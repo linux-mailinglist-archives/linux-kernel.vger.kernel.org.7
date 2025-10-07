@@ -1,203 +1,169 @@
-Return-Path: <linux-kernel+bounces-844156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BB56BC129A
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:19:45 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id A575FBC11E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:17:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B93919A061B
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:20:06 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2BEF534E3B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:17:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19AA92DC762;
-	Tue,  7 Oct 2025 11:18:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C13F72D97B8;
+	Tue,  7 Oct 2025 11:17:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NYlzwupD"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="f3cQ3vX3"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4128E2DC790
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 11:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FADD22B8AB;
+	Tue,  7 Oct 2025 11:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759835917; cv=none; b=HrWbu2ZPabhGbxpYaLA5nKg4Cq1/SQsvKJhmV9PZ/exRPVC+zMdl8boiav82bUZNiwU0vylgvQrwWp/V8ELw0rWJOpF7wyKJfm0WXBA0v4M11oN3JD6ybMOhdFtEW7VOOEh2uYDBwZ9h0US+ygmIauUpTabyTcYPa1n3lLL5Brs=
+	t=1759835830; cv=none; b=CS4R+6Og5VwhwudCW9/Zh50b0CyPK62l26N0K/IlH3nZ0FTYxgs98aDEsbUM1S/rr6/fOsD4J9lFtBtWj9QBU3vFHLPBI2D0aqMRoAkXdmD5AOHhXmhj54cRyU9+wxrzaWefHSf/Ltq/BparwT4yz02Bc6EJvunjIhzFrsBv420=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759835917; c=relaxed/simple;
-	bh=aj4aVwNnkYZP/VgOnJhsAwtvL4XTAa/u4ZaKgBAEh3Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JHHsSZ1EhxNir+QfQXr8ASVQbVrJc1IDjqJsxP6nMDR3aqNffdR9v6Ihm2qGhL5zJ1ppooFW1OFw/iEdy1Z2OcEdFWgOhjdyURnX5PAotagn6oagENSbP38iaTw1Wi79a2lBMW8xmeMQ0OfhRikcT5QlBN+QL8CDoc5ldAd5e4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NYlzwupD; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-26983b5411aso40384395ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 04:18:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759835914; x=1760440714; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U5nftmpeMNxILQOhfvmkuo3ny/kYcoPK9w/ov0DMU2I=;
-        b=NYlzwupDGThZRHDRSJ0IzlInDTU1jpda9LFB651lWtvVtPAmrq9fftwnNnj+eRDorM
-         yZwrHpLjr8nVBFhbVu1UVS5auim9ijYrlm4hcdA78VZoNgKhI4uIlFB0phQVp58Jj5C2
-         zgt9sCwdwgvkKKvG+7yUChG1Ly4xMkVkma0XaicEwAk+otAZOmJ8idSRDPlmVLjHQCf/
-         Sj1tWu7xB0vQFPCOeLQWHVKazaL1Tz2+HoAQvLoyRe4wpYwZy7EfWq4mwIunnc9KD5QU
-         eihl6r8dH+xJqOGRbNpLgU9lX460sC79OTbF8dT+T5Z0geQgPwYwRybBpA0DZ5tEF+fJ
-         cyJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759835914; x=1760440714;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U5nftmpeMNxILQOhfvmkuo3ny/kYcoPK9w/ov0DMU2I=;
-        b=JjFYQ/MWHrdCgESJwOYnYLrdmZtUe4wD1KDg1LLJ+QpAF9k664Jyd75nbZL5onrDmJ
-         qIgc/DFQOM9WVLtOTx5EduucKc3n4tPzKHZWDxmNap/Y/yZGctI8ipUk2ab5WY3guJby
-         3riinBb6PryxfPDtIkWG577Ki8xpD56BDrlu7rmX6y8VFvHYWgT5cUDgFBJm9Lct7/Lu
-         4dkaqnyrM5Ohwy7BSwHb+DAHwQP20izsOs7ff1es/TYQYAKKHbBojncnVv0YRLfZyni2
-         GYV+qIMxR1cRxOmq05fBS3CVReTxGIfXUPsTloddPLVL0JvZUKD+3+m3490PpOiYuX51
-         R/DQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWPEMuUr+9wpko3MonrtRo+b0B9eJi0MAN8xnbVH7uff9yh08C5D33lEMInvWHhJOWwgr3MY0qruVvuQZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFoVLZECIafQ/YyR41CCMzehepH2Vt605IaABA2qUteh/0t4Xc
-	6Ev0MxEENhHODeV8la9+C1+0s4vYFSa669dHqZGWrDHU2HFAmJCylZMr
-X-Gm-Gg: ASbGncueMGtE9ytiRGktvN89d7bqyqUzUW73koRGJMUI4O7wY96IuFhoUrdXeYLjnF+
-	6nGPt2hmrfc7Lj5s/nBvmnPpsmf8y7ymycKrR2kXHKl/ARwpHpMGj2Hr3kR3a1jJLL0J+ZBbGwN
-	84xp9WXM4XWKKTvZBC3AzxUsbXDD7HLlCl61VmCvN2S5q7gtev22T/eo1Rgqd73iReiIlNqzGOd
-	4TQe+N9mzVp2TLSEWTFbklqzf4322aJsTCGEk6CBnNz666LB0O6y+M+vZKIyiVQ2bV866vB58yI
-	BPt4hHr0eBWPbOWR6GY7avCfFTNnGT1KrGygsddsXjMDxamZytGkB0V5ExMVYJtl2Tt9H5iX/ui
-	DuC45PCJTj+dPatLnbtcy9eiWJv4cL6hlUvt/BFX7A6YAdzVDHith4I0FEmGVV/pRGiIIvASfBU
-	uS0DfAJUtivLJ1lfnShR2t3EVDmZcrafMBBy9Q7RT+RJQZb2rirhsH
-X-Google-Smtp-Source: AGHT+IHuJHgjXCw9R80/D5o7z6w5Ge8vVPTT5vKpu+uAH8PzOw9lXkX16l4ogNuFgD8KvHrVNOpLCw==
-X-Received: by 2002:a17:902:f60b:b0:269:ed31:6c50 with SMTP id d9443c01a7336-28e9a54efd7mr198564635ad.10.1759835914522;
-        Tue, 07 Oct 2025 04:18:34 -0700 (PDT)
-Received: from [192.168.2.3] (2403-580a-80ed-0-4835-5a07-49e7-f115.ip6.aussiebb.net. [2403:580a:80ed:0:4835:5a07:49e7:f115])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1d31bdsm162509045ad.94.2025.10.07.04.18.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 04:18:34 -0700 (PDT)
-From: James Calligeros <jcalligeros99@gmail.com>
-Date: Tue, 07 Oct 2025 21:16:51 +1000
-Subject: [PATCH v3 10/13] arm64: dts: apple: t8103,t60xx,t8112: Add SMC RTC
- node
+	s=arc-20240116; t=1759835830; c=relaxed/simple;
+	bh=dTlWqI9MDbTPXjNObomXrRjydpXiYIqN1Xq05lAl5jE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VBzj1pexHSUpfaDf4hzIwJ/XLrTpE1cOvlKw9sCmWvtZTIASSJficgDQqXwbzkml31w6isAtH/ov97QkgVq3VW6++yjyJdqgfWNNnf18XDH18wo12F/NWhWd6Tui8FdWSzqFlne+OznyzyjkGM/etXoW7Ftc9Sg4OGMQfhlxPz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=f3cQ3vX3; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5973m764004958;
+	Tue, 7 Oct 2025 11:17:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	AzwZV3lhbGPsR0uXeFxUfkE+5WX8Kk287FDa3Qgag1g=; b=f3cQ3vX3TpiQm/ZE
+	m8ZiTtsGJ++drn1xl0m5Se2ZEM3sK39iG2FG2f1d7SG9MJ7cl9/1xd2UOzqBZGd1
+	J8DsWzfsESWUFv2ey2w8iEbJBoxqeq/s/DKFRHgAA80ZSs2WDzOpj2ERkT2KyySD
+	sLIrZRyi/uALeQVh2TOp2UkE/5Tof4MpkSuoyyhL2+BabMd2LPc52oap9INXL3b1
+	+2WSjuGgQx+BirkiHsO2uxhlMTLqdNnWrfmUr8BjNG/7tFtl2OzdGVdqQW5BC4G9
+	mY4OSc2z092eoAvfRZfygOy6LWTTjgG7GBd5l6v3Vl4/A6Hxc7NBE6T723xmns+0
+	qjU1QQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49jvrhpu3p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 07 Oct 2025 11:17:01 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 597BH0uV009622
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 7 Oct 2025 11:17:00 GMT
+Received: from [10.217.216.18] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Tue, 7 Oct
+ 2025 04:16:55 -0700
+Message-ID: <817f02aa-dfb8-a134-2fd4-fbdf8e8a714e@quicinc.com>
+Date: Tue, 7 Oct 2025 16:46:52 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v4 1/4] dt-bindings: mmc: Add dll-hsr-list for HS400 and
+ HS200 modes
+Content-Language: en-US
+To: Rob Herring <robh@kernel.org>
+CC: Ulf Hansson <ulf.hansson@linaro.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Adrian Hunter
+	<adrian.hunter@intel.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad
+ Dybcio" <konradybcio@kernel.org>, <linux-mmc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <dmitry.baryshkov@oss.qualcomm.com>,
+        <quic_pragalla@quicinc.com>, <quic_sayalil@quicinc.com>,
+        <quic_nitirawa@quicinc.com>, <quic_bhaskarv@quicinc.com>,
+        <kernel@oss.qualcomm.com>, Sachin Gupta <quic_sachgupt@quicinc.com>
+References: <20250929113515.26752-1-quic_rampraka@quicinc.com>
+ <20250929113515.26752-2-quic_rampraka@quicinc.com>
+ <20251006214830.GB625548-robh@kernel.org>
+From: Ram Prakash Gupta <quic_rampraka@quicinc.com>
+In-Reply-To: <20251006214830.GB625548-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251007-macsmc-subdevs-v3-10-d7d3bfd7ae02@gmail.com>
-References: <20251007-macsmc-subdevs-v3-0-d7d3bfd7ae02@gmail.com>
-In-Reply-To: <20251007-macsmc-subdevs-v3-0-d7d3bfd7ae02@gmail.com>
-To: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Jonathan Corbet <corbet@lwn.net>, 
- James Calligeros <jcalligeros99@gmail.com>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-rtc@vger.kernel.org, linux-hwmon@vger.kernel.org, 
- linux-input@vger.kernel.org, linux-doc@vger.kernel.org
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2689;
- i=jcalligeros99@gmail.com; h=from:subject:message-id;
- bh=2GQnZlbwDgkFgLSJTTlkgGVtMUC2q8Y46wlmJNb88ZA=;
- b=owGbwMvMwCV2xczoYuD3ygTG02pJDBlPvm3z/bogMmDmvGmNrrUnyxbdOaX5PtCls+l3jMPhz
- 6cmtr+Z3lHKwiDGxSArpsiyoUnIY7YR281+kcq9MHNYmUCGMHBxCsBEym8zMsxcaGsZebPXWOLh
- Jk2m5un3M9certhx625ak2LGK/uJp9UYGbZ/4zg+d7f2xsAVRRMqPC6XTBVXf9Vx57Yo4/bqpe0
- 89gwA
-X-Developer-Key: i=jcalligeros99@gmail.com; a=openpgp;
- fpr=B08212489B3206D98F1479BDD43632D151F77960
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAzNiBTYWx0ZWRfX6RQ0kTSZW4R5
+ bwjSohAl9l2XlwT+RN1dyIUocTTLwtHh/q1L9lfwE4HcP5LlYFCuNC3s87HNKVRODwuB24hOqdz
+ Ck2d92lMIYwiIKfCfYfjd/30Ot/WJiREcVG8pchgA8IyUs+rPSMxS0ix7xlSuQXS7KAed7+QqDz
+ LZtj6SdL+xR+RxRnqipACI1b1h9L6GtIOfO8wKe2rbuvY63b7a4FolIEuXyaYnmTxf8n0h0JIEr
+ k1/TUDkCOwFaDSQh/sMDuAv0jt40hCpiIJhWEUr+wVlMYsbEdlASikUqCxvu59Mt5yyhvNlyZtQ
+ rAB83D4Yg/kR64DZd29Hb1tD00Bw+gelTOwXBBuzSGI54dlvdALQlgmt4v8v82ksUl6M1PlFMI2
+ 9mQ4tOaeOyn3X9eV/exuM2xHeBsD1A==
+X-Proofpoint-GUID: bjPfjbwXZxMNLvL4xrxliimPWRKEvptK
+X-Authority-Analysis: v=2.4 cv=XIQ9iAhE c=1 sm=1 tr=0 ts=68e4f6ad cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=COk6AnOGAAAA:8
+ a=bBXPjYvAnMgFlPrjOloA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: bjPfjbwXZxMNLvL4xrxliimPWRKEvptK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-06_07,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 suspectscore=0 lowpriorityscore=0 impostorscore=0 phishscore=0
+ clxscore=1015 adultscore=0 spamscore=0 priorityscore=1501 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040036
 
-From: Sven Peter <sven@kernel.org>
 
-The System Manager Controller of all M1/M2 SoCs supports the RTC
-sub-device.
+On 10/7/2025 3:18 AM, Rob Herring wrote:
+> On Mon, Sep 29, 2025 at 05:05:12PM +0530, Ram Prakash Gupta wrote:
+>> From: Sachin Gupta <quic_sachgupt@quicinc.com>
+>>
+>> Document the 'dll-hsr-list' property for MMC device tree bindings.
+>> The 'dll-hsr-list' property defines the DLL configurations for HS400
+>> and HS200 modes.
+>>
+>> QC SoCs can have 0 to 4 SDHCI instances, and each one may need
+>> different tuning.
+>>
+>> Signed-off-by: Sachin Gupta <quic_sachgupt@quicinc.com>
+>> Signed-off-by: Ram Prakash Gupta <quic_rampraka@quicinc.com>
+>> ---
+>>  Documentation/devicetree/bindings/mmc/sdhci-msm.yaml | 5 +++++
+>>  1 file changed, 5 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+>> index 22d1f50c3fd1..a60222473990 100644
+>> --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+>> +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
+>> @@ -137,6 +137,11 @@ properties:
+>>      $ref: /schemas/types.yaml#/definitions/uint32
+>>      description: platform specific settings for DLL_CONFIG reg.
+>>  
+>> +  qcom,dll-hsr-list:
+> '-list' doesn't add anything.
 
-Reviewed-by: Neal Gompa <neal@gompa.dev>
-Signed-off-by: Sven Peter <sven@kernel.org>
-Signed-off-by: James Calligeros <jcalligeros99@gmail.com>
----
- .../arm64/boot/dts/apple/t600x-die0.dtsi | 6 ++++++
- .../arm64/boot/dts/apple/t602x-die0.dtsi | 6 ++++++
- arch/arm64/boot/dts/apple/t8103.dtsi     | 6 ++++++
- arch/arm64/boot/dts/apple/t8112.dtsi     | 6 ++++++
- 4 files changed, 24 insertions(+)
+list was used as there are 5 dll register, but '-list' can be
+dropped, and it can be renamed to qcom,dll-hsr, I will update in
+next patchset.
 
-diff --git a/arch/arm64/boot/dts/apple/t600x-die0.dtsi b/arch/arm64/boot/dts/apple/t600x-die0.dtsi
-index 3603b276a2ab..f715b19efd16 100644
---- a/arch/arm64/boot/dts/apple/t600x-die0.dtsi
-+++ b/arch/arm64/boot/dts/apple/t600x-die0.dtsi
-@@ -44,6 +44,12 @@ smc_reboot: reboot {
- 			nvmem-cell-names = "shutdown_flag", "boot_stage",
- 				"boot_error_count", "panic_count";
- 		};
-+
-+		rtc {
-+			compatible = "apple,smc-rtc";
-+			nvmem-cells = <&rtc_offset>;
-+			nvmem-cell-names = "rtc_offset";
-+		};
- 	};
- 
- 	smc_mbox: mbox@290408000 {
-diff --git a/arch/arm64/boot/dts/apple/t602x-die0.dtsi b/arch/arm64/boot/dts/apple/t602x-die0.dtsi
-index 2e7d2bf08ddc..8622ddea7b44 100644
---- a/arch/arm64/boot/dts/apple/t602x-die0.dtsi
-+++ b/arch/arm64/boot/dts/apple/t602x-die0.dtsi
-@@ -121,6 +121,12 @@ smc_reboot: reboot {
- 			nvmem-cell-names = "shutdown_flag", "boot_stage",
- 				"boot_error_count", "panic_count";
- 		};
-+
-+		rtc {
-+			compatible = "apple,smc-rtc";
-+			nvmem-cells = <&rtc_offset>;
-+			nvmem-cell-names = "rtc_offset";
-+		};
- 	};
- 
- 	pinctrl_smc: pinctrl@2a2820000 {
-diff --git a/arch/arm64/boot/dts/apple/t8103.dtsi b/arch/arm64/boot/dts/apple/t8103.dtsi
-index 8b7b27887968..59f2678639cf 100644
---- a/arch/arm64/boot/dts/apple/t8103.dtsi
-+++ b/arch/arm64/boot/dts/apple/t8103.dtsi
-@@ -916,6 +916,12 @@ smc_reboot: reboot {
- 				nvmem-cell-names = "shutdown_flag", "boot_stage",
- 					"boot_error_count", "panic_count";
- 			};
-+
-+			rtc {
-+				compatible = "apple,smc-rtc";
-+				nvmem-cells = <&rtc_offset>;
-+				nvmem-cell-names = "rtc_offset";
-+			};
- 		};
- 
- 		smc_mbox: mbox@23e408000 {
-diff --git a/arch/arm64/boot/dts/apple/t8112.dtsi b/arch/arm64/boot/dts/apple/t8112.dtsi
-index 3f79878b25af..6bc3f58b06f7 100644
---- a/arch/arm64/boot/dts/apple/t8112.dtsi
-+++ b/arch/arm64/boot/dts/apple/t8112.dtsi
-@@ -919,6 +919,12 @@ smc_reboot: reboot {
- 				nvmem-cell-names = "shutdown_flag", "boot_stage",
- 					"boot_error_count", "panic_count";
- 			};
-+
-+			rtc {
-+				compatible = "apple,smc-rtc";
-+				nvmem-cells = <&rtc_offset>;
-+				nvmem-cell-names = "rtc_offset";
-+			};
- 		};
- 
- 		smc_mbox: mbox@23e408000 {
+>
+> What is 'hsr'?
 
--- 
-2.51.0
+Hardware Settings Reference
 
+>
+>> +    maxItems: 10
+>> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+>> +    description: platform specific settings for DLL registers.
+>> +
+>>    iommus:
+>>      minItems: 1
+>>      maxItems: 8
+>> -- 
+>> 2.34.1
+>>
 
