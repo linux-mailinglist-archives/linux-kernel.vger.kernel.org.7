@@ -1,105 +1,143 @@
-Return-Path: <linux-kernel+bounces-844557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35261BC2363
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 19:03:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 102F6BC2369
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 19:04:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1EA8D4E59D2
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 17:03:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B815918991F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 17:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ACA12E8897;
-	Tue,  7 Oct 2025 17:03:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080B62E8B76;
+	Tue,  7 Oct 2025 17:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kJ0EwbfZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="xh7gM6Q6"
+Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A84628F5;
-	Tue,  7 Oct 2025 17:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751D22DF130;
+	Tue,  7 Oct 2025 17:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759856602; cv=none; b=VrVZWdAEAWVxKBXLbU9U0aLXzVDzCvdQxAouw/4OsMdOe34eLrc+0wt8XdKP9wRoquCliWcC/EJ4AV15rUovaAohHd3nb+WWElaXDzcHMycGEgC9MkyyE4QNyXi3RLmUYEJgNfVC4+XTHwiNi8CxNUcx++EeYfkmtwFkHieM+Nk=
+	t=1759856648; cv=none; b=fufuZF68veXn5Fzi4zrZYgFGojFv0nY5TV4D3Kz/XG8sCGF9ppniADOcuTkxz8EOCIbMthV2bQe5vDQ/G+4INapfeu1UQQuyIpVi/LZCySmlCAYW6f8wqm3NBzGESHrs0paIj/u6KSINwCzGsJdszp7bI5GUdcJ95PufCQ34xdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759856602; c=relaxed/simple;
-	bh=/pSQNfp/NoybqW59QlXQrWZnpCKQXoNs3vgFg+pkIaU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=pjaVLVDx54lEdmjqVWCF1p4Qw4hzADcn1hB33SqamWXyDI6JBxu1XeFD/QqQjTUgnFPOcWmpN4zue7lmPXy2K5ZfmlhQX586mHhsoggDElwvKsfI8/7fhYTbwD/jVZHCqC0ATIcABB38Ngv/8RdIDD1a02YGkG5ZKyw60yrNB20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kJ0EwbfZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C9B5C4CEF7;
-	Tue,  7 Oct 2025 17:03:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759856602;
-	bh=/pSQNfp/NoybqW59QlXQrWZnpCKQXoNs3vgFg+pkIaU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=kJ0EwbfZh6hA4LkGyNhay0l2/t3gpMYISrJvJOXSwiCYtGyauST1J4a8Fh2rmVqQp
-	 wTbaUcG0VjlIphJVstEii87typHLD4ne3Jj/sMTxos/potZRu2dr6bm+jhFxNQhamm
-	 1cANhRm63DawqftB+Hz2DjK6gmvslPkzm3xawjzUxcw37tEIMFEUuG1hLW5NH+Qt8+
-	 RY8ZQUNMDpgEMJnkPi0WZcmoL50ra6rbB46E3ChCiTckzfBgYV90AzfUra1Jj3CeR8
-	 I1WAfwHvnDFvNLdqt8rGRJUEoCoQyUrZMR3UTZWH68SaDS8IosFAFJSCgemR4U/U8D
-	 DgKIlQk8gBM8w==
-From: Mark Brown <broonie@kernel.org>
-To: Jerome Brunet <jbrunet@baylibre.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Valerio Setti <vsetti@baylibre.com>
-Cc: linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20251007-fix-i2s-polarity-v1-1-86704d9cda10@baylibre.com>
-References: <20251007-fix-i2s-polarity-v1-1-86704d9cda10@baylibre.com>
-Subject: Re: [PATCH] ASoC: meson: aiu-encoder-i2s: fix bit clock polarity
-Message-Id: <175985659977.122025.13786700969734596641.b4-ty@kernel.org>
-Date: Tue, 07 Oct 2025 18:03:19 +0100
+	s=arc-20240116; t=1759856648; c=relaxed/simple;
+	bh=TmecqJ+5qwk2sM9mRz944u6sKOHgNyAjItlrrCFK1Zk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KDu06F276BsqLFOXtslBWg1gI56uFuosCpX/HUA8YT9w9dW+LnzBgxR9Xx6Lv4l04eU/h5W1IQzLFqPHGaibpRflvtsUjb1DxLhFtReWR6nxOM2dDbVVF+NqWUHQBqTFNo6O+xzPgA2pnyLBNxSMpxCfMfKZStwMRZS+EfArHk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org; spf=none smtp.mailfrom=idosch.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=xh7gM6Q6; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=idosch.org
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfout.phl.internal (Postfix) with ESMTP id 65B74EC032F;
+	Tue,  7 Oct 2025 13:04:05 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Tue, 07 Oct 2025 13:04:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1759856645; x=1759943045; bh=yQkaBhKJ2SJ4QYCh3VzMHRHO23fODnHWxAa
+	UeH65jcc=; b=xh7gM6Q6ZwfKs/4QtlLtvRHBRkX9F50eqQwvpqbq1CdFwevs5IM
+	rRSEm5hgfrRLqjnpXUMNqi+yGtzb2DDDaDS88kIyMF4YYYEAE3/+JzN94CaSaDi1
+	2bRPHZSc1ZOjyWNpZiOHqtSC96VN4FRQbvWtFptS/Y41dis663koel+cZgY3gNdN
+	nCoHf6EQphA95trhDWDJ57pBN8pQYcdh98PQNIEsu6hvb21+SRuNhNcbkoQccb40
+	EGiePpnoZ3k9OvLdv6ly8ZgSej34tVtrIu/w9qabgrYAg1f5xaW4/25IRBI5XBR0
+	Vby+9+Ued1XbLZkaNQqKK3Vmp5N0LBUO4QQ==
+X-ME-Sender: <xms:BUjlaDyagWRNFGGu3nDQpPtAbnAyk1sKH8hU6t1zR8FE-pAs8dgGQw>
+    <xme:BUjlaOWUhaPrWPPu2XLYaO5qzeD30G9zKICfBCTHgnQp4pKqSYvMzZ1a4kKFkVIUI
+    Abn-90s_-jomFFmQY9x7A7Hi-eBCwtBhEhYiz6NIB-7DL-uYw>
+X-ME-Received: <xmr:BUjlaH_739i5izQvXBI8ccUefZMoTStMlZMmUpr4nS7sx6WuWJ2FplIAy-nVJvDqppg6k-6S6ykJiu6V2Jm9Y0Ru>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutddtleejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepkfguohcuufgt
+    hhhimhhmvghluceoihguohhstghhsehiughoshgthhdrohhrgheqnecuggftrfgrthhtvg
+    hrnhephefhtdejvdeiffefudduvdffgeetieeigeeugfduffdvffdtfeehieejtdfhjeek
+    necuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtne
+    curfgrrhgrmhepmhgrihhlfhhrohhmpehiughoshgthhesihguohhstghhrdhorhhgpdhn
+    sggprhgtphhtthhopedutddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggvmh
+    gvthhrihhouhhsiiesphhrohhtohhnrdhmvgdprhgtphhtthhopeifihhllhgvmhguvggs
+    rhhuihhjnhdrkhgvrhhnvghlsehgmhgrihhlrdgtohhmpdhrtghpthhtohepuggrvhgvmh
+    esuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegushgrhhgvrhhnsehkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtg
+    hpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihes
+    rhgvughhrghtrdgtohhmpdhrtghpthhtohephhhorhhmsheskhgvrhhnvghlrdhorhhgpd
+    hrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:BUjlaJumaGeVRqaOnzlQnCz0WPrlwsNtNH9H4LCmA0PWawHhmyysjQ>
+    <xmx:BUjlaP2a4qFbzTUghm0rgfQ6JOBXGHi6ZSje1y37GnBlGAg16vnldg>
+    <xmx:BUjlaGRcaY75CuUivNPiEh67vXCgwBcMCJ3uSapErPpamCFkmSAACA>
+    <xmx:BUjlaLfwiLm6XZFMXudeucZyZ4eYJS1e3OnLWoDojrH4I-yLcpb4JA>
+    <xmx:BUjlaAabPBhwIDuUh4TsEPfRnyvEmWH2Fyj5JwdQDrPRl2LUvozNXM_o>
+Feedback-ID: i494840e7:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 7 Oct 2025 13:04:04 -0400 (EDT)
+Date: Tue, 7 Oct 2025 20:04:01 +0300
+From: Ido Schimmel <idosch@idosch.org>
+To: Dmitry <demetriousz@proton.me>, willemdebruijn.kernel@gmail.com
+Cc: "David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: ipv6: respect route prfsrc and fill empty
+ saddr before ECMP hash
+Message-ID: <aOVIAWAxpWto8ETd@shredder>
+References: <20251005-ipv6-set-saddr-to-prefsrc-before-hash-to-stabilize-ecmp-v1-1-d43b6ef00035@proton.me>
+ <aOPEYwnyGnMQCp-f@shredder>
+ <MZruGuax8jyrCcZTXAVhH0AaAMOZ-2Gcj5VeZO8xy8wS9FqwA3EMhPFpHLZs67FAKCu6z3GpEVeArSX2qGdSUqsysI-0o13dKK1ZmUhK_l0=@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-56183
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <MZruGuax8jyrCcZTXAVhH0AaAMOZ-2Gcj5VeZO8xy8wS9FqwA3EMhPFpHLZs67FAKCu6z3GpEVeArSX2qGdSUqsysI-0o13dKK1ZmUhK_l0=@proton.me>
 
-On Tue, 07 Oct 2025 00:12:19 +0200, Valerio Setti wrote:
-> According to I2S specs audio data is sampled on the rising edge of the
-> clock and it can change on the falling one. When operating in normal mode
-> this SoC behaves the opposite so a clock polarity inversion is required
-> in this case.
+On Mon, Oct 06, 2025 at 06:31:10PM +0000, Dmitry wrote:
+> If the 5-tuple is not changed, then both the hash and the outgoing interface
+> (OIF) should remain consistent, which is not the case. Only with the fix does it
+> respect the configured SRC and produce a consistent, correct 5-tuple with the
+> proper hash.
 > 
-> This was tested on an OdroidC2 (Amlogic S905 SoC) board.
-> 
-> [...]
+> Therefore, in my opinion, this should be fixed.
 
-Applied to
+Note that even if the hash is consistent throughout the lifetime of the
+socket, it is still possible for packets to be routed out of different
+interfaces. This can happen, for example, if one of the nexthop devices
+loses its carrier. This will change the hash thresholds in the ECMP
+group and can cause packets to egress a different interface even if the
+current one is not the one that went down. Obviously packets can also
+change paths due to changes in other routers between you and the
+destination. A network design that results in connections being severed
+every time a flow is routed differently seems fragile to me.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+If you still want to address the issue, then I believe that the correct
+way to do it would be to align tcp_v6_connect() with tcp_v4_connect().
+I'm not sure why they differ, but the IPv4 version will first do a route
+lookup to determine the source address, then allocate a source port and
+only when all the parameters are known it will do a final route lookup
+and cache the result in the socket. IPv6 on the other hand, does a
+single route lookup with an unknown source address and an unknown source
+port.
 
-Thanks!
+This is explained in the comment above ip_route_connect_init() and
+Willem also explained it here:
 
-[1/1] ASoC: meson: aiu-encoder-i2s: fix bit clock polarity
-      commit: 4c4ed5e073a923fb3323022e1131cb51ad8df7a0
+https://lore.kernel.org/all/20250424143549.669426-2-willemdebruijn.kernel@gmail.com/
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+Willem, do you happen to know why tcp_v6_connect() only performs a
+single route lookup?
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Link to the original patch:
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+https://lore.kernel.org/netdev/20251005-ipv6-set-saddr-to-prefsrc-before-hash-to-stabilize-ecmp-v1-1-d43b6ef00035@proton.me/
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Thanks
 
