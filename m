@@ -1,605 +1,210 @@
-Return-Path: <linux-kernel+bounces-843835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FC69BC05F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:49:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D5D6BC0602
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:50:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A29E3B184D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:49:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AA273AFCC4
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:50:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6557C227B94;
-	Tue,  7 Oct 2025 06:49:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3282A22A7E0;
+	Tue,  7 Oct 2025 06:50:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="UP1ZGc9M"
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013044.outbound.protection.outlook.com [40.93.201.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=vayavyalabs.com header.i=@vayavyalabs.com header.b="GwDAa8UH"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C24D1B2186;
-	Tue,  7 Oct 2025 06:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759819787; cv=fail; b=HPdI5iSMzeQYOY4X8dpcrIO+LQ7l2hhT8NIJC/ONQ2sTepz3OOKhCiwoSR/r6gWIil4yzsO9A3ynrXtPl8d1GwP07RnbjdZcdL7JKWYd0+QBdfiMGnE8CeUh0pUrqSxE9He3MPQU2EYe2u81Z7krcnt6ZJmZuyb8JqsWpussJ90=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759819787; c=relaxed/simple;
-	bh=egxXDHnl5QlWiy1AfboV1UyIWBND2EOJVamhQIUbG48=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=R/rX1qFoWnyAFPlw+ozFR+IFn8SOcFF0+yXLMWPlXmgaNtUwjEUJa0RF5SCL7FGP+rrhQj94SL7Rhpb1/m41mv1h2Afo/zV6w4kTl7DifAHqweS+ey23PvDRQ9aAVSCW+kvUgA5p8T3xlzzA9i6VKWQPETs/yE6ke8V/HBziXdI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=UP1ZGc9M; arc=fail smtp.client-ip=40.93.201.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Q7/PHBnqCFzeC/UGQOWIwbiYP/wBYwwJW14Q2i40WEjqP5y1scOoH04UyeZzNW1C0lR52dz2QijupLzefcFLqDojR1WGxoyCoPMKE6u8aqABokuQ8INPykDsHUhCfhQNAymFRUNzDtYzWm+R9v+ElpKl4sNXO2dgj21l0BhCOIith1gNw7ZaJYGdiCbC9C2roc7MzAebm0I9TnX4WUwjfwtaMOzEuM6VVPrcuoK+8H3kt1FCr0oj1aDzMYF72AfJkwFzsBXdOhLh3uTnPyhFuMhgNES/p8RSKtVdf17T/C3p9NJPv638mxD/IpRjvMGa4aptJq9BrFDDpuGlUSFW5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oaVDNS3QitRr/MdozJBXneK/QfegC3erOy2gqS5yWyU=;
- b=Q/CmCx+DRMTEs46n5773P8Fa+CUW6/SyyV0/rZwiGPWgnBPn43UYJAFX55fzd+k+F9eX6tQydNcU5kj+2JPsMzn/jQlBW8y7JqI0JX1cMf4F38x9c441IhVbeNfDSOM3dNqH+SMiSS0epIOIF+xNbttmS3HPdSfvAWvFy8eIp+vpZA5aldp9Od83ysC4mxsWQcsRDoDeiBDF5ndKBLgaJQst2Lh8lX2+c2sx4whrk5gXeoHAvvj0Dvof1fWW4Ms3Xjwqy8CbE5sx95O+vIQ2RX4a4jRwU4RVcqV406EK1ULfHBnDDYhAcuWg5TqLUQHJQP8fyaK4Hdvel34mzg0q5w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oaVDNS3QitRr/MdozJBXneK/QfegC3erOy2gqS5yWyU=;
- b=UP1ZGc9MoUAv0iJNuQcZm4XgC7uNICXoA7S94qqUN6vUEN3xoA7u2fqbaMD5LrqohPooOP1iNbsALvGsOovj+mCjKn780xmDfrUKi9DfvhoC3/Ad2j2e2kAw0ZwbHX6n8f8yOjkG7rSM3CfT3l2vZQfut2Uu0e2ivUUm90sSQNTs9i9ewP9JBiGE5N5q3syQbfWJpZABzValvLvYkUHub9eNVxVYOKyQYE4DMmHOKC/IDbG4CXNNkJ8gNVBfOtdejAlglX29HWnYPww93nvxARvzcs9+Y6OoTiBRb2XEV8MmkitFg5iw9d/Pxxqz5stMe2aM5oBJSnotXPJWaw2irA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by DS0PR12MB8317.namprd12.prod.outlook.com (2603:10b6:8:f4::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Tue, 7 Oct
- 2025 06:49:30 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9182.017; Tue, 7 Oct 2025
- 06:49:30 +0000
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 07 Oct 2025 15:49:26 +0900
-Message-Id: <DDBW1JYMK8Y7.37R0EJR5VFEO4@nvidia.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "dakr@kernel.org" <dakr@kernel.org>, "Alexandre Courbot"
- <acourbot@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
- Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- "bjorn3_gh@protonmail.com" <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "David
- Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "John
- Hubbard" <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
- "joel@joelfernandes.org" <joel@joelfernandes.org>, "Elle Rhumsaa"
- <elle@weathered-steel.dev>, "Yury Norov" <yury.norov@gmail.com>, "Daniel
- Almeida" <daniel.almeida@collabora.com>, "Andrea Righi"
- <arighi@nvidia.com>, "nouveau@lists.freedesktop.org"
- <nouveau@lists.freedesktop.org>
-Subject: Re: [PATCH v6 1/5] nova-core: bitfield: Move bitfield-specific code
- from register! into new macro
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Edwin Peer" <epeer@nvidia.com>, "Joel Fernandes"
- <joelagnelf@nvidia.com>
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20251003154748.1687160-1-joelagnelf@nvidia.com>
- <20251003154748.1687160-2-joelagnelf@nvidia.com>
- <F3853912-2C1C-4F9B-89B0-3168689F35B3@nvidia.com>
-In-Reply-To: <F3853912-2C1C-4F9B-89B0-3168689F35B3@nvidia.com>
-X-ClientProxiedBy: TYCPR01CA0090.jpnprd01.prod.outlook.com
- (2603:1096:405:3::30) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC72F215767
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 06:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759819839; cv=none; b=KqK+wfJHRCcjT+3BLWQyRYHBc8Lz5btcHRYRh57TmAYE0cuM7hBzXuMKdTbNmBqsKrELNMUqpMsqGezK9kyF6c9BJFly6uaAeBFbKi0phWZoj7m4UZixPxmID4caNk3ie8Z9zdPsrIcy7b/b2VlvTUW1ri7Xo2IXuWTDrYtV8qA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759819839; c=relaxed/simple;
+	bh=QnTLV3o19IG6q9YeHZebGR923u5V9mmkqGyVmvzfLc8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SWv+bxUeDhNOnRirxSXKBfUfEITbbV6o1pAP2HkHnpLHYgWj+vTBlYiDuMGasmITQOcAoAv6jd555SLwh56kopJNQ+EZ57YZojvqcn3LcQ2k6aLEjed2bJgBCDUkVRIrDAZjlmUbCGxlOoEzpfFVrXcKYQmkZr9znL5KigOL8nA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=vayavyalabs.com; spf=pass smtp.mailfrom=vayavyalabs.com; dkim=pass (1024-bit key) header.d=vayavyalabs.com header.i=@vayavyalabs.com header.b=GwDAa8UH; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=vayavyalabs.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vayavyalabs.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-269af38418aso71498945ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 23:50:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=vayavyalabs.com; s=google; t=1759819837; x=1760424637; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1ue3YLt56/lr86Z7z674epKcb+OTcReM8+sZPVWTsKU=;
+        b=GwDAa8UHYRjEi52ycFVQ04djnMFU4iM3bQU46XZVynA8kB1fsZI+V72Zq+STjkjofn
+         BMVYvtrQNKpdhm5VumSmUalNa6uQ1jLAm2T2ynYbOOTxwAOXmSZm7qZ972TLN2I6dOSF
+         W/MaV4tkmWOEigTefoaI7d7r9wyZ3+FKxKxAM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759819837; x=1760424637;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1ue3YLt56/lr86Z7z674epKcb+OTcReM8+sZPVWTsKU=;
+        b=VBTgkdDhhJZy4bDZbv5WQ29VdHHPaCHgqbqol+7PUgU7vdykdeJHUjvhDWh0LE9QHZ
+         i8R3nQbYkf3z7iDXRetz2VwR3ZcdeRMMTb0LLUv1NQ933Y8XwTXzazUggqh2q2/163Th
+         W9szwmM5U4MQKOwTefRdYwPWC/p5WN4+xQcoO4tG7aEHSjVDgitVy5KRoL76jP1VpfTK
+         NvqeVMPURTtxzY9zd7V8abC4iIDHgKYsABh2q16mYAtHiPv7s8sLhDoLS/baNg1xdI4w
+         RrDucMsgAUGHB1EZfAGGQbpLbbsr2pf4EEraVpSu3Fh+mK/DIdMXLyergHHGjaNmjRbS
+         JaeA==
+X-Forwarded-Encrypted: i=1; AJvYcCWR67JGiUUzUwHkUYF/4DIDj0IJvQw79n5sK1xMwrltaIj1DY9B5cbinnHfkcGqpusTZ/3XRTXerM9M7cE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+sSosUWJuX6Jw6j1zKirLqnnwBa8SUC41FYJ7+BsV6O58oZR2
+	ZMom4ZMeXqjvAHo142PavseXf/4CcsOsN+UsuGO0C+yWwewKf8Mz7bO/tph1+aOwT5I=
+X-Gm-Gg: ASbGncu1iPiH2K55+ZIhqYUpOVnB8LZbuSqjIOHy2WPWWZ1IVEIQGCaJFLsCTw0VIM1
+	Hhqychun+k77SgXfSAp42DKfTw8JG2W3WRoZpFjEp+7es0GDo1Qo8C7moWgcQ0XUZsglWm9PBkR
+	T2ZYCYpJnrDh5Ha9AElNXLOE2mAlCroK645Cdf36D9xSnOQLH/7ZvIpK9al7S23wg6fwEchcptd
+	JzWEwPgaCUBF+I3LMXnp5IW+zD3siY5Bv8Nqx+6kncgJGQxFCborZqrm+MZmEzRDMl4sjsenqqr
+	IyybIMMqllsFIOLFd8O/xw/kIzJtkV7IzqXmNNbsZ+tg///E72yHpnjsgatKWT9j+v5DDCSM/hb
+	+osVgJPl2IlguyLHbSkfuSb/G+a2JuE1wi0DYz+Tq3MmHLyvZYIHCFPIJdkDpscRafsYLmw==
+X-Google-Smtp-Source: AGHT+IGyuOfQcD629SA8YXpzQqVGAaDQkA881473yXUv9GAx21Pra7oLfp+Z5y2AIx6o3w56Q0/m5A==
+X-Received: by 2002:a17:903:3bcf:b0:273:1516:3ed2 with SMTP id d9443c01a7336-28e9a6dd480mr172564515ad.50.1759819837084;
+        Mon, 06 Oct 2025 23:50:37 -0700 (PDT)
+Received: from localhost.localdomain ([103.108.57.9])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d111905sm153287745ad.24.2025.10.06.23.50.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Oct 2025 23:50:36 -0700 (PDT)
+From: Pavitrakumar Managutte <pavitrakumarm@vayavyalabs.com>
+To: linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	herbert@gondor.apana.org.au,
+	robh@kernel.org
+Cc: krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	Ruud.Derwig@synopsys.com,
+	manjunath.hadli@vayavyalabs.com,
+	adityak@vayavyalabs.com,
+	Pavitrakumar Managutte <pavitrakumarm@vayavyalabs.com>
+Subject: [PATCH v7 0/4] Add SPAcc Crypto Driver
+Date: Tue,  7 Oct 2025 12:20:16 +0530
+Message-Id: <20251007065020.495008-1-pavitrakumarm@vayavyalabs.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|DS0PR12MB8317:EE_
-X-MS-Office365-Filtering-Correlation-Id: 77690e71-cdf7-4d84-553c-08de056daa19
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TUpwcldVamdobEFvT1pDZ0dtcmJ4Mi9tTXlJR0hPSU1ESW1QYnREa1FKbXpU?=
- =?utf-8?B?emFIYTVseFA1WlFLdTM3TTcrS3VFaVBkM2J3T3NzT0U5ZnhhRjNZb0NieDR6?=
- =?utf-8?B?ZVphM01wUDJ2NWZMS2x3T3krWlU1b3AvU2V3M2x0bzJucXdxUTdGWnlVNE8y?=
- =?utf-8?B?SkcyaHpFNFV4RDlDbytJTHYrbVQvOG5xSnhRWDhoRGxpcE9EeDVGSlo4WkdU?=
- =?utf-8?B?YTJreGFzV1lDcE42bTFjVm9GVDAzTHlValUzMzBvamsvUkNNYjFVRUs5Q1l4?=
- =?utf-8?B?b3Q2b3RqN0pnTGRLbGN1dFErM2s2ZElCaGlpUHkvTUN5YVd6WjNsVzBCbDJk?=
- =?utf-8?B?K2ZrNndxNXF6a28rZStqay9KbnhYSmkzRDFVRVNHTlNJSWVFKzlGTHhkajF6?=
- =?utf-8?B?WkNmM1J1K1pCLzVPVU9Qb3dLNGNGUGREdXJ4V0ZZVWt2MHk1b0lVemI1eXp4?=
- =?utf-8?B?alFVZVNnVnJ0bDNZUE1nejhtMHVseGRaV2ZsNnFTY2x2Q2x1dHVkODhnaTE1?=
- =?utf-8?B?UWNEdC9rcnVnV3UybWpKRWxKbVhFejM5QzRIMmRxbVRrU2t1WGs4Z1dXZE9J?=
- =?utf-8?B?WGdIRnh5N3dUZitvS1dsdDhLOWgrSEpmN2RjV3VCbkRTZ1Z2Qy9ua0lBTVUz?=
- =?utf-8?B?Q2JPbUtxSFFTdzI4cUNEaGR5b3Y0QXpuWXJ0T2VEOGF3YUpEVHU2VGx5bk9k?=
- =?utf-8?B?V3lnRzAxKzhhZHhJb296OVRRdzVkd1pJc2JKSGxQdFV1bnNmSzdsTDUzY2Mw?=
- =?utf-8?B?dzlBcGQ1L1MycmhZOEwrSGVtMGhrOWZGRXpFRzFDN0xQR2ZSc2ZwU2VwaU9l?=
- =?utf-8?B?dUpCTjlqdDR6V2kvTmxpUmw5cEgxeVhTTTdEVlF1ZkFPaEl4UGk3R3ZtYVNt?=
- =?utf-8?B?ZS9nOUZoTmVsa2xjblluTVhjc2FyRjZjWXZzajg0Z00yQlRNSG5ta3VDNHpM?=
- =?utf-8?B?cVpzRzhNcC84RHFmOVJ3YTM0ZmdyUUpRcjBJZmhaUTEzWjk4SCtMcWtYYTMz?=
- =?utf-8?B?d1MzL00vMTIvTjRhZUY1alU1NmgvTy9GTXNjQUptcC9jVzk0bFpJKzE4WDgz?=
- =?utf-8?B?TEVQdWFDVzhoZmpDVmdYOUQwalFGSE9vbXRTWEhrK1dvZUhvdys0ZG1KRjQy?=
- =?utf-8?B?UXEvVDZzRTJUY3EvenBMWGw2dFhteTFWc2FKSkhiTTZwUlFWZTJRWFhYNGVw?=
- =?utf-8?B?NDNQY21KOXp6cm1RbXNWTHNmcjRmeElrM2l1bW1TNmZXR0tyU2xnRDVOdmhi?=
- =?utf-8?B?NmkrSVB3cDhFZ0dRL2xsMk9kU0RZak9oRGEzSWJBOFZrcENuSUJpQXhpZm5J?=
- =?utf-8?B?cWpGbFJyNEo1RVUxOFROOG5teVhzU1JpSGVsWkhPcElVNUI2ZTMzT3g5amdi?=
- =?utf-8?B?dWNtSFNTdGRIQlNrVyt1UVM4RXUrSjg0UHdWOEJXN2F1eGZWajRicTlsbzZ3?=
- =?utf-8?B?ZEhDRThBQzltSHVpMWFJL0M0Nk5JTG5Zc0dsNGJDQ0R1c05BNE15N0V4Q3pZ?=
- =?utf-8?B?aGFYYnpUVEJMR01PeHM1aS82c3dOdGhuaFBMWHdOTVA4bklaK3BGQmNCYVJt?=
- =?utf-8?B?Wmtpc1QzeXZmbVhuWjNwMDJ5VVpvYVpFQWxxdFByd3RHcXNlL250cVBDUito?=
- =?utf-8?B?VHVNOGtFeEIyT3YwRWZMd2VueS9SK3dHNnJpWGlTZW5oa0tleDRLQitxbkVm?=
- =?utf-8?B?dTlud3hLa0xYKzZZc1MxekVxYUJqaDdyUlFadkcwcTBzNVRHQ0JaVDh5bFpJ?=
- =?utf-8?B?L3loS3l2ZFkwdjJHYXJ6RW9BOUJoSUhIZlRhQWdVU2RIRWRBZlNYMDJlS2tw?=
- =?utf-8?B?NEplblpjemw2SXlKdlFXQTRxQ1ZYckxQMFdranYyWkVrUlh5US94RmIyQnBZ?=
- =?utf-8?B?a0ora21PdnhCQ2Z6dU1mcGdGNkR5TU1LN3cyZGV4Z1pMYUhtOEJiWnI3YmNW?=
- =?utf-8?Q?nR53Ou4B68dalZv2G0yd98L4QUuut6Az?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(10070799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Q2V5UFJoc0JPYk82THQwbmZwOWd1ZFhkaGdkN3RObTMrLzRmZ2oyY3RnMEN1?=
- =?utf-8?B?Z3pPZHNvSlpYVHF2TmlrR01DR3VhbW5aYjJiT1BnZkdCR3BZa2NFakUvUTM4?=
- =?utf-8?B?eFF1OHZqK3l0aExETVFaeTFTWEh6YWtRS2dvc0VYM0MvcW1RN09tUWNMc3d6?=
- =?utf-8?B?YVF3NmN1bXpxMm14NlA4ZHpaSnUvRFRDWG0vYzhlblBCSngva0lTSXNFd1g0?=
- =?utf-8?B?TFBsOHBIN0ZuZFhSVWwzZkMyZnJmT3ZrRnpoSEhkNUlOZjZOTHZxVzVOZjlS?=
- =?utf-8?B?eENSN3R6QnNoUmNTWGpYQW1aS0pxREEzUUNCaUdwZ096ZXA4dHdCaFE5cWZj?=
- =?utf-8?B?VCtsNnZPb3FZYTY5NEZoZkFFMnVhQXlXTnllQUNLOEZNd20rS0JoclpJd05q?=
- =?utf-8?B?VFBjWkMzWWxHS0VuU0czc09qZ1VqT25aTHE1ekJOc3kxOXhSSnpBUFM2WUgr?=
- =?utf-8?B?L2FpOUd2cllPeUpmellmNUNVTHUzaHpnQVM2eFptVllJTDdESGdTRHA5QXB5?=
- =?utf-8?B?dHNYTktYeHBJZVBDandJRXpnQzZsa3RFcFdZL0lOVmI1TnBNVHQ5Q2Q5bGhi?=
- =?utf-8?B?MWV1MGUxa1l0bTQxbXlrMjNNQ2dpZXdHRng3NTFBQlBINkU5NEJaUUY0S1Zl?=
- =?utf-8?B?elFac3B1WWovTi9aMWpYbDBEclFrYWg0ZUtrSmNiNktUak1aaUJ0L3VNYzZr?=
- =?utf-8?B?cjg1RVNIV1NqV3dieldGTU9uZDhXSkcxSUJ1WHZaeXRJNGJaekl0b3JPdGFu?=
- =?utf-8?B?L1F6NXNlS1FBeWhBYXFUSTNpMmdPcURJS2FGdzlXUjd4MHEyQW9FaThSMDBu?=
- =?utf-8?B?U05BUmpFTHFqbE1vQmV2OFhLb09xSmFSRStGODZEeWJqcEFpcjVWd3UxUHJV?=
- =?utf-8?B?N21tYWV3bHluT3h0ZVdRZjlYa1pNRmtiSzhtT2IxTGV0ci9MR1ZDNUNWL2dp?=
- =?utf-8?B?L2lCSG9MSjNVYnlMd1JNQVZtNkV6bDhad0l3c2RFRG9icVFYRmwzRFN6RE53?=
- =?utf-8?B?TzZnM2NDbXZBa0FQOVM1ODhrUWl3a041THRuRXRrVU82YURUUkllMzcxVmUv?=
- =?utf-8?B?K0s0OXI0ZjNzWlFzV2lwVWgrTFRzVitLWFRheGQ4Y1hnZVdrVVFqRUErMENa?=
- =?utf-8?B?cmhqRWlOUGJNSGNqUjg3a2lNeW90Tmh1UVVuenFaSW5iOVBrZXRwdG1DbXdZ?=
- =?utf-8?B?cHMyUmNFdzFVQ2h0a3hzK1BFT0JZVHlNUTVDSC9vbkpUZVNXS1luODVNa2gz?=
- =?utf-8?B?bmVLVGtQMHNDZlI1SWFwUjd3REZRaWJ4M25TNEZqYnlaemZQU3JaUWg1R3RX?=
- =?utf-8?B?V2FzU1FSUmRXMmhJNlU4TVFRejlxWTNodndzYWFvZmxoMHBJK3Nod2RIRTBY?=
- =?utf-8?B?ZVZsMTVHeGFCM2w2Z2lERHp6bUpUVHI2WlVCa0N2QUt3ei8vSG5KSWFFT3Yv?=
- =?utf-8?B?MXNNNld1ZDlqcml1QXVaKys5VEhQMzUyZ0pKWFpVQVAxUjVHQUUzaWRTSUFj?=
- =?utf-8?B?V1FmY0ZpbS9zRHNOVXZGWUxXN2IvUFF6cjdtVTBJUlpwS0JPWmt1b2p0VDZ0?=
- =?utf-8?B?SjF6SEFOOFJ5UUc5RGEwak45SmExa1JGTmp5RmZYUlU0bDltUXhrRXQ0THRu?=
- =?utf-8?B?WE1QNWVQdExNNFZZMVBFUE1UeXcrU0pXZ1M0SDNyK0FzRnAwT2prWm1nVFlO?=
- =?utf-8?B?RWt0VUVZT3BZYTBDTmZlV0VXb01BdE8xZWNrVEhNZVRkUHlZeDU2Q2FzR1JW?=
- =?utf-8?B?R0FOa2FXZTlBWm8yanJEODE4MGhtb29MSWh4UVhTUTlSQ2NwR2poU01HOXBJ?=
- =?utf-8?B?UmIyTDdSakZqc0pMcTN5TVU2bXZzV1kySXBzVkVSWTIwTXdDUXQwQVpDd3JG?=
- =?utf-8?B?bkt1TjZCTVl3cnRYb0MzNlJ2aGRwRWxqd0tzMWV6UXVGV1oydnZoQUxrYWlB?=
- =?utf-8?B?TG1TdXpoeXR6b3JXOWdKM0M4dG5Qd2J3aW5EUWVuRVI1bUcxT1lsZHFZZmQv?=
- =?utf-8?B?aFJnSWJvQTNhM0lJQVhXS3pva1V4SHZVZDgzYld2L2NzaVdJazM5LyttUEI1?=
- =?utf-8?B?QzhrUXVrdzR3QlEvZ1k2UmNUVHc3cTJEbDdsRUp6NmFvQTJhZlJhdHg1UCsx?=
- =?utf-8?B?WnZwanNha0N2djZDL05QMldRWlFJb1FreWd3WHQ3c2hFT3pKZGRZZVFpVVgr?=
- =?utf-8?Q?YHODB3uJTYAKC+S646VtD/++2ie6ZyMlnnWwFPu14L9n?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 77690e71-cdf7-4d84-553c-08de056daa19
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2025 06:49:29.9049
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: K5nb56NGmFAOWZNg0eRDbM9vhG3dzv9BqJRAcF9tbWLLx4V9Ggf27PVszJ9DDZ8gouVhF7CJKKgcpr1C7w/IFw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8317
+Content-Transfer-Encoding: 8bit
 
-Hi Edwin,
+Add the driver for SPAcc(Security Protocol Accelerator), which is a             
+crypto acceleration IP from Synopsys. The SPAcc supports multiple ciphers,      
+hashes and AEAD algorithms with various modes. The driver currently supports    
+below                                                                           
+                                                                                
+hash:                                                                           
+- cmac(aes)                                                                     
+- xcbc(aes)                                                                     
+- cmac(sm4)                                                                     
+- xcbc(sm4)                                                                     
+- hmac(md5)                                                                     
+- md5                                                                           
+- hmac(sha1)                                                                    
+- sha1                                                                          
+- sha224
+- sha256                                                                        
+- sha384                                                                        
+- sha512                                                                        
+- hmac(sha224)                                                                  
+- hmac(sha256)                                                                  
+- hmac(sha384)                                                                  
+- hmac(sha512)                                                                  
+- sha3-224                                                                      
+- sha3-256                                                                      
+- sha3-384                                                                      
+- sha3-512                                                                      
+- hmac(sm3)                                                                     
+- sm3                                                                           
+- michael_mic                                              
 
-(replying as I wrote the original code and introduced the points you are
-discussing).
+Pavitrakumar Managutte (4):
+  dt-bindings: crypto: Document support for SPAcc
+  Add SPAcc ahash support
+  Add SPAcc AUTODETECT Support
+  Add SPAcc Kconfig and Makefile
 
-On Tue Oct 7, 2025 at 2:56 AM JST, Edwin Peer wrote:
-> Hi Joel,
->
-> I recognize that this patch is intended to be a code move, but I=E2=80=99=
-m seeing this code for the first time, hence the comments regarding the con=
-tent below.
->
-> On Oct 3, 2025, at 8:47=E2=80=AFAM, Joel Fernandes <joelagnelf@nvidia.com=
-> wrote:
->
->> The bitfield-specific into new macro. This will be used to define
->> structs with bitfields, similar to C language.
->>
->> Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
->> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
->> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
->> ---
->> drivers/gpu/nova-core/bitfield.rs    | 316 +++++++++++++++++++++++++++
->> drivers/gpu/nova-core/nova_core.rs   |   3 +
->> drivers/gpu/nova-core/regs/macros.rs | 259 +---------------------
->> 3 files changed, 329 insertions(+), 249 deletions(-)
->> create mode 100644 drivers/gpu/nova-core/bitfield.rs
->>
->> diff --git a/drivers/gpu/nova-core/bitfield.rs b/drivers/gpu/nova-core/b=
-itfield.rs
->> new file mode 100644
->> index 000000000000..dd0ef2016ff8
->> --- /dev/null
->> +++ b/drivers/gpu/nova-core/bitfield.rs
->> @@ -0,0 +1,316 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +//! Bitfield library for Rust structures
->> +//!
->> +//! Support for defining bitfields in Rust structures. Also used by the=
- [`register!`] macro.
->> +
->> +/// Defines a struct with accessors to access bits within an inner unsi=
-gned integer.
->> +///
->> +/// # Syntax
->> +///
->> +/// ```rust
->> +/// use nova_core::bitfield;
->> +///
->> +/// #[derive(Debug, Clone, Copy, Default)]
->> +/// enum Mode {
->> +///     #[default]
->> +///     Low =3D 0,
->> +///     High =3D 1,
->> +///     Auto =3D 2,
->> +/// }
->> +///
->> +/// impl TryFrom<u8> for Mode {
->> +///     type Error =3D u8;
->> +///     fn try_from(value: u8) -> Result<Self, Self::Error> {
->> +///         match value {
->> +///             0 =3D> Ok(Mode::Low),
->> +///             1 =3D> Ok(Mode::High),
->> +///             2 =3D> Ok(Mode::Auto),
->> +///             _ =3D> Err(value),
->> +///         }
->> +///     }
->> +/// }
->> +///
->> +/// impl From<Mode> for u32 {
->> +///     fn from(mode: Mode) -> u32 {
->> +///         mode as u32
->> +///     }
->> +/// }
->
-> Is there a reason for the asymmetry in the From conversions for the user =
-facing enum type? Here we have u8 in the one direction and u32 in the other=
-. It looks like the latter is required by the use of u32:from() in the set_=
-<field>() accessor, but the macro would be more ergonomic if it handled the=
- necessary upcast conversions internally too.
+changelog:
+  v1->v2 changes:
+    - Added local_bh_disable() and local_bh_enable() for the below calls.
+      a. for ciphers skcipher_request_complete()
+      b. for aead aead_request_complete()
+      c. for hash ahash_request_complete()
+    - dt-bindings updates
+      a. removed snps,vspacc-priority and made it into config option
+      b. renamed snps,spacc-wdtimer to snps,spacc-internal-counter
+      c. Added description to all properties
+    - Updated corresponding dt-binding changes to code 
 
-Mmm, good point - actually it turns out the field setters work with the
-type of the storage, and not of the field. This problem was in my
-original code and is not introduced by this series.
+  v2->v3 changes:
+    - cra_init and cra_exit replaced with init_tfm and exit_tfm for hashes.
+    - removed mutex_lock/unlock for spacc_skcipher_fallback call
+    - dt-bindings updates
+     a. updated SOC related information
+     b. renamed compatible string as per SOC
+   - Updated corresponding dt-binding changes to code 
 
-I agree that we should have symmetry here, and actually that will be a
-requirement to start using the TryFrom/Into derive macros [0].
+  v3->v4 changes:
+   - removed snps,vspacc-id from the dt-bindings 
+   - removed mutex_lock from ciphers
+   - replaced magic numbers with macros
+   - removed sw_fb variable from struct mode_tab and associated code from the
+     hashes
+   - polling code is replaced by wait_event_interruptible
 
-I do have a patch available for this, which I kept for when we start
-using the derive macros, but we should probably integrate it at the
-beginning of this series.
+  v4->v5 changes:
+   - Updated to register with the crypto-engine
+   - Used semaphore to manage SPAcc device hardware context pool
+   - This patchset supports Hashes only 
+   - Dropping the support for Ciphers and AEADs in this patchset 
+   - Added Reviewed-by tag on the Device tree patch since it was reviewed on 
+     v4 patch by Krzysztof Kozlowski and Rob Herring (Arm)
 
-[0] https://lore.kernel.org/rust-for-linux/cover.1755235180.git.y.j3ms.n@gm=
-ail.com/
+  v5->v6 changes:
+   - Removed CRYPTO_DEV_SPACC_CIPHER and CRYPTO_DEV_SPACC_AEAD Kconfig options,
+     since the cipher and aead support is not part of this patchset
+   - Dropped spacc_skcipher.o and spacc_aead.o from Makefile to fix build errors
+     reported by kernel test robot
+   - Added Reported-by and Closes tags as suggested
 
->
->> +///
->> +/// #[derive(Debug, Clone, Copy, Default)]
->> +/// enum State {
->> +///     #[default]
->> +///     Inactive =3D 0,
->> +///     Active =3D 1,
->> +/// }
->> +///
->> +/// impl From<bool> for State {
->> +///     fn from(value: bool) -> Self {
->> +///         if value { State::Active } else { State::Inactive }
->> +///     }
->> +/// }
->> +///
->> +/// impl From<State> for u32 {
->> +///     fn from(state: State) -> u32 {
->> +///         state as u32
->> +///     }
->> +/// }
->
-> Similarly for bool vs u32.
->
->> +///
->> +/// bitfield! {
->> +///     struct ControlReg {
->> +///         3:0 mode as u8 ?=3D> Mode;
->> +///         7:7 state as bool =3D> State;
->> +///     }
->> +/// }
->> +/// ```
->> +///
->> +/// This generates a struct with:
->> +/// - Field accessors: `mode()`, `state()`, etc.
->> +/// - Field setters: `set_mode()`, `set_state()`, etc. (supports chaini=
-ng with builder pattern).
->> +/// - Debug and Default implementations.
->> +///
->> +/// Fields are defined as follows:
->> +///
->> +/// - `as <type>` simply returns the field value casted to <type>, typi=
-cally `u32`, `u16`, `u8` or
->> +///   `bool`. Note that `bool` fields must have a range of 1 bit.
->> +/// - `as <type> =3D> <into_type>` calls `<into_type>`'s `From::<<type>=
->` implementation and returns
->> +///   the result.
->> +/// - `as <type> ?=3D> <try_into_type>` calls `<try_into_type>`'s `TryF=
-rom::<<type>>` implementation
->> +///   and returns the result. This is useful with fields for which not =
-all values are valid.
->> +macro_rules! bitfield {
->> +    // Main entry point - defines the bitfield struct with fields
->> +    (struct $name:ident $(, $comment:literal)? { $($fields:tt)* }) =3D>=
- {
->> +        bitfield!(@core $name $(, $comment)? { $($fields)* });
->> +    };
->> +
->> +    // All rules below are helpers.
->> +
->> +    // Defines the wrapper `$name` type, as well as its relevant implem=
-entations (`Debug`,
->> +    // `Default`, `BitOr`, and conversion to the value type) and field =
-accessor methods.
->> +    (@core $name:ident $(, $comment:literal)? { $($fields:tt)* }) =3D> =
-{
->> +        $(
->> +        #[doc=3D$comment]
->> +        )?
->> +        #[repr(transparent)]
->> +        #[derive(Clone, Copy)]
->> +        pub(crate) struct $name(u32);
->> +
->> +        impl ::core::ops::BitOr for $name {
->> +            type Output =3D Self;
->> +
->> +            fn bitor(self, rhs: Self) -> Self::Output {
->> +                Self(self.0 | rhs.0)
->> +            }
->> +        }
->
-> Why do we implement BitOr for the register type? Seems a bit out of place=
- for an abstraction that is trying to provide a safer field level access AP=
-I.
+  v6->v7 changes:
+   - Fixed build error reported by Kernel test robot
+   - Added Reported-by and Closes tags as suggested
 
-Nice catch. I guess I wanted to make it easy to combine fields into a
-new value, but that's what the builder pattern is for. BitOr makes it
-possible to build an invalid value from two valid ones. I'll remove it.
+ .../bindings/crypto/snps,dwc-spacc.yaml       |   50 +
+ drivers/crypto/Kconfig                        |    1 +
+ drivers/crypto/Makefile                       |    1 +
+ drivers/crypto/dwc-spacc/Kconfig              |   80 +
+ drivers/crypto/dwc-spacc/Makefile             |    8 +
+ drivers/crypto/dwc-spacc/spacc_ahash.c        |  980 +++++++
+ drivers/crypto/dwc-spacc/spacc_core.c         | 2394 +++++++++++++++++
+ drivers/crypto/dwc-spacc/spacc_core.h         |  830 ++++++
+ drivers/crypto/dwc-spacc/spacc_device.c       |  283 ++
+ drivers/crypto/dwc-spacc/spacc_device.h       |  233 ++
+ drivers/crypto/dwc-spacc/spacc_hal.c          |  374 +++
+ drivers/crypto/dwc-spacc/spacc_hal.h          |  114 +
+ drivers/crypto/dwc-spacc/spacc_interrupt.c    |  328 +++
+ drivers/crypto/dwc-spacc/spacc_manager.c      |  613 +++++
+ 14 files changed, 6289 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/crypto/snps,dwc-spacc.yaml
+ create mode 100644 drivers/crypto/dwc-spacc/Kconfig
+ create mode 100644 drivers/crypto/dwc-spacc/Makefile
+ create mode 100644 drivers/crypto/dwc-spacc/spacc_ahash.c
+ create mode 100644 drivers/crypto/dwc-spacc/spacc_core.c
+ create mode 100644 drivers/crypto/dwc-spacc/spacc_core.h
+ create mode 100644 drivers/crypto/dwc-spacc/spacc_device.c
+ create mode 100644 drivers/crypto/dwc-spacc/spacc_device.h
+ create mode 100644 drivers/crypto/dwc-spacc/spacc_hal.c
+ create mode 100644 drivers/crypto/dwc-spacc/spacc_hal.h
+ create mode 100644 drivers/crypto/dwc-spacc/spacc_interrupt.c
+ create mode 100644 drivers/crypto/dwc-spacc/spacc_manager.c
 
->
->> +
->> +        impl ::core::convert::From<$name> for u32 {
->> +            fn from(val: $name) -> u32 {
->> +                val.0
->> +            }
->> +        }
->> +
->> +        bitfield!(@fields_dispatcher $name { $($fields)* });
->> +    };
->> +
->> +    // Captures the fields and passes them to all the implementers that=
- require field information.
->> +    //
->> +    // Used to simplify the matching rules for implementers, so they do=
-n't need to match the entire
->> +    // complex fields rule even though they only make use of part of it=
-.
->> +    (@fields_dispatcher $name:ident {
->> +        $($hi:tt:$lo:tt $field:ident as $type:tt
->> +            $(?=3D> $try_into_type:ty)?
->> +            $(=3D> $into_type:ty)?
->> +            $(, $comment:literal)?
->> +        ;
->> +        )*
->> +    }
->> +    ) =3D> {
->> +        bitfield!(@field_accessors $name {
->> +            $(
->> +                $hi:$lo $field as $type
->> +                $(?=3D> $try_into_type)?
->> +                $(=3D> $into_type)?
->> +                $(, $comment)?
->> +            ;
->> +            )*
->> +        });
->> +        bitfield!(@debug $name { $($field;)* });
->> +        bitfield!(@default $name { $($field;)* });
->> +    };
->> +
->> +    // Defines all the field getter/setter methods for `$name`.
->> +    (
->> +        @field_accessors $name:ident {
->> +        $($hi:tt:$lo:tt $field:ident as $type:tt
->> +            $(?=3D> $try_into_type:ty)?
->> +            $(=3D> $into_type:ty)?
->> +            $(, $comment:literal)?
->> +        ;
->> +        )*
->> +        }
->> +    ) =3D> {
->> +        $(
->> +            bitfield!(@check_field_bounds $hi:$lo $field as $type);
->> +        )*
->> +
->> +        #[allow(dead_code)]
->> +        impl $name {
->> +            $(
->> +            bitfield!(@field_accessor $name $hi:$lo $field as $type
->> +                $(?=3D> $try_into_type)?
->> +                $(=3D> $into_type)?
->> +                $(, $comment)?
->> +                ;
->> +            );
->> +            )*
->> +        }
->> +    };
->> +
->> +    // Boolean fields must have `$hi =3D=3D $lo`.
->> +    (@check_field_bounds $hi:tt:$lo:tt $field:ident as bool) =3D> {
->> +        #[allow(clippy::eq_op)]
->> +        const _: () =3D {
->> +            ::kernel::build_assert!(
->> +                $hi =3D=3D $lo,
->> +                concat!("boolean field `", stringify!($field), "` cover=
-s more than one bit")
->> +            );
->> +        };
->> +    };
->> +
->> +    // Non-boolean fields must have `$hi >=3D $lo`.
->> +    (@check_field_bounds $hi:tt:$lo:tt $field:ident as $type:tt) =3D> {
->> +        #[allow(clippy::eq_op)]
->> +        const _: () =3D {
->> +            ::kernel::build_assert!(
->> +                $hi >=3D $lo,
->> +                concat!("field `", stringify!($field), "`'s MSB is smal=
-ler than its LSB")
->> +            );
->> +        };
->> +    };
->
-> It would also be good to find a way to catch overlapping field definition=
-s.
 
-Overlapping fields are actually a feature.
+base-commit: c0d36727bf39bb16ef0a67ed608e279535ebf0da
+-- 
+2.25.1
 
->
->> +
->> +    // Catches fields defined as `bool` and convert them into a boolean=
- value.
->> +    (
->> +        @field_accessor $name:ident $hi:tt:$lo:tt $field:ident as bool =
-=3D> $into_type:ty
->> +            $(, $comment:literal)?;
->> +    ) =3D> {
->> +        bitfield!(
->> +            @leaf_accessor $name $hi:$lo $field
->> +            { |f| <$into_type>::from(if f !=3D 0 { true } else { false =
-}) }
->
-> if f !=3D 0 { true } else {false} =3D> f !=3D 0
-
-Oops, thank - will fix.
-
->
->> +            $into_type =3D> $into_type $(, $comment)?;
->> +        );
->> +    };
->> +
->> +    // Shortcut for fields defined as `bool` without the `=3D>` syntax.
->> +    (
->> +        @field_accessor $name:ident $hi:tt:$lo:tt $field:ident as bool =
-$(, $comment:literal)?;
->> +    ) =3D> {
->> +        bitfield!(@field_accessor $name $hi:$lo $field as bool =3D> boo=
-l $(, $comment)?;);
->> +    };
->> +
->> +    // Catches the `?=3D>` syntax for non-boolean fields.
->> +    (
->> +        @field_accessor $name:ident $hi:tt:$lo:tt $field:ident as $type=
-:tt ?=3D> $try_into_type:ty
->> +            $(, $comment:literal)?;
->> +    ) =3D> {
->> +        bitfield!(@leaf_accessor $name $hi:$lo $field
->> +            { |f| <$try_into_type>::try_from(f as $type) } $try_into_ty=
-pe =3D>
->> +            ::core::result::Result<
->> +                $try_into_type,
->> +                <$try_into_type as ::core::convert::TryFrom<$type>>::Er=
-ror
->> +            >
->> +            $(, $comment)?;);
->> +    };
->> +
->> +    // Catches the `=3D>` syntax for non-boolean fields.
->> +    (
->> +        @field_accessor $name:ident $hi:tt:$lo:tt $field:ident as $type=
-:tt =3D> $into_type:ty
->> +            $(, $comment:literal)?;
->> +    ) =3D> {
->> +        bitfield!(@leaf_accessor $name $hi:$lo $field
->> +            { |f| <$into_type>::from(f as $type) } $into_type =3D> $int=
-o_type $(, $comment)?;);
->> +    };
->> +
->> +    // Shortcut for non-boolean fields defined without the `=3D>` or `?=
-=3D>` syntax.
->> +    (
->> +        @field_accessor $name:ident $hi:tt:$lo:tt $field:ident as $type=
-:tt
->> +            $(, $comment:literal)?;
->> +    ) =3D> {
->> +        bitfield!(@field_accessor $name $hi:$lo $field as $type =3D> $t=
-ype $(, $comment)?;);
->> +    };
->
-> I realize that the additional From conversion and closure invocation this=
- produces will likely be optimized out when compiling at a suitable optimiz=
-ation level, but this is inefficient for register accesses in non-optimized=
- debug builds:
->
-> https://godbolt.org/z/YcTGh9xor
->
-> It should be relatively straightforward to have the macro construct appro=
-priate wrappers for an inline accessor function only when the conversions a=
-re needed, which would compile to something more efficient by construction.
-
-This would only be possible if the field has the same type as the
-storage type, which it seldom the case. I don't think it is worth
-complicating the code to support some edge case that is only relevant on
-non-optimized builds.
-
-Furthermore, conversion will be unavoidable once we start using bounded
-integers.
-
->
->> +
->> +    // Generates the accessor methods for a single field.
->> +    (
->> +        @leaf_accessor $name:ident $hi:tt:$lo:tt $field:ident
->> +            { $process:expr } $to_type:ty =3D> $res_type:ty $(, $commen=
-t:literal)?;
->> +    ) =3D> {
->> +        ::kernel::macros::paste!(
->> +        const [<$field:upper _RANGE>]: ::core::ops::RangeInclusive<u8> =
-=3D $lo..=3D$hi;
->> +        const [<$field:upper _MASK>]: u32 =3D ((((1 << $hi) - 1) << 1) =
-+ 1) - ((1 << $lo) - 1);
->
-> I note that genmask, introduced in a subsequent patch, also uses this con=
-struction (based on the range, which does not appear to be used by current =
-code).
->
-> Using const MASK: u32 =3D (1 << $hi - $lo + 1) - 1 << $lo would be more c=
-lear.
->
-> It can also be a good idea to first right shift the value in the accessor=
- and then utilize an unshifted mask, since smaller constant masks can lend =
-themselves to more efficient immediate instructions (as in the godbolt link=
- above).
-
-The next patch addresses this by using genmask. Let's not modify code on
-a patch that is a strict move, as this would make it more difficult to
-review.
-
->
->> +        const [<$field:upper _SHIFT>]: u32 =3D Self::[<$field:upper _MA=
-SK>].trailing_zeros();
->
-> const SHIFT: u32 =3D $lo;
-
-Indeed. Let's address that in its own patch.
-
-Thanks for the review!
 
