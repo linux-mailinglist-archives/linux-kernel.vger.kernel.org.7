@@ -1,184 +1,178 @@
-Return-Path: <linux-kernel+bounces-843804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 288B3BC04C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:08:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B3E7BC04CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:09:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0E983BFE13
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:08:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C5DF1897114
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 094D21E5B7C;
-	Tue,  7 Oct 2025 06:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0BE9220F29;
+	Tue,  7 Oct 2025 06:08:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="kJ1HiXqm"
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010037.outbound.protection.outlook.com [52.101.193.37])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZyjVX0Xx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A938E273FD
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 06:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759817307; cv=fail; b=GOnJG9Y8idk0v4f4e7Y+7muQVuYbcEQKCDb862LM7Ius6MUsOE72l9fu2W3k648KErnLHC/Ka5uNmN1IRgkoom8y6xtQovTsezTOJ4PAPgstG6o8nIel7tSqkfbqJudfYGJ/geJzfWonceGi6VrtaYoCvLP3Z+DS8vVW7tMfLxc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759817307; c=relaxed/simple;
-	bh=Uf89qS06dvXIX+WBCOGaW8sCxotYIbLLneOJgL5nN8Y=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=T/P2iTv2rmUVyFoJGm64tvGQNjST6l6IMwfIAsA7TOPkREKcv+gjMd8PWR+LvOsXR8me3Gr19wVjbQVqe+ctXTkXJCNRTpC+rtehtoJp05Erh3ed+2JGZituM+s9wBmbXVxJf4Z4DQ50lwz0j7qjBoP4AwRRXKfSYa5/guVPQYw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=kJ1HiXqm; arc=fail smtp.client-ip=52.101.193.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uiW6Jd/+RfODK54g2cuxNdsbykLqr9iCyecZzpNX9+rbOI9KXGLrdD58oLAPYOQrI73kdC0Dvh+vKdygD1gXd/f3RvjmJRnBIDRj0FM5lna38RK0Hc8u5+EjyBNfSqCKPJN2IedEJ1utakOslMqKr6VTFSgeT+TmE5+4vl38vVpNXzfc8pInCV1E6+sFHptsefvZpizTmUI6gDYp9OjjnmsifdN5+EING5+T2lxKw3JV+q3KQiVGA7YoSSb9BCo8NlYYsZVin5lE+FWatfjhQaWtDdgbHIHkOiXfApeQCsH1/sWr2EqYF0Vfuequ+hpfp6fyO8DP1rsRwipnnswNzw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7OfYUQxzdRDcQneGnBUEfRRzDx5Lfkuwii42ITnYmUI=;
- b=FuM1Cie0dNDpXCHQVye5ptrzIsaoUQ9HJoozmDgtmyKPYfTu0WheBDBFEf90R1N9cpuTrxhMrJZwukggriiOYCS05ZUlUCJWUTVXUHUe/MHGkfmKtD4PAkOx+KIYrOcu/uyV5j8JMkE18zR+9mkLVgiWK45HmLWDWUKSGOgLtfjhZjbYTDajnCjX5OV1bMJx+PmeMhVZA5p6MnXxucr0WMq4/rvJFGSJY5gAhcYG8AqEoTFbYgHNsiEkPIjIRTSFuvmpkY9vhRIxJm4zjS2dcTN3wykRMhAJ6/p9VH/0nJNLoGtoetcjXYkR8ZBfu+5uH+voGob7IsK1uVk/kVbjAg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=zytor.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7OfYUQxzdRDcQneGnBUEfRRzDx5Lfkuwii42ITnYmUI=;
- b=kJ1HiXqmdlxF/ilYMChxDbVNAdcqdEp2Xm9UD3PEooKSBqzPxMtO/aGHfPn5Wnpwp8ZA5OgRdQ6lThVVLxaSXy2AdvG6VrLW4t0FrdoOMUzvsfQQl6ZsUr5nb2k9flaJcm690A6g3BvCjs3d3508dXVCUBADsXGdLAsfVKPjwzo=
-Received: from CH5PR03CA0014.namprd03.prod.outlook.com (2603:10b6:610:1f1::16)
- by SA5PPFA403A61D8.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8da) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Tue, 7 Oct
- 2025 06:08:20 +0000
-Received: from DS2PEPF0000343A.namprd02.prod.outlook.com
- (2603:10b6:610:1f1:cafe::ab) by CH5PR03CA0014.outlook.office365.com
- (2603:10b6:610:1f1::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9182.20 via Frontend Transport; Tue,
- 7 Oct 2025 06:08:20 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- DS2PEPF0000343A.mail.protection.outlook.com (10.167.18.37) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9203.9 via Frontend Transport; Tue, 7 Oct 2025 06:08:19 +0000
-Received: from BLR-L1-NDADHANI (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 6 Oct
- 2025 23:08:15 -0700
-From: Nikunj A Dadhania <nikunj@amd.com>
-To: Juergen Gross <jgross@suse.com>, <linux-kernel@vger.kernel.org>,
-	<x86@kernel.org>, <thomas.lendacky@amd.com>
-CC: <xin@zytor.com>, Juergen Gross <jgross@suse.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
-	<bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin"
-	<hpa@zytor.com>
-Subject: Re: [PATCH v2 02/12] x86/sev: Replace call of native_wrmsr() with
- native_wrmsrq()
-In-Reply-To: <20250930070356.30695-3-jgross@suse.com>
-References: <20250930070356.30695-1-jgross@suse.com>
- <20250930070356.30695-3-jgross@suse.com>
-Date: Tue, 7 Oct 2025 06:08:12 +0000
-Message-ID: <85v7krqm5v.fsf@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D57D273FD;
+	Tue,  7 Oct 2025 06:08:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759817337; cv=none; b=HqcoRDFze1O8iajtmPazMuZY/XdBAQuB7ashFdLO++IxQYPcWrk8vZBBmqWCKf2FDM6KUdodjt9LmOnU687uJ9ocjsELyQ9M4hId1yrtkvpCJfKQcrK8I310CRWogbrYKzKlwOeKo//u0ABCYQI7SjhonQa7o+TiXd25a2uSh+o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759817337; c=relaxed/simple;
+	bh=vaMq5ngZH7t7l69by25TsKwNJKrKVl7+BNZxPUHPjj0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ihRRVkWnjRMzjHDVd7HpY09qOTsqQV/lk7aV2oR/+Lss9YdVF0b4iu/3VcM7BOHNEOMo+dDNIyw4eNNc+znvwRttE3fXsAT2hMD/iHXZULc2YjNcOG4ZxXq02TbG5ZV6DqspReFXC02m0k2FVSm95GyAHXpmGYiYFGk+D79FnSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZyjVX0Xx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id BCC33C4CEF1;
+	Tue,  7 Oct 2025 06:08:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759817336;
+	bh=vaMq5ngZH7t7l69by25TsKwNJKrKVl7+BNZxPUHPjj0=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=ZyjVX0XxlE/mSqnqQrohIPMQpWmxz2ziDjpM8TQomjM7WfRAb2qVCLiZ3lIDqbSF7
+	 /iADAORwxFvxuPQhkBsZcNOFalFFa5LBCt9aZzJgHHJeWvDJLy1fEgTB1TnlQrJ/MO
+	 YWEVT4f5i/Vv9bArzcXIOuZs0brrMFhcWy1IwuVcagsZWqLzwTTIagKHdDdFVOnfDL
+	 5CLcMpS/ilCs+rzBWYCqM2PAwr3sTKnIRqZpVLHjZ8iopQZn2wdT7Qiqsw2zh2x2DL
+	 4IzXXEPZn75Mn9dyGQqxMVQVWLZXbdYwMmUHd5CRo8f4skHbw9HbWnke3J/W6XyOzE
+	 yo2fi10p7HI0g==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8256CCA470;
+	Tue,  7 Oct 2025 06:08:56 +0000 (UTC)
+From: Dmitry Safonov via B4 Relay <devnull+dima.arista.com@kernel.org>
+Date: Tue, 07 Oct 2025 07:08:36 +0100
+Subject: [PATCH] net/ip6_tunnel: Prevent perpetual tunnel growth
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF0000343A:EE_|SA5PPFA403A61D8:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7f3a3ffe-d866-4375-bb14-08de0567e9e5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?fHIOpFM2LF2WkoTk8k+MlljJqlcQHi1AdpuH59jfsy8vFQdRLXbTOfXLnGK8?=
- =?us-ascii?Q?LylB/73nAIKi3FsFkp9rhpIHpNKrwD13R/gIs8GKt7e40cFjjVSZGeaZwjoT?=
- =?us-ascii?Q?6MrPhjTKXjcE0YlQT/AFu+ckgwn9XXqLTs3l8CIg6JgoEIFGGGekhmo8rUME?=
- =?us-ascii?Q?4NQCUG3+HPrbODv0UXihV8GwdhsV1RQP47jNUFfr3YM8ue4IOT2s5KwQa1lU?=
- =?us-ascii?Q?rkUgxfcnjn3msUGN9t0cVkOgGE9gZubTPZ7tWYX7FDh8ct6G8c7JY38weoSK?=
- =?us-ascii?Q?S/WNEXXY2Y7ZFRbDIIxGynctGYoPy4Ae+6hJ+b333n+JWMZXvOhQcplFVPNf?=
- =?us-ascii?Q?0YiBEpYHfoZkQqIPI2UjPcpItsdGalsfRa9dPExsKxYps2jJuj+kNvZ1ycqS?=
- =?us-ascii?Q?vpERLlFFdmsEXXWI7tM4tTqeSaVin/kl0f+bp/pcU1cHJea4sQmZL/Yz8FM5?=
- =?us-ascii?Q?j+fBzUX7eMQuvLk3bw56UTGEeLaKEIYF54QeLUevy+BzjlvlY8wtXhc4jTRu?=
- =?us-ascii?Q?sydw2ynBP5DsWtm+79TQfS4A4s+JSDPyEpJp9h4dMXpnx6RN94mzfmQc8VDC?=
- =?us-ascii?Q?Dpx7RVMQVKf1ahCyDMVHsOcYxdeWBibPi7/Otb4YbzD+WbOadtVIWN2l1uln?=
- =?us-ascii?Q?LAxYdHF14n1Sm8rnpvkeYhXP9nkHEO/JXlssB0AUg/IXo3tdkuGUEPk1b68I?=
- =?us-ascii?Q?jjz5gv4ipSnCuU9mwcX7ar4rZsjRNr/K8lq5FeoKqov1rMyHxlP/FbK31H25?=
- =?us-ascii?Q?QMBgJ1WNwLv6Bmb6U4TG3PvoCHn96gVTaDXEnxWGDfpg5wCtBm46+y/rbtI9?=
- =?us-ascii?Q?mivmb/I1uDiNraU/SiOiFKGhKGzaupPJhQ/xDCTMJiHSFUEhG6rXZyFK2nAz?=
- =?us-ascii?Q?xAlyJkY4IlUGwghX4k/HFoHzwewyxbH/dC+B375Ca35ybk/Hlchf0WS86CHF?=
- =?us-ascii?Q?ONH6G22cKImZMWVs93k0DD4Be8Pj2D27Fz3TPOi5mhi1rtVM9mjR0DrT16n6?=
- =?us-ascii?Q?GnrzfXELOcUcIgy5v3R9XIMREhMfXujz0s0OMXmpn9h3Yn2CUqtsRwBnDnra?=
- =?us-ascii?Q?mDnT2r6X9J8YYdK2MgXj2ruPWaSZyrZlf4vtiCMyssJfzcTH28Wu9a+ghBbA?=
- =?us-ascii?Q?Rh/0e47XkLHpHQagElIsptiSp3+FXu6A7+WO97uBJPMyBLQvdt1ixb7UE4gK?=
- =?us-ascii?Q?Iut/PRphPF3xFQxTXJ1ui77QFPYsZOypmraFKE+xG4h4V4/bwE66O5/HQuVG?=
- =?us-ascii?Q?BfAQblOiQdq03/7tPwdz2JBhiqQDO75FWBDcS65CAMvB4CNJek6r4WaOgRTF?=
- =?us-ascii?Q?g0lN+ScfSjY1bHbZtQgEVBIGaHr6zu5DRvRiNfg0KLjziOvzpWORYIG+FN0R?=
- =?us-ascii?Q?KXfx639g7XXxbYVCAJHv/+Lnzfw5C/rI+RCombtbE/CXXzko4NWxSYLVqB7c?=
- =?us-ascii?Q?W1Z17ZTMtoxDBXblwuAe3BDl8A3UdvnCLuLworrIsWxTLmC5KDwxuFQS6dMi?=
- =?us-ascii?Q?ALWJOVgOcSomK8QWf7IkOz2PmY6PKGw6GLZWD6NaeaULr0TffmnL3ciMDol/?=
- =?us-ascii?Q?AiwC6DgBxB4rDCgO9Jw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2025 06:08:19.6301
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7f3a3ffe-d866-4375-bb14-08de0567e9e5
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS2PEPF0000343A.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPFA403A61D8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251007-ip6_tunnel-headroom-v1-1-c1287483a592@arista.com>
+X-B4-Tracking: v=1; b=H4sIAGOu5GgC/x3MQQrCMBBA0auUWRtMo1brVURk0oxmoE3KTCxC6
+ d2NLt/i/xWUhEnh2qwgtLByThXtroEhYnqR4VANzrpTa+3Z8Nw9yjslGk0kDJLzZDz23QUd9sc
+ DQi1noSd//tfbvdqjkvGCaYi/V8my4Bh0P6EWEti2L7hx7O2HAAAA
+X-Change-ID: 20251007-ip6_tunnel-headroom-ba968a2a943a
+To: "David S. Miller" <davem@davemloft.net>, 
+ David Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, Tom Herbert <tom@herbertland.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Florian Westphal <fw@strlen.de>, Francesco Ruggeri <fruggeri05@gmail.com>, 
+ Dmitry Safonov <dima@arista.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759817335; l=3578;
+ i=dima@arista.com; s=20250521; h=from:subject:message-id;
+ bh=B0Jlh8RDVwjqLnA0Qj6JzNQbbltz7rJFTIJJo5dDy3w=;
+ b=rATwaMJDQEhKExQr2WdFI9D4UGwHdjuQADmB7GCXlGA1fSZX7scBr+wKxxp+SBVqnWDWMGayV
+ dmxe/bVYeiOCEJnrZZl4VmXElsVxhZhTZ6YoSRm8u92KskISZQZFRHN
+X-Developer-Key: i=dima@arista.com; a=ed25519;
+ pk=/z94x2T59rICwjRqYvDsBe0MkpbkkdYrSW2J1G2gIcU=
+X-Endpoint-Received: by B4 Relay for dima@arista.com/20250521 with
+ auth_id=405
+X-Original-From: Dmitry Safonov <dima@arista.com>
+Reply-To: dima@arista.com
 
-Juergen Gross <jgross@suse.com> writes:
+From: Dmitry Safonov <dima@arista.com>
 
-> In sev_es_wr_ghcb_msr() the 64 bit MSR value is split into 2 32 bit
-> values in order to call native_wrmsr(), which will combine the values
-> into a 64 bit value again.
->
-> Just use native_wrmsrq() instead.
->
-> Signed-off-by: Juergen Gross <jgross@suse.com>
+Similarly to ipv4 tunnel, ipv6 version updates dev->needed_headroom, too.
+While ipv4 tunnel headroom adjustment growth was limited in
+commit 5ae1e9922bbd ("net: ip_tunnel: prevent perpetual headroom growth"),
+ipv6 tunnel yet increases the headroom without any ceiling.
 
-Reviewed-by: Nikunj A Dadhania <nikunj@amd.com>
+Reflect ipv4 tunnel headroom adjustment limit on ipv6 version.
 
-> ---
-> V2:
-> - new patch
-> ---
->  arch/x86/include/asm/sev-internal.h | 7 +------
->  1 file changed, 1 insertion(+), 6 deletions(-)
->
-> diff --git a/arch/x86/include/asm/sev-internal.h b/arch/x86/include/asm/sev-internal.h
-> index 3dfd306d1c9e..f5d6fb3b5916 100644
-> --- a/arch/x86/include/asm/sev-internal.h
-> +++ b/arch/x86/include/asm/sev-internal.h
-> @@ -89,12 +89,7 @@ static inline u64 sev_es_rd_ghcb_msr(void)
->  
->  static __always_inline void sev_es_wr_ghcb_msr(u64 val)
->  {
-> -	u32 low, high;
-> -
-> -	low  = (u32)(val);
-> -	high = (u32)(val >> 32);
-> -
-> -	native_wrmsr(MSR_AMD64_SEV_ES_GHCB, low, high);
-> +	native_wrmsrq(MSR_AMD64_SEV_ES_GHCB, val);
->  }
->  
->  void snp_register_ghcb_early(unsigned long paddr);
-> -- 
-> 2.51.0
+Credits to Francesco Ruggeri, who was originally debugging this issue
+and wrote local Arista-specific patch and a reproducer.
+
+Fixes: 8eb30be0352d ("ipv6: Create ip6_tnl_xmit")
+Cc: Florian Westphal <fw@strlen.de>
+Cc: Francesco Ruggeri <fruggeri05@gmail.com>
+Signed-off-by: Dmitry Safonov <dima@arista.com>
+---
+ include/net/ip_tunnels.h | 15 +++++++++++++++
+ net/ipv4/ip_tunnel.c     | 14 --------------
+ net/ipv6/ip6_tunnel.c    |  3 +--
+ 3 files changed, 16 insertions(+), 16 deletions(-)
+
+diff --git a/include/net/ip_tunnels.h b/include/net/ip_tunnels.h
+index 4314a97702eae094f2defc65d914390864c21006..d88532c0fbcd30110e41907722fcaf31ce2e4fda 100644
+--- a/include/net/ip_tunnels.h
++++ b/include/net/ip_tunnels.h
+@@ -611,6 +611,21 @@ struct metadata_dst *iptunnel_metadata_reply(struct metadata_dst *md,
+ int skb_tunnel_check_pmtu(struct sk_buff *skb, struct dst_entry *encap_dst,
+ 			  int headroom, bool reply);
+ 
++static inline void ip_tunnel_adj_headroom(struct net_device *dev,
++					  unsigned int headroom)
++{
++	/* we must cap headroom to some upperlimit, else pskb_expand_head
++	 * will overflow header offsets in skb_headers_offset_update().
++	 */
++	static const unsigned int max_allowed = 512;
++
++	if (headroom > max_allowed)
++		headroom = max_allowed;
++
++	if (headroom > READ_ONCE(dev->needed_headroom))
++		WRITE_ONCE(dev->needed_headroom, headroom);
++}
++
+ int iptunnel_handle_offloads(struct sk_buff *skb, int gso_type_mask);
+ 
+ static inline int iptunnel_pull_offloads(struct sk_buff *skb)
+diff --git a/net/ipv4/ip_tunnel.c b/net/ipv4/ip_tunnel.c
+index aaeb5d16f0c9a46d90564dc2b6d7fd0a5b33d037..158a30ae7c5f2f1fa39eea7c3d64e36fb5f7551a 100644
+--- a/net/ipv4/ip_tunnel.c
++++ b/net/ipv4/ip_tunnel.c
+@@ -568,20 +568,6 @@ static int tnl_update_pmtu(struct net_device *dev, struct sk_buff *skb,
+ 	return 0;
+ }
+ 
+-static void ip_tunnel_adj_headroom(struct net_device *dev, unsigned int headroom)
+-{
+-	/* we must cap headroom to some upperlimit, else pskb_expand_head
+-	 * will overflow header offsets in skb_headers_offset_update().
+-	 */
+-	static const unsigned int max_allowed = 512;
+-
+-	if (headroom > max_allowed)
+-		headroom = max_allowed;
+-
+-	if (headroom > READ_ONCE(dev->needed_headroom))
+-		WRITE_ONCE(dev->needed_headroom, headroom);
+-}
+-
+ void ip_md_tunnel_xmit(struct sk_buff *skb, struct net_device *dev,
+ 		       u8 proto, int tunnel_hlen)
+ {
+diff --git a/net/ipv6/ip6_tunnel.c b/net/ipv6/ip6_tunnel.c
+index 3262e81223dfc859a06b55087d5dac20f43e6c11..6405072050e0ef7521ca1fdddc4a0252e2159d2a 100644
+--- a/net/ipv6/ip6_tunnel.c
++++ b/net/ipv6/ip6_tunnel.c
+@@ -1257,8 +1257,7 @@ int ip6_tnl_xmit(struct sk_buff *skb, struct net_device *dev, __u8 dsfield,
+ 	 */
+ 	max_headroom = LL_RESERVED_SPACE(tdev) + sizeof(struct ipv6hdr)
+ 			+ dst->header_len + t->hlen;
+-	if (max_headroom > READ_ONCE(dev->needed_headroom))
+-		WRITE_ONCE(dev->needed_headroom, max_headroom);
++	ip_tunnel_adj_headroom(dev, max_headroom);
+ 
+ 	err = ip6_tnl_encap(skb, t, &proto, fl6);
+ 	if (err)
+
+---
+base-commit: c746c3b5169831d7fb032a1051d8b45592ae8d78
+change-id: 20251007-ip6_tunnel-headroom-ba968a2a943a
+
+Best regards,
+-- 
+Dmitry Safonov <dima@arista.com>
+
+
 
