@@ -1,298 +1,194 @@
-Return-Path: <linux-kernel+bounces-844423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C439BC1DF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 17:09:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FF60BC1DFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 17:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0A4319A440D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 15:10:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B55E23E08A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 15:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8006E2E092B;
-	Tue,  7 Oct 2025 15:09:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845C02E228C;
+	Tue,  7 Oct 2025 15:11:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RVrh9jHF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="lxdS8zPR"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012026.outbound.protection.outlook.com [52.101.66.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999DF8BEC
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 15:09:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759849790; cv=none; b=dzOGSy9B144NqAwnSzPTc9fyoww38GE0entYz1bCYYKpyz5BVdrPku/kkcJisfnZ52NYsRwlJLJyc6GQ1qK6VO3nIG2n10pWb5bTXvqFYKReikRKoDsppV+eoasXnNVa35Jl5RlarLevemYVUyVB7h0N7Je1EbPZmaqpvAqd8Do=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759849790; c=relaxed/simple;
-	bh=avOyeg1m+eplsvWMyciACAxlCd32fi+x94S5/Z9UVN4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KWtIk0DdSY3NRZIlcWJyufsbWkUsEwYw38rkR0/PNJSrj0vNra1ZVRUDnbNTCLt1y7HPNyOmJLG0JNNWzc/tkdH1zPSkJf2SlsfAiWls0F/RfdIv883uGTMYaR5n4F4KU9G0sGRoGPBz8Jbmr64SSci/AXJxEojd0TBCcp6jmx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RVrh9jHF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC617C4CEF1;
-	Tue,  7 Oct 2025 15:09:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759849790;
-	bh=avOyeg1m+eplsvWMyciACAxlCd32fi+x94S5/Z9UVN4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RVrh9jHFPfdLBsiPJQ0DVbGFd0bFhl0kL25RjT4KVUiC/mwwwZGAJ3e9REDz2yoFb
-	 q4ZsiqzbzGTecaS8xG0nlBuXMjZQnWa9zLKmtgLZcZAv7EQfkodz4LW3No5iwGjyCi
-	 vGDqzJ2oNF6hRWdOgxRVRRB21NClGHVTmBFqY4pjVyADf3ly1TKBEl7ZdCMqB0w6Zi
-	 HBlrF/8Mpv0R0l+sphmFOKii+9/58bktSpNKh5ZSWbv/LwXpn3EyMJwjlXtevlZQ+z
-	 3dBdZFKJbr/2WL08a2VUCL2xcm+G3rIS83eoHeHAL/uGjx1CO+b99T9KWfuVHcQusN
-	 lroJ6WZtCScdA==
-Date: Tue, 7 Oct 2025 17:09:46 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Hui Pu <Hui.Pu@gehealthcare.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Dmitry Baryshkov <lumag@kernel.org>
-Subject: Re: [PATCH 2/2] drm/bridge: ti-sn65dsi83: protect device resources
- on unplug
-Message-ID: <20251007-charming-successful-foxhound-1ca192@penduick>
-References: <20250808-drm-bridge-atomic-vs-remove-v1-0-a52e933b08a8@bootlin.com>
- <20250808-drm-bridge-atomic-vs-remove-v1-2-a52e933b08a8@bootlin.com>
- <l2orbpdoh3cqqgqudbnbdlogo3bd57uu4nv3ax74uoahknzjgr@gbxxuky3huw6>
- <20250820131302.6a2da5ef@booty>
- <20250827-charming-arcane-stingray-cfb8b6@houat>
- <20250908154906.16693078@booty>
- <20250910-glittering-serval-of-piety-b32844@houat>
- <20250910184752.6c42f004@booty>
- <20250915-benign-rare-marmot-9fbb96@penduick>
- <20250915165156.35378299@booty>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EEE42D8363;
+	Tue,  7 Oct 2025 15:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.26
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759849893; cv=fail; b=mahOyu4eBj7y9RoiBnnIOT6FI0U0rvmaAxD4wqS6kBZyXtxkmNaUV2WpywArn1hWF1djPyjIt4Cfy048Oara9eY0LW7E41l4wJufVYYYz/XT07HRvg+qjigg0bYU8nnyT3Gy3apWNT8SLQtFFT1SUDb4Jo7bi+7WLuzNwdWHjU0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759849893; c=relaxed/simple;
+	bh=iTc23luWUXkaaGWRbGrNB54S/u7tBMLYg+VIptku+bI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=rAI00+F7uCYJgN1ITt4ZXUYjSwkzF2Hw4GD7FlLnsXMNZenCEEpBxBHg+BcYbRLEfot1UM4+cTCCl/DZX+9HebMi8g6BUd9pYbkRGK0nYrXfPUj26Yy+bNF+xrhxsWIZSxLAIvl0g840vLSB4eveLCGbqlQHxF/VHuOYeUFkldY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=lxdS8zPR; arc=fail smtp.client-ip=52.101.66.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=l+NIC5DCxlqPslpCojADamlc1gnOmslSEFPlgdeDd8bUyzSL05p0/LoiWB5EJjlB45kRpBbieg3YC22JKTY2GiSBoVjft1NjGQ2y5B7n5dZOdielWFdZcgVqspDWw7vtx2c3fO7LbIQ5+CpbiM7++DZ0mvPwke5NiOhR4wSnideEi2Xf0WOSWm7kTBEqh67a6++3B0WKdkOvYBvGtkoLIBRzK9wfcuUV972LWY1pGcY7DuJTMveR3VgP633j+F6E6AQnu8/iQjnM72jMAPQE3ykWmnvBwAWk45PRBOUJsKFp+471HnNW0sBeM8ZS2H2EEq/vYNzXom87rcKNmYLlMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=q/cBvaEjyH8vxuj6qVo4HYwdzm6XJqiaq+bgMoLP0OQ=;
+ b=QeSFdXDRvMwZHMtUI+8X+sHJCV/HduuAStTWIKzMSxgBzbpC3dye9Fjgx6LtOouiXOxfJZEsHLTkIESHqonK53YbWr62dM8dtYyVOAnEAYS+ZUFTp5JxHgMPUnM90VNxybuiMhslhaKbVDIQd/sLvfKNHIBi36PTFImhWI72uUSdBDViZp25kz2yL+7inUMFzLfMXyLyiYYeY6Z8+STjH4CfXuo0I7d4GL9fb/dVi39TmLaSFCt0fAj2qQLZBVFuLlFBzMs58nC1Hvz5m4DGNRyaiEbpCof7Hzh8aK3OdlzvYgttIAoX83yW766QdWELFhgZcwDLDkP8podhEifEBg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=q/cBvaEjyH8vxuj6qVo4HYwdzm6XJqiaq+bgMoLP0OQ=;
+ b=lxdS8zPRtIngO02guikjJnjR40VpzlBgXSeCokOL7VuM8TDQN/hfDwjhYXh3uOvQY1QPm+lzq1xNff4mNbicXZvyq+cYu4XfUWrWjbI3CwGlTvng2XMlwnV+UVNm68MyZiUwnHN/ScWV+VtpakahQ20UsQxLB/ltJrqdY60DOA94ICQ4uTW4WDJlfCDxkulsKdaqE66SS8MisxZc5SoReAkpsvyxbD8jYI+V3WCA8MBG79alM2KK8tU6r3chW2UErVca7N77Ez86Pn8mL8lHHJdeCIqYakfdU1jiNQ1tCXM44jelZyTdwJ9ERbwNXfDPIM9f75VaFXoDLOT76dZPaQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by GVXPR04MB10082.eurprd04.prod.outlook.com (2603:10a6:150:1b5::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Tue, 7 Oct
+ 2025 15:11:27 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9182.015; Tue, 7 Oct 2025
+ 15:11:27 +0000
+Date: Tue, 7 Oct 2025 11:11:17 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: ALOK TIWARI <alok.a.tiwari@oracle.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Jon Mason <jdmason@kudzu.us>,
+	Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ntb@lists.linux.dev, imx@lists.linux.dev
+Subject: Re: [External] : [PATCH v4 2/3] PCI: endpoint: Add API
+ pci_epf_assign_bar_space()
+Message-ID: <aOUtlUIcHE8JIO4j@lizhi-Precision-Tower-5810>
+References: <20250930-vntb_msi_doorbell-v4-0-ea2c94c6ff2e@nxp.com>
+ <20250930-vntb_msi_doorbell-v4-2-ea2c94c6ff2e@nxp.com>
+ <c9efa64c-20d7-4aa6-815e-2be040480ff9@oracle.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c9efa64c-20d7-4aa6-815e-2be040480ff9@oracle.com>
+X-ClientProxiedBy: PH3PEPF00004099.namprd05.prod.outlook.com
+ (2603:10b6:518:1::45) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="s65hntyyqmm23soq"
-Content-Disposition: inline
-In-Reply-To: <20250915165156.35378299@booty>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|GVXPR04MB10082:EE_
+X-MS-Office365-Filtering-Correlation-Id: a8a4cfa1-8a56-470a-5b20-08de05b3c98b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|52116014|366016|1800799024|19092799006|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?fwRQMAv9p3b8aUzqEJSh41RpDdPdS5wMYgHNwU6Q0fc2uSCMZbjU1tDWNr1d?=
+ =?us-ascii?Q?6IZg/niSJgd+OuUAoWxZ7lm1WobSyoO8fKp9i45II4GlAHyYo3ybkyMUnHnB?=
+ =?us-ascii?Q?ARr/DgGZRvuX+IRQq3DY+b3Cc8P3NFgdVyRx1h12OIAzqc9trz0FOP+/tsR6?=
+ =?us-ascii?Q?xwj4FOm+1MNvgyWPmrVtNtLR8g4JTvefEKjxKnVrjdckINWdEfQo0QohhAh2?=
+ =?us-ascii?Q?2uNC18aLqg7bBAZETqhIhTWHQt4MvhKfRFHnDBj3Y/PEYs2yGEUUCiqKxZII?=
+ =?us-ascii?Q?gCA3Qmsiv9LSwAs5Xhphafs+dStnb0LYr4WobWeBBK+DRylveqqkgDiLz4Ur?=
+ =?us-ascii?Q?4bP/XmyEc4iVRtkA5mBs4EvQJ57TVhfwDKhsRty2WBZtS1vU9R/yn2TQCE9V?=
+ =?us-ascii?Q?0sQB2GaaEWYqiICt+/MSnu55hYG89NbKRj7AztMfddrlyMxSY2Y12FANX9eO?=
+ =?us-ascii?Q?U4Oz32ghY8tW9uHOexZ2zyGEFELUp+9wetRrmiqocuw3hEVXMhY3ccbqg4o9?=
+ =?us-ascii?Q?9eM5WjBDaVW4jKF7122Xa2lKnRV8xNRUt6zn4uaCj7CtMEGkfh5lgpZF82hY?=
+ =?us-ascii?Q?3dH9zYhCCFv+g5UVVO3RH8WtXZXsHJflnWgl1EFCd197N4B7jEsB0kzNa6or?=
+ =?us-ascii?Q?UUbsAKj1Lp2lqhUBzlbKXn5ldW6QLYsAlzRCtOl5eouB5h1u3x2SLEho4gLy?=
+ =?us-ascii?Q?A7YLTUS00zoUfof8yEmYX45Z2hUEprA+LmTp6y5cOa/6jpPaDgaxbeKfZXTW?=
+ =?us-ascii?Q?Jjtg6KJa8qDP4HzsuSGpS9AP//wBeHH2H8ilYjUJf0rHYCfXp5V5fTe5aBHR?=
+ =?us-ascii?Q?W2NxDSXsZCLc+6u+dC4Ni4r97Q33Sxsmt+dLWBpTJ3t/AgOKR4zuRdYgcitZ?=
+ =?us-ascii?Q?+1D+Ay8R0QhLRSH5o5Im2T4zglV2oXWfG8MTFjD91Lszq7WEoK9GJUCeefF8?=
+ =?us-ascii?Q?WbqKBeDDddaL3i1emsRPu/wfhiyclKOKH3Uq3AkrH9CZhZO9sKaPHVqKkdW9?=
+ =?us-ascii?Q?wyGG44XiF5Wc1KEMoodx3HDwNFalj7qColztp6h7kUN+S4UO5YRUf62GYPJo?=
+ =?us-ascii?Q?omfkYhvRc/oHfI2iBoVLEAcabcO8NaVBnApcY0Mn3RU03KqgcecfvtDAGQGZ?=
+ =?us-ascii?Q?CNK0J9FLE17r9YBpm52VCAAqVd+IE+oonLaBZG1CjJnlvA8Jiie0jDcyv+an?=
+ =?us-ascii?Q?nY7cqPugPHmN720H8baJ+9xw3o0iRJ1T2oVdYsET+GjUppbAySGjTYr/TJ6v?=
+ =?us-ascii?Q?8BhlwMWkvRqiFYS4pRNGhTjcmi8ncAL30AYPARYNvPtZyRyaRxLhl6x8xhJ6?=
+ =?us-ascii?Q?NVTSh51KAEZwYJARrp4ZOVXNVeH8HOYpeYrav0UqqknyJr0VwMz33YdCmsX3?=
+ =?us-ascii?Q?2LvvXnNIrHJew0BiPMr3kf+FO34by0k8euFTnANzxB6u+/dx+2NjenhmW2Wp?=
+ =?us-ascii?Q?I2j+lsK5nrTcEWNm4mKDD/YvFwODLk/YktBGKID69jXXkcEQrQ9VrV9fJGi5?=
+ =?us-ascii?Q?mRVf1UFq7q+piK44vMAPUDehIqJO+KdQmi0q?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(366016)(1800799024)(19092799006)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?hnHQFRtTX59uKoB695Bb9IYRwwxHH47tt5bGvp78fu5So27rEoYTGwyytDk3?=
+ =?us-ascii?Q?NMRKauqmugfBWGvEn13DNTs4yMGeH41cAZWwDMrZp03HouUNhXl8JswRZBVO?=
+ =?us-ascii?Q?sjQz68kQsKoG8zPuzdV74HfxbRz+omPN8ZOFOU+rxEtGYibZ3HKyelxWpMRl?=
+ =?us-ascii?Q?eB0ADdSLA+DMFEc/ZeSxs8IuSJC4qzFwG+0dswAjd6MdZ9JHMrfyqwkH0/KM?=
+ =?us-ascii?Q?ugtJUbLLd+LQKXRItUIRQ3Kfj2CkgHct5P47VcVORLo4J/pUBZhf1b/51IRW?=
+ =?us-ascii?Q?Crw7Khwy5mefNTascHJXnZ72uSwxXuvSwJrB9vWLWfzvul6R7nroE+8u075B?=
+ =?us-ascii?Q?IEqmNUn3ekWoapsgWL5TNM2kAIj2mwQj07U5lM7gofve0VWn8Um7WjQAjUq7?=
+ =?us-ascii?Q?xJzadoD/bX7qY1AFQ5bB+Ae3CJIMAFtka6Jpfd8oQDphGSq0EU5qv1rtvLVw?=
+ =?us-ascii?Q?TPQWbFcZc0DVgavW6XTSEmyfbdbl1KtcZP7oREsl9LdbJ2XoqDHnK/S1NPf3?=
+ =?us-ascii?Q?o24dywKqetoYxOUhBt22qvvVS9hT7ZdDHZkLsmWiAFwEBfDlOED4jFUXrhmK?=
+ =?us-ascii?Q?dePnWFTdQyKs3obWiFBAfL1mvB1xJB/lvP5Y8AdVA8UG4QdvEreIzdgaZkAE?=
+ =?us-ascii?Q?VPVknrliDgfkAdah7icGdZLPf9mqLwn9j17uHpkU2Mkyeb7VpsObrSZSLq9d?=
+ =?us-ascii?Q?Eb7tEWHWheCG7sxx/k67ZxJmoat48/cWKzQ5CcHX/gWjeghv7ssz1swaNdBe?=
+ =?us-ascii?Q?msWX4RJAW2BmQKTuazcKgneqePRGXGn2K1NZR5pCfZQCNluDkv7IV/pWzfBq?=
+ =?us-ascii?Q?7scT75OsGRNtNvqzNTsymzzvd0cVmsmue63fbCQJ6KQyed1PxdMYWJ+xfpqD?=
+ =?us-ascii?Q?H1XXPVn1fMaj3AzgJMiH4r68pvmwoiFptIpOmaOmgUV28AGce5ExNnIgjE9d?=
+ =?us-ascii?Q?pUHb6HutLU88mu9Ahqj5ZN/GYWJEfvTeU1+1LpH6e9D5+GyzRU3CVgQZym8r?=
+ =?us-ascii?Q?S5zORJpr6NxWgJvGFHxaBLSZpCL6/CBGXOE0/2zYD48jmnGKVWrCtbmmgyNv?=
+ =?us-ascii?Q?Egnivnlud4S5CHWDrTczf82ErGG9QlEgI0VYT0CgXAvM6ehm6UfaXyzUzGCV?=
+ =?us-ascii?Q?FSPWhIeaYAXblmjdbK2KmmALEKvr1O6zn8FXFtVgYfHjOr9khfMv1hoscBKw?=
+ =?us-ascii?Q?ztqEPmXMdyzpTtydcND+BJBfQQemJOzh7sWWWnSry4kbPCMnvGV+8BdMpRKy?=
+ =?us-ascii?Q?M7IuauwMeqq7/cWFIe3dbYD0vbhE7CLRHOAW5m5F94Fpqu4B5SRdV86+GrPN?=
+ =?us-ascii?Q?t/D2hqlpSaoy+XsbS4m2AXkTRDKpCcCij4pNnmYqJ1yuibKgeu6M+bmbhEHu?=
+ =?us-ascii?Q?p+vmtkM2nctFgBQeA5otVbo6vPRNanMiYUxMkx/sOmHFSlUDbgXb23QhKUUX?=
+ =?us-ascii?Q?dE82O+m+zRqvAy9qlrf1TWk4xuXCOhYEpegvO5AeBr/8x9Wx2514KqHFopsp?=
+ =?us-ascii?Q?tNtBIe3WrBa7YLj6UUSWDo6QITlkn6PtTqmkxErEyUqi+qOA+xVrDaaOFYtj?=
+ =?us-ascii?Q?huRP621rhjEr0YkBhy5uk6IFTbGeNB1PCwd0NUR3?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a8a4cfa1-8a56-470a-5b20-08de05b3c98b
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2025 15:11:27.5295
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: g2bGSgmIXJB1HpVhZEgn99xEXj0hMLKQy9d5jo2yqIkoW2r+VVEI2ak1kXsrLITm4dkmnEBXqT25UbqSfff4Ag==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10082
 
+On Tue, Oct 07, 2025 at 12:25:59AM +0530, ALOK TIWARI wrote:
+>
+>
+> On 10/1/2025 2:09 AM, Frank Li wrote:
+> > +int pci_epf_assign_bar_space(struct pci_epf *epf, size_t size,
+> > +			     enum pci_barno bar,
+> > +			     const struct pci_epc_features *epc_features,
+> > +			     enum pci_epc_interface_type type,
+> > +			     dma_addr_t inbound_addr);
+>
+> nit: Any particular reason for using inbound_addr instead of bar_addr ?
 
---s65hntyyqmm23soq
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 2/2] drm/bridge: ti-sn65dsi83: protect device resources
- on unplug
-MIME-Version: 1.0
+bar_addr is easy to confuse with RC side's bar windows's address. This one
+means the ATU convert bar's inbound transfer to what EP side's address.
 
-On Mon, Sep 15, 2025 at 04:51:56PM +0200, Luca Ceresoli wrote:
-> Hi Maxime,
->=20
-> thanks for the feedback, this discussion is getting very interesting!
->=20
-> On Mon, 15 Sep 2025 14:03:17 +0200
-> Maxime Ripard <mripard@kernel.org> wrote:
->=20
-> > > > I'm still confused why it's so important than in your example
-> > > > xyz_disable must be called after drm_bridge_unplug. =20
-> > >=20
-> > > Let me clarify with an example.
-> > >=20
-> > > As I wrote in another reply, I have moved from a flag
-> > > (disable_resources_needed) to a devres action as you had suggested, b=
-ut
-> > > the example here is based on the old flag because it is more explicit,
-> > > code would be executed in the same order anyway, and, well, because I
-> > > had written the example before the devres action conversion.
-> > >=20
-> > > Take these two functions (stripped versions of the actual ones):
-> > >=20
-> > > /* Same as proposed, but with _unplug moved at the end */
-> > > static void sn65dsi83_remove()
-> > > {
-> > > 	struct sn65dsi83 *ctx =3D i2c_get_clientdata(client);
-> > >=20
-> > > 	drm_bridge_remove(&ctx->bridge);
-> > > =09
-> > > 	/*=20
-> > > 	 * I moved the following code to a devm action, but keeping it
-> > > 	 * explicit here for the discussion
-> > > 	 */
-> > > 	if (ctx->disable_resources_needed) {
-> > > 		sn65dsi83_monitor_stop(ctx);
-> > > 		regulator_disable(ctx->vcc);
-> > > 	}
-> > > =09
-> > > 	drm_bridge_unplug(&ctx->bridge);     // At the end!
-> > > } =20
-> >=20
-> > First off, why do we need to have drm_bridge_unplug and
-> > drm_bridge_remove separate?
-> >=20
-> > If we were to mirror drm_dev_enter and drm_dev_unplug, drm_dev_unplug
-> > calls drm_dev_unregister itself, and I can't find a reason where we
-> > might want to split the two.
->=20
-> I think it could make sense and I'm definitely open to it.
->=20
-> After a quick analysis I have mostly one concern. Calls
-> to drm_bridge_add() and drm_bridge_remove() are balanced in current
-> code and that's very intuitive. If drm_bridge_unplug() were to call
-> drm_bridge_remove(), that symmetry would disappear. Some drivers would
-> still need to call drm_bridge_remove() directly (e.g. the DSI host
-> drivers which _add/remove() in the DSI attach/detach callbacks), while
-> other wouldn't because drm_bridge_unplug() would do that.
->=20
-> What do you think about this?
+The below API also use term 'inbound_addr'.
 
-Which DSI host do you have in mind there? Because it's really not what
-we document.
+It is not big deal. Manivannan or Niklas Cassel, do you have any perfer?
 
-> Another concern I initially had is about drivers whose usage of
-> drm_bridge is more complex than the average. Most simple drivers just
-> call drm_bridge_remove() in their .remove callback and that's
-> straightforward. I was suspicious about drivers such as
-> imx8qxp-pixel-combiner which instantiate multiple bridges, and whether
-> they need do all the drm_bridge_unplug()s before all the
-> drm_bridge_remove()s. However I don't think that's a real need because,
-> except for probe and removal, operations on bridges happen on a
-> per-bridge basis, so each bridge is independent from others, at least
-> for the driver I mentioned.
+I am okay for both names.
 
-In this particular case, they would be unplugged all at the same time,
-right? In which case, we would disable all the bridges starting from the
-one in the chain that just got removed, and then we just have to remove
-all of them.
-
-All in all, I think it's ok to somewhat break things here: all this was
-broken before. If we want to bring some consistency, we will have to
-reduce what bridges are allowed to do. Let's figure out something that
-works for all reasonable cases (straightforward, component framework,
-DSI device, DSI host, and DSI device on another bus), and the hacky
-drivers will move eventually.
-
-That's pretty easy to solve with a documentation update :)
-
-We can just further restrict the order in which
-
-> > > static void sn65dsi83_atomic_disable()
-> > > {
-> > > 	if (!drm_bridge_enter(bridge, &idx))
-> > > 		return;
-> > >=20
-> > > 	/* These 3 lines will be replaced by devm_release_action() */
-> > > 	ctx->disable_resources_needed =3D false;
-> > > 	sn65dsi83_monitor_stop(ctx);
-> > > 	regulator_disable(ctx->vcc);
-> > >=20
-> > > 	drm_bridge_exit(idx);
-> > > }
-> > >=20
-> > > Here the xyz_disable() in my pseudocode is the sn65dsi83_monitor_stop=
-()
-> > > + regulator_disable().
-> > >=20
-> > > If sn65dsi83_remove() and sn65dsi83_atomic_disable() were to happen
-> > > concurrently, this sequence of events could happen:
-> > >=20
-> > > 1. atomic_disable:  drm_bridge_enter() -> OK, can go
-> > > 2. remove:          drm_bridge_remove()
-> > > 3. remove:          sn65dsi83_monitor_stop()
-> > > 4. remove:          regulator_disable()
-> > > 5. remove:          drm_bridge_unplug() -- too late to stop atomic_di=
-sable =20
-> >=20
-> > drm_dev_unplug would also get delayed until drm_dev_exit is called,
-> > mitigating your issue here.
->=20
-> I don't think I got what you mean. With the above code the regulator
-> would still be subject to an en/disable imbalance.
-
-My point was that drm_bridge_remove wouldn't be allowed to execute until
-after atomic_disable has called drm_bridge_exit. So we wouldn't have the
-sequence of events you described. atomic_disable would disable the
-bridge, and then drm_bridge_remove wouln't have anything to disable
-anymore by the time it runs.
-
-> However I realized the problem does not exist when using devres,
-> because devres itself takes care of executing each release function only
-> once, by means of a spinlock.
->=20
-> I think using devres actually solves my concerns about removal during
-> atomic[_post]_disable, but also for the atomic[_pre]_enable and other
-> call paths. Also, I think it makes the question of which goes first
-> (drm_bridge_unplug() or _remove()) way less relevant.
->=20
-> The concern is probably still valid for drivers which don't use devres.
-> However the concern is irrelevant until there is a need for a bridge to
-> become hot-pluggable. At that point a driver needs to either move to
-> devres or take other actions to avoid incurring in the same issue.
-
-I disagree with that statement. We never considered !devres as outdated,
-and thus we need to support both. Especially if it's about races we know
-about in a code path we might never run.
-
-> I'm going to send soon a v2 with my devres changes so we can continue
-> this discussion on actual code.
->=20
-> > > 6. atomic_disable:  ctx->disable_resources_needed =3D false -- too la=
-te to stop .remove
-> > > 7. atomic_disable:  sn65dsi83_monitor_stop() -- twice, maybe no probl=
-em
-> > > 8. atomic_disable:  regulator_disable() -- Twice, en/disable imbalanc=
-e!
-> > >=20
-> > > So there is an excess regulator disable, which is an error. I don't s=
-ee
-> > > how this can be avoided if the drm_bridge_unplug() is called after the
-> > > regulator_disable().
-> > >=20
-> > > Let me know whether this clarifies the need to _unplug at the beginni=
-ng
-> > > of the .remove function. =20
-> >=20
-> > Another thing that just crossed my mind is why we don't call
-> > atomic_disable when we're tearing down the bridge too. We're doing it
-> > for the main DRM devices, it would make sense to me to disable the
-> > encoder -> bridge -> connector (and possibly CRTC) chain if we remove a
-> > bridge automatically.
->=20
-> Uh, interesting idea.
->=20
-> Do you mean something like:
->=20
-> void drm_bridge_unplug(struct drm_bridge *bridge)
-> {
->     bridge->unplugged =3D true;
->     synchronize_srcu(&drm_bridge_unplug_srcu);
->=20
->     drm_bridge_remove(bridge); // as per discussion above
->=20
->     drm_atomic_helper_shutdown(bridge->dev);
-> }
->=20
-> ?
->=20
-> I'm not sure which is the right call to tear down the pipeline though.
-
-No, the shutdown needs to happen before marking the bridge unplugged,
-otherwise you'll never run the disable callbacks.
-
-And we probably shouldn't disable the whole device, just everything from
-the CRTC that feeds the bridge.
-
-Maxime
-
---s65hntyyqmm23soq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaOUtNgAKCRAnX84Zoj2+
-dh1oAX983qrqMiiWRa9MAkz8E/6TsqVVBWd5TC7XBazrUxZ7ACLJurGc7eSK+pTD
-/COsRzUBf3jo9cN4xwZzPMQuhuM5dbWy8dI1RF4xyOnNtCLzrEkzZPsODVW9wIBK
-QMJvqTNupQ==
-=96M8
------END PGP SIGNATURE-----
-
---s65hntyyqmm23soq--
+Frank
+>
+> > +
+> >   int pci_epf_align_inbound_addr(struct pci_epf *epf, enum pci_barno bar,
+> >   			       u64 addr, dma_addr_t *base, size_t *off);
+> >   int pci_epf_bind(struct pci_epf *epf);
+>
+>
+> Thanks,
+> Alok
 
