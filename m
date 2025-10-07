@@ -1,132 +1,170 @@
-Return-Path: <linux-kernel+bounces-844863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A95A0BC2F69
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 01:38:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E87A6BC2F4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 01:32:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FAFE3C6C0E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 23:38:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A320B3B56AC
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 23:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED5F25DB0A;
-	Tue,  7 Oct 2025 23:38:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9740D34BA35;
+	Tue,  7 Oct 2025 23:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="apz0RRnJ"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QMIq3V9x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F9824679A
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 23:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E9E21D3CA
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 23:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759880282; cv=none; b=d7mUK4ptP2HXvwtjA0XaAPX+Znnj4K3OO8sT+jJtQy6XKzN4itpVKnK+oCEwFI27bUpZidoFkrgwVQS6YwoZjjBzwxiQw8/gnM9dz19JnC3sQDZNm7BcYEmzc4axBGqfeYn1ntKapwRRfeJpD5jyywA8/VNxJchz8+4qCziWjoY=
+	t=1759879945; cv=none; b=YZfQGp5+yrWAuBYmD/EdR6vkwPczwJ+clPyPNRvc4IBA8idC7kypmfB2VPIsxVdv+uKiu2AG8czalW4WIeFTgQobKiE3ff0njVMlG4YkUhYkYmy6ZNRkKppxuNfL/ikOcvVCyGTdv+g0/8Ga127qll8wHzlJ9u19UMF0IJuBQ1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759880282; c=relaxed/simple;
-	bh=h26x29s20hjBJODDc+mltJ1rrKTeU+LcB6figctfTWU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gJdcLCOlAHJPoJetxGdbYoLijKFT+/cseaX8d+dQPENryPKhr4ugVy/RWioBpjmfOW0IahZSYyLhlDyNRJprKsnIk+7Oj0UOfzsv0MSJC0NzsZr2DGRVfrDj2VSs3kATBK5OwVPh9GJN/5zVkKmwOlNqx4yIO40LgYTjSPcvMjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=apz0RRnJ; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-859b2ec0556so699960285a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 16:38:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759880279; x=1760485079; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PLxpd9kbi54qSwlv5nU44o57YQdg6U4+ha5MoJ07Q4g=;
-        b=apz0RRnJSR8eH+105kHOth9iqPn054UtK/j/Kz0qb1C+A1IxNURZiWDiBQq9WPJU2c
-         z2aoWLdMkfiavHyiFwyfK4raSKoKq/pS2D2xThFJ+lbBfQgGIaoBvw6gccYiaj2dqrS4
-         caRFZKQ0tghyj+ksfiBJl5C4a7TBGhx14Ap+dBcb7aOnz98s03JTftf3oJhw/qceVp6s
-         MuAOPe1yTpqSK2Ct7QEWZJdYJME33nqlGO8DLlC6txODjXlp5qJONCYLJXAAovReXBd9
-         lhO7YraHnFwcZERsVzn4myBG8HIPDWzGPTu9OPA7kN8OQj6aIbk829dzIeUzCcIYfp6O
-         xnEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759880279; x=1760485079;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PLxpd9kbi54qSwlv5nU44o57YQdg6U4+ha5MoJ07Q4g=;
-        b=djvkwBXNRLIsAQquGuNNfJLX7WAIXy+A0zTqrk00KuNQhtdWYbZAiLK6M3RfYsg149
-         dfoUsfMyxA80qFOLR3SUjwBleaY1/4ZSmnfqeugipjqNk7q7xXBdQFMwVgcgPTMC2uSb
-         eAZsTpbvVriMzp00ezwvz/gJv+2TRGNo3U9X2PZZfJ346+AmLaMk3cGiKUW3A4v4uC6n
-         GVURE7jqR0G9nhSaSmEbjvJIIrg3jKXYchlSF/g1XlurwdsSh+I45l50ooxhv4yR39jC
-         zT+mfd1s0TzUDxS3PFWL1hXvJOpC15CsufGuOUBLlKAQgwwrfGGu6dJlHoQwB0O3Rv4S
-         xA4A==
-X-Forwarded-Encrypted: i=1; AJvYcCVI19eTQc42/e29RECO+x8Nm0Tq6kq5unrHH1AlZnUSCrOJYaYX20XNOgpmEEs/pXNVoZmtqykQfr/LgSI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQW/pfPn7+27zB998g7n9mchDNkmIjMGu/S4hA1nEx7akjmOkL
-	/VTPx05I2hL6QnAy0W+NjCoHRz1FrRcYQHVcAkY0CzqmVRtvp7VLHvu2mHOpr1ek+Oo=
-X-Gm-Gg: ASbGncu5/TtAd4HXf+TNZYQjmLsI8P3B0ybB39zDPEm44fTCf0Om8TEdvkKPbMtDfC0
-	VbKcFDUmXB2d+H0q3Hp/m/Rxu7ydKmpAtWRjiB2JUIcuMvj/kOZ/P1nT2WUYuUznQEK67XQJ/k0
-	vMQqc7eA7e3XBHwlKOZ4mxl4kgCpE6mQAWoYaPkiRve9TE4bjdPLRgJz7ttht6H7VsXeF+kRtaQ
-	Rjq1KrTl4K6F0gnOgJMhzHVcoexj+dxXdnrE431eakLaFnyNPB5OCJfUYVIm/Irr3LSMxvtLktF
-	3VuXmOHUF/7vjjGOQY6ORcaprLxIqRFQ5h2aGv7xvE44cRcfywNbtKi5u34Q4Lt7xzEXTI6xZtg
-	P9SrbyEms35TBiwp5lBtc6/t0OIkKhXwqpiyp6OftsLcPbtW6NC5eveqyyWzvPul6n4Uc092GqP
-	uoJxVOjmNCBNmkQDExKbi30OX65agq3so=
-X-Google-Smtp-Source: AGHT+IGWuoyjLBHTvXhdCeOdSV6cJByJ0Y01xALhTW3Q5DEdDg5DMyRj8M0bafbfIIx4igMJsj0h+Q==
-X-Received: by 2002:a05:620a:29d0:b0:826:a2b5:d531 with SMTP id af79cd13be357-88350a7881bmr266619585a.32.1759880279064;
-        Tue, 07 Oct 2025 16:37:59 -0700 (PDT)
-Received: from mango-teamkim.. ([129.170.197.108])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87a0e9bd554sm14351366d6.32.2025.10.07.16.37.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 16:37:58 -0700 (PDT)
-From: pip-izony <eeodqql09@gmail.com>
-To: Marcel Holtmann <marcel@holtmann.org>
-Cc: Seungjin Bae <eeodqql09@gmail.com>,
-	Kyungtae Kim <Kyungtae.Kim@dartmouth.edu>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-bluetooth@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] Bluetooth: bfusb: Fix buffer over-read in rx processing loop
-Date: Tue,  7 Oct 2025 19:29:42 -0400
-Message-ID: <20251007232941.3742133-2-eeodqql09@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1759879945; c=relaxed/simple;
+	bh=bLQg2aOLe4NVfyI9GDwWK3IkQGghonCZb+jkOy5wtN8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PZ8CBMmZfN37IsIK6SXMCF8+PuZi6rSH7dPCt1Tr81TRmkAe4eQBzb4CUHtdY2MjJKlxa3Ib1dLXqi6SHHaEj4sDTstKTdX9wugXiLRrGMPd+wmu96Xrap1skX1XwlcIkiYIFdjgpSJ/iCR9bNz/2XrC6/rF30PkV/emFclMqqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QMIq3V9x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 857EBC2BC86
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 23:32:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759879944;
+	bh=bLQg2aOLe4NVfyI9GDwWK3IkQGghonCZb+jkOy5wtN8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=QMIq3V9xMPAPAnRodoA5rD0kwJH5acy3F7RNlaI/pyvazed67N1qxHBRz9QDtyP57
+	 Nv76zlMb9BLd1w93JxuLiwqN/vRsCUP3cn7J/msEScOzcSb0G8Hb8Zegyl1Km1fulE
+	 gqqYzSimKUncyCyyFFRg30d/pJaTLKJr2rLdwWCwlI4Wingewy9nmNHllFQ995/jBZ
+	 1nYMBTH35aQus+qiOiaO3iNnSwgpf1qZ8SH+nkKJvg68UEM8gPL7UyLCd1ctqrWH+q
+	 EmvN69Br12+ZxsTLs0jOzcBvnCu+zQze1abwESF3twE+eiRqdPEQvE8d8+yKix+eCa
+	 UKyQWvUeLYKhw==
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-71d6051aeafso73396837b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 16:32:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUp91qOlLqaBSE3K63FynubyAbknM4gbW9GG0kmejBM5XQWY6DGvj2l7GoW7omcdnYLn6E6EXVM4CW4sw4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDcUjMuUgSHTelysgFWa7t9C3yPE3PblrzZwhRb1z7RHoX9epY
+	2xpIgKIf0zu88sARIamInFzETGj3jwETErmuHGBpJzoau3BT0CTO7plBhXqz876Flzkh3OsCF4u
+	u8/5gRKRB72hPWfe7ch+r5gkKPFd62Umcbe7Cp7G25A==
+X-Google-Smtp-Source: AGHT+IF8Dg6uqR2RW1utm2WOx5D5ACNj4AR/alcGrKcg6aUAQ3ncvoBeR28wcJP7W/rj5XjZFGhFIuGm57r2c0sfe90=
+X-Received: by 2002:a53:d607:0:b0:634:e9b2:eedc with SMTP id
+ 956f58d0204a3-63ccb8f1f80mr1223835d50.38.1759879943623; Tue, 07 Oct 2025
+ 16:32:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CA+CK2bAbB8YsheCwLi0ztY5LLWMyQ6He3sbYru697Ogq5+hR+Q@mail.gmail.com>
+ <20250929150425.GA111624@bhelgaas> <CACePvbV+D6nu=gqjavv+hve4tcD+6WxQjC0O9TbNxLCeBhi5nQ@mail.gmail.com>
+In-Reply-To: <CACePvbV+D6nu=gqjavv+hve4tcD+6WxQjC0O9TbNxLCeBhi5nQ@mail.gmail.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Tue, 7 Oct 2025 16:32:12 -0700
+X-Gmail-Original-Message-ID: <CACePvbUJ6mxgCNVy_0PdMP+-98D0Un8peRhsR45mbr9czfMkEA@mail.gmail.com>
+X-Gm-Features: AS18NWDPalaS8O9DIQeC528cFS4jviFQWlDaGfaaeKicXkkFCNGwkwVkJLeplN4
+Message-ID: <CACePvbUJ6mxgCNVy_0PdMP+-98D0Un8peRhsR45mbr9czfMkEA@mail.gmail.com>
+Subject: Re: [PATCH v2 00/10] LUO: PCI subsystem (phase I)
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	David Matlack <dmatlack@google.com>, Pasha Tatashin <tatashin@google.com>, 
+	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>, 
+	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
+	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, Mike Rapoport <rppt@kernel.org>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, skhawaja@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Seungjin Bae <eeodqql09@gmail.com>
+Thanks to one that provides good feedback on the PCI series.
 
-The bfusb_rx_complete() function parses incoming URB data in while loop.
-The logic does not sufficiently validate the remaining buffer size(count)
-accross loop iterations, which can lead to a buffer over-read.
+I just want to give an update on the state of the LUO PCI series,
+based on the feedback I received. The LUO PCI series should be called
+from the memfd side and remove global subsystem state if possible.
+Which means the PCI series will depend on the VIFO or iommu series.
+I have some internal alignment with Vipin (for VFIO) and Samiullah
+(for iommu). Here is the new plan for upstream patch submission:
 
-For example, with 4-bytes remaining buffer, if the first iteration takes
-the `hdr & 0x4000` branch, 2-bytes are consumed. On the next iteration,
-only 2-bytes remain, but the else branch is trying to access the third
-byte(buf[2]). This causes an out-of-bounds read and a potential kernel panic.
+1)  KHO series go first, which is already happening with additional improve=
+ment.
 
-This patch fixes the vulnerability by adding checks to ensure enough
-data remains in the buffer before it is accessed.
+2) Next is Pasha's LUO series with memfd support, also happening right now.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Seungjin Bae <eeodqql09@gmail.com>
----
- drivers/bluetooth/bfusb.c | 4 ++++
- 1 file changed, 4 insertions(+)
+3) Next series will be Vipin's VFIO series with preserving one
+busmaster bit in the config space of the end point vfio device, there
+is no PCI layer involved yet. The VFIO will use some driver trick to
+prevent the native driver from binding to the liveupdate device used
+by VFIO after kexec. After kexec, the VFIO driver validates that the
+busmaster in the PCI config register is already set.
 
-diff --git a/drivers/bluetooth/bfusb.c b/drivers/bluetooth/bfusb.c
-index 8df310983bf6..f17eae6dbd7d 100644
---- a/drivers/bluetooth/bfusb.c
-+++ b/drivers/bluetooth/bfusb.c
-@@ -360,6 +360,10 @@ static void bfusb_rx_complete(struct urb *urb)
- 			count -= 2;
- 			buf   += 2;
- 		} else {
-+            if (count < 3) {
-+                bf_dev_err(data->hdev, "block header is too short");
-+                break;
-+            }
- 			len = (buf[2] == 0) ? 256 : buf[2];
- 			count -= 3;
- 			buf   += 3;
--- 
-2.43.0
+4) After the VFIO series, the PCI can start to preserve the livedupate
+device by BDF. Avoid the driver auto probe on the livedupate devices.
+At this point the VFIO driver in stage 3 will not need the other
+driver trick to avoid the auto bind of native driver. The PCI layer
+takes the core of that. This series PCI will have very limited
+support, most of the driver callback is not needed, no bridge device
+dependent as well.
 
+5) VFIO device will continue DMA across the kexec. This series will
+require the IOMMU series for DMA mapping support. The PCI will hook up
+with the VFIO and build the list of the liveupdate device, which
+includes the PCI bridge with bus master big preserved as well.
+
+So I will pause the LUO PCI series a bit to wait for the integration
+with VFIO series.
+Meanwhile, I will continue to fix up the LUO PCI series internally for
+the other feedback I have received:
+- Clean up device info printing, remove raw address value (Greg KH, Jason).
+- Remove the device format string (Greg KH).
+- Remove the liveupdate struct from struct device, move it to the PCI (Greg=
+ KH).
+- Remove LUO call back forwarding and hook it up with the VFIO (Jason, Davi=
+d)
+- Drive the PCI from memfd context on VFIO or iommu, no subsystem
+registration. (Jason)
+- up_read(&pci_bus_sem); instead of up_write (Greg KH)
+- Avoid preserving the driver name, just avoid auto-probing the
+liveupdate devices. Let user space do the driver loading in initrd
+(Jason).
+
+That will keep me busy for a while waiting for the VFIO series.
+
+Thanks
+
+Chris
+
+
+On Mon, Sep 29, 2025 at 11:13=E2=80=AFAM Chris Li <chrisl@kernel.org> wrote=
+:
+>
+> On Mon, Sep 29, 2025 at 8:04=E2=80=AFAM Bjorn Helgaas <helgaas@kernel.org=
+> wrote:
+> >
+> > On Sat, Sep 27, 2025 at 02:05:38PM -0400, Pasha Tatashin wrote:
+> > > Hi Bjorn,
+> > >
+> > > My latest submission is the following:
+> > > https://lore.kernel.org/all/20250807014442.3829950-1-pasha.tatashin@s=
+oleen.com/
+> > >
+> > > And github repo is in cover letter:
+> > >
+> > > https://github.com/googleprodkernel/linux-liveupdate/tree/luo/v3
+> > >
+> > > It applies cleanly against the mainline without the first three
+> > > patches, as they were already merged.
+> >
+> > Not sure what I'm missing.  I've tried various things but none apply
+> > cleanly:
+>
+> Sorry about that. Let me do a refresh of the LUOPCI V3 patch and send
+> out the git repo link as well. The issue is that there are other
+> patches not in the mainline kernel which luopci is dependent on. Using
+> a git repo would be easier to get a working tree.
+>
+> Working on it now, please stay tuned.
+>
+> Chris
 
