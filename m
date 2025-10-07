@@ -1,165 +1,127 @@
-Return-Path: <linux-kernel+bounces-844032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53859BC0DEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:39:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C898BC0DF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:40:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE3ED3AC996
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:39:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30FCC189EB9B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A44B12D5408;
-	Tue,  7 Oct 2025 09:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 173292D77FE;
+	Tue,  7 Oct 2025 09:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l+f0gmOv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="STy3dpPl"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB990165F16;
-	Tue,  7 Oct 2025 09:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6DB2528FD
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 09:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759829952; cv=none; b=Zqs3vsyul4YFBbD1MkUTUJOtPE5BL2/lJ4uXNaFRT2N/0qEtqm+LQMCwoNsakfoemIq1cYzOngexlILYbt1yNyWQ38au+DS6Rjw6w00GWvbyTYwS/jPMrjZmHgOMmTFHLnC5+5reKmdQHwhPZvJ3/PASQSdoKOawdTrpkGrBGQw=
+	t=1759829999; cv=none; b=Hb/03MzQQGIQbds8jGGzQB+YBgwx56Gf3zsNo2haByC6I6FPiVAkqsZdQuKwcqoUgfUrxU1qexrBwyrTmyR3LNd8PGQeGbC6Qzax6DeMPLkaJMKnip7YX2OPJXWcwCDwhCBQE80/5lgWjhAm3NRnQ0qMjnGpNvDCA9zhnQV6GKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759829952; c=relaxed/simple;
-	bh=Y4EXS4AlfGJ1lns+hS2c1t6Y+szkd/o4CvJQriKDRbw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fBujoy5fm0B24/dSAhCnjniQNCLO7jEX9XwaABJxoTyp8JP9O0uELzjh+YD9yJ6HW1S18M9G8ZqKEqEVt+mX6DTqxeS5233ktksX3wX8ZyXWHlsLnsqBviccWOiU6dXumEMwqc2vptmFD+b0Q+rJCJ1DiIT/qlSBhJiwIzRVIL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l+f0gmOv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 445ABC4CEF1;
-	Tue,  7 Oct 2025 09:39:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759829951;
-	bh=Y4EXS4AlfGJ1lns+hS2c1t6Y+szkd/o4CvJQriKDRbw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=l+f0gmOv6IAt8WHDh81BJb2zC7zknFHSRJcTkXW64CL4hCBz/CqGEbIp7dCizAaD4
-	 wx6vnBbAvNaFwgfk+2N2r66e44nJGRBLe4QRoaqbTfsGMQQoEH4GO40u4FO1FNdqoR
-	 QRqbIHI523lN6Ka7WGYeYweKKf2y/vupCUzgfkB5PI7r2MKGnlOWnyAjGRjjhivJp9
-	 ZrOdtrP3LOxiIGAHzfkTbIITSpcnCC37kqSF9MVPiM1kwH7i3qqmf4PRl2XfOW8K+8
-	 fFs1SuWd8hqDoM4Ok5ZcJ7LdUJZRNE+BSVRKOmHzLXRECghqLP3Farme2mX/UR7d+B
-	 EW2nofvQ/0/rQ==
-Message-ID: <1561d6f5-bc60-4b41-aef5-3e22a23ee133@kernel.org>
-Date: Tue, 7 Oct 2025 18:39:07 +0900
+	s=arc-20240116; t=1759829999; c=relaxed/simple;
+	bh=YJ4l8YO6+oXjEOidGVwHWzcVddJ2TcaRCjmIlq6mC5k=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ew0q0D62duRur+xL+N2IE3cL4V0OzuD7Z6vN4OI7s3WyJ253kL/yCVjyEgXdLLzecCvWN1EACAms58g+U6LzIEdNN1bS8poeVP7+cIwO27t6LFk1bl1NQV6U39PqEj2741OaxmXusIfT9yFeOrDiUZzLew2IiEtZoB2uvVbqtKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=STy3dpPl; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3ee12ab7f33so3242867f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 02:39:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759829996; x=1760434796; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FmSwAXOxZKUOz9AOH50gpoq+A3qgk8C+jOU4GTuqrho=;
+        b=STy3dpPl9Xhi3iu2LiXEkKDT2Eoont7dMyNDlsZvNuKxu7ToXtBaEy68Sib4111Dsu
+         Sb9WepWNzuhRM1zIhM7kO8AlsZDSTBNp4VD1+sNcdGkyAgFHfLlDj6vPg9DBijshI5+t
+         cYXBZnoshkgpXj3KG5EZvSXswbdLzvzNbPWQa20kagefQKP2D+GQJJh+Ci4ToOnItVSY
+         g3HTZFGCtUdWt9a4SYZuFASc2ZnU0Y32jIeOlc1RB2AKprVswT8f1tlpiABUSOkF4fPi
+         lXCHwsr/OgHkxZo19p6lMj9OzhWcYDyOM8C9VDyxSXtsHSOtZZJ/TZVxoFDAfNuzcxzY
+         i6mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759829996; x=1760434796;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FmSwAXOxZKUOz9AOH50gpoq+A3qgk8C+jOU4GTuqrho=;
+        b=hSQLBA4AWUkSfFn8UPF+9cwACJFnjRNAi5ZmeKtYWrWyB5x4T8RoVcv15keJKt4wZw
+         0uYp5BFdVKExJuIVbkCX6g1AVD0mIF0mOZrLxwivz6z1rLtyLWVIYf3+wV6A4aUSxVan
+         OPNaEtdIv95TV1g/0y14MpjbNqzalTGiR/hBvqKzQ/SlL9bKW0mbWrOnlJ3deaYfglcR
+         6wD83bchDggh6ToFtiz4pkwRxYgkl8+Da9+TFoYiIGzl5vKsIbDsGB4bKQ8v5tLYq+zc
+         w0OGDphI8l2l5gW4Xc74T2ZOWyYtSmADhHbwbdqo+jddMX8OxL23nvSsSfbGWXm/aKTc
+         uUVA==
+X-Forwarded-Encrypted: i=1; AJvYcCXzx4gTUQPnjfOevg0cUAb5aov4FPFO8eA9HRl1P2lmpspq/GwBBgE7xHpOAz3kG+sa1C5LfKD99IPrgkA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyCv2zkJl/wUMPfNe+lAGjPj4mQbn67BOYUmKo8A8b1EkY5jmE
+	4x9tNC/pz1MOSv5h7gmV9To0xHy5bSj+JiJGeDz4PQiM02XP0pcV/lSldawyQiV8+yPPaDfUrn6
+	2z64YUC/TWarsZFKKtQ==
+X-Google-Smtp-Source: AGHT+IH9mV4n0lSExlu3FWYpv4Mx9IbTkfdC7gum/bBTbtYumGPaxNtiTvGoi4bA+x/MdMJOo0Dus7tFTRbpL7M=
+X-Received: from wruv15.prod.google.com ([2002:a5d:678f:0:b0:3de:7346:de21])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a5d:5f47:0:b0:415:7a6c:6a38 with SMTP id ffacd0b85a97d-425671c3bcdmr9683097f8f.59.1759829996366;
+ Tue, 07 Oct 2025 02:39:56 -0700 (PDT)
+Date: Tue, 07 Oct 2025 09:39:50 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: counter: Add new ti,omap-dmtimer-cap
- compatible
-To: Gokul Praveen <g-praveen@ti.com>, j-keerthy@ti.com, vigneshr@ti.com,
- wbg@kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org
-Cc: u-kumar1@ti.com, n-francis@ti.com
-References: <20250909080042.36127-1-g-praveen@ti.com>
- <20250909080042.36127-2-g-praveen@ti.com>
- <6faff5b1-65b1-41ee-aba8-8c06a2bc6f58@kernel.org>
- <9653740a-44fe-46bb-92c8-f7fc26cbe5ee@ti.com>
- <30101fb9-e2eb-4050-896a-7be629ced44d@kernel.org>
- <2de3151b-eedc-4209-8b20-53473cafacef@ti.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <2de3151b-eedc-4209-8b20-53473cafacef@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAObf5GgC/13MQQrCMBCF4auUWRtJ00qJK+8hXZhkJh3QRBIJa
+ sndjQU3Lv8H71shY2LMcOxWSFg4cwwt1K4Du1yCR8GuNSipDr2UShgODpOghPhGQVqjGpwdJ0P QPveExM/NO8+tF86PmF4bX/rv+pPGP6n0QgoymqyzpMw0nHyM/op7G28w11o/IQg1NKsAAAA=
+X-Change-Id: 20251002-binder-freeze-f99e23dc47bf
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=892; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=YJ4l8YO6+oXjEOidGVwHWzcVddJ2TcaRCjmIlq6mC5k=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBo5N/qX3xFHhbOaJLoreqfLBGBEG7JYzjxBBPl8
+ pRre/Fl9MaJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaOTf6gAKCRAEWL7uWMY5
+ Rk3eD/0f8Krqvn+ehSx/aGgx/Z+jrHzHgRtE++NieYt4mvpXcKEPsfvaOKDxwFTVFPV9DV5kzJV
+ TstX2/turYRCm0YZCrQ+LiXfudTuXEIyfhNjGQgjqRD8pP8xIlEwidLd8yeMF06a0w7C3IlGnoX
+ Thoyo5fR7UubjX04nJMMdeXDBWPhaH+F6xaygp7S3+l4hiWhZjhVT6scfMklKbNoplswK0F0Ve/
+ hQqJym3Qnb1beaBHbfG0wMY7VGTYSqr5x90Lrk+SmrI1iHFyzJFjGaFl6Pag0q2O0wRx+GXEaWx
+ NjG9BTB3K5y6yNQXJGJXOakaJjyrPy8DXgv5ExRlfI8XJtRAg+4jHyjFZvWzMGAPfcQSDAqCC+B
+ lHAcx2JRE6vkg7cAKRAQUExmP0sXGSICxY51yBiNgkN05Y87Xu1paJSGH7ERS0WyooaFOpJU0dN
+ 08kIETVJ60y6pG9pxx+Ac9B5xUrRTedpgixCofVmK2o1Ot9GLTWY9uHZxRDaviL3up3Jj8YJG9p
+ bVooruyZIpqEao4fgCbTP9E7Enqj9y8/gm+G+kf4X6aeb0AlVdD0G8kuny1mGIfLdGbCEIGqrR+
+ UdaNbYp56bd4tDTIMeLOuVnZtzNsJ4Do3EnIWkvtbohUCVS2TpYTYSWt5Gyr95sWVQJMYftfaCD +XqNhuEhsWjzvIg==
+X-Mailer: b4 0.14.2
+Message-ID: <20251007-binder-freeze-v2-0-5376bd64fb59@google.com>
+Subject: [PATCH v2 0/3] Fix three issues with freeze listeners
+From: Alice Ryhl <aliceryhl@google.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "=?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, 
+	Martijn Coenen <maco@android.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Christian Brauner <brauner@kernel.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On 07/10/2025 18:23, Gokul Praveen wrote:
-> Hi Krzysztof,
-> 
-> 
-> On 07/10/25 12:05, Krzysztof Kozlowski wrote:
->> On 26/09/2025 18:06, Gokul Praveen wrote:
->>>>
->>>>> +
->>>>> +  ti,timers:
->>>>> +    description: Timer instance phandle for the Capture
->>>>
->>>> So the only resource is phandle? That's completely fake device then. NAK.
->>>>
->>>
->>>
->>> The OMAP Timer IP can operate in 3 modes: Timer, PWM mode or capture
->>> (mutually exclusive).
->>> The timer/ti,timer-dm.yaml file describes the timer mode of operation.
->>> It encapsulates base IP block and reg property is also part the same
->>> binding.
->>>
->>> This node represents the capture mode with phandle reference to the
->>> timer DT node. This is modeled all the same lines as how PWM
->>> functionality is implemented in pwm/ti,omap-dmtimer-pwm.yaml
->>
->> Different modes do not have their own device nodes. It is still one
->> device, so one device node.
->>
->>>
->>> Now, if this needs to change, please suggest alternate.
->>>
->>> One solution is perhaps to add a new property to ti,timer-dm.yaml itself
->>> to indicate the mode of IP?
->>
->> Not sure, depends what this really is and how it is used. I can also
->> imagine that consumer defines the mod of operation.
->>
-> 
-> For a timer operating in capture mode, there are no consumers actually 
-> and the only way we use it is through sysfs.
-> 
-> Would it be good enough if I have a separate "mode" property for the 
-> dmtimer device node just like how it is done for USB as follows where 
-> the usb device node has a "dr_mode" property to decide on whether the 
-> usb should act in host, device or otg mode.
+See each commit message for details.
 
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+Changes in v2:
+- Add fully frozen fix (patch 3).
+- Link to v1: https://lore.kernel.org/r/20251004-binder-freeze-v1-0-fb9fcdcf2b73@google.com
 
-No, because of all my other comments in previous email.
+---
+Alice Ryhl (3):
+      rust_binder: freeze_notif_done should resend if wrong state
+      rust_binder: don't delete FreezeListener if there are pending duplicates
+      rust_binder: report freeze notification only when fully frozen
 
+ drivers/android/binder/freeze.rs      | 18 +++++++++++---
+ drivers/android/binder/process.rs     | 46 ++++++++++++++++++++++++++++-------
+ drivers/android/binder/transaction.rs |  6 ++---
+ 3 files changed, 54 insertions(+), 16 deletions(-)
+---
+base-commit: eafedbc7c050c44744fbdf80bdf3315e860b7513
+change-id: 20251002-binder-freeze-f99e23dc47bf
 
 Best regards,
-Krzysztof
+-- 
+Alice Ryhl <aliceryhl@google.com>
+
 
