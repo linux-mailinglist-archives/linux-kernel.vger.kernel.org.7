@@ -1,142 +1,154 @@
-Return-Path: <linux-kernel+bounces-844351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98D40BC1A59
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:07:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2268FBC1A4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:07:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7CA0C34F990
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:07:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B05C3E12B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C82A2DC783;
-	Tue,  7 Oct 2025 14:07:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50BC02E1EE0;
+	Tue,  7 Oct 2025 14:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="AphBgvdy"
-Received: from mx-relay09-hz2.antispameurope.com (mx-relay09-hz2.antispameurope.com [83.246.65.95])
+	dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.b="PWedq49G"
+Received: from mx0.infotecs.ru (mx0.infotecs.ru [91.244.183.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1071EB5FD
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 14:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=83.246.65.95
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759846027; cv=pass; b=FEFEBTjP1vzmo1w92EXP8S/nc2jPXU6U5oxrVLlsDyK5SwrIIkBmKZMMULzw3iXfDOg7/IyQQGzKy6OrYDBvN/PRczKzBRC3mQyqA4d9YcAUXe8T970CYzSLmyL+EXnZZNCieGUnoDf2BqEKViDnQafLJ2ZIkQkGWmdYM/66D4M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759846027; c=relaxed/simple;
-	bh=WmSuK2KgeZZKjS3RAHylOHbDs/ZtMx32hEmXNAnI9LY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NI55FDGjgeL3vJPfBsS9sCE1195Q2pO0MmgBB0D8yaemLcTn4SY2a5ol6aiutpm6Iqp7wl1DWSst/EtQz/bsDCX31wxTGrkuZ2Hwtos0xMdnyWiImiFIyGokWNDoEBbXxh6r8NLgQv7knY+MtFUZ3FbIqXSjf0pepTjzWbyL+HU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=AphBgvdy; arc=pass smtp.client-ip=83.246.65.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-ARC-Authentication-Results: i=1; mx-gate09-hz2.hornetsecurity.com 1; spf=pass
- reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
- smtp.mailfrom=ew.tq-group.com smtp.helo=smtp-out01-hz1.hornetsecurity.com;
- dmarc=pass header.from=ew.tq-group.com orig.disposition=pass
-ARC-Message-Signature: a=rsa-sha256;
- bh=DFvOQZa24W/AnKkgvYTUsj2VAl9wPNaKiNLZsjze+Cs=; c=relaxed/relaxed;
- d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
- t=1759846008;
- b=juleUW9tEOYT4hWbYrPlfa9kh5kYm+lKFNlBZIMqmw8hY8CJAL8Afy+XDlwESnRKNNr4G9zp
- Wdk0RTgRYa2KQvEmY5uzPGznOxcqkKYzZV9GGZF8vKqc1doc9gNOdZOJMUInsI0xXDdEwNMdbUZ
- 2HZ8Jb9KiNlAk+ikcJWLheqawLbolj1pHMo1msGfO98zTO9YX3iGiui0GWq++e/a8U3C6z6LP3t
- sP6tIoUE6ZeG3CgcSsdv1rtypws9qNAvV7p0SaHoceJkVr7oiiRsoTYY+GL+t0VmNklDsYXtOEe
- sFwDiq4qt/eiuPvNK8N9PSzpGPP6oZ+5n5cuh47E3LqlA==
-ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
- t=1759846008;
- b=q4zaNsgWGeU4hWHVYcDhOC8Ma/hoDU0JR7fLXIeaDDo5uzRnLbCiVfuNpDjXqufKg5Yqdo3M
- Z9J8Huabe/cbicuRQwsiEHPWl9KulgzjFaMAv6UKwIYcWS6kdw3EhTnKUqcp3nfvQIWDSLLnEVk
- 7J7TloX9SJdVdLVkgwWkwTOcwQDgCU1A7TK7dpW5SXBVWl6bD88ZRfu2zGBEd2C5SuSQTlpK+m9
- +cfQz82s/I2HJMCiz2TOBx2d5sJIMENTkgGbJGV/yAxRFbS0Db8GYzAUKWEo0JBVBI+noXnvixf
- rcPTiRRddbrzwuPmYxlrPEvERxsNAIK1Eyhj8BtETMCjA==
-Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay09-hz2.antispameurope.com;
- Tue, 07 Oct 2025 16:06:47 +0200
-Received: from [192.168.153.128] (host-82-135-125-110.customer.m-online.net [82.135.125.110])
-	(Authenticated sender: matthias.schiffer@ew.tq-group.com)
-	by smtp-out01-hz1.hornetsecurity.com (Postfix) with ESMTPSA id 55104A40A92;
-	Tue,  7 Oct 2025 16:06:37 +0200 (CEST)
-Message-ID: <09aa8945c41cdc0c518bddedf8d3489c1e521661.camel@ew.tq-group.com>
-Subject: Re: [PATCH 1/2] i2c: ocores: replace 1ms poll iteration timeout
- with total transfer timeout
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Peter Korsgaard <peter@korsgaard.com>, Andi Shyti
- <andi.shyti@kernel.org>,  linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux@ew.tq-group.com
-Date: Tue, 07 Oct 2025 16:06:36 +0200
-In-Reply-To: <7dbefacc-3ce0-47ea-b521-102320f49420@lunn.ch>
-References: 
-	<1eb320b6b7d3a12e62785893ea68c4d16aa2560d.1759838476.git.matthias.schiffer@ew.tq-group.com>
-	 <7dbefacc-3ce0-47ea-b521-102320f49420@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437FE1CF96;
+	Tue,  7 Oct 2025 14:06:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.244.183.115
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759846010; cv=none; b=RfYGeEnwdt8pdd9SOSW775p+xhKIWX2gXOkWClfJxFodVpnSb0fltIiA7mS0/FK8e2AQKDpLNVxsoyo/ejs567hIwouWtH2jY9+Xrm9dirp0QdYss58eVAUau4jRsLUqvk4zggUjnAGVMBF7fAeohSFw8kDNNfHpmTdt+pBghs4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759846010; c=relaxed/simple;
+	bh=OPDdaWDKOAxCmqxFbeyTYOQIkH9eX6dgPSJpCJciY7A=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Sb0yaZ274enarrzac9j+iEJw1gvSCipyLsNyAc2xOWXJBDFEa7JvdqYCe79aCs/DElHsnGpmtAkQ2wzfWHcAo/VUW0ZfDtdkOeyi39LoYLt6WBkfJvCq7VFFEny7zhTZ5SPUcmqmme+6khq8Asz5iTJHZDdvAgIsTK9KPjVguwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=infotecs.ru; spf=pass smtp.mailfrom=infotecs.ru; dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.b=PWedq49G; arc=none smtp.client-ip=91.244.183.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=infotecs.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infotecs.ru
+Received: from mx0.infotecs-nt (localhost [127.0.0.1])
+	by mx0.infotecs.ru (Postfix) with ESMTP id 1EBBB10C7800;
+	Tue,  7 Oct 2025 17:06:46 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs.ru 1EBBB10C7800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infotecs.ru; s=mx;
+	t=1759846006; bh=B1h/NhFSvGKzs2lwZsaJd9XPGSb5oFBLrlRbiHNX/9M=;
+	h=From:To:CC:Subject:Date:From;
+	b=PWedq49G9GDTRIMhAZ6HsoT51da3zvEClnj1OMhTG98yi38j6TMuls3waf+sPbqoB
+	 m6Z/2KucoCT+K3rMXDrDeh5Rg6wiFan5KjmucN6MLVQNTSua+qrlZPmucRFF3ZXZVE
+	 Z51k7kvGZFaopZxn3/vtz1mlRmhN8PurQ5tW4DCk=
+Received: from msk-exch-02.infotecs-nt (msk-exch-02.infotecs-nt [10.0.7.192])
+	by mx0.infotecs-nt (Postfix) with ESMTP id 19CE630CD6C9;
+	Tue,  7 Oct 2025 17:06:46 +0300 (MSK)
+From: Ilia Gavrilov <Ilia.Gavrilov@infotecs.ru>
+To: Magnus Karlsson <magnus.karlsson@intel.com>
+CC: Maciej Fijalkowski <maciej.fijalkowski@intel.com>, Stanislav Fomichev
+	<sdf@fomichev.me>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Alexei Starovoitov
+	<ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, "Jesper Dangaard
+ Brouer" <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, "Song
+ Yoong Siang" <yoong.siang.song@intel.com>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: [PATCH net v2] xsk: Fix overflow in descriptor validation
+Thread-Topic: [PATCH net v2] xsk: Fix overflow in descriptor validation
+Thread-Index: AQHcN5OdnXCPK8VDDEqW23qLq6U3NQ==
+Date: Tue, 7 Oct 2025 14:06:45 +0000
+Message-ID: <20251007140645.3199133-1-Ilia.Gavrilov@infotecs.ru>
+Accept-Language: ru-RU, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-exclaimer-md-config: 208ac3cd-1ed4-4982-a353-bdefac89ac0a
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-cloud-security-sender:matthias.schiffer@ew.tq-group.com
-X-cloud-security-recipient:linux-kernel@vger.kernel.org
-X-cloud-security-crypt: load encryption module
-X-cloud-security-Mailarchiv: E-Mail archived for: matthias.schiffer@ew.tq-group.com
-X-cloud-security-Mailarchivtype:outbound
-X-cloud-security-Virusscan:CLEAN
-X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay09-hz2.antispameurope.com with 4cgycF6Td5z2102K
-X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
-X-cloud-security-Digest:a4c114696472c606f0b88d2546581029
-X-cloud-security:scantime:2.016
-DKIM-Signature: a=rsa-sha256;
- bh=DFvOQZa24W/AnKkgvYTUsj2VAl9wPNaKiNLZsjze+Cs=; c=relaxed/relaxed;
- d=ew.tq-group.com;
- h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
- t=1759846007; v=1;
- b=AphBgvdy+tC1wPLjVJZnjRsNM4YTM3eXjkm3tz3PP22ohg6DBw988iyYjC1uF0TUeJk7vh7N
- ZhnPRIxI4LFd7BeyjfiakS5yOGg0wHm1C+1HnObu5cGOXdzWaJ3ger96QNCEZ1eDse7uAbfBgI8
- AD2t6QvdFog82PbCL/1cGHMgNESSNzZ50cQcmsyYMuYxP9BzFgprC+O61qXfz20Y4RREiShXRQn
- P4fWYRWsAM+zWULskHAfTKS9VWPasKtZPbJ6flDnA+8p8ttosyw1hc6nmJl0osQZ9fDrCcsC2UD
- HrMVfE4FRZ+G6vUEnsqq3zlWgWw595Tyee6F0pob3REBw==
+X-KLMS-Rule-ID: 5
+X-KLMS-Message-Action: clean
+X-KLMS-AntiSpam-Status: not scanned, disabled by settings
+X-KLMS-AntiSpam-Interceptor-Info: not scanned
+X-KLMS-AntiPhishing: Clean, bases: 2025/10/07 12:47:00
+X-KLMS-AntiVirus: Kaspersky Security for Linux Mail Server, version 8.0.3.30, bases: 2025/10/07 12:37:00 #27889104
+X-KLMS-AntiVirus-Status: Clean, skipped
 
-On Tue, 2025-10-07 at 14:34 +0200, Andrew Lunn wrote:
-> On Tue, Oct 07, 2025 at 02:09:24PM +0200, Matthias Schiffer wrote:
-> > When a target makes use of clock stretching, a timeout of 1ms may not b=
-e
-> > enough. One extreme example is the NXP PTN3460 eDP to LVDS bridge, whic=
-h
-> > takes ~320ms to send its ACK after a flash command has been
-> > submitted.
-> >=20
-> > Replace the per-iteration timeout of 1ms with limiting the total
-> > transfer time to the timeout set in struct i2c_adapter (defaulting to
-> > 1s, configurable through the I2C_TIMEOUT ioctl). While we're at it, als=
-o
-> > add a cpu_relax() to the busy poll loop.
->=20
-> 1s is a long time to spin. Maybe it would be better to keep with the
-> current spin for 1ms, and then use one of the helpers from iopoll.h to
-> do a sleeping wait? Say with 10ms sleeps, up to the 1s maximum?
->=20
-> 	Andrew
+The desc->len value can be set up to U32_MAX. If umem tx_metadata_len
+option is also set, the value of the expression
+'desc->len + pool->tx_metadata_len' can overflow and validation
+of the incorrect descriptor will be successfully passed.
+This can lead to a subsequent chain of arithmetic overflows
+in the xsk_build_skb() function and incorrect sk_buff allocation.
 
-Makes sense. I don't think I can use something from iopoll.h directly, as i=
-2c-
-ocores has its own ioreadX abstraction to deal with different register widt=
-hs
-and endianesses, but a combination of spin + sleep is probably the way to g=
-o.
+To reproduce the overflow, this piece of userspace code can be used:
+       struct xdp_umem_reg umem_reg;
+       umem_reg.addr =3D (__u64)(void *)umem;
+       ...
+       umem_reg.chunk_size =3D 4096;
+       umem_reg.tx_metadata_len =3D 16;
+       umem_reg.flags =3D XDP_UMEM_TX_METADATA_LEN;
+       setsockopt(sfd, SOL_XDP, XDP_UMEM_REG, &umem_reg, sizeof(umem_reg));
+       ...
 
-Best,
-Matthias
+       xsk_ring_prod__reserve(tq, batch_size, &idx);
 
+       for (i =3D 0; i < nr_packets; ++i) {
+               struct xdp_desc *tx_desc =3D xsk_ring_prod__tx_desc(tq, idx =
++ i);
+               tx_desc->addr =3D packets[i].addr;
+               tx_desc->addr +=3D umem->tx_metadata_len;
+               tx_desc->options =3D XDP_TX_METADATA;
+               tx_desc->len =3D UINT32_MAX;
+       }
 
+       xsk_ring_prod__submit(tq, nr_packets);
+       ...
+       sendto(sfd, NULL, 0, MSG_DONTWAIT, NULL, 0);
 
+Found by InfoTeCS on behalf of Linux Verification Center
+(linuxtesting.org) with SVACE.
+
+Fixes: 341ac980eab9 ("xsk: Support tx_metadata_len")
+Cc: stable@vger.kernel.org
+Signed-off-by: Ilia Gavrilov <Ilia.Gavrilov@infotecs.ru>
+---
+v2: Add a repro
+ net/xdp/xsk_queue.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/net/xdp/xsk_queue.h b/net/xdp/xsk_queue.h
+index f16f390370dc..b206a8839b39 100644
+--- a/net/xdp/xsk_queue.h
++++ b/net/xdp/xsk_queue.h
+@@ -144,7 +144,7 @@ static inline bool xp_aligned_validate_desc(struct xsk_=
+buff_pool *pool,
+ 					    struct xdp_desc *desc)
+ {
+ 	u64 addr =3D desc->addr - pool->tx_metadata_len;
+-	u64 len =3D desc->len + pool->tx_metadata_len;
++	u64 len =3D (u64)desc->len + pool->tx_metadata_len;
+ 	u64 offset =3D addr & (pool->chunk_size - 1);
+=20
+ 	if (!desc->len)
+@@ -165,7 +165,7 @@ static inline bool xp_unaligned_validate_desc(struct xs=
+k_buff_pool *pool,
+ 					      struct xdp_desc *desc)
+ {
+ 	u64 addr =3D xp_unaligned_add_offset_to_addr(desc->addr) - pool->tx_metad=
+ata_len;
+-	u64 len =3D desc->len + pool->tx_metadata_len;
++	u64 len =3D (u64)desc->len + pool->tx_metadata_len;
+=20
+ 	if (!desc->len)
+ 		return false;
 --=20
-TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
-any
-Amtsgericht M=C3=BCnchen, HRB 105018
-Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
-neider
-https://www.tq-group.com/
+2.39.5
 
