@@ -1,256 +1,316 @@
-Return-Path: <linux-kernel+bounces-844302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74F5FBC17F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 15:30:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B995FBC17FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 15:32:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46C9F19A311A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 13:30:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94B0D3E1439
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 13:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770972E0B6E;
-	Tue,  7 Oct 2025 13:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD12D2E0B5A;
+	Tue,  7 Oct 2025 13:31:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jfq10qwA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gb1ZmBAn"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C8AC8E6;
-	Tue,  7 Oct 2025 13:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0567225785
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 13:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759843824; cv=none; b=sFqMozaSIgs9Qk9ToAkj+5HzjLFLH30PIpcm7wVme1Le+U4OZkXtn4MRNtjKqpr0cXuun+U0BahGrYcSDF1sBrHbu+YlD9BVeDADZb/QM0v36lN+DepfNZuGwH1XxVLKYsSDVj/a3ACMcOoCo8M50eS9xS+vjG8gql0BAlxyP60=
+	t=1759843907; cv=none; b=DdYy+y2688AlSZtUkg+IJ/6cr93CO5tP5F5XTlaYyjz0jQ1cGjnmvt0tuvL72h5yYI0GuqmrG379Od99g9SoFbBGEusdZsnztRk2WEsRsYS01C+dlIMlO/1QsCm66epuUJXnyOcgXT5yqX5TQ54PJjQUap9x6zWtfPmQ8fdJSNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759843824; c=relaxed/simple;
-	bh=a+hLMRZ89lMMfohnZj5rrKyndKWksZlfn0//bNtRnv4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=jHft47049a6RP88NlVEwrSNMSAtDqI7cGGfvcXWAxZl39PbCgIcGnxMvyieHPxA1zJWcr//6DSL1GDAL5vdVJqagKnPsFtBh7zU/djQ0WEIh9kT6Kj80Ci2XvkccaIHkh4tGCoEam7Do6u9ffXMqKC4rza3RAMDr8uiO8jm017s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jfq10qwA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92074C4CEF1;
-	Tue,  7 Oct 2025 13:30:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759843824;
-	bh=a+hLMRZ89lMMfohnZj5rrKyndKWksZlfn0//bNtRnv4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=jfq10qwAPMrOKPp2UWn6SkGdeFAYE0GUabtMligJY3wVU7Aq8Vpaig+nucTfu4Ajc
-	 2ZCWUllTifw2PXGTtyHvi0afbUzDzKw/xEMI/Q8cFAwORA+B8jPmQ9V7pxjNOq9ctl
-	 5JPz7CoVYIKtFXHWaamduBxbDeVM1quhrxSUpII69Yno07vmItODHPdyJ7qSIdWWHs
-	 SILxDRyD+XXt0fsILH398D4Gz7J+B0xg4U7oABmaICYhXnaroMvkJQGGd6lY22XFQn
-	 JzXBXN9OevTrIdhHUH1Bhdhv5w8wAKiTNGOxeYy9nUDUor5zr1ITtH9MlNKTsS0c6d
-	 psfRTjxGAHJ6g==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>,  jasonmiu@google.com,
-  graf@amazon.com,  changyuanl@google.com,  rppt@kernel.org,
-  dmatlack@google.com,  rientjes@google.com,  corbet@lwn.net,
-  rdunlap@infradead.org,  ilpo.jarvinen@linux.intel.com,
-  kanie@linux.alibaba.com,  ojeda@kernel.org,  aliceryhl@google.com,
-  masahiroy@kernel.org,  akpm@linux-foundation.org,  tj@kernel.org,
-  yoann.congal@smile.fr,  mmaurer@google.com,  roman.gushchin@linux.dev,
-  chenridong@huawei.com,  axboe@kernel.dk,  mark.rutland@arm.com,
-  jannh@google.com,  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
-  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com,
-  hughd@google.com,  skhawaja@google.com,  chrisl@kernel.org,
-  steven.sistare@oracle.com
-Subject: Re: [PATCH v4 03/30] kho: drop notifiers
-In-Reply-To: <CA+CK2bCFsPZQQQ0JFErnYt=dbzBx=ZJdV+eNXYWyNUE+xk7=yA@mail.gmail.com>
-	(Pasha Tatashin's message of "Tue, 7 Oct 2025 09:16:24 -0400")
-References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
-	<20250929010321.3462457-4-pasha.tatashin@soleen.com>
-	<mafs0tt0cnevi.fsf@kernel.org>
-	<CA+CK2bA2qfLF1Mbyvnat+L9+5KAw6LnhYETXVoYcMGJxwTGahg@mail.gmail.com>
-	<mafs0playoqui.fsf@kernel.org>
-	<CA+CK2bCFsPZQQQ0JFErnYt=dbzBx=ZJdV+eNXYWyNUE+xk7=yA@mail.gmail.com>
-Date: Tue, 07 Oct 2025 15:30:13 +0200
-Message-ID: <mafs0a522on4q.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1759843907; c=relaxed/simple;
+	bh=nmqHCCYLjv7UOISdWOVnZizfWfYHpPgRLbuQW0jXLas=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qXWswqYClgf6Duti2aKmNv/cjzDNfROr5dd7JvxGYaLIR6ydE2oeS+ThdRvLiW+mPbusdOBTHQ3UPB7it+O7nywC6mcCx4KrHuUVNKHSQRPbcCdvkc+Ih2RYcjWFEsnRHsEjsYmj0K++/h9W6tDgj4BoYf5t//p+9iW1BPCUkmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gb1ZmBAn; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3ee12332f3dso5511991f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 06:31:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1759843904; x=1760448704; darn=vger.kernel.org;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=nmqHCCYLjv7UOISdWOVnZizfWfYHpPgRLbuQW0jXLas=;
+        b=gb1ZmBAnHhJ/N98arGaW5PdrmWKOF6nywyAji+CjzHBCH9ASIDuPzy5P3ou9aqfkBz
+         YUBdz/X9rBvkyo7U8kyEulLYwcViRGlqSoFHLRFKvUSpFN9zaj/sTLf0h6lHI0purtRn
+         n48cVjbtI9UdqaCvmx460AgYA1aZiEOYutUuN17uh7whPSyXXP9iVOmwi/bDNZizFu1M
+         dco2iWhkofP5242vf9J7jwe6e37Eh8rMAK11ulDYVWX4NIKHsSW3178/QdIDtDjaKnDE
+         h4UkNCcGxDpJvCwY5zeu83uQDSyfI1CCgJ23MbMrY6F0WdZfONKa6T4y83HibCdN1CcA
+         +WKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759843904; x=1760448704;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nmqHCCYLjv7UOISdWOVnZizfWfYHpPgRLbuQW0jXLas=;
+        b=DppWjz+1AdpkBYXP9HPQ36Z3fd9rJzCOI2kGWSu71fmfCkwswqkdErH6hSfQqqho4M
+         rOqn5dlZWFnd4i63Vp2aJDpsXNtU/7IBIJqpp3oCtOChRn9vdNI1FOH183e+G/25WBK+
+         SV4WUSnLmClTpk7f+2rKv3mMLduOg1/NZhBLWY9EMTG0TYXH1703TnhcwH9n8oYgD+On
+         oTUubgqJC/oL4vA9VYZITm1zwZwrJjExoAFOLJatFMeHOUAmALlXo/uBi1RneZWsNHEK
+         3HtToE+NTTemtSy0vFSRUrMttSBZam2xuSHpnbrOGkiNFUw4bLvYMNVT4DYoFMh1Q6dB
+         R5FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrzj0VmE6kM4FVnx7qT0C96tAiBuiOwrBaFKugOZE4cSd/lF381yuxPCsD3Md5hGj4M7Xze0b+3qHLdwI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzu8+ZV1KeQMO3w8mrnN39Wcd6lnvlgffDrRHAS7LPnAFvgYq3Z
+	dhZqye08a2uTLOce/b2pLG14zP5BUrYeo4s4IiPseGOvySaKcrTMwvyv2oD9uyXjC2A=
+X-Gm-Gg: ASbGncv5n1T9Y4bB/bBGlXsIeMOw6ZSqIzJG2XsaIC6pOHJH15hwh3qZYE3tOAi/Fpl
+	cJh5bAZ4I7k7Ei12RXe2cB1t7zf4cP/zHLVciUJXmnpkcLILleACvDn4C3QHM1jjWvBmC+5K8P/
+	CWVt8WO3YNLf7wLCmUncVNBafmMzaOoWv1mUmUIETwoi/ejxGo0qxq4eVqz9aV+G4LDSu1qnUSd
+	/6DdXGlQ/hv/uVoeoB8WasNCjux76GiVnesFKb+3/wVNekUjpP3A1+KrOxr5vjgmtvGZ3tpJzYz
+	jXvbjbuGDpF09lhfV/WhcFVz7+KBXLt5wL0q9Sp6e+03xEeg6+n+RyFr6kpD8cIBQzW65IwhUA8
+	GJipcduzrPIRTiuqZ2f7vKANu0RaOo6yKsUGYjUIJffCQ3Nif8bG+n4dIrKZ3vWZnr7b1bG5WR7
+	xSYKqX68XNbrFG2QNKxqd8iTeODRmdD9G/DM5xaNWZGdRmRCT/Aed/DWXOlqGBeaqBTPjVc0rsN
+	C77g/Q=
+X-Google-Smtp-Source: AGHT+IGDBarKisTLZ3aOlvaz9TPlo6eBvhoC8Zr4diC92RrOmHD9/iLkB04bWjBNEXUlLD5vKyJOTw==
+X-Received: by 2002:a05:6000:2901:b0:3eb:4e88:585 with SMTP id ffacd0b85a97d-42567194b00mr9558612f8f.29.1759843903831;
+        Tue, 07 Oct 2025 06:31:43 -0700 (PDT)
+Received: from ?IPV6:2003:e5:873f:400:7b4f:e512:a417:5a86? (p200300e5873f04007b4fe512a4175a86.dip0.t-ipconnect.de. [2003:e5:873f:400:7b4f:e512:a417:5a86])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f0392sm25840968f8f.42.2025.10.07.06.31.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Oct 2025 06:31:43 -0700 (PDT)
+Message-ID: <5d792dc5-ea8e-46d2-8031-44f8e92b0188@suse.com>
+Date: Tue, 7 Oct 2025 15:31:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/7] x86/kexec: Disable kexec/kdump on platforms with TDX
+ partial write erratum
+To: Dave Hansen <dave.hansen@intel.com>,
+ "Reshetova, Elena" <elena.reshetova@intel.com>,
+ "Annapurve, Vishal" <vannapurve@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "bp@alien8.de" <bp@alien8.de>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "peterz@infradead.org" <peterz@infradead.org>,
+ "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+ "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
+ "x86@kernel.org" <x86@kernel.org>, "kas@kernel.org" <kas@kernel.org>,
+ "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, "Huang, Kai" <kai.huang@intel.com>,
+ "seanjc@google.com" <seanjc@google.com>,
+ "Chatre, Reinette" <reinette.chatre@intel.com>,
+ "Yamahata, Isaku" <isaku.yamahata@intel.com>,
+ "Williams, Dan J" <dan.j.williams@intel.com>,
+ "ashish.kalra@amd.com" <ashish.kalra@amd.com>,
+ "nik.borisov@suse.com" <nik.borisov@suse.com>, "Gao, Chao"
+ <chao.gao@intel.com>, "sagis@google.com" <sagis@google.com>,
+ "Chen, Farrah" <farrah.chen@intel.com>, Binbin Wu <binbin.wu@linux.intel.com>
+References: <20250901160930.1785244-1-pbonzini@redhat.com>
+ <20250901160930.1785244-5-pbonzini@redhat.com>
+ <CAGtprH__G96uUmiDkK0iYM2miXb31vYje9aN+J=stJQqLUUXEg@mail.gmail.com>
+ <74a390a1-42a7-4e6b-a76a-f88f49323c93@intel.com>
+ <CAGtprH-mb0Cw+OzBj-gSWenA9kSJyu-xgXhsTjjzyY6Qi4E=aw@mail.gmail.com>
+ <a2042a7b-2e12-4893-ac8d-50c0f77f26e9@intel.com>
+ <CAGtprH_nTBdX-VtMQJM4-y8KcB_F4CnafqpDX7ktASwhO0sxAg@mail.gmail.com>
+ <DM8PR11MB575071F87791817215355DD8E7E7A@DM8PR11MB5750.namprd11.prod.outlook.com>
+ <27d19ea5-d078-405b-a963-91d19b4229c8@suse.com>
+ <5b007887-d475-4970-b01d-008631621192@intel.com>
+Content-Language: en-US
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+Autocrypt: addr=jgross@suse.com; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
+ mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
+ G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
+ kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
+ Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
+ RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
+ vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
+ sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
+ aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
+ w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
+ auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
+ 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
+ fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
+ HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
+ QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
+ ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
+In-Reply-To: <5b007887-d475-4970-b01d-008631621192@intel.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------eh2kZetL0id6wh0cV6D67V5G"
+
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------eh2kZetL0id6wh0cV6D67V5G
+Content-Type: multipart/mixed; boundary="------------SS3m9n9G0zIP5yb22DVC4Q10";
+ protected-headers="v1"
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+To: Dave Hansen <dave.hansen@intel.com>,
+ "Reshetova, Elena" <elena.reshetova@intel.com>,
+ "Annapurve, Vishal" <vannapurve@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "bp@alien8.de" <bp@alien8.de>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "peterz@infradead.org" <peterz@infradead.org>,
+ "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+ "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
+ "x86@kernel.org" <x86@kernel.org>, "kas@kernel.org" <kas@kernel.org>,
+ "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, "Huang, Kai" <kai.huang@intel.com>,
+ "seanjc@google.com" <seanjc@google.com>,
+ "Chatre, Reinette" <reinette.chatre@intel.com>,
+ "Yamahata, Isaku" <isaku.yamahata@intel.com>,
+ "Williams, Dan J" <dan.j.williams@intel.com>,
+ "ashish.kalra@amd.com" <ashish.kalra@amd.com>,
+ "nik.borisov@suse.com" <nik.borisov@suse.com>, "Gao, Chao"
+ <chao.gao@intel.com>, "sagis@google.com" <sagis@google.com>,
+ "Chen, Farrah" <farrah.chen@intel.com>, Binbin Wu <binbin.wu@linux.intel.com>
+Message-ID: <5d792dc5-ea8e-46d2-8031-44f8e92b0188@suse.com>
+Subject: Re: [PATCH 4/7] x86/kexec: Disable kexec/kdump on platforms with TDX
+ partial write erratum
+References: <20250901160930.1785244-1-pbonzini@redhat.com>
+ <20250901160930.1785244-5-pbonzini@redhat.com>
+ <CAGtprH__G96uUmiDkK0iYM2miXb31vYje9aN+J=stJQqLUUXEg@mail.gmail.com>
+ <74a390a1-42a7-4e6b-a76a-f88f49323c93@intel.com>
+ <CAGtprH-mb0Cw+OzBj-gSWenA9kSJyu-xgXhsTjjzyY6Qi4E=aw@mail.gmail.com>
+ <a2042a7b-2e12-4893-ac8d-50c0f77f26e9@intel.com>
+ <CAGtprH_nTBdX-VtMQJM4-y8KcB_F4CnafqpDX7ktASwhO0sxAg@mail.gmail.com>
+ <DM8PR11MB575071F87791817215355DD8E7E7A@DM8PR11MB5750.namprd11.prod.outlook.com>
+ <27d19ea5-d078-405b-a963-91d19b4229c8@suse.com>
+ <5b007887-d475-4970-b01d-008631621192@intel.com>
+In-Reply-To: <5b007887-d475-4970-b01d-008631621192@intel.com>
+
+--------------SS3m9n9G0zIP5yb22DVC4Q10
+Content-Type: multipart/mixed; boundary="------------VKMwJJqlh6qjkFMGIZJ0kor4"
+
+--------------VKMwJJqlh6qjkFMGIZJ0kor4
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
+
+T24gMDIuMTAuMjUgMTc6MDYsIERhdmUgSGFuc2VuIHdyb3RlOg0KPiBPbiAxMC8yLzI1IDAw
+OjQ2LCBKdWVyZ2VuIEdyb3NzIHdyb3RlOg0KPj4gU28gbGV0cyBjb21wYXJlIHRoZSAyIGNh
+c2VzIHdpdGgga2R1bXAgZW5hYmxlZCBhbmQgZGlzYWJsZWQgaW4geW91cg0KPj4gc2NlbmFy
+aW8gKGNyYXNoIG9mIHRoZSBob3N0IE9TKToNCj4+DQo+PiBrZHVtcCBlbmFibGVkOiBObyBk
+dW1wIGNhbiBiZSBwcm9kdWNlZCBkdWUgdG8gdGhlICNNQyBhbmQgc3lzdGVtIGlzDQo+PiBy
+ZWJvb3RlZC4NCj4+DQo+PiBrZHVtcCBkaXNhYmxlZDogTm8gZHVtcCBpcyBwcm9kdWNlZCBh
+bmQgc3lzdGVtIGlzIHJlYm9vdGVkIGFmdGVyIGNyYXNoLg0KPj4+IFdoYXQgaXMgdGhlIG1h
+aW4gY29uY2VybiB3aXRoIGtkdW1wIGVuYWJsZWQ/IEkgZG9uJ3Qgc2VlIGFueQ0KPj4gZGlz
+YWR2YW50YWdlIHdpdGggZW5hYmxpbmcgaXQsIGp1c3QgdGhlIGFkdmFudGFnZSB0aGF0IGlu
+IG1hbnkgY2FzZXMNCj4+IGEgZHVtcCB3aWxsIGJlIHdyaXR0ZW4uDQo+IFRoZSBkaXNhZHZh
+bnRhZ2UgaXMgdGhhdCBhIGtlcm5lbCBidWcgZnJvbSBsb25nIGFnbyByZXN1bHRzIGluIGEg
+bWFjaGluZQ0KPiBjaGVjay4gTWFjaGluZSBjaGVja3MgYXJlIGdlbmVyYWxseSBpbmRpY2F0
+aXZlIG9mIGJhZCBoYXJkd2FyZS4gU28gdGhlDQo+IGRpc2FkdmFudGFnZSBpcyB0aGF0IHNv
+bWVvbmUgbWlzdGFrZXMgdGhlIGxvbmcgYWdvIGtlcm5lbCBidWcgZm9yIGJhZA0KPiBoYXJk
+d2FyZS4NCj4gDQo+IFRoZXJlIGFyZSB0d28gd2F5cyBvZiBsb29raW5nIGF0IHRoaXM6DQo+
+IA0KPiAxLiBBIHRoZW9yZXRpY2FsbHkgZnJhZ2lsZSBrZHVtcCBpcyBiZXR0ZXIgdGhhbiBu
+byBrZHVtcCBhdCBhbGwuIEFsbCBvZg0KPiAgICAgdGhlIHN0YXJzIHdvdWxkIGhhdmUgdG8g
+YWxpZ24gZm9yIGtkdW1wIHRvIF9mYWlsXyBhbmQgd2UgZG9uJ3QgdGhpbmsNCj4gICAgIHRo
+YXQncyBnb2luZyB0byBoYXBwZW4gb2Z0ZW4gZW5vdWdoIHRvIG1hdHRlci4NCj4gMi4ga2R1
+bXAgaGFwcGVucyBhZnRlciBrZXJuZWwgYnVncy4gVGhlIG1hY2hpbmUgY2hlY2tzIGhhcHBl
+biBiZWNhdXNlIG9mDQo+ICAgICBrZXJuZWwgYnVncy4gSXQncyBub3QgYSBiaWcgc3RyZXRj
+aCB0byB0aGluayB0aGF0LCBhdCBzY2FsZSwga2R1bXAgaXMNCj4gICAgIGdvaW5nIHRvIHJ1
+biBpbiB0byB0aGVzZSAjTUNzIG9uIGEgcmVndWxhciBiYXNpcy4NCj4gDQo+IERvZXMgdGhh
+dCBjYXB0dXJlIHRoZSB0d28gcGVyc3BlY3RpdmVzIGZhaXJseT8NCg0KQmFzaWNhbGx5IHll
+cy4NCg0KSWYgd2UgY2FuJ3QgY29tZSB0byBhbiBhZ3JlZW1lbnQgdGhhdCBrZHVtcCBzaG91
+bGQgYmUgYWxsb3dlZCBpbiBzcGl0ZSBvZg0KYSBwb3RlbnRpYWwgI01DLCBtYXliZSB3ZSBj
+b3VsZCBkaXNhYmxlIGtkdW1wIG9ubHkgaWYgVERYIGd1ZXN0cyBoYXZlIGJlZW4NCmFjdGl2
+ZSBvbiB0aGUgbWFjaGluZSBiZWZvcmU/IERpc2FibGluZyBrZHVtcCBvbiBhIGRpc3RybyBr
+ZXJuZWwganVzdCBiZWNhdXNlDQpURFggd2FzIGVuYWJsZWQgYnV0IHdpdGhvdXQgYW55b25l
+IGhhdmluZyB1c2VkIFREWCB3b3VsZCBiZSBxdWl0ZSBoYXJkLg0KDQoNCkp1ZXJnZW4NCg==
+
+--------------VKMwJJqlh6qjkFMGIZJ0kor4
+Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Description: OpenPGP public key
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 07 2025, Pasha Tatashin wrote:
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-> On Tue, Oct 7, 2025 at 8:10=E2=80=AFAM Pratyush Yadav <pratyush@kernel.or=
-g> wrote:
->>
->> On Mon, Oct 06 2025, Pasha Tatashin wrote:
->>
->> > On Mon, Oct 6, 2025 at 1:01=E2=80=AFPM Pratyush Yadav <pratyush@kernel=
-.org> wrote:
->> >>
->> >> On Mon, Sep 29 2025, Pasha Tatashin wrote:
->> >>
->> >> > From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
->> >> >
->> >> > The KHO framework uses a notifier chain as the mechanism for client=
-s to
->> >> > participate in the finalization process. While this works for a sin=
-gle,
->> >> > central state machine, it is too restrictive for kernel-internal
->> >> > components like pstore/reserve_mem or IMA. These components need a
->> >> > simpler, direct way to register their state for preservation (e.g.,
->> >> > during their initcall) without being part of a complex,
->> >> > shutdown-time notifier sequence. The notifier model forces all
->> >> > participants into a single finalization flow and makes direct
->> >> > preservation from an arbitrary context difficult.
->> >> > This patch refactors the client participation model by removing the
->> >> > notifier chain and introducing a direct API for managing FDT subtre=
-es.
->> >> >
->> >> > The core kho_finalize() and kho_abort() state machine remains, but
->> >> > clients now register their data with KHO beforehand.
->> >> >
->> >> > Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
->> >> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
->> >> [...]
->> >> > diff --git a/mm/memblock.c b/mm/memblock.c
->> >> > index e23e16618e9b..c4b2d4e4c715 100644
->> >> > --- a/mm/memblock.c
->> >> > +++ b/mm/memblock.c
->> >> > @@ -2444,53 +2444,18 @@ int reserve_mem_release_by_name(const char =
-*name)
->> >> >  #define MEMBLOCK_KHO_FDT "memblock"
->> >> >  #define MEMBLOCK_KHO_NODE_COMPATIBLE "memblock-v1"
->> >> >  #define RESERVE_MEM_KHO_NODE_COMPATIBLE "reserve-mem-v1"
->> >> > -static struct page *kho_fdt;
->> >> > -
->> >> > -static int reserve_mem_kho_finalize(struct kho_serialization *ser)
->> >> > -{
->> >> > -     int err =3D 0, i;
->> >> > -
->> >> > -     for (i =3D 0; i < reserved_mem_count; i++) {
->> >> > -             struct reserve_mem_table *map =3D &reserved_mem_table=
-[i];
->> >> > -             struct page *page =3D phys_to_page(map->start);
->> >> > -             unsigned int nr_pages =3D map->size >> PAGE_SHIFT;
->> >> > -
->> >> > -             err |=3D kho_preserve_pages(page, nr_pages);
->> >> > -     }
->> >> > -
->> >> > -     err |=3D kho_preserve_folio(page_folio(kho_fdt));
->> >> > -     err |=3D kho_add_subtree(ser, MEMBLOCK_KHO_FDT, page_to_virt(=
-kho_fdt));
->> >> > -
->> >> > -     return notifier_from_errno(err);
->> >> > -}
->> >> > -
->> >> > -static int reserve_mem_kho_notifier(struct notifier_block *self,
->> >> > -                                 unsigned long cmd, void *v)
->> >> > -{
->> >> > -     switch (cmd) {
->> >> > -     case KEXEC_KHO_FINALIZE:
->> >> > -             return reserve_mem_kho_finalize((struct kho_serializa=
-tion *)v);
->> >> > -     case KEXEC_KHO_ABORT:
->> >> > -             return NOTIFY_DONE;
->> >> > -     default:
->> >> > -             return NOTIFY_BAD;
->> >> > -     }
->> >> > -}
->> >> > -
->> >> > -static struct notifier_block reserve_mem_kho_nb =3D {
->> >> > -     .notifier_call =3D reserve_mem_kho_notifier,
->> >> > -};
->> >> >
->> >> >  static int __init prepare_kho_fdt(void)
->> >> >  {
->> >> >       int err =3D 0, i;
->> >> > +     struct page *fdt_page;
->> >> >       void *fdt;
->> >> >
->> >> > -     kho_fdt =3D alloc_page(GFP_KERNEL);
->> >> > -     if (!kho_fdt)
->> >> > +     fdt_page =3D alloc_page(GFP_KERNEL);
->> >> > +     if (!fdt_page)
->> >> >               return -ENOMEM;
->> >> >
->> >> > -     fdt =3D page_to_virt(kho_fdt);
->> >> > +     fdt =3D page_to_virt(fdt_page);
->> >> >
->> >> >       err |=3D fdt_create(fdt, PAGE_SIZE);
->> >> >       err |=3D fdt_finish_reservemap(fdt);
->> >> > @@ -2499,7 +2464,10 @@ static int __init prepare_kho_fdt(void)
->> >> >       err |=3D fdt_property_string(fdt, "compatible", MEMBLOCK_KHO_=
-NODE_COMPATIBLE);
->> >> >       for (i =3D 0; i < reserved_mem_count; i++) {
->> >> >               struct reserve_mem_table *map =3D &reserved_mem_table=
-[i];
->> >> > +             struct page *page =3D phys_to_page(map->start);
->> >> > +             unsigned int nr_pages =3D map->size >> PAGE_SHIFT;
->> >> >
->> >> > +             err |=3D kho_preserve_pages(page, nr_pages);
->> >> >               err |=3D fdt_begin_node(fdt, map->name);
->> >> >               err |=3D fdt_property_string(fdt, "compatible", RESER=
-VE_MEM_KHO_NODE_COMPATIBLE);
->> >> >               err |=3D fdt_property(fdt, "start", &map->start, size=
-of(map->start));
->> >> > @@ -2507,13 +2475,14 @@ static int __init prepare_kho_fdt(void)
->> >> >               err |=3D fdt_end_node(fdt);
->> >> >       }
->> >> >       err |=3D fdt_end_node(fdt);
->> >> > -
->> >> >       err |=3D fdt_finish(fdt);
->> >> >
->> >> > +     err |=3D kho_preserve_folio(page_folio(fdt_page));
->> >> > +     err |=3D kho_add_subtree(MEMBLOCK_KHO_FDT, fdt);
->> >> > +
->> >> >       if (err) {
->> >> >               pr_err("failed to prepare memblock FDT for KHO: %d\n"=
-, err);
->> >> > -             put_page(kho_fdt);
->> >> > -             kho_fdt =3D NULL;
->> >> > +             put_page(fdt_page);
->> >>
->> >> This adds subtree to KHO even if the FDT might be invalid. And then
->> >> leaves a dangling reference in KHO to the FDT in case of an error. I
->> >> think you should either do this check after
->> >> kho_preserve_folio(page_folio(fdt_page)) and do a clean error check f=
-or
->> >> kho_add_subtree(), or call kho_remove_subtree() in the error block.
->> >
->> > I agree, I do not like these err |=3D stuff, we should be checking
->> > errors cleanly, and do proper clean-ups.
->>
->> Yeah, this is mainly a byproduct of using FDTs. Getting and setting
->> simple properties also needs error checking and that can get tedious
->> real quick. Which is why this pattern has shown up I suppose.
->
-> Exactly. This is also why it's important to replace FDT with something
-> more sensible for general-purpose live update purposes.
->
-> By the way, I forgot to address this comment in the v5 of the KHO
-> series I sent out yesterday. Could you please take another look? If
-> everything else is good, I will refresh that series so we can ask
-> Andrew to take in the KHO patches. That would simplify the LUO series.
+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
+kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
+=3DeeAB
+-----END PGP PUBLIC KEY BLOCK-----
 
-Good idea. Will take a look.
+--------------VKMwJJqlh6qjkFMGIZJ0kor4--
 
-[...]
+--------------SS3m9n9G0zIP5yb22DVC4Q10--
 
---=20
-Regards,
-Pratyush Yadav
+--------------eh2kZetL0id6wh0cV6D67V5G
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmjlFj4FAwAAAAAACgkQsN6d1ii/Ey8p
+3QgAlcpsM1b65HZ+nYJ9qmO1fgoCaS6uqm8EKvecyh255Jo8fAoEZ0QSdojiEY4duquiYUYzysis
+yBqVWceul+ft46KPhSZZqaOH98FUzTBJ+WDucPEgDn//t5lv9RPj1CfExm1Uc9Cz7BphIAJqrkCR
+iz3jV47eFYnNu91PU1aCCm3YWI2rrInx5UL0hW9Y+lENUQwHcDkPLWtjaOLyOWHEY4La6eUhpRqv
+zgrlV+C+HWAYZjZOtBwKbUp1aE6pNsZY225/0TF7GnUeQWo7H4cjHWRE2XLB9akZVPLPDZvt/xNw
+FzjEvecvltRhgIexjtnHj3FoRV1MBABWxTNXpP/fMw==
+=roL9
+-----END PGP SIGNATURE-----
+
+--------------eh2kZetL0id6wh0cV6D67V5G--
 
