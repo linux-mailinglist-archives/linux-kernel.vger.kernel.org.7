@@ -1,162 +1,199 @@
-Return-Path: <linux-kernel+bounces-843722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A57CEBC0126
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 05:13:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70FF0BC01D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 05:50:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 519EE34C3F5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 03:13:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC3DC3A15F7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 03:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D79D1FECAB;
-	Tue,  7 Oct 2025 03:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3511E217F33;
+	Tue,  7 Oct 2025 03:50:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="YsdsMLFK"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LREWyy4v"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35CE1F3D58;
-	Tue,  7 Oct 2025 03:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E444020322
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 03:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759806806; cv=none; b=AIQomgQAiO0tnPoiPuePCs8eUUg+9a1lgvbIV7bXC1XZ8IWiB03XFmEJqW+x/hx7767bJuzkw55TR5v1FzLrHyb9STtt+Bb0nae2Wl1X/YK36cWZahSgvhyPyNFSBskfLYji4Tqf4uZ44Hmeb+Kkxi3yNbTdjKZIJ97pqHty16Q=
+	t=1759809019; cv=none; b=TdQtp3nHQQ91sq6c2G00tXdiipsrsIOiWpK6z2+MPwJYriMilVbkov0RousT957QRDBkzDYerTgxQ7tDf3Dq5+s/UisqSr/L5Zggt/t0NqUCOUPN+S2KE4DGVTeter0WDJiC2X4B0YXFKZaKQ4IwXSKY9jwUAq1DEYM342AFgTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759806806; c=relaxed/simple;
-	bh=g7SBsgpEXa0bEbTMglrTg0VgIQmHDA8rbXlLwuk8S5w=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=tDM3YblKmj1VS5dPL3oAGvEcib+wkUkwhrT7UOBBQJcDWG+iw7EdpC6jAHEGm1Y18b3oRc2cnRTHiUhvOcXLvR38iXV0+0ZcmTu/WVA+Gy3C5ca3xw9M2ZYrCDCCj3iP3WonT/7BlRhu74yIcrLmMHk9WTyLiivuUkTE5u5jXvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=YsdsMLFK; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 5973D8q243438052, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1759806788; bh=lSh85/Q7itr2LXpqH53KzmVW4jEDAZPaB6WVCNkaCDQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=YsdsMLFKAxw3eNgEnKJwrVDMr+ghI6F8KD8fX2/O80+/N64voCB+pIUtv/88QBtca
-	 42g2jb9RCcjl040ZqLQJqcioaXOY1SgRUCbpbcTVoUV0NqFdVxLDzBGEOhiUEvEz/z
-	 M/ZeFkm9ErH2rqJNOQ16fQiN9ZOMcAX6HEoxaW8kdvwRYFYofojInwLy4xRQmp7R2I
-	 b0CFflDh23Bu7GLxiLk44Ov/k5gFYb0F7zeHmHNfFewY0QZ7FH9uxngUzgj0sePxZ5
-	 5ShUQmDVxtDcUu6v4ZCVNBsbuT/Gezgde+7lLb4vNC2LGOGYXOExV96Q0WOgJZfQ8H
-	 ZknEu/albQ9Xg==
-Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 5973D8q243438052
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 7 Oct 2025 11:13:08 +0800
-Received: from RTKEXHMBS05.realtek.com.tw (10.21.1.55) by
- RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.27; Tue, 7 Oct 2025 11:13:08 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS05.realtek.com.tw (10.21.1.55) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.27; Tue, 7 Oct 2025 11:13:08 +0800
-Received: from RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090]) by
- RTKEXHMBS06.realtek.com.tw ([fe80::c39a:c87d:b10b:d090%10]) with mapi id
- 15.02.1544.027; Tue, 7 Oct 2025 11:13:08 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Fedor Pchelkin <pchelkin@ispras.ru>,
-        Bitterblue Smith
-	<rtl8821cerfe2@gmail.com>
-CC: Zong-Zhe Yang <kevin_yang@realtek.com>,
-        Bernie Huang
-	<phhuang@realtek.com>,
-        "linux-wireless@vger.kernel.org"
-	<linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "lvc-project@linuxtesting.org"
-	<lvc-project@linuxtesting.org>
-Subject: RE: [PATCH rtw-next v2 5/7] wifi: rtw89: implement C2H TX report handler
-Thread-Topic: [PATCH rtw-next v2 5/7] wifi: rtw89: implement C2H TX report
- handler
-Thread-Index: AQHcM9ij/5zY6bpRKkiRJfxW79+fNLS2B9uQ
-Date: Tue, 7 Oct 2025 03:13:08 +0000
-Message-ID: <91083b4683fd457ab6363b135bfee6a3@realtek.com>
-References: <20251002200857.657747-1-pchelkin@ispras.ru>
- <20251002200857.657747-6-pchelkin@ispras.ru>
-In-Reply-To: <20251002200857.657747-6-pchelkin@ispras.ru>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1759809019; c=relaxed/simple;
+	bh=+N4gtziafAY4WD1brFYmW50W1a/ix1jY2Uo1fbt1pYg=;
+	h=Message-ID:From:To:Cc:Subject:In-Reply-To:Date:References; b=eizYPij3C1P5LZsG4EvsaPL3SPNbJrvgXcPL/T6vSP4wGgNxf0Bk7XnonrGhF4GKDZG7xekDKD1UVHHo7HV1hcxPYKJqo7/til6NMaglBLibRZcp0fpZ8BH7NsnJls/Lub8qBCCtT5bvh+kB34xAej0vm9JCemKfTspWmtiub2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LREWyy4v; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b5515eaefceso5401505a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 20:50:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759809017; x=1760413817; darn=vger.kernel.org;
+        h=references:date:in-reply-to:subject:cc:to:from:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=DLvTrnlB6pwG2/hP8cgIWiHqyjOpePcOnpbnsgYKsys=;
+        b=LREWyy4vQI51YZWeCpbtsZbkLAvq4ipRRtricIo1TNvQc/ceSxEaM0ebriIJuqQ9BQ
+         W2FDnhdR6/ijFqb7gnQARwp/1+NNQ8oiCWhU2nEVGmw3eAJ2+gbW6Dx+J13WnaemtCJL
+         fE9oAHW8PXtvt5ml3mp2+AGtOaroD6qrDpNRi/buLGQBaHMWgC705Pagq7+BVwZd6DlV
+         ngJev/eEFMamnBcne2531YjqN3ayu73khO6IbKW++JOXTbc4L6eKcw8RjIqdLLb19FBX
+         /P2h3vYC/Tu9fNFDAcvSEZPa6wMkFyi4vJSBMPj/KfVvacfymus7S06s6bB6Kh8kgRGx
+         A9Ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759809017; x=1760413817;
+        h=references:date:in-reply-to:subject:cc:to:from:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DLvTrnlB6pwG2/hP8cgIWiHqyjOpePcOnpbnsgYKsys=;
+        b=LxxoExikqh5jXdllCF1CHlRH1p1LJpVRnSnqLnyvDhIh74a0qV5GRQP4du0l94iRfb
+         1X+A+/mCZTbFIjSkg7eef+37TmUF64+aspE+rj4xzugoEaA7m7BikcqxI8lzi8n2HLwd
+         5DBR4z/vUlDixg02e9yVMHf4esa5fYkaFCLEc2Y8C6T4wGnH3nbyUiSTqofoj5/Kf4Sv
+         fblvbPj/+fVbQStfoJNI9YC5hWFrXP0hwvhRJjwpD48xkSyOKIwB0rIA3bMlfb3VIdRe
+         v1pKbfDzdPtd+WTIFxlBDDRo/Y4+E4u1OwdKt63UB76sUPbpch7hFLMlnvlXAlHSLzGu
+         tN3A==
+X-Forwarded-Encrypted: i=1; AJvYcCVXyhCYwHIYjzZA7l9g/8zNMAToa8NzbBFjR/cmhMUIYdmaQqth95VxSTwddjIGH0nK1nFU368EnU2BZtA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzovL6UjyXyPUvgeWl6o+0sJJbi5uIpxvxctWzkJ8pAbDXbTWoW
+	o/n7X9ibOb/mPL+OSuV7t/wf5TX7wT0+tl13OzHnI7XnlkwuJskW1XRZ
+X-Gm-Gg: ASbGnctDrF6tXUFHVBBdGIwMz+ERTjI0Hb5u1Ygx+1NeWEuohRQeEIFw3omGOuUPClu
+	Rxpt7UkiglBBS4NzAPYueoa31jz+bOjDurPwPxScHG1lmEWvCPFIMcU5QzgCBV2HU5gL+kGXJWE
+	17sHChuLRW3vianN9LUu+mvtWrr6ew68+B5eKTDg0lG+JlAWPxa3nIMI883Pa9VmTMCUagFQ/DQ
+	NbJonMtMJqFfbh5n2z60T1B7GIKzuwW2l9A88TbnCLroWP4U6fUwzXh/jU2nLt51OjLWxU7rd/W
+	9hZdZkx9QlnHMIon1B5TxmPIdxs2iobG8RrQmj/xX0hiJoNcKfUcECTmSw57GRFF0P0/GVnY6BT
+	q9O6M1svOl8vi9MMnNztdsn2uupoqRL1MqwZPdaLaN60OGnZC6Q==
+X-Google-Smtp-Source: AGHT+IFmjVvttIfnEZ9exjxiEqJx+Nnc0IZMPVpG/NyeFL1NUXZsFyXzVDAXJzYFsL6KxP1hXcUViw==
+X-Received: by 2002:a17:903:38d0:b0:269:8f2e:e38 with SMTP id d9443c01a7336-28e9a565f18mr186783675ad.6.1759809016924;
+        Mon, 06 Oct 2025 20:50:16 -0700 (PDT)
+Received: from dw-tp ([49.205.218.89])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1b8444sm149114645ad.86.2025.10.06.20.50.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Oct 2025 20:50:16 -0700 (PDT)
+Message-ID: <68e48df8.170a0220.4b4b0.217d@mx.google.com>
+X-Google-Original-Message-ID: <875xcrgzs2.fsf@ritesh.list@gmail.com>
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Nam Cao <namcao@linutronix.de>, Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <maz@kernel.org>, Gautam Menghani <gautam@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Cc: Nam Cao <namcao@linutronix.de>
+Subject: Re: [PATCH v2 1/3] powerpc/xive: Untangle xive from child interrupt controller drivers
+In-Reply-To: <83968073022a4cc211dcbd0faccd20ec05e58c3e.1754903590.git.namcao@linutronix.de>
+Date: Tue, 07 Oct 2025 08:54:13 +0530
+References: <cover.1754903590.git.namcao@linutronix.de> <83968073022a4cc211dcbd0faccd20ec05e58c3e.1754903590.git.namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
 
-Fedor Pchelkin <pchelkin@ispras.ru> wrote:
-> rtw89 has several ways of handling TX status report events.  The first on=
-e
-> is based on RPP feature which is used by PCIe HCI.  The other one depends
-> on firmware sending a corresponding C2H message, quite similar to what
-> rtw88 has.
->=20
-> Toggle a bit in the TX descriptor and place skb in a queue to wait for a
-> message from the firmware.  rtw89 has an extra feature providing TX
-> reports for multiple retry transmission attempts.  When there is a failed
-> TX status reported by the firmware, the report is ignored until the limit
-> is reached or success status appears.  Do all this according to the vendo=
-r
-> driver for RTL8851BU.
->=20
-> It seems the only way to implement TX status reporting for rtw89 USB.
-> This will allow handling TX wait skbs and the ones flagged with
-> IEEE80211_TX_CTL_REQ_TX_STATUS correctly.
->=20
-> Found by Linux Verification Center (linuxtesting.org).
->=20
-> Suggested-by: Bitterblue Smith <rtl8821cerfe2@gmail.com>
-> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+Nam Cao <namcao@linutronix.de> writes:
 
-[...]
+> xive-specific data is stored in handler_data. This creates a mess, as xive
+> has to rely on child interrupt controller drivers to clean up this data, as
+> was done by 9a014f45688 ("powerpc/pseries/pci: Add a msi_free() handler to
+> clear XIVE data").
+>
+> Instead, store xive-specific data in chip_data and untangle the child
+> drivers.
+>
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
+> ---
+> v2: no change
+> ---
+>  arch/powerpc/include/asm/xive.h           |  1 -
+>  arch/powerpc/platforms/powernv/pci-ioda.c | 21 +-------
+>  arch/powerpc/platforms/pseries/msi.c      | 18 +------
+>  arch/powerpc/sysdev/xive/common.c         | 63 +++++++++++------------
+>  4 files changed, 33 insertions(+), 70 deletions(-)
 
-> diff --git a/drivers/net/wireless/realtek/rtw89/mac.c b/drivers/net/wirel=
-ess/realtek/rtw89/mac.c
-> index fd11b8fb3c89..10c2a39e544b 100644
-> --- a/drivers/net/wireless/realtek/rtw89/mac.c
-> +++ b/drivers/net/wireless/realtek/rtw89/mac.c
-> @@ -5457,6 +5457,20 @@ rtw89_mac_c2h_mcc_status_rpt(struct rtw89_dev *rtw=
-dev, struct sk_buff *c2h, u32
->         rtw89_complete_cond(&rtwdev->mcc.wait, cond, &data);
->  }
->=20
-> +static void
-> +rtw89_mac_c2h_tx_rpt(struct rtw89_dev *rtwdev, struct sk_buff *c2h, u32 =
-len)
-> +{
-> +       const struct rtw89_c2h_mac_tx_rpt *rpt =3D
-> +               (const struct rtw89_c2h_mac_tx_rpt *)c2h->data;
-> +       u8 sw_define =3D le32_get_bits(rpt->w2, RTW89_C2H_MAC_TX_RPT_W2_S=
-W_DEFINE);
-> +       u8 tx_status =3D le32_get_bits(rpt->w2, RTW89_C2H_MAC_TX_RPT_W2_T=
-X_STATE);
-> +       u8 data_txcnt =3D le32_get_bits(rpt->w5, RTW89_C2H_MAC_TX_RPT_W5_=
-DATA_TX_CNT);
 
-Since we'd like reverse X'mas tree order, I'd like separate declarations an=
-d
-assignments. Like
+Hi Nam, 
 
-u8 sw_define, tx_status, data_txcnt;
+I am facing kernel crash on host when trying to run kvm pseries guest on
+powernv host. Looking it a bit more closely, I see that we are missing
+conversion of xxx_irq_handler_data()) to xxx_irq_chip_data() at few other
+places, including in powerpc KVM code. 
 
-sw_define =3D le32_get_bits(rpt->w2, RTW89_C2H_MAC_TX_RPT_W2_SW_DEFINE);
-tx_status =3D le32_get_bits(rpt->w2, RTW89_C2H_MAC_TX_RPT_W2_TX_STATE);
-data_txcnt =3D le32_get_bits(rpt->w5, RTW89_C2H_MAC_TX_RPT_W5_DATA_TX_CNT);
+<Crash signature>
 
-Otherwise, looks good to me.
+BUG: Kernel NULL pointer dereference on read at 0x00000010
+Faulting instruction address: 0xc0000000001c0704
+Oops: Kernel access of bad area, sig: 11 [#1]
+LE PAGE_SIZE=64K MMU=Radix  SMP NR_CPUS=2048 NUMA PowerNV
+CPU: 103 UID: 0 PID: 2742 Comm: qemu-system-ppc Not tainted 6.17.0-01737-g50c19e20ed2e #1 NONE
+<...>
+NIP:  c0000000001c0704 LR: c0000000001c06f8 CTR: 0000000000000000
+REGS: c0000000627476a0 TRAP: 0300   Not tainted  (6.17.0-01737-g50c19e20ed2e)
+MSR:  9000000000009033 <SF,HV,EE,ME,IR,DR,RI,LE>  CR: 88044488  XER: 00000036
+CFAR: c0000000002c20d8 DAR: 0000000000000010 DSISR: 40000000 IRQMASK: 0 
+<...>
+NIP [c0000000001c0704] kvmppc_xive_attach_escalation+0x174/0x240
+LR [c0000000001c06f8] kvmppc_xive_attach_escalation+0x168/0x240
+Call Trace:
+  kvmppc_xive_attach_escalation+0x168/0x240 (unreliable)
+  kvmppc_xive_connect_vcpu+0x2a0/0x4c0
+  kvm_arch_vcpu_ioctl+0x354/0x470
+  kvm_vcpu_ioctl+0x488/0x9a0
+  sys_ioctl+0x4ec/0x1030
+  system_call_exception+0x104/0x2b0
+  system_call_vectored_common+0x15c/0x2ec
 
-> +
-> +       rtw89_debug(rtwdev, RTW89_DBG_TXRX,
-> +                   "C2H TX RPT: sn %d, tx_status %d, data_txcnt %d\n",
-> +                   sw_define, tx_status, data_txcnt);
-> +}
-> +
 
-[...]
+
+Here is the diff which fixed this.. 
+
+diff --git a/arch/powerpc/kvm/book3s_xive.c b/arch/powerpc/kvm/book3s_xive.c
+index 1302b5ac5672..c029c6cc82ef 100644
+--- a/arch/powerpc/kvm/book3s_xive.c
++++ b/arch/powerpc/kvm/book3s_xive.c
+@@ -917,7 +917,7 @@ int kvmppc_xive_attach_escalation(struct kvm_vcpu *vcpu, u8 prio,
+         */
+        if (single_escalation) {
+                struct irq_data *d = irq_get_irq_data(xc->esc_virq[prio]);
+-               struct xive_irq_data *xd = irq_data_get_irq_handler_data(d);
++               struct xive_irq_data *xd = irq_data_get_irq_chip_data(d);
+
+                xive_vm_esb_load(xd, XIVE_ESB_SET_PQ_01);
+                vcpu->arch.xive_esc_raddr = xd->eoi_page;
+@@ -1612,7 +1612,7 @@ int kvmppc_xive_set_mapped(struct kvm *kvm, unsigned long guest_irq,
+
+        /* Grab info about irq */
+        state->pt_number = hw_irq;
+-       state->pt_data = irq_data_get_irq_handler_data(host_data);
++       state->pt_data = irq_data_get_irq_chip_data(host_data);
+
+        /*
+         * Configure the IRQ to match the existing configuration of
+@@ -1788,7 +1788,7 @@ void kvmppc_xive_disable_vcpu_interrupts(struct kvm_vcpu *vcpu)
+ void xive_cleanup_single_escalation(struct kvm_vcpu *vcpu, int irq)
+ {
+        struct irq_data *d = irq_get_irq_data(irq);
+-       struct xive_irq_data *xd = irq_data_get_irq_handler_data(d);
++       struct xive_irq_data *xd = irq_data_get_irq_chip_data(d);
+
+        /*
+         * This slightly odd sequence gives the right result
+@@ -2829,7 +2829,7 @@ int kvmppc_xive_debug_show_queues(struct seq_file *m, struct kvm_vcpu *vcpu)
+                if (xc->esc_virq[i]) {
+                        struct irq_data *d = irq_get_irq_data(xc->esc_virq[i]);
+                        struct xive_irq_data *xd =
+-                               irq_data_get_irq_handler_data(d);
++                               irq_data_get_irq_chip_data(d);
+                        u64 pq = xive_vm_esb_load(xd, XIVE_ESB_GET);
+
+                        seq_printf(m, "    ESC %d %c%c EOI @%llx",
+
+
+... However grepping for "handler_data" in arch/powerpc I see there is
+atleast one more place where we may still need the fix.. There are few
+more places which grep returned - but I am not sure if they all really need
+the fix. But I guess VAS should be fixed i.e :
+
+arch/powerpc/platforms/powernv/vas.c:   xd = irq_get_handler_data(vinst->virq);
+
+
+Would you like to submit an official patch for converting these other places too?
+
+
+Thanks!
+-ritesh
 
 
