@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-844224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 362F7BC1563
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 14:16:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C83F6BC156B
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 14:17:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BE3219A14CA
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 12:16:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D8C718859C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 12:16:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5307E2DECA3;
-	Tue,  7 Oct 2025 12:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9E82DF3FD;
+	Tue,  7 Oct 2025 12:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KC0dMdeK"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L5PTt/fR"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED70735972
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 12:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A192DE6F3
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 12:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759839338; cv=none; b=FUVG0ztFxGBGJddLpLS5L3m89dIaoGxiXZ1fmt2bM9Mq+6TCcGBuKFZGgzjPe5IF9QWaU1nB+mQBJqfwvd3KmvtNrprNh+yduhGFn9I+31D6TjAkoAX6rR7pyPdeoCBK8P/WgQzoNWME/FVdJB9HIPKaJRDcSC28DPqIRcOkDE4=
+	t=1759839340; cv=none; b=lVQGZYcYFZUy5zSKE1ZGXEhALBUHF/fkhRzhy+xzHb2aoph9ityVYV9H8E2R+LNHkbUDNlNSWz49qWXrh5y70YwNNt4bMiy+115ZdvYERMAqk8fEyKKJ5dLX/nuS9iIiOq0ntQ4H+Vm2fKcUy7iJ4zgfuZyXJ+KvIuXOas/fF4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759839338; c=relaxed/simple;
-	bh=WTfNWiSUHE3yzT8NN8B4cyL4njh+KYmZ9d7q1pyxDug=;
+	s=arc-20240116; t=1759839340; c=relaxed/simple;
+	bh=jE5Y4osDC+P5h48du48IVUkyowJxZGZE4qvBYfy1Jok=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KObhl2iX9mLfH60iokmL+6eWG4p9v1Jm3cPLnghl0LXahhSE7LVOhPCpvDZQmf7fDh7uOCCrclZbgUBP8qNwjf/1O2cJlm2ZcS/jbAT0APbt8UPQ5EqnRBEcAWUIbhVf+O8Q0W7sa2+PpEZ0bF3VtYhp/vODRG9JOoBFCc/cWhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KC0dMdeK; arc=none smtp.client-ip=209.85.221.44
+	 MIME-Version; b=db7YnRco6j2zIs/SSY/arIjl36eIrpVx+wmUeIbc4EfE+DYOt0NRRPUPRpDu89qDMzx1cr+xcSy4NHcDrmta63B9hwfxI0H9LGBvSoYsYKAR7Vdm/YO+04hYxvZtmv6jGXTUz3x/+sjkgYF1VJnuoBmWFYv10EYGL3Up81Tfq1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L5PTt/fR; arc=none smtp.client-ip=209.85.221.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-42421b1514fso2913728f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 05:15:36 -0700 (PDT)
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3c68ac7e18aso658079f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 05:15:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759839335; x=1760444135; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759839337; x=1760444137; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=euhEJjeobLyj8H5iJ33FXAElxhlSOQw3IhaD7kRk93A=;
-        b=KC0dMdeKkdMPtCuP0yAVJKsDK2wsXOF+UQ2yZR881BYhQ+sitWGuEeNg8dsILXfn4Y
-         8cuVaw0ASG/t7Z/he8jEvqBu6CjPBV53WrF/cm06ppYyfBNrZ6hBi/kVtrjGIl0fMHFt
-         FjSwJknvLfRCNWCYChSTugHHkFJmOpZmcjmn95ENEfMI/ohEWr7NYou5hzGSdGzudP1d
-         SuPKtbA/lWrDn0W7ycaEffulNv6nNq9awDEt3fvIAWFiTvVA782hzCfQHIo3ArxGwFQT
-         6M5VHIPxdGhars5Wbeiyk/WKaCg8gPAkWEKzBnLwUrar/gFFEhoZz4UF2j5dpzQLdeWk
-         4g1A==
+        bh=UxV2LuC4knXLNn0oldAJSchipN1qTRUO37h3RaQ5WvU=;
+        b=L5PTt/fRfOJ96l8poNIovLWJzFxEZKcIq96vE90JByxy6s2qy3PqfC/CAjK9q1+c4L
+         FFTg2bBx1+0xfIKxcWOWKoofmHixNRJis8TX493QF3IWWV9W6Pa/ma3uuuHVJoZyG1Y3
+         p28hbpmIsSKvlUNVX1x5+qoWopKNLP2M3EdOTuWt5QRbbb4N5fXtpIiHZqY02RVuH1f9
+         t6i6LVEqgBikNKZbgvnDU2A5MbA1ZWY1Tnx4nt0O/UjBuLBXt6rhwVRJOW00OHI1/U+M
+         NTMY3CFjGvj2TIGqgfrVwEBhqeDA9sAsSWDrBhRATkm1XQEugfMsnsiE2H8JIftGJ4ik
+         02Iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759839335; x=1760444135;
+        d=1e100.net; s=20230601; t=1759839337; x=1760444137;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=euhEJjeobLyj8H5iJ33FXAElxhlSOQw3IhaD7kRk93A=;
-        b=FSqynIYl1ftrdGjj/WEUARU58uvIzDqU2thO9Eu+YR9+SWZJolph25uHBhY5hw/VIP
-         rRlFBHsvMPmV/DaPdYgyosd8uYkaLV3aOb0aDweXQ0LBHauWQ6HzFddkIUdHxWqcaSEO
-         sNTet0YDRZBYXEf/NMJYbHuek+KKikbx1PiNW0i39LZ8vJWO86GGh0AMVowo010jaNkh
-         SCOzj26sDrx9L0VfFXf+j9IKxGvCq7OpBkG5ZIycAJEd9ew3cMwS90kC2u1Jj1wHnVUE
-         JLKSZa0ZOJ50Sawo8cclD3kZeqJXZ2te+ljjb28glviLSjUaNiFb+KU/NgyXQDELkTIA
-         e99g==
-X-Forwarded-Encrypted: i=1; AJvYcCVVgvY1yyyPdDM5r6y3l18jwTZ5cuBdjKgkaK3ZqNc0bZ/JGqtc9HMnD2PM5WEVVusLwylAPF+fINqyPQg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcgSNT6ePfIrHCOEwgV3FJFewuDzl4NWljRNICRTo4ATk1g3iS
-	svcYFuK7dZRAF397xgLJi6izFY9GCNfwg3XUjVAg7WgQOVfmlyV16YOV
-X-Gm-Gg: ASbGncvk2urc4zLMdSkomjeE+YS8nGbpksYDsUmJao1QKC2Y03084f9HUl02pejFSyK
-	MyPHmshKI8M5jgHq5ciATEnSuWAvO0Y7Nbi5MH7RKyXULuGN+ttdtxR2T1SE7uirWcRHfbk0k7q
-	EYPjpYoAvIOdiCpGcRrzBVMFgx1NqQPIKRLpMVMAYbBEbTv6qHBpOH6WSKeXwAubqwrcK8ZpJrN
-	Wor8SxtdqwaiICbzX6bQZV/SmEFjejWLZbnBcWlgrulU7sKP5/a4PnFuN5+f7UgOEXM4y5l579j
-	nUkjkmXfrVmkMhStnTVA6K8VRNWhEkZrfTEHjbRqWoQLB7sCz9o4va5Bvofxg9Rd4UHJBR2EywI
-	Gz5MYgGjkA1B7DWpaxK5bDsjz80H3WPCIo8jHv+7aoZIWmkjMRVyiS5AMOrlndaDsM3HVaJN822
-	b4VU85
-X-Google-Smtp-Source: AGHT+IEWjOayRTPZVPnsMccxbWYDGiMC1YfpjgyiCNEpc7Zo759zR8e/RAlhpAfbAmZEfuj9Nojr1g==
-X-Received: by 2002:a05:6000:4029:b0:3e4:b44d:c586 with SMTP id ffacd0b85a97d-4256719e10dmr8954404f8f.34.1759839335308;
-        Tue, 07 Oct 2025 05:15:35 -0700 (PDT)
+        bh=UxV2LuC4knXLNn0oldAJSchipN1qTRUO37h3RaQ5WvU=;
+        b=Gwd0wnBOUxAzdWt4emzljfsFgn1uA6xv6knLYe8eF0J2ije43dcUqvOlMQdRIbQuO6
+         7oF5sEGLJFMJ/hzTNq/rr60U77itmYxxI6PxY1E9F6NfdPV2QXtlzjB6GJTn+EmP09gi
+         gVrhLAM1wNBUe8pztxc0lVLhNFIQMZElsRNBtN+TMliCmq0reTaHRu5VrJEfpTRjEENo
+         8NUJi3AWLRjKuDA+5WDAilqLrp/B3B6Y9kNDoQkKxdFESD6C2XUw3kDB2PPMAnqAywyI
+         H1jvKw4waflx9JbiuY9EJsxmkiUldrXwqHdEcJ5u8uwBxErPXJsqf6kMDqVNmzsDSO72
+         1RSA==
+X-Forwarded-Encrypted: i=1; AJvYcCU6OCN8ySrWBu0H5Sqcn1C4fuiUC/0YGb7IZBhYOO69aoJB239FIeKtGtonhnqp+RcwQaegnbBDvzNY3Ms=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0YfTFkeHG+zsTCgYSF/ZK91tirtd6b8aNqA0wkIT2M75NmBSn
+	D3VuKQZSfUoUw+AE0gMwo8SyQkI0J9qkdgBvo1zS1F8au7YKPFOQbH7t
+X-Gm-Gg: ASbGncsET2Lv/IWd520IjYgS4M2uov5EEW4KZZ/YMWnceItn29FeJOKn2dF8/+tPQuA
+	5jb7xhWZ+tA8upFRCrfmqNKNseSCUrseFL3KsOCtcayx+h8+t1bWb5kS72wajI3myG2VV8nGa1N
+	VTFajIGi9TD/Wmj+3il9xBegVQStS3cXl856ge/srGbZqRiRg/Xc/MrnEXJ7oDk7YZaQobxaTEP
+	L30eX7ecxDpz43ZtUPMi9mDa49p29lFO3LStOgtatF+MFyr2srxrDiyz33GqC2hJDiIYn+ItbQh
+	DbjuUVTowsK2mZ2TniGoNBY6O1YLlaSZ4CZRFwR45OjZuwrBWqpbfLOfGKJuCY1Nsb3eBquKZ/t
+	j7EBYl7CpgsGIIP38XpN1P8EuIVwoBGiERc6n88SI+m0o7ixa/NdpDl5SqTbLkh8GC7pbP+3F+x
+	UbWPoC
+X-Google-Smtp-Source: AGHT+IF9KlIFhnybD09Wxy3QuXwNIOtzoAtHacg13oKGF3oEvjFMihHxLGJv/GK57sI040CCkcmmmA==
+X-Received: by 2002:a05:6000:250c:b0:3d1:c2cf:da07 with SMTP id ffacd0b85a97d-4256713ee35mr7992344f8f.4.1759839336467;
+        Tue, 07 Oct 2025 05:15:36 -0700 (PDT)
 Received: from iku.example.org ([2a06:5906:61b:2d00:9667:4f0f:586a:20c3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8a6e1bsm25590167f8f.8.2025.10.07.05.15.34
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8a6e1bsm25590167f8f.8.2025.10.07.05.15.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 05:15:34 -0700 (PDT)
+        Tue, 07 Oct 2025 05:15:35 -0700 (PDT)
 From: Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -87,9 +87,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	Biju Das <biju.das.jz@bp.renesas.com>,
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
 	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 2/4] arm64: dts: renesas: r9a09g056: Add Cortex-A55 PMU node
-Date: Tue,  7 Oct 2025 13:15:06 +0100
-Message-ID: <20251007121508.1595889-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 3/4] arm64: dts: renesas: r9a09g077: Add Cortex-A55 PMU node
+Date: Tue,  7 Oct 2025 13:15:07 +0100
+Message-ID: <20251007121508.1595889-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251007121508.1595889-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20251007121508.1595889-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -104,19 +104,19 @@ Content-Transfer-Encoding: 8bit
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
 Enable the performance monitor unit for the Cortex-A55 cores on the
-RZ/V2N (R9A09G056) SoC.
+RZ/T2H (R9A09G077) SoC.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a09g056.dtsi | 5 +++++
+ arch/arm64/boot/dts/renesas/r9a09g077.dtsi | 5 +++++
  1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g056.dtsi b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
-index 9d540aa4d10b..8781c2fa7313 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g056.dtsi
-@@ -153,6 +153,11 @@ opp-19687500 {
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/r9a09g077.dtsi b/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
+index cb16fe194208..0086f7953cdc 100644
+--- a/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a09g077.dtsi
+@@ -65,6 +65,11 @@ extal_clk: extal {
+ 		clock-frequency = <0>;
  	};
  
 +	pmu {
