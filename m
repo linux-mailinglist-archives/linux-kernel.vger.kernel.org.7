@@ -1,143 +1,136 @@
-Return-Path: <linux-kernel+bounces-844512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6AD2BC21C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:26:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C727BC21CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:27:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BB1C84EF769
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:26:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E230188BFCC
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:27:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ED012E7F2A;
-	Tue,  7 Oct 2025 16:26:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 631082E7BDD;
+	Tue,  7 Oct 2025 16:27:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Yt+zyzda"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AElYYsOh"
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB7F2E7BDC;
-	Tue,  7 Oct 2025 16:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5067111712
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 16:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759854371; cv=none; b=jnEjKg7WGYS2h/VWKAjtQNDbRTdiOGGjlSojRFw0KTU3/QpUn6FDw0NSRJsnG55vDGo1ubf34cnKAzBpDLWsvGS1ZMip6hFkABfSkdLcum+VUOHg7tvbRjuisImA88Rc6La795ImHQZVi/SEgiOfYJczGqRpmwipV8BWH5/Ta38=
+	t=1759854434; cv=none; b=N5fjOiN0BN23SpzOTsrUHBORjXSZf6/msFMzv3FEaxcAz60iBmaTrXseC+3+cC3fQBEJrAMIh1lqzjyOatIi7MoAsCKkeryXS+Z5PpY14Nzt6xhQWLS4RQ3Kh/+wAGY4xuRd0QR+ML56skbZx3otViaGrQhO+qT+XCW2SLhTTRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759854371; c=relaxed/simple;
-	bh=nP2Zdx6rW0paU6gSmqNSwdkZxdivBILmkcFEEf8fh5c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fLrQxl2lwGtiyWQRb2/aCSzD9UnyMvVcHaAxsW2prckpngonlPbAyzc0Zt85iGfn2OaYLw0xD156HjPmkhlgGCXmg3IpfR1wOplz+f8drWHJ0S7ckOjVGFLOMIhSPm2bt88wagq0KGWiwfectXSO7jq1kSU0lpVEdZEYkxiG3Qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Yt+zyzda; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=sux+G8UYuTe6OpX0yXYNFv4IijM8dkNkYRTT0OHVyw0=; b=Yt+zyzdaOOyvXP4CN8scOQIvB7
-	hMr62mIPLsssoXyHhcgac7K4DzmccMDIDSjxxYEeR/8RneyHCtA0Inha4T4G6cc99kLkMBLuYp9mE
-	GaJ+IVuQgqMWNgnetTmMcsMSASET8pF08TRHopxw9XugNyFZ1Bg8dmIT/Wn9yqx8sAZN8rKQCcetI
-	+D46UgqmLdVqetuBPV745ZPMCeWNxSYEKrWmXD2vvkzCUD9a4doViK4QyD94QWfQHRpu45gB4SlcC
-	APYp4cD7U9E/tg6+sYz0/8sUk4Q25qD4ZqDY0LLWdjvnzN3/Iyg65K8KMd+kTIzjy9hMxRlyAEngO
-	Nj8ev45w==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:58244)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1v6AVR-000000005LF-197N;
-	Tue, 07 Oct 2025 17:25:41 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1v6AVK-0000000032Z-2vLE;
-	Tue, 07 Oct 2025 17:25:34 +0100
-Date: Tue, 7 Oct 2025 17:25:34 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: jjm2473 <jjm2473@gmail.com>, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, heiko@sntech.de, quentin.schulz@cherry.de,
-	kever.yang@rock-chips.com, naoki@radxa.com, honyuenkwun@gmail.com,
-	inindev@gmail.com, ivan8215145640@gmail.com,
-	neil.armstrong@linaro.org, mani@kernel.org, dsimic@manjaro.org,
-	pbrobinson@gmail.com, alchark@gmail.com, didi.debian@cknow.org,
-	jbx6244@gmail.com, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] arm64: dts: rockchip: add LinkEase EasePi R1
-Message-ID: <aOU-_tPOmkyuw_kx@shell.armlinux.org.uk>
-References: <20250929065714.27741-1-jjm2473@gmail.com>
- <20250929065714.27741-4-jjm2473@gmail.com>
- <d8ad476c-d0c7-4e97-9e76-540a539ffb52@lunn.ch>
- <CAP_9mL4ofig-X-w9wx1A5D_eVXROo6AVFBSwp4mh=kj7webpPA@mail.gmail.com>
- <7e219aef-88a0-4184-9553-30dcbc8dbd79@lunn.ch>
+	s=arc-20240116; t=1759854434; c=relaxed/simple;
+	bh=ffdQ3x2Q74v3VCd2+CYlW5xb0s3Z1kjp9on1ibT+iSE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Suyfr4g9KL5YxTwtU3V/c3pxXBivCo351t/Gq4aMch0LxSBDOoGMHPFv4cF+ZJcLZGA74PP4n8Qml00FTejWI7mkBWQUVJQvGTefqBssU5qzv1m1ADRRrsOETlOHIQ1gzwFCHJfWqJgNT99ASVNC1zWIxEMn4VYeH3oou65wAww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AElYYsOh; arc=none smtp.client-ip=209.85.166.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-938bf212b72so228997939f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 09:27:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759854431; x=1760459231; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UBD2hSu0l0klHe2PgM26i3kvAILb+lcpLzVDDzltvlo=;
+        b=AElYYsOh5LkGgAQisYEdTwuZtPulVmji31w6KJlAPOf0c3v+tiKmMUSmOWB8dKkKCe
+         FAgeVzP222q3JDi4M4vlVipYcg4aIm4YjDRbAdUwdXpV2xi31BRSUK62bA/UlvmEFIUh
+         7Zs1AS3J5i5S53r+2EPfq6zOVY3mSlsQJHv6f7fwQeDvVXaKOcXy+vMZqhEFjXHi6LnJ
+         CFBG7IkloR6Ohz138B91H6ktipvMTHMK8/Re61+R9Nxdqrx2d2/EayqhGgVyY0kB6Z3Q
+         RwnpZnyvxhJ2tKZ/rZ8cbtvN+4cYMfP0EnPiSasBh0xFuT5plf0Rqk64PpIw6Wd0eA2+
+         LPHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759854431; x=1760459231;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UBD2hSu0l0klHe2PgM26i3kvAILb+lcpLzVDDzltvlo=;
+        b=LZyCA+za974+ug3ZtjjrkjV5ADEQ0fP5jJoKiotUya40Vu3VZjGaEkmaeCbjo3tgQC
+         Ct/+mDnlTVarA9fK40QM5Jrx4ArsCWdhnu/nR+yLe9Gjy3Na+gmG3YtNnYHyxBkPxJ1Z
+         7kpHMvHeQTiAAKfOFGilmFb6vlScjJmCiwQgZphMtcuCcS2cVf4bhiRtUEdmqWsbN5eS
+         8Kfa2Y4ZLG+OQbaPqFkddm0oniJqDwVDfhyUUKhRdgfPlaz4uV8czpuO309p3mFQ+bk7
+         dGP2pJcVlzeIlu8Smr4TSr76kYzQ4Cum7V52KUvV4MZcHn097njUGZcJIjlBRC4Jk12G
+         C/eg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZjHmPvWBiPd60CXzA55zs6du71GMS5UdgkA/hng2OlhUS3HwDrJF65wUAIb0SSQo5aitDP76RYsfJnoA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+kpwvy/FyXFlBO6xM69+mdfgfRLS5oCFMazsMZp9KQ7ehaOIV
+	tt2L0iIeih5+9SHPXFbh2osj2xaaIcbECrZfebGqIpuSaJwTSrXX2grD5S4s3ABoIL02LNjb6W7
+	fG71doxUFI/TmKr5tiVzsGKM7+qRe5fc=
+X-Gm-Gg: ASbGncuWwbLEAdr4TdLOMj7RcyFn2zFILmgR/6phUARHmGuQputg4N7wTRhcM4i7b0E
+	enUtfmGYKLTHpXXtB6EaPCpYS2QaskZNvenkwZKXlZox2TLD7eu8xOzp+9GnGd8/w2IRStlIrVm
+	xPdxa87bOyvZroVtD4K3oDp9MBifqbHmHcMQlWfNfsiUsiOI9g/Ggs9w8BUq9uQ+N8K5jSRo6KE
+	N/CnLafHKSpbzqyaA34cTKXQ7eF
+X-Google-Smtp-Source: AGHT+IGLCFTglTAa2kP1ck6r7iG/OBxuOc/X5vnBoy2Ox8YpkFznUIu4nAdIvA5gwoNVKy9bdZ/E6m0Pbw/Ia4pBasM=
+X-Received: by 2002:a05:6e02:2581:b0:426:e20b:f5d4 with SMTP id
+ e9e14a558f8ab-42e7ad16b0bmr217493585ab.10.1759854431265; Tue, 07 Oct 2025
+ 09:27:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7e219aef-88a0-4184-9553-30dcbc8dbd79@lunn.ch>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <aOPDRmk2Zd20qxfk@shell.ilvokhin.com>
+In-Reply-To: <aOPDRmk2Zd20qxfk@shell.ilvokhin.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Tue, 7 Oct 2025 09:26:59 -0700
+X-Gm-Features: AS18NWDyUXxAHm2OhgOIQBVisQRhBDWipv0GA7qDF0rBOZJ41WWj-kV3nnRnazA
+Message-ID: <CAKEwX=O2CMnufzuU7n32BD+SD5Oapmct=YGUUQFZ=2w+u2kGvA@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: skip folio_activate() for mlocked folios
+To: Dmitry Ilvokhin <d@ilvokhin.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Kemeng Shi <shikemeng@huaweicloud.com>, 
+	Kairui Song <kasong@tencent.com>, Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
+	Chris Li <chrisl@kernel.org>, Axel Rasmussen <axelrasmussen@google.com>, 
+	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, 
+	Kiryl Shutsemau <kas@kernel.org>, Usama Arif <usamaarif642@gmail.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 07, 2025 at 04:57:32PM +0200, Andrew Lunn wrote:
-> On Tue, Oct 07, 2025 at 10:32:26PM +0800, jjm2473 wrote:
-> > Andrew Lunn <andrew@lunn.ch> 于2025年10月6日周一 23:51写道：
-> > > Please change it to rgmii-id, and smaller tx/rx_delay values. Or show
-> > > us the schematics which clearly show extra long clock lines.
-> > 
-> > In fact, the RTL8211F's RXDLY and TXDLY signals are both pulled low,
-> > just like the Banana Pi BPI-R2 Pro, so the configuration is also referenced:
-> > https://elixir.bootlin.com/linux/v6.15/source/arch/arm64/boot/dts/rockchip/rk3568-bpi-r2-pro.dts#L237
-> 
-> Pull low makes no difference to the 2ns RGMII delays.
+On Mon, Oct 6, 2025 at 6:25=E2=80=AFAM Dmitry Ilvokhin <d@ilvokhin.com> wro=
+te:
+>
+> __mlock_folio() does not move folio to unevicable LRU, when
+> folio_activate() removes folio from LRU.
+>
+> To prevent this case also check for folio_test_mlocked() in
+> folio_mark_accessed(). If folio is not yet marked as unevictable, but
+> already marked as mlocked, then skip folio_activate() call to allow
+> __mlock_folio() to make all necessary updates. It should be safe to skip
+> folio_activate() here, because mlocked folio should end up in
+> unevictable LRU eventually anyway.
+>
+> To observe the problem mmap() and mlock() big file and check Unevictable
+> and Mlocked values from /proc/meminfo. On freshly booted system without
+> any other mlocked memory we expect them to match or be quite close.
+>
+> See below for more detailed reproduction steps. Source code of stat.c is
+> available at [1].
+>
+>   $ head -c 8G < /dev/urandom > /tmp/random.bin
+>
+>   $ cc -pedantic -Wall -std=3Dc99 stat.c -O3 -o /tmp/stat
+>   $ /tmp/stat
+>   Unevictable:     8389668 kB
+>   Mlocked:         8389700 kB
+>
+>   Need to run binary twice. Problem does not reproduce on the first run,
+>   but always reproduces on the second run.
+>
+>   $ /tmp/stat
+>   Unevictable:     5374676 kB
+>   Mlocked:         8389332 kB
+>
+> [1]: https://gist.github.com/ilvokhin/e50c3d2ff5d9f70dcbb378c6695386dd
+>
+> Co-developed-by: Kiryl Shutsemau <kas@kernel.org>
+> Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
+> Signed-off-by: Dmitry Ilvokhin <d@ilvokhin.com>
+> Acked-by: Usama Arif <usamaarif642@gmail.com>
 
-To be clear, while the RXDLY and TXDLY are hardware strapping controls
-the hardware configuration of the 2ns RGMII clock delays, the realtek
-driver can (and does) override this according to the phy-mode property.
-Thus hardware strapping makes no difference to Linux.
-
-So, what we get at the RTL8211F PHY is:
-
-	phy-mode	receive clock delay	transmit clock delay
-	"rgmii"		0ns			0ns
-	"rgmii-rxid"	2ns			0ns
-	"rgmii-txid"	0ns			2ns
-	"rgmii-id"	2ns			2ns
-
-irrespective of RXDLY / TXDLY hardware strapping.
-
-> > The tx_delay and rx_delay values were obtained using Rockchip's
-> > automatic scanning tool:
-> > https://github.com/istoreos/istoreos/blob/54746dfdb5bd34d1f281cf41d1d1620d0c3ee686/target/linux/rockchip/files/drivers/net/ethernet/stmicro/stmmac/dwmac-rk-tool.c
-> > https://gitlab.com/firefly-linux/docs/-/blob/rk356x/firefly/Common/GMAC/Rockchip_Developer_Guide_Linux_GMAC_RGMII_Delayline_EN.pdf
-> > https://github.com/axlrose/rkdocs/blob/main/Common/GMAC/Rockchip_Developer_Guide_Linux_GMAC_RGMII_Delayline_EN.pdf
-> 
-> Vendors get things wrong, including this. 'rgmii' means the PCB adds
-> the 2ns delay. Nearly every Rockchip board follows Rockchip broken
-> vendor recommendations, and then i come along, point out how it is
-> wrong, and ask for it to be fixed, before being merged to Mainline.
-
-Can we at least get the "tx_delay" and "rx_delay" DT properties (which
-are register values) properly documented in the DT binding document?
-I know from the driver code that a value of 0 means "no delay". Other
-values add an unspecified delay - it is not obvious what any non-zero
-value means, or what the default means.
-
-This would help us understand what values such as:
-
-	tx_delay = 0x3c or 0x4f
-
-and
-
-	rx_delay = 0x2f or 0x26
-
-actually mean in terms of the resulting delay at the MAC.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Acked-by: Nhat Pham <nphamcs@gmail.com>
 
