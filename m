@@ -1,274 +1,182 @@
-Return-Path: <linux-kernel+bounces-844633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA3A4BC2610
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 20:24:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE7F9BC2604
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 20:24:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64D3D3C74C7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 18:24:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D8DDF4F71D2
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 18:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 887772E92D4;
-	Tue,  7 Oct 2025 18:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41712D5408;
+	Tue,  7 Oct 2025 18:24:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lDe6rU3e"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ppVZ6P77"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A42012E92B2
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 18:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F77128819
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 18:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759861465; cv=none; b=b1zXdK3+DLm9d5gj0RHGAV4eBYsEZTOKWk4ufOQMBBO+6/rgXOB1906Wqcm0YGBugcsXNToZ6AaSETUey/O1wSx8rLgLOxi5j5TZ537d/LbuGhThmIkFezEvYEsVK4kPl5L5CWSwyhMH/2h4rp5uIyj9e615fvSEZpRX51DdBNM=
+	t=1759861453; cv=none; b=N8njzFZa09W/1hRTpkSx3w953GWGLNswou+a8oo24VszrhEI/t1Onc0mi2/gH5zoan2E7lZjJQdrB7QUOj5GiVVCxHNiemRDhxINoo9vC2wQj3jQQo8w8VUKMiZ1zTa9Ygr0vfSIuXha6lgebCcpYf46g/rGNaouPhGBAcGfto0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759861465; c=relaxed/simple;
-	bh=Xa09G7kAEtQpxw4yOJ2reBncMLpC8/fWQifv/+f3CTY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jcjS8hy4QzBjid0gHrc3tt/m9Svx2JGi6yapAZT4NbOj4P1nbIXox7fEb876ob5vK2WCcT3KDRp+6tDIlJQAwgTKyjzbR2qYuNVpcR6tkIB6vOVoAZ2arg5FrLx+nvbas/Xa81jI6dIZgP/VLWGMnqqES634hprQw6oWqwnpvjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lDe6rU3e; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e326e4e99so879815e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 11:24:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759861462; x=1760466262; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eQmS4iGCIsqFscOYPI2pMSI5i8ARz15f5xJppXklNTg=;
-        b=lDe6rU3eBNwmbFmjWhGDJuyiheMj39MAUWVbIJkwfW5raOHZrbRiGTUT7RHLqRGAZ/
-         C4DsCCO1i8JmuQMSRB8QdBllKh9KP8khtjSTj9vdwjAWB19RTHcVZU/4y7QNVTQvG1tH
-         +1iXqlMEyjjBVp68LluKyrU9s7O5QGL417ikM6+kuUBGUgPca31hbpy0j4QzykH6WaId
-         rDDUfwC/b37DDfLA5es1OiEFncG++ktNolGwKUT1K9JisfrwXPjN7kUmdPkGBka/tIvu
-         icRjCUuxqDNMB/3SpQ3QuQVKZ4oHmqh6YskN8W4vXVe2cdm17PnEra2j35tirywEZd03
-         +n8A==
+	s=arc-20240116; t=1759861453; c=relaxed/simple;
+	bh=PhbegbaMd1qZ+6ZHuLSkaTFKK0U2ZhDS1zI+8IlM3Xk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OxPzY5s4M0iDCGllRxtDaiY4QoBQAIPLe2jsVLHyMOivxxRgeo84COlJxB4DNqiAeDILFMGESyhanTQWp1Qv4uCAnaSGp3j7+BD9miw6T363R1yxXhLkyejsmHrECzsKtD/mK0x3Hq0sdgpeUCzStnE7OJhtYQez1ndWW0shcu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ppVZ6P77; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 597ET7kV020319
+	for <linux-kernel@vger.kernel.org>; Tue, 7 Oct 2025 18:24:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=v7gi3ANU7eGwAeHBm/VtX/N+PelGRzkkDBF
+	dO15qWFo=; b=ppVZ6P77exkgaA75jAnjZYSEF5MqFITHrr/PWEI9ACIezmyMyj2
+	zzjWpb+VMMlCzE61/Ivf19Se0guYAjqfSXdHQUqHExV4ARrYGTTycIOUb/mTXOn5
+	Le9STcQ4pBVMOswJHRWT+/lsXFFFaUawGwvVtMjK9V53Ts3auymk/8uhPTJJgceJ
+	dLY1cGAxxFi3tPeY4T42WLt5Sxb8aTVwSjzmzum1QbvBDc/LDGLRoqOzKifA39gq
+	1UBpT7jTzM7qnqf85J3yhXKpslYElC0KMqWKykH75AFE8PT556xP77pyCCWXdQ3Y
+	QMEhu3mZ27ahxtEA0OACVb6GDZc9N12eAgQ==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49js9e0cvw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 18:24:09 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2699ebc0319so62790035ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 11:24:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759861462; x=1760466262;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eQmS4iGCIsqFscOYPI2pMSI5i8ARz15f5xJppXklNTg=;
-        b=izUaI7vj9f/yQhPtcqpSzE19aDpdWN7r61VLJJIW09PvRqtYYbjXodluS5Z5D7388E
-         CwOiqP1f0sbimfK26M0pwuY6GuIZTliEfm/wGWQgJc/qjF+QBQ2PWwAigSxmELYTJmbG
-         OQ6voWPhzjO1A8z7mHMwY6fIj7u3r72paDtsP44boWQGH6xWq1SePIdNVhOR1Wmgmlyz
-         5XQmaslIUb5KT6Bfe1Etd5UOAFCn1L8yre+8HC8e70dwpT4KLBqX9/ac+QGmGFrq7SJg
-         N2ago/WeucOCWItrSn98AEtivOaZyag68Vxhxv/7kMTvlLcqupvQbJMa7i3bJ/nw+6MC
-         FL1w==
-X-Forwarded-Encrypted: i=1; AJvYcCW1JoSa5tpcB9grUp3lrDbCRoPcDLyNHqXnJiNKQBK2v6HFDovzWVDmf14WzeOGss9y++vgEP4DInL7Tsc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywkxlr/t4FjJx8mc9wsdKkIZRzXL6E+EZPmGVv/NHvgJwCi4Pql
-	AZq5S2c0NAXofqK984lXAqCOSEkNssAgzakW6punwPfDeUDp5smkMmlU
-X-Gm-Gg: ASbGnctGEpmhZ1K6Qp/x5kwbxo5HxIwMFjYtIiLmSdbrUqkg1o/WvMlJ0wtRK/SAWcS
-	n1CBIOdU+JL0WK+CGcvc6xog4l3LgDeHhLvl9BCGPrsz8hqdmrKam5AH78TWbB1JtevHiCvxsMc
-	MVFtay74LgMAAkido3Y6OuoKF8p+dlRkxZlZMX4Dq51Csndbl0sYOQjWMFNtfESvI2jsTXFETgs
-	9hk1kXGK8C+ym3RdxpaGGLx+ztukomvI0OW5GF2i7X8rBUiGlYnPHESRhYti6rN7SJkD+G/Aasc
-	bynUo1QIiXiBi6C17uf+pz1li5qxs0q0+AdXZQR+bgNh9jr0YKVD1IujXZvOZw7MHKcMPR7pE7s
-	8eZJYJVRKsGmAeVjlJ5e1J3+ItRKUth0PtTvnbDHCBGvxYadqal2pHTS1CkmXjvnuRtiirhCujk
-	byg5PXtDa5u9dT
-X-Google-Smtp-Source: AGHT+IGj/aZ4dREFNGfXsKOVw/xQDfcBe5qfV06LY9YeLiL2xFcvZXfiVKVcLJWLZMfSJ7R2lbSN1Q==
-X-Received: by 2002:a05:600c:458b:b0:45d:5c71:769d with SMTP id 5b1f17b1804b1-46fa9e9a2e5mr2597245e9.8.1759861461807;
-        Tue, 07 Oct 2025 11:24:21 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fa9d6269asm3998165e9.15.2025.10.07.11.24.21
+        d=1e100.net; s=20230601; t=1759861448; x=1760466248;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v7gi3ANU7eGwAeHBm/VtX/N+PelGRzkkDBFdO15qWFo=;
+        b=sK2VOnSzxUTW6OcmFyeMJpVIwcsVPKQRdjHfaH2E1aKEmbAW9PHnD45Zc25Kmq97zy
+         Sv1dQOOugFygZcWtBW5UtcMniGC0ibahQeuZs2wOIxF9kLVY49rI/zMOtyUmAjsZ+WcK
+         ZNCq1YW7uRW3l3OMFgF2tG7ddHZPJrDxSvIKDvuZPItGfpfY0Ih/ct+9ooXinmjh16qH
+         ZJcxYBD8eBJrRDHLcSnaHIlyg4wsR2Lx5Frw3ICrj97ESGSwIjFdleGiTa3i6MhN5qyj
+         b36ZEJtV0aH5jq8OUWsGL/pNqQlHgvYZp/xHb9u2y0NDmENyJrKyJLExoiP+wOy/eJuy
+         S5NA==
+X-Forwarded-Encrypted: i=1; AJvYcCVmd10zSfWF1/DvbDrlEc9El6KpTSlKHdBl327ygvWif/6pIMYdeWl/B1JgPtMTZmFfv/s5rxNQr0VWjKs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxO/IcEK4N50VbjyTjGRvanC8URlzm83Mqz0ryEPbtdX11ueRP
+	J6+T2vCJ4P8R/Sdium6YOG9DCm+XFVb+ZBQZSQ1jJQ4fxC/Wz+4RoH4E1YCxKf+iq0GsOkKXHtx
+	BlvAC3XxeBkVpOpnJ9gyWTlfldsVQRZ/3UJesCk7EQkyznpLJLOlv6eJdprfIhT4Uk50=
+X-Gm-Gg: ASbGncv9vXmPP/x+8BjSZYZxixqDAEUzXlEdUOiaszUA6fGLK1tIVSJ99AG01JjVoio
+	QK6tgN8ddob+TQ5USxjpluQlDKIfEkPUBOIujiKkoIBBxEng7/gveNcMM1dIQdaiucbHOfcpXr3
+	7CvCfvUKaiSC3HO8o1t9Q88wL5qQqLc88wqZKE/ADwqXohKOVT+pl0VfHZ/nsyT7JV21/2ooSYW
+	f15iarb59sUgVR2+RY4pQcL6mSjKlD1ESp+MAY6uazhIzJfjnfiukJH1hIF/MhMPJKOGfzlBV3S
+	svDmTWCpvkzK/AjsO2YK+14HsCRhjDTvJSRmAB1LKWfBIVy4FP0wRh4JANNr50U3dgqFROMN
+X-Received: by 2002:a17:903:90d:b0:27e:d7a4:cd32 with SMTP id d9443c01a7336-290272ff5a5mr8818965ad.57.1759861448169;
+        Tue, 07 Oct 2025 11:24:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHk+kGnyBGf3KfhdZk/5b6XJ+HDJE6ygty3ucqB0kfKr1z7QKyevL86q3VUXkPE7iIuJxra0Q==
+X-Received: by 2002:a17:903:90d:b0:27e:d7a4:cd32 with SMTP id d9443c01a7336-290272ff5a5mr8818625ad.57.1759861447505;
+        Tue, 07 Oct 2025 11:24:07 -0700 (PDT)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1ba25asm172984505ad.87.2025.10.07.11.24.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 11:24:21 -0700 (PDT)
-Date: Tue, 7 Oct 2025 19:23:27 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Guan-Chun Wu <409411716@gms.tku.edu.tw>, akpm@linux-foundation.org,
- axboe@kernel.dk, ceph-devel@vger.kernel.org, ebiggers@kernel.org,
- hch@lst.de, home7438072@gmail.com, idryomov@gmail.com, jaegeuk@kernel.org,
- kbusch@kernel.org, linux-fscrypt@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
- sagi@grimberg.me, tytso@mit.edu, visitorckw@gmail.com, xiubli@redhat.com
-Subject: Re: [PATCH v3 2/6] lib/base64: Optimize base64_decode() with
- reverse lookup tables
-Message-ID: <20251007192327.57f00588@pumpkin>
-In-Reply-To: <CADUfDZp6TA_S72+JDJRmObJgmovPgit=-Zf+-oC+r0wUsyg9Jg@mail.gmail.com>
-References: <20250926065235.13623-1-409411716@gms.tku.edu.tw>
-	<20250926065556.14250-1-409411716@gms.tku.edu.tw>
-	<CADUfDZruZWyrsjRCs_Y5gjsbfU7dz_ALGG61pQ8qCM7K2_DjmA@mail.gmail.com>
-	<aNz/+xLDnc2mKsKo@wu-Pro-E500-G6-WS720T>
-	<CADUfDZq4c3dRgWpevv3+29frvd6L8G9RRdoVFpFnyRsF3Eve1Q@mail.gmail.com>
-	<20251005181803.0ba6aee4@pumpkin>
-	<aOTPMGQbUBfgdX4u@wu-Pro-E500-G6-WS720T>
-	<CADUfDZp6TA_S72+JDJRmObJgmovPgit=-Zf+-oC+r0wUsyg9Jg@mail.gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        Tue, 07 Oct 2025 11:24:07 -0700 (PDT)
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
+        suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com,
+        will@kernel.org
+Cc: alexandru.elisei@arm.com, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org,
+        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Subject: [PATCH] KVM: arm64: Check cpu_has_spe() before initializing PMSCR_EL1 in VHE
+Date: Tue,  7 Oct 2025 23:53:56 +0530
+Message-ID: <20251007182356.2813920-1-mukesh.ojha@oss.qualcomm.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=Hrl72kTS c=1 sm=1 tr=0 ts=68e55ac9 cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=YElTaCpYnbo2m2hzBnMA:9
+ a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-GUID: -RqTpnziGldAaScYmatYdPeQoeef8CGv
+X-Proofpoint-ORIG-GUID: -RqTpnziGldAaScYmatYdPeQoeef8CGv
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAwNCBTYWx0ZWRfXy1Eu2nuKQwtV
+ Z5PMX6FukIoFvPSADyDkK4uiPEmm7sNOmwTY8F6HK1ShVBWCvG04NX10/OkafNuk6DWfAsBeSou
+ zs5V+uBmMnHYCAW3lZK+r6UHOC6Dt97a7VJhV6LN7BmcWGwd9PKnptiBIjjpZr0XQvfSdKWBZ3J
+ vev7zSXx0WAyU327nl7HuPvzcUNLC7nxMs/Mxn1ktLxpWVnG85Gx4kRFHrHNnxOjIOklwbvTZsj
+ LWxLFM2MZl20ppB7Es9Y6/JE4CikmsUA09YXHBRrnm6Yu6iHy3yymOg3TUcB3+bdFs81NShO22X
+ UFz1080taYr8W1D4E/tE/R9+5potknQWNXSon0i3jB7fSKEIbiluOkm0jdVZUUPULCPpX4AkKxo
+ uWAjTAKNKv1iEHN4mr7R6OABg/zrfA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-07_02,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 phishscore=0 spamscore=0 adultscore=0 lowpriorityscore=0
+ bulkscore=0 priorityscore=1501 malwarescore=0 impostorscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040004
 
-On Tue, 7 Oct 2025 07:57:16 -0700
-Caleb Sander Mateos <csander@purestorage.com> wrote:
+commit efad60e46057 ("KVM: arm64: Initialize PMSCR_EL1 when in VHE")
+initializes PMSCR_EL1 to 0 which is making the boot up stuck when KVM
+runs in VHE mode and reverting the change is fixing the issue.
 
-> On Tue, Oct 7, 2025 at 1:28=E2=80=AFAM Guan-Chun Wu <409411716@gms.tku.ed=
-u.tw> wrote:
-> >
-> > On Sun, Oct 05, 2025 at 06:18:03PM +0100, David Laight wrote: =20
-> > > On Wed, 1 Oct 2025 09:20:27 -0700
-> > > Caleb Sander Mateos <csander@purestorage.com> wrote:
-> > > =20
-> > > > On Wed, Oct 1, 2025 at 3:18=E2=80=AFAM Guan-Chun Wu <409411716@gms.=
-tku.edu.tw> wrote: =20
-> > > > >
-> > > > > On Fri, Sep 26, 2025 at 04:33:12PM -0700, Caleb Sander Mateos wro=
-te: =20
-> > > > > > On Thu, Sep 25, 2025 at 11:59=E2=80=AFPM Guan-Chun Wu <40941171=
-6@gms.tku.edu.tw> wrote: =20
-> > > > > > >
-> > > > > > > From: Kuan-Wei Chiu <visitorckw@gmail.com>
-> > > > > > >
-> > > > > > > Replace the use of strchr() in base64_decode() with precomput=
-ed reverse
-> > > > > > > lookup tables for each variant. This avoids repeated string s=
-cans and
-> > > > > > > improves performance. Use -1 in the tables to mark invalid ch=
-aracters.
-> > > > > > >
-> > > > > > > Decode:
-> > > > > > >   64B   ~1530ns  ->  ~75ns    (~20.4x)
-> > > > > > >   1KB  ~27726ns  -> ~1165ns   (~23.8x)
-> > > > > > >
-> > > > > > > Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-> > > > > > > Co-developed-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-> > > > > > > Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-> > > > > > > ---
-> > > > > > >  lib/base64.c | 66 ++++++++++++++++++++++++++++++++++++++++++=
-++++++----
-> > > > > > >  1 file changed, 61 insertions(+), 5 deletions(-)
-> > > > > > >
-> > > > > > > diff --git a/lib/base64.c b/lib/base64.c
-> > > > > > > index 1af557785..b20fdf168 100644
-> > > > > > > --- a/lib/base64.c
-> > > > > > > +++ b/lib/base64.c
-> > > > > > > @@ -21,6 +21,63 @@ static const char base64_tables[][65] =3D {
-> > > > > > >         [BASE64_IMAP] =3D "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefgh=
-ijklmnopqrstuvwxyz0123456789+,",
-> > > > > > >  };
-> > > > > > >
-> > > > > > > +static const s8 base64_rev_tables[][256] =3D {
-...
-> > > > > > Do we actually need 3 separate lookup tables? It looks like all=
- 3
-> > > > > > variants agree on the value of any characters they have in comm=
-on. So
-> > > > > > we could combine them into a single lookup table that would wor=
-k for a
-> > > > > > valid base64 string of any variant. The only downside I can see=
- is
-> > > > > > that base64 strings which are invalid in some variants might no=
- longer
-> > > > > > be rejected by base64_decode().
-> > > > > > =20
-> > > > >
-> > > > > In addition to the approach David mentioned, maybe we can use a c=
-ommon
-> > > > > lookup table for A=E2=80=93Z, a=E2=80=93z, and 0=E2=80=939, and t=
-hen handle the variant-specific
-> > > > > symbols with a switch. =20
-> > >
-> > > It is certainly possible to generate the initialiser from a #define to
-> > > avoid all the replicated source.
-> > > =20
-> > > > >
-> > > > > For example:
-> > > > >
-> > > > > static const s8 base64_rev_common[256] =3D {
-> > > > >     [0 ... 255] =3D -1,
-> > > > >     ['A'] =3D 0, ['B'] =3D 1, /* ... */, ['Z'] =3D 25, =20
-> > >
-> > > If you assume ASCII (I doubt Linux runs on any EBCDIC systems) you
-> > > can assume the characters are sequential and miss ['B'] =3D etc to
-> > > reduce the the line lengths.
-> > > (Even EBCDIC has A-I J-R S-Z and 0-9 as adjacent values)
-> > > =20
-> > > > >     ['a'] =3D 26, /* ... */, ['z'] =3D 51,
-> > > > >     ['0'] =3D 52, /* ... */, ['9'] =3D 61,
-> > > > > };
-> > > > >
-> > > > > static inline int base64_rev_lookup(u8 c, enum base64_variant var=
-iant) {
-> > > > >     s8 v =3D base64_rev_common[c];
-> > > > >     if (v !=3D -1)
-> > > > >         return v;
-> > > > >
-> > > > >     switch (variant) {
-> > > > >     case BASE64_STD:
-> > > > >         if (c =3D=3D '+') return 62;
-> > > > >         if (c =3D=3D '/') return 63;
-> > > > >         break;
-> > > > >     case BASE64_IMAP:
-> > > > >         if (c =3D=3D '+') return 62;
-> > > > >         if (c =3D=3D ',') return 63;
-> > > > >         break;
-> > > > >     case BASE64_URLSAFE:
-> > > > >         if (c =3D=3D '-') return 62;
-> > > > >         if (c =3D=3D '_') return 63;
-> > > > >         break;
-> > > > >     }
-> > > > >     return -1;
-> > > > > }
-> > > > >
-> > > > > What do you think? =20
-> > > >
-> > > > That adds several branches in the hot loop, at least 2 of which are
-> > > > unpredictable for valid base64 input of a given variant (v !=3D -1 =
-as
-> > > > well as the first c check in the applicable switch case). =20
-> > >
-> > > I'd certainly pass in the character values for 62 and 63 so they are
-> > > determined well outside the inner loop.
-> > > Possibly even going as far as #define BASE64_STD ('+' << 8 | '/').
-> > > =20
-> > > > That seems like it would hurt performance, no?
-> > > > I think having 3 separate tables
-> > > > would be preferable to making the hot loop more branchy. =20
-> > >
-> > > Depends how common you think 62 and 63 are...
-> > > I guess 63 comes from 0xff bytes - so might be quite common.
-> > >
-> > > One thing I think you've missed is that the decode converts 4 charact=
-ers
-> > > into 24 bits - which then need carefully writing into the output buff=
-er.
-> > > There is no need to check whether each character is valid.
-> > > After:
-> > >       val_24 =3D t[b[0]] | t[b[1]] << 6 | t[b[2]] << 12 | t[b[3]] << =
-18;
-> > > val_24 will be negative iff one of b[0..3] is invalid.
-> > > So you only need to check every 4 input characters, not for every one.
-> > > That does require separate tables.
-> > > (Or have a decoder that always maps "+-" to 62 and "/,_" to 63.)
-> > >
-> > >       David
-> > > =20
-> >
-> > Thanks for the feedback.
-> > For the next revision, we=E2=80=99ll use a single lookup table that map=
-s both +
-> > and - to 62, and /, _, and , to 63.
-> > Does this approach sound good to everyone? =20
->=20
-> Sounds fine to me. Perhaps worth pointing out that the decision to
-> accept any base64 variant in the decoder would likely be permanent,
-> since users may come to depend on it. But I don't see any issue with
-> it as long as all the base64 variants agree on the values of their
-> common symbols.
+[    2.967447] RPC: Registered tcp NFSv4.1 backchannel transport module.
+[    2.974061] PCI: CLS 0 bytes, default 64
+[    2.978171] Unpacking initramfs...
+[    2.982889] kvm [1]: nv: 568 coarse grained trap handlers
+[    2.988573] kvm [1]: IPA Size Limit: 40 bits
 
-If an incompatible version comes along it'll need a different function
-(or similar). But there is no point over-engineering it now.
+Lets guard the change with cpu_has_spe() check so that it only affects
+the cpu which has SPE feature supported.
 
-	David
+Fixes: efad60e46057 ("KVM: arm64: Initialize PMSCR_EL1 when in VHE")
+Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+---
+ arch/arm64/kvm/debug.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-
->=20
-> Best,
-> Caleb
+diff --git a/arch/arm64/kvm/debug.c b/arch/arm64/kvm/debug.c
+index 3515a273eaa2..d9fd45f0db9a 100644
+--- a/arch/arm64/kvm/debug.c
++++ b/arch/arm64/kvm/debug.c
+@@ -15,6 +15,14 @@
+ #include <asm/kvm_arm.h>
+ #include <asm/kvm_emulate.h>
+ 
++static int cpu_has_spe(void)
++{
++	u64 dfr0 = read_sysreg(id_aa64dfr0_el1);
++
++	return cpuid_feature_extract_unsigned_field(dfr0, ID_AA64DFR0_EL1_PMSVer_SHIFT) &&
++	       !(read_sysreg_s(SYS_PMBIDR_EL1) & PMBIDR_EL1_P);
++}
++
+ /**
+  * kvm_arm_setup_mdcr_el2 - configure vcpu mdcr_el2 value
+  *
+@@ -80,8 +88,7 @@ void kvm_init_host_debug_data(void)
+ 	if (has_vhe())
+ 		return;
+ 
+-	if (cpuid_feature_extract_unsigned_field(dfr0, ID_AA64DFR0_EL1_PMSVer_SHIFT) &&
+-	    !(read_sysreg_s(SYS_PMBIDR_EL1) & PMBIDR_EL1_P))
++	if (cpu_has_spe())
+ 		host_data_set_flag(HAS_SPE);
+ 
+ 	/* Check if we have BRBE implemented and available at the host */
+@@ -101,8 +108,8 @@ void kvm_init_host_debug_data(void)
+ 
+ void kvm_debug_init_vhe(void)
+ {
+-	/* Clear PMSCR_EL1.E{0,1}SPE which reset to UNKNOWN values. */
+-	if (SYS_FIELD_GET(ID_AA64DFR0_EL1, PMSVer, read_sysreg(id_aa64dfr0_el1)))
++	if (cpu_has_spe())
++		/* Clear PMSCR_EL1.E{0,1}SPE which reset to UNKNOWN values. */
+ 		write_sysreg_el1(0, SYS_PMSCR);
+ }
+ 
+-- 
+2.50.1
 
 
