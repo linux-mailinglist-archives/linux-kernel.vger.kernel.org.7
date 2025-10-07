@@ -1,189 +1,134 @@
-Return-Path: <linux-kernel+bounces-844162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 333C9BC1324
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:23:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B08CBC1333
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:24:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 216473BAB01
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:22:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51DA63A834B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA04B2550D8;
-	Tue,  7 Oct 2025 11:22:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DCFD2DAFA3;
+	Tue,  7 Oct 2025 11:23:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PSgduCEa"
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uuSHBBh2"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A045328467C
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 11:22:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9FFA2D978D
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 11:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759836145; cv=none; b=tVyS5P58s5smHDhTWVyetQmRiwDuIWxa2eIc9L3rRU2FATTVymEvwAZZJLzwTGPg5JUJTOkNcWAd8K5NTrOrl9NLn2L1Aw3c1P7SjEH6oKlnoLpcwmINvA1K4AFEtgIlYFURc+FNoQHWoq/aoDO/xr3sG7msRs4CRosqSQemMNY=
+	t=1759836210; cv=none; b=T6D/gKde2Ktl6nyT2/SuheEq0BvtI2NPymR2MIs5aNbSHFgvOWVVwCWJdZ6kjU5vpPPQkf2iyqyjBWIdGx2NBobznHEPtJbxsxbZQ+TiaWa8iNmmLmCScR95VaqiaFx4oEabeSWfJ7/TFD0TOZA1LUBAwcW0qLvXM7lpsURwloc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759836145; c=relaxed/simple;
-	bh=TP6L6nX6UruJ3pB+cOIOamthEdmmWNRvoKyQ0cJzqW4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=noHjiOjLQnQip76hxl9BFeE8a6YJr8RUqorTfXvaiCu/Rx/uG5QtKv2i01JxUO3WPIivrmlu2Nno2YcoJ8EYqP3cEK9Mc3Jpt/W8xdzgJGwTWU6k+uZqGpWhkHkw4WdnAzqFubnGglMHWbNHER9b6cnqqoDRhwtNv1NaXoJOXK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PSgduCEa; arc=none smtp.client-ip=209.85.210.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-79f79e37c04so4227384a34.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 04:22:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759836143; x=1760440943; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LOKak42BxSjTqNtj6mYpJxlR5q3B9F54/H2laJuu/Ec=;
-        b=PSgduCEaOGJtAs0kAMA+m9MfN+63lbfNJo1EtMgpMw+RQ8i87w/R2Ff893KDmJlk5i
-         1OCg936wXjcn0ma1nx7F5vgR5E43UNbWcyzZXnVoqpRSOQmGz+OnnqJjJ7PJLRNtkJ7U
-         1H8GFhZBfrnOot3TcFgcDIjnPAXl/smLvkuPY0bFNZWMBS+pXy1f4LjmEeFdu9W5kvcT
-         2/2sXyMAu1IRk1N0pj1OSihWc6Obe2bV0+4sWHG1ePeT0vzToHugDQN32CWZfqFb3bGv
-         HYajYq8nNYAOhvWD4p+vCZc2VwIy9kRDmDOLaXAYCk/bREM7ECBuZooD172ZNt+8ZaRr
-         Hy3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759836143; x=1760440943;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LOKak42BxSjTqNtj6mYpJxlR5q3B9F54/H2laJuu/Ec=;
-        b=QfLGEADbX1co3MwOb1stUrsVtRp2oJHbQLe+Xf6d+HYZKlexzDocJrZaBTN5Uf0a3V
-         3m2dvgkG+Hw2PJYxxkYa37X2oer4nHcOjoY3+fNMZrB86woVneANvukzFkOg8OqhAO7k
-         l5haQJhqQ+UgyOzZnRP+sKxqY5yFsyJlzyY7TkpQu50VzMQhCi89gkmBqs4rP6LyMf21
-         8UL4qfWgNr5gbFZwgTCf2KK77TK8pj2FpaOqzuFzqoBqDHVevp9pJvqQtmrfuzM7ASuc
-         OyjHJdPOvlfP2lSUXNziMmOrAT0imZNv+NebAuPDlXdzAD7U7U5sofe/O4cB1g3SWvKV
-         StPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUzuSwkFQBMq2paxShA9sN+3n0miewwF9vKgaN+Vsd3AbSTfOqNors2FayKNnJ8FRBy2MqefA0yw2BQZ+g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyvge0WuUQ+Fzh873EbOAzdaSbbuDt573ZVsrxUaCd/6giEhoUd
-	Rm7jkJnwvWdhn10I37nFpx4ymZcX0pWu4YttzQNKTL8RRoLiXm80KV1YK1MyM/Twnh65u8u8Ndc
-	HanS9+a0YtB7EjRudABfNTgBAp612Ok4=
-X-Gm-Gg: ASbGnctrmAHOyp2tduYb9+4QPcLps1Ram3OABdQ3XnnkZzrv9rdciP7+T+kzEqfF8Ry
-	nR6jR0coS6roU/GWk8Dqk7Wah9ei1T8ZVEDUrvPPaS3qstnzv3VhbouXguNoJh+Dul9yOAeF3FO
-	KpwtgKN79z14vK/CyHnyscqw0K7bJFZZBjcaLfzL28cAJXH48CNg+13Lo2iUHOGvU8G/G+9H2jz
-	bk0h+m4cs3I7pdgClxIlfJf6p0SOT8=
-X-Google-Smtp-Source: AGHT+IGrDawY9ofKGk9/eyTmUOL3jD2x4B6Okgu7pwFdf2migeP2i5Onul05hLHaz6ZGnGeCGy7mHZDRguWDu53W2LY=
-X-Received: by 2002:a05:6830:25d1:b0:7aa:abca:b464 with SMTP id
- 46e09a7af769-7bf772d468amr6869487a34.2.1759836142707; Tue, 07 Oct 2025
- 04:22:22 -0700 (PDT)
+	s=arc-20240116; t=1759836210; c=relaxed/simple;
+	bh=fctyKYc2x7DMTuxl7duvS5t5Yb2REEfkf2CXPqpksVI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nQcoaTNo6ZPVplnOMO7wsReb2+RFg1+5hXVESnzjKHen8R+EdQkUGomx6xHusp42LaJwkNPFkpvXx90y6mydO0APVZvRsz1zhA0/b2r27m171qqpi9T1u/cht2OAbTb77X5OUAikoSCSGb/2Belz2Oqdr4SSlhy5F4WodQ/PA7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=uuSHBBh2; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 597BNBo43748368;
+	Tue, 7 Oct 2025 06:23:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1759836191;
+	bh=4KNIFjNPxwNPgtviTOOqfAT97sq7NEDYsdF9WCpvtF4=;
+	h=From:To:CC:Subject:Date;
+	b=uuSHBBh2/xiKm8wz6ta+YL1PdG30U/vG9IOaW4Xl91Du/RwYrywFKZFFJz0o41sdV
+	 KHXV9IR8RXH9wz2EgZd0sdfaP5PTJ9Y/ZvaXCSbuROaZT1vkLLdNWDTxLyi/9FGKs8
+	 TmhyLiQTJdrdvruOYCSzdnfRfQ9Dcqcf741d7XAE=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 597BNBEc650378
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 7 Oct 2025 06:23:11 -0500
+Received: from DLEE211.ent.ti.com (157.170.170.113) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 7
+ Oct 2025 06:23:10 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE211.ent.ti.com
+ (157.170.170.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 7 Oct 2025 06:23:10 -0500
+Received: from localhost (ti.dhcp.ti.com [172.24.233.157] (may be forged))
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 597BN9Dj1039554;
+	Tue, 7 Oct 2025 06:23:10 -0500
+From: Devarsh Thakkar <devarsht@ti.com>
+To: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>, <rfoss@kernel.org>,
+        <airlied@gmail.com>, <maarten.lankhorst@linux.intel.com>,
+        <mripard@kernel.org>, <tzimmermann@suse.de>,
+        <dri-devel@lists.freedesktop.org>, <jani.nikula@intel.com>,
+        <simona@ffwll.ch>, <linux-kernel@vger.kernel.org>,
+        <dmitry.baryshkov@oss.qualcomm.com>
+CC: <tomi.valkeinen@ideasonboard.com>, <praneeth@ti.com>, <vigneshr@ti.com>,
+        <aradhya.bhatia@linux.dev>, <s-jain1@ti.com>, <s-wang12@ti.com>,
+        <r-donadkar@ti.com>, <h-shenoy@ti.com>, <devarsht@ti.com>
+Subject: [PATCH v3] drm/bridge: sii902x: Fix HDMI detection with DRM_BRIDGE_ATTACH_NO_CONNECTOR
+Date: Tue, 7 Oct 2025 16:53:09 +0530
+Message-ID: <20251007112309.1103811-1-devarsht@ti.com>
+X-Mailer: git-send-email 2.39.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251003091304.3686-1-briansune@gmail.com> <aOTrsYllMst3oR03@opensource.cirrus.com>
-In-Reply-To: <aOTrsYllMst3oR03@opensource.cirrus.com>
-From: Sune Brian <briansune@gmail.com>
-Date: Tue, 7 Oct 2025 19:22:10 +0800
-X-Gm-Features: AS18NWDeJ5CTjgoTVdMOiXo-PridYXAlKWUdewUGLzoadrVfqQMt6DgBwSY5GEs
-Message-ID: <CAN7C2SB5Re35yGYsqr14hGXde3nTKLX2Aa3ZbuJ9xuT0m07uxg@mail.gmail.com>
-Subject: Re: [PATCH] sound/soc/codecs/wm8978: add missing BCLK divider setup
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linux-sound@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Charles Keepax <ckeepax@opensource.cirrus.com> =E6=96=BC 2025=E5=B9=B410=E6=
-=9C=887=E6=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=886:30=E5=AF=AB=E9=81=
-=93=EF=BC=9A
->
-> On Fri, Oct 03, 2025 at 05:13:04PM +0800, Brian Sune wrote:
->
-> Patch title should be tweaked to match the other patches to this
-> driver:
->
-> ASoC: wm8978: ...
+The SII902x HDMI bridge driver wasn't working properly with drivers that
+use the newer bridge connector architecture with the
+DRM_BRIDGE_ATTACH_NO_CONNECTOR flag, like TIDSS.  This caused HDMI audio to
+fail since the driver wasn't properly setting the sink_is_hdmi flag when
+the bridge was attached without a connector since .get_modes() is never
+called in this case. Fix it by setting sink_is_hdmi flag when reading
+the EDID block itself.
 
-Will submit update patch, thank you.
+Fixes: 3de47e1309c2 ("drm/bridge: sii902x: use display info is_hdmi")
+Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+---
+V3: Use drm_edid_connector_update without edid NULL check
+V2: Use drm_edid_connector_update to detect HDMI
 
->
-> > The original WM8978 codec driver did not set the BCLK (bit clock)
-> > divider, which can cause audio clocks to be incorrect or unstable
-> > depending on the sample rate and word length.
->
-> This isn't totally accurate, the driver expects it will be set
-> through the set_clkdiv callback. Which one could probably argue
-> is a bit of a more legacy approach, but probably worth calling
-> that out here.
->
+Link to V2:
+https://lore.kernel.org/all/20251006150714.3144368-1-devarsht@ti.com/
+Link to V1:
+https://lore.kernel.org/all/20251003143642.4072918-1-devarsht@ti.com/
 
-According to actual hardware tests and the WM8978 driver study.
-There are no bclk register setup in the entire driver. So I am not sure
-How could this even set through the callback? The IC itself requires
-2-wires register load and this can't be done via software level.
+ drivers/gpu/drm/bridge/sii902x.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-> > This patch adds proper calculation and configuration of the BCLK
-> > divider based on the sample rate and word width, ensuring the
-> > codec generates the correct bit clock for all supported rates.
-> >
-> > Signed-off-by: Brian Sune <briansune@gmail.com>
-> > ---
-> >  sound/soc/codecs/wm8978.c | 20 ++++++++++++++++++++
-> >  1 file changed, 20 insertions(+)
-> >
-> > diff --git a/sound/soc/codecs/wm8978.c b/sound/soc/codecs/wm8978.c
-> > index 8c45ba6fc4c3..2109c84f33df 100644
-> > --- a/sound/soc/codecs/wm8978.c
-> > +++ b/sound/soc/codecs/wm8978.c
-> > @@ -717,6 +717,11 @@ static int wm8978_hw_params(struct snd_pcm_substre=
-am *substream,
-> >                           struct snd_pcm_hw_params *params,
-> >                           struct snd_soc_dai *dai)
-> >  {
-> > +     unsigned int bclk, bclkdiv =3D 0, min_diff =3D UINT_MAX;
-> > +     unsigned int target_bclk =3D params_rate(params) * params_width(p=
-arams) * 2;
->
-> Probably better to use snd_soc_params_to_bclk or similar helper.
->
-> > +     /* WM8978 supports divisors */
-> > +     static const int bclk_divs[] =3D {1, 2, 4, 8, 16, 32};
-> > +
-> >       struct snd_soc_component *component =3D dai->component;
-> >       struct wm8978_priv *wm8978 =3D snd_soc_component_get_drvdata(comp=
-onent);
-> >       /* Word length mask =3D 0x60 */
-> > @@ -820,6 +825,21 @@ static int wm8978_hw_params(struct snd_pcm_substre=
-am *substream,
-> >       /* MCLK divisor mask =3D 0xe0 */
-> >       snd_soc_component_update_bits(component, WM8978_CLOCKING, 0xe0, b=
-est << 5);
-> >
-> > +     for (i =3D 0; i < ARRAY_SIZE(bclk_divs); i++) {
-> > +             bclk =3D wm8978->f_256fs / bclk_divs[i];
-> > +             if (abs(bclk - target_bclk) < min_diff) {
-> > +                     min_diff =3D abs(bclk - target_bclk);
-> > +                     bclkdiv =3D i;
-> > +             }
-> > +     }
-> > +
-> > +     dev_dbg(component->dev, "%s: fs=3D%u width=3D%u -> target BCLK=3D=
-%u, using div #%u\n",
-> > +             __func__, params_rate(params), params_width(params), targ=
-et_bclk,
-> > +             bclk_divs[bclkdiv]);
-> > +
-> > +     /* BCLKDIV divisor mask =3D 0x1c */
-> > +     snd_soc_component_update_bits(component, WM8978_CLOCKING, 0x1c, b=
-clkdiv << 2);
->
-> We should probably add something to handle the interaction with
-> set_clkdiv and skip this if a fixed divider has been set. Well
-> either that or remove the set_clkdiv option, although that is a
-> little braver.
+diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
+index d537b1d036fb..bb613d4c281f 100644
+--- a/drivers/gpu/drm/bridge/sii902x.c
++++ b/drivers/gpu/drm/bridge/sii902x.c
+@@ -296,6 +296,8 @@ static const struct drm_edid *sii902x_edid_read(struct sii902x *sii902x,
+ 	mutex_lock(&sii902x->mutex);
+ 
+ 	drm_edid = drm_edid_read_ddc(connector, sii902x->i2cmux->adapter[0]);
++	drm_edid_connector_update(connector, drm_edid);
++	sii902x->sink_is_hdmi = connector->display_info.is_hdmi;
+ 
+ 	mutex_unlock(&sii902x->mutex);
+ 
+@@ -309,14 +311,11 @@ static int sii902x_get_modes(struct drm_connector *connector)
+ 	int num = 0;
+ 
+ 	drm_edid = sii902x_edid_read(sii902x, connector);
+-	drm_edid_connector_update(connector, drm_edid);
+ 	if (drm_edid) {
+ 		num = drm_edid_connector_add_modes(connector);
+ 		drm_edid_free(drm_edid);
+ 	}
+ 
+-	sii902x->sink_is_hdmi = connector->display_info.is_hdmi;
+-
+ 	return num;
+ }
+ 
+-- 
+2.39.1
 
-Not too understand this idea but the current problem or bug is just
-the bclk is missing.
-Which had tested via this patch and provide good result. Meanwhile,
-the mclk divider
-is restricted to actual IC clock design so this is why it is a fixed table.
-
->
-> Thanks,
-> Charles
 
