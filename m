@@ -1,164 +1,167 @@
-Return-Path: <linux-kernel+bounces-844264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 182A1BC167F
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 14:49:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93CB2BC168E
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 14:50:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AB79F4F5FFF
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 12:49:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 678294F5CE3
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 12:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7229B2DFA40;
-	Tue,  7 Oct 2025 12:48:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54B1E2DF3EA;
+	Tue,  7 Oct 2025 12:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FpnpWjyb"
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fWotCO4n"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 431B82E03EF
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 12:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E742DF15C
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 12:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759841333; cv=none; b=uFLhTGHPBTKxjkUiEPMjWE+oXt1pll13mTBsaaH/mPgiZnHaGmoD2eKhBYXfw/2cx8soN6ZKOnoqx2Dh7BfJugvyVA/ENjAYocQdZ9mtTo7l3ufhj05OH8sgP/iCttyt5/u/hRB5Dx4J5Z5glemqWri6FrGpcQoam5RH2lj/UCw=
+	t=1759841407; cv=none; b=phISfeYCzcwH3UoDCayJNzgzzQKpKfAPKLpGY5nDn3PGAtglQwdq6OFBu+kCdE+9eUbjCtj0YX9sKwRCed+EBDLB4RTzoDuGC6MKS4VPRaj0SVaOr7P9gES4CcCHbgDb2xaI1LACkmp4eS/B0fOH2qJs5lQa361QDyOyWyUhl8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759841333; c=relaxed/simple;
-	bh=9HmWPMv2U+/E83yndjpVpT6Vcq9ASGLRPH8pDxp34V4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EoLM7RAuMaZsuci9DKgkYV1GxzeGd+iPg4u9gyN9Efl1EGC/QJOL8040AT0GEeB7omQJqWjIUrBHn+/bDawPQ/ICc3nLzi5zV6tmRmGgLkWT/fq297WSwH2GcwLFdukH9iPDGN3IQYQJOkGH2OkZaMZOu23NWxbV/btxjRWI424=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FpnpWjyb; arc=none smtp.client-ip=209.85.161.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-649a715fcaeso1562248eaf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 05:48:52 -0700 (PDT)
+	s=arc-20240116; t=1759841407; c=relaxed/simple;
+	bh=gDFkczEy5aLumk4mklhks8XLo/0MjhJ8I7UhjJ9LD/U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Kk0uxeVVlzutuvoi/koGAQJ7K1QHb38u02HI6qGeYjo44S7sYUmip/qIxrmVrnxqVaXhWrLPi7b4jLnBG+G7gHaXJi+zFjR2A6tT33182LkAwAuZALRiKqziD7RQWmEWHDaP9ltaIAl/bxkCzTsD4jPJmb+j5uff+z8u2I89Y0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fWotCO4n; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3ee130237a8so4328988f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 05:50:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759841331; x=1760446131; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rKZEZkWITt2dtndJOL13JwsxNWGFhaYy4o+MDasr+AY=;
-        b=FpnpWjybThJivBBaxbjPUe1G9m1hyaifSRCffM49JWzMfszDa53eiD/XuoDBPzEJFD
-         A+5sPBmqMtJvLH+cWDLurorB8nkOdZi4aGqe1K/VnvIdZ1FedeJPr92Hmrs9cYVHLko7
-         lhN4htTAje/fR+AiUBq0+LhHvYgIomnhHW4a5henUqZp9cLG4DJAnDt/OetJuPvPFbJO
-         6XUv04dEKlqkpvBoA5vhosbgKYHNjwaoRvMoxDCwhsgy+q7a5dTOUgbZ29Zp03pbfz3w
-         rIna5J45ygEGfIN3qLXNwGqL6jjbXTIjEnwaAf83t4h+FFBrZhTPDuDPIQX19tXLDDZH
-         1xHg==
+        d=suse.com; s=google; t=1759841404; x=1760446204; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=6l4qDzHlUYQBmQQYtKJ85nOEgJMlrYTsriVtxYcb/0I=;
+        b=fWotCO4nZY9cX6jyh6+DRWY7acS/w0K3WRfDntYLEUwNbleT7A0BnvumnMuakW5wAm
+         iN98EMuWc05UyemiMBOe4YvTmAVjW0XDWpEfuOMNN1GrSboEckqXkPR2N+TeUnOF35vk
+         vazddY4LSq/Ypxk/KZJ8UN2B+Hi8ervgkeczBM5dQtYsTOVDZO8Rek48DbcGKN33L8HH
+         HjzY8QNxw/IKd2Tq/Wpwm3fjPmd7asFgqHQRdHePBxqfuu2L5AAJAHzp7EnCSY4fd/XC
+         ZWwDa64F/QzHjlPY57lcVJv2T9mzI66GGrw6owArdbgiX46v40pOSa0Gv5MVc10trqOb
+         WSkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759841331; x=1760446131;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rKZEZkWITt2dtndJOL13JwsxNWGFhaYy4o+MDasr+AY=;
-        b=BJ7WjQ/HEIkBeGGQPwYSNe9gGfy2gltkvbEPIfY8hw3CO8OsZAXeGFwEGX7ZIIK813
-         u2FsnUoP7pKsoXiB0DesCg+Td/GzRi5bLNJINliJ8NhUZvcdLmy+VJrnSYG4cx3amjgA
-         eqojjO/h7VnkEy5LCGnxELWhEWLVh9rGEcHRDhqL6WbeAr0h4ilhbhWnnIkUmCbPW6lW
-         Mxs79HJu6NBzNzilCxIL5asMGKpxUYmOoJmBB69+1w56VvSzX/+Ftr+OsqRJak9xOB66
-         xdK5tt4eRppwihWRGm+0FImm/mY8lpMUcj2I+s+SlGw9BGttuHU1+JudvZIUXgBTEioO
-         tNyg==
-X-Forwarded-Encrypted: i=1; AJvYcCXUC3ZUkeBLEjrBv/VI1ArTBwOEFdE0TJzE4dkt8I9SOWI6wTtkrabupU8/lGCT7c/O+XtBZYHpWnKrOMY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJsIrKuPMYH+e2NR7vYjyqz/N00Eujax6nXL4tQqLABIL+MIU5
-	GzJ3UYbI8O916oNllnZtFJ+3dihMtE+7P72R5353NE8yFgzgzI0ZhJbmwXqhLey/IZqijFltiCM
-	T/0ws5QWUb8qSClXfSzIWEGLuQVTUjts=
-X-Gm-Gg: ASbGncs6S5RCjavTyGh2mn3iVnZjHyxcMDwxBQ9tfC6WfErzR0eMP5RWVl1u3GRLSMu
-	0CipXbhA/QFwSY9l4kuQ59vPgt+iz/s0tyJDvikA9zE6AKmSMx1VG18aAhJy4ZeZOzYEzjv8iG0
-	M7D+txTXhGGkySP5rz3zO/7QTSf7dnUk+ebYe3nl4IB4foGzzEUcBZ/dmX5UqpGREr43UI+mSM9
-	F4uBZxAdDAMX7NnI770wgAJi8vSTwc=
-X-Google-Smtp-Source: AGHT+IGPrNBzklP5kU7kCk9ZhQ7ap8j+rNi1icSnorCaRG2GECK4uVIZY7FIeoy1KAiCLUeJbGu8O8gRc19pWyk1+C0=
-X-Received: by 2002:a05:6820:4209:b0:624:b767:e1c4 with SMTP id
- 006d021491bc7-64e601559c5mr7975745eaf.0.1759841331189; Tue, 07 Oct 2025
- 05:48:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759841404; x=1760446204;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6l4qDzHlUYQBmQQYtKJ85nOEgJMlrYTsriVtxYcb/0I=;
+        b=PAy+fz0vCnizLXFXZRV4V1euZ0XVq55ep1pPpZolsjvOzIBiffh4+rTi2DR78urcyP
+         UT3yEiNujAsy/j6/ciuE84SPEP09K0r7Nxibw6elnMzNBxJ3rf8wRqusvn5zxnEBgGnS
+         c/nXkXo4s7A/MF0AvF2PfrSknH3S4wC4uBmVqgK8yeqeFGf0gjZeRTz1K4Z9p7/8mAI1
+         KpN3tQqKbwpPjU1CSb8j/2ln//cFmRV37yVXqpw+9uMaP0ny11S/mq36S3ssqt09eegG
+         lLtwRQCBlgy0HVsTRYEMsHjBX2eB19X9zp01YDyB3QwRC7sWgzFDdf5SYT4e5wciGorQ
+         tg2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUKe83dS1C1wPVBlw9bNkwM2pGnLsY3ejZTSGvvHaQMqxC491s05O6Iq4/pVAWZiVmiKztgXfTpFMvT9GU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+KCZTaUf0M7gcqrFHC46MBSmlGO26th89yKdy30OXGrU0fOtU
+	QH/sRjYdCeogsh9Bto4sGVfN+OcLI8d5yvz25NFDSM6mt5EOClYmR5pG6Il3LEsUbjs=
+X-Gm-Gg: ASbGncs1zL5XbDMQ+2yLVHFyUzJMfetqh5BFyj+T2WBKfEcchOYXrvOV/EMvvxd4xWO
+	40+Sa9hk1iMGqWdx1GQSego1B21AJNkPFwDBYqsVAxPeImc+bQr95c3Z9CuR9rBcLUXwagoqvVE
+	LpJ9yVHEGfrIplkXT41gAfKYlG9qxxhprD4VNVP131gNar0Jg2K8f6E4M/VcR836G+sX8cxBFxj
+	7Mh3gqghhGa3IgFr9Dmch2ixjFtOBtiiAGSTNZ1rvNmFYAyK0tnOEjYOLJagkMbIIVhhwIETkwE
+	W8Q9vxc9u1PPdWUjRE6ivow36DzioGPR3X5v3SEpsmKrf9xsNNWXjpla24ca9qEBMtmLrWrSPyY
+	S10h6NySfrYB5WC27ezLy4DIGpgB6dLwmBiOjuulb9U5/rOc9dS/qT1gy8ntwoBrD3iuvrg==
+X-Google-Smtp-Source: AGHT+IHycONYE0I9/Fts71hnV2fdXn2nPmEVGvc0scyDQGRv5ii/jl7XmGE+QxbL2vJAlrW0eanXtA==
+X-Received: by 2002:a05:6000:25c6:b0:3e8:68:3a91 with SMTP id ffacd0b85a97d-425671c36e9mr11207300f8f.60.1759841403766;
+        Tue, 07 Oct 2025 05:50:03 -0700 (PDT)
+Received: from [10.20.0.214] (ivokam.ddns.nbis.net. [109.121.139.111])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8a8542sm25275178f8f.9.2025.10.07.05.50.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Oct 2025 05:50:03 -0700 (PDT)
+Message-ID: <9628cba6-f793-4301-8620-8de46e0c5c97@suse.com>
+Date: Tue, 7 Oct 2025 15:50:02 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251003091304.3686-1-briansune@gmail.com> <aOTrsYllMst3oR03@opensource.cirrus.com>
- <CAN7C2SB5Re35yGYsqr14hGXde3nTKLX2Aa3ZbuJ9xuT0m07uxg@mail.gmail.com> <aOUDbF/i4+9PXc1j@opensource.cirrus.com>
-In-Reply-To: <aOUDbF/i4+9PXc1j@opensource.cirrus.com>
-From: Sune Brian <briansune@gmail.com>
-Date: Tue, 7 Oct 2025 20:48:40 +0800
-X-Gm-Features: AS18NWCSlsbFTKbdtzoAuhSxzpfZ4XQDyqXz9owOit9VAub9xbVQ3v6Pj590Ir8
-Message-ID: <CAN7C2SBsFQJ2qNe0HLfpG+6cuONtpChBnq6fuFkd_CGkLt2c5g@mail.gmail.com>
-Subject: Re: [PATCH] sound/soc/codecs/wm8978: add missing BCLK divider setup
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linux-sound@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] x86/tsx: Get the tsx= command line parameter with
+ early_param()
+To: Petr Tesarik <ptesarik@suse.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+ "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
+ <linux-kernel@vger.kernel.org>
+References: <cover.1758906115.git.ptesarik@suse.com>
+ <63118e583443490a285fd194baeae874d65eff87.1758906115.git.ptesarik@suse.com>
+Content-Language: en-US
+From: Nikolay Borisov <nik.borisov@suse.com>
+Autocrypt: addr=nik.borisov@suse.com; keydata=
+ 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
+In-Reply-To: <63118e583443490a285fd194baeae874d65eff87.1758906115.git.ptesarik@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Charles Keepax <ckeepax@opensource.cirrus.com> =E6=96=BC 2025=E5=B9=B410=E6=
-=9C=887=E6=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=888:11=E5=AF=AB=E9=81=
-=93=EF=BC=9A
->
-> On Tue, Oct 07, 2025 at 07:22:10PM +0800, Sune Brian wrote:
-> > Charles Keepax <ckeepax@opensource.cirrus.com> =E6=96=BC 2025=E5=B9=B41=
-0=E6=9C=887=E6=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=886:30=E5=AF=AB=E9=
-=81=93=EF=BC=9A
-> > > On Fri, Oct 03, 2025 at 05:13:04PM +0800, Brian Sune wrote:
-> > > > The original WM8978 codec driver did not set the BCLK (bit clock)
-> > > > divider, which can cause audio clocks to be incorrect or unstable
-> > > > depending on the sample rate and word length.
-> > >
-> > > This isn't totally accurate, the driver expects it will be set
-> > > through the set_clkdiv callback. Which one could probably argue
-> > > is a bit of a more legacy approach, but probably worth calling
-> > > that out here.
-> >
-> > According to actual hardware tests and the WM8978 driver study.
-> > There are no bclk register setup in the entire driver. So I am not sure
-> > How could this even set through the callback? The IC itself requires
-> > 2-wires register load and this can't be done via software level.
->
-> /*
->  * Configure WM8978 clock dividers.
->  */
-> static int wm8978_set_dai_clkdiv(struct snd_soc_dai *codec_dai,
->                                  int div_id, int div)
-> {
->         struct snd_soc_component *component =3D codec_dai->component;
->         struct wm8978_priv *wm8978 =3D snd_soc_component_get_drvdata(comp=
-onent);
->         int ret =3D 0;
->
->         switch (div_id) {
->         case WM8978_OPCLKRATE:
->                 ...
->         case WM8978_BCLKDIV:
->                 if (div & ~0x1c)
->                         return -EINVAL;
->                 snd_soc_component_update_bits(component, WM8978_CLOCKING,=
- 0x1c, div); <<---- HERE
->                 break;
->         default:
->                 return -EINVAL;
->         }
->
->         dev_dbg(component->dev, "%s: ID %d, value %u\n", __func__, div_id=
-, div);
->
->         return ret;
-> }
->
-> Its not missing its right there. That said your way is probably
-> slightly more standard these days, but we should take care of the
-> interaction between the two.
 
-What my missing meant is if run with DEBUG flag on that case had never
-behave as expected.
-MCLK and LRCLK both is correctly outputted. While the current
-unpatched version will generate
-wrong BCLK complete break the codec. As such I proposed the BCLK patch.
-I had not investigate deep why it never calls but the "int div" is
-loaded and computed by where is a bit puzzling.
-And the loaded it simply with div on actual mclk/2/bit_per_channel is
-also incorrect.
-As mentioned in previous explanations, the clock register is a fix
-table on dividing # that is a LUT with restricted # allowed.
 
->
-> Thanks,
-> Charles
+On 26.09.25 г. 21:01 ч., Petr Tesarik wrote:
+> Use early_param() to get the value of the tsx= command line parameter.
+> Although cmdline_find_option() works fine, the option is later reported
+> as unknown and passed to user space. The latter is not a real issue, but
+> the former is confusing and makes people wonder if the tsx= parameter had
+> any effect and double-check for typos unnecessarily.
+> 
+> The behavior changes slightly if "tsx" is given without any argument (which
+> is invalid syntax). Prior to this patch, the kernel logged an error message
+> and disabled TSX. With this patch, the parameter is ignored. The new
+> behavior is consistent with other parameters, e.g. "tsx_async_abort".
+> 
+> Signed-off-by: Petr Tesarik <ptesarik@suse.com>
+
+LGTM, also could you include some rationale why early_param vs __setup 
+for example, or arch_param_cb (which by the way has yet to find its 
+first user).
+
+
+Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
 
