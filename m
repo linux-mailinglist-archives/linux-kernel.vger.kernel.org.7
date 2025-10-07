@@ -1,118 +1,99 @@
-Return-Path: <linux-kernel+bounces-844248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B767BC15FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 14:34:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38495BC1669
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 14:47:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B8213B82CE
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 12:34:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B5DDB4F59F7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 12:47:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496962DEA7B;
-	Tue,  7 Oct 2025 12:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F972DF3DA;
+	Tue,  7 Oct 2025 12:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="smD3zNuQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="e3ICVuOR"
+Received: from forward501a.mail.yandex.net (forward501a.mail.yandex.net [178.154.239.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996762DD5E2;
-	Tue,  7 Oct 2025 12:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1272AD2F;
+	Tue,  7 Oct 2025 12:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759840493; cv=none; b=ohghZ2a0AS05wem8HzVqZKDfWqg8n10h927FtwtVXV7X80rcGaXwvNbuHtMcE3Z0fpdljlH3hLmyvDCGiA1xn1ml+Gxov67bHok6ZKow25qS/EZQjpTPqI8aeNUVEGgT8mhfstiZp7FEj82yHOUcEfpeRVCcNqYoHNeFLUPsLEY=
+	t=1759841233; cv=none; b=IC4HHkfDmeMgfKYrD+kfoaQk8JlDcyyeBmRhGGcpyxorvMiV95I9dHMRRaxTJ0Q6E94vb2KA4uKONEgaeFocc4NHnYelUzl3ZZdWH9M0ngpEwByqMe0rPzn2n1UMCzh4grqTVg4sNycKayxGaqaloMxGd5X5QpsJH/kf4Lliw5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759840493; c=relaxed/simple;
-	bh=/gA2vXXADC0P2DO9PBeH/QWjg5FYuxfk1woaBqc5pHM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Z5ZOP+xxXB/4Lb7YfLHF4ekk7omuLaRJ5xunD3mwL8nhz7t6b87iKJf0w9EM83TrR8Ni2RskxdCOCwKCh1Gi9+IueEMUXrtgU5VsFSXF8zWKHYxxCZOIe7lQyxYMQux+BfqwnvwS4c/8e/pKIBOjLnnJcidKFUmbY75kJ1I0mZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=smD3zNuQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF235C4CEF1;
-	Tue,  7 Oct 2025 12:34:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759840493;
-	bh=/gA2vXXADC0P2DO9PBeH/QWjg5FYuxfk1woaBqc5pHM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=smD3zNuQsvbnvKUBlqEraNMCOmlHf5ZqFh3D8I+is2XJSEVmtVUmBd3U/x4u/wg8w
-	 tKjmOiTTHzsDJHxh7tDkCvTFCZ8p2UMXtApFoE9n2UUGL5/1v+zgDlg99IKclCZvjF
-	 MpLB+inmE4asNzxoj/DxExIsl2N8eNyZ9aq9NEaerLss2KG/Qq5UKeWs/cCCxUuSj+
-	 mfnH3xt0zvvB06dAqhXq4FbWclNtfrCkDf2CEQg5yULP6BdFmqfZDNIOSOA6Ew0S25
-	 gjnF2kcFJKmmDa+rVD/QKIHjC/Gntmts7UUH/XDS+aj2nuTONSDemVf/blJQYHOUmm
-	 VHx6PU1UZaWIA==
-Date: Tue, 7 Oct 2025 13:34:49 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Tree for Oct 7
-Message-ID: <aOUI6esdF-mwJib6@sirena.org.uk>
+	s=arc-20240116; t=1759841233; c=relaxed/simple;
+	bh=c+6ev8lGVHIuS9Fgc9kpY0G1q7d2ENYk5Qma+GHfWjs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gdik1RLClQadYnWT+FdTbW2JCX/cxydJXSyUDpqp/Ylq+sdE1Q9IdD60GH7TtW7WudlHKKQrFNjskd+J16Lay7C5UjGHVnIJcvbps8Qg67xpxgeQSnSVy4QkVWEkjZZ5XxWFNc4Nrmkv6GXueYxrzoBsF0OleGkPYKQdYA5XEE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=e3ICVuOR; arc=none smtp.client-ip=178.154.239.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+Received: from mail-nwsmtp-smtp-production-main-60.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-60.vla.yp-c.yandex.net [IPv6:2a02:6b8:c18:3ea3:0:640:1894:0])
+	by forward501a.mail.yandex.net (Yandex) with ESMTPS id E06628160F;
+	Tue, 07 Oct 2025 15:37:39 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-60.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id YbkbHRALx0U0-zfyy7dBX;
+	Tue, 07 Oct 2025 15:37:38 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=mail; t=1759840658;
+	bh=11vCPpW2xiVEBFoImljy4JjSFQTqP7bkvs9j7Br2/Mk=;
+	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
+	b=e3ICVuORs9C+my8Q4paC3iw7po2weA4/sPgA8kr0UcCeJQ11xCs4lwhBoCCRugNJH
+	 nXY330+btQrs2B6CM0B4tecKGrUREwLu0V79g2OCk6bHX++VHyLams0xp+j8elFTG+
+	 6Q/GYrgBQHBmZBupNep1FoDmC3Fl4voPUrrdR8oU=
+Authentication-Results: mail-nwsmtp-smtp-production-main-60.vla.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
+Date: Tue, 7 Oct 2025 15:37:32 +0300
+From: Onur =?UTF-8?B?w5Z6a2Fu?= <work@onurozkan.dev>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: rust-for-linux@vger.kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
+ boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+ lossin@kernel.org, tmgross@umich.edu, dakr@kernel.org,
+ linux-kernel@vger.kernel.org, acourbot@nvidia.com, airlied@gmail.com,
+ simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, corbet@lwn.net, lyude@redhat.com,
+ linux-doc@vger.kernel.org
+Subject: Re: [PATCH 0/3] rust: xarray: abstract `xa_alloc` and
+ `xa_alloc_cyclic`
+Message-ID: <20251007153732.654b9c6b@nimda.home>
+In-Reply-To: <aOTzJyLA49xdckRr@google.com>
+References: <20251006163024.18473-1-work@onurozkan.dev>
+	<aOTzJyLA49xdckRr@google.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bjLYY9IEYe109sMt"
-Content-Disposition: inline
-
-
---bjLYY9IEYe109sMt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Tue, 7 Oct 2025 11:01:59 +0000
+Alice Ryhl <aliceryhl@google.com> wrote:
 
-Changes since 20251006:
+> On Mon, Oct 06, 2025 at 07:30:21PM +0300, Onur =C3=96zkan wrote:
+> > Initial version of xa_alloc and xa_alloc_cyclic abstraction
+> > patch series.
+> >=20
+> > Onur =C3=96zkan (3):
+> >   rust: xarray: abstract `xa_alloc`
+> >   rust: xarray: abstract `xa_alloc_cyclic`
+> >   remove completed task from nova-core task list
+> >=20
+> >  Documentation/gpu/nova/core/todo.rst |  8 ---
+> >  rust/kernel/xarray.rs                | 82
+> > ++++++++++++++++++++++++++++ 2 files changed, 82 insertions(+), 8
+> > deletions(-)
+>=20
+> We should send xarray patches to the linux-mm@kvack.org too.
+>=20
+> Alice
 
-The mailbox tree gained a build failure, I used the version from
-20251006 instead.
+I suppose it should be added to the MAINTAINERS file? `get_maintainer.pl
+rust/kernel/xarray.rs` doesn't give that address right now.
 
-Non-merge commits (relative to Linus' tree): 1189
- 1444 files changed, 61523 insertions(+), 29086 deletions(-)
-
-----------------------------------------------------------------------------
-
-I have created today's linux-next tree at
-git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
-are tracking the linux-next tree using git, you should not use "git pull"
-to do so as that will try to merge the new linux-next release with the
-old one.  You should use "git fetch" and checkout or reset to the new
-master.
-
-You can see which trees have been included by looking in the Next/Trees
-file in the source.  There is also the merge.log file in the Next
-directory.  Between each merge, the tree was built with an arm64
-defconfig, an allmodconfig for x86_64, a multi_v7_defconfig for arm and
-a native build of tools/perf.=20
-
-Below is a summary of the state of the merge.
-
-I am currently merging 407 trees (counting Linus' and 406 trees of bug
-fix patches pending for the current release).
-
-Stats about the size of the tree over time can be seen at
-http://neuling.org/linux-next-size.html .
-
-Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
-Gortmaker for triage and bug fixes.
-
---bjLYY9IEYe109sMt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjlCOkACgkQJNaLcl1U
-h9BxXwf+IEH5TVkJsZTKvQ2v2Ab8fPfHLoMs1noXC4EVD4q50hUK0kKkwbB+MdLH
-CXFl2hFQ6WlpF9WUWtH5Fui08EEvRo894qKrzqvmYmVivo3ZzwgYA7GFQBlUL93d
-kXL2MfkwerhM8QpyKCC0pu6uW38uJpe/2lquNAajgdrGqnBAv5rc9mOgII/6JkcZ
-974bjDJTaf/aHrXtHulEk7kAL3+auybwqQI/g6KLeXMVPJi3h5vfagjNe/Kw8NDs
-dFI4M+h0ZhyLoZfl7F4CaChFnmvImilB82NCwfeH0+lvub3e00U/W5Tc5QxH1Pj1
-dKkWc16Vn9yG7wI25p3swSXNwwhT2Q==
-=vEQR
------END PGP SIGNATURE-----
-
---bjLYY9IEYe109sMt--
+Thanks,
+Onur
 
