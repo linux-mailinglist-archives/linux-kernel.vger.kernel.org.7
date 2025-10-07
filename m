@@ -1,128 +1,135 @@
-Return-Path: <linux-kernel+bounces-844595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1611BBC24F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 19:57:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2886FBC2510
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 20:04:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C80023C5F04
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 17:57:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 17DA14E2FAE
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 18:04:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE7772E8B8E;
-	Tue,  7 Oct 2025 17:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0FB20C461;
+	Tue,  7 Oct 2025 18:03:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Hryn9ECz"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YDGW7iSt"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57DF734BA5C
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 17:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880301662E7
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 18:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759859825; cv=none; b=rgulFcgoRKkh2eL8Rteg41sNDs6w01+/vcSk8WzhYbTDQ8Wc05IjEPo0sxwxi4Fizvlx64+/gdfkovriotLnMLjJJZHIJfdHIDV7wmfup5U/YLFfVVN6PHkQQlFhEd9mO/pjMd1kjkpRgCzvdNDVnf2HDwJCsyxGXxBAyqYKhl4=
+	t=1759860233; cv=none; b=dSRVfaf3i+OpV1ATReHxEz+jEQFpiQPDm298PqVL0HGP20v7OZWasjMn755T//4vZijyR0q+YVIJibKwiu3LGf0NJDCfPvYg+0/vhSpP1qAmCVCBlFJorNcwScTpxi9UfbDUSfBVoghen9Ip+096qC+RfHvbBJo6NMQWDWlvtMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759859825; c=relaxed/simple;
-	bh=BBoLmzgQFjNWPojT3b9qrfvfUGCgJ6jVJBKAFlr7QvQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YsGq8gRaVzcO5KHQszc7ge58ph5N1uy+3/R9J4YdMb8wi2/EX2GW5og2BzV7LA0onbDackRsgi9mfgq0QmNw7inUlycnoPPblfS6tG53zWfkYmBX+oYXU39QeAAiCdIfaOusaPnwy16e8ndCvlNT0ePRcRf+qU28ZfVVvu7qWf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Hryn9ECz; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 7 Oct 2025 10:56:54 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759859821;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wbA3BYEyn+mxKLyud6a/KO/PAxmrcSw7SZSIkfU9Jro=;
-	b=Hryn9ECzWmsNJwns1EtidDA4yExpGmfII0Nmt0EwJ6MNEYvgE1tvHAy9mvDQqEDXdkZJgq
-	5jWCrMEh6pwZP8Bk6ppCt9sM4KaJCJXIqlvy/LENuBa1BR1zZT5auynWh/UoiRA8e2Jldz
-	LzY5C/Nnfqy4n4x9eKaG0R1ZlQDTMhU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Qi Zheng <qi.zheng@linux.dev>
-Cc: hannes@cmpxchg.org, hughd@google.com, mhocko@suse.com, 
-	roman.gushchin@linux.dev, muchun.song@linux.dev, david@redhat.com, 
-	lorenzo.stoakes@oracle.com, ziy@nvidia.com, harry.yoo@oracle.com, 
-	baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com, 
-	dev.jain@arm.com, baohua@kernel.org, lance.yang@linux.dev, 
-	akpm@linux-foundation.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	cgroups@vger.kernel.org, Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: Re: [PATCH v4 4/4] mm: thp: reparent the split queue during memcg
- offline
-Message-ID: <sdpkprxqf43emy5sttfzxnv4aemlarimdybdva4xyywyndajtx@zyvckuxgujzm>
-References: <cover.1759510072.git.zhengqi.arch@bytedance.com>
- <a01588414c9911f2bc912fa87f181aa5620d89d4.1759510072.git.zhengqi.arch@bytedance.com>
+	s=arc-20240116; t=1759860233; c=relaxed/simple;
+	bh=NHEmrtJIgEleCWQcevq6nqZY7xNB77jO7eLNYiB6sEU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MS8F59hhKw8VVq/Vos9MANexBoO8NN1eJp+96KPtNDeWOfezYPRkdRoLBZ81Ca3NRdQZNlulvjq/EW3gf7YB0m9w5x/DKzlR9Xql7PJPCTDQtFw9EWHRugIcqZbt7eRcqJoZttdpK1I0jxlUonM4ZJsp90heibQ8INHeKfpMJAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YDGW7iSt; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so6167964b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 11:03:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759860232; x=1760465032; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BoeUTdyH6Ho2hK/WV0Pq7ReoILwQzxKPA2QdB9ZFVa0=;
+        b=YDGW7iStLghTCfJ7+MCFpdhgAbzOjwWdGzzI4+L/86ppjDjIEg1yv6gMYK7LVKlQyQ
+         A62FUxwi7lyqLo86FJjSoCt4Cxl4tlO0fCBif7yXNu8b81yfL6+NpNlMBvDELrOz4KVD
+         Mp4yh4bsPfcGIXLH+lA7B/v9L+KcJsb0YxXnrsQuPpXPe7MF7chjW77QqwsBWQENainV
+         SJ7yKYtzDCRymEeRt44ed1JSClqUNeFjqaFZkerPO885JnyLV+4lo/2X9BHI3g2q8V4F
+         wm5F1GT8MSgfQGG8KePscMiHadq35L2g5kGW3vkcIM9+NuZVdcIgraWFc+UXAqJzXYQe
+         4OsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759860232; x=1760465032;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BoeUTdyH6Ho2hK/WV0Pq7ReoILwQzxKPA2QdB9ZFVa0=;
+        b=lpiITWsHI0fKQZJAbIk3IxFdUqnEy6lwwyjPy5iOoukTLGGtp9z8Hr0Woj9uGRdouJ
+         XiauXSSf69fO2qrFx6SiZ3lqLnUmcK9+eUIEt8lqNfXoVMOYgMqIpNQPHsB49aLgQeSW
+         FpmwT49PGRCe/TuKym/wlu9La48PfOrZpx/ryV7de13c6M1buSPTBw5duVnos5f94VTn
+         rQZC3udkUBoTiGaWXVIQ4xlHZuEoeA8KySUHRSclxibb2gfiOBJapEPfb7tXxGSXcjbZ
+         NLg4LMPVMCdzlNwU2lubU6txBRUVSUKt3bKHa9ONKcn0n9WaPnhL5boRNVQZgUDZof/R
+         57cg==
+X-Forwarded-Encrypted: i=1; AJvYcCVEm8ZH6K5lM2fHR5LcOUVEwM/wvIV4hwagHE8R6+Zew3S1Q/RD9v2Dnf0N5G+GShfNAk8MyhB3MNZmoME=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx71vgtl2XwP2HFMmKDTLSzz+6PtI3w8EjXBzm2yOMtpWm+laBV
+	T37mo0CgN/NfxCVU4WifpD2aO/uwi3aK68Vse0z3ObHWc7KgtrN3ujWi+Dq6td2SD+juVZCxTj3
+	l4NrEdn/T+LNido80ltrU9gqrwNfpF6JAOmpdZjjg
+X-Gm-Gg: ASbGncvsKJA7xzYHHf6jGjbx0G0ZvqnYZVzrDkV3ndck1NY0oMRMR5ynsUcegWeXxgX
+	C18mEpszehT2N++VR2Ryf7rbMq0QVcx4JBl77bQD0vdY/M5j8Jsde3bHPGathFqv0jZgdnrSPpR
+	Ca4UNt2q2fyTm5wcHrhFUZAX6QXNywnp35TAoirPNkKNUbxR7CsFm46Tn1r+ICa6ckmAeaceFRB
+	CnX43nNzwkSv+W2Cptv17y/y3J/jipf2sTDuXk1cmx52iFCRNEJnl2WsbYYkI0Ga0CwOF9g6N7o
+	KQb9zOm2pfdE7A==
+X-Google-Smtp-Source: AGHT+IErqs+kJVv5rsWGTN2Z0xZ0ickiFqF1IQ4SpRF/lYWHEWgJPEacLea7fTefk87mdvoXJ1AdDn7lRgB9V20xPD0=
+X-Received: by 2002:a17:902:d58d:b0:266:cb8c:523 with SMTP id
+ d9443c01a7336-290273ffe89mr5647285ad.48.1759860231518; Tue, 07 Oct 2025
+ 11:03:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a01588414c9911f2bc912fa87f181aa5620d89d4.1759510072.git.zhengqi.arch@bytedance.com>
-X-Migadu-Flow: FLOW_OUT
+References: <20251006232125.1833979-1-royluo@google.com> <36068ca3-912e-4e71-b688-8689ead8194b@kernel.org>
+In-Reply-To: <36068ca3-912e-4e71-b688-8689ead8194b@kernel.org>
+From: Roy Luo <royluo@google.com>
+Date: Tue, 7 Oct 2025 11:03:15 -0700
+X-Gm-Features: AS18NWA8U90B63ffP5jXdkUD5e6eOAqItmxz5SXEaQputDmKkvJD4mEmS6I0ARg
+Message-ID: <CA+zupgyLx8q23b-ecrLhYAU27HV_ZFMiH9XR81Q2MKRmMwpcNw@mail.gmail.com>
+Subject: Re: [PATCH v1 0/4] Add Google Tensor SoC USB support
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Peter Griffin <peter.griffin@linaro.org>, 
+	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Joy Chakraborty <joychakr@google.com>, 
+	Naveen Kumar <mnkumar@google.com>, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 04, 2025 at 12:53:18AM +0800, Qi Zheng wrote:
-> From: Qi Zheng <zhengqi.arch@bytedance.com>
-> 
-> Similar to list_lru, the split queue is relatively independent and does
-> not need to be reparented along with objcg and LRU folios (holding
-> objcg lock and lru lock). So let's apply the similar mechanism as list_lru
-> to reparent the split queue separately when memcg is offine.
-> 
-> This is also a preparation for reparenting LRU folios.
-> 
-> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
-> ---
->  include/linux/huge_mm.h |  4 +++
->  mm/huge_memory.c        | 54 +++++++++++++++++++++++++++++++++++++++++
->  mm/memcontrol.c         |  1 +
->  3 files changed, 59 insertions(+)
-> 
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index f327d62fc9852..0c211dcbb0ec1 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -417,6 +417,9 @@ static inline int split_huge_page(struct page *page)
->  	return split_huge_page_to_list_to_order(page, NULL, ret);
->  }
->  void deferred_split_folio(struct folio *folio, bool partially_mapped);
-> +#ifdef CONFIG_MEMCG
-> +void reparent_deferred_split_queue(struct mem_cgroup *memcg);
-> +#endif
->  
->  void __split_huge_pmd(struct vm_area_struct *vma, pmd_t *pmd,
->  		unsigned long address, bool freeze);
-> @@ -611,6 +614,7 @@ static inline int try_folio_split(struct folio *folio, struct page *page,
->  }
->  
->  static inline void deferred_split_folio(struct folio *folio, bool partially_mapped) {}
-> +static inline void reparent_deferred_split_queue(struct mem_cgroup *memcg) {}
->  #define split_huge_pmd(__vma, __pmd, __address)	\
->  	do { } while (0)
->  
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 59ddebc9f3232..b5eea2091cdf6 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -1099,6 +1099,11 @@ static struct deferred_split *memcg_split_queue(int nid, struct mem_cgroup *memc
->  {
->  	return memcg ? &memcg->deferred_split_queue : split_queue_node(nid);
->  }
-> +
-> +static bool memcg_is_dying(struct mem_cgroup *memcg)
-> +{
-> +	return memcg ? css_is_dying(&memcg->css) : false;
-> +}
+On Mon, Oct 6, 2025 at 6:06=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
+>
+> On 07/10/2025 08:21, Roy Luo wrote:
+> > This series introduces support for the USB controller and PHY found on
+> > Google Tensor SoCs (G5 and newer). This includes:
+> >
+> > 1.  DWC3 Glue Driver: A new glue layer for the Synopsys DesignWare USB =
+3.0
+> >     controller (DWC3) as integrated into Google Tensor SoCs, including
+> >     hibernation support.
+> > 2.  DWC3 DT Bindings: Device Tree binding documentation for the Google
+> >     Tensor SoC DWC3 controller.
+> > 3.  USB PHY Driver: A new driver for the Google Tensor SoC USB PHY,
+> >     initially supporting high-speed operations.
+> > 4.  USB PHY DT Bindings: Device Tree binding documentation for the Goog=
+le
+> >     Tensor SoC USB PHY.
+>
+> This is useless message in the cover letter. We see what patches do from
+> the patches.
+>
+> What you are supposed to explain here and in the bindings patches, is
+> why we want this driver and what is Tensor SoC, considering we already
+> have one Tensor SoC... IOW, explain everything which is not obvious -
+> and duplicating SoCs with some generic name is for sure not obvious.
+>
+> Best regards,
+> Krzysztof
 
-Please move the above function to include/linux/memcontrol.h
+Thanks for the review. Will remove the redundant info and ensure the next
+cover letter provides the necessary context on the Google Tensor G5 SoC
+this series intends to support.
 
-With that, please add:
-
-Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
-
+Regards,
+Roy Luo
 
