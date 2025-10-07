@@ -1,116 +1,71 @@
-Return-Path: <linux-kernel+bounces-844688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E246BC2811
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 21:25:36 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B98CBC2823
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 21:28:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 558313A2E11
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 19:25:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A18F44EF72E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 19:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6353E23184A;
-	Tue,  7 Oct 2025 19:25:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FAEF231830;
+	Tue,  7 Oct 2025 19:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dLpS61BS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="gl7ZowPn"
+Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B833A22172C;
-	Tue,  7 Oct 2025 19:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7255A1C5F23
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 19:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759865123; cv=none; b=n9+Rz/KX9x/KLpVGVhHUc2+BjP4fLXbQ5dZAaAOaR6/BPA/SL5+RMmO/EZl/8j76Ts++ZMEFzqIHICoefF1MuKACL5WUKAzvu13j09IRBRxmySQqv0UZdKK1T25Tp5lV7MdlNzyhAGlvPQT/6nTSCMfudvPjQNy9q1ZFDOxQKdo=
+	t=1759865317; cv=none; b=TL85Rh/rvJLlGpL9x3gDeBItDHlok2PPQ0JzSnjCyL06a1tHoGw89Ompo9WfQSYJ7cYJkVLHYEe18KjC3BJ/D+0stjsAOa69HEoTtepLCqOrT2+KK7qXxFRCfoYW25DHivhR0/amVoRTvuWQ/ANwCXuiA/0Vam2ik2i11M5uaU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759865123; c=relaxed/simple;
-	bh=nzAwztI0+ApyNKq3ya5FejLfcx6q+aoJwQfJH3QO1dY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tblQn8utWVygDOqyJ13k1yPCardsDMr2JOCtZP4BBsAN5vTTgPBlhco8u+NdSxOi0cwGr36uMMCJk+8UHMe9k0PpEzr4haLM6aA/XIsJn+2FZjsN6egC5lmdLxVnNXOErQXgwOiw8ws0iLtpgvTXErhdF2+kowl13NGA3ujG+pU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dLpS61BS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEDE6C4CEF1;
-	Tue,  7 Oct 2025 19:25:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759865123;
-	bh=nzAwztI0+ApyNKq3ya5FejLfcx6q+aoJwQfJH3QO1dY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dLpS61BS3xppycjSk6rS+WRuTGq/q+DQlvYwtCVP/PRdTYVjz/PLSTHQFdPzzTu3v
-	 ZYd7OFajzQHXJpGtgLFXnOW1rGSuegIo7TIee7I8uuf6dewcXErUs7zY/v22aA1LXX
-	 0WWhsauAnMemUXHfB1cLd5v7cwyRaX6O5VjA5V7KCU5Iy3V3jJSJYBlL+FcdLt4Wfg
-	 c3XDF1eDU/BiZXAwWJVlrYk7oxjfUJg2HElR1q6e57q0huCj1rqTqM5z2FqhGal+Mv
-	 Nw1qXCkebMKvY0qKtVs5+gjKWQFd0/C07FTjtA+3N9BoZijRJwcdferCaygb3W71pd
-	 SvyW2MW4dN/Wg==
-Date: Tue, 7 Oct 2025 22:25:19 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Shahriyar Jalayeri <shahriyar@posteo.de>
-Cc: peterhuewe@gmx.de, jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tpm: infineon: add bounds check in tpm_inf_recv
-Message-ID: <aOVpH_31JEhiN6qv@kernel.org>
-References: <20251007090736.17942-1-shahriyar@posteo.de>
+	s=arc-20240116; t=1759865317; c=relaxed/simple;
+	bh=8o9bF8iyapjTsVg/hDsFbGPWEyB7pyDRmCb3bnkj1hk=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type; b=p6dXORMwXzsz8+TbWbDJBH3geOVsNQAEk2EDie5p0Xsu/9X8MEjlaemdNq8M/1W/A6Ndg4UaN6C62IDBs9u66PQijTtgodfjqfMLZg2ldmyMQbXuKf9Yk70XaArndmvduiGyc4f9vRHvaBDR3f8biHWtcGsBf4EORhTlMwm2X3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=gl7ZowPn; arc=none smtp.client-ip=185.67.36.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout02.posteo.de (Postfix) with ESMTPS id C7EDA240101
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 21:28:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
+	t=1759865313; bh=8o9bF8iyapjTsVg/hDsFbGPWEyB7pyDRmCb3bnkj1hk=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type:
+	 Content-Transfer-Encoding:From;
+	b=gl7ZowPn6jXN034+oPzpL2D08NO+Srh5sZmDGgYgLFDVJgTk6SsrSVHb3CXNSJQqg
+	 JmorbaNr/tMcTe92zJKbRHi2YTclC2hyAnOYVvx9+RjEGlJJFVqpDEceIqXJrYhrWm
+	 dBNS3mu8EyDVjytSP9+qRyDCPQ8kkqEQkhtqTJgGu02rgIw4wlp0oSigPoivSC1Z1y
+	 ytIbLnbZBumtF13CwSIq2qSpnr1F4nehmBkwcZiwgU2shlifH85xqfxyYupOtaKtnw
+	 KGbiGSTz5ITQq4yKhTY9Eyy2blnMc6wpHbOWzVA6CqXNIl6qXy36Pjnb9nTsuPqyHH
+	 IiNrkXbBgiuEw==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4ch5lj3hlBz9rxD
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 21:28:33 +0200 (CEST)
+Message-ID: <4a813594-8c34-4be9-9292-e576577e1648@posteo.de>
+Date: Tue, 07 Oct 2025 19:28:33 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251007090736.17942-1-shahriyar@posteo.de>
+From: Andreas Kinzler <kinzler@posteo.de>
+Subject: bug: CONFIG_SCHED_MC_PRIO has undeclared dependency on
+ CONFIG_DEBUG_FS
+To: linux-kernel@vger.kernel.org
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 07, 2025 at 09:07:39AM +0000, Shahriyar Jalayeri wrote:
-> Add two buffer size validations to prevent buffer overflows in
-> tpm_inf_recv():
-> 
-> 1. Validate that the provided buffer can hold at least the 4-byte header
->    before attempting to read it.
-> 2. Validate that the buffer is large enough to hold the data size reported
->    by the TPM before reading the payload.
-> 
-> Without these checks, a malicious or malfunctioning TPM could cause buffer
-> overflows by reporting data sizes larger than the provided buffer, leading
-> to memory corruption.
-> 
-> Fixes: ebb81fdb3dd0 ("[PATCH] tpm: Support for Infineon TPM")
-> Signed-off-by: Shahriyar Jalayeri <shahriyar@posteo.de>
-> ---
->  drivers/char/tpm/tpm_infineon.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/drivers/char/tpm/tpm_infineon.c b/drivers/char/tpm/tpm_infineon.c
-> index 7638b65b8..8b90a8191 100644
-> --- a/drivers/char/tpm/tpm_infineon.c
-> +++ b/drivers/char/tpm/tpm_infineon.c
-> @@ -250,6 +250,11 @@ static int tpm_inf_recv(struct tpm_chip *chip, u8 * buf, size_t count)
->  	number_of_wtx = 0;
->  
->  recv_begin:
-> +    /* expect at least 1-byte VL header, 1-byte ctrl-tag, 2-byte data size */
-> +	if (count < 4) {
-> +		return -EIO;
-> +	}
-> +
->  	/* start receiving header */
->  	for (i = 0; i < 4; i++) {
->  		ret = wait(chip, STAT_RDA);
-> @@ -268,6 +273,10 @@ static int tpm_inf_recv(struct tpm_chip *chip, u8 * buf, size_t count)
->  		/* size of the data received */
->  		size = ((buf[2] << 8) | buf[3]);
->  
-> +		if (size + 6 > count) {
-> +			return -EIO;
-> +		}
-> +
->  		for (i = 0; i < size; i++) {
->  			wait(chip, STAT_RDA);
->  			buf[i] = tpm_data_in(RDFIFO);
-> -- 
-> 2.43.0
-> 
+please see https://bugzilla.kernel.org/show_bug.cgi?id=220638
 
-Nitpick: we don't use curly braces for one line statements.
-AFAIK scripts/checkpatch.pl complains about this. Other than that
-I don't see any issues.
+https://elixir.bootlin.com/linux/v6.17.1/source/arch/x86/Kconfig#L1057 does not declare a dependency on CONFIG_DEBUG_FS. In fact CONFIG_SCHED_MC_PRIO requires CONFIG_DEBUG_FS because the function sched_set_itmt_support (https://elixir.bootlin.com/linux/v6.17.1/source/arch/x86/kernel/itmt.c#L108) creates debug fs entries and fails if CONFIG_DEBUG_FS is not set.
 
-BR, Jarkko
+I found this bug because with my custom kernel CONFIG_SCHED_MC_PRIO functionality did not work because I did not enable CONFIG_DEBUG_FS. After enabling CONFIG_DEBUG_FS CONFIG_SCHED_MC_PRIO also worked.
+
+
 
