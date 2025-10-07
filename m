@@ -1,83 +1,87 @@
-Return-Path: <linux-kernel+bounces-843754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D3B8BC0291
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 06:39:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F0C6BC029A
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 06:40:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2D1E44E6352
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 04:39:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ACC71897D59
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 04:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09EE31917D6;
-	Tue,  7 Oct 2025 04:39:35 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BFB5FDA7
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 04:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE451C6FE1;
+	Tue,  7 Oct 2025 04:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KvvUcnsC"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E4917A318;
+	Tue,  7 Oct 2025 04:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759811974; cv=none; b=AvE0zsJECLRRK967JPPeCfteilRnWxeegaS+93CR4gN5TWiB09HE8Eul159cFNX+EG6rDRLYY/DgVZFIX2oybnR1yiJ3P+mkqRFV2PpR2gLmwJOz18tGWsMlx2Wasvsee3LZFSlEoB6X9vzGM7uMWWTNYocmD2eKKflpBbud3oE=
+	t=1759812004; cv=none; b=POiWskv4eXz1b+Z/Uqxn0Twn2TVY7chq8b+bYhuhoxb0PKKhaXcDYm9JGySDhsWjWH4F/PrkX9+kTWUqRNkakHUuIKr3ERguYhHZX+jW0tPpF0lXsZe7Qb7EO4d9W+g3eXGWsxSxHB5IKB2HrLyYxnjFBUTxTqdSWo95ghYf+3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759811974; c=relaxed/simple;
-	bh=ZEjwKV7KCaCqaG6CV2M/Yiahp9JEm8AkBNAcW4fQQgo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RnAo8gYFV/w3hRP3vZ7Y3t7VKeABsN+A/Lv+wn9lza3dGNSg7219eFBm7G5lDt2hDF8k/w00JU6x2FE5U4iLsa7YvEhqqeWDPJBeXn+ve8wv4F4eITJf0SglGvomKzFMsSr5l8tSBRRcIwgPSKSyvBj5dS5TBsIa7lmwWmfedJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3B1FE14BF;
-	Mon,  6 Oct 2025 21:39:24 -0700 (PDT)
-Received: from [10.163.65.24] (unknown [10.163.65.24])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A8FF63F59E;
-	Mon,  6 Oct 2025 21:39:26 -0700 (PDT)
-Message-ID: <0d1bcfdc-031f-4841-b0f3-15ae1d1ffb8e@arm.com>
-Date: Tue, 7 Oct 2025 10:09:22 +0530
+	s=arc-20240116; t=1759812004; c=relaxed/simple;
+	bh=GeYSyG5ulRONz/Oh78xBkkMNZYojc/GpUceMuyVQSas=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dJVgyujYdrSMFpVch+0Gdy/XoS/tyG93dmDG5tbS88EEyrBWRtHdZjJ6lF3q6GgE3L1ORVAvYnzrwDP3KldfCjMM9+UoA/0+0lM5cZu0fjcicB1gh0fMvuBEkiNnitOu6JsEiQ0hzJygfJ/L3L7+SfoC1K+jEopzwqU607CplwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KvvUcnsC; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=+AguE4rucpaLg7FRf0dthwiLawI0yG7ImPAcuMa5Ft0=; b=KvvUcnsCCswrLRbrDcoRJmfHPB
+	JJyHOcyzAWpyqdIoBTqJ/gVWCj9Ch9KAaFgb8NA2zaRHVyaFOpl4jTio9nzGpuWQyiPBGPglHSJXQ
+	iqZ1S1Ku1o0XeJ5pH+8QOmpWSIslnvMCu0D1U+kxkqljO/t8MKlqljoZrYTT52qCP2///yKhIqCco
+	NKRU42bkstpeUXRXiTSBzM6LAw2cgtMcfruEgoHTGu7QJtyEWFMZ/yRXU7P6Bx5Ywdc4TprN6NEk3
+	6wFs3pB/B6Lek1COjRb9hkkN8IvqGhfE5gdpU0SVvvQ8e2W4JgezRDiARn/DBBcJ6rBDqOJcFL+9y
+	NwTkgIag==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v5zUZ-00000001GFd-0Y2k;
+	Tue, 07 Oct 2025 04:40:03 +0000
+Date: Mon, 6 Oct 2025 21:40:03 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: dima@arista.com
+Cc: Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	David Disseldorp <ddiss@suse.de>, Nicolas Schier <nsc@kernel.org>
+Subject: Re: [PATCH RFC] gen_init_cpio: Do fsync() only on regular files
+Message-ID: <aOSZo8h6l2XNin3C@infradead.org>
+References: <20251007-gen_init_cpio-pipe-v1-1-d782674d4926@arista.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH mm-new v2 2/3] mm/khugepaged: use VM_WARN_ON_FOLIO instead
- of VM_BUG_ON_FOLIO for non-anon folios
-To: Lance Yang <lance.yang@linux.dev>, akpm@linux-foundation.org,
- david@redhat.com, lorenzo.stoakes@oracle.com
-Cc: ziy@nvidia.com, baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
- npache@redhat.com, ryan.roberts@arm.com, baohua@kernel.org,
- ioworker0@gmail.com, richard.weiyang@gmail.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20251006144338.96519-1-lance.yang@linux.dev>
- <20251006144338.96519-3-lance.yang@linux.dev>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <20251006144338.96519-3-lance.yang@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251007-gen_init_cpio-pipe-v1-1-d782674d4926@arista.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
+On Tue, Oct 07, 2025 at 12:55:03AM +0100, Dmitry Safonov via B4 Relay wrote:
+> From: Dmitry Safonov <dima@arista.com>
+> 
+> Here at Arista gen_init_cpio is used in testing in order to create
+> an initramfs for specific tests. Most notably, there is a test that does
+> essentially a fork-bomb in kdump/panic kernel, replacing build-time
+> generated init script: instead of doing makedumpfile, it does call
+> shell tests.
 
-On 06/10/25 8:13 pm, Lance Yang wrote:
-> From: Lance Yang <lance.yang@linux.dev>
->
-> As Zi pointed out, we should avoid crashing the kernel for conditions
-> that can be handled gracefully. Encountering a non-anonymous folio in an
-> anonymous VMA is a bug, but a warning is sufficient.
->
-> This patch changes the VM_BUG_ON_FOLIO(!folio_test_anon(folio)) to a
-> VM_WARN_ON_FOLIO() in both __collapse_huge_page_isolate() and
-> hpage_collapse_scan_pmd(), and then aborts the scan with SCAN_PAGE_ANON.
->
-> Making more of the scanning logic common between hpage_collapse_scan_pmd()
-> and __collapse_huge_page_isolate(), as suggested by Dev.
->
-> Suggested-by: Dev Jain <dev.jain@arm.com>
-> Suggested-by: Zi Yan <ziy@nvidia.com>
-> Signed-off-by: Lance Yang <lance.yang@linux.dev>
-> ---
->   
+Why is is using fsync at all?  Seems like this was added in
 
-Reviewed-by: Dev Jain <dev.jain@arm.com>
+commit ae18b94099b04264b32e33b057114024bc72c993
+Author: David Disseldorp <ddiss@suse.de>
+Date:   Tue Aug 19 13:05:45 2025 +1000
 
+    gen_init_cpio: support -o <output_file> parameter
+
+without any good explanation.  In general doing a per-file fsync
+is going to horrible wreck performance, and given that no one is
+interested in partial initramfs archives also rather pointless.
 
