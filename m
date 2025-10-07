@@ -1,87 +1,139 @@
-Return-Path: <linux-kernel+bounces-844858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C912BBC2EE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 01:25:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B32D6BC2EE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 01:26:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A3153C70F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 23:25:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDE0B189CE3D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 23:26:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92D6258EEE;
-	Tue,  7 Oct 2025 23:25:05 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D40E259C83;
+	Tue,  7 Oct 2025 23:25:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CTK8l4Kx"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063F8235C01
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 23:25:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89352235C01
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 23:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759879505; cv=none; b=efhaPxzc9+N13KO6ukWIYthW7PqCGzs0v7QVTvubJpTrOtJFzfblMQtAO9u3SOz1H81uIa8Sl2DE40h10ve8ofrucHQRR/tKAaSnQER1PMTJGoij3WCo7EDzXGzbqspFpHUTEMaDPy7EP4y9LG7pbNRsmnhL74UVU1oLMw2BuPs=
+	t=1759879555; cv=none; b=HtOw+IJjBr2NIJXVaOqeNX1zVsdh524z6Nbz0ohUcScnTrV7z99ByDMakccZep+nxca7lIgWnQfTUM29g/Jab+SxnpY6Z1smT8Rd8cK6EwjigmpJ4dvGuKhW0CWhpPZQ9zNZPUrGSdDpSJCYncYBb4QRfMLgSW4e/cmmEYkNL38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759879505; c=relaxed/simple;
-	bh=3mqLMi8unCYBtqBS6sHWqUOKQV8pcV00WogRpanNdWg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=FU/Ph1VOTNBTqCNNMNksBGHl7F7emAP6W1ZjAy/F2/NUQrAsJ1Aqg5SLxgfuDRFsVHYTrm7zANCYvV25XRnglEI8dLOKABNMp9GDUoSHJhpInwTPY4UD3A39hBNF51pHa+nRw+B8r8nRqVGk7q7kGjXI4Nv4KN0Ht941+5hXK/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-90e388db4bdso407365739f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 16:25:03 -0700 (PDT)
+	s=arc-20240116; t=1759879555; c=relaxed/simple;
+	bh=sM3A7QvmdBlfaZ/1cFm6HDZFBo8SVeKyCVvxoFkhzqM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RZZqUnqG8yww2el6k7RZrrtLMQo/ZZlxV7/bc1wzvtfacJ3nSh6YB7MuQQbEbAJn47U+f52M7SjHvaJIx7bgHTTtWrE1gCOY+iIKNrJUFkZYu86CIArddEUlwFq1yKQG3thSErCu44osoDPl/+0tWJjt62sJZz0hFd1QBc1JbLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CTK8l4Kx; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-71d6014810fso75122337b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 16:25:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759879552; x=1760484352; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=znGzsSqOOr/r0H2h0VqSOL5mXrikH4XLgaNPq7VatkE=;
+        b=CTK8l4KxIipDZzDoHJM4LG8w9Q4GfR+TQDUkVHXXJUUJXjhvMl5YCGr3Yf3AepE+iv
+         dJYwW1u9Q3HMxr2kSBvu0IMyGxq7YSk6tCLTp6jyVFMCNTbKwYeFw1JPBRbPLnbYZUAY
+         4uzxre1D8nGF+WAEwvViW3fJnJOS6NF13n7b4hfqZ8QJoiP+jjGL8t4kVbq/XvmNL4gC
+         9lFCShhzvxqpGSS7ATavmPFXbkPqQCg+PREW7lHYkxv8QFyHlFAZaecGznNb4v/dG3FO
+         YOT5sj6BwTQ8D6HzOm7m1tNtsKs9vk8TQ2hffjJwYaTBr3UD8FlJHTPNiF7m2lIwfCwa
+         nHWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759879503; x=1760484303;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XoP/K6iZKVZg7llns/PNRetmADP3Jh7y64NwgSYNlNQ=;
-        b=vJQlmWjrH336fpDXV8AhufNG1g4EfTRuI+sWe7AYKLOOSf3BQ2iugqycIOA44oMkAQ
-         /tR2nJB4GaylMIAQTN0ME1AY4420NnPL99eP2zOvERpV0EzGyUxsJ5Nngw5enkEYGoxw
-         FqbAYxi90HAnRPHo5GwIk2dvMGe0+hGfAGYFfqhjL7zyL//gi/RK6xIXx91eaSvMz8Nk
-         zhZK3Ub7CPG0rcePPosh/AMKNlBo3uwPtJi8XSqoFOjykZBHSTrMu97wZSl9DciN+BCb
-         S/IhgfiXbH2yYZqLYut0JLWWuPxXweLzbYsmmPK4SX3okh8leCe/+iDCPawIe8iRp94Z
-         ssww==
-X-Forwarded-Encrypted: i=1; AJvYcCUuriSv2GEOpGU1X1IaNhNi4TA67Co6XL98M0VIhAGAmtWRdfCch7+ie9tODuxESwUjCBXM4Sy4a9WRFsk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfhKKFgygUznfU237moMjvvH0HwamU8rWTKQaUmtmEMK3TdgNf
-	6ErpauCDqblQsv5yv4/5ytasSpcm5N/jWObRcHA33nWfTdK1OEdrTN7xAEx2a9OHeyi+6BcIxHS
-	w5IC95wYAWLi6Q05sQgfVRFfy0HJm3blV4e/45qPYiBtWTyDV48TX18Agj9M=
-X-Google-Smtp-Source: AGHT+IEjYzlmPHHuvKttQ8YfsXsMOY93Y5N3wS5MXIAj2Q4cVyJMUTzVz9FqyHGKkvdaVYvYJMwTXRFtBlCwP2KhRMcPdE5Popta
+        d=1e100.net; s=20230601; t=1759879552; x=1760484352;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=znGzsSqOOr/r0H2h0VqSOL5mXrikH4XLgaNPq7VatkE=;
+        b=Nyb/+L9I4S1/aHW8AgAL1nUkLlk3L7VMqrqR0ox7wF7kdpslouiUtrYvGPpoCgQ2MM
+         f4RBjCZqSdjTuHdm0MJ1tYFjCaOzpq8v8axV/kJJ2aZdTH59JCn9Hb1NiXtzKLjwXvip
+         Bd3c8xSvhKzF2es/6s6XQo2rKWfk52ZIJDGWBtrgsXx6U9gDTe/D0dY2wpjEm2733zVG
+         lf49thRVK4CLhPuWgmshvEFRzYKVqKJp97TMm34S3cNhLA3TMoiLrWJbEaVpCBw2bWoh
+         Pd7OH+2yNkfsBk77mYNMAqQCgkaByldl5fG9D262QK/w/o9spg6fU34y7VJghMY4/uID
+         brjg==
+X-Forwarded-Encrypted: i=1; AJvYcCXZLYczciOpQ9HDMtvwY55BKQgCsvVNYnJ4EqEkcs2IJEFtd8Ig+Kwa6KtaYpO7VEaNAS49S1Guc7za0CQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEBO/bdRp7NjYbjQtx21J/ztdsh3U0D4cjPydEtXCSxjPl1uxQ
+	mtwQCyAFD4WQZjTUZ042cYLjVKxemOqYw9LjHyFwYv63sASIF2c+rWAy5XXITSSdWBPlePtmrNZ
+	cbFSEegdhjWoFgu2KVRcNhRJ1yPSlO5aANSN+jyZG
+X-Gm-Gg: ASbGncvYfd3HBi70ogGNUV5UQVOXpBhomNBzQjJ4rp+hSOpOXgqx2mtyj3D1lviKroc
+	ffuny7SYysY0JCFDDtnBbcnqcXsgvio4a6s9tS9mm2vGPjKghHAIXjbgWn453OLAt921ieN7vuG
+	aQmIF2o8zOrhwDhpeqyatJlcMQ+fhnBipRbEuY1KG8YkOqDRW/jGJpCdwU19mbpq5i6z8cIQ/qn
+	EWHNh2Qc/q5+FAbpBGarHD4kqOWm+Mizl5icMrKytM2LSvGm6XYAMgh7QAsZYcwgAcKvEN1L6bW
+	e5w=
+X-Google-Smtp-Source: AGHT+IHwuI2DV/8i9wA+ftWDchHWoXcLhvoxkPYCx4wGBXD6hoJ3XwVMuh37n+yunlF2yMM+iZ57eZJG7up0SSWoOtM=
+X-Received: by 2002:a53:d811:0:b0:635:4ecd:75a2 with SMTP id
+ 956f58d0204a3-63ccb8efe97mr1280678d50.48.1759879552427; Tue, 07 Oct 2025
+ 16:25:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3f93:b0:927:be17:389d with SMTP id
- ca18e2360f4ac-93bd1838538mr148722439f.4.1759879503079; Tue, 07 Oct 2025
- 16:25:03 -0700 (PDT)
-Date: Tue, 07 Oct 2025 16:25:03 -0700
-In-Reply-To: <CAHxJ8O-VdrVEyCpktyUnEE-xwsN8poMvYsXsmQFfwvxi8f-E0g@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68e5a14f.050a0220.256323.002c.GAE@google.com>
-Subject: Re: [syzbot] [ext4?] kernel BUG in ext4_write_inline_data (3)
-From: syzbot <syzbot+f3185be57d7e8dda32b8@syzkaller.appspotmail.com>
-To: eraykrdg1@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20251007003417.3470979-2-runpinglai@google.com>
+ <20251006221043.07cdb0fd@gandalf.local.home> <CABgk4RQwGsn4CdP0K+_7A0j7RVOiHNfoF1ESk17wEuzCea16pA@mail.gmail.com>
+ <20251007154308.5b158d04@gandalf.local.home> <20251007163141.1034b120@gandalf.local.home>
+ <20251007174208.11fd02da@gandalf.local.home>
+In-Reply-To: <20251007174208.11fd02da@gandalf.local.home>
+From: Runping Lai <runpinglai@google.com>
+Date: Tue, 7 Oct 2025 16:25:41 -0700
+X-Gm-Features: AS18NWAB9wq6H0aVv79GmfnejYGOzUl2Ly8MQJ4U2zAS6jGCp5V1hgXWT22LhFU
+Message-ID: <CABgk4RSxm8mNJcRn0HdNH3+Y=VDL5gNVvyhhR26wjBme+i5X-g@mail.gmail.com>
+Subject: Re: [PATCH v1] Revert "tracing: Fix tracing_marker may trigger page
+ fault during preempt_disable"
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Wattson CI <wattson-external@google.com>, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	Luo Gengkun <luogengkun@huaweicloud.com>, Linus Torvalds <torvalds@linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Tue, Oct 7, 2025 at 2:40=E2=80=AFPM Steven Rostedt <rostedt@goodmis.org>=
+ wrote:
+>
+> On Tue, 7 Oct 2025 16:31:41 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> > +static void trace_user_fault_buffer_free(struct trace_user_buf_info *t=
+info)
+> > +{
+> > +     char *buf;
+> > +     int cpu;
+> > +
+> > +     for_each_possible_cpu(cpu) {
+> > +             buf =3D per_cpu_ptr(tinfo->tbuf, cpu)->buf;
+> > +             kfree(buf);
+> > +     }
+>
+> Oops, missed:
+>
+>         free_percpu(tinfo->tbuf);
+>
+> here.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Hey Steve,
 
-Reported-by: syzbot+f3185be57d7e8dda32b8@syzkaller.appspotmail.com
-Tested-by: syzbot+f3185be57d7e8dda32b8@syzkaller.appspotmail.com
+Thanks for providing the buffer-based solution. I tried it and it
+fixes the problem!
+However, the first experiment, adding pagefault_disable/enable()
+around copy_nofault()
+doesn't help. Still having the same problem. I suppose the issue is
+more than pagefault?
 
-Tested on:
+Can you please suggest the next move? I can also do more tests if needed.
 
-commit:         a8cdf51c Merge tag 'hardening-fix1-v6.18-rc1' of git:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=139b5458580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=18b333076bdf1c20
-dashboard link: https://syzkaller.appspot.com/bug?extid=f3185be57d7e8dda32b8
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=166b7334580000
+Best,
+Runping
 
-Note: testing is done by a robot and is best-effort only.
+>
+> -- Steve
+>
+> > +     kfree(tinfo);
+> > +}
 
