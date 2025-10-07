@@ -1,175 +1,125 @@
-Return-Path: <linux-kernel+bounces-843620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A847EBBFDA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 02:34:53 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01763BBFDB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 02:36:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2C8324E2A3C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 00:34:52 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A2DE534C2BA
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 00:36:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 778FD1A4E70;
-	Tue,  7 Oct 2025 00:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8571B5EB5;
+	Tue,  7 Oct 2025 00:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="AVqMWw8K"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vOO0yupP"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AEE942AA3
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 00:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759797286; cv=pass; b=iKT3zVSwcBDxa8FvF27uEnDnVsVl8jp8CI4k9jSwF4nTrLF1ZLK6p+W3VFJ8/d6yXOlp3HWfm6RrHD3GeaFJoKm4LbRlK8gqzC1CnQL59IrAohgKuSD8id60/wn9jBVUYC6N1P3JkH6PHTXEZbTAgEy3T4NKqNGneCHClXdg91w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759797286; c=relaxed/simple;
-	bh=jeIZeeYDF9Ng2YqqixU00pcLvIyQeOgTBAAzYPDnvAA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gFmZnh/jo7JVv1wE4xqRl/BJ18rzBhRl6COQd8hA2Ab1JObB2aETwI08PsKV6uB5nqfFcCP+2oJO/Qn1tjheBOj8GGH98JgenWu5l8X0Pwu8pQFRBy3LipkoR3jm0WOSSOUSEIsokAeZ9fNuCAkUheHdXooiPHtaEeW3mN7BcVE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=AVqMWw8K; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1759797266; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=RlwrFiZvdan50H4kqXG4lG0Z+8rNongazAuAynNOTXCi/uMSqfENHoIOnarV//9ioMhh0ZOF01xTUogA1YBetW93E3owQ+v0mthBT36K9a6fkrDj16WIrvv4FADWE9RluJQVWZyDh/mri/RSTL2nLBTxLg5WhdAj/EPJ2XDVnyg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1759797266; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=+ZMAf+X470UbdXWWHN9Qz4YlFy0BR17oOQDi8pq/BL8=; 
-	b=FkUHRft9YxOn6Yb78x4Y3vnuSulVvhQA4gL+Wi2fqjF77W+sneB6e9LqPU4QBMwvZzCg7tU2uzuSeZ4aFY31c8fesweBhbq6eetYOEJ8EuJLikUKECWF1WfChQgmCX6Vd7ULkcjKRwUPvSNW8EFGA5VbhxR56e8ePilN2/M/qr0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759797266;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
-	bh=+ZMAf+X470UbdXWWHN9Qz4YlFy0BR17oOQDi8pq/BL8=;
-	b=AVqMWw8KOSTjY6LWGoEvcARkXsY0PyytCoQqPTvxRB6Dk/bsb6jLVyJFh4gWOlW9
-	laJnn2PnFFvlzlzmKAtudbiQXyIDM3/7jqc4cmU5Ne0Dd/lA1Ot2B15EagArKiaeKzo
-	XDVXFFihWCb2vfETDHQwFabZKu83nBzLMOkatD4s=
-Received: by mx.zohomail.com with SMTPS id 175979726147753.982398285844056;
-	Mon, 6 Oct 2025 17:34:21 -0700 (PDT)
-Date: Tue, 7 Oct 2025 01:34:16 +0100
-From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
-To: Steven Price <steven.price@arm.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	Boris Brezillon <boris.brezillon@collabora.com>, kernel@collabora.com, Rob Herring <robh@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>
-Subject: Re: [PATCH v4 03/10] drm/panfrost: Handle job HW submit errors
-Message-ID: <3mtnplufdgdfjsj23s5f3ftbwwzj5t3rbjzrqmg4ahqkojxyxd@at275hsnrqip>
-References: <20251001022039.1215976-1-adrian.larumbe@collabora.com>
- <20251001022039.1215976-4-adrian.larumbe@collabora.com>
- <f20a1595-d5a8-4f3c-8b08-f7c743ca37e9@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3FB41A9FB8
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 00:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759797358; cv=none; b=FQzG58psGnhWcHa82w7DbBA/Dc56YRET1pAgKsmrhlSfBfllKSJ4Zm/dYdK/8CpA95DaNvxhV3gngtroP5THYZeJnPjLgpMKcjWIRmbGpZ8MqoX0yEDXw9ASaywvPWA7yNC8Y98cYljrAFk+Rbq9oUCxnUBWVARXzjzx/jtPHwM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759797358; c=relaxed/simple;
+	bh=eaYVbAhT4lR/ZZ5Jro1HbUESdMb7AvVKpDnCTSt+6g8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=se1fuvE+W32Ewua2EYuwZVaADnucS3DAfo6g8GZFfaTobZrh9O9v1svKDwQLqh1sf2Sj9UpK0LLZVfyafbcixjr7tv4TuZJCmuSiBZijq3TArH3mTZ8Yv4rM7Z0t+cc87BfJAfnGx8nJM1/FxCEplrtxNEJIOLzDGOjZQtLJSy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--runpinglai.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vOO0yupP; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--runpinglai.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2711a55da20so34174285ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 17:35:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759797356; x=1760402156; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Y6HSIAmMJUhDqfzrB/fS5/kaQRYPRIDkYIlVlDXHnEY=;
+        b=vOO0yupPgSf8x/G82WTBytGAtwDlFEcwxaMKzjZf+tykD1yE9LqICuSeXdoVUcp7bT
+         lJLNHMSbS9S+KXY2jUqv3JmHPfqN/2qtD3TKMHwydv1yZaQzgiUVyZdC0z6pWGoAjNZC
+         lzTrTKyNhUfDdHjKVeDgdKapx6TE8HqIL6PhfnvVTIOQqNyIpJIkzDWCWFoaWYwsmudV
+         OTRvAV0kbNK7MXhrzRbNmHo0pLRnQbSA7dtRl/q7XtMoohqPGfkcCnNl4m4gxlsdlSAp
+         BsFVUNYZcC/CywEb3iBvthTs5FFKzdmQAnURVcAth+PppETMegLEhMWR9iZ77uBsR2gN
+         BRtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759797356; x=1760402156;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Y6HSIAmMJUhDqfzrB/fS5/kaQRYPRIDkYIlVlDXHnEY=;
+        b=WqT+rEdkHGLDvNUJjrhEKc3mVirqLaYp1HtKJrr0YCb07jbEbZFU2OfjtMxwr998L0
+         N7Mg4/3vPopemdxGWWrqLY6tirtuwWwWMPYvbxczO1EAZC2dP62cvchj9w+vtufYoV+G
+         UcELsZT2fdCBF+vv9+KtyyEckpTCyJj0VfVj5omHXctQXYuGetCHGo3k4v2ymqSX65MS
+         7QprxE0rYB1nhwb40EXeM+i9V45bzDSjnRg6TN8rq5zkdtjuzuWGFs7P5dQjMSj2wpL1
+         3+dYDclRJ164Xa7uMXZLCswlc5DhMa5LHGjaN1wjl0FFJA6LH+cqs2rmccVRkM1sO9em
+         UW3w==
+X-Forwarded-Encrypted: i=1; AJvYcCXpFabcq5w1/WVM1/Q6LXO1ih5KlaLQg6KmuYABYHtMtJUrPg43snnVBJYf72+mEqlZiZ1T90HAEDfJyVc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAfiP47f4uoF0drbs3hlW7P0cVtCZ4+xvinYDH+cQoWJmnNrQ/
+	KXDzx4r7/LbTr/pqDiIk3Gxd5HYxp7YP6vDrz9nRO3izcwQSbw3CVVWl8nMyaNKKD3Xtsvwf2/1
+	bLzF8QGPIOVDR7OhuWGyMpQ==
+X-Google-Smtp-Source: AGHT+IGrHmHhj30VeewmLKDwaHhCJ86g6aH0nKGtqdD2dWGpbW474Z1gxjM8uvB35pCImQIRal7TzTHgTluIfL0A
+X-Received: from plhy5.prod.google.com ([2002:a17:902:d645:b0:264:d7d1:2748])
+ (user=runpinglai job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:903:1b4f:b0:28e:8c3a:fb02 with SMTP id d9443c01a7336-28e9a566888mr176712275ad.14.1759797356148;
+ Mon, 06 Oct 2025 17:35:56 -0700 (PDT)
+Date: Tue,  7 Oct 2025 00:34:17 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f20a1595-d5a8-4f3c-8b08-f7c743ca37e9@arm.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
+Message-ID: <20251007003417.3470979-2-runpinglai@google.com>
+Subject: [PATCH v1] Revert "tracing: Fix tracing_marker may trigger page fault
+ during preempt_disable"
+From: Runping Lai <runpinglai@google.com>
+To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Runping Lai <runpinglai@google.com>, Wattson CI <wattson-external@google.com>, 
+	kernel-team@android.com, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 06.10.2025 17:07, Steven Price wrote:
-> On 01/10/2025 03:20, Adrián Larumbe wrote:
-> > Avoid waiting for the DRM scheduler job timedout handler, and instead, let
-> > the DRM scheduler core signal the error fence immediately when HW job
-> > submission fails.
-> >
-> > That means we must also decrement the runtime-PM refcnt for the device,
-> > because the job will never be enqueued or inflight.
-> >
-> > Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-> > Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
-> > ---
-> >  drivers/gpu/drm/panfrost/panfrost_job.c | 20 ++++++++++++++++----
-> >  1 file changed, 16 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c b/drivers/gpu/drm/panfrost/panfrost_job.c
-> > index a0123d0a1b7d..3f60adc9b69d 100644
-> > --- a/drivers/gpu/drm/panfrost/panfrost_job.c
-> > +++ b/drivers/gpu/drm/panfrost/panfrost_job.c
-> > @@ -196,7 +196,7 @@ panfrost_enqueue_job(struct panfrost_device *pfdev, int slot,
-> >  	return 1;
-> >  }
-> >
-> > -static void panfrost_job_hw_submit(struct panfrost_job *job, int js)
-> > +static int panfrost_job_hw_submit(struct panfrost_job *job, int js)
-> >  {
-> >  	struct panfrost_device *pfdev = job->pfdev;
-> >  	unsigned int subslot;
-> > @@ -208,10 +208,11 @@ static void panfrost_job_hw_submit(struct panfrost_job *job, int js)
-> >
-> >  	ret = pm_runtime_get_sync(pfdev->base.dev);
-> >  	if (ret < 0)
-> > -		return;
-> > +		goto err_hwsubmit;
-> >
-> >  	if (WARN_ON(job_read(pfdev, JS_COMMAND_NEXT(js)))) {
-> > -		return;
-> > +		ret = -EINVAL;
-> > +		goto err_hwsubmit;
-> >  	}
-> >
-> >  	cfg = panfrost_mmu_as_get(pfdev, job->mmu);
-> > @@ -262,6 +263,12 @@ static void panfrost_job_hw_submit(struct panfrost_job *job, int js)
-> >  			job, js, subslot, jc_head, cfg & 0xf);
-> >  	}
-> >  	spin_unlock(&pfdev->js->job_lock);
-> > +
-> > +	return 0;
-> > +
-> > +err_hwsubmit:
-> > +	pm_runtime_put_autosuspend(pfdev->base.dev);
->
-> I think you're missing something here. You've put a call to
-> pm_runtime_put_autosuspend() here which matches the call to
-> pm_runtime_get_sync() that we do earlier in the function. But there's no
-> corresponding panfrost_devfreq_record_idle() (but the first thing this
-> function does is panfrost_devfreq_record_busy()).
->
-> So unless I'm missing something (very possible) then this is going to
-> mess up the devfreq accounting. A simple fix would be just to move the
-> panfrost_devfreq_record_busy() call down in the function.
+This reverts commit 3d62ab32df065e4a7797204a918f6489ddb8a237.
 
-You didn't miss anything, I completely forgot to keep the devfreq busy
-count balanced after this change.
+It's observed on Pixel 6 that this commit causes a severe functional
+regression: all user-space writes to trace_marker now fail. The write
+does not goes through at all. The error is observed in the shell as
+'printf: write: Bad address'. This breaks a primary ftrace interface
+for user-space debugging and profiling. In kernel trace file, it's
+logged as 'tracing_mark_write: <faulted>'. After reverting this commit,
+functionality is restored.
 
-I've moved panfrost_devfreq_record_busy() right after the point the function
-can no longer result in an error, as you suggested.
+Signed-off-by: Runping Lai <runpinglai@google.com>
+Reported-by: Wattson CI <wattson-external@google.com>
+---
+ kernel/trace/trace.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> Thanks,
-> Steve
->
-> > +	return ret;
-> >  }
-> >
-> >  static int panfrost_acquire_object_fences(struct drm_gem_object **bos,
-> > @@ -384,6 +391,7 @@ static struct dma_fence *panfrost_job_run(struct drm_sched_job *sched_job)
-> >  	struct panfrost_device *pfdev = job->pfdev;
-> >  	int slot = panfrost_job_get_slot(job);
-> >  	struct dma_fence *fence = NULL;
-> > +	int ret;
-> >
-> >  	if (job->ctx->destroyed)
-> >  		return ERR_PTR(-ECANCELED);
-> > @@ -405,7 +413,11 @@ static struct dma_fence *panfrost_job_run(struct drm_sched_job *sched_job)
-> >  		dma_fence_put(job->done_fence);
-> >  	job->done_fence = dma_fence_get(fence);
-> >
-> > -	panfrost_job_hw_submit(job, slot);
-> > +	ret = panfrost_job_hw_submit(job, slot);
-> > +	if (ret) {
-> > +		dma_fence_put(fence);
-> > +		return ERR_PTR(ret);
-> > +	}
-> >
-> >  	return fence;
-> >  }
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 156e7e0bf559..bb9a6284a629 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -7213,7 +7213,7 @@ static ssize_t write_marker_to_buffer(struct trace_array *tr, const char __user
+ 	entry = ring_buffer_event_data(event);
+ 	entry->ip = ip;
+ 
+-	len = copy_from_user_nofault(&entry->buf, ubuf, cnt);
++	len = __copy_from_user_inatomic(&entry->buf, ubuf, cnt);
+ 	if (len) {
+ 		memcpy(&entry->buf, FAULTED_STR, FAULTED_SIZE);
+ 		cnt = FAULTED_SIZE;
+@@ -7310,7 +7310,7 @@ static ssize_t write_raw_marker_to_buffer(struct trace_array *tr,
+ 
+ 	entry = ring_buffer_event_data(event);
+ 
+-	len = copy_from_user_nofault(&entry->id, ubuf, cnt);
++	len = __copy_from_user_inatomic(&entry->id, ubuf, cnt);
+ 	if (len) {
+ 		entry->id = -1;
+ 		memcpy(&entry->buf, FAULTED_STR, FAULTED_SIZE);
+-- 
+2.51.0.618.g983fd99d29-goog
 
-Adrian Larumbe
 
