@@ -1,97 +1,125 @@
-Return-Path: <linux-kernel+bounces-844280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C88DBC1709
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 15:09:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 843B3BC1727
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 15:13:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 08B5434F041
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 13:09:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CCEF18965EB
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 13:14:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4719B2E03FB;
-	Tue,  7 Oct 2025 13:09:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407DA2E0910;
+	Tue,  7 Oct 2025 13:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="H20xxQjK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="OpkeMj9c"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974AC2D46DA
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 13:09:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC7172DFF19
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 13:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759842557; cv=none; b=h2cSv+OVWsW0wptxrKyRETH4655Cd2WTrv8SjqWcef36nAIK6SlxhEsoMW2qgKg526KO01wFSwR8KJnu5LmNxrOtHFbwsijw/lrmmjlUG2izhqeqpxUL2vk3pYy1/pYAQKV9Cgr7u6Y1g28zeeWb7kd3BSmP8ZcmCjAlozYwQ7c=
+	t=1759842825; cv=none; b=ik1NE87SbbueV8lOp//9QCvcE5NGRHH0PQ6tkfsCeIRNvGtyEyD5MVzlzpfckaJw12bc4mtP6SBNXQooc621ddQTbnlroip10lLNiBlzPNxr7WaqVEw3EQmRy210ykgWJPdvozSKtSjzHxi4r2gmIk//3eH5IFiegkPdyPhJRgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759842557; c=relaxed/simple;
-	bh=7+b9mzhZhGk7teWQIGJV14rPQT890YkHjeZnN4mso5M=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ueed9q+b8/0xoIU7EpPGPQP5BETqGZP5bY1bYE9NAZ43Wppdzg7+t3XyRLUJMY7rpOtt9BjvMj8gprmz95rbC10mfpGJQiaEGEtTtE5gQk5vn3mnRSwpldxl6heBvvwXNfOdHVdNNrk3iJ/a71RuN77aCKTACx3w3w992aGDLt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=H20xxQjK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C265BC4CEF1;
-	Tue,  7 Oct 2025 13:09:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1759842557;
-	bh=7+b9mzhZhGk7teWQIGJV14rPQT890YkHjeZnN4mso5M=;
-	h=Date:From:To:Cc:Subject:From;
-	b=H20xxQjKB9z2HFIztG4EkN9Trjp3luqgLpEM8kkI+Cw7NlprWNzxOGHNdHhxTm6S3
-	 WK3cYx+Oojvf/5KYtlEetmP6Yii7Fety1PiS8vNEiZ3SOQVt064087fIZYSUAIEMKC
-	 7wibWcvMQO7S6K9eSoO4M5gOaIXA7T8L2GjKDhME=
-Date: Tue, 7 Oct 2025 15:09:14 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Char/Misc/IIO driver fixes for 6.18-rc1
-Message-ID: <aOUQ-nATuR-NzHLE@kroah.com>
+	s=arc-20240116; t=1759842825; c=relaxed/simple;
+	bh=t0N+x/VGNAQttY2sxorx9dZNMTxHZKG1OWxQ7z8PFso=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=edu08al1YjEULR/HreqRDyd99b/5pCxf0Anc/7pW+4d0/1zlzYH+MSEGXwzGJH15epM9+SvSxUhXVIiUWZWbTRuEofDwExlNZswY/TeDtaPdv46kYQcqe+nWY4vY/3peaBCQot6oa8geHZf2932NCUJNqR3PF498HJtWpCTeFS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=OpkeMj9c; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-36ba647ac9fso50165761fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 06:13:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1759842822; x=1760447622; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t0N+x/VGNAQttY2sxorx9dZNMTxHZKG1OWxQ7z8PFso=;
+        b=OpkeMj9cbEuqd2iTllQwOT9yVdO2fmEEfS/m+hUM0tUHgN48mBoIkT9BLHmLCL7Wlb
+         1I4Wl4IqdVR7OrwMlzUdgd2raaJAlK+p0VBkNvpOODbVkbOslgiYx7G5jMQzGM9jdWKF
+         FiVgfSs/g3PoEGlT4PO2KF5C0QOpj3sXe4xDurS7S/SlJpbZ9vXXC5lihfFxMDyriyy1
+         ooeiOGOPQDcAchF5JGqJzFx0H/4WFsylmkV0hcQnJCR5bOxvJcFA1UxD7SrZ0u+87u90
+         ODudjpiY1i3XQEsYtgz7Hog3C8bUp0VzKEpfQJUtinC2s6OpzK6JOSILBD8EsvgMkr74
+         dTwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759842822; x=1760447622;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=t0N+x/VGNAQttY2sxorx9dZNMTxHZKG1OWxQ7z8PFso=;
+        b=pcLjVMhheQLhtp6HrywjLcGpaygyDbiEyherALktkr1prb950hu758KxTMDd9Y8M7O
+         NnnBv+LC5h5Z3vWpS/QWzFA4ue69c1qQ8RiEh3Vp77TiLH28vLPbQ6QJoVZFgOQzjCp6
+         igTpW5jy/ufbDwxRTUSjnmqiBaTAAB7iiJkJG1EbPYvS44LdIoylO6Zj0/NzIk0wB0i8
+         4uozhiSB5Mxqwyl4+IcogRvAK6pJ4zxfBMFazfrFQtfa+ztcptrohbQpFeMk5zQkkc0U
+         DoKZcS1Qv0tzhQs7vTmE4MO8Qm1DQWXSRptnPHbWlG9RGEUlEw3+V4F3jAG7QTexiDHR
+         6spQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWGt1wrtRxxakzu8k/wDR69it82MqnwQ3W4mEIrGSn2zGmpOf+9QsfYgNPBtHIXzpnHH89cgjB3m5M1oNQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzbv6EL/Roltc9f/53BCnPVAQQbiqmiGXO8WA5LZ7zQSRK2GAn4
+	WKHgKqkAqRSwl8nPo1DD0G3q5mq+AuRmb5PdNdjfyP5xiVqkAh9FzYIXzRYL7LuVJbCtXNplO9n
+	nQHWjgz4EC0331ziB9f/VOgzhZBefQr2E+EDaDs0ojg==
+X-Gm-Gg: ASbGnctWKyksExhsKFAQW7tAylBYlLNr3bKha8GeJm0uvw456ijGakTFOs+bynqcR2+
+	N7T0GPoj+iMalTzu1zkU6o+wsMLiUijLGW5W0IdGr8e+UyZjnyh/2/b6tj39oDi2gJO4EIKFljZ
+	HulGtCEa031lruEdLIf8j3p6bInpfaTqpBot/5aSSa09qUCFFVZ8cbFEaqK8LUDGqgXzcoJ6cJa
+	jY1EI1K/Klv+pDYjmO3BFV4OlULwVhG934VU90FNnMQKNKIHX3ii3BKUlIAozQ=
+X-Google-Smtp-Source: AGHT+IG7P5Lsywws5bBPOT8E7JIpupmd0eu9fkYQI1gC/FvLSNAcnVdx2QxXsM+KX1p4mn8AU407934CqwjnV4QazxU=
+X-Received: by 2002:a2e:9a14:0:b0:36e:21a0:f212 with SMTP id
+ 38308e7fff4ca-374c38477a4mr56218171fa.29.1759842821852; Tue, 07 Oct 2025
+ 06:13:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250924-gpio-shared-v1-0-775e7efeb1a3@linaro.org>
+ <0b402bba-0399-4f93-873e-890a78570ff7@kernel.org> <CAMRc=MfwEHGV-HZQURR3JNg1HatAeWO17qbRmkWUXTSBWj5jSg@mail.gmail.com>
+ <80347dcf-419b-489e-9b0e-d901fbacc71a@kernel.org>
+In-Reply-To: <80347dcf-419b-489e-9b0e-d901fbacc71a@kernel.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 7 Oct 2025 15:13:29 +0200
+X-Gm-Features: AS18NWAq4ASQRRUa58ojinY89n-hm2wwAP_Re2fgpRgz7dBtx-tBmKEba_o3nR0
+Message-ID: <CAMRc=McaZV=tUkzDGMYxXqkuEYw_KasKcv8QGdjw709UYZuGhg@mail.gmail.com>
+Subject: Re: [PATCH RFC 0/9] gpio: improve support for shared GPIOs
+To: Srinivas Kandagatla <srini@kernel.org>
+Cc: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Andy Shevchenko <andy@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-hardening@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following changes since commit 1b237f190eb3d36f52dffe07a40b5eb210280e00:
+On Mon, Oct 6, 2025 at 11:55=E2=80=AFPM Srinivas Kandagatla <srini@kernel.o=
+rg> wrote:
+>
+> >
+> > If they were called "reset-gpios" then we could (and should) use
+> > Krzysztof's reset-gpio driver here, but we have many cases where
+> > that's not the case and the names (and implied functions) are
+>
+> Yes, these codec drivers are due to be moved to use reset-gpios.
+>
 
-  Linux 6.17-rc3 (2025-08-24 12:04:12 -0400)
+You will still need to keep support for the current "powerdown-gpios"
+property in existing device tree sources so that doesn't change
+anything. And what about shared pins other than reset? 'dc-gpios' for
+display, other 'powerdown' instances, 'enable-gpios', all kinds of
+uncommon names like: `dlg,cs`, `wlf,ldo2ena`, `speaker-enable`,
+`maxim,enable`? It's not likely we will create a separate abstraction
+for each of them. What I'm proposing is a sane, catch-all mechanism
+for shared GPIOs that right now use a rather wonky hack. Also: the
+drivers have no business knowing that they request GPIOs that can be
+shared. This is why I want to hide it inside GPIOLIB.
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git tags/char-misc-6.18-rc1-2
-
-for you to fetch changes up to 10df039834f84a297c72ec962c0f9b7c8c5ca31a:
-
-  misc: fastrpc: Skip reference for DMA handles (2025-09-12 16:34:10 +0200)
-
-----------------------------------------------------------------
-Char/Misc fixes for 6.18-rc1
-
-Here are some small nvmem and fastrpc fixes for 6.18-rc1.  They missed
-the cut-off to get into 6.17-final, due to me being slow in getting them
-out, my fault, not the maintainers of these subsystems :(
-
-Anyway, better late than never.  Changes included in here are:
-  - nvmem fix for automatic module loading
-  - fastrpc driver fixes for reported issues
-
-All of these have been in linux-next for weeks (4?) with no reported
-issues.
-
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-----------------------------------------------------------------
-Ling Xu (4):
-      misc: fastrpc: Save actual DMA size in fastrpc_map structure
-      misc: fastrpc: Fix fastrpc_map_lookup operation
-      misc: fastrpc: fix possible map leak in fastrpc_put_args
-      misc: fastrpc: Skip reference for DMA handles
-
-Michael Walle (1):
-      nvmem: layouts: fix automatic module loading
-
- drivers/misc/fastrpc.c  | 89 ++++++++++++++++++++++++++++++++-----------------
- drivers/nvmem/layouts.c | 13 ++++++++
- 2 files changed, 71 insertions(+), 31 deletions(-)
+Bartosz
 
