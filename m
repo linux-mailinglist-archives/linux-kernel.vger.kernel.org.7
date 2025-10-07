@@ -1,285 +1,146 @@
-Return-Path: <linux-kernel+bounces-844159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C638BC12D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:20:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B030BC12E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 390014EFDD1
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:20:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E90F119A0B54
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508AE2DCC1F;
-	Tue,  7 Oct 2025 11:19:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F8B92DC779;
+	Tue,  7 Oct 2025 11:19:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="asc6xbGE"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.b="UHZ07eBF"
+Received: from mx0.infotecs.ru (mx0.infotecs.ru [91.244.183.115])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DC72DFA46
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 11:18:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A469B2D979B;
+	Tue,  7 Oct 2025 11:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.244.183.115
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759835939; cv=none; b=VJejNG/XkKk3bymScPOID+i/suW/i5kRuW2UwicPL3g02OHCci91u0fhgvByr7LCtWLZHwsOMeG4ufEYmgQqZIsbbr4W7mZ1gVO2k+wRFieUhsQp0ILRKZqibHCXJf3fpW7wJAdH7QxgU9T+8ZjGsdIKJcMUjaPCohMy1s3jr4U=
+	t=1759835972; cv=none; b=qurhNayQFSABBU9OiXFjHrgERN4pMB7NecqGmkEsH5LgcczSx6cBtDWjfmCrVeq9dyJQKTLysQvXjpMR42lfSzVnjMfsfg5l/VuZ2eIimfIfDaxIb+DqmQ0PXronjYg8/WP59xpYPb9lw0Ye9c0VgT8xjnlksVn7UCZTa+AO8ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759835939; c=relaxed/simple;
-	bh=dMA8ghWVekTunsVu7XOstdzBbwszG1Yq/dFfXRCf/bk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=kvYikquy7zY+rTYHEsY/cPxrRUsBOcSiG8N+PA3k+jgP6gemKjo9KDRuEHzchqVDmzg2x7cAn3+8bse/+WCntNfgx9K0tk+Hu1pWRCPE++8VxaU40wdClolprJGpuPFYI2igmHi3NLkZh/e+YW9JdCTcWo++Ik8m9iUXreFxTZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=asc6xbGE; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-27ee41e074dso66422145ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 04:18:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759835937; x=1760440737; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Dw9cqHmtj+JTcT9542JQD/91O64sVk3+jyfqTVqzQ4Y=;
-        b=asc6xbGEOXI2vrbwGk2VCUH6HD60XmuUffxJQK3ChlrcazaNsDv8fJEyq8osKWgkG7
-         Y5GWBSJq7V4LhpjixQSpvXePbo5o1un6icvPvapWn4VCgYaZQ700ZnNR9YZtBl/+xrWf
-         K7IujnBO4/+vo1+YVcTyaVEMegk4jGpsBf/FDy8iTLzs9DWnIQTCvHrva/ee7tkCdnmJ
-         o0b4Y5+LQYyKx41j6qzI2kgecNf5mQ92Yr+gkJiMOMvugFLFL7dg4R8BhnvoGpY4UKWv
-         +ExdogmbZtuDPw394mC66mwZdVaGPCM66f44I3dh/sULRV9PlwzARIITnUgLPTomi4NU
-         ACEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759835937; x=1760440737;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dw9cqHmtj+JTcT9542JQD/91O64sVk3+jyfqTVqzQ4Y=;
-        b=kwif47DCfh3mpsWsE3hu0NLsT9zcdAMYo8En4DPW7nnUc9nIXN2CTSyuITGyIdKqij
-         hpHzkT0aEieLozBRsPj1wa0Bkym0yeyeGkwx88WayhyNB9YmzRzJwp7KgrrLDZ2yKBya
-         Jc95Zq1I+0t9cKi0zFoIFRVKENUF2oDSkw4q7DSBYVWtnE+nVZ/rleM7RgejHVem0TuM
-         N22rdkeLh+2O3Bdbn4PnWx56HVERr53oU320dt+JxaCUW8wC2sPUIOUSHnU9KmEyJJ13
-         pmxFzKRvrRau4uQ3EQQCdbRottpue1bx8pGPyTGy8VSeL1nasME8JkzYcsiYNOAomDMo
-         pNig==
-X-Forwarded-Encrypted: i=1; AJvYcCVBWivNAnZq1ZPGcgpoyMExSKjudeqe/tE6s7RZ7dQQI2ZPUdfZZUjwAF7QYY+kohgDIaH0+5mlA5aIJMU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzATiayyDhG6YMqIwAzSE/fJijtSWt3QVUmN+hToC+ORHsiz1IX
-	qp0ShZWHIJMD0X8KfwETGUKRTFuSQFspWqex7X9s+MUOoQSH37huSZPP
-X-Gm-Gg: ASbGncu0Y+X8hozdzqjkJ8nljBAfIql+ikRRkIfwx3mRFw+x6U5WZP1BIlR9jZak+yE
-	9lhXelWvPqFPtMJkatonNJwh5CKS6uFWdJQ57p2SLnzAxIwhlo7Ti7FGS53qL2qWsld6erO/XeH
-	ZSmtGTx4+0V/93032371JFXjtX5F9BqoC4gkG5rMaKj2oz20RHJc/pOjhpOSiPqGp/vR8FTUoOO
-	RXpAoeEWF/5oUq9ShrNYADvY7MDoq2PKlG1ZLsGz+mSpeGn3zM6pVEVACKopXhM2jirKD1qoXe6
-	4ylN2GvcLVyWPHaLOLdvyL/TVmGyGXtSdORMaPqy/q6pjtCVx9Nsm/rJfqxg7FmOqY+l0GAQTOZ
-	E6/0W91PGIriRDQv0XAYreuKF9omUdUzQoSuWUA4P1x8c79kxJ4VubM4fKZl6pt8keVvc69ZmhL
-	K1wU+Yj3fN/KuCT5ACsEpcSWajyFtE/guKoPL/SWMQVA==
-X-Google-Smtp-Source: AGHT+IHC2LNmC/xUFVcWeK3yLywWA7GD9fZRA7+m31c3Vn2k7x7olct3JnOgC1orGXTqxPOFEWB82w==
-X-Received: by 2002:a17:902:ccc8:b0:28e:80bc:46b4 with SMTP id d9443c01a7336-28e9a664f0dmr175025365ad.55.1759835936684;
-        Tue, 07 Oct 2025 04:18:56 -0700 (PDT)
-Received: from [192.168.2.3] (2403-580a-80ed-0-4835-5a07-49e7-f115.ip6.aussiebb.net. [2403:580a:80ed:0:4835:5a07:49e7:f115])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1d31bdsm162509045ad.94.2025.10.07.04.18.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 04:18:56 -0700 (PDT)
-From: James Calligeros <jcalligeros99@gmail.com>
-Date: Tue, 07 Oct 2025 21:16:54 +1000
-Subject: [PATCH v3 13/13] arm64: dts: apple: t8103, t60xx, t8112: Add
- common hwmon nodes to devices
+	s=arc-20240116; t=1759835972; c=relaxed/simple;
+	bh=i2/mIJZywNFRDzg/L8D1NE6gFQ2BKhRmpA3TA90foLk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=FLItfWJosY9sovURGOEPl1oawCm+XqFgEKGFataawqakZbPc0n3f0GhH3HExeL6rs9KtnsrdYVgRhdr50R8sqCtpeaUYtBy6SqTs94N/uOWnJ8kt7maHMNI07SezygyHAfZhM4xGoBhu+7isSQGOiEbuLw2njEMgoAhpureTOUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=infotecs.ru; spf=pass smtp.mailfrom=infotecs.ru; dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.b=UHZ07eBF; arc=none smtp.client-ip=91.244.183.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=infotecs.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infotecs.ru
+Received: from mx0.infotecs-nt (localhost [127.0.0.1])
+	by mx0.infotecs.ru (Postfix) with ESMTP id 441871050FB6;
+	Tue,  7 Oct 2025 14:19:20 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs.ru 441871050FB6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infotecs.ru; s=mx;
+	t=1759835960; bh=i2/mIJZywNFRDzg/L8D1NE6gFQ2BKhRmpA3TA90foLk=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+	b=UHZ07eBFT7U1enM5SLzkO5DhLNgV6zxrFfnOKr/xMNAoDTUQKL1G+6ElA6WjV0x8m
+	 vE9/PMe2a4ByPgyN+C2o4lMYukaOSFXWA4IIckRt7JVrhAGh2csDhemEBn0WnirKhW
+	 AaeaH47bllfR6RI/GrX4Dgmp74u3H5iPfyuU0Akc=
+Received: from msk-exch-02.infotecs-nt (msk-exch-02.infotecs-nt [10.0.7.192])
+	by mx0.infotecs-nt (Postfix) with ESMTP id 3F00931118DB;
+	Tue,  7 Oct 2025 14:19:20 +0300 (MSK)
+From: Ilia Gavrilov <Ilia.Gavrilov@infotecs.ru>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+CC: Song Yoong Siang <yoong.siang.song@intel.com>, Maciej Fijalkowski
+	<maciej.fijalkowski@intel.com>, Jesper Dangaard Brouer <hawk@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, John Fastabend <john.fastabend@gmail.com>, "Alexei
+ Starovoitov" <ast@kernel.org>, "stable@vger.kernel.org"
+	<stable@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Eric Dumazet <edumazet@google.com>,
+	"Stanislav Fomichev" <sdf@fomichev.me>, Simon Horman <horms@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>, "bpf@vger.kernel.org"
+	<bpf@vger.kernel.org>, Paolo Abeni <pabeni@redhat.com>, "David S. Miller"
+	<davem@davemloft.net>, Magnus Karlsson <magnus.karlsson@intel.com>,
+	"lvc-project@linuxtesting.org" <lvc-project@linuxtesting.org>
+Subject: Re: [lvc-project] [PATCH net] xsk: Fix overflow in descriptor
+ validation@@
+Thread-Topic: [lvc-project] [PATCH net] xsk: Fix overflow in descriptor
+ validation@@
+Thread-Index: AQHcN3w5Ve3VV/I+jk+9of8ehLdFkg==
+Date: Tue, 7 Oct 2025 11:19:19 +0000
+Message-ID: <06da20bf-79f6-4ad7-92cc-75f19685b530@infotecs.ru>
+References: <20251006085316.470279-1-Ilia.Gavrilov@infotecs.ru>
+ <c5a1c806-2c4c-47c5-b83a-cb83f93369b4@intel.com>
+In-Reply-To: <c5a1c806-2c4c-47c5-b83a-cb83f93369b4@intel.com>
+Accept-Language: ru-RU, en-US
+Content-Language: ru-RU
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-exclaimer-md-config: 208ac3cd-1ed4-4982-a353-bdefac89ac0a
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <56B79B3E998EB0499C802CA4B2F65111@infotecs.ru>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251007-macsmc-subdevs-v3-13-d7d3bfd7ae02@gmail.com>
-References: <20251007-macsmc-subdevs-v3-0-d7d3bfd7ae02@gmail.com>
-In-Reply-To: <20251007-macsmc-subdevs-v3-0-d7d3bfd7ae02@gmail.com>
-To: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Neal Gompa <neal@gompa.dev>, 
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Jonathan Corbet <corbet@lwn.net>, 
- James Calligeros <jcalligeros99@gmail.com>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-rtc@vger.kernel.org, linux-hwmon@vger.kernel.org, 
- linux-input@vger.kernel.org, linux-doc@vger.kernel.org
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6022;
- i=jcalligeros99@gmail.com; h=from:subject:message-id;
- bh=dMA8ghWVekTunsVu7XOstdzBbwszG1Yq/dFfXRCf/bk=;
- b=owGbwMvMwCV2xczoYuD3ygTG02pJDBlPvm3jY15w+v9irk9rkrp+zvDZ//DCl5UBk87+iv7aZ
- ZqqumjV+Y5SFgYxLgZZMUWWDU1CHrON2G72i1TuhZnDygQyhIGLUwAmcm0Cwz+bGSzX5RgmqjHo
- y5znt+T57zzd66/K5hWSYuwTrSqWRDsyMrzjnabz55ZC+PGlEjuNczkDOffPrNJIyZ3CKOV6Kfp
- fGy8A
-X-Developer-Key: i=jcalligeros99@gmail.com; a=openpgp;
- fpr=B08212489B3206D98F1479BDD43632D151F77960
+X-KLMS-Rule-ID: 5
+X-KLMS-Message-Action: clean
+X-KLMS-AntiSpam-Status: not scanned, disabled by settings
+X-KLMS-AntiSpam-Interceptor-Info: not scanned
+X-KLMS-AntiPhishing: Clean, bases: 2025/10/07 08:54:00
+X-KLMS-AntiVirus: Kaspersky Security for Linux Mail Server, version 8.0.3.30, bases: 2025/10/07 08:21:00 #27888622
+X-KLMS-AntiVirus-Status: Clean, skipped
 
-Add the known, common hwmon-related SMC keys to the DTs for the devices
-they pertain to.
-
-Reviewed-by: Neal Gompa <neal@gompa.dev>
-Co-developed-by: Janne Grunau <j@jannau.net>
-Signed-off-by: Janne Grunau <j@jannau.net>
-Signed-off-by: James Calligeros <jcalligeros99@gmail.com>
----
- .../arm64/boot/dts/apple/t6001-j375c.dts | 2 ++
- arch/arm64/boot/dts/apple/t6001.dtsi     | 2 ++
- .../arm64/boot/dts/apple/t6002-j375d.dts | 2 ++
- .../boot/dts/apple/t600x-j314-j316.dtsi  | 3 +++
- arch/arm64/boot/dts/apple/t8103-j274.dts | 2 ++
- arch/arm64/boot/dts/apple/t8103-j293.dts | 3 +++
- arch/arm64/boot/dts/apple/t8103-j313.dts | 2 ++
- arch/arm64/boot/dts/apple/t8103-j456.dts | 2 ++
- arch/arm64/boot/dts/apple/t8103-j457.dts | 2 ++
- arch/arm64/boot/dts/apple/t8103.dtsi     | 1 +
- arch/arm64/boot/dts/apple/t8112-j413.dts | 2 ++
- arch/arm64/boot/dts/apple/t8112-j473.dts | 2 ++
- arch/arm64/boot/dts/apple/t8112-j493.dts | 3 +++
- arch/arm64/boot/dts/apple/t8112.dtsi     | 1 +
- 14 files changed, 29 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/apple/t6001-j375c.dts b/arch/arm64/boot/dts/apple/t6001-j375c.dts
-index 2e7c23714d4d..08276114c1d8 100644
---- a/arch/arm64/boot/dts/apple/t6001-j375c.dts
-+++ b/arch/arm64/boot/dts/apple/t6001-j375c.dts
-@@ -24,3 +24,5 @@ &wifi0 {
- &bluetooth0 {
- 	brcm,board-type = "apple,okinawa";
- };
-+
-+#include "hwmon-fan-dual.dtsi"
-diff --git a/arch/arm64/boot/dts/apple/t6001.dtsi b/arch/arm64/boot/dts/apple/t6001.dtsi
-index ffbe823b71bc..264df90f07d8 100644
---- a/arch/arm64/boot/dts/apple/t6001.dtsi
-+++ b/arch/arm64/boot/dts/apple/t6001.dtsi
-@@ -66,3 +66,5 @@ p-core-pmu-affinity {
- &gpu {
- 	compatible = "apple,agx-g13c", "apple,agx-g13s";
- };
-+
-+#include "hwmon-common.dtsi"
-diff --git a/arch/arm64/boot/dts/apple/t6002-j375d.dts b/arch/arm64/boot/dts/apple/t6002-j375d.dts
-index 2b7f80119618..d12c0ae418f7 100644
---- a/arch/arm64/boot/dts/apple/t6002-j375d.dts
-+++ b/arch/arm64/boot/dts/apple/t6002-j375d.dts
-@@ -56,3 +56,5 @@ &bluetooth0 {
- 
- /delete-node/ &ps_disp0_cpu0_die1;
- /delete-node/ &ps_disp0_fe_die1;
-+
-+#include "hwmon-fan-dual.dtsi"
-diff --git a/arch/arm64/boot/dts/apple/t600x-j314-j316.dtsi b/arch/arm64/boot/dts/apple/t600x-j314-j316.dtsi
-index c0aac59a6fae..127814a9dfa4 100644
---- a/arch/arm64/boot/dts/apple/t600x-j314-j316.dtsi
-+++ b/arch/arm64/boot/dts/apple/t600x-j314-j316.dtsi
-@@ -131,3 +131,6 @@ &fpwm0 {
- };
- 
- #include "spi1-nvram.dtsi"
-+
-+#include "hwmon-laptop.dtsi"
-+#include "hwmon-fan-dual.dtsi"
-diff --git a/arch/arm64/boot/dts/apple/t8103-j274.dts b/arch/arm64/boot/dts/apple/t8103-j274.dts
-index 1c3e37f86d46..f5b8cc087882 100644
---- a/arch/arm64/boot/dts/apple/t8103-j274.dts
-+++ b/arch/arm64/boot/dts/apple/t8103-j274.dts
-@@ -61,3 +61,5 @@ &pcie0_dart_2 {
- &i2c2 {
- 	status = "okay";
- };
-+
-+#include "hwmon-mac-mini.dtsi"
-diff --git a/arch/arm64/boot/dts/apple/t8103-j293.dts b/arch/arm64/boot/dts/apple/t8103-j293.dts
-index 5b3c42e9f0e6..abb88391635f 100644
---- a/arch/arm64/boot/dts/apple/t8103-j293.dts
-+++ b/arch/arm64/boot/dts/apple/t8103-j293.dts
-@@ -119,3 +119,6 @@ dfr_panel_in: endpoint {
- &displaydfr_dart {
- 	status = "okay";
- };
-+
-+#include "hwmon-laptop.dtsi"
-+#include "hwmon-fan.dtsi"
-diff --git a/arch/arm64/boot/dts/apple/t8103-j313.dts b/arch/arm64/boot/dts/apple/t8103-j313.dts
-index 97a4344d8dca..491ead016b21 100644
---- a/arch/arm64/boot/dts/apple/t8103-j313.dts
-+++ b/arch/arm64/boot/dts/apple/t8103-j313.dts
-@@ -41,3 +41,5 @@ &wifi0 {
- &fpwm1 {
- 	status = "okay";
- };
-+
-+#include "hwmon-laptop.dtsi"
-diff --git a/arch/arm64/boot/dts/apple/t8103-j456.dts b/arch/arm64/boot/dts/apple/t8103-j456.dts
-index 58c8e43789b4..c2ec6fbb633c 100644
---- a/arch/arm64/boot/dts/apple/t8103-j456.dts
-+++ b/arch/arm64/boot/dts/apple/t8103-j456.dts
-@@ -75,3 +75,5 @@ &pcie0_dart_1 {
- &pcie0_dart_2 {
- 	status = "okay";
- };
-+
-+#include "hwmon-fan-dual.dtsi"
-diff --git a/arch/arm64/boot/dts/apple/t8103-j457.dts b/arch/arm64/boot/dts/apple/t8103-j457.dts
-index 7089ccf3ce55..aeaab2482d54 100644
---- a/arch/arm64/boot/dts/apple/t8103-j457.dts
-+++ b/arch/arm64/boot/dts/apple/t8103-j457.dts
-@@ -56,3 +56,5 @@ ethernet0: ethernet@0,0 {
- &pcie0_dart_2 {
- 	status = "okay";
- };
-+
-+#include "hwmon-fan.dtsi"
-diff --git a/arch/arm64/boot/dts/apple/t8103.dtsi b/arch/arm64/boot/dts/apple/t8103.dtsi
-index 78eb931d6fb7..f1820bdc0910 100644
---- a/arch/arm64/boot/dts/apple/t8103.dtsi
-+++ b/arch/arm64/boot/dts/apple/t8103.dtsi
-@@ -1145,3 +1145,4 @@ port02: pci@2,0 {
- };
- 
- #include "t8103-pmgr.dtsi"
-+#include "hwmon-common.dtsi"
-diff --git a/arch/arm64/boot/dts/apple/t8112-j413.dts b/arch/arm64/boot/dts/apple/t8112-j413.dts
-index 6f69658623bf..500dcdf2d4b5 100644
---- a/arch/arm64/boot/dts/apple/t8112-j413.dts
-+++ b/arch/arm64/boot/dts/apple/t8112-j413.dts
-@@ -78,3 +78,5 @@ &i2c4 {
- &fpwm1 {
- 	status = "okay";
- };
-+
-+#include "hwmon-laptop.dtsi"
-diff --git a/arch/arm64/boot/dts/apple/t8112-j473.dts b/arch/arm64/boot/dts/apple/t8112-j473.dts
-index 06fe257f08be..11db6a92493f 100644
---- a/arch/arm64/boot/dts/apple/t8112-j473.dts
-+++ b/arch/arm64/boot/dts/apple/t8112-j473.dts
-@@ -52,3 +52,5 @@ &pcie1_dart {
- &pcie2_dart {
- 	status = "okay";
- };
-+
-+#include "hwmon-mac-mini.dtsi"
-diff --git a/arch/arm64/boot/dts/apple/t8112-j493.dts b/arch/arm64/boot/dts/apple/t8112-j493.dts
-index fb8ad7d4c65a..a0da02c00f15 100644
---- a/arch/arm64/boot/dts/apple/t8112-j493.dts
-+++ b/arch/arm64/boot/dts/apple/t8112-j493.dts
-@@ -133,3 +133,6 @@ touchbar0: touchbar@0 {
- 		touchscreen-inverted-y;
- 	};
- };
-+
-+#include "hwmon-laptop.dtsi"
-+#include "hwmon-fan.dtsi"
-diff --git a/arch/arm64/boot/dts/apple/t8112.dtsi b/arch/arm64/boot/dts/apple/t8112.dtsi
-index 5a8fa6daa00a..c4d1e5ffaee9 100644
---- a/arch/arm64/boot/dts/apple/t8112.dtsi
-+++ b/arch/arm64/boot/dts/apple/t8112.dtsi
-@@ -1184,3 +1184,4 @@ port03: pci@3,0 {
- };
- 
- #include "t8112-pmgr.dtsi"
-+#include "hwmon-common.dtsi"
-
--- 
-2.51.0
-
+T24gMTAvNi8yNSAxODoxOSwgQWxleGFuZGVyIExvYmFraW4gd3JvdGU6DQo+IEZyb206IElsaWEg
+R2F2cmlsb3YgPElsaWEuR2F2cmlsb3ZAaW5mb3RlY3MucnU+DQo+IERhdGU6IE1vbiwgNiBPY3Qg
+MjAyNSAwODo1MzoxNyArMDAwMA0KPiANCj4+IFRoZSBkZXNjLT5sZW4gdmFsdWUgY2FuIGJlIHNl
+dCB1cCB0byBVMzJfTUFYLiBJZiB1bWVtIHR4X21ldGFkYXRhX2xlbg0KPiANCj4gSW4gdGhlb3J5
+LiBOZXZlciBpbiBwcmFjdGljZS4NCj4gDQoNCkhpIEFsZXhhbmRlciwNClRoYW5rIHlvdSBmb3Ig
+dGhlIHJldmlldy4NCg0KSXQgc2VlbXMgdG8gbWUgdGhhdCB0aGlzIHByb2JsZW0gc2hvdWxkIGJl
+IGNvbnNpZGVyZWQgbm90IGZyb20gdGhlIHBvaW50IG9mIHZpZXcgb2YgcHJhY3RpY2FsIHVzZSwg
+DQpidXQgZnJvbSB0aGUgcG9pbnQgb2YgdmlldyBvZiBzZWN1cml0eS4gQW4gYXR0YWNrZXIgY2Fu
+IHNldCBhbnkgbGVuZ3RoIG9mIHRoZSBwYWNrZXQgaW4gdGhlIGRlc2NyaXB0b3IgDQpmcm9tIHRo
+ZSB1c2VyIHNwYWNlIGFuZCBkZXNjcmlwdG9yIHZhbGlkYXRpb24gd2lsbCBwYXNzLg0KDQoNCj4+
+IG9wdGlvbiBpcyBhbHNvIHNldCwgdGhlbiB0aGUgdmFsdWUgb2YgdGhlIGV4cHJlc3Npb24NCj4+
+ICdkZXNjLT5sZW4gKyBwb29sLT50eF9tZXRhZGF0YV9sZW4nIGNhbiBvdmVyZmxvdyBhbmQgdmFs
+aWRhdGlvbg0KPj4gb2YgdGhlIGluY29ycmVjdCBkZXNjcmlwdG9yIHdpbGwgYmUgc3VjY2Vzc2Z1
+bGx5IHBhc3NlZC4NCj4+IFRoaXMgY2FuIGxlYWQgdG8gYSBzdWJzZXF1ZW50IGNoYWluIG9mIGFy
+aXRobWV0aWMgb3ZlcmZsb3dzDQo+PiBpbiB0aGUgeHNrX2J1aWxkX3NrYigpIGZ1bmN0aW9uIGFu
+ZCBpbmNvcnJlY3Qgc2tfYnVmZiBhbGxvY2F0aW9uLg0KPj4NCj4+IEZvdW5kIGJ5IEluZm9UZUNT
+IG9uIGJlaGFsZiBvZiBMaW51eCBWZXJpZmljYXRpb24gQ2VudGVyDQo+PiAobGludXh0ZXN0aW5n
+Lm9yZykgd2l0aCBTVkFDRS4NCj4gDQo+IEkgdGhpbmsgdGhlIGdlbmVyYWwgcnVsZSBmb3Igc2Vu
+ZGluZyBmaXhlcyBpcyB0aGF0IGEgZml4IG11c3QgZml4IGEgcmVhbA0KPiBidWcgd2hpY2ggY2Fu
+IGJlIHJlcHJvZHVjZWQgaW4gcmVhbCBsaWZlIHNjZW5hcmlvcy4NCg0KSSBhZ3JlZSB3aXRoIHRo
+YXQsIHNvIEkgbWFrZSBhIHRlc3QgcHJvZ3JhbSAoUG9DKS4gU29tZXRoaW5nIGxpa2UgdGhhdDoN
+Cg0KCXN0cnVjdCB4ZHBfdW1lbV9yZWcgdW1lbV9yZWc7DQoJdW1lbV9yZWcuYWRkciA9IChfX3U2
+NCkodm9pZCAqKXVtZW07DQoJLi4uDQoJdW1lbV9yZWcuY2h1bmtfc2l6ZSA9IDQwOTY7DQoJdW1l
+bV9yZWcudHhfbWV0YWRhdGFfbGVuID0gMTY7DQoJdW1lbV9yZWcuZmxhZ3MgPSBYRFBfVU1FTV9U
+WF9NRVRBREFUQV9MRU47DQoJc2V0c29ja29wdChzZmQsIFNPTF9YRFAsIFhEUF9VTUVNX1JFRywg
+JnVtZW1fcmVnLCBzaXplb2YodW1lbV9yZWcpKTsNCgkuLi4NCgkNCgl4c2tfcmluZ19wcm9kX19y
+ZXNlcnZlKHRxLCBiYXRjaF9zaXplLCAmaWR4KTsNCg0KCWZvciAoaSA9IDA7IGkgPCBucl9wYWNr
+ZXRzOyArK2kpIHsNCgkJc3RydWN0IHhkcF9kZXNjICp0eF9kZXNjID0geHNrX3JpbmdfcHJvZF9f
+dHhfZGVzYyh0cSwgaWR4ICsgaSk7DQoJCXR4X2Rlc2MtPmFkZHIgPSBwYWNrZXRzW2ldLmFkZHI7
+DQoJCXR4X2Rlc2MtPmFkZHIgKz0gdW1lbS0+dHhfbWV0YWRhdGFfbGVuOw0KCQl0eF9kZXNjLT5v
+cHRpb25zID0gWERQX1RYX01FVEFEQVRBOw0KCQl0eF9kZXNjLT5sZW4gPSBVSU5UMzJfTUFYOw0K
+CX0NCg0KCXhza19yaW5nX3Byb2RfX3N1Ym1pdCh0cSwgbnJfcGFja2V0cyk7DQoJLi4uDQoJc2Vu
+ZHRvKHNmZCwgTlVMTCwgMCwgTVNHX0RPTlRXQUlULCBOVUxMLCAwKTsNCg0KU2luY2UgdGhlIGNo
+ZWNrIG9mIGFuIGludmFsaWQgZGVzY3JpcHRvciBoYXMgcGFzc2VkLCBrZXJuZWwgdHJ5IHRvIGFs
+bG9jYXRlDQphIHNrYiB3aXRoIHNpemUgb2YgJ2hyICsgbGVuICsgdHInIGluIHRoZSBzb2NrX2Fs
+bG9jX3NlbmRfcHNrYigpIGZ1bmN0aW9uDQphbmQgdGhpcyBpcyB3aGVyZSB0aGUgbmV4dCBvdmVy
+ZmxvdyBvY2N1cnMuDQpza2IgYWxsb2NhdGVzIHdpdGggYSBzaXplIG9mIDYzLiBOZXh0IHRoZSBz
+a2JfcHV0KCkgaXMgY2FsbGVkLCB3aGljaCBhZGRzIFUzMl9NQVggdG8gc2tiLT50YWlsIGFuZCBz
+a2ItPmVuZC4NCk5leHQgdGhlIHNrYl9zdG9yZV9iaXRzKCkgdHJpZXMgdG8gY29weSAtMSBieXRl
+cywgYnV0IGZhaWxzLg0KDQogX194c2tfZ2VuZXJpY194bWl0DQoJeHNrX2J1aWxkX3NrYg0KCQls
+ZW4gPSBkZXNjLT5sZW47IC8vIGZyb20gZGVzY3JpcHRvcg0KCQlzb2NrX2FsbG9jX3NlbmRfc2ti
+KC4uLiwgaHIgKyBsZW4gKyB0ciwgLi4uKSAvLyB0aGUgbmV4dCBvdmVyZmxvdw0KCQkJc29ja19h
+bGxvY19zZW5kX3Bza2INCgkJCQlhbGxvY19za2Jfd2l0aF9mcmFncw0KCQlza2JfcHV0KHNrYiwg
+bGVuKSAgLy8gbGVuIGNhc3RzIHRvIGludA0KCQlza2Jfc3RvcmVfYml0cyhza2IsIDAsIGJ1ZmZl
+ciwgbGVuKQ0KDQo+IFN0YXRpYyBBbmFseXNpcyBUb29scyBoYXZlIG5vIGlkZWEgdGhhdCBub2Jv
+ZHkgc2VuZHMgNCBHYiBzaXplZCBuZXR3b3JrDQo+IHBhY2tldHMuDQo+IA0KDQpUaGF0J3Mgcmln
+aHQuIFN0YXRpYyBhbmFseXplciBpcyBvbmx5IGEgdG9vbCwgYnV0IGluIHRoaXMgY2FzZSwgdGhl
+IG92ZXJmbG93DQpoaWdobGlnaHRlZCBieSB0aGUgc3RhdGljIGFuYWx5emVyIGNhbiBiZSB1c2Vk
+IGZvciBtYWxpY2lvdXMgcHVycG9zZXMuDQogDQoNCj4+DQo+PiBGaXhlczogMzQxYWM5ODBlYWI5
+ICgieHNrOiBTdXBwb3J0IHR4X21ldGFkYXRhX2xlbiIpDQo+PiBDYzogc3RhYmxlQHZnZXIua2Vy
+bmVsLm9yZw0KPj4gU2lnbmVkLW9mZi1ieTogSWxpYSBHYXZyaWxvdiA8SWxpYS5HYXZyaWxvdkBp
+bmZvdGVjcy5ydT4NCj4+IC0tLQ0KPj4gIG5ldC94ZHAveHNrX3F1ZXVlLmggfCA0ICsrLS0NCj4+
+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KPiBUaGFu
+a3MsDQo+IE9sZWsNCg0KVGhhbmtzLCANCklsaWENCg0K
 
