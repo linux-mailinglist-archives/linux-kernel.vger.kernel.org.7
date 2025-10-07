@@ -1,160 +1,605 @@
-Return-Path: <linux-kernel+bounces-843834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D2C9BC05D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:47:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FC69BC05F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:49:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBF2C1890595
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:47:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A29E3B184D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9EE923312D;
-	Tue,  7 Oct 2025 06:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6557C227B94;
+	Tue,  7 Oct 2025 06:49:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FNMMNYk5"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="UP1ZGc9M"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013044.outbound.protection.outlook.com [40.93.201.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9CE42253EF
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 06:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759819610; cv=none; b=Tlj5iVktfgOzVjAfEvtO6N0VHHrWF5kuDu04zelRhaAWTyIRcpnNw8R/lrOZk8RBlP0eqE3YDckUzOLxCy5D/p08wroFE3RruhWmef/aOBaFdTy3MtIX5goi0CkMJ/RYR+tjBWU6lV78HB427hk0xejj8ZEjmikDxSyfkZQSbA4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759819610; c=relaxed/simple;
-	bh=bdUUcvN2FlIOv+cXCHCzP0ZEOmw5wiYTT5nx3jKR8BM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JlA8j2iOjq6dsFNd7cDmzBU9h1wvTu56x6xT9GqYLvA1jVth+SCyXrITuNVsUFvAxS1ScbhmAURaY5VyGKYL6H5yPQGEby+kP1golTxVFU3UuAhKHYRMBTd7Fqolc3RQz/PZKPp/cFk99ubM/VCKv9L7HT4WmGTu+7TR5eRTxcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FNMMNYk5; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-36a448c8aa2so47583641fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 23:46:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759819603; x=1760424403; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ouLTgsP/dL+VYka0KLm9xf7OR4U+ayB9IhKPeIL4RjM=;
-        b=FNMMNYk5VnQrUrGzfS5tZ8GCp0R+qiOpiB6tjLyzkZeX0BBHwbtFYjnTcauQsebfeP
-         stdkshnDBdrcxxdvsfviB7d22ls8lmCvDrvoFmzneyHZCmRblh7R8LQzs+eQnBGpylOU
-         2YEqrQ0SOHtgixlhAfQgcca6RJORUAt3sCCl1hvpHKlJuiplJl0KaBH0118mPpaH/6zy
-         ak+lVSirt0msD97TVuecXeiS1VGrBI/EF8Zd6dGtQmWQ6B+7NxQS2RDo5w5dXPFm6iGv
-         qLI/Fw8mQ9P/OZcY1da5eZLPYtQ6DgrntjxpHKwfip1/+Vj0hXk1AEdAT/s3ZgvJemr9
-         9Gqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759819603; x=1760424403;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ouLTgsP/dL+VYka0KLm9xf7OR4U+ayB9IhKPeIL4RjM=;
-        b=nAILMCXhIZSyzgOFBZLK4vMCLAI37m1U5S7gQPXxuv/jE/B0M/6WadVpQ6JiWFVSG3
-         rK3pBYwsihnT1Me3Yd7Jet2BskhBqdypI1j2jcw475GMbuXEPQQ7S3VE5P6FViRzy2+T
-         K/RXvzmzpo2WztNqCtJpVrEzEbjRes/Rr7rKT9TGZXAdz+OQf6FYXqPRUY2MPrE84cl4
-         SNDqev2VJ6Bob5XLMIexGYm2ROqm7EHeCZUxR7sfGVH6i5xhNj/27aypeWNWIDumxFpY
-         oc8sOUlbEAY3dfwhJhUa3mhwuTs/C4VjzE2nbuUFP37CnrSl5JPZ+7DtuK99/lMm+1gW
-         5l2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU98R34pdzclq1wOBX4BeW7xAzv/IxVcSO09s8/YQcOHRT9SubztEZF2290O20pjYlvwjIlWu+KYvHc7mA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGi0dWQVSn4qkVyVceFR81hPsq+yAwVFxjAweHM8Rboq17nUU9
-	sekl6ZpHFemnhQMlBQ81iigdzXfA6R0gtetgULnoxYChP7kRXueVLXhEgsxRCEMxmXIuROxUuiR
-	1jPTFOya/u9QqkMZ8DodxHQU/9bwSqaE=
-X-Gm-Gg: ASbGncsB7izcjnFC5xfQpY2tCFN4TaPj4AEl/nT1rhybOdmU6fkMTTkEB4p8cpxHAkh
-	tWlrqvbnt9zaIMfKCQfxqLfvvlqDMavnevMpezysW1xN8/S7BqgscCY1pDpSnV3THWYgiEEW7Al
-	PjbtOT64Vzqruzv9wuaogOgKBsVMcOjUKN/4mDQrYvF7mvUi3KnbyzHS/TxZy2zfA6a+tbCK5ht
-	+dOqt04pC25M6gXx2PYI9+i/Sgg/OQ=
-X-Google-Smtp-Source: AGHT+IEdlOJ2MrVpBtb7ftpbczU5vSBj6YVyPhzA+Bp8l5exxa/OkACgKSRLpeqUWyWVhFVNu8hlpHdmtirgoemz21Q=
-X-Received: by 2002:a05:651c:50d:b0:372:921b:4b7e with SMTP id
- 38308e7fff4ca-374c37da0camr56699071fa.27.1759819602473; Mon, 06 Oct 2025
- 23:46:42 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C24D1B2186;
+	Tue,  7 Oct 2025 06:49:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759819787; cv=fail; b=HPdI5iSMzeQYOY4X8dpcrIO+LQ7l2hhT8NIJC/ONQ2sTepz3OOKhCiwoSR/r6gWIil4yzsO9A3ynrXtPl8d1GwP07RnbjdZcdL7JKWYd0+QBdfiMGnE8CeUh0pUrqSxE9He3MPQU2EYe2u81Z7krcnt6ZJmZuyb8JqsWpussJ90=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759819787; c=relaxed/simple;
+	bh=egxXDHnl5QlWiy1AfboV1UyIWBND2EOJVamhQIUbG48=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=R/rX1qFoWnyAFPlw+ozFR+IFn8SOcFF0+yXLMWPlXmgaNtUwjEUJa0RF5SCL7FGP+rrhQj94SL7Rhpb1/m41mv1h2Afo/zV6w4kTl7DifAHqweS+ey23PvDRQ9aAVSCW+kvUgA5p8T3xlzzA9i6VKWQPETs/yE6ke8V/HBziXdI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=UP1ZGc9M; arc=fail smtp.client-ip=40.93.201.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Q7/PHBnqCFzeC/UGQOWIwbiYP/wBYwwJW14Q2i40WEjqP5y1scOoH04UyeZzNW1C0lR52dz2QijupLzefcFLqDojR1WGxoyCoPMKE6u8aqABokuQ8INPykDsHUhCfhQNAymFRUNzDtYzWm+R9v+ElpKl4sNXO2dgj21l0BhCOIith1gNw7ZaJYGdiCbC9C2roc7MzAebm0I9TnX4WUwjfwtaMOzEuM6VVPrcuoK+8H3kt1FCr0oj1aDzMYF72AfJkwFzsBXdOhLh3uTnPyhFuMhgNES/p8RSKtVdf17T/C3p9NJPv638mxD/IpRjvMGa4aptJq9BrFDDpuGlUSFW5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oaVDNS3QitRr/MdozJBXneK/QfegC3erOy2gqS5yWyU=;
+ b=Q/CmCx+DRMTEs46n5773P8Fa+CUW6/SyyV0/rZwiGPWgnBPn43UYJAFX55fzd+k+F9eX6tQydNcU5kj+2JPsMzn/jQlBW8y7JqI0JX1cMf4F38x9c441IhVbeNfDSOM3dNqH+SMiSS0epIOIF+xNbttmS3HPdSfvAWvFy8eIp+vpZA5aldp9Od83ysC4mxsWQcsRDoDeiBDF5ndKBLgaJQst2Lh8lX2+c2sx4whrk5gXeoHAvvj0Dvof1fWW4Ms3Xjwqy8CbE5sx95O+vIQ2RX4a4jRwU4RVcqV406EK1ULfHBnDDYhAcuWg5TqLUQHJQP8fyaK4Hdvel34mzg0q5w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oaVDNS3QitRr/MdozJBXneK/QfegC3erOy2gqS5yWyU=;
+ b=UP1ZGc9MoUAv0iJNuQcZm4XgC7uNICXoA7S94qqUN6vUEN3xoA7u2fqbaMD5LrqohPooOP1iNbsALvGsOovj+mCjKn780xmDfrUKi9DfvhoC3/Ad2j2e2kAw0ZwbHX6n8f8yOjkG7rSM3CfT3l2vZQfut2Uu0e2ivUUm90sSQNTs9i9ewP9JBiGE5N5q3syQbfWJpZABzValvLvYkUHub9eNVxVYOKyQYE4DMmHOKC/IDbG4CXNNkJ8gNVBfOtdejAlglX29HWnYPww93nvxARvzcs9+Y6OoTiBRb2XEV8MmkitFg5iw9d/Pxxqz5stMe2aM5oBJSnotXPJWaw2irA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by DS0PR12MB8317.namprd12.prod.outlook.com (2603:10b6:8:f4::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Tue, 7 Oct
+ 2025 06:49:30 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9182.017; Tue, 7 Oct 2025
+ 06:49:30 +0000
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 07 Oct 2025 15:49:26 +0900
+Message-Id: <DDBW1JYMK8Y7.37R0EJR5VFEO4@nvidia.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "dakr@kernel.org" <dakr@kernel.org>, "Alexandre Courbot"
+ <acourbot@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Miguel
+ Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
+ Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ "bjorn3_gh@protonmail.com" <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "David
+ Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "John
+ Hubbard" <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
+ "joel@joelfernandes.org" <joel@joelfernandes.org>, "Elle Rhumsaa"
+ <elle@weathered-steel.dev>, "Yury Norov" <yury.norov@gmail.com>, "Daniel
+ Almeida" <daniel.almeida@collabora.com>, "Andrea Righi"
+ <arighi@nvidia.com>, "nouveau@lists.freedesktop.org"
+ <nouveau@lists.freedesktop.org>
+Subject: Re: [PATCH v6 1/5] nova-core: bitfield: Move bitfield-specific code
+ from register! into new macro
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Edwin Peer" <epeer@nvidia.com>, "Joel Fernandes"
+ <joelagnelf@nvidia.com>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251003154748.1687160-1-joelagnelf@nvidia.com>
+ <20251003154748.1687160-2-joelagnelf@nvidia.com>
+ <F3853912-2C1C-4F9B-89B0-3168689F35B3@nvidia.com>
+In-Reply-To: <F3853912-2C1C-4F9B-89B0-3168689F35B3@nvidia.com>
+X-ClientProxiedBy: TYCPR01CA0090.jpnprd01.prod.outlook.com
+ (2603:1096:405:3::30) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251002184120.495193-1-akshayaj.lkd@gmail.com>
- <20251002184120.495193-3-akshayaj.lkd@gmail.com> <20251004135829.531a03e1@jic23-huawei>
-In-Reply-To: <20251004135829.531a03e1@jic23-huawei>
-From: Akshay Jindal <akshayaj.lkd@gmail.com>
-Date: Tue, 7 Oct 2025 12:16:29 +0530
-X-Gm-Features: AS18NWDj-Dl2DV2f_l8NseuUFP6e5ox0A_Xb4BZUTSeFz8ePOd_VWSN49qYGbfA
-Message-ID: <CAE3SzaTaq7QFoRZMTd33e__ORsHiCMqBK0joVEdSt2YnEfhkSw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/5] iio: accel: bma400: Use macros for generic event
- configuration values
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: dan@dlrobertson.com, dlechner@baylibre.com, nuno.sa@analog.com, 
-	andy@kernel.org, shuah@kernel.org, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|DS0PR12MB8317:EE_
+X-MS-Office365-Filtering-Correlation-Id: 77690e71-cdf7-4d84-553c-08de056daa19
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|10070799003;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TUpwcldVamdobEFvT1pDZ0dtcmJ4Mi9tTXlJR0hPSU1ESW1QYnREa1FKbXpU?=
+ =?utf-8?B?emFIYTVseFA1WlFLdTM3TTcrS3VFaVBkM2J3T3NzT0U5ZnhhRjNZb0NieDR6?=
+ =?utf-8?B?ZVphM01wUDJ2NWZMS2x3T3krWlU1b3AvU2V3M2x0bzJucXdxUTdGWnlVNE8y?=
+ =?utf-8?B?SkcyaHpFNFV4RDlDbytJTHYrbVQvOG5xSnhRWDhoRGxpcE9EeDVGSlo4WkdU?=
+ =?utf-8?B?YTJreGFzV1lDcE42bTFjVm9GVDAzTHlValUzMzBvamsvUkNNYjFVRUs5Q1l4?=
+ =?utf-8?B?b3Q2b3RqN0pnTGRLbGN1dFErM2s2ZElCaGlpUHkvTUN5YVd6WjNsVzBCbDJk?=
+ =?utf-8?B?K2ZrNndxNXF6a28rZStqay9KbnhYSmkzRDFVRVNHTlNJSWVFKzlGTHhkajF6?=
+ =?utf-8?B?WkNmM1J1K1pCLzVPVU9Qb3dLNGNGUGREdXJ4V0ZZVWt2MHk1b0lVemI1eXp4?=
+ =?utf-8?B?alFVZVNnVnJ0bDNZUE1nejhtMHVseGRaV2ZsNnFTY2x2Q2x1dHVkODhnaTE1?=
+ =?utf-8?B?UWNEdC9rcnVnV3UybWpKRWxKbVhFejM5QzRIMmRxbVRrU2t1WGs4Z1dXZE9J?=
+ =?utf-8?B?WGdIRnh5N3dUZitvS1dsdDhLOWgrSEpmN2RjV3VCbkRTZ1Z2Qy9ua0lBTVUz?=
+ =?utf-8?B?Q2JPbUtxSFFTdzI4cUNEaGR5b3Y0QXpuWXJ0T2VEOGF3YUpEVHU2VGx5bk9k?=
+ =?utf-8?B?V3lnRzAxKzhhZHhJb296OVRRdzVkd1pJc2JKSGxQdFV1bnNmSzdsTDUzY2Mw?=
+ =?utf-8?B?dzlBcGQ1L1MycmhZOEwrSGVtMGhrOWZGRXpFRzFDN0xQR2ZSc2ZwU2VwaU9l?=
+ =?utf-8?B?dUpCTjlqdDR6V2kvTmxpUmw5cEgxeVhTTTdEVlF1ZkFPaEl4UGk3R3ZtYVNt?=
+ =?utf-8?B?ZS9nOUZoTmVsa2xjblluTVhjc2FyRjZjWXZzajg0Z00yQlRNSG5ta3VDNHpM?=
+ =?utf-8?B?cVpzRzhNcC84RHFmOVJ3YTM0ZmdyUUpRcjBJZmhaUTEzWjk4SCtMcWtYYTMz?=
+ =?utf-8?B?d1MzL00vMTIvTjRhZUY1alU1NmgvTy9GTXNjQUptcC9jVzk0bFpJKzE4WDgz?=
+ =?utf-8?B?TEVQdWFDVzhoZmpDVmdYOUQwalFGSE9vbXRTWEhrK1dvZUhvdys0ZG1KRjQy?=
+ =?utf-8?B?UXEvVDZzRTJUY3EvenBMWGw2dFhteTFWc2FKSkhiTTZwUlFWZTJRWFhYNGVw?=
+ =?utf-8?B?NDNQY21KOXp6cm1RbXNWTHNmcjRmeElrM2l1bW1TNmZXR0tyU2xnRDVOdmhi?=
+ =?utf-8?B?NmkrSVB3cDhFZ0dRL2xsMk9kU0RZak9oRGEzSWJBOFZrcENuSUJpQXhpZm5J?=
+ =?utf-8?B?cWpGbFJyNEo1RVUxOFROOG5teVhzU1JpSGVsWkhPcElVNUI2ZTMzT3g5amdi?=
+ =?utf-8?B?dWNtSFNTdGRIQlNrVyt1UVM4RXUrSjg0UHdWOEJXN2F1eGZWajRicTlsbzZ3?=
+ =?utf-8?B?ZEhDRThBQzltSHVpMWFJL0M0Nk5JTG5Zc0dsNGJDQ0R1c05BNE15N0V4Q3pZ?=
+ =?utf-8?B?aGFYYnpUVEJMR01PeHM1aS82c3dOdGhuaFBMWHdOTVA4bklaK3BGQmNCYVJt?=
+ =?utf-8?B?Wmtpc1QzeXZmbVhuWjNwMDJ5VVpvYVpFQWxxdFByd3RHcXNlL250cVBDUito?=
+ =?utf-8?B?VHVNOGtFeEIyT3YwRWZMd2VueS9SK3dHNnJpWGlTZW5oa0tleDRLQitxbkVm?=
+ =?utf-8?B?dTlud3hLa0xYKzZZc1MxekVxYUJqaDdyUlFadkcwcTBzNVRHQ0JaVDh5bFpJ?=
+ =?utf-8?B?L3loS3l2ZFkwdjJHYXJ6RW9BOUJoSUhIZlRhQWdVU2RIRWRBZlNYMDJlS2tw?=
+ =?utf-8?B?NEplblpjemw2SXlKdlFXQTRxQ1ZYckxQMFdranYyWkVrUlh5US94RmIyQnBZ?=
+ =?utf-8?B?a0ora21PdnhCQ2Z6dU1mcGdGNkR5TU1LN3cyZGV4Z1pMYUhtOEJiWnI3YmNW?=
+ =?utf-8?Q?nR53Ou4B68dalZv2G0yd98L4QUuut6Az?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(10070799003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Q2V5UFJoc0JPYk82THQwbmZwOWd1ZFhkaGdkN3RObTMrLzRmZ2oyY3RnMEN1?=
+ =?utf-8?B?Z3pPZHNvSlpYVHF2TmlrR01DR3VhbW5aYjJiT1BnZkdCR3BZa2NFakUvUTM4?=
+ =?utf-8?B?eFF1OHZqK3l0aExETVFaeTFTWEh6YWtRS2dvc0VYM0MvcW1RN09tUWNMc3d6?=
+ =?utf-8?B?YVF3NmN1bXpxMm14NlA4ZHpaSnUvRFRDWG0vYzhlblBCSngva0lTSXNFd1g0?=
+ =?utf-8?B?TFBsOHBIN0ZuZFhSVWwzZkMyZnJmT3ZrRnpoSEhkNUlOZjZOTHZxVzVOZjlS?=
+ =?utf-8?B?eENSN3R6QnNoUmNTWGpYQW1aS0pxREEzUUNCaUdwZ096ZXA4dHdCaFE5cWZj?=
+ =?utf-8?B?VCtsNnZPb3FZYTY5NEZoZkFFMnVhQXlXTnllQUNLOEZNd20rS0JoclpJd05q?=
+ =?utf-8?B?VFBjWkMzWWxHS0VuU0czc09qZ1VqT25aTHE1ekJOc3kxOXhSSnpBUFM2WUgr?=
+ =?utf-8?B?L2FpOUd2cllPeUpmellmNUNVTHUzaHpnQVM2eFptVllJTDdESGdTRHA5QXB5?=
+ =?utf-8?B?dHNYTktYeHBJZVBDandJRXpnQzZsa3RFcFdZL0lOVmI1TnBNVHQ5Q2Q5bGhi?=
+ =?utf-8?B?MWV1MGUxa1l0bTQxbXlrMjNNQ2dpZXdHRng3NTFBQlBINkU5NEJaUUY0S1Zl?=
+ =?utf-8?B?elFac3B1WWovTi9aMWpYbDBEclFrYWg0ZUtrSmNiNktUak1aaUJ0L3VNYzZr?=
+ =?utf-8?B?cjg1RVNIV1NqV3dieldGTU9uZDhXSkcxSUJ1WHZaeXRJNGJaekl0b3JPdGFu?=
+ =?utf-8?B?L1F6NXNlS1FBeWhBYXFUSTNpMmdPcURJS2FGdzlXUjd4MHEyQW9FaThSMDBu?=
+ =?utf-8?B?U05BUmpFTHFqbE1vQmV2OFhLb09xSmFSRStGODZEeWJqcEFpcjVWd3UxUHJV?=
+ =?utf-8?B?N21tYWV3bHluT3h0ZVdRZjlYa1pNRmtiSzhtT2IxTGV0ci9MR1ZDNUNWL2dp?=
+ =?utf-8?B?L2lCSG9MSjNVYnlMd1JNQVZtNkV6bDhad0l3c2RFRG9icVFYRmwzRFN6RE53?=
+ =?utf-8?B?TzZnM2NDbXZBa0FQOVM1ODhrUWl3a041THRuRXRrVU82YURUUkllMzcxVmUv?=
+ =?utf-8?B?K0s0OXI0ZjNzWlFzV2lwVWgrTFRzVitLWFRheGQ4Y1hnZVdrVVFqRUErMENa?=
+ =?utf-8?B?cmhqRWlOUGJNSGNqUjg3a2lNeW90Tmh1UVVuenFaSW5iOVBrZXRwdG1DbXdZ?=
+ =?utf-8?B?cHMyUmNFdzFVQ2h0a3hzK1BFT0JZVHlNUTVDSC9vbkpUZVNXS1luODVNa2gz?=
+ =?utf-8?B?bmVLVGtQMHNDZlI1SWFwUjd3REZRaWJ4M25TNEZqYnlaemZQU3JaUWg1R3RX?=
+ =?utf-8?B?V2FzU1FSUmRXMmhJNlU4TVFRejlxWTNodndzYWFvZmxoMHBJK3Nod2RIRTBY?=
+ =?utf-8?B?ZVZsMTVHeGFCM2w2Z2lERHp6bUpUVHI2WlVCa0N2QUt3ei8vSG5KSWFFT3Yv?=
+ =?utf-8?B?MXNNNld1ZDlqcml1QXVaKys5VEhQMzUyZ0pKWFpVQVAxUjVHQUUzaWRTSUFj?=
+ =?utf-8?B?V1FmY0ZpbS9zRHNOVXZGWUxXN2IvUFF6cjdtVTBJUlpwS0JPWmt1b2p0VDZ0?=
+ =?utf-8?B?SjF6SEFOOFJ5UUc5RGEwak45SmExa1JGTmp5RmZYUlU0bDltUXhrRXQ0THRu?=
+ =?utf-8?B?WE1QNWVQdExNNFZZMVBFUE1UeXcrU0pXZ1M0SDNyK0FzRnAwT2prWm1nVFlO?=
+ =?utf-8?B?RWt0VUVZT3BZYTBDTmZlV0VXb01BdE8xZWNrVEhNZVRkUHlZeDU2Q2FzR1JW?=
+ =?utf-8?B?R0FOa2FXZTlBWm8yanJEODE4MGhtb29MSWh4UVhTUTlSQ2NwR2poU01HOXBJ?=
+ =?utf-8?B?UmIyTDdSakZqc0pMcTN5TVU2bXZzV1kySXBzVkVSWTIwTXdDUXQwQVpDd3JG?=
+ =?utf-8?B?bkt1TjZCTVl3cnRYb0MzNlJ2aGRwRWxqd0tzMWV6UXVGV1oydnZoQUxrYWlB?=
+ =?utf-8?B?TG1TdXpoeXR6b3JXOWdKM0M4dG5Qd2J3aW5EUWVuRVI1bUcxT1lsZHFZZmQv?=
+ =?utf-8?B?aFJnSWJvQTNhM0lJQVhXS3pva1V4SHZVZDgzYld2L2NzaVdJazM5LyttUEI1?=
+ =?utf-8?B?QzhrUXVrdzR3QlEvZ1k2UmNUVHc3cTJEbDdsRUp6NmFvQTJhZlJhdHg1UCsx?=
+ =?utf-8?B?WnZwanNha0N2djZDL05QMldRWlFJb1FreWd3WHQ3c2hFT3pKZGRZZVFpVVgr?=
+ =?utf-8?Q?YHODB3uJTYAKC+S646VtD/++2ie6ZyMlnnWwFPu14L9n?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 77690e71-cdf7-4d84-553c-08de056daa19
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2025 06:49:29.9049
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: K5nb56NGmFAOWZNg0eRDbM9vhG3dzv9BqJRAcF9tbWLLx4V9Ggf27PVszJ9DDZ8gouVhF7CJKKgcpr1C7w/IFw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8317
 
-On Sat, Oct 4, 2025 at 6:28=E2=80=AFPM Jonathan Cameron <jic23@kernel.org> =
-wrote:
->
-> On Fri,  3 Oct 2025 00:11:03 +0530
-> Akshay Jindal <akshayaj.lkd@gmail.com> wrote:
->
-> > Add macros and enums for configuration values used in generic event
-> > handling for activity and inactivity detection. Replace hard-coded
-> > values in activity_event_en() with the new definitions to make the
-> > configuration explicit.
-> >
-> > No functional changes are intended.
-> >
-> > Signed-off-by: Akshay Jindal <akshayaj.lkd@gmail.com>
-> > ---
-> >  drivers/iio/accel/bma400.h      | 30 ++++++++++++++++++++++++++++++
-> >  drivers/iio/accel/bma400_core.c | 14 +++++++++++---
-> >  2 files changed, 41 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/iio/accel/bma400.h b/drivers/iio/accel/bma400.h
-> > index ae3411c090c9..13fe2e5a3175 100644
-> > --- a/drivers/iio/accel/bma400.h
-> > +++ b/drivers/iio/accel/bma400.h
-> > @@ -106,8 +106,38 @@
-> >  #define BMA400_GEN1INT_CONFIG0_REG      0x3f
-> >  #define BMA400_GEN2INT_CONFIG0_REG      0x4A
-> >  #define BMA400_GENINT_CONFIG0_HYST_MASK              GENMASK(1, 0)
-> > +#define BMA400_GENINT_CONFIG0_REF_UPD_MODE_MASK      GENMASK(3, 2)
-> > +#define BMA400_GENINT_CONFIG0_DATA_SRC_MASK  BIT(4)
-> > +#define BMA400_GENINT_CONFIG0_X_EN_MASK              BIT(5)
-> > +#define BMA400_GENINT_CONFIG0_Y_EN_MASK              BIT(6)
-> > +#define BMA400_GENINT_CONFIG0_Z_EN_MASK              BIT(7)
-> > +
-> > +enum bma400_accel_data_src {
-> > +     ACCEL_FILT1,
-> > +     ACCEL_FILT2,
-> > +};
-> > +
-> > +enum bma400_ref_updt_mode {
-> > +     BMA400_REF_MANUAL_UPDT_MODE,
-> > +     BMA400_REF_ONETIME_UPDT_MODE,
-> > +     BMA400_REF_EVERYTIME_UPDT_MODE,
-> > +     BMA400_REF_EVERYTIME_LP_UPDT_MODE,
-> > +};
-> >
-> >  #define BMA400_GEN_CONFIG1_OFF      0x01
-> > +#define BMA400_GENINT_CONFIG1_AXES_COMB_MASK BIT(0)
-> > +#define BMA400_GENINT_CONFIG1_DETCT_CRIT_MASK        BIT(1)
-> > +
-> > +enum bma400_genintr_acceleval_axescomb {
-> > +     BMA400_EVAL_X_OR_Y_OR_Z,
-> > +     BMA400_EVAL_X_AND_Y_AND_Z,
->
-> An enum for potential field values only makes sense if you are going to
-> use it as a type somewhere.  If not it is simpler to just
-> use a define next to the mask for the field.  Also these should be named
-> with prefixes that align with that mask.
-> If you do use it as a type in future patches that's fine but the naming
-> point still remains and you should specify values =3D 0, =3D 1 etc
-> as they matter whereas implication of using an enum is that the actual
-> values assigned doesn't matter.
->
-> Same applies to the other enums introduced in here.
-Assigned explicit values to enums in v4 patch series.
+Hi Edwin,
 
-Thanks,
-Akshay.
+(replying as I wrote the original code and introduced the points you are
+discussing).
+
+On Tue Oct 7, 2025 at 2:56 AM JST, Edwin Peer wrote:
+> Hi Joel,
+>
+> I recognize that this patch is intended to be a code move, but I=E2=80=99=
+m seeing this code for the first time, hence the comments regarding the con=
+tent below.
+>
+> On Oct 3, 2025, at 8:47=E2=80=AFAM, Joel Fernandes <joelagnelf@nvidia.com=
+> wrote:
+>
+>> The bitfield-specific into new macro. This will be used to define
+>> structs with bitfields, similar to C language.
+>>
+>> Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
+>> Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
+>> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+>> ---
+>> drivers/gpu/nova-core/bitfield.rs    | 316 +++++++++++++++++++++++++++
+>> drivers/gpu/nova-core/nova_core.rs   |   3 +
+>> drivers/gpu/nova-core/regs/macros.rs | 259 +---------------------
+>> 3 files changed, 329 insertions(+), 249 deletions(-)
+>> create mode 100644 drivers/gpu/nova-core/bitfield.rs
+>>
+>> diff --git a/drivers/gpu/nova-core/bitfield.rs b/drivers/gpu/nova-core/b=
+itfield.rs
+>> new file mode 100644
+>> index 000000000000..dd0ef2016ff8
+>> --- /dev/null
+>> +++ b/drivers/gpu/nova-core/bitfield.rs
+>> @@ -0,0 +1,316 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +//! Bitfield library for Rust structures
+>> +//!
+>> +//! Support for defining bitfields in Rust structures. Also used by the=
+ [`register!`] macro.
+>> +
+>> +/// Defines a struct with accessors to access bits within an inner unsi=
+gned integer.
+>> +///
+>> +/// # Syntax
+>> +///
+>> +/// ```rust
+>> +/// use nova_core::bitfield;
+>> +///
+>> +/// #[derive(Debug, Clone, Copy, Default)]
+>> +/// enum Mode {
+>> +///     #[default]
+>> +///     Low =3D 0,
+>> +///     High =3D 1,
+>> +///     Auto =3D 2,
+>> +/// }
+>> +///
+>> +/// impl TryFrom<u8> for Mode {
+>> +///     type Error =3D u8;
+>> +///     fn try_from(value: u8) -> Result<Self, Self::Error> {
+>> +///         match value {
+>> +///             0 =3D> Ok(Mode::Low),
+>> +///             1 =3D> Ok(Mode::High),
+>> +///             2 =3D> Ok(Mode::Auto),
+>> +///             _ =3D> Err(value),
+>> +///         }
+>> +///     }
+>> +/// }
+>> +///
+>> +/// impl From<Mode> for u32 {
+>> +///     fn from(mode: Mode) -> u32 {
+>> +///         mode as u32
+>> +///     }
+>> +/// }
+>
+> Is there a reason for the asymmetry in the From conversions for the user =
+facing enum type? Here we have u8 in the one direction and u32 in the other=
+. It looks like the latter is required by the use of u32:from() in the set_=
+<field>() accessor, but the macro would be more ergonomic if it handled the=
+ necessary upcast conversions internally too.
+
+Mmm, good point - actually it turns out the field setters work with the
+type of the storage, and not of the field. This problem was in my
+original code and is not introduced by this series.
+
+I agree that we should have symmetry here, and actually that will be a
+requirement to start using the TryFrom/Into derive macros [0].
+
+I do have a patch available for this, which I kept for when we start
+using the derive macros, but we should probably integrate it at the
+beginning of this series.
+
+[0] https://lore.kernel.org/rust-for-linux/cover.1755235180.git.y.j3ms.n@gm=
+ail.com/
+
+>
+>> +///
+>> +/// #[derive(Debug, Clone, Copy, Default)]
+>> +/// enum State {
+>> +///     #[default]
+>> +///     Inactive =3D 0,
+>> +///     Active =3D 1,
+>> +/// }
+>> +///
+>> +/// impl From<bool> for State {
+>> +///     fn from(value: bool) -> Self {
+>> +///         if value { State::Active } else { State::Inactive }
+>> +///     }
+>> +/// }
+>> +///
+>> +/// impl From<State> for u32 {
+>> +///     fn from(state: State) -> u32 {
+>> +///         state as u32
+>> +///     }
+>> +/// }
+>
+> Similarly for bool vs u32.
+>
+>> +///
+>> +/// bitfield! {
+>> +///     struct ControlReg {
+>> +///         3:0 mode as u8 ?=3D> Mode;
+>> +///         7:7 state as bool =3D> State;
+>> +///     }
+>> +/// }
+>> +/// ```
+>> +///
+>> +/// This generates a struct with:
+>> +/// - Field accessors: `mode()`, `state()`, etc.
+>> +/// - Field setters: `set_mode()`, `set_state()`, etc. (supports chaini=
+ng with builder pattern).
+>> +/// - Debug and Default implementations.
+>> +///
+>> +/// Fields are defined as follows:
+>> +///
+>> +/// - `as <type>` simply returns the field value casted to <type>, typi=
+cally `u32`, `u16`, `u8` or
+>> +///   `bool`. Note that `bool` fields must have a range of 1 bit.
+>> +/// - `as <type> =3D> <into_type>` calls `<into_type>`'s `From::<<type>=
+>` implementation and returns
+>> +///   the result.
+>> +/// - `as <type> ?=3D> <try_into_type>` calls `<try_into_type>`'s `TryF=
+rom::<<type>>` implementation
+>> +///   and returns the result. This is useful with fields for which not =
+all values are valid.
+>> +macro_rules! bitfield {
+>> +    // Main entry point - defines the bitfield struct with fields
+>> +    (struct $name:ident $(, $comment:literal)? { $($fields:tt)* }) =3D>=
+ {
+>> +        bitfield!(@core $name $(, $comment)? { $($fields)* });
+>> +    };
+>> +
+>> +    // All rules below are helpers.
+>> +
+>> +    // Defines the wrapper `$name` type, as well as its relevant implem=
+entations (`Debug`,
+>> +    // `Default`, `BitOr`, and conversion to the value type) and field =
+accessor methods.
+>> +    (@core $name:ident $(, $comment:literal)? { $($fields:tt)* }) =3D> =
+{
+>> +        $(
+>> +        #[doc=3D$comment]
+>> +        )?
+>> +        #[repr(transparent)]
+>> +        #[derive(Clone, Copy)]
+>> +        pub(crate) struct $name(u32);
+>> +
+>> +        impl ::core::ops::BitOr for $name {
+>> +            type Output =3D Self;
+>> +
+>> +            fn bitor(self, rhs: Self) -> Self::Output {
+>> +                Self(self.0 | rhs.0)
+>> +            }
+>> +        }
+>
+> Why do we implement BitOr for the register type? Seems a bit out of place=
+ for an abstraction that is trying to provide a safer field level access AP=
+I.
+
+Nice catch. I guess I wanted to make it easy to combine fields into a
+new value, but that's what the builder pattern is for. BitOr makes it
+possible to build an invalid value from two valid ones. I'll remove it.
+
+>
+>> +
+>> +        impl ::core::convert::From<$name> for u32 {
+>> +            fn from(val: $name) -> u32 {
+>> +                val.0
+>> +            }
+>> +        }
+>> +
+>> +        bitfield!(@fields_dispatcher $name { $($fields)* });
+>> +    };
+>> +
+>> +    // Captures the fields and passes them to all the implementers that=
+ require field information.
+>> +    //
+>> +    // Used to simplify the matching rules for implementers, so they do=
+n't need to match the entire
+>> +    // complex fields rule even though they only make use of part of it=
+.
+>> +    (@fields_dispatcher $name:ident {
+>> +        $($hi:tt:$lo:tt $field:ident as $type:tt
+>> +            $(?=3D> $try_into_type:ty)?
+>> +            $(=3D> $into_type:ty)?
+>> +            $(, $comment:literal)?
+>> +        ;
+>> +        )*
+>> +    }
+>> +    ) =3D> {
+>> +        bitfield!(@field_accessors $name {
+>> +            $(
+>> +                $hi:$lo $field as $type
+>> +                $(?=3D> $try_into_type)?
+>> +                $(=3D> $into_type)?
+>> +                $(, $comment)?
+>> +            ;
+>> +            )*
+>> +        });
+>> +        bitfield!(@debug $name { $($field;)* });
+>> +        bitfield!(@default $name { $($field;)* });
+>> +    };
+>> +
+>> +    // Defines all the field getter/setter methods for `$name`.
+>> +    (
+>> +        @field_accessors $name:ident {
+>> +        $($hi:tt:$lo:tt $field:ident as $type:tt
+>> +            $(?=3D> $try_into_type:ty)?
+>> +            $(=3D> $into_type:ty)?
+>> +            $(, $comment:literal)?
+>> +        ;
+>> +        )*
+>> +        }
+>> +    ) =3D> {
+>> +        $(
+>> +            bitfield!(@check_field_bounds $hi:$lo $field as $type);
+>> +        )*
+>> +
+>> +        #[allow(dead_code)]
+>> +        impl $name {
+>> +            $(
+>> +            bitfield!(@field_accessor $name $hi:$lo $field as $type
+>> +                $(?=3D> $try_into_type)?
+>> +                $(=3D> $into_type)?
+>> +                $(, $comment)?
+>> +                ;
+>> +            );
+>> +            )*
+>> +        }
+>> +    };
+>> +
+>> +    // Boolean fields must have `$hi =3D=3D $lo`.
+>> +    (@check_field_bounds $hi:tt:$lo:tt $field:ident as bool) =3D> {
+>> +        #[allow(clippy::eq_op)]
+>> +        const _: () =3D {
+>> +            ::kernel::build_assert!(
+>> +                $hi =3D=3D $lo,
+>> +                concat!("boolean field `", stringify!($field), "` cover=
+s more than one bit")
+>> +            );
+>> +        };
+>> +    };
+>> +
+>> +    // Non-boolean fields must have `$hi >=3D $lo`.
+>> +    (@check_field_bounds $hi:tt:$lo:tt $field:ident as $type:tt) =3D> {
+>> +        #[allow(clippy::eq_op)]
+>> +        const _: () =3D {
+>> +            ::kernel::build_assert!(
+>> +                $hi >=3D $lo,
+>> +                concat!("field `", stringify!($field), "`'s MSB is smal=
+ler than its LSB")
+>> +            );
+>> +        };
+>> +    };
+>
+> It would also be good to find a way to catch overlapping field definition=
+s.
+
+Overlapping fields are actually a feature.
+
+>
+>> +
+>> +    // Catches fields defined as `bool` and convert them into a boolean=
+ value.
+>> +    (
+>> +        @field_accessor $name:ident $hi:tt:$lo:tt $field:ident as bool =
+=3D> $into_type:ty
+>> +            $(, $comment:literal)?;
+>> +    ) =3D> {
+>> +        bitfield!(
+>> +            @leaf_accessor $name $hi:$lo $field
+>> +            { |f| <$into_type>::from(if f !=3D 0 { true } else { false =
+}) }
+>
+> if f !=3D 0 { true } else {false} =3D> f !=3D 0
+
+Oops, thank - will fix.
+
+>
+>> +            $into_type =3D> $into_type $(, $comment)?;
+>> +        );
+>> +    };
+>> +
+>> +    // Shortcut for fields defined as `bool` without the `=3D>` syntax.
+>> +    (
+>> +        @field_accessor $name:ident $hi:tt:$lo:tt $field:ident as bool =
+$(, $comment:literal)?;
+>> +    ) =3D> {
+>> +        bitfield!(@field_accessor $name $hi:$lo $field as bool =3D> boo=
+l $(, $comment)?;);
+>> +    };
+>> +
+>> +    // Catches the `?=3D>` syntax for non-boolean fields.
+>> +    (
+>> +        @field_accessor $name:ident $hi:tt:$lo:tt $field:ident as $type=
+:tt ?=3D> $try_into_type:ty
+>> +            $(, $comment:literal)?;
+>> +    ) =3D> {
+>> +        bitfield!(@leaf_accessor $name $hi:$lo $field
+>> +            { |f| <$try_into_type>::try_from(f as $type) } $try_into_ty=
+pe =3D>
+>> +            ::core::result::Result<
+>> +                $try_into_type,
+>> +                <$try_into_type as ::core::convert::TryFrom<$type>>::Er=
+ror
+>> +            >
+>> +            $(, $comment)?;);
+>> +    };
+>> +
+>> +    // Catches the `=3D>` syntax for non-boolean fields.
+>> +    (
+>> +        @field_accessor $name:ident $hi:tt:$lo:tt $field:ident as $type=
+:tt =3D> $into_type:ty
+>> +            $(, $comment:literal)?;
+>> +    ) =3D> {
+>> +        bitfield!(@leaf_accessor $name $hi:$lo $field
+>> +            { |f| <$into_type>::from(f as $type) } $into_type =3D> $int=
+o_type $(, $comment)?;);
+>> +    };
+>> +
+>> +    // Shortcut for non-boolean fields defined without the `=3D>` or `?=
+=3D>` syntax.
+>> +    (
+>> +        @field_accessor $name:ident $hi:tt:$lo:tt $field:ident as $type=
+:tt
+>> +            $(, $comment:literal)?;
+>> +    ) =3D> {
+>> +        bitfield!(@field_accessor $name $hi:$lo $field as $type =3D> $t=
+ype $(, $comment)?;);
+>> +    };
+>
+> I realize that the additional From conversion and closure invocation this=
+ produces will likely be optimized out when compiling at a suitable optimiz=
+ation level, but this is inefficient for register accesses in non-optimized=
+ debug builds:
+>
+> https://godbolt.org/z/YcTGh9xor
+>
+> It should be relatively straightforward to have the macro construct appro=
+priate wrappers for an inline accessor function only when the conversions a=
+re needed, which would compile to something more efficient by construction.
+
+This would only be possible if the field has the same type as the
+storage type, which it seldom the case. I don't think it is worth
+complicating the code to support some edge case that is only relevant on
+non-optimized builds.
+
+Furthermore, conversion will be unavoidable once we start using bounded
+integers.
+
+>
+>> +
+>> +    // Generates the accessor methods for a single field.
+>> +    (
+>> +        @leaf_accessor $name:ident $hi:tt:$lo:tt $field:ident
+>> +            { $process:expr } $to_type:ty =3D> $res_type:ty $(, $commen=
+t:literal)?;
+>> +    ) =3D> {
+>> +        ::kernel::macros::paste!(
+>> +        const [<$field:upper _RANGE>]: ::core::ops::RangeInclusive<u8> =
+=3D $lo..=3D$hi;
+>> +        const [<$field:upper _MASK>]: u32 =3D ((((1 << $hi) - 1) << 1) =
++ 1) - ((1 << $lo) - 1);
+>
+> I note that genmask, introduced in a subsequent patch, also uses this con=
+struction (based on the range, which does not appear to be used by current =
+code).
+>
+> Using const MASK: u32 =3D (1 << $hi - $lo + 1) - 1 << $lo would be more c=
+lear.
+>
+> It can also be a good idea to first right shift the value in the accessor=
+ and then utilize an unshifted mask, since smaller constant masks can lend =
+themselves to more efficient immediate instructions (as in the godbolt link=
+ above).
+
+The next patch addresses this by using genmask. Let's not modify code on
+a patch that is a strict move, as this would make it more difficult to
+review.
+
+>
+>> +        const [<$field:upper _SHIFT>]: u32 =3D Self::[<$field:upper _MA=
+SK>].trailing_zeros();
+>
+> const SHIFT: u32 =3D $lo;
+
+Indeed. Let's address that in its own patch.
+
+Thanks for the review!
 
