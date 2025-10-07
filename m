@@ -1,136 +1,153 @@
-Return-Path: <linux-kernel+bounces-844196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB633BC1478
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:58:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA118BC147B
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:58:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B0C03C2520
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:58:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 943D23C2D45
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F382DAFDE;
-	Tue,  7 Oct 2025 11:58:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5662DC321;
+	Tue,  7 Oct 2025 11:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HbXxxjKH"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T0uAdM15"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D21B253F13
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 11:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64621B4F1F
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 11:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759838308; cv=none; b=fSFjC2diuuFS6Hy/B6Png8yYFDYakCBuFS3FAojbSCwg3lcLWzLbkQJ+73yZUEI0K2FGgxAW0ornpCbVH2rxW0q/WA//DEE3Pjb9i06+eX33vuSBVDPTgpdpe2nv+ecilewEq88o20JEtw+ILkPtT84xFoQ/jJZe6URuT5/f2yQ=
+	t=1759838327; cv=none; b=iLlfYZOk3GduvMSoqVPV6Ii7nzmwdXcyokLLadCIQ4vmpFWBV9BdKJiKCW/Efw8otA4uZJ1OX1huuuU69PNQgQ8sMY1mtZHxMWyUh9Kr+ES7DxUHZPnnZCIYIs0ltq/CvJ4FX7A9dvW7KKpgpp99XP3pXYYereVU8bix700Umb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759838308; c=relaxed/simple;
-	bh=KkJzx5iseDOMBqov/lks7E3Iw2pm9GsyzW9W4JlqAqs=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=chaQfYx4EaetgOQ+phFJXcIXKNzf37MN2E8KoPWziL99sRpDtkmJyBHoWob8W/YrLttrDfD7UNgn7GulRaPkiIK4iZifiHsY9pUFZVUleuv0CVjPDYvbuZrXWMd/UIlc4CTklFmh6qk7U+vrUAPASWHfyUCeNk1sdzJBx0tqpKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HbXxxjKH; arc=none smtp.client-ip=209.85.128.172
+	s=arc-20240116; t=1759838327; c=relaxed/simple;
+	bh=B28UriZIDHaPpeAMdw/A3PSTb2BtJpDt+bRHW5rPK7s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=citDokt6/tOYHcjGGhm55VgBbcauOXE01+jyp2+X/HQOroQxjk7Ctx9Xq+EiCfNz24nDP28cWnieiWbFouuuCGBPd/cY5Kx5AmWH6IO2XVK0Kt2YYt7R2LlO0eGqF8LAuKk++vFLCRLxqZWNNgq6ZPZ0A6NX8kSh/rHnX7YGdYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T0uAdM15; arc=none smtp.client-ip=209.85.167.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-71d71bcac45so66672447b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 04:58:26 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-57e8e67aa3eso9383373e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 04:58:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759838305; x=1760443105; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/LCefJSJB1+ypX3Sb+h7MPQdpzfzCeRiHx/LBHLwVq4=;
-        b=HbXxxjKHRCESFLKDJEl7RqpQVy6cse8nDLjqClKUeXbKElYg+cWwjwFO5x9DcSpgma
-         KrpLDDN4dCt6UkTNwPBCsCw1asR5kb+6tfWbdulVwrOHqWCTJoayT5dIt/MqhsUYfWjG
-         7kp5fIushbbr8gCz81y73rqXKeqovdKs4o0N11Q7ipq+/74tjAoAMZ7p8/T0it+KYnoD
-         uw7oHEH24j10AvTHmMwTgKVIKiZv7B4+fDlEV+3RF4Is/KwktE5/qCs/psqHuspVREzH
-         IGvcau1dJ+R3rYSeBAQbuqKGQrM26SAyFkYCgf2fbcCjCAfN45A/HQJ3ubwHLhOKkupv
-         JIog==
+        d=gmail.com; s=20230601; t=1759838324; x=1760443124; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1UHSTsWVgVFJryrJ3NLdWTjkzgi76W+AuTzj7De7nJs=;
+        b=T0uAdM15QY3a/WCz2OJ/5T58Juyfu9jd3fJMhb5Cg07CkVpwXn6/1nqeKNPkw1cbL3
+         0fjW5pPv2c1E9g7Q+cSSbYm5yofwUJMzrf9s/WWgifU0dS9EQh/SXE9JpjeBUa3kFtPD
+         HR1nwB+o5nEkL3XaLA0L6gR/tF19NA0RmuSpikK+0uXwDEE2xtAH04YMfV1cfuOwtT31
+         4V+y2JYT+SyR2i0MmxTg6SCo/1OMRA3R20zDNgpRSMTolksbZjFIGORi0wvousHac44T
+         HDszxOPASCrq2dQPfH8Q943g+wC5QzdjWyyU3mouyLVn7CBvRyvYVi6i2ESUwQ+AIacL
+         MnWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759838305; x=1760443105;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/LCefJSJB1+ypX3Sb+h7MPQdpzfzCeRiHx/LBHLwVq4=;
-        b=aCzaaVani/iqj3VuHow40vqIhW7PZa/Vs2J1k/JeseCj4HbIpOqo7xgKnVwk4+Fl6O
-         47h6Qbtfb+hVFFDKGQhG9BSAhffrH5OmQNdP6YYJb6KT2YwFjpxXhR0UXkIza9qp2bhm
-         dQCi9PCrNlN96K6sbgRWnEmH90wlxs6MCcCWjaXGtH8Rj1pYAqj6//isw6qyHcdENW2R
-         u1T3V7KHuEa13Ak6zbFtzwEsgQzYcJ9APzNbs0KuiOFSnnw/9xsUy2FLXLtgMfVss5dI
-         zIZhVuv1iZnXtW7+mQxMCziTH3+342bm8xNiuDIOO+UMwI4gvoK+WR/bri3lgFNlseop
-         caKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUtLXMgQkbltL9G7wN+oAaTfIQn447mYEm4t4UhTm/wwT/ctgcPaeqnjpKBNxer84d8q5uw3wLF93rn/Sc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjoOXy9YYFBS+wgrzfg6NNbJCe9Nkx3e6CX5JE4gb4LsJ1Ibul
-	z+BdFCqiTE9g6mlEGnB0DcU7upQmYcxvjwLs7ARCIRjU/TV0Uo/xzB0IvXLpnXFdJCKLDRZXKSF
-	MNa56XZ/BeibmaBNno6s88Xy9TQNInMT/5Hhz
-X-Gm-Gg: ASbGncuHIkCsy2Dwk0kEAwqj9RaySM7311mNHgb67zLSxPQxiU4YIKnv2rtrbDUx7iN
-	w+V2ijVAVZ6P2D7TbmqCBRokkqx1qMRCoeKr+b2EXHbXUl7yCYLXmeiyIwmIeyma4JsuQeHcxcf
-	XbrezFHGDqqr1Mflv0PkruSTUwWDYsxH2x9mNenQ6Eg9qv7BqLXcmYqeHnnCaZ8YgSqMwFzFyJt
-	7q2L5tDBS2zE+Cnl2qTa06P7fnKs0VbDg==
-X-Google-Smtp-Source: AGHT+IFwJYF3xD4zTcOOqIqOOaWTariNHri9p50BnxHJgjKQUTJP4D/lImwMzoitAXDMhFg9bpYSJ8/BH/27hwAa0xM=
-X-Received: by 2002:a53:ef87:0:b0:636:dd7:ee49 with SMTP id
- 956f58d0204a3-63b9a07b943mr13743424d50.13.1759838305201; Tue, 07 Oct 2025
- 04:58:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759838324; x=1760443124;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1UHSTsWVgVFJryrJ3NLdWTjkzgi76W+AuTzj7De7nJs=;
+        b=uWSe12hAbYCsPjoVa3zKtkmDD75s7COcoR3xSfgYU8Fwwsazu1WfD/5wgR7HpNruL5
+         L+EevjRSr/NcStQFmpxZHk45srA3yZ4W0ERYXaXkbw15KjUZSHUJh07oE84GqQjq44KJ
+         WYaZMPOZIvvliNPP6oTAwTzSONwWQLQysTJCNJBc55wR3B3PTC/icU8qQY8ahZ1FBM1O
+         mrSh3kA1OnulNVBnFJXFmFPfrcdyU6qDM0HJSNfmmdMJsZrbopAg9XRAR8czcZIY9pIR
+         qaMdskzVY0ZxR47Yyn6POm2oRlQft1uXUIEQb7+vZiTyZ0DP49//M5SsCIndacErBKde
+         ERCA==
+X-Gm-Message-State: AOJu0YzIV782uVwTlW5zz/x/mmZluKiVep4wj5F5L6teC2QWq0RUcxVU
+	u1Dol3AqVurdE7K5I2Vkmp5vWYKjKHCNXEPdRgTf+ZXbXxZS6wzaMA+J
+X-Gm-Gg: ASbGnctycoaS7/PAetC8oSTTlEcBOquFIple0mrjAV59mP1nIw09DfdS/8BJ5N6GDmZ
+	4k1s8cXcdhTfNbn8J7YhQzbJw5G1zxjuMQKaWVbg4Vr6TrlDPCfw4aQFOgmcnlYv6zcmtfvlNLb
+	SCkEr4M7VIR7lrDalk97koQiHcgWDyRgLGfrgOozIa9LNg768AXw0xa2WkWJMPZ1IVleAsVR7xa
+	6Gp7ZNtMtowXSGwSMIOh8rH3pZ55YWb5JxGbJSKTEcnt3hu0T23GF6o6FZFPgxI2JO3pKmPOxnH
+	MO5Rw813TNoNxHfuanl0setRPQrNQa1rSAIetTEz37dyJGAmgqZ6aHjnFKXoJ1HTvqUoB55DsJE
+	VVFFuR4qY7iQnDEIw+ntlCe5+FZOyJyMwuGXwKQ==
+X-Google-Smtp-Source: AGHT+IH7bnrkgnYWwbfbVsumwqkq4TDS5dWXB/mKRxP9HCltzhRMTTRuu0r7Qqnaw0RjDr3wioTn4A==
+X-Received: by 2002:a05:6512:3987:b0:580:dda2:52f0 with SMTP id 2adb3069b0e04-5905e21c2a8mr974685e87.8.1759838323582;
+        Tue, 07 Oct 2025 04:58:43 -0700 (PDT)
+Received: from curiosity ([5.188.167.4])
+        by smtp.googlemail.com with ESMTPSA id 2adb3069b0e04-58b011a8941sm6043339e87.114.2025.10.07.04.58.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Oct 2025 04:58:42 -0700 (PDT)
+From: Sergey Matyukevich <geomatsi@gmail.com>
+To: linux-riscv@lists.infradead.org,
+	linux-kselftest@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Thomas Huth <thuth@redhat.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Andy Chiu <andybnac@gmail.com>,
+	Han Gao <rabenda.cn@gmail.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Nam Cao <namcao@linutronix.de>,
+	Joel Granados <joel.granados@kernel.org>,
+	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Sergey Matyukevich <geomatsi@gmail.com>
+Subject: [PATCH v2 0/6] riscv: vector: misc ptrace fixes for debug use-cases
+Date: Tue,  7 Oct 2025 14:58:16 +0300
+Message-ID: <20251007115840.2320557-1-geomatsi@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Murad Sadigov <sdgvmrd@gmail.com>
-Date: Tue, 7 Oct 2025 15:58:13 +0400
-X-Gm-Features: AS18NWB_yyYRNWS9evJrxnGlrnIIeGU8nnCxFnRBDZKYWNyfd0MsSgaGiJMyL58
-Message-ID: <CAEuvNs2b-_Q=dazKjhUwJoZ5XUpjRsf-FrCOTR_j24T+EG-f=g@mail.gmail.com>
-Subject: [PATCH] staging: axis-fifo: fix integer overflow in write()
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Fix integer overflow in axis_fifo_write() that allows local users
-to bypass buffer validation, potentially causing hardware FIFO
-buffer overflow and system denial of service.
+This patch series suggests fixes for several corner cases in the RISC-V
+vector ptrace implementation:
 
-The axis_fifo_write() function converts user-controlled size_t 'len'
-(64-bit) to unsigned int 'words_to_write' (32-bit) without overflow
-checking at line 322:
+- follow gdbserver expectations and return ENODATA instead of EINVAL if vector
+  extension is supported but not yet activated for a traced process
 
-    words_to_write = len / sizeof(u32);
+- force vector context save on the next context switch after ptrace call that
+  modified vector CSRs, to avoid reading stale values by the next ptrace calls
 
-On 64-bit systems, when len equals 0x400000000 (16 GiB):
-  - Division: 0x400000000 / 4 = 0x100000000 (requires 33 bits)
-  - Truncation: Result stored in 32-bit variable = 0 (overflow)
-  - Validation bypass: if (0 > fifo_depth) evaluates to false
-  - Impact: Hardware FIFO overflow, system crash
+- force vector context save on the first context switch after vector context
+  initialization, to avoid reading zero vlenb by an early attached debugger
 
-This allows unprivileged local users with access to /dev/axis_fifo*
-to trigger denial of service.
+For detailed description see the appropriate commit messages. A new test is
+added into the tools/testing/selftests/riscv/vector to verify the fixes.
+Each fix is accompanied by its own test case.
 
-The fix adds overflow check before type conversion to ensure len
-does not exceed the maximum safe value (UINT_MAX * sizeof(u32)).
+Initial version [1] of this series included only the last fix for zero vlenb.
 
-Affected systems include embedded devices using Xilinx FPGA with
-AXI-Stream FIFO IP cores.
+[1] https://lore.kernel.org/linux-riscv/20250821173957.563472-1-geomatsi@gmail.com/T/#u
 
-Signed-off-by: Murad Sadigov <sdgvmrd@gmail.com>
----
- drivers/staging/axis-fifo/axis-fifo.c | 7 +++++++
- 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/staging/axis-fifo/axis-fifo.c
-b/drivers/staging/axis-fifo/axis-fifo.c
-index 1234567890ab..abcdef123456 100644
---- a/drivers/staging/axis-fifo/axis-fifo.c
-+++ b/drivers/staging/axis-fifo/axis-fifo.c
-@@ -319,6 +319,13 @@ static ssize_t axis_fifo_write(struct file *f,
-const char __user *buf,
-  return -EINVAL;
-  }
+Ilya Mamay (1):
+  riscv: ptrace: return ENODATA for inactive vector extension
 
-+ /* Prevent integer overflow in words calculation */
-+ if (len > (size_t)UINT_MAX * sizeof(u32)) {
-+ dev_err(fifo->dt_device,
-+ "write length %zu exceeds maximum %zu bytes\n",
-+ len, (size_t)UINT_MAX * sizeof(u32));
-+ return -EINVAL;
-+ }
-+
-  words_to_write = len / sizeof(u32);
+Sergey Matyukevich (5):
+  selftests: riscv: test ptrace vector interface
+  selftests: riscv: set invalid vtype using ptrace
+  riscv: vector: allow to force vector context save
+  selftests: riscv: verify initial vector state with ptrace
+  riscv: vector: initialize vlenb on the first context switch
 
-  if (!words_to_write) {
+ arch/riscv/include/asm/thread_info.h          |   2 +
+ arch/riscv/include/asm/vector.h               |   3 +
+ arch/riscv/kernel/process.c                   |   2 +
+ arch/riscv/kernel/ptrace.c                    |  15 +-
+ arch/riscv/kernel/vector.c                    |   4 +
+ .../testing/selftests/riscv/vector/.gitignore |   1 +
+ tools/testing/selftests/riscv/vector/Makefile |   5 +-
+ .../testing/selftests/riscv/vector/v_ptrace.c | 302 ++++++++++++++++++
+ 8 files changed, 331 insertions(+), 3 deletions(-)
+ create mode 100644 tools/testing/selftests/riscv/vector/v_ptrace.c
+
+
+base-commit: c746c3b5169831d7fb032a1051d8b45592ae8d78
 -- 
-2.34.1
+2.51.0
+
 
