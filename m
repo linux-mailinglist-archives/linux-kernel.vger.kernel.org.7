@@ -1,112 +1,152 @@
-Return-Path: <linux-kernel+bounces-843655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13E5CBBFEE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 03:22:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25AC0BBFEF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 03:23:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 74D1C34C5A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 01:22:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D40483C4B32
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 01:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E855B1A9FA8;
-	Tue,  7 Oct 2025 01:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9892B1E835D;
+	Tue,  7 Oct 2025 01:22:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XncjnnSB"
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cxBotesK"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28244129A78
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 01:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B14E1D6DB6
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 01:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759800143; cv=none; b=Yb0+5ySlRDeceKSzQ3ZI/lEM3RUcW10VjZw7OZeFSQDpHbvhfhe6581WKXOguqCFF/g/KcKSM+SjPx5bN/EGe4EZIYQlaL6/novvNV18x7nxaJ4lEOC4xQq65yeQAG3BR5OmXmRQ+km2ZbeieWw2IUv2ys39QCzSnu/Fq0LpURA=
+	t=1759800179; cv=none; b=NcIfixpJdlR5clV4oMLea0aESG+zZX+M6MQOyHqXUrYHNWLIbY/kOQIzYKNG0xIfc+ufkago5+5qdFMV69fUjR86+wfWJmZYCEp6vZOcPjgfKTaB1CFlUDQuD7E3yckkBXynqGyAHiAI1pYnllbynT/yZ/bihBpUkC+qsJqttWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759800143; c=relaxed/simple;
-	bh=H/Vde5fSyegTVrxDL779b0Ekl1TqghJb8VzoeMUW5sU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b6dmn/rEADW+PxLjjyH9eiCT5r5xmf+W91dwUu/QS5M5/vx28WlRnh8HnduUQZf6EptUfUF97gDrBNLlz6obBpUg+3vDNluTv7honLp1mQNEgjSXJEYCtpxmUEzH66m9Q797FiWGnsXDDm3F4CMlcl18zCCggHQY1+JZqX4SvNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XncjnnSB; arc=none smtp.client-ip=209.85.222.46
+	s=arc-20240116; t=1759800179; c=relaxed/simple;
+	bh=00hx5O89+8fvzy4PkP6xQKJCZLvcQoPJKp5vdlCLTCE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UD7jULjxmWRRKl3z8HVC1S08vlmwdbV5kULlluBhFnZtSq/WtZcq9KF0Uvf6o6e5M+a1C1qM4oXEBu/dgiCmxjEojnRBO+ZnIGGygTLypWzAvow5bX6e3zbVin1FxELpryYuIZrnY8byy1AX2MP1rX6TG0xlFhN9D+mxmvTGKJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cxBotesK; arc=none smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-8e8163d94bbso4080520241.3
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 18:22:17 -0700 (PDT)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-63963066fb0so6719795a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 18:22:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759800137; x=1760404937; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oeZtd1lS2iAL5Eb5txNbBPZr6F+hk2iic2qSNfSBlxc=;
-        b=XncjnnSB2+L1F4/tJ8mSC8SG4h/oSIvs7toO039nd5FdscCP2C/rDKR1v0tEB/O20y
-         f2CjZ1M04v9k5A4pcEyHSWgtEfzTnJpaAmNI001gtaNQiPtq+I1WzaMPse6RtfkJLg+b
-         RW0ac9W6hRUw/b54tpR6IsZ7THsw6ol/d+tfv8tH8aU1aicHprE8jc1QyRbXo6g3Xdu/
-         3CcccBd+MVYtakcehaMCi0lBPSxHGBrd12eIfHwUc2+KtRXZlsXa4c5ceCGiphpe+mnT
-         hmA2oLhZ3Au9c/lvTlzhkdEB5yCZ5Sr2I6Qca9I3c7MAsgfsrTyDuvfDDkrHa2++7YRi
-         n3qw==
+        d=gmail.com; s=20230601; t=1759800175; x=1760404975; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t47vpiwRUGgVZgrjR0ubmEzxDtialDVYBK5r+ezzR+E=;
+        b=cxBotesKVT0kItaCi+pL79Rrdy7oHT/uuYEDZPxBFct+abfWG5d4HATokKErrW6Dov
+         8LWvTC2r6AiCf/12ib4PyDnFYyo1rbz31IcEhzWeCLYpaSKEUVFq4CrOvMZcYr4gwbPH
+         Rch5xtKR2oqwJ17lxy9L6RGmoGAb8ObcoCauAwoIW0IpqpzUe2Sni6rQnGMGgWvZ15tO
+         FKv6HB/L4snlgopisxw6TsUTVEv4ItS6cxhYcXh7/Eh02tMMmtELMrwrTFJ4VNZmnNIH
+         +w65691ilDaIiDGbzVQ0QX2hw5fXhO4qN25lkV5AUkqGod9x0m6/typnjfSkVxjdx92m
+         rawQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759800137; x=1760404937;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oeZtd1lS2iAL5Eb5txNbBPZr6F+hk2iic2qSNfSBlxc=;
-        b=po4qity6mwx02QsqdcXNgK/cSNyrEvTLOfaP33ufF+X8d1bfWS5EYvtQ81exygg99i
-         OJEognf8vya6zUsh8iV1j2jj+Ntgb0APqQxyivQjVBle6ozwa9mimjt0p4bbQDuZLxi+
-         1hIVR0F08ZteFLE95zDErXa8FKE9ZP+6bSsKXEg2XWIaJcwFjieVZMPkYsD8eH/XTtRz
-         o9H4+UQvFwVOeCIS0d8EDwz7U+F05YKKE2nl9yw7q/JxRIqe4u6F5rI6JfDtR3hYn2xu
-         tzZGq+ODpq646VMCm0QczlKvW5FDavcb29jAQSP8Stbhw7V0Vkv3suExp53gsIqhAhPp
-         ScBg==
-X-Forwarded-Encrypted: i=1; AJvYcCXjcAk0VIPxXw5rN/TClaNj+0I2G+BwMe7JFl82gPnZaogB3bCEH1Rd9FMiPiTq/Uk9/o94ayyrbnnU4K4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywrk1exSWDFo1Uja9siVEj6FIAuhqULeqAGlXt3lsVYfcnC6r4H
-	+6IB2EXqEpd3sTd+SCek2UodHWtCeMgU38bxhIDm1U7gEJpIdtYIYFGD
-X-Gm-Gg: ASbGnctKltBLfBkkt2gnbqPuj933TPD80+l1oP4uZ52GO0GmlIYKAf9NT7+VqPDfQGh
-	dwBfJ41cxTrBo7IXOXBcLMa2aDjOTDvJP8FKOpw3QUFukBh4m6QEP+aNgtZJFuVbb0ZyYuNdCeg
-	sBt3hdT/c76xS0gQFX67pyUsG1cYN+Wcu8YviPFmVcHbh7AE2PNDLmEEbOX5beKsCelcrmAkkUP
-	K3Pa9TD6YK7bzOpqlOkRTXOl0LenrCAwIAgRuMxVuV3iwfKwY6/GjNrMnvIsnsIYw0bLxmJzukO
-	6j9x9YwK2b7ygcLBkAzIBA7bJbK5D78UYkjtp5Qh6siQ4qxZmEvRRr+ANy4/baItpeHnT11hZcI
-	xtmuiuhiZMzQ8t0fYGxkhyfMcmkxqjIhi9JoStYq3pNF8nEuOQ4IBV55Igr4j93A=
-X-Google-Smtp-Source: AGHT+IFmBzhKhtg5t4PSLIdciapJfvhjo0L3FJBJCxbNlT3KY5aZygpXM3hCFzRlcEVz+ZGVmyRtfQ==
-X-Received: by 2002:a05:6122:514:b0:54b:bc60:93f8 with SMTP id 71dfb90a1353d-5524ea2517fmr5491547e0c.9.1759800137067;
-        Mon, 06 Oct 2025 18:22:17 -0700 (PDT)
-Received: from [192.168.1.145] ([104.203.11.126])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5523cf6558esm3444393e0c.22.2025.10.06.18.22.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 Oct 2025 18:22:16 -0700 (PDT)
-Message-ID: <4124e1a5-fcd9-4ce3-9d97-5ebe8018207e@gmail.com>
-Date: Mon, 6 Oct 2025 21:22:12 -0400
+        d=1e100.net; s=20230601; t=1759800175; x=1760404975;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=t47vpiwRUGgVZgrjR0ubmEzxDtialDVYBK5r+ezzR+E=;
+        b=rOj1mj88qFQybXviOVKmxWocZNDJoEXBfp4tEpToB/MVkQHVV6y0skqAKX47BrdFBF
+         rH2Qbc9kDf+/wHir/824GmBh0ZljUf9K0JMnz8s/qdj6hB0qOlArNSzNuJCeR734D0NZ
+         OQkRBZ6bH7GugsLcMEvsaEA/znd7tD23+ZfEk0W9wSPzl0NGD8Ff8Y1hlEJ8jMe0cubX
+         kLi9Wbmn/69LSc3C2pH1mtWiuZ5jfb6rDZlxOoIpEmWxxDjUqTSX7IZmRW/z7SqMPoXB
+         8tpxM6YY7th8EJBABH/9yNJvpErXO+McSimU5pKUSIOViN2k8IgP/b+E1Uwhhgb4Qo2n
+         DpLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVM69h1fcrNTL+tzwhQgenZleh9e/Z9dJfy1YDPkAx8CvVwVIDHbpfWfN7jFxsGOS6mtuhyIT1ZgIzajQQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHtl4U93TvdqfvfUXXZve/R0nM/C+swcFKKKE+mtlxtCQ61DSZ
+	0ApGxXBPlyHnkmDJ6aowmBjO2LVjN2T7HsoNaiidfdLxRGCSE/OoNT4wBSHlajG4eK5aCZBl/cU
+	l4i7l0PKX6uwnulbhTRYZDiGtZVVC1N8=
+X-Gm-Gg: ASbGncucNBFezLQ+wl3MRj09z9VJCyTxDDFvHWh4B0aFUkVd4gT29pklH2VGc7Vn5+6
+	gpbk7jq2CmGpv8/hxEzJgCCXa/aPyejN8T4iPT1sorZMVK0ssJN8C0P3liqKAJEkWUIkscxIyfo
+	ZFJpzAtK1CnidbkA7fZioB2BazQRA3+9HxkCzZnQ5LpzmSXct7x4qzsPrr96wReLY8d1y7fQ+7A
+	BvYEiWRGF5Ol26Eye9Qr6Uukdgjm2o9wCgtJWEMZPJWwYDrOktVahqeT04u3A==
+X-Google-Smtp-Source: AGHT+IEqVioe1S+GxtMPUCva4kG5CmfdDTTGDPNdiniLUblABnKsGagheixLUyeC/Xqdz84Zg3zCalpzx4OwzsmlUYQ=
+X-Received: by 2002:a05:6402:b0a:b0:638:d495:50a7 with SMTP id
+ 4fb4d7f45d1cf-639348fa973mr13226165a12.16.1759800175262; Mon, 06 Oct 2025
+ 18:22:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: usb: lan78xx: fix use of improperly initialized
- dev->chipid in lan78xx_reset
-To: I Viswanath <viswanathiyyappan@gmail.com>, Thangaraj.S@microchip.com,
- Rengarajan.S@microchip.com, UNGLinuxDriver@microchip.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com
-Cc: netdev@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
- linux-kernel-mentees@lists.linux.dev
-References: <20251001131409.155650-1-viswanathiyyappan@gmail.com>
-Content-Language: en-US
-From: David Hunter <david.hunter.linux@gmail.com>
-In-Reply-To: <20251001131409.155650-1-viswanathiyyappan@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251003043140.1341958-1-alistair.francis@wdc.com>
+ <20251003043140.1341958-4-alistair.francis@wdc.com> <05d7ba0e-fe39-4f86-9e46-7ba95fccdce9@suse.de>
+In-Reply-To: <05d7ba0e-fe39-4f86-9e46-7ba95fccdce9@suse.de>
+From: Alistair Francis <alistair23@gmail.com>
+Date: Tue, 7 Oct 2025 11:22:29 +1000
+X-Gm-Features: AS18NWA3ErD_gS2cWuFH4B1EU9R8Gp49Hxw1eP3L2D2MX2i73c7hEabcslLmzvQ
+Message-ID: <CAKmqyKMRXKJTQciiqjPXYAFa6UUJ6xkTSdEfU+9HnyNTOx-BxA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/8] net/handshake: Ensure the request is destructed on completion
+To: Hannes Reinecke <hare@suse.de>
+Cc: chuck.lever@oracle.com, hare@kernel.org, 
+	kernel-tls-handshake@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org, kbusch@kernel.org, 
+	axboe@kernel.dk, hch@lst.de, sagi@grimberg.me, kch@nvidia.com, 
+	Alistair Francis <alistair.francis@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/1/25 09:14, I Viswanath wrote:
-> dev->chipid is used in lan78xx_init_mac_address before it's initialized:
-> 
-> lan78xx_reset() {
->     lan78xx_init_mac_address()
->         lan78xx_read_eeprom()
->             lan78xx_read_raw_eeprom() <- dev->chipid is used here
-> 
->     dev->chipid = ... <- dev->chipid is initialized correctly here
-> }
+On Mon, Oct 6, 2025 at 4:16=E2=80=AFPM Hannes Reinecke <hare@suse.de> wrote=
+:
+>
+> On 10/3/25 06:31, alistair23@gmail.com wrote:
+> > From: Alistair Francis <alistair.francis@wdc.com>
+> >
+> > To avoid future handshake_req_hash_add() calls failing with EEXIST when
+> > performing a KeyUpdate let's make sure the old request is destructed
+> > as part of the completion.
+> >
+> > Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+> > ---
+> > v3:
+> >   - New patch
+> >
+> >   net/handshake/request.c | 2 ++
+> >   1 file changed, 2 insertions(+)
+> >
+> > diff --git a/net/handshake/request.c b/net/handshake/request.c
+> > index 0d1c91c80478..194725a8aaca 100644
+> > --- a/net/handshake/request.c
+> > +++ b/net/handshake/request.c
+> > @@ -311,6 +311,8 @@ void handshake_complete(struct handshake_req *req, =
+unsigned int status,
+> >               /* Handshake request is no longer pending */
+> >               sock_put(sk);
+> >       }
+> > +
+> > +     handshake_sk_destruct_req(sk);
+> >   }
+> >   EXPORT_SYMBOL_IF_KUNIT(handshake_complete);
+> >
+> Curious.
+> Why do we need it now? We had been happily using the handshake mechanism
+> for quite some time now, so who had been destroying the request without
+> this patch?
 
-Please describe the testing you performed.
+Until now a handshake would only be destroyed on a failure or when a
+sock is freed (via the sk_destruct function pointer).
+handshake_complete() is only called on errors, not a successful
+handshake so it doesn't remove the request.
+
+Note that destroying is mostly just removing the entry from the hash
+table with rhashtable_remove_fast(). Which is what we need to be able
+to submit it again.
+
+Alistair
+
+>
+> Cheers,
+>
+> Hannes
+> --
+> Dr. Hannes Reinecke                  Kernel Storage Architect
+> hare@suse.de                                +49 911 74053 688
+> SUSE Software Solutions GmbH, Frankenstr. 146, 90461 N=C3=BCrnberg
+> HRB 36809 (AG N=C3=BCrnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
