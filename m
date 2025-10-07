@@ -1,75 +1,78 @@
-Return-Path: <linux-kernel+bounces-843725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03308BC016F
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 05:31:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C846EBC0174
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 05:31:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A00554E4DCB
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 03:31:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14D32189607B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 03:31:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666AA19F115;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D56F4213254;
 	Tue,  7 Oct 2025 03:31:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="WTL6iwSp"
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="fK9CsyzM"
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44BDD3C33
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 03:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9166F7464
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 03:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759807869; cv=none; b=tpR0Jtcjs5Xu7UqqK6sN23ZtSqZO8PvCIbShWF4e83sy7/Pam6FxTVeuTBDQcgor7LXzw85CzeqVXVXHy15OgIV7HaYL/i1ohrbGhRc1t432GZe+U37pCFywKEm+6gmQ7cPkDTQgIYSHSMxRP13SoeJJLTSdQ0V7Q8mSkwO2+wc=
+	t=1759807870; cv=none; b=iTLO1U2nkfL9hF0m2ypZwMu13Jb6dHIAM+2mZJ1M4nlCf8wLNCROqGd4h7mUIJWgtm7kxmZ8Tuw2oSWXlfXXPTdO9eF5Q+Sv6G4vvwoJJW8fUh90BFOqHG5aj/ZfA5avg36PPGIMxKv6nVehsXwl1tIkrs/bBQEfeRt5Z5gtb3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759807869; c=relaxed/simple;
-	bh=MhQ6oJejU6PDuMID1wCmHAiUGwf2Bfqf9rncwjrHPQw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=jrHqiD5lzGQnLWrEL87GWE2xhOOkcpWffhSX0yy5auzjeA/HmcRgyEf6QrYIOoGgJb2QK3uAmCkotks/wmQ0QB1RdTFUbvfFP/BHwI386WNJB7ePWLFuaf/UZnKnw7iw3mMotMYFghayAspsM8HVFKOjTZk/6kq+UoEmMweUi90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=WTL6iwSp; arc=none smtp.client-ip=209.85.217.51
+	s=arc-20240116; t=1759807870; c=relaxed/simple;
+	bh=/fll/of95rQWwNDdp7em7nO/Y9F6lxz5T9wJPKWVKi0=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=KDIOHRrOTOKx81dFpB87kyBqh7rT7oVtu7zhueFbPZc+RotubCC6meJPN6O78odG0QNC5lmQEcnAMy/swerTesR4osRVN4ipjdDKkCBiN0CskInvaWILJjUCUMi/BRw0oPEKFaFTDfaiXNT7f/4py967HnW0vkwneSTMC6L2r94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=fK9CsyzM; arc=none smtp.client-ip=209.85.221.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-5c7fda918feso6197356137.0
-        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 20:31:06 -0700 (PDT)
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-54bbf3329c1so5327881e0c.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 20:31:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1759807866; x=1760412666; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rjctk86pjCIgeyP/NdtThstP3+9eB+EELMA59nxuFWo=;
-        b=WTL6iwSpS69VOe17zYnHhBqm+nkBidSvzd7Pj9gEFDXZyR/uouifYQAWiIJrY7DA41
-         nEZGvUwiXISWhc4jYz8F1H3Gfa/qqXBUufc1nGrbZFhZmH7o90c8dzogGfQ5BRDPwWmX
-         ytkgC+UpAhvWm54gvhCQxDjVCMWNnpPqbUlThUEA5D4icp2FyvMRi2ZcPKhDqwsKLnrt
-         a4eYlkUaQDPE+EAcLgPRA9dd7vnBVdI+8B/ij9TH0F0TW750nFoWKskZTNLTk+klEfUk
-         x5j3IT49IDd2gnewq/NUcjtFqLB5+Y3batYxFzkzYE8RZkm7ZFen3ME7uDwSU67INgBi
-         RMYg==
+        d=soleen.com; s=google; t=1759807867; x=1760412667; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pb2j8N8Az+uWt45nNFfEUmcYJA7/O93dKo/dsaUrS7Y=;
+        b=fK9CsyzM/WiXFRmOL9nd20G0NhzsxKur5anC5bQTbNxTeWydxWXaRIBajBezvKsPmm
+         PFQm5Nz97r/BTXWpLt+1S8OQ4NH7112W30C4pqVXBJxG+59/HAkHkgy8fDBby6go7HrE
+         NclW6CKwV7N27GB+o44uh1TUF87Ut2yaynL9TC1LC59rJWeQ2pM1pg4MVCkYHXhziEcn
+         klwR3Udv8t/A3wglxYZaTQuFyDhMubPZqjX0U/LOnuZpdvpSBvIagJP8qFR/w5yibZNi
+         9f8zwtKstG5CUj9j3B2Kgw6m2nwETkY6mHlnpaTOQBKgJ9PU1hrN6qUIC6bJUdPyVW9r
+         G22Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759807866; x=1760412666;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rjctk86pjCIgeyP/NdtThstP3+9eB+EELMA59nxuFWo=;
-        b=TjXW7/G0OPhkrr66OFhtBHjw3BX9IjY4WZzDte//Sr1TcgPjiis6sYlSBuV/0zXm10
-         p9hv7MQ0iB5TTAUT+v2Vh+KuFhZgKSvDtmN6Z9Ys47W6ePoqJRsWad36qt52qfDlyITO
-         A6fINwarfANv/nnoKX8PYW+Xvgo+lf9l39Sxelkieg2sOciooCVNSfW70qybGukiUoOB
-         9APhqtH1vUUpGeLx0srFQgEjESXiQHEHqS2KoSwmQLr6gXJ2/M/eAralLANcmbo3dI3+
-         tHwmVhVCJvSaEN1XuVWaVSQ7CSd1WWb2iXBAt2oj/cjL78dhKsZZEjsmF0U0wQPsBqgl
-         p5rg==
-X-Forwarded-Encrypted: i=1; AJvYcCWY7trPp8ifbEzccJZcg5bO/xbMKkav196TBKt8lSgvBxyZsn3y7rR4p4qiIh666DKTd7XYa9+kAG5tpgM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkAvggNn273QYBqCpKvccG8OdsgPeQ28ZuNCvJ4TAwP9CQa1mj
-	SP5iP2eIEW4ZDOjQovjmw67pYEkBxTgUTsC0MM65x2zRKVuL50ka3WmIuyMzf4Z1Yng=
-X-Gm-Gg: ASbGncvtuhgag6vAjtKdsaXmbi/bmXZde4GWnFqvdU7/sqsVcnl8X3SoHXbCgIE+70N
-	N5Ybsuch36JCp844bgp7aTXFC4zvBUI6D7FDaWihSdsHPBHBOk97NHSTVtJ3iuw1RPgoiCMpdI1
-	g8fH+X3LIveWgYTwIFChtSEm+Y80hb9/2MpAMJHFKaeFbGCLqlCrEoKUuDp+I3WHj1GPIufnRfl
-	jYJnnVTsifienf44HoU5s9fjzIIK5Zl0byoUVCxmfJzfE3Kc8eirVgCf284iZh8JRbvufdhrKMK
-	DEWsp0N91kppjGGdj53tm9+nBcMPvgwWecvkQ7CeWlQrueTk+oKAMGwcylYXa/D0hLoaoLsMyGU
-	QjQFRchecJq4gWv79xBmnTtfP7Y4sl0O+WIbu972DgwbGnUqWNiPsm9dHHqUllGveplqUqkVmCP
-	ODNxAvSdDaXE0yVHSl7YT9b6YM0rdj91w=
-X-Google-Smtp-Source: AGHT+IGKRy0UP3vTkTlJTpx5s9AazpWHtvbvNx1lS1PdbgNpyNUKLM1G0yemMh+rckd5h8dVv5lWbg==
-X-Received: by 2002:a05:6102:5347:b0:59c:93df:4fe with SMTP id ada2fe7eead31-5d41cff3341mr5630492137.9.1759807865789;
-        Mon, 06 Oct 2025 20:31:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759807867; x=1760412667;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pb2j8N8Az+uWt45nNFfEUmcYJA7/O93dKo/dsaUrS7Y=;
+        b=xHO7mv4cRNaDP2PpBhxP6SCZK544fZU6WCH8/zNzKNjZ+tvrEe+iVCztNDsITqRzP5
+         5gtyesl1Haf5ef40e248ugH2ck4pg0lt5iiZiNNNb6YNSsC4GpEXyJJ5ITTciTQfvi+z
+         I2yBsZmzENkJNxrIsSLIRFRpGnVRH2W4GhV+915O240j13oXUfsBqq8+SZE3kTKM/sPJ
+         povf39vIabYxa8qkiUv30wUNQu6C+TlVWTa7WA5ZLzEuSi9pjisv0HQyk4hHvwIcEoQ8
+         fsl7ZfzxR+0xs5Et04xZX/E770DEmtSCGgBmVxWE9B003Wq9j2dJOfszMz/8vSrajHTt
+         TvHA==
+X-Forwarded-Encrypted: i=1; AJvYcCUmFG0ZkidrFMNIuU6ECjIm8wyP4I7sOJcQ2dZgZiVqcHjisuOfMRjiS4WcIl/8jleqBnYR9NHG5n0sgHw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9dkcj5Sy/IOeTrEqZi3e6OeRTuPeLnSkJwiIj67YQcpwPekNM
+	zSpgczp/BSavCK+nPoWK/DexHZEtvT9rDv0DD5JoRkeiaenesZ0xAP6Hbrv6nLAtTdg=
+X-Gm-Gg: ASbGncuUZNb6So61nMM6zRgFzluwjYbreHNHzeKnbFTFU5NH2ZuUuZe9pqib4drcMY6
+	cdUfJe6+6+yBQo8AkCuBMRiGRMGjuhFHNSk9sMIhU/5jQUsNLvARCYxSsNSDq8YnOhVKSLW/qdz
+	BilaCvDW7Sz7sEpIZuvVtnu8G4EEwd0G4eC7eW0AUrqD4crACyZo+Ibl/w8HJzAgSxO4Ewvkxe1
+	Y6X2GzyMCn9HcdjYMzFxoQmUG792FC/k63o1EzFU2P94HxIQpoUBvjjchCa/78FZVqJF25HzLOO
+	NWeUkYVxShLeGWcNE+Q6xq427V6H7zVqiR7Kd6vlV+ZNPx/Bs+bpETPotkfLdZTfNJzmqA6k6UL
+	sdah+l5l8FTLKoeM2rpvfjzp2sxbpMUVerUm7BKRl5ip9aHEQefGr1SR6NSWA0/Yr1LgWS6yXYy
+	zTtZmuBUnAv8vL8XjXXxzo0HjaKY0D660=
+X-Google-Smtp-Source: AGHT+IHKWYvZiwypYwTwT1zKSJgyEU7e/SRkQV11sdxCZs7Hd6H9BMFs3IwoGAGyQxuhUHEh8cuY/A==
+X-Received: by 2002:a05:6122:8cd:b0:552:3366:e822 with SMTP id 71dfb90a1353d-554a8d1b310mr1055414e0c.1.1759807867441;
+        Mon, 06 Oct 2025 20:31:07 -0700 (PDT)
 Received: from soleen.c.googlers.com.com (53.47.86.34.bc.googleusercontent.com. [34.86.47.53])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-552ea335f07sm2446030e0c.15.2025.10.06.20.31.04
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-552ea335f07sm2446030e0c.15.2025.10.06.20.31.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Oct 2025 20:31:05 -0700 (PDT)
+        Mon, 06 Oct 2025 20:31:06 -0700 (PDT)
 From: Pasha Tatashin <pasha.tatashin@soleen.com>
 To: akpm@linux-foundation.org,
 	brauner@kernel.org,
@@ -86,10 +89,12 @@ To: akpm@linux-foundation.org,
 	rdunlap@infradead.org,
 	rppt@kernel.org,
 	tj@kernel.org
-Subject: [PATCH v5 0/7] liveupdate: Rework KHO for in-kernel users
-Date: Tue,  7 Oct 2025 03:30:53 +0000
-Message-ID: <20251007033100.836886-1-pasha.tatashin@soleen.com>
+Subject: [PATCH v5 1/7] kho: allow to drive kho from within kernel
+Date: Tue,  7 Oct 2025 03:30:54 +0000
+Message-ID: <20251007033100.836886-2-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
+In-Reply-To: <20251007033100.836886-1-pasha.tatashin@soleen.com>
+References: <20251007033100.836886-1-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,67 +103,159 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-These patches are taken from the LUOv4 series [1] and address recent
-comments from Pratyush.
+Allow to do finalize and abort from kernel modules, so LUO could
+drive the KHO sequence via its own state machine.
 
-This series refactors the KHO framework to better support in-kernel
-users like the upcoming LUO. The current design, which relies on a
-notifier chain and debugfs for control, is too restrictive for direct
-programmatic use.
+Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+---
+ include/linux/kexec_handover.h | 15 +++++++
+ kernel/kexec_handover.c        | 74 ++++++++++++++++++++--------------
+ 2 files changed, 59 insertions(+), 30 deletions(-)
 
-The core of this rework is the removal of the notifier chain in favor of
-a direct registration API. This decouples clients from the shutdown-time
-finalization sequence, allowing them to manage their preserved state
-more flexibly and at any time.
-
-In support of this new model, this series also:
- - Exports kho_finalize() and kho_abort() for programmatic control.
- - Makes the debugfs interface optional.
- - Introduces APIs to unpreserve memory and fixes a bug in the abort
-   path where client state was being incorrectly discarded. Note that
-   this is an interim step, as a more comprehensive fix is planned as
-   part of the stateless KHO work [2].
- - Moves all KHO code into a new kernel/liveupdate/ directory to
-   consolidate live update components.
-
-[1] https://lore.kernel.org/all/20250929010321.3462457-1-pasha.tatashin@soleen.com
-[2] https://lore.kernel.org/all/20251001011941.1513050-1-jasonmiu@google.com
-
-Mike Rapoport (Microsoft) (1):
-  kho: drop notifiers
-
-Pasha Tatashin (6):
-  kho: allow to drive kho from within kernel
-  kho: make debugfs interface optional
-  kho: add interfaces to unpreserve folios and page ranes
-  kho: don't unpreserve memory during abort
-  liveupdate: kho: move to kernel/liveupdate
-  kho: move kho debugfs directory to liveupdate
-
- Documentation/core-api/kho/concepts.rst     |   2 +-
- MAINTAINERS                                 |   3 +-
- include/linux/kexec_handover.h              |  53 +-
- init/Kconfig                                |   2 +
- kernel/Kconfig.kexec                        |  15 -
- kernel/Makefile                             |   2 +-
- kernel/liveupdate/Kconfig                   |  30 ++
- kernel/liveupdate/Makefile                  |   4 +
- kernel/{ => liveupdate}/kexec_handover.c    | 515 ++++++++------------
- kernel/liveupdate/kexec_handover_debug.c    | 216 ++++++++
- kernel/liveupdate/kexec_handover_internal.h |  47 ++
- lib/test_kho.c                              |  30 +-
- mm/memblock.c                               |  60 +--
- tools/testing/selftests/kho/init.c          |   2 +-
- tools/testing/selftests/kho/vmtest.sh       |   1 +
- 15 files changed, 553 insertions(+), 429 deletions(-)
- create mode 100644 kernel/liveupdate/Kconfig
- create mode 100644 kernel/liveupdate/Makefile
- rename kernel/{ => liveupdate}/kexec_handover.c (79%)
- create mode 100644 kernel/liveupdate/kexec_handover_debug.c
- create mode 100644 kernel/liveupdate/kexec_handover_internal.h
-
-
-base-commit: 4a71531471926e3c391665ee9c42f4e0295a4585
+diff --git a/include/linux/kexec_handover.h b/include/linux/kexec_handover.h
+index 25042c1d8d54..04d0108db98e 100644
+--- a/include/linux/kexec_handover.h
++++ b/include/linux/kexec_handover.h
+@@ -67,6 +67,10 @@ void kho_memory_init(void);
+ 
+ void kho_populate(phys_addr_t fdt_phys, u64 fdt_len, phys_addr_t scratch_phys,
+ 		  u64 scratch_len);
++
++int kho_finalize(void);
++int kho_abort(void);
++
+ #else
+ static inline bool kho_is_enabled(void)
+ {
+@@ -139,6 +143,17 @@ static inline void kho_populate(phys_addr_t fdt_phys, u64 fdt_len,
+ 				phys_addr_t scratch_phys, u64 scratch_len)
+ {
+ }
++
++static inline int kho_finalize(void)
++{
++	return -EOPNOTSUPP;
++}
++
++static inline int kho_abort(void)
++{
++	return -EOPNOTSUPP;
++}
++
+ #endif /* CONFIG_KEXEC_HANDOVER */
+ 
+ #endif /* LINUX_KEXEC_HANDOVER_H */
+diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
+index 76f0940fb485..76c34ea923f0 100644
+--- a/kernel/kexec_handover.c
++++ b/kernel/kexec_handover.c
+@@ -1067,7 +1067,7 @@ static int kho_out_update_debugfs_fdt(void)
+ 	return err;
+ }
+ 
+-static int kho_abort(void)
++static int __kho_abort(void)
+ {
+ 	int err;
+ 	unsigned long order;
+@@ -1100,7 +1100,27 @@ static int kho_abort(void)
+ 	return err;
+ }
+ 
+-static int kho_finalize(void)
++int kho_abort(void)
++{
++	int ret = 0;
++
++	if (!kho_enable)
++		return -EOPNOTSUPP;
++
++	guard(mutex)(&kho_out.lock);
++	if (!kho_out.finalized)
++		return -ENOENT;
++
++	ret = __kho_abort();
++	if (ret)
++		return ret;
++
++	kho_out.finalized = false;
++
++	return kho_out_update_debugfs_fdt();
++}
++
++static int __kho_finalize(void)
+ {
+ 	int err = 0;
+ 	u64 *preserved_mem_map;
+@@ -1143,12 +1163,32 @@ static int kho_finalize(void)
+ abort:
+ 	if (err) {
+ 		pr_err("Failed to convert KHO state tree: %d\n", err);
+-		kho_abort();
++		__kho_abort();
+ 	}
+ 
+ 	return err;
+ }
+ 
++int kho_finalize(void)
++{
++	int ret;
++
++	if (!kho_enable)
++		return -EOPNOTSUPP;
++
++	guard(mutex)(&kho_out.lock);
++	if (kho_out.finalized)
++		return -EEXIST;
++
++	ret = __kho_finalize();
++	if (ret)
++		return ret;
++
++	kho_out.finalized = true;
++
++	return kho_out_update_debugfs_fdt();
++}
++
+ static int kho_out_finalize_get(void *data, u64 *val)
+ {
+ 	mutex_lock(&kho_out.lock);
+@@ -1160,33 +1200,7 @@ static int kho_out_finalize_get(void *data, u64 *val)
+ 
+ static int kho_out_finalize_set(void *data, u64 _val)
+ {
+-	int ret = 0;
+-	bool val = !!_val;
+-
+-	mutex_lock(&kho_out.lock);
+-
+-	if (val == kho_out.finalized) {
+-		if (kho_out.finalized)
+-			ret = -EEXIST;
+-		else
+-			ret = -ENOENT;
+-		goto unlock;
+-	}
+-
+-	if (val)
+-		ret = kho_finalize();
+-	else
+-		ret = kho_abort();
+-
+-	if (ret)
+-		goto unlock;
+-
+-	kho_out.finalized = val;
+-	ret = kho_out_update_debugfs_fdt();
+-
+-unlock:
+-	mutex_unlock(&kho_out.lock);
+-	return ret;
++	return (!!_val) ? kho_finalize() : kho_abort();
+ }
+ 
+ DEFINE_DEBUGFS_ATTRIBUTE(fops_kho_out_finalize, kho_out_finalize_get,
 -- 
 2.51.0.618.g983fd99d29-goog
 
