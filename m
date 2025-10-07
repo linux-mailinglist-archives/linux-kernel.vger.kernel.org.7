@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-844201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E848BC149F
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:59:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 679D3BC14AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:59:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1C1234F1371
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:59:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 233543C4C91
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40DBB2DC332;
-	Tue,  7 Oct 2025 11:58:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606402DCBF7;
+	Tue,  7 Oct 2025 11:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TZdfPHTh"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="blikrU/q"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A7C2D94B4
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 11:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 903002DEA90
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 11:58:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759838334; cv=none; b=jw9xIvGBo2a4gEMVkkAQ5jNJXSAItPPjHRFQrjI28JTJcfqwUHauqITHrkPmumHRbJu2uN8YsZGPc7sgQKSd9fB+yKlKw6TckUshHNKd4VNvxu4C5DesE3/9J2tGIUb0KNu63f2rKBNrOA1RJxRFPwJ3XeDaJ7+Z7/AklWMJh34=
+	t=1759838336; cv=none; b=VJWmFQs9b3+GUxB5P50IyABwHOwv7yjFI6B6wwam8rcZQyoBjdkra0uoKPPJntgmmfWhhMoZTtqH+Tk2d13DD14jh04/lpvJtkSKt28eX5/JSS9q8VXjepVP3tz1Ua1Lnte6j5toWkumtAAo6Jdpr4b5aCJq4kixtd7LIMKOc1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759838334; c=relaxed/simple;
-	bh=aycT2YW8ngTHcamjRTws20c/psHw5lFicsYQqCpiH3w=;
+	s=arc-20240116; t=1759838336; c=relaxed/simple;
+	bh=2Hli3rnQU0ee/Z+SJdrdeUeLAzI1KOmmrB4NougJ9ws=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EWPS1z4yeywt0yg9VOFMxPm3+6ZikmWzL0vf4bs7G7degkrcn2HJz9pIgZOUQCtAOBNnbVvGtw4sBl58vaxLU/xpv9TsqiOJQRuYB1+ahKQ2BcPoBOaskDpyiVu9Rhw2Ln0IZxugYpcKOEJZLGA+/NC6IARxGkR0ZgCfNyig8ZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TZdfPHTh; arc=none smtp.client-ip=209.85.167.42
+	 MIME-Version; b=ZK57OKrbX2F08T5Fa9y2l20pjO+IDzEOtUcAkwrJuoTYdj103fyAiepI2bJPTEAhC2oTg6nRqGu8/35SGzmmLGaw0TbqYssu/uQEm9Bh5M5CHcEpIoXrlZ2+uHh97orFVNq7klC0O253jSZCw+fWT1oYaOr8IAin8plwY0YPZaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=blikrU/q; arc=none smtp.client-ip=209.85.167.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-57bd04f2e84so6962880e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 04:58:52 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-57a604fecb4so7948706e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 04:58:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759838331; x=1760443131; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759838333; x=1760443133; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gLmsg/56sZrz4BdDAhOz8lvZvUVWtSQgVDQGJvDc9c8=;
-        b=TZdfPHThxVOMCc4fUJEPoMK97zP6CedDJFjpUZvgPyISZh8XMM78i8gxdVa9O1Bm8a
-         Csl2KoCIl+kBuGTnvlhdS1x++d5Rk71qKg1Sxzcm5ptgqtvP1a/x/IV9hLfOTKwY6HkI
-         shB2aNyprHUmvENH7RGSrNrMtBNuNyDwNm0YhP2jOPzhL/k7I94Ybpqz/mwNyCw63XFz
-         CAkWFIhMajq2mk4ugUq7FO5QfNK88WPkTYkJNeTAOA1tlEi12/G+mjFn6fAAS6IAxqtN
-         +DM7DuH+KzlCE8Xccg2Y8nxpLIJ5Fz+/0+6plbhZmeiNAeUYvo8Gj+xWFAyWYewib/J/
-         TqGA==
+        bh=DHT1PRp2JY0IGazIqjL1tLWH/amjUJ0aFr/0p5QGBFQ=;
+        b=blikrU/qFPnnGGF6At++q78isAOP+VO71zfsqlULZozidVa36g7NQxT4Hrpew0fRYF
+         r0dK80cmx3tn1HATfyFHJC1kvTtRL0cWji4iVNA3Ye9TM9tBXFdecx4EHDA8dn6PYE3W
+         USN0IVp0VjGdYJDUxXADjMQy/89rcx6RKCpiV72tvw19PrZPkB6EhrPGyzerc6tQxTRY
+         IEKAsdbKUPPQ3elSyn/Ea3NjEXIDkY7zPXNVRibAZR8P/25Wf83swD0/8+ucEI44fHIC
+         fBCOh3PlUT5kabaK2rrMhy24f+DciRBRG5GUeAabjG9PiUUwSy1GNg9rnpHLAaTXagMe
+         OoxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759838331; x=1760443131;
+        d=1e100.net; s=20230601; t=1759838333; x=1760443133;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gLmsg/56sZrz4BdDAhOz8lvZvUVWtSQgVDQGJvDc9c8=;
-        b=sEalGRT/8RiAh4KB9Lc7xsuLfTl6zB1NL/rSWyKx+ZWn26kZDo58RCCNGAVZrvEPdc
-         OMH2lDZRkIAe1YRDaMoL2/Gl/t48gTkEGWNgnbB+jKPNlYJ5t5+NkYO+z8kzNCwfK6io
-         RY5vO6BoggXCHnGXRzFOB9/Tr9ZZup/X/qKaV0nLf36t4bj45ASsZ+FDIzKXEQhvEGJG
-         DUSqQg7r+eb4YhbEz5HbIGZoWggLItiefwyr5j8XES3WTpdubtyHqB1q4IaVqDgchA3X
-         bYjxdLtD8TmGbVI0fy8pGxiuQq1pA09iinHfCqa+ivNfrK55hFRGdb3DdNLKH6HKphxa
-         iLAQ==
-X-Gm-Message-State: AOJu0YyL9geGAdvMFCqf6g/95HE2D4SXXIam6hZwapMe7bk+hlZx4hBb
-	AImi+Ho39Ko1Yt3GcOthO7eIsZY6yjI517Co8hxuubkss7F1CV7n802r
-X-Gm-Gg: ASbGncvdodldZCArSZYNF3vO6gViKlbJN8Ui8tAW+fSESrK7kUfLAqVosSUM57X9pIM
-	L0Kl2StJEY5ptzi55nUPg9caw0OWr0JaE3AgmOjAubgknq7TSRcEM7q0NPi4lQ4nQC0hkD2FGy0
-	g81SPLydyXZrx568xo+4m3M6hZBpuPEca7RYl0rnZfKXFFeZcNKb0n+7kiBjBfwUFu99dZZc9xq
-	P7P+VKcP/rux/BJ9CKT44if4vDB/VUz09nHRsYa5Cjh7iRPlir3MDnyqLfGj5ye3h11wZZmf2gR
-	lIvedGzYDvSwxRN0gSsKMVeZNMdJhHuZqYYqrDZ8lF0cyoOxeJtSV8j5pCOnNskgYsocxcQpMct
-	aYggJWmCp2o3XizsynCpTPWjNA6w8OXRwzmthMg==
-X-Google-Smtp-Source: AGHT+IGfT8s7layBTVcGXA6YfBl09MAMt5tdhMpUSEGyHeuPqtgVVg9HtsIeoOOkz2owLe0BeMm1lQ==
-X-Received: by 2002:a05:6512:3e27:b0:55f:6db5:748d with SMTP id 2adb3069b0e04-58cb956b71amr5116109e87.4.1759838330577;
-        Tue, 07 Oct 2025 04:58:50 -0700 (PDT)
+        bh=DHT1PRp2JY0IGazIqjL1tLWH/amjUJ0aFr/0p5QGBFQ=;
+        b=cKuHV9571xGMRI3k7yTina38XWXCVnl9iCcs8Mjy+r7RFxWXL9Xm/7Xqc89AnPEZMY
+         Jm2QhbOhDhU94Q0z5LxgMKDGwxA9HsNSAIEzQERgefD5ljOZRT/gnsZsi2C0v8vIRwVk
+         dS+XWUNJUTrooYgBCi4pib1IB5m2YvVFwkwHjO2LsuHUoslRjZ3vCfipDbX8tZp9so9F
+         UQrYhRHb16yGZIbT960iTi92oa1ueQlUNbQ3lNO8G9X0V0pfxzyd/fHUUnU2fG6cZjmE
+         6jQNkpexe/kQ/pBGHKPgBICz6XeI3TpWoHQ77vLzY8xVDXLYpq9+4RCxuIbyet6QRNvA
+         c+BA==
+X-Gm-Message-State: AOJu0YzizdrI4P0tedH9Kyu2uXhl/rxh2Uv+aJFiYJJVr+QU1OqyxXHM
+	Q0z8T1E3kAr5P+urTBaaQobvRguvgM9uyk60dm3kj/6YOCSfVltuJ2kD
+X-Gm-Gg: ASbGnctL+9zVqXt0NmFODqoHhy00ENsZKN8cPgMjUdJliMWsCXc7dLQtzzd0HCOKhHc
+	P3xGfCTBEkSQ2VbN5kUlxJhkKfxE8FcyztnvA9ahlzPE+uPyZ883RrMxQaXbK0nbUwr5PCSU1au
+	kA1iM6AceZNG+9Cjt2ougYcJA2tCfiIt3tA/dGqcGXNJbo/gARSHLz/yVwmVsnhZA9+hsMdnOGB
+	jgJjEfsyPiQwjQCAu0YqpPHZv+J95oUvynDrcrpnrasDfrjc3Yi1qroy709Fb/gnznyx3V1KoY+
+	9CYU51fZV+TNfUlr99NqYsTxEkVvM/93JF78bLI1TGlDwacNaUfmLMUgNNnraPW8VdU8Lm9gfx1
+	9Xiy47QMG/m2NZRTWI6lL4HGjBXbI05tzqu4L0F0+wI27aRBK
+X-Google-Smtp-Source: AGHT+IEzN3zS6xGqVRO8VCU7zICi7Cd8TK0JwH77VbJyPE7udYDtblpgFcyovJkjgfD5sCBUy3Ty/w==
+X-Received: by 2002:ac2:4e0e:0:b0:570:daa5:de18 with SMTP id 2adb3069b0e04-58cbbbeee5dmr5043998e87.33.1759838332383;
+        Tue, 07 Oct 2025 04:58:52 -0700 (PDT)
 Received: from curiosity ([5.188.167.4])
-        by smtp.googlemail.com with ESMTPSA id 2adb3069b0e04-58b011a8941sm6043339e87.114.2025.10.07.04.58.49
+        by smtp.googlemail.com with ESMTPSA id 2adb3069b0e04-58b011a8941sm6043339e87.114.2025.10.07.04.58.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 04:58:49 -0700 (PDT)
+        Tue, 07 Oct 2025 04:58:51 -0700 (PDT)
 From: Sergey Matyukevich <geomatsi@gmail.com>
 To: linux-riscv@lists.infradead.org,
 	linux-kselftest@vger.kernel.org
@@ -93,9 +93,9 @@ Cc: linux-kernel@vger.kernel.org,
 	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
 	Conor Dooley <conor.dooley@microchip.com>,
 	Sergey Matyukevich <geomatsi@gmail.com>
-Subject: [PATCH v2 4/6] riscv: vector: allow to force vector context save
-Date: Tue,  7 Oct 2025 14:58:20 +0300
-Message-ID: <20251007115840.2320557-5-geomatsi@gmail.com>
+Subject: [PATCH v2 5/6] selftests: riscv: verify initial vector state with ptrace
+Date: Tue,  7 Oct 2025 14:58:21 +0300
+Message-ID: <20251007115840.2320557-6-geomatsi@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251007115840.2320557-1-geomatsi@gmail.com>
 References: <20251007115840.2320557-1-geomatsi@gmail.com>
@@ -107,93 +107,126 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When ptrace updates vector CSR registers for a traced process, the
-changes may not be immediately visible to the next ptrace operations
-due to vector context switch optimizations.
-
-The function 'riscv_v_vstate_save' saves context only if mstatus.VS is
-'dirty'. However mstatus.VS of the traced process context may remain
-'clean' between two breakpoints, if no vector instructions were executed
-between those two breakpoints. In this case the vector context will not
-be saved at the second breakpoint. As a result, the second ptrace may
-read stale vector CSR values.
-
-Fix this by introducing a TIF flag that forces vector context save on
-the next context switch, regardless of mstatus.VS state. Set this
-flag on ptrace oprations that modify vector CSR registers.
+Add a test case that attaches to a traced process immediately after its
+first vector instructions to verify the initial vector context state.
 
 Signed-off-by: Sergey Matyukevich <geomatsi@gmail.com>
 ---
- arch/riscv/include/asm/thread_info.h | 2 ++
- arch/riscv/include/asm/vector.h      | 3 +++
- arch/riscv/kernel/process.c          | 2 ++
- arch/riscv/kernel/ptrace.c           | 5 +++++
- 4 files changed, 12 insertions(+)
+ .../testing/selftests/riscv/vector/v_ptrace.c | 103 ++++++++++++++++++
+ 1 file changed, 103 insertions(+)
 
-diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/asm/thread_info.h
-index 836d80dd2921..e05e9aa89c43 100644
---- a/arch/riscv/include/asm/thread_info.h
-+++ b/arch/riscv/include/asm/thread_info.h
-@@ -118,7 +118,9 @@ int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src);
- 
- #define TIF_32BIT			16	/* compat-mode 32bit process */
- #define TIF_RISCV_V_DEFER_RESTORE	17	/* restore Vector before returing to user */
-+#define TIF_RISCV_V_FORCE_SAVE		13	/* force Vector context save */
- 
- #define _TIF_RISCV_V_DEFER_RESTORE	BIT(TIF_RISCV_V_DEFER_RESTORE)
-+#define _TIF_RISCV_V_FORCE_SAVE		BIT(TIF_RISCV_V_FORCE_SAVE)
- 
- #endif /* _ASM_RISCV_THREAD_INFO_H */
-diff --git a/arch/riscv/include/asm/vector.h b/arch/riscv/include/asm/vector.h
-index b61786d43c20..d3770e13da93 100644
---- a/arch/riscv/include/asm/vector.h
-+++ b/arch/riscv/include/asm/vector.h
-@@ -370,6 +370,9 @@ static inline void __switch_to_vector(struct task_struct *prev,
- {
- 	struct pt_regs *regs;
- 
-+	if (test_and_clear_tsk_thread_flag(prev, TIF_RISCV_V_FORCE_SAVE))
-+		__riscv_v_vstate_dirty(task_pt_regs(prev));
-+
- 	if (riscv_preempt_v_started(prev)) {
- 		if (riscv_v_is_on()) {
- 			WARN_ON(prev->thread.riscv_v_flags & RISCV_V_CTX_DEPTH_MASK);
-diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
-index 31a392993cb4..47959c55cefb 100644
---- a/arch/riscv/kernel/process.c
-+++ b/arch/riscv/kernel/process.c
-@@ -183,6 +183,7 @@ void flush_thread(void)
- 	kfree(current->thread.vstate.datap);
- 	memset(&current->thread.vstate, 0, sizeof(struct __riscv_v_ext_state));
- 	clear_tsk_thread_flag(current, TIF_RISCV_V_DEFER_RESTORE);
-+	clear_tsk_thread_flag(current, TIF_RISCV_V_FORCE_SAVE);
- #endif
- #ifdef CONFIG_RISCV_ISA_SUPM
- 	if (riscv_has_extension_unlikely(RISCV_ISA_EXT_SUPM))
-@@ -205,6 +206,7 @@ int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
- 	memset(&dst->thread.vstate, 0, sizeof(struct __riscv_v_ext_state));
- 	memset(&dst->thread.kernel_vstate, 0, sizeof(struct __riscv_v_ext_state));
- 	clear_tsk_thread_flag(dst, TIF_RISCV_V_DEFER_RESTORE);
-+	clear_tsk_thread_flag(dst, TIF_RISCV_V_FORCE_SAVE);
- 
- 	return 0;
+diff --git a/tools/testing/selftests/riscv/vector/v_ptrace.c b/tools/testing/selftests/riscv/vector/v_ptrace.c
+index ccda8a4dc49b..f452e04629ea 100644
+--- a/tools/testing/selftests/riscv/vector/v_ptrace.c
++++ b/tools/testing/selftests/riscv/vector/v_ptrace.c
+@@ -196,4 +196,107 @@ TEST(ptrace_rvv_invalid_vtype)
+ 	}
  }
-diff --git a/arch/riscv/kernel/ptrace.c b/arch/riscv/kernel/ptrace.c
-index 906cf1197edc..569f756bef23 100644
---- a/arch/riscv/kernel/ptrace.c
-+++ b/arch/riscv/kernel/ptrace.c
-@@ -148,6 +148,11 @@ static int riscv_vr_set(struct task_struct *target,
- 	if (vstate->vlenb != ptrace_vstate.vlenb)
- 		return -EINVAL;
  
-+	if (vstate->vtype != ptrace_vstate.vtype ||
-+	    vstate->vcsr != ptrace_vstate.vcsr ||
-+	    vstate->vl != ptrace_vstate.vl)
-+		set_tsk_thread_flag(target, TIF_RISCV_V_FORCE_SAVE);
++TEST(ptrace_rvv_early_access)
++{
++	static volatile unsigned long vstart;
++	static volatile unsigned long vtype;
++	static volatile unsigned long vlenb;
++	static volatile unsigned long vcsr;
++	static volatile unsigned long vl;
++	pid_t pid;
 +
- 	vstate->vstart = ptrace_vstate.vstart;
- 	vstate->vl = ptrace_vstate.vl;
- 	vstate->vtype = ptrace_vstate.vtype;
++	if (!is_vector_supported())
++		SKIP(return, "Vector not supported");
++
++	chld_lock = 1;
++
++	pid = fork();
++
++	ASSERT_LE(0, pid)
++		TH_LOG("fork: %m");
++
++	if (pid == 0) {
++		while (chld_lock == 1)
++			asm volatile("" : : "g"(chld_lock) : "memory");
++
++		asm volatile("csrr %[vstart], vstart" : [vstart] "=r"(vstart));
++		asm volatile("csrr %[vl], vl" : [vl] "=r"(vl));
++		asm volatile("csrr %[vtype], vtype" : [vtype] "=r"(vtype));
++		asm volatile("csrr %[vcsr], vcsr" : [vcsr] "=r"(vcsr));
++		asm volatile("csrr %[vlenb], vlenb" : [vlenb] "=r"(vlenb));
++
++		asm volatile ("ebreak" : : : );
++	} else {
++		struct __riscv_v_regset_state *regset_data;
++		unsigned long vstart_csr;
++		unsigned long vl_csr;
++		unsigned long vtype_csr;
++		unsigned long vcsr_csr;
++		unsigned long vlenb_csr;
++		size_t regset_size;
++		struct iovec iov;
++		int status;
++
++		/* attach */
++
++		ASSERT_EQ(0, ptrace(PTRACE_ATTACH, pid, NULL, NULL));
++		ASSERT_EQ(pid, waitpid(pid, &status, 0));
++		ASSERT_TRUE(WIFSTOPPED(status));
++
++		/* unlock */
++
++		ASSERT_EQ(0, ptrace(PTRACE_POKEDATA, pid, &chld_lock, 0));
++
++		/* resume and wait for ebreak */
++
++		ASSERT_EQ(0, ptrace(PTRACE_CONT, pid, NULL, NULL));
++		ASSERT_EQ(pid, waitpid(pid, &status, 0));
++		ASSERT_TRUE(WIFSTOPPED(status));
++
++		/* read tracee vector csr regs using ptrace PEEKDATA */
++
++		errno = 0;
++		vstart_csr = ptrace(PTRACE_PEEKDATA, pid, &vstart, NULL);
++		ASSERT_FALSE((errno != 0) && (vstart_csr == -1));
++
++		errno = 0;
++		vl_csr = ptrace(PTRACE_PEEKDATA, pid, &vl, NULL);
++		ASSERT_FALSE((errno != 0) && (vl_csr == -1));
++
++		errno = 0;
++		vtype_csr = ptrace(PTRACE_PEEKDATA, pid, &vtype, NULL);
++		ASSERT_FALSE((errno != 0) && (vtype_csr == -1));
++
++		errno = 0;
++		vcsr_csr = ptrace(PTRACE_PEEKDATA, pid, &vcsr, NULL);
++		ASSERT_FALSE((errno != 0) && (vcsr_csr == -1));
++
++		errno = 0;
++		vlenb_csr = ptrace(PTRACE_PEEKDATA, pid, &vlenb, NULL);
++		ASSERT_FALSE((errno != 0) && (vlenb_csr == -1));
++
++		/* read tracee csr regs using ptrace GETREGSET */
++
++		regset_size = sizeof(*regset_data) + vlenb_csr * 32;
++		regset_data = calloc(1, regset_size);
++
++		iov.iov_base = regset_data;
++		iov.iov_len = regset_size;
++
++		ASSERT_EQ(0, ptrace(PTRACE_GETREGSET, pid, NT_RISCV_VECTOR, &iov));
++
++		/* compare */
++
++		EXPECT_EQ(vstart_csr, regset_data->vstart);
++		EXPECT_EQ(vtype_csr, regset_data->vtype);
++		EXPECT_EQ(vlenb_csr, regset_data->vlenb);
++		EXPECT_EQ(vcsr_csr, regset_data->vcsr);
++		EXPECT_EQ(vl_csr, regset_data->vl);
++
++		/* cleanup */
++
++		ASSERT_EQ(0, kill(pid, SIGKILL));
++	}
++}
++
+ TEST_HARNESS_MAIN
 -- 
 2.51.0
 
