@@ -1,119 +1,136 @@
-Return-Path: <linux-kernel+bounces-844195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DAC1BC1449
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:56:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB633BC1478
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:58:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8BE0034CA9E
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:56:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B0C03C2520
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BFB52DC321;
-	Tue,  7 Oct 2025 11:56:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F382DAFDE;
+	Tue,  7 Oct 2025 11:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IAnCErPz"
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HbXxxjKH"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E58CA39FD9
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 11:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D21B253F13
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 11:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759838204; cv=none; b=ir6m7o03ps0/6uKu4Kbje6ItkWBkNbjdbedUokVjcXjmZ6Ibg3CHJcnJTbEt6Ads/KEAZBkod3D4a/kPG0Nv4vU/xtQYzK4atCcY90rwImMXt+wzjVMKkP1TYnVJBLPLCblGE9Qxifp4HbCLkL6MCR8EHKPp8Cx874jBS0Ck+Vs=
+	t=1759838308; cv=none; b=fSFjC2diuuFS6Hy/B6Png8yYFDYakCBuFS3FAojbSCwg3lcLWzLbkQJ+73yZUEI0K2FGgxAW0ornpCbVH2rxW0q/WA//DEE3Pjb9i06+eX33vuSBVDPTgpdpe2nv+ecilewEq88o20JEtw+ILkPtT84xFoQ/jJZe6URuT5/f2yQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759838204; c=relaxed/simple;
-	bh=nDnAQgr0ehcQfLdJbw7+Vc9h3ifViIBS7JXVbBJKbvE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ASma0XFgm05rYzDDC73aE/qXe2gYWqhhUr4lhb2i+PrE7pE+yMq3vPoQjCPrejNoQdqdR533ddvBS0Psc2NmOpHdT3EI5vsiQFYB73iq+L9oK2CHnTRC8iOsEGf97I1ckrU/rSt4r38607ZLFfLLsagmAzaVr/nAtosBnLbGWFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IAnCErPz; arc=none smtp.client-ip=209.85.210.44
+	s=arc-20240116; t=1759838308; c=relaxed/simple;
+	bh=KkJzx5iseDOMBqov/lks7E3Iw2pm9GsyzW9W4JlqAqs=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=chaQfYx4EaetgOQ+phFJXcIXKNzf37MN2E8KoPWziL99sRpDtkmJyBHoWob8W/YrLttrDfD7UNgn7GulRaPkiIK4iZifiHsY9pUFZVUleuv0CVjPDYvbuZrXWMd/UIlc4CTklFmh6qk7U+vrUAPASWHfyUCeNk1sdzJBx0tqpKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HbXxxjKH; arc=none smtp.client-ip=209.85.128.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-7abc631ae5cso4477742a34.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 04:56:42 -0700 (PDT)
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-71d71bcac45so66672447b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 04:58:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759838202; x=1760443002; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nDnAQgr0ehcQfLdJbw7+Vc9h3ifViIBS7JXVbBJKbvE=;
-        b=IAnCErPzEexbl0VXmsBkVwT1/JShIy1f+RzlRiT+iec/1Em3wyz6n0n/rWVMev1GZE
-         1PzQv1u/SHK5QbTkgLqZtfjYvbZwiRD+jJUlSl/VgBVPJSwZ0WMYRufe7ZOrqL7esJWS
-         Pe4E/fE098qTgNud1tJE9mmUhSnTts27SZsKuYID8NduW6MkzYjM0HNTrzK6hxjl8TAI
-         4n+DWajBvGMOS2aMdJzHkZlC4gpMsJtYM4czROaVRX2X7gJY/L5QVBw1sgvpUyB/Kg7S
-         42x/h9ylzOWiWd0MhvFtAQZaxV/+SEGpfHcovloke+g/l8d8r33HQQzb8Bq9EzjfdAbb
-         v8Og==
+        d=gmail.com; s=20230601; t=1759838305; x=1760443105; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/LCefJSJB1+ypX3Sb+h7MPQdpzfzCeRiHx/LBHLwVq4=;
+        b=HbXxxjKHRCESFLKDJEl7RqpQVy6cse8nDLjqClKUeXbKElYg+cWwjwFO5x9DcSpgma
+         KrpLDDN4dCt6UkTNwPBCsCw1asR5kb+6tfWbdulVwrOHqWCTJoayT5dIt/MqhsUYfWjG
+         7kp5fIushbbr8gCz81y73rqXKeqovdKs4o0N11Q7ipq+/74tjAoAMZ7p8/T0it+KYnoD
+         uw7oHEH24j10AvTHmMwTgKVIKiZv7B4+fDlEV+3RF4Is/KwktE5/qCs/psqHuspVREzH
+         IGvcau1dJ+R3rYSeBAQbuqKGQrM26SAyFkYCgf2fbcCjCAfN45A/HQJ3ubwHLhOKkupv
+         JIog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759838202; x=1760443002;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nDnAQgr0ehcQfLdJbw7+Vc9h3ifViIBS7JXVbBJKbvE=;
-        b=gMaz4MPnsRksNbQ5TCtolXfJfmNvMNMjUnED+ov37fc9wSVZkaA2mnLEYi1DKN4f76
-         jaRGpzr8OHWgiEeqOZa0LabxBbTAE/DqFuLLtsGyVwVv4CFIoaoNCNQvW7OicZ8dacLJ
-         GVEnIImgx5e0v1uut/JbODVn8bQiIADx1e9lACCFpWwkoWm1E9RS/8xgpElGQduT9lSD
-         U9SFCrAgZvSreOyySxMgv32jTgqf/b8S6DW/UfGS/4lRY/ZToJ8s45/IvXyGYBdIbzIY
-         BpHx4YA0EbvpN5qflX6IVurKy/kllAjkNMk1RE7AEIK7TwFe62SpvpJaqWApjJIkn4et
-         E93g==
-X-Forwarded-Encrypted: i=1; AJvYcCVB7WsrVmpIM09VY1ay623q8lWtUzkS4SxDtpopSqBIN43wFuSRzzsjMXKZs57DGH7Iwg8gIhNv/lzqgcY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCAVq5IHghLDOP7Ae3ovj4CLluvwgrtMgJtI7tebrY/D8E1y0+
-	OpDHMTFIIPBP4yWgIpbjZVAQ2wQkdbnysUYKML/yGoRtTodRDcDmHKGkAyZhW6VO/uF2RkUvABl
-	JDcfmdKHiVWHTIwvV8jp6RTurnDC4dss=
-X-Gm-Gg: ASbGncval/kwsDYpchQrDMyvqDAlgGNbJwW1zRevIvdZjpvIvIF4PKARcUk2ppDQXft
-	Fa3501gPABrbx08Zx+su3szW78yd8oL10oe0vGQ48tU0HksRZH+sRHSVB69yZE9DCOEyfEk4KDd
-	ybRqGfeE7Qaw+ckoJ0Y7ssmtVVL2cdR9SlJ9lcbmuIGW1f00/XDr4qYr2FoIj6vcu8rcgWw/JJB
-	VIlYp8IeYXb0mfoJyKPQYTX/IQ7B3g=
-X-Google-Smtp-Source: AGHT+IGf1SyOfC0WI5vDsH1aFSv/+54kbpC2ajcfxHOjA2QxNkQPutmrcDALkOHUhMYn8vqOvC01ofPAA4sM3QF72MU=
-X-Received: by 2002:a05:6830:3786:b0:748:8b42:77ab with SMTP id
- 46e09a7af769-7bf770d4574mr10925867a34.0.1759838202064; Tue, 07 Oct 2025
- 04:56:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759838305; x=1760443105;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/LCefJSJB1+ypX3Sb+h7MPQdpzfzCeRiHx/LBHLwVq4=;
+        b=aCzaaVani/iqj3VuHow40vqIhW7PZa/Vs2J1k/JeseCj4HbIpOqo7xgKnVwk4+Fl6O
+         47h6Qbtfb+hVFFDKGQhG9BSAhffrH5OmQNdP6YYJb6KT2YwFjpxXhR0UXkIza9qp2bhm
+         dQCi9PCrNlN96K6sbgRWnEmH90wlxs6MCcCWjaXGtH8Rj1pYAqj6//isw6qyHcdENW2R
+         u1T3V7KHuEa13Ak6zbFtzwEsgQzYcJ9APzNbs0KuiOFSnnw/9xsUy2FLXLtgMfVss5dI
+         zIZhVuv1iZnXtW7+mQxMCziTH3+342bm8xNiuDIOO+UMwI4gvoK+WR/bri3lgFNlseop
+         caKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUtLXMgQkbltL9G7wN+oAaTfIQn447mYEm4t4UhTm/wwT/ctgcPaeqnjpKBNxer84d8q5uw3wLF93rn/Sc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjoOXy9YYFBS+wgrzfg6NNbJCe9Nkx3e6CX5JE4gb4LsJ1Ibul
+	z+BdFCqiTE9g6mlEGnB0DcU7upQmYcxvjwLs7ARCIRjU/TV0Uo/xzB0IvXLpnXFdJCKLDRZXKSF
+	MNa56XZ/BeibmaBNno6s88Xy9TQNInMT/5Hhz
+X-Gm-Gg: ASbGncuHIkCsy2Dwk0kEAwqj9RaySM7311mNHgb67zLSxPQxiU4YIKnv2rtrbDUx7iN
+	w+V2ijVAVZ6P2D7TbmqCBRokkqx1qMRCoeKr+b2EXHbXUl7yCYLXmeiyIwmIeyma4JsuQeHcxcf
+	XbrezFHGDqqr1Mflv0PkruSTUwWDYsxH2x9mNenQ6Eg9qv7BqLXcmYqeHnnCaZ8YgSqMwFzFyJt
+	7q2L5tDBS2zE+Cnl2qTa06P7fnKs0VbDg==
+X-Google-Smtp-Source: AGHT+IFwJYF3xD4zTcOOqIqOOaWTariNHri9p50BnxHJgjKQUTJP4D/lImwMzoitAXDMhFg9bpYSJ8/BH/27hwAa0xM=
+X-Received: by 2002:a53:ef87:0:b0:636:dd7:ee49 with SMTP id
+ 956f58d0204a3-63b9a07b943mr13743424d50.13.1759838305201; Tue, 07 Oct 2025
+ 04:58:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251003091304.3686-1-briansune@gmail.com> <20251007113305.1337-1-briansune@gmail.com>
- <5a71fdac-f6cf-4557-9bc8-d416a033263e@sirena.org.uk> <CAN7C2SCHirxurUA0n2VZKEEiYCt-NUKgspGFfZLNurHhACZkBQ@mail.gmail.com>
- <3266559a-8403-4a26-bbd9-c54e27fc59f8@sirena.org.uk>
-In-Reply-To: <3266559a-8403-4a26-bbd9-c54e27fc59f8@sirena.org.uk>
-From: Sune Brian <briansune@gmail.com>
-Date: Tue, 7 Oct 2025 19:56:31 +0800
-X-Gm-Features: AS18NWAu7PJlkBsOtE2R4WdatURJdL0LNgBsmKGMTutcvQMQA045NJ06MTP4Ums
-Message-ID: <CAN7C2SC96jZYYGP=DFrSKgtEfxy+MYpM7=-iW8YKhDG81ufw+Q@mail.gmail.com>
-Subject: Re: [PATCH v2] ASoC: wm8978: add missing BCLK divider setup
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linux-sound@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Charles Keepax <ckeepax@opensource.cirrus.com>
+From: Murad Sadigov <sdgvmrd@gmail.com>
+Date: Tue, 7 Oct 2025 15:58:13 +0400
+X-Gm-Features: AS18NWB_yyYRNWS9evJrxnGlrnIIeGU8nnCxFnRBDZKYWNyfd0MsSgaGiJMyL58
+Message-ID: <CAEuvNs2b-_Q=dazKjhUwJoZ5XUpjRsf-FrCOTR_j24T+EG-f=g@mail.gmail.com>
+Subject: [PATCH] staging: axis-fifo: fix integer overflow in write()
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Mark Brown <broonie@kernel.org> =E6=96=BC 2025=E5=B9=B410=E6=9C=887=E6=97=
-=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=887:52=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> On Tue, Oct 07, 2025 at 07:48:11PM +0800, Sune Brian wrote:
-> > Mark Brown <broonie@kernel.org> =E6=96=BC 2025=E5=B9=B410=E6=9C=887=E6=
-=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=887:44=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> > > Please don't send new patches in reply to old patches or serieses, th=
-is
-> > > makes it harder for both people and tools to understand what is going
-> > > on - it can bury things in mailboxes and make it difficult to keep tr=
-ack
-> > > of what current patches are, both for the new patches and the old one=
-s.
->
-> > Sorry for this action. But this patch is just a title fixe according
-> > to previous comment.
-> > Patch body is fully aligned to previous revision.
->
-> > May I know what is the proper way to amend the title?
->
-> The title is fine, the above is about sending the patch as a reply.
+Fix integer overflow in axis_fifo_write() that allows local users
+to bypass buffer validation, potentially causing hardware FIFO
+buffer overflow and system denial of service.
 
-Got it, when title amended version is sent, need no reply with
-previous revision ID.
-Thank you
+The axis_fifo_write() function converts user-controlled size_t 'len'
+(64-bit) to unsigned int 'words_to_write' (32-bit) without overflow
+checking at line 322:
+
+    words_to_write = len / sizeof(u32);
+
+On 64-bit systems, when len equals 0x400000000 (16 GiB):
+  - Division: 0x400000000 / 4 = 0x100000000 (requires 33 bits)
+  - Truncation: Result stored in 32-bit variable = 0 (overflow)
+  - Validation bypass: if (0 > fifo_depth) evaluates to false
+  - Impact: Hardware FIFO overflow, system crash
+
+This allows unprivileged local users with access to /dev/axis_fifo*
+to trigger denial of service.
+
+The fix adds overflow check before type conversion to ensure len
+does not exceed the maximum safe value (UINT_MAX * sizeof(u32)).
+
+Affected systems include embedded devices using Xilinx FPGA with
+AXI-Stream FIFO IP cores.
+
+Signed-off-by: Murad Sadigov <sdgvmrd@gmail.com>
+---
+ drivers/staging/axis-fifo/axis-fifo.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/staging/axis-fifo/axis-fifo.c
+b/drivers/staging/axis-fifo/axis-fifo.c
+index 1234567890ab..abcdef123456 100644
+--- a/drivers/staging/axis-fifo/axis-fifo.c
++++ b/drivers/staging/axis-fifo/axis-fifo.c
+@@ -319,6 +319,13 @@ static ssize_t axis_fifo_write(struct file *f,
+const char __user *buf,
+  return -EINVAL;
+  }
+
++ /* Prevent integer overflow in words calculation */
++ if (len > (size_t)UINT_MAX * sizeof(u32)) {
++ dev_err(fifo->dt_device,
++ "write length %zu exceeds maximum %zu bytes\n",
++ len, (size_t)UINT_MAX * sizeof(u32));
++ return -EINVAL;
++ }
++
+  words_to_write = len / sizeof(u32);
+
+  if (!words_to_write) {
+-- 
+2.34.1
 
