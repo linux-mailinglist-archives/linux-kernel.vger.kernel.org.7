@@ -1,125 +1,132 @@
-Return-Path: <linux-kernel+bounces-844136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4814BC11A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:12:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A7E0BC11B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:16:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4FC3F4F39C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:12:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3AB804E7723
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1062D94BB;
-	Tue,  7 Oct 2025 11:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40B132D9780;
+	Tue,  7 Oct 2025 11:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RfbOpB3J"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="FcAoANgm"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 771FAE55A
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 11:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB061991CA;
+	Tue,  7 Oct 2025 11:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759835532; cv=none; b=Z47BHBNJK/WryGO+k2FEwedFtBC9cW4sl8+iUQIzFGA2HbDaGYU0fVjqIPnUzRplSXRhLzEkYaJodk9XQhnVq5OqAUF2S1cj+Zo7p6hOxP4QNAG9x6k8X5P/46+6I5QlzUtreZbiELnIm/ItsqCfTLU46UvR9naCX22r6+L3EYY=
+	t=1759835759; cv=none; b=QVquCS5fHI7e/0GIGZsJ5tswnKZGQw5YiSdrj8Rv53whi1NukFbn+XmucVzlGxPx9/np9SfZiV9jv4iPT8DNNRdyyBhkC0hUqpfJgbC/zEzB+q8+aQpmtfc0oIs23fMInUgElScEC9TULewIC7hB6FGNQxY5oVYb0e/IaoAt5PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759835532; c=relaxed/simple;
-	bh=0tRTQVIxs/q5Q+Hy3g5FmzBunJcJwAq3/m8TJlQzte4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=skgspsgycZaPbcsS14EQ6wVcI2mVZaHetGSXkN0ChNb9ab2heYilBOFT4UcbKYgAFJ5PqUWvD0aW5bMZjeTB/vJNZJvDVI4AGK3Aex8M1SRZdCHcOPMoIrX/ATsdzxq3so0330Lyg6wicG6HEJ0D3jfrAnQEuzOwKQAvXM+pqyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RfbOpB3J; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3fa528f127fso4583786f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 04:12:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759835529; x=1760440329; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ocYnZTYhvxaa0KoO8huddSXbdFmRkGMfcfmF/WCGuz0=;
-        b=RfbOpB3JGA4TYkT3UFFvRFQqZ1wThfcWIci7RLeJH9mYX0kZAd8YhC/CjhZwC60+92
-         SKmaKLO/+oncK6PbOh1pEZDEm99EmYFjUHhpLvYYrHFZtarJ8LwHeAG8gfOPNHDUG0fs
-         sngMzwmrUMPuza9pTF6gYK/N0pJam3M1DV17SxxvC5CIaWbtzEF8W4fT0tJbYaVYc4+g
-         Lho722Vugj4wxLGIkwjqESKR9Xkz4cU3P+cxe11Bf/YyK0EUfwPjjOERr5dy9BxeoX4m
-         dNFk44JksVxR8nDTpnIHnitAcxeg7SvRzAAkglJY7Ejs+r7xJN6UFvA938JJg4G3jlVD
-         NLNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759835529; x=1760440329;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ocYnZTYhvxaa0KoO8huddSXbdFmRkGMfcfmF/WCGuz0=;
-        b=sv902RMxpB2/4I8UnsU5xhC23cUebrhXeDyPYjyoqT2GHC/FgwJyIrZHT1R731W4MJ
-         laqk03mu2IauTweYquMB73rkClgWrIeNXhkwMGxUdSlMB2bWm71P6A29mkcpjDE7puUO
-         NzUxYjpNLeVP47G1jzBYPT3rYV43i+qoO1cbCH20eB1hrqV6q/7MNfZcMJgejx3CjFok
-         W9CTA0IfkHVui4YUKAGTLNyQ5KEb6bycKSi4vWjajeqhPYlK6/qetU33Xcdq86MUG2OK
-         VZzPuhdRI5Jgp7Exv2reEuEMGqGi9OaazUEiEp42+Ke/pZTxQ+S21FfH7LsrHN2kBvV5
-         izkw==
-X-Forwarded-Encrypted: i=1; AJvYcCX1eGd1hBkjpaATcop/jEpywxi7nXsr32EiIYl0SoH98Y4qAUHiKk2TKOplcA+EOXIoFSkJdt25xXAtqeQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdurARgbTHXIM5V8PTo6067+a42ZlHTePmaMr0htv69rN79YgO
-	7GcyHV9tpTLNQGyxV41B1X+VWGU+K33R2BF/GRqY5BnXtWqvjH99NhPt
-X-Gm-Gg: ASbGncv/8BZy6bRaHWpfE7kWrQ5T20EZbyW460Q4+26zVmkVJtPdjRSdepmcobz1XX/
-	ZszKlONUixvRoeNVB+dAH4htY8Ma2xQJQkiVySSGCoiSkzuU62i+80XN4A7LFL0JNByj9zHb/gl
-	qXSwPycU1mGAqIKsyERLGlutkpKxIE6vWLXKG9+ntEg/vD9CFmaMzED4u0lP25g2wlPB1E16QAd
-	Hc0qNOrYm/PSRJZVqT32PI1kiyhim6bGqxTECfceprWmROVW0KMeC1F5w0SNMWchvxRXyYp7WUg
-	rBmsz18iOLd2eezSsUaFL3Jgg9HvdgnrLzkpuoyMypuYwSLPq4UJqe+CLK/jLX42h1j4Fvd5Rq8
-	RdOvxj+MFT0i0Gu5xP3RFowWBkE0oJ1gJSMDfjIkrVgoVgi2ImwUN7xMGFOOBvUEtnZO6oLHZsX
-	MzLqzSaYz67VEOewRdS4PHdzqHvqe73Gfc
-X-Google-Smtp-Source: AGHT+IGN+cc5ZZpnHcEXI8f0KHWUoIw898vV1d9Wme0Eh5+yRRXXdczmyz6c9IhuGVi+7ydolzC3Ng==
-X-Received: by 2002:a5d:5005:0:b0:425:8334:9a9d with SMTP id ffacd0b85a97d-42583349adamr1261124f8f.1.1759835528500;
-        Tue, 07 Oct 2025 04:12:08 -0700 (PDT)
-Received: from ?IPV6:2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c? ([2a01:4b00:bd21:4f00:7cc6:d3ca:494:116c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8a6b40sm25122214f8f.2.2025.10.07.04.12.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Oct 2025 04:12:07 -0700 (PDT)
-Message-ID: <584d69ee-512a-4940-8348-d67f8b57fce1@gmail.com>
-Date: Tue, 7 Oct 2025 12:13:46 +0100
+	s=arc-20240116; t=1759835759; c=relaxed/simple;
+	bh=pCgjhOAfa0xJBY/SyhGRQksYUt+OUNex4S0WaZXWA4E=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ll4+2NE2cbsdZCbl3w3tEBdjCVSX98l4O9kgjoku2biyVh7efa1mJB3zK7tRqdbkyhbmjQSLjswijGlUKbuvUTJdZUP6gP6xtWy1UomBr1wiIrtipvXXgs091uPx0LiHgNK2XoHVygDv/miPhqbn2wvWjmh7LWp80U6cA4ybqU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=FcAoANgm; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5978d308006564;
+	Tue, 7 Oct 2025 07:15:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=s0vnOaWLD+wvbQNlkGU0J7hYscm
+	kGTZq5roKm/OUSRk=; b=FcAoANgm8V7trDPIdPzhH3LuTwndUxIm7CTF0GheD3H
+	43H8KB/l4HBeo5cFO23j8GSgAdZdDIs+xX47mM2o91F3MDQdXvWMNWAGEvhmL24F
+	Auo9Em2VEv8Md5BNb7WUz9fvgANwc+17Gz7ZcOu0rxXKr6LPGRdroi8DbCeDtZ89
+	6x7qHo38zcGBTDUjKfVg2ehmqSmSc+pwaPyRoQfYCBnVr9qpaCfhyyf7O7wfzwEk
+	ouv7lHWpArPO4PSBO9kVtFqSVbGnB+ANduxJ6zMzrMUSZ1rr5Mtgfd4f8Jy/dPzb
+	iusrYaTC0EtJW1TsD9NwLj0MHnaQh6maBRSZVDVyYqw==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 49myhq8qdw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 07 Oct 2025 07:15:55 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 597BFsoe058151
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 7 Oct 2025 07:15:54 -0400
+Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
+ ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.37; Tue, 7 Oct 2025 07:15:54 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
+ ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.37; Tue, 7 Oct 2025 07:15:54 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.37 via Frontend
+ Transport; Tue, 7 Oct 2025 07:15:54 -0400
+Received: from Ubuntu.ad.analog.com ([10.32.15.145])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 597BFftR006224;
+	Tue, 7 Oct 2025 07:15:46 -0400
+From: Antoniu Miclaus <antoniu.miclaus@analog.com>
+To: <jic23@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
+        <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+CC: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Subject: [PATCH v3 0/6] iio: adc: ad4080: add support for AD4081 and AD4084
+Date: Tue, 7 Oct 2025 11:15:19 +0000
+Message-ID: <20251007111525.25711-1-antoniu.miclaus@analog.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/zcrx: use folio_nr_pages() instead of shift
- operation
-To: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>,
- Jens Axboe <axboe@kernel.dk>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251004030733.49304-1-pedrodemargomes@gmail.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20251004030733.49304-1-pedrodemargomes@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA3MDA2OCBTYWx0ZWRfX4pefL6PqeBme
+ GwqxSr4f7ARNC4qw0o1iK3sEGuFswOjzIWB4kBNLtcYz2iFarEVRgzkOTZwXYRtLOGtHci1TPdW
+ stHzYh89X/F6h9eQ6fsA0lPG3mXkrOdW21dk4l8/yFrK3SUEQZuNBPq49Ek8HidPHesGyZpkngy
+ j6NfAkFVXf5vmk6WRJS0dYCPnG6iFnxtLt/rFhVicLWYnNvnZZ1orG19nfwj6369pPbVWPOMRTI
+ XJ8rYzYRpENDuxyc3UrPh7hj1XfWqxH9LH/fXaNisUiMKIlasPxofxbB11KmTGES4Aek9L9L74n
+ xTlTIB3KwCe3lD6DhRbmx/sBXJeCfP2kh8G5SrawxzN5IJ2zKfi9E8ZthrWj8urlUPkXYXL25bx
+ x8TBW2/SXwFA7J7KltSEJpGGPdQdFg==
+X-Authority-Analysis: v=2.4 cv=IdOKmGqa c=1 sm=1 tr=0 ts=68e4f66b cx=c_pps
+ a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=V9bAyUBXO8NA9gdfiQwA:9
+ a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: iuisRfTAu3Xgj9GnKStaMdMf8tAYzT4F
+X-Proofpoint-ORIG-GUID: iuisRfTAu3Xgj9GnKStaMdMf8tAYzT4F
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-06_07,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 impostorscore=0 clxscore=1015 adultscore=0 priorityscore=1501
+ spamscore=0 suspectscore=0 bulkscore=0 lowpriorityscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510070068
 
-On 10/4/25 04:07, Pedro Demarchi Gomes wrote:
-> folio_nr_pages() is a faster helper function to get the number of pages when
-> NR_PAGES_IN_LARGE_FOLIO is enabled.
+Add support for AD4081 (16-bit, 4 LVDS CNV clock max) and AD4084
+(18-bit, 6 LVDS CNV clock max) ADC variants to the existing AD4080
+driver.
 
-Looks straightforward, I'll take it into a branch.
+Changes:
+ - Update device tree bindings to include AD4081 and AD4084
+ - Add chip_info entries for AD4081 and AD4084 with appropriate
+   resolution and LVDS CNV clock count
+ - Modify channel definitions to accommodate different resolutions
+ - Ensure backward compatibility with existing AD4080 functionality
 
-> Signed-off-by: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
-> ---
->   io_uring/zcrx.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-> index e5ff49f3425e..97fda3d65919 100644
-> --- a/io_uring/zcrx.c
-> +++ b/io_uring/zcrx.c
-> @@ -172,7 +172,7 @@ static unsigned long io_count_account_pages(struct page **pages, unsigned nr_pag
->   		if (folio == last_folio)
->   			continue;
->   		last_folio = folio;
-> -		res += 1UL << folio_order(folio);
-> +		res += folio_nr_pages(folio);
->   	}
->   	return res;
->   }
+Antoniu Miclaus (6):
+  iio: adc: ad4080: fix chip identification
+  iio: adc: ad4080: prepare driver for multi-part support
+  dt-bindings: iio: adc: adi,ad4080: add support for AD4084
+  iio: adc: ad4080: add support for AD4084
+  dt-bindings: iio: adc: adi,ad4080: add support for AD4081
+  iio: adc: ad4080: add support for AD4081
+
+ .../bindings/iio/adc/adi,ad4080.yaml          |  2 +
+ drivers/iio/adc/ad4080.c                      | 80 ++++++++++++++-----
+ 2 files changed, 60 insertions(+), 22 deletions(-)
 
 -- 
-Pavel Begunkov
+2.43.0
 
 
