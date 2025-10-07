@@ -1,209 +1,188 @@
-Return-Path: <linux-kernel+bounces-844622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BA1FBC25BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 20:19:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59E87BC25C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 20:19:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28DCF19A4281
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 18:19:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 798604F0F33
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 18:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CABD221F12;
-	Tue,  7 Oct 2025 18:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B752D5408;
+	Tue,  7 Oct 2025 18:19:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="w0yohibw"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AOfahSZX"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF36C1FF7D7
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 18:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9586621D3E2
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 18:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759861161; cv=none; b=AOZAPhUSok2vLKI/guRaSSj/wEe7iVjgQhIDdVroKSBCNzqAJPZhw9e4xV9slGDPkg+mA1y9/AmtNFktpEcu+vUrIQVYdVKiEB5XYHq5EQnjO3dJYeU0b3E0gAGVBm6rY1DrS0QA6sYtBOmFU/IEEAj6IdtQrOBtq9j93Rqxrrc=
+	t=1759861190; cv=none; b=n1/mjIsVYFLbVvbRLG8AApY5w4Y61NxCsuLp4BuqJ9K3UPhblx7IiqxlSQrFP62e7CNFfIR/CLOzBQEPD9v5hQBUw8eG//cyM+2cIu3UdXkzB5K5md1sQJyGMG7bBpgT/vZm2OYGLWkll6QnzdGfh3eU4disdf3hDhSKCwVzypg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759861161; c=relaxed/simple;
-	bh=Mp4PZJ9KZs8IkrXP6UCO+Lm2pD0Jfn7WwtijGiWN0FI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QQy70QjgiUvvdGACnj7ClApEBgISMhUd/p6g7GdH0HdottuSHwB4Gq1wCCjFmLCPFlXRZ4wV+NF5iQMhHgybnKBKOL/2af39kGDUz1jyBi3eKEkOAxcPkqnviSCPyEKKFjEIqcCC3k/k4dE29NWe2EfvoAhKyBWu7uz/CgSqEqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=w0yohibw; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-87808473c3bso850236485a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 11:19:18 -0700 (PDT)
+	s=arc-20240116; t=1759861190; c=relaxed/simple;
+	bh=IVqEvsVTUvX2jwOw2TI5EYYaO5oPHB99rIwU+g37kOU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mBWNaMFYhcZWmkyxjHVaSSnlHjuKkimXJmf/PMV3BEbjVSG7uIbOHkPNyGAE7jKyeI9/EghwQGETvwxG6B0EC1/NgtKsBHqvrqLWIMtBy6CXZ9s+o76OC+z7WXZwuKPlzstLFPtdmRFTOH4QU6HQktsCNNtdHiCMjpHCyYVcgOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AOfahSZX; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-71d6014810fso72547037b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 11:19:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1759861158; x=1760465958; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
-         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ScToGLgY21W9pR03qXloVq8Erpuen1ih1N7DUB0PhsI=;
-        b=w0yohibwuGvRSkRLd+uACE8LGewnYWz5iL1AHTAW3q/37vhSeaMKZBMjD83hnoEt1B
-         dq8aLG0Xs+yvbtkOuY+gnJHtZVQJj2OWomSTgyd3B16uCVnaP5PEeVYD4cbqeP56kIot
-         2f0VIjT1z/p4Ne64YkbAUMFYwrPvNA/JMeDFKstD+hdJNeVdmc+7nad31JNduv8Kx180
-         oRSBGo/l3r97cna+MPpGp6gmQrC0upk+jQCzfSl7sYNsDSKA7HvM16wqSS3EmuKt/nNd
-         H27Ue46ekaC18E9xtFsN17IUp7PHO8hOTFdAWdtcXF8wt63MmNSYr3qyLzkH3x5yAWFL
-         F3RQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759861158; x=1760465958;
-        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
-         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1759861186; x=1760465986; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ScToGLgY21W9pR03qXloVq8Erpuen1ih1N7DUB0PhsI=;
-        b=ldoY1Okd67un/eMmfgkvZNvkO4dFfZDMVxkzo9DvH37ejVrilsvDl/fGodhCYtOMEX
-         T650zE1wglqUuFBSZdve2u8GfTGVtHmqjDLte/qQIcutlohl3ifR0PHhiSzZDmQL10Sm
-         GIvUs5RaGj37PA3S/QBcnQyB/9IsmDRTnqUqrl2+jF+AmHl95wNOQUYatfELRqDPvVKe
-         KtScAtU3/PZcqFPLuxs64n4O3IRFfgphtzGeUt+S28SfioUxXbLmcrfH85paiSpsEFBA
-         fIjB3HiOXL5fC7/rnBSwmZU0WeEpnvfLCpT+pbwsiBr5AclnX630nguiVe7aYwR9cRie
-         2bmg==
-X-Forwarded-Encrypted: i=1; AJvYcCW33yaHpfPARToUCdaGeCzI3BH28NwBSpLGngAWWhi4Tp+PaX96RstdVf0ZFv46uSKiNBLEwBMXihYxHAw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywpkz1aFqgB7gimq23l4QpuUgQYgKYWeZFTPaq2XBFnfnkBIAZi
-	yFbSrWjmUQRtxpWhRqUF3MoVOyIx4vFGdGrvWsb3+RdVujvhwnE6LtUi9jgkWhoeffI=
-X-Gm-Gg: ASbGnctPljOc4GA7eO2escsGRXx901LjP+/1xtteItPkACFTUGQSCmfHjWylgkuYmrf
-	XBOiaF6ZHT3GDtMlHkFsJdEDDIKdKSDSrwFlii+sNxL5SnzjPk/TcV0mAUbgmuXISL5ctdVHaQ2
-	JCjAUy65ethDLXMAr4TeJTPJT+KfYVzXwq9AfmvL3UugVlvb93AIBbpdLY1mxycwl9laW6MMFlL
-	oriZodJMHlcjcb0Z+YOnKHNRX0FkofGeenUzeTBesqYymSFGK3Vh44gvyARPYzB/hUhDFy0wGFo
-	iBC7z+T5M2iAxGNmAsBm1Hw0qNnJOJG9+fzEvAMTTJTDuXzyQ0UNON2F96akuOnXY4wiqLZ1e5g
-	C0Vzy84HfXeyKgpV3TaT66+xxD2xyFjexShAoC97ZJW7G51v1C5FI
-X-Google-Smtp-Source: AGHT+IHAN4pZjNRmmjniVTQYekbD8pM0Q+9DHCv4rh7qOTooNtWbQmwGL4IxpavnXlznH/zxFYUPUA==
-X-Received: by 2002:a05:620a:3909:b0:813:ccb9:509f with SMTP id af79cd13be357-88351de79cbmr108285785a.5.1759861157718;
-        Tue, 07 Oct 2025 11:19:17 -0700 (PDT)
-Received: from ?IPv6:2606:6d00:17:ebd3::c41? ([2606:6d00:17:ebd3::c41])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-87771129491sm1649508085a.2.2025.10.07.11.19.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 11:19:16 -0700 (PDT)
-Message-ID: <db7030790063d0ebe6d254c7053e758184b9d7cc.camel@ndufresne.ca>
-Subject: Re: [PATCH 03/16] media: rockchip: rga: align stride to 16 bytes
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Sven =?ISO-8859-1?Q?P=FCschel?= <s.pueschel@pengutronix.de>, Jacob Chen
-	 <jacob-chen@iotwrt.com>, Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, 
- Mauro Carvalho Chehab
-	 <mchehab@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Rob Herring
-	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	 <conor+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, kernel@pengutronix.de
-Date: Tue, 07 Oct 2025 14:19:15 -0400
-In-Reply-To: <20251007-spu-rga3-v1-3-36ad85570402@pengutronix.de>
-References: <20251007-spu-rga3-v1-0-36ad85570402@pengutronix.de>
-	 <20251007-spu-rga3-v1-3-36ad85570402@pengutronix.de>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-xTXqAg4scDgbBruSU9ja"
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+        bh=QpRN8feqqsElTzLcm8W2XosrV9uz7ywy4cSoDnu6iQU=;
+        b=AOfahSZX/OVO/qiBtcbWKTd23P7v6SJ+YQcWyRIcgwOERZuZerVpFkTo44CGuGBCoI
+         He7yWgbx3v9VtvSA1jlvpeGHsRtyaU3NIn4u8vmKbj3JhnWpykTOR9FE26T83kvq97Ur
+         m5p6D8gss2UcEI6I0DtKkkVsLwHTJF/mHyUWp7WaUmtpkLmVxNmkXzOjvwGUN1ntPAos
+         /OKPrt0PqidGP7PSaoV62EZxvop9Ro1r1BpUC0So+yfpC/iPyNpaCU3f7+z0sAI1UPRi
+         5o3SbK/rJ1FwFEEBQjc3Mr1CkHfVt2H8tzmYT5G4qCkggaT+Fw7xyEPViOymvTFk2tF3
+         +3Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759861186; x=1760465986;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QpRN8feqqsElTzLcm8W2XosrV9uz7ywy4cSoDnu6iQU=;
+        b=ULC5e08dX/oIiKZjVfDdP7nzyJMrW2IgxUwOEHaHnQvB0YfxkEKVVTDAFgVvqwd5VP
+         dH1JXUD64OVyoeVR1+iDVkd4UQG6dKpJmMsz1XcUvxKcNGL0Skvh/sVKbyHRyZQiaH4U
+         IiV6eH6JHvJy5Y0Ri4TwYAh5nOf6+K4H5mrj9Yss5P6W6zTn7OVVAcjJKwHDWSMEVz++
+         277WN6WUZ+gZ/Fh+fQhsfXSFeeJjSfadnr4bJ6w/4TJJgkILivjQtuNwAIEPytFQ1rEv
+         1Ux6/hp8EQJGJZ72EMxguBg+uND5Q4yAf35rY3apgGn0I+QX8Kv/X7x0m3cNh1mL7zd3
+         wLRg==
+X-Forwarded-Encrypted: i=1; AJvYcCWzs4Ej14AY4Winni+mSZgTceLq7oKbZSmo7ora0/4JyTJJxgatyP7903NxXlAuEJtzpu0Lv4DIwaaXe3k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7t/GhkXrHl4hJAnyYQ9Wo/6OUnFZH58Alqgon10WFiqCcYdP3
+	9oKAAquTVXiYXOT6rDwkvKzD4Y30xwLHRfKJFC4M9Abvt4o5luBWAUn9gtYxUOnKDkxAMFYLaXd
+	8/fwHbKFP2rnxosKDlosS2xH4TlYD/RkMPBR7fn5T
+X-Gm-Gg: ASbGncuwJdRP2moDOOspAwIF4R4RND3CqSbc0lp/ut9VoFa/YgUOoP071jIyFWOKIOD
+	N1ziMkwgoROtSxMLv6YiS3jNe6hnzWJZzJPD/oFsAnwlg09v2aUoMy1rut6tj3oPmu/32JiS1kc
+	ngbXgT90M8b52jnGH7bljT8b1z0v7g4KjtaSaA1JCEOoiaYlBf/3hLj6hAd2a6/dNq1CH8KZt+7
+	G7Tv+J8ws0n7WkfhQYyLYP5e4XYDqMRG6CK1d00yYQoSRGVlIdKEl52FItCMMsXiflV3nBI09iZ
+	HbIJVj9XK2TK9Q==
+X-Google-Smtp-Source: AGHT+IHmnWRPd1ss0ygaevLRNtl5Gxq2B+MPydv3Ris/6UTKaORAxfSjZgrqGsCx7T5ydjyxJGnOiVeVkgDs6SCCIy8=
+X-Received: by 2002:a53:bd52:0:b0:636:5bf:2e30 with SMTP id
+ 956f58d0204a3-63ccb8dba95mr426506d50.38.1759861186047; Tue, 07 Oct 2025
+ 11:19:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-
-
---=-xTXqAg4scDgbBruSU9ja
+References: <20251007003417.3470979-2-runpinglai@google.com> <20251006221043.07cdb0fd@gandalf.local.home>
+In-Reply-To: <20251006221043.07cdb0fd@gandalf.local.home>
+From: Runping Lai <runpinglai@google.com>
+Date: Tue, 7 Oct 2025 11:19:34 -0700
+X-Gm-Features: AS18NWCYZSrDjScKnxfB6EhPqKQ5Q-Y1_UuIogq3KVwEYQ9HtyLxCPJJqTTf_vU
+Message-ID: <CABgk4RQwGsn4CdP0K+_7A0j7RVOiHNfoF1ESk17wEuzCea16pA@mail.gmail.com>
+Subject: Re: [PATCH v1] Revert "tracing: Fix tracing_marker may trigger page
+ fault during preempt_disable"
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Wattson CI <wattson-external@google.com>, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	Luo Gengkun <luogengkun@huaweicloud.com>, Linus Torvalds <torvalds@linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, Oct 6, 2025 at 7:08=E2=80=AFPM Steven Rostedt <rostedt@goodmis.org>=
+ wrote:
+>
+> On Tue,  7 Oct 2025 00:34:17 +0000
+> Runping Lai <runpinglai@google.com> wrote:
+>
+> > This reverts commit 3d62ab32df065e4a7797204a918f6489ddb8a237.
+> >
+> > It's observed on Pixel 6 that this commit causes a severe functional
+> > regression: all user-space writes to trace_marker now fail. The write
+> > does not goes through at all. The error is observed in the shell as
+> > 'printf: write: Bad address'. This breaks a primary ftrace interface
+> > for user-space debugging and profiling. In kernel trace file, it's
+> > logged as 'tracing_mark_write: <faulted>'. After reverting this commit,
+> > functionality is restored.
+>
+> This is very interesting. The copy is being done in an atomic context. If
+> the fault had to do anything other than update a page table, it is likely
+> not to do anything and return a fault.
+>
+> What preemption model is Pixel 6 running in? CONFIG_PREEMPT_NONE?
 
+Hey Steve,
 
-Le mardi 07 octobre 2025 =C3=A0 10:31 +0200, Sven P=C3=BCschel a =C3=A9crit=
-=C2=A0:
-> Align the stride to a multiple of 16 according to the RGA3 requirements
-> mentioned in the datasheet. This also ensures that the stride of the RGA2
-> is aligned to 4 bytes, as it needs to divide the value by 4 (one word)
-> before storing it in the register.
->=20
-> Increasing the stride for the alignment also requires to increase the
-> sizeimage value. This is usually handled by v4l2_fill_pixfmt_mp, but
-> it doesn't allow to set a stride alignment. Therefore use the generated
-> values to calculate the total number of lines to properly update the
-> sizeimage value after the bytesperline has been aligned.
->=20
-> Signed-off-by: Sven P=C3=BCschel <s.pueschel@pengutronix.de>
-> ---
-> =C2=A0drivers/media/platform/rockchip/rga/rga.c | 21 ++++++++++++++++++++=
-+
-> =C2=A01 file changed, 21 insertions(+)
->=20
-> diff --git a/drivers/media/platform/rockchip/rga/rga.c
-> b/drivers/media/platform/rockchip/rga/rga.c
-> index
-> 6438119a6c7aeff1e89e7aa95dcd5d2921fefa08..3cb7ce470c47e39d694e8176875a75f=
-ad271
-> 7f96 100644
-> --- a/drivers/media/platform/rockchip/rga/rga.c
-> +++ b/drivers/media/platform/rockchip/rga/rga.c
-> @@ -459,6 +459,25 @@ static int vidioc_enum_fmt(struct file *file, void *=
-priv,
-> struct v4l2_fmtdesc *f
-> =C2=A0	return 0;
-> =C2=A0}
-> =C2=A0
-> +static void align_pixfmt(struct v4l2_pix_format_mplane *pix_fmt)
-> +{
-> +	int lines;
-> +	struct v4l2_plane_pix_format *fmt;
-> +
-> +	/*
-> +	 * Align stride to 16 for the RGA3 (based on the datasheet)
-> +	 * To not dismiss the v4l2_fill_pixfmt_mp helper
-> +	 * (and manually write it again), we're approximating the new
-> sizeimage
-> +	 */
-> +	for (fmt =3D pix_fmt->plane_fmt;
-> +	=C2=A0=C2=A0=C2=A0=C2=A0 fmt < pix_fmt->plane_fmt + pix_fmt->num_planes=
-;
-> +	=C2=A0=C2=A0=C2=A0=C2=A0 fmt++) {
-> +		lines =3D DIV_ROUND_UP(fmt->sizeimage, fmt->bytesperline);
-> +		fmt->bytesperline =3D (fmt->bytesperline + 0xf) & ~0xf;
-> +		fmt->sizeimage =3D fmt->bytesperline * lines;
+On Pixel6, CONFIG_PREEMPT is set. And CONFIG_PREEMPT_NONE
+is not set. I'll paste the full PREEMPT configs:
 
-Instead of open coding this, describe this with struct v4l2_frmsize_stepwis=
-e and
-then use v4l2_apply_frmsize_constraints().
+~/aosp_kernel > common/scripts/extract-ikconfig
+out/slider/dist/vmlinux | less | grep PREEMPT
+CONFIG_PREEMPT_BUILD=3Dy
+CONFIG_ARCH_HAS_PREEMPT_LAZY=3Dy
+# CONFIG_PREEMPT_NONE is not set
+# CONFIG_PREEMPT_VOLUNTARY is not set
+CONFIG_PREEMPT=3Dy
+# CONFIG_PREEMPT_LAZY is not set
+# CONFIG_PREEMPT_RT is not set
+CONFIG_PREEMPT_COUNT=3Dy
+CONFIG_PREEMPTION=3Dy
+# CONFIG_PREEMPT_DYNAMIC is not set
+CONFIG_PREEMPT_RCU=3Dy
+CONFIG_HAVE_PREEMPT_DYNAMIC=3Dy
+CONFIG_HAVE_PREEMPT_DYNAMIC_KEY=3Dy
+CONFIG_PREEMPT_NOTIFIERS=3Dy
+# CONFIG_DEBUG_PREEMPT is not set
+CONFIG_PREEMPTIRQ_TRACEPOINTS=3Dy
+# CONFIG_PREEMPT_TRACER is not set
+# CONFIG_PREEMPTIRQ_DELAY_TEST is not set
 
-Nicolas
+>
+> The original code is buggy, but if this is causing a regression, then we
+> likely need to do something else, like copy in a pre-allocated buffer?
 
-> +	}
-> +}
-> +
-> =C2=A0static int vidioc_g_fmt(struct file *file, void *priv, struct v4l2_=
-format *f)
-> =C2=A0{
-> =C2=A0	struct v4l2_pix_format_mplane *pix_fmt =3D &f->fmt.pix_mp;
-> @@ -474,6 +493,7 @@ static int vidioc_g_fmt(struct file *file, void *priv=
-,
-> struct v4l2_format *f)
-> =C2=A0		return PTR_ERR(frm);
-> =C2=A0
-> =C2=A0	v4l2_fill_pixfmt_mp(pix_fmt, frm->fmt->fourcc, frm->width, frm-
-> >height);
-> +	align_pixfmt(pix_fmt);
-> =C2=A0
-> =C2=A0	pix_fmt->field =3D V4L2_FIELD_NONE;
-> =C2=A0	pix_fmt->colorspace =3D frm->colorspace;
-> @@ -496,6 +516,7 @@ static int vidioc_try_fmt(struct file *file, void *pr=
-iv,
-> struct v4l2_format *f)
-> =C2=A0				(u32)MIN_HEIGHT, (u32)MAX_HEIGHT);
-> =C2=A0
-> =C2=A0	v4l2_fill_pixfmt_mp(pix_fmt, fmt->fourcc, pix_fmt->width, pix_fmt-
-> >height);
-> +	align_pixfmt(pix_fmt);
-> =C2=A0	pix_fmt->field =3D V4L2_FIELD_NONE;
-> =C2=A0
-> =C2=A0	return 0;
+Sounds like a good plan. Before the long term fix, can we please
+revert this commit?
 
---=-xTXqAg4scDgbBruSU9ja
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+Best,
+Runping
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaOVZowAKCRDZQZRRKWBy
-9MJZAQCpWWpCOI+8uxUCGwR39EX9OFe0+a9YuMmqqvplJUrUewEA0RMUMOwAoFpB
-7n2OM0ustpDmfHr+P0+lF6Jtxzgqcwo=
-=MSnu
------END PGP SIGNATURE-----
-
---=-xTXqAg4scDgbBruSU9ja--
+>
+> -- Steve
+>
+>
+> >
+> > Signed-off-by: Runping Lai <runpinglai@google.com>
+> > Reported-by: Wattson CI <wattson-external@google.com>
+> > ---
+> >  kernel/trace/trace.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> > index 156e7e0bf559..bb9a6284a629 100644
+> > --- a/kernel/trace/trace.c
+> > +++ b/kernel/trace/trace.c
+> > @@ -7213,7 +7213,7 @@ static ssize_t write_marker_to_buffer(struct trac=
+e_array *tr, const char __user
+> >       entry =3D ring_buffer_event_data(event);
+> >       entry->ip =3D ip;
+> >
+> > -     len =3D copy_from_user_nofault(&entry->buf, ubuf, cnt);
+> > +     len =3D __copy_from_user_inatomic(&entry->buf, ubuf, cnt);
+> >       if (len) {
+> >               memcpy(&entry->buf, FAULTED_STR, FAULTED_SIZE);
+> >               cnt =3D FAULTED_SIZE;
+> > @@ -7310,7 +7310,7 @@ static ssize_t write_raw_marker_to_buffer(struct =
+trace_array *tr,
+> >
+> >       entry =3D ring_buffer_event_data(event);
+> >
+> > -     len =3D copy_from_user_nofault(&entry->id, ubuf, cnt);
+> > +     len =3D __copy_from_user_inatomic(&entry->id, ubuf, cnt);
+> >       if (len) {
+> >               entry->id =3D -1;
+> >               memcpy(&entry->buf, FAULTED_STR, FAULTED_SIZE);
+>
 
