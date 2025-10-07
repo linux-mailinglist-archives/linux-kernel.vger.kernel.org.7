@@ -1,212 +1,116 @@
-Return-Path: <linux-kernel+bounces-844676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0077BC278A
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 21:07:15 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4149DBC2787
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 21:07:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 499CD4EE108
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 19:07:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 231164E8DA5
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 19:07:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7101E223715;
-	Tue,  7 Oct 2025 19:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E69E222578;
+	Tue,  7 Oct 2025 19:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VynVlLQz"
-Received: from mail-yx1-f47.google.com (mail-yx1-f47.google.com [74.125.224.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C/odYhjl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD29945C0B
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 19:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33CF45C0B;
+	Tue,  7 Oct 2025 19:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759864028; cv=none; b=fbShI8F29PhiRTWwrzwufwFeU80HnNl/rrvnXJYCUI4mx6CL2e8sOuvrz86Y7EHognetYkTZo5DAsGL68/zPnlBiv7iMjsIXMO9GH7+kY+tgXK5bEbZdOXTgIySLeSutkIFMXMNdWuSTKI2NqzZh4QteWv3yGcSqZACrJz9iFQo=
+	t=1759864018; cv=none; b=JmwvUFpqIhuDeV9YKWlwnOzZXsfNnZJLyMjMGJbSCM3CpX/iGtr1ZLaA2caTIP8T7cFuFklQ2iu/bDnSxnI5Q+ncrvwBRaXXecpGN0mFDrrbK0Mn2l8E2rTubyUC4UrE6g4/er7xnwwMk4mCouYDSzFQguCbQWtKIFmuV26n5w4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759864028; c=relaxed/simple;
-	bh=oW4P1sn0WRvjSmxNJBgf4iF9/kJoF6IXu574tDnahP4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dOMv/Bv/asOO+05RHb6DpavaDaIbWPmWQKjc1e9jWzWKBpBK22CwtHYLncG/t3oGuxgUuIfSuFUeKDGZgfrfhiCKKEzmzQmam3CUThT4EyTnFMAXsIH3b/3ZDlKooZP6AmWdD5aHHtcXsGadJn6VYV9gfP71ZIni1sxXRR48X4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VynVlLQz; arc=none smtp.client-ip=74.125.224.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yx1-f47.google.com with SMTP id 956f58d0204a3-6353ff1a78dso6307810d50.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 12:07:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759864026; x=1760468826; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7iUti3RModmlHi7jtpIcdt26BPjskgCGc5piTAZQzxA=;
-        b=VynVlLQztGZVyIckPrhuQJ++lotTVbgQFIvI1wrUd18F61wEJ1s1HChMnFKOJAdl9f
-         XZmUCUJS64DSwV2wBstrKLf9ckM+78R6kXVjvhQ+if9bDs51iW6u9xs8/3eskZc45Vxt
-         PGYzi6dekcFrcDKUef1zdOXn4IdExMTnj4/N5MP9bI2KLjftrGpYxwLs3ScPEGMNJlp+
-         pZGIvQP+QGhsRuVroF46sjVTd4mOdCdwjUO/hc1BiH7+mlJ75D84tnxIJTAr5/7AIeSK
-         V/YgG+SlxFifFkDLjb+x9tmklqbGw+G+cjU/E5N7x1QkPhbc5p9QmnOl21uuUTNri/0x
-         tp/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759864026; x=1760468826;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7iUti3RModmlHi7jtpIcdt26BPjskgCGc5piTAZQzxA=;
-        b=a2nxOEVbeeju7b+5+WsJb/pXecto3YmOJk5AwXSASshNtcdPVUQ0SvY2IanlWvTT+x
-         4b09m64l9TNS99+I3GjlpO3a2lhM7pADLVOR5LPJQmZ+MbCK3YhxCuqL3Qb7ihT+VaOW
-         HfB9kM6cu8sUaHHtj7qZMkcW7IDGHNzO19xsca3jO0uA7aeMLGngRazFKz0TmxcHU4KE
-         IoRf6qJoUjLVB0pz0W1grAlcteQjyrPH21SxcBjMYibcfdYfriQ/TCdehwSL7hjoewyh
-         nIwCFjFqbcWYV1WNbINark2O1YZZ8CAPJs35deD7mC8AmXEytjjWEduMTnEH0MsaZ/jJ
-         XNtw==
-X-Forwarded-Encrypted: i=1; AJvYcCUTcWRDsc9hFiZH+idWuuDJ3Wi7MO2Yh4WGu0+ijvF9QBOXpUPN82giNAvgBBz58r/GYccWErTb60GR7vI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8TOLN6ukt97AS28HX28WHZXw2ztKmAKiWJiiGsrNMxNtALMmC
-	QKUaa+ZSzJRX2wmlkSenP+wH8Wlvy0a1MFaChskOQpwnV2Esr5k5qcgVEIm58o/QTk+U2vKNBrm
-	w2VJ55BOXe/SBL/t0kV1288HoOb/eeWp5aHIEiGAcFA==
-X-Gm-Gg: ASbGncuD0WJTNartD93epiD9Lc3mLCEtm/JyUAWsY3g3d38dafT5NksGC9Qh8gzG/vJ
-	WhbNuy/M1XHzbTGP39FAzgLYCvFcncCccX6yHkxJTwtUnIEt050cU9FsrsWKXtgQRg6SWMJyMoB
-	js54cnIVLBrQNFxwM4pxE0jmVEZaQOauf1VOukLryZiKdfVv0QoU7WYTJSh30x3ZPc+psBG56MY
-	VwOsxMMW0GhpIG+lXlt7qjJzYEsAbah4g==
-X-Google-Smtp-Source: AGHT+IHGabCWkJ+CSgQuNpDDGJm5CBq1o8eRFzjGkU0N7AFW1WICocRBQKTnUVXzNlv6ZZDS/IDRlDvAToOZJFwsXgE=
-X-Received: by 2002:a53:c64b:0:b0:629:ec90:c446 with SMTP id
- 956f58d0204a3-63ccb8240e3mr675987d50.12.1759864025589; Tue, 07 Oct 2025
- 12:07:05 -0700 (PDT)
+	s=arc-20240116; t=1759864018; c=relaxed/simple;
+	bh=SZJQ7IjL7u17J7+a7h9BaqxIi1C6AJMtxUOMSfLxNMA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Smd/EX/O8aKKpSBStEidbsjIsIjM6oM0rc9PsfY7NIbkmH8EjI8zWoguOzQmGmzcLI0eGhIZKQytdOaXmjPCOOq1BZ2IchqicTO6xnU/zINNtNkKHfNJfBeY97lpS1uS7d190SNTZktWdUXZ1dRQDNV9ynnD/TCYyt994EfiFLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C/odYhjl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42BBAC4CEF1;
+	Tue,  7 Oct 2025 19:06:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759864018;
+	bh=SZJQ7IjL7u17J7+a7h9BaqxIi1C6AJMtxUOMSfLxNMA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C/odYhjlJhZlKkae3ViuZvP8+RzsZGSZTRQNnll+W1HCwuXYlp+uJ+fSwN5yRiJ1l
+	 NEhHg6iqihn5Y7Sfv70U+YJVnLvQ1Fv/WIwwp3if3ZLHQeIi8F74JIMpCtQtI1VlC6
+	 SkH0A6VZ/MoEZCRTt63s6NcSrYu0Ho78FCabnWmDz5eTANqEM76KRrBLt8WlB0MXI8
+	 DAXf2gQ4GYCHqB7ddkT3do8owAhKPJfd9gJXfp/NTSkuHOiliAjIfBH6PgX5Jlz1ia
+	 UvVCi5poAugyYSpOHYLGi6vx9JMro28n1nuEJ2i0+nysuy2QrlaUYnlLBJ7ccbMQb9
+	 iX/owYGkDbU0Q==
+Date: Tue, 7 Oct 2025 09:06:57 -1000
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>,
+	Changwoo Min <changwoo@igalia.com>
+Cc: linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev
+Subject: [PATCH 5/4] sched_ext/tools: Add compat wrapper for
+ scx_bpf_task_set_slice/dsq_vtime()
+Message-ID: <aOVk0V9WigQq6Qc_@slm.duckdns.org>
+References: <20251007015147.2496026-1-tj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251002-gs101-pmu-regmap-tables-v1-0-1f96f0920eb3@linaro.org>
- <20251002-gs101-pmu-regmap-tables-v1-3-1f96f0920eb3@linaro.org>
- <CAPLW+4nvuGd8AoDKK1VdF2pabCHzjgYHRJkYrcncRt4s=qt8Dw@mail.gmail.com> <2c36d66dc3eaf8f0f9778dd6a1d45806e7d9bcdd.camel@linaro.org>
-In-Reply-To: <2c36d66dc3eaf8f0f9778dd6a1d45806e7d9bcdd.camel@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Tue, 7 Oct 2025 14:06:54 -0500
-X-Gm-Features: AS18NWBO7FvM4SL8eDmLZftkdQk-t8hGwCLxZkF8ye__N3jbcGABazPA6EkFfAk
-Message-ID: <CAPLW+4mmbtFvdyijMQ+xG1S_FQeZyHt+cYJgycWTmpsnNNmamg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] soc: samsung: gs101-pmu: implement access tables for
- read and write
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251007015147.2496026-1-tj@kernel.org>
 
-On Mon, Oct 6, 2025 at 2:06=E2=80=AFAM Andr=C3=A9 Draszik <andre.draszik@li=
-naro.org> wrote:
->
-> On Fri, 2025-10-03 at 13:24 -0500, Sam Protsenko wrote:
-> > On Thu, Oct 2, 2025 at 5:33=E2=80=AFAM Andr=C3=A9 Draszik <andre.draszi=
-k@linaro.org> wrote:
-> > >
-> > > Accessing non-existent PMU registers causes an SError, halting the
-> > > system.
-> > >
-> > > Implement read and write access tables for the gs101-PMU to specify
-> > > which registers are read- and/or writable to avoid that SError.
-> > >
-> > > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> >
-> > I think having "Fixes:" tag would be justified here?
->
-> I decided against, because IMHO it's not a bug fix as such, it's a new fe=
-ature.
-> >
->
-> > > ---
-> > > Note there are checkpatch warnings 'Macros with complex values should
-> > > be enclosed in parentheses' and 'Macro argument reuse' for macros lik=
-e
-> > > CLUSTER_CPU_RANGE(). Since they are used in an initialiser, the only
-> > > way to get rid of the warnings is to avoid the macros and duplicate a=
-ll
-> > > the related register ranges I believe, which I'd rather not due to th=
-e
-> > > sheer amount of similar blocks.
-> > > ---
-> > >  drivers/soc/samsung/gs101-pmu.c             | 306 ++++++++++++++++++=
-++++++-
-> > >  include/linux/soc/samsung/exynos-regs-pmu.h | 343 ++++++++++++++++++=
-+++++++++-
-> > >  2 files changed, 640 insertions(+), 9 deletions(-)
-> > >
-> > > diff --git a/drivers/soc/samsung/gs101-pmu.c b/drivers/soc/samsung/gs=
-101-pmu.c
-> > > index b5a535822ec830b751e36a33121e2a03ef2ebcb2..5be1cbfa58c95e466bbdf=
-954923f324f74460783 100644
-> > > --- a/drivers/soc/samsung/gs101-pmu.c
-> > > +++ b/drivers/soc/samsung/gs101-pmu.c
-> > > @@ -8,6 +8,7 @@
-> > >  #include <linux/array_size.h>
-> > >  #include <linux/soc/samsung/exynos-pmu.h>
-> > >  #include <linux/soc/samsung/exynos-regs-pmu.h>
-> > > +#include <linux/regmap.h>
-> >
-> > If you decide to add this line to exynos-pmu.h (as I commented in the
-> > preceding patch), it can then be omitted here.
-> >
-> > >
-> > >  #include "exynos-pmu.h"
-> > >
-> > > @@ -19,9 +20,312 @@
-> > >  #define TENSOR_PMUREG_WRITE            1
-> > >  #define TENSOR_PMUREG_RMW              2
->
-> [...]
->
-> > > +#define CLUSTER_NONCPU_RANGE(cl)                                    =
-   \
-> > > +       regmap_reg_range(GS101_CLUSTER_NONCPU_IN(cl),                =
-   \
-> > > +                        GS101_CLUSTER_NONCPU_IN(cl)),               =
-   \
-> > > +       regmap_reg_range(GS101_CLUSTER_NONCPU_INT_IN(cl),            =
-   \
-> > > +                        GS101_CLUSTER_NONCPU_INT_IN(cl)),           =
-   \
-> > > +       regmap_reg_range(GS101_CLUSTER_NONCPU_DUALRAIL_CTRL_IN(cl),  =
-   \
-> > > +                        GS101_CLUSTER_NONCPU_DUALRAIL_CTRL_IN(cl))
-> > > +
-> > > +       CLUSTER_NONCPU_RANGE(0),
-> > > +       CLUSTER_NONCPU_RANGE(1),
-> > > +       CLUSTER_NONCPU_RANGE(2),
-> > > +       regmap_reg_range(GS101_CLUSTER_NONCPU_INT_EN(2),
-> > > +                        GS101_CLUSTER_NONCPU_INT_DIR(2)),
-> > > +#undef CLUSTER_NONCPU_RANGE
-> > > +
-> > > +#define SUBBLK_RANGE(blk)                                           =
-   \
-> >
-> > Reusing the same names for different macros seems a bit confusing. But
-> > that might be just a matter of my taste, so no strong opinion.
->
-> And I OTOH explicitly picked the same name because it's the same block, j=
-ust
-> for r/o instead of r/w :-)
->
-> [...]
->
-> >
-> > That's quite an extensive list of registers! Does this PMU driver
-> > really have to cover all of those?
->
-> That's what all Samsung PMU drivers do, it's the PMU region after all. Al=
-so,
-> in the gs101 case, only the PMU driver knows how to do the secure access:=
- Various
-> other drivers have references to this PMU regmap, e.g. phy drivers for is=
-olation
-> (USB & UFS) and upcoming PD driver will do too. We don't want to reimplem=
-ent
-> secure access in all of those.
->
+for sub-scheduler authority checks. Add compat wrappers which fall back to
+direct p->scx field writes on older kernels.
 
-Ok, thanks for explaining this.
+Suggested-by: Andrea Righi <arighi@nvidia.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+---
+ tools/sched_ext/include/scx/common.bpf.h |    2 --
+ tools/sched_ext/include/scx/compat.bpf.h |   24 ++++++++++++++++++++++++
+ 2 files changed, 24 insertions(+), 2 deletions(-)
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-
-> Cheers,
-> Andre'
+--- a/tools/sched_ext/include/scx/common.bpf.h
++++ b/tools/sched_ext/include/scx/common.bpf.h
+@@ -101,8 +101,6 @@ s32 scx_bpf_pick_any_cpu_node(const cpum
+ s32 scx_bpf_pick_any_cpu(const cpumask_t *cpus_allowed, u64 flags) __ksym;
+ bool scx_bpf_task_running(const struct task_struct *p) __ksym;
+ s32 scx_bpf_task_cpu(const struct task_struct *p) __ksym;
+-bool scx_bpf_task_set_slice(struct task_struct *p, u64 slice) __ksym __weak;
+-bool scx_bpf_task_set_dsq_vtime(struct task_struct *p, u64 vtime) __ksym __weak;
+ struct rq *scx_bpf_cpu_rq(s32 cpu) __ksym;
+ struct rq *scx_bpf_locked_rq(void) __ksym;
+ struct task_struct *scx_bpf_cpu_curr(s32 cpu) __ksym __weak;
+--- a/tools/sched_ext/include/scx/compat.bpf.h
++++ b/tools/sched_ext/include/scx/compat.bpf.h
+@@ -235,6 +235,30 @@ scx_bpf_dsq_insert(struct task_struct *p
+ }
+ 
+ /*
++ * v6.19: scx_bpf_task_set_slice() and scx_bpf_task_set_dsq_vtime() added to for
++ * sub-sched authority checks. Drop the wrappers and move the decls to
++ * common.bpf.h after v6.22.
++ */
++bool scx_bpf_task_set_slice___new(struct task_struct *p, u64 slice) __ksym __weak;
++bool scx_bpf_task_set_dsq_vtime___new(struct task_struct *p, u64 vtime) __ksym __weak;
++
++static inline void scx_bpf_task_set_slice(struct task_struct *p, u64 slice)
++{
++	if (bpf_ksym_exists(scx_bpf_task_set_slice___new))
++		scx_bpf_task_set_slice___new(p, slice);
++	else
++		p->scx.slice = slice;
++}
++
++static inline void scx_bpf_task_set_dsq_vtime(struct task_struct *p, u64 vtime)
++{
++	if (bpf_ksym_exists(scx_bpf_task_set_dsq_vtime___new))
++		scx_bpf_task_set_dsq_vtime___new(p, vtime);
++	else
++		p->scx.dsq_vtime = vtime;
++}
++
++/*
+  * Define sched_ext_ops. This may be expanded to define multiple variants for
+  * backward compatibility. See compat.h::SCX_OPS_LOAD/ATTACH().
+  */
 
