@@ -1,131 +1,131 @@
-Return-Path: <linux-kernel+bounces-844269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92CEABC16A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 14:53:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F372BC16A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 14:53:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 18A5E34EF1A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 12:53:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F146219A188D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 12:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7FF2DFA27;
-	Tue,  7 Oct 2025 12:53:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DEDB2DF71B;
+	Tue,  7 Oct 2025 12:53:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vrf2TL8Q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YYxZEMxS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E84921FF48;
-	Tue,  7 Oct 2025 12:53:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91BC821FF48
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 12:53:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759841607; cv=none; b=RCEyb09vMoMt1mn/PrFSFdKQ1YXbj3PMwT3/jfd68F+5bJFXCmJB3jQHe45/++6zMzHywR+kH7W3I6+r4nTAmumtmtWTb5TefWGFm1LDEvvAf5NiR79YjFJK4iGweAZxLn/XDqr9x+++8IbbRDyBxpKwSuNHSa9MsafLhDXZops=
+	t=1759841599; cv=none; b=HQVIKELZX77n2lIPxgMlOsF44lkWqo1E8q2ovz3YFgI9g1V05aSJW1nqBpAsBDI8gfyvrUX06OMTT5gYjRFZY550COW4Jl9PvgQCeXEu00GSsjQ7HJBOkaG2ITTIlpPz1MwRAWzSSlg9vZlbyy7E8t7SYVmRN+C/NrveQmCnAWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759841607; c=relaxed/simple;
-	bh=JPWlmf592WX06I9M3tsj+KikVBlunSp1rDaNErH1gr4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=AVPS5dQlqi/U1e3JeTW3cOcOrs+YMxttopLZZXInJWIHHv34byCHMRpMT/hxyvO4ylgRf4Z0vOSexjIxdX8AkGTyUIAcDd8+4g6O3j2hriv2cV0yGfU2Tvkx3uS34hLXMwh1oQ9NUrfjXIpATHwNpNaiH4iBl52kpPM9SZ97JU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vrf2TL8Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 91EE0C4CEF1;
-	Tue,  7 Oct 2025 12:53:26 +0000 (UTC)
+	s=arc-20240116; t=1759841599; c=relaxed/simple;
+	bh=X8QBC2ygzAStr37/k0zja2w0t/iYFCNEHKleB9Aj8g8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fHbTbGYemB/w8HO22zcLfVFzXIZzbAONbzldQkUO2AzvTyeh4hFrp2noXrcXwk49SaZlSXuPtdjB3HkzcW8Y1WtVEkRCYSUQbzwwtE8A9TW5RtYulT5EU7nj3jPPbc2iLYa1slTMsrygypQEJLNYNHn0TvM4/zQyLJM6JlEpIbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YYxZEMxS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB5FFC4CEF1;
+	Tue,  7 Oct 2025 12:53:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759841606;
-	bh=JPWlmf592WX06I9M3tsj+KikVBlunSp1rDaNErH1gr4=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=Vrf2TL8Q2KuaAHshwfpUWdbwV47WoWHISDc8KkXtrC9WNfssYxk7UT62RxzxQCjU+
-	 CcAUMpRfxu1N3zN1F8w6T5vz2vl5ng1ScjjnUZ6d++HvAQjYH64zmek3+EVk+Gq6Ws
-	 Quua36M1nxiijEyUEYQsfai8kE2MtQjdUC17em6A0WuUR3mR2LgpmmzAEmDlNqLwYp
-	 jBeLcVxv+AJ+jKoQO6IrHgXfySM1xfzbzYBj0m5PWNrm55g0L2mlBE0OBYb4q9ILZs
-	 AMsfiTpwGls3nrSRObhf3txncAfk6J5Ezor6yvU4GCesCjlTR6jYcenorMT3VvXum4
-	 nz49Tm+mFUZmg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8283FCCA476;
-	Tue,  7 Oct 2025 12:53:26 +0000 (UTC)
-From: Ali Khan via B4 Relay <devnull+abdulalikhan1337.gmail.com@kernel.org>
-Date: Tue, 07 Oct 2025 12:53:09 +0000
-Subject: [PATCH] ARM: OMAP2+: Fix falg->flag typo in omap_smc2()
+	s=k20201202; t=1759841599;
+	bh=X8QBC2ygzAStr37/k0zja2w0t/iYFCNEHKleB9Aj8g8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YYxZEMxSydTjlMaiN0S1ud0QxfJxxMlH5U/7Y4jSWM4UwkBexU18oSmgZWyFg1Otr
+	 Qf6shvUBRs5RwB7h1z1A61HqfbmhZDs5SDoFS2LYZkOV3enseKUwut2w/Opmogbmlu
+	 PW62H74S2/q7BKZMX9zkIr2ysQnjnPafMp+ptHQwuxyW1CkHqRIWBTRCSY4t8lyl4c
+	 todO5jXvegaOrl8xX6Ie+MmtIxoKF6gjWq4BbD37nhzvBj9vWwWLweB9eYKK/dq+9M
+	 NJz9zGyEWmjZJVKtBeGR1cclbGgNXUOoq9mcctvfodsTj4CZgLZr5ixtaGEbkKJpsz
+	 YcZ7VcIqM1/Lg==
+Date: Tue, 7 Oct 2025 14:53:15 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Demi Marie Obenour <demiobenour@gmail.com>, 
+	Linux kernel mailing list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] kernel: Prevent prctl(PR_SET_PDEATHSIG) from racing with
+ parent process exit
+Message-ID: <20251007-hochnehmen-zerreden-d17ad9147c7c@brauner>
+References: <20250913-fix-prctl-pdeathsig-race-v1-1-44e2eb426fe9@gmail.com>
+ <ef4878fe-3edf-4bd0-bb33-116ced1a4eb8@gmail.com>
+ <20250922154819.c3049158ca006e1561ff5dcb@linux-foundation.org>
+ <20250923120344.GA12377@redhat.com>
+ <CAGudoHED4nx8QT-yw-zdcUApUyvt2HCOR9c3SQ3tAm9J7Q1jEQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251007-omap-falg-fix-v1-1-545a1de74a0a@gmail.com>
-X-B4-Tracking: v=1; b=H4sIADQN5WgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1NDAwNz3fzcxALdtMScdN20zArd5ERD0zRDY7NkE0MzJaCegqJUoDDYvOj
- Y2loA1fbSbV8AAAA=
-To: Aaro Koskinen <aaro.koskinen@iki.fi>, 
- Andreas Kemnade <andreas@kemnade.info>, Kevin Hilman <khilman@baylibre.com>, 
- Roger Quadros <rogerq@kernel.org>, Tony Lindgren <tony@atomide.com>, 
- Russell King <linux@armlinux.org.uk>
-Cc: linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, 
- Jens Schleusener <Jens.Schleusener@fossies.org>, 
- Ali Khan <abdulalikhan1337@gmail.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759841606; l=1869;
- i=abdulalikhan1337@gmail.com; s=20251007; h=from:subject:message-id;
- bh=LO4l4xtXGeg/5kuikNmT+7wW9ZSxcTZ7VwPYOe2JJsc=;
- b=X2XrdnImlsmvmIP+rT9bIf5q8oh9/l/ssN5g7kMwZcb9W2GPAp/bQU6mmsmOCgNYJcnpOYrMR
- zpTqzrk9+cPCmAjP4dclW02HoeYB1Lx2r4qXbIEO9HAdqXxIGuMrSNd
-X-Developer-Key: i=abdulalikhan1337@gmail.com; a=ed25519;
- pk=MGvpDjvgp0SIh0jkqpHnh8BE7tUnGwAv3jhzd3o/xS4=
-X-Endpoint-Received: by B4 Relay for abdulalikhan1337@gmail.com/20251007
- with auth_id=538
-X-Original-From: Ali Khan <abdulalikhan1337@gmail.com>
-Reply-To: abdulalikhan1337@gmail.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHED4nx8QT-yw-zdcUApUyvt2HCOR9c3SQ3tAm9J7Q1jEQ@mail.gmail.com>
 
-From: Ali Khan <abdulalikhan1337@gmail.com>
+On Tue, Sep 23, 2025 at 03:39:06PM +0200, Mateusz Guzik wrote:
+> On Tue, Sep 23, 2025 at 2:05 PM Oleg Nesterov <oleg@redhat.com> wrote:
+> > As you correctly pointed out, forget_original_parent/prctl lack the necessary
+> > barries. So lets add the barriers instead of abusing tasklist? As for sys_prctl(),
+> > I think that ret-to-user-mode + enter-the-kernel-mode should act as a full
+> > barrier, so it only needs WRITE_ONCE()...
+> >
+> 
+> So I looked over this and I think I see why you are not eager to fix
+> the problem to begin with. ;)
+> 
+> I agree with reluctance to take tasklist lock to handle
+> PR_SET_PDEATHSIG, but I wonder if in practice this is used rarely
+> enough that the lock trip would not be a problem? It avoids any
+> modifications to the exit codepath.
 
-Fix a spelling error in the omap_smc2() function declaration
-and in a corresponding comment within the assembly source.
-This was reported via bugzilla in 2019.
+Unprivileged userspace can now just call that prctl() in a loop to
+hammer on tasklist_lock. Already possible with the subreaper stuff but I
+think we don't need to add more. At least for the subreaper stuff it has
+an actual meaningful use and not just plugs a theoretical problem.
 
-Reported-by: Jens Schleusener <Jens.Schleusener@fossies.org>
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=205891
-Signed-off-by: Ali Khan <abdulalikhan1337@gmail.com>
----
- arch/arm/mach-omap2/omap-secure.h | 2 +-
- arch/arm/mach-omap2/omap-smc.S    | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> By barriers I presume you meant smp_mb() between
+> RCU_INIT_POINTER(t->real_parent, reaper) and
+> READ_ONCE(t->pdeath_signal) in forget_original_parent. That's very
+> nasty as the full fence is quite expensive. This could be done with
+> just one fence for the entire call by iterating the list twice, but
+> that's still preferably avoided.
+> 
+> > Or perhaps user-space can do something else to sync with the exiting parent
+> > instead of using getppid() ?
+> >
+> 
+> I never put any thought concerning this mechanism, I do think it
+> nicely showcases the prctl at hand is kind of crap. The non-crap
+> version would pass the PID you think your parent is, so that you do
+> this race-free. I don't know if makes any sense to add this.
 
-diff --git a/arch/arm/mach-omap2/omap-secure.h b/arch/arm/mach-omap2/omap-secure.h
-index 2517c4a5a0e2..04b4ba0f59ab 100644
---- a/arch/arm/mach-omap2/omap-secure.h
-+++ b/arch/arm/mach-omap2/omap-secure.h
-@@ -68,7 +68,7 @@ extern u32 omap_secure_dispatcher(u32 idx, u32 flag, u32 nargs,
- 				u32 arg1, u32 arg2, u32 arg3, u32 arg4);
- extern void omap_smccc_smc(u32 fn, u32 arg);
- extern void omap_smc1(u32 fn, u32 arg);
--extern u32 omap_smc2(u32 id, u32 falg, u32 pargs);
-+extern u32 omap_smc2(u32 id, u32 flag, u32 pargs);
- extern u32 omap_smc3(u32 id, u32 process, u32 flag, u32 pargs);
- extern int omap_secure_ram_reserve_memblock(void);
- extern u32 save_secure_ram_context(u32 args_pa);
-diff --git a/arch/arm/mach-omap2/omap-smc.S b/arch/arm/mach-omap2/omap-smc.S
-index 7376f528034d..fe3b5478200a 100644
---- a/arch/arm/mach-omap2/omap-smc.S
-+++ b/arch/arm/mach-omap2/omap-smc.S
-@@ -32,7 +32,7 @@ ENTRY(_omap_smc1)
- ENDPROC(_omap_smc1)
- 
- /**
-- * u32 omap_smc2(u32 id, u32 falg, u32 pargs)
-+ * u32 omap_smc2(u32 id, u32 flag, u32 pargs)
-  * Low level common routine for secure HAL and PPA APIs.
-  * @id: Application ID of HAL APIs
-  * @flag: Flag to indicate the criticality of operation
+I see that stuff already made it into the tree. I strongly dislike
+adding more tasklist_lock usage. All for a theoretical race with limited
+impact.
 
----
-base-commit: 07e27ad16399afcd693be20211b0dfae63e0615f
-change-id: 20251007-omap-falg-fix-ca15f136c416
+If I'd seen this sooner I would have NAKed this out of existence.
 
-Best regards,
--- 
-Ali Khan <abdulalikhan1337@gmail.com>
-
-
+> 
+> I'm wondering if the fact that tasklist is write-locked in that code
+> path could be utilized to synchronize this in a matter other than
+> taking it.
+> 
+> pseudo-code wise, something like this:
+> WRITE_ONCE(me->pdeath_signal, arg2);
+> /* publish the above store and load the lock after */
+> smb_mb();
+> /* here spin waiting until tasklist_lock is not write-locked */
+> smb_rmb();
+> 
+> Unless I'm missing something this should provide the guarantee you see
+> the updated parent, if any.
+> 
+> I don't see a routine to do it though and knowing memory barriers
+> there might be some bullshit hiding there making this not work, so not
+> my first choice unless someone with more memory barrier clue can chime
+> in.
 
