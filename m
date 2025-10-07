@@ -1,164 +1,180 @@
-Return-Path: <linux-kernel+bounces-844507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C951BC21AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:22:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 376FDBC2159
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:18:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C91D44F6B72
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:22:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DE38D4F6AB6
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:18:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 482E92E8894;
-	Tue,  7 Oct 2025 16:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PV3YpeQe"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AFD22E7BC1;
+	Tue,  7 Oct 2025 16:18:30 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F2F2E7F13
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 16:22:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71FD214228
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 16:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759854150; cv=none; b=RBDcPNj1CpJTlHnp+WpeWrRRhyixmd+m21QUIDEV9GcFC+5A2Mz26EzjOZ8dcgIjBFF7fXZtDh2LojcjfJV/JYYtPv7jp1wuKa54tXKQ2yFRm3Hu6M2ixuYwPp7ldvCL0W0KA9sWfqnBBfrl5BPF2eTk4IlphwYU23p9f7dqOsk=
+	t=1759853909; cv=none; b=W5DOqkU4xNvRlGQsId9QHgulTVOZLkRzHZnH5nyv9rqRxBm63lJRdxvodHVbBoslg6wlA+NmDA5wrHVcDz1Etr+dl9dURn1vLkpSxWipdEWq5WiMd4mOYmQL/tOHN6wwfmb0E14MPRBeaLCP8rcVh9Y3PnAQNTzyqcUvegFxoDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759854150; c=relaxed/simple;
-	bh=jNPXFguZ0o33eieY8lz73vZNTUwXVK/ZZse4W5W/FWs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tde95MDl3Uyvir0+dH303LbS6mC36BeKxysv0JMk/42nOkKqZYZznIOgNDcHEJYWh2GZc2vnBrIXpLNZ+5K4RvFpq4TN4RtYd3KM0mxOIkL/Jg2aWF9bdRfzDwauttPwWH+kBdikFJ+JBLubGd7X4qOdvG7Fq2F5vVVLQX3lG2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PV3YpeQe; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b593def09e3so4787487a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 09:22:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759854148; x=1760458948; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PpoHs7x3DMAGLg3gdog2cHx5D9ViCBx9xQddbSTGLHY=;
-        b=PV3YpeQeTFIl2wsKaDZByDBNmRKdoqol6WSHRz6SdDnrLV4MyaXQvyQiByFh0spgCS
-         +ScbZJhGvjgjQ9cVpBBh+gmTD4xoEqR6JojPfsJ45t8KRytjwqcATnSuyxCB58AxBxF7
-         nvsuGq9x6WSIp2ogFhLc6GS6/DOeEvshGMEGZx0FOrHYyMsb3666X3GCb2vlUwKoJJ1R
-         2bmlNDQrsW6x9b8rzXD7TEezTFZL+ZVHu0wbp6bFunpDkxaD11ldpB1y8tpumpak4/Rp
-         IdGzOzk4+GDtwcKGwVBcKaQ6Fyvj/jqz/q3HHBUQAwSla9MWZYAMEdoFlVU1TUwFBpL2
-         d25g==
+	s=arc-20240116; t=1759853909; c=relaxed/simple;
+	bh=/A8IlGR2aPRQk/7uCzF0JMnWO7ZBfWRgr4joBxiC+8w=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=nfooOHGJeCk158aZJpMRFYb1/6CWxOsASYmh2YbSL1iZeDYcG3ObDNbju6AinNYkAPk7zneP8RY1SXGalPht+I8guELQ4NW0OMsjA4orjmyf3+phdTRe6Aw/iTf4ZxHbOS+LJuyW7OXSuAeGbE6/mdK4SqNsAEQoJIqstS2NtoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-42a076e4f9eso77328145ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 09:18:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759854148; x=1760458948;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PpoHs7x3DMAGLg3gdog2cHx5D9ViCBx9xQddbSTGLHY=;
-        b=N6b0uNoy2VpqO3qAFyEYoz8KqTJCVDghrcCxn4zcxNXVF1QfeNimi2vSplquUVE/d0
-         vPGC2aV+Nr4wrZo0yctH1RfRUd/oCrRYdy7QrHEMEIFwT+lbvPblnzGM8Q34ZrVhFm3H
-         3AG6xnu/gaH50jxanUXCbbnDi56ijrVW0v2x8ghMTCNKdXfW2sUd3vHr4xDC0cOtSkDF
-         N0jOm4IJXBzxc+BdZrJ8Z9gNgN7rUUPEmXkK1wu69Vj9kuS5c0czbWWgG0ANmCDIz/ZX
-         OKQpLGu6TohLIiMPRv2Y/VVZarJ38szdeftCQpdYtnohZNK4UNbIGWExLC76Y6lqx7EW
-         Q9AQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXSQQL2sv8AuLVN6aIPzTbMNAr0+KSbfTByX29muXMk1Jx8Q+fljl93o3Guu87MqPgHyoSnQTMKUMDHrfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yynv2NBOLgTyeEToP/g6dcptdFxjnXC1weNNUS8Ze7hJxjZDPg/
-	hKjDFp8vhKeBJwJz6GIRd80Bnf22Iok9EY16RSSaPOKGG+sReqCzPoig
-X-Gm-Gg: ASbGncu4uSGDbP4TqvMqrCxEP7vfV+u4oSGj8c7Ul/9fNBUOhNamCTL3eLp9YroqH2J
-	BhWuCjBgN4fYg3vc1nvWt4dUnh6z4yQM1WGTxt8gLM4VlYUXi4dRzvIOahueas1cZ+QrMkJaNSC
-	3noy5DOT7lqqCYMq0Qz22wwcwY9uL1bKn0s4F+Pd9pkr0WBGyzB2/abeX4+bE2P7Ky8UBhR8uF4
-	xaX32SbMLMUPube75VtzYS1YEMLHtm3nw3C2AP56Lc1eurTDUPuxoj/mNo/1V5yNXmEKMTj6YTt
-	+mq3Xkf3HHsBmXI/cUxBLx6UVFIUJ1yVjVyL1u8SntvDygcbnIvVSSOit+r1MoekHX9Z9G19xFA
-	3YYEklk9mZweNnw1Fze/758u5MGNBAJKjOjCOPgRBguTGcxCxQJclELWUjy5OQIs=
-X-Google-Smtp-Source: AGHT+IEVmC+M/InRT3VdaLJRW/KctK/jw/7e7suEc5r/fdcvZSXq5B54eCtA1zk17y2IKaq6ovlUJw==
-X-Received: by 2002:a17:90b:1e0c:b0:32e:87fa:d975 with SMTP id 98e67ed59e1d1-33b513ebbedmr59703a91.34.1759854147989;
-        Tue, 07 Oct 2025 09:22:27 -0700 (PDT)
-Received: from rakuram-MSI.. ([2405:201:d027:f04e:d2f9:a2da:e7d:3e96])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339ee0f830fsm1431733a91.5.2025.10.07.09.22.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 09:22:27 -0700 (PDT)
-From: Rakuram Eswaran <rakuram.e96@gmail.com>
-To: ulf.hansson@linaro.org
-Cc: zhoubinbin@loongson.cn,
-	u.kleine-koenig@baylibre.com,
-	chenhuacai@kernel.org,
-	david.hunter.linux@gmail.com,
-	skhan@linuxfoundation.org,
-	khalid@kernel.org,
-	linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rakuram.e96@gmail.com,
-	linux-kernel-mentees@lists.linux.dev,
-	kernel test robot <lkp@intel.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: [PATCH] mmc: pxamci: Fix passing NULL to PTR_ERR() in pxamci_probe()
-Date: Tue,  7 Oct 2025 21:47:44 +0530
-Message-ID: <20251007161948.12442-1-rakuram.e96@gmail.com>
-X-Mailer: git-send-email 2.48.1
+        d=1e100.net; s=20230601; t=1759853907; x=1760458707;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lZQxPVH9aOC3z7g2ZE6k7k0QRTdiI3Cxj6W4vp3imfE=;
+        b=dx5CRLU9P1VB3Vti2iK2mJkd7yyEEXQ2DLPBjO00IXZyZqbcCqBel8FNCmBuPxdqyg
+         FVxIlawMrlr3eEYLPpcFAjfoJDRGBbDEOE500vgMfHGccPVKJo8As64V1SX9iJnUta5/
+         oMYqxPslRBtJ6tuwjsIPuWDgPjXfU6CvOa66s2bP4cPuGMJKujJBIg9IshSahQ1+B51I
+         VWeaGQdVy57ec/Tlp0ukPEV1UvQLkp5+KyhrB94/AFYCbOm33UZY2l3dwi+LYE9yjcXa
+         0NgYCyCvAfm+q2KlGgtE3olFrB3b4oTdcXiQlWj0BO3kypibeYPpXkla37mf6H3r9UJQ
+         XQKw==
+X-Forwarded-Encrypted: i=1; AJvYcCUm27KzL2U9KR5dzFTe/Z4hyXdL1d0NGHPYMvSok+Zu++OTNLgMfh8rqS5VYevvI/1bAO8tByvLxXhp944=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6O8W6oTmZkmjiwEesoMJZAwJ7TaWcBcqSd3bnJBnDdL+GiglV
+	70DQgQu5Na7458kcOglimR7VZ6B5TI/94LW7jO5gP1G2wJsZ8WMjHhlP3DcaV5tEvvoIIzGwapA
+	twBSB3OqGZsma8tUExFfNx9a9lGneTd8cgeExW+pASnuqikulbwacMOpGMow=
+X-Google-Smtp-Source: AGHT+IFYFag4k6egAe1JboWcm0XVijHFYgmBfoEL7zj+T1IXkXH/oCA1DCyFKaPaVedHkjKv4iGGe0COh+UGJRyYm1971qEF3neH
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1a6d:b0:42e:6e45:e0a3 with SMTP id
+ e9e14a558f8ab-42e7acd296dmr219474365ab.2.1759853906965; Tue, 07 Oct 2025
+ 09:18:26 -0700 (PDT)
+Date: Tue, 07 Oct 2025 09:18:26 -0700
+In-Reply-To: <681c8009.050a0220.654ca.0000.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68e53d52.a00a0220.298cc0.047d.GAE@google.com>
+Subject: Re: [syzbot] [perf?] WARNING in __perf_event_overflow (2)
+From: syzbot <syzbot+2524754f17993441bf66@syzkaller.appspotmail.com>
+To: acme@kernel.org, adrian.hunter@intel.com, 
+	alexander.shishkin@linux.intel.com, irogers@google.com, jolsa@kernel.org, 
+	kan.liang@linux.intel.com, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, mark.rutland@arm.com, mingo@redhat.com, 
+	namhyung@kernel.org, netdev@vger.kernel.org, peterz@infradead.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Smatch reported:
-drivers/mmc/host/pxamci.c:709 pxamci_probe() warn: passing zero to 'PTR_ERR'
+syzbot has found a reproducer for the following issue on:
 
-Case 1:
-When dma_request_chan() fails, host->dma_chan_rx is an ERR_PTR(),
-but it is reset to NULL before using PTR_ERR(), resulting in PTR_ERR(0).
-This mistakenly returns 0 instead of the real error code.
+HEAD commit:    de7342228b73 bpf: Finish constification of 1st parameter o..
+git tree:       bpf-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=16e75a7c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1e0e0bf7e51565cd
+dashboard link: https://syzkaller.appspot.com/bug?extid=2524754f17993441bf66
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=167761e2580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16b941e2580000
 
-Case 2:
-When devm_clk_get() fails, host->clk is an ERR_PTR() resulting in the similar
-issue like case 1. 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/48d49cec8205/disk-de734222.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/0c197aec9229/vmlinux-de734222.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7f7872725138/bzImage-de734222.xz
 
-Store the error code before nullifying the pointers in both the cases.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2524754f17993441bf66@syzkaller.appspotmail.com
 
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/r/202510041841.pRlunIfl-lkp@intel.com/
-Fixes: 58c40f3faf742c ("mmc: pxamci: Use devm_mmc_alloc_host() helper")
-Signed-off-by: Rakuram Eswaran <rakuram.e96@gmail.com>
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 6380 at kernel/events/core.c:10369 __perf_event_overflow+0xb3b/0xe40 kernel/events/core.c:10369
+Modules linked in:
+CPU: 1 UID: 0 PID: 6380 Comm: syz.3.105 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+RIP: 0010:__perf_event_overflow+0xb3b/0xe40 kernel/events/core.c:10369
+Code: 08 4c 89 f7 e8 a6 f9 34 00 4d 89 3e e9 bc fa ff ff 48 c7 44 24 40 00 00 00 00 e8 d0 55 cf ff e9 1c fe ff ff e8 c6 55 cf ff 90 <0f> 0b 90 e9 2d ff ff ff e8 b8 55 cf ff 48 c7 c7 a0 fa 73 8b e8 ec
+RSP: 0018:ffffc9000afd74c0 EFLAGS: 00010293
+RAX: ffffffff81efce8a RBX: 1ffff1100b67a3b5 RCX: ffff8880572d0000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc9000afd75d0 R08: ffff88805b3d1b4f R09: 1ffff1100b67a369
+R10: dffffc0000000000 R11: ffffed100b67a36a R12: dffffc0000000000
+R13: ffff88805b3d1900 R14: ffff88805b3d1b48 R15: 0000000000000000
+FS:  00007fd06a42e6c0(0000) GS:ffff888125e27000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 00000000114bc000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ perf_swevent_overflow kernel/events/core.c:10467 [inline]
+ perf_swevent_event+0x2f4/0x5e0 kernel/events/core.c:-1
+ do_perf_sw_event kernel/events/core.c:10607 [inline]
+ ___perf_sw_event+0x4a1/0x700 kernel/events/core.c:10634
+ __perf_sw_event+0xfa/0x1a0 kernel/events/core.c:10646
+ perf_sw_event include/linux/perf_event.h:1596 [inline]
+ do_user_addr_fault+0x12d9/0x1380 arch/x86/mm/fault.c:1283
+ handle_page_fault arch/x86/mm/fault.c:1476 [inline]
+ exc_page_fault+0x82/0x100 arch/x86/mm/fault.c:1532
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+RIP: 0010:rep_movs_alternative+0x4a/0x90 arch/x86/lib/copy_user_64.S:74
+Code: 35 04 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 8b 06 48 89 07 48 83 c6 08 48 83 c7 08 83 e9 08 74 db 83 f9 08 73 e8 eb c5 <f3> a4 e9 4f 35 04 00 48 8b 06 48 89 07 48 8d 47 08 48 83 e0 f8 48
+RSP: 0018:ffffc9000afd7af0 EFLAGS: 00050202
+RAX: 00007ffffffff001 RBX: 0000000000000060 RCX: 0000000000000060
+RDX: 0000000000000001 RSI: 0000000000000000 RDI: ffffc9000af0d060
+RBP: 0000000000000000 R08: ffffc9000af0d0bf R09: 1ffff920015e1a17
+R10: dffffc0000000000 R11: fffff520015e1a18 R12: ffffc9000af0d060
+R13: dffffc0000000000 R14: ffffc9000af0d060 R15: 0000000000000000
+ copy_user_generic arch/x86/include/asm/uaccess_64.h:126 [inline]
+ raw_copy_from_user arch/x86/include/asm/uaccess_64.h:141 [inline]
+ _inline_copy_from_user include/linux/uaccess.h:178 [inline]
+ _copy_from_user+0x7a/0xb0 lib/usercopy.c:18
+ copy_from_user include/linux/uaccess.h:212 [inline]
+ copy_from_bpfptr_offset include/linux/bpfptr.h:53 [inline]
+ copy_from_bpfptr+0x5c/0x90 include/linux/bpfptr.h:59
+ bpf_prog_load+0xa83/0x19e0 kernel/bpf/syscall.c:2992
+ __sys_bpf+0x507/0x860 kernel/bpf/syscall.c:6134
+ __do_sys_bpf kernel/bpf/syscall.c:6244 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:6242 [inline]
+ __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:6242
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fd06958eec9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fd06a42e038 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 00007fd0697e5fa0 RCX: 00007fd06958eec9
+RDX: 0000000000000094 RSI: 00002000000000c0 RDI: 0000000000000005
+RBP: 00007fd069611f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fd0697e6038 R14: 00007fd0697e5fa0 R15: 00007ffcf5bcab18
+ </TASK>
+----------------
+Code disassembly (best guess):
+   0:	35 04 00 66 2e       	xor    $0x2e660004,%eax
+   5:	0f 1f 84 00 00 00 00 	nopl   0x0(%rax,%rax,1)
+   c:	00
+   d:	0f 1f 00             	nopl   (%rax)
+  10:	48 8b 06             	mov    (%rsi),%rax
+  13:	48 89 07             	mov    %rax,(%rdi)
+  16:	48 83 c6 08          	add    $0x8,%rsi
+  1a:	48 83 c7 08          	add    $0x8,%rdi
+  1e:	83 e9 08             	sub    $0x8,%ecx
+  21:	74 db                	je     0xfffffffe
+  23:	83 f9 08             	cmp    $0x8,%ecx
+  26:	73 e8                	jae    0x10
+  28:	eb c5                	jmp    0xffffffef
+* 2a:	f3 a4                	rep movsb %ds:(%rsi),%es:(%rdi) <-- trapping instruction
+  2c:	e9 4f 35 04 00       	jmp    0x43580
+  31:	48 8b 06             	mov    (%rsi),%rax
+  34:	48 89 07             	mov    %rax,(%rdi)
+  37:	48 8d 47 08          	lea    0x8(%rdi),%rax
+  3b:	48 83 e0 f8          	and    $0xfffffffffffffff8,%rax
+  3f:	48                   	rex.W
+
+
 ---
-
-Build and Analysis:
-This patch was compiled against the configuration file reported by
-0day CI in the above link (config: s390-randconfig-r071-20251004) using
-`s390x-linux-gnu-gcc (Ubuntu 14.2.0-19ubuntu2) 14.2.0`. 
-
-Static analysis was performed with Smatch to ensure the reported warning 
-no longer reproduces after applying this fix.
-
-Command used for verification:
-  ARCH=s390 CROSS_COMPILE=s390x-linux-gnu- \
-  ~/project/smatch/smatch_scripts/kchecker ./drivers/mmc/host/pxamci.c
-
- drivers/mmc/host/pxamci.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mmc/host/pxamci.c b/drivers/mmc/host/pxamci.c
-index 26d03352af63..4fab693d3b32 100644
---- a/drivers/mmc/host/pxamci.c
-+++ b/drivers/mmc/host/pxamci.c
-@@ -653,8 +653,9 @@ static int pxamci_probe(struct platform_device *pdev)
- 
- 	host->clk = devm_clk_get(dev, NULL);
- 	if (IS_ERR(host->clk)) {
-+		ret = PTR_ERR(host->clk);
- 		host->clk = NULL;
--		return PTR_ERR(host->clk);
-+		return ret;
- 	}
- 
- 	host->clkrate = clk_get_rate(host->clk);
-@@ -705,8 +706,9 @@ static int pxamci_probe(struct platform_device *pdev)
- 
- 	host->dma_chan_rx = dma_request_chan(dev, "rx");
- 	if (IS_ERR(host->dma_chan_rx)) {
-+		ret = PTR_ERR(host->dma_chan_rx);
- 		host->dma_chan_rx = NULL;
--		return dev_err_probe(dev, PTR_ERR(host->dma_chan_rx),
-+		return dev_err_probe(dev, ret,
- 				     "unable to request rx dma channel\n");
- 	}
- 
--- 
-2.48.1
-
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
