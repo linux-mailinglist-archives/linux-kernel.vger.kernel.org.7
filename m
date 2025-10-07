@@ -1,192 +1,376 @@
-Return-Path: <linux-kernel+bounces-844067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83EC0BC0EC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:51:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 477FBBC0ED3
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:52:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CF1E3B8710
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:51:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26CFD1882917
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:53:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378E8262FD7;
-	Tue,  7 Oct 2025 09:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD692528FD;
+	Tue,  7 Oct 2025 09:52:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Dnwj/8Pa";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Z0OLcOkB";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Dnwj/8Pa";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Z0OLcOkB"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="POBoqFT3"
+Received: from sonic308-54.consmr.mail.gq1.yahoo.com (sonic308-54.consmr.mail.gq1.yahoo.com [98.137.68.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078DC1E5B94
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 09:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B03246BF
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 09:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.68.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759830695; cv=none; b=px9ciygVo4DbOtIc62+UocP8KiQYMqWg/1j1cJ4EuhwKMeTmIXG2a4YZk9Xvlg/E2bwk1NKdAJkA5Hdl/Utg5X9BmlRHBVRLl/0ZhAj6atLHZ+n4AB05qasj9kAvETvYOrw8sqJCjdbJnbttX2bGFAmN1yPVyFbNTN7Y0jiO70M=
+	t=1759830751; cv=none; b=rQtkiZ7gXPDqmpitJGNdY/3AQhGVfTCO5m4nNnG5nmlyXAZeknKOfBPo1uAqTQzF3af/Bcg7TUPyoAhRVlN2bw9UEvW9ugVcBjTEjWLM15jTc0rjceYBFhrwV1gFdFIMOZ4RTn2nDsz3GdFREe1I8ueEuR+t8IKVGO7TuK7uOgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759830695; c=relaxed/simple;
-	bh=N4TqPLvCylts6kJn1Yyifs5XQBQjcyPhMM9Gq/YcQ0g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N0aRIrBVv0pYOUdJjC0uUWEgnXrf9hP4RgLFW9GySuJA6n6wn4g75z3FSLdP5MC8uz2YctIvkCQkZj2r8QV/800vBPtoCLknvMbM6TpM4VUwH0NrQDqLm0e9HM3IndipgWsfSPscX4ZimB8vJZBRdGshovOvlij1VZnEgCtq4Y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Dnwj/8Pa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Z0OLcOkB; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Dnwj/8Pa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Z0OLcOkB; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 268BE1F7B7;
-	Tue,  7 Oct 2025 09:51:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1759830692; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7hXPaqmmq2s2Y3lyXsf2ahFy73j+9/j9vaK8FcUsZ9k=;
-	b=Dnwj/8PaBsqiZdcg3fy/YHJKs9ngFLes8ErwGbAKwBpxAxGkosdYZcymQbd2ezu+WTVvOh
-	e1QpViuPhxgMQQ4yLfD/FrYUHHj4gsPvzEilFDUTCJLS2DVWJQMLmx6rWp5rZxeiOdx6Gy
-	SZDjIITrSeI0cg8Lu+FveuMjro5lrDI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1759830692;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7hXPaqmmq2s2Y3lyXsf2ahFy73j+9/j9vaK8FcUsZ9k=;
-	b=Z0OLcOkBD4fuK/FQWLJqP2gC9h+WJ8a+X/Fg7IIduo2zVzsSLl3DRthWmTP8ohtMoNqrsO
-	Iz2K8LoWU5mRJQDA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1759830692; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7hXPaqmmq2s2Y3lyXsf2ahFy73j+9/j9vaK8FcUsZ9k=;
-	b=Dnwj/8PaBsqiZdcg3fy/YHJKs9ngFLes8ErwGbAKwBpxAxGkosdYZcymQbd2ezu+WTVvOh
-	e1QpViuPhxgMQQ4yLfD/FrYUHHj4gsPvzEilFDUTCJLS2DVWJQMLmx6rWp5rZxeiOdx6Gy
-	SZDjIITrSeI0cg8Lu+FveuMjro5lrDI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1759830692;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7hXPaqmmq2s2Y3lyXsf2ahFy73j+9/j9vaK8FcUsZ9k=;
-	b=Z0OLcOkBD4fuK/FQWLJqP2gC9h+WJ8a+X/Fg7IIduo2zVzsSLl3DRthWmTP8ohtMoNqrsO
-	Iz2K8LoWU5mRJQDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F2F1013AAC;
-	Tue,  7 Oct 2025 09:51:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id n320OqPi5Gi2VgAAD6G6ig
-	(envelope-from <hare@suse.de>); Tue, 07 Oct 2025 09:51:31 +0000
-Message-ID: <8e5a3ff3-d17a-488f-97fb-3904684edb47@suse.de>
-Date: Tue, 7 Oct 2025 11:51:31 +0200
+	s=arc-20240116; t=1759830751; c=relaxed/simple;
+	bh=U+JtLC3uIarSLTaO/9RtEwe/za03BZBuu5rfpKpvycs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ZVw+b7d+4V5iQx1Mic80/1Q+VRbuWkBXZjFgkEx8O7hJ5+U2x47wMZflVkp5zmNEjKefwQmpl84KEbij/myohbF+2jHQ4MALFICciZbWiG5W/HCDyd0ftEAwruZ6WPBxGqVd82dHFEutX1jzep3PJTrEFqwcQLdcLNrWrcuneDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=POBoqFT3; arc=none smtp.client-ip=98.137.68.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1759830743; bh=rmLbHG+dji4lQf0mPiF/jLd006I4IRGCWQeXYf404SY=; h=Subject:From:To:Cc:Date:In-Reply-To:References:From:Subject:Reply-To; b=POBoqFT38nZYaAsa1cl5QFzresRwrI9OMTgQwNiSP9ru+PJ3FDXMPKGfEeuBidXpyQnOnI6h8a+9ls84BJ6M9PDspWFBsuxPih0ZclyuSzabqNwmigMJWpyqjb9k6ht16bRtDjtSa8i8/2UH23vH9KCDdhc5D4VbBdDnWNvK5MJb4/6WMpDGsnrmMr+GELwqJyPiQCzIBWgE+k6V4zySL5aL5EbDz9T/Hd/QIvnRcymnhIMgjypvz7x/QAdAIA+Kw/pzfi25Syv737Pj5KCMWqPJWZjsmwuCyNHQ9VvLrmSkEbEBZhMeVrFA9Xc9iBcAJ7DcUrvKFXws8eTSioUkZA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1759830743; bh=9qZnKPIFgSiWsAn3aqQiD2SeCTYMRo+3xb+dRckQaqO=; h=X-Sonic-MF:Subject:From:To:Date:From:Subject; b=dmVccrDo5YrNWP1m0bA9pIO4lBxa2+NdfJ9Wq4G6WB5ClzhZ3M7OGj9TyA0kxyWdLpkmalIcGglb7IJEt8ydcS2vhpTFsk+2xJr4Hq9KQ4keZWeopc+B8Vz/txY3xtiJi5OvD3I5u7djsEqgTO3s4jer3p8SNN0DnJprIOy7eudLatWnqov9Wm0t4iyFBGTsIoti/xMRDpllA1bc80ua/RrAtPF4L0MEEuH8ZgBVqL9s16tnq6bk64jCnljGUhFJ64JgAlLfJtYNJi9rh7aGDFCNcBNfJ9T5cd1ZDkYGSnOH/8pm3TN7jqK541/AVk6SeVcq0of21G4qHO5bQww4kw==
+X-YMail-OSG: dMM33pEVM1kj_XUtIle5aWRKkm3ORbnfL4qq1GuV_3k1ggv9EsCy902pJxAn3Ne
+ oAKjNkVwf0qj44Qsb2BOj3t861TZXxsC42bFcl24KEfRrxGhgXZT5Cdm_QQbZiM9I4DFZV5dxwAK
+ EpsAB0cgaAxaNr1ubDHG6REnXRVDBBobDzpifWPv4uksjsCpzPvnGL4UIbzcmkHcnkiVt8vTLgsY
+ vUBI2RIrzGor9MUNQYNBbzyaWpOAkIrUmXxW_enBnGXmKzZfoIBMkxY__tOwtZRPne_1Z9IwZdAC
+ h3uGKRCAJAOTJh8Zh24mNOLLizZaz5fbOzf8KisSbbKqc95eDWuiXTU3XTUBKnr.a8FkKGf_Hhxf
+ 9sLfOTCbf7V6xITXyUHZvcfrt.DsxdOHzFLPg4za6FU5SfoG8Z_1WQoLZzi8HsxVa49cHaUWF7Oc
+ 6sZZgJG6ODs74zGuGpUc8TpWsUHatdIIBjJjCeAMmljReErfsLxbNA_4BiDjN3QtQfMRahDEQe9N
+ 6rZzIfJqRTaMvq5s3tzbYjr11.iZBiGIkIJ7ICRw1qc6HBcidBNTWvh4Eyk4oAbYw8uP8flwYseF
+ ltfbr0SEhx2MkNo2o3ni0coCTN3WTyYcfS59CDP1Emzlnfry1B0xzVgy97F006u4FYaASrSU..mn
+ 09yo5nFdvtEF5J5VCvYWfioZU_FziSzWjMbsreAeSYLDv_B64Ggn6k1e1ACktrfEL8xZ_bzCndvT
+ OOoSgqagxC7O6EQMS5rXB7diAI24L8V007UxNUnAh68F3Gf5DFFAiB_jHiCnnbsdTJEggx4sx.2Y
+ Jt5dY739s28cx1AfXvexDuVkCeFdU0k0wjY7DSLEpMRVdrkm33afAuQ4tHSi9ZYmlGMEwjc3qcve
+ b2P7HvcyzJaade0uePIB4cPaUiBjIPRl1_6mlRFeG_pcRisIb.mhWm2biKuKxYgRrx_Qnw3_jCIN
+ LEKJ5DfNVXjenmjMrXZQ1fRufpLxNiY.7HkaSQ6sI09jOckSXB6Fp0kmNEnZV.PnFUTz0Q8sXI.S
+ K1_r8TN.OVv4N11_HnHSgacR9Gd91Z2U_SVg.6pALuWTVTnxhdstgL6Fq6gGGLMintpg4Rg6X_rP
+ onZJ4y.uuH07LmUswOZN6X13GEMxDlXET7OMFExUBSwwX7oPzDNf9dylArMCd_ggPtDk7V_gHWpw
+ Ec1.REeTD4rOwW_e.t6pqjh2IrHnt3fCEy.iTOKVEemUdacPKxSOfJoPHMV6QE_GX5lETEaElLl_
+ 1XKtQ.JjBXJ4PnBwlQevRZzF3E4vbeHlogis2nDFJDd0GZEfPWuu9aQWD_rNsim1tBJVmDWjo36E
+ .8DKQXKk5V.ET9Wj3ZjZ5.7XrI_WdxEYU8fGeHl7KioaKsVNmwieDnX1cKi8aHoqUP5yjY2trRuT
+ skUEtc1DEr50oOx84H2fObR4kgw4sfotVekCHQuRt8Lq7uHLFh50oabzGoa_KDp7m7Y85_Ww01eQ
+ StkdWycKRoyCSpH1TPXtbVUZrMfBtZ4FvjW3pDPcoEVgrr.BeMkPJhSfb_zwh4KI2fYE97lzYwzm
+ 08RSQlPBGGO7WkkG2Cid_IE5GeBmSpR0002MnbYZglI.WjQUaGbNxD6PZR0GKDLB.3OeGQNdLhmO
+ WcqjTs0FMfbrWtSK8eAsRxGjNB4jFOJBVofBj1IP3bgoD81mleKJQFU8SD8faVR7r2ybpoYZAp9G
+ rh9.Fhq8ThtJOnkjDTUgs8nUuyXkW8p5ATHr4m4AUApERTr13G0t7MX.qvSkYHXbMOedC38C.KtY
+ i8WWqelJIgTIfRfa1nx5P6OAqvE1Dv43xTQAH7TZ0sMZENnHBC.jfP40D4GL5peV2Nca721nPgL7
+ vaXX7qt0RZTCs2MbgJQZ1eSwz3pV730vLpXq19D8Rd0AU4vzqd5QH77H_fAU23ClSMQektxl63.K
+ L3STAkQTTY848aMBLWrYf9xesckhwefsWlsoG9q_IHWpFABcNOHU8l.y4OMchyVAiOulIVwa4pYa
+ eezfG1ts47m9ifC9MSIodjp9t1W42qNfEgkRHlaoFGCY8LCLrmMvUmDwiswgxnt8zH9f6ISe1qOy
+ F9uAgmwI8hrxxm1nekaTxahJgOKyVqVYd4NEy2mH9xeF2B94Fp0.fTAD0b0xD1VRFnRfYEgNmofQ
+ xljYvmsdVUzSVbdwcT.DIEd69Rpyi3J.kwk3IJ_Y9nRmmXiBAouxp80fmMkFDKkNzi6Nyrae.39G
+ Jh_tvPC3SnaKdyZPbALGlyr75af_5WIrsez2clEnMvfwDVnOT_wEkt3D01mKi
+X-Sonic-MF: <rubenru09@aol.com>
+X-Sonic-ID: 0ff5df7c-90dd-487b-baa9-3055bad4a296
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.gq1.yahoo.com with HTTP; Tue, 7 Oct 2025 09:52:23 +0000
+Received: by hermes--production-ir2-ccdb4f9c8-748zl (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 644e3e6e89d1f4de38a7c1902a4aae25;
+          Tue, 07 Oct 2025 09:52:17 +0000 (UTC)
+Message-ID: <c1c282fd64521f1cc675a53084683af745070697.camel@aol.com>
+Subject: Re: [PATCH] drm/gud: move plane init to gud_pipe.c
+From: Ruben Wauters <rubenru09@aol.com>
+To: Thomas Zimmermann <tzimmermann@suse.de>, Maarten Lankhorst
+	 <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Date: Tue, 07 Oct 2025 10:52:15 +0100
+In-Reply-To: <e0d81b43-22cf-4004-936f-2a1dae9d8741@suse.de>
+References: <20251004175900.15235-2-rubenru09.ref@aol.com>
+	 <20251004175900.15235-2-rubenru09@aol.com>
+	 <e0d81b43-22cf-4004-936f-2a1dae9d8741@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] nvme/tcp: handle tls partially sent records in
- write_space()
-To: Wilfred Mallawa <wilfred.opensource@gmail.com>,
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org
-Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
- John Fastabend <john.fastabend@gmail.com>, Jakub Kicinski <kuba@kernel.org>,
- Sabrina Dubroca <sd@queasysnail.net>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
-References: <20251007004634.38716-2-wilfred.opensource@gmail.com>
- <0bf649d5-112f-42a8-bc8d-6ef2199ed19d@suse.de>
- <339cbb66fbcd78d639d0d8463a3a67daf089f40d.camel@gmail.com>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <339cbb66fbcd78d639d0d8463a3a67daf089f40d.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	TAGGED_RCPT(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,kernel.dk,lst.de,grimberg.me,gmail.com,queasysnail.net,davemloft.net,google.com,redhat.com];
-	FREEMAIL_TO(0.00)[gmail.com,lists.infradead.org,vger.kernel.org];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -2.80
+X-Mailer: WebService/1.1.24562 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.aol
 
-On 10/7/25 11:24, Wilfred Mallawa wrote:
-> On Tue, 2025-10-07 at 07:19 +0200, Hannes Reinecke wrote:
->> On 10/7/25 02:46, Wilfred Mallawa wrote:
->>> From: Wilfred Mallawa <wilfred.mallawa@wdc.com>
->>>
->>
-> [...]
->> I wonder: Do we really need to check for a partially assembled
->> record,
->> or wouldn't it be easier to call queue->write_space() every time
->> here?
->> We sure would end up with executing the callback more often, but if
->> no
->> data is present it shouldn't do any harm.
->>
->> IE just use
->>
->> if (nvme_tcp_queue_tls(queue)
->>       queue->write_space(sk);
-> 
-> Hey Hannes,
-> 
-> This was my initial approach, but I figured using
-> tls_is_partially_sent_record() might be slightly more efficient. But if
-> we think that's negligible, happy to go with this approach (omitting
-> the partial record check).
-> 
-Please do.
-Performance testing on NVMe-TCP is notoriously tricky, so for now we
-really should not assume anything here.
-And it's making the patch _vastly_ simpler, _and_ we don't have to
-involve the networking folks here.
-We have a similar patch for the data_ready() function in nvmet_tcp(),
-and that seemed to work, too.
-Nit: we don't unset the 'NOSPACE' flag there. Can you check if that's
-really required? And, if it is, fixup nvmet_tcp() to unset it?
-Or, if not, modify your patch to not clear it?
+On Tue, 2025-10-07 at 11:17 +0200, Thomas Zimmermann wrote:
+> Hi Ruben,
+>=20
+> please see my comments below.
+>=20
+> Am 04.10.25 um 19:49 schrieb Ruben Wauters:
+> > gud_probe() currently is a quite large function that does a lot of
+> > different things, including USB detection, plane init, and several othe=
+r
+> > things.
+> >=20
+> > This patch moves the plane and crtc init into gud_plane_init() in
+> > gud_pipe.c, which is a more appropriate file for this. Associated
+> > variables and structs have also been moved to gud_pipe.c
+> >=20
+> > Signed-off-by: Ruben Wauters <rubenru09@aol.com>
+> > ---
+> > It was somewhat difficult to determine what exactly should be moved
+> > over, gud_probe() as a function quite a mess, so I need to figure out
+> > exactly how to split this one up.
+>=20
+> Agreed. The probe function looks really chaotic.
+>=20
+> I think that just moving CRTC and plane is a not enough. In ast and udl,=
+=20
+> we have functions that init the whole display pipeline from=20
+> drmm_mode_config_init() to _reset(). See [1] and [2] for examples. That=
+=20
+> would likely be a good model for gud as well, but gud's probe function=
+=20
+> mixes up pipeline init with other code.
+>=20
+> [1]=20
+> https://elixir.bootlin.com/linux/v6.17.1/source/drivers/gpu/drm/ast/ast_m=
+ode.c#L1005
+> [2]=20
+> https://elixir.bootlin.com/linux/v6.17.1/source/drivers/gpu/drm/udl/udl_m=
+odeset.c#L482
+>=20
+>=20
+> Looking over gud_probe, the following blocks are related to pipeline init=
+:
+>=20
+> - lines 466-469 [3]
+> - lines 486-489
+> - lines 558-565
+> - lines 590-599
+> - lines 610-623
+> - line 641
+>=20
+> [3]=20
+> https://gitlab.freedesktop.org/drm/misc/kernel/-/blob/drm-misc-next/drive=
+rs/gpu/drm/gud/gud_drv.c#L466
+>=20
+> I'd try to move these lines into a new helper that initializes the full=
+=20
+> modesetting pipeline.
+>=20
+> The other code that happens in between is either preparation or clean up=
+=20
+> and should be done before or after creating the pipeline.
 
-Cheers,
+These changes will probably required another patch/possibly even a
+patch series, so will be more extensive, as such they make take me
+longer to do as I consider the best way to go about it.
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+Ruben
+>=20
+>=20
+> >=20
+> > As an aside, I noticed that the driver doesn't have a version macro in
+> > gud_drv.c, and therefore is shown as 1.0.0. I was thinking of
+> > introducing a version, but I wanted to know how others generally deal
+> > with driver versions. I'm not 100% sure if it's *necessary* for GUD but
+> > it might be a good idea.
+>=20
+> I wouldn't bother at all about module versions. AFAIK no one cares about=
+=20
+> it anyway.
+>=20
+> Best regards
+> Thomas
+>=20
+> > ---
+> >   drivers/gpu/drm/gud/gud_drv.c      | 48 +-----------------------
+> >   drivers/gpu/drm/gud/gud_internal.h |  1 +
+> >   drivers/gpu/drm/gud/gud_pipe.c     | 60 +++++++++++++++++++++++++++++=
++
+> >   3 files changed, 62 insertions(+), 47 deletions(-)
+> >=20
+> > diff --git a/drivers/gpu/drm/gud/gud_drv.c b/drivers/gpu/drm/gud/gud_dr=
+v.c
+> > index b7345c8d823d..967c16479b5c 100644
+> > --- a/drivers/gpu/drm/gud/gud_drv.c
+> > +++ b/drivers/gpu/drm/gud/gud_drv.c
+> > @@ -16,7 +16,6 @@
+> >   #include <drm/clients/drm_client_setup.h>
+> >   #include <drm/drm_atomic_helper.h>
+> >   #include <drm/drm_blend.h>
+> > -#include <drm/drm_crtc_helper.h>
+> >   #include <drm/drm_damage_helper.h>
+> >   #include <drm/drm_debugfs.h>
+> >   #include <drm/drm_drv.h>
+> > @@ -338,43 +337,12 @@ static int gud_stats_debugfs(struct seq_file *m, =
+void *data)
+> >   	return 0;
+> >   }
+> >  =20
+> > -static const struct drm_crtc_helper_funcs gud_crtc_helper_funcs =3D {
+> > -	.atomic_check =3D drm_crtc_helper_atomic_check
+> > -};
+> > -
+> > -static const struct drm_crtc_funcs gud_crtc_funcs =3D {
+> > -	.reset =3D drm_atomic_helper_crtc_reset,
+> > -	.destroy =3D drm_crtc_cleanup,
+> > -	.set_config =3D drm_atomic_helper_set_config,
+> > -	.page_flip =3D drm_atomic_helper_page_flip,
+> > -	.atomic_duplicate_state =3D drm_atomic_helper_crtc_duplicate_state,
+> > -	.atomic_destroy_state =3D drm_atomic_helper_crtc_destroy_state,
+> > -};
+> > -
+> > -static const struct drm_plane_helper_funcs gud_plane_helper_funcs =3D =
+{
+> > -	DRM_GEM_SHADOW_PLANE_HELPER_FUNCS,
+> > -	.atomic_check =3D gud_plane_atomic_check,
+> > -	.atomic_update =3D gud_plane_atomic_update,
+> > -};
+> > -
+> > -static const struct drm_plane_funcs gud_plane_funcs =3D {
+> > -	.update_plane =3D drm_atomic_helper_update_plane,
+> > -	.disable_plane =3D drm_atomic_helper_disable_plane,
+> > -	.destroy =3D drm_plane_cleanup,
+> > -	DRM_GEM_SHADOW_PLANE_FUNCS,
+> > -};
+> > -
+> >   static const struct drm_mode_config_funcs gud_mode_config_funcs =3D {
+> >   	.fb_create =3D drm_gem_fb_create_with_dirty,
+> >   	.atomic_check =3D drm_atomic_helper_check,
+> >   	.atomic_commit =3D drm_atomic_helper_commit,
+> >   };
+> >  =20
+> > -static const u64 gud_plane_modifiers[] =3D {
+> > -	DRM_FORMAT_MOD_LINEAR,
+> > -	DRM_FORMAT_MOD_INVALID
+> > -};
+> > -
+> >   DEFINE_DRM_GEM_FOPS(gud_fops);
+> >  =20
+> >   static const struct drm_driver gud_drm_driver =3D {
+> > @@ -587,17 +555,10 @@ static int gud_probe(struct usb_interface *intf, =
+const struct usb_device_id *id)
+> >   			return -ENOMEM;
+> >   	}
+> >  =20
+> > -	ret =3D drm_universal_plane_init(drm, &gdrm->plane, 0,
+> > -				       &gud_plane_funcs,
+> > -				       formats, num_formats,
+> > -				       gud_plane_modifiers,
+> > -				       DRM_PLANE_TYPE_PRIMARY, NULL);
+> > +	ret =3D gud_plane_init(gdrm, formats, num_formats);
+> >   	if (ret)
+> >   		return ret;
+> >  =20
+> > -	drm_plane_helper_add(&gdrm->plane, &gud_plane_helper_funcs);
+> > -	drm_plane_enable_fb_damage_clips(&gdrm->plane);
+> > -
+> >   	devm_kfree(dev, formats);
+> >   	devm_kfree(dev, formats_dev);
+> >  =20
+> > @@ -607,13 +568,6 @@ static int gud_probe(struct usb_interface *intf, c=
+onst struct usb_device_id *id)
+> >   		return ret;
+> >   	}
+> >  =20
+> > -	ret =3D drm_crtc_init_with_planes(drm, &gdrm->crtc, &gdrm->plane, NUL=
+L,
+> > -					&gud_crtc_funcs, NULL);
+> > -	if (ret)
+> > -		return ret;
+> > -
+> > -	drm_crtc_helper_add(&gdrm->crtc, &gud_crtc_helper_funcs);
+> > -
+> >   	ret =3D gud_get_connectors(gdrm);
+> >   	if (ret) {
+> >   		dev_err(dev, "Failed to get connectors (error=3D%d)\n", ret);
+> > diff --git a/drivers/gpu/drm/gud/gud_internal.h b/drivers/gpu/drm/gud/g=
+ud_internal.h
+> > index d27c31648341..4a91aae61e50 100644
+> > --- a/drivers/gpu/drm/gud/gud_internal.h
+> > +++ b/drivers/gpu/drm/gud/gud_internal.h
+> > @@ -69,6 +69,7 @@ void gud_plane_atomic_update(struct drm_plane *plane,
+> >   int gud_connector_fill_properties(struct drm_connector_state *connect=
+or_state,
+> >   				  struct gud_property_req *properties);
+> >   int gud_get_connectors(struct gud_device *gdrm);
+> > +int gud_plane_init(struct gud_device *gdrm, u32 *formats, unsigned int=
+ num_formats);
+> >  =20
+> >   /* Driver internal fourcc transfer formats */
+> >   #define GUD_DRM_FORMAT_R1		0x00000122
+> > diff --git a/drivers/gpu/drm/gud/gud_pipe.c b/drivers/gpu/drm/gud/gud_p=
+ipe.c
+> > index 3a208e956dff..1f7af86b28fd 100644
+> > --- a/drivers/gpu/drm/gud/gud_pipe.c
+> > +++ b/drivers/gpu/drm/gud/gud_pipe.c
+> > @@ -10,6 +10,7 @@
+> >  =20
+> >   #include <drm/drm_atomic.h>
+> >   #include <drm/drm_connector.h>
+> > +#include <drm/drm_crtc_helper.h>
+> >   #include <drm/drm_damage_helper.h>
+> >   #include <drm/drm_drv.h>
+> >   #include <drm/drm_format_helper.h>
+> > @@ -450,6 +451,65 @@ static void gud_fb_handle_damage(struct gud_device=
+ *gdrm, struct drm_framebuffer
+> >   	gud_flush_damage(gdrm, fb, src, !fb->obj[0]->import_attach, damage);
+> >   }
+> >  =20
+> > +static const struct drm_plane_funcs gud_plane_funcs =3D {
+> > +	.update_plane =3D drm_atomic_helper_update_plane,
+> > +	.disable_plane =3D drm_atomic_helper_disable_plane,
+> > +	.destroy =3D drm_plane_cleanup,
+> > +	DRM_GEM_SHADOW_PLANE_FUNCS,
+> > +};
+> > +
+> > +static const struct drm_plane_helper_funcs gud_plane_helper_funcs =3D =
+{
+> > +	DRM_GEM_SHADOW_PLANE_HELPER_FUNCS,
+> > +	.atomic_check =3D gud_plane_atomic_check,
+> > +	.atomic_update =3D gud_plane_atomic_update,
+> > +};
+> > +
+> > +static const struct drm_crtc_helper_funcs gud_crtc_helper_funcs =3D {
+> > +	.atomic_check =3D drm_crtc_helper_atomic_check
+> > +};
+> > +
+> > +static const struct drm_crtc_funcs gud_crtc_funcs =3D {
+> > +	.reset =3D drm_atomic_helper_crtc_reset,
+> > +	.destroy =3D drm_crtc_cleanup,
+> > +	.set_config =3D drm_atomic_helper_set_config,
+> > +	.page_flip =3D drm_atomic_helper_page_flip,
+> > +	.atomic_duplicate_state =3D drm_atomic_helper_crtc_duplicate_state,
+> > +	.atomic_destroy_state =3D drm_atomic_helper_crtc_destroy_state,
+> > +};
+> > +
+> > +static const u64 gud_plane_modifiers[] =3D {
+> > +	DRM_FORMAT_MOD_LINEAR,
+> > +	DRM_FORMAT_MOD_INVALID
+> > +};
+> > +
+> > +int gud_plane_init(struct gud_device *gdrm, u32 *formats, unsigned int=
+ num_formats)
+> > +{
+> > +	struct drm_device *drm =3D &gdrm->drm;
+> > +	struct drm_plane *plane =3D &gdrm->plane;
+> > +	struct drm_crtc *crtc =3D &gdrm->crtc;
+> > +	int ret;
+> > +
+> > +	ret =3D drm_universal_plane_init(drm, plane, 0,
+> > +				       &gud_plane_funcs,
+> > +				       formats, num_formats,
+> > +				       gud_plane_modifiers,
+> > +				       DRM_PLANE_TYPE_PRIMARY, NULL);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	drm_plane_helper_add(plane, &gud_plane_helper_funcs);
+> > +	drm_plane_enable_fb_damage_clips(plane);
+> > +
+> > +	ret =3D drm_crtc_init_with_planes(drm, crtc, plane, NULL,
+> > +					&gud_crtc_funcs, NULL);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	drm_crtc_helper_add(crtc, &gud_crtc_helper_funcs);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >   int gud_plane_atomic_check(struct drm_plane *plane,
+> >   			   struct drm_atomic_state *state)
+> >   {
 
