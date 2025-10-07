@@ -1,170 +1,186 @@
-Return-Path: <linux-kernel+bounces-844861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E87A6BC2F4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 01:32:33 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73CDDBC2F51
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 01:32:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A320B3B56AC
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 23:32:32 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E4BA63477A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 23:32:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9740D34BA35;
-	Tue,  7 Oct 2025 23:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QMIq3V9x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C41125B687;
+	Tue,  7 Oct 2025 23:32:32 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E9E21D3CA
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 23:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB9823F42D
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 23:32:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759879945; cv=none; b=YZfQGp5+yrWAuBYmD/EdR6vkwPczwJ+clPyPNRvc4IBA8idC7kypmfB2VPIsxVdv+uKiu2AG8czalW4WIeFTgQobKiE3ff0njVMlG4YkUhYkYmy6ZNRkKppxuNfL/ikOcvVCyGTdv+g0/8Ga127qll8wHzlJ9u19UMF0IJuBQ1Y=
+	t=1759879951; cv=none; b=sKJBWMGBUkvso+ON8C/dos4zsqpUoq+tE11gtR+zWvOWJTD/rI/JJyAzLc8uD3jH+ri8TQIedD4NtGFAprHRnC9kL7NYHpnWXevyL/Y1MJ35zoqjxj2mXyzAHGiIIfYjd8M0TOOQfe3Xn29Wx5kwQ5lCqAvC45hSkeNSXRv47sI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759879945; c=relaxed/simple;
-	bh=bLQg2aOLe4NVfyI9GDwWK3IkQGghonCZb+jkOy5wtN8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PZ8CBMmZfN37IsIK6SXMCF8+PuZi6rSH7dPCt1Tr81TRmkAe4eQBzb4CUHtdY2MjJKlxa3Ib1dLXqi6SHHaEj4sDTstKTdX9wugXiLRrGMPd+wmu96Xrap1skX1XwlcIkiYIFdjgpSJ/iCR9bNz/2XrC6/rF30PkV/emFclMqqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QMIq3V9x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 857EBC2BC86
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 23:32:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759879944;
-	bh=bLQg2aOLe4NVfyI9GDwWK3IkQGghonCZb+jkOy5wtN8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=QMIq3V9xMPAPAnRodoA5rD0kwJH5acy3F7RNlaI/pyvazed67N1qxHBRz9QDtyP57
-	 Nv76zlMb9BLd1w93JxuLiwqN/vRsCUP3cn7J/msEScOzcSb0G8Hb8Zegyl1Km1fulE
-	 gqqYzSimKUncyCyyFFRg30d/pJaTLKJr2rLdwWCwlI4Wingewy9nmNHllFQ995/jBZ
-	 1nYMBTH35aQus+qiOiaO3iNnSwgpf1qZ8SH+nkKJvg68UEM8gPL7UyLCd1ctqrWH+q
-	 EmvN69Br12+ZxsTLs0jOzcBvnCu+zQze1abwESF3twE+eiRqdPEQvE8d8+yKix+eCa
-	 UKyQWvUeLYKhw==
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-71d6051aeafso73396837b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 16:32:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUp91qOlLqaBSE3K63FynubyAbknM4gbW9GG0kmejBM5XQWY6DGvj2l7GoW7omcdnYLn6E6EXVM4CW4sw4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDcUjMuUgSHTelysgFWa7t9C3yPE3PblrzZwhRb1z7RHoX9epY
-	2xpIgKIf0zu88sARIamInFzETGj3jwETErmuHGBpJzoau3BT0CTO7plBhXqz876Flzkh3OsCF4u
-	u8/5gRKRB72hPWfe7ch+r5gkKPFd62Umcbe7Cp7G25A==
-X-Google-Smtp-Source: AGHT+IF8Dg6uqR2RW1utm2WOx5D5ACNj4AR/alcGrKcg6aUAQ3ncvoBeR28wcJP7W/rj5XjZFGhFIuGm57r2c0sfe90=
-X-Received: by 2002:a53:d607:0:b0:634:e9b2:eedc with SMTP id
- 956f58d0204a3-63ccb8f1f80mr1223835d50.38.1759879943623; Tue, 07 Oct 2025
- 16:32:23 -0700 (PDT)
+	s=arc-20240116; t=1759879951; c=relaxed/simple;
+	bh=oHFqVz1jq1oi6phvuAR2XlAJXCsaRdNNF0HwkIN+Do4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kaLFhYGQW+ZW6/lS+SvxkGlLKM6JCPUUXSzcVHKIzg3zpuq34PRYk39/KIBTSiYAPnWY1fjJ2jGJ1v/jwgp6oIj//Zc8hInGjiCLBGdE8tN0oVuBgf2s+dlZslIqwk8Jub9FN8lxaHiFVC4VxmVWAr/FzLXt1usuGAE10h4BN+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-8ea63b6f262so1421313439f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 16:32:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759879949; x=1760484749;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=H+V4BB0SYrSnQNgVu+nCSW9roKQJL9Ev+We4fb/qOTk=;
+        b=ZCeDyM8cJS+AQwbXemYjrJW2YqM2lnxt0APRv0QRvQZhmTbrEIzMM2iouUSndgkEps
+         zbdG0w6062OVi/3xYv1pZlmHcW6D3pRjBPaPL3j6mRn39nL08cCzgZn67YW8sgAAcp2p
+         GVCOy5OhMcLfopm6VJtbO9egWRqgSLBEPkabC6NI31W+6vphYnBeAkPwOy3ekFYvyN2C
+         o1zx5c49CQCyXM/In4RTvcnQ0rlacGsuuzMAZ7VXBjLAPe9Mb/daLKCzCciAQTq03Ge4
+         WlF9YTqsk389ljQREXxupCdgWMB5kYAfRbSm7AhCiA0K+HJCSnmrnZihPo41rcyPFToY
+         P4+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWO9yLjrf/Ny9wiz66YsHOsipKpmofmCf/dcbIBc6ZiUlHtz6+irZMTkdfX4nERqdzdpjQz6wRg4js1TB8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yww+8uVGl16Fh/mlC42m6GwGUxpIRzPrl7dFlP/vg10cIJwQcht
+	ISiKvo77E9rgD81L9mcOLEfjA4Xq0CrfKSrMlcMBbGvtZJs7l/7X9R3dRRa/VUByVGIZBtT6Vw4
+	I2xAeyTwh9vzFtbKhzxFipEk0QxSktW3wlKZPGoxUTVZKU6IVtNhiBaErpz0=
+X-Google-Smtp-Source: AGHT+IE33uGQahccdyFgAdtwOojge90eBwTzHM4KgfC2NY/iYVmYRWSbUa0fG79ZfIzcVswvk/KkggMQiaCTdll9rjeV8AtcFEzj
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+CK2bAbB8YsheCwLi0ztY5LLWMyQ6He3sbYru697Ogq5+hR+Q@mail.gmail.com>
- <20250929150425.GA111624@bhelgaas> <CACePvbV+D6nu=gqjavv+hve4tcD+6WxQjC0O9TbNxLCeBhi5nQ@mail.gmail.com>
-In-Reply-To: <CACePvbV+D6nu=gqjavv+hve4tcD+6WxQjC0O9TbNxLCeBhi5nQ@mail.gmail.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Tue, 7 Oct 2025 16:32:12 -0700
-X-Gmail-Original-Message-ID: <CACePvbUJ6mxgCNVy_0PdMP+-98D0Un8peRhsR45mbr9czfMkEA@mail.gmail.com>
-X-Gm-Features: AS18NWDPalaS8O9DIQeC528cFS4jviFQWlDaGfaaeKicXkkFCNGwkwVkJLeplN4
-Message-ID: <CACePvbUJ6mxgCNVy_0PdMP+-98D0Un8peRhsR45mbr9czfMkEA@mail.gmail.com>
-Subject: Re: [PATCH v2 00/10] LUO: PCI subsystem (phase I)
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	David Matlack <dmatlack@google.com>, Pasha Tatashin <tatashin@google.com>, 
-	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>, 
-	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
-	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, Mike Rapoport <rppt@kernel.org>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, skhawaja@google.com
+X-Received: by 2002:a05:6602:1490:b0:8dd:d9c5:140d with SMTP id
+ ca18e2360f4ac-93bd193c6b1mr115736039f.12.1759879949109; Tue, 07 Oct 2025
+ 16:32:29 -0700 (PDT)
+Date: Tue, 07 Oct 2025 16:32:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68e5a30d.050a0220.256323.002e.GAE@google.com>
+Subject: [syzbot] [iommu?] divide error in iova_bitmap_alloc
+From: syzbot <syzbot+093a8a8b859472e6c257@syzkaller.appspotmail.com>
+To: iommu@lists.linux.dev, jgg@ziepe.ca, joro@8bytes.org, kevin.tian@intel.com, 
+	linux-kernel@vger.kernel.org, robin.murphy@arm.com, 
+	syzkaller-bugs@googlegroups.com, will@kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Thanks to one that provides good feedback on the PCI series.
+Hello,
 
-I just want to give an update on the state of the LUO PCI series,
-based on the feedback I received. The LUO PCI series should be called
-from the memfd side and remove global subsystem state if possible.
-Which means the PCI series will depend on the VIFO or iommu series.
-I have some internal alignment with Vipin (for VFIO) and Samiullah
-(for iommu). Here is the new plan for upstream patch submission:
+syzbot found the following issue on:
 
-1)  KHO series go first, which is already happening with additional improve=
-ment.
+HEAD commit:    971199ad2a0f Merge tag 'arm64-fixes' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1570f92f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=87fcad19f7d09298
+dashboard link: https://syzkaller.appspot.com/bug?extid=093a8a8b859472e6c257
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16286304580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1370f92f980000
 
-2) Next is Pasha's LUO series with memfd support, also happening right now.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-971199ad.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a4f2f91ba510/vmlinux-971199ad.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8fa7552ebcd0/bzImage-971199ad.xz
 
-3) Next series will be Vipin's VFIO series with preserving one
-busmaster bit in the config space of the end point vfio device, there
-is no PCI layer involved yet. The VFIO will use some driver trick to
-prevent the native driver from binding to the liveupdate device used
-by VFIO after kexec. After kexec, the VFIO driver validates that the
-busmaster in the PCI config register is already set.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+093a8a8b859472e6c257@syzkaller.appspotmail.com
 
-4) After the VFIO series, the PCI can start to preserve the livedupate
-device by BDF. Avoid the driver auto probe on the livedupate devices.
-At this point the VFIO driver in stage 3 will not need the other
-driver trick to avoid the auto bind of native driver. The PCI layer
-takes the core of that. This series PCI will have very limited
-support, most of the driver callback is not needed, no bridge device
-dependent as well.
+Oops: divide error: 0000 [#1] SMP KASAN NOPTI
+CPU: 2 UID: 0 PID: 6098 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:iova_bitmap_offset_to_index drivers/iommu/iommufd/iova_bitmap.c:135 [inline]
+RIP: 0010:iova_bitmap_alloc+0xe8/0x350 drivers/iommu/iommufd/iova_bitmap.c:259
+Code: e8 3d ad 7e fc 48 83 fd 3f 0f 87 c0 8c e9 fb e8 be b1 7e fc 89 e9 b8 08 00 00 00 31 d2 48 d3 e0 48 8d 7b 40 48 89 c1 4c 89 e0 <48> f7 f1 48 ba 00 00 00 00 00 fc ff df 48 89 f9 48 c1 e9 03 48 83
+RSP: 0018:ffffc900034ffba8 EFLAGS: 00010246
+RAX: ffffffffffffffff RBX: ffff888032636100 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff853dc2d2 RDI: ffff888032636140
+RBP: 000000000000003f R08: 0000000000000007 R09: 000000000000003f
+R10: 000000000000003f R11: 0000000000000000 R12: ffffffffffffffff
+R13: 0000000000000000 R14: 0000000000000000 R15: ffffffff8c065aa0
+FS:  000055558b0da500(0000) GS:ffff8880d6bdf000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b2f463fff CR3: 000000004ee7c000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ iommu_read_and_clear_dirty drivers/iommu/iommufd/io_pagetable.c:543 [inline]
+ iopt_read_and_clear_dirty_data+0x271/0x4c0 drivers/iommu/iommufd/io_pagetable.c:603
+ iommufd_hwpt_get_dirty_bitmap+0x1c3/0x340 drivers/iommu/iommufd/hw_pagetable.c:485
+ iommufd_fops_ioctl+0x34d/0x540 drivers/iommu/iommufd/main.c:533
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:597 [inline]
+ __se_sys_ioctl fs/ioctl.c:583 [inline]
+ __x64_sys_ioctl+0x18b/0x210 fs/ioctl.c:583
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f705598eec9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffeac4d43a8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f7055be5fa0 RCX: 00007f705598eec9
+RDX: 0000200000000300 RSI: 0000000000003b8c RDI: 0000000000000003
+RBP: 00007f7055a11f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f7055be5fa0 R14: 00007f7055be5fa0 R15: 0000000000000003
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:iova_bitmap_offset_to_index drivers/iommu/iommufd/iova_bitmap.c:135 [inline]
+RIP: 0010:iova_bitmap_alloc+0xe8/0x350 drivers/iommu/iommufd/iova_bitmap.c:259
+Code: e8 3d ad 7e fc 48 83 fd 3f 0f 87 c0 8c e9 fb e8 be b1 7e fc 89 e9 b8 08 00 00 00 31 d2 48 d3 e0 48 8d 7b 40 48 89 c1 4c 89 e0 <48> f7 f1 48 ba 00 00 00 00 00 fc ff df 48 89 f9 48 c1 e9 03 48 83
+RSP: 0018:ffffc900034ffba8 EFLAGS: 00010246
+RAX: ffffffffffffffff RBX: ffff888032636100 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff853dc2d2 RDI: ffff888032636140
+RBP: 000000000000003f R08: 0000000000000007 R09: 000000000000003f
+R10: 000000000000003f R11: 0000000000000000 R12: ffffffffffffffff
+R13: 0000000000000000 R14: 0000000000000000 R15: ffffffff8c065aa0
+FS:  000055558b0da500(0000) GS:ffff8880d6cdf000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055558b0da808 CR3: 000000004ee7c000 CR4: 0000000000352ef0
+----------------
+Code disassembly (best guess):
+   0:	e8 3d ad 7e fc       	call   0xfc7ead42
+   5:	48 83 fd 3f          	cmp    $0x3f,%rbp
+   9:	0f 87 c0 8c e9 fb    	ja     0xfbe98ccf
+   f:	e8 be b1 7e fc       	call   0xfc7eb1d2
+  14:	89 e9                	mov    %ebp,%ecx
+  16:	b8 08 00 00 00       	mov    $0x8,%eax
+  1b:	31 d2                	xor    %edx,%edx
+  1d:	48 d3 e0             	shl    %cl,%rax
+  20:	48 8d 7b 40          	lea    0x40(%rbx),%rdi
+  24:	48 89 c1             	mov    %rax,%rcx
+  27:	4c 89 e0             	mov    %r12,%rax
+* 2a:	48 f7 f1             	div    %rcx <-- trapping instruction
+  2d:	48 ba 00 00 00 00 00 	movabs $0xdffffc0000000000,%rdx
+  34:	fc ff df
+  37:	48 89 f9             	mov    %rdi,%rcx
+  3a:	48 c1 e9 03          	shr    $0x3,%rcx
+  3e:	48                   	rex.W
+  3f:	83                   	.byte 0x83
 
-5) VFIO device will continue DMA across the kexec. This series will
-require the IOMMU series for DMA mapping support. The PCI will hook up
-with the VFIO and build the list of the liveupdate device, which
-includes the PCI bridge with bus master big preserved as well.
 
-So I will pause the LUO PCI series a bit to wait for the integration
-with VFIO series.
-Meanwhile, I will continue to fix up the LUO PCI series internally for
-the other feedback I have received:
-- Clean up device info printing, remove raw address value (Greg KH, Jason).
-- Remove the device format string (Greg KH).
-- Remove the liveupdate struct from struct device, move it to the PCI (Greg=
- KH).
-- Remove LUO call back forwarding and hook it up with the VFIO (Jason, Davi=
-d)
-- Drive the PCI from memfd context on VFIO or iommu, no subsystem
-registration. (Jason)
-- up_read(&pci_bus_sem); instead of up_write (Greg KH)
-- Avoid preserving the driver name, just avoid auto-probing the
-liveupdate devices. Let user space do the driver loading in initrd
-(Jason).
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-That will keep me busy for a while waiting for the VFIO series.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Thanks
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Chris
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-On Mon, Sep 29, 2025 at 11:13=E2=80=AFAM Chris Li <chrisl@kernel.org> wrote=
-:
->
-> On Mon, Sep 29, 2025 at 8:04=E2=80=AFAM Bjorn Helgaas <helgaas@kernel.org=
-> wrote:
-> >
-> > On Sat, Sep 27, 2025 at 02:05:38PM -0400, Pasha Tatashin wrote:
-> > > Hi Bjorn,
-> > >
-> > > My latest submission is the following:
-> > > https://lore.kernel.org/all/20250807014442.3829950-1-pasha.tatashin@s=
-oleen.com/
-> > >
-> > > And github repo is in cover letter:
-> > >
-> > > https://github.com/googleprodkernel/linux-liveupdate/tree/luo/v3
-> > >
-> > > It applies cleanly against the mainline without the first three
-> > > patches, as they were already merged.
-> >
-> > Not sure what I'm missing.  I've tried various things but none apply
-> > cleanly:
->
-> Sorry about that. Let me do a refresh of the LUOPCI V3 patch and send
-> out the git repo link as well. The issue is that there are other
-> patches not in the mainline kernel which luopci is dependent on. Using
-> a git repo would be easier to get a working tree.
->
-> Working on it now, please stay tuned.
->
-> Chris
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
