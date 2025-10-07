@@ -1,173 +1,202 @@
-Return-Path: <linux-kernel+bounces-844358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D25E1BC1AD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:16:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C78FBC1AEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:18:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BDF2189219A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:17:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A46441892714
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D8D1F4E34;
-	Tue,  7 Oct 2025 14:16:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C75B2DECD6;
+	Tue,  7 Oct 2025 14:18:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZcGRW7A/"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VLEBgklu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875758488
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 14:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AAEE374EA;
+	Tue,  7 Oct 2025 14:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759846608; cv=none; b=uekd/vJUbUmbgDT+hOBvGQEMfwC9VxfXs5F8udxioCCcfm+tu/fInssPlsTeCd/BkjnKIpuxLsn6C9G4JJFlLCFbY7qv0kvUehpQhV+JpG/fIQ0TaRCOc1lHEpTdVuqbgefoTdFRYHFkq/MSaYDDFQ9ILzttoR/mqGcYfPS5e+s=
+	t=1759846696; cv=none; b=fM4fmnBXB1kk7qUBPZy2AAhW4+plB8BOhmhQQE4LMgApOX5/RGsR8WsdS39z7wQEgnjVLjD5fGsftJNUlmgFLwOBXWb0g9+nH7Vyc6f4ckYpNTLehmkInxZQnCU2Gl8ItFgwpHUht9iGmniHSrBPQNoO9AN+dXrXlBqSol5n2Y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759846608; c=relaxed/simple;
-	bh=aaMvmWCsiURlT61ttb49Aw69W7JtRP1PMfNbx+wtqns=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aslMHVWj6fIyjAtnJs+c1og7S0zBAqEyVH/Yjensv7YbBOyw00mNa2nZb5xYKnG6zmCuu3/xJVr268f4Q8kiC1SZIarukFhgWcI8XGl+j+0LVzn27UXCa30NZ4to5TDG/LrmvhitfQE14wbCa4c+IMfEEq9cOhWi/NSzUF/lrDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZcGRW7A/; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b472842981fso833030966b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 07:16:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759846605; x=1760451405; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WlNrYksHLMfAVeQP3yUtYa9PE9Wf6Qdn7i1hS35K1lA=;
-        b=ZcGRW7A/MNCWgrkcfz/mIrCGcZ7pRUU8+Q+m82XnCfdggI3XWwvrPI0kiVdBezXLAU
-         s1KH72Pt9EIntk4qgOZHh/RtfnIzwRD2kcRKauaSCLFe5bgCpxZiIbkuCwA8h/rhf1T6
-         7yy7Uyf0vDh/HRmhPyNM7PWyTydfUkot6Z2WT7F5DbbABQhbo11O07fMwwvpxR8MnHir
-         tS0tnjA70Sox93s/NtVwpkqFIne5K1dky0Oik+B97KdaPY8QLbag3Ap41M0K78yi2zws
-         yHM19keDuw18vKveLygk6sXJzJIEFl2riofrjD2m4mc1uWV3uaXyltVNO23ImXkUMClh
-         w2yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759846605; x=1760451405;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WlNrYksHLMfAVeQP3yUtYa9PE9Wf6Qdn7i1hS35K1lA=;
-        b=QGrySCxMb39psZ1rDktci3agt06ULETwyp2orraaJRVYvlfEls22dLk8LA6Gz4mTKA
-         AwhAyo1+oqKGywHEpY6fJzq0vZhzExRQqm1cOY6CVo09gDGWv7PykyFnE4UDuYrKbpdW
-         g6uKgi+/tGvegDKCXdklsPWURdjqNaHhPh82uZ2c2dwYVdHwTcew68B6jtUuiliAfQLZ
-         urVNR1MCxZRzmQFBxlKDysWjHxkBcBJmJ2fKoU12g6WXAsXUhdkidd9lFGdJP0aAHv/O
-         5NtdLNJkIIf9QmjNDB1c/oxBAVi6gNxuacI6D3G1yZatoU7MlCbWLrbxlckCB30BaMUo
-         5bbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX5c4IZBK4IhfnekN7M7eHO5Vo7llf4DONAomss/UenIAqpE9PQISw3dwyLf27yXwhLxR6lNlv0WjHcW5o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZXeeXxEYVzx0bdHxrS+9XhEGN+32HfDe/nHgKONsVjErkRTXu
-	pp+I/Ny8SeBs8GAhshayOO1D1+r+OpfgM8hFIO0rtnSyATuH4EqFD7D3TjLYj+A7p4wE/ZfkCvL
-	RDlKeG0E6LWwpP+mAUlodc9g9NWsXDrHTEbljQns=
-X-Gm-Gg: ASbGncsVR9oOEH17q5Mf+qCjgNwN+0CaKWICbGkm635Ybt18C8RyvHjrABoiR7N2PaM
-	foVsi9NjoAxrwjIVy4BII4MnTaRfYkUvh2m5ZzzmhwKmxLiW0XEnHNjjXIXmumLtnOXfMBqU0pr
-	nhdZPC7002Efirp4CR1Qqsn3hsMUF7YpzlrKUvBi5Cvkefmrdp9ahvLLplk7Nfe8uBREH97LTZX
-	R62MOBY04uF8yGvMnhGcQJ+bSlknlyG
-X-Google-Smtp-Source: AGHT+IHHcmxe7xACPAEy8QV/B2eyRrCFpBlq18//7M+WWVut43Uk241D1fmqAzqfxbqBEfa0YeS5Ndpszg4TAJ9iGyA=
-X-Received: by 2002:a17:907:7293:b0:b04:61aa:6adc with SMTP id
- a640c23a62f3a-b49c12806cbmr1771245066b.7.1759846604448; Tue, 07 Oct 2025
- 07:16:44 -0700 (PDT)
+	s=arc-20240116; t=1759846696; c=relaxed/simple;
+	bh=G/NshkMJ1GZbtO3UIa9SqYi+nufWNB4mZlO3zufyam0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RUXvIQHwbgnmtbf46RpJIL+u4dCa1sTU2JILIKmX6FF9n9LOLB9GG+ggCkgrGQ7GSxvHILHfBEEi2uGoVtBTIW12qnmem2r65ULlyZdCXD7PJXr36qnaWD1+HXR752vUrb53TR60WxnOjgEprCoakaeA0VPsnvSxtHnyIj6Bz5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VLEBgklu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FCD1C4CEF9;
+	Tue,  7 Oct 2025 14:18:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759846696;
+	bh=G/NshkMJ1GZbtO3UIa9SqYi+nufWNB4mZlO3zufyam0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VLEBgkluXeahLBiq1Q8q74aSbv9sUk8S4cduCCxdRDeAUEmAGnpgT2dd+ksDo9KZp
+	 TPcksti+HsUH8pFCU61wkEbT/aYAaPpHRA+y6NTCHqP4xPH9SG397h9kS32wIqs24s
+	 h44CpSGxzl9ePGWUWhOWW0kb3oAphuENyakg/QfeoPzuPIGh/Mzf9mUhmNsfi58zNj
+	 Be3k2bbXybJQvjBHxrSobLIrxkG3l+2U+rKsvU0OWna64yWtAl8pECHgqRcOo8fBc4
+	 MtJ1mNa8tuXV+8tIXqt8l2v/2d8Sc5OUh3ac4tc1vGBQ5kXqT4AZQ5EiAf//4c1t+e
+	 YJ8MxK/7lqJ/w==
+Message-ID: <d592eb91-84e9-4bdc-8363-1d0bfd47c17c@kernel.org>
+Date: Tue, 7 Oct 2025 23:18:04 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251003205837.10748-1-pascal.giard@etsmtl.ca> <CABBYNZJVUoVnJPdOXARvk7T_9EsvomJ_oe_ZZ_QZMTQBVjNDHw@mail.gmail.com>
-In-Reply-To: <CABBYNZJVUoVnJPdOXARvk7T_9EsvomJ_oe_ZZ_QZMTQBVjNDHw@mail.gmail.com>
-From: Pascal Giard <evilynux@gmail.com>
-Date: Tue, 7 Oct 2025 10:16:33 -0400
-X-Gm-Features: AS18NWDMEhKXRd_AXB1cgsGhtd6LO1y4YZjcNM87YeMK5w4MccS9LFkhHrMIC10
-Message-ID: <CAJNNDmm-sBv4Qz9J+bFGWmmQ8jdOKQtRr9xDcwAsDYQQMm0Uxw@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth: Add filter for Qualcomm debug packets
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: marcel@holtmann.org, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Pascal Giard <pascal.giard@etsmtl.ca>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/4] dt-bindings: usb: dwc3: Add Google SoC DWC3 USB
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: Roy Luo <royluo@google.com>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+References: <20251006232125.1833979-1-royluo@google.com>
+ <20251006232125.1833979-3-royluo@google.com>
+ <8ca61364-df47-41f2-b0d1-f2a8a74ec728@kernel.org>
+ <CADrjBPr7Jp_ZyGv2Krv6iLG0avgFWpcWJEO-Z=cEkhwEY-+z5Q@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CADrjBPr7Jp_ZyGv2Krv6iLG0avgFWpcWJEO-Z=cEkhwEY-+z5Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Dear Luiz,
+On 07/10/2025 18:09, Peter Griffin wrote:
+> Hi Krzysztof & Roy,
+> 
+> Firstly thanks Roy for your patches, it's great to see more Tensor
+> support being posted upstream!
+> 
+> On Tue, 7 Oct 2025 at 01:44, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On 07/10/2025 08:21, Roy Luo wrote:
+>>> Document the DWC3 USB bindings for Google Tensor SoCs.
+>>>
+>>> Signed-off-by: Roy Luo <royluo@google.com>
+>>> ---
+>>>  .../bindings/usb/google,snps-dwc3.yaml        | 144 ++++++++++++++++++
+>>>  1 file changed, 144 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/usb/google,snps-dwc3.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/usb/google,snps-dwc3.yaml b/Documentation/devicetree/bindings/usb/google,snps-dwc3.yaml
+>>> new file mode 100644
+>>> index 000000000000..3e8bcc0c2cef
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/usb/google,snps-dwc3.yaml
+>>> @@ -0,0 +1,144 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+>>> +# Copyright (c) 2025, Google LLC
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/usb/google,snps-dwc3.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Google DWC3 USB SoC Controller
+>>> +
+>>> +maintainers:
+>>> +  - Roy Luo <royluo@google.com>
+>>> +
+>>> +description:
+>>> +  Describes the Google DWC3 USB block, based on Synopsys DWC3 IP.
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    items:
+>>> +      - enum:
+>>> +          - google,lga-dwc3
+>>> +      - const: google,snps-dwc3
+>>
+>>
+>> There is no such soc as snps, so you grossly misuse other company name
+>> as name of SoC. Neither lga. Otherwise please point me to the top-level
+>> bindings describing that SoC.
+>>
+>> You need to better describe the hardware here - why this is something
+>> completely different than GS which. Or switch to existing bindings and
+>> existing drivers. Did you align this with Peter Griffin?
+> 
+> I think (from what I've seen at least) this is the first submission
+> for drivers in the Tensor G5 SoC used in Pixel 10 devices (which as I
+> understand it isn't based on any Samsung IP). Hence the new drivers,
+> bindings etc.
 
-Le lun. 6 oct. 2025, =C3=A0 13 h 21, Luiz Augusto von Dentz
-<luiz.dentz@gmail.com> a =C3=A9crit :
->
-> Hi Pascal,
->
-> On Fri, Oct 3, 2025 at 4:59=E2=80=AFPM Pascal Giard <evilynux@gmail.com> =
-wrote:
-> >
-> > Some Qualcomm Bluetooth controllers, e.g., QCNFA765 send debug packets
-> > as ACL frames with header 0x2EDC. The kernel misinterprets these as
-> > malformed ACL packets, causing repeated errors:
-> >
-> >   Bluetooth: hci0: ACL packet for unknown connection handle 3804
-> >
-> > This can occur hundreds of times per minute, greatly cluttering logs.
-> > On my computer, I am observing approximately 7 messages per second
-> > when streaming audio to a speaker.
-> >
-> > For Qualcomm controllers exchanging over UART, hci_qca.c already
-> > filters out these debug packets. This patch is for controllers
-> > not going through UART, but USB.
-> >
-> > This patch filters these packets in btusb_recv_acl() before they reach
-> > the HCI layer, redirecting them to hci_recv_diag().
-> >
-> > Tested on: Thinkpad T14 gen2 (AMD) with QCNFA765, kernel 6.16.9
-> >
-> > Signed-off-by: Pascal Giard <pascal.giard@etsmtl.ca>
-> > ---
-> >  drivers/bluetooth/btusb.c | 9 +++++++++
-> >  1 file changed, 9 insertions(+)
-> >
-> > diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-> > index 5e9ebf0c5312..900400646315 100644
-> > --- a/drivers/bluetooth/btusb.c
-> > +++ b/drivers/bluetooth/btusb.c
-> > @@ -68,6 +68,9 @@ static struct usb_driver btusb_driver;
-> >  #define BTUSB_ACTIONS_SEMI             BIT(27)
-> >  #define BTUSB_BARROT                   BIT(28)
-> >
-> > +/* Qualcomm firmware debug packets header */
-> > +#define QCA_DEBUG_HEADER       0x2EDC
-> > +
-> >  static const struct usb_device_id btusb_table[] =3D {
-> >         /* Generic Bluetooth USB device */
-> >         { USB_DEVICE_INFO(0xe0, 0x01, 0x01) },
-> > @@ -1229,6 +1232,12 @@ static int btusb_recv_intr(struct btusb_data *da=
-ta, void *buffer, int count)
-> >
-> >  static int btusb_recv_acl(struct btusb_data *data, struct sk_buff *skb=
-)
-> >  {
-> > +       /* Drop QCA firmware debug packets sent as ACL frames */
-> > +       if (skb->len >=3D 2) {
-> > +               if (get_unaligned_le16(skb->data) =3D=3D QCA_DEBUG_HEAD=
-ER)
-> > +                       return hci_recv_diag(data->hdev, skb);
-> > +       }
->
-> Well it turns out that handle 0x2EDC is actually a valid handle, so we
-> can't just reclassify these packets just because Qualcomm thinks that
-> it could reserve it for its own, so this needs to be using
-> classify_pkt_type to reclassify the packets to the handle 0x2EDC to
-> HCI_DIAG_PKT for the models affected.
 
-Thank you for considering my patch. Based on your comment, I had a
-look at how btintel.c uses classify_pkt_type, and I think I understand
-what you are expecting of me.
+That could explain a lot. I would be happy to see background of hardware
+in the bindings commit msg and the cover letter.
 
-Before I submit a new version, should I go very narrow (just the
-VID:PID=3D0x0489:0xe0d0 I know for certain has the issue) or should I
-lump in all modules with the WCN6855 chip? The latter seems somewhat
-reasonable to me given how hci_qca.c does it (even broader).
-Therefore, I'm thinking of reusing BTUSB_QCA_WCN6855.
+> 
+> However the issue is that none of the other base SoC drivers on which
+> this driver depends currently exist upstream (like clocks, reset
+> driver, power domains, pinctrl etc). So it's very hard to reason about
+> the correctness or otherwise of this submission. It is also likely
+> that when those drivers are upstreamed things could change in the
+> review process, to how it looks today in the downstream kernel.
 
-Thanks,
 
--Pascal
---
-Homepage (http://pascal.giard.info)
-=C3=89cole de technologie sup=C3=A9rieure (http://etsmtl.ca)
+Bindings and drivers can be contributed without core SoC support, but
+then please describe the hardware (SoC) here. Having core support posted
+earlier is of course preferred, but I think not a requirement.
+
+Anyway, compatibles and all commit messages in this patchset are too
+generic and need to reflect this actual SoC, not "Tensor" because we
+already have a Tensor with USB. So basically based on existing support
+all this patchset would be redundant, right? :)
+
+Best regards,
+Krzysztof
 
