@@ -1,194 +1,157 @@
-Return-Path: <linux-kernel+bounces-844424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FF60BC1DFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 17:11:41 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3523BC1E08
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 17:12:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B55E23E08A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 15:11:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E166D4F0045
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 15:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845C02E228C;
-	Tue,  7 Oct 2025 15:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080CF2E1C7E;
+	Tue,  7 Oct 2025 15:12:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="lxdS8zPR"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012026.outbound.protection.outlook.com [52.101.66.26])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hv+CKpY5";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ysVWsU9F"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EEE42D8363;
-	Tue,  7 Oct 2025 15:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.26
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759849893; cv=fail; b=mahOyu4eBj7y9RoiBnnIOT6FI0U0rvmaAxD4wqS6kBZyXtxkmNaUV2WpywArn1hWF1djPyjIt4Cfy048Oara9eY0LW7E41l4wJufVYYYz/XT07HRvg+qjigg0bYU8nnyT3Gy3apWNT8SLQtFFT1SUDb4Jo7bi+7WLuzNwdWHjU0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759849893; c=relaxed/simple;
-	bh=iTc23luWUXkaaGWRbGrNB54S/u7tBMLYg+VIptku+bI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=rAI00+F7uCYJgN1ITt4ZXUYjSwkzF2Hw4GD7FlLnsXMNZenCEEpBxBHg+BcYbRLEfot1UM4+cTCCl/DZX+9HebMi8g6BUd9pYbkRGK0nYrXfPUj26Yy+bNF+xrhxsWIZSxLAIvl0g840vLSB4eveLCGbqlQHxF/VHuOYeUFkldY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=lxdS8zPR; arc=fail smtp.client-ip=52.101.66.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=l+NIC5DCxlqPslpCojADamlc1gnOmslSEFPlgdeDd8bUyzSL05p0/LoiWB5EJjlB45kRpBbieg3YC22JKTY2GiSBoVjft1NjGQ2y5B7n5dZOdielWFdZcgVqspDWw7vtx2c3fO7LbIQ5+CpbiM7++DZ0mvPwke5NiOhR4wSnideEi2Xf0WOSWm7kTBEqh67a6++3B0WKdkOvYBvGtkoLIBRzK9wfcuUV972LWY1pGcY7DuJTMveR3VgP633j+F6E6AQnu8/iQjnM72jMAPQE3ykWmnvBwAWk45PRBOUJsKFp+471HnNW0sBeM8ZS2H2EEq/vYNzXom87rcKNmYLlMg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=q/cBvaEjyH8vxuj6qVo4HYwdzm6XJqiaq+bgMoLP0OQ=;
- b=QeSFdXDRvMwZHMtUI+8X+sHJCV/HduuAStTWIKzMSxgBzbpC3dye9Fjgx6LtOouiXOxfJZEsHLTkIESHqonK53YbWr62dM8dtYyVOAnEAYS+ZUFTp5JxHgMPUnM90VNxybuiMhslhaKbVDIQd/sLvfKNHIBi36PTFImhWI72uUSdBDViZp25kz2yL+7inUMFzLfMXyLyiYYeY6Z8+STjH4CfXuo0I7d4GL9fb/dVi39TmLaSFCt0fAj2qQLZBVFuLlFBzMs58nC1Hvz5m4DGNRyaiEbpCof7Hzh8aK3OdlzvYgttIAoX83yW766QdWELFhgZcwDLDkP8podhEifEBg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=q/cBvaEjyH8vxuj6qVo4HYwdzm6XJqiaq+bgMoLP0OQ=;
- b=lxdS8zPRtIngO02guikjJnjR40VpzlBgXSeCokOL7VuM8TDQN/hfDwjhYXh3uOvQY1QPm+lzq1xNff4mNbicXZvyq+cYu4XfUWrWjbI3CwGlTvng2XMlwnV+UVNm68MyZiUwnHN/ScWV+VtpakahQ20UsQxLB/ltJrqdY60DOA94ICQ4uTW4WDJlfCDxkulsKdaqE66SS8MisxZc5SoReAkpsvyxbD8jYI+V3WCA8MBG79alM2KK8tU6r3chW2UErVca7N77Ez86Pn8mL8lHHJdeCIqYakfdU1jiNQ1tCXM44jelZyTdwJ9ERbwNXfDPIM9f75VaFXoDLOT76dZPaQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
- by GVXPR04MB10082.eurprd04.prod.outlook.com (2603:10a6:150:1b5::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Tue, 7 Oct
- 2025 15:11:27 +0000
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9182.015; Tue, 7 Oct 2025
- 15:11:27 +0000
-Date: Tue, 7 Oct 2025 11:11:17 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: ALOK TIWARI <alok.a.tiwari@oracle.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Jon Mason <jdmason@kudzu.us>,
-	Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ntb@lists.linux.dev, imx@lists.linux.dev
-Subject: Re: [External] : [PATCH v4 2/3] PCI: endpoint: Add API
- pci_epf_assign_bar_space()
-Message-ID: <aOUtlUIcHE8JIO4j@lizhi-Precision-Tower-5810>
-References: <20250930-vntb_msi_doorbell-v4-0-ea2c94c6ff2e@nxp.com>
- <20250930-vntb_msi_doorbell-v4-2-ea2c94c6ff2e@nxp.com>
- <c9efa64c-20d7-4aa6-815e-2be040480ff9@oracle.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c9efa64c-20d7-4aa6-815e-2be040480ff9@oracle.com>
-X-ClientProxiedBy: PH3PEPF00004099.namprd05.prod.outlook.com
- (2603:10b6:518:1::45) To PAXSPRMB0053.eurprd04.prod.outlook.com
- (2603:10a6:102:23f::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8EC88BEC;
+	Tue,  7 Oct 2025 15:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759849950; cv=none; b=TXP9Rb86QGfI0KB7q7TeJ3regwDxhMtlR8bqZGEXoj1bvKzrAurSmDp7zHkW64cu8Y3mDn2NVlNBSQodoAt4iS33ptPZxLpODzpFvPYADeds3Us//vDPOSuQsY0BWJLeG+JLz4rdsi/1HEMahbNDKIVy4gAGb40AN173S/FX3jU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759849950; c=relaxed/simple;
+	bh=ae6nDSlCWz9xfvlwaCBcRWsJfqjOvPHYZR8tJZhxn5Q=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=mu9kJBqsR2MxlbuqGEuxHtCVYmb/Qk6UjNAK3E/FwLah1nJffIQwe3LA1YD6qDIeSY8+E7yOU19G99ej9g1fyNElrzsm6upx546kqK5Cw415lkaCSGvA3LMs7kkbzwI7pZ+z5D5wtI2PXPsDUhH+hdU3bWmJQtICc6YGthEvvK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hv+CKpY5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ysVWsU9F; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1759849947;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x2ClbCVr3BVXHDb1NN4Xjp7dDlGKmBkjH5HMzWAKdE8=;
+	b=hv+CKpY5p7ityX7mnzhjP8ZQC/BXDUlOnGIc1nGSSJtRofxJxyFYUZX8ud5GnBrcn0CeED
+	t1hJ3pPZx40EJWJMvcJDntcU+NSaeOTonGMIoLRIHVfPcx8GThiOZzCq27kXBrUH/MsmHZ
+	tNtDOGAgXweGg4GgRGrxbrWLlNZbKcK7647cihhX1PTQuxEOj1XkRuIdvStw6b1pE56K1G
+	v2F2ts7wvdtf9h/2/ZjRBUhuXWQxCqRzUhgWN5wdxdCZDDeeENuRoSbc4CWm/0UgfwiQW+
+	tQfQiYhC7p9tnL2eVIRwGmlyZXq672gXvnGEgZA0/axyrdgKz0fiV1GE2eMf7A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1759849947;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x2ClbCVr3BVXHDb1NN4Xjp7dDlGKmBkjH5HMzWAKdE8=;
+	b=ysVWsU9Fq7OpG+yCvkOe0ZKsOjAutOnfDugsWG3S2r8y+ynMRdUOrXAOIXBjD+E+ZKtcyt
+	Fsvxb5Zxhh6OwNCQ==
+To: Sehee Jeong <sehee1.jeong@samsung.com>, anna-maria@linutronix.de,
+ frederic@kernel.org, corbet@lwn.net
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ sehee1.jeong@samsung.com
+Subject: Re: [PATCH v2 0/1] timers/migration: add 'tmigr' kernel parameter
+ to optionally disable timer migration
+In-Reply-To: <20250910074251.8148-1-sehee1.jeong@samsung.com>
+References: <CGME20250910074257epcas2p2557473cfc52840b904ed22bdf1a3f27f@epcas2p2.samsung.com>
+ <20250910074251.8148-1-sehee1.jeong@samsung.com>
+Date: Tue, 07 Oct 2025 17:12:25 +0200
+Message-ID: <87jz163fvq.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|GVXPR04MB10082:EE_
-X-MS-Office365-Filtering-Correlation-Id: a8a4cfa1-8a56-470a-5b20-08de05b3c98b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|52116014|366016|1800799024|19092799006|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?fwRQMAv9p3b8aUzqEJSh41RpDdPdS5wMYgHNwU6Q0fc2uSCMZbjU1tDWNr1d?=
- =?us-ascii?Q?6IZg/niSJgd+OuUAoWxZ7lm1WobSyoO8fKp9i45II4GlAHyYo3ybkyMUnHnB?=
- =?us-ascii?Q?ARr/DgGZRvuX+IRQq3DY+b3Cc8P3NFgdVyRx1h12OIAzqc9trz0FOP+/tsR6?=
- =?us-ascii?Q?xwj4FOm+1MNvgyWPmrVtNtLR8g4JTvefEKjxKnVrjdckINWdEfQo0QohhAh2?=
- =?us-ascii?Q?2uNC18aLqg7bBAZETqhIhTWHQt4MvhKfRFHnDBj3Y/PEYs2yGEUUCiqKxZII?=
- =?us-ascii?Q?gCA3Qmsiv9LSwAs5Xhphafs+dStnb0LYr4WobWeBBK+DRylveqqkgDiLz4Ur?=
- =?us-ascii?Q?4bP/XmyEc4iVRtkA5mBs4EvQJ57TVhfwDKhsRty2WBZtS1vU9R/yn2TQCE9V?=
- =?us-ascii?Q?0sQB2GaaEWYqiICt+/MSnu55hYG89NbKRj7AztMfddrlyMxSY2Y12FANX9eO?=
- =?us-ascii?Q?U4Oz32ghY8tW9uHOexZ2zyGEFELUp+9wetRrmiqocuw3hEVXMhY3ccbqg4o9?=
- =?us-ascii?Q?9eM5WjBDaVW4jKF7122Xa2lKnRV8xNRUt6zn4uaCj7CtMEGkfh5lgpZF82hY?=
- =?us-ascii?Q?3dH9zYhCCFv+g5UVVO3RH8WtXZXsHJflnWgl1EFCd197N4B7jEsB0kzNa6or?=
- =?us-ascii?Q?UUbsAKj1Lp2lqhUBzlbKXn5ldW6QLYsAlzRCtOl5eouB5h1u3x2SLEho4gLy?=
- =?us-ascii?Q?A7YLTUS00zoUfof8yEmYX45Z2hUEprA+LmTp6y5cOa/6jpPaDgaxbeKfZXTW?=
- =?us-ascii?Q?Jjtg6KJa8qDP4HzsuSGpS9AP//wBeHH2H8ilYjUJf0rHYCfXp5V5fTe5aBHR?=
- =?us-ascii?Q?W2NxDSXsZCLc+6u+dC4Ni4r97Q33Sxsmt+dLWBpTJ3t/AgOKR4zuRdYgcitZ?=
- =?us-ascii?Q?+1D+Ay8R0QhLRSH5o5Im2T4zglV2oXWfG8MTFjD91Lszq7WEoK9GJUCeefF8?=
- =?us-ascii?Q?WbqKBeDDddaL3i1emsRPu/wfhiyclKOKH3Uq3AkrH9CZhZO9sKaPHVqKkdW9?=
- =?us-ascii?Q?wyGG44XiF5Wc1KEMoodx3HDwNFalj7qColztp6h7kUN+S4UO5YRUf62GYPJo?=
- =?us-ascii?Q?omfkYhvRc/oHfI2iBoVLEAcabcO8NaVBnApcY0Mn3RU03KqgcecfvtDAGQGZ?=
- =?us-ascii?Q?CNK0J9FLE17r9YBpm52VCAAqVd+IE+oonLaBZG1CjJnlvA8Jiie0jDcyv+an?=
- =?us-ascii?Q?nY7cqPugPHmN720H8baJ+9xw3o0iRJ1T2oVdYsET+GjUppbAySGjTYr/TJ6v?=
- =?us-ascii?Q?8BhlwMWkvRqiFYS4pRNGhTjcmi8ncAL30AYPARYNvPtZyRyaRxLhl6x8xhJ6?=
- =?us-ascii?Q?NVTSh51KAEZwYJARrp4ZOVXNVeH8HOYpeYrav0UqqknyJr0VwMz33YdCmsX3?=
- =?us-ascii?Q?2LvvXnNIrHJew0BiPMr3kf+FO34by0k8euFTnANzxB6u+/dx+2NjenhmW2Wp?=
- =?us-ascii?Q?I2j+lsK5nrTcEWNm4mKDD/YvFwODLk/YktBGKID69jXXkcEQrQ9VrV9fJGi5?=
- =?us-ascii?Q?mRVf1UFq7q+piK44vMAPUDehIqJO+KdQmi0q?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(366016)(1800799024)(19092799006)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?hnHQFRtTX59uKoB695Bb9IYRwwxHH47tt5bGvp78fu5So27rEoYTGwyytDk3?=
- =?us-ascii?Q?NMRKauqmugfBWGvEn13DNTs4yMGeH41cAZWwDMrZp03HouUNhXl8JswRZBVO?=
- =?us-ascii?Q?sjQz68kQsKoG8zPuzdV74HfxbRz+omPN8ZOFOU+rxEtGYibZ3HKyelxWpMRl?=
- =?us-ascii?Q?eB0ADdSLA+DMFEc/ZeSxs8IuSJC4qzFwG+0dswAjd6MdZ9JHMrfyqwkH0/KM?=
- =?us-ascii?Q?ugtJUbLLd+LQKXRItUIRQ3Kfj2CkgHct5P47VcVORLo4J/pUBZhf1b/51IRW?=
- =?us-ascii?Q?Crw7Khwy5mefNTascHJXnZ72uSwxXuvSwJrB9vWLWfzvul6R7nroE+8u075B?=
- =?us-ascii?Q?IEqmNUn3ekWoapsgWL5TNM2kAIj2mwQj07U5lM7gofve0VWn8Um7WjQAjUq7?=
- =?us-ascii?Q?xJzadoD/bX7qY1AFQ5bB+Ae3CJIMAFtka6Jpfd8oQDphGSq0EU5qv1rtvLVw?=
- =?us-ascii?Q?TPQWbFcZc0DVgavW6XTSEmyfbdbl1KtcZP7oREsl9LdbJ2XoqDHnK/S1NPf3?=
- =?us-ascii?Q?o24dywKqetoYxOUhBt22qvvVS9hT7ZdDHZkLsmWiAFwEBfDlOED4jFUXrhmK?=
- =?us-ascii?Q?dePnWFTdQyKs3obWiFBAfL1mvB1xJB/lvP5Y8AdVA8UG4QdvEreIzdgaZkAE?=
- =?us-ascii?Q?VPVknrliDgfkAdah7icGdZLPf9mqLwn9j17uHpkU2Mkyeb7VpsObrSZSLq9d?=
- =?us-ascii?Q?Eb7tEWHWheCG7sxx/k67ZxJmoat48/cWKzQ5CcHX/gWjeghv7ssz1swaNdBe?=
- =?us-ascii?Q?msWX4RJAW2BmQKTuazcKgneqePRGXGn2K1NZR5pCfZQCNluDkv7IV/pWzfBq?=
- =?us-ascii?Q?7scT75OsGRNtNvqzNTsymzzvd0cVmsmue63fbCQJ6KQyed1PxdMYWJ+xfpqD?=
- =?us-ascii?Q?H1XXPVn1fMaj3AzgJMiH4r68pvmwoiFptIpOmaOmgUV28AGce5ExNnIgjE9d?=
- =?us-ascii?Q?pUHb6HutLU88mu9Ahqj5ZN/GYWJEfvTeU1+1LpH6e9D5+GyzRU3CVgQZym8r?=
- =?us-ascii?Q?S5zORJpr6NxWgJvGFHxaBLSZpCL6/CBGXOE0/2zYD48jmnGKVWrCtbmmgyNv?=
- =?us-ascii?Q?Egnivnlud4S5CHWDrTczf82ErGG9QlEgI0VYT0CgXAvM6ehm6UfaXyzUzGCV?=
- =?us-ascii?Q?FSPWhIeaYAXblmjdbK2KmmALEKvr1O6zn8FXFtVgYfHjOr9khfMv1hoscBKw?=
- =?us-ascii?Q?ztqEPmXMdyzpTtydcND+BJBfQQemJOzh7sWWWnSry4kbPCMnvGV+8BdMpRKy?=
- =?us-ascii?Q?M7IuauwMeqq7/cWFIe3dbYD0vbhE7CLRHOAW5m5F94Fpqu4B5SRdV86+GrPN?=
- =?us-ascii?Q?t/D2hqlpSaoy+XsbS4m2AXkTRDKpCcCij4pNnmYqJ1yuibKgeu6M+bmbhEHu?=
- =?us-ascii?Q?p+vmtkM2nctFgBQeA5otVbo6vPRNanMiYUxMkx/sOmHFSlUDbgXb23QhKUUX?=
- =?us-ascii?Q?dE82O+m+zRqvAy9qlrf1TWk4xuXCOhYEpegvO5AeBr/8x9Wx2514KqHFopsp?=
- =?us-ascii?Q?tNtBIe3WrBa7YLj6UUSWDo6QITlkn6PtTqmkxErEyUqi+qOA+xVrDaaOFYtj?=
- =?us-ascii?Q?huRP621rhjEr0YkBhy5uk6IFTbGeNB1PCwd0NUR3?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a8a4cfa1-8a56-470a-5b20-08de05b3c98b
-X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2025 15:11:27.5295
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: g2bGSgmIXJB1HpVhZEgn99xEXj0hMLKQy9d5jo2yqIkoW2r+VVEI2ak1kXsrLITm4dkmnEBXqT25UbqSfff4Ag==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10082
+Content-Type: text/plain
 
-On Tue, Oct 07, 2025 at 12:25:59AM +0530, ALOK TIWARI wrote:
+On Wed, Sep 10 2025 at 16:42, Sehee Jeong wrote:
+> This patch introduces a kernel boot parameter to optionally disable the
+> timer migration.
 >
+> On heterogeneous systems with big.LITTLE architectures, timer migration
+> may cause timers from little cores to run on big cores, or vice versa,
+> because core type differences are not considered in the current timer
+> migration logic.
 >
-> On 10/1/2025 2:09 AM, Frank Li wrote:
-> > +int pci_epf_assign_bar_space(struct pci_epf *epf, size_t size,
-> > +			     enum pci_barno bar,
-> > +			     const struct pci_epc_features *epc_features,
-> > +			     enum pci_epc_interface_type type,
-> > +			     dma_addr_t inbound_addr);
->
-> nit: Any particular reason for using inbound_addr instead of bar_addr ?
+> In our heterogeneous system, we observed timers being migrated to big
+> CPU frequently, resulting in timer callbacks that could have run on
+> little CPUs being executed on the big CPU instead. This reduced big
+> CPU's idle residency and increased overall power consumption due to
+> higher power draw on the big CPU. Since timer_migration is a relatively
+> new feature, addressing the structural limitation was difficult.
 
-bar_addr is easy to confuse with RC side's bar windows's address. This one
-means the ATU convert bar's inbound transfer to what EP side's address.
+It's not that new, but anyway I'm not understanding what's so difficult
+to address that problem in the migration code. As all of that code is
+based on a hierarchy, so it requires to ensure that:
 
-The below API also use term 'inbound_addr'.
+   All big CPUs are on one side of the hierarchy and all little CPUs
+   on the other side and those sides are not connected.
 
-It is not big deal. Manivannan or Niklas Cassel, do you have any perfer?
+Taking the example from the comment on top of the code:
 
-I am okay for both names.
+ * LVL 2                           [GRP2:0]
+ *                              GRP1:0 = GRP1:M
+ *
+ * LVL 1            [GRP1:0]                      [GRP1:1]
+ *               GRP0:0 - GRP0:2               GRP0:3 - GRP0:5
+ *
+ * LVL 0  [GRP0:0]  [GRP0:1]  [GRP0:2]  [GRP0:3]  [GRP0:4]  [GRP0:5]
+ * CPUS     0-7       8-15      16-23     24-31     32-39     40-47
 
-Frank
->
-> > +
-> >   int pci_epf_align_inbound_addr(struct pci_epf *epf, enum pci_barno bar,
-> >   			       u64 addr, dma_addr_t *base, size_t *off);
-> >   int pci_epf_bind(struct pci_epf *epf);
->
->
-> Thanks,
-> Alok
+Assume that GRP1:0 is the big cluster and GRP1:1 is the little
+cluster. Then obviously LVL2 is not required for this scenario. So the
+resulting hierarchy looks like this:
+
+ * LVL 1            [GRP1:0]                      [GRP1:1]
+ *               GRP0:0 - GRP0:2               GRP0:3 - GRP0:5
+ *
+ * LVL 0  [GRP0:0]  [GRP0:1]  [GRP0:2]  [GRP0:3]  [GRP0:4]  [GRP0:5]
+ * CPUS     0-7       8-15      16-23     24-31     32-39     40-47
+
+It works nicely even when the clusters are asymetric, i.e. one requires
+more levels than the other:
+
+ * LVL 1            [GRP1:0]                      [GRP1:1]
+ *               GRP0:0		               GRP0:1 - GRP0:3
+ *
+ * LVL 0  [GRP0:0]                        [GRP0:1]  [GRP0:2]  [GRP0:3]
+ * CPUS     0-7                             8-15      16-23     24-31 
+
+GRP1:0 is just there to keep the code simple, but as the hierarchy ends
+there it is not any different than having only CPU 8-15 online in
+GRP1:1.
+
+That means the required changes boil down to:
+
+  1) Calculate the hierarchy levels based on big/little clusters and not
+     connect those clusters on top in tmigr_init(), which means the
+     hierarchy levels are one less than on a connected system.
+
+  2) Ensure that the CPUs end up on the correct side of the hierarchy in
+     tmigr_setup_groups()
+
+  3) Prevent tmigr_cpu_offline() from assigning a cross cluster migrator.
+
+Everything else works out of the box.
+
+I obviously might be missing the real difficulty you observed when you
+tried to address this structural "limitation". You surely can explain
+that to me then, right?
+
+> Therefore, this patch adds a boot parameter to optionally disable timer
+> migration.
+
+You still did not address my comment, that this also means that all
+timers must expire on the CPU they are armed on. Which in turn causes
+less idle recidency in the overall system, no?
+
+Thanks
+
+        tglx
 
