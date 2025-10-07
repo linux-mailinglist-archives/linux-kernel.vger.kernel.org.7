@@ -1,121 +1,139 @@
-Return-Path: <linux-kernel+bounces-844030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D209BBC0DE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:38:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FE25BC0DE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:38:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B8143C0775
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:38:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FC41189C7EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 267EF2D5A0C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD402D7DCE;
 	Tue,  7 Oct 2025 09:38:13 +0000 (UTC)
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HOmfza0K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E512528FD
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 09:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38932D47F3;
+	Tue,  7 Oct 2025 09:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759829892; cv=none; b=fYxKp/kFbGS/t4kcc0/UcHcJOq6VoHmH4SblNszoCm1zpQdo1ITVBjSa+YBA11KnwwCrdtHobQNjFfDB5rQiy2rVlBShzP3bAcDJnGBH/CSO1tTsscPPmr/YPsipdfurEomWX8MMn+XTFXsTEPgIHZeZ4/HfM9joj9GPzQ4hMC0=
+	t=1759829893; cv=none; b=lpMrkiuWHEkdqWiroFtLOHKHm77bKwmtIf9x3zNO/nJ77YFmcXa2sSM10W5KSs7PpcCurXY6MRzdvG/TeqSEEwhnv48flNgozv0xbNfqeiUtLapBP6wmPGKysACy1vIuUfgYd2RmcPebVESDiqFLmf0ujeQKep7gi9+3W+tVucg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759829892; c=relaxed/simple;
-	bh=vM8pMTuLE07i2LEgmF4lMZLaKCtkOjD8GlbT6u/BICc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U1s5kL4/W1Y6l9yEmzTp8IltAeGL51PIJRO3t6LaOGeN/frXMfEX7ZeLALsfHixBZ7KWCUuidcasxciIATnxGr4pV00D7OorseCYwShrJzVAwBuBFdOu110e7GkdekzGMzykS+DngbXDDar/PfBRKGAwsUwP64n0xU53I44j97o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-54aa0792200so4510051e0c.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 02:38:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759829888; x=1760434688;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3q+QEIFXqBPYZCCIeDe/OpyZelbNarCGc2Hc+hYBZL4=;
-        b=qRrR1RaRp1y/oA52rreL1OZ0TwxFv+SMV5Gk/GjCT6o6uGFfz1KsOYNpuRItobCa1x
-         ETXfy6qGYNnWNHZaJulIAXlnfLUYhnTBrFbm/mO4jI1wLUI19Gb9BiYc7iW27EhVSzxY
-         qM0oEOpaM/s588edXrDqM3kwBNK+Qxc3BIKMv2onUq/wW3ZlCKmMWf5iUfJLEJo3igfy
-         92cLld9B+zI+3/ugmjLBQlfi0hC2v8nxi9mTClA9Ivlwp/pM6d0o4ZI0K5Bmf0F9W4/A
-         iwC/D1LNLO9RfpZjlzGBUxByWe+LKVrSBDFaSFAK25A8QltmZKtbPHbobEogOtNl4lel
-         PYng==
-X-Forwarded-Encrypted: i=1; AJvYcCVql6TZhKiBsKB0S9C6aUts4nBN7c4EaO+wSGM8xxv1ZQmF5r2VPuGHdLppoTqZL6Sb2FWJWp0/kt3jZik=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKBgaWmXVT1BQiLSERKzj4s3/br+juLdezLqLzb4dU8NgOzxMX
-	ERV5lylesW+e75IvSg7O6Hf4sMn9qGChZwwcftuKRAel9M3KftQ5aANGy7xbu5DW
-X-Gm-Gg: ASbGncvJxAleh09IXM+i+PRhx+k28HHIp76vELV6HfP/odHrq5QSccxrQlF6Sw0W59X
-	HpgBBm/PBPmLGR8gD2t2iYDS5tIpEqrhJCr9xizH+uBlLHL7AHX/HwleDFNwD2Tg5Z4itE6J8yw
-	WljvxTC64tLHzzTjTNRyp585yXcM271+SWCToglpx7QGNjP3pFkIqiYB/uWXklgz7i4bAyq95CX
-	M79Nx4DB7t+Vr167f6ZsMMxMqYEPdCXeSo2ycuiEcIOxiljpPe41BfDYHIaArYGcHzYr7JfVK1U
-	eBqAHBEYYZb3AsGyZJIkf39X+ez2oQzUSC1yq99/kjQDne9UjautQf8u49pl/02zGXRufqi5iF8
-	CX9GTqqtzxi4doX3NPStN7PVwLs51o1o+u6VwSHReMmuiYPk/84l3HhN7S8Zz3xvuVnosaqDnSu
-	ukvL3ZbaIk
-X-Google-Smtp-Source: AGHT+IEvqzvAUvemoPbdRqeCJAmR5XpQMPSZjKfXPl4eSWHhHX2Z8BzJ3O+lmBHvYy7wPQN6Zh6aTA==
-X-Received: by 2002:a05:6102:6d0:b0:5a1:f09f:524e with SMTP id ada2fe7eead31-5d41d1131b0mr6445575137.16.1759829888435;
-        Tue, 07 Oct 2025 02:38:08 -0700 (PDT)
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-554a3cb13dasm804428e0c.13.2025.10.07.02.38.08
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Oct 2025 02:38:08 -0700 (PDT)
-Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-5a0d17db499so5589383137.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 02:38:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXzXTKj+R8Ij18xGUu6ojNajeY7ZXsWgDEjRC7NzLLnPueROLBewpkAhAE8it2mUDKutWDxvy4Zcb4QdJ4=@vger.kernel.org
-X-Received: by 2002:a05:6102:292a:b0:5be:57a1:3eda with SMTP id
- ada2fe7eead31-5d41d020b48mr6240729137.2.1759829888107; Tue, 07 Oct 2025
- 02:38:08 -0700 (PDT)
+	s=arc-20240116; t=1759829893; c=relaxed/simple;
+	bh=u92iuBD9npKLkZwen9nH8npHhYPl96jEeJrt91lktJc=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=SX3TJdDguF9pbgfoN88oKWrfNM6cMvXnrK0ybwPFtq6TGV+qer+90AIAtgFXkrFguO7l6Fdxqt6O9RCLgxKwQ9oDH3FWnMup87Ocjcsbfmjnj9Tp8rHAjfgg5QctiP3rFqkEB/om5VumQY7GZk2Twmg968Ps9/JczJtwhu6Sarg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HOmfza0K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCD0CC4CEF1;
+	Tue,  7 Oct 2025 09:38:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759829892;
+	bh=u92iuBD9npKLkZwen9nH8npHhYPl96jEeJrt91lktJc=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=HOmfza0KUcqItu3B38b5T6A/W6mNpqIlnJurMLmB5zfuBM5aiOHgkBxzuXEx0OIcU
+	 6l6XKwM6xG208TlQxlrhCVTa05vgYi3VT7iPd5Hv1z5dn8yGMXmD/93PkkzQDOfOB4
+	 oQQ/lRAmAM1HmpGQjyStvsVCT23CdCNY7EgMZ5BkuIqWu73fXvNptIIKkszqsiOf45
+	 5+SUu/6+ufe8btQh7bgOozY1EhPQEiDHD8MqKqTwjJrQQO0J0X0mkEOOUDSXp82vTT
+	 hLwHAjRaPAC3NbvQxOWsb2yMdZKvp+KAkXVK89YgjcaW+CXwUAay8CAXsxPyFT/44P
+	 S8c0fXIkOhkNA==
+Message-ID: <1f920cc2-625c-48af-a6d0-a505980fbeaa@kernel.org>
+Date: Tue, 7 Oct 2025 11:38:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251007092313.755856-1-daniel@thingy.jp> <20251007092313.755856-4-daniel@thingy.jp>
-In-Reply-To: <20251007092313.755856-4-daniel@thingy.jp>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 7 Oct 2025 11:37:57 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWDfNgUUh-uU7ZFKmmAccEMqDdfDpwRXQYmwjMG6O_Trg@mail.gmail.com>
-X-Gm-Features: AS18NWCsRb9Pc5BA4Gs-2WvP7BRo3Mx4GNtWy6MFkPi8rKNsMmOdkKU4tfHRGL8
-Message-ID: <CAMuHMdWDfNgUUh-uU7ZFKmmAccEMqDdfDpwRXQYmwjMG6O_Trg@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/5] m68k: amiga: Allow PCI
-To: Daniel Palmer <daniel@thingy.jp>
-Cc: linux-m68k@lists.linux-m68k.org, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [PATCH] iommu: __iommu_attach_group: check for non-NULL
+ blocking_domain
+To: iommu@lists.linux.dev
+Cc: Linux Kernel <linux-kernel@vger.kernel.org>,
+ Linux Media Mailing List <linux-media@vger.kernel.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Jason Gunthorpe <jgg@nvidia.com>, Robin Murphy <robin.murphy@arm.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+References: <9a3ebe9b-518e-49ef-b87d-925d951a446f@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <9a3ebe9b-518e-49ef-b87d-925d951a446f@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Daniel,
+Hi all,
 
-On Tue, 7 Oct 2025 at 11:33, Daniel Palmer <daniel@thingy.jp> wrote:
-> The Amiga has various options for adding a PCI bus so select HAVE_PCI.
->
-> Signed-off-by: Daniel Palmer <daniel@thingy.jp>
+On 29/09/2025 10:23, Hans Verkuil wrote:
+> Loading the omap3isp driver fails in __iommu_attach_group:
+> group->blocking_domain is NULL, and so the check
+> group->domain != group->blocking_domain is always true and it
+> returns -EBUSY.
+> 
+> Only return -EBUSY if group->blocking_domain is non-NULL.
+> 
+> Signed-off-by: Hans Verkuil <hverkuil+cisco@kernel.org>
+> Fixes: 0286300e6045 ("iommu: iommu_group_claim_dma_owner() must always assign a domain")
+> ---
 
-Thanks for your patch!
+So just ignore this patch :-)
 
-> --- a/arch/m68k/Kconfig.machine
-> +++ b/arch/m68k/Kconfig.machine
-> @@ -7,6 +7,7 @@ config AMIGA
->         bool "Amiga support"
->         depends on MMU
->         select LEGACY_TIMER_TICK
-> +       select HAVE_PCI
->         help
->           This option enables support for the Amiga series of computers. If
->           you plan to use this kernel on an Amiga, say Y here and browse the
+Today I dropped this patch from my branch, and retested on my Beagle xM and it all
+worked fine.
 
-This doesn't make much sense without upstream support for actual
-PCI host bridge controllers.
+I suspect that it might be related to the fact that I started testing with the Beagle
+board (so not the xM variant), and I hit the issue there. But the Beagle board doesn't
+have the connector for the camera, so later I switched to the xM variant. But I probably
+never tried running it on the xM without that iommu patch until today.
 
-Gr{oetje,eeting}s,
+In two weeks time I have access to my Beagle board again and I'll experiment a bit
+to see if my theory is correct.
 
-                        Geert
+Apologies for all the noise.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Regards,
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+	Hans
+
+> Since I am unfamiliar with the iommu core code, I am uncertain whether I am
+> just papering over a bug elsewhere, or whether this is really the correct solution.
+> 
+> The omap3isp code in question is here:
+> 
+> drivers/media/platform/ti/omap3isp/isp.c, function isp_attach_iommu().
+> 
+> This omap3isp code predates the addition of blocking_domain and it used to work
+> before that feature was added.
+> 
+> I've tested this patch with my Beagle XM board.
+> 
+> If this patch is addressing the issue in the wrong place, then advise
+> on what the correct solution is would be very much appreciated!
+> 
+> I have a bunch of media omap3isp cleanup patches pending, but there is no point in
+> posting those until this issue is resolved.
+> 
+> Regards,
+> 
+> 	Hans
+> ---
+>  drivers/iommu/iommu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index 060ebe330ee1..0ab1671ee850 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -2220,7 +2220,7 @@ static int __iommu_attach_group(struct iommu_domain *domain,
+>  	struct device *dev;
+> 
+>  	if (group->domain && group->domain != group->default_domain &&
+> -	    group->domain != group->blocking_domain)
+> +	    group->blocking_domain && group->domain != group->blocking_domain)
+>  		return -EBUSY;
+> 
+>  	dev = iommu_group_first_dev(group);
+
 
