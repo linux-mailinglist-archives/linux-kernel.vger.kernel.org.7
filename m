@@ -1,149 +1,177 @@
-Return-Path: <linux-kernel+bounces-843794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21144BC048C
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 07:57:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED936BC0471
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 07:57:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4C6F3C5713
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 05:56:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D1433C5E88
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 05:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC0B23315A;
-	Tue,  7 Oct 2025 05:55:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1672C2264CC;
+	Tue,  7 Oct 2025 05:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="isR7iKQc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b9efv9s8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941C5227EA4;
-	Tue,  7 Oct 2025 05:55:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2812264AA;
+	Tue,  7 Oct 2025 05:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759816549; cv=none; b=s4po+kaPWlJl/CqpMWYy7ZKp3hnEaBSpoUU/LiOaCeU0B2XyCPt8Ns7x/cxP4w+WfFR9TOqKz5cIj43zEIfSynTmJfPa6wxhYboyyVR+AVRE4wXSxcJRwkOkDLiJxD+rZJosYE2BKaUkIqLWKtf/Aj78k+GOK931hkGQ2haWtWo=
+	t=1759816548; cv=none; b=O1tbw3e8iNxPxa6mryP3a+4R41hOWtvDqYy0i94b0VHXtgLQiksIxIQS9/npe0yh9QsuEn4TwT+gcywvVU/B0qyw9LzLg8NmzKF13kDv5W1vvNj9kb9a+K3STHYnNWO6jsKb30o8UJloCG2qBeZAzafKbyCaq8gNQ0DC5tMsrp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759816549; c=relaxed/simple;
-	bh=zllb+3NvwJkSAIh2p+SIfQifQPmEwRZvoLAixcWzz0E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Qkx0W2yGRBJ+RtOFSc1KwtbQw18CL1NFLu6RDnlovrfwTyD/BpNEg06212oDqmh5wGW27NzhwZiGY24+ljum95kLMrovsKkeL0lC0TsM7NycLfjaxXicf8/bHoAEGVW9apR5FUU9k+lM2qHhjde7cvURPRVDAMHBFt62MDO6/QI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=isR7iKQc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1FC6BC19421;
-	Tue,  7 Oct 2025 05:55:49 +0000 (UTC)
+	s=arc-20240116; t=1759816548; c=relaxed/simple;
+	bh=2nIEFFo9PgMnji0tHWyo3GRSaIlkwdtp4+O2fweT93k=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Mrmt7dUDKQx/EfsSR2huwL9s3VkzmdJlmx+tapwO/eEkVqm5VDu31e9Tob1s6zbt9lnm8CmFM+MNTFfllv9cEZSRw4WlNdu2E+NyrjND5T2vO/h9bdkToNkT3GUSqZIFY992Qkn1wnLcYwoTyyZugA5GfewvV1YHyrxOzWfCHeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b9efv9s8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5AC2C4CEF1;
+	Tue,  7 Oct 2025 05:55:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759816549;
-	bh=zllb+3NvwJkSAIh2p+SIfQifQPmEwRZvoLAixcWzz0E=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=isR7iKQchEFp5G+QojRUOl5eUNtDqlaWT8mKlVNVJLOTwrfBH8bSdqz5QbuF8dM10
-	 vpnhcfZDdGfkFysr2JaleFx98N07/jFIGw69GOkbxkFh1mvD/DEjMpO+tj3pTOla8q
-	 cEFGozztCcEgUS3AHgGDkCQeuMjLvB0oPVU1rEec3Ch0RhJasV7LV3NjbXB62c9CHx
-	 1fYlfpsJQR9+au6VhkBOQbt94el7JvygD3dcWhroPX4TyW7jXI2J4TE3FDA/euNbxi
-	 b7wjgCbIMRb1PD6SXDKYHrLOGLjJn+bnpyE4UfADAFonkqGDHWlmrWEzZftB/SEiqe
-	 +OS5Q411S0c3A==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18C85CCD184;
-	Tue,  7 Oct 2025 05:55:49 +0000 (UTC)
-From: Alexandre Messier via B4 Relay <devnull+alex.me.ssier.org@kernel.org>
-Date: Tue, 07 Oct 2025 01:55:45 -0400
-Subject: [PATCH 4/4] ARM: dts: qcom: msm8974pro-htc-m8: add touchscreen
+	s=k20201202; t=1759816547;
+	bh=2nIEFFo9PgMnji0tHWyo3GRSaIlkwdtp4+O2fweT93k=;
+	h=Date:From:To:Cc:Subject:From;
+	b=b9efv9s8AJvltibiCrt8vh9HVtHTTvtssCaWUHYYkra42UeeFcJ4sCUrDnByv9k1S
+	 J+Pp8PW0kO2CTgFO8BeVS5c1XaKH02MsWjfi4WqJ4oic7i41RPchhVbO0+O/vISsMZ
+	 gUzLKao2kfLPQv6+v50MeoH2rUTo6fQY8vi4YWqzow8dLA7jr1ABnK3ke56VXSbwTt
+	 1hcAEhu4YfS7pt7nIBVhQNZNeAvFYT8pK4w0H2eU+eBoevdi9SgUHPVHu92sJuJ1vm
+	 C6cvh+wq6wWVmBGjNsQG2Tq+fSocILnRx0/1QB+D6bmp0g/5BxuYOoPsglMjRXMJ0w
+	 sTHh0Y1F71cbA==
+Date: Tue, 7 Oct 2025 05:55:46 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Wei Liu <wei.liu@kernel.org>,
+	Linux Kernel List <linux-kernel@vger.kernel.org>,
+	Linux on Hyper-V List <linux-hyperv@vger.kernel.org>,
+	kys@microsoft.com, haiyangz@microsoft.com, decui@microsoft.com
+Subject: [GIT PULL] Hyper-V patches for 6.18
+Message-ID: <20251007055546.GF2051323@liuwe-devbox-debian-v2.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251007-m8-dts-additions-v1-4-53d7ab3594e7@me.ssier.org>
-References: <20251007-m8-dts-additions-v1-0-53d7ab3594e7@me.ssier.org>
-In-Reply-To: <20251007-m8-dts-additions-v1-0-53d7ab3594e7@me.ssier.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Luca Weiss <luca@lucaweiss.eu>, linux-arm-kernel@lists.infradead.org, 
- linux-arm-msm@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- phone-devel@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Alexandre Messier <alex@me.ssier.org>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759816548; l=1396;
- i=alex@me.ssier.org; s=20240603; h=from:subject:message-id;
- bh=hdecRNJtpjZw0ZFJpTZCDbMGZMkzuTJDOFqG18sWriY=;
- b=upDMWCpKVS6TzPDV0IXurlo/SWZvnQRUjFVv2F6MvD841N+5VeyizVu42f8yrfyUfvHsGTJcb
- DQQ744yTtVVCTTcOgpkwKuY/iNhAp23aL5tX4I3TqR0vY7Bx8BiQAVY
-X-Developer-Key: i=alex@me.ssier.org; a=ed25519;
- pk=JjRqVfLd2XLHX2QTylKoROw346/1LOyZJX0q6cfnrKw=
-X-Endpoint-Received: by B4 Relay for alex@me.ssier.org/20240603 with
- auth_id=168
-X-Original-From: Alexandre Messier <alex@me.ssier.org>
-Reply-To: alex@me.ssier.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: Alexandre Messier <alex@me.ssier.org>
+Hi Linus,
 
-Add the touchscreen device node for the HTC One (M8).
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
-Signed-off-by: Alexandre Messier <alex@me.ssier.org>
----
- arch/arm/boot/dts/qcom/qcom-msm8974pro-htc-m8.dts | 36 +++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
 
-diff --git a/arch/arm/boot/dts/qcom/qcom-msm8974pro-htc-m8.dts b/arch/arm/boot/dts/qcom/qcom-msm8974pro-htc-m8.dts
-index 36eb42f0f3d9..040a256f9465 100644
---- a/arch/arm/boot/dts/qcom/qcom-msm8974pro-htc-m8.dts
-+++ b/arch/arm/boot/dts/qcom/qcom-msm8974pro-htc-m8.dts
-@@ -65,6 +65,35 @@ vreg_vph_pwr: vreg-vph-pwr {
- 	};
- };
- 
-+&blsp1_i2c2 {
-+	clock-frequency = <384000>;
-+
-+	status = "okay";
-+
-+	touch@20 {
-+		compatible = "syna,rmi4-i2c";
-+		reg = <0x20>;
-+
-+		interrupts-extended = <&tlmm 18 IRQ_TYPE_LEVEL_LOW>;
-+
-+		pinctrl-0 = <&ts_int_pin>;
-+		pinctrl-names = "default";
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		rmi4-f01@1 {
-+			reg = <0x1>;
-+			syna,nosleep-mode = <1>;
-+		};
-+
-+		rmi4-f11@11 {
-+			reg = <0x11>;
-+			syna,sensor-type = <1>;
-+		};
-+	};
-+};
-+
- &blsp1_i2c3 {
- 	clock-frequency = <384000>;
- 
-@@ -358,6 +387,13 @@ cmd-data-pins {
- 		};
- 	};
- 
-+	ts_int_pin: ts-int-pin-state {
-+		pins = "gpio18";
-+		function = "gpio";
-+		drive-strength = <2>;
-+		bias-disable;
-+	};
-+
- 	wcnss_pin_a: wcnss-pin-active-state {
- 		bt-pins {
- 			pins = "gpio35", "gpio43", "gpio44";
+are available in the Git repository at:
 
--- 
-2.51.0
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git tags/hyperv-next-signed-20251006
 
+for you to fetch changes up to b595edcb24727e7f93e7962c3f6f971cc16dd29e:
 
+  hyperv: Remove the spurious null directive line (2025-10-02 21:21:24 +0000)
+
+----------------------------------------------------------------
+hyperv-next for v6.18
+ - Unify guest entry code for KVM and MSHV (Sean Christopherson)
+ - Switch Hyper-V MSI domain to use msi_create_parent_irq_domain() (Nam
+   Cao)
+ - Add CONFIG_HYPERV_VMBUS and limit the semantics of CONFIG_HYPERV (Mukesh
+   Rathor)
+ - Add kexec/kdump support on Azure CVMs (Vitaly Kuznetsov)
+ - Deprecate hyperv_fb in favor of Hyper-V DRM driver (Prasanna Kumar T S
+   M)
+ - Miscellaneous enhancements, fixes and cleanups (Abhishek Tiwari, Alok
+   Tiwari, Nuno Das Neves, Wei Liu, Roman Kisel, Michael Kelley))
+----------------------------------------------------------------
+Abhishek Tiwari (1):
+      Drivers: hv: util: Cosmetic changes for hv_utils_transport.c
+
+Alok Tiwari (3):
+      Drivers: hv: vmbus: Clean up sscanf format specifier in target_cpu_store()
+      Drivers: hv: vmbus: Fix sysfs output format for ring buffer index
+      Drivers: hv: vmbus: Fix typos in vmbus_drv.c
+
+Michael Kelley (1):
+      Drivers: hv: Simplify data structures for VMBus channel close message
+
+Mukesh Rathor (2):
+      Drivers: hv: Add CONFIG_HYPERV_VMBUS option
+      Drivers: hv: Make CONFIG_HYPERV bool
+
+Nam Cao (1):
+      x86/hyperv: Switch to msi_create_parent_irq_domain()
+
+Nuno Das Neves (2):
+      hyperv: Add missing field to hv_output_map_device_interrupt
+      mshv: Add support for a new parent partition configuration
+
+Prasanna Kumar T S M (2):
+      fbdev/hyperv_fb: deprecate this in favor of Hyper-V DRM driver
+      MAINTAINERS: Mark hyperv_fb driver Obsolete
+
+Roman Kisel (1):
+      hyperv: Remove the spurious null directive line
+
+Sean Christopherson (4):
+      mshv: Handle NEED_RESCHED_LAZY before transferring to guest
+      entry/kvm: KVM: Move KVM details related to signal/-EINTR into KVM proper
+      entry: Rename "kvm" entry code assets to "virt" to genericize APIs
+      mshv: Use common "entry virt" APIs to do work in root before running guest
+
+Vitaly Kuznetsov (1):
+      x86/hyperv: Add kexec/kdump support on Azure CVMs
+
+Wei Liu (1):
+      clocksource: hyper-v: Skip unnecessary checks for the root partition
+
+ MAINTAINERS                                 |  13 +-
+ arch/arm64/kvm/Kconfig                      |   2 +-
+ arch/arm64/kvm/arm.c                        |   3 +-
+ arch/loongarch/kvm/Kconfig                  |   2 +-
+ arch/loongarch/kvm/vcpu.c                   |   3 +-
+ arch/riscv/kvm/Kconfig                      |   2 +-
+ arch/riscv/kvm/vcpu.c                       |   3 +-
+ arch/x86/hyperv/irqdomain.c                 | 111 ++++++++++-----
+ arch/x86/hyperv/ivm.c                       | 211 +++++++++++++++++++++++++++-
+ arch/x86/kernel/cpu/mshyperv.c              |  11 +-
+ arch/x86/kvm/Kconfig                        |   2 +-
+ arch/x86/kvm/vmx/vmx.c                      |   1 -
+ arch/x86/kvm/x86.c                          |   3 +-
+ drivers/Makefile                            |   2 +-
+ drivers/clocksource/hyperv_timer.c          |  10 +-
+ drivers/gpu/drm/Kconfig                     |   2 +-
+ drivers/hid/Kconfig                         |   2 +-
+ drivers/hv/Kconfig                          |  15 +-
+ drivers/hv/Makefile                         |   4 +-
+ drivers/hv/channel.c                        |   2 +-
+ drivers/hv/hv_common.c                      |  22 +--
+ drivers/hv/hv_utils_transport.c             |  10 +-
+ drivers/hv/mshv.h                           |   2 -
+ drivers/hv/mshv_common.c                    |  22 ---
+ drivers/hv/mshv_root_main.c                 |  57 +++-----
+ drivers/hv/vmbus_drv.c                      |  10 +-
+ drivers/input/serio/Kconfig                 |   4 +-
+ drivers/net/hyperv/Kconfig                  |   2 +-
+ drivers/pci/Kconfig                         |   2 +-
+ drivers/scsi/Kconfig                        |   2 +-
+ drivers/uio/Kconfig                         |   2 +-
+ drivers/video/fbdev/Kconfig                 |   7 +-
+ drivers/video/fbdev/hyperv_fb.c             |   2 +
+ include/asm-generic/mshyperv.h              |  19 ++-
+ include/hyperv/hvgdk_mini.h                 |   2 -
+ include/hyperv/hvhdk_mini.h                 |   1 +
+ include/linux/{entry-kvm.h => entry-virt.h} |  19 +--
+ include/linux/hyperv.h                      |   7 +-
+ include/linux/kvm_host.h                    |  17 ++-
+ include/linux/rcupdate.h                    |   2 +-
+ kernel/entry/Makefile                       |   2 +-
+ kernel/entry/{kvm.c => virt.c}              |  15 +-
+ kernel/rcu/tree.c                           |   6 +-
+ net/vmw_vsock/Kconfig                       |   2 +-
+ virt/kvm/Kconfig                            |   2 +-
+ 45 files changed, 449 insertions(+), 193 deletions(-)
+ rename include/linux/{entry-kvm.h => entry-virt.h} (83%)
+ rename kernel/entry/{kvm.c => virt.c} (66%)
 
