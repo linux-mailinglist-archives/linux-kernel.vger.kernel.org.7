@@ -1,184 +1,151 @@
-Return-Path: <linux-kernel+bounces-843928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC927BC09CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 10:23:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA7D9BC08CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 10:06:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAEB23C53D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 08:23:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 937234EEF8C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 08:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ADB92D47F3;
-	Tue,  7 Oct 2025 08:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0CA238145;
+	Tue,  7 Oct 2025 08:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="h94yckcC"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ghwOfKNl"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7CC02D3EF5
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 08:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86415218AB4
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 08:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759825425; cv=none; b=lnIE7ohhWmuXbtKZW6N22WS3tzJ44IO6i3zNNsmqFz+wXzFQZtP1zRPwBjhOxCddCH5BmCeGkgTpnECJd45+hmYLu/AA+x0imGNcd5iOppJJHvX7vSaanNA4EEeFtKxRbKsfcelPZHuz1CoIRAzUm0N7ZV2EMd0MY1UQRlcIxhU=
+	t=1759824412; cv=none; b=LO0TKq8r5pnC42r647Jf2SHGIg4/7M+EUkod7nC90wuRN6mWy0hBtnsQDj8BBn1wxZKkVx696K4npJXwFqRaT/GtD0bxHNraOn5QkhaMHCiGmO+tsrc9b9luvvvAHoiWLscWbj9/JLDmk7QUKLLQJyhLFyYJ4Kys3C9Pplcbz6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759825425; c=relaxed/simple;
-	bh=MajXR+eDQMdIEwqLUWV9WRQsZnhgMUSoAq1t5bSMaXY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dxPWYMC02SaqJgVUB11Rfna5UEsvACjNpBMtgF0Qzm9HQR7fgplkLMyibvyrWma+zM0Hmfi8y9d3uuUHA/gNFZtyinAWzsGupF35PoY1zJyfDJByiLcDw6Oo0A1BsJF0wAsJ0GcsGMyCHpY3wlmjB+1EWbyLe74tTls+gCvB3HI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=h94yckcC; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1759825421;
-	bh=MajXR+eDQMdIEwqLUWV9WRQsZnhgMUSoAq1t5bSMaXY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=h94yckcCqavoDlxoyOxLv6t2EuQBAVlYln19rbbJL3vxd3gzo3WYckwrR+GLDXwVH
-	 GwKPb+AZiOg5PDlB6i+yEZiQ4pr8pDWs38o5FizNRmB/xgBEJVgYn3ECztmStmB4cS
-	 EJ+N6ef0gZlpk/Dq6rWieTUvt9R2ISU56qO9EeXXBE/NyWFktQTVZHpKj981jpSmIt
-	 SbTu9YX159OmzzSyQvqlDgEiy2Z8MhEv5m5vBapAZW7JPPYVFuQymU/756VZyv/ehy
-	 Kz2v8h3L4Fl8R50f8B9Vrm5h2BV0wpz7FGbvImBDI/I1JzEw/TtRnA6GX8n7Rl3xoC
-	 DF16N9yKm98OA==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6706C17E0A28;
-	Tue,  7 Oct 2025 10:23:41 +0200 (CEST)
-Date: Tue, 29 Apr 2025 18:16:05 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- kernel@collabora.com, Rob Herring <robh@kernel.org>, Steven Price
- <steven.price@arm.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-Subject: Re: [PATCH 1/3] drm/panfrost: Add BO labelling to Panfrost
-Message-ID: <20250429181030.6a81a2ea@collabora.com>
-In-Reply-To: <20250424022138.709303-2-adrian.larumbe@collabora.com>
-References: <20250424022138.709303-1-adrian.larumbe@collabora.com>
-	<20250424022138.709303-2-adrian.larumbe@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1759824412; c=relaxed/simple;
+	bh=0nuVQOkwJzeH7k9ho0X0QYWBaSW1FiKlHuDOyl8At9I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=nih/naiDtYnLkpfqc7I9CLcAwa1Dgfxryc/mb63t9utW1z9S6waH61A5iAAFJRFza8ge9VaIbI78/K8wu3k+nTZg5Ju40zpjHF/MjytUCuVukiww+7rl3A22WcS2r3FmvBqFdZAI3DqSmKPkIhlDvX8ewe1wVE9NtNspYa7b/DY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ghwOfKNl; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46e2cfbf764so7271625e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 01:06:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759824408; x=1760429208; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=+DemagZ3lwdnPbdAD7J+Cx+hPerc6FDpVY4UH1BSMao=;
+        b=ghwOfKNlAxJnl/QpK+Tx4wr6ORYXHno92o3YfmUZqzquMrncQ7vPHwEaBZGRkPjMFC
+         tBsLwTCJyEgD9MQrgwRW2UOmTzBELWH13fbydMrdMuztvMdV0h8HwhlmHBqG4mXislYk
+         jeCgS4RRU0Mi/KojdEYXVZSUsmyvPHweARJ4Wsa3VAO7iWzn4P89x2X0zqWpRPxsgJJI
+         kuVblAsWGQSRUA5n4k+8nJgj3zcfvHlXWh5JO3UaGXkXUK59BsrbtovkTHuMPB6BarqU
+         RxsuaOuHyQzLWg2Hf8y9vHAQ87kJR5qhRXzm2ja2fL1iZKuSg1/jv6UvV3FyZcOES8nD
+         J0YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759824408; x=1760429208;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+DemagZ3lwdnPbdAD7J+Cx+hPerc6FDpVY4UH1BSMao=;
+        b=jD9CP5Dtl17VB4XNTQQHvh+sPL6OW2dSMpMBuAR3TEmshQ3sDI0kuKUVxzug0lq1aC
+         T641ubcIpAjw88FX3hRI5MS0QC9BIJtsIzDwcNkR/rIUMnLSZ5lNkKFWm54EymQ+0SGM
+         uNwMsuzyqGQVsynCl75Nx0OSkzILH35l299m0HQ1j40aZc/epNSH0zhnpmGd9+sFUtjk
+         OVxmwfvrA2UJe8W2nGD4VbY+T2dnvVXgVRSpBzcsHQCUzcNFUNpf11W8gZqIajugBduu
+         wt8d/BdEUGAnSlx6YwRn1MqvABoDecqUd4lfx9uFpc5WKI/TWQNZ+CeypRnf9LF8+h9q
+         RNvw==
+X-Forwarded-Encrypted: i=1; AJvYcCWfd7ov9pINVEQNUoJC9jrEEINEYeQlmQU5v6vwHQy4w9HveKjwUNP9wNn7w5y+PK5Axj89jfwLYjWwIB8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRInlsOQ1czFzwLRCPN4AEZNbVXHcgM2leL7I/p7RcTJzDXaBJ
+	thAEvFXXp8haQ8RURZvFWW9Jr2ZpoACyzS/3lU6GkCAp/TPVUTh7o0bY
+X-Gm-Gg: ASbGnctqBc2AzFOnHWIdEAWqkAdREgKtOLDVqnDkbduITVLYCzVrDaLEbY+G2fkJwTp
+	pf8YMwArN3XG2lL54zHDpr5OPKVcV/IBe0rnhSQz9kuz6ujAzWrsKT67BX84jmwfMUMIZmbB3wy
+	U8SQVEOdfatL6xFcu+lOO4qCGKsRxgGxO32y6fCTIS68fWumQy3TuRncoG3IOig166q9du7RCJi
+	fbETEoUNTMGa7MhsB83aiuPRorwIakkFKHZ/zv+pByEgenZtAEpnTCfU/BzUMETiJSA9rZ8qy/w
+	QRpVR8VLxShS5N3wyPUxAsBRF7WF29ytXTG4J7m80tZ9ZLtIXOHkzKhdVkj2jA7vaP3yNz+ydlK
+	7ebcQn87V84SuYj7DChU1L7vpS76r/pJ/1fQZ8vtP1AD6sDNrJ+CLYPWRt616JRT7g61t7ON/gt
+	s=
+X-Google-Smtp-Source: AGHT+IG7W8TdSh7hajTVSLVxdSS/RLt63cBB9lWB3+Jv1QSy+dF+pbB9sKZOf60r/31B0nPg2XLA7Q==
+X-Received: by 2002:a05:600c:3510:b0:45d:f7df:270b with SMTP id 5b1f17b1804b1-46e710b22c1mr53224255e9.0.1759824407277;
+        Tue, 07 Oct 2025 01:06:47 -0700 (PDT)
+Received: from [192.168.174.116] ([102.155.185.183])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8e9780sm24118374f8f.29.2025.10.07.01.06.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Oct 2025 01:06:46 -0700 (PDT)
+Message-ID: <20f049cc-41f4-4b23-b4a7-5d41dca7c7e5@gmail.com>
+Date: Tue, 7 Oct 2025 09:07:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-ZM-MESSAGEID: 1745943481827134300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/gud: Use kmalloc_array() instead of kmalloc()
+To: Thomas Zimmermann <tzimmermann@suse.de>,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
+ simona@ffwll.ch, mingo@kernel.org, tglx@linutronix.de, jfalempe@redhat.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-kernel-mentees@lists.linuxfoundation.org, skhan@linuxfoundation.org,
+ david.hunter.linux@gmail.com, rubenru09@aol.com
+References: <20250923085144.22582-1-mehdi.benhadjkhelifa@gmail.com>
+ <26036ff3-2374-40a9-8597-271b93130a7e@suse.de>
+Content-Language: en-US
+From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+In-Reply-To: <26036ff3-2374-40a9-8597-271b93130a7e@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, 24 Apr 2025 03:21:30 +0100
-Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
+On 10/7/25 8:45 AM, Thomas Zimmermann wrote:
+> Hi
+> 
+> Am 23.09.25 um 10:51 schrieb Mehdi Ben Hadj Khelifa:
+>> Replace kmalloc with kmalloc array in drm/gud/gud_pipe.c since the
+>> calculation inside kmalloc is dynamic 'width * height' to avoid
+>> overflow.
+>>
+>> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+>> ---
+>> Changelog:
+>>
+>> Changes since v1:
+>> - Use of width as element count and height as size of element to
+>> eliminate the mentionned calculation and overflow issues.
+>>
+>>   drivers/gpu/drm/gud/gud_pipe.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/gud/gud_pipe.c b/drivers/gpu/drm/gud/ 
+>> gud_pipe.c
+>> index 8d548d08f127..8898dc9393fb 100644
+>> --- a/drivers/gpu/drm/gud/gud_pipe.c
+>> +++ b/drivers/gpu/drm/gud/gud_pipe.c
+>> @@ -70,7 +70,7 @@ static size_t gud_xrgb8888_to_r124(u8 *dst, const 
+>> struct drm_format_info *format
+>>       height = drm_rect_height(rect);
+>>       len = drm_format_info_min_pitch(format, 0, width) * height;
+>> -    buf = kmalloc(width * height, GFP_KERNEL);
+>> +    buf = kmalloc_array(width, height, GFP_KERNEL);
+> 
+> One nitpick here: the first parameter is the number of elements and the 
+> second parameter is the size of an individual element. [1] So the 
+> arguments 'width' and 'height' should be reversed.  Please resubmit.
+> 
+Understood,I will be sending v3 shortly.
 
-> Unlike in Panthor, from where this change is based on, there is no need
-> to support tagging of BO's other than UM-exposed ones, so all strings
-> can be freed with kfree().
->=20
-> This commit is done in preparation of a following one that will allow
-> UM to set BO labels through a new ioctl().
->=20
-> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
-> ---
->  drivers/gpu/drm/panfrost/panfrost_gem.c | 19 +++++++++++++++++++
->  drivers/gpu/drm/panfrost/panfrost_gem.h | 16 ++++++++++++++++
->  2 files changed, 35 insertions(+)
->=20
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_gem.c b/drivers/gpu/drm/pa=
-nfrost/panfrost_gem.c
-> index 963f04ba2de6..a7a29974d8b1 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_gem.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_gem.c
-> @@ -1,6 +1,7 @@
->  // SPDX-License-Identifier: GPL-2.0
->  /* Copyright 2019 Linaro, Ltd, Rob Herring <robh@kernel.org> */
-> =20
-> +#include <linux/cleanup.h>
->  #include <linux/err.h>
->  #include <linux/slab.h>
->  #include <linux/dma-buf.h>
-> @@ -35,6 +36,9 @@ static void panfrost_gem_free_object(struct drm_gem_obj=
-ect *obj)
->  	 */
->  	WARN_ON_ONCE(!list_empty(&bo->mappings.list));
-> =20
-> +	kfree(bo->label.str);
-> +	mutex_destroy(&bo->label.lock);
-> +
->  	if (bo->sgts) {
->  		int i;
->  		int n_sgt =3D bo->base.base.size / SZ_2M;
-> @@ -260,6 +264,7 @@ struct drm_gem_object *panfrost_gem_create_object(str=
-uct drm_device *dev, size_t
->  	mutex_init(&obj->mappings.lock);
->  	obj->base.base.funcs =3D &panfrost_gem_funcs;
->  	obj->base.map_wc =3D !pfdev->coherent;
-> +	mutex_init(&obj->label.lock);
-> =20
->  	return &obj->base.base;
->  }
-> @@ -302,3 +307,17 @@ panfrost_gem_prime_import_sg_table(struct drm_device=
- *dev,
-> =20
->  	return obj;
->  }
-> +
-> +void
-> +panfrost_gem_set_label(struct drm_gem_object *obj, const char *label)
-> +{
-> +	struct panfrost_gem_object *bo =3D to_panfrost_bo(obj);
-> +	const char *old_label;
-> +
-> +	scoped_guard(mutex, &bo->label.lock) {
-> +		old_label =3D bo->label.str;
-> +		bo->label.str =3D label;
-> +	}
-> +
-> +	kfree(old_label);
-> +}
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_gem.h b/drivers/gpu/drm/pa=
-nfrost/panfrost_gem.h
-> index 7516b7ecf7fe..c0be2934f229 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_gem.h
-> +++ b/drivers/gpu/drm/panfrost/panfrost_gem.h
-> @@ -41,6 +41,20 @@ struct panfrost_gem_object {
->  	 */
->  	size_t heap_rss_size;
-> =20
-> +	/**
-> +	 * @label: BO tagging fields. The label can be assigned within the
-> +	 * driver itself or through a specific IOCTL.
-> +	 */
-> +	struct {
-> +		/**
-> +		 * @label.str: Pointer to NULL-terminated string,
-> +		 */
-> +		const char *str;
-> +
-> +		/** @lock.str: Protects access to the @label.str field. */
-> +		struct mutex lock;
-> +	} label;
+> Best regards
+> Thomas
+> 
 
-Should we have a panfrost_gem_debugfs where we put all the debugfs
-fields, like we have in panthor?
+Best Regards,
+Mehdi
 
-> +
->  	bool noexec		:1;
->  	bool is_heap		:1;
->  };
-> @@ -89,4 +103,6 @@ void panfrost_gem_teardown_mappings_locked(struct panf=
-rost_gem_object *bo);
->  int panfrost_gem_shrinker_init(struct drm_device *dev);
->  void panfrost_gem_shrinker_cleanup(struct drm_device *dev);
-> =20
-> +void panfrost_gem_set_label(struct drm_gem_object *obj, const char *labe=
-l);
-> +
->  #endif /* __PANFROST_GEM_H__ */
+> [1] https://elixir.bootlin.com/linux/v6.17.1/source/tools/include/linux/ 
+> slab.h#L15
+> 
+>>       if (!buf)
+>>           return 0;
+> 
 
 
