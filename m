@@ -1,527 +1,338 @@
-Return-Path: <linux-kernel+bounces-843751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48F93BC0266
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 06:25:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7453BC0276
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 06:28:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B21183C0F90
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 04:24:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91AAC1896CC2
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 04:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6A821A458;
-	Tue,  7 Oct 2025 04:24:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881FC218ACA;
+	Tue,  7 Oct 2025 04:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="pLwQ3jkk"
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=etsalapatis-com.20230601.gappssmtp.com header.i=@etsalapatis-com.20230601.gappssmtp.com header.b="p0tTIUU0"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6DB01F19A
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 04:24:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA5734BA3A
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 04:28:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759811092; cv=none; b=OQlMXGIltRh65tYq2jDcSBCNveEa2X7gM1PFQvNYC5Cwo+NH2XUgNTgQUxVKd2D/A6gdCPtPfYYEVHTLnjuKNPInywoiB4nHXO2vZk+BSeRCsgDuC1Dw/Ub5sDQ8bSySd1KDQutnvsq97WHunvFHWQW/rHiJZpxYD9vuZaIFxp8=
+	t=1759811299; cv=none; b=YH39nFisrGPKVq0bNg/zvzcMFTNzdUf8pCz1MC1ozttJ+ZdBsaUwPNYbBFZXfWIEVWRY0VZZXgMiZFLJcBLYJvoN8Rq3r3iiN+LoV3Wf5aRSH4UGcxF/+Wd5XnvdYwHwjREV31UNdRw/zjkLUzDuSBh72xCBbqFlavMjFy6DS8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759811092; c=relaxed/simple;
-	bh=lzvsY1xoArVCw8tXrta4vNdFVJ0XiZtdMtKSbCiq6gg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sRfaDZ1Qy+mISAnrBEg72K/nkrnT+zMZtq/kX7g7tbawXpNoXXpwyTn2qAQeAFLKIFPRImjTYS6QQNVy8dA+E/Q4HS2h/EjUaTHvbWJxcBcdpGKRWTjdwihqUUXAT4b5WdlfVi0ZQuwdvldXfK9FPj3ejcz9SSe4oB89xLkiIso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=pLwQ3jkk; arc=none smtp.client-ip=67.231.153.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59742E1L2919762
-	for <linux-kernel@vger.kernel.org>; Mon, 6 Oct 2025 21:24:48 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=s2048-2025-q2; bh=cngsvZSdIP+RydwswOVA
-	ihfuG3IRHAmtCy4CkPJRjmI=; b=pLwQ3jkkWqH7eMufS/LspaxSu84A5NvqHtg/
-	5iWt9RtN9fXclRWrEuNnfnB5k6VnjVMAYLn5QG7OV8SKlgvg0e/RcYwnFTIIXdyj
-	/30CzYTAnjzG3pHoZSTuaE977i+wXhotf4PrZ/xp3A76swX3rEGftZUJ4RH3Povv
-	BF4pUZdT351wsvzxGUCLWb5btJ0Av634GYagrIldLiO4dl8q+LRiNYtDG7L25gl1
-	6QbRfDO0kT4+6/fl+BLGTVK86wThEigtvlWm1KC+BHNDMHl6m3eR08zguV0Sll9K
-	QAH0UJiBGyb5H7rMjcCmZ/YZZrMZc7cWlMYXjQw7tlfAjR3PlA==
-Received: from mail.thefacebook.com ([163.114.134.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 49mufv8328-3
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 21:24:48 -0700 (PDT)
-Received: from twshared30833.05.prn5.facebook.com (2620:10d:c085:208::7cb7) by
- mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.20; Tue, 7 Oct 2025 04:24:46 +0000
-Received: by devgpu015.cco6.facebook.com (Postfix, from userid 199522)
-	id 96EC3C6C6F1; Mon,  6 Oct 2025 21:24:35 -0700 (PDT)
-Date: Mon, 6 Oct 2025 21:24:35 -0700
-From: Alex Mastro <amastro@fb.com>
-To: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
-CC: Jason Gunthorpe <jgg@ziepe.ca>,
-        Alex Williamson
-	<alex.williamson@redhat.com>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] vfio: fix VFIO_IOMMU_UNMAP_DMA when end of range would
- overflow u64
-Message-ID: <aOSWA46X1XsH7pwP@devgpu015.cco6.facebook.com>
-References: <20251005-fix-unmap-v1-1-6687732ed44e@fb.com>
- <20251006121618.GA3365647@ziepe.ca>
- <aOPuU0O6PlOjd/Xs@devgpu015.cco6.facebook.com>
- <20251006225039.GA3441843@ziepe.ca>
- <aORhMMOU5p3j69ld@devgpu015.cco6.facebook.com>
- <68e18f2c-79ad-45ec-99b9-99ff68ba5438@oracle.com>
+	s=arc-20240116; t=1759811299; c=relaxed/simple;
+	bh=9yVzn3ZpIshopjvvzCxG+1nC99jPfO2oOkje86bLalw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oVu8QzXpganPqpguWwKByFgenA7BT/0xFiAZxd6SaWGzZi39pVw4dqDkP51BUIiVV/7G8hiONeMpWZkOrdeqE2s2yenaL6FCJvgiuM733qwv3AQ5rRTGGMclInbQJkyv09PJoNQFSUZtSw2qqmFPHeMr8V10f2A4cvMhyXoIhBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=etsalapatis.com; spf=pass smtp.mailfrom=etsalapatis.com; dkim=pass (2048-bit key) header.d=etsalapatis-com.20230601.gappssmtp.com header.i=@etsalapatis-com.20230601.gappssmtp.com header.b=p0tTIUU0; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=etsalapatis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=etsalapatis.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-71d60501806so64040597b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 21:28:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=etsalapatis-com.20230601.gappssmtp.com; s=20230601; t=1759811295; x=1760416095; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=24nmEMKW5sAHhorNG5XT+pmsvvkx9tjAqyzOdDrY5Ik=;
+        b=p0tTIUU0AFSKc4ya/ZPFmrP+MJgyFXdsJ2Rxs+4sUqR9p61yUKUAMgVjrBpWh1dOQq
+         MX/mtNQsCtkEwv+4N+H8yU3v0YtMjkIj73gGNHClhNKUOwdQTq3Oer9uDo+jMYRHvWcV
+         ryYs2TivyL0C86W+6QFreDJmMndA+oAGhcoQexiWuolLpjrrGpOL1n97Qd6EECHPce18
+         mv0FJmqkUvEObTNde0R2pjrnb2ZlVFvYHl+6uR5xDj2deWdlRMaQoNdjTd1NUo7+jJZ6
+         29KI6E9QCgcVTS5Bupy8lj+/Z3fIBfbolErHrx/+hjFKc4BRg09i+hGNzuy5NMsfH0ow
+         JxaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759811295; x=1760416095;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=24nmEMKW5sAHhorNG5XT+pmsvvkx9tjAqyzOdDrY5Ik=;
+        b=qBfObsypEI6002/z/FfV6GnpN4JeuRs68m9UprGAyp3EDWDIyd5N+Kp5OC8P6LB0mn
+         pugX2giRyQ4uk+rG67uNzBdqO5kIfjtTAL3AQ0rk48LNghgpcW5OFXNCdCN7vdOZ6QIy
+         3iwc/75U1haMeTOkPlqXJ5kn7F2crrTktV2BPZo4+Pmnt9NKMVheRq1pnvfnpEL3GhTP
+         bPJ/zI12sSaXvs/UBP4sMTTGl+he8lsCJ+p8xqeVOVJjzetPQG8pKz0X+bgCqimjH0z4
+         cA+CZhXCDPua7vPO7gFZvjCbYB1Gq4mBbluHKBtfZ8aFvzoOhg04HZGnsYhPdvFMSYSj
+         dICQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVtscUMsBPobm1Pob3/y1EVtSzj1fqs6Ji8UhxaQeMBYA/7j1h5xEXW1iB9oKRnEJ0+cq5YZyi3Qbv+WQo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcSS+PNOHIt/HyAxCK5SKuMYd0YRB4i3AhjcJEbW+AlEr7TJk6
+	yL5LMnGFn/LDZs0vmVWcqBZE93D5G1VoJJourClkv2i2i/EXxb4Np7mw4PuEmD6mjOah3avUz0E
+	KF3+s1K4OPioXEsZnRx2q3dgsiuUFKRN5jVAxGucR9g==
+X-Gm-Gg: ASbGncujQBUm7Vg5TQbU6wFOIW2zlV5VL6el5rBLC2TvUS+lZb2q0tzjsLJ3KAKQwtL
+	xF6V8WWBAXhbt1KPC6IFEwCri8m2hp6LQ5mHYJnT8+nXY2Ege7BF3hEKm995sM34/dtSpBvvLLE
+	GhyPuHqonfIpsCYvl2uuH5eYVLUwvKOM2Yl/zMDIalGaieUo6lbApniPQuindciEHzJjhlql7bj
+	ubq9DAIUkslzHQ5RjSjIsIuYej+nmPfQw==
+X-Google-Smtp-Source: AGHT+IGhzTiWkfdI87vr+ql7n+ls2Q2mwQkq/hCmiGc/TFbmSh7pEvaPN+t3bx0U4a3klTVgRIv9BVvw0gk8VfEm9CA=
+X-Received: by 2002:a53:b6ca:0:b0:62c:70de:7c9a with SMTP id
+ 956f58d0204a3-63b9a060c6bmr11169835d50.11.1759811294975; Mon, 06 Oct 2025
+ 21:28:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <68e18f2c-79ad-45ec-99b9-99ff68ba5438@oracle.com>
-X-FB-Internal: Safe
-X-Proofpoint-ORIG-GUID: ZoJcAUQNXB26DcJZvGrwFONEq3o81b6F
-X-Proofpoint-GUID: ZoJcAUQNXB26DcJZvGrwFONEq3o81b6F
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA3MDAzMiBTYWx0ZWRfXzPioEg4R2uo+
- 4lhN+FHY9o7PLFaYYRVvSMBw+XaGHYTj6eoMwvoRYjYOlwfoxj+xoVHCTBgx0+LCtoUeHGnL3/o
- 9W8G52Wdv6i283Wyk+s0+cHzpHsyQv/QNk6Er1zYA79QfmF9PkSYwuT5XtgcfgO/8wn0zY5tTE1
- ojHBHzpdWsm7deuYJKX4h1puoXboidChMyuCwoprZjf6IQJAlT4xXqj0GEjnTaXaItDwAFq+3Gf
- YxDt4GGge9S7Q4jx7U6FOArYP//Mt/PBFVlsToJ5GZPkm466HDr4DLk72CTKd6VU+bByBjERYya
- awuTmIAaOsC5ecjYzoidKa5HkxCgtp4C1hn2asqSfxj3btmXf7T2A+ATbuy5rMCAeSpm+oCJjQt
- +THyJQf/D3kREzT0Wl7Jb8a/879kDg==
-X-Authority-Analysis: v=2.4 cv=BsaQAIX5 c=1 sm=1 tr=0 ts=68e49610 cx=c_pps
- a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=ZjcyzfyPlXKTUgq5GIwA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-06_07,2025-10-06_01,2025-03-28_01
+References: <20251007015147.2496026-1-tj@kernel.org> <20251007015147.2496026-5-tj@kernel.org>
+In-Reply-To: <20251007015147.2496026-5-tj@kernel.org>
+From: Emil Tsalapatis <linux-lists@etsalapatis.com>
+Date: Tue, 7 Oct 2025 00:28:04 -0400
+X-Gm-Features: AS18NWCFvNvrwtrBiaqOBKljQaSigyxHunXr9Ns6gQbxc73Qy4enNSRBK5aC_IM
+Message-ID: <CABFh=a5wpYf-ZRTKqUhGQLynMXt4ABowfuqNS11cU6Yw-Pa5Jg@mail.gmail.com>
+Subject: Re: [PATCH 4/4] sched_ext: Make scx_bpf_dsq_insert*() return bool
+To: Tejun Heo <tj@kernel.org>
+Cc: David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>, 
+	Changwoo Min <changwoo@igalia.com>, linux-kernel@vger.kernel.org, 
+	sched-ext@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 06, 2025 at 09:23:56PM -0400, Alejandro Jimenez wrote:
-> If going this way, we'd also have to deny the MAP requests. Right now we
+On Mon, Oct 6, 2025 at 9:51=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
+>
+> In preparation for hierarchical schedulers, change scx_bpf_dsq_insert() a=
+nd
+> scx_bpf_dsq_insert_vtime() to return bool instead of void. With
+> sub-schedulers, there will be no reliable way to guarantee a task is stil=
+l
+> owned by the sub-scheduler at insertion time (e.g., the task may have bee=
+n
+> migrated to another scheduler). The bool return value will enable
+> sub-schedulers to detect and gracefully handle insertion failures.
+>
+> For the root scheduler, insertion failures will continue to trigger sched=
+uler
+> abort via scx_error(), so existing code doesn't need to check the return
+> value. Backward compatibility is maintained through compat wrappers.
+>
+> Also update scx_bpf_dsq_move() documentation to clarify that it can retur=
+n
+> false for sub-schedulers when @dsq_id points to a disallowed local DSQ.
+>
+> Signed-off-by: Tejun Heo <tj@kernel.org>
 
-Agree.
+Reviewed-by: Emil Tsalapatis <emil@etsalapatis.com>
 
-> > I have doubts that anyone actually relies on MAP_DMA-ing such
-> > end-of-u64-mappings in practice, so perhaps it's OK?
-> > 
-> 
-> The AMD IOMMU supports a 64-bit IOVA, so when using the AMD vIOMMU with DMA
-> remapping enabled + VF passthrough + a Linux guest with iommu.forcedac=1 we
-> hit this issue since the driver (mlx5) starts requesting mappings for IOVAs
-> right at the top of the address space.
+> ---
+>  kernel/sched/ext.c                       | 45 ++++++++++++++++++------
+>  tools/sched_ext/include/scx/common.bpf.h |  3 +-
+>  tools/sched_ext/include/scx/compat.bpf.h | 23 ++++++++++--
+>  3 files changed, 56 insertions(+), 15 deletions(-)
+>
+> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> index a34e731229de..399e53c8939c 100644
+> --- a/kernel/sched/ext.c
+> +++ b/kernel/sched/ext.c
+> @@ -5323,8 +5323,12 @@ __bpf_kfunc_start_defs();
+>   * exhaustion. If zero, the current residual slice is maintained. If
+>   * %SCX_SLICE_INF, @p never expires and the BPF scheduler must kick the =
+CPU with
+>   * scx_bpf_kick_cpu() to trigger scheduling.
+> + *
+> + * Returns %true on successful insertion, %false on failure. On the root
+> + * scheduler, %false return triggers scheduler abort and the caller does=
+n't need
+> + * to check the return value.
+>   */
+> -__bpf_kfunc void scx_bpf_dsq_insert(struct task_struct *p, u64 dsq_id, u=
+64 slice,
+> +__bpf_kfunc bool scx_bpf_dsq_insert(struct task_struct *p, u64 dsq_id, u=
+64 slice,
+>                                     u64 enq_flags)
+>  {
+>         struct scx_sched *sch;
+> @@ -5332,10 +5336,10 @@ __bpf_kfunc void scx_bpf_dsq_insert(struct task_s=
+truct *p, u64 dsq_id, u64 slice
+>         guard(rcu)();
+>         sch =3D rcu_dereference(scx_root);
+>         if (unlikely(!sch))
+> -               return;
+> +               return false;
+>
+>         if (!scx_dsq_insert_preamble(sch, p, enq_flags))
+> -               return;
+> +               return false;
+>
+>         if (slice)
+>                 p->scx.slice =3D slice;
+> @@ -5343,13 +5347,24 @@ __bpf_kfunc void scx_bpf_dsq_insert(struct task_s=
+truct *p, u64 dsq_id, u64 slice
+>                 p->scx.slice =3D p->scx.slice ?: 1;
+>
+>         scx_dsq_insert_commit(sch, p, dsq_id, enq_flags);
+> +
+> +       return true;
+> +}
+> +
+> +/*
+> + * COMPAT: Will be removed in v6.23.
+> + */
+> +__bpf_kfunc void scx_bpf_dsq_insert___compat(struct task_struct *p, u64 =
+dsq_id,
+> +                                            u64 slice, u64 enq_flags)
+> +{
+> +       scx_bpf_dsq_insert(p, dsq_id, slice, enq_flags);
+>  }
+>
+> -static void scx_dsq_insert_vtime(struct scx_sched *sch, struct task_stru=
+ct *p,
+> +static bool scx_dsq_insert_vtime(struct scx_sched *sch, struct task_stru=
+ct *p,
+>                                  u64 dsq_id, u64 slice, u64 vtime, u64 en=
+q_flags)
+>  {
+>         if (!scx_dsq_insert_preamble(sch, p, enq_flags))
+> -               return;
+> +               return false;
+>
+>         if (slice)
+>                 p->scx.slice =3D slice;
+> @@ -5359,6 +5374,8 @@ static void scx_dsq_insert_vtime(struct scx_sched *=
+sch, struct task_struct *p,
+>         p->scx.dsq_vtime =3D vtime;
+>
+>         scx_dsq_insert_commit(sch, p, dsq_id, enq_flags | SCX_ENQ_DSQ_PRI=
+Q);
+> +
+> +       return true;
+>  }
+>
+>  struct scx_bpf_dsq_insert_vtime_args {
+> @@ -5394,8 +5411,12 @@ struct scx_bpf_dsq_insert_vtime_args {
+>   * function must not be called on a DSQ which already has one or more FI=
+FO tasks
+>   * queued and vice-versa. Also, the built-in DSQs (SCX_DSQ_LOCAL and
+>   * SCX_DSQ_GLOBAL) cannot be used as priority queues.
+> + *
+> + * Returns %true on successful insertion, %false on failure. On the root
+> + * scheduler, %false return triggers scheduler abort and the caller does=
+n't need
+> + * to check the return value.
+>   */
+> -__bpf_kfunc void
+> +__bpf_kfunc bool
+>  __scx_bpf_dsq_insert_vtime(struct task_struct *p,
+>                            struct scx_bpf_dsq_insert_vtime_args *args)
+>  {
+> @@ -5405,10 +5426,10 @@ __scx_bpf_dsq_insert_vtime(struct task_struct *p,
+>
+>         sch =3D rcu_dereference(scx_root);
+>         if (unlikely(!sch))
+> -               return;
+> +               return false;
+>
+> -       scx_dsq_insert_vtime(sch, p, args->dsq_id, args->slice, args->vti=
+me,
+> -                            args->enq_flags);
+> +       return scx_dsq_insert_vtime(sch, p, args->dsq_id, args->slice,
+> +                                   args->vtime, args->enq_flags);
+>  }
+>
+>  /*
+> @@ -5432,6 +5453,7 @@ __bpf_kfunc_end_defs();
+>
+>  BTF_KFUNCS_START(scx_kfunc_ids_enqueue_dispatch)
+>  BTF_ID_FLAGS(func, scx_bpf_dsq_insert, KF_RCU)
+> +BTF_ID_FLAGS(func, scx_bpf_dsq_insert___compat, KF_RCU)
+>  BTF_ID_FLAGS(func, __scx_bpf_dsq_insert_vtime, KF_RCU)
+>  BTF_ID_FLAGS(func, scx_bpf_dsq_insert_vtime, KF_RCU)
+>  BTF_KFUNCS_END(scx_kfunc_ids_enqueue_dispatch)
+> @@ -5686,8 +5708,9 @@ __bpf_kfunc void scx_bpf_dsq_move_set_vtime(struct =
+bpf_iter_scx_dsq *it__iter,
+>   * Can be called from ops.dispatch() or any BPF context which doesn't ho=
+ld a rq
+>   * lock (e.g. BPF timers or SYSCALL programs).
+>   *
+> - * Returns %true if @p has been consumed, %false if @p had already been =
+consumed
+> - * or dequeued.
+> + * Returns %true if @p has been consumed, %false if @p had already been
+> + * consumed, dequeued, or, for sub-scheds, @dsq_id points to a disallowe=
+d local
+> + * DSQ.
+>   */
+>  __bpf_kfunc bool scx_bpf_dsq_move(struct bpf_iter_scx_dsq *it__iter,
+>                                   struct task_struct *p, u64 dsq_id,
+> diff --git a/tools/sched_ext/include/scx/common.bpf.h b/tools/sched_ext/i=
+nclude/scx/common.bpf.h
+> index b1c2a0dde76e..522c90d0ced2 100644
+> --- a/tools/sched_ext/include/scx/common.bpf.h
+> +++ b/tools/sched_ext/include/scx/common.bpf.h
+> @@ -62,8 +62,7 @@ s32 scx_bpf_create_dsq(u64 dsq_id, s32 node) __ksym;
+>  s32 scx_bpf_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake=
+_flags, bool *is_idle) __ksym;
+>  s32 __scx_bpf_select_cpu_and(struct task_struct *p, const struct cpumask=
+ *cpus_allowed,
+>                              struct scx_bpf_select_cpu_and_args *args) __=
+ksym __weak;
+> -void scx_bpf_dsq_insert(struct task_struct *p, u64 dsq_id, u64 slice, u6=
+4 enq_flags) __ksym __weak;
+> -void __scx_bpf_dsq_insert_vtime(struct task_struct *p, struct scx_bpf_ds=
+q_insert_vtime_args *args) __ksym __weak;
+> +bool __scx_bpf_dsq_insert_vtime(struct task_struct *p, struct scx_bpf_ds=
+q_insert_vtime_args *args) __ksym __weak;
+>  u32 scx_bpf_dispatch_nr_slots(void) __ksym;
+>  void scx_bpf_dispatch_cancel(void) __ksym;
+>  bool scx_bpf_dsq_move_to_local(u64 dsq_id) __ksym __weak;
+> diff --git a/tools/sched_ext/include/scx/compat.bpf.h b/tools/sched_ext/i=
+nclude/scx/compat.bpf.h
+> index e172de696f99..33c26928f4e9 100644
+> --- a/tools/sched_ext/include/scx/compat.bpf.h
+> +++ b/tools/sched_ext/include/scx/compat.bpf.h
+> @@ -196,7 +196,7 @@ scx_bpf_select_cpu_and(struct task_struct *p, s32 pre=
+v_cpu, u64 wake_flags,
+>   * Inline wrapper that packs scalar arguments into a struct and calls
+>   * __scx_bpf_dsq_insert_vtime(). See __scx_bpf_dsq_insert_vtime() for de=
+tails.
+>   */
+> -static inline void
+> +static inline bool
+>  scx_bpf_dsq_insert_vtime(struct task_struct *p, u64 dsq_id, u64 slice, u=
+64 vtime,
+>                          u64 enq_flags)
+>  {
+> @@ -208,10 +208,29 @@ scx_bpf_dsq_insert_vtime(struct task_struct *p, u64=
+ dsq_id, u64 slice, u64 vtime
+>                         .enq_flags =3D enq_flags,
+>                 };
+>
+> -               __scx_bpf_dsq_insert_vtime(p, &args);
+> +               return __scx_bpf_dsq_insert_vtime(p, &args);
+>         } else {
+>                 scx_bpf_dsq_insert_vtime___compat(p, dsq_id, slice, vtime=
+,
+>                                                   enq_flags);
+> +               return true;
+> +       }
+> +}
+> +
+> +/*
+> + * v6.19: scx_bpf_dsq_insert() now returns bool instead of void. Move
+> + * scx_bpf_dsq_insert() decl to common.bpf.h and drop compat helper afte=
+r v6.22.
+> + */
+> +bool scx_bpf_dsq_insert___new(struct task_struct *p, u64 dsq_id, u64 sli=
+ce, u64 enq_flags) __ksym __weak;
+> +void scx_bpf_dsq_insert___compat(struct task_struct *p, u64 dsq_id, u64 =
+slice, u64 enq_flags) __ksym __weak;
+> +
+> +static inline bool
+> +scx_bpf_dsq_insert(struct task_struct *p, u64 dsq_id, u64 slice, u64 enq=
+_flags)
+> +{
+> +       if (bpf_ksym_exists(scx_bpf_dsq_insert___new)) {
+> +               return scx_bpf_dsq_insert___new(p, dsq_id, slice, enq_fla=
+gs);
+> +       } else {
+> +               scx_bpf_dsq_insert___compat(p, dsq_id, slice, enq_flags);
+> +               return true;
+>         }
+>  }
+>
 
-Interesting!
 
-> The reason why I hadn't send it to the list yet is because I noticed the
-> additional locations Jason mentioned earlier in the thread (e.g.
-> vfio_find_dma(), vfio_iommu_replay()) and wanted to put together a
-> reproducer that also triggered those paths.
-
-I am not well equipped to test some of these paths, so if you have a recipe, I'd
-be interested.
- 
-> I mentioned in the notes for the patch above why I chose a slightly more
-> complex method than the '- 1' approach, since there is a chance that
-> iova+size could also go beyond the end of the address space and actually
-> wrap around.
-
-I think certain invariants have broken if that is possible. The current checks
-in the unmap path should prevent that (iova + size - 1 < iova).
-
-1330          } else if (!size || size & (pgsize - 1) ||
-1331                     iova + size - 1 < iova || size > SIZE_MAX) {
-1332                  goto unlock;
-
-> My goal was not to trust the inputs at all if possible. We could also use
-> check_add_overflow() if we want to add explicit error reporting in
-> vfio_iommu_type1 when an overflow is detected. i.e. catch bad callers that
-
-I do like the explicitness of the check_* functions over the older style wrap
-checks.
-
-Below is my partially validated attempt at a more comprehensive fix if we were
-to try and make end of address space mappings work, rather than blanking out
-the last page.
-
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index 08242d8ce2ca..66a25de35446 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -28,6 +28,7 @@
- #include <linux/iommu.h>
- #include <linux/module.h>
- #include <linux/mm.h>
-+#include <linux/overflow.h>
- #include <linux/kthread.h>
- #include <linux/rbtree.h>
- #include <linux/sched/signal.h>
-@@ -165,12 +166,14 @@ static struct vfio_dma *vfio_find_dma(struct vfio_iommu *iommu,
- {
- 	struct rb_node *node = iommu->dma_list.rb_node;
- 
-+	BUG_ON(size == 0);
-+
- 	while (node) {
- 		struct vfio_dma *dma = rb_entry(node, struct vfio_dma, node);
- 
--		if (start + size <= dma->iova)
-+		if (start + size - 1 < dma->iova)
- 			node = node->rb_left;
--		else if (start >= dma->iova + dma->size)
-+		else if (start > dma->iova + dma->size - 1)
- 			node = node->rb_right;
- 		else
- 			return dma;
-@@ -186,10 +189,12 @@ static struct rb_node *vfio_find_dma_first_node(struct vfio_iommu *iommu,
- 	struct rb_node *node = iommu->dma_list.rb_node;
- 	struct vfio_dma *dma_res = NULL;
- 
-+	BUG_ON(size == 0);
-+
- 	while (node) {
- 		struct vfio_dma *dma = rb_entry(node, struct vfio_dma, node);
- 
--		if (start < dma->iova + dma->size) {
-+		if (start <= dma->iova + dma->size - 1) {
- 			res = node;
- 			dma_res = dma;
- 			if (start >= dma->iova)
-@@ -199,7 +204,7 @@ static struct rb_node *vfio_find_dma_first_node(struct vfio_iommu *iommu,
- 			node = node->rb_right;
- 		}
- 	}
--	if (res && size && dma_res->iova > start + size - 1)
-+	if (res && dma_res->iova > start + size - 1)
- 		res = NULL;
- 	return res;
- }
-@@ -213,7 +218,7 @@ static void vfio_link_dma(struct vfio_iommu *iommu, struct vfio_dma *new)
- 		parent = *link;
- 		dma = rb_entry(parent, struct vfio_dma, node);
- 
--		if (new->iova + new->size <= dma->iova)
-+		if (new->iova + new->size - 1 < dma->iova)
- 			link = &(*link)->rb_left;
- 		else
- 			link = &(*link)->rb_right;
-@@ -825,14 +830,24 @@ static int vfio_iommu_type1_pin_pages(void *iommu_data,
- 	unsigned long remote_vaddr;
- 	struct vfio_dma *dma;
- 	bool do_accounting;
-+	u64 end, to_pin;
- 
--	if (!iommu || !pages)
-+	if (!iommu || !pages || npage < 0)
- 		return -EINVAL;
- 
- 	/* Supported for v2 version only */
- 	if (!iommu->v2)
- 		return -EACCES;
- 
-+	if (npage == 0)
-+		return 0;
-+
-+	if (check_mul_overflow(npage, PAGE_SIZE, &to_pin))
-+		return -EINVAL;
-+
-+	if (check_add_overflow(user_iova, to_pin - 1, &end))
-+		return -EINVAL;
-+
- 	mutex_lock(&iommu->lock);
- 
- 	if (WARN_ONCE(iommu->vaddr_invalid_count,
-@@ -997,7 +1012,7 @@ static long vfio_sync_unpin(struct vfio_dma *dma, struct vfio_domain *domain,
- #define VFIO_IOMMU_TLB_SYNC_MAX		512
- 
- static size_t unmap_unpin_fast(struct vfio_domain *domain,
--			       struct vfio_dma *dma, dma_addr_t *iova,
-+			       struct vfio_dma *dma, dma_addr_t iova,
- 			       size_t len, phys_addr_t phys, long *unlocked,
- 			       struct list_head *unmapped_list,
- 			       int *unmapped_cnt,
-@@ -1007,18 +1022,16 @@ static size_t unmap_unpin_fast(struct vfio_domain *domain,
- 	struct vfio_regions *entry = kzalloc(sizeof(*entry), GFP_KERNEL);
- 
- 	if (entry) {
--		unmapped = iommu_unmap_fast(domain->domain, *iova, len,
-+		unmapped = iommu_unmap_fast(domain->domain, iova, len,
- 					    iotlb_gather);
- 
- 		if (!unmapped) {
- 			kfree(entry);
- 		} else {
--			entry->iova = *iova;
-+			entry->iova = iova;
- 			entry->phys = phys;
- 			entry->len  = unmapped;
- 			list_add_tail(&entry->list, unmapped_list);
--
--			*iova += unmapped;
- 			(*unmapped_cnt)++;
- 		}
- 	}
-@@ -1037,18 +1050,17 @@ static size_t unmap_unpin_fast(struct vfio_domain *domain,
- }
- 
- static size_t unmap_unpin_slow(struct vfio_domain *domain,
--			       struct vfio_dma *dma, dma_addr_t *iova,
-+			       struct vfio_dma *dma, dma_addr_t iova,
- 			       size_t len, phys_addr_t phys,
- 			       long *unlocked)
- {
--	size_t unmapped = iommu_unmap(domain->domain, *iova, len);
-+	size_t unmapped = iommu_unmap(domain->domain, iova, len);
- 
- 	if (unmapped) {
--		*unlocked += vfio_unpin_pages_remote(dma, *iova,
-+		*unlocked += vfio_unpin_pages_remote(dma, iova,
- 						     phys >> PAGE_SHIFT,
- 						     unmapped >> PAGE_SHIFT,
- 						     false);
--		*iova += unmapped;
- 		cond_resched();
- 	}
- 	return unmapped;
-@@ -1057,12 +1069,12 @@ static size_t unmap_unpin_slow(struct vfio_domain *domain,
- static long vfio_unmap_unpin(struct vfio_iommu *iommu, struct vfio_dma *dma,
- 			     bool do_accounting)
- {
--	dma_addr_t iova = dma->iova, end = dma->iova + dma->size;
- 	struct vfio_domain *domain, *d;
- 	LIST_HEAD(unmapped_region_list);
- 	struct iommu_iotlb_gather iotlb_gather;
- 	int unmapped_region_cnt = 0;
- 	long unlocked = 0;
-+	size_t pos = 0;
- 
- 	if (!dma->size)
- 		return 0;
-@@ -1086,13 +1098,14 @@ static long vfio_unmap_unpin(struct vfio_iommu *iommu, struct vfio_dma *dma,
- 	}
- 
- 	iommu_iotlb_gather_init(&iotlb_gather);
--	while (iova < end) {
-+	while (pos < dma->size) {
- 		size_t unmapped, len;
- 		phys_addr_t phys, next;
-+		dma_addr_t iova = dma->iova + pos;
- 
- 		phys = iommu_iova_to_phys(domain->domain, iova);
- 		if (WARN_ON(!phys)) {
--			iova += PAGE_SIZE;
-+			pos += PAGE_SIZE;
- 			continue;
- 		}
- 
-@@ -1101,7 +1114,7 @@ static long vfio_unmap_unpin(struct vfio_iommu *iommu, struct vfio_dma *dma,
- 		 * may require hardware cache flushing, try to find the
- 		 * largest contiguous physical memory chunk to unmap.
- 		 */
--		for (len = PAGE_SIZE; iova + len < end; len += PAGE_SIZE) {
-+		for (len = PAGE_SIZE; len + pos < dma->size; len += PAGE_SIZE) {
- 			next = iommu_iova_to_phys(domain->domain, iova + len);
- 			if (next != phys + len)
- 				break;
-@@ -1111,16 +1124,18 @@ static long vfio_unmap_unpin(struct vfio_iommu *iommu, struct vfio_dma *dma,
- 		 * First, try to use fast unmap/unpin. In case of failure,
- 		 * switch to slow unmap/unpin path.
- 		 */
--		unmapped = unmap_unpin_fast(domain, dma, &iova, len, phys,
-+		unmapped = unmap_unpin_fast(domain, dma, iova, len, phys,
- 					    &unlocked, &unmapped_region_list,
- 					    &unmapped_region_cnt,
- 					    &iotlb_gather);
- 		if (!unmapped) {
--			unmapped = unmap_unpin_slow(domain, dma, &iova, len,
-+			unmapped = unmap_unpin_slow(domain, dma, iova, len,
- 						    phys, &unlocked);
- 			if (WARN_ON(!unmapped))
- 				break;
- 		}
-+
-+		pos += unmapped;
- 	}
- 
- 	dma->iommu_mapped = false;
-@@ -1212,7 +1227,7 @@ static int update_user_bitmap(u64 __user *bitmap, struct vfio_iommu *iommu,
- }
- 
- static int vfio_iova_dirty_bitmap(u64 __user *bitmap, struct vfio_iommu *iommu,
--				  dma_addr_t iova, size_t size, size_t pgsize)
-+				  dma_addr_t iova, u64 end, size_t pgsize)
- {
- 	struct vfio_dma *dma;
- 	struct rb_node *n;
-@@ -1229,8 +1244,8 @@ static int vfio_iova_dirty_bitmap(u64 __user *bitmap, struct vfio_iommu *iommu,
- 	if (dma && dma->iova != iova)
- 		return -EINVAL;
- 
--	dma = vfio_find_dma(iommu, iova + size - 1, 0);
--	if (dma && dma->iova + dma->size != iova + size)
-+	dma = vfio_find_dma(iommu, end, 1);
-+	if (dma && dma->iova + dma->size - 1 != end)
- 		return -EINVAL;
- 
- 	for (n = rb_first(&iommu->dma_list); n; n = rb_next(n)) {
-@@ -1239,7 +1254,7 @@ static int vfio_iova_dirty_bitmap(u64 __user *bitmap, struct vfio_iommu *iommu,
- 		if (dma->iova < iova)
- 			continue;
- 
--		if (dma->iova > iova + size - 1)
-+		if (dma->iova > end)
- 			break;
- 
- 		ret = update_user_bitmap(bitmap, iommu, dma, iova, pgsize);
-@@ -1305,6 +1320,7 @@ static int vfio_dma_do_unmap(struct vfio_iommu *iommu,
- 	unsigned long pgshift;
- 	dma_addr_t iova = unmap->iova;
- 	u64 size = unmap->size;
-+	u64 unmap_end;
- 	bool unmap_all = unmap->flags & VFIO_DMA_UNMAP_FLAG_ALL;
- 	bool invalidate_vaddr = unmap->flags & VFIO_DMA_UNMAP_FLAG_VADDR;
- 	struct rb_node *n, *first_n;
-@@ -1327,11 +1343,13 @@ static int vfio_dma_do_unmap(struct vfio_iommu *iommu,
- 		if (iova || size)
- 			goto unlock;
- 		size = U64_MAX;
--	} else if (!size || size & (pgsize - 1) ||
--		   iova + size - 1 < iova || size > SIZE_MAX) {
-+	} else if (!size || size & (pgsize - 1) || size > SIZE_MAX) {
- 		goto unlock;
- 	}
- 
-+	if (check_add_overflow(iova, size - 1, &unmap_end))
-+		goto unlock;
-+
- 	/* When dirty tracking is enabled, allow only min supported pgsize */
- 	if ((unmap->flags & VFIO_DMA_UNMAP_FLAG_GET_DIRTY_BITMAP) &&
- 	    (!iommu->dirty_page_tracking || (bitmap->pgsize != pgsize))) {
-@@ -1376,8 +1394,8 @@ static int vfio_dma_do_unmap(struct vfio_iommu *iommu,
- 		if (dma && dma->iova != iova)
- 			goto unlock;
- 
--		dma = vfio_find_dma(iommu, iova + size - 1, 0);
--		if (dma && dma->iova + dma->size != iova + size)
-+		dma = vfio_find_dma(iommu, unmap_end, 1);
-+		if (dma && dma->iova + dma->size - 1 != unmap_end)
- 			goto unlock;
- 	}
- 
-@@ -1386,7 +1404,7 @@ static int vfio_dma_do_unmap(struct vfio_iommu *iommu,
- 
- 	while (n) {
- 		dma = rb_entry(n, struct vfio_dma, node);
--		if (dma->iova > iova + size - 1)
-+		if (dma->iova > unmap_end)
- 			break;
- 
- 		if (!iommu->v2 && iova > dma->iova)
-@@ -1713,12 +1731,12 @@ static int vfio_iommu_replay(struct vfio_iommu *iommu,
- 
- 	for (; n; n = rb_next(n)) {
- 		struct vfio_dma *dma;
--		dma_addr_t iova;
-+		size_t pos = 0;
- 
- 		dma = rb_entry(n, struct vfio_dma, node);
--		iova = dma->iova;
- 
--		while (iova < dma->iova + dma->size) {
-+		while (pos < dma->size) {
-+			dma_addr_t iova = dma->iova + pos;
- 			phys_addr_t phys;
- 			size_t size;
- 
-@@ -1734,14 +1752,15 @@ static int vfio_iommu_replay(struct vfio_iommu *iommu,
- 				phys = iommu_iova_to_phys(d->domain, iova);
- 
- 				if (WARN_ON(!phys)) {
--					iova += PAGE_SIZE;
-+					pos += PAGE_SIZE;
- 					continue;
- 				}
- 
-+
- 				size = PAGE_SIZE;
- 				p = phys + size;
- 				i = iova + size;
--				while (i < dma->iova + dma->size &&
-+				while (size + pos < dma->size &&
- 				       p == iommu_iova_to_phys(d->domain, i)) {
- 					size += PAGE_SIZE;
- 					p += PAGE_SIZE;
-@@ -1782,7 +1801,7 @@ static int vfio_iommu_replay(struct vfio_iommu *iommu,
- 				goto unwind;
- 			}
- 
--			iova += size;
-+			pos += size;
- 		}
- 	}
- 
-@@ -1799,29 +1818,29 @@ static int vfio_iommu_replay(struct vfio_iommu *iommu,
- unwind:
- 	for (; n; n = rb_prev(n)) {
- 		struct vfio_dma *dma = rb_entry(n, struct vfio_dma, node);
--		dma_addr_t iova;
-+		size_t pos = 0;
- 
- 		if (dma->iommu_mapped) {
- 			iommu_unmap(domain->domain, dma->iova, dma->size);
- 			continue;
- 		}
- 
--		iova = dma->iova;
--		while (iova < dma->iova + dma->size) {
-+		while (pos < dma->size) {
-+			dma_addr_t iova = dma->iova + pos;
- 			phys_addr_t phys, p;
- 			size_t size;
- 			dma_addr_t i;
- 
- 			phys = iommu_iova_to_phys(domain->domain, iova);
- 			if (!phys) {
--				iova += PAGE_SIZE;
-+				pos += PAGE_SIZE;
- 				continue;
- 			}
- 
- 			size = PAGE_SIZE;
- 			p = phys + size;
- 			i = iova + size;
--			while (i < dma->iova + dma->size &&
-+			while (pos + size < dma->size &&
- 			       p == iommu_iova_to_phys(domain->domain, i)) {
- 				size += PAGE_SIZE;
- 				p += PAGE_SIZE;
-@@ -2908,6 +2927,7 @@ static int vfio_iommu_type1_dirty_pages(struct vfio_iommu *iommu,
- 		unsigned long pgshift;
- 		size_t data_size = dirty.argsz - minsz;
- 		size_t iommu_pgsize;
-+		u64 end;
- 
- 		if (!data_size || data_size < sizeof(range))
- 			return -EINVAL;
-@@ -2916,8 +2936,12 @@ static int vfio_iommu_type1_dirty_pages(struct vfio_iommu *iommu,
- 				   sizeof(range)))
- 			return -EFAULT;
- 
--		if (range.iova + range.size < range.iova)
-+		if (range.size == 0)
-+			return 0;
-+
-+		if (check_add_overflow(range.iova, range.size - 1, &end))
- 			return -EINVAL;
-+
- 		if (!access_ok((void __user *)range.bitmap.data,
- 			       range.bitmap.size))
- 			return -EINVAL;
-@@ -2949,7 +2973,7 @@ static int vfio_iommu_type1_dirty_pages(struct vfio_iommu *iommu,
- 		if (iommu->dirty_page_tracking)
- 			ret = vfio_iova_dirty_bitmap(range.bitmap.data,
- 						     iommu, range.iova,
--						     range.size,
-+						     end,
- 						     range.bitmap.pgsize);
- 		else
- 			ret = -EINVAL;
+> --
+> 2.51.0
+>
+>
 
