@@ -1,107 +1,124 @@
-Return-Path: <linux-kernel+bounces-843747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 857EFBC021A
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 06:05:47 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3A5ABC0225
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 06:09:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 399984F3263
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 04:05:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5CFDD4F0863
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 04:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B72B20FAAB;
-	Tue,  7 Oct 2025 04:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71AAA218ADD;
+	Tue,  7 Oct 2025 04:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Cmyho6/C"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YhTqT8nk"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB3A1DF75D
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 04:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D791A9F8D
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 04:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759809935; cv=none; b=Ac6penvGgQWeUhUCTEe42/L5sRV8NdbQ1IGwvRrTo2xYcN7XCFw2mjzD8nLXeotr68gEHVXs35+10+8kgWG+ztPNH7HkCIg+iCofWPxFfE4WUrfMG4P4B3CWHfrPKzvKixcnvffDKylrrAM1F5IFdLtYJ9A8ZrKYS4NMFJFguRo=
+	t=1759810143; cv=none; b=n478R81L99Fvk+pGPp5GNSBflQnxSLoYpZ33Q4TFkYaCkFlB+75Vr/CRk1jD3dqKBkn9Ebj5dMUWQcbTY+BXf8fTiVrtIUskHQZPsaHHtYJ4GISwFR9FQErKoQ5RbEeLIg/Bwl782X1u2rSC5HQgwzpEOm1ELAEtx1TKNK50AZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759809935; c=relaxed/simple;
-	bh=o6K8MXxBxZXWW0NnX0lkhK7EDHOV3mtYRrDuLF0iKt4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kkSK3YhoahKcE6AHu53OnmV02kDlKKRj4++KFCElicjZb9j7ftHW1Hwa0bFP4XjlJFE0Ba9DvA3iPRVz1nbbQilcMQ6SVjG5fzzC8P6Dc4C8AJXmyn83FiEotQdUPKQKHFYjrf0lzSMYXrM1hOcwU+DF/VMXlDCkjoPxvslCCH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Cmyho6/C; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <2e24a7e9-fe8c-4af8-b775-ccc75e6af091@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759809930;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gNJCitJ4Tnp0EPXiVoeBb+P+yX7efY+z34gCVdRRGPw=;
-	b=Cmyho6/ClxGN8TrhgGXngFbEr2PRb6hV/z+SW6bS77Yme4T33Z+d5OAz7GmIs4dgBCaJyn
-	kLUowKujrHrGRwgQXfj/8mEl6f9WiZM2F+bSD7Oc087xc/3HQrrIdxwTCy4W4y+P9ePr5w
-	gPHLtsV3Fkkls6DQFDLTR+a/YkOqn4A=
-Date: Mon, 6 Oct 2025 21:05:23 -0700
+	s=arc-20240116; t=1759810143; c=relaxed/simple;
+	bh=432QvHvOj19tKWGrDdk4erAr4nKhVAMEK3WbFkC/IRQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jMOTvSQNizZQxwvvAu95WLWKyyUkxh8QhGb9gVLpxmgxlzpcp0WNPwAVUJKiywyVkMzTvD/Pf3eJo00fzV/b5C3aDn72jrsyr4VFu3ZxEOEeOChW9G5UiHUX1niOUEvSN755n4Jg8cmc6Dk5fR9MPHRNvgFqNkOL5LX4HbCKRAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YhTqT8nk; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46e4473d7f6so34900265e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 21:09:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759810140; x=1760414940; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wK04lQWKr2DjWtJceprl3zo5tRNApv5guaFqKP5j6NI=;
+        b=YhTqT8nk2g/L01i/OaUJ8+4bKkVsbeTIxroy6/QXn6yXZjlnyHFktbGs3ef6/FXWAz
+         f1G6wiirRsDMVVyVhqUyIoXvJXp/7wHif4GPFxJDe+V4Qn2tCkBjyR09EZuN4XTh0a7n
+         vLfCIWmVU36f0XTWlKoai9+jIwwNse36wv+2K9421mSjoTx0b2dNYk9H3LQfc+V2wK2R
+         iwegy6d4dZGBMP5E7m52Ec4MdNIGKtsEklg5Hg2D0KOLKqEpWGkQG+TuuMfCLtklhcdW
+         IurDnPcR8AsaeRaPnuSlaa2v+yudDtoo6AA/Nn8hi3Ur7FLzlBajTC4sZP6x6LQriJOJ
+         MBqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759810140; x=1760414940;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wK04lQWKr2DjWtJceprl3zo5tRNApv5guaFqKP5j6NI=;
+        b=I4OHk5kREgqrmRMb0DM24xGxxbe0gYczjnvF2CFo0SlkRJTywIvrrRjFBLBneaMuwb
+         gEN+a4I/TGmICM0bU7/zFY9OVu+dnX1lLSj7LBRAaEhjzIvzag4Olz/t8/nxiaJb4MuH
+         s28Y+M5JMANr9rmNkjJ1iWcJmjJYbh2N+l5wIgPnNU8BZuK1m579uwfPFp5pMzxU6svO
+         2Bb43T6olw4WSKhktyinUeNQ/sy9SNd6XN579mMMTagQifekNXprAmFd/wwD3Fs1MoFZ
+         FYlOQE2hcnXRD94gFLfFn0CoUqktFlafz2c7qJUcoFLSyeH07zLlPr0Cu1LdWSMRHY/8
+         eUdA==
+X-Forwarded-Encrypted: i=1; AJvYcCU1ufjn9KZEidjDm1bdGSe9jX81MVQriug+RbF2uXqJJjVdStmQ48lvI/eHk/PKPnXdwY4OQxRUgy8TnNk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAvt/yrKXcFOh0DNiCe1kU0GzVpuef8WyNNpcA1nlvRnVC4ONK
+	YvpyVaKAVux89p3saXrmtWkJ2wvGpGqx0A5HtsyvOqKoUAlWD4WXeYsHMqH1KM9EgpbC4DqdukV
+	ajl+/klfnhSiCh+ymgwuIPdPB3va7QaE=
+X-Gm-Gg: ASbGncugOnukyDQIk1guMSZEdrtbF5bUTjHPLuNVO/r9JlKmZWFwk/LHNpaAM6NdCbR
+	/+RZ5/xAIPgh0/hfVMvEAs5lhHnfieywE0J806ZnaRiPOkYIP1X6v94UbXuopQssguvlRwP6eLZ
+	EdV+8BYpjjUBjjMpnvqMW3AJdw0KP5nBrb3rDG61Wdo7KkNDkNIr5ueUrHwE8krpj8DURYpETqH
+	AAvcsPwtP/0XYWkaoOxRQzBqPDUcmQwaL/uARi/LmFweWydRXyOePHPnkROtBh1Pd6S+nmHDg==
+X-Google-Smtp-Source: AGHT+IHYHh6bEmYuCmFai3v43g5P6gr1pDPCY9ygDD4iuTvWaHhchyjoP1nQ92EQruT44rG7ohu+X4LwmhENyChZTvU=
+X-Received: by 2002:a05:600c:4e94:b0:46e:394b:4991 with SMTP id
+ 5b1f17b1804b1-46e71105457mr96964855e9.11.1759810140454; Mon, 06 Oct 2025
+ 21:09:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf v2 1/2] bpf: Avoid RCU context warning when unpinning
- htab with internal structs
-Content-Language: en-GB
-To: KaFai Wan <kafai.wan@linux.dev>, ast@kernel.org, daniel@iogearbox.net,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, shuah@kernel.org, toke@redhat.com,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-Cc: Le Chen <tom2cat@sjtu.edu.cn>
-References: <20251007012235.755853-1-kafai.wan@linux.dev>
- <20251007012235.755853-2-kafai.wan@linux.dev>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <20251007012235.755853-2-kafai.wan@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <cover.1759804822.git.rongtao@cestc.cn> <tencent_6E59062E4249590597452A06AFCDA3098808@qq.com>
+In-Reply-To: <tencent_6E59062E4249590597452A06AFCDA3098808@qq.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Mon, 6 Oct 2025 21:08:49 -0700
+X-Gm-Features: AS18NWBUCpOWw8ZMVB20Bk2k82iz0iF-_IQG_RoaZfjQrcbZ-AoUhVqW_uV4EFY
+Message-ID: <CAADnVQJFBR5ecewWdDhTqyXTMWH_QVEPCm2PXxV_3j1wa+tWMQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v3 1/2] bpf: add bpf_strcasestr,bpf_strncasestr kfuncs
+To: Rong Tao <rtoax@foxmail.com>
+Cc: Viktor Malik <vmalik@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Eduard <eddyz87@gmail.com>, 
+	Rong Tao <rongtao@cestc.cn>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+	"open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)" <bpf@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 10/6/25 6:22 PM, KaFai Wan wrote:
-> When unpinning a BPF hash table (htab or htab_lru) that contains internal
-> structures (timer, workqueue, or task_work) in its values, a BUG warning
-> is triggered:
->   BUG: sleeping function called from invalid context at kernel/bpf/hashtab.c:244
->   in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 14, name: ksoftirqd/0
->   ...
+On Mon, Oct 6, 2025 at 8:00=E2=80=AFPM Rong Tao <rtoax@foxmail.com> wrote:
 >
-> The issue arises from the interaction between BPF object unpinning and
-> RCU callback mechanisms:
-> 1. BPF object unpinning uses ->free_inode() which schedules cleanup via
->     call_rcu(), deferring the actual freeing to an RCU callback that
->     executes within the RCU_SOFTIRQ context.
-> 2. During cleanup of hash tables containing internal structures,
->     htab_map_free_internal_structs() is invoked, which includes
->     cond_resched() or cond_resched_rcu() calls to yield the CPU during
->     potentially long operations.
->
-> However, cond_resched() or cond_resched_rcu() cannot be safely called from
-> atomic RCU softirq context, leading to the BUG warning when attempting
-> to reschedule.
->
-> Fix this by changing from ->free_inode() to ->destroy_inode() and rename
-> bpf_free_inode() to bpf_destroy_inode() for BPF objects (prog, map, link).
-> This allows direct inode freeing without RCU callback scheduling,
-> avoiding the invalid context warning.
->
-> Reported-by: Le Chen <tom2cat@sjtu.edu.cn>
-> Closes: https://lore.kernel.org/all/1444123482.1827743.1750996347470.JavaMail.zimbra@sjtu.edu.cn/
-> Fixes: 68134668c17f ("bpf: Add map side support for bpf timers.")
-> Suggested-by: Alexei Starovoitov <ast@kernel.org>
-> Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
+> +/**
+> + * bpf_strnstr - Find the first substring in a length-limited string, ig=
+noring
+> + *               the case of the characters
+> + * @s1__ign: The string to be searched
+> + * @s2__ign: The string to search for
+> + * @len: the maximum number of characters to search
+> + *
+> + * Return:
+> + * * >=3D0      - Index of the first character of the first occurrence o=
+f @s2__ign
+> + *              within the first @len characters of @s1__ign
+> + * * %-ENOENT - @s2__ign not found in the first @len characters of @s1__=
+ign
+> + * * %-EFAULT - Cannot read one of the strings
+> + * * %-E2BIG  - One of the strings is too large
+> + * * %-ERANGE - One of the strings is outside of kernel address space
+> + */
+> +__bpf_kfunc int bpf_strncasestr(const char *s1__ign, const char *s2__ign=
+,
+> +                                                               size_t le=
+n)
 
-Acked-by: Yonghong Song <yonghong.song@linux.dev>
+See AI review for the above part.
 
+pw-bot: cr
 
