@@ -1,178 +1,169 @@
-Return-Path: <linux-kernel+bounces-843805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B3E7BC04CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:09:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74B53BC04E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:12:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C5DF1897114
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:09:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5548F3C13E4
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0BE9220F29;
-	Tue,  7 Oct 2025 06:08:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD50221FBB;
+	Tue,  7 Oct 2025 06:12:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZyjVX0Xx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AGbpPTNk"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D57D273FD;
-	Tue,  7 Oct 2025 06:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2AE1E7C23
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 06:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759817337; cv=none; b=HqcoRDFze1O8iajtmPazMuZY/XdBAQuB7ashFdLO++IxQYPcWrk8vZBBmqWCKf2FDM6KUdodjt9LmOnU687uJ9ocjsELyQ9M4hId1yrtkvpCJfKQcrK8I310CRWogbrYKzKlwOeKo//u0ABCYQI7SjhonQa7o+TiXd25a2uSh+o=
+	t=1759817541; cv=none; b=ua4mZIB/aIo3bAjvwgqIRN0a63gaSCZA6E+pWh2yvdcTTlOaY9kLqV/9zxIY1z8ozJsmDlySGBinFSJigqGJxhqQIsJ+fgnWdsPQumK8bUG4r8bqOtQ9BKzteuKaZhnBpYTZYOTb+3uSJnDuJ4nJUucZExtOVrAWXhhK/CEW4o8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759817337; c=relaxed/simple;
-	bh=vaMq5ngZH7t7l69by25TsKwNJKrKVl7+BNZxPUHPjj0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ihRRVkWnjRMzjHDVd7HpY09qOTsqQV/lk7aV2oR/+Lss9YdVF0b4iu/3VcM7BOHNEOMo+dDNIyw4eNNc+znvwRttE3fXsAT2hMD/iHXZULc2YjNcOG4ZxXq02TbG5ZV6DqspReFXC02m0k2FVSm95GyAHXpmGYiYFGk+D79FnSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZyjVX0Xx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BCC33C4CEF1;
-	Tue,  7 Oct 2025 06:08:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759817336;
-	bh=vaMq5ngZH7t7l69by25TsKwNJKrKVl7+BNZxPUHPjj0=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=ZyjVX0XxlE/mSqnqQrohIPMQpWmxz2ziDjpM8TQomjM7WfRAb2qVCLiZ3lIDqbSF7
-	 /iADAORwxFvxuPQhkBsZcNOFalFFa5LBCt9aZzJgHHJeWvDJLy1fEgTB1TnlQrJ/MO
-	 YWEVT4f5i/Vv9bArzcXIOuZs0brrMFhcWy1IwuVcagsZWqLzwTTIagKHdDdFVOnfDL
-	 5CLcMpS/ilCs+rzBWYCqM2PAwr3sTKnIRqZpVLHjZ8iopQZn2wdT7Qiqsw2zh2x2DL
-	 4IzXXEPZn75Mn9dyGQqxMVQVWLZXbdYwMmUHd5CRo8f4skHbw9HbWnke3J/W6XyOzE
-	 yo2fi10p7HI0g==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8256CCA470;
-	Tue,  7 Oct 2025 06:08:56 +0000 (UTC)
-From: Dmitry Safonov via B4 Relay <devnull+dima.arista.com@kernel.org>
-Date: Tue, 07 Oct 2025 07:08:36 +0100
-Subject: [PATCH] net/ip6_tunnel: Prevent perpetual tunnel growth
+	s=arc-20240116; t=1759817541; c=relaxed/simple;
+	bh=f/KtZW3rhkYJ2eiCGDLGTJbkYnmihth0V8SUE4SHB04=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZpbHbzb4VfnWKsxGOn2YKVU2V6DzeZGzQz9Pd3wQ/4QcG48nIlvHHlkSi/ZzFltY3mSbRjFxzLpC0jt6nz/k0YeI1K+n4CCkAiJOyGfTeQmnxjJnVzYLpD1q/aT4y3W9U2rNwFU5UKcNKWEOF9ZI0Ic9oHdxduzl9jSfnpT2Dy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AGbpPTNk; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-3305c08d9f6so4211345a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 23:12:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759817539; x=1760422339; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=x039O0NFHGAXzxihdFNNk+CPOWRSSl0ZG6jnY+lkA64=;
+        b=AGbpPTNkK+bPv/uqVFQEeN3njBGhCB4hNTE84OEQz/gZY8TytGQL+jZchJDF6LLJnq
+         fOj+9NUi5z5Yh1kSGuWLNvgVAF55Z+J8n8lAWEzUWNrtEbIWBLEm7xeJ1kfZf9qyh6G3
+         /xaWfllvTLaJ2lX2MeseSd2EXfUVu9AxIDTfd1JFLpDz0HluE6RyD+9cr6o9KtDJ49KE
+         FdG34cnbt5oMOIECOulAkEYW/d0Pa5WHnUmxeaxfcTDAR+mdUhZk2T/g65IUuDoqaC6h
+         hFOxwkzJZYVFfwXKg3zCmVFa/tt6hdytBnmXHpiHH1DAD449c7G1P7QNvvayuLwhdifD
+         R2rg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759817539; x=1760422339;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=x039O0NFHGAXzxihdFNNk+CPOWRSSl0ZG6jnY+lkA64=;
+        b=XHA0Kxls36jUeKdKjZaTq8rDKPzYweyuXQ+qIoj6MSnLmYUZC7mUE06N6PpQFEDNPQ
+         9H4W+lV1L1iH0g2OEZ0xdLugz9EakMZ5Ls23bL3vzEVD90o07XHx7pL8tYBlrsmJMWs9
+         1uviKY6x2imxh1iSdsjHBQnwxXLyjVL91AwTPCj9MyoVdVqgPlqiT77B4J0Q8a8NRQvO
+         2TojFW6TSDVJUCiJJnXrJIOKHr5M42cYuLzr87p/uygoeiUpSfmNY9SsYtwyLjWDxPFo
+         zutdHSUsl1IeZeT+vLlZTB6oKt2nT7jp7TcA7WkIAtXz1FNt5QZBDrQhAAi1qa2INYfa
+         AEmw==
+X-Forwarded-Encrypted: i=1; AJvYcCVSeQ3t7Khe++GqDFnzNGxHFW8f3y6hoF/XKLpuknlekqIS7ATx/OA6nJ5r/Ovi1wCXegKAuc2FSx+YKq8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOHSBETEc/8E2zDe9wFF7CCAyLjNttZnK4mG2pwKR63sgQ9k4Y
+	+4gmrtEUqmASa/QInwTdZK146FOhXEKRJnFReNVckBcX3cwoDVHVIanJ
+X-Gm-Gg: ASbGncvFNnqf4TohSULU2DrFXNorQsS8aI9h2zuGTzOxqaFA1t+ebkqB/FfOnWr2lb1
+	+mAgrH32+tXyCj+jokZSkqtBXjp9gd0ftLykiyGwUb73XsnO6yAZTNm83mC3qC1oxsjhE1CHI0L
+	46aj/Y5UNf7ykfdEsyQUPYkalCTfaKkH0rZmTOOsnaMhf8GJoxqDF6BlOZzgIgf2i+lT/cRHIbE
+	gTewRoNQ/F03KyIrRyIfDW7dDFbaGcy9dFD1niVN2bpyxqp+7Ar9PgUMj1T6vkc/40QX5nfw56b
+	uiEYLI69tOI6av26J2s+atX4Fa9Bs+qHJHLdjOfHZwFq53yo85CpVsn1nsCRHte+tbgJT5v0nWc
+	zFh1rcfJmXqeQLwSesYj5OcgW7at+45h8kOsHacPcpqulxqKzSCjkG7BoQKcIyDmx5j06rlOtOC
+	ElTA==
+X-Google-Smtp-Source: AGHT+IG2DTQJY2MdHBjlE/ea/em21MmRyqHMhJutkpAPqmAVGyj8WhoqLhe1SRoTVivJMvCIXdKuuw==
+X-Received: by 2002:a17:90b:384f:b0:327:53f0:6368 with SMTP id 98e67ed59e1d1-339eda67866mr2533241a91.2.1759817539087;
+        Mon, 06 Oct 2025 23:12:19 -0700 (PDT)
+Received: from [10.0.2.15] ([14.98.178.155])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339ee9218ffsm739057a91.4.2025.10.06.23.12.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Oct 2025 23:12:18 -0700 (PDT)
+Message-ID: <e8311311-61bd-4be6-8025-841b84ff4422@gmail.com>
+Date: Tue, 7 Oct 2025 11:42:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251007-ip6_tunnel-headroom-v1-1-c1287483a592@arista.com>
-X-B4-Tracking: v=1; b=H4sIAGOu5GgC/x3MQQrCMBBA0auUWRtMo1brVURk0oxmoE3KTCxC6
- d2NLt/i/xWUhEnh2qwgtLByThXtroEhYnqR4VANzrpTa+3Z8Nw9yjslGk0kDJLzZDz23QUd9sc
- DQi1noSd//tfbvdqjkvGCaYi/V8my4Bh0P6EWEti2L7hx7O2HAAAA
-X-Change-ID: 20251007-ip6_tunnel-headroom-ba968a2a943a
-To: "David S. Miller" <davem@davemloft.net>, 
- David Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>, Tom Herbert <tom@herbertland.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Florian Westphal <fw@strlen.de>, Francesco Ruggeri <fruggeri05@gmail.com>, 
- Dmitry Safonov <dima@arista.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759817335; l=3578;
- i=dima@arista.com; s=20250521; h=from:subject:message-id;
- bh=B0Jlh8RDVwjqLnA0Qj6JzNQbbltz7rJFTIJJo5dDy3w=;
- b=rATwaMJDQEhKExQr2WdFI9D4UGwHdjuQADmB7GCXlGA1fSZX7scBr+wKxxp+SBVqnWDWMGayV
- dmxe/bVYeiOCEJnrZZl4VmXElsVxhZhTZ6YoSRm8u92KskISZQZFRHN
-X-Developer-Key: i=dima@arista.com; a=ed25519;
- pk=/z94x2T59rICwjRqYvDsBe0MkpbkkdYrSW2J1G2gIcU=
-X-Endpoint-Received: by B4 Relay for dima@arista.com/20250521 with
- auth_id=405
-X-Original-From: Dmitry Safonov <dima@arista.com>
-Reply-To: dima@arista.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net: usb: lan78xx: Fix lost EEPROM write timeout
+ error(-ETIMEDOUT) in lan78xx_write_raw_eeprom
+To: Khalid Aziz <khalid@kernel.org>,
+ Thangaraj Samynathan <Thangaraj.S@microchip.com>,
+ Rengarajan Sundararajan <Rengarajan.S@microchip.com>,
+ UNGLinuxDriver@microchip.com, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: linux-kernel-mentees@lists.linuxfoundation.org,
+ skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
+ netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251004040722.82882-1-bhanuseshukumar@gmail.com>
+ <866d28f8-616c-4a79-9030-2ebc971e73fd@kernel.org>
+Content-Language: en-US
+From: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+In-Reply-To: <866d28f8-616c-4a79-9030-2ebc971e73fd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Dmitry Safonov <dima@arista.com>
+On 07/10/25 00:30, Khalid Aziz wrote:
+> On 10/3/25 10:07 PM, Bhanu Seshu Kumar Valluri wrote:
+>> The function lan78xx_write_raw_eeprom failed to properly propagate EEPROM
+>> write timeout errors (-ETIMEDOUT). In the timeout  fallthrough path, it first
+>> attempted to restore the pin configuration for LED outputs and then
+>> returned only the status of that restore operation, discarding the
+>> original timeout error saved in ret.
+>>
+>> As a result, callers could mistakenly treat EEPROM write operation as
+>> successful even though the EEPROM write had actually timed out with no
+>> or partial data write.
+>>
+>> To fix this, handle errors in restoring the LED pin configuration separately.
+>> If the restore succeeds, return any prior EEPROM write timeout error saved
+>> in ret to the caller.
+>>
+>> Suggested-by: Oleksij Rempel <o.rempel@pengutronix.de>
+>> Fixes: 8b1b2ca83b20 ("net: usb: lan78xx: Improve error handling in EEPROM and OTP operations")
+>> Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+>> ---
+>>   Note:
+>>   The patch is compiled and tested.
+>>   The patch was suggested by Oleksij Rempel while reviewing a fix to a bug
+>>   found by syzbot earlier.
+>>   The review mail chain where this fix was suggested is given below.
+>>   https://lore.kernel.org/all/aNzojoXK-m1Tn6Lc@pengutronix.de/
+>>
+>>   drivers/net/usb/lan78xx.c | 11 +++++++----
+>>   1 file changed, 7 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
+>> index d75502ebbc0d..5ccbe6ae2ebe 100644
+>> --- a/drivers/net/usb/lan78xx.c
+>> +++ b/drivers/net/usb/lan78xx.c
+>> @@ -1174,10 +1174,13 @@ static int lan78xx_write_raw_eeprom(struct lan78xx_net *dev, u32 offset,
+>>       }
+>>     write_raw_eeprom_done:
+>> -    if (dev->chipid == ID_REV_CHIP_ID_7800_)
+>> -        return lan78xx_write_reg(dev, HW_CFG, saved);
+>> -
+>> -    return 0;
+>> +    if (dev->chipid == ID_REV_CHIP_ID_7800_) {
+>> +        int rc = lan78xx_write_reg(dev, HW_CFG, saved);
+>> +        /* If USB fails, there is nothing to do */
+>> +        if (rc < 0)
+>> +            return rc;
+>> +    }
+>> +    return ret;
+>>   }
+>>     static int lan78xx_read_raw_otp(struct lan78xx_net *dev, u32 offset,
+> 
+> You were able to test the change to read eeprom code by forcing a timeout while doing probe on EVB-LAN7800LC. Were you able to test this code change the same way just to make sure callers of the write function handle the new ETIMEDOUT return value correctly?
+> 
+> Thanks,
 
-Similarly to ipv4 tunnel, ipv6 version updates dev->needed_headroom, too.
-While ipv4 tunnel headroom adjustment growth was limited in
-commit 5ae1e9922bbd ("net: ip_tunnel: prevent perpetual headroom growth"),
-ipv6 tunnel yet increases the headroom without any ceiling.
+Hi Khalid,
 
-Reflect ipv4 tunnel headroom adjustment limit on ipv6 version.
+This function is only invoked from user's ethtool operations.  The ethtool handles errors returned from the driver callback functions. 
+I tested it with ethtool -E option by forcing a ETIMEDOUT error early in the lan78xx_write_raw_eeprom temporarily. The ethtool 
+reported error with "Cannot set EEPROM data" message. The ethtool version used is 5.16.
 
-Credits to Francesco Ruggeri, who was originally debugging this issue
-and wrote local Arista-specific patch and a reproducer.
-
-Fixes: 8eb30be0352d ("ipv6: Create ip6_tnl_xmit")
-Cc: Florian Westphal <fw@strlen.de>
-Cc: Francesco Ruggeri <fruggeri05@gmail.com>
-Signed-off-by: Dmitry Safonov <dima@arista.com>
----
- include/net/ip_tunnels.h | 15 +++++++++++++++
- net/ipv4/ip_tunnel.c     | 14 --------------
- net/ipv6/ip6_tunnel.c    |  3 +--
- 3 files changed, 16 insertions(+), 16 deletions(-)
-
-diff --git a/include/net/ip_tunnels.h b/include/net/ip_tunnels.h
-index 4314a97702eae094f2defc65d914390864c21006..d88532c0fbcd30110e41907722fcaf31ce2e4fda 100644
---- a/include/net/ip_tunnels.h
-+++ b/include/net/ip_tunnels.h
-@@ -611,6 +611,21 @@ struct metadata_dst *iptunnel_metadata_reply(struct metadata_dst *md,
- int skb_tunnel_check_pmtu(struct sk_buff *skb, struct dst_entry *encap_dst,
- 			  int headroom, bool reply);
- 
-+static inline void ip_tunnel_adj_headroom(struct net_device *dev,
-+					  unsigned int headroom)
-+{
-+	/* we must cap headroom to some upperlimit, else pskb_expand_head
-+	 * will overflow header offsets in skb_headers_offset_update().
-+	 */
-+	static const unsigned int max_allowed = 512;
-+
-+	if (headroom > max_allowed)
-+		headroom = max_allowed;
-+
-+	if (headroom > READ_ONCE(dev->needed_headroom))
-+		WRITE_ONCE(dev->needed_headroom, headroom);
-+}
-+
- int iptunnel_handle_offloads(struct sk_buff *skb, int gso_type_mask);
- 
- static inline int iptunnel_pull_offloads(struct sk_buff *skb)
-diff --git a/net/ipv4/ip_tunnel.c b/net/ipv4/ip_tunnel.c
-index aaeb5d16f0c9a46d90564dc2b6d7fd0a5b33d037..158a30ae7c5f2f1fa39eea7c3d64e36fb5f7551a 100644
---- a/net/ipv4/ip_tunnel.c
-+++ b/net/ipv4/ip_tunnel.c
-@@ -568,20 +568,6 @@ static int tnl_update_pmtu(struct net_device *dev, struct sk_buff *skb,
- 	return 0;
- }
- 
--static void ip_tunnel_adj_headroom(struct net_device *dev, unsigned int headroom)
--{
--	/* we must cap headroom to some upperlimit, else pskb_expand_head
--	 * will overflow header offsets in skb_headers_offset_update().
--	 */
--	static const unsigned int max_allowed = 512;
--
--	if (headroom > max_allowed)
--		headroom = max_allowed;
--
--	if (headroom > READ_ONCE(dev->needed_headroom))
--		WRITE_ONCE(dev->needed_headroom, headroom);
--}
--
- void ip_md_tunnel_xmit(struct sk_buff *skb, struct net_device *dev,
- 		       u8 proto, int tunnel_hlen)
- {
-diff --git a/net/ipv6/ip6_tunnel.c b/net/ipv6/ip6_tunnel.c
-index 3262e81223dfc859a06b55087d5dac20f43e6c11..6405072050e0ef7521ca1fdddc4a0252e2159d2a 100644
---- a/net/ipv6/ip6_tunnel.c
-+++ b/net/ipv6/ip6_tunnel.c
-@@ -1257,8 +1257,7 @@ int ip6_tnl_xmit(struct sk_buff *skb, struct net_device *dev, __u8 dsfield,
- 	 */
- 	max_headroom = LL_RESERVED_SPACE(tdev) + sizeof(struct ipv6hdr)
- 			+ dst->header_len + t->hlen;
--	if (max_headroom > READ_ONCE(dev->needed_headroom))
--		WRITE_ONCE(dev->needed_headroom, max_headroom);
-+	ip_tunnel_adj_headroom(dev, max_headroom);
- 
- 	err = ip6_tnl_encap(skb, t, &proto, fl6);
- 	if (err)
-
----
-base-commit: c746c3b5169831d7fb032a1051d8b45592ae8d78
-change-id: 20251007-ip6_tunnel-headroom-ba968a2a943a
-
-Best regards,
--- 
-Dmitry Safonov <dima@arista.com>
-
-
+Regards,
+Bhanu Seshu Kumar Valluri
 
