@@ -1,167 +1,119 @@
-Return-Path: <linux-kernel+bounces-844706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 884B7BC28DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 21:48:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5D41BC2528
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 20:07:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 357FE3503F7
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 19:48:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FEA43C4B77
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 18:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0740D22D4F6;
-	Tue,  7 Oct 2025 19:48:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7402E6CAF;
+	Tue,  7 Oct 2025 18:06:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="rq3ofEwu"
-Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4WjB5Zx3"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E7116E863;
-	Tue,  7 Oct 2025 19:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6700121CC71
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 18:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759866513; cv=none; b=fiTyRRTfHgvVMLTeNkjk+Zd+xaYokKc7FN2UDbi7If7vochLzAplZGFbRp30KuY3Qq36gMtNXeH4Kxay4J+bBSIqPG3x7NHV5acVgCTwnyJlNPWruOl9+vZ3YJuiZeegE4sR11ZEki/M0bDVPJR/YIgJy/htk7D35ODB5voPWLo=
+	t=1759860408; cv=none; b=TeHwMZdSPUCO+ZdH518uPrL40t0oSYdk+QEBs6PL8CwSB5lZaTsnJSc/QxBnp4hi7YVB7acB9/uq96E2vd7tV5qHHV80sc93cS9W2BvxfHWqNuP7JYKuHLQ8038YC1huFKGVfC+H6ewxyGFooPduNv3lcr9iUmdp/XNoaGwlQIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759866513; c=relaxed/simple;
-	bh=vMtXbq1KgnSFelCHvUhZ2kgM7oOGT+RSFcTakW+bbUQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=emFOB4agXJIKvKZ/IszM/orn0uPSNGP6zXcYi4d3IrchAB5QdjL0DIPHapdGyKOs1odT4wIm8jv/spSRbPb0p1uTF37lSrv4ioAczvbBwYsHcUquMHRzMZye+XuIGpZYbrJvnlARlm2pswl1tPid9uNzEtlL4fNeyYv7gTwB7/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=rq3ofEwu; arc=none smtp.client-ip=44.202.169.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-5005b.ext.cloudfilter.net ([10.0.29.189])
-	by cmsmtp with ESMTPS
-	id 6BR1vxE44KXDJ6DfcvpKpW; Tue, 07 Oct 2025 19:48:24 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id 6DfbvD9cRfjrX6Dfbv0Zuc; Tue, 07 Oct 2025 19:48:23 +0000
-X-Authority-Analysis: v=2.4 cv=ItcecK/g c=1 sm=1 tr=0 ts=68e56e87
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=4oHATN8Nx7vVUZJYxp75bA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
- a=4e8un5K37ZRR6lRcyOEA:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=LfPENtYO9yg3I6QdDZRxM3kYJOjt9kvB6+tlT/9JDY4=; b=rq3ofEwuaf/LsUbXFiBonuvEIq
-	RxMqKlBHPQKE0AuTVNDJsDVj75ymDtYqNiO3fAmFt23hkENte81TdQlr0GsFdMRMi+jxjh7V6kyQm
-	KcNtwlIx4JaWgVdTILImYMmfZi0n9Tcp2+NWz0buuxHBboNkW3OgHiBMWnrgIhfxRQXcxzTSDUg4E
-	7vD4ODepcDwimuFZSvt52p73eFkiipi/Od1bLKyXhZUrIYk44Mtqu8xE5JygdISuIbDsZXNRThfcK
-	wsCrSSbbFFBayQ02/LatGp5Lg7Zv4mVKo6SSOElviL/eO/ILdtdEUzs/OeSN7r8ZItL53YbdKnPd0
-	/qv0cLQQ==;
-Received: from [185.134.146.81] (port=48322 helo=[10.21.53.44])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1v65C3-00000000Luf-35FH;
-	Tue, 07 Oct 2025 05:45:19 -0500
-Message-ID: <9e0613bf-17ae-407a-a3ab-cbeac09c3a17@embeddedor.com>
-Date: Tue, 7 Oct 2025 11:45:15 +0100
+	s=arc-20240116; t=1759860408; c=relaxed/simple;
+	bh=q6J61bs7L3ujukcqpOfn3PO8VFKDKO+odJmf7OZwqE8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=UBHQwo2xlqWM1JUQZweSVI3eA4hAulYHUzexzcxdTIMmnhf71G/ea+C/j7GAsGXyIsvPzZIWog8jT5myF/oLaKw9zeo/O7b8ExBRNSFtLba+Y11XyhQGsaX5KgWZIuO1bElaz82VY871BUBbFbDuxvsUesKJww2n73bY9D3s1n0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--wyihan.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4WjB5Zx3; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--wyihan.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-7821487d16bso11706997b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 11:06:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759860404; x=1760465204; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jy9uoa9n7CiOeOtHRkWJVJ718GS54wk/TvFhgvjRAGk=;
+        b=4WjB5Zx3PWSn2EIrhSL5yvD4QblGhEl3eUBlngvYpz8eOaY/SU1SNEIN1hw5bUrlmQ
+         rNqjnHz5YhQm0mZpXIZmTp3Av3Zb5Rfygjt4aQqCsgLz/QYNLuCVkwRyxD6CDcIuL+Yc
+         2iEN0BauroDWgcUe0ScyEFVwaTyDgvoqa3XTsDsmG3/2WYkxAhpb3vpG77sru8uQBwb1
+         c+avHlkhaON8oQ3JhJROrKeUzeWnYsC/qCze5wSguIjQofTze2TYZXzvOVsBqve1VBx8
+         KE/+8UGQ9f1k3zEvYaoNbTQa1JWMbkoGtnU8BzxkmNv8THAMsQ1pFNoud1PX3wvDIgQS
+         q06w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759860404; x=1760465204;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jy9uoa9n7CiOeOtHRkWJVJ718GS54wk/TvFhgvjRAGk=;
+        b=cX96Eehj6CKOUQ5zHCM9ulfBd2A6DATnu7HreiqScIJzhDFAer6noPG6uUf7DR0opB
+         2377F3EbABQEfL8qJ4OWJ4CpgpLDpXaDhBfqjkClf9H7nhoilTnZduZrRkd2KS49v+d7
+         CelTW/j872KGnjg43dyyF7AI1/lNiiZbWyH3DE93g0S5vBTkQ0c9qiDwWneN7HJPFYoF
+         ofrVkCMEh78b2L5TOYU0jVt5EHDqJJp2A+M2sd986sDlDkeseaNJj204rrydohJevm5G
+         rHnMXL/CenR1zSo2otzSQBpKfqdoGM2u3cMvtcbzmgpeSvJLMReKSRwSnOaKMhhEmRSJ
+         f73Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX0Mxk4EApgxLppIfFlmVA6oTogJOCIgaX0rEtdA5ddVT9QVFdswh+GsfBY4eE3WbScuv2DRE2+R5TwTNo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgqlHAsC3JWlupZtRzR+bN7yCed1lyF0XuJh5Jtlg24qy8n6YR
+	y+WiqRhEj1MCMpRTs2518S9VA0YPNpGuo6hl+X8syrhWlZy8eKK7WDvWxBeVa4T8o91vbnlteq8
+	bxaZSFg==
+X-Google-Smtp-Source: AGHT+IFM0FyD52n4COlTUfeE1w0IfmK3uQQePrMvE9YP1sa7uKjBgBKdHuInhyl0TsFz1oW0BpvBogVlPbg=
+X-Received: from pfms2.prod.google.com ([2002:aa7:8282:0:b0:781:1d87:4584])
+ (user=wyihan job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:891:b0:77e:cac4:446e
+ with SMTP id d2e1a72fcca58-79387e0539cmr513966b3a.31.1759860404519; Tue, 07
+ Oct 2025 11:06:44 -0700 (PDT)
+Date: Tue,  7 Oct 2025 18:06:06 +0000
+In-Reply-To: <20251003232606.4070510-14-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] scsi: hisi_sas: Avoid a couple
- -Wflex-array-member-not-at-end warnings
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Yihang Li <liyihang9@h-partners.com>,
- "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <aM1J5UemZFgdso3F@kspp>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <aM1J5UemZFgdso3F@kspp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 185.134.146.81
-X-Source-L: No
-X-Exim-ID: 1v65C3-00000000Luf-35FH
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([10.21.53.44]) [185.134.146.81]:48322
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 0
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfNbSc0c0lJ7nQ1ngLk0019RGqvP+k6LOj9TRdVd/TY9QoFlp8hNAX6gfALSAzF4P2FwTb/3e/q7kexPAlqe54tLUMV8vfkcW49mz7pk3pbM/7FHaH7oA
- yKXcuXr1Tu+nq3HcoNx90EAz/JsDxWUedtBghBVGa3aMy5K9NtJ0ZZLjVTNlmMtiEkIZZwJvNSVIbdUnnWpLAMVp4Cj0bRvh1Zrp3RHZRB/3hIa73uvhvn6c
- Zb1Lik/Jmg3Q+GjHi6rC86gcIVcYcAmM22tULX6XLgI0uedIgAgqMTuG3Wed9+d+teesOM2+HXb8xD2jsKKN+A==
+Mime-Version: 1.0
+References: <20251003232606.4070510-14-seanjc@google.com>
+X-Mailer: git-send-email 2.51.0.710.ga91ca5db03-goog
+Message-ID: <20251007180606.940219-1-wyihan@google.com>
+Subject: Re: [PATCH v2 13/13] KVM: selftests: Verify that reads to
+ inaccessible guest_memfd VMAs SIGBUS
+From: Lisa Wang <wyihan@google.com>
+To: seanjc@google.com
+Cc: ackerleytng@google.com, borntraeger@linux.ibm.com, david@redhat.com, 
+	frankja@linux.ibm.com, imbrenda@linux.ibm.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, pbonzini@redhat.com, tabba@google.com, 
+	Lisa Wang <wyihan@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi all,
+Sean Christopherson <seanjc@google.com> writes:
 
-Friendly ping: who can take this, please?
+> Expand the guest_memfd negative testcases for overflow and MAP_PRIVATE to
+> verify that reads to inaccessible memory also get a SIGBUS.
+>
+> Opportunistically fix the write path to use the "val" instead of hardcoding
+> the literal value a second time, and to use TEST_FAIL(...) instead of
+> TEST_ASSERT(false, ...).
+>
 
-Thanks!
--Gustavo
+Reviewed-by: Lisa Wang <wyihan@google.com>
+Tested-by: Lisa Wang <wyihan@google.com>
 
-On 9/19/25 13:17, Gustavo A. R. Silva wrote:
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally.
-> 
-> Move the conflicting declarations to the end of the corresponding
-> structures (and in a union). Notice that `struct ssp_command_iu`
-> is a flexible structure, this is a structure that contains a
-> flexible-array member.
-> 
-> With these changes fix the following warnings:
-> 
-> drivers/scsi/hisi_sas/hisi_sas.h:639:38: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/scsi/hisi_sas/hisi_sas.h:616:47: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 > ---
->   drivers/scsi/hisi_sas/hisi_sas.h | 10 +++++++---
->   1 file changed, 7 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/scsi/hisi_sas/hisi_sas.h b/drivers/scsi/hisi_sas/hisi_sas.h
-> index 1323ed8aa717..55c638dd58b1 100644
-> --- a/drivers/scsi/hisi_sas/hisi_sas.h
-> +++ b/drivers/scsi/hisi_sas/hisi_sas.h
-> @@ -613,8 +613,8 @@ struct hisi_sas_command_table_ssp {
->   	struct ssp_frame_hdr hdr;
->   	union {
->   		struct {
-> -			struct ssp_command_iu task;
->   			u32 prot[PROT_BUF_SIZE];
-> +			struct ssp_command_iu task;
->   		};
->   		struct ssp_tmf_iu ssp_task;
->   		struct xfer_rdy_iu xfer_rdy;
-> @@ -636,13 +636,17 @@ struct hisi_sas_status_buffer {
->   
->   struct hisi_sas_slot_buf_table {
->   	struct hisi_sas_status_buffer status_buffer;
-> -	union hisi_sas_command_table command_header;
->   	struct hisi_sas_sge_page sge_page;
-> +
-> +	/* Must be last --ends in a flexible-array member. */
-> +	union hisi_sas_command_table command_header;
->   };
->   
->   struct hisi_sas_slot_dif_buf_table {
-> -	struct hisi_sas_slot_buf_table slot_buf;
->   	struct hisi_sas_sge_dif_page sge_dif_page;
-> +
-> +	/* Must be last --ends in a flexible-array member. */
-> +	struct hisi_sas_slot_buf_table slot_buf;
->   };
->   
->   extern struct scsi_transport_template *hisi_sas_stt;
-
+>  tools/testing/selftests/kvm/guest_memfd_test.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
+> index f5372fdf096d..e7d9aeb418d3 100644
+> --- a/tools/testing/selftests/kvm/guest_memfd_test.c
+> +++ b/tools/testing/selftests/kvm/guest_memfd_test.c
+> @@ -84,6 +84,7 @@ static void test_fault_sigbus(int fd, size_t accessible_size, size_t map_size)
+>  	mem = kvm_mmap(map_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd);
+>  
+>  	TEST_EXPECT_SIGBUS(memset(mem, val, map_size));
+> +	TEST_EXPECT_SIGBUS((void)READ_ONCE(mem[accessible_size]));
+>  
+>  	for (i = 0; i < accessible_size; i++)
+>  		TEST_ASSERT_EQ(READ_ONCE(mem[i]), val);
+> -- 
+> 2.51.0.618.g983fd99d29-goog
 
