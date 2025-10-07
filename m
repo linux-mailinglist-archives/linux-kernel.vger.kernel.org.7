@@ -1,47 +1,66 @@
-Return-Path: <linux-kernel+bounces-844093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D221BC0FCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 12:16:15 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA78ABC0FD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 12:16:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAC28188EAD1
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 10:16:37 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 38F6A34DD39
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 10:16:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7664C2D7DF6;
-	Tue,  7 Oct 2025 10:16:08 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C0C2D8363;
+	Tue,  7 Oct 2025 10:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WdB1oNoM"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1489525A324
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 10:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DE322579E;
+	Tue,  7 Oct 2025 10:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759832168; cv=none; b=ek66rf/oRVSSeGM+knoSkWLCsci6ILC/JxZmqtll2JIcFs1xTvjPyaKrIoLbnH2Q5CtNKZvkMUzvkmAM8CVFqbi9fHO9tetaGxqlw34H0NgGl+99jWlaHXYga5J+VF+cVp50qSBxv1VF5ui1ThHZfdlJyHnRimQxUU5yBPqiAIo=
+	t=1759832182; cv=none; b=fG6kyggHh85V3JuKTv3BtKKsuDj3hbDnw7xgxh62sM1wtgN6tSM1U5sV1HGfPXc5/d1pB07vZ4ZTR4cXAWX/rraedoSnlEbbNnKcKjdc+O1VnF0TmVSWkkVlcERoCrN55PZx/NeptYj32d8JilO2VmgfhNLOu4o2rA3u5Ieb44Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759832168; c=relaxed/simple;
-	bh=EVYc896DRIPSIudKMi9q1kUcyR3baEWsSFshUnToE0Q=;
+	s=arc-20240116; t=1759832182; c=relaxed/simple;
+	bh=cu5WgrnaZH+RK73IluvxZt1kldsqWNC5A84/kComYHg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hgho9aoDMCLwZWD/eCgyDSlH9fK7ekRHTvC3TBNcq8SdaH3bhVvlShKMi64+TWbjW+W000XLTTVzu472Hr3Np7jHgi6wexrOJ/sqvvB5CFTdGLYuH1Gp9f4QX9RTiZhwOMv+v83N+pzgt3SoK0cYvkcE1V4cLzLA+dUSkMxHvaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DCDDC4CEF1;
-	Tue,  7 Oct 2025 10:16:05 +0000 (UTC)
-Date: Tue, 7 Oct 2025 11:16:03 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Sascha Bischoff <sascha.bischoff@arm.com>,
-	Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <maz@kernel.org>
-Subject: Re: [PATCH] irqchip/gic-v5: Fix GIC CDEOI instruction encoding
-Message-ID: <aOToY8dF07zPe9Bt@arm.com>
-References: <20251006100758.624934-1-lpieralisi@kernel.org>
- <aOPEXEx-QRv7v9A5@arm.com>
- <aOPZqM2xGIrPJH/d@lpieralisi>
- <aOPfIgrxZaqzu-7s@arm.com>
- <aOTWJBETJDY4xFUh@lpieralisi>
+	 Content-Type:Content-Disposition:In-Reply-To; b=L8zZu5yiU/OQNjFXMvfnIjk3GGLJoFcVU948/4UJTlJxKQNu+hjUqPS/OaklcQGH9owuEI9LiS6L5rUiPMSEYB+P6JQTtnakQmlMVY+whTOzsi90z6Cyt78+tbVrmPQO9wxwVHT7C0rtYSjDHXobtjaRN83poct5QAK7A6wmxZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WdB1oNoM; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Iwif9ExfXZYFRG5YTH8P10iLbyGNxofX7BDXhWql0DM=; b=WdB1oNoM0PZjs3DNOrLnDhkZa7
+	s14Dw1cbIFWC+1iPrfLldF2q7gCtWi9uqTV/XWm0mJKt2o3C+JQhPmZUpGy+fOyn7+BUA5GikR1rD
+	Qf2A+N4tStT1EC4Ko5Za2PlzYs5qXMKmSARrpyLON2LAwZbKT0vsd0crPT3Y2elZMthPgeFRfKL8p
+	19BmFp/sQBRi/0j3XkiRfNEwYBJmtmVyG66s0AOw5n4OiPi0xIo5LUMlm4SAqiko5GBqvcaadJdTs
+	m5J2JOjrHVF+ZWOc9P6tV8RFTZPcZROdO2o1JDq4lIyhZoHjzmPenwVv8Avs35UFEbz2q9qE7lyaD
+	+ILz82qw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v64jr-0000000HY5o-0w5r;
+	Tue, 07 Oct 2025 10:16:11 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 20B68300220; Tue, 07 Oct 2025 12:16:10 +0200 (CEST)
+Date: Tue, 7 Oct 2025 12:16:10 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: tj@kernel.org, linux-kernel@vger.kernel.org, mingo@kernel.org,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
+	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
+	changwoo@igalia.com, cgroups@vger.kernel.org,
+	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de
+Subject: Re: [RFC][PATCH 1/3] sched: Detect per-class runqueue changes
+Message-ID: <20251007101610.GD3245006@noisy.programming.kicks-ass.net>
+References: <20251006104652.630431579@infradead.org>
+ <20251006105453.522934521@infradead.org>
+ <aOTmg90J1Tdggm5z@jlelli-thinkpadt14gen4.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,39 +69,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aOTWJBETJDY4xFUh@lpieralisi>
+In-Reply-To: <aOTmg90J1Tdggm5z@jlelli-thinkpadt14gen4.remote.csb>
 
-On Tue, Oct 07, 2025 at 10:58:12AM +0200, Lorenzo Pieralisi wrote:
-> On Mon, Oct 06, 2025 at 04:24:18PM +0100, Catalin Marinas wrote:
-> > On Mon, Oct 06, 2025 at 05:00:56PM +0200, Lorenzo Pieralisi wrote:
-> > > My only remark there is that even as the code in mainline stands with
-> > > GCC, it is not very clear that we rely on implicit XZR generation to
-> > > make sure the instruction encoding generated is correct - it looks
-> > > like a bit of a stretch to reuse a sysreg write with immediate value == 0
-> > > to generate a system instruction write with Rt == 0b11111, it works
-> > > but it is a bit opaque or at least not straighforward to grok.
-> > > 
-> > > Obviously the patch below improves LLVM code generation too in the process.
-> > > 
-> > > I don't know what's best - I admit I am on the fence on this one.
-> > 
-> > My concern is other cases where we may rely on this, so we might as well
-> > go with a generic approach than fixing each case individually. If that's
-> > the only case, I'll leave it to you and Marc do decide whichever you
-> > prefer.
+On Tue, Oct 07, 2025 at 12:08:03PM +0200, Juri Lelli wrote:
+> Hi Peter,
 > 
-> I will take your patch - added comments and rewrote the log for v2, with
-> your Suggested-by (did not give you authorship let me know if that's OK
-> please).
+> On 06/10/25 12:46, Peter Zijlstra wrote:
+> > Have enqueue/dequeue set a per-class bit in rq->queue_mask. This then
+> > enables easy tracking of which runqueues are modified over a
+> > lock-break.
+> > 
+> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > ---
+> 
+> Nice.
+> 
+> > @@ -12887,8 +12888,8 @@ static int sched_balance_newidle(struct
+> >  	if (this_rq->cfs.h_nr_queued && !pulled_task)
+> >  		pulled_task = 1;
+> >  
+> > -	/* Is there a task of a high priority class? */
+> > -	if (this_rq->nr_running != this_rq->cfs.h_nr_queued)
+> > +	/* If a higher prio class was modified, restart the pick */
+> > +	if (this_rq->queue_mask & ~((fair_sched_class.queue_mask << 1)-1))
+> >  		pulled_task = -1;
+> 
+> Does this however want a self-documenting inline helper or macro to make
+> it even more clear? If this is always going to be the only caller maybe
+> not so much.
 
-That's absolutely fine.
+There's another one in patch 3. I suppose we can do that. Maybe
+something like:
 
-> One thing to mention, I added a Fixes: tag that goes back to the initial
-> GICv5 commit, I don't know whether it is fixing more than that, it does
-> not look like by a quick grep through kernel code but I am not sure.
+static inline bool rq_modified_above(struct rq *rq, struct sched_class *class)
+{
+	unsigned int mask = class->queue_mask;
+	return rq->queue_mask & ~((mask << 1) - 1);
+}
 
-This would do. If we find other problems, we'll backport it.
+This then writes the above like:
 
--- 
-Catalin
+	if (rq_modified_above(this_rq, &fair_sched_class))
 
