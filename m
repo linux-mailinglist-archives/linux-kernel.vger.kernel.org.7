@@ -1,101 +1,203 @@
-Return-Path: <linux-kernel+bounces-844514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB50BBC21D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:28:15 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BF98BC21D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:28:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A423F3AD52A
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:28:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BD4EC4F6FF4
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43FA22E7F30;
-	Tue,  7 Oct 2025 16:28:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E4B2E8B6B;
+	Tue,  7 Oct 2025 16:28:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="zspHA+iW"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V6gLOwgn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 508E911712;
-	Tue,  7 Oct 2025 16:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937CD11712;
+	Tue,  7 Oct 2025 16:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759854491; cv=none; b=WEkElFROq6R2PXvBNJJGvNEbYV47C+Dp0DYTfWdPBRQuOb0rR3yDYkuhN1+EK4aGBzLNiaj2YvuDp9rgY5eKWjrPfHu4kiCAAkExzvgKEgVoQTtYMWr4n5aw2dSeAt9WlF1zI25TxLAGTY0H6OMkUwmr3T8xAwf6tUImnhxEMsU=
+	t=1759854498; cv=none; b=GD9euknB66oGhmLML3ObvWsyU+qbu54ywZT3KY1YzyNUxIB+oxtXslWM+5Ee0Qe5nyzgP18KbJllJVHhWuMuhj6begse5jjcpBnekUTktwH/CY55+ZQC6tZa27zT8VKQ/+PY43VWhX6kAAF+SO1wEJ7vmTbTlQ4EcatXAdmUHyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759854491; c=relaxed/simple;
-	bh=6FLy1wq268733luOmRwct1kCS6sCeSZUwKr5j+mJjz8=;
+	s=arc-20240116; t=1759854498; c=relaxed/simple;
+	bh=xYeA5nn/abbj5ed3ef1cNUU82SoHc8qkl+HZ9ylyjw0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UA8goIHtW2qDggmy5xI7xZiGEfofByC3QzHdjr23u41LqUpu81YSol7rxAgJuASyGvCdXDc/bhYVoAp1mi8OfvZxN24ohcojuL25GM5VmEkYGEftb0VSu4BIyXKa4DQzVsqWSGYTRBIZOUGcUq4Tr7rOQUKc6pcBxiBLwEQKNcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=zspHA+iW; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=CSdeUl0+Wlj3wrQusnKRTtGq1C5jdr7eduitM3MGZgo=; b=zspHA+iWPxTcZTxT/Je2B4G6tw
-	v534xoaaXgJXV7v2hC90Zwk4epC3hYCX3ntpzHLoS6snCOfo02fOfHMWw8lGqVd/V0iQjfqrfo9aL
-	S0dtRxcKDb0X7AOyf14bE07Uf9IvbJsrcNnauB3jzCZSrvz142bz40vvhiUkiOy7ESb7t8EaexArE
-	vl5J/TnKfxTKNnfJImi4I+X+4nLUXDwTydF0ccP/m15Khrii/uUE2dj/jKnj5Bz9xx4b+7yRWQ63o
-	w7NCEmkPmM0sFRQHO56bXcVcX+jWImi2kDXUWcKQ+sdu9L0hlp1i//GhivJwMeWTjyWbX2eTamTtk
-	PqFESXUA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:53078)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1v6AXV-000000005Li-4389;
-	Tue, 07 Oct 2025 17:27:50 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1v6AXU-0000000032l-0FFc;
-	Tue, 07 Oct 2025 17:27:48 +0100
-Date: Tue, 7 Oct 2025 17:27:47 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Diederik de Haas <didi.debian@cknow.org>
-Cc: jjm2473 <jjm2473@gmail.com>, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, heiko@sntech.de, quentin.schulz@cherry.de,
-	kever.yang@rock-chips.com, naoki@radxa.com, honyuenkwun@gmail.com,
-	inindev@gmail.com, ivan8215145640@gmail.com,
-	neil.armstrong@linaro.org, mani@kernel.org, dsimic@manjaro.org,
-	pbrobinson@gmail.com, alchark@gmail.com, jbx6244@gmail.com,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/3] arm64: dts: rockchip: introduce LinkEase EasePi R1
-Message-ID: <aOU_g-47JEycc8ZV@shell.armlinux.org.uk>
-References: <20250929065714.27741-1-jjm2473@gmail.com>
- <DD57IZJQ4FQM.3T5791FLUQ8KQ@cknow.org>
- <CAP_9mL6+uoeG7LX8YCcUFjoU13De1CdPFqxNNfoJvOdsOrYo5Q@mail.gmail.com>
- <DD63EEOKPWNV.3IK12D6CFPTQZ@cknow.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=K9PgkzPY/ohSTyDwc1iScqabgDsP95NbA8LcR0dMoF3zuxqRgfaQtEnDim9DwiA9D303/rFUOB4HYV0k/tJMTD+GerzQO0ZYmZpZni4RaKYcAahQGfHV1ioK5Bc3p7VeFXQFtEnoi0ydRZ5Hvb4+oT2Ul6c10QaiDiYJB83SRnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V6gLOwgn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35AEBC4CEF7;
+	Tue,  7 Oct 2025 16:28:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759854498;
+	bh=xYeA5nn/abbj5ed3ef1cNUU82SoHc8qkl+HZ9ylyjw0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V6gLOwgnvOxPmJz0LQMipMYO5vPDFV2CTcpBXKWlC2TaqSGT+mEm4K0D0NemSziR+
+	 a4L5Jd2D+bj64roEwzpceQowvn1wIf8vSepKeIwWp//LmKqlJarXByX8yBNEm0K9wT
+	 QB1ZUUIKRIHJE66kz3NZL3TUwuBF6yZcXvXc0fsz5fYo1vIIdIjgtL64vHPyF5V54T
+	 nk2QNw3WoblZcLttkdFD0oPGFd3IThCJcEgCoTjVRR3FAWogq8xYeFhE8tcpkXN4BS
+	 yapf08l++uGwkTeGLJagoTf86oBKBPUPxbfQKXJwnjS9kNhWRl1Lsnt2+URfaCWFtx
+	 Zth3UW0roW0uw==
+Date: Tue, 7 Oct 2025 17:28:12 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Sascha Bischoff <Sascha.Bischoff@arm.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, nd <nd@arm.com>,
+	Mark Rutland <Mark.Rutland@arm.com>,
+	Catalin Marinas <Catalin.Marinas@arm.com>,
+	"maz@kernel.org" <maz@kernel.org>,
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+	Joey Gouly <Joey.Gouly@arm.com>,
+	Suzuki Poulose <Suzuki.Poulose@arm.com>,
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>
+Subject: Re: [PATCH 1/3] arm64/sysreg: Support feature-specific fields with
+ 'Feat' descriptor
+Message-ID: <26d69b0d-3529-454f-9385-99a914bf1ebc@sirena.org.uk>
+References: <20251007153505.1606208-1-sascha.bischoff@arm.com>
+ <20251007153505.1606208-2-sascha.bischoff@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2tSGI2X8sep9nY9m"
+Content-Disposition: inline
+In-Reply-To: <20251007153505.1606208-2-sascha.bischoff@arm.com>
+X-Cookie: Teachers have class.
+
+
+--2tSGI2X8sep9nY9m
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DD63EEOKPWNV.3IK12D6CFPTQZ@cknow.org>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 30, 2025 at 01:19:21PM +0200, Diederik de Haas wrote:
-> On Mon Sep 29, 2025 at 8:09 PM CEST, jjm2473 wrote:
-> > I have another question. If there are reviewers or co-authors later,
-> > do I need to add it to the commit message and send it again?
-> > Or should the reviewer or co-author add the message and
-> > continue to deliver the patch?
-> 
-> When you get a Reviewed-by tag, you should add that tag too to a new
-> version. But there's no need to send a new version to just add those
-> tags, the tooling used by maintainers picks those up themselves.
+On Tue, Oct 07, 2025 at 03:35:14PM +0000, Sascha Bischoff wrote:
 
-The only exception to this is if something changes in the patch
-after the reviewed-by tag has been given - because changes mean
-that the changes haven't been reviewed.
+> Some system register field encodings change based on the available and
+> in-use architecture features. In order to support these different
+> field encodings, introduce the Feat descriptor (Feat, ElseFeat,
+> EndFeat) for describing such sysregs.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+We have other system registers which change layouts based on things
+other than features, ESR_ELx is probably the most entertaining of these
+but there's others like PAR_EL1.  Ideally we should probably do the
+logic for generating the conditionals in a manner that's not tied to
+features with a layer on top that generates standard naming for common
+patterns like FEAT, but OTOH part of why that's not been done because
+it's got a bunch of nasty issues so perhaps just doing the simpler case
+is fine.
+
+> The Feat descriptor can be used in the following way (Feat acts as
+> both an if and an else-if):
+
+>         Sysreg  EXAMPLE 0    1    2    3    4
+>         Feat    FEAT_A
+>         Field   63:0    Foo
+>         Feat    FEAT_B
+
+This assumes that there will never be nesting of these conditions in the
+architecture.  I'm not sure I would want to assume that, even for plain
+features though I can't think of any examples where it's an issue.
+There are more serious issues with the implementation for practical
+patterns with nesting (see below) which mean we might not want to deal
+with that now but we should define the syntax for the file in a way that
+will cope so I'd prefer not to have the implicit elses.
+
+I'd also be inclined to say that something that's specificly for
+features shouldn't repeat the FEAT_ so:
+
+          Feat    A
+
+instead, but that's purely a taste question.
+
+> -	define("REG_" reg, "S" op0 "_" op1 "_C" crn "_C" crm "_" op2)
+> -	define("SYS_" reg, "sys_reg(" op0 ", " op1 ", " crn ", " crm ", " op2 "=
+)")
+> +	feat =3D null
+> +
+> +	define(feat, "REG_" reg, "S" op0 "_" op1 "_C" crn "_C" crm "_" op2)
+> +	define(feat, "SYS_" reg, "sys_reg(" op0 ", " op1 ", " crn ", " crm ", "=
+ op2 ")")
+> =20
+> -	define("SYS_" reg "_Op0", op0)
+> -	define("SYS_" reg "_Op1", op1)
+> -	define("SYS_" reg "_CRn", crn)
+> -	define("SYS_" reg "_CRm", crm)
+> -	define("SYS_" reg "_Op2", op2)
+> +	define(feat, "SYS_" reg "_Op0", op0)
+> +	define(feat, "SYS_" reg "_Op1", op1)
+> +	define(feat, "SYS_" reg "_CRn", crn)
+> +	define(feat, "SYS_" reg "_CRm", crm)
+> +	define(feat, "SYS_" reg "_Op2", op2)
+
+Possibly it's worth having a reg_define() or something given the number
+of things needing updating here?
+
+> @@ -201,6 +205,7 @@ $1 =3D=3D "EndSysreg" && block_current() =3D=3D "Sysr=
+eg" {
+>  	res0 =3D null
+>  	res1 =3D null
+>  	unkn =3D null
+> +	feat =3D null
+> =20
+>  	block_pop()
+>  	next
+
+Probably worth complaining if we end a sysreg with a feature/prefix
+defined.
+
+> +$1 =3D=3D "Feat" && (block_current() =3D=3D "Sysreg" || block_current() =
+=3D=3D "SysregFields" || block_current() =3D=3D "Feat") {
+
+=2E..
+
+> +	next_bit =3D 63
+> +
+> +	res0 =3D "UL(0)"
+> +	res1 =3D "UL(0)"
+> +	unkn =3D "UL(0)"
+
+This is only going to work if the whole register is in a FEAT_ block, so
+you coudn't have:
+
+        Sysreg  EXAMPLE 0    1    2    3    4
+	Res0	63
+        Feat    FEAT_A
+        Field   62:1    Foo
+        Feat    FEAT_B
+        Field   62:32    Foo
+        Field   31:1     Bar
+	EndFeat
+	Res0	0
+	EndSysreg
+
+but then supporting partial registers does have entertaining
+consequences for handling Res0 and Res1.  If we're OK with that
+restriction then the program should complain if someone tries to=20
+define a smaller FEAT block.
+
+--2tSGI2X8sep9nY9m
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjlP5sACgkQJNaLcl1U
+h9AY1Qf/csPwwhVqEVz16SFCiD4J+Z7duRX2w5NTCWs3V6z30u19pzao0zemleKD
+l0UdPz/T/LaiHj6hEdZqwuni6i84rlzgmbPfJ6XPXAfjmg7p4FeKBavOLU3Ablhz
+yiTGGyi4INGrTu4znpmuHVT1Vx2RIeaCWPpjkTcGdJ7aHWIErjKNPzpdJTl6cz7n
+f6ChusvOhN5nCKgD93MX5imL2oe+xULMuCBEhJ9EdjsWHCndFmIl/hoLv1gFJ0yJ
+ppwnKqdEiszW8Gx6VUhiCILY5lkuVl0yOwM7tsol+sGEv44msyJJouplCqw1JoYt
+7Rb48t0H3ra9N3XS6TOh7UQOYBKkDw==
+=QE7l
+-----END PGP SIGNATURE-----
+
+--2tSGI2X8sep9nY9m--
 
