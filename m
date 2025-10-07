@@ -1,183 +1,166 @@
-Return-Path: <linux-kernel+bounces-844893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE354BC3006
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 01:51:50 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 299F5BC2DB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 00:20:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E16A919E018D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 23:52:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EB3414E6D6E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 22:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01FFB1B87F2;
-	Tue,  7 Oct 2025 23:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3AC2472B0;
+	Tue,  7 Oct 2025 22:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JHETawTw"
-Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="hSqn9pR+"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8884A224AF3;
-	Tue,  7 Oct 2025 23:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F721F63FF;
+	Tue,  7 Oct 2025 22:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759881090; cv=none; b=Xmfu5rFXyyZJAVnEtetUbd0ah3hC6yKURZnahLVjW8/j36EzL5aGjnPKBTfjI9cnGXua1SGalhK6FqlR7YgjIvjgacWwXsi24lQZr7Wfl3I0qXZqTQ20/P9AabImCkXBZW97OW5w54jCjjnC5VEfL2jTks+rCNZb3xoj8Ab2fyA=
+	t=1759875607; cv=none; b=c8J8yqH0R/K7xwErnUdn6iZ5TgVKlQCfs45vlRp6XXMWAf4FwXbV432kHEhAgRUV5qypz5MZ6FXYMre8LWJ2DZ0RLmOBAFo6Tpeb90QficN7n1UeqCbYvfqzKdTLGwLmls10s9l0EdbarazwwRIASlWcZ8g3E49vOzW2F8M4PiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759881090; c=relaxed/simple;
-	bh=rNKE9ngzFrHTLxZ7ppLHn5u6VEyDnMzzG91YPYVvxwk=;
-	h=To:Cc:Message-ID:In-Reply-To:References:From:Subject:Date; b=YGgrgYbrVKVWUcf8gB6DoLGRXtl31mSad3iPWUvfcnDeMPHPTfjJsB+RTpXp9H3EPs8BdYoXg0H+UhcCuig8idhwlcyjM7FBcfxIiJ7PWgElk32S/fsT2gb+w29ALf8I6pQUDUBmkusvDNy2+7ZF+bqAtoErqccGAOs3lG75Kqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JHETawTw; arc=none smtp.client-ip=202.12.124.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 7AFC37A0078;
-	Tue,  7 Oct 2025 19:51:27 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Tue, 07 Oct 2025 19:51:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-	:feedback-id:from:from:in-reply-to:in-reply-to:message-id
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759881087; x=
-	1759967487; bh=0+AdSH1sg/8lok7qtu/8oSLYuGUe0/34ymLa0qtNzl8=; b=J
-	HETawTwt13D+PZ6+SnHOUkOkfOJixRcK2mEAmqGP9fpoGn44euJSdk/y6ZUdjCJa
-	Zu2nqtmiu4dUjKnK4Gv0OMaOLlqKB+wYcw52F4noBx6gmiLeoWEEQtM4Z/icdxyP
-	8AZjWUk9mf8kK+NxCH/bIHz4+Dgwe9yhN5q9jTGEzLbHlQLUnY1KJTjZre61HCF2
-	ojSmMhMJPsvQM+63pKCrHlQxmNcGM6dF6TvkcY1jbI4DKTq+wj0wT7banc71UaDX
-	6Zz7Lv22bvTQRnbPe/E7QGDoamgPSG2wGe16cMam/fCvmbZYIEHRMOmWpMBquu7H
-	xvsmi84AS8IS673L98zyw==
-X-ME-Sender: <xms:f6flaJvd7BrvdGXqVdvCLIj_CgzXm1_79r6xVFAZohn4mbAyjM7LDQ>
-    <xme:f6flaOVvvPFSQlitVnYppi0-QVdOfyeEBGoVh_GKzbi8b2DKmTld5nXaO5yl4wgTd
-    afAIPeQxDsVHu_DHl46P9fMUAt4h7OL0nxcMSGYT9QdDrKbzSmoDg>
-X-ME-Received: <xmr:f6flaJx9qsZZaL_zdd4sPVviEkUtdyt3dcWVwFmRl1bF3LP0NCFArUR6N12M6bbrjTSrxZdwHx9bjoFoWMi506drQPkc6BBj_YI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutddujeelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepvfevkfgjfhfhufffsedttdertddttddtnecuhfhrohhmpefhihhnnhcuvfhhrghi
-    nhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtthgvrh
-    hnpeevgffgtdfhhfefveeuudfgtdeugfeftedtveekieeggfduleetgeegueehgeffffen
-    ucevlhhushhtvghrufhiiigvpedvnecurfgrrhgrmhepmhgrihhlfhhrohhmpehfthhhrg
-    hinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopeduuddpmhhouggv
-    pehsmhhtphhouhhtpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorh
-    hgpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrkhhp
-    mheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepsghoqhhunh
-    drfhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtoheptghorhgsvghtsehlfihnrdhn
-    vghtpdhrtghpthhtohepmhgrrhhkrdhruhhtlhgrnhgusegrrhhmrdgtohhmpdhrtghpth
-    htoheprghrnhgusegrrhhnuggsrdguvgdprhgtphhtthhopehlihhnuhigqdhkvghrnhgv
-    lhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhgthh
-    esvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:f6flaFEOc5SyJhLVmqVkWcAcLBNa8f0_UthZVOAZjQdt6n6EgYOXrg>
-    <xmx:f6flaOsX18xVBHMTErTqi9R7G7hBEQTJRYW5oG2l5t2ycyOC8ZJrZg>
-    <xmx:f6flaFCOZIBezrdWTl8veOdG9OJm9Qw-tUeXtIRTkdUz5zH6RZENhg>
-    <xmx:f6flaJAO99rV-WjwKcKT7kQEQfwZwZygLLhyeKlapVoGAiOXzZ55OQ>
-    <xmx:f6flaA5W_ZUip7j3TxcHofm7zWfxJRP3-jNZLdX4AxXbnppvQv71x7sf>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 7 Oct 2025 19:51:24 -0400 (EDT)
-To: Peter Zijlstra <peterz@infradead.org>,
-    Will Deacon <will@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-    Boqun Feng <boqun.feng@gmail.com>,
-    Jonathan Corbet <corbet@lwn.net>,
-    Mark Rutland <mark.rutland@arm.com>,
-    Arnd Bergmann <arnd@arndb.de>,
-    linux-kernel@vger.kernel.org,
-    linux-arch@vger.kernel.org,
-    Geert Uytterhoeven <geert@linux-m68k.org>,
-    linux-m68k@vger.kernel.org
-Message-ID: <d4ab82f5646f901b7c556c4cb8f8adf4096f0c50.1759875560.git.fthain@linux-m68k.org>
-In-Reply-To: <cover.1759875560.git.fthain@linux-m68k.org>
-References: <cover.1759875560.git.fthain@linux-m68k.org>
-From: Finn Thain <fthain@linux-m68k.org>
-Subject: [RFC v3 5/5] atomic: Add option for weaker alignment check
-Date: Wed, 08 Oct 2025 09:19:20 +1100
+	s=arc-20240116; t=1759875607; c=relaxed/simple;
+	bh=1RtDq0A1RZWwZjHU/cddoxGAZzdiIWeIfbGDh4YzFq4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ON+F4qXtF075dVlFOnXznWSyajCXDJ43VNCtrqmWeEdEBTW8Cttcur4Jkw7luo++fOCftTDU/LZPY8S5Zwr8tzi5bL3+tMxUZaKl6tJ1h0YdTDrqF0xRQ11fveIfrye+2pPtWRzRzTZZ/3FMepcgeUwymADIo9l7U4T9p48kGwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=hSqn9pR+; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 597IUbpj010572;
+	Tue, 7 Oct 2025 18:19:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=5bylmLC2D9Sq8ZZnNilvP3JpPRe
+	J0dKy7HvUGEtpDsI=; b=hSqn9pR+WMbsm3D8tGlsSOBHtBSO2jtYM2msplrP0ud
+	arv0Vyk9JlWvK2TVh/wC4El5nvcLWWRLPBDqAXpt1kQ/NC/1MaYZJNVcLy0ufzUm
+	JYdAqMxIXy4pbjpNxJI2ejaF9wQApxXHYztXQsxxIACM4aLXtrBZVBXxEeh3F+PW
+	CTLdwPp6lbhKzG6PAhThLHl/AKNb48vcgnjKmZ60T/JSpx1Es6MOHAX4827fC5PM
+	dYJQpAN8PZUSi+NcR4hQBXv5Bjrmz2h2s3OE0aIexe4VIPInRfWKxmXL/UKGsVPQ
+	nzRT/2Rp+jaKyBLf1CY2Q8dBwuHLmQr2Xuv4tQqX7vQ==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 49jwe22pcj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 07 Oct 2025 18:19:50 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 597MJmH5049657
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 7 Oct 2025 18:19:48 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.37; Tue, 7 Oct
+ 2025 18:19:48 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.37 via Frontend
+ Transport; Tue, 7 Oct 2025 18:19:48 -0400
+Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 597MJcTP020093;
+	Tue, 7 Oct 2025 18:19:41 -0400
+From: Marcelo Schmitt <marcelo.schmitt@analog.com>
+To: <linux-pwm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <ukleinek@kernel.org>, <jic23@kernel.org>, <marcelo.schmitt1@gmail.com>,
+        kernel test robot <lkp@intel.com>
+Subject: [PATCH] pwm: Declare waveform stubs for when PWM is not reachable
+Date: Tue, 7 Oct 2025 19:19:38 -0300
+Message-ID: <1ac0fc529e02744aacfcb9140ed597ff60886f39.1759873890.git.marcelo.schmitt@analog.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Authority-Analysis: v=2.4 cv=Y7n1cxeN c=1 sm=1 tr=0 ts=68e59206 cx=c_pps
+ a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
+ a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8 a=gAnH3GRIAAAA:8
+ a=umOawDddDieID1hGUK0A:9 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: Nw-7FBRIa7Sn_OZS7Y_NPGODW2hMG3pr
+X-Proofpoint-ORIG-GUID: Nw-7FBRIa7Sn_OZS7Y_NPGODW2hMG3pr
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDA0MyBTYWx0ZWRfX+M8Z4c3DG243
+ 35MMGlQGbYldZTx26B3epmnZVa2KoLPWdsXwhzza8/NeRUO/zYlecf0PebG51faJRwqgKrNub0K
+ bPN3QYkNICiF4JmSZ927+JNd55SN/JhyTZPX8Ivd5iJLwhI6WM2TW011z9fAMRiwe9n4ZueK9IZ
+ YRtYmb3Nm2x+sjigc6O+Tqb39gzVoPp8fBsB5R2rEo8MBSTNbOUDcLyoupoxCbC0zoFUtOYuqEg
+ OquKQJkutlrRYtBJjOp9EYQ09cJ9dnkj0T0jp1XZlr+ZAa5Fa5GjZD12MJbFEczV7slbPK70soJ
+ SRooWLlOaF3VHlJ0YDmoL18JsYVm31mv6oCerBdDYkd6QhgnuOW/kU2f4586CvlR8I61c0MoIJ/
+ bSL3ZV1yWPgbPAFi0mMXEgi7DCpgtg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-07_02,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 adultscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0
+ phishscore=0 impostorscore=0 malwarescore=0 priorityscore=1501 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040043
 
-Add a new Kconfig symbol to make CONFIG_DEBUG_ATOMIC more useful on
-those architectures which do not align dynamic allocations to
-8-byte boundaries. Without this, CONFIG_DEBUG_ATOMIC produces excessive
-WARN splats.
+Previously, the PWM waveform consumer API would not be declared if
+CONFIG_PWM was not reachable. That caused kernel builds to fail if a
+consumer driver was enabled but PWM disabled. Add stubs for PWM waveform
+functions so client drivers that use, but don't depend on PWM, can build if
+PWM is disabled.
+
+Fixes: 6c5126c6406d ("pwm: Provide new consumer API functions for waveforms")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202509272028.0zLNiR5w-lkp@intel.com/
+Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
 ---
- include/linux/instrumented.h | 14 +++++++++++---
- lib/Kconfig.debug            |  9 +++++++++
- 2 files changed, 20 insertions(+), 3 deletions(-)
+Cc: Jonathan Cameron <jic23@kernel.org>
+Hi Uwe,
 
-diff --git a/include/linux/instrumented.h b/include/linux/instrumented.h
-index 402a999a0d6b..3c9a570dbfa7 100644
---- a/include/linux/instrumented.h
-+++ b/include/linux/instrumented.h
-@@ -8,11 +8,13 @@
- #define _LINUX_INSTRUMENTED_H
- 
- #include <linux/bug.h>
-+#include <linux/cache.h>
- #include <linux/compiler.h>
- #include <linux/kasan-checks.h>
- #include <linux/kcsan-checks.h>
- #include <linux/kmsan-checks.h>
- #include <linux/types.h>
-+#include <vdso/align.h>
- 
- /**
-  * instrument_read - instrument regular read access
-@@ -68,7 +70,9 @@ static __always_inline void instrument_atomic_read(const volatile void *v, size_
- {
- 	kasan_check_read(v, size);
- 	kcsan_check_atomic_read(v, size);
--	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ATOMIC) && ((unsigned long)v & (size - 1)));
-+	if (IS_ENABLED(CONFIG_DEBUG_ATOMIC))
-+		WARN_ON_ONCE(v != PTR_ALIGN(v, IS_ENABLED(CONFIG_DEBUG_ATOMIC_LARGEST_ALIGN) ?
-+					       __LARGEST_ALIGN : size));
- }
- 
- /**
-@@ -83,7 +87,9 @@ static __always_inline void instrument_atomic_write(const volatile void *v, size
- {
- 	kasan_check_write(v, size);
- 	kcsan_check_atomic_write(v, size);
--	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ATOMIC) && ((unsigned long)v & (size - 1)));
-+	if (IS_ENABLED(CONFIG_DEBUG_ATOMIC))
-+		WARN_ON_ONCE(v != PTR_ALIGN(v, IS_ENABLED(CONFIG_DEBUG_ATOMIC_LARGEST_ALIGN) ?
-+					       __LARGEST_ALIGN : size));
- }
- 
- /**
-@@ -98,7 +104,9 @@ static __always_inline void instrument_atomic_read_write(const volatile void *v,
- {
- 	kasan_check_write(v, size);
- 	kcsan_check_atomic_read_write(v, size);
--	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ATOMIC) && ((unsigned long)v & (size - 1)));
-+	if (IS_ENABLED(CONFIG_DEBUG_ATOMIC))
-+		WARN_ON_ONCE(v != PTR_ALIGN(v, IS_ENABLED(CONFIG_DEBUG_ATOMIC_LARGEST_ALIGN) ?
-+					       __LARGEST_ALIGN : size));
- }
- 
- /**
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index d82626b7d6be..f81b8a9b9216 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1373,6 +1373,15 @@ config DEBUG_ATOMIC
- 
- 	  This option has potentially significant overhead.
- 
-+config DEBUG_ATOMIC_LARGEST_ALIGN
-+	bool "Check alignment only up to __LARGEST_ALIGN"
-+	depends on DEBUG_ATOMIC
-+	help
-+	  Say Y here if you require natural alignment of atomic accesses
-+	  only up to long word boundaries. That is, char, short, int and long
-+	  will be checked for natural alignment but anything larger checked
-+	  only for alignment with a long word boundary.
+This is a fix based on a report from 0-day bot [1].
+We need this for a sophisticated IIO device that makes direct use of a PWM
+waveform (in addition to indirect use of PWM through SPI_OFFLOAD_TRIGGER_PWM). 
+I'm not very familiar with the details of how it works for series of
+patches that update multiple subsystems. Documentation says such sets may go
+through the -mm tree. Though, this is a small change and the consumer driver set
+depends on it. Would it be okay if this gets picked up through Jonathan's IIO tree?
+
+[1]: https://lore.kernel.org/linux-iio/202509272028.0zLNiR5w-lkp@intel.com/
+
+Thanks,
+Marcelo
+
+ include/linux/pwm.h | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/include/linux/pwm.h b/include/linux/pwm.h
+index 549ac4aaad59..a20ddc40a32a 100644
+--- a/include/linux/pwm.h
++++ b/include/linux/pwm.h
+@@ -504,6 +504,25 @@ struct pwm_device *devm_fwnode_pwm_get(struct device *dev,
+ 				       struct fwnode_handle *fwnode,
+ 				       const char *con_id);
+ #else
++static inline int pwm_round_waveform_might_sleep(struct pwm_device *pwm, struct pwm_waveform *wf)
++{
++	might_sleep();
++	return -EOPNOTSUPP;
++}
 +
- menu "Lock Debugging (spinlocks, mutexes, etc...)"
- 
- config LOCK_DEBUGGING_SUPPORT
++static inline int pwm_get_waveform_might_sleep(struct pwm_device *pwm, struct pwm_waveform *wf)
++{
++	might_sleep();
++	return -EOPNOTSUPP;
++}
++
++static inline int pwm_set_waveform_might_sleep(struct pwm_device *pwm,
++					       const struct pwm_waveform *wf, bool exact)
++{
++	might_sleep();
++	return -EOPNOTSUPP;
++}
++
+ static inline bool pwm_might_sleep(struct pwm_device *pwm)
+ {
+ 	return true;
+
+base-commit: 8f2689f194b8d1bff41150ae316abdfccf191309
 -- 
-2.49.1
+2.39.2
 
 
