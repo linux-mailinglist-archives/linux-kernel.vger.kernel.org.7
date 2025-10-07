@@ -1,106 +1,159 @@
-Return-Path: <linux-kernel+bounces-844765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28A15BC2B52
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 22:53:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BA8CBC2B5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 22:56:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0250E4E36E9
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 20:53:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6C01188ADDB
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 20:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA3623D298;
-	Tue,  7 Oct 2025 20:53:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2AB723D7EA;
+	Tue,  7 Oct 2025 20:56:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SlGUFpSs"
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="vpy3OQSP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E96523C50C
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 20:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DA628399;
+	Tue,  7 Oct 2025 20:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759870412; cv=none; b=nF5aRdNmuQP7W6TshfFwHJhROtHZtHXSeUGAxmc0K5o83gsi8MsRXJEFG5QZJKYApc3T0sgSYPZWMgrRMrGGBNAnwAXFAGUJoxn1bLIHk3fmu4Re9T/Ddv8yFYKg5+c7F+FEmj65/3VZjAQlPzCYrStyUKeEZ/szENIzD7jJaaM=
+	t=1759870562; cv=none; b=gQHlEarW7cLlMd9MVTCtBsqHDrZogHEyI2fNWefk448oQGEjbaItBUJHGphzazhXRWq1cOgVYGQUb4Wtst7C3rl2oIIFwBSAU63B/pdg2Km4dz+A+kFqSpoYW3kTLD4zW93vaH5PsCrG+jv0fsj4LEU6y5OrIRZpIGOskRTe/hM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759870412; c=relaxed/simple;
-	bh=/hCZP75SmDHrCZY5PWLz8NOVMBMSMd1PrqQADWHi6tM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LsBfaYYYF0I7+9I7XtFOqTlBea3sV3sRW7eymEicjJWdnLF4hWaW/t4jZBe5uHTJYYlBRAIjTMAaP4Fyplu+uXTFD0yyt3R5HFocD++1i1Vl1HGiqdIq8CMEyIloA55NcKJiNUrxNlWsDaDuFJWoLhh4Kpq+wda9S/iVOTbQBHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SlGUFpSs; arc=none smtp.client-ip=209.85.210.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-79d36a6298dso2620191a34.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 13:53:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759870409; x=1760475209; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/hCZP75SmDHrCZY5PWLz8NOVMBMSMd1PrqQADWHi6tM=;
-        b=SlGUFpSspz44Aw5wUKlHa342PN49vvlrUAMNLdS7xKJR2gulKpDZtYd70s33EVMqUB
-         d2k3McBx8l0aDVxdmSsZYHq7L/xqAPwE8CZjoHAllk/QjDD5JiHdDeNEhI8oiAVpOzhi
-         8hZrwkurrQLZdIa7JXTR0wxcwFACOC66xYgoSX0HRda5WnPfsxGs6DNKq4NQvnrnZaIc
-         sk80RjesUNWg6H2sQwMcC4WbFP9/AY9uqfQaUHVxfhKflrpPxDr5eUfyBk4tdFa036G5
-         E+ttBI2bX6sr1uowZuA8z/ToSCxC7e/00glVZRQ5OT3Tvbddfh11h7E/BXYBOJsBAzPl
-         /F+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759870409; x=1760475209;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/hCZP75SmDHrCZY5PWLz8NOVMBMSMd1PrqQADWHi6tM=;
-        b=HeAjXbbnbBgPT5Ki+pGzHcGY2GRh2RTkOvJIG1oL6Df4HAx7zXkQPdyYE8o5vXmSmt
-         qhme+8Cwv+4ESzC0Lh3YVUMwjIry6QbRQD1uInDLBu0ZQxgKvjN0SXt2Tt/xF3TlAp6e
-         xo3YBS9QdMl5o+pChZ28efzqwdra4CAF6IB7xRcEfBli6ZkLq042ZgQ36jTzPGLiCefd
-         uAF2Ad/0r+3vXCed6Op09yyT/yiKu53mUC41QWhWKGUd4kVAAkLN7EJn8r6VChOmMg46
-         kAxd7x9wlpjRartDUmEQNpO/srp7uUq5t1m9+e72B7iLAdoN6awS78ZnV0TMefdqzpfY
-         5DxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX8mwShfOZ5RpHExIFIIKwhWpZp8IAnTBpLAXCi+3N7irL16Dg1CMLCzkwx15Cvcmqg5xeCNv6nS1Iuqnw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcWWqm6BnMs9SYVWaLmFwP5Uya7nk/KNDBdRzF5L5SvFloF2w3
-	fG5dtfm/ouWjwUSURB9JG7UhB60MTTyWhINwwn3iwJKh1jjkzkKnfc0GvN8gTuFNmJCjrw6zOdu
-	persBgGsonsXNRDRrmfL3pa9k/JIot4ndVXsu9cIQnQ==
-X-Gm-Gg: ASbGnctcggYF+MyNpcfi5fdgzW0I4GQCeI+IELX4swN6mt1PzLTig9fVyhAFaKhMEZZ
-	sLGI2AyJRX3Yw+xfYq1SxC8mzQPPNL6Rzx/0SLplU1Z8V7jcp2KvLjsjdMwdrZ4JT8s30Rr3vU5
-	MbnS0s5ghOscUz9RPcqcoR1WbK/fYxa1MRvPBi7069XQlWup3GcSTY1pkSpX95dPOriKYnKZcnR
-	t/L/B4sgHDtTg1TXktTQ0qhuOtNNYelxY//9Q==
-X-Google-Smtp-Source: AGHT+IFQJZVs4LBnBVbWSGDsdN3906KKw4UjF5sMiH1fvSeD9gn0otajPAH5kYHA1+VAEseWAd1TdVpRyCmSlYYSQ1w=
-X-Received: by 2002:a05:6808:1988:b0:43f:57cb:7f83 with SMTP id
- 5614622812f47-4417b3e3209mr436998b6e.46.1759870409126; Tue, 07 Oct 2025
- 13:53:29 -0700 (PDT)
+	s=arc-20240116; t=1759870562; c=relaxed/simple;
+	bh=Gg93q9CWxU5Fuu6tdVUBKMJqQ0HTtVaIEb6Cg6dpU9s=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=SHYR2zpc5/YZmPcYKg4xq0+U7UzslH9tD3IqY6KH6Js0DA2Ykjs+aqu/8mhjBj5p9jmMITvktoRPWitK06PhwkIzRkkbKhsIbzpMXUu5xM45njEuzqfGQHsBT5e1L/gMOvrnGP3ABhG3t7ayZyHxUPWW6nitwbzoJwnCq34uWLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=vpy3OQSP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F24D4C4CEF1;
+	Tue,  7 Oct 2025 20:56:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1759870561;
+	bh=Gg93q9CWxU5Fuu6tdVUBKMJqQ0HTtVaIEb6Cg6dpU9s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=vpy3OQSPxKsYHofaY5nTubfqbeqCcI02CR2QjQABytRZminMP/SlUK8Lg0Yy5Rk1t
+	 nMiGpw5x0NaHJU4Go+SY3vkeu+6DN8Cn0B4yKwuZUBgyXWkb3Iqa0a++tobdurFO0E
+	 JVfOHj0NBLGpUSlj+d3VbUWwq2a0dxVBkpi7QCiU=
+Date: Tue, 7 Oct 2025 13:56:00 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Finn Thain
+ <fthain@linux-m68k.org>, Lance Yang <lance.yang@linux.dev>,
+ amaindex@outlook.com, anna.schumaker@oracle.com, boqun.feng@gmail.com,
+ ioworker0@gmail.com, joel.granados@kernel.org, jstultz@google.com,
+ leonylgao@tencent.com, linux-kernel@vger.kernel.org,
+ linux-m68k@lists.linux-m68k.org, longman@redhat.com, mhiramat@kernel.org,
+ mingo@redhat.com, mingzhe.yang@ly.com, oak@helsinkinet.fi,
+ peterz@infradead.org, rostedt@goodmis.org, senozhatsky@chromium.org,
+ tfiga@chromium.org, will@kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] hung_task: fix warnings caused by unaligned lock
+ pointers
+Message-Id: <20251007135600.6fc4a031c60b1384dffaead1@linux-foundation.org>
+In-Reply-To: <inscijwnnydibdwwrkggvgxjtimajr5haixff77dbd7cxvvwc7@2t7l7oegsxcp>
+References: <20250909145243.17119-1-lance.yang@linux.dev>
+	<yqjkjxg25gh4bdtftsdngj5suturft2b4hjbfxwe6hehbg4ctq@6i55py3jaiov>
+	<99410857-0e72-23e4-c60f-dea96427b85a@linux-m68k.org>
+	<CAMuHMdVYiSLOk-zVopXV8i7OZdO7PAK7stZSJNJDMw=ZEqtktA@mail.gmail.com>
+	<inscijwnnydibdwwrkggvgxjtimajr5haixff77dbd7cxvvwc7@2t7l7oegsxcp>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251006-gs101-pd-v1-0-f0cb0c01ea7b@linaro.org> <20251006-gs101-pd-v1-3-f0cb0c01ea7b@linaro.org>
-In-Reply-To: <20251006-gs101-pd-v1-3-f0cb0c01ea7b@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Tue, 7 Oct 2025 21:53:17 +0100
-X-Gm-Features: AS18NWAUUQxOHKEKFHDJ43bMyMuc1k66q_SOXE8Wv3pAaENJrBaMTokvZjBYJtQ
-Message-ID: <CADrjBPoharrk2BwLuFaAicErLxZXre+gSSqwws6Q07E4C9f8nA@mail.gmail.com>
-Subject: Re: [PATCH 03/10] pmdomain: samsung: use to devm_kstrdup_const() to
- simplify error handling
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, 
-	kernel-team@android.com, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, 6 Oct 2025 at 17:43, Andr=C3=A9 Draszik <andre.draszik@linaro.org> =
-wrote:
->
-> Convert to using devm_kstrdup_const() so as to simplify cleanup during
-> error handling.
->
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> ---
 
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+Getting back to the $Subject at hand, are people OK with proceeding
+with Lance's original fix?
+
+
+From: Lance Yang <lance.yang@linux.dev>
+Subject: hung_task: fix warnings caused by unaligned lock pointers
+Date: Tue, 9 Sep 2025 22:52:43 +0800
+
+From: Lance Yang <lance.yang@linux.dev>
+
+The blocker tracking mechanism assumes that lock pointers are at least
+4-byte aligned to use their lower bits for type encoding.
+
+However, as reported by Eero Tamminen, some architectures like m68k
+only guarantee 2-byte alignment of 32-bit values. This breaks the
+assumption and causes two related WARN_ON_ONCE checks to trigger.
+
+To fix this, the runtime checks are adjusted to silently ignore any lock
+that is not 4-byte aligned, effectively disabling the feature in such
+cases and avoiding the related warnings.
+
+Thanks to Geert Uytterhoeven for bisecting!
+
+Link: https://lkml.kernel.org/r/20250909145243.17119-1-lance.yang@linux.dev
+Fixes: e711faaafbe5 ("hung_task: replace blocker_mutex with encoded blocker")
+Signed-off-by: Lance Yang <lance.yang@linux.dev>
+Reported-by: Eero Tamminen <oak@helsinkinet.fi>
+Closes: https://lore.kernel.org/lkml/CAMuHMdW7Ab13DdGs2acMQcix5ObJK0O2dG_Fxzr8_g58Rc1_0g@mail.gmail.com
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Cc: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc: Anna Schumaker <anna.schumaker@oracle.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Finn Thain <fthain@linux-m68k.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Joel Granados <joel.granados@kernel.org>
+Cc: John Stultz <jstultz@google.com>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Lance Yang <lance.yang@linux.dev>
+Cc: Mingzhe Yang <mingzhe.yang@ly.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Tomasz Figa <tfiga@chromium.org>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Yongliang Gao <leonylgao@tencent.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+
+ include/linux/hung_task.h |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+--- a/include/linux/hung_task.h~hung_task-fix-warnings-caused-by-unaligned-lock-pointers
++++ a/include/linux/hung_task.h
+@@ -20,6 +20,10 @@
+  * always zero. So we can use these bits to encode the specific blocking
+  * type.
+  *
++ * Note that on architectures where this is not guaranteed, or for any
++ * unaligned lock, this tracking mechanism is silently skipped for that
++ * lock.
++ *
+  * Type encoding:
+  * 00 - Blocked on mutex			(BLOCKER_TYPE_MUTEX)
+  * 01 - Blocked on semaphore			(BLOCKER_TYPE_SEM)
+@@ -45,7 +49,7 @@ static inline void hung_task_set_blocker
+ 	 * If the lock pointer matches the BLOCKER_TYPE_MASK, return
+ 	 * without writing anything.
+ 	 */
+-	if (WARN_ON_ONCE(lock_ptr & BLOCKER_TYPE_MASK))
++	if (lock_ptr & BLOCKER_TYPE_MASK)
+ 		return;
+ 
+ 	WRITE_ONCE(current->blocker, lock_ptr | type);
+@@ -53,8 +57,6 @@ static inline void hung_task_set_blocker
+ 
+ static inline void hung_task_clear_blocker(void)
+ {
+-	WARN_ON_ONCE(!READ_ONCE(current->blocker));
+-
+ 	WRITE_ONCE(current->blocker, 0UL);
+ }
+ 
+_
+
 
