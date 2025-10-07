@@ -1,213 +1,62 @@
-Return-Path: <linux-kernel+bounces-843830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38F32BC05BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:44:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 768FDBC05C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:45:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20140189A36C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:45:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B076189E54C
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:45:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051C3227EB9;
-	Tue,  7 Oct 2025 06:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H2NXGA1T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A6523315A;
+	Tue,  7 Oct 2025 06:45:12 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2846F1DFE12;
-	Tue,  7 Oct 2025 06:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6A122D4F6;
+	Tue,  7 Oct 2025 06:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759819448; cv=none; b=ZOB9uD1/KCc2ZnmbKU6eLcIMJLAS3aE3tsL0bGIJ/VShf7yCKdcRgh7BWWpmyNZGJwC93oNiWpDRw3ElFXxG7kjMwsqmDeGGUeckFoIrnFYVg0DXlcbovBj0yJh71eGEtzIjd0DpkYEjof/piYKY3lUqZq8SaiOjPh/B2eb4LNQ=
+	t=1759819512; cv=none; b=a4M8DnMuvuYd4iCALt9OpCgsCR71VNJQhQntVCoHTQAG/m+cWjzVPiJcyJBH7nGNxVsxzqcqCAxDC0xfe/DXWV9FDtCu6b/+dF+tsDBcM4x72nDEleXc3fBqoVjWnqiOum5FzVVJNYaGKHROjCaaRQb5VKkqfVYD7R85rPgs/XM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759819448; c=relaxed/simple;
-	bh=ortTdRbp29kvA57ub10lSkTj/eY7/3lHwfhRGCyyHSk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ip4OZ6SFdatwTSgO6mNFcedvlNSLzYdh+S8GenfBRbIivVmbEe5ze237V1zQrqVC0zMHp9Z/Ph36KC9TnOILuCdrj34kL1nStmKM+EGV3LtVFy6Ukn0MWmk5nf3V669aLnCFHeyzy6NMRhVDWL9+sDrv01mmxb6SREbRS9Pr62A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H2NXGA1T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3366C4CEF9;
-	Tue,  7 Oct 2025 06:43:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759819447;
-	bh=ortTdRbp29kvA57ub10lSkTj/eY7/3lHwfhRGCyyHSk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=H2NXGA1Tb86DHODQYJ8t3Ufn3jCk0w4pXOIa5bAQyPZ5c0W5sfrB8htI679R97K/6
-	 PgoQoXj2VgFEdgEkk+cLSzq/qWyKd87hmqjFbksLNKBmthf3qQrVZUk9ZLTWyl81b1
-	 s5S16ZX38QEdtLRBcVDa1V8mFzJzn5csfKewLisRK1i5F0W4zXR0wcyonpNekI6CyS
-	 uQb58e4CK//x+lyO3apmdpACAtWnDCycvPPwo+BnFfLEeFpre5mc75ajkY/ReznEVr
-	 T0gSMP6mpXyvAkxeqPgFiLFbuxgWXGf0bBaYqiO/msrcP4VpnEt3SErHLDSspggW8W
-	 8/3SkkzgVs44Q==
-Message-ID: <8a6861a0-f546-475b-907c-65b691d1d340@kernel.org>
-Date: Tue, 7 Oct 2025 15:43:56 +0900
+	s=arc-20240116; t=1759819512; c=relaxed/simple;
+	bh=Dg+fDc//iqXx6roS8o/mrUIgVewGTijV6CKFwUoWnnc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=obbkC56YqM/rvuA4KsHqaTmn/Z1Z1NnFHD3JKKjRUKV8gDdQpvlPEzn14gY5jIu8Ea5NprzbLvT2iI50pCcZe/Dj2aNs42EEUQiAaFv14JSAVQ+/FLsiHsObpJMxkDx1oNyCJNii3Un+ARNjBUhShe0jWR7d+zDwUiknCHHKFqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 1D75C67373; Tue,  7 Oct 2025 08:44:59 +0200 (CEST)
+Date: Tue, 7 Oct 2025 08:44:58 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Christoph Hellwig <hch@lst.de>,
+	kernel test robot <oliver.sang@intel.com>,
+	Dave Chinner <dchinner@redhat.com>, oe-lkp@lists.linux.dev,
+	lkp@intel.com, linux-kernel@vger.kernel.org,
+	Carlos Maiolino <cem@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-xfs@vger.kernel.org
+Subject: Re: [linus:master] [xfs]  c91d38b57f:  stress-ng.chown.ops_per_sec
+ 70.2% improvement
+Message-ID: <20251007064458.GA19763@lst.de>
+References: <202510020917.2ead7cfe-lkp@intel.com> <20251003075615.GA13238@lst.de> <aOJckY5NnB2MaOqj@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 3/5] dt-bindings: display/msm: Document MDSS on
- QCS8300
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Yongxing Mou <yongxing.mou@oss.qualcomm.com>,
- Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov
- <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>,
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Kuogee Hsieh <quic_khsieh@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250911-qcs8300_mdss-v12-0-5f7d076e2b81@oss.qualcomm.com>
- <20250911-qcs8300_mdss-v12-3-5f7d076e2b81@oss.qualcomm.com>
- <20250918-spectral-seahorse-of-witchcraft-69553c@kuoka>
- <b745c515-2264-42aa-8d92-663efc7f6276@oss.qualcomm.com>
- <6c195b42-d994-4d24-9c40-48d8069304e3@kernel.org>
- <rkuihu3pmhexeahfch6j7bvwn5rn4ecccbhamluh7fas5qgaup@av2foeiwmcz3>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <rkuihu3pmhexeahfch6j7bvwn5rn4ecccbhamluh7fas5qgaup@av2foeiwmcz3>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aOJckY5NnB2MaOqj@dread.disaster.area>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On 27/09/2025 08:26, Dmitry Baryshkov wrote:
-> On Fri, Sep 19, 2025 at 01:34:39PM +0900, Krzysztof Kozlowski wrote:
->> On 18/09/2025 13:14, Yongxing Mou wrote:
->>>
->>>
->>> On 9/18/2025 9:01 AM, Krzysztof Kozlowski wrote:
->>>> On Thu, Sep 11, 2025 at 07:24:03PM +0800, Yongxing Mou wrote:
->>>>> Document the MDSS hardware found on the Qualcomm QCS8300 platform.
->>>>>
->>>>> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
->>>>
->>>> Patch v11 and still basic issues. I am very dissapointed.
->>>>
->>>> <form letter>
->>>> This is a friendly reminder during the review process.
->>>>
->>>> It looks like you received a tag and forgot to add it.
->>>>
->>>> If you do not know the process, here is a short explanation:
->>>> Please add Acked-by/Reviewed-by/Tested-by tags when posting new
->>>> versions of patchset, under or above your Signed-off-by tag, unless
->>>> patch changed significantly (e.g. new properties added to the DT
->>>> bindings). Tag is "received", when provided in a message replied to you
->>>> on the mailing list. Tools like b4 can help here. However, there's no
->>>> need to repost patches *only* to add the tags. The upstream maintainer
->>>> will do that for tags received on the version they apply.
->>>>
->>>> Please read:
->>>> https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
->>>>
->>>> If a tag was not added on purpose, please state why and what changed.
->>>> </form letter>
->>>>
->>>> Best regards,
->>>> Krzysztof
->>>>
->>> Hi,
->>> Sorry for the confusion. I did intend to remove the Reviewed-by tag, and 
->>> I mentioned this in the cover letter, but maybe explanation in 
->>> cover-letter was probe not clear at all.
->>>
->>> This patch includes three changes:
->>>
->>> 1.In the displayport-controller compatible property, "items" was changed 
->>> to "contains".
->>> 2.Use "qcom,sa8775p-dp" as fallback.
->>>
->>> These changes might not be considered significant. So I’ll be more 
->>> careful next time. Thanks~
->>
->>
->> I really do not expect v12 to receive so significant changes in the
->> first place. If you keep sending us buggy code, which then you keep
->> changing after review, I will just not do the review. It's easier for me
->> to wait for v20...
-> 
-> I'm not sure how to react to this missage. The changes reflect the
+On Sun, Oct 05, 2025 at 10:54:57PM +1100, Dave Chinner wrote:
+> stress-ng puts a fsync() at the end of every ops loop:
 
+Ok, with that the numbers make sense.  Thanks for digging into it.
 
-This message represents my annoyance with low quality submissions from
-Qualcomm, which needs multiple iterations and often apply tag, then
-change significantly thus drop the tag or completely ignore the review
-tag. And I review again.. and tag is dropped again because patch was
-again seriously reworked. Or even without serious rework - Qualcomm
-authors drop the tags, just "because".
-
-~2 months ago simple patch from Qualcomm required three involvements
-from DT maintainers, because even trivial patch was being continuously
-changed and author was dropping or ignoring review tags.
-
-
-
-> process in other patchsets and in my understanding on how to describe
-> the particular hardware block. The changes were reflected in the
-> changelog. If you plan to review this patchset once you get back from
-> your vacation, that's fine. If you don't plan to, I can ask Yongxing to
-> send v20 just for that number.
-
-Solution for me could be to ignore Qualcomm patches till they reach some
-sort of maturity.
-
-I am not planning to review this patch, because:
-1. I already reviewed it, so not really necessary, but even if I wanted:
-2. It is gone from my inbox...
-
-Best regards,
-Krzysztof
 
