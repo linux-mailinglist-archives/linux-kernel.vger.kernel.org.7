@@ -1,97 +1,174 @@
-Return-Path: <linux-kernel+bounces-844696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C1D6BC287A
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 21:39:39 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 620E5BC2889
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 21:40:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51FD119A307C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 19:40:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E0D9D4E3C88
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 19:40:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E88042E1EFD;
-	Tue,  7 Oct 2025 19:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D03A2E172B;
+	Tue,  7 Oct 2025 19:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PMRyewKC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LLbRAgEA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44236221F1F;
-	Tue,  7 Oct 2025 19:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10AF42DCBE3
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 19:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759865971; cv=none; b=KZISIZn6gdWiMQ7LcVRGK63geCRUHRWEwZGxs2uWdAZ29Ae6cLE+mE1dXiS3Xm8OY6uyf9gbmNI8qHKcLfOaWSHVvPzBOArZwD5KRIBD/pdJgbsTcT2r8b9A65Mggx+thKWd7cWwMvTlhXf3aco8gy6k6SfJdBprd6IXRg8TWeE=
+	t=1759866006; cv=none; b=Wrj3nlbamjLQKRLPnkWc/lenUXPvoT/CJuJi5+9DqCOeoN+yC3plWbNviaaGcd0hKXo5S9MV27OwK/KW0SMk0hNaOBhacc6Uy4DEpzGO/yqHpOfuDuFn6aupfD8Sj4NRAZ2Yky3EwRN/m5lgSWEF0UKTlRSs7wnDnS4SyVAPEzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759865971; c=relaxed/simple;
-	bh=9qQZTxiJTp9KxisCW4d+bUhuiwq3YHZzWlOsXv7u0Bk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rhB5Cfpn6f3iX4zSB0nT7F1TjejwphLN6aqW3BGNnnSjZa0BnAoL/mEjmULEIXozYxVMF8Kkk68q+DU92whmy4Evj+16CnJgs3scGfPpN1CKQfGFjPtVr1H8CxADEXYYhdzlpYMz3MA0D5WvUYwREJsvi1hkdsNAmOnIQat4L+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PMRyewKC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB240C4CEF1;
-	Tue,  7 Oct 2025 19:39:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759865970;
-	bh=9qQZTxiJTp9KxisCW4d+bUhuiwq3YHZzWlOsXv7u0Bk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PMRyewKCUK6A8xVg1GbAgLy8hmrxBsVaiixgfZKL0d9dm2YdECEwiDgvPne5Q/9cP
-	 rWlVuMUFuqJbyI99t5y/vv3UiMXciAPc6YEIr45gVTDhkcXMzvsVziVQhWontnmWLB
-	 umYYUbK4iw1OVtYkf3lm07KIMmaiKR9CNdzeSB86wmR4iXPCk4p6Xc2cDSplMXz+vI
-	 aVxvXs7BtheGe4nkdhVDFo74gvwU4lz5BTX2ZEqimKaYyX0ckCBXR2eEOcn8s9bNnd
-	 mAKveWb6aEsXLtVPkDBuKYuVplJNfy19obqbcTJs3XGDc1nJKw+mJZCOGEy6UV+RrY
-	 U7BgCR4o40jig==
-Date: Tue, 7 Oct 2025 20:39:26 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Aliaksandr Smirnou <asmirnou@pinefeat.co.uk>
-Cc: jacopo.mondi@ideasonboard.com, hverkuil@xs4all.nl, mchehab@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/2] dt-bindings: Pinefeat cef168 lens control board
-Message-ID: <20251007-geologic-epidemic-2f667f232cf6@spud>
-References: <20251005133228.62704-1-asmirnou@pinefeat.co.uk>
- <20251005133228.62704-2-asmirnou@pinefeat.co.uk>
+	s=arc-20240116; t=1759866006; c=relaxed/simple;
+	bh=Udd/yjrW9L4anOjlghUyo9BC8Qll6R5LcXpuy/V6dpI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tdL2BS7ItDNGNLIzUDgAtFUpID0EcTUzYnS44mLYAj4YS5ex+eCu0IcuAZ8ETAhX8tUO07Kur25BwYVMs7hcaqFfOe9undiMA9GXU8eeC/YcMk1HMH8jeU2g2RRcv9l7IMlalew0vEHwlMxlry4FgsjwTQMqhwqBQua7i+VXM0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LLbRAgEA; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759866004;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=9VumtYpTrX67AUkgEfTTMEIc6RIxe4xeW3+00mS96fE=;
+	b=LLbRAgEAj1e46bGbVdT5v1q6fAGB8MoWpd0IWGt/bbTUxzJIbJKF0CBoyAOuAYGpVCGpib
+	04x3rvGBd9hocRMtgdNoxhBXlln04nnA3TyNLw6AMRLvkGDDeJXUA7zhw4VEQhTDpTQZvv
+	MavXXd1CCh4nWrat8S/xCy5YFhsyJgk=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-190-U4pRwEc4NMayt06sltnAng-1; Tue, 07 Oct 2025 15:40:02 -0400
+X-MC-Unique: U4pRwEc4NMayt06sltnAng-1
+X-Mimecast-MFC-AGG-ID: U4pRwEc4NMayt06sltnAng_1759866001
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3efa77de998so4021115f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 12:40:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759866001; x=1760470801;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9VumtYpTrX67AUkgEfTTMEIc6RIxe4xeW3+00mS96fE=;
+        b=LoLR/SoovvxxFITo4cAuYESrnQXCAEi6al3dZ+jVazQtui2JqZEDNYcNy6olCzuVjI
+         8qMx9OmTjf+pgXfD6IKhL3AyZJWccTrMHuTqQnSBxg6T/zp27LPIowcSqNu3H025GDVB
+         Bd+mjBT3w80H5lbNvw1rOFBPf6rQ8spU82UdC0XM9xkKC/gz/XBxRj2/s0OGdkhizTS5
+         oR86vy08Ue1kzl1CgFGmtNUhjYlwvatEY2BeIKEdFSk/tVyytuDeaGwdGjWrCzBpWNyV
+         q2/Pkij8TJvkAf8UUo0gCOMKiDJIGDfW8vJucHs8XGjNIPMCDLKynHvdM3cYM8+uaP8J
+         OM4A==
+X-Gm-Message-State: AOJu0YzlpDZ7P6kEBC1H/zj6GmL3mRE6x/fWmnFb9E+IPcK+EH5m976J
+	P1UQxCDKGLnUEUBIuVTLmifgenZfGE2e5mCCdWsf6fVJdMHHdBqxipA5jqI5PBwMmhueRhJRmBo
+	I7ODviC6p+9HhNPGLrNfbt4GYSHVmgMLm4U2OA41kCOGSUXrvX4NdVuCuBFhziCdZAw==
+X-Gm-Gg: ASbGncsnfcVSuzUIaY4P2M6iS/l1o/jxHwX19PUDu9Ft7Z8AClteL/7+qw9noQxaD2J
+	inxBFSB3F7mqnUnrK0jh6LfeC1hXJ/YbxCkaJsIC4/+Nva2qRao6Ba8wqqXha7YGcDpM8xD6Xkv
+	ZQQz6GPBmXbnbFINsz5gQ8QMbvhJL65AMXD4GINwVVcicBi7WwZJgmiHcAPYEPq1T/YkwhpZygw
+	kYELOiqKIzWE5TWHtQhDCOihn76lHi9uxfrrOWsi7Vvt1ufsAqLYTs8wGIaylcLKBiQDyfpp41F
+	raK3I9MHMQLiYP5eZM+EZn8/BcnB43s8i4JieuBnnD5GzTgqzzpDVs5vgUOFlcyMFS0ZhPYrog1
+	efZk/iVd0
+X-Received: by 2002:a05:6000:208a:b0:3ec:42ad:597 with SMTP id ffacd0b85a97d-4266e7dff52mr302901f8f.37.1759866001468;
+        Tue, 07 Oct 2025 12:40:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEej/svesPDrHY997doiJUMRsBCaL4lMY/21dpeNKaxMJMF1Jf9ZuSBWRwx+hr9s6QqrTCUyg==
+X-Received: by 2002:a05:6000:208a:b0:3ec:42ad:597 with SMTP id ffacd0b85a97d-4266e7dff52mr302886f8f.37.1759866001067;
+        Tue, 07 Oct 2025 12:40:01 -0700 (PDT)
+Received: from [192.168.3.141] (tmo-083-110.customers.d1-online.com. [80.187.83.110])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fa9c2a39dsm7457035e9.18.2025.10.07.12.39.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Oct 2025 12:40:00 -0700 (PDT)
+Message-ID: <ba392005-8cb1-44c6-a4ca-7608423fea62@redhat.com>
+Date: Tue, 7 Oct 2025 21:39:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gJGglnMSE2FrIzO0"
-Content-Disposition: inline
-In-Reply-To: <20251005133228.62704-2-asmirnou@pinefeat.co.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] s390/sclp: Remove MHP_OFFLINE_INACCESSIBLE
+To: Sumanth Korikkar <sumanthk@linux.ibm.com>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ linux-s390 <linux-s390@vger.kernel.org>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>
+References: <20250926131527.3260733-1-sumanthk@linux.ibm.com>
+ <20250926131527.3260733-4-sumanthk@linux.ibm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20250926131527.3260733-4-sumanthk@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 26.09.25 15:15, Sumanth Korikkar wrote:
+> mhp_flag MHP_OFFLINE_INACCESSIBLE was used to mark memory as not
+> accessible until memory hotplug online phase begins.
+> 
+> Earlier, standby memory blocks were added upfront during boottime and
+> MHP_OFFLINE_INACCESSIBLE flag avoided page_init_poison() on memmap
+> during mhp addtion phase.
+> 
+> However with dynamic runtime configuration of memory, standby memory can
+> be brought to accessible state before performing add_memory(). Hence,
+> remove MHP_OFFLINE_INACCESSIBLE.
+> 
+> Acked-by: Heiko Carstens <hca@linux.ibm.com>
+> Signed-off-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
+> ---
 
---gJGglnMSE2FrIzO0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-On Sun, Oct 05, 2025 at 02:32:27PM +0100, Aliaksandr Smirnou wrote:
-> Add the Device Tree schema and examples for the Pinefeat cef168 lens
-> control board. This board interfaces Canon EF & EF-S lenses with
-> non-Canon camera bodies, enabling electronic control of focus and
-> aperture via V4L2.
->=20
-> Power supply is derived from fixed supplies via connector or GPIO
-> header. Therefore, the driver does not manage any regulator, so
-> representing any supply in the binding is redundant.
->=20
-> Signed-off-by: Aliaksandr Smirnou <asmirnou@pinefeat.co.uk>
+-- 
+Cheers
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+David / dhildenb
 
---gJGglnMSE2FrIzO0
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaOVsbgAKCRB4tDGHoIJi
-0rwnAP9TulVjtal42EnsBmoo7AjkCIdZNgn6rt5edW5E7aWihAD/TZ/hjcqvk93R
-exHMgGWlg/OckbssQqAwPTmfPS0dtAo=
-=iTFt
------END PGP SIGNATURE-----
-
---gJGglnMSE2FrIzO0--
 
