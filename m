@@ -1,141 +1,160 @@
-Return-Path: <linux-kernel+bounces-843812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 562BBBC052B
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:24:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AC89BC053C
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 327B1189CD22
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:24:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 026691898A96
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06FDB220F29;
-	Tue,  7 Oct 2025 06:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02951221FA8;
+	Tue,  7 Oct 2025 06:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fJ1brEeQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="smR4dAGf";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="60g1EBQl";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="P4sTyD9y";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dsCJRQGX"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FCE81B2186;
-	Tue,  7 Oct 2025 06:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3D91E1C3F
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 06:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759818238; cv=none; b=SnZQuvnTLSpPJUuYFt6Oucqf+tcYcCd3BUKBLFWes2aOfAe1FgzWBCrzfJTw+6kHS1N6DX5oqUk47ooka1fek9a5F3g0n7NcrE7D2SCH5fUB0PxZlydr9L+euUirMPE50WOFqjobP5uM8RsefvyTwLvBOf9cQ33aWpTz8R+O3Ko=
+	t=1759818431; cv=none; b=LLvXtN1zk13R4CAO6MoTNQml4x8AjEnTus1qFz5aPsqMBSj1VfDCAoEuQkh3SA+k1O4gz4HQLc2nlve+dzPov1HZifYOttwC+SdjXl4EVA4dOne2WW0WsZNb9yc7YGozKmFSIrCD9TXRZiI8HKhtnn8hCBoK9Z2/M/gJliSjFVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759818238; c=relaxed/simple;
-	bh=Ja59a957iBMaRAqpZPsZafADwu4TF7aqs2SwJJevMMM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m7+PR2qkbMgauEcNWD4rt/bdVKZIicmLLf75ZuWl39GiaGWi9upmIkvJhP0IvUpRdrGDiLqzo8kkaOUvMLammxYi0yWi9leoQbJ5DzsWrQCf0PNshluAw928RgLvkkBZgjd9bX5mUoWu1odp/ucYPB0O1tufhj2QbDXA4RAV96o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fJ1brEeQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73FD0C4CEF9;
-	Tue,  7 Oct 2025 06:23:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759818237;
-	bh=Ja59a957iBMaRAqpZPsZafADwu4TF7aqs2SwJJevMMM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fJ1brEeQD2obBuLpaLfbrBymik23ZetXBLtGIk8z3+ltZMufR0/kM7v6z8CdSfh9d
-	 zijTTHBiv8kQbfw/Og52EE3NWbPMQUpiJRCxJqX3WWwdIBk/kHjXcbH15d6HV4LH1l
-	 PJaPN8vbUiM65wzrEhM7izL9emODRhRgDvy4P8Um1Q0G2NXX4jl+JfDCSf/a7DR/n4
-	 YcdK2yiIHzgO2d+21DUMVIc5lceaOmhU/Gcz/u7AjTPdjqftUl/ALOrEbooO2Yxul/
-	 B5fNnlJTp6nlI/AHH/0LPLN0ZVO5gFunne88I5dZdflbdqLF999mLtpe07ZtC62+RA
-	 2hXKSyxiZdHgQ==
-Message-ID: <808d166a-b615-49c6-b0f5-bf5101721381@kernel.org>
-Date: Tue, 7 Oct 2025 15:23:46 +0900
+	s=arc-20240116; t=1759818431; c=relaxed/simple;
+	bh=mLtgu1121hWMoWk2CeoHxVbBZEGu9LesxuoK9aIfCsI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QDE6BHL0NypP7TjwiNyEmUqwS/1raGAg0veLW0R2t8Ybezq5HpXUMjEuid0NIpjnwBQCg3MHCOKozQrMPK+qXrhw2PZ6+i9suUEWW/YIt2OZsuXus6pMB6WXLee6dtsHhxwAr+8Ozkp/96XH4xv+e+Cn3szhUtGnLMsqHXB0dJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=smR4dAGf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=60g1EBQl; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=P4sTyD9y; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=dsCJRQGX; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id CE1891F78B;
+	Tue,  7 Oct 2025 06:27:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759818427; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jortXDB7JK6GmIdf4P86Bkb//IghcT6jdZQ5sTZwfsg=;
+	b=smR4dAGf/+M5YYkwef2mql8YbqzxoxQc1JGCmuOIybd54gZtdqc3j2PMqCEh8cuvMFMbxC
+	3JijA79Ix2ydKZPH/jpg7ev8BhG89KbZjnLJ7cIWiOBE84SGO3kQZEDsE43ISalrPKIxgF
+	DVIfB9oWM0AdifIXONBgYbpR6ZmYnJ0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759818427;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jortXDB7JK6GmIdf4P86Bkb//IghcT6jdZQ5sTZwfsg=;
+	b=60g1EBQl4g2aAa4aLzGryEPTlYBbs+FN8zK2HS5lPL29ke/ymWueTY4K+HTht/HwOcppMP
+	U2lJeMl2pOY7MkDw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=P4sTyD9y;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=dsCJRQGX
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759818426; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jortXDB7JK6GmIdf4P86Bkb//IghcT6jdZQ5sTZwfsg=;
+	b=P4sTyD9y5OjsGh+lmv92XKASdLcsZ2WL29jCqCVC1S3bC09uiu7VbP9t346BIzP9LGA9YK
+	UEKQbYht9guw1v30fnReQSY+jh9snVJ0iYLaNL8ITLlSjRmFjBD3dwXwQfzJSH+Bctm2MI
+	kZ3/YMc9CAzskh9jiQchohkk3nd1yhU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759818426;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jortXDB7JK6GmIdf4P86Bkb//IghcT6jdZQ5sTZwfsg=;
+	b=dsCJRQGXpz7OcOkvECs1+/ntizn0MmeUZ0OmzxIlZAcHWSqWgiOxiwwsWboERkD+O5GVZk
+	0RHqWzDenuhWU9CQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4932B13AAC;
+	Tue,  7 Oct 2025 06:27:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id KFjbALiy5Gi+FQAAD6G6ig
+	(envelope-from <ddiss@suse.de>); Tue, 07 Oct 2025 06:27:04 +0000
+Date: Tue, 7 Oct 2025 17:25:56 +1100
+From: David Disseldorp <ddiss@suse.de>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: dima@arista.com, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier
+ <nicolas.schier@linux.dev>, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Nicolas Schier <nsc@kernel.org>
+Subject: Re: [PATCH RFC] gen_init_cpio: Do fsync() only on regular files
+Message-ID: <20251007172556.3e57b0c8.ddiss@suse.de>
+In-Reply-To: <aOStTfvOR-C7l1se@infradead.org>
+References: <20251007-gen_init_cpio-pipe-v1-1-d782674d4926@arista.com>
+	<aOSZo8h6l2XNin3C@infradead.org>
+	<20251007165732.66949558.ddiss@suse.de>
+	<aOStTfvOR-C7l1se@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
- ExynosAutov920 HS phy compatible
-To: Pritam Manohar Sutar <pritam.sutar@samsung.com>, vkoul@kernel.org,
- kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- alim.akhtar@samsung.com, andre.draszik@linaro.org, peter.griffin@linaro.org,
- kauschluss@disroot.org, ivo.ivanov.ivanov1@gmail.com,
- igor.belwon@mentallysanemainliners.org, m.szyprowski@samsung.com,
- s.nawrocki@samsung.com
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com,
- dev.tailor@samsung.com, faraz.ata@samsung.com, muhammed.ali@samsung.com,
- selvarasu.g@samsung.com
-References: <20250903073827.3015662-1-pritam.sutar@samsung.com>
- <CGME20250903072936epcas5p4a28d0e63c7f0792b516b0cbc68bf3a8e@epcas5p4.samsung.com>
- <20250903073827.3015662-2-pritam.sutar@samsung.com>
- <0df74c2b-31b9-4f29-97d3-b778c8e3eaf1@kernel.org>
- <007801dc2893$18ed4a20$4ac7de60$@samsung.com>
- <02ef5180-ad56-45f0-a56f-87f442bf6793@kernel.org>
- <007f01dc2b81$84ef19b0$8ecd4d10$@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <007f01dc2b81$84ef19b0$8ecd4d10$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: CE1891F78B
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -3.51
 
-On 22/09/2025 14:26, Pritam Manohar Sutar wrote:
-> This phy needs 0.75v, 0.18v and 3.3v supplies for its internal 
-> functionally. Power Supply's names are as per phy's User Data-Book.
-> These names, (dvdd, vdd18 and vdd33), are considered  for 0.75v, 1.8v 
-> and 3.3v respectively.  
-> "
+On Mon, 6 Oct 2025 23:03:57 -0700, Christoph Hellwig wrote:
+
+> On Tue, Oct 07, 2025 at 04:57:32PM +1100, David Disseldorp wrote:
+> > I should have explained why in the commit, sorry. The intention was to
+> > catch any FS I/O errors during output archive writeback. fsync() is
+> > called only once as the final I/O.  
 > 
->>
->> I still cannot find constraints for the rest of properties, though.
-> 
-> Sorry I didn't get it completely. Can you please elaborate on the same? 
+> I don't parse this.  What does 'as the final I/O' mean?
 
+fsync() is called once after all buffered writes and copy_file_range()
+calls for the initramfs archive have completed.
 
-Writing bindings and introductory talks elaborate on that. You add
-properties without constraints. That's not what we want. We want
-constraints.
+> If you want
+> to catch writeback errors, a single syncfs should be enough.
 
-
-Best regards,
-Krzysztof
+gen_init_cpio should only be concerned that the output archive file is
+flushed to storage, rather than the entire filesystem. Why would syncfs
+be more suitable?
 
