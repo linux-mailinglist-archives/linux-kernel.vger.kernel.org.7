@@ -1,106 +1,119 @@
-Return-Path: <linux-kernel+bounces-844192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AE20BC1431
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:52:14 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42A0BBC1438
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:52:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13100189D0CF
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:52:37 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B7C3B342D2A
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 815CB2DAFDE;
-	Tue,  7 Oct 2025 11:52:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB012DC337;
+	Tue,  7 Oct 2025 11:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dvqTm3mR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="RvnpCRIB"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB66135972;
-	Tue,  7 Oct 2025 11:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2CEC35972;
+	Tue,  7 Oct 2025 11:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759837926; cv=none; b=RFwGXjDx8wZKK0mgE5z7+QjJqeUiffwlumjng7X+bTRxNnHVd5b87FNo60v93o/5xMVI4HGvVEMs519R8ksobvpOSLqI/f6GuQi8+gcJl3IkDzjivWDRF3YJCZKL61u0XOIu2g7QhMTQxrfJ0KnNvG7yz00+WHLVAy2/5VLtP74=
+	t=1759837958; cv=none; b=sNzd0aASk/iwIt4eBNP0Q9Z0xg3yeeFCEz23BMs3rhBdWs747FotMzIIAexybTqGbkQiE2kszRLbssQqG3TzAdJjnHJHJcRDBDIrQChnItP8PxFyAZSfEunwd+sodVtreivTa7YHYqCmvayEVkCk+s3UvN6Tpn8Il7PCoIguxSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759837926; c=relaxed/simple;
-	bh=fv8kYW58rqJ/7JUDI8cM3BH+XF8NQaOUEMNYw5kqOaQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IpCj1mc7sc6Sdaqrm/DYooI9H+5ZeY8OTIPqUf9q6zBhX5jQJrfgeTmOjul+bbUJdBCY2X/pQRSma7y74SKZXT7New/TCiLwye3CxoaDzpVMyb8zsG6dP+inEqBz8eEp26V/faLMkX7e5S3X5uq88PNRhIRFtsrRPXkJh53KuiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dvqTm3mR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C4A2C4CEF1;
-	Tue,  7 Oct 2025 11:52:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759837924;
-	bh=fv8kYW58rqJ/7JUDI8cM3BH+XF8NQaOUEMNYw5kqOaQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dvqTm3mR1ZXXgE53N8SjqB1xkuqqoIZ7o+zDvkGaWFvHADCgA0b6h5mxAGfjIJGqR
-	 6borTvrSnb+k1cB9g237RkElDPaNAONAhYFPpZnOW68MQ3yY6i3O4m/FKEmZHmdvhX
-	 RlKPY/yQl/I3GDGEDSTnmEMruCENPloB6whwwStOQIji+h0if63kisZKqqZTAOPRtG
-	 uVWUBewNl99ThZpmreb0QP0ZKCC2I7D0v6wwVarxis0IpTJPNlIAyQyZUOXOehus11
-	 h9nQ0DOvKokVq4a9fJixwXg1bPvTl/uz8yPmKpEvGPvwwDbGtLYRRRv/94fVHqj0Ll
-	 Zay+e2NuiXSWQ==
-Date: Tue, 7 Oct 2025 12:52:00 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Sune Brian <briansune@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] ASoC: wm8978: add missing BCLK divider setup
-Message-ID: <3266559a-8403-4a26-bbd9-c54e27fc59f8@sirena.org.uk>
-References: <20251003091304.3686-1-briansune@gmail.com>
- <20251007113305.1337-1-briansune@gmail.com>
- <5a71fdac-f6cf-4557-9bc8-d416a033263e@sirena.org.uk>
- <CAN7C2SCHirxurUA0n2VZKEEiYCt-NUKgspGFfZLNurHhACZkBQ@mail.gmail.com>
+	s=arc-20240116; t=1759837958; c=relaxed/simple;
+	bh=2AJflxKtq5+v/023pQVHuifTumNDGfX1QboKFC1H4FU=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=OIvIzqPSRL0HTBHm42YOGn7/4JxOdua8rlDLrjibFHf68Q/tzd84CcN+0R6ElJeCrSoyDapAN7Xi9buvT18xxUb3OQJr2eAwVgPqCQQdPMkQDJXCFhm78VwJAvxL1iLSuQjWIa1iMS63UyipBn/f5TlJpoutCT/+FfPB4E4xc0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=RvnpCRIB; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c68:b33c:92a2:e532:1826:f0a3])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 21363669;
+	Tue,  7 Oct 2025 13:50:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1759837854;
+	bh=2AJflxKtq5+v/023pQVHuifTumNDGfX1QboKFC1H4FU=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=RvnpCRIBN+6SjgAtNl6l0INcZPkGtNBUIKyRveCE3j0hGKx4f6kGbakDhkxMySU18
+	 6DlIiNWg0tnHE+0bK1hykgW6u/RE15anNDIEnhy/SMoM4Pt1SOFKhFylS6ySWldHtO
+	 37/Fnwu+TDbxNALcv14a2zvCrWWp0PqIviNSiAEM=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="tuc+nuWIUH+Rsy0n"
-Content-Disposition: inline
-In-Reply-To: <CAN7C2SCHirxurUA0n2VZKEEiYCt-NUKgspGFfZLNurHhACZkBQ@mail.gmail.com>
-X-Cookie: Teachers have class.
-
-
---tuc+nuWIUH+Rsy0n
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <4534a09b-7eef-4e61-835a-c70d07df3416@ideasonboard.com>
+References: <20250911102832.1583440-1-r-donadkar@ti.com> <20250911102832.1583440-12-r-donadkar@ti.com> <4534a09b-7eef-4e61-835a-c70d07df3416@ideasonboard.com>
+Subject: Re: [PATCH v7 11/16] media: ti: j721e-csi2rx: add multistream support
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+Cc: y-abhilashchandra@ti.com, devarsht@ti.com, s-jain1@ti.com, vigneshr@ti.com, mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org, p.zabel@pengutronix.de, conor+dt@kernel.org, sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl, changhuang.liang@starfivetech.com, jack.zhu@starfivetech.com, sjoerd@collabora.com, hverkuil+cisco@kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org
+To: Rishikesh Donadkar <r-donadkar@ti.com>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, jai.luthra@linux.dev, laurent.pinchart@ideasonboard.com, mripard@kernel.org
+Date: Tue, 07 Oct 2025 17:22:22 +0530
+Message-ID: <175983794202.36451.17500767517117494893@freya>
+User-Agent: alot/0.12.dev28+gd2c823fe
 
-On Tue, Oct 07, 2025 at 07:48:11PM +0800, Sune Brian wrote:
-> Mark Brown <broonie@kernel.org> =E6=96=BC 2025=E5=B9=B410=E6=9C=887=E6=97=
-=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=887:44=E5=AF=AB=E9=81=93=EF=BC=9A
+Hi Tomi,
 
-> > Please don't send new patches in reply to old patches or serieses, this
-> > makes it harder for both people and tools to understand what is going
-> > on - it can bury things in mailboxes and make it difficult to keep track
-> > of what current patches are, both for the new patches and the old ones.
+Quoting Tomi Valkeinen (2025-09-25 17:47:38)
+> Hi,
+>=20
+> On 11/09/2025 13:28, Rishikesh Donadkar wrote:
+> > From: Jai Luthra <j-luthra@ti.com>
+> >=20
+> > Each CSI2 stream can be multiplexed into 4 independent streams, each
+> > identified by its virtual channel number. To capture this multiplexed
+>=20
+> The split can also be done with the datatype. I don't see it supported
+> in the driver, but afaics the HW supports it. Was there a reason not to
+> support DT filtering? I would think it would be very simple addition.
+>=20
 
-> Sorry for this action. But this patch is just a title fixe according
-> to previous comment.
-> Patch body is fully aligned to previous revision.
+I believe DT filtering should work as-is with the current driver, given we
+program the SHIM DMACNTX register with the correct datatype depending upon
+the v4l2 format of the video node.
 
-> May I know what is the proper way to amend the title?
+So if there is multi-stream source with two different datatypes, it should
+be possible to route it to different video devices and it "just" works. But
+I agree that it would be good if it can be tested once, and this commit
+message can mention that both VC and DT based filtering is supported.
 
-The title is fine, the above is about sending the patch as a reply.
+Rishikesh, would you be able to use an IMX219 to test capturing embedded
+data and frame data?
 
---tuc+nuWIUH+Rsy0n
-Content-Type: application/pgp-signature; name="signature.asc"
+>  Tomi
+>=20
 
------BEGIN PGP SIGNATURE-----
+Thanks,
+    Jai
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjk/t8ACgkQJNaLcl1U
-h9BsxAf/XP1ZR+bUWjpFwtoI6mROs5sSEg4IIgyws4hfX3CvMjCP3Rem5o05jQgI
-mz8mtnxBwGk77SjYYM2nBQiTtClSjGWO4y5HQMV2hsYcLWPf1PY5Z4Lw9R9vOqyR
-YkNUWsKDhaqcXb0csyfafvUO4pZ6grIKc36r/tGw+twSluy2fqJuwpcuACVrXiSu
-aX3Je5vpY3xjyB6DrVOhAYMJ6KX4J5nfFFOvyZdbFhIm8fb2lW97Jrt8MCtoeJ58
-28xKQsA8kFDKYsXW/+uJg2bb7kvUgO+6oJ8uaimjx58fL3m1kV56A90TzfGYuanG
-wksblhBUcbVDizmsurVJhTUSQX9EuA==
-=/svS
------END PGP SIGNATURE-----
+> > stream, the application needs to tell the driver how it wants to route
+> > the data. It needs to specify which context should process which stream.
+> > This is done via the new routing APIs.
+> >=20
+> > Add ioctls to accept routing information from the application and save
+> > that in the driver. This can be used when starting streaming on a
+> > context to determine which route and consequently which virtual channel
+> > it should process.
+> >=20
+> > Support the new enable_stream()/disable_stream() APIs in the subdev
+> > instead of s_stream() hook.
+> >=20
+> > De-assert the pixel interface reset on first start_streaming() and asse=
+rt
+> > it on the last stop_streaming().
+> >=20
+> > Reviewed-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+> > Co-developed-by: Pratyush Yadav <p.yadav@ti.com>
+> > Signed-off-by: Pratyush Yadav <p.yadav@ti.com>
+> > Signed-off-by: Jai Luthra <j-luthra@ti.com>
+> > Co-developed-by: Rishikesh Donadkar <r-donadkar@ti.com>
+> > Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
 
---tuc+nuWIUH+Rsy0n--
+[snip]
 
