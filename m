@@ -1,236 +1,218 @@
-Return-Path: <linux-kernel+bounces-844835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEC85BC2E1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 00:36:38 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7479DBC2E2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 00:41:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97496189DDC4
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 22:37:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1B1AE4E6A5F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 22:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8EF259C80;
-	Tue,  7 Oct 2025 22:36:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BF11258CFA;
+	Tue,  7 Oct 2025 22:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Cw/xybFL"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FZciYFxZ"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A985C23D281
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 22:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D4F23D281
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 22:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759876590; cv=none; b=PRCUIQhFDMCBOIgGB0tfbzD9c2neeWnMLd9S3DCGEJ+lV/mAl50wRDbZZxMsCTjwBXDCLz7tnDc/pwgomsi3Dmv62CFYUcRSmGkhyqiLtfK3Vbvr6NdlcM/nhKAl6TdRYIGThlHVnR9g29Zc8bqMvzhpb2wpQzM7zRw1EnvZ5QQ=
+	t=1759876869; cv=none; b=ogr0m5LNTB+wPsCX+DWX9G3IWX9SlH+k6dvDY5bemd55dBLY5YECJlvwbyGwIIDVhRdoiUKE4rYUjJeJuXsM9wQ4fHRFssTLabGB5pG505uTDKMQjIb5Nm22YCd+CqNgap6Xu5hnCSGH0na1I8b9DbZv6yeNS21I2hnlotv0n9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759876590; c=relaxed/simple;
-	bh=8m9s5ewUnOI8HOC6LmCn+j18kEaFqyw5sp0EdYi5yfU=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=VhVL20EVXHkHrW91jDjZg6z2jJ6MoySrHJ4NTnx98oSDwk0q6OiYVIYv5WcF52onXxUw3VLJaBGTDKuLCAJHn3ImFy2KMSguWmHrUZ7+5HtAOpW7rBG9/tJc+TtZIGv4e/ycM/OylrSCY3Vyf1bpbyRYWz0q5e/4z+VQFIalD1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Cw/xybFL; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b57c2371182so5615587a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 15:36:28 -0700 (PDT)
+	s=arc-20240116; t=1759876869; c=relaxed/simple;
+	bh=rZiQKqhCIiCr888lDLCOWnuCZ40KEFeQoLAW02e4oLI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QPUgksqbLDMVWzY9e9Ww5ywiJp92Qf4JLH1ZA2BMza4lGIj7putdAjh/uEPeeJVnSxqSgRC+5d9gztCdGPFi54pe9jhdJ7I6y7s144s11ztOLuz5X2FFVsvKcac45CNYopc6jZ2WqpCr6Dw//kerYm/BbFuKZvNxZLTJSgBBFa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FZciYFxZ; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7bc147fd11bso4193655a34.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 15:41:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759876588; x=1760481388; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=68qo6n2TcvOcWthot2i6pnlKFOZE+Ug0E5pPbn/P/4I=;
-        b=Cw/xybFLrITsOmLqrBcE9GRy3C9K0osP91GMpTD0ZOc201R0P3FIDXX/zHWSACe/3W
-         xXLURWyA+xpCgcYdCLX3WRe4TDiK9M/xlPa5lMn/KFa/JqmyKysD95u0xy6RqTr/hgBU
-         j+n63A+ee2Gr9j5wvdqpvstlcFBBPTTQIAC6X/bXG9hUOtfVR7xY+YttppzIqbSlbdEb
-         4339RWerx1RjB60arXUopSJ6IjL02ORaAC6sSYMmYcx97hJSumN2KPeXXvicXAG8WI3S
-         xgc541V53by26UPuzd7VlhiTOVF5yHzTHSd4s2YVzD1BrQqTWobCenwFM21TjJp1uS0/
-         P0sA==
+        d=gmail.com; s=20230601; t=1759876867; x=1760481667; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IBfCBek8M+CyleueLSM0/f7MhRf1ZAzzj8LCZK7gE+I=;
+        b=FZciYFxZSupRQHH40nthXw1bmLh5c2l9CuSVoZxKFCDb8aNthX7FGC5v7mNMPtb/+3
+         YVJRIMbWxzVFtBIF4b5BW72sOT6uCpLf6Lf41SRj7bkPnZx8T8KAi9OEudoWhPejv2+4
+         jI3zapQW0yp/XaJH+TV3di4MyUl7MgKVamPhX7ehYnOZI9Yp15K6D1R2J1/xDMUfsWEZ
+         2HXy2YuE1KfcUf4fd32D/nS5xkM4gOSy4APg06JDAZt163ad1a0TtfLBoNOTYFGpotjA
+         MDLZvmMyBk+vbnrF+gpA74qoU3+VFStvJNmIQ/XVer44cCGLJVfl/7cHtqk5NGdsaHLQ
+         ma1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759876588; x=1760481388;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=68qo6n2TcvOcWthot2i6pnlKFOZE+Ug0E5pPbn/P/4I=;
-        b=rPUi6orqsRTqdM8NsplO9T1G6llbf4Az4uxEojkD2HddO4fkW0wR+RTv1oiZzNPoP9
-         NfCHHwJgp+yBpIg+TCuXD71wC0Dz+aJsdd/iLF0+PNAFCrt2Uwho2BXTMthH7qr3zSar
-         HG+mlNm1VPQRRBIjJYjRe8yRYMEzYPH03rvtXRHa/dwbT3UUBAky1kefYkQq6l/soxXM
-         YNPvBcgCWYhbGpI22vUeykjVWvcchHdn354xldrXxfrv9Nn4PmXRRGrU1lrRdrPxlwlF
-         ufRag4TsK8yz1EK/rJSOAvra7rsFB+d9lEhqoGsPTpdAQ/kyHMcHnvAYXmF1UNRT52Bl
-         gkyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUv+TCVpF0BaeK0hXWPf5RLdkcX/QZfFGcyD9erxd/sxUzs+H/kP0YLLPapcqkmUyIvwcO/D5jddRZy/bg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiADwXHY9N0VEJ1+S0A9WsB+qNScufM6kRbIclD+J/s5bqtFQl
-	c+NCDcSV8YsXFFYZw6gUu4iv1F9qe28jT/kuKC/Kpt3aYzrvdpQFgFy3Q3K5ZcRVAqZg2p6qGNt
-	kCd8lKw==
-X-Google-Smtp-Source: AGHT+IHCZuGC68qasf7KAOUWdyDnwSOMgu3ErsL6HL80dAIVGS/k+xxOUSgxkSNZO0APtx0Mg4yaL0cDewI=
-X-Received: from pjbpc1.prod.google.com ([2002:a17:90b:3b81:b0:327:e021:e61d])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4d06:b0:32c:2cd:4d67
- with SMTP id 98e67ed59e1d1-33b511188dcmr1161678a91.13.1759876587894; Tue, 07
- Oct 2025 15:36:27 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Tue,  7 Oct 2025 15:36:25 -0700
+        d=1e100.net; s=20230601; t=1759876867; x=1760481667;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IBfCBek8M+CyleueLSM0/f7MhRf1ZAzzj8LCZK7gE+I=;
+        b=F4c/5v6DnndiKqTH1m9MaY97jgfAWzBJghsSjUfXKXx2Ni/hjLevlqm1MNGI8kzVDB
+         IX2st8d8aUwUINnYl2Mv6nk7tpWWJ+I3KZIVPzV2jIV0R34g12JrMWKT8tgRh/y0q7cN
+         GC/PMTTg61bZ/s7DdeBNydNgrApwPzGP05v/kg0F1tHgxZ8sxsck9ackCF99TVyTPjUi
+         rtiUR/RTqMtrpnvZWLbk0nWOJKA4sCWV9DNZpEROlwgOIf0AGmIJIxfLzZyF65YLJhaR
+         S8+JwMeH8/308WRFE5CCNAwkG8mp+B6KRM510rOr+ksM0xetB3gfUyP/Tpjz7jTqogek
+         ydbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWHjj/gNbmOduh/RCUN6hzoWughVUSoh+ijZFRo/uqazkTccas3+BYj0a2Fw55Anqp8E9t1BUj25hu+0Fc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzR7iYHdVJMeHC28VGxRmEmC+tGWLNPhle0OJxj9yUz46yPgOCt
+	eoA+pMic3cOKZn4bGvgn8xr7rtDifbbneKaAEZNB55NUPp6U0VBiSNYd
+X-Gm-Gg: ASbGnctRfhqq3jC5CGzMteBrXLMUawSXUZ8zhL8cqo7dikpfqiisN8tw6cMug9+mhqb
+	2opK07ABf+gMJOJsq2JSPv0Ie1FsCasMlgZzyE/ZfLOdk/xV0rd7wDRkOL0ghX9eU2dw+kO4m2u
+	BM1OfJ6Sek4aEhMBSebzM4fdiD4EZZGE9EEsO/q1bsX17vAkZxcIC8+17zmyTvsHGM5tKLhMlsP
+	3ziTQGSQm7b7cPgl0znuGLbO8paUmbeLBSA3ObIX2hAu2XLYstaVM1jx+OkGnr/RZopX90jrfoA
+	rp7qcSAnn2GT0cdweOtgpAwa4mBR6RmsmrlYb8kMRNbilhOuRvVTzzJzps5tZ229itWeRgZe1Zv
+	T4Jzh+84U9IQgsvkHh+dyBl6RHVrkh7T5HIvMwIwgzbPLmFVCk0pVUmP9yFwEAsD+5vD8MrKdok
+	98RxzXCmA+XkCFX0Ai9Ho5yzJ1bE050vnsxW/qdGqmuQFogtPOh5Ve48NCZY9rNpUzAQzDBz16
+X-Google-Smtp-Source: AGHT+IE1J58eiP+VZ/SYqsE+VJxT4uZEnpYq5J2Eo/+1x4KBfgRwP/Uu6PgKxEpsZMKZSBrgZnKoSg==
+X-Received: by 2002:a05:6830:d8d:b0:7af:1d61:1055 with SMTP id 46e09a7af769-7c0df784309mr973015a34.21.1759876867142;
+        Tue, 07 Oct 2025 15:41:07 -0700 (PDT)
+Received: from uacde259c55d655.ant.amazon.com (amazon.com.bear2.houston1.level3.net. [4.1.110.174])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7bf434f904dsm5265419a34.29.2025.10.07.15.41.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Oct 2025 15:41:06 -0700 (PDT)
+From: jayxu1990@gmail.com
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>
+Cc: linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	avnerkhan@utexas.edu,
+	rdlee.upstream@gmail.com,
+	Jay Xu <jayxu1990@gmail.com>
+Subject: [PATCH] mtd: core: Add nand_id sysfs attribute for NAND devices
+Date: Wed,  8 Oct 2025 06:40:49 +0800
+Message-Id: <20251007224049.2798233-1-jayxu1990@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.710.ga91ca5db03-goog
-Message-ID: <20251007223625.369939-1-seanjc@google.com>
-Subject: [PATCH] KVM: selftests: Rename "guest_paddr" variables to "gpa"
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Sean Christopherson <seanjc@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Rename "guest_paddr" variables in vm_userspace_mem_region_add() and
-vm_mem_add() to KVM's de facto standard "gpa", both for consistency and
-to shorten line lengths.
+From: Jay Xu <jayxu1990@gmail.com>
 
-Opportunistically fix the indentation of the
-vm_userspace_mem_region_add() declaration.
+[Problem]
+Currently, NAND devices do not expose their NAND ID through sysfs,
+making it difficult for userspace applications to identify the specific
+NAND flash chip in use. For supply management reasons, electronics
+products are typically manufactured with multiple storage device
+suppliers, creating a need to identify which storage device is used
+on a particular product. The NAND ID is a semi-unique identifier that can
+be used to determine chip-specific characteristics such as maximum P/E
+cycles, which is essential for NAND health monitoring and wear leveling
+algorithms.
 
-Signed-off-by: Sean Christopherson <seanjc@google.com>
+[Solution]
+This patch adds a new 'nand_id' sysfs attribute that:
+
+1. Exposes the full NAND ID (typically 5-8 bytes) in hexadecimal format
+2. Only appears on physical NAND devices (MTD_NANDFLASH/MTD_MLCNANDFLASH)
+3. Is hidden on virtual MTD devices
+4. Reads from the master device to ensure consistent ID across partitions
+5. Handles on-demand ID reading if not already populated during probe
+
+The implementation uses a separate attribute group with visibility control
+to avoid affecting existing MTD sysfs attributes. All NAND partitions
+from the same physical chip will show the same ID, as expected.
+
+This enables userspace tools to reliably identify NAND chips for
+health monitoring, bad block management, and device-specific
+optimizations.
+
+Signed-off-by: Jay Xu <jayxu1990@gmail.com>
 ---
- .../testing/selftests/kvm/include/kvm_util.h  | 10 ++--
- tools/testing/selftests/kvm/lib/kvm_util.c    | 46 +++++++++----------
- 2 files changed, 26 insertions(+), 30 deletions(-)
+ drivers/mtd/mtdcore.c | 60 ++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 59 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/kvm/include/kvm_util.h b/tools/testing/selftests/kvm/include/kvm_util.h
-index 26cc30290e76..3aa7a286d4a0 100644
---- a/tools/testing/selftests/kvm/include/kvm_util.h
-+++ b/tools/testing/selftests/kvm/include/kvm_util.h
-@@ -675,12 +675,12 @@ int __vm_set_user_memory_region2(struct kvm_vm *vm, uint32_t slot, uint32_t flag
- 				 uint32_t guest_memfd, uint64_t guest_memfd_offset);
+diff --git a/drivers/mtd/mtdcore.c b/drivers/mtd/mtdcore.c
+index 5ba9a741f5ac..9290dbe04093 100644
+--- a/drivers/mtd/mtdcore.c
++++ b/drivers/mtd/mtdcore.c
+@@ -34,6 +34,7 @@
  
- void vm_userspace_mem_region_add(struct kvm_vm *vm,
--	enum vm_mem_backing_src_type src_type,
--	uint64_t guest_paddr, uint32_t slot, uint64_t npages,
--	uint32_t flags);
-+				 enum vm_mem_backing_src_type src_type,
-+				 uint64_t gpa, uint32_t slot, uint64_t npages,
-+				 uint32_t flags);
- void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
--		uint64_t guest_paddr, uint32_t slot, uint64_t npages,
--		uint32_t flags, int guest_memfd_fd, uint64_t guest_memfd_offset);
-+		uint64_t gpa, uint32_t slot, uint64_t npages, uint32_t flags,
-+		int guest_memfd_fd, uint64_t guest_memfd_offset);
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/partitions.h>
++#include <linux/mtd/rawnand.h>
  
- #ifndef vm_arch_has_protected_memory
- static inline bool vm_arch_has_protected_memory(struct kvm_vm *vm)
-diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
-index 6743fbd9bd67..ce3230068482 100644
---- a/tools/testing/selftests/kvm/lib/kvm_util.c
-+++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-@@ -963,8 +963,8 @@ void vm_set_user_memory_region2(struct kvm_vm *vm, uint32_t slot, uint32_t flags
+ #include "mtdcore.h"
  
- /* FIXME: This thing needs to be ripped apart and rewritten. */
- void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
--		uint64_t guest_paddr, uint32_t slot, uint64_t npages,
--		uint32_t flags, int guest_memfd, uint64_t guest_memfd_offset)
-+		uint64_t gpa, uint32_t slot, uint64_t npages, uint32_t flags,
-+		int guest_memfd, uint64_t guest_memfd_offset)
- {
- 	int ret;
- 	struct userspace_mem_region *region;
-@@ -978,30 +978,29 @@ void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
- 		"Number of guest pages is not compatible with the host. "
- 		"Try npages=%d", vm_adjust_num_guest_pages(vm->mode, npages));
- 
--	TEST_ASSERT((guest_paddr % vm->page_size) == 0, "Guest physical "
-+	TEST_ASSERT((gpa % vm->page_size) == 0, "Guest physical "
- 		"address not on a page boundary.\n"
--		"  guest_paddr: 0x%lx vm->page_size: 0x%x",
--		guest_paddr, vm->page_size);
--	TEST_ASSERT((((guest_paddr >> vm->page_shift) + npages) - 1)
-+		"  gpa: 0x%lx vm->page_size: 0x%x",
-+		gpa, vm->page_size);
-+	TEST_ASSERT((((gpa >> vm->page_shift) + npages) - 1)
- 		<= vm->max_gfn, "Physical range beyond maximum "
- 		"supported physical address,\n"
--		"  guest_paddr: 0x%lx npages: 0x%lx\n"
-+		"  gpa: 0x%lx npages: 0x%lx\n"
- 		"  vm->max_gfn: 0x%lx vm->page_size: 0x%x",
--		guest_paddr, npages, vm->max_gfn, vm->page_size);
-+		gpa, npages, vm->max_gfn, vm->page_size);
- 
- 	/*
- 	 * Confirm a mem region with an overlapping address doesn't
- 	 * already exist.
- 	 */
- 	region = (struct userspace_mem_region *) userspace_mem_region_find(
--		vm, guest_paddr, (guest_paddr + npages * vm->page_size) - 1);
-+		vm, gpa, (gpa + npages * vm->page_size) - 1);
- 	if (region != NULL)
- 		TEST_FAIL("overlapping userspace_mem_region already "
- 			"exists\n"
--			"  requested guest_paddr: 0x%lx npages: 0x%lx "
--			"page_size: 0x%x\n"
--			"  existing guest_paddr: 0x%lx size: 0x%lx",
--			guest_paddr, npages, vm->page_size,
-+			"  requested gpa: 0x%lx npages: 0x%lx page_size: 0x%x\n"
-+			"  existing gpa: 0x%lx size: 0x%lx",
-+			gpa, npages, vm->page_size,
- 			(uint64_t) region->region.guest_phys_addr,
- 			(uint64_t) region->region.memory_size);
- 
-@@ -1015,8 +1014,7 @@ void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
- 			"already exists.\n"
- 			"  requested slot: %u paddr: 0x%lx npages: 0x%lx\n"
- 			"  existing slot: %u paddr: 0x%lx size: 0x%lx",
--			slot, guest_paddr, npages,
--			region->region.slot,
-+			slot, gpa, npages, region->region.slot,
- 			(uint64_t) region->region.guest_phys_addr,
- 			(uint64_t) region->region.memory_size);
- 	}
-@@ -1042,7 +1040,7 @@ void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
- 	if (src_type == VM_MEM_SRC_ANONYMOUS_THP)
- 		alignment = max(backing_src_pagesz, alignment);
- 
--	TEST_ASSERT_EQ(guest_paddr, align_up(guest_paddr, backing_src_pagesz));
-+	TEST_ASSERT_EQ(gpa, align_up(gpa, backing_src_pagesz));
- 
- 	/* Add enough memory to align up if necessary */
- 	if (alignment > 1)
-@@ -1106,20 +1104,18 @@ void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
- 	region->unused_phy_pages = sparsebit_alloc();
- 	if (vm_arch_has_protected_memory(vm))
- 		region->protected_phy_pages = sparsebit_alloc();
--	sparsebit_set_num(region->unused_phy_pages,
--		guest_paddr >> vm->page_shift, npages);
-+	sparsebit_set_num(region->unused_phy_pages, gpa >> vm->page_shift, npages);
- 	region->region.slot = slot;
- 	region->region.flags = flags;
--	region->region.guest_phys_addr = guest_paddr;
-+	region->region.guest_phys_addr = gpa;
- 	region->region.memory_size = npages * vm->page_size;
- 	region->region.userspace_addr = (uintptr_t) region->host_mem;
- 	ret = __vm_ioctl(vm, KVM_SET_USER_MEMORY_REGION2, &region->region);
- 	TEST_ASSERT(ret == 0, "KVM_SET_USER_MEMORY_REGION2 IOCTL failed,\n"
- 		"  rc: %i errno: %i\n"
- 		"  slot: %u flags: 0x%x\n"
--		"  guest_phys_addr: 0x%lx size: 0x%lx guest_memfd: %d",
--		ret, errno, slot, flags,
--		guest_paddr, (uint64_t) region->region.memory_size,
-+		"  guest_phys_addr: 0x%lx size: 0x%llx guest_memfd: %d",
-+		ret, errno, slot, flags, gpa, region->region.memory_size,
- 		region->region.guest_memfd);
- 
- 	/* Add to quick lookup data structures */
-@@ -1143,10 +1139,10 @@ void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
- 
- void vm_userspace_mem_region_add(struct kvm_vm *vm,
- 				 enum vm_mem_backing_src_type src_type,
--				 uint64_t guest_paddr, uint32_t slot,
--				 uint64_t npages, uint32_t flags)
-+				 uint64_t gpa, uint32_t slot, uint64_t npages,
-+				 uint32_t flags)
- {
--	vm_mem_add(vm, src_type, guest_paddr, slot, npages, flags, -1, 0);
-+	vm_mem_add(vm, src_type, gpa, slot, npages, flags, -1, 0);
+@@ -339,6 +340,54 @@ static ssize_t mtd_bbt_blocks_show(struct device *dev,
  }
+ MTD_DEVICE_ATTR_RO(bbt_blocks);
  
- /*
-
-base-commit: 6b36119b94d0b2bb8cea9d512017efafd461d6ac
++static ssize_t mtd_nand_id_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct mtd_info *mtd = dev_get_drvdata(dev);
++	struct mtd_info *master = mtd_get_master(mtd);
++	struct nand_chip *chip;
++	int ret;
++
++	/* Ensure this is actually a NAND device */
++	if (master->type != MTD_NANDFLASH && master->type != MTD_MLCNANDFLASH)
++		return -ENODEV;
++
++	chip = mtd_to_nand(master);
++
++	/* If ID not populated, try to read it now */
++	if (!chip->id.len) {
++		ret = nand_readid_op(chip, 0, chip->id.data, NAND_MAX_ID_LEN);
++		if (ret)
++			return sysfs_emit(buf, "read-error\n");
++		chip->id.len = strnlen(chip->id.data, NAND_MAX_ID_LEN);
++	}
++
++	return sysfs_emit(buf, "%*phN\n", chip->id.len, chip->id.data);
++}
++MTD_DEVICE_ATTR_RO(nand_id);
++
++static umode_t mtd_nand_id_visible(struct kobject *kobj, struct attribute *attr, int n)
++{
++	struct device *dev = kobj_to_dev(kobj);
++	struct mtd_info *mtd = dev_get_drvdata(dev);
++
++	/* Only show on NAND devices (excludes UBI volumes which have type 'ubi') */
++	if (mtd->type != MTD_NANDFLASH && mtd->type != MTD_MLCNANDFLASH)
++		return 0;
++
++	return attr->mode;
++}
++
++static struct attribute *mtd_nand_attrs[] = {
++	&dev_attr_nand_id.attr,
++	NULL,
++};
++
++static const struct attribute_group mtd_nand_group = {
++	.attrs = mtd_nand_attrs,
++	.is_visible = mtd_nand_id_visible,
++};
++
+ static struct attribute *mtd_attrs[] = {
+ 	&dev_attr_type.attr,
+ 	&dev_attr_flags.attr,
+@@ -359,7 +408,16 @@ static struct attribute *mtd_attrs[] = {
+ 	&dev_attr_bitflip_threshold.attr,
+ 	NULL,
+ };
+-ATTRIBUTE_GROUPS(mtd);
++
++static const struct attribute_group mtd_group = {
++	.attrs = mtd_attrs,
++};
++
++static const struct attribute_group *mtd_groups[] = {
++	&mtd_group,
++	&mtd_nand_group,
++	NULL,
++};
+ 
+ static const struct device_type mtd_devtype = {
+ 	.name		= "mtd",
 -- 
-2.51.0.710.ga91ca5db03-goog
+2.47.3
 
 
