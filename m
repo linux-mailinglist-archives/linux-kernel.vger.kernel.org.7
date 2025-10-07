@@ -1,94 +1,131 @@
-Return-Path: <linux-kernel+bounces-843816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78D24BC054E
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:28:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF1ADBC0566
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:30:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E9B9C34B5F6
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:28:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47CEE189E4A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E56A221F24;
-	Tue,  7 Oct 2025 06:28:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CxTKTgX9"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B606208D0;
-	Tue,  7 Oct 2025 06:28:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 955741DDA1E;
+	Tue,  7 Oct 2025 06:30:15 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ECB71F936
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 06:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759818523; cv=none; b=e6h1LKqIMt41f7KufI9BivEZp3lqbZEH03mPlGSyHJ/Ca9tR1pBWThk2DiXTwxbxY5HEnHp/e2dO5zwxbQtMdyPN8mJ3QzjqdeNqZMQntlql2TO5YxciID6ztf3l4rcZAJOb/Bi1otuQodKQDorHnlJm5k6vR0JMunmFV7aL4ds=
+	t=1759818615; cv=none; b=eNQ9it4FKgBmYLwaVAXGLgZvkRcKoviifLdy3ywTQsSAYlZiVTA715ASRt39nZA3zC3d0idMqMqncjH4dbQzUAUw9gTZsnkBf6Fxg4ZoelMDEQF3hfKvo4xhtzaeqO1gN2jcGZmTemfhwxtcpo0hsv4OizZwVMayTfKdTdsdmv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759818523; c=relaxed/simple;
-	bh=JHP3w83ranJKofgy+ICEW4qvy6Ftj/xL8oVhICw0e1w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tUNfbZGmv31AGEKWg+X5iGTel3ILWai9X+FU5dwN+r4An2wyBe6R3zPOXORu6QVSr/jANKZcMHBySWjcA8GLVxK55r231BpUEwf3s33HQU5ZllmRvzlXzrCA+Iz/Rhj0rjperjx+viS7xsKJOYmgB+2jTG5jJInp59PW5nM5420=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CxTKTgX9; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=jvyHlrrXhbs7kCNYUcL+h44dh1vvxBRvtL2nVCRhMR0=; b=CxTKTgX98L0a5Cr1oJUjL3RA0X
-	5ReHEmpgKX1pB+2iogtipXf6PXpua+TZI0rU202zQh3p+7Piqvwb9ULnPOgwIEqAEFf6iBoGwONvl
-	W0Ugype5bv4MJThaUI4tquESVH33TbDmpi3Nf1FRLeePY98qAcOTOng/lcEqjRMAknMpV0Moc50oO
-	4hRaIhNCxmfcVuOCsTyt0AAarfQZKcPoSCVIGFzhhKwg4C+8Ntv+K6c/9A5EvnM4Sjon7bH+jH4ym
-	8lQdrnYkxW2uQS6CDyloffLv9mAAGHlhMUc3ekXpo7Ccv3mtOKslR3HwEu1n50mGLFnZHyxfCoxW0
-	eSQ111ew==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v61Bh-00000001MSs-2dey;
-	Tue, 07 Oct 2025 06:28:41 +0000
-Date: Mon, 6 Oct 2025 23:28:41 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: David Disseldorp <ddiss@suse.de>
-Cc: Christoph Hellwig <hch@infradead.org>, dima@arista.com,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Nicolas Schier <nsc@kernel.org>
-Subject: Re: [PATCH RFC] gen_init_cpio: Do fsync() only on regular files
-Message-ID: <aOSzGf7OFn2Gkkbe@infradead.org>
-References: <20251007-gen_init_cpio-pipe-v1-1-d782674d4926@arista.com>
- <aOSZo8h6l2XNin3C@infradead.org>
- <20251007165732.66949558.ddiss@suse.de>
- <aOStTfvOR-C7l1se@infradead.org>
- <20251007172556.3e57b0c8.ddiss@suse.de>
+	s=arc-20240116; t=1759818615; c=relaxed/simple;
+	bh=Lbe8ZT0ceTL1YIksr/EVnxhD1mGGOqPvdn8I5FdfI78=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SLQOghi8TtcqDvEnK5MFof5R1DMWBxJsYN4Kc83NAz6afBCeYs6fhFMJfQeyENihPKf+MGfPyiR0l574lLSvdzdwFIzNVU5yhkCQNoW9ikGa0A9xiiEsCQIH9IjAhHdSoW/e3K64TLJjSRz9w88tJ0uNSizeWG0Whkl+F3q8HxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6060A14BF;
+	Mon,  6 Oct 2025 23:30:04 -0700 (PDT)
+Received: from [10.163.65.24] (unknown [10.163.65.24])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 655C73F59E;
+	Mon,  6 Oct 2025 23:30:07 -0700 (PDT)
+Message-ID: <586f6282-ac7e-42d2-b132-0ba067623ddc@arm.com>
+Date: Tue, 7 Oct 2025 11:58:47 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251007172556.3e57b0c8.ddiss@suse.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH mm-new v2 3/3] mm/khugepaged: merge PTE scanning logic
+ into a new helper
+To: Lance Yang <lance.yang@linux.dev>, akpm@linux-foundation.org,
+ david@redhat.com, lorenzo.stoakes@oracle.com
+Cc: ziy@nvidia.com, baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
+ npache@redhat.com, ryan.roberts@arm.com, baohua@kernel.org,
+ ioworker0@gmail.com, richard.weiyang@gmail.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20251006144338.96519-1-lance.yang@linux.dev>
+ <20251006144338.96519-4-lance.yang@linux.dev>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <20251006144338.96519-4-lance.yang@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 07, 2025 at 05:25:56PM +1100, David Disseldorp wrote:
-> On Mon, 6 Oct 2025 23:03:57 -0700, Christoph Hellwig wrote:
-> 
-> > On Tue, Oct 07, 2025 at 04:57:32PM +1100, David Disseldorp wrote:
-> > > I should have explained why in the commit, sorry. The intention was to
-> > > catch any FS I/O errors during output archive writeback. fsync() is
-> > > called only once as the final I/O.  
-> > 
-> > I don't parse this.  What does 'as the final I/O' mean?
-> 
-> fsync() is called once after all buffered writes and copy_file_range()
-> calls for the initramfs archive have completed.
-> 
-> > If you want
-> > to catch writeback errors, a single syncfs should be enough.
-> 
-> gen_init_cpio should only be concerned that the output archive file is
-> flushed to storage, rather than the entire filesystem. Why would syncfs
-> be more suitable?
 
-Oh, it is called on the generated archive.  Yes, that makes sense.
-Sorry for the noise.
+On 06/10/25 8:13 pm, Lance Yang wrote:
+> +static inline int thp_collapse_check_pte(pte_t pte, struct vm_area_struct *vma,
+> +		unsigned long addr, struct collapse_control *cc,
+> +		struct folio **foliop, int *none_or_zero, int *unmapped,
+> +		int *shared, int *scan_result)
+
+Nit: Will prefer the cc parameter to go at the last.
+
+> +{
+> +	struct folio *folio = NULL;
+> +	struct page *page = NULL;
+> +
+> +	if (pte_none(pte) || is_zero_pfn(pte_pfn(pte))) {
+> +		(*none_or_zero)++;
+> +		if (!userfaultfd_armed(vma) &&
+> +		    (!cc->is_khugepaged ||
+> +		     *none_or_zero <= khugepaged_max_ptes_none)) {
+> +			return PTE_CHECK_CONTINUE;
+> +		} else {
+> +			*scan_result = SCAN_EXCEED_NONE_PTE;
+> +			count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
+> +			return PTE_CHECK_FAIL;
+> +		}
+> +	} else if (!pte_present(pte)) {
+> +		if (!unmapped) {
+> +			*scan_result = SCAN_PTE_NON_PRESENT;
+> +			return PTE_CHECK_FAIL;
+> +		}
+> +
+> +		if (non_swap_entry(pte_to_swp_entry(pte))) {
+> +			*scan_result = SCAN_PTE_NON_PRESENT;
+> +			return PTE_CHECK_FAIL;
+> +		}
+> +
+> +		(*unmapped)++;
+> +		if (!cc->is_khugepaged ||
+> +		    *unmapped <= khugepaged_max_ptes_swap) {
+> +			/*
+> +			 * Always be strict with uffd-wp enabled swap
+> +			 * entries. Please see comment below for
+> +			 * pte_uffd_wp().
+> +			 */
+> +			if (pte_swp_uffd_wp(pte)) {
+> +				*scan_result = SCAN_PTE_UFFD_WP;
+> +				return PTE_CHECK_FAIL;
+> +			}
+> +			return PTE_CHECK_CONTINUE;
+> +		} else {
+> +			*scan_result = SCAN_EXCEED_SWAP_PTE;
+> +			count_vm_event(THP_SCAN_EXCEED_SWAP_PTE);
+> +			return PTE_CHECK_FAIL;
+> +		}
+> +	} else if (pte_uffd_wp(pte)) {
+> +		/*
+> +		 * Don't collapse the page if any of the small PTEs are
+> +		 * armed with uffd write protection. Here we can also mark
+> +		 * the new huge pmd as write protected if any of the small
+> +		 * ones is marked but that could bring unknown userfault
+> +		 * messages that falls outside of the registered range.
+> +		 * So, just be simple.
+> +		 */
+> +		*scan_result = SCAN_PTE_UFFD_WP;
+> +		return PTE_CHECK_FAIL;
+> +	}
+> +
+> +	page = vm_normal_page(vma, addr, pte);
+
+You should use vm_normal_folio here and drop struct page altogether - this was also
+noted during the review of the mTHP collapse patchset.
+
 
