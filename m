@@ -1,113 +1,140 @@
-Return-Path: <linux-kernel+bounces-843976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5E7BBC0C31
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 10:44:51 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91C0BBC0BFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 10:42:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 788973AEDDE
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 08:41:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 02FF94F67E6
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 08:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 241202D5C97;
-	Tue,  7 Oct 2025 08:38:04 +0000 (UTC)
-Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB6232D6E69;
+	Tue,  7 Oct 2025 08:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mBNXcNdr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1979A2571BD;
-	Tue,  7 Oct 2025 08:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191AA4C9D;
+	Tue,  7 Oct 2025 08:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759826283; cv=none; b=RCfIjMRowI1R2pOb2pC5Wv2io9dVHTytpvvOaMignnx31HeDweB6hj2FOzM3VPySQqo2S0Pr0KzlsbEmadLVUuhmtxaGoArFZZ3C4oI8C1Hi2EArxRkVI5gIFz1718Vkuqnk3sEhUIsY/FvpOvF6MvxZpaTeBPCqkP/ChVF4NqE=
+	t=1759826319; cv=none; b=a97jXaEDuj4fwXhAVaf0T/U/9E5rQ39N+Bo2eTROsC5OCVgFG99jmYMIbnCSo9Gpabk7Ot/OzCdKiaU1Puhji0WHA40YrdG/Fc/Ikfi9Z4oDYmjXl3+1Uq2DXlCIQ+E55QQv84U1Aci6PEU6y5IpmkqoAp3smFmT95D71eLl2RU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759826283; c=relaxed/simple;
-	bh=qpcqu+blCYTEGW/oR+TT2Q7IbBLF+U8hpYCvlTBUr04=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K1YexVj9IlFzFgEXMIFaeCd3osKStPiDeOJh2rtoNKPnIEiS+CVLyd6hPbcEphauwH8OTt38xm/2i4lZgrMeK5xBWd7T0F3lYCLZ8X3Dy26wOkMW0W6TFmtcFYYiKyfyTYBHbqx1GOmEFSup9lDU2VYro0KpGlW4O3wVjKCY8zU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 7 Oct
- 2025 16:36:50 +0800
-Received: from aspeedtech.com (192.168.10.13) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Tue, 7 Oct 2025 16:36:50 +0800
-From: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
-To: <wim@linux-watchdog.org>, <linux@roeck-us.net>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <joel@jms.id.au>,
-	<andrew@codeconstruct.com.au>, <linux-watchdog@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-	<BMC-SW@aspeedtech.com>
-Subject: [PATCH 3/3] watchdog: aspeed: Add support for AST2700 platform
-Date: Tue, 7 Oct 2025 16:36:50 +0800
-Message-ID: <20251007083650.2155317-4-chin-ting_kuo@aspeedtech.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251007083650.2155317-1-chin-ting_kuo@aspeedtech.com>
-References: <20251007083650.2155317-1-chin-ting_kuo@aspeedtech.com>
+	s=arc-20240116; t=1759826319; c=relaxed/simple;
+	bh=5qfAOY91alRr3e4nKv4ZlXn5Fa6lg2X17V+MXXHFttI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uWKOINQjIdX7qQympPoxz5GjpurR5GEfYNlaVA739vfmvethR+GRbATgIg40paj503qKNCPrqzJFb7+az0GvlOjKE1Ny7etJJtR1idvXqpcanyzUYU0Tp/uYZtnqPwZQyTUZ/+SxdGHCalmJxBVja4wUdI9ni4IB9oHcRxI0Cp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mBNXcNdr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86BF2C4CEF1;
+	Tue,  7 Oct 2025 08:38:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759826317;
+	bh=5qfAOY91alRr3e4nKv4ZlXn5Fa6lg2X17V+MXXHFttI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mBNXcNdrMhlUS15PHBr9WakiXmp+gSiOMYXdXN948Q9PoeegPNuxtcNRShu/VuAwK
+	 9lXIenGSdt7jYGJ3kX0hba6cDjZvyX9B8Ep01QSZKm5HRGaivlpsj7ye2qP7+yT2et
+	 LcUBQ/pyAWCqr9cVvM2Aq7arhQnAXWBm5MpJ4UuwIpw9zgTp9pSDzHQ/vz62E7wcLp
+	 m1UitEFsxIoS0BEoQIvU8e54RaSR/dn8cTb4LcmeneS3i45Isx/x/eAjpaP67NMWxi
+	 LNX2uPBD8irlZZ9J2CIjEheuSOJ+wgDtgf6q+QLDMAAkEwmkD15Yb5OvEjOfBWpJ9q
+	 MuhgPBC7ySOvA==
+Message-ID: <c4b0f1d0-cebd-4381-b2c0-20c177c0732c@kernel.org>
+Date: Tue, 7 Oct 2025 17:38:29 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 13/16] media: dt-bindings: media: rockchip-rga: add
+ rockchip,rk3588-rga3
+To: =?UTF-8?Q?Sven_P=C3=BCschel?= <s.pueschel@pengutronix.de>,
+ Jacob Chen <jacob-chen@iotwrt.com>,
+ Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko Stuebner
+ <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, kernel@pengutronix.de
+References: <20251007-spu-rga3-v1-0-36ad85570402@pengutronix.de>
+ <20251007-spu-rga3-v1-13-36ad85570402@pengutronix.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20251007-spu-rga3-v1-13-36ad85570402@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-Add AST2700 platform support to the ASPEED watchdog driver. This includes
-a new per-platform configuration with SCU reset status register at
-SCU1_070 and support for 5 reset mask registers.
+On 07/10/2025 17:32, Sven Püschel wrote:
+> Add a new compatible for the rk3588 Rockchip SoC, which features an
+> RGA3, which is described in the TRM Part2.
+> 
+> Signed-off-by: Sven Püschel <s.pueschel@pengutronix.de>
+> ---
+>  Documentation/devicetree/bindings/media/rockchip-rga.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/rockchip-rga.yaml b/Documentation/devicetree/bindings/media/rockchip-rga.yaml
+> index ac17cda65191be047fc61d0c806f806c6af07c7b..11e86333c56aab55d9358dc88e45e7c1ebfaae9e 100644
+> --- a/Documentation/devicetree/bindings/media/rockchip-rga.yaml
+> +++ b/Documentation/devicetree/bindings/media/rockchip-rga.yaml
+> @@ -20,6 +20,7 @@ properties:
+>      oneOf:
+>        - const: rockchip,rk3288-rga
+>        - const: rockchip,rk3399-rga
+> +      - const: rockchip,rk3588-rga3
 
-Signed-off-by: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
----
- drivers/watchdog/aspeed_wdt.c | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+There is already rk3588-rga, so please explain in commit msg
+differences, including compatibility or lack thereof. I am confused why
+there are two completely different 2D accelerators simultaneously on
+that SoC.
 
-diff --git a/drivers/watchdog/aspeed_wdt.c b/drivers/watchdog/aspeed_wdt.c
-index e15f70c5e416..f2245a28ac10 100644
---- a/drivers/watchdog/aspeed_wdt.c
-+++ b/drivers/watchdog/aspeed_wdt.c
-@@ -84,10 +84,24 @@ static const struct aspeed_wdt_config ast2600_config = {
- 	.num_reset_masks = 2,
- };
- 
-+static const struct aspeed_wdt_config ast2700_config = {
-+	.ext_pulse_width_mask = 0xfffff,
-+	.irq_shift = 0,
-+	.irq_mask = GENMASK(31, 10),
-+	.scu = {
-+		.compatible = "aspeed,ast2700-scu0",
-+		.reset_status_reg = 0x70,
-+		.wdt_reset_mask = 0xf,
-+		.wdt_reset_mask_shift = 0,
-+	},
-+	.num_reset_masks = 5,
-+};
-+
- static const struct of_device_id aspeed_wdt_of_table[] = {
- 	{ .compatible = "aspeed,ast2400-wdt", .data = &ast2400_config },
- 	{ .compatible = "aspeed,ast2500-wdt", .data = &ast2500_config },
- 	{ .compatible = "aspeed,ast2600-wdt", .data = &ast2600_config },
-+	{ .compatible = "aspeed,ast2700-wdt", .data = &ast2700_config },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, aspeed_wdt_of_table);
-@@ -484,8 +498,9 @@ static int aspeed_wdt_probe(struct platform_device *pdev)
- 	}
- 
- 	if ((of_device_is_compatible(np, "aspeed,ast2500-wdt")) ||
--		(of_device_is_compatible(np, "aspeed,ast2600-wdt"))) {
--		u32 reset_mask[2];
-+	    (of_device_is_compatible(np, "aspeed,ast2600-wdt")) ||
-+	    (of_device_is_compatible(np, "aspeed,ast2700-wdt"))) {
-+		u32 reset_mask[5];
- 		size_t nrstmask = wdt->cfg->num_reset_masks;
- 		u32 reg = readl(wdt->base + WDT_RESET_WIDTH);
- 		int i;
--- 
-2.34.1
-
+Best regards,
+Krzysztof
 
