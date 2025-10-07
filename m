@@ -1,138 +1,186 @@
-Return-Path: <linux-kernel+bounces-844120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99E51BC10DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 12:54:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAB74BC1446
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 13:54:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 544423C1079
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 10:54:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82793189FEF8
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 11:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A812D879B;
-	Tue,  7 Oct 2025 10:54:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1DDC2DC34F;
+	Tue,  7 Oct 2025 11:53:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JDPukr/S"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="wgfAny9c"
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BABA02D6E6E;
-	Tue,  7 Oct 2025 10:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A6F735972;
+	Tue,  7 Oct 2025 11:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759834482; cv=none; b=UzDWT5Dt9z0Fxzxv1nEE03kkjPE66Tn90a2DCaECPeQCNsmWBgs1j682WNeymZFqXKOPaG6n7V+X54L+ga3YxzDsRU6L1Hd7lk4Tb9OTuzu4xiYyLad3F2dpwN2E/Ebnvm2qiqMTMcxsnpuXsO+20ROWyxFVW47R6vb26KhP0Ls=
+	t=1759838035; cv=none; b=LKvJhtpAA1XYpj2yvp/EFq0pt5Ug9fgfywszdBQtBoEJXsaZMAvZyR7CwYyl7V/T4bWw65SWd0OISSyYKMM2IqgRJdqZHkdCoKslwNH4EKtKvCa9vOz6bFjQ5EAvAbnZLqpWDbOi26II90e+TGCbVWp8wLdGiJXNfmw66THqbyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759834482; c=relaxed/simple;
-	bh=u++xuxmfY7yUa0CDs/pPu9JMySam+ko+Di/CayzFiOc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BMjrOeABlZWUiRCiGe6Ld6o+wIl5IeY/QUe1TW4va9duvTfEzbhsmncKvV77k9a1kCmgK6nr4Z5KIquyKGhX2pwqdlS3/tGl99x2qt5A7qx6E4TsXOtGGK8B6xHJnusnkRWjlaJrpoPEGjkKL1BMshu/ZV6OjEZbinbFuyY9ODw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=JDPukr/S; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 597As0eU064331;
-	Tue, 7 Oct 2025 05:54:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1759834440;
-	bh=qRXHLbRBDsuSDZ3JRGY2OvYgbs7ujLbpdTE0+o8E2EQ=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=JDPukr/S3NeMkpra/lCjbMz4mDcIOWzuywKysPN7YsCQ6JU30an5ju1YxNeEH45mC
-	 Fn8taa/iuxbGpNEqXUSmEQ4f57QTZspHNQcuENHNttHulSwir2Fym2WI0w0DpvbfLy
-	 7d/akc9AOvjLTpa784veuIY4izGJUiPzqaC++MiY=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 597As0XT2923797
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 7 Oct 2025 05:54:00 -0500
-Received: from DLEE200.ent.ti.com (157.170.170.75) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 7
- Oct 2025 05:54:00 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE200.ent.ti.com
- (157.170.170.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 7 Oct 2025 05:54:00 -0500
-Received: from localhost (lcpd911.dhcp.ti.com [172.24.233.130])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 597ArwX71007621;
-	Tue, 7 Oct 2025 05:53:59 -0500
-Date: Tue, 7 Oct 2025 16:23:58 +0530
-From: Dhruva Gole <d-gole@ti.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-CC: Saravana Kannan <saravanak@google.com>,
-        "Rafael J . Wysocki"
-	<rafael@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-pm@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>,
-        Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
-        Heiko Stuebner
-	<heiko@sntech.de>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Sebin
- Francis <sebin.francis@ti.com>,
-        Diederik de Haas <didi.debian@cknow.org>,
-        Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-        Jon Hunter
-	<jonathanh@nvidia.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] driver core: fw_devlink: Don't warn about
- sync_state() pending
-Message-ID: <20251007105358.6jgn25jnwjxafz6r@lcpd911>
-References: <20251007094312.590819-1-ulf.hansson@linaro.org>
+	s=arc-20240116; t=1759838035; c=relaxed/simple;
+	bh=xAmtcSiYneGYrEA5MVX3I4DmoITVa1if+HoK67nb8iU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=XAD4W3eMX+rnaLUdoSL+t3U/Yrujz+4bDrmzYmqRpJRC13fd4BJQU2TEz2Zan/E+Hu7j5W1iZ5q0KqHggg+20wT9Mcudl5uJEcFEnxdNf9zyV/8XTyBCm5ASdZeIJ+9PQ43RpZ7oDCBZiCjc5auzw/aP2u6//APRN3j22DQHz3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=wgfAny9c; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-6006b.ext.cloudfilter.net ([10.0.30.211])
+	by cmsmtp with ESMTPS
+	id 65QKvUJzyjzfw66GNvyVP4; Tue, 07 Oct 2025 11:53:51 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id 66GLvKAikMem566GLvsC2L; Tue, 07 Oct 2025 11:53:50 +0000
+X-Authority-Analysis: v=2.4 cv=bZtrUPPB c=1 sm=1 tr=0 ts=68e4ff4f
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=4oHATN8Nx7vVUZJYxp75bA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=23AC6A14qyjZoQxIM3kA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=xYX6OU9JNrHFPr8prv8u:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:References:Cc:To:From:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=GzqhRhaEEqzGyTEdmrMO2YaMzjaRRo6FU0EtpB0R+I4=; b=wgfAny9c9uHp2QMHZUmUBGzZtq
+	PJHE1aUvl6+rQqx3r+Zym55nNZFCcLQO/c/1weLQE3KmWS/Q5VSEl//4gWlU7jM8nLdEhgBvxACDJ
+	WgKRNkjTAfxk+DbFEHbK5Po41VNtJLEZu3e4pfVtI++mYc07kTRK/scNgAKo2KqatCg2i7gCROBj6
+	HZS6Bl6Qujyd7eZEL9jCNXJnD0EDWUke1J5Cr2BwFexI492W7PdWfzpfL/TpBr+IhOojnQeiNjBLo
+	HkZkXxP1Zk09AkyKQy2l5LWXIR1sWlS6av4D1LeKto9o2afVHs3pSB2+qMAA6rh9PZrrqQFHGhNSw
+	H/Fh5r6A==;
+Received: from [185.134.146.81] (port=42034 helo=[10.21.53.44])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1v65Ku-00000000WlI-05NZ;
+	Tue, 07 Oct 2025 05:54:28 -0500
+Message-ID: <0e46139a-bb80-4684-977d-aaacc653840b@embeddedor.com>
+Date: Tue, 7 Oct 2025 11:54:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251007094312.590819-1-ulf.hansson@linaro.org>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] scsi: hisi_sas: Avoid a couple
+ -Wflex-array-member-not-at-end warnings
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Yihang Li <liyihang9@h-partners.com>,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <aM1J5UemZFgdso3F@kspp>
+ <9e0613bf-17ae-407a-a3ab-cbeac09c3a17@embeddedor.com>
+Content-Language: en-US
+In-Reply-To: <9e0613bf-17ae-407a-a3ab-cbeac09c3a17@embeddedor.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 185.134.146.81
+X-Source-L: No
+X-Exim-ID: 1v65Ku-00000000WlI-05NZ
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([10.21.53.44]) [185.134.146.81]:42034
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 0
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfPnB0vJFVvvAWyWfTSQaBQ7nwBQ22x5ULp3zJlE9ziS/yRF8wdB6hh3VhoJPyjFJ/XZXEN441F+i1javQVNA2Zfq/KXhdxWFCFcO0WiZNFpQmsnYUgLh
+ 03WTo+nLHzol1NvWyYhu5rfnxO0IZ8xAoI8fnjkOBUfnjT919znifjtysB28BqRxYWVg9nwHOCf3Rf+lcKTkd1bAxan6cb4s0bAG9q8PUgds9JhKX7+BxNGE
+ yx53MU9vxbZelvhrZUpeVaRDWpmmjaoEC0vvhvtGk63sTYKqt/ILV7me6YHbBP7Kwnqn3ELfD0mj9z9trOZw1Q==
 
-On Oct 07, 2025 at 11:43:12 +0200, Ulf Hansson wrote:
-> Due to the wider deployment of the ->sync_state() support, for PM domains
-> for example, we are receiving reports about the sync_state() pending
-> message that is being logged in fw_devlink_dev_sync_state(). In particular
-> as it's printed at the warning level, which is questionable.
-> 
-> Even if it certainly is useful to know that the ->sync_state() condition
-> could not be met, there may be nothing wrong with it. For example, a driver
-> may be built as module and are still waiting to be initialized/probed. For
-> this reason let's move to the info level for now.
-> 
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Reported-by: Sebin Francis <sebin.francis@ti.com>
-> Reported-by: Diederik de Haas <didi.debian@cknow.org>
-> Reported-by: Jon Hunter <jonathanh@nvidia.com>
-> Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
-> 
-> Changes in v2:
-> 	- Due to discussions on v1 and because the default Kconfig is to use the
-> 	FW_DEVLINK_SYNC_STATE_STRICT, I suggest that for now it may be best to
-> 	keep the warning level for the "Timed out.." print and only change the
-> 	"sync_state pending..." message.
-> 
-> ---
->  drivers/base/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index d22d6b23e758..c62e428b95b0 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -1784,7 +1784,7 @@ static int fw_devlink_dev_sync_state(struct device *dev, void *data)
->  		return 0;
->  
->  	if (fw_devlink_sync_state == FW_DEVLINK_SYNC_STATE_STRICT) {
-> -		dev_warn(sup, "sync_state() pending due to %s\n",
-> +		dev_info(sup, "sync_state() pending due to %s\n",
 
-Reviewed-by: Dhruva Gole <d-gole@ti.com>
 
--- 
-Best regards,
-Dhruva Gole
-Texas Instruments Incorporated
+On 10/7/25 11:45, Gustavo A. R. Silva wrote:
+> Hi all,
+> 
+> Friendly ping: who can take this, please?
+> 
+> Thanks!
+> -Gustavo
+> 
+> On 9/19/25 13:17, Gustavo A. R. Silva wrote:
+>> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+>> getting ready to enable it, globally.
+>>
+>> Move the conflicting declarations to the end of the corresponding
+>> structures (and in a union). Notice that `struct ssp_command_iu`
+>> is a flexible structure, this is a structure that contains a
+>> flexible-array member.
+>>
+>> With these changes fix the following warnings:
+>>
+>> drivers/scsi/hisi_sas/hisi_sas.h:639:38: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member- 
+>> not-at-end]
+>> drivers/scsi/hisi_sas/hisi_sas.h:616:47: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member- 
+>> not-at-end]
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+>> ---
+>>   drivers/scsi/hisi_sas/hisi_sas.h | 10 +++++++---
+>>   1 file changed, 7 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/scsi/hisi_sas/hisi_sas.h b/drivers/scsi/hisi_sas/hisi_sas.h
+>> index 1323ed8aa717..55c638dd58b1 100644
+>> --- a/drivers/scsi/hisi_sas/hisi_sas.h
+>> +++ b/drivers/scsi/hisi_sas/hisi_sas.h
+>> @@ -613,8 +613,8 @@ struct hisi_sas_command_table_ssp {
+>>       struct ssp_frame_hdr hdr;
+>>       union {
+>>           struct {
+>> -            struct ssp_command_iu task;
+>>               u32 prot[PROT_BUF_SIZE];
+>> +            struct ssp_command_iu task;
+>>           };
+
+Actually, I have a question here:
+
+is u32 prot[PROT_BUF_SIZE]; intended to overlap flex array task.add_cdb[]
+at some point?
+
+if not, this change is just fine. Otherwise, I'd need to update this
+patch to account for the overlap.
+
+Could someone provide some feedback here? :)
+
+Thanks!
+-Gustavo
+
+>>           struct ssp_tmf_iu ssp_task;
+>>           struct xfer_rdy_iu xfer_rdy;
+>> @@ -636,13 +636,17 @@ struct hisi_sas_status_buffer {
+>>   struct hisi_sas_slot_buf_table {
+>>       struct hisi_sas_status_buffer status_buffer;
+>> -    union hisi_sas_command_table command_header;
+>>       struct hisi_sas_sge_page sge_page;
+>> +
+>> +    /* Must be last --ends in a flexible-array member. */
+>> +    union hisi_sas_command_table command_header;
+>>   };
+>>   struct hisi_sas_slot_dif_buf_table {
+>> -    struct hisi_sas_slot_buf_table slot_buf;
+>>       struct hisi_sas_sge_dif_page sge_dif_page;
+>> +
+>> +    /* Must be last --ends in a flexible-array member. */
+>> +    struct hisi_sas_slot_buf_table slot_buf;
+>>   };
+>>   extern struct scsi_transport_template *hisi_sas_stt;
+> 
+
 
