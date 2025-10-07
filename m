@@ -1,135 +1,167 @@
-Return-Path: <linux-kernel+bounces-844596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2886FBC2510
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 20:04:03 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 884B7BC28DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 21:48:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 17DA14E2FAE
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 18:04:02 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 357FE3503F7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 19:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0FB20C461;
-	Tue,  7 Oct 2025 18:03:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0740D22D4F6;
+	Tue,  7 Oct 2025 19:48:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YDGW7iSt"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="rq3ofEwu"
+Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880301662E7
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 18:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E7116E863;
+	Tue,  7 Oct 2025 19:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759860233; cv=none; b=dSRVfaf3i+OpV1ATReHxEz+jEQFpiQPDm298PqVL0HGP20v7OZWasjMn755T//4vZijyR0q+YVIJibKwiu3LGf0NJDCfPvYg+0/vhSpP1qAmCVCBlFJorNcwScTpxi9UfbDUSfBVoghen9Ip+096qC+RfHvbBJo6NMQWDWlvtMQ=
+	t=1759866513; cv=none; b=fiTyRRTfHgvVMLTeNkjk+Zd+xaYokKc7FN2UDbi7If7vochLzAplZGFbRp30KuY3Qq36gMtNXeH4Kxay4J+bBSIqPG3x7NHV5acVgCTwnyJlNPWruOl9+vZ3YJuiZeegE4sR11ZEki/M0bDVPJR/YIgJy/htk7D35ODB5voPWLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759860233; c=relaxed/simple;
-	bh=NHEmrtJIgEleCWQcevq6nqZY7xNB77jO7eLNYiB6sEU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MS8F59hhKw8VVq/Vos9MANexBoO8NN1eJp+96KPtNDeWOfezYPRkdRoLBZ81Ca3NRdQZNlulvjq/EW3gf7YB0m9w5x/DKzlR9Xql7PJPCTDQtFw9EWHRugIcqZbt7eRcqJoZttdpK1I0jxlUonM4ZJsp90heibQ8INHeKfpMJAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YDGW7iSt; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so6167964b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 11:03:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759860232; x=1760465032; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BoeUTdyH6Ho2hK/WV0Pq7ReoILwQzxKPA2QdB9ZFVa0=;
-        b=YDGW7iStLghTCfJ7+MCFpdhgAbzOjwWdGzzI4+L/86ppjDjIEg1yv6gMYK7LVKlQyQ
-         A62FUxwi7lyqLo86FJjSoCt4Cxl4tlO0fCBif7yXNu8b81yfL6+NpNlMBvDELrOz4KVD
-         Mp4yh4bsPfcGIXLH+lA7B/v9L+KcJsb0YxXnrsQuPpXPe7MF7chjW77QqwsBWQENainV
-         SJ7yKYtzDCRymEeRt44ed1JSClqUNeFjqaFZkerPO885JnyLV+4lo/2X9BHI3g2q8V4F
-         wm5F1GT8MSgfQGG8KePscMiHadq35L2g5kGW3vkcIM9+NuZVdcIgraWFc+UXAqJzXYQe
-         4OsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759860232; x=1760465032;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BoeUTdyH6Ho2hK/WV0Pq7ReoILwQzxKPA2QdB9ZFVa0=;
-        b=lpiITWsHI0fKQZJAbIk3IxFdUqnEy6lwwyjPy5iOoukTLGGtp9z8Hr0Woj9uGRdouJ
-         XiauXSSf69fO2qrFx6SiZ3lqLnUmcK9+eUIEt8lqNfXoVMOYgMqIpNQPHsB49aLgQeSW
-         FpmwT49PGRCe/TuKym/wlu9La48PfOrZpx/ryV7de13c6M1buSPTBw5duVnos5f94VTn
-         rQZC3udkUBoTiGaWXVIQ4xlHZuEoeA8KySUHRSclxibb2gfiOBJapEPfb7tXxGSXcjbZ
-         NLg4LMPVMCdzlNwU2lubU6txBRUVSUKt3bKHa9ONKcn0n9WaPnhL5boRNVQZgUDZof/R
-         57cg==
-X-Forwarded-Encrypted: i=1; AJvYcCVEm8ZH6K5lM2fHR5LcOUVEwM/wvIV4hwagHE8R6+Zew3S1Q/RD9v2Dnf0N5G+GShfNAk8MyhB3MNZmoME=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx71vgtl2XwP2HFMmKDTLSzz+6PtI3w8EjXBzm2yOMtpWm+laBV
-	T37mo0CgN/NfxCVU4WifpD2aO/uwi3aK68Vse0z3ObHWc7KgtrN3ujWi+Dq6td2SD+juVZCxTj3
-	l4NrEdn/T+LNido80ltrU9gqrwNfpF6JAOmpdZjjg
-X-Gm-Gg: ASbGncvsKJA7xzYHHf6jGjbx0G0ZvqnYZVzrDkV3ndck1NY0oMRMR5ynsUcegWeXxgX
-	C18mEpszehT2N++VR2Ryf7rbMq0QVcx4JBl77bQD0vdY/M5j8Jsde3bHPGathFqv0jZgdnrSPpR
-	Ca4UNt2q2fyTm5wcHrhFUZAX6QXNywnp35TAoirPNkKNUbxR7CsFm46Tn1r+ICa6ckmAeaceFRB
-	CnX43nNzwkSv+W2Cptv17y/y3J/jipf2sTDuXk1cmx52iFCRNEJnl2WsbYYkI0Ga0CwOF9g6N7o
-	KQb9zOm2pfdE7A==
-X-Google-Smtp-Source: AGHT+IErqs+kJVv5rsWGTN2Z0xZ0ickiFqF1IQ4SpRF/lYWHEWgJPEacLea7fTefk87mdvoXJ1AdDn7lRgB9V20xPD0=
-X-Received: by 2002:a17:902:d58d:b0:266:cb8c:523 with SMTP id
- d9443c01a7336-290273ffe89mr5647285ad.48.1759860231518; Tue, 07 Oct 2025
- 11:03:51 -0700 (PDT)
+	s=arc-20240116; t=1759866513; c=relaxed/simple;
+	bh=vMtXbq1KgnSFelCHvUhZ2kgM7oOGT+RSFcTakW+bbUQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=emFOB4agXJIKvKZ/IszM/orn0uPSNGP6zXcYi4d3IrchAB5QdjL0DIPHapdGyKOs1odT4wIm8jv/spSRbPb0p1uTF37lSrv4ioAczvbBwYsHcUquMHRzMZye+XuIGpZYbrJvnlARlm2pswl1tPid9uNzEtlL4fNeyYv7gTwB7/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=rq3ofEwu; arc=none smtp.client-ip=44.202.169.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5005b.ext.cloudfilter.net ([10.0.29.189])
+	by cmsmtp with ESMTPS
+	id 6BR1vxE44KXDJ6DfcvpKpW; Tue, 07 Oct 2025 19:48:24 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id 6DfbvD9cRfjrX6Dfbv0Zuc; Tue, 07 Oct 2025 19:48:23 +0000
+X-Authority-Analysis: v=2.4 cv=ItcecK/g c=1 sm=1 tr=0 ts=68e56e87
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=4oHATN8Nx7vVUZJYxp75bA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=4e8un5K37ZRR6lRcyOEA:9 a=QEXdDO2ut3YA:10 a=xYX6OU9JNrHFPr8prv8u:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=LfPENtYO9yg3I6QdDZRxM3kYJOjt9kvB6+tlT/9JDY4=; b=rq3ofEwuaf/LsUbXFiBonuvEIq
+	RxMqKlBHPQKE0AuTVNDJsDVj75ymDtYqNiO3fAmFt23hkENte81TdQlr0GsFdMRMi+jxjh7V6kyQm
+	KcNtwlIx4JaWgVdTILImYMmfZi0n9Tcp2+NWz0buuxHBboNkW3OgHiBMWnrgIhfxRQXcxzTSDUg4E
+	7vD4ODepcDwimuFZSvt52p73eFkiipi/Od1bLKyXhZUrIYk44Mtqu8xE5JygdISuIbDsZXNRThfcK
+	wsCrSSbbFFBayQ02/LatGp5Lg7Zv4mVKo6SSOElviL/eO/ILdtdEUzs/OeSN7r8ZItL53YbdKnPd0
+	/qv0cLQQ==;
+Received: from [185.134.146.81] (port=48322 helo=[10.21.53.44])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1v65C3-00000000Luf-35FH;
+	Tue, 07 Oct 2025 05:45:19 -0500
+Message-ID: <9e0613bf-17ae-407a-a3ab-cbeac09c3a17@embeddedor.com>
+Date: Tue, 7 Oct 2025 11:45:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251006232125.1833979-1-royluo@google.com> <36068ca3-912e-4e71-b688-8689ead8194b@kernel.org>
-In-Reply-To: <36068ca3-912e-4e71-b688-8689ead8194b@kernel.org>
-From: Roy Luo <royluo@google.com>
-Date: Tue, 7 Oct 2025 11:03:15 -0700
-X-Gm-Features: AS18NWA8U90B63ffP5jXdkUD5e6eOAqItmxz5SXEaQputDmKkvJD4mEmS6I0ARg
-Message-ID: <CA+zupgyLx8q23b-ecrLhYAU27HV_ZFMiH9XR81Q2MKRmMwpcNw@mail.gmail.com>
-Subject: Re: [PATCH v1 0/4] Add Google Tensor SoC USB support
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Peter Griffin <peter.griffin@linaro.org>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Joy Chakraborty <joychakr@google.com>, 
-	Naveen Kumar <mnkumar@google.com>, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] scsi: hisi_sas: Avoid a couple
+ -Wflex-array-member-not-at-end warnings
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Yihang Li <liyihang9@h-partners.com>,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <aM1J5UemZFgdso3F@kspp>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <aM1J5UemZFgdso3F@kspp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 185.134.146.81
+X-Source-L: No
+X-Exim-ID: 1v65C3-00000000Luf-35FH
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([10.21.53.44]) [185.134.146.81]:48322
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 0
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfNbSc0c0lJ7nQ1ngLk0019RGqvP+k6LOj9TRdVd/TY9QoFlp8hNAX6gfALSAzF4P2FwTb/3e/q7kexPAlqe54tLUMV8vfkcW49mz7pk3pbM/7FHaH7oA
+ yKXcuXr1Tu+nq3HcoNx90EAz/JsDxWUedtBghBVGa3aMy5K9NtJ0ZZLjVTNlmMtiEkIZZwJvNSVIbdUnnWpLAMVp4Cj0bRvh1Zrp3RHZRB/3hIa73uvhvn6c
+ Zb1Lik/Jmg3Q+GjHi6rC86gcIVcYcAmM22tULX6XLgI0uedIgAgqMTuG3Wed9+d+teesOM2+HXb8xD2jsKKN+A==
 
-On Mon, Oct 6, 2025 at 6:06=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
->
-> On 07/10/2025 08:21, Roy Luo wrote:
-> > This series introduces support for the USB controller and PHY found on
-> > Google Tensor SoCs (G5 and newer). This includes:
-> >
-> > 1.  DWC3 Glue Driver: A new glue layer for the Synopsys DesignWare USB =
-3.0
-> >     controller (DWC3) as integrated into Google Tensor SoCs, including
-> >     hibernation support.
-> > 2.  DWC3 DT Bindings: Device Tree binding documentation for the Google
-> >     Tensor SoC DWC3 controller.
-> > 3.  USB PHY Driver: A new driver for the Google Tensor SoC USB PHY,
-> >     initially supporting high-speed operations.
-> > 4.  USB PHY DT Bindings: Device Tree binding documentation for the Goog=
-le
-> >     Tensor SoC USB PHY.
->
-> This is useless message in the cover letter. We see what patches do from
-> the patches.
->
-> What you are supposed to explain here and in the bindings patches, is
-> why we want this driver and what is Tensor SoC, considering we already
-> have one Tensor SoC... IOW, explain everything which is not obvious -
-> and duplicating SoCs with some generic name is for sure not obvious.
->
-> Best regards,
-> Krzysztof
+Hi all,
 
-Thanks for the review. Will remove the redundant info and ensure the next
-cover letter provides the necessary context on the Google Tensor G5 SoC
-this series intends to support.
+Friendly ping: who can take this, please?
 
-Regards,
-Roy Luo
+Thanks!
+-Gustavo
+
+On 9/19/25 13:17, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
+> 
+> Move the conflicting declarations to the end of the corresponding
+> structures (and in a union). Notice that `struct ssp_command_iu`
+> is a flexible structure, this is a structure that contains a
+> flexible-array member.
+> 
+> With these changes fix the following warnings:
+> 
+> drivers/scsi/hisi_sas/hisi_sas.h:639:38: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/scsi/hisi_sas/hisi_sas.h:616:47: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> ---
+>   drivers/scsi/hisi_sas/hisi_sas.h | 10 +++++++---
+>   1 file changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/scsi/hisi_sas/hisi_sas.h b/drivers/scsi/hisi_sas/hisi_sas.h
+> index 1323ed8aa717..55c638dd58b1 100644
+> --- a/drivers/scsi/hisi_sas/hisi_sas.h
+> +++ b/drivers/scsi/hisi_sas/hisi_sas.h
+> @@ -613,8 +613,8 @@ struct hisi_sas_command_table_ssp {
+>   	struct ssp_frame_hdr hdr;
+>   	union {
+>   		struct {
+> -			struct ssp_command_iu task;
+>   			u32 prot[PROT_BUF_SIZE];
+> +			struct ssp_command_iu task;
+>   		};
+>   		struct ssp_tmf_iu ssp_task;
+>   		struct xfer_rdy_iu xfer_rdy;
+> @@ -636,13 +636,17 @@ struct hisi_sas_status_buffer {
+>   
+>   struct hisi_sas_slot_buf_table {
+>   	struct hisi_sas_status_buffer status_buffer;
+> -	union hisi_sas_command_table command_header;
+>   	struct hisi_sas_sge_page sge_page;
+> +
+> +	/* Must be last --ends in a flexible-array member. */
+> +	union hisi_sas_command_table command_header;
+>   };
+>   
+>   struct hisi_sas_slot_dif_buf_table {
+> -	struct hisi_sas_slot_buf_table slot_buf;
+>   	struct hisi_sas_sge_dif_page sge_dif_page;
+> +
+> +	/* Must be last --ends in a flexible-array member. */
+> +	struct hisi_sas_slot_buf_table slot_buf;
+>   };
+>   
+>   extern struct scsi_transport_template *hisi_sas_stt;
+
 
