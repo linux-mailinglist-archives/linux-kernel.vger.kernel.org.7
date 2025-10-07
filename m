@@ -1,57 +1,43 @@
-Return-Path: <linux-kernel+bounces-843890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF5FEBC0806
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 09:38:55 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9A21BC0812
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 09:41:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 535B634D248
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 07:38:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 899F14EC6D7
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 07:41:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E1B2550D8;
-	Tue,  7 Oct 2025 07:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="X1M2fSo6"
-Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D2932561D9;
+	Tue,  7 Oct 2025 07:41:16 +0000 (UTC)
+Received: from baidu.com (mx22.baidu.com [220.181.50.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BEDD25486D;
-	Tue,  7 Oct 2025 07:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F210525486D;
+	Tue,  7 Oct 2025 07:41:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759822728; cv=none; b=dwD0/EOO3yR/x3l01kXtd6ApRcV4etSQJI6gAysb7i+u8oUs+hxVHBC5MZKEoMsD/IIXzdBe2ZMVwApQjKHGNAmymTpz977FAYk4n8G6B4fR6QDmLfYIhNuij/AiomyahrtwTNornnPGOBUP7QOxrFj2cLzD7Rb55Mhfl5YM7xo=
+	t=1759822876; cv=none; b=YJJPi9Sftijf8QAPryqt88ZfF7uAZkgRQB1zfXwhv/cNPsxFpApTdmEgMt0SnuEv0vBGCsYETg7E+DExvqNSyWdmZ/Q/vs+RTGdXPlp2AHi+akJjJKSg0KCut7IR4MzEd3ZuBb0F2mF/HJ8LvD/cgIu5ULt91KiaKew+6XWRYfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759822728; c=relaxed/simple;
-	bh=izKDjWaxuTD0X9xPadokk2qGqpRQ5SI3QiNeU6LMxIU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=arB9iCGC9nNa4kGVkKkQBIsX1ceUCrx74YYr+gN61vyYhN6Tv00JAK9BBBp+elFU2nn0aPUQ3p713CHdQ4VqEEQsjrVV9+aveey5LBEqYZH6BjYGYpNcMRwg2hmedQy787BNvjJViZI2ZsGBUGZQar7qH4TAqHev7LrkTdpqZec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=X1M2fSo6; arc=none smtp.client-ip=95.143.211.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
-From: Denis Arefev <arefev@swemel.ru>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
-	t=1759822712;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=mQtBl8NZIHe7kauTG50kRQk+84xEw1u9+LoZLcV7hns=;
-	b=X1M2fSo6NrITkvAQIeaEd9bSf/+rsy1a15nD/flLJ4tbA5GmjOKhPHPvfZNGQHeeneTQyK
-	KGzDXe/KcFWY+Tvd0iVMthv7pLCDR/wa5DZHMG29qUMoFtb5NLtcGSCLHkBzi48enGCxyt
-	ZZ1gMyzyN9OtAWBtlakNgcpWecyYAnQ=
-To: David Rhodes <david.rhodes@cirrus.com>
-Cc: Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Stefan Binding <sbinding@opensource.cirrus.com>,
-	linux-sound@vger.kernel.org,
-	patches@opensource.cirrus.com,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	stable@vger.kernel.org
-Subject: [PATCH] ALSA: hda: cs35l41: Fix NULL pointer dereference in cs35l41_get_acpi_mute_state()
-Date: Tue,  7 Oct 2025 10:38:31 +0300
-Message-ID: <20251007073832.3662-1-arefev@swemel.ru>
+	s=arc-20240116; t=1759822876; c=relaxed/simple;
+	bh=GkZISkGeS+Thss4TG+0//7gQ0lSs/IhS2IyAqLOsNG8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nt57JVXGoDQATVchzu1U8oab3mfZlPSZyG8Vk+4iCFsFv6yT+L28kW2/QqdfDmHSgdqVZc6E7siHw88KUsJzPtl4zM6/wINQuOdVLxdwQ2njLWk+1IHzfQPMFBQl1sWP8z9XVfx0Z/BaabrAokBuNqnVFsvl/Y9VknUfP1syH0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: Fushuai Wang <wangfushuai@baidu.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <horms@kernel.org>, <ast@kernel.org>,
+	<martin.lau@kernel.org>, <houtao1@huawei.com>, <jkangas@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<bpf@vger.kernel.org>, <menglong.dong@linux.dev>, Fushuai Wang
+	<wangfushuai@baidu.com>
+Subject: [PATCH v2] bpf: Use rcu_read_lock_dont_migrate in bpf_sk_storage.c
+Date: Tue, 7 Oct 2025 15:40:11 +0800
+Message-ID: <20251007074011.12916-1-wangfushuai@baidu.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,36 +45,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: bjkjy-exc11.internal.baidu.com (172.31.51.11) To
+ bjkjy-exc17.internal.baidu.com (172.31.50.13)
+X-FEAS-Client-IP: 172.31.50.13
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-Return value of a function acpi_evaluate_dsm() is dereferenced  without
-checking for NULL, but it is usually checked for this function.
+Use rcu_read_lock_dont_migrate() and rcu_read_unlock_migrate() in
+bpf_sk_storage.c to obtain better performance when PREEMPT_RCU is
+not enabled.
 
-acpi_evaluate_dsm() may return NULL, when acpi_evaluate_object() returns
-acpi_status other than ACPI_SUCCESS, so add a check to prevent the crach.
-
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Fixes: 447106e92a0c ("ALSA: hda: cs35l41: Support mute notifications for CS35L41 HDA")
-Cc: stable@vger.kernel.org
-Signed-off-by: Denis Arefev <arefev@swemel.ru>
+Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
 ---
- sound/hda/codecs/side-codecs/cs35l41_hda.c | 2 ++
- 1 file changed, 2 insertions(+)
+v1 -> v2: no code changes. Simplify and clarify commit message
+---
+ net/core/bpf_sk_storage.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/sound/hda/codecs/side-codecs/cs35l41_hda.c b/sound/hda/codecs/side-codecs/cs35l41_hda.c
-index 37f2cdc8ce82..890ddb8cc66c 100644
---- a/sound/hda/codecs/side-codecs/cs35l41_hda.c
-+++ b/sound/hda/codecs/side-codecs/cs35l41_hda.c
-@@ -1426,6 +1426,8 @@ static int cs35l41_get_acpi_mute_state(struct cs35l41_hda *cs35l41, acpi_handle
+diff --git a/net/core/bpf_sk_storage.c b/net/core/bpf_sk_storage.c
+index 2e538399757f..bdb70cf89ae1 100644
+--- a/net/core/bpf_sk_storage.c
++++ b/net/core/bpf_sk_storage.c
+@@ -50,16 +50,14 @@ void bpf_sk_storage_free(struct sock *sk)
+ {
+ 	struct bpf_local_storage *sk_storage;
  
- 	if (cs35l41_dsm_supported(handle, CS35L41_DSM_GET_MUTE)) {
- 		ret = acpi_evaluate_dsm(handle, &guid, 0, CS35L41_DSM_GET_MUTE, NULL);
-+		if (!ret)
-+			return -EINVAL;
- 		mute = *ret->buffer.pointer;
- 		dev_dbg(cs35l41->dev, "CS35L41_DSM_GET_MUTE: %d\n", mute);
+-	migrate_disable();
+-	rcu_read_lock();
++	rcu_read_lock_dont_migrate();
+ 	sk_storage = rcu_dereference(sk->sk_bpf_storage);
+ 	if (!sk_storage)
+ 		goto out;
+ 
+ 	bpf_local_storage_destroy(sk_storage);
+ out:
+-	rcu_read_unlock();
+-	migrate_enable();
++	rcu_read_unlock_migrate();
+ }
+ 
+ static void bpf_sk_storage_map_free(struct bpf_map *map)
+@@ -161,8 +159,7 @@ int bpf_sk_storage_clone(const struct sock *sk, struct sock *newsk)
+ 
+ 	RCU_INIT_POINTER(newsk->sk_bpf_storage, NULL);
+ 
+-	migrate_disable();
+-	rcu_read_lock();
++	rcu_read_lock_dont_migrate();
+ 	sk_storage = rcu_dereference(sk->sk_bpf_storage);
+ 
+ 	if (!sk_storage || hlist_empty(&sk_storage->list))
+@@ -213,9 +210,8 @@ int bpf_sk_storage_clone(const struct sock *sk, struct sock *newsk)
  	}
+ 
+ out:
+-	rcu_read_unlock();
+-	migrate_enable();
+ 
++	rcu_read_unlock_migrate();
+ 	/* In case of an error, don't free anything explicitly here, the
+ 	 * caller is responsible to call bpf_sk_storage_free.
+ 	 */
 -- 
-2.43.0
+2.36.1
 
 
