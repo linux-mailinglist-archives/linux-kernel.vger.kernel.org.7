@@ -1,309 +1,143 @@
-Return-Path: <linux-kernel+bounces-844353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72137BC1A74
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:08:57 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4177BC1A86
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:11:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1F99034F968
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:08:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A59804F6E47
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E31B2E22AA;
-	Tue,  7 Oct 2025 14:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B372E1C54;
+	Tue,  7 Oct 2025 14:09:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Ire6ZoiP"
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013062.outbound.protection.outlook.com [52.101.72.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hu4SSzBv"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D112E228C;
-	Tue,  7 Oct 2025 14:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759846113; cv=fail; b=lSL0XAj3OCtRpNXf/hTGKasbpe/texUjVUiPYh7lAkte1kKlblXK16pjm8a8aNP3ZfWNkZaUyQpUKTH4nKTCgvh61O5QwuJdZmb3i2XpjvqcLQJO0KagQvcAGIHh4NgrLrjysXpvMmNYh9Ly8JXNKFQm9trJdbzhLxMVe3mu61k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759846113; c=relaxed/simple;
-	bh=K122ijpEhOTjQi+4wu/kqWEwdAXUtvxTgCW/N4+5T1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=jFFabmZcDHINAzYXNlGGmt8LrOgvC8Ib9zR4Jenwk7UHzYK47lg/dTG6O4OFm9BmKkdtbISfcWsl0wM2rmwJwrbF2ol+D+RCZSsmENjBF64Sn0atvLBx4ugNBC62TrrbONqdVvDag3t5wKjOANpqMSQBEKCrV6RVKr8OAtgWKxE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Ire6ZoiP; arc=fail smtp.client-ip=52.101.72.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=e3TngxhnX81bHvuGuSIs4wxv2hBbhN5U3+uw9deQjbV81pWfTzrcq4HLYAiuzlLjZ+GR0LYNZkoVINmQpPl9HlgqQLNq7aeMoD+NpFN1+dl+RSIM24vGiv+tAc0TNfvCAJTAXaO1z6S0coOYo4flQgNmPUJc62gJwpTSzAQrWo8FaYckzKNfeXeSW9WZmv9VMFKfCcDsrp0rPtbQWQ3H5fJn3WO1ZaWZsBJjAmfjT0Q9eOOR07FoX4dTAgfXHnt1I+ypxsPaWLWErWMlI7kEEqrgRmF5eCVQYiBpiSaYTB2IV6AdW+fNYnnXmCMU4LX7mq2w0L4PbrZ2+vgOPnDEbA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JsXDC7X6bd2Pst0S1/SSINdE/lcpIP+tIkyT7WQnGUY=;
- b=aW/OlWuzyiIdMUjF7KUlS5CezOr73ggdL3uRVck/G459CTXFW58ExdMBrVohAEV1u/IBrZ1Hakj33FI8tb1l7lnjVC6UWln5vNtNe5rbEnz9vTs8pcn/hlKbAYS2SgtSzz69qeIqO3ugYGaWQ8Ugi7KYNjrzq86Tc+Adot2rStrYSZA2zXE6ssgCX/lmjHNdoX949JzpbXC2MhqCqNR6evuDPuF/ZG2VxLsvN3G0bUhocWmbO5ZW/CbLFxNWdGFOEr3rzIygBEfz7en03ZrC+tImiEgw3e68kv7cpEVKHeltrsm+I/BRhrfTC0q/eGyLDJZA7FhDCSAyfEZYMnaewA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JsXDC7X6bd2Pst0S1/SSINdE/lcpIP+tIkyT7WQnGUY=;
- b=Ire6ZoiP74UI4cYuMJcd/S2PIkyJm1DJNPQA0HafWhM2vp7UH1wedg/v6PXqhoQyiv+k8BDEhZ3CuU9/D1um/Pi+wlqA0uhXvaZcXykJiXu2WFjzgEU+iBWEcu/28j8kOW5ELPYqE0hC/clF+bpxo+KYG4H+OvUp4FUzDfQkbQYRB9GtfnD6hL+D9j8bUgOlkHuTGJD6lhG+NMhcVJ8XIBcdEV4VhfgjJg6n4f5kDJKL6FqjGoLRZokwj9q/e9vWcfX9islZ/IjAllSxLuQvUmPoFvYO/4rTiTxXCDiSYx34IxFtvRCESZLDem8Pqd7+peQaQIDeu5f3MeHSB0+z2A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by DBAPR04MB7429.eurprd04.prod.outlook.com (2603:10a6:10:1a2::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Tue, 7 Oct
- 2025 14:08:23 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::b067:7ceb:e3d7:6f93]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::b067:7ceb:e3d7:6f93%5]) with mapi id 15.20.9182.017; Tue, 7 Oct 2025
- 14:08:23 +0000
-Date: Tue, 7 Oct 2025 17:08:19 +0300
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: Alexander Wilhelm <alexander.wilhelm@westermo.com>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Aquantia PHY in OCSGMII mode?
-Message-ID: <20251007140819.7s5zfy4zv7w3ffy5@skbuf>
-References: <aJH8n0zheqB8tWzb@FUE-ALEWI-WINX>
- <20250806145856.kyxognjnm4fnh4m6@skbuf>
- <aK6eSEOGhKAcPzBq@FUE-ALEWI-WINX>
- <20250827073120.6i4wbuimecdplpha@skbuf>
- <aK7Ep7Khdw58hyA0@FUE-ALEWI-WINX>
- <aK7GNVi8ED0YiWau@shell.armlinux.org.uk>
- <aK7J7kOltB/IiYUd@FUE-ALEWI-WINX>
- <aK7MV2TrkVKwOEpr@shell.armlinux.org.uk>
- <20250828092859.vvejz6xrarisbl2w@skbuf>
- <aN4TqGD-YBx01vlj@FUE-ALEWI-WINX>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aN4TqGD-YBx01vlj@FUE-ALEWI-WINX>
-X-ClientProxiedBy: VI1PR0102CA0003.eurprd01.prod.exchangelabs.com
- (2603:10a6:802::16) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FAA1CF96
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 14:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759846182; cv=none; b=uY/eIo9M4TuJG6VzWgR2zdyMHOZDyiQbcTxDMUzexqdNztKV1uq6gkN1RVu5oaHGWkwdtno+IDtC+Fwl1xkcy/1nhSiU8hC4p4H++hC9AMhJzk0cUCRo1OjfLNOE/HypQvWu4xuZ+mKiNKoKr2Cpu2cbh5SFkEMrYxzk8KAHAhw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759846182; c=relaxed/simple;
+	bh=L9AjwpUsEpFzN7j3AU7eSyOdGZd8dr/4sJod2h6VzSU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IkTNw0jNMRYSKmaVyEtNniX7oMwNgdUBorc+r7T/Y6aypEb2CLC22ZgMBkxlfBcbRVUTKw76LkxBj8OrAa7eWcfmtpwCeHSVVIm7etzWUXJ7158UTc9n8GEUOoPUgoPlcbN9RA4IP+YskUTaaLwZ13cMY06JUymqOMySEmpoQ0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hu4SSzBv; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3f1aff41e7eso4805803f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 07:09:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759846179; x=1760450979; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=U9r/MY5tB9klfws5MHV7V8VIaWyKsEd3V2VsHuC5/TM=;
+        b=hu4SSzBvkmdnR5s1ObdqtfNpUO95dcsOwkQFEcIvNPgwL5t3JIafQVdlHNM24wlR0n
+         GhXfWNUAjptW0eQnZIwUeDFRuUrlJxJWqme/xMB01dPhbe5DI6ztbE8seTNUvodD0XE+
+         FkrxTYM/r32YZ7ezSU+5cvIGtPsW8EkoEuji9PcfPMp+qEDFnAioND0WHyaIA1g2gE4P
+         LfjcjV5U0pN2Cu/xAHLHB4kJANfrStb9TjNYZl5MMSiq8WOQU3Zz9u6AvLNfS14zZfcD
+         Nx/t6zvsrBTf/m6QhQEzQlYhz2cmTBsB1BszoJBT929IiErUrUNB24PdLYo8k71bZzxC
+         oUJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759846179; x=1760450979;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=U9r/MY5tB9klfws5MHV7V8VIaWyKsEd3V2VsHuC5/TM=;
+        b=M3FHQaZHJ2s6nPqWljz5NJ4lSugmx0wTmnmcnq/NNAs4H/q0FXQSLN3uIPj9tLmDLh
+         bTCI/PROCk/cbYPWXkIAlNj+xsJSQeA+b1FgWJYeFN2xnXWqEygWMUE0iQHvR6f7JT4m
+         yRyKwnGWswrv83UqxvrdgnOrW1M9fRDags3sMQWphNTnO5CaSigOyMPpJT8DsagerELB
+         T0yRl6+rI0In+Ssrp/Zgd3ububsQfEGXkKIeyCJlMKcqKOV1MeE4+rq2oFC8eJkTQkWL
+         W76OLGH7G5R9me2NiTiwCrvt/7bRlzBwB4PMW9RR1oZQc8tvsfgZ0kqAAN0YTA6aEiTj
+         cwKg==
+X-Forwarded-Encrypted: i=1; AJvYcCW2s3r6H9xgJYZ8cVbfEBlwDimHpEiYja3PnuxKrqDcJZ1TcWtfjXsuPHEVIN4cb6fk7sBh8h3zuxby8Q4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5oFTGSWL4nfgfGg2eWV6IY6SMGf0bw/JyeXbFnKrfrHrzFhxu
+	2cCpz1JLz/bIPhL3F3VZnOhi3v91nbytZFplHS2qSV4ufDSz0NQ5VtfPlbdlJyURT08=
+X-Gm-Gg: ASbGncsF6erZ2nJKxwHG06lTeV+V/GbeUspGlGyiMnR9k97yRZoqtFbTl55PFXU1mA7
+	7CvNhZI839XE3dRyaf2R4DQycABtrnZOQCfAXDD0k42ogPp5oQjzT/9aVrUl5QKtVD9uOOzJFSH
+	vJXOzLe5umFBdNXfWsfjitCMMva4qLqX9RIWFvsZxkesbDtB7kwYLEYkxiogG8Nqygly7PQ/cPW
+	nto92t6uW+8oScw5zcW8pEesFbvEjtS91oH7BPajO3Q+0oh3q88IexbchnlEU2zPclLN9ov6KbL
+	YSC45GJZAgADzSqLYEZrvAVtmiuRXDA07Dua+5GlcWNkmE8ko5+uc9oTJORLv1wA4ubO/1W8K+w
+	fuLjmBFcZKO6LVVvZgVus0PEXRYmEBAEEDc0OVadCJppgBRgMYxtG3jr+MtlRKb/dWZ0=
+X-Google-Smtp-Source: AGHT+IFxD1tOqcUqYz0RgbVWVOVy7pMAuGKke7jIHSzcw8uBab3yPJbul3Hx2YYu5Jm3wEK1oA54hg==
+X-Received: by 2002:a05:6000:2507:b0:3e2:c41c:bfe3 with SMTP id ffacd0b85a97d-425671aa970mr11076591f8f.38.1759846178794;
+        Tue, 07 Oct 2025 07:09:38 -0700 (PDT)
+Received: from localhost.localdomain ([185.48.76.109])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e619b7e37sm303294885e9.1.2025.10.07.07.09.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Oct 2025 07:09:38 -0700 (PDT)
+From: James Clark <james.clark@linaro.org>
+To: linux-perf-users@vger.kernel.org,
+	irogers@google.com,
+	namhyung@kernel.org,
+	acme@kernel.org
+Cc: James Clark <james.clark@linaro.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] perf tests: use strdup() in "Object code reading"
+Date: Tue,  7 Oct 2025 15:09:08 +0100
+Message-Id: <20251007140909.307940-1-james.clark@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|DBAPR04MB7429:EE_
-X-MS-Office365-Filtering-Correlation-Id: c1fddd51-ae98-4088-3d15-08de05aafa08
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|19092799006|7416014|376014|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UDAzQ2ZYYkl3WGNvUlE3VFpReUUzQzdXc3FFbzlVai92TTAydDR4aE4vSU1L?=
- =?utf-8?B?Z29hNlNVMkpyU3F0RlNjeHNRcTNiS0V6TkRXakZnOEtycVJmQzZLaUxOUUs1?=
- =?utf-8?B?dVE4VmdMMUFVUEkvS0RySHhHaXFML1l0STQvK3RXSVZGbGpDSnVDSnhqcnF1?=
- =?utf-8?B?YktxM2xGV0FualQ3enp5MTlyS1YzMFN4M3Zud2xuaHU5T0RSbW92Y0hjOW9L?=
- =?utf-8?B?OHRraW1kcFdIOTBjWGVBV0dzUzlabUpVdFJPa0Z5eEpKdGxkS3ZYWllTZEk4?=
- =?utf-8?B?MVZpNHE4ckszeXJSb2lWV2xROUNsRkluMzNuOHpzYXBtZFZSRk5udmh2b0J3?=
- =?utf-8?B?RVVFNlNpSGR0Y3FNUWZYeGZYVXNhMkVYUkRVSHBGVk5jR0hJY3NVd1dSa0F1?=
- =?utf-8?B?RTJ1ZUJqOGVOZytKT1d1dWRlQXE2WFlrd0NqVEFhS1dtM200bUplcTU0N0sw?=
- =?utf-8?B?NE1HRnJMcm5sWFByYm5uOVV4QlllVlR6YU1rMUZKK210bFdacC9nSHNnTGIw?=
- =?utf-8?B?cFJzai9RWFhRblNnM2FPUStJOFZUQ2w4cFBIa2JiemY0YXNycmdUbHZuK1p4?=
- =?utf-8?B?aEwyeUFSMFRjRjhDZDhrOHl4cXdPM1lVZ2RDVDBCZHlUcmNFQm5mUjIxb25V?=
- =?utf-8?B?dmViSVNNbGtUemxrOGxJdU96UjduRS9CaG9icSs4NEJETXJOYnpDcUpPUk5h?=
- =?utf-8?B?YXB6cHVoM0o5OWVnMXJ6MExHcVhoQkFzTEhwRDRraHhaS1M0eHljeTZnL1A1?=
- =?utf-8?B?clRnOFloK21YVjZ1aGtFRlowUE80U0xiVTJ6Yy9oaWhJNWNJaGtjbXFHN2Vo?=
- =?utf-8?B?Y2c5My85M000Qlprc0FCeFBEd08vdGF6ejRBZDExTWM4YkJJSTUwUVRNQ2NX?=
- =?utf-8?B?ZHQ3MkhWU1oxZ0dmUE5yd0FQRlFuM2ticmZSVnpUSUVmTFpvK2ZuZUkwU0tV?=
- =?utf-8?B?dXNLMCtCekRkREk0QUJXbzYzNy8reEYybHkzTTFHaHZLdVpQTHBnWFN6QmRR?=
- =?utf-8?B?U0RGbFpXU3JwRSs2b051WnhrV2xqK0VVS00wSUZlTEw0WG4wcHFDWTUzbElC?=
- =?utf-8?B?TjJTNVZ5bHJEbTBJb0lFOXE2a201RHprTUlSbDJNWWtMampkeW1jSkpyWjgx?=
- =?utf-8?B?OUNISStsOUsvZm02M3czcUp0clBaRUFMaUt3QUgvejdSNHVnSExaQVYxbU1J?=
- =?utf-8?B?ayt0N2IyNnFML01rRG5oSVpZcHcyUnZ2R0NkY3RFcTdiczBkY1pxYWNOTDdn?=
- =?utf-8?B?b2RLS0FkM0NLcmFmdXFSK1ZEd3F6WmRVT1F0QVRxU3MrMUdFdGd1d2FKWmxh?=
- =?utf-8?B?SzRjRFhzKzU1WDFYSXVKZ1ZxZlFPd2kxVlljWUpoMEY0TTFKY2ZtN1FtNkRZ?=
- =?utf-8?B?d3dPOEo2NTVjTFdvTmRFWTYvdUVzNmFLQXgrdm1JVS9YbTYxekY0TWlMQ1VO?=
- =?utf-8?B?anlleGJJbWFCbWkrUWlxVGRSY1dWODVZQVZVV3gvSHNRWC9xUzJ4T2lBVGNz?=
- =?utf-8?B?WTdJZFZIcjNud1BnYlZlYURtbmJBR0xYbHlTd3BvMWlNL05RcDM0VExGZWto?=
- =?utf-8?B?Vkd0K0Q5ei90NWFwRi83eGd0NHJRS2xEVlVHV2RoaWhmLytMeXdsUXMyYTdi?=
- =?utf-8?B?TFZJVGJ4NGFhYzl1TkFEQ0RGTEdFTmJtUlBjODlNQXczMExydjh6QlBMRFF0?=
- =?utf-8?B?UXZQQklhU2pSYzYzbG5icTBiUDZrQXNXZWdadmo3ZS8wSHhtZEk5VUVhZG1p?=
- =?utf-8?B?L0F1OHRYc2NuRUY0ZGtjd0gyZmdTMTR1RmlpQlhOQ1lOQ1laZGNCMk4wQk9Z?=
- =?utf-8?B?aHU0bC9kUExUR3czRVhScXM5QnBPdTYvNWFpYnFNUm9lZ2JSRTNsSGdQUUxs?=
- =?utf-8?B?aWRvUjE0d21BbHNHSlUvOC84dTd1dkt4S2kxMU1XcEpPd2t3VE02cmtNRWJ3?=
- =?utf-8?Q?Se7KpRieOL87jedkmsGAuvWIOqFtLeuF?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(7416014)(376014)(10070799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZFpKMThXb0tYS3EwU01zTDQ5Q0hRQ1VaY1FRditMcGtqMGFPS2NMczkxdFNS?=
- =?utf-8?B?bEVHOHpnajd0M2ppYm1Gc2RlSHkwMldNZ250UG9pL2luZTIyN1AyenJPZ1d2?=
- =?utf-8?B?RUkyNDBienFxdEs5dmtJeVBTVnJFRFZTd3BPcEhHWkxhZStBbzJTVDhNaCs5?=
- =?utf-8?B?WDF1RDNvcmdEYlQyaUErOVNXYW02blV2L2E5d3VXaDNET2txQ0xFa3R6Q0hx?=
- =?utf-8?B?UmFsMUFQZEtCSU9CYWIwOU8yK1czN1JMRDBzQ2R4NENyY1JHWmFYMDB5MW9L?=
- =?utf-8?B?YmVHdnZVTXZ6c2Z2WCtJMjEwY1hGd2k2ZWJhNDJLSVFPTzNrcmZod0NyYUlu?=
- =?utf-8?B?ZDJUbWNTeWM4VkxjcWNKRllWVWZSaDdwbGNSY3BDMTIxcW4xaUFOWmI4UlEv?=
- =?utf-8?B?UHF3Z2t2NHgwUFFVdi9sVUZSWkgrSzVmYkZwYnFUanRTNXRtcmJqTS9EcUFi?=
- =?utf-8?B?YVYyZEFaRWdEdU9DeXN3S2FvUXNxMWM0SkQzMHZ0MXBGcG4rZmYza3YwYmU0?=
- =?utf-8?B?SEdSN2M3MUtnVWJxcFBvbS90ZjdDSVdualZDQUtVM05kRXVveGJYZnV2SFZS?=
- =?utf-8?B?UTBmUlVyVEVGOVUrLzI1QzBUZTNVQ1JQWXJMSGtvcjJnZDAvdFlPak5zUWV1?=
- =?utf-8?B?aE1uVWVZeEY2cjBUVGZRSWdUM1Y0NE95eGlVNStHQjBBcmV2cEcyeTcrMWVX?=
- =?utf-8?B?NDBLN1J2YXJLZkxvUm9MYzZwUU5BSEtDYjlDMjZEYW9nRG9QZmkyaS9qb1Iw?=
- =?utf-8?B?VTBKRjNlYk9USUJNWmhFMzJQUmlOZXpqZTM4M25zVXh1T0ZWd0hEQ3lkU3pl?=
- =?utf-8?B?Ni9sL1BGM0FCUWQxejhrTWRoU2RiRDlhcXlpODU1NFV5UU1NdjFpTklMOGRv?=
- =?utf-8?B?T3IxVnZEb3dUbkViRklPMnRTMlpHUUNaamdBUUtvdmlNeUYyQVYvYlZkVk52?=
- =?utf-8?B?ZUFGUkVBdm5QS0w3Y1lPZjRHTDhtWDIrWTNDNUhGSlFNdHBRbzVTTXIzSm9R?=
- =?utf-8?B?VU1qNnVZZGxSdzdBTThWRWRib3dtZS83SWkycTFjdG5TNXEvRVFmN0xEQzN1?=
- =?utf-8?B?b1JZbzAvZnJDSmo5V2Z3ZDNtZlVtZWpVZDRJckZscEIxWE5IZS80OStkaTJy?=
- =?utf-8?B?aDc4VVg3TnNtSWYydjEvb2hJTThjUklET0JXaDI1NWplSGwycXM1WUdoRnk5?=
- =?utf-8?B?VjRreUdpYnFDRmxqUSsxTzJLK3BoR1ZYTXUwcTM0bHQzaEVNalhGQThpVUNn?=
- =?utf-8?B?SGFJQ2dXb2NNMEJNNlc5UnRIMlNyeWF5M1FiRkdhMGRGMnpJc2JYVTJxZjA5?=
- =?utf-8?B?RndodnZWZU5aZ1E1UkJjSVQvbEVJVkpzM1J0QlFiQnRTTk9TQ2E4cW5vYUFR?=
- =?utf-8?B?SGI3emFFTXhZYWMycEpSVEtxNzkxVDBwQUt3RnJscTkvcExUNXh4VHVtSW8z?=
- =?utf-8?B?ckhaZmRyeUN4OGJNSldNRHFDeFlIcEx1WnlqTlZ0UXk4TG5rakg3a3VqUkgw?=
- =?utf-8?B?WVpwN1Q0dkg3VzYzMHNIZkdMY3YvZDVJZkc1WWkvaHVRL2xGMWJQUjZMWGJC?=
- =?utf-8?B?UTMzWU5aalBjcXAxWUVaTjBidUVicjdZdGhvOXVXN3kxWkFzblgwWlN6MklP?=
- =?utf-8?B?aUtUUHJEdUY2UXZGbkdvRDZGNGx4aTE0T3ZZSGZ5STZVbXJjbnFqRU9PNDB5?=
- =?utf-8?B?SUlJZHdsS0VkSU83TG1WRytGd0d4dU15enUzWDdhTGx5WmhSRmpMUmxpcExh?=
- =?utf-8?B?M3Rnd1ozWXpXMjFGSjUyMjZHckZZdTZzUUdDYld6TFpUVHBqUGdLOUxkSnFq?=
- =?utf-8?B?dkpYcnk0bW82NU8ySDVNSWFRYU9aTGM1Yjc5aEVycGhaRjJTREJIVGtDMUxW?=
- =?utf-8?B?eXgrQWlHQk45TjExOFprSE1aWTB6UVpDa09oVGY2MGNCR29OdFZwdEdoaXU2?=
- =?utf-8?B?T3NHMXlvM2xZT0JkZEkwUWxib24xSnc1MW1Mb1lwNFJlMTBQWnlmN3E3bzNJ?=
- =?utf-8?B?QmlsekN4N3hlaUR4Q3J6ZkpBVUdtOXJTRVpGRGhiTlRVaC8rUEpIejl0WGc3?=
- =?utf-8?B?SGEwREM1SmhFbHA0d0grZ0tiLzJVZHpLVmZvdXhCczZyOFhJVXA5ZlVRQlpW?=
- =?utf-8?B?T1JTR2tUS1ZBTUJ4U0g3MURmSmZRVzFlQ3BRdWlCT0dQdTMzVXEvU2w3UTAr?=
- =?utf-8?B?dTk3Yk9GS0I2WGZTZTZWVHVLK2tsVmNPZTgwZW13dkJuT2k1cktCYkQ0WGg5?=
- =?utf-8?B?RjBHM0ZSR2NnaHNYYkJheGZyUi9nPT0=?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c1fddd51-ae98-4088-3d15-08de05aafa08
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2025 14:08:23.3161
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RUarTsXyOt293TeGQYL3ML1Y57DxKqsKMdmafNqE1A1lnKJi9fgLTslvVUnZuq7ytfiAs6fBNueuLALSWu7jzQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7429
+Content-Transfer-Encoding: 8bit
 
-Hi Alexander,
+Use strdup() instead of fixed PATH_MAX buffer for storing paths to not
+waste memory.
 
-On Thu, Oct 02, 2025 at 07:54:48AM +0200, Alexander Wilhelm wrote:
-> Hi Vladimir,
-> 
-> Thanks your for the hint with the IF_MODE register, I finally found the
-> root cause of my issue. Unfortunately, my U-Boot implementation was setting
-> the `IF_MODE_SGMII_EN` and `IF_MODE_USE_SGMII_AN` bits. This caused a 10x
-> symbol replication when operating at 100M speed. At the same time, the
-> `pcs-lynx` driver never modified these bits when 2500Base-X was configured.
-> 
-> I was able to fix this in U-Boot. Additionally, I explicitly cleared these
-> bits in the Lynx driver whenever 2500Base-X is configured (see patch
-> below). Iâ€™d like to hear your expertise on this: do you think this patch is
-> necessary, or could there be scenarios where these flags should remain set
-> for 2500Base-X?
-> 
-> 
-> Best regards
-> Alexander Wilhelm
-> ---
->  drivers/net/pcs/pcs-lynx.c | 26 ++++++++++++++++++++------
->  1 file changed, 20 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/net/pcs/pcs-lynx.c b/drivers/net/pcs/pcs-lynx.c
-> index 23b40e9eacbb..2774c62fb0db 100644
-> --- a/drivers/net/pcs/pcs-lynx.c
-> +++ b/drivers/net/pcs/pcs-lynx.c
-> @@ -169,6 +169,25 @@ static int lynx_pcs_config_giga(struct mdio_device *pcs,
->  					  neg_mode);
->  }
->  
-> +static int lynx_pcs_config_2500basex(struct mdio_device *pcs,
-> +				     unsigned int neg_mode)
-> +{
-> +	int err;
-> +
-> +	if (neg_mode == PHYLINK_PCS_NEG_INBAND_ENABLED) {
-> +		dev_err(&pcs->dev,
-> +			"AN not supported on 3.125GHz SerDes lane\n");
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	err = mdiodev_modify(pcs, IF_MODE,
-> +			     IF_MODE_SGMII_EN | IF_MODE_USE_SGMII_AN, 0);
-> +	if (err)
-> +		return err;
-> +
-> +	return 0;
-> +}
-> +
->  static int lynx_pcs_config_usxgmii(struct mdio_device *pcs,
->  				   const unsigned long *advertising,
->  				   unsigned int neg_mode)
-> @@ -201,12 +220,7 @@ static int lynx_pcs_config(struct phylink_pcs *pcs, unsigned int neg_mode,
->  		return lynx_pcs_config_giga(lynx->mdio, ifmode, advertising,
->  					    neg_mode);
->  	case PHY_INTERFACE_MODE_2500BASEX:
-> -		if (neg_mode == PHYLINK_PCS_NEG_INBAND_ENABLED) {
-> -			dev_err(&lynx->mdio->dev,
-> -				"AN not supported on 3.125GHz SerDes lane\n");
-> -			return -EOPNOTSUPP;
-> -		}
-> -		break;
-> +		return lynx_pcs_config_2500basex(lynx->mdio, neg_mode);
->  	case PHY_INTERFACE_MODE_USXGMII:
->  		return lynx_pcs_config_usxgmii(lynx->mdio, advertising,
->  					       neg_mode);
-> 
-> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
-> -- 
-> 2.43.0
+Suggested-by: Ian Rogers <irogers@google.com>
+Signed-off-by: James Clark <james.clark@linaro.org>
+---
+Applies on top of: https://lore.kernel.org/linux-perf-users/CAP-5=fV1N-j+f4GBFnDWsmoMZcz_k0U=nu1A7NZz-g4gzCH4KA@mail.gmail.com/T/#t
 
-Sorry for the delay. What you have found are undoubtebly two major bugs,
-causing the Lynx PCS to operate in undefined behaviour territory.
-Nonetheless, while your finding has helped me discover many previously
-unknown facts about the hardware IP, I still cannot replicate exactly
-your reported behaviour. In order to fully process things, I would like
-to ask a few more clarification questions.
+ tools/perf/tests/code-reading.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Is your U-Boot implementation based on NXP's dtsec_configure_serdes()?
-https://github.com/u-boot/u-boot/blob/master/drivers/net/fm/eth.c#L57
-Why would U-Boot set IF_MODE_SGMII_EN | IF_MODE_USE_SGMII_AN only when
-the AQR115 resolves only to 100M, but not in the other cases (which do
-not have this problem)? Or does it do it irrespective of resolved media
-side link speed? Simply put: what did the code that you fixed up look like?
+diff --git a/tools/perf/tests/code-reading.c b/tools/perf/tests/code-reading.c
+index 4c9fbf6965c4..88408eea9e41 100644
+--- a/tools/perf/tests/code-reading.c
++++ b/tools/perf/tests/code-reading.c
+@@ -43,7 +43,7 @@
+ struct tested_section {
+ 	struct rb_node rb_node;
+ 	u64 addr;
+-	char path[PATH_MAX];
++	char *path;
+ };
+ 
+ static bool tested_code_insert_or_exists(const char *path, u64 addr,
+@@ -79,7 +79,7 @@ static bool tested_code_insert_or_exists(const char *path, u64 addr,
+ 		return true;
+ 
+ 	data->addr = addr;
+-	strlcpy(data->path, path, sizeof(data->path));
++	data->path = strdup(path);
+ 	rb_link_node(&data->rb_node, parent, node);
+ 	rb_insert_color(&data->rb_node, tested_sections);
+ 	return false;
+@@ -94,6 +94,7 @@ static void tested_sections__free(struct rb_root *root)
+ 						     rb_node);
+ 
+ 		rb_erase(node, root);
++		free(ts->path);
+ 		free(ts);
+ 	}
+ }
+-- 
+2.34.1
 
-With the U-Boot fix reverted, could you please replicate the broken
-setup with AQR115 linking at 100Mbps, and add the following function in
-Linux drivers/pcs-lynx.c?
-
-static void lynx_pcs_debug(struct mdio_device *pcs)
-{
-	int bmsr = mdiodev_read(pcs, MII_BMSR);
-	int bmcr = mdiodev_read(pcs, MII_BMCR);
-	int adv = mdiodev_read(pcs, MII_ADVERTISE);
-	int lpa = mdiodev_read(pcs, MII_LPA);
-	int if_mode = mdiodev_read(pcs, IF_MODE);
-
-	dev_info(&pcs->dev, "BMSR 0x%x, BMCR 0x%x, ADV 0x%x, LPA 0x%x, IF_MODE 0x%x\n", bmsr, bmcr, adv, lpa, if_mode);
-}
-
-and call it from:
-
-static void lynx_pcs_get_state(struct phylink_pcs *pcs, unsigned int neg_mode,
-			       struct phylink_link_state *state)
-{
-	struct lynx_pcs *lynx = phylink_pcs_to_lynx(pcs);
-
-	lynx_pcs_debug(lynx->mdio); // <- here
-
-	switch (state->interface) {
-	...
-
-With this, I would like to know:
-(a) what is the IF_MODE register content outside of the IF_MODE_SGMII_EN
-    and IF_MODE_USE_SGMII_AN bits.
-(b) what is the SGMII code word advertised by the AQR115 in OCSGMII mode.
-
-Then if you could replicate this test for 1Gbps medium link speed, it
-would be great.
 
