@@ -1,73 +1,59 @@
-Return-Path: <linux-kernel+bounces-843644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9374BBFE7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 03:08:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6967BBBFE94
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 03:13:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 527103B04C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 01:08:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 618CC4E4580
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 01:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5CE1E520F;
-	Tue,  7 Oct 2025 01:08:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B001E5718;
+	Tue,  7 Oct 2025 01:13:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kIpfst5K"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l58UO+On"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1493C2B9BA;
-	Tue,  7 Oct 2025 01:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF0227707;
+	Tue,  7 Oct 2025 01:13:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759799305; cv=none; b=CuHky50Gz7qs88HxWbWAahmpLIm3BTdEaVw8l0dAJ7zxigUv0obsQE+2jtfTfjnk3k91HPgCFGXINhmlhSDqzcOn84707i+Uc/W3+q1QKEDODt6ZpqLH/QZVuROk3hEWDS0I9aWxzKZ/bAjapw76al+6qG975iv0cYdACTuS2p8=
+	t=1759799587; cv=none; b=qh02VjObVzRTkBrU2YySStPnqVF11utzasguVTA7WfxMSmCHbDhWBq0RvHmcUFWLvWhIMg6LLSGTIABtpoGeBnmpVuFCo1NIygNOtio8uVv62qCWvYdbm4SXskY9rR6ZFzWcxgYL/ai4ZwPJ0OYKNnbKfWEXVVe/iaftR2JJ3PE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759799305; c=relaxed/simple;
-	bh=4mZ2Pd7g7yEA1a/btYS4fCpf+KxY0K6O7rgNoBX5KJ8=;
+	s=arc-20240116; t=1759799587; c=relaxed/simple;
+	bh=UrWYSwCIX3TQEiEX18+TLOM2cQ69NKHxhnVPXlw0Rl8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DjtckusWJ8albq0m3tdMXZPEEBboVEbHrhGLN85atFD1OPFT1e5UTD9grL8URRXBSZULbRXdiSwtH6vK5z3GYFFfb4EMF00mrtmmTjdmQp3HZFBoCtaG10Qq/wEfkkJQmpxbmV+li84kPgK6w/lOB/HNdQ1ct6jp2g7USP1ldag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kIpfst5K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7998FC4CEF5;
-	Tue,  7 Oct 2025 01:08:24 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=AJP8HPHpuzdOtD0wcfJSHImCa5HzGiyfTC/nrv981E72wDxxD62OdXy3tBKLSLJjYayMcVCXdAToO7ETMuQ+RAolmvdpsiG9Vf8WS6p09Bf28dEUiWW3lbw/u4Ahp62tcrIFbTnz3eO/RfeNqxexjOZwMVVoSc2qN1DAVkY9SaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l58UO+On; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E841C4CEF5;
+	Tue,  7 Oct 2025 01:13:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759799304;
-	bh=4mZ2Pd7g7yEA1a/btYS4fCpf+KxY0K6O7rgNoBX5KJ8=;
+	s=k20201202; t=1759799587;
+	bh=UrWYSwCIX3TQEiEX18+TLOM2cQ69NKHxhnVPXlw0Rl8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kIpfst5KFmC7qevzDNx9HzQobP57DvqFlF2zEOAmbfTjskVex3r4K0egK5ODyVxRc
-	 pSRv4XR4rgfydQmwv3PD7qWkS8e/Yno9sSLUIsTzbZh0ypIWb08mw2reke9yQQqadO
-	 Q7Kh4iv/sLIJvArPRDiIfxxmBiJwGvKeZ144P+C2dvPpnShd4UplGq7JMBnaiZr40v
-	 HTo0bHtLmqqJzqqV6ZzQNuPm9LLVhxvay3FGjldmoleHApa2P/iGEulXiy8wI+VErM
-	 LeEQNtFz6fR8Z/O1R3YBnE3r00qIRui7g+tfPLW6fTWSndmxolva3GTQWGJntez+Rl
-	 9azlF3FT+3Usg==
-Date: Mon, 6 Oct 2025 20:08:23 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Cc: Robin Murphy <robin.murphy@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	linux-kernel@vger.kernel.org, David Airlie <airlied@gmail.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Simona Vetter <simona@ffwll.ch>, Maxime Ripard <mripard@kernel.org>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	Bjorn Andersson <andersson@kernel.org>, Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, iommu@lists.linux.dev,
-	Joerg Roedel <joro@8bytes.org>, devicetree@vger.kernel.org,
-	Jordan Crouse <jordan@cosmicpenguin.net>,
-	Jonathan Marek <jonathan@marek.ca>
-Subject: Re: [PATCH 17/17] dt-bindings: display/msm/gmu: Add Adreno 840 GMU
-Message-ID: <175979930291.705827.13931250728494462568.robh@kernel.org>
-References: <20250930-kaana-gpu-support-v1-0-73530b0700ed@oss.qualcomm.com>
- <20250930-kaana-gpu-support-v1-17-73530b0700ed@oss.qualcomm.com>
+	b=l58UO+On5tt9RFTfBtXL3PitdQ2efVXZXEA55vKiewNCwB4ZI23AJtlPuMimxT/jI
+	 GVkxjwtjCOkk31ESeMad/9Ln7K3jPawByZWETuyTo/Z1OtWDdCBHh+0i2wBOfO8VLk
+	 kt3rP7Urkt24mp57IUTnfQp/NwwUCV2latEf2/XWtTQZIWBhF6TimEbhowlpGoVkXI
+	 cPuJ35tzkk9HMggTk2586EU84SAbfzaeIxB+x6S17UxliCG//rWazOVli38u5KKWqW
+	 EewS5Tpl93hOhGA4P4p2rdQ4JVrrwLR2GVSVjdEJ3PFvyPcfP1J9h1AmJg1T07+5CI
+	 m+02Mis68+rFA==
+Date: Mon, 6 Oct 2025 18:11:42 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	Joachim Vandersmissen <git@jvdsn.com>,
+	David Howells <dhowells@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] lib/crypto: Add FIPS pre-operational self-test for SHA
+ algorithms
+Message-ID: <20251007011142.GA77681@sol>
+References: <20251006172612.75240-1-ebiggers@kernel.org>
+ <CAMj1kXFTbP9dGQmk9F-WFyoL_LjtfXHMCnGT0WUQwMnrn7DHCw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,18 +62,159 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250930-kaana-gpu-support-v1-17-73530b0700ed@oss.qualcomm.com>
+In-Reply-To: <CAMj1kXFTbP9dGQmk9F-WFyoL_LjtfXHMCnGT0WUQwMnrn7DHCw@mail.gmail.com>
 
-
-On Tue, 30 Sep 2025 11:18:22 +0530, Akhil P Oommen wrote:
-> Document Adreno 840 GMU in the dt-binding specification.
+On Tue, Oct 07, 2025 at 01:53:25AM +0200, Ard Biesheuvel wrote:
+> On Mon, 6 Oct 2025 at 19:28, Eric Biggers <ebiggers@kernel.org> wrote:
+> >
+> > Add FIPS pre-operational self-tests for all SHA-1 and SHA-2 algorithms.
+> > Following the "Implementation Guidance for FIPS 140-3" document, to
+> > achieve this it's sufficient to just test a single test vector for each
+> > of HMAC-SHA1, HMAC-SHA256, and HMAC-SHA512.
+> >
+> > Link: https://lore.kernel.org/linux-crypto/20250917184856.GA2560@quark/
+> > Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+> > ---
+> >
+> > Since there seemed to be more interest in complaining that these are
+> > missing than actually writing a patch, I decided to just do it.
+> >
+> >  lib/crypto/fips.h                   | 38 +++++++++++++++++++++++++++++
+> >  lib/crypto/sha1.c                   | 19 ++++++++++++++-
+> >  lib/crypto/sha256.c                 | 19 ++++++++++++++-
+> >  lib/crypto/sha512.c                 | 19 ++++++++++++++-
+> >  scripts/crypto/gen-fips-testvecs.py | 33 +++++++++++++++++++++++++
+> >  5 files changed, 125 insertions(+), 3 deletions(-)
+> >  create mode 100644 lib/crypto/fips.h
+> >  create mode 100755 scripts/crypto/gen-fips-testvecs.py
+> >
+> > diff --git a/lib/crypto/fips.h b/lib/crypto/fips.h
+> > new file mode 100644
+> > index 0000000000000..78a1bdd33a151
+> > --- /dev/null
+> > +++ b/lib/crypto/fips.h
+> > @@ -0,0 +1,38 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> > +/* This file was generated by: gen-fips-testvecs.py */
+> > +
+> > +#include <linux/fips.h>
+> > +
+> > +static const u8 fips_test_data[] __initconst __maybe_unused = {
+> > +       0x66, 0x69, 0x70, 0x73, 0x20, 0x74, 0x65, 0x73,
+> > +       0x74, 0x20, 0x64, 0x61, 0x74, 0x61, 0x00, 0x00,
+> > +};
+> > +
+> > +static const u8 fips_test_key[] __initconst __maybe_unused = {
+> > +       0x66, 0x69, 0x70, 0x73, 0x20, 0x74, 0x65, 0x73,
+> > +       0x74, 0x20, 0x6b, 0x65, 0x79, 0x00, 0x00, 0x00,
+> > +};
+> > +
+> > +static const u8 fips_test_hmac_sha1_value[] __initconst __maybe_unused = {
+> > +       0x29, 0xa9, 0x88, 0xb8, 0x5c, 0xb4, 0xaf, 0x4b,
+> > +       0x97, 0x2a, 0xee, 0x87, 0x5b, 0x0a, 0x02, 0x55,
+> > +       0x99, 0xbf, 0x86, 0x78,
+> > +};
+> > +
+> > +static const u8 fips_test_hmac_sha256_value[] __initconst __maybe_unused = {
+> > +       0x59, 0x25, 0x85, 0xcc, 0x40, 0xe9, 0x64, 0x2f,
+> > +       0xe9, 0xbf, 0x82, 0xb7, 0xd3, 0x15, 0x3d, 0x43,
+> > +       0x22, 0x0b, 0x4c, 0x00, 0x90, 0x14, 0x25, 0xcf,
+> > +       0x9e, 0x13, 0x2b, 0xc2, 0x30, 0xe6, 0xe8, 0x93,
+> > +};
+> > +
+> > +static const u8 fips_test_hmac_sha512_value[] __initconst __maybe_unused = {
+> > +       0x6b, 0xea, 0x5d, 0x27, 0x49, 0x5b, 0x3f, 0xea,
+> > +       0xde, 0x2d, 0xfa, 0x32, 0x75, 0xdb, 0x77, 0xc8,
+> > +       0x26, 0xe9, 0x4e, 0x95, 0x4d, 0xad, 0x88, 0x02,
+> > +       0x87, 0xf9, 0x52, 0x0a, 0xd1, 0x92, 0x80, 0x1d,
+> > +       0x92, 0x7e, 0x3c, 0xbd, 0xb1, 0x3c, 0x49, 0x98,
+> > +       0x44, 0x9c, 0x8f, 0xee, 0x3f, 0x02, 0x71, 0x51,
+> > +       0x57, 0x0b, 0x15, 0x38, 0x95, 0xd8, 0xa3, 0x81,
+> > +       0xba, 0xb3, 0x15, 0x37, 0x5c, 0x6d, 0x57, 0x2b,
+> > +};
+> > diff --git a/lib/crypto/sha1.c b/lib/crypto/sha1.c
+> > index 5904e4ae85d24..001059cb0fce4 100644
+> > --- a/lib/crypto/sha1.c
+> > +++ b/lib/crypto/sha1.c
+> > @@ -10,10 +10,11 @@
+> >  #include <linux/kernel.h>
+> >  #include <linux/module.h>
+> >  #include <linux/string.h>
+> >  #include <linux/unaligned.h>
+> >  #include <linux/wordpart.h>
+> > +#include "fips.h"
+> >
+> >  static const struct sha1_block_state sha1_iv = {
+> >         .h = { SHA1_H0, SHA1_H1, SHA1_H2, SHA1_H3, SHA1_H4 },
+> >  };
+> >
+> > @@ -328,14 +329,30 @@ void hmac_sha1_usingrawkey(const u8 *raw_key, size_t raw_key_len,
+> >         hmac_sha1_update(&ctx, data, data_len);
+> >         hmac_sha1_final(&ctx, out);
+> >  }
+> >  EXPORT_SYMBOL_GPL(hmac_sha1_usingrawkey);
+> >
+> > -#ifdef sha1_mod_init_arch
+> > +#if defined(sha1_mod_init_arch) || defined(CONFIG_CRYPTO_FIPS)
+> >  static int __init sha1_mod_init(void)
+> >  {
+> > +#ifdef sha1_mod_init_arch
+> >         sha1_mod_init_arch();
+> > +#endif
+> > +       if (fips_enabled) {
+> > +               /*
+> > +                * FIPS pre-operational self-test.  As per the FIPS
+> > +                * Implementation Guidance, testing HMAC-SHA1 satisfies the test
+> > +                * requirement for SHA-1 too.
+> > +                */
+> > +               u8 mac[SHA1_DIGEST_SIZE];
+> > +
+> > +               hmac_sha1_usingrawkey(fips_test_key, sizeof(fips_test_key),
+> > +                                     fips_test_data, sizeof(fips_test_data),
+> > +                                     mac);
+> > +               if (memcmp(fips_test_hmac_sha1_value, mac, sizeof(mac)) != 0)
+> > +                       panic("sha1: FIPS pre-operational self-test failed\n");
+> > +       }
+> >         return 0;
+> >  }
+> >  subsys_initcall(sha1_mod_init);
+> >
 > 
-> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-> ---
->  .../devicetree/bindings/display/msm/gmu.yaml       | 30 +++++++++++++++++++++-
->  1 file changed, 29 insertions(+), 1 deletion(-)
+> In the builtin case, couldn't this execute only after the first calls
+> into the library? That would mean it does not quite fit the
+> requirements of the pre-operational selftest.
+
+Only if other builtin code in the kernel actually calls it before
+subsys_initcall, i.e. during very early boot long before userspace
+starts.  Such calls can occur only from within the FIPS module (i.e. the
+kernel) itself, so arbitrary external users need not be considered here.
+
+x86's SHA-256 microcode checksumming is the only such call I've noticed.
+
+But even then I doubt it actually matters.  There are several possible
+reasons why even that early SHA-256 could be fine.  E.g. it could be
+interpreted as not being used for a security purpose, or as not
+producing any output from the FIPS module (i.e. the kernel) yet
+considering that lib/crypto/ is an internal interface.
+
+And of course, the x86 microcode checksumming predated my SHA-256
+cleanups in 6.16 and 6.17.  So it's not like anyone cared before...
+
+> So perhaps, we should wrap the fips test in a separate function, and
+> in the builtin case, add a call to it to every exported library
+> routine, conditional on some static key that gets set on success? With
+> the right macro foo, it doesn't have to be that ugly, and it can just
+> disappear entirely if FIPS support is disabled.
 > 
+> (For all I care, we don't bother with this at all, but if we add this
+> it should be solid)
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+I think we should try the simpler solution from this patch first, which
+is already used in crypto/kdf_sp800108.c, crypto/hkdf.c,
+crypto/asymmetric_keys/selftest.c, and lib/crypto/aesgcm.c.  I suspect
+the FIPS labs will be fine with it; subsys_initcall is very early.  If
+they were actually using an overly-strict and pedantic interpretation of
+FIPS, then FIPS-certified Linux kernels would not already exist.
 
+- Eric
 
