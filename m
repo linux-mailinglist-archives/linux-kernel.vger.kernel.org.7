@@ -1,113 +1,121 @@
-Return-Path: <linux-kernel+bounces-844287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE4ADBC1757
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 15:16:51 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A717BC1773
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 15:18:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A2A7934F0F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 13:16:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 102594F6135
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 13:18:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A722E0914;
-	Tue,  7 Oct 2025 13:16:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588ED2E0B44;
+	Tue,  7 Oct 2025 13:18:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DhEl/zG+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u/OPe73Y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFC934BA34;
-	Tue,  7 Oct 2025 13:16:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E6D2D9497;
+	Tue,  7 Oct 2025 13:18:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759843003; cv=none; b=f1uPDSSROMaaWD5Oh0gV7K8lgL9E2GVEoHjTe8pIYckmi6P69JUDWaROOxZ+of7f49ZbHnZYS36O9r5S0ztGqteB2I40wD8lC0Hh8QnoMD9iurHMUpe669b/Z4g/hD0x3pq1aT0TCLVFYyyXwxSMeBVNBZNupdWPpdTDzOemH0s=
+	t=1759843091; cv=none; b=R3aK3IpWBmb2kM5q4LlQkbaRQ23P/+emKrosTNLjgbFb9UnIRBnlCmCvyvjRehqZQF3tO4Tm+RkWoSKuBpZrQe8nNEC5CZkwmau2QCi6Jm9DH9pcoI1JclZtbU9KlOlYzf/sqVSGwelNtbY1u3sg2WzpPVjj4AuQ07xxRIbPSyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759843003; c=relaxed/simple;
-	bh=6UjzVlz1EtzKDtCcbFvNlSfCTmDJhScI63/zH3jvfVA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=qoakepgld4I0c0uisGmUu/ap01Ucfe7L4mTrdRWTCqSSFbzKl7HoAnMu2W+IjbeTFpC+21dioo+IMawhBqyMrejbqQBJHkMKSKQNuAPyZuz7vfOFthi9OUrf+4naqLozn3xIYyn6v6qIBumD7pKmMZWbgxMPnnlnZdGsvikith4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DhEl/zG+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EB19C4CEF1;
-	Tue,  7 Oct 2025 13:16:37 +0000 (UTC)
+	s=arc-20240116; t=1759843091; c=relaxed/simple;
+	bh=ROB3wlEWOzXAJwBh1qm1R6lseFVqsndr6PEwvgYDBYU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ghZ/INxScrZdejhQIcpfiEV1N78MUQ2wZ+kbQtfBXjB3WfTKXNXtgDLHzLWkUQ4zRc3VOQt4qAtn98WKj2rbxHJBWsyfkunhzttGER8wreIZWlKyi/favMPd2FIfkPOxLhAuh8wsYx3WOPQiwCPw/9O3rXFRovhytzDyxtH4F0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u/OPe73Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0654C4CEF1;
+	Tue,  7 Oct 2025 13:18:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759843003;
-	bh=6UjzVlz1EtzKDtCcbFvNlSfCTmDJhScI63/zH3jvfVA=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=DhEl/zG+D7xFgqiPWQVAdl3fHwTnoe02BBj4mm/Hut3L3AvLtiropA6iQKNKR9ihj
-	 PrDT+saQAFcMRAX90RlVlIsHlT5aSWD0Jun9zUaMYd1q0lm11iY0q4xTAH5bxq4BzW
-	 Imdfn0O0PVR1fezkl+US2ZbE2qKJrPd/JvACcmAJ1AWQ/bYAqYbptM3BiMKz9A/Pjz
-	 PJJVjtZ2YgwVK6RnK+i2UHpCyuoGHIuHRXM+fGJdFvf5pO/XqgZPh524KbGltDXMkm
-	 CsvbFYPZOYFlGn0tc6e7yh9a/XT4R/XE4NsqkLutt3X0cyrbsD5Uz8knxfBlMfKmMZ
-	 5QT6K/RWDIkbw==
+	s=k20201202; t=1759843091;
+	bh=ROB3wlEWOzXAJwBh1qm1R6lseFVqsndr6PEwvgYDBYU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u/OPe73Yuq+jYwS/iZhhQZMiPxNGXAkDbDfIouyky571NFqTqJSkk9IhCRB9s/Ntu
+	 U+l7EgZNGiFtvrWn9PdJoN40o10zPvgl5MlBmtIsvvbNI/qI6hEpkyGaVli6AfcKlR
+	 OAdTydJl+rEyYRa2YMrd6mVstlbhVxkQ/857uFGby+IIoHcsCTBRaD101Mpoo8D51o
+	 hIxqCC+EodZ10aCeIPQCElFA74nuyD7+SXLgUCpP8Q52KYSL4qhbDZ2qrILE2JyRwi
+	 3n7HaYZweb6M9CgaWiOgxaplPRgJVhG4bWp2qKTWPt6FlfIKD9Ssv56c4h9iypq/dj
+	 OnphxE7Wb4o3w==
+Date: Tue, 7 Oct 2025 14:18:01 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Srinivas Kandagatla <srini@kernel.org>, Kees Cook <kees@kernel.org>,
+	Mika Westerberg <westeri@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH RFC 0/9] gpio: improve support for shared GPIOs
+Message-ID: <a9a4f33f-b6c5-4c25-8321-7b08a2afb8a0@sirena.org.uk>
+References: <20250924-gpio-shared-v1-0-775e7efeb1a3@linaro.org>
+ <0b402bba-0399-4f93-873e-890a78570ff7@kernel.org>
+ <CAMRc=MfwEHGV-HZQURR3JNg1HatAeWO17qbRmkWUXTSBWj5jSg@mail.gmail.com>
+ <80347dcf-419b-489e-9b0e-d901fbacc71a@kernel.org>
+ <CAMRc=McaZV=tUkzDGMYxXqkuEYw_KasKcv8QGdjw709UYZuGhg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="+soYglqC22/n5wEt"
+Content-Disposition: inline
+In-Reply-To: <CAMRc=McaZV=tUkzDGMYxXqkuEYw_KasKcv8QGdjw709UYZuGhg@mail.gmail.com>
+X-Cookie: Teachers have class.
+
+
+--+soYglqC22/n5wEt
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 07 Oct 2025 15:16:36 +0200
-Message-Id: <DDC49ZIRX79X.2Q4KW0UY7WUF3@kernel.org>
-Subject: Re: [PATCH v6 0/5] Introduce bitfield and move register macro to
- rust/kernel/
-Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <dri-devel@lists.freedesktop.org>, "Alistair Popple" <apopple@nvidia.com>,
- "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
- "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
- <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
- <joel@joelfernandes.org>, "Elle Rhumsaa" <elle@weathered-steel.dev>,
- "Daniel Almeida" <daniel.almeida@collabora.com>, "Andrea Righi"
- <arighi@nvidia.com>, <nouveau@lists.freedesktop.org>
-To: "Alexandre Courbot" <acourbot@nvidia.com>, "Yury Norov"
- <yury.norov@gmail.com>, "Joel Fernandes" <joelagnelf@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20251003154748.1687160-1-joelagnelf@nvidia.com>
- <aORCwckUwZspBMfv@yury> <DDC0VAHL5OCP.DROT6CPKE5H5@nvidia.com>
-In-Reply-To: <DDC0VAHL5OCP.DROT6CPKE5H5@nvidia.com>
 
-On Tue Oct 7, 2025 at 12:36 PM CEST, Alexandre Courbot wrote:
-> Because letting it fully mature within nova-core also has the drawback
-> that we might miss the perspective of other potential users, which may
-> make us draw ourselves into a corner that will make the macro less
-> useful generally speaking. We are at a stage where we can still make
-> design changes if needed, but we need to hear from other users, and
-> these won't come as long as the macro is in nova-core.
+On Tue, Oct 07, 2025 at 03:13:29PM +0200, Bartosz Golaszewski wrote:
+> On Mon, Oct 6, 2025 at 11:55=E2=80=AFPM Srinivas Kandagatla <srini@kernel=
+=2Eorg> wrote:
 
-There are two different things here that are getting mixed up a bit.
+> > Yes, these codec drivers are due to be moved to use reset-gpios.
 
-  (1) Moving the register!() code out of nova-core to make it accessible fo=
-r
-      other drivers.
+=2E..
 
-  (2) Generalize the bitfield implementation that so far is baked into the
-      register!() code.
+> anything. And what about shared pins other than reset? 'dc-gpios' for
+> display, other 'powerdown' instances, 'enable-gpios', all kinds of
+> uncommon names like: `dlg,cs`, `wlf,ldo2ena`, `speaker-enable`,
+> `maxim,enable`? It's not likely we will create a separate abstraction
 
-Both of those make sense, but they don't have to happen at the same time
-necessarily.
+Many of which, crucially, don't actually reset the device.
 
-Now, I'm not saying that we necessarily have to change the approach here. T=
-he
-current merge window isn't even closed, so we have plently of time left, i.=
-e.
-there's no rush with with patch series.
+--+soYglqC22/n5wEt
+Content-Type: application/pgp-signature; name="signature.asc"
 
-However, if it helps, I'm perfectly fine to take the register!() implementa=
-tion
-into the I/O entry in a first step and in a second step generalize the bitf=
-ield
-implementation and move it out of the register!() code.
+-----BEGIN PGP SIGNATURE-----
 
-Again, there's no rush as far as I'm concerned, yet the latter approach mig=
-ht
-add a bit more structure and hence run a bit smoother.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjlEwkACgkQJNaLcl1U
+h9CCzQf7Bncfs5WXAs3r5vAGgmMUJo/gZu8vwflStoT02OjudlAyN52XX/Ddf3z5
+QXLXvR2X8rQdiG44lFaOVpNKFPMwEaBSOPqnfw6xC6iaC0r00qkfq1wnmCluy8Uc
+GH8fRxQaZSl25laa2GBST1WJsH912QI3fWlhqEtgUl5/zY2VnVz/QNdFFS1TwL0+
+SE6hw0hdTJL8UJSFQumw7FohV7A80u+3V3Xs3rvOJKnaOFEPLfOQdWw9/TZi0UuE
+q1lPaj7gmq1VEgxDdPSIHzzZv3fSQQCtP+1MTi+oQ8LMxElcnPOny0c4stKH0P9T
+bNI4srPGEXT8UtZkh8pXTJMNrRKmMA==
+=2iBf
+-----END PGP SIGNATURE-----
 
-- Danilo
+--+soYglqC22/n5wEt--
 
