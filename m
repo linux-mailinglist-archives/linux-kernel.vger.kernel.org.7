@@ -1,126 +1,130 @@
-Return-Path: <linux-kernel+bounces-844529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C86C3BC223A
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:41:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A65DBC2240
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:43:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DAF054F76AF
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:40:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E0DDB4F682B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67DF72DFF0D;
-	Tue,  7 Oct 2025 16:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3452E7F11;
+	Tue,  7 Oct 2025 16:43:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jcdm3lF9"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Rnp7i08F"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179292E0B6E
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 16:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183AD2DCBEB
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 16:43:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759855240; cv=none; b=ZS+o9xE31+/HzBXHs+qPCHfHeHRZzCNhMlpOmQGsnYXjXre9s6uSEvyE6cO1T5t0i3ZHcGBnpDtcFW598FFlLvHUgxN4raBcB7JsHdTR9UlcEcHIuC01Drxzu7rny0HTL/Y/bvS4SupxqMwaOOCg7Ycv/0SpsZ7zeuGJ11EWAVU=
+	t=1759855383; cv=none; b=alfy8GQ3fy6gonAPTi8ZI104W6a0pXLrAPHbIRXdmV1RDbsCsupa9CGn1Kf0KlsmmJOr4bj4GcCLURdXf6Xhzo+8njwdwnTag8U8RIacFy46Rv1GZ0KajYC6o0nRyTRNlFjHYT/T64LFfyugKX4oC5xK197URMB9MITpylkofwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759855240; c=relaxed/simple;
-	bh=hFXYR4fcmLBIVGVw+InBgwA3ZnSYHsqcnzS4vlOpQQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N4x8KVZlTcq59KUq3/NhEK730PmlSpFIJWkAaXZR6OcZ4lmwgIPaVCLdSLlJwlNHw1yIL8wO5bhHG4/Gq3KosdY17gynWnoNLSnmXzWuYw+r5tpgRDYRljFud9U5lkpQJzekdptKPv0nUPBUhbbdx0ExZywra+uzo7oClO2itEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jcdm3lF9; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46e4ad36541so69911965e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 09:40:38 -0700 (PDT)
+	s=arc-20240116; t=1759855383; c=relaxed/simple;
+	bh=1I3jSACvZj52dzAKxBDeApC+0iug0xrEx1kH0ZI8aYE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=trg30HeOcZ8Lhb/ugIA4ay72xEtBTOKVY7/g3JQJosf5SprtLHbAeMHTP0APo4VVuTeZxomWbwcqtFoGJWRRP31mE0kwtHgaEb1DqIUb61J3zga4wCcDdhk34rDr6MpTMaHHWKia59TqBzSv4j4vznKS0iw5yr4G9PhcKUKn17E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Rnp7i08F; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32ee62ed6beso10660442a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 09:43:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759855237; x=1760460037; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4T6AAskuAQMA+z0rbuJKIDBvXK6M4cVmAuCtckIwoTw=;
-        b=Jcdm3lF9cp8hdxyA1TwTCKeOt1k7pIzDXoX0hqrHYLxKeb3AfnRRFLXutukwxM1zlI
-         Jey0VeGuBo/ok6OKMEKzifL9VZlC2ARHb44yKW3yQp9Fbr/MZh6SimXBWy+CVKB5WMav
-         EgGxVK27zpI61WY6MvWJoaiExBXw6QS8BUNn+hZIlPy/rpEo0B9KfHEMx9WKcrsJ4RGN
-         DIdErZODu4/EUrOXxHui2sqQYEMwsc8qRA2xtEHPT8G4yFIMtrGKgtqQxOlnhJq2O9UN
-         7sHDYTB3i2Os+S3Kb2meK1s0wDMgtZ0QyFRGAOTGTwg/BBkaGs1uwNaat8588vxOxiCk
-         moBA==
+        d=google.com; s=20230601; t=1759855381; x=1760460181; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Oz1jqWWg+SoU/ogJkFuXFKT4EoUpLm9W9ZKhzFV4aIM=;
+        b=Rnp7i08FH5hsPPSFGN/v6iRO/MXIEcLiJ4PmGA/w0+mVOCVNZ0AoAjPnk+frHepdtm
+         WVU7GRLTegLRsaUO3DZQ6Jl5A1doyoAAiUzMlLgyHqZW5ueheYEUcESmGTmGpBuEH6rw
+         waxNxezWH+ly+LPQ6f/Hl6OjCmu5iaGd6cL1U2H84RMUlCu81RLzpTumoVzHVYc3WNDR
+         Mi4+45d+B+rEepaFGeqYKlCE4iAdEipOUipqWk95C/dXi2Uc1Oyyjly70z/mRgiRT+xu
+         OGDSqdUHQhahzMLn3DkNjb2iSwu1cQAFZ3iHI2JfZcBEgpL/u1bZofqwlVQfVoHB1ZiC
+         k3pQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759855237; x=1760460037;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4T6AAskuAQMA+z0rbuJKIDBvXK6M4cVmAuCtckIwoTw=;
-        b=WhgcOcEoV42UEcKPhIKZI7VgiDhWkcOLaHH11P58jYnX/RkUkQEQ+M3TSgMdLNQULl
-         vh1YjTf5s+oxBf+XuVQOkTnV9uGON4Yb/kC3Tb1AvgPDMgF+RHTSbCv91kITC5UYMlhq
-         +sqB/Q1b55lR0r9JblcZyQZTwvxcyXOIvZDjwlYCy65LUSYOkTM1M/J5uYnIBQIAbnLN
-         cKpWt7jmlOC23Ja1eklo/+J8JWme492kd4JiTMd08Jx+oGtDG+2rPECRl0UUgB8Sx8/x
-         jpa+APRZdNBfpxSeZn7uLfOc2NN+2Jq1IBuKyWJENVQiQqVhXrszqWqWXnyhF4PaWJ3i
-         S0gw==
-X-Forwarded-Encrypted: i=1; AJvYcCWMsgawxSUOZ758i4W2vVt73PBtDiG96Z2x4vl625UqACqG7BkBhlOE/q2i9Jlt/4KCiga1K3mhJ1xDPFk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywNe7w/AW54+p/8UmFOkT2+FwcEUiOpGtyf+14tjzDmIZcZz4i
-	79V8OQJKkzzbto9rbaIP97IRGKSCyD7jpd1uBeRVdIeVVEgDcSOXJ8icT8OAXKQRmfM=
-X-Gm-Gg: ASbGnctpUePK8GNnkPprWA5bcXupa597xzrZOc/oMUN0gh/dfwMaQLS47Lghyq0DBzw
-	9ZLHiI6lGiQtTG0DnzZGE9p1a/FLccVBssKyXei9TMjWBfIS6e6xw6LW5Ccj3Bm+pkrCZFo9Joe
-	/Elcz8wnGl0x7pUyrx/YFJCmh7XuA9jwRyIWm0NfrPUZ/6OTRS9DSv9mIxPbskG5j84bNG92qEy
-	RvD4tt1o4shUq0+xrwylRBcPriIIHXGFuMtQRFjFLr4NXMXJ6s++u1RxQrAAG5IhprmR24ZOS3u
-	UghyoKttpmbV/dIyzvupUDHCFwyGK0tR1qcNfr7rUJLxgEjprJhSMwJ4Gtb0TNX+YkKEzsOHWFS
-	xLmqaOKw8K5eZGhz1nCSk4hMIYp9i2m0MEE9+5w40CW4dooi+mjnEQoCO
-X-Google-Smtp-Source: AGHT+IGlCEBhLy99r0MwbwBabTf5K5u09aQHi1qXsVdU6U8kDvKm7mhQZ0t1bgVq0uYvoequQknBLg==
-X-Received: by 2002:a05:600c:528b:b0:46e:5cb5:8ca5 with SMTP id 5b1f17b1804b1-46fa9b164edmr2084845e9.35.1759855237338;
-        Tue, 07 Oct 2025 09:40:37 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4255d8f0170sm26956211f8f.49.2025.10.07.09.40.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 09:40:37 -0700 (PDT)
-Date: Tue, 7 Oct 2025 19:40:33 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Rakuram Eswaran <rakuram.e96@gmail.com>
-Cc: ulf.hansson@linaro.org, zhoubinbin@loongson.cn,
-	u.kleine-koenig@baylibre.com, chenhuacai@kernel.org,
-	david.hunter.linux@gmail.com, skhan@linuxfoundation.org,
-	khalid@kernel.org, linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] mmc: pxamci: Fix passing NULL to PTR_ERR() in
- pxamci_probe()
-Message-ID: <aOVCgXnHDnErCLnu@stanley.mountain>
-References: <20251007161948.12442-1-rakuram.e96@gmail.com>
+        d=1e100.net; s=20230601; t=1759855381; x=1760460181;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Oz1jqWWg+SoU/ogJkFuXFKT4EoUpLm9W9ZKhzFV4aIM=;
+        b=BMX/65iyTSjAEpmOY+MN+g7+sKafZ6d0k07y9zMaoHaWBdVDgzRFqdqZVtJINCx8Rd
+         fW1Y/6Ohts6rRWmVjJB+oRZfkYQtH+HpjRouvFY6FlwWqC3YMDQWNlaLSkkHTIA5U6tz
+         hj8Z9ww6rB2qxc9fu1Y/YRwVf/DBjos7YcL7mgt5jl9C/jsHM8Jrh1cXxAYUynVPna3f
+         sKeJJ7KZpAhrXsquxoFo+PXWlqcYcF3TXjqzm/Kdjrg6b23MzMsQErtT9wFKBfqieWEG
+         FbplIRkCTdSkkHELZieKb5i+8XOxtLmZEG/u8ReyUzvNk0lIlzbKEGeodAWyxcl1vB5i
+         LTNg==
+X-Forwarded-Encrypted: i=1; AJvYcCUaDlIzz4kU9/RBaeGoQDey0smIv3tA8+3HvxsDcj7ecjgi5TOUXLeg3Yo751pF2R/OwDFqvdGVR2JRoRA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywvc3lamkrQh5FWYE27hDjy7h5+ogA+zlddR2BSY43zPQbUmH0b
+	f10mjjfgV4lNg3lxCoHW3iz7JVRgjnxpjLaVQg7A8yUrW7UCWMkG1MmHOXNhQ2TJ7qzEE/z+zq9
+	eTRP4TQPLstTjh5tsFP1+ANP4Eg==
+X-Google-Smtp-Source: AGHT+IGb5pFhL/AY+MlAKGnk7BkcIMmIEce49PNrjagW8tb9GwlMHqoxNKHixhepMoCTL/8Y4mkXl0xkoJXBngxvww==
+X-Received: from pjbhk16.prod.google.com ([2002:a17:90b:2250:b0:32d:dbd4:5cf3])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:3846:b0:32e:87fa:d95f with SMTP id 98e67ed59e1d1-33b513eaae0mr109039a91.32.1759855381473;
+ Tue, 07 Oct 2025 09:43:01 -0700 (PDT)
+Date: Tue, 07 Oct 2025 09:43:00 -0700
+In-Reply-To: <20251003232606.4070510-6-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251007161948.12442-1-rakuram.e96@gmail.com>
+Mime-Version: 1.0
+References: <20251003232606.4070510-1-seanjc@google.com> <20251003232606.4070510-6-seanjc@google.com>
+Message-ID: <diqz7bx6ek8b.fsf@google.com>
+Subject: Re: [PATCH v2 05/13] KVM: guest_memfd: Allow mmap() on guest_memfd
+ for x86 VMs with private memory
+From: Ackerley Tng <ackerleytng@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 07, 2025 at 09:47:44PM +0530, Rakuram Eswaran wrote:
-> Smatch reported:
-> drivers/mmc/host/pxamci.c:709 pxamci_probe() warn: passing zero to 'PTR_ERR'
-> 
-> Case 1:
-> When dma_request_chan() fails, host->dma_chan_rx is an ERR_PTR(),
-> but it is reset to NULL before using PTR_ERR(), resulting in PTR_ERR(0).
-> This mistakenly returns 0 instead of the real error code.
-> 
-> Case 2:
-> When devm_clk_get() fails, host->clk is an ERR_PTR() resulting in the similar
-> issue like case 1. 
-> 
-> Store the error code before nullifying the pointers in both the cases.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/r/202510041841.pRlunIfl-lkp@intel.com/
-> Fixes: 58c40f3faf742c ("mmc: pxamci: Use devm_mmc_alloc_host() helper")
-> Signed-off-by: Rakuram Eswaran <rakuram.e96@gmail.com>
+Sean Christopherson <seanjc@google.com> writes:
+
+> Allow mmap() on guest_memfd instances for x86 VMs with private memory as
+> the need to track private vs. shared state in the guest_memfd instance is
+> only pertinent to INIT_SHARED.  Doing mmap() on private memory isn't
+> terrible useful (yet!), but it's now possible, and will be desirable when
+> guest_memfd gains support for other VMA-based syscalls, e.g. mbind() to
+> set NUMA policy.
+>
+> Lift the restriction now, before MMAP support is officially released, so
+> that KVM doesn't need to add another capability to enumerate support for
+> mmap() on private memory.
+>
+
+Also thought through this: before this series, CoCo VMs could not use
+mmap, but that's a tighter constraint, relaxed in this patch.
+
+The actual restriction is that private memory must not be mapped to host
+userspace.
+
+In this patch series, guest_memfd's shared/private state is controlled
+only by the presence of INIT_SHARED. CoCo VMs cannot use INIT_SHARED,
+and hence cannot have guest_memfd memory that has shared status.
+
+CoCo VMs can only use guest_memfd memory with private status, private
+memory can't be mapped to host userspace, so we're good in terms of CoCo
+safety and keeping the original purpose of guest_memfd satisfied.
+
+> Fixes: 3d3a04fad25a ("KVM: Allow and advertise support for host mmap() on guest_memfd files")
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+
+Reviewed-by: Ackerley Tng <ackerleytng@google.com>
+Tested-by: Ackerley Tng <ackerleytng@google.com>
+
 > ---
-
-Thanks!
-
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-regards,
-dan carpenter
-
+>  arch/x86/kvm/x86.c       |  7 ++++---
+>  include/linux/kvm_host.h | 12 +++++++++++-
+>  virt/kvm/guest_memfd.c   |  9 ++-------
+>  virt/kvm/kvm_main.c      |  6 +-----
+>  4 files changed, 18 insertions(+), 16 deletions(-)
+>
+> 
+> [...snip...]
+> 
 
