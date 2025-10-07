@@ -1,87 +1,79 @@
-Return-Path: <linux-kernel+bounces-844292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51790BC1785
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 15:19:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8740ABC178E
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 15:20:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CC96B34F38C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 13:19:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CB11D4E1B6B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 13:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8672E0938;
-	Tue,  7 Oct 2025 13:19:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FF532E0B5C;
+	Tue,  7 Oct 2025 13:20:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QbpAp+MI"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="UtIk1H+p"
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA0525486D
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 13:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D67025486D
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 13:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759843162; cv=none; b=JhX0ss1wj1+WEOS+79CYgGydaZgKHGc4cOLgLtJorMW8p0ZqjGTM0Kw2mT7EFkqUs9Yk12kJT2OLGHZVO4LLTRtOenLv7EG/Cezb/sGGFJXaaFO3mpZlJEUeLoX34gvz6jEi2cJ7PGudCtfRrKiIlUlgJIC6meqU658wAnxlhww=
+	t=1759843212; cv=none; b=FwHNZhagcORoGV5mKdCGfLNiu/JlnHmFmb3rAnewUHYNNPOQ6rvlhlaELKybRd7F6o9Vh3sT2Z2oMv+MGbrjPMIurTAjD7A/6QGOKvRKTmJKkRGymK6UFidh7RHJWzRZxKtVR1NXXE0Ij3ys6WMgkFIz8R1PGEbXR6Ppm7lUOvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759843162; c=relaxed/simple;
-	bh=LnAHJdfLE8ObSWvVmW7FhZfRtelieJ3PBtAew1HGBgU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fl56Jz7aodBSutMv9HG6hhh1yUTA242b3RrNe6PH3gmnPbuSALzvHXK9lldNbaLB5XAm23yx3DIM7JTIBktzlBIAlx/ll2pUkkFDTMh5lSuILPMlR5JFB6Tu+MoJpdDJUanPI07YKBFzxR2XRjjpAN5tVIo87YD4z25PP3fsDA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QbpAp+MI; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 597Cl2tC019416
-	for <linux-kernel@vger.kernel.org>; Tue, 7 Oct 2025 13:19:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zDMLEOsZqI7VKYWstweTCTb87X62RrcGaFnWA3/+hWk=; b=QbpAp+MI7xUz/fOg
-	3iiwHwfmofszZ6uUvzFeWdiG2oZVlhmgKaiIxep0GNjFDq/qdOroV7IqbQwL4SNB
-	JJdLhSBFZIf14r1wuL8CtT0fdWdWsqjRzFY+Cya832F1iFBvSLUrUGXes/JJFHcU
-	futz7zi6UaMygj9EDJY2oqO45tdLXThKm5JXpXMlg/CdkvAJ1naAuTas/1QyU5ow
-	r7w3a9ZIBcpIUQlwvngr/C6mkofSiuZI7EAGlNWva7aLScmtaI3+yGpRbLHFBo+3
-	1gwV6cs9G6jjrUBBaoe0JxvTvCR58Lmpw0kfgJLeUmhvPwa6heJfS27Sl4wbeCmH
-	n2oiqw==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49jtwgqbde-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 13:19:19 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-826b30ed087so16439156d6.2
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 06:19:18 -0700 (PDT)
+	s=arc-20240116; t=1759843212; c=relaxed/simple;
+	bh=giqCpi0LH1kxCJpdQzyBEXWToPuMe+YtyXITit3AxbM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=nia2WgCVdL6N2AVM3NFtNlp/P5PR6t4qe5E/RIW6HjaHSQ4By4DM6lWFDiVxbY2IAq+asE6VQN0tOdZmFepAgsJ5PrJ5Dy92CJ3I+eAfTsHIU0Ys4bWcKDGMw1wAMxyfgWwbaB4gwk+iZsVcPYYl/e05ORoprR2ZRpyAUGxHE3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=UtIk1H+p; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-42d8a0f09f6so25421945ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 06:20:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1759843209; x=1760448009; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=gFkYQqELpZ/I5DDYLLleq52CpzNajwjStFZiAMR6DNo=;
+        b=UtIk1H+pZiERYJW1o3TSw0V0VmA2OmaJNMk62hQAkPaDJobOLDpAnWVDRDCTzkurBR
+         Lb2TXJU7az8mZXJS87I3pP442yv5K8RUYso01xvAOnNpo3zISzSwavb5K8mY8chl9bXB
+         +D6XgevkZZYgbO0PSnrAV53Ac82K+iWbZgsFNe4oeBF8i3vVBMCuOYOL914rDYBaVvxW
+         DIGDOTVxtWk4/grtNHJdJyTIV3XDbcPTza85KwnkuXy82c2bLNrlm9DNxmm0h+jKSTjU
+         ZY+kWu3AyGgB8lQ8yE5HAI9LbM8CgepJjJpYEJEea+oXjboSilov8V2s948GxLO/FuKZ
+         hFkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759843158; x=1760447958;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1759843209; x=1760448009;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zDMLEOsZqI7VKYWstweTCTb87X62RrcGaFnWA3/+hWk=;
-        b=m6LtI7Xw94oGdjkAkAoNsPPVPpsoPGewYEWAeuT5g642y1w4T4zhj3S9o0H6Wkk+al
-         JUxBstHekfWY1H8kv1hCGfeO6+EeUCkosU/9n1MXESKs9Zq5UNhw4RCbtPW5u5MkAHxB
-         zMcoPtyfS1dG4ymeuN/dJFJMU0SPYAdceZC8I2SRJAJWI2aoa/u2hLhpFp7u/DEM6/uh
-         q+y+LSWC14pjrcLvidmP8sRX3NTE0X8fv4oPTIfYDykkWdrtqwfEozAVLYOWEH6FDuTK
-         d6UdqaTbZ80ueQnQ7gcLBCi3/2Glfw7jHOifwRevj/faBsBrtkQdZlHkhyNPLf3B3IwN
-         41GQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX2DpXVejXdKMob5j2eKodlG1k1OQi2m+0BHd/eX01iLTc0B4Cyn8OU5jSRwBJhjmNfkDoabH1sGKhmTQk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdgXw8zP0Ob09ywysAIgLUrb5TkALmddXxnzLQSsgl7xpf+GpT
-	dQ7zlXV20dW6Mkn1k9FsMMNq5sroU1sNeHQLvE+QH9WvFIqNxnsfhYe+u8N/TbSQh2gqeTGTZlT
-	qYAP3eWR5Bh2YDlACLqB5RGp0ZGTD5ayGbTil3SXqlpOHGLwyGuHhNvT23Ma2b4PQGbU=
-X-Gm-Gg: ASbGncvzVvJkeVWq11j88AadhPfnLBozq8pgbbLHZajMZJzOWG/gGGSgQYv2UiOERcr
-	ffKNPj1GR9KLaDwVNyn6KzNaoo1ir30O4dC7ZD+oboec1UvOBg+770atZQYODi8bVeTm3t5wHxU
-	NH4UQ078JRzjSQpFuT0nQ8nk8grphmVpBjUxeKrBUgTgpxH5fxaWU+3SA69eb4owQppI27mGO3D
-	Fqoxtm/C9NcByD5+R5JsaUzxN0TqhBwPmhMr0f8Fweyc9kEg/1VoMbGGs3oPdvb3QPBc3FuSCQJ
-	Bvaefey0yF4wttE5EmPCYxrQPOZ4bUNb9L/e53Al9PX5xUyAhGQ7CDrWDeuONnj5vzHaX/cklEQ
-	s4hxHi279DzQepZYcOeUsaSnf/kw=
-X-Received: by 2002:ac8:5f91:0:b0:4b7:aa56:c0f8 with SMTP id d75a77b69052e-4e576a4b14emr132692771cf.4.1759843158031;
-        Tue, 07 Oct 2025 06:19:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE/NXeouDxTbHwgWa2d0D7fBgPvLyWgqaq7L3tSbrQ2CaTdY9AOHfPVIWwQCrEHUSq2nA0hqg==
-X-Received: by 2002:ac8:5f91:0:b0:4b7:aa56:c0f8 with SMTP id d75a77b69052e-4e576a4b14emr132692161cf.4.1759843157313;
-        Tue, 07 Oct 2025 06:19:17 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b486970a4bdsm1396017166b.49.2025.10.07.06.19.15
+        bh=gFkYQqELpZ/I5DDYLLleq52CpzNajwjStFZiAMR6DNo=;
+        b=nX0T0E+YHSws4Uvq24wcvu3QpAElkoPhzbU7+gaXu+/Ws7pPJisOzYb9jQXGycaRhB
+         RPFec3cCQWrXYUJsFMe2R9RC0d6+7/tNm7dzMYDTsym4yxI1Mp7HPwi55su1VfL+O+oN
+         KYKvEf7RSGBYi9k/URUmDqsbSkLtiGGg2zEzA0Hn/zzmXRiilCx/G2VqRdpsAk3u8Ou/
+         ki7Hkpp0LYA1N3U51JIQrRAJeu4V1pIVLqCsfu99EyKMskr037hAmTJc8Z+q82C7bOEh
+         w+HsSJoYNHPywgqV6JVj2AsIc1Cb8wx7QSFRpLnww9OZTHcnruxEURpXMkt6HUamTuua
+         3BBA==
+X-Forwarded-Encrypted: i=1; AJvYcCWHJvoZw/tnxTMk/n7o/zRdrSbZzB9jzwbAO6HO9LitoxCKBRRr369nlzsi4iXGt32Ynb1uIH+q6t1GeM4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrrVu5Hi5DKUtLLk/Q3KddH1p4Kg4s1GeoahQiHKR4OZDDOJE4
+	drkUSEHw6EHb3iZxF4a7Ua36/poJsQ4lN4Ve1wYtf8JPqxiK9VlQc3tIZ9/vPigVgtQ=
+X-Gm-Gg: ASbGncsRfwaK8qqn80AYA8OjWImYKZoIli3QFVTuLY8wIOwMT6sIi4E7SK7cUyTF4oQ
+	brtVpAWOfw64JFv3ugv/0EOUrlLasj4rsg11tv5JqWETCYoP6zKIB41bz4vAkbFZBXXB6tKOiWG
+	9/KABdCZzWG2WXezQR6X1a2nRVA95dVkgrYUXtHf75PLeAkuoMKzwOt1LxXfdydX2poqIBF6pPF
+	bvR5oLJZ9E0rKPiUHEAsYUUZ5HJbfCMxw8T51+uMG7lUNXRbD/7FvmjE52X7/vfr68Zbd5m5lAY
+	fCi+rptdK3WAnl/4Ionj3AzNkayVGz5rQ6oKJYq1s2LMvHne4+jLNcMtoMkYQbjgQNYe80itucu
+	KPnAQiggobvh0aTxA+UfPcTCLEfDHqePj5FhY5jt32gd7I9uGWLMD6FU=
+X-Google-Smtp-Source: AGHT+IECpoJl5ZknvT8EatO5MCAHJVtZrLUEEc1VV9KUIEqsn3vWrqz+GBQUzNa/CwNmBAZBLoaGKQ==
+X-Received: by 2002:a05:6e02:1fe9:b0:425:7466:624d with SMTP id e9e14a558f8ab-42e7ada91abmr224158295ab.26.1759843209434;
+        Tue, 07 Oct 2025 06:20:09 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-42d8b294ddfsm63257435ab.33.2025.10.07.06.20.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Oct 2025 06:19:16 -0700 (PDT)
-Message-ID: <1cd3fdd3-af27-48e8-8bcc-aad7262b139e@oss.qualcomm.com>
-Date: Tue, 7 Oct 2025 15:19:14 +0200
+        Tue, 07 Oct 2025 06:20:08 -0700 (PDT)
+Message-ID: <7c0346f9-e90c-4c15-a2d6-b2d40005361c@kernel.dk>
+Date: Tue, 7 Oct 2025 07:20:08 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,62 +81,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: pmi8950: Fix VADC channel scaling
- factors
-To: Antony Kurniawan Soemardi <linux@smankusors.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20251004-fix-pmi8950-vadc-v1-0-3143ecab99e9@smankusors.com>
- <20251004-fix-pmi8950-vadc-v1-2-3143ecab99e9@smankusors.com>
+Subject: Re: [syzbot] [io-uring?] KASAN: slab-use-after-free Read in
+ io_waitid_wait
+To: syzbot <syzbot+b9e83021d9c642a33d8c@syzkaller.appspotmail.com>,
+ io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+References: <68e50af2.a00a0220.298cc0.0479.GAE@google.com>
+From: Jens Axboe <axboe@kernel.dk>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20251004-fix-pmi8950-vadc-v1-2-3143ecab99e9@smankusors.com>
+In-Reply-To: <68e50af2.a00a0220.298cc0.0479.GAE@google.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAxOSBTYWx0ZWRfX4cxXFOhWJ7rP
- vsdYiHUfwPIPVpxN9y7DS8gnecA+KWhHiTi2p4evWGDsrtBf+MwSm4pms1cjinUzoaBx/Bj2eje
- +vrOXyTRJg76VYLwbCjUuaE3Pb0w2gmAnjYgnbwdx/wBcgixVKoRGso2cmEjiZiQzLmZ7WZY3oA
- pqpr7q/njR43sQE3QCJmxe9ugdJ/yyXq6/AcVkgtgW+gY2KBRE6vsLVQKPu8vO6UyN4dfTjTjLs
- KtQYAyme75OTuvAWHnxXeXFxahWwphMX9yadiFoW8aWl6+Neh0hmNkZL3YL61tcVUMf1gZFVSso
- JD3jMUn1XfpQXcz4OeAbc9iorhRBgKWRIcPeZIKLQ55doRN8hECI6bxVlSTHC7UXmFzxTDt9v1k
- vYanMpuy0ujtcnZWBYI8AIOaEZfEGA==
-X-Authority-Analysis: v=2.4 cv=B6O0EetM c=1 sm=1 tr=0 ts=68e51357 cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=NEAV23lmAAAA:8 a=wxLWbCv9AAAA:8
- a=EUspDBNiAAAA:8 a=jy5Z_zf4QHJ3AEBhBnAA:9 a=QEXdDO2ut3YA:10
- a=pJ04lnu7RYOZP9TFuWaZ:22 a=QJY96suAAestDpCc5Gi9:22
-X-Proofpoint-GUID: CPz-B0n_Iv9UoxTrYlTwveLTNh08AIPm
-X-Proofpoint-ORIG-GUID: CPz-B0n_Iv9UoxTrYlTwveLTNh08AIPm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-07_01,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 lowpriorityscore=0 adultscore=0
- impostorscore=0 spamscore=0 bulkscore=0 phishscore=0 malwarescore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
- definitions=main-2510040019
 
-On 10/4/25 3:12 PM, Antony Kurniawan Soemardi wrote:
-> Fix USBIN/DCIN scaling to match the downstream implementation [1].
-> 
-> Downstream defines the following scaling mappings [2], corresponding
-> to mainline pre-scaling values:
-> 
->   <4>  ->  <1 20>
->   <1>  ->  <1 3>
-> 
-> [1] https://github.com/LineageOS/android_kernel_qcom_msm8953/blob/e6b46fc6f52e754eef5ce6265c7d82a3622e0b0f/arch/arm64/boot/dts/qcom/pmi8950.dtsi#L55-L86
-> [2] https://github.com/LineageOS/android_kernel_qcom_msm8953/blob/e6b46fc6f52e754eef5ce6265c7d82a3622e0b0f/include/linux/qpnp/qpnp-adc.h#L342-L357
-> 
-> Signed-off-by: Antony Kurniawan Soemardi <linux@smankusors.com>
-> ---
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux.git
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+diff --git a/io_uring/waitid.c b/io_uring/waitid.c
+index 26c118f3918d..f25110fb1b12 100644
+--- a/io_uring/waitid.c
++++ b/io_uring/waitid.c
+@@ -230,13 +230,14 @@ static int io_waitid_wait(struct wait_queue_entry *wait, unsigned mode,
+ 	if (!pid_child_should_wake(wo, p))
+ 		return 0;
+ 
++	list_del_init(&wait->entry);
++
+ 	/* cancel is in progress */
+ 	if (atomic_fetch_inc(&iw->refs) & IO_WAITID_REF_MASK)
+ 		return 1;
+ 
+ 	req->io_task_work.func = io_waitid_cb;
+ 	io_req_task_work_add(req);
+-	list_del_init(&wait->entry);
+ 	return 1;
+ }
+ 
 
-Konrad
+-- 
+Jens Axboe
 
