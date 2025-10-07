@@ -1,121 +1,163 @@
-Return-Path: <linux-kernel+bounces-844503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A260BC2189
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:20:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69000BC2192
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 18:21:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7E4BD4F661C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:20:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3B303B17A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 16:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E96C82E7F11;
-	Tue,  7 Oct 2025 16:20:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29CC22E7F07;
+	Tue,  7 Oct 2025 16:20:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="xoD0pR9R"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oy6JPO8y"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8956F2E7658;
-	Tue,  7 Oct 2025 16:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2AD71DE2CC
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 16:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759854006; cv=none; b=kNxvT6wdfeHlDXNXnVfjnL9h+VZUvymu5p6bC2s1KRetj7vPzNSRBp8UP06SN1/cz8gdv7Aw8wLzhF7rSRmja1VHJfICljTgo9e4ogqfTyA9uNuofKQCYg1NevlkXrU/GVAylFbDwnpvO1SiUNSV/SNsr3nHlHKkzwmkJiym39E=
+	t=1759854053; cv=none; b=OvhCH5cv04vkEfMhpMRIBFO/PlHkS+N7cF/JWalhbJdtEKdMeoArX5CsA0eLwoKGME+lIpAaSIfl3oTIw+nJpb3UqaZ5THhYfiYVdEZM8cycnqJtV9C5AeXXJsVPeRaBX2LgjvK0c3ys1THa1JYzTvI+ivoF4hLObDzboFWKnP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759854006; c=relaxed/simple;
-	bh=h/Eg/Uc6BoL1pnkILtNEBcDhyDg10QbRxuCgWt+axpY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lcTtT0/qbLnn7CGv/dTmOC+QuFihGwCyykR/27Qgr2v8h9uu+PpkHM0rcFzyuS3TqnZbqDm6PU4NyA5ldCMJjxI9xlLKM/FSVwbThE7kxZ8dAi+m2pLaaiWUUsBP564wIYfTuSSMOFM4XIc/gHAnIPxRs4oVfxExfYTidQo3QaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=xoD0pR9R; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4ch1ZC2hjJzlgqV0;
-	Tue,  7 Oct 2025 16:20:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1759854000; x=1762446001; bh=h/Eg/Uc6BoL1pnkILtNEBcDh
-	yDg10QbRxuCgWt+axpY=; b=xoD0pR9RDOxtIlxFtnRIjLF5rDcQM0X1iuuILYui
-	O3QZUQDkXGb+c8M22sxgLJJEt/jyua8CnJfK1FlY7ovl1bTcwuSpuZJutVBviAEk
-	txlm9ekn8MOKdM0iDBnrUH9VMVBpQW/S6SV7nJYSS27TYQg65+MkPS8F5oRTenjA
-	l/09DjusndKDTO86kC6vhfpzfvG0oMyOeoVfA6Yy5rW4j0RFuYbFKJ0Gy+j54Xgm
-	CclaftVCQ6yBhavTdG6erMsRG/mDOscI97eVXrsU/GL/pP1t+AtXCFb2+1mRnJLc
-	UnaHZ+eowxsGQXuJkPVKDQIkJPrI3c+ICHVi+PLxaKEcLg==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id sWalvk3kUJVJ; Tue,  7 Oct 2025 16:20:00 +0000 (UTC)
-Received: from [100.119.48.131] (unknown [104.135.180.219])
+	s=arc-20240116; t=1759854053; c=relaxed/simple;
+	bh=2fEwLuPhzM8A+jG8Jh4BEEDphvVP+ZSL+92/amnexyQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JXtCDSFpXV6siQbdzvIbsljRw9k74dUiB4WmD8AhaUIkzc+mmG4FkAMO4o8wpvKSaesoXq/TC9rE3036rzHyaVtrpJi8qH4juGoJ+ggM3uQCEVh4I5hfFdHfQPSZAR3hPFp/ukhujib8FL/NAI/wnPYR+MCQ6cNn8cBWIQux1aU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oy6JPO8y; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1759854049;
+	bh=2fEwLuPhzM8A+jG8Jh4BEEDphvVP+ZSL+92/amnexyQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=oy6JPO8y9XnNaLP4Sk2bewDlY3H1B6YQ3oKcRxbx4JLUnU03ACzvM1j0ougQicbFr
+	 Fye+ajTW7ViIfU+jW3u43ZaU96Xvf61i1NECvmX/TH5jzk03SHgvM8jYUFgJ+y1fwn
+	 Un1N3Q+3J0lIw/Xx+G2ALvYGS1qscIt1zIFCYNDzJ6esyIh6OvvpNCmz/MHGwCTBc4
+	 AlGW0Ss2XAu0TR+u6W8Coa3w5FWLbOu+gi4MS02SJpenOA53UREIc9ipWhpQO9xRJs
+	 jBYJYTEmX96Dc7Hns7CzdT/wcytmw6iPOYFeCDVWgOc2JwKzRH1R5C5q0Nqeh+UXHC
+	 qBCyKDGtFZFVg==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4ch1Yt1s7vzlgqVF;
-	Tue,  7 Oct 2025 16:19:45 +0000 (UTC)
-Message-ID: <2ce08f9f-af8c-4cac-8d66-97517eb18037@acm.org>
-Date: Tue, 7 Oct 2025 09:19:44 -0700
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8A5DE17E1310;
+	Tue,  7 Oct 2025 18:20:48 +0200 (CEST)
+Date: Tue, 7 Oct 2025 18:20:45 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Steven
+ Price <steven.price@arm.com>, kernel@collabora.com, Rob Herring
+ <robh@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>
+Subject: Re: [PATCH v5 05/12] drm/panfrost: Check sgt to know whether pages
+ are already mapped
+Message-ID: <20251007182045.6a239bb8@fedora>
+In-Reply-To: <20251007150216.254250-6-adrian.larumbe@collabora.com>
+References: <20251007150216.254250-1-adrian.larumbe@collabora.com>
+	<20251007150216.254250-6-adrian.larumbe@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] scsi: ufs: core: Reduce the sleep before vcc can
- be powered on
-To: =?UTF-8?B?UGV0ZXIgV2FuZyAo546L5L+h5Y+LKQ==?= <peter.wang@mediatek.com>,
- "avri.altman@wdc.com" <avri.altman@wdc.com>,
- "quic_cang@quicinc.com" <quic_cang@quicinc.com>,
- "quic_nitirawa@quicinc.com" <quic_nitirawa@quicinc.com>,
- "quic_nguyenb@quicinc.com" <quic_nguyenb@quicinc.com>,
- "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
- "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
- "martin.petersen@oracle.com" <martin.petersen@oracle.com>
-Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "beanhuo@micron.com" <beanhuo@micron.com>,
- "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
- "James.Bottomley@HansenPartnership.com"
- <James.Bottomley@HansenPartnership.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <cover.1759348507.git.quic_nguyenb@quicinc.com>
- <b9467720ccabbabd6d3d230a21f9ffb24721f1ed.1759348507.git.quic_nguyenb@quicinc.com>
- <c12b15699ad8176760c220100247af15954f30d8.camel@mediatek.com>
- <a1eaae1e-3e10-4512-bc83-ae25eacc43d6@quicinc.com>
- <4943d9d6e31b2993ee0563722b8bc38c3b1ef069.camel@mediatek.com>
- <234a5185-d7f3-fe81-9c02-7895691c1fbd@quicinc.com>
- <85bce5dc28293f48e32b64eed5591d66c54c9e69.camel@mediatek.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <85bce5dc28293f48e32b64eed5591d66c54c9e69.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
+On Tue,  7 Oct 2025 16:01:47 +0100
+Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
 
-On 10/7/25 12:04 AM, Peter Wang (=E7=8E=8B=E4=BF=A1=E5=8F=8B) wrote:
-> On Fri, 2025-10-03 at 14:27 -0700, Bao D. Nguyen wrote:
->> With the current or recent offerings of ufs devices in the market,=20
->> the requirement is 1ms. For example, the Kioxia datasheet says
->> "Vcc shall be kept less than 0.3V for at least 1ms before it goes
->> beyond 0.3V again". Similarly other vendors have this 1ms
->> requirement. So I believe this indicates the worst case scenario.=20
->> I understand there may be very old devices that are upgrading the=20
->> kernel only. In that case I don't know the specifics for these old
->> ufs parts as mentioned.
+> In the MMU's page fault ISR for a heap object, determine whether the
+> faulting address belongs to a 2MiB block that was already mapped by
+> checking its corresponding sgt in the Panfrost BO.
 >=20
-> Hi Bao,
+> Also avoid retrieving pages from the shmem file if last one in the block
+> was already present, as this means all of them had already been fetched.
 >=20
-> Please consider using module_param_cb to set the default
-> delay to 2ms(or 1ms). At the same time, we should keep the
-> flexibility for devices that may require a longer delay by
-> allowing them to extend the delay through a module parameter.
+> This is done in preparation for a future commit in which the MMU mapping
+> helper might fail, but the page array is left populated, so this cannot
+> be used as a check for an early bail-out.
+>=20
+> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
+> ---
+>  drivers/gpu/drm/panfrost/panfrost_mmu.c | 41 +++++++++++++++----------
+>  1 file changed, 24 insertions(+), 17 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.c b/drivers/gpu/drm/pa=
+nfrost/panfrost_mmu.c
+> index cf272b167feb..72864d0d478e 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> @@ -600,32 +600,39 @@ static int panfrost_mmu_map_fault_addr(struct panfr=
+ost_device *pfdev, int as,
+>  		refcount_set(&bo->base.pages_use_count, 1);
+>  	} else {
+>  		pages =3D bo->base.pages;
+> -		if (pages[page_offset]) {
+> -			/* Pages are already mapped, bail out. */
+> -			goto out;
+> -		}
+> +	}
+> +
+> +	sgt =3D &bo->sgts[page_offset / (SZ_2M / PAGE_SIZE)];
+> +	if (sgt->sgl) {
+> +		/* Pages are already mapped, bail out. */
+> +		goto out;
+>  	}
+> =20
+>  	mapping =3D bo->base.base.filp->f_mapping;
+>  	mapping_set_unevictable(mapping);
+> =20
+> -	for (i =3D page_offset; i < page_offset + NUM_FAULT_PAGES; i++) {
+> -		/* Can happen if the last fault only partially filled this
+> -		 * section of the pages array before failing. In that case
+> -		 * we skip already filled pages.
+> +	if (!pages[page_offset + NUM_FAULT_PAGES - 1]) {
+> +		/* Pages are retrieved sequentially, so if the very last
+> +		 * one in the subset we want to map is already assigned, then
+> +		 * there's no need to further iterate.
+>  		 */
 
-Why a kernel module parameter? Why can't the default delay be set by
-ufshcd_variant_ops.init()?
+I don't think we care about optimizing the page range walk in the
+unlikely case of a double fault on the same section, so I'd just keep
+the existing loop unchanged.
 
-Thanks,
-
-Bart.
+> -		if (pages[i])
+> -			continue;
+> -
+> -		pages[i] =3D shmem_read_mapping_page(mapping, i);
+> -		if (IS_ERR(pages[i])) {
+> -			ret =3D PTR_ERR(pages[i]);
+> -			pages[i] =3D NULL;
+> -			goto err_unlock;
+> +		for (i =3D page_offset; i < page_offset + NUM_FAULT_PAGES; i++) {
+> +			/* Can happen if the last fault only partially filled this
+> +			 * section of the pages array before failing. In that case
+> +			 * we skip already filled pages.
+> +			 */
+> +			if (pages[i])
+> +				continue;
+> +
+> +			pages[i] =3D shmem_read_mapping_page(mapping, i);
+> +			if (IS_ERR(pages[i])) {
+> +				ret =3D PTR_ERR(pages[i]);
+> +				pages[i] =3D NULL;
+> +				goto err_unlock;
+> +			}
+>  		}
+>  	}
+> =20
+> -	sgt =3D &bo->sgts[page_offset / (SZ_2M / PAGE_SIZE)];
+>  	ret =3D sg_alloc_table_from_pages(sgt, pages + page_offset,
+>  					NUM_FAULT_PAGES, 0, SZ_2M, GFP_KERNEL);
+>  	if (ret)
 
