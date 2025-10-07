@@ -1,220 +1,172 @@
-Return-Path: <linux-kernel+bounces-843646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6967BBBFE94
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 03:13:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62999BBFE9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 03:14:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 618CC4E4580
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 01:13:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BD0534E963B
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 01:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B001E5718;
-	Tue,  7 Oct 2025 01:13:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4F61EA7C9;
+	Tue,  7 Oct 2025 01:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l58UO+On"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lm7amN5j"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF0227707;
-	Tue,  7 Oct 2025 01:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29D313AF2;
+	Tue,  7 Oct 2025 01:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759799587; cv=none; b=qh02VjObVzRTkBrU2YySStPnqVF11utzasguVTA7WfxMSmCHbDhWBq0RvHmcUFWLvWhIMg6LLSGTIABtpoGeBnmpVuFCo1NIygNOtio8uVv62qCWvYdbm4SXskY9rR6ZFzWcxgYL/ai4ZwPJ0OYKNnbKfWEXVVe/iaftR2JJ3PE=
+	t=1759799661; cv=none; b=lEX15J2vda5K5Q20ImEmbQPeL7KduiQxbcuslYcxKQYSDffdDkum+mRQq397qI+ocIDtKS5X0vwpHD2kXZ/ERVYDUn5JkhG7AsdAP5JKxVyTzaI/3wU7udu5ze54ZTuLUeGZ8J6gBfaX/7BlFXbec64txovmfbQ5gBkSRaAXhsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759799587; c=relaxed/simple;
-	bh=UrWYSwCIX3TQEiEX18+TLOM2cQ69NKHxhnVPXlw0Rl8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AJP8HPHpuzdOtD0wcfJSHImCa5HzGiyfTC/nrv981E72wDxxD62OdXy3tBKLSLJjYayMcVCXdAToO7ETMuQ+RAolmvdpsiG9Vf8WS6p09Bf28dEUiWW3lbw/u4Ahp62tcrIFbTnz3eO/RfeNqxexjOZwMVVoSc2qN1DAVkY9SaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l58UO+On; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E841C4CEF5;
-	Tue,  7 Oct 2025 01:13:07 +0000 (UTC)
+	s=arc-20240116; t=1759799661; c=relaxed/simple;
+	bh=tbDITsoSGRPsOcqxA2EA0aJKGkYbrUNq2vw4X1lzn0Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ahBKuMdF5iFJnRb+b4T2SOF85wQIKjuhkCC/M6IVlROVJ8tOGxWW0HzsXS+VEFBfsdsW1Inr3OZt0gWCjwZRDr+pB61ZQNwvyt9XN06uwQpwlUeS1ncDvaYURfu1pJ/ifKvTEv+14r0G7JUev75fge8Q3R3BQyzacX8AlFarDOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lm7amN5j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EF47C4CEF5;
+	Tue,  7 Oct 2025 01:14:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759799587;
-	bh=UrWYSwCIX3TQEiEX18+TLOM2cQ69NKHxhnVPXlw0Rl8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l58UO+On5tt9RFTfBtXL3PitdQ2efVXZXEA55vKiewNCwB4ZI23AJtlPuMimxT/jI
-	 GVkxjwtjCOkk31ESeMad/9Ln7K3jPawByZWETuyTo/Z1OtWDdCBHh+0i2wBOfO8VLk
-	 kt3rP7Urkt24mp57IUTnfQp/NwwUCV2latEf2/XWtTQZIWBhF6TimEbhowlpGoVkXI
-	 cPuJ35tzkk9HMggTk2586EU84SAbfzaeIxB+x6S17UxliCG//rWazOVli38u5KKWqW
-	 EewS5Tpl93hOhGA4P4p2rdQ4JVrrwLR2GVSVjdEJ3PFvyPcfP1J9h1AmJg1T07+5CI
-	 m+02Mis68+rFA==
-Date: Mon, 6 Oct 2025 18:11:42 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>,
-	Vegard Nossum <vegard.nossum@oracle.com>,
-	Joachim Vandersmissen <git@jvdsn.com>,
-	David Howells <dhowells@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] lib/crypto: Add FIPS pre-operational self-test for SHA
- algorithms
-Message-ID: <20251007011142.GA77681@sol>
-References: <20251006172612.75240-1-ebiggers@kernel.org>
- <CAMj1kXFTbP9dGQmk9F-WFyoL_LjtfXHMCnGT0WUQwMnrn7DHCw@mail.gmail.com>
+	s=k20201202; t=1759799660;
+	bh=tbDITsoSGRPsOcqxA2EA0aJKGkYbrUNq2vw4X1lzn0Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Lm7amN5jZqGrJfdHU0CYEuMWQAqOEwQWcIkhsC1/7VzOJr8BjiR3c9a9lnUXrTEMJ
+	 dbfeNuRpp5IraUmdKT61Vm6sjIlHMM1Fv4VcXQUYiHjaNUUGvJzoMfU+rdh5ULAn9q
+	 /J701I6poJWBR6NvuYPcLOIGpYz8bkx8zmLvAXETzefgv940gNL6Teibz4Z8Inf409
+	 D0chOh+GdkVouMBEqQmMujs3KWcw54bVT3oeoNoW6a84ZZ/E3HUqDVVtrPSjCLuOly
+	 dUkcPxIGZTz08Y3OcjqDRZ/M3wMlPNUa+iqJEqTki2z6Bv5+KFlndhW+HZNNTAUEVa
+	 Kkswn4B0bSnSQ==
+Message-ID: <64dd0bab-6036-4e06-aff5-b0f86a167ada@kernel.org>
+Date: Tue, 7 Oct 2025 10:14:14 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXFTbP9dGQmk9F-WFyoL_LjtfXHMCnGT0WUQwMnrn7DHCw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] gpio: of: make it possible to reference gpios probed in
+ acpi in device tree
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+ Markus Probst <markus.probst@posteo.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+ Mika Westerberg <westeri@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251002215759.1836706-1-markus.probst@posteo.de>
+ <CAMRc=Me3VLbmRksbrHmOdw8NxN7sxXjeuNFb9=6DzE=uLn0oAA@mail.gmail.com>
+ <7f4057f25594ac3b50993a739af76b7b1430ee6a.camel@posteo.de>
+ <CAMRc=McioBjF3WCBu0ezzuL+JJTiEpF2fz1YpbToRpijpHfAEg@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CAMRc=McioBjF3WCBu0ezzuL+JJTiEpF2fz1YpbToRpijpHfAEg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 07, 2025 at 01:53:25AM +0200, Ard Biesheuvel wrote:
-> On Mon, 6 Oct 2025 at 19:28, Eric Biggers <ebiggers@kernel.org> wrote:
-> >
-> > Add FIPS pre-operational self-tests for all SHA-1 and SHA-2 algorithms.
-> > Following the "Implementation Guidance for FIPS 140-3" document, to
-> > achieve this it's sufficient to just test a single test vector for each
-> > of HMAC-SHA1, HMAC-SHA256, and HMAC-SHA512.
-> >
-> > Link: https://lore.kernel.org/linux-crypto/20250917184856.GA2560@quark/
-> > Signed-off-by: Eric Biggers <ebiggers@kernel.org>
-> > ---
-> >
-> > Since there seemed to be more interest in complaining that these are
-> > missing than actually writing a patch, I decided to just do it.
-> >
-> >  lib/crypto/fips.h                   | 38 +++++++++++++++++++++++++++++
-> >  lib/crypto/sha1.c                   | 19 ++++++++++++++-
-> >  lib/crypto/sha256.c                 | 19 ++++++++++++++-
-> >  lib/crypto/sha512.c                 | 19 ++++++++++++++-
-> >  scripts/crypto/gen-fips-testvecs.py | 33 +++++++++++++++++++++++++
-> >  5 files changed, 125 insertions(+), 3 deletions(-)
-> >  create mode 100644 lib/crypto/fips.h
-> >  create mode 100755 scripts/crypto/gen-fips-testvecs.py
-> >
-> > diff --git a/lib/crypto/fips.h b/lib/crypto/fips.h
-> > new file mode 100644
-> > index 0000000000000..78a1bdd33a151
-> > --- /dev/null
-> > +++ b/lib/crypto/fips.h
-> > @@ -0,0 +1,38 @@
-> > +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> > +/* This file was generated by: gen-fips-testvecs.py */
-> > +
-> > +#include <linux/fips.h>
-> > +
-> > +static const u8 fips_test_data[] __initconst __maybe_unused = {
-> > +       0x66, 0x69, 0x70, 0x73, 0x20, 0x74, 0x65, 0x73,
-> > +       0x74, 0x20, 0x64, 0x61, 0x74, 0x61, 0x00, 0x00,
-> > +};
-> > +
-> > +static const u8 fips_test_key[] __initconst __maybe_unused = {
-> > +       0x66, 0x69, 0x70, 0x73, 0x20, 0x74, 0x65, 0x73,
-> > +       0x74, 0x20, 0x6b, 0x65, 0x79, 0x00, 0x00, 0x00,
-> > +};
-> > +
-> > +static const u8 fips_test_hmac_sha1_value[] __initconst __maybe_unused = {
-> > +       0x29, 0xa9, 0x88, 0xb8, 0x5c, 0xb4, 0xaf, 0x4b,
-> > +       0x97, 0x2a, 0xee, 0x87, 0x5b, 0x0a, 0x02, 0x55,
-> > +       0x99, 0xbf, 0x86, 0x78,
-> > +};
-> > +
-> > +static const u8 fips_test_hmac_sha256_value[] __initconst __maybe_unused = {
-> > +       0x59, 0x25, 0x85, 0xcc, 0x40, 0xe9, 0x64, 0x2f,
-> > +       0xe9, 0xbf, 0x82, 0xb7, 0xd3, 0x15, 0x3d, 0x43,
-> > +       0x22, 0x0b, 0x4c, 0x00, 0x90, 0x14, 0x25, 0xcf,
-> > +       0x9e, 0x13, 0x2b, 0xc2, 0x30, 0xe6, 0xe8, 0x93,
-> > +};
-> > +
-> > +static const u8 fips_test_hmac_sha512_value[] __initconst __maybe_unused = {
-> > +       0x6b, 0xea, 0x5d, 0x27, 0x49, 0x5b, 0x3f, 0xea,
-> > +       0xde, 0x2d, 0xfa, 0x32, 0x75, 0xdb, 0x77, 0xc8,
-> > +       0x26, 0xe9, 0x4e, 0x95, 0x4d, 0xad, 0x88, 0x02,
-> > +       0x87, 0xf9, 0x52, 0x0a, 0xd1, 0x92, 0x80, 0x1d,
-> > +       0x92, 0x7e, 0x3c, 0xbd, 0xb1, 0x3c, 0x49, 0x98,
-> > +       0x44, 0x9c, 0x8f, 0xee, 0x3f, 0x02, 0x71, 0x51,
-> > +       0x57, 0x0b, 0x15, 0x38, 0x95, 0xd8, 0xa3, 0x81,
-> > +       0xba, 0xb3, 0x15, 0x37, 0x5c, 0x6d, 0x57, 0x2b,
-> > +};
-> > diff --git a/lib/crypto/sha1.c b/lib/crypto/sha1.c
-> > index 5904e4ae85d24..001059cb0fce4 100644
-> > --- a/lib/crypto/sha1.c
-> > +++ b/lib/crypto/sha1.c
-> > @@ -10,10 +10,11 @@
-> >  #include <linux/kernel.h>
-> >  #include <linux/module.h>
-> >  #include <linux/string.h>
-> >  #include <linux/unaligned.h>
-> >  #include <linux/wordpart.h>
-> > +#include "fips.h"
-> >
-> >  static const struct sha1_block_state sha1_iv = {
-> >         .h = { SHA1_H0, SHA1_H1, SHA1_H2, SHA1_H3, SHA1_H4 },
-> >  };
-> >
-> > @@ -328,14 +329,30 @@ void hmac_sha1_usingrawkey(const u8 *raw_key, size_t raw_key_len,
-> >         hmac_sha1_update(&ctx, data, data_len);
-> >         hmac_sha1_final(&ctx, out);
-> >  }
-> >  EXPORT_SYMBOL_GPL(hmac_sha1_usingrawkey);
-> >
-> > -#ifdef sha1_mod_init_arch
-> > +#if defined(sha1_mod_init_arch) || defined(CONFIG_CRYPTO_FIPS)
-> >  static int __init sha1_mod_init(void)
-> >  {
-> > +#ifdef sha1_mod_init_arch
-> >         sha1_mod_init_arch();
-> > +#endif
-> > +       if (fips_enabled) {
-> > +               /*
-> > +                * FIPS pre-operational self-test.  As per the FIPS
-> > +                * Implementation Guidance, testing HMAC-SHA1 satisfies the test
-> > +                * requirement for SHA-1 too.
-> > +                */
-> > +               u8 mac[SHA1_DIGEST_SIZE];
-> > +
-> > +               hmac_sha1_usingrawkey(fips_test_key, sizeof(fips_test_key),
-> > +                                     fips_test_data, sizeof(fips_test_data),
-> > +                                     mac);
-> > +               if (memcmp(fips_test_hmac_sha1_value, mac, sizeof(mac)) != 0)
-> > +                       panic("sha1: FIPS pre-operational self-test failed\n");
-> > +       }
-> >         return 0;
-> >  }
-> >  subsys_initcall(sha1_mod_init);
-> >
+On 03/10/2025 17:51, Bartosz Golaszewski wrote:
+> On Fri, Oct 3, 2025 at 10:40 AM Markus Probst <markus.probst@posteo.de> wrote:
+>>
+>> On Fri, 2025-10-03 at 10:03 +0200, Bartosz Golaszewski wrote:
+>>> On Thu, Oct 2, 2025 at 11:58 PM Markus Probst
+>>> <markus.probst@posteo.de> wrote:
+>>>>
+>>>> sometimes it is necessary to use both acpi and device tree to
+>>>> declare
+>>>
+>>> This is a rather controversial change so "sometimes" is not
+>>> convincing
+>>> me. I would like to see a user of this added in upstream to consider
+>>> it.
+>>>
+>>>> devices. Not every gpio device driver which has an acpi_match_table
+>>>> has
+>>>> an of_match table (e.g. amd-pinctrl). Furthermore gpio is an device
+>>>> which
+>>>
+>>> What is the use-case here because I'm unable to wrap my head around
+>>> it? Referencing devices described in ACPI from DT? How would the
+>>> associated DT source look like?
+>> In my specific usecase for the Synology DS923+, there are gpios for
+>> powering the usb vbus on (powered down by default), also for powering
+>> on sata disks. An example for a regulator defined in DT using a gpio in
+>> ACPI (in this case controlling the power of on of the usb ports):
+>>
+>>         gpio: gpio-controller@fed81500 {
+>>                 acpi-path = "\\_SB_.GPIO";
+>>                 #gpio-cells = <2>;
+>>         };
+>>
+>>         vbus1_regulator: fixedregulator@0 {
+>>                 compatible = "regulator-fixed";
+>>                 regulator-name = "vbus1_regulator";
+>>                 regulator-min-microvolt = <5000000>;
+>>                 regulator-max-microvolt = <5000000>;
+>>                 gpio = <&gpio 0x2a 0x01>;
+>>         };
+>>
+>> - Markus Probst
+>>>
 > 
-> In the builtin case, couldn't this execute only after the first calls
-> into the library? That would mean it does not quite fit the
-> requirements of the pre-operational selftest.
+> Krzysztof: Could you please look at this and chime in? Does this make any sense?
 
-Only if other builtin code in the kernel actually calls it before
-subsys_initcall, i.e. during very early boot long before userspace
-starts.  Such calls can occur only from within the FIPS module (i.e. the
-kernel) itself, so arbitrary external users need not be considered here.
 
-x86's SHA-256 microcode checksumming is the only such call I've noticed.
+There is no such property as acpi-path and I don't see here any ABI
+being documented. Nothing in dtschema, either. Nothing in DT spec. I
+also did not receive this patch. Actually - nothing from
+markus.probst@posteo.de in mail mailbox.
 
-But even then I doubt it actually matters.  There are several possible
-reasons why even that early SHA-256 could be fine.  E.g. it could be
-interpreted as not being used for a security purpose, or as not
-producing any output from the FIPS module (i.e. the kernel) yet
-considering that lib/crypto/ is an internal interface.
+So no clue what is this about, but if you want to use undocumented
+property then obviously no.
 
-And of course, the x86 microcode checksumming predated my SHA-256
-cleanups in 6.16 and 6.17.  So it's not like anyone cared before...
 
-> So perhaps, we should wrap the fips test in a separate function, and
-> in the builtin case, add a call to it to every exported library
-> routine, conditional on some static key that gets set on success? With
-> the right macro foo, it doesn't have to be that ugly, and it can just
-> disappear entirely if FIPS support is disabled.
-> 
-> (For all I care, we don't bother with this at all, but if we add this
-> it should be solid)
-
-I think we should try the simpler solution from this patch first, which
-is already used in crypto/kdf_sp800108.c, crypto/hkdf.c,
-crypto/asymmetric_keys/selftest.c, and lib/crypto/aesgcm.c.  I suspect
-the FIPS labs will be fine with it; subsys_initcall is very early.  If
-they were actually using an overly-strict and pedantic interpretation of
-FIPS, then FIPS-certified Linux kernels would not already exist.
-
-- Eric
+Best regards,
+Krzysztof
 
