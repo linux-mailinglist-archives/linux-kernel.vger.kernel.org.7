@@ -1,106 +1,114 @@
-Return-Path: <linux-kernel+bounces-844008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A621BC0D2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:11:17 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90025BC0D0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:07:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B88EF3A8436
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:11:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DEF9E4E638D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3B8E2D661D;
-	Tue,  7 Oct 2025 09:11:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FFD42D661A;
+	Tue,  7 Oct 2025 09:07:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b="bH3h03gJ"
-Received: from vps.xff.cz (vps.xff.cz [195.181.215.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="B7rpfU+S"
+Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370432D6E4F;
-	Tue,  7 Oct 2025 09:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.181.215.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE01C1E633C
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 09:07:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759828270; cv=none; b=hfmZp0QNU2wt+uURnbNGT4biyXAFPHvsHzn8XwEcOObFDet7Z0RD15DItF2lH0a9kEU9LlhlhxU4NIpKjAKwBqybj/SqwaJBIHynLLhQMR306Q9vrvqfoXDHFj7iCQthoM2edZkfG02VxqKNcVQV6/+oc2Tcb2QKCJ19GEsM5p8=
+	t=1759828070; cv=none; b=IbSjtk24ZxKlowR73nuofFq2Nl9PXGVnf22StsIyaXl0rdiSa3j29AmQAFGe+VaPj6qP5BCemzlvWl68SDoA6V5DD2jzGCtoUcK9PhVZGHCMeAuQmVi6dtdVRw8r+jRa6+yhMBKOonROJ1IBGMZKDlbE0Ssf2KYozA6kuBwxJ6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759828270; c=relaxed/simple;
-	bh=YCPXdnG5zQAocVXJ3TiIrBnpkKTBpqwF0eKVaj6G9aM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ay1E1N8xiBXvizIHdq+BVCF6JIl/Tl+GHHJXdiyOkHbj3tae/Ezkm1vHNqT1mRCCNpzbbmq2s80GFf/K2pFwYFWQ/h3iABzIMKJUwSvzGpzzqF9MU2jtoAx0pFKbWjKeas5nnLBAGGUOBxgYRX8AlBNXhRrzIfWExOdwMnXcz40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz; spf=pass smtp.mailfrom=xff.cz; dkim=pass (1024-bit key) header.d=xff.cz header.i=@xff.cz header.b=bH3h03gJ; arc=none smtp.client-ip=195.181.215.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xff.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xff.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xff.cz; s=mail;
-	t=1759827912; bh=YCPXdnG5zQAocVXJ3TiIrBnpkKTBpqwF0eKVaj6G9aM=;
-	h=Date:From:To:Cc:Subject:X-My-GPG-KeyId:References:From;
-	b=bH3h03gJn2Olv7O538Cv+ijkF+N4ZzLrxe9yoduUJCcd0s0Y6p9ALFEaiYfj+65hL
-	 /JxpPE2biHy2FiKR8xH65AJKuZgQ92CyWpPPiO6dTW3UH3Lfyj6hMJDloe3/M3moz/
-	 fZCZ1z14I8IYXdy/dsYZNZn1X3wWAFXoAysyMr6Q=
-Date: Tue, 7 Oct 2025 11:05:11 +0200
-From: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>
-To: Rudraksha Gupta <guptarud@gmail.com>
-Cc: Dragan Simic <dsimic@manjaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	"Leonardo G. Trombetta" <lgtrombetta@gmx.com>
-Subject: Re: [PATCH v3 0/5] Upstreaming Pinephone Pro Patches
-Message-ID: <6joes3gufls2bx37gf2uoywyahlqprn73qfz6gfico5jxkua7z@irixdgkqp66p>
-Mail-Followup-To: =?utf-8?Q?Ond=C5=99ej?= Jirman <megi@xff.cz>, 
-	Rudraksha Gupta <guptarud@gmail.com>, Dragan Simic <dsimic@manjaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	"Leonardo G. Trombetta" <lgtrombetta@gmx.com>
-X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
- <https://xff.cz/key.txt>
-References: <20250921-ppp_light_accel_mag_vol-down-v3-0-7af6651f77e4@gmail.com>
- <53eabe34a310ea9c74315fa09a604e4a@manjaro.org>
- <b01ed528-8b29-4a6a-bdff-88f2e3b5dd2e@gmail.com>
- <115da845d9161e6ecfa67cf189b84aa8@manjaro.org>
- <37f2603e-8c51-4f92-a7af-0e60cd577004@gmail.com>
+	s=arc-20240116; t=1759828070; c=relaxed/simple;
+	bh=ZHX+FiPSiE2E1Wigo8Og8gIZxYADFUEaJAsKoo/q/SI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Jwt9JApayGqqI0trB9bfws2wSipcFX3/3oRX5Lo09T0Rkdrorwb7fqCvDddYlfHAqsBqEJALZAs7BAwndAnlckd6NfZVGEskMJdKt39Vzro2NAsME7pLlpNzJB1u31+KFqc5CZjh4Y0B9vJp8463WEStC3HnWTuDxytUwXmTGCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=B7rpfU+S; arc=none smtp.client-ip=185.67.36.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout02.posteo.de (Postfix) with ESMTPS id B30D5240103
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 11:07:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
+	t=1759828059; bh=tLnL2HT54F+560rMBs/uFtu/cmzwUuzUU1HYryiA84Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:From;
+	b=B7rpfU+S1vA6PeSETcuv2uIUilWTOZ/lZbeTqhuM1rETJQQkeVJXfnVxVR7OV4uuw
+	 1mQYvAB16+/9LuQj855Pt6JtVf44Eex15SsXAA4bO3lveoC6NMn+EbMi+a+EyfLZN3
+	 q2T14HuesnyUEvl9xXcWH6+055SZmEwVF5qIjZMZhjVSrfklTvFB1Aw8h05I6eZnrq
+	 uay72vhxGglmUCW5hsseURHTkNcAFUVNslFR/42lsNZI0vf/A/33MiKwkCJnpoUdWu
+	 I74NMpCT/Q6ixmVhIlfdUJXmw/vrAitJQ0UfiOE3EA7at36eurV5yqbR4KaAJ3RN11
+	 GEL7LU4GghiYg==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4cgqzG5MRZz9rxD;
+	Tue,  7 Oct 2025 11:07:38 +0200 (CEST)
+From: Shahriyar Jalayeri <shahriyar@posteo.de>
+To: jarkko@kernel.org
+Cc: shahriyar@posteo.de,
+	peterhuewe@gmx.de,
+	jgg@ziepe.ca,
+	linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] tpm: infineon: add bounds check in tpm_inf_recv
+Date: Tue, 07 Oct 2025 09:07:39 +0000
+Message-ID: <20251007090736.17942-1-shahriyar@posteo.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <37f2603e-8c51-4f92-a7af-0e60cd577004@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 04, 2025 at 09:55:19PM -0700, Rudraksha Gupta wrote:
+Add two buffer size validations to prevent buffer overflows in
+tpm_inf_recv():
 
-> Awesome! I was hoping that others would comment on the testing I've done
-> (especially for the accelerometer and magnetometer patches) as I can't tell
-> if userspace is wrong or if my testing/conclusion is wrong. Mobile Linux is
-> very early stages at the moment, and I suspect the Pinephone and Pinephone
-> Pro were used as reference devices with Megi's downstream kernel. Wrong
-> mount matrices in the downstream kernel might be affecting userspace. This
-> means that with the corrected mount matrices in this patch series, userspace
-> is slightly broken (eg. since I fixed the accelerometer, the screen in Phosh
-> and KDE Plasma are upside down. I suspect KDE's Kompass and Leonardo's
-> compass app might be the same if I'm changing the mount matrix for the
-> magnetometer). This is why I decided to showcase the raw values in my
-> testing. If my testing is incorrect, please feel free to let me know.
-> 
+1. Validate that the provided buffer can hold at least the 4-byte header
+   before attempting to read it.
+2. Validate that the buffer is large enough to hold the data size reported
+   by the TPM before reading the payload.
 
-KDE Kompass uses this as an algorithm: 
+Without these checks, a malicious or malfunctioning TPM could cause buffer
+overflows by reporting data sizes larger than the provided buffer, leading
+to memory corruption.
 
- https://invent.kde.org/smigaud/kompass/-/blob/master/src/compass.cpp?ref_type=heads
+Fixes: ebb81fdb3dd0 ("[PATCH] tpm: Support for Infineon TPM")
+Signed-off-by: Shahriyar Jalayeri <shahriyar@posteo.de>
+---
+ drivers/char/tpm/tpm_infineon.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-which is largely inadequate and doesn't take mount matrix (in_mount_matrix) into
-account at all. So that's not a good reference app. Also it doesn't even
-claim to support "af8133j" sensor.
+diff --git a/drivers/char/tpm/tpm_infineon.c b/drivers/char/tpm/tpm_infineon.c
+index 7638b65b8..8b90a8191 100644
+--- a/drivers/char/tpm/tpm_infineon.c
++++ b/drivers/char/tpm/tpm_infineon.c
+@@ -250,6 +250,11 @@ static int tpm_inf_recv(struct tpm_chip *chip, u8 * buf, size_t count)
+ 	number_of_wtx = 0;
+ 
+ recv_begin:
++    /* expect at least 1-byte VL header, 1-byte ctrl-tag, 2-byte data size */
++	if (count < 4) {
++		return -EIO;
++	}
++
+ 	/* start receiving header */
+ 	for (i = 0; i < 4; i++) {
+ 		ret = wait(chip, STAT_RDA);
+@@ -268,6 +273,10 @@ static int tpm_inf_recv(struct tpm_chip *chip, u8 * buf, size_t count)
+ 		/* size of the data received */
+ 		size = ((buf[2] << 8) | buf[3]);
+ 
++		if (size + 6 > count) {
++			return -EIO;
++		}
++
+ 		for (i = 0; i < size; i++) {
+ 			wait(chip, STAT_RDA);
+ 			buf[i] = tpm_data_in(RDFIFO);
+-- 
+2.43.0
 
-Leonardo's compass app has its own mount matrices, when kernel doesn't contain
-one:
-
-https://gitlab.com/lgtrombetta/compass/-/blob/main/src/compass.py?ref_type=heads
-
-which we can also use for comaprison/confusion and is different from what your
-patches are trying to upstream. :)
-
-regards,
-	o.
 
