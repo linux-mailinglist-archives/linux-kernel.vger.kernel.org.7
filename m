@@ -1,158 +1,114 @@
-Return-Path: <linux-kernel+bounces-843973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5017BC0BCB
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 10:41:32 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0274ABC0BB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 10:41:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EA48B4F512D
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 08:40:30 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A228634E050
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 08:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEFBF2DAFDB;
-	Tue,  7 Oct 2025 08:35:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792612D94BD;
+	Tue,  7 Oct 2025 08:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VTCUXA1+"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G3rSDdVb"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B702DBF7C
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 08:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8EE92D5410
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 08:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759826126; cv=none; b=JMJ6D9CJwWIV62GirDs87yXFmhXAfVyHvflRLe6g9jh2lV01/KqMaF0zeiZjKqna+DqkmMywN4vRLMyJ96XHyeAtDQVMk0JNPZkG6nWv41bLcKgMNuJyF/7ts47SKyUaAdHrYlDFxb72244ngtSQHRiyRSCuJGo8JsNHJzJo/TQ=
+	t=1759826180; cv=none; b=OsyiWnc0m1oeArxyI1aGOo3zNvbtmALvTnQGCb8e1J91cJBFMieQbOxDiGpYS8Fes8e0/z1Vx+7abi13XGdG9UTDXK/a7CbDpFQpthOcvJ/N49roltYp7mnxTf0nLgZSY76oNL5XFNUmWAEDFk7+dCGk5BRJ+ZsIZv6AryddCW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759826126; c=relaxed/simple;
-	bh=ZHDZ/62yyQM2WpcdFkqxEjcI8DLW3Glqgwz1/vt5I0o=;
+	s=arc-20240116; t=1759826180; c=relaxed/simple;
+	bh=hclHZaPwvU+Or/kgDq9GYsNnRsFBBmjtWca90LyRtXY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EqY29mANYmOfdJWCHZGQzT4VxvCF8LINbcUwh6LIz8VmqejqKTH5I9HD8D3Iy0yo+lkqSi4+VdFozySgs+oj66nsFcwsslH1+n6fG5aSqWsC1Alb/ylYtC2M2RKaMPtB+5Gcw0OsDYpY1HyOf8sHlJMoYzBwdTr0OJgfufiTrCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VTCUXA1+; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-57b8fc6097fso7885901e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 01:35:24 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=JoYEtocwkr4Tx7lmpNelKDZ2MKVJxovxvUVhK7Befo6QU4KWV0ahe8TpSZ1IY7U3qgfUTxroUgO0HQMsovAuiXV8+ASKuYtFSLPZr16QCE+KVOUDRnh/AgEfXLGCsTR9rK8Rz58J2vNZBfe0/ysXfflMZizG9PmyooaBUf/XT7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G3rSDdVb; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-46e4473d7f6so36113765e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 01:36:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759826122; x=1760430922; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1759826177; x=1760430977; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lA2K8SX41xRVhtx0TGelIGFHrpKngX8UyetIiKY/xmk=;
-        b=VTCUXA1+FaEj7a+2/oVxdnJNo3BnF/OqvSgUf1HOaNGCamMJjXyoGVmmIX0DegCvvn
-         EaIib6u4cM+JuIk4JXcwxC/7+fL0Y18rEHChyr0tFnZ3FhvkDxSCUjX0crvSNwpsTvGm
-         sNlUswMSOHz7LRZmE7+BUMnlB5TuDl468/P/8DPaRclpP7zY1B5or4B/CyMB8iw2W3VY
-         vfyCB9crDrkUDflJccFbw/HWcM1WyQG+XVVXRlivYuVhJw8DyRJQT4fWDw137MTA+ghK
-         on3iUUeq3DGc5ZcmsG8bd5s7snk2+xkHIQUQu2QRPJs4Aog2RCualAfCDR9Q7tAMS0iD
-         T4qA==
+        bh=P/Puk0DGClgU/d0N9KPCXsJda8f3CNcdxuN1BPXv0d4=;
+        b=G3rSDdVbIEkxIEUR5jo4ejt9aPv88tOyhobo9qltV+JH7QORuUESnDPrQkwHOGVivI
+         ev7JzUfrlXAZNcnXgRVoywyEzQPginE8TQrKiI9HHW1KXMQ7HygMUtZNBP3XkUyu2fQ8
+         aH7WPDF+THlD0CO4ul6KVe2zLVHQ1cmR8x4E1ThgfOMMkAsXQhZb5a/PuoDbaeYeQESc
+         7kS6Xd56WuS755Rd+d3izKqWKa6iLAbttfLvgkfeY79rqEm6hqf/eklKvJMYPfqsIXga
+         feHu/HJ1TlRzm/bNrCQT0FmMHJrcY7n8dvLRvfDFvXcrfurCdOyEewiedTCac/7peusj
+         jpsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759826122; x=1760430922;
+        d=1e100.net; s=20230601; t=1759826177; x=1760430977;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lA2K8SX41xRVhtx0TGelIGFHrpKngX8UyetIiKY/xmk=;
-        b=LlsxjCX3tgCUPuMe3bMCNhDVkWLHM+RhiVwjeQw7UopNI1XrGQb/9XMZu07yKyQtWx
-         CprVaqhCpjdsZJ0BCu4mQInDY4ymeEGmrQyCJd7LYJhtKYUT5Mu6WFb+mko+ZTsx9n7r
-         Jkst2n68O+bFZUdxa4Sydi+RkLzmkoj9IW65jyVnZ4UMx5BxzweKgG9udeg8FKQZtjOi
-         Ma8Std+94PA7hcKZQT0B9JiceDZO4cJ6Ft7SA7zR7E3ycKqvxTHPlBpEnZLCCID3zfut
-         23OqPNmE5xWhhBpWZwys6XmQMEBlxxPzLHQ4RhFBWdF2+ZyuCLbGbR/AWLCFDXtPkyy3
-         38wA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbkHntpFEcdahV5p1nU1H2zhm5O48yIsSlKbkMJ3TGcwq9BzbFoN6gma9Bz5B4nUTyfNq6foEix4BZLVY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymmJU74uHb1k34aJyxMOQwIxMWtdgppTZUaTFlbuvmRQX5RLnf
-	/gfd50ZeqXkkCBPe/uy2izo31wfhCBw4+5NslIixWhPL29sVmBEDsrtt
-X-Gm-Gg: ASbGncskPkB0nrBpkYfUjb+tDiCQVs+i/Bqaf9UC3BTt9p1cvN2YIdNyyQ8VVxYXQOb
-	de68XLg9MLgZdf3Q22pZYQYjLj4YMNLE9Fs800YBV1yfCS/IpA9W/mGxW/oPyhFidUk2Rxcp2oP
-	6SDho17VpB48kCCL7Nl4eT5Iv3apmyjyHA5cxKknLae/oMrhjXDi5TcdZXc5zwM3VJBr3joWncg
-	tXjsPpumg2NraLtK69W3NOzBNaUoodVOOggmx9DppAsyDhD6wVgbKkbzjwN096tx0+HwkQ9oV5a
-	s1FBH3go5aRy6x9wCsOjScNc/VsAKTbCIKk6a9rFq//w7yQkrWhdFU8FDETd+5DSI5X/ybKK3OW
-	0jBmtprZSLyOGBu3AtWNoZ/DYh6gEWqWlP5NGLuDf+etfB2IDgELtLkqiy9RRaZkY
-X-Google-Smtp-Source: AGHT+IHWvQFZoM0ayT5AgPXGKHGCCpp31nPy7gmVdN+F8yj0NL32bKU7cfG819gEXcZcLzrJj4brIQ==
-X-Received: by 2002:a05:6512:104b:b0:578:ed03:7b87 with SMTP id 2adb3069b0e04-58cbb4416a6mr4798688e87.33.1759826122219;
-        Tue, 07 Oct 2025 01:35:22 -0700 (PDT)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b0112462esm5893790e87.3.2025.10.07.01.35.20
+        bh=P/Puk0DGClgU/d0N9KPCXsJda8f3CNcdxuN1BPXv0d4=;
+        b=jAUGKKNhKwNAg1GGNYqNgiEA3XFP7xMZjOJgZBwmUvE2hSX/tV/X/NmfCGtf42YcdY
+         qOCEPLjjoOTkL3bH6XzEukwKmMFELVDfx2Cy1GOV3ojCjW4A9eJtkMVXkArtHDtDPJWS
+         OCJiWGDNy5CIMQGys1ZynIMYns+jlfNzfeeVU6MCE9fBERr9iKWoVMCRfQymSxFkUl6G
+         lwgx7Ey8R72Es/1xSYP8+Cco3RVAqDqsyTsPtQyu1viam6Xp6xKf/xIMDfYm35NyQvrH
+         QSH4MMoNgUwrHnH+IP9nOYUwQAQjNXajmoMuSJI1UhYjRhsuqF6nSOrpBXejinTWpUlO
+         7ZZw==
+X-Forwarded-Encrypted: i=1; AJvYcCWHV2WjLn4BHKbrTq6pNPFjEtXOIdwVEFKXf1TqVci7vTVyP4ttnH7C4KvLvJ+XLgoiwRT31lBWP6Zg8TM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0Rob4ib8Tnw9Vgga5ydC70eRlZeYHOHsbrqBYr7dXo3bzJsBI
+	deR9MPYooUPjYieStW4Qv3wdwJGA1QD68dH6jRO976EUu4o3E5w8K6VmMALAo6gH8BU=
+X-Gm-Gg: ASbGncv1Pc87p+tnR+UT5VuXmHIT5e9iSNB36VM7GrRPdZ6abIvcUK5D0ZugRVvYGUu
+	GFVmKy06aytFzK4FXzPY4DsZS/9BquDilR5N2UA2cEAmu/tCBNy443yzz1hfN4BwsC3cAzNy6Z9
+	EeEaxO5BNXxAd7Kat9HuDpU3rVznSwhU/Oleva47UxszYD005itR32EWP3r2tenmy1slPJfJZyE
+	eaVgKdJXhz7miT4ToqvmzBEFeVMu7fubPhEn3tvkiATnuNXiyjCOtKHXnsWwtQ9kP2i5xHccOrJ
+	0YWCYhTt9xBpWffsoPC/nmxLoa5WQiZwVv2Xm6ApbZe4DmZSfQjz4UaCKymCiMC+AD1oAYla+Li
+	InM13B/xEiqsxhr62ggjqzCJHBBDzIjJyX8TMPEcM2j5Ecd8=
+X-Google-Smtp-Source: AGHT+IGSw3Oke9DIjL+Gqc2rIqeM9+dXoWrNDqM+qZ8Vk9YiyMWaLjloD47BAFLjtVPGVOkVw7GP4w==
+X-Received: by 2002:a05:600c:c4a8:b0:46e:4c7c:515c with SMTP id 5b1f17b1804b1-46e711549a1mr93067795e9.34.1759826176991;
+        Tue, 07 Oct 2025 01:36:16 -0700 (PDT)
+Received: from linaro.org ([86.121.7.169])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e61a0241bsm284196215e9.11.2025.10.07.01.36.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 01:35:20 -0700 (PDT)
-Date: Tue, 7 Oct 2025 11:35:17 +0300
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Andreas Kemnade <andreas@kemnade.info>, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [RFC PATCH 13/13] MAINTAINERS: Add ROHM BD72720 PMIC
-Message-ID: <e413de5850eba28be024f642a4a7ec26c197662e.1759824376.git.mazziesaccount@gmail.com>
-References: <cover.1759824376.git.mazziesaccount@gmail.com>
+        Tue, 07 Oct 2025 01:36:16 -0700 (PDT)
+Date: Tue, 7 Oct 2025 11:36:14 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Rajendra Nayak <quic_rjendra@quicinc.com>, Wesley Cheng <wesley.cheng@oss.qualcomm.com>, 
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Sibi Sankar <quic_sibis@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+	Bryan O'Donoghue <bod@kernel.org>
+Subject: Re: [PATCH v2 2/3] clk: qcom: gcc-x1e80100: Add missing USB4
+ clocks/resets
+Message-ID: <i4vpoy6bgkclazobrozspxmza3j7kyynbbs5lgdydtfxsk7daq@aqf435db4n2p>
+References: <20251003-topic-hamoa_gcc_usb4-v2-0-61d27a14ee65@oss.qualcomm.com>
+ <20251003-topic-hamoa_gcc_usb4-v2-2-61d27a14ee65@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="SlztX/me0LjlXKoG"
-Content-Disposition: inline
-In-Reply-To: <cover.1759824376.git.mazziesaccount@gmail.com>
-
-
---SlztX/me0LjlXKoG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251003-topic-hamoa_gcc_usb4-v2-2-61d27a14ee65@oss.qualcomm.com>
 
-Add the ROHM BD72720 PMIC driver files to be maintained by undersigned.
+On 25-10-03 20:14:39, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> Currently, some of the USB4 clocks/resets are described, but not all
+> of the back-end muxes are present. Configuring them properly is
+> necessary for proper operation of the hardware.
+> 
+> Add all the resets & muxes and wire up any unaccounted USB4 clock paths.
+> 
+> Fixes: 161b7c401f4b ("clk: qcom: Add Global Clock controller (GCC) driver for X1E80100")
+> Reviewed-by: Bryan O'Donoghue <bod@kernel.org>
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 21ec42d93ee4..3afd9cb978cf 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -21940,6 +21940,7 @@ S:	Supported
- F:	drivers/clk/clk-bd718x7.c
- F:	drivers/gpio/gpio-bd71815.c
- F:	drivers/gpio/gpio-bd71828.c
-+F:	drivers/gpio/gpio-bd72720.c
- F:	drivers/mfd/rohm-bd71828.c
- F:	drivers/mfd/rohm-bd718x7.c
- F:	drivers/mfd/rohm-bd9576.c
-@@ -21956,6 +21957,7 @@ F:	drivers/watchdog/bd96801_wdt.c
- F:	include/linux/mfd/rohm-bd71815.h
- F:	include/linux/mfd/rohm-bd71828.h
- F:	include/linux/mfd/rohm-bd718x7.h
-+F:	include/linux/mfd/rohm-bd72720.h
- F:	include/linux/mfd/rohm-bd957x.h
- F:	include/linux/mfd/rohm-bd96801.h
- F:	include/linux/mfd/rohm-bd96802.h
---=20
-2.51.0
-
-
---SlztX/me0LjlXKoG
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmjk0MUACgkQeFA3/03a
-ocURTAgAu6dnmWP/JjZcJMWGUn+hYLg15qVmjQNYJoLBcZtaNezTwNj9uXTJeGp4
-aF3xpHcZtryUyaerjRHwCYmHkyab19+2EgxtORp2dmdqVhsb/bvOcyuNLz2sFfOS
-eDFFRQadRdLwYbi0wx2lhHqfh9/HXUqYQjBwWSaIidlhU5sjVXlsOQYFlkOv/aZe
-E3h6QunJQxBavA27oVpucRouBOxpGzFLt80PyB3LwH1j2+PRN2ugZiW90TDmFZNl
-e8/nPHDTqoF5T3VyxAXleGRLyrfnF8d+VsTF3R6rj7aQCv2jOw2aHoI96AJAjZgO
-DUZUp9dgZicc5YzSzYQmOfchxX1dJg==
-=phW3
------END PGP SIGNATURE-----
-
---SlztX/me0LjlXKoG--
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
