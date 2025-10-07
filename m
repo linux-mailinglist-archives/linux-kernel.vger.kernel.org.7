@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-844048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2599BC0E3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:45:20 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05BADBC0E40
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:45:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1FC9334CEA8
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C0E2B4F3264
 	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:45:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F85B2D8DBD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A2B2D8DD9;
 	Tue,  7 Oct 2025 09:44:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RSVV7yr+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f5m4il7b"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4360F2D6E51;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C8025A324;
 	Tue,  7 Oct 2025 09:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759830295; cv=none; b=f+cSq8Fciu59Xj1wWSI6bcP5b2IAk2Wokr3nv+pE043bfNdogF+BuefinVj2gTW2fov66YQWnA3CEPv5D7CoebEoW3zPqJXoUKAdW0p1MEU+vFtyMA3rjsAvszn2p6mipD1pS+vzZfLNHcqP1mf1NzTO7/ay0u0IU98LvLV4a7Q=
+	t=1759830295; cv=none; b=aNegn6uwTa5/n7u3IPOfLFKJGx+5Vv5482p0RAa5yO1HyrLYjJNQJBzJHYqJeBuDeAxC0QB17FJ+/DAWOAVG/4T2p4F3Vb+XxsOPWVray4Zy/F+uSZHFPgWnLakdWqNNVEnemz1yki4ND0j/pGYqcS/gw3V8/s3DBe/EqPKyx5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1759830295; c=relaxed/simple;
-	bh=/ZOvDlaE5co2FsuffrPvaCXpclhBsGaMcrTzFAqteP8=;
+	bh=VGVPMHZfJFWJ065a5fqtHiZF8kLqRFAbyAg8TzOuAcA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XPTpWSbcuyPBx1jbW11veYiFtKD6irnT9iJ/I7KdoP0ksiFCCJu5QJ4b0TKCWvlP9Gco0cNbHS8g4bcSnPA3UKyznr9wCi26ZpodGnaXr0O8nxI008aokzDByXzVCJxbl7uiOxRtuAkjBe37guRVpfqODEbY+v0efB4UDNAQY80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RSVV7yr+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFD0AC19421;
+	 MIME-Version; b=mFfRhQhy0klATMG96YAlYzzBy34cYvhy6v6RHdA6OANr+hr4GsfrrYkIf91ty/3nPSNVNggJ011CDAePzCuUJab/rhd2Mj3uq4dDHBK9od4JK8Tako2VU991K+UkFaZMcF5F8pyeBcBsAnAPGAnkAhKUBqcR3ntaLXoMUQ7A800=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f5m4il7b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEBCFC116D0;
 	Tue,  7 Oct 2025 09:44:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759830295;
-	bh=/ZOvDlaE5co2FsuffrPvaCXpclhBsGaMcrTzFAqteP8=;
+	s=k20201202; t=1759830294;
+	bh=VGVPMHZfJFWJ065a5fqtHiZF8kLqRFAbyAg8TzOuAcA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RSVV7yr+5OVgnHY6oNeJOOgE0BC9uK4Osp/Q67gwk4md/e4XtHt+nCmFKyHbdVBQX
-	 4k9u+lGgb/xcNve564U1DUABJd8gsM+bfq0AIHI/s4P77imstehCxIjddEk2EvzbBI
-	 EW8gg5NGGaVX8Df8Ej66Rvt9KJMHGd0xdbhK3Kr1+R+AV+lNhsVlxrnMFD6f3udobc
-	 KP3oZq0t7L7QrCENHji37nwv6rXBhSUqaoZXL1fyy1LnVEQyEdgVh/uqxDt5coEyLZ
-	 908aPS4zWfG1ZuGbBo4zBbD+wm8dLEuNMGpDxFpqX0V+rniBXPVc2D4sTAMzOuxHmN
-	 WwyON/5bk3VYw==
+	b=f5m4il7bogse4bk0D9jOCOcDlKkY34svP9eZdZEjow6BRd12AHNkhgt9Ie/PRBVKB
+	 63nfTkVz3brZTZ8zihJ4blaGhOE6vH9lRgr7LvBI8y2UrH5/AFCsXp1T0x55Y5wpQR
+	 K+JVoO6ZgTT/EWmXZZYoDBgRv3xGovAs03AqKTMAfd4C09La8fwlMC176jVJu8fT66
+	 5FNUZOqy8OkZUdsE0Ksxlab+/II6AvFXGjg9zsi1gyJK0Bf31tZoXkIiJZo+3zdLsa
+	 2P2C6yTTRT8gAwDgpaV7Bbm7Kro+uABu6w6DcHCGxEoH7AEDm1/5tqjV9ApkgkmYYw
+	 AnnWaoEKo1yYg==
 Received: from johan by xi.lan with local (Exim 4.98.2)
 	(envelope-from <johan@kernel.org>)
-	id 1v64FY-0000000035f-48dj;
+	id 1v64FZ-0000000035h-0Jx1;
 	Tue, 07 Oct 2025 11:44:53 +0200
 From: Johan Hovold <johan@kernel.org>
 To: Joerg Roedel <joro@8bytes.org>,
@@ -62,10 +62,10 @@ Cc: Robin Murphy <robin.murphy@arm.com>,
 	linux-kernel@vger.kernel.org,
 	Johan Hovold <johan@kernel.org>,
 	stable@vger.kernel.org,
-	Yu Kuai <yukuai3@huawei.com>
-Subject: [PATCH v2 03/14] iommu/exynos: fix device leak on of_xlate()
-Date: Tue,  7 Oct 2025 11:43:16 +0200
-Message-ID: <20251007094327.11734-4-johan@kernel.org>
+	Magnus Damm <damm+renesas@opensource.se>
+Subject: [PATCH v2 04/14] iommu/ipmmu-vmsa: fix device leak on of_xlate()
+Date: Tue,  7 Oct 2025 11:43:17 +0200
+Message-ID: <20251007094327.11734-5-johan@kernel.org>
 X-Mailer: git-send-email 2.49.1
 In-Reply-To: <20251007094327.11734-1-johan@kernel.org>
 References: <20251007094327.11734-1-johan@kernel.org>
@@ -80,45 +80,28 @@ Content-Transfer-Encoding: 8bit
 Make sure to drop the reference taken to the iommu platform device when
 looking up its driver data during of_xlate().
 
-Note that commit 1a26044954a6 ("iommu/exynos: add missing put_device()
-call in exynos_iommu_of_xlate()") fixed the leak in a couple of error
-paths, but the reference is still leaking on success.
-
-Fixes: aa759fd376fb ("iommu/exynos: Add callback for initializing devices from device tree")
-Cc: stable@vger.kernel.org	# 4.2: 1a26044954a6
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Yu Kuai <yukuai3@huawei.com>
+Fixes: 7b2d59611fef ("iommu/ipmmu-vmsa: Replace local utlb code with fwspec ids")
+Cc: stable@vger.kernel.org	# 4.14
+Cc: Magnus Damm <damm+renesas@opensource.se>
 Acked-by: Robin Murphy <robin.murphy@arm.com>
 Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/iommu/exynos-iommu.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/iommu/ipmmu-vmsa.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index b6edd178fe25..ce9e935cb84c 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -1446,17 +1446,14 @@ static int exynos_iommu_of_xlate(struct device *dev,
- 		return -ENODEV;
+diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+index ffa892f65714..02a2a55ffa0a 100644
+--- a/drivers/iommu/ipmmu-vmsa.c
++++ b/drivers/iommu/ipmmu-vmsa.c
+@@ -720,6 +720,8 @@ static int ipmmu_init_platform_device(struct device *dev,
  
- 	data = platform_get_drvdata(sysmmu);
--	if (!data) {
--		put_device(&sysmmu->dev);
-+	put_device(&sysmmu->dev);
-+	if (!data)
- 		return -ENODEV;
--	}
+ 	dev_iommu_priv_set(dev, platform_get_drvdata(ipmmu_pdev));
  
- 	if (!owner) {
- 		owner = kzalloc(sizeof(*owner), GFP_KERNEL);
--		if (!owner) {
--			put_device(&sysmmu->dev);
-+		if (!owner)
- 			return -ENOMEM;
--		}
++	put_device(&ipmmu_pdev->dev);
++
+ 	return 0;
+ }
  
- 		INIT_LIST_HEAD(&owner->controllers);
- 		mutex_init(&owner->rpm_lock);
 -- 
 2.49.1
 
