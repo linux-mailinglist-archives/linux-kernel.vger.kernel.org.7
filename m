@@ -1,168 +1,299 @@
-Return-Path: <linux-kernel+bounces-844313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D4EBC18A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 15:40:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9661BC18A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 15:41:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AED6C19A40ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 13:40:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9635B3C6020
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 13:41:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB4992E1737;
-	Tue,  7 Oct 2025 13:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08C42E172B;
+	Tue,  7 Oct 2025 13:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SccgwECQ"
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="3JbK6vld"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0BD2E11D2
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 13:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C872DFA2B
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 13:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759844413; cv=none; b=PvhHLUp02jZ331slOdC44AARFecttukzIZE7oERCLbBjpEXAF/ygRvnoDtuysU2Ep+L5OW7JF3UNs2n3Rnlk0ze8DI8DlSxfRXBixcKfHKTTzTZ6HmwubZ/exVAbDGTjulZaV+/IQVsCNNPzYk3wnJ3CiGFPTUGo0qPO0CNSaNM=
+	t=1759844458; cv=none; b=fGBen5XvSAX7Sp7VJqPYT1UOqYYI+KRKJNPdcTmhBRVmbQQhwMu79ssLn07pI5oQhaclwD7ouI8naBw9fR4TC5CnLlMhH+2bXrnCmqSt2ScfL70P49O8h8BaPljCe8QZRa/6mo47wyALG7L60eGooSTXx2VGxE+KREdKmuiL31c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759844413; c=relaxed/simple;
-	bh=B5zJo6+e9mfBQxyG03vxeQAF4XuA277T13ti7Xburds=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hkWUAYVsu6DniDOogIgdjvJzxgd2JmO52HHapUB8o0MxAfTsbAse31bfXX6EAH3etyyJ7zHph9PFBb3tRre9tDL+S6jITSSpx4Wdc9AZfoAunLHehXVUEtgq/VNdFvmrtbAGH1sWyL3yMq6X1OS7gMbCG8UWqO2F0LhCHxKB22I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SccgwECQ; arc=none smtp.client-ip=209.85.210.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-7c0dd405c38so138861a34.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 06:40:10 -0700 (PDT)
+	s=arc-20240116; t=1759844458; c=relaxed/simple;
+	bh=maR5I0NRG+pVQzt1ZqXCzGrjCBiXFmvoqkdMd1ZLotw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LxK/ReCiggeu0dagGlV2NFyKtJ9i7+Bf9g8YpCvkX5QIe/E0+t8CIrbfqHKaMfu3i1f5XHm9pOEtOVZyuSL+qvWQWuBY7lCaFTqYu+Hz++fMbfdXN18IPCENLFDezHeU6Q3KZeCZkZSx4O0Te0SfEZazdRI02sGitfV2vQ6/4GM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=3JbK6vld; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-33c9f2bcdceso42157781fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 06:40:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759844410; x=1760449210; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vCQTFpOCLXGsaDGm5R3fay+Aj7gDLjtHX2II8z9luO4=;
-        b=SccgwECQKdlHJtKHZTALExpUyJA1W2HAOQBisHi/IGW9k5Wo7/DZQAIh5LfVEtU/l+
-         8EBnUmjayBl98gNHztXYG+UkJ2hTx8AIqZiCE5n7OToOWbEPIq884L2CnaOmFB91nioB
-         9xNG5JkPpuYfawY+KY4AHR3gjLhuysUIwjJudDMKcEqeSntjeYVX9DNjbGIC9WydnIoo
-         GuWFW4hgSGf2vx/Tz84C4lWiQqqd2Rd9aYgj1zSTSricBtRC4SqRx3+4sICZZJuJAXg3
-         kEt8+rTp+1UNb2H2/qJ0YQKDU1UlsEoDkkAUri1wuRqtpSzZQ1PmqEtn0R5I7VEiyrEY
-         E4tQ==
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1759844455; x=1760449255; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=xRBV/A+wYkc5dgFJj6Y8p0jl0ix5QJORnEw5CJQ5ixk=;
+        b=3JbK6vldew0Ih99+2O5z+sPBU1+pXLud6Z5ZFXgS8qonCHWcVHJVL/gMdEsJwJlvmT
+         bjuhhLadvVxU8Q5Tps/QHY5Pnmtfg5+njXNVwccNEasAKvw2k/XumkQf7QHGTAH/hMRe
+         WRMIlcbWyShAyEiwqlenIMrXhTHVHRhvjZmjRfu0KxGZuMHBIATZTJuP+gL4jRYNaKGe
+         sGvWS8/DjJu/mZY4ZRzpaHgHiSXG5UiEg3pr3EvsEflD8QtzQnLKgP/gIc7WbKRLdAuY
+         LIvMgUwh2HVvoYzI1vc+DsUrteMLPeSkQufo9fS4ByVDZ9VHvFNhknzF4OkLoe0xKy2l
+         YbCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759844410; x=1760449210;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vCQTFpOCLXGsaDGm5R3fay+Aj7gDLjtHX2II8z9luO4=;
-        b=vFjBRoqPBfRNMYGb8+BAkVEro19FoeqVxZ2E9K4311D8xNTOY9LO/OYqMe4K7Vdr5w
-         DxqTVlskDgHzlKAtXEf4KvijjYoflEEJ1XvWIEuq3y+V8icKiLwo3namH1voLlzvFeyP
-         m5kEviKu0jvqsxq+s1+b788qSO3qEnED9H9VWY6X7Rr6XWh0RkrReITe3JT69fl+WsSA
-         yCrdy6rbe4ctjIZ1WbHm9oNv0opLuxjBbJZFW6GI+X5nL/NENKg1+3aRQLkg/JjJyekl
-         c3Er6sQRa/0RyhDTLhUzaUxAyHbg2ZzVygLJ2PlaygmRNarpVfK1yKjnJhnzM4Ey+lGI
-         iJiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/FmQcAd/TrNHnhf6yTeVeCRFl7KcjWcsR2X6XKsOr4zXqEU8ROKUOzwpcCW8DdGiJjLghcpKtOfD0w90=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdUaltiGFDMLa4pgcj3buPr6a5RZAOX68oROn01tedzN95Bhid
-	ZHp7P8fxAKZIbjVG6lGUAVFLYQqSs3n2xcnnxTjBRwyzZ+1Y7NCzUyOLAQIWjoQMCYurFDCcAgW
-	mr7zeSCu3kwbJWTkc+V5y1TGiv6q8dz8=
-X-Gm-Gg: ASbGnctkA1HFVNaciF/jpYOo3QMJu0Xif438nA8fs01/P0vKSUtOJoI57yvJT6s5feO
-	UbIYH/f04n0wAioc5yb1M1xKnHS584FldO34qZrVNU7FXZEw1JYMe2nxyydh5QbY6rpOxHGD27X
-	ffY0coJtLE67exq7IOYuh0Rc6erezSJg7fiLYEyLFZ0sryQzrWCWJ18mEP7Ds1wjjPjundWTPLE
-	dhBjhK/VjwtqSBXX17SPfP16BXhxKo=
-X-Google-Smtp-Source: AGHT+IFaX/eNzGSX/0xQ94MkT4x6GcjLTrj7/eYCQtsj7JxcgVbmL9x7FOv9ascQlxHmQ5isdD+BlSAOUJF4t34ed2Q=
-X-Received: by 2002:a05:6830:67d9:b0:771:5ae2:fcde with SMTP id
- 46e09a7af769-7bf772db651mr7720312a34.2.1759844410206; Tue, 07 Oct 2025
- 06:40:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759844455; x=1760449255;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xRBV/A+wYkc5dgFJj6Y8p0jl0ix5QJORnEw5CJQ5ixk=;
+        b=pjWhFpkS61sJ/ow54NzcC1QKDAAzx5y8verdLvUnO8AdDFk8iZUXL9xTYq9yo/dJI4
+         PWt4gG1O1cnjCHCvukHQvSpq9XqLdd7lJ7s+rpdKIDdkzUrK38zNAtp1pYuuQ7O2r6Rc
+         F4ki5fVTR0wrSNrCinqd7kfXB7JLzHb/9WEny1LLA1iwaWj8+hvBO4zb8roE2waUuAXl
+         lmUEjVBQJF6nBsqJnR/h3IFpW8Vz/+oT9UswWNawAmnYsinxsAawc0Op/vBrP+JiwAPu
+         4qO4HClnFrdZksSBKptAoKpzmFDCccsRkiz3PAQ6DakxKWbO2zA89tItCkok9T48viHH
+         I34w==
+X-Forwarded-Encrypted: i=1; AJvYcCXV55SyylZvCmVpi1vbkwEp+0e0xpLsjrwPipyVq/QeSeiUr+0IF8Ige8YXIO6G+0lV8su8NfUvR//KoeY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/layAa4thw71QDBsN1Nleft9ZwGTGtVAe1g/cQBkElweP0Yz/
+	vGNfvNcZs0HxxYmdQGjXR+QK++9YW6sjKU5UrPv+oQwdWyqaSzOZH6S2WU8Hs1MfEPs=
+X-Gm-Gg: ASbGncvJs7Bms43Jv/gurkYhblAdM+rfgnWPrqG00AGFPMr7i2ms/YP3Sz/n4sxlWh6
+	pHZ3MrcnryvvsTulrqL79U0oj4zULM35Q/yLy2oHe5jyFpBnFIdhx+QGZEC3t6+Xb9apaMReeQd
+	8l2j+iDW+X12yR2zUICTRzEycvZ7PLpovaHfAJMhI8FPrNO+Db8XPq6W8dNVWuCdI0QHKS/GWKa
+	LZXkUUP2gJXMOitT+3g7Ap1CUZEgvaStrct10NDSqnpd51snfJp7tKx95DGVNzN5hZcbvQjuxMe
+	6LXnuxq1fvFZuLNg8dJPmEDArFoiuD1+rSg0iOdGsHrhtleDZCwRL+Bmd5rLrRcMSuIf9jjmLEt
+	0BV3V+4+b7nDKAvuSL3qPqJc1tynfEk+fB6QPk9CXf3NNwfvbwIBvAteCE9M=
+X-Google-Smtp-Source: AGHT+IFHxO2m8T/MgbMT85edP7c603ruD5Ye6htT8rb/M8e+XOKBexOHQ+jUa0yBLYyuI5v4+gKA8w==
+X-Received: by 2002:a05:6512:1245:b0:58a:92cc:581d with SMTP id 2adb3069b0e04-58cbbbee331mr4524737e87.50.1759844454433;
+        Tue, 07 Oct 2025 06:40:54 -0700 (PDT)
+Received: from [10.78.74.174] ([212.248.24.216])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59067823d9esm350641e87.69.2025.10.07.06.40.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Oct 2025 06:40:53 -0700 (PDT)
+Message-ID: <6ec98658418f12b85e5161d28a59c48a68388b76.camel@dubeyko.com>
+Subject: Re: [PATCH] hfs: Validate CNIDs in hfs_read_inode
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: George Anthony Vernon <contact@gvernon.com>, Viacheslav Dubeyko
+	 <Slava.Dubeyko@ibm.com>
+Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>, 
+ "frank.li@vivo.com"	 <frank.li@vivo.com>, "skhan@linuxfoundation.org"
+ <skhan@linuxfoundation.org>,  "linux-fsdevel@vger.kernel.org"	
+ <linux-fsdevel@vger.kernel.org>, "linux-kernel-mentees@lists.linux.dev"	
+ <linux-kernel-mentees@lists.linux.dev>, 
+ "syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com"	
+ <syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com>, 
+ "linux-kernel@vger.kernel.org"	 <linux-kernel@vger.kernel.org>
+Date: Tue, 07 Oct 2025 06:40:50 -0700
+In-Reply-To: <aOB3fME3Q4GfXu0O@Bertha>
+References: <20251003024544.477462-1-contact@gvernon.com>
+	 <405569eb2e0ec4ce2afa9c331eb791941d0cf726.camel@ibm.com>
+	 <aOB3fME3Q4GfXu0O@Bertha>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.0 (flatpak git) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251003091304.3686-1-briansune@gmail.com> <aOTrsYllMst3oR03@opensource.cirrus.com>
- <CAN7C2SB5Re35yGYsqr14hGXde3nTKLX2Aa3ZbuJ9xuT0m07uxg@mail.gmail.com>
- <aOUDbF/i4+9PXc1j@opensource.cirrus.com> <CAN7C2SBsFQJ2qNe0HLfpG+6cuONtpChBnq6fuFkd_CGkLt2c5g@mail.gmail.com>
- <aOUSZ2pnxRfxEPi4@opensource.cirrus.com>
-In-Reply-To: <aOUSZ2pnxRfxEPi4@opensource.cirrus.com>
-From: Sune Brian <briansune@gmail.com>
-Date: Tue, 7 Oct 2025 21:39:59 +0800
-X-Gm-Features: AS18NWCJzGH3rZLWEXtfYgf2RrERANUmm3tsSEcxJkdLTt4vNPLp_FNxuVYAWqU
-Message-ID: <CAN7C2SBDC2LrWpUTe3zZakHCrmUy1nQ-WiguLQKVK1CyOPb9zw@mail.gmail.com>
-Subject: Re: [PATCH] sound/soc/codecs/wm8978: add missing BCLK divider setup
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linux-sound@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Charles Keepax <ckeepax@opensource.cirrus.com> =E6=96=BC 2025=E5=B9=B410=E6=
-=9C=887=E6=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=889:15=E5=AF=AB=E9=81=
-=93=EF=BC=9A
->
-> On Tue, Oct 07, 2025 at 08:48:40PM +0800, Sune Brian wrote:
-> > Charles Keepax <ckeepax@opensource.cirrus.com> =E6=96=BC 2025=E5=B9=B41=
-0=E6=9C=887=E6=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=888:11=E5=AF=AB=E9=
-=81=93=EF=BC=9A
-> > > On Tue, Oct 07, 2025 at 07:22:10PM +0800, Sune Brian wrote:
-> > > > Charles Keepax <ckeepax@opensource.cirrus.com> =E6=96=BC 2025=E5=B9=
-=B410=E6=9C=887=E6=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=886:30=E5=AF=AB=
-=E9=81=93=EF=BC=9A
-> > > > > On Fri, Oct 03, 2025 at 05:13:04PM +0800, Brian Sune wrote:
-> > > > > > The original WM8978 codec driver did not set the BCLK (bit cloc=
-k)
-> > > Its not missing its right there. That said your way is probably
-> > > slightly more standard these days, but we should take care of the
-> > > interaction between the two.
-> >
-> > What my missing meant is if run with DEBUG flag on that case had never
-> > behave as expected.
-> > MCLK and LRCLK both is correctly outputted. While the current
-> > unpatched version will generate
-> > wrong BCLK complete break the codec. As such I proposed the BCLK patch.
-> > I had not investigate deep why it never calls but the "int div" is
-> > loaded and computed by where is a bit puzzling.
-> > And the loaded it simply with div on actual mclk/2/bit_per_channel is
-> > also incorrect.
-> > As mentioned in previous explanations, the clock register is a fix
-> > table on dividing # that is a LUT with restricted # allowed.
->
-> Yeah the existing code expects the machine driver to call
-> snd_soc_dai_set_clkdiv. I am guessing you are using something
-> like simple card that doesn't do this.
->
-> To be clear the bulk of your patch is good, updating this in
-> hw_params is probably more normal these days. But we need to
-> make sure the two paths don't interfere with each other. Think
-> of a system that is already calling snd_soc_dai_set_clkdiv() to
-> set BCLKDIV, after your patch BCLKDIV will be set twice
-> potentially to two different values and would generate no error
-> messages.
+On Sat, 2025-10-04 at 02:25 +0100, George Anthony Vernon wrote:
+> On Fri, Oct 03, 2025 at 10:40:16PM +0000, Viacheslav Dubeyko wrote:
+> > Let's pay respect to previous efforts. I am suggesting to add this
+> > line:
+> >=20
+> > Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> >=20
+> > Are you OK with it?
+> I agree with paying respect to Tetsuo. The kernel docs indicate that
+> the SoB tag
+> isn't used like that. Would the Suggested-by: tag be more
+> appropriate?
+>=20
 
-Before the below action started. I need more background, if possible.
-If my understand is correct on your ideas. Do you mean the default driver c=
-alls
-the bclkdiv on other places? But how could that bclkdiv # be correct
-from first place?
-As I had mentioned the div # ifself like this codec is a LUT rather
-than the actual divided #?
-For example /32 from LUT is a 3b101?
-For example what if MCLK is set higher than /64 could even out of the
-LUT from first place.
-The external div # passed in, how to ensure it is codec LUT compatible
-from first place?
+Frankly speaking, I don't see how Suggested-by is applicable here. :)
+My point was that if you mentioned the previous discussion, then it
+means that you read it. And it sounds to me that your patch is
+following to the points are discussed there. So, your code is
+inevitably based on the code is shared during that discussion. This is
+why I suggested the Signed-off-by. But if you think that it's not
+correct logic for you, then I am completely OK. :)
 
->
-> I think you have two options:
->
-> 1) Remove WM8978_BCLKDIV from wm8978_set_dai_clkdiv. There are no
->    upstream users that I can see, so this should be fine. This
->    would mean an out of tree user of snd_soc_dai_set_clkdiv would
->    now get an error so they know they need to fix something.
-> 2) Only run your dynamic BCLK code if wm8978_set_dai_clkdiv
->    hasn't been called. This would mean any out of tree users of
->    snd_soc_dai_set_clkdiv would have no problems everything would
->    keep working as before, but at the cost of a little complexity
->    in the code.
->
-> I am happy with either approach so which ever you prefer is fine
-> with me.
->
-> Thanks,
-> Charles
+> > I think we can declare like this:
+> >=20
+> > static inline
+> > bool is_valid_cnid(unsigned long cnid, s8 type)
+> >=20
+> > Why cnid has unsigned long type? The u32 is pretty enough.
+> Because struct inode's inode number is an unsigned long.
+
+The Catalog Node ID (CNID) is identification number of item in Catalog
+File of HFS/HFS+ file system. And it hasn't direct relation with inode
+number. The Technical Note TN1150 [1] define it as:
+
+The catalog node ID is defined by the CatalogNodeID data type.
+
+typedef UInt32 HFSCatalogNodeID;
+
+The hfs.h declares CNID as __be32 always. Also, hfsplus_raw.h defines
+CNID as: typedef __be32 hfsplus_cnid;.
+
+So, it cannot be bigger than 32 bits. But unsigned long could be bigger
+than unsigned int. Potentially, unsigned long could be 64 bits on some
+platforms.
+
+> >=20
+> > Why type has signed type (s8)? We don't expect negative values
+> > here. Let's use
+> > u8 type.
+> Because the type field of struct hfs_cat_rec is an s8. Is there
+> anything to gain
+> by casting the s8 to a u8?
+>=20
+
+I am not completely sure that s8 was correct declaration type in struct
+hfs_cat_rec and other ones. But if we will use s8 as input parameter,
+then we could have soon another syzbot report about crash because this
+framework has generated negative values as input parameter. And I would
+like to avoid such situation by using u8 data type. Especially,
+because, negative values don't make sense for type of object.
+
+> >=20
+> > > +{
+> > > +	if (likely(cnid >=3D HFS_FIRSTUSER_CNID))
+> > > +		return true;
+> > > +
+> > > +	switch (cnid) {
+> > > +	case HFS_POR_CNID:
+> > > +	case HFS_ROOT_CNID:
+> > > +		return type =3D=3D HFS_CDR_DIR;
+> > > +	case HFS_EXT_CNID:
+> > > +	case HFS_CAT_CNID:
+> > > +	case HFS_BAD_CNID:
+> > > +	case HFS_EXCH_CNID:
+> > > +		return type =3D=3D HFS_CDR_FIL;
+> > > +	default:
+> > > +		return false;
+> >=20
+> > We can simply have default that is doing nothing:
+> >=20
+> > default:
+> > =C2=A0=C2=A0=C2=A0 /* continue logic */
+> > =C2=A0=C2=A0=C2=A0 break;
+> >=20
+> > > +	}
+> >=20
+> > I believe that it will be better to return false by default here
+> > (after switch).
+> We can do that, but why would it be better, is it an optimisation? We
+> don't have
+> any logic to continue.
+
+We have this function flow:
+
+bool is_valid_cnid()
+{
+   if (condition)
+      return <something>;
+
+   switch () {
+   case 1:
+      return something;
+   }
+}
+
+Some compilers can treat this like function should return value but has
+no return by default. And it could generate warnings. So, this is why I
+suggested to have return at the end of function by default.
+
+>=20
+> > > +			break;
+> > > +		}
+> > > =C2=A0		inode->i_size =3D be16_to_cpu(rec->dir.Val) + 2;
+> > > =C2=A0		HFS_I(inode)->fs_blocks =3D 0;
+> > > =C2=A0		inode->i_mode =3D S_IFDIR | (S_IRWXUGO & ~hsb-
+> > > >s_dir_umask);
+> >=20
+> > We have practically the same check for the case of
+> > hfs_write_inode():
+> >=20
+> > int hfs_write_inode(struct inode *inode, struct writeback_control
+> > *wbc)
+> > {
+> > 	struct inode *main_inode =3D inode;
+> > 	struct hfs_find_data fd;
+> > 	hfs_cat_rec rec;
+> > 	int res;
+> >=20
+> > 	hfs_dbg("ino %lu\n", inode->i_ino);
+> > 	res =3D hfs_ext_write_extent(inode);
+> > 	if (res)
+> > 		return res;
+> >=20
+> > 	if (inode->i_ino < HFS_FIRSTUSER_CNID) {
+> > 		switch (inode->i_ino) {
+> > 		case HFS_ROOT_CNID:
+> > 			break;
+> > 		case HFS_EXT_CNID:
+> > 			hfs_btree_write(HFS_SB(inode->i_sb)-
+> > >ext_tree);
+> > 			return 0;
+> > 		case HFS_CAT_CNID:
+> > 			hfs_btree_write(HFS_SB(inode->i_sb)-
+> > >cat_tree);
+> > 			return 0;
+> > 		default:
+> > 			BUG();
+> > 			return -EIO;
+> >=20
+> > I think we need to select something one here. :) I believe we need
+> > to remove
+> > BUG() and return -EIO, finally. What do you think?=20
+>=20
+> I think that with validation of inodes in hfs_read_inode this code
+> path should
+> no longer be reachable by poking the kernel interface from userspace.
+> If it is
+> ever reached, it means kernel logic is broken, so it should be
+> treated as a bug.
+>=20
+
+We already have multiple syzbot reports with kernel crashes for
+likewise BUG() statements in HFS/HFS+ code. From one point of view, it
+is better to return error instead of crashing kernel. From another
+point of view, the 'return -EIO' is never called because we have BUG()
+before. So, these two statements together don't make sense. This is why
+I am suggesting to rework this code.
+
+Thanks,
+Slava.
+
+> >=20
+> > 		}
+> > 	}
+> >=20
+> > <skipped>
+> > }
+> >=20
+> > What's about to use your check here too?
+>=20
+> Let's do that, I'll include it in V2.
+>=20
+> >=20
+> > Mostly, I like your approach but the patch needs some polishing
+> > yet. ;)
+> >=20
+> > Thanks,
+> > Slava.
+>=20
+> Thank you for taking the time to give detailed feedback, I really
+> appreciate it.
+>=20
+> George
+
+[1]
+https://dubeyko.com/development/FileSystems/HFSPLUS/tn1150.html#CatalogFile
 
