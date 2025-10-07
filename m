@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-844031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FE25BC0DE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:38:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53859BC0DEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:39:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FC41189C7EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:38:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE3ED3AC996
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:39:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD402D7DCE;
-	Tue,  7 Oct 2025 09:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A44B12D5408;
+	Tue,  7 Oct 2025 09:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HOmfza0K"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l+f0gmOv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38932D47F3;
-	Tue,  7 Oct 2025 09:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB990165F16;
+	Tue,  7 Oct 2025 09:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759829893; cv=none; b=lpMrkiuWHEkdqWiroFtLOHKHm77bKwmtIf9x3zNO/nJ77YFmcXa2sSM10W5KSs7PpcCurXY6MRzdvG/TeqSEEwhnv48flNgozv0xbNfqeiUtLapBP6wmPGKysACy1vIuUfgYd2RmcPebVESDiqFLmf0ujeQKep7gi9+3W+tVucg=
+	t=1759829952; cv=none; b=Zqs3vsyul4YFBbD1MkUTUJOtPE5BL2/lJ4uXNaFRT2N/0qEtqm+LQMCwoNsakfoemIq1cYzOngexlILYbt1yNyWQ38au+DS6Rjw6w00GWvbyTYwS/jPMrjZmHgOMmTFHLnC5+5reKmdQHwhPZvJ3/PASQSdoKOawdTrpkGrBGQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759829893; c=relaxed/simple;
-	bh=u92iuBD9npKLkZwen9nH8npHhYPl96jEeJrt91lktJc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=SX3TJdDguF9pbgfoN88oKWrfNM6cMvXnrK0ybwPFtq6TGV+qer+90AIAtgFXkrFguO7l6Fdxqt6O9RCLgxKwQ9oDH3FWnMup87Ocjcsbfmjnj9Tp8rHAjfgg5QctiP3rFqkEB/om5VumQY7GZk2Twmg968Ps9/JczJtwhu6Sarg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HOmfza0K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCD0CC4CEF1;
-	Tue,  7 Oct 2025 09:38:10 +0000 (UTC)
+	s=arc-20240116; t=1759829952; c=relaxed/simple;
+	bh=Y4EXS4AlfGJ1lns+hS2c1t6Y+szkd/o4CvJQriKDRbw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fBujoy5fm0B24/dSAhCnjniQNCLO7jEX9XwaABJxoTyp8JP9O0uELzjh+YD9yJ6HW1S18M9G8ZqKEqEVt+mX6DTqxeS5233ktksX3wX8ZyXWHlsLnsqBviccWOiU6dXumEMwqc2vptmFD+b0Q+rJCJ1DiIT/qlSBhJiwIzRVIL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l+f0gmOv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 445ABC4CEF1;
+	Tue,  7 Oct 2025 09:39:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759829892;
-	bh=u92iuBD9npKLkZwen9nH8npHhYPl96jEeJrt91lktJc=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=HOmfza0KUcqItu3B38b5T6A/W6mNpqIlnJurMLmB5zfuBM5aiOHgkBxzuXEx0OIcU
-	 6l6XKwM6xG208TlQxlrhCVTa05vgYi3VT7iPd5Hv1z5dn8yGMXmD/93PkkzQDOfOB4
-	 oQQ/lRAmAM1HmpGQjyStvsVCT23CdCNY7EgMZ5BkuIqWu73fXvNptIIKkszqsiOf45
-	 5+SUu/6+ufe8btQh7bgOozY1EhPQEiDHD8MqKqTwjJrQQO0J0X0mkEOOUDSXp82vTT
-	 hLwHAjRaPAC3NbvQxOWsb2yMdZKvp+KAkXVK89YgjcaW+CXwUAay8CAXsxPyFT/44P
-	 S8c0fXIkOhkNA==
-Message-ID: <1f920cc2-625c-48af-a6d0-a505980fbeaa@kernel.org>
-Date: Tue, 7 Oct 2025 11:38:08 +0200
+	s=k20201202; t=1759829951;
+	bh=Y4EXS4AlfGJ1lns+hS2c1t6Y+szkd/o4CvJQriKDRbw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=l+f0gmOv6IAt8WHDh81BJb2zC7zknFHSRJcTkXW64CL4hCBz/CqGEbIp7dCizAaD4
+	 wx6vnBbAvNaFwgfk+2N2r66e44nJGRBLe4QRoaqbTfsGMQQoEH4GO40u4FO1FNdqoR
+	 QRqbIHI523lN6Ka7WGYeYweKKf2y/vupCUzgfkB5PI7r2MKGnlOWnyAjGRjjhivJp9
+	 ZrOdtrP3LOxiIGAHzfkTbIITSpcnCC37kqSF9MVPiM1kwH7i3qqmf4PRl2XfOW8K+8
+	 fFs1SuWd8hqDoM4Ok5ZcJ7LdUJZRNE+BSVRKOmHzLXRECghqLP3Farme2mX/UR7d+B
+	 EW2nofvQ/0/rQ==
+Message-ID: <1561d6f5-bc60-4b41-aef5-3e22a23ee133@kernel.org>
+Date: Tue, 7 Oct 2025 18:39:07 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,91 +49,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH] iommu: __iommu_attach_group: check for non-NULL
- blocking_domain
-To: iommu@lists.linux.dev
-Cc: Linux Kernel <linux-kernel@vger.kernel.org>,
- Linux Media Mailing List <linux-media@vger.kernel.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Jason Gunthorpe <jgg@nvidia.com>, Robin Murphy <robin.murphy@arm.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>
-References: <9a3ebe9b-518e-49ef-b87d-925d951a446f@kernel.org>
-Content-Language: en-US, nl
-In-Reply-To: <9a3ebe9b-518e-49ef-b87d-925d951a446f@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: counter: Add new ti,omap-dmtimer-cap
+ compatible
+To: Gokul Praveen <g-praveen@ti.com>, j-keerthy@ti.com, vigneshr@ti.com,
+ wbg@kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org
+Cc: u-kumar1@ti.com, n-francis@ti.com
+References: <20250909080042.36127-1-g-praveen@ti.com>
+ <20250909080042.36127-2-g-praveen@ti.com>
+ <6faff5b1-65b1-41ee-aba8-8c06a2bc6f58@kernel.org>
+ <9653740a-44fe-46bb-92c8-f7fc26cbe5ee@ti.com>
+ <30101fb9-e2eb-4050-896a-7be629ced44d@kernel.org>
+ <2de3151b-eedc-4209-8b20-53473cafacef@ti.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <2de3151b-eedc-4209-8b20-53473cafacef@ti.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi all,
+On 07/10/2025 18:23, Gokul Praveen wrote:
+> Hi Krzysztof,
+> 
+> 
+> On 07/10/25 12:05, Krzysztof Kozlowski wrote:
+>> On 26/09/2025 18:06, Gokul Praveen wrote:
+>>>>
+>>>>> +
+>>>>> +  ti,timers:
+>>>>> +    description: Timer instance phandle for the Capture
+>>>>
+>>>> So the only resource is phandle? That's completely fake device then. NAK.
+>>>>
+>>>
+>>>
+>>> The OMAP Timer IP can operate in 3 modes: Timer, PWM mode or capture
+>>> (mutually exclusive).
+>>> The timer/ti,timer-dm.yaml file describes the timer mode of operation.
+>>> It encapsulates base IP block and reg property is also part the same
+>>> binding.
+>>>
+>>> This node represents the capture mode with phandle reference to the
+>>> timer DT node. This is modeled all the same lines as how PWM
+>>> functionality is implemented in pwm/ti,omap-dmtimer-pwm.yaml
+>>
+>> Different modes do not have their own device nodes. It is still one
+>> device, so one device node.
+>>
+>>>
+>>> Now, if this needs to change, please suggest alternate.
+>>>
+>>> One solution is perhaps to add a new property to ti,timer-dm.yaml itself
+>>> to indicate the mode of IP?
+>>
+>> Not sure, depends what this really is and how it is used. I can also
+>> imagine that consumer defines the mod of operation.
+>>
+> 
+> For a timer operating in capture mode, there are no consumers actually 
+> and the only way we use it is through sysfs.
+> 
+> Would it be good enough if I have a separate "mode" property for the 
+> dmtimer device node just like how it is done for USB as follows where 
+> the usb device node has a "dr_mode" property to decide on whether the 
+> usb should act in host, device or otg mode.
 
-On 29/09/2025 10:23, Hans Verkuil wrote:
-> Loading the omap3isp driver fails in __iommu_attach_group:
-> group->blocking_domain is NULL, and so the check
-> group->domain != group->blocking_domain is always true and it
-> returns -EBUSY.
-> 
-> Only return -EBUSY if group->blocking_domain is non-NULL.
-> 
-> Signed-off-by: Hans Verkuil <hverkuil+cisco@kernel.org>
-> Fixes: 0286300e6045 ("iommu: iommu_group_claim_dma_owner() must always assign a domain")
-> ---
 
-So just ignore this patch :-)
+No, because of all my other comments in previous email.
 
-Today I dropped this patch from my branch, and retested on my Beagle xM and it all
-worked fine.
 
-I suspect that it might be related to the fact that I started testing with the Beagle
-board (so not the xM variant), and I hit the issue there. But the Beagle board doesn't
-have the connector for the camera, so later I switched to the xM variant. But I probably
-never tried running it on the xM without that iommu patch until today.
-
-In two weeks time I have access to my Beagle board again and I'll experiment a bit
-to see if my theory is correct.
-
-Apologies for all the noise.
-
-Regards,
-
-	Hans
-
-> Since I am unfamiliar with the iommu core code, I am uncertain whether I am
-> just papering over a bug elsewhere, or whether this is really the correct solution.
-> 
-> The omap3isp code in question is here:
-> 
-> drivers/media/platform/ti/omap3isp/isp.c, function isp_attach_iommu().
-> 
-> This omap3isp code predates the addition of blocking_domain and it used to work
-> before that feature was added.
-> 
-> I've tested this patch with my Beagle XM board.
-> 
-> If this patch is addressing the issue in the wrong place, then advise
-> on what the correct solution is would be very much appreciated!
-> 
-> I have a bunch of media omap3isp cleanup patches pending, but there is no point in
-> posting those until this issue is resolved.
-> 
-> Regards,
-> 
-> 	Hans
-> ---
->  drivers/iommu/iommu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> index 060ebe330ee1..0ab1671ee850 100644
-> --- a/drivers/iommu/iommu.c
-> +++ b/drivers/iommu/iommu.c
-> @@ -2220,7 +2220,7 @@ static int __iommu_attach_group(struct iommu_domain *domain,
->  	struct device *dev;
-> 
->  	if (group->domain && group->domain != group->default_domain &&
-> -	    group->domain != group->blocking_domain)
-> +	    group->blocking_domain && group->domain != group->blocking_domain)
->  		return -EBUSY;
-> 
->  	dev = iommu_group_first_dev(group);
-
+Best regards,
+Krzysztof
 
