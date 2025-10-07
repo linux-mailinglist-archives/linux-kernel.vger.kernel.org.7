@@ -1,98 +1,105 @@
-Return-Path: <linux-kernel+bounces-844027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F4ABBC0DBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:29:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 933DCBC0DD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:35:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 856C018979E6
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:29:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 606DB3A1F8D
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C192D77F7;
-	Tue,  7 Oct 2025 09:29:13 +0000 (UTC)
-Received: from ni.piap.pl (ni.piap.pl [195.187.100.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B1F2D77E6;
+	Tue,  7 Oct 2025 09:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qJdWj2Ui"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36BC154BF5;
-	Tue,  7 Oct 2025 09:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.187.100.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BFE3207;
+	Tue,  7 Oct 2025 09:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759829353; cv=none; b=hlzpDy5Plcp2vSEwfFikvIr8EXHOvc3QvNI5a2lSSuszlcX0gKYUERnsnddTxw9PcHzO/o3QoAHuf6BkRP04Qt8AQad+EvvZg3YVEihOQcrUXoB07rAgnH3AKVtawGZDJAKzYUUXEuJPtbQDCUIBa6VMBmIA7yW+RBKCJH6TvVY=
+	t=1759829716; cv=none; b=YkGNFkAP8pu6KQ1Cy5QHpExGcuqQ0NFI7g/bg+OUYAx0/9jtzAqnu32w08+6bPoGDNMmjdu8UB5TTgywJRLtPqh+HEfynDJfrUHroh7sjMIA4EbpisNKBBi5zrwBMJk7G6peOYv7N0Q0pzhMPAgslQ3tW8821Ts5pBhO40GpJwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759829353; c=relaxed/simple;
-	bh=fWqIweYDp0uOOqzStY2LwbqOGthMNkDoqqwc9tDtfek=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=s4mF2xn/yFT16swJ5Dlvdpf9v7u9OOKwgpwJ69yVLMX2e5gZU0Z3ENWnKBFiYpOoAAvtX+ukMuTk4APuXgldRpKvo45b1hrntzcKJCyWmOxI+EdlSLkbIr4ePVIizzf9kmzqKbAYUoDmIFRNR9tugNMe94cAu4H/KbLIIDZHA5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=piap.pl; spf=pass smtp.mailfrom=piap.pl; arc=none smtp.client-ip=195.187.100.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=piap.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=piap.pl
-Received: from t19.piap.pl (OSB1819.piap.pl [10.0.9.19])
-	by ni.piap.pl (Postfix) with ESMTPS id 5C2EBC3EEACD;
-	Tue,  7 Oct 2025 11:28:59 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ni.piap.pl 5C2EBC3EEACD
-From: =?utf-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Kriish Sharma <kriish.sharma2006@gmail.com>,  khc@pm.waw.pl,
-  andrew+netdev@lunn.ch,  davem@davemloft.net,  edumazet@google.com,
-  kuba@kernel.org,  netdev@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drivers/net/wan/hdlc_ppp: fix potential null pointer in
- ppp_cp_event logging
-In-Reply-To: <d8fb2384-66bb-473a-a020-1bd816b5766c@redhat.com> (Paolo Abeni's
-	message of "Tue, 7 Oct 2025 10:41:45 +0200")
-References: <20251002180541.1375151-1-kriish.sharma2006@gmail.com>
-	<m3o6qotrxi.fsf@t19.piap.pl>
-	<CAL4kbROGfCnLhYLCptND6Ni2PGJfgZzM+2kjtBhVcvy3jLHtfQ@mail.gmail.com>
-	<d8fb2384-66bb-473a-a020-1bd816b5766c@redhat.com>
-Sender: khalasa@piap.pl
-Date: Tue, 07 Oct 2025 11:28:59 +0200
-Message-ID: <m37bx7t604.fsf@t19.piap.pl>
+	s=arc-20240116; t=1759829716; c=relaxed/simple;
+	bh=CpHSJxldJGUmua//0ARbaJ1d4uPkotPp8oo+L2MXqBQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u/+8vLAr95sz7l2DyZ2JJIA4qy6nGxiVqtzv3VrsKVmu258W2cr9oY1XlcVL/DdRWuA4tU/HOxFjihwUGdjb3wMNQmtqXVBlbIae9twI3YKXTs/gfRejfIK8e4w+9bOpibf2Alu5SJBo0rlK2MJMV8CL1Wn1o8yiyWW0Kn2ZHK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qJdWj2Ui; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=lIDqpP0aQZGw92fNmehm1NTPBgNKs/DwZnYkZGr5ZVg=; b=qJdWj2UibmFOp1KxbE2KB3rbOC
+	nFFWNlTG1qt+yPZknjvcFGPS63eUGvaP6cnPPMd1zDr0qzXqMf9XetP/MWD4crO0DpPHMVDTqFfaD
+	bsydrqMJSoXEn/8+ijrFx4vY3+NLSY+0mjJJXl9rhOjGDfiLdbAFHnwOkF+yugKgBKU4NxM1EAJ4f
+	qhtSu5xbm96qGvxKBzLBlfwkVlHwJMYjFNEDq5KmDxKxu7xGRPMYZ1v1PBTI7OEsQzsGwx6DbIuja
+	+tNuGw5YWVgPwX+/NsLFeVwjovlUYPAb+n1rzOHaG/uu6xI+UhH3qkhd8y7ES23vQTV5XmRE16zft
+	OiF2oo+A==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v645u-0000000HWqi-0tSS;
+	Tue, 07 Oct 2025 09:34:54 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 010E4300220; Tue, 07 Oct 2025 11:34:53 +0200 (CEST)
+Date: Tue, 7 Oct 2025 11:34:52 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Shrikanth Hegde <sshegde@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
+	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
+	changwoo@igalia.com, cgroups@vger.kernel.org,
+	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de,
+	tj@kernel.org
+Subject: Re: [PATCH 01/14] sched: Employ sched_change guards
+Message-ID: <20251007093452.GC3245006@noisy.programming.kicks-ass.net>
+References: <20250910154409.446470175@infradead.org>
+ <20250910155808.415580225@infradead.org>
+ <fee0edd5-86d1-4dff-9e07-70fd2208b073@linux.ibm.com>
+ <20251006181429.GV3245006@noisy.programming.kicks-ass.net>
+ <2b37d74f-7a5d-486b-98df-679bd7e2b0c2@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2b37d74f-7a5d-486b-98df-679bd7e2b0c2@linux.ibm.com>
 
-Paolo,
+On Tue, Oct 07, 2025 at 10:42:29AM +0530, Shrikanth Hegde wrote:
+> On 10/6/25 11:44 PM, Peter Zijlstra wrote:
 
-Paolo Abeni <pabeni@redhat.com> writes:
+> > --- a/kernel/sched/core.c
+> > +++ b/kernel/sched/core.c
+> > @@ -10783,6 +10783,12 @@ struct sched_change_ctx *sched_change_be
+> >   	struct sched_change_ctx *ctx = this_cpu_ptr(&sched_change_ctx);
+> >   	struct rq *rq = task_rq(p);
+> > +	/*
+> > +	 * Must exclusively use matched flags since this is both dequeue and
+> > +	 * enqueue.
+> > +	 */
+> 
+> yes. Something like that. Unless callsites explicitly change the flags using
+> the scope, enqueue will happen with matching flags.
+> 
+> > +	WARN_ON_ONCE(flags & 0xFFFF0000);
+> > +
+> 
+> A mythical example:
+> scope_guard(sched_change, p, DEQUEUE_THROTTLE)
+> 	scope->flags &= ~DEQUEUE_THROTTLE;
+> 	scope->flags |= ENQUEUE_HEAD;
+> 
+> But, One could still do this right? for such users the warning may be wrong.
 
-> If v2 is not ready yet, I think it would be better returning "unknown"
-> instead of "LCP" when the protocol id is actually unknown.
->
-> In the current code base, such case is unexpected/impossible, but the
-> compiler force us to handle it anyway. I think we should avoid hiding
-> the unexpected event.
->
-> Assuming all the code paths calling proto_name() ensure the pid is a
-> valid one, you should possibly add a WARN_ONCE() on the default case.
-
-Look, this is really simple code. Do we need additional bloat
-everywhere?
-
-The compiler doesn't force us to anything. We define that, as far as
-get_proto() is concerned, PID_IPCP is "IPCP", PID_IPV6CP is "IPV6CP",
-and all other values mean "LCP". Then we construct the switch statement
-accordingly. Well, it seems I failed it slightly originally, most
-probably due to copy & paste from get_proto(). Now Kriish has noticed it
-and agreed to make it perfect.
-
-Do you really think we should now change semantics of this 20 years old
-code (most probably never working incorrectly), adding some "unknown"
-(yet impossible) case, and WARNing about a condition which is excluded
-at the start of the whole RX parser?
-
-Well, maybe gcc would identify and remove these new unneeded operations.
-Maybe. I think we don't need more bloat at the source level either,
-though.
---=20
-Krzysztof "Chris" Ha=C5=82asa
-
-Sie=C4=87 Badawcza =C5=81ukasiewicz
-Przemys=C5=82owy Instytut Automatyki i Pomiar=C3=B3w PIAP
-Al. Jerozolimskie 202, 02-486 Warszawa
+Right, I suppose this would be possible. Lets worry about it if/when it
+ever comes up though.
 
