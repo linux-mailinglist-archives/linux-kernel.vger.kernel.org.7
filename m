@@ -1,119 +1,161 @@
-Return-Path: <linux-kernel+bounces-844380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C96D4BC1C49
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:35:57 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF159BC1C5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 16:39:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C470A19A466F
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:36:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8F9194EE7E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 14:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C1A2E03FB;
-	Tue,  7 Oct 2025 14:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0AC2E11AB;
+	Tue,  7 Oct 2025 14:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Hte+npcl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="USQSwcBd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124BA1F12F8
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 14:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D89A2D73A4;
+	Tue,  7 Oct 2025 14:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759847752; cv=none; b=Ftl9nibS+FCEc3G2dg9Na6qiuzhIYj/5nGYmvKZqZyvyTpQD0O761oy5JK9rS3jmSaFX0wKwxXkntmAkZMw9NENDh3PPlZQ6CijfGgzXEPiihFtv2VXR49euIHyzKV3dRUPHaXk0sxiglWmVBmqTg44MupiD3ngx1WYqvc1ao4U=
+	t=1759847934; cv=none; b=V16ds2AVkaW+0ry5tpzHM2OBO534WqzsG5oZjLYP6bL4Ma5E9WC0bbDrWe4HC+DK/Urn6XfE9Hj1SkGefBveCGsd8nVLesBalsMw86BbsfNYrZuBan5jCqdBQsE1CTW0TOgNSIE3/r5BnXxHnGcu1Ior4q9DyUrkq6E8YgYBNUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759847752; c=relaxed/simple;
-	bh=ddQMm4wD+700e2ki2lu+CmIm7Je2pKn7ZCgyIA/xbKA=;
+	s=arc-20240116; t=1759847934; c=relaxed/simple;
+	bh=40+xkhjc2Wm5Ld3hrRFSd44nAhq1g6XgDf94PZ4Cw6s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LJHGqx5we5jCfs9sbI1FqcxTgPIp2qbxEhhids8dwmyRIUBdr/TsarmrHVrCKoj8yoPzDr/FONV+yuFiUGg6pT0Gmcy2ZjFwBWMlf1t5ZhaqfxwcE63kEIOdqYBl2X6x1ZfZNnzXVREgsF2WmEdXEsHpx4pKle8wGmMoOM03+Do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Hte+npcl; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759847749;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LTHNDfkzPY8gHjn3H8bW45troKESABjUXMGCPbEvS48=;
-	b=Hte+npclV7gRWNBgfg0/u0iFGc3jcdHPoyhwmRG9gzXF7520lf+db6YImQAUYmbDKk4VV0
-	pYS5+2hXW7yurnXl3ZKDEP+sk7gbC/pqmt7pte8hMckVXehFxDP+AnWs4+zTsg5nqV417a
-	PGAUNnpVDZnYODQ4noQ3kRiN2ui1OZI=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-449-sQDi6061MJaa7kcZzJOSkw-1; Tue,
- 07 Oct 2025 10:35:44 -0400
-X-MC-Unique: sQDi6061MJaa7kcZzJOSkw-1
-X-Mimecast-MFC-AGG-ID: sQDi6061MJaa7kcZzJOSkw_1759847743
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7BC3E1800581;
-	Tue,  7 Oct 2025 14:35:43 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.227.6])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 2113F19560A2;
-	Tue,  7 Oct 2025 14:35:40 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue,  7 Oct 2025 16:34:22 +0200 (CEST)
-Date: Tue, 7 Oct 2025 16:34:19 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fqVRHVH3NMOe/iuMxZVLf4g114RzMAH8cGGuM7+xZS0YheEnY6urZl7wYf4iU0eEVTzqp7ePdfrcaxzoAlNWdJ4m+xf1c9cc63fMxe+kCkq4NnEsJGlvp5ZXFFpgZZRPi2lwzXYZJ1XX2aO87Y4iwgmbhqe1WuzvJ/dkUvLBK+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=USQSwcBd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDAE9C4CEF1;
+	Tue,  7 Oct 2025 14:38:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759847934;
+	bh=40+xkhjc2Wm5Ld3hrRFSd44nAhq1g6XgDf94PZ4Cw6s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=USQSwcBdmZW6GjWjGuipqp6KDuuLpVyqYBETKZ+omYpRNYoaQ7QbbGc27lrkOgCvo
+	 iJJzTYHk344B7migg7+yhG1UvHqWgsK2/26nYMc2QmcEeD9WcML/tUmSJ5nROmiPOj
+	 q4up48+SpiEyHumv788A0evsIKK5qks+7ohKe5K3QusNQDAoBJOvH66kYXfvLNSqOw
+	 TOWFcPxmBb5I7Zn285Peio8hr+LLLMg3MtlV1LE2RG+FoOsPk1tt3ywO6ECZpZXdEA
+	 PsUn4dNaqOvQTo2B3A3YwDylIpQAlhdK5/2dVh/e/ClQjeslvYNIcEkmRT8s3CNfrn
+	 PQPdFOwrE6y/Q==
+Date: Tue, 7 Oct 2025 17:38:50 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: Re: [GIT PULL 05/12 for v6.18] pidfs
-Message-ID: <20251007143418.GA12329@redhat.com>
-References: <20250926-vfs-618-e880cf3b910f@brauner>
- <20250926-vfs-pidfs-3e8a52b6f08b@brauner>
- <20251001141812.GA31331@redhat.com>
- <20251006-liedgut-leiden-f3d51f4242c2@brauner>
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	David Howells <dhowells@redhat.com>, keyrings@vger.kernel.org,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] TPM DEVICE DRIVER: tpmdd-next-v6.18
+Message-ID: <aOUl-mZkRwJJwtJ7@kernel.org>
+References: <aOKTFv1vh1cvvcLk@kernel.org>
+ <CAHk-=wiCWiDcLEE3YqQo78piVHpwY2iXFW--6FbmFAURtor2+w@mail.gmail.com>
+ <aOOu1f1QWQNtkl6c@kernel.org>
+ <aOPOZwp_inGui9Bx@kernel.org>
+ <125ba81bb222cdffef05ef9868c68002efd61235.camel@HansenPartnership.com>
+ <aOPzovsBYlH3ojTR@kernel.org>
+ <aOP04Yy3m23E4kjf@kernel.org>
+ <aOUkcytS21zQs71I@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20251006-liedgut-leiden-f3d51f4242c2@brauner>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aOUkcytS21zQs71I@kernel.org>
 
-On 10/06, Christian Brauner wrote:
->
-> On Wed, Oct 01, 2025 at 04:18:12PM +0200, Oleg Nesterov wrote:
-> > On 09/26, Christian Brauner wrote:
-> > >
-> > > Oleg Nesterov (3):
-> > >       pid: make __task_pid_nr_ns(ns => NULL) safe for zombie callers
-> > ...
-> > > gaoxiang17 (1):
-> > >       pid: Add a judgment for ns null in pid_nr_ns
-> >
-> > Oh... I already tried to complain twice
-> >
-> > 	https://lore.kernel.org/all/20250819142557.GA11345@redhat.com/
-> > 	https://lore.kernel.org/all/20250901153054.GA5587@redhat.com/
-> >
-> > One of these patches should be reverted. It doesn't really hurt, but it makes
-> > no sense to check ns != NULL twice.
->
-> Sorry, those somehow got lost.
-> Do you mind sending me a revert?
+On Tue, Oct 07, 2025 at 05:32:24PM +0300, Jarkko Sakkinen wrote:
+> On Mon, Oct 06, 2025 at 07:57:10PM +0300, Jarkko Sakkinen wrote:
+> > On Mon, Oct 06, 2025 at 07:51:51PM +0300, Jarkko Sakkinen wrote:
+> > > On Mon, Oct 06, 2025 at 10:33:40AM -0400, James Bottomley wrote:
+> > > > On Mon, 2025-10-06 at 17:12 +0300, Jarkko Sakkinen wrote:
+> > > > > 2. Null seed was extremely bad idea. The way I'm planning to actually
+> > > > >    fix this is to parametrize the primary key to a persistent key
+> > > > > handle
+> > > > >    stored into nvram of the chip instead of genration. This will
+> > > > > address
+> > > > >    also ambiguity and can be linked directly to vendor ceritifcate
+> > > > >    for e.g. to perfom remote attesttion.
+> > > > 
+> > > > Just a minute, there's been no discussion or debate about this on the
+> > > > list.  The rationale for using the NULL seed is clearly laid out here:
+> > > > 
+> > > > https://docs.kernel.org/security/tpm/tpm-security.html
+> > > > 
+> > > > But in brief it is the only way to detect reset attacks against the TPM
+> > > > and a reset attack is the single simplest attack an interposer can do.
+> > > > 
+> > > > If you think there's a problem with the approach, by all means let's
+> > > > have a debate, since TPM security is always a trade off, but you can't
+> > > > simply come to your own opinion and try to impose it by fiat without at
+> > > > least raising whatever issue you think you've found with the parties
+> > > > who contributed the code in the first place.
+> > > 
+> > > Ok fair enough, it's quite context dependent what is not secure and
+> > > what is secure.
+> > > 
+> > > What I've thought, or have planned to implement, is not to discard null
+> > > seed but instead parmetrize the primary key as a kernel command-line
+> > > parameter.
+> > > 
+> > > E.g. "tpm.integrity_key={off,null,handle}" and
+> > > "tpm.integrity_key_handle" to specify an NV index. The default value is
+> > > off and I think also that with this change and possibly with some
+> > > additional polishing it can reappear in default config,
+> > > 
+> > > This out of context for the PR but I will take your comment into account
+> > > in the pull request.
+> > > 
+> > > My main issue preventing sending a new pull request is that weird list
+> > > of core TPM2 features that is claimed "not to be required" with zero
+> > > references. Especially it is contraditory claim that TPM2_CreatePrimary
+> > > would be optional feature as the whole chip standard is based on three
+> > > random seeds from which primary keys are templated and used as root
+> > > keys for other keys.
+> > > 
+> > > So I guess I cherry-pick the claims from Chris' patch that I can cope
+> > > with, look what I wrote to my commit and adjust that accordingly and
+> > > finally write a tag message with summarization of all this. I exactly
+> > > drop the arguments with no quantitative evidence, which is probably
+> > > a sane way to move forward.
+> > 
+> > Personally I think that once there's correctly implemented command-line
+> > option, the feature flag is somewhat redundant (and we've never had one
+> > for /dev/tpmrm0). And it will help a lot with kernel QA as you can run
+> > tests with same kernel image without recompilation.
+> 
+> I don't really see any possible security issues either with null seed.
+> 
+> It's no different as per remote attestation when compared storage keys.
+> In a power cycle it's like same as per TPM2_Certify is considered. It's
+> pretty much exactly performance issues but depending on deployment.
+> Sometimes storage key root would be probably a better choice.
+> 
+> I really tried to dig something else than exactly perf stuff but was
+> unsuccessful to find anything, and I've actually done a lot of work
+> at work on remote attestation so everything is also somewhat fresh
+> on my mind.
+> 
+> Still rooting to perf, immediate action being default option disable,
+> and long term action being replacing the compilation option with
+> kernel command-line options. I.e., I'll stay on track what I'e
+> been already doing for some time :-)
+> 
+> That said, my PR cover letter (or the tag message) did suck and
+> I'll just address next during exactly why something is or isn't
+> an issue. I think this is really good outcome for everyone in
+> the long run (because everyone will get the outcome they were
+> looking for).
 
-Thanks, will do.
+And in the business I'm ATM i.e., covering like with 20-30% market share
+Finnish high school IT deplyoment going extremes is feasible, as some
+kids are smart and capable of hacking the systems so to speak ;-) I'd
+likely enable this feature e.g., in that type of deployment together
+with remote attesation just to max out defence in depth.
 
-But which one? I am biased, but I'd prefer to revert 006568ab4c5ca2309ceb36
-("pid: Add a judgment for ns null in pid_nr_ns")
-
-Mostly because abdfd4948e45c51b1916 ("pid: make __task_pid_nr_ns(ns => NULL)
-safe for zombie callers") tries to explain why this change makes sense and
-why it is not easy to avoid ns == NULL.
-
-OK?
-
-Oleg.
-
+BR, Jarkko
 
