@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-844050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B0C0BC0E65
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:46:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76A1DBC0E70
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:47:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DD1DD34D48C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:46:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD6A2189FDFC
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574172DC78C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 524642DC782;
 	Tue,  7 Oct 2025 09:44:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HLOJe5aH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lz4A46Ts"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775082D7DDB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C422D7DC5;
 	Tue,  7 Oct 2025 09:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759830295; cv=none; b=mAR6d8Yg0xC1YVHBJPRvvz+3KYXLSW5AeBXTyEsk0m4vM7lfjqY0g+XUElDoXUq7XCZD2lWNGqsdH7y4hJWGuiLgw4hXUlg23k118mBJRv0eI5lQXBb39DCrrY/un2spgmcLJjZff4HZfUdEO6rlxeBB4foxcWbcNp9bAAYLd8I=
+	t=1759830295; cv=none; b=CgtULWbEy0kNejyenkqH2E02EQ3R+mBuqdsMW3NBrZtr8eyLyJDOYkHXahTIcHt+50W+v17HxyCGEfflYlbs1jkLvnqXnGhHC4/o1WDVavai8u8FsCq8SWP2iH6eiJzU0H3AHYFrbzDFeI9W0JmhQ/teVKxh0lAyY9ZxhUbcIR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1759830295; c=relaxed/simple;
-	bh=YgTtXA9dF7mB20DwiqCqHja/k4JWmcrR69fNJ7Tlp6w=;
+	bh=3YsUGHE8p+SGmBLxNad+cDIngJ/4w2kWdXR7zcSNBhM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=g4jmgw4XJTzuX7FqLMrmy6iGiXzIih6Z6Eo+cdPlTdM4sKsvx2XV8y6nPmWrl8ewNKCxboUYlQO/khoqCru4OgdE0yaxkEBEl8D46QgDRE+0K5rnemDCP1bUGJoRubCJiIH8HVVaFGuug+Yf/ot28eI7OKTOebVrjtUVT/n8N24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HLOJe5aH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11109C4CEFE;
+	 MIME-Version; b=bLdJ438efBJzzseewKbwSZtqTpa7VZw9LfCRywlBd9VEAd2smCfksRvnDtV6wTV+9Uwlx7oIA2O4Pd5TdS4FHG7wKZvCAecLY2Hgm8o2tUUUb7srEw7RLC+ZD9WZeRSAU2fubLASjj6RT48vO/SkD3z72AFA7fUZ2+CGI8pVznM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lz4A46Ts; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ACC1C4AF0F;
 	Tue,  7 Oct 2025 09:44:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1759830295;
-	bh=YgTtXA9dF7mB20DwiqCqHja/k4JWmcrR69fNJ7Tlp6w=;
+	bh=3YsUGHE8p+SGmBLxNad+cDIngJ/4w2kWdXR7zcSNBhM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HLOJe5aHGUCBlnjnVURD939HWlQk8oRakwSok+PsgoJKLrodBiw3GpuUdLskwSXd/
-	 isE977if6ZEexV4rrhKJ3YH3gQAWLjiUdxbkt9zD0q658u1wfwIPx70ScapXEoHMoh
-	 r5PwYe2RRCzxCr2zqH/usPMHrspO7BPo8Vp1AgVEz2QzTQZuiFRoD0Si1N74wvaJi9
-	 kq3oEBWoUq0w1XNIjXNR8BCXZ9SJkqueo1EsepvviNfBO9ErLgMykNLOGAP3ftRY2M
-	 BEGHcj+yPc3WG3uptmEaZk1x8sh01qXVdiOGzd4tim6w21YGR1KPPIMqCc4+/C4s1e
-	 WzBEq7o/1ZVxQ==
+	b=Lz4A46TspwgvM2rCHwq6tFgYs9Kq1WQFGtkhQIccVj1T+5xFX6bdYyvNboSJqbcZa
+	 oPJVSKo8CpPlt8wMbluFLWh+QlxnIHtqedpiYDQ9YqAnjr8Vn1Cb196pi0e/Scv93n
+	 okPytWwUkzlUNXd56vT1OS8K5uG2zLeVCh+cMEEl0e3FlXNWPt7oE1fcFnQTUVzGpH
+	 91oYJbN4jR+KZG5Su2wLscKOEIAQOVz6H5qTrIuNNoe3iTDX7xnQXX81ypnvhZA8h3
+	 X0wIQAGoeHlvzWnRMIiB75ZMbKyofcPEYwPz8DH7Wb4vXp3KOaJKCvL/zs7h35Agkx
+	 8/5wnTtWQLPgw==
 Received: from johan by xi.lan with local (Exim 4.98.2)
 	(envelope-from <johan@kernel.org>)
-	id 1v64FZ-0000000035n-1AML;
+	id 1v64FZ-0000000035q-1aMt;
 	Tue, 07 Oct 2025 11:44:53 +0200
 From: Johan Hovold <johan@kernel.org>
 To: Joerg Roedel <joro@8bytes.org>,
@@ -60,11 +60,10 @@ Cc: Robin Murphy <robin.murphy@arm.com>,
 	Krishna Reddy <vdumpa@nvidia.com>,
 	iommu@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan@kernel.org>,
-	stable@vger.kernel.org
-Subject: [PATCH v2 06/14] iommu/mediatek: fix device leaks on probe()
-Date: Tue,  7 Oct 2025 11:43:19 +0200
-Message-ID: <20251007094327.11734-7-johan@kernel.org>
+	Johan Hovold <johan@kernel.org>
+Subject: [PATCH v2 07/14] iommu/mediatek: simplify dt parsing error handling
+Date: Tue,  7 Oct 2025 11:43:20 +0200
+Message-ID: <20251007094327.11734-8-johan@kernel.org>
 X-Mailer: git-send-email 2.49.1
 In-Reply-To: <20251007094327.11734-1-johan@kernel.org>
 References: <20251007094327.11734-1-johan@kernel.org>
@@ -76,82 +75,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Make sure to drop the references taken to the larb devices during
-probe on probe failure (e.g. probe deferral) and on driver unbind.
+As previously documented by commit 26593928564c ("iommu/mediatek: Add
+error path for loop of mm_dts_parse"), the id mapping may not be linear
+so the whole larb array needs to be iterated on devicetree parsing
+errors.
 
-Note that commit 26593928564c ("iommu/mediatek: Add error path for loop
-of mm_dts_parse") fixed the leaks in a couple of error paths, but the
-references are still leaking on success and late failures.
+Simplify the loop by iterating from index zero while dropping the
+redundant NULL check for consistency with later cleanups.
 
-Fixes: 0df4fabe208d ("iommu/mediatek: Add mt8173 IOMMU driver")
-Cc: stable@vger.kernel.org	# 4.6
+Also add back the comment which was removed by commit 462e768b55a2
+("iommu/mediatek: Fix forever loop in error handling") to prevent anyone
+from trying to optimise the loop by iterating backwards from 'i'.
+
 Cc: Yong Wu <yong.wu@mediatek.com>
 Acked-by: Robin Murphy <robin.murphy@arm.com>
 Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/iommu/mtk_iommu.c | 24 ++++++++++++++++++------
- 1 file changed, 18 insertions(+), 6 deletions(-)
+ drivers/iommu/mtk_iommu.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-index 8d8e85186188..20a5ba80f983 100644
+index 20a5ba80f983..24bb8b646edc 100644
 --- a/drivers/iommu/mtk_iommu.c
 +++ b/drivers/iommu/mtk_iommu.c
-@@ -1216,13 +1216,17 @@ static int mtk_iommu_mm_dts_parse(struct device *dev, struct component_match **m
- 		platform_device_put(plarbdev);
- 	}
- 
--	if (!frst_avail_smicomm_node)
--		return -EINVAL;
-+	if (!frst_avail_smicomm_node) {
-+		ret = -EINVAL;
-+		goto err_larbdev_put;
-+	}
- 
- 	pcommdev = of_find_device_by_node(frst_avail_smicomm_node);
- 	of_node_put(frst_avail_smicomm_node);
--	if (!pcommdev)
--		return -ENODEV;
-+	if (!pcommdev) {
-+		ret = -ENODEV;
-+		goto err_larbdev_put;
-+	}
- 	data->smicomm_dev = &pcommdev->dev;
- 
- 	link = device_link_add(data->smicomm_dev, dev,
-@@ -1230,7 +1234,8 @@ static int mtk_iommu_mm_dts_parse(struct device *dev, struct component_match **m
- 	platform_device_put(pcommdev);
- 	if (!link) {
- 		dev_err(dev, "Unable to link %s.\n", dev_name(data->smicomm_dev));
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto err_larbdev_put;
- 	}
+@@ -1240,11 +1240,10 @@ static int mtk_iommu_mm_dts_parse(struct device *dev, struct component_match **m
  	return 0;
  
-@@ -1402,8 +1407,12 @@ static int mtk_iommu_probe(struct platform_device *pdev)
- 	iommu_device_sysfs_remove(&data->iommu);
- out_list_del:
- 	list_del(&data->list);
--	if (MTK_IOMMU_IS_TYPE(data->plat_data, MTK_IOMMU_TYPE_MM))
-+	if (MTK_IOMMU_IS_TYPE(data->plat_data, MTK_IOMMU_TYPE_MM)) {
- 		device_link_remove(data->smicomm_dev, dev);
+ err_larbdev_put:
+-	for (i = MTK_LARB_NR_MAX - 1; i >= 0; i--) {
+-		if (!data->larb_imu[i].dev)
+-			continue;
++	/* id mapping may not be linear, loop the whole array */
++	for (i = 0; i < MTK_LARB_NR_MAX; i++)
+ 		put_device(data->larb_imu[i].dev);
+-	}
 +
-+		for (i = 0; i < MTK_LARB_NR_MAX; i++)
-+			put_device(data->larb_imu[i].dev);
-+	}
- out_runtime_disable:
- 	pm_runtime_disable(dev);
  	return ret;
-@@ -1423,6 +1432,9 @@ static void mtk_iommu_remove(struct platform_device *pdev)
- 	if (MTK_IOMMU_IS_TYPE(data->plat_data, MTK_IOMMU_TYPE_MM)) {
- 		device_link_remove(data->smicomm_dev, &pdev->dev);
- 		component_master_del(&pdev->dev, &mtk_iommu_com_ops);
-+
-+		for (i = 0; i < MTK_LARB_NR_MAX; i++)
-+			put_device(data->larb_imu[i].dev);
- 	}
- 	pm_runtime_disable(&pdev->dev);
- 	for (i = 0; i < data->plat_data->banks_num; i++) {
+ }
+ 
 -- 
 2.49.1
 
