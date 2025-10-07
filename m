@@ -1,266 +1,203 @@
-Return-Path: <linux-kernel+bounces-843845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-843846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADAB9BC068C
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:55:05 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C78E8BC0698
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 08:55:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5B75A4F3BF4
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:54:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 433DF4F3AFA
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 06:54:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0905D22B8B0;
-	Tue,  7 Oct 2025 06:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0D11B2186;
+	Tue,  7 Oct 2025 06:52:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iejNTuY4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VM+3Hh6L"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB13215767
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 06:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5782264A7
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 06:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759819946; cv=none; b=T9t7PUT7Jt7k/hfkWZDMwT+WIcCLIz9/CqlpU9Wmv7FjvYsT8GfuUcZJKFFnaWPlO36K1GtqNTepSdLcWczfEeDezDlr5D4Dq7X6uhHvckz+2DWypgf7tp9tEQ1MRuY/o+Qzzm4JoUBA/30Clu4tkcwT6Sllop/SWUKAUrZcWoI=
+	t=1759819973; cv=none; b=bp0W0OnfF/6Xi4hfapzodiZF3HZupyraVIaUDHLC0eqQWIFiqfJE0odjBBXEBScZZUIflwz7fooKCwDsoj7FzoSDjewwRETNG6WHF0HtILbU4So3Gh3PF/bA7F44kwuz0ykRMJk7OPT/aOj3JtBzLbssMz7rPrfvL/h61Tl0bIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759819946; c=relaxed/simple;
-	bh=ljRIZcXVDsulZu38rOR6Abg5SbUHTniYuTY+SzLZI8g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JDJZWoxoH9krRoJmZhqROiSxJIyzGLs+EPDn/IfQcC86YbJBzNEwhjNwjL4c//3Fn5jnkN+41H3d034FHYK/tbMHhCWn7sO9YS2PZx/FcZCmzVcTsM52RSZz/WNodyRQOxs26kHZpb4O673OXdFNH3vI4MHJ71Z7M4tWDgubELY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iejNTuY4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80EBBC4CEF7;
-	Tue,  7 Oct 2025 06:52:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759819945;
-	bh=ljRIZcXVDsulZu38rOR6Abg5SbUHTniYuTY+SzLZI8g=;
-	h=From:To:Cc:Subject:Date:From;
-	b=iejNTuY4GggfYpfh21eBR5X5L1Qy0kK8hjhzrUyo7ePAhd0zZd7hC0GrwC2dG//Id
-	 GYQGREtX+98qKZbJROSjIRJ33PwVZIF56/5k0uGgjCDs7rAWBXziMrIvO5vwntJ8Qf
-	 dqX+/D/7WNHepyBxPSp0UnfU9zd6nec9FFdzDM+63gMq17pt51ovC/hS63I/0Lpmz/
-	 cHYBLjxL1/Ipkg5LVjVeAef0fRjE2VzT7M33pPCJY43OnK6iBUSkNNvp4pSQ86EH9P
-	 aLTvZzKA7UEQg4n0yIu7paPpLxNoHtkzXQR2lS5EM8riDVw/65NTp6mUw3Kcy6XLy+
-	 cg3d9Kx7pfCQg==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1v61Yd-0000000H0MH-2HA0;
-	Tue, 07 Oct 2025 08:52:23 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Igor Mammedov <imammedo@redhat.com>,
-	"Michael S . Tsirkin" <mst@redhat.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Shiju Jose <shiju.jose@huawei.com>,
-	qemu-arm@nongnu.org,
-	qemu-devel@nongnu.org,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Cleber Rosa <crosa@redhat.com>,
-	John Snow <jsnow@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] scripts/ghes_inject.py: avoid long lines inside the script
-Date: Tue,  7 Oct 2025 08:52:11 +0200
-Message-ID: <5d75e5f2a9584d4c9235d5111b6402291ec8f616.1759819931.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1759819973; c=relaxed/simple;
+	bh=ZSjlhghuDjwIeHnl71xo1QfnL/uEr7xaGmW26iAiHh0=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Wgum6hwrxkoDKB1LbDa4TymllUOPOgTcsyyUSY+uzi63/IFYW6j8tV1hRde+yDQy6m3fExMVE2zXBK9b4jbJiAykbIwCptYafOXJBYd+RxKfuMVzLCw6s+tjlWPoM63cGacn/DEC3r817kPEbAkABBDPzQhPBbkRPNfqi1bFNQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VM+3Hh6L; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5972xoKi027706
+	for <linux-kernel@vger.kernel.org>; Tue, 7 Oct 2025 06:52:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	orLZT7zL3V4+D2PmyvlqkkoTTPi2f83cdPN1hh+UFig=; b=VM+3Hh6LFQ+Mpawq
+	Tr+pzqrIs1eQ+pmdaPEtcju3yDEeqyg2uh8Jp9ccOknskLiLqwgO739t7fRwlClR
+	c7ceLb/vf/SeNob19qAuSaS0qnQ9HPZDvjdKwkSHvKn8naQW46MXd4afqhLHiDTf
+	KRiL43eubQqUQRszG8uUz7pDuLanoAt8CkHbETaUiFOKnTdknAmlobJpctlK27vp
+	KcUNRDCG49LPhb7zOKRAWzidchMbEUZp/ZDajbHWxhshuFeM0KZ8u0fMkRjQHZ2H
+	m6IGNRLDYmrVEMreEEIDoDMgWtnbfOPcP7+iBrq1ZHK/oL0sp/p+C38qi33M3rR+
+	MSQVUg==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49junu6as8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 06:52:49 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-28bd8b3fa67so51876295ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 06 Oct 2025 23:52:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759819969; x=1760424769;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=orLZT7zL3V4+D2PmyvlqkkoTTPi2f83cdPN1hh+UFig=;
+        b=YD7gHipOur3aEY1szBGGG/NXXTR45wH57EleeWfXZlycyfSWmE0dJF266I+D6uno44
+         E3C2SR9Si5QWAQf4ixbL3pnpXpsm2I2GFG/ujUOa2bQ5f+PDnTqucDlTlP5I5GeJS+xT
+         TXhi9eSevT9jidv92fMR4IufFaOLcAu/s6e5cEhqv/UDtrOBLzLRLQA0+EhZoDO0gP2n
+         cYaiCoWS7nelNYouVFChN6TnciAA6s20hx3dL8P2sfZl4f13ftl/xHKZBG+GmcUO01lK
+         CniqSqpL7oZ/kYTS8cEd/NUwDzzVOmx2X9GKlvpxrbCJmabgUg89Nd19YjiLlI/YD/l4
+         deTw==
+X-Forwarded-Encrypted: i=1; AJvYcCUzXCCzrxjKsLYXJcvl/ukZrhrEyVQZe1xxu7CGwyU7beJfGplQXaV5fsZGUvF6bxlxAjD/+L0uucfhSiM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT3bA7Sucycl4NEs/1wcZWchI47EP6rqONI6yW2GFhdeyX3vuK
+	dZbE27rBcFmq2LLBfDxccfRG5q6IH0JbsY+3pcvvE7Gzq49Tty6jn95IshNcH14dfarQAes1ztT
+	1E+69UmzidbxMkU/nTh8ItzahZipLzlIgxcSK2JzP1v0872dXqZptsRTD1Ue+JaHJARg=
+X-Gm-Gg: ASbGnct5cPubLCpIkFuZPDzGGruNf0zISiSdFWzyHm4AWGo4PTMOaOg/8k1npuylGMh
+	Y1uNwxNFIrx1f+PJVhsO8dt4oyiRU0ybtlpabJn5iadDO3kZdfcPpPjEDJjGh+9/MJGEjZSRZ8s
+	jWQiNhZGBOqLZlysAZsuyYPZFp17nJKiFS2U2SS+hBcVqdCKXs63y9hjxYXALb/gSoZa6XjN3nH
+	Zg9WLofU2ow/IuC/ucDB3NiScEGj1GY37sdltXmJtpmk0MXPqktwEM1z9sDozlV7IGPUj4RQ6Lm
+	KV7t8Cq6XehgYAJWmrajpgedNz4HAzFLnwKFu6uOKcXcfNYBbo0SGhlIwF4xF9Ab+5FzrVh7B5E
+	VDda2/GR9rL/rWk7KCZqsm7UfnA8tjivtM/3XfRAeWU9NW8JNnCYhYRLRmbJknOL4/IQ=
+X-Received: by 2002:a17:902:ebc5:b0:28d:1815:6382 with SMTP id d9443c01a7336-28e9a64925cmr164252125ad.46.1759819968685;
+        Mon, 06 Oct 2025 23:52:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEWs7dD71EQBt8SniMOLPxdgiNr5aQ3jTTG8yNgF3kNyUIvGY7hrt9bbkSOQkdsWoCRJlV7Xg==
+X-Received: by 2002:a17:902:ebc5:b0:28d:1815:6382 with SMTP id d9443c01a7336-28e9a64925cmr164251785ad.46.1759819968129;
+        Mon, 06 Oct 2025 23:52:48 -0700 (PDT)
+Received: from [10.190.210.68] (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1b8444sm154035465ad.86.2025.10.06.23.52.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Oct 2025 23:52:47 -0700 (PDT)
+Message-ID: <166a0b99-879c-43cd-b3c0-37eb04afca5a@oss.qualcomm.com>
+Date: Tue, 7 Oct 2025 12:22:42 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
+Subject: Re: [PATCH v2] watchdog: Add driver for Gunyah Watchdog
+To: Guenter Roeck <linux@roeck-us.net>,
+        Bjorn Andersson
+ <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>
+References: <20251006-gunyah_watchdog-v2-1-b99d41d45450@oss.qualcomm.com>
+ <6e7eaac2-0859-4bfd-b76b-2f81e384a91c@roeck-us.net>
+Content-Language: en-US
+In-Reply-To: <6e7eaac2-0859-4bfd-b76b-2f81e384a91c@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+X-Proofpoint-ORIG-GUID: pW_aIiL8KAGQp-BPFvToJj9_zrUvByAn
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAyMyBTYWx0ZWRfX/weWf2aOHeMl
+ XlPOFgs6hIKCYZFk9NsdKBB0poatUfzdY25QoPdHn1qrJk/cY3/jIiN+O+hItq+tco3WM2B2AKx
+ Z0lWq3ADAxIlSQx1GqTdQBK9NLblHtDwGeFz2dPL2YHE+72+IPjXZDky+ZIqdxeoMeC9BjP+FsY
+ JI+2imnJDpo3nn8QrsyK9jp1HGxqmXQeVhlLohXoC+NDkz8XssQdTDPUofsbolw1QmeKk3blc5Q
+ Y9h2lusB1FuE6BqYIU17FgyL9taHfNZmmP2X0DTFj3TLt7ZwojSwVGUuiRgVWAvdvb3tQ8XojJT
+ /sVv4JJze8I6ZfmWaOrpq/ecnRrtgTETazLuFOlSGSGtAaKTOTB93f27p4Cau22MhLp0xUNhEh0
+ adfUV/uZOOyjwR9nIeGcUXK3cnclng==
+X-Authority-Analysis: v=2.4 cv=CbIFJbrl c=1 sm=1 tr=0 ts=68e4b8c2 cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=NEAV23lmAAAA:8 a=EUspDBNiAAAA:8 a=GK14inuqRTfZ8P4RZYYA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: pW_aIiL8KAGQp-BPFvToJj9_zrUvByAn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-06_07,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 malwarescore=0 clxscore=1015 adultscore=0 suspectscore=0
+ spamscore=0 priorityscore=1501 phishscore=0 impostorscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040023
 
-There are some lines that are too long, mostly at argparse,
-causing checkpatch warnings, plus a couple pylint disable
-lines.
 
-Make them honor 80 columns limit.
+On 10/6/2025 7:48 PM, Guenter Roeck wrote:
+> On 10/6/25 00:37, Hrishabh Rajput via B4 Relay wrote:
+>> From: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
+>>
+>> On Qualcomm SoCs running under the Gunyah hypervisor, access to watchdog
+>> through MMIO is not available on all platforms. Depending on the
+>> hypervisor configuration, the watchdog is either fully emulated or
+>> exposed via ARM's SMC Calling Conventions (SMCCC) through the Vendor
+>> Specific Hypervisor Service Calls space.
+>>
+>> When Gunyah is not present or Gunyah emulates MMIO-based watchdog, we
+>> expect MMIO watchdog device to be present in the devicetree. If we
+>> detect this device node, we don't proceed ahead. Otherwise, we go ahead
+>> and invoke GUNYAH_WDT_STATUS SMC to initiate the discovery of the
+>> SMC-based watchdog.
+>>
+>> Add driver to support the SMC-based watchdog provided by the Gunyah
+>> Hypervisor. module_exit() is intentionally not implemented as this
+>> driver is intended to be a persistent module.
+>>
+>> Signed-off-by: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
+>> ---
+>> Gunyah is a Type-I hypervisor which was introduced in the patch series
+>> [1]. It is an open source hypervisor. The source repo is available at
+>> [2].
+>>
+>> The Gunyah Hypervisor doesn't allow its Virtual Machines to directly
+>> access the MMIO watchdog. It either provides the fully emulated MMIO
+>> based watchdog interface or the SMC-based watchdog interface depending
+>> on the hypervisor configuration.
+>> The SMC-based watchdog follows ARM's SMC Calling Convention (SMCCC)
+>> version 1.1 and uses Vendor Specific Hypervisor Service Calls space.
+>>
+>> This patch series adds support for the SMC-based watchdog interface
+>> provided by the Gunyah Hypervisor.
+>>
+>> This series is tested on SM8750 platform.
+>>
+>> [1]
+>> https://lore.kernel.org/all/20240222-gunyah-v17-0-1e9da6763d38@quicinc.com/ 
+>>
+>>
+>> [2]
+>> https://github.com/quic/gunyah-hypervisor
+>> ---
+>> Changes in v2:
+>> - Move away from platform driver model since the devicetree overlay does
+>>    not happen by default.
+>
+> This is just wrong. Platform drivers do not depend on devicetree. I am 
+> not even
+> going to review the rest of the driver. 
 
-No functional changes.
+Thanks for pointing out the mistake here. Platform drivers are 
+independent of devicetree. Therefore the line you've pointed to is wrong 
+as it erroneously portrays that the platform drivers are dependent on 
+devicetrees. It is a mistake and I would rephrase it to following to 
+make the intent clearer:
 
-While here, add a space after comma on help lines displaying
-possible alternatives.
+"Do not depend on devicetree to discover (and probe) watchdog as 
+devicetree overlay does not happen by default. Instead invoke 
+GUNYAH_WDT_STATUS SMC Call to discover (and initialize) the watchdog."
 
-Requested-by: "Michael S. Tsirkin" <mst@redhat.com>
-Closes: https://lore.kernel.org/qemu-devel/20251005082027-mutt-send-email-mst@kernel.org/
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- scripts/arm_processor_error.py | 35 +++++++++++++++++++++-------------
- scripts/ghes_inject.py         |  8 ++++----
- scripts/qmp_helper.py          | 23 +++++++++++++---------
- 3 files changed, 40 insertions(+), 26 deletions(-)
 
-diff --git a/scripts/arm_processor_error.py b/scripts/arm_processor_error.py
-index 73d069f070d4..e4b6e11822af 100644
---- a/scripts/arm_processor_error.py
-+++ b/scripts/arm_processor_error.py
-@@ -80,12 +80,14 @@
- [Hardware Error]:    error_type: 0x08: bus error
- [Hardware Error]:    error_info: 0x00000080d6460fff
- [Hardware Error]:     transaction type: Generic
--[Hardware Error]:     bus error, operation type: Generic read (type of instruction or data request cannot be determined)
-+[Hardware Error]:     bus error, operation type: Generic read
-+                      (type of instruction or data request cannot be determined)
- [Hardware Error]:     affinity level at which the bus error occurred: 1
- [Hardware Error]:     processor context corrupted
- [Hardware Error]:     the error has been corrected
- [Hardware Error]:     PC is imprecise
--[Hardware Error]:     Program execution can be restarted reliably at the PC associated with the error.
-+[Hardware Error]:     Program execution can be restarted reliably at the PC
-+                      associated with the error.
- [Hardware Error]:     participation type: Local processor observed
- [Hardware Error]:     request timed out
- [Hardware Error]:     address space: External Memory Access
-@@ -102,12 +104,14 @@
- [Hardware Error]:    register context type: AArch64 EL1 context registers
- [Hardware Error]:    00000000: 00000000 00000000
- [Hardware Error]:   Vendor specific error info has 5 bytes:
--[Hardware Error]:    00000000: 13 7b 04 05 01                                   .{...
-+[Hardware Error]:    00000000: 13 7b 04 05 01                             .{...
- [Firmware Warn]: GHES: Unhandled processor error type 0x02: cache error
- [Firmware Warn]: GHES: Unhandled processor error type 0x04: TLB error
- [Firmware Warn]: GHES: Unhandled processor error type 0x08: bus error
--[Firmware Warn]: GHES: Unhandled processor error type 0x10: micro-architectural error
--[Firmware Warn]: GHES: Unhandled processor error type 0x14: TLB error|micro-architectural error
-+[Firmware Warn]: GHES: Unhandled processor error type 0x10:
-+                 micro-architectural error
-+[Firmware Warn]: GHES: Unhandled processor error type 0x14:
-+                 TLB error|micro-architectural error
- """
- 
- import argparse
-@@ -171,10 +175,10 @@ def __init__(self, subparsers):
- 
-         parser = subparsers.add_parser("arm", description=self.DESC)
- 
--        arm_valid_bits = ",".join(self.arm_valid_bits.keys())
--        flags = ",".join(self.pei_flags.keys())
--        error_types = ",".join(self.pei_error_types.keys())
--        pei_valid_bits = ",".join(self.pei_valid_bits.keys())
-+        arm_valid_bits = ", ".join(self.arm_valid_bits.keys())
-+        flags = ", ".join(self.pei_flags.keys())
-+        error_types = ", ".join(self.pei_error_types.keys())
-+        pei_valid_bits = ", ".join(self.pei_valid_bits.keys())
- 
-         # UEFI N.16 ARM Validation bits
-         g_arm = parser.add_argument_group("ARM processor")
-@@ -193,7 +197,7 @@ def __init__(self, subparsers):
-                            help="Indicates if the processor is running or not")
-         g_arm.add_argument("--psci", "--psci-state",
-                            type=lambda x: int(x, 0),
--                           help="Power State Coordination Interface - PSCI state")
-+                           help="Power State Coordination Interface state")
- 
-         # TODO: Add vendor-specific support
- 
-@@ -208,9 +212,12 @@ def __init__(self, subparsers):
- 
-         # UEFI N.17 Integer values
-         g_pei.add_argument("-m", "--multiple-error", nargs="+",
--                        help="Number of errors: 0: Single error, 1: Multiple errors, 2-65535: Error count if known")
-+                        help="Number of errors: "
-+                             "0: Single error, 1: Multiple errors, "
-+                             "2-65535: Error count if known")
-         g_pei.add_argument("-e", "--error-info", nargs="+",
--                        help="Error information (UEFI 2.10 tables N.18 to N.20)")
-+                        help="Error information "
-+                             "(UEFI 2.10 tables N.18 to N.20)")
-         g_pei.add_argument("-p", "--physical-address",  nargs="+",
-                         help="Physical address")
-         g_pei.add_argument("-v", "--virtual-address",  nargs="+",
-@@ -219,7 +226,9 @@ def __init__(self, subparsers):
-         # UEFI N.21 Context
-         g_ctx = parser.add_argument_group("Processor Context")
-         g_ctx.add_argument("--ctx-type", "--context-type", nargs="*",
--                        help="Type of the context (0=ARM32 GPR, 5=ARM64 EL1, other values supported)")
-+                        help="Type of the context "
-+                             "(0=ARM32 GPR, 5=ARM64 EL1, "
-+                             "other values supported)")
-         g_ctx.add_argument("--ctx-size", "--context-size", nargs="*",
-                         help="Minimal size of the context")
-         g_ctx.add_argument("--ctx-array", "--context-array", nargs="*",
-diff --git a/scripts/ghes_inject.py b/scripts/ghes_inject.py
-index 9a235201418b..1a2d60e9e16f 100755
---- a/scripts/ghes_inject.py
-+++ b/scripts/ghes_inject.py
-@@ -8,7 +8,7 @@
- Handle ACPI GHESv2 error injection logic QEMU QMP interface.
- """
- 
--import argparse
-+from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
- import sys
- 
- from arm_processor_error import ArmProcessorEinj
-@@ -26,9 +26,9 @@ def main():
-     """Main program"""
- 
-     # Main parser - handle generic args like QEMU QMP TCP socket options
--    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter,
--                                     usage="%(prog)s [options]",
--                                     description=EINJ_DESC)
-+    parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter,
-+                            usage="%(prog)s [options]",
-+                            description=EINJ_DESC)
- 
-     g_options = parser.add_argument_group("QEMU QMP socket options")
-     g_options.add_argument("-H", "--host", default="localhost", type=str,
-diff --git a/scripts/qmp_helper.py b/scripts/qmp_helper.py
-index c1e7e0fd80ce..18b99c01cd79 100755
---- a/scripts/qmp_helper.py
-+++ b/scripts/qmp_helper.py
-@@ -198,7 +198,8 @@ def bit(b):
-     def data_add(data, value, num_bytes):
-         """Adds bytes from value inside a bitarray"""
- 
--        data.extend(value.to_bytes(num_bytes, byteorder="little"))  # pylint: disable=E1101
-+        # pylint: disable=E1101
-+        data.extend(value.to_bytes(num_bytes, byteorder="little"))
- 
-     def dump_bytearray(name, data):
-         """Does an hexdump of a byte array, grouping in bytes"""
-@@ -416,12 +417,14 @@ def _connect(self):
-     def argparse(parser):
-         """Prepare a parser group to query generic error data"""
- 
--        block_status_bits = ",".join(qmp.BLOCK_STATUS_BITS.keys())
--        error_severity_enum = ",".join(qmp.ERROR_SEVERITY.keys())
--        validation_bits = ",".join(qmp.VALIDATION_BITS.keys())
--        gedb_flags_bits = ",".join(qmp.GEDB_FLAGS_BITS.keys())
-+        block_status_bits = ", ".join(qmp.BLOCK_STATUS_BITS.keys())
-+        error_severity_enum = ", ".join(qmp.ERROR_SEVERITY.keys())
-+        validation_bits = ", ".join(qmp.VALIDATION_BITS.keys())
-+        gedb_flags_bits = ", ".join(qmp.GEDB_FLAGS_BITS.keys())
-+
-+        # pylint: disable=E1101
-+        g_gen = parser.add_argument_group("Generic Error Data")
- 
--        g_gen = parser.add_argument_group("Generic Error Data")  # pylint: disable=E1101
-         g_gen.add_argument("--block-status",
-                            help=f"block status bits: {block_status_bits}")
-         g_gen.add_argument("--raw-data", nargs="+",
-@@ -439,9 +442,10 @@ def argparse(parser):
-                            help="Time when the error info was collected")
-         g_gen.add_argument("--precise", "--precise-timestamp",
-                            action='store_true',
--                           help="Marks the timestamp as precise if --timestamp is used")
-+                           help="if --timestamp is used, timestamp is precise")
-         g_gen.add_argument("--gedb-flags",
--                           help=f"General Error Data Block flags: {gedb_flags_bits}")
-+                           help="General Error Data Block flags: "
-+                                f"{gedb_flags_bits}")
- 
-     def set_args(self, args):
-         """Set the arguments optionally defined via self.argparse()"""
-@@ -501,8 +505,9 @@ def set_args(self, args):
-                 self.validation_bits |= self.VALIDATION_BITS["timestamp"]
- 
-         if args.gen_err_valid_bits:
-+            gen_err_valid_bits = args.gen_err_valid_bits
-             self.validation_bits = util.get_choice(name="validation",
--                                                   value=args.gen_err_valid_bits,
-+                                                   value=gen_err_valid_bits,
-                                                    choices=self.VALIDATION_BITS)
- 
-     def __init__(self, host, port, debug=False):
--- 
-2.51.0
+Thanks,
+Hrishabh
 
 
