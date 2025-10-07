@@ -1,140 +1,172 @@
-Return-Path: <linux-kernel+bounces-844798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41CEDBC2CCD
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 23:52:35 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E766BC2CE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 23:55:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E3511350062
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 21:52:34 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3A31835044F
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 21:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 459F12561D9;
-	Tue,  7 Oct 2025 21:52:29 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26C1257830;
+	Tue,  7 Oct 2025 21:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eDSswZT8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 402BA246BB7
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 21:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4685E20010A;
+	Tue,  7 Oct 2025 21:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759873948; cv=none; b=qyNA7s4TFJdt0ZUfwyradOVy3lxozcsr1yYeKM494humi7hRDoHYJLljTVJKUQuMhqhRExz+T9sEDDvLNoLNS+QASa9FpnBqOlWM9SzTIr4rRJV64qarr1WRsmSyXjDb3KYsLxuiuUEjKQkrg8Pfr6D4dReiTz3/vEwqULA4UJo=
+	t=1759874107; cv=none; b=tQlOh6iSvFVDp9rlUv2tX/zhzRHcTKRDSCbTID8FEaBWH2+n7N73DxVfzpgbTmW9M2ObpnJtIpiuyTa1DHbhMfZboLPfoA3XOx6b8udCS6614vNV1n38uh015mNNYMUdu9D53ELldQD/hJU31Yyz5mkPu4AvcWLS5eZSnhkyY6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759873948; c=relaxed/simple;
-	bh=Rf/Q1Iv6JMPmtv6eqR6d3PLk/+uH64F/ZMLm0Ku/lfI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=bXOJPly7aG9WFFuhZG/9D5bk6jmVSmblLTXJkCz2vemupSyIBxyK2utXxV+0ZIoq2/2XLCRMD3/jqspEul735Ncp37YpL60h+bBQfNI69IiTtTgmexZOO/iaKt1jw8c23OgZuO480aOUrf01Q0t99JWVljWkRThQr0EFCgi/sSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-91b3cc5aa6aso1602729339f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 14:52:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759873946; x=1760478746;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rr525ggriPbti9RSgts0y1f0Wmcz7fRKptJXoPmGDnk=;
-        b=iG1c7rLMoTaMCpIb0YAJZIArww8XYi4ZKKWc1QQwmSdSdMvEA4LbSfUiH5vY9d9519
-         TLzohAArOje7l59QrefujZKDB9XUzvy20no89zah/Ga4aZJw7lj+C8Y8qRZHDZSsqvjT
-         q+pfVAlVZKIvV+dmb7FjEwgd0kp4pJWwk3fm6bXY2RQmiqcVnAefOqJ7xOHwtRNgblu5
-         JkZxx04qB4Yro5INJJuJXtgar7WUZjjQmfhn2S21a8hQxtvIt0R1F8rQ9Ov4ISfyvzgm
-         4G+0BgUN3BsZ3g6lAScBXJYglxcTiX/4NQ/67UkIQaQ9XbUTWD1SfgyCEg11oB8SMPKs
-         /7vA==
-X-Gm-Message-State: AOJu0YxmIG6cHQz3cflwURYkt9N9uoNX31dYYV+fy6Ias2f75cyK7M3c
-	1aYGfKfO65HfUDJWQmtVKR+1dDrvPWRWmqCDbSBtRXULoucgju8CxqpB3XLRhNZXC3Omwl7oDTZ
-	U7qZU6ygU+dnSUVGi87qmT1+bGJtBe0sUKiRSaI+/WLemRH7UkvZryzrf5ig=
-X-Google-Smtp-Source: AGHT+IHFVNodcufQDyW7chzPvwMkn+Qyshs/Unn2TkYUYRDlU2YicbMB35nWylSfks2hDv7F6i0EgAk10zmvDxmjq6ky4pI1U+2j
+	s=arc-20240116; t=1759874107; c=relaxed/simple;
+	bh=kQh6Ho8fKAf4SzN/orRsqLD48VeGsXJLmeu9AGlhXHU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qs13KS9YqvBmKJqWOZJuZ31/H9KjRsgdA0memSfNbB5et7M7UI8FEQqwju9gHafM43lmCrCVSFfII+OvcyryLj2IdCLNvZ8VNU9GZPGl+r3eT2gb2eM8Ufc2cEdypld2tbXBS1T35r/OdN62wmW2QC5vI3/iOLW4yxTv/rImSXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eDSswZT8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46208C4CEF1;
+	Tue,  7 Oct 2025 21:55:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759874105;
+	bh=kQh6Ho8fKAf4SzN/orRsqLD48VeGsXJLmeu9AGlhXHU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eDSswZT8hrP3Q/Kz4IzE8+hcg0UFu3vP4bvlIbkZkRe2iDGgcLQ6vzEGB9W/0r9F+
+	 TBRYHAXAW4fIKgPXhkrESu10i8Pyhd9VNNZcDJDnMZnnL1UDcwBw+dGHDH2myToe06
+	 W1FLwLPgJ+OwpN4G7GhWtqqwdOM/iMzLXA1bjX0axQv9IG271rLZvfvW6ZerU42lDW
+	 KBs6ATfpTWRqCz2qj73HkS66bqOWe8T7JvrayMX+3F9Z3qjJYRfZ4Av7knncLtgdYG
+	 jrZa5mVZQyJD0+u0RpT8ssPd5nXTXdX9O3Od+kBZxjkvTPaEIep8gCy30dMRj8Mb8X
+	 u5Ug7P3bJ46uQ==
+Date: Tue, 7 Oct 2025 14:55:04 -0700
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 12/12] arm64: dts: qcom: Add EL2 overlay for Lemans
+Message-ID: <yef5jtmcfuks2w2sngxr4a4htihxx4xidsgwpro6wckbfvmvvn@jfr3dlsdf5vm>
+References: <20251007-kvm_rprocv4_next-20251007-v4-0-de841623af3c@oss.qualcomm.com>
+ <20251007-kvm_rprocv4_next-20251007-v4-12-de841623af3c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:48c:b0:929:11b1:9bd9 with SMTP id
- ca18e2360f4ac-93bd1970ea3mr94500339f.10.1759873946385; Tue, 07 Oct 2025
- 14:52:26 -0700 (PDT)
-Date: Tue, 07 Oct 2025 14:52:26 -0700
-In-Reply-To: <68e2ff91.050a0220.2c17c1.003a.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68e58b9a.050a0220.256323.0027.GAE@google.com>
-Subject: Forwarded: 
-From: syzbot <syzbot+3a1878433bc1cb97b42a@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251007-kvm_rprocv4_next-20251007-v4-12-de841623af3c@oss.qualcomm.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Tue, Oct 07, 2025 at 10:18:57PM +0530, Mukesh Ojha wrote:
+> All the Lemans IOT variants boards are using Gunyah hypervisor which
+> means that, so far, Linux-based OS could only boot in EL1 on those
+> devices.  However, it is possible for us to boot Linux at EL2 on these
+> devices [1].
+> 
+> When running under Gunyah, remote processor firmware IOMMU streams is
+> controlled by the Gunyah however when Linux take ownership of it in EL2,
+> It need to configure it properly to use remote processor.
+> 
+> Add a EL2-specific DT overlay and apply it to Lemans IOT variant
+> devices to create -el2.dtb for each of them alongside "normal" dtb.
+> 
+> [1]
+> https://docs.qualcomm.com/bundle/publicresource/topics/80-70020-4/boot-developer-touchpoints.html#uefi
+> 
+> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/Makefile        |  7 +++++-
+>  arch/arm64/boot/dts/qcom/lemans-el2.dtso | 41 ++++++++++++++++++++++++++++++++
+>  2 files changed, 47 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+> index 296688f7cb26..e2eb6c4f8e25 100644
+> --- a/arch/arm64/boot/dts/qcom/Makefile
+> +++ b/arch/arm64/boot/dts/qcom/Makefile
+> @@ -35,6 +35,8 @@ dtb-$(CONFIG_ARCH_QCOM)	+= lemans-evk.dtb
+>  lemans-evk-camera-csi1-imx577-dtbs	:= lemans-evk.dtb lemans-evk-camera-csi1-imx577.dtbo
+>  
+>  dtb-$(CONFIG_ARCH_QCOM)	+= lemans-evk-camera-csi1-imx577.dtb
+> +lemans-evk-el2-dtbs := lemans-evk.dtb lemans-el2.dtbo
+> +dtb-$(CONFIG_ARCH_QCOM)	+= lemans-evk-el2.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= monaco-evk.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8216-samsung-fortuna3g.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-acer-a1-724.dtb
+> @@ -136,7 +138,10 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2-vision-mezzanine.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs8300-ride.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs8550-aim300-aiot.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride.dtb
+> -dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride-r3.dtb
+> +qcs9100-ride-el2-dtbs := qcs9100-ride.dtb lemans-el2.dtbo
+> +dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride.dtb qcs9100-ride-el2.dtb
+> +qcs9100-ride-r3-el2-dtbs := qcs9100-ride-r3.dtb lemans-el2.dtbo
+> +dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride-r3.dtb qcs9100-ride-r3-el2.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= qdu1000-idp.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= qrb2210-rb1.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= qrb4210-rb2.dtb
+> diff --git a/arch/arm64/boot/dts/qcom/lemans-el2.dtso b/arch/arm64/boot/dts/qcom/lemans-el2.dtso
+> new file mode 100644
+> index 000000000000..582b0a3a291a
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/lemans-el2.dtso
+> @@ -0,0 +1,41 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +/*
+> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+> + */
+> +
+> +/*
+> + * Lemans specific modifications required to boot in EL2.
+> + */
+> +
+> +/dts-v1/;
+> +/plugin/;
+> +
+> +&iris {
+> +	/* TODO: Add video-firmware iommus to start IRIS from EL2 */
 
-***
+So the missing 'iommus' property is the only blocker to enable IRIS?
 
-Subject: 
-Author: jkoolstra@xs4all.nl
+- Mani
 
-#syz test
+> +	status = "disabled";
+> +};
+> +
+> +/*
+> + * When running under Gunyah, remote processor firmware IOMMU streams is
+> + * controlled by the Gunyah however when we take ownership of it in EL2,
+> + * we need to configure it properly to use remote processor.
+> + */
+> +&remoteproc_adsp {
+> +	iommus = <&apps_smmu 0x3000 0x0>;
+> +};
+> +
+> +&remoteproc_cdsp0 {
+> +	iommus = <&apps_smmu 0x21c0 0x0400>;
+> +};
+> +
+> +&remoteproc_cdsp1 {
+> +	iommus = <&apps_smmu 0x29c0 0x0400>;
+> +};
+> +
+> +&remoteproc_gpdsp0 {
+> +       iommus = <&apps_smmu 0x38a0 0x0>;
+> +};
+> +
+> +&remoteproc_gpdsp1 {
+> +       iommus = <&apps_smmu 0x38c0 0x0>;
+> +};
+> 
+> -- 
+> 2.50.1
+> 
 
-
- fs/ntfs3/index.c | 10 +++++-----
- fs/ntfs3/ntfs.h  |  5 ++++-
- 2 files changed, 9 insertions(+), 6 deletions(-)
-
-diff --git a/fs/ntfs3/index.c b/fs/ntfs3/index.c
-index 6d1bf890929d..2e512abc7000 100644
---- a/fs/ntfs3/index.c
-+++ b/fs/ntfs3/index.c
-@@ -1808,7 +1808,7 @@ indx_insert_into_buffer(struct ntfs_index *indx, struct ntfs_inode *ni,
- 	CLST new_vbn;
- 	__le64 t_vbn, *sub_vbn;
- 	u16 sp_size;
--	void *hdr1_saved = NULL;
-+	void *blk1_saved = NULL;
- 
- 	/* Try the most easy case. */
- 	e = fnd->level - 1 == level ? fnd->de[level] : NULL;
-@@ -1842,8 +1842,8 @@ indx_insert_into_buffer(struct ntfs_index *indx, struct ntfs_inode *ni,
- 	memcpy(up_e, sp, sp_size);
- 
- 	used1 = le32_to_cpu(hdr1->used);
--	hdr1_saved = kmemdup(hdr1, used1, GFP_NOFS);
--	if (!hdr1_saved) {
-+	blk1_saved = kmemdup(&n1->index->blk, used1, GFP_NOFS);
-+	if (!blk1_saved) {
- 		err = -ENOMEM;
- 		goto out;
- 	}
-@@ -1924,13 +1924,13 @@ indx_insert_into_buffer(struct ntfs_index *indx, struct ntfs_inode *ni,
- 		 * Undo critical operations.
- 		 */
- 		indx_mark_free(indx, ni, new_vbn >> indx->idx2vbn_bits);
--		memcpy(hdr1, hdr1_saved, used1);
-+		memcpy(&n1->index->blk, blk1_saved, used1);
- 		indx_write(indx, ni, n1, 0);
- 	}
- 
- out:
- 	kfree(up_e);
--	kfree(hdr1_saved);
-+	kfree(blk1_saved);
- 
- 	return err;
- }
-diff --git a/fs/ntfs3/ntfs.h b/fs/ntfs3/ntfs.h
-index 552b97905813..d5e2b22eacd7 100644
---- a/fs/ntfs3/ntfs.h
-+++ b/fs/ntfs3/ntfs.h
-@@ -754,7 +754,10 @@ static inline bool hdr_has_subnode(const struct INDEX_HDR *hdr)
- struct INDEX_BUFFER {
- 	struct NTFS_RECORD_HEADER rhdr; // 'INDX'
- 	__le64 vbn; // 0x10: vcn if index >= cluster or vsn id index < cluster
--	struct INDEX_HDR ihdr; // 0x18:
-+	struct_group(blk,
-+		struct INDEX_HDR ihdr; // 0x18:
-+	        u8 data[]; // NTFS_DE entries
-+	);
- };
- 
- static_assert(sizeof(struct INDEX_BUFFER) == 0x28);
 -- 
-2.51.0
+மணிவண்ணன் சதாசிவம்
 
