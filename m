@@ -1,174 +1,145 @@
-Return-Path: <linux-kernel+bounces-844569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 630D0BC23DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 19:21:35 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1488BC23E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 19:21:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A262A3C11A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 17:21:33 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DBA5B34FD83
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 17:21:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E3B2E8B72;
-	Tue,  7 Oct 2025 17:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD092E8DF7;
+	Tue,  7 Oct 2025 17:21:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ToBuI3E2"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K+1gBqnx"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FB82DEA90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025BE2E090C
 	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 17:21:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759857689; cv=none; b=iB6wEX+A7KFFvlLIVLREYcvgkkgwPl6xUdfCEh6ZYZosPx6d2W39rgHrYslYOx2tuWf/QX307kko8ERQK3WxjeAWwNvUcDLXwouoQ8T2moXyO/HgO11Lv1r6yS2jQ1VUVdfHzTimL1mqCXV6/743ao4k6mo5Z56DMQQJfB8iWWA=
+	t=1759857690; cv=none; b=UyDZMe0PPZWggHKH/Wm3WedMzcKrw2Z3uiiARALo00EFmBOrzYnM7ALR/2llecm+zR2Sf1xg11SSBoqgNRydQjTGXATL/Gmy2L1vHZAft1HcQ1vFvrrdIDo6P2ddhqEVUZ8jf67xWzoN9xT+T6tD4X93iDFczYbhrmeV+kvrGok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759857689; c=relaxed/simple;
-	bh=npfrZy3PQI9uuBJ8os2reujGutciWsH0vsyOW4dEBqA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aIcJitqmNzkha3KSz0FqWIPUsncGfkpf0oiVzAQHpFbpqzIHf4kcI1X1mYu/OBHrqFN7PB/CM1Ov+tLQ628vVyFcReUiZw6jvAk+tOQDTr4QptvtPFDD8oJnNfYmLa6iGyQKmFMB5CUE6aNdwkL87n7PGXuwB0B2oqBduvllBNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ToBuI3E2; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-26808b24a00so11276015ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 10:21:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759857687; x=1760462487; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GY9baoySzSZr6T4oYF3bCPJoTe08YW4EjCGWDqwSwoI=;
-        b=ToBuI3E2CGOl/PAMPlmOgX3Uj5WSfM4NSY2IkK/io/zJsyuD/SbD5WyBiKXyzchhi7
-         njB0GOLLiW/jgixgQvPuI2WAmy9kbFQ1gYfG9fT4DEXjUNYzP4B82ICPuy8cq3ItMjhX
-         jgAOkn8ht2lrX8KoPxqJroeNWvBsJn4uq/62JFlDRaSxuPGl0y+d6Jhrnnn/Ug/36oJn
-         HsaD58QSnl9cRMI1jjxK0FLQcingpxQejSitNGF7rO9Ic525zDmvlsf2fgRZAT3Kdtx+
-         4fp08Oi61mMqnngJ1fQ453cqTTI/nxfPmRHLqWKjw709G1gOWJ4fFjrqXrqm3+y82f4c
-         jUSQ==
+	s=arc-20240116; t=1759857690; c=relaxed/simple;
+	bh=b2vHjDsP2BxSjpiOVSVFD8j9UmUoOh1nH1hX783c5rs=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=iztIFthJ0J+Qe1qnWQfqFlQBYOJ85DwiMUjoqyAYrHjHS9qpCNf9jp4V/DfnA0BIRC1cPhWmCRyK4b8yFa4Ab4Hex9cr9JzI2ghYk7QXwc2cgHtqIQb8u1yL37JPVYFRu0TgP/rScuINSfL3zab9101P3iX+PX7KTT3hM5DQrow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K+1gBqnx; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759857687;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wfLqwqfh7pqxZEfbQpikVBptkM8ufmn/kKGSr4Jd6Yw=;
+	b=K+1gBqnx2xJOTbF+YDRgyttF8c0DN4/X0wSgJ39mXnyfZvIxtIU7nS6hbOER0ssC8zKKuY
+	rq9YQtXIhtTcqg4AF72rG1e5QCsZTB0joJAi4egLrpEqLMl7bMK6HDAxlrxwS/UiQ3/v+L
+	4HVEv9RxyNRXmCbMhefogt4fCPOaGdQ=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-588-HNWG8xUPORSPtVRdK-zzHw-1; Tue, 07 Oct 2025 13:21:26 -0400
+X-MC-Unique: HNWG8xUPORSPtVRdK-zzHw-1
+X-Mimecast-MFC-AGG-ID: HNWG8xUPORSPtVRdK-zzHw_1759857686
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-78f3a8ee4d8so119302156d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 10:21:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759857687; x=1760462487;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GY9baoySzSZr6T4oYF3bCPJoTe08YW4EjCGWDqwSwoI=;
-        b=b4pzQUbfm5DmB5XLoCMRAxPpN6vpyDMb+4lnh+cV2i3r3G7Sq1X+9S5WkwUjoN/SBz
-         RCt6tlPbyOI0/SST0aq26yFmpeiv9BbxPpTrvw/amnhdozOWrtnT3Ma4dbSNS7jR4efX
-         pXLDv3AiSfgt3p9Sv+9CMoEhTXXA8QkpwhxIYrwBxwsFFlOEQACVvIOd3dYm9WlevMk6
-         lImJYcH0K+EOl9XOO+auvuhAv1vYHWA1eFF3HLwyAD3Svp3+WqXD7/9R/S7XHUkcQC0h
-         M2X7/AcwqB+VtE/QYoAHuRAMDj3yJr4AgYNCk51OZKEf8b1u4qFK28CFYlgU/yh40sK4
-         9YAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW28RD/PRXx8kXcqkjV0uGR0Sut/txnwtUFSsxsTe+YPJvAuf1LpiFluY5938Gn1mDbE70JkDLmAmXH+Iw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhwevP6GZMnjYBR76GJzm6WBHWQlYrb5m4bBkJFGLIbgCbvwNF
-	fKs6rJd5tHfzNjAtFDwi75c+w53UOd2PhF2IwO0hmnt75ubOE6rUlQ8hGsDrLULIr+W61laho4L
-	9nuSE1hF8BMA1bXWaCYdC0EvP7T9Srxs=
-X-Gm-Gg: ASbGncul+UZwacCScPflnupI4JXzVuH6Z+8zsbqBkxQLws0FfrTxsF410x9xjFcs65s
-	l3gF3e7SdK/V/08HgAGje4jqFi08bHR6GldA+TCHqtj5kDqA8IAgHBEEMTKsTtcBxIeUcZmMpdH
-	DLYZDCBoIsaRbzIgLEqgy+6mRTaHVyRqVLQiFFEDyUSl5IRGGcpmE3HV3Cg1gBWzylf9lJB4N3D
-	TBzZDnk9paP1wMaEA5EoG0ksu7107fUxtJgjaXoY2sjtWvwZHIwCS0TYoEVXNMYLaixxxUM4/rK
-	9mouy/Gk9NmqRtKdumjKPRAD8rw3edCevkqIZLA6tz3xgrJXxA==
-X-Google-Smtp-Source: AGHT+IGb9eTHfz3z9Yt3XqFGv9YvEYPb2KiB7MHj2b6wZb1nnL/QXub+VSTfQ0PcWpPzT36tTEahOhEzWY23RhwT1a4=
-X-Received: by 2002:a17:902:fb8b:b0:266:914a:2e7a with SMTP id
- d9443c01a7336-2902743ae8fmr2411475ad.6.1759857687383; Tue, 07 Oct 2025
- 10:21:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759857686; x=1760462486;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wfLqwqfh7pqxZEfbQpikVBptkM8ufmn/kKGSr4Jd6Yw=;
+        b=vYQ97caA5N9HSO6GhJi2ghyoi0QH7kZo4tXH1++FFMvULnXMGYvuV8GHDE1BDG9jNj
+         K63qfhaH5AfaOwdeFCYNn/eQb9W4ojnBnO/10hyTNFHPC17s3IBq2mKbJ0YAeyRIVZdI
+         pjmLOzqLrJ8KzMNUT0KkZ8bsmZuo1ooAhZ3uxNaaDCV3Xe+L1/NkYyxmudH1Xj3s/06F
+         2EJxWyafsLiux3itl9RJf12QhA4T6OdS2+Tu9GVEEuoUK/bGGUDTEJo4VxSRceFENoBF
+         g4Nd2OX4pHghHpjgwNW6I4Rfymu/rHovv4UKLOkryhxdt/ab7Pr9zGnueLMvVE/lFlMk
+         wiPw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGgGgukQHARKIhjqBKaZIywQQ9Uk5I1sZQR1YWRwFDF9kyN2I8hm2nt0Obdyx7Wl7rmM0aTanNJ6/8PS4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyosfdjl2mCZZN3pFDzF+5Lj4/ChNXm8cH9ZzeqApegjL41d/lo
+	/UAsOvUNkiu2dY2/1tKcpVid/ZNOdUaiGGGkp9USxR39jNfEFU0r3K3nSeRtDRKA6kwssoRn+BF
+	UMbjS7qOUg3Ifdn8cBvkb9x+nYDuU6BxdPuFAEFPBaX0AWHf8QchmFZDE3e7TaSDAJA==
+X-Gm-Gg: ASbGncv4oUxEpbd/WcEwmM7ITCdusCMhTT3s38vVsJHFxvZaVKvx/YwKDi8+DY+j6w6
+	VJ5oLRrFFITFZ1KJLgPIKBBPkcZB6C50qCLM9RukvkC3McGOgySkHZ3vjN/ThdwulNuNr9rDJhz
+	x/sJJvX+Rl1c+GtgY3Ph5rQlWz1Q+xUxM1L1wmFTGyAXd1F8SdXy6llDhHza4mpVLI3zHJRoFdV
+	HhsgsQn8727ynYhyUqTgzLWK7kNKqFbmtG1DxzJLZSY3wDkRbjRKwC2WWHmT0ifg3pbw8HJtV6O
+	CVgU66vMFrSrJSPG7UoT9IoPm1gts1sJ82uFyWffqqHnthdlD3ZIf9bYtXeJkRxLqWlBq2t4ILY
+	yitsn4TcGy26WaihL
+X-Received: by 2002:a05:6214:5012:b0:70d:f9d0:de72 with SMTP id 6a1803df08f44-87b2f005742mr2718786d6.61.1759857685697;
+        Tue, 07 Oct 2025 10:21:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFB6Pon6/tq/QF2SuS7Tynf1CLwWPH8R1IxJHBqbKPp6PdP09o/UQXK+tnc70iWYXkENmbzaA==
+X-Received: by 2002:a05:6214:5012:b0:70d:f9d0:de72 with SMTP id 6a1803df08f44-87b2f005742mr2718156d6.61.1759857685141;
+        Tue, 07 Oct 2025 10:21:25 -0700 (PDT)
+Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-878bdf533a0sm155713596d6.58.2025.10.07.10.21.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Oct 2025 10:21:24 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <9299a314-fd20-4255-ae4d-38ee97e16879@redhat.com>
+Date: Tue, 7 Oct 2025 13:21:23 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPM=9tzYUBfz+YmifRDgdBsuTL=FpBxQVfxu23it48kGRzJNPQ@mail.gmail.com>
- <CANiq72kq5YHovH=_a9c0JQgfrAx9gRsQvVo1VfHd-FaupOp7rQ@mail.gmail.com>
- <bd004ac5-9e51-4e90-a3a4-025d74941a38@nvidia.com> <3771775.lGaqSPkdTl@hyperion>
- <CAHk-=wj4_zaYJ9ieazt9dnL69R+SL1PEfJtquGVOqsNCVt_rDA@mail.gmail.com>
-In-Reply-To: <CAHk-=wj4_zaYJ9ieazt9dnL69R+SL1PEfJtquGVOqsNCVt_rDA@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 7 Oct 2025 19:21:13 +0200
-X-Gm-Features: AS18NWC_RH9_bRB4snwAZ0VxZRYHqiLEXEVcXDR2yH7h0c0kZfkYKI8KcUzkT5I
-Message-ID: <CANiq72kDB1cX1XXX7sc3yQvnaUUYB8q1wVKNxykv8=OV-=rWuQ@mail.gmail.com>
-Subject: Re: [git pull] drm for 6.18-rc1
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Maarten ter Huurne <maarten@treewalker.org>, John Hubbard <jhubbard@nvidia.com>, 
-	Dave Airlie <airlied@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, Sima Vetter <sima@ffwll.ch>, 
-	dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] seqlock: introduce scoped_seqlock_read() and
+ scoped_seqlock_read_irqsave()
+To: Oleg Nesterov <oleg@redhat.com>, Waiman Long <llong@redhat.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+ Boqun Feng <boqun.feng@gmail.com>, David Howells <dhowells@redhat.com>,
+ Ingo Molnar <mingo@redhat.com>, Li RongQing <lirongqing@baidu.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>, Will Deacon <will@kernel.org>,
+ linux-kernel@vger.kernel.org
+References: <20251007142113.GA17118@redhat.com>
+ <6e804e9b-ec73-4f2d-8e1f-c187ea5eb319@redhat.com>
+ <20251007171810.GC12329@redhat.com>
+Content-Language: en-US
+In-Reply-To: <20251007171810.GC12329@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Oct 5, 2025 at 11:33=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+
+On 10/7/25 1:18 PM, Oleg Nesterov wrote:
+> On 10/07, Waiman Long wrote:
+>> On 10/7/25 10:21 AM, Oleg Nesterov wrote:
+>>> +
+>>> +/* internal helper for scoped_seqlock_read/scoped_seqlock_read_irqsave */
+>>> +static inline int
+>>> +scoped_seqlock_read_retry(seqlock_t *lock, int *seq, unsigned long *flags)
+>> I would suggest adding the "__" prefix to indicate that this is an internal
+>> helper that shouldn't be called directly.
+> OK, I will add "__", but I thought that "internal helper" makes it clear that
+> it shouldn't be called directly. Nevermind, will do.
 >
-> Oh, that sounds like a good heuristic, because that "comma after last
-> entry" is very much "I expect this list to be expanded upon later".
+>>> +#define __scoped_seqlock_read(lock, lockless, seq)	\
+>>> +	for (int lockless = 1, seq = read_seqbegin(lock);		\
+>>> +	     lockless || scoped_seqlock_read_retry(lock, &seq, NULL);	\
+>>> +	     lockless = 0)
+>> I like Linus' suggestion of putting lockless and seq into a struct to make
+>> it more consistent with __scoped_seqlock_read_irqsave().
+> Again, will do. See my reply to Linus.
+>
+>>> +/**
+>>> + * scoped_seqlock_read_irqsave(lock) - same as scoped_seqlock_read() but
+>>> + *                                     disables irqs on a locking pass
+>>> + * @lock: pointer to the seqlock_t protecting the data
+>> Maybe we should we should add a comment saying that this API is similar to
+>> scoped_seqlock_read() but with irqs disabled.
+> Hmm... This is what the comment above tries to say... Do you think it can
+> be improved?
 
-We can use a trick today to approximate that, which is adding a
-comment after one of the commas, e.g.
-
-    use crate::{
-        fmt,
-        page::AsPageIter, //
-    };
-
-It is not the first time I do something like that -- I used an empty
-comment to force visual separation between attributes in b9b701fce49a
-("rust: clarify the language unstable features in use"), so there is
-some precedent.
-
-Yes, it isn't ideal, but it avoids the repetition of the prefix all
-the time (many `use` statements), and we can use that temporarily as a
-shorthand for "skip formatting this" (which `rustfmt` also supports
-with an attribute, but takes more characters and a new line). Then, if
-upstream `rustfmt` agrees, eventually we should be able to remove
-those extra couple slashes and everything should "just work", i.e.
-stay the same.
-
-It seems to work fine in the nested cases (i.e. you can control it
-per-level), and it allows to keep single item cases with braces too.
-
-So I will send you a patch to unbreak the situation with some added
-docs too, unless you hate it.
-
-By the way, I also took a very quick look at the "trailing comma" idea
-to see how complex it could be upstream (it could be either a "just
-accept the multiline formatting if there is a trailing comma" approach
-or the "take the comma as a hint to reformat accordingly" one
-mentioned), and it seems doable. But we will see what they think about
-it -- they don't have much bandwidth, I think.
-
-I ran a quick test for the reformatting approach on the kernel, and
-the diff isn't terribly big (e.g. +183 -45). One gets things like [1]
--- notice how the nested one (`property::`) is kept as a one liner
-because there is no comma there, but the others are reformatted as
-vertical on purpose. And if one adds a comma after `NArgs`, then it
-will make it multiline.
-
-If we got something like this upstream, it should be easy to
-eventually migrate since the diff can be kept small by using the
-workaround above meanwhile.
+Sorry, I missed that. Never mind :-)
 
 Cheers,
-Miguel
+Longman
 
-[1]
-
-diff --git a/samples/rust/rust_driver_platform.rs
-b/samples/rust/rust_driver_platform.rs
-index 6473baf4f120..90544b093c85 100644
---- a/samples/rust/rust_driver_platform.rs
-+++ b/samples/rust/rust_driver_platform.rs
-@@ -63,13 +63,15 @@
- //!
-
- use kernel::{
--    acpi, c_str,
-+    acpi,
-+    c_str,
-     device::{
-         self,
-         property::{FwNodeReferenceArgs, NArgs},
-         Core,
-     },
--    of, platform,
-+    of,
-+    platform,
-     prelude::*,
-     str::CString,
-     sync::aref::ARef,
 
