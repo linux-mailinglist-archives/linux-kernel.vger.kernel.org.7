@@ -1,383 +1,138 @@
-Return-Path: <linux-kernel+bounces-844007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BC9DBC0D23
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:10:27 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F41BC0D2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 11:11:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A91B9189B66C
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:10:49 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1342834CB3E
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 09:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70552D6E62;
-	Tue,  7 Oct 2025 09:10:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C372D5940;
+	Tue,  7 Oct 2025 09:11:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VEkE620G"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ljO1R0bB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BxvMRXFM";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="axDO3gJN";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PFqMaes1"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9554E2797BE
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 09:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D21192D68
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 09:11:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759828217; cv=none; b=FNZ0AjgCJzeTjblbxi/xQnMQG2LqRwNjuD7fBoWuzaFw4VqQUVC4nyV1jr2LUVpX5UZe2tgBNEIsBjzDEsLb3r1+Wo06YZM/IuMBCQ3iRxcZ9RuI0lceOSwOfyBWv14Je7gftFHSSmfUgI/dD3MeXd+ToHqS4uSUrG7+SZLHdWY=
+	t=1759828307; cv=none; b=o7xUwqsE5EszY/jM9fzCabZYj4GRg2BbfxYtbDxUKUjyqGdjJOwGH4U6vDMzAsu7OxvsFzgabljfbqz6R0kayalgTBZ93UyXTCqJAUHz8PDbzHvOxHihCckq3ixwcJ8og1nDW/HhFA25sU/9RxWRY2DbdgcB27Yg0LZdfVKG6Bc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759828217; c=relaxed/simple;
-	bh=xkurHUrHiDvxiaLEkzB8GFBV/iCz22WvC9ERFE1fsyw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ruHctz80SW3k/u9mIgpzVBEfw7AqmYyCgoWutEmumRjHfTNTuqKDbXhdf1AFeqxw2XCfMN42R0JXAbmqqJ8XxcELZ2auxNBuAbdqpFLaWfrRopPhrHs30onSAlCYs3f6T1G4w+2h/P3yQwa2vY51gaAjkCI0/d4WlKIIZaxWz4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VEkE620G; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46b303f755aso46053175e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 02:10:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759828214; x=1760433014; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1A5grJalUNQTGqrKuVDzibQGrnaKKNODDxPG9phNRc4=;
-        b=VEkE620GO+P0p3Kl0IhNLbTLGXNiylhm8Uzo2xfxp8/jOR0WuAqG3sUNL8PjADOo20
-         oTHtrtITiaAt19/OqyVmJ6KL88ECRkSOP+WeDv45m32kT5hFYQzz+w/7q75P1GLpr+fW
-         bGB898LsHqpTqCVNcuPixVkdPeHqcpANCed3u9dOjEY3Fuj/Yl/WV2PsLoNajvO9lp/5
-         cucyxZmvPN5yNmTz/o2K26DMspSXS1xs0xnlDnA7VWMX8C0NSwdjiAgGwy+EAvu4i+hZ
-         Z1FORkaW6COnrX75lZiC8o3Tg0iJqddDh0s4CQcp/s8Jc+No+lUWATBmpgQNZQdTAPp3
-         CFOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759828214; x=1760433014;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1A5grJalUNQTGqrKuVDzibQGrnaKKNODDxPG9phNRc4=;
-        b=GSA3LKXAq7S8wayRhuz/tn73KHWBPJFnpJc2N/bopDOasRymQl/RpEvrWlAFQNq0uU
-         bqcM5y8vE7gtfPI+kbdotQ3SwXtS8MwYXlYddKwtplMNmDSwm8lzQ+TgITZuqNJ2US0b
-         Km4rSzdgZW2w66hbExrBAaIZdxRIh45uaieTrEqXytDpO8Kft70higvSUH8VYipU09sX
-         WAhki37o5D3uHFngRSRVgGN+L1Z+nQRBi3ilh1h3Z6exx8qRYBFJPvBqq3wZKwjiTh4y
-         4UYURP7JOl/aEQzFj7iSPmJJonrch+xS9ndaXGJlNeSG4Mm7XsGtZ2S791a0+n+L4PWT
-         okYg==
-X-Forwarded-Encrypted: i=1; AJvYcCVHmU9idOELMGJX7sNn7oLZuoRG7E+vREww8McOqULiCBPXFTm/nWqsmi7jlKXG5O7V15Xd3CgyRh1vbuE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4Lteea11o9w9qG0a6g8BN2pu2cpGm303J8VTz93ajKyxytGwo
-	6HtChwb6F4ZkTv3L6FjUOwZTFoXKZdvJZ9WFuVyJzCyIrNNW44SwGDXYyO+cSWDhyRw=
-X-Gm-Gg: ASbGncshToLrEzQaQ+bspwXodLrW3hL5oNm5+fskUecYKBO49xPTgIS6xK2OtG1KiWn
-	1e5ek2X6Q/S0XI6mLFwkP8nQwcTqM9RmoDqFmwSupgznxzt9JIW1Au0UM7Fv3KvM0SwH3k8A3Ef
-	Qv+NmRxQLdYsIzG47Sr1WO8dMycQvDcnsIt/1xpXYXtwWRTvWwwvPo7siwevqndEyfJgCEUb2uo
-	sogt7WfLHvwe3CVRjLW7jlQ0IrJlVYFk4snG3BzGusBB0h2QyRIUVQCWdYcroL9ryno10xJKp+M
-	nnozLQS8PpA0egXAH/W0tUG4PzEEGF6170N/vwT2wMOvK9yLLr8q5Bxciat2BFKGDAvpOvEYYwj
-	TvNBdBJRrwAnHv+BYVwBtvKKUSAEMsBHuITSMMplRNhCDQ+juQVa21I1z
-X-Google-Smtp-Source: AGHT+IGMFiVKJp39q+pMns0W0NskfICt/r26mga3cpyM8uAPmyuedwXmOqFinHFTEHYx9lKQOrElfw==
-X-Received: by 2002:a05:600d:41f3:b0:46e:4a78:dea9 with SMTP id 5b1f17b1804b1-46e71145dc7mr133486085e9.17.1759828213740;
-        Tue, 07 Oct 2025 02:10:13 -0700 (PDT)
-Received: from [192.168.1.3] ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e619c396esm292761625e9.8.2025.10.07.02.10.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Oct 2025 02:10:13 -0700 (PDT)
-Message-ID: <b39ffdd5-1692-46ed-86d9-726011c92036@linaro.org>
-Date: Tue, 7 Oct 2025 10:10:12 +0100
+	s=arc-20240116; t=1759828307; c=relaxed/simple;
+	bh=UGEiUTwCseva8xZzmqHLyj3bDKqh0Jkv0kwO8vjCsOY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I8FYGhMzXGG2RlLXARss+gsArVoQdP1t4fRY6MOXisDWYP/yZwVXIgIlKMaG+YQCptmregFEJ0ZmPyvzDXJjA/NNGL8FiXHlQHjvVYapBOMJH9Wabmx+uTdX5K6JbVXq0pLQ1OgeGFB73ub9QEU01Z7Ye7ofSqk3oToHoAIOIQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ljO1R0bB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BxvMRXFM; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=axDO3gJN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PFqMaes1; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from localhost (unknown [10.100.12.32])
+	by smtp-out1.suse.de (Postfix) with ESMTP id E2F5B336F3;
+	Tue,  7 Oct 2025 09:11:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759828303; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yLP+glegqIJBcIb7jt0bclmibbjRxFmE8iklM/lj5FI=;
+	b=ljO1R0bBwHZiKasEy6MhvQCSGMlm4+xEKkcMA41IC56HN4tKhzzPOFm+eTkjrQzqilrVK3
+	UC/yHR6APtQGnjhomDeck1bgfmzaVQmrry8QRd0kPAGBVcwOP8DGrFPGvbqISCnAjhGulb
+	rNU4Uie76wFo5+5DZz5J1iEYpTP2aB4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759828303;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yLP+glegqIJBcIb7jt0bclmibbjRxFmE8iklM/lj5FI=;
+	b=BxvMRXFMc97Quk4/ZugYs8ialO0F/RJfEsI5Q5x9B6YX01gaJ6jzvuX/oaR8uw2O4xZmKE
+	tgpgxhSKqSLMDnBQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759828302; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yLP+glegqIJBcIb7jt0bclmibbjRxFmE8iklM/lj5FI=;
+	b=axDO3gJNswuZeSVfGNwO0ejXnMY06seTp6gjJMbJxdhX3zGYuYB+jGZzlZM9q38syn3Fsu
+	PTTnLxfztDzoPNnl44gYiGimfP+ZKAa3Xa3bFoFZkLbFgvafB+E9gjyLbj6iSWDxovtWEu
+	5ZB1LFMsTFU1K4kTHxrCz0+chEO9V9A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759828302;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yLP+glegqIJBcIb7jt0bclmibbjRxFmE8iklM/lj5FI=;
+	b=PFqMaes1rrVopcuRe9tYuxzoLI7wyEtAd2Tb16TNVlhte9BwGzUA/0Q8CyM/FJdYAMDYMS
+	W9iYjQfFKU399tBA==
+Date: Tue, 7 Oct 2025 11:11:42 +0200
+From: Jiri Bohac <jbohac@suse.cz>
+To: Baoquan He <bhe@redhat.com>
+Cc: David Hildenbrand <dhildenb@redhat.com>,
+	Breno Leitao <leitao@debian.org>, kas@kernel.org, riel@surriel.com,
+	vbabka@suse.cz, nphamcs@gmail.com, Vivek Goyal <vgoyal@redhat.com>,
+	Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org,
+	akpm@linux-foundation.org, Philipp Rudo <prudo@redhat.com>,
+	Donald Dutile <ddutile@redhat.com>, Pingfan Liu <piliu@redhat.com>,
+	Tao Liu <ltao@redhat.com>, linux-kernel@vger.kernel.org,
+	Michal Hocko <mhocko@suse.cz>
+Subject: Re: [PATCH v5 0/5] kdump: crashkernel reservation from CMA
+Message-ID: <aOTZTji039KEJ1T0@dwarf.suse.cz>
+References: <aEqnxxfLZMllMC8I@dwarf.suse.cz>
+ <vojlxf5pelxlr6omsfsccd4e4cdzn5qyxpgiqajorkgmgd7ruh@e5wwhkmvntpb>
+ <26ae6b04-3beb-47e9-9639-b081003dc9bb@redhat.com>
+ <f7x2flir2c5zpkusgiyk7qnrdqo4dek3iksyldw6w22r55s4vy@4b47lrcv3fag>
+ <2e35b6dd-56dd-47e6-8dac-54f446f763f0@redhat.com>
+ <aOSO/e68pZ7FGKm1@MiWiFi-R3L-srv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf tests: Don't retest sections in "Object code
- reading"
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Leo Yan <leo.yan@arm.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251006-james-perf-object-code-reading-v1-1-acab2129747d@linaro.org>
- <CAP-5=fXmAbz7Gp5eCRFYsYu_pZoFNSR+mcJgE6Eu6YewHyLNtg@mail.gmail.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <CAP-5=fXmAbz7Gp5eCRFYsYu_pZoFNSR+mcJgE6Eu6YewHyLNtg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aOSO/e68pZ7FGKm1@MiWiFi-R3L-srv>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.995];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	RCVD_COUNT_ZERO(0.00)[0];
+	MID_RHS_MATCH_FROMTLD(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_CC(0.00)[redhat.com,debian.org,kernel.org,surriel.com,suse.cz,gmail.com,lists.infradead.org,linux-foundation.org,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
+On Tue, Oct 07, 2025 at 11:55:36AM +0800, Baoquan He wrote:
+> And I saw Jiri has excluded the crashk_cma_ranges[] from the dumped
+> content via elf_header_exclude_ranges(). 
 
+Exactly, thanks for pointing this out, while I was away from my e-mail.
 
-On 06/10/2025 4:21 pm, Ian Rogers wrote:
-> On Mon, Oct 6, 2025 at 6:11 AM James Clark <james.clark@linaro.org> wrote:
->>
->> We already only test each kcore map once, but on slow systems
->> (particularly with network filesystems) even the non-kcore maps are
->> slow. The test can test the same objump output over and over which only
->> wastes time. Generalize the skipping mechanism to track all DSOs and
->> addresses so that each section is only tested once.
->>
->> On a fully loaded Arm Juno (simulating a parallel Perf test run) with a
->> network filesystem, the original runtime is:
->>
->>    real  1m51.126s
->>    user  0m19.445s
->>    sys   1m15.431s
->>
->> And the new runtime is:
->>
->>    real  0m48.873s
->>    user  0m8.031s
->>    sys   0m32.353s
->>
->> Signed-off-by: James Clark <james.clark@linaro.org>
-> 
-> Reviewed-by: Ian Rogers <irogers@google.com>
-> 
->> ---
->>   tools/perf/tests/code-reading.c | 119 ++++++++++++++++++++++++++++------------
->>   1 file changed, 85 insertions(+), 34 deletions(-)
->>
->> diff --git a/tools/perf/tests/code-reading.c b/tools/perf/tests/code-reading.c
->> index 9c2091310191..4c9fbf6965c4 100644
->> --- a/tools/perf/tests/code-reading.c
->> +++ b/tools/perf/tests/code-reading.c
->> @@ -2,6 +2,7 @@
->>   #include <errno.h>
->>   #include <linux/kconfig.h>
->>   #include <linux/kernel.h>
->> +#include <linux/rbtree.h>
->>   #include <linux/types.h>
->>   #include <inttypes.h>
->>   #include <stdlib.h>
->> @@ -39,11 +40,64 @@
->>   #define BUFSZ  1024
->>   #define READLEN        128
->>
->> -struct state {
->> -       u64 done[1024];
->> -       size_t done_cnt;
->> +struct tested_section {
->> +       struct rb_node rb_node;
->> +       u64 addr;
->> +       char path[PATH_MAX];
->>   };
->>
->> +static bool tested_code_insert_or_exists(const char *path, u64 addr,
->> +                                        struct rb_root *tested_sections)
->> +{
->> +       struct rb_node **node = &tested_sections->rb_node;
->> +       struct rb_node *parent = NULL;
->> +       struct tested_section *data;
->> +
->> +       while (*node) {
->> +               int cmp;
->> +
->> +               parent = *node;
->> +               data = rb_entry(*node, struct tested_section, rb_node);
->> +               cmp = strcmp(path, data->path);
->> +               if (!cmp) {
->> +                       if (addr < data->addr)
->> +                               cmp = -1;
->> +                       else if (addr > data->addr)
->> +                               cmp = 1;
->> +                       else
->> +                               return true; /* already tested */
->> +               }
->> +
->> +               if (cmp < 0)
->> +                       node = &(*node)->rb_left;
->> +               else
->> +                       node = &(*node)->rb_right;
->> +       }
->> +
->> +       data = zalloc(sizeof(*data));
->> +       if (!data)
->> +               return true;
->> +
->> +       data->addr = addr;
->> +       strlcpy(data->path, path, sizeof(data->path));
-> 
-> nit: perhaps strdup rather than having 4kb per tested_section.
-> 
-> Thanks,
-> Ian
-> 
+The crashkernel CMA reservation ranges will not be seen at all by
+makedumpfile.
 
-Oh yeah that would have been better, not sure why I didn't do it that 
-way. Although the max sections I saw was around 50, and it's usually a 
-lot less so it's probably not worth the churn to change it now that 
-Arnaldo's applied it?
-
-Thanks
-James
-
->> +       rb_link_node(&data->rb_node, parent, node);
->> +       rb_insert_color(&data->rb_node, tested_sections);
->> +       return false;
->> +}
->> +
->> +static void tested_sections__free(struct rb_root *root)
->> +{
->> +       while (!RB_EMPTY_ROOT(root)) {
->> +               struct rb_node *node = rb_first(root);
->> +               struct tested_section *ts = rb_entry(node,
->> +                                                    struct tested_section,
->> +                                                    rb_node);
->> +
->> +               rb_erase(node, root);
->> +               free(ts);
->> +       }
->> +}
->> +
->>   static size_t read_objdump_chunk(const char **line, unsigned char **buf,
->>                                   size_t *buf_len)
->>   {
->> @@ -316,13 +370,15 @@ static void dump_buf(unsigned char *buf, size_t len)
->>   }
->>
->>   static int read_object_code(u64 addr, size_t len, u8 cpumode,
->> -                           struct thread *thread, struct state *state)
->> +                           struct thread *thread,
->> +                           struct rb_root *tested_sections)
->>   {
->>          struct addr_location al;
->>          unsigned char buf1[BUFSZ] = {0};
->>          unsigned char buf2[BUFSZ] = {0};
->>          size_t ret_len;
->>          u64 objdump_addr;
->> +       u64 skip_addr;
->>          const char *objdump_name;
->>          char decomp_name[KMOD_DECOMP_LEN];
->>          bool decomp = false;
->> @@ -350,6 +406,18 @@ static int read_object_code(u64 addr, size_t len, u8 cpumode,
->>                  goto out;
->>          }
->>
->> +       /*
->> +        * Don't retest the same addresses. objdump struggles with kcore - try
->> +        * each map only once even if the address is different.
->> +        */
->> +       skip_addr = dso__is_kcore(dso) ? map__start(al.map) : al.addr;
->> +       if (tested_code_insert_or_exists(dso__long_name(dso), skip_addr,
->> +                                        tested_sections)) {
->> +               pr_debug("Already tested %s @ %#"PRIx64" - skipping\n",
->> +                        dso__long_name(dso), skip_addr);
->> +               goto out;
->> +       }
->> +
->>          pr_debug("On file address is: %#"PRIx64"\n", al.addr);
->>
->>          if (len > BUFSZ)
->> @@ -387,24 +455,6 @@ static int read_object_code(u64 addr, size_t len, u8 cpumode,
->>                  goto out;
->>          }
->>
->> -       /* objdump struggles with kcore - try each map only once */
->> -       if (dso__is_kcore(dso)) {
->> -               size_t d;
->> -
->> -               for (d = 0; d < state->done_cnt; d++) {
->> -                       if (state->done[d] == map__start(al.map)) {
->> -                               pr_debug("kcore map tested already");
->> -                               pr_debug(" - skipping\n");
->> -                               goto out;
->> -                       }
->> -               }
->> -               if (state->done_cnt >= ARRAY_SIZE(state->done)) {
->> -                       pr_debug("Too many kcore maps - skipping\n");
->> -                       goto out;
->> -               }
->> -               state->done[state->done_cnt++] = map__start(al.map);
->> -       }
->> -
->>          objdump_name = dso__long_name(dso);
->>          if (dso__needs_decompress(dso)) {
->>                  if (dso__decompress_kmodule_path(dso, objdump_name,
->> @@ -471,9 +521,9 @@ static int read_object_code(u64 addr, size_t len, u8 cpumode,
->>          return err;
->>   }
->>
->> -static int process_sample_event(struct machine *machine,
->> -                               struct evlist *evlist,
->> -                               union perf_event *event, struct state *state)
->> +static int process_sample_event(struct machine *machine, struct evlist *evlist,
->> +                               union perf_event *event,
->> +                               struct rb_root *tested_sections)
->>   {
->>          struct perf_sample sample;
->>          struct thread *thread;
->> @@ -494,7 +544,8 @@ static int process_sample_event(struct machine *machine,
->>                  goto out;
->>          }
->>
->> -       ret = read_object_code(sample.ip, READLEN, sample.cpumode, thread, state);
->> +       ret = read_object_code(sample.ip, READLEN, sample.cpumode, thread,
->> +                              tested_sections);
->>          thread__put(thread);
->>   out:
->>          perf_sample__exit(&sample);
->> @@ -502,10 +553,11 @@ static int process_sample_event(struct machine *machine,
->>   }
->>
->>   static int process_event(struct machine *machine, struct evlist *evlist,
->> -                        union perf_event *event, struct state *state)
->> +                        union perf_event *event, struct rb_root *tested_sections)
->>   {
->>          if (event->header.type == PERF_RECORD_SAMPLE)
->> -               return process_sample_event(machine, evlist, event, state);
->> +               return process_sample_event(machine, evlist, event,
->> +                                           tested_sections);
->>
->>          if (event->header.type == PERF_RECORD_THROTTLE ||
->>              event->header.type == PERF_RECORD_UNTHROTTLE)
->> @@ -525,7 +577,7 @@ static int process_event(struct machine *machine, struct evlist *evlist,
->>   }
->>
->>   static int process_events(struct machine *machine, struct evlist *evlist,
->> -                         struct state *state)
->> +                         struct rb_root *tested_sections)
->>   {
->>          union perf_event *event;
->>          struct mmap *md;
->> @@ -537,7 +589,7 @@ static int process_events(struct machine *machine, struct evlist *evlist,
->>                          continue;
->>
->>                  while ((event = perf_mmap__read_event(&md->core)) != NULL) {
->> -                       ret = process_event(machine, evlist, event, state);
->> +                       ret = process_event(machine, evlist, event, tested_sections);
->>                          perf_mmap__consume(&md->core);
->>                          if (ret < 0)
->>                                  return ret;
->> @@ -637,9 +689,7 @@ static int do_test_code_reading(bool try_kcore)
->>                          .uses_mmap   = true,
->>                  },
->>          };
->> -       struct state state = {
->> -               .done_cnt = 0,
->> -       };
->> +       struct rb_root tested_sections = RB_ROOT;
->>          struct perf_thread_map *threads = NULL;
->>          struct perf_cpu_map *cpus = NULL;
->>          struct evlist *evlist = NULL;
->> @@ -773,7 +823,7 @@ static int do_test_code_reading(bool try_kcore)
->>
->>          evlist__disable(evlist);
->>
->> -       ret = process_events(machine, evlist, &state);
->> +       ret = process_events(machine, evlist, &tested_sections);
->>          if (ret < 0)
->>                  goto out_put;
->>
->> @@ -793,6 +843,7 @@ static int do_test_code_reading(bool try_kcore)
->>          perf_thread_map__put(threads);
->>          machine__delete(machine);
->>          perf_env__exit(&host_env);
->> +       tested_sections__free(&tested_sections);
->>
->>          return err;
->>   }
->>
->> ---
->> base-commit: a22d167ed82505f770340c3a7c257c04ba24dac9
->> change-id: 20251006-james-perf-object-code-reading-9646e486d595
->>
->> Best regards,
->> --
->> James Clark <james.clark@linaro.org>
->>
+-- 
+Jiri Bohac <jbohac@suse.cz>
+SUSE Labs, Prague, Czechia
 
 
