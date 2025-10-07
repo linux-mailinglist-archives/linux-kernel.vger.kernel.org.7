@@ -1,261 +1,233 @@
-Return-Path: <linux-kernel+bounces-844684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5B23BC27E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 21:22:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1B6DBC27F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 21:24:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AE743A9DD5
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 19:22:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A500D19A2A60
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 19:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152F822D4DC;
-	Tue,  7 Oct 2025 19:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA10233134;
+	Tue,  7 Oct 2025 19:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="uJHLJ9d0"
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010029.outbound.protection.outlook.com [52.101.85.29])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BeY0t+XP"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2B078F59
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 19:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.29
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759864960; cv=fail; b=Eo1fvU+x+8HqXvw5CHTIs1upLHlc9sxH+oQYT3oZXfEgRBVvEOSIqO2jAsNcMDOe/glkO1iM+9DDp0XGiUSTusO9fG0j02bo6oFVOT87ETI6A6pZz8UZy8+kDql03zHDz0lqCjA4733vHs0IW3ZRSDW9SV17M5M6zXlCkFPN2ow=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759864960; c=relaxed/simple;
-	bh=WqDwwFJdhLdKAne662AQ/4uFe04Rmyobi/w38OaxfEI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=lD/5vIAEpoefzOHbHqp6kdzCM0gPG8DFs7gHYNLwi5mCKKaHgKpBD51OwTSNqpcUn54Se1y8UR7ZFUSMg3j35Rpc9pQYwGhoYuwcVOVSAcm5IAnRMMLJ7kfxKV79OjyEX+Dlo+bJRt/SGC2TEsYthqaMW/Ap8RUQLAtddictD/o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=uJHLJ9d0; arc=fail smtp.client-ip=52.101.85.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MICr9pmi5gr2fMsgTj2nsN3OV368vfXgqmxI/Um4xGvK8+7IBgsUBrk4dQMwKzX2o/D1eyycRhCObfHf4pgLnGUKtij9amSxnpV/Z9naKE+4WCLg9+ThOhc0zqnWTiMjFEAWhSGNYuWXaQxm7PcMYKgwF7LOR8k5hAixRKBBq3aoxG9LX/RjJc+mh7nSz8vt8MFq/hu3LoZibFxp+R7ep1a0yTV0g7lIyLn+qHoXc2d1J7uR2Aj9Ns23erPUyQSV2OQYtRUXUO8IBYwx/f6FBOVLQYB9GBAWaUkXWeJ7hnKv8rxrbdSXnETRNpkbTPecjLUUYCbQ+rzKM66k7kR7QA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cn+wgvto4vYTlR8X0NScM3xMcx3S0dUe4tZUFayYHJU=;
- b=TluITC2LueKHiSNz+yOzVaioA8ptjcNMy/7T6XSx+Pi5DYkEjj0of3aCv4X2S2f5R09cDpj4nGqJaWuZONNbVVfXj0uO71IIpipD90ZeuS1gnb3WqW8Bhuqa4R+B2ONn+BRNnRXJDzg4fowHVxmKAYT+kttrHED0kXD/qred/R4MgFujE+H5imzAO/JpQU+DGne1wRizjhZOd+yH2VeK7T1h5++We+WOQ3uFdCZyB8wKEsOwyDvDD73/7x1iRoayujxpby4nNRmiSmFFJQoRmditgABwDaFBPMz/4aNFvnypoBPd6/ra0xtxuNum1ruQD7ZshWcvUulwbussYNmhkw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cn+wgvto4vYTlR8X0NScM3xMcx3S0dUe4tZUFayYHJU=;
- b=uJHLJ9d0QLNDD2w1lSuHxOIetTos4wRFC5IUd/hJWT4UmQulOT/MHSY5SKIFkNBvHdGn8pZZqyqf38xii9KlmsYwX9ILQFcHJdo5TJp6B2TOovEuAm9JpFA2EpummCM0wydM2aN/FZZQzVtwvUOWolGpsUTEotuKr1euV91T4Y8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM8PR12MB5445.namprd12.prod.outlook.com (2603:10b6:8:24::7) by
- IA0PPF8FC6E1236.namprd12.prod.outlook.com (2603:10b6:20f:fc04::bda) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Tue, 7 Oct
- 2025 19:22:33 +0000
-Received: from DM8PR12MB5445.namprd12.prod.outlook.com
- ([fe80::a544:caf8:b505:5db6]) by DM8PR12MB5445.namprd12.prod.outlook.com
- ([fe80::a544:caf8:b505:5db6%6]) with mapi id 15.20.9203.007; Tue, 7 Oct 2025
- 19:22:33 +0000
-Message-ID: <3e27de73-61a1-4977-b0a1-629ffaa81032@amd.com>
-Date: Tue, 7 Oct 2025 14:22:30 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 11/12] iommu/amd: Add support for nested domain
- attach/detach
-Content-Language: en-US
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: nicolinc@nvidia.com, linux-kernel@vger.kernel.org, robin.murphy@arm.com,
- will@kernel.org, joro@8bytes.org, kevin.tian@intel.com, jsnitsel@redhat.com,
- vasant.hegde@amd.com, iommu@lists.linux.dev, santosh.shukla@amd.com,
- sairaj.arunkodilkar@amd.com, jon.grimm@amd.com, prashanthpra@google.com,
- wvw@google.com, wnliu@google.com, gptran@google.com, kpsingh@google.com,
- joao.m.martins@oracle.com, alejandro.j.jimenez@oracle.com
-References: <20251001060954.5030-1-suravee.suthikulpanit@amd.com>
- <20251001060954.5030-12-suravee.suthikulpanit@amd.com>
- <20251006145900.GT3360665@nvidia.com>
-From: "Suthikulpanit, Suravee" <suravee.suthikulpanit@amd.com>
-In-Reply-To: <20251006145900.GT3360665@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA9PR13CA0088.namprd13.prod.outlook.com
- (2603:10b6:806:23::33) To DM8PR12MB5445.namprd12.prod.outlook.com
- (2603:10b6:8:24::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EFD20E31C
+	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 19:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759865036; cv=none; b=HVobFvRHo5mSV5QeRKzLILRsxig2LCvmGhp9xDVTMJfVMterJMqAf6v74pJ1mKw9K1lmXFYvQgDa0LvjJPvpsIjS6AiQ+0/1YH3eYzZqh22F3F9mQ89xD53PNs1n1iTHdZ66AAobXqgKThzBAZb0ab/5jfKVMCRALw4Hd+8//ks=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759865036; c=relaxed/simple;
+	bh=Xw87XgCbg1sAtPDYd2NoXiEutjwEoopTGJYzoXJp+RU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A0abS++Cc+e2PBk8OD7d1acaCx/MVSAam+pujvIGRBAnqj0uQBjNMwUGHyJs7slqCAQSJJZ4IhcEHbB3qz5Wv9wH4FF9oqZDfKoGeslvpVtYqEMUJgI7CzvMi4Tn0kV/kDxg9l9to7BFJF+5lYDo8E4LNj59JmG7hbu/DnAbWKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BeY0t+XP; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7930132f59aso1225071b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 12:23:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759865034; x=1760469834; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eT1nwRDKVbKeF8BXec5ppEFdy9ETGubsSZiyxLMw9JI=;
+        b=BeY0t+XPIL49xGOpuFawoFJcyKkJT42Sx+SmegzwSVIr0zRs/+N3UQ2vb6Nw0S8Th6
+         P6R8jdaXsc9UCy+8ByKBz65bzckfmDBv/qrTT8PxAWJWhS0HokRZcCtkgu3EBf4DFk8R
+         F8Az6eu4+yFOWCOMHoXxJZ0XDgel6Csu+9/s7huIuiK3V2l+9gmOUofebtpA7OpQY9Sm
+         O4/qzioO4qk431yZUiyJsfCuNUdg5ge5S9eEztjfqP4HZkHyC+TlBlFHs67J2VcjR5sy
+         0ra+sU4if5dvHqoFhzw26vD31vwLfaNxRK9Avkx9/jcujFk2UHw/1llUOv52QkhM0xVs
+         HcfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759865034; x=1760469834;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eT1nwRDKVbKeF8BXec5ppEFdy9ETGubsSZiyxLMw9JI=;
+        b=izXxve5KcgCQ+/knI9GJHmz2M6ARUT9ZdZHWzvMJEdcpMfByp3A6EUyNIK5BgAOXvC
+         XCh6RUKngPqRWC4gujUZKx3zD0mGvCW5Y+EEhvD1BFxpNZQmq68vetkbSyHfGx8/I9KB
+         qgx+oYHYyQvLCs30c0Ruq5++lxguKFGvpYvj3N/5b2B6p4OZMBIYe7iK/0Vbzcypr8wS
+         t4f0xDTP+6DG12bKOj5HoDnESb073shd1m3hMAqf0cZS3B+UHEhZ60scgSZZNY9h62BY
+         bG59PVl5QbwDJjMyzg5ebWxlOPYRAhDOoLTc8LcX7VkjwUZFbJvEyt4koXAmng2HmkWR
+         hCDA==
+X-Forwarded-Encrypted: i=1; AJvYcCXfJ+B5omiUfs7rPboCBgZ/xbjF2R8taKRlN8mlRLlaIeWkDrW65KOq2BBhMb+dIPjGWOzpND5H6JKVSTg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6GqueBmX0Wom5enSZOjZSo0lK2G8I8xVkK/sa3aaWCyCDX1JG
+	DWf/ueVAZ2Lhqt8OusmLuHnZM9vlQFyywevd/xGTVqE6OVx7TXQqvOCowLNW1J09lw==
+X-Gm-Gg: ASbGncuIm4hoO/o+Ug9Z+Pgj+ZL1bUGVTHnuzzo2+A/FuGrCor5rzMA9NkK4o9SVSHD
+	Fj79Z32WfiznVYxa3D0JsP5IfGSzc0nQbOI11xumgOl8EYeCsYzYPrQRQnnzo3y/ZTrzoUZAKsv
+	MNE6vx0v1lGZlWdgHoNtqW6FfMKL8laVRFlRwtf4sqtmZZGRreReMUHwSPWBl3dLOhu9vqTVPG+
+	bopLjFrS+bAAeiVvUjmSANzZ2h1QhscGPWhQc0tV/CZAE1+Y0esm+v5kM9PSNP3IlvNuQFnn4bc
+	23IGOrEZgexbXfoVcIEX769gvPcHLwKJIhjwhR2mJvbEGMkL4ocXSDpVVCslPMxSESwrx7R6DcP
+	QDqEkkeBa4EPVwgHgz1lkjRzPNwiKamkqjk/ZIv/PIs/12DB1qMnhNTK6VQv48MZ8GXd8TX/lpM
+	7uQ9DMA+u2xK9dgfPs/et8Egbb1xLKfl4=
+X-Google-Smtp-Source: AGHT+IGSwGW88WMOLbHemUBllZFvuVlpdJOj4FF3pHUy4SuNXB8acXcCYQBlHBqvvbgzLZJwVZQjDQ==
+X-Received: by 2002:a05:6a21:33a9:b0:2c9:1323:f800 with SMTP id adf61e73a8af0-32da80db36cmr695432637.9.1759865033911;
+        Tue, 07 Oct 2025 12:23:53 -0700 (PDT)
+Received: from google.com (232.92.83.34.bc.googleusercontent.com. [34.83.92.232])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b0205336csm16623586b3a.45.2025.10.07.12.23.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Oct 2025 12:23:52 -0700 (PDT)
+Date: Tue, 7 Oct 2025 19:23:49 +0000
+From: Benson Leung <bleung@google.com>
+To: Jameson Thies <jthies@google.com>
+Cc: akuchynski@chromium.org, abhishekpandit@chromium.org,
+	krzk+dt@kernel.org, robh@kernel.org, bleung@chromium.org,
+	heikki.krogerus@linux.intel.com, ukaszb@chromium.org,
+	tzungbi@kernel.org, devicetree@vger.kernel.org,
+	chrome-platform@lists.linux.dev, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: chrome: Add Cros EC UCSI driver
+Message-ID: <aOVoxQY3sLgkzJgD@google.com>
+References: <20251001193346.1724998-1-jthies@google.com>
+ <20251001193346.1724998-2-jthies@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM8PR12MB5445:EE_|IA0PPF8FC6E1236:EE_
-X-MS-Office365-Filtering-Correlation-Id: c7b8d353-f6d6-4c7e-9105-08de05d6dd66
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UVhZM1RxM2NlUmx2ejlWMHlORVNWV1hXempaeUtOWi9LQnA3dWJrTEhaUFgv?=
- =?utf-8?B?VFQ0NWQ5Y1hOSjJQS1c2aXNITG5rOENqc1VhR1Y2cWhWeDZRZ1dKZCtJZFha?=
- =?utf-8?B?WVVvTk5nei9aejdQTnJzWTRnU2NPTkd4dzJKVnlmZ2VDZ2xjeDV4MDFZazVh?=
- =?utf-8?B?LzdlR1BXZnJ2QlJSSGNQazRwRVN3dmcyY1NZK2RRWno0QzlpdG5TY3ZJYlVh?=
- =?utf-8?B?WHN4NmRSUGlVU3FoZWJkbWlPVkJ1QytkbTduUDNZb3RnUjBOZGx0OWVGVUI2?=
- =?utf-8?B?L1FQZnFVTGpFTWwvakJmdSs0czdEN1p0UkVOeDZzY0VWRFh1L3QvejZ3UUsx?=
- =?utf-8?B?YzdNS2xKM2ZGZHNaQTl2ODJJQTRFN2l4NFYybUhGV1I4LzZaaEZxV3lRd2dp?=
- =?utf-8?B?YzZGZENVNWNuSlIvYUh0N0p2eUtzb1F3Njhvb1BxbkRHSGwvUDYwVzVmVFRn?=
- =?utf-8?B?Z1hMZWI3SUUyaW45cWczS2ZTU01pRlNiY085T3hvdU1PNUp0alFlWjZ1WmZX?=
- =?utf-8?B?cVZoeFU2RU1xVE1iQkY2Sk1RSnJ2TEhaeTN2ckpITE5UWXVYQncvUVVGaXZE?=
- =?utf-8?B?RWNNMThkYUwxSTBZWkh3ZkRCMEhReGtXOEdiTnRFalArTXNHcnVhQWdDaUI4?=
- =?utf-8?B?M0pOMnYxb0hwbmU5cUxvbHFvOHVSV1A5K293akxIMkFzakcybTNmQlNuWTNE?=
- =?utf-8?B?K3pZQ2JLcm8yb1JiOTE0VU5DMEoxQlZxT1FVSHhFUDF6TStaT1QyRlAwVmpw?=
- =?utf-8?B?MExxU0ZrbVJDS3o2a1lRazB4Y1BNck9ocEVCZ1BLclVjaHE3SC9MRWVYUVNZ?=
- =?utf-8?B?WVVWVy9SMlR4VjlsUUVMWmdSMmNuOFVqWjFJMVJJZU9kbUo0NURiZlNkQVQz?=
- =?utf-8?B?bnBDbTJhK0VzMjlUTmdTRDZWWVB5ajBkaUJROW1zL3hSQmo0ZlpINlgrTEpn?=
- =?utf-8?B?bzVYY3BXR0hHRlVGSkdiaTVxNTZzc2wvUFJVczNrSG81M3dEM05reXJxNUwr?=
- =?utf-8?B?TzR6eVJHWmd3U29vS0RTbnh0MEd6dE1oNWJFaHZnMEZWMWpqZGNTMnUyWTJW?=
- =?utf-8?B?RmpEdFlMWTZxRE43ckphaFV1VU5UQkZXSG53QzRyRU5VZGh5am5yZWp5Z2Nh?=
- =?utf-8?B?MVlVNEw1a0pNRUdFREhnbjdEY3FDekJmbnZtMUNlSFRJYWQ4YjNoczR4b0Vk?=
- =?utf-8?B?bDMyWEFsV0YvdEdySmZxR3VDTExKaTZUMkRnenRBam5vYUNNWVU5dlRyZllL?=
- =?utf-8?B?a3piRnY4RTBpUFNmRWw0WEtLUm1CaEgyV0UwUFBJOUxjYXlZM3dKaFA5OTRB?=
- =?utf-8?B?Y1RPUzQxcHFBOWhRQ2FyS0FTd2pVUjZGYTZYWmxXQ1ArblBxSUxiSmd1a2VI?=
- =?utf-8?B?cUVRbXR6anUwcDlmS1BBWlZsM0tSSmpZSVBoS0Ira0N5WVJwaGVsYTkrMWEv?=
- =?utf-8?B?ZXcwRDc5R0JjaVJ5YW52eXRPa3R0emNabS9qOXNEbURoTmdjRjNvamhLRDFs?=
- =?utf-8?B?SUdpaklpUU96dGdPZWtrR0ZGR1ZpdU80QzU2cmtUVXIrL2RpM096VnBoVWlj?=
- =?utf-8?B?ZnZHNFNRMktDcWJPRHhabGRXUjVnQ3hIRnFPQjJaM2RQajNpRk9wWDNkc1Fl?=
- =?utf-8?B?THNiZG53T0wyd0ZobitBcFBlZVNrQ3M2Y1RuMEJ2ak5RNkdXVDJFdTZubGtV?=
- =?utf-8?B?aEM5ckFScWZuSlRUbXliRmVXbGdBcklIbnlla0JDeDdmcjBPR2VwdTYrYkNz?=
- =?utf-8?B?Q3Y5dTRreG5ueklMRXRnQVJnTXY3WFVHZExZNHpEYitlYTFMdTFxVDVaWEJ4?=
- =?utf-8?B?eDYwdDZEYkZBSk9uTGdQRThVWlg0ZURrQXlLaS9ReFY4bmV5aG5DNDhUZUpH?=
- =?utf-8?B?ajRDZVV2YU1MUlpPcUszeEEzV3dQY0dibU5ZMkdHTjlmM2VGc29UenlQY3VW?=
- =?utf-8?Q?8arpJPd9wvjoyMvyIdB9MM9XQkhH6XIr?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR12MB5445.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dUk2eGt2MDFBYzRQTlJ6d1kvWmVkcWN1TVR5MU4yYXFpTlRqYUx0cUtCTW0v?=
- =?utf-8?B?bkJkdGtPRGZodXhMRVNmVWJjTzJMVHRrQzN0RitXMm5nWWRuOXlna3RWTXJk?=
- =?utf-8?B?SjdJbE9WaHRTU1d0TFljaXhDTXN4SmlwajV3Yk5kVHpkbkRHY21PQU5FTkZU?=
- =?utf-8?B?R0tHUHRLalA3aDkxbDB0WS84N3VYWmZHNVEzUk1mTWo4MVVUanJib2FJcVVV?=
- =?utf-8?B?RjJpb2YrWWI4K3lwYktSRU1sTlByb2szOU5XUkpMODVLUFdlL2I1NXR6UWFk?=
- =?utf-8?B?STVQNGpLQmt2UmQ3ZnFZQm5VaUxib1owem5oT21raFhHdXowNXFIYWVOOXN3?=
- =?utf-8?B?SmR3RVN5MUkrUmQ4UHJnNm01R3hvTTZ3dHFqaGhiZTFIL0FDcXRDWnpnZzlj?=
- =?utf-8?B?T0cwazRycUwxRWFQSUV5ckRYUmkyQ3Vyclo3TWRuNzhMUnUyaVk2OGdlZTFl?=
- =?utf-8?B?MWcvMytzSWR0KzZtYkh4ZVZ6WW1kYXdGUU0wSWUyZkxpRVc5UVlhMmI2Zk5L?=
- =?utf-8?B?TVU1OWVuTmx5ZGJEbGRBcm5aYnRXRzl4N2FNdFVoOGVXMXVmNGZ0YjAxdXBv?=
- =?utf-8?B?dm1uRlhzQjBrRlJqMUJCS1N6RnVDTmZCSWcwSE4xWDB5bks4UXBuaU1EZUxm?=
- =?utf-8?B?VUdOamJ4Zyt3UGtIK016RGpoZGNCRWRLY0tpN1lwMXdTaXNaUUwvY0JlZEZk?=
- =?utf-8?B?SW5tWFhLczNmbkZqenJNVlNMR0NzQlgvdnJuNkpKalhrbk93NXFtUXR6RzVk?=
- =?utf-8?B?WXNLbFgrSkdDSmpiN1FRVmhWR1pEckUvRWdGTHdvVVgxVDB3MkhPN0RSWE11?=
- =?utf-8?B?bWpIUFBXRVJ0SkNJT0IzUlNHM0pDL0lNcFpORDN4VkZsNmRaRlFGSDNOQ2RP?=
- =?utf-8?B?bVhsVmhCSzlzVmtVR1FoVkRpYkdlajF6ZTl4a0hLUjArc2FJaXhScGExZUtW?=
- =?utf-8?B?S1EwSWY1cG5PMVlQalRIRkxlUFFxdHRuY3RrU3diaUFjaTBFdEliWUlFbXd3?=
- =?utf-8?B?YkRCNUlCZGhtR2tKdk81K2xWTjR2NHBxbWxnOHdWcHFkM1oxVWYrRW1BdlJQ?=
- =?utf-8?B?Sysyd1JSRGVQREI0VDF4YzRmK09kdEtqOXZIRUhvZjF6Y0I3VTVXZi9NcEk1?=
- =?utf-8?B?UkdudndQU2VCdWFlSEFJbU96cVNtWURickRlVXdrYWVlSTFTV1NtYXNMY29r?=
- =?utf-8?B?QXlIUkVJWHMxaEdieVMyZWIyVEhmU3ZKc1d6cTNlcUdWQWFuL1VodHpuOXlR?=
- =?utf-8?B?STlUTVVocUdQU1JFYjlSVnhzZE9RZTBFdTFORnd4cERHQXI5MGRCRm9Fbkdm?=
- =?utf-8?B?ck1ybkQ1b3ZEUnVVQ3M1NHJUck1lV3F6dnNINEZabnJaZHpXRi9ObS9FM2Er?=
- =?utf-8?B?YkdvdDJBZzhpdXJKNHRQK3czSTVINUtmek5wNTFMakNXeUFYdnZ2Y21jYjh1?=
- =?utf-8?B?NHovZGFQUGVDNnJJa0xneUcrMFVoek13MGxOMEI4TktVd3BEWTlMeDlJTEph?=
- =?utf-8?B?MXQ5STNUNDlKUnhjVjZCK0ZBZlQ0RjcyRFlvMyt3NVJXMDkvZEdqREljeVI5?=
- =?utf-8?B?RS9PSVNyMGovelFpVjVjYSt4cktzcis5NVI2N3oweitRaWxvVXUwY1krU0xo?=
- =?utf-8?B?K1NheDhLb0lMS3QyTXU2eTA5WURZdXJoanN5UE9IbW16dUE2YjBHU3ZOYVkz?=
- =?utf-8?B?SGt6OVV1UEhhNjlnQVNEN1NpWVR0a1lsQXpjd0R1R1JBNlVybUVJTFNGOWZR?=
- =?utf-8?B?VzRnVG1Rd1JUaFBpd2Faem5FTlAvMUtwNzg3UXBMMWFJYVlub3AxUHZWSjlx?=
- =?utf-8?B?UGI1T3pwY2lINGt5enV0WW5Ic0dHZUZoYzQ5eGlZVjJ5M29XNFNqM0gySlg1?=
- =?utf-8?B?NkpZK1E3bWdQckhHUmN6Tm82TWNseWd0RWRqdkVDWC95WGMya2Z3eFIvRWpx?=
- =?utf-8?B?dTJXNVYzTFowOEZpK3JXSHVaM2k3ZmZsUUZVcTFHY00zTDg1dmRJNHlEdnJ0?=
- =?utf-8?B?RUxtWDlKMWc3Mk52clU2R0ZLOVRXbXJwZ1JWSnNidUsrNEQ5eGFMb0VwZHRQ?=
- =?utf-8?B?dVhVaFNZZVlWVDdWNXRSTGYzYTJWa1oydHovRWRCVXVtMjRsK1pMVzZwYytF?=
- =?utf-8?Q?v38tWTC+6baipg/Oqkrkwbdhf?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c7b8d353-f6d6-4c7e-9105-08de05d6dd66
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR12MB5445.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2025 19:22:33.1054
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dR7wNTN6UxGGBxlBNLEFuo7vDQrfXSagXRua3d2rjMorzv0hk4EcfGJGgpf4bzsMZW+qVP7pomu8pQ6YcxSPXg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PPF8FC6E1236
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Bael24djLhppaNDA"
+Content-Disposition: inline
+In-Reply-To: <20251001193346.1724998-2-jthies@google.com>
 
 
+--Bael24djLhppaNDA
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 10/6/2025 9:59 AM, Jason Gunthorpe wrote:
-> On Wed, Oct 01, 2025 at 06:09:53AM +0000, Suravee Suthikulpanit wrote:
->> ....
->> +	if (WARN_ON(!ndom || !pdom || (pdom->iop.mode == PAGE_MODE_NONE)))
->> +		return;
->> +
->> +	amd_iommu_make_clear_dte(dev_data, &new);
->> +
->> +	new.data[0] |= iommu_virt_to_phys(pdom->iop.root);
->> +	new.data[0] |= FIELD_PREP(DTE_MODE_MASK, pdom->iop.mode);
->> +	new.data[0] |= DTE_FLAG_IR | DTE_FLAG_IW | DTE_FLAG_TV;
->> +	new.data[0] |= (DTE_FLAG_PPR & gdte->data[0]);
-> 
->> +	if (pdom->dirty_tracking)
->> +		new.data[0] |= DTE_FLAG_HAD;
->> +
->> +	if (dev_data->ats_enabled)
->> +		new.data[1] |= DTE_FLAG_IOTLB;
-> 
-> This sequence should be in some set_dte_gcr3() ??
+On Wed, Oct 01, 2025 at 07:33:41PM +0000, Jameson Thies wrote:
+> Chrome OS devices with PDCs allow the host to read port status and
+> control port behavior with UCSI commands sent to the embedded controller
+> (EC). Add documentation for cros-ec-ucsi node which loads the Chrome OS
+> UCSI driver.
+>=20
+> Signed-off-by: Jameson Thies <jthies@google.com>
 
-Not sure what you mean. This logic was in set_dte_entry(), and 
-duplicated here in the set_dte_nested() since we no longer calling 
-set_dte_entry() from the nested path. Also, it's not really related to 
-GCR3 table.
+Reviewed-by: Benson Leung <bleung@chromium.org>
 
->> +	/*
->> +	 * Restore cached persistent DTE bits, which can be set by information
->> +	 * in IVRS table. See set_dev_entry_from_acpi().
->> +	 */
->> +	initial_dte = amd_iommu_get_ivhd_dte_flags(iommu->pci_seg->id, dev_data->devid);
->> +	if (initial_dte) {
->> +		new.data128[0] |= initial_dte->data128[0];
->> +		new.data128[1] |= initial_dte->data128[1];
->> +	}
-> 
-> This should go into amd_iommu_make_clear_dte() I think, and refactor
-> it out of iommu_update_dte256() ?
-> Every created DTE needs these bits set, right?
 
-Currently, the amd_iommu_make_clear_dte() clears all the DTE bits and 
-set the DTE[V] (valid) bit. This is used when preparing the DTE for 
-programming, detaching domain, and when setting the blocking domain. 
-Putting this logic in the function would change the behavior.
+> ---
+>  .../bindings/chrome/google,cros-ec-ucsi.yaml  | 71 +++++++++++++++++++
+>  .../bindings/mfd/google,cros-ec.yaml          |  4 +-
+>  2 files changed, 74 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/chrome/google,cros-=
+ec-ucsi.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/chrome/google,cros-ec-ucsi=
+=2Eyaml b/Documentation/devicetree/bindings/chrome/google,cros-ec-ucsi.yaml
+> new file mode 100644
+> index 000000000000..2121776e3ff0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/chrome/google,cros-ec-ucsi.yaml
+> @@ -0,0 +1,71 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/chrome/google,cros-ec-ucsi.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Google Chrome OS EC(Embedded Controller) UCSI driver.
+> +
+> +maintainers:
+> +  - Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+> +  - Andrei Kuchynski <akuchynski@chromium.org>
+> +  - Benson Leung <bleung@chromium.org>
+> +  - Jameson Thies <jthies@google.com>
+> +  - =C5=81ukasz Bartosik <ukaszb@chromium.org>
+> +
+> +description:
+> +  Chrome OS devices with PDC-based USB-C ports expose a UCSI interface
+> +  from the Embedded Controller (EC) which allows the host to request
+> +  port state and control limited port behavior (DR/PR swap). This node
+> +  allows the host UCSI driver to send and receive UCSI commands to a
+> +  Chrome OS EC. The node for this device should be under a cros-ec node
+> +  like google,cros-ec-spi.
+> +
+> +properties:
+> +  compatible:
+> +    const: google,cros-ec-ucsi
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+> +
+> +patternProperties:
+> +  '^connector@[0-9a-f]+$':
+> +    $ref: /schemas/connector/usb-connector.yaml#
+> +    required:
+> +      - reg
+> +
+> +required:
+> +  - compatible
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |+
+> +    spi {
+> +      #address-cells =3D <1>;
+> +      #size-cells =3D <0>;
+> +
+> +      cros_ec: ec@0 {
+> +        compatible =3D "google,cros-ec-spi";
+> +        reg =3D <0>;
+> +        interrupts =3D <35 0>;
+> +
+> +        typec {
+> +          compatible =3D "google,cros-ec-ucsi";
+> +
+> +          #address-cells =3D <1>;
+> +          #size-cells =3D <0>;
+> +
+> +          connector@0 {
+> +            compatible =3D "usb-c-connector";
+> +            reg =3D <0>;
+> +            power-role =3D "dual";
+> +            data-role =3D "dual";
+> +            try-power-role =3D "source";
+> +          };
+> +        };
+> +      };
+> +    };
+> diff --git a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml b/=
+Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
+> index 50f457090066..646bc81c526f 100644
+> --- a/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/google,cros-ec.yaml
+> @@ -99,7 +99,9 @@ properties:
+>    gpio-controller: true
+> =20
+>    typec:
+> -    $ref: /schemas/chrome/google,cros-ec-typec.yaml#
+> +    oneOf:
+> +      - $ref: /schemas/chrome/google,cros-ec-typec.yaml#
+> +      - $ref: /schemas/chrome/google,cros-ec-ucsi.yaml#
+> =20
+>    ec-pwm:
+>      $ref: /schemas/pwm/google,cros-ec-pwm.yaml#
+> --=20
+> 2.51.0.618.g983fd99d29-goog
+>=20
 
-These bits affect Interrupt remapping (Lint0/Lint1/NMI/INIT/ExtInt 
-interrupt pass-through) and System management message behavior. It 
-should be okay to set these up for the specified devices in the current 
-implementation.
+--Bael24djLhppaNDA
+Content-Type: application/pgp-signature; name="signature.asc"
 
->> +
->> +	/* Guest translation stuff */
->> +	new.data[0] |= (gdte->data[0] &
->> +		       (DTE_GLX | DTE_FLAG_GV | DTE_FLAG_GIOV));
->> +
->> +	/* GCR3 table */
->> +	new.data[0] |= (gdte->data[0] & DTE_GCR3_14_12);
->> +	new.data[1] |= (gdte->data[1] & (DTE_GCR3_30_15 | DTE_GCR3_51_31));
->> +
->> +	/* Guest paging mode */
->> +	new.data[2] |= (gdte->data[2] & DTE_GPT_LEVEL_MASK);
-> 
-> I didn't see anything validating gdte has only permitted set bits in
-> the prior patch?
+-----BEGIN PGP SIGNATURE-----
 
-Not sure which on are you referring to.
+iHUEABYKAB0WIQQCtZK6p/AktxXfkOlzbaomhzOwwgUCaOVowgAKCRBzbaomhzOw
+wghaAP4ptO8He+nJ7m200fytazpueLrS9kKxn3i2rwNFghRDdgD+K5AL8DYGEsTY
+DAUJA4flfi9ks9FmXLEf5hEQyUN98w4=
+=nNDB
+-----END PGP SIGNATURE-----
 
-> If this is goint to decode array item by item then why not use struct
-> iommu_hwpt_amd_guest in the nested_domain ?
-
-The struct dev_table_entry *gdte is basically the same information as in 
-the struct iommu_hwpt_amd_guest.dte that we copied from the userspace 
-into the more appropriate in-kernel data structure type, which is used 
-within the driver.
-
-Here, we just select only what we needed for configuring guest page 
-table specifically to be programmed onto the host DTE.
-
-Thanks,
-Suravee
+--Bael24djLhppaNDA--
 
