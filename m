@@ -1,200 +1,247 @@
-Return-Path: <linux-kernel+bounces-844111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C78E5BC105F
-	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 12:32:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E00FBC1074
+	for <lists+linux-kernel@lfdr.de>; Tue, 07 Oct 2025 12:36:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A87ED4F4608
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 10:32:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6060C3BEDBD
+	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 10:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7B4256C89;
-	Tue,  7 Oct 2025 10:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86DD22D7D2A;
+	Tue,  7 Oct 2025 10:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="feEnouAM"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="R+criTYr"
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010003.outbound.protection.outlook.com [52.101.56.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591D33C17
-	for <linux-kernel@vger.kernel.org>; Tue,  7 Oct 2025 10:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759833115; cv=none; b=tyWQEnyac04s6DwJ2gvPVqLEwKuZMq2EpPcI935kYSm6F3ckIlwpP/h90d407N4P0VFNNF1OTKzaHlExBuZyzatkyxcC4qQr5u8xtDUTO/3hKv81CBfqxkGoJ0jSQn/vx2qbSut+QYZWB+NCTtdbOGT+SJyXtD8lArqlXMl7o7k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759833115; c=relaxed/simple;
-	bh=VoxhNUvQg3/ii55U385Skz6aEN5UOWXXWJdEbfpFYFE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=epIYi58HCnKvXfUXc3OViQ44cZE6FzDnv6RNfVxPKdqpXxeKn4xnHFDVyrrwDEr9yzsOnmFeJVXP6eJfP/Ko34W5YKktpkAhC9AeNJxh5rP1eInTQw9WneYx+K01TEFQcTlH/aLlZ1oiI5n8T7XaEsg6M+LGf73knaraJmdY/3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=feEnouAM; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5972iRpO027568
-	for <linux-kernel@vger.kernel.org>; Tue, 7 Oct 2025 10:31:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6pMruL4RrOD8Ab3ncsU6klJP2YjjkGCkq0lz1ZS5k+o=; b=feEnouAMg6bHP8eH
-	NEPUNji/ZPht1l93C6vEPCNXhEgScd+hLzrG1RZannJfhEPkrDy9cH477OUSLpMl
-	5MCSG8f6W5RV86VQ5nhwPsnc3W8EAmm5Isu+vEHkeFYEswyNQGVuV3y4r7wtIVqy
-	odBfM06KeA6/icfOQJwQVZEx1szCcEIAOYkI29v34wRiC8WsC4P4QZ4AqPHGUYAS
-	cj2hEgiUr+5kjlGxZfMOlRQRpxCfecMNoqSy0yCys7KNp4vw9A+HZCDXae0isZXA
-	8p5eAyHIUoPNph5khyDmdfq+HJNefSHwFKim5qZWSmKxHqNT0D5aIZA1ow/7yzmi
-	4vJYqA==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49jut1pux5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 10:31:53 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4d880ce17bbso6219871cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 03:31:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759833112; x=1760437912;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6pMruL4RrOD8Ab3ncsU6klJP2YjjkGCkq0lz1ZS5k+o=;
-        b=IbUpuGjOOwiArG9gg+GfOcZDLoQXuvv5h234Ty9MRCaIOhRwfVZ61pB1SgMk+TyaSs
-         ji2Ti7xfrghZueu/GpK0JwJj98vT/d6EHnXu4Z3n3r3nk3Xpl580TksYN0bVFYqfS9WH
-         8l1RcgRIHq+mpZpHQ7q86/W4R4Y0+7PajydMUgmSkK19XRJmkzcSh9YjZagqwe7jOHG9
-         BkUuVVWR4ZptBvQTtehJGkb1qF6ONpzdkOOdwBQ19Xr8qOU3EtOJgqIcF1MgGXgqiGdq
-         7HfAIeyEuIChzyMKxM6K3eto0br8V5ChroZcy6q+KDbUNIlP67ADww6+t7gll7cY6JOd
-         RWXg==
-X-Forwarded-Encrypted: i=1; AJvYcCWLx9nlJwVOgT+X7rx1DJIDlyAy386b5sNH7Qv6TtGg+S3jQox1GtI6yclLebQaDKw9f2nZk/Y8s94+8iY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxajbAL3/hETn/baBi9h1FXXhkgnYBoIJ7WHIMFMeNiJq+6yahM
-	lJZ4jPr3eQW8X7kWh4mmKrr5Ho+fmpucCSO4+23x8pajmj3eUEv2EA9SgJIIPWpvKiQWs1KgHwH
-	Z48T741jSvrX9vJWW+0U447DVoCah9DypTse2OB9p6W7J5XSvoa+hpBa+ZxQ+HNvsnVHKvxz1au
-	A=
-X-Gm-Gg: ASbGncsiw4LBmxgwsW+mQDbF+rOJc0kYSl0pg7pdj7r1Waq8P+yaQXrSBEI19QkJwal
-	dPKrUyEZ+S9dBqn106tZwMC2MJxzkxhARHFgINfX9SBygAZNK8Y9IT6fkd+1m4ItRqG+XoFh4/P
-	rElwTpUfxFNszaDOY8r9kzIxInZEpySYnT/pgn7GDflD2XfMefwJ7+1ooQoA/2XuSAtMbL7B9vO
-	JPNauDvglVM2xGiRxEJJMoAy58feirffaOv76cswT3Tvn9EOvHn5EfEe8G2kk/acsk/bWKPYVMF
-	sKtiGLx9u1L3m53+z9xfAcETpAn+p6m3NazrEvLa0LS0MaePcO4n3f4r4Fg3CFbgRio18PgSAkA
-	LUsQEAhEQgfFTC9Yr0hpQjh8ZRbI=
-X-Received: by 2002:ac8:5890:0:b0:4d7:e0ed:421f with SMTP id d75a77b69052e-4e576a2e554mr139971181cf.3.1759833112017;
-        Tue, 07 Oct 2025 03:31:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF49wJdpC9RNWjrZh/mjq2BnFEU9JH6SZhV7KcMqbJZ1IBEcWUiuSsdgRT5R07pr15Mpi9GiQ==
-X-Received: by 2002:ac8:5890:0:b0:4d7:e0ed:421f with SMTP id d75a77b69052e-4e576a2e554mr139970751cf.3.1759833111321;
-        Tue, 07 Oct 2025 03:31:51 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b503c779df2sm33444766b.34.2025.10.07.03.31.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Oct 2025 03:31:50 -0700 (PDT)
-Message-ID: <085dbb83-d805-45c7-962c-2cf40a93a31a@oss.qualcomm.com>
-Date: Tue, 7 Oct 2025 12:31:48 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5FDB1FDE09;
+	Tue,  7 Oct 2025 10:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.3
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759833394; cv=fail; b=SKT+qiLt18z4p++2juj1Kmd867i5/Lh+ownaByXUJfBITKFMZytd14y++d648OpSYgEkVS8ZWzL4PwYaY2xwG51+f0Bf8GeO0w5luxzziYFgzjPomEC0cGEJJPqss0c9wvX095rF//7MrAePvJnEMIoIR2wxK3SWyzopI8o6Nr4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759833394; c=relaxed/simple;
+	bh=tHhrnavh2iDdeSPusYznlNNRZ3nWDD15b2MvtoW57dI=;
+	h=Content-Type:Date:Message-Id:To:Cc:Subject:From:References:
+	 In-Reply-To:MIME-Version; b=e81tgwLsEzJ3pfCuvf3Gs9Cw4+xX668UKSCS8Ea1Cdo4yx4JO1dqQPhCF5NSj7flEBZOnwMJxjtTDtwZQpZFKhYWYtq+5jZNXT4B1lKjD/1Y0EIxjTs+q7qMEh+afD/mRXQVaKzUnzWZIXT3x6lj36f7sh4UoEKbmnFVCo5QvDg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=R+criTYr; arc=fail smtp.client-ip=52.101.56.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XH2KN6HTVOXHiya+BEfHN+MrF+1wb5QDq69qJNiPay1103reXy3d5SO17S3WbtxObUoCBYWGnTRTOpxUrz0KNLfVrQGtg94LTnRb/mxiVPEgM8EKr0YVTixMIbPl7T4yBB1ytk5yM9j/Dx6u51/zRJzgVFPxWuGlIDH79jZjTXwN++Dkuqt0XgxgAf59HlNr0Mc61TOo6rhCdHSpkBJZrlCZDuXUMh4a2pyUIljYo3dV0tfNJX/PrTbEgz3QtN55eo1yqyM2fDZhe+/1lNTBKyD2s9JNztqYYa/J8K07AEMAwuC2SwEx9sMHgEr1gxBYNjucwAgYQ/yIxUjXLJ6sHw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tHhrnavh2iDdeSPusYznlNNRZ3nWDD15b2MvtoW57dI=;
+ b=WXiNoWYLb2OfLftzA/5ZQtWNzxyKmarYE+LO1cIpMpCMmsUuTW3TUKj1077CuoWIu361xFTfrJSa9MKDVrv5qmOJ6QvK/3UztHNkz1Q1wDcxXhJd3A7rDGbykFwb8H/nafkvAWKFOwZaJMoG9sMYSixQk/BVm2FKGSvxBeCKmdrIEPaWf6niokSQoV4spGTw/2/WvlfySKPgkWnxYTKWGC5XyYiPvFccl/2MjC3LiB5nLvsKPbNT6y7fL70yc4K94O/FUIQKIvk5ASkmmOkUeUT8YOuNtS70TqZ28jLCZPbqUcl4fRpt8TAjNRBfc719lgL+GG/fFls/OiSlzte4+w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tHhrnavh2iDdeSPusYznlNNRZ3nWDD15b2MvtoW57dI=;
+ b=R+criTYrRTnH/o0BzMP48c/i2EkecULheZ7oUtugr9pz09TguFKVl7catm4SzySwqqZUB08l0nDgHwWVtPvPubxNHVvJbZcncAnMvT3DDnKJAR8pqJrfMfhzvT+ZNRHK7F1+tyYhVVPitu7nvc1+szy+8P9mc0LUfE+UGl+xEDKgQwGqTWiPIRFvGiVHeLrOontz58KxeSiSPDpwIqii86aXZF0TN/GZGQk9WHDtrcKg0DcpnmBGg7MZPlsFcokETSzTHPP+ULa4t551U1QcF7MUtODH4e6/o1gvINicr3EDRa+3YeAnmGkSW3zsFbKtDt9LE9PP/c86mATlMNJMXQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by SA1PR12MB8858.namprd12.prod.outlook.com (2603:10b6:806:385::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Tue, 7 Oct
+ 2025 10:36:25 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9182.017; Tue, 7 Oct 2025
+ 10:36:25 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 07 Oct 2025 19:36:21 +0900
+Message-Id: <DDC0VAHL5OCP.DROT6CPKE5H5@nvidia.com>
+To: "Yury Norov" <yury.norov@gmail.com>, "Joel Fernandes"
+ <joelagnelf@nvidia.com>
+Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <dri-devel@lists.freedesktop.org>, <dakr@kernel.org>,
+ <acourbot@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Miguel
+ Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
+ Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
+ <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
+ <joel@joelfernandes.org>, "Elle Rhumsaa" <elle@weathered-steel.dev>,
+ "Daniel Almeida" <daniel.almeida@collabora.com>, "Andrea Righi"
+ <arighi@nvidia.com>, <nouveau@lists.freedesktop.org>
+Subject: Re: [PATCH v6 0/5] Introduce bitfield and move register macro to
+ rust/kernel/
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251003154748.1687160-1-joelagnelf@nvidia.com>
+ <aORCwckUwZspBMfv@yury>
+In-Reply-To: <aORCwckUwZspBMfv@yury>
+X-ClientProxiedBy: TYCP286CA0040.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:29d::15) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] phy: qcom: qmp-combo: Move pipe_clk on/off to common
-To: Val Packett <val@packett.cool>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20250927093915.45124-2-val@packett.cool>
- <e6754738-76c9-4080-bbed-17f02e6535bf@oss.qualcomm.com>
- <2564cdec-9726-4efa-ba07-a2f2646168c6@packett.cool>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <2564cdec-9726-4efa-ba07-a2f2646168c6@packett.cool>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: -qCeaZbiFhiioTHLZJv-F-F2wskinnTc
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAyNyBTYWx0ZWRfX14UEB1+qiu8A
- 76jovmc3Eq+EXVrsXg2OT1XGflFcqwpuDGAWQp4/qqLmEMqwukU5epaYMkMjvX05qrWV4Eirg6y
- A68s6ZpM5J5fjO7jUbpaEE6QSOySKYDKjxF/XJhQ/9enehRES3uUMwBSmEhXooWhx+8AYehpb/r
- hrFtQLRFjFWN2bYlStYYyFWG+u+Q/iRZDFndisnM6Fe4uspHw99rFsGEGHzYBqr/ubNI53VjpoW
- mPshTp94/D/bWpBeWzIsNTsSJCcXPRbYUCTzpdpRASRPHd/F7vOxUlsuBSt6XmR7rJS+UE+DwRZ
- AzbErPf1v+Ea1hYiVs1W00tu1t24DA71DuvZo85DGbkEZFGjzQQyy+FWPDC55H7Y5nItKBl4Qt+
- mroqPBe2uICorQty6Y+UtsMDCexTtQ==
-X-Authority-Analysis: v=2.4 cv=Vqcuwu2n c=1 sm=1 tr=0 ts=68e4ec19 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=p0WdMEafAAAA:8 a=IIrk0cfXZlyaRavtHIIA:9
- a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22 a=poXaRoVlC6wW9_mwW8W4:22
- a=pHzHmUro8NiASowvMSCR:22 a=n87TN5wuljxrRezIQYnT:22
-X-Proofpoint-ORIG-GUID: -qCeaZbiFhiioTHLZJv-F-F2wskinnTc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-06_07,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 adultscore=0 malwarescore=0 spamscore=0 priorityscore=1501
- suspectscore=0 bulkscore=0 clxscore=1015 impostorscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040027
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|SA1PR12MB8858:EE_
+X-MS-Office365-Filtering-Correlation-Id: db3c5756-6f44-4aab-a07a-08de058d5d57
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|1800799024|10070799003|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Y1p3em5wQVM2Y3NLSEY0UHVzT2drY2R2bUN4cmNEMXhoZXRwcG5zUC9jejR3?=
+ =?utf-8?B?WGZRWitjeld3eE51UTZudDFnMGdKUlJTREw3TVViekVQRkMybHVycGRhdVVU?=
+ =?utf-8?B?dEdSeDdLY2NaUm5lN1ZHcXFQYXoydXowZ3hUOFA2a08ycXc0NG40UzVXdld6?=
+ =?utf-8?B?aGFWSlpXNHQ2dkRIcEVwNkptSzJ1dVp1YlN5OVh3dEQxK2xGeGJEZXdVdE9X?=
+ =?utf-8?B?b0dSMzliazN1dThwQ29vSk1XK05EOUtrUGNCUWhCZHpDcWFEVHMxVmpWNnZw?=
+ =?utf-8?B?ejQ0cjB1NCszWWVwQ1Z3VjBUU2V5VXN0ZjdUdlBJUXFQR01vNWpsa0dncjI2?=
+ =?utf-8?B?L2hmOWp3a2xMK2YzZCtkRXQxa0dFUW9UM2JuZ21DdVc4UmJnNEZyNGI3aW96?=
+ =?utf-8?B?ZzQ1M3diVU40QWd2VDc0NHZtVVhCUW1DSTB0TGRXa2VKRSt0MklhU2NkdUVI?=
+ =?utf-8?B?bjdQWGw5NlEvb1drR3JCMEwwMmw4VkhPRVhRVXE1ZHNYRG00N0lOZW9YUjlS?=
+ =?utf-8?B?QVdBWHVScjhXNTcxWUZuSERIazF0OXdHN1BVRFlQaHpxZnRFallqSzdUSjNF?=
+ =?utf-8?B?akdTb3ptK0ViUzNmV0hEZUNDTXpVYjVmbkdxbkx0QlhqWlhoYWhPcmU2ME1p?=
+ =?utf-8?B?K25zMHhQNWRPZmQxTVIzRU43WUdLQTNTZXZDUldwcnNPMlRLeG1rY3U5RlpN?=
+ =?utf-8?B?QTcrdUQwZEFXbmdiaGhqRGlFOTlWUDQ1ZHF0VE1RNExtQml1d3pTckpMaFIx?=
+ =?utf-8?B?dFJtaVBBSk9OVnNnVlhhVmdOK3MrNGZyR2RUcHg4a0FYSlh6b09CSVdwanpZ?=
+ =?utf-8?B?NVBiZHpXQVRvVXp1c3Q1VkJBN3hxZ1J4SXBpZ2Jia2QyR3ZyRFdCdjZQbmlS?=
+ =?utf-8?B?cXBoaXRHVjVTalB1YktDRjhNZmtPN0hYcVV2emVrb0VOOFZPY3hDdVM3TlFq?=
+ =?utf-8?B?MWNWZlBCWFRVbnZBdkViS3FoWUpiTG5zUzA2QVBnQ25EVjlmU2Q2QnNDSGw5?=
+ =?utf-8?B?YWM2V3Q2cURod0EwdGR6STk0S041ZVRGN3l5dWpqT241NGNKUHlBdy9kUGdk?=
+ =?utf-8?B?blhiOTU2ZnN3aExwdmlZUDhYTnpvN3lZanVQaXIrSVROY3cyQm1oOWRWUWJa?=
+ =?utf-8?B?K1VzK0hRckVJckU5Uld6RCt0ZTUyS2ZsbHRoeFZhTmI5THV4N3FEZnRyY2RE?=
+ =?utf-8?B?UXVmZnBWcG45dTRJZXh0a3ptYkNYcHNXRngzelo0NncwTGlYKzIzYU5YbWRL?=
+ =?utf-8?B?dGFOd3dtV0NFdXpieXpxNkZiUnhxTlVRemJJMUNkaFJzNjBkcVpudWl3WU56?=
+ =?utf-8?B?ZjB3VEtZdFV5WlgyUFZrQTZkR0dDTStLbU8ydzBmVHV2bFhWUjloV0dZOVJk?=
+ =?utf-8?B?VW8zUnJ0MXJIQnFBSU5lMktUNDhBUG1TU056NzhVck43TGtsZjdvRUl6WkI2?=
+ =?utf-8?B?TDBIZURXbVNIZVZWNWdMTFhpVHFkNjhxS1pzRFdFVEEvTXBxTlBaSnZRQVFk?=
+ =?utf-8?B?eEFod09jdy9OZzA2TGlzbUdyQVNKNVU5bi9vUEowa2V2Zlczcm9PZUVTbC9V?=
+ =?utf-8?B?dDVZaWVWUmlTSGtmNWpSZlE0Vm1Ja2x1MHB0WWxFSkRMNjhzTzVVR1I2cHBy?=
+ =?utf-8?B?OGtqeXFvK0dtQzFvTC9rclg3cFJZNEFNN09OcU1NOTdmdUpjM2Q1VFZRaGVk?=
+ =?utf-8?B?TXV4M1d0NTljWndraktQclJ4QmVFSThvS1V3RWhUdE9jaU1ZaEU4cGdnTmlK?=
+ =?utf-8?B?L2lKdEZjUURUYThCNDdkRWJWelZNL1g4Ti95bkFOYU9tZlBKSCtnVkQ0Mjd4?=
+ =?utf-8?B?SjRKVUVNaUtiME9RYmNWOGxjZnJ1ZXFmblNQdFJZbGIrbnh4TWhsMVU4TzZv?=
+ =?utf-8?B?eHZ0MkdFMWprc0dKczdhOHFQcjRoQkxseWlNTk45cGNsUFNRQlByc0Q3STVZ?=
+ =?utf-8?B?bHZrZ2hVUFRETDR0ZjVCRDlEZjNKT1NxSXZLVCtZQWNoYzVLSzFtWVBGUjV2?=
+ =?utf-8?B?WHpCNGI2akl3PT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(10070799003)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TFFWMTcrQ2NhdlNoVlBhQlpLaWZ3c3FOaTFQcEwxN1dlb2FYVTNybUV4ZXZQ?=
+ =?utf-8?B?NDVOZElkY0NvQnU2RzRTaHhrN3Y3RXNocDg4OGFXb3NrSTZ3SG9YY1ZmV0Zv?=
+ =?utf-8?B?M1pCbDY2VDcvdUdyM3Z0MTZLQnBPMFZzTU9FSjVodFdsSDBpZHl6NnFxS2Yx?=
+ =?utf-8?B?TWYrTm13ekhpNlFVdjFaeUxBbjFNanY3SXN6WWdNdDR6T3R0ZmNMTW13TWtG?=
+ =?utf-8?B?MndnOERsM1NHZmJhR3l0WDRVNDd5cWJtbDZuMzVlak02MjZoajdwVmN6Y3lY?=
+ =?utf-8?B?dDBKalIxZ3JMQnE1MDBKazJOUlVBeWVyZlc5b2Qxb0YrblUrY0pJWkp1bnRh?=
+ =?utf-8?B?V3RzSGVVU0Vwc28rNC94S0M1KzBsZVRKMTVaeGpNRzl0d1ZKNUZuK1VZV1h1?=
+ =?utf-8?B?UFo5dzZmVUhaOVJiRGJSY0xxTVhIUXBibXlTNmk0UStCbThRc3RYdDRVZ29l?=
+ =?utf-8?B?ejUyL0phQk5VWmxNcENmNllHbzhIcWdvVjU4WXRsMHVheGtQRis5aXZPa1JB?=
+ =?utf-8?B?WU5hUUE1NCtjVENIaFNpVXIyYkEyemE5MFRmak5KNUhuY3RQRjF1WXlGb1hK?=
+ =?utf-8?B?dithaTd4dzhrV21JeWQrSkJkNVp1TDVERFNqK0hVU0dSYWJXSGt5MEZnWU45?=
+ =?utf-8?B?Zk5Qcm9DZWRXZGJ3L09DYjBkYXlEN1gvdTJBU1k1Y3dLeVJITFhPWU5pbW5T?=
+ =?utf-8?B?ZEl5NUhIR3JUYzNWdGxlSU9xOXd5RWQxN3oxcERxcGl2MXgrSmZ0V3JQd1RP?=
+ =?utf-8?B?M3VaeW9mUzhjaWhmbXpwTG1MV1VmVW5GOFdPRGt2S2tzdzNIQmdLdWw4U1VU?=
+ =?utf-8?B?MVNVcGEyWEhiZWZleW85cmM5ZXY5NkJMRnN0T1NYUC9WWVhFN0NHcU1Sb2lT?=
+ =?utf-8?B?UlBJZ0VYR0tJZFZGcWZWQW4zMDM1ZmdMWGRrcS9EWHMxVTVKWGVVY1I4dGxp?=
+ =?utf-8?B?MzA5ZmZLTkdvV2FyNThvaE1IM3RVbTdPbVV2YlE4QUpVaWJxSUJXZTVDd2lX?=
+ =?utf-8?B?emhqTnIyNkpTZzNIVXRiWTlaVDQveXBBcmJGSnRNQ1d1RFI1SnBFT1YreEFH?=
+ =?utf-8?B?VExFditQSHZCUGhYRkkwMG80TWgrM1dzTlNXSTk1Y0JyK1VIZGdnNjNTOGgy?=
+ =?utf-8?B?d3ArOGkwYW5FbFFpcDUwUWVibTVJQnBQM3Y1UE5CbTJXL3UwZkRnZjZDYmxR?=
+ =?utf-8?B?a2c4djRXQnM4SG5WQ3h4M2FvNDlQbXlJQjIzQjVxZXdkcUZDSzhXbnR6NExL?=
+ =?utf-8?B?U05PU2M2dVhxNXFoeUJNeWFBS1BVbFMxWEMzWEpjTHBpQURiaEM5YXREWGlS?=
+ =?utf-8?B?VnBWaWFJRDBWc1NKRGIva29yYzduVXdscGxIa09xTEw5QmxGWkVRWlUzcm12?=
+ =?utf-8?B?eVRSOUJ2NFZGa0VYNGN4OUFNRk9uR2VxdURHL1pqZU5GZHZxbWdVZ1A4WktK?=
+ =?utf-8?B?bG81TXY0MzEzTGd0S21NNDh5RW4xeXVKZjRPcTYraUIwa2ZCRFhhUjZsMmoz?=
+ =?utf-8?B?TXZCM1hFSVRsL3JId1hHMFBvTVhDcVd5L2FwZnJ6VnUxRm1DNzV3SlJjRVE1?=
+ =?utf-8?B?cmdZWHplRld6WlZmRTc5VkQ1Y0JqR2QxQjE5NFlYWDZ5RGdWN0FHbzlmb2FK?=
+ =?utf-8?B?THZGbnBxWHYyRXUrMmpkWmNsbSsxUHFoZENnRGNJMno0RkJhMDVGRHJkQ1BF?=
+ =?utf-8?B?dlo0dWlaSHBhZUtkcDk5UlM0L0xtTGVtNS9CUGVHb3RqQVFHMVVwWkZ2NHpI?=
+ =?utf-8?B?ZTlHRGIxUUw0Tkk1bkZ0MWVPeThtR2djelRrVG80eHN2OElZaXhVUll2TTlS?=
+ =?utf-8?B?NWc1NW9YcXhGQm5xTEJGYllPVkhzS1BBVzUxbzkzOVFuUjJwcCtjMkl3dDZT?=
+ =?utf-8?B?K2FkT2VqN0NKQjdwUlFlbEhwb291QWx6UVkzWXRXWHppdHVZMUN2TGdYVVhO?=
+ =?utf-8?B?eGszMDg3VkdaYVFWb2hQcGkvVUgxa3RpU1EzeWlydExtaVgwMmgrVUxFUzNY?=
+ =?utf-8?B?UWo0dklyK2NVakJ4Y2JCeWpQeks4RStzNGxGZ011T2svTk5GNUM4ZVBBREpE?=
+ =?utf-8?B?aDF5d0dQSGlIUzV0Q0wycC94eXZOU3JlUDh4MGsvNkJ1WXp2RklVQjdMcmlL?=
+ =?utf-8?B?TjZ3ejcwejIyTGlEZ0NFWGw5TEhPYUE5SzhmazgvWE5DUjVKekhuTGd5VWRF?=
+ =?utf-8?Q?gXWKa5RBMUnWpGKVckHXJ7pz1AuOKN01CYd76ON0wjid?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: db3c5756-6f44-4aab-a07a-08de058d5d57
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Oct 2025 10:36:25.0207
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: HuhN/AvwTUgvOLUIOsU8cEpKK5AUX+VkWNPfUJOQOJfyjMWbXXDxqAlDO8zvZrwpYGfNeQ/JOH1Lt2I+lL3SRg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8858
 
-On 10/6/25 6:13 PM, Val Packett wrote:
-> 
-> On 10/6/25 11:44 AM, Konrad Dybcio wrote:
->> On 9/27/25 11:17 AM, Val Packett wrote:
->>> Keep the USB pipe clock working when the phy is in DP-only mode, because
->>> the dwc controller still needs it for USB 2.0 over the same Type-C port.
->>> [..]
->>>
->>> In [1] Konrad mentioned that "the hardware disagrees" with keeping the USB
->>> PLL always on. I'm not sure what exactly was meant by disagreement there,
->>> and I didn't find any specific code that touches that PLL in the driver,
->>> so I decided to just try it anyway.
->> So what I did was playing around with the RESET_OVRD settings, which
->> dictate what parts of the PHY (and their associated PLLs) are kept online..
->> but I totally forgot that there is a branch/gate clock in GCC that sits
->> inbetween!
->>
->>> [..]
->>> I'm sure it might not be that simple but from my limited and uninformed
->>> understanding without any internal knowledge, the "sneaky workaround"
->>> might actually be the intended way to do things?
->> Normally the clock which you're enabling is sourced from the QMPPHY.
->> The other option (bar some debug outputs) is for it to be driven by
->> the 19.2 MHz always-on crystal (instead of $lots_of_mhz from the PHY).
->>
->> For USB hosts without a USB3 phy connected to them, there's an option
->> to mux the controller's PIPE clock to be sourced from the UTMI clock
->> input. In those cases, the UTMI (and therefore PIPE) clock runs at..
->> well, 19.2 MHz!
->>
->> (you can actually do that on USB3-phy-connected hosts too, at the cost
->> of.. USB3, probably)
->>
->> So I'm not sure how much of that is well thought-out design and how
->> much is luck, but this ends up working for us anyway, with seemingly
->> no downsides.
->>
->> At least that's my understanding of the situation.
-> 
-> I wonder how Windows drivers handle this.
-> 
-> The ability to use the UTMI clock sounds more appropriate for when only a legacy USB2 device is plugged in and the entirety of QMPPHY is unnecessary and can be shut down to save power.
+Hi Yuri,
 
-How would you hotplug a USB3 device then?
+On Tue Oct 7, 2025 at 7:29 AM JST, Yury Norov wrote:
+<snip>
+> Regardless, I don't think that this is the right path to move the
+> bitfields into the core. The natural path for a feature that has
+> been originally developed on driver side is to mature in there and
+> get merged to core libraries after a while. Resctrl from Intel is one
+> recent example.
+>
+> With that said, I'm OK if you move the bitfields as a whole, like you
+> do in v5, and I'm also OK if you split out the part essential for nova
+> and take it into the driver. In that case the bitfields will stay in=20
+> drivers and you'll be able to focus on the features that _you_ need,
+> not on generic considerations.
+>
+> I'm not OK to move bitfields in their current (v6) incomplete form in
+> rust/kernel. We still have no solid understanding on the API and
+> implementation that we've been all agreed on.
 
-> BTW I'm still seeing USB2 functionality die if I boot with the monitor cable *already* plugged in, but that sounds like a very different issue (the host controller starting to touch the bus before the PIPE clock is up? something something probe order?)
+Initially the plan was indeed to give this code some more time to mature
+in nova-core before moving it out.
 
-Unclocked accesses would result in immediate restarts
+The reason for the early move is that we have another driver (Tyr) who
+wants to start using the register macro. Without it, they would be left
+with the option of either reinventing the wheel, or poking at registers
+the old-fashioned way, which I think we can agree is not going to be any
+safer than the current macro. :)
 
-We've had some coldplug woes in the past due to the ADSP Type-C handling..
-does replugging (maybe more than once, maybe in a different orientation)
-fix it for you?
+IIUC your remaining concern is with the possible loss of data when
+setting a field that is smaller than its primitive type? That should be
+addressed by [0], but as it introduces a new core feature I expect some
+discussion to take place before it can be merged. In the meantime, it
+would be great if we can make the register macro available.
 
->> The suspend logic is broken and unused anyway, but that's a nice catch,
->> the PIPE clock in question is even conveniently called "usb3_pipe" in DT
-> 
-> Hmm. Is it unused? Oh, you mean the pm_runtime_forbid(), right.
-> 
-> Do you have any pointers about what exactly is broken there? I've been poking at the runtime PM stuff too (https://gitlab.com/Linaro/arm64-laptops/linux/-/issues/14 for USB), the PHYs are the biggest missing piece there overall..
+Because letting it fully mature within nova-core also has the drawback
+that we might miss the perspective of other potential users, which may
+make us draw ourselves into a corner that will make the macro less
+useful generally speaking. We are at a stage where we can still make
+design changes if needed, but we need to hear from other users, and
+these won't come as long as the macro is in nova-core.
 
-The PHYs likely sip power compared to other things.. (but of course fixing
-this would be welcome as every drop counts)
+[0] https://lore.kernel.org/rust-for-linux/20251002-bounded_ints-v1-0-dd60f=
+5804ea4@nvidia.com/
 
-I am not sure what needs fixing, but there exists a chance that because
-of the relationship that we're talking about in this thread, the xhci
-suspend could use some love first.. I think there was some work on that,
-somewhere?
+> On maintenance: no core functionality can be merged unmaintained - it's
+> a strict rule. While in drivers, bitfields are maintained by the nova
+> maintainers as part of the driver. If you make it a generic library,
+> you need to define a responsible person(s) in advance. It's also a good
+> practice to add a core maintainer as a reviewer or co-maintainer. Alice
+> and Burak added me for bitmap/rust because I already look after bitmaps
+> in C. You can do the same for bitfields, for the same reason.
 
-Konrad
+We can assume maintainership of this of course, but is there a problem
+if this falls under the core Rust umbrella? As this is a pretty core
+functionality. Miguel and other core folks, WDYT?
 
