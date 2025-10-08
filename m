@@ -1,73 +1,87 @@
-Return-Path: <linux-kernel+bounces-844941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3308FBC31C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 03:20:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91688BC31C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 03:32:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B66C13AB7EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 01:20:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4780B3B8300
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 01:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145CD28E59E;
-	Wed,  8 Oct 2025 01:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="R//HYTdh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B19296BAA;
+	Wed,  8 Oct 2025 01:32:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C08413774D
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 01:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B90E25A2C9
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 01:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759886416; cv=none; b=UAuAZnBy1Y0t+lscTK+FOJ+kXdZlBmYfrc3V6XX0EWzZosYb4wzHS4A8oTyjt9qyQtDNv8BQWHDOQO0KnmScJEktDT5MRVasrP3k19I3ZeFpFbYys9yawbh9wdfwAWHKDossKZKZaOAVY3tsgk1tXK54YjaQXrLGBpIw3wPY2jA=
+	t=1759887125; cv=none; b=YrOfU2p2K30RRz5MI9R21RDqx1bDdzwFlmsLEVS1a7gQ0TbvsRTGhMCLaP13PaJHB8oyed7gkBow/LYAmo1r1QU7TvK+NmHYJ8uK0MT9nxcEHku27DAsJRa1SpDebGQp7Q0/uuVuU4tuEB3YZnqnTSnSOdoh8IKldYeJTB2eQX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759886416; c=relaxed/simple;
-	bh=RggMqVpCe390gnGrGEqJRdIG6qG4CtpvuczcXMf7cvQ=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=mPZjWxqFZjp1vZnUbxAyoI7e6MZaWRsGMSXThKfC4jSIQ+xxdHeXMYUjx3uUyI+KrjZbPH1mDzKmhXTz9pUhqLKCNtOo3IfSR4hKnj3fTATDEXsT2MB0Feo4gyZwFZT0zuaVAuN64lECaokDQCwH1FhV8j/QNwivSwk93WmC9Rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=R//HYTdh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A64DBC4CEF1;
-	Wed,  8 Oct 2025 01:20:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1759886416;
-	bh=RggMqVpCe390gnGrGEqJRdIG6qG4CtpvuczcXMf7cvQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=R//HYTdhSQqxbhONMMs56VKD4M4Aayke0Qw3/3uFTYr5htKhgRksOzM6PnWOAmm9O
-	 ePJQ3W1JyouZ0TN0HQ7ger9uOGa7CuVNayKVJSCCTRwj5wnaXcrbXw9DrWZ1Zhxr7K
-	 Fb+ghAFpd2RBXtMscNIkR70l1Ns41uOMUCZ1Ctc4=
-Date: Tue, 7 Oct 2025 18:20:15 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org, Kemeng Shi
- <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, Baoquan He
- <bhe@redhat.com>, Barry Song <baohua@kernel.org>, Chris Li
- <chrisl@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>, David
- Hildenbrand <david@redhat.com>, "Matthew Wilcox (Oracle)"
- <willy@infradead.org>, Ying Huang <ying.huang@linux.alibaba.com>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] mm/migrate, swap: drop usage of folio_index
-Message-Id: <20251007182015.cae4a063398cdaac71e47f41@linux-foundation.org>
-In-Reply-To: <CAKEwX=OfcTDH08VrTMFL-uQyBay11H=NccYWVo73XNHVVf7bEw@mail.gmail.com>
-References: <20251007-swap-clean-after-swap-table-p1-v1-0-74860ef8ba74@tencent.com>
-	<20251007-swap-clean-after-swap-table-p1-v1-4-74860ef8ba74@tencent.com>
-	<CAKEwX=OfcTDH08VrTMFL-uQyBay11H=NccYWVo73XNHVVf7bEw@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1759887125; c=relaxed/simple;
+	bh=JjYiUAcEVHic5kTL9/57PUUspZUTe1KugqQ8aJl3fsI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=JIc9uSDG7h+VFM3WBaDa+uNTyu/w1l0YxDK6ZTr4M4yz1sBLaTHxzhV4T7m2nEncXitNZxhyBAyZy/31td5+Fuxjtzrhce9g7IhN8Q2+lxZHMqgtmWKUnF0AcBbCRTgsxS/8FdIqJybYtORcNhRMP/y748JvQGYKFGyI6XuchWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-42f6639fb22so56758995ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 18:32:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759887122; x=1760491922;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Odmpr3/K7GXDT3dw7DJg7DqXzfopWz2++pbeuyB9nx4=;
+        b=ZUgUnlrJKqr69O0h/HthtsQSqfXTdbMGEepfAU2es+wHnLubOZCqlLRaIlAhHMwujs
+         /LuIO0wxqx1Bh8hKaAzog8X7SVW/XYKGK08FQEkPOsGmLMgenR9ew3m68rEtRuxfB+A6
+         oGxKoPgrM686yQluuK6oE09PUFH4jc06DaoszAFxb5Pvyw5i6nIKGh8VQcuzhjYtxkfV
+         AkmjlqWr5AXH0N8P9YVJ9B5o98zkcVxYHiN0ADnsf+zLyXioQwNtFUw8L3gTUBbVQ1ko
+         SzgNyZ3r1kR7aFgwRCg1MGbEg2QOI++JWOoJJVmI51WYvfW2JH+rulumPGTIpx0LrBMQ
+         rk+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXCkZyH7DquL0rVJJoUVGCSoQ4Co1tTu5/W/hYcgwzJjz30aTPFTgCkVxIrcMXq3yxUdS5SBPWpGAvJpXM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1ro0sskcUO45w8eEoc8qDfjfpBopWNQX+phbnWgvDO46dwN3E
+	B3uExio/HbKsydlIgaZnpc8cllX+lPS8aNSpAPen9M65L2KLIbGtPaYpLlQNdnIE7iEmQahiCN7
+	bARIAzKk43X4GlF5V3+6P7ZR39RArevc0F6g0G5yvPb9mJW+VwDklw0t5sow=
+X-Google-Smtp-Source: AGHT+IGS6VjORzVbFjhLZNhi2/vW5olYRrchkl/Z/u8XXQCTsNxxBpemfy02wsXE+3HaOfiN8prQCXrSsy3FwgtW8Ar7f7T/gB01
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:5e04:b0:42f:87c1:cc3f with SMTP id
+ e9e14a558f8ab-42f87c1ce10mr9970135ab.18.1759887122380; Tue, 07 Oct 2025
+ 18:32:02 -0700 (PDT)
+Date: Tue, 07 Oct 2025 18:32:02 -0700
+In-Reply-To: <20251008011021.8322-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68e5bf12.050a0220.256323.0030.GAE@google.com>
+Subject: Re: [syzbot] [fuse?] possible deadlock in __folio_end_writeback
+From: syzbot <syzbot+27727256237e6bdd3649@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 7 Oct 2025 16:48:40 -0700 Nhat Pham <nphamcs@gmail.com> wrote:
+Hello,
 
-> > This helper was used when swap cache was mixed with swap cache. Now they
-> 
-> mixed with page cache? ;)
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-I locally made that edit, thanks.
+Reported-by: syzbot+27727256237e6bdd3649@syzkaller.appspotmail.com
+Tested-by: syzbot+27727256237e6bdd3649@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         0d97f206 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1672da7c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d6fcded704acad42
+dashboard link: https://syzkaller.appspot.com/bug?extid=27727256237e6bdd3649
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=10ef5458580000
+
+Note: testing is done by a robot and is best-effort only.
 
