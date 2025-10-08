@@ -1,184 +1,138 @@
-Return-Path: <linux-kernel+bounces-845501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D84BABC52E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:24:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 528A3BC52F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:24:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C086C4E368F
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:24:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E56E84016BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3744A255222;
-	Wed,  8 Oct 2025 13:24:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF285284682;
+	Wed,  8 Oct 2025 13:24:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dis6zV80"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WA3uLfNt"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39A4250BEC
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 13:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCB23284893
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 13:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759929875; cv=none; b=dxwtHaT5HBTB29jWcSjCfa+Db5LOB6Un76OzpT/FI6vBYfFK1HoXKtqsNgiwlbIUbza+oHWV0jdEOZ6W2LYWBLMgz8rNPdUU04COwsn8SNwjkrDANwjEhO4ZdFs0/JNCqlbhCvgU1I1Y5OMDDfiOsw2ucWj6/IrhUkdkucAz8mM=
+	t=1759929881; cv=none; b=D72FVU64JRPV2CV/MhDX3Zd8hWy7OKhs5TqVSHuClI5al3Vv+YG7J2QWGNnYrgJrUvvq+40/iIoEMAxrTtRHSTEjLLByeS/14nQ75vcUGE7K5qvjl13A+NQIbffIZN30KLL588B8mmnRYtljLNSudg3Ul3aM/KMTYJg3J1U6AGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759929875; c=relaxed/simple;
-	bh=+z4cw7Kh0UDzc/Mzt4faADLbEJpWktNXzAB2U/Vl3lc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j/bi+6Wc2xGYKHp6ttRkr/0181PBVRJ8phLsd7NbPB5v/cAtMRNapakxyhy8aFGmxiwWIUb528uTEP1LhA6YNuwLDroxB7Xs2VDmtVgKITluo5mDmoK8aBCyceUtL3256Pw4wc5nqIDnZljA3p9kEkyFKjiggsSbvlGXEQ6pl9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dis6zV80; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-637a2543127so13738037a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 06:24:33 -0700 (PDT)
+	s=arc-20240116; t=1759929881; c=relaxed/simple;
+	bh=fHRL68xgbrs4S5d+Rk03mc7ClH8sihNkbqrGqaL31yo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nMxoCoUQ7dr33hNos8iDPzfkNS6dIu61SQKGRGDWom6JWzDhTrn2dxlh56Uv14oqZtM/KfH5CuJzyyWDsjEJB47nRz05Xu4hY24r8pPQ+z5uWSibD4kUSkblPlYbeMOUnH8nbgjgD/8wFGlZF35S7C2j8RXAzkP/SxmEW/pJ8+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WA3uLfNt; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-42421b1514fso3526484f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 06:24:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759929872; x=1760534672; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=BI/TCoi4LzxSA8XfIjZuhJqyGS6WzPwjqlZF4XU4Rk0=;
-        b=Dis6zV80iSK509rUExGQLSoy+RVXoHXGi8fTj6CG2vV7TtkqfKxGu9xq493Ha1XYuY
-         C/WWVZygORk25MH6P9GygIVR2vQyc9iWduSsCtLG5tXwKBa9VUD1bmWQz4mcXSKboCzn
-         /Gm6Uj8pyhxSYjUC4pPFiL6Jly8kNdpz7bzdXpDL6wSO0hR8Bx/RsfDzY8Jjwu41t2pz
-         h9T8Yyq2ma86O1P99CInYl/YJ1mK6IXSKvEcob8b03FTEKboVrPkFzkkSjTIV5+LIMFg
-         kASyOJGAMBCCXk1C35AMUkgfKw54H5QXDIa7Cd2LJpS4o7SdBGWK1Le6TBl9Lcz6Q3d5
-         2ngw==
+        d=suse.com; s=google; t=1759929876; x=1760534676; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ai9bodin2zTCE30sm2MezQ75jr/Y4H7WdWVegLgSDKU=;
+        b=WA3uLfNtZKVV9l37I3e/ToYZya1MGuHLUToON1sDJ/mLNk46sz/nZGuPgKgrnftm0t
+         HjTiJHGd+b8TbTp8eU2AQrbPTpifE+cM4okUjyzbzXtjNNkWm6TiDG2fgLsoUvQ/543K
+         broEnKIROX30s0w4pdscVGlZYdYRs1ZSg0ALpZFhRbFMD5pBMpXgG2xDETEN3s9rO52P
+         ayBhwuPWIMGvmWTxzTuBPYmkuQ2YObGPFr4YCWt9S8aNBtJidU7quF6COOIeSrPQJL+4
+         GPMcCr1hYobFqLfwpJzqZgyj7dW9HM4M0VnjpYnYXk0fMfT7zTnKLKA8qQhdicB8t71T
+         gNFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759929872; x=1760534672;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1759929876; x=1760534676;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BI/TCoi4LzxSA8XfIjZuhJqyGS6WzPwjqlZF4XU4Rk0=;
-        b=bEd2mRnDJlxBiTJK7FkUVG674ySb4z6GpjmZPA+SsygYNfP3qYavAC5CN02bw6j/uP
-         zdXKfGuDGh5ti4Gvk84PVB9UUhknQP5incuBncgWhZjfLF+cSqvwnNO02sXshymOcRtm
-         z0+SN3QGeLBr/CvIjiL4lk46ptE99RvfeXTWSyYbbAmcqQF+32iDTr5q7PRAWHug9+EP
-         SbTF1C/1Y1YP0aMzSmh7EdwrkRoYF5jHMhoK5ZynzTg6N8znQMAzKiuLE2XvXkgxOs+C
-         RUhV/27IQ//c0TLr6pyxwUdunLipJROvk8E2lE2xRc5Ss31K6GFTeXqlXYRiNsPD5VXB
-         PocA==
-X-Forwarded-Encrypted: i=1; AJvYcCX5Ymyb9MVqaMIWjCeB0mLwuMxYkvKb6+iMXKdtv/FtaGbkIJ/1IEnkyvq121+Z6zvB1MZ2r+/Z8VV9738=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJwRlkFV9PNhkiNDz3VPvZZJ4S2hZCoT1VfLfFsJBl4mONU0TJ
-	PIqe0ul4qi9QDcbIBbOCMetco3o1rdSlTTWmXW7AjSfT7iIw+gx+Jklu
-X-Gm-Gg: ASbGncugIoTPXiMRf4m6p1BX2HNDwq27E51hOdZt+fQqD53X/L6Sri2Nr79kA5fPNhD
-	bZsZQfoDO5O0QLQvc+yiyhh3raAe3iF2gtiWSjAeDF1xrJi3d+bU3TAkAQT3IN0O/b0RfIl/Onl
-	wmbQELDzEQlnvuiZGewkVS/AtWCL5TWnjWuxdAOsjqE7ruy6th2lnWsAZ+JweOezbkQkPqD8cre
-	KUxrq+cZVG+Ir8C9spq5wzCIw2d01TNZmB9qeCbF2eJ9Viasox8Ip6yxr6hOVEEKeZUq0NjGF8r
-	gMkhJE/J5xTVj7bAWhd4zL6gfKgOmNBj9KKHnnhSLeQKZYvcteu+Fz7hsR6Xt/GPgguFT6P1jS4
-	KLc+KYw3I6JEvLnHZEct4ck3oQ3ThnqsGksEBytNX1WhBLEcjxw0ZI2lmWBoGZ7VsfiDNUKPnY+
-	R3yNpQiARio++9ikgxl+m6nxb4l8UUyps=
-X-Google-Smtp-Source: AGHT+IFoTe1GsKoLNfXidCZ8Czjg/nCNLCnzrvEUmCAiPJvugQ49+mFzHnMIpycIWZF3p+SyrTr4cg==
-X-Received: by 2002:a17:907:948f:b0:b07:c90a:8ade with SMTP id a640c23a62f3a-b50aa08f896mr397894066b.20.1759929871888;
-        Wed, 08 Oct 2025 06:24:31 -0700 (PDT)
-Received: from alessandro-pc (net-2-37-207-41.cust.vodafonedsl.it. [2.37.207.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48652aa040sm1650850166b.20.2025.10.08.06.24.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 06:24:31 -0700 (PDT)
-Date: Wed, 8 Oct 2025 15:24:29 +0200
-From: Alessandro Zanni <alessandrozanni.dev@gmail.com>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Alessandro Zanni <alessandro.zanni87@gmail.com>, jgg@ziepe.ca, 
-	kevin.tian@intel.com, shuah@kernel.org, iommu@lists.linux.dev, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] Fix to avoid the usage of the `res` variable
- uninitialized in the following macro expansions.
-Message-ID: <rfwgp73zuyctbjgxvdgs67gq7g6glfxdd5peimqjiw5inw5h4g@cgmif7gyplct>
-References: <20250924165801.49523-1-alessandro.zanni87@gmail.com>
- <dc360969-c1af-4b87-a259-cc265a8d553d@linuxfoundation.org>
+        bh=ai9bodin2zTCE30sm2MezQ75jr/Y4H7WdWVegLgSDKU=;
+        b=t6wB81z4pPhA7Skun5zA2/aOfzSeMYStXk42YyYIHsnARVR51QTbUWZucV9nUofpLC
+         xTxVDrLBJ3IixTPwa6sz+iLD5WkRTNrlDDgOjKa2DY1v7kDsqjDz2y9SsOhwTg4GfdVo
+         FCpt4/zzcgffwJQ+l6Zs/EO+jF2ZMiFhPHLeUBtoJd9y7oSrdE7R5i43ZYK5g+7alGtY
+         vxTWWDha1iEOk7kavNHsw3WWmOTytDhNIkQl4SBVjjjwLmQGCgeUJg3y1eLul2Etlli3
+         sFs/cLgHYZ0cSLN9szBI7JF1DdfpkFF2iqPej7KWXZKnKfR9alsRDCrUSkQtw2SpH3bU
+         QABw==
+X-Forwarded-Encrypted: i=1; AJvYcCVwAgN9ng11wQJVQhPdV3VAR0m/eXQZMUituf1PgGvw/6FV45KzrAAxYIe1uNhNiIP6LMvEQqJjZRaalQU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx78sfngBc+HypAzgD6bmWWUJtI/XC2fwZL0kvb7SdvoI61dGzF
+	Qer0/OdK9UZqak6v7gHZk6JmH/DoxdpXb8lHjxhnFFMq0IjRWS8dEzrt8CWQByCobQA=
+X-Gm-Gg: ASbGncuKkV5qMSbP+xQ/TFZignyH4HQuse0Z7EQZSS83ycQW4OuCRRRwFH1FYnEiSAT
+	mhwuykndDbu3mq5Z4XjnutJde8LLBmn8C7nKqPitZYVQKGaVWaaMUsWCglloRfIWy9wHp0JkfXi
+	zOmQ6/2YIclqiAQpm3lAvqb8sk8YA4S30o+Hk/Y5LfcEgfwLglrPf5PHSHX7hLxwa8+a3795VBu
+	H2hd7bWri+i608cjyQAsQrfKPi+2Zk6n9X9/9Sk5JSIPMUHjDtYWk54Uywjkh8gr/Ml0eELgeQZ
+	x+N/mlj6fCZNiZcTCejtbDPTQC+pLCYdtf9GNwyHFdbfmgg8Do6MWylr9rjOd8IUytSRHqtbA/Y
+	DFh+acdHMKIw7Blj+KaLL0L/IkwBrgT0x3Vs+Ir17jKSRgRUYhv71nVQK++bjOGPG
+X-Google-Smtp-Source: AGHT+IHuhMKyjw9ZbS23OBrv8VA5JUlHXtFCz8Wrw4kfUqnmq3pfnc8RuPQ01+3mL+le3/TLouPIeg==
+X-Received: by 2002:a05:6000:22c7:b0:3ec:6259:5079 with SMTP id ffacd0b85a97d-42666ab1b7fmr2477434f8f.11.1759929876072;
+        Wed, 08 Oct 2025 06:24:36 -0700 (PDT)
+Received: from [10.0.1.22] (109-81-1-107.rct.o2.cz. [109.81.1.107])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8ab8b0sm29892836f8f.18.2025.10.08.06.24.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Oct 2025 06:24:35 -0700 (PDT)
+Message-ID: <b394956c-5973-438b-9e43-f7081a89fa97@suse.com>
+Date: Wed, 8 Oct 2025 15:24:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <dc360969-c1af-4b87-a259-cc265a8d553d@linuxfoundation.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/10] remove references to *_gpl sections in
+ documentation
+To: Siddharth Nayyar <sidnayyar@google.com>
+Cc: Nathan Chancellor <nathan@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>, Sami Tolvanen
+ <samitolvanen@google.com>, Nicolas Schier <nicolas.schier@linux.dev>,
+ Arnd Bergmann <arnd@arndb.de>, linux-kbuild@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250829105418.3053274-1-sidnayyar@google.com>
+ <20250829105418.3053274-9-sidnayyar@google.com>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20250829105418.3053274-9-sidnayyar@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 07, 2025 at 03:28:29PM -0600, Shuah Khan wrote:
-> On 9/24/25 10:57, Alessandro Zanni wrote:
+On 8/29/25 12:54 PM, Siddharth Nayyar wrote:
+> Signed-off-by: Siddharth Nayyar <sidnayyar@google.com>
+> ---
+>  Documentation/kbuild/modules.rst | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> Fix to avoid the usage of the `res` variable uninitialized in the following macro expansions.
-> 
-> ret not res?
-> 
-> You can simplify the shortlog "Fix ret unitialized warning" perhaps.
-> 
-> 
-> > It solves the following warning:
-> 
-> Fix the following warning.
-> 
-> > In function ‘iommufd_viommu_vdevice_alloc’,
-> >    inlined from ‘wrapper_iommufd_viommu_vdevice_alloc’ at
-> > iommufd.c:2889:1:
-> > ../kselftest_harness.h:760:12: warning: ‘ret’ may be used uninitialized
-> > [-Wmaybe-uninitialized]
-> >    760 |   if (!(__exp _t __seen)) { \
-> >        |      ^
-> > ../kselftest_harness.h:513:9: note: in expansion of macro ‘__EXPECT’
-> >    513 |   __EXPECT(expected, #expected, seen, #seen, ==, 1)
-> >        |   ^~~~~~~~
-> > iommufd_utils.h:1057:9: note: in expansion of macro ‘ASSERT_EQ’
-> >   1057 |   ASSERT_EQ(0, _test_cmd_trigger_vevents(self->fd, dev_id,
-> > nvevents))
-> >        |   ^~~~~~~~~
-> > iommufd.c:2924:17: note: in expansion of macro
-> > ‘test_cmd_trigger_vevents’
-> >   2924 |   test_cmd_trigger_vevents(dev_id, 3);
-> >        |   ^~~~~~~~~~~~~~~~~~~~~~~~
-> > 
-> > The issue can be reproduced, building the tests, with the command:
-> > make -C tools/testing/selftests TARGETS=iommu
-> > 
-> > Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
-> > ---
-> >   tools/testing/selftests/iommu/iommufd_utils.h | 8 +++-----
-> >   1 file changed, 3 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/tools/testing/selftests/iommu/iommufd_utils.h b/tools/testing/selftests/iommu/iommufd_utils.h
-> > index 3c3e08b8c90e..772ca1db6e59 100644
-> > --- a/tools/testing/selftests/iommu/iommufd_utils.h
-> > +++ b/tools/testing/selftests/iommu/iommufd_utils.h
-> > @@ -1042,15 +1042,13 @@ static int _test_cmd_trigger_vevents(int fd, __u32 dev_id, __u32 nvevents)
-> >   			.dev_id = dev_id,
-> >   		},
-> >   	};
-> > -	int ret;
-> >   	while (nvevents--) {
-> > -		ret = ioctl(fd, _IOMMU_TEST_CMD(IOMMU_TEST_OP_TRIGGER_VEVENT),
-> > -			    &trigger_vevent_cmd);
-> > -		if (ret < 0)
-> > +		if (!ioctl(fd, _IOMMU_TEST_CMD(IOMMU_TEST_OP_TRIGGER_VEVENT),
-> > +			    &trigger_vevent_cmd))
-> >   			return -1;
-> >   	}
-> > -	return ret;
-> 
-> Hmm. with this change -1 is returned instead of ret
-> 
-> > +	return 0;
-> >   }
-> >   #define test_cmd_trigger_vevents(dev_id, nvevents) \
-> 
-> thanks,
-> -- Shuah
->
+> diff --git a/Documentation/kbuild/modules.rst b/Documentation/kbuild/modules.rst
+> index d0703605bfa4..f2022fa2342f 100644
+> --- a/Documentation/kbuild/modules.rst
+> +++ b/Documentation/kbuild/modules.rst
+> @@ -426,11 +426,11 @@ Symbols From the Kernel (vmlinux + modules)
+>  Version Information Formats
+>  ---------------------------
+>  
+> -	Exported symbols have information stored in __ksymtab or __ksymtab_gpl
+> -	sections. Symbol names and namespaces are stored in __ksymtab_strings,
+> +	Exported symbols have information stored in the __ksymtab section.
+> +	Symbol names and namespaces are stored in __ksymtab_strings section,
+>  	using a format similar to the string table used for ELF. If
+>  	CONFIG_MODVERSIONS is enabled, the CRCs corresponding to exported
+> -	symbols will be added to the __kcrctab or __kcrctab_gpl.
+> +	symbols will be added to the __kcrctab section.
+>  
+>  	If CONFIG_BASIC_MODVERSIONS is enabled (default with
+>  	CONFIG_MODVERSIONS), imported symbols will have their symbol name and
 
-This patch has a malformed title. Please refer to the patch called
-'[PATCH v2] selftests/iommu: prevent use of uninitialized variable'.
-But the typo `res`->`ret` is still present. Sorry for that.
+Nit: I realize this part of the document primarily discusses sections
+related to modversions, but I think it would be good to briefly mention
+also the existence of the __kflagstab section. The first sentence could
+say:
 
-About the fix, the assert test just checks if the return value is 0 or
-not. That's why the variable has been deleted.
-By the way, if we prefer to return also the error values, the patch 
-v1 just solves the warnings returning the negative values.
+Exported symbols have information stored in the __ksymtab and
+__kflagstab sections.
 
-Let me know which version is preferable.
-Thank you,
-Alessandro
-
-
-
-
+-- 
+Thanks,
+Petr
 
