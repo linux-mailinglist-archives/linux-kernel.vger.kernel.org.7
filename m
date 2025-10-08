@@ -1,365 +1,148 @@
-Return-Path: <linux-kernel+bounces-845108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FF63BC388C
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 09:04:26 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A755FBC388F
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 09:04:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E852402CC3
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 07:04:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A7A1E4F3B72
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 07:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4A02F1FC3;
-	Wed,  8 Oct 2025 07:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D9B729E116;
+	Wed,  8 Oct 2025 07:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B4CLiF6F"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oYgeZ3ax"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3566E246773
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 07:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E861019F137;
+	Wed,  8 Oct 2025 07:04:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759907055; cv=none; b=CHE2y1E2gdLHesChc/OxqFBOoj4q3Ekur2MfFLuvPraiYYuDXJysTr/ggFu+rTgcmHpRUbEe+1iXrHkLMZQajmaQpp7TZidvCZvUS0lfiS2I+GUdOfhOa8N+NpfSEbCiCgnAdMN+NEbuRfdfXt7m3YOzwP6Sxnwr0umX7KagSok=
+	t=1759907072; cv=none; b=MyxSuJPtZAwfjiPVSgpsEPUioE5AMWmiTsE5Dy3r9TupflXEvrnKpNqS6GCloeaqzJ6LiHu8PDZacns4VCSEILdd+iDhqslkVSAVGcWd26cJWIQowy68DYQ4VQ2uywVO/+m3DhQQKc/Vtd4Ne/YoJ77oLaYvvMs0ZypkYOvSOG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759907055; c=relaxed/simple;
-	bh=/GbuQkuDNR0smyhVeZXvUoVOJNV+5FL2qiigjo7yspo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G7eyPYG9VuaUD+GHJMqSqekk5+0+TUayvDg0qS0XKWIP7Ki1WsIUSIqWEqIGB7my3Lu2ORhFGwLFEBR18GHhXcOzKpSjzDwAndVXeI2feJ0sJmo2Du4h3QpOlF0pqZIfvGhz5E1MkixykQSFkqF/Bz1NQu9oQiPPxrZhG8CnNGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=B4CLiF6F; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4e6ec0d1683so159321cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 00:04:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759907051; x=1760511851; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rPCHBZ1+/7LiLJckiEnwJaZfBghJo0RvCO3Y5uD53wo=;
-        b=B4CLiF6Figh5oBsptxipQcJrfoHUMisD+0Iw/gee+79h+97umCSutby3pdtSNAQ9jx
-         mUgMjq8eL9b9TF8DMJEv1wO16xM/RxvHZFLCX8cS/vU8JhwfeOuPC5gR4I+vTOdvelNg
-         7Eq0N9xD55xuK/M1JjxkoY8B7s5KEhp9qFCa1asos3hy/WOuVVAvnue5VpJHij8nIcY1
-         cTrQErj7Tnx0E1Ea/hka5HHt16SAoBMrohHmarngBz717dmFWthSwqou32jWhV3rJGoK
-         ni0yHvmuEnmtEDF92PX9zZd6ALFP3zBEm4RUi/iq2DxjK5+Uff51HJF58SNwr80NKXX0
-         QHuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759907051; x=1760511851;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rPCHBZ1+/7LiLJckiEnwJaZfBghJo0RvCO3Y5uD53wo=;
-        b=sBx6821VmlMi2ICLDM8tnWpp1RKIpjrwP2vd4ssUjXz/FUxwZPAQIQ5AYoLIND2vJZ
-         X8w+LgyPrQSIDuY30rqhVroHjRzPQc6C352drW3L1u82YvlCpUSkbeT5jJlP2cDbWgqn
-         YDq+KIanu6LG+GU1UXtQ1jeyzxlOlXX1uzniVSwyXmUmao6UDHCDPc8psST6cjS0WGyE
-         RceDUB1dRx45GPZbKNN3Pv8QMx776lbkTCgMyhn/K2BEcnTRQxbpM1FgI8F3w/E4y0x1
-         rzXX/QlQD0+SZuA5F39SKx+kJJjztmF0oYG1x9S7EcJB+x4J6rfL+onxS4f3+6R6Wsbi
-         0Dug==
-X-Forwarded-Encrypted: i=1; AJvYcCUeGHNYjcTrHQy4jxS+ceEbQCDLRBH5a4Q2XJo1H91ntBfWa9GeFrziNN120gvoj0AkvrhSXF1Xs+ZhbQo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyctA/2dsHT8MyASYJDUB3tzM+mPCVyfB98ujY35bHlZfpIHFhI
-	8cw2tjoww0RMZrvmH7G84t10Xq0+iUW8UCal3Av6bKVmy0DCQ6UVIljXQw+gJEPVwIMNdz1ggzM
-	sRtCHZAfoPcSEgslAJbXfbmkzXlrIZI0P/ZYpTJkz
-X-Gm-Gg: ASbGncvV7bmIV7jQBVTCStZ0PsO1nzEJtjk5eptnD5inMCunCnfjvCOHAY2lMEEgd2S
-	iCCBR88ZMu5PeCTyAY2HVD5JxcFV6wJH24OCb9tHM5s8ons07WVG+jJ+MFnKSYZQsDOzNUfdD3Q
-	V7Fw32VovHRMBCmJPTgOapyBuwtWYpQ5ERmAQeKkFRXOxxtq3cAYpVoHC8DGkNE4nJy/xlTWpsY
-	MkYmlG5DshXF8wQpPq98od5rf/XwCPxIn5NcM/T1O/YicuFPI3PooCYpdDErvIeeWuFInBeX+IT
-	WdnTlg==
-X-Google-Smtp-Source: AGHT+IESBNxpmlHAcig1IJkHHF05YX821iqOxoDV74weoqPTYVJz+7JZa7+j9bKX361CFoQRAxX2np/+3jTAYoYjULA=
-X-Received: by 2002:a05:622a:14cd:b0:4b4:9863:5d76 with SMTP id
- d75a77b69052e-4e6eab2eacfmr4994001cf.8.1759907049795; Wed, 08 Oct 2025
- 00:04:09 -0700 (PDT)
+	s=arc-20240116; t=1759907072; c=relaxed/simple;
+	bh=Cn0hwA5a0OPNVqc8nD8QyTB2FElVcotJTS3Sy75LIig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IRKkfdM+3As7lCLw491hhfa75n++2AV6Z30BllcUor4G+CQDvKy5u59GOXAk4H9hRTOcjml9x4QmUSQvkqbKIiStuWGv+5A5qMf4EzHB2Fjm2cn2NFUmrWrsb6zYPFrPj47xWOwoNgqcbZVAj5ppT2LECrB3rN2hoWcRSzeNg7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oYgeZ3ax; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=m7/Waz38jPwvduLs9rjuvwGuLFIpbXU37o2+qitla4A=; b=oYgeZ3axbWt9sN8mFGCxFNJ1aD
+	/9CywViu+n9+hW2cwcDMLgkCCBj7SiZuRZw2JMjjqoSfms5bg9uHimDZcoHhUYzztskfCFAh3Fl/C
+	t6pJs8EwL+j+94KMJLhCuG1fizF/oRHOpIHxXHCxV9ZDXakhJhES2lJuvXRJcsPPc/pY3pVdJalVN
+	ZhB3KI3F1iRRvjF8mevg+OVqFDVHXO2RdHIhm+eQK7ePMUCi+goeCk8+lOVJJrpb8qNMnCPGifw2X
+	hH2TGbLNtcJb0cezMnBtnneXFLrmOBwGP5CNBxPW2ae46/zK8Zk4HyIar+Wn0d20iKVLL2xYjS0NG
+	XO1JBVBQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v6ODj-000000001Av-1Fd4;
+	Wed, 08 Oct 2025 07:04:20 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 1743D300230; Wed, 08 Oct 2025 09:04:19 +0200 (CEST)
+Date: Wed, 8 Oct 2025 09:04:19 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: tj@kernel.org, linux-kernel@vger.kernel.org, mingo@kernel.org,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
+	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
+	changwoo@igalia.com, cgroups@vger.kernel.org,
+	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 10/12] sched: Add locking comments to sched_class methods
+Message-ID: <20251008070419.GR4067720@noisy.programming.kicks-ass.net>
+References: <20251006104402.946760805@infradead.org>
+ <20251006104527.694841522@infradead.org>
+ <aOTjSla1Yr3kz7op@jlelli-thinkpadt14gen4.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929010321.3462457-1-pasha.tatashin@soleen.com> <CA+CK2bB+RdapsozPHe84MP4NVSPLo6vje5hji5MKSg8L6ViAbw@mail.gmail.com>
-In-Reply-To: <CA+CK2bB+RdapsozPHe84MP4NVSPLo6vje5hji5MKSg8L6ViAbw@mail.gmail.com>
-From: Samiullah Khawaja <skhawaja@google.com>
-Date: Wed, 8 Oct 2025 00:03:58 -0700
-X-Gm-Features: AS18NWCS-g05IhVhTIM2Iz76DqP2Hm1WLW7pFPt_MogdzxJ745tyFKTSuojklQE
-Message-ID: <CAAywjhSP=ugnSJOHPGmTUPGh82wt+qnaqZAqo99EfhF-XHD5Sg@mail.gmail.com>
-Subject: Re: [PATCH v4 00/30] Live Update Orchestrator
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
-	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
-	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
-	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
-	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
-	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
-	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
-	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
-	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, chrisl@kernel.org, 
-	steven.sistare@oracle.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aOTjSla1Yr3kz7op@jlelli-thinkpadt14gen4.remote.csb>
 
-On Tue, Oct 7, 2025 at 10:11=E2=80=AFAM Pasha Tatashin
-<pasha.tatashin@soleen.com> wrote:
->
-> On Sun, Sep 28, 2025 at 9:03=E2=80=AFPM Pasha Tatashin
-> <pasha.tatashin@soleen.com> wrote:
-> >
-> > This series introduces the Live Update Orchestrator (LUO), a kernel
-> > subsystem designed to facilitate live kernel updates. LUO enables
-> > kexec-based reboots with minimal downtime, a critical capability for
-> > cloud environments where hypervisors must be updated without disrupting
-> > running virtual machines. By preserving the state of selected resources=
-,
-> > such as file descriptors and memory, LUO allows workloads to resume
-> > seamlessly in the new kernel.
-> >
-> > The git branch for this series can be found at:
-> > https://github.com/googleprodkernel/linux-liveupdate/tree/luo/v4
-> >
-> > The patch series applies against linux-next tag: next-20250926
-> >
-> > While this series is showed cased using memfd preservation. There are
-> > works to preserve devices:
-> > 1. IOMMU: https://lore.kernel.org/all/20250928190624.3735830-16-skhawaj=
-a@google.com
-> > 2. PCI: https://lore.kernel.org/all/20250916-luo-pci-v2-0-c494053c3c08@=
-kernel.org
-> >
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > Changelog since v3:
-> > (https://lore.kernel.org/all/20250807014442.3829950-1-pasha.tatashin@so=
-leen.com):
-> >
-> > - The main architectural change in this version is introduction of
-> >   "sessions" to manage the lifecycle of preserved file descriptors.
-> >   In v3, session management was left to a single userspace agent. This
-> >   approach has been revised to improve robustness. Now, each session is
-> >   represented by a file descriptor (/dev/liveupdate). The lifecycle of
-> >   all preserved resources within a session is tied to this FD, ensuring
-> >   automatic cleanup by the kernel if the controlling userspace agent
-> >   crashes or exits unexpectedly.
-> >
-> > - The first three KHO fixes from the previous series have been merged
-> >   into Linus' tree.
-> >
-> > - Various bug fixes and refactorings, including correcting memory
-> >   unpreservation logic during a kho_abort() sequence.
-> >
-> > - Addressing all comments from reviewers.
-> >
-> > - Removing sysfs interface (/sys/kernel/liveupdate/state), the state
-> >   can now be queried  only via ioctl() API.
-> >
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> Hi all,
->
-> Following up on yesterday's Hypervisor Live Update meeting, we
-> discussed the requirements for the LUO to track dependencies,
-> particularly for IOMMU preservation and other stateful file
-> descriptors. This email summarizes the main design decisions and
-> outcomes from that discussion.
->
-> For context, the notes from the previous meeting can be found here:
-> https://lore.kernel.org/all/365acb25-4b25-86a2-10b0-1df98703e287@google.c=
-om
-> The notes for yesterday's meeting are not yes available.
->
-> The key outcomes are as follows:
->
-> 1. User-Enforced Ordering
-> -------------------------
-> The responsibility for enforcing the correct order of operations will
-> lie with the userspace agent. If fd_A is a dependency for fd_B,
-> userspace must ensure that fd_A is preserved before fd_B. This same
-> ordering must be honored during the restoration phase after the reboot
-> (fd_A must be restored before fd_B). The kernel preserve the ordering.
->
-> 2. Serialization in PRESERVE_FD
-> -------------------------------
-> To keep the global prepare() phase lightweight and predictable, the
-> consensus was to shift the heavy serialization work into the
-> PRESERVE_FD ioctl handler. This means that when userspace requests to
-> preserve a file, the file handler should perform the bulk of the
-> state-saving work immediately.
->
-> The proposed sequence of operations reflects this shift:
->
-> Shutdown Flow:
-> fd_preserve() (heavy serialization) -> prepare() (lightweight final
-> checks) -> Suspend VM -> reboot(KEXEC) -> freeze() (lightweight)
->
-> Boot & Restore Flow:
-> fd_restore() (lightweight object creation) -> Resume VM -> Heavy
-> post-restore IOCTLs (e.g., hardware page table re-creation) ->
-> finish() (lightweight cleanup)
->
-> This decision primarily serves as a guideline for file handler
-> implementations. For the LUO core, this implies minor API changes,
-> such as renaming can_preserve() to a more active preserve() and adding
-> a corresponding unpreserve() callback to be called during
-> UNPRESERVE_FD.
->
-> 3. FD Data Query API
-> --------------------
-> We identified the need for a kernel API to allow subsystems to query
-> preserved FD data during the boot process, before userspace has
-> initiated the restore.
->
-> The proposed API would allow a file handler to retrieve a list of all
-> its preserved FDs, including their session names, tokens, and the
-> private data payload.
->
-> Proposed Data Structure:
->
-> struct liveupdate_fd {
->         char *session; /* session name */
->         u64 token; /* Preserved FD token */
->         u64 data; /* Private preserved data */
-> };
->
-> Proposed Function:
-> liveupdate_fd_data_query(struct liveupdate_file_handler *h,
->                          struct liveupdate_fd *fds, long *count);
->
-> 4. New File-Lifecycle-Bound Global State
-> ----------------------------------------
-> A new mechanism for managing global state was proposed, designed to be
-> tied to the lifecycle of the preserved files themselves. This would
-> allow a file owner (e.g., the IOMMU subsystem) to save and retrieve
-> global state that is only relevant when one or more of its FDs are
-> being managed by LUO.
->
-> The key characteristics of this new mechanism are:
-> The global state is optionally created on the first preserve() call
-> for a given file handler.
-> The state can be updated on subsequent preserve() calls.
-> The state is destroyed when the last corresponding file is unpreserved
-> or finished.
-> The data can be accessed during boot.
->
-> I am thinking of an API like this.
->
-> 1. Add three more callbacks to liveupdate_file_ops:
+On Tue, Oct 07, 2025 at 11:54:18AM +0200, Juri Lelli wrote:
 
-This part is a little tricky, the file handler might be in a
-completely different subsystem as compared to the global state. While
-FD is supposed to own and control the lifecycle of the preserved
-state, the global state might be needed in a completely different
-layer during boot or some other event. Maybe the user can put some
-APIs in place to move this state across layers?
+> Not for this patch, but I wondered if, while we are at it, we wanted to
+> complete documentation of these flags. My new AI friend is suggesting
+> the following, is it very much garbage? :)
 
-Subsystems actually do provide this flexibility. But If I see
-correctly, this approach is "global" like a subsystem but synchronous.
-Users can decide when to preserve/create global state when they need
-without the need to stage it and preserve it when subsystem PREPARE is
-called.
-> /*
->  * Optional. Called by LUO during first get global state call.
->  * The handler should allocate/KHO preserve its global state object and r=
-eturn a
->  * pointer to it via 'obj'. It must also provide a u64 handle (e.g., a ph=
-ysical
->  * address of preserved memory) via 'data_handle' that LUO will save.
->  * Return: 0 on success.
->  */
-> int (*global_state_create)(struct liveupdate_file_handler *h,
->                            void **obj, u64 *data_handle);
->
-> /*
->  * Optional. Called by LUO in the new kernel
->  * before the first access to the global state. The handler receives
->  * the preserved u64 data_handle and should use it to reconstruct its
->  * global state object, returning a pointer to it via 'obj'.
->  * Return: 0 on success.
->  */
-> int (*global_state_restore)(struct liveupdate_file_handler *h,
->                             u64 data_handle, void **obj);
+Heh; its not terrible. I've been playing with local LLMs, but mostly
+I've found they struggle with getting enough context to not be utterly
+demented. And when you up the context window, they get unusable slow :/
 
-If I understand correctly, is this only for unpacking? Once unpacked
-the user can call the _get function and get the global state that it
-just unpacked. This should be fine.
->
-> /*
->  * Optional. Called by LUO after the last
->  * file for this handler is unpreserved or finished. The handler
->  * must free its global state object and any associated resources.
->  */
-> void (*global_state_destroy)(struct liveupdate_file_handler *h, void *obj=
-);
->
-> The get/put global state data:
->
-> /* Get and lock the data with file_handler scoped lock */
-> int liveupdate_fh_global_state_get(struct liveupdate_file_handler *h,
->                                    void **obj);
->
-> /* Unlock the data */
-> void liveupdate_fh_global_state_put(struct liveupdate_file_handler *h);
->
-> Execution Flow:
-> 1. Outgoing Kernel (First preserve() call):
-> 2. Handler's preserve() is called. It needs the global state, so it calls
->    liveupdate_fh_global_state_get(&h, &obj). LUO acquires h->global_state=
-_lock.
->    It sees h->global_state_obj is NULL.
->    LUO calls h->ops->global_state_create(h, &h->global_state_obj, &handle=
-).
->    The handler allocates its state, preserves it with KHO, and returns it=
-s live
->    pointer and a u64 handle.
-> 3. LUO stores the handle internally for later serialization.
-> 4. LUO sets *obj =3D h->global_state_obj and returns 0 with the lock stil=
-l held.
-> 5. The preserve() callback does its work using the obj.
-> 6. It calls liveupdate_fh_global_state_put(h), which releases the lock.
->
-> Global PREPARE:
-> 1. LUO iterates handlers. If h->count > 0, it writes the stored data_hand=
-le into
->    the LUO FDT.
->
-> Incoming Kernel (First access):
-> 1. When liveupdate_fh_global_state_get(&h, &obj) is called the first time=
-. LUO
->    acquires h->global_state_lock.
-> 2. It sees h->global_state_obj is NULL, but it knows it has a preserved u=
-64
->    handle from the FDT. LUO calls h->ops->global_state_restore()
-> 3. Reconstructs its state object, and returns the live pointer.
-> 4. LUO sets *obj =3D h->global_state_obj and returns 0 with the lock held=
-.
-> 5. The caller does its work.
-> 6. It calls liveupdate_fh_global_state_put(h) to release the lock.
->
-> Last File Cleanup (in unpreserve or finish):
-> 1. LUO decrements h->count to 0.
-> 2. This triggers the cleanup logic.
-> 3. LUO calls h->ops->global_state_destroy(h, h->global_state_obj).
-> 4. The handler frees its memory and resources.
-> 5. LUO sets h->global_state_obj =3D NULL, resetting it for a future live =
-update
->    cycle.
->
-> Pasha
->
->
-> Pasha
+Setting up and configuring the whole pile of subtly interlocking stacks
+of software to get anything useful out of this stuff is non-trivial (it
+reminds me of the sendmail m4 days).
+
+> ---
+> 
+> From: Claude <claude-sonnet-4-5@anthropic.com>
+> Date: Mon, 7 Oct 2025 12:44:13 +0200
+> Subject: sched: Document remaining DEQUEUE/ENQUEUE flags
+> 
+> Complete the flag documentation by adding descriptions for the three
+> previously undocumented flags: DEQUEUE_SPECIAL, DEQUEUE_THROTTLE, and
+> ENQUEUE_INITIAL.
+> 
+> DEQUEUE_SPECIAL is used when dequeuing tasks in special states (stopped,
+> traced, parked, dead, or frozen) that don't use the normal wait-loop
+> pattern and must not use delayed dequeue.
+> 
+> DEQUEUE_THROTTLE is used when removing tasks from the runqueue due to
+> CFS bandwidth throttling, preventing delayed dequeue to ensure proper
+> throttling behavior.
+> 
+> ENQUEUE_INITIAL is used when enqueueing newly created tasks in
+> wake_up_new_task(), allowing the fair scheduler to give them preferential
+> initial placement (half vslice when PLACE_DEADLINE_INITIAL is enabled).
+> 
+> Signed-off-by: Claude <claude-sonnet-4-5@anthropic.com>
+> Not-so-sure-yet: Juri Lelli <juri.lelli@redhat.com>
+
+Is this the generally acceptable form of attribution for these things?
+I'm not sure what the official guidance is on using these AI tools.
+
+Greg, you have any insights here?
+
+> ---
+>  kernel/sched/sched.h | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index 4c222fa8f908..1a2b3c8d9e4f 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -2364,10 +2364,20 @@ extern const u32		sched_prio_to_wmult[40];
+>   * CLASS - going to update p->sched_class; makes sched_change call the
+>   *         various switch methods.
+>   *
+> + * DEQUEUE_SPECIAL - task is in a special state (STOPPED, TRACED, PARKED,
+> + *                   DEAD, FROZEN) that doesn't use the normal wait-loop;
+> + *                   disables delayed dequeue.
+> + *
+> + * DEQUEUE_THROTTLE - dequeuing due to CFS bandwidth throttling; disables
+> + *                    delayed dequeue to ensure proper throttling.
+> + *
+>   * ENQUEUE_HEAD      - place at front of runqueue (tail if not specified)
+>   * ENQUEUE_REPLENISH - CBS (replenish runtime and postpone deadline)
+>   * ENQUEUE_MIGRATED  - the task was migrated during wakeup
+> + * ENQUEUE_INITIAL   - enqueuing a newly created task in wake_up_new_task();
+> + *                     fair scheduler may give preferential initial placement
+> + *                     (e.g., half vslice with PLACE_DEADLINE_INITIAL).
+>   * ENQUEUE_RQ_SELECTED - ->select_task_rq() was called
+>   *
+>   */
+> 
 
