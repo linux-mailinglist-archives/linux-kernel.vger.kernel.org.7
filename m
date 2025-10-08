@@ -1,87 +1,79 @@
-Return-Path: <linux-kernel+bounces-845293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBD0ABC44B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 12:22:24 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E504BC44AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 12:21:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD7AB401486
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 10:22:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 71A6D4E8AA4
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 10:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365FF2F5A19;
-	Wed,  8 Oct 2025 10:22:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 841282F5A1C;
+	Wed,  8 Oct 2025 10:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="awYUZIYV"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tlDENX4m"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A482F1FC3
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 10:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101661F12E9
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 10:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759918933; cv=none; b=n7oC7Le9rSrjuQm/THJpUBHjdWIVSVM0H/SxkMwtjeuIvbsN8wfgb+3IJZmyBHRr7FfpvGEuSOvi6LVUm69dRUv4XPtvPlVv1U1cDMMfQQvOQkyhZ1xBnLo5TyBEsqpTLCb3FAXN8pEu+pC0Qcl1DQp7Z0IQu1OgycHqP4xpbks=
+	t=1759918899; cv=none; b=NikENBFVBcLUPoRbwAcX4dNr2ZXlWhQ0+lYvWJzi1t8YAYp9ue/7xlrmNYXH/t9KwXqfS+crYa5+mpFaAZ1fYMO1zlKrhqFAc01IhdP6cZdPjHq4zII244iXWN0E4EpAs3DXE4qOVpwu/sVUhZnQTQNI1jBbgD+UpZKfo2xNmLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759918933; c=relaxed/simple;
-	bh=Lr09AlCI9tmALrlNWWYo2diNjyAqc2PL1Wfv06g5EdU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ls966UrmnhOPEty2VpXACT/AKRswPkN2bR4aEHUsg82PmcAWaojQIa50LE5Z7WtwobhjanXCumQHnFrI7pg8xmSQk85dlu2qonwfT0MGYcOxeVH+nUdcyJCJmhcZnukRMbdkK4msoOHiI7ktEd9ewQ7gAPDqWXUjjKnLze4wW4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=awYUZIYV; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59890R6T028917
-	for <linux-kernel@vger.kernel.org>; Wed, 8 Oct 2025 10:22:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	skZej2QK7qLiwq43MFOuoC8Kz7XZV3jwiPvyq5Yz+/c=; b=awYUZIYVTtP/+Wao
-	LuedFDi4C6eKkeNOcwsTNqwwe4ePXsEsMNXUTLSkBSvO5m99Gk7XxZun3Oi9k5Fs
-	E0JJim/UKCHV5IDbKK7q1CWJnG3a5xMb4BhSigDOR6R65VHaWjanRiXbbcgkRjDR
-	ZwhgVmY10fU3JKbV+QQPnKzIK2mmETCrSqu8eHRBpJxF3DJAgzi2ccsl2LrDgo0j
-	5kHSXEl1ojq3XiSal91JA2Q0cPHxf4SGOGFgi1qm4ly1ImxaPOFJqKAG2HPANnp6
-	7ze41TZqwJ4aHZvRWh2y20wWMkirfAx51DiyftoeMpFfmdgYEfCVhIVAXfdqBkE3
-	5YT94A==
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49jtwgt42e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 10:22:10 +0000 (GMT)
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-8649a8dbff8so126092585a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 03:22:10 -0700 (PDT)
+	s=arc-20240116; t=1759918899; c=relaxed/simple;
+	bh=EhLgvD7E0LABHvPRP91GEEdQZfhx3aehQkmOfRxJheE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=F79Q2PyHMqbyBLrjTboZJPlPNPkG6Zd2qTnTthOMqo0TiBUKMzw0lZr0BLsvJGMDcHs2mR28GkEd28zwy0KRKuXahThOKkOrffcMVvRdee9qBpMvf0k4IorgDV9Yrrggw90phVEdK4tvJcXV7i4NG4M6WfId8m0QyBRa1YwGenY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tlDENX4m; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46e2e6a708fso48268955e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 03:21:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759918896; x=1760523696; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=F3YnocctbkZ7er98rP3Yets/VbNBUnYoPrVtlDdecDc=;
+        b=tlDENX4mJM6+GtI5bY9xJqe3OSpmWleq57QyNwlSsoOAg/uRexxhlxEW693PXfcYYF
+         4GHFEhx7e+kQ88IvyeZMs89q42+MCTr6uc3DSk0QsgVqxdsED+vsG+zQy5vmVXpjoEtt
+         9zIzb+rZkFO3YuyJLFY/0rR59oSRd0F+jVTvWrvZgGnMVZoUVzbqXpnypce4i/nMHSzo
+         SImAPWWjFiq8wPtAxx2b1CiaN0e6HY8/2qsNeE1kNkYLRd+aVItpVJtz9uGPXSq5KpCm
+         cfCjrctx3yvc2V4TUTwnufXSerlxS6myX3wqOrFcNtH9ECcfTaJou3FK4ouXeqVeyn3p
+         Qv3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759918847; x=1760523647;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1759918896; x=1760523696;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=skZej2QK7qLiwq43MFOuoC8Kz7XZV3jwiPvyq5Yz+/c=;
-        b=kPQtxj5kvHp/VZGVuTTNIrT49fgo74RkBTRLmS99Xteg1dVzITYYZ0VNRCTu7uA8B5
-         BPcF4Ko3MvcDkNfDHVdCiE2W8V/XJ/GdpWf79f9wH1GT4cvPleHHfUnrYFu7Vp2HaVMe
-         Dm4NMdhLsFLSX2n8g2rl06pEvGlp+PutJq9jYgrIiwyuQ07UWZplTJAT7lz84Ka5PURy
-         LjjbJ0vXwLlSHKwh7NkWrLc38Dcf/toewctPTg3GbeOW4g3uG69kwHIwgqX0ASp1a+WQ
-         LPaBn74CfNbuxlR1FKQ2eXG1mrUnmhHHcOAXsoTj8EWe3TB9v/vA3cDjVjJdsrrXzFYG
-         WxRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVWDrQ7nzGSrrP0qbzCAoPFk+qs/20c8Bq6ZkEYaFQcdP2jUM3mU8sY1MK5xMo7j4MnhrDWNmLBN1bQoQk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yya8kqDlv8fHidJsxQFN7ABOuX1XwPISqFbx0IPvYjNMAtt1yTP
-	qfBMtFUAnlPqk5mNm56L/UCN1i36jyME3d8+E2J6ISqGPrh4RCY1QtU7Zt6mC4Yv3ObGAa1tZ95
-	dOOXTRTi9aYNayAbtQAzcjVO342xO5XTAVdVvHf33WpVy0+ZAv4cLuMUPePKQ6ZshPZc=
-X-Gm-Gg: ASbGncvq4GbV24wjDoDvdDu+PPlwGmpYbGuAaPoDipUq+wH5qmWFQuAHHU31E0hmsPq
-	HJ4PLjkn3gnmFjDjg2z9l60QynnxdxfcGHkbdxh81C0faDW7OxE6RSJShRkaglQi51fDOVfkybP
-	8YztBF4IHBPAYsKm5L3hFk8HN7gATU3caS5SxnPKdcBI0lOhmaPA/159Fw8jldq+ZHCGsOBlxW/
-	59GO/rCW6vUGsX71bG8RxK04YLUFZCfkEKJ7xHQE6lxjBNg2kPpdf8uAxPKEE+WEqOsRUOXuxab
-	OFNZn1Tp9mTG6jpoiKcnNm3Yw7IiwO57JQTLp0y1e55XZabmnzTxNFxjyfCFKdlhGhbexAZ+tZr
-	Q4ef/XMeATL+hWLNTBFmt01fKFOo=
-X-Received: by 2002:a05:620a:3905:b0:878:7b3e:7bbf with SMTP id af79cd13be357-883527ca0b4mr298299585a.3.1759918846870;
-        Wed, 08 Oct 2025 03:20:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGLHDjHHvjj8j9dLTGHWXGfTR4aJjre+aHMWNbl/tFlpXmEHkL+rMhFOApHFHL+DL/d9ZVLIg==
-X-Received: by 2002:a05:620a:3905:b0:878:7b3e:7bbf with SMTP id af79cd13be357-883527ca0b4mr298295885a.3.1759918846201;
-        Wed, 08 Oct 2025 03:20:46 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b4869c4f94asm1619475866b.79.2025.10.08.03.20.44
+        bh=F3YnocctbkZ7er98rP3Yets/VbNBUnYoPrVtlDdecDc=;
+        b=snSNKm0OgIPqd+jNddOCZTm8CvUPGmDvsJDFHpq2O783/yMZD5WYOh1ger9BMs77ry
+         JIS/lmLGBMwtO+mE2TIJG7lulgZVtZkN/jux2tDLXt4tXewLV5vRoKkae4v/NU1Lcl1C
+         ar3C1MjhjIA0hg+WlgZ0WrkiB1o4wkOIaa9SEvF1rpLZoKWUr4Of4SVEWxbHC6Ce5TZd
+         WRHbJ6FJ1/69CS7ZVzgomh0EXNIsns43CQ0VYuEkQkmxX7yGvlamI5V2RyMFc+y2QqJ6
+         csIlEZzE7vX/whkfclarLD50MVNm4ujr3HMsoFkP3Z7VfyN1Gt/Ghv34rOl+STCvicpP
+         MonQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOX8HkcZIb6e8qa21YZ3A4g3dItQjINBHhZM5iUoi1FdQXGUOKFd1jxFQUdaki3BQB5p1ho6qujIMddeA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzt1E/9mkf1VK91pzH19wg+j/fLRKlde/Vody64QUi10TcI2c37
+	cW52y/G/EVVpymlskuybedh5cQYHU8AWFntM01OrY1xqSxpwoZ+ZdBCb/RnvRCVZti0=
+X-Gm-Gg: ASbGncs16ZSBWIFgJlehcAeUdz228/So32FJ7g7HyPWnvJITHbbtytde6XNs/x4mJv3
+	Yo7wLNtstXCEeqhKvRwBeO40q3DmimgZrwj325UsiSKwohE/KQT58FaSnC4W0Y1xr97UVM8pTok
+	fEex3iaavbS9PFBFkwhCAYyw3HiHgusq6JYJxO1YGuQ8hwheNSPCK5kLFbHZ4GWMAO5+ymq5h+w
+	A+CEXZz4KuFBCCiyhzScA65A/GzdzuccwLDhhOsTHyxSRGKitolzIoOG4wCwRCnsZ+XNVOaMjrQ
+	6Jn+TV+B98sdUYaa+Lk1vsCpZx8lIqAgeNwZKUpJClhAeFNp9eVgjvh/L1Gw2WvkCAFMuBJSSEh
+	qBnuNRp9GfRCqauBn4kWxL/z/mlBX+t9wxI/v0kmDIBWkKzuazEfVZByO
+X-Google-Smtp-Source: AGHT+IGrZHG1I4BquDHt0Gxg3DnN1qvMxqgyFGE7TQYpvxCsyV5GBEgNIf4ntzhI0Sph+4sHQIV6HA==
+X-Received: by 2002:a05:600c:1e86:b0:46e:4784:cdf5 with SMTP id 5b1f17b1804b1-46fa9a9f254mr21670825e9.15.1759918896295;
+        Wed, 08 Oct 2025 03:21:36 -0700 (PDT)
+Received: from [192.168.1.3] ([185.48.76.109])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fa9c0e35dsm32480825e9.8.2025.10.08.03.21.35
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Oct 2025 03:20:45 -0700 (PDT)
-Message-ID: <392d2e9a-dc31-4916-ab8a-680b2ec4dca5@oss.qualcomm.com>
-Date: Wed, 8 Oct 2025 12:20:43 +0200
+        Wed, 08 Oct 2025 03:21:35 -0700 (PDT)
+Message-ID: <887ff02c-c221-4b98-be98-efe62e043727@linaro.org>
+Date: Wed, 8 Oct 2025 11:21:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,82 +81,112 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 18/20] arm64: dts: qcom: kaanapali-mtp: Add audio support
- (WSA8845, WCD9395, DMIC)
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>,
-        Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
-        trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com
-References: <20250924-knp-dts-v1-0-3fdbc4b9e1b1@oss.qualcomm.com>
- <20250924-knp-dts-v1-18-3fdbc4b9e1b1@oss.qualcomm.com>
- <CAJKOXPfY-CpE_aKd910PQ2+u9ux2EvuVEt9ArzhdVCJcTQJUQQ@mail.gmail.com>
- <51637d37-aa5e-492a-851c-e5d6bfbe421e@oss.qualcomm.com>
- <43ba93bd-0dba-415b-8a7e-cdc4d954f79d@kernel.org>
+Subject: Re: [PATCH] perf tests: Don't retest sections in "Object code
+ reading"
+From: James Clark <james.clark@linaro.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Ian Rogers <irogers@google.com>, Dan Carpenter <dan.carpenter@linaro.org>,
+ Charlie Jenkins <charlie@rivosinc.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Leo Yan <leo.yan@arm.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251006-james-perf-object-code-reading-v1-1-acab2129747d@linaro.org>
+ <CAP-5=fXmAbz7Gp5eCRFYsYu_pZoFNSR+mcJgE6Eu6YewHyLNtg@mail.gmail.com>
+ <b39ffdd5-1692-46ed-86d9-726011c92036@linaro.org> <aOVxlEXDMKJyIhME@x1>
+ <a7698f4f-6541-4d3c-afea-d30baa4776f5@linaro.org>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <43ba93bd-0dba-415b-8a7e-cdc4d954f79d@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAxOSBTYWx0ZWRfX3JwH+6OZSM8X
- T6CjcPfyvY0ITlHH/M7Y+CAXHE+MqAkpbZUPZaCA7o2fnSsxXZEY7oXKOxjhKlpotUb3X9M/Fad
- IJrdZK6+xVWIUOwg2wnoLsSNrWbSMzEoQxhl+PsevCKOh2yTZGyeyON5D1g8rZR3dnNVY7Z931/
- M9BS2Er3aZp5nnp+JugHZ6Lue9PyZWj7bXmGrCreTGBhbONgWtmSPT+abM4plUXnWBAC9Ju2WOX
- LoPDPGlxUHl56NFMaXHa/kjgG95fjLPewPjAnyKYLVO34PTQUnz+I3YrBfuihqJwOIyPhY0XCBn
- r5UXCezGnSELxw0QQlxeC7+ffJoUO/8WGs2PjcA23G3W3/Gg9rW+pQ5OH5jMB5wpcOhl/uu+5mj
- CSVU7LtCjpXVDgXLAhp0Oh3ekKu3nQ==
-X-Authority-Analysis: v=2.4 cv=B6O0EetM c=1 sm=1 tr=0 ts=68e63b52 cx=c_pps
- a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=CoZnzqn1Vmb4SI8PR-kA:9
- a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
-X-Proofpoint-GUID: x8soYtrdBYkZ3qit6AEv33zQIQe9tcsa
-X-Proofpoint-ORIG-GUID: x8soYtrdBYkZ3qit6AEv33zQIQe9tcsa
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-08_03,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 lowpriorityscore=0 adultscore=0
- impostorscore=0 spamscore=0 bulkscore=0 phishscore=0 malwarescore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
- definitions=main-2510040019
+In-Reply-To: <a7698f4f-6541-4d3c-afea-d30baa4776f5@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 10/6/25 10:48 AM, Krzysztof Kozlowski wrote:
-> On 30/09/2025 21:06, Prasad Kumpatla wrote:
->>
->> On 9/25/2025 6:56 PM, Krzysztof Kozlowski wrote:
->>> On Thu, 25 Sept 2025 at 09:18, Jingyi Wang <jingyi.wang@oss.qualcomm.com> wrote:
->>>> From: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
->>>>
->>>> Add support for audio on the Kaanapali MTP platform by introducing device
->>>> tree nodes for WSA8845 smart speaker amplifier for playback, DMIC
->>>> microphone for capture, and sound card routing. The WCD9395 codec is add
->>>> to supply MIC-BIAS, for enabling onboard microphone capture.
->>>>
->>>> Signed-off-by: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
->>>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
->>>> ---
->>>>   arch/arm64/boot/dts/qcom/kaanapali-mtp.dts | 226 +++++++++++++++++++++++++++++
->>>>   1 file changed, 226 insertions(+)
->>>>
->>> Audio is not a separate feature from USB.
->>
->> I didn't understand this, Could you please help me to provide more 
->> context on it?
->> Is this regarding Audio over Type-c?
+
+
+On 08/10/2025 9:32 am, James Clark wrote:
 > 
-> USB depends on ADSP, so your split of patches into separate audio commit
-> is just incorrect.
+> 
+> On 07/10/2025 9:01 pm, Arnaldo Carvalho de Melo wrote:
+>> On Tue, Oct 07, 2025 at 10:10:12AM +0100, James Clark wrote:
+>>> On 06/10/2025 4:21 pm, Ian Rogers wrote:
+>>>> On Mon, Oct 6, 2025 at 6:11 AM James Clark <james.clark@linaro.org> 
+>>>> wrote:
+>>>>> +       data = zalloc(sizeof(*data));
+>>>>> +       if (!data)
+>>>>> +               return true;
+>>
+>>>>> +       data->addr = addr;
+>>>>> +       strlcpy(data->path, path, sizeof(data->path));
+>>>> nit: perhaps strdup rather than having 4kb per tested_section.
+>>
+>>> Oh yeah that would have been better, not sure why I didn't do it that 
+>>> way.
+>>> Although the max sections I saw was around 50, and it's usually a lot 
+>>> less
+>>> so it's probably not worth the churn to change it now that Arnaldo's 
+>>> applied
+>>> it?
+>>
+>> I see you submitted a patch for using strdup() and then there is a need
+>> for checking the strdup(), etc.
+>>
+>> Since at this point this is an improvement on a test and all is sitting
+>> in linux-next and the window is closing for v6.18, lets leave this for
+>> the next window, ok?
+>>
+> 
+> Makes sense.
+> 
+>> These would be good things for some tool to catch, before it gets sent,
+>> but that is another rabbit hole :-)
+>>
+>> Thanks,
+>>
+>> - Arnaldo
+> 
+> Does Smatch work on Perf? I imagine it would catch this if it does. Or 
+> just plain old cppcheck. I'll take a look.
+> 
+> James
+> 
 
-No, this is no longer the case on Kaanapali.
+Smatch doesn't know about strdup and seems to be more focused on kernel 
+so probably isn't a good fit.
 
-PMIC_GLINK is now served by the SoCCP rproc
+Cppcheck struggles with a lot of the kernely style that's used in Perf, 
+especially the headers. We'd either have to silence a lot of the 
+warnings, or start with almost no warnings enabled.
 
-Konrad
+It doesn't have a warning for usage of a malloc return value without 
+NULL checking, so in this case it wouldn't be useful.
+
+I'm not 100% convinced that the effort of integrating one of these into 
+the build system would be worth it. I know that once they're in, there 
+would be constant maintenance of silencing false positives etc. And a 
+lot of the warnings are more style or opinions about undefined behavior 
+according to the standard, but aren't real based on what the compiler 
+actually does.
+
+As an example, cppcheck on code-reading.c with --enable=all gives 17 
+portability, 11 style, 3 warning and 1 error outputs. Out of all of 
+these only two of the warnings are significant, from commit 0f9ad973b095 
+("perf tests code-reading: Handle change in objdump output from binutils 
+ >= 2.41 on riscv"):
+
+   token = strsep(&version, ".");
+   version_tmp = atoi(token);
+   if (token)
+       version_num += version_tmp * 100;
+
+   token = strsep(&version, ".");
+   version_tmp = atoi(token);
+   if (token)
+       version_num += version_tmp;
+			
+"token" has already been passed to atoi() so can't be NULL in the if 
+statement. I think the atoi() needs to come after the null check.
+
+James
+
 
