@@ -1,340 +1,223 @@
-Return-Path: <linux-kernel+bounces-845105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9058FBC386E
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 08:58:22 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A311BC3874
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 08:58:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65232189FAF5
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 06:58:45 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E3E533428D9
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 06:58:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679E62ED871;
-	Wed,  8 Oct 2025 06:58:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 109FF2EDD60;
+	Wed,  8 Oct 2025 06:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="m3wnm8Hl"
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013000.outbound.protection.outlook.com [40.93.201.0])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Qbd6nFuJ"
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013041.outbound.protection.outlook.com [40.107.201.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0292EC0AF;
-	Wed,  8 Oct 2025 06:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720612ED163;
+	Wed,  8 Oct 2025 06:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.41
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759906689; cv=fail; b=nitQkTGS8mJ9iwQ9Bxh9G2NHegTWSV1K7oxaUI+j2vjnkbgbKbvQ6w4dVwHp4VMhxMfO3gS71XUQsGME2oR8AdRCrhYkhKeN3WJOYRb4fJTQLq9lwZO63KjrjRYFHEs/9AxOB+oZlxkuG0FMeJSHlYutrUPVikYBZlJ1+cNYxFw=
+	t=1759906705; cv=fail; b=DSNFKXCT/fJjkgNVMUoBLnVsZJCOQ3GRpliTyz8UnQyTQS+0snwViSeZD+m1UXPo0bHf6zBfo893Y2QSwAwmBnSCYHmKNwBNffZ+rVwTQeQZ7xAnIzfFBTjrGUMuqFXh7SSzl7RHMv37Za3wvpYMyNIB+Xei74IRUHCfttt5mAE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759906689; c=relaxed/simple;
-	bh=MTcK5O0BQwrmHot4GY53bE5wVYEl3n0EYex3IizXeBc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aSgXwFn7pVFzfO/fpd1UcyiM9qQp0iOU38Bb7iSIzBMFWMePw6Iw15rq5lGQUtNCl0zUNFTS3K/C4LZh+d+9ZWpVYXSqulgvzGanuMo0IP/upzr4nHgvs4u6sy3r6cSs4gpHQGAnP9cZX/pQKU+yYEtFh9VkcZwNdFRA7kg9SN8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=m3wnm8Hl; arc=fail smtp.client-ip=40.93.201.0
+	s=arc-20240116; t=1759906705; c=relaxed/simple;
+	bh=vFgvBtwpkUdpLmFiju+L5rIZPqoQr4M8WCQ2AQbxp/c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=DQxM2ZNKwGZQ7L/9TwCkII/E3D6bKkO61IN5rk1Q3InKG+2W4peTBt8PxSQ/xqT/mUv5XVSU0egtQVd5E3IHhy1Q5aZj8W1YdGtZVUskAAVV8I7zcZH2Oqo11kkKC6yOOsEjwngQBrc8npowhvGXbiQlG6j9A8tFgPXb8Jq0if8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Qbd6nFuJ; arc=fail smtp.client-ip=40.107.201.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Yt0AXKS4zxvSZ39s3jEtgv4dfVNEiKYViIPIlDa0SN5BVN6sYPdiVcLxFC5WoriE8I2JWCvRYEGEcCxXEBE34+6D/5QG+6nVcgFcFkwyHNeieQUoUyy4zSg0lLlzv7fLlb4ADCFt3rhxyKHdcRsDp9sVHuo3OHREZ/tV1ZAlNsz5MKmpTAgOkEY5L7Oy2gRHqmsw3K5Gu7kVNplBtYJUGFFP1H/mAOIFTCddPa+LRDijDPt8FedcbHeac+5Lk9eRfa7UZ+qV7vIv9XQ2QrIIjGZja2/gx0SOWUuRok9TymkECZLXu50H2B3vJIFcZatRWUt5sae3dfLspCeMrqL3Sg==
+ b=hV9dyFd1reWi/dJu00KdwvoqWmeLIS9LaZKnFipyKpD1ycZg95FTV2S0jOEu1z1Sg7nBlSeIxqS9VJtx+AtSgSnVaPhhaqF3l3JrS3ejqQSixqq7UI3RhiELnKvmWEA58SyV5Q8JNj8xZFzcg6CRwa7cTvsB8foB36XAHEtERzA2/XRxGnIeZchJ/Fo9SqIIMNR0enMPwj3+HEMKEk7xqOrrIzbEFhPOpLml3cpi9EI4ptaYutj8dDD+Mf51JgFmMe8fjS/LHUXjH+rr9j3BoIREBmWAduLx+tcz8ntlHmwMKsIhZqy3FnuR9S4OpGI/KFm2ESrr0FzK6QSRZu5Enw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=E8EWwZRb5rL2FHkyri3pq90F7vHmI9yzmZjnu1rA5ZU=;
- b=ITpuzpj9wAj2/Rrq/FWiheZH362AAyJhDfR+Th2PepWRuRpc+F3Dg/PPEk1776U4lgsHJCQI27ow4y95Gife7kaYPWvLUR/hs4CbLYU3KEhnS5/abNqntEroGJuTajqibXTH/i6nOrIip18tlnnWm7TrTKZXHx6h07S5tqq85UfSVy7mGpgTzIv7+oYz0brLYtKgXcQBC8a+8e7GJGesuhhwc8wnZA9kxVlhuZKwgt1JLrrIWU/9qvLa6uvpIgJKX6yTbi2Wsq78MRXyUZhSaQdywFSNW8LrSLX4erb7JgujYtyrTNh6/ixoTzWbwKq/3N1CB1cU4xJPzPegTUHvcg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=networkplumber.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+ bh=XyFG1oGlVSIvqyzrTWTxBzUKfa80YV3GIEwbtkBnmXM=;
+ b=Sn4c0OekElKuDveBty1oiIDuQkNKVtbIDLzgje0hIDVlkd56/QlxG8iQOT3wlBEnWYazLQJSWPWRIqI19uLABUFcUCe7kyKpe4KSdnqcD/bpGeIrX9eJUnpHLCu371wWJWoiFYcSfilLKMP9lmhe6Vfn8ZYe1S2c0UOxrz07n3T534wdQ0O4spdrCPjV5teoHjf5oZDd1rnZbu8hJeC4mBkj9YPei7cqkv8Wp9Oz6RO5ODvV/ctPhmqBp8pIVwDg7qvN7qsC38T57YvQg7Zoo1Y1u0xqkZBfxnCnrwykcdaJnWd+ebqwTdLKZM2zvO3mxaiczzig8pO9v86NcDzupw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=E8EWwZRb5rL2FHkyri3pq90F7vHmI9yzmZjnu1rA5ZU=;
- b=m3wnm8HlSS0epgCc4GimniAx5WBdsxQnTY/VJ0QjIdA88DKGOeTHyd+LhEbHtNKaQZwgY4vWZYg83QA6i4mSs5SackF9OD+8WsL2Dwj44CBYz8qR8J+OAfF1dKOJyUZ+x3SLxw7fJw1zD+0HB1ge+0lHCR7X1uzD6/dPS3sr95Eo6jzjf4nPcd/Xiq6er2ujmvFDanEs6BIqOGbs7ZG29qjn3RURwFfZQyW5ZEN9e/nkAzcxs84LD0lpMHw3MUyytMJH8ETUmGK4Z0DDVWFIrRknPzb4GoKBhTBGPahU/VPaUhwJrMW1GQoaCNIW7+St0/3i7FvQNjB4XT6a4S1tew==
-Received: from SJ0PR03CA0067.namprd03.prod.outlook.com (2603:10b6:a03:331::12)
- by LV2PR12MB5989.namprd12.prod.outlook.com (2603:10b6:408:171::20) with
+ bh=XyFG1oGlVSIvqyzrTWTxBzUKfa80YV3GIEwbtkBnmXM=;
+ b=Qbd6nFuJc9ltn9QLXbguwMk4KRHhqyWP338vlMm11im+JKHrewnUCGWM9NH7iLJWWM+a+/jtthCtihnv1jWGgjwPWD7hezsbCKupWjQA5kek7znCPLhLYnB0xDtL+fqHWrfbMCIkYJNaWRpPs/AJowMBbMiOjO8lNfETNRgHhh6tusJIu0p4RUolGz4CYKjHkfQQRGegdtGqcQJuQobZIF9NUiE7FEh9Pab4pJbxeWI3Ai6C2GGeHxwM2pDP4jm6t7hROPtAvT922vOREnUtvrALFNxffb8/1vlpDopyg55s5GWW+w/iEDeRFTGE+RDgfUD8hE22aZSYWxMCYXVZwA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by DS0PR12MB8526.namprd12.prod.outlook.com (2603:10b6:8:163::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.9; Wed, 8 Oct
- 2025 06:57:48 +0000
-Received: from SJ1PEPF000026C6.namprd04.prod.outlook.com
- (2603:10b6:a03:331:cafe::bf) by SJ0PR03CA0067.outlook.office365.com
- (2603:10b6:a03:331::12) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9182.20 via Frontend Transport; Wed,
- 8 Oct 2025 06:57:48 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- SJ1PEPF000026C6.mail.protection.outlook.com (10.167.244.103) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9203.9 via Frontend Transport; Wed, 8 Oct 2025 06:57:48 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 7 Oct
- 2025 23:57:37 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Tue, 7 Oct 2025 23:57:37 -0700
-Received: from vdi.nvidia.com (10.127.8.10) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
- Transport; Tue, 7 Oct 2025 23:57:31 -0700
-From: Tariq Toukan <tariqt@nvidia.com>
-To: Stephen Hemminger <stephen@networkplumber.org>, David Ahern
-	<dsahern@gmail.com>, Jiri Pirko <jiri@resnulli.us>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
-	<davem@davemloft.net>
-CC: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
-	<netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Gal Pressman <gal@nvidia.com>, Moshe Shemesh
-	<moshe@nvidia.com>, Jiri Pirko <jiri@nvidia.com>, Carolina Jubran
-	<cjubran@nvidia.com>, Shahar Shitrit <shshitrit@nvidia.com>
-Subject: [PATCH iproute2-next] devlink: Introduce burst period for health reporter
-Date: Wed, 8 Oct 2025 09:57:18 +0300
-Message-ID: <1759906638-867747-1-git-send-email-tariqt@nvidia.com>
-X-Mailer: git-send-email 2.8.0
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Wed, 8 Oct
+ 2025 06:58:13 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9182.017; Wed, 8 Oct 2025
+ 06:58:13 +0000
+Date: Wed, 8 Oct 2025 08:58:05 +0200
+From: Andrea Righi <arighi@nvidia.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: tj@kernel.org, linux-kernel@vger.kernel.org, mingo@kernel.org,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, longman@redhat.com,
+	hannes@cmpxchg.org, mkoutny@suse.com, void@manifault.com,
+	changwoo@igalia.com, cgroups@vger.kernel.org,
+	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de
+Subject: Re: [PATCH 01/12] sched: Employ sched_change guards
+Message-ID: <aOYLfSfePpgL4gMQ@gpd4>
+References: <20251006104402.946760805@infradead.org>
+ <20251006104526.613879143@infradead.org>
+ <aOTNXPTyk4zth-1C@gpd4>
+ <20251008065103.GQ4067720@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251008065103.GQ4067720@noisy.programming.kicks-ass.net>
+X-ClientProxiedBy: MR1P264CA0033.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:501:2f::20) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000026C6:EE_|LV2PR12MB5989:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5740f105-e69f-41d4-102b-08de0637fdd0
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|DS0PR12MB8526:EE_
+X-MS-Office365-Filtering-Correlation-Id: d9f5da38-b47f-4852-3a5c-08de06380c6f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|82310400026|1800799024|36860700013;
+	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UHZLNE5xNE9CbHlPdXl0OVoyUFd2czlkRExXcTZMaktScFFDREQ3VnFOeEgy?=
- =?utf-8?B?amZTYWRvL1d5aDY3UUgrWC9WUFlLdUFaUXI3TlNGamlYMnBUSFFZQitkb2w4?=
- =?utf-8?B?YkZZSG1XNGxOZTdUTG5wN2NmM2I1cVpEK0w3RnhzNzVYdVk0d3YxQ3c2MWNq?=
- =?utf-8?B?TDluOHlleTJzcUVuZXU2T0FCaHV2WFozUUJIZWZldGpqZG5Qa0tNZisvbnJN?=
- =?utf-8?B?WXFvSTY5U0hZRnlGSkJkbmcyWlU1eXlnVW9nZ0pRY3pEMXh6QWFMWXFRb01Z?=
- =?utf-8?B?UnpIYkYvT2ZISGRiV282SjA3Vi9rQ3JCM0JyL1VublhJYzdBVVFEbEsrMzhP?=
- =?utf-8?B?TkdZcUROV3NYemxsNFYyUkltajZnVVZValUrbFJXdTJxbEJoM01nM3hhaXAw?=
- =?utf-8?B?YjFXZ0d0N1VpcUdzV1FlS00wK3RBUFlzeWMzd1UzZ2NUOWZyZ09pRUY2TjRC?=
- =?utf-8?B?Njc0dXVpZm4zclJqclc3OFVPbHJNbnlOSUhCSm9yMS90YjdzZlpiYytWNzVH?=
- =?utf-8?B?VU4vSm0yUllMRkFOTHdKZnVNSGg5MGgvRytrOWkzU2RCOVZDelU2dnhMeldG?=
- =?utf-8?B?alM4eTEwc1ZyUE5rZzY4a0FPRFo5QjZhM214S2wvaDYwTm9iUUdTT0hlUUQ5?=
- =?utf-8?B?SlVFMzBGMkI2WS9DUjAwV3RyL2x4dFdGMi9Dc09qcVoxMHV1NU5tNzV0NEZC?=
- =?utf-8?B?ZDB0Vkg0L1o1dG1KY2tVMitJclRUeUI2K0RUMzlqUGxxOWt6YWRndEc5bWhK?=
- =?utf-8?B?R242SmNjdU9MMjRYd1pNTFdOckVPWU12UEdwQ29Rck91U0N0VEh2OHJGZy9l?=
- =?utf-8?B?M2RyL0d2RGJjZkI4aXlPZmFDWEJMNi81WXFmeDQzVG9udkxZY3hKcFpZQWFO?=
- =?utf-8?B?dURMQkw4WDcwZlV2ZmpMbDdYdDU2NU1pdzJoMzdJbnJzS0FPSitkT3Zrd1l4?=
- =?utf-8?B?VWpWZ09BcGVVUnNTYmhITTFRL00zQTB5cUdOM2VTMXRDWTFMUlRabkJyNWNi?=
- =?utf-8?B?SWhaRXFaY3h5TW5zeUhMOUFrUTMvaHZXeFpWK1doek9UQy9YL2gwRmtYYU1h?=
- =?utf-8?B?ZnNDeFpDTUxKRkd6WFIzZUNNcGpqdGc3NHptMi9LZzRNN0RpVXNoME5IaDRp?=
- =?utf-8?B?dVBzL2ZIWHRvM1FjdnJSV0FzSEUwRHpKYUE0bXgxenppY3EybDRVNFc0L2hN?=
- =?utf-8?B?RXZ0ckJ2bHU2MHBFNXp0ckhESnU4Z3dMdUQ3Q21teE5OR0llRnJJQjhNdTFx?=
- =?utf-8?B?aC9hMnM3YnRMVVV0QzFSeU1HQW9DOHcxcG1NaThnTmJzOURnamt4SmxxQm1E?=
- =?utf-8?B?Ykh6RTZNOUUrS3Z6ZkJiUkwzU3l3anFPSlROOHp2QUYxdlVIUlFTZ2dBVnZ4?=
- =?utf-8?B?MkVuMVVDa01Iek5FdEVOTmxPNUYvYS9nTmxTakQ5RjdiOGoveW4zV0FLM1dB?=
- =?utf-8?B?c1N1cndSbEVtUTR3Wkx2anZBSWVCamt5aUIzb3YwcUZnc285MS8wak5nbkcz?=
- =?utf-8?B?SUdpYzROTE9VeXB4djFWVE1SdCtWN0ZXVGx3cGt6bVM2Zm5KM3ovWXhHN2JE?=
- =?utf-8?B?Yld6YjhJMDNodUFNNExsYnoyLzZlMkY4aUlYak1iTHNYdlg0WGpiTUx4ZUR0?=
- =?utf-8?B?U0xBYmNDNmloZFlyNUpZWmJSWXMvMXhwYjIxNWplSWZjazlVQnlyUVd6MW5o?=
- =?utf-8?B?NjdnblBqZ1lRc1JCeXJHVjhpd3dsM1Ywb1hRdTkyZDZpNXdNcGx5VnV2UzMx?=
- =?utf-8?B?UEltK05TMXR0dWkvcUxnMm5LS1hYTzAwaGg4TEdhY0xFVVNDWlBIc0ZoYjZn?=
- =?utf-8?B?RHlkRHlrWTJIcUlPVnRnLzlGdFdmV0xhNFNNRjNrb2pRR3NHc09JUWpEQmZD?=
- =?utf-8?B?L3A2a1JYdWpJVEQvcG1MdlFsRGloS1hQb0tzUG9JLzNKNFhhSEMvblhBb2V6?=
- =?utf-8?B?dndyVkJCRG16VzFnQWJHZzJGa1kzU0o2TC9yNVpOK2JKaGtqTlZmL2FyUE9V?=
- =?utf-8?B?OC9RV0pQb2NHcXBLbXh2V0JsckpjbmxPMzZjS2wrUWNhSFpwOXArek1KVEZp?=
- =?utf-8?B?RTNBMzlkbDNrM3FZSG5uNmN4RktiZm9selM3US9wSzFmbnlZQVRlczlWVUZq?=
- =?utf-8?Q?PuEk=3D?=
+	=?us-ascii?Q?Lhe1gMaXSZsb7Vl/MNrgJkXSOFzsTi3ViIKxHpXX6yFKNkOmROk7n4A2Nu5d?=
+ =?us-ascii?Q?xVx12TKBG/7bVHaxAIiAo+oUmfDWZ7/5+RCVXTCGhhOqpCwfII9phfjLSZ6S?=
+ =?us-ascii?Q?CF4vjipN1xT7v3giAtxk9cJInE3Cni4h58RI/bUkjP20YgYGAo1gE/KddIwm?=
+ =?us-ascii?Q?VRGhMLgcBEJPdCeoV9pPI+pYvRUMWf8InfJSSBGnxQ23bAq+FiBu7fMsSzgR?=
+ =?us-ascii?Q?k2I/6nG02j+GaHBOJHxpGLWXa0IvomgSLSRTDKtRHilAybn1/ll5gztgd3al?=
+ =?us-ascii?Q?M58en0Q0X0l7qmVtN+quTx5dP/E3Uyka+l2Vl2CgPi1jnMZSzDQrxRe6qqKp?=
+ =?us-ascii?Q?jke2c84opItp+6Yc77I2k/AAU4EOYOmNWqx16GWaEKwYNV+gLLOcO8yNQ4Mc?=
+ =?us-ascii?Q?yM8ELkEopizpv63naMlLEh8kjtJ00Y9yr9RToHMH4n3L24rFKrXjAKFk3yfB?=
+ =?us-ascii?Q?mHVwdX8+ZA/Q4CpW9viqbyd1p8wCyvZ0N3T8fdHvkuSgADe8WkIDGK3/XKNm?=
+ =?us-ascii?Q?jcA4u9KoYtCRFGk3SSS/81v/lsqWdVT9PtUoRP7+lGzoSJIYE9UroXEz6QI4?=
+ =?us-ascii?Q?GtKDsEsqeYz4+/1TnGFTBEwxS06jvxXh1ILPWBcMxmS8Ca3E4pTndV2uhzoO?=
+ =?us-ascii?Q?5OsEskHJEzP6pmSatPDCPoFfx3gJfppXnyCpsDm3fCWzuAQVcqu7QL0/JWDo?=
+ =?us-ascii?Q?Y8fRibrbtYjutqc6yApHverIPNYG7RUSPuCI5YVXUB5vlHeMLqS942bQQN4n?=
+ =?us-ascii?Q?xQrax8gIs6FKqfqTm8ckweN6ic7QX0WjA7lV5L0juZGF7zLzexk6jD0HMY6Y?=
+ =?us-ascii?Q?6Xo+dFmJ925NIsatFYbFx36HKHqszt3H2DhJv1YRXwCit4fFc42XjejjHotT?=
+ =?us-ascii?Q?5s7ZPQPYXxmIQ2QSth1NzCNRHAhwMd6pAIu/8PT/BIbQHRGmaylYz+vobcg+?=
+ =?us-ascii?Q?PA8mhL4ZulHGKx1jQ3U3yuft5wUBI+ZJH60J8WrAx5hDvtzrGDQ504AZYT5y?=
+ =?us-ascii?Q?FOZ51FczPPge1ewGjJH0ILcfzKv5S2zMqzLHUu2tnsO+M1sKw022wW5GJWRx?=
+ =?us-ascii?Q?p0lNlDBJd1mHPKRPKEQ/WGkhBIDY8uNLk2CpoRPAonvHdc91gX+kmo2iJP3x?=
+ =?us-ascii?Q?WR2itJWPCBxQgl4OURfZT52ylX4ON3DeY6TV78TvYiTVFnaB07uOCHlnJTLj?=
+ =?us-ascii?Q?ouERtMlPz6MA8l5bUeBdacUR3sUJlJPnBbuNvw8QqfGK+QNSwtuAs21no9aN?=
+ =?us-ascii?Q?KnLNQh4fDZOE21CCuS3+Sq60bDmc/U8v55ZBsVxfObQ1glDLPLqObro/45y1?=
+ =?us-ascii?Q?9bAbJ9kSBCwIqQGwnPSMgPpMCA5dh6VeBO7C1LmvjJZdWEZzq+cQNssdYdvP?=
+ =?us-ascii?Q?Scgi4RkjCYjvtQEP/IFUnpvfN27HQflHU629VkytMg1x08pcsg2DKwWjJyYE?=
+ =?us-ascii?Q?31wM7x+vqgwVPzG5Ch3ow9ptXupKOcxO?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?QT7ikVfjaZN1UBTSJZ7dASG4UJk5VChr54kakUTSrJ1ZBEUjTzY947MJG9+k?=
+ =?us-ascii?Q?H0vS4i+Acd5lCLbm/wOsSnK4Z0hz0qpGKprbb3Iaqz01z8FWMSvyTaEwbJKH?=
+ =?us-ascii?Q?8LmkpmxO/JGWeHjFTeCAHcPfxBK3xVPg46Ff/QKeGc5kdBVLe0bmBJCDb24c?=
+ =?us-ascii?Q?Ca+dvnSQTVIpwvJJxilj/nNd0RquIQaBEE17xHjhCXnJdE6aXLRFb8XVHdAG?=
+ =?us-ascii?Q?auqu/hOTb490NP4ajVa9//A12mLVg7rAXCMZTLWf3NhqoAdvPR1uNFpsJ9BS?=
+ =?us-ascii?Q?aLU0ACsnrmO5lE1NOChqner1yAU7howgNinyK6v4WjT4JwXB7kec99wwkeVA?=
+ =?us-ascii?Q?ovSx2L/kOOqLkkAA3lUA3Z0KSONlrrab6h9aLmzAo4baGDu4VeqY2+DBPO4x?=
+ =?us-ascii?Q?HjdNNNpWP5Phl3tbwN5Ej9sKJlWOOwIhkzWVk+wde9Zox48yb6YPqBTAXyhV?=
+ =?us-ascii?Q?pidAty2wLguLfaGKULEgGaREiLGvYWHfvMRZCTPGUmjEUckpw6lynx3FYYtx?=
+ =?us-ascii?Q?imF8tGCoQcga4AhvdUUy+vvsPQT2BCQGjpJ0ZzKyLNgL5tpJUWxM1YLpszH6?=
+ =?us-ascii?Q?SInir89nJ/hGnjQZfLBjEa0Sq1zZyzm4xD01w05BbEOaw6nkG6fslyov92Sb?=
+ =?us-ascii?Q?6xqHS3vmE0IoDFZSTQELg2RA0hvUo0TSISsm1j/5F0N/n2fElTtXtiv9eVlK?=
+ =?us-ascii?Q?PW6+RNUjS8n2XkcAkGV3RlfhJ0+4WrP4iMSqsUaSohh7TZvAiq8K0kbkY4GK?=
+ =?us-ascii?Q?rMv7l482niO1NvmsOXSiPV/PhuYk21969Mhuo1qf82RG9B+gQ58OGCMj4KL6?=
+ =?us-ascii?Q?8v417yLz/Zj80NsgO8LDlnb0fkyUQzdLnFZsRjX+pABfBn06RJORHtVvbwDy?=
+ =?us-ascii?Q?VWmpoRwFNM2amlWyAOtSMFr5ZX2r1aVFcYUZZRSkPJ0pvSY2Z2I1CYpU+fLU?=
+ =?us-ascii?Q?erR/GwalHRDMnUub3yy1BLiZNjjO2pTiGFaPDmeFpbxLmSB3xBRIwzuMzLwB?=
+ =?us-ascii?Q?sGNeFNBW/3MHm0zsgwSsIvMZH9G5Vsyl/im00hDDcmFsalfL7/25hXtIPdAS?=
+ =?us-ascii?Q?U4DPeuaVGXQ4lUDTvA/Mv+k8FOQXQ5HuOCfvTMmKppG2W8mwU0vytTA8Gu8D?=
+ =?us-ascii?Q?M3YjSlJJiwwI3xWpXBkcuiDjCq1uGZS3yRgezOtHZRJUNPStVB9ziQbP+QnP?=
+ =?us-ascii?Q?vkVSzpfDOHb+xd/J/tSHzDze3M6Ohp5iOpvnVrZ9WQaViBiBfZcgvXU0Z+8M?=
+ =?us-ascii?Q?TfR/kQfDrxMeNm/qlcWCj80Xtge7TkF1UZM/EBIR12CEJ7ZMpGlTjmTzd5Fp?=
+ =?us-ascii?Q?cDrzL9tNumfiGt8zKhAaoHHreqwEAQBdmjOKum6Y2l1bZ+SNgEQDlopDdFkq?=
+ =?us-ascii?Q?D/iLluXlkRVBr/XOolFNj/nxU0NAkRMAXlnd/LSweuc+WqWT/PX9WiwFlWqM?=
+ =?us-ascii?Q?hF+oDc3bQrSWoyzmqpFRSVWFyG4zdZC/cPDQlqCftcsT1DEcuiQHZBXmW956?=
+ =?us-ascii?Q?2AGxRhNXE9/0Q3hed2QK+xhuN8nYvaBzP7sjo/CmKu1nfBVk3SUI7rGiU7Mc?=
+ =?us-ascii?Q?VRNs27FrI37BXKWzOeBm20TzQy7PQm44rkFYLPkS?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2025 06:57:48.4117
+X-MS-Exchange-CrossTenant-Network-Message-Id: d9f5da38-b47f-4852-3a5c-08de06380c6f
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2025 06:58:13.1675
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5740f105-e69f-41d4-102b-08de0637fdd0
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000026C6.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5989
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: iwRIqB0a9sTeC3KygGqH7o7gcrgf/t9kasUXPyiCcRIF5RAHi6dZyMjnJkhq63BHUqLrMF2KkmAd33ckOmCLOA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8526
 
-From: Shahar Shitrit <shshitrit@nvidia.com>
+Hi Peter,
 
-Add a new devlink health set option to configure the health
-reporter’s burst period. The burst period defines a time window
-during which recovery attempts for reported errors are allowed.
-Once this period expires, the configured grace period begins.
+On Wed, Oct 08, 2025 at 08:51:03AM +0200, Peter Zijlstra wrote:
+> On Tue, Oct 07, 2025 at 10:20:44AM +0200, Andrea Righi wrote:
+> > Hi Peter,
+> > 
+> > On Mon, Oct 06, 2025 at 12:44:03PM +0200, Peter Zijlstra wrote:
+> > > As proposed a long while ago -- and half done by scx -- wrap the
+> > > scheduler's 'change' pattern in a guard helper.
+> > > 
+> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > > Acked-by: Tejun Heo <tj@kernel.org>
+> > > ---
+> > ...
+> > > --- a/kernel/sched/sched.h
+> > > +++ b/kernel/sched/sched.h
+> > > @@ -3885,23 +3885,22 @@ extern void check_class_changed(struct r
+> > >  extern struct balance_callback *splice_balance_callbacks(struct rq *rq);
+> > >  extern void balance_callbacks(struct rq *rq, struct balance_callback *head);
+> > >  
+> > > -#ifdef CONFIG_SCHED_CLASS_EXT
+> > > -/*
+> > > - * Used by SCX in the enable/disable paths to move tasks between sched_classes
+> > > - * and establish invariants.
+> > > - */
+> > > -struct sched_enq_and_set_ctx {
+> > 
+> > Not necessarily for this patch, we can add it later, but I kinda liked the
+> > comment that briefly explained how the context is used. Maybe having
+> > something along these lines could be helpful?
+> 
+> I have changed it thus:
+> 
+> 
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -3885,6 +3885,22 @@ extern void check_class_changed(struct r
+>  extern struct balance_callback *splice_balance_callbacks(struct rq *rq);
+>  extern void balance_callbacks(struct rq *rq, struct balance_callback *head);
+>  
+> +/*
+> + * The 'sched_change' pattern is the safe, easy and slow way of changing a
+> + * task's scheduling properties. It dequeues a task, such that the scheduler
+> + * is fully unaware of it; at which point its properties can be modified;
+> + * after which it is enqueued again.
+> + *
+> + * Typically this must be called while holding task_rq_lock, since most/all
+> + * properties are serialized under those locks. There is currently one
+> + * exception to this rule in sched/ext which only holds rq->lock.
+> + */
+> +
+> +/*
+> + * This structure is a temporary, used to preserve/convey the queueing state
+> + * of the task between sched_change_begin() and sched_change_end(). Ensuring
+> + * the task's queueing state is idempotent across the operation.
+> + */
 
-This feature addresses cases where multiple errors occur
-simultaneously due to a common root cause. Without a burst period,
-the grace period starts immediately after the first error recovery
-attempt finishes. This means that only the first error might be
-recovered, while subsequent errors are blocked during the grace period.
-With the burst period, the reporter initiates a recovery attempt for
-every error reported within this time window before the grace period
-starts.
+Looks great and very clear, thanks!
 
-Example:
-$ devlink health set pci/0000:00:09.0 reporter tx burst_period 500
-
-Signed-off-by: Shahar Shitrit <shshitrit@nvidia.com>
-Reviewed-by: Carolina Jubran <cjubran@nvidia.com>
-Reviewed-by: Jiri Pirko <jiri@nvidia.com>
-Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
----
- bash-completion/devlink   |  4 ++--
- devlink/devlink.c         | 19 +++++++++++++++++++
- man/man8/devlink-health.8 | 20 ++++++++++++++++++++
- 3 files changed, 41 insertions(+), 2 deletions(-)
-
-diff --git a/bash-completion/devlink b/bash-completion/devlink
-index 52dc82b37ca5..c053d3d08009 100644
---- a/bash-completion/devlink
-+++ b/bash-completion/devlink
-@@ -792,12 +792,12 @@ _devlink_health()
-             if [[ $command == "set" ]]; then
-                 case $cword in
-                     6)
--                        COMPREPLY=( $( compgen -W "grace_period auto_recover" \
-+                        COMPREPLY=( $( compgen -W "grace_period burst_period auto_recover" \
-                                    -- "$cur" ) )
-                         ;;
-                     7)
-                         case $prev in
--                            grace_period)
-+                            grace_period|burst_period)
-                                 # Integer argument- msec
-                                 ;;
-                             auto_recover)
-diff --git a/devlink/devlink.c b/devlink/devlink.c
-index 171b85327be3..f77b4449e8c5 100644
---- a/devlink/devlink.c
-+++ b/devlink/devlink.c
-@@ -311,6 +311,7 @@ static int ifname_map_update(struct ifname_map *ifname_map, const char *ifname)
- #define DL_OPT_PORT_FN_CAPS	BIT(57)
- #define DL_OPT_PORT_FN_MAX_IO_EQS	BIT(58)
- #define DL_OPT_PORT_FN_RATE_TC_BWS	BIT(59)
-+#define DL_OPT_HEALTH_REPORTER_BURST_PERIOD	BIT(60)
- 
- struct dl_opts {
- 	uint64_t present; /* flags of present items */
-@@ -346,6 +347,7 @@ struct dl_opts {
- 	const char *flash_component;
- 	const char *reporter_name;
- 	__u64 reporter_graceful_period;
-+	__u64 reporter_burst_period;
- 	bool reporter_auto_recover;
- 	bool reporter_auto_dump;
- 	const char *trap_name;
-@@ -697,6 +699,7 @@ static const enum mnl_attr_data_type devlink_policy[DEVLINK_ATTR_MAX + 1] = {
- 	[DEVLINK_ATTR_HEALTH_REPORTER_RECOVER_COUNT] = MNL_TYPE_U64,
- 	[DEVLINK_ATTR_HEALTH_REPORTER_DUMP_TS] = MNL_TYPE_U64,
- 	[DEVLINK_ATTR_HEALTH_REPORTER_GRACEFUL_PERIOD] = MNL_TYPE_U64,
-+	[DEVLINK_ATTR_HEALTH_REPORTER_BURST_PERIOD] = MNL_TYPE_U64,
- 	[DEVLINK_ATTR_FLASH_UPDATE_COMPONENT] = MNL_TYPE_STRING,
- 	[DEVLINK_ATTR_FLASH_UPDATE_STATUS_MSG] = MNL_TYPE_STRING,
- 	[DEVLINK_ATTR_FLASH_UPDATE_STATUS_DONE] = MNL_TYPE_U64,
-@@ -2101,6 +2104,13 @@ static int dl_argv_parse(struct dl *dl, uint64_t o_required,
- 			if (err)
- 				return err;
- 			o_found |= DL_OPT_HEALTH_REPORTER_GRACEFUL_PERIOD;
-+		} else if (dl_argv_match(dl, "burst_period") &&
-+			   (o_all & DL_OPT_HEALTH_REPORTER_BURST_PERIOD)) {
-+			dl_arg_inc(dl);
-+			err = dl_argv_uint64_t(dl, &opts->reporter_burst_period);
-+			if (err)
-+				return err;
-+			o_found |= DL_OPT_HEALTH_REPORTER_BURST_PERIOD;
- 		} else if (dl_argv_match(dl, "auto_recover") &&
- 			(o_all & DL_OPT_HEALTH_REPORTER_AUTO_RECOVER)) {
- 			dl_arg_inc(dl);
-@@ -2701,6 +2711,10 @@ static void dl_opts_put(struct nlmsghdr *nlh, struct dl *dl)
- 		mnl_attr_put_u64(nlh,
- 				 DEVLINK_ATTR_HEALTH_REPORTER_GRACEFUL_PERIOD,
- 				 opts->reporter_graceful_period);
-+	if (opts->present & DL_OPT_HEALTH_REPORTER_BURST_PERIOD)
-+		mnl_attr_put_u64(nlh,
-+				 DEVLINK_ATTR_HEALTH_REPORTER_BURST_PERIOD,
-+				 opts->reporter_burst_period);
- 	if (opts->present & DL_OPT_HEALTH_REPORTER_AUTO_RECOVER)
- 		mnl_attr_put_u8(nlh, DEVLINK_ATTR_HEALTH_REPORTER_AUTO_RECOVER,
- 				opts->reporter_auto_recover);
-@@ -9309,6 +9323,7 @@ static int cmd_health_set_params(struct dl *dl)
- 			       NLM_F_REQUEST | NLM_F_ACK);
- 	err = dl_argv_parse(dl, DL_OPT_HANDLE | DL_OPT_HANDLEP | DL_OPT_HEALTH_REPORTER_NAME,
- 			    DL_OPT_HEALTH_REPORTER_GRACEFUL_PERIOD |
-+			    DL_OPT_HEALTH_REPORTER_BURST_PERIOD |
- 			    DL_OPT_HEALTH_REPORTER_AUTO_RECOVER |
- 			    DL_OPT_HEALTH_REPORTER_AUTO_DUMP);
- 	if (err)
-@@ -9753,6 +9768,9 @@ static void pr_out_health(struct dl *dl, struct nlattr **tb_health,
- 	if (tb[DEVLINK_ATTR_HEALTH_REPORTER_GRACEFUL_PERIOD])
- 		pr_out_u64(dl, "grace_period",
- 			   mnl_attr_get_u64(tb[DEVLINK_ATTR_HEALTH_REPORTER_GRACEFUL_PERIOD]));
-+	if (tb[DEVLINK_ATTR_HEALTH_REPORTER_BURST_PERIOD])
-+		pr_out_u64(dl, "burst_period",
-+			   mnl_attr_get_u64(tb[DEVLINK_ATTR_HEALTH_REPORTER_BURST_PERIOD]));
- 	if (tb[DEVLINK_ATTR_HEALTH_REPORTER_AUTO_RECOVER])
- 		print_bool(PRINT_ANY, "auto_recover", " auto_recover %s",
- 			   mnl_attr_get_u8(tb[DEVLINK_ATTR_HEALTH_REPORTER_AUTO_RECOVER]));
-@@ -9827,6 +9845,7 @@ static void cmd_health_help(void)
- 	pr_err("       devlink health dump clear { DEV | DEV/PORT_INDEX } reporter REPORTER_NAME\n");
- 	pr_err("       devlink health set { DEV | DEV/PORT_INDEX } reporter REPORTER_NAME\n");
- 	pr_err("                          [ grace_period MSEC ]\n");
-+	pr_err("                          [ burst_period MSEC ]\n");
- 	pr_err("                          [ auto_recover { true | false } ]\n");
- 	pr_err("                          [ auto_dump    { true | false } ]\n");
- }
-diff --git a/man/man8/devlink-health.8 b/man/man8/devlink-health.8
-index 975b8c75d798..fd6818dfadaa 100644
---- a/man/man8/devlink-health.8
-+++ b/man/man8/devlink-health.8
-@@ -61,6 +61,8 @@ devlink-health \- devlink health reporting and recovery
- [
- .BI "grace_period " MSEC "
- ] [
-+.BI "burst_period " MSEC "
-+] [
- .BR auto_recover " { " true " | " false " } "
- ] [
- .BR auto_dump " { " true " | " false " } "
-@@ -182,6 +184,11 @@ doesn't support a recovery or dump method.
- .BI grace_period " MSEC "
- Time interval between consecutive auto recoveries.
- 
-+.TP
-+.BI burst_period " MSEC "
-+Time window for error recoveries before starting the grace period.
-+Configuring burst_period is invalid when the grace period is disabled.
-+
- .TP
- .BR auto_recover " { " true " | " false " } "
- Indicates whether the devlink should execute automatic recover on error.
-@@ -242,6 +249,19 @@ the specified port and reporter.
- devlink health set pci/0000:00:09.0 reporter fw_fatal auto_recover false
- .RS 4
- Turn off auto recovery on the specified device and reporter.
-+.RE
-+.PP
-+devlink health set pci/0000:00:09.0 reporter tx burst_period 5000
-+.RS 4
-+Set the burst period to 5000 milliseconds on the specified
-+device and reporter, prior to initiating the grace period.
-+.RE
-+.PP
-+devlink health set pci/0000:00:09.0 reporter tx grace_period 0
-+.RS 4
-+Disable grace period on the specified device and reporter. Disabling the grace
-+period also deactivates the burst period.
-+.RE
- 
- .RE
- .SH SEE ALSO
-
-base-commit: 1f7924938884235daa5594f1d0f18c5b07fa9d74
--- 
-2.31.1
-
+-Andrea
 
