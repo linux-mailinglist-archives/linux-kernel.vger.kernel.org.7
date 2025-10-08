@@ -1,154 +1,111 @@
-Return-Path: <linux-kernel+bounces-845116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABB8DBC38DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 09:23:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD822BC38F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 09:28:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C3B8403E9C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 07:23:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F2DF19E16CF
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 07:28:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02BAB2F1FE4;
-	Wed,  8 Oct 2025 07:23:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943CD2F1FE6;
+	Wed,  8 Oct 2025 07:28:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Dee5XhHN"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	dkim=pass (1024-bit key) header.d=cse.ust.hk header.i=@cse.ust.hk header.b="43HKo5xB"
+Received: from cse.ust.hk (cssvr7.cse.ust.hk [143.89.41.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5D52BEC5F
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 07:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759908208; cv=none; b=Jtjhf1XtMndAU6YeM7aS3uTAJAo2TuGSX1RMYwMY+Ks5WlxDtdKzMP4rQygulgNVLL9W/V2pMMQOGO75jNh0ClrsnfX4whoibstrvLV1X3nHp56yR3EcWBfEVtm7zhePRkbe5c8OCJMVMqfC/mFOM4NZYJVIIsZ457B8DUVIFhI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759908208; c=relaxed/simple;
-	bh=1hrKhcewNAog3goQOz9EqxB44PnuDQDFLGTcN9t+kO0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=lQpfdbjliLSYrFD6yH1lBIyxzNZXzrk/brjn7i/tKdiMsgePNqrVg9arP9erEgqEAG+mWNjCbEWxwwsUUFVvPYtRiQRm/jMtE8uVpDL9JnCrs+WODqRO3Y8YmDYgtyJ0Pcdn/68KEXU9tTb2p2Fqo8ApQRM7QT+OAQD0pBGlSds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Dee5XhHN; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <2bd2c4a8-456e-426a-aece-6d21afe80643@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759908198;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7UAlSyFCkIOPcSkRc3Lm4Oe7r2DyLQZxHY7cDP0CdBc=;
-	b=Dee5XhHNRi8+jbIjAMSc7VYUoyLS2n5Fa3t+P3S6Vurg1mz0XZURAABYGb6QUH0OX0ytvu
-	R9y2tkbCktxKpZpBFiECWBrpk4I7X8VNSzHe/hxCfx0XrX6P2hPDZZYu2kYvI9tBLyf5ET
-	wji78FEvG+Ukr16/gbwgg6gm6U821MI=
-Date: Wed, 8 Oct 2025 15:23:05 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31DD2EBB80
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 07:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=143.89.41.157
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759908481; cv=pass; b=awLwobjpG8fy9I6FOMvNJ2cYJs6H8F2eIQazet1BWrCPuIa1akojIbLELnvL+tTYXvImlrqOV/UIi0AfdOQjv2KHNHzslZtH0FCWFb7RcHGdbp6lx+Zv3Z1kpO2q4UBTlwll4L16PBkeaOLD3gCYeDJMOxdQxIlM8Dg8Juxwoak=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759908481; c=relaxed/simple;
+	bh=UnfEl6eABXibxD9MAwlt62uo81pW10g2nmAQ/ptt77A=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=DmldBsG2FzLPBGnID3ljR+fMAkCFKIH6RHl+7wVnpL7lh60Jgu9UllqrANzRUiYepoM8+XiLnBtGXKViMKlcPmW0Csp69CtHwY30vIhmRxyAduV5ASsuUzxD6L6sgxYEF5xJ/KzXAQaaR+Hx91tEbmuOycSAvdpCiqQoQgFOfzA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.ust.hk; spf=pass smtp.mailfrom=cse.ust.hk; dkim=pass (1024-bit key) header.d=cse.ust.hk header.i=@cse.ust.hk header.b=43HKo5xB; arc=pass smtp.client-ip=143.89.41.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.ust.hk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cse.ust.hk
+Received: from osx.local (ecs-119-8-240-33.compute.hwclouds-dns.com [119.8.240.33])
+	(authenticated bits=0)
+	by cse.ust.hk (8.18.1/8.12.5) with ESMTPSA id 5987RFgN2013116
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Wed, 8 Oct 2025 15:27:22 +0800
+ARC-Seal: i=1; a=rsa-sha256; d=cse.ust.hk; s=arccse; t=1759908445; cv=none;
+	b=c+ouuHC1NO32X1JJOhAfPfX6k5XQde3p7p+8oNbGiQHfnYq5WPtWyzyjj+7yh5Wig8E2Dg7XRCRJzFGZfHl9m7NbkiM98rRl+7Wo3cX8lJ+7KQMQ7+foeT4tVXeBaEeXDfZcN48WcLxlAJMhW4soEsj85p4H9f11lutrhBDehns=
+ARC-Message-Signature: i=1; a=rsa-sha256; d=cse.ust.hk; s=arccse;
+	t=1759908445; c=relaxed/relaxed;
+	bh=1d+fJPm6FAmG/otg2kfvoAFrk4yXq4+Potk4oSH+KSs=;
+	h=DKIM-Signature:Date:From:To:Subject:Message-ID:MIME-Version; b=IfUN5OWwhGa+eOTLxT+rxnHxr3EoU/U+hmLrYL63ReFmjcqDWxLBwVDYIaQMxI19CVDHgfovzqK0XfkoiIV7+XhpY9UZIcKqs3oh5mYm7/KgvXGb1mSYZy5o/OjohYNAWifoCdi+Gk+/IebUCLwjRE4rGPGsRlwOMFb0TuX2akc=
+ARC-Authentication-Results: i=1; cse.ust.hk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cse.ust.hk;
+	s=cseusthk; t=1759908445;
+	bh=1d+fJPm6FAmG/otg2kfvoAFrk4yXq4+Potk4oSH+KSs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=43HKo5xBJrsMu6WAVuqJmrtMbv5JQ26vixFRQyLXUm4CzdyYosvg0gHfzdw+xkzcv
+	 qBRlp+XcCCqvmIC9KDviPkXhMfCgw8hzwgrVU5T1DoKLFr9DocnLVwp3dhM1YBWjBD
+	 AxbLaEYiLyNEulEphFSO4/kzmvh95s2EF2L0KmrM=
+Date: Wed, 8 Oct 2025 15:27:09 +0800
+From: Shuhao Fu <sfual@cse.ust.hk>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Frank Li <Frank.Li@nxp.com>, linux-i3c@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] i3c: fix refcount inconsistency in i3c_master_register
+Message-ID: <aOYSTX5EA_nRoIY_@osx.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 1/1] hung_task: fix warnings caused by unaligned lock
- pointers
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-To: Finn Thain <fthain@linux-m68k.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>, Eero Tamminen
- <oak@helsinkinet.fi>, Kent Overstreet <kent.overstreet@linux.dev>,
- amaindex@outlook.com, anna.schumaker@oracle.com, boqun.feng@gmail.com,
- ioworker0@gmail.com, joel.granados@kernel.org, jstultz@google.com,
- leonylgao@tencent.com, linux-kernel@vger.kernel.org,
- linux-m68k@lists.linux-m68k.org, longman@redhat.com, mhiramat@kernel.org,
- mingo@redhat.com, mingzhe.yang@ly.com, peterz@infradead.org,
- rostedt@goodmis.org, senozhatsky@chromium.org, tfiga@chromium.org,
- will@kernel.org, stable@vger.kernel.org
-References: <20250909145243.17119-1-lance.yang@linux.dev>
- <yqjkjxg25gh4bdtftsdngj5suturft2b4hjbfxwe6hehbg4ctq@6i55py3jaiov>
- <99410857-0e72-23e4-c60f-dea96427b85a@linux-m68k.org>
- <CAMuHMdVYiSLOk-zVopXV8i7OZdO7PAK7stZSJNJDMw=ZEqtktA@mail.gmail.com>
- <inscijwnnydibdwwrkggvgxjtimajr5haixff77dbd7cxvvwc7@2t7l7oegsxcp>
- <20251007135600.6fc4a031c60b1384dffaead1@linux-foundation.org>
- <b43ce4a0-c2b5-53f2-e374-ea195227182d@linux-m68k.org>
- <56784853-b653-4587-b850-b03359306366@linux.dev>
- <693a62e0-a2b5-113b-d5d9-ffb7f2521d6c@linux-m68k.org>
- <23b67f9d-20ff-4302-810c-bf2d77c52c63@linux.dev>
-In-Reply-To: <23b67f9d-20ff-4302-810c-bf2d77c52c63@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Env-From: sfual
 
+In `i3c_master_register`, a possible refcount inconsistency has been
+identified, causing possible resource leak.
 
+Function `of_node_get` increases the refcount of `parent->of_node`. If 
+function `i3c_bus_init` fails, the function returns immediately without
+a corresponding decrease, resulting in an inconsistent refcounter.
 
-On 2025/10/8 15:09, Lance Yang wrote:
-> 
-> 
-> On 2025/10/8 14:14, Finn Thain wrote:
->>
->> On Wed, 8 Oct 2025, Lance Yang wrote:
->>
->>> On 2025/10/8 08:40, Finn Thain wrote:
->>>>
->>>> On Tue, 7 Oct 2025, Andrew Morton wrote:
->>>>
->>>>> Getting back to the $Subject at hand, are people OK with proceeding
->>>>> with Lance's original fix?
->>>>>
->>>>
->>>> Lance's patch is probably more appropriate for -stable than the patch I
->>>> proposed -- assuming a fix is needed for -stable.
->>>
->>> Thanks!
->>>
->>> Apart from that, I believe this fix is still needed for the hung task
->>> detector itself, to prevent unnecessary warnings in a few unexpected
->>> cases.
->>>
->>
->> Can you be more specific about those cases? A fix for a theoretical bug
->> doesn't qualify for -stable branches. But if it's a fix for a real bug, I
->> have misunderstood Andrew's question...
-> 
-> I believe it is a real bug, as it was reported by Eero and Geert[1].
-> 
-> The blocker tracking mechanism in -stable assumes that lock pointers
-> are at least 4-byte aligned. As I mentioned previously[2], this
-> assumption fails for packed structs on architectures that don't trap
-> on unaligned access.
-> 
-> Of course, we could always improve the mechanism to not make
-> assumptions. But for -stable, this fix completely resolves the issue
-> by ignoring any unaligned pointer, whatever the cause (e.g., packed
-> structs, non-native alignment, etc.).
-> 
-> So we can all sleep well at night again :)
-> 
-> [1] https://lore.kernel.org/lkml/ 
-> CAMuHMdW7Ab13DdGs2acMQcix5ObJK0O2dG_Fxzr8_g58Rc1_0g@mail.gmail.com/
-> [2] https://lore.kernel.org/lkml/cfb62b9d-9cbd-47dd- 
-> a894-3357027e2a50@linux.dev/
+In this patch, an extra goto label is added to ensure the balance of
+refcount when `i3c_bus_init` fails.
 
-Forgot to add:
+Fixes: 3a379bbcea0a ("i3c: Add core I3C infrastructure")
+Signed-off-by: Shuhao Fu <sfual@cse.ust.hk>
+---
+ drivers/i3c/master.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-In other words, we are not just fixing the bug reported by Eero
-and Geert, but correcting the blocker tracking mechanism's flawed
-assumption for -stable ;)
-
-If you feel this doesn't qualify as a fix, I can change the Fixes:
-tag to point to the original commit that introduced this flawed
-mechanism instead.
-
-> 
->>
->>>>
->>>> Besides those two alternatives, there is also a workaround:
->>>> $ ./scripts/config -d DETECT_HUNG_TASK_BLOCKER
->>>> which may be acceptable to the interested parties (i.e. m68k users).
->>>>
->>>> I don't have a preference. I'll leave it up to the bug reporters (Eero
->>>> and Geert).
->>>
-> 
+diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
+index d946db75d..9f4fe98d2 100644
+--- a/drivers/i3c/master.c
++++ b/drivers/i3c/master.c
+@@ -2885,7 +2885,7 @@ int i3c_master_register(struct i3c_master_controller *master,
+ 
+ 	ret = i3c_bus_init(i3cbus, master->dev.of_node);
+ 	if (ret)
+-		return ret;
++		goto err_put_of_node;
+ 
+ 	device_initialize(&master->dev);
+ 	dev_set_name(&master->dev, "i3c-%d", i3cbus->id);
+@@ -2973,6 +2973,9 @@ int i3c_master_register(struct i3c_master_controller *master,
+ err_put_dev:
+ 	put_device(&master->dev);
+ 
++err_put_of_node:
++	of_node_put(master->dev.of_node);
++
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(i3c_master_register);
+-- 
+2.39.5 (Apple Git-154)
 
 
