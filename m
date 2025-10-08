@@ -1,214 +1,301 @@
-Return-Path: <linux-kernel+bounces-845830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6EE3BC63D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 20:08:53 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 291E9BC63E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 20:09:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0C8A34EC5AE
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 18:08:52 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A7CDC34DBFE
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 18:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF5D2BE7AD;
-	Wed,  8 Oct 2025 18:08:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0424429E0E8;
+	Wed,  8 Oct 2025 18:09:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ZNvWTkwT"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011015.outbound.protection.outlook.com [52.101.52.15])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="jLQ59Z3r"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E37827B358
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 18:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759946928; cv=fail; b=WHyTwLZUImKt4PrcPLpNqQRyynD9C1WVDyQIAl6TGGufgvWkFu6T7kY679KRjvNarA6cp0BMymtbhHWGKuFBYdQYyMJAoOnSbFMK53LW5H3UrVhQD5w+qGE4E8IbX8EZlg1bIAeQ+ikc5ljFteoHNt3I/Dv5vHiZOJIzweimT5k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759946928; c=relaxed/simple;
-	bh=rI5MjrlqhbTdZW1oLwQmflwZVAuXtjQUR167SwK07jw=;
-	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=H+y/qJMzf3QTjZdGRdbF79vDEWSLk3GweOoBUnJ9YG9IVr+w7wkeZTuXR8Uu+ed8KyGs5zvkjE6dlWSRLflhxe7YYTKHvYEOOR2q3zj9WfZah1BNXWADf3BbEcocTFDtjPNvEXKeaF8V3u2DbGOtkVKAZRqIGfCSzONXqY3+XpE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ZNvWTkwT; arc=fail smtp.client-ip=52.101.52.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CN4jpON+fzdSCWOMs3kgfeSvYX1onb9SoIlQJGSdIg/VCpWeYWqTTkJUbb8S38sf6kUF+KdMpwiBTJIoUqnKJupWnehh3ZnATzdPId0Q8ksr1kAciYQDtecwQRR5QPpr+0UsuknVrdmjs3gjLtZU6aDtvX8rZz8FV+XUCFMq0/bgBUVfBKZJ/B9mq5Usr8i4LD82Gzi/LBreW+lkuvhoKjkHUnOBPa8dqax4UVFSseKiyAi9pfIoCSJYmpGM3NsihCy94Cn0Wy1uQcxBKrCvO1x/IMKrEzuBzSQuXU35+RtzK9b6RWMmDFo6g3j4OMk5NC/1Ia9rD/1rnClLg7kPQw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GqkzCsdBYRvkuATifWe1rdvP0VUWTlhw+W7GO4bmqoo=;
- b=tq/UHWRix3C/AWXOsJ7mRu3WIzQhsegYcWjzTrb+kCWG427IFZ+WRSfGYVST2mXkBeD5dlrWoBddV3zKxfVZ35/p7EY/yIWb7cYPmaooc+NqGkcE8C4GYu03qLRWZ6TTqWyvmxClCwnMpaJ48EmrCRNZHdZ47aIa7GsZTMqtu5z/m1cov7VCO8pvEdYRsEqWfQ4aqyyihVZeoWBGeMGU+bEjeL7bWJ6AE07MRB1mKwBKAlAl866eowErUUZiwxDuJlq8UC2hN6RoJbboQWtYn6fXJfkSRFkD8Cf38VI4DvEKI9cY1/kp3qUm85kmlwCYRlm/BKj6yHfpwf2RUAuwXQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GqkzCsdBYRvkuATifWe1rdvP0VUWTlhw+W7GO4bmqoo=;
- b=ZNvWTkwTlSAwcO14woSuI9m6Or9slo9gCk1Wfy1WfBOgQQHZc4PjMem0ROYsoauzuooYbWQBfOUSQVFB3g5VHMVbvHY0LxQv8Z2uGJfmFLTSfWDYJ+MU+lx9iub3VIjakXzR0T4ax6hPrngh58THQDh8aeXM0Ae8aQCT4JIJghY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- (2603:10b6:20f:fc04::bdc) by SA1PR12MB9546.namprd12.prod.outlook.com
- (2603:10b6:806:459::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Wed, 8 Oct
- 2025 18:08:38 +0000
-Received: from IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- ([fe80::8d61:56ca:a8ea:b2eb]) by IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- ([fe80::8d61:56ca:a8ea:b2eb%8]) with mapi id 15.20.9115.018; Wed, 8 Oct 2025
- 18:08:38 +0000
-Message-ID: <6c512e5a-0657-4f3e-83ac-7f8fa1de4c6c@amd.com>
-Date: Wed, 8 Oct 2025 13:08:36 -0500
-User-Agent: Mozilla Thunderbird
-From: Babu Moger <babu.moger@amd.com>
-Subject: Re: [PATCH] x86/resctrl: Fix buggy overflow when reactivating
- previously Unavailable RMID
-To: Reinette Chatre <reinette.chatre@intel.com>, "Moger, Babu"
- <bmoger@amd.com>, tony.luck@intel.com, Dave.Martin@arm.com,
- james.morse@arm.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com
-Cc: x86@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
- peternewman@google.com, eranian@google.com, gautham.shenoy@amd.com
-References: <515a38328989e48d403ef5a7d6dd321ba3343a61.1759791957.git.babu.moger@amd.com>
- <fe06aa33-3351-45d4-a687-ff88a689be6e@intel.com>
- <3e1b459a-bd9a-400b-8c10-038b330e539f@amd.com>
- <1b352ad2-e542-4005-a470-5a9bb94b7ad8@intel.com>
-Content-Language: en-US
-In-Reply-To: <1b352ad2-e542-4005-a470-5a9bb94b7ad8@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA0PR11CA0195.namprd11.prod.outlook.com
- (2603:10b6:806:1bc::20) To IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- (2603:10b6:20f:fc04::bdc)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684FB27B358
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 18:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759946969; cv=none; b=CpZmT1urtf5V1+vOqnyXo6EAvNFZ4LP/W3ZLFUsei3fa9mi68VvPEAr5ISP+6zqV0YfuMQLIDz7fEudlh2UFO5+AjOE1v9ROzaVGBwAuOKLiwTFhToQ8/n7zpnUH0EA199/pW5g93mWryhZT2HAib0nmLtoPBJ8ZWxVsBAr5JAg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759946969; c=relaxed/simple;
+	bh=rV1TzK0dy3w2gP4a5mDL2oXseDkGAf7FqFXIUjG6jYM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e87PcdIivg8RrBipH/uu1QIFe/WwdPEElql7Px9qDuUs+UX7FNmUwXp0eXu0myhTYNZ6AkhrgWQPqhRjI3Y2pqD2sivrYI+1X7KUEA7D9RVPm1fHGrWwyGgki7t8Gq/Yw/bQRyVkH9FoubdqwMaNx83gvfw0pn+mWhMAi54ufMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=jLQ59Z3r; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 598HI1Hj030370;
+	Wed, 8 Oct 2025 18:09:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=SVm74a
+	GAwJF1JJPKZ47yU7o2RREFiloqrOd+wiiilgE=; b=jLQ59Z3rcEroH4GK/jdfoT
+	3dti22t31wajGZ4XjXXIdGxm9Ohk4oV1UL0dQsYoZ4MFq7DojskI17cKatAjehQh
+	J698G49Ja5xY80Ksqh5sSDUsHoHQBf8QqJpouWT+uNO9NtBO3cizmf3ghroEfkGs
+	lbeKZ/vOAXXgh1GCeaYKuTl+AFj4v5R189qipVP4OmjJExm7cE/AVDYd+7i6upnh
+	0LYC5olNuvAvj9DoTl+cJqIm1F9Gj1F3qtXfU2JJ2bDFWB/LsL47c31AYN0HW/AB
+	FjxV1GyrQA3t3u1lXQpLDSzdjZJdRbOaWaVF01bjzQhCNPqbVcCwFxqO7zNQwiew
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49nv81g7bf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 08 Oct 2025 18:09:19 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 598I9JL9006311;
+	Wed, 8 Oct 2025 18:09:19 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49nv81g7bd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 08 Oct 2025 18:09:19 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 598HJsAT022808;
+	Wed, 8 Oct 2025 18:09:18 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49nv8v86yf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 08 Oct 2025 18:09:18 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 598I9EBt47710682
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 8 Oct 2025 18:09:14 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 98B3320043;
+	Wed,  8 Oct 2025 18:09:14 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7335520040;
+	Wed,  8 Oct 2025 18:09:12 +0000 (GMT)
+Received: from [9.124.216.74] (unknown [9.124.216.74])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  8 Oct 2025 18:09:12 +0000 (GMT)
+Message-ID: <86fbf707-9ecf-4941-ae70-3332c360533d@linux.ibm.com>
+Date: Wed, 8 Oct 2025 23:39:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA0PPF9A76BB3A6:EE_|SA1PR12MB9546:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4f29da93-5e72-4a94-6b88-08de0695b471
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eFhUdDJ1UVdIRmx1TGM0ZHJTTStSWCtmNjkvQXo3RE5aSnRLQXpISWNYTno5?=
- =?utf-8?B?TnBNd3ZZVXZaRnI1K1IvZHJLWFdDU2p1bWhKT3JjMmZxMFNJaFRuajVYZlE5?=
- =?utf-8?B?MGUwaFFnK0tPbk9pUXNiN1NmQ2JaQjA0WTFsQXNqUlhjTzM1QjU1YjBVUUl4?=
- =?utf-8?B?RXViclRYSm1QTmJCc0JkMGNqbU1KL2dsSjFCcSt0NHdFQW9taUZnN01tZzJN?=
- =?utf-8?B?bUNEUkpZbk4zQzZZWEI2aklIZG81Ri9kaHlvMEMwcEZ1LzVNZVN4bkVrc2VD?=
- =?utf-8?B?eHliUzdSMllSMkVURzRjUWkrKzU5SmpFd2NoMUd0K0hxSWtXMmxNVEt3UGpO?=
- =?utf-8?B?Y2dsZENYaTZwWU5zNXRuZ3M0SHNRUHROSkZNMmh4K0o0Z0FmYnN2Y2hCcmEx?=
- =?utf-8?B?NWQrUmI0a1hFMkYyQ3BrZXB2ZzVpS0xRdDg1bGtETVY0N1JlTFRQV0JhRzhl?=
- =?utf-8?B?Y2s3ODR5SlJlanpZV2t0aUJTejV3b3VYQlJZUEQxNTk5eG9XZ2hQRjVwR0t2?=
- =?utf-8?B?VjZkamM0Z1NNejdpbDJaRGdZOEdDWi9uR245bWJXRE5VN0FMMjlXN2dYR3kz?=
- =?utf-8?B?eXRyNC9EdjA0cmtEUlhKQ1JYK3hJT2dyYjU0UGZZRHNNMEJwWjZ5Z2pWd2tx?=
- =?utf-8?B?VDMrVFJJc3hhVVJoVnRqcVdrR0oyMUx4aUlNQ1R1MkcrSHo1Z2NFd3hHNk1L?=
- =?utf-8?B?T05XUklEdi8vc3BjSDV3REdOVE52aFhqZWVZbVdMSGtVM1ozQ05wU29JdU5H?=
- =?utf-8?B?UHRKZGMrM1doRXFJMG45QXlwbHdXcG9ORXVPeFZKK002eFRpeHBNNTZnWmNQ?=
- =?utf-8?B?YVEzdFRKL2wvOEFqOURuem1ocXNER3BHNXdjQXB3SW1VN2FYQ3l0d3YrNTI3?=
- =?utf-8?B?Yng3bENpRGVmU2Y2MitGUUJsTStPbXlNQVpOQ3hYWk4vQTdwd2lKVHg0ODBB?=
- =?utf-8?B?dm9sMTlQZHpiaHRDSllobm1pUlNQbHhSTHZkME9vb0pCcXVVMmdqcXl4RDFv?=
- =?utf-8?B?NmF4d2trWW8xUldNUU9zaXpzdmdhS3kyY2JoZ0o1RjhYYjlxZHM4dUlGZzZT?=
- =?utf-8?B?NG1JRW05b0lhcnAwL2VwS24zWncwUkNObHVZaTFIUnlCVUl6c2lkbEpQMUFl?=
- =?utf-8?B?d0VHT0Z1NkJpanJKNTd2Y2d2d01VWEluU2NLVERCRVVmU29xajRtVlJSKzdS?=
- =?utf-8?B?SzNlR1ZYRHJ4N3RLTWFPdXFFTUFTT3QzNzNuVVN2Z2FHSkdlc1EzT3BvdnEr?=
- =?utf-8?B?YWR3MWZSYjdDZDcwaEVDYWdLLzAyaHIyNTV2OW1Mbng0S3RkUWVwVUNlVzR0?=
- =?utf-8?B?VDI3ZCtCcW1vb1RuOFpzRzF5ODZWZHI1Q3dyTHlzeGRxWXNNVC90VVJZM1Y1?=
- =?utf-8?B?VTNpd3UxV1dmSXJGa0xjSm50cnZOSGZmUXhIenVYeEZ0Y282WHROQUVOU0th?=
- =?utf-8?B?aExobUQ4MFBSUEpvbnlwaGQwaGF2OWJzeHYzeDJ3dGRVOVJROEQyY2hqblEy?=
- =?utf-8?B?RmJ6K2dmd2tjUnVRUlhsTHVMWUNOaFpqeGhWU3JxaUFscnpIRDh6NXhLbTlq?=
- =?utf-8?B?WGFib3VHZjl2UFJ2NzBad3llWjU5bGpDcGwrR2dwaW1qVDVLRisyUEhIQ2M1?=
- =?utf-8?B?UzdPYUpQeDcxQ1B3Z1dHZUFyREkwY09OWGcvbnp4NHE4ZGEreXNrM25zV01C?=
- =?utf-8?B?c09sTzZjaFNsNGJncWsySDFwdkVNWGx3VHdEMzByTlVjQ2J1Z3o1VGtsR0p2?=
- =?utf-8?B?MXZVVTVHTmZxczR3NWsxVzRtREQ3TjA4VDlYWitRZEpuajhUTkZvSEpGQVl3?=
- =?utf-8?B?QVlKN3U5R29jUmZiVzBjUDZWMzY1TjM0OWF3UE96Zko0b0R3c05FRFFpckNn?=
- =?utf-8?B?Q1pqRUNncXpYWjJZMHNORG9VR0RBbk9kUEtaNmREcWRmQWlDZU4rTzRCakR6?=
- =?utf-8?B?VjV0d1FsVllSdHJxQVlLbFowbkJmdGlENVRRV0JyeWxyblNOaWx6Snh0M1VM?=
- =?utf-8?Q?aCOyApXkSllQwkJssxgJ+QoaLO/Vlc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PPF9A76BB3A6.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?by9ycThYM0FZclo5bnRtNFk3Nld0b3d1RkR0UTMvelNMVG5ydUxOVXhMayts?=
- =?utf-8?B?azVLaTRNSFU3YWxPejA5WmZHTmtwOGdic2ZjbmRYQ2VUdmdDcWY3SWwwWmRx?=
- =?utf-8?B?bzA1UkhFdkI2eHJ3SDVDSVA3ckJDTEVpUkhFQ0ZRVHpNa0Uyc1hCUURFa3NY?=
- =?utf-8?B?Q3hHRmN3SElaVWVKTlR4enRVZTBRU0VrdjAvV1JPQ1RYT3RmWlRGd1YyN0dl?=
- =?utf-8?B?Y1RUL2JnQ3FybWwzblA3dG54Z0JzYkJkcWNGVDVzQi8xcWIwb2ZpS2dZL01O?=
- =?utf-8?B?REY4VFNlR2UwTllEYWNBNWdwS1QxMHBXZUxUNEs0Vm56bFp3VjZTQXJuU01w?=
- =?utf-8?B?NHRaS084RHVZNmh1VEkzOGlZQmdGQ2FqalR6WW1xWi9mOE9LN3pISG16NEpj?=
- =?utf-8?B?Z3pMNUNMODB4dHF3Rm56YjFlaHFTWk1sVEx3SUhGL25abnVnWlRHZjZUaFJl?=
- =?utf-8?B?dTZ0UVhzRTFXTHhjYnhBbVI1NUJKUHpMZ3h6NDE5QzJoT0ovT0xhSll3TldE?=
- =?utf-8?B?SUtub0cwdU83aTIzMk8vcWJUamFLQi9uRDQ3enB3MFE1M1RtNXZ4T2NxdUlh?=
- =?utf-8?B?TVVjcmpSejEzQWdscmlVd0RaZmxsMjN1bmxCYmttazRpTXp0OGk3WkM0Ny8w?=
- =?utf-8?B?NU9DS2ZuMjQ4OEtxMXdwbTUreFJpZWRTTitpdy9TZCtyZmVPTGRKN1huckJt?=
- =?utf-8?B?ckJvTkk4SDIvaGQ0bmVGZEFHQWtjdkhranl6bjV5Nmcrb1B6Y3E5OGZvc2da?=
- =?utf-8?B?Z1hUS1hBaUlzSkJtbmhEbG9OMVUvaW56R2VmQjZYNU94T2tvMGVkby9ESDdl?=
- =?utf-8?B?ZFdBMlpzM3ovalllUzZTQldQSVI0eGRzdDEvWHhLZzRvZUp2bTBCdmxYTFRU?=
- =?utf-8?B?YTVGVCtabUI3UFpsS25NQnJlSnRnZWIwek1wSFh2YmM5S0VkYTR6VzdzQ1NM?=
- =?utf-8?B?RmYreEJ2dVBSYzhpblpCL2xmWW50V1MvTEtzczdVOEpxZEUzQjdBdTJlZVRQ?=
- =?utf-8?B?SzdYZU9Mb1lwNGNZbFVDVVBEQU1WYlg0OVVIWkRNWVJDYi9VTXJKS1FUWks0?=
- =?utf-8?B?eVB1UkF5ZUtIejRqV0x0UTVmVXZZd0RxbXpieGp6SlR4MjdGMXNCRVlWbTJE?=
- =?utf-8?B?YVdZWFJhUUwwRGpBZDlJUUJ1dTZpcGg4RHNnczloaytZbWY5WEVZWUYwcWNl?=
- =?utf-8?B?L3FFODVUREdZazVIc2VuSWVYOTdWM3NoZ0dSc0pKbmZWdEJPeURXTzlqa0hY?=
- =?utf-8?B?UnNZRWNUV3hHeXZsckREZzIrZUdVb0lFK1dHcTVxeGFDR1VGMWxoM1kybXI5?=
- =?utf-8?B?WHczTDErQU5nN2ltb09iZTMyOCsreHRLR1ZMWXZqUytHS2lXQlVTOWJrNGRQ?=
- =?utf-8?B?RjcveEF0dEFGamhiVXlOaFRJQXZwY2xJTG1hbUxDWkhaTnMwdlJTMlcwSmcx?=
- =?utf-8?B?U1crTHhiRHlKbkJqWTNtRWVIQnVYVVVlWmJtZnlja3BrVU5YNDNIVUtLb1Fz?=
- =?utf-8?B?QllHK0JadXorejJIaC94c0xGTGppcktBVWVQZk5oZzhXRlBKK1hzN1ZjdUky?=
- =?utf-8?B?Q1E1eVFHUUVmZTlOQkY0cTBRSUdxUldLbUZNWEVxZFp4ZFU4ZnpqcUN0SkZE?=
- =?utf-8?B?Zjh6dzIzM1Njakp6cDU0SnJ6bFVPdXpldUk4QzZBQTY0aGxSMHdBV3lxdVRL?=
- =?utf-8?B?bG9NRVplZStsMDMyemdKOU5GSTJKSFZmTzhBK0ZsNXk3eGZDVnZvSzlXTUlK?=
- =?utf-8?B?QW5mSCtmR1NoQjhhWGVRQVZvQnZVOEhzK0E2cHJQcjRMZ2lnZ1VKSEQ1bmZn?=
- =?utf-8?B?NnFzWkhjMlcxaVlCRnA4V0Z5M3YxbVo0b01qNklFVEpraS8xcGhDNzZPOXRx?=
- =?utf-8?B?ZG5PbUUyUkMzZGtVV1NaNHJMdk1GT1NtK1A5ZEhGY0k0aU1URUtNb2l2VGJt?=
- =?utf-8?B?WHdVY0lmTFM4UEdieElYUHFBVkxXQWtKUnpqMWgwdlpHK3lkWVNkb05CSndi?=
- =?utf-8?B?Nk9zSW16RUpzMkNGY1FINmxucUJBZWFSMDdDM1cwWmhnWVR1WGl4dFVwcys4?=
- =?utf-8?B?UFNYWmdwRElRZEJ5OExlSzVYN2tQRTQ5TWgrbFlCeTBhOTgxSUNGY0RGc0gv?=
- =?utf-8?Q?z1ds=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f29da93-5e72-4a94-6b88-08de0695b471
-X-MS-Exchange-CrossTenant-AuthSource: IA0PPF9A76BB3A6.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2025 18:08:38.2722
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1yTPvIQGMIqoShEyxe4xjNv5+VdlVhyqRWSi7uShfuQ7swnWsBCpRU2xP2juZZMU
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB9546
+User-Agent: Mozilla Thunderbird
+Subject: Re: [bisected][mainline]Kernel warnings at
+ kernel/sched/cpudeadline.c:219
+To: Peter Zijlstra <peterz@infradead.org>,
+        Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>, jstultz@google.com,
+        stultz@google.com
+References: <8218e149-7718-4432-9312-f97297c352b9@linux.ibm.com>
+ <20251008095039.GG3245006@noisy.programming.kicks-ass.net>
+ <5a248390-ddaa-4127-a58a-794d0d70461a@linux.ibm.com>
+ <20251008111314.GI3289052@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+In-Reply-To: <20251008111314.GI3289052@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: P_F7Au8kFTcbkE3QRRZuaJdkGp5ZIYO8
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX0JM0fo40WeQz
+ fvAJEoZ2SNcH5MGWqtYh3LqsSRnUljckWoyWwYESbeCAxHyWbKVEF/5NGzmGUt9rg3g21uxsv5o
+ Oj1WuiSBMcaf9FwhWqvpmf54KuNr+3nfIt7oWw9gmTN2qjh/Hl9LF8avwttYu1kuh620gOmGzPu
+ MiQNGVS9u2sNZt4t3mSBcOLLmDQ6MkjjgahLJpLIAoY9Te7vxQSWa7eO93e9VXywQ6yLlStg0f7
+ 3P3d2JhCyDa3XshQVkYApSrwQra87fiIzPhk8s0cLacoa8I4qIO9pK2Ba+kQaRJmt5bn4OAzDOQ
+ JQK9S6ZT8BGMFoVBkUln/3O5g3AnF0GqgM87en+ZB3aXOV4VX+zG+vRbcif2D58j2/AfmXEoY3v
+ JZ/WkDSXc9FKusIqxhu+/TXkQgXxHw==
+X-Authority-Analysis: v=2.4 cv=cKntc1eN c=1 sm=1 tr=0 ts=68e6a8cf cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=pI1YL9lGUCM5EE-SFDYA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: FtL4O8A1Ssr1rYusy5EOikEo7bCPOFZS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-08_05,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 impostorscore=0 adultscore=0 lowpriorityscore=0 malwarescore=0
+ suspectscore=0 bulkscore=0 phishscore=0 spamscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
 
-Hi Reinette,
 
-On 10/7/25 22:04, Reinette Chatre wrote:
-> Hi Babu,
->
-> On 10/7/25 4:47 PM, Moger, Babu wrote:
->> On 10/7/2025 3:23 PM, Reinette Chatre wrote:
->>> On 10/6/25 4:13 PM, Babu Moger wrote:
-> ...
->
->>>> ---
->>>>
->>>> Tested this on multiple AMD systems, but not on Intel systems.
->>>> Need help with that. If everything goes well, this patch needs to
->>>> go to all the stable kernels.
->>> Needs a "Fixes" and "Cc: stable@vger.kernel.org"?
->> Hmm.. Not sure. Which commit to add Fixes in. This is AMD related.
->> We should have taken care when adding support to AMD. Does this commit make sense?
+
+On 10/8/25 4:43 PM, Peter Zijlstra wrote:
+> On Wed, Oct 08, 2025 at 03:47:16PM +0530, Shrikanth Hegde wrote:
 >>
->> Fixes: 4d05bf71f157d ("x86/resctrl: Introduce AMD QOS feature")
-> This seems fair. From what I can tell this spans all LTS kernels so I expect
-> a couple of different variants of this fix since this code has evolved quite a lot.
-> Do you want this fix backported to all the LTS kernels?
-> It may be useful to add a note to the stable team that this patch needs changes to
-> apply to all kernel versions (see "Point out known problems"
-> in Documentation/process/stable-kernel-rules.rst)
+>>
+>> On 10/8/25 3:20 PM, Peter Zijlstra wrote:
+>>> On Wed, Oct 08, 2025 at 07:41:10AM +0530, Venkat Rao Bagalkote wrote:
+>>>> Greetings!!!
+>>>>
+>>>>
+>>>> IBM CI has reported a kernel warnings while running CPU hot plug operation
+>>>> on IBM Power9 system.
+>>>>
+>>>>
+>>>> Command to reproduce the issue:
+>>>>
+>>>> drmgr -c cpu -r -q 1
+>>>>
 
-Sure. Sending v2 will all the updates.
+> 
+> I do not know what drmgr is. I am not familiar with PowerPC tools.
+> AFAICT x86 never modifies cpu_present_mask after boot.
+> 
 
--- 
-Thanks
-Babu Moger
+It is a tool which allows dynamic addition of cpu/memory. It does indeed changes the present cpus.
+Even i am not profound with it :)
 
+>> maybe during drmgr, the dl server gets started again? Maybe that's why above patch it didn't work.
+>> Will see and understand this bit more.
+> 
+> dl_server is per cpu and is started on enqueue of a fair task when:
+> 
+>    - the runqueue was empty; and
+>    - the dl_server wasn't already active
+> 
+> Once the dl_server is active it has this timer (you already found this),
+> this timer is set for the 0-laxity moment (the last possible moment in
+> time where it can still run its budget and not be late), during this
+> time any fair runtime is accounted against it budget (subtracted from).
+> 
+> Once the timer fires and it still has budget left; it will enqueue the
+> deadline entity. However the more common case is that its budget will be
+> depleted, in which case the timer is reset to its period end for
+> replenish (where it gets new runtime budget), after which its back to
+> the 0-laxity.
+> 
+> If the deadline entity gets scheduled, it will try and pick a fair task
+> and run that. In the case where there is no fair task, it will
+> deactivate itself.
+
+ok cool.
+
+> 
+> The patch I sent earlier would force stop the deadline timer on CPU
+> offline.
+> 
+> 
+>> Also, i tried this below diff which fixes it. Just ignore the hrtimer if the cpu is offline.
+>> Does this makes sense?
+>> ---
+>>
+>> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+>> index 615411a0a881..a342cf5e4624 100644
+>> --- a/kernel/sched/deadline.c
+>> +++ b/kernel/sched/deadline.c
+>> @@ -1160,6 +1160,9 @@ static enum hrtimer_restart dl_server_timer(struct hrtimer *timer, struct sched_
+>>   	scoped_guard (rq_lock, rq) {
+>>   		struct rq_flags *rf = &scope.rf;
+>> +		if (!cpu_online(rq->cpu))
+>> +			return HRTIMER_NORESTART;
+>> +
+>>   		if (!dl_se->dl_throttled || !dl_se->dl_runtime)
+>>   			return HRTIMER_NORESTART;
+> 
+> This could leave the dl_server in inconsistent state. It would have to
+> call dl_server_stop() or something along those lines.
+> 
+> Also, this really should not happen; per my previous patch we should be
+> stopping the timer when we go offline.
+> 
+> Since you can readily reproduce this; perhaps you could stick something
+> like this in dl_server_start():
+> 
+> 	WARN_ON_ONCE(!cpu_online(rq->cpu))
+> 
+> See if anybody is (re)starting the thing ?
+
+So i did use this diff to get who is enabling it again, after it was stopped in offline.
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 198d2dd45f59..83e77bbbb6b4 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -8328,6 +8328,8 @@ static inline void sched_set_rq_offline(struct rq *rq, int cpu)
+                 BUG_ON(!cpumask_test_cpu(cpu, rq->rd->span));
+                 set_rq_offline(rq);
+         }
++       dl_server_stop(&rq->fair_server);
++
+         rq_unlock_irqrestore(rq, &rf);
+  }
+  
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index 615411a0a881..5847540bdc18 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -1582,6 +1582,8 @@ void dl_server_start(struct sched_dl_entity *dl_se)
+         if (!dl_server(dl_se) || dl_se->dl_server_active)
+                 return;
+  
++       WARN_ON(!rq->online);
++
+         dl_se->dl_server_active = 1;
+         enqueue_dl_entity(dl_se, ENQUEUE_WAKEUP);
+         if (!dl_task(dl_se->rq->curr) || dl_entity_preempt(dl_se, &rq->curr->dl))
+
+*It pointed to this*
+
+NIP [c0000000001fd798] dl_server_start+0x50/0xd8
+LR [c0000000001d9534] enqueue_task_fair+0x228/0x8ec
+Call Trace:
+[c000006684a579c0] [0000000000000001] 0x1 (unreliable)
+[c000006684a579f0] [c0000000001d9534] enqueue_task_fair+0x228/0x8ec
+[c000006684a57a60] [c0000000001bb344] enqueue_task+0x5c/0x1c8
+[c000006684a57aa0] [c0000000001c5fc0] ttwu_do_activate+0x98/0x2fc
+[c000006684a57af0] [c0000000001c671c] try_to_wake_up+0x2e0/0xa60
+[c000006684a57b80] [c00000000019fb48] kthread_park+0x7c/0xf0
+[c000006684a57bb0] [c00000000015fefc] takedown_cpu+0x60/0x194
+[c000006684a57c00] [c000000000161924] cpuhp_invoke_callback+0x1f4/0x9a4
+[c000006684a57c90] [c0000000001621a4] __cpuhp_invoke_callback_range+0xd0/0x188
+[c000006684a57d30] [c000000000165aec] _cpu_down+0x19c/0x560
+[c000006684a57df0] [c0000000001637c0] __cpu_down_maps_locked+0x2c/0x3c
+[c000006684a57e10] [c00000000018a100] work_for_cpu_fn+0x38/0x54
+[c000006684a57e40] [c00000000019075c] process_one_work+0x1d8/0x554
+[c000006684a57ef0] [c00000000019165c] worker_thread+0x308/0x46c
+[c000006684a57f90] [c00000000019e474] kthread+0x16c/0x19c
+[c000006684a57fe0] [c00000000000dd58] start_kernel_thread+0x14/0x18
+
+It is takedown_cpu called from CPU0(boot CPU) and it wakes up kthread which is CPU Bound I guess.
+Since happens after rq was marked offline, it ends up starting the deadline server again.
+
+So i think it is sensible idea to stop the deadline server if the cpu is going down.
+Once we stop the server we will return HRTIMER_NORESTART.
+
+This does fix the warning. Does this look any good?
+
+---
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index 615411a0a881..831797b9ec0f 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -1160,11 +1160,14 @@ static enum hrtimer_restart dl_server_timer(struct hrtimer *timer, struct sched_
+         scoped_guard (rq_lock, rq) {
+                 struct rq_flags *rf = &scope.rf;
+  
++               update_rq_clock(rq);
++               if (!cpu_online(rq->cpu))
++                       dl_server_stop(dl_se);
++
+                 if (!dl_se->dl_throttled || !dl_se->dl_runtime)
+                         return HRTIMER_NORESTART;
+  
+                 sched_clock_tick();
+-               update_rq_clock(rq);
+  
+                 if (!dl_se->dl_runtime)
+                         return HRTIMER_NORESTART;
+
+----
+
+Also below check is duplicate. We do the same check above.
+
+if (!dl_se->dl_runtime)
+                         return HRTIMER_NORESTART;
 
