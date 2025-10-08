@@ -1,125 +1,112 @@
-Return-Path: <linux-kernel+bounces-845673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58B99BC5ECB
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:02:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33D2DBC5CFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:45:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2C41420F0B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:44:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD8ED19E49C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F2CB2F7AC1;
-	Wed,  8 Oct 2025 15:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E5B283FCD;
+	Wed,  8 Oct 2025 15:39:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LAsO6lpa"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="d3rIbryL"
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C402F658A
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:37:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385FD2E7F39
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:39:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759937871; cv=none; b=mFMPlDfeOcbgOFAPVkow1Ww8dzG6krAVuh84pHfVVSTo/qg7YzNxTRQGuQvcQIYKiUvK6G7zHokCVt/iM2xKkVwTPIsjeYNZLUUE1eLvUI4QylLhnFW24QY4bAiWWKjOZDliLhU/M0zmCRU4VgOSXd9RH9NVIBjKF7qjKF//9hg=
+	t=1759937980; cv=none; b=KWGiE+jFlc6+UZORuXXl9y7LLtzulyXjrR4yLLHXExGJ8JDJcCkfnb8jN9U+zp0uZYXrqFDOsGsQphACB0moefJqv85zBQ9zdm4p9zXHCkaJT5WZjK2eT7BGh/D9fsBlwpFTRhsgcd7vmZMCItZ3aD7mnJ77q7xsH6ACWN4bPkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759937871; c=relaxed/simple;
-	bh=KlHt5XQeGRsL2MzJqjJiYmZ7o2G1WppR2KYmO/pQOzY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KAri7DuwxdMQO1/rjKDiQkQTeUfc/qhbg2JBQn+6U/vY8jggkOopTtDHuYjXPc45qrBhTeZOmM8b8MN4wiqAnT8ba3G4EAc/bfOKKN5JE1EvDlTiMAekzhmBvMRp4BMmyqMKa+EdSFmd0Koc5aXw3voa0ldGqszO4IZ8lIWhDmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LAsO6lpa; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 598Dmp2Y005709;
-	Wed, 8 Oct 2025 15:37:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=bb9Kcp
-	+SuQkcJvL73IGi/JELHqGZ6mZxoBcn0YJUzaw=; b=LAsO6lpa2vrOBh31GPJgg+
-	QBjHJ1fc2bNbAUJlxmBvWddfV7+M2e3XUHFs9kXh8YCV+F9UtEsMkmrIcHBjSHnX
-	IyOekGDs3qqrm3uRAr3XwOapxA1LuYSwkmxpuW+Vb1xqzWXAZsLMCAqquWoapH0c
-	9rZN9BCMqyFCcyYbyu/MF8JImTtcF8vD808eTA4AFQOY7eSn+CN/oJwjDOppFEIa
-	wc0mugwHhKRXU7TliY/ey5Z73gy9/NoWP28VG0ykIPqM6/UQqoYDT0OyiW+q5dH4
-	MGgM8ak77vjtA0jOiPB8erp72SpiTnoqN35Kb+U20gIzxOhPw2xefPt73qPVO+GQ
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49ju8aw7xt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 Oct 2025 15:37:44 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 598EoDon021221;
-	Wed, 8 Oct 2025 15:37:43 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49kgm1gw9n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 Oct 2025 15:37:43 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 598FbgWG29622968
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 8 Oct 2025 15:37:42 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5851E58066;
-	Wed,  8 Oct 2025 15:37:42 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C90F858058;
-	Wed,  8 Oct 2025 15:37:41 +0000 (GMT)
-Received: from [9.61.26.35] (unknown [9.61.26.35])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  8 Oct 2025 15:37:41 +0000 (GMT)
-Message-ID: <b1f1ae25-4adc-40e1-94e8-ff004c796771@linux.ibm.com>
-Date: Wed, 8 Oct 2025 10:37:41 -0500
+	s=arc-20240116; t=1759937980; c=relaxed/simple;
+	bh=prwSvqu9MGiHjwNKVOTAp54pKuVdWoI9wNc12CjnUiY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c3BigYzzB6zZYd0SR5QvYiukH7Y68oWuYTKijf+0vbZP4JGzf7EqYkUXZBM2IaCUIzAV5ReC9G1MjBSZR+Nc8hNyjvmGZDMmKoETy5Bf9qCp4Dp7FaFJAR4E1EkjI4O+MwH7yXjFy41fJGPu6d2c9vWec7mM79Rgzc5Z+wuigyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=d3rIbryL; arc=none smtp.client-ip=67.231.145.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 598EZSd53817531
+	for <linux-kernel@vger.kernel.org>; Wed, 8 Oct 2025 08:39:37 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=s2048-2025-q2; bh=Y6rX75GCY18R2EPN4PkQ
+	EedkSYgIhsGgAaXv2mMV+ko=; b=d3rIbryLBO69TrQZISYTb/kuP/3DTMD/bANR
+	I20PkNCsVx3ziLSO9CePtsiqQXh9TT8Yjo8Ih3C689fnOLMyqFWcDe31j8bS7urM
+	s1uzgRC7NQK/eRjV3cqhcQeLC1IOrVfskP113f3fFTl4jW0Ej6rJsKA3j+FuO3Le
+	JwaknbgkMyqiqUFbCTmq7PoYAoKdF2rVC6ZzbzrsDHzAhuJ+/VP8aWt22n7MpiRd
+	OLW7S9J0ViRQav5fOhEJNZ6FFuWrQN/gTj+Q8ZrdGpsyZ8ZpFj8lhKAwWXfz513C
+	T7aQIHWs8mEs7qkBigxrMMMcT9a9D5k9px+iwl/MGhMoCbA7Bg==
+Received: from mail.thefacebook.com ([163.114.134.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 49nsut8hwj-4
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:39:37 -0700 (PDT)
+Received: from twshared63906.02.prn5.facebook.com (2620:10d:c085:108::150d) by
+ mail.thefacebook.com (2620:10d:c08b:78::2ac9) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.20; Wed, 8 Oct 2025 15:39:35 +0000
+Received: by devgpu015.cco6.facebook.com (Postfix, from userid 199522)
+	id 67471D6B67F; Wed,  8 Oct 2025 08:39:21 -0700 (PDT)
+Date: Wed, 8 Oct 2025 08:39:21 -0700
+From: Alex Mastro <amastro@fb.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+CC: Alex Williamson <alex.williamson@redhat.com>,
+        Alejandro Jimenez
+	<alejandro.j.jimenez@oracle.com>,
+        <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/3] vfio/type1: sanitize for overflow using
+ check_*_overflow
+Message-ID: <aOaFqZ5cPgeRyoNS@devgpu015.cco6.facebook.com>
+References: <20251007-fix-unmap-v2-0-759bceb9792e@fb.com>
+ <20251007-fix-unmap-v2-1-759bceb9792e@fb.com>
+ <20251008121930.GA3734646@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fsi: occ: Update response size to 8kb
-To: Eddie James <eajames@linux.ibm.com>, linux-fsi@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
-References: <20251008152157.1387182-1-eajames@linux.ibm.com>
-Content-Language: en-US
-From: Ninad Palsule <ninad@linux.ibm.com>
-In-Reply-To: <20251008152157.1387182-1-eajames@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Agm92PdpxzNWuhmIy_ZPUzFHRcnT-8GM
-X-Authority-Analysis: v=2.4 cv=BpiQAIX5 c=1 sm=1 tr=0 ts=68e68548 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VnNF1IyMAAAA:8 a=e1z_xrLAd5A5IXzM0sYA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAyMiBTYWx0ZWRfX8/Rxs8QJC9FA
- 07cbLmFnogy0NXywMJrBVDUBbs9zZ9rrq8Yc3gK1cxU+koN90jy2Ug+wJhydAKa9tKeWLQA/V4/
- m4Wk30EzfNJDu9i+vj28kPS8uGmVWHZjz+fSBi3mzKKOKEEn5K28naifBk7s5plUN7oYokaabqI
- cePTFSXimU4AssjQqzhHAmAcOHz6bKnWf4JbSBipFdeGmM6zRUtgSRJl/cWIshk6qS2PYj0hT0W
- jbhmrDgLzpR7YbWeAnRBojBkSrRvtXnZmcbIMoqrISjCnkfjs2VDr+1rv4JDqOKVPpr0my92qoX
- 2hwLgiT2EjMyi4w6s8Xn3BWYeVoeuw+IwLcMwRRsqbn6GUr7fZpp/o/NeRbXXUH1tl6Er+qsDu2
- 4Jua6iYz5qicOYfCw/NaaCoQosmjFA==
-X-Proofpoint-ORIG-GUID: Agm92PdpxzNWuhmIy_ZPUzFHRcnT-8GM
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251008121930.GA3734646@ziepe.ca>
+X-FB-Internal: Safe
+X-Proofpoint-GUID: YTHQ1vYVyKGDZnIRwZ9lKGHxH19iwLP8
+X-Authority-Analysis: v=2.4 cv=UadciaSN c=1 sm=1 tr=0 ts=68e685b9 cx=c_pps
+ a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=M8q2Z_HFV9kjbA1Vx5EA:9
+ a=CjuIK1q_8ugA:10
+X-Proofpoint-ORIG-GUID: YTHQ1vYVyKGDZnIRwZ9lKGHxH19iwLP8
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDExMCBTYWx0ZWRfX+YbkAwYhLRf+
+ XMJmmT3XBIRuuvHNYgHNEEOs1BIAFRTeqn2u6tqDQgjp26L1gBjEyuqgSP+Ss3pQQlfw30bap0r
+ IDXarwBF03oKsYPJQNlsi1MZJfgdiZkxIEcIwqa9gIBlehGVpAlNciarpnKkdshQhEQRHrVO1KT
+ up8cf1hWplZawrmEz2vr/m1CEUWt/siAcyd1Htz9mPGBC0N2Jtznm9mHMnp1ReMXbXOH42nIhK4
+ 1g4pSaoVcxLPtiPTx33JYrjfWHwH4N8Xk8TtRV+ieN4jRVkLXwjh9kKFL4WafTQpMKs2VlZ3Md5
+ fRyMm4Z/4ld/aa4RjtTG8Ao+iL20H15ckS3DD7FtqYWWBBj4Ko/qWHZ5ZbRFMLGFw0b1DlKKEm3
+ cTf8/0INDLWjpl/30JudXLLgtS8m6w==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-08_05,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 lowpriorityscore=0 priorityscore=1501 malwarescore=0
- suspectscore=0 bulkscore=0 impostorscore=0 adultscore=0 clxscore=1011
- phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
- definitions=main-2510040022
 
-
-
-On 10/8/25 10:21, Eddie James wrote:
-> Newer OCCs return more data.
+On Wed, Oct 08, 2025 at 09:19:30AM -0300, Jason Gunthorpe wrote:
+> On Tue, Oct 07, 2025 at 09:08:46PM -0700, Alex Mastro wrote:
+> > +	if (check_mul_overflow(npage, PAGE_SIZE, &iova_size))
+> > +		return -EINVAL;
 > 
-> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> -EOVERFLOW and everywhere else
+> 
+> > +
+> > +	if (check_add_overflow(user_iova, iova_size - 1, &iova_end))
+> > +		return -EINVAL;
+> 
+> Let's be consistent with iommufd/etc, 'end' is start+size 'last' is start+size-1
+> 
+> Otherwise it is super confusing :(
 
-Reviewed-by: Ninad Palsule <ninad@linux.ibm.com>
 
--- 
-Thanks & Regards,
-Ninad
-
+Both suggestions SGTM.
 
