@@ -1,353 +1,253 @@
-Return-Path: <linux-kernel+bounces-845198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24C43BC3D88
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 10:30:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47CEEBC3D28
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 10:28:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F050B4EB27A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 08:30:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32B68188717A
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 08:29:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0C12EB84C;
-	Wed,  8 Oct 2025 08:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66B62F39AD;
+	Wed,  8 Oct 2025 08:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KncPlkh/"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EPk997O7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC2E2F5A33
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 08:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19CE42ED165
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 08:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759912130; cv=none; b=BktspoHhzivk/maManDzk8deeisVWUjqcwamezizkN16UPvnIDGiwCiTyQ8r6cqAICTRC+2wLLOI60ol0QZDvk4Mjm59i0SL4MSSUPqdN0H3fOjt3BFXdQRLVmxE+xga94rzPiPArgnD7lVqjo71nNK4A20yiID9lK+G96Y/Yqc=
+	t=1759912111; cv=none; b=Db2s6ZVAvd6aD6OoQeAE3pNXmlI9JhgPWdinimpS117lKHJoXG9x1VHyKEAG0j9hcMwz3lsDR51HehyUOqT8Lby4rqGS5ffVuFZbPDgcj0OBaxcif03RrK61slnl7Pn/+BPDT2jnrvBlpK9QwduwfEySFpG9RkZyGbhW+Bcttnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759912130; c=relaxed/simple;
-	bh=N6P5WCCeOnCGwvhnhBBgW52HQgSWp6+PBlz/w8oEUJE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cgdII0sHe4tLs4kWBqRarKC5UTUCJ0SQTzlkc3OzchE/MvjP+95vPI9SV0faCh6YnFwCpI8kpecjhpU2wkU1zZa6uTOv5rtIu2WZkxgEluOrqBOxcTiuKLi9oS6uIEGrB4T5mCNJT3e7oukUp2wNDuszgNxQZ2UbK5DIAYufgv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KncPlkh/; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-57ea78e0618so8165281e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 01:28:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759912126; x=1760516926; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tanbjVQInwNXwsuRUHW57vdooILwUCkscqmzWBh825c=;
-        b=KncPlkh/eWlqrqwxOp7FD619Bnw6U8tue4Rx3v+3ReNMDdFSsFGg3NAiVnozienmju
-         t3bi9HDTCxX+NZ/jrJSMSwwMoCTyR94xnctflo+6zdtlgShvWp7iYl/XEFWnw/fPD2WB
-         S1zmfUjufVpUEW9fpWThhDyrknpxIkjpSjDEBMdvLij6yaHIor9pdzZQqs3bPCQiRDRm
-         ne7hPCpGcVI0C7aTKMsTDUq0RwCq4hXgAAVdtBz2sDbHWuge/J0yCqr7U3jKxBCZLotl
-         NKjP64rOiGfIOGDNiEG1rTGI1RW9dEUSTgEhFwBTHBGbjbQvHyai9VGOWQkHTkyXS74T
-         v15w==
+	s=arc-20240116; t=1759912111; c=relaxed/simple;
+	bh=uPuRT0rKbd169LhyOP8vq0tnZqYlljfoH1xigVhCgk8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=moCPcxG3qV2Oicz5gblRmkfkJ4sXFC902LfN0wtGZySQYkg2lJjiY9DV9gV78XWR2nI9GTGRRWSOkL45LHbegd339LKuWGRde78bdm8z08YOYMAln5MYMO+OUPtpLiUh508fX48hPIb8KDh5UsFE5pmiP3WHDwzo2XKIIf7gg40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EPk997O7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759912109;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lgA+tVTVFPOH/IagYGfwbQiNMHCdePGaYyMYs/mQ1ng=;
+	b=EPk997O7nCMh+yVZrQE/4MGvg8f7vAcNP9N/Rm3PgJWwlALA3G9yVGKcgo6DvmOGEyN5ys
+	8e0RRUxA3YBd2M0xWxsNfbNstZPctYZQvsHl1f+vpsP5BCfxABBm7uFADFS2OwZCfZ6xem
+	Llm3SeSms3T+EavAra2jT5xnZcPWwnY=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-378-ku3RnGR5OG-S7pCHPyVgrQ-1; Wed, 08 Oct 2025 04:28:27 -0400
+X-MC-Unique: ku3RnGR5OG-S7pCHPyVgrQ-1
+X-Mimecast-MFC-AGG-ID: ku3RnGR5OG-S7pCHPyVgrQ_1759912106
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-42558f501adso3129758f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 01:28:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759912126; x=1760516926;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tanbjVQInwNXwsuRUHW57vdooILwUCkscqmzWBh825c=;
-        b=FQ0ajywBoU3d2DM9C06MBF0f4mCAOfHoU3lSa36YBkD5bzY6BcdIa72vGrrT+T8E0K
-         spzShGFbJ67fwkvTHQBg+rwIa9i7pvb+LoNh24kzTINn8ZTEg+HbecNSI1VfC/gJbfnV
-         eP7XMkMM3DSbzT/AAwIXL7KazwKwR1FZkCyzHZ1+W5zrFYpDYI2ZQz7XZbFOEfD3Mhu0
-         axEH96i5tf1HKnr12OPo+WT0MiuEgLM5uYOy07UkQYKLlqodo0j1xHwxl/f1ZgJI7F6h
-         3ZL1v3LvjczgmqHYatjGHXg9eLYOoQhU1KJyUNIDLUHPPgN/2uvFCEnYKNmKu5z/MPsW
-         iSrg==
-X-Forwarded-Encrypted: i=1; AJvYcCUBxXux/BmDzJ3FUJXtYYmDlJR546sV5A/JrLT0C61aa1ida9ei/JJhoOafkIejHs1IAyN9DucxnGAX8Jo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzC8PI/4Lb+HFbvCaOlGTvaK9yRz4cmndrCI4h3zrQ5BVWlSVLP
-	AbBBT7CEMtpNzv4LmT+8WC6kUC0d53VKgT8NPOqboZbHxCo7ypihiQDq
-X-Gm-Gg: ASbGncs6ga31QvMNcd1fRMjCOYcxr/NE8/VzhULl2h0HG7hGv98xe0JVy1qZO55KzxY
-	vTTIHJQc4BhUugFkTBLd9GLsKSq4QDfGjNOqgOZeH8SuQBpg17XLObbFPo+/jDVew8Z3b7+0TXq
-	R9++azAQCr8q4nZPgd6/aTuENiN2QL0JbodE/4re/uq8pmQHwTdYeiZ/gj8zsazApYIniAL6Dnd
-	lfLMg1U+SY64cVJ6E31WIab5wwX6DwBynH/PGvSpefM/Mr2zXX4+KQV+rMxnwKidAPYcrPpAe7C
-	LDNf/Ax2nhViot2VdA7YaE4/lb1I37rVV3QvW3/zWpqH2kIqiV9dUXNpHvt6ea7T+dZS28FW6dL
-	KlZenj4PqOdzh8Ytr2rSrRP/BbBx9TJE06UvnFQ==
-X-Google-Smtp-Source: AGHT+IFYhOHXvIB/IXogSLQnW12fzbq9+hzW5B7qM2oJqmmRUlMRmtAdj2WVYS7TUc170eZQ+0D9cw==
-X-Received: by 2002:ac2:5685:0:b0:58a:fa11:b7a1 with SMTP id 2adb3069b0e04-5906dc16d75mr761505e87.24.1759912125752;
-        Wed, 08 Oct 2025 01:28:45 -0700 (PDT)
-Received: from xeon.. ([188.163.112.70])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b01124649sm6968733e87.15.2025.10.08.01.28.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 01:28:45 -0700 (PDT)
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Douglas Anderson <dianders@chromium.org>,
-	Svyatoslav Ryhel <clamor95@gmail.com>,
-	Sam Ravnborg <sam@ravnborg.org>
-Cc: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH v2 7/7] gpu/drm: panel: add Samsung LTL106HL02 MIPI DSI panel driver
-Date: Wed,  8 Oct 2025 11:27:59 +0300
-Message-ID: <20251008082800.67718-8-clamor95@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20251008082800.67718-1-clamor95@gmail.com>
-References: <20251008082800.67718-1-clamor95@gmail.com>
+        d=1e100.net; s=20230601; t=1759912106; x=1760516906;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lgA+tVTVFPOH/IagYGfwbQiNMHCdePGaYyMYs/mQ1ng=;
+        b=f6uJT0vIduhdGI4q7cxLjhMKOctRRbPdMqqpD/cmjy1aRrQ5AKK6Mq/MeW8MIRWBCb
+         eA3YkV3YMqrvtYn50V/WDYrYIrrzwcPXL9S/fs4QcOykZCKCyilj7/3RPPmumUIkxzlG
+         dvBP6dhwAu7md+hyuQH51F6tCZzEOe9GnLeZEaw/+LkInDpK1XoWVxeoeBsKzRPAgw6n
+         okWOwRiLlpi4CZQLREh4MO9h7Um7Bs3fO0vzFbkCNi09PIo1dXDARO5r/ndPadTD3HRn
+         1g74iahumZxATpaCy/djDe7QaOVr3g0c8rHnueAg3qwZpOipyb9gMuBUz8sSDEvBBVXH
+         4M/w==
+X-Forwarded-Encrypted: i=1; AJvYcCWHPbtzR1svh5SheyUdZ3wyU6h9NPzqCx+B6VOi/PHDjbPnzDgWxvE4llMFv8NlaOd0bnax0YExABxRSxU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmuQ9S8VCzCgaCZJlYbMYV1agf9UanuGiANouxyor6x0LRIGEN
+	7QTbC4zFLBPheUij+hEsORtNma6gDlzkQRBSY8ke8SBv7kEoNObbQqTppaLmnTBX/zsDtO7vL8Q
+	T4LocwBFD/kQmaktqy7ePGV+d11kB96z/MMB6OeSt96IMEidt/j/YXSAWajbgNCtdBw==
+X-Gm-Gg: ASbGncs+3mPsq/sJQt5xpr9mySaLMvoXI1kdOXvBESHrhLmV0MHAxDjGfKsDc5wocKC
+	7gvWBcTsFhMpQMlBIlYP9UXbmyaKrW9acwNjyKz9etAp+suF2QBpxAX3d+FbEq75r/KJE596IRZ
+	tPKfQDWV+G5QU141QCBJt+J4jj2pngd7bYvss5hRqfWtLauoHFA9tID+lrRQBL0rZynRUcrrEW9
+	o6Vs8y7md7GiGA8OyEEAD3EgTUkDGPNhH4IlkfNn2S/JwqZ/Xz3YrmTFampg/PWev7pU6Wt8NqT
+	TWX+FKvCJFACmisShVPS3P1TVqDxKyKGryqEYdrX9Q24PnSIA3kJ+ZkyKdUt4S+ieQKyCCgvLAA
+	8jGi33EkI
+X-Received: by 2002:a05:6000:1ac8:b0:3ee:1118:df81 with SMTP id ffacd0b85a97d-42666abb532mr1522621f8f.13.1759912106363;
+        Wed, 08 Oct 2025 01:28:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEU7A/ilDozaFzXNrA4EK/JkMpcDnq8RVYdbBoUgVDvboLxb5QtC0kI8nRYuU9+KmgVx5jgmw==
+X-Received: by 2002:a05:6000:1ac8:b0:3ee:1118:df81 with SMTP id ffacd0b85a97d-42666abb532mr1522597f8f.13.1759912105942;
+        Wed, 08 Oct 2025 01:28:25 -0700 (PDT)
+Received: from [192.168.3.141] (tmo-083-110.customers.d1-online.com. [80.187.83.110])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f0853sm29247216f8f.50.2025.10.08.01.28.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Oct 2025 01:28:25 -0700 (PDT)
+Message-ID: <7723a2c7-3750-44f7-9eb5-4ef64b64fbb8@redhat.com>
+Date: Wed, 8 Oct 2025 10:28:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 mm-new 03/11] mm: thp: add support for BPF based THP
+ order selection
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>, ziy@nvidia.com,
+ baolin.wang@linux.alibaba.com, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Liam Howlett <Liam.Howlett@oracle.com>, npache@redhat.com,
+ ryan.roberts@arm.com, dev.jain@arm.com, Johannes Weiner
+ <hannes@cmpxchg.org>, usamaarif642@gmail.com,
+ gutierrez.asier@huawei-partners.com, Matthew Wilcox <willy@infradead.org>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Amery Hung <ameryhung@gmail.com>,
+ David Rientjes <rientjes@google.com>, Jonathan Corbet <corbet@lwn.net>,
+ 21cnbao@gmail.com, Shakeel Butt <shakeel.butt@linux.dev>,
+ Tejun Heo <tj@kernel.org>, lance.yang@linux.dev,
+ Randy Dunlap <rdunlap@infradead.org>, bpf <bpf@vger.kernel.org>,
+ linux-mm <linux-mm@kvack.org>,
+ "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>
+References: <20250930055826.9810-1-laoar.shao@gmail.com>
+ <20250930055826.9810-4-laoar.shao@gmail.com>
+ <CAADnVQJtrJZOCWZKH498GBA8M0mYVztApk54mOEejs8Wr3nSiw@mail.gmail.com>
+ <27e002e3-b39f-40f9-b095-52da0fbd0fc7@redhat.com>
+ <CALOAHbBFNNXHdzp1zNuD530r9ZjpQF__wGWyAdR7oDLvemYSMw@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <CALOAHbBFNNXHdzp1zNuD530r9ZjpQF__wGWyAdR7oDLvemYSMw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Anton Bambura <jenneron@protonmail.com>
+On 08.10.25 10:18, Yafang Shao wrote:
+> On Wed, Oct 8, 2025 at 4:08 PM David Hildenbrand <david@redhat.com> wrote:
+>>
+>> On 03.10.25 04:18, Alexei Starovoitov wrote:
+>>> On Mon, Sep 29, 2025 at 10:59 PM Yafang Shao <laoar.shao@gmail.com> wrote:
+>>>>
+>>>> +unsigned long bpf_hook_thp_get_orders(struct vm_area_struct *vma,
+>>>> +                                     enum tva_type type,
+>>>> +                                     unsigned long orders)
+>>>> +{
+>>>> +       thp_order_fn_t *bpf_hook_thp_get_order;
+>>>> +       int bpf_order;
+>>>> +
+>>>> +       /* No BPF program is attached */
+>>>> +       if (!test_bit(TRANSPARENT_HUGEPAGE_BPF_ATTACHED,
+>>>> +                     &transparent_hugepage_flags))
+>>>> +               return orders;
+>>>> +
+>>>> +       rcu_read_lock();
+>>>> +       bpf_hook_thp_get_order = rcu_dereference(bpf_thp.thp_get_order);
+>>>> +       if (WARN_ON_ONCE(!bpf_hook_thp_get_order))
+>>>> +               goto out;
+>>>> +
+>>>> +       bpf_order = bpf_hook_thp_get_order(vma, type, orders);
+>>>> +       orders &= BIT(bpf_order);
+>>>> +
+>>>> +out:
+>>>> +       rcu_read_unlock();
+>>>> +       return orders;
+>>>> +}
+>>>
+>>> I thought I explained it earlier.
+>>> Nack to a single global prog approach.
+>>
+>> I agree. We should have the option to either specify a policy globally,
+>> or more refined for cgroups/processes.
+>>
+>> It's an interesting question if a program would ever want to ship its
+>> own policy: I can see use cases for that.
+>>
+>> So I agree that we should make it more flexible right from the start.
+> 
+> To achieve per-process granularity, the struct-ops must be embedded
+> within the mm_struct as follows:
+> 
+> +#ifdef CONFIG_BPF_MM
+> +struct bpf_mm_ops {
+> +#ifdef CONFIG_BPF_THP
+> +       struct bpf_thp_ops bpf_thp;
+> +#endif
+> +};
+> +#endif
+> +
+>   /*
+>    * Opaque type representing current mm_struct flag state. Must be accessed via
+>    * mm_flags_xxx() helper functions.
+> @@ -1268,6 +1281,10 @@ struct mm_struct {
+>   #ifdef CONFIG_MM_ID
+>                  mm_id_t mm_id;
+>   #endif /* CONFIG_MM_ID */
+> +
+> +#ifdef CONFIG_BPF_MM
+> +               struct bpf_mm_ops bpf_mm;
+> +#endif
+>          } __randomize_layout;
+> 
+> We should be aware that this will involve extensive changes in mm/.
 
-LTL106HL02 is a color active matrix TFT (Thin Film Transistor) liquid
-crystal display (LCD) that uses amorphous silicon TFT as switching
-devices. This model is composed of a TFT LCD panel, a driver circuit and a
-backlight unit. The resolution of a 10.6" contains 1920 x 1080 pixels and
-can display up to 16,8M color with wide viewing angle.
+That's what we do on linux-mm :)
 
-Signed-off-by: Jonas Schwöbel <jonasschwoebel@yahoo.de>
-Signed-off-by: Anton Bambura <jenneron@protonmail.com>
-Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
----
- drivers/gpu/drm/panel/Kconfig                 |  13 ++
- drivers/gpu/drm/panel/Makefile                |   1 +
- .../gpu/drm/panel/panel-samsung-ltl106hl02.c  | 179 ++++++++++++++++++
- 3 files changed, 193 insertions(+)
- create mode 100644 drivers/gpu/drm/panel/panel-samsung-ltl106hl02.c
+It would be great to use Alexei's feedback/experience to come up with 
+something that is flexible for various use cases.
 
-diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-index cf6174da5105..cafd1a75956f 100644
---- a/drivers/gpu/drm/panel/Kconfig
-+++ b/drivers/gpu/drm/panel/Kconfig
-@@ -781,6 +781,19 @@ config DRM_PANEL_SAMSUNG_LD9040
- 	depends on BACKLIGHT_CLASS_DEVICE
- 	select VIDEOMODE_HELPERS
- 
-+config DRM_PANEL_SAMSUNG_LTL106HL02
-+	tristate "Samsung LTL106HL02 panel"
-+	depends on OF
-+	depends on DRM_MIPI_DSI
-+	depends on BACKLIGHT_CLASS_DEVICE
-+	select VIDEOMODE_HELPERS
-+	help
-+	  Say Y here if you want to enable support for the Samsung LTL106HL02
-+	  panel driver which is used in Microsoft Surface 2.
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called panel-samsung-ltl106hl02.
-+
- config DRM_PANEL_SAMSUNG_S6E3FA7
- 	tristate "Samsung S6E3FA7 panel driver"
- 	depends on OF
-diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
-index 9281221183ac..a87ae98362bd 100644
---- a/drivers/gpu/drm/panel/Makefile
-+++ b/drivers/gpu/drm/panel/Makefile
-@@ -76,6 +76,7 @@ obj-$(CONFIG_DRM_PANEL_SAMSUNG_AMS639RQ08) += panel-samsung-ams639rq08.o
- obj-$(CONFIG_DRM_PANEL_SAMSUNG_ATNA33XC20) += panel-samsung-atna33xc20.o
- obj-$(CONFIG_DRM_PANEL_SAMSUNG_DB7430) += panel-samsung-db7430.o
- obj-$(CONFIG_DRM_PANEL_SAMSUNG_LD9040) += panel-samsung-ld9040.o
-+obj-$(CONFIG_DRM_PANEL_SAMSUNG_LTL106HL02) += panel-samsung-ltl106hl02.o
- obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6D16D0) += panel-samsung-s6d16d0.o
- obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6D27A1) += panel-samsung-s6d27a1.o
- obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6D7AA0) += panel-samsung-s6d7aa0.o
-diff --git a/drivers/gpu/drm/panel/panel-samsung-ltl106hl02.c b/drivers/gpu/drm/panel/panel-samsung-ltl106hl02.c
-new file mode 100644
-index 000000000000..1618841b7caa
---- /dev/null
-+++ b/drivers/gpu/drm/panel/panel-samsung-ltl106hl02.c
-@@ -0,0 +1,179 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include <linux/array_size.h>
-+#include <linux/delay.h>
-+#include <linux/err.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/property.h>
-+#include <linux/regulator/consumer.h>
-+
-+#include <video/mipi_display.h>
-+
-+#include <drm/drm_mipi_dsi.h>
-+#include <drm/drm_modes.h>
-+#include <drm/drm_panel.h>
-+#include <drm/drm_probe_helper.h>
-+
-+struct samsung_ltl106hl02 {
-+	struct drm_panel panel;
-+	struct mipi_dsi_device *dsi;
-+
-+	struct regulator *supply;
-+	struct gpio_desc *reset_gpio;
-+};
-+
-+static inline struct samsung_ltl106hl02 *to_samsung_ltl106hl02(struct drm_panel *panel)
-+{
-+	return container_of(panel, struct samsung_ltl106hl02, panel);
-+}
-+
-+static void samsung_ltl106hl02_reset(struct samsung_ltl106hl02 *ctx)
-+{
-+	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
-+	usleep_range(10000, 11000);
-+	gpiod_set_value_cansleep(ctx->reset_gpio, 0);
-+	usleep_range(2000, 3000);
-+}
-+
-+static int samsung_ltl106hl02_prepare(struct drm_panel *panel)
-+{
-+	struct samsung_ltl106hl02 *ctx = to_samsung_ltl106hl02(panel);
-+	struct mipi_dsi_multi_context dsi_ctx = { .dsi = ctx->dsi };
-+	struct device *dev = &ctx->dsi->dev;
-+	int ret;
-+
-+	ret = regulator_enable(ctx->supply);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to enable power supply %d\n", ret);
-+		return ret;
-+	}
-+
-+	if (ctx->reset_gpio)
-+		samsung_ltl106hl02_reset(ctx);
-+
-+	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
-+	mipi_dsi_msleep(&dsi_ctx, 70);
-+
-+	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
-+	mipi_dsi_msleep(&dsi_ctx, 5);
-+
-+	return dsi_ctx.accum_err;
-+}
-+
-+static int samsung_ltl106hl02_unprepare(struct drm_panel *panel)
-+{
-+	struct samsung_ltl106hl02 *ctx = to_samsung_ltl106hl02(panel);
-+	struct mipi_dsi_multi_context dsi_ctx = { .dsi = ctx->dsi };
-+
-+	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
-+	mipi_dsi_msleep(&dsi_ctx, 50);
-+	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
-+	mipi_dsi_msleep(&dsi_ctx, 150);
-+
-+	if (ctx->reset_gpio)
-+		gpiod_set_value_cansleep(ctx->reset_gpio, 1);
-+
-+	regulator_disable(ctx->supply);
-+
-+	return 0;
-+}
-+
-+static const struct drm_display_mode samsung_ltl106hl02_mode = {
-+	.clock = (1920 + 32 + 32 + 64) * (1080 + 6 + 3 + 22) * 60 / 1000,
-+	.hdisplay = 1920,
-+	.hsync_start = 1920 + 32,
-+	.hsync_end = 1920 + 32 + 32,
-+	.htotal = 1920 + 32 + 32 + 64,
-+	.vdisplay = 1080,
-+	.vsync_start = 1080 + 6,
-+	.vsync_end = 1080 + 6 + 3,
-+	.vtotal = 1080 + 6 + 3 + 22,
-+	.width_mm = 235,
-+	.height_mm = 132,
-+	.type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED,
-+};
-+
-+static int samsung_ltl106hl02_get_modes(struct drm_panel *panel,
-+					struct drm_connector *connector)
-+{
-+	return drm_connector_helper_get_modes_fixed(connector, &samsung_ltl106hl02_mode);
-+}
-+
-+static const struct drm_panel_funcs samsung_ltl106hl02_panel_funcs = {
-+	.prepare = samsung_ltl106hl02_prepare,
-+	.unprepare = samsung_ltl106hl02_unprepare,
-+	.get_modes = samsung_ltl106hl02_get_modes,
-+};
-+
-+static int samsung_ltl106hl02_probe(struct mipi_dsi_device *dsi)
-+{
-+	struct device *dev = &dsi->dev;
-+	struct samsung_ltl106hl02 *ctx;
-+	int ret;
-+
-+	ctx = devm_drm_panel_alloc(dev, struct samsung_ltl106hl02, panel,
-+				   &samsung_ltl106hl02_panel_funcs,
-+				   DRM_MODE_CONNECTOR_DSI);
-+	if (IS_ERR(ctx))
-+		return PTR_ERR(ctx);
-+
-+	ctx->supply = devm_regulator_get(dev, "power");
-+	if (IS_ERR(ctx->supply))
-+		return dev_err_probe(dev, PTR_ERR(ctx->supply),
-+				     "Failed to get power regulator\n");
-+
-+	ctx->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
-+	if (IS_ERR(ctx->reset_gpio))
-+		return dev_err_probe(dev, PTR_ERR(ctx->reset_gpio),
-+				     "Failed to get reset-gpios\n");
-+
-+	ctx->dsi = dsi;
-+	mipi_dsi_set_drvdata(dsi, ctx);
-+
-+	dsi->lanes = 4;
-+	dsi->format = MIPI_DSI_FMT_RGB888;
-+	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_LPM;
-+
-+	ret = drm_panel_of_backlight(&ctx->panel);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to get backlight\n");
-+
-+	drm_panel_add(&ctx->panel);
-+
-+	ret = devm_mipi_dsi_attach(dev, dsi);
-+	if (ret < 0) {
-+		drm_panel_remove(&ctx->panel);
-+		return dev_err_probe(dev, ret, "Failed to attach to DSI host\n");
-+	}
-+
-+	return 0;
-+}
-+
-+static void samsung_ltl106hl02_remove(struct mipi_dsi_device *dsi)
-+{
-+	struct samsung_ltl106hl02 *ctx = mipi_dsi_get_drvdata(dsi);
-+
-+	drm_panel_remove(&ctx->panel);
-+}
-+
-+static const struct of_device_id samsung_ltl106hl02_of_match[] = {
-+	{ .compatible = "samsung,ltl106hl02-001" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, samsung_ltl106hl02_of_match);
-+
-+static struct mipi_dsi_driver samsung_ltl106hl02_driver = {
-+	.driver = {
-+		.name = "panel-samsung-ltl106hl02",
-+		.of_match_table = samsung_ltl106hl02_of_match,
-+	},
-+	.probe = samsung_ltl106hl02_probe,
-+	.remove = samsung_ltl106hl02_remove,
-+};
-+module_mipi_dsi_driver(samsung_ltl106hl02_driver);
-+
-+MODULE_AUTHOR("Anton Bambura <jenneron@protonmail.com>");
-+MODULE_DESCRIPTION("DRM driver for Samsung LTL106HL02 video mode DSI panel");
-+MODULE_LICENSE("GPL");
+So I think this is likely the right direction.
+
+It would be great to evaluate which scenarios we could unlock with this 
+(global vs. per-process vs. per-cgroup) approach, and how 
+extensive/involved the changes will be.
+
+If we need a slot in the bi-weekly mm alignment session to brainstorm, 
+we can ask Dave R. for one in the upcoming weeks.
+
 -- 
-2.48.1
+Cheers
+
+David / dhildenb
 
 
