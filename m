@@ -1,139 +1,167 @@
-Return-Path: <linux-kernel+bounces-845495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8842BC527B
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:14:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6433DBC5281
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:15:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 665B64E3FFD
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:14:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E8EF84EDD18
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7527F27B358;
-	Wed,  8 Oct 2025 13:14:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECED128315A;
+	Wed,  8 Oct 2025 13:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QLpWyrZT"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZIfpuXSL"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3838225397
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 13:14:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F651A23BE
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 13:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759929269; cv=none; b=R4He2Mr611Yf+OitfRZ5uXX5VW2HLFULWtHKg9RZVe+kWy1ghuLoKjqvdDGi/Feb53MVIbQk89B1rSqMZYPI7cvKGujKA84cr0N3M0YrBhbBRYue1A2hCKv4F31GWhMj27FpOxB/uEKK+hh7LxPcaq348nqBOFBeylh9sFoqbNE=
+	t=1759929316; cv=none; b=NM1YDpBaH1ir1pHPe1SWfUUeqthIroWFDfIbtADgBuuyTmhIMCp0TaXaolNj/pNQEubQDVdZpTt4cAZ1B7g2qGo9M1Zqxfroh/PTsnw3YzLUXUjxGsv+u5VHATC5HQTiWBClohmwEeBl242eQAZ5oHege0mLp1xeztaccAmLXUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759929269; c=relaxed/simple;
-	bh=PdWVBBkA52sDRjTk2ne2LFVnrggwsvKZ1JT2sYuDyk8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UycGvKI1G1PiW/rhgyQlwG4xr5NNeMqHyhwYQZi67CzWlzqdkH1iTddZUWc3MzeuRSwpd8PvXeLmYnCrH9McftNJliU0ng4NPFfAtLlCHPJ+hJg0WAf4a5tSq/KPya0rkxvtg3vBU+LF7XgXkyehKagHGVYCvTTw/u6rMdEKKOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QLpWyrZT; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b3b3a6f4dd4so1369015666b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 06:14:27 -0700 (PDT)
+	s=arc-20240116; t=1759929316; c=relaxed/simple;
+	bh=CKys8xJDsixk4GZcRnoL31wC6RicgzU4/uO8xbMBzzA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=rYb6tn2JxvEu+7Krq8zzJbHSqeuX371GSDSiMIfTQXbJ7swk+hXMJVHxwPRGKeMQ6dqwFR5CmDTD1RCB0XU7wc2Ot8LzUkPMhNSeUrUPfh+pm4qOUoE4LfnoRJLRB4SfmlbjuihnV9Tl+vE7Af4d7a1UXGDxxJqbqtvYqP3JSGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZIfpuXSL; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-46e473e577eso39229785e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 06:15:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1759929266; x=1760534066; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NaY2N0oDvWpK7NE8eBCGe3YYI68gQsJWyCuxusejoXI=;
-        b=QLpWyrZTHL5c947snWdjtu3GvvqNZIAC2D3oheBS0vSUh1DhzdAtoLDS0/XrgkLn9M
-         vdLh9UTxWnZqeeljjN6AS4woZc4oawFIzWFfzxsIkbW8YayMMpaPWJ9POerruDGLgyi6
-         IeZ/RIMJKhCI9LzVPMdS8M1wAXx+RicwtdwxApNyr/VLLv9ObyXH1uN3c9IfCJoeEtan
-         aZeVckpwkrcTChyYVvoSB25hgTzAGcAMg9UEI+0Oct5oNtUq8gp1+iBvduXHYvM5mpR0
-         v40NhTlnuRSz3KcXRY39HKruoG19uTXMokiKl6s0Kel8bbnoXdEEnAR+WnUL0cL41rBz
-         R06A==
+        d=google.com; s=20230601; t=1759929313; x=1760534113; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3GMh8gF1Uu4hd329Ty2DF0Ok3lYIutJuQKHJlpedSPk=;
+        b=ZIfpuXSLr3xdcpb5YfJg5fSuh09LvdzmtOEF3aTDyXSAxM/rOO2Of7onvS3VH4EH60
+         q5aJRjEsJ17CIocEu0jsjJwXU5DmeHeWVsD8Hn/XaIGFGFOg7gw/QILQdMbNsMWU968E
+         Nfy8n+OH2JkoZnCbC2zKSd37uwWsqYeUnI0KMkMazlQbCS2yRKAmKuxNjN3E8p3HQJGE
+         ykwq7mvj5mwErIjwbo5QPyoXiwI1snZsAJPlTVKXepf0ru0tXBqlkJA3i33VnxV+lFl6
+         ybgXnw7d9mdeXO149uqsVWRp+X5Ln9gI+DwAQrsyfqPxa2u5rbh4KqhSsoOvNrk1CmBu
+         MY3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759929266; x=1760534066;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NaY2N0oDvWpK7NE8eBCGe3YYI68gQsJWyCuxusejoXI=;
-        b=JYormBKwEpSvIFHL5NCKwj24Mt+F4ha4d2QAYDBs8xg92eD09bJ9GolC4eOBbO0JS/
-         VIQOOzYZx367tVLYXejYe52PT9oktqqexPpqiO+vUgR/5j4f0C0yPBJGljUU6rJTIQUa
-         UKm/vSoO3v+eek3nUWqbycoqSTZKV10Uh2Ep0iaZ3LzTjPYrZm7nVOemwuRmexj+GqKD
-         COPcs0wHiFjF/JtURp8WGIfkLMthJ9agdKFqhJhAjw7/rAuwZ9QhS6PO33HuteJnx+Gj
-         uvmXXlP9x5LoGL5rPdOKK+lLKT+CZFQi5iec8E6WaQxzfWEqmCaEA+QHO6nGpXbU5acC
-         idzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXO3yOmJhBEXRg/LLdcXwdvBxt4/lfKCUHkDxySFiMdMFX4OpsxKXPblqD0RRlupDL542mh4df34QOuEQg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3CifwXHCWYzyRoYrPT/W9QAar0B9qP68t/nV8q7Te2b7TCfcR
-	IL5wfINphc2Krh0TMjqeYxHaB4Iyg3+VPSQ8VMKZKSBAdIIUJm7ZP/is/ilQyNIUrWE=
-X-Gm-Gg: ASbGncudnNZIxHAIgfhzSmKbhYKblMoSDaJdALfvo/jURwSegAF5dbG0GE6DXUhzqcY
-	IwU2WcHXRlD9h/WHbTYHPwDC6i2Isyi306JWedAJVNxwEtKmWiJdTkWXkZEL6yuu+i5PQR7f19J
-	EeJhJYRZiQcmop8gbdGUm3X9s7vNbCt4I035+R+mTPFYYOGXxX6NVUTQc7KsOvCiT2XHZLmIjx7
-	jyQpG01sigIPS48odJ9JgTsfkMg4Kn2RGwY7s52EGuvsrdMkStqvGcPg3e1WTO4qUhi/ACwIQ7Z
-	poH9ierJDWNlUwnWOKlcvitoAWqd7gOXi3/9GB0nOVWF8XlwE4h//aEvyr1rDlMGm2fIsNTahpi
-	r8egd0iK5VMKjPGMkcjmOlKCrEPz1TvGKDrfXpX0xXrb0O4gQkoaySSJ6p5dJCtqZ
-X-Google-Smtp-Source: AGHT+IHcDTahBvSA9DjGwetRnV64ZXy70/FjjTjnrQed/ev3/o4UscoPNE9s2/VK++lhFIcpnHrsRw==
-X-Received: by 2002:a17:907:7e82:b0:b41:c892:2c6e with SMTP id a640c23a62f3a-b50ac7e6c8emr393155566b.43.1759929266063;
-        Wed, 08 Oct 2025 06:14:26 -0700 (PDT)
-Received: from pathway.suse.cz (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b486970b315sm1660759166b.64.2025.10.08.06.14.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 06:14:25 -0700 (PDT)
-Date: Wed, 8 Oct 2025 15:14:23 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Lukas Hruska <lhruska@suse.cz>
-Cc: mbenes@suse.cz, jpoimboe@kernel.org, joe.lawrence@redhat.com,
-	live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, mpdesouza@suse.com,
-	Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [PATCH v3 3/6] kbuild/modpost: integrate klp-convert
-Message-ID: <aOZjr7YTSrT-BznV@pathway.suse.cz>
-References: <20240827123052.9002-1-lhruska@suse.cz>
- <20240827123052.9002-4-lhruska@suse.cz>
+        d=1e100.net; s=20230601; t=1759929313; x=1760534113;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3GMh8gF1Uu4hd329Ty2DF0Ok3lYIutJuQKHJlpedSPk=;
+        b=pQ9+RVqHr3BJ0Sw8Gw+PQ0g3CTXrsIh9Igt6Ov0m8B+spUGqNRXl4cne67gMYZx3v9
+         GsWWJACiZsevG+G08nlrwrZqW6NxB7vqv/nnvZGkGjCUgsNmUxp/l0QSCQomduunpsW9
+         F3GTtsSW+NIVqXxbWYITicKA91KK2+KxXdY/TjSbURWpKcNT1whGplTbT9V82Ryq261B
+         v5Xm+03kps3vJzQmlwLFZZ+F6JnspUPumDhOHkcgFXtg/3gt9gUpceql9jahb2h0PSkb
+         QAm8+XxYSsMszf4YOTbg+LQxoBZFAIPTV/MM4roXJzyrmjgYxEAZtPARdjcCxvbU2TFr
+         24Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCWop2CWSRz3Q0zr5iWwXIyD8d8D42rjxN1HsPlSyibNjzu/mmhjbrpwourjDhvKphi4XKK7Yza1ipQup6Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc325qfHXpThAouu/jYmibbszP1QA7pg6VNdoWXjjxRHNAESMx
+	dkYQivSS3/6QQW3+e975gOjNsj3tIHg2GmLG8A8IntguSkErCkA53/bf5ueNIqu+RD7FH9c7dWM
+	ZJ5XSQSCfWuCKA4+6kg==
+X-Google-Smtp-Source: AGHT+IE89beyKsvULLcf3UqV4s6rtxpjy11EnRj5cgsae6DgqsLnVq5SrKgEBnb7OKFnTiIg04Lj/tLVIr0qKRI=
+X-Received: from wmbz6.prod.google.com ([2002:a05:600c:c086:b0:46e:1bcf:3f8])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:c162:b0:45f:2cb5:ecff with SMTP id 5b1f17b1804b1-46fa9b02fa3mr29367005e9.31.1759929313030;
+ Wed, 08 Oct 2025 06:15:13 -0700 (PDT)
+Date: Wed, 8 Oct 2025 13:15:12 +0000
+In-Reply-To: <20251008125427.68735-1-acsjakub@amazon.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827123052.9002-4-lhruska@suse.cz>
+Mime-Version: 1.0
+References: <20251007162136.1885546-1-aliceryhl@google.com> <20251008125427.68735-1-acsjakub@amazon.de>
+Message-ID: <aOZj4Jeif1uYXAxZ@google.com>
+Subject: Re: [PATCH] mm: use enum for vm_flags
+From: Alice Ryhl <aliceryhl@google.com>
+To: Jakub Acs <acsjakub@amazon.de>
+Cc: djwong@kernel.org, jhubbard@nvidia.com, akpm@linux-foundation.org, 
+	axelrasmussen@google.com, chengming.zhou@linux.dev, david@redhat.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, peterx@redhat.com, rust-for-linux@vger.kernel.org, 
+	xu.xin16@zte.com.cn
+Content-Type: text/plain; charset="utf-8"
 
-On Tue 2024-08-27 14:30:48, Lukas Hruska wrote:
-> From: Josh Poimboeuf <jpoimboe@redhat.com>
+On Wed, Oct 08, 2025 at 12:54:27PM +0000, Jakub Acs wrote:
+> redefine VM_* flag constants with BIT()
 > 
-> Call klp-convert for the livepatch modules after the final linking.
+> Make VM_* flag constant definitions consistent - unify all to use BIT()
+> macro and define them within an enum.
 > 
-> Also update the modpost tool so that it does not warn about unresolved
-> symbols matching the expected format which will be then resolved by
-> klp-convert.
+> The bindgen tool is better able to handle BIT(_) declarations when used
+> in an enum.
 > 
-> --- a/scripts/mod/modpost.c
-> +++ b/scripts/mod/modpost.c
-> @@ -1676,10 +1680,18 @@ static void check_exports(struct module *mod)
->  		const char *basename;
->  		exp = find_symbol(s->name);
->  		if (!exp) {
-> -			if (!s->weak && nr_unresolved++ < MAX_UNRESOLVED_REPORTS)
-> +			if (!s->weak && nr_unresolved++ < MAX_UNRESOLVED_REPORTS) {
-> +				/*
-> +				 * In case of livepatch module we allow
-> +				 * unresolved symbol with a specific format
-> +				 */
-> +				if (mod->is_livepatch &&
-> +				    strncmp(s->name, KLP_SYM_RELA, strlen(KLP_SYM_RELA)) == 0)
-> +					break;
+> Also add enum definitions for tracepoints.
+> 
+> We have previously changed VM_MERGEABLE in a separate bugfix. This is a
+> follow-up to make all the VM_* flag constant definitions consistent, as
+> suggested by David in [1].
+> 
+> [1]: https://lore.kernel.org/all/85f852f9-8577-4230-adc7-c52e7f479454@redhat.com/
+> 
+> Signed-off-by: Jakub Acs <acsjakub@amazon.de>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Xu Xin <xu.xin16@zte.com.cn>
+> Cc: Chengming Zhou <chengming.zhou@linux.dev>
+> Cc: Peter Xu <peterx@redhat.com>
+> Cc: Axel Rasmussen <axelrasmussen@google.com>
+> Cc: linux-mm@kvack.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+> 
+> Hi Alice,
+> 
+> thanks for the patch, I squashed it in (should I add your signed-off-by
+> too?) and added the TRACE_DEFINE_ENUM calls pointed out by Derrick.
 
-Just for record. There must be "continue" instead of "break".
-Otherwise, the function does not check the remaining symbols.
-It won't copy CRCs of exported symbols. Finally, depmod would
-complain about incompatible versions of symbols.
+You could add this if you go with the enum approach:
 
+Co-Developed-by: Alice Ryhl <aliceryhl@google.com>
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
->  				modpost_log(warn_unresolved ? LOG_WARN : LOG_ERROR,
->  					    "\"%s\" [%s.ko] undefined!\n",
->  					    s->name, mod->name);
-> +			}
->  			continue;
->  		}
->  		if (exp->module == mod) {
+> I have the following points to still address, though: 
+> 
+> - can the fact that we're not controlling the type of the values if
+>   using enum be a problem? (likely the indirect control we have through
+>   the highest value is good enough, but I'm not sure)
 
-Best Regards,
-Petr
+The compiler should pick the right integer type in this case.
 
-PS: I am not sure if this patchset would ever reach upstream.
-    But we found this bug when using the tool...
+> - where do TRACE_DEFINE_ENUM calls belong?
+>   I see them placed e.g. in include/trace/misc/nfs.h for nfs or
+>   arch/x86/kvm/mmu/mmutrace.h, but I don't see a corresponding file for
+>   mm.h - does this warrant creating a separate file for these
+>   definitions?
+> 
+> - with the need for TRACE_DEFINE_ENUM calls, do we still deem this
+>   to be a good trade-off? - isn't fixing all of these in
+>   rust/bindings/bindings_helper.h better?
+> 
+> @Derrick, can you point me to how to test for the issue you pointed out?
+
+I'm not familiar with the TRACE_DEFINE_ENUM unfortunately.
+
+> +#ifndef CONFIG_MMU
+> +TRACE_DEFINE_ENUM(VM_MAYOVERLAY);
+> +#endif /* CONFIG_MMU */
+
+Here I think you want:
+
+#ifdef CONFIG_MMU
+TRACE_DEFINE_ENUM(VM_UFFD_MISSING);
+#else
+TRACE_DEFINE_ENUM(VM_MAYOVERLAY);
+#endif /* CONFIG_MMU */
+
+> +TRACE_DEFINE_ENUM(VM_SOFTDIRTY);
+
+Here I think you want:
+
+#ifdef CONFIG_MEM_SOFT_DIRTY
+TRACE_DEFINE_ENUM(VM_SOFTDIRTY);
+#endif
+
+Alice
 
