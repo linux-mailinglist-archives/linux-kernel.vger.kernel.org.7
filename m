@@ -1,113 +1,119 @@
-Return-Path: <linux-kernel+bounces-845219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0084ABC400E
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 10:55:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D723BC4025
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 10:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9FFE435288E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 08:55:16 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2978B352A55
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 08:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8097E2F49F4;
-	Wed,  8 Oct 2025 08:55:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F85A2F49F4;
+	Wed,  8 Oct 2025 08:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IfZztZSN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g70vdSNH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7302E22B4
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 08:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F75A2ECE8C
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 08:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759913710; cv=none; b=iOtxLH7GToa8XXARvTEh6p7xokMUeCcZwZX1AHkNKuQuZAcU2E1YJSgG1BlIhUkI5u+SEV24VlY3QknIxb50ipPBEzw+BUJjYIL2t/ZkSl7dsSBtWmUNw2GqU73hiD7ed0gWdv6N20uiQgFMTZBU24HuuW48euB8Fpbvnr2qDoY=
+	t=1759913764; cv=none; b=Nxd9jnY886KfgCfr6prbFC/cBDoZeYsuhxluaXKnPgql4dFV4XL/fzXNTqNSXtF1NdQv6LvRhIjbEQgQzCNmGL6S3kt2iTzbS9gYXIvGYIu+/S6aBQJ1aTThkgniLI98tx7vPlj0enKM75KJH0KA+V/Y3kEXUH/jxbnlP9bm/8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759913710; c=relaxed/simple;
-	bh=eyr6gDi37Ru8nuj21CkAi6nqiQrd/Us5xWlLiGHLy2Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QtuKZ2XCsD9HG6+vuvNQMRyJSKL7n5UaP9ippBOGMVTjy7K6f1BMcKoWq4zIuEtWQHb3GzXk3K4mmU7nTcYX7dz5Hpj7zqCYTh+6evEr9OfP4dFa6q/BBWj+2uZRuv8r5s1jOZJquFTarjMeUMl1MQQKMLn+vaZ99AqYZDjqcTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IfZztZSN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3B61C4CEF4;
-	Wed,  8 Oct 2025 08:55:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759913710;
-	bh=eyr6gDi37Ru8nuj21CkAi6nqiQrd/Us5xWlLiGHLy2Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IfZztZSNbIcLHWEXxmGMy7WBI7I5FnPLuHesKunLdfxwEVd7YFIJ/4HujdZFo74+m
-	 mQArzKq0O8VkfyQ0NaHGmQIAg1rAaJj4yCyGnsJCsPWR/PgLeD8/uSeetV6EMkClQ0
-	 /Ih7G0bIn9npYMYVfLHHazcjL9kB9XlFPX2029pGTi7NNohqpQ9FZoxWznon7ATN+Q
-	 plbj5FBms3j8zXWeUlMn9TK7+eZ4fdgKRyZLrqqTmes2csL8h7o8BbZhJU166YF95S
-	 4NoCKzuHrq+ijolrj7C/xeIQu4mfXyBCf9DOn0ZKJrZEdLiXNpFvJcX8k0ZRBKjypN
-	 V5fwjJIW3Uv2g==
-Date: Wed, 8 Oct 2025 09:55:05 +0100
-From: Will Deacon <will@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Sascha Bischoff <sascha.bischoff@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <maz@kernel.org>
-Subject: Re: [PATCH v2] arm64/sysreg: Fix GIC CDEOI instruction encoding
-Message-ID: <aOYm6SUnPo1VEvdM@willie-the-truck>
-References: <20251007102600.879337-1-lpieralisi@kernel.org>
- <aOUsjRkq4DTcLujW@arm.com>
+	s=arc-20240116; t=1759913764; c=relaxed/simple;
+	bh=u5MMr100rtEA08BaWHHgA+sasRbKdAq9QCFOKJi4Oio=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZSOxTWDGGopBjdKnTghbvhC4iZtTQdj9YalVivuL5d+Mvt/TqzJ6Wl37XgXAaW8D/rDBhJBDQd+pfdusOXIpaz5CCBwB2zoERI92fnuEcbq1E2JtZRPBiKfdM/qbqbnlFiLSMrHql6EsRTgcijtGypg5VsqBrLhk6sarxz/36Y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g70vdSNH; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759913761;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EmZevF5PTde87YSaZT3Xg+uQUGfauJNRDPEZI/VcPlY=;
+	b=g70vdSNHnWakurJUwBoh1NF2fXrnT9o9OcJB0miNENtNaUvJX3Vn81bLAh7HcYb2Rx4oQc
+	gO71YHDIRakiJ/37+e49mZIHLS4DcMrbYwId4/WVNywTbU9a2ON11/Ox/4v6TeQWeZ4/4c
+	tOAYKLR6ji6sgmfBsf30+o14y3eiG9A=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-440-WplYsemcNKyaZPPnZ1iaew-1; Wed, 08 Oct 2025 04:55:58 -0400
+X-MC-Unique: WplYsemcNKyaZPPnZ1iaew-1
+X-Mimecast-MFC-AGG-ID: WplYsemcNKyaZPPnZ1iaew_1759913757
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-b3afaf5defdso877767566b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 01:55:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759913757; x=1760518557;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EmZevF5PTde87YSaZT3Xg+uQUGfauJNRDPEZI/VcPlY=;
+        b=jsGtih9cWYZUh/z2Aoscq+lvI5kvJslRqdAuS6gIU86M4lHjCwLu+3wyauTveMOsJ5
+         0oCZAVcWbW9K45nqrmjfJsnwULYSoBsrDT7Di/ecQNomVWdSxbBgjJabdMZycKFV9In0
+         Z0CG0gOt50T8bmGPLLMTtfdu6yWfO0f51cbvw0344piQAglK89iG/eZwvnQfd6j1WnUl
+         3ImtQ680R9AJpOKtlVKpulr8HQsNPga5U35jyALLOtX3His3qG96QQtxURjtHZKe5ob1
+         2/Q7JCeZ55+FKdmLoX3v18yrjTEq3HZGotR+RutO4J6FStyYu40bMfQ40Qm9AqxljpwS
+         a/SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWoM+lKHtWSGX1KP42Dn27kca+e7DzuhBuUTfmVDOgFbmzcc5s6PqZuPDm3p/PeakLtiLHEY/umEWYmKZQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsJ6txtsa/fAZL5cb+YBkVZjBg6E64vlg6Y2n13SqBpJpIuHCl
+	sB5mumvQafQZZ0tDoaqnUKYulmAUwgxxCqJYufwp4g3+hzgQVCu1nLZRRZujvwwZHVXLrf9bSHs
+	o8DimndBkIiM1JcSKBuLtkE4de44B/kMpQRHTTXNzdCi9bp8Y56AgXNG68SopaeOqPux8zyDwMh
+	4VW0toZbIlBtCpm5HrjW8lqcibCw+I34mRRNtyIOw9
+X-Gm-Gg: ASbGncv0lycVyaC/IvyjdR2guN4CqgiambAJq+diezzcF+8JY7JVJowoPIF3Al9256I
+	pq2pnO2fOjE5dOytFyMZWUlS5dmCDvv9f3QafH6e82QjwbkcFt6XqJpt3WxKCO7BAM9FLyuXxZJ
+	Kw1QFgNPFMIK6Eqd3OhSJIuxfEAUIJ/zVrur0S8f70P7RcFXXAcT8SZ7U6
+X-Received: by 2002:a17:907:97c9:b0:b41:c602:c746 with SMTP id a640c23a62f3a-b50aa48da0fmr287436066b.20.1759913757242;
+        Wed, 08 Oct 2025 01:55:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEwDn/7ZQH008AVGRVzX3xl8S3wEet83yeV03ET1vAJj3u2Og5YpJNeojyb8tG8SneCqFvrdKDeitzutNVPpqE=
+X-Received: by 2002:a17:907:97c9:b0:b41:c602:c746 with SMTP id
+ a640c23a62f3a-b50aa48da0fmr287433966b.20.1759913756904; Wed, 08 Oct 2025
+ 01:55:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aOUsjRkq4DTcLujW@arm.com>
+References: <20251008064500.245926-1-costa.shul@redhat.com> <CADDUTFyVOzhjiqAzDHKKCprWLvq6Ww_V4rcyjDyzs5FCwXTvRA@mail.gmail.com>
+In-Reply-To: <CADDUTFyVOzhjiqAzDHKKCprWLvq6Ww_V4rcyjDyzs5FCwXTvRA@mail.gmail.com>
+From: Tomas Glozar <tglozar@redhat.com>
+Date: Wed, 8 Oct 2025 10:55:45 +0200
+X-Gm-Features: AS18NWBCA23-6OFIlvrHSY8E4tcCHEcJLjRidM7TL23KHQVxPHb-wwoMpAqdnd8
+Message-ID: <CAP4=nvTDsoejezFNcS1uWftF5CkuKNb-QbBDYzZjrnHHj5RVzg@mail.gmail.com>
+Subject: Re: [PATCH v1] tools/rtla: Add missing --quiet option to timerlat hist
+To: Costa Shulyupin <costa.shul@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Crystal Wood <crwood@redhat.com>, 
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 07, 2025 at 04:06:53PM +0100, Catalin Marinas wrote:
-> On Tue, Oct 07, 2025 at 12:26:00PM +0200, Lorenzo Pieralisi wrote:
-> > The GIC CDEOI system instruction requires the Rt field to be set to 0b11111
-> > otherwise the instruction behaviour becomes CONSTRAINED UNPREDICTABLE.
-> > 
-> > Currenly, its usage is encoded as a system register write, with a constant
-> > 0 value:
-> > 
-> > write_sysreg_s(0, GICV5_OP_GIC_CDEOI)
-> > 
-> > While compiling with GCC, the 0 constant value, through these asm
-> > constraints and modifiers ('x' modifier and 'Z' constraint combo):
-> > 
-> > asm volatile(__msr_s(r, "%x0") : : "rZ" (__val));
-> > 
-> > forces the compiler to issue the XZR register for the MSR operation (ie
-> > that corresponds to Rt == 0b11111) issuing the right instruction encoding.
-> > 
-> > Unfortunately LLVM does not yet understand that modifier/constraint
-> > combo so it ends up issuing a different register from XZR for the MSR
-> > source, which in turns means that it encodes the GIC CDEOI instruction
-> > wrongly and the instruction behaviour becomes CONSTRAINED UNPREDICTABLE
-> > that we must prevent.
-> > 
-> > Add a conditional to write_sysreg_s() macro that detects whether it
-> > is passed a constant 0 value and issues an MSR write with XZR as source
-> > register - explicitly doing what the asm modifier/constraint is meant to
-> > achieve through constraints/modifiers, fixing the LLVM compilation issue.
-> > 
-> > Fixes: 7ec80fb3f025 ("irqchip/gic-v5: Add GICv5 PPI support")
-> > Suggested-by: Catalin Marinas <catalin.marinas@arm.com>
-> > Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> > Acked-by: Marc Zyngier <maz@kernel.org>
-> > Cc: stable@vger.kernel.org
-> > Cc: Sascha Bischoff <sascha.bischoff@arm.com>
-> > Cc: Will Deacon <will@kernel.org>
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Mark Rutland <mark.rutland@arm.com>
-> > Cc: Marc Zyngier <maz@kernel.org>
-> 
-> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-> 
-> (unless Will sends another pull request before -rc1, I'll pick this
-> patch shortly after)
+st 8. 10. 2025 v 10:46 odes=C3=ADlatel Costa Shulyupin
+<costa.shul@redhat.com> napsal:
+>
+> Actually, osnoise hist also lacks the --quiet option, and this appears
+> to be intentional.
+>
 
-I'm not planning to send anything until the -rc3 timeframe now as I'm
-going fishing for a couple of weeks :)
+Yeah, --quiet is used to suppress printing every second, hist has no
+such functionality, so it doesn't do anything there. See:
 
-Will
+[tglozar@cs9 rtla]$ grep -r 'params->common.quiet' src/*.c
+src/osnoise_top.c:      if (!params->common.quiet)
+src/osnoise_top.c:                      params->common.quiet =3D 1;
+src/osnoise_top.c:      if (isatty(STDOUT_FILENO) && !params->common.quiet)
+src/timerlat_top.c:     if (!params->common.quiet)
+src/timerlat_top.c:                     params->common.quiet =3D 1;
+src/timerlat_top.c:     if (isatty(STDOUT_FILENO) && !params->common.quiet)
+src/timerlat_top.c:             wait_retval =3D
+timerlat_bpf_wait(params->common.quiet ? -1 :
+src/timerlat_top.c:             if (!params->common.quiet)
+
+Tomas
+
 
