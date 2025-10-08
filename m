@@ -1,112 +1,121 @@
-Return-Path: <linux-kernel+bounces-844900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BE75BC3052
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 01:57:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E216BC305B
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 02:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A8C83A8241
-	for <lists+linux-kernel@lfdr.de>; Tue,  7 Oct 2025 23:57:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D98724E3D42
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 00:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B0C2797BD;
-	Tue,  7 Oct 2025 23:57:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80CD27B4E5;
+	Wed,  8 Oct 2025 00:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IN4k8QBy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LkT/Y1g8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06CB6241CB6;
-	Tue,  7 Oct 2025 23:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3103427B33B;
+	Wed,  8 Oct 2025 00:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759881432; cv=none; b=BpkmVQ9l4ZbOqpaRVA75UNGmrO0y8QZuLseFEP1losD/VJEiazjGyckQQwjDiuAxJg+z7RWmyE3ajVTFQehgKXjpwTCHoNGo4HDvbN9RyRPaPKO3OTTI/Du2He9S5+qpSkg04YazrCs6TJnM2IA2rY8xOK2uLT7Y0+v6gE9Ne1U=
+	t=1759881619; cv=none; b=OR/CuS7wg7RqWpYgg66ktlb22aZ3I1so8wUa286zNhIwFQgUBk8mS9EO7oLwc8yoySjBbNuxBKsWb5DSuVOjia0HSBg5HiNQdWzXx3qz/PQuQPGmxkVaZo8wm9cNB3BvvAwXG/93EYOgSUeEqkpMjqvk/Ao2DsR++u+rJ84hwe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759881432; c=relaxed/simple;
-	bh=1lt/GTVLCLNZSIET9CdCaV6qRR/vWL2EfdDCZp2fU48=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=cn+njngx34Mg6CLhkIP8Hg4+9qhtkKs1BA6wd7ySZB4mrB88kzBHQK35sE7UY57lnbJ7oNKpggDs6QguZ3coJRvde2h0pjUBoKoBQiZrW/S/VuACAORL6R02a90YpMgu/etvIQhb/JTunu2mq2kTXdlJyV3liNBazIee1fJdvdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IN4k8QBy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81C2FC4CEF1;
-	Tue,  7 Oct 2025 23:57:09 +0000 (UTC)
+	s=arc-20240116; t=1759881619; c=relaxed/simple;
+	bh=XJBMwUPakCIENOJ5JGM6h6npOfSqG5BKOSRQWEqhaWc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=FaSbZink7KPqz1tYQZnUDlG1DN3nAFLCmG5fJ4+fLv1Y7LjdKdkGDUgn8ar2WwEXJbRFf21bkUgdcN2K49chGeX9bZIcY9c1hZrDH8LJ8HwaDO7iTNAY7iwlzhi2ol8pdcvRKCcOELzsDbOa/MdcVXILx/0gUyqxw13rOz7fqA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LkT/Y1g8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7425BC4CEF1;
+	Wed,  8 Oct 2025 00:00:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759881431;
-	bh=1lt/GTVLCLNZSIET9CdCaV6qRR/vWL2EfdDCZp2fU48=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IN4k8QBy1X/rmTBeABtwBwH/i7YVJQPMCxs68EIHfekm6+GpR0JTwAXZmorJeKDKQ
-	 vFCDHlI4m3FQ999udFeUMvUzwZA5ZKSZu18hkmE8zd3eUXVH8nfICAjHa/dkrCz+Tz
-	 N8G536fyGyZhxxsDO//IFuOUy6ni5ks9uJBBdikaEoNfb6oYMvuUhJX1Rb2iq7BRA+
-	 BI0dpf79EAXg2+zQ7rH/ylx/HmLgoccQ6GPM/B8pIeJqKwA0YbdJqDv5K/uEwUFALx
-	 mTJgN4kkigiWxA9LIgaZvDbsLoVZw9YRk+/fmLSFOryhCWv8y+E8mGjHn0bQx9pCQe
-	 p2EfmMeHlPHtg==
-Date: Wed, 8 Oct 2025 08:57:07 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-hardening@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH] tracing: probes: Replace strcpy() with memcpy() in
- __trace_probe_log_err()
-Message-Id: <20251008085707.eb3cacb973269b94a8db4388@kernel.org>
-In-Reply-To: <20251007191415.01f9005e@gandalf.local.home>
-References: <20250820214717.778243-3-thorsten.blum@linux.dev>
-	<20250825160540.9a5272a8a93a789eb36a7098@kernel.org>
-	<635528D7-9B5F-4B7C-9568-87375BA866C3@linux.dev>
-	<20250909085308.15a7f4379b5d324051bbd383@kernel.org>
-	<20251007191415.01f9005e@gandalf.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1759881618;
+	bh=XJBMwUPakCIENOJ5JGM6h6npOfSqG5BKOSRQWEqhaWc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=LkT/Y1g8sW+oeGcLJAYTuRKgha8oR+0vHhIYAkMnM/ilfxGTXWXxZ5EM23ntytBIz
+	 vGe6WnBWm3S209VzN6FRC7thPPFPe6NsFMSmj8rF6dPa8xDX/pilKIa1WnoGBzHHfv
+	 5Xw42YfvsCJkTLQvVhJeXM6cRl8j3ippxyUdrXkoCjt8TG+CWL42VX8ZnHBmb0Ue9u
+	 qCQcTqRLI3gavlc4WWgcUdFMRjzNdHjxi+cyNb78GpNTPoBoE9eCYgF5aJ2wVZmeMB
+	 7St8oTWhkrLjLh2n4ohruEHP2soTgKccT3fMOOzHMNH5KfHuSpRogI4ssf2n9GcG/z
+	 rmOW68YW8kreA==
+From: SeongJae Park <sj@kernel.org>
+To: SeongJae Park <sj@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [RFC PATCH 03/11] mm/damon/core: implement DAMOS_QUOTA_NODE_MEMCG_USED_BP
+Date: Tue,  7 Oct 2025 17:00:14 -0700
+Message-Id: <20251008000014.2845-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250619220023.24023-4-sj@kernel.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, 7 Oct 2025 19:14:15 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Thu, 19 Jun 2025 15:00:15 -0700 SeongJae Park <sj@kernel.org> wrote:
 
-> On Tue, 9 Sep 2025 08:53:08 +0900
-> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+> Implement the behavior of DAMOS_QUOTA_NODE_MEMCG_USED_BP.  It uses sum
+> of active/inactive anon/file pages of a given cgroup on a given NUMA
+> node as the value of the metric.
 > 
-> > On Mon, 8 Sep 2025 12:13:23 +0200
-> > Thorsten Blum <thorsten.blum@linux.dev> wrote:
-> > 
-> > > Hi Masami,
-> > > 
-> > > On 25. Aug 2025, at 09:05, Masami Hiramatsu (Google) wrote:  
-> > > > On Wed, 20 Aug 2025 23:47:18 +0200
-> > > > Thorsten Blum <thorsten.blum@linux.dev> wrote:
-> > > >   
-> > > >> strcpy() is deprecated; use memcpy() instead.
-> > > >> 
-> > > >> Link: https://github.com/KSPP/linux/issues/88
-> > > >> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>  
-> > > > 
-> > > > OK, looks good to me.  
-> > > 
-> > > Did you forget to add a Reviewed-by: tag and/or to add it to your tree?  
-> > 
-> > Thanks for ping me. No problem, I will add my Signed-by when
-> > picking this to probes/for-next.
-> > Since I will be responsible for applying this patch and sending
-> > it to Linus, this includes the "Reviewed-by" as well.
-> > 
+> Signed-off-by: SeongJae Park <sj@kernel.org>
+> ---
+>  mm/damon/core.c | 32 ++++++++++++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
 > 
-> Was this ever sent to Linus?
+> diff --git a/mm/damon/core.c b/mm/damon/core.c
+> index d675dd932a23..1481b43f2710 100644
+> --- a/mm/damon/core.c
+> +++ b/mm/damon/core.c
+[...]
+> +static unsigned long damos_get_node_memcg_used_bp(
+> +		struct damos_quota_goal *goal)
+> +{
+> +	struct mem_cgroup *memcg;
+> +	struct lruvec *lruvec;
+> +	unsigned long used_pages;
+> +	struct sysinfo i;
+> +
+> +	rcu_read_lock();
+> +	memcg = mem_cgroup_from_id(goal->memcg_id);
+> +	mem_cgroup_flush_stats(memcg);
+> +	lruvec = mem_cgroup_lruvec(memcg, NODE_DATA(goal->nid));
+> +	used_pages = lruvec_page_state(lruvec, NR_ACTIVE_ANON);
+> +	used_pages += lruvec_page_state(lruvec, NR_INACTIVE_ANON);
+> +	used_pages += lruvec_page_state(lruvec, NR_ACTIVE_FILE);
+> +	used_pages += lruvec_page_state(lruvec, NR_INACTIVE_FILE);
+> +	rcu_read_unlock();
 
-Yeah, but rejected with other patches in probes/for-next.
-I thought it was a part of cleanup, or should I sent it urgently?
-Then I can move this to probes/fixes.
+mem_cgroup_flush_stats() calls css_rstat_flush() which may block.  But the
+above diff is putting it inside an RCU read-side critical section.  Actually
+only mem_cgroup_from_id() needs to be called inside an RCU read-side critical
+section.  I will revise the next version to call rcu_read_unlock() right after
+mem_cgroup_from_id().
 
-Thank you,
+Also, mem_cgroup_from_id() could return NULL if the memcg is removeed while
+DAMON is running, but this diff is not checking the NULL return case.  I will
+add the handling in the next version.
 
-> 
-> -- Steve
+> +
+> +	si_meminfo_node(&i, goal->nid);
+> +	return used_pages * PAGE_SIZE * 10000 / i.totalram;
+
+i.totalram is in number of pages unit, but the above code is assuming it is in
+bytes unit.  This makes the result significantly wrong.  I will fix this in the
+next version.
 
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Thanks,
+SJ
+
+[...]
 
