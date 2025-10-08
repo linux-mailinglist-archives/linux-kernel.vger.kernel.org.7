@@ -1,186 +1,340 @@
-Return-Path: <linux-kernel+bounces-845051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E09DBC35FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 07:16:59 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2F66BC3604
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 07:23:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12A281890DE9
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 05:17:22 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1DE5D34C65F
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 05:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657C02C0265;
-	Wed,  8 Oct 2025 05:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DAFB2D7DE9;
+	Wed,  8 Oct 2025 05:23:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="eQnmDOhV"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011061.outbound.protection.outlook.com [52.101.52.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RxK+nVao"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F139454652;
-	Wed,  8 Oct 2025 05:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759900611; cv=fail; b=d4tizQjFTkiA8rHFQs5bbT79o4674u0Df3vkc+Z2Uqsj7cCvz4WXx6+5W4dFrxAucjX6J6p2w9Z7cY3FvBHo1uuW6aNjDep9m3hIsDs8jO7Zgj2zYHYjbTmctxoEp3w0wq85MBd1xkIf9o5kmSU4V8UPtLEF5s5oucJL06QYkuk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759900611; c=relaxed/simple;
-	bh=g8noL/5suIPlLolkhjmmpkhAAIeMePIIQq0CUreLbXA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=u7jwUxmUkYQ1eCBRzo6/IZmOaTSm6SSZ3iXz0S1xUP9yLcRvVORmYevhnxABXVVNO9hCpRVuUEb5mjjSyE9XqptnQVneJ0RGznYx6nwfS0gsipj54/3TZYA157e4T6K11n87ocRrHzwWQem8MgAYIRfTTXE177koXIbXF3IFwo0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=fail (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=eQnmDOhV reason="signature verification failed"; arc=fail smtp.client-ip=52.101.52.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QZKZXbT91LmtSGgvW0x5t2FimMzzpN8lXSu8LZzL/r5U7SV3fq/aWEBMuMRpqAnBSS6rrdQUelBUoLcUIhkXbV6w53yH0xcl8LT7v8pa+MhUFu9FGFtXUtdreCuWpNAZyH6uSMjgvZ3fTKDUFkJnstbKLQ9KOrB7b6jENU6xJ/1UAXT/p0BH7uRyb7nuRleYyECbBE9G5z8ZeYDq6nfK6KjCsyBnCeNv4sKLmC8NjQiTEQfafxWkN6wTbWIBaCt/2RiHX11d0TOA0U8F3cgl5Gs2joywlsrYpLa7UvwfPj3GQ5+t7i/kvODoM0EBh0GfXq640nwUWlOui7a5+htBrA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jnMhS8J0pU37AuKDKpXj2xoIgm7hTaRGeUYiRxVnuNs=;
- b=lYgxjy1O/171FVyOwdM4eICNdT5tu6qoSMVv3J1HQFpQTJZXf4joIiV2SRNBxzJmSdgpOlmgh2SW3klomU5NB4b+aGJnZieMvFAXoGOk7f31ZwDaBWwSTCKhTFaKxh80ar8SB+HWnMBxXj/5GzHT65w0NTR2fQwsovml+x4f8bDsD4KbztiPrUP/mHUxk5m7xs1izEbyQF5/FXU5uwsHhE7JbgbRdsbm5shEYdSfon4Q7wvv/OUmEO6cdpbwaNK0p8uy9obDw2CeQNC/2A4J1jGfuaduPQrLXy51qEpp5edqDUO8dK2MsPczGJp+qfh+yg1l773Mh6QZ8xipqND1cw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jnMhS8J0pU37AuKDKpXj2xoIgm7hTaRGeUYiRxVnuNs=;
- b=eQnmDOhVJw2kyEsdcY0kM+uCmP+wqBj3Ap02e6jfQ5Rs+ntKoUHcRNrjrEzvQach3wUbKooMtUFsbtkwtOR8n6Ld+Kkag65/xOl0EODCZo+ubLLTP1nXiBq9egQAho3URfWrT7v33AZtGA/oVSr6leQoI2d1BStuhrn6LBxNGO20L3jrdZsCErhaFBtjwkCBPtt0jVEtBP07T4TeyfTdm80sKF1SYhTG/oLEq5/2tfXVaK9G0QenBT+No3W+uP1AfnGbnsvOBQgwsmjUa333sTPLZWW77rmXaZmQWPqJdvToUTIXT73fXlxuiLr6+ZHFq9LZpffHJVvhDTDRtAxQ+Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
- CY5PR12MB6346.namprd12.prod.outlook.com (2603:10b6:930:21::12) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9203.9; Wed, 8 Oct 2025 05:16:42 +0000
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe%4]) with mapi id 15.20.9182.017; Wed, 8 Oct 2025
- 05:16:42 +0000
-Date: Wed, 8 Oct 2025 16:16:37 +1100
-From: Alistair Popple <apopple@nvidia.com>
-To: Timur Tabi <ttabi@nvidia.com>
-Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	Alexandre Courbot <acourbot@nvidia.com>, "dakr@kernel.org" <dakr@kernel.org>, 
-	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>, "lossin@kernel.org" <lossin@kernel.org>, 
-	"ojeda@kernel.org" <ojeda@kernel.org>, "boqun.feng@gmail.com" <boqun.feng@gmail.com>, 
-	"a.hindborg@kernel.org" <a.hindborg@kernel.org>, "tzimmermann@suse.de" <tzimmermann@suse.de>, 
-	"tmgross@umich.edu" <tmgross@umich.edu>, "alex.gaynor@gmail.com" <alex.gaynor@gmail.com>, 
-	"simona@ffwll.ch" <simona@ffwll.ch>, "mripard@kernel.org" <mripard@kernel.org>, 
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	John Hubbard <jhubbard@nvidia.com>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, 
-	"bjorn3_gh@protonmail.com" <bjorn3_gh@protonmail.com>, "airlied@gmail.com" <airlied@gmail.com>, 
-	"aliceryhl@google.com" <aliceryhl@google.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
-	"gary@garyguo.net" <gary@garyguo.net>, "lyude@redhat.com" <lyude@redhat.com>
-Subject: Re: [PATCH v4 12/13] nova-core: falcon: Add support to write
- firmware version
-Message-ID: <5kxodbtwdynnvdats34aroj423nphas7jw2s3n3eh5eiwkbp7s@dyzoc2lzkkky>
-References: <20251008001253.437911-1-apopple@nvidia.com>
- <20251008001253.437911-13-apopple@nvidia.com>
- <aaf218306186aa8959d8f3971a62afb9f229548b.camel@nvidia.com>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aaf218306186aa8959d8f3971a62afb9f229548b.camel@nvidia.com>
-X-ClientProxiedBy: SY5PR01CA0094.ausprd01.prod.outlook.com
- (2603:10c6:10:207::19) To DS0PR12MB7726.namprd12.prod.outlook.com
- (2603:10b6:8:130::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B809299AA3
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 05:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759901020; cv=none; b=J+aytGXMrHyupcTibGlwmOf8k/zy2Fv/5E/JmgT1EnaOj5dQoV3s50l9c5uqomE8B5E+P37gMQSY01VPWtwQyDAUT1vQob7rC+5HUCj0dhWx8ohWtV8omBEPGS0ANkCK761Defqu7Mtde315N60hwT+53ls/Ae3MXrSA1/tifqQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759901020; c=relaxed/simple;
+	bh=P8qqEuK3PoEA5cllT3wlUBqTY/38xBUk1xlPNaGF0eA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=cGpBXhLM4JfvXiJEHG33wQQBEL0xUwf7k4+GO4tpcHv1KPJjTuQbQBjREcWSfmXruHdab1xvnM5/gJZqVjSSuHqVuJot+hDqA6ZKXzLq5aFOnmQDDkglswQAoy5SkpygYcib62z1hd1C0ubhTQtlOxuL5asB/rjhkn5fTc4MJ1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RxK+nVao; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-781db5068b8so5859779b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 22:23:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759901018; x=1760505818; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PXOa+U28y6xbw2LPH6fpfk/ty0XUAGQZN36l5ZO4W0M=;
+        b=RxK+nVaoRHohJmveBMnd1fI/KiCfs9ZGNGn/hl8ooMjFSwhZdyOuvEbQGzcfqywLqX
+         vHct2kfZlAOHNw+4SkCIUZW1d9xmAlAXY0E4VRr67aG56eKaHgdjM31Y7He3CYPO7cNm
+         XLmQxIIISeLi5SQWlmJrqz6Ob3LC1+McBxr70/vLbl/4DLatHH3JnwKvjJjcWZlQ79a2
+         /YGUNqlh93riNg+9CIwa09E1WueVk964bC9Ko0ya247JWU9ysP44ziwm8jtK0HIriowh
+         Dt9ZSiSK6Cu8S8anH2laAVJlC8jJKl7OV2xfA8MlhOUcMrN4UfaX7YYRIX4ZhHSnRQVL
+         Lw8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759901018; x=1760505818;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PXOa+U28y6xbw2LPH6fpfk/ty0XUAGQZN36l5ZO4W0M=;
+        b=lake7oZgs12OyJd0bIz2ge++PnjosnkxIo1r7vAQ9WeWGVduPuX2xGjkB9UQRSBfnp
+         bOeShb7ubX/7axoTm2PdBm4mBuf1nJygbbme4uvYCFsyA4bTlYv6JOZRKihqhyhD4pQj
+         FQgVyKfWXcEY95e6u6DW51XHup59jXfV5/kEUIcChSXOAqQgjuERwOXpF6+odCgBZ4F8
+         9LtubOuqJTVbw2McMjzY0qI0vTgl8PSqmaOKpqOh/+ZLLX8fQbGk3teMnVyvHyPSohhv
+         aW3AVQ3j2v81AZ2zroOBlUQAifzQ+zv9+Z5Fkmkrv0QmFqGNkii7I8eg6p7eUxyRErId
+         2jMg==
+X-Gm-Message-State: AOJu0Yx+eLeG4A+DzwJUcA+/10c4n22EIUCvsS9eMHKIG1gW1xYHDf06
+	9tzxf8RoCfxjKAQFExrRekCbc1okFQR9VngS8L0vaMpZQyk5Q+fxJz1R
+X-Gm-Gg: ASbGncuEYmnryzaIy53AFpJMEOaSIpdgurIQgJn6soKGqRqX3ZYW9wSQck8yJi9g1xG
+	pmY8p4lUNDZIRe3mLmpFA25GaG7Gycz8P4XVI2tUa9wht8q2AiGhbAfHMMM26wIUTMU/zlFbTDY
+	B8wZXZPWs4T7LKA8klKdCDPauQDdSs2SsfYZOnZACSvRErzavaIPoSGYujRuWWgu+eGQaljCq3/
+	4RTkziglAaXFU9A4p4xIaWgD/IcktJWBH3JyY6lthVUIp98wFN0WgD09N45ZkX5RFDuAZT5cQIw
+	gcpZXRNmVoo/ZZrw8xJm/qsI2Gcqs5o3yTXVGIC54baDEVnyxJcO2rYCw7abYJOMuLQ/5JmH1bg
+	xD3MF7vjRwQ/DRT3ijULSuhA1uAKxm97TkXj4b+Ft1XGm154cGuMh+j0FN/mrAyYAFYs3u8psOq
+	wKcTLW7eGDxlbk+VjTgIzy0A==
+X-Google-Smtp-Source: AGHT+IH26oyBKYVovIOpfm01RMEX2KB31Pr4W/WwzI+6yHjxFfdmg0q4wKtgWT/J5cKLeK9ZXX+n0g==
+X-Received: by 2002:a05:6a00:17a5:b0:78c:99a8:d294 with SMTP id d2e1a72fcca58-79382c6bb87mr2661587b3a.0.1759901017404;
+        Tue, 07 Oct 2025 22:23:37 -0700 (PDT)
+Received: from google.com ([2a00:79e0:2ebe:8:371b:ca9b:6e46:724a])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b0206e814sm17456730b3a.68.2025.10.07.22.23.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Oct 2025 22:23:36 -0700 (PDT)
+Date: Tue, 7 Oct 2025 22:23:34 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Subject: [git pull] Input updates for v6.18-rc0
+Message-ID: <es25pm67cujd4ufo3uqba5ca3do4mkcw4cdrcdzghrs3tc6azn@d6aejmsh4ywf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|CY5PR12MB6346:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0bda385c-9fd4-497e-fb28-08de0629ddc6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?iso-8859-1?Q?t0ibq9sBs5FGD36/fg2aWFqjx68HTTGYIINC/bd06ORd6oqXVqiKE4zhYh?=
- =?iso-8859-1?Q?G4LjIXbNLVI+nOJ3zzbYMVa4CQCF08o8NU7zj/mxzeulxpv6r9JyZeg6vJ?=
- =?iso-8859-1?Q?9xhg3Um6H0CW74Ddo7jYN2aPNqqn+D501GpkcyU99MZD8KkUe7YJB5HtXn?=
- =?iso-8859-1?Q?gGf0prScjOxk1jchZjC+B4AxxgdpdOlfGbjjm61cmvallGquqns0slmGH3?=
- =?iso-8859-1?Q?i3/mnMkeZSGM09kwcuK9gSZPPTWCxtCK7c400AjWW+QW5U4lN3lDiiVKxv?=
- =?iso-8859-1?Q?RhfIuBjXi+etwEn9hyKFAC1Q28QvK2sGLsND7udmLjow+wvtjOpYfBQpTJ?=
- =?iso-8859-1?Q?bGPHg2i+7lsJmAUN8oziBIYVsKfIlgUBbFlmHkFrD6oEiNe9bfFNbYrTwx?=
- =?iso-8859-1?Q?O/UPkrnhkioNHONp8bkG52mw63kQ+P6faXUrAndp2ZziyvuLEUSkV/320d?=
- =?iso-8859-1?Q?o7HmjJr1RlH2pJE6X0M8ELQD+Ii3bP76z5s1y2/zllrF44U2MYAOHYhEpe?=
- =?iso-8859-1?Q?LXJu9CMoe5xs6Qrts2+w/zjBUES2oT5JD3+JQH3MCqjtPGeBwiCLMrGg/H?=
- =?iso-8859-1?Q?vXBKeTyiye4f6wuDv2mfHrSusiWeZd1mLJpyApjCheLdMUG2FVP6rPXFXH?=
- =?iso-8859-1?Q?IXjp4BNPS4vxe3Yem+3Ypiuj7xDs37GMvvoMltEZagrkFoPiwIF+WMUPjh?=
- =?iso-8859-1?Q?cGL/+aIJihYFz3o+1hx33ef3EXbbxmkniAihrZb0blHAPEa1FqSOlmhLgx?=
- =?iso-8859-1?Q?DROMHb0mF2QEdNQ85IcEbIYRct9bKoBQaZ/rc3I8r3O5LQ4kIgl3B4Dop0?=
- =?iso-8859-1?Q?Kl6N1zT4BiJUXGgfkcCGuVXQ1WpPVQYanZJhCHpsW/ObNROw3OxTr9YFp3?=
- =?iso-8859-1?Q?qZE6wDhe00mEFVgV6IokLpMDHNhXsBEjTZINfAvk/eRsKwccCuF6LWMx3T?=
- =?iso-8859-1?Q?42zIDkTAENOZvyRAKVhlcpTrw/KxuMBsACa6xCz+WsOF7K+5wlnAUaDoeW?=
- =?iso-8859-1?Q?Qu7pfMOHVP53s9Bpd0H0IwBh3WWjN/LTvnnh/76J6KgxtrVgnZ0769Vb2s?=
- =?iso-8859-1?Q?CT5mjZUlbSkX1xbVWUJV1qymdKKBvUG3xnj4/hwCGCeNxeI2dlMGiiGj0R?=
- =?iso-8859-1?Q?wqTPBMwhODYkCZ2u53lFJeDzaOgMNq9L34XTw6TKfHIq5LOaFqz9qC3GLK?=
- =?iso-8859-1?Q?ahg42JXT2Y55+HKIySpWQA0akFMptuDOousk87AsRhXslNLouIOtCmceEJ?=
- =?iso-8859-1?Q?JS29mDLewgKwNuYj+UlRlQJPDpWE+Uus8WQpAsDjFn2nB28n3xxNbHlEtN?=
- =?iso-8859-1?Q?sd7Y2F2v+ysfqNOFSJrlkeQ2lVs4XmxK401AY7fzwTo7ca6VrGBZjEE4zB?=
- =?iso-8859-1?Q?fq1Yhn+XoTOlR38dsbcBs+06yaMWoWDvj+jDDVcSTi9H4vnad0vm8cO6i4?=
- =?iso-8859-1?Q?BGlVJiKCV8Ey/uUHueZIRzFCFOIKAP1nQD1QkqvnCJXjt/QpTnyUleRrM4?=
- =?iso-8859-1?Q?zNFSJDa4BMLnPVZ/SM2wU/?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?iso-8859-1?Q?EHm0klG9ug2Qj2y+d2otjDHHONz36YP7EuQklhn4CY0vCjz9GaQk5kZVr5?=
- =?iso-8859-1?Q?DiJlWeB5JW/tiP8g/JCbe6tV6K+FhJGCmQlT9FoivOzAnd6Zu/5QV/IbYD?=
- =?iso-8859-1?Q?+2nqhw7zQMKyUJUs4JHfeeypwBIyLRhn6CA0j1QbypOu3SzHRUaLRh5NXG?=
- =?iso-8859-1?Q?CN2DyC1V+ujQy51AfOuyPz6FQ2h5BdiquLZ1J3S2haddPPh8XdVqCzA9ir?=
- =?iso-8859-1?Q?XuGjYcSj+rniaFHTjLM7KDELXK6Of2h9ycz7YTU3p7SBjJJ33wJur42+y0?=
- =?iso-8859-1?Q?N2eWo4YgZciEjKazVw5ILqA8YswgIUlrw2gjdDUwasMkgJTY2Ld7V3VUBn?=
- =?iso-8859-1?Q?W+9BVN+HRv2sj2bVuqNhRGyWaR8d5lW9zMbtGyva6N+FNpcawTL7nCfk9l?=
- =?iso-8859-1?Q?CDHu0w5fjLk7INQtQ2NDm/1KC0ZyEi3XaEl/rptH0FcFopAJx8F4Rgrjhy?=
- =?iso-8859-1?Q?RT9z+jaXlI5ZC/2LeJofTi9lh82a0tNsRgDw9TvPW3u2kJDbGStVbNdXBE?=
- =?iso-8859-1?Q?LgHKrKL/Di4kxMBXHNZ8Zbwng7HkhMIGF0pbutERLQKpeH5NMK5zafcG91?=
- =?iso-8859-1?Q?xTe5CRcwfu6em8hsflw1WFoBDVPtOwmygL0WHF9v9RNt8UzCo00ttjBALt?=
- =?iso-8859-1?Q?zs8hiyYnEknQ40urlMXij4w1wJmlpKf/cNIQw0/4ogFUjE7XI47ahmewZs?=
- =?iso-8859-1?Q?PsgXsL3cF18Lg3y4QpanyM5zIB+Zfq+YKKQCR+tQAC7UdtuHUqxU4tZjhn?=
- =?iso-8859-1?Q?mkis0V8nsdiN9YQrbqrQAV+6wloqkBNjaLp8FAHgqMSF9/73JgVBFO6Kw8?=
- =?iso-8859-1?Q?u9a2j7kc4XPLgigqgGWThHuxpKWoDnoLqFDHnqGc/83vCNw+46GHfy8a/c?=
- =?iso-8859-1?Q?oo3KGUvj2WxJYgkJvU3k5PRxzHCB9U+lFo0O2awmGu36ZekmU04A+mWBEt?=
- =?iso-8859-1?Q?XusORdA++blaktlHW/yus++BPbPqlPJVfIqS50MIPFI/OuUZDLiTjofVKh?=
- =?iso-8859-1?Q?xxsFcTM8pnCzuklV+KQ9orHbQ5+vQSqFspCc85zn2gxWQU2of6q2XyFKaQ?=
- =?iso-8859-1?Q?Amp3+qxNxM8wBB0dNUE8M2I9af5F/ugVaREWjF4UeZFS0EgJ1pOb55jPJ1?=
- =?iso-8859-1?Q?4+FdhK5jYgHFgtpwhO6gZX9w/7GK2S7STeCzPWMmIU2VL5GVgYlB+v9ECX?=
- =?iso-8859-1?Q?Jj67+1dFfbh3RAhJdl8CKycLopTUrJe1YnyXj+tO8Y60CJwzM3sDBw/a3T?=
- =?iso-8859-1?Q?flVUoyh4KOjirpZeQ6P0cZ8mQCWGoiq8ZxHlVipW2giF2E2X8Sl8PnVtHn?=
- =?iso-8859-1?Q?mPl/7kvUnqKT4LDAEBHbiPEaTDtUlqHlAgyjgznH7NyrmSHFCf1/6Oh9ju?=
- =?iso-8859-1?Q?ufCJXxej20/xU5XIP06+V2BlrGDrAd9Y6dn6tO8I0aT3zqEPSaeESf79PU?=
- =?iso-8859-1?Q?mIpGR8xYgDw/cT/M0QVlRomGJ6R52sNLXfES+KdOZ8ALwioWo2nbhRGeDu?=
- =?iso-8859-1?Q?fcieNZF/QAkHpuIyuLHyhd5tDqjIZ1M58eOQ6p4fyKQ35TGhBN6ycuFdyN?=
- =?iso-8859-1?Q?kUpsJ56+8jMYfJvK7JMWnFkuzt8hPAolX3Q/XZhaZBoXFOtUOx/8KnwfXW?=
- =?iso-8859-1?Q?KXuQ9VL0ZDb09xLP2Y2VSED08qEp0VIpdq?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0bda385c-9fd4-497e-fb28-08de0629ddc6
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2025 05:16:41.9161
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fhBDVH6DQhn5n9S/HI+fLVKuHep8nhBmMFEsCnPOAFoLjikmXxvVbNZp82tjdRBTmRhwJT15xeSxWwT8nwskNQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6346
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-On 2025-10-08 at 14:21 +1100, Timur Tabi <ttabi@nvidia.com> wrote...
-> On Wed, 2025-10-08 at 11:12 +1100, Alistair Popple wrote:
-> > +
-> > +    /// Write the application version to the OS register.
-> > +    #[expect(dead_code)]
-> > +    pub(crate) fn write_os_version(&self, bar: &Bar0, app_version: u32) -> Result<()> {
-> > +        regs::NV_PFALCON_FALCON_OS::default()
-> > +            .set_value(app_version)
-> > +            .write(bar, &E::ID);
-> > +        Ok(())
-> > +    }
-> 
-> I should have noticed this in v3, but why return Result here?  This is just like is_riscv_active
-> -- this function cannot fail.
+Hi Linus,
 
-Oh phooey. I recall noticing this but must've missed it when splitting the
-fixes. There will almost certainly be a v5 so will fix it then. Thanks.
+Please pull from:
+
+	git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git tags/input-for-v6.18-rc0
+
+to receive updates for the input subsystem. You will get:
+
+- a number of conversions to yaml/json schema and fixes for 
+  input-related device tree bindings
+
+- a new driver for Awinic AW86927 haptic chip
+
+- a new driver for Hynitron CST816x series controller
+
+- a new driver for add Himax HX852x(ES) touchscreen controller
+
+- a fix to uinput to not leak kernel memory via a gap in
+  uinput_ff_upload_compat structure
+
+- a fix to prevent overflow in pressure calculation in tsc2007 driver
+  causing phantom touches
+
+- a change to Atmel maxTouch driver to support generic touchscreen
+  configuration (flip, rotate, etc.)
+
+- support for platform data was dropped in tca8418_keypad,
+  pxa27x-keypad, spear-keyboard and twl4030_keypad drivers, they all
+  now rely on generic device properties for configuration
+
+- other assorted changes and fixes 
+
+Changelog:
+---------
+
+Andreas Kemnade (1):
+      dt-bindings: input: tsc2007: use comma in filename
+
+Dan Carpenter (1):
+      Input: aw86927 - fix error code in probe()
+
+Dario Binacchi (9):
+      Input: imx6ul_tsc - use BIT, FIELD_{GET,PREP} and GENMASK macros
+      dt-bindings: touchscreen: convert bu21013 bindings to json schema
+      dt-bindings: touchscreen: convert zet6223 bindings to json schema
+      dt-bindings: touchscreen: add debounce-delay-us property
+      dt-bindings: touchscreen: fsl,imx6ul-tsc: support glitch thresold
+      Input: imx6ul_tsc - set glitch threshold by DTS property
+      dt-bindings: touchscreen: convert eeti bindings to json schema
+      dt-bindings: arm: bcm: raspberrypi,bcm2835-firmware: Add touchscreen child node
+      dt-bindings: touchscreen: remove touchscreen.txt
+
+Dmitry Torokhov (10):
+      Input: tca6416-keypad - remove the driver
+      Input: tca8418_keypad - switch to using module_i2c_driver()
+      Input: move input_bits_to_string() to input-compat.c
+      Input: include export.h in modules using EXPORT_SYMBOL*()
+      Input: pxa27x-keypad - replace uint32_t with u32
+      Input: pxa27x-keypad - use BIT, GENMASK, FIELD_GET, etc
+      Input: pxa27x-keypad - drop support for platform data
+      Input: spear-keyboard - drop support for platform data
+      Input: synaptics-rmi4 - add includes for types used in rmi_2d_sensor.h
+      Input: twl4030_keypad - drop support for platform data
+
+Duje MihanoviÄ‡ (1):
+      dt-bindings: input: touchscreen: imagis: add missing minItems
+
+Fabio Estevam (1):
+      dt-bindings: input: touchscreen: tsc2007: Document 'wakeup-source'
+
+Frank Li (6):
+      dt-bindings: input: convert lpc32xx-key.txt to yaml format
+      dt-bindings: input: exc3000: move eeti,egalax_ts from egalax-ts.txt to eeti,exc3000.yaml
+      dt-bindings: input: convert semtech,sx8654 to yaml format
+      dt-bindings: input: convert max11801-ts to yaml format
+      dt-bindings: input: convert tca8418_keypad.txt to yaml format
+      dt-bindings: touchscreen: resistive-adc-touch: change to unevaluatedProperties
+
+Griffin Kroah-Hartman (2):
+      dt-bindings: input: Add Awinic AW86927
+      Input: aw86927 - add driver for Awinic AW86927
+
+Haotian Zhang (1):
+      Input: psxpad-spi - add a check for the return value of spi_setup()
+
+J. NeuschÃ¤fer (1):
+      Input: ps2-gpio - fix typo
+
+Johannes Kirchmair (1):
+      Input: tsc2007 - prevent overflow in pressure calculation
+
+Krzysztof Kozlowski (1):
+      dt-bindings: input: qcom,pm8941-pwrkey: Fix formatting of descriptions
+
+Luca Weiss (2):
+      dt-bindings: input: pm8941-pwrkey: Document wakeup-source property
+      Input: pm8941-pwrkey - disable wakeup for resin by default
+
+Marek Vasut (2):
+      dt-bindings: input: touchscreen: goodix: Drop 'interrupts' requirement
+      Input: atmel_mxt_ts - allow reset GPIO to sleep
+
+Michael Trimarchi (1):
+      Input: imx6ul_tsc - fix typo in register name
+
+Oleh Kuzhylnyi (2):
+      dt-bindings: input: touchscreen: add hynitron cst816x series
+      Input: add driver for Hynitron CST816x series
+
+Stephan Gerhold (2):
+      dt-bindings: input: touchscreen: document Himax HX852x(ES)
+      Input: add Himax HX852x(ES) touchscreen driver
+
+Svyatoslav Ryhel (4):
+      Input: tsc2007 - change warning to debug message if pen GPIO is not defined
+      Input: tsc2007 - make interrupt optional
+      dt-bindings: input: maxtouch: add common touchscreen properties
+      Input: atmel_mxt_ts - add support for generic touchscreen configurations
+
+Wolfram Sang (1):
+      Input: remove unneeded 'fast_io' parameter in regmap_config
+
+Zhen Ni (1):
+      Input: uinput - zero-initialize uinput_ff_upload_compat to avoid info leak
+
+Diffstat:
+--------
+
+ .../arm/bcm/raspberrypi,bcm2835-firmware.yaml      |  28 +
+ .../devicetree/bindings/input/atmel,maxtouch.yaml  |   3 +-
+ .../devicetree/bindings/input/awinic,aw86927.yaml  |  48 ++
+ .../devicetree/bindings/input/lpc32xx-key.txt      |  34 -
+ .../devicetree/bindings/input/nxp,lpc3220-key.yaml |  61 ++
+ .../bindings/input/qcom,pm8941-pwrkey.yaml         |  42 +-
+ .../devicetree/bindings/input/tca8418_keypad.txt   |  10 -
+ .../devicetree/bindings/input/ti,tca8418.yaml      |  61 ++
+ .../bindings/input/touchscreen/bu21013.txt         |  43 --
+ .../bindings/input/touchscreen/eeti,exc3000.yaml   |  42 +-
+ .../devicetree/bindings/input/touchscreen/eeti.txt |  30 -
+ .../bindings/input/touchscreen/egalax-ts.txt       |  18 -
+ .../bindings/input/touchscreen/fsl,imx6ul-tsc.yaml |  14 +
+ .../bindings/input/touchscreen/goodix.yaml         |   1 -
+ .../bindings/input/touchscreen/himax,hx852es.yaml  |  81 ++
+ .../input/touchscreen/hynitron,cst816x.yaml        |  65 ++
+ .../input/touchscreen/imagis,ist3038c.yaml         |  18 +
+ .../bindings/input/touchscreen/max11801-ts.txt     |  17 -
+ .../bindings/input/touchscreen/maxim,max11801.yaml |  46 ++
+ .../input/touchscreen/raspberrypi,firmware-ts.txt  |  26 -
+ .../input/touchscreen/resistive-adc-touch.yaml     |   2 +-
+ .../bindings/input/touchscreen/rohm,bu21013.yaml   |  95 +++
+ .../bindings/input/touchscreen/semtech,sx8654.yaml |  52 ++
+ .../bindings/input/touchscreen/sx8654.txt          |  23 -
+ .../{ti.tsc2007.yaml => ti,tsc2007.yaml}           |   4 +-
+ .../bindings/input/touchscreen/touchscreen.txt     |   1 -
+ .../bindings/input/touchscreen/touchscreen.yaml    |   4 +
+ .../bindings/input/touchscreen/zeitec,zet6223.yaml |  62 ++
+ .../bindings/input/touchscreen/zet6223.txt         |  30 -
+ MAINTAINERS                                        |   7 +
+ drivers/input/ff-core.c                            |   2 +-
+ drivers/input/ff-memless.c                         |   1 +
+ drivers/input/gameport/gameport.c                  |   1 +
+ drivers/input/input-compat.c                       |  30 +
+ drivers/input/input-compat.h                       |   3 +
+ drivers/input/input-poller.c                       |   1 +
+ drivers/input/input.c                              |  36 +-
+ drivers/input/joystick/iforce/iforce-main.c        |   1 +
+ drivers/input/joystick/iforce/iforce-packets.c     |   1 +
+ drivers/input/joystick/psxpad-spi.c                |   6 +-
+ drivers/input/keyboard/Kconfig                     |  18 -
+ drivers/input/keyboard/Makefile                    |   1 -
+ drivers/input/keyboard/pxa27x_keypad.c             | 530 +++++--------
+ drivers/input/keyboard/spear-keyboard.c            |  71 +-
+ drivers/input/keyboard/tca6416-keypad.c            | 305 --------
+ drivers/input/keyboard/tca8418_keypad.c            |  13 +-
+ drivers/input/keyboard/twl4030_keypad.c            |  35 +-
+ drivers/input/misc/Kconfig                         |  11 +
+ drivers/input/misc/Makefile                        |   1 +
+ drivers/input/misc/ad714x.c                        |   1 +
+ drivers/input/misc/adxl34x.c                       |   1 +
+ drivers/input/misc/aw86927.c                       | 846 +++++++++++++++++++++
+ drivers/input/misc/cma3000_d0x.c                   |   1 +
+ drivers/input/misc/pm8941-pwrkey.c                 |  12 +-
+ drivers/input/misc/uinput.c                        |   1 +
+ drivers/input/rmi4/rmi_2d_sensor.c                 |   1 +
+ drivers/input/rmi4/rmi_2d_sensor.h                 |   3 +
+ drivers/input/rmi4/rmi_bus.c                       |   1 +
+ drivers/input/rmi4/rmi_driver.c                    |   1 +
+ drivers/input/serio/hil_mlc.c                      |   1 +
+ drivers/input/serio/hp_sdc.c                       |   1 +
+ drivers/input/serio/i8042.c                        |   1 +
+ drivers/input/serio/libps2.c                       |   1 +
+ drivers/input/serio/ps2-gpio.c                     |   2 +-
+ drivers/input/serio/serio.c                        |   1 +
+ drivers/input/sparse-keymap.c                      |   1 +
+ drivers/input/touch-overlay.c                      |   1 +
+ drivers/input/touchscreen.c                        |   1 +
+ drivers/input/touchscreen/Kconfig                  |  22 +
+ drivers/input/touchscreen/Makefile                 |   2 +
+ drivers/input/touchscreen/ad7879.c                 |   1 +
+ drivers/input/touchscreen/atmel_mxt_ts.c           |  13 +-
+ drivers/input/touchscreen/cyttsp_core.c            |   1 +
+ drivers/input/touchscreen/fsl-imx25-tcq.c          |   1 -
+ drivers/input/touchscreen/goodix_berlin_core.c     |   1 +
+ drivers/input/touchscreen/himax_hx852x.c           | 503 ++++++++++++
+ drivers/input/touchscreen/hynitron-cst816x.c       | 253 ++++++
+ drivers/input/touchscreen/imx6ul_tsc.c             | 121 +--
+ drivers/input/touchscreen/tsc2007_core.c           |  39 +-
+ drivers/input/touchscreen/tsc200x-core.c           |   1 +
+ drivers/input/touchscreen/wm9705.c                 |   1 +
+ drivers/input/touchscreen/wm9712.c                 |   1 +
+ drivers/input/touchscreen/wm9713.c                 |   1 +
+ drivers/input/touchscreen/wm97xx-core.c            |   1 +
+ include/linux/platform_data/keyboard-spear.h       | 164 ----
+ include/linux/platform_data/keypad-pxa27x.h        |  73 --
+ include/linux/tca6416_keypad.h                     |  30 -
+ 87 files changed, 2764 insertions(+), 1378 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/input/awinic,aw86927.yaml
+ delete mode 100644 Documentation/devicetree/bindings/input/lpc32xx-key.txt
+ create mode 100644 Documentation/devicetree/bindings/input/nxp,lpc3220-key.yaml
+ delete mode 100644 Documentation/devicetree/bindings/input/tca8418_keypad.txt
+ create mode 100644 Documentation/devicetree/bindings/input/ti,tca8418.yaml
+ delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/bu21013.txt
+ delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/eeti.txt
+ delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/egalax-ts.txt
+ create mode 100644 Documentation/devicetree/bindings/input/touchscreen/himax,hx852es.yaml
+ create mode 100644 Documentation/devicetree/bindings/input/touchscreen/hynitron,cst816x.yaml
+ delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/max11801-ts.txt
+ create mode 100644 Documentation/devicetree/bindings/input/touchscreen/maxim,max11801.yaml
+ delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/raspberrypi,firmware-ts.txt
+ create mode 100644 Documentation/devicetree/bindings/input/touchscreen/rohm,bu21013.yaml
+ create mode 100644 Documentation/devicetree/bindings/input/touchscreen/semtech,sx8654.yaml
+ delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/sx8654.txt
+ rename Documentation/devicetree/bindings/input/touchscreen/{ti.tsc2007.yaml => ti,tsc2007.yaml} (95%)
+ delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/touchscreen.txt
+ create mode 100644 Documentation/devicetree/bindings/input/touchscreen/zeitec,zet6223.yaml
+ delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/zet6223.txt
+ delete mode 100644 drivers/input/keyboard/tca6416-keypad.c
+ create mode 100644 drivers/input/misc/aw86927.c
+ create mode 100644 drivers/input/touchscreen/himax_hx852x.c
+ create mode 100644 drivers/input/touchscreen/hynitron-cst816x.c
+ delete mode 100644 include/linux/platform_data/keyboard-spear.h
+ delete mode 100644 include/linux/platform_data/keypad-pxa27x.h
+ delete mode 100644 include/linux/tca6416_keypad.h
+
+Thanks.
+
+
+-- 
+Dmitry
 
