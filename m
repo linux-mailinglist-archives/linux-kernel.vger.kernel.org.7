@@ -1,86 +1,103 @@
-Return-Path: <linux-kernel+bounces-845430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DEF9BC4E14
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 14:41:00 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6DA2BC4E22
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 14:41:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B02CE351E88
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 12:40:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 841F84EB03D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 12:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC74254AE1;
-	Wed,  8 Oct 2025 12:40:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28E424DCE2
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 12:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13C124EAB2;
+	Wed,  8 Oct 2025 12:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CfU0F376"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B1FD248F77
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 12:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759927246; cv=none; b=OyoB11xuDwlT+uA1vhtQExbvhphwBzxOnel5J9f2yfaYcdK4DsnfmFomOZnAWQMil+DfgwoTzDEBMVxQPlMw+gq63HqgcFqoBbrelzW1nPzIdHC2HekUE8rh4OmD3ut1WLF5HPdfnwzUpxy/Ldx+hhZnBqaLZ6lmAUora8XgbTE=
+	t=1759927251; cv=none; b=GFv4Andoo/Oie49aJh/K+ydWvjJ9IwRgJy74qW7s/N5sygmW6mF2tzOZFSu8MUADyteiCoXYinF5pcXk8P0eaboQXvie9spX9/OjiChhJKuY6GikXjYQlLbZGwarAbV3lTXR0L5xs3pVRlF0lYawOITfWYtPRv3EkVWCGhrXdt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759927246; c=relaxed/simple;
-	bh=xnw1k6sqpWoaqzrDSju1NOU1Ov2L4Pj8El+q2fMBNT8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hPQXHytsgUSkzuPkXO8V1fAJFv2fIYJOQF4THB9H/cnIrZbvcr2gAoXEdNBzMxXtak//hrQ5ekYsvdVKUAvMMlkxLtY1okddfM48MzZEafHNp1gIZ43T8bDrMA/cC1+i5F55gt7HTBS2kr/sqC078dW37S49HKcvWOd52KYATb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 11AC022FC;
-	Wed,  8 Oct 2025 05:40:35 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9CEA73F738;
-	Wed,  8 Oct 2025 05:40:42 -0700 (PDT)
-Date: Wed, 8 Oct 2025 13:40:40 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
-	Oliver Upton <oliver.upton@linux.dev>, joey.gouly@arm.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, will@kernel.org, alexandru.elisei@arm.com,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: arm64: Check cpu_has_spe() before initializing
- PMSCR_EL1 in VHE
-Message-ID: <20251008124040.GC77665@e132581.arm.com>
-References: <20251007182356.2813920-1-mukesh.ojha@oss.qualcomm.com>
- <aOVckTSJET5ORY1n@linux.dev>
- <861pndzn4w.wl-maz@kernel.org>
+	s=arc-20240116; t=1759927251; c=relaxed/simple;
+	bh=ScMSz4dASWHUMNw3VMR5HsvVzsipH3DOHnYd9nCasRY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=lnlgpjwWAZev0Vv+pswoT01Rg8aXaMX4/pFJegnrtcCr27sp1SZbXV1h9fr2QQ8bgPkqEJCZIzxlkuLbUgnM6OZf29OhgYOxVW8LiwtlW+99mgALqefZqp+jnwwN3xF0ZzXkFZD9Dhxq9izLo92KppNl1OfnOQNeESdDfIlhXW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CfU0F376; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CEFBC4CEF4;
+	Wed,  8 Oct 2025 12:40:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759927250;
+	bh=ScMSz4dASWHUMNw3VMR5HsvVzsipH3DOHnYd9nCasRY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=CfU0F376MJf5m4TlX85hI6/0B4baf0AA6sM8NcaosCKppQUqeyigqH5Hj8nBSzTYP
+	 rCxb3+Hkn0ZoPV0GYWc0XWS9+BQ+L6CXWdtukRSo38N3yGfFHSMzxLcc2Qc7cJj2O2
+	 tUCBKpTkMqvbhpxPZNDMAX3wgDLZssPOyJv1V14oaNLoj8aMALyGb7NQZZyiyUOMoX
+	 qWe4JwDqddCSmU15PCtP9dmXaNDOxBUo3Wwa2ix9HAubCm9Tn+ru/Q1lUpXFIhPlmk
+	 iky8HbbHJpb0VCgTlyT+kUec2ULq7M3GLxyspFSi21wKh83/ScvXOBfa5PsgmUjf1U
+	 wYe/OOkG7/IZw==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: Sean Anderson <sean.anderson@linux.dev>,  Tudor Ambarus
+ <tudor.ambarus@linaro.org>,  Michael Walle <mwalle@kernel.org>,
+  linux-mtd@lists.infradead.org,  Richard Weinberger <richard@nod.at>,
+  linux-kernel@vger.kernel.org,  Miquel Raynal <miquel.raynal@bootlin.com>,
+  Vignesh Raghavendra <vigneshr@ti.com>
+Subject: Re: [PATCH] mtd: spi-nor: Enable locking for n25q00a
+In-Reply-To: <mafs05xcpo9sz.fsf@kernel.org> (Pratyush Yadav's message of "Wed,
+	08 Oct 2025 14:30:20 +0200")
+References: <20251006223409.3475001-1-sean.anderson@linux.dev>
+	<mafs0ecreontu.fsf@kernel.org>
+	<4888cefa-e8be-4f0d-9d4a-c82f9ff6cda0@linux.dev>
+	<mafs05xcpo9sz.fsf@kernel.org>
+Date: Wed, 08 Oct 2025 14:40:48 +0200
+Message-ID: <mafs0wm55mur3.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <861pndzn4w.wl-maz@kernel.org>
+Content-Type: text/plain
 
-On Wed, Oct 08, 2025 at 11:46:55AM +0100, Marc Zyngier wrote:
+On Wed, Oct 08 2025, Pratyush Yadav wrote:
 
+> On Tue, Oct 07 2025, Sean Anderson wrote:
+>
+[...]
+>>>> Tested with a mt25qu01gbbb, which shares the same flash ID.
+>>> 
+>>> Ughh, is this another case of flash ID reuse? Do mt25qu and n25q00a
+>>> flashes behave exactly the same and only have two names? If not, then
+>>> how do you know if n25q00a will also work with these changes?
+>>
+>> I examined the datasheet for the n25q00a and determined that it has the
+>> same status register layout.
+>
+> Can you share the links to the datasheets?
+>
+> Also, test logs would be nice to have.
+>
+>>
+>> In fact, every n25q and mt25q flash has the same status register layout,
+>> which (as noted above) is necessary to support capacities greater than 8
+>> MiB (and all flashes in this series have such capacity).
+>
+> Do they behave the same? If not, do you know how they differ? If they
+
+To clarify, I mean behave the same in things other than the status
+register.
+
+> behave differently, we might need to have some code that detects which
+> one is running. Not necessarily as part of this patch though.
 [...]
 
-> > > Lets guard the change with cpu_has_spe() check so that it only affects
-> > > the cpu which has SPE feature supported.
-> > 
-> > This could benefit from being spelled out a bit more. In both cases we
-> > check for the presence of FEAT_SPE, however I believe the issue you
-> > observe is EL3 hasn't delegated ownership of the Profiling Buffer to
-> > Non-secure nor does it reinject an UNDEF in response to the sysreg trap.
-> > 
-> > I agree that the change is correct but the rationale needs to be clear.
-> 
-> To me, this smells a lot more like some sort of papering over a
-> firmware bug. Why isn't SPE available the first place?
-
-TF-a grants permission to non-secure world [1], only access from secure
-world or realm will trap to EL3.
-
-So yes, it would be good to check if any issue in firmware.
-
-Thanks,
-Leo
-
-[1] https://git.trustedfirmware.org/plugins/gitiles/TF-A/trusted-firmware-a.git/+/refs/heads/master/lib/extensions/spe/spe.c#52
+-- 
+Regards,
+Pratyush Yadav
 
