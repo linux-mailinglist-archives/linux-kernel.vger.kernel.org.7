@@ -1,162 +1,215 @@
-Return-Path: <linux-kernel+bounces-846035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BBC9BC6D4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 01:01:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95A0BBC6D5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 01:03:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF754188A6E9
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 23:01:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EDEC4068AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 23:03:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B102C3258;
-	Wed,  8 Oct 2025 23:01:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0BE2C21E5;
+	Wed,  8 Oct 2025 23:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iIavJCYH"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="p7MV0I4o"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87BE2C21FF
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 23:01:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8DE1E25F9;
+	Wed,  8 Oct 2025 23:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759964472; cv=none; b=KkK6ubjmqNgpzymGs5ITMgh9Tcknet7zT0jvfhq31O8oMac6vWYryODkCWKunYLPhS1TIo09vJ2zB7cadiZD2UjaM4Dqf/h8PnqOG5P+/hm3SZfLm/qsWqJcsGjC2F1AY8V65PC/NqS88UkNppeljf2TOnClvvDOvKMypkT2414=
+	t=1759964591; cv=none; b=SIG3DCw3yrd0+cioqILDAdqGA0+MW9a8aup6Mx7wgesk6P9L/RMkJQhOTJgbGrdgkziYkGcHwba5gP9L9Q4Bt8zL6xnnPO2CIReCox+zLKDrSUGXq9qjl67L1ndHiTUVXVf1rm4tLH5Lflp19uz/cGNrrzKb2O2kMTZGBsqViOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759964472; c=relaxed/simple;
-	bh=J6naoicX6YO52BOs1YYqGhDcIuPebi0tPRNmqLYfK/4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ezfn609ztlY72HSPOyk2bp0LjJL4YLJ+Iq32cCwT8Gf6smrkSlecNiC+VpILbozFYYrbTV9DMBz1zpyHN0nioDFSgF5uDan7a/xtJuaK3VAnxlHAvlDnai/bLU7N85RTy+Ox5yLe2REFIUWKYFPK5PSPL5idy7tc3on47OhVPyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iIavJCYH; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b650a3e0efcso62030a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 16:01:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759964469; x=1760569269; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=U3W05OR4qhoErzn2hSlT+lwHNht4XbUpenDxlwhWo4Q=;
-        b=iIavJCYHKT43xsOVQVX/QAuHGPAww9gEBw9seu4JOxyZuPikTEf2rIZLJ2/3jmBkeU
-         ffYbzofgyui6gnJ6QDAf3CiVmzvjBzfTFhCgg391ARwHdceiXaBA6c2xL9JWl/ab+qqA
-         pKhWNhaQ9HG3iCMn3L0FYcSOD4a+O17SQuFYd7F8Lu2c3X/js48LeGa5vwxNWddHan99
-         aN3SbzxgGZohBKkHoslth13eAkbCsiA1nB8qH5v/YkiXfy1uUah6K42W0jT3WT17aPaL
-         WYO07htKxyp/6qfDjJxVKMVc9RAztPw9UrA7Jj2iU9k8Gw7EIOM9t9Cy65ve3Q+HeHiD
-         4Obg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759964469; x=1760569269;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U3W05OR4qhoErzn2hSlT+lwHNht4XbUpenDxlwhWo4Q=;
-        b=blImIgD7MwwEe5FBPqJwrpqSB7f2eggvNvuZV78Kcl3/c6dDlTSsbl0tQIUFJENAdZ
-         P1PjRuxoxLpMl8a/2vsvffoViGTc2NoW1YGalWhJj4QEvYyfNwrE4YFa0fatxbh9ELrO
-         onl4S+EQ7/vP4Y6NUfrSKvmKEymDzPafU2K5qrhQP1IArzUHekND8Cgtop4L1B7a4DaX
-         gp+yXKe8iLioQTEFbayjDu5GUXHuruevkna13mz/fShPbDWqkAw/2w2iirGKmcoUtlo+
-         jam0+qVvZgWYA/5+Ry024IXwdU/pHQFOi94AFRP1ui529yiV21Xg7RScW+UFHy4dQatF
-         6epg==
-X-Forwarded-Encrypted: i=1; AJvYcCWhGyyXRAh6j2GobR7yxlJqsdPNsAK1JVIK+/s8G5aLagKLvlTHjCOV6wLOFFlWpWrWTuSr9l7W6U5sg9c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwV9lDl2bskXIUNoN0mMmRoZT5s3FRW+UZXMUpUZK2KW9oaqhtf
-	7KWn+sP8inzxE4Zl0Q3RXRd7CxkcX+nNJrZp4Wr+PkZMAaQxI64lHulvwzKkI2Z1jlxAHPjclmU
-	2LI1Ytg==
-X-Google-Smtp-Source: AGHT+IFm0oXfs8EI8t7khyLXG8PnbkOBg8NV7KElx8DOui3DOeBprgmwN/sDXkkpdWjTUzd9ZcDKdkRKatw=
-X-Received: from pjbpv10.prod.google.com ([2002:a17:90b:3c8a:b0:32e:b34b:92eb])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:9f8c:b0:2f6:9592:9075
- with SMTP id adf61e73a8af0-32da81f3adbmr7025731637.25.1759964469003; Wed, 08
- Oct 2025 16:01:09 -0700 (PDT)
-Date: Wed, 8 Oct 2025 16:01:07 -0700
-In-Reply-To: <Z_g-UQoZ8fQhVD_2@google.com>
+	s=arc-20240116; t=1759964591; c=relaxed/simple;
+	bh=Qh4apJsKdEQDbKnbcHSrefH+QGPPUWhORULgvKtYQKQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rdDxlVsLDVJy4OJesL3wBl5hMF1W6D5j6eeP0NIu4GgyuSri0nyzweOHYN/MTwf8ffLoC7un5GV0VMYW0kBpzyiVnxiISb+JjHp5RVaEnLOIpulk/NT8eM4kqz3BgkP0q0na/KAdv0ppfA3js/Z/NX/p7vvOeRHpFZ0mFUIcjt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=p7MV0I4o; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1759964580; x=1760569380; i=deller@gmx.de;
+	bh=x9vTxoQVMIBYa4egvTWqg1s9EsIH2uXuVj8h3WxMs/4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=p7MV0I4oRFVwnrXAFQKBfmYDUQan7/41t1QFV5QysLt75ie+fiFtLqovoveE7GdE
+	 oNKpgsvsMjmEp9wyosz074wqVqzyt9ZRDxIM5g2lscfasPA1SCUJ9YD2Vpt3YImR6
+	 SC9cT11/AdFbjsBJHnzNeId7qjbQ39nvp6AAvxSoVGA03Kiz2MHvAbh7f6g8vDggr
+	 g+2ulgEyehK3Xuwe5IjNHG4ByThpD8KCsuEt1dri6ZXkjDOMemY875oFUhCLXC88D
+	 nJQHeymqJNXoj6+i4hoBYtH+idQxX4iDdn1CZ+lmnVHzVmSXOzS/ruOAdGq5ZrIzI
+	 Y5mpbbdS7/tqi3Pwyw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.55] ([109.250.50.53]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MzhnN-1uKJpF0NA9-013Y1d; Thu, 09
+ Oct 2025 01:03:00 +0200
+Message-ID: <54ed44ef-7f89-4f56-b2c0-f36b2f0bfa63@gmx.de>
+Date: Thu, 9 Oct 2025 01:02:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250324140849.2099723-1-chao.gao@intel.com> <Z_g-UQoZ8fQhVD_2@google.com>
-Message-ID: <aObtM-7S0UfIRreU@google.com>
-Subject: Re: [PATCH] KVM: VMX: Flush shadow VMCS on emergency reboot
-From: Sean Christopherson <seanjc@google.com>
-To: Chao Gao <chao.gao@intel.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fbdev: Fix logic error in "offb" name match
+To: Finn Thain <fthain@linux-m68k.org>, Simona Vetter <simona@ffwll.ch>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ Javier Martinez Canillas <javierm@redhat.com>
+Cc: stable@vger.kernel.org, linux-fbdev@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <f91c6079ef9764c7e23abd80ceab39a35f39417f.1759964186.git.fthain@linux-m68k.org>
+Content-Language: en-US
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+In-Reply-To: <f91c6079ef9764c7e23abd80ceab39a35f39417f.1759964186.git.fthain@linux-m68k.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:yszPytJKr1rUEp/XtQ4Bbg2NOYg2Ekx52TPQz/roI8zj0uqf5Xg
+ B07UcTt9CysMkdH5e0z7BQ3kbKWn0fX8mQk/3RUu+jQwhATo0uo5IAiUTkbHcz3ceQK7+c3
+ P3fnVjNGcoIFbT0Djs6Xh6Auk9Mn1THO31zxmpZ+EK9JGnCds4YVGtZnBCNDPa3VoG2MVsU
+ jZXLUEtCrP8jjTjLJTNDw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:PjASLaVM4L0=;MURyKVSoKhf8q5jSV9Je+CV8qjI
+ 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
+ 9bmxUBOPO7OHDKi2ZLWhcvcJEI=
 
-Trimmed Cc: to lists, as this is basically off-topic, but I thought you might
-be amused :-)
+On 10/9/25 00:56, Finn Thain wrote:
+> A regression was reported to me recently whereby /dev/fb0 had disappeare=
+d
+> from a PowerBook G3 Series "Wallstreet". The problem shows up when the
+> "video=3Dofonly" parameter is passed to the kernel, which is what the
+> bootloader does when "no video driver" is selected. The cause of the
+> problem is the "offb" string comparison, which got mangled when it got
+> refactored. Fix it.
+>=20
+> Cc: stable@vger.kernel.org
+> Fixes: 93604a5ade3a ("fbdev: Handle video=3D parameter in video/cmdline.=
+c")
+> Reported-and-tested-by: Stan Johnson <userm57@yahoo.com>
+> Signed-off-by: Finn Thain <fthain@linux-m68k.org>
+> ---
+>   drivers/video/fbdev/core/fb_cmdline.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Thu, Apr 10, 2025, Sean Christopherson wrote:
-> On Mon, Mar 24, 2025, Chao Gao wrote:
-> > Ensure the shadow VMCS cache is evicted during an emergency reboot to
-> > prevent potential memory corruption if the cache is evicted after reboot.
-> 
-> I don't suppose Intel would want to go on record and state what CPUs would actually
-> be affected by this bug.  My understanding is that Intel has never shipped a CPU
-> that caches shadow VMCS state.
-> 
-> On a very related topic, doesn't SPR+ now flush the VMCS caches on VMXOFF?  If
-> that's going to be the architectural behavior going forward, will that behavior
-> be enumerated to software?  Regardless of whether there's software enumeration,
-> I would like to have the emergency disable path depend on that behavior.  In part
-> to gain confidence that SEAM VMCSes won't screw over kdump, but also in light of
-> this bug.
+applied.
 
-Apparently I completely purged it from my memory, but while poking through an
-internal branch related to moving VMXON out of KVM, I came across this:
-
---
-Author:     Sean Christopherson <seanjc@google.com>
-AuthorDate: Wed Jan 17 16:19:28 2024 -0800
-Commit:     Sean Christopherson <seanjc@google.com>
-CommitDate: Fri Jan 26 13:16:31 2024 -0800
-
-    KVM: VMX: VMCLEAR loaded shadow VMCSes on kexec()
-    
-    Add a helper to VMCLEAR _all_ loaded VMCSes in a loaded_vmcs pair, and use
-    it when doing VMCLEAR before kexec() after a crash to fix a (likely benign)
-    bug where KVM neglects to VMCLEAR loaded shadow VMCSes.  The bug is likely
-    benign as existing Intel CPUs don't insert shadow VMCSes into the VMCS
-    cache, i.e. shadow VMCSes can't be evicted since they're never cached, and
-    thus won't clobber memory in the new kernel.
-
---
-
-At least my reaction was more or less the same both times?
-
-> If all past CPUs never cache shadow VMCS state, and all future CPUs flush the
-> caches on VMXOFF, then this is a glorified NOP, and thus probably shouldn't be
-> tagged for stable.
-> 
-> > This issue was identified through code inspection, as __loaded_vmcs_clear()
-> > flushes both the normal VMCS and the shadow VMCS.
-> > 
-> > Avoid checking the "launched" state during an emergency reboot, unlike the
-> > behavior in __loaded_vmcs_clear(). This is important because reboot NMIs
-> > can interfere with operations like copy_shadow_to_vmcs12(), where shadow
-> > VMCSes are loaded directly using VMPTRLD. In such cases, if NMIs occur
-> > right after the VMCS load, the shadow VMCSes will be active but the
-> > "launched" state may not be set.
-> > 
-> > Signed-off-by: Chao Gao <chao.gao@intel.com>
-> > ---
-> >  arch/x86/kvm/vmx/vmx.c | 5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> > index b70ed72c1783..dccd1c9939b8 100644
-> > --- a/arch/x86/kvm/vmx/vmx.c
-> > +++ b/arch/x86/kvm/vmx/vmx.c
-> > @@ -769,8 +769,11 @@ void vmx_emergency_disable_virtualization_cpu(void)
-> >  		return;
-> >  
-> >  	list_for_each_entry(v, &per_cpu(loaded_vmcss_on_cpu, cpu),
-> > -			    loaded_vmcss_on_cpu_link)
-> > +			    loaded_vmcss_on_cpu_link) {
-> >  		vmcs_clear(v->vmcs);
-> > +		if (v->shadow_vmcs)
-> > +			vmcs_clear(v->shadow_vmcs);
-> > +	}
-> >  
-> >  	kvm_cpu_vmxoff();
-> >  }
-> > -- 
-> > 2.46.1
-> > 
+Thanks!
+Helge
 
