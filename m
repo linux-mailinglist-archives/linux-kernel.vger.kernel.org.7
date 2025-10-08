@@ -1,79 +1,101 @@
-Return-Path: <linux-kernel+bounces-845451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B349CBC4FEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 14:53:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B65C1BC5012
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 14:54:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4A21F3521EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 12:53:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B368E403A97
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 12:53:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB52257422;
-	Wed,  8 Oct 2025 12:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C13266576;
+	Wed,  8 Oct 2025 12:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="P4r5ZVOX"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aTmMpC2v";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UCu18VNL";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="R/m232qK";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="83qoPr/r"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A7222576E;
-	Wed,  8 Oct 2025 12:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4C7264A7F
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 12:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759927985; cv=none; b=bpD4Q1c14/1UJwEldopEiwE+dCoq+RdhcPvWagU0iBpVFr6x+RoTBOAIGAJ0JxcNddu2hHu2DTzU47ncZJbzgXTv87KxeTZAEUH5/mbbaeV9PZsSg2kkslcgiUXckHTWhgs/X9jwFOhIKQd3QrnuAutHsAha2P4Qw16IgyhS8js=
+	t=1759928008; cv=none; b=HQU+weeyclgwZopEd8hw4+XKPmHY21C1kpVyw+pSwaD8LRslhG9w6db1JgmE/zv6TrXErHrgQkF3pH2SvRB8pFG7eXKWyYJaApPFhWIEQzduDzYoHIc/w/w09PXLTyqpkV0voHREWObwq0d664YohEwqIO1OhiKJ0l++llvIK/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759927985; c=relaxed/simple;
-	bh=KE994vaHc9Lub7dV+5qjBDCWtxEyznYGfeEQaGAijBc=;
+	s=arc-20240116; t=1759928008; c=relaxed/simple;
+	bh=jolk5sBxPv60IpiEazWwOVg3Mme1Sq2PHc8+LGnUf2M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TclUDbdR4EdjvFWCpSWN+mgAfrmgDO1xBYPtQzPK7ttHXbXA5Mi4BPGLJDYE7auQK0qcBwXtu2NLubrsmQ6T5BhjXmpTKYFNBzZdTYKiy2vRpkYW9agB1Erjrr4CQyw+/9qvgQLEl9CaCawPjgRBXmyEGWA5KAMlN45gbg3LIKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=P4r5ZVOX; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=rUcNF7HmWtTGzIMms9/Q8UU/RXubK/rmOwXw+oXKsP0=; b=P4r5ZVOXQiZxQe2ze5I0fRfgFe
-	pSpL71g8anM40noUiJXsS1xp7yhe7SztuvFwnfLEjqAf49e2OQLwcE5TZP0Pg/i4Rf/vXmYe5GqKS
-	ZxRDzDuS1Bd8r1TvlSsZ1BW8OV0vDdXB5yAkcADohw3lmkGVx7cRii+Uo5129WxPXBPEheNifZTxR
-	WrxZBW6N8RjfU85mN5Cc1hUqI6oUamCnSbXDX06fCeus8sBwf79InY0GglbCWK8y8eLs5tc3veJg4
-	eX9w5YCrW7AKcT1QcqduhUqp+U5WRxssoDlh0GVzi4YgTi+7gPx4nDSFpwma8/gDAxdfAxm4xnTxW
-	TI2yTqYQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56520)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1v6Tex-0000000064b-2vae;
-	Wed, 08 Oct 2025 13:52:47 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1v6Ter-000000003sR-3QOm;
-	Wed, 08 Oct 2025 13:52:42 +0100
-Date: Wed, 8 Oct 2025 13:52:41 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: Alexander Wilhelm <alexander.wilhelm@westermo.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Aquantia PHY in OCSGMII mode?
-Message-ID: <aOZemYL1iofWyBji@shell.armlinux.org.uk>
-References: <20250827073120.6i4wbuimecdplpha@skbuf>
- <aK7Ep7Khdw58hyA0@FUE-ALEWI-WINX>
- <aK7GNVi8ED0YiWau@shell.armlinux.org.uk>
- <aK7J7kOltB/IiYUd@FUE-ALEWI-WINX>
- <aK7MV2TrkVKwOEpr@shell.armlinux.org.uk>
- <20250828092859.vvejz6xrarisbl2w@skbuf>
- <aN4TqGD-YBx01vlj@FUE-ALEWI-WINX>
- <20251007140819.7s5zfy4zv7w3ffy5@skbuf>
- <aOYXEFf1fVK93QeS@FUE-ALEWI-WINX>
- <20251008111059.wxf3jgialy36qc6m@skbuf>
+	 Content-Type:Content-Disposition:In-Reply-To; b=E0QRBjZ9KILM9wf/GL4iZn7uAlqP3l68SrbNaYkVDvE5HFv1yvYGhuYK39MCq2nH0hJQKaRcRmjmeK0Po5iOqSrkzGJ0xzwA9QZks0Np9fmY7OGxnJPCObiUmoxjG6et9vcBeyHpsw7jo+XT4g4BWuOg/h4NHk4AMA0u6jEqZvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aTmMpC2v; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UCu18VNL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=R/m232qK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=83qoPr/r; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7E6F61FD71;
+	Wed,  8 Oct 2025 12:53:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759928003; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YzniZCrvw6b1u3KIHRNwcErdevqzQ6AHeU1M43FbPEE=;
+	b=aTmMpC2vtjCN8DywNjEvhhWpJHjGuJxzR5Lccjfpjpb89gvRuT8FRRblYzgXP09Y0qEUhs
+	eQljvpstKPfNk38WFRnAxKNOFEvgXKpEVxiyWTIDCsvmSguMKaLEZhFOk/bF2rVZzbhUBl
+	AGDjNY+iMsNX79Wykns7hXG0r9Jr1lc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759928003;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YzniZCrvw6b1u3KIHRNwcErdevqzQ6AHeU1M43FbPEE=;
+	b=UCu18VNL5+7RfKl5TqWDeaGeyJbkjlZFqWTRdhLaP8t3PrUOtyg8yQitbjgEKzOrKDabUg
+	3MTVpEQVik+OAtCw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759928002; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YzniZCrvw6b1u3KIHRNwcErdevqzQ6AHeU1M43FbPEE=;
+	b=R/m232qKJ3JNvBO4b25EAZjziwXlQIx/SOB0+iC9h/gJQNafR+5vjEU4wPDZVHcfly7Tbe
+	62qF8nrmeS/hhXXGbGR87rpd4ggEqd+XhdKT1niR67EsYgkgQNeRNeKn+MIt65i08pAwMP
+	ZvyHmucK1Lhod2TPHqfzV0siwnzRgC0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759928002;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YzniZCrvw6b1u3KIHRNwcErdevqzQ6AHeU1M43FbPEE=;
+	b=83qoPr/r+O0Fj4WgTzc81bfa7TqWuoXD8XhsF5Vsx9si+w3cTg6+lJfqkTqgrvtUp1loQU
+	a5sVK0gAqhdzK/DQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 53E2513693;
+	Wed,  8 Oct 2025 12:53:22 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 9FjaE8Je5mj9RAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 08 Oct 2025 12:53:22 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B07EDA0A9C; Wed,  8 Oct 2025 14:53:13 +0200 (CEST)
+Date: Wed, 8 Oct 2025 14:53:13 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
+	yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH v2 12/13] ext4: add large folios support for moving
+ extents
+Message-ID: <axefpw7kkvnto72cde4cmn7ns6elbh6xrmfqh523dgjfveej5w@nmh5nsos4xoz>
+References: <20250925092610.1936929-1-yi.zhang@huaweicloud.com>
+ <20250925092610.1936929-13-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,16 +104,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251008111059.wxf3jgialy36qc6m@skbuf>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <20250925092610.1936929-13-yi.zhang@huaweicloud.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-On Wed, Oct 08, 2025 at 02:10:59PM +0300, Vladimir Oltean wrote:
-> 1. Configure IF_MODE=3 (SGMII autoneg format) for 2500base-x:
+On Thu 25-09-25 17:26:08, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> Pass the moving extent length into mext_folio_double_lock() so that it
+> can acquire a higher-order folio if the length exceeds PAGE_SIZE. This
+> can speed up extent moving when the extent is larger than one page.
+> Additionally, remove the unnecessary comments from
+> mext_folio_double_lock().
+> 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-Just to be clear, we're not going to accept SGMII autoneg format for
-2500base-X.
+One nit below, otherwise feel free to add:
 
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+> @@ -214,7 +206,8 @@ static int mext_move_begin(struct mext_data *mext, struct folio *folio[2],
+>  	orig_pos = ((loff_t)mext->orig_map.m_lblk) << blkbits;
+>  	donor_pos = ((loff_t)mext->donor_lblk) << blkbits;
+>  	ret = mext_folio_double_lock(orig_inode, donor_inode,
+> -			orig_pos >> PAGE_SHIFT, donor_pos >> PAGE_SHIFT, folio);
+> +			orig_pos >> PAGE_SHIFT, donor_pos >> PAGE_SHIFT,
+> +			mext->orig_map.m_len << blkbits, folio);
+			^^^ This is just cosmetical but we should cast to
+  size_t before the shift...
+
+								Honza
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
