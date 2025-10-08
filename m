@@ -1,248 +1,220 @@
-Return-Path: <linux-kernel+bounces-845574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5863BC5692
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 16:16:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4425ABC56A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 16:16:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AF673ADEE6
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 14:15:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 466203C6432
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 14:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3728283FF7;
-	Wed,  8 Oct 2025 14:15:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E33429A9F9;
+	Wed,  8 Oct 2025 14:16:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="kntnz6+f"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="AQEdKOtJ"
+Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010033.outbound.protection.outlook.com [40.93.198.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D216224C076
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 14:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759932948; cv=none; b=aOu9U9LcktOKBOt0JJDrUV7kdgfYa1sC4pSHUMHS73s6WNyt9N7eBQzinT0vunmRuzmnWXJ0mPxvoTFLT0njS5RvBhy4Og7SILbsqRCP8N9Yy3iRkvSyBfetEjCe7OkyEoW7AII8xUtfjcxQV11P+bG6G4bokoZnpTPsXOYKrEM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759932948; c=relaxed/simple;
-	bh=8tRqtbODRqjaEdOTfJSsrK4OHe29vcxu7+DtAi2pak4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FFKSPihT1uWC4MhD5QryRYoxQJWtHD1jV8lzM+So2X41zrCLmY1TkhYctBqMgdi5Lfpuk+HXd7KbL0Q+iN5TUBDPku4RmdtIe5kU2RkditqIqHkr4IsaKStRfmwmUT1t4S2BCqRgKhCPeArIaldx7DwiOCUsItP4AYlxhGPU9p0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=kntnz6+f; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 064C6EFE;
-	Wed,  8 Oct 2025 16:14:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1759932849;
-	bh=8tRqtbODRqjaEdOTfJSsrK4OHe29vcxu7+DtAi2pak4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kntnz6+fJf8VFixy317M7XUJctcfhnvC/AFpuJKTkZc6QA2z2Z+kvb9xd8DbkN6hf
-	 OLD4kp4EX/SmUZRwtXLwQSyPgVcofL/5IDWZNhv25c5R6a38J/vlteHKWhes7hWzBL
-	 x5zdfBRQdE8Soem2TuHZY6QKsRjdJzsL8q5C0QeU=
-Message-ID: <47dfe81e-08ab-4fea-85fe-8c0a1d76bb78@ideasonboard.com>
-Date: Wed, 8 Oct 2025 17:15:38 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3929AA31
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 14:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.33
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759932988; cv=fail; b=RjwwP3OjstRx73Llc7bxtKh0xf5/guFQLLTqcOE+bOBtHJz+g1rkLNPiz0GwyONWSXywwvYPl8RtHTf6YattW0s+ZxVY2n04thmjlwwQkOGLK9JgK4DETjoJlELOLVVSwDxx1AWWIIE4lh22qkI3sP2rOCtrBTZoLcPVHCkSgMw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759932988; c=relaxed/simple;
+	bh=Ozs/YXmEK3dG8KoXQLIMqb6Xfmdsr6oi07H8uvnDEnE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=dBbigHF5tBNs6//mDOtkEh2jdBpvz/KFOUEKsRHtOv9gOXbNOdhmd8tbSAYDNgsqmt20xjI6QpsqsjUGtssg0h0r0mKsSmLiiQnkkxzlFh2VU3xfMrfEq+aegNUvSA1I7x3TOUtrxRYcR5iaUhNsyU+xd73XwsOI5QP0TGNa/XY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=AQEdKOtJ; arc=fail smtp.client-ip=40.93.198.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Pi4u93WDsK5z/xk/xqWL744H7AXwIzBs1/53uY3lLxzBYn1bPHv630d4IGSuvOL+4UHaTDkLM5S805GdNYwP9Y91PXCoiY2B+9Jc5EqsnZI/GrVbrAnfLcx6iTbQSz09ms2HLCkvJx0uqSC70H90YX0Icwv5aNG0PG7yrb58u2uvo63CYwl6gf8a0D8e9H9BkhIONTuKOTmoyvjxVg/AX7tehGAnddvhKnOZ0sWZ9ZOXhZuHeps5OlppWyaoq9HEsFMaxPGLNYpHIu/aBo3pr6Dn1UriRGUDAnxfN7XWdjatoeVd3N8FvpxWMqRTWegaIif4/sRfNa9pVlGb0ehWqg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JXzXLFU0XvzllBA5jPWFf67xgIOvf4dLYVV6pyRvVEQ=;
+ b=MLMDAZVT4jRiYjRq4uAeGNVUHCL3dPuLCQaYwGwPe/YEFxvS/fA6wWq1lYzJEtlC5BO20ozUtcg/Ea/ITFDIuLTIcFZM2chFHxRqpcOU1nQtSo1BG48Fg/Tr5N4ryZANXNndCN6XSS+qCXbl3wZkYyUD2ldsbJVgC+8FxockBe91VdzKiFZ7oJwdvalIbeWarIMAe4PxA9CvXS8khx7TS693ishhEI+6hjC7SnMlo9QPC6BE0XWRZtJR8dflnMBhfKRQamEmcGRsnTDhHT3ul49pbXDGPuwmQvKaTnXLl5MVmyXzeMfevEYzJuWo6TDnU5GgBneB2SMJrCtpXjsXAQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JXzXLFU0XvzllBA5jPWFf67xgIOvf4dLYVV6pyRvVEQ=;
+ b=AQEdKOtJCY0VAIKrz1ZN17rrHHQTPz0x72URhB/ncY4E4+Xv46QZTBP2liklMKaz8DrskuP/FD1XfVobsx1D8oEItuxFzkD0rosQMBhfo6vI9wJE4aOlt9C9RsPjxTTJH6qgN5eqzTKnaUbL6KdK/d500RKyI+ngj5CWwE4EG5E=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM8PR12MB5445.namprd12.prod.outlook.com (2603:10b6:8:24::7) by
+ BL1PR12MB5945.namprd12.prod.outlook.com (2603:10b6:208:398::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Wed, 8 Oct
+ 2025 14:16:17 +0000
+Received: from DM8PR12MB5445.namprd12.prod.outlook.com
+ ([fe80::a544:caf8:b505:5db6]) by DM8PR12MB5445.namprd12.prod.outlook.com
+ ([fe80::a544:caf8:b505:5db6%6]) with mapi id 15.20.9203.007; Wed, 8 Oct 2025
+ 14:16:16 +0000
+Message-ID: <85a88037-d36f-433a-96c6-95a0c2e8307f@amd.com>
+Date: Wed, 8 Oct 2025 09:16:13 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 09/12] iommu/amd: Add support for nest parent domain
+ allocation
+Content-Language: en-US
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, linux-kernel@vger.kernel.org, robin.murphy@arm.com,
+ will@kernel.org, joro@8bytes.org, kevin.tian@intel.com, jsnitsel@redhat.com,
+ vasant.hegde@amd.com, iommu@lists.linux.dev, santosh.shukla@amd.com,
+ sairaj.arunkodilkar@amd.com, jon.grimm@amd.com, prashanthpra@google.com,
+ wvw@google.com, wnliu@google.com, gptran@google.com, kpsingh@google.com,
+ joao.m.martins@oracle.com, alejandro.j.jimenez@oracle.com
+References: <20251001060954.5030-1-suravee.suthikulpanit@amd.com>
+ <20251001060954.5030-10-suravee.suthikulpanit@amd.com>
+ <aN69rkBJS2hIcZjk@Asurada-Nvidia>
+From: "Suthikulpanit, Suravee" <suravee.suthikulpanit@amd.com>
+In-Reply-To: <aN69rkBJS2hIcZjk@Asurada-Nvidia>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA0PR11CA0114.namprd11.prod.outlook.com
+ (2603:10b6:806:d1::29) To DM8PR12MB5445.namprd12.prod.outlook.com
+ (2603:10b6:8:24::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/29] drm: Implement state readout support
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Jyri Sarha <jyri.sarha@iki.fi>
-References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
- <f87700f1-ed9c-40fe-9327-efe574820139@ideasonboard.com>
- <20251008-nondescript-snobbish-rattlesnake-d486a7@houat>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- xsFNBE6ms0cBEACyizowecZqXfMZtnBniOieTuFdErHAUyxVgtmr0f5ZfIi9Z4l+uUN4Zdw2
- wCEZjx3o0Z34diXBaMRJ3rAk9yB90UJAnLtb8A97Oq64DskLF81GCYB2P1i0qrG7UjpASgCA
- Ru0lVvxsWyIwSfoYoLrazbT1wkWRs8YBkkXQFfL7Mn3ZMoGPcpfwYH9O7bV1NslbmyJzRCMO
- eYV258gjCcwYlrkyIratlHCek4GrwV8Z9NQcjD5iLzrONjfafrWPwj6yn2RlL0mQEwt1lOvn
- LnI7QRtB3zxA3yB+FLsT1hx0va6xCHpX3QO2gBsyHCyVafFMrg3c/7IIWkDLngJxFgz6DLiA
- G4ld1QK/jsYqfP2GIMH1mFdjY+iagG4DqOsjip479HCWAptpNxSOCL6z3qxCU8MCz8iNOtZk
- DYXQWVscM5qgYSn+fmMM2qN+eoWlnCGVURZZLDjg387S2E1jT/dNTOsM/IqQj+ZROUZuRcF7
- 0RTtuU5q1HnbRNwy+23xeoSGuwmLQ2UsUk7Q5CnrjYfiPo3wHze8avK95JBoSd+WIRmV3uoO
- rXCoYOIRlDhg9XJTrbnQ3Ot5zOa0Y9c4IpyAlut6mDtxtKXr4+8OzjSVFww7tIwadTK3wDQv
- Bus4jxHjS6dz1g2ypT65qnHen6mUUH63lhzewqO9peAHJ0SLrQARAQABzTBUb21pIFZhbGtl
- aW5lbiA8dG9taS52YWxrZWluZW5AaWRlYXNvbmJvYXJkLmNvbT7CwY4EEwEIADgWIQTEOAw+
- ll79gQef86f6PaqMvJYe9QUCX/HruAIbAwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRD6
- PaqMvJYe9WmFD/99NGoD5lBJhlFDHMZvO+Op8vCwnIRZdTsyrtGl72rVh9xRfcSgYPZUvBuT
- VDxE53mY9HaZyu1eGMccYRBaTLJSfCXl/g317CrMNdY0k40b9YeIX10feiRYEWoDIPQ3tMmA
- 0nHDygzcnuPiPT68JYZ6tUOvAt7r6OX/litM+m2/E9mtp8xCoWOo/kYO4mOAIoMNvLB8vufi
- uBB4e/AvAjtny4ScuNV5c5q8MkfNIiOyag9QCiQ/JfoAqzXRjVb4VZG72AKaElwipiKCWEcU
- R4+Bu5Qbaxj7Cd36M/bI54OrbWWETJkVVSV1i0tghCd6HHyquTdFl7wYcz6cL1hn/6byVnD+
- sR3BLvSBHYp8WSwv0TCuf6tLiNgHAO1hWiQ1pOoXyMEsxZlgPXT+wb4dbNVunckwqFjGxRbl
- Rz7apFT/ZRwbazEzEzNyrBOfB55xdipG/2+SmFn0oMFqFOBEszXLQVslh64lI0CMJm2OYYe3
- PxHqYaztyeXsx13Bfnq9+bUynAQ4uW1P5DJ3OIRZWKmbQd/Me3Fq6TU57LsvwRgE0Le9PFQs
- dcP2071rMTpqTUteEgODJS4VDf4lXJfY91u32BJkiqM7/62Cqatcz5UWWHq5xeF03MIUTqdE
- qHWk3RJEoWHWQRzQfcx6Fn2fDAUKhAddvoopfcjAHfpAWJ+ENc7BTQROprNHARAAx0aat8GU
- hsusCLc4MIxOQwidecCTRc9Dz/7U2goUwhw2O5j9TPqLtp57VITmHILnvZf6q3QAho2QMQyE
- DDvHubrdtEoqaaSKxKkFie1uhWNNvXPhwkKLYieyL9m2JdU+b88HaDnpzdyTTR4uH7wk0bBa
- KbTSgIFDDe5lXInypewPO30TmYNkFSexnnM3n1PBCqiJXsJahE4ZQ+WnV5FbPUj8T2zXS2xk
- 0LZ0+DwKmZ0ZDovvdEWRWrz3UzJ8DLHb7blPpGhmqj3ANXQXC7mb9qJ6J/VSl61GbxIO2Dwb
- xPNkHk8fwnxlUBCOyBti/uD2uSTgKHNdabhVm2dgFNVuS1y3bBHbI/qjC3J7rWE0WiaHWEqy
- UVPk8rsph4rqITsj2RiY70vEW0SKePrChvET7D8P1UPqmveBNNtSS7In+DdZ5kUqLV7rJnM9
- /4cwy+uZUt8cuCZlcA5u8IsBCNJudxEqBG10GHg1B6h1RZIz9Q9XfiBdaqa5+CjyFs8ua01c
- 9HmyfkuhXG2OLjfQuK+Ygd56mV3lq0aFdwbaX16DG22c6flkkBSjyWXYepFtHz9KsBS0DaZb
- 4IkLmZwEXpZcIOQjQ71fqlpiXkXSIaQ6YMEs8WjBbpP81h7QxWIfWtp+VnwNGc6nq5IQDESH
- mvQcsFS7d3eGVI6eyjCFdcAO8eMAEQEAAcLBXwQYAQIACQUCTqazRwIbDAAKCRD6PaqMvJYe
- 9fA7EACS6exUedsBKmt4pT7nqXBcRsqm6YzT6DeCM8PWMTeaVGHiR4TnNFiT3otD5UpYQI7S
- suYxoTdHrrrBzdlKe5rUWpzoZkVK6p0s9OIvGzLT0lrb0HC9iNDWT3JgpYDnk4Z2mFi6tTbq
- xKMtpVFRA6FjviGDRsfkfoURZI51nf2RSAk/A8BEDDZ7lgJHskYoklSpwyrXhkp9FHGMaYII
- m9EKuUTX9JPDG2FTthCBrdsgWYPdJQvM+zscq09vFMQ9Fykbx5N8z/oFEUy3ACyPqW2oyfvU
- CH5WDpWBG0s5BALp1gBJPytIAd/pY/5ZdNoi0Cx3+Z7jaBFEyYJdWy1hGddpkgnMjyOfLI7B
- CFrdecTZbR5upjNSDvQ7RG85SnpYJTIin+SAUazAeA2nS6gTZzumgtdw8XmVXZwdBfF+ICof
- 92UkbYcYNbzWO/GHgsNT1WnM4sa9lwCSWH8Fw1o/3bX1VVPEsnESOfxkNdu+gAF5S6+I6n3a
- ueeIlwJl5CpT5l8RpoZXEOVtXYn8zzOJ7oGZYINRV9Pf8qKGLf3Dft7zKBP832I3PQjeok7F
- yjt+9S+KgSFSHP3Pa4E7lsSdWhSlHYNdG/czhoUkSCN09C0rEK93wxACx3vtxPLjXu6RptBw
- 3dRq7n+mQChEB1am0BueV1JZaBboIL0AGlSJkm23kw==
-In-Reply-To: <20251008-nondescript-snobbish-rattlesnake-d486a7@houat>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM8PR12MB5445:EE_|BL1PR12MB5945:EE_
+X-MS-Office365-Filtering-Correlation-Id: af33fb98-db42-4e72-f7d1-08de06753ea1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WkowL0hSOUliVm5xeWVLUGh4STVNdFBHNUtiSzIxZlpoTWRndWkrT2dwQ2JD?=
+ =?utf-8?B?VlNWUWVBVkNFNW1yNUNxT2V0d2tNeGJmeGoxV3RMdmM0dWZ2UTc3OWJwWUhP?=
+ =?utf-8?B?RHE0NlBQVkg0ZDluUkhNTFpOd2w0VldyMDliUURlTlR2alByMFVUUTc2TERl?=
+ =?utf-8?B?elh6Wm5sTDRzQW55RTBJeGJCa3ZmdVZyT2puWHd1dGRhMGp0dUxaQzl2NDVn?=
+ =?utf-8?B?cHBrRGFEVmg4bDA4ei82RDZQMERUbUJRK3R0Mm9PWjRzaUZWSXp6d2tmcU1B?=
+ =?utf-8?B?eEY4M1hJRTRoSzZ1R2xNeHkvTVdMYkRiTHVuUXV0UU16YXNYdkdaaVpWZzI5?=
+ =?utf-8?B?d1MrdU1pbWc3Q0YyS0hQdFAzajVDWmpKcWRPaDZVZW9sYU82ZElmU0Y5bW5R?=
+ =?utf-8?B?R0NqcUNlVE1QSG9XZ1lwUEljVUNvN0pBNjJjc1Y4TWd1bFBhZzlJbzcrUEhC?=
+ =?utf-8?B?TkhiVStiNGpWT1FobWhGZ1N4blFxL09ER0N3WkFmVU9yZkV3Z1hEUUZ5K1k1?=
+ =?utf-8?B?bUNGRUZqamhOUTJUbjM2VFQrS2haNGNNNDhuL3RQMEdZL2NnUW45c0kzY0xR?=
+ =?utf-8?B?L014dWp5V3FLemdJb1lITkJJT0tVN2tEUUQzQWR1dWZYcWI5V2RON21Gc1pO?=
+ =?utf-8?B?V2lyYWNWU0w3Vm9mR2x1QmVzbFVrL1NXVHlCSHM0VWdzQWIrVHgxbWlBU2xZ?=
+ =?utf-8?B?MzgrcjBSTTNRdEhkdHYyRkhwOFA2TUdKbC92M2JOTnlXcGhMNE1IQ1JESzlP?=
+ =?utf-8?B?c1V3eTlwdFIyZ3g3ZnhqOHpuSlc2RkhIb0tnOHpVOHM4UnJ2L1FJUGt4UWti?=
+ =?utf-8?B?NmVlckFDb0o4a09jZWFFMWNKdFJQVEZZQmpDU1FNeE1IbEhPNnVmRGNZMmZv?=
+ =?utf-8?B?eFlqejhDcWhxeUY3N0Y0UFQyZlJSSTAvNmwxcTZubjR2TjM2NnRUckZ2VG12?=
+ =?utf-8?B?VFUyZ1NZWHNTWGhVa2Q1cmQ3V3drZEFncFM3REVXTisyMFdGQVVpNkt6QmFP?=
+ =?utf-8?B?UTlGRmNmQ01adm9panpRMlpFYVpLWU1rOVZ5SjRzSUtVQTA2MkRYVDVWTnNs?=
+ =?utf-8?B?TFhqeWg0VkNVSjQwTGNjdHpOMVYzNGFpYkNVOFVnc1NlVHhDbC84anJyUUwx?=
+ =?utf-8?B?MUVEM1VlR1B4WktzZHh3T3o1Z1c0Nll6M0FvY3gvbG42VlhmbWtGMjIrVXd2?=
+ =?utf-8?B?S0ZVWXpUYldla3VmVDlmUzJOZFo5a1VkdmtNdWF1eHhURlE0Ly9NZkluWWR0?=
+ =?utf-8?B?MnN6Q1REN2NWNFlzNG1KNGUrZG0rK093NnlWQkZRTTNabFFMSVdwSFNaUmsr?=
+ =?utf-8?B?Z0xhOTNQN211ZlRxS0crYjMrMDBoL2pINlJQRVphUDNXbUhRMk5JbGRCeHJu?=
+ =?utf-8?B?cEFRb1Rkcmd4VTRsOEZEdlF2Q0wvdUozdEtkWlhOdDUyYk0xalg5LzhudFRY?=
+ =?utf-8?B?U3ROcW4yRXg0TUxMa0JVeTRXUzk3aWhocEowTkZyYVkzOFNBTC9tWElReXVt?=
+ =?utf-8?B?Ly90VjdmclNES3RoVDVsZnNBTU5WSi83TE9jWXVhK2xwNFY3QjJtRXFTRnNy?=
+ =?utf-8?B?ZWJ5TFYvNU9VV2IrWndNNUVmVjVKWnQ2cWFqcXBDbjUwV0RodExreGxuYWpS?=
+ =?utf-8?B?RllweDZrM3crb04rMDFDZkNVY3E1ZitudCtXUU5nTDVHUjUwNW9YR1ZZSEh6?=
+ =?utf-8?B?d0lmZjJNR294TWUzbFMrVUh5MWF4R2U1MTg0anlEOUlQanVnMHA4MkdUaHJH?=
+ =?utf-8?B?THRFaEpGNklFay85Y2orQ3FjQThQT1lKY2FuQjdMYlc2ajU2bjQ3N2JOOXA3?=
+ =?utf-8?B?VVdFMk00WUxVb21vY0RiMjdRaUxJbnU5NWFpOFdVZENDSnRqOVpKVUtDREVW?=
+ =?utf-8?B?YzA1ampZVEoxTzhHb0hCbkd6Nms3MVFleDl1d2VVbjJpN2I0SFVyWk43ZEF5?=
+ =?utf-8?Q?YOemEyRYviXEtKCClcwAKuxkI0oHaoVU?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR12MB5445.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?YWpMYVVwQkwzbzhYNWVjL25pU0ZyMEJyTXZzTHRWT1J2bEdtNFNzdUE2a1Zj?=
+ =?utf-8?B?ZWFrQUs2U1lBdU9SL2pmemlKcjViVW1rQkhKZDUxeldKdTZ4L29iQnZnd3ox?=
+ =?utf-8?B?SDJnSmRaMWRkWmdGZGFQa2p3S0JRY0UwUGVYcFN0VXhyd3dRRGNrQzYwSm5z?=
+ =?utf-8?B?dk1RWVp4OUxxWEJpWmViN1FOTDg0Nzl5aXRQVVptK1M4cXpuVmpmVlZudDJa?=
+ =?utf-8?B?U2J4UmJDRmVOUzZKUU1Gc2V5QkxudERxd3Njd2YrN3JVZkgwWXIyZWw2K0hx?=
+ =?utf-8?B?d0lWbnBxQkhNUjFpY1lNYURZblpiaXBqaXY5bVdibkRYeEJ3MEt1OVlTMFdZ?=
+ =?utf-8?B?Q2F0Q0tIcHlQREt5bmZrRUx6UkRSMWFRZlNwS3UrSkN6VTBXcy9Jck51RUxI?=
+ =?utf-8?B?Zmtvc3RBR0MrVWFWZ2NmZkFaQm5lb2hnZ0NyUzdOdE5uZVI2aE9weTRqU0ow?=
+ =?utf-8?B?ajl3alVtSHNsMzVGSWpaZEE5TGhOTm1NWWREcVAvNmczRTkyTjFiUVRBZFVj?=
+ =?utf-8?B?QjRYOS9rbmF1b0dnbG0xaUJXd25QbS9uOEo0TnpuYjAybjVqaTgweE1neEdP?=
+ =?utf-8?B?UEQ5Mm5CTG8xQThudVFPUWRzbDlEQThwby85bmpraVBFTEpObEY0dkk1M2d4?=
+ =?utf-8?B?dnpaUjNmaW9Gc3E3L1U0WW5RWG9TT3l6MElybUlLbkF3STFzTWRvZ3YzRlRj?=
+ =?utf-8?B?dDF1WndTeWk0T21lY1ZjeUhhdmFSdVJFYVY2UGNBSisxd0FMRVhYMm41Z1pN?=
+ =?utf-8?B?d3o1RkJtaGFkeEcrbjRwenNJS0tWR25yYXBNLzhPMG5wU1RvSXpQNmJTakhv?=
+ =?utf-8?B?L243Y2RVbUZVQ2dtUG9UeGxML2RRdi85VWY1TUpxYVJGM0d4SGRkb3czUEJO?=
+ =?utf-8?B?SFFFcjhKdUdvbmRQVlh1OUZnSDExR1JwT0xpb0NBMXJYbmdwVDVDUytXbU1a?=
+ =?utf-8?B?RkZRMTI4QVhZTDlYcFQxQ2ZrZHNzNVR1SXlMTU8xWVB3VFZmSlluR1ArZkdC?=
+ =?utf-8?B?eFZNTlE2WURHaXF0Vkd3SS81dEppd3RkdEp6cndSNzRiQUdsQWQ0UnBjSFJG?=
+ =?utf-8?B?OWdoNmJZVm83bWhSQWo4TmVCTFRXcm9KV2Urc3VLbCswT1lEdmRGcCtWSUgy?=
+ =?utf-8?B?UEJNWUhwR0g5SUxpLzlFRFRIREgwQjIzTFdGLzFrSUVNa3M4QndFdGJsYzEv?=
+ =?utf-8?B?UDNOK2F2dEwvVExKY085QWowL1Myd1J4RWw0YjBOUVlDVUtWVDVhQUFIdTE4?=
+ =?utf-8?B?aFJyUks4YTA5VE9DS1kwNGtvZVVibWpFYlh2cEQvQm5CRktNRUdJeXJkbEha?=
+ =?utf-8?B?eU1acmNweWNCam9Ya01PMDAyUzhaM0tRNzAxSDI4ZnYwZmJVUlNudWFJYkdY?=
+ =?utf-8?B?Z2J6aE1YTnRidG1Ba1ludWNaY05tWUY0VFBEMW9pK2xPTUh6MHgyd1l0QkNq?=
+ =?utf-8?B?Mkoza0F4YVlzYnZiekNia2JtRnBadW8vSFAyci9MVTdKVGlOdVRmbFl6MWlS?=
+ =?utf-8?B?Q1VIMDNjN0J6QUZyYlo4eVY3RFhnOXVBWXY5NDNlV0g0U0RIYythZ1RIYXBO?=
+ =?utf-8?B?QWNrQ3BBN2lFRnlOS2pHdjlFcWV6dVg5eWlZY2xhazdKME42a3c4VmdtbnRS?=
+ =?utf-8?B?d0NsWWRMdm1aRXpMWk9MUnYzSjZoOHlOSVZzWDM3K2R3OHlvazRUellWM1M5?=
+ =?utf-8?B?b2NiSkRUd0t2RVNyb29QQmdzVUE4ZGdGSzRFOGVOQkwxOERJcXJWK2xCK0V2?=
+ =?utf-8?B?SGpKZnBpeDAxc1NFeDJxNTJtQjd6QkhwZ2RmN3lPTUVyazllNkEwOGNjd081?=
+ =?utf-8?B?T3FRVHNHMU5sbFdVWk0ybmpPbVlsUW1Ka1BCM2dOa05Fa3Y1VGkrS1N3dW80?=
+ =?utf-8?B?SEgyMkhpbFFCc1E0bjBXNjRNMXc3VU4xMldSbFViT3hIM1JCZVljeXJMTzBm?=
+ =?utf-8?B?ajVxanN3bWRCVEdTQWY2eHlBWlBieUpiTnRSZVJFY0pnNGp0UDdSanlyZDJ6?=
+ =?utf-8?B?SUlhTzFzZ21neXlESWMyVnR5cmxndHB3b25sWjluYnZNTDFGQThKZHZHUm5n?=
+ =?utf-8?B?eVpHaS9jdlFWeEhQRzNzL2ZiazVXZ3dKb3U5enZ1Y1B5TEtjZDk0NE9WSXB4?=
+ =?utf-8?Q?+BQT7iFqiFLzoyOqyAl7QyawW?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: af33fb98-db42-4e72-f7d1-08de06753ea1
+X-MS-Exchange-CrossTenant-AuthSource: DM8PR12MB5445.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2025 14:16:16.7110
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 69/Uh6s40MeJ/ELGaNAHumIBMPCcSdtDv/tpjUPK464aYG3q3LdgRSRrbwVz6tEs4Rr7FtMLmq3KNjuVU4ucGg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5945
 
-Hi,
 
-On 08/10/2025 16:57, Maxime Ripard wrote:
-> Hi Tomi,
-> 
-> Thanks for having a look.
-> 
-> On Wed, Oct 08, 2025 at 04:07:57PM +0300, Tomi Valkeinen wrote:
->> On 02/09/2025 11:32, Maxime Ripard wrote:
->>> Hi,
->>>
->>> Here's a series that implement what i915 calls "fastboot", ie,
->>> initializing the initial KMS state from the hardware state at boot, to
->>> skip the first modeset if the firmware already set up the display.
->>>
->>> This series creates the infrastructure in KMS to create that state by
->>> relying on driver specific hooks. It also implements some infrastructure
->>> to check during non-blocking commits that the readout helpers work
->>> properly by reading out the state that was just committed and comparing
->>> it to what was supposed to be commited.
->>>
->>> This relies on another set of driver hooks to compare the entities
->>> states, with helpers providing the default implementation.
->>>
->>> It then implements the readout support in the TIDSS driver, and was
->>> tested with the SK-AM62 board. This board in particular is pretty
->>> interesting, since it relies on an DPI to HDMI bridge, and uses the
->>> drm_bridge_connector infrastructure.
->>>
->>> So the readout works with the current state of the art on embedded-ish
->>> platforms.
->>>
->>> The whole thing feels a bit clunky at the moment:
->>>
->>>   - The initial state buildup ties everything together in a state in the
->>>     old state pointer. It's useful for the initial readout because
->>>     accessors can then use the usual state accessors to look into the
->>>     state of other entities. But one of the argument for it was also
->>>     that for state comparison, it allows to compare the new state
->>>     (committed) to the old state (readout). It doesn't really work in
->>>     practice, since in such a case the old state contains the previous
->>>     hardware state to be freed, and thus we would end up with a memory
->>>     leak
->>>
->>>   - The framebuffer refcounting is broken.
->>>
->>>   - The tidss atomic_flush waits for the go bit on the initial
->>>     modesetting, except that if the state is readout we didn't commit
->>>     anything and the driver will wait forever, eventually resulting in
->>>     commit timeout
+
+On 10/2/2025 1:00 PM, Nicolin Chen wrote:
+> On Wed, Oct 01, 2025 at 06:09:51AM +0000, Suravee Suthikulpanit wrote:
+>> To support nested translation, the nest parent domain is allocated with
+>> IOMMU_HWPT_ALLOC_NEST_PARENT flag, and stores information of the v1 page
+>> table for stage 2 (i.e. GPA->SPA).
 >>
->> Isn't atomic flush part of the modeset? Why is it called if there's no
->> modeset.
-> 
-> No, atomic_flush is ran when we update the planes, so it will trigger
-> here on the first page flip.
-> 
->>>   - The tidss_crtc_state fields are not read properly at the moment
->>>     either.
+>> Also, only support nest parent domain on AMD system, which can support
+>> the Guest CR3 Table (GCR3TRPMode) feature. This feature is required in
+>> order to program DTE[GCR3 Table Root Pointer] with the GPA.
 >>
->> Just because no implemented, or was there something funny with them? I
->> guess there's some reverse-mapping that needs to be done.
+>> Signed-off-by: Suravee Suthikulpanit<suravee.suthikulpanit@amd.com>
+>> +static inline bool is_nest_parent_supported(u32 flags)
+>> +{
+>> +	/* Only allow nest parent when these features are supported */
+>> +	if ((flags & IOMMU_HWPT_ALLOC_NEST_PARENT) &&
+>> +	    (!check_feature(FEATURE_GT) ||
+>> +	     !check_feature(FEATURE_GIOSUP) ||
+>> +	     !check_feature2(FEATURE_GCR3TRPMODE)))
+>> +		return false;
+>> +
+>> +	return true;
+> If the "flags" doesn't have IOMMU_HWPT_ALLOC_NEST_PARENT while one
+> of the features is missing, this would return true, indicating the
+> HW supports nesting parent, which will be logically wrong although
+> it does validate the nest parent flag.
 > 
-> The bus_format field isn't read properly, I wasn't quite sure what was
-> going on there.
+> Following the existing coding style, I think this could be just:
 > 
-> And also, for bridges, I've yet to figure out a way to read / find the
-> input/output formats.
-> 
->>> The main thing works though: the state is picked up properly, doesn't
->>> trigger a modeset if what was programmed is the one the first modeset
->>> tries to pick as well, will switch properly if it isn't, etc.
->>
->> This is pretty interesting work. I haven't tested, and I'm sure it still
->> breaks in a million ways if used with anything else but the HW you're
->> using =).
-> 
-> Thanks :D
-> 
->> This is related to the boot-splash screen work I've been working on for
->> quite a while, although at a different stage.
-> 
-> As far as I'm concerned, once this lands, your work isn't needed at all.
+> static inline bool is_nest_parent_supported(void)
+> {
+> 	/* Only allow nest parent when these features are supported */
+> 	return check_feature(FEATURE_GT) && check_feature(FEATURE_GIOSUP) &&
+> 	       check_feature2(FEATURE_GCR3TRPMODE);
+> }
 
-No, I'm quite sure something alike my patches are needed. Without my
-patch (drm/tidss: Add some support for splash-screen):
+Ahh, I missed this part.
 
-- the driver will do a hw reset at probe time, and you lose the splash
-screen
-- nothing has a reference to the related clocks, so they may be turned off
-
->> In my patches I have been trying to avoid hw reset, so that if the DSS
->> has been set up by the bootloader, we'll just let it run until we get
->> a modeset.
-> 
-> We really only need to power up the hardware around
-> drm_mode_config_reset.
-
-If by "power up" you mean set things up (it's powered up already by the
-bootloader), yes. I think that's somewhat similar to what I did in my
-patch wrt. handling the reset, but with your series we'll skip the reset
-too.
-
-> Once we're done, either the hardware will be active or inactive, but
-> we'll know for sure.
-
-We still need to have some early code to make sure we keep the clocks
-enabled until the userspace does a modeset. Or would
-drm_mode_config_reset be called at probe time?
-
->> And now your series would potentially remove that modeset too, so, in
->> theory, we could get up to X/Weston from bootloader with just a single
->> modeset in the bootloader.
->>
->> Of course, fbdev/simpledrm will mess things up there. I had some hacks
->> for fbdev too, to retain the bootsplash image, but it was just hacking.
-> 
-> And it works also with fbdev, since fbdev or whatever will trigger a
-> new commit we can compare to.
-
-Sorry, meant simplefb. There's a different problem there: if the
-bootloader has set up a boot splash, simpledrm will allocate a new empty
-framebuffer so we get a black screen, or in case of simplefb, it can be
-made to use the existing memory buffer, but if fb console is enabled, it
-will clear the buffer.
-
-So maybe there won't be a modeset-related-temporary-blanking when using
-your series, but the core issue of keeping a stable logo on the screen
-up until X/Weston is, afaik, unsolved (unless you disable simplefb/drm
-and thus also fbconsole).
-
- Tomi
-
+Thanks,
+Suravee
 
