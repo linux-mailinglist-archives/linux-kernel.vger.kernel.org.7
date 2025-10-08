@@ -1,87 +1,79 @@
-Return-Path: <linux-kernel+bounces-845852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id C976EBC64C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 20:32:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAC44BC64DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 20:32:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 75E4A34EE02
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 18:32:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80C3C4065B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 18:32:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E2202C11DB;
-	Wed,  8 Oct 2025 18:32:08 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C204284690;
+	Wed,  8 Oct 2025 18:32:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jgHrqYTW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C432C0F97
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 18:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF40F20370B;
+	Wed,  8 Oct 2025 18:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759948327; cv=none; b=QnmCavuu5UmybQ+cKWYGmxz0pKnF0yhVW1ILUnazlXUvPLlNgppR6D7vqIlnQS6MSzU0cZGqL7cQ8MufIVKxKSk383oUDtL76hzC3s7rrLlvOm2Ks/wDxFi4btoI7UxPDkX8oZV33XEEQE0apjZvmEEuLTmszKcKD/OzblBecP4=
+	t=1759948370; cv=none; b=d+9eXdMUpV4GoHxqg+NDrdBwf/z1JdgIiSXsW6MXMdIT+459448svCVFBb3Ito5lKt4vdyyoKyabkaIZBCsMDCHgwBkvidXQceZhxpjDoaMH5t+FKjIgkkbuWLF/dSRrwjUWEpuQPqxo/0WakCmNULhYwNLTiSIMCEV4bKojW0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759948327; c=relaxed/simple;
-	bh=pQr0RXKDhtdHCYuqgGg4G30GwwOEqAFonoahRIyYkPM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=o39BIzQWQjuURhRYSqd/bjWC832wdl8ytFaQ7MxQngBFQugLT2tkoPNZcSSrwXgldlwQHbtF3YY/dyxDPKi8qNq46rn4eVGqBAVjEi1eSsSBOdv1i9dOLSLCDZ3FDNnU1rUQyr4Q3fig9xgZaNEWIdPaGi93Z3ccKtjfR389vh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-42f639d6e02so4836685ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 11:32:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759948323; x=1760553123;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TaZOpCCY5/XduIX9mtEV8gBwSBZGOkUpcxeW8AAMz9o=;
-        b=pYKu4Dd/PQUEtpFZ5/jzYY9zUxzbROgSJpj3DmX30fYgfDFIas6iZ50X+aaIoevLmJ
-         UnCLU1WFzt4w+3nZ+qkXw+90lFdtL54QMN5K13tWNWU6WgLmzvsYJzpy3TMqWwloAHl0
-         15GcOP+IaO8CAXmGtXQ55y67+6QmVtXei+f1vbKQ07dEkk5H9eaRM2qjni8X2ipFbZ1R
-         EqOZ0CAm2d4wPZOyt/7O/dRW2l7O6MZX4mftdJPPbO7dc6gvPZGaJ2zQHpjCfsonv2+2
-         nzNtr9WGwogG65Q3PImaNvWUHHX640oAkKq1Qpt9ER6GBTClgibH9cDVy4xd0xn+MLjr
-         0Wuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCfjLUEkEVeVs9RKtMHu22I8+bJuvT37+PWkuuN8MdVaRvep8qQXyZLCFweL4u+PVO6FrovugfU2BndPk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMz9vldaDxyYOfhvPS4Fn9IbHQtvTBx4DNzh5KCUuVgZ/waKKd
-	aYOJCNs976KhktF2tryT36C7Fe1DClFQ8eUmqXruI/FzfV6LbPOjnYm95eUY3DJPhzPBRsECbm4
-	TbHi5LXDJ3gnX7AsOoLPjAwb6E44VDxfYphCQTodvb1KEZZG9ZAfx2lX4Hb4=
-X-Google-Smtp-Source: AGHT+IEvX2DUtFqjql1HQOA4RLqxL4DHSGgNUqm9hlxconRy3HmItVFhoZ9obM+mvLIX8JG3sQNgpqfH1o3c+9mzAl+adEfY6ulG
+	s=arc-20240116; t=1759948370; c=relaxed/simple;
+	bh=sTWPKF9alo+tvVGt9lUYHopgwmcpVLiijGjofW7+p8U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kI3ly+FfVg1Wlt/uGPe+lOk84BDSZ1LbWhRhDg4Fq26cr4RpNk6h2h6yNrdjrSO/EUDzqGZQPNWmrRVr/OjMzif675oB2OuzdoznQLxNT3ug1o0rQnE81N9bqhjxVNmMF0WUJ0OUkdbURVqYluTh7KrG7fQMJxBl4oCCV5+/ZoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jgHrqYTW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E115EC4CEE7;
+	Wed,  8 Oct 2025 18:32:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759948370;
+	bh=sTWPKF9alo+tvVGt9lUYHopgwmcpVLiijGjofW7+p8U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jgHrqYTWruq2gYgNiUWZXVxjyqW0UNbYqrh1kSicJUgIauEApt5VGgztdcNqL0gix
+	 zUS13Ee4+DbwdCKH1mwpvN5FQTnhOdmKnsdg7FBimtCN06BmffyAXcl54GtYhE7opS
+	 lLlCIPTNuHezutgpR7NREuYuTA6zdRbuSFzWXV/RiVYQuxLk/q1VdV1IZ5L53/lVHR
+	 GnSz+dRS8ebl3tYwGX9lfcbCk/18HGcAKci3L07jiUsh6CSbaBFi/zb3Tbxoo3CMRH
+	 1AyEcYKiYYtLKHyqQhr5IExVwAAGfs/3Xq1Zdp01E4H2tj6ym/BpC7CsxYPD/g+y78
+	 fgX/0fH5APJLA==
+Date: Wed, 8 Oct 2025 19:32:45 +0100
+From: Simon Horman <horms@kernel.org>
+To: Stanislav Fomichev <sdf@fomichev.me>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, andrew+netdev@lunn.ch,
+	shuah@kernel.org, willemb@google.com, daniel.zahka@gmail.com,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net v2] selftests: drv-net: update remaining Python init
+ files
+Message-ID: <20251008183245.GS3060232@horms.kernel.org>
+References: <20251008162503.1403966-1-sdf@fomichev.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2166:b0:42d:8268:5026 with SMTP id
- e9e14a558f8ab-42f873e45c5mr41891275ab.22.1759948323433; Wed, 08 Oct 2025
- 11:32:03 -0700 (PDT)
-Date: Wed, 08 Oct 2025 11:32:03 -0700
-In-Reply-To: <f347ec0c-a49c-4ec7-be81-f2829227ae75@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68e6ae23.050a0220.256323.00e5.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] KASAN: use-after-free Read in ocfs2_dir_foreach_blk
-From: syzbot <syzbot+b20bbf680bb0f2ecedae@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251008162503.1403966-1-sdf@fomichev.me>
 
-Hello,
+On Wed, Oct 08, 2025 at 09:25:03AM -0700, Stanislav Fomichev wrote:
+> From: Jakub Kicinski <kuba@kernel.org>
+> 
+> Convert remaining __init__ files similar to what we did in
+> commit b615879dbfea ("selftests: drv-net: make linters happy with our imports")
+> 
+> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Hi Stan,
 
-Reported-by: syzbot+b20bbf680bb0f2ecedae@syzkaller.appspotmail.com
-Tested-by: syzbot+b20bbf680bb0f2ecedae@syzkaller.appspotmail.com
+Sorry to be the bearer of such news.
+But your SoB line needs to go here as you posted the patch.
 
-Tested on:
-
-commit:         0d97f206 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=134a11e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=33b052d7a6d140c9
-dashboard link: https://syzkaller.appspot.com/bug?extid=b20bbf680bb0f2ecedae
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17bbf334580000
-
-Note: testing is done by a robot and is best-effort only.
+-- 
+pw-bot: changes-requested
 
