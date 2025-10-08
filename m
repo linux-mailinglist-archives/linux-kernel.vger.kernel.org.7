@@ -1,175 +1,202 @@
-Return-Path: <linux-kernel+bounces-845173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FEAEBC3C57
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 10:12:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91EDFBC3C5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 10:14:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F6123C70D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 08:12:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AEF63BA4DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 08:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE32B2F3612;
-	Wed,  8 Oct 2025 08:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031552F3612;
+	Wed,  8 Oct 2025 08:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rGBjfUmI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TLYzuiLZ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4Qldh2rM"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3588034BA3C;
-	Wed,  8 Oct 2025 08:12:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45EF134BA3C;
+	Wed,  8 Oct 2025 08:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759911134; cv=none; b=cYlcT/jRQ2lm9VLSBZ3xM7myHMgZA1pfcX+wGK92tJmfOtTyVsaeTEhWl3r+VFtN17HRtvo9hGwNXr8yQuYmtpOmkRYeO+G5j15vytGTHr1cjRctJ6quwajPJeLOGlH8ErpjGjwMxo41cRwwj2CUbHonACzA/+x0KvohRY4z+Z0=
+	t=1759911259; cv=none; b=s2XB8J5vBwmv0z7n7TriLo5pHs2GErbpO9WROg59pB5Q7IqAB/5Gv7ZEYqZiZMm8mnjq4IWh7XOaJgtY7B/tIV0hT9el9Ey+2DB63uYFbm4DfftFtHxXCXsJ2cki5ZhvInj/N337gsBBjQc0jAwH+Gfi5aQ/gtadbpViVotCrxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759911134; c=relaxed/simple;
-	bh=c2GoYT8KDL1eyEVGxGi2+EGCXK+Kst3nZpOtV/b7mRI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pu+kHqKkfk8Tv2ix7OnQYLSlT4z2kX9/08XefEW/Ic12PyRRS+RjtHFGwrv40d5ahzBfHOqT5xFJtrr6hRv5LSxmyVr5LcXFJYeCu6MOa0EJOQ9kGaNxl1rv5rsSSNnExWMyUz6Fe0hXsSPXeOAZYi/sWEK4679IFgZoffxCs8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rGBjfUmI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E36D2C4CEF4;
-	Wed,  8 Oct 2025 08:12:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759911133;
-	bh=c2GoYT8KDL1eyEVGxGi2+EGCXK+Kst3nZpOtV/b7mRI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rGBjfUmIyYr045AoFAFtC5WxvZZSyRdgeyLM8tzfmR56rQvImMVp2pNQ3wu8GG8h0
-	 uq3fYEE9KLbDy07nlDJYm6S/B8QVeZneKLnp95OvZHDlVFUv6b7d32LkEYICetaPQY
-	 8ft1ZIjmxLeQwqauQYwFh4pjWgTe3dsIFD+QU41nt0Js8soqRN2Yluveb/bTW1nY8T
-	 2Lq0fgOoOoFu9Dk87Gyu93qDIfkbkLJ+MaZi0lkJ/lyJFWAkhDcNt/RhpcUKr16opL
-	 hRSvLxtaXcKh/berPk2u5uoUFow/IwyGWqnmMm2n1vTst8WMPZGWVjDX8tcoLbyel+
-	 w9yUlBpM6ux1w==
-Message-ID: <c33a26a8-a054-4ce6-86d9-4945014f69cf@kernel.org>
-Date: Wed, 8 Oct 2025 17:12:01 +0900
+	s=arc-20240116; t=1759911259; c=relaxed/simple;
+	bh=etNC4AoN+WiTAxrG7ImcBG+LLIlJF8oJN4cSiaXug24=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uUH+R0Y2R9D4lHCP0g9zGz9YPjJ7YQE63OXpzdkhQmj8j1ZpnJ8yxijfEdLCE3fy17+0OrD50Lz1Z15qMaAK+STt6bw+2evraMSISxGLTUbWUx8j1AT0IOMQ0UWAltIBfe3GNMTvaFfKLles6WvgAdkNdPx4jnppjKUxer4VpqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TLYzuiLZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4Qldh2rM; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1759911254;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=H5TDg8FSvQpDKH++xWAtG1t0GE6Gx0i9+KrmLqybckU=;
+	b=TLYzuiLZY2Sklg9yYjmr8SHWaWYn0YpZ3oWlUhhRWYX0FgK71fBDVLsVj+7pF1GnHowFUr
+	+0kHfwZuCRBP5WXFLjnhcx8XthcjitAg3kn0GkJiWmVfw4rNv1m5UlxhgAXGk0KsBO/+uK
+	AGJyiXtfB/bl6hLM+t/GE6wb5XFRqWSEinluaGYAN6j0qAzSjhtrMXFGGtB2c2QDxTsJOL
+	89P+5l85eLHD4i3Nhsl7erpaHiTlAm2/Wt68VQhrwt7O60gRro6SeEa7o7bis0HvTsrkjd
+	igxdjgWrL1hPnLwXlLt1U2OiX3TkzAlaV1jBNNlykpa312jmASbJgHFEclA9RA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1759911254;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=H5TDg8FSvQpDKH++xWAtG1t0GE6Gx0i9+KrmLqybckU=;
+	b=4Qldh2rMCNzlzmnuLKwkQ4g4LcJEyGBAPvTu822MxwPO39Gsbk9N4VuL6B+PaZLocm8AHY
+	+cU+LnQYG/jgo3BA==
+To: Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Frederic Barrat <fbarrat@linux.ibm.com>,
+	Andrew Donnellan <ajd@linux.ibm.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nam Cao <namcao@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linuxppc-dev@lists.ozlabs.org,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Subject: [PATCH] powerpc, ocxl: Fix extraction of struct xive_irq_data
+Date: Wed,  8 Oct 2025 08:13:59 +0000
+Message-ID: <20251008081359.1382699-1-namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
- ExynosAutov920 HS phy compatible
-To: Pritam Manohar Sutar <pritam.sutar@samsung.com>, vkoul@kernel.org,
- kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- alim.akhtar@samsung.com, andre.draszik@linaro.org, peter.griffin@linaro.org,
- kauschluss@disroot.org, ivo.ivanov.ivanov1@gmail.com,
- igor.belwon@mentallysanemainliners.org, m.szyprowski@samsung.com,
- s.nawrocki@samsung.com
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com,
- dev.tailor@samsung.com, faraz.ata@samsung.com, muhammed.ali@samsung.com,
- selvarasu.g@samsung.com
-References: <20250903073827.3015662-1-pritam.sutar@samsung.com>
- <CGME20250903072936epcas5p4a28d0e63c7f0792b516b0cbc68bf3a8e@epcas5p4.samsung.com>
- <20250903073827.3015662-2-pritam.sutar@samsung.com>
- <0df74c2b-31b9-4f29-97d3-b778c8e3eaf1@kernel.org>
- <007801dc2893$18ed4a20$4ac7de60$@samsung.com>
- <02ef5180-ad56-45f0-a56f-87f442bf6793@kernel.org>
- <007f01dc2b81$84ef19b0$8ecd4d10$@samsung.com>
- <808d166a-b615-49c6-b0f5-bf5101721381@kernel.org>
- <000001dc380e$612b5680$23820380$@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <000001dc380e$612b5680$23820380$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On 08/10/2025 13:45, Pritam Manohar Sutar wrote:
-> Hi Krzysztof,
-> 
->> -----Original Message-----
->> From: Krzysztof Kozlowski <krzk@kernel.org>
->> Sent: 07 October 2025 11:54 AM
->> To: Pritam Manohar Sutar <pritam.sutar@samsung.com>; vkoul@kernel.org;
->> kishon@kernel.org; robh@kernel.org; krzk+dt@kernel.org;
->> conor+dt@kernel.org; alim.akhtar@samsung.com; andre.draszik@linaro.org;
->> peter.griffin@linaro.org; kauschluss@disroot.org;
->> ivo.ivanov.ivanov1@gmail.com; igor.belwon@mentallysanemainliners.org;
->> m.szyprowski@samsung.com; s.nawrocki@samsung.com
->> Cc: linux-phy@lists.infradead.org; devicetree@vger.kernel.org; linux-
->> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-samsung-
->> soc@vger.kernel.org; rosa.pila@samsung.com; dev.tailor@samsung.com;
->> faraz.ata@samsung.com; muhammed.ali@samsung.com;
->> selvarasu.g@samsung.com
->> Subject: Re: [PATCH v8 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
->> ExynosAutov920 HS phy compatible
->>
->> On 22/09/2025 14:26, Pritam Manohar Sutar wrote:
->>> This phy needs 0.75v, 0.18v and 3.3v supplies for its internal
->>> functionally. Power Supply's names are as per phy's User Data-Book.
->>> These names, (dvdd, vdd18 and vdd33), are considered  for 0.75v, 1.8v
->>> and 3.3v respectively.
->>> "
->>>
->>>>
->>>> I still cannot find constraints for the rest of properties, though.
->>>
->>> Sorry I didn't get it completely. Can you please elaborate on the same?
->>
->>
->> Writing bindings and introductory talks elaborate on that. You add properties
->> without constraints. That's not what we want. We want constraints.
->>
-> 
-> Have added only supplies in this patch-set. However, was going 
-> through schema example and it says nothing is needed to define
-> in terms of supply. 
+Commit cc0cc23babc9 ("powerpc/xive: Untangle xive from child interrupt
+controller drivers") changed xive_irq_data to be stashed to chip_data
+instead of handler_data. However, multiple places are still attempting to
+read xive_irq_data from handler_data and get a NULL pointer deference bug.
 
+Update them to read xive_irq_data from chip_data.
 
-I don't have original patchset in my inbox anymore, so not sure what was
-there, but most likely you miss constraining the presence of these
-properties per each variant. IOW, not each of devices in the bindings
-have these supplies, so I expect syntax similar as in example-schema.
+Non-XIVE files which touch xive_irq_data seem quite strange to me,
+especially the ocxl driver. I think there ought to be an alternative
+platform-independent solution, instead of touching XIVE's data directly.
+Therefore, I think this whole thing should be cleaned up. But perhaps I
+just misunderstand something. In any case, this cleanup would not be
+trivial; for now, just get things working again.
 
-https://elixir.bootlin.com/linux/v5.19/source/Documentation/devicetree/bindings/example-schema.yaml#L212
+Fixes: cc0cc23babc9 ("powerpc/xive: Untangle xive from child interrupt cont=
+roller drivers")
+Reported-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+Closes: https://lore.kernel.org/linuxppc-dev/68e48df8.170a0220.4b4b0.217d@m=
+x.google.com/
+Signed-off-by: Nam Cao <namcao@linutronix.de>
+---
+VAS and OCXL has not been tested. I noticed them while grepping.
+---
+ arch/powerpc/kvm/book3s_xive.c       | 12 ++++--------
+ arch/powerpc/platforms/powernv/vas.c |  2 +-
+ arch/powerpc/sysdev/xive/common.c    |  2 +-
+ drivers/misc/ocxl/afu_irq.c          |  2 +-
+ 4 files changed, 7 insertions(+), 11 deletions(-)
 
+diff --git a/arch/powerpc/kvm/book3s_xive.c b/arch/powerpc/kvm/book3s_xive.c
+index 1302b5ac5672..89a1b8c21ab4 100644
+--- a/arch/powerpc/kvm/book3s_xive.c
++++ b/arch/powerpc/kvm/book3s_xive.c
+@@ -916,8 +916,7 @@ int kvmppc_xive_attach_escalation(struct kvm_vcpu *vcpu=
+, u8 prio,
+ 	 * it fires once.
+ 	 */
+ 	if (single_escalation) {
+-		struct irq_data *d =3D irq_get_irq_data(xc->esc_virq[prio]);
+-		struct xive_irq_data *xd =3D irq_data_get_irq_handler_data(d);
++		struct xive_irq_data *xd =3D irq_get_chip_data(xc->esc_virq[prio]);
+=20
+ 		xive_vm_esb_load(xd, XIVE_ESB_SET_PQ_01);
+ 		vcpu->arch.xive_esc_raddr =3D xd->eoi_page;
+@@ -1612,7 +1611,7 @@ int kvmppc_xive_set_mapped(struct kvm *kvm, unsigned =
+long guest_irq,
+=20
+ 	/* Grab info about irq */
+ 	state->pt_number =3D hw_irq;
+-	state->pt_data =3D irq_data_get_irq_handler_data(host_data);
++	state->pt_data =3D irq_data_get_irq_chip_data(host_data);
+=20
+ 	/*
+ 	 * Configure the IRQ to match the existing configuration of
+@@ -1787,8 +1786,7 @@ void kvmppc_xive_disable_vcpu_interrupts(struct kvm_v=
+cpu *vcpu)
+  */
+ void xive_cleanup_single_escalation(struct kvm_vcpu *vcpu, int irq)
+ {
+-	struct irq_data *d =3D irq_get_irq_data(irq);
+-	struct xive_irq_data *xd =3D irq_data_get_irq_handler_data(d);
++	struct xive_irq_data *xd =3D irq_get_chip_data(irq);
+=20
+ 	/*
+ 	 * This slightly odd sequence gives the right result
+@@ -2827,9 +2825,7 @@ int kvmppc_xive_debug_show_queues(struct seq_file *m,=
+ struct kvm_vcpu *vcpu)
+ 				   i0, i1);
+ 		}
+ 		if (xc->esc_virq[i]) {
+-			struct irq_data *d =3D irq_get_irq_data(xc->esc_virq[i]);
+-			struct xive_irq_data *xd =3D
+-				irq_data_get_irq_handler_data(d);
++			struct xive_irq_data *xd =3D irq_get_chip_data(xc->esc_virq[i]);
+ 			u64 pq =3D xive_vm_esb_load(xd, XIVE_ESB_GET);
+=20
+ 			seq_printf(m, "    ESC %d %c%c EOI @%llx",
+diff --git a/arch/powerpc/platforms/powernv/vas.c b/arch/powerpc/platforms/=
+powernv/vas.c
+index b65256a63e87..9c9650319f3b 100644
+--- a/arch/powerpc/platforms/powernv/vas.c
++++ b/arch/powerpc/platforms/powernv/vas.c
+@@ -121,7 +121,7 @@ static int init_vas_instance(struct platform_device *pd=
+ev)
+ 		return -EINVAL;
+ 	}
+=20
+-	xd =3D irq_get_handler_data(vinst->virq);
++	xd =3D irq_get_chip_data(vinst->virq);
+ 	if (!xd) {
+ 		pr_err("Inst%d: Invalid virq %d\n",
+ 				vinst->vas_id, vinst->virq);
+diff --git a/arch/powerpc/sysdev/xive/common.c b/arch/powerpc/sysdev/xive/c=
+ommon.c
+index 625361a15424..8d0123b0ae84 100644
+--- a/arch/powerpc/sysdev/xive/common.c
++++ b/arch/powerpc/sysdev/xive/common.c
+@@ -1580,7 +1580,7 @@ static void xive_flush_cpu_queue(unsigned int cpu, st=
+ruct xive_cpu *xc)
+ 			cpu, irq);
+ #endif
+ 		raw_spin_lock(&desc->lock);
+-		xd =3D irq_desc_get_handler_data(desc);
++		xd =3D irq_desc_get_chip_data(desc);
+=20
+ 		/*
+ 		 * Clear saved_p to indicate that it's no longer pending
+diff --git a/drivers/misc/ocxl/afu_irq.c b/drivers/misc/ocxl/afu_irq.c
+index 36f7379b8e2d..f6b821fc274c 100644
+--- a/drivers/misc/ocxl/afu_irq.c
++++ b/drivers/misc/ocxl/afu_irq.c
+@@ -203,7 +203,7 @@ u64 ocxl_afu_irq_get_addr(struct ocxl_context *ctx, int=
+ irq_id)
+ 	mutex_lock(&ctx->irq_lock);
+ 	irq =3D idr_find(&ctx->irq_idr, irq_id);
+ 	if (irq) {
+-		xd =3D irq_get_handler_data(irq->virq);
++		xd =3D irq_get_chip_data(irq->virq);
+ 		addr =3D xd ? xd->trig_page : 0;
+ 	}
+ 	mutex_unlock(&ctx->irq_lock);
+--=20
+2.51.0
 
-Best regards,
-Krzysztof
 
