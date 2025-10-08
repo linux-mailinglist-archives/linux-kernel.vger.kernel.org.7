@@ -1,92 +1,746 @@
-Return-Path: <linux-kernel+bounces-845434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99CAFBC4E4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 14:42:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E913BC4E81
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 14:44:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6369E4EE415
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 12:42:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2699D18953C3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 12:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081F224DCE2;
-	Wed,  8 Oct 2025 12:42:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D24624DCF9;
+	Wed,  8 Oct 2025 12:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="O1FR00z6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1hKkeoZd"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="lXjde4R+"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE85523D7EA
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 12:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F8C246BB6
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 12:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759927346; cv=none; b=Nu+QuHxgirk4wpIWW9bjM1kN5IFxKYyxsQlK1Az87JRbN9g/rCVOl5F+86eN4mrXoLROQuD75+UmkMPL1wxsx/5jlMYgCOX+l8a14fcrCy4Zn1zEga+OM6DTva4HQSi6xqX3BWJ+eonRP3TpDOn8mXCtK1tCUmQOfS/tYWqYOAI=
+	t=1759927455; cv=none; b=dFLzP/RyLzUtkj5n//poAGy+vRetg9KGbgmbLm6HP/+dpwfSZZL9l6jcWAwaKx7AX71PVC1gyvd4Ucz+fBADCR0ahnODlwf1AheIF1hkxDjaB+e29YsffLv3fzF7qQeJUj/yFJD76gQmzXfW2SKwBOuVHj0izQoqZs3NRz9MjcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759927346; c=relaxed/simple;
-	bh=dLXbk05GIaWx/w3DF//cO6kLa3zsX9a0z/i92yVtAB4=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cEAklzQ7uEHn38UNh9k9dMarp1oYbcktuYWjF9rR6Oz6v2lunWSvTq3R72LPsoCbpiiodP1FtmJzlkwTzFSHcM7cFDh3H26VT+vdsJQhWv+W85jyOA4KUO+VT1Gf4k9WEhmQmpSMqAQCzx5ZvkfZtFVp1IZMRmJ4RXgCpock9uY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=O1FR00z6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1hKkeoZd; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1759927343;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SEB371UVD7p9y6tuscumDyLeJGmkjZ51qI7OiaqfHYQ=;
-	b=O1FR00z6YIWDmCnUQnYJ/rkfBxjhVctVN1ldKAHZuqM7AZMiiiTiG3xt3bUMJG2QdsLDnL
-	+tYlj1dm5Bv83Fh28wjSU6yOWAXp5vmR4I4rjbevk5VdVgCmIATmCJ1bNYzq7wyK0tP1dI
-	a8Tn9S3gmAftbWlWn4Wsc4zs7GMXXaJ69ld862jc+04trtrQVYKVC4G7cgKF1RfwflfvOH
-	QZfapA14EaBcqDMo06wxXFwZARn65jZ3pQ9KAdN7GVYvlkJWVrfubNqZ8//+6DOtyacF6R
-	B/klHx/5snA7XPOwcyzDEyq5MNhUFGExt8qY6utqqdouYZ6RVFaJLxPaTzs2yg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1759927343;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SEB371UVD7p9y6tuscumDyLeJGmkjZ51qI7OiaqfHYQ=;
-	b=1hKkeoZdxe2Wz/9/ZnYPPSi8pqPSIkKVb++Fz2slv1L8s3IDPVuroDvdRTH0cnMrehC9fN
-	IlBm9k7eXY5gX1Bg==
-To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>, Madhavan Srinivasan
- <maddy@linux.ibm.com>, LKML <linux-kernel@vger.kernel.org>, linuxppc-dev
- <linuxppc-dev@lists.ozlabs.org>, Gautam Menghani <gautam@linux.ibm.com>
-Subject: Re: [bisected][mainline]Kernel OOPs at msi_desc_to_pci_dev
-In-Reply-To: <878d7651-433a-46fe-a28b-1b7e893fcbe0@linux.ibm.com>
-References: <878d7651-433a-46fe-a28b-1b7e893fcbe0@linux.ibm.com>
-Date: Wed, 08 Oct 2025 14:42:22 +0200
-Message-ID: <87wm55h8ep.fsf@yellow.woof>
+	s=arc-20240116; t=1759927455; c=relaxed/simple;
+	bh=kdGYMCxCHYzqf5FsMx7+vUoktiqTqpBLQXRd2YfGFhQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XR2FTaVS0g9dWFG60OwXm31cWV9yRooUsAVYHY85FKFrRCXCUd/FyWq1jVM8bujpZ8EVWLzOdY0ayNoy7ozT3ZRS/jxZV3BzoJy22aidw7rVWBh7DK4j6ZFq08RZ/EMr1nVU0/iUsme8eOcKRiuv6om+kYglqVp/6T6UMPoc26s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=lXjde4R+; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8C01F42B;
+	Wed,  8 Oct 2025 14:42:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1759927356;
+	bh=kdGYMCxCHYzqf5FsMx7+vUoktiqTqpBLQXRd2YfGFhQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lXjde4R+mN3Gpp304VTJU1On6Mp0ulF4rew0Ge7JKETZVOxZtF9GudJ+fT/6JOH2m
+	 O4Wty6SCgmtSIKRXs9/OERI96us6bWoYWYMwLcxruYeB43qhr+LpBGdgRCfxdaebLY
+	 x9y1l6BP2xrHfvRwNTbzH3udI0Jf4bQwisSlYPKw=
+Message-ID: <b7ed3209-b336-4f0b-84e5-8bd1c87cd74d@ideasonboard.com>
+Date: Wed, 8 Oct 2025 15:44:06 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 27/29] drm/tidss: Implement readout support
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Jyri Sarha <jyri.sarha@iki.fi>
+References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
+ <20250902-drm-state-readout-v1-27-14ad5315da3f@kernel.org>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20250902-drm-state-readout-v1-27-14ad5315da3f@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Venkat Rao Bagalkote <venkat88@linux.ibm.com> writes:
-> IBM CI has reported a kernel crash while running module load and unload 
-> testing on lpfc driver.
+Hi,
 
-Thanks for the report.
+On 02/09/2025 11:32, Maxime Ripard wrote:
+> With the hardware readout infrastructure now in place in the KMS
+> framework, we can provide it for the tidss driver.
+> 
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> ---
+>  drivers/gpu/drm/tidss/tidss_crtc.c  | 218 +++++++++++++++++++++++++++++++++++-
+>  drivers/gpu/drm/tidss/tidss_dispc.c |  48 --------
+>  drivers/gpu/drm/tidss/tidss_kms.c   |   3 +-
+>  drivers/gpu/drm/tidss/tidss_plane.c | 194 +++++++++++++++++++++++++++++++-
+>  4 files changed, 409 insertions(+), 54 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/tidss/tidss_crtc.c b/drivers/gpu/drm/tidss/tidss_crtc.c
+> index 8fcc6a2f94770ae825eeb2a3b09856a2bf2d6a1e..454c4db92942c6c781440aff78c755e386b2edf3 100644
+> --- a/drivers/gpu/drm/tidss/tidss_crtc.c
+> +++ b/drivers/gpu/drm/tidss/tidss_crtc.c
+> @@ -2,18 +2,22 @@
+>  /*
+>   * Copyright (C) 2018 Texas Instruments Incorporated - https://www.ti.com/
+>   * Author: Tomi Valkeinen <tomi.valkeinen@ti.com>
+>   */
+>  
+> +#include <linux/clk.h>
+> +
+>  #include <drm/drm_atomic.h>
+>  #include <drm/drm_atomic_helper.h>
+> +#include <drm/drm_atomic_uapi.h>
+>  #include <drm/drm_crtc.h>
+>  #include <drm/drm_gem_dma_helper.h>
+>  #include <drm/drm_vblank.h>
+>  
+>  #include "tidss_crtc.h"
+>  #include "tidss_dispc.h"
+> +#include "tidss_dispc_regs.h"
+>  #include "tidss_drv.h"
+>  #include "tidss_irq.h"
+>  #include "tidss_plane.h"
+>  
+>  /* Page flip and frame done IRQs */
+> @@ -350,24 +354,229 @@ static void tidss_crtc_destroy_state(struct drm_crtc *crtc,
+>  
+>  	__drm_atomic_helper_crtc_destroy_state(&tstate->base);
+>  	kfree(tstate);
+>  }
+>  
+> -static void tidss_crtc_reset(struct drm_crtc *crtc)
+> +static unsigned long calc_pixel_clock_hz(unsigned int htotal,
+> +					 unsigned int vtotal,
+> +					 unsigned int refresh,
+> +					 unsigned int freq_div)
+>  {
+> +	unsigned long rate = (unsigned long)htotal * vtotal * refresh;
+> +
+> +	return (rate * 1000) / freq_div;
+> +}
+> +
+> +static const unsigned int refresh_tries[] = {30, 50, 60};
+> +static const unsigned int refresh_factors_tries[] = {1000, 1001};
+> +
+> +static unsigned int tidss_find_closest_refresh_rate_from_clk(struct drm_device *dev,
+> +							     struct clk *clk,
+> +							     unsigned int htotal,
+> +							     unsigned int vtotal,
+> +							     unsigned long *pixel_clock_hz)
+> +{
+> +	unsigned long actual_clk_rate = clk_get_rate(clk);
+> +	unsigned long best_clk_rate = 0;
+> +	unsigned long best_rate_diff = ULONG_MAX;
+> +	unsigned int best_refresh = 0;
+> +	unsigned int i, j;
+> +
+> +	drm_dbg(dev, "Actual clock rate is %lu\n", actual_clk_rate);
+> +
+> +	for (i = 0; i < ARRAY_SIZE(refresh_tries); i++) {
+> +		for (j = 0; j < ARRAY_SIZE(refresh_factors_tries); j++) {
+> +			unsigned int try_refresh = refresh_tries[i];
+> +			unsigned int try_factor = refresh_factors_tries[j];
+> +			unsigned long try_clk_rate = calc_pixel_clock_hz(htotal,
+> +									 vtotal,
+> +									 try_refresh,
+> +									 try_factor);
+> +			unsigned long diff;
+> +
+> +			drm_dbg(dev, "Evaluating refresh %u, factor %u, rate %lu\n",
+> +				try_refresh, try_factor, try_clk_rate);
+> +
+> +			if (try_clk_rate == actual_clk_rate) {
+> +				drm_dbg(dev, "Found exact match. Stopping.\n");
+> +				best_refresh = try_refresh;
+> +				best_clk_rate = try_clk_rate;
+> +				goto out;
+> +			}
+> +
+> +
+> +			diff = abs_diff(actual_clk_rate, try_clk_rate);
+> +			if (diff < best_rate_diff) {
+> +				drm_dbg(dev, "Found new candidate. Difference is %lu\n", diff);
+> +				best_refresh = try_refresh;
+> +				best_clk_rate = try_clk_rate;
+> +				best_rate_diff = diff;
+> +			}
+> +		}
+> +	}
+> +
+> +out:
+> +	drm_dbg(dev, "Best candidate is %u Hz, pixel clock rate %lu Hz", best_refresh, best_clk_rate);
+> +
+> +	if (pixel_clock_hz)
+> +		*pixel_clock_hz = best_clk_rate;
+> +
+> +	return best_refresh;
+> +}
+> +
+> +static int tidss_crtc_readout_mode(struct dispc_device *dispc,
+> +				   struct tidss_crtc *tcrtc,
+> +				   struct drm_display_mode *mode)
+> +{
+> +	struct tidss_device *tidss = dispc->tidss;
+> +	struct drm_device *dev = &tidss->ddev;
+> +	unsigned long pixel_clock;
+> +	unsigned int refresh;
+> +	u16 hdisplay, hfp, hsw, hbp;
+> +	u16 vdisplay, vfp, vsw, vbp;
+> +	u32 vp = tcrtc->hw_videoport;
+> +	u32 val;
+> +
+> +	val = dispc_vp_read(dispc, vp, DISPC_VP_SIZE_SCREEN);
+> +	hdisplay = FIELD_GET(DISPC_VP_SIZE_SCREEN_HDISPLAY_MASK, val) + 1;
+> +	vdisplay = FIELD_GET(DISPC_VP_SIZE_SCREEN_VDISPLAY_MASK, val) + 1;
+> +
+> +	mode->hdisplay = hdisplay;
+> +	mode->vdisplay = vdisplay;
+> +
+> +	val = dispc_vp_read(dispc, vp, DISPC_VP_TIMING_H);
+> +	hsw = FIELD_GET(DISPC_VP_TIMING_H_SYNC_PULSE_MASK, val) + 1;
+> +	hfp = FIELD_GET(DISPC_VP_TIMING_H_FRONT_PORCH_MASK, val) + 1;
+> +	hbp = FIELD_GET(DISPC_VP_TIMING_H_BACK_PORCH_MASK, val) + 1;
 
-I trust the below patch should fix the issue?
+I don't like this. The idea has been that dispc.c is the controlling
+file for the DSS DISPC registers, and I'd like to keep it that way.
 
-diff --git a/arch/powerpc/platforms/pseries/msi.c b/arch/powerpc/platforms/pseries/msi.c
-index 825f9432e03d..a82aaa786e9e 100644
---- a/arch/powerpc/platforms/pseries/msi.c
-+++ b/arch/powerpc/platforms/pseries/msi.c
-@@ -443,8 +443,7 @@ static int pseries_msi_ops_prepare(struct irq_domain *domain, struct device *dev
-  */
- static void pseries_msi_ops_teardown(struct irq_domain *domain, msi_alloc_info_t *arg)
- {
--	struct msi_desc *desc = arg->desc;
--	struct pci_dev *pdev = msi_desc_to_pci_dev(desc);
-+	struct pci_dev *pdev = to_pci_dev(domain->dev);
- 
- 	rtas_disable_msi(pdev);
- }
+Any reason why we couldn't add utility funcs to dispc.c that do the
+readouts?
+
+ Tomi
+
+> +
+> +	mode->hsync_start = hdisplay + hfp;
+> +	mode->hsync_end = hdisplay + hfp + hsw;
+> +	mode->htotal = hdisplay + hfp + hsw + hbp;
+> +
+> +	val = dispc_vp_read(dispc, vp, DISPC_VP_TIMING_V);
+> +	vsw = FIELD_GET(DISPC_VP_TIMING_V_SYNC_PULSE_MASK, val) + 1;
+> +	vfp = FIELD_GET(DISPC_VP_TIMING_V_FRONT_PORCH_MASK, val);
+> +	vbp = FIELD_GET(DISPC_VP_TIMING_V_BACK_PORCH_MASK, val);
+> +
+> +	mode->vsync_start = vdisplay + vfp;
+> +	mode->vsync_end = vdisplay + vfp + vsw;
+> +	mode->vtotal = vdisplay + vfp + vsw + vbp;
+> +
+> +	refresh = tidss_find_closest_refresh_rate_from_clk(dev,
+> +							   dispc->vp_clk[vp],
+> +							   mode->htotal,
+> +							   mode->vtotal,
+> +							   &pixel_clock);
+> +	if (!refresh)
+> +		return -EINVAL;
+> +
+> +	mode->clock = pixel_clock / 1000;
+> +
+> +	val = dispc_vp_read(dispc, vp, DISPC_VP_POL_FREQ);
+> +	if (FIELD_GET(DISPC_VP_POL_FREQ_IVS_MASK, val))
+> +		mode->flags |= DRM_MODE_FLAG_NVSYNC;
+> +	else
+> +		mode->flags |= DRM_MODE_FLAG_PVSYNC;
+> +
+> +	if (FIELD_GET(DISPC_VP_POL_FREQ_IHS_MASK, val))
+> +		mode->flags |= DRM_MODE_FLAG_NHSYNC;
+> +	else
+> +		mode->flags |= DRM_MODE_FLAG_PHSYNC;
+> +
+> +	mode->type |= DRM_MODE_TYPE_DRIVER;
+> +	drm_mode_set_name(mode);
+> +	drm_mode_set_crtcinfo(mode, 0);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct drm_crtc_state *
+> +tidss_crtc_readout_state(struct drm_crtc *crtc)
+> +{
+> +	struct drm_device *ddev = crtc->dev;
+> +	struct tidss_device *tidss = to_tidss(ddev);
+> +	struct dispc_device *dispc = tidss->dispc;
+>  	struct tidss_crtc_state *tstate;
+> +	struct tidss_crtc *tcrtc =
+> +		to_tidss_crtc(crtc);
+> +	struct drm_display_mode mode;
+> +	u32 val;
+> +	int ret;
+>  
+>  	if (crtc->state)
+>  		tidss_crtc_destroy_state(crtc, crtc->state);
+>  
+>  	tstate = kzalloc(sizeof(*tstate), GFP_KERNEL);
+>  	if (!tstate) {
+> -		crtc->state = NULL;
+> -		return;
+> +		return ERR_PTR(-ENOMEM);
+>  	}
+>  
+>  	__drm_atomic_helper_crtc_reset(crtc, &tstate->base);
+> +
+> +	tidss_runtime_get(tidss);
+> +
+> +	val = dispc_vp_read(dispc, tcrtc->hw_videoport, DISPC_VP_CONTROL);
+> +	if (!FIELD_GET(DISPC_VP_CONTROL_ENABLE_MASK, val))
+> +		goto out;
+> +
+> +	/*
+> +	 * The display is active, we need to enable our clock to have
+> +	 * proper reference count.
+> +	 */
+> +	WARN_ON(dispc_vp_enable_clk(tidss->dispc, tcrtc->hw_videoport));
+> +
+> +	tstate->base.active = 1;
+> +	tstate->base.enable = 1;
+> +
+> +	ret = tidss_crtc_readout_mode(dispc, tcrtc, &mode);
+> +	if (ret)
+> +		goto err_runtime_put;
+> +
+> +	ret = drm_atomic_set_mode_for_crtc(&tstate->base, &mode);
+> +	if (WARN_ON(ret))
+> +		goto err_runtime_put;
+> +
+> +	drm_mode_copy(&tstate->base.adjusted_mode, &mode);
+> +
+> +	val = dispc_vp_read(dispc, tcrtc->hw_videoport, DISPC_VP_POL_FREQ);
+> +	if (FIELD_GET(DISPC_VP_POL_FREQ_IPC_MASK, val))
+> +		tstate->bus_flags |= DRM_BUS_FLAG_PIXDATA_DRIVE_NEGEDGE;
+> +
+> +	if (FIELD_GET(DISPC_VP_POL_FREQ_IEO_MASK, val))
+> +		tstate->bus_flags |= DRM_BUS_FLAG_DE_LOW;
+> +
+> +	if (FIELD_GET(DISPC_VP_POL_FREQ_RF_MASK, val))
+> +		tstate->bus_flags |= DRM_BUS_FLAG_SYNC_DRIVE_POSEDGE;
+> +
+> +	/*
+> +	 * The active connectors and planes will be filled by their
+> +	 * respective readout callbacks.
+> +	 */
+> +
+> +out:
+> +	tidss_runtime_put(tidss);
+> +	return &tstate->base;
+> +
+> +err_runtime_put:
+> +	tidss_runtime_put(tidss);
+> +	kfree(tstate);
+> +	return ERR_PTR(ret);
+> +}
+> +
+> +static bool tidss_crtc_compare_state(struct drm_crtc *crtc,
+> +				     struct drm_printer *p,
+> +				     struct drm_crtc_state *expected,
+> +				     struct drm_crtc_state *actual)
+> +{
+> +	struct tidss_crtc_state *t_expected = to_tidss_crtc_state(expected);
+> +	struct tidss_crtc_state *t_actual = to_tidss_crtc_state(actual);
+> +	int ret = drm_atomic_helper_crtc_compare_state(crtc, p, expected, actual);
+> +
+> +	STATE_CHECK_U32_X(ret, p, crtc->name, t_expected, t_actual, bus_format);
+> +	STATE_CHECK_U32_X(ret, p, crtc->name, t_expected, t_actual, bus_flags);
+> +
+> +	return ret;
+>  }
+>  
+>  static struct drm_crtc_state *tidss_crtc_duplicate_state(struct drm_crtc *crtc)
+>  {
+>  	struct tidss_crtc_state *state, *current_state;
+> @@ -398,14 +607,15 @@ static void tidss_crtc_destroy(struct drm_crtc *crtc)
+>  	drm_crtc_cleanup(crtc);
+>  	kfree(tcrtc);
+>  }
+>  
+>  static const struct drm_crtc_funcs tidss_crtc_funcs = {
+> -	.reset = tidss_crtc_reset,
+>  	.destroy = tidss_crtc_destroy,
+>  	.set_config = drm_atomic_helper_set_config,
+>  	.page_flip = drm_atomic_helper_page_flip,
+> +	.atomic_readout_state = tidss_crtc_readout_state,
+> +	.atomic_compare_state = tidss_crtc_compare_state,
+>  	.atomic_duplicate_state = tidss_crtc_duplicate_state,
+>  	.atomic_destroy_state = tidss_crtc_destroy_state,
+>  	.enable_vblank = tidss_crtc_enable_vblank,
+>  	.disable_vblank = tidss_crtc_disable_vblank,
+>  };
+> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
+> index 18b6beddfe51f9b5c164481ee2ef0fa289e63318..e7f6f047574f5b520b00195c2b14d98224db6f19 100644
+> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
+> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
+> @@ -2916,51 +2916,10 @@ static void dispc_init_errata(struct dispc_device *dispc)
+>  		dispc->errata.i2000 = true;
+>  		dev_info(dispc->dev, "WA for erratum i2000: YUV formats disabled\n");
+>  	}
+>  }
+>  
+> -/*
+> - * K2G display controller does not support soft reset, so we do a basic manual
+> - * reset here: make sure the IRQs are masked and VPs are disabled.
+> - */
+> -static void dispc_softreset_k2g(struct dispc_device *dispc)
+> -{
+> -	unsigned long flags;
+> -
+> -	spin_lock_irqsave(&dispc->tidss->irq_lock, flags);
+> -	dispc_set_irqenable(dispc, 0);
+> -	dispc_read_and_clear_irqstatus(dispc);
+> -	spin_unlock_irqrestore(&dispc->tidss->irq_lock, flags);
+> -
+> -	for (unsigned int vp_idx = 0; vp_idx < dispc->feat->num_vps; ++vp_idx)
+> -		VP_REG_FLD_MOD(dispc, vp_idx, DISPC_VP_CONTROL, 0,
+> -			       DISPC_VP_CONTROL_ENABLE_MASK);
+> -}
+> -
+> -static int dispc_softreset(struct dispc_device *dispc)
+> -{
+> -	u32 val;
+> -	int ret;
+> -
+> -	if (dispc->feat->subrev == DISPC_K2G) {
+> -		dispc_softreset_k2g(dispc);
+> -		return 0;
+> -	}
+> -
+> -	/* Soft reset */
+> -	REG_FLD_MOD(dispc, DSS_SYSCONFIG, 1, DSS_SYSCONFIG_SOFTRESET_MASK);
+> -	/* Wait for reset to complete */
+> -	ret = readl_poll_timeout(dispc->base_common + DSS_SYSSTATUS,
+> -				 val, val & 1, 100, 5000);
+> -	if (ret) {
+> -		dev_err(dispc->dev, "failed to reset dispc\n");
+> -		return ret;
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+>  static int dispc_init_hw(struct dispc_device *dispc)
+>  {
+>  	struct device *dev = dispc->dev;
+>  	int ret;
+>  
+> @@ -2974,26 +2933,19 @@ static int dispc_init_hw(struct dispc_device *dispc)
+>  	if (ret) {
+>  		dev_err(dev, "Failed to enable DSS fclk\n");
+>  		goto err_runtime_suspend;
+>  	}
+>  
+> -	ret = dispc_softreset(dispc);
+> -	if (ret)
+> -		goto err_clk_disable;
+> -
+>  	clk_disable_unprepare(dispc->fclk);
+>  	ret = pm_runtime_set_suspended(dev);
+>  	if (ret) {
+>  		dev_err(dev, "Failed to set DSS PM to suspended\n");
+>  		return ret;
+>  	}
+>  
+>  	return 0;
+>  
+> -err_clk_disable:
+> -	clk_disable_unprepare(dispc->fclk);
+> -
+>  err_runtime_suspend:
+>  	ret = pm_runtime_set_suspended(dev);
+>  	if (ret) {
+>  		dev_err(dev, "Failed to set DSS PM to suspended\n");
+>  		return ret;
+> diff --git a/drivers/gpu/drm/tidss/tidss_kms.c b/drivers/gpu/drm/tidss/tidss_kms.c
+> index 86eb5d97410bedced57129c2bbcd35f1719424c2..38c90027c158a392f96012f88824ead091332fb7 100644
+> --- a/drivers/gpu/drm/tidss/tidss_kms.c
+> +++ b/drivers/gpu/drm/tidss/tidss_kms.c
+> @@ -37,11 +37,12 @@ static void tidss_atomic_commit_tail(struct drm_atomic_state *old_state)
+>  
+>  	tidss_runtime_put(tidss);
+>  }
+>  
+>  static const struct drm_mode_config_helper_funcs mode_config_helper_funcs = {
+> -	.atomic_commit_tail = tidss_atomic_commit_tail,
+> +	.atomic_commit_tail	= tidss_atomic_commit_tail,
+> +	.atomic_reset		= drm_atomic_helper_readout_state,
+>  };
+>  
+>  static int tidss_atomic_check(struct drm_device *ddev,
+>  			      struct drm_atomic_state *state)
+>  {
+> diff --git a/drivers/gpu/drm/tidss/tidss_plane.c b/drivers/gpu/drm/tidss/tidss_plane.c
+> index bd10bc1b9961571e6c6dee26698149fc9dd135b0..037c21354dd170511868baca24960ff9295dbea5 100644
+> --- a/drivers/gpu/drm/tidss/tidss_plane.c
+> +++ b/drivers/gpu/drm/tidss/tidss_plane.c
+> @@ -10,13 +10,15 @@
+>  #include <drm/drm_crtc.h>
+>  #include <drm/drm_fb_dma_helper.h>
+>  #include <drm/drm_fourcc.h>
+>  #include <drm/drm_framebuffer.h>
+>  #include <drm/drm_gem_atomic_helper.h>
+> +#include <drm/drm_gem_framebuffer_helper.h>
+>  
+>  #include "tidss_crtc.h"
+>  #include "tidss_dispc.h"
+> +#include "tidss_dispc_regs.h"
+>  #include "tidss_drv.h"
+>  #include "tidss_plane.h"
+>  
+>  void tidss_plane_error_irq(struct drm_plane *plane, u64 irqstatus)
+>  {
+> @@ -173,17 +175,207 @@ static const struct drm_plane_helper_funcs tidss_primary_plane_helper_funcs = {
+>  	.atomic_enable = tidss_plane_atomic_enable,
+>  	.atomic_disable = tidss_plane_atomic_disable,
+>  	.get_scanout_buffer = drm_fb_dma_get_scanout_buffer,
+>  };
+>  
+> +static const struct drm_framebuffer_funcs tidss_plane_readout_fb_funcs = {
+> +	.destroy	= drm_gem_fb_destroy,
+> +};
+> +
+> +static struct drm_framebuffer *tidss_plane_readout_fb(struct drm_plane *plane)
+> +{
+> +	struct drm_device *ddev = plane->dev;
+> +	struct tidss_device *tidss = to_tidss(ddev);
+> +	struct dispc_device *dispc = tidss->dispc;
+> +	struct tidss_plane *tplane = to_tidss_plane(plane);
+> +	const struct drm_format_info *info;
+> +	struct drm_framebuffer *fb;
+> +	u32 fourcc, val;
+> +	int ret;
+> +
+> +	fb = kzalloc(sizeof(*fb), GFP_KERNEL);
+> +	if (!fb)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	fb->dev = plane->dev;
+> +
+> +	val = dispc_vid_read(dispc, tplane->hw_plane_id, DISPC_VID_ATTRIBUTES);
+> +	fourcc =
+> +		dispc_plane_find_fourcc_by_dss_code(FIELD_GET(DISPC_VID_ATTRIBUTES_FORMAT_MASK,
+> +							      val));
+> +	if (!fourcc) {
+> +		ret = -EINVAL;
+> +		goto err_free_fb;
+> +	}
+> +
+> +	info = drm_format_info(fourcc);
+> +	if (!info) {
+> +		ret = -EINVAL;
+> +		goto err_free_fb;
+> +	}
+> +
+> +	// TODO: Figure out YUV and multiplanar formats
+> +	if (info->is_yuv) {
+> +		ret = -EINVAL;
+> +		goto err_free_fb;
+> +	}
+> +
+> +	fb->format = info;
+> +
+> +	val = dispc_vid_read(dispc, tplane->hw_plane_id, DISPC_VID_PICTURE_SIZE);
+> +	fb->width = FIELD_GET(DISPC_VID_PICTURE_SIZE_MEMSIZEX_MASK, val) + 1;
+> +	fb->height = FIELD_GET(DISPC_VID_PICTURE_SIZE_MEMSIZEY_MASK, val) + 1;
+> +
+> +	// TODO: Figure that out.
+> +	val = dispc_vid_read(dispc, tplane->hw_plane_id, DISPC_VID_ROW_INC);
+> +	if (val != 1) {
+> +		ret = -EINVAL;
+> +		goto err_free_fb;
+> +	}
+> +
+> +	fb->pitches[0] = fb->width * (drm_format_info_bpp(info, 0) / 8);
+> +
+> +	// TODO: Figure out the offsets
+> +	fb->offsets[0] = 0;
+> +
+> +	ret = drm_framebuffer_init(plane->dev, fb, &tidss_plane_readout_fb_funcs);
+> +	if (ret) {
+> +		kfree(fb);
+> +		return ERR_PTR(ret);
+> +	}
+> +
+> +	return fb;
+> +
+> +err_free_fb:
+> +	kfree(fb);
+> +	return ERR_PTR(ret);
+> +}
+> +
+> +static struct drm_crtc *tidss_plane_readout_crtc(struct drm_plane *plane)
+> +{
+> +	struct drm_device *dev = plane->dev;
+> +
+> +	if (dev->num_crtcs != 1)
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	return list_first_entry(&dev->mode_config.crtc_list, struct drm_crtc, head);
+> +}
+> +
+> +static struct drm_plane_state *tidss_plane_atomic_readout_state(struct drm_plane *plane,
+> +								struct drm_atomic_state *state)
+> +{
+> +	struct drm_device *ddev = plane->dev;
+> +	struct tidss_device *tidss = to_tidss(ddev);
+> +	struct dispc_device *dispc = tidss->dispc;
+> +	struct tidss_plane *tplane = to_tidss_plane(plane);
+> +	struct drm_plane_state *plane_state;
+> +	struct drm_crtc_state *crtc_state;
+> +	struct drm_framebuffer *fb;
+> +	struct drm_crtc *crtc;
+> +	bool lite = dispc->feat->vid_info[tplane->hw_plane_id].is_lite;
+> +	u16 in_w, in_h;
+> +	u32 val;
+> +	int ret;
+> +
+> +	if (plane->state)
+> +		drm_atomic_helper_plane_destroy_state(plane, plane->state);
+> +
+> +	plane_state = kzalloc(sizeof(*plane_state), GFP_KERNEL);
+> +	if (!plane_state)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	__drm_atomic_helper_plane_state_reset(plane_state, plane);
+> +
+> +	tidss_runtime_get(tidss);
+> +
+> +	val = dispc_vid_read(dispc, tplane->hw_plane_id, DISPC_VID_ATTRIBUTES);
+> +	if (!FIELD_GET(DISPC_VID_ATTRIBUTES_ENABLE_MASK, val)) {
+> +		goto out;
+> +	}
+> +
+> +	fb = tidss_plane_readout_fb(plane);
+> +	if (IS_ERR(fb)) {
+> +		ret = PTR_ERR(fb);
+> +		goto err_runtime_pm;
+> +	}
+> +
+> +	crtc = tidss_plane_readout_crtc(plane);
+> +	if (IS_ERR(crtc)) {
+> +		ret = PTR_ERR(crtc);
+> +		goto err_runtime_pm;
+> +	}
+> +
+> +	plane_state->fb = fb;
+> +	plane_state->crtc = crtc;
+> +	plane_state->visible = true;
+> +
+> +	val = dispc_vid_read(dispc, tplane->hw_plane_id, DISPC_VID_PICTURE_SIZE);
+> +	in_w = FIELD_GET(DISPC_VID_PICTURE_SIZE_MEMSIZEX_MASK, val) + 1;
+> +	in_h = FIELD_GET(DISPC_VID_PICTURE_SIZE_MEMSIZEY_MASK, val) + 1;
+> +	plane_state->src_w = in_w << 16;
+> +	plane_state->src_h = in_h << 16;
+> +
+> +	if (!lite) {
+> +		val = dispc_vid_read(dispc, tplane->hw_plane_id, DISPC_VID_SIZE);
+> +		plane_state->crtc_w = FIELD_GET(DISPC_VID_SIZE_SIZEX_MASK, val) + 1;
+> +		plane_state->crtc_h = FIELD_GET(DISPC_VID_SIZE_SIZEY_MASK, val) + 1;
+> +	} else {
+> +		plane_state->crtc_w = in_w;
+> +		plane_state->crtc_h = in_h;
+> +	}
+> +
+> +	// TODO: Handle crtc_x/crtc_x/src_x/src_y
+> +	// crtc_x/crtc_y are handled by DISPC_OVR_ATTRIBUTES / OVR1_DSS_ATTRIBUTES
+> +
+> +	// TODO: Handle zpos, see DISPC_OVR_ATTRIBUTES / OVR1_DSS_ATTRIBUTES
+> +
+> +	plane_state->src.x1 = 0;
+> +	plane_state->src.x2 = plane_state->src_w;
+> +	plane_state->src.y1 = 0;
+> +	plane_state->src.y2 = plane_state->src_h;
+> +	plane_state->dst.x1 = 0;
+> +	plane_state->dst.x2 = plane_state->crtc_w;
+> +	plane_state->dst.y1 = 0;
+> +	plane_state->dst.y2 = plane_state->crtc_h;
+> +
+> +	val = dispc_vid_read(dispc, tplane->hw_plane_id, DISPC_VID_GLOBAL_ALPHA);
+> +	plane_state->alpha = FIELD_GET(DISPC_VID_GLOBAL_ALPHA_GLOBALALPHA_MASK, val) << 16;
+> +
+> +	val = dispc_vid_read(dispc, tplane->hw_plane_id, DISPC_VID_ATTRIBUTES);
+> +	if (FIELD_GET(DISPC_VID_ATTRIBUTES_PREMULTIPLYALPHA_MASK, val))
+> +		plane_state->pixel_blend_mode = DRM_MODE_BLEND_PREMULTI;
+> +	else
+> +		plane_state->pixel_blend_mode = DRM_MODE_BLEND_COVERAGE;
+> +
+> +	// TODO: If YUV, handle color encoding and range
+> +
+> +	crtc_state = drm_atomic_get_old_crtc_state(state, crtc);
+> +	if (!crtc_state) {
+> +		ret = -ENODEV;
+> +		goto err_runtime_pm;
+> +	}
+> +
+> +	crtc_state->plane_mask |= drm_plane_mask(plane);
+> +
+> +out:
+> +	tidss_runtime_put(tidss);
+> +	return plane_state;
+> +
+> +err_runtime_pm:
+> +	tidss_runtime_put(tidss);
+> +	kfree(plane_state);
+> +	return ERR_PTR(ret);
+> +}
+> +
+>  static const struct drm_plane_funcs tidss_plane_funcs = {
+>  	.update_plane = drm_atomic_helper_update_plane,
+>  	.disable_plane = drm_atomic_helper_disable_plane,
+> -	.reset = drm_atomic_helper_plane_reset,
+>  	.destroy = drm_plane_destroy,
+> +	.atomic_compare_state = drm_atomic_helper_plane_compare_state,
+>  	.atomic_duplicate_state = drm_atomic_helper_plane_duplicate_state,
+>  	.atomic_destroy_state = drm_atomic_helper_plane_destroy_state,
+> +	.atomic_readout_state = tidss_plane_atomic_readout_state,
+>  };
+>  
+>  struct tidss_plane *tidss_plane_create(struct tidss_device *tidss,
+>  				       u32 hw_plane_id, u32 plane_type,
+>  				       u32 crtc_mask, const u32 *formats,
+> 
+
 
