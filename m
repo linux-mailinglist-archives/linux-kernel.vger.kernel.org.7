@@ -1,156 +1,248 @@
-Return-Path: <linux-kernel+bounces-845572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FFC9BC5686
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 16:15:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5863BC5692
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 16:16:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0662D3E5555
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 14:15:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AF673ADEE6
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 14:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15C229A9FE;
-	Wed,  8 Oct 2025 14:14:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3728283FF7;
+	Wed,  8 Oct 2025 14:15:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S/rSAn8e"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="kntnz6+f"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA402298CDE
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 14:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D216224C076
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 14:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759932899; cv=none; b=Pbrbnf/s+s5uPyfXAtZPX86daaPcDiTstgFb2UQn0VNS4Ocu2263Y2v8YSGdzaMDpPi57cHJzFcugTah9zEPoJoWX6SLu+eADlJyMT1RupQLrh1pzJw+pZRnQfG+eW9wqyooYqNbZtSFzGdCRmmtKpk9/hIdW//iyAKTQ0vvg3c=
+	t=1759932948; cv=none; b=aOu9U9LcktOKBOt0JJDrUV7kdgfYa1sC4pSHUMHS73s6WNyt9N7eBQzinT0vunmRuzmnWXJ0mPxvoTFLT0njS5RvBhy4Og7SILbsqRCP8N9Yy3iRkvSyBfetEjCe7OkyEoW7AII8xUtfjcxQV11P+bG6G4bokoZnpTPsXOYKrEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759932899; c=relaxed/simple;
-	bh=HUTvihCmklt+sstzIY6HzW565nJhZcYT4rJEtEIVljQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FeUNsuhBY5NiKuoPfK3r52j/jK+4xyqKKHgsEfwTh1RumHaBOMuIatslLmWJe1xbvooY8ZlVTp97j5FD94ndpRlz/nrPuUd9cHEY5aiFQw6QaCRE3WDrGfp2CmQgZ7LhJmzYf0wx95kkov9rq51w0lS3ro1uGNT4ouZHWVMWA98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S/rSAn8e; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759932896;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=4UESpQ82rYG/usUfnOSQIXuNtS6mZs6hqNHW1t9lVjY=;
-	b=S/rSAn8e+bn7IBXAf1U12mteLjyssIRjXJ75H+IGvCCkAMTQTTzgpyxPRgE8ZOUJeX2jFm
-	UymhCSz3yP1M+az8AQuzxATD4414wiQpaphIA6aQLUU6UecSvE7anAf+O0gD0J9ltRz5xg
-	vGtClCO0zyyD73JDm9U8veLnJ+6PJwI=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-653-OuodJBr5Nz6hAodBQ1RP5A-1; Wed,
- 08 Oct 2025 10:14:51 -0400
-X-MC-Unique: OuodJBr5Nz6hAodBQ1RP5A-1
-X-Mimecast-MFC-AGG-ID: OuodJBr5Nz6hAodBQ1RP5A_1759932890
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9CE771800357;
-	Wed,  8 Oct 2025 14:14:49 +0000 (UTC)
-Received: from p16v.luc.cera.cz (unknown [10.44.32.116])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D8E5A1800446;
-	Wed,  8 Oct 2025 14:14:46 +0000 (UTC)
-From: Ivan Vecera <ivecera@redhat.com>
-To: netdev@vger.kernel.org
-Cc: Prathosh Satish <Prathosh.Satish@microchip.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Jakub Kicinski <kuba@kernel.org>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net] dpll: zl3073x: Handle missing or corrupted flash configuration
-Date: Wed,  8 Oct 2025 16:14:45 +0200
-Message-ID: <20251008141445.841113-1-ivecera@redhat.com>
+	s=arc-20240116; t=1759932948; c=relaxed/simple;
+	bh=8tRqtbODRqjaEdOTfJSsrK4OHe29vcxu7+DtAi2pak4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FFKSPihT1uWC4MhD5QryRYoxQJWtHD1jV8lzM+So2X41zrCLmY1TkhYctBqMgdi5Lfpuk+HXd7KbL0Q+iN5TUBDPku4RmdtIe5kU2RkditqIqHkr4IsaKStRfmwmUT1t4S2BCqRgKhCPeArIaldx7DwiOCUsItP4AYlxhGPU9p0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=kntnz6+f; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 064C6EFE;
+	Wed,  8 Oct 2025 16:14:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1759932849;
+	bh=8tRqtbODRqjaEdOTfJSsrK4OHe29vcxu7+DtAi2pak4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kntnz6+fJf8VFixy317M7XUJctcfhnvC/AFpuJKTkZc6QA2z2Z+kvb9xd8DbkN6hf
+	 OLD4kp4EX/SmUZRwtXLwQSyPgVcofL/5IDWZNhv25c5R6a38J/vlteHKWhes7hWzBL
+	 x5zdfBRQdE8Soem2TuHZY6QKsRjdJzsL8q5C0QeU=
+Message-ID: <47dfe81e-08ab-4fea-85fe-8c0a1d76bb78@ideasonboard.com>
+Date: Wed, 8 Oct 2025 17:15:38 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/29] drm: Implement state readout support
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Jyri Sarha <jyri.sarha@iki.fi>
+References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
+ <f87700f1-ed9c-40fe-9327-efe574820139@ideasonboard.com>
+ <20251008-nondescript-snobbish-rattlesnake-d486a7@houat>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20251008-nondescript-snobbish-rattlesnake-d486a7@houat>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-If the internal flash contains missing or corrupted configuration,
-basic communication over the bus still functions, but the device
-is not capable of normal operation (for example, using mailboxes).
+Hi,
 
-This condition is indicated in the info register by the ready bit.
-If this bit is cleared, the probe procedure times out while fetching
-the device state.
+On 08/10/2025 16:57, Maxime Ripard wrote:
+> Hi Tomi,
+> 
+> Thanks for having a look.
+> 
+> On Wed, Oct 08, 2025 at 04:07:57PM +0300, Tomi Valkeinen wrote:
+>> On 02/09/2025 11:32, Maxime Ripard wrote:
+>>> Hi,
+>>>
+>>> Here's a series that implement what i915 calls "fastboot", ie,
+>>> initializing the initial KMS state from the hardware state at boot, to
+>>> skip the first modeset if the firmware already set up the display.
+>>>
+>>> This series creates the infrastructure in KMS to create that state by
+>>> relying on driver specific hooks. It also implements some infrastructure
+>>> to check during non-blocking commits that the readout helpers work
+>>> properly by reading out the state that was just committed and comparing
+>>> it to what was supposed to be commited.
+>>>
+>>> This relies on another set of driver hooks to compare the entities
+>>> states, with helpers providing the default implementation.
+>>>
+>>> It then implements the readout support in the TIDSS driver, and was
+>>> tested with the SK-AM62 board. This board in particular is pretty
+>>> interesting, since it relies on an DPI to HDMI bridge, and uses the
+>>> drm_bridge_connector infrastructure.
+>>>
+>>> So the readout works with the current state of the art on embedded-ish
+>>> platforms.
+>>>
+>>> The whole thing feels a bit clunky at the moment:
+>>>
+>>>   - The initial state buildup ties everything together in a state in the
+>>>     old state pointer. It's useful for the initial readout because
+>>>     accessors can then use the usual state accessors to look into the
+>>>     state of other entities. But one of the argument for it was also
+>>>     that for state comparison, it allows to compare the new state
+>>>     (committed) to the old state (readout). It doesn't really work in
+>>>     practice, since in such a case the old state contains the previous
+>>>     hardware state to be freed, and thus we would end up with a memory
+>>>     leak
+>>>
+>>>   - The framebuffer refcounting is broken.
+>>>
+>>>   - The tidss atomic_flush waits for the go bit on the initial
+>>>     modesetting, except that if the state is readout we didn't commit
+>>>     anything and the driver will wait forever, eventually resulting in
+>>>     commit timeout
+>>
+>> Isn't atomic flush part of the modeset? Why is it called if there's no
+>> modeset.
+> 
+> No, atomic_flush is ran when we update the planes, so it will trigger
+> here on the first page flip.
+> 
+>>>   - The tidss_crtc_state fields are not read properly at the moment
+>>>     either.
+>>
+>> Just because no implemented, or was there something funny with them? I
+>> guess there's some reverse-mapping that needs to be done.
+> 
+> The bus_format field isn't read properly, I wasn't quite sure what was
+> going on there.
+> 
+> And also, for bridges, I've yet to figure out a way to read / find the
+> input/output formats.
+> 
+>>> The main thing works though: the state is picked up properly, doesn't
+>>> trigger a modeset if what was programmed is the one the first modeset
+>>> tries to pick as well, will switch properly if it isn't, etc.
+>>
+>> This is pretty interesting work. I haven't tested, and I'm sure it still
+>> breaks in a million ways if used with anything else but the HW you're
+>> using =).
+> 
+> Thanks :D
+> 
+>> This is related to the boot-splash screen work I've been working on for
+>> quite a while, although at a different stage.
+> 
+> As far as I'm concerned, once this lands, your work isn't needed at all.
 
-Handle this case by checking the ready bit value in zl3073x_dev_start()
-and skipping DPLL device and pin registration if it is cleared.
-Do not report this condition as an error, allowing the devlink device
-to be registered and enabling the user to flash the correct configuration.
+No, I'm quite sure something alike my patches are needed. Without my
+patch (drm/tidss: Add some support for splash-screen):
 
-Prior this patch:
-[   31.112299] zl3073x-i2c 1-0070: Failed to fetch input state: -ETIMEDOUT
-[   31.116332] zl3073x-i2c 1-0070: error -ETIMEDOUT: Failed to start device
-[   31.136881] zl3073x-i2c 1-0070: probe with driver zl3073x-i2c failed with error -110
+- the driver will do a hw reset at probe time, and you lose the splash
+screen
+- nothing has a reference to the related clocks, so they may be turned off
 
-After this patch:
-[   41.011438] zl3073x-i2c 1-0070: FW not fully ready - missing or corrupted config
+>> In my patches I have been trying to avoid hw reset, so that if the DSS
+>> has been set up by the bootloader, we'll just let it run until we get
+>> a modeset.
+> 
+> We really only need to power up the hardware around
+> drm_mode_config_reset.
 
-Fixes: 75a71ecc24125 ("dpll: zl3073x: Register DPLL devices and pins")
-Signed-off-by: Ivan Vecera <ivecera@redhat.com>
----
- drivers/dpll/zl3073x/core.c | 21 +++++++++++++++++++++
- drivers/dpll/zl3073x/regs.h |  3 +++
- 2 files changed, 24 insertions(+)
+If by "power up" you mean set things up (it's powered up already by the
+bootloader), yes. I think that's somewhat similar to what I did in my
+patch wrt. handling the reset, but with your series we'll skip the reset
+too.
 
-diff --git a/drivers/dpll/zl3073x/core.c b/drivers/dpll/zl3073x/core.c
-index 092e7027948a..e42e527813cf 100644
---- a/drivers/dpll/zl3073x/core.c
-+++ b/drivers/dpll/zl3073x/core.c
-@@ -1038,8 +1038,29 @@ zl3073x_dev_phase_meas_setup(struct zl3073x_dev *zldev)
- int zl3073x_dev_start(struct zl3073x_dev *zldev, bool full)
- {
- 	struct zl3073x_dpll *zldpll;
-+	u8 info;
- 	int rc;
- 
-+	rc = zl3073x_read_u8(zldev, ZL_REG_INFO, &info);
-+	if (rc) {
-+		dev_err(zldev->dev, "Failed to read device status info\n");
-+		return rc;
-+	}
-+
-+	if (!FIELD_GET(ZL_INFO_READY, info)) {
-+		/* The ready bit indicates that the firmware was successfully
-+		 * configured and is ready for normal operation. If it is
-+		 * cleared then the configuration stored in flash is wrong
-+		 * or missing. In this situation the driver will expose
-+		 * only devlink interface to give an opportunity to flash
-+		 * the correct config.
-+		 */
-+		dev_info(zldev->dev,
-+			 "FW not fully ready - missing or corrupted config\n");
-+
-+		return 0;
-+	}
-+
- 	if (full) {
- 		/* Fetch device state */
- 		rc = zl3073x_dev_state_fetch(zldev);
-diff --git a/drivers/dpll/zl3073x/regs.h b/drivers/dpll/zl3073x/regs.h
-index 19a25325bd9c..d837bee72b17 100644
---- a/drivers/dpll/zl3073x/regs.h
-+++ b/drivers/dpll/zl3073x/regs.h
-@@ -67,6 +67,9 @@
-  * Register Page 0, General
-  **************************/
- 
-+#define ZL_REG_INFO				ZL_REG(0, 0x00, 1)
-+#define ZL_INFO_READY				BIT(7)
-+
- #define ZL_REG_ID				ZL_REG(0, 0x01, 2)
- #define ZL_REG_REVISION				ZL_REG(0, 0x03, 2)
- #define ZL_REG_FW_VER				ZL_REG(0, 0x05, 2)
--- 
-2.49.1
+> Once we're done, either the hardware will be active or inactive, but
+> we'll know for sure.
+
+We still need to have some early code to make sure we keep the clocks
+enabled until the userspace does a modeset. Or would
+drm_mode_config_reset be called at probe time?
+
+>> And now your series would potentially remove that modeset too, so, in
+>> theory, we could get up to X/Weston from bootloader with just a single
+>> modeset in the bootloader.
+>>
+>> Of course, fbdev/simpledrm will mess things up there. I had some hacks
+>> for fbdev too, to retain the bootsplash image, but it was just hacking.
+> 
+> And it works also with fbdev, since fbdev or whatever will trigger a
+> new commit we can compare to.
+
+Sorry, meant simplefb. There's a different problem there: if the
+bootloader has set up a boot splash, simpledrm will allocate a new empty
+framebuffer so we get a black screen, or in case of simplefb, it can be
+made to use the existing memory buffer, but if fb console is enabled, it
+will clear the buffer.
+
+So maybe there won't be a modeset-related-temporary-blanking when using
+your series, but the core issue of keeping a stable logo on the screen
+up until X/Weston is, afaik, unsolved (unless you disable simplefb/drm
+and thus also fbconsole).
+
+ Tomi
 
 
