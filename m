@@ -1,72 +1,93 @@
-Return-Path: <linux-kernel+bounces-845307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D11FBC4538
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 12:32:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99036BC453B
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 12:33:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AF92189FE23
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 10:33:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D6B404EEDA0
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 10:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB11F2F5A1C;
-	Wed,  8 Oct 2025 10:32:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A98B2F39CB;
+	Wed,  8 Oct 2025 10:33:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gOKCoRhJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LF531aTP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27471D7E41;
-	Wed,  8 Oct 2025 10:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A6F1D7E41
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 10:33:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759919553; cv=none; b=WdHLxDEmp1cs9I/3o2+cBNRpJlH7+PiG/g9UeshnyI1APtHPRk6zAvyvI1YADkjem7jqNTvNNl+AuL9fESFf/zcZx+uavvKwqJvXAPIJvlEDAvnIaMGD5Uit9Qh2oT7sctbn0WtrFkzFbm/aJl666Le04eq7Y49XK838SzHIiVA=
+	t=1759919587; cv=none; b=mf+MYbP18xQ1fUWPlEXeRTCIQTWejNkJ5uh0ycI39VM6TmYCOu1tWVtVgJY8B6ibMCWZI60C24LOZL+ujGdZNxeNghmXG3FiGy1zH/mCp4o6XYiKDy4pQjVVjQiWCZ0F0E1CVKCClCODOradvGjZ9CfDW/5a1JTaMraq3PcPSAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759919553; c=relaxed/simple;
-	bh=mpJCJRmqq7qLlxk4UiGEW5X5iwP6YOqYIuZ48aIO4q8=;
+	s=arc-20240116; t=1759919587; c=relaxed/simple;
+	bh=ebKkEsnGtJg9BHiElx4TZYX6g1+ZOgVHkaaIq2OEWwk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OCCVWJWqcV3LSCwoyzeeSICgWnpHxQYkEBCF+JITi7698Pd4AIStyBgQqWOHLDoKd5ODjL+MGhwO+/2snVolRGimE7n+nspjxZSEOcnlhLpCUComLkyLnPDZ42vbjQjlaCsSssDD0PhCx3sKl97AK65d4WnBpaT9/U8/B1OAW08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gOKCoRhJ; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759919550; x=1791455550;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mpJCJRmqq7qLlxk4UiGEW5X5iwP6YOqYIuZ48aIO4q8=;
-  b=gOKCoRhJHGQW735mW+blQjla0ynUKUQgVo2KOpQm34xecoMaGVeaYFFH
-   VGpNK2pHveyy3lwDZTgiu+isH7NF5XRHveMeCoOJJ6zbloNk5iudVZg9q
-   9M1yS/v5mvBGZkwCxrnsfTX4n9HgW2IA0/BXBZgbuHoumptm0855M2x9M
-   DjxRr7dr5atGojgXMyNxbf8Xvlq6HH+Cd7wSUBT+QCB7X+sfjtweg6cB9
-   0GCFrt/HshujV1PkVHIhgB3DBYzZ2Oz4NpZF/17uwwlmuachn1ATjKcrm
-   /wZjO0tTGtzZ8f3kg8iMDJW1NCfuVfr12HJuMkQW+TBKV0Y2eNGJCYsuG
-   w==;
-X-CSE-ConnectionGUID: Wntt9tKdT8CtnLUp0v43Ug==
-X-CSE-MsgGUID: GvalrHyLR3mVX2mVQrSLrQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11575"; a="79544713"
-X-IronPort-AV: E=Sophos;i="6.18,323,1751266800"; 
-   d="scan'208";a="79544713"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2025 03:32:30 -0700
-X-CSE-ConnectionGUID: Cm7dSnEPQ96+ZUiAYYydhA==
-X-CSE-MsgGUID: bGjmKLv0QpycyeA3pBOf1Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,323,1751266800"; 
-   d="scan'208";a="179652095"
-Received: from iherna2-mobl4.amr.corp.intel.com (HELO kuha.fi.intel.com) ([10.124.220.169])
-  by orviesa010.jf.intel.com with SMTP; 08 Oct 2025 03:32:28 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 08 Oct 2025 13:32:26 +0300
-Date: Wed, 8 Oct 2025 13:32:26 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: RD Babiera <rdbabiera@google.com>
-Cc: gregkh@linuxfoundation.org, badhri@google.com,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] usb: typec: class: add typec_get_data_role symbol
-Message-ID: <aOY9uk3waQH8wJKr@kuha.fi.intel.com>
-References: <20250923181606.1583584-4-rdbabiera@google.com>
- <20250923181606.1583584-5-rdbabiera@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PAa4oECXn+Q560aLOShigCtxhJxmN7+dEslDLy2Dox9L9E4TWbnIygRupf3YiFDvRPyeFywzYX/GfV5kYVgcI9ZdDOiYrL86bsnsIae3ImSpdxbyY37ECJmNLZW7piACnWhgYYLEY0wDfP5NYZDBTJRUsVeKcxwf6tJSqjvAEKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LF531aTP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADD38C4CEFE;
+	Wed,  8 Oct 2025 10:33:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759919584;
+	bh=ebKkEsnGtJg9BHiElx4TZYX6g1+ZOgVHkaaIq2OEWwk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LF531aTP1JbJUOxrESg6EEYoDCVJUrdTfLI+S8rMdHbE77jCm9TPFnAWvHKMMxUN5
+	 npaQ//6cqqUHZhTBaM1c7W1l7ETAm2ulGJRQrUYN8FVcUBKeWTbSejWubh/vtEHyUf
+	 XujqXckawG3p6Eg7Kh5cIIN4q/vn4rlybGCHfYYDLDNtXtD4zwSfZ6R02SNj46mgrc
+	 u9SyYsJwF55TtANMzQZea1KYbEnvlh2h1UTjk52l1uQ10MzZP0SJjNrh8oy+EbMDRg
+	 qKanU/uEyfrHQ8fI44LjH/HsfafjxlLrQyicuZ9JoaYKgl9bropCP+hTIc1JgaA9d3
+	 tfQcKtFaAzIEw==
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfauth.phl.internal (Postfix) with ESMTP id D48AEF4006A;
+	Wed,  8 Oct 2025 06:33:03 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Wed, 08 Oct 2025 06:33:03 -0400
+X-ME-Sender: <xms:3z3maEPgXEJLz2KM41mvujuUPTcYRX6iiSpBjDCMRxygDNtOSlFeLA>
+    <xme:3z3maDwe3-HOGSY4do_Gqb7qN0Jo3uIoyw4ZNz2m-kYUMX-r7Z5hlM15zwzZyCoKe
+    ZIK8CMsMxD6GCLMMSZ_5nwBsqnoS7RDOQlz3_LwZodgSNEueAuiAU3v>
+X-ME-Received: <xmr:3z3maCOCToqIh9PXwKLy6Z6olts7GiYzL102t3BreEgBWIXZyMCiPYIwrdNrdQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutdeftdejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
+    ufhhuhhtshgvmhgruhcuoehkrghssehkvghrnhgvlhdrohhrgheqnecuggftrfgrthhtvg
+    hrnhepheeikeeuveduheevtddvffekhfeufefhvedtudehheektdfhtdehjeevleeuffeg
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepkhhirh
+    hilhhlodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduieduudeivdeiheeh
+    qddvkeeggeegjedvkedqkhgrsheppehkvghrnhgvlhdrohhrghesshhhuhhtvghmohhvrd
+    hnrghmvgdpnhgspghrtghpthhtohepfedvpdhmohguvgepshhmthhpohhuthdprhgtphht
+    thhopehsjheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepugesihhlvhhokhhhihhnrd
+    gtohhmpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhr
+    ghdprhgtphhtthhopehshhhikhgvmhgvnhhgsehhuhgrfigvihgtlhhouhgurdgtohhmpd
+    hrtghpthhtohepkhgrshhonhhgsehtvghntggvnhhtrdgtohhmpdhrtghpthhtohepnhhp
+    hhgrmhgtshesghhmrghilhdrtghomhdprhgtphhtthhopegshhgvsehrvgguhhgrthdrtg
+    homhdprhgtphhtthhopegsrghohhhurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    tghhrhhishhlsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:3z3maGQQEIn_9blyobQI1AT6SA-kIjq1QWm2DQ2Hcg4V1T1YeLICvw>
+    <xmx:3z3maFXKjvvo7oqtsl0v32XslPUruNAv8C7amGimTl6qXKpC2wLmww>
+    <xmx:3z3maPRmfX_CmQaDOSbs0ExcLsL50UPU2l9c5ix32X8XrdPQoypueQ>
+    <xmx:3z3maAtPNXOaxJHYTTGUhOyWXPRRtpTXg0G7WlMMNCjcAxigVG5ocw>
+    <xmx:3z3maAao22rxt42G-lDKVLKVh12lCW6sJLhSETLJ_B9JqMPneYJplngV>
+Feedback-ID: i10464835:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 8 Oct 2025 06:33:03 -0400 (EDT)
+Date: Wed, 8 Oct 2025 11:33:01 +0100
+From: Kiryl Shutsemau <kas@kernel.org>
+To: SeongJae Park <sj@kernel.org>
+Cc: Dmitry Ilvokhin <d@ilvokhin.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Kemeng Shi <shikemeng@huaweicloud.com>, 
+	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, 
+	Barry Song <baohua@kernel.org>, Chris Li <chrisl@kernel.org>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, 
+	Usama Arif <usamaarif642@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	kernel-team@meta.com
+Subject: Re: [PATCH v2] mm: skip folio_activate() for mlocked folios
+Message-ID: <x6u2afqqwqpoabtpq24n64owlwagolt63csvaibg33p6t2ywuf@beayabw66enb>
+References: <aOPDRmk2Zd20qxfk@shell.ilvokhin.com>
+ <20251007195313.7336-1-sj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,90 +96,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250923181606.1583584-5-rdbabiera@google.com>
+In-Reply-To: <20251007195313.7336-1-sj@kernel.org>
 
-On Tue, Sep 23, 2025 at 06:16:07PM +0000, RD Babiera wrote:
-> Alt Mode drivers are responsible for sending Enter Mode through the TCPM,
-> but only a DFP is allowed to send Enter Mode. typec_get_data_role gets
-> the port's data role, which can then be used in altmode drivers via
-> typec_altmode_get_data_role to know if Enter Mode should be sent.
+On Tue, Oct 07, 2025 at 12:53:13PM -0700, SeongJae Park wrote:
+> On Mon, 6 Oct 2025 13:25:26 +0000 Dmitry Ilvokhin <d@ilvokhin.com> wrote:
 > 
-> Signed-off-by: RD Babiera <rdbabiera@google.com>
-
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-
-> ---
-> Changes from v1:
-> * changed typec_altmode_get_data_role documentation format
-> ---
->  drivers/usb/typec/class.c         | 13 +++++++++++++
->  include/linux/usb/typec.h         |  1 +
->  include/linux/usb/typec_altmode.h | 13 +++++++++++++
->  3 files changed, 27 insertions(+)
+> > __mlock_folio() does not move folio to unevicable LRU, when
+> > folio_activate() removes folio from LRU.
 > 
-> diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
-> index 67a533e35150..9b2647cb199b 100644
-> --- a/drivers/usb/typec/class.c
-> +++ b/drivers/usb/typec/class.c
-> @@ -2120,6 +2120,19 @@ void typec_set_data_role(struct typec_port *port, enum typec_data_role role)
->  }
->  EXPORT_SYMBOL_GPL(typec_set_data_role);
->  
-> +/**
-> + * typec_get_data_role - Get port data role
-> + * @port: The USB Type-C Port to query
-> + *
-> + * This routine is used by the altmode drivers to determine if the port is the
-> + * DFP before issuing Enter Mode
-> + */
-> +enum typec_data_role typec_get_data_role(struct typec_port *port)
-> +{
-> +	return port->data_role;
-> +}
-> +EXPORT_SYMBOL_GPL(typec_get_data_role);
-> +
->  /**
->   * typec_set_pwr_role - Report power role change
->   * @port: The USB Type-C Port where the role was changed
-> diff --git a/include/linux/usb/typec.h b/include/linux/usb/typec.h
-> index 252af3f77039..309251572e2e 100644
-> --- a/include/linux/usb/typec.h
-> +++ b/include/linux/usb/typec.h
-> @@ -337,6 +337,7 @@ struct typec_plug *typec_register_plug(struct typec_cable *cable,
->  void typec_unregister_plug(struct typec_plug *plug);
->  
->  void typec_set_data_role(struct typec_port *port, enum typec_data_role role);
-> +enum typec_data_role typec_get_data_role(struct typec_port *port);
->  void typec_set_pwr_role(struct typec_port *port, enum typec_role role);
->  void typec_set_vconn_role(struct typec_port *port, enum typec_role role);
->  void typec_set_pwr_opmode(struct typec_port *port, enum typec_pwr_opmode mode);
-> diff --git a/include/linux/usb/typec_altmode.h b/include/linux/usb/typec_altmode.h
-> index b3c0866ea70f..f7db3bd4c90e 100644
-> --- a/include/linux/usb/typec_altmode.h
-> +++ b/include/linux/usb/typec_altmode.h
-> @@ -172,6 +172,19 @@ typec_altmode_get_svdm_version(struct typec_altmode *altmode)
->  	return typec_get_negotiated_svdm_version(typec_altmode2port(altmode));
->  }
->  
-> +/**
-> + * typec_altmode_get_data_role - Get port data role
-> + * @altmode: Handle to the alternate mode
-> + *
-> + * Alt Mode drivers should only issue Enter Mode through the port if they are
-> + * the DFP.
-> + */
-> +static inline enum typec_data_role
-> +typec_altmode_get_data_role(struct typec_altmode *altmode)
-> +{
-> +	return typec_get_data_role(typec_altmode2port(altmode));
-> +}
-> +
->  /**
->   * struct typec_altmode_driver - USB Type-C alternate mode device driver
->   * @id_table: Null terminated array of SVIDs
-> -- 
-> 2.51.0.534.gc79095c0ca-goog
+> A trivial opinion.  So the user-visible issue is the incorrect meminfo, right?
+
+The user-visible effect is that we unnecessary postpone moving pages to
+unevictable LRU that lead to unexpected stats: Mlocked > Unevictable.
+
+> > ---
+> > Changes in v2:
+> >   - Rephrase commit message: frame it in terms of unevicable LRU, not stat
+> >     accounting.
+> 
+> Yet another trivial and personal opinion.  Adding a link to the previous
+> version could be helpful for reviewers like me.
+
+You probably missed recent Linus rant on Link: tags :P
 
 -- 
-heikki
+  Kiryl Shutsemau / Kirill A. Shutemov
 
