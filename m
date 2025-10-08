@@ -1,197 +1,249 @@
-Return-Path: <linux-kernel+bounces-845901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F3F3BC6720
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 21:15:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D471BBC6730
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 21:18:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 408F74041E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 19:15:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2861B400A2B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 19:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA781799F;
-	Wed,  8 Oct 2025 19:15:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD186246799;
+	Wed,  8 Oct 2025 19:18:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GlxKPARb"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I3lRAVNY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD331E50E
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 19:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86C41F4C90;
+	Wed,  8 Oct 2025 19:18:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759950924; cv=none; b=NwQR27Z+xTlosvV9BCxAvI7pF4yLpEShld+1C7Oa4NzxhsZJNyVXPlGZj69TYB21FOG1pCI7GWMgebaB2/hHNylAFRiWhK5tkIlhbT87AutpacN5vV/jCLyHGBN/E+tPDY8YViXihe6onS4AxGypofzZTcIt1Z6XDeiqqefWFug=
+	t=1759951095; cv=none; b=XVYnwn8595PrjQFaXAGM7ZGDUYkku0pWX/LB6cMyjNtQndho/lPipWR7qTTi3w5zXLmuV/pmTOCRlPgNCk5fQYoFcRewbos5eq4llR1MAgIDpIL9Xliweu3K6YLypPM7eUHzC/V6L7MUAxAtLW+nfO9sYzR+pT6s0U2xeX+VHuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759950924; c=relaxed/simple;
-	bh=hyslDlshQM6LDluVpR6VxhY8TVKC1YHa3wlo89Z5Vrc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tdc2Vn9hEJon8xADdD+ppyFtGT/OK4Oab0r47WWr5rvW63zQ+1rwmMuyQL/kRAWeJSLemiNcY3P+zAeQhJkzV2l8kbkK2Q2+O/v+Sg5oemBTyIWW9frlkEZV3NS5dDMbwM6zSF07TO6/Nu5mpuQDF8+eKjgxerTRrXaFfBqSnaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GlxKPARb; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 598I5G0u027606
-	for <linux-kernel@vger.kernel.org>; Wed, 8 Oct 2025 19:15:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=rClisPK/TxSFKRv6Q0Cr14NR
-	DtDvjkB0ari9poTtf4Y=; b=GlxKPARb3V0hqEX43/6dhucPy/J1pg+m0mq1lMrT
-	2VIHUhUqwNaW/dCXlaNtKhxK2ylNmm4i+/hHcaixnhEFF3MFmmjnZSRlt8iCvb3Y
-	BUUF8eoa2d5fmi5v3SRiJ/l1rTI629uV4I9cCwxVzh5ltLV7pmlYj5xTlnOOGySU
-	Nj4iGWOr3Dg/dxLhTYhEY8MXywGgT/6LiCiFFd42oQy2XRhOFo/++iJpdcIoRCNs
-	zMtXWMFC/ESUrDz3s0vZ8WQdIk65xY65ssCWWHi5Qb9Px1yOXCmxUWuUYYScT/FX
-	konUeWFoR9ryzrcRqg0iBd4Lz/sFy5AFRZ9o64BiRBkYGQ==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv4nrbms-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 19:15:21 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4de53348322so8691761cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 12:15:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759950920; x=1760555720;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rClisPK/TxSFKRv6Q0Cr14NRDtDvjkB0ari9poTtf4Y=;
-        b=b2RgPf5dNRDYtOEPXz6CLc4HhBjNSa4r/9ipa/2qIPhmjt8RuBBPG8U6G+L8C1nIji
-         r9H23CZAM9H//NH4YBsCiCZg3F7gITPsb/J2xH4z3xsM8+mjeRC6EQgYfcGT1ccfwllN
-         H7VKQhZBfhscGV/Ga9mZ1+9oHYFfzdDnLTT+81NkWhKXNS4ZrijEbI5HjEz4qyCc+cjc
-         mKy7TSlv4SX17UMf7QSmyP0Q3c8RbiZYAM7IbBxGRfVTLk0LYUEeK1/luov8UNMwZJ3L
-         vem8R7US5+mYIqWFmVFIRSoyUOUMb7tp+RvPJH4+3FrVZidhCi0nV2eahlfG/I8jeaJs
-         safw==
-X-Forwarded-Encrypted: i=1; AJvYcCWWI/MHapkOKhFsbt1OUmiWa4ZWE4OiXadgfvCVr/HYUsEFC8QaxwLCmBYPQ4hKTrP3O/Nr2T86EDVRcAE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziWwT38IuchnV1ierItcuSuRs4mndiU6enihPHg69brAKzVsF1
-	Nk4a+Bk8CAX7yvLApK8kbAbGRFcQcs3gOJ3wG5dN3B9RBYUw7iOKIIdaSRGjBbZXMALRsZQNu7F
-	mxRBejUKvPfPCm9kU8wOnyFFpMZwOp8pXWylme9cP5hz8SUgyOnIerfhIvZgstzKxI9c=
-X-Gm-Gg: ASbGncu4wTDHVillIuLZix6QFXSB+LLZgea/mhHQ0FkHstz1tJlSRfEq9mF2XaGt37Y
-	9HzZjuJ3m6UErqwENI/50nrBXZ5ahz0GED64xxTI5K3OiaAGa1r5fcP3lpBtf6ReqhakEvIErlS
-	oxrMrGoJUOu/Et3JvqA636lIBBlpdH2Idt5OakdsWjtGv68oTY+m21ri7ncspDRNiC5/nn5UNEq
-	/Fow4WscJv+IPvTtCI6qPAzQ0/S97ro9uwCVeiPmgSwTPVgN9S8+DmnaxyIo3hEgAz1Kf/VuDDs
-	gh0T5koUn1OuR+Lxkn/B5crZRLMFHbRl/KW362XAbheGDfmDnIeZGPhV1WclvgBw+PlQoOc5xBL
-	FkXPcPt4Gj5X2z5baKnpzx0TZdvPfGCuRu9qLMWEoQgIsxB/Ux06zP60xVg==
-X-Received: by 2002:a05:622a:2617:b0:4dd:2916:7980 with SMTP id d75a77b69052e-4e6eacdac81mr73922141cf.2.1759950920147;
-        Wed, 08 Oct 2025 12:15:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE4rMJuDQ11cU0fEePDen159WkUOlwxGWhLHakggUGwUJweQQyEA6jLWCQf2NLDMt7yQE0LfA==
-X-Received: by 2002:a05:622a:2617:b0:4dd:2916:7980 with SMTP id d75a77b69052e-4e6eacdac81mr73921421cf.2.1759950919569;
-        Wed, 08 Oct 2025 12:15:19 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5907adaaf59sm266158e87.85.2025.10.08.12.15.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 12:15:18 -0700 (PDT)
-Date: Wed, 8 Oct 2025 22:15:15 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bod@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/8] media: iris: remove duplicateion between generic
- gen2 data and qcs8300
-Message-ID: <aqoeloznoaggj7wge4wzajtinff6zjxp4hgqq2jqyt7ah5xggv@5gmn5qcgk2ko>
-References: <20251008-iris-sc7280-v1-0-def050ba5e1f@oss.qualcomm.com>
- <20251008-iris-sc7280-v1-5-def050ba5e1f@oss.qualcomm.com>
- <e335be9f-641e-4835-8b9f-69398b131b7a@oss.qualcomm.com>
+	s=arc-20240116; t=1759951095; c=relaxed/simple;
+	bh=ojVQ6pMmCu2omOMuxlW9nDuAGqzSiJiP/EfTOjtRqy4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=llOtdSnbT6YABdj+C6znjF2BJ/R2K15heDnZ25ZdTvuru5XJGflk00qZoW3ndJeWVRQK4awqWv6embtddpWiW4vLPMpuxFg8zl3vIfP7mFQLv7V8AQHfDN7zDxm8TKJAnMLtk2zzcfM6V+5aqn+QeBh4abELyJpHZID3Hzl0dGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I3lRAVNY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16B19C4CEE7;
+	Wed,  8 Oct 2025 19:18:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759951095;
+	bh=ojVQ6pMmCu2omOMuxlW9nDuAGqzSiJiP/EfTOjtRqy4=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=I3lRAVNYyG6/Df/PtKA9Wp7zrmpxjGbCR2YF+AV3DlFFjcgK0e6ntKR9/EADv7NMl
+	 f2m3fcgLygrNo865kH2Op6ssAcUfa/YLLpEjn6eHkugFlcfd86Sc0MIfg1A4U9SmxG
+	 ZChFCM8y4eHMZbDO67ITeg2n4xVUTnG6z3/V7ppzoX4M9tZs9MH54g/0VnnqrKlhhz
+	 fPn6KZPnRnNVVhctclENnch9Uzytq363A2B6Bddr8K6lmEO48NUTEsOsW6TRCprKB3
+	 oTdlWbKHNhh/uiBsCdOh5CroKAlsxA468WqBhFy62qIijJVHe7iEZqWpKXIzQV+Qjr
+	 RCUkViCDQ8JTA==
+Message-ID: <304a057170fe9a9e3848cbefce20e1e93294b221.camel@kernel.org>
+Subject: Re: [PATCH 2/2] sunrpc: add a slot to rqstp->rq_bvec for TCP record
+ marker
+From: Jeff Layton <jlayton@kernel.org>
+To: Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, Olga
+ Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom
+ Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, Anna
+ Schumaker <anna@kernel.org>, "David S. Miller"	 <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski	 <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Simon Horman	 <horms@kernel.org>, David Howells
+ <dhowells@redhat.com>
+Cc: linux-nfs@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, brandona@meta.com
+Date: Wed, 08 Oct 2025 15:18:11 -0400
+In-Reply-To: <20251008-rq_bvec-v1-2-7f23d32d75e5@kernel.org>
+References: <20251008-rq_bvec-v1-0-7f23d32d75e5@kernel.org>
+	 <20251008-rq_bvec-v1-2-7f23d32d75e5@kernel.org>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e335be9f-641e-4835-8b9f-69398b131b7a@oss.qualcomm.com>
-X-Proofpoint-ORIG-GUID: u-QM__w9xQ8lO54Iq4LgvQo6fwWm4dPL
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfXz2fk8YkRp826
- ePOox3JrcudSGtABcVGUSq9p0QyQpiIBLQSl0/ohjrYg5h6zsF2OV3CoMwBhgpXgqhLpPIhBs8V
- saqoUbdO6Md7j1R8H+CHC9+nw0Amy0hTrG3Y8dN5a5iKKqb8Ofu37DJZYXHtnZ6fHtO54PEEh19
- pN24+xRqSrio6se91DCY9OdLPQJujzJVep4ItdC2Oy0BSNgHnkPww3hEr/H4DkFrkChVYWu/+X6
- jWgk9hULzxe4skhgIx7yzFM/3yLv73YyMhpfD7TC7RIJDMWzjzwMfDyHt/iWg+RGvccUqVTYDqM
- qamPAI5PtcejlUg7Tdc0xgUCGgfUMDp/NVnsQMixYjxkbXsdr1t/j8ugQ+LFGgNG6DTfoQvrX8r
- tY6uoQt5N4OMW51V2MUtyA59Rhqf1A==
-X-Proofpoint-GUID: u-QM__w9xQ8lO54Iq4LgvQo6fwWm4dPL
-X-Authority-Analysis: v=2.4 cv=b6a/I9Gx c=1 sm=1 tr=0 ts=68e6b849 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=HR2MuO_p39cwD0E3uXEA:9 a=CjuIK1q_8ugA:10
- a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-08_05,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 suspectscore=0 lowpriorityscore=0 adultscore=0 phishscore=0
- clxscore=1015 spamscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
 
-On Wed, Oct 08, 2025 at 10:07:47AM +0200, Konrad Dybcio wrote:
-> On 10/8/25 6:33 AM, Dmitry Baryshkov wrote:
-> > Now as we have removed PIPE value from inst_fw_caps_dec there should be
-> > no difference between inst_fw_caps of QCS8300 and SM8550+. Drop the
-> > QCS8300-specific tables and use generic one instead.
-> > 
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> > ---
-> 
-> [...]
-> 
-> > +static struct platform_inst_caps platform_inst_cap_qcs8300 = {
-> > +	.min_frame_width = 96,
-> > +	.max_frame_width = 4096,
-> > +	.min_frame_height = 96,
-> > +	.max_frame_height = 4096,
-> > +	.max_mbpf = (4096 * 2176) / 256,
-> > +	.mb_cycles_vpp = 200,
-> > +	.mb_cycles_fw = 326389,
-> > +	.mb_cycles_fw_vpp = 44156,
-> > +	.num_comv = 0,
-> > +	.max_frame_rate = MAXIMUM_FPS,
-> > +	.max_operating_rate = MAXIMUM_FPS,
-> > +};
-> > +
-> >  const struct iris_platform_data qcs8300_data = {
-> >  	.get_instance = iris_hfi_gen2_get_instance,
-> >  	.init_hfi_command_ops = iris_hfi_gen2_command_ops_init,
-> > @@ -1022,10 +1030,10 @@ const struct iris_platform_data qcs8300_data = {
-> >  	.fwname = "qcom/vpu/vpu30_p4_s6.mbn",
-> >  	.pas_id = IRIS_PAS_ID,
-> >  	.inst_caps = &platform_inst_cap_qcs8300,
-> > -	.inst_fw_caps_dec = inst_fw_cap_qcs8300_dec,
-> > -	.inst_fw_caps_dec_size = ARRAY_SIZE(inst_fw_cap_qcs8300_dec),
-> > -	.inst_fw_caps_enc = inst_fw_cap_qcs8300_enc,
-> > -	.inst_fw_caps_enc_size = ARRAY_SIZE(inst_fw_cap_qcs8300_enc),
-> > +	.inst_fw_caps_dec = inst_fw_cap_sm8550_dec,
-> > +	.inst_fw_caps_dec_size = ARRAY_SIZE(inst_fw_cap_sm8550_dec),
-> > +	.inst_fw_caps_enc = inst_fw_cap_sm8550_enc,
-> > +	.inst_fw_caps_enc_size = ARRAY_SIZE(inst_fw_cap_sm8550_enc),
-> 
-> 8550 enc data has a .set() under a number of caps (was qcs8300 tested?)
+On Wed, 2025-10-08 at 14:58 -0400, Jeff Layton wrote:
+> svc_tcp_sendmsg steals a slot in the rq_bvec array for the TCP record
+> marker. If the send is an unaligned READ call though, then there may not
+> be enough slots in the rq_bvec array.
+>=20
+> Add a slot to the rq_bvec array, and fix up the array length
+> calculations.
+>=20
+> Fixes: e18e157bb5c8 ("SUNRPC: Send RPC message on TCP with a single sock_=
+sendmsg() call")
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
 
-Welcome to a non-conflict merge issue. Commit d22037f3fd33 ("media:
-iris: Set platform capabilities to firmware for encoder video device")
-added .set callbacks, while commit 6bdfa3f947a7 ("media: iris: Add
-platform-specific capabilities for encoder video device") extended
-QCS8300 config. Nobody noticed that the second file should also be
-updated, which is yet another reason for merging those two structures.
+Chuck,
 
-> and also additionally defines:
-> 
->  * INPUT_BUF_HOST_MAX_COUNT
->  * OUTPUT_BUF_HOST_MAX_COUNT
+Brandon (cc'ed) was able to test a backported version of this patch and
+validate that it worked. Can you add this?
 
-Good question. I hope the defaults should be fine...
+Tested-by: Brandon Adams <brandona@meta.com>
 
-> 
-> values of which should probably be cross-checked (they say "DEFAULT"
-> so it's probably OK, but just so you know)
-> 
-> dec is 1 : 1
-> 
-> Konrad
 
--- 
-With best wishes
-Dmitry
+>  fs/nfsd/vfs.c        | 6 +++---
+>  net/sunrpc/svc.c     | 3 ++-
+>  net/sunrpc/svcsock.c | 4 ++--
+>  3 files changed, 7 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+> index 77f6879c2e063fa79865100bbc2d1e64eb332f42..c4e9300d657cf7fdba23f2f4e=
+4bdaad9cd99d1a3 100644
+> --- a/fs/nfsd/vfs.c
+> +++ b/fs/nfsd/vfs.c
+> @@ -1111,7 +1111,7 @@ nfsd_direct_read(struct svc_rqst *rqstp, struct svc=
+_fh *fhp,
+> =20
+>  	v =3D 0;
+>  	total =3D dio_end - dio_start;
+> -	while (total && v < rqstp->rq_maxpages &&
+> +	while (total && v < rqstp->rq_maxpages + 1 &&
+>  	       rqstp->rq_next_page < rqstp->rq_page_end) {
+>  		len =3D min_t(size_t, total, PAGE_SIZE);
+>  		bvec_set_page(&rqstp->rq_bvec[v], *rqstp->rq_next_page,
+> @@ -1200,7 +1200,7 @@ __be32 nfsd_iter_read(struct svc_rqst *rqstp, struc=
+t svc_fh *fhp,
+> =20
+>  	v =3D 0;
+>  	total =3D *count;
+> -	while (total && v < rqstp->rq_maxpages &&
+> +	while (total && v < rqstp->rq_maxpages + 1 &&
+>  	       rqstp->rq_next_page < rqstp->rq_page_end) {
+>  		len =3D min_t(size_t, total, PAGE_SIZE - base);
+>  		bvec_set_page(&rqstp->rq_bvec[v], *rqstp->rq_next_page,
+> @@ -1318,7 +1318,7 @@ nfsd_vfs_write(struct svc_rqst *rqstp, struct svc_f=
+h *fhp,
+>  	if (stable && !fhp->fh_use_wgather)
+>  		kiocb.ki_flags |=3D IOCB_DSYNC;
+> =20
+> -	nvecs =3D xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages, payload);
+> +	nvecs =3D xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages + 1, paylo=
+ad);
+>  	iov_iter_bvec(&iter, ITER_SOURCE, rqstp->rq_bvec, nvecs, *cnt);
+>  	since =3D READ_ONCE(file->f_wb_err);
+>  	if (verf)
+> diff --git a/net/sunrpc/svc.c b/net/sunrpc/svc.c
+> index 4704dce7284eccc9e2bc64cf22947666facfa86a..919263a0c04e3f1afa607414b=
+c1893ba02206e38 100644
+> --- a/net/sunrpc/svc.c
+> +++ b/net/sunrpc/svc.c
+> @@ -706,7 +706,8 @@ svc_prepare_thread(struct svc_serv *serv, struct svc_=
+pool *pool, int node)
+>  	if (!svc_init_buffer(rqstp, serv, node))
+>  		goto out_enomem;
+> =20
+> -	rqstp->rq_bvec =3D kcalloc_node(rqstp->rq_maxpages,
+> +	/* +1 for the TCP record marker */
+> +	rqstp->rq_bvec =3D kcalloc_node(rqstp->rq_maxpages + 1,
+>  				      sizeof(struct bio_vec),
+>  				      GFP_KERNEL, node);
+>  	if (!rqstp->rq_bvec)
+> diff --git a/net/sunrpc/svcsock.c b/net/sunrpc/svcsock.c
+> index 377fcaaaa061463fc5c85fc09c7a8eab5e06af77..5f8bb11b686bcd7302b944764=
+90ba9b1b9ddc06a 100644
+> --- a/net/sunrpc/svcsock.c
+> +++ b/net/sunrpc/svcsock.c
+> @@ -740,7 +740,7 @@ static int svc_udp_sendto(struct svc_rqst *rqstp)
+>  	if (svc_xprt_is_dead(xprt))
+>  		goto out_notconn;
+> =20
+> -	count =3D xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages, xdr);
+> +	count =3D xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages + 1, xdr);
+> =20
+>  	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, rqstp->rq_bvec,
+>  		      count, rqstp->rq_res.len);
+> @@ -1244,7 +1244,7 @@ static int svc_tcp_sendmsg(struct svc_sock *svsk, s=
+truct svc_rqst *rqstp,
+>  	memcpy(buf, &marker, sizeof(marker));
+>  	bvec_set_virt(rqstp->rq_bvec, buf, sizeof(marker));
+> =20
+> -	count =3D xdr_buf_to_bvec(rqstp->rq_bvec + 1, rqstp->rq_maxpages - 1,
+> +	count =3D xdr_buf_to_bvec(rqstp->rq_bvec + 1, rqstp->rq_maxpages,
+>  				&rqstp->rq_res);
+> =20
+>  	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, rqstp->rq_bvec,
+
+--=20
+Jeff Layton <jlayton@kernel.org>
 
