@@ -1,80 +1,74 @@
-Return-Path: <linux-kernel+bounces-845671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34B81BC5E9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:00:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 58B99BC5ECB
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:02:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAB87407353
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:43:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2C41420F0B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2DA62FD1D0;
-	Wed,  8 Oct 2025 15:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F2CB2F7AC1;
+	Wed,  8 Oct 2025 15:37:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gnF5NSC5"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LAsO6lpa"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29127303A22
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C402F658A
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759937734; cv=none; b=KMK64wtthmB1lodvkr4md5FVKyQzLqzNBxb6zLsy5pvpbeAejPheHtyD+OieT7kusihfZG3qQGPPkQEjYhAD1keS/qY/Hb8NhYpT97mCF1Q47nWSCkJtT1f3ovhWnBNmWdr4F3dHWXNWDP6etpR4GMIkdJFJw0PwbGpeTwrfD48=
+	t=1759937871; cv=none; b=mFMPlDfeOcbgOFAPVkow1Ww8dzG6krAVuh84pHfVVSTo/qg7YzNxTRQGuQvcQIYKiUvK6G7zHokCVt/iM2xKkVwTPIsjeYNZLUUE1eLvUI4QylLhnFW24QY4bAiWWKjOZDliLhU/M0zmCRU4VgOSXd9RH9NVIBjKF7qjKF//9hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759937734; c=relaxed/simple;
-	bh=MeMMelM99YxAP2TiJ88uHut4Vgu4VVwfVNl7tmbTWec=;
+	s=arc-20240116; t=1759937871; c=relaxed/simple;
+	bh=KlHt5XQeGRsL2MzJqjJiYmZ7o2G1WppR2KYmO/pQOzY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GLZGKfA4mf6UvcVqHA7OOOpVxNQq3rRLpwcfYMIMEIms0yl9NHsOy5nMtYE4q7R6f/k9oX/9x49oBUuA1cEnMwmph/6nKFODjnbbyTGgxFMRXteZ0KOhilt1AyfCSgEq+nE7X1S7hvm1FaKQ+1qVn6Iq4X4PCDcqJVRxgrQ1+mY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gnF5NSC5; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-46b303f7469so49403435e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:35:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1759937730; x=1760542530; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ubNXaozyh7/Vs/XkTA5KuPjbCc9zS+vNuDnCIrZD13M=;
-        b=gnF5NSC50KY8J07hJipP4oSUoycsnB5USbLkXj+IRUeEwb3bhLFIKuLsoO+gxroQqH
-         hNZucazjbQHPSMYn+rF05W2Qm3NgXiO7yCF9cwfH9tWKSGGHfK4wkKRldds27153FYrR
-         8UKbPPGXjJxFj3MrHOd8mQaIZPKcL6NWlyyyQ1ZZiS22z8O/vCA1h6d/le88excK+PFp
-         Vo00gWI0eYa81mis8wk396h9ZHapvR1zw3LLf1tVJ3LsVduqBpxPIBGIToL6c1ssdr1o
-         ImqpvGWiGv1rwoShyyRI1RY5uMErpIXY+BSvv2MHpNpxoy+OWIoFZzY+yMlrBFVfwYoj
-         F3Nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759937730; x=1760542530;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ubNXaozyh7/Vs/XkTA5KuPjbCc9zS+vNuDnCIrZD13M=;
-        b=DOZ9F2oRID7ZeFGJtfJI+4mGRMwfiEJ8j1H169vlzpnqLvzKOUEJDyTIJcy3+NAjfv
-         B7TkOGyxss1X3Qi/HeedF69eNyYRG7AFrcWNzs2J4GjsYGSTNNEsbNfGqy+Xt2oaL4op
-         d9bCnL9q3QWDJSArosl7n/X0dS+6zlJbpOg15LESfCZQZnG3IcdQ72ZEjLRJWZ18y4E+
-         H1O5CN3eDl5C1OJQz2XEqKGyftr0H8DjXXRRXnCjmSpINkW1sOgVrv3xHrGyz2zdip9h
-         gS7GSg9E8iwIOIaC+BpOZKs86sTyesGCHSPbhOIVC5di54bUCVeMUFTMRFwm5KvVpL6h
-         W0gw==
-X-Forwarded-Encrypted: i=1; AJvYcCVrXC9olNoNqppm+UVZaelpapkYG3zddaJfgJ1cV1Fi50GO/QrTxFcgmrl8NnRg30WZbk9LebUt4rU9cZA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb8rm9cQOA5Javr/ITVkzIL0yuUam2adNvLGwFrAqPmn1FuFyx
-	DGKW/F7a94SC7qmDLViPWFKpyrJQtMZz83UdDAoVi9zKGwSCvHtVdWZvV6BDIGhdmAA=
-X-Gm-Gg: ASbGnctWM7xRfgQFNoZJ7csasPxJw6VGyMcyChRcVmVtLTx5epVdqj18tfhUDcwKtMH
-	6Ao1a7DwCYebSVgDvkFXGLb4FkOdBUvxiyuZ6BMgoVGqtMX29xpkf91K+W6xZEkHG90Kbu2PHXT
-	MzNVzdDJaorw0oSZq/iKlz5tUCORN+N6Yjo5cV8/xNK4li94u87M5xpG4TOWQUTZfZrIPgQS5oW
-	gJliQ3UM8L64WwUqcNnL2LIUqkqc0yh8J8zspJlxK/S2LH3rnxNBAHFntLJyolyirzuTOvZ2GPB
-	nueuFDFqaQcZhvRfFrsygtvpoiCleXkNV+OTB0P/5No+4Bdb/rW1jyMHb5WQjiLqad/rzh/UKq5
-	zYI9ZgAgk+T+5QCSHLOjRPcqw0k8YW5His9gKb7MKX0PuOroAsQ+9rOHGRJ99i9wG1KpnKkWext
-	c=
-X-Google-Smtp-Source: AGHT+IGq0oHp24srWcJJTjTppYJ2gdwL9MgZY8IY0dg2EY9BvDrG3QQbJW280mmxjX7I0sdyPXCadA==
-X-Received: by 2002:a05:600c:529a:b0:46e:3e25:1626 with SMTP id 5b1f17b1804b1-46fa9aefe15mr27734775e9.19.1759937730499;
-        Wed, 08 Oct 2025 08:35:30 -0700 (PDT)
-Received: from [10.0.1.22] (109-81-1-107.rct.o2.cz. [109.81.1.107])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fab3cc939sm16809025e9.1.2025.10.08.08.35.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Oct 2025 08:35:29 -0700 (PDT)
-Message-ID: <75099eaa-4b51-4580-ac82-2c9f892f34b2@suse.com>
-Date: Wed, 8 Oct 2025 17:35:28 +0200
+	 In-Reply-To:Content-Type; b=KAri7DuwxdMQO1/rjKDiQkQTeUfc/qhbg2JBQn+6U/vY8jggkOopTtDHuYjXPc45qrBhTeZOmM8b8MN4wiqAnT8ba3G4EAc/bfOKKN5JE1EvDlTiMAekzhmBvMRp4BMmyqMKa+EdSFmd0Koc5aXw3voa0ldGqszO4IZ8lIWhDmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LAsO6lpa; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 598Dmp2Y005709;
+	Wed, 8 Oct 2025 15:37:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=bb9Kcp
+	+SuQkcJvL73IGi/JELHqGZ6mZxoBcn0YJUzaw=; b=LAsO6lpa2vrOBh31GPJgg+
+	QBjHJ1fc2bNbAUJlxmBvWddfV7+M2e3XUHFs9kXh8YCV+F9UtEsMkmrIcHBjSHnX
+	IyOekGDs3qqrm3uRAr3XwOapxA1LuYSwkmxpuW+Vb1xqzWXAZsLMCAqquWoapH0c
+	9rZN9BCMqyFCcyYbyu/MF8JImTtcF8vD808eTA4AFQOY7eSn+CN/oJwjDOppFEIa
+	wc0mugwHhKRXU7TliY/ey5Z73gy9/NoWP28VG0ykIPqM6/UQqoYDT0OyiW+q5dH4
+	MGgM8ak77vjtA0jOiPB8erp72SpiTnoqN35Kb+U20gIzxOhPw2xefPt73qPVO+GQ
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49ju8aw7xt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 08 Oct 2025 15:37:44 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 598EoDon021221;
+	Wed, 8 Oct 2025 15:37:43 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49kgm1gw9n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 08 Oct 2025 15:37:43 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 598FbgWG29622968
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 8 Oct 2025 15:37:42 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5851E58066;
+	Wed,  8 Oct 2025 15:37:42 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C90F858058;
+	Wed,  8 Oct 2025 15:37:41 +0000 (GMT)
+Received: from [9.61.26.35] (unknown [9.61.26.35])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  8 Oct 2025 15:37:41 +0000 (GMT)
+Message-ID: <b1f1ae25-4adc-40e1-94e8-ff004c796771@linux.ibm.com>
+Date: Wed, 8 Oct 2025 10:37:41 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,83 +76,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/10] module loader: enforce symbol import protection
-To: Siddharth Nayyar <sidnayyar@google.com>
-Cc: Nathan Chancellor <nathan@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>, Sami Tolvanen
- <samitolvanen@google.com>, Nicolas Schier <nicolas.schier@linux.dev>,
- Arnd Bergmann <arnd@arndb.de>, linux-kbuild@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250829105418.3053274-1-sidnayyar@google.com>
- <20250829105418.3053274-11-sidnayyar@google.com>
+Subject: Re: [PATCH] fsi: occ: Update response size to 8kb
+To: Eddie James <eajames@linux.ibm.com>, linux-fsi@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
+References: <20251008152157.1387182-1-eajames@linux.ibm.com>
 Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20250829105418.3053274-11-sidnayyar@google.com>
-Content-Type: text/plain; charset=UTF-8
+From: Ninad Palsule <ninad@linux.ibm.com>
+In-Reply-To: <20251008152157.1387182-1-eajames@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Agm92PdpxzNWuhmIy_ZPUzFHRcnT-8GM
+X-Authority-Analysis: v=2.4 cv=BpiQAIX5 c=1 sm=1 tr=0 ts=68e68548 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VnNF1IyMAAAA:8 a=e1z_xrLAd5A5IXzM0sYA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAyMiBTYWx0ZWRfX8/Rxs8QJC9FA
+ 07cbLmFnogy0NXywMJrBVDUBbs9zZ9rrq8Yc3gK1cxU+koN90jy2Ug+wJhydAKa9tKeWLQA/V4/
+ m4Wk30EzfNJDu9i+vj28kPS8uGmVWHZjz+fSBi3mzKKOKEEn5K28naifBk7s5plUN7oYokaabqI
+ cePTFSXimU4AssjQqzhHAmAcOHz6bKnWf4JbSBipFdeGmM6zRUtgSRJl/cWIshk6qS2PYj0hT0W
+ jbhmrDgLzpR7YbWeAnRBojBkSrRvtXnZmcbIMoqrISjCnkfjs2VDr+1rv4JDqOKVPpr0my92qoX
+ 2hwLgiT2EjMyi4w6s8Xn3BWYeVoeuw+IwLcMwRRsqbn6GUr7fZpp/o/NeRbXXUH1tl6Er+qsDu2
+ 4Jua6iYz5qicOYfCw/NaaCoQosmjFA==
+X-Proofpoint-ORIG-GUID: Agm92PdpxzNWuhmIy_ZPUzFHRcnT-8GM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-08_05,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 lowpriorityscore=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 bulkscore=0 impostorscore=0 adultscore=0 clxscore=1011
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
+ definitions=main-2510040022
 
-On 8/29/25 12:54 PM, Siddharth Nayyar wrote:
-> The module loader will reject unsigned modules from loading if such a
-> module attempts to import a symbol which has the import protection bit
-> set in the kflagstab entry for the symbol.
+
+
+On 10/8/25 10:21, Eddie James wrote:
+> Newer OCCs return more data.
 > 
-> Signed-off-by: Siddharth Nayyar <sidnayyar@google.com>
-> ---
-> [...]
-> diff --git a/kernel/module/main.c b/kernel/module/main.c
-> index 4437c2a451ea..ece074a6ba7b 100644
-> --- a/kernel/module/main.c
-> +++ b/kernel/module/main.c
-> @@ -380,6 +380,7 @@ static bool find_exported_symbol_in_section(const struct symsearch *syms,
->  	fsa->crc = symversion(syms->crcs, sym - syms->start);
->  	fsa->sym = sym;
->  	fsa->license = (sym_flags & KSYM_FLAG_GPL_ONLY) ? GPL_ONLY : NOT_GPL_ONLY;
-> +	fsa->is_protected = sym_flags & KSYM_FLAG_PROTECTED;
->  
->  	return true;
->  }
-> @@ -1273,6 +1274,11 @@ static const struct kernel_symbol *resolve_symbol(struct module *mod,
->  		goto getname;
->  	}
->  
-> +	if (fsa.is_protected && !mod->sig_ok) {
-> +		fsa.sym = ERR_PTR(-EACCES);
-> +		goto getname;
-> +	}
-> +
->  getname:
->  	/* We must make copy under the lock if we failed to get ref. */
->  	strscpy(ownername, module_name(fsa.owner), MODULE_NAME_LEN);
+> Signed-off-by: Eddie James <eajames@linux.ibm.com>
 
-The is_protected check should be moved before the ref_module() call.
-Adding a reference to another module should be always the last step,
-after all symbol checks have been performed.
-
-> @@ -1550,8 +1556,12 @@ static int simplify_symbols(struct module *mod, const struct load_info *info)
->  				break;
->  
->  			ret = PTR_ERR(ksym) ?: -ENOENT;
-> -			pr_warn("%s: Unknown symbol %s (err %d)\n",
-> -				mod->name, name, ret);
-> +			if (ret == -EACCES)
-> +				pr_warn("%s: Protected symbol %s (err %d)\n",
-> +					mod->name, name, ret);
-> +			else
-> +				pr_warn("%s: Unknown symbol %s (err %d)\n",
-> +					mod->name, name, ret);
->  			break;
->  
->  		default:
-
-I suggest moving the error message about the symbol being protected down
-into resolve_symbol(), at the point where this issue is detected. This
-approach is generally used for other checks, such as the CRC or
-namespace check. Additionally, I think it would make sense to change the
-current "Unknown symbol" warning here to "Unresolved symbol" to be more
-accurate.
+Reviewed-by: Ninad Palsule <ninad@linux.ibm.com>
 
 -- 
-Thanks,
-Petr
+Thanks & Regards,
+Ninad
+
 
