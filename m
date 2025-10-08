@@ -1,152 +1,138 @@
-Return-Path: <linux-kernel+bounces-844953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60A07BC3232
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 03:56:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1FE3BC3238
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 03:57:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20EDD3B89A8
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 01:56:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA318188629F
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 01:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE2329A32D;
-	Wed,  8 Oct 2025 01:55:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C527D29AAEA;
+	Wed,  8 Oct 2025 01:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WSjlpz5R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D/c90Ws1"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0F5259CAC;
-	Wed,  8 Oct 2025 01:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690A1299ABF
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 01:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759888551; cv=none; b=bwosTkI/rxEPCAh3jCf/HZY5AhYLZ4YfsETPq74FO2h99AI24TU1i+CPJcZmoFo/hTtk3AYwkrGygupIiEW3lfsYBdX8i/8Qmp/k/gWHIC9xBPikv+R5cUAuTNb2G4dQLlZaKNFt/YyQe3KIEax9fIL+U810wRqRkW3NxzSTPjg=
+	t=1759888668; cv=none; b=Ex3//MWBxuKoqCXgfcc2FMbf6TQABd0tb+L97/fqqZkDAC5Z5/PnImPV11VTzfAlfOXqk18AuIVR7abgm+cu6+DG4Eve8upzTGom2zfx7tJtTHDG5JIfgS9JuXvzM+gK2QqFHf47vARb3e3MDd4Hk0N3RUflt7ijg/CMsyKgc08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759888551; c=relaxed/simple;
-	bh=zUFhCE55gFIo0YuR9SI3nbI7zUYaY9J9ttmKAuups78=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZjYzr+lw18LrmZYuzldQO29WJ7heoc2ufb0HGKCwS+/ctkEewRmvWeuW0Q5ThP7d1XoXP5K2DPiaxI1SyfS4BHoDY0Hz/inAYAT0yODBYI1AMGhC4E7/EBnWVQGiam6IxthkWA9uk3yfEgmSILd921UEWLLlWQaciBs91hXzpAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WSjlpz5R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0537C4CEF1;
-	Wed,  8 Oct 2025 01:55:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759888551;
-	bh=zUFhCE55gFIo0YuR9SI3nbI7zUYaY9J9ttmKAuups78=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WSjlpz5RmjXK8xcAe2HmxNq3T/d+qmhcJMygkYX/KOXOChRgXirnYRWFFWjrlUiGi
-	 u7E3UjgyWozkSJxNLXbyBmxavxlDwXEgtGp2d2o9oydfW4gDoKSVC8pKcjS18ufcz/
-	 ozAPILk8zMlev7+Nz10kRdduj7+eK0oDjW0I0+wLfikSxCn2YAHUzxV/3YVSPRmldO
-	 OAE2NnM9CBpPHtY6r7HBJQcjixYcyiUw1XjGMgWOkzqeJrUxKB8uyJUkO3ezvj5MFM
-	 /p7jPsxlJHeaB3zw0P+uPSg4Qfu8k5RSZpmX1KFBvTtd7OTmm2SvdZ1HMEoOkykOaI
-	 H4Vs/4eOPToug==
-Message-ID: <0ac39a3e-d1a2-40d8-a3d1-b422acc720cc@kernel.org>
-Date: Wed, 8 Oct 2025 10:55:40 +0900
+	s=arc-20240116; t=1759888668; c=relaxed/simple;
+	bh=nYWUxbqqzq5QQ6EmGRf9P1x3GCe3p++g87Rn6siR5m8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=rvq1fsFw587c0mbNv3t98A6CO2h+L+UBa0jOTmO/F0YAbSlnzl6+F7EfwuW4gFG+ZJSYC5iNIoybyDwZdXvjjRcWfVM+YosnFuYzT+vQKPci6gpididHcP/+bjdT1tHni1fniIcO/9dgY2jBXPW0Ln5DT1/KFpFuxvhw5BcasxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D/c90Ws1; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-7e3148a8928so59150256d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 18:57:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759888665; x=1760493465; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FTB+YSGmu0bpbLnHjtaDTbYodJCzl2qjGAMNG+RlZjI=;
+        b=D/c90Ws1G+GGV44Yzj+RjcvoAc1Zet0BgdzuPGpPaYujFKJst/3ugUE2hhE8Uz8gah
+         EbbmQxbZWV0tw/Ry02bUL6v3IHx2pvHW/SlOar74hTdTKPSX4UbVlVms1tShnV0GSuhs
+         x547f41Rq60OKnZz4wRJaqoxAEg8lOhg1x4rexoG+jApGLWKRfcL8ks49+GlNp3Yk/MD
+         7NpkIIkrd3bM3bZczqtHXSbP8hAjzEqZGSoYosC47ssBZZNN9H2wYti5eBf654L4Xg4l
+         h1DS39BZZQu3ORlBuQQZiFXYMz3OYXOsaI4Q7ltPMz7iiGakOc5pPsTuVRJvv8zPFLnc
+         jVkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759888665; x=1760493465;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FTB+YSGmu0bpbLnHjtaDTbYodJCzl2qjGAMNG+RlZjI=;
+        b=abWq6aMvdiozy16kjAQF+XMjAmBo0yE6KkSjINRHBHBnkPaPrj1TkUjINVVd0/fTKX
+         TWfdNJjLVf5BOVB6wviWXokMEtDZlRw6eXxH3aqGe2zHNUvcNgvdiLjGztjpCz6Of7f1
+         eBkpC8knbjx5b34px6ggpeq7C/VLVMEwxgbkpmrYBpiEnbme5tD/VPc5ci5S8AF6KmrA
+         LM2Vivi577hE/EvtTFH1FKD0RBlytwWYKum1uBlGK8rYdKFCO0+lnYy0gNnEfDInteN/
+         O11Ht8wD4/LpXrF/BO721XNflv6e58LVRLn74pV72TlKhfhVOHvfjBNhypnIf8EzmWTH
+         kNyg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/UYuIZDLE7WMahRSkl6FV+Avcw4HH4B31sVsPmsaEJD+Ao587/q7MUn7rzLASxhQF8cLx9a8Npl+kmFE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yycq4ZXH9DI+On3EvzKiVdVbUD68ugrg0VbMX/H7liBAEY387gI
+	sF1Tp/ie9j4OW7s1L/N6adnp/zViDZpksCbjUg0ctlWoldCVPpwzPRZe
+X-Gm-Gg: ASbGncspDJHL31fdotYO6845dzFIP0f15LoTv3fdFWP/jWPO8L3+lyQQaWVTTEEIgAH
+	DLCWUx4FemzLFQB0/ZncuRsaKT+HXsBGDObXG9NQAIzDdF6DiU1Or4vZVmDQ5q6FMYqfOjdms57
+	V4p4vZIXzFmX0njKIs1RrFdxAXt2adUSMidqPY+M/h+Q+tHu0ASDyQrrZZxWkwjYqDnEEgGRW/S
+	pK5D6BmzVxCcka+4V7vC1D21s+dYJ1q3AJICa4ZUxecklTidGCqb31eU6R7fAsXWd8WP9vn+TEU
+	X5F6BYG5hHd2TfaQjJet89hy5CnytJeOTJf2OxrxyqSXjnI99055aYU2Gs+oF9EbWFyA/Wmk9gt
+	a5k1Hfj3+IvS6OFdrqij7PVWs0bjexMR2DUVyiZ5K2iMRUexXxHuyDzSHk0/q/UklrrVgl5GE2n
+	FpkCYVOLRh+cLyBtupj8PAqZ+6tb76BvL1aMa2a4LAXQ==
+X-Google-Smtp-Source: AGHT+IGoHjbRgqWNn7pWfYsSMs1tXQxTjaq25oW+rI7yvaco4w9zmjYdtsj6ViMdN47X51D41+1jkQ==
+X-Received: by 2002:ad4:5aa4:0:b0:809:19ab:599f with SMTP id 6a1803df08f44-87b2106da26mr22488656d6.27.1759888665253;
+        Tue, 07 Oct 2025 18:57:45 -0700 (PDT)
+Received: from mango-teamkim.. ([129.170.197.108])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-878bae60146sm154303896d6.11.2025.10.07.18.57.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Oct 2025 18:57:44 -0700 (PDT)
+From: pip-izony <eeodqql09@gmail.com>
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: Seungjin Bae <eeodqql09@gmail.com>,
+	Kyungtae Kim <Kyungtae.Kim@dartmouth.edu>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-bluetooth@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH v2] Bluetooth: bfusb: Fix buffer over-read in rx processing loop
+Date: Tue,  7 Oct 2025 21:56:41 -0400
+Message-ID: <20251008015640.3745834-2-eeodqql09@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251007232941.3742133-2-eeodqql09@gmail.com>
+References: <20251007232941.3742133-2-eeodqql09@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 16/16] media: rockchip: rga: add rga3 support
-To: =?UTF-8?Q?Sven_P=C3=BCschel?= <s.pueschel@pengutronix.de>,
- Jacob Chen <jacob-chen@iotwrt.com>,
- Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko Stuebner
- <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, kernel@pengutronix.de
-References: <20251007-spu-rga3-v1-0-36ad85570402@pengutronix.de>
- <20251007-spu-rga3-v1-16-36ad85570402@pengutronix.de>
- <bf989d9f-9e8e-4acc-b502-1674ce215318@kernel.org>
- <947409d8-9a92-46f2-a6e7-49f3aa44d74f@pengutronix.de>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <947409d8-9a92-46f2-a6e7-49f3aa44d74f@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 08/10/2025 01:05, Sven Püschel wrote:
-> Hi Krzysztof,
-> 
-> On 10/7/25 10:39 AM, Krzysztof Kozlowski wrote:
->> On 07/10/2025 17:32, Sven Püschel wrote:
->>> Add support for the RGA3 unit contained in the RK3588.
->>>
->>> Only a basic feature set consisting of scaling and color conversion is
->>> implemented. Advanced features like rotation and cropping will just be
->>> ignored. Also the BT601F color space conversion is currently hard coded.
->>>
->>> The register address defines were copied from the
->>> vendor Rockchip kernel sources and slightly adjusted to not start at 0
->>> again for the cmd registers.
->>>
->>> Signed-off-by: Sven Püschel <s.pueschel@pengutronix.de>
->>> ---
->>>   drivers/media/platform/rockchip/rga/Makefile  |   2 +-
->>>   drivers/media/platform/rockchip/rga/rga.c     |   4 +
->>>   drivers/media/platform/rockchip/rga/rga.h     |   2 +-
->>>   drivers/media/platform/rockchip/rga/rga3-hw.c | 490 ++++++++++++++++++++++++++
->>>   drivers/media/platform/rockchip/rga/rga3-hw.h | 186 ++++++++++
->>>   5 files changed, 682 insertions(+), 2 deletions(-)
->> Your order of patches is a mess. DTS cannot be in the middle. In fact,
->> DTS should not be even in this patchset, because you are targeting media.
-> 
-> sorry to bother you, but could you go into a bit more detail on how it 
-> should be done correctly?
+From: Seungjin Bae <eeodqql09@gmail.com>
 
-DTS cannot be before drivers, because this suggests that drivers depends
-on DTS, which would be a NAK. See also maintainer soc profile. To avoid
-having such impression of fake dependency, DTS must be placed at the end
-of patchset (except the obvious part: nothing in your code can depend on
-it).
+The bfusb_rx_complete() function parses incoming URB data in while loop.
+The logic does not sufficiently validate the remaining buffer size(count)
+accross loop iterations, which can lead to a buffer over-read.
 
-Best regards,
-Krzysztof
+For example, with 4-bytes remaining buffer, if the first iteration takes
+the `hdr & 0x4000` branch, 2-bytes are consumed. On the next iteration,
+only 2-bytes remain, but the else branch is trying to access the third
+byte(buf[2]). This causes an out-of-bounds read and a potential kernel panic.
+
+This patch fixes the vulnerability by adding checks to ensure enough
+data remains in the buffer before it is accessed.
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Seungjin Bae <eeodqql09@gmail.com>
+---
+ v1 -> v2: Fixing the error function name
+ 
+ drivers/bluetooth/bfusb.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/bluetooth/bfusb.c b/drivers/bluetooth/bfusb.c
+index 8df310983bf6..45f4ec5b6860 100644
+--- a/drivers/bluetooth/bfusb.c
++++ b/drivers/bluetooth/bfusb.c
+@@ -360,6 +360,10 @@ static void bfusb_rx_complete(struct urb *urb)
+ 			count -= 2;
+ 			buf   += 2;
+ 		} else {
++            if (count < 3) {
++                bt_dev_err(data->hdev, "block header is too short");
++                break;
++            }
+ 			len = (buf[2] == 0) ? 256 : buf[2];
+ 			count -= 3;
+ 			buf   += 3;
+-- 
+2.43.0
+
 
