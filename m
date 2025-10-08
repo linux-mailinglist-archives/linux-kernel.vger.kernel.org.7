@@ -1,114 +1,114 @@
-Return-Path: <linux-kernel+bounces-846162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 772D5BC72B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 04:03:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D63FBC7504
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 05:44:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 22023347FB9
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 02:03:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 952294005A8
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 03:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02EDF19922D;
-	Thu,  9 Oct 2025 02:03:15 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0B41397;
-	Thu,  9 Oct 2025 02:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C9723C4ED;
+	Thu,  9 Oct 2025 03:44:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dhel5p+x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2EA7261A;
+	Thu,  9 Oct 2025 03:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759975394; cv=none; b=R+C/QkF38p6ZMDHOaA1cTK3S9K6+9xIiH6yBny3bgvBCF+GtFOByCMUPSII8AWOk7aBmPCQ0uEHOGX2qfuh4Fys1+Gy0waiPxME3SdQ8G1I5ZwMnExuynUNzsK8DcFJfAZuaeQ/K5Ew1YUUzo7aBcjScir47rk1TmRb6ztQiD8E=
+	t=1759981481; cv=none; b=uU9Kk3f3tvUjmeFbYwepqtZTYE+e2TCGBksXN/26EIrlPYwzChfVR7udEzTOFqomLCkgifGZzjEL5l8bYNNTTiGNSq3w95pDkqO57MLq0aj0XN2747Irg0kOyJ1Fu5nRXJJtH2mwOH4QKB1EOYdIYnDm6JudcY1On5/AXQLSeb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759975394; c=relaxed/simple;
-	bh=FYeKjXCSa+sugLZNOvMXe+AcFfKj2MNmosBD05Z/05g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t087YLUUKXhLORZBdeovZlP9FdjrmuA1NBF5QI9x7Vvx4iGjuV8smIdincY/xJ1GRNK6SdF82xqBZNTzRxXmGdhEn+Sncaem6BCI2w7816p6dmM4E62WpVoEiMAJEbmgjhaBrlyxIMam3QVludhGlrxvIYpN9MrwYO/4yvwv5Gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C5AFA1A32;
-	Wed,  8 Oct 2025 19:03:02 -0700 (PDT)
-Received: from [10.163.35.84] (unknown [10.163.35.84])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E94173F738;
-	Wed,  8 Oct 2025 19:03:06 -0700 (PDT)
-Message-ID: <24beaa64-d144-42c3-945f-a37e1cac384d@arm.com>
-Date: Thu, 9 Oct 2025 07:33:03 +0530
+	s=arc-20240116; t=1759981481; c=relaxed/simple;
+	bh=HgZ6zzODSIrnwYu4EFvmHmU5frccBU91n5zHjRH6eLI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FmlR9NlZXnmqmmvXi3kAH+M9AfF2nW4NFtDL1UDRajehK8FhEOjtA+PWcQ0uYspqcgyfynMWB8RpP7Vp4EM3NG9TqJztPUumErHqZf/mxWXY/ZEASEOtaFBFWiQs38gtWQVJGJjhNskqwT/NYhXn3MVIBRTU7JwUT/LHdWtCRzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dhel5p+x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A07A3C4CEF7;
+	Thu,  9 Oct 2025 03:44:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759981481;
+	bh=HgZ6zzODSIrnwYu4EFvmHmU5frccBU91n5zHjRH6eLI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dhel5p+xgZqT6vVr9iDk76AVP40koVTBJgYUwqGQ+Kwu1zliVkCE0GrT1U4tghBe+
+	 LAbFO3SN4FH75GvSkRhDnIXsQFRN7ZI/ytIRHmXK61ktqmyq470ecxJ8Vkd6o7o4JE
+	 Z7poXaPntiXmiaSm7hLUGgWxbZB0oD47+GUbKPVgvYfVHpBF/D+SXp7aRV7fSazNm1
+	 ssp/I05Uw3QINvDrQM/Vcg+SaU+zz6UrDRiHxotOlE4k13SV5/FYoq0tUxJljOKQvZ
+	 p5U9Oc4VY9iFpGG2eZiqeOa5T/Oae+gzScewOiVEugLQE43vaLJUx2WwHE/RdPmQfE
+	 GTirY0rL5I8tA==
+Date: Wed, 8 Oct 2025 21:52:02 +0200
+From: Nicolas Schier <nsc@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/5] kbuild: uapi: upgrade check_sizetypes() warning
+ to error
+Message-ID: <aObA4vNF4tppZ5vR@levanger>
+References: <20250813-kbuild-hdrtest-fixes-v2-0-8a7921ca3a03@linutronix.de>
+ <20250813-kbuild-hdrtest-fixes-v2-4-8a7921ca3a03@linutronix.de>
+ <20251006190048.GA2395186@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/18] perf/core: Replace READ_ONCE() with standard
- page table accessors
-To: Samuel Holland <samuel.holland@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <pjw@kernel.org>,
- linux-riscv@lists.infradead.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, Conor Dooley <conor@kernel.org>,
- Alexandre Ghiti <alex@ghiti.fr>, Emil Renner Berthing <kernel@esmil.dk>,
- Andrew Morton <akpm@linux-foundation.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-References: <20251009015839.3460231-1-samuel.holland@sifive.com>
- <20251009015839.3460231-3-samuel.holland@sifive.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20251009015839.3460231-3-samuel.holland@sifive.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251006190048.GA2395186@ax162>
 
-
-
-On 09/10/25 7:27 AM, Samuel Holland wrote:
-> Replace READ_ONCE() with standard page table accessors, i.e. pXXp_get(),
-> which have a default implementation of READ_ONCE() if the architecture
-> does not override them.
+On Mon, Oct 06, 2025 at 12:00:48PM -0700, Nathan Chancellor wrote:
+> On Wed, Aug 13, 2025 at 08:16:59AM +0200, Thomas Weiﬂschuh wrote:
+> > No problematic type usages exist anymore.
+> > 
+> > Make sure it stays this way.
+> > 
+> > Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> > Reviewed-by: Nicolas Schier <nsc@kernel.org>
+> > ---
+> >  usr/include/headers_check.pl | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> > 
+> > diff --git a/usr/include/headers_check.pl b/usr/include/headers_check.pl
+> > index 36307a137cc1e109e3e1c253f66f3e5935499fc8..36349b21cef5d55241b68ca24dabe6a321b7ce27 100755
+> > --- a/usr/include/headers_check.pl
+> > +++ b/usr/include/headers_check.pl
+> > @@ -159,7 +159,6 @@ sub check_sizetypes
+> >  		              "found __[us]{8,16,32,64} type " .
+> >  		              "without #include <linux/types.h>\n";
+> >  		$linux_types = 2;
+> > -		# Warn until headers are all fixed
+> > -		#$ret = 1;
+> > +		$ret = 1;
+> >  	}
+> >  }
+> > 
+> > -- 
+> > 2.50.1
+> > 
 > 
-> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
-> ---
-> 
-> Changes in v2:
->  - New patch for v2
-> 
->  kernel/events/core.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 820127536e62b..952ba4e3d8815 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -8110,7 +8110,7 @@ static u64 perf_get_pgtable_size(struct mm_struct *mm, unsigned long addr)
->  	pte_t *ptep, pte;
->  
->  	pgdp = pgd_offset(mm, addr);
-> -	pgd = READ_ONCE(*pgdp);
-> +	pgd = pgdp_get(pgdp);
->  	if (pgd_none(pgd))
->  		return 0;
->  
-> @@ -8118,7 +8118,7 @@ static u64 perf_get_pgtable_size(struct mm_struct *mm, unsigned long addr)
->  		return pgd_leaf_size(pgd);
->  
->  	p4dp = p4d_offset_lockless(pgdp, pgd, addr);
-> -	p4d = READ_ONCE(*p4dp);
-> +	p4d = p4dp_get(p4dp);
->  	if (!p4d_present(p4d))
->  		return 0;
->  
-> @@ -8126,7 +8126,7 @@ static u64 perf_get_pgtable_size(struct mm_struct *mm, unsigned long addr)
->  		return p4d_leaf_size(p4d);
->  
->  	pudp = pud_offset_lockless(p4dp, p4d, addr);
-> -	pud = READ_ONCE(*pudp);
-> +	pud = pudp_get(pudp);
->  	if (!pud_present(pud))
->  		return 0;
->  
+> Geert's regression report and subsequent fix made me look a little
+> closer at this check. Is it even useful to do this anymore now that we
+> compile test the headers? If these types are found without the
+> appropriate include, won't there just be an error? Or is this to avoid
+> the case where a system header may transitively include types.h so the
+> compile would succeed but the header is not as contained as it could be?
 
-This is already under discussion here.
+Good question.  I think you're right, that header compiling should be
+enough.
 
-https://lore.kernel.org/all/20251006042622.1743675-1-anshuman.khandual@arm.com/
+I cannot think of a sensible way that with successful header compile
+test for an UAPI header file that is not contained. 
 
+Setting USERCFLAGS='-include something/like/types.h' during header
+compilation may hide a missing '#include <linux/types.h>', but I don't
+think that this is a good reason to keep the checking.
+
+Kind regards,
+Nicolas
 
