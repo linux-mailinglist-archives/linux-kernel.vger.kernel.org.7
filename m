@@ -1,169 +1,311 @@
-Return-Path: <linux-kernel+bounces-845444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63BCFBC4F26
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 14:48:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EBBECBC4F4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 14:49:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62BB719E1FF5
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 12:48:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1DF619E280B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 12:49:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E30F2580F9;
-	Wed,  8 Oct 2025 12:48:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 635A825742F;
+	Wed,  8 Oct 2025 12:49:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="lHT51kpd"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hTznbQdM";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="u7o1ByH6";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hTznbQdM";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="u7o1ByH6"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE54625228C
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 12:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97B82494F8
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 12:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759927680; cv=none; b=LiseLYDnJtZCZY8MkSN9QoO0oALhixiHeVMCUzNlt9XOs/Pq8vZUAE/mjWLtDAtuS+k1MoubdZLP9qgctfaMxEBlUht07HcpvIV8P+SH0feYpTtiS2sg8X30JLsoCFxW7toDidBYuz/royOyV8F8Yx6/zvd1WcwHhUwbnW9EHMQ=
+	t=1759927757; cv=none; b=XnU5y7dTB5AgcDHkPG9VjjewPdyhY6QVSmgWLx7R3y9+QSlyR/IFdFlDUGsUquHjZZNY6ucJ8Yxwr6vsbo7HJmF08skGleg7+6OiZ3QpnZ1ioOFSkXeRo8Twzi28Ikr5Ilf5kr2KC5wWkJk9HQd5yi/HJYYDxecp7VpAKyfb+vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759927680; c=relaxed/simple;
-	bh=P51AzmQJe4s0CJL4Wwu7Z0oBZHbLe0/rr/yjZVDr1J0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Bcnac3MNL+/YHry9MNvtfx1BY91wTfEyGq36jiTyYniZ073uQwxrRZJ7qP8HZEPn2R2xjRZpKiYt7Pxt+dsYcECBo1cz78B1/60Bdk4ImBkIfg7yuvK5V7vDaCnYLd1IXCnlz0KdbA9OlaZcqC533wIT1eigRAq72TUjaXXCObI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=lHT51kpd; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afcb78ead12so1340051066b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 05:47:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1759927677; x=1760532477; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=AXhIFAPZtegMDAxULdLjEweIkAMVkFzkJ9S+EwaPmEY=;
-        b=lHT51kpdQKVwU6CizDgUwD+Rvjv8IjElzQcz7hafByUFiZf4f98aJRKpx0GdwJ1n2k
-         Z1LR9BvOVF0RZA+rSKLBtss5BJhscBlrcPCHcjBt0OGrVuzCpjnQwVTLJ29vOI50Fu2r
-         zBntPzPKFHWhwZsrk2Dmj2yu5pkfbQtxq05P97LyAG14ueP0WbFnV/r5H8ERaLtcuUjL
-         x0Xwky8aTZNWHjbX5fkHY8dqHn2GNN3eNm2elpINlTsh/pf/wbnun9/Yg3476RVS/tZm
-         E76HvJf+Hkm9BpsNkKRcrT5i5WafMYAreVhF7A7ecXC/WLSHTG6cKx86C2zjhpt2vZpl
-         +5lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759927677; x=1760532477;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AXhIFAPZtegMDAxULdLjEweIkAMVkFzkJ9S+EwaPmEY=;
-        b=Bg5t0dXOUEPPR38KNi6bIrVCUDoO5RiKIp/kYLMUlbJYZ7YwgkFvo56XR+v0zE0afp
-         j5LNgUG8k5Mn7CxI5hk6kdKv7AQQKGT+syFGSZBugpgZkjXsJ9+A+G8oROroQFqr0+89
-         IaEZx115Si2IA8ABhO67i8S17atY02y8QeHpYBzrdPfRlvoixu6FjdwB/ecLu6/v5em1
-         Q0LlnX8PhNfvhnJeT1k6m0zB6Gd1DtTVn6GfmTXgWRz3/64BOXfanfWM+Wl+KwhZTm9M
-         5nhpFxxBuDw+OvSToOminsbK+RUPaKhXohZ/EI8C1H4/J/zQrzxdfmy75BKnZsQ/Phmu
-         dZ2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXKsVLGf502HoYZfaVDcU++eWhCeTk9wKNQXvCnnHF1kIVcdwgapPytxgpSAnhnGxrvjQbMWmSEh3xXLW0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4MsQ48wQAtdFO50NuOvsjf+jrEP8mEnuo56bAuz9KhYsl2FcQ
-	7wVKh4k4SnCtT6r28un0ENdVIwmZ2rkzFYTBJdE2d9jb0NgHxzXJhZ2KN0UugBGPpZQ=
-X-Gm-Gg: ASbGncua3mRQdX0dc3hqdEt0SUMSWWP1XOF1dWcTKeLa+E1Cdmopds+VlE7PIgU8gSk
-	dzfEjRJhrwpVkKWELs0KOGOUeEyypV4hrG3kq0CrxusDVp0rUkGiCrQoPA4KOyC0nLbQMbCXn22
-	nhqa3LMVpfYTCjB3QZLNYvcK0kBXyEqi5+LzSvxD+77Ajj3SN+52x1ID+87dfqj4wJAtezoF2RX
-	pFg2pMXHhqdQLAB1LfKSMMbFicXJrw27nYJMaNZBrF181Oh6bzsU+AAcRzs41FSasJH41F6kWkp
-	JLJBM+tUY40jp6Sps59lDIOeWeDHgJhEpdlB5XOVPX8hgsljAiz+MWTF+OVI2C6KnCgaKyrqGhn
-	iGuT1LJGi6SWVFRbXhxF/ujakIz43kChBFLjVJwcTykDDQjvfuiC2Iw==
-X-Google-Smtp-Source: AGHT+IGpOYxdU1TjlTUaBcL5WSDuVrPngUkKCAdSSFEPYFhIoh1b/oFl2+SzF4mi5hdAxR3O/fYw6A==
-X-Received: by 2002:a17:906:6a22:b0:b37:4f78:55b2 with SMTP id a640c23a62f3a-b50ac1cba08mr336276266b.34.1759927676843;
-        Wed, 08 Oct 2025 05:47:56 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.59])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b486970b5acsm1639393966b.60.2025.10.08.05.47.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Oct 2025 05:47:56 -0700 (PDT)
-Message-ID: <d0fa09bb-3e2c-478b-a9b1-af57254a4fb1@tuxon.dev>
-Date: Wed, 8 Oct 2025 15:47:55 +0300
+	s=arc-20240116; t=1759927757; c=relaxed/simple;
+	bh=wD4ph7ksr7Y9PqrcdV3UGxg9ldNUcUA7ihnBteSKObU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eUz7txTPMosAXlMqsWgvrAjbp2BlP7AepaZKtiIwInvIlQzOmsMaJ5BmA+8yH95HxWIwxeI8Gt1HljHb6b/9wPoiAN0wV/IoKOBrNFuvb+REvoBRyxv64Di4M1lS7XXFcOrXYF6u2kddydupAcoYcRGPIt8MCB8pHkRyuRZ6Ldo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hTznbQdM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=u7o1ByH6; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hTznbQdM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=u7o1ByH6; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C4F9333682;
+	Wed,  8 Oct 2025 12:49:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759927753; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e+BW6/xM0yjRVEcYqLBcosbvQZRHGeQCo1d/3Di/Qk0=;
+	b=hTznbQdMWZLom2mDKgB/qOLM8wl8Dpviwpwx2rh+h2CbnQN2paWN3wIIKXA379jqECmp9u
+	Q8+9TTEMHspAH9KBP/vyETlQ/mXY+K6yBXADjRUJhyrBnUzyif0DA9tZ/5jilbcMNKeKnA
+	DKl60XpqDesyC8YwLJteGvgAw8VGjlc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759927753;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e+BW6/xM0yjRVEcYqLBcosbvQZRHGeQCo1d/3Di/Qk0=;
+	b=u7o1ByH665vxSLDl3GM/W+IZzi0/fmshKy0J4Y7Sm96SRvCGLKdVHePufsvkRSKgkFPDcj
+	4Ftr96m5IB5QGcAQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=hTznbQdM;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=u7o1ByH6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759927753; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e+BW6/xM0yjRVEcYqLBcosbvQZRHGeQCo1d/3Di/Qk0=;
+	b=hTznbQdMWZLom2mDKgB/qOLM8wl8Dpviwpwx2rh+h2CbnQN2paWN3wIIKXA379jqECmp9u
+	Q8+9TTEMHspAH9KBP/vyETlQ/mXY+K6yBXADjRUJhyrBnUzyif0DA9tZ/5jilbcMNKeKnA
+	DKl60XpqDesyC8YwLJteGvgAw8VGjlc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759927753;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e+BW6/xM0yjRVEcYqLBcosbvQZRHGeQCo1d/3Di/Qk0=;
+	b=u7o1ByH665vxSLDl3GM/W+IZzi0/fmshKy0J4Y7Sm96SRvCGLKdVHePufsvkRSKgkFPDcj
+	4Ftr96m5IB5QGcAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A060913693;
+	Wed,  8 Oct 2025 12:49:13 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id D/EiJ8ld5mh8QwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 08 Oct 2025 12:49:13 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 08F98A0A9C; Wed,  8 Oct 2025 14:49:09 +0200 (CEST)
+Date: Wed, 8 Oct 2025 14:49:08 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
+	yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH v2 11/13] ext4: switch to using the new extent movement
+ method
+Message-ID: <wdluk2p7bmgkh3n3xzep3tf3qb7mv3x2o6ltemjcahgorgmhwb@hfu7t7ar2vol>
+References: <20250925092610.1936929-1-yi.zhang@huaweicloud.com>
+ <20250925092610.1936929-12-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 4/7] reset: rzg2l-usbphy-ctrl: Add support for USB
- PWRRDY
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-To: Philipp Zabel <p.zabel@pengutronix.de>, vkoul@kernel.org,
- kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- geert+renesas@glider.be, magnus.damm@gmail.com,
- yoshihiro.shimoda.uh@renesas.com, biju.das.jz@bp.renesas.com
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-References: <20250925100302.3508038-1-claudiu.beznea.uj@bp.renesas.com>
- <20250925100302.3508038-5-claudiu.beznea.uj@bp.renesas.com>
- <c7fc31f1247332196516394a22f6feef9733a0b4.camel@pengutronix.de>
- <66d85e70-efb8-4a45-9164-55b123691b70@tuxon.dev>
- <bcf6113b0025777db1cb2ace1618fed8fac2dfc6.camel@pengutronix.de>
- <cca1061e-df67-4b5b-99bd-9721c72a0f88@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <cca1061e-df67-4b5b-99bd-9721c72a0f88@tuxon.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250925092610.1936929-12-yi.zhang@huaweicloud.com>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: C4F9333682
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -4.01
+
+On Thu 25-09-25 17:26:07, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> Now that we have mext_move_extent(), we can switch to this new interface
+> and deprecate move_extent_per_page(). First, after acquiring the
+> i_rwsem, we can directly use ext4_map_blocks() to obtain a contiguous
+> extent from the original inode as the extent to be moved. It can and
+> it's safe to get mapping information from the extent status tree without
+> needing to access the ondisk extent tree, because ext4_move_extent()
+> will check the sequence cookie under the folio lock. Then, after
+> populating the mext_data structure, we call ext4_move_extent() to move
+> the extent. Finally, the length of the extent will be adjusted in
+> mext.orig_map.m_len and the actual length moved is returned through
+> m_len.
+> 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+
+Two small comments below:
+
+> +int ext4_move_extents(struct file *o_filp, struct file *d_filp, __u64 orig_blk,
+> +		      __u64 donor_blk, __u64 len, __u64 *moved_len)
+>  {
+>  	struct inode *orig_inode = file_inode(o_filp);
+>  	struct inode *donor_inode = file_inode(d_filp);
+> -	struct ext4_ext_path *path = NULL;
+> -	int blocks_per_page = PAGE_SIZE >> orig_inode->i_blkbits;
+> -	ext4_lblk_t o_end, o_start = orig_blk;
+> -	ext4_lblk_t d_start = donor_blk;
+> +	struct mext_data mext;
+> +	struct super_block *sb = orig_inode->i_sb;
+> +	struct ext4_sb_info *sbi = EXT4_SB(sb);
+> +	int retries = 0;
+> +	u64 m_len;
+>  	int ret;
+>  
+> +	*moved_len = 0;
+> +
+>  	/* Protect orig and donor inodes against a truncate */
+>  	lock_two_nondirectories(orig_inode, donor_inode);
+>  
+>  	ret = mext_check_validity(orig_inode, donor_inode);
+>  	if (ret)
+> -		goto unlock;
+> +		goto out;
+>  
+>  	/* Wait for all existing dio workers */
+>  	inode_dio_wait(orig_inode);
+>  	inode_dio_wait(donor_inode);
+>  
+> -	/* Protect extent tree against block allocations via delalloc */
+> -	ext4_double_down_write_data_sem(orig_inode, donor_inode);
+>  	/* Check and adjust the specified move_extent range. */
+>  	ret = mext_check_adjust_range(orig_inode, donor_inode, orig_blk,
+>  				      donor_blk, &len);
+>  	if (ret)
+>  		goto out;
+> -	o_end = o_start + len;
+>  
+> -	*moved_len = 0;
+> -	while (o_start < o_end) {
+> -		struct ext4_extent *ex;
+> -		ext4_lblk_t cur_blk, next_blk;
+> -		pgoff_t orig_page_index, donor_page_index;
+> -		int offset_in_page;
+> -		int unwritten, cur_len;
+> -
+> -		path = get_ext_path(orig_inode, o_start, path);
+> -		if (IS_ERR(path)) {
+> -			ret = PTR_ERR(path);
+> +	mext.orig_inode = orig_inode;
+> +	mext.donor_inode = donor_inode;
+> +	while (len) {
+> +		mext.orig_map.m_lblk = orig_blk;
+> +		mext.orig_map.m_len = len;
+> +		mext.orig_map.m_flags = 0;
+> +		mext.donor_lblk = donor_blk;
+> +
+> +		ret = ext4_map_blocks(NULL, orig_inode, &mext.orig_map, 0);
+> +		if (ret < 0)
+>  			goto out;
+> -		}
+> -		ex = path[path->p_depth].p_ext;
+> -		cur_blk = le32_to_cpu(ex->ee_block);
+> -		cur_len = ext4_ext_get_actual_len(ex);
+> -		/* Check hole before the start pos */
+> -		if (cur_blk + cur_len - 1 < o_start) {
+> -			next_blk = ext4_ext_next_allocated_block(path);
+> -			if (next_blk == EXT_MAX_BLOCKS) {
+> -				ret = -ENODATA;
+> -				goto out;
+> -			}
+> -			d_start += next_blk - o_start;
+> -			o_start = next_blk;
+> -			continue;
+> -		/* Check hole after the start pos */
+> -		} else if (cur_blk > o_start) {
+> -			/* Skip hole */
+> -			d_start += cur_blk - o_start;
+> -			o_start = cur_blk;
+> -			/* Extent inside requested range ?*/
+> -			if (cur_blk >= o_end)
+> +
+> +		/* Skip moving if it is a hole or a delalloc extent. */
+> +		if (mext.orig_map.m_flags &
+> +		    (EXT4_MAP_MAPPED | EXT4_MAP_UNWRITTEN)) {
+> +			ret = mext_move_extent(&mext, &m_len);
+> +			if (ret == -ESTALE)
+> +				continue;
+> +			if (ret == -ENOSPC &&
+> +			    ext4_should_retry_alloc(sb, &retries))
+> +				continue;
+
+ENOSPC here could come only from extent tree manipulations right? I was
+wondering for a while why do we check it here :).
+
+> +			if (ret == -EBUSY &&
+> +			    sbi->s_journal && retries++ < 4 &&
+> +			    jbd2_journal_force_commit_nested(sbi->s_journal))
+> +				continue;
+> +			if (ret)
+>  				goto out;
+> -		} else { /* in_range(o_start, o_blk, o_len) */
+> -			cur_len += cur_blk - o_start;
+> +
+> +			*moved_len += m_len;
+> +			retries = 0;
+>  		}
+> -		unwritten = ext4_ext_is_unwritten(ex);
+> -		if (o_end - o_start < cur_len)
+> -			cur_len = o_end - o_start;
+> -
+> -		orig_page_index = o_start >> (PAGE_SHIFT -
+> -					       orig_inode->i_blkbits);
+> -		donor_page_index = d_start >> (PAGE_SHIFT -
+> -					       donor_inode->i_blkbits);
+> -		offset_in_page = o_start % blocks_per_page;
+> -		if (cur_len > blocks_per_page - offset_in_page)
+> -			cur_len = blocks_per_page - offset_in_page;
+> -		/*
+> -		 * Up semaphore to avoid following problems:
+> -		 * a. transaction deadlock among ext4_journal_start,
+> -		 *    ->write_begin via pagefault, and jbd2_journal_commit
+> -		 * b. racing with ->read_folio, ->write_begin, and
+> -		 *    ext4_get_block in move_extent_per_page
+> -		 */
+> -		ext4_double_up_write_data_sem(orig_inode, donor_inode);
+> -		/* Swap original branches with new branches */
+> -		*moved_len += move_extent_per_page(o_filp, donor_inode,
+> -				     orig_page_index, donor_page_index,
+> -				     offset_in_page, cur_len,
+> -				     unwritten, &ret);
+> -		ext4_double_down_write_data_sem(orig_inode, donor_inode);
+> -		if (ret < 0)
+> -			break;
+> -		o_start += cur_len;
+> -		d_start += cur_len;
+> +		orig_blk += mext.orig_map.m_len;
+> +		donor_blk += mext.orig_map.m_len;
+> +		len -= mext.orig_map.m_len;
+
+In case we've called mext_move_extent() we should update everything only by
+m_len, shouldn't we? Although I have somewhat hard time coming up with a
+realistic scenario where m_len != mext.orig_map.m_len for the parameters we
+call ext4_swap_extents() with... So maybe I'm missing something.
+
+								Honza
 
 
-
-On 10/8/25 15:16, Claudiu Beznea wrote:
-> Hi, Philipp,
-> 
-> On 10/8/25 13:23, Philipp Zabel wrote:
->> Hi Claudiu,
->>
->> On Mi, 2025-10-08 at 12:29 +0300, Claudiu Beznea wrote:
->>> Hi, Philipp,
->>>
->>> On 10/8/25 11:34, Philipp Zabel wrote:
->>>> Hi Claudiu,
->>>>
->>>> On Do, 2025-09-25 at 13:02 +0300, Claudiu wrote:
->>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>>
->>>>> On the Renesas RZ/G3S SoC, the USB PHY block has an input signal called
->>>>> PWRRDY. This signal is managed by the system controller and must be
->>>>> de-asserted after powering on the area where USB PHY resides and asserted
->>>>> before powering it off.
->>>>>
->>>>> On power-on the USB PWRRDY signal need to be de-asserted before enabling
->>>>> clock and switching the module to normal state (through MSTOP support). The
->>>>> power-on configuration sequence
->>>>
->>>> The wording makes me wonder, have you considered implementing this as a
->>>> power sequencing driver?
->>>
->>> No, haven't tried as power sequencing. At the moment this was started I
->>> think the power sequencing support wasn't merged.
->>>
->>> The approaches considered were:
->>> a/ power domain
->>
->> Letting a power domain control a corresponding power ready signal would
->> have been my first instinct as well.
->>
->>> b/ regulator
->>> c/ as a reference counted bit done through regmap read/writes APIs
->>>
->>> a and b failed as a result of discussions in the previous posted versions.
->>
->> Could you point me to the discussion related to a?
-> 
-> It's this one
-> https://lore.kernel.org/all/CAPDyKFrS4Dhd7DZa2zz=oPro1TiTJFix0awzzzp8Qatm-8Z2Ug@mail.gmail.com/
-> 
-> 
->>
->> I see v2 and v3 tried to control the bit from the PHY drivers, and in
->> v4 we were are already back to the reset driver.
-> 
-> v2 passed the system controller (SYSC) phandle to the USB PHYs only (though
-> renesas,sysc-signals DT property) where the PWRRDY bit was set. The PWRRDY
-> bit was referenced counted in the SYSC driver though regmap APIs.
-
-Sorry, I forgot to mention: in v2, the SYSC phandle was passed to the PHYs
-only as I wasn't aware of the block diagram presented in this patch
-description. I got aware of the block diagram starting with v3.
-
-Thank you,
-Claudiu
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
