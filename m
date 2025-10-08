@@ -1,177 +1,179 @@
-Return-Path: <linux-kernel+bounces-845971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D698ABC69B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:45:56 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DE80BC69C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:46:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8D0824E3CD3
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:45:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 590714E3046
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22997212575;
-	Wed,  8 Oct 2025 20:45:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 764DE27C84B;
+	Wed,  8 Oct 2025 20:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cWQxs4Jo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZUrr/SXm"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72FCA34BA47;
-	Wed,  8 Oct 2025 20:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C382472BF
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 20:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759956349; cv=none; b=jd6vi8aOkmjMdmQ4q4JhEbxtfbCMhlhCi9iz5JQnzUvhhwJHVaFUk4WMZkRgkPEx4ReRVqN4PygW0vxwEOwFDvehVss7G0xWY403l/eB5v9R/mARtXq9C43hWzh4Qc8/qh2xJKdaCWTOwkPMRLul19Q6bJqd6bc7usp2E9qtdLk=
+	t=1759956393; cv=none; b=JctqOoyfmXWbP9f80PSry0YcHIPBPMUGpbfh2bubkK99KyFfRgKxpVuVpqlsLLUgQt5L+huULEdeQfUS0yh01brD9pGYP002P10eUsoND9nLLKIpgdEvnLPnLhkzGFAgpSMpfYv3Pkr+M2hu3TqrxVpIvgngvp9LBP5QxENYDLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759956349; c=relaxed/simple;
-	bh=LW0bw/jiGBt9EQg7EK+quDFm8WZF1tmhz+TiW+AYGiw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KyCr+vm7HqggivkHHJDhohQ+W3yJ60ey3nefkxeAEKd54bJa8YFOB2ZajPEUFWlr+2gHzvMm0dvWsR95vUL+RjeJSsCg3t3zDLf89NlSaFzg3RFnUYlEQEKgfxeQVe7UBJRmYC3geTkC/wP+zoqYpZy4r3w5+p7a1aUsccOAw4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cWQxs4Jo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDD3FC4CEE7;
-	Wed,  8 Oct 2025 20:45:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759956347;
-	bh=LW0bw/jiGBt9EQg7EK+quDFm8WZF1tmhz+TiW+AYGiw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cWQxs4JojNuZTiszKRwycHX1sNsToytA2sX3mt3G027T3bn2Y95sx3ewLPyJQwGxc
-	 ZYIWh4O8nlekHxZxKSNUeDQY4Q0OWwKRRjkwNTlYPTgi5dPCv9i7+UGlLFlqr9AlTN
-	 +xI5Io++jXLjdSIcUPxzr1KCGooUbKlKO1wYuLcB4KmzQDrHMr7wbugfDKURbjLnjp
-	 HXsADIbY8qoloo2DHhr8nkw/zpEO4hZZLYk0p5UkyKVOdDjXpgM4rBcfmUpZ9oFt3s
-	 SHn6esXHxXgi9C54HC2mHkOa7P3NoplkyW08cMb2f0DWlTEICUJ/bZyUAcYzIiC0ak
-	 WXmy3UxhdB+WQ==
-Date: Wed, 8 Oct 2025 21:45:42 +0100
-From: Conor Dooley <conor@kernel.org>
-To: CL Wang <cl634@andestech.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	gg@swlinux02.smtp.subspace.kernel.org, vkoul@kernel.org,
-	dmaengine@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tim609@andestech.com
-Subject: Re: [PATCH V1 1/2] dt-bindings: dmaengine: Add support for
- ATCDMAC300 DMA engine
-Message-ID: <20251008-criteria-debit-09f8e855bcec@spud>
-References: <20251002131659.973955-1-cl634@andestech.com>
- <20251002131659.973955-2-cl634@andestech.com>
- <20251002-absolute-spinning-f899e75b2c4a@spud>
- <aOUIfaZY7-eUYoOS@swlinux02>
- <734de17e-a712-4eb5-96fa-b7e75f86d880@kernel.org>
- <aOXW7HUMeOyABuUG@swlinux02>
- <dcd14886-f2cc-41ec-8bb5-9cb5ed50c452@kernel.org>
- <aOZokztqpHHX0JPq@swlinux02>
+	s=arc-20240116; t=1759956393; c=relaxed/simple;
+	bh=ATtk0XNCR2WVF4S15RHWwDC3LY2M+FoezyWVxyx62sQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p3sY7LMyAtKBJ24y9tMOIhuSm/nNfoZ/RAYxtE6+x4VvKL/7s0bVWtZ51LRjb6KYQngnekJSEd2FIX1HDKzShbW3SUIIoCh6Fy0NPYmLtY+y6gBjstsqiJrYiF5uypTcec6Vd/0SnOZS1WZ0oc/yrH54nSD427J9VAfFUCqnf+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZUrr/SXm; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-3637d6e9923so1811231fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 13:46:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759956390; x=1760561190; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rxhkbVa/uEXngkfUo+dBA3TFbsCdSBF++Qy9JKTTAdY=;
+        b=ZUrr/SXmJv9FU6/GNB/gwDeo5Yc6IfyG7pKANFt+DY58Rny1M3VOUHCyRUmvhvhztu
+         xsciyxIh41q5WLbBBHsvQEb4i2YV6feBSh4f43JDbuPXrehZ3I7eHbKiWaFW5yqrKpUv
+         mVZ75e4D64N9vYN/6HZM4fb188Ixf5taW2b2boKDybuVZ0WsXTyW4g1vmD+7Imh8Eb9L
+         uNbJHlzQ6A+Pbsvo81fXSUsNeonxjXOswMXZO8w41xBJ7lEie2i5zRYltPJfN91G/tAk
+         PkzxCDgSS7QqquT7wRg75X3D2On+lpkNFyMpFklhxaiOu7c4StMMvOMrztrW7blInbZh
+         cM0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759956390; x=1760561190;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rxhkbVa/uEXngkfUo+dBA3TFbsCdSBF++Qy9JKTTAdY=;
+        b=K8x0RNoN0lyvHe4xIu3lUH+0RqFYu7Ue5liquNIey+9cNpkvUz+cBEWhrlIldcyFkQ
+         ug+ocx3wKFmB0Ihlushr7d2L8gx0MxOxaaJ/ht62QydDDwhNAQiyLaf/vMOANlAmsHAJ
+         8EGJQC19g5/BJ4ATpxHCqaoTKdlZ8Q2iBwotArOUSoCS5AKP4qcD7knwejtPOQRYohYi
+         OO9pVYVL9kTgwE1mgd6KQ9TznkSZjLBZZnQWux4MJERhDAxwO/VI63S/jI6DyYHScF+q
+         fBawjOFDlpc9CrT6EX/Qkkormplkcbl1a3XJtuzArEoOe38k8hIe41mqW39ydIRtmVwL
+         xo4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCURS3coXCB5WU1i/UgHOv3pcv4CDuMf70TPFD1QCXK3g0MOHSbO8i387wdHhmVJXr4tFv2+ka5XqVJdKQs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2toydV+WP9Kzpb3Aa0tB9kjrGGq2KfJ8Wte5Xwp0VlVjZLZ8T
+	Cp22OBae2FZyS9nTQMe1m0vrwtY88gp8HuaMuCAyKe0k+ODgigkTALh+9HvkfCYDGDIa0qZOf9I
+	kro4zBsrxrHafte1VGUbmjbmd/gqO8ME=
+X-Gm-Gg: ASbGncurz6Ao+JvuwxVBlUTqM3xFBOaAJyBdMCiYPgB1HGkhkoZQySYtG9wvfX+hu3f
+	5Y/RwOq0DSblLK0/1087QjQ9SHPtQi1BIa6oOMAQE/6zrGo3fj7KKsLIyPXpyRx4rc9kzsCni4a
+	3CRsDiHHEwoecsQm3FHqLpyKrZt8J44xNzrOT+3w8K4z8xkhWk34FqddTcB+duPtXQfrqPqHNQF
+	oGTmnRKdxZY6CdyMS7AQTlqoBNWZyhuLfiEJVbWgp2PuMuVz2YcaZhmiTwl6cVtPsnQQQmD3UyR
+	q9EhoVM/NcZm6IPXjDgB3YEV2RUfyz4VBIuUkDOTT7IZ
+X-Google-Smtp-Source: AGHT+IFJhp/tSRDD6lbiN5FsweIVaBTWj0SEmB759OfG5ef5vYNgy9NHDR6XMGwyweNedzBOPTYTzZLdyknCujsFpWk=
+X-Received: by 2002:a05:651c:1992:b0:372:8ccc:2629 with SMTP id
+ 38308e7fff4ca-37609ea7f6fmr12329021fa.34.1759956389715; Wed, 08 Oct 2025
+ 13:46:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="+n0iJs4RcGo1Uplu"
-Content-Disposition: inline
-In-Reply-To: <aOZokztqpHHX0JPq@swlinux02>
-
-
---+n0iJs4RcGo1Uplu
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20251008124619.3160-1-work@onurozkan.dev> <20251008124619.3160-3-work@onurozkan.dev>
+ <CAJ-ks9mtfVmP+SwZvBVuQSwViiqo2ZngSGQuU5Y7A-Q_JSwjKQ@mail.gmail.com> <20251008225002.011378ed@nimda.home>
+In-Reply-To: <20251008225002.011378ed@nimda.home>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Wed, 8 Oct 2025 13:45:53 -0700
+X-Gm-Features: AS18NWCgbeEJXhSg6SR3UxIn3ImEaYtYHA2yKjUMu36X7Q4evawJbCU6rPxkSEU
+Message-ID: <CAJ-ks9nMziN2LU=T=XGhV8xau6UfGXOMZ49+2Lrt8KGbL7Qngg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] rust: xarray: abstract `xa_alloc`
+To: =?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>
+Cc: rust-for-linux@vger.kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	lossin@kernel.org, aliceryhl@google.com, tmgross@umich.edu, dakr@kernel.org, 
+	linux-kernel@vger.kernel.org, acourbot@nvidia.com, airlied@gmail.com, 
+	simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	tzimmermann@suse.de, corbet@lwn.net, lyude@redhat.com, 
+	linux-doc@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 08, 2025 at 09:35:15PM +0800, CL Wang wrote:
-> Hi Krzysztof,
->=20
-> Thanks for the clarification, and sorry for the earlier confusion.
->=20
-> To elaborate on the rationale:
-> "andestech,atcdmac300" is the IP core name of the DMA controller, which s=
-erves
-> as a generic fallback compatible shared across multiple Andes SoCs.
->=20
-> Primary compatible (SoC-specific):
-> andestech,qilai-dma refers to the DMA controller instance implemented on =
-the
-> Qilai SoC, following the SoC-specific recommendation.
->=20
-> Fallback compatible (IP-core specific):
-> andestech,atcdmac300 represents the reusable IP block used across differe=
-nt
-> Andes SoCs that share the same register map and programming model.
->=20
-> Keeping andestech,atcdmac300 as a fallback helps avoid code duplication a=
-nd
-> allows a single driver to support future SoCs using the same hardware IP.
->=20
-> This approach follows the DeviceTree binding guideline:
->=20
-> =E2=80=9CDO use a SoC-specific compatible for all SoC devices, followed b=
-y a fallback
-> if appropriate. SoC-specific compatibles are also preferred for the fallb=
-acks.=E2=80=9D
-> =E2=80=94 Documentation/devicetree/bindings/writing-bindings.rst, line 42
-
-Unless there is a significant likelihood of there being different
-configurations between devices that are reflected by dedicated properties
-there's usually no reason not to use a single compatible for the first
-devices and then use that as the fallback for future devices. Either the
-future devices will be similar enough for this to work or the fallback
-to something not soc-specific wouldn't have helped much since the new
-device would need special handling.
-
-This case might be different though Krzysztof, because Andes is an IP
-vendor not just someone using an IP in their own devices. People
-certainly get tetchy about using someone else's soc-specific compatible
-for their device and I can understand that. I also think it's easier to
-understand that when you bought an "atcdmac300" IP from a vendor that
-the correct fallback is "andes,atcdmac300" rather than
-"andes,qilai-dma". Personally, I think what's suggested below is okay.
-
-
->=20
-> Please let me know if this aligns with your expectation.
->=20
-> Best regards,
-> CL
->=20
-> On Wed, Oct 08, 2025 at 05:04:53PM +0900, Krzysztof Kozlowski wrote:
-> > [EXTERNAL MAIL]
-> >=20
-> > On 08/10/2025 12:13, CL Wang wrote:
-> > > Hi Krzysztof,
+On Wed, Oct 8, 2025 at 12:50=E2=80=AFPM Onur =C3=96zkan <work@onurozkan.dev=
+> wrote:
+>
+> On Wed, 8 Oct 2025 09:59:12 -0700
+> Tamir Duberstein <tamird@gmail.com> wrote:
+>
+> > On Wed, Oct 8, 2025 at 6:05=E2=80=AFAM Onur =C3=96zkan <work@onurozkan.=
+dev> wrote:
 > > >
-> > > Thank you for pointing this out.
+> > > Implements `alloc` function to `XArray<T>` that wraps
+> > > `xa_alloc` safely, which will be used to generate the
+> > > auxiliary device IDs.
 > > >
-> > > "ATCDMAC300" is the IP block name of the DMA controller used in Andes=
- SoC.
-> > > According to your suggestion, I have updated the binding to use SoC-s=
-pecific
-> > > compatibles with "andestech,atcdmac300" as a fallback, as shown below:
+> > > Resolves a task from the nova/core task list under the "XArray
+> > > bindings [XARR]" section in "Documentation/gpu/nova/core/todo.rst"
+> > > file.
 > > >
-> > > -  const: andestech,atcdmac300
-> > > +  items:
-> > > +    - enum:
-> > > +        - andestech,qilai-dma
-> > > +    - const: andestech,atcdmac300
-> > > ...
-> > >    dma-controller@f0c00000 {
-> > > -      compatible =3D "andestech,atcdmac300";
-> > > +      compatible =3D "andestech,qilai-dma", "andestech,atcdmac300";
-> >=20
-> > That's exactly the same code as you pasted before. Please do not repeat
-> > the same as argument to my comment.
-> >=20
-> > Best regards,
-> > Krzysztof
->=20
+> > > Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev>
+> > > ---
+> > >  rust/kernel/xarray.rs | 41
+> > > ++++++++++++++++++++++++++++++++++++++++- 1 file changed, 40
+> > > insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/rust/kernel/xarray.rs b/rust/kernel/xarray.rs
+> > > index 90e27cd5197e..0711ccf99fb4 100644
+> > > --- a/rust/kernel/xarray.rs
+> > > +++ b/rust/kernel/xarray.rs
+> > > @@ -10,7 +10,7 @@
+> > >      ffi::c_void,
+> > >      types::{ForeignOwnable, NotThreadSafe, Opaque},
+> > >  };
+> > > -use core::{iter, marker::PhantomData, pin::Pin, ptr::NonNull};
+> > > +use core::{iter, marker::PhantomData, ops::Range, pin::Pin,
+> > > ptr::NonNull}; use pin_init::{pin_data, pin_init, pinned_drop,
+> > > PinInit};
+> > >
+> > >  /// An array which efficiently maps sparse integer indices to
+> > > owned objects. @@ -268,6 +268,45 @@ pub fn store(
+> > >              Ok(unsafe { T::try_from_foreign(old) })
+> > >          }
+> > >      }
+> > > +
+> > > +    /// Allocates an empty slot within the given `limit` and
+> > > stores `value` there.
+> > > +    ///
+> > > +    /// May drop the lock if needed to allocate memory, and then
+> > > reacquire it afterwards.
+> > > +    ///
+> > > +    /// On success, returns the allocated index.
+> >
+> > Returning the index is not a very good abstraction. Would the
+> > reservation API meet your needs?
+> >
+> > https://lore.kernel.org/all/20250713-xarray-insert-reserve-v2-3-b939645=
+808a2@gmail.com/
+> >
+> > If yes, I would appreciate your tags there.
+>
+> It should be "allocated key", I misdocumented it. I don't have a
+> use-case for this implementation, I am just trying to help on the nova
+> task list:
+>     https://docs.kernel.org/gpu/nova/core/todo.html#xarray-bindings-xarr
 
---+n0iJs4RcGo1Uplu
-Content-Type: application/pgp-signature; name="signature.asc"
+I think implementing things without understanding the use-case is a
+good way to build the wrong thing.
 
------BEGIN PGP SIGNATURE-----
+> The task mentions "generate the auxiliary device IDs", which should be
+> the returned key, right?
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaObNdgAKCRB4tDGHoIJi
-0tA5AQDh+jkkW+8bNKgitktkRidvoNRSZ818jGiiGIapmS8ntwD/cLKcBUM1lScV
-Ue8XhfNYOpIqVPyv1WDc6TAFqZoc+Q4=
-=TekB
------END PGP SIGNATURE-----
+I dunno.
 
---+n0iJs4RcGo1Uplu--
+> There is also this reference [1] that shows that the returned key will
+> be useful.
+>
+> [1]: https://lore.kernel.org/all/aOTyVzpJNDOaxxs6@google.com/
+
+Sure, it's useful - the reservation API also exposes it. But it is not
+a proper abstraction.
+
+Cheers.
+
+Tamir
 
