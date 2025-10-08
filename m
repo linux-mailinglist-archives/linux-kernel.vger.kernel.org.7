@@ -1,148 +1,144 @@
-Return-Path: <linux-kernel+bounces-845743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73A3FBC5FC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:16:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5AC1BC5FDD
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:18:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 501174E52F6
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 16:16:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C581B189FD6E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 16:18:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E32244686;
-	Wed,  8 Oct 2025 16:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3CE1A4F3C;
+	Wed,  8 Oct 2025 16:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Cm43++bm"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VrGcwYCL"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2681D5CC9
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 16:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA2F7260A
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 16:18:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759940172; cv=none; b=VZJDMwRZmtTyIBQjyAMoIhmZ/fybd523Xy/KK5XRBFcfC6ckK6lHnnXj7+fSQq/vjzTsJKWwmQSxWZjZgzSpl8x6cJB+hmUPNR3uMrkGnPNFN1EDUlMk/zQTMksQp1GSfnhP1fYztshTX5Y7G5nfw6oS7c3bfxVGRzIh/UvYBZc=
+	t=1759940283; cv=none; b=Ei2wr2Tc0PjMEle+y/ruHU9Po6q565e43dS4DFZKO1ByLYX0iH/Sk3Xhqsd/2SrakPwqOkOt24ro+OSEQCCWKESC7T24hrNwL/PP1/3ZrJ6jM9aPRKPtxLJYZbOLFIN9Fjdk2Z2jkMaCqlTr1pDbzb3D9LMwvH4wg9REYOvFtpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759940172; c=relaxed/simple;
-	bh=uEGenzvUyzBkuEtUVn+BvDaUco6V3TK5byPQuBV+0Co=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HKbQ7fwJLvEw3oYOuqQPi0ZQSPZMjiHy+tD0/i4T0/HLytCKGOk7KPQNxJl7qAshSPJQU6Q6RoaBL4Ozav0lQ8/SUhwr+PYfi0n//3eJ51HVN2TzTqWho/vRd0sBIbns64UnjF9FgR5xryNagsPjy4lU4DYOfB477tACM8Tacf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Cm43++bm; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-61feb87fe26so11287327a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 09:16:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1759940169; x=1760544969; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wafGHdomjeTMWOaW1CHD+uCxSHknTrB56S6k0QVoIaI=;
-        b=Cm43++bmhXYlN7w1DWapAMICbB9FZtTY8rg7bredgqSkYAqFKaChUQ9A5cvcW8oFMZ
-         4qJrvJLQ2Kz6VA/jx9SFV9UOyIp2BU/zBeR5G4sRsm7Q1pyq0Rts0NPext9li6UufRxU
-         xniv6W06t33oj/TlBorylxLJqIptQAibbXHUY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759940169; x=1760544969;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wafGHdomjeTMWOaW1CHD+uCxSHknTrB56S6k0QVoIaI=;
-        b=AKpML1ayTiKNkk+1x6Sx+2Trygf8Gz7yoRssVgg9dWq9Pg9nz9RPriiGfSV/N8Ww5A
-         9c5UTpsB4u6f4PlYWqLRLhr0gilFsrqRmn2MPbEstGhyIqlWvQn0s8FPe0ltb3J3iAzB
-         RNCIF35kKKDePB1grnFURchgURPQXIfAAXaVTRuJxZt/XN9GTg3Cl4BS/jvqCpOQS5sQ
-         knbQPcmpsGZyv5kTyU8pwkKBwFftDOLbVMPhVC2fO9ZtJb7pHGGMuOc6gOakESinCzSN
-         d8YydTvTzFtN2Z/LRGyyaG7R+4DB1/TMJV9DVfsTbwxDLCBR7eKwhijSGoU0Mdt9WA/6
-         gReA==
-X-Forwarded-Encrypted: i=1; AJvYcCWUGg3H/lZ1tjIJdbhjVNkPfE8le7yv1K1jL9BgY9GASisrgngm/t7oAdXHB3YILHLCeh89rBk/iYMy7KU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPXX6cXNfGEqfYIr8yhKbZ3gMdByofhm6fUW703HAQ43Df10YD
-	BdUXyvF9KBDoDc91hPI3ooFfJPg5JzE0l3UnQVDP4Jf/tEpVLAzJ3LPU5nS+42kC0/FUB/Chhji
-	54A+sBZQ=
-X-Gm-Gg: ASbGncvHkiwqQovdDdciB/l8WBIRvkFedVJ2LY/cv2ie+zqduY01igngRI/FwXi9PJ9
-	/J6bbpfQ7alDblLM25m5MOCetzepEgDgnGU19SCwmiGF212uTmXVDEi07mC1oUH83RO96yWnU/I
-	+8xaZXcFvQcdwUwLxPOpurKe62nz6Svfl8jlJ2hhzqzgaNUqy+GzsRQJrnzKIMjCsK43VP8Vx3O
-	pqJgqNj/PRox/IYe6/J+k/GX74WzZYLwWCAsT0FwLGrmuud9JIVgKqCstsYvkOBnTCG3tHo9NfR
-	yD1ixn7iTEnEDv0LS/wyJ+l7q2JqGlbtRVxrUHFc32LlzpnRR07TX9rupjnOfcX2m03p0O03dEf
-	AvLsHPJxLgxPpO4et14dF2W+8KPJUiwCu9ZKaYs4zsTtswExo1x7YRgodWCMQV5ZLOZfvOA8vPU
-	6qroCA/nINncnV4hjyGUmN
-X-Google-Smtp-Source: AGHT+IEaluyChxIh5vs1HjszT8Z3a4kOu/QEgUjuYPiCpz32thBVPhf+5sDOFRi/6NgKXY5fD4Q6VQ==
-X-Received: by 2002:a05:6402:3506:b0:639:c94f:93a4 with SMTP id 4fb4d7f45d1cf-639d5c30226mr4079220a12.23.1759940168959;
-        Wed, 08 Oct 2025 09:16:08 -0700 (PDT)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-639f3d0a0e0sm284606a12.32.2025.10.08.09.16.07
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Oct 2025 09:16:07 -0700 (PDT)
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-62ec5f750f7so13207275a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 09:16:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUqkkEiNeYFXceXAQg4/wFKvGnmL9sQWfJ1JyIYkOat62xnRg5CrmlFsDC0SvCXbUzB4fEInnRnXVmfOMQ=@vger.kernel.org
-X-Received: by 2002:a05:6402:1ed0:b0:639:e469:8ad1 with SMTP id
- 4fb4d7f45d1cf-639e469a2e6mr1978291a12.20.1759940166695; Wed, 08 Oct 2025
- 09:16:06 -0700 (PDT)
+	s=arc-20240116; t=1759940283; c=relaxed/simple;
+	bh=RZl4lKWmddpuY1UctYVb7Z6TQW+g+Ty6j1koaO9HTM4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N//wAiDOwE9dKOkU8avxBePX+TShmEvojnimZixNyZYhbUuivVQHUX1XNg4VAiBJiG+6D2g+UhE5C7GhP/omA90gWFyvduhLbkWo6Er9cgA3IAYWB8zWcjELWo0oBCWDiMZBzSKYNufRQLtE8MveqrAoRDF8xKBlax1MbecyzQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VrGcwYCL; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 8 Oct 2025 09:17:49 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759940279;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I6aq5SwqQxzUQvtsSeg2YfAbu8H4ci5QlEizppPzgCA=;
+	b=VrGcwYCLWpAJ2NulmMTuWCkvfMN/ckxDBVcdI0JkZMWibwGNfNcSz/5/hPzNCk+XrhbUe1
+	myi6ilVzSrQ7r6HM3rqz3YYyDmKybND1HHfKj1m4t9PDNTaLX/mGmlHEPJwWjzKzNRJx+l
+	cpzd1/qjHqNrKn+W568iUpWpU4HjwYc=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Dmitry Ilvokhin <d@ilvokhin.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, Chris Li <chrisl@kernel.org>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, 
+	Kiryl Shutsemau <kas@kernel.org>, Usama Arif <usamaarif642@gmail.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, kernel-team@meta.com, hughd@google.com, yangge1116@126.com, 
+	david@redhat.com
+Subject: Re: [PATCH v2] mm: skip folio_activate() for mlocked folios
+Message-ID: <ltvv3v4vibvlglpch6urayotenavpzxc7klbcyowjb4wrv3e7z@pzovtvtbmnsp>
+References: <aOPDRmk2Zd20qxfk@shell.ilvokhin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1a71398e-637f-4aa5-b4c6-0d3502a62a0c@kernel.org>
- <f31dbb22-0add-481c-aee0-e337a7731f8e@oracle.com> <20251002172310.GC1697@sol>
- <2981dc1d-287f-44fc-9f6f-a9357fb62dbf@oracle.com> <CAHk-=wjcXn+uPu8h554YFyZqfkoF=K4+tFFtXHsWNzqftShdbQ@mail.gmail.com>
- <3b1ff093-2578-4186-969a-3c70530e57b7@oracle.com> <CAHk-=whzJ1Bcx5Yi5JC57pLsJYuApTwpC=WjNi28GLUv7HPCOQ@mail.gmail.com>
- <e1dc974a-eb36-4090-8d5f-debcb546ccb7@oracle.com> <20251006192622.GA1546808@google.com>
- <0acd44b257938b927515034dd3954e2d36fc65ac.camel@redhat.com> <20251008121316.GJ386127@mit.edu>
-In-Reply-To: <20251008121316.GJ386127@mit.edu>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 8 Oct 2025 09:15:49 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whTKNg8+F5EUP2oxcfr14P7geOOpaPBwhxF7a0jjBm2GA@mail.gmail.com>
-X-Gm-Features: AS18NWCvIhnESJ0gUsT-9HGa5XjpSt2eBl3AMS3_hBGymdQg0Vd76BELyTS6HCA
-Message-ID: <CAHk-=whTKNg8+F5EUP2oxcfr14P7geOOpaPBwhxF7a0jjBm2GA@mail.gmail.com>
-Subject: Re: 6.17 crashes in ipv6 code when booted fips=1 [was: [GIT PULL]
- Crypto Update for 6.17]
-To: "Theodore Ts'o" <tytso@mit.edu>
-Cc: Simo Sorce <simo@redhat.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Vegard Nossum <vegard.nossum@oracle.com>, Jiri Slaby <jirislaby@kernel.org>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, netdev@vger.kernel.org, 
-	Jakub Kicinski <kuba@kernel.org>, "nstange@suse.de" <nstange@suse.de>, "Wang, Jay" <wanjay@amazon.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aOPDRmk2Zd20qxfk@shell.ilvokhin.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 8 Oct 2025 at 05:13, Theodore Ts'o <tytso@mit.edu> wrote:
->
-> If there is something beyond hard-disabling CONFIG_CRYPTO_SHA1 which
-> all distributions could agree with --- what would that set of patches
-> look like, and would it be evenly vaguely upstream acceptable.  It
-> could even hidden behind CONFIG_BROKEN.  :-)
+[Somehow I messed up the subject, so resending]
 
-Maybe just
+Cc Hugh, yangge, David
 
- (a) make it a runtime flag - so that it can't mess up the boot, at least
+On Mon, Oct 06, 2025 at 01:25:26PM +0000, Dmitry Ilvokhin wrote:
+> __mlock_folio() does not move folio to unevicable LRU, when
+> folio_activate() removes folio from LRU.
+> 
+> To prevent this case also check for folio_test_mlocked() in
+> folio_mark_accessed(). If folio is not yet marked as unevictable, but
+> already marked as mlocked, then skip folio_activate() call to allow
+> __mlock_folio() to make all necessary updates. It should be safe to skip
+> folio_activate() here, because mlocked folio should end up in
+> unevictable LRU eventually anyway.
+> 
+> To observe the problem mmap() and mlock() big file and check Unevictable
+> and Mlocked values from /proc/meminfo. On freshly booted system without
+> any other mlocked memory we expect them to match or be quite close.
+> 
+> See below for more detailed reproduction steps. Source code of stat.c is
+> available at [1].
+> 
+>   $ head -c 8G < /dev/urandom > /tmp/random.bin
+> 
+>   $ cc -pedantic -Wall -std=c99 stat.c -O3 -o /tmp/stat
+>   $ /tmp/stat
+>   Unevictable:     8389668 kB
+>   Mlocked:         8389700 kB
+> 
+>   Need to run binary twice. Problem does not reproduce on the first run,
+>   but always reproduces on the second run.
+> 
+>   $ /tmp/stat
+>   Unevictable:     5374676 kB
+>   Mlocked:         8389332 kB
+> 
+> [1]: https://gist.github.com/ilvokhin/e50c3d2ff5d9f70dcbb378c6695386dd
+> 
+> Co-developed-by: Kiryl Shutsemau <kas@kernel.org>
+> Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
+> Signed-off-by: Dmitry Ilvokhin <d@ilvokhin.com>
+> Acked-by: Usama Arif <usamaarif642@gmail.com>
+> ---
+> Changes in v2:
+>   - Rephrase commit message: frame it in terms of unevicable LRU, not stat
+>     accounting.
+> 
+>  mm/swap.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/mm/swap.c b/mm/swap.c
+> index 2260dcd2775e..f682f070160b 100644
+> --- a/mm/swap.c
+> +++ b/mm/swap.c
+> @@ -469,6 +469,16 @@ void folio_mark_accessed(struct folio *folio)
+>  		 * this list is never rotated or maintained, so marking an
+>  		 * unevictable page accessed has no effect.
+>  		 */
+> +	} else if (folio_test_mlocked(folio)) {
+> +		/*
+> +		 * Pages that are mlocked, but not yet on unevictable LRU.
+> +		 * They might be still in mlock_fbatch waiting to be processed
+> +		 * and activating it here might interfere with
+> +		 * mlock_folio_batch(). __mlock_folio() will fail
+> +		 * folio_test_clear_lru() check and give up. It happens because
+> +		 * __folio_batch_add_and_move() clears LRU flag, when adding
+> +		 * folio to activate batch.
+> +		 */
 
- (b) make it ternary so that you get a "warn vs turn off"
+This makes sense as activating an mlocked folio should be a noop but I
+am wondering why we are seeing this now. By this, I mean mlock()ed
+memory being delayed to get to unevictable LRU. Also I remember Hugh
+recently [1] removed the difference betwen mlock percpu cache and other
+percpu caches of clearing LRU bit on entry. Does you repro work even
+with Hugh's changes or without it?
 
- (c) and allow people to clear it too - so that you can sanely *test*
-it without forcing a possibly unusable machine
-
-and then
-
- (d) make the clearing be dependent on that 'lockdown' set that nobody
-remotely normal uses anyway
-
-would make this thing a whole lot more testable, and a whole lot less abrupt.
-
-Christ, if even FIPS went "we know this is a big thing, we'll give you
-a decade to sort things out", then the kernel damn well shouldn't make
-it some black-and-white sudden flag.
-
-So we should *NOT* say "FIPS says turn it off eventually, so we should
-turn it off". No. That was very very wrong.
-
-We should say "FIPS says turn it off eventually, so we should give
-users simple tools to find problem spots".
-
-And that "simple tools" very much is about not making it some kind of
-"Oh, what happens is that the machine is unusable". It should be that
-"Oh, look, now it gives a warning that I would have a problem in XYZ
-if it wasn't available".
-
-                   Linus
+[1] https://lore.kernel.org/all/05905d7b-ed14-68b1-79d8-bdec30367eba@google.com/
 
