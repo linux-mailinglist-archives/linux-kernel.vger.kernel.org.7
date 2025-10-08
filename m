@@ -1,150 +1,218 @@
-Return-Path: <linux-kernel+bounces-845904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E364BC6764
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 21:22:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DAD75BC676B
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 21:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DFCAD4ECFC3
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 19:22:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7F1434E8533
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 19:23:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A10257AC2;
-	Wed,  8 Oct 2025 19:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65930246BC5;
+	Wed,  8 Oct 2025 19:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kq0B6iJA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AgzUPALZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876A5241690
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 19:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45AC34BA38;
+	Wed,  8 Oct 2025 19:23:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759951342; cv=none; b=H911qfHo3OQhMRl05Oqdb81kt/QfriHFuH8ab4jfQA9ab02MDhO7/IExHJAGyuVgD+eGXbdlhEzGKEdvehkTEiPCKiuReZaaPW0qJ3EvDjrmltD4ND9FglHxA/uN2QUbiAotgbLlymC4fy1qM68JdMROQU1o5MJblKYsjepTUvs=
+	t=1759951380; cv=none; b=LPlEvOotsEAe5vairj/FhdAah92MuYK8aTe2tqKuKKPppVfpGdOL86RL0cYMiwhF0r4n3isXUTH4U/tx0d+PiqGb08WnmUM5qEATKRY6LA8WNPZvz5EOfe+8ttyrqyGKh22+E9wVdNUYWs+e2abCGodqkn80UuCAt2BYXWaLTkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759951342; c=relaxed/simple;
-	bh=p1FloL7u6sitnIwamS/IVFzvRYrDtxts6lZC0tFc+cs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QZdqPnvokSW2z2hqAZWzVgUkdswjDxmlwB2P5kL2c/jmVeCrx16PfhCrqgwgKTthTnP4yygPMF/yq3E9g/lc+tvo6PlqwAwnT/hWbzib6A21Mt5PA56lQ98DKxEtGughQatVN4K7rNP8JokD1U+y6KEnmfKJMAL2IvvGYXK7JgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kq0B6iJA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31EE6C4CEF4
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 19:22:22 +0000 (UTC)
+	s=arc-20240116; t=1759951380; c=relaxed/simple;
+	bh=8RXtyqmUHYlebDgNkwtw05CKYDQhvfLRTzMQS3ooS/k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=h9MrGmWk44qdL4HTIWAYv0frqoWuyqpTYRPiSphcabYbKU+REGyNI0Qbt9W2gCmSqot2DihEJK8sDmCUw0wpYdEKDZtFGDkEhne18SuYmSznQVhReVJL37VWN2eBHPPzC2zWWpZF23GG7kJia4BQ1aIHH62t392nvXXDz2Aephc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AgzUPALZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01278C4CEE7;
+	Wed,  8 Oct 2025 19:22:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759951342;
-	bh=p1FloL7u6sitnIwamS/IVFzvRYrDtxts6lZC0tFc+cs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=kq0B6iJA6YXOKEhi7Xg6iqp8W9wOglKdHu6myHJdLcfhLEHPOtLPuwRDwwZGvffG1
-	 7qK5mAQ1HHLd3HnUM22z1ZBhDXj+NJOxEeS+GgPYh77HMTDx/JbK3H89xq7xaOlT/5
-	 Lh7tC2UD8+weqYVUqHftiJ/B0NlX1aKmrm00Xol+VEw5YMRouT+Yx2CkU/wLiyjxQP
-	 USgz/tVfp0MhmLGk6j/+zK92GtJJVGsI5vsRXW83yK27wf+ZC0RW22kH+g/r2pJuoJ
-	 0Fp/kOuH4B8BEtBKkMviDJ628dIcLDUkd1lgIr09DdP1Bzd2O/fDvVuxocji7a7AgW
-	 E4EUZTCP3bd+A==
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b3e7cc84b82so35257066b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 12:22:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUPlDv5y/n/AiMe4hSsJpDPc1I089KeAiv6CiJFHNalZLeNifad6SMnAM1ulpwZUt7+YOdpyp6wu06Wq8s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+wbfYjfW41J3jiS4pF9bDRVrLHlcCveZDJaH1/M7KLYoQADRg
-	qL3+bI5XlZP0CmHolBbJOtQQiwriHMxiMilOmVEBchWStm48kDt3632Dc1n23ZdEw8b+QcFAkua
-	XtNPBau6mjQPiXzlBJamPP3GxNe+mgg==
-X-Google-Smtp-Source: AGHT+IFdFngGNxCZPPIQLNIfjr5zUkVQ8HeDdnCrjhFQ2p+SAA5LToy7AYRsDpPb5xEu412/9NqTwzHKyFIOThsSahI=
-X-Received: by 2002:a17:906:d8c3:b0:b51:24e9:7ddc with SMTP id
- a640c23a62f3a-b5124e982d4mr280318966b.50.1759951340737; Wed, 08 Oct 2025
- 12:22:20 -0700 (PDT)
+	s=k20201202; t=1759951380;
+	bh=8RXtyqmUHYlebDgNkwtw05CKYDQhvfLRTzMQS3ooS/k=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=AgzUPALZfxcnsvRtXYVqOsLaTS+qzN+0rLdJ3UNUtAfjUzo8EeLo+YrT51cbxDPZO
+	 +mEtJ0VOkzYFNqN7e2eP95GdZRVDE5936kTjtXeoBkJVe/MLEkY2jZlm3C1CC8wlSf
+	 XPa6RYFJOZJFBhxVtSu/dVPEdzIZUWOKPczd/Jr9+5r1/Xbm1I5iQ4PFS1EDwC7wPy
+	 bCzOkHqzNYTkzpvU/Mx86zDZnGbmoRA+mouCajzUK2yiFJ7HK3Mzj5h6uQgqbxYJzr
+	 srSSJUK+RI8FXlDWwXHRbJ0xfRcvQWOJ/wnfUJAkRL2/d2reR2TTYClSOV5+ewdo+U
+	 en0HFDcXF7d7g==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Christian Loehle <christian.loehle@arm.com>
+Subject:
+ [PATCH v1 3/3] cpufreq: intel_pstate: Simplify the energy model for hybrid
+ systems
+Date: Wed, 08 Oct 2025 21:22:27 +0200
+Message-ID: <3914183.kQq0lBPeGt@rafael.j.wysocki>
+Organization: Linux Kernel Development
+In-Reply-To: <5937608.DvuYhMxLoT@rafael.j.wysocki>
+References: <5937608.DvuYhMxLoT@rafael.j.wysocki>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251001183320.83221-1-ariel.dalessandro@collabora.com>
- <175943240204.235529.17735630695826458855.robh@kernel.org>
- <CABBYNZKSFCes1ag0oiEptKpifb=gqLt1LQ+mdvF8tYRj8uDDuQ@mail.gmail.com>
- <CAL_Jsq+Y6uuyiRo+UV-nz+TyjQzxx4H12auHHy6RdsLtThefhA@mail.gmail.com> <CABBYNZKxGNXS2m7_VAf1d_Ci3uW4xG2NamXZ0UVaHvKvHi07Jg@mail.gmail.com>
-In-Reply-To: <CABBYNZKxGNXS2m7_VAf1d_Ci3uW4xG2NamXZ0UVaHvKvHi07Jg@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 8 Oct 2025 14:22:09 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+aO8Fdq_7PHvh0aTb00qvGdKe2RDRotYcWjqGHppyL4g@mail.gmail.com>
-X-Gm-Features: AS18NWCo7ZqN6wGn4m9B_o_gy6tmLf9kYyB6Mb5gzMeUUTNc9Hq9pXF9owcdPo0
-Message-ID: <CAL_Jsq+aO8Fdq_7PHvh0aTb00qvGdKe2RDRotYcWjqGHppyL4g@mail.gmail.com>
-Subject: Re: [PATCH v3] dt-bindings: net: Convert Marvell 8897/8997 bindings
- to DT schema
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: "Ariel D'Alessandro" <ariel.dalessandro@collabora.com>, andrew+netdev@lunn.ch, 
-	conor+dt@kernel.org, kernel@collabora.com, krzk+dt@kernel.org, 
-	angelogioacchino.delregno@collabora.com, kuba@kernel.org, 
-	devicetree@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
-	davem@davemloft.net, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, edumazet@google.com
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 3, 2025 at 9:33=E2=80=AFAM Luiz Augusto von Dentz
-<luiz.dentz@gmail.com> wrote:
->
-> Hi Rob,
->
-> On Fri, Oct 3, 2025 at 9:38=E2=80=AFAM Rob Herring <robh@kernel.org> wrot=
-e:
-> >
-> > On Thu, Oct 2, 2025 at 2:18=E2=80=AFPM Luiz Augusto von Dentz
-> > <luiz.dentz@gmail.com> wrote:
-> > >
-> > > Hi,
-> > >
-> > > On Thu, Oct 2, 2025 at 3:14=E2=80=AFPM Rob Herring (Arm) <robh@kernel=
-.org> wrote:
-> > > >
-> > > >
-> > > > On Wed, 01 Oct 2025 15:33:20 -0300, Ariel D'Alessandro wrote:
-> > > > > Convert the existing text-based DT bindings for Marvell 8897/8997
-> > > > > (sd8897/sd8997) bluetooth devices controller to a DT schema.
-> > > > >
-> > > > > While here, bindings for "usb1286,204e" (USB interface) are dropp=
-ed from
-> > > > > the DT   schema definition as these are currently documented in f=
-ile [0].
-> > > > >
-> > > > > [0] Documentation/devicetree/bindings/net/btusb.txt
-> > > > >
-> > > > > Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.co=
-m>
-> > > > > ---
-> > > > >  .../net/bluetooth/marvell,sd8897-bt.yaml      | 79 +++++++++++++=
-+++++
-> > > > >  .../devicetree/bindings/net/btusb.txt         |  2 +-
-> > > > >  .../bindings/net/marvell-bt-8xxx.txt          | 83 -------------=
-------
-> > > > >  3 files changed, 80 insertions(+), 84 deletions(-)
-> > > > >  create mode 100644 Documentation/devicetree/bindings/net/bluetoo=
-th/marvell,sd8897-bt.yaml
-> > > > >  delete mode 100644 Documentation/devicetree/bindings/net/marvell=
--bt-8xxx.txt
-> > > > >
-> > > >
-> > > > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> > > >
-> > > > You'll probably have to resend this after rc1.
-> > >
-> > > In that case I'd like to have a Fixes tag so I can remember to send i=
-t
-> > > as rc1 is tagged.
-> >
-> > A Fixes tag is not appropriate for a conversion to DT schema.
->
-> Ok, but then how do you justify merging it for an RC?
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-I don't.
+Since em_cpu_energy() computes the cost of using a given CPU to
+do work as a product of the utilization of that CPU and a constant
+positive cost coefficient supplied through an energy model, EAS
+evenly distributes the load among CPUs represented by identical
+one-CPU PDs regardless of what is there in the energy model.
 
-> Or I'm
-> misunderstanding and that should just be merged to bluetooth-next and
-> wait for the next merge window?
+Namely, two CPUs represented by identical PDs have the same energy
+model data and if the PDs are one-CPU, max_util is always equal to the
+utilization of the given CPU, possibly increased by the utilization
+of a task that is waking up.  The cost coefficient is a monotonically
+increasing (or at least non-decreasing) function of max_util, so the
+CPU with higher utilization will generally get a higher (or at least
+not lower) cost coefficient.  After multiplying that coefficient by
+CPU utilization, the resulting number will always be higher for the
+CPU with higher utilization.  Accordingly, whenever these two CPUs
+are compared, the cost of running a waking task will always be higher
+for the CPU with higher utilization which leads to the even distribution
+of load mentioned above.
 
-Yes, this is 6.19 material.
+For this reason, the energy model can be adjusted in arbitrary
+ways without disturbing the even distribution of load among CPUs
+represented by indentical one-CPU PDs.  In particular, for all of
+those CPUs, the energy model can provide one cost coefficient that
+does not depend on the performance level.
 
-> In that case I can just merge it right
-> away.
+Moreover, if there are two different CPU types, A and B, each having
+a performance-independent cost coefficient in the EM, then these
+cost coefficients determine the utilization levels at which CPUs
+of type A and B will be regarded as equally expensive for running
+a waking task.  For example, if the cost coefficient for CPU type
+A is 1, the cost coefficient for CPU type B is 2, and the utilization
+of the waking task is x, a CPU of type A will be regarded as "cost-
+equivalent" to a CPU of type B if its utilization is the sum of x and
+twice the utilization of the latter.  Similarly, for the cost
+coefficients equal to 2 and 3, respectively, the "cost equivalence"
+utilization of CPU type A will be the sum of x/2 and the CPU type B
+utilization multiplied by 3/2.  In the limit of negligibly small x,
+the "cost equivalence" utilization of CPU type A is just the
+utilization of CPU type B multiplied by the ratio of the cost
+coefficients for B and A.  That ratio can be regarded as an effective
+"cost priority" of CPU type A relative to CPU type B, as it indicates
+how much more on average the former needs to be loaded so it can be
+regarded as cost-equivalent to the latter (for low-utilization tasks).
 
-That's up to you.
+Use the above observations for simplifying the default energy model
+for hybrid platforms in intel_pstate as follows:
 
-Rob
+ * A performance-independent cost coefficient is introduced for each CPU
+   type.
+
+ * The number of states in each PD is reduced to 2 (it is not necessary
+   to use more of them because the cost per scale-invariant utilization
+   point does not depend on the performance level any more).
+
+ * CPUs without L3 cache (LPE-cores) that are expected to be the most
+   energy-efficient ones are prioritized over any other CPUs.
+
+ * The CPU type value from CPUID (now easliy accessible through
+   cpu_data[]) is used for identifying P-cores and E-cores instead
+   of hybrid scaling factors which are less reliable.
+
+ * E-cores are preferred to P-cores.
+
+The cost coefficients for different CPU types that can appear in a
+hybrid system (P-cores, E-cores, and LPE-cores that are effectively
+E-cores without L3 cache and with lower capacity) are chosen in
+accordance with the following rules:
+
+ * The cost priority of LPE-cores relative to E-cores is 1.5.
+
+ * The cost priority of E-cores relative to P-cores is 2, which
+   also means that the cost priority of LPE-cores relative to
+   P-cores is 3.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/cpufreq/intel_pstate.c |   41 +++++++++++++++--------------------------
+ 1 file changed, 15 insertions(+), 26 deletions(-)
+
+--- a/drivers/cpufreq/intel_pstate.c
++++ b/drivers/cpufreq/intel_pstate.c
+@@ -927,23 +927,20 @@ static struct cpudata *hybrid_max_perf_c
+ static DEFINE_MUTEX(hybrid_capacity_lock);
+ 
+ #ifdef CONFIG_ENERGY_MODEL
+-#define HYBRID_EM_STATE_COUNT	4
++#define HYBRID_EM_STATE_COUNT	2
+ 
+ static int hybrid_active_power(struct device *dev, unsigned long *power,
+ 			       unsigned long *freq)
+ {
+ 	/*
+-	 * Create "utilization bins" of 0-40%, 40%-60%, 60%-80%, and 80%-100%
+-	 * of the maximum capacity such that two CPUs of the same type will be
+-	 * regarded as equally attractive if the utilization of each of them
+-	 * falls into the same bin, which should prevent tasks from being
+-	 * migrated between them too often.
++	 * Create two "states" corresponding to 50% and 100% of the full
++	 * capacity.
+ 	 *
+-	 * For this purpose, return the "frequency" of 2 for the first
++	 * For this purpose, return the "frequency" of 1 for the first
+ 	 * performance level and otherwise leave the value set by the caller.
+ 	 */
+ 	if (!*freq)
+-		*freq = 2;
++		*freq = 1;
+ 
+ 	/* No power information. */
+ 	*power = EM_MAX_POWER;
+@@ -970,26 +967,18 @@ static bool hybrid_has_l3(unsigned int c
+ static int hybrid_get_cost(struct device *dev, unsigned long freq,
+ 			   unsigned long *cost)
+ {
+-	struct pstate_data *pstate = &all_cpu_data[dev->id]->pstate;
+-
+-	/*
+-	 * The smaller the perf-to-frequency scaling factor, the larger the IPC
+-	 * ratio between the given CPU and the least capable CPU in the system.
+-	 * Regard that IPC ratio as the primary cost component and assume that
+-	 * the scaling factors for different CPU types will differ by at least
+-	 * 5% and they will not be above INTEL_PSTATE_CORE_SCALING.
+-	 *
+-	 * Add the freq value to the cost, so that the cost of running on CPUs
+-	 * of the same type in different "utilization bins" is different.
+-	 */
+-	*cost = div_u64(100ULL * INTEL_PSTATE_CORE_SCALING, pstate->scaling) + freq;
+ 	/*
+-	 * Increase the cost slightly for CPUs able to access L3 to avoid
+-	 * touching it in case some other CPUs of the same type can do the work
+-	 * without it.
++	 * The cost per scale-invariant utilization point for LPE-cores (CPUs
++	 * without L3 cache), E-cores and P-cores is chosen so that the cost
++	 * priority of LPE-cores relative to E-cores is 1.5 and the cost
++	 * priority of E-cores relative to P-cores is 2.
+ 	 */
+-	if (hybrid_has_l3(dev->id))
+-		*cost += 2;
++	if (!hybrid_has_l3(dev->id))
++		*cost = 2;
++	else if (hybrid_get_cpu_type(dev->id) == INTEL_CPU_TYPE_ATOM)
++		*cost = 3;
++	else
++		*cost = 6;
+ 
+ 	return 0;
+ }
+
+
+
 
