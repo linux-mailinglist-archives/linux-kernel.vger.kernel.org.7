@@ -1,63 +1,63 @@
-Return-Path: <linux-kernel+bounces-845035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AA7CBC354D
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 06:40:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0817BC3550
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 06:40:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2747B351161
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 04:40:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CAA9B4F0280
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 04:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27BC22BEC2E;
-	Wed,  8 Oct 2025 04:40:13 +0000 (UTC)
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B8E2BEC2A;
+	Wed,  8 Oct 2025 04:40:17 +0000 (UTC)
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2267081E
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 04:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B1A2BE7A3
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 04:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759898412; cv=none; b=HC1J+MdRgp6dYeGqHpqUKBl/1ql97xgtwatxRDY7umo5wOwBlIurgIKYAMBqpEmDtWLV922tolCehOqZbr/ke9bZnJdVYGtOj2z70pBQ/+5PKMMocWYFFf3qaEffOEnwGITdSRbShhLaTzfLujm9w5F2p2FqmeESQUjR3uitGUg=
+	t=1759898416; cv=none; b=XaNF7rFbQ7Xyve8Yq2z91ZUduxbT6vnVuW6dJ4qeLNIHpU53Oz1A2eCBv+Sa4ELyKmVijQZlM2BXdn7vMNc3qJnu+85EN069g3JajwyEmMWYXW274xcj6sVTdsbINUjNQaYlSGYyLqI5ghQ7IEkcCOaHnD/wUYAdbn2Ke+0iZf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759898412; c=relaxed/simple;
-	bh=Pqucpul+5RJtUtZoACgpdoHCzTgMciFNbTy5krsKgDY=;
+	s=arc-20240116; t=1759898416; c=relaxed/simple;
+	bh=bZJyIuTDVmo4Y04op6+VtmrFSedVXRPbJQfkp4IkVjQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZdPwdzkFWF5TBwEIWjRPKh6tHbRnRl8M/yDVRP8PIKKrHtvGFVkEctAxZyk66c3jKkjdangz1wVwv/Wp3buDFfRGMROGCLkpuP0AW12q/ZmClOg2C9Or9Kk2baADYtq3baEZ6ihZdjiKWQhbC6T1bJ/L+tlIRfBkBCRIVu9rI74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.51
+	 MIME-Version; b=ICF+rgCnbNnnba//EB6IdiP/uDzq6rV5pnVNz09gSnvZ4gSaEknTSwwf1PZn5IYZHK7aKAHYBZLrLjn48yVhXvk2xU2CeuSyomPt2ugGPC8b7A5sNA3kQl9dgTc62bGPMM3ofpF53lHR+HffLeLj99RQryRQhecLij5/PaQBNUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3ee1381b835so5944873f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 21:40:09 -0700 (PDT)
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-46e3a50bc0fso55736665e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 21:40:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759898408; x=1760503208;
+        d=1e100.net; s=20230601; t=1759898413; x=1760503213;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=O1vidbU4o/R9Ye6BnVqcmKpIlA05IhBIAjHHRerQXS0=;
-        b=vufwmL60Islqfl4aTFd2Ygb35gcOBL1A/1lwT4dIwVG9gC+NII18eWwcFP0S97YUZa
-         M4XMX/KLUGTgc+xUcg5gHQKi6o0JHWIHkzZqqhJnWDe2AEAty8bne0yQfhgneFAsFTb9
-         RwZkBB1LJuF65dV6PxYV98Q4wGR44tihDQF5Rte7PpoGnUX6ZgM/+AWxoYJITLgXpNkW
-         k7QqWQXaQ7DS40Y7nFVDMM9w17OCsXa0LZdpN50TjARxZXH8Ol4FGNOPmvG+Jd+CIIO3
-         2JUIZWqTXtmgywzxGxtyOA07/WjUMq2H6HUVb9KwKi5E6WcUkXxKo+wStnI0NljaW7Oj
-         ionQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWUOX9mgD4eA1R89fGz0blb5ndTMdXmrjJnqrDqo2FA/xmec71IK4HHpBEuI3dTGmUzmz/qAVhMIs+KcIw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQk7xM2jMboXf1CFhLb6DndxwwSONoBdz0APmDAnjCHfsB8Unt
-	SSnwGdZx2A4uu2Uqf1HX10eXVty4H8hvo6IQ+usEYloYu99Ank9HJJJd
-X-Gm-Gg: ASbGncuU2ZBZspBR5zECYZjo0eQby6tFNO3DFH5eyFTkKUIY+0u8UaTF21LcwhzUExL
-	H3WFGUFeour04AlmRPVnpjpOeStZyvC7hbASRnwHQwYWSWU922528Xq4VzlZH6JM/t9UPzCT+H0
-	hPVjDQHieO07t0BgrSUTftSl6McHaFIcjSt5LtCv1sxr9DKYOvn3YrAIC4twev+q/nn9gzNeTU+
-	J6Ric0iQH0vsJ/XnrC3bPjuZ7Tt1VHBsPXO7b4xOnpn1qaXJ+S60TltfOoduXdtk5h+zvRJ2qYA
-	qHW5WfYlwgL2tL1dMJYnkT6DdoD+Fep4ga0pQi0Y/xf5PwjLeBKZJZPTw7w1uFNE1Z2VCTFjdNB
-	lhGNUf+QDnl5+M7JhcO7YNwVggs3d1FsNCTGzpqQ=
-X-Google-Smtp-Source: AGHT+IHOpwHZ85+agtOAF2qCT7IEMETz9GhbzRlWnNeqadDo/gCzv+K2+p7rO5lMYvUpSyxh4Ub+DQ==
-X-Received: by 2002:a05:6000:2890:b0:3ea:f4a1:f063 with SMTP id ffacd0b85a97d-4267b3394cdmr964670f8f.55.1759898408068;
-        Tue, 07 Oct 2025 21:40:08 -0700 (PDT)
+        bh=FgeK9txdpLwb4kWStPacRxPPvf5dOZwITmGfD3OrnjM=;
+        b=JlZ/1itq3Ld+B0xQBGArDeW/2eSdlVicsffitmFpAmPij0HvdblEPla14YcyyCRxWe
+         VXaxLFHG3qLoA43jW+ZE4DaY2N63ffeUCPftwyUcf/+/4fEVJ5NBXJF+H+12Pxv0DEi0
+         8s+ZcTxiG2YlA0IQ75H/mEB57Pp1ViPafCS9tmJIiF5ed9QhvbCajT5cDHBnUeIF4v1s
+         PWBIG9b4jgTm9MKJ67nXHLjMOZA39pjoDRWjLAhZymXE4nQ8iZNRZ79EHik16zZNlFTQ
+         PYlonZQMEkwBq3IG6d65KFI4Wqtf4B1YyxQEUr22DBqrp9MSi7adRoR6GeNRetUlo/zE
+         oyNA==
+X-Forwarded-Encrypted: i=1; AJvYcCXWPTrETgg3Q5cUXDJ4CyAOI6dvdqSJ3pRByy/6gtMtjMhDdDZiF36qFpLyWqYishlg3VeNs03lwsheYu8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeOqKZQb50u7TzTCWcsdZmeGVCwGLrjH8J8+G8SxsPJm9CHYvY
+	RGYRZ1mAF8QBonnrWXoepWaMKU8bF/oWfRR+j7AMh2BQd0Jv/zD+Fen+
+X-Gm-Gg: ASbGncub15yUtNYv0VSNVHGOyVsCe1aMCrxcYmXbp4YTIV0RmAgl+L0R6lst9HLOh5g
+	vzVMUKeG3IYQmVAgdUPC6+Nf6TpDF81Dlmo3hAt3dwocU0hxVYtngWQRFSXyyeyfcd12CHGzo5E
+	DvoNcQ7GY/EgfMX0d60FjTaUiatkJs0G0eJOB6NZOLzOaqVvYOTbJzHspXY9BYS5+nKtZejlQeV
+	7+GDGKKzqkMA1aMvFKSzLdwArbfwUmipcKRdzfFULgFOFMXkPnxXCZgV7gAztzK6jqKcx0s0Nop
+	YKkuRxwoC0GJnczvEs9BP8Yc5PhgYp9VE35zh72Q802Fc9/5SgEIgxEGGpYLEa9NZaIgEGX6Grz
+	YdF1YwwjoFZVmeLq3SKpe6T/07P9abxJaG3rju5E=
+X-Google-Smtp-Source: AGHT+IFFXobL07i2VJMhEzLhFg05M47YN+wsWxZdEN4xGgG8V0Gor51hRV6tBPzlCpXcq9XDuLQd5g==
+X-Received: by 2002:a05:600c:37c9:b0:46e:477a:f3dd with SMTP id 5b1f17b1804b1-46fa9b1b18emr11613395e9.36.1759898413470;
+        Tue, 07 Oct 2025 21:40:13 -0700 (PDT)
 Received: from localhost.localdomain ([2a09:0:1:2::30b2])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8a6c49sm28159164f8f.3.2025.10.07.21.40.01
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8a6c49sm28159164f8f.3.2025.10.07.21.40.08
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 07 Oct 2025 21:40:07 -0700 (PDT)
+        Tue, 07 Oct 2025 21:40:13 -0700 (PDT)
 From: Lance Yang <lance.yang@linux.dev>
 To: akpm@linux-foundation.org,
 	david@redhat.com,
@@ -74,9 +74,9 @@ Cc: ziy@nvidia.com,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
 	Lance Yang <lance.yang@linux.dev>
-Subject: [PATCH mm-new v3 1/3] mm/khugepaged: optimize PTE scanning with if-else-if-else-if chain
-Date: Wed,  8 Oct 2025 12:37:46 +0800
-Message-ID: <20251008043748.45554-2-lance.yang@linux.dev>
+Subject: [PATCH mm-new v3 2/3] mm/khugepaged: use VM_WARN_ON_FOLIO instead of VM_BUG_ON_FOLIO for non-anon folios
+Date: Wed,  8 Oct 2025 12:37:47 +0800
+Message-ID: <20251008043748.45554-3-lance.yang@linux.dev>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20251008043748.45554-1-lance.yang@linux.dev>
 References: <20251008043748.45554-1-lance.yang@linux.dev>
@@ -90,68 +90,51 @@ Content-Transfer-Encoding: 8bit
 
 From: Lance Yang <lance.yang@linux.dev>
 
-As pointed out by Dev, the PTE checks for disjoint conditions in the
-scanning loops can be optimized. is_swap_pte, (pte_none && is_zero_pfn),
-and pte_uffd_wp are mutually exclusive.
+As Zi pointed out, we should avoid crashing the kernel for conditions
+that can be handled gracefully. Encountering a non-anonymous folio in an
+anonymous VMA is a bug, but a warning is sufficient.
 
-This patch refactors the loops in both __collapse_huge_page_isolate() and
-hpage_collapse_scan_pmd() to use a continuous if-else-if-else-if chain
-instead of separate if blocks. While at it, the redundant pte_present()
-check before is_zero_pfn() is also removed.
+This patch changes the VM_BUG_ON_FOLIO(!folio_test_anon(folio)) to a
+VM_WARN_ON_FOLIO() in both __collapse_huge_page_isolate() and
+hpage_collapse_scan_pmd(), and then aborts the scan with SCAN_PAGE_ANON.
 
-Also, this is a preparatory step to make it easier to merge the
-almost-duplicated scanning logic in these two functions, as suggested
-by David.
+Making more of the scanning logic common between hpage_collapse_scan_pmd()
+and __collapse_huge_page_isolate(), as suggested by Dev.
 
+Suggested-by: Dev Jain <dev.jain@arm.com>
+Suggested-by: Zi Yan <ziy@nvidia.com>
 Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
 Reviewed-by: Dev Jain <dev.jain@arm.com>
-Reviewed-by: Zi Yan <ziy@nvidia.com>
-Suggested-by: Dev Jain <dev.jain@arm.com>
-Suggested-by: David Hildenbrand <david@redhat.com>
 Signed-off-by: Lance Yang <lance.yang@linux.dev>
 ---
- mm/khugepaged.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ mm/khugepaged.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index bec3e268dc76..e3e27223137a 100644
+index e3e27223137a..b5c0295c3414 100644
 --- a/mm/khugepaged.c
 +++ b/mm/khugepaged.c
-@@ -548,8 +548,7 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
- 	for (_pte = pte; _pte < pte + HPAGE_PMD_NR;
- 	     _pte++, addr += PAGE_SIZE) {
- 		pte_t pteval = ptep_get(_pte);
--		if (pte_none(pteval) || (pte_present(pteval) &&
--				is_zero_pfn(pte_pfn(pteval)))) {
-+		if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
- 			++none_or_zero;
- 			if (!userfaultfd_armed(vma) &&
- 			    (!cc->is_khugepaged ||
-@@ -560,12 +559,10 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
- 				count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
- 				goto out;
- 			}
--		}
--		if (!pte_present(pteval)) {
-+		} else if (!pte_present(pteval)) {
- 			result = SCAN_PTE_NON_PRESENT;
- 			goto out;
--		}
--		if (pte_uffd_wp(pteval)) {
-+		} else if (pte_uffd_wp(pteval)) {
- 			result = SCAN_PTE_UFFD_WP;
- 			goto out;
+@@ -573,7 +573,11 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
  		}
-@@ -1321,8 +1318,7 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
- 				count_vm_event(THP_SCAN_EXCEED_SWAP_PTE);
- 				goto out_unmap;
- 			}
--		}
--		if (pte_uffd_wp(pteval)) {
-+		} else if (pte_uffd_wp(pteval)) {
- 			/*
- 			 * Don't collapse the page if any of the small
- 			 * PTEs are armed with uffd write protection.
+ 
+ 		folio = page_folio(page);
+-		VM_BUG_ON_FOLIO(!folio_test_anon(folio), folio);
++		if (!folio_test_anon(folio)) {
++			VM_WARN_ON_FOLIO(true, folio);
++			result = SCAN_PAGE_ANON;
++			goto out;
++		}
+ 
+ 		/* See hpage_collapse_scan_pmd(). */
+ 		if (folio_maybe_mapped_shared(folio)) {
+@@ -1340,6 +1344,7 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
+ 		folio = page_folio(page);
+ 
+ 		if (!folio_test_anon(folio)) {
++			VM_WARN_ON_FOLIO(true, folio);
+ 			result = SCAN_PAGE_ANON;
+ 			goto out_unmap;
+ 		}
 -- 
 2.49.0
 
