@@ -1,173 +1,124 @@
-Return-Path: <linux-kernel+bounces-845978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB2D4BC69E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:59:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02F80BC69FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 23:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD1F2420699
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:59:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B28A442049A
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 21:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649042777F9;
-	Wed,  8 Oct 2025 20:58:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0536028504F;
+	Wed,  8 Oct 2025 21:00:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ys4ncc22"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FowkcP+6"
+Received: from mail-ed1-f67.google.com (mail-ed1-f67.google.com [209.85.208.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00B326E716
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 20:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD2127B50F
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 21:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759957138; cv=none; b=BH6It3Wq0IB7cGoQkom5TPEj9uELn8wGR2qJzfO3nmHtDzEJBOnrikEJ8P01j7WenGDVxGBbOJfgPx13ptFzmvo0YpYch6X59B5vTS4VCY0i4uEhjg6sxcvRQTEnE+qm2HFUWk600eYaAPdgGNUhShczgasYJuhwcCPU4VnvkSk=
+	t=1759957216; cv=none; b=qg72lcFZdDO0Deqj4USWujW1LkmMqg/K57J0oPaUxHOfbalVUfNP2nsI6EvFSkXeXhez+stmCv6J6oRn9xPKClyOYSlgNzmumUwZ2+UZncX3ImCeXINhXg6my4PVBpG6BdJ3mFmaYHrLapspAzuQQZdy5eLrblhOQbv6q94RoK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759957138; c=relaxed/simple;
-	bh=I/O5cFAIVReUYpBF2BqP5uRgVY4CVJzEBglG9Ag9N1c=;
+	s=arc-20240116; t=1759957216; c=relaxed/simple;
+	bh=GKC6oaRq+uiw7mdJich1LJGlGIA1fAyZCaa6CLeTtHU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z0/0TZ9w3EH/lSXd6vTH+Dqmk4JOVFvCHJ3lK32RtWCE5c9Jn0pvANwYx+2IbBOkpVUdhSMRtg0R7Jv0HK/jEO7r9o1wBbrACB/rupqhenNrqqodSOje1FitEaM2kuKH7FTUlueYHlGIdrk8jQENyLxkJz9NjPT6/xYST30Uq7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ys4ncc22; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A800C4CEE7
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 20:58:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759957138;
-	bh=I/O5cFAIVReUYpBF2BqP5uRgVY4CVJzEBglG9Ag9N1c=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Ys4ncc2238l++WKdLlwPuP9Dhfkv0tOhxX6aBWkPTsZd5E1V4elf4rMrzL1Fpk17N
-	 4I4EmHUkjsII5KGgMR7AMtvNNlPFZAHepB/l27uboV+Y8Nv9XeNPHt8esi+ThQ/P7n
-	 C/zPlGWD3XBMUqWtXR7zo+zaSXyEdVmBgxj5l8iPAeZTSayhg4mh8F6xgFV1zkr7AD
-	 rDNBNHJvFqOpCd5UkIF7HzV1WK/JYB1FhX1UQA8wBMdarheSvOnAL9sX8P7Z2qEvE2
-	 NaQS/EiFPcRMgPRc+0P9LX+HYxzQ9qwWf1qfn2Nj/XAI4s7JzlMcZ/CcJjCbsJXQqk
-	 Y4+wU87lk/ecA==
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-77f947312a5so2874627b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 13:58:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXt+ZnE0dc+nh8+9JU2xC2PQ32CFPhrJty/Qj1yt7CC61c9HkDr22gdsqmrwUZOQ5pfT/CDF0J/8r/GF9U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweEEuQbWUi3f65QFFZF5pXX5/rd+Pj0xnGp1aXr2GG/6p++CdI
-	XPF0bqqnkG9ocZNJYA9w9Tdr+KYHvSTpQODClvKL7lhQdsHZc8qR6DkBhUPdYSQ6tIp5VEEFfc3
-	reQtN8V8raAN4mQNAhjyWGQ8mWZDWntzTcz7uZ5nESQ==
-X-Google-Smtp-Source: AGHT+IFmDct8NBJB7hs7xpsIKwGqjrJKi8DA5w41X122GCxOpuP97IsVpRnLD3pg7rvYeA6vDxTtei2PmX8W22XUzTk=
-X-Received: by 2002:a53:cb41:0:b0:634:751b:1d13 with SMTP id
- 956f58d0204a3-63ccb85da27mr3897822d50.23.1759957137556; Wed, 08 Oct 2025
- 13:58:57 -0700 (PDT)
+	 To:Cc:Content-Type; b=r5pgkpArGskFKtNcK9kTHw7ZNa3RFtybfgd4WG5loK1Nca11d80LlzNu4Tsr3rMF2FGddkvJW5N2jMNXCgKRvmozuNOCpdEVPjGd4Xwzny0AqNEs8Ho24lG9Pp0vLxqJu2qtTESrUgym9MRkVBYZ9j5SGCzn8cZayigbfTyMA+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FowkcP+6; arc=none smtp.client-ip=209.85.208.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f67.google.com with SMTP id 4fb4d7f45d1cf-634cef434beso2142389a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 14:00:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759957212; x=1760562012; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=gjWje9iMvGX5rIAekMXgH40NgWMmwUHYwMVyzVQ9M2U=;
+        b=FowkcP+6mNH19c2K4CZXs3n9WF3fiGnbcPHyRH9es9fs141pnKuwq/VQhncKSAihGo
+         xruaeS/y3Wgoq++5H3LV1GHQpOXyDf+RuFefcx1vbxUP9cMAYEVt+QpExrwbE48QrRRx
+         zXrWzvhgY2Wc5+lzQKCwRRDZZI4JCInFYumsC+8Hu7TrbwS/HkQNVfmdOVsc5irGQnUE
+         bM9abaGMmI8MOVH6QDENeVPUpliPKoetzWqVg8Lq/bo9Bn1+9YbxOae1NqJ8o/vhXx9n
+         VTIQ2pmoTG3WMuNqzsDYXywxz/utT4QzCwENkiCeVdKWVohHIIA4+Nv1vO2rpyORMSTn
+         R9ZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759957212; x=1760562012;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gjWje9iMvGX5rIAekMXgH40NgWMmwUHYwMVyzVQ9M2U=;
+        b=eWMr6DOnEgATDrebTc0KYBdRB64O0oAmt22WS+m+pZfWD3R1fJhOK9zgbuarha9feP
+         PNUhZPlqD4Um1AzgREmtkwL/9S6ufjZ64PR/RyCEh5dacgwHtUFW3kOVQERZBHfIaZl0
+         W/xHKUnUm7K4vnvY9G7TJCzdnQAetgzSBP62UNdyAaaMyZVKcwV9C4i6ZDG8p/OU0Gay
+         DiKe7Axjh1ZsaEPtTlZA/tHJlMq8QC6pU0fZZ395AYZklWJuqyxcWTrRgLCq6ugJgQa8
+         TskDNCBZlzYaRCMPq4WohWX7xovxnIn/X+BmXLfuo35ta2NcagbwhhO6yhLdfcB9K8ym
+         GXBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV76ahDwiUhW7Vl5XQoah486m5jjN+A0xHuth3KWLIar4MjJtovduB6RE4ISuhwlMsQeWWfueG7U5CPg+8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFB1CEDCz0uw5waNkBqkxk2NMBijKhEXWJZCjo70xrb635Wj82
+	DDBIkjIJNthu3Ds1qL9kgjFxYvmaoyX8JElD2nDC+sw4NlwodHuVbFZVSPxH1HCiAP3FL2eKdcs
+	oZI5ITL8jI3VBl5LsRACIka2bpffIoaA=
+X-Gm-Gg: ASbGncvnI6jm4x7sKlHa3jKNUjz9iA0PxnQSEJPbrm1zuFs+A3/o7xf3CbLmkFHGsiA
+	ONUVqK7AU0eJNLGes7Zs5Jbjii0BnelQWpNlwn9OKUW+AHtjem8LpxhDo9vBhKsNt+af08B0ToN
+	d8CWwH1TnyM3/C3SmnGEMiX8uYYmWGZ+x+ZEDpHuRhWmQnZo3pL/kU+od4xClUjZ1sWXykhZTLU
+	IU+j+Lmo5k0+LiAWTkK8yHb0FVeTrQGV+TRcDJ7F5E34NZfIhsm6Z0FbZMYda2+ce32Ng/0iY2L
+	/n2iaOnO+qWGG3wUkvT6
+X-Google-Smtp-Source: AGHT+IHjmmpMFRNDs6euqAb3iIYh0ALJqoacwPe+YJkt7+Se3sU7gW3RO0BPcw/5AzbPQrFFFyx0miU/mwSJGY2lnt4=
+X-Received: by 2002:a17:907:d412:b0:b3b:478:515f with SMTP id
+ a640c23a62f3a-b4f43105684mr894239866b.22.1759957212145; Wed, 08 Oct 2025
+ 14:00:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251007-swap-clean-after-swap-table-p1-v1-0-74860ef8ba74@tencent.com>
- <20251007-swap-clean-after-swap-table-p1-v1-2-74860ef8ba74@tencent.com>
-In-Reply-To: <20251007-swap-clean-after-swap-table-p1-v1-2-74860ef8ba74@tencent.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Wed, 8 Oct 2025 13:58:45 -0700
-X-Gmail-Original-Message-ID: <CACePvbXtWQq0g+K0YtQLi3Sz5ukS5YS3XF-_VDEmUR0Y3f_Agg@mail.gmail.com>
-X-Gm-Features: AS18NWDUClHnjux-YVCXQbI0rvRka3sDNL5Dc2iIYoaxaQjpkAmt0AU3DR9zlUc
-Message-ID: <CACePvbXtWQq0g+K0YtQLi3Sz5ukS5YS3XF-_VDEmUR0Y3f_Agg@mail.gmail.com>
-Subject: Re: [PATCH 2/4] mm, swap: rename helper for setup bad slots
-To: Kairui Song <ryncsn@gmail.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, 
-	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, David Hildenbrand <david@redhat.com>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Ying Huang <ying.huang@linux.alibaba.com>, 
-	linux-kernel@vger.kernel.org
+References: <20250927061210.194502-1-menglong.dong@linux.dev>
+ <20250927061210.194502-2-menglong.dong@linux.dev> <CAADnVQJAdAxEOWT6avzwq6ZrXhEdovhx3yibgA6T8wnMEnnAjg@mail.gmail.com>
+ <3571660.QJadu78ljV@7950hx> <7f28937c-121a-4ea8-b66a-9da3be8bccad@gmail.com>
+ <CAADnVQLxpUmjbsHeNizRMDkY1a4_gLD0VBFWS8QMYHzpYBs4EQ@mail.gmail.com>
+ <CAP01T75TegFO0DrZ=DvpNQBSnJqjn4HvM9OLsbJWFKJwzZeYXw@mail.gmail.com>
+ <0adc5d8a299483004f4796a418420fe1c69f24bc.camel@gmail.com>
+ <CAP01T77agpqQWY7zaPt9kb6+EmbUucGkgJ_wEwkPFpFNfxweBg@mail.gmail.com> <09bc63a92ba1c9042d57bf19258e28e3cd00be57.camel@gmail.com>
+In-Reply-To: <09bc63a92ba1c9042d57bf19258e28e3cd00be57.camel@gmail.com>
+From: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Date: Wed, 8 Oct 2025 22:59:35 +0200
+X-Gm-Features: AS18NWDhFIkGMmqU2seG_4tWpW5wh6BoPDeAWpFQCUEp4vlG8Tha-zmBXl0Sza8
+Message-ID: <CAP01T75DqdVHgfD5e4ZcizZLrh7+VOv4cmNyZ2YFbFJE3f0Ttw@mail.gmail.com>
+Subject: Re: bpf_errno. Was: [PATCH RFC bpf-next 1/3] bpf: report probe fault
+ to BPF stderr
+To: Eduard Zingerman <eddyz87@gmail.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Leon Hwang <hffilwlqm@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Menglong Dong <menglong.dong@linux.dev>, 
+	Menglong Dong <menglong8.dong@gmail.com>, Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, jiang.biao@linux.dev
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Chris Li <chrisl@kernel.org>
+On Wed, 8 Oct 2025 at 22:30, Eduard Zingerman <eddyz87@gmail.com> wrote:
+>
+> On Wed, 2025-10-08 at 22:08 +0200, Kumar Kartikeya Dwivedi wrote:
+>
+> [...]
+>
+> > Since we're piling on ideas, one of the other things that I think
+> > could be useful in general (and maybe should be done orthogonally to
+> > bpf_errno)
+> > is making some empty nop function and making it not traceable reliably
+>                                                   ^^^^^^^^^^^^^
+>                                    You mean traceable, right?
+>                    So that user attaches a bpf program to it,
+>                   and debugs bpf programs using bpf programs?
 
-Chris
+Yeah, sorry, typo.
 
-On Mon, Oct 6, 2025 at 1:03=E2=80=AFPM Kairui Song <ryncsn@gmail.com> wrote=
-:
 >
-> From: Kairui Song <kasong@tencent.com>
->
-> The name inc_cluster_info_page is very confusing, as this helper is only
-> used during swapon to mark bad slots. Rename it properly and turn the
-> VM_BUG_ON in it into WARN_ON to expose more potential issues. Swapon is
-> a cold path, so adding more checks should be a good idea.
->
-> No feature change except new WARN_ON.
->
-> Signed-off-by: Kairui Song <kasong@tencent.com>
-> ---
->  mm/swapfile.c | 22 +++++++++++-----------
->  1 file changed, 11 insertions(+), 11 deletions(-)
->
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index 0d1924f6f495..732e07c70ce9 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -751,14 +751,14 @@ static void relocate_cluster(struct swap_info_struc=
-t *si,
->  }
->
->  /*
-> - * The cluster corresponding to page_nr will be used. The cluster will n=
-ot be
-> - * added to free cluster list and its usage counter will be increased by=
- 1.
-> - * Only used for initialization.
-> + * The cluster corresponding to @offset will be accounted as having one =
-bad
-> + * slot. The cluster will not be added to the free cluster list, and its
-> + * usage counter will be increased by 1. Only used for initialization.
->   */
-> -static int inc_cluster_info_page(struct swap_info_struct *si,
-> -       struct swap_cluster_info *cluster_info, unsigned long page_nr)
-> +static int swap_cluster_setup_bad_slot(struct swap_cluster_info *cluster=
-_info,
-> +                                      unsigned long offset)
->  {
-> -       unsigned long idx =3D page_nr / SWAPFILE_CLUSTER;
-> +       unsigned long idx =3D offset / SWAPFILE_CLUSTER;
->         struct swap_table *table;
->         struct swap_cluster_info *ci;
->
-> @@ -772,8 +772,8 @@ static int inc_cluster_info_page(struct swap_info_str=
-uct *si,
->
->         ci->count++;
->
-> -       VM_BUG_ON(ci->count > SWAPFILE_CLUSTER);
-> -       VM_BUG_ON(ci->flags);
-> +       WARN_ON(ci->count > SWAPFILE_CLUSTER);
-> +       WARN_ON(ci->flags);
->
->         return 0;
->  }
-> @@ -3396,7 +3396,7 @@ static struct swap_cluster_info *setup_clusters(str=
-uct swap_info_struct *si,
->          * See setup_swap_map(): header page, bad pages,
->          * and the EOF part of the last cluster.
->          */
-> -       err =3D inc_cluster_info_page(si, cluster_info, 0);
-> +       err =3D swap_cluster_setup_bad_slot(cluster_info, 0);
->         if (err)
->                 goto err;
->         for (i =3D 0; i < swap_header->info.nr_badpages; i++) {
-> @@ -3404,12 +3404,12 @@ static struct swap_cluster_info *setup_clusters(s=
-truct swap_info_struct *si,
->
->                 if (page_nr >=3D maxpages)
->                         continue;
-> -               err =3D inc_cluster_info_page(si, cluster_info, page_nr);
-> +               err =3D swap_cluster_setup_bad_slot(cluster_info, page_nr=
-);
->                 if (err)
->                         goto err;
->         }
->         for (i =3D maxpages; i < round_up(maxpages, SWAPFILE_CLUSTER); i+=
-+) {
-> -               err =3D inc_cluster_info_page(si, cluster_info, i);
-> +               err =3D swap_cluster_setup_bad_slot(cluster_info, i);
->                 if (err)
->                         goto err;
->         }
->
-> --
-> 2.51.0
->
+> > across arches and invoke it in the bpf exception handler.
+> > Then if we expose prog_stream_dump_stack() as a kfunc (should be
+> > trivial), the user can write anything to stderr that is relevant to
+> > get more information on the fault.
+> >
+> > It is then up to the user to decide the rate of messages for such
+> > faults etc. and get more information if needed.
 
