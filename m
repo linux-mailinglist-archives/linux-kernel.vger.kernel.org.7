@@ -1,213 +1,281 @@
-Return-Path: <linux-kernel+bounces-845610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E0CCBC5845
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:07:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D56A4BC5851
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:09:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7F27402CFC
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:07:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E5B164F9546
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:08:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE00286413;
-	Wed,  8 Oct 2025 15:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94AC62EB851;
+	Wed,  8 Oct 2025 15:07:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b="GgpfQHP9"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R3pRjs7i"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC6627E1DC
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:07:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07354286413
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759936032; cv=none; b=L1VKKt/+FoQj3ko9UHSUYyJqnPE/fe4PTEjHPM1ktH1OGOkxhwMEpgTt1dc+E2DPtxO/o7gQmwArGV/1I+djJ+GU4FPY2OsgfbeTFgJOD2UUsahv4A4CXJgbKHoOzC8fvuzS/7F3JlxCVtnQLKoxChZ+z+fHq9Wx+kKDV8enaGM=
+	t=1759936078; cv=none; b=NZ7cDk1RL2ZeLF6tpI3M9p5lBrpMpbAse66Oqza/geY4ZSafYydniJJ1Jna9E8H0QrO0ifzHXIww/eFZ1Sbe/tOL67PaQG2bLypExuoxwUpWjpFnnES6bBbSWpKKpKmOQf4Wa9+GX7qZr6f3mYSoRsV3WaNsByONa7Mdz8ddmJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759936032; c=relaxed/simple;
-	bh=p70jpTwbF6iD/EGs8mwK96rlc8FsCINMVTiDl7eZEJE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YddLOhZnxvcbtAA2yB/PIZ1jvSJIiJyrdn4aYq9SPoqXFQefPO/7y77YkE4Nv+PoRMpBkV9bCJbKpTtLqPZG8/HJ0Kc2sxf10WfT80rSsVWg0p360m+rYsyF4GmNo9pqRSaxO5aG5Iqmqhc8GSCJvSbk0ePeSqagJdobqEiilCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com; spf=none smtp.mailfrom=readmodwrite.com; dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b=GgpfQHP9; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=readmodwrite.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-46e6674caa5so243105e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:07:10 -0700 (PDT)
+	s=arc-20240116; t=1759936078; c=relaxed/simple;
+	bh=Nm7aX1Bb8l40LyIYWaF3fwVxtzyrnMlq872TDd6+wfc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WWUlkTCdaiStvCu6hbX9DwOYKijs4+xZiAvuv6y8yP9FFiBeUDslM8nJ6gFrHKn2GD1c9+mRMJuU4hC/jYSEmn5jQ1uzOwY6yFFNSnI1abcVLHcbSQW6LTlDtcsGQiKssMHP5lQqrWDX4hEzK6aoCt+6dYdRyEcnTxMpTwKykaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=R3pRjs7i; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2731ff54949so198585ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:07:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=readmodwrite-com.20230601.gappssmtp.com; s=20230601; t=1759936028; x=1760540828; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1759936076; x=1760540876; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NK7i9/AEMpPUF4a2FcEnJZGqcJ2Lpx6X/3iZkewqTsc=;
-        b=GgpfQHP9S/9CC/SwDiuquxVjzu1wqUOS+IcMtXVKAQqYEzpot2Z03JA1eL7no5mclf
-         6V+5F1X3ePlXGxqpmTcFqa+YPKZ+4u8DTqnSCAuma9sxV3ypSZwIBFUsP5rRFI5OZ3/y
-         FlXdRiVAIAGZCYzftNpTYX2vK7naReSeoEZugKCVWUlgXcQnSqojqrzcR+KK6DruP5Mg
-         nYfUXQSSGnHEqgcXuCKW2vQWQvVamDK25tvWZqVV4rXfOv3H6i9Tq9a9GU0yHpRL71uM
-         3rt//moahJCuD2cudado2R/fgMopB2uNe1CexF9z10EP7Hw9UfV8aW8C764uS+KwgUsN
-         3TkA==
+        bh=JZb0E/ciyXI/QUv2L4T9aSkLcWAAZb1kZeJF5tHvIuI=;
+        b=R3pRjs7iHTmizXoQOyBAv824Qt1KFMfPiTUw81K4R3NC2qaCwsq8sMMPUofD4/F82K
+         9ex6xizLJ6GZKqCoaXPz366EzeQVD5ku5XklY2bxzy09OzypIEyh4+3U4psEuEHiUKe7
+         jZyeXtZuQMDsNqYElLwaqhVCPWNU6K11OJXJJJ+wrpUEbnt4JCWfZttfWB9M4coapjcx
+         N/AXW3GQ+EXAHO5MNiqvRIr4ZG3DO27bPOZTEwbLerlo+Us42DBCIusUbvZLQebBILls
+         /eKL4w6WQJpaTxfTC+flqkA4g6LmpDUUDi5d/taeIX+AJE7SD1q3LCMyW1fXJ3p9EB+y
+         PwPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759936028; x=1760540828;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1759936076; x=1760540876;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NK7i9/AEMpPUF4a2FcEnJZGqcJ2Lpx6X/3iZkewqTsc=;
-        b=KfO1RHLf3OW+yiff98InTQqAEddsMfeKZI2BjgDi/pCOqdv3vG0GV1DOSsfBs/PTtS
-         UyIFnAZnaG4TCARFoTN6ALy0u1Tqf22OAZdxE3VIjvPzbVLw6Cb8QfqwnZdCxYoks1kj
-         kClXeSAPIUFOgG4lAJoiwHkuCHGwtQ1Pp129PhvZk5oG87EJEa4p9YN+y89tLt9MhztW
-         n/WIE1HTb6ITR7IzyRoTJcu/Z8x4z5xg0P7iPP+Z967QU9kjb/EVRkOdB+1YJu4WZPhI
-         E7Rb3uPJnqGr+/yhCfbrHAsvF7Soi/PbkyxKhLdlpkF6RKayfFYiygWGK09vns22t+pz
-         gZjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxELl+O1JJmXlZN4qdFVDeKSkUoKkomzhDTj/pmOtIvAh9vNbyM+MOdI7vlyw1CaHEZWxuNj0+BwkNUSE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyIzYa2yTKo6BLynn6vtRDEC3MQ2LxvudAQbsllJJF/ZPBf8yt
-	TwNAK1rNBG9NJ4fmN9WQLml/v8+Rfmx7Mq5PeV8ws3KZYOrtHwMt9qyICjWBrS8vn0w=
-X-Gm-Gg: ASbGncvMbujKvkjZviFTcK2np0+3WA6rL34Exont//m2qb0i1sQMUaF6WSHAsvmUZgP
-	2RKRwtIKZVTDFXpCYwnf4dcmEhQSBOUHBYUdhsDjFMPKA4p7ZcsKtPzQVfkjERQyVc/B/Xul9s7
-	9bzvWcl72YbPugQPyC6BJg2M6aY4L6nVB8JpwmGKwGPMlSdKrltJGhjrugn1gtdfZ3W+A7+7qCF
-	y06eS6KeWcIt1g7zqmRyGw+/ia5mANM7ESLaPz3ObbuBjdRCfYcYhhjmBMbkX9Wvo361MGd8Qly
-	ndq7zzfh1++2gYsKG40DhzhHyyn5c6RqqJNLRV35cEO8fS7ChnfKwOfPfNxdRkV3Wwq6cWHAvCk
-	RdiGwpXq7OkQNno4JPrOWm6Wwyd0QUxgAlshMhWOVMdLirz0=
-X-Google-Smtp-Source: AGHT+IHHHiu00/+y+Qzr9ip7z9MvgYCkQKUorD8RSuE1gz8NEXqljs9qDzEiFA1EgVMqP9sQ/ONd7Q==
-X-Received: by 2002:a05:600c:458b:b0:45d:5c71:769d with SMTP id 5b1f17b1804b1-46fa9e9a2e5mr27125865e9.8.1759936028143;
-        Wed, 08 Oct 2025 08:07:08 -0700 (PDT)
-Received: from matt-Precision-5490.. ([2a09:bac1:2880:f0::2e0:b5])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46faf16abf6sm3383135e9.12.2025.10.08.08.07.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 08:07:07 -0700 (PDT)
-From: Matt Fleming <matt@readmodwrite.com>
-To: Matt Fleming <matt@readmodwrite.com>
-Cc: adilger.kernel@dilger.ca,
-	kernel-team@cloudflare.com,
-	linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	willy@infradead.org,
-	Baokun Li <libaokun1@huawei.com>,
-	Jan Kara <jack@suse.cz>
-Subject: Re: ext4 writeback performance issue in 6.12
-Date: Wed,  8 Oct 2025 16:07:05 +0100
-Message-Id: <20251008150705.4090434-1-matt@readmodwrite.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251006115615.2289526-1-matt@readmodwrite.com>
-References: <20251006115615.2289526-1-matt@readmodwrite.com>
+        bh=JZb0E/ciyXI/QUv2L4T9aSkLcWAAZb1kZeJF5tHvIuI=;
+        b=KOE1pxfQ+ZzjiGrRckaq77A1THPKynu3rxvAsuEUgXbrpx2O7n6qFrVamTe53zrt4J
+         IG3n2qLzLODliXTeMZtg/4KJYF8iPGwOQS/AtqmWcYK2LFi9fKyK58zBOZLmKQNWsHWC
+         UDMnkOdU7BKm2e+4BTkr6kZEofkbNuDrq1qls++BM7K78pKYMbKFPDTd3bfdUsIVR7h/
+         LMo/+wYHdnd/thHd80rCdjP8yH3t6ch6DfNHsSo+OwQ2+z9sU7Tc12TPsyZ8+3NCqNfQ
+         Vx32sfwOkfSv3nQU0sVhBmsk1OmbqOYgrSazE35PdSCehoO/DUwMNgLoeKga9JcNRf2u
+         YkyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWWFqopS8wstDKJoY2jlmJ7/1Kr6K17jQ0bu76aWOit7c13+WCL5NKsMA/r8OEkghoN2C3mgc2Pqq4R0Xk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1N1JXJcXEVAE90aM8bgIGf2KLNDrJ8ahrhnI352rarSVPCyTc
+	sQ2iOUPgbRmXysVN2ORlBo30MFjPrBSxmbqxQAq+B6PW8O/0nqe5wN8SRg2srPakXdURtQfeArC
+	paMm5hX5xw68ZYyUd7WyjNBM6zTe+6gevsio06AUP
+X-Gm-Gg: ASbGnctNimQdR3AuIFfsWxka3YmOJ9cnvDZ36JR64fgSliVXydtJ0NFbgKjzs9zCSok
+	RTiJxqaRc0BXtvF54Iw/18AL0ogIHeXV4ivfBqF99x3lMAXSzHT/KTF0Ggu0n27rPNKD6WKPCHs
+	yhs9dwhCTMCYt3wxzBH6VNlhcCQfLXLBYJEkjwNFDX9rFg+hxZvTZR411mKP5fNDWOH0AaDrN9J
+	wnTbe3nkFMEm0AV+rCed4Hxwcfi4aerQ/aMYjke0YmjjlEP3T2QSDvQ0ew+Efgg4Ujy
+X-Google-Smtp-Source: AGHT+IFiThZkf1CHvwbFmuIjDclrlQRkzSg5IQ4HojWsioD+qhs7llL+rWqNNmlCx92DTvW9gyjiFsxhQhZAxyC7iSM=
+X-Received: by 2002:a17:903:38cf:b0:248:7b22:dfb4 with SMTP id
+ d9443c01a7336-290276dfef2mr4977015ad.16.1759936075946; Wed, 08 Oct 2025
+ 08:07:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251006-james-perf-object-code-reading-v1-1-acab2129747d@linaro.org>
+ <CAP-5=fXmAbz7Gp5eCRFYsYu_pZoFNSR+mcJgE6Eu6YewHyLNtg@mail.gmail.com>
+ <b39ffdd5-1692-46ed-86d9-726011c92036@linaro.org> <aOVxlEXDMKJyIhME@x1>
+ <a7698f4f-6541-4d3c-afea-d30baa4776f5@linaro.org> <887ff02c-c221-4b98-be98-efe62e043727@linaro.org>
+ <aOZplPKCRwvlOgUA@stanley.mountain> <be4fae8b-d49f-4a90-a617-1ac2b22a2356@linaro.org>
+In-Reply-To: <be4fae8b-d49f-4a90-a617-1ac2b22a2356@linaro.org>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 8 Oct 2025 08:07:44 -0700
+X-Gm-Features: AS18NWBgSIC-Q9EYl79OeIgdXgIl5ccn5b34hbYIPhNuXzYuXKiZ4uxhtK6Tzgs
+Message-ID: <CAP-5=fVzOQv5OVk8mchZ_w11iHr02AB7c6jn1tKSE4pmHiq14A@mail.gmail.com>
+Subject: Re: [PATCH] perf tests: Don't retest sections in "Object code reading"
+To: James Clark <james.clark@linaro.org>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Charlie Jenkins <charlie@rivosinc.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Leo Yan <leo.yan@arm.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-(Adding Baokun and Jan in case they have any ideas)
+On Wed, Oct 8, 2025 at 7:11=E2=80=AFAM James Clark <james.clark@linaro.org>=
+ wrote:
+> On 08/10/2025 2:39 pm, Dan Carpenter wrote:
+> > On Wed, Oct 08, 2025 at 11:21:34AM +0100, James Clark wrote:
+> >> On 08/10/2025 9:32 am, James Clark wrote:
+> >>> On 07/10/2025 9:01 pm, Arnaldo Carvalho de Melo wrote:
+> >>>> On Tue, Oct 07, 2025 at 10:10:12AM +0100, James Clark wrote:
+> >>>>> On 06/10/2025 4:21 pm, Ian Rogers wrote:
+> >>>>>> On Mon, Oct 6, 2025 at 6:11=E2=80=AFAM James Clark
+> >>>>>> <james.clark@linaro.org> wrote:
+> >>>>>>> +       data =3D zalloc(sizeof(*data));
+> >>>>>>> +       if (!data)
+> >>>>>>> +               return true;
+> >>>>
+> >>>>>>> +       data->addr =3D addr;
+> >>>>>>> +       strlcpy(data->path, path, sizeof(data->path));
+> >>>>>> nit: perhaps strdup rather than having 4kb per tested_section.
+> >>>>
+> >>>>> Oh yeah that would have been better, not sure why I didn't do it
+> >>>>> that way.
+> >>>>> Although the max sections I saw was around 50, and it's usually
+> >>>>> a lot less
+> >>>>> so it's probably not worth the churn to change it now that
+> >>>>> Arnaldo's applied
+> >>>>> it?
+> >>>>
+> >>>> I see you submitted a patch for using strdup() and then there is a n=
+eed
+> >>>> for checking the strdup(), etc.
+> >>>>
+> >>>> Since at this point this is an improvement on a test and all is sitt=
+ing
+> >>>> in linux-next and the window is closing for v6.18, lets leave this f=
+or
+> >>>> the next window, ok?
+> >>>>
+> >>>
+> >>> Makes sense.
+> >>>
+> >>>> These would be good things for some tool to catch, before it gets se=
+nt,
+> >>>> but that is another rabbit hole :-)
+> >>>>
+> >>>> Thanks,
+> >>>>
+> >>>> - Arnaldo
+> >>>
+> >>> Does Smatch work on Perf? I imagine it would catch this if it does. O=
+r
+> >>> just plain old cppcheck. I'll take a look.
+> >>>
+> >>> James
+> >>>
+> >>
+> >> Smatch doesn't know about strdup and seems to be more focused on kerne=
+l so
+> >> probably isn't a good fit.
+> >>
+> >
+> > No one is going to write a check which tells people when to use a fixed
+> > array vs when to allocate memory dynamically.  Those sorts of decisions
+> > are too complicated.
+> >
+>
+> I mean "doesn't know about strdup" in that it would have to know that
+> it's an allocator and can return NULL which should be checked etc. Not
+> that it should know about Ian's original suggestion to use strdup in the
+> first place.
 
-On Mon, Oct 06, 2025 at 12:56:15 +0100, Matt Fleming wrote:
-> Hi,
-> 
-> We're seeing writeback take a long time and triggering blocked task
-> warnings on some of our database nodes, e.g.
-> 
->   INFO: task kworker/34:2:243325 blocked for more than 225 seconds.
->         Tainted: G           O       6.12.41-cloudflare-2025.8.2 #1
->   "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->   task:kworker/34:2    state:D stack:0     pid:243325 tgid:243325 ppid:2      task_flags:0x4208060 flags:0x00004000
->   Workqueue: cgroup_destroy css_free_rwork_fn
->   Call Trace:
->    <TASK>
->    __schedule+0x4fb/0xbf0
->    schedule+0x27/0xf0
->    wb_wait_for_completion+0x5d/0x90
->    ? __pfx_autoremove_wake_function+0x10/0x10
->    mem_cgroup_css_free+0x19/0xb0
->    css_free_rwork_fn+0x4e/0x430
->    process_one_work+0x17e/0x330
->    worker_thread+0x2ce/0x3f0
->    ? __pfx_worker_thread+0x10/0x10
->    kthread+0xd2/0x100
->    ? __pfx_kthread+0x10/0x10
->    ret_from_fork+0x34/0x50
->    ? __pfx_kthread+0x10/0x10
->    ret_from_fork_asm+0x1a/0x30
->    </TASK>
-> 
-> A large chunk of system time (4.43%) is being spent in the following
-> code path:
-> 
->    ext4_get_group_info+9
->    ext4_mb_good_group+41
->    ext4_mb_find_good_group_avg_frag_lists+136
->    ext4_mb_regular_allocator+2748
->    ext4_mb_new_blocks+2373
->    ext4_ext_map_blocks+2149
->    ext4_map_blocks+294
->    ext4_do_writepages+2031
->    ext4_writepages+173
->    do_writepages+229
->    __writeback_single_inode+65
->    writeback_sb_inodes+544
->    __writeback_inodes_wb+76
->    wb_writeback+413
->    wb_workfn+196
->    process_one_work+382
->    worker_thread+718
->    kthread+210
->    ret_from_fork+52
->    ret_from_fork_asm+26
-> 
-> That's the path through the CR_GOAL_LEN_FAST allocator.
-> 
-> The primary reason for all these cycles looks to be that we're spending
-> a lot of time in ext4_mb_find_good_group_avg_frag_lists(). The fragment
-> lists seem quite big and the function fails to find a suitable group
-> pretty much every time it's called either because the frag list is empty
-> (orders 10-13) or the average size is < 1280 (order 9). I'm assuming it
-> falls back to a linear scan at that point.
-> 
->   https://gist.github.com/mfleming/5b16ee4cf598e361faf54f795a98c0a8
-> 
-> $ sudo cat /proc/fs/ext4/md127/mb_structs_summary
-> optimize_scan: 1
-> max_free_order_lists:
-> 	list_order_0_groups: 0
-> 	list_order_1_groups: 1
-> 	list_order_2_groups: 6
-> 	list_order_3_groups: 42
-> 	list_order_4_groups: 513
-> 	list_order_5_groups: 62
-> 	list_order_6_groups: 434
-> 	list_order_7_groups: 2602
-> 	list_order_8_groups: 10951
-> 	list_order_9_groups: 44883
-> 	list_order_10_groups: 152357
-> 	list_order_11_groups: 24899
-> 	list_order_12_groups: 30461
-> 	list_order_13_groups: 18756
-> avg_fragment_size_lists:
-> 	list_order_0_groups: 108
-> 	list_order_1_groups: 411
-> 	list_order_2_groups: 1640
-> 	list_order_3_groups: 5809
-> 	list_order_4_groups: 14909
-> 	list_order_5_groups: 31345
-> 	list_order_6_groups: 54132
-> 	list_order_7_groups: 90294
-> 	list_order_8_groups: 77322
-> 	list_order_9_groups: 10096
-> 	list_order_10_groups: 0
-> 	list_order_11_groups: 0
-> 	list_order_12_groups: 0
-> 	list_order_13_groups: 0
-> 
-> These machines are striped and are using noatime:
-> 
-> $ grep ext4 /proc/mounts
-> /dev/md127 /state ext4 rw,noatime,stripe=1280 0 0
-> 
-> Is there some tunable or configuration option that I'm missing that
-> could help here to avoid wasting time in
-> ext4_mb_find_good_group_avg_frag_lists() when it's most likely going to
-> fail an order 9 allocation anyway?
-> 
-> I'm happy to provide any more details that might help.
-> 
-> Thanks,
-> Matt
+Ooh, is smatch smart about errptrs? perf is using the hashmap code
+from libbpf and rather than doing the more conventional C thing of
+setting errno and returning NULL from hashmap__new it encodes ENOMEM
+as an errptr thereby breaking NULL tests. We seem to always forget
+this and eye-ball checks of hashmap__new results being compared to
+NULL are reasonable. For example this fix for the issue:
+https://lore.kernel.org/lkml/20250917095422.60923-1-wangfushuai@baidu.com/
+I believe in the kernel coccinelle will spot this but we don't have it
+as part of the perf build.
+
+I think to make the C compilers smart enough to catch this we need to
+do something like:
+struct ERRNO_OR(hashmap) hashmap__new(...)
+where ERRNO_OR would be a macro to add a wrapping struct and then we'd
+force users of the hashmap__new result to check if the value were
+errno or a pointer.
+
+Another source code analysis tool it'd be interesting to have on the
+perf build would be clang-tidy.
+
+Thanks,
+Ian
+
+> >> Cppcheck struggles with a lot of the kernely style that's used in Perf=
+,
+> >> especially the headers. We'd either have to silence a lot of the warni=
+ngs,
+> >> or start with almost no warnings enabled.
+> >>
+> >> It doesn't have a warning for usage of a malloc return value without N=
+ULL
+> >> checking, so in this case it wouldn't be useful.
+> >
+> > In the kernel we care a lot about missing NULL checks but in userspace
+> > it doesn't really matter in the same way...  It's easy enough to write
+> > a check for this in Smatch.
+> >
+> >>
+> >> I'm not 100% convinced that the effort of integrating one of these int=
+o the
+> >> build system would be worth it. I know that once they're in, there wou=
+ld be
+> >> constant maintenance of silencing false positives etc. And a lot of th=
+e
+> >> warnings are more style or opinions about undefined behavior according=
+ to
+> >> the standard, but aren't real based on what the compiler actually does=
+.
+> >>
+> >
+> > The thing about false positives is that people should just ignore all t=
+he
+> > warnings except the new ones.  In the kernel, this works well because w=
+e
+> > fix all the real bugs right away.  And if we haven't eventually someone
+> > will look at the code again and after 10 years or so it all either gets
+> > fixed or it doesn't matter.
+> >
+>
+> This requires some infrastructure though. The easiest way I imagined it
+> working would be more like how we have compiler warnings and -Werror
+> currently.
+>
+> Not that we couldn't come up with some kind of infrastructure to track
+> new errors. But I think it would be applied too sporadically to block
+> people from sending a patch in the first place.
+>
+> >> As an example, cppcheck on code-reading.c with --enable=3Dall gives 17
+> >> portability, 11 style, 3 warning and 1 error outputs. Out of all of th=
+ese
+> >> only two of the warnings are significant, from commit 0f9ad973b095 ("p=
+erf
+> >> tests code-reading: Handle change in objdump output from binutils >=3D=
+ 2.41 on
+> >> riscv"):
+> >>
+> >>    token =3D strsep(&version, ".");
+> >>    version_tmp =3D atoi(token);
+> >>    if (token)
+> >>        version_num +=3D version_tmp * 100;
+> >>
+> >>    token =3D strsep(&version, ".");
+> >>    version_tmp =3D atoi(token);
+> >>    if (token)
+> >>        version_num +=3D version_tmp;
+> >>
+> >> "token" has already been passed to atoi() so can't be NULL in the if
+> >> statement. I think the atoi() needs to come after the null check.
+> >>
+> >
+> > Yep.  Smatch does cross function analysis so it would have caught that.
+> > (I haven't tested).
+> >
+> > regards,
+> > dan carpenter
+> >
+>
+> I ran it on this file and it didn't say much. Although I don't know if
+> I'm using it properly:
+>
+>    smatch --full-path -I. -I../include -I../lib/perf/include -Iutil -I../
+>      arch/x86/include -I../lib tests/code-reading.c
+>
+>    tests/code-reading.c: note: in included file:
+>
+>    /usr/include/x86_64-linux-gnu//sys/param.h:93:10: warning:
+> preprocessor token roundup redefined
+>
+>    tests/code-reading.c: note: in included file (through
+> ../include/linux/kernel.h):
+>    ../include/linux/math.h:17:9: this was the original definition
+>
+>
 
