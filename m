@@ -1,59 +1,56 @@
-Return-Path: <linux-kernel+bounces-844930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 537ACBC314C
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 02:42:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B11DABC3155
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 02:47:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E2B9189EAA3
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 00:43:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C54C3E0595
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 00:47:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8941828643C;
-	Wed,  8 Oct 2025 00:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EDFB287512;
+	Wed,  8 Oct 2025 00:47:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X5bgyMdA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ht+7uV4b"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAA1285CBD;
-	Wed,  8 Oct 2025 00:42:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9513C2874F6;
+	Wed,  8 Oct 2025 00:47:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759884158; cv=none; b=Fejqf/Y/VXIRUSTfKxplslXY439ubmNLo/GoWYy/+Zec+s0Gd3UbkErLnzIzqH7wLJomzUsKBlLOFG2dtjmq/TMH5/SZjcXLD+ovwtxXH1ZF/q8n3EM4v8nwD5JiEOuTAbO6002fLZWDdYkyn/4wDHH0C5fn+BHBlSKZcBkGCP0=
+	t=1759884438; cv=none; b=Wgy1k/NPCoSQYKp7gAJ2ESB774qBMsnlF8uwCmQsdnacJTDzkoMOQJ48qdml0aWiQoKvSWMbMwzLzpxUvSQLlfYmDnj74+jzTQcBXCjPd9dLNtXIkM/LCGRTPKOn8J7Gzl8Sy1fioefxB+3nBDrEwYqZBo/kbxo1PfVttSrPihg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759884158; c=relaxed/simple;
-	bh=Us9OmsgR+fW1SGZHE7rtfd59UKKbvLz88NLfSMaVR9E=;
+	s=arc-20240116; t=1759884438; c=relaxed/simple;
+	bh=YxZh3W+XSiyq1owAkNfMx7aVLQPQxF4PtBRHasFhUrY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c+uU8scr/uDT8QEoFMbJj91jOPKxRk6OjQiHLYXpIJsuNtWSiZg2Ue5e4GvlAkywRUBjOGsXo50VRspSZdC7N1eBq09IMPFjfiuzKFYFNe6WC+qCrNrEghEarHhBoXdLmkxbVkIbxt10E9Ekd4dRo7mR9wgdBdSgyq+D1t9ckLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X5bgyMdA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23134C4CEF1;
-	Wed,  8 Oct 2025 00:42:37 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=W4M0XLU9VtgP41YATFoCuT8XwtV19/OHvJEMR3Inl+9JsivSsH1UZkUnRr03S2I6kXoYjtIt4gniNo2jbx6cJezzLS6jITazqt1LnGkyRvFSXb8EGM1HlisnKPiM1bIWRy+caCMR7GiYwC9rg+Nb3V+u96SplxyAkpu721Fe060=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ht+7uV4b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09D38C4CEF1;
+	Wed,  8 Oct 2025 00:47:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759884157;
-	bh=Us9OmsgR+fW1SGZHE7rtfd59UKKbvLz88NLfSMaVR9E=;
+	s=k20201202; t=1759884438;
+	bh=YxZh3W+XSiyq1owAkNfMx7aVLQPQxF4PtBRHasFhUrY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X5bgyMdAHLgoj3RqWaTvyULA6IPdyY+GtixaZvBRBwHVxogMHzWjE4U8tYiEp/ZWb
-	 iP95JSBYpR/KyeZGAly0AfC7uS0/Sr8myiQm/VsFutyJwpHuYxGLzEqo8VJe+r/OJc
-	 c5gHIHWkRBYKPPmbG66dtK9u0CwvRSnT0q3Bs+SNDuT88USobBwjHmESPjM3a2D+tU
-	 kJVpYTUlx0P41ebg4JdO5X6DG/YPeLe/z+aEPnUxUdj6juAVkWuAteBDCXTTdJjKcu
-	 7HQpVt8GAsxrmZs9esQCIB2r/sjk0kAjk/vyr5OuXh0MgD4Xd04qdZzNfx/ktU5egp
-	 cPTjlXVhKXc7g==
-Date: Tue, 7 Oct 2025 19:42:36 -0500
-From: Rob Herring <robh@kernel.org>
-To: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
-Cc: krzk+dt@kernel.org, conor+dt@kernel.org, konrad.dybcio@oss.qualcomm.com,
-	dmitry.baryshkov@oss.qualcomm.com, kishon@kernel.org,
-	vkoul@kernel.org, gregkh@linuxfoundation.org,
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 01/10] dt-bindings: phy:
- qcom,sc8280xp-qmp-usb43dp-phy: Add Glymur compatible
-Message-ID: <20251008004236.GA1833490-robh@kernel.org>
-References: <20251006222002.2182777-1-wesley.cheng@oss.qualcomm.com>
- <20251006222002.2182777-2-wesley.cheng@oss.qualcomm.com>
+	b=ht+7uV4br8p5eS8cfZ0/0cIbG8A64P3Y5kUVIzk71eQtPq2pvYQgwdFfB1e4tp1de
+	 Oc5Po6LZOuJysaprDDc+yK3RBzz1U3IRbh3xzYjUvUGpPOqiWoYvPnDQ3/oPNvpQr9
+	 zuRlw2ysYcrgH/ytYO4qCia2dvPyTHpI2NKUbtcrrQJ4uJHJOI1lLYRsXndm9beFTF
+	 9zbMDhV4iFCM8bb6fn9OqyWhOTXaR7CmDzLk1Fv/puEAoRMInH8CDJc5ALoof/mtv3
+	 xI8slQ+8j54XbL48LlCp1kM3gJwcvf6E+cVi8+mMm8A4EKZH4k/Fd8lDqYpLVfZR8I
+	 0CwtMQXY3r4eA==
+Date: Tue, 7 Oct 2025 17:47:17 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Ahmet Eray Karadag <eraykrdg1@gmail.com>
+Cc: tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org, david.hunter.linux@gmail.com,
+	skhan@linuxfoundation.org,
+	syzbot+f3185be57d7e8dda32b8@syzkaller.appspotmail.com,
+	Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+Subject: Re: [PATCH] Fix: ext4: add sanity check for inode inline write range
+Message-ID: <20251008004717.GL8084@frogsfrogsfrogs>
+References: <20251007234221.28643-2-eraykrdg1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,26 +59,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251006222002.2182777-2-wesley.cheng@oss.qualcomm.com>
+In-Reply-To: <20251007234221.28643-2-eraykrdg1@gmail.com>
 
-On Mon, Oct 06, 2025 at 03:19:53PM -0700, Wesley Cheng wrote:
-> Define a Glymur compatible string for the QMP PHY combo driver, along with
-> resource requirements.  Add a different identifier for the primary QMP PHY
-> instance as it does not require a clkref entry.
+On Wed, Oct 08, 2025 at 02:42:22AM +0300, Ahmet Eray Karadag wrote:
+> Add a simple check in ext4_try_to_write_inline_data() to prevent
+> writes that extend past the inode's inline data area. The function
+> now returns -EINVAL if pos + len exceeds i_inline_size.
 > 
-> Signed-off-by: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
+> This avoids invalid inline write attempts and keeps the write path
+> consistent with the inode limits.
+> 
+> Reported-by: syzbot+f3185be57d7e8dda32b8@syzkaller.appspotmail.com
+> Link: https://syzkaller.appspot.com/bug?extid=f3185be57d7e8dda32b8
+> Co-developed-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com> 
+> Signed-off-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+> Signed-off-by: Ahmet Eray Karadag <eraykrdg1@gmail.com>
 > ---
->  .../phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml    | 72 +++++++++++++++++--
->  1 file changed, 65 insertions(+), 7 deletions(-)
+>  fs/ext4/inline.c | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
+> index 1b094a4f3866..13ba56e8e334 100644
+> --- a/fs/ext4/inline.c
+> +++ b/fs/ext4/inline.c
+> @@ -782,6 +782,16 @@ int ext4_write_inline_data_end(struct inode *inode, loff_t pos, unsigned len,
+>  	struct ext4_iloc iloc;
+>  	int ret = 0, ret2;
+>  
+> +	if ((pos + len) > EXT4_I(inode)->i_inline_size) {
+> +			ext4_warning_inode(inode,
+> +				"inline write beyond capacity (pos=%lld, len=%u, inline_size=%d)",
+> +				pos, len, EXT4_I(inode)->i_inline_size);
+> +		folio_unlock(folio);
+> +		folio_put(folio);
+> +		ret = -EINVAL;
+> +		goto out;
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml: allOf:1:then:properties:clock-names: {'maxItems': 5, 'items': [{'const': 'aux'}, {'const': 'ref'}, {'const': 'com_aux'}, {'const': 'usb3_pipe'}, {'const': 'clkref'}]} should not be valid under {'required': ['maxItems']}
-	hint: "maxItems" is not needed with an "items" list
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml: allOf:2:then:properties:clock-names: {'maxItems': 5, 'items': [{'const': 'aux'}, {'const': 'ref'}, {'const': 'com_aux'}, {'const': 'usb3_pipe'}, {'const': 'cfg_ahb'}]} should not be valid under {'required': ['maxItems']}
-	hint: "maxItems" is not needed with an "items" list
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml: allOf:3:then:properties:clock-names: {'maxItems': 4, 'items': [{'const': 'aux'}, {'const': 'ref'}, {'const': 'com_aux'}, {'const': 'usb3_pipe'}]} should not be valid under {'required': ['maxItems']}
-	hint: "maxItems" is not needed with an "items" list
-	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
+Shouldn't write_begin have converted the file to block format if the
+range to be written exceeds the possible inlinedata size?
+
+> +	}
+> +
+>  	if (unlikely(copied < len) && !folio_test_uptodate(folio))
+>  		copied = 0;
+>  
+> @@ -838,8 +848,8 @@ int ext4_write_inline_data_end(struct inode *inode, loff_t pos, unsigned len,
+>  	 */
+>  	if (pos + len > inode->i_size && ext4_can_truncate(inode))
+>  		ext4_orphan_add(handle, inode);
+> -
+> -	ret2 = ext4_journal_stop(handle);
+> +	if (handle)
+> +		ret2 = ext4_journal_stop(handle);
+
+What is this??
+
+--D
+
+>  	if (!ret)
+>  		ret = ret2;
+>  	if (pos + len > inode->i_size) {
+> -- 
+> 2.43.0
+> 
+> 
 
