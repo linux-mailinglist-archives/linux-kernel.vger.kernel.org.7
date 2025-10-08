@@ -1,124 +1,74 @@
-Return-Path: <linux-kernel+bounces-845289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACBA8BC4485
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 12:18:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89E57BC449F
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 12:20:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A37AB4ECE72
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 10:18:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3EED3AD086
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 10:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B54992F5A20;
-	Wed,  8 Oct 2025 10:18:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0AC72F5A18;
+	Wed,  8 Oct 2025 10:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fNIFBteU"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="H1rftDEc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1383F2E8B80;
-	Wed,  8 Oct 2025 10:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F238D2F39CD;
+	Wed,  8 Oct 2025 10:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759918711; cv=none; b=qIY67VmKCMJatqMumPf2rM8VtJVbCrXJFdzgfDHgCxFDX3narCAwcA/HkN6eZdUhLPzK91vPWFpHwSl/If7ly0EE8KiludDqUD6EcnvG70Idi+bUmJwVfvspPe8KND9gKvaBL4FOFFyst92wns0BBtjjmBDemxFUOJrhrEjQRVs=
+	t=1759918830; cv=none; b=aCuhJ/s82oQmzQlvRmMdY3+YxcXid0SyxT619HgNFbXZnuGRpXzoGsXEZH+lFf+VzfFy3DAeT5LH5S/e92qgIfvI0p14HT/pHAoB7wk00tK6ro3ZDDYu7ATDUZvJNvGjax/JyGjJK0q+s+ha27pjdJbVYSzvC/5xSj7JRpgYrwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759918711; c=relaxed/simple;
-	bh=b/FTtui6gRJ0e8SceFeHMggEt9pTm3eBkrK95al13n4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=noDzglgPftmCrq8mdm3P6BONYjd27vefncrzaeGKvgX1L26ZWiJT9+FB6Tna7fgYcIfQZeEPcGAU9qdZvRjqmcmhvAKhPK38ITmmWeW/7Mt1P9S0Fjt1Ul2n2RYe7HhXYQFbNj1vu1e7t5tsQ3cJxhn1CC3sJVmz0/3SkbiQmBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fNIFBteU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1A85C116C6;
-	Wed,  8 Oct 2025 10:18:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759918710;
-	bh=b/FTtui6gRJ0e8SceFeHMggEt9pTm3eBkrK95al13n4=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=fNIFBteU5oXqlXy5snUMg4wnv4ymZxQNvlmghhT3xY3rBznehwKbSRFDnStR9p4s6
-	 r48i2oLx463jKd4eYL6LBAJ25yLSDXfiJBiFNknLJUmOVYvDcSW+sjp1CCnZfkKLb/
-	 rH+rM75edc1xTbEDnAJb6uS5iZLCp92bV/nSrDo7bhiYEeXwwgyXH0dhkJznNGQi39
-	 JDmF1yRptuK0FKjfZEXbn2f0pD8ngnETbmCoPbATpRnBbjw6l2ecFN7E46RZty2j9+
-	 jBjyHPTkReCELApres82FOslhT8aapoU+cbWDq90GSGhtYEWJZcxumKi3+7WLIKRBZ
-	 j3YMjO8sVWLJg==
+	s=arc-20240116; t=1759918830; c=relaxed/simple;
+	bh=3kn/Um2ENzowfrEYzak/NVYIYTDSIVj6NG/MWnQy38U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KCM7VOeOlAq2TkTHNoOHJq78ZmkQpV5ULaDp/Ye8v/TDKD16Leg2nxfgbbTn+J1fyfSPKklQQ1CzVJokbjECMI1XAT1IsAFw/nhj1rD31rmbZvcmiaZmwtcxRWjV4VeMyEr2hQjxax9RpUGt+ngF/njwTubbpiQJBQNhJr4o1OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=H1rftDEc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2C3FC4CEFF;
+	Wed,  8 Oct 2025 10:20:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1759918829;
+	bh=3kn/Um2ENzowfrEYzak/NVYIYTDSIVj6NG/MWnQy38U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H1rftDEcgUF8m7aygkU8vIwno0Y/fpUPdoR01ezAOOpsWY3E3N25NhlRwWtddKFzb
+	 RBPMQqY9tm3eminboS1AIpQ4wUfR8spgb+zOd6UJNUtEdq0Sbq1ejcenowXYph1F6Y
+	 uw/A3q1F3sC2DRvmSMf/lOZrXInr0MULTz78pqSQ=
+Date: Wed, 8 Oct 2025 12:20:26 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Vivian Wang <wangruikang@iscas.ac.cn>
+Cc: stable@vger.kernel.org, Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Guo Ren <guoren@kernel.org>, Charlie Jenkins <charlie@rivosinc.com>,
+	Yangyu Chen <cyy@cyyself.name>, Han Gao <rabenda.cn@gmail.com>,
+	Icenowy Zheng <uwu@icenowy.me>, Inochi Amaoto <inochiama@gmail.com>,
+	Yao Zi <ziyao@disroot.org>, Palmer Dabbelt <palmer@rivosinc.com>
+Subject: Re: [PATCH 6.6.y 0/2] riscv: mm: Backport of mmap hint address fixes
+Message-ID: <2025100812-raven-goes-4fd8@gregkh>
+References: <20251008-riscv-mmap-addr-space-6-6-v1-0-9f47574a520f@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 08 Oct 2025 12:18:24 +0200
-Message-Id: <DDCV43KW9OGL.27I8HP4TSTQ6N@kernel.org>
-Cc: =?utf-8?q?Onur_=C3=96zkan?= <work@onurozkan.dev>,
- <rust-for-linux@vger.kernel.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <tmgross@umich.edu>, <dakr@kernel.org>,
- <linux-kernel@vger.kernel.org>, <acourbot@nvidia.com>, <airlied@gmail.com>,
- <simona@ffwll.ch>, <maarten.lankhorst@linux.intel.com>,
- <mripard@kernel.org>, <tzimmermann@suse.de>, <corbet@lwn.net>,
- <lyude@redhat.com>, <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH 1/3] rust: xarray: abstract `xa_alloc`
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-X-Mailer: aerc 0.21.0
-References: <20251006163024.18473-1-work@onurozkan.dev>
- <20251006163024.18473-2-work@onurozkan.dev>
- <DDBHMNEIU9HJ.68MGF28IF58I@kernel.org> <aOTyVzpJNDOaxxs6@google.com>
-In-Reply-To: <aOTyVzpJNDOaxxs6@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251008-riscv-mmap-addr-space-6-6-v1-0-9f47574a520f@iscas.ac.cn>
 
-On Tue Oct 7, 2025 at 12:58 PM CEST, Alice Ryhl wrote:
-> On Mon, Oct 06, 2025 at 09:31:43PM +0200, Benno Lossin wrote:
->> On Mon Oct 6, 2025 at 6:30 PM CEST, Onur =C3=96zkan wrote:
->> > Implements `alloc` function to `XArray<T>` that wraps
->> > `xa_alloc` safely.
->> >
->> > Resolves a task from the nova/core task list under the "XArray
->> > bindings [XARR]" section in "Documentation/gpu/nova/core/todo.rst"
->> > file.
->> >
->> > Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev>
->> > ---
->> >  rust/kernel/xarray.rs | 39 +++++++++++++++++++++++++++++++++++++++
->> >  1 file changed, 39 insertions(+)
->> >
->> > diff --git a/rust/kernel/xarray.rs b/rust/kernel/xarray.rs
->> > index a49d6db28845..1b882cd2f58b 100644
->> > --- a/rust/kernel/xarray.rs
->> > +++ b/rust/kernel/xarray.rs
->> > @@ -266,6 +266,45 @@ pub fn store(
->> >              Ok(unsafe { T::try_from_foreign(old) })
->> >          }
->> >      }
->> > +
->> > +    /// Allocates an empty slot within the given limit range and stor=
-es `value` there.
->> > +    ///
->> > +    /// May drop the lock if needed to allocate memory, and then reac=
-quire it afterwards.
->> > +    ///
->> > +    /// On success, returns the allocated id.
->> > +    ///
->> > +    /// On failure, returns the element which was attempted to be sto=
-red.
->> > +    pub fn alloc(
->> > +        &mut self,
->> > +        limit: bindings::xa_limit,
->> > +        value: T,
->> > +        gfp: alloc::Flags,
->> > +    ) -> Result<u32, StoreError<T>> {
->>=20
->> I think it would be a good idea to make the id a newtype wrapper around
->> u32. Maybe not even allow users to manually construct it or even inspect
->> it if possible.
->
-> What? People need to know what the assigned index is.
+On Wed, Oct 08, 2025 at 03:50:15PM +0800, Vivian Wang wrote:
+> Backport of the two riscv mmap patches from master. In effect, these two
+> patches removes arch_get_mmap_{base,end} for riscv.
 
-The documentation says "allocated id", so I assumed that it was some
-internal, implementation-dependent thing, not an index. In that case we
-should change the docs instead.
+Why is this needed?  What bug does this fix?
 
----
-Cheers,
-Benno
+thanks,
+
+greg k-h
 
