@@ -1,135 +1,150 @@
-Return-Path: <linux-kernel+bounces-844993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A692BC33C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 05:31:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E349BC33CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 05:31:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E614F34C677
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 03:31:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EB85188D10E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 03:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22E7629BD90;
-	Wed,  8 Oct 2025 03:30:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169402BD001;
+	Wed,  8 Oct 2025 03:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=star-ark.net header.i=@star-ark.net header.b="tnxG0VFp";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cUdt+k3x"
-Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dUMcassV"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B544DF71
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 03:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3CDD29BD90
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 03:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759894257; cv=none; b=O8hnPQ0AyZaLIHTQowOlwvFCeBobkxV3nTCV4eKr6xnI/JreslgObEafUAnh+EvBV6r3YQfJt0NZAXQEGxMj2xrCnSXjq+HZBCr9Yo9RFe4p49NW8WdbMz+ryk3ojsV7Tdpi/Cyia+ynYyQcaEzRLIMOmISV7Y60Pvr3/WaLCZM=
+	t=1759894274; cv=none; b=gPqUb2hmG7fxR82EpqkYyLIPuKEAidsqGpm9pXF4fqPXxkfxNWpxbfuaNcI2Qn9+GumWTp7xNQLyrtlwbDwD/f4Zq9dRrFXAALEOVj69ulCPRh6nphwooNM38nlE/cu1TJlBaoiPu+lcejHC4qxUfPe38AwOt30vCbWsdD7zN2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759894257; c=relaxed/simple;
-	bh=yLp0c608OOqehE6ao+XhNNZGPPltUl1TMWCGJrj1zrI=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=tNInBJSkX36P6SJ/1f0C21xxyCylzncvSBF+8txxWkL7o7EiEkLwfgf6+FVlYNhQMTmfq0PC2feEYoe61epFGVKsUFL9rQTNT4FCnZCt2IF/aQaVfQpbrqz+g6gQOYyM3ar+62Geuh/RidpjQpBxM8P3m5Lm7+kTmlivtv7dRRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=star-ark.net; spf=pass smtp.mailfrom=star-ark.net; dkim=pass (2048-bit key) header.d=star-ark.net header.i=@star-ark.net header.b=tnxG0VFp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=cUdt+k3x; arc=none smtp.client-ip=202.12.124.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=star-ark.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=star-ark.net
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 86B807A07EE;
-	Tue,  7 Oct 2025 23:30:53 -0400 (EDT)
-Received: from phl-imap-03 ([10.202.2.93])
-  by phl-compute-01.internal (MEProxy); Tue, 07 Oct 2025 23:30:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=star-ark.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1759894253;
-	 x=1759980653; bh=DrM0xBFZthWR65HG2j667b24SJaJtTQgyYBWysOgEcM=; b=
-	tnxG0VFpfYj7O3UUF7X/YVjz4d2/5zPFa4LbQs5bE+xH/zsw9OkOXwnE+Fd+TW9E
-	El/w+l5Or5aGbU2Pk1BjvWKg0lu55332zC7uTmMot6O0y2DSORmTIXcdnDHEVQzm
-	Ys/Ft4VOybUSZV+Z91FbRygAyOIzK+nzMqnRxdSfY621jVs3cJiLH/9gqs6M8M/j
-	PUpprBdErP3Qo4uir1vSsfYMuPjH2N2+JQ1SYXLLyPnqw4Fv4aclAqZHuL0FMXyl
-	2zOAoYr8TQGVUZS8p/2cBDKyhAcz/+J4FTdx8fwd69m9lqjJ14kZ24ifX67qGoLe
-	Czedt+kSdKBSkm5Ey3adSg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759894253; x=
-	1759980653; bh=DrM0xBFZthWR65HG2j667b24SJaJtTQgyYBWysOgEcM=; b=c
-	Udt+k3x6bonaM1aFJrBX5WQo1yH0cjMhDuJqSsYiUAhrJB4vEXiEbZjGSNA+eDte
-	2TUMLJEa4yY2m87amyC6+TFl+oRpKjSsBOE7AdfPdlKF8+dhLm5ud311zNzKpGZJ
-	DumT68YSc3aK9t9V/Barqujil7SiNxxW7MTXEuZEQsc6stSEqzUyM8B/o7xPzItR
-	x24SBSxEkS8vteD/iMxKliA1Gjsc4StufT5Ln8lYnfqgX2qSY9ChTx6p2tfLGD0I
-	odS0uDeprb6Zk24ji5cZAQIbJOqJFMfefTEIhnfiI6rMI6xLb21uKbVT31mluqB/
-	cflgYpTvWaGik6E6AZcSg==
-X-ME-Sender: <xms:7NrlaNouvYXWXqtHVe3oEud-_tnyMK2Zkz1DZq5xdrdtuP-VYw-J4A>
-    <xme:7NrlaKeiKwJ3twXIaiCOv08uo-F7zSGMajpvggjdadfNfi-KBqi24dlA1936Igqxj
-    lNiGAk6vT26Faiv9WcLmyjO07gqCoy5m-krUCOg2oTMyudp2krDOHA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutddvvddvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfnfhilhhl
-    ihgrnhcuuegvrhhrhidfuceolhhilhhlihgrnhesshhtrghrqdgrrhhkrdhnvghtqeenuc
-    ggtffrrghtthgvrhhnpefgtdeggedtheeffeekgfefffeikeefvddtieduffdvvedukedv
-    hfehkeefhfffhfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
-    hrohhmpehlihhllhhirghnsehsthgrrhdqrghrkhdrnhgvthdpnhgspghrtghpthhtohep
-    iedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfoh
-    hunhgurghtihhonhdrohhrghdprhgtphhtthhopegrrdhfrghtohhumhesphgvnhhguhht
-    rhhonhhigidruggvpdhrtghpthhtohepkhgvrhhnvghlsehpvghnghhuthhrohhnihigrd
-    guvgdprhgtphhtthhopehlghhosehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthho
-    pehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtth
-    hopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhk
-X-ME-Proxy: <xmx:7drlaENN0lBm-IP5nzeW0QynfnNmWiWUC20m3g_-oJ6ufxCCBEMwiQ>
-    <xmx:7drlaNMbh63FYqt7ulH4Ry16DYz78JSTnCDvnf2hwnnz6Omi3z1yVg>
-    <xmx:7drlaNhGTtE9sF9D51NKkfVl47Pky1BCeOyo-ybah1lj3HU99_ncSQ>
-    <xmx:7drlaCuoyZ-HeKME75xcaud2GFzOyz0gH1CUg6e5ZzNrq7kUuOfPew>
-    <xmx:7drlaMRpsZ2N8LiOUWLcEffmINLulgP0JQjPFXDG_UgqCb2g6iQrOFXp>
-Feedback-ID: i8db94900:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id E0A1918E0054; Tue,  7 Oct 2025 23:30:52 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1759894274; c=relaxed/simple;
+	bh=2a3OrLH67QU4fsm474jcgPYn16EzoMNKGPvctGw+AQY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tSc0We8/Dn5JRBVLOtzywuJtti4tWMfpdcrppWUyOlfdA4fL1YUzES6hdO0pEzLFXskwyuud4VuWBWZHKFN3Tk5PFVEK67O3m9FddiUgOWKnV8CHWc2zCV9Adx8ogjtymXYscIhR3I+7ea9+q3p4/kQ+fOcIxepANxriBaU/e8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dUMcassV; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59803UPr023166
+	for <linux-kernel@vger.kernel.org>; Wed, 8 Oct 2025 03:31:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=WWL+oxTaknWPjEJ9W43cr4xK
+	NIzu1kCbsEoFeNIlit0=; b=dUMcassVp3gMljPZyMDp1hQaii9A5T70+AeLfRZp
+	oHAi5RF9lsSo+5SRAGRXA38s0UjlaJHa6uVD0bYcRV1rPMOqq31eCi0MW8VUMVJr
+	5+L81wNwxLn4+ub7dk4O6tEwCAR+W7V270Y6G46xuT/9Sv56LvwwVqVSS5DsgLJr
+	Ay+yCN+ZaSh52FUIpvJzmAqQmIqGUVmDNYWAmBi7Dd/OagOepNA7QytESBy2w6mf
+	feLaGvZ5sv63G83b7UMlPqUOuT6uPJm0NtP//duPyap3E3eY43habQBBm9a8m/qR
+	hR9pjcMcgEKNvixJwt2gYHUpJRR6X19zRQpJv4pe7p6yyg==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49jtk718r5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 03:31:11 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4e576157d54so125140431cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 20:31:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759894271; x=1760499071;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WWL+oxTaknWPjEJ9W43cr4xKNIzu1kCbsEoFeNIlit0=;
+        b=UdNAHgnS/0iEM/mIs9s/B41UF0unjK/qzoQ1s43L3/8I3p4PQKaqS3b0m0ZbTFhe7h
+         MiOTwjsdDoblMwf2mVvurNSwt6s2ewVOdbGtSGHlM1L5pWGAEcTJLEmMrd43rApSxBMi
+         ZPsBvGh8BJdKid+SnjmDZIiBUP/whpy8cDohdar0UDA3td6wVYWNsvpfgIfPiEGZ/hgL
+         lTLTnu9TNhJZG3sPMXo9k0Sy18uDs42lgy/ST5e2qM3pECIXW120msV2VtAztSpwqGFG
+         IGEg7erZVthNqXSAJ9a1cLv0j+TgvSGg2KRjKy4oEBHQHWnjABp9kB8QhkUuFkJkPerP
+         oJ3g==
+X-Forwarded-Encrypted: i=1; AJvYcCWYfe2okkrojvFHDQ9lv6MImGSkYEarkW07N9DkY16HoNfZz44ouJq2H1DMrvZpzafBX1tf4WoXWRCyD7w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4MewxDVHi6dRukDK+Lwld6X09U7rbs1uQx8L9sn1dsx+kKxBx
+	6yMurV2xyXrsKEmfEyjPoKImASo6zmYnduys6leSJBBPtuSeA0/1rIXwEAD+Nu6K8EnJqOZLd6Z
+	ffpHqGWm5ymN/xWtTQW24c3gVIP2q+ifiZ+UhYp2sryE8k/mNzWycuB3gCppGZuSAFkY=
+X-Gm-Gg: ASbGncthlYpm6a/KrHOledcBKha8S2zUVCX/PTY6nSTW8YWXY9y30EDZ00/oJR4gjwb
+	96dRSkpwxYg2uRxlHyRbg/xhOWb1F/O7oLuSdfw6tREZDGRjFgHMANIkyDaAousYcwVCaVdKmNa
+	l/sjVwNwLaUAfQXLSQO/M/yYbKcsZhFKrAn9v8DGk417/siCeQcp2UgbFk8A8GRFmKp9Zx23KUo
+	hQpi3L65pyQTs1dav3BZW1SmowofzPUA1QxSfZ8B4l0oso11SoAOtVhPuVxPfKTouaLXUFBdjXs
+	m1YZWt5wcJTGI8vHxWBLkSr0+FjbK7ptZSleJFEVLL0HR+DnNcgBGoog8E6JrAo/Zj4wY0OraAb
+	D40PaPUH4+MQYgJO1xTLfNRtq3MwKOz39z/FwjqX6eBHij8T3UZuLxydElg==
+X-Received: by 2002:ac8:5d05:0:b0:4de:9f9a:b8e1 with SMTP id d75a77b69052e-4e6eacd1632mr28143151cf.18.1759894270938;
+        Tue, 07 Oct 2025 20:31:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGpJi9YDeXIx8aKnVS2WDaUwvZAKAbXdQcjcWyTLCETRGIS0rZ8bznBq56g1sVuq6qO6sT9iw==
+X-Received: by 2002:ac8:5d05:0:b0:4de:9f9a:b8e1 with SMTP id d75a77b69052e-4e6eacd1632mr28142891cf.18.1759894270521;
+        Tue, 07 Oct 2025 20:31:10 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5906775d5desm979249e87.72.2025.10.07.20.31.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Oct 2025 20:31:09 -0700 (PDT)
+Date: Wed, 8 Oct 2025 06:31:06 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Wesley Cheng <wesley.cheng@oss.qualcomm.com>, krzk+dt@kernel.org,
+        conor+dt@kernel.org, konrad.dybcio@oss.qualcomm.com, kishon@kernel.org,
+        vkoul@kernel.org, gregkh@linuxfoundation.org, robh@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 00/10] Introduce Glymur USB support
+Message-ID: <llyanh7h7xbojo5n5npglokotkuqagbkqdgcquj6aagu6u7zal@wazru6ihqamp>
+References: <20251006222002.2182777-1-wesley.cheng@oss.qualcomm.com>
+ <a6690fbc-0b86-4725-99ca-6b4cc477b4ec@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AYuNQIH7K6Uo
-Date: Tue, 07 Oct 2025 23:30:44 -0400
-From: "Lillian Berry" <lillian@star-ark.net>
-To: "Ahmad Fatoum" <a.fatoum@pengutronix.de>, linux-kernel@vger.kernel.org
-Cc: "Andrew Morton" <akpm@linux-foundation.org>,
- "Al Viro" <viro@zeniv.linux.org.uk>, "Leonard Goehrs" <lgo@pengutronix.de>,
- "kernel@pengutronix.de" <kernel@pengutronix.de>
-Message-Id: <984d02d0-3862-4641-b474-345736a13b9d@app.fastmail.com>
-In-Reply-To: <254c82d5-81d9-4e23-9ed8-29cfc3f3c008@pengutronix.de>
-References: <20250707091411.1412681-1-lillian@star-ark.net>
- <254c82d5-81d9-4e23-9ed8-29cfc3f3c008@pengutronix.de>
-Subject: Re: [PATCH v3] init/main.c: add warning when file specified in rdinit is
- inaccessible
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a6690fbc-0b86-4725-99ca-6b4cc477b4ec@kernel.org>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAxNyBTYWx0ZWRfXzDr7flDIsXYg
+ WCOSydyzciMT2vZ1W503R2q2QG0oAa8Mr0a2LbkgPHwsRW9iwnXknwdm1YUZX4eZHiHq/8jL0qL
+ 1eQePTt5qcI3QPVDsrZLECKriBbZjUbXAADQnnf4wVMX99ribK1Y3hKzB70G2yTfhXRnYsqdawi
+ 3jSY/McgVza1dqxDERBctcBeCbUWYAOoRFrzDxrkZCJMBwESky9fLuagH2aML6EPIxjmRi5to0C
+ CGhLqwSzVzLdIlMt4zrkgjPHpY3dZ6+7KCv+0D8H6Tdha80dKQSgCwMmD+HEelxHU6Nx3egJBEc
+ gibquwBN3ot5F1p0Ij2ulUUtEky5D0gAa7eQtQ+e1W7wMoqOzLrwJjS4paGWAgTVi81z1PDEcIG
+ 8UwBaXG8R0TQplO/ARiQ/T/SIWA2/A==
+X-Authority-Analysis: v=2.4 cv=do3Wylg4 c=1 sm=1 tr=0 ts=68e5daff cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=ukQvhT9bAo9IVCr4j54A:9 a=CjuIK1q_8ugA:10
+ a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-GUID: zK78OFcVvbJU3tiMqBWOIHyVDobOtpFx
+X-Proofpoint-ORIG-GUID: zK78OFcVvbJU3tiMqBWOIHyVDobOtpFx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-07_02,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 adultscore=0 lowpriorityscore=0 phishscore=0 clxscore=1015
+ malwarescore=0 spamscore=0 impostorscore=0 priorityscore=1501 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040017
 
-Hi,
+On Tue, Oct 07, 2025 at 10:02:11AM +0900, Krzysztof Kozlowski wrote:
+> On 07/10/2025 07:19, Wesley Cheng wrote:
+> > This series enables the PHY level changes that are required to support
+> > the type C based controllers and the multiport controller.  The typeC
+> > ports utilize a usb43dp based QMP PHY for the SSUSB path, while using
+> > the M31 eUSB2 PHY for the HSUSB path.  For the multiport controller,
+> > it will utilize two QMP UNI PHYs for the SSUSB path, and two M31 eUSB2
+> > PHYs for the HSUSB path.
+> > 
+> > -----
+> > Changes in v5:
+> > - Moved phy-qcom-qmp-usb43-pcs-v8.h into USB specific QMP driver
+> > - Fixed DT bindings for clock properties for QMP combo PHY
+> > 
+> 
+> Where are lore links? Why aren't you using b4?
 
-On Tue, Oct 7, 2025, at 10:57 AM, Ahmad Fatoum wrote:
-> On 7/7/25 11:14 AM, Lillian Berry wrote:
->> Avoid silently ignoring the initramfs when the file specified in rdinit
->> is not usable. This prints an error that clearly explains the issue
->> (file was not found, vs initramfs was not found).
->
-> I have a system that works just fine without an initramfs, but now the
-> kernel warns me about it:
->
-> [    2.805602] check access for rdinit=/init failed: -2, ignoring
->
-> I suppose that's unintended and the code here should actually check that
-> there is an initrd at all before checking for the rdinit?
+Using b4 is the best current practice and it is strongly recommended,
+but I don't think that it is a requirement for contributing to Linux
+kernel.
 
-This isn't directly unintended. This message informs the user their
-specified rdinit= binary was not able to run, regardless of the reason.
-
-It would be good to check presence of initrd and print a more specific
-message such as "rdinit=/init specified but no initrd present".
-
-Kindly,
-Lillian
+-- 
+With best wishes
+Dmitry
 
