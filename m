@@ -1,171 +1,117 @@
-Return-Path: <linux-kernel+bounces-845614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 233A8BC5857
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:09:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF02DBC585A
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:09:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE86440360B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:08:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 314CC403970
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5187A2F360C;
-	Wed,  8 Oct 2025 15:08:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72BA52ECD39;
+	Wed,  8 Oct 2025 15:09:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fGylAEVa"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mI03c5Fy"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF47298CDE
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:08:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3B6288513
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759936121; cv=none; b=ekcclPhKXMDcOroWU5wkOs6qWg2smNg60nXA4bNRR7T+eEnKZtfUtoMODjAOUa5QqvcCBGVM7LT9/u0LcGGNs3LtSLIaGnQx8PJfAxw6mG0QvmMxBAs9nMl3pdBiYg4kfU79S4J/NtOY1NaRmN7vKD4Tukf49lSFRU5qqh/wx20=
+	t=1759936145; cv=none; b=Motpgf5rz+wXG8p84ivPHIY6P4iNWsoUyOx2p6qUpPEvLj+YXyvmHDZ3S3IRTxdOUlhABkkkigYsVWU2+0Z+FSW9nHQkbh+wB9IRbrdlPBx47xfMHRcORaABK4CtZomRK5jfz/RESnKkCnKK/vLPLPCxdZWaga7hcmk6+46aH0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759936121; c=relaxed/simple;
-	bh=0jgaG0UnD4RYPzbpJrP+C6lzU5NmS3WZz+jQE8vDcWA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QjFQR5RVr6VIPCQUwHnZHtHHasymb/fxFzU+2ASsvGUNUX7nEDy8gJIgIBpFS9c/Rml9YbebuhEmC0hU/aIUiYPK7KM7Dfq7gYH4S9cXa1peM7hVobsMobvgpBsVXvjzUn47AQyWF6kYMSyyumePkmki1pzPbvpz1RzXwaef88E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fGylAEVa; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2731ff54949so198835ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:08:39 -0700 (PDT)
+	s=arc-20240116; t=1759936145; c=relaxed/simple;
+	bh=1K+mZHhUUT08Buqc1WIo7B/dy9RfBBDC35AAmiVX12c=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=TzHBnkpNLPy++3sYg3Bl9ovzIcda+wheA8PsRA0pzpH7nqstOzFdzOHD/ZFnCvY2kxfPvXAY/M4l1FoXM6Jyrrxku/dP/CZAI9CxAVmSufjXSiq1fmHkdDEXsACY+T0FGANimubundx4l59j/oDQTePMNuYGZYnE/8viHqfMRtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mI03c5Fy; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3ee12a63af1so17364f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:09:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759936119; x=1760540919; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=10+A/Wgf9iHzcdJ56ejMI3GBStWLH8FDWnolqzz3WNY=;
-        b=fGylAEVa1+rMWFxR8aIYsgd4HAFrEWuTWQ0Durw2Y1lIrlkwPDiCsARBuLbQ4Quvmq
-         s1K+Q3smkBZn1xEuATIzNYrD+YaZ2TkedFkMasuYe4nHtX8I9O1xvjUowBYWoJg3uRmg
-         f6RFidLAukUwKIFxL8/MixQMj6uQdY+iNwJIcaQSel2MABZ1yLTSAgO7iqfafMc/GSJs
-         v3Gs9c/UXjmH9rxUvhUlivTG4fw4m0w6qNDfLgUGeqGRdEqikMcc5RkPJQvhdxbAfVKP
-         ZrCvZ2IMDM8ErVCGpzDtyhvnSvRiU+pAOEPyNEU/fwHW3kW2KqcaVz5SuQHStP+LRskr
-         X5+g==
+        d=linaro.org; s=google; t=1759936142; x=1760540942; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6Lsv/v4r6+foGJWr+qrH8p2k9rjZsdGH+FPsXAlrkVQ=;
+        b=mI03c5FyBkiUk2gVEx+fgak9+cVGldj/HtkrA540CoKE3m0m5NRX5kvSbwN80sGbAf
+         KhvWqYI0G4Qax0E4sqGApnMAXK9MTQaV4BjDztbMPtt3dtdvby/pda4dPBbgitisniPC
+         3qXXO2tQC5uufYxsSrnsCe1Iu4MR2NJCUj/sE/vPxci4lbxiBWDtvBD0H8iUajnYQOoA
+         wshAese0+/HFGjHL9kiBi6MV9BkRXKR7WfJGNQ3dgjsflrOxNCa5eRvNFDPfcMb0Jb97
+         UsOdPYWkSmSwev9urvcwEQrbTAncqCr0k8nELaAq9ozoUB4gSM2WwOAW/2g3EAT57235
+         Jt2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759936119; x=1760540919;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=10+A/Wgf9iHzcdJ56ejMI3GBStWLH8FDWnolqzz3WNY=;
-        b=J9rLFrITW7Ra4PPVKmqKRiP/d65p9QKGo0jsXeoNUQmRBkphCNJXiW8UA6ngzQsIwN
-         Mx1zDzVUrasr55wvQa70Uq7xPgOH1KAzy3d8AgAn1z3dCj/W4J9KR25TuKEQOJSQvYS4
-         HleG3MHH1S6DSPteOVqcr3MLWMYeuoBx0qGMMGc8YKQdp1RDjT1O3aNSSZpkja9j958t
-         J41Na0S0D0seWkQzMOgTc4qhH0MXsUQTtIlU7s+7Kx1/xe2evzUpnT6EHYUyF2OqNJz4
-         8pDbj5LvhRULN3Np7AA1Nas8RZ1WtMEKzNZmadJnnwqB4+m74EDbZT1a7LrziAMv7wf8
-         gbCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW2vPJlx/FUCZf37LcHQ/82edg/IGEe5q9QBQ2DeMeflPXnwiTrMSunr2trLRr/XAQrWkWdfzD+X4qtq2g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztHSPxz4o+nJOaxmWoQDM7bsVKhN84HBzj46RJ6fo7mQLDmvbB
-	NGSu2kimsXwypi/fR8rGsjNjsN5u1zDpVJAkoNyKM6kVwo9mdUvxzXPa54styz4lNcCZGqn7h2H
-	G0flxFH50I7wbnr3F0y+RZwjRtDJ+XRTBVIGd8moW
-X-Gm-Gg: ASbGncvQt6nSRpooxUOSvOmaoATvUSosJ/rvp59YHb/e7ELppzHZFfC48N5LtY2b3vm
-	AokXVbOw4kYalaBgGkSorgsCQumn6kGzp7REOTWab3QxnHzF5QkMqpCeVbaL/SnzL6VmD/7531D
-	20v4cveXll0sTMBCQ2QXf974ooNsQOSvzVAFJfDBA/cvahpGefbRSsfOHz42VsRnT/ikZBA53Uv
-	q+4r7Sp0PEQGPzTMSUUMTGX0UTlVBqhRLy046+hy5PL431Ha7HGhnNli8gdiEVgxvXZrw0VRlPL
-	YjI=
-X-Google-Smtp-Source: AGHT+IEA5bfAGEnmxgkEpgYbLlFKR6/UnvKbH6owwoQlKj5SmNQgcG1ODYv9uPu3CrB5mPkR3Em57VbOB1dHDQGAg9U=
-X-Received: by 2002:a17:903:2408:b0:261:83d2:9d91 with SMTP id
- d9443c01a7336-290276de56cmr5322015ad.15.1759936118954; Wed, 08 Oct 2025
- 08:08:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759936142; x=1760540942;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6Lsv/v4r6+foGJWr+qrH8p2k9rjZsdGH+FPsXAlrkVQ=;
+        b=f719FBPmkwteVvOvZR/qg1eikGPkn2gDFn+xdJT8l17dzevy16uZQd2yOn/PAh1R1a
+         fbBpXiXecIJnyt5akyITo0WjJgXVtCiI1uqJ1zj5Ss/8MGQy2StsixwayHsafs/Kr5gl
+         o5+feLQ6YBxIXIMeC0ZNB9qosZPO7YVbLorTakilieJvzKDfcK/7oCUTm18VieGS9Eha
+         ciHJqLbAeKPwF6WO4RsHE4m213+KlEEEILNFodL6nVhKbljBNSpFQ87xUU4k2jpf7PCc
+         KRB9+5SNsXs0fUyZhjuHHGf55VUBrFnWNmsjRs8brwzMxXpzC6Kl2w1PvRUzNbIOcL8D
+         Yt5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXgPzvaMb6flkxXZZbUeUYp3VFy3OtAj2Bx+5wqcAWeTpSJXK7gk3gkhuVw0G+NdqjZj0NcVuwVv4337Yo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6X1y27fb+kVDzfDa4J9pp3hpVc3x0pu/imJPD0a0Kja25ugFo
+	yMwX43hfrTQd24UIhsmTDgS+IF/iix/qZL8J/7LkrIDepNib9KDKOb4LidSQIIDyeZI=
+X-Gm-Gg: ASbGncu2OnnQ0TDrvMDzxzBbo6vvCA/7QX1GkktNjwEPkno2sJiJD5CgtavfkrAvBgY
+	ka1LtG6vZpm5+qEs4vkwZ+cZRf2+wdpQ+Pq0avnYIuXHj710USoru6dG240wnmGLJhhc76YJIrB
+	8n0Co2LFxLqRO+BT0xIY1Cm6Tv5WVpr3wDCrsUee0VUZDE4xHpppGokIkpEPGx2Bb+v1kIrLLC7
+	VYT7X2uWfKHPDgiSUroowNwLhQRICa/IdkfBk5KpIiFnseGiEREz7hRGv7M0OJoJKHPCH8M3VNM
+	vovCjwNw9UGZ5MXY4tiSWZ3ljt7KETDB3IrISBrQOeRePoMbPVdjvtG3Or5izr6BTbFqp9SEErw
+	pX+pSw9UfshXjByK1SKsn7pMK8fwe/JT3LxQj4c2DOjQuX2O3f2voZD9h
+X-Google-Smtp-Source: AGHT+IHYVsHAe0/w87MtOEqTgFE1mT/tsUBsMdlVHgFGbcOBnMrbBTOagFPDRArfyaH2aIEMb5EBvA==
+X-Received: by 2002:a05:6000:2c0c:b0:3f1:5bdd:190a with SMTP id ffacd0b85a97d-42666ac3a16mr2508780f8f.3.1759936142001;
+        Wed, 08 Oct 2025 08:09:02 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4255d869d50sm31248166f8f.0.2025.10.08.08.09.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 08:09:01 -0700 (PDT)
+Date: Wed, 8 Oct 2025 18:08:58 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Qu Wenruo <wqu@suse.com>
+Cc: Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
+	Filipe Manana <fdmanana@suse.com>, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] btrfs: tree-checker: Fix bounds check in check_inode_extref()
+Message-ID: <aOZ-inc8o7T63QHT@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251007185826.3674908-1-irogers@google.com> <aOYUPWbyQv53hrjE@google.com>
-In-Reply-To: <aOYUPWbyQv53hrjE@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 8 Oct 2025 08:08:27 -0700
-X-Gm-Features: AS18NWBWQqG-RTUR2EkYdMU1qeQqpxuHV0_UrNufBtuGJQoxMeBwbPhE2TZXFrc
-Message-ID: <CAP-5=fW946mri4wEKBzR+XYzbfBH_foV8KW+AG6bU=H=byt2_Q@mail.gmail.com>
-Subject: Re: [PATCH v1] perf bpf_counter: Fix opening of "any"(-1) CPU events
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Tengda Wu <wutengda@huaweicloud.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On Wed, Oct 8, 2025 at 12:35=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> Hi Ian,
->
-> On Tue, Oct 07, 2025 at 11:58:26AM -0700, Ian Rogers wrote:
-> > The bperf BPF counter code doesn't handle "any"(-1) CPU events, always
-> > wanting to aggregate a count against a CPU, which avoids the need for
-> > atomics. Force evsels used for BPF counters to require a CPU when not
-> > in system-wide mode so that the "any"(-1) value isn't used during map
-> > propagation and evsel's CPU map matches that of the PMU.
-> >
-> > Fixes: b91917c0c6fa ("perf bpf_counter: Fix handling of cpumap fixing h=
-ybrid")
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > ---
-> >  tools/perf/builtin-stat.c     | 12 ++++++++++++
-> >  tools/perf/util/bpf_counter.c |  1 +
-> >  2 files changed, 13 insertions(+)
-> >
-> > diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-> > index 7006f848f87a..7fdc7f273a48 100644
-> > --- a/tools/perf/builtin-stat.c
-> > +++ b/tools/perf/builtin-stat.c
-> > @@ -2797,6 +2797,18 @@ int cmd_stat(int argc, const char **argv)
-> >
-> >       evlist__warn_user_requested_cpus(evsel_list, target.cpu_list);
-> >
-> > +     if (target.use_bpf && !target.system_wide) {
->
-> The target.use_bpf only checks the --bpf-counters option.  But IIUC it's
-> possible to use BPF only for selected events with ':b' modifier.  I
-> think you need to check each evsel with evsel__is_bperf().
->
-> Also system_wide might not be set for -C/--cpu option.  Probably you
-> want target__has_cpu() instead of target.system_wide.
+The parentheses for the unlikely() annotation were put in the wrong
+place so it means that the condition is basically never true and the
+bounds checking is skipped.
 
-Thanks Namhyung, I'll fix in v2.
+Fixes: aab9458b9f00 ("btrfs: tree-checker: add inode extref checks")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ fs/btrfs/tree-checker.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Ian
+diff --git a/fs/btrfs/tree-checker.c b/fs/btrfs/tree-checker.c
+index ca30b15ea452..c10b4c242acf 100644
+--- a/fs/btrfs/tree-checker.c
++++ b/fs/btrfs/tree-checker.c
+@@ -1797,7 +1797,7 @@ static int check_inode_extref(struct extent_buffer *leaf,
+ 		struct btrfs_inode_extref *extref = (struct btrfs_inode_extref *)ptr;
+ 		u16 namelen;
+ 
+-		if (unlikely(ptr + sizeof(*extref)) > end) {
++		if (unlikely(ptr + sizeof(*extref) > end)) {
+ 			inode_ref_err(leaf, slot,
+ 			"inode extref overflow, ptr %lu end %lu inode_extref size %zu",
+ 				      ptr, end, sizeof(*extref));
+-- 
+2.51.0
 
-> Thanks,
-> Namhyung
->
->
-> > +             /*
-> > +              * Setup BPF counters to require CPUs as any(-1) isn't
-> > +              * supported. evlist__create_maps below will propagate th=
-is
-> > +              * information to the evsels.
-> > +              */
-> > +             struct evsel *counter;
-> > +
-> > +             evlist__for_each_entry(evsel_list, counter)
-> > +                     counter->core.requires_cpu =3D true;
-> > +     }
-> > +
-> >       if (evlist__create_maps(evsel_list, &target) < 0) {
-> >               if (target__has_task(&target)) {
-> >                       pr_err("Problems finding threads of monitor\n");
-> > diff --git a/tools/perf/util/bpf_counter.c b/tools/perf/util/bpf_counte=
-r.c
-> > index ca5d01b9017d..d3e5933b171b 100644
-> > --- a/tools/perf/util/bpf_counter.c
-> > +++ b/tools/perf/util/bpf_counter.c
-> > @@ -495,6 +495,7 @@ static int bperf_reload_leader_program(struct evsel=
- *evsel, int attr_map_fd,
-> >        * following evsel__open_per_cpu call
-> >        */
-> >       evsel->leader_skel =3D skel;
-> > +     assert(!perf_cpu_map__has_any_cpu_or_is_empty(evsel->core.cpus));
-> >       evsel__open(evsel, evsel->core.cpus, evsel->core.threads);
-> >
-> >  out:
-> > --
-> > 2.51.0.710.ga91ca5db03-goog
-> >
 
