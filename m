@@ -1,86 +1,89 @@
-Return-Path: <linux-kernel+bounces-845785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07485BC61A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:58:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 682E1BC61A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:58:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BFE774ED439
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 16:58:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5709019E5201
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 16:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97F92F5320;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3AD2F5A0E;
 	Wed,  8 Oct 2025 16:57:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j+sEn+dh"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LwBnVVlK"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F070C2ECE8A;
-	Wed,  8 Oct 2025 16:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F662BEC23
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 16:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759942672; cv=none; b=UuMnCxreCsgGjocqLKP/4g/dXwElzIVZA1s2gIY85ChCwVYB+UwIlMZZp5ciFel//fneaCMIgr48FCyv1NBShMpB9sBTytGNi2jDMQXldBvOEZBl3nHeAf0KlWZnpxThDibY6sLNjfdv1MBk3/SuU7wrghJn9I56rqnRwoe5OP0=
+	t=1759942672; cv=none; b=A82VdTVWBc/kZf5viuF8mRVQ46XR82bVzHudRSJMb7mt48epBschJb/Vc4cno4pIxLKMMqvjdpI3tIuOkhk2wQAW/xyGH5/0zYGV2cxa+UUmoI4y3OvRj9kdvs2c/ODfT7G4LPGdLouUlkWZheh1jRfh22EBE8DTf/ZvVTb1DJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1759942672; c=relaxed/simple;
-	bh=Eq/1r+VZp2Evz/CTTMUVwGClrUgMN6C7oaQOpB9fUXg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bqGv9veypl/NZXr4t1SCX640uXHgPFmdNk8F/tBzoVDEoKF6WcEviiiGzuXgi5fbVuky7FMlUnB1N6LjAliai6GHii9FVLJfgJGCN5NKBlLS8YvRYV7/C3deYZbGIDI6Iy1fpsyT0BIKamyLsPZIZV7BbNx0U3DZtoIPUZcT6Fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j+sEn+dh; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759942670; x=1791478670;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Eq/1r+VZp2Evz/CTTMUVwGClrUgMN6C7oaQOpB9fUXg=;
-  b=j+sEn+dhI43ifrjcmSo6DCMXjbSzRwq9gPMElX+ogPPPC/y8YZdI+xt4
-   mmDUL4X4wMlaqNLr/jKaARR3izr/Q8W4z175DWuKoiD6IM87meUeKrJSU
-   EdCgC89qZ5sxZVRuF929pBV9AJ8LNzZ47oIYpOPFIQm3zBzCj9xwI27M/
-   Naxkyx+6/Ln5U9dCy9mUxVR9TmngkueS4EX4AT/dlZasuyAzUbmFyfHyv
-   qJNVUo5eECAci75vXyzTreS3uQBda+mMrVFNEAEWf5CzU7wXPiF0iMVaT
-   v/bSapTsfB5Nf69vMCYGMJ8g4T3capBSOcgbPAiL7aL+7Z2Cu6H5X806g
-   w==;
-X-CSE-ConnectionGUID: Y/aM1mXCQUWeKB/A/ckrHA==
-X-CSE-MsgGUID: d2B82jBjRMCjX46+/zZ0cw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11576"; a="73487536"
-X-IronPort-AV: E=Sophos;i="6.19,213,1754982000"; 
-   d="scan'208";a="73487536"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2025 09:57:49 -0700
-X-CSE-ConnectionGUID: wXKPDV8WQKuQWySFSquJpg==
-X-CSE-MsgGUID: oTtQcRjZRaeEq3izNJbQpQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,213,1754982000"; 
-   d="scan'208";a="181255763"
-Received: from newjersey.igk.intel.com ([10.102.20.203])
-  by fmviesa010.fm.intel.com with ESMTP; 08 Oct 2025 09:57:45 -0700
-From: Alexander Lobakin <aleksander.lobakin@intel.com>
-To: Magnus Karlsson <magnus.karlsson@intel.com>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	nxne.cnse.osdt.itp.upstreaming@intel.com,
-	bpf@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	stable@vger.kernel.org,
+	bh=bsb+y9GXaiujW9D0Ry82D5jCo6Sp7m/WH69JdEGt4HU=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=g20rkh3pK1fe+WnTcYbWKc2D+Y5f6X2XA2pwuXI35SCtSp1FUhREbwVSGm4rLfm3lqdqC6uS/w9dqtmdCJH562RCDsN8lzLOEqSxBQGMMbO8yC8/a2zTgIhorXRBl9SoSRHrE9Pr1h5H6NYs9JSBOiNySIXG/jwNNSpGbjMITQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LwBnVVlK; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-85780d76b48so4127685a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 09:57:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759942669; x=1760547469; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JI4x8uT047uus/c8gIMluqpXmcSLrCVGwf/TCPTFBjs=;
+        b=LwBnVVlKfY0/9f+jdKAfrVzpOKxomkSrxFH0RAa3Fl3azENZ1a94RPIfUPc/cdQJzb
+         nCmbN6+K82cXySFGvr07XOjsnFRepxsztlswnO1elClvqXlrRJ46gGr4WeYne4EsJJlS
+         m1hbN30lbWAaY6DMUrdgQadi8bZgOLKrmcvEWd/Jd/VE7AloRHGTlsTlKnv6WT7uV+cw
+         BLIzfl7RztSkj+HlqubkDuSrcqruMFYN7kB2OjvtepXZa/FEEoD2otUO3YPy2Qkd+hpv
+         VtYeINV6PbeGhWqxfyW97IaPOBtdncO7Ny1w1EUL2Gy6mIkxndwHPZ+F3WnPr1cVJVCA
+         mGiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759942669; x=1760547469;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JI4x8uT047uus/c8gIMluqpXmcSLrCVGwf/TCPTFBjs=;
+        b=gXZGce1iZzi6jOxC+xNPL5WMjoIv58MQBVc6VTQVHPXQ1qO6zpbRKsTeWYApcaV1B5
+         r09LprFpjOj+vO5v1Ddgv3U2FcGY8LAkth0srodQz6R8nWo01O2riOdebnKka1NZ4mV7
+         0vdRb8xM7Fv/ppvIN8dAjzZ/p5egR6pw5aJFS+EUGdeSa3WFHpx73n49d/DZMTve0t9n
+         1fbKuY2t1CJ1eFwDUCWg3dL6Jt4nZdKnbcU0fc7pim097l4n+GlWaHzvGKjSH+vlDlJA
+         Q7qZlRJgW9EzlFVXiAb6uyyFDd126z1LB3yAtFqJE+xHv8JmAthlTWPEPL8nJf5UQ+7J
+         R7vA==
+X-Forwarded-Encrypted: i=1; AJvYcCX9qvBej3nhUucSZZdRjLxkPqjizHpToUhyZ7cZdN7Uxv646i4ZeBCJGvUolHSe1nC0ODKycIwo5h5npL4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwETEfb3YoPLEshAmaNleNpfVZbm76kKeDpy4TiRXimGIfgOmnL
+	LVg9bn0D1J5YgT96+AvXUi28ifx8LnDvq7DbSchVvXVH/y+mdJeswuq3
+X-Gm-Gg: ASbGnct1lLpGqCRbbFT/GntKE+d6WjvmVGGUVApdteG3n1OnLXwk3wOVrpGeSmF2NUV
+	8SE7PiHa4IZDAHpYX2Dd7bwRTAUYIDwuK9d713CZStQ9WYYW1WxKlhtPyfX9D3+xtFiM3PvNdZx
+	lbG7S/lVfJfqx6jG8FGpiCcgp3F2w+NpMrDgEhTaIIPOIvHLYcgMPsQxt1ApshrNyzjVukPclEV
+	RVwNPsT5oC7BnNvIKom3sDdEPLn4PG9OqpPhA0/gwdyulG+q8kl1KMvoTrbkfFgDUqA8XASME+5
+	aaCcMODuhbh3rCmQR+wCPbI6awS8ycMQ9Itq5VXhnTezlxFPegeK2pT08Fqbn6YnEsoQG+RXiE+
+	RP0FQGtclzPUI3SLs3AJaH1+YgU9om+Jc3D1dhldWTa2Ah75FK8vTMQ==
+X-Google-Smtp-Source: AGHT+IF7IbP0lx/uab9pODOh9W3eLzJEe+oj9q6RkB0BKPMx0GjbzVTX1N2vVri4J8bQbiVKXX9jAw==
+X-Received: by 2002:a05:620a:28ce:b0:835:e5ec:1f54 with SMTP id af79cd13be357-8834fe9987fmr633592085a.9.1759942669234;
+        Wed, 08 Oct 2025 09:57:49 -0700 (PDT)
+Received: from localhost ([12.22.141.131])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-884a1ca2f0csm21861785a.32.2025.10.08.09.57.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 09:57:48 -0700 (PDT)
+From: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Rik van Riel <riel@surriel.com>,
+	"Yury Norov (NVIDIA)" <yury.norov@gmail.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Roman Kisel <romank@linux.microsoft.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH bpf] xsk: harden userspace-supplied &xdp_desc validation
-Date: Wed,  8 Oct 2025 18:56:59 +0200
-Message-ID: <20251008165659.4141318-1-aleksander.lobakin@intel.com>
-X-Mailer: git-send-email 2.51.0
+Subject: [PATCH] smp: simplify smp_call_function_any()
+Date: Wed,  8 Oct 2025 12:57:45 -0400
+Message-ID: <20251008165746.144503-1-yury.norov@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,122 +92,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Turned out certain clearly invalid values passed in &xdp_desc from
-userspace can pass xp_{,un}aligned_validate_desc() and then lead
-to UBs or just invalid frames to be queued for xmit.
+The functions calls get_cpu()/put_cpu() meaningless because the actual
+CPU that would execute the caller's function is not necessarily the
+current one.
 
-desc->len close to ``U32_MAX`` with a non-zero pool->tx_metadata_len
-can cause positive integer overflow and wraparound, the same way low
-enough desc->addr with a non-zero pool->tx_metadata_len can cause
-negative integer overflow. Both scenarios can then pass the
-validation successfully.
-This doesn't happen with valid XSk applications, but can be used
-to perform attacks.
+The smp_call_function_single() which is called by
+smp_call_function_any() does the right get/put protection.
 
-Always promote desc->len to ``u64`` first to exclude positive
-overflows of it. Use explicit check_{add,sub}_overflow() when
-validating desc->addr (which is ``u64`` already).
-
-bloat-o-meter reports a little growth of the code size:
-
-add/remove: 0/0 grow/shrink: 2/1 up/down: 60/-16 (44)
-Function                                     old     new   delta
-xskq_cons_peek_desc                          299     330     +31
-xsk_tx_peek_release_desc_batch               973    1002     +29
-xsk_generic_xmit                            3148    3132     -16
-
-but hopefully this doesn't hurt the performance much.
-
-Fixes: 341ac980eab9 ("xsk: Support tx_metadata_len")
-Cc: stable@vger.kernel.org # 6.8+
-Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
 ---
- net/xdp/xsk_queue.h | 45 +++++++++++++++++++++++++++++++++++----------
- 1 file changed, 35 insertions(+), 10 deletions(-)
+ kernel/smp.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/net/xdp/xsk_queue.h b/net/xdp/xsk_queue.h
-index f16f390370dc..1eb8d9f8b104 100644
---- a/net/xdp/xsk_queue.h
-+++ b/net/xdp/xsk_queue.h
-@@ -143,14 +143,24 @@ static inline bool xp_unused_options_set(u32 options)
- static inline bool xp_aligned_validate_desc(struct xsk_buff_pool *pool,
- 					    struct xdp_desc *desc)
+diff --git a/kernel/smp.c b/kernel/smp.c
+index 02f52291fae4..fa50ed459703 100644
+--- a/kernel/smp.c
++++ b/kernel/smp.c
+@@ -754,17 +754,13 @@ EXPORT_SYMBOL_GPL(smp_call_function_single_async);
+ int smp_call_function_any(const struct cpumask *mask,
+ 			  smp_call_func_t func, void *info, int wait)
  {
--	u64 addr = desc->addr - pool->tx_metadata_len;
--	u64 len = desc->len + pool->tx_metadata_len;
--	u64 offset = addr & (pool->chunk_size - 1);
-+	u64 len = desc->len;
-+	u64 addr, offset;
+-	unsigned int cpu;
+-	int ret;
++	unsigned int cpu = smp_processor_id();
  
--	if (!desc->len)
-+	if (!len)
- 		return false;
+ 	/* Try for same CPU (cheapest) */
+-	cpu = get_cpu();
+ 	if (!cpumask_test_cpu(cpu, mask))
+ 		cpu = sched_numa_find_nth_cpu(mask, 0, cpu_to_node(cpu));
  
--	if (offset + len > pool->chunk_size)
-+	/* Can overflow if desc->addr < pool->tx_metadata_len */
-+	if (check_sub_overflow(desc->addr, pool->tx_metadata_len, &addr))
-+		return false;
-+
-+	offset = addr & (pool->chunk_size - 1);
-+
-+	/*
-+	 * Can't overflow: @offset is guaranteed to be < ``U32_MAX``
-+	 * (pool->chunk_size is ``u32``), @len is guaranteed
-+	 * to be <= ``U32_MAX``.
-+	 */
-+	if (offset + len + pool->tx_metadata_len > pool->chunk_size)
- 		return false;
- 
- 	if (addr >= pool->addrs_cnt)
-@@ -158,27 +168,42 @@ static inline bool xp_aligned_validate_desc(struct xsk_buff_pool *pool,
- 
- 	if (xp_unused_options_set(desc->options))
- 		return false;
-+
- 	return true;
+-	ret = smp_call_function_single(cpu, func, info, wait);
+-	put_cpu();
+-	return ret;
++	return smp_call_function_single(cpu, func, info, wait);
  }
- 
- static inline bool xp_unaligned_validate_desc(struct xsk_buff_pool *pool,
- 					      struct xdp_desc *desc)
- {
--	u64 addr = xp_unaligned_add_offset_to_addr(desc->addr) - pool->tx_metadata_len;
--	u64 len = desc->len + pool->tx_metadata_len;
-+	u64 len = desc->len;
-+	u64 addr, end;
- 
--	if (!desc->len)
-+	if (!len)
- 		return false;
- 
-+	/* Can't overflow: @len is guaranteed to be <= ``U32_MAX`` */
-+	len += pool->tx_metadata_len;
- 	if (len > pool->chunk_size)
- 		return false;
- 
--	if (addr >= pool->addrs_cnt || addr + len > pool->addrs_cnt ||
--	    xp_desc_crosses_non_contig_pg(pool, addr, len))
-+	/* Can overflow if desc->addr is close to 0 */
-+	if (check_sub_overflow(xp_unaligned_add_offset_to_addr(desc->addr),
-+			       pool->tx_metadata_len, &addr))
-+		return false;
-+
-+	if (addr >= pool->addrs_cnt)
-+		return false;
-+
-+	/* Can overflow if pool->addrs_cnt is high enough */
-+	if (check_add_overflow(addr, len, &end) || end > pool->addrs_cnt)
-+		return false;
-+
-+	if (xp_desc_crosses_non_contig_pg(pool, addr, len))
- 		return false;
- 
- 	if (xp_unused_options_set(desc->options))
- 		return false;
-+
- 	return true;
- }
+ EXPORT_SYMBOL_GPL(smp_call_function_any);
  
 -- 
-2.51.0
+2.43.0
 
 
