@@ -1,181 +1,290 @@
-Return-Path: <linux-kernel+bounces-845913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC3D8BC67B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 21:36:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFA3DBC67BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 21:40:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49CF2404C24
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 19:36:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E781404C96
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 19:40:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90EA72638B2;
-	Wed,  8 Oct 2025 19:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 941E92652A6;
+	Wed,  8 Oct 2025 19:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aA97Um01"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="3zbI0AaS"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013013.outbound.protection.outlook.com [40.93.201.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E372259C80
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 19:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759952206; cv=none; b=B5S/sD4UJnfma1guyEzQjOyt4XOSsSThNTydi3z46XHEBNC+SFEqNuF5vU7hriC67rHDF1gj9jxOUwXkaEC8TB3QHRPoK0IlT6whP3jTD+qby+MpOR3JpqUzOcE0amXzGyb+u+JppNGwAPqGGCw6XwNUHKJULMr5qhNRLCsvz9A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759952206; c=relaxed/simple;
-	bh=Ll7E79Gg4d1JPkSdUd3Vazrtozyg144vEKsT+UQDLNM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TyUM05Y3iOri0Bi0g1jPNE5O48ZBrcHlKslMetaL1SaygvKf8Seh3u8R/DO4RRrgaHQ4RoOAlwzNu1QqcGhoqbwpzD9Ywo+3SeVRKHbyulK9UKuEiOMo+6yq4GiHJHUN2V0CfQsPpK3f6yxxEemhI5zWIHoV2haiCTISH6db5qI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aA97Um01; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-71d71bcac45so2717777b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 12:36:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759952204; x=1760557004; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=moKwOhdpUyJ4bZcyz0xhC/UoJ3xCwW2GSEFAUi/lwOw=;
-        b=aA97Um01LxoOqoyCbeXulN8kTxFvb3cexUYmThsfBmijl4UCGV23O/peJBGgcDi4Wq
-         MlAxO4FcjBhe67+sJ5mf+nt5qeD+HLzLkKZsfboJq1qY7UrAOfHQOtL8UTKDcGXh2kEI
-         hRYIMxTn1ekgZCeqAyuIu9mnjgUxk6oplaiMj2gBon4nlwakVf0lxpl5GwHGgKHuYkI2
-         Rg+ZaH0jhtDKaKNtv5dhR0IIb1lNG0CEmihNokj5laSf55ih2toqvl9jX8cxu9U1hkLJ
-         JxFLGBCc4bh9LGIvrl6oUEMBeNLTHJWPanSAy6JYCxedLm4OwcG/+W+UDlXYnccJRSrY
-         /YuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759952204; x=1760557004;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=moKwOhdpUyJ4bZcyz0xhC/UoJ3xCwW2GSEFAUi/lwOw=;
-        b=rO8VoDcYU8vEkKAaRzho1cDZV+vB5rP1McMSsEex0fZoE+w7Ij0AGtu0sp45oHccGr
-         /3x7jYLaFFNLDefwLowiuy1MEA8mQiuKFJKSlsd6K3zqFgU/FW7SafB1LoutYoCXKiv+
-         2MpYEXxKJ66yL2/uyEMR20RygJU9Yg8qsfgNWIFk0bxGki5myAeM8Pgbwx2JYarbWXd/
-         WrVRkYejdUUB3cc7rT1OKnNMxgS3DuW/2Ud08DLgzFbPXWD4KmK1c9aV7KWaesnTOR7e
-         qmHyklwSFdmdJRWv3OjunIP54RXrKFKNbuBWZc9cm7e/o0rhXxUYf22btg2HnWYig41v
-         TVDg==
-X-Forwarded-Encrypted: i=1; AJvYcCXG782AVeTF/RfXUKhhsaMkMJ2Fe50cqaP9pLFkJdmUdFd2lqXEx6CVGSNY7syTbSdwbMyPr1Z36XRbjVA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyftansIHQ6SU/UX1f+kpUfg88w+mk5bEwc17M8h25S4/7QHiqm
-	9Ft8+VhLTtqp/xp/h2ncys54muNlPrFPTeFSR48ZPrQfUL9Do16P6jsh/w+Ufw==
-X-Gm-Gg: ASbGncuk9Ruhd7la4Z/j8G52Hk/sS2bNbhDlHfmM18QKz39iFo4TqzEmPd2gnhYfQap
-	AScrUKU32pceKrrvzUFrKrRIWPFtd4Et+tlx788dPxv3yQIdTcbr5BjKuy4Wx6JB5jQt57Uph0W
-	7PZ/tDHACx8REAR0mGNnjVjH6/PznOxAzMA4FmC4AtRYi8jE/ydSqs6W/26/TbUg3B6OkE2z0fK
-	hkwjbvLUF0smumHoNrYz4nqwPo0MMUWCXqO9vPZhUOFTEUPnye6++vXcxNlasdkCHySQl51w7vg
-	Xz7et6EKfKXQtKPmJGk1bXaNzDYQW5yYKhLpwFPiyiy7olHG4PfLJ3i/HtrhT53V9+P9ojWpxaB
-	RbJPL/eJR7TGmmb/Bn7luJHOnesj0FS3jEsSJBoPGcBxkBIdGIU7HiXJM+9XBusV+LankKSQPrq
-	caHNHArMfnLViv0g==
-X-Google-Smtp-Source: AGHT+IHtB8Z8ID/pyVnrYXDZZOQNzUqtOOHCwxuT0b7AWpclaN93NeUezX9digLJSKp1/ekVgKu9Tg==
-X-Received: by 2002:a05:690c:9a8d:b0:772:72d1:15bd with SMTP id 00721157ae682-780e15bd334mr60790547b3.44.1759952204064;
-        Wed, 08 Oct 2025 12:36:44 -0700 (PDT)
-Received: from localhost ([2a03:2880:25ff:4d::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-77fa89e5b38sm46859517b3.44.2025.10.08.12.36.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 12:36:43 -0700 (PDT)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Brendan Jackman <jackmanb@google.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@suse.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Zi Yan <ziy@nvidia.com>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	ying.huang@linux.alibaba.com
-Subject: Re: [RFC] [PATCH] mm/page_alloc: pcp->batch tuning
-Date: Wed,  8 Oct 2025 12:36:41 -0700
-Message-ID: <20251008193642.953032-1-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <1b72c0b1-4615-4287-bac2-c8806e56f44a@intel.com>
-References: 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D784237A4F
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 19:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759952413; cv=fail; b=uk0dH4AE2MqMMNeZNx7CtpOb0SB+GGpnOYnTAhV3Y6D0VYPkh4UrwOXmmPNaANgyRKKvNGvRBtk+D7D1OGxfIOps8eGszpI6A7WhB6zkFXYaKazMR5YQsKTTGD++u9d+TciGDn2tQ3JCPmvz8nK0WtpLwmmcj0+EyuQiI6e1sB0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759952413; c=relaxed/simple;
+	bh=zxPuaVClKkCMw2QTHUcuWhQ5+YY1JDKLeWegw7/K0cc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DZ08nC8X3qAGRdQPJNvDB7tNUmHtM81Rvz9HpuMhniApIwrsmRob6FwOa61wPZeUuuuhVb+o1pZaY/sSuqivNxhncsvb3IdebwCgowJaqVixBjlvli+tgFci2xAvLiLVhZdwRg5Zyi9D3E+71UvPMObM7w3K1lZfMbj9djuSauc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=3zbI0AaS; arc=fail smtp.client-ip=40.93.201.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=E0aPzWKFZkc1D9at0KvEzwm53Cn4EJewHQoyVd4nk73mqsTgcEraDVv+PQgS1s24Kju1RqOD61L7jFEFbETT0lB7TQtq0lgGgGzdw6TpMAno+k//h7DsJilcs8m7CXJYWb3FGg9Ughu/aaOuQfFVyPthDfrldLOYgQPR4FytFEcbq/wUUPajlXkMHjpFY3iaV2sgYEsuHLuZsxDpSBOfX6beMCETDeeRvdNCXZMoeoC5gqcfdMFqaYHoaw6nXXFUINk4LLiFiKfgtfbHF3RygWjEilIGu4XLOdtnXcskVUiiZN3G6zJvy0esI2FIhKUl3OJdiBsPOY+tF/N2h9WdWQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=evjx5gPQQ/cod5WGyQfMnIV4w8mCNPRGh03Y4eo+uWY=;
+ b=VqgTnwKO7tRzA6mtBRMMiCnJQa+/pnwhiK4N8VTjOlpg7z6QcJnAX+H22mW8fKt+Gbly1hhfazyhK1Fu1mnaSMxtecsIX4OXI5TVJb/pyg3uh3HpZQTsaIJtfAy/T517eHAKfqfBq37sh8XqH7rUSVOb5O8ojf7i9ntPhfWnolWNiZ0333bhCzBXhIcGN+5sYwiWmW0AGLP03jkrJpr0TUZBH+ixegTErfw9rdny1it44PISz2wB7+DxutixjN+HRZH5Yrwo86pwDzxMyXbZcnK8kgTLNoJ7jd6+rP4hhEnQBKmwjyJayirTbXBkzKdd4r/7wszaKAgE6R5z7vNBCw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=evjx5gPQQ/cod5WGyQfMnIV4w8mCNPRGh03Y4eo+uWY=;
+ b=3zbI0AaSaAVpw8GxMrUiqgq3/X8zA/B8MQpAwSp8Q1krg5Fexz0cIxloY2CeWGYLWHkeWPfUDTVXsPLcJ3Ytj3CBttGoAH8y/nRkB9b1hd9guic0G5Mrktcmcra605wHLCVyyWpFPgoYeN97ODYccbvLt8Ra1ERCvuaWY53diFs=
+Received: from BYAPR02CA0012.namprd02.prod.outlook.com (2603:10b6:a02:ee::25)
+ by PH0PR12MB8031.namprd12.prod.outlook.com (2603:10b6:510:28e::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.9; Wed, 8 Oct
+ 2025 19:40:01 +0000
+Received: from SJ5PEPF000001F3.namprd05.prod.outlook.com
+ (2603:10b6:a02:ee:cafe::8c) by BYAPR02CA0012.outlook.office365.com
+ (2603:10b6:a02:ee::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.9 via Frontend Transport; Wed, 8
+ Oct 2025 19:40:01 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ SJ5PEPF000001F3.mail.protection.outlook.com (10.167.242.71) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9203.9 via Frontend Transport; Wed, 8 Oct 2025 19:40:01 +0000
+Received: from bmoger-ubuntu.amd.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 8 Oct
+ 2025 12:40:00 -0700
+From: Babu Moger <babu.moger@amd.com>
+To: <babu.moger@amd.com>, <tony.luck@intel.com>, <reinette.chatre@intel.com>,
+	<Dave.Martin@arm.com>, <james.morse@arm.com>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>
+CC: <x86@kernel.org>, <hpa@zytor.com>, <linux-kernel@vger.kernel.org>,
+	<peternewman@google.com>, <eranian@google.com>, <gautham.shenoy@amd.com>
+Subject: [PATCH v2] x86/resctrl: Fix buggy overflow when reactivating previously Unavailable RMID
+Date: Wed, 8 Oct 2025 14:39:54 -0500
+Message-ID: <2ead4ece804b0f61aab01f47385d9a125714991e.1759952394.git.babu.moger@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F3:EE_|PH0PR12MB8031:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9ff7d18c-da37-47f2-81d3-08de06a278ff
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|7416014|82310400026|1800799024|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aDNiaXNMTkZHVk5LZnNWbVJyVlFHSzgvUmpIVU4xWW5DdWErNkI0QW9lNDhJ?=
+ =?utf-8?B?cEcxQ3NPVTZYWkNIVmZjc21ZMnRMZ0p6NjBQWjEzdlFCYzhHeDF0aXMxSjlL?=
+ =?utf-8?B?TERZT2d3YUhzNFJJRWFHQmNTb1d5UHZWWC91NVVUQWZDRmdZSFlPRlNFVFlK?=
+ =?utf-8?B?azdKNVlabTlKZFc2RC9aa3pwcW5rU3ZpUjR6bUVkNnd3cHM5MklFZkpqMkQ5?=
+ =?utf-8?B?YmlRVVArUXJxeTdwWk5tdXpMMERJYVBKbC9obWFXYUh2dXRqYWhrQzRCTHdk?=
+ =?utf-8?B?cjdYcnFCaEVPWWZZaEhlMjRNK3A1cFdlQTdGYjQrNXZUK1lSaktlR1FDSEpE?=
+ =?utf-8?B?QndoZC9FSVRMdVdxelJaZGx2TG5hZXhTcGVodlk5bEluemFuSzNMVysydmQv?=
+ =?utf-8?B?YklUYTBQTDNvaHlQNThqT3FlSWg5ak8zVFB6MnBHVHVMMGl5MWpJRGxjb2dI?=
+ =?utf-8?B?eERkTFBSeGoybjVGOWRNZVQxKzhRZ3QyT3BadHJtSDUwN0djUElxcE5PNC9Q?=
+ =?utf-8?B?ZGhySXhaQXRJUEJETUs5L201ZzRrOUhHTWZZSExUQ2h6YWRSakZpTXMxS015?=
+ =?utf-8?B?N1lmUlZ0K01kTnlCTjk3cGFGbjdHQVphRm9yVzAvL2JxUGg5MDBFQm1IcG9m?=
+ =?utf-8?B?U3h6ZkNEaXBHbGVIcnRIRGJ0bFdnTW1wc0ZTK3d5VlZBeGdNVzBXcXlRZnhN?=
+ =?utf-8?B?RlNNYW1VeGRCbUNUQitHR2YxYmdvWVkxV3R5WVVBNURVenQxMzMyeFRiRnVy?=
+ =?utf-8?B?cDZDOWZmVlQySzhIUmUzM3BTQ0h5SjZiSk1sOWk1SGVXcVFzSlJyU0luNDZz?=
+ =?utf-8?B?cUR5dWx2N0ZmaEl1TzF2VHNSSjF4MDV0RkFycnVvZllGWUJSeVZreGR2S0o3?=
+ =?utf-8?B?THBVbE55U3h2dTh0TUVVWkdGRVB2c01VZ0QwYUxUWjZFOHdiNmhhMi9BN3l1?=
+ =?utf-8?B?UFA2WS92WW9VREg3ejFHRjllN2J5bkh2Wm5maHVZR3A0VFZVR3JWdXFXZjNG?=
+ =?utf-8?B?ZXNFY1J1NXNRZkp0SW4rWHVMM2NYeUtzNmVGN09IZ1RIcENlZFUrN3NMd2Mx?=
+ =?utf-8?B?ZDFuTXFGWjA1MW5tZGpRK3ZlMlFKNmlNY2s2TFc5dzdxSmhyQk9PR0JLOXZU?=
+ =?utf-8?B?a0ovVFF2aytNdHVaSzlKQ3pMWXA3clgzN1E2VFUyMlUwWjUvSkZkUUhkdGlN?=
+ =?utf-8?B?dnRLQW0yQ0hMMExGV0QwalBaUUZ4OFNwRkhwN2FSOHIwY0N2YUFYbDU0eGgr?=
+ =?utf-8?B?SjlBa3AzSzd4NWhhSjlWYTFsMW4yYUE2QmErN3pONkZDTFdmNXA3MzdJQXFU?=
+ =?utf-8?B?WWdYYkU5bWlzNkhGSXNuSVUvQmY3eXpiY3UwSFFtNC9leWV2cUtVM1o4SGV3?=
+ =?utf-8?B?NXpPNnhoZG1HYUdkZUZZYThqR29MVUtpQnN0Qkh3ZEpwalczeXc5eG0wNStY?=
+ =?utf-8?B?WVpXYUFrZnVSWFVOOUptU3lSRU9IQkVaNFkwL0xiZDFJdzZYRkNaOTNTcjNo?=
+ =?utf-8?B?VXhRbnNOb2ZCMDJxZk9RSHZqUlp5OS9GTnBscGFyOS9Zbkw4RlRzZmFyemZG?=
+ =?utf-8?B?YW1Ia0JFQXBISTdyU2RQS2M0aVYva0FjUVo1Mmpia1lPT1JKWHNKSytRTnp1?=
+ =?utf-8?B?ZXN0T0NDS1lBWlF2T1l1UlgzMzRTRnhuSnNxZEd2TEI1NmxUWTNqQ0NkSHZR?=
+ =?utf-8?B?ZXB6bUE2RW9GUkJUMm5KSjdUUGRrODlTOVlqek5raHlUbDd0WHhNYXk5eUlj?=
+ =?utf-8?B?VVVjVXFDYnQrOVYwRzZFV1JwSjA0V0JDOUV1QVRRc1o3REpoRUVGWjU5eTR6?=
+ =?utf-8?B?V3dLaktzUkwxUXQ5aGNZR0Zoa3VReFRTeFIxWXJpZURQZ09JbWl0VVBTVzdP?=
+ =?utf-8?B?VTFiZjB1YStraldOSUFIM0lVbWdFN0xYYm13bmZwRnJBY0pGN3B1KzdBSVdM?=
+ =?utf-8?B?b0tVL3RhUEgyeEJvenZ3UHBoVmVCRHRhRkZGMXd0eTZ4czcxcS9LLy82NlpG?=
+ =?utf-8?B?YllXNUg5TDRoNUdiRXZva3hNdk0xRC9ZaklEZk9NaWlETW1jTVpnbkhnQUJo?=
+ =?utf-8?Q?p8oM23?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(7416014)(82310400026)(1800799024)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2025 19:40:01.6322
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9ff7d18c-da37-47f2-81d3-08de06a278ff
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001F3.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8031
 
-On Wed, 8 Oct 2025 08:34:21 -0700 Dave Hansen <dave.hansen@intel.com> wrote:
+Users can create as many monitoring groups as the number of RMIDs supported
+by the hardware. However, on AMD systems, only a limited number of RMIDs
+are guaranteed to be actively tracked by the hardware. RMIDs that exceed
+this limit are placed in an "Unavailable" state. When a bandwidth counter
+is read for such an RMID, the hardware sets MSR_IA32_QM_CTR.Unavailable
+(bit 62).
 
-Hello Dave, thank you for your feedback!
+The problem occurs when an RMID transitions from the “Unavailable” state
+back to the active state. When this happens, the hardware resets the
+counter to zero, but the kernel compares this new smaller value with the
+previously saved MSR value and mistakenly interprets it as an overflow.
 
-> First of all, I do agree that the comment should go away or get fixed up.
-> 
-> But...
-> 
-> On 10/6/25 07:54, Joshua Hahn wrote:
-> > This leaves us with a /= 4 with no corresponding *= 4 anywhere, which
-> > leaves pcp->batch mistuned from the original intent when it was
-> > introduced. This is made worse by the fact that pcp lists are generally
-> > larger today than they were in 2013, meaning batch sizes should have
-> > increased, not decreased.
-> 
-> pcp->batch and pcp->high do very different things. pcp->high is a limit
-> on the amount of memory that can be tied up. pcp->batch balances
-> throughput with latency. I'm not sure I buy the idea that a higher
-> pcp->high means we should necessarily do larger batches.
+Problem scenario:
+1. The resctrl filesystem is mounted, and a task is assigned to a
+   monitoring group.
 
-I agree with your observation that a higher pcp->high doesn't mean we should
-do larger batches. I think what I was trying to get at here was that if
-pcp lists are bigger, some other values might want to scale.
+   $mount -t resctrl resctrl /sys/fs/resctrl
+   $mkdir /sys/fs/resctrl/mon_groups/test1/
+   $echo 1234 > /sys/fs/resctrl/mon_groups/test1/tasks
 
-For instance, in nr_pcp_free, pcp->batch is used to determine how many
-pages should be left in the pcplist (and the rest be freed). Should this
-value scale with a bigger pcp? (This is not a rhetorical question, I really
-do want to understand what the implications are here).
+   $cat /sys/fs/resctrl/mon_groups/test1/mon_data/mon_L3_*/mbm_total_bytes
+   21323            <- Total bytes on domain 0
+   "Unavailable"    <- Total bytes on domain 1
 
-Another thing that I would like to note is that pcp->high is actually at
-least in part a function of pcp->batch. In decay_pcp_high, we set
+   Task is running on domain 0. Counter on domain 1 is "Unavailable".
 
-pcp->high = max3(pcp->count - (batch << CONFIG_PCP_BATCH_SCALE_MAX), ...)
+2. The task runs on domain 0 for a while and then moves to domain 1. The
+   counter starts incrementing on domain 1.
 
-So here, it seems like a higher batch value would actually lead to a much
-lower pcp->high instead. This actually seems actively harmful to the system.
-So I'll do a take two of this patch and take your advice below and instead
-of getting rid of the /= 4, just fold it in (or add a better explanation)
-as to why we do this. Another candidate place to do this seems to be
-where we do the rounddown_pow_of_two.
+   $cat /sys/fs/resctrl/mon_groups/test1/mon_data/mon_L3_*/mbm_total_bytes
+   7345357          <- Total bytes on domain 0
+   4545             <- Total bytes on domain 1
 
-> So I dunno... f someone wanted to alter the initial batch size, they'd
-> ideally repeat some of Ying's experiments from: 52166607ecc9 ("mm:
-> restrict the pcp batch scale factor to avoid too long latency").
 
-I ran a few very naive and quick tests on kernel builds, and it seems like
-for larger machines (1TB memory, 316 processors), this leads to a very
-significant speedup in system time during a kernel compilation (~10%).
+3. At some point, the RMID in domain 0 transitions to the "Unavailable"
+   state because the task is no longer executing in that domain.
 
-But for smaller machines (250G memory, 176 processors) and (62G memory and 36
-processors), this leads to quite a regression (~5%).
+   $cat /sys/fs/resctrl/mon_groups/test1/mon_data/mon_L3_*/mbm_total_bytes
+   "Unavailable"    <- Total bytes on domain 0
+   434341           <- Total bytes on domain 1
 
-So maybe the answer is that this should actually be defined by the machine's
-size. In zone_batchsize, we set the value of the batch to: 
+4.  Since the task continues to migrate between domains, it may eventually
+    return to domain 0.
 
-min(zone_managed_pages(zone) >> 10, SZ_1M / PAGE_SIZE)
+    $cat /sys/fs/resctrl/mon_groups/test1/mon_data/mon_L3_*/mbm_total_bytes
+    17592178699059  <- Overflow on domain 0
+    3232332         <- Total bytes on domain 1
 
-But maybe it makes sense to let this value grow bigger for larger machines? If
-anything, I think that the experiment results above do show that batch size does
-have an impact on the performance, and the effect can either be positive or
-negative based on the machine's size. I can run some more experiments to 
-see if there's an opportunity to better tune pcp->batch.
+    In this case, the RMID on domain 0 transitions from “Unavailable”
+    state to the active state. The hardware sets MSR_IA32_QM_CTR.Unavailable
+    (bit 62) when the counter is read and begins tracking the RMID counting
+    from 0. Subsequent reads succeed but may return a value smaller than the
+    previously saved MSR value (7345357). Consequently, the kernel’s overflow
+    logic is triggered—it compares the previous value (7345357) with the new,
+    smaller value and incorrectly interprets this as a counter overflow,
+    adding a large delta. In reality, this is a false positive: the counter
+    did not overflow but was simply reset when the RMID transitioned from
+    “Unavailable” back to active.
 
-> Better yet, just absorb the /=4 into the two existing batch assignments.
-> It will probably compile to exactly the same code and have no functional
-> changes and get rid of the comment.
-> 
-> Wouldn't this compile to the same thing?
-> 
->         batch = zone->managed_pages / 4096;
->         if (batch * PAGE_SIZE > 128 * 1024)
->                 batch = (128 * 1024) / PAGE_SIZE;
+Reset the stored value (arch_mbm_state::prev_msr) of MSR_IA32_QM_CTR, used
+for handling counter overflows, whenever the RMID transitions to the
+“Unavailable” state to resolve the issue.
 
-But for now, this seems good to me. I'll get rid of the confusing comment,
-and try to fold in the batch value and leave a new comment leaving this
-as an explanation. 
+Here is the text from APM [1] available from [2].
 
-Thank you for your thoughtful review, Dave. I hope you have a great day!
-Joshua
+"In PQOS Version 2.0 or higher, the MBM hardware will set the U bit on the
+first QM_CTR read when it begins tracking an RMID that it was not
+previously tracking. The U bit will be zero for all subsequent reads from
+that RMID while it is still tracked by the hardware. Therefore, a QM_CTR
+read with the U bit set when that RMID is in use by a processor can be
+considered 0 when calculating the difference with a subsequent read."
+
+[1] AMD64 Architecture Programmer's Manual Volume 2: System Programming
+    Publication # 24593 Revision 3.41 section 19.3.3 Monitoring L3 Memory
+    Bandwidth (MBM).
+
+Cc: stable@vger.kernel.org # needs adjustments for <= v6.17
+Fixes: 4d05bf71f157d ("x86/resctrl: Introduce AMD QOS feature")
+Signed-off-by: Babu Moger <babu.moger@amd.com>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537 # [2]
+---
+
+v2: Fixed few systax issues.
+    Checked for special charachars.
+    Added Fixes tag.
+    Added CC to stable kernel.
+    Rephrased most of the changelog.
+
+v1:
+Tested this on multiple AMD systems, but not on Intel systems.
+Need help with that. If everything goes well, this patch needs to
+go to all the stable kernels.
+
+https://lore.kernel.org/lkml/515a38328989e48d403ef5a7d6dd321ba3343a61.1759791957.git.babu.moger@amd.com/
+---
+ arch/x86/kernel/cpu/resctrl/monitor.c | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
+index c8945610d455..a685370dd160 100644
+--- a/arch/x86/kernel/cpu/resctrl/monitor.c
++++ b/arch/x86/kernel/cpu/resctrl/monitor.c
+@@ -242,7 +242,9 @@ int resctrl_arch_rmid_read(struct rdt_resource *r, struct rdt_mon_domain *d,
+ 			   u32 unused, u32 rmid, enum resctrl_event_id eventid,
+ 			   u64 *val, void *ignored)
+ {
++	struct rdt_hw_mon_domain *hw_dom = resctrl_to_arch_mon_dom(d);
+ 	int cpu = cpumask_any(&d->hdr.cpu_mask);
++	struct arch_mbm_state *am;
+ 	u64 msr_val;
+ 	u32 prmid;
+ 	int ret;
+@@ -251,12 +253,21 @@ int resctrl_arch_rmid_read(struct rdt_resource *r, struct rdt_mon_domain *d,
+ 
+ 	prmid = logical_rmid_to_physical_rmid(cpu, rmid);
+ 	ret = __rmid_read_phys(prmid, eventid, &msr_val);
+-	if (ret)
+-		return ret;
+ 
+-	*val = get_corrected_val(r, d, rmid, eventid, msr_val);
++	switch (ret) {
++	case 0:
++		*val = get_corrected_val(r, d, rmid, eventid, msr_val);
++		break;
++	case -EINVAL:
++		am = get_arch_mbm_state(hw_dom, rmid, eventid);
++		if (am)
++			am->prev_msr = 0;
++		break;
++	default:
++		break;
++	}
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static int __cntr_id_read(u32 cntr_id, u64 *val)
+-- 
+2.34.1
+
 
