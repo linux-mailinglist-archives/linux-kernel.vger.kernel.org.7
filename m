@@ -1,147 +1,147 @@
-Return-Path: <linux-kernel+bounces-845634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8CA2BC590A
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:25:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7AECBC5913
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:27:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E27AF19E3789
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:25:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 103924053EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:27:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF60A2F3609;
-	Wed,  8 Oct 2025 15:25:18 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546732F361C;
+	Wed,  8 Oct 2025 15:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gVPWv9Kb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7743F63CB;
-	Wed,  8 Oct 2025 15:25:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED802EBBA8;
+	Wed,  8 Oct 2025 15:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759937118; cv=none; b=Got56CEozBdGmxiE76a9rUG3fE9raqwyKuui7LsWKHpDdSIp88nIEjvfc8LGdFT+YJWoLfDGPWJaCgjtvzeUJY7Ur9hrQdw57/eaRes050PYm1+QLjU8GxKrsOiBluKIH0dsd/M8nqKxi75gMMtPjD5y2su11UfU+behzPjbV4s=
+	t=1759937269; cv=none; b=Xg8c1mwkwUua7gmgVinV5X7NEVMKY4+a4ZUxlXGuQabDn8WM88Hmy/nXnmdssBmxguKhaa6vPX2rIkzieV1GiiaFy4pcF5KXuWXVnxuTrlOhKEZLbVbVVDzbsy5vfquIUNaDwBB3Cr7QkheEMNKe7xJu1XFQ15xdTGRVCVivLFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759937118; c=relaxed/simple;
-	bh=tf2OZBz7Fn2v7rVfb+J3dUP+sJ+ddhlD32tR0HcCvRA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C+9gnRH4DO1XkvHhDXkEEMyegFxcSWyip1VSPfOgD0zqqKL4nwlSaEJEkyftzORbCRKz4yVVYaSuJ7opMxUxVBiBJrqVOiNnnSnT77kirrq8KF3KsMLMYj5BGSf+PLF2fJ+6pGOysprfoX74IYz6SbjY3bD0fu2nHiWABM7Xxc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay06.hostedemail.com (Postfix) with ESMTP id BFB5B11A8D1;
-	Wed,  8 Oct 2025 15:25:07 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf08.hostedemail.com (Postfix) with ESMTPA id 102C520026;
-	Wed,  8 Oct 2025 15:25:05 +0000 (UTC)
-Date: Wed, 8 Oct 2025 11:27:00 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] tracing/irqsoff: Balance prolog on fgraph failure
-Message-ID: <20251008112700.622df439@gandalf.local.home>
-In-Reply-To: <20251006175848.1906912-2-sashal@kernel.org>
-References: <20251006175848.1906912-1-sashal@kernel.org>
-	<20251006175848.1906912-2-sashal@kernel.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1759937269; c=relaxed/simple;
+	bh=m/gtv3txD5nG4mkTfb82QKREplefXMZgkwqiSnws77A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nC23kK+YPdIViV92M7OCqiEhGrnyVtDcUVTh2dB76davG/ubyxNWaUT8/gtWhZ8iDXnR5PdVU7+GLuB0p2RBRmh3AQVXnnflVOCYvKdTuhRpnx37rvXaMI34O5sbyBZWrsgei6nK+Rpr/UQ+jpqaUkiqdJNyENnFMLzHo8eBfRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gVPWv9Kb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 446F5C4CEE7;
+	Wed,  8 Oct 2025 15:27:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759937268;
+	bh=m/gtv3txD5nG4mkTfb82QKREplefXMZgkwqiSnws77A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gVPWv9Kb/h6zVn7KKibvBMp9NGAN+7ts+svazfyNIN5MJDlqa4+YD1XpLI3+S2sk3
+	 qUHNnACmwBRys/ww9v+64KxhlfYHFyiuViKfOhLvOFC70hvb6X0vWaauNeop1ln6D4
+	 nHsxSkA0AjUF53irjYN86tVT+YhzC5I1CCMSyBOf13AvMqEkFMIZoTtTk+hvssv98V
+	 n5r36F4A2Q4n97O+5AYMFFX4epM3uYWdNLYGsA9SkZ8xc88TYZfB8QDolwB91dBKtt
+	 1SUE0FU/Xxpv+5fOh88bmKxvTzMSncijGUD0SgPaijPoZD1xmYRJWAmSowVO7IPKAv
+	 7/WD7ymaqf1bg==
+Date: Wed, 8 Oct 2025 08:27:45 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Petr Mladek <pmladek@suse.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Miroslav Benes <mbenes@suse.cz>, Joe Lawrence <joe.lawrence@redhat.com>, 
+	live-patching@vger.kernel.org, Song Liu <song@kernel.org>, laokz <laokz@foxmail.com>, 
+	Jiri Kosina <jikos@kernel.org>, Marcos Paulo de Souza <mpdesouza@suse.com>, 
+	Weinan Liu <wnliu@google.com>, Fazla Mehrab <a.mehrab@bytedance.com>, 
+	Chen Zhongjin <chenzhongjin@huawei.com>, Puranjay Mohan <puranjay@kernel.org>, 
+	Dylan Hatch <dylanbhatch@google.com>, Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v4 51/63] objtool/klp: Introduce klp diff subcommand for
+ diffing object files
+Message-ID: <bnipx2pvsyxcd27uhxw5rr5yugm7iuint6rg3lzt3hdm7vkeue@g3wzb7kyr5da>
+References: <cover.1758067942.git.jpoimboe@kernel.org>
+ <702078edac02ecf79f869575f06c5b2dba8cd768.1758067943.git.jpoimboe@kernel.org>
+ <aOZuzj0vhKPF1bcW@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 71bcmj9zymdz3bonjfb6bm5m36msntid
-X-Rspamd-Server: rspamout07
-X-Rspamd-Queue-Id: 102C520026
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18m/61Q64YlzFsn+00d5PucbweZ647RzXE=
-X-HE-Tag: 1759937105-918818
-X-HE-Meta: U2FsdGVkX1+g/oesg4HIQZkame07Pv77CKJ/t1FzvbaJ8KmMYr6GxTiZ6Nz45FsZCvH8o5zuAMEwQCc3geQNGCTmhvMpho81G2BfY+SEG2dPX7Zx/j/Wi7sQ7U7wi8jX4MHRA3m+pW8eHLZf+T5SYuXbTXPiMRdp+BJJ3J+9XkkqyZogqDnYhmsFamrVqP1UEUHIkqSjK7Nj1C/reNY+vJIl9p2iwvI/GDhNNEyoWGb1LLbOWIbmRaV+lUWKX7mB1Hygs1VIqX+rp/U1IUq+N2HDAyl3qi5P1SvLLzzkAaEJXKBvnjZ3p1n3k1eIlOZUqEVF14UkNFtgEt9H1YEaB9xn0I0SzKeE
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aOZuzj0vhKPF1bcW@pathway.suse.cz>
 
-On Mon,  6 Oct 2025 13:58:48 -0400
-Sasha Levin <sashal@kernel.org> wrote:
+On Wed, Oct 08, 2025 at 04:01:50PM +0200, Petr Mladek wrote:
+> On Wed 2025-09-17 09:03:59, Josh Poimboeuf wrote:
+> > +static int read_exports(void)
+> > +{
+> > +	const char *symvers = "Module.symvers";
+> > +	char line[1024], *path = NULL;
+> > +	unsigned int line_num = 1;
+> > +	FILE *file;
+> > +
+> > +	file = fopen(symvers, "r");
+> > +	if (!file) {
+> > +		path = top_level_dir(symvers);
+> > +		if (!path) {
+> > +			ERROR("can't open '%s', \"objtool diff\" should be run from the kernel tree", symvers);
+> > +			return -1;
+> > +		}
+> > +
+> > +		file = fopen(path, "r");
+> > +		if (!file) {
+> > +			ERROR_GLIBC("fopen");
+> > +			return -1;
+> > +		}
+> > +	}
+> > +
+> > +	while (fgets(line, 1024, file)) {
+> 
+> Nit: It might be more safe to replace 1024 with sizeof(line).
+>      It might be fixed later in a separate patch.
 
-> diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
-> index 5496758b6c760..39152ef3d2432 100644
-> --- a/kernel/trace/trace_irqsoff.c
-> +++ b/kernel/trace/trace_irqsoff.c
-> @@ -202,8 +202,10 @@ static int irqsoff_graph_entry(struct ftrace_graph_ent *trace,
->  		return 0;
->  
->  	calltime = fgraph_reserve_data(gops->idx, sizeof(*calltime));
-> -	if (!calltime)
-> +	if (!calltime) {
-> +		local_dec(&data->disabled);
->  		return 0;
-> +	}
->  
->  	*calltime = trace_clock_local();
->  
-> @@ -233,8 +235,10 @@ static void irqsoff_graph_return(struct ftrace_graph_ret *trace,
->  
->  	rettime = trace_clock_local();
->  	calltime = fgraph_retrieve_data(gops->idx, &size);
-> -	if (!calltime)
-> +	if (!calltime) {
-> +		local_dec(&data->disabled);
->  		return;
-> +	}
->  
->  	trace_ctx = tracing_gen_ctx_flags(flags);
->  	__trace_graph_return(tr, trace, trace_ctx, *calltime, rettime);
-> -- 
+Indeed.
 
-Technically correct, but this would look better:
+> > +/*
+> > + * Klp relocations aren't allowed for __jump_table and .static_call_sites if
+> > + * the referenced symbol lives in a kernel module, because such klp relocs may
+> > + * be applied after static branch/call init, resulting in code corruption.
+> > + *
+> > + * Validate a special section entry to avoid that.  Note that an inert
+> > + * tracepoint is harmless enough, in that case just skip the entry and print a
+> > + * warning.  Otherwise, return an error.
+> > + *
+> > + * This is only a temporary limitation which will be fixed when livepatch adds
+> > + * support for submodules: fully self-contained modules which are embedded in
+> > + * the top-level livepatch module's data and which can be loaded on demand when
+> > + * their corresponding to-be-patched module gets loaded.  Then klp relocs can
+> > + * be retired.
+> 
+> I wonder how temporary this is ;-) The comment looks optimistic. I am
+> just curious. Do you have any plans to implement the support for
+> the submodules... ?
 
-diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
-index 5496758b6c76..4c45c49b06c8 100644
---- a/kernel/trace/trace_irqsoff.c
-+++ b/kernel/trace/trace_irqsoff.c
-@@ -184,7 +184,7 @@ static int irqsoff_graph_entry(struct ftrace_graph_ent *trace,
- 	unsigned long flags;
- 	unsigned int trace_ctx;
- 	u64 *calltime;
--	int ret;
-+	int ret = 0;
- 
- 	if (ftrace_graph_ignore_func(gops, trace))
- 		return 0;
-@@ -202,13 +202,11 @@ static int irqsoff_graph_entry(struct ftrace_graph_ent *trace,
- 		return 0;
- 
- 	calltime = fgraph_reserve_data(gops->idx, sizeof(*calltime));
--	if (!calltime)
--		return 0;
--
--	*calltime = trace_clock_local();
--
--	trace_ctx = tracing_gen_ctx_flags(flags);
--	ret = __trace_graph_entry(tr, trace, trace_ctx);
-+	if (calltime) {
-+		*calltime = trace_clock_local();
-+		trace_ctx = tracing_gen_ctx_flags(flags);
-+		ret = __trace_graph_entry(tr, trace, trace_ctx);
-+	}
- 	local_dec(&data->disabled);
- 
- 	return ret;
-@@ -233,11 +231,10 @@ static void irqsoff_graph_return(struct ftrace_graph_ret *trace,
- 
- 	rettime = trace_clock_local();
- 	calltime = fgraph_retrieve_data(gops->idx, &size);
--	if (!calltime)
--		return;
--
--	trace_ctx = tracing_gen_ctx_flags(flags);
--	__trace_graph_return(tr, trace, trace_ctx, *calltime, rettime);
-+	if (calltime) {
-+		trace_ctx = tracing_gen_ctx_flags(flags);
-+		__trace_graph_return(tr, trace, trace_ctx, *calltime, rettime);
-+	}
- 	local_dec(&data->disabled);
- }
- 
--- Steve
+I actually already have a working POC for that, but didn't want to make
+the patch set even longer ;-)
+
+It was surprisingly easy and straightforward to implement.
+
+> PS: To make some expectations. I am not doing a deep review.
+>     I am just looking at the patchset to see how far and mature
+>     it is. And I just comment what catches my eye.
+> 
+>     My first impression is that it is already in a pretty good state.
+>     And I do not see any big problem there. Well, some documentation
+>     would be fine ;-)
+> 
+>     What are your plans, please?
+
+From my perspective, it's testing well and in a good enough state for
+merging soon (after the merge window?), if there aren't any objections
+to that.
+
+There will be more patches to come, like the submodules and other arch
+support.  And of course there will be bugs discovered by broader
+testing.  But I think this is a good foundation to begin with.
+
+And the sooner we can get people using this, the sooner we can start
+deprecating kpatch-build, which would be really nice.
+
+-- 
+Josh
 
