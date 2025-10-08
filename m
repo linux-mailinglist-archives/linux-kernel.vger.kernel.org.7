@@ -1,131 +1,154 @@
-Return-Path: <linux-kernel+bounces-845115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 915BBBC38D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 09:22:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABB8DBC38DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 09:23:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 80A064F6B1E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 07:22:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C3B8403E9C
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 07:23:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5428A2F0C7C;
-	Wed,  8 Oct 2025 07:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02BAB2F1FE4;
+	Wed,  8 Oct 2025 07:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="O6PSvB88"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Dee5XhHN"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6FB2F0C6D
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 07:22:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5D52BEC5F
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 07:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759908147; cv=none; b=KntHKa5PpTI9tpIKlXO82WWisALJFb4O9JeyS6BefuYZ9UcB4Q9U4v+FhRoZBPERKpfyaEzShjV8PwStQ7POXytodrXT10fZOIDlwkA9RSrN9MMbXH3FiNx8kWEbR2ZNwXxZkDWfudy8GUjsfOhlz4jaqvo37HaL+Sf2D4rVYv0=
+	t=1759908208; cv=none; b=Jtjhf1XtMndAU6YeM7aS3uTAJAo2TuGSX1RMYwMY+Ks5WlxDtdKzMP4rQygulgNVLL9W/V2pMMQOGO75jNh0ClrsnfX4whoibstrvLV1X3nHp56yR3EcWBfEVtm7zhePRkbe5c8OCJMVMqfC/mFOM4NZYJVIIsZ457B8DUVIFhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759908147; c=relaxed/simple;
-	bh=mcexpX3yq4Q3MMzxGyZRYDODjhj+STYTu1Yuea0dtl4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fWjo0R4sihnZHPnoc6Uw6PPwvlO7VD28dlrgClzDcXLSYZ6E4v7eeEMVvgGImjp9+Hd353nTcIpahhxMvNmTTMnjYtctTD5mEKNFp0lbpXIgb4259vKPHxhTiEwtN9npYh5Dv3qJmhxuvA6EJPJ0zVtx7V5jjSMh9gvdrh11qI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=O6PSvB88; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=5o9b
-	75Q7T0RZfTO0p6lzlK4pNYoGjq29THsS5IEP6w8=; b=O6PSvB88T/CnWRpXCEfn
-	nMXsCTnEw1TSWJBSyH2OZHBVMaZDi0i6GJ6cMIcLVNt3xxy6rEtiEnbZHYHZg9cV
-	WH0janmFreUvnQ2PEpQ9WrY/rLVscP5vTMSmS6aSzke50UVaRP4H0E5y8YUJ8R+U
-	h5nKCTDJP0mXQ4hYrQ1KLNW15ri9fDgUw3vA/kM6vmdbWB/OQGxdRFInvWcq45Fl
-	2Lbk0rEiiKx1vtuQXCy/wdUrJDWCddVs/IGFzDJgacra75A3q+z/lVPv8eT7pF6K
-	PbJhvsj63BODYO/9/ApqAx5XMYaK31mrFcoa5mFpe1Y3Cg3MMhQkYnPPyuw6vRrD
-	4g==
-Received: (qmail 561768 invoked from network); 8 Oct 2025 09:22:21 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 8 Oct 2025 09:22:21 +0200
-X-UD-Smtp-Session: l3s3148p1@n/aPi6BA7s4ujnts
-Date: Wed, 8 Oct 2025 09:22:20 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Kael D'Alcamo <dev@kael-k.io>
-Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Wei Yan <sledge.yanwei@huawei.com>, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: i2c: hisilicon,hix5hd2-i2c convert to DT
- schema
-Message-ID: <aOYRLCGv9_k8i_Vn@shikoro>
-References: <20251004154808.116143-2-dev@kael-k.io>
+	s=arc-20240116; t=1759908208; c=relaxed/simple;
+	bh=1hrKhcewNAog3goQOz9EqxB44PnuDQDFLGTcN9t+kO0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=lQpfdbjliLSYrFD6yH1lBIyxzNZXzrk/brjn7i/tKdiMsgePNqrVg9arP9erEgqEAG+mWNjCbEWxwwsUUFVvPYtRiQRm/jMtE8uVpDL9JnCrs+WODqRO3Y8YmDYgtyJ0Pcdn/68KEXU9tTb2p2Fqo8ApQRM7QT+OAQD0pBGlSds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Dee5XhHN; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <2bd2c4a8-456e-426a-aece-6d21afe80643@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759908198;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7UAlSyFCkIOPcSkRc3Lm4Oe7r2DyLQZxHY7cDP0CdBc=;
+	b=Dee5XhHNRi8+jbIjAMSc7VYUoyLS2n5Fa3t+P3S6Vurg1mz0XZURAABYGb6QUH0OX0ytvu
+	R9y2tkbCktxKpZpBFiECWBrpk4I7X8VNSzHe/hxCfx0XrX6P2hPDZZYu2kYvI9tBLyf5ET
+	wji78FEvG+Ukr16/gbwgg6gm6U821MI=
+Date: Wed, 8 Oct 2025 15:23:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="TIHNeOzJaVf0rHY9"
-Content-Disposition: inline
-In-Reply-To: <20251004154808.116143-2-dev@kael-k.io>
+Subject: Re: [PATCH v2 1/1] hung_task: fix warnings caused by unaligned lock
+ pointers
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+To: Finn Thain <fthain@linux-m68k.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>, Eero Tamminen
+ <oak@helsinkinet.fi>, Kent Overstreet <kent.overstreet@linux.dev>,
+ amaindex@outlook.com, anna.schumaker@oracle.com, boqun.feng@gmail.com,
+ ioworker0@gmail.com, joel.granados@kernel.org, jstultz@google.com,
+ leonylgao@tencent.com, linux-kernel@vger.kernel.org,
+ linux-m68k@lists.linux-m68k.org, longman@redhat.com, mhiramat@kernel.org,
+ mingo@redhat.com, mingzhe.yang@ly.com, peterz@infradead.org,
+ rostedt@goodmis.org, senozhatsky@chromium.org, tfiga@chromium.org,
+ will@kernel.org, stable@vger.kernel.org
+References: <20250909145243.17119-1-lance.yang@linux.dev>
+ <yqjkjxg25gh4bdtftsdngj5suturft2b4hjbfxwe6hehbg4ctq@6i55py3jaiov>
+ <99410857-0e72-23e4-c60f-dea96427b85a@linux-m68k.org>
+ <CAMuHMdVYiSLOk-zVopXV8i7OZdO7PAK7stZSJNJDMw=ZEqtktA@mail.gmail.com>
+ <inscijwnnydibdwwrkggvgxjtimajr5haixff77dbd7cxvvwc7@2t7l7oegsxcp>
+ <20251007135600.6fc4a031c60b1384dffaead1@linux-foundation.org>
+ <b43ce4a0-c2b5-53f2-e374-ea195227182d@linux-m68k.org>
+ <56784853-b653-4587-b850-b03359306366@linux.dev>
+ <693a62e0-a2b5-113b-d5d9-ffb7f2521d6c@linux-m68k.org>
+ <23b67f9d-20ff-4302-810c-bf2d77c52c63@linux.dev>
+In-Reply-To: <23b67f9d-20ff-4302-810c-bf2d77c52c63@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
 
---TIHNeOzJaVf0rHY9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-Hi,
+On 2025/10/8 15:09, Lance Yang wrote:
+> 
+> 
+> On 2025/10/8 14:14, Finn Thain wrote:
+>>
+>> On Wed, 8 Oct 2025, Lance Yang wrote:
+>>
+>>> On 2025/10/8 08:40, Finn Thain wrote:
+>>>>
+>>>> On Tue, 7 Oct 2025, Andrew Morton wrote:
+>>>>
+>>>>> Getting back to the $Subject at hand, are people OK with proceeding
+>>>>> with Lance's original fix?
+>>>>>
+>>>>
+>>>> Lance's patch is probably more appropriate for -stable than the patch I
+>>>> proposed -- assuming a fix is needed for -stable.
+>>>
+>>> Thanks!
+>>>
+>>> Apart from that, I believe this fix is still needed for the hung task
+>>> detector itself, to prevent unnecessary warnings in a few unexpected
+>>> cases.
+>>>
+>>
+>> Can you be more specific about those cases? A fix for a theoretical bug
+>> doesn't qualify for -stable branches. But if it's a fix for a real bug, I
+>> have misunderstood Andrew's question...
+> 
+> I believe it is a real bug, as it was reported by Eero and Geert[1].
+> 
+> The blocker tracking mechanism in -stable assumes that lock pointers
+> are at least 4-byte aligned. As I mentioned previously[2], this
+> assumption fails for packed structs on architectures that don't trap
+> on unaligned access.
+> 
+> Of course, we could always improve the mechanism to not make
+> assumptions. But for -stable, this fix completely resolves the issue
+> by ignoring any unaligned pointer, whatever the cause (e.g., packed
+> structs, non-native alignment, etc.).
+> 
+> So we can all sleep well at night again :)
+> 
+> [1] https://lore.kernel.org/lkml/ 
+> CAMuHMdW7Ab13DdGs2acMQcix5ObJK0O2dG_Fxzr8_g58Rc1_0g@mail.gmail.com/
+> [2] https://lore.kernel.org/lkml/cfb62b9d-9cbd-47dd- 
+> a894-3357027e2a50@linux.dev/
 
-thanks for this conversion!
+Forgot to add:
 
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - hisilicon,hix5hd2-i2c
+In other words, we are not just fixing the bug reported by Eero
+and Geert, but correcting the blocker tracking mechanism's flawed
+assumption for -stable ;)
 
-Question for DT maintainers: Is it preferred to start with 'enum' right
-away or to start with 'const' and convert to 'enum' once a second user
-appears?
+If you feel this doesn't qualify as a fix, I can change the Fixes:
+tag to point to the original commit that introduced this flawed
+mechanism instead.
 
-> +  "#address-cells":
-> +    const: 1
-> +
-> +  "#size-cells":
-> +    const: 0
+> 
+>>
+>>>>
+>>>> Besides those two alternatives, there is also a workaround:
+>>>> $ ./scripts/config -d DETECT_HUNG_TASK_BLOCKER
+>>>> which may be acceptable to the interested parties (i.e. m68k users).
+>>>>
+>>>> I don't have a preference. I'll leave it up to the bug reporters (Eero
+>>>> and Geert).
+>>>
+> 
 
-These should be left out because they come from i2c-controller.yaml?
-
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - clocks
-> +  - "#address-cells"
-> +  - "#size-cells"
-
-Same here for the last two?
-
-Happy hacking,
-
-   Wolfram
-
-
---TIHNeOzJaVf0rHY9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjmESgACgkQFA3kzBSg
-KbbFqQ/9ExadYvrRHKWulIyZrfcfQ3n37wKyse2joBI22cpuVCHhJ7pnkl1N0EE4
-gSY+TRV6zCSyu126Pt92Q/maA2rjxt3E4xLoC+4dS6cMNWhcLOIEPmEDUCaHMu57
-8YSJz9cgFQv7rJJ/JFD0TcBaQG9gvDIjyvT3Keemy8CN3i6OLTIrnTECsW+wtMFL
-k8XLcaIqR5KPAuo1X7NFJX0OQV2BR1yJ4XCnMpXadnpRJvIU5xZPHtE4NHK17r4P
-vftIrG6d70h7sV/qvRnPsZ9yXlTdSiBUkNrFyYbi/5nDq8h4BUIpmnAx8x7V6Nia
-fQvulIY9YP1T2PAkz1e3cpcnakDyE/fqSEfYy8PAKlRqP41qe5j+ZOOOVy3KfOZa
-lmaYFNSfxJusgJ6MOInxO58HdFMSFIMJtqIEihrJlMg/BQPadkqPX4uYyn8pj99c
-OeO7SrJyQvx37PlSNcfyNmOfzq0crowA0hIwHBpmiCWrgm9M/zqaB4Nn4ODYlU7b
-oWV5rIxd4k44Al6sST8k0NC99RutkOjNuwS+2GQ41wH7ehygoDEG4q6iXiHkDIN4
-tr5J15BEj2DeI/GSWbrAcgUJRe1hHjW7CkGt7Yl44ecWgZiQpFGG9MBWk76L6qX/
-lvQD8ZmgqBx16OKex0+bbGSyknBfypEzvDfEP/Xy2oW2bqGFeWM=
-=k+jW
------END PGP SIGNATURE-----
-
---TIHNeOzJaVf0rHY9--
 
