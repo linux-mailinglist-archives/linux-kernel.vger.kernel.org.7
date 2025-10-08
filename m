@@ -1,144 +1,110 @@
-Return-Path: <linux-kernel+bounces-845744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5AC1BC5FDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:18:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67F6BBC6001
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:20:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C581B189FD6E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 16:18:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E34819E469B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 16:21:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3CE1A4F3C;
-	Wed,  8 Oct 2025 16:18:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EBE7291C1E;
+	Wed,  8 Oct 2025 16:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VrGcwYCL"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bL4YBHAb"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA2F7260A
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 16:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A27B92417E6
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 16:20:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759940283; cv=none; b=Ei2wr2Tc0PjMEle+y/ruHU9Po6q565e43dS4DFZKO1ByLYX0iH/Sk3Xhqsd/2SrakPwqOkOt24ro+OSEQCCWKESC7T24hrNwL/PP1/3ZrJ6jM9aPRKPtxLJYZbOLFIN9Fjdk2Z2jkMaCqlTr1pDbzb3D9LMwvH4wg9REYOvFtpQ=
+	t=1759940434; cv=none; b=RNwMsumZcFry+oTCUaGoD84zR7u9I3J2nu8qu6gAZUWTcpQkesPUMUmscoCOU4ofPFN7u3+zEZ/QIsJf+F8ymZW8BQjbm7EKhfS2HIKTB4pJOsdT3ovjfKBCJyUXpZ2Cb5JM03+W+dcr2y0/tf1kBPRqEWz1b7Ufi/O6+kBEKtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759940283; c=relaxed/simple;
-	bh=RZl4lKWmddpuY1UctYVb7Z6TQW+g+Ty6j1koaO9HTM4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N//wAiDOwE9dKOkU8avxBePX+TShmEvojnimZixNyZYhbUuivVQHUX1XNg4VAiBJiG+6D2g+UhE5C7GhP/omA90gWFyvduhLbkWo6Er9cgA3IAYWB8zWcjELWo0oBCWDiMZBzSKYNufRQLtE8MveqrAoRDF8xKBlax1MbecyzQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VrGcwYCL; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 8 Oct 2025 09:17:49 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759940279;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=I6aq5SwqQxzUQvtsSeg2YfAbu8H4ci5QlEizppPzgCA=;
-	b=VrGcwYCLWpAJ2NulmMTuWCkvfMN/ckxDBVcdI0JkZMWibwGNfNcSz/5/hPzNCk+XrhbUe1
-	myi6ilVzSrQ7r6HM3rqz3YYyDmKybND1HHfKj1m4t9PDNTaLX/mGmlHEPJwWjzKzNRJx+l
-	cpzd1/qjHqNrKn+W568iUpWpU4HjwYc=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Dmitry Ilvokhin <d@ilvokhin.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, Chris Li <chrisl@kernel.org>, 
-	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>, 
-	Kiryl Shutsemau <kas@kernel.org>, Usama Arif <usamaarif642@gmail.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, kernel-team@meta.com, hughd@google.com, yangge1116@126.com, 
-	david@redhat.com
-Subject: Re: [PATCH v2] mm: skip folio_activate() for mlocked folios
-Message-ID: <ltvv3v4vibvlglpch6urayotenavpzxc7klbcyowjb4wrv3e7z@pzovtvtbmnsp>
-References: <aOPDRmk2Zd20qxfk@shell.ilvokhin.com>
+	s=arc-20240116; t=1759940434; c=relaxed/simple;
+	bh=T/2YcwWKmAY+B7hDOTvxmnfQNfKpAL8dEcLckN0qNB4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JG5SFNICfw41FQ61khGLfX1t1wfNH+KkOEHPhkBnIqMpG/3r2tSH29VWOs3UgUlNoqbyqm92cF12XnVcXAt83KaGnzYexMi4MkIUiBm+TmS6ZmA63gkzJoJAL0ICQayWhzKCsGEydESCtU3tc+tGBMbciAl7IfwQKhcRZwY8fOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bL4YBHAb; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-28d18e933a9so13064235ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 09:20:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759940432; x=1760545232; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kzZhXiLzKKt9ijicdsXyGaAREF+VLijn+mpS3QdbwuQ=;
+        b=bL4YBHAbuXDSHsqKXvVVFAU+gYMqcXihCfTPcWRuP7BGBMD7VRn9AhQMuwabLU7coR
+         BBxCpC6waaj73/8C3a1kkpluZLJRlLFq87jnN5lntzPCCs5gxsJImZ4MYC/DkgHx+03n
+         MfUI4UsIBMejHG87decTdY/zZAFoCVRzmF4rR9gVDBaSn1RcHJu/e6cZDVvclyhzfXBo
+         mb03C5J6BWz4IMlbQL+zDbvf8PRzkngaHRMUfY1YP0/dJRfLkRHhnvNng6klYiySDybK
+         GDhI3YMI0N6yL+iG+eZQay2aeYM92dtIzHIghzMf+X1osUVonZ2Dz13lwZzTPHRQbgkv
+         gj9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759940432; x=1760545232;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kzZhXiLzKKt9ijicdsXyGaAREF+VLijn+mpS3QdbwuQ=;
+        b=SumXv3dzxTRzn0XddiJrJ99j2dTh3OCL7s1O4GY9y6X7lqDWQDGdRNfO4W2qJn8sSK
+         JYYF72IgTsS4sMPT7ppxirs2+ZgY5tPx/60VXxPj+8DCil5trq1xJPMoXrgH9DwS54Rx
+         aHX444bCaHrDcfpIJLs7R77rfZ57NBFJWKxrjv/31MzDGyQYVf8DL3FxeFYi3H6z4iiI
+         UYarCIFjYk8G3XxDZ8NE8bWxAMbseHhOYk/mNRCl91uK+ul2W9Tay3sgOFeXjG+HVIKl
+         siAi0eUIPMkT3WlcPZY+eexkYU3ERjiSslEHW1Tj41Mv53JHVdCvzML5ZlOZ2Bad2Bzk
+         Sgjg==
+X-Gm-Message-State: AOJu0YwfLxfl8taUlXDEY7EGl8TeXZOHpow+64FqnFXXSMB47nmPB8mV
+	XsDbG9MQCcOEVVXZF6KrcoSOpsMioPR9IoQbnOinCGN4JNRVHHWN+QwY8lSd0gSEXYfFZUhJiY0
+	34L69flw3JG0uMbajhfTeoO6Ln4Rr1G8=
+X-Gm-Gg: ASbGncvSiIDGN9lseIlbUuQ6ylrUXF61I264q09GWYrVVU765Sn4u2KRXWospJ4je9e
+	gVEnFaQEjh38N0n+aC6kvnbcSdrNgPVD7/UELnCXS1DQ/kLAQHcfJP+7UuPunNPiC+kJqF2PCsv
+	wevrbCf1/APd/pwkkg+722kAas66h2vVqZApBbkdwseJLbYEnmpHpUqs6AbRQEMpbpf0yJOqGWQ
+	YekjggaJHR8ROBxg4+uyBTq6LOxo+/IYx21qur3afQyoHLS1iYvGFa+IFy/JBbDjDVNGPExdYkx
+	QUq/okl1t5Tdm/aVP5VoyPgDpfSwKlhG4jkXerd1narGlkE64A==
+X-Google-Smtp-Source: AGHT+IFRtEpmUYO1NC+sl6QOX+ycPV+YRBQwmDD+/ZPRzUNkPTRekJQZRPUOeOECIkAwhtODxGST5I3Q/8aiX15xH4k=
+X-Received: by 2002:a17:902:d483:b0:27e:f07c:8429 with SMTP id
+ d9443c01a7336-29027215bd4mr28915515ad.1.1759940431715; Wed, 08 Oct 2025
+ 09:20:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aOPDRmk2Zd20qxfk@shell.ilvokhin.com>
-X-Migadu-Flow: FLOW_OUT
+References: <20251008151554.340806-1-marco.crivellari@suse.com> <20251008151554.340806-3-marco.crivellari@suse.com>
+In-Reply-To: <20251008151554.340806-3-marco.crivellari@suse.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 8 Oct 2025 18:20:19 +0200
+X-Gm-Features: AS18NWAxIRHTDXe_UK4N5rbhlyy853rdCwdewKT2ZCEY4_Le0oNYYILFmF6Dh10
+Message-ID: <CANiq72mt-RAH54KWmwh+R58OHsX31pQXc1cce7RgoBAgRpj0rg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] rust: add system_percpu() around the new system_percpu_wq
+To: Marco Crivellari <marco.crivellari@suse.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Michal Hocko <mhocko@suse.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-[Somehow I messed up the subject, so resending]
+On Wed, Oct 8, 2025 at 5:16=E2=80=AFPM Marco Crivellari
+<marco.crivellari@suse.com> wrote:
+>
+> +/// Note: `system_percpu_wq` will replace ['system_wq`] in a future rela=
+se cycle.
 
-Cc Hugh, yangge, David
+Please check your patch with `make ... rustdoc` (which would complain
+here about an unescaped backtick) and others like `make ... CLIPPY=3D1`:
 
-On Mon, Oct 06, 2025 at 01:25:26PM +0000, Dmitry Ilvokhin wrote:
-> __mlock_folio() does not move folio to unevicable LRU, when
-> folio_activate() removes folio from LRU.
-> 
-> To prevent this case also check for folio_test_mlocked() in
-> folio_mark_accessed(). If folio is not yet marked as unevictable, but
-> already marked as mlocked, then skip folio_activate() call to allow
-> __mlock_folio() to make all necessary updates. It should be safe to skip
-> folio_activate() here, because mlocked folio should end up in
-> unevictable LRU eventually anyway.
-> 
-> To observe the problem mmap() and mlock() big file and check Unevictable
-> and Mlocked values from /proc/meminfo. On freshly booted system without
-> any other mlocked memory we expect them to match or be quite close.
-> 
-> See below for more detailed reproduction steps. Source code of stat.c is
-> available at [1].
-> 
->   $ head -c 8G < /dev/urandom > /tmp/random.bin
-> 
->   $ cc -pedantic -Wall -std=c99 stat.c -O3 -o /tmp/stat
->   $ /tmp/stat
->   Unevictable:     8389668 kB
->   Mlocked:         8389700 kB
-> 
->   Need to run binary twice. Problem does not reproduce on the first run,
->   but always reproduces on the second run.
-> 
->   $ /tmp/stat
->   Unevictable:     5374676 kB
->   Mlocked:         8389332 kB
-> 
-> [1]: https://gist.github.com/ilvokhin/e50c3d2ff5d9f70dcbb378c6695386dd
-> 
-> Co-developed-by: Kiryl Shutsemau <kas@kernel.org>
-> Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
-> Signed-off-by: Dmitry Ilvokhin <d@ilvokhin.com>
-> Acked-by: Usama Arif <usamaarif642@gmail.com>
-> ---
-> Changes in v2:
->   - Rephrase commit message: frame it in terms of unevicable LRU, not stat
->     accounting.
-> 
->  mm/swap.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/mm/swap.c b/mm/swap.c
-> index 2260dcd2775e..f682f070160b 100644
-> --- a/mm/swap.c
-> +++ b/mm/swap.c
-> @@ -469,6 +469,16 @@ void folio_mark_accessed(struct folio *folio)
->  		 * this list is never rotated or maintained, so marking an
->  		 * unevictable page accessed has no effect.
->  		 */
-> +	} else if (folio_test_mlocked(folio)) {
-> +		/*
-> +		 * Pages that are mlocked, but not yet on unevictable LRU.
-> +		 * They might be still in mlock_fbatch waiting to be processed
-> +		 * and activating it here might interfere with
-> +		 * mlock_folio_batch(). __mlock_folio() will fail
-> +		 * folio_test_clear_lru() check and give up. It happens because
-> +		 * __folio_batch_add_and_move() clears LRU flag, when adding
-> +		 * folio to activate batch.
-> +		 */
+    https://rust-for-linux.com/contributing#submit-checklist-addendum
 
-This makes sense as activating an mlocked folio should be a noop but I
-am wondering why we are seeing this now. By this, I mean mlock()ed
-memory being delayed to get to unevictable LRU. Also I remember Hugh
-recently [1] removed the difference betwen mlock percpu cache and other
-percpu caches of clearing LRU bit on entry. Does you repro work even
-with Hugh's changes or without it?
+Also, in general, please use intra-doc links wherever possible.
 
-[1] https://lore.kernel.org/all/05905d7b-ed14-68b1-79d8-bdec30367eba@google.com/
+Thanks!
+
+Cheers,
+Miguel
 
