@@ -1,102 +1,126 @@
-Return-Path: <linux-kernel+bounces-846061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03C0EBC6EDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 01:38:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C95BBBC6EF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 01:42:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E83444E7D52
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 23:38:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 997C8189CE1C
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 23:42:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2CB22D0C64;
-	Wed,  8 Oct 2025 23:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434892C2AA2;
+	Wed,  8 Oct 2025 23:42:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vw7Bb92h"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l6hkWjXW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D052D061A
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 23:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA9D2264A3;
+	Wed,  8 Oct 2025 23:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759966510; cv=none; b=ICYq6OPVMaW5KLutdCcjKAFpgilMzJANvXKk2Stv2ucoP/T+JUy5T693Cf0jS1oToldkCBrd0KaZ3xpTgD1CVRbXNoP3hnGx4A4yxdfqyCs9ektd8BJiwuLqwbVt3RwDZKm0VbsD5JHFpW/A4PnJRLUFdx+u7ysgW1vimVUYh/s=
+	t=1759966937; cv=none; b=p7lvUgnZxxtIG5v+CuQm6JRk7uvscmzUcoX+fR244s0+3mcwCg07x9bix/s1NUwozBd/iMAbLyuG1Ekp7WQVwv/YYHVOdbrtvPBxeVoXWku283PckYmhPDEXlH+p03evZxfv5nuH6clz347zoVi1MR/3v/avQmSNmirtD34na08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759966510; c=relaxed/simple;
-	bh=9igNQRi1zsIULgFOJ+Hpha80v02kSWzsiG8eRfeHWOg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WWibqGkRgTsO57+Zremnz6uJuV5L8gqXoCLuIzi7g48AkNmciNRy5bf2W/lGXU2xTc/lxfpQoPV5awiSF/dFCrn6AkusHAyxnr7INOBXwybp79Y5cKT8oOE4n0biYhvoJpex4I4HPonPFrvczSZdoahlH+w+CGfHJXahRkeFDcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vw7Bb92h; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3f0ae439bc3so189473f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 16:35:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759966507; x=1760571307; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9igNQRi1zsIULgFOJ+Hpha80v02kSWzsiG8eRfeHWOg=;
-        b=vw7Bb92hM90H9chxoWRY7TYUuNiZkaPWRN8l+Rh0APRdDAgKPQijy8I0B0+/yG+vMS
-         2QxwPhHyOzPjOqQXmGf7kto9UTlPIOkm+SSSU7J8EQHt2gO5keOeUlQM3uZDLzkBoVcX
-         Nb2y9450owpUl9irmBkbQdw61by0hcAWmRc6csFjcEVypZeVemzjBtr2KlTfD3JcHfMP
-         BpiuQa+9pKuuCpQfg5+wl2RUHJWLvb7yZ5Pvsw56ModGSQ3MLHnNJb18K7nPgJWMtlSN
-         X9avtg1e0LT8tvXdEk7B+F19TrJgDB3vKjdFmZ5mlx34Mu56ePezV8zS2/o2xDeuDnSH
-         jlXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759966507; x=1760571307;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9igNQRi1zsIULgFOJ+Hpha80v02kSWzsiG8eRfeHWOg=;
-        b=hFK7+i8AEYOBHylI08fM69y3ZwjSuQjjOE+ycfLPQe/YKRJC8KJ0Ya1emvw3v8Vf1J
-         F3Hx6aktIp5ucOkpV1qBRotNvirdiAB0sjHkZ++uRx72b73fPCKJz/0uAokhzEj82BCU
-         uphavwrW92fDHGQfcMLTWfGKkKJ0AEKqrzfadje3a3KSD8MS/27Ktmqd6/iRfwp5SVo1
-         K8q2jGOBGvFjsROjPaO49aPNby5URZRdN7LDuvIopgc2lwnm62u15kU8Rv9SAPp3LNiS
-         //FrpPHgan/cVqYwWf6/U9/u6cgSHrQ1hkg8r35Ezco6jnHuvswqeicRZx2exILS1Z1R
-         Uc4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUeHdWpLESYxqB8gi7sNGJFi7WTdjnXptJ4Xu2tMqMLe1chVxrUiBkBJQCqbFWQGqINEDYlXN28ev3a704=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+dqZeRDXXyEeW1ql/6IMnWF6IFNegfmh0uekTpkeCPorSPzh9
-	rmkOd4G4VztQT9OVETzA2cke65O0eT5oi+9dHuUF1HP4ZoXeHxLWaWngYKK+Rhzh8VrLJdiNIYI
-	rYWyZlbBAOsvaYWOE1ZQ9OHl5ZbwdFlBN69krLvUe
-X-Gm-Gg: ASbGncvjqc6T+wCFh3rBb4p9TFRRNSjc/hTzIZQ0NwQ7eoXQQDLfMmMeu3Z2QluWv0/
-	HVJRjs9IuFXNGAQN62DDtkZDgS41Jod5rHsoKBMdizVSXxL+0Dy9HVQEzPfb0tNRpvgOjAqD347
-	iXG1ckKZCAiYnTpkETeRNQjf62/85Jy8jibQLWiRc0SSd3AW7BFrn6xOyj1ote/7gFkn59OT7aI
-	ryYPKKXY8+xq3/lysNDVexN84v3GV6NjPJU97bn6UrFdr5pt330UKi9RFz5INHXkGGr6XKa35wR
-	C0Pc4bdabdUDYg==
-X-Google-Smtp-Source: AGHT+IEqmdZ9VxhWMpDcRldSURNd0QiDBJUs0+1kYdV5l/JzukTnaa5H9DzGsLurz4/S6KkfONlhR48b+fTHniX4RxU=
-X-Received: by 2002:a05:6000:4313:b0:3ea:6680:8fb5 with SMTP id
- ffacd0b85a97d-42666ab29d5mr2881250f8f.2.1759966506486; Wed, 08 Oct 2025
- 16:35:06 -0700 (PDT)
+	s=arc-20240116; t=1759966937; c=relaxed/simple;
+	bh=Sh81BlQNbHf2Tut+VaTzcvGalFFYoQRL5dyvIXHuqCU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ef4MyhsDKaSNCY3HHs0Oaqt9FGwGYxglpPGR2uNi6+ejKLjoL4XYDhYRXpsjjGfDUc+peVlgev+urI9sWPEwPvu/UyhyfmucDV0BIit5ikkiNmMeeZQyIFlg1XwyCujKNvih2asRuygWOHp87H2+LJ95M0wByHcHpm2dSptWOok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l6hkWjXW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A79EC4CEE7;
+	Wed,  8 Oct 2025 23:42:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759966937;
+	bh=Sh81BlQNbHf2Tut+VaTzcvGalFFYoQRL5dyvIXHuqCU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=l6hkWjXWUMp0R/H3RvuMJnEeatm8vYMUo4/zBl6UNUbWKzHcxaCLdN9zEAHXC1fzj
+	 q7/4Hd1rK/6R/i/Iuwlo8/kLAICpsGp5pr4HCDjl+yYFS5KEXt6AUp0T0STo3lpQBx
+	 HI6FZfAxzg+O//0KTUsxclKwINYkkj1al7LW3sWT9Sl5XmQ82io946mNSi3s3MsODg
+	 jnKyd+1Tg02OGbuSdMh7vr13/0tgLdHR0hh5harSYQLNas4Yfguj4v6WNzRVuADMXv
+	 si+6Rm176+QSoYsiNyLQ1FtEfJcpVW68tP64k11fNISO/fMbw8J+2UDehezugDNfp/
+	 8unozSQA5W3KQ==
+Message-ID: <13426fe2-d4cc-4d87-bc4a-4a6dca955456@kernel.org>
+Date: Thu, 9 Oct 2025 08:42:07 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251001193346.1724998-1-jthies@google.com> <20251001193346.1724998-4-jthies@google.com>
- <aOZUq6K8bZtciL6Q@kuha.fi.intel.com>
-In-Reply-To: <aOZUq6K8bZtciL6Q@kuha.fi.intel.com>
-From: Jameson Thies <jthies@google.com>
-Date: Wed, 8 Oct 2025 16:34:54 -0700
-X-Gm-Features: AS18NWDl9Wn1v62FRwVNd2rJ20xgecQEZIHrqIoqrT8lQI_Q_BqxHXid5fR55og
-Message-ID: <CAMFSARfn_ULu2+JXjGSjz4KPDOSD=MAcKS8XwZNqbHf7YL6JBg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] mfd: cros_ec: Don't add cros_ec_ucsi if it is
- defined in OF or ACPI
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: akuchynski@chromium.org, abhishekpandit@chromium.org, krzk+dt@kernel.org, 
-	robh@kernel.org, bleung@chromium.org, ukaszb@chromium.org, tzungbi@kernel.org, 
-	devicetree@vger.kernel.org, chrome-platform@lists.linux.dev, 
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: soc: samsung: exynos-sysreg: add
+ power-domains
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251008-power-domains-dt-bindings-soc-samsung-exynos-sysreg-v1-1-ab41c517dec6@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251008-power-domains-dt-bindings-soc-samsung-exynos-sysreg-v1-1-ab41c517dec6@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-> If you are not using that for anything, then couldn't you just use
-> acpi_dev_found("GOOG0021") ?
+On 08/10/2025 23:17, André Draszik wrote:
+> Sysreg can be part of a power domain, so we need to allow the relevant
+> property 'power-domains'.
+> 
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> ---
+>  .../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml         | 3 +++
 
-Thanks, this is a good suggestion. I'll switch to acpi_dev_found() in
-the v3 update.
+It is not part of power domain for any existing SoCs, at least nothing
+indicates that so this should be restricted as in example-schema to GS
+sysregs only.
 
-> Can there be multiple UCSI interfaces on these systems?
-
-None of our devices will support multiple UCSI interfaces.
+Best regards,
+Krzysztof
 
