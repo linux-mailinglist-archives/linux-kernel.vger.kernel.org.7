@@ -1,315 +1,173 @@
-Return-Path: <linux-kernel+bounces-845977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54C48BC69E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:58:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB2D4BC69E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:59:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2F8364E6595
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:58:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD1F2420699
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C132228642B;
-	Wed,  8 Oct 2025 20:58:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649042777F9;
+	Wed,  8 Oct 2025 20:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CYiBhD9n"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ys4ncc22"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92BD1E7C12;
-	Wed,  8 Oct 2025 20:58:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00B326E716
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 20:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759957125; cv=none; b=Fxbtyo2mQfvC8rkaS9QWxwrskiXS3quXpGx2X2LCtFHoi/SAhl4ugY4NKi+BDURDuH6xqaI0CKpqphblNFR8ZvxUPINCP2NpHVCeaMKH+XMWOYgjAKDiLVtu7pC1gzpnpHi2woN0Po8fhrKDleM0blbxXLqPSo68kqnbFEdB9Gw=
+	t=1759957138; cv=none; b=BH6It3Wq0IB7cGoQkom5TPEj9uELn8wGR2qJzfO3nmHtDzEJBOnrikEJ8P01j7WenGDVxGBbOJfgPx13ptFzmvo0YpYch6X59B5vTS4VCY0i4uEhjg6sxcvRQTEnE+qm2HFUWk600eYaAPdgGNUhShczgasYJuhwcCPU4VnvkSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759957125; c=relaxed/simple;
-	bh=u+7t08X/+SbXaDtAVRzGtlvNbiihuB51BPXTkQ6Q1NQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VhwcDrQ4rXQ+jJY6ifm3/kKsw2mGUzsjWe7JO2Gz0f1jNtzrWVhXMhG88XZ31CTGQIVNrjWAltHKj4/65Sb7NzCCQPLJWL6eWEAoInRjYvP4fspw4yKyT1qnxC6ehm4hzAu0eHai7jYs3gh+enjPcXEA5XdtX8Sf+/xNixWV7+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CYiBhD9n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE588C4CEE7;
-	Wed,  8 Oct 2025 20:58:40 +0000 (UTC)
+	s=arc-20240116; t=1759957138; c=relaxed/simple;
+	bh=I/O5cFAIVReUYpBF2BqP5uRgVY4CVJzEBglG9Ag9N1c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z0/0TZ9w3EH/lSXd6vTH+Dqmk4JOVFvCHJ3lK32RtWCE5c9Jn0pvANwYx+2IbBOkpVUdhSMRtg0R7Jv0HK/jEO7r9o1wBbrACB/rupqhenNrqqodSOje1FitEaM2kuKH7FTUlueYHlGIdrk8jQENyLxkJz9NjPT6/xYST30Uq7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ys4ncc22; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A800C4CEE7
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 20:58:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759957124;
-	bh=u+7t08X/+SbXaDtAVRzGtlvNbiihuB51BPXTkQ6Q1NQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CYiBhD9nU7UHGrRGOhKpxtOeu42UNvpeEXnvJKO1AnKCri3uTHSCori2F/6oV6Ao/
-	 uuJokJ8HQ08GhcO0eTjQALWfr1p6RAayHNshP7rPXMZGXaJPYImHTQVl9jLOpFgYOh
-	 FA94dHDio0zVtvWA55xRllxDJKRTjgnx6lZKjicRCev47oZHY6UsXym1Tg2qO2y02R
-	 7N5TFRQk4qL72c3x0zMX3G/Nqr0xQP09nlSvOIXT8uMWF91fMJukIu0h0FIMjlPTzq
-	 hHHkTXlTOVVOOzW5mY7EOaTpZGvjM0M0+a1RftrIMGUKeTkxcSUlAyY60AejzPWlrt
-	 RbDZyraGvszpA==
-Date: Wed, 8 Oct 2025 21:58:38 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Roy Luo <royluo@google.com>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Joy Chakraborty <joychakr@google.com>,
-	Naveen Kumar <mnkumar@google.com>,
-	Badhri Jagan Sridharan <badhri@google.com>,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] dt-bindings: usb: dwc3: Add Google Tensor G5 DWC3
-Message-ID: <20251008-slider-uncombed-66790ea92ea0@spud>
-References: <20251008060000.3136021-1-royluo@google.com>
- <20251008060000.3136021-2-royluo@google.com>
+	s=k20201202; t=1759957138;
+	bh=I/O5cFAIVReUYpBF2BqP5uRgVY4CVJzEBglG9Ag9N1c=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Ys4ncc2238l++WKdLlwPuP9Dhfkv0tOhxX6aBWkPTsZd5E1V4elf4rMrzL1Fpk17N
+	 4I4EmHUkjsII5KGgMR7AMtvNNlPFZAHepB/l27uboV+Y8Nv9XeNPHt8esi+ThQ/P7n
+	 C/zPlGWD3XBMUqWtXR7zo+zaSXyEdVmBgxj5l8iPAeZTSayhg4mh8F6xgFV1zkr7AD
+	 rDNBNHJvFqOpCd5UkIF7HzV1WK/JYB1FhX1UQA8wBMdarheSvOnAL9sX8P7Z2qEvE2
+	 NaQS/EiFPcRMgPRc+0P9LX+HYxzQ9qwWf1qfn2Nj/XAI4s7JzlMcZ/CcJjCbsJXQqk
+	 Y4+wU87lk/ecA==
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-77f947312a5so2874627b3.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 13:58:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXt+ZnE0dc+nh8+9JU2xC2PQ32CFPhrJty/Qj1yt7CC61c9HkDr22gdsqmrwUZOQ5pfT/CDF0J/8r/GF9U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweEEuQbWUi3f65QFFZF5pXX5/rd+Pj0xnGp1aXr2GG/6p++CdI
+	XPF0bqqnkG9ocZNJYA9w9Tdr+KYHvSTpQODClvKL7lhQdsHZc8qR6DkBhUPdYSQ6tIp5VEEFfc3
+	reQtN8V8raAN4mQNAhjyWGQ8mWZDWntzTcz7uZ5nESQ==
+X-Google-Smtp-Source: AGHT+IFmDct8NBJB7hs7xpsIKwGqjrJKi8DA5w41X122GCxOpuP97IsVpRnLD3pg7rvYeA6vDxTtei2PmX8W22XUzTk=
+X-Received: by 2002:a53:cb41:0:b0:634:751b:1d13 with SMTP id
+ 956f58d0204a3-63ccb85da27mr3897822d50.23.1759957137556; Wed, 08 Oct 2025
+ 13:58:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="H4E5skbR47wtHuC7"
-Content-Disposition: inline
-In-Reply-To: <20251008060000.3136021-2-royluo@google.com>
-
-
---H4E5skbR47wtHuC7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20251007-swap-clean-after-swap-table-p1-v1-0-74860ef8ba74@tencent.com>
+ <20251007-swap-clean-after-swap-table-p1-v1-2-74860ef8ba74@tencent.com>
+In-Reply-To: <20251007-swap-clean-after-swap-table-p1-v1-2-74860ef8ba74@tencent.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Wed, 8 Oct 2025 13:58:45 -0700
+X-Gmail-Original-Message-ID: <CACePvbXtWQq0g+K0YtQLi3Sz5ukS5YS3XF-_VDEmUR0Y3f_Agg@mail.gmail.com>
+X-Gm-Features: AS18NWDUClHnjux-YVCXQbI0rvRka3sDNL5Dc2iIYoaxaQjpkAmt0AU3DR9zlUc
+Message-ID: <CACePvbXtWQq0g+K0YtQLi3Sz5ukS5YS3XF-_VDEmUR0Y3f_Agg@mail.gmail.com>
+Subject: Re: [PATCH 2/4] mm, swap: rename helper for setup bad slots
+To: Kairui Song <ryncsn@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, 
+	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, David Hildenbrand <david@redhat.com>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Ying Huang <ying.huang@linux.alibaba.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 08, 2025 at 05:59:57AM +0000, Roy Luo wrote:
-> Document the device tree bindings for the DWC3 USB controller found in
-> Google Tensor SoCs, starting with the G5 generation.
->=20
-> The Tensor G5 silicon represents a complete architectural departure from
-> previous generations (like gs101), including entirely new clock/reset
-> schemes, top-level wrapper and register interface. Consequently,
-> existing Samsung/Exynos DWC3 USB bindings and drivers are incompatible,
-> necessitating this new device tree binding.
->=20
-> The USB controller on Tensor G5 is based on Synopsys DWC3 IP and features
-> Dual-Role Device single port with hibernation support.
->=20
-> Signed-off-by: Roy Luo <royluo@google.com>
+Acked-by: Chris Li <chrisl@kernel.org>
+
+Chris
+
+On Mon, Oct 6, 2025 at 1:03=E2=80=AFPM Kairui Song <ryncsn@gmail.com> wrote=
+:
+>
+> From: Kairui Song <kasong@tencent.com>
+>
+> The name inc_cluster_info_page is very confusing, as this helper is only
+> used during swapon to mark bad slots. Rename it properly and turn the
+> VM_BUG_ON in it into WARN_ON to expose more potential issues. Swapon is
+> a cold path, so adding more checks should be a good idea.
+>
+> No feature change except new WARN_ON.
+>
+> Signed-off-by: Kairui Song <kasong@tencent.com>
 > ---
->  .../bindings/usb/google,gs-dwc3.yaml          | 145 ++++++++++++++++++
->  1 file changed, 145 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/google,gs-dwc3.=
-yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/usb/google,gs-dwc3.yaml b/=
-Documentation/devicetree/bindings/usb/google,gs-dwc3.yaml
-> new file mode 100644
-> index 000000000000..9eb0bf726e8d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/usb/google,gs-dwc3.yaml
-
-filename matching the compatible please.
-
-> @@ -0,0 +1,145 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +# Copyright (c) 2025, Google LLC
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/usb/google,gs-dwc3.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Google Tensor Series (G5+) DWC3 USB SoC Controller
-> +
-> +maintainers:
-> +  - Roy Luo <royluo@google.com>
-> +
-> +description: |
-> +  Describes the DWC3 USB controller block implemented on Google Tensor S=
-oCs,
-> +  starting with the G5 generation. Based on Synopsys DWC3 IP, the contro=
-ller
-> +  features Dual-Role Device single port with hibernation add-on.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - google,gs5-dwc3
-
-items is redundant here.
-
-> +
-> +  reg:
-> +    minItems: 3
-> +    maxItems: 3
-> +
-> +  reg-names:
-> +    description: |
-> +      The following memory regions must present:
-> +        - dwc3_core: Core DWC3 IP registers.
-> +        - host_cfg_csr: Hibernation control registers.
-> +        - usbint_csr: Hibernation interrupt registers.
-
-Put this into reg as an items list, and you can drop the min/max items
-=66rom there.
-Same applies to interrupts and power-domains.
-
-> +    items:
-> +      - const: dwc3_core
-> +      - const: host_cfg_csr
-> +      - const: usbint_csr
-> +
-> +  interrupts:
-> +    minItems: 3
-> +    maxItems: 3
-> +
-> +  interrupt-names:
-> +    description: |
-> +      The following interrupts must present:
-> +        - dwc_usb3: Core DWC3 interrupt.
-> +        - hs_pme_irq: High speed remote wakeup interrupt for hibernation.
-> +        - ss_pme_irq: Super speed remote wakeup interrupt for hibernatio=
-n.
-> +    items:
-> +      - const: dwc_usb3
-> +      - const: hs_pme_irq
-> +      - const: ss_pme_irq
-
-s/_irq//
-
-> +
-> +  clocks:
-> +    minItems: 3
-> +    maxItems: 3
-> +
-> +  clock-names:
-> +    minItems: 3
-> +    maxItems: 3
-> +
-> +  resets:
-> +    minItems: 5
-> +    maxItems: 5
-
-For clocks and resets, please provide descriptions. For clock-names, you
-provided no names and therefore cannot use the property since anything
-is valid!
-
-> +
-> +  reset-names:
-> +    items:
-> +      - const: usbc_non_sticky
-> +      - const: usbc_sticky
-> +      - const: usb_drd_bus
-> +      - const: u2phy_apb
-> +      - const: usb_top_csr
-
-"csr" is an odd thing to have in a reset name, since it usually means
-"control and status register". Why is it here.
-
-> +
-> +  power-domains:
-> +    minItems: 2
-> +    maxItems: 2
-> +
-> +  power-domain-names:
-> +    description: |
-> +      The following power domain must present:
-> +          - usb_psw_pd: The child power domain of usb_top_pd. Turning it=
- on puts the controller
-> +                         into full power state, turning it off puts the =
-controller into power
-> +                         gated state.
-> +          - usb_top_pd: The parent power domain of usb_psw_pd. Turning i=
-t on puts the controller
-> +                         into power gated state, turning it off complete=
-ly shuts off the
-> +                         controller.
-> +    items:
-> +      - const: usb_psw_pd
-> +      - const: usb_top_pd
-
-s/_pd// at the very least, but I would question the need to put "usb" in
-any of the names given that this is a usb device.
-
-> +
-> +  iommus:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reg-names
-> +  - interrupts
-> +  - interrupt-names
-> +  - clocks
-> +  - resets
-> +  - reset-names
-> +  - power-domains
-> +  - power-domain-names
-> +
-> +allOf:
-> +  - $ref: snps,dwc3-common.yaml#
-> +
-> +unevaluatedProperties: false
-
-So every property from snps,dwc3-common.yaml is valid here, with any of
-the permitted values?
-
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    soc {
-> +        #address-cells =3D <2>;
-> +        #size-cells =3D <2>;
-> +
-> +        usb@c400000 {
-> +            compatible =3D "google,gs5-dwc3";
-> +            reg =3D <0 0x0c400000  0 0xd060>, <0 0x0c450000 0 0x14>, <0 =
-0x0c450020 0 0x8>;
-> +            reg-names =3D "dwc3_core", "host_cfg_csr", "usbint_csr";
-> +            interrupts =3D <GIC_SPI 580 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                         <GIC_SPI 597 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                         <GIC_SPI 598 IRQ_TYPE_LEVEL_HIGH 0>;
-> +            interrupt-names =3D "dwc_usb3", "hs_pme_irq", "ss_pme_irq";
-> +            clocks =3D <&hsion_usbc_non_sticky_clk>,  <&hsion_usbc_stick=
-y_clk>,
-> +                     <&hsion_u2phy_apb_clk>;
-> +            clock-names =3D "usbc_non_sticky", "usbc_sticky", "u2phy_apb=
-";
-> +            resets =3D <&hsion_resets_usbc_non_sticky>, <&hsion_resets_u=
-sbc_sticky>,
-> +                     <&hsion_resets_usb_drd_bus>, <&hsion_resets_u2phy_a=
-pb>,
-> +                     <&hsion_resets_usb_top_csr>;
-> +            reset-names =3D "usbc_non_sticky", "usbc_sticky",
-> +                     "usb_drd_bus", "u2phy_apb",
-> +                     "usb_top_csr";
-> +            power-domains =3D <&hsio_n_usb_psw_pd>, <&hsio_n_usb_pd>;
-> +            power-domain-names =3D "usb_psw_pd", "usb_top_pd";
-> +            phys =3D <&usb_phy 0>;
-> +            phy-names =3D "usb2-phy";
-> +            snps,quirk-frame-length-adjustment =3D <0x20>;
-> +            snps,gfladj-refclk-lpm-sel-quirk;
-> +            snps,incr-burst-type-adjustment =3D <4>;
-> +        };
-> +    };
-> +...
-
-pw-bot: cr
-
---H4E5skbR47wtHuC7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaObQfgAKCRB4tDGHoIJi
-0oWjAP9YqWk7a/FyW8foR/yT+VNOq+XI66exHNNQBPvOdVgC9AEArKBNkcUi0g8z
-w38R4cEA+3VrU78OnQDQNAfK5wcUdg8=
-=Lg9K
------END PGP SIGNATURE-----
-
---H4E5skbR47wtHuC7--
+>  mm/swapfile.c | 22 +++++++++++-----------
+>  1 file changed, 11 insertions(+), 11 deletions(-)
+>
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index 0d1924f6f495..732e07c70ce9 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -751,14 +751,14 @@ static void relocate_cluster(struct swap_info_struc=
+t *si,
+>  }
+>
+>  /*
+> - * The cluster corresponding to page_nr will be used. The cluster will n=
+ot be
+> - * added to free cluster list and its usage counter will be increased by=
+ 1.
+> - * Only used for initialization.
+> + * The cluster corresponding to @offset will be accounted as having one =
+bad
+> + * slot. The cluster will not be added to the free cluster list, and its
+> + * usage counter will be increased by 1. Only used for initialization.
+>   */
+> -static int inc_cluster_info_page(struct swap_info_struct *si,
+> -       struct swap_cluster_info *cluster_info, unsigned long page_nr)
+> +static int swap_cluster_setup_bad_slot(struct swap_cluster_info *cluster=
+_info,
+> +                                      unsigned long offset)
+>  {
+> -       unsigned long idx =3D page_nr / SWAPFILE_CLUSTER;
+> +       unsigned long idx =3D offset / SWAPFILE_CLUSTER;
+>         struct swap_table *table;
+>         struct swap_cluster_info *ci;
+>
+> @@ -772,8 +772,8 @@ static int inc_cluster_info_page(struct swap_info_str=
+uct *si,
+>
+>         ci->count++;
+>
+> -       VM_BUG_ON(ci->count > SWAPFILE_CLUSTER);
+> -       VM_BUG_ON(ci->flags);
+> +       WARN_ON(ci->count > SWAPFILE_CLUSTER);
+> +       WARN_ON(ci->flags);
+>
+>         return 0;
+>  }
+> @@ -3396,7 +3396,7 @@ static struct swap_cluster_info *setup_clusters(str=
+uct swap_info_struct *si,
+>          * See setup_swap_map(): header page, bad pages,
+>          * and the EOF part of the last cluster.
+>          */
+> -       err =3D inc_cluster_info_page(si, cluster_info, 0);
+> +       err =3D swap_cluster_setup_bad_slot(cluster_info, 0);
+>         if (err)
+>                 goto err;
+>         for (i =3D 0; i < swap_header->info.nr_badpages; i++) {
+> @@ -3404,12 +3404,12 @@ static struct swap_cluster_info *setup_clusters(s=
+truct swap_info_struct *si,
+>
+>                 if (page_nr >=3D maxpages)
+>                         continue;
+> -               err =3D inc_cluster_info_page(si, cluster_info, page_nr);
+> +               err =3D swap_cluster_setup_bad_slot(cluster_info, page_nr=
+);
+>                 if (err)
+>                         goto err;
+>         }
+>         for (i =3D maxpages; i < round_up(maxpages, SWAPFILE_CLUSTER); i+=
++) {
+> -               err =3D inc_cluster_info_page(si, cluster_info, i);
+> +               err =3D swap_cluster_setup_bad_slot(cluster_info, i);
+>                 if (err)
+>                         goto err;
+>         }
+>
+> --
+> 2.51.0
+>
 
