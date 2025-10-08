@@ -1,159 +1,133 @@
-Return-Path: <linux-kernel+bounces-845567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4207DBC5626
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 16:07:45 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8635BC564F
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 16:10:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 73AB9344D32
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 14:07:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4A3684F38EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 14:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C7229B8D0;
-	Wed,  8 Oct 2025 14:07:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E6728CF56;
+	Wed,  8 Oct 2025 14:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ut11yE86"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wXOIV+Tz"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A453729993A;
-	Wed,  8 Oct 2025 14:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2394028B407
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 14:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759932433; cv=none; b=pmP3BHPaB2OCfXVMx4C6wIdKYukAziFJ6phfhdTEOGMjqH+ihJeDzQEeyYfV44UH6cOPlKZ8JUF++2LyeskXVKbp37/57eE22VdN58OsLHGNLTwEtx3bcvWQWOrbmDDpUQyCtG4ZCF2O9iStjq+dGBrBma2xP1b05soZFWdVD7Y=
+	t=1759932517; cv=none; b=NscIcOXzruDOj2uZpJvyAyEle3idlxed03mDEAhsphpTo+iX1ttB5ro1mVKxFp7VjUORRsUOhDOhvS6GGLsxo+yOjCBNXLtew3zI10FHF2mto99pmT2njyPePi7b1odQMSkjavysG8az5JWAIJeOatukBfgffNmEPSj1AtHpPNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759932433; c=relaxed/simple;
-	bh=Uqc/kLJQy55H6bnTrhnxEfGjhf286WP1v2c3zjoMyx4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=AR3RAYsTcnnYeu2K8tFgfFFW16TH59dCnisNZ2MzTInp5Zd3MWT0bngobx85xJ6DptJ9DRhsvEY1Bq2APUbVm5VHDByX0Dg6tCPQ4eqoB+ot91PjqVqrglxzBDITLk9JDdTbqv2KYW9cWKE5EWtEVox0WLdbMNrJUWi3s2eW0Os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ut11yE86; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E490C4CEF5;
-	Wed,  8 Oct 2025 14:07:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759932433;
-	bh=Uqc/kLJQy55H6bnTrhnxEfGjhf286WP1v2c3zjoMyx4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Ut11yE86J8IoE7mxYoqQpkN/v+Pa7sQGTHpeEYCGmj9Ax94Xsklg1TlqDYcM3/toM
-	 SxiZugEnzOk+esAum3pVSXxFoNfTovF2c6bGtWfGoh4UoH8CBhjyArrzwQXKyhzDrT
-	 SFUwcLhjyXN2AUud9POC+VTa9W09E8cj2VdpoamNJRTUgizzoNQPwtF4LMy8A5QXM9
-	 AL+TiWHogfULKJLuOfRJEzQapsrp07nCMP3+UDHX9fIlYvQPFLp7qRRkGivRxLwGub
-	 sXaKp0lcWWX3VEV1RIHIzghftn4WFZ1x26Nb9QzfuzPgfIR6Ydffyug3CyxBr3toLS
-	 n3PDlfig/9OMw==
-From: Benjamin Tissoires <bentiss@kernel.org>
-Date: Wed, 08 Oct 2025 16:06:59 +0200
-Subject: [PATCH 2/2] selftests/hid: add tests for missing release on the
- Dell Synaptics
+	s=arc-20240116; t=1759932517; c=relaxed/simple;
+	bh=tAwpicwtdQMUuNcHpBxjwYWrqxJs6DJpBsuCMldzPrs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dveWA5D6/AifDgpp7RhCAORQ+xNyi2JGvRn1ozKr9LAO28w50p3PIuKUprJ5GdqZcvwp94PDqOU0pcyuFdIf2iHuJW3QYzLwc+2vK4edCGpGT2R5Jy3xlgUaXInRaZw4ixSbJZrUtxpWmNOXoi5iGyl7n0pJAvahBsxOiy49ROU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wXOIV+Tz; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=5YGz17tjyVqkAUMXByj29FD7vbgf3YKY876usv36iw8=; b=wXOIV+TzesxELkvE57to+2D3yA
+	Dn1W4J3VkJABd/wmfZM7IawB+pzNnaQroxFIZabVznohvFA/OMN7Cr75JODv1JaTFjiVYnhbbRwh4
+	ExNiwUS8XGgxJ+X6ki40QUH6ePyzAd+XnHpXiVKYrqgMvX4hpLQz7RrkbcRKEK6RwXCScGtUjg+95
+	Xf/yIRgPT2XIFBUCAGZG+7/gdCqXg4NtpDZYEInaSD5QPhFKAugrGCExj3nifZWCX5Sa6ZvhIOqTw
+	osXIpqguYOPMhBq9JdUsAY/HXnCXa2s5IIy7T/X7c1ez2yLTqBuvCtjxdr39q5ixaRzfEgSAa2wWz
+	J7C13WUA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v6UqA-00000006Vrk-3oOT;
+	Wed, 08 Oct 2025 14:08:28 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 31671300400; Wed, 08 Oct 2025 16:08:27 +0200 (CEST)
+Date: Wed, 8 Oct 2025 16:08:27 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched/fair: Fix pelt lost idle time detection
+Message-ID: <20251008140827.GY4067720@noisy.programming.kicks-ass.net>
+References: <20251008131214.3759798-1-vincent.guittot@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251008-fix-sticky-fingers-v1-2-760f1f26fce3@kernel.org>
-References: <20251008-fix-sticky-fingers-v1-0-760f1f26fce3@kernel.org>
-In-Reply-To: <20251008-fix-sticky-fingers-v1-0-760f1f26fce3@kernel.org>
-To: Jiri Kosina <jikos@kernel.org>, Shuah Khan <shuah@kernel.org>
-Cc: Peter Hutterer <peter.hutterer@who-t.net>, linux-input@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- Benjamin Tissoires <bentiss@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759932427; l=7534;
- i=bentiss@kernel.org; s=20230215; h=from:subject:message-id;
- bh=Uqc/kLJQy55H6bnTrhnxEfGjhf286WP1v2c3zjoMyx4=;
- b=HM+woDX5bgiVNyXttgO3cJHrrGOPvuveDmdMS5F+Bvl3bKyIdkd+xQAjQDu/UMQGntneuSUTo
- Xix0x1+bJVDCnXEoRmb1Zp9km0UfVChuqKt1jP8zOlRG1KAXrRw5bKJ
-X-Developer-Key: i=bentiss@kernel.org; a=ed25519;
- pk=7D1DyAVh6ajCkuUTudt/chMuXWIJHlv2qCsRkIizvFw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251008131214.3759798-1-vincent.guittot@linaro.org>
 
-Add a simple test for the corner case not currently covered by the
-sticky fingers quirk. Because it's a corner case test, we only test this
-on a couple of devices, not on all of them because the value of adding
-the same test over and over is rather moot.
+On Wed, Oct 08, 2025 at 03:12:14PM +0200, Vincent Guittot wrote:
+> The check for some lost idle pelt time should be always done when 
+> pick_next_task_fair() fails to pick a task and not only when we call it
+> from the fair fast-path.
+> 
+> The case happens when the last running task on rq is a RT or DL task. When
+> the latter goes to sleep and the /Sum of util_sum of the rq is at the max
+> value, we don't account the lost of idle time whereas we should.
+> 
+> Fixes: 67692435c411 ("sched: Rework pick_next_task() slow-path")
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 
-Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
----
- .../testing/selftests/hid/tests/test_multitouch.py | 55 ++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
+Durr, sorry about that. Let me go queue this.
 
-diff --git a/tools/testing/selftests/hid/tests/test_multitouch.py b/tools/testing/selftests/hid/tests/test_multitouch.py
-index 5d2ffa3d59777e3cd93d1d7aebabc2a6b7ecb42a..ece0ba8e7d34b75d42245e5936ecf804c46b0846 100644
---- a/tools/testing/selftests/hid/tests/test_multitouch.py
-+++ b/tools/testing/selftests/hid/tests/test_multitouch.py
-@@ -1752,6 +1752,52 @@ class TestWin8TSConfidence(BaseTest.TestWin8Multitouch):
-         assert evdev.slots[0][libevdev.EV_ABS.ABS_MT_TRACKING_ID] == -1
- 
- 
-+    @pytest.mark.skip_if_uhdev(
-+        lambda uhdev: "Confidence" not in uhdev.fields,
-+        "Device not compatible, missing Confidence usage",
-+    )
-+    def test_mt_confidence_bad_multi_release(self):
-+        """Check for the sticky finger being properly detected.
-+
-+        We first inject 3 fingers, then release only the second.
-+        After 100 ms, we should receive a generated event about the
-+        2 missing fingers being released.
-+        """
-+        uhdev = self.uhdev
-+        evdev = uhdev.get_evdev()
-+
-+        # send 3 touches
-+        t0 = Touch(1, 50, 10)
-+        t1 = Touch(2, 150, 100)
-+        t2 = Touch(3, 250, 200)
-+        r = uhdev.event([t0, t1, t2])
-+        events = uhdev.next_sync_events()
-+        self.debug_reports(r, uhdev, events)
-+
-+        # release the second
-+        t1.tipswitch = False
-+        r = uhdev.event([t1])
-+        events = uhdev.next_sync_events()
-+        self.debug_reports(r, uhdev, events)
-+
-+        # only the second is released
-+        assert evdev.slots[0][libevdev.EV_ABS.ABS_MT_TRACKING_ID] != -1
-+        assert evdev.slots[1][libevdev.EV_ABS.ABS_MT_TRACKING_ID] == -1
-+        assert evdev.slots[2][libevdev.EV_ABS.ABS_MT_TRACKING_ID] != -1
-+
-+        # wait for the timer to kick in
-+        time.sleep(0.2)
-+
-+        events = uhdev.next_sync_events()
-+        self.debug_reports([], uhdev, events)
-+
-+        # now all 3 fingers are released
-+        assert libevdev.InputEvent(libevdev.EV_KEY.BTN_TOUCH, 0) in events
-+        assert evdev.slots[0][libevdev.EV_ABS.ABS_MT_TRACKING_ID] == -1
-+        assert evdev.slots[1][libevdev.EV_ABS.ABS_MT_TRACKING_ID] == -1
-+        assert evdev.slots[2][libevdev.EV_ABS.ABS_MT_TRACKING_ID] == -1
-+
-+
- class TestElanXPS9360(BaseTest.TestWin8Multitouch):
-     def create_device(self):
-         return Digitizer(
-@@ -2086,3 +2132,12 @@ class Testsynaptics_06cb_ce08(BaseTest.TestPTP):
-             input_info=(BusType.I2C, 0x06CB, 0xCE08),
-             rdesc="05 01 09 02 a1 01 85 02 09 01 a1 00 05 09 19 01 29 02 15 00 25 01 75 01 95 02 81 02 95 06 81 01 05 01 09 30 09 31 15 81 25 7f 75 08 95 02 81 06 c0 c0 05 01 09 02 a1 01 85 18 09 01 a1 00 05 09 19 01 29 03 46 00 00 15 00 25 01 75 01 95 03 81 02 95 05 81 01 05 01 09 30 09 31 15 81 25 7f 75 08 95 02 81 06 c0 c0 06 00 ff 09 02 a1 01 85 20 09 01 a1 00 09 03 15 00 26 ff 00 35 00 46 ff 00 75 08 95 05 81 02 c0 c0 05 0d 09 05 a1 01 85 03 05 0d 09 22 a1 02 15 00 25 01 09 47 09 42 95 02 75 01 81 02 95 01 75 03 25 05 09 51 81 02 75 01 95 03 81 03 05 01 15 00 26 f8 04 75 10 55 0e 65 11 09 30 35 00 46 24 04 95 01 81 02 46 30 02 26 a0 02 09 31 81 02 c0 05 0d 09 22 a1 02 15 00 25 01 09 47 09 42 95 02 75 01 81 02 95 01 75 03 25 05 09 51 81 02 75 01 95 03 81 03 05 01 15 00 26 f8 04 75 10 55 0e 65 11 09 30 35 00 46 24 04 95 01 81 02 46 30 02 26 a0 02 09 31 81 02 c0 05 0d 09 22 a1 02 15 00 25 01 09 47 09 42 95 02 75 01 81 02 95 01 75 03 25 05 09 51 81 02 75 01 95 03 81 03 05 01 15 00 
- 26 f8 04 75 10 55 0e 65 11 09 30 35 00 46 24 04 95 01 81 02 46 30 02 26 a0 02 09 31 81 02 c0 05 0d 09 22 a1 02 15 00 25 01 09 47 09 42 95 02 75 01 81 02 95 01 75 03 25 05 09 51 81 02 75 01 95 03 81 03 05 01 15 00 26 f8 04 75 10 55 0e 65 11 09 30 35 00 46 24 04 95 01 81 02 46 30 02 26 a0 02 09 31 81 02 c0 05 0d 09 22 a1 02 15 00 25 01 09 47 09 42 95 02 75 01 81 02 95 01 75 03 25 05 09 51 81 02 75 01 95 03 81 03 05 01 15 00 26 f8 04 75 10 55 0e 65 11 09 30 35 00 46 24 04 95 01 81 02 46 30 02 26 a0 02 09 31 81 02 c0 05 0d 55 0c 66 01 10 47 ff ff 00 00 27 ff ff 00 00 75 10 95 01 09 56 81 02 09 54 25 7f 95 01 75 08 81 02 05 09 09 01 25 01 75 01 95 01 81 02 95 07 81 03 05 0d 85 08 09 55 09 59 75 04 95 02 25 0f b1 02 85 0d 09 60 75 01 95 01 15 00 25 01 b1 02 95 07 b1 03 85 07 06 00 ff 09 c5 15 00 26 ff 00 75 08 96 00 01 b1 02 c0 05 0d 09 0e a1 01 85 04 09 22 a1 02 09 52 15 00 25 0a 75 08 95 01 b1 02 c0 09 22 a1 00 85 06 09 57 09 58 75 01 95 02 25 01 b1 02 95 06 b1 03 c0 c0 06 00 ff 09 01 a
- 1 01 85 09 09 02 15 00 26 ff 00 75 08 95 14 91 02 85 0a 09 03 15 00 26 ff 00 75 08 95 14 91 02 85 0b 09 04 15 00 26 ff 00 75 08 95 45 81 02 85 0c 09 05 15 00 26 ff 00 75 08 95 45 81 02 85 0f 09 06 15 00 26 ff 00 75 08 95 03 b1 02 85 0e 09 07 15 00 26 ff 00 75 08 95 01 b1 02 c0",
-         )
-+
-+class Testsynaptics_06cb_ce26(TestWin8TSConfidence):
-+    def create_device(self):
-+        return PTP(
-+            "uhid test synaptics_06cb_ce26",
-+            max_contacts=5,
-+            input_info=(BusType.I2C, 0x06CB, 0xCE26),
-+            rdesc="05 01 09 02 a1 01 85 02 09 01 a1 00 05 09 19 01 29 02 15 00 25 01 75 01 95 02 81 02 95 06 81 01 05 01 09 30 09 31 15 81 25 7f 75 08 95 02 81 06 c0 c0 05 0d 09 05 a1 01 85 03 05 0d 09 22 a1 02 15 00 25 01 09 47 09 42 95 02 75 01 81 02 95 01 75 03 25 05 09 51 81 02 75 01 95 03 81 03 05 01 15 00 26 45 05 75 10 55 0e 65 11 09 30 35 00 46 64 04 95 01 81 02 46 a2 02 26 29 03 09 31 81 02 c0 05 0d 09 22 a1 02 15 00 25 01 09 47 09 42 95 02 75 01 81 02 95 01 75 03 25 05 09 51 81 02 75 01 95 03 81 03 05 01 15 00 26 45 05 75 10 55 0e 65 11 09 30 35 00 46 64 04 95 01 81 02 46 a2 02 26 29 03 09 31 81 02 c0 05 0d 09 22 a1 02 15 00 25 01 09 47 09 42 95 02 75 01 81 02 95 01 75 03 25 05 09 51 81 02 75 01 95 03 81 03 05 01 15 00 26 45 05 75 10 55 0e 65 11 09 30 35 00 46 64 04 95 01 81 02 46 a2 02 26 29 03 09 31 81 02 c0 05 0d 09 22 a1 02 15 00 25 01 09 47 09 42 95 02 75 01 81 02 95 01 75 03 25 05 09 51 81 02 75 01 95 03 81 03 05 01 15 00 26 45 05 75 10 55 0e 65 11 09 30 35 00 46 64 
- 04 95 01 81 02 46 a2 02 26 29 03 09 31 81 02 c0 05 0d 09 22 a1 02 15 00 25 01 09 47 09 42 95 02 75 01 81 02 95 01 75 03 25 05 09 51 81 02 75 01 95 03 81 03 05 01 15 00 26 45 05 75 10 55 0e 65 11 09 30 35 00 46 64 04 95 01 81 02 46 a2 02 26 29 03 09 31 81 02 c0 05 0d 55 0c 66 01 10 47 ff ff 00 00 27 ff ff 00 00 75 10 95 01 09 56 81 02 09 54 25 7f 95 01 75 08 81 02 05 09 09 01 25 01 75 01 95 01 81 02 95 07 81 03 05 0d 85 08 09 55 09 59 75 04 95 02 25 0f b1 02 85 0d 09 60 75 01 95 01 15 00 25 01 b1 02 95 07 b1 03 85 07 06 00 ff 09 c5 15 00 26 ff 00 75 08 96 00 01 b1 02 c0 05 0d 09 0e a1 01 85 04 09 22 a1 02 09 52 15 00 25 0a 75 08 95 01 b1 02 c0 09 22 a1 00 85 06 09 57 09 58 75 01 95 02 25 01 b1 02 95 06 b1 03 c0 c0 06 00 ff 09 01 a1 01 85 09 09 02 15 00 26 ff 00 75 08 95 14 91 02 85 0a 09 03 15 00 26 ff 00 75 08 95 14 91 02 85 0b 09 04 15 00 26 ff 00 75 08 95 3d 81 02 85 0c 09 05 15 00 26 ff 00 75 08 95 3d 81 02 85 0f 09 06 15 00 26 ff 00 75 08 95 03 b1 02 85 0e 09 07 15 00 26 ff 00 7
- 5 08 95 01 b1 02 c0",
-+        )
-
--- 
-2.51.0
-
+> ---
+> 
+> I Noticed this while reviewing [1]
+> 
+> [1] https://lore.kernel.org/all/20251006105453.648473106@infradead.org/
+> 
+>  kernel/sched/fair.c | 26 +++++++++++++-------------
+>  1 file changed, 13 insertions(+), 13 deletions(-)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index b3be1e2749ce..dd0ea01af730 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -8920,21 +8920,21 @@ pick_next_task_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf
+>  	return p;
+>  
+>  idle:
+> -	if (!rf)
+> -		return NULL;
+> -
+> -	new_tasks = sched_balance_newidle(rq, rf);
+> +	if (rf) {
+> +		new_tasks = sched_balance_newidle(rq, rf);
+>  
+> -	/*
+> -	 * Because sched_balance_newidle() releases (and re-acquires) rq->lock, it is
+> -	 * possible for any higher priority task to appear. In that case we
+> -	 * must re-start the pick_next_entity() loop.
+> -	 */
+> -	if (new_tasks < 0)
+> -		return RETRY_TASK;
+> +		/*
+> +		 * Because sched_balance_newidle() releases (and re-acquires)
+> +		 * rq->lock, it is possible for any higher priority task to
+> +		 * appear. In that case we must re-start the pick_next_entity()
+> +		 * loop.
+> +		 */
+> +		if (new_tasks < 0)
+> +			return RETRY_TASK;
+>  
+> -	if (new_tasks > 0)
+> -		goto again;
+> +		if (new_tasks > 0)
+> +			goto again;
+> +	}
+>  
+>  	/*
+>  	 * rq is about to be idle, check if we need to update the
+> -- 
+> 2.43.0
+> 
 
