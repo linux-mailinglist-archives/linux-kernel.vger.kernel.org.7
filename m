@@ -1,196 +1,182 @@
-Return-Path: <linux-kernel+bounces-845722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C4B1BC5FBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:15:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E8D1BC5F70
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:10:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73A5D423E20
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 16:04:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3F83421D6C
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 16:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E43317A2E0;
-	Wed,  8 Oct 2025 16:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF97D2BCF7F;
+	Wed,  8 Oct 2025 16:05:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="tFkGT4Vf"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HC3fEM16"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723B32BE020;
-	Wed,  8 Oct 2025 16:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72F1276038
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 16:05:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759939441; cv=none; b=gi6p7LEA3p6nbQSR6LjskhQCuMJ+wtHglfSEgMwbvtCQkU7xuDDZ3eja672dOak6/XOonrZ+GkUn/jv7DokBK0wikFEsNsi5svsaTCwoGf8924HUdbw1x8rS/6iTRsWe2HqmUmZxnK1bM4gUo7OMkJ3JuCjZuBRPltFZlbDWxzU=
+	t=1759939511; cv=none; b=EuFS12QgkkzxTNvLZk7KhmRw+VvmIG7hEgEZiHplVwD9ClkyUKiFetYqfaBeEKV40a7oAh/NR/LdoDqbU6wPnvuY7yY6f/GV2+82Oy0mnFrc9Cr5hRYtDRZijjczF9iGwAHP3WjIVwQw56f+pWbEPYzINFxAD7c65zIyRVPMsko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759939441; c=relaxed/simple;
-	bh=qRGrciwh24/r0rMBH/z4DnVMPsm6JU9NYKa2O2p8Cyc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aeCoQhdvUjk6t4uUBIvjvDEIhQHiqg91g2fplRc1QJm0xMKCkse0qiF3V+0BGzKgd7IVm6hbhO+k1DK/LU+g99s0iMbqRZmAFMj6Jkjll8TJ3KtYgo2UGeHAzNCoy4PAZGt54iLSdaAoodlezbLYsk94rzPll5/111TBmj0xRMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=tFkGT4Vf; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4chd996c7nzlgqxl;
-	Wed,  8 Oct 2025 16:03:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1759939435; x=1762531436; bh=i6kqsxtRDB6sbvfO8K5y5sD6
-	F6tM1jHqnp6pWG6pxyE=; b=tFkGT4VfJJcWaquPYtJUVWn6+2R7UPy2umFOl7vZ
-	EKYy2S6I+F4azcO/nk7Bb8vbC4doD6ahROVbHe8VzqrvBZy/ImUmjtKXw4B465GN
-	VD/wuQxVsd5eoE7tx/fhwq+AsRHKPhv6HnVYvKf3CY0JGUO2DPn4bi2ER7pOT+1n
-	EDAhkqwVAT3wXnKOx2HuGGtPBh5evU/WKp+OVR18NoKvOUAd9pH9QVZSIxBWiXQT
-	MrBL2ovgRJkuMvFwP7iEZt1FX5WWD8VdXAtIJTbF5lE2aN5TSshVauFYy3rV9U13
-	uKpIlqROl2sMR9B9C4B/LtCS6tRqReCNbe3Irlda8j6jhw==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id S2QNzb7VcNYK; Wed,  8 Oct 2025 16:03:55 +0000 (UTC)
-Received: from [100.119.48.131] (unknown [104.135.180.219])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4chd8v4c7KzlgqyY;
-	Wed,  8 Oct 2025 16:03:42 +0000 (UTC)
-Message-ID: <3fb0bc7b-bcde-417a-96ef-239af94cff54@acm.org>
-Date: Wed, 8 Oct 2025 09:03:41 -0700
+	s=arc-20240116; t=1759939511; c=relaxed/simple;
+	bh=K08WfS0zn9WdF9OY55ASJ9oYL9UzYTBlPczRzX3vcjE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=btZAUdx3M/iEmypULSXZkzPFFjPxRTpUltRQJ1cjpJrLLwA7t+dUvL8v1qoPcUwPIKZHKtZhvZL/Skzbb7Zn6AeGoCj0Ivv5i4gh7yANpIXCVS2EKSqh/nEOGqYVQITj8OlYmj2EQXKWrGidEZWLcTByvj+POZ8IuF7dbWgyvBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HC3fEM16; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-77f5d497692so8373606b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 09:05:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759939509; x=1760544309; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/4uNl2Ay0LlgN6EXPwo8K9A/+ge9VPm7JFPlv/QSzME=;
+        b=HC3fEM168QQCwro8QA/jHrMNTqlovYXZEeiJgNNMTl6F383J/L883CzHPH/OTIfebw
+         OW9Dmc9FedFgUpM87B+udGHqlacknGmLSEhCy8uXJeGqkTeT3bdNUf8EnZkZc6vNRu5+
+         E8+9gxNtvbcNK0bzeHT77v9x1DaZQ/ZRp1ZX/Y+WstevohLSmcrC64R3VPPZ/1odHOO1
+         DQKr3qdFFHf1sCpgVG7LVXd2F6iE2xCe8Aop8jMan60axguROfTY3IyGuNlPaHnx9occ
+         JBX0ujhaWjxV6VCuvXrdAZ/trrkNg9C5jasxDJwH4eROU+0nfAGNYiM8FVheB9mADoTw
+         T77g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759939509; x=1760544309;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/4uNl2Ay0LlgN6EXPwo8K9A/+ge9VPm7JFPlv/QSzME=;
+        b=B/yil6Qns/UsPmf2zNRVs9+lDFetVcPH9xxxC/EzPC29ysuNl+44u68/rNNYcEvtUB
+         bySLlXpAKO3jB6Q9IFaasKM6+JcOPlWplrVswXZLHTxwQsc39P6jxs11K7FMDJyxHvmZ
+         gbE/R7i8EOna6i3iKBINSLKyhFusF5+ZFOs9HdJ5iNecpWQ3U7eiS0DgPwuRpFS+QkMj
+         oLUAOQTIlOEjGQVErRDgPU9zs2pN73oI2xB+C0M4betRAZdYY96vU0emWNJUPY6g41IP
+         3tvu9lbRkh33TKkxaxVnSnrQ7QHQsKVLT3IqFmabQGHw3+tLREhx2V5wA7hYR4fYLfQi
+         7Wrw==
+X-Forwarded-Encrypted: i=1; AJvYcCVmiMdZuWnhMRQW6c7U1zrC2DI7625qU5pPwQ/TyR8eXJAdN3SAbuZYgRnheIgxrNt90DSDvaSlX2DAD4k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPoLAW4PaGOp9bvdgEKDc/yyeGvp73kQuqXveeA27+I5URCabU
+	E2dzuICLZbaYuSbD96LG8ZwlLNSZrv7WolnWs09FwpJTuQbra+CkvzJfUe4K5wsVyvAf7w==
+X-Gm-Gg: ASbGncufCWegdS+Qs9KRitPBdiKOJC+exxM6TqCKoBRbP6PShpl/TyWCC9s9acf/g/o
+	ve3VxRCb13ZteXzQi3+oLiAiXrw6iwX/cFjFzDQRKYKNmawdTQRj9pdomqKrmCJOG+yez27fWro
+	n+bvtp+4i1rPeHnP7A+g4G8MIc9bcp9rExMC0OzcDxW9yae3ST1v9oS5842Zaw/0QBpuuVgD7N4
+	9DAgGClRGx1efvRHWpA/06v2E+Re3562Mcw69WCUDVYsMJ3NdFErzKiHvrnuIbTCGOSupqA/OmH
+	VVmjhGQEeKZodmdiJV4Iv2/KyQI6xKOQhXG0vOqld1d26MzMXZPXJOKZmbqn+RFAyV0VMpT3IYH
+	oRFxrURduAwN9fh5PWZPAmo6u+NEn6zUj4eHauq3dlwzQJf4HfKXUrxUvbYVccA+F4ApyVdZj
+X-Google-Smtp-Source: AGHT+IHSwlR9X8nvzvyK35SoahmqhhUuc9WoGLaGvsDB3ru0DwXBEkmxWja+WJ5QFHVue0BRF6f0jA==
+X-Received: by 2002:a05:6a21:501a:b0:2e5:c9ee:96fa with SMTP id adf61e73a8af0-32da83de32fmr3996700637.34.1759939508502;
+        Wed, 08 Oct 2025 09:05:08 -0700 (PDT)
+Received: from localhost.localdomain ([185.213.82.31])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-794dbc5a6c5sm120658b3a.54.2025.10.08.09.05.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 09:05:08 -0700 (PDT)
+From: Brian Sune <briansune@gmail.com>
+To: Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4] ASoC: wm8978: add missing BCLK divider setup
+Date: Thu,  9 Oct 2025 00:04:52 +0800
+Message-ID: <20251008160452.1741-1-briansune@gmail.com>
+X-Mailer: git-send-email 2.47.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] scsi: ufs: core: Remove duplicate macro
- definitions
-To: Bean Huo <beanhuo@iokpp.de>, avri.altman@wdc.com,
- avri.altman@sandisk.com, alim.akhtar@samsung.com, jejb@linux.ibm.com,
- martin.petersen@oracle.com, can.guo@oss.qualcomm.com,
- ulf.hansson@linaro.org, beanhuo@micron.com, jens.wiklander@linaro.org
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251008145854.68510-1-beanhuo@iokpp.de>
- <20251008145854.68510-2-beanhuo@iokpp.de>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20251008145854.68510-2-beanhuo@iokpp.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/8/25 7:58 AM, Bean Huo wrote:
-> Remove duplicate definitions of SD_ASCII_STD and SD_RAW macros from
-> ufshcd-priv.h as they are already defined in include/ufs/ufshcd.h.
-> 
-> Suggested-by: Avri Altman <Avri.Altman@sandisk.com>
-> Signed-off-by: Bean Huo <beanhuo@micron.com>
-> ---
->   drivers/ufs/core/ufshcd-priv.h | 3 ---
->   1 file changed, 3 deletions(-)
-> 
-> diff --git a/drivers/ufs/core/ufshcd-priv.h b/drivers/ufs/core/ufshcd-priv.h
-> index d0a2c963a27d..cadee685eb5e 100644
-> --- a/drivers/ufs/core/ufshcd-priv.h
-> +++ b/drivers/ufs/core/ufshcd-priv.h
-> @@ -77,9 +77,6 @@ int ufshcd_mcq_abort(struct scsi_cmnd *cmd);
->   int ufshcd_try_to_abort_task(struct ufs_hba *hba, int tag);
->   void ufshcd_release_scsi_cmd(struct ufs_hba *hba,
->   			     struct ufshcd_lrb *lrbp);
-> -
-> -#define SD_ASCII_STD true
-> -#define SD_RAW false
->   int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index,
->   			    u8 **buf, bool ascii);
->   
+In previous WM8978 codec driver versions, wm8978_set_dai_clkdiv
+might not have been called for BCLK, leaving the bit clock
+divider unconfigured. This could cause incorrect or unstable audio
+clocks depending on sample rate and word length.
 
-Please improve this patch as follows:
-- Remove the ufshcd_read_string_desc() declaration from
-   include/ufs/ufshcd.h because this function has not been exported.
-- Change the type of the 'ascii' argument into an enumeration type.
-   Code readability improves significantly if boolean arguments are
-   replaced with enumeration type arguments.
+This patch adds a check in wm8978_hw_params: if the BCLK divider
+has not been set via wm8978_set_dai_clkdiv, it is dynamically
+calculated and configured at runtime.
+This ensures that BCLK is always correctly set, whether the
+machine driver configures it explicitly or not.
 
-Below there is an untested patch that illustrates the above.
+Apart from this core patch, due to request from Mark Brown and
+Charles Keepax. Overclock BCLK setup is applied, and dropped the
+possible lowest error BCLK result. On top of the overclocking,
+warning message is given to user as a reminding.
+This patch author do not agree with this design nor
+concept from first place!
 
-Thanks,
+Signed-off-by: Brian Sune <briansune@gmail.com>
+---
+ sound/soc/codecs/wm8978.c | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-Bart.
-
-
-diff --git a/drivers/ufs/core/ufshcd-priv.h b/drivers/ufs/core/ufshcd-priv.h
-index 1f0d38aa37f9..85d3d9e64bd7 100644
---- a/drivers/ufs/core/ufshcd-priv.h
-+++ b/drivers/ufs/core/ufshcd-priv.h
-@@ -80,10 +80,12 @@ int ufshcd_try_to_abort_task(struct ufs_hba *hba, 
-int tag);
-  void ufshcd_release_scsi_cmd(struct ufs_hba *hba,
-  			     struct ufshcd_lrb *lrbp);
-
--#define SD_ASCII_STD true
--#define SD_RAW false
--int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index,
--			    u8 **buf, bool ascii);
-+enum ufs_descr_fmt {
-+	SD_RAW = 0,
-+	SD_ASCII_STD = 1,
-+};
-+int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index, u8 **buf,
-+			    enum ufs_descr_fmt fmt);
-
-  int ufshcd_send_uic_cmd(struct ufs_hba *hba, struct uic_command *uic_cmd);
-  int ufshcd_send_bsg_uic_cmd(struct ufs_hba *hba, struct uic_command 
-*uic_cmd);
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index be4bf435da09..b10de1ade23b 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -3759,16 +3759,15 @@ static inline char 
-ufshcd_remove_non_printable(u8 ch)
-   * @desc_index: descriptor index
-   * @buf: pointer to buffer where descriptor would be read,
-   *       the caller should free the memory.
-- * @ascii: if true convert from unicode to ascii characters
-- *         null terminated string.
-+ * @ufs_descr_fmt: if %SD_ASCII_STD, convert from UTF-16 to ASCII
-   *
-   * Return:
-   * *      string size on success.
-   * *      -ENOMEM: on allocation failure
-   * *      -EINVAL: on a wrong parameter
-   */
--int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index,
--			    u8 **buf, bool ascii)
-+int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index, u8 **buf,
-+			    enum ufs_descr_fmt fmt)
-  {
-  	struct uc_string_id *uc_str;
-  	u8 *str;
-@@ -3797,7 +3796,7 @@ int ufshcd_read_string_desc(struct ufs_hba *hba, 
-u8 desc_index,
-  		goto out;
-  	}
-
--	if (ascii) {
-+	if (fmt == SD_ASCII_STD) {
-  		ssize_t ascii_len;
-  		int i;
-  		/* remove header and divide by 2 to move from UTF16 to UTF8 */
-diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
-index 8a5649933715..f030e9a062a3 100644
---- a/include/ufs/ufshcd.h
-+++ b/include/ufs/ufshcd.h
-@@ -1428,10 +1428,6 @@ static inline int 
-ufshcd_disable_host_tx_lcc(struct ufs_hba *hba)
-  void ufshcd_auto_hibern8_update(struct ufs_hba *hba, u32 ahit);
-  void ufshcd_fixup_dev_quirks(struct ufs_hba *hba,
-  			     const struct ufs_dev_quirk *fixups);
--#define SD_ASCII_STD true
--#define SD_RAW false
--int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index,
--			    u8 **buf, bool ascii);
-
-  void ufshcd_hold(struct ufs_hba *hba);
-  void ufshcd_release(struct ufs_hba *hba);
+diff --git a/sound/soc/codecs/wm8978.c b/sound/soc/codecs/wm8978.c
+index 8c45ba6fc4c3..d894d1cda326 100644
+--- a/sound/soc/codecs/wm8978.c
++++ b/sound/soc/codecs/wm8978.c
+@@ -99,6 +99,7 @@ struct wm8978_priv {
+ 	unsigned int f_mclk;
+ 	unsigned int f_256fs;
+ 	unsigned int f_opclk;
++	bool bclk_set;
+ 	int mclk_idx;
+ 	enum wm8978_sysclk_src sysclk;
+ };
+@@ -590,6 +591,7 @@ static int wm8978_set_dai_clkdiv(struct snd_soc_dai *codec_dai,
+ 	case WM8978_BCLKDIV:
+ 		if (div & ~0x1c)
+ 			return -EINVAL;
++		wm8978->bclk_set = true;
+ 		snd_soc_component_update_bits(component, WM8978_CLOCKING, 0x1c, div);
+ 		break;
+ 	default:
+@@ -717,6 +719,11 @@ static int wm8978_hw_params(struct snd_pcm_substream *substream,
+ 			    struct snd_pcm_hw_params *params,
+ 			    struct snd_soc_dai *dai)
+ {
++	unsigned int bclk, bclkdiv = 0, min_diff = UINT_MAX;
++	unsigned int target_bclk = params_rate(params) * params_width(params) * 2;
++	/* WM8978 supports divisors */
++	static const int bclk_divs[] = {1, 2, 4, 8, 16, 32};
++
+ 	struct snd_soc_component *component = dai->component;
+ 	struct wm8978_priv *wm8978 = snd_soc_component_get_drvdata(component);
+ 	/* Word length mask = 0x60 */
+@@ -820,6 +827,31 @@ static int wm8978_hw_params(struct snd_pcm_substream *substream,
+ 	/* MCLK divisor mask = 0xe0 */
+ 	snd_soc_component_update_bits(component, WM8978_CLOCKING, 0xe0, best << 5);
+ 
++	if (!wm8978->bclk_set) {
++		for (i = 0; i < ARRAY_SIZE(bclk_divs); i++) {
++			bclk = wm8978->f_256fs / bclk_divs[i];
++
++			if (bclk < target_bclk) {
++				dev_warn(component->dev,
++					 "Auto BCLK cannot fit, BCLK using: #%u\n",
++					 wm8978->f_256fs / bclk_divs[bclkdiv]);
++				break;
++			}
++
++			if (abs(bclk - target_bclk) < min_diff) {
++				min_diff = abs(bclk - target_bclk);
++				bclkdiv = i;
++			}
++		}
++
++		dev_dbg(component->dev, "%s: fs=%u width=%u -> target BCLK=%u, using div #%u\n",
++			__func__, params_rate(params), params_width(params), target_bclk,
++			bclk_divs[bclkdiv]);
++
++		/* BCLKDIV divisor mask = 0x1c */
++		snd_soc_component_update_bits(component, WM8978_CLOCKING, 0x1c, bclkdiv << 2);
++	}
++
+ 	snd_soc_component_write(component, WM8978_AUDIO_INTERFACE, iface_ctl);
+ 	snd_soc_component_write(component, WM8978_ADDITIONAL_CONTROL, add_ctl);
+ 
+-- 
+2.47.1.windows.1
 
 
