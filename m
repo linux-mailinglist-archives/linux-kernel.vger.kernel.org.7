@@ -1,87 +1,80 @@
-Return-Path: <linux-kernel+bounces-845199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A34CBC3D91
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 10:31:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCA5CBC3D9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 10:32:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D9FC84E41DE
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 08:31:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99135188697E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 08:33:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83F523E330;
-	Wed,  8 Oct 2025 08:31:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D842EBDF0;
+	Wed,  8 Oct 2025 08:32:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Jn5x0UvG"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mW93nNJx"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E0F189
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 08:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4FA2E22B4
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 08:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759912265; cv=none; b=qmgukW095dArNvWvarX5hkT0qjjz5e7PwVEknpXqVXYatdPz9CKdYDhlUgHrlHykrtj0YQhFfLBlcNMRWhiOoNzkfK9LXJwTnAlmfcssqX9lKuZdUEgAdbbPpo9pWV5JgDR0asm3fILBHe4ZsNA5694dgiVmnHovEQf0uBoLQkQ=
+	t=1759912368; cv=none; b=bzHWR9Za9oYTyQeIpKmUbPfbYnSMg8QHOh91bM3PU2K7ElDJsGYMi+X+gdDGtV2saPdEDt1RfjhVKckcieWfl5TJPJTDbH8lIs3i5O+B70/e2itmfxC+Hb6QfjyB07KCvYG1j3B/9rFG/ptZPt9yrZFkbeuhi4OEJeSKTcrPyeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759912265; c=relaxed/simple;
-	bh=MlOQPUrFbRM7lzb6+6+OsElMAObdrmpb4oWngR80KNE=;
+	s=arc-20240116; t=1759912368; c=relaxed/simple;
+	bh=8OfX1olNym2yuDElCFo+y+N8czgO6/khDBIoAQrlzsU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mVPaN0aNrrQExP0FrETQhTMmLD8nv9QVPeMGtFGU2gent7XdYtngsNZJNWzs3Rd5RAhxf9hhwzYE+9QSQ9o1OXu8ltydDA4LSaJ0faSxC+PtAiRki7w0ZKFFqSoH7MbpND0f4oSr5NpSb34lF9KRiju59/IHlQqtmfBpVgOPPTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Jn5x0UvG; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5987aVs7012334
-	for <linux-kernel@vger.kernel.org>; Wed, 8 Oct 2025 08:31:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+msSb2AQCXuitHlyCPM/RkFMjkfHAZ9Xm5Da/gnVsS0=; b=Jn5x0UvG1v++ZhOx
-	EakpkYX6Pf8tlTjMEVCrbKuoS0APFpTQRmwfyt6QRqh/K3OInFOeX4A+mYQaGGzf
-	37G3lTMUbchAcbPgRWFAnq+ztDooXRZh5yWTAPZgllN8f2OiPb9jv6N4eU60O2h8
-	JrCpbFXWcj6zg/ikmwtDpC13GbC5PJMksPDO1DJTSWbvQAY9ireEFIANTTTzykqV
-	Dz18+ve2SDiVXIJfzYPPgn+MLVQEtZmEur3GWwx6WUDrYweJSO4kDCniGHdktyhd
-	YpZbMprBvU/EByUkOMQ8uoBOfsCjTITXoOLrmuG+cAgu3PyDVHYBZdJMnJA27lkY
-	CcbQ3A==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49jtwgsuhr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:31:01 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4ddf2a2d95fso25518971cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 01:31:01 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=VyVx9aH38eICBL461HA0LrwLxyqDXQLtn1WuR6g1vx57XNBNDSM7ge+Y7QdpwqgCCWUQLulIJkFtiIzGzsy193+IjgAbd9efhmvLgGJgcpnfVQrwTLkIn9lbMhpIj73Bwjq2iuNV0PTuasQhWDF4SVgOHJFzEhFRWYLrHLMHiQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mW93nNJx; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-46e42deffa8so70969495e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 01:32:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759912364; x=1760517164; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8s4t9BjYm06noPeILdvIoWKkJuRRVPbdNb9iIdV8a8A=;
+        b=mW93nNJxrUT6YqyqJPnaI9Wd9sbiKCZO8dMJlaiQOAjLZAt7D1QjbL7koKXw0ZjFTc
+         ylyTKUc+XtbrFFR0HdDif6CFcKUnyjOgn/bZ+uhTsuZ7IjYUshBuMWz9y7SDw3gKE/me
+         l3FgQgW3VZLqXH1WIWEU88upjMm75tZfjgrg7b/8T8NonWEk8VUKf3r6LrlL0TH0wGfZ
+         /5VRXU9sVA5aQHmUa5+4HVkepdKJEcCkwP7BYhsHPS94JSHUSA8ZSFQVa93gLJWH4auE
+         VyZkYsbN+OzEATamh9wvlyyduic3N37hwSEKQet/qxCS8D0xIxEpjHGxyY/Ls954dq0S
+         053A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759912260; x=1760517060;
-        h=content-transfer-encoding:in-reply-to:from:content-language
+        d=1e100.net; s=20230601; t=1759912364; x=1760517164;
+        h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+msSb2AQCXuitHlyCPM/RkFMjkfHAZ9Xm5Da/gnVsS0=;
-        b=bzCa8XgjL13KwtBsad6Uti+rRX0Msi/l/zlaotwA5rSN9LiUG8mpiZzPAQ3EGDTE5D
-         bG9uuOdTRGIr6xW3i6P5dK+MkmUOb1gqcjpczf50y3F5RUu9Wy5luowqW9oSDgLEOapf
-         0yFMtyIE+w09kYgl+iZHpLoYrpUvRFgJSSsy9/U5o2FZZ319duOKYsyFSVyLt5qb1hoc
-         vYdOKMb92E7q7jed1trM8kMpDb16Nzb96qLeZUdUEr+Y70aaDDB3UEBdaHzN6g/zpHZ3
-         MfdXaR2fW2whXEjI7zfYMABMIJNTx03RXeN68TsJ4f4ej4NU3ZABg24W9zdszeoKtye7
-         ZIeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWbC24+lYZKXGQ6SeY+2WfU05wh5zrlSrP3bVe3x0FWPQv3FxrFRO+9gp/5gejUaYClG4mAoA3oRu3kBec=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZbPcKYtATQPBOYpjiXxad5fmdG6YKGHeR/2ow7PfIhlLa528O
-	RcEtpGfYgNEBOxzCkclsA9SarLoSmydIYdY6J3zHNn9oQJaU2FBQWyuOS4rGmphdh4Dtx4RMQTx
-	bzmUDMA1tsRyXAEoBEJuCr0ord1mniLvX+Y0WultfLOlq5dxNM0VvtH8T+yF/aJJWfy8=
-X-Gm-Gg: ASbGnctAbtEP4RpuRRSYEuSUy2gaLOqINrCyQPBmc1pZY1NrWr/xgdhdNtQOXXZw13q
-	909aQRPvlkFbzFLHr9yqxmkTTuDPNbuODrkegMYJwt3NAl8s7tzrXYUW35NosxEtj344NOoepp4
-	Tts30MVzhlSd/hFARQDkCIgKx4+0OfhR8Z7JJTKqBmIU+McFJ3ljPGJHwvriCn44IB9eadjbDS2
-	mKFwXMkmMulFczprWYqogXutyVc2kcIdgU7a7BoT/Qptw+P3uvUp2F9L++wp5XQEtZ5Ln31jqvO
-	zKXrT0cedSNHsaqctJ9EjKcgyomO3+40eR5SdyrFSmB33O6Kb9YMcBpPA3jK2a2S6pLpW9hXfbC
-	jEK0kI6aoua0rEdfkHQO0J4H5O10=
-X-Received: by 2002:a05:622a:1a28:b0:4b5:f521:30f7 with SMTP id d75a77b69052e-4e6eacf31e7mr24483711cf.4.1759912260329;
-        Wed, 08 Oct 2025 01:31:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEho6Mv27Giv6bxZJ6pXvVDhyeR4MaSk/nV6G8qKCeFZZbNjnhay6CBU2IK8uL6Zhs0P9fM9Q==
-X-Received: by 2002:a05:622a:1a28:b0:4b5:f521:30f7 with SMTP id d75a77b69052e-4e6eacf31e7mr24483461cf.4.1759912259775;
-        Wed, 08 Oct 2025 01:30:59 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-637881000besm14230201a12.23.2025.10.08.01.30.57
+        bh=8s4t9BjYm06noPeILdvIoWKkJuRRVPbdNb9iIdV8a8A=;
+        b=rygeQsbLId4Uls02m3AEG8kdOFMbV0mCeSpz5TOxV8XWXMq4EeP1auZoMVMnDafBiA
+         HYOel9xi38O5CIiaq1X9/bRFA31y/3XRJvRiETRPIyI/OG0El3PGody2bQ/fheq+Strj
+         JXnTUBMYNkCiSs15HZdqV8BBG9pdPnJn9oBwexMSHbkzIZtA2OYQKRQLePZklnNn18Qd
+         82k5VH/moLd0ziO9U9ofMKD9Eoe7Ph85UFq3qqc754NYKlfDW+oLMbviYgJ7oHf89PFO
+         viKtZkAhmXM36VrH1otXZaluDPZK5kpBFpU26BekT2qS5nZwhNrnKbMMX6vJX2uloZW4
+         AUIw==
+X-Forwarded-Encrypted: i=1; AJvYcCXIFI0WygJ/oOJglhY5qwqggIFITHyajVi1IahMOxvZHSe2XbtC6kc3MdD6bZ70qLsl9xQgXAW8k+Ijsc8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwR0JZwWmzK73svRSuWTRGdltLAeq84gs+mPm8VLwFiRH4dlHpy
+	KGqDwQIjp7GVjui1IgEkcBzkp+4eXWE1TWQkxm39aqZqp8QeXW558JllhR4vFBXsGtg=
+X-Gm-Gg: ASbGncvksP72GZcqdAKWHTj+VO+BxqhlWT2BEwhB2BkDjBdJW7iw88BwrKCoAZg6V8O
+	C5mK2KRUWOKRwQQb1BUWLnWQKxuK/FJnjNG0V/4LoMXBqqx5e/2ggVzGkIuQxMWQqYOZvapvhS+
+	13nAIfMtzs8mbRIZigdI44gexMc7QsXo6WrcSrjoUdxj9BH7/SZKbHfck0amOAAJofJeGRVKkpl
+	63gXQEktxwsBBBdJClEJBXKZC2CE1uAnGk+5uBQqxVrcmPo5EgHPpmFjVJYPlmjmxIrsyOb5E+w
+	NpQgvZBgvyXxuv8SyJGhStvyfbbhhipRsyjCLcGJ6CvhuQAIAVOM4ZdR5k4ZS8XY0pd3clHdg9o
+	n1t9NntV1EP2W/WBdFFlPBX4QNRpryDQBFV2qjUUwqdEk47JDYLPp9hgou/yIEgMzIy+TJ/U/1s
+	9QoPOkK40YFMqn5gNw
+X-Google-Smtp-Source: AGHT+IFEhXVT1pfSNTwPur3KNe2uf9XZsC40/sb4jcVizQ0HFclkkqo2tT3ku67t+UACu1zLc9b1yA==
+X-Received: by 2002:a05:600c:3b2a:b0:461:8bdb:e8 with SMTP id 5b1f17b1804b1-46fa9b06c50mr19760695e9.30.1759912364417;
+        Wed, 08 Oct 2025 01:32:44 -0700 (PDT)
+Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fa9bf8288sm28037695e9.2.2025.10.08.01.32.43
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Oct 2025 01:30:59 -0700 (PDT)
-Message-ID: <6429dd8d-d610-4393-9863-b856dcfd0cb0@oss.qualcomm.com>
-Date: Wed, 8 Oct 2025 10:30:56 +0200
+        Wed, 08 Oct 2025 01:32:43 -0700 (PDT)
+Message-ID: <a0bf546d-e91a-49f9-a06c-8ef1186a9eae@linaro.org>
+Date: Wed, 8 Oct 2025 09:32:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,75 +82,135 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 20/20] arm64: dts: qcom: kaanapali: Add iris video node
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
-        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
-        yijie.yang@oss.qualcomm.com,
-        Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-References: <20250924-knp-dts-v1-0-3fdbc4b9e1b1@oss.qualcomm.com>
- <20250924-knp-dts-v1-20-3fdbc4b9e1b1@oss.qualcomm.com>
+Subject: Re: [PATCH 1/8] media: iris: turn platform caps into constants
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+ Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251008-iris-sc7280-v1-0-def050ba5e1f@oss.qualcomm.com>
+ <FhzvOpI3xnjmzE7G_aLgkpk24bRAD2ad_O2BvQLHWV6C-W2WK5EpE1CDMS_yp87JZwsfuMf0f9egHDu8bOp3Tg==@protonmail.internalid>
+ <20251008-iris-sc7280-v1-1-def050ba5e1f@oss.qualcomm.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250924-knp-dts-v1-20-3fdbc4b9e1b1@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20251008-iris-sc7280-v1-1-def050ba5e1f@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAxOSBTYWx0ZWRfX3u3pfeULOEgU
- eVd2QqvUQOPNbtPirprBFxfSEX0LEGmaItmDqds+P6+QGbg3cUAKsDsxm7vZJDij4dGJAoEQ7ym
- DAWGgqEynm4VCD4t0ieUjKfV2pfZ9AbBw2NGfQofMDXQM1QEESazkq6gdIBB7K373FfgWDI/Aq3
- JpRBazZGiSelktzGifVFgjEoN3eNYNxaiOWuuPa/DwW9NZ/yHDHV5CN/uIc+cuz4tN2I9T1YYC3
- z1L75CMQctsxcLYnNLnS3BCgWkj9L3ftyiTw4ilApUA6OWXBJu7YNOiGIfUE1L4iyRCNaAEn5VJ
- UyFHasmyWmPupuU40n760EDzU6L9ErvpV2nn4XHBOmefwaML92KTmS1Qe2r8x1dNB395JOF5Yk7
- LjQ2H4IlUaUfFU13nxQ7gJG6qYA1Fg==
-X-Authority-Analysis: v=2.4 cv=B6O0EetM c=1 sm=1 tr=0 ts=68e62145 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=nVCHojuieXwSnDvak8UA:9
- a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-GUID: dzJV6YPn0K65oQ3tUt7MEKLH3G7QxlUu
-X-Proofpoint-ORIG-GUID: dzJV6YPn0K65oQ3tUt7MEKLH3G7QxlUu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-08_01,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 lowpriorityscore=0 adultscore=0
- impostorscore=0 spamscore=0 bulkscore=0 phishscore=0 malwarescore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
- definitions=main-2510040019
 
-On 9/25/25 2:17 AM, Jingyi Wang wrote:
-> Add DT node for the kaanapali iris video node.
+On 08/10/2025 05:32, Dmitry Baryshkov wrote:
+> Make all struct platform_inst_fw_cap instances constant, they are not
+> modified at runtime.
 > 
-> Written with help from Taniya Das(added videocc node).
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> ---
+>   drivers/media/platform/qcom/iris/iris_ctrls.c            | 2 +-
+>   drivers/media/platform/qcom/iris/iris_platform_common.h  | 4 ++--
+>   drivers/media/platform/qcom/iris/iris_platform_gen2.c    | 4 ++--
+>   drivers/media/platform/qcom/iris/iris_platform_qcs8300.h | 4 ++--
+>   drivers/media/platform/qcom/iris/iris_platform_sm8250.c  | 4 ++--
+>   5 files changed, 9 insertions(+), 9 deletions(-)
 > 
-> Signed-off-by: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-
-I think you might have lost Vikash's authorship here
-
-[...]
-> +		videocc: clock-controller@20f0000 {
-> +			compatible = "qcom,kaanapali-videocc";
-> +			reg = <0x0 0x20f0000 0x0 0x10000>;
-> +			clocks = <&bi_tcxo_div2>,
-> +				 <&gcc GCC_VIDEO_AHB_CLK>;
-> +
-> +			power-domains = <&rpmhpd RPMHPD_MMCX>,
-> +					<&rpmhpd RPMHPD_MXC>;
-> +			required-opps = <&rpmhpd_opp_low_svs>,
-> +					<&rpmhpd_opp_low_svs>;
-
-I see that the PLLs can operate at LOWSVS_D1 at the same frequencies
-as they do at LOWSVS, although they need _SVS to fully stretch their
-legs
-
-I think we can do _D1 here? +Taniya?
-
-Konrad
+> diff --git a/drivers/media/platform/qcom/iris/iris_ctrls.c b/drivers/media/platform/qcom/iris/iris_ctrls.c
+> index 754a5ad718bc37630bb861012301df7a2e7342a1..9da050aa1f7ce8152dfa46a706e2c27adfb5d6ce 100644
+> --- a/drivers/media/platform/qcom/iris/iris_ctrls.c
+> +++ b/drivers/media/platform/qcom/iris/iris_ctrls.c
+> @@ -301,7 +301,7 @@ int iris_ctrls_init(struct iris_inst *inst)
+> 
+>   void iris_session_init_caps(struct iris_core *core)
+>   {
+> -	struct platform_inst_fw_cap *caps;
+> +	const struct platform_inst_fw_cap *caps;
+>   	u32 i, num_cap, cap_id;
+> 
+>   	caps = core->iris_platform_data->inst_fw_caps_dec;
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
+> index 58d05e0a112eed25faea027a34c719c89d6c3897..17ed86bf78bb3b0bc3f0862253fba6505ac3d164 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_common.h
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
+> @@ -215,9 +215,9 @@ struct iris_platform_data {
+>   	const char *fwname;
+>   	u32 pas_id;
+>   	struct platform_inst_caps *inst_caps;
+> -	struct platform_inst_fw_cap *inst_fw_caps_dec;
+> +	const struct platform_inst_fw_cap *inst_fw_caps_dec;
+>   	u32 inst_fw_caps_dec_size;
+> -	struct platform_inst_fw_cap *inst_fw_caps_enc;
+> +	const struct platform_inst_fw_cap *inst_fw_caps_enc;
+>   	u32 inst_fw_caps_enc_size;
+>   	struct tz_cp_config *tz_cp_config_data;
+>   	u32 core_arch;
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen2.c b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> index 36d69cc73986b74534a2912524c8553970fd862e..cbf38e13f89e5c4c46e759fbb86777854d751552 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> @@ -19,7 +19,7 @@
+>   #define VIDEO_ARCH_LX 1
+>   #define BITRATE_MAX				245000000
+> 
+> -static struct platform_inst_fw_cap inst_fw_cap_sm8550_dec[] = {
+> +static const struct platform_inst_fw_cap inst_fw_cap_sm8550_dec[] = {
+>   	{
+>   		.cap_id = PROFILE_H264,
+>   		.min = V4L2_MPEG_VIDEO_H264_PROFILE_BASELINE,
+> @@ -203,7 +203,7 @@ static struct platform_inst_fw_cap inst_fw_cap_sm8550_dec[] = {
+>   	},
+>   };
+> 
+> -static struct platform_inst_fw_cap inst_fw_cap_sm8550_enc[] = {
+> +static const struct platform_inst_fw_cap inst_fw_cap_sm8550_enc[] = {
+>   	{
+>   		.cap_id = PROFILE_H264,
+>   		.min = V4L2_MPEG_VIDEO_H264_PROFILE_BASELINE,
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_qcs8300.h b/drivers/media/platform/qcom/iris/iris_platform_qcs8300.h
+> index 35ea0efade73caa687d300779c5b1dc3b17a0128..87517361a1cf4b6fe53b8a1483188670df52c7e7 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_qcs8300.h
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_qcs8300.h
+> @@ -5,7 +5,7 @@
+> 
+>   #define BITRATE_MAX				245000000
+> 
+> -static struct platform_inst_fw_cap inst_fw_cap_qcs8300_dec[] = {
+> +static const struct platform_inst_fw_cap inst_fw_cap_qcs8300_dec[] = {
+>   	{
+>   		.cap_id = PROFILE_H264,
+>   		.min = V4L2_MPEG_VIDEO_H264_PROFILE_BASELINE,
+> @@ -189,7 +189,7 @@ static struct platform_inst_fw_cap inst_fw_cap_qcs8300_dec[] = {
+>   	},
+>   };
+> 
+> -static struct platform_inst_fw_cap inst_fw_cap_qcs8300_enc[] = {
+> +static const struct platform_inst_fw_cap inst_fw_cap_qcs8300_enc[] = {
+>   	{
+>   		.cap_id = PROFILE_H264,
+>   		.min = V4L2_MPEG_VIDEO_H264_PROFILE_BASELINE,
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_sm8250.c b/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
+> index 16486284f8acccf6a95a27f6003e885226e28f4d..e29cba993fde922b579eb7e5a59ae34bb46f9f0f 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_sm8250.c
+> @@ -17,7 +17,7 @@
+>   #define BITRATE_PEAK_DEFAULT	(BITRATE_DEFAULT * 2)
+>   #define BITRATE_STEP		100
+> 
+> -static struct platform_inst_fw_cap inst_fw_cap_sm8250_dec[] = {
+> +static const struct platform_inst_fw_cap inst_fw_cap_sm8250_dec[] = {
+>   	{
+>   		.cap_id = PIPE,
+>   		.min = PIPE_1,
+> @@ -38,7 +38,7 @@ static struct platform_inst_fw_cap inst_fw_cap_sm8250_dec[] = {
+>   	},
+>   };
+> 
+> -static struct platform_inst_fw_cap inst_fw_cap_sm8250_enc[] = {
+> +static const struct platform_inst_fw_cap inst_fw_cap_sm8250_enc[] = {
+>   	{
+>   		.cap_id = STAGE,
+>   		.min = STAGE_1,
+> 
+> --
+> 2.47.3
+> 
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
