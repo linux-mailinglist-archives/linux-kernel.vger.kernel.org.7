@@ -1,95 +1,50 @@
-Return-Path: <linux-kernel+bounces-845632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3769BC5904
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:23:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE7A5BC5907
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:24:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 83C764ED069
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:23:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7585B4F4739
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:24:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784C92F3609;
-	Wed,  8 Oct 2025 15:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cebxWFv8"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB77A22A7E6
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE552F2602;
+	Wed,  8 Oct 2025 15:24:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5569763CB
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759937030; cv=none; b=HdAAowqQooSiJP97SOWjbCK+74lobj8dBFyX9vSJbxC4zMfkYDXh9trez/InGlpB1LYZCOMhGOwTODii2FouQkxSPYgGmytifR8PyTe5VKfpa3ILfIIzHeaM2OdUcjYGzZArpnA4sNjGn5EyG9rqGNqt8Y+eQhHIMqihLukrto8=
+	t=1759937050; cv=none; b=LskcIQHiPg+Nf68Mb/FMN/LH95mbueDrxFf97IF46KwKSWpryBA25hk0pdmZshAnQwgwxtX/Z48v7AZ3mgrF8oZs1d5aRO6/QLfVASO1UorQgzzYWbfHZBFfbZdVYtgEevJ6WNXD2Ixp9ZOV/YObTiTOoIzHb3riyveg6ob6ndY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759937030; c=relaxed/simple;
-	bh=l9os6ZO8dPY7bfQh/0jGGJRonldCJsuxvWJYvxUUJAc=;
+	s=arc-20240116; t=1759937050; c=relaxed/simple;
+	bh=MMyPuLv4DMsbJW0nHM2Ei7EwWKrIv6Mq3xsVAUkXDjQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qez63AYrq3XHm42X62VwJ73+eF9eictlZWsO3EBF+07YP3andh3hAYd7FwpiDWpY0TNJHcyw7aVPbuxlWvfXg/wCZN153gtn1fOV7dM1U3gz3Ak4xt3AtY7rEsGWPXVtvPrTO2kFPUH41FpBQQC/XU1h+5QrDj5ZOrnIE+/XcdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cebxWFv8; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6399328ff1fso6500250a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:23:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1759937026; x=1760541826; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VEFKGIEcuas2Pari3eoGaAS3BufIbyvqNDimCw+KvpQ=;
-        b=cebxWFv8EJqPNUrzmjVbTGNroZHu/D3PH9uWTrbbR54e7gke8WRw0GnQwsYE6H2Bdf
-         m5ZKXmocBQrRLEQxUqkvM2ZhZ5kZe4d1qLImQwjuCUArAyZhRMpF++I+coXLDecnKIyY
-         2ccjiBPt8+JK4upy4cIU6gB36lN5n/h4d4zDE+P8sG4q+PaEql6T5XVvZI1lTLQaddTY
-         0rmzeJUiRtPsA4R5jAVI7EdZKrNLM9LRZMFPruEDf4YPZhV3Yz98rBjPOp90+8ITiNmm
-         ApDcTvjylchy+D5dxGyGHnmBgpSl/oJrWfTgdhlkF+I6fnoUNg53Cnio0HeRR85YsNfu
-         qAHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759937026; x=1760541826;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VEFKGIEcuas2Pari3eoGaAS3BufIbyvqNDimCw+KvpQ=;
-        b=KS4HWepW5OTYyur49jEnmzENX2GR+UZXSDBdlIfEreza24QIL29isIW+FExE5NPXbu
-         ZQZkf8qGCP+ymt/nM3hbjm4JZBBFPq3TnclraeuZ3atmZ1k2vSRYFgscRm1AwIoQrsgA
-         P68eM/FjezoVZsML7u7iIRKnvS3hQRND6ZfmyHfYMzB0/P8o+9IZ9bRxOkVbY6Zx1czO
-         AS+vFaLrJqEWtwJ4iW09HfoENNEDjionYvZPRHGCY+wro5noWkqIlXH8Ql5bKL0xXtxY
-         Vab8R7Q5JK9fn1/W8MytVrGkNsANcJrFkA05LXELBDtebQxd89pdfhN7x5haQ5LoT1o9
-         dcJg==
-X-Forwarded-Encrypted: i=1; AJvYcCXVBVGmRsmh2RQPq9WhRQngOJ7Q0xyMpRNHIgIdQGdpHu85cpgrCbIkGfe56G5cei4hBfHMQDDR8TxgQAE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOSysOP7kx4ExenrsEqnU6AuVpfQCi//9XXc0IkG8OLGi/NYyB
-	zjBy9OjSMzJZaRVTqcWRrS37t1Qn97cKD3JguotwB0f3mANUiVraH6HCh76mYXoBj4Q=
-X-Gm-Gg: ASbGnctsm7288lmzAfNadq14STMHel7TlKLHXH0OVHwRL+dX8xTE/apFEtN3x/ABbdh
-	qk/1ZliBH9MHhVldJxiDvBX6ix4op/uVL7noxeUiq8Cc30+88gNIQqw1m1D6QdUIW+na5eJZyWR
-	gs57mJ4ISifniY1/ED8mqrJgxwj6Om1K+LRUSjzZl9u+F7LyBA/ohX2gbfgSTVdJD0ytAcP0zAO
-	Koidar4JHh7Vk9v9jJUuAlCDcGicp/e94m6Mm1XHz9ZR9lDfi1KtPpniiGEsex3CuSmi46skxBX
-	dXpD3XAStNi8yCTJ4AodGN6wx928yLYS7qx55T9Q3PGixvMxlEfB2jvh+11MDXDSH/4z5aMmrEN
-	3fkv0lb+Fkdk8nq+b7KePfRK+fHRGUx6+5PYex2/N42Qam46c43kDtONgkNN/
-X-Google-Smtp-Source: AGHT+IGNuMGqHdw+uNNDnAnIMkPJmLsC8kdVFIi2VETZkBtQkqYRsFlkZfBi/u6TL2LUyonVmTrK0w==
-X-Received: by 2002:a17:907:c14:b0:b45:8370:eef6 with SMTP id a640c23a62f3a-b50aaa9d0f5mr485367066b.19.1759937026160;
-        Wed, 08 Oct 2025 08:23:46 -0700 (PDT)
-Received: from localhost (109-81-95-234.rct.o2.cz. [109.81.95.234])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b486970b2ffsm1711555666b.47.2025.10.08.08.23.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 08:23:45 -0700 (PDT)
-Date: Wed, 8 Oct 2025 17:23:44 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Gregory Price <gourry@gourry.net>, linux-mm@kvack.org, corbet@lwn.net,
-	muchun.song@linux.dev, osalvador@suse.de, akpm@linux-foundation.org,
-	hannes@cmpxchg.org, laoar.shao@gmail.com, brauner@kernel.org,
-	mclapinski@google.com, joel.granados@kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mel Gorman <mgorman@suse.de>,
-	Alexandru Moise <00moses.alexander00@gmail.com>,
-	Mike Kravetz <mike.kravetz@oracle.com>,
-	David Rientjes <rientjes@google.com>
-Subject: Re: [PATCH] Revert "mm, hugetlb: remove hugepages_treat_as_movable
- sysctl"
-Message-ID: <aOaCAG6e5a7BDUxK@tiehlicka>
-References: <20251007214412.3832340-1-gourry@gourry.net>
- <402170e6-c49f-4d28-a010-eb253fc2f923@redhat.com>
- <aOZ8PPWMchRN_t5-@tiehlicka>
- <271f9af4-695c-4aa5-9249-2d21ad3db76e@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VbiCVgpGCC8AFFkaWIxnWoZ7fpQFs3go9gb7poIObanBZU6qz4V+uRYYxG2i+IhW1Zh0uYNjfPMVXqw9VWkeWQyzZ9/4jiksUuA13jET4nR6oFmnWt0MA79x99J8xDCa6zNihemDk6ZCnfiQATncDCRxuCus6s7INTmFYC5EH+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A7C2B22FC;
+	Wed,  8 Oct 2025 08:23:59 -0700 (PDT)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5028B3F66E;
+	Wed,  8 Oct 2025 08:24:05 -0700 (PDT)
+Date: Wed, 8 Oct 2025 16:23:57 +0100
+From: Dave Martin <Dave.Martin@arm.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Babu Moger <babu.moger@amd.com>, tony.luck@intel.com,
+	james.morse@arm.com, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, linux-kernel@vger.kernel.org, peternewman@google.com,
+	eranian@google.com, gautham.shenoy@amd.com
+Subject: Re: [PATCH] x86/resctrl: Fix buggy overflow when reactivating
+ previously Unavailable RMID
+Message-ID: <aOaCDee7xbhA0ji3@e133380.arm.com>
+References: <515a38328989e48d403ef5a7d6dd321ba3343a61.1759791957.git.babu.moger@amd.com>
+ <fe06aa33-3351-45d4-a687-ff88a689be6e@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,58 +53,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <271f9af4-695c-4aa5-9249-2d21ad3db76e@redhat.com>
+In-Reply-To: <fe06aa33-3351-45d4-a687-ff88a689be6e@intel.com>
 
-On Wed 08-10-25 17:14:26, David Hildenbrand wrote:
-> On 08.10.25 16:59, Michal Hocko wrote:
-> > On Wed 08-10-25 10:58:23, David Hildenbrand wrote:
-> > > On 07.10.25 23:44, Gregory Price wrote:
-> > [...]
-> > > > @@ -926,7 +927,8 @@ static inline gfp_t htlb_alloc_mask(struct hstate *h)
-> > > >    {
-> > > >    	gfp_t gfp = __GFP_COMP | __GFP_NOWARN;
-> > > > -	gfp |= hugepage_movable_supported(h) ? GFP_HIGHUSER_MOVABLE : GFP_HIGHUSER;
-> > > > +	gfp |= (hugepage_movable_supported(h) || hugepages_treat_as_movable) ?
-> > > > +	       GFP_HIGHUSER_MOVABLE : GFP_HIGHUSER;
-> > > 
-> > > I mean, this is as ugly as it gets.
-> > > 
-> > > Can't we just let that old approach RIP where it belongs? :)
-> > > 
-> > > If something unmovable, it does not belong on ZONE_MOVABLE, as simple as that.
-> > 
-> > yes, I do agree. This is just muddying the semantic of the zone.
-> > 
-> > Maybe what we really want is to have a configurable zone rather than a
-> > very specific consumer of it instead. What do I mean by that? We clearly
-> > have physically (DMA, DMA32) and usability (NORMAL, MOVABLE) constrained
-> > zones. So rather than having a MOVABLE zone we can have a single zone
-> > $FOO_NAME zone with configurable attributes - like allocation
-> > constrains (kernel, user, movable, etc). Now that we can overlap zones
-> > this should allow for quite a lot flexibility. Implementation wise this
-> > would require some tricks as we have 2 zone types for potentially 3
-> > different major usecases (kernel allocations, userspace reserved ranges
-> > without movability and movable allocations). I haven't thought this
-> > through completely and mostly throwing this as an idea (maybe won't
-> > work). Does that make sense?
+Hi,
+
+On Tue, Oct 07, 2025 at 01:23:36PM -0700, Reinette Chatre wrote:
+> Hi Babu,
 > 
-> I suggested something called PREFER_MOVABLE in the past, that would prefer
-> movable allocations but nothing would stop unmovable allocations to end up
-> on it. But only as a last resort or when explicitly requested (e.g.,
-> gigantic pages).
+> Thank you for catching and preparing a fix for this issue.
 > 
-> Maybe that's similar to what you have in mind?
+> On 10/6/25 4:13 PM, Babu Moger wrote:
+> > The issue was observed during testing on systems with multiple resctrl
+> > domains, where tasks were dynamically moved between domains.
+> 
+> (please let changelog stand on its own and not be a continuation of subject line)
 
-Slightly different because what I was thinking about was more towards
-guarantee/predictability. Last resort is quite hard to plan around. It
-might be a peak memory pressure to eat up portion of a memory block and
-then fragmenting it to prevent other use planned for that memroy block.
-That is why I called it user allocations because those are supposed to
-be configured for userspace consumation and planned for that use. So you
-would get pretty much a guarantee that no kernel allocations will fall
-there.
+[...]
 
--- 
-Michal Hocko
-SUSE Labs
+[Quick, drive-by observation:]
+
+Can I add that the commit message also seems way too long?
+
+I think some of the description of the problem symptom could probably
+be after the tearoff -- there doesn't seem to be a clear statement of
+what is actually wrong in the code, or of why the change made in the
+patch fixes it (or if there is, I struggled to find it.)
+
+I puzzled over this for some minutes before I figured out this patch is
+fixing something that is not upstream, yet.  A statement to that effect
+would have helped.
+
+Possibly I didn't read carefully enough...
+
+Cheers
+---Dave
 
