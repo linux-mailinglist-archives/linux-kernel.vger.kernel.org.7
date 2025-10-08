@@ -1,252 +1,95 @@
-Return-Path: <linux-kernel+bounces-845014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29E7FBC3495
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 06:21:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BD53BC3498
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 06:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCE5B3C531E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 04:21:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 065983A6DA9
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 04:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1429B2BE7C0;
-	Wed,  8 Oct 2025 04:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eyzksQ9E"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8377D299A90
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 04:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9142BE653;
+	Wed,  8 Oct 2025 04:21:38 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C0F29B8F8
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 04:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759897270; cv=none; b=RX/PyRmg3aMtY1l7CNh8y7XO03FjA5HV6czmB0D2/OQQBs//im3y6tr3guRVbui/Ts2IfVaok5kXVlEgoiWmh8t7UAw/z5dSGBspfn7wuIZsBwvy7LlguzUJjxM4tCV2PdqvnwOp9e7KiaUr5Z3r2ucFCiIJ1FGbvZw6bUq8YHA=
+	t=1759897297; cv=none; b=YotXrV+cwa9gdGxFy9sx1wwttQss8/2+QTCHvFaPN0liU4hmLE97LQDRLhl5mw2Hsxf7V6wwqTnjEQvhydijuJ8xMol0rOPyiKW9PoqDCqEiFXuOJi7X6bIXxj9rRCkBkxUtbwqAuCVheyjZmJZC8icAV1GEudwN+AQ6jUSpd2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759897270; c=relaxed/simple;
-	bh=l0m8a19M8uRE97VEhRLl8oSLNWe4r6HUTI2Q6O6wAcQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Pa2bywgKqbRxjnrmbFvp1OLmpMl0AvSXIrhBvvmxq+YYcGEyIPqECpp0/H2aOGOHhtiq28sYEraM48YC96g/TiX6Ts0FhZcoc0rjJ35jtORykxZhRHuE0xGX/MLjT1mFxmuePirpmec0M+LPbjAKiVoTUpaP+1vp1T3UKxVEJvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eyzksQ9E; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7811fa91774so5286392b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 21:21:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759897266; x=1760502066; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=9TJy9TZ0V4zU9QEOdoUBMSlfuWW6/GP48/yMW3+/H9s=;
-        b=eyzksQ9Efcf8OEtTrA5BH8bD4yrw8FjLhDuIsLcaXrZYd5LVHkn5l56uKeBu4qc9tF
-         K7KNEp4An8aK/TN3R9z9Kgf8BboH3GPrM1Wt625ii1/tS5/DuTfhqHg1xTUVdLFR0Z0S
-         igAMtFqWv3vVlivc6StmTiC5al9ZSe12CztWNWgXBlcDUz1NiUfbzh1MFt0imey/joPO
-         ntp/7Tyluq0s/3xzf2iSAFUaONRMaOEDEfiDCMWdG7uOmMJAeQHMC5fTjtcl0fTeGbDw
-         xX56YQtuHCDBf3ia3ggZ6iOFtjt+YFLS3pTW37Adh9gaaWx28keBUbWUYoTs5sfTtbCR
-         zzKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759897266; x=1760502066;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9TJy9TZ0V4zU9QEOdoUBMSlfuWW6/GP48/yMW3+/H9s=;
-        b=LKtPBX/DlwYzMaixcLIfCNfH8r5AgZQ9kUqa7FWyzxgHXWVeSwD+fXsoZApqVFdLFN
-         Gbk/PKRMWyJbvgcBLVZYuaKzHW2UEbp0uwkTg5OikteYleuFEcMpCSoNOfTNs0RKrSZ7
-         Hv4qEc8CjPJgXn2Bd+/O2/I84PtSdD0TqpBPM0bLHGc2wnZGephzLVsct5qZdAIvmTe8
-         tAghxnkXY6jBWatEc3fCInUgvVCfiHdWdrmSG752CURl/cXKj6BIG/2SNZcjdZEl4BL7
-         OOymttFcVbZnOe2gCl8snfaTrZUmCEvOMSdC4ODG6BzliN9B4zEOubMQV9eRK36BsJma
-         F2yw==
-X-Forwarded-Encrypted: i=1; AJvYcCVF2Rf/xB5maRq+Bwwan9LuOLNR0TCF6Hme0FeR9lewovMoznfpxHZs9mxUNvvbTe+B1t6oqxE8bOJC2DU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxKjuPrcRwwQrpl8oQLamVz3PyyL5cQafshtiCab3ADbljIuvs
-	6JfU94txleCAdeRSoQiXny5l0TSjCTbpF8E3KhPlgczUJj7nzX1JDY4S
-X-Gm-Gg: ASbGnctzUO2gGxHgamhgIgZ/zU+AK1mwaWwzl90HXiJInCuKQWbCaswf8hUB7wTUD2S
-	NTsMBnfViZXFQo7d0lVAXOrlMLrOWP8tZskY7xtmr8Bj258ndqRV3gNPTY5zUcpZah2gPWraSWQ
-	fN4pyzgscJAXWNyIlRKl30p6ov2Jh1YcXLtu5qu6cIh9vaOV4XXABZDj6ezYYopgvic6XOUjnk8
-	GZEkNA5Eylt+q10U4nQFO0PFdunHF3fuukinjKCztpYppVxyuUy4MURuAmwIC5+1RJuDO6lKjv4
-	aXvufZwqQQwxaw+29VGBfGaytXB49nbckN94W5dG5Y2ZUiGClwtjHHWXSSzsNf7kBwzfUpfbavS
-	ygVrMKJklp8zcEtfpUxJQvYkB8BzpkjVTYKVzkjIIrpalHNJ/VmkS+rwaf1C9Umsd1ADBpb1sn4
-	mKFK9v+mDh/s1fiDFZjfw=
-X-Google-Smtp-Source: AGHT+IGPl/Mm/NaQsG0TYzUcRWLvYSHGWrnzPu3xN1xjq6km3zWj4znIXZRYrQL1Ybsio/8lBLjBzA==
-X-Received: by 2002:a05:6a00:391a:b0:781:220c:d2c1 with SMTP id d2e1a72fcca58-79385709914mr2694127b3a.2.1759897265572;
-        Tue, 07 Oct 2025 21:21:05 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b01f9cd3bsm17314227b3a.4.2025.10.07.21.21.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Oct 2025 21:21:04 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <c5cab3a0-b17f-494b-b856-ebf2fb68db60@roeck-us.net>
-Date: Tue, 7 Oct 2025 21:21:03 -0700
+	s=arc-20240116; t=1759897297; c=relaxed/simple;
+	bh=z87BLegyEF33UQuQEaBxe3mjgZuRVFrt39YuYai/vw8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Hy21SY3kwIU9brXrweiEJGOkrT2X92jezDHyVryGl2dS1VjY4LpUzXpuw5QBhdc4HjUInPb3VH+ZwnZsKwZYbFDB7fcXDzHP5aHB+nosnr8ZgKc4Bqk48GibQb/jC2+VN+D8XrJYF1aPDhrFZ8azjSkdsKnNYsxq1Ig/pIEb4GQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8D41F22EE;
+	Tue,  7 Oct 2025 21:21:23 -0700 (PDT)
+Received: from ergosum.cambridge.arm.com (ergosum.cambridge.arm.com [10.1.196.45])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AA2BC3F738;
+	Tue,  7 Oct 2025 21:21:30 -0700 (PDT)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	Dimitri Sivanich <dimitri.sivanich@hpe.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH] drivers/sgi-gru: Use pxdp_get() for page table access
+Date: Wed,  8 Oct 2025 05:21:26 +0100
+Message-Id: <20251008042126.2408106-1-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] watchdog: aspeed: Support variable number of reset
- mask registers
-To: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>,
- "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "joel@jms.id.au" <joel@jms.id.au>,
- "andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
- "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- BMC-SW <BMC-SW@aspeedtech.com>
-References: <20251007083650.2155317-1-chin-ting_kuo@aspeedtech.com>
- <20251007083650.2155317-3-chin-ting_kuo@aspeedtech.com>
- <83a90651-0b46-4c68-ab90-361422192e90@roeck-us.net>
- <TYZPR06MB52035407C39249441F09AA18B2E1A@TYZPR06MB5203.apcprd06.prod.outlook.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <TYZPR06MB52035407C39249441F09AA18B2E1A@TYZPR06MB5203.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/7/25 20:29, Chin-Ting Kuo wrote:
-> Hi Guenter,
-> 
-> Thanks for the quick review.
-> 
->> -----Original Message-----
->> From: Guenter Roeck <groeck7@gmail.com> On Behalf Of Guenter Roeck
->> Sent: Tuesday, October 7, 2025 10:55 PM
->> Subject: Re: [PATCH 2/3] watchdog: aspeed: Support variable number of reset
->> mask registers
->>
->> On 10/7/25 01:36, Chin-Ting Kuo wrote:
->>> Starting from the AST2600 platform, the SoC design has become more
->>> complex, with an increased number of reset mask registers.
->>> To support this, introduce a new field 'num_reset_masks' in the
->>> 'aspeed_wdt_config' structure to specify the number of reset mask
->>> registers per platform. This change removes the need for hardcoded
->>> platform-specific logic and improves scalability for future SoCs.
->>>
->>> Signed-off-by: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>
->>> ---
->>>    drivers/watchdog/aspeed_wdt.c | 12 ++++++++----
->>>    1 file changed, 8 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/watchdog/aspeed_wdt.c
->>> b/drivers/watchdog/aspeed_wdt.c index 837e15701c0e..e15f70c5e416
->>> 100644
->>> --- a/drivers/watchdog/aspeed_wdt.c
->>> +++ b/drivers/watchdog/aspeed_wdt.c
->>> @@ -35,6 +35,7 @@ struct aspeed_wdt_config {
->>>    	u32 irq_shift;
->>>    	u32 irq_mask;
->>>    	struct aspeed_wdt_scu scu;
->>> +	u32 num_reset_masks;
->>>    };
->>>
->>>    struct aspeed_wdt {
->>> @@ -54,6 +55,7 @@ static const struct aspeed_wdt_config ast2400_config =
->> {
->>>    		.wdt_reset_mask = 0x1,
->>>    		.wdt_reset_mask_shift = 1,
->>>    	},
->>> +	.num_reset_masks = 1,
->>
->> Looking at this again: Why set it on ast2400 ?
->>
-> 
-> This should be removed for AST2400 platform. I will update it in the next patch version.
-> 
->>>    };
->>>
->>>    static const struct aspeed_wdt_config ast2500_config = { @@ -66,6
->>> +68,7 @@ static const struct aspeed_wdt_config ast2500_config = {
->>>    		.wdt_reset_mask = 0x1,
->>>    		.wdt_reset_mask_shift = 2,
->>>    	},
->>> +	.num_reset_masks = 1,
->>>    };
->>>
->>>    static const struct aspeed_wdt_config ast2600_config = { @@ -78,6
->>> +81,7 @@ static const struct aspeed_wdt_config ast2600_config = {
->>>    		.wdt_reset_mask = 0xf,
->>>    		.wdt_reset_mask_shift = 16,
->>>    	},
->>> +	.num_reset_masks = 2,
->>>    };
->>>
->>>    static const struct of_device_id aspeed_wdt_of_table[] = { @@ -482,8
->>> +486,9 @@ static int aspeed_wdt_probe(struct platform_device *pdev)
->>>    	if ((of_device_is_compatible(np, "aspeed,ast2500-wdt")) ||
->>>    		(of_device_is_compatible(np, "aspeed,ast2600-wdt"))) {
->>
->> ... because the code here only evaluates it if this is an ast2500 or ast2600.
->>
->> If num_reset_masks would be set to 0 for ast2400, the value could be used
->> here.
->>
->> 	if (wdt->cfg->num_reset_masks) {
->> 		...
->> 	}
->>
->> and it would not be necessary to add of_device_is_compatible() for new chips.
->>
-> 
-> This "if" conditional statement includes not only reset mask configuration but also pulse polarity and driving type of reset output signal.
-> How about changing this "if" statement to the below one?
-> 	if (!of_device_is_compatible(np, "aspeed,ast2400-wdt")) {
-> 		...
-> 	}
-> It will also not need to add of_device_is_compatible() for new chips.
-> 
+Replace all READ_ONCE() with a standard page table accessors i.e pxdp_get()
+that default into READ_ONCE() in cases where platforms do not override.
 
-Ok..
+Cc: Dimitri Sivanich <dimitri.sivanich@hpe.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+---
+ drivers/misc/sgi-gru/grufault.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Thanks,
-Guenter
+diff --git a/drivers/misc/sgi-gru/grufault.c b/drivers/misc/sgi-gru/grufault.c
+index 3557d78ee47a..60e55facd8d7 100644
+--- a/drivers/misc/sgi-gru/grufault.c
++++ b/drivers/misc/sgi-gru/grufault.c
+@@ -212,19 +212,19 @@ static int atomic_pte_lookup(struct vm_area_struct *vma, unsigned long vaddr,
+ 	pte_t pte;
+ 
+ 	pgdp = pgd_offset(vma->vm_mm, vaddr);
+-	if (unlikely(pgd_none(*pgdp)))
++	if (unlikely(pgd_none(pgdp_get(pgdp))))
+ 		goto err;
+ 
+ 	p4dp = p4d_offset(pgdp, vaddr);
+-	if (unlikely(p4d_none(*p4dp)))
++	if (unlikely(p4d_none(p4dp_get(p4dp))))
+ 		goto err;
+ 
+ 	pudp = pud_offset(p4dp, vaddr);
+-	if (unlikely(pud_none(*pudp)))
++	if (unlikely(pud_none(pudp_get(pudp))))
+ 		goto err;
+ 
+ 	pmdp = pmd_offset(pudp, vaddr);
+-	if (unlikely(pmd_none(*pmdp)))
++	if (unlikely(pmd_none(pmdp_get(pmdp))))
+ 		goto err;
+ #ifdef CONFIG_X86_64
+ 	if (unlikely(pmd_leaf(*pmdp)))
+-- 
+2.30.2
 
 
