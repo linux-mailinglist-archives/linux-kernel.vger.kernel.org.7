@@ -1,153 +1,164 @@
-Return-Path: <linux-kernel+bounces-845306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED18EBC4526
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 12:30:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D11FBC4538
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 12:32:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8A5744E9D75
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 10:30:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AF92189FE23
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 10:33:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1011029B8D3;
-	Wed,  8 Oct 2025 10:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB11F2F5A1C;
+	Wed,  8 Oct 2025 10:32:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iqqNoT/a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gOKCoRhJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A51183CA6;
-	Wed,  8 Oct 2025 10:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27471D7E41;
+	Wed,  8 Oct 2025 10:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759919432; cv=none; b=or2ZolMw+0TRxoJ2ol4jDdNIEnh2zWIWAhNVoyVaGs5MKoKyk1zZf6Ypbx5oCn+IilOf3GYDRCxie64xwFS8Wv8KJMXliA0BmFRS68pYb7wMoBTJERcQNk7fW4491MnvApURRFnvhDTr0Pm4J0F+KP8EimQCacUiiVZXWj+Kn2w=
+	t=1759919553; cv=none; b=WdHLxDEmp1cs9I/3o2+cBNRpJlH7+PiG/g9UeshnyI1APtHPRk6zAvyvI1YADkjem7jqNTvNNl+AuL9fESFf/zcZx+uavvKwqJvXAPIJvlEDAvnIaMGD5Uit9Qh2oT7sctbn0WtrFkzFbm/aJl666Le04eq7Y49XK838SzHIiVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759919432; c=relaxed/simple;
-	bh=AXcMqvG7cWe67YMt9/vHX2AYm8W1c2Xwkevu9/LVcgA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=D+/0UwSN5K4Au3LlK2Tg9CZR9HkVNOu+X3rpGR4ANUYyqjWeCcVdbBGV6nucnZ5Vdya94J3d1kDramimVTdbkMYpYuFTJ426T7r+41hZnZE17CF8xlY+AsMLll8VA45inUyU/3n5kgt5mxSX5839YHz8MOCOL9fwPQbnU4qyFhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iqqNoT/a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1CD1C4CEF4;
-	Wed,  8 Oct 2025 10:30:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759919432;
-	bh=AXcMqvG7cWe67YMt9/vHX2AYm8W1c2Xwkevu9/LVcgA=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=iqqNoT/aMi/YEka2R9fqbhXzM6g7OQ3F8JZv1/EXkGXevjj/VkdLMnjYD8rnf59gn
-	 cTTPtm9/zxzcMRCP4HZk7f7lJeLzBXK8s4F2/Iif/dIusIkQP/2IuvttpkdhVGym0J
-	 pti/VdjbRO9en5lKB2V9n/4I3Ay5MkN0W/+7LGUJdQCHqU+uTWCcngcGkko7gxf6ih
-	 CMqjKg8iOzBDIxin/1aEHaGV7uuXfO6tTDN+Qr4OS80WOjJsHpqjtBRM759svJ3Vss
-	 Qz5etPE9MLXJLKor7BByDjHbJM4z2mtoFrfLnRonF9NGv5WdqEmFtDNfcigUIbbjSb
-	 USRw9mZj8hUNw==
+	s=arc-20240116; t=1759919553; c=relaxed/simple;
+	bh=mpJCJRmqq7qLlxk4UiGEW5X5iwP6YOqYIuZ48aIO4q8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OCCVWJWqcV3LSCwoyzeeSICgWnpHxQYkEBCF+JITi7698Pd4AIStyBgQqWOHLDoKd5ODjL+MGhwO+/2snVolRGimE7n+nspjxZSEOcnlhLpCUComLkyLnPDZ42vbjQjlaCsSssDD0PhCx3sKl97AK65d4WnBpaT9/U8/B1OAW08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gOKCoRhJ; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759919550; x=1791455550;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mpJCJRmqq7qLlxk4UiGEW5X5iwP6YOqYIuZ48aIO4q8=;
+  b=gOKCoRhJHGQW735mW+blQjla0ynUKUQgVo2KOpQm34xecoMaGVeaYFFH
+   VGpNK2pHveyy3lwDZTgiu+isH7NF5XRHveMeCoOJJ6zbloNk5iudVZg9q
+   9M1yS/v5mvBGZkwCxrnsfTX4n9HgW2IA0/BXBZgbuHoumptm0855M2x9M
+   DjxRr7dr5atGojgXMyNxbf8Xvlq6HH+Cd7wSUBT+QCB7X+sfjtweg6cB9
+   0GCFrt/HshujV1PkVHIhgB3DBYzZ2Oz4NpZF/17uwwlmuachn1ATjKcrm
+   /wZjO0tTGtzZ8f3kg8iMDJW1NCfuVfr12HJuMkQW+TBKV0Y2eNGJCYsuG
+   w==;
+X-CSE-ConnectionGUID: Wntt9tKdT8CtnLUp0v43Ug==
+X-CSE-MsgGUID: GvalrHyLR3mVX2mVQrSLrQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11575"; a="79544713"
+X-IronPort-AV: E=Sophos;i="6.18,323,1751266800"; 
+   d="scan'208";a="79544713"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2025 03:32:30 -0700
+X-CSE-ConnectionGUID: Cm7dSnEPQ96+ZUiAYYydhA==
+X-CSE-MsgGUID: bGjmKLv0QpycyeA3pBOf1Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,323,1751266800"; 
+   d="scan'208";a="179652095"
+Received: from iherna2-mobl4.amr.corp.intel.com (HELO kuha.fi.intel.com) ([10.124.220.169])
+  by orviesa010.jf.intel.com with SMTP; 08 Oct 2025 03:32:28 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 08 Oct 2025 13:32:26 +0300
+Date: Wed, 8 Oct 2025 13:32:26 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: RD Babiera <rdbabiera@google.com>
+Cc: gregkh@linuxfoundation.org, badhri@google.com,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] usb: typec: class: add typec_get_data_role symbol
+Message-ID: <aOY9uk3waQH8wJKr@kuha.fi.intel.com>
+References: <20250923181606.1583584-4-rdbabiera@google.com>
+ <20250923181606.1583584-5-rdbabiera@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 08 Oct 2025 12:30:25 +0200
-Message-Id: <DDCVDASJNW9T.BUT6XK1WXD0A@kernel.org>
-Subject: Re: [PATCH v4 01/13] gpu: nova-core: Set correct DMA mask
-Cc: <rust-for-linux@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
- <acourbot@nvidia.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
- <jhubbard@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur
- Tabi" <ttabi@nvidia.com>, <linux-kernel@vger.kernel.org>,
- <nouveau@lists.freedesktop.org>
-To: "Alistair Popple" <apopple@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20251008001253.437911-1-apopple@nvidia.com>
- <20251008001253.437911-2-apopple@nvidia.com>
-In-Reply-To: <20251008001253.437911-2-apopple@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250923181606.1583584-5-rdbabiera@google.com>
 
-On Wed Oct 8, 2025 at 2:12 AM CEST, Alistair Popple wrote:
-> Set the correct DMA mask. Without this DMA will fail on some setups.
->
-> Signed-off-by: Alistair Popple <apopple@nvidia.com>
->
+On Tue, Sep 23, 2025 at 06:16:07PM +0000, RD Babiera wrote:
+> Alt Mode drivers are responsible for sending Enter Mode through the TCPM,
+> but only a DFP is allowed to send Enter Mode. typec_get_data_role gets
+> the port's data role, which can then be used in altmode drivers via
+> typec_altmode_get_data_role to know if Enter Mode should be sent.
+> 
+> Signed-off-by: RD Babiera <rdbabiera@google.com>
+
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+
 > ---
->
-> Changes for v4:
->  - Use a const (GPU_DMA_BITS) instead of a magic number
->
-> Changes for v2:
->  - Update DMA mask to correct value for Ampere/Turing (47 bits)
+> Changes from v1:
+> * changed typec_altmode_get_data_role documentation format
 > ---
->  drivers/gpu/nova-core/driver.rs | 9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/drivers/gpu/nova-core/driver.rs b/drivers/gpu/nova-core/driv=
-er.rs
-> index edc72052e27a..84fe4a45eb6a 100644
-> --- a/drivers/gpu/nova-core/driver.rs
-> +++ b/drivers/gpu/nova-core/driver.rs
-> @@ -3,6 +3,8 @@
->  use kernel::{
->      auxiliary, c_str,
->      device::Core,
-> +    dma::Device,
-> +    dma::DmaMask,
->      pci,
->      pci::{Class, ClassMask, Vendor},
->      prelude::*,
-> @@ -20,6 +22,10 @@ pub(crate) struct NovaCore {
+>  drivers/usb/typec/class.c         | 13 +++++++++++++
+>  include/linux/usb/typec.h         |  1 +
+>  include/linux/usb/typec_altmode.h | 13 +++++++++++++
+>  3 files changed, 27 insertions(+)
+> 
+> diff --git a/drivers/usb/typec/class.c b/drivers/usb/typec/class.c
+> index 67a533e35150..9b2647cb199b 100644
+> --- a/drivers/usb/typec/class.c
+> +++ b/drivers/usb/typec/class.c
+> @@ -2120,6 +2120,19 @@ void typec_set_data_role(struct typec_port *port, enum typec_data_role role)
 >  }
-> =20
->  const BAR0_SIZE: usize =3D SZ_16M;
+>  EXPORT_SYMBOL_GPL(typec_set_data_role);
+>  
+> +/**
+> + * typec_get_data_role - Get port data role
+> + * @port: The USB Type-C Port to query
+> + *
+> + * This routine is used by the altmode drivers to determine if the port is the
+> + * DFP before issuing Enter Mode
+> + */
+> +enum typec_data_role typec_get_data_role(struct typec_port *port)
+> +{
+> +	return port->data_role;
+> +}
+> +EXPORT_SYMBOL_GPL(typec_get_data_role);
 > +
-> +// For now we only support Ampere which can use up to 47-bit DMA address=
-es.
-> +const GPU_DMA_BITS: u32 =3D 47;
-
-IIRC, the idea was to abstract this properly with a subsequent patch worked=
- on
-by John. In that case, please add a TODO.
-
->  pub(crate) type Bar0 =3D pci::Bar<BAR0_SIZE>;
-> =20
->  kernel::pci_device_table!(
-> @@ -57,6 +63,9 @@ fn probe(pdev: &pci::Device<Core>, _info: &Self::IdInfo=
-) -> Result<Pin<KBox<Self
->          pdev.enable_device_mem()?;
->          pdev.set_master();
-> =20
-> +        // SAFETY: No DMA allocations have been made yet
-
-I think you forgot to address my comment from v2:
-
-	It's not really about DMA allocations that have been made previously, ther=
-e is
-	no unsafe behavior in that.
-=09
-	It's about the method must not be called concurrently with any DMA allocat=
-ion or
-	mapping primitives.
-=09
-	Can you please adjust the comment correspondingly?
-
-In general, I recommend having a look at the safety requirements of the
-corresponding function.
-
-NIT: Please end with a period.
-
-> +        unsafe { pdev.dma_set_mask_and_coherent(DmaMask::new::<GPU_DMA_B=
-ITS>())? };
+>  /**
+>   * typec_set_pwr_role - Report power role change
+>   * @port: The USB Type-C Port where the role was changed
+> diff --git a/include/linux/usb/typec.h b/include/linux/usb/typec.h
+> index 252af3f77039..309251572e2e 100644
+> --- a/include/linux/usb/typec.h
+> +++ b/include/linux/usb/typec.h
+> @@ -337,6 +337,7 @@ struct typec_plug *typec_register_plug(struct typec_cable *cable,
+>  void typec_unregister_plug(struct typec_plug *plug);
+>  
+>  void typec_set_data_role(struct typec_port *port, enum typec_data_role role);
+> +enum typec_data_role typec_get_data_role(struct typec_port *port);
+>  void typec_set_pwr_role(struct typec_port *port, enum typec_role role);
+>  void typec_set_vconn_role(struct typec_port *port, enum typec_role role);
+>  void typec_set_pwr_opmode(struct typec_port *port, enum typec_pwr_opmode mode);
+> diff --git a/include/linux/usb/typec_altmode.h b/include/linux/usb/typec_altmode.h
+> index b3c0866ea70f..f7db3bd4c90e 100644
+> --- a/include/linux/usb/typec_altmode.h
+> +++ b/include/linux/usb/typec_altmode.h
+> @@ -172,6 +172,19 @@ typec_altmode_get_svdm_version(struct typec_altmode *altmode)
+>  	return typec_get_negotiated_svdm_version(typec_altmode2port(altmode));
+>  }
+>  
+> +/**
+> + * typec_altmode_get_data_role - Get port data role
+> + * @altmode: Handle to the alternate mode
+> + *
+> + * Alt Mode drivers should only issue Enter Mode through the port if they are
+> + * the DFP.
+> + */
+> +static inline enum typec_data_role
+> +typec_altmode_get_data_role(struct typec_altmode *altmode)
+> +{
+> +	return typec_get_data_role(typec_altmode2port(altmode));
+> +}
 > +
->          let devres_bar =3D Arc::pin_init(
->              pdev.iomap_region_sized::<BAR0_SIZE>(0, c_str!("nova-core/ba=
-r0")),
->              GFP_KERNEL,
-> --=20
-> 2.50.1
+>  /**
+>   * struct typec_altmode_driver - USB Type-C alternate mode device driver
+>   * @id_table: Null terminated array of SVIDs
+> -- 
+> 2.51.0.534.gc79095c0ca-goog
 
+-- 
+heikki
 
