@@ -1,290 +1,201 @@
-Return-Path: <linux-kernel+bounces-845914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFA3DBC67BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 21:40:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13377BC67D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 21:40:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E781404C96
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 19:40:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4DD03A22AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 19:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 941E92652A6;
-	Wed,  8 Oct 2025 19:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9C126A0DB;
+	Wed,  8 Oct 2025 19:40:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="3zbI0AaS"
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013013.outbound.protection.outlook.com [40.93.201.13])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="mXABxiFt"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D784237A4F
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 19:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759952413; cv=fail; b=uk0dH4AE2MqMMNeZNx7CtpOb0SB+GGpnOYnTAhV3Y6D0VYPkh4UrwOXmmPNaANgyRKKvNGvRBtk+D7D1OGxfIOps8eGszpI6A7WhB6zkFXYaKazMR5YQsKTTGD++u9d+TciGDn2tQ3JCPmvz8nK0WtpLwmmcj0+EyuQiI6e1sB0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759952413; c=relaxed/simple;
-	bh=zxPuaVClKkCMw2QTHUcuWhQ5+YY1JDKLeWegw7/K0cc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DZ08nC8X3qAGRdQPJNvDB7tNUmHtM81Rvz9HpuMhniApIwrsmRob6FwOa61wPZeUuuuhVb+o1pZaY/sSuqivNxhncsvb3IdebwCgowJaqVixBjlvli+tgFci2xAvLiLVhZdwRg5Zyi9D3E+71UvPMObM7w3K1lZfMbj9djuSauc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=3zbI0AaS; arc=fail smtp.client-ip=40.93.201.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=E0aPzWKFZkc1D9at0KvEzwm53Cn4EJewHQoyVd4nk73mqsTgcEraDVv+PQgS1s24Kju1RqOD61L7jFEFbETT0lB7TQtq0lgGgGzdw6TpMAno+k//h7DsJilcs8m7CXJYWb3FGg9Ughu/aaOuQfFVyPthDfrldLOYgQPR4FytFEcbq/wUUPajlXkMHjpFY3iaV2sgYEsuHLuZsxDpSBOfX6beMCETDeeRvdNCXZMoeoC5gqcfdMFqaYHoaw6nXXFUINk4LLiFiKfgtfbHF3RygWjEilIGu4XLOdtnXcskVUiiZN3G6zJvy0esI2FIhKUl3OJdiBsPOY+tF/N2h9WdWQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=evjx5gPQQ/cod5WGyQfMnIV4w8mCNPRGh03Y4eo+uWY=;
- b=VqgTnwKO7tRzA6mtBRMMiCnJQa+/pnwhiK4N8VTjOlpg7z6QcJnAX+H22mW8fKt+Gbly1hhfazyhK1Fu1mnaSMxtecsIX4OXI5TVJb/pyg3uh3HpZQTsaIJtfAy/T517eHAKfqfBq37sh8XqH7rUSVOb5O8ojf7i9ntPhfWnolWNiZ0333bhCzBXhIcGN+5sYwiWmW0AGLP03jkrJpr0TUZBH+ixegTErfw9rdny1it44PISz2wB7+DxutixjN+HRZH5Yrwo86pwDzxMyXbZcnK8kgTLNoJ7jd6+rP4hhEnQBKmwjyJayirTbXBkzKdd4r/7wszaKAgE6R5z7vNBCw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=evjx5gPQQ/cod5WGyQfMnIV4w8mCNPRGh03Y4eo+uWY=;
- b=3zbI0AaSaAVpw8GxMrUiqgq3/X8zA/B8MQpAwSp8Q1krg5Fexz0cIxloY2CeWGYLWHkeWPfUDTVXsPLcJ3Ytj3CBttGoAH8y/nRkB9b1hd9guic0G5Mrktcmcra605wHLCVyyWpFPgoYeN97ODYccbvLt8Ra1ERCvuaWY53diFs=
-Received: from BYAPR02CA0012.namprd02.prod.outlook.com (2603:10b6:a02:ee::25)
- by PH0PR12MB8031.namprd12.prod.outlook.com (2603:10b6:510:28e::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.9; Wed, 8 Oct
- 2025 19:40:01 +0000
-Received: from SJ5PEPF000001F3.namprd05.prod.outlook.com
- (2603:10b6:a02:ee:cafe::8c) by BYAPR02CA0012.outlook.office365.com
- (2603:10b6:a02:ee::25) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.9 via Frontend Transport; Wed, 8
- Oct 2025 19:40:01 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- SJ5PEPF000001F3.mail.protection.outlook.com (10.167.242.71) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9203.9 via Frontend Transport; Wed, 8 Oct 2025 19:40:01 +0000
-Received: from bmoger-ubuntu.amd.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 8 Oct
- 2025 12:40:00 -0700
-From: Babu Moger <babu.moger@amd.com>
-To: <babu.moger@amd.com>, <tony.luck@intel.com>, <reinette.chatre@intel.com>,
-	<Dave.Martin@arm.com>, <james.morse@arm.com>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>
-CC: <x86@kernel.org>, <hpa@zytor.com>, <linux-kernel@vger.kernel.org>,
-	<peternewman@google.com>, <eranian@google.com>, <gautham.shenoy@amd.com>
-Subject: [PATCH v2] x86/resctrl: Fix buggy overflow when reactivating previously Unavailable RMID
-Date: Wed, 8 Oct 2025 14:39:54 -0500
-Message-ID: <2ead4ece804b0f61aab01f47385d9a125714991e.1759952394.git.babu.moger@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3AF237A4F;
+	Wed,  8 Oct 2025 19:40:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759952448; cv=none; b=Ixf4pkBh6pm2dnWyHEIoz/MT7XSBebdZ4axVzPw6Ht88AaQQlk/nCUvL/xi87iJHtyc03x2i/cyJTedLZ+Ad5T41o9uNGbNb30aWsoPcEv2pYs3CXOr3a8Ctf5rF2RGBaWw9JVg2xo1xNTGl6w4zziqBI8klF1TjJPqxoLYAg2E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759952448; c=relaxed/simple;
+	bh=XOnrmMWwxVFBnMVO7Ta7eL97SgQLueAuXSlhk5sHuxQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ApN04xOOaJZ4ZD1rjUPbjwU0AGuDwqry0QkYrbrgoW2Shql6QE57Vg4g4w01ERH/I62SbfGhenr49eqqEYSxYQ3FIWwWYR8m60cV3quL9ut99VZ2XayvI3rGWpDEA9kpUFNPcff0yUG0EmMMh6vZyyJioTz9+753IdZANFdO850=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=mXABxiFt; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1759952427; x=1760557227; i=markus.elfring@web.de;
+	bh=ryyxa63Wy3N8dRSeueUjZJIkSdeBzBk1q/YZMtKe2/Y=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=mXABxiFtOzewx/2064n6kVzyD0dRWgaa/bbs+oxXaQAdx4vZotHIIcYk6t00wB5A
+	 s4Vg2BIUC/LKzZnkIP9sV3+o9etUpZIeifKTNCXeLxNHDvpxep8lLofT4YNjjt/32
+	 kWhFBZAYeubuxWy3j49Fhvota3Po9BUj203pVAcDNWzrU68ictnBmsXzvzK10psy5
+	 12/lpK9hMhf4hICbyT3RrU3Qo1wvAZdaTwfC6eq5rOHZE+AmnrKBsPGkS8Yhoeohf
+	 aSajHfGO2/VN+P23bS12PvCl1fvNqXOx4CVs0ZEvN2BRnwOiBFtvM9x85W+8pU9Qb
+	 xNXuLehZ3vep+2d4Vg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.249]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MzkSZ-1uKNFy0Jph-015a57; Wed, 08
+ Oct 2025 21:40:27 +0200
+Message-ID: <717a6d2a-b3f8-4296-b0b3-8738d1c1dab2@web.de>
+Date: Wed, 8 Oct 2025 21:40:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F3:EE_|PH0PR12MB8031:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9ff7d18c-da37-47f2-81d3-08de06a278ff
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|7416014|82310400026|1800799024|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aDNiaXNMTkZHVk5LZnNWbVJyVlFHSzgvUmpIVU4xWW5DdWErNkI0QW9lNDhJ?=
- =?utf-8?B?cEcxQ3NPVTZYWkNIVmZjc21ZMnRMZ0p6NjBQWjEzdlFCYzhHeDF0aXMxSjlL?=
- =?utf-8?B?TERZT2d3YUhzNFJJRWFHQmNTb1d5UHZWWC91NVVUQWZDRmdZSFlPRlNFVFlK?=
- =?utf-8?B?azdKNVlabTlKZFc2RC9aa3pwcW5rU3ZpUjR6bUVkNnd3cHM5MklFZkpqMkQ5?=
- =?utf-8?B?YmlRVVArUXJxeTdwWk5tdXpMMERJYVBKbC9obWFXYUh2dXRqYWhrQzRCTHdk?=
- =?utf-8?B?cjdYcnFCaEVPWWZZaEhlMjRNK3A1cFdlQTdGYjQrNXZUK1lSaktlR1FDSEpE?=
- =?utf-8?B?QndoZC9FSVRMdVdxelJaZGx2TG5hZXhTcGVodlk5bEluemFuSzNMVysydmQv?=
- =?utf-8?B?YklUYTBQTDNvaHlQNThqT3FlSWg5ak8zVFB6MnBHVHVMMGl5MWpJRGxjb2dI?=
- =?utf-8?B?eERkTFBSeGoybjVGOWRNZVQxKzhRZ3QyT3BadHJtSDUwN0djUElxcE5PNC9Q?=
- =?utf-8?B?ZGhySXhaQXRJUEJETUs5L201ZzRrOUhHTWZZSExUQ2h6YWRSakZpTXMxS015?=
- =?utf-8?B?N1lmUlZ0K01kTnlCTjk3cGFGbjdHQVphRm9yVzAvL2JxUGg5MDBFQm1IcG9m?=
- =?utf-8?B?U3h6ZkNEaXBHbGVIcnRIRGJ0bFdnTW1wc0ZTK3d5VlZBeGdNVzBXcXlRZnhN?=
- =?utf-8?B?RlNNYW1VeGRCbUNUQitHR2YxYmdvWVkxV3R5WVVBNURVenQxMzMyeFRiRnVy?=
- =?utf-8?B?cDZDOWZmVlQySzhIUmUzM3BTQ0h5SjZiSk1sOWk1SGVXcVFzSlJyU0luNDZz?=
- =?utf-8?B?cUR5dWx2N0ZmaEl1TzF2VHNSSjF4MDV0RkFycnVvZllGWUJSeVZreGR2S0o3?=
- =?utf-8?B?THBVbE55U3h2dTh0TUVVWkdGRVB2c01VZ0QwYUxUWjZFOHdiNmhhMi9BN3l1?=
- =?utf-8?B?UFA2WS92WW9VREg3ejFHRjllN2J5bkh2Wm5maHVZR3A0VFZVR3JWdXFXZjNG?=
- =?utf-8?B?ZXNFY1J1NXNRZkp0SW4rWHVMM2NYeUtzNmVGN09IZ1RIcENlZFUrN3NMd2Mx?=
- =?utf-8?B?ZDFuTXFGWjA1MW5tZGpRK3ZlMlFKNmlNY2s2TFc5dzdxSmhyQk9PR0JLOXZU?=
- =?utf-8?B?a0ovVFF2aytNdHVaSzlKQ3pMWXA3clgzN1E2VFUyMlUwWjUvSkZkUUhkdGlN?=
- =?utf-8?B?dnRLQW0yQ0hMMExGV0QwalBaUUZ4OFNwRkhwN2FSOHIwY0N2YUFYbDU0eGgr?=
- =?utf-8?B?SjlBa3AzSzd4NWhhSjlWYTFsMW4yYUE2QmErN3pONkZDTFdmNXA3MzdJQXFU?=
- =?utf-8?B?WWdYYkU5bWlzNkhGSXNuSVUvQmY3eXpiY3UwSFFtNC9leWV2cUtVM1o4SGV3?=
- =?utf-8?B?NXpPNnhoZG1HYUdkZUZZYThqR29MVUtpQnN0Qkh3ZEpwalczeXc5eG0wNStY?=
- =?utf-8?B?WVpXYUFrZnVSWFVOOUptU3lSRU9IQkVaNFkwL0xiZDFJdzZYRkNaOTNTcjNo?=
- =?utf-8?B?VXhRbnNOb2ZCMDJxZk9RSHZqUlp5OS9GTnBscGFyOS9Zbkw4RlRzZmFyemZG?=
- =?utf-8?B?YW1Ia0JFQXBISTdyU2RQS2M0aVYva0FjUVo1Mmpia1lPT1JKWHNKSytRTnp1?=
- =?utf-8?B?ZXN0T0NDS1lBWlF2T1l1UlgzMzRTRnhuSnNxZEd2TEI1NmxUWTNqQ0NkSHZR?=
- =?utf-8?B?ZXB6bUE2RW9GUkJUMm5KSjdUUGRrODlTOVlqek5raHlUbDd0WHhNYXk5eUlj?=
- =?utf-8?B?VVVjVXFDYnQrOVYwRzZFV1JwSjA0V0JDOUV1QVRRc1o3REpoRUVGWjU5eTR6?=
- =?utf-8?B?V3dLaktzUkwxUXQ5aGNZR0Zoa3VReFRTeFIxWXJpZURQZ09JbWl0VVBTVzdP?=
- =?utf-8?B?VTFiZjB1YStraldOSUFIM0lVbWdFN0xYYm13bmZwRnJBY0pGN3B1KzdBSVdM?=
- =?utf-8?B?b0tVL3RhUEgyeEJvenZ3UHBoVmVCRHRhRkZGMXd0eTZ4czcxcS9LLy82NlpG?=
- =?utf-8?B?YllXNUg5TDRoNUdiRXZva3hNdk0xRC9ZaklEZk9NaWlETW1jTVpnbkhnQUJo?=
- =?utf-8?Q?p8oM23?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(7416014)(82310400026)(1800799024)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2025 19:40:01.6322
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9ff7d18c-da37-47f2-81d3-08de06a278ff
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001F3.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8031
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] smb: client: Move an error code assignment in
+ smb3_init_transform_rq()
+To: Henrique Carvalho <henrique.carvalho@suse.com>,
+ linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+ Bharath SM <bharathsm@microsoft.com>, Paulo Alcantara <pc@manguebit.org>,
+ Pavel Shilovsky <pshilov@microsoft.com>,
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>,
+ Tom Talpey <tom@talpey.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <02627021-da2f-41f8-9ea7-fd2da96e0503@web.de>
+ <5bd37df6-1743-4b9c-a83a-a811e221489b@suse.com>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <5bd37df6-1743-4b9c-a83a-a811e221489b@suse.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:jIVMvqdyoOWT9UqqOXm69WtFzMHQBCQdaRcA2wIh9HDAvjkNCad
+ 8PmiSUFa6t0eLJDEW7PIjPDyujvIXWOvKi7pBulmQDVLBKDTLDv3AQQ5Yjoq+IxwkXz7QiE
+ Sf9QWp99VVo6/DTUPNX8S8/S/D6awh+05m0Sosbndn/RWGjFH5dWxfNtiGz1Xwr4A7T5kB/
+ ynDMpHUkGPTGGzRaxcxNQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:81HFVJ0zwQA=;RS/KV6zD6a2LP0xfMyEeHCxQ04B
+ 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
+ Jru4W7xTa3mDITHA8FVoRv6B5o=
 
-Users can create as many monitoring groups as the number of RMIDs supported
-by the hardware. However, on AMD systems, only a limited number of RMIDs
-are guaranteed to be actively tracked by the hardware. RMIDs that exceed
-this limit are placed in an "Unavailable" state. When a bandwidth counter
-is read for such an RMID, the hardware sets MSR_IA32_QM_CTR.Unavailable
-(bit 62).
+>> Convert an initialisation for the variable =E2=80=9Crc=E2=80=9D into an=
+ error code
+>> assignment at the end of this function implementation.
+=E2=80=A6>> +++ b/fs/smb/client/smb2ops.c
+=E2=80=A6>> @@ -4611,7 +4611,7 @@ smb3_init_transform_rq(struct TCP_Server=
+_Info *server, int num_rqst,
+>>  		if (size > 0) {
+>>  			buffer =3D cifs_alloc_folioq_buffer(size);
+>>  			if (!buffer)
+>> -				goto err_free;
+>> +				goto e_nomem;
+>> =20
+>>  			new->rq_buffer =3D buffer;
+>>  			iov_iter_folio_queue(&new->rq_iter, ITER_SOURCE,
+>> @@ -4634,6 +4634,8 @@ smb3_init_transform_rq(struct TCP_Server_Info *se=
+rver, int num_rqst,
+>> =20
+>>  	return rc;
+>> =20
+>> +e_nomem:
+>> +	rc =3D -ENOMEM;
+>>  err_free:
+>>  	smb3_free_compound_rqst(num_rqst - 1, &new_rq[1]);
+>>  	return rc;
+>=20
+> I don't think this change improves readability.
+>=20
+> I understand that making the assignment explicit is good,
 
-The problem occurs when an RMID transitions from the “Unavailable” state
-back to the active state. When this happens, the hardware resets the
-counter to zero, but the kernel compares this new smaller value with the
-previously saved MSR value and mistakenly interprets it as an overflow.
-
-Problem scenario:
-1. The resctrl filesystem is mounted, and a task is assigned to a
-   monitoring group.
-
-   $mount -t resctrl resctrl /sys/fs/resctrl
-   $mkdir /sys/fs/resctrl/mon_groups/test1/
-   $echo 1234 > /sys/fs/resctrl/mon_groups/test1/tasks
-
-   $cat /sys/fs/resctrl/mon_groups/test1/mon_data/mon_L3_*/mbm_total_bytes
-   21323            <- Total bytes on domain 0
-   "Unavailable"    <- Total bytes on domain 1
-
-   Task is running on domain 0. Counter on domain 1 is "Unavailable".
-
-2. The task runs on domain 0 for a while and then moves to domain 1. The
-   counter starts incrementing on domain 1.
-
-   $cat /sys/fs/resctrl/mon_groups/test1/mon_data/mon_L3_*/mbm_total_bytes
-   7345357          <- Total bytes on domain 0
-   4545             <- Total bytes on domain 1
+Thanks for this constructive feedback.
 
 
-3. At some point, the RMID in domain 0 transitions to the "Unavailable"
-   state because the task is no longer executing in that domain.
+> but why not simply set rc to -ENOMEM if !buffer and then goto err_free?
 
-   $cat /sys/fs/resctrl/mon_groups/test1/mon_data/mon_L3_*/mbm_total_bytes
-   "Unavailable"    <- Total bytes on domain 0
-   434341           <- Total bytes on domain 1
+I proposed to adjust the affected if branch in this way
+because there is no need to add curly brackets then.
 
-4.  Since the task continues to migrate between domains, it may eventually
-    return to domain 0.
 
-    $cat /sys/fs/resctrl/mon_groups/test1/mon_data/mon_L3_*/mbm_total_bytes
-    17592178699059  <- Overflow on domain 0
-    3232332         <- Total bytes on domain 1
+> Also, I think its a bit confusing having inconsistent naming styles `e_`
+> `err_`...
 
-    In this case, the RMID on domain 0 transitions from “Unavailable”
-    state to the active state. The hardware sets MSR_IA32_QM_CTR.Unavailable
-    (bit 62) when the counter is read and begins tracking the RMID counting
-    from 0. Subsequent reads succeed but may return a value smaller than the
-    previously saved MSR value (7345357). Consequently, the kernel’s overflow
-    logic is triggered—it compares the previous value (7345357) with the new,
-    smaller value and incorrectly interprets this as a counter overflow,
-    adding a large delta. In reality, this is a false positive: the counter
-    did not overflow but was simply reset when the RMID transitioned from
-    “Unavailable” back to active.
+Which naming approach would you find more helpful for the marking
+of a variable assignment instead of a subsequent function call?
 
-Reset the stored value (arch_mbm_state::prev_msr) of MSR_IA32_QM_CTR, used
-for handling counter overflows, whenever the RMID transitions to the
-“Unavailable” state to resolve the issue.
-
-Here is the text from APM [1] available from [2].
-
-"In PQOS Version 2.0 or higher, the MBM hardware will set the U bit on the
-first QM_CTR read when it begins tracking an RMID that it was not
-previously tracking. The U bit will be zero for all subsequent reads from
-that RMID while it is still tracked by the hardware. Therefore, a QM_CTR
-read with the U bit set when that RMID is in use by a processor can be
-considered 0 when calculating the difference with a subsequent read."
-
-[1] AMD64 Architecture Programmer's Manual Volume 2: System Programming
-    Publication # 24593 Revision 3.41 section 19.3.3 Monitoring L3 Memory
-    Bandwidth (MBM).
-
-Cc: stable@vger.kernel.org # needs adjustments for <= v6.17
-Fixes: 4d05bf71f157d ("x86/resctrl: Introduce AMD QOS feature")
-Signed-off-by: Babu Moger <babu.moger@amd.com>
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537 # [2]
----
-
-v2: Fixed few systax issues.
-    Checked for special charachars.
-    Added Fixes tag.
-    Added CC to stable kernel.
-    Rephrased most of the changelog.
-
-v1:
-Tested this on multiple AMD systems, but not on Intel systems.
-Need help with that. If everything goes well, this patch needs to
-go to all the stable kernels.
-
-https://lore.kernel.org/lkml/515a38328989e48d403ef5a7d6dd321ba3343a61.1759791957.git.babu.moger@amd.com/
----
- arch/x86/kernel/cpu/resctrl/monitor.c | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
-index c8945610d455..a685370dd160 100644
---- a/arch/x86/kernel/cpu/resctrl/monitor.c
-+++ b/arch/x86/kernel/cpu/resctrl/monitor.c
-@@ -242,7 +242,9 @@ int resctrl_arch_rmid_read(struct rdt_resource *r, struct rdt_mon_domain *d,
- 			   u32 unused, u32 rmid, enum resctrl_event_id eventid,
- 			   u64 *val, void *ignored)
- {
-+	struct rdt_hw_mon_domain *hw_dom = resctrl_to_arch_mon_dom(d);
- 	int cpu = cpumask_any(&d->hdr.cpu_mask);
-+	struct arch_mbm_state *am;
- 	u64 msr_val;
- 	u32 prmid;
- 	int ret;
-@@ -251,12 +253,21 @@ int resctrl_arch_rmid_read(struct rdt_resource *r, struct rdt_mon_domain *d,
- 
- 	prmid = logical_rmid_to_physical_rmid(cpu, rmid);
- 	ret = __rmid_read_phys(prmid, eventid, &msr_val);
--	if (ret)
--		return ret;
- 
--	*val = get_corrected_val(r, d, rmid, eventid, msr_val);
-+	switch (ret) {
-+	case 0:
-+		*val = get_corrected_val(r, d, rmid, eventid, msr_val);
-+		break;
-+	case -EINVAL:
-+		am = get_arch_mbm_state(hw_dom, rmid, eventid);
-+		if (am)
-+			am->prev_msr = 0;
-+		break;
-+	default:
-+		break;
-+	}
- 
--	return 0;
-+	return ret;
- }
- 
- static int __cntr_id_read(u32 cntr_id, u64 *val)
--- 
-2.34.1
-
+Regards,
+Markus
 
