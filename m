@@ -1,352 +1,227 @@
-Return-Path: <linux-kernel+bounces-845148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E334FBC3B35
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 09:39:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 102C4BC3B44
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 09:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 69F6235240E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 07:39:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4E4519E343C
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 07:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A7B2F260B;
-	Wed,  8 Oct 2025 07:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD8062F1FE1;
+	Wed,  8 Oct 2025 07:35:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="FSDMMQK5"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cV2xWan2"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C3F21CC55
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 07:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 757742F49F9
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 07:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759908873; cv=none; b=D+/tCPHvlSpw0Yk9dHeW/aMt7DeU9rlhAS9RTmTjJdUOJDCVneuWEptr89dlHufM097W3BuNL1/ykbuX5zVLM7wuUxCAiTEYZYqOCHn+BrWIWGEYnQSE/NQy+MVQHi7HDYrmoETqhLpZTvuwvz4UUH1UnzQ552taV6D1VkAdshA=
+	t=1759908933; cv=none; b=poaOmvvhkHlqqXT5SkVAkpW50+lbnBKP/yWroqyHVAsF7PKfXK7O/J7LUEgvdCT61bujhywxrQEOFGFFraiFirvMO1nDrh6KLq4awp9ToysrSPiaXJBpfCA/GWlCK/t4shQe7rm1NOgqYZAbDo2sZ8TK4tkPPZthWY683ePNXKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759908873; c=relaxed/simple;
-	bh=aSSVV3MZV80vt0f5cNvmiBKaH7Njep1w4mgCUlCU/a0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=T+cE0i1k8jZuzQOk4bOACPVd1xiKWOb02AmBbJxTuxXtsflmjn7qa5roPiAxxtYYGME9/qefIKd6v3fpgkKkZXHjT37ziarb6pY6ZzSBa94rSmh+lh0AUIxmq8x19S24Y6/sLafG2U3xj5sDJZc5HEl1zcidJU8hvfuOh3sx53w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=FSDMMQK5; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4chPsH0yF2z9tLj;
-	Wed,  8 Oct 2025 09:34:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1759908867; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SqsYZSEv3wPkkO5CjL60oHf/kDiHMVtuA54/1pd5yLc=;
-	b=FSDMMQK5HbVIUqxT3oioKTUgynIczROfwnDNepIrRvWqsFMZl5hv2fk71dcBz2DjY1foKT
-	wxELCJI5w/c6clR0S9Z9ikGNruabThtOvMP2MwBnyzgU8C7R1jkXNf3AG+Q29BEqtotXoC
-	h1a6oTaB4wKR/jkYw5HhMbFnnodgOHw8HfB0VAQwOQUdighb1CQsIiybkQtwnvlLpA+UzF
-	mE7/DFX5WIMT1uoM86Bea25KS0T+u35+hmbBYCYmle054p0Gkqowv4ONnoRmh7BUX9sHsG
-	lADrs1J5RgctJ7DfQLx0qgAfKpXl4iMO8rZBYAVXAeMhAPDhQV3BQcIxKZD8vg==
-Message-ID: <6ecf62805e3d3bb6007d9bf645ed10006b599349.camel@mailbox.org>
-Subject: Re: [PATCH v2] Revert "drm/nouveau: Remove waitque for sched
- teardown"
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Matthew Brost <matthew.brost@intel.com>, Philipp Stanner
- <phasta@kernel.org>
-Cc: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sumit Semwal
-	 <sumit.semwal@linaro.org>, Christian =?ISO-8859-1?Q?K=F6nig?=
-	 <christian.koenig@amd.com>, dri-devel@lists.freedesktop.org, 
-	nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Date: Wed, 08 Oct 2025 09:34:22 +0200
-In-Reply-To: <aOVKt1kQlBEYxctO@lstrano-desk.jf.intel.com>
-References: <20250901083107.10206-2-phasta@kernel.org>
-	 <aOVKt1kQlBEYxctO@lstrano-desk.jf.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1759908933; c=relaxed/simple;
+	bh=F4Jf3/Jx2Wrf9ObJ98QM9rPrenllrUtXKxkbFh2XhXQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KL7HVq6dgz5NeePwnCRuQe9sW5TmhjbiexTY8R/b9YvRyxucUR/tXxSrRQXOuofa75er7s3VQ8Qx2MUe/ElByeWiHQVUDcXV9mg0kaVBaLpgYfNUiMie+Y4O+IWKVFfULWGsf5I4wH1ao2dXuovcWZjf15OqQBa5juLcubkcyzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cV2xWan2; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59803pcS024073
+	for <linux-kernel@vger.kernel.org>; Wed, 8 Oct 2025 07:35:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	iiYKnuUQureOztNmxjz+R23v+NHrM5vRIegiMWn4T4g=; b=cV2xWan2lpcGhei+
+	S2278UgtDFr6SN4gmmI/rpGUbpYCIIrxysHH0c/NZ6nfB0iXlaTkXkWbz4AlamlN
+	IrBi4dRtWQze9TZUcnZ8jSrsQocbbRQdQxh7V4PE2mRXvc8tyAtQFSVwCCqVMcvw
+	cV4uj206WqbYSK8/U/8XGPrLdZg1mK4/ws3BmONyB+8jORgwbtDLeCWG3yITPeis
+	c43d/Hr3pmCAi3ytoso3tZi6gMp1g4i5ZCDaseUOVpakaOD4B9a+UyW/bFvRM+lE
+	ZsLenuunxelrpQMYFIC8NMw8jSefUGckMzYDgw1gkz8VMbhsHplYxgmJ5iWHGpxW
+	ItYwXw==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49jtk71q7y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 07:35:30 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-780f914b5a4so6644523b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 00:35:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759908929; x=1760513729;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iiYKnuUQureOztNmxjz+R23v+NHrM5vRIegiMWn4T4g=;
+        b=rT5++GOG3a/Utcu9JO7d8sHryckiNllQESlXSEa3QUwuoGG9E+pBLnl8WK6Kgfrx7M
+         xdPAZLeYC+h9oi/JAQHRH8yolzCcEzqoFShJY+z9h0NVySdPSg8QpG/Po1u8n/EGa4ea
+         l2WldfpIMbqe/0wW8LFxc3f2k1+mC/nM7x1ChEnyfPrxKQSm9WO8x9o3ZaBIvnxAKGqx
+         R7AXB7TELY5UbIWcLNpki9Qsm9DKJ/YkIbS5n60jb1Nad9An+D/WZWg359TFHVdvXLgE
+         Sr69MN8HFADuMs3tZOmdVGTyL9DSD1THD5SaL6885tabsQ7UWpo6rjeL4NhKyk4EBg4u
+         l34g==
+X-Forwarded-Encrypted: i=1; AJvYcCXYOzk2TP6Bm2mrQ4PIrTWdWouWf5WQhrtDi9mokCzkBZGRuFq2EC8alsVqIyIDR9wTe/ziWSofZ/OWev8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkqLcvaWSIuPSktt4nHfkhzxNn5yIQInT3LxxPuCvyx/QRixI8
+	4sNr3qSTirxK7EIJa4XpGKtqKQLVfkNQlaYEBPNruDBgBkjGhzZG2bFnYNO52PMrG1qGg5p/5mo
+	zJWH4iTHobcRVzsY+EBIJA1q84GNNP4oaGy0Ew+f7ueHQ21/8dyJg4pmiCZyr3cYYYmY=
+X-Gm-Gg: ASbGncum43EoZNW2/YB+lMQitKsWSSbkapCQfxYXEzcECOAQIboeBXZG6o3f4uERbVn
+	pMcqdsJwokBNt1ubDFi26JPVj5z5vArDyWVVstbep/mHmUq7OFV4cVy3zfQee3mFgSatzkRn2Zh
+	VCew8FkFxKR6d1uSBjZMyr5loJ6pxwiJMd975CE0ooYee/xpkTPT3NYJd51P4fFVeWOW2ShoBh3
+	JBCaU7A5KsFTqO2lnzM1XyvuiW1RrRl7PgiLXN+99fNucJ9LtJjUOZ7ZEeGIaVzjkCsl0JPt2qG
+	/8jJTq4qybCZ1/+KgQfWKuh0urNlcVhgZXuFXNucov51PL9FhB3yPPhAkIWU0eMiAuBAP9Du
+X-Received: by 2002:a05:6a00:9298:b0:781:9a6:1175 with SMTP id d2e1a72fcca58-79387c17855mr2747277b3a.25.1759908928354;
+        Wed, 08 Oct 2025 00:35:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEeZSMKoKEdQQfj+KuO8JF5SEBLYOmlTZtL7VL9jTiwIRBF7GJdJ3rVJjNWFYe4E2jpO7zRbQ==
+X-Received: by 2002:a05:6a00:9298:b0:781:9a6:1175 with SMTP id d2e1a72fcca58-79387c17855mr2747235b3a.25.1759908927674;
+        Wed, 08 Oct 2025 00:35:27 -0700 (PDT)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b01f9ced7sm17817725b3a.15.2025.10.08.00.35.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 00:35:27 -0700 (PDT)
+Date: Wed, 8 Oct 2025 13:05:21 +0530
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 06/12] firmware: qcom_scm: Add a prep version of
+ auth_and_reset function
+Message-ID: <20251008073521.ky5cxxrxntundezl@hu-mojha-hyd.qualcomm.com>
+References: <20251007-kvm_rprocv4_next-20251007-v4-0-de841623af3c@oss.qualcomm.com>
+ <20251007-kvm_rprocv4_next-20251007-v4-6-de841623af3c@oss.qualcomm.com>
+ <juirzpdb7ltx32fdiu37q3fd543fctvtssnro5qv4satninz2z@3bxup227lvvy>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-META: iiacjepudk81ydpppfc6q3f174z8ez4j
-X-MBO-RS-ID: 1586c1d58911504b8ff
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <juirzpdb7ltx32fdiu37q3fd543fctvtssnro5qv4satninz2z@3bxup227lvvy>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAxNyBTYWx0ZWRfX7BAzbQuEcXFD
+ o6l4z8qZsLQOu7Bw5H+Aapva0hQ4+rgFfgrJttmiv77Xa3GCF76UipP+M6vL9B4RRkJvQsmdkdN
+ VT20gmB9dRJXlZBMEjEszFCZmq1yKQ0mDeq84cUqjwRS8RY//7AYt2RKatW6PJ3ZNDV9G9cIKCT
+ bMo6m485yNzz8rDVPn+E2fTSQ5fGEloWQVkzldqSPZk4HrZC2YMc8wkzYtPf4jC7VhRuCN84km2
+ LqVqZWPnUhW+ii6zfrZ1+D5IJAuh+cp7Yn8doMT6iko3PFUTszgMfgnqvhYe53UpCVK0FF4t5yG
+ RHqvngbCfq8+lE0UclXaeqMH2TYRn9oYLx4e3NEnvbWasP8veYvFsAOmsz2Ni/6sU+Ix5vGovlU
+ daR+17JS7/neUBQl0/ondnCYS5VL5w==
+X-Authority-Analysis: v=2.4 cv=do3Wylg4 c=1 sm=1 tr=0 ts=68e61442 cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=H8e-7uY52fie2kMTd9UA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
+X-Proofpoint-GUID: eJfYRtw4PLDk1ilpScsu9Kzh_0xG2EK2
+X-Proofpoint-ORIG-GUID: eJfYRtw4PLDk1ilpScsu9Kzh_0xG2EK2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-08_01,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 adultscore=0 lowpriorityscore=0 phishscore=0 clxscore=1015
+ malwarescore=0 spamscore=0 impostorscore=0 priorityscore=1501 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040017
 
-On Tue, 2025-10-07 at 10:15 -0700, Matthew Brost wrote:
-> On Mon, Sep 01, 2025 at 10:31:08AM +0200, Philipp Stanner wrote:
-> > This reverts:
-> >=20
-> > commit bead88002227 ("drm/nouveau: Remove waitque for sched teardown")
-> > commit 5f46f5c7af8c ("drm/nouveau: Add new callback for scheduler teard=
-own")
->=20
-> I've been scanning some recent DRM scheduler changes.
->=20
-> I think we should likely revert:
->=20
-> bf8bbaefaa6a drm/sched: Avoid memory leaks with cancel_job() callback
->=20
-> 5f46f5c7af8c was the only user of cancel_job. I'm not sure why we'd
-> carry dead code in DRM scheduler unless you have plans to make use of
-> this function soon.
-
-That will be added back to Nouveau soon. The reason it was removed from
-Nouveau was not that cancel_job() is broken, but that removing the
-waitqueue is not possible for other reasons.
-
-Implementing cancel_job() has the canonical way of handling the
-difficult life time issues and memory leaks associated with drm_sched
-has been discussed literally for about 8-9 months on the lists.
-
-If we can't get to a solution for a problem after 9 months of on-list
-discussions, then we are lost.
-
-P.
-
->=20
-> Matt
->=20
-> >=20
-> > from the drm/sched teardown leak fix series:
-> >=20
-> > https://lore.kernel.org/dri-devel/20250710125412.128476-2-phasta@kernel=
-.org/
-> >=20
-> > The aforementioned series removed a blocking waitqueue from
-> > nouveau_sched_fini(). It was mistakenly assumed that this waitqueue onl=
-y
-> > prevents jobs from leaking, which the series fixed.
-> >=20
-> > The waitqueue, however, also guarantees that all VM_BIND related jobs
-> > are finished in order, cleaning up mappings in the GPU's MMU. These job=
-s
-> > must be executed sequentially. Without the waitqueue, this is no longer
-> > guaranteed, because entity and scheduler teardown can race with each
-> > other.
-> >=20
-> > Revert all patches related to the waitqueue removal.
-> >=20
-> > Fixes: bead88002227 ("drm/nouveau: Remove waitque for sched teardown")
-> > Suggested-by: Danilo Krummrich <dakr@kernel.org>
-> > Signed-off-by: Philipp Stanner <phasta@kernel.org>
+On Tue, Oct 07, 2025 at 02:37:40PM -0700, Manivannan Sadhasivam wrote:
+> On Tue, Oct 07, 2025 at 10:18:51PM +0530, Mukesh Ojha wrote:
+> > For memory passed to TrustZone (TZ), it must either be part of a pool
+> > registered with TZ or explicitly registered via SHMbridge SMC calls.
+> > When Gunyah hypervisor is present, PAS SMC calls from Linux running at
+> > EL1 are trapped by Gunyah running @ EL2, which handles SHMbridge
+> > creation for both metadata and remoteproc carveout memory before
+> > invoking the calls to TZ.
+> > 
+> > On SoCs running with a non-Gunyah-based hypervisor, Linux must take
+> > responsibility for creating the SHM bridge before invoking PAS SMC
+> > calls. For the auth_and_reset() call, the remoteproc carveout memory
+> > must first be registered with TZ via a SHMbridge SMC call and once
+> > authentication and reset are complete, the SHMbridge memory can be
+> > deregistered.
+> > 
+> > Introduce qcom_scm_pas_prepare_and_auth_reset(), which sets up the SHM
+> > bridge over the remoteproc carveout memory when Linux operates at EL2.
+> > This behavior is indicated by a new field added to the PAS context data
+> > structure. The function then invokes the auth_and_reset SMC call.
+> > 
+> > Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
 > > ---
-> > Changes in v2:
-> > =C2=A0 - Don't revert commit 89b2675198ab ("drm/nouveau: Make fence con=
-tainer helper usable driver-wide")
-> > =C2=A0 - Add Fixes-tag
-> > ---
-> > =C2=A0drivers/gpu/drm/nouveau/nouveau_fence.c | 15 -----------
-> > =C2=A0drivers/gpu/drm/nouveau/nouveau_fence.h |=C2=A0 1 -
-> > =C2=A0drivers/gpu/drm/nouveau/nouveau_sched.c | 35 ++++++++++----------=
------
-> > =C2=A0drivers/gpu/drm/nouveau/nouveau_sched.h |=C2=A0 9 ++++---
-> > =C2=A0drivers/gpu/drm/nouveau/nouveau_uvmm.c=C2=A0 |=C2=A0 8 +++---
-> > =C2=A05 files changed, 24 insertions(+), 44 deletions(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.c b/drivers/gpu/drm/=
-nouveau/nouveau_fence.c
-> > index 9f345a008717..869d4335c0f4 100644
-> > --- a/drivers/gpu/drm/nouveau/nouveau_fence.c
-> > +++ b/drivers/gpu/drm/nouveau/nouveau_fence.c
-> > @@ -240,21 +240,6 @@ nouveau_fence_emit(struct nouveau_fence *fence)
-> > =C2=A0	return ret;
-> > =C2=A0}
-> > =C2=A0
-> > -void
-> > -nouveau_fence_cancel(struct nouveau_fence *fence)
-> > -{
-> > -	struct nouveau_fence_chan *fctx =3D nouveau_fctx(fence);
-> > -	unsigned long flags;
-> > -
-> > -	spin_lock_irqsave(&fctx->lock, flags);
-> > -	if (!dma_fence_is_signaled_locked(&fence->base)) {
-> > -		dma_fence_set_error(&fence->base, -ECANCELED);
-> > -		if (nouveau_fence_signal(fence))
-> > -			nvif_event_block(&fctx->event);
-> > -	}
-> > -	spin_unlock_irqrestore(&fctx->lock, flags);
-> > -}
-> > -
-> > =C2=A0bool
-> > =C2=A0nouveau_fence_done(struct nouveau_fence *fence)
-> > =C2=A0{
-> > diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.h b/drivers/gpu/drm/=
-nouveau/nouveau_fence.h
-> > index 9957a919bd38..183dd43ecfff 100644
-> > --- a/drivers/gpu/drm/nouveau/nouveau_fence.h
-> > +++ b/drivers/gpu/drm/nouveau/nouveau_fence.h
-> > @@ -29,7 +29,6 @@ void nouveau_fence_unref(struct nouveau_fence **);
-> > =C2=A0
-> > =C2=A0int=C2=A0 nouveau_fence_emit(struct nouveau_fence *);
-> > =C2=A0bool nouveau_fence_done(struct nouveau_fence *);
-> > -void nouveau_fence_cancel(struct nouveau_fence *fence);
-> > =C2=A0int=C2=A0 nouveau_fence_wait(struct nouveau_fence *, bool lazy, b=
-ool intr);
-> > =C2=A0int=C2=A0 nouveau_fence_sync(struct nouveau_bo *, struct nouveau_=
-channel *, bool exclusive, bool intr);
-> > =C2=A0
-> > diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.c b/drivers/gpu/drm/=
-nouveau/nouveau_sched.c
-> > index 0cc0bc9f9952..e60f7892f5ce 100644
-> > --- a/drivers/gpu/drm/nouveau/nouveau_sched.c
-> > +++ b/drivers/gpu/drm/nouveau/nouveau_sched.c
-> > @@ -11,7 +11,6 @@
-> > =C2=A0#include "nouveau_exec.h"
-> > =C2=A0#include "nouveau_abi16.h"
-> > =C2=A0#include "nouveau_sched.h"
-> > -#include "nouveau_chan.h"
-> > =C2=A0
-> > =C2=A0#define NOUVEAU_SCHED_JOB_TIMEOUT_MS		10000
-> > =C2=A0
-> > @@ -122,9 +121,11 @@ nouveau_job_done(struct nouveau_job *job)
-> > =C2=A0{
-> > =C2=A0	struct nouveau_sched *sched =3D job->sched;
-> > =C2=A0
-> > -	spin_lock(&sched->job_list.lock);
-> > +	spin_lock(&sched->job.list.lock);
-> > =C2=A0	list_del(&job->entry);
-> > -	spin_unlock(&sched->job_list.lock);
-> > +	spin_unlock(&sched->job.list.lock);
+> >  drivers/firmware/qcom/qcom_scm.c       | 48 ++++++++++++++++++++++++++++++++++
+> >  include/linux/firmware/qcom/qcom_scm.h |  2 ++
+> >  2 files changed, 50 insertions(+)
+> > 
+> > diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
+> > index 7b4ff3cb26ed..ab2543d44097 100644
+> > --- a/drivers/firmware/qcom/qcom_scm.c
+> > +++ b/drivers/firmware/qcom/qcom_scm.c
+> > @@ -791,6 +791,54 @@ int qcom_scm_pas_auth_and_reset(u32 pas_id)
+> >  }
+> >  EXPORT_SYMBOL_GPL(qcom_scm_pas_auth_and_reset);
+> >  
+> > +/**
+> > + * qcom_scm_pas_prepare_and_auth_reset() - Prepare, authenticate, and reset the
+> > + *					   remote processor
+> > + *
+> > + * @ctx:	Context saved during call to qcom_scm_pas_context_init()
+> > + *
+> > + * This function performs the necessary steps to prepare a PAS subsystem,
+> > + * authenticate it using the provided metadata, and initiate a reset sequence.
+> > + *
+> > + * It should be used when Linux is in control setting up the IOMMU hardware
+> > + * for remote subsystem during secure firmware loading processes. The preparation
+> > + * step sets up a shmbridge over the firmware memory before TrustZone accesses the
+> > + * firmware memory region for authentication. The authentication step verifies
+> > + * the integrity and authenticity of the firmware or configuration using secure
+> > + * metadata. Finally, the reset step ensures the subsystem starts in a clean and
+> > + * sane state.
+> > + *
+> > + * Return: 0 on success, negative errno on failure.
+> > + */
+> > +int qcom_scm_pas_prepare_and_auth_reset(struct qcom_scm_pas_context *ctx)
+> > +{
+> > +	u64 handle;
+> > +	int ret;
 > > +
-> > +	wake_up(&sched->job.wq);
-> > =C2=A0}
-> > =C2=A0
-> > =C2=A0void
-> > @@ -305,9 +306,9 @@ nouveau_job_submit(struct nouveau_job *job)
-> > =C2=A0	}
-> > =C2=A0
-> > =C2=A0	/* Submit was successful; add the job to the schedulers job list=
-. */
-> > -	spin_lock(&sched->job_list.lock);
-> > -	list_add(&job->entry, &sched->job_list.head);
-> > -	spin_unlock(&sched->job_list.lock);
-> > +	spin_lock(&sched->job.list.lock);
-> > +	list_add(&job->entry, &sched->job.list.head);
-> > +	spin_unlock(&sched->job.list.lock);
-> > =C2=A0
-> > =C2=A0	drm_sched_job_arm(&job->base);
-> > =C2=A0	job->done_fence =3D dma_fence_get(&job->base.s_fence->finished);
-> > @@ -392,23 +393,10 @@ nouveau_sched_free_job(struct drm_sched_job *sche=
-d_job)
-> > =C2=A0	nouveau_job_fini(job);
-> > =C2=A0}
-> > =C2=A0
-> > -static void
-> > -nouveau_sched_cancel_job(struct drm_sched_job *sched_job)
-> > -{
-> > -	struct nouveau_fence *fence;
-> > -	struct nouveau_job *job;
-> > -
-> > -	job =3D to_nouveau_job(sched_job);
-> > -	fence =3D to_nouveau_fence(job->done_fence);
-> > -
-> > -	nouveau_fence_cancel(fence);
-> > -}
-> > -
-> > =C2=A0static const struct drm_sched_backend_ops nouveau_sched_ops =3D {
-> > =C2=A0	.run_job =3D nouveau_sched_run_job,
-> > =C2=A0	.timedout_job =3D nouveau_sched_timedout_job,
-> > =C2=A0	.free_job =3D nouveau_sched_free_job,
-> > -	.cancel_job =3D nouveau_sched_cancel_job,
-> > =C2=A0};
-> > =C2=A0
-> > =C2=A0static int
-> > @@ -458,8 +446,9 @@ nouveau_sched_init(struct nouveau_sched *sched, str=
-uct nouveau_drm *drm,
-> > =C2=A0		goto fail_sched;
-> > =C2=A0
-> > =C2=A0	mutex_init(&sched->mutex);
-> > -	spin_lock_init(&sched->job_list.lock);
-> > -	INIT_LIST_HEAD(&sched->job_list.head);
-> > +	spin_lock_init(&sched->job.list.lock);
-> > +	INIT_LIST_HEAD(&sched->job.list.head);
-> > +	init_waitqueue_head(&sched->job.wq);
-> > =C2=A0
-> > =C2=A0	return 0;
-> > =C2=A0
-> > @@ -493,12 +482,16 @@ nouveau_sched_create(struct nouveau_sched **psche=
-d, struct nouveau_drm *drm,
-> > =C2=A0	return 0;
-> > =C2=A0}
-> > =C2=A0
+> > +	if (!ctx->has_iommu)
+> > +		return qcom_scm_pas_auth_and_reset(ctx->pas_id);
 > > +
-> > =C2=A0static void
-> > =C2=A0nouveau_sched_fini(struct nouveau_sched *sched)
-> > =C2=A0{
-> > =C2=A0	struct drm_gpu_scheduler *drm_sched =3D &sched->base;
-> > =C2=A0	struct drm_sched_entity *entity =3D &sched->entity;
-> > =C2=A0
-> > +	rmb(); /* for list_empty to work without lock */
-> > +	wait_event(sched->job.wq, list_empty(&sched->job.list.head));
-> > +
-> > =C2=A0	drm_sched_entity_fini(entity);
-> > =C2=A0	drm_sched_fini(drm_sched);
-> > =C2=A0
-> > diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.h b/drivers/gpu/drm/=
-nouveau/nouveau_sched.h
-> > index b98c3f0bef30..20cd1da8db73 100644
-> > --- a/drivers/gpu/drm/nouveau/nouveau_sched.h
-> > +++ b/drivers/gpu/drm/nouveau/nouveau_sched.h
-> > @@ -103,9 +103,12 @@ struct nouveau_sched {
-> > =C2=A0	struct mutex mutex;
-> > =C2=A0
-> > =C2=A0	struct {
-> > -		struct list_head head;
-> > -		spinlock_t lock;
-> > -	} job_list;
-> > +		struct {
-> > +			struct list_head head;
-> > +			spinlock_t lock;
-> > +		} list;
-> > +		struct wait_queue_head wq;
-> > +	} job;
-> > =C2=A0};
-> > =C2=A0
-> > =C2=A0int nouveau_sched_create(struct nouveau_sched **psched, struct no=
-uveau_drm *drm,
-> > diff --git a/drivers/gpu/drm/nouveau/nouveau_uvmm.c b/drivers/gpu/drm/n=
-ouveau/nouveau_uvmm.c
-> > index d94a85509176..79eefdfd08a2 100644
-> > --- a/drivers/gpu/drm/nouveau/nouveau_uvmm.c
-> > +++ b/drivers/gpu/drm/nouveau/nouveau_uvmm.c
-> > @@ -1019,8 +1019,8 @@ bind_validate_map_sparse(struct nouveau_job *job,=
- u64 addr, u64 range)
-> > =C2=A0	u64 end =3D addr + range;
-> > =C2=A0
-> > =C2=A0again:
-> > -	spin_lock(&sched->job_list.lock);
-> > -	list_for_each_entry(__job, &sched->job_list.head, entry) {
-> > +	spin_lock(&sched->job.list.lock);
-> > +	list_for_each_entry(__job, &sched->job.list.head, entry) {
-> > =C2=A0		struct nouveau_uvmm_bind_job *bind_job =3D to_uvmm_bind_job(__j=
-ob);
-> > =C2=A0
-> > =C2=A0		list_for_each_op(op, &bind_job->ops) {
-> > @@ -1030,7 +1030,7 @@ bind_validate_map_sparse(struct nouveau_job *job,=
- u64 addr, u64 range)
-> > =C2=A0
-> > =C2=A0				if (!(end <=3D op_addr || addr >=3D op_end)) {
-> > =C2=A0					nouveau_uvmm_bind_job_get(bind_job);
-> > -					spin_unlock(&sched->job_list.lock);
-> > +					spin_unlock(&sched->job.list.lock);
-> > =C2=A0					wait_for_completion(&bind_job->complete);
-> > =C2=A0					nouveau_uvmm_bind_job_put(bind_job);
-> > =C2=A0					goto again;
-> > @@ -1038,7 +1038,7 @@ bind_validate_map_sparse(struct nouveau_job *job,=
- u64 addr, u64 range)
-> > =C2=A0			}
-> > =C2=A0		}
-> > =C2=A0	}
-> > -	spin_unlock(&sched->job_list.lock);
-> > +	spin_unlock(&sched->job.list.lock);
-> > =C2=A0}
-> > =C2=A0
-> > =C2=A0static int
-> > --=20
-> > 2.49.0
-> >=20
+> > +	/*
+> > +	 * When Linux running @ EL1, Gunyah hypervisor running @ EL2 traps the
+> > +	 * auth_and_reset call and create an shmbridge on the remote subsystem
+> > +	 * memory region and then invokes a call to TrustZone to authenticate.
+> > +	 * When Linux runs @ EL2 Linux must create the shmbridge itself and then
+> > +	 * subsequently call TrustZone for authenticate and reset.
+> > +	 */
+> > +	ret = qcom_tzmem_shm_bridge_create(ctx->mem_phys, ctx->mem_size, &handle);
+> > +	if (ret) {
+> > +		dev_err(__scm->dev, "Failed to create shmbridge ret=%d %u\n",
+> 
+> 	"Failed to create shmbridge for PAS ID (%u): %d\n"
 
+Will apply, Thanks.
+
+> 
+> > +			ret, ctx->pas_id);
+> > +		return ret;
+> > +	}
+> > +
+> > +	ret = qcom_scm_pas_auth_and_reset(ctx->pas_id);
+> > +	qcom_tzmem_shm_bridge_delete(handle);
+> > +
+> > +	return ret;
+> 
+> 	return 0;
+> 
+> - Mani
+> 
+> -- 
+> மணிவண்ணன் சதாசிவம்
+
+-- 
+-Mukesh Ojha
 
