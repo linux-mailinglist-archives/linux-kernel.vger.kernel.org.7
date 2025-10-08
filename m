@@ -1,202 +1,125 @@
-Return-Path: <linux-kernel+bounces-845174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91EDFBC3C5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 10:14:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3346ABC3C69
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 10:15:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AEF63BA4DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 08:14:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6F4C3ACB12
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 08:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031552F3612;
-	Wed,  8 Oct 2025 08:14:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CB224466D;
+	Wed,  8 Oct 2025 08:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TLYzuiLZ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4Qldh2rM"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b="YeZWkgAN"
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45EF134BA3C;
-	Wed,  8 Oct 2025 08:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C5210A1E;
+	Wed,  8 Oct 2025 08:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759911259; cv=none; b=s2XB8J5vBwmv0z7n7TriLo5pHs2GErbpO9WROg59pB5Q7IqAB/5Gv7ZEYqZiZMm8mnjq4IWh7XOaJgtY7B/tIV0hT9el9Ey+2DB63uYFbm4DfftFtHxXCXsJ2cki5ZhvInj/N337gsBBjQc0jAwH+Gfi5aQ/gtadbpViVotCrxs=
+	t=1759911341; cv=none; b=hFQh8AJ9/nji12DyoQvcUXbh7YvCYGG7Su1+Dk91SD29YgjzrsCPLHC9LlbUe9tZScutNYtIzNcLd0Okb21GliBQqdPA64QrN1OMj3sMumb3soqbj5B12389w9/AM32cb5VMlNK++VMjFF/K0dj5wGla6zhJCRChETvquGXzIXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759911259; c=relaxed/simple;
-	bh=etNC4AoN+WiTAxrG7ImcBG+LLIlJF8oJN4cSiaXug24=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uUH+R0Y2R9D4lHCP0g9zGz9YPjJ7YQE63OXpzdkhQmj8j1ZpnJ8yxijfEdLCE3fy17+0OrD50Lz1Z15qMaAK+STt6bw+2evraMSISxGLTUbWUx8j1AT0IOMQ0UWAltIBfe3GNMTvaFfKLles6WvgAdkNdPx4jnppjKUxer4VpqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TLYzuiLZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4Qldh2rM; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1759911254;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=H5TDg8FSvQpDKH++xWAtG1t0GE6Gx0i9+KrmLqybckU=;
-	b=TLYzuiLZY2Sklg9yYjmr8SHWaWYn0YpZ3oWlUhhRWYX0FgK71fBDVLsVj+7pF1GnHowFUr
-	+0kHfwZuCRBP5WXFLjnhcx8XthcjitAg3kn0GkJiWmVfw4rNv1m5UlxhgAXGk0KsBO/+uK
-	AGJyiXtfB/bl6hLM+t/GE6wb5XFRqWSEinluaGYAN6j0qAzSjhtrMXFGGtB2c2QDxTsJOL
-	89P+5l85eLHD4i3Nhsl7erpaHiTlAm2/Wt68VQhrwt7O60gRro6SeEa7o7bis0HvTsrkjd
-	igxdjgWrL1hPnLwXlLt1U2OiX3TkzAlaV1jBNNlykpa312jmASbJgHFEclA9RA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1759911254;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=H5TDg8FSvQpDKH++xWAtG1t0GE6Gx0i9+KrmLqybckU=;
-	b=4Qldh2rMCNzlzmnuLKwkQ4g4LcJEyGBAPvTu822MxwPO39Gsbk9N4VuL6B+PaZLocm8AHY
-	+cU+LnQYG/jgo3BA==
-To: Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Frederic Barrat <fbarrat@linux.ibm.com>,
-	Andrew Donnellan <ajd@linux.ibm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nam Cao <namcao@linutronix.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linuxppc-dev@lists.ozlabs.org,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [PATCH] powerpc, ocxl: Fix extraction of struct xive_irq_data
-Date: Wed,  8 Oct 2025 08:13:59 +0000
-Message-ID: <20251008081359.1382699-1-namcao@linutronix.de>
+	s=arc-20240116; t=1759911341; c=relaxed/simple;
+	bh=P2GGlTUYTtBsyg/fxoUWVeOEvro8Z3cIvQlXbLOTlW4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HscV+/w3pfWTSG9dbV32JKsWljioIXjYc+/Obuh325LKJu4xLhN1/8ooIEfX7Kkzq2oSMyVbRWom+XhCMg5D7f6LeZ4HMyoC0tLe7YESg3EcPoR87EQ+t50HxroGOT5ZuFHLmw/IzyVhgiM+UgvaXmy68j/R67882Qbdt3DwgHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b=YeZWkgAN; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=gondor.apana.org.au; s=h01; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:cc:to:subject:message-id:date:
+	from:content-type:reply-to; bh=xTeD5TXMUUxOn6GRK8xe62w7qElKQSrw/VtIwhlCxEQ=; 
+	b=YeZWkgAN9wEogSGEbJFyatCB6AqfHCkzh9XGFNVNO7x4yIvXCJZIgFkBsabUt1vZyTf6FtCFAX/
+	gPzaZ6h4pKoGWrsHAtMaKH/E3gUBsMxCvV2tRHvJuXfHWnycyAq1G/m0KtJKoPGSjUtFwXE/eY1Dr
+	tnB7kC7FpFULAH14I/hAogugUpioU4dkmA7DeIGvYoy6puSt0jrQB+Txf88FkxauHY/Br5OHCN8bn
+	6yPrTJDZur9qll8cfMa9Bk3fZn3d5SsI03PUwq/F+NfkhhFF+flcxf0ykRJh5tnawEG9BDLUp2Hji
+	H35WQ0/76YejgvWdECfOZH/02OveXRtiQfDw==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1v6PKb-00BBN8-2v;
+	Wed, 08 Oct 2025 16:15:30 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 08 Oct 2025 16:15:29 +0800
+Date: Wed, 8 Oct 2025 16:15:29 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: T Pratham <t-pratham@ti.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Manorit Chawdhry <m-chawdhry@ti.com>,
+	Kamlesh Gurudasani <kamlesh@ti.com>,
+	Shiva Tripathi <s-tripathi1@ti.com>,
+	Kavitha Malarvizhi <k-malarvizhi@ti.com>,
+	Vishal Mahaveer <vishalm@ti.com>,
+	Praneeth Bajjuri <praneeth@ti.com>, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] crypto: api - fix reqsize handling for skciphers and
+ aeads
+Message-ID: <aOYdodeILYU2_Pjq@gondor.apana.org.au>
+References: <20251007141852.726540-1-t-pratham@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251007141852.726540-1-t-pratham@ti.com>
 
-Commit cc0cc23babc9 ("powerpc/xive: Untangle xive from child interrupt
-controller drivers") changed xive_irq_data to be stashed to chip_data
-instead of handler_data. However, multiple places are still attempting to
-read xive_irq_data from handler_data and get a NULL pointer deference bug.
+On Tue, Oct 07, 2025 at 07:27:51PM +0530, T Pratham wrote:
+> Commit afddce13ce81d ("crypto: api - Add reqsize to crypto_alg")
+> introduced cra_reqsize field in crypto_alg struct to replace type
+> specific reqsize fields. It looks like this was introduced specifically
+> for ahash and acomp from the commit description as subsequent commits
+> add necessary changes in these alg frameworks.
+> 
+> However, this is being recommended for use in all crypto algs [1]
+> instead of setting reqsize using crypto_*_set_reqsize(). Using
+> cra_reqsize in skcipher and aead algorithms, hence, causes memory
+> corruptions and crashes as the underlying functions in the algorithm
+> framework have not been updated to set the reqsize properly from
+> cra_reqsize. [2]
+> 
+> Add proper set_reqsize calls in the skcipher and aead init functions to
+> properly initialize reqsize for these algorithms in the framework.
+> 
+> [1]: https://lore.kernel.org/linux-crypto/aCL8BxpHr5OpT04k@gondor.apana.org.au/
+> [2]: https://gist.github.com/Pratham-T/24247446f1faf4b7843e4014d5089f6b
+> 
+> Fixes: afddce13ce81d ("crypto: api - Add reqsize to crypto_alg")
+> Signed-off-by: T Pratham <t-pratham@ti.com>
+> ---
+> 
+> Found this while developing TI DTHEv2 crypto driver. I narrowed that
+> these crashes in [2] are due to some upstream change and not my code as
+> the same driver is working fine in our internal 6.12 LTS version (with
+> daily CI builds not showing any regression from crypto subsystem). The
+> *only* change is replacing crypto_skcipher_set_reqsize() with
+> cra_reqsize in algorithms as this patch was introduced after 6.12.
+> 
+> Now, these crashes were not caught earlier because [3] split the
+> in-kernel self-tests into two configs (CRYPTO_SELFTESTS and
+> CRYPTO_SELFTESTS_FULL) which went unnoticed in my local development flow
+> and the CRYPTO_SELFTESTS_FULL config was not enabled till recently. [2]
+> shows after applying this patch, the driver passes all selftests
+> succssfully with CRYPTO_SELFTESTS_FULL=y.
+> 
+> [3]: https://lore.kernel.org/linux-crypto/20250612174709.26990-1-ebiggers@kernel.org/
+> ---
+>  crypto/aead.c     | 1 +
+>  crypto/skcipher.c | 2 ++
+>  2 files changed, 3 insertions(+)
 
-Update them to read xive_irq_data from chip_data.
+Thanks.  I've applied the skcipher part of your patch.
 
-Non-XIVE files which touch xive_irq_data seem quite strange to me,
-especially the ocxl driver. I think there ought to be an alternative
-platform-independent solution, instead of touching XIVE's data directly.
-Therefore, I think this whole thing should be cleaned up. But perhaps I
-just misunderstand something. In any case, this cleanup would not be
-trivial; for now, just get things working again.
+Please repost the AEAD part as a separate patch.
 
-Fixes: cc0cc23babc9 ("powerpc/xive: Untangle xive from child interrupt cont=
-roller drivers")
-Reported-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-Closes: https://lore.kernel.org/linuxppc-dev/68e48df8.170a0220.4b4b0.217d@m=
-x.google.com/
-Signed-off-by: Nam Cao <namcao@linutronix.de>
----
-VAS and OCXL has not been tested. I noticed them while grepping.
----
- arch/powerpc/kvm/book3s_xive.c       | 12 ++++--------
- arch/powerpc/platforms/powernv/vas.c |  2 +-
- arch/powerpc/sysdev/xive/common.c    |  2 +-
- drivers/misc/ocxl/afu_irq.c          |  2 +-
- 4 files changed, 7 insertions(+), 11 deletions(-)
-
-diff --git a/arch/powerpc/kvm/book3s_xive.c b/arch/powerpc/kvm/book3s_xive.c
-index 1302b5ac5672..89a1b8c21ab4 100644
---- a/arch/powerpc/kvm/book3s_xive.c
-+++ b/arch/powerpc/kvm/book3s_xive.c
-@@ -916,8 +916,7 @@ int kvmppc_xive_attach_escalation(struct kvm_vcpu *vcpu=
-, u8 prio,
- 	 * it fires once.
- 	 */
- 	if (single_escalation) {
--		struct irq_data *d =3D irq_get_irq_data(xc->esc_virq[prio]);
--		struct xive_irq_data *xd =3D irq_data_get_irq_handler_data(d);
-+		struct xive_irq_data *xd =3D irq_get_chip_data(xc->esc_virq[prio]);
-=20
- 		xive_vm_esb_load(xd, XIVE_ESB_SET_PQ_01);
- 		vcpu->arch.xive_esc_raddr =3D xd->eoi_page;
-@@ -1612,7 +1611,7 @@ int kvmppc_xive_set_mapped(struct kvm *kvm, unsigned =
-long guest_irq,
-=20
- 	/* Grab info about irq */
- 	state->pt_number =3D hw_irq;
--	state->pt_data =3D irq_data_get_irq_handler_data(host_data);
-+	state->pt_data =3D irq_data_get_irq_chip_data(host_data);
-=20
- 	/*
- 	 * Configure the IRQ to match the existing configuration of
-@@ -1787,8 +1786,7 @@ void kvmppc_xive_disable_vcpu_interrupts(struct kvm_v=
-cpu *vcpu)
-  */
- void xive_cleanup_single_escalation(struct kvm_vcpu *vcpu, int irq)
- {
--	struct irq_data *d =3D irq_get_irq_data(irq);
--	struct xive_irq_data *xd =3D irq_data_get_irq_handler_data(d);
-+	struct xive_irq_data *xd =3D irq_get_chip_data(irq);
-=20
- 	/*
- 	 * This slightly odd sequence gives the right result
-@@ -2827,9 +2825,7 @@ int kvmppc_xive_debug_show_queues(struct seq_file *m,=
- struct kvm_vcpu *vcpu)
- 				   i0, i1);
- 		}
- 		if (xc->esc_virq[i]) {
--			struct irq_data *d =3D irq_get_irq_data(xc->esc_virq[i]);
--			struct xive_irq_data *xd =3D
--				irq_data_get_irq_handler_data(d);
-+			struct xive_irq_data *xd =3D irq_get_chip_data(xc->esc_virq[i]);
- 			u64 pq =3D xive_vm_esb_load(xd, XIVE_ESB_GET);
-=20
- 			seq_printf(m, "    ESC %d %c%c EOI @%llx",
-diff --git a/arch/powerpc/platforms/powernv/vas.c b/arch/powerpc/platforms/=
-powernv/vas.c
-index b65256a63e87..9c9650319f3b 100644
---- a/arch/powerpc/platforms/powernv/vas.c
-+++ b/arch/powerpc/platforms/powernv/vas.c
-@@ -121,7 +121,7 @@ static int init_vas_instance(struct platform_device *pd=
-ev)
- 		return -EINVAL;
- 	}
-=20
--	xd =3D irq_get_handler_data(vinst->virq);
-+	xd =3D irq_get_chip_data(vinst->virq);
- 	if (!xd) {
- 		pr_err("Inst%d: Invalid virq %d\n",
- 				vinst->vas_id, vinst->virq);
-diff --git a/arch/powerpc/sysdev/xive/common.c b/arch/powerpc/sysdev/xive/c=
-ommon.c
-index 625361a15424..8d0123b0ae84 100644
---- a/arch/powerpc/sysdev/xive/common.c
-+++ b/arch/powerpc/sysdev/xive/common.c
-@@ -1580,7 +1580,7 @@ static void xive_flush_cpu_queue(unsigned int cpu, st=
-ruct xive_cpu *xc)
- 			cpu, irq);
- #endif
- 		raw_spin_lock(&desc->lock);
--		xd =3D irq_desc_get_handler_data(desc);
-+		xd =3D irq_desc_get_chip_data(desc);
-=20
- 		/*
- 		 * Clear saved_p to indicate that it's no longer pending
-diff --git a/drivers/misc/ocxl/afu_irq.c b/drivers/misc/ocxl/afu_irq.c
-index 36f7379b8e2d..f6b821fc274c 100644
---- a/drivers/misc/ocxl/afu_irq.c
-+++ b/drivers/misc/ocxl/afu_irq.c
-@@ -203,7 +203,7 @@ u64 ocxl_afu_irq_get_addr(struct ocxl_context *ctx, int=
- irq_id)
- 	mutex_lock(&ctx->irq_lock);
- 	irq =3D idr_find(&ctx->irq_idr, irq_id);
- 	if (irq) {
--		xd =3D irq_get_handler_data(irq->virq);
-+		xd =3D irq_get_chip_data(irq->virq);
- 		addr =3D xd ? xd->trig_page : 0;
- 	}
- 	mutex_unlock(&ctx->irq_lock);
---=20
-2.51.0
-
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
