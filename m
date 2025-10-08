@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-846062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C95BBBC6EF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 01:42:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7629BC6F06
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 01:47:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 997C8189CE1C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 23:42:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF89F189842D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 23:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434892C2AA2;
-	Wed,  8 Oct 2025 23:42:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360142C3244;
+	Wed,  8 Oct 2025 23:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l6hkWjXW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oIZVnmxG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA9D2264A3;
-	Wed,  8 Oct 2025 23:42:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E59221FAE;
+	Wed,  8 Oct 2025 23:46:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759966937; cv=none; b=p7lvUgnZxxtIG5v+CuQm6JRk7uvscmzUcoX+fR244s0+3mcwCg07x9bix/s1NUwozBd/iMAbLyuG1Ekp7WQVwv/YYHVOdbrtvPBxeVoXWku283PckYmhPDEXlH+p03evZxfv5nuH6clz347zoVi1MR/3v/avQmSNmirtD34na08=
+	t=1759967213; cv=none; b=hPiqRoeafampj2hqPsSgFmtFdT8OfGEvOEzWHJiUKbfzz8XcpJw0vRxm4hazXaMXqMGmaWHhbai9khulXzaIx76jBVgPMcOO1BBAb8UUozV1HOqZLGU2uNcVP0UzZFTygJR+A5DygUCnxhyw/YQmGoTHWqWQJkiSlCFtmQpoVZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759966937; c=relaxed/simple;
-	bh=Sh81BlQNbHf2Tut+VaTzcvGalFFYoQRL5dyvIXHuqCU=;
+	s=arc-20240116; t=1759967213; c=relaxed/simple;
+	bh=60o+HfuSsJMQwDdG60nj/x9q59RFDBqDo31TGDgXga8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ef4MyhsDKaSNCY3HHs0Oaqt9FGwGYxglpPGR2uNi6+ejKLjoL4XYDhYRXpsjjGfDUc+peVlgev+urI9sWPEwPvu/UyhyfmucDV0BIit5ikkiNmMeeZQyIFlg1XwyCujKNvih2asRuygWOHp87H2+LJ95M0wByHcHpm2dSptWOok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l6hkWjXW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A79EC4CEE7;
-	Wed,  8 Oct 2025 23:42:12 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=sbkyWhSh/RUZpXKpEmSI+G2bLUavFh/gkJH2/tdGkmX5BVJnhtqsZIv3lzELgajBtD1Fk+cUL8ZaT1U8qwrV9hgHfJUXf5Lk6l4wRZ9GT91aSYSyz/RMusRlmYEsRdrKMFI/QgPBpahY0sUoVobGjfdsb6kT0uI0fhZ/ST4+VcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oIZVnmxG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FD6AC4CEE7;
+	Wed,  8 Oct 2025 23:46:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759966937;
-	bh=Sh81BlQNbHf2Tut+VaTzcvGalFFYoQRL5dyvIXHuqCU=;
+	s=k20201202; t=1759967212;
+	bh=60o+HfuSsJMQwDdG60nj/x9q59RFDBqDo31TGDgXga8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=l6hkWjXWUMp0R/H3RvuMJnEeatm8vYMUo4/zBl6UNUbWKzHcxaCLdN9zEAHXC1fzj
-	 q7/4Hd1rK/6R/i/Iuwlo8/kLAICpsGp5pr4HCDjl+yYFS5KEXt6AUp0T0STo3lpQBx
-	 HI6FZfAxzg+O//0KTUsxclKwINYkkj1al7LW3sWT9Sl5XmQ82io946mNSi3s3MsODg
-	 jnKyd+1Tg02OGbuSdMh7vr13/0tgLdHR0hh5harSYQLNas4Yfguj4v6WNzRVuADMXv
-	 si+6Rm176+QSoYsiNyLQ1FtEfJcpVW68tP64k11fNISO/fMbw8J+2UDehezugDNfp/
-	 8unozSQA5W3KQ==
-Message-ID: <13426fe2-d4cc-4d87-bc4a-4a6dca955456@kernel.org>
-Date: Thu, 9 Oct 2025 08:42:07 +0900
+	b=oIZVnmxGpSoFvsC+TnJRZAtjpGqeN+rr4+jnzKdoOKug59vua14+1oRplacwJ4tat
+	 H/JWj8NurWy3A4dD47gfEdfl6zDAH9m1/KGi5r/HWtCS2ucjo3S0Xy6ccUwxjy78VG
+	 WmpBdi40hI4VuJHpt9PT5ZVvS3ErU7Axg7LxLbFkXr86tcrB17EtIGOVls4oY1Kw37
+	 3lTtT88eQ9tI8s70NNsJSSwdrsDvPsio+PymPd8GNf6bdAH2XVjZIE0obRaWpHcPiZ
+	 pD3BtWfNh2dfCk3J3mg0k8k5hx1p1Mkc1ZZ1zgvi6c9s0SdMquVEo+NiPEdEfAuW/C
+	 MncftIOOwNpxw==
+Message-ID: <1b5f080f-2c18-43e7-9c47-b5b09847c51d@kernel.org>
+Date: Thu, 9 Oct 2025 08:46:44 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: soc: samsung: exynos-sysreg: add
- power-domains
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251008-power-domains-dt-bindings-soc-samsung-exynos-sysreg-v1-1-ab41c517dec6@linaro.org>
+Subject: Re: [PATCH v6 1/2] dt-bindings: Pinefeat cef168 lens control board
+To: Aliaksandr Smirnou <asmirnou@pinefeat.co.uk>,
+ jacopo.mondi@ideasonboard.com, hverkuil@xs4all.nl, mchehab@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251007195732.16436-1-asmirnou@pinefeat.co.uk>
+ <20251007195732.16436-2-asmirnou@pinefeat.co.uk>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,21 +102,45 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251008-power-domains-dt-bindings-soc-samsung-exynos-sysreg-v1-1-ab41c517dec6@linaro.org>
+In-Reply-To: <20251007195732.16436-2-asmirnou@pinefeat.co.uk>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 08/10/2025 23:17, André Draszik wrote:
-> Sysreg can be part of a power domain, so we need to allow the relevant
-> property 'power-domains'.
+On 08/10/2025 04:57, Aliaksandr Smirnou wrote:
+> Add the Device Tree schema and examples for the Pinefeat cef168 lens
+> control board. This board interfaces Canon EF & EF-S lenses with
+> non-Canon camera bodies, enabling electronic control of focus and
+> aperture via V4L2.
 > 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> ---
->  .../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml         | 3 +++
+> Power supply is derived from fixed supplies via connector or GPIO
+> header. Therefore, the driver does not manage any regulator, so
+> representing any supply in the binding is redundant.
+> 
+> Signed-off-by: Aliaksandr Smirnou <asmirnou@pinefeat.co.uk>
 
-It is not part of power domain for any existing SoCs, at least nothing
-indicates that so this should be restricted as in example-schema to GS
-sysregs only.
+You already got review at v4! Why are you forcing us to do the job
+multiple times?
+
+<form letter>
+This is a friendly reminder during the review process.
+
+It looks like you received a tag and forgot to add it.
+
+If you do not know the process, here is a short explanation:
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
+of patchset, under or above your Signed-off-by tag, unless patch changed
+significantly (e.g. new properties added to the DT bindings). Tag is
+"received", when provided in a message replied to you on the mailing
+list. Tools like b4 can help here. However, there's no need to repost
+patches *only* to add the tags. The upstream maintainer will do that for
+tags received on the version they apply.
+
+Please read:
+https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+
+If a tag was not added on purpose, please state why and what changed.
+</form letter>
+
 
 Best regards,
 Krzysztof
