@@ -1,162 +1,255 @@
-Return-Path: <linux-kernel+bounces-846021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08208BC6CC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 00:32:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74FBABC6CCF
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 00:34:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 46B96344363
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 22:32:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6470D1897C51
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 22:35:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0832F2C21EF;
-	Wed,  8 Oct 2025 22:32:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E9592C21E5;
+	Wed,  8 Oct 2025 22:34:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p63Ul3tv"
-Received: from mail-yx1-f47.google.com (mail-yx1-f47.google.com [74.125.224.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LZ4vUHDq"
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011033.outbound.protection.outlook.com [40.107.208.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED2E24DCF9
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 22:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759962753; cv=none; b=ZhWM5Cqzu/61Bz1WUdohU/mgI6FkCs2FQjJhgyERRLu32QpFsv14BqV+yOZxkRCJ9eUgtrNuWmj74ZjgeiXmeauAYcMKJokTUgvqnU2myxd2q6lVSzCVF/gR+PAbPSRgG5OLxrJYK83D09Z5pqCcl72SgeTjnRXV3XtHudPOEBY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759962753; c=relaxed/simple;
-	bh=QLJvDD80Ts+jq/Te/fByXHFw2lX7qriJtxUTxcdfGYk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lNYWT9v957j7DvSkLlrVeZVHAY1+ws17y1dPafqUVGk56TGtscC8a751TIfeuu/lvqWlkweaqeOCX1ey076J8jAb37+6oJyK/b34uTGxQr8Ls0QmYaJ0+pbrYgBvl8eU/lcLpy7tbIKusIn05Czh81mIBk0jGqfkS9lvhckbxp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p63Ul3tv; arc=none smtp.client-ip=74.125.224.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yx1-f47.google.com with SMTP id 956f58d0204a3-6352a77add0so502976d50.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 15:32:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759962750; x=1760567550; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oQg/oGPX3QlPO44vwiPmFn7QHJjEMDGpRp1ZFhGCDj0=;
-        b=p63Ul3tvVv7UXIhLQOrEO8Q+8x0ggDdXHHumYvlIk5LVRcGyaEwvb0cdCdRj9dTd79
-         xbsmJKRhxeb/WxQAoiiqbhZx4+G0ZEnmL45MA0WsCnEThlskv668oE8OrIgOpV7NuxTd
-         jSekOhApeJS2/kn/TnFQ85KWtemB+ptXyuh11P/V5QlgzG5CrcQws9H9g89c+fhCOQ2x
-         18v5XsHEm7fkzaRQ5z7RIAuVGJZOZzn5KF+IaYWDFv+3XIRoKYmbF9FRfmfsokCrXw25
-         GYqHEjKhyrdYMptloNaIkZpqlM+fUNqysJlNjJ4ALDi8GYeDAUjjYIie7hSBpy9Jw8Us
-         ZTog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759962750; x=1760567550;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oQg/oGPX3QlPO44vwiPmFn7QHJjEMDGpRp1ZFhGCDj0=;
-        b=OgfsA8ZLR/O5JZv1TR9i1GP5q4E0HG3tZqdFOoCoq10BvQRPLpxonHp7cOZw+NE4mW
-         2uxhwo36pYoQBoRh1OQqXEup3AvkHOhZGCljwIK8TgH2q3F7lb5wfaFbdYZNW2DdB0Ym
-         4aeLaw+W7umhCZabcY2KyRCUu4zlXoCvS5RiO/XtK1csCHsnbOzU245oBrdKHfcpc4/U
-         5aw6W4E0vzbeiwvhNIUx/1u7SZBPzcVGnppXUfNYuBckPaMjWg6nlnz1+wmOa7+FqC8E
-         wPPoUObOFRN4wpxNk7IPiKqFHkAJkfCv/3UnNg+irCGmaReKcE2zIkHgcefUTtYbhF3T
-         aNWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUczkiUYvCe7TvOO/Y1rD8LSlvfX42yOnsx0C25tSj7wZkzpjyTUZML+ECLnK/LSMr8eTo+tK/YadOLQCQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+wXt5fDdjpTCi8etU/sRZ2StAjB41wGYyg8ZbEVMLjj2UB0VL
-	HqNaNe7iazfnTXcqxl+6+z7gEQhFtvkHcQ7fp/BImoiCdVEA7osVQkDfle3tnUbAOkxtsR6xGN9
-	P/r70jONgBIS7wifrtqvc9UzIHn6t8Wq2VgKQLN2g
-X-Gm-Gg: ASbGnctkOvlc84o7Vrp/D9NoT/a5M0QvQ/Blip3blLpbl+2Kak4fTGDh+JEceL2t/4q
-	c11IVZaTjOK9CRU+dRFevOtAR9HOSMYn4BHw99jfw21qPa25I6abVb4WpdbY0B4rltX97fc5f+e
-	MZ9/VaFYFajZnrNwloFyyYFPn6oNBRWlZewOrJv6ZEqquKuMnDCs/bjRN7BmBEfX8llT6T0CGTL
-	BViY+KBno9Mo7WlJzn4h43cD19IUzDLJOIKcaf9EtC6JKvGyAA7VG8eXj/kegyspFhVzpoIly0H
-	KnY=
-X-Google-Smtp-Source: AGHT+IHIwhJ1jTa6pSoNA6/xh10XCnJ12TGkOcCTYPDGo29d1Uylhw3j/X7DZaX30WkFO3YvYercS8T1QZ1hYdEvctA=
-X-Received: by 2002:a05:690e:1551:20b0:635:4ecf:bdcc with SMTP id
- 956f58d0204a3-63ccb964b4bmr4231044d50.46.1759962749615; Wed, 08 Oct 2025
- 15:32:29 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A181C8630;
+	Wed,  8 Oct 2025 22:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.33
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759962885; cv=fail; b=aEEbsyrU4Gx9tMP6C5O+O0B5D9r380qKAViqSPxa3ud9klqyn/Cq2XJdPglqSD2AkHSN618CF1syA52568xLYm5G5KUHy5UfrDTmOpSFnELX/CHGGicIA9PZp4qeHcScWUXpCkcGdV/MmMKNCBrxfS8EGL++t1zj2gqp86lYnDQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759962885; c=relaxed/simple;
+	bh=GyU4SI/Kp8jNwlh+e6oB6Luye0IiglTU5xWO+5UT/+8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=B0TgAe0a6KIZZYFp7cbkvHfEQ356hgaKsjyiZa/8TTeOPoYzuu7ir/22jYbpfge4taMhd0B8filZTWIaIer16RRbst6hD5/DRwXD6ux5ma308huYsBwJd1yD9igu92djWPC+Zizj0oqrKZDxjVcGK8uOszBg5cwUVsM5UtD4oVU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LZ4vUHDq; arc=fail smtp.client-ip=40.107.208.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FuHL3+m/4p0ciLvYlW7jeWSo5ciaJthqahluPw82UsJwaUKRHowjLYpRLx0TrwLe8ZefEgEPZsD7N2oTM6mV+HEVXPPhbqPWJGKqdqGR88RvGk5Gr8gO+YYMB3gN+7D4cFu/it/NTx69+4QJff01k39l6gk5l7kxE6BiinjZzaOwUgVkRQblLhG+wGoJH9C2lahst9A/57v+VZ9YyF0FDk0KRP+KUdVBpxPzF+UTmlfopKRuCTbCuBt5odvYBtfqBR2hENDQv+r9By1d/00uO4s4uYwKFyv1YE21sJN4FPYtq6TrnE9qPmVZyNhpa93SULLgKygZhKcFr25YUJkeIA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Fbq61dFWDMiAOOae1Xbu2QzxeMoKWrnuC6SW7Jg9VAA=;
+ b=Jo8b0B2jeFHqi0GlFKt+DaTU8bMmf78ZgMiQzSX9saC+w714ermKwMqR+GvRSNUV5K2qQZQ6Wi/xDYRbVqw2SCDrkUo+HNwLzbqrd+xRASJdeO0aFWJJO9dn91/nUCZ5c7p2rvBJEvMwzvYEBcSJD/dxwLFV+KpanIC3x0eX7NhAHGc1AUEQgqYtzX2q1H278pJ36a+rEG7e1UHs3jmYaNu9D/oKU7OzZkbvYiDLHcaG1K5DBNFXrrCTpRsNqm1G6YtvP+z1o1LIFhZnE7Impc00vO2hrGRsIz4aF+VGEORlhmiuI4tgA1Ldq6BTUmf8waNzg/Eq+9R8/FR2c1Wfzw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Fbq61dFWDMiAOOae1Xbu2QzxeMoKWrnuC6SW7Jg9VAA=;
+ b=LZ4vUHDqx4f1fKIwGqtahlEQBXXeKpRDdybyU+YEy8vuaGlsdZeMcC2ceTndLkFtx0DM+hqXgq6ZSkEv9Sm0difHPS866K8oW/srEG/WL7izUf4GoMqeiMeMtVI0rE+NQjfkROM2XvleKrUckyUyzIqdNr3KhFFSeOe+kDx+aoVpm8ED5h6Sw8fSxT+hFgmTQuo0B3oipBv95dq953qT5JAENJU48skm1r6935B6jKTxmQrduGDqnSp4SY94t4oRipM66OkxZK5ABZMM1saqS/2HcrYwoRrgdUvvKu6uQXDzI3SosT8blrbm3nIZIlbb4uv4U9WkEYMY1pIkJI6sQA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
+ CH8PR12MB9792.namprd12.prod.outlook.com (2603:10b6:610:2b5::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.9; Wed, 8 Oct
+ 2025 22:34:41 +0000
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe%4]) with mapi id 15.20.9203.007; Wed, 8 Oct 2025
+ 22:34:41 +0000
+Date: Thu, 9 Oct 2025 09:34:36 +1100
+From: Alistair Popple <apopple@nvidia.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	acourbot@nvidia.com, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	John Hubbard <jhubbard@nvidia.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org
+Subject: Re: [PATCH v4 01/13] gpu: nova-core: Set correct DMA mask
+Message-ID: <tmworgafsb7jgxyk3muoj4plhhc57xrlzy7g7cyqahvrj6ame6@5qykqhbtpswf>
+References: <20251008001253.437911-1-apopple@nvidia.com>
+ <20251008001253.437911-2-apopple@nvidia.com>
+ <DDCVDASJNW9T.BUT6XK1WXD0A@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DDCVDASJNW9T.BUT6XK1WXD0A@kernel.org>
+X-ClientProxiedBy: SY5P282CA0175.AUSP282.PROD.OUTLOOK.COM
+ (2603:10c6:10:249::26) To DS0PR12MB7726.namprd12.prod.outlook.com
+ (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250930172850.598938-1-jthoughton@google.com> <202510041919.LaZWBcDN-lkp@intel.com>
-In-Reply-To: <202510041919.LaZWBcDN-lkp@intel.com>
-From: James Houghton <jthoughton@google.com>
-Date: Wed, 8 Oct 2025 15:31:53 -0700
-X-Gm-Features: AS18NWACWefjyXnJ3mzO_5c1LrSHUfnzIGfip6tiGf7K_b7r41zRxk-Vv_BIoCI
-Message-ID: <CADrL8HXOPOhWXa9o36m5wh-YJyVoMOXyj4R0_7EdUQ6nhJ-avQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] KVM: For manual-protect GET_DIRTY_LOG, do not hold
- slots lock
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: oe-kbuild@lists.linux.dev, Paolo Bonzini <pbonzini@redhat.com>, 
-	Sean Christopherson <seanjc@google.com>, lkp@intel.com, oe-kbuild-all@lists.linux.dev, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|CH8PR12MB9792:EE_
+X-MS-Office365-Filtering-Correlation-Id: 34e3ab8c-032c-42ae-e024-08de06badee3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?gR8g9FdR2DQIxL3T35e7zuAtYMUAAn59mHXoK6MpcZ0GWn9JWvQ9glL75Ed7?=
+ =?us-ascii?Q?mPztykbdiqZbHCEvjc1Dj1o4Kc5jzDlvCFne5Bon4nUleKFl6JtNDG7HUdnR?=
+ =?us-ascii?Q?HMPUcLynBqWUsr+WOcL/h/IZ/+dBl2gxUkUvrlUjdYGwu4okmiugkPBBby9B?=
+ =?us-ascii?Q?+w4kzOTWn9s7QPnW8qgTAaBfXIAxwBIZ7Y1M8XnfjrLxaxsqb0ChrS7Yk3mM?=
+ =?us-ascii?Q?VTiwFIsTFLl4uAZvIXavm6mgjAM8TWDbrQEWPDqXW08NbtXQxg6BSeVBUdwP?=
+ =?us-ascii?Q?vA1X3umUIa5cmRCe+GdIuQpMBFMmmSIEzIqJQCifcGSaI42ceTC3l0BIjibM?=
+ =?us-ascii?Q?TkfkDDdS+3VZ0r/xTgafeWyxGvggTOWwmR49dPauVAY87DHE70wmB3/ZBZNV?=
+ =?us-ascii?Q?U1cxWCK/vpQwUaJQH/EBA784oIpWcxv0RO4W+Dv8/96KyJGCI8cba9PaHZOQ?=
+ =?us-ascii?Q?FFIXaRQ095YbvlpzA607B5eXDVTnxyoM3c/Hk+nFKDlf1ao+4O/TVCSQ4mex?=
+ =?us-ascii?Q?Fla42CuvcUo2wj/XnZaktmLMQsvixoe6CvqgYlELrA256HtLtayCNjHaYy/e?=
+ =?us-ascii?Q?mmRInlqN2v1Z0tv5pSQuD/ucZQRVJuzyVmTxVFMEYvqgZLA2LQIuI7AIESi4?=
+ =?us-ascii?Q?i7w3qh5gqu+gcoqxmh7wO90PPHKgFu9zQ+FpTcN56g9HetcETP+BE/jacPrP?=
+ =?us-ascii?Q?6HpSCwsboaAzQnyMN7nuTkThKOHDVnusxV2Yi+TN3Ot356ZS/BwDSfEqS0gq?=
+ =?us-ascii?Q?lDuUqxBUL9aEQCbVcWftjsLnLXkoyArLGxBHPxxsUYaTIdecoF9x8YvuJwdX?=
+ =?us-ascii?Q?WKZta6s/VlgF0iEbiVrCWHNADXunZm5lgxO0P2KZ8gfg7Vv7unvYQXRolJse?=
+ =?us-ascii?Q?ub7f5t763QsNFzCmcrNvZnuXRJyFpbKDuOiIEIapI0u/EuZB/f866V35IFnl?=
+ =?us-ascii?Q?o/8Ecdsxhd8MKLHnVPTLZ/znsQSbez49lJXe1OURNCqxaNBwNvajzcILezwU?=
+ =?us-ascii?Q?X6xWWD47MBgl/GkTpdYbW3hLbf+LV+AKXJskcm9eqxKksKQBJNuJI6BsDcOX?=
+ =?us-ascii?Q?GrvdG8mhayY6jUMUdWeFlnpssYNp9KJS9ZEGJTFYOzSjzLUIZJ5xAGhkUNwA?=
+ =?us-ascii?Q?9rEsU/7wCWk17+cgHep4okEkojjImqoo3QNO6XND6IQq/sOwvyFbfQYnMveu?=
+ =?us-ascii?Q?CAkaR1LZwrwDGLGLVorhSIrJj4bPZHdt/1UB9M8yC8C85qQ2MASKbh83G+zw?=
+ =?us-ascii?Q?1/yX6Fp5DPqIvppuwUAzEM55QvGTT0UCCbHr01egdWTafyKE0X1BeJnXsOtu?=
+ =?us-ascii?Q?6O5smrxte+YJibTyDTtuc4mFtvcnXHffnqdU2OPej00QCcUNIzw8DAFgPccp?=
+ =?us-ascii?Q?8DSF8PpMHrN/QN7O1vnUZIDm0TaZd2wnur1yzhOYkeKpwWMbrVey/WJ5VWaC?=
+ =?us-ascii?Q?zBXNecnPa8PVk567ZEXeHA/+tXF0FVZm?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?o1pwkjoI+sOxIisY558eub8rwQuk+90hVlq1jEUSy4GUZ0ImjnnWnr/YIAAr?=
+ =?us-ascii?Q?MtThZYtcgnai1OhGhV1acqxYpbld9jlwC0L1yTNF7l1v+yvGRJGKJil1V/bt?=
+ =?us-ascii?Q?29//w1R/6nGw54FkG7Xv3K89r0tCB9bUtEXJl8erRKqayLjg3eiMjHbhI7/i?=
+ =?us-ascii?Q?QAYFNV6V+ML1qRZhYbfhNn4gJZMrADe7oGSqilrIjCPWGxuqwlhHGXstq4m8?=
+ =?us-ascii?Q?IWBXNb+5M38xoC/ZKQuNCvzLGpVCjdP2CfyWWq/ETJtPCPsFxPAporriuRuB?=
+ =?us-ascii?Q?Yd3TT17OTmQ7WR+AErgXRjpnV7GStQI2JiaAByQzExPWjK4W6ef9eN5PrKZI?=
+ =?us-ascii?Q?BUkgygfklIEmGBlzXAN9X+O2ToaTzAw5sCc491YWN3Kv2V1dNrv/aDve0QGW?=
+ =?us-ascii?Q?XSOXKny7XjCUIp6m9SZ19bXA2ai7IlvCbXzlk034ztlFoQCQPhpjRt7qgMLI?=
+ =?us-ascii?Q?NPfE93fGZYoOLg2qEI6++x7mePSUR9oKbJ2oRDB2cnYNWQ86eHj07HLWNKP+?=
+ =?us-ascii?Q?hKMbQfPsAVA848jOZxj7SH+J2r3UtFoMdp0I+QZ4abByoLH3qt0gUTj6Mgxm?=
+ =?us-ascii?Q?sx+6ehWFnAArhauqXS2u4+P6TirjsBCHz9csKHj4rSpwLXe3B2pWRhvQ4yBA?=
+ =?us-ascii?Q?rxFz8ajhhMvSxVepNNvswLQtFb4s24r0yXRNekoavgIVfOIY3UlqL2YB7sVn?=
+ =?us-ascii?Q?0U+HKyfLUdd+ZszBmSrW3VQc8WD+ulrIRqeNv0ZGiybkRF9Md+GuJzwCWeS9?=
+ =?us-ascii?Q?KsA3yFjxTaXdxz2bNmyGMGlFfET/bSTKBT8dYm9uheF+5B47fNDa8XmPkkax?=
+ =?us-ascii?Q?Z2k9CWNwLVWnqPYM67vqKCJG04jGZbqC4dJwVWag20P4wa5QkLNvqhkiYvD/?=
+ =?us-ascii?Q?jNks2CWudtdKZKoFJyRBonmU8jj3WbVlerXJVAuTmjbrHTcFUwbcqoRWd2cr?=
+ =?us-ascii?Q?oKbSOU5w7DUpZhiXDVrEsp2iWxgZgifFgneiH6/Rzwzy1niZipAAtRTeNsph?=
+ =?us-ascii?Q?NlpTNIBS/g0JS7ZzlLtMzlpWPZnXiYOwr7YgmKVAqVHU5xTNPBCBzSW+SQlk?=
+ =?us-ascii?Q?tXbh+gOT9/RX4eKE5VelYca8Vs/Ovn5AEe3j+cmL6bjzCj5tKiKI3aParpdi?=
+ =?us-ascii?Q?OI/csqcNMBZ6qBRKP3qFXcFcs8ICbCgdMpN7LJP6dlPVE9g4nRDZEF67tK67?=
+ =?us-ascii?Q?Ub8fzf7caf1m77lKoQc6sD4wjYE4Bd8b7kz4TjARw70eAXTn/mYfCCuFKSeB?=
+ =?us-ascii?Q?o/aXwzusWATVnP9sVcS+7sKCi1TIweFRY8ZQZA5byY6CmiEn8yXlJkyl8RjH?=
+ =?us-ascii?Q?fk0oiEaOBfCGrBuMVIXjNJScpVKbjxpTSF2rNpyWdvquUwstvEBSK40h8Wu/?=
+ =?us-ascii?Q?wBETrndiydQhSvTp944SNJsrErm4MtWiZXYelHwvtO14J0WsY0WWzFA+xpyZ?=
+ =?us-ascii?Q?uRE1l3n221LozAy9NXV6Ekq4JEzSm5L0SiejbDL9IJMyccAmJi/Je7dnF+wj?=
+ =?us-ascii?Q?70L3HDjkawY5PPOYz+ZnjOilxrCXpIvpMNHuXbQpijNuMUWvxeaCHOePcxMC?=
+ =?us-ascii?Q?C7zI+aPBXrXHawir2RjhYxGEQM98Zb/cHJ7aO4kH?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 34e3ab8c-032c-42ae-e024-08de06badee3
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2025 22:34:41.0321
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2BEpOpHDfUAZ4U+4j75gtDqWcJGfzfMV16CAFCL9+V63G7Se6D6QJRG3vPRIS8HsIqs3p7HYdmtutvZ8oaEwNQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH8PR12MB9792
 
-On Mon, Oct 6, 2025 at 12:33=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
->
-> Hi James,
->
-> kernel test robot noticed the following build warnings:
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/James-Houghton/KVM=
--selftests-Add-parallel-KVM_GET_DIRTY_LOG-to-dirty_log_perf_test/20251001-0=
-13306
-> base:   a6ad54137af92535cfe32e19e5f3bc1bb7dbd383
-> patch link:    https://lore.kernel.org/r/20250930172850.598938-1-jthought=
-on%40google.com
-> patch subject: [PATCH 1/2] KVM: For manual-protect GET_DIRTY_LOG, do not =
-hold slots lock
-> config: x86_64-randconfig-161-20251004 (https://download.01.org/0day-ci/a=
-rchive/20251004/202510041919.LaZWBcDN-lkp@intel.com/config)
-> compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0=
-227cb60147a26a1eeb4fb06e3b505e9c7261)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> | Closes: https://lore.kernel.org/r/202510041919.LaZWBcDN-lkp@intel.com/
->
-> New smatch warnings:
-> arch/x86/kvm/../../../virt/kvm/kvm_main.c:2290 kvm_get_dirty_log_protect(=
-) error: uninitialized symbol 'flush'.
->
-> vim +/flush +2290 arch/x86/kvm/../../../virt/kvm/kvm_main.c
->
-> ba0513b5b8ffbcb virt/kvm/kvm_main.c    Mario Smarduch      2015-01-15  22=
-55     n =3D kvm_dirty_bitmap_bytes(memslot);
-> 82fb1294f7ad3ee virt/kvm/kvm_main.c    James Houghton      2025-09-30  22=
-56     if (!protect) {
-> 2a31b9db153530d virt/kvm/kvm_main.c    Paolo Bonzini       2018-10-23  22=
-57             /*
-> 82fb1294f7ad3ee virt/kvm/kvm_main.c    James Houghton      2025-09-30  22=
-58              * Unlike kvm_get_dirty_log, we never flush, because no flus=
-h is
-> 82fb1294f7ad3ee virt/kvm/kvm_main.c    James Houghton      2025-09-30  22=
-59              * needed until KVM_CLEAR_DIRTY_LOG.  There is some code
-> 82fb1294f7ad3ee virt/kvm/kvm_main.c    James Houghton      2025-09-30  22=
-60              * duplication between this function and kvm_get_dirty_log, =
-but
-> 82fb1294f7ad3ee virt/kvm/kvm_main.c    James Houghton      2025-09-30  22=
-61              * hopefully all architecture transition to
-> 82fb1294f7ad3ee virt/kvm/kvm_main.c    James Houghton      2025-09-30  22=
-62              * kvm_get_dirty_log_protect and kvm_get_dirty_log can be
-> 82fb1294f7ad3ee virt/kvm/kvm_main.c    James Houghton      2025-09-30  22=
-63              * eliminated.
-> 2a31b9db153530d virt/kvm/kvm_main.c    Paolo Bonzini       2018-10-23  22=
-64              */
-> 2a31b9db153530d virt/kvm/kvm_main.c    Paolo Bonzini       2018-10-23  22=
-65             dirty_bitmap_buffer =3D dirty_bitmap;
-> 2a31b9db153530d virt/kvm/kvm_main.c    Paolo Bonzini       2018-10-23  22=
-66     } else {
-> 82fb1294f7ad3ee virt/kvm/kvm_main.c    James Houghton      2025-09-30  22=
-67             bool flush;
->
-> flush needs to be initialized to false.
+On 2025-10-08 at 21:30 +1100, Danilo Krummrich <dakr@kernel.org> wrote...
+> On Wed Oct 8, 2025 at 2:12 AM CEST, Alistair Popple wrote:
+> > Set the correct DMA mask. Without this DMA will fail on some setups.
+> >
+> > Signed-off-by: Alistair Popple <apopple@nvidia.com>
+> >
+> > ---
+> >
+> > Changes for v4:
+> >  - Use a const (GPU_DMA_BITS) instead of a magic number
+> >
+> > Changes for v2:
+> >  - Update DMA mask to correct value for Ampere/Turing (47 bits)
+> > ---
+> >  drivers/gpu/nova-core/driver.rs | 9 +++++++++
+> >  1 file changed, 9 insertions(+)
+> >
+> > diff --git a/drivers/gpu/nova-core/driver.rs b/drivers/gpu/nova-core/driver.rs
+> > index edc72052e27a..84fe4a45eb6a 100644
+> > --- a/drivers/gpu/nova-core/driver.rs
+> > +++ b/drivers/gpu/nova-core/driver.rs
+> > @@ -3,6 +3,8 @@
+> >  use kernel::{
+> >      auxiliary, c_str,
+> >      device::Core,
+> > +    dma::Device,
+> > +    dma::DmaMask,
+> >      pci,
+> >      pci::{Class, ClassMask, Vendor},
+> >      prelude::*,
+> > @@ -20,6 +22,10 @@ pub(crate) struct NovaCore {
+> >  }
+> >  
+> >  const BAR0_SIZE: usize = SZ_16M;
+> > +
+> > +// For now we only support Ampere which can use up to 47-bit DMA addresses.
+> > +const GPU_DMA_BITS: u32 = 47;
+> 
+> IIRC, the idea was to abstract this properly with a subsequent patch worked on
+> by John. In that case, please add a TODO.
 
-I'll fix this and the other bug about not documenting the new
-parameter, my mistake. :(
+Yep. I have added the following for v5:
 
-I think in a v2 I'll also merge kvm_get_dirty_log() into
-kvm_get_dirty_log_protect(); might as well.
+// TODO: Add an abstraction for this to support newer GPUs which may support
+// larger DMA addresses. Restricting these to smaller address widths wont have any
+// adverse impacts for now.
+
+> >  pub(crate) type Bar0 = pci::Bar<BAR0_SIZE>;
+> >  
+> >  kernel::pci_device_table!(
+> > @@ -57,6 +63,9 @@ fn probe(pdev: &pci::Device<Core>, _info: &Self::IdInfo) -> Result<Pin<KBox<Self
+> >          pdev.enable_device_mem()?;
+> >          pdev.set_master();
+> >  
+> > +        // SAFETY: No DMA allocations have been made yet
+> 
+> I think you forgot to address my comment from v2:
+
+Indeed I did sorry.
+ 
+> 	It's not really about DMA allocations that have been made previously, there is
+> 	no unsafe behavior in that.
+> 	
+> 	It's about the method must not be called concurrently with any DMA allocation or
+> 	mapping primitives.
+> 	
+> 	Can you please adjust the comment correspondingly?
+
+Have changed it to this for v5:
+
+        // SAFETY: No concurrent DMA allocations or mappings can be made because
+        // the device is still being probed and therefore isn't being used by
+        // other threads of execution.
+
+> In general, I recommend having a look at the safety requirements of the
+> corresponding function.
+
+Ack, that is my general approach. Whether I adaquately explain how they are met
+is a different question :)
+
+> NIT: Please end with a period.
+> 
+> > +        unsafe { pdev.dma_set_mask_and_coherent(DmaMask::new::<GPU_DMA_BITS>())? };
+> > +
+> >          let devres_bar = Arc::pin_init(
+> >              pdev.iomap_region_sized::<BAR0_SIZE>(0, c_str!("nova-core/bar0")),
+> >              GFP_KERNEL,
+> > -- 
+> > 2.50.1
+> 
 
