@@ -1,255 +1,105 @@
-Return-Path: <linux-kernel+bounces-846022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74FBABC6CCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 00:34:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F15FBC6CD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 00:41:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6470D1897C51
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 22:35:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 094B63C7B4E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 22:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E9592C21E5;
-	Wed,  8 Oct 2025 22:34:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9992C21F2;
+	Wed,  8 Oct 2025 22:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LZ4vUHDq"
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011033.outbound.protection.outlook.com [40.107.208.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xf3+5pqO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A181C8630;
-	Wed,  8 Oct 2025 22:34:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.33
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759962885; cv=fail; b=aEEbsyrU4Gx9tMP6C5O+O0B5D9r380qKAViqSPxa3ud9klqyn/Cq2XJdPglqSD2AkHSN618CF1syA52568xLYm5G5KUHy5UfrDTmOpSFnELX/CHGGicIA9PZp4qeHcScWUXpCkcGdV/MmMKNCBrxfS8EGL++t1zj2gqp86lYnDQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759962885; c=relaxed/simple;
-	bh=GyU4SI/Kp8jNwlh+e6oB6Luye0IiglTU5xWO+5UT/+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=B0TgAe0a6KIZZYFp7cbkvHfEQ356hgaKsjyiZa/8TTeOPoYzuu7ir/22jYbpfge4taMhd0B8filZTWIaIer16RRbst6hD5/DRwXD6ux5ma308huYsBwJd1yD9igu92djWPC+Zizj0oqrKZDxjVcGK8uOszBg5cwUVsM5UtD4oVU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LZ4vUHDq; arc=fail smtp.client-ip=40.107.208.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FuHL3+m/4p0ciLvYlW7jeWSo5ciaJthqahluPw82UsJwaUKRHowjLYpRLx0TrwLe8ZefEgEPZsD7N2oTM6mV+HEVXPPhbqPWJGKqdqGR88RvGk5Gr8gO+YYMB3gN+7D4cFu/it/NTx69+4QJff01k39l6gk5l7kxE6BiinjZzaOwUgVkRQblLhG+wGoJH9C2lahst9A/57v+VZ9YyF0FDk0KRP+KUdVBpxPzF+UTmlfopKRuCTbCuBt5odvYBtfqBR2hENDQv+r9By1d/00uO4s4uYwKFyv1YE21sJN4FPYtq6TrnE9qPmVZyNhpa93SULLgKygZhKcFr25YUJkeIA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Fbq61dFWDMiAOOae1Xbu2QzxeMoKWrnuC6SW7Jg9VAA=;
- b=Jo8b0B2jeFHqi0GlFKt+DaTU8bMmf78ZgMiQzSX9saC+w714ermKwMqR+GvRSNUV5K2qQZQ6Wi/xDYRbVqw2SCDrkUo+HNwLzbqrd+xRASJdeO0aFWJJO9dn91/nUCZ5c7p2rvBJEvMwzvYEBcSJD/dxwLFV+KpanIC3x0eX7NhAHGc1AUEQgqYtzX2q1H278pJ36a+rEG7e1UHs3jmYaNu9D/oKU7OzZkbvYiDLHcaG1K5DBNFXrrCTpRsNqm1G6YtvP+z1o1LIFhZnE7Impc00vO2hrGRsIz4aF+VGEORlhmiuI4tgA1Ldq6BTUmf8waNzg/Eq+9R8/FR2c1Wfzw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Fbq61dFWDMiAOOae1Xbu2QzxeMoKWrnuC6SW7Jg9VAA=;
- b=LZ4vUHDqx4f1fKIwGqtahlEQBXXeKpRDdybyU+YEy8vuaGlsdZeMcC2ceTndLkFtx0DM+hqXgq6ZSkEv9Sm0difHPS866K8oW/srEG/WL7izUf4GoMqeiMeMtVI0rE+NQjfkROM2XvleKrUckyUyzIqdNr3KhFFSeOe+kDx+aoVpm8ED5h6Sw8fSxT+hFgmTQuo0B3oipBv95dq953qT5JAENJU48skm1r6935B6jKTxmQrduGDqnSp4SY94t4oRipM66OkxZK5ABZMM1saqS/2HcrYwoRrgdUvvKu6uQXDzI3SosT8blrbm3nIZIlbb4uv4U9WkEYMY1pIkJI6sQA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
- CH8PR12MB9792.namprd12.prod.outlook.com (2603:10b6:610:2b5::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.9; Wed, 8 Oct
- 2025 22:34:41 +0000
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe%4]) with mapi id 15.20.9203.007; Wed, 8 Oct 2025
- 22:34:41 +0000
-Date: Thu, 9 Oct 2025 09:34:36 +1100
-From: Alistair Popple <apopple@nvidia.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	acourbot@nvidia.com, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	John Hubbard <jhubbard@nvidia.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
-	Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org
-Subject: Re: [PATCH v4 01/13] gpu: nova-core: Set correct DMA mask
-Message-ID: <tmworgafsb7jgxyk3muoj4plhhc57xrlzy7g7cyqahvrj6ame6@5qykqhbtpswf>
-References: <20251008001253.437911-1-apopple@nvidia.com>
- <20251008001253.437911-2-apopple@nvidia.com>
- <DDCVDASJNW9T.BUT6XK1WXD0A@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DDCVDASJNW9T.BUT6XK1WXD0A@kernel.org>
-X-ClientProxiedBy: SY5P282CA0175.AUSP282.PROD.OUTLOOK.COM
- (2603:10c6:10:249::26) To DS0PR12MB7726.namprd12.prod.outlook.com
- (2603:10b6:8:130::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232E51E25F9;
+	Wed,  8 Oct 2025 22:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759963292; cv=none; b=lUBFDb8VoqwZlLeIFbZdj4HAm1Dv90qButtbIss6GUW6PWZsr6o0wjILTcxdPDppUP/Hw35aRbRLqOyN/8KcpGGzsz5+eBuie8P+1dwF1HCOmgABSOZNbnc7I2wE6OM9P5VSj0JibEuqe6BdncExCwIFONqwjlt6q6gOwjsCDkc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759963292; c=relaxed/simple;
+	bh=BmE5hJ8rbuCDGFjo8CBQ1PvsWoi7WyWjZG/68v+d69M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UNP5qc4+vJawxTqelxySOHW4BwNhuWW7VKFzWMbLJmATIrHMJpJUITQjcGeKNvgeFQQsHpltWem1K7Hii7q8WDsiggLxKDexwQZ1K7pn4VKCS76gV3MQrRSNxk4tGEEE0HYkjAMT6gYUeWCLK0k1hH47QgO2EJ9b3Qan63qhwSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xf3+5pqO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 407ACC4CEE7;
+	Wed,  8 Oct 2025 22:41:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759963291;
+	bh=BmE5hJ8rbuCDGFjo8CBQ1PvsWoi7WyWjZG/68v+d69M=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Xf3+5pqOvOpZP8s+tB3IRecNIw27RavRuHuU+RdeEQaju8YVWm8lHYhQLtU3Z4L6i
+	 z7vl5lXvSEvnUTRgDegnaJrduiieZBYOlXuwn3xP/STiYJIHstJBhrXEWQsDuaSRNM
+	 x5KvkO1dDXZHLRwIJ0rViUti64MS4zaMs2k2WJZ9ULIqTOz1iVv15A28mC58/XOREK
+	 e1UWCQ3McNK9mYwPVjFnKWV9h8MCKik3JKlNAtUqLtpNlYBgGOrFRmIEwVmoSlf4Pv
+	 aUKmAizrHh/gc62IAIr/ZZJYKvl8ZVOgcLAUuKcUIRYirgg+3J1bECWH4PaITN6VBb
+	 7UOJAHyNHkmYw==
+Message-ID: <45f8532e-5aa2-4b32-ae53-bdf588133a3e@kernel.org>
+Date: Thu, 9 Oct 2025 07:41:22 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|CH8PR12MB9792:EE_
-X-MS-Office365-Filtering-Correlation-Id: 34e3ab8c-032c-42ae-e024-08de06badee3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?gR8g9FdR2DQIxL3T35e7zuAtYMUAAn59mHXoK6MpcZ0GWn9JWvQ9glL75Ed7?=
- =?us-ascii?Q?mPztykbdiqZbHCEvjc1Dj1o4Kc5jzDlvCFne5Bon4nUleKFl6JtNDG7HUdnR?=
- =?us-ascii?Q?HMPUcLynBqWUsr+WOcL/h/IZ/+dBl2gxUkUvrlUjdYGwu4okmiugkPBBby9B?=
- =?us-ascii?Q?+w4kzOTWn9s7QPnW8qgTAaBfXIAxwBIZ7Y1M8XnfjrLxaxsqb0ChrS7Yk3mM?=
- =?us-ascii?Q?VTiwFIsTFLl4uAZvIXavm6mgjAM8TWDbrQEWPDqXW08NbtXQxg6BSeVBUdwP?=
- =?us-ascii?Q?vA1X3umUIa5cmRCe+GdIuQpMBFMmmSIEzIqJQCifcGSaI42ceTC3l0BIjibM?=
- =?us-ascii?Q?TkfkDDdS+3VZ0r/xTgafeWyxGvggTOWwmR49dPauVAY87DHE70wmB3/ZBZNV?=
- =?us-ascii?Q?U1cxWCK/vpQwUaJQH/EBA784oIpWcxv0RO4W+Dv8/96KyJGCI8cba9PaHZOQ?=
- =?us-ascii?Q?FFIXaRQ095YbvlpzA607B5eXDVTnxyoM3c/Hk+nFKDlf1ao+4O/TVCSQ4mex?=
- =?us-ascii?Q?Fla42CuvcUo2wj/XnZaktmLMQsvixoe6CvqgYlELrA256HtLtayCNjHaYy/e?=
- =?us-ascii?Q?mmRInlqN2v1Z0tv5pSQuD/ucZQRVJuzyVmTxVFMEYvqgZLA2LQIuI7AIESi4?=
- =?us-ascii?Q?i7w3qh5gqu+gcoqxmh7wO90PPHKgFu9zQ+FpTcN56g9HetcETP+BE/jacPrP?=
- =?us-ascii?Q?6HpSCwsboaAzQnyMN7nuTkThKOHDVnusxV2Yi+TN3Ot356ZS/BwDSfEqS0gq?=
- =?us-ascii?Q?lDuUqxBUL9aEQCbVcWftjsLnLXkoyArLGxBHPxxsUYaTIdecoF9x8YvuJwdX?=
- =?us-ascii?Q?WKZta6s/VlgF0iEbiVrCWHNADXunZm5lgxO0P2KZ8gfg7Vv7unvYQXRolJse?=
- =?us-ascii?Q?ub7f5t763QsNFzCmcrNvZnuXRJyFpbKDuOiIEIapI0u/EuZB/f866V35IFnl?=
- =?us-ascii?Q?o/8Ecdsxhd8MKLHnVPTLZ/znsQSbez49lJXe1OURNCqxaNBwNvajzcILezwU?=
- =?us-ascii?Q?X6xWWD47MBgl/GkTpdYbW3hLbf+LV+AKXJskcm9eqxKksKQBJNuJI6BsDcOX?=
- =?us-ascii?Q?GrvdG8mhayY6jUMUdWeFlnpssYNp9KJS9ZEGJTFYOzSjzLUIZJ5xAGhkUNwA?=
- =?us-ascii?Q?9rEsU/7wCWk17+cgHep4okEkojjImqoo3QNO6XND6IQq/sOwvyFbfQYnMveu?=
- =?us-ascii?Q?CAkaR1LZwrwDGLGLVorhSIrJj4bPZHdt/1UB9M8yC8C85qQ2MASKbh83G+zw?=
- =?us-ascii?Q?1/yX6Fp5DPqIvppuwUAzEM55QvGTT0UCCbHr01egdWTafyKE0X1BeJnXsOtu?=
- =?us-ascii?Q?6O5smrxte+YJibTyDTtuc4mFtvcnXHffnqdU2OPej00QCcUNIzw8DAFgPccp?=
- =?us-ascii?Q?8DSF8PpMHrN/QN7O1vnUZIDm0TaZd2wnur1yzhOYkeKpwWMbrVey/WJ5VWaC?=
- =?us-ascii?Q?zBXNecnPa8PVk567ZEXeHA/+tXF0FVZm?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?o1pwkjoI+sOxIisY558eub8rwQuk+90hVlq1jEUSy4GUZ0ImjnnWnr/YIAAr?=
- =?us-ascii?Q?MtThZYtcgnai1OhGhV1acqxYpbld9jlwC0L1yTNF7l1v+yvGRJGKJil1V/bt?=
- =?us-ascii?Q?29//w1R/6nGw54FkG7Xv3K89r0tCB9bUtEXJl8erRKqayLjg3eiMjHbhI7/i?=
- =?us-ascii?Q?QAYFNV6V+ML1qRZhYbfhNn4gJZMrADe7oGSqilrIjCPWGxuqwlhHGXstq4m8?=
- =?us-ascii?Q?IWBXNb+5M38xoC/ZKQuNCvzLGpVCjdP2CfyWWq/ETJtPCPsFxPAporriuRuB?=
- =?us-ascii?Q?Yd3TT17OTmQ7WR+AErgXRjpnV7GStQI2JiaAByQzExPWjK4W6ef9eN5PrKZI?=
- =?us-ascii?Q?BUkgygfklIEmGBlzXAN9X+O2ToaTzAw5sCc491YWN3Kv2V1dNrv/aDve0QGW?=
- =?us-ascii?Q?XSOXKny7XjCUIp6m9SZ19bXA2ai7IlvCbXzlk034ztlFoQCQPhpjRt7qgMLI?=
- =?us-ascii?Q?NPfE93fGZYoOLg2qEI6++x7mePSUR9oKbJ2oRDB2cnYNWQ86eHj07HLWNKP+?=
- =?us-ascii?Q?hKMbQfPsAVA848jOZxj7SH+J2r3UtFoMdp0I+QZ4abByoLH3qt0gUTj6Mgxm?=
- =?us-ascii?Q?sx+6ehWFnAArhauqXS2u4+P6TirjsBCHz9csKHj4rSpwLXe3B2pWRhvQ4yBA?=
- =?us-ascii?Q?rxFz8ajhhMvSxVepNNvswLQtFb4s24r0yXRNekoavgIVfOIY3UlqL2YB7sVn?=
- =?us-ascii?Q?0U+HKyfLUdd+ZszBmSrW3VQc8WD+ulrIRqeNv0ZGiybkRF9Md+GuJzwCWeS9?=
- =?us-ascii?Q?KsA3yFjxTaXdxz2bNmyGMGlFfET/bSTKBT8dYm9uheF+5B47fNDa8XmPkkax?=
- =?us-ascii?Q?Z2k9CWNwLVWnqPYM67vqKCJG04jGZbqC4dJwVWag20P4wa5QkLNvqhkiYvD/?=
- =?us-ascii?Q?jNks2CWudtdKZKoFJyRBonmU8jj3WbVlerXJVAuTmjbrHTcFUwbcqoRWd2cr?=
- =?us-ascii?Q?oKbSOU5w7DUpZhiXDVrEsp2iWxgZgifFgneiH6/Rzwzy1niZipAAtRTeNsph?=
- =?us-ascii?Q?NlpTNIBS/g0JS7ZzlLtMzlpWPZnXiYOwr7YgmKVAqVHU5xTNPBCBzSW+SQlk?=
- =?us-ascii?Q?tXbh+gOT9/RX4eKE5VelYca8Vs/Ovn5AEe3j+cmL6bjzCj5tKiKI3aParpdi?=
- =?us-ascii?Q?OI/csqcNMBZ6qBRKP3qFXcFcs8ICbCgdMpN7LJP6dlPVE9g4nRDZEF67tK67?=
- =?us-ascii?Q?Ub8fzf7caf1m77lKoQc6sD4wjYE4Bd8b7kz4TjARw70eAXTn/mYfCCuFKSeB?=
- =?us-ascii?Q?o/aXwzusWATVnP9sVcS+7sKCi1TIweFRY8ZQZA5byY6CmiEn8yXlJkyl8RjH?=
- =?us-ascii?Q?fk0oiEaOBfCGrBuMVIXjNJScpVKbjxpTSF2rNpyWdvquUwstvEBSK40h8Wu/?=
- =?us-ascii?Q?wBETrndiydQhSvTp944SNJsrErm4MtWiZXYelHwvtO14J0WsY0WWzFA+xpyZ?=
- =?us-ascii?Q?uRE1l3n221LozAy9NXV6Ekq4JEzSm5L0SiejbDL9IJMyccAmJi/Je7dnF+wj?=
- =?us-ascii?Q?70L3HDjkawY5PPOYz+ZnjOilxrCXpIvpMNHuXbQpijNuMUWvxeaCHOePcxMC?=
- =?us-ascii?Q?C7zI+aPBXrXHawir2RjhYxGEQM98Zb/cHJ7aO4kH?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 34e3ab8c-032c-42ae-e024-08de06badee3
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2025 22:34:41.0321
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2BEpOpHDfUAZ4U+4j75gtDqWcJGfzfMV16CAFCL9+V63G7Se6D6QJRG3vPRIS8HsIqs3p7HYdmtutvZ8oaEwNQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH8PR12MB9792
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 13/15] blktrace: trace zone management operations
+To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+ Jens Axboe <axboe@kernel.dk>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
+ "linux-btrace@vger.kernel.org" <linux-btrace@vger.kernel.org>,
+ John Garry <john.g.garry@oracle.com>, Hannes Reinecke <hare@suse.de>,
+ hch <hch@lst.de>, Naohiro Aota <Naohiro.Aota@wdc.com>,
+ Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+ Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>
+References: <20250925150231.67342-1-johannes.thumshirn@wdc.com>
+ <20250925150231.67342-14-johannes.thumshirn@wdc.com>
+ <f5a5bc62-093b-4d4a-91ba-a7ec5718609f@kernel.org>
+ <057c7e5f-6079-4451-829d-40c73c88fb60@wdc.com>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <057c7e5f-6079-4451-829d-40c73c88fb60@wdc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 2025-10-08 at 21:30 +1100, Danilo Krummrich <dakr@kernel.org> wrote...
-> On Wed Oct 8, 2025 at 2:12 AM CEST, Alistair Popple wrote:
-> > Set the correct DMA mask. Without this DMA will fail on some setups.
-> >
-> > Signed-off-by: Alistair Popple <apopple@nvidia.com>
-> >
-> > ---
-> >
-> > Changes for v4:
-> >  - Use a const (GPU_DMA_BITS) instead of a magic number
-> >
-> > Changes for v2:
-> >  - Update DMA mask to correct value for Ampere/Turing (47 bits)
-> > ---
-> >  drivers/gpu/nova-core/driver.rs | 9 +++++++++
-> >  1 file changed, 9 insertions(+)
-> >
-> > diff --git a/drivers/gpu/nova-core/driver.rs b/drivers/gpu/nova-core/driver.rs
-> > index edc72052e27a..84fe4a45eb6a 100644
-> > --- a/drivers/gpu/nova-core/driver.rs
-> > +++ b/drivers/gpu/nova-core/driver.rs
-> > @@ -3,6 +3,8 @@
-> >  use kernel::{
-> >      auxiliary, c_str,
-> >      device::Core,
-> > +    dma::Device,
-> > +    dma::DmaMask,
-> >      pci,
-> >      pci::{Class, ClassMask, Vendor},
-> >      prelude::*,
-> > @@ -20,6 +22,10 @@ pub(crate) struct NovaCore {
-> >  }
-> >  
-> >  const BAR0_SIZE: usize = SZ_16M;
-> > +
-> > +// For now we only support Ampere which can use up to 47-bit DMA addresses.
-> > +const GPU_DMA_BITS: u32 = 47;
+On 10/8/25 22:29, Johannes Thumshirn wrote:
+> I'm not sure if it makes sense to do completion tracing here. At least 
+> we cannot do it in the endio handler as usual.
 > 
-> IIRC, the idea was to abstract this properly with a subsequent patch worked on
-> by John. In that case, please add a TODO.
-
-Yep. I have added the following for v5:
-
-// TODO: Add an abstraction for this to support newer GPUs which may support
-// larger DMA addresses. Restricting these to smaller address widths wont have any
-// adverse impacts for now.
-
-> >  pub(crate) type Bar0 = pci::Bar<BAR0_SIZE>;
-> >  
-> >  kernel::pci_device_table!(
-> > @@ -57,6 +63,9 @@ fn probe(pdev: &pci::Device<Core>, _info: &Self::IdInfo) -> Result<Pin<KBox<Self
-> >          pdev.enable_device_mem()?;
-> >          pdev.set_master();
-> >  
-> > +        // SAFETY: No DMA allocations have been made yet
+> One thing to get the error and the duration would be the following:
 > 
-> I think you forgot to address my comment from v2:
-
-Indeed I did sorry.
- 
-> 	It's not really about DMA allocations that have been made previously, there is
-> 	no unsafe behavior in that.
-> 	
-> 	It's about the method must not be called concurrently with any DMA allocation or
-> 	mapping primitives.
-> 	
-> 	Can you please adjust the comment correspondingly?
-
-Have changed it to this for v5:
-
-        // SAFETY: No concurrent DMA allocations or mappings can be made because
-        // the device is still being probed and therefore isn't being used by
-        // other threads of execution.
-
-> In general, I recommend having a look at the safety requirements of the
-> corresponding function.
-
-Ack, that is my general approach. Whether I adaquately explain how they are met
-is a different question :)
-
-> NIT: Please end with a period.
+> int blkdev_zone_mgmt(struct block_device *bdev, enum req_op op,
+>                       sector_t sector, sector_t nr_sectors)
+> {
 > 
-> > +        unsafe { pdev.dma_set_mask_and_coherent(DmaMask::new::<GPU_DMA_BITS>())? };
-> > +
-> >          let devres_bar = Arc::pin_init(
-> >              pdev.iomap_region_sized::<BAR0_SIZE>(0, c_str!("nova-core/bar0")),
-> >              GFP_KERNEL,
-> > -- 
-> > 2.50.1
+>          /* [...] */
 > 
+>          trace_blkdev_zone_mgmt(bio, nr_sectors);
+>          ret = submit_bio_wait(bio);
+> 
+> +     trace_blkdev_zone_mgmt_completion(bio, nr_sectors, bio->bi_error);
+>          bio_put(bio);
+
+That does seem OK to me. Maybe try and see how it looks ?
+Though the request alloc, insert, dispatch and completion for this BIO will
+still be traced, right ? If these events show correctly that this is a zone
+management command (and which one it is), then we should not need the above.
+
+
+-- 
+Damien Le Moal
+Western Digital Research
 
