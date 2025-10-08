@@ -1,119 +1,210 @@
-Return-Path: <linux-kernel+bounces-845274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7E46BC43B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 12:01:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97C1CBC42B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 11:34:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 795E83AF13C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 10:01:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47DFA401BBD
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 09:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E63102EBDDC;
-	Wed,  8 Oct 2025 10:01:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A4B2EC569;
+	Wed,  8 Oct 2025 09:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Rz21MMKZ"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bVeoDjOK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3001F936;
-	Wed,  8 Oct 2025 10:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6C21DFE12
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 09:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759917708; cv=none; b=mMYB3273/IN7otrBmZYwYvKCO3ssF1PdV8525bEb3krC9Hgh/vUnDX17Q4XW1FP5ozP+e6VBGPFnFoUkO9Mdm23/KcVxVKibDsiHUSc/BapeTB8OmO4hVyHDGxsTyCMa6y9UTUMm5CXc/IUDiwc97f7jVuE1VKD158POnEMXero=
+	t=1759916039; cv=none; b=aOVvos5nJBj4Lgt80OvlAueAqOASvYF/0ptEHv2DN0/bgjhznIBaY2WYS69k882TDxVEtlzRaprA6TQ5d11VtpfaFHp2gFGBIUSQbFrRtqtZHe6PYfDLW8w6o8XuDKVzd1eeAyC1aHKXKEITOAba01fWjmvy7StjcCbphBORH+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759917708; c=relaxed/simple;
-	bh=M1blxd/mKUNiZQ6/0sH3xYrIOPjliqElO4KW6JDypVc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KXRCtKT9FC1VKG/nzas811UcFzwkX9EYJJbWhEmM4dvr2M7q09s3QtrnaFdO1A78oAC34MFMhiKnTYj10t768W6clUJyR6/CGwQM5mAjGkvJ5OjmHkmHjkrjb2pvxOF8cXVg4Rfai4ILYiaX5cIFmJt4DPm/+O0gihf1B4zgw/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Rz21MMKZ; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 598A1etr4017440;
-	Wed, 8 Oct 2025 05:01:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1759917700;
-	bh=cTxDlhTEVr5LCo55gg3H0iUO4ew9aXKpaM9Ax2tgf6I=;
-	h=From:To:CC:Subject:Date;
-	b=Rz21MMKZIHnmJdY07aJNoKk7PDNuRAiJoylOLhPnZvluG+dPk62HD4dZfQehSfRFT
-	 hozcovL0Ku1Xdfb3FYD63JaZEP4fvdIC0gAklNFVTHvJkPDvDgKvtDmGp1c/63abpr
-	 mrUqv2ENaiuXK7VMj/2ihbnXcuca5zpjD4dlIFiQ=
-Received: from DLEE202.ent.ti.com (dlee202.ent.ti.com [157.170.170.77])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 598A1e6L070818
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 8 Oct 2025 05:01:40 -0500
-Received: from DLEE200.ent.ti.com (157.170.170.75) by DLEE202.ent.ti.com
- (157.170.170.77) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 8 Oct
- 2025 05:01:40 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE200.ent.ti.com
- (157.170.170.75) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Wed, 8 Oct 2025 05:01:40 -0500
-Received: from pratham-Workstation-PC (pratham-workstation-pc.dhcp.ti.com [10.24.69.191])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 598A1cRU2600584;
-	Wed, 8 Oct 2025 05:01:39 -0500
-From: T Pratham <t-pratham@ti.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller"
-	<davem@davemloft.net>
-CC: T Pratham <t-pratham@ti.com>, Manorit Chawdhry <m-chawdhry@ti.com>,
-        Kamlesh Gurudasani <kamlesh@ti.com>,
-        Shiva Tripathi <s-tripathi1@ti.com>,
-        Kavitha Malarvizhi <k-malarvizhi@ti.com>,
-        Vishal Mahaveer <vishalm@ti.com>, Praneeth Bajjuri <praneeth@ti.com>,
-        <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] crypto: aead - Fix reqsize handling
-Date: Wed, 8 Oct 2025 15:03:14 +0530
-Message-ID: <20251008100117.808195-1-t-pratham@ti.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1759916039; c=relaxed/simple;
+	bh=6zxM30aDH01IiYvZ1H7Wr1pAyvigajpz0autcEP1khY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hzy/s285S5dpV4jVHBTpcWRjI443cTTHBLQ07uqyrKJT0vpFMSsix37StDGyKiEbUIWWxBtLgJuviwPUDfLmGLnd3exnHo1bim8V1J7W2wKnvxZAKf/t+h3P2bTYbBZjwtcf0Euz2XBtg7hny8xHBEL4XeRdmJbcGmLtQbi1yPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bVeoDjOK; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759916037;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=pvNQ2sqsxcgVrxGJZXdoSqap7VzzZ3mjW5LxJACJ12c=;
+	b=bVeoDjOKPj0XetoejOhFasGEUkL641UKLGMlsT2j24Ka2OuHjJN26NOBZGNisa+tZvGqnS
+	VKjk17PsxTcyzp6qYPgdfH/+B/GFpAvob0wUd7jFgGqY5bKMf6ip8elZRZBfeCuJKiLNZu
+	jHG8kr63bKTSBL9nnb9BEdVBjUW5nfw=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-35-bBbCGzbpOsm3_XBjO_xS5A-1; Wed, 08 Oct 2025 05:33:55 -0400
+X-MC-Unique: bBbCGzbpOsm3_XBjO_xS5A-1
+X-Mimecast-MFC-AGG-ID: bBbCGzbpOsm3_XBjO_xS5A_1759916034
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-4256fae4b46so2572771f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 02:33:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759916034; x=1760520834;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pvNQ2sqsxcgVrxGJZXdoSqap7VzzZ3mjW5LxJACJ12c=;
+        b=NY4eV8OBAZgEI3bQSrXPrdXIv+BqdscgKuDtOunpYujeYuYh0SmBx5IVidP3I4b7eG
+         EaV3+qiiUoL0MbVpAjk5czsHL9jf1XdBEtpKgCFTFus8VLRDYrdqAZ3Jng+htjxa9kpZ
+         +8dnjLNViSybmzj2h6pKjyrfOM4ox3+etjofQVDWvlDE9i1YdNE4AjBxGfb5lwp1lvMN
+         1///pVPiCrrhPnOQ2aQGwflJyK7D+6+W6UMA476YaZwPxPfx3uu+04BWhJf0BoupkD7M
+         FS+qkOu4UjqoX587G1AVLelWlCCSgM7NE93dF6H/zS+O0BQr3bskD5K9OC7SduzcTn/K
+         3V9g==
+X-Forwarded-Encrypted: i=1; AJvYcCWLEUAmaopZ1S3sn6BjCLTaaBNIwbiE4AoM5FkVd3lRZKTaCfogIpVpkR4J9fArn0/MIdIsf50DtWQftWQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwK+k2YBXJJR9IWysDOBin8J1AW8Ly21x0gBv5S4IsG30lNB+ko
+	E5m835wgXr1MAR9/REFIGfDBSwspQg9vi3QLeHENeQkDufZU9BH0J8C4EjU6VrhcBn72MfSOGEP
+	WvEJymZLKfyIGHzjjluth6uRoNehxe92rxkNNWTrfK2ZT0KCtWB4c6GP9j7pOkrZhhrF78Hp2mQ
+	==
+X-Gm-Gg: ASbGncs/8YS4tyUzLYTTL6CCKM5yH+GAjwcVfFh3eaAuJEdVItyesBHZPP+iTe353wR
+	fnJ1WaMwBCS4azEMqd+a6d8P108Dbc1TS7tQdhmr+1zv2OxXoTeL8HRt68ZlruHihJ164xnc9oG
+	uJtWnYElurpHq4sypQCWCMerhx92IHTS/smCCU2FwfMRmI+HmqwUh6fVgsZTuNTGP5I+Wh9wpz/
+	sdtAAPbmv4/5R16yCvkADTXTV/FWWbajbmH8aqTVrthtEQW/j82BwtJyz3+8M6hsAxYhB1ltuHi
+	oN59byYvsMvt8/Z8kiA6AsnahvORnOEKgoJ9e4yzFxiu1EPUzQKIB4YzupQML7pTp4pR/1Q09sK
+	BS4i2GdUu
+X-Received: by 2002:a05:6000:2408:b0:414:6fe6:8fbd with SMTP id ffacd0b85a97d-4266e8de55dmr1525957f8f.54.1759916034447;
+        Wed, 08 Oct 2025 02:33:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHRgm9ENNBAKPQVvD/piMECVRSv9+MLaK5jztOw4UsWToxz1h/ZD5Ud2PMOKOKZArxB19KvCg==
+X-Received: by 2002:a05:6000:2408:b0:414:6fe6:8fbd with SMTP id ffacd0b85a97d-4266e8de55dmr1525932f8f.54.1759916034010;
+        Wed, 08 Oct 2025 02:33:54 -0700 (PDT)
+Received: from [192.168.3.141] (tmo-083-110.customers.d1-online.com. [80.187.83.110])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f4cc3sm29006938f8f.55.2025.10.08.02.33.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Oct 2025 02:33:53 -0700 (PDT)
+Message-ID: <9f35aedb-fd67-412f-a3d3-bb6692f7c2ce@redhat.com>
+Date: Wed, 8 Oct 2025 11:33:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] Support dynamic (de)configuration of memory
+To: Sumanth Korikkar <sumanthk@linux.ibm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>,
+ LKML <linux-kernel@vger.kernel.org>, linux-s390
+ <linux-s390@vger.kernel.org>, Gerald Schaefer
+ <gerald.schaefer@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>
+References: <20250926131527.3260733-1-sumanthk@linux.ibm.com>
+ <ab366c03-8c78-449d-bfc4-2d155212d9d7@redhat.com>
+ <aOVUNmDiWgrDJ1dJ@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
+ <5e3b16ec-9ef9-483e-b97e-bff0c1915b19@redhat.com>
+ <aOX_L1_2S30XhLRA@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
+ <1efcb368-fcdf-4bdd-8b94-a705b7806bc2@redhat.com>
+ <aOYrUEr-inqogzJE@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <aOYrUEr-inqogzJE@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Commit afddce13ce81d ("crypto: api - Add reqsize to crypto_alg")
-introduced cra_reqsize field in crypto_alg struct to replace type
-specific reqsize fields. It looks like this was introduced specifically
-for ahash and acomp from the commit description as subsequent commits
-add necessary changes in these alg frameworks.
+On 08.10.25 11:13, Sumanth Korikkar wrote:
+>>>> I wonder if the above two are really required. I would expect most/all users
+>>>> to simply keep using -e / -d.
+>>>>
+>>>> Sure, there might be some corner cases, but I would assume most people to
+>>>> not want to care about memmap-on-memory with the new model.
+>>>
+>>> I believe this remains very beneficial for customers in the following
+>>> scenario:
+>>>
+>>> 1) Initial memory layout:
+>>> 4 GB configured online
+>>> 512 GB standby
+>>>
+>>> If memory_hotplug.memmap_on_memory=Y is set in the kernel command line:
+>>> Suppose user requires more memory and onlines 256 GB. With memmap-on-memory
+>>> enabled, this likely succeeds by default.
+>>>
+>>> Later, the user needs 256 GB of contiguous physical memory across memory
+>>> blocks. Then, the user can still configure those memory blocks with
+>>> memmap-on-memory disabled and online it.
+>>>
+>>> 2) If the administrator forgets to configure
+>>> memory_hotplug.memmap_on_memory=Y, the following steps can be taken:
+>>> Rescue from OOM situations: configure with memmap-on-memory enabled, online it.
+>>
+>> That's my point: I don't consider either very likely to be used by actual
+>> admins.
+>>
+>> I guess in (1) it really only is a problem with very big memory blocks.
+>> Assuming a memory block is just 128 MiB (or even 1 GiB), you can add+online
+>> them individually. Once you succeeded with the first one (very likely), the
+>> other ones will follow.
+>>
+>> Sure, if you are so low on memory that you cannot even a single memory
+>> block, then memmap-on-memory makes sense.
+>>
+>> But note that memmap-on-memory was added to handle hotplug of large chunks
+>> of memory (large DIMM/NVDIMM, large CXL device) in one go, without the
+>> chance to add+online individual memory blocks incrementally.
+> 
+> Interesting. Thanks David.
+> 
+> Heiko suggested that memory increment size could also be upto
+> 64GB. In that case, it might be useful.
 
-However, this is being recommended for use in all crypto algs
-instead of setting reqsize using crypto_*_set_reqsize(). Using
-cra_reqsize in aead algorithms, hence, causes memory corruptions and
-crashes as the underlying functions in the algorithm framework have not
-been updated to set the reqsize properly from cra_reqsize. [1]
+Yeha, rings a bell. But that would not be your 4GiB scenario you shared :)
 
-Add proper set_reqsize calls in the aead init function to properly
-initialize reqsize for these algorithms in the framework.
-
-[1]: https://gist.github.com/Pratham-T/24247446f1faf4b7843e4014d5089f6b
-
-Fixes: afddce13ce81d ("crypto: api - Add reqsize to crypto_alg")
-Signed-off-by: T Pratham <t-pratham@ti.com>
----
- crypto/aead.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/crypto/aead.c b/crypto/aead.c
-index 5d14b775036ee..51ab3af691af2 100644
---- a/crypto/aead.c
-+++ b/crypto/aead.c
-@@ -120,6 +120,7 @@ static int crypto_aead_init_tfm(struct crypto_tfm *tfm)
- 	struct aead_alg *alg = crypto_aead_alg(aead);
- 
- 	crypto_aead_set_flags(aead, CRYPTO_TFM_NEED_KEY);
-+	crypto_aead_set_reqsize(aead, crypto_tfm_alg_reqsize(tfm));
- 
- 	aead->authsize = alg->maxauthsize;
- 
 -- 
-2.43.0
+Cheers
+
+David / dhildenb
 
 
