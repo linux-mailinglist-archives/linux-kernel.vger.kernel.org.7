@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-845682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E840BC5DD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:51:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3C69BC5D75
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:48:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4F4B34FB076
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:47:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A357119E4D64
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:47:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178562BE02D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB81C2EBDF2;
 	Wed,  8 Oct 2025 15:46:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MkUEtHk4"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OEwFH1Kx"
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF9825B31D
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6365429DB9A
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759938409; cv=none; b=hBxuQSnQygSv4mLp3tPHXOKex5pEu9kySnu+T6fzJoMKTpH0HxFW8FIZy/hsGVU8I0wH3NORsZ34epNk1PjmQZEHOGiN4gLYBGzccCN1VnLV2pg92dHykxu0FsAJ8TruQBSNE1pFaUduaooG/IubRfiHs8CeFvhDGGB3sfdMOG4=
+	t=1759938410; cv=none; b=sJ2rqAKrGcwRQvQ7XXyxuLX+RV0P1wX82M4NG14dNRp5tskdA6kRkM5+IT/JvRUTfZS67WP1ynnBMVjzep+OPNodh+vlBfFb+z+7mHQux1RysxHTfQrOdz6y00HTSmq+hM9YwtPgRonsTKpcB/tyrnPhqwwBJJvgA3bot5WH3qI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759938409; c=relaxed/simple;
-	bh=12RXdlH8WUVCzzyh4vIFws4ja8Gr26ZMeYscmOm7oNE=;
+	s=arc-20240116; t=1759938410; c=relaxed/simple;
+	bh=81RCAUhzxGVASsLN/Sj+xtc3cF0rIGFNTxe2ppMxs6A=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=jJfTPxOS6ebASY/YBQFzkHy9i7Z/ExkbdgeTKylLez0l/RZYptTdq5AzN7hECfgm7tn2g9WCCEE5UT6CS0Y0f9WZJE9zse0+WhGfsEf9tsPDfN9pqWco5Ebk4yVXQyl/2MejDvK1cdourqDUi0tFws9OdI9pXJyeFVtBFKQwbDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MkUEtHk4; arc=none smtp.client-ip=209.85.128.73
+	 To:Cc:Content-Type; b=uptxwk250W/W1lj0Ej2qyIB9Oh+7mDSyEJ88+s+cydvQoNX/MOUTij9rgNEkyR5Jek0T7t2SEm2MoclTFDcNgOQy44zEmmFF8/UErcDeq31irHq46ID0rSeXNJursZfn7p3NBHpnkfqeubWpQE3oQ5tiHUU1T0CFY7hw7zAw5MA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OEwFH1Kx; arc=none smtp.client-ip=209.85.208.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-46e3af78819so35192775e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:46:47 -0700 (PDT)
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-6232f49fc79so8748385a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:46:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759938406; x=1760543206; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1759938407; x=1760543207; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0AhbZPensuqKG/yW0Qj7LE8IaoQDaRVlqpZyE8QDARA=;
-        b=MkUEtHk4snIs5lRXjuc0RGebRrxYuNBdxlqNzkB5nZ/9E+9mGNa75OK+/LDVlerJyh
-         0CvnrK97nno0ptq7K2lk9McykRedmKZzhJDexco23c8L/xnDd0E/N2oNlVKqM+E4Vocp
-         OFBeHsaRiwTE24y6gNMYzM78KmrsWTPcjgslga+cy4nVKvaeWtXVMNY/99/T+JPgitXS
-         LJM/8qzIHQm2IPA6KFlSi1NIjQziIot/G7O1Vm7pFWa7ey/nn+LWh8gF3y42skE5msUk
-         kXvJgcHg6zzKIaehoNaoMUvyjI41EJRfDtuZFKxp9LpjHz5XxapMq6j0/jk9wsskEDGs
-         Hf1Q==
+        bh=0aOpjZgoFTagPU2U7+lhs7TWsUUBL3VjC18ylyP94Gs=;
+        b=OEwFH1KxTvKNXc9bq+YswcwfENtIULETZ1TtiVs3cm+YpI895pHJ8rc6WCwYr5J5ts
+         Xfr+cokOHdl61V7X9KujDAzdEN8NjLI8Jr1yfmdKbq9N5N6PmCFb31FxvcmX92b+Yh1A
+         mo09X4Utq6DBsT/XTWpBDGXd9wbC/9TBhUcga9cgApie2B8c5ZdeGuG7tkeLzTcL5BM3
+         8xRnwxAEhmC7VKA/Y0vvfZB/6a9DaUgoXeVJlw4ZZl6f1x5XEzWNGhM0BWLOl2XQCBIx
+         rkEj0PLYfJ4NnbPVMBFByMQFORrMEuTNUMuU5OTIc9dYC2A2NNTApea1w++3swzuQphR
+         b6fA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759938406; x=1760543206;
+        d=1e100.net; s=20230601; t=1759938407; x=1760543207;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0AhbZPensuqKG/yW0Qj7LE8IaoQDaRVlqpZyE8QDARA=;
-        b=pk7Ly/A4jn4q+vDsHOuXZTa+w+z6pf/xLwzVgAJMRpMIYcB+K7YF04k8L3sqidmfr5
-         h9eELU2+fmCchlxX4X6tG9I0XVYQCcTzo0x8Wi3vFYGhYcjwsZqMFcrRwNXh2WthLwEU
-         dudaVoAsstLBeHFzO6GYrpjKPSXb9ex18tIThT/7OJuj3XPOGgM12HK5oAvGev6f62m5
-         vHUHE6LrVNiHWrkvievAcP212di8nH/96Z3bBe9cLVbLyzCn3hHQLpsZDmqRvNFuAGyA
-         UZAHw01CVi9oeHL+J6/FrDZ3n8kf7Igg+TTx1sqgWIRS1MomMBYovSsLS2Pfd3PjY79L
-         AuMg==
-X-Gm-Message-State: AOJu0YzMpowqs6x0f6MKTCM6x44GriGH9o24vvVC8Noogghrj+CDy5Qr
-	EvzsjecIHR3xPkIMX4A488FCJFVYrl1MCJyImQCoMZx4wpKRf5I2cUGS7PCSUBBe4WAgF/E8lQ=
+        bh=0aOpjZgoFTagPU2U7+lhs7TWsUUBL3VjC18ylyP94Gs=;
+        b=KQsXUQyQsNOjcZDzxaAnfYf7Cq6B0s4Ta4fAXDmuc6QOA/KHomAzGX3/qW4jiixlKs
+         PZta6MWcOowNXYg+4jXh6sf7+LhXgW+ltrvzwjSdaVuWKrdto8nNXfBYmfQX1nWrjZG6
+         Jas5/II/8Mbwc3j4l1bmPlshbvO2aChlJJHJzYBSJ6FDc2KNle7jOHNdI3p0tgb5fmpF
+         xG2xahVlg6L3PRyRB68FiN0RPYI2W0DDYYvfCugFDIjtL1dtvC3MiUG3tQTOWiWdh9Mn
+         5CV639J2Gczjk017ugoMiNmnsMVdiQ6co0cFQ2fN11IokzONAzCVAIYbP+0OoGaudUDK
+         3ymQ==
+X-Gm-Message-State: AOJu0YxiFzBzmhDwDpa0xh9N4RiHMVF/Ox5BWewxbn77GrxgOAnGd39Y
+	bbQ8mpYPAcQ1DDhiDWLqexmGrd8tqr1JLnW7kCssuRVsVt8N87u8OEzb/IY+cYkfSYNH0yS9bA=
 	=
-X-Google-Smtp-Source: AGHT+IFGiSWygFLP8i64IlU/Ujr5WlDyO+2EV/4Cl8eQXXpZQ1evYrz2O0ebGMwfs5ylyK1bfixkdj8Z
-X-Received: from wmbgx7.prod.google.com ([2002:a05:600c:8587:b0:46f:aa50:d70a])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:4f08:b0:46e:3dcb:35b0
- with SMTP id 5b1f17b1804b1-46fa9a94553mr27472645e9.2.1759938405883; Wed, 08
- Oct 2025 08:46:45 -0700 (PDT)
-Date: Wed,  8 Oct 2025 17:45:35 +0200
+X-Google-Smtp-Source: AGHT+IEjXfSRLqs1LdB6T1FDKUwIpLPy5cDnenPLXjF2fx7wJgZU+J3eEdql/LMEKYHPQ3roG7kHp6XU
+X-Received: from edzh6.prod.google.com ([2002:a05:6402:946:b0:637:87fb:3b14])
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:518a:b0:639:6bc8:c7bd
+ with SMTP id 4fb4d7f45d1cf-639d5b89335mr3498965a12.15.1759938406837; Wed, 08
+ Oct 2025 08:46:46 -0700 (PDT)
+Date: Wed,  8 Oct 2025 17:45:36 +0200
 In-Reply-To: <20251008154533.3089255-23-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,14 +72,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251008154533.3089255-23-ardb+git@google.com>
 X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=926; i=ardb@kernel.org;
- h=from:subject; bh=dFhPhM339lpxbecIP5ywrFTMp3sezPQKRMrRY5eAeY4=;
- b=owGbwMvMwCVmkMcZplerG8N4Wi2JIeNZu1Lfp9XzPjod2dxh3FPPsqyyScbs3OtNeYcfX7Y+w
- Fm+oNm2o5SFQYyLQVZMkUVg9t93O09PlKp1niULM4eVCWQIAxenAEzE6QEjwxpeIaV+vccGIcs9
- Dyc+unbs7fSJWqcyfXV2LPXdKGaT9ZmRYVXe3vsMtX7S1jcOe/o0fpbfGaJcmHeg7Mq7F+7nFwd d5gEA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1857; i=ardb@kernel.org;
+ h=from:subject; bh=j9GSsyZWNvCHsZ+73xBchQmAL5ZAXeZZs4NWX80DqD8=;
+ b=owGbwMvMwCVmkMcZplerG8N4Wi2JIeNZu8rfJAkfjdO/9vefY02Zc5ad2+qC2S4lbn8HkaMf6
+ 6Lv5f/qKGVhEONikBVTZBGY/ffdztMTpWqdZ8nCzGFlAhnCwMUpABPZbcXwz5j/pePnsrXLRIR8
+ Hq0oNPfN4NuQPeX7guViSn0WLx5O92L4n2s8Y/Yhht5nll/sv2RFRi8UzXQ75xt2sXyZqpx+ilA yAwA=
 X-Mailer: git-send-email 2.51.0.710.ga91ca5db03-goog
-Message-ID: <20251008154533.3089255-24-ardb+git@google.com>
-Subject: [PATCH v3 01/21] crypto/arm64: aes-ce-ccm - Avoid pointless yield of
+Message-ID: <20251008154533.3089255-25-ardb+git@google.com>
+Subject: [PATCH v3 02/21] crypto/arm64: sm4-ce-ccm - Avoid pointless yield of
  the NEON unit
 From: Ard Biesheuvel <ardb+git@google.com>
 To: linux-arm-kernel@lists.infradead.org
@@ -91,32 +91,66 @@ Content-Type: text/plain; charset="UTF-8"
 From: Ard Biesheuvel <ardb@kernel.org>
 
 Kernel mode NEON sections are now preemptible on arm64, and so there is
-no need to yield it explicitly in order to prevent scheduling latency
-spikes.
+no need to yield it when calling APIs that may sleep.
 
-Reviewed-by: Eric Biggers <ebiggers@kernel.org>
+Also, move the calls to kernel_neon_end() to the same scope as
+kernel_neon_begin(). This is needed for a subsequent change where a
+stack buffer is allocated transparently and passed to
+kernel_neon_begin().
+
+Acked-by: Eric Biggers <ebiggers@kernel.org>
+[ardb: Simplify convoluted logic]
 Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 ---
- arch/arm64/crypto/aes-ce-ccm-glue.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ arch/arm64/crypto/sm4-ce-ccm-glue.c | 25 +++++---------------
+ 1 file changed, 6 insertions(+), 19 deletions(-)
 
-diff --git a/arch/arm64/crypto/aes-ce-ccm-glue.c b/arch/arm64/crypto/aes-ce-ccm-glue.c
-index 2d791d51891b..2eb4e76cabc3 100644
---- a/arch/arm64/crypto/aes-ce-ccm-glue.c
-+++ b/arch/arm64/crypto/aes-ce-ccm-glue.c
-@@ -114,11 +114,8 @@ static u32 ce_aes_ccm_auth_data(u8 mac[], u8 const in[], u32 abytes,
- 			in += adv;
- 			abytes -= adv;
+diff --git a/arch/arm64/crypto/sm4-ce-ccm-glue.c b/arch/arm64/crypto/sm4-ce-ccm-glue.c
+index e9cc1c1364ec..e92cbdf1aaee 100644
+--- a/arch/arm64/crypto/sm4-ce-ccm-glue.c
++++ b/arch/arm64/crypto/sm4-ce-ccm-glue.c
+@@ -172,35 +172,22 @@ static int ccm_crypt(struct aead_request *req, struct skcipher_walk *walk,
+ 	if (req->assoclen)
+ 		ccm_calculate_auth_mac(req, mac);
  
--			if (unlikely(rem)) {
--				kernel_neon_end();
--				kernel_neon_begin();
-+			if (unlikely(rem))
- 				macp = 0;
--			}
- 		} else {
- 			u32 l = min(AES_BLOCK_SIZE - macp, abytes);
+-	while (walk->nbytes && walk->nbytes != walk->total) {
++	while (walk->nbytes) {
+ 		unsigned int tail = walk->nbytes % SM4_BLOCK_SIZE;
  
++		if (walk->nbytes == walk->total)
++			tail = 0;
++
+ 		sm4_ce_ccm_crypt(rkey_enc, walk->dst.virt.addr,
+ 				 walk->src.virt.addr, walk->iv,
+ 				 walk->nbytes - tail, mac);
+ 
+-		kernel_neon_end();
+-
+ 		err = skcipher_walk_done(walk, tail);
+-
+-		kernel_neon_begin();
+ 	}
+ 
+-	if (walk->nbytes) {
+-		sm4_ce_ccm_crypt(rkey_enc, walk->dst.virt.addr,
+-				 walk->src.virt.addr, walk->iv,
+-				 walk->nbytes, mac);
+-
+-		sm4_ce_ccm_final(rkey_enc, ctr0, mac);
++	sm4_ce_ccm_final(rkey_enc, ctr0, mac);
+ 
+-		kernel_neon_end();
+-
+-		err = skcipher_walk_done(walk, 0);
+-	} else {
+-		sm4_ce_ccm_final(rkey_enc, ctr0, mac);
+-
+-		kernel_neon_end();
+-	}
++	kernel_neon_end();
+ 
+ 	return err;
+ }
 -- 
 2.51.0.710.ga91ca5db03-goog
 
