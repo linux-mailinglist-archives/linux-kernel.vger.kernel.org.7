@@ -1,102 +1,80 @@
-Return-Path: <linux-kernel+bounces-845364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5E6EBC4959
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:37:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74853BC4963
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:37:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A9DC44EE301
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:37:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 717441888ED2
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 394DC2F745C;
-	Wed,  8 Oct 2025 11:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98FFE2EB878;
+	Wed,  8 Oct 2025 11:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cDXyF6qV";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LZfNIq6h";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="r0emNODP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FyBBMf7g"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KFKBFIBU"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B63C2C3259
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 11:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9146F25B1CE
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 11:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759923411; cv=none; b=NF5HNfB0FBlRQfhn7pTrxEIxsoj18UAB2ullO0kFdPIpQwbKzLibLEtDzASFf3RGYc3Sg473GXK9U9c+EevL/XHo3HXvVzNUfogXwmPGo4ZGL5dCjJ44cJHh1f8/YwsGd4yaqqGBg0T+9JHQKojuuBTEobT2uiFt3YsanH033UE=
+	t=1759923449; cv=none; b=WUi71aWaGlmu0ymqSiqn2Pyns2Mq/6QZEjd2NeIuOweHqkJ9wCLXAGhT4cYDVq8W7//fvnjW4vh4dOykePlCeM0vEEDhStUAN2sOCyJ8lIJ3GRvo2SUMFxylTdINCbXloHMNB0CMc5/X07P5DimEjb4j+7Hkwy6QFlibXDIbEbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759923411; c=relaxed/simple;
-	bh=dUA0kycUjCNgoLmLvWW5zC2MSB7Y6zh05/n1UZBgrPM=;
+	s=arc-20240116; t=1759923449; c=relaxed/simple;
+	bh=vyibQgDohNPlsD0FCwsM1rLRhORPlfbfdwXRep+Z4bE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H6yzDYVkSiU3iSL9Xb7AoPqkko27bN+YLNWRyruAyflYSDV0RS03U/5jRyv2PV50MOEkCYZCzR+5VRHCtjRTHWt5KYFp0dLz62QH3IdIGKstFweW2p6YKaq7PYuohtVK4Okte2gicI8D+ReNK/6mcL0chfp52GctMq69UGenq10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cDXyF6qV; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LZfNIq6h; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=r0emNODP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FyBBMf7g; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CAC7C33682;
-	Wed,  8 Oct 2025 11:36:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759923408; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QskK6sQlHONQvEW5OGacm6exgi6VLgrwHUdy41lqvi4=;
-	b=cDXyF6qV01eynbfN74hM9iVNFNSyB1IEb4SkSPMJBhqck4AfX87luVoaJziQg7Esf2jDtJ
-	Ple3AcxnxHEuaLNZLlPIbyIoQQ1HpEwJlJT8ILwYISccAvaDI9f697/Y+m/vJhRtnVQU45
-	HiHfkDWHCgt1RAFT0j6v6QJxlbIAVMc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759923408;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QskK6sQlHONQvEW5OGacm6exgi6VLgrwHUdy41lqvi4=;
-	b=LZfNIq6ht+Bxfh0B52NclgW6PVTxVHYv3y1dWaXX2brlPitEpU2R0kTd21Mtm5BDQ95kz3
-	f8DsLR26tCvjAEAw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=r0emNODP;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=FyBBMf7g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759923407; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QskK6sQlHONQvEW5OGacm6exgi6VLgrwHUdy41lqvi4=;
-	b=r0emNODP1UBpzvDJay464gnGYQZrUqPOIVgzeLkc/SnfiDyc5dyxJGTI9atNamtzWlyj9O
-	g2Rvkj4M14396sX5gaRaLd4C9Y2QnbnEttNlNa+Ieb7d5YrrXeYboShzaEd8s/K79Q1/o7
-	vqp2xRMNDTbwqXJAoaQEC2O0pU3oOZY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759923407;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QskK6sQlHONQvEW5OGacm6exgi6VLgrwHUdy41lqvi4=;
-	b=FyBBMf7gUwBwOapylXwqKBxhYJrG+jZU5Nd61iR33Th2NskRKjiG0zuFhYrKxsGYpwDc8O
-	wn5sKxGAiLX7nQBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BDE7E13A3D;
-	Wed,  8 Oct 2025 11:36:47 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id R1tWLs9M5mhbKwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 08 Oct 2025 11:36:47 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 580EBA0ACD; Wed,  8 Oct 2025 13:36:43 +0200 (CEST)
-Date: Wed, 8 Oct 2025 13:36:43 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
-	yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v2 05/13] ext4: pass out extent seq counter when mapping
- blocks
-Message-ID: <uugyelukqaxxipbrdrldvr37eoqn5uqc4x7jhvex6vbdaswgnl@wcwjbfcglxna>
-References: <20250925092610.1936929-1-yi.zhang@huaweicloud.com>
- <20250925092610.1936929-6-yi.zhang@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cnHCYZBl3Pwk6DOpB42VYsh2fisQrBrVVHmoOytp8bylkq2J5nxbI3blKKBpIt4MIJcEPCS6vLu05bATWvPP56NUQ41Uk1GWGDLo9tYm5fyvIE+ynDVoAbx1lp3w9nWEjuJOQ2ncVG009PpqbK4xxf+Z3t+0L8wrN29zgraxUdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KFKBFIBU; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Jgprr7F3KdJ+JKXM/25Z++fkBAjjCczyn4sy7+XGqu0=; b=KFKBFIBUccgaXaF6dKrcg+/EJ/
+	MUmr5V1ruA96j7rGG/E7wbJisVaWMjQNo0U/XcuYfn0kR0egRhTy33Jhua7KVoaAQvCKbKlUXvJvT
+	Cpbd1QWNC5NwUnJsq+JnYO5IWMqUfs/j+u/MvMxrCdJIoce6AdW6YZ7ilYhN8hD+RYxhZXoO7hHln
+	kbRdy+eMrUGg6quzOkendWK55ytk5DDj4NvJ7ORDI/tkbNGkfL4/J2tpdYIzgZfHvFlRw3qZ2VMNa
+	ErVLGzeD1wX3B+w4svh4Jrfbbet/MpzjrdReRo/d4B7IgGDXpGDYrIOUoLevA6wlfFKG7ctB8N+v/
+	xQSEMuCQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v6STt-00000003w9Y-1cAQ;
+	Wed, 08 Oct 2025 11:37:18 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 1CDA6300220; Wed, 08 Oct 2025 13:37:18 +0200 (CEST)
+Date: Wed, 8 Oct 2025 13:37:18 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: John Stultz <jstultz@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Metin Kaya <Metin.Kaya@arm.com>,
+	Xuewen Yan <xuewen.yan94@gmail.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Suleiman Souhlal <suleiman@google.com>,
+	kuyo chang <kuyo.chang@mediatek.com>, hupu <hupu.gm@gmail.com>,
+	kernel-team@android.com
+Subject: Re: [PATCH v22 3/6] sched: Add logic to zap balance callbacks if we
+ pick again
+Message-ID: <20251008113718.GV3419281@noisy.programming.kicks-ass.net>
+References: <20250926032931.27663-1-jstultz@google.com>
+ <20250926032931.27663-4-jstultz@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,148 +83,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250925092610.1936929-6-yi.zhang@huaweicloud.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: CAC7C33682
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,huawei.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Score: -4.01
+In-Reply-To: <20250926032931.27663-4-jstultz@google.com>
 
-On Thu 25-09-25 17:26:01, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> When creating or querying mapping blocks using the ext4_map_blocks() and
-> ext4_map_{query|create}_blocks() helpers, also pass out the extent
-> sequence number of the block mapping info through the ext4_map_blocks
-> structure. This sequence number can later serve as a valid cookie within
-> iomap infrastructure and the move extents procedure.
-> 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+On Fri, Sep 26, 2025 at 03:29:11AM +0000, John Stultz wrote:
 
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/ext4/ext4.h  |  1 +
->  fs/ext4/inode.c | 24 ++++++++++++++++--------
->  2 files changed, 17 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index 7b37a661dd37..7f452895ec09 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -260,6 +260,7 @@ struct ext4_map_blocks {
->  	ext4_lblk_t m_lblk;
->  	unsigned int m_len;
->  	unsigned int m_flags;
-> +	u64 m_seq;
->  };
->  
->  /*
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index c7fac4b89c88..d005a4f3f4b3 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -550,10 +550,13 @@ static int ext4_map_query_blocks(handle_t *handle, struct inode *inode,
->  		retval = ext4_ext_map_blocks(handle, inode, map, flags);
->  	else
->  		retval = ext4_ind_map_blocks(handle, inode, map, flags);
-> -
-> -	if (retval <= 0)
-> +	if (retval < 0)
->  		return retval;
->  
-> +	/* A hole? */
-> +	if (retval == 0)
-> +		goto out;
+> +#ifdef CONFIG_SCHED_PROXY_EXEC
+> +/*
+> + * Only called from __schedule context
+> + *
+> + * There are some cases where we are going to re-do the action
+> + * that added the balance callbacks. We may not be in a state
+> + * where we can run them, so just zap them so they can be
+> + * properly re-added on the next time around. This is similar
+> + * handling to running the callbacks, except we just don't call
+> + * them.
+> + */
+> +static void zap_balance_callbacks(struct rq *rq)
+> +{
+> +	struct balance_callback *next, *head;
+> +	bool found = false;
 > +
->  	if (unlikely(retval != map->m_len)) {
->  		ext4_warning(inode->i_sb,
->  			     "ES len assertion failed for inode "
-> @@ -573,11 +576,13 @@ static int ext4_map_query_blocks(handle_t *handle, struct inode *inode,
->  				EXTENT_STATUS_UNWRITTEN : EXTENT_STATUS_WRITTEN;
->  		ext4_es_insert_extent(inode, map->m_lblk, map->m_len,
->  				      map->m_pblk, status, false);
-> -		return retval;
-> +	} else {
-> +		retval = ext4_map_query_blocks_next_in_leaf(handle, inode, map,
-> +							    orig_mlen);
+> +	lockdep_assert_rq_held(rq);
+> +
+> +	head = rq->balance_callback;
+> +	while (head) {
+> +		if (head == &balance_push_callback)
+> +			found = true;
+> +		next = head->next;
+> +		head->next = NULL;
+> +		head = next;
+> +	}
+> +	rq->balance_callback = found ? &balance_push_callback : NULL;
+> +}
+> +#else
+> +static inline void zap_balance_callbacks(struct rq *rq) {}
+> +#endif
+> +
+>  static void do_balance_callbacks(struct rq *rq, struct balance_callback *head)
+>  {
+>  	void (*func)(struct rq *rq);
+> @@ -6942,10 +6974,15 @@ static void __sched notrace __schedule(int sched_mode)
+>  	rq_set_donor(rq, next);
+>  	if (unlikely(task_is_blocked(next))) {
+>  		next = find_proxy_task(rq, next, &rf);
+> -		if (!next)
+> +		if (!next) {
+> +			/* zap the balance_callbacks before picking again */
+> +			zap_balance_callbacks(rq);
+>  			goto pick_again;
+> -		if (next == rq->idle)
+> +		}
+> +		if (next == rq->idle) {
+> +			zap_balance_callbacks(rq);
+>  			goto keep_resched;
+> +		}
 >  	}
-> -
-> -	return ext4_map_query_blocks_next_in_leaf(handle, inode, map,
-> -						  orig_mlen);
-> +out:
-> +	map->m_seq = READ_ONCE(EXT4_I(inode)->i_es_seq);
-> +	return retval;
->  }
->  
->  static int ext4_map_create_blocks(handle_t *handle, struct inode *inode,
-> @@ -649,7 +654,7 @@ static int ext4_map_create_blocks(handle_t *handle, struct inode *inode,
->  	 * extent status tree.
->  	 */
->  	if (flags & EXT4_GET_BLOCKS_PRE_IO &&
-> -	    ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es, NULL)) {
-> +	    ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es, &map->m_seq)) {
->  		if (ext4_es_is_written(&es))
->  			return retval;
->  	}
-> @@ -658,6 +663,7 @@ static int ext4_map_create_blocks(handle_t *handle, struct inode *inode,
->  			EXTENT_STATUS_UNWRITTEN : EXTENT_STATUS_WRITTEN;
->  	ext4_es_insert_extent(inode, map->m_lblk, map->m_len, map->m_pblk,
->  			      status, flags & EXT4_GET_BLOCKS_DELALLOC_RESERVE);
-> +	map->m_seq = READ_ONCE(EXT4_I(inode)->i_es_seq);
->  
->  	return retval;
->  }
-> @@ -723,7 +729,7 @@ int ext4_map_blocks(handle_t *handle, struct inode *inode,
->  		ext4_check_map_extents_env(inode);
->  
->  	/* Lookup extent status tree firstly */
-> -	if (ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es, NULL)) {
-> +	if (ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es, &map->m_seq)) {
->  		if (ext4_es_is_written(&es) || ext4_es_is_unwritten(&es)) {
->  			map->m_pblk = ext4_es_pblock(&es) +
->  					map->m_lblk - es.es_lblk;
-> @@ -1979,6 +1985,8 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map)
->  
->  	map->m_flags |= EXT4_MAP_DELAYED;
->  	retval = ext4_insert_delayed_blocks(inode, map->m_lblk, map->m_len);
-> +	if (!retval)
-> +		map->m_seq = READ_ONCE(EXT4_I(inode)->i_es_seq);
->  	up_write(&EXT4_I(inode)->i_data_sem);
->  
->  	return retval;
-> -- 
-> 2.46.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>  picked:
+>  	clear_tsk_need_resched(prev);
+
+I would feel a wee bit better if you'd add something like:
+
+  pick_again:
++	assert_balance_callbacks_empty();
+	next = pick_next_task(...);
+
+And have that verify the balance list is indeed empty (save for push).
+Perhaps make that depend on PROVE_LOCKING or so; since someone went and
+deleted SCHED_DEBUG *sigh*.
 
