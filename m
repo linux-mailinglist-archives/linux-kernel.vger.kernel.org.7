@@ -1,181 +1,143 @@
-Return-Path: <linux-kernel+bounces-845480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CF0BBC51AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:03:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30896BC51EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:05:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BA461889292
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:03:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5A3C54F72CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B1827A900;
-	Wed,  8 Oct 2025 13:03:04 +0000 (UTC)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627DE25EFB6;
+	Wed,  8 Oct 2025 13:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tFmk/2X8"
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCC826A08F
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 13:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7AC241691
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 13:04:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759928583; cv=none; b=AB5fxbIZ2nuQlSuRDsJf9r0odtV9wQsU7romUYylvEcrH9/aR5MWWsl7Cftfh4jSUtCkocp9VPVx9gdiiLH11YgHRNB2L/cdMwMDtOccqnG3B3OaZxNPBlnqUVACJhzYlb+DE4fv9VERuAoovBojLU5KSH6bUO8OYzBVl/eNusE=
+	t=1759928656; cv=none; b=VPzXIuBnOpSlydX9VQG3oCf0HDKhC5X3QLkd3vueRc4OF+dRliTEi0+M57EyE5XbcAJE7ZcfRjyXXfcDRXTd/q8k2qlUwdTopNKs8oNn1G2Alv3FvFGl7JMlBwNCjBZKFWLG7HIbkPukFMJWQLmHCFST3wFc9QM2buyH1uAhw94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759928583; c=relaxed/simple;
-	bh=EIAWGhW8A2v+ZxqAjP2xba0nfScSMoScw5np+T9vffE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ON1DEfyGblhnaNU4l5KoWIMZwbYjg2XTA3aOyXzC7HKy1UWqzMu9Kd2FfMMKCJUIK8AkR/uPs/hOMG62wOEeMFVuZSO/nrx0wet1rMWMwe+HlXN58AR5x0pA+IBYOVS13G4X2Matv3xg/VBLMqI6rtlTil8/ld6H/iV27+XTn04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b00a9989633so211252966b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 06:03:01 -0700 (PDT)
+	s=arc-20240116; t=1759928656; c=relaxed/simple;
+	bh=iombOkx6RZ049iGmftkrgMRMmszUv7qM3smVLV5UOqk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=lbSblFealw+pVME9fZxZB+KCzttlro0VXpKOLlNoeyjoz9Q4vDuFw/OLpw520Biw7ZsN4WaxSF1bnPvgNgkz3agJ4lW+LxIK+nft/j05UTIVM1tIFII83u3YXFJpwHXDANbwbmTt26ajPrM4J7YygIWhbm1Cd7GaebS269eAFGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tFmk/2X8; arc=none smtp.client-ip=209.85.208.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-632d1317f48so8182506a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 06:04:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759928653; x=1760533453; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UqAM5J5K6OQvQzOQHzxihWMwPVqmYeUpdruR6N5ZdUg=;
+        b=tFmk/2X8iExVa094zCS3dmlp+I9iU9nfzN6z9RHO8wwtjoKJppXfZdmLZHEI6bYIQU
+         zbGcL/pdCWlhkJ3hApwh/ZjUEgoEdhrHB8/y0ezt+mdnBt2FfyvtYAG88wAXQj5pta0+
+         oDDCiW0ESbkXijvhNB6RZUE8//iEZ9rGUNmnIaf1WtcsC7JkMspY9o2IBFPLTCNy3Gac
+         OuiTmrMbZCJ0SnR5fqFAel1DrnRITcUUbVqiNzAjXLpOYzWlFxHoSswjQwOHKX13JeCn
+         oBp1qczBZt2wz4VS3NToa7yjgz9HG3efh0MHTgi65X2Y19s0Pm0Rf9WyPRR48qigVPn6
+         29qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759928580; x=1760533380;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ddtNPUJibRxzuhh3dSgUV8Un+ayK9jnQFI5eAYadmU0=;
-        b=CtQl4IVipsGNhooX2vrN0739hixxora6EqepjqhIagIKG6WhWgzywvHcf10wTcpg3Y
-         Arw5zQEdX/KFOK5K0XSsIm2CMPhN7eMMYrCxdl6sy0FHBCdbqHANL1o9McIm2D8d2i7w
-         fu4q//enTINWcqzI6yuTNW6o5HyUd8HvW8fPbztW3pLR6rDgx0CVvqTG5rKXfQkQ4nqB
-         j71Yd6JdT26UdJL/ATckpc1PNDvxVUBRE1dwbdyurMlfWWIEblGWUDf66hZ9NCPGceXG
-         iiaumlDnal8ijCeMw2YWfp44TnPv/bl0+HhS1glM582GUR+6DNRaYQgVja56GLShyixn
-         T+0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU6Cpq41Rf0Q/hCQfYFExJ8cX0wYnSnqTP5vDT2p6VSnFwzSIRzisAHrabWCOKo4X6+Ye1kK/sL3Es4Pbk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqlNrEhnQZDfOd+J6DEm7O1wK1qviSqEyvy0JisrOwSh2sh0tG
-	van2EycL9jC/B+zfdIyy+FtxPATB/Mv0fGetVc3SuqvQ5Y7rB5yjX+w7
-X-Gm-Gg: ASbGncsub+FBaMVdbTOB66sRrSGMdtSNt1XemgUinYzPizkQ75FZ/DB5ya5d/3fjVpu
-	xF9ozh+OkajVkHOeIr8QqcaXoDBYHAXFu+yr/0VJCoHZX27gtRg2R6yACu3k1U7CkLI0yq6O4cm
-	auTEIpxbQATKxHYRExSE90FJxUTZQHC0XQJxnINlJK5HFzWhySRZfxoTZOj0g3h4AFHnC1A2CEs
-	dPVLEOMVSoMugzG/g11mFIR0+ZkmnEZt/yMST1HmLjmVeCYMGu2bCi+3nA2Pss23XiIfonYkCrJ
-	kqQZSU+ffe/jaafyDM6XmZCHD/sshDZ+pHtF3m0V8u6/R9ntU5AIuo7rJ/itfK5znzzyTxntV9e
-	iFbv/3ljx7pUb6fS2T5Hbk2/yWhfmZOkTwx0PKuKoYw==
-X-Google-Smtp-Source: AGHT+IFCsOv+E+hkE/ODWPwUMsik0P5C7r77C29nZTRyMVSRUaIvoxt5GdpsOgvdOE/VgE3kaUEYsQ==
-X-Received: by 2002:a17:906:6a1f:b0:b04:3cd2:265b with SMTP id a640c23a62f3a-b50bcc09d8dmr365835566b.5.1759928579841;
-        Wed, 08 Oct 2025 06:02:59 -0700 (PDT)
-Received: from gmail.com ([2a03:2880:30ff:40::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b486970a60dsm1631679466b.63.2025.10.08.06.02.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 06:02:59 -0700 (PDT)
-Date: Wed, 8 Oct 2025 06:02:56 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>, 
-	david decotigny <decot@googlers.com>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, asantostc@gmail.com, efault@gmx.de, calvin@wbinvd.org, 
-	kernel-team@meta.com, jv@jvosburgh.net
-Subject: Re: [PATCH net v7 4/4] selftest: netcons: add test for netconsole
- over bonded interfaces
-Message-ID: <m2dwihyj3vddvipam555ewxej663brejyv5gdnsw4ks5mis2y7@2mu2gus2o7ys>
-References: <20251003-netconsole_torture-v7-0-aa92fcce62a9@debian.org>
- <20251003-netconsole_torture-v7-4-aa92fcce62a9@debian.org>
- <e6764450-b0f8-4f50-b761-6321dfe2ad71@redhat.com>
+        d=1e100.net; s=20230601; t=1759928653; x=1760533453;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=UqAM5J5K6OQvQzOQHzxihWMwPVqmYeUpdruR6N5ZdUg=;
+        b=sKKeq/zB0O6f55ph7nrnkylpbgwg6nLRDH7OIdqhUa5Q9ZQnOefDN2lSDYyRqXOnFE
+         NBUWTMdSE8nGC9csDGuauaPIjAs4McEFuLkG6bLNBnIAfZTZH/nm66LF9lY2AATgYkDZ
+         FJY1iMpm5oiIynkQ8lqH3p7q3PkjpZ9DrncDDNQ5+kP6//2xXG5MZ8i+KkKrF5GgVV0v
+         aa9NevpdKVDEF2IFk/l+BBH53IB0EbBynoUgRI2GULlvXmPaz0ITPiQJts8CNWtZVN1G
+         s1A9DJtL06dObcZvu9HUMvt60bPVajry8Gz//qdKRGjhu5YBQoZnMuH7UF2lj0DCMBOn
+         +aAA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBg7tM5xehv3R9TybHcGVaP2dNorTGhviVtQhzPTVIdGpx4t0JdLAYrWbo1E4hc2HY3L+LtWBm/YY8UIM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0oYI4uxX3W6unF/nfe8XFiRKMKJL5WtdOCoqQJY36QYKEb+Y5
+	OqX8jcmsMLw66qx+WyvDbfj/AqzzqMHa2J9mtlv+z6cfjzsgAle4EfskQ0AB7GpnRMSN7Ce5A1S
+	a3vzRsZHJtP52LLmWUQ==
+X-Google-Smtp-Source: AGHT+IEwDtKAOG3+0GlDuiqWNfaiYirepvfQDt/Qk9gvr2w2apCZsFLWkE0cR2CwoYx8kDzMVpCqB89Jb5iURts=
+X-Received: from edbde21.prod.google.com ([2002:a05:6402:3095:b0:62f:d279:8fa2])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6402:40cf:b0:636:23c2:e61f with SMTP id 4fb4d7f45d1cf-639d5c5a38dmr3342530a12.26.1759928652918;
+ Wed, 08 Oct 2025 06:04:12 -0700 (PDT)
+Date: Wed, 8 Oct 2025 13:04:11 +0000
+In-Reply-To: <20251008124619.3160-3-work@onurozkan.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e6764450-b0f8-4f50-b761-6321dfe2ad71@redhat.com>
+Mime-Version: 1.0
+References: <20251008124619.3160-1-work@onurozkan.dev> <20251008124619.3160-3-work@onurozkan.dev>
+Message-ID: <aOZhS9nTDnH3Zh7N@google.com>
+Subject: Re: [PATCH v2 2/4] rust: xarray: abstract `xa_alloc`
+From: Alice Ryhl <aliceryhl@google.com>
+To: "Onur =?utf-8?B?w5Z6a2Fu?=" <work@onurozkan.dev>
+Cc: rust-for-linux@vger.kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	lossin@kernel.org, tmgross@umich.edu, dakr@kernel.org, 
+	linux-kernel@vger.kernel.org, acourbot@nvidia.com, airlied@gmail.com, 
+	simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	tzimmermann@suse.de, corbet@lwn.net, lyude@redhat.com, 
+	linux-doc@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Paolo,
+On Wed, Oct 08, 2025 at 03:46:17PM +0300, Onur =C3=96zkan wrote:
+> Implements `alloc` function to `XArray<T>` that wraps
+> `xa_alloc` safely, which will be used to generate the
+> auxiliary device IDs.
+>=20
+> Resolves a task from the nova/core task list under the "XArray
+> bindings [XARR]" section in "Documentation/gpu/nova/core/todo.rst"
+> file.
+>=20
+> Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev>
+> ---
+>  rust/kernel/xarray.rs | 41 ++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 40 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/rust/kernel/xarray.rs b/rust/kernel/xarray.rs
+> index 90e27cd5197e..0711ccf99fb4 100644
+> --- a/rust/kernel/xarray.rs
+> +++ b/rust/kernel/xarray.rs
+> @@ -10,7 +10,7 @@
+>      ffi::c_void,
+>      types::{ForeignOwnable, NotThreadSafe, Opaque},
+>  };
+> -use core::{iter, marker::PhantomData, pin::Pin, ptr::NonNull};
+> +use core::{iter, marker::PhantomData, ops::Range, pin::Pin, ptr::NonNull=
+};
+>  use pin_init::{pin_data, pin_init, pinned_drop, PinInit};
+>=20
+>  /// An array which efficiently maps sparse integer indices to owned obje=
+cts.
+> @@ -268,6 +268,45 @@ pub fn store(
+>              Ok(unsafe { T::try_from_foreign(old) })
+>          }
+>      }
+> +
+> +    /// Allocates an empty slot within the given `limit` and stores `val=
+ue` there.
+> +    ///
+> +    /// May drop the lock if needed to allocate memory, and then reacqui=
+re it afterwards.
+> +    ///
+> +    /// On success, returns the allocated index.
+> +    ///
+> +    /// On failure, returns the element which was attempted to be stored=
+.
+> +    pub fn alloc(
+> +        &mut self,
+> +        limit: Range<u32>,
 
-On Tue, Oct 07, 2025 at 11:47:22AM +0200, Paolo Abeni wrote:
-> On 10/3/25 1:57 PM, Breno Leitao wrote:
+The Range type is inclusive/exclusive but xa_limit is
+inclusive/inclusive. They should match to avoid confusion.
 
-> > +# Test #5: Enslave a sub-interface to a bonding interface
-> > +# Enslave an interface to a bond interface that has netpoll attached
-> > +# At this stage, BOND_TX_MAIN_IF is created and BOND_TX1_SLAVE_IF is part of
-> > +# it. Netconsole is currently disabled
-> > +enslave_iface_to_bond
-> > +echo "test #5: Enslaving an interface to bond+netpoll. Test passed." >&2
-> 
-> I think this is missing the negative/fail to add test case asked by
-> Jakub. AFAICS you should be able to trigger such case trying to add a
-> veth device to the netpoll enabled bond (since the latter carries the
-> IFF_DISABLE_NETPOLL priv_flag).
-
-Thanks for the review. I misunderstood what Jakub said, sorry about it.
-
-I've tried to enslave a veth interface manually into a bonding
-interface, and I can see:
-
-	# ip link set veth0 master bond_tx_78
-	 aborting
-	 RTNETLINK answers: Device or resource busy
-	
-and dmesg shows:
-
-	netpoll: (null): veth0 doesn't support polling,
-
-If that is the test case that is missing, I will add it as an additional
-test in the selftest, and send a new version.
-
-> > +function create_ifaces_bond() {
-> > +	echo "$NSIM_BOND_TX_1" > "$NSIM_DEV_SYS_NEW"
-> > +	echo "$NSIM_BOND_TX_2" > "$NSIM_DEV_SYS_NEW"
-> > +	echo "$NSIM_BOND_RX_1" > "$NSIM_DEV_SYS_NEW"
-> > +	echo "$NSIM_BOND_RX_2" > "$NSIM_DEV_SYS_NEW"
-> > +	udevadm settle 2> /dev/null || true
-> > +
-> > +	local BOND_TX1=/sys/bus/netdevsim/devices/netdevsim"$NSIM_BOND_TX_1"
-> > +	local BOND_TX2=/sys/bus/netdevsim/devices/netdevsim"$NSIM_BOND_TX_2"
-> > +	local BOND_RX1=/sys/bus/netdevsim/devices/netdevsim"$NSIM_BOND_RX_1"
-> > +	local BOND_RX2=/sys/bus/netdevsim/devices/netdevsim"$NSIM_BOND_RX_2"
-> 
-> Note that with the create_netdevsim() helper from
-> tools/testing/selftests/net/lib.sh you could create the netdevsim device
-> directly in the target namespace and avoid some duplicate code.
-
-Awesome. I am more than happy to create_netdevsim() in this selftest,
-and move the others to use it as well.
-
-> It would be probably safer to create both rx and tx devices in child
-> namespaces.
-
-Sure, that is doable, but, I need to change a few common helpers, to
-start netconsole from inside the "tx namespace" instead of the default
-namespace.
-
-Given all the other netconsole selftest uses TX from the default net
-namespace, I would like to move them at all the same time.
-
-Do you think it is Ok to have this test using TX interfaces from the
-main net namespace (as is now), and then I submit a follow patch to
-migrate all the netcons tests (including this one) to use a TX
-namespace? Then I can change the helpers at the same time, simplifying
-the code review.
-
-> > +	# now create the RX bonding iface
-> > +	ip netns exec "${NAMESPACE}" \
-> > +		ip link add "${BOND_RX_MAIN_IF}" type bond mode balance-rr
-> 
-> Minor nit:
-> 
-> 	ip -n "${NAMESPACE}" link ...
-> 
-> will yield the same result with a little less wording.
-
-Ack. I will update. Thanks
-
-> > +# Clean up netdevsim ifaces created for bonding test
-> > +function cleanup_bond_nsim() {
-> > +	echo "$NSIM_BOND_TX_1" > "$NSIM_DEV_SYS_DEL"
-> > +	echo "$NSIM_BOND_TX_2" > "$NSIM_DEV_SYS_DEL"
-> > +	echo "$NSIM_BOND_RX_1" > "$NSIM_DEV_SYS_DEL"
-> > +	echo "$NSIM_BOND_RX_2" > "$NSIM_DEV_SYS_DEL"
-> > +	cleanup_all_ns
-> 
-> If all devices are created in child netns, you will not need explicit
-> per device cleanup.
-
-Ack!
-
-Thanks for the review,
---breno
+Alice
 
