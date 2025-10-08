@@ -1,120 +1,155 @@
-Return-Path: <linux-kernel+bounces-845662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E4C5BC5BA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:39:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59309BC5BCB
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:40:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03F6019E3CE9
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:40:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E93C19E3FA9
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:40:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B84BE2FBE10;
-	Wed,  8 Oct 2025 15:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7CB5301002;
+	Wed,  8 Oct 2025 15:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wYBMgz54"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="B10ueDmc"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5771B2FBE09
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D72630100F
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759937646; cv=none; b=RYm6Z/o+RFIEB0Xwld7QvK9m03afnILHiu3a3RHqQT1lvu8QYqVP379R2JgbrllFaUfedGwRXCdRe5b3IpzXCR0pVYJGKjDbT2aX+GS87jeWSb8WFFGg6tdL3xERPo7CateFbLmLUcj4knrL+UTZHx2BGhvqgt7pTYpNDT+EJNo=
+	t=1759937651; cv=none; b=CTVmmikFFmfauNq6jmWA1gxRCoPdYAG/Fo99bcdjDz4TYABDyqYEft/FbQ0vu4LSlbKYEtOWl2m58kVipGG39CLyqdv3aur56ucc3DbI2LgxkMj2jlrk8j5D9gUNzf5b4viSWwLYFuIZLiT4N44+iV6Geq1yykGVQEZyakkdvXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759937646; c=relaxed/simple;
-	bh=42RqGuehjRDSpY2gsrVZJlk6zt2QYdS+W6t8m/VoWXA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e0ros2Kcw9lLzhlbrwWLIA6790We3XaxWuQXavJXE+rYQxZPNXuNLYqWlLlPxqB4jEhO/c2QPQ6MWFglSq83CHZFS6dBQi4kwJGYU+Rykdlxyta/ZbyF/BphPOItP/uxYR8G/KVgt6P5yXjS7iG1hksSZUUx7Kw/5Znt3brbUZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wYBMgz54; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-46e5980471eso38622815e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:34:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759937643; x=1760542443; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3nT10c9+RtbCyZpgzKMKOftV2ncNLF5WtmF89g9eodc=;
-        b=wYBMgz54rI2qanBpnS/yUaLctWQRbskcCwiHIiuLdt00vfamaLNmUQSdpKDXfbxn1I
-         a6z2V2dDEKYb5QdKAlP/2HwY0M30bMBaCQlHIKgKbcmRoKYsTSUshurlpuQRGrrBtwai
-         DPXNyMaqyAuFXTj5wvvUaorLOUd6o/VidvrMHSnVvujIDpSk1qXZ1TU1xdizwyJLXGll
-         dHV5rA+ei/8m/wzGYxZ2nDP8DK5gPeeJkIgmX50SCl9kZJL+7BlhAWtbKG3VwMgBjWie
-         EnpQcDsSnf5FcIOKcOknRetHXcNauTRl1AFhlwYeoMxVlmthrDor60HNiTQooud8UVg2
-         1JzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759937643; x=1760542443;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3nT10c9+RtbCyZpgzKMKOftV2ncNLF5WtmF89g9eodc=;
-        b=d+pzOKzZ6c3Mr9E/VPrKIZZkvknzyxpauH4bkBK/dkHDV/bsg6SF/pnzk76mgDeTLN
-         Rdm0Stn6KAUHtzloJZ4HU+Y8r+Jz1fKGUIJHiqYaiseVmJSsTmvzTARf6yH7WG8W7f7W
-         Ff1WW5YgvXL6dan6eBlOHaWjrvSt+gJ9/yxFZhllqQkdwgy93AaDot8dby1rd6MYVDW7
-         4U67c2y8gtbZoCTtKmnQ3XOAfB4eMDCU8tJ5CXjcuvFQ91STE3QfB+Sam3LPyICCeRiA
-         +6HjaK23Fe+D4gyRz4H97zSqiHcFyA+R1Dwo2KOJEZjCG+zaMMtBGHjPVAzpg4y8XJAC
-         QHlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVJyHT59st0Yjif9p5RqNhxrEL0+lT82CI+zAG+MiSiNHo4s14kMfMIkvGN5TW1RTBa+ovCyXWFTX4BNmg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4iAQqNRWksqqVUs1y+di8cCWfYZnCyU1u9WS7tGHUoBj9e1Rd
-	pLkHFLhDba0CcrB18zNI+jdUY96TS8bJZbYYx/+qb/UiNKsyXPYc/WaMSiVNMxlv068=
-X-Gm-Gg: ASbGncsqePVom95HKcJHAR2F9L/2HcTqCKR97bEnkeeEz8ehjnhybe3e6Lui4uXGfFz
-	dY/SJh+kOTyjnAZQhS1Cnxi5KtZ4b49cMmI8/UJhIccEVSrtqzm5uoEg158NBMdXDLKvQpTEf85
-	fB1/dlj1RyAEx0KrHVYCUJLynulmpp4NzANNT3Px+Blg5g0y3w6Dw4y4GG5uatIJdlE6PBBBwXl
-	B9k/uAka+uRC0uND8rrIi7mAbIX7PFbiptLcfTBFkgfbXkJesjtg1fAD/DxSIIG9mfNog1j8bYg
-	+9fGn7Ro5SRmExnl+4TCYbCQVO9lsBLHABxlMnaqgJVkPTaxJP4/jLMMNfJl6SOLnCoUzulhcyn
-	6KaMSQGNJ9wDoEpHGwk8HrXBwTO5Djqarm8hRp+W6f6p85bwNUDKVepMqIUPmkrbvRfI=
-X-Google-Smtp-Source: AGHT+IHWKpjkgnJ6mZ4SxdFrASKIm3+agiqKwM+jn1niikJVBh/tK845v90Y+pp2KpRiWUEcs/aoDQ==
-X-Received: by 2002:a05:600c:1f93:b0:46e:376c:b1f0 with SMTP id 5b1f17b1804b1-46fa9a8ca9fmr25983455e9.7.1759937642542;
-        Wed, 08 Oct 2025 08:34:02 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46fab3d7df4sm17562785e9.1.2025.10.08.08.34.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 08:34:02 -0700 (PDT)
-Date: Wed, 8 Oct 2025 18:33:58 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Mattijs Korpershoek <mkorpershoek@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>,
-	Khairul Anuar Romli <khairul.anuar.romli@altera.com>,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] spi: cadence-quadspi: Fix pm_runtime unbalance on dma
- EPROBE_DEFER
-Message-ID: <aOaEZmrWgy_g0u7c@stanley.mountain>
-References: <20251008-cadence-quadspi-fix-pm-runtime-v1-1-33bcb4b83a2e@kernel.org>
+	s=arc-20240116; t=1759937651; c=relaxed/simple;
+	bh=81mkZlQSBdCKGQbglxWaHnFhDvryAJU0e3jWFOvHPjk=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=U0iOiujk8LCoxQF94xVMyH2Jl2/EoTxEkNRFmGRgIc4snYbxBsN/Ee71yB6puLBdVsA6p6b0RkHn3jE7qteUOEpFAFkQF8+VQ/wWNz/UpKi+2VvMwh4tsE+AYMCJVd/4v9q1nFyRZs0s6KQuBs3angqPmHxtKfKwYHHg3SyBM6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=B10ueDmc; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=l8oO3/pg6CmV2p3K97uD74zhg8Z0UWj/UPOYhl1Zo0w=; b=B10ueDmcM/SylBaBdgXfdp4OBf
+	IRFCD7EWQJi175dNzQJtH4nMUKjtazucCYKhqUG4hAqGxohiAft+dj8GIlWO+0zaBYvxQI22rDnBP
+	xY4IVBJ4GAU/IcjKB0tVsihi14MHscNJWO56kItbiB1iChF35r/Mwqf6tYk2AaRCEoaQy0grYJ5Ij
+	Rs+PUVwvojMBGWEnlAmLXXUZpgc0UNsD2aRDIODXmM6Xjag1W4jeesqQTKq1SS7kyfkVm98c6roz7
+	CjQxlLKh8vamkW7ruj4jRLXdSquLjHHgVaZoSHgCFwacAF5RBHFo/02rREJG5y9lKlE9BtW1pPfa9
+	QVTIXAvA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v6WB5-00000007jkZ-2HTW
+	for linux-kernel@vger.kernel.org;
+	Wed, 08 Oct 2025 15:34:07 +0000
+Date: Wed, 8 Oct 2025 16:34:07 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: linux-kernel@vger.kernel.org
+Subject: Using Gmail for kernel development Considered Harmful
+Message-ID: <aOaEb_9j6CwGgX7r@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20251008-cadence-quadspi-fix-pm-runtime-v1-1-33bcb4b83a2e@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 08, 2025 at 03:38:39PM +0200, Mattijs Korpershoek wrote:
-> In csqspi_probe(), when cqspi_request_mmap_dma() returns -EPROBE_DEFER,
-> we handle the error by jumping to probe_setup_failed.
-> In that label, we call pm_runtime_disable(), even if we never called
-> pm_runtime_enable() before.
-> 
-> Because of this, the driver cannot probe:
-> 
-> [    2.690018] cadence-qspi 47040000.spi: No Rx DMA available
-> [    2.699735] spi-nor spi0.0: resume failed with -13
-> [    2.699741] spi-nor: probe of spi0.0 failed with error -13
-> 
-> Only call pm_runtime_disable() if it was enabled by adding a new
-> label to handle cqspi_request_mmap_dma() failures.
-> 
-> Fixes: 04a8ff1bc351 ("spi: cadence-quadspi: fix cleanup of rx_chan on failure paths")
-> Signed-off-by: Mattijs Korpershoek <mkorpershoek@kernel.org>
-> ---
-> This has been tested on a AM69 SK board.
+Don't use gmail addresses for your kernel development.  You'll
+randomly lose email because gmail thinks it knows better and gives
+no way to say "you're wrong".
 
-The patch seems correct, but the correct Fixes tag is:
-Fixes: b07f349d1864 ("spi: spi-cadence-quadspi: Fix pm runtime unbalance")
+----- Forwarded message from Mail Delivery System <Mailer-Daemon@infradead.org> -----
 
-regards,
-dan carpenter
+Date: Wed, 08 Oct 2025 13:40:38 +0000
+From: Mail Delivery System <Mailer-Daemon@infradead.org>
+To: willy@infradead.org
+Subject: Mail delivery failed: returning message to sender
 
+This message was created automatically by mail delivery software.
+
+A message that you sent could not be delivered to one or more of its
+recipients. This is a permanent error. The following address(es) failed:
+
+  airlied@gmail.com
+    host gmail-smtp-in.l.google.com [2a00:1450:400c:c04::1a]
+    SMTP error from remote mail server after pipelined end of data:
+    550-5.7.1 [2001:8b0:10b:1236::1      12] Gmail has detected that this message is
+    550-5.7.1 likely unsolicited mail. To reduce the amount of spam sent to Gmail,
+    550-5.7.1 this message has been blocked. For more information, go to
+    550 5.7.1  https://support.google.com/mail/?p=UnsolicitedMessageError ffacd0b85a97d-42583ab9ab6si2621680f8f.237 - gsmtp
+  boqun.feng@gmail.com
+    host gmail-smtp-in.l.google.com [2a00:1450:400c:c04::1a]
+    SMTP error from remote mail server after pipelined end of data:
+    550-5.7.1 [2001:8b0:10b:1236::1      12] Gmail has detected that this message is
+    550-5.7.1 likely unsolicited mail. To reduce the amount of spam sent to Gmail,
+    550-5.7.1 this message has been blocked. For more information, go to
+    550 5.7.1  https://support.google.com/mail/?p=UnsolicitedMessageError ffacd0b85a97d-42583ab9ab6si2621680f8f.237 - gsmtp
+  alex.gaynor@gmail.com
+    host gmail-smtp-in.l.google.com [2a00:1450:400c:c04::1a]
+    SMTP error from remote mail server after pipelined end of data:
+    550-5.7.1 [2001:8b0:10b:1236::1      12] Gmail has detected that this message is
+    550-5.7.1 likely unsolicited mail. To reduce the amount of spam sent to Gmail,
+    550-5.7.1 this message has been blocked. For more information, go to
+    550 5.7.1  https://support.google.com/mail/?p=UnsolicitedMessageError ffacd0b85a97d-42583ab9ab6si2621680f8f.237 - gsmtp
+
+Reporting-MTA: dns; casper.infradead.org
+
+Action: failed
+Final-Recipient: rfc822;alex.gaynor@gmail.com
+Status: 5.0.0
+Remote-MTA: dns; gmail-smtp-in.l.google.com
+Diagnostic-Code: smtp; 550-5.7.1 [2001:8b0:10b:1236::1      12] Gmail has detected that this message is
+ 550-5.7.1 likely unsolicited mail. To reduce the amount of spam sent to Gmail,
+ 550-5.7.1 this message has been blocked. For more information, go to
+ 550 5.7.1  https://support.google.com/mail/?p=UnsolicitedMessageError ffacd0b85a97d-42583ab9ab6si2621680f8f.237 - gsmtp
+
+Action: failed
+Final-Recipient: rfc822;boqun.feng@gmail.com
+Status: 5.0.0
+Remote-MTA: dns; gmail-smtp-in.l.google.com
+Diagnostic-Code: smtp; 550-5.7.1 [2001:8b0:10b:1236::1      12] Gmail has detected that this message is
+ 550-5.7.1 likely unsolicited mail. To reduce the amount of spam sent to Gmail,
+ 550-5.7.1 this message has been blocked. For more information, go to
+ 550 5.7.1  https://support.google.com/mail/?p=UnsolicitedMessageError ffacd0b85a97d-42583ab9ab6si2621680f8f.237 - gsmtp
+
+Action: failed
+Final-Recipient: rfc822;airlied@gmail.com
+Status: 5.0.0
+Remote-MTA: dns; gmail-smtp-in.l.google.com
+Diagnostic-Code: smtp; 550-5.7.1 [2001:8b0:10b:1236::1      12] Gmail has detected that this message is
+ 550-5.7.1 likely unsolicited mail. To reduce the amount of spam sent to Gmail,
+ 550-5.7.1 this message has been blocked. For more information, go to
+ 550 5.7.1  https://support.google.com/mail/?p=UnsolicitedMessageError ffacd0b85a97d-42583ab9ab6si2621680f8f.237 - gsmtp
+
+Date: Wed, 8 Oct 2025 14:40:17 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Onur Özkan <work@onurozkan.dev>, rust-for-linux@vger.kernel.org,
+ ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+ gary@garyguo.net, bjorn3_gh@protonmail.com, lossin@kernel.org,
+ tmgross@umich.edu, dakr@kernel.org, linux-kernel@vger.kernel.org,
+ acourbot@nvidia.com, airlied@gmail.com, simona@ffwll.ch,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ corbet@lwn.net, lyude@redhat.com, linux-doc@vger.kernel.org,
+ linux-mm@kvack.org
+Subject: Re: [PATCH v2 2/4] rust: xarray: abstract `xa_alloc`
+
+On Wed, Oct 08, 2025 at 01:04:11PM +0000, Alice Ryhl wrote:
+> > +        limit: Range<u32>,
+> 
+> The Range type is inclusive/exclusive but xa_limit is
+> inclusive/inclusive. They should match to avoid confusion.
+
+... and xa_limit is inclusive at the top end to be sure that we can
+actually allocate 2^32-1.  Or does Range handle that by using 0 to mean
+that 2^32-1 is allowed?
+> 
+
+
+----- End forwarded message -----
 
