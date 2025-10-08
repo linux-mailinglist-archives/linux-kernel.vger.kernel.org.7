@@ -1,86 +1,125 @@
-Return-Path: <linux-kernel+bounces-845530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC888BC5422
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:48:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 06172BC5431
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:49:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 42B5E35199C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:48:08 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A7C2F351BA6
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11602586C5;
-	Wed,  8 Oct 2025 13:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED054286D7E;
+	Wed,  8 Oct 2025 13:48:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kKNGTE95"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XN18ZBQH"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D3E21B9C0
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 13:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95334285CA9
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 13:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759931283; cv=none; b=tGDUjpi5UX5f0kzT4HZM8QElsCFdH2s/PjzFjEFFI5x2itgAMD9Dwc24gkRYvw3UHzfy4U02Vz1bMZ1/VOpU8FUGpd/wqOPLc15U32XG178SVyB4SNAzFicnzi2yWc8SZqZdTMhByvz5ctwWjwuD2/VwgIsh6Un/gXAEePOyddY=
+	t=1759931339; cv=none; b=An8uPiyp7JPNQEO4kWz0nrVLpyBa95WB7Fnagdih9lgy0vbAIWzniwRJFFn2+xZlvfcvhv6smEcKrPEZUt4PnmcXJ2vt8YARuxc2uYb3gD1TvPKkYEj6GqXThekc1cWe3pbOqlxOvMjz9XvTSe9WBeRvR5+PII5BVeSwSJ1/l5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759931283; c=relaxed/simple;
-	bh=TArvezDZEQsjMhaHWIisKml+GzJyRldlLSrXhgHIPb8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PHi7OFViTaOTJVIZAGyQR2A8E7d31SHacxPxB5tEBPjdc7wwPlhFsxUYeAv0GR6oW8UPdEDlurMj3kot+uIArdXCutOGGLU0v+tobzN5jH08motLk6hWwXPOg5IbJbmYGxknZB3iZVgh4w4p+IdCaCFWzhWD5B5lUEw+ihAsz+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kKNGTE95; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B744EC116B1
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 13:48:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759931282;
-	bh=TArvezDZEQsjMhaHWIisKml+GzJyRldlLSrXhgHIPb8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=kKNGTE95vAq1vaS/BL4oTKjY7jbEX3OEkX/j3GX6GyjVInt6acx2gObwo4cCcpnIF
-	 WolI4vA5wQz11Le2ZOOqMEK+hRz0YSoLv1MXmLB48is8C1NGDFqNBxZ5oyJsPR2o4u
-	 C0tMc8MMfXjVDaHJLzwf+xhJtTcwnJe8n8RYcsddZz4Six9cTwSb1s9GV+kbcyGyDC
-	 iEGQTBxm8YoVRSZoWad05bOEnpqGC1w3mq7yRqdmA9whATdICvCUdj5xDOn2zWbYjn
-	 ++CFPA3ur+y9eM8LOeBH2hE+XsoBZWqBbeP54dLveXIyzJwWxArRJLTI9TqJ5IJ+/H
-	 k5AoWzLznZ0Rw==
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-6494330b1b9so3215016eaf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 06:48:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWktNFOk5HLGgN3cSRkW7n0155nEpXYO+RUB+Lv5JavXgytJwRbDRB7GHhTEd+Jl4JtRq/tw0pftJHaRW0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVZ8WKhNjnXIG7bTPNjthkmmGc3nhopmoURHQPKjUZCQ9udwWk
-	dMV8kXEpya5DAKgstDpUM5Xsd70pkAvy0WYHwVbarvHjImDx0KvrWXNzILbrfQ0AaK/gADMqtE/
-	wQj85oIL3JkEpYyTDftRDk7axLVr56+w=
-X-Google-Smtp-Source: AGHT+IFz5cBg4+T4rL9tuywKBs8c6cm4c/NRWXhnpM1O5tcd8mh0O2hidOMfjxbofOc9Tqa4RWlPyoGWgmjOias/7z0=
-X-Received: by 2002:a05:6808:188b:b0:43d:2197:c1e5 with SMTP id
- 5614622812f47-4417b1ac054mr1841940b6e.0.1759931282013; Wed, 08 Oct 2025
- 06:48:02 -0700 (PDT)
+	s=arc-20240116; t=1759931339; c=relaxed/simple;
+	bh=GbSaa/EKZ5s8UkgtPrh/MX8WgMkQZPaiA6bJfdaGpgw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VfyNejVdYcqvAr4oysVx1+bAUSNL8C52uAlD57GoZm67eVROKqC2JpYXqb7O+QqbO0JkckSbqx8NHOChtsCRaf4iEzEaCHgD/N6yk2+IdITL3JTpszH98GjSfVzlgbAr33QRCqt2wymzQNGsc/DxOxHc8R7CNeoCL5QK5E6PlrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XN18ZBQH; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <3fa8182f-0195-43ee-b163-f908a9e2cba3@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759931325;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Uf5/duJrWVKUCDJFgAcXUExHgRsL5XyYj1G/kjKoQGw=;
+	b=XN18ZBQHkL8VF42r5TRMQE022lIyv/4biRi92DxLzr+OwHWrQo1lBg7HW2YB6owPNKY/AP
+	h3sdwVABCXdpNWT92wcOEWaDCwUIs7coRdTd6DNumvRABDWHVg3NmTg3WWMQ3spQWmrow/
+	/rU1jTQvLss0mVrtlzpXkiR37xDte28=
+Date: Wed, 8 Oct 2025 21:48:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251007063551.3147937-1-senozhatsky@chromium.org>
- <20251008101408.dj46r66gcfo26sgl@lcpd911> <CAJZ5v0hBzgJP2L0yg4JtP2c=NxA=MqAY_m+9GJ9P8kszb1hWvw@mail.gmail.com>
- <20251008130234.mw6k4k7fupxma2t5@lcpd911> <rbap3e2chlgx7zn2uw5fntjfjoqlfdebsautmiaq4oz7y2ecnx@ejmbrvrtbpju>
-In-Reply-To: <rbap3e2chlgx7zn2uw5fntjfjoqlfdebsautmiaq4oz7y2ecnx@ejmbrvrtbpju>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 8 Oct 2025 15:47:50 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0g-f2dzKJZDZ_fxrDL+JYcF3JxjargBVT3RVcXhVVywjw@mail.gmail.com>
-X-Gm-Features: AS18NWDzg6y_ln0VOA3LER6CVKTWcaEQ6TVX12yT9jm_4CrN9aS2IFrcY9Saj2Q
-Message-ID: <CAJZ5v0g-f2dzKJZDZ_fxrDL+JYcF3JxjargBVT3RVcXhVVywjw@mail.gmail.com>
-Subject: Re: [PATCHv2] PM: dpm: add module param to backtrace all CPUs
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Dhruva Gole <d-gole@ti.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Tomasz Figa <tfiga@chromium.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 1/1] hung_task: fix warnings caused by unaligned lock
+ pointers
+Content-Language: en-US
+To: Finn Thain <fthain@linux-m68k.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+ Eero Tamminen <oak@helsinkinet.fi>,
+ Kent Overstreet <kent.overstreet@linux.dev>, amaindex@outlook.com,
+ anna.schumaker@oracle.com, boqun.feng@gmail.com, ioworker0@gmail.com,
+ joel.granados@kernel.org, jstultz@google.com, leonylgao@tencent.com,
+ linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+ longman@redhat.com, mhiramat@kernel.org, mingo@redhat.com,
+ mingzhe.yang@ly.com, peterz@infradead.org, rostedt@goodmis.org,
+ senozhatsky@chromium.org, tfiga@chromium.org, will@kernel.org,
+ stable@vger.kernel.org
+References: <20250909145243.17119-1-lance.yang@linux.dev>
+ <yqjkjxg25gh4bdtftsdngj5suturft2b4hjbfxwe6hehbg4ctq@6i55py3jaiov>
+ <99410857-0e72-23e4-c60f-dea96427b85a@linux-m68k.org>
+ <CAMuHMdVYiSLOk-zVopXV8i7OZdO7PAK7stZSJNJDMw=ZEqtktA@mail.gmail.com>
+ <inscijwnnydibdwwrkggvgxjtimajr5haixff77dbd7cxvvwc7@2t7l7oegsxcp>
+ <20251007135600.6fc4a031c60b1384dffaead1@linux-foundation.org>
+ <b43ce4a0-c2b5-53f2-e374-ea195227182d@linux-m68k.org>
+ <56784853-b653-4587-b850-b03359306366@linux.dev>
+ <693a62e0-a2b5-113b-d5d9-ffb7f2521d6c@linux-m68k.org>
+ <23b67f9d-20ff-4302-810c-bf2d77c52c63@linux.dev>
+ <2bd2c4a8-456e-426a-aece-6d21afe80643@linux.dev>
+ <ba00388c-1d5b-4d95-054d-a6f09af41e7b@linux-m68k.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <ba00388c-1d5b-4d95-054d-a6f09af41e7b@linux-m68k.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Oct 8, 2025 at 3:10=E2=80=AFPM Sergey Senozhatsky
-<senozhatsky@chromium.org> wrote:
->
-> On (25/10/08 18:32), Dhruva Gole wrote:
-> > What I meant really was to consider another path instead of a mod param=
-,
-> > something like a /sys/kernel/
->
-> Modules' params are exposed to sysfs and are writeable.
 
-Some of them aren't writable, but this particular one is.
+
+On 2025/10/8 18:12, Finn Thain wrote:
+> 
+> On Wed, 8 Oct 2025, Lance Yang wrote:
+> 
+>>
+>> In other words, we are not just fixing the bug reported by Eero and
+>> Geert, but correcting the blocker tracking mechanism's flawed assumption
+>> for -stable ;)
+>>
+>> If you feel this doesn't qualify as a fix, I can change the Fixes: tag
+>> to point to the original commit that introduced this flawed mechanism
+>> instead.
+>>
+> 
+> That's really a question for the bug reporters. I don't personally have a
+> problem with CONFIG_DETECT_HUNG_TASK_BLOCKER so I can't say whether the
+> fix meets the requirements set in
+> Documentation/process/stable-kernel-rules.rst. And I still don't know
+
+I'm a bit confused, as I recall you previously stating that "It's wrong
+and should be fixed"[1].
+
+To clarify, is your current position that it should be fixed in general,
+but the fix should not be backported to -stable?
+
+If so, then I have nothing further to add to this thread and am happy
+to let the maintainer @Andrew decide.
+
+> what's meant by "unnecessary warnings in a few unexpected cases".
+
+The blocker tracking mechanism will trigger a warning when it
+encounters any unaligned lock pointer (e.g., from a packed struct). I
+don't think that is the expected behavior. Instead, it should simply
+skip any unaligned pointer it cannot handle. For the stable kernels,
+at least, this is the correct behavior.
+
+[1] 
+https://lore.kernel.org/lkml/6ec95c3f-365b-e352-301b-94ab3d8af73c@linux-m68k.org/
 
