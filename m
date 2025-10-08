@@ -1,362 +1,150 @@
-Return-Path: <linux-kernel+bounces-845218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89A39BC3F33
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 10:53:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3444BC402F
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 10:56:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 214FE4F8FA0
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 08:53:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44D8418872E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 08:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00F3B2F4A10;
-	Wed,  8 Oct 2025 08:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B03B2F4A18;
+	Wed,  8 Oct 2025 08:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TBRYDYhG"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="VqzCtDDG"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF06E2F3C28
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 08:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E07272F3632;
+	Wed,  8 Oct 2025 08:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759913593; cv=none; b=tsMNCQZOExpLsS2IJhZcPoZWoerpiixcbis+8Uy+D8ToZSbfWp7IlpIgbYvlZ1GBWgk6VSLB0RoIvKWx0jGeCswwTN6PrY4796+/WUQg56VWoEvvjHI0CqbhCFRRMk0ZlKoS2erRkSCVcYUboY1z30/pNam1HSphc+k1hP1myUQ=
+	t=1759913776; cv=none; b=nYYCPtHJepk7hxe1uOebv9uwV0W8H0ZLjJtsvS3lsKIVmzvM5/wzyptEql94hvvgGVF7h7ojRdLdAhI1rN4QNq+D9MlUTQXgPLNGFN4paLn8bAyyYQAvSNTWcD9koYvZ6X7upXqay0Qlq/4t8uuEIyg6ntYMrqnkH5e3YJ4eW/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759913593; c=relaxed/simple;
-	bh=coizfBfCGKgQ8fALILJU/iXDy4esAxUvjS43FaLCTTQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=F1OteQVnUyV341V+RePrDZ34MkZbKFLcAjoN8wLf/W88acal2uosxkBw0v21Q7EliqCLFKjZRmiejrjHVE7NiW8JiqeSR2NXWWi9hOmB9g5Zme7siVxQVqwAGH8/q8vVvOy0BuIlTKaXqACc819stb2XzJb4Uq9n3EwFH3px5yA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TBRYDYhG; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251008085308euoutp01b6d78b36576ce98f2e2bf426d96a7a79~seBWqSDCw3202732027euoutp01g
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 08:53:08 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251008085308euoutp01b6d78b36576ce98f2e2bf426d96a7a79~seBWqSDCw3202732027euoutp01g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1759913588;
-	bh=kGrCnlGnP8ZDxxm+rsFGZarcVznvcQwAdEI88ve/ye0=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=TBRYDYhGqemTlsujP1djfw3sOdY/+at5cJondTpHPZ7kKso/5bk4j6vpHC6Kr0kYp
-	 0dvO6jedcsbvDdRcwbk2zRL2ww80GocOd3ASSI+BWb9TIbmTM/RT+//Ofz97gOiyaO
-	 DOALqE9XtRguDwa9hJDJj4b7NA4IZqyOa4rTPERE=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20251008085308eucas1p1690525b7ed2b58e06f80ff8201a42439~seBWFG-_j1228712287eucas1p1a;
-	Wed,  8 Oct 2025 08:53:08 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20251008085306eusmtip178f2c38c68106bb4643d24eaee98c3f0~seBUiI6Ry0375703757eusmtip1u;
-	Wed,  8 Oct 2025 08:53:06 +0000 (GMT)
-Message-ID: <4d4305f7-1ee1-415b-9bd5-407a85e60af8@samsung.com>
-Date: Wed, 8 Oct 2025 10:53:05 +0200
+	s=arc-20240116; t=1759913776; c=relaxed/simple;
+	bh=H/ik4pU3HkalHVwzw773zJ63OWJtWJ8qrNm4n1O+v/Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PIowZPuDCTPBK4WAAwGfB8QgCXEzgYEcNcnJBeE61dFujmTxuOySSnKHp2hxiDbQMbkuq+SsMoXFmiViDZW5iwnwC/vH29n9quXZ4kFdOHSLMgOd0b+/nVrSHp3T53Ep5/TfgXW4hV5s9HMIJnzuiE2iH/OI4Cs4pBDja1mi4d8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=VqzCtDDG; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=si
+	54P4hhGgXr8g3ksCyz7KRzFUMFtbJhWpk8XEnsyFU=; b=VqzCtDDGa1swIt+8DM
+	IVv4UNWYMMzRkAASqV2FsH6sbCNweGBu2oCG5skunIEd70DlCwH4uibNVeNENFoQ
+	bu4x1fA8DI9H67N8eBmMI7xpS8Sld4TCOmIgByUiF5LYpKw815EsMDfUzg5mmLXu
+	cTpFN69Fc6oGcYu8Y4MqRyUxA=
+Received: from localhost.localdomain (unknown [])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wDXL7fpJuZoLo0ZCw--.24071S4;
+	Wed, 08 Oct 2025 16:55:06 +0800 (CST)
+From: Haoxiang Li <haoxiang_li2024@163.com>
+To: minghsiu.tsai@mediatek.com,
+	houlong.wei@mediatek.com,
+	andrew-ct.chen@mediatek.com,
+	mchehab@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	hans.verkuil@cisco.com,
+	christophe.jaillet@wanadoo.fr,
+	nicolas@ndufresne.ca
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Haoxiang Li <haoxiang_li2024@163.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v3] media: mtk-mdp: Fix error handling in probe function
+Date: Wed,  8 Oct 2025 16:55:03 +0800
+Message-Id: <20251008085503.12434-1-haoxiang_li2024@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: KMSAN: uninit-value in eth_type_trans
-To: Alexander Potapenko <glider@google.com>, Robin Murphy
-	<robin.murphy@arm.com>, Christoph Hellwig <hch@infradead.org>, Leon
-	Romanovsky <leonro@nvidia.com>, mhklinux@outlook.com
-Cc: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com, Aleksandr Nogikh <nogikh@google.com>,
-	"iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <CAG_fn=U3Rjd_0zfCJE-vuU3Htbf2fRP_GYczdYjJJ1W5o30+UQ@mail.gmail.com>
 Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20251008085308eucas1p1690525b7ed2b58e06f80ff8201a42439
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20251007065234eucas1p2d75cf31bee782bce0dac9d591914a528
-X-EPHeader: CA
-X-CMS-RootMailID: 20251007065234eucas1p2d75cf31bee782bce0dac9d591914a528
-References: <20250925223656.1894710-1-nogikh@google.com>
-	<CGME20251007065234eucas1p2d75cf31bee782bce0dac9d591914a528@eucas1p2.samsung.com>
-	<CAG_fn=U3Rjd_0zfCJE-vuU3Htbf2fRP_GYczdYjJJ1W5o30+UQ@mail.gmail.com>
+X-CM-TRANSID:_____wDXL7fpJuZoLo0ZCw--.24071S4
+X-Coremail-Antispam: 1Uf129KBjvJXoWxuF4xZF13Kr15ArWDtFyrWFg_yoW5Jw48pF
+	yDKayFkrWUCFW29r47Ja18A3Z8Cw1S9w48Ww4xJw4xC345WrWrJryrta48t3yxtr97Ca43
+	Jw1avFWrCFWYvF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0p_oGHUUUUUU=
+X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/xtbBEhXbbmjf66NFhwACsN
 
-Hi
+Add mtk_mdp_unregister_m2m_device() on the error handling path to prevent
+resource leak.
 
-On 07.10.2025 08:51, Alexander Potapenko wrote:
-> On Fri, Sep 26, 2025 at 12:36 AM Aleksandr Nogikh <nogikh@google.com> wrote:
->> Hello net developers,
-> CCing DMA developers, as this seems to be a generic problem.
-> See the question below, after the KMSAN report.
+Add check for the return value of vpu_get_plat_device() to prevent null
+pointer dereference. And vpu_get_plat_device() increases the reference
+count of the returned platform device. Add platform_device_put() to
+prevent reference leak.
 
-Thanks for this report!
+Fixes: c8eb2d7e8202 ("[media] media: Add Mediatek MDP Driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+---
+Changes in v3:
+- Modify the patch subject and description.
+- Patch v2 is a little bit verbose and trivial, so I changed the
+  subject and moved the fixes of mtk_mdp_remove to a separate patch.
+  Thanks, Nicolas!
+Changes in v2:
+- Add check for vpu_get_plat_device()
+- Add platform_device_put() in mtk_mdp_remove()
+- Add mtk_mdp_unregister_m2m_device() on the error handling path.
+- Modify the patch title and description. I think you are right.
+  Thanks, CJ!
+---
+ .../media/platform/mediatek/mdp/mtk_mdp_core.c   | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
->> I hit the following kernel crash when I try to boot a CONFIG_KMSAN=y kernel on qemu:
->>
->> KMSAN: uninit-value in eth_type_trans
->>
->> Could you please have a look?
->>
->> Kernel: torvalds
->> Commit: cec1e6e5d1ab33403b809f79cd20d6aff124ccfe
->> Config: https://protect2.fireeye.com/v1/url?k=53229ed1-0cb9a7ce-5323159e-000babdfecba-dfefb775995a4321&q=1&e=a1f2777b-91b5-43b3-8580-011d41f4d75a&u=https%3A%2F%2Fraw.githubusercontent.com%2Fgoogle%2Fsyzkaller%2Frefs%2Fheads%2Fmaster%2Fdashboard%2Fconfig%2Flinux%2Fupstream-kmsan.config
->>
->> Qemu command to reproduce:
->>
->> qemu-system-x86_64 -m 8G -smp 2,sockets=2,cores=1 -machine pc-q35-10.0 \
->> -enable-kvm -display none -serial stdio -snapshot \
->> -device virtio-blk-pci,drive=myhd -drive file=~/buildroot_amd64_2024.09,format=raw,if=none,id=myhd \
->> -kernel ~/linux/arch/x86/boot/bzImage -append "root=/dev/vda1" -cpu max \
->> -net nic,model=e1000 -net user,host=10.0.2.10,hostfwd=tcp:127.0.0.1:10021-:22
->>
->> The command used the buildroot image below:
->> $ wget 'https://protect2.fireeye.com/v1/url?k=b0fed9f8-ef65e0e7-b0ff52b7-000babdfecba-ea62e0c7e52f3737&q=1&e=a1f2777b-91b5-43b3-8580-011d41f4d75a&u=https%3A%2F%2Fstorage.googleapis.com%2Fsyzkaller%2Fimages%2Fbuildroot_amd64_2024.09.gz'
->> $ gunzip buildroot_amd64_2024.09.gz
->>
->> Full symbolized report:
->>
->> BUG: KMSAN: uninit-value in eth_skb_pkt_type include/linux/etherdevice.h:627 [inline]
->> BUG: KMSAN: uninit-value in eth_type_trans+0x4ee/0x980 net/ethernet/eth.c:165
->>   eth_skb_pkt_type include/linux/etherdevice.h:627 [inline]
->>   eth_type_trans+0x4ee/0x980 net/ethernet/eth.c:165
->>   e1000_receive_skb drivers/net/ethernet/intel/e1000/e1000_main.c:4005 [inline]
->>   e1000_clean_rx_irq+0x1256/0x1cf0 drivers/net/ethernet/intel/e1000/e1000_main.c:4465
->>   e1000_clean+0x1e4b/0x5f10 drivers/net/ethernet/intel/e1000/e1000_main.c:3807
->>   __napi_poll+0xda/0x850 net/core/dev.c:7506
->>   napi_poll net/core/dev.c:7569 [inline]
->>   net_rx_action+0xa56/0x1b00 net/core/dev.c:7696
->>   handle_softirqs+0x166/0x6e0 kernel/softirq.c:579
->>   __do_softirq kernel/softirq.c:613 [inline]
->>   invoke_softirq kernel/softirq.c:453 [inline]
->>   __irq_exit_rcu+0x66/0x180 kernel/softirq.c:680
->>   irq_exit_rcu+0x12/0x20 kernel/softirq.c:696
->>   common_interrupt+0x99/0xb0 arch/x86/kernel/irq.c:318
->>   asm_common_interrupt+0x2b/0x40 arch/x86/include/asm/idtentry.h:693
->>   native_safe_halt arch/x86/include/asm/irqflags.h:48 [inline]
->>   pv_native_safe_halt+0x17/0x20 arch/x86/kernel/paravirt.c:81
->>   arch_safe_halt arch/x86/kernel/process.c:756 [inline]
->>   default_idle+0xd/0x20 arch/x86/kernel/process.c:757
->>   arch_cpu_idle+0xd/0x20 arch/x86/kernel/process.c:794
->>   default_idle_call+0x41/0x70 kernel/sched/idle.c:122
->>   cpuidle_idle_call kernel/sched/idle.c:190 [inline]
->>   do_idle+0x1dc/0x790 kernel/sched/idle.c:330
->>   cpu_startup_entry+0x60/0x80 kernel/sched/idle.c:428
->>   rest_init+0x1df/0x260 init/main.c:744
->>   start_kernel+0x76e/0x960 init/main.c:1097
->>   x86_64_start_reservations+0x28/0x30 arch/x86/kernel/head64.c:307
->>   x86_64_start_kernel+0x139/0x140 arch/x86/kernel/head64.c:288
->>   common_startup_64+0x13e/0x147
->>
->> Uninit was stored to memory at:
->>   skb_put_data include/linux/skbuff.h:2753 [inline]
->>   e1000_copybreak drivers/net/ethernet/intel/e1000/e1000_main.c:4339 [inline]
->>   e1000_clean_rx_irq+0x870/0x1cf0 drivers/net/ethernet/intel/e1000/e1000_main.c:4384
->>   e1000_clean+0x1e4b/0x5f10 drivers/net/ethernet/intel/e1000/e1000_main.c:3807
->>   __napi_poll+0xda/0x850 net/core/dev.c:7506
->>   napi_poll net/core/dev.c:7569 [inline]
->>   net_rx_action+0xa56/0x1b00 net/core/dev.c:7696
->>   handle_softirqs+0x166/0x6e0 kernel/softirq.c:579
->>   __do_softirq kernel/softirq.c:613 [inline]
->>   invoke_softirq kernel/softirq.c:453 [inline]
->>   __irq_exit_rcu+0x66/0x180 kernel/softirq.c:680
->>   irq_exit_rcu+0x12/0x20 kernel/softirq.c:696
->>   common_interrupt+0x99/0xb0 arch/x86/kernel/irq.c:318
->>   asm_common_interrupt+0x2b/0x40 arch/x86/include/asm/idtentry.h:693
->>
->> Uninit was stored to memory at:
->>   swiotlb_bounce+0x470/0x640 kernel/dma/swiotlb.c:-1
->>   __swiotlb_sync_single_for_cpu+0x9e/0xc0 kernel/dma/swiotlb.c:1567
->>   swiotlb_sync_single_for_cpu include/linux/swiotlb.h:279 [inline]
->>   dma_direct_sync_single_for_cpu kernel/dma/direct.h:77 [inline]
->>   __dma_sync_single_for_cpu+0x50d/0x710 kernel/dma/mapping.c:370
->>   dma_sync_single_for_cpu include/linux/dma-mapping.h:381 [inline]
->>   e1000_copybreak drivers/net/ethernet/intel/e1000/e1000_main.c:4336 [inline]
->>   e1000_clean_rx_irq+0x7dc/0x1cf0 drivers/net/ethernet/intel/e1000/e1000_main.c:4384
->>   e1000_clean+0x1e4b/0x5f10 drivers/net/ethernet/intel/e1000/e1000_main.c:3807
->>   __napi_poll+0xda/0x850 net/core/dev.c:7506
->>   napi_poll net/core/dev.c:7569 [inline]
->>   net_rx_action+0xa56/0x1b00 net/core/dev.c:7696
->>   handle_softirqs+0x166/0x6e0 kernel/softirq.c:579
->>   __do_softirq kernel/softirq.c:613 [inline]
->>   invoke_softirq kernel/softirq.c:453 [inline]
->>   __irq_exit_rcu+0x66/0x180 kernel/softirq.c:680
->>   irq_exit_rcu+0x12/0x20 kernel/softirq.c:696
->>   common_interrupt+0x99/0xb0 arch/x86/kernel/irq.c:318
->>   asm_common_interrupt+0x2b/0x40 arch/x86/include/asm/idtentry.h:693
->>
->> Uninit was stored to memory at:
->>   swiotlb_bounce+0x470/0x640 kernel/dma/swiotlb.c:-1
->>   swiotlb_tbl_map_single+0x2956/0x2b20 kernel/dma/swiotlb.c:1439
->>   swiotlb_map+0x349/0x1050 kernel/dma/swiotlb.c:1584
->>   dma_direct_map_page kernel/dma/direct.h:-1 [inline]
->>   dma_map_page_attrs+0x614/0xef0 kernel/dma/mapping.c:169
->>   dma_map_single_attrs include/linux/dma-mapping.h:469 [inline]
->>   e1000_alloc_rx_buffers+0x96d/0x1600 drivers/net/ethernet/intel/e1000/e1000_main.c:4616
->>   e1000_configure+0x16fe/0x1930 drivers/net/ethernet/intel/e1000/e1000_main.c:377
->>   e1000_open+0x985/0x14d0 drivers/net/ethernet/intel/e1000/e1000_main.c:1388
->>   __dev_open+0x7c2/0xc40 net/core/dev.c:1682
->>   __dev_change_flags+0x3ae/0x9b0 net/core/dev.c:9549
->>   netif_change_flags+0x8d/0x1e0 net/core/dev.c:9612
->>   dev_change_flags+0x18c/0x320 net/core/dev_api.c:68
->>   devinet_ioctl+0x162d/0x2570 net/ipv4/devinet.c:1199
->>   inet_ioctl+0x4c0/0x6f0 net/ipv4/af_inet.c:1001
->>   sock_do_ioctl+0x9f/0x480 net/socket.c:1238
->>   sock_ioctl+0x70b/0xd60 net/socket.c:1359
->>   vfs_ioctl fs/ioctl.c:51 [inline]
->>   __do_sys_ioctl fs/ioctl.c:598 [inline]
->>   __se_sys_ioctl+0x23c/0x400 fs/ioctl.c:584
->>   __x64_sys_ioctl+0x97/0xe0 fs/ioctl.c:584
->>   x64_sys_call+0x1cbc/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:17
->>   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->>   do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
->>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
->>
->> Uninit was created at:
->>   __alloc_frozen_pages_noprof+0x648/0xe80 mm/page_alloc.c:5171
->>   __alloc_pages_noprof+0x41/0xd0 mm/page_alloc.c:5182
->>   __page_frag_cache_refill+0x57/0x2a0 mm/page_frag_cache.c:59
->>   __page_frag_alloc_align+0xd0/0x690 mm/page_frag_cache.c:103
->>   __napi_alloc_frag_align net/core/skbuff.c:248 [inline]
->>   __netdev_alloc_frag_align+0x1b7/0x1f0 net/core/skbuff.c:269
->>   netdev_alloc_frag include/linux/skbuff.h:3408 [inline]
->>   e1000_alloc_frag drivers/net/ethernet/intel/e1000/e1000_main.c:2074 [inline]
->>   e1000_alloc_rx_buffers+0x276/0x1600 drivers/net/ethernet/intel/e1000/e1000_main.c:4584
->>   e1000_configure+0x16fe/0x1930 drivers/net/ethernet/intel/e1000/e1000_main.c:377
->>   e1000_open+0x985/0x14d0 drivers/net/ethernet/intel/e1000/e1000_main.c:1388
->>   __dev_open+0x7c2/0xc40 net/core/dev.c:1682
->>   __dev_change_flags+0x3ae/0x9b0 net/core/dev.c:9549
->>   netif_change_flags+0x8d/0x1e0 net/core/dev.c:9612
->>   dev_change_flags+0x18c/0x320 net/core/dev_api.c:68
->>   devinet_ioctl+0x162d/0x2570 net/ipv4/devinet.c:1199
->>   inet_ioctl+0x4c0/0x6f0 net/ipv4/af_inet.c:1001
->>   sock_do_ioctl+0x9f/0x480 net/socket.c:1238
->>   sock_ioctl+0x70b/0xd60 net/socket.c:1359
->>   vfs_ioctl fs/ioctl.c:51 [inline]
->>   __do_sys_ioctl fs/ioctl.c:598 [inline]
->>   __se_sys_ioctl+0x23c/0x400 fs/ioctl.c:584
->>   __x64_sys_ioctl+0x97/0xe0 fs/ioctl.c:584
->>   x64_sys_call+0x1cbc/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:17
->>   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->>   do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
->>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> Folks, as far as I understand, dma_direct_sync_single_for_cpu() and
-> dma_direct_sync_single_for_device() are the places where we send data
-> to or from the device.
-> Should we add KMSAN annotations to those functions to catch infoleaks
-> and mark data from devices as initialized?
-
-I confirm the issue and indeed dma_sync* function family requires kmsan 
-annotations. Those should be added in the same place as trace_dma_* and 
-debug_dma_* calls in kernel/dma/mapping.c. I briefly looked at the 
-existing annotations there and found that the existing 
-kmsan_handle_dma() calls also should be moved from dma_map* to 
-dma_unmap* set of functions, because only after them it is safe to 
-access the DMA transferred data by the CPU.
-
-The major problem however is that in dma_unmap_page() (or 
-dma_unmap_phys() in linus/master) and __dma_sync_single*() there is no 
-access to original page pointer needed by kmsan hook. The only way to 
-fix this is probably to add .dma_to_phys() method to struct dma_map_ops 
-and all its providers.
-
-
-I made a quick PoC based on dma-direct and it resolved the issue 
-reported in this thread on QEMU system:
-
-diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
-index 56de28a3b179..98ba1a6b5c84 100644
---- a/kernel/dma/mapping.c
-+++ b/kernel/dma/mapping.c
-@@ -171,7 +171,6 @@ dma_addr_t dma_map_page_attrs(struct device *dev, 
-struct page *page,
-                 addr = iommu_dma_map_page(dev, page, offset, size, dir, 
-attrs);
-         else
-                 addr = ops->map_page(dev, page, offset, size, dir, attrs);
--       kmsan_handle_dma(page, offset, size, dir);
-         trace_dma_map_page(dev, page_to_phys(page) + offset, addr, 
-size, dir,
-                            attrs);
-         debug_dma_map_page(dev, page, offset, size, dir, addr, attrs);
-@@ -180,12 +179,30 @@ dma_addr_t dma_map_page_attrs(struct device *dev, 
-struct page *page,
-  }
-  EXPORT_SYMBOL(dma_map_page_attrs);
-
-+#include <linux/dma-direct.h>
+diff --git a/drivers/media/platform/mediatek/mdp/mtk_mdp_core.c b/drivers/media/platform/mediatek/mdp/mtk_mdp_core.c
+index 80fdc6ff57e0..f78fa30f1864 100644
+--- a/drivers/media/platform/mediatek/mdp/mtk_mdp_core.c
++++ b/drivers/media/platform/mediatek/mdp/mtk_mdp_core.c
+@@ -194,11 +194,17 @@ static int mtk_mdp_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	mdp->vpu_dev = vpu_get_plat_device(pdev);
++	if (!mdp->vpu_dev) {
++		dev_err(&pdev->dev, "Failed to get vpu device\n");
++		ret = -ENODEV;
++		goto err_vpu_get_dev;
++	}
 +
-+static void kmsan_handle_direct_dma(struct device *dev, dma_addr_t addr,
-+               size_t size, enum dma_data_direction dir)
-+{
-+       phys_addr_t phys = dma_to_phys(dev, addr);
-+       struct page *page = pfn_to_page(PHYS_PFN(phys));
-+       size_t offset = offset_in_page(phys);
+ 	ret = vpu_wdt_reg_handler(mdp->vpu_dev, mtk_mdp_reset_handler, mdp,
+ 				  VPU_RST_MDP);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to register reset handler\n");
+-		goto err_m2m_register;
++		goto err_reg_handler;
+ 	}
+ 
+ 	platform_set_drvdata(pdev, mdp);
+@@ -206,7 +212,7 @@ static int mtk_mdp_probe(struct platform_device *pdev)
+ 	ret = vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to set vb2 dma mag seg size\n");
+-		goto err_m2m_register;
++		goto err_reg_handler;
+ 	}
+ 
+ 	pm_runtime_enable(dev);
+@@ -214,6 +220,12 @@ static int mtk_mdp_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
++err_reg_handler:
++	platform_device_put(mdp->vpu_dev);
 +
-+       kmsan_handle_dma(page, offset, size, dir);
-+}
++err_vpu_get_dev:
++	mtk_mdp_unregister_m2m_device(mdp);
 +
-  void dma_unmap_page_attrs(struct device *dev, dma_addr_t addr, size_t 
-size,
-                 enum dma_data_direction dir, unsigned long attrs)
-  {
-         const struct dma_map_ops *ops = get_dma_ops(dev);
-
-         BUG_ON(!valid_dma_direction(dir));
-+
-+       if (dma_map_direct(dev, ops))
-+               kmsan_handle_direct_dma(dev, addr, size, dir);
-+       else
-+               BUG();
-+
-         if (dma_map_direct(dev, ops) ||
-             arch_dma_unmap_page_direct(dev, addr + size))
-                 dma_direct_unmap_page(dev, addr, size, dir, attrs);
-@@ -218,7 +235,6 @@ static int __dma_map_sg_attrs(struct device *dev, 
-struct scatterlist *sg,
-                 ents = ops->map_sg(dev, sg, nents, dir, attrs);
-
-         if (ents > 0) {
--               kmsan_handle_dma_sg(sg, nents, dir);
-                 trace_dma_map_sg(dev, sg, nents, ents, dir, attrs);
-                 debug_dma_map_sg(dev, sg, nents, ents, dir, attrs);
-         } else if (WARN_ON_ONCE(ents != -EINVAL && ents != -ENOMEM &&
-@@ -306,6 +322,7 @@ void dma_unmap_sg_attrs(struct device *dev, struct 
-scatterlist *sg,
-         const struct dma_map_ops *ops = get_dma_ops(dev);
-
-         BUG_ON(!valid_dma_direction(dir));
-+       kmsan_handle_dma_sg(sg, nents, dir);
-         trace_dma_unmap_sg(dev, sg, nents, dir, attrs);
-         debug_dma_unmap_sg(dev, sg, nents, dir);
-         if (dma_map_direct(dev, ops) ||
-@@ -366,6 +383,12 @@ void __dma_sync_single_for_cpu(struct device *dev, 
-dma_addr_t addr, size_t size,
-         const struct dma_map_ops *ops = get_dma_ops(dev);
-
-         BUG_ON(!valid_dma_direction(dir));
-+
-+       if (dma_map_direct(dev, ops))
-+               kmsan_handle_direct_dma(dev, addr, size, dir);
-+       else
-+               BUG();
-+
-         if (dma_map_direct(dev, ops))
-                 dma_direct_sync_single_for_cpu(dev, addr, size, dir);
-         else if (use_dma_iommu(dev))
-@@ -406,6 +429,7 @@ void __dma_sync_sg_for_cpu(struct device *dev, 
-struct scatterlist *sg,
-                 iommu_dma_sync_sg_for_cpu(dev, sg, nelems, dir);
-         else if (ops->sync_sg_for_cpu)
-                 ops->sync_sg_for_cpu(dev, sg, nelems, dir);
-+       kmsan_handle_dma_sg(sg, nelems, dir);
-         trace_dma_sync_sg_for_cpu(dev, sg, nelems, dir);
-         debug_dma_sync_sg_for_cpu(dev, sg, nelems, dir);
-  }
-
-Best regards
+ err_m2m_register:
+ 	v4l2_device_unregister(&mdp->v4l2_dev);
+ 
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.25.1
 
 
