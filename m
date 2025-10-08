@@ -1,134 +1,180 @@
-Return-Path: <linux-kernel+bounces-845242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86C24BC420D
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 11:14:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39BC4BC4216
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 11:14:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 216E04ED6D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 09:13:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1C5634F751B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 09:14:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A3B2F39C4;
-	Wed,  8 Oct 2025 09:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 184B82F39A4;
+	Wed,  8 Oct 2025 09:14:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IyM1v587"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="i/kN9LKS"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70DC23ABA1;
-	Wed,  8 Oct 2025 09:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D296D4A01;
+	Wed,  8 Oct 2025 09:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759914830; cv=none; b=hPiBmGoD03M1WfKOrCkUcYJIRT//jzhBUql927E7bEjKvAkJQFc0dvhqdmp2dlniFwkciRfX3OjdDZ+0YEnmhctQ3W6qjCYm97/0bTIGAyxq5JjT2/NagUNVFYmQ9A04qv2hY1VH69rdg0DEgmEEW3E3AdWPieN0uegDCUAdDTw=
+	t=1759914848; cv=none; b=P716JVfEqJwazWq0/Bx9rGP8hWTttcWX/USjOlhMk1wIcamw6cm4vzbd6yUaj/cbdRsHzbDFsId1tEootVh0ajpu30M+yUJPe654fSFOwUDz2Jc4p1sImu4g+zBILZu5w0tgLHVmqYfWzrjyZ5UudKYP6EE5k7cIBrhzzAZsf78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759914830; c=relaxed/simple;
-	bh=eurWf6g12WEClCkCh+jJCglmEsZtMc18LlN1ZJ++/mw=;
+	s=arc-20240116; t=1759914848; c=relaxed/simple;
+	bh=RBX/JvHVp/JLTGdlufX43YS1sS3t80WXsI+7GI4P8Ps=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e9AVX8BFja57NPHYzKLFVpngCDLFjkmdd10cOhcaSkj6RpnfWprAU9oCF+Ga64INFJa0iL3uGSVtpM3mazwNUcg/qF66ET4R61/34dvyAahf7K/voL8kkF2u8Y2095ujIy83TlOQN2ooVrmuWdnesiBnAaL416ByDeH3r95OBoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IyM1v587; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA591C4CEF4;
-	Wed,  8 Oct 2025 09:13:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759914830;
-	bh=eurWf6g12WEClCkCh+jJCglmEsZtMc18LlN1ZJ++/mw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IyM1v587lYcNUpW0/zKiHZWXz/QMTlP5uMM+5ivozGNpqgie2Qk/o2cT88Zjas49l
-	 qbPP1EKEBKkQLac7TmvKxXJB0qQGnCbOTZ539huRw9bcYKvgkm+0GWhJupfJJr96Bt
-	 4d9Y+K8avyoAQL8xUYKiUPMzddXiZ+oT0ysFM5NYazRPV+uqYm/HVT1g0kxqsH66gC
-	 fqvyeoI+tXfvCk7p5l5p44gVJyb7gX0AI7+M1LafWc/GD4lFQJ0XjWqpMZdsKUdIAi
-	 CFJ5JZbuUNCQIJbndxT0pwHBDuoMCBEv/oGyhMKsci0E4iZB6iVFrSQD7l9y+nh3VF
-	 /7nxWfZ9WdueA==
-Date: Wed, 8 Oct 2025 10:13:46 +0100
-From: Simon Horman <horms@kernel.org>
-To: Yeounsu Moon <yyyynoom@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: dlink: handle dma_map_single() failure properly
-Message-ID: <20251008091346.GO3060232@horms.kernel.org>
-References: <20251002152638.1165-1-yyyynoom@gmail.com>
- <20251003094424.GF2878334@horms.kernel.org>
- <DDA4Y2GRUHD4.1DFHX01NOJYCB@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z0Ho+uevH66M/xSUyBnQfhXzNRPT3bZqKMwccENu27H4UzSP/RVVYAJavNbeEwv4289x5Qe4h8cA4oy7kqdHdCQ2vO0bKHhDMkBU2ZfonZ0vCa5Aw1pZjoBXJB/Ghxgp4Lps6Cq7Ghdvfx1uC27nGtnVIxa/U7lr8D+sjOuQjiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=i/kN9LKS; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5982Vevp030070;
+	Wed, 8 Oct 2025 09:14:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=QPruGH
+	7fTf9jQZZnyfNgBfKH7Ef9ATtAqGNYbKyXYM0=; b=i/kN9LKSsmIECxE9pgj0Pk
+	paFXt2sDl4b+d2sBH4uGOUVcKUec+xGrhyQbK0wIWCgmXsPveGyps1GWXHw+pKWz
+	N4kN7G/tmKla269vrIm6mK4PdE0X8vVgQRisckMiL1u1we1omRiivBcvpw+LN5rs
+	r4b/C5UjUUH9Yl+4u0MxMc/3Qw0ounpPdieaOZv+9mY/o2U9dQ9DwulkoXjjSQ6H
+	s3NaLEKbh5+8j2yN0/KY3S/e6qqqseyXcmbQZbc4wjxyiHo/Vq/9DaQQTGLeDZ0z
+	+LbfOTKEqpWHS9y6wp3LiJGMWkI0Xe/cljVA0WBws5gYI1QHRp99V33yKGyH+aOA
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49ju3h46td-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 08 Oct 2025 09:13:59 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59859MxQ028041;
+	Wed, 8 Oct 2025 09:13:58 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49kewn7qwj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 08 Oct 2025 09:13:58 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5989Dsxl38404354
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 8 Oct 2025 09:13:54 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9ABC92004D;
+	Wed,  8 Oct 2025 09:13:54 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2CB1420043;
+	Wed,  8 Oct 2025 09:13:54 +0000 (GMT)
+Received: from li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com (unknown [9.111.14.160])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed,  8 Oct 2025 09:13:54 +0000 (GMT)
+Date: Wed, 8 Oct 2025 11:13:52 +0200
+From: Sumanth Korikkar <sumanthk@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>
+Subject: Re: [PATCH 0/4] Support dynamic (de)configuration of memory
+Message-ID: <aOYrUEr-inqogzJE@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
+References: <20250926131527.3260733-1-sumanthk@linux.ibm.com>
+ <ab366c03-8c78-449d-bfc4-2d155212d9d7@redhat.com>
+ <aOVUNmDiWgrDJ1dJ@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
+ <5e3b16ec-9ef9-483e-b97e-bff0c1915b19@redhat.com>
+ <aOX_L1_2S30XhLRA@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
+ <1efcb368-fcdf-4bdd-8b94-a705b7806bc2@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <DDA4Y2GRUHD4.1DFHX01NOJYCB@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1efcb368-fcdf-4bdd-8b94-a705b7806bc2@redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAxOCBTYWx0ZWRfX2SinUPWl76cz
+ AjKGe/+vIb6wkkuw6snsxnXWw8uKHTIO5PX8ZtgaWkHm6x2aLt1nN+KYH89EnYoHdv9argm1nwQ
+ NlCyOiYHCnWmsi1jz0fXmhUSxgXER53PFSh71pk0g22a6zf1/sPcUrFZk+scMcUxhfUHoXOy23p
+ 6fWLp5DjrexUoFTp3P/wLrLD5p3Y6fFzdp/Z5QG1xyCBYaQJZulxcKj22WlTp9CvMZpRMbosDhZ
+ JvJSubMsHEzKqf3eRyxW3AQbXJnLRP8+KAOKBGD2wsoTrePfW3wMecwgNimPv6vJ9jFKTrxWRsa
+ r30WYsftT8s0Hp+3DpEbIeVH/nJgS/pMQdPf/Dr0EoekvSQ8TIpyAdigJOUiyVx4ZLy/pHnCJi0
+ QvG7PavYzOhbAbsjv48DHsK/MaI6Hg==
+X-Authority-Analysis: v=2.4 cv=I4dohdgg c=1 sm=1 tr=0 ts=68e62b58 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
+ a=5lHgw4X1gRwckBSjVGgA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: frYyvW6OcdJeNiV13t28CQ7UrL4Xa7Gg
+X-Proofpoint-ORIG-GUID: frYyvW6OcdJeNiV13t28CQ7UrL4Xa7Gg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-08_02,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 lowpriorityscore=0 malwarescore=0 adultscore=0 spamscore=0
+ bulkscore=0 suspectscore=0 clxscore=1015 priorityscore=1501 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040018
 
-On Sun, Oct 05, 2025 at 02:22:43PM +0900, Yeounsu Moon wrote:
-> Hello Simon.
+> > > I wonder if the above two are really required. I would expect most/all users
+> > > to simply keep using -e / -d.
+> > > 
+> > > Sure, there might be some corner cases, but I would assume most people to
+> > > not want to care about memmap-on-memory with the new model.
+> > 
+> > I believe this remains very beneficial for customers in the following
+> > scenario:
+> > 
+> > 1) Initial memory layout:
+> > 4 GB configured online
+> > 512 GB standby
+> > 
+> > If memory_hotplug.memmap_on_memory=Y is set in the kernel command line:
+> > Suppose user requires more memory and onlines 256 GB. With memmap-on-memory
+> > enabled, this likely succeeds by default.
+> > 
+> > Later, the user needs 256 GB of contiguous physical memory across memory
+> > blocks. Then, the user can still configure those memory blocks with
+> > memmap-on-memory disabled and online it.
+> > 
+> > 2) If the administrator forgets to configure
+> > memory_hotplug.memmap_on_memory=Y, the following steps can be taken:
+> > Rescue from OOM situations: configure with memmap-on-memory enabled, online it.
 > 
-> I'm currenly re-writing the code as you suggested. I think `alloc_list()` 
-> can easily adopt the `goto` pattern, but for others functions, it's not 
-> that straightforward.
+> That's my point: I don't consider either very likely to be used by actual
+> admins.
 > 
-> My question is whether a style combining `goto`, `continue`, and `break`
-> would be acceptable in this context:
+> I guess in (1) it really only is a problem with very big memory blocks.
+> Assuming a memory block is just 128 MiB (or even 1 GiB), you can add+online
+> them individually. Once you succeeded with the first one (very likely), the
+> other ones will follow.
 > 
-> ```c
-> 	if (np->cur_rx - np->old_rx >= RX_RING_SIZE) {
-> 		printk(KERN_INFO "Try to recover rx ring exhausted...\n");
-> 		/* Re-allocate skbuffs to fill the descriptor ring */
-> 		for (; np->cur_rx - np->old_rx > 0; np->old_rx++) {
-> 			struct sk_buff *skb;
-> 			dma_addr_t addr;
-> 			entry = np->old_rx % RX_RING_SIZE;
-> 			/* Dropped packets don't need to re-allocate */
-> 			if (np->rx_skbuff[entry])
-> 				goto fill_entry;
+> Sure, if you are so low on memory that you cannot even a single memory
+> block, then memmap-on-memory makes sense.
 > 
-> 			skb = netdev_alloc_skb_ip_align(dev, np->rx_buf_sz);
-> 			if (skb == NULL)
-> 				goto out_clear_fraginfo;
-> 
-> 			addr = dma_map_single(&np->pdev->dev, skb->data,
-> 					      np->rx_buf_sz,
-> 					      DMA_FROM_DEVICE);
-> 			if (dma_mapping_error(&np->pdev->dev, addr))
-> 				goto out_kfree_skb;
-> 
-> 			np->rx_skbuff[entry] = skb;
-> 			np->rx_ring[entry].fraginfo = cpu_to_le64(addr);
-> fill_entry:
-> 			np->rx_ring[entry].fraginfo |=
-> 			    cpu_to_le64((u64)np->rx_buf_sz << 48);
-> 			np->rx_ring[entry].status = 0;
-> 			continue;
-> 
-> out_kfree_skb:
-> 			dev_kfree_skb_irq(skb);
-> out_clear_fraginfo:
-> 			np->rx_ring[entry].fraginfo = 0;
-> 			printk(KERN_INFO
-> 			       "%s: Still unable to re-allocate Rx skbuff.#%d\n"
-> 			       , dev->name, entry);
-> 			break;
-> 		} /* end for */
-> 	} /* end if */
-> 	spin_unlock_irqrestore (&np->rx_lock, flags);
-> 	np->timer.expires = jiffies + next_tick;
-> 	add_timer(&np->timer);
-> }
-> ```
-> 
-> Or is there any better way to handle errors here?
-> I'd appreciate your guidance.
+> But note that memmap-on-memory was added to handle hotplug of large chunks
+> of memory (large DIMM/NVDIMM, large CXL device) in one go, without the
+> chance to add+online individual memory blocks incrementally.
 
-Sorry for the slow response, I've been ill for the past few days.
+Interesting. Thanks David.
 
-I did also consider the option above. That is handling the
-errors in the loop. And I can see some merit in that approach,
-e.g. reduced scope of variables.
+Heiko suggested that memory increment size could also be upto
+64GB. In that case, it might be useful.
 
-But I think the more idiomatic approach is to handle them 'here'.
-That is, at the end of the function. So I would lean towards
-that option.
+https://lore.kernel.org/all/20250521142149.11483C95-hca@linux.ibm.com/
+
+> That's also the reason why I didn't care so far to implement
+> memmap-on-memory support for virito-mem: as we add+online individual (small)
+> emmory blocks, the implementation effort for supporting memmap_on_memory was
+> so far not warranted.
+> 
+> (it's a bit trickier for virtio-mem to implement :) )
+> 
+> -- 
+> Cheers
+> 
+> David / dhildenb
+> 
 
