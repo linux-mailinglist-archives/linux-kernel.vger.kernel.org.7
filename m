@@ -1,120 +1,76 @@
-Return-Path: <linux-kernel+bounces-845074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2974FBC3711
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 08:10:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6132BC3722
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 08:14:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7E8D3AB17E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 06:10:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D7B13A8E68
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 06:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0E82EA73F;
-	Wed,  8 Oct 2025 06:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUt7p4Yr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077B52EA74D;
+	Wed,  8 Oct 2025 06:14:18 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DFEA296BD6;
-	Wed,  8 Oct 2025 06:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872E629D292;
+	Wed,  8 Oct 2025 06:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759903833; cv=none; b=swNzNjAiCL0heYyIZ+ipMtfdeAOChLQ2n11Q/c7MTiwhCGQaknenqj2FngYvPL2wFqPoiC73h3GJ/d7EhVcRgw1BEtnyX8LIp0cdwQooncOfqxMbOUjo+UCR2q8HLAqjM7d9bivKGyMn8iC7J+FG6C0EQPio+tOEY3Lh552nwJQ=
+	t=1759904057; cv=none; b=BqxSn11QM7pn8ZK+8gVtiGGZFpWqIUHJDo+Yf/ajMKT+G7oTXOdlWk/7gkpnjq7/dbtimAXcd3tSNH9RVRge87oCLWSpc8c2OGpJIJydZvv5nDcpMn4tgHgD6IuKx6WfFnySI4yBaCTf7Dp6b5RxKPsRj1C+f/ZmUZYvYRoLRZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759903833; c=relaxed/simple;
-	bh=Dc569KT1YS0VQ3qzLz5ms49L7ZBR3t8zH8folwCiWa8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=HheAhURreZQt5DgjOMY9n/3bPP0AblfAe4MwJ/yfAWV0eUUIbz78C37LIhP8V+sLF6FvWms7uLq8dm5ZRtmq62mu85clnMpMRLfY7+dNKvg9OnnWtWJ49RPJ/9xGsHSgXf6wEzd5zpJzIJibcRvun4UvyW0CnHV02hiJQqdBBcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oUt7p4Yr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A64FC4CEF4;
-	Wed,  8 Oct 2025 06:10:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759903833;
-	bh=Dc569KT1YS0VQ3qzLz5ms49L7ZBR3t8zH8folwCiWa8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=oUt7p4YrY+IuLquT8CkeUy70jH9EPO23jENfxHkTIYmyBQQBC1rqAL69/ljqsWt9T
-	 1eVRGYfHCByz90XkdQ+Pd/nAVHKIM15vHMK/PFOubWNLj0yb/8s4uQRxuDkPugWX2Z
-	 DjgzVpIT9G9qI/f0KYfmN2S9+ij0yOdy2JLOzVdB8+N0o8Smeic5WcB+GdLXD/MmN1
-	 tkKktcAsOGY/jufEVMVbeIKoh3jLf9vJlDfdY19w5/0gJjiLc2AROIQ360/YAMAsxc
-	 tgyzRovP9z048Kz8m6BXCrsHMfoMuS2ORyO2e3ScMMiZ5WutaLzQagV8oq7pq2yTqG
-	 bog/slmI6n8AQ==
-From: Kees Cook <kees@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Kees Cook <kees@kernel.org>,
-	syzbot+a9391462075ffb9f77c6@syzkaller.appspotmail.com,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] dma-buf: use SB_I_NOEXEC and SB_I_NODEV
-Date: Tue,  7 Oct 2025 23:10:32 -0700
-Message-Id: <20251008061027.work.515-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1759904057; c=relaxed/simple;
+	bh=WswQbeUWBAMV25CA4i+SPcySveFy4PoQ1NaxzzlS4Fg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k2jbHiwmJQRpW0Xj1Y/a9Nfv26ojY42J5fJi79r8Fj7veLkhDLhRGY+DfGb+MNavL2taX12qASvnMpeWNjzea6bndaEwYNNZrXrsFe/i8R6N8u7TN3UnC5xSC5i9yBhpfOSDdol4ZxH029WfeofLMZ36LZPOHf9+dUtXGNtzyuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 35396227AAE; Wed,  8 Oct 2025 08:14:04 +0200 (CEST)
+Date: Wed, 8 Oct 2025 08:14:04 +0200
+From: hch <hch@lst.de>
+To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+Cc: hch <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
+	"linux-btrace@vger.kernel.org" <linux-btrace@vger.kernel.org>,
+	John Garry <john.g.garry@oracle.com>,
+	Hannes Reinecke <hare@suse.de>, Damien Le Moal <dlemoal@kernel.org>,
+	Naohiro Aota <Naohiro.Aota@wdc.com>,
+	Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+	Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>
+Subject: Re: [PATCH v2 11/15] blktrace: add block trace commands for zone
+ operations
+Message-ID: <20251008061403.GA13979@lst.de>
+References: <20250925150231.67342-1-johannes.thumshirn@wdc.com> <20250925150231.67342-12-johannes.thumshirn@wdc.com> <20251003073257.GE12624@lst.de> <4638c185-ac5c-41e3-8c79-5c995228ec0e@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1929; i=kees@kernel.org; h=from:subject:message-id; bh=Dc569KT1YS0VQ3qzLz5ms49L7ZBR3t8zH8folwCiWa8=; b=owGbwMvMwCVmps19z/KJym7G02pJDBnPGMIvvjnZz8Y1Y7b5isuyJ5568nE21L+vtb9k+Mkn9 nO/9D7jjlIWBjEuBlkxRZYgO/c4F4+37eHucxVh5rAygQxh4OIUgInMi2b4wxP2aK6KqInRk67H 1z88+XNBde6Mi7VnVB6ZdK6/8uWSkQEjw6MdiyfJ2D0vu2v/Rdj6+JqlDRMy1/x4X3TiiVZdzfz G59wA
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4638c185-ac5c-41e3-8c79-5c995228ec0e@wdc.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-The dma-buf pseudo-filesystem should never have executable mappings nor
-device nodes. Set SB_I_NOEXEC and SB_I_NODEV on the superblock to enforce
-this at the filesystem level, similar to secretmem, commit 98f99394a104
-("secretmem: use SB_I_NOEXEC").
+On Tue, Oct 07, 2025 at 01:08:00PM +0000, Johannes Thumshirn wrote:
+> Sure for the old commands everything is still in the lower 32bits, this 
+> has the nice property that we don't need to duplicate all the code for 
+> v1 and v2.
 
-Fix the syzbot-reported warning from the exec code to enforce this
-requirement:
-
-> WARNING: CPU: 1 PID: 6000 at fs/exec.c:119 path_noexec+0x1af/0x200 fs/exec.c:118
-> Modules linked in:
-> CPU: 1 UID: 0 PID: 6000 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full)
-> RIP: 0010:path_noexec+0x1af/0x200 fs/exec.c:118
-> Call Trace:
->  <TASK>
->  do_mmap+0xa43/0x10d0 mm/mmap.c:469
->  vm_mmap_pgoff+0x2a6/0x4d0 mm/util.c:580
->  ksys_mmap_pgoff+0x51f/0x760 mm/mmap.c:604
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Reported-by: syzbot+a9391462075ffb9f77c6@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/68dc3ade.a70a0220.10c4b.015b.GAE@google.com/
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>
-Cc: "Christian König" <christian.koenig@amd.com>
-Cc: syzbot+a9391462075ffb9f77c6@syzkaller.appspotmail.com
-Cc: <linux-media@vger.kernel.org>
-Cc: <dri-devel@lists.freedesktop.org>
-Cc: <linaro-mm-sig@lists.linaro.org>
----
- drivers/dma-buf/dma-buf.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/dma-buf/dma-buf.c b/drivers/dma-buf/dma-buf.c
-index 2bcf9ceca997..6e2ab1a4560d 100644
---- a/drivers/dma-buf/dma-buf.c
-+++ b/drivers/dma-buf/dma-buf.c
-@@ -189,6 +189,8 @@ static int dma_buf_fs_init_context(struct fs_context *fc)
- {
- 	struct pseudo_fs_context *ctx;
- 
-+	fc->s_iflags |= SB_I_NOEXEC;
-+	fc->s_iflags |= SB_I_NODEV;
- 	ctx = init_pseudo(fc, DMA_BUF_MAGIC);
- 	if (!ctx)
- 		return -ENOMEM;
--- 
-2.34.1
+I don't think you need to duplicate anything, just have a little
+function that maps from the free-form v2 commands and flags to the
+v1 field.  Preferably including a mapping of all unsupported ones to
+a catchall unsupported command and flag each to indicate that the
+trace includes something only visible with v2.
 
 
