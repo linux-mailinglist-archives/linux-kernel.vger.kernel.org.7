@@ -1,590 +1,324 @@
-Return-Path: <linux-kernel+bounces-845954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EA88BC690F
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:23:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C72D3BC68FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:21:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93BE140401C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:23:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A462D407F3C
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:20:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7220D299AAB;
-	Wed,  8 Oct 2025 20:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 831622857E9;
+	Wed,  8 Oct 2025 20:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iokpp.de header.i=@iokpp.de header.b="j0FLwOST"
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.83])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=opnsrc.net header.i=@opnsrc.net header.b="EG/KVrzm"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5E7227814C;
-	Wed,  8 Oct 2025 20:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759954985; cv=pass; b=ghEsa8Krv7XE5oCNPNFOhrcXQ4mMc9wT9cckr1g7KBtcKDIC4wRIBdEKjsCB0V+1jA169z+8fcWzXvwV0UDwqFjNjGADJknfLjgx8IRIk85e5cuU8uwZpIP21Hac4DcY6ZRvTfzgzRVuWEg1E7GF/CRsgNR7uahzX3dcFNca4qc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759954985; c=relaxed/simple;
-	bh=XLcoM4PeQYKUDK1STtSlax4qqRIwqkx5VQu6yBcaFac=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PY9KXyfY/1RKbZXStypBXAJbx9LgI20EPS7WxM7PRQ6ZVnhyFsKhr+bEL2Qn1SsXDqfN9IITZTsCYGjZcG4PQ368oiuJlTc5P7wDP3/HGXBtbWXxDN++wyYwtQO//4ua8l6msZbmcZssT/68MKseyDKWssvGT4lcCKGOWgg3whU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iokpp.de; spf=none smtp.mailfrom=iokpp.de; dkim=pass (2048-bit key) header.d=iokpp.de header.i=@iokpp.de header.b=j0FLwOST; arc=pass smtp.client-ip=85.215.255.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iokpp.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=iokpp.de
-ARC-Seal: i=1; a=rsa-sha256; t=1759954797; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=LlWIxwtSWsmyeycSyhWYecNicA9O4QdNhvjHCyJnZ2ACqDKLFgiA6517ZsFKFc2MO7
-    bAT0Tn/+7YtnLghbizZGnv/MAz5aBjRSAWqNJ0KJ+uNFPWOmMA2iELPe3uE+ghAF7hHe
-    x0MiwxnpXz5vMGAMYKNbUgVo4/u7CGcIdh4j124MBCnqgzTmgGvvONPHlp7t2c8ek6mA
-    kXj4OvDUePlkb+9mqr2NrWK+oIR97fEwG25V/LP1tSlikS0gmO974mNFOUBjASQ7PbBg
-    KYZwPjywmz6jDof5AWagSSPtYRTDxUGQSI0j+JQK1JCilOlW+pcLKWbD0TmPQDTemY7h
-    r2TA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1759954797;
-    s=strato-dkim-0002; d=strato.com;
-    h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=KquzWdNL6D04iJ+jzohSYesBw8aHdl23ulJD3/JAu0E=;
-    b=Cpa7DHuWqeQfTZEcWvY8QzYTB0CkK5QTeUua3igWoF5VoF2KRLLMgkL+eUPmI+NHFC
-    zi8AEdtMoVH00qPDJweQeaZgK4ruDQ7QjeK83nHqy/+KO9ExKOyjESLq9lAswq1XLAPf
-    LNDKn6hmmn70rQfE1mY/sCOUi0jSVCZ0Y0CfeGL548NeR3lIoFs01mnvmpOK6RMHKj/Q
-    NxFv7PUPxgFStcPqTeVCgDuprKX02gX7O+ygcUIIUgoOpfjR5Cro5Zs/6cFvOC51WeAk
-    uVNCosFeNqU5NDxZPVyzf4iRMMeFcMu7e2iV5+uwYYjL8Czequv3pKdllpu2PViOZcqb
-    jRaw==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1759954797;
-    s=strato-dkim-0002; d=iokpp.de;
-    h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=KquzWdNL6D04iJ+jzohSYesBw8aHdl23ulJD3/JAu0E=;
-    b=j0FLwOSTVIg/13wKIY/FYv1hKW25CUmWpFIrxrWwLgOm1/piPVhBTTD1Gqq4hB6GpO
-    JlIo1VBqi0BzDcUHLOrDnPRZfqhipyLOyDG5aaZw/v404kJpZNyT3OlFHVDFcZm0oKQs
-    NRkeFCg42/5LqRSsUjnn1rOcRBYufQaaOyzQAF/MKUZTVEYNJ8jAq0PAXECPFQVgsq58
-    vJvT2UujU2dCetVuy2jWHP0uDFp0BexSKHGMabmBfeqL1OU2M4wogbrYW/fabx1CVZIo
-    dujNE7xsmQ4nH9z5m/v0NKJFsSIyOqKwIYvn55dWKLHzZ9ucd5EVh9U0uspQobXWM5zI
-    TEwg==
-X-RZG-AUTH: ":LmkFe0i9dN8c2t4QQyGBB/NDXvjDB6pBSfNuhhDSDt3O256fJ4HnWXON1RX36IbE0bahBk7fQ77Y5cN0Av1YXTvXCMGxpd0="
-Received: from Munilab01-lab.speedport.ip
-    by smtp.strato.de (RZmta 53.4.2 AUTH)
-    with ESMTPSA id z293fb198KJv3U2
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Wed, 8 Oct 2025 22:19:57 +0200 (CEST)
-From: Bean Huo <beanhuo@iokpp.de>
-To: avri.altman@wdc.com,
-	avri.altman@sandisk.com,
-	bvanassche@acm.org,
-	alim.akhtar@samsung.com,
-	jejb@linux.ibm.com,
-	martin.petersen@oracle.com,
-	can.guo@oss.qualcomm.com,
-	ulf.hansson@linaro.org,
-	beanhuo@micron.com,
-	jens.wiklander@linaro.org
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/3] scsi: ufs: core: Add OP-TEE based RPMB driver for UFS devices
-Date: Wed,  8 Oct 2025 22:19:20 +0200
-Message-Id: <20251008201920.89575-4-beanhuo@iokpp.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26375284B36
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 20:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759954844; cv=none; b=BKO8bFAO4e4aClXdihDdleI3PM2HkHKARFG95eo1vryNt+5G2aogBKKuegcl6RqmFeLGY+JgQpQHXWEIBCqfQoLxUY3KOHA41T59aZsU0nJbb1hVKAKYMiduKwbhsTW0j9zbLHk1wy0slv3z2Qx/K+yVA+Y/IQhZvP5LmxYQjQI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759954844; c=relaxed/simple;
+	bh=Kblm/YBuCqsYDj4lXesYlOM0jGmwKFYpGtWrm3NKd7w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=REwAgxr8Mb/a4dHpJkTVC1gdVIr15wOgKTaZ2OHK07iSqM/AClpnFHtA+jIJZTp93F+dxTN/nskWHj1DPxOEuwOo+YrPriXCvHdNu+uOEF9O7rJ6gCXoafvrDL9bh1BrrqcxK89R0+sxgR+Cw84RTqGjpaALos3C0DityO3OgLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=opnsrc.net; spf=pass smtp.mailfrom=opnsrc.net; dkim=pass (2048-bit key) header.d=opnsrc.net header.i=@opnsrc.net header.b=EG/KVrzm; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=opnsrc.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opnsrc.net
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46e4ad36541so2652495e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 13:20:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=opnsrc.net; s=google; t=1759954840; x=1760559640; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vJNpPsdQklqfKtuRWABGJHNN5kI2pylvrPJggCRG4l0=;
+        b=EG/KVrzm2BarQzCP0DhQEkCLGirvEzzLMX6r5m2L8F5n/MX60MSe0xffQwj5XL4r6K
+         UF5/jpfEY0iHPohs2Qy3psu/utoffF/sUkhnQ0VPAA4E6QclivRoaNpXoFiBVVeXBC9G
+         5qSt33o0AQqH/o+LPBF3blRwZBrfjVBV3O7BO8NmQkoauBCQPwkGtE8xvyCb1pCvCMSS
+         kD1IE8Om0RzyVyvT3FMzwu2IH862cYvNLK2xJFYQ/kXlsG1mf+01ANAiikKnBWv7Iw4H
+         N3Dx68VMhZOBuP0qZPZCfNv81teDv2/qxlTXYEJfEaQJEdLZth8Z3MSZg22e4nEqSq1T
+         iKfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759954840; x=1760559640;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vJNpPsdQklqfKtuRWABGJHNN5kI2pylvrPJggCRG4l0=;
+        b=muA38zEa8qck18njQ6Ti7cUzChnCHJv8YsYBKRWxTIBjhItSLbqzR3fkOg0qwFWWPt
+         d8hvjNiic3dz8cJxUlSi0JoEbHfvVTI6LEYsS4uDcqQTmo/orhjVHYtUjGzv9QsUF9Hs
+         A+JmYJEBS7NSTFP27Z8rSNyXh/49ujg9AIBouI0AWods21ypXEKRXEzoFuoYGOhsrCvH
+         zhfisKyQLlQ3MB+1B9fSjd5aEfwrUlrNyt83Xxl2bXGbbZj9G5vThsamsyt849hKQ67V
+         aCdNImLyd29eCHOpZ409tVCnWiZrxbuwbdmgCYTuf48RfDJUyuOlCrOyhHvb6f8oEHyk
+         4wtA==
+X-Gm-Message-State: AOJu0YxPgMirCjn2eFSbgzd66Vq3G8eY9SPy3UySppa2jGnJUVrdGJbt
+	RM+u2XlqtkyrznoiHaYTmrogf4VQTJdUr8IwZoQHsuOhxJpj4i/IzVVmsyQbEF70Nx8cOHJ0ljv
+	bwDfnPwL10A==
+X-Gm-Gg: ASbGncvCBx9wRcsGOAmG4Uz2+K2nnmZG4CouugbG9KmIK17cUF8XNG6CdNQSXOplNEq
+	0QxAx8F08YJTTqSB5L33d2J+mDRQKW5OaUNL+cRHGcBxvlKqnG0BuWg6LXL9rfB9q29+fbj/iY3
+	8N1AC+O80DIRjBeIgB2KZl5a1z0Is2zzsX0+0FVZ6TCL26UEq3aHHiQ4ynf9lrW1lCUPCGIODCz
+	/gyGIGERqKAlM9XsmRMTdseu0Slh551qREEq87f4dIfw3zzQ46o0w+580DonZlETqNTZdA8JN8C
+	VaFpewU079MWrU54TKMWvPDX9s98lc1bV0XXPiEXAu6HrlfgH5O9UqQC93h4QnOl1Tec57/QHmx
+	9PANlegg0QJz49JWYiU1R0olC5193xLos0KLbSL3bsCc1Ozo2O7ZTkdcdtenpqlx3AT4sfYy46X
+	hSU6/qOPftBl1Tp3pGjz3QKu6Vn5A+bJQzo8yJf/WxH3M=
+X-Google-Smtp-Source: AGHT+IFM4K7XP4z2AGieVbbR2IlzDu8DLCDL4uKG4v9Kaas6lvil6rTJOq2Qsk2XBXTkAez+pnL+vQ==
+X-Received: by 2002:a05:600c:c162:b0:45f:2cb5:ecff with SMTP id 5b1f17b1804b1-46fa9b02fa3mr40867845e9.31.1759954839949;
+        Wed, 08 Oct 2025 13:20:39 -0700 (PDT)
+Received: from localhost.localdomain ([90.209.204.182])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fab64aed8sm20124745e9.10.2025.10.08.13.20.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 13:20:39 -0700 (PDT)
+From: salil.mehta@opnsrc.net
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: salil.mehta@huawei.com,
+	jonathan.cameron@huawei.com,
+	maz@kernel.org,
+	will@kernel.org,
+	catalin.marinas@arm.com,
+	mark.rutland@arm.com,
+	james.morse@arm.com,
+	sudeep.holla@arm.com,
+	lpieralisi@kernel.org,
+	jean-philippe@linaro.org,
+	tglx@linutronix.de,
+	oliver.upton@linux.dev,
+	peter.maydell@linaro.org,
+	richard.henderson@linaro.org,
+	andrew.jones@linux.dev,
+	mst@redhat.com,
+	david@redhat.com,
+	philmd@linaro.org,
+	ardb@kernel.org,
+	borntraeger@linux.ibm.com,
+	alex.bennee@linaro.org,
+	gustavo.romero@linaro.org,
+	npiggin@gmail.com,
+	linux@armlinux.org.uk,
+	karl.heubaum@oracle.com,
+	miguel.luis@oracle.com,
+	darren@os.amperecomputing.com,
+	ilkka@os.amperecomputing.com,
+	vishnu@os.amperecomputing.com,
+	gankulkarni@os.amperecomputing.com,
+	salil.mehta@opnsrc.net,
+	wangyanan55@huawei.com,
+	wangzhou1@hisilicon.com,
+	linuxarm@huawei.com
+Subject: [RFC PATCH] KVM: arm64: vgic-v3: Cache ICC_CTLR_EL1 and allow lockless read when ready
+Date: Wed,  8 Oct 2025 20:19:55 +0000
+Message-Id: <20251008201955.3919537-1-salil.mehta@opnsrc.net>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251008201920.89575-1-beanhuo@iokpp.de>
-References: <20251008201920.89575-1-beanhuo@iokpp.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="us-ascii"
 
-From: Bean Huo <beanhuo@micron.com>
+From: Salil Mehta <salil.mehta@huawei.com>
 
-This patch adds OP-TEE based RPMB support for UFS devices. This enables secure RPMB operations on
-UFS devices through OP-TEE, providing the same functionality available for eMMC devices and
-extending kernel-based secure storage support to UFS-based systems.
+[A rough illustration of the problem and the probable solution]
 
-Benefits of OP-TEE based RPMB implementation:
-- Eliminates dependency on userspace supplicant for RPMB access
-- Enables early boot secure storage access (e.g., fTPM, secure UEFI variables)
-- Provides kernel-level RPMB access as soon as UFS driver is initialized
-- Removes complex initramfs dependencies and boot ordering requirements
-- Ensures reliable and deterministic secure storage operations
-- Supports both built-in and modular fTPM configurations
+Userspace reads of ICC_CTLR_EL1 via KVM device attributes currently takes a slow
+path that may acquire all vCPU locks. Under workloads that exercise userspace
+PSCI CPU_ON flows or frequent vCPU resets, this can cause vCPU lock contention
+in KVM and, in the worst cases, -EBUSY returns to userspace.
 
-Co-developed-by: Can Guo <can.guo@oss.qualcomm.com>
-Signed-off-by: Can Guo <can.guo@oss.qualcomm.com>
-Reviewed-by: Avri Altman <avri.altman@sandisk.com>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Bean Huo <beanhuo@micron.com>
+When PSCI CPU_ON and CPU_OFF calls are handled entirely in KVM, these operations
+are executed under KVM vCPU locks in the host kernel (EL1) and appear atomic to
+other vCPU threads. In this context, system register accesses are serialized
+under KVM vCPU locks, ensuring atomicity with respect to other vCPUs. After
+SMCCC filtering was introduced, PSCI CPU_ON and CPU_OFF calls can now exit to
+userspace (QEMU). During the handling of PSCI CPU_ON call in userspace, a
+cpu_reset() is exerted which reads ICC_CTLR_EL1 through KVM device attribute
+IOCTLs. To avoid transient inconsistency and -EBUSY errors, QEMU is forced to
+pause all vCPUs before issuing these IOCTLs. Later operation should be avoided
+as it ends up in freezing VM till the entire KVM device IOCTL operation is
+completed (and this could happen every time when PSCI CPU_ON is requested by
+the Guest user). There are also known issues with the implementaiton of the
+{pause, resume}_all_vcpus() in the QEMU which can lead to race conditions.
+
+Introduce a per-vCPU shadow of ICC_CTLR_EL1 that allows userspace to read this
+register without taking any vCPU-wide locks once the VGIC has been initialized.
+The new helper vgic_v3_try_icc_ctlr_el1_lockless_access() attempts a fast,
+lockless read of the per-vCPU shadow and returns -EBUSY if the VGIC is not yet
+initialized, allowing the caller to fall back to the existing contended path.
+This reduces cross-vCPU contention and prevents spurious -EBUSY errors during
+userspace-driven CPU_ON sequences, without changing architectural behaviour.
+
+The shadow is updated in set_gic_ctlr(): after VMCR fields are written, we
+recompute ICC_CTLR_EL1 via get_gic_ctlr(). Writes remain unchanged and continue
+to use the existing synchronized path.
+
+Without this change, QEMU must cache ICC_CTLR_EL1 itself to avoid racy
+pause_all_vcpus() usage during cpu_reset(), as described in:
+https://lore.kernel.org/qemu-devel/20251001010127.3092631-22-salil.mehta@opnsrc.net/
+
+RFC Discussion (Architectural Considerations):
+=============================================
+
+It might have been helpful if the ARM architecture were to have clearer
+boundaries between dynamic and static (or pseudo-static) system registers(?)
+Registers such as ICC_CTLR_EL1 contain configuration fields that are effectively
+static once the VM is initialized (even the EOIMode, CBPR & PMHE are guest
+GICv3 driver configured constants), yet the architecture allows them to coexist
+with other more dynamic runtime fields of the ICH_ VMCR_EL2. If these
+configuration registers had been architecturally immutable after VM
+initialization, their accesses could have avoided expensive all-vCPU locking
+otherwise required to guarantee atomic visibility across vCPUs.
+
+ICC_CTLR_EL1 [63:0]
+
+  63                                                                       32
+ +---------------------------------------------------------------------------+
+ |                                   RES0                                    |
+ +---------------------------------------------------------------------------+
+  31        20 19 18 17 16 15 14 13 12 11 10   9   8  7  6   5  4  3  2  1  0
+ +------------+--+--+--+--+--+--+--+--+--+---+---+---+--+--+--+--+--+--+--+--+
+ |    RES0    |Ex|RS|RES0 |A3|SE| IDbits |  PRIbits  |R0|PM|  RES0     |EO|CB|
+ +------------+--+--+--+--+--+--+--+--+--+---+---+---+--+--+--+--+--+--+--+--+
+              |  |        |  |                       |   |             |  |
+              |  |        |  |                       |   |             |  +CBPR
+              |  |        |  |                       |   |             +EOImode
+              |  |        |  |                       |   +-PMHE
+              |  |        |  |                       +----RES0
+              |  |        |  +--SEIS
+              |  |        +-----A3V
+              |  +--------------RSS
+              +-----------------ExtRange
+
+ Access: {Ex, RS, A3, SE, IDbits, PRIbits} = RO;
+         {PMHE} = RW*;
+         {EO, CB} = RW**;
+	 others = RES0.
+ Notes : * impl-def (may be RO when DS=0)
+         ** CB may be RO when DS=0 (EO stays RW)
+
+ Source: Arm GIC Architecture Specification (IHI 0069H.b),
+         §12.2.6 “ICC_CTLR_EL1”, pp. 12-233…12-237
+
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
- drivers/misc/Kconfig           |   2 +-
- drivers/ufs/core/Makefile      |   1 +
- drivers/ufs/core/ufs-rpmb.c    | 249 +++++++++++++++++++++++++++++++++
- drivers/ufs/core/ufshcd-priv.h |  13 ++
- drivers/ufs/core/ufshcd.c      |  30 +++-
- include/ufs/ufs.h              |   4 +
- include/ufs/ufshcd.h           |   8 +-
- 7 files changed, 300 insertions(+), 7 deletions(-)
- create mode 100644 drivers/ufs/core/ufs-rpmb.c
+ arch/arm64/kvm/vgic-sys-reg-v3.c      | 14 ++++++++++++
+ arch/arm64/kvm/vgic/vgic-kvm-device.c | 32 +++++++++++++++++++++++++++
+ include/kvm/arm_vgic.h                |  3 +++
+ 3 files changed, 49 insertions(+)
 
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index b9ca56930003..46ffa62eac6e 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -106,7 +106,7 @@ config PHANTOM
+diff --git a/arch/arm64/kvm/vgic-sys-reg-v3.c b/arch/arm64/kvm/vgic-sys-reg-v3.c
+index bdc2d57370b2..80d6e38b4aa7 100644
+--- a/arch/arm64/kvm/vgic-sys-reg-v3.c
++++ b/arch/arm64/kvm/vgic-sys-reg-v3.c
+@@ -10,12 +10,17 @@
+ #include "vgic/vgic.h"
+ #include "sys_regs.h"
  
- config RPMB
- 	tristate "RPMB partition interface"
--	depends on MMC
-+	depends on MMC || SCSI_UFSHCD
- 	help
- 	  Unified RPMB unit interface for RPMB capable devices such as eMMC and
- 	  UFS. Provides interface for in-kernel security controllers to access
-diff --git a/drivers/ufs/core/Makefile b/drivers/ufs/core/Makefile
-index cf820fa09a04..51e1867e524e 100644
---- a/drivers/ufs/core/Makefile
-+++ b/drivers/ufs/core/Makefile
-@@ -2,6 +2,7 @@
++static int get_gic_ctlr(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r,
++			u64 *valp);
++
+ static int set_gic_ctlr(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r,
+ 			u64 val)
+ {
+ 	u32 host_pri_bits, host_id_bits, host_seis, host_a3v, seis, a3v;
++	struct vgic_v3_cpu_if *cif = &vcpu->arch.vgic_cpu.vgic_v3;
+ 	struct vgic_cpu *vgic_v3_cpu = &vcpu->arch.vgic_cpu;
+ 	struct vgic_vmcr vmcr;
++	u64 sysreg;
  
- obj-$(CONFIG_SCSI_UFSHCD)		+= ufshcd-core.o
- ufshcd-core-y				+= ufshcd.o ufs-sysfs.o ufs-mcq.o
-+ufshcd-core-$(CONFIG_RPMB)		+= ufs-rpmb.o
- ufshcd-core-$(CONFIG_DEBUG_FS)		+= ufs-debugfs.o
- ufshcd-core-$(CONFIG_SCSI_UFS_BSG)	+= ufs_bsg.o
- ufshcd-core-$(CONFIG_SCSI_UFS_CRYPTO)	+= ufshcd-crypto.o
-diff --git a/drivers/ufs/core/ufs-rpmb.c b/drivers/ufs/core/ufs-rpmb.c
-new file mode 100644
-index 000000000000..98cad0fa0290
---- /dev/null
-+++ b/drivers/ufs/core/ufs-rpmb.c
-@@ -0,0 +1,249 @@
-+// SPDX-License-Identifier: GPL-2.0
+ 	vgic_get_vmcr(vcpu, &vmcr);
+ 
+@@ -53,6 +58,15 @@ static int set_gic_ctlr(struct kvm_vcpu *vcpu, const struct sys_reg_desc *r,
+ 	vmcr.eoim = FIELD_GET(ICC_CTLR_EL1_EOImode_MASK, val);
+ 	vgic_set_vmcr(vcpu, &vmcr);
+ 
++	/* update the ICC_CTLR_EL1 shadow, if required */
++	get_gic_ctlr(vcpu, r, &sysreg);
++
++	/*
++	 * Update the ICC_CTLR_EL1 shadow to allow lock free access of static
++	 * or pesudo static register fields from KVM device IOCTLs
++	 */
++	cif->icc_ctlr_el1_shadow = (u32)sysreg;
++
+ 	return 0;
+ }
+ 
+diff --git a/arch/arm64/kvm/vgic/vgic-kvm-device.c b/arch/arm64/kvm/vgic/vgic-kvm-device.c
+index 3d1a776b716d..4a2971525c1a 100644
+--- a/arch/arm64/kvm/vgic/vgic-kvm-device.c
++++ b/arch/arm64/kvm/vgic/vgic-kvm-device.c
+@@ -522,6 +522,29 @@ static bool reg_allowed_pre_init(struct kvm_device_attr *attr)
+ 	}
+ }
+ 
 +/*
-+ * UFS OP-TEE based RPMB Driver
-+ *
-+ * Copyright (C) 2025 Micron Technology, Inc.
-+ * Copyright (C) 2025 Qualcomm Technologies, Inc.
-+ *
-+ * Authors:
-+ *	Bean Huo <beanhuo@micron.com>
-+ *	Can Guo <can.guo@oss.qualcomm.com>
++ * Fast, lockless read of ICC_CTLR_EL1 for userspace ioctl. Saves calls from
++ * -EBUSY due to inability to acquire vCPU mutexes for all the vCPUs
 + */
-+
-+#include <linux/module.h>
-+#include <linux/device.h>
-+#include <linux/kernel.h>
-+#include <linux/types.h>
-+#include <linux/rpmb.h>
-+#include <linux/string.h>
-+#include <linux/list.h>
-+#include <ufs/ufshcd.h>
-+#include <linux/unaligned.h>
-+#include "ufshcd-priv.h"
-+
-+#define UFS_RPMB_SEC_PROTOCOL		0xEC	/* JEDEC UFS application */
-+#define UFS_RPMB_SEC_PROTOCOL_ID	0x01	/* JEDEC UFS RPMB protocol ID, CDB byte3 */
-+
-+static const struct bus_type ufs_rpmb_bus_type = {
-+	.name = "ufs_rpmb",
-+};
-+
-+/* UFS RPMB device structure */
-+struct ufs_rpmb_dev {
-+	u8 region_id;
-+	struct device dev;
-+	struct rpmb_dev *rdev;
-+	struct ufs_hba *hba;
-+	struct list_head node;
-+};
-+
-+static int ufs_sec_submit(struct ufs_hba *hba, u16 spsp, void *buffer, size_t len, bool send)
++static inline int
++vgic_v3_try_icc_ctlr_el1_lockless_access(struct kvm_device *dev,
++                                         const struct kvm_device_attr *attr,
++                                         struct kvm_vcpu *vcpu)
 +{
-+	struct scsi_device *sdev = hba->ufs_rpmb_wlun;
-+	u8 cdb[12] = { };
++	struct vgic_v3_cpu_if *vgic_cpu_if = &vcpu->arch.vgic_cpu.vgic_v3;
++	u32 __user *uaddr;
++	u32 shadow;
 +
-+	cdb[0] = send ? SECURITY_PROTOCOL_OUT : SECURITY_PROTOCOL_IN;
-+	cdb[1] = UFS_RPMB_SEC_PROTOCOL;
-+	put_unaligned_be16(spsp, &cdb[2]);
-+	put_unaligned_be32(len, &cdb[6]);
++	/* pathological check, in case we are here too early */
++	if (!vgic_initialized(dev->kvm))
++		return -EBUSY;
 +
-+	return scsi_execute_cmd(sdev, cdb, send ? REQ_OP_DRV_OUT : REQ_OP_DRV_IN,
-+				buffer, len, /*timeout=*/30 * HZ, 0, NULL);
++	shadow = vgic_cpu_if->icc_ctlr_el1_shadow;
++	uaddr = (u32 __user *)(unsigned long)attr->addr;
++
++	return put_user(shadow, uaddr) ? -EFAULT : 0;
 +}
 +
-+/* UFS RPMB route frames implementation */
-+static int ufs_rpmb_route_frames(struct device *dev, u8 *req, unsigned int req_len, u8 *resp,
-+					unsigned int resp_len)
-+{
-+	struct ufs_rpmb_dev *ufs_rpmb = dev_get_drvdata(dev);
-+	struct rpmb_frame *frm_out = (struct rpmb_frame *)req;
-+	bool need_result_read = true;
-+	u16 req_type, protocol_id;
-+	struct ufs_hba *hba;
-+	int ret;
-+
-+	if (!ufs_rpmb) {
-+		dev_err(dev, "Missing driver data\n");
-+		return -ENODEV;
-+	}
-+
-+	hba = ufs_rpmb->hba;
-+
-+	req_type = be16_to_cpu(frm_out->req_resp);
-+
-+	switch (req_type) {
-+	case RPMB_PROGRAM_KEY:
-+		if (req_len != sizeof(struct rpmb_frame) || resp_len != sizeof(struct rpmb_frame))
-+			return -EINVAL;
-+		break;
-+	case RPMB_GET_WRITE_COUNTER:
-+		if (req_len != sizeof(struct rpmb_frame) || resp_len != sizeof(struct rpmb_frame))
-+			return -EINVAL;
-+		need_result_read = false;
-+		break;
-+	case RPMB_WRITE_DATA:
-+		if (req_len % sizeof(struct rpmb_frame) || resp_len != sizeof(struct rpmb_frame))
-+			return -EINVAL;
-+		break;
-+	case RPMB_READ_DATA:
-+		if (req_len != sizeof(struct rpmb_frame) || resp_len % sizeof(struct rpmb_frame))
-+			return -EINVAL;
-+		need_result_read = false;
-+		break;
-+	default:
-+		dev_err(dev, "Unknown request type=0x%04x\n", req_type);
-+		return -EINVAL;
-+	}
-+
-+	protocol_id = ufs_rpmb->region_id << 8 | UFS_RPMB_SEC_PROTOCOL_ID;
-+
-+	ret = ufs_sec_submit(hba, protocol_id, req, req_len, true);
-+	if (ret) {
-+		dev_err(dev, "Command failed with ret=%d\n", ret);
-+		return ret;
-+	}
-+
-+	if (need_result_read) {
-+		struct rpmb_frame *frm_resp = (struct rpmb_frame *)resp;
-+
-+		memset(frm_resp, 0, sizeof(*frm_resp));
-+		frm_resp->req_resp = cpu_to_be16(RPMB_RESULT_READ);
-+		ret = ufs_sec_submit(hba, protocol_id, resp, resp_len, true);
-+		if (ret) {
-+			dev_err(dev, "Result read request failed with ret=%d\n", ret);
-+			return ret;
-+		}
-+	}
-+
-+	if (!ret) {
-+		ret = ufs_sec_submit(hba, protocol_id, resp, resp_len, false);
-+		if (ret)
-+			dev_err(dev, "Response read failed with ret=%d\n", ret);
-+	}
-+
-+	return ret;
-+}
-+
-+static void ufs_rpmb_device_release(struct device *dev)
-+{
-+	struct ufs_rpmb_dev *ufs_rpmb = dev_get_drvdata(dev);
-+
-+	rpmb_dev_unregister(ufs_rpmb->rdev);
-+}
-+
-+/* UFS RPMB device registration */
-+int ufs_rpmb_probe(struct ufs_hba *hba)
-+{
-+	struct ufs_rpmb_dev *ufs_rpmb, *it, *tmp;
-+	struct rpmb_dev *rdev;
-+	u8 cid[16] = { };
-+	int region;
-+	u8 *sn;
-+	u32 cap;
-+	int ret;
-+
-+	if (!hba->ufs_rpmb_wlun || hba->dev_info.b_advanced_rpmb_en) {
-+		dev_info(hba->dev, "Skip OP-TEE RPMB registration\n");
-+		return -ENODEV;
-+	}
-+
-+	/* Get the UNICODE serial number data */
-+	sn = hba->dev_info.serial_number;
-+	if (!sn) {
-+		dev_err(hba->dev, "Serial number not available\n");
-+		return -EINVAL;
-+	}
-+
-+	INIT_LIST_HEAD(&hba->rpmbs);
-+
-+	/* Copy serial number into device ID (max 15 chars + NUL). */
-+	strscpy(cid, sn);
-+
-+	struct rpmb_descr descr = {
-+		.type = RPMB_TYPE_UFS,
-+		.route_frames = ufs_rpmb_route_frames,
-+		.dev_id_len = sizeof(cid),
-+		.reliable_wr_count = hba->dev_info.rpmb_io_size,
-+	};
-+
-+	for (region = 0; region < ARRAY_SIZE(hba->dev_info.rpmb_region_size); region++) {
-+		cap = hba->dev_info.rpmb_region_size[region];
-+		if (!cap)
-+			continue;
-+
-+		ufs_rpmb = devm_kzalloc(hba->dev, sizeof(*ufs_rpmb), GFP_KERNEL);
-+		if (!ufs_rpmb) {
-+			ret = -ENOMEM;
-+			goto err_out;
-+		}
-+
-+		ufs_rpmb->hba = hba;
-+		ufs_rpmb->dev.parent = &hba->ufs_rpmb_wlun->sdev_gendev;
-+		ufs_rpmb->dev.bus = &ufs_rpmb_bus_type;
-+		ufs_rpmb->dev.release = ufs_rpmb_device_release;
-+		dev_set_name(&ufs_rpmb->dev, "ufs_rpmb%d", region);
-+
-+		/* Set driver data BEFORE device_register */
-+		dev_set_drvdata(&ufs_rpmb->dev, ufs_rpmb);
-+
-+		ret = device_register(&ufs_rpmb->dev);
-+		if (ret) {
-+			dev_err(hba->dev, "Failed to register UFS RPMB device %d\n", region);
-+			put_device(&ufs_rpmb->dev);
-+			goto err_out;
-+		}
-+
-+		/* Make CID unique for this region by appending region numbe */
-+		cid[sizeof(cid) - 1] = region;
-+		descr.dev_id = cid;
-+		descr.capacity = cap;
-+
-+		/* Register RPMB device */
-+		rdev = rpmb_dev_register(&ufs_rpmb->dev, &descr);
-+		if (IS_ERR(rdev)) {
-+			dev_err(hba->dev, "Failed to register UFS RPMB device.\n");
-+			device_unregister(&ufs_rpmb->dev);
-+			ret = PTR_ERR(rdev);
-+			goto err_out;
-+		}
-+
-+		ufs_rpmb->rdev = rdev;
-+		ufs_rpmb->region_id = region;
-+
-+		list_add_tail(&ufs_rpmb->node, &hba->rpmbs);
-+
-+		dev_info(hba->dev, "UFS RPMB region %d registered (capacity=%u)\n", region, cap);
-+	}
-+
-+	return 0;
-+err_out:
-+	list_for_each_entry_safe(it, tmp, &hba->rpmbs, node) {
-+		list_del(&it->node);
-+		device_unregister(&it->dev);
-+	}
-+
-+	return ret;
-+}
-+
-+/* UFS RPMB remove handler */
-+void ufs_rpmb_remove(struct ufs_hba *hba)
-+{
-+	struct ufs_rpmb_dev *ufs_rpmb, *tmp;
-+
-+	if (list_empty(&hba->rpmbs))
-+		return;
-+
-+	/* Remove all registered RPMB devices */
-+	list_for_each_entry_safe(ufs_rpmb, tmp, &hba->rpmbs, node) {
-+		dev_info(hba->dev, "Removing UFS RPMB region %d\n", ufs_rpmb->region_id);
-+		/* Remove from list first */
-+		list_del(&ufs_rpmb->node);
-+		/* Unregister device */
-+		device_unregister(&ufs_rpmb->dev);
-+	}
-+
-+	dev_info(hba->dev, "All UFS RPMB devices unregistered\n");
-+}
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("OP-TEE UFS RPMB driver");
-diff --git a/drivers/ufs/core/ufshcd-priv.h b/drivers/ufs/core/ufshcd-priv.h
-index d74742a855b2..e63b0e9075e0 100644
---- a/drivers/ufs/core/ufshcd-priv.h
-+++ b/drivers/ufs/core/ufshcd-priv.h
-@@ -417,4 +417,17 @@ static inline u32 ufshcd_mcq_get_sq_head_slot(struct ufs_hw_queue *q)
- 	return val / sizeof(struct utp_transfer_req_desc);
- }
- 
-+#ifdef CONFIG_RPMB
-+int ufs_rpmb_probe(struct ufs_hba *hba);
-+void ufs_rpmb_remove(struct ufs_hba *hba);
-+#else
-+static inline int ufs_rpmb_probe(struct ufs_hba *hba)
-+{
-+	return 0;
-+}
-+static inline void ufs_rpmb_remove(struct ufs_hba *hba)
-+{
-+}
-+#endif
-+
- #endif /* _UFSHCD_PRIV_H_ */
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index d65169733a69..3de284759a6a 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -5238,10 +5238,15 @@ static void ufshcd_lu_init(struct ufs_hba *hba, struct scsi_device *sdev)
- 	    desc_buf[UNIT_DESC_PARAM_LU_WR_PROTECT] == UFS_LU_POWER_ON_WP)
- 		hba->dev_info.is_lu_power_on_wp = true;
- 
--	/* In case of RPMB LU, check if advanced RPMB mode is enabled */
--	if (desc_buf[UNIT_DESC_PARAM_UNIT_INDEX] == UFS_UPIU_RPMB_WLUN &&
--	    desc_buf[RPMB_UNIT_DESC_PARAM_REGION_EN] & BIT(4))
--		hba->dev_info.b_advanced_rpmb_en = true;
-+	/* In case of RPMB LU, check if advanced RPMB mode is enabled, and get region size */
-+	if (desc_buf[UNIT_DESC_PARAM_UNIT_INDEX] == UFS_UPIU_RPMB_WLUN) {
-+		if (desc_buf[RPMB_UNIT_DESC_PARAM_REGION_EN] & BIT(4))
-+			hba->dev_info.b_advanced_rpmb_en = true;
-+		hba->dev_info.rpmb_region_size[0] = desc_buf[RPMB_UNIT_DESC_PARAM_REGION0_SIZE];
-+		hba->dev_info.rpmb_region_size[1] = desc_buf[RPMB_UNIT_DESC_PARAM_REGION1_SIZE];
-+		hba->dev_info.rpmb_region_size[2] = desc_buf[RPMB_UNIT_DESC_PARAM_REGION2_SIZE];
-+		hba->dev_info.rpmb_region_size[3] = desc_buf[RPMB_UNIT_DESC_PARAM_REGION3_SIZE];
-+	}
- 
- 
- 	kfree(desc_buf);
-@@ -8149,8 +8154,11 @@ static int ufshcd_scsi_add_wlus(struct ufs_hba *hba)
- 		ufshcd_upiu_wlun_to_scsi_wlun(UFS_UPIU_RPMB_WLUN), NULL);
- 	if (IS_ERR(sdev_rpmb)) {
- 		ret = PTR_ERR(sdev_rpmb);
-+		hba->ufs_rpmb_wlun = NULL;
-+		dev_err(hba->dev, "%s: RPMB WLUN not found\n", __func__);
- 		goto remove_ufs_device_wlun;
- 	}
-+	hba->ufs_rpmb_wlun = sdev_rpmb;
- 	ufshcd_blk_pm_runtime_init(sdev_rpmb);
- 	scsi_device_put(sdev_rpmb);
- 
-@@ -8423,6 +8431,7 @@ static int ufs_get_device_desc(struct ufs_hba *hba)
- 	int err;
- 	u8 model_index;
- 	u8 *desc_buf;
-+	u8 serial_index;
- 	struct ufs_dev_info *dev_info = &hba->dev_info;
- 
- 	desc_buf = kzalloc(QUERY_DESC_MAX_SIZE, GFP_KERNEL);
-@@ -8458,6 +8467,7 @@ static int ufs_get_device_desc(struct ufs_hba *hba)
- 				UFS_DEV_HID_SUPPORT;
- 
- 	model_index = desc_buf[DEVICE_DESC_PARAM_PRDCT_NAME];
-+	serial_index = desc_buf[DEVICE_DESC_PARAM_SN];
- 
- 	err = ufshcd_read_string_desc(hba, model_index,
- 				      &dev_info->model, SD_ASCII_STD);
-@@ -8467,6 +8477,12 @@ static int ufs_get_device_desc(struct ufs_hba *hba)
- 		goto out;
- 	}
- 
-+	err = ufshcd_read_string_desc(hba, serial_index, &dev_info->serial_number, SD_RAW);
-+	if (err < 0) {
-+		dev_err(hba->dev, "%s: Failed reading Serial Number. err = %d\n", __func__, err);
-+		goto out;
-+	}
-+
- 	hba->luns_avail = desc_buf[DEVICE_DESC_PARAM_NUM_LU] +
- 		desc_buf[DEVICE_DESC_PARAM_NUM_WLU];
- 
-@@ -8502,6 +8518,8 @@ static void ufs_put_device_desc(struct ufs_hba *hba)
- 
- 	kfree(dev_info->model);
- 	dev_info->model = NULL;
-+	kfree(dev_info->serial_number);
-+	dev_info->serial_number = NULL;
- }
- 
- /**
-@@ -8645,6 +8663,8 @@ static int ufshcd_device_geo_params_init(struct ufs_hba *hba)
- 	else if (desc_buf[GEOMETRY_DESC_PARAM_MAX_NUM_LUN] == 0)
- 		hba->dev_info.max_lu_supported = 8;
- 
-+	hba->dev_info.rpmb_io_size = desc_buf[GEOMETRY_DESC_PARAM_RPMB_RW_SIZE];
-+
- out:
- 	kfree(desc_buf);
- 	return err;
-@@ -8830,6 +8850,7 @@ static int ufshcd_add_lus(struct ufs_hba *hba)
- 
- 	ufs_bsg_probe(hba);
- 	scsi_scan_host(hba->host);
-+	ufs_rpmb_probe(hba);
- 
- out:
- 	return ret;
-@@ -10389,6 +10410,7 @@ void ufshcd_remove(struct ufs_hba *hba)
- 		ufshcd_rpm_get_sync(hba);
- 	ufs_hwmon_remove(hba);
- 	ufs_bsg_remove(hba);
-+	ufs_rpmb_remove(hba);
- 	ufs_sysfs_remove_nodes(hba->dev);
- 	cancel_delayed_work_sync(&hba->ufs_rtc_update_work);
- 	blk_mq_destroy_queue(hba->tmf_queue);
-diff --git a/include/ufs/ufs.h b/include/ufs/ufs.h
-index 72fd385037a6..1d44e2b32253 100644
---- a/include/ufs/ufs.h
-+++ b/include/ufs/ufs.h
-@@ -651,6 +651,10 @@ struct ufs_dev_info {
- 	u8 rtt_cap; /* bDeviceRTTCap */
- 
- 	bool hid_sup;
-+
-+	u8 *serial_number;
-+	u8 rpmb_io_size;
-+	u8 rpmb_region_size[4];
- };
- 
  /*
-diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
-index 9ed188d24cb0..5d04da9acb52 100644
---- a/include/ufs/ufshcd.h
-+++ b/include/ufs/ufshcd.h
-@@ -851,6 +851,7 @@ enum ufshcd_mcq_opr {
-  * @host: Scsi_Host instance of the driver
-  * @dev: device handle
-  * @ufs_device_wlun: WLUN that controls the entire UFS device.
-+ * @ufs_rpmb_wlun: RPMB WLUN SCSI device
-  * @hwmon_device: device instance registered with the hwmon core.
-  * @curr_dev_pwr_mode: active UFS device power mode.
-  * @uic_link_state: active state of the link to the UFS device.
-@@ -965,8 +966,8 @@ enum ufshcd_mcq_opr {
-  * @pm_qos_enabled: flag to check if pm qos is enabled
-  * @critical_health_count: count of critical health exceptions
-  * @dev_lvl_exception_count: count of device level exceptions since last reset
-- * @dev_lvl_exception_id: vendor specific information about the
-- * device level exception event.
-+ * @dev_lvl_exception_id: vendor specific information about the device level exception event.
-+ * @rpmbs: list of OP-TEE RPMB devices (one per RPMB region)
-  */
- struct ufs_hba {
- 	void __iomem *mmio_base;
-@@ -984,6 +985,7 @@ struct ufs_hba {
- 	struct Scsi_Host *host;
- 	struct device *dev;
- 	struct scsi_device *ufs_device_wlun;
-+	struct scsi_device *ufs_rpmb_wlun;
+  * vgic_v3_attr_regs_access - allows user space to access VGIC v3 state
+  *
+@@ -533,6 +556,7 @@ static int vgic_v3_attr_regs_access(struct kvm_device *dev,
+ 				    struct kvm_device_attr *attr,
+ 				    bool is_write)
+ {
++	u32 sysreg = attr->attr & ~KVM_DEV_ARM_VGIC_CPUID_MASK;
+ 	struct vgic_reg_attr reg_attr;
+ 	gpa_t addr;
+ 	struct kvm_vcpu *vcpu;
+@@ -549,6 +573,14 @@ static int vgic_v3_attr_regs_access(struct kvm_device *dev,
  
- #ifdef CONFIG_SCSI_UFS_HWMON
- 	struct device *hwmon_device;
-@@ -1140,6 +1142,8 @@ struct ufs_hba {
- 	int critical_health_count;
- 	atomic_t dev_lvl_exception_count;
- 	u64 dev_lvl_exception_id;
+ 	switch (attr->group) {
+ 	case KVM_DEV_ARM_VGIC_GRP_CPU_SYSREGS:
++		/* Try lockless ICC_CTLR_EL1 read first */
++		if (!is_write && sysreg == SYS_ICC_CTLR_EL1) {
++			ret = vgic_v3_try_icc_ctlr_el1_lockless_access(dev,
++				 attr, vcpu);
++			if(!ret)
++				return ret;
++		}
 +
-+	struct list_head rpmbs;
+ 		/* Sysregs uaccess is performed by the sysreg handling code */
+ 		uaccess = false;
+ 		break;
+diff --git a/include/kvm/arm_vgic.h b/include/kvm/arm_vgic.h
+index 4000ff16f295..42c767c62291 100644
+--- a/include/kvm/arm_vgic.h
++++ b/include/kvm/arm_vgic.h
+@@ -334,6 +334,9 @@ struct vgic_v3_cpu_if {
+ 	struct its_vpe	its_vpe;
+ 
+ 	unsigned int used_lrs;
++
++	/* ICC_CTLR_EL1 shadow (published to readers) */
++	u32 icc_ctlr_el1_shadow; /* upper 32 bits of this reg are reserved */
  };
  
- /**
+ struct vgic_cpu {
 -- 
 2.34.1
 
