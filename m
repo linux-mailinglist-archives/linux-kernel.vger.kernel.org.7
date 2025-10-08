@@ -1,170 +1,116 @@
-Return-Path: <linux-kernel+bounces-845040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18CAABC356E
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 06:46:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE522BC3568
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 06:45:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1597F4EC0F3
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 04:45:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 983DA3A7549
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 04:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D07C2C0264;
-	Wed,  8 Oct 2025 04:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD2E2BE7CC;
+	Wed,  8 Oct 2025 04:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="b9YTkETD"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TnaffeSL"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9EB2BF3CA
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 04:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C11F194A44
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 04:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759898744; cv=none; b=Zlv6QDgfHcFe5X9teoOJac5HdTmicksFK0SlIGiAhckBiqdliuUdQ+YJajbZblT8cTztgHMj6tuFeG5HrIGdiGSnKUgX7nFO6APuWbfE7rjO6+hRoJ3o1UEwwKOpUkmcawbTwpBJx4YuMN4bP5JzkNvrTkVRisLMJvKJeLIDwAQ=
+	t=1759898740; cv=none; b=WxSLCpcLL0jmv/3wGQT6FvA15oH+Ow5PttTca185r051qZMbD4RLF67cQbQxEV6LvF7JTYYJvm3UfUKp3FVV9lO7p93rha9iB3w4AtzxV4mveDaqw2ZaW612h8vO+BrLV1azLPeReXmq5GWmWxeM83jvtrs/NnHRogF16mXnzJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759898744; c=relaxed/simple;
-	bh=ioRZSka0OhdYFPnQh7NRYIPcq8Xeaprd2kX7MLnG640=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=qx+Ls1wtW1Les12IRqtYsZg3asCfvKw9EPj3P0eH8LpbWrEBWYjhEWfWgrJ0sQTcEgM73a5SHsTHR1LiRCjV79EV8EuEg3CThMCl/43M750hmYzIJZpdsO0rkAECyXUBQSzK+wlWFNVZulSG7tqCTe7dx4SHAi0QJgiUahOZOhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=b9YTkETD; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20251008044535epoutp0153ebfac3c65cc52bca04651e91fa3c49~sapNGZUhi0750607506epoutp01P
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 04:45:35 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20251008044535epoutp0153ebfac3c65cc52bca04651e91fa3c49~sapNGZUhi0750607506epoutp01P
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1759898735;
-	bh=vROKexdVYNHAhyF4ES21jI5cobDDrJlr4MDKl+4gj3Y=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=b9YTkETDxlWM1AzKrBj0MZRefGT60KTRTCdJ8B8NmeUYvo9o2Uk//mWjkEVLKYKnc
-	 bu26mJik2ZFvgzNbQYwmUx1NKQuXCZHBbpApGHJSsJWEairfzIiU9MoCFumdmzHp6B
-	 nAfDNOdaPeFyUYztbf/67tMAHdrygsvNoabziGHc=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20251008044534epcas5p1270379e0d1536e8cda6567d9be45df5d~sapMfio3Y1099610996epcas5p14;
-	Wed,  8 Oct 2025 04:45:34 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.93]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4chL6P3rz1z3hhT8; Wed,  8 Oct
-	2025 04:45:33 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20251008044532epcas5p23af935589ba8975d38fc28b5df113e5d~sapK1yD-m2794127941epcas5p29;
-	Wed,  8 Oct 2025 04:45:32 +0000 (GMT)
-Received: from INBRO001840 (unknown [107.122.3.105]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20251008044529epsmtip1f98e9c929be1697bcf28a33dba660d45~sapHeFoD12062920629epsmtip1I;
-	Wed,  8 Oct 2025 04:45:28 +0000 (GMT)
-From: "Pritam Manohar Sutar" <pritam.sutar@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <vkoul@kernel.org>,
-	<kishon@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <alim.akhtar@samsung.com>,
-	<andre.draszik@linaro.org>, <peter.griffin@linaro.org>,
-	<kauschluss@disroot.org>, <ivo.ivanov.ivanov1@gmail.com>,
-	<igor.belwon@mentallysanemainliners.org>, <m.szyprowski@samsung.com>,
-	<s.nawrocki@samsung.com>
-Cc: <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <rosa.pila@samsung.com>,
-	<dev.tailor@samsung.com>, <faraz.ata@samsung.com>,
-	<muhammed.ali@samsung.com>, <selvarasu.g@samsung.com>
-In-Reply-To: <808d166a-b615-49c6-b0f5-bf5101721381@kernel.org>
-Subject: RE: [PATCH v8 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
- ExynosAutov920 HS phy compatible
-Date: Wed, 8 Oct 2025 10:15:27 +0530
-Message-ID: <000001dc380e$612b5680$23820380$@samsung.com>
+	s=arc-20240116; t=1759898740; c=relaxed/simple;
+	bh=wE/kdATIEfdP1bT5DFvn1f+TOEuk6V4ywi7jxxibmN0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=hnCJgTQzxPqesgqyAN1TSWLO47s8ShWiT9WD6jRMc67IAN+BCx/AIovhzrfjx+N3IKBgi8oN/yd2WIK4w+abyU/x58rQG3mvk7thM0wpGqBxuehSnwltOpvjXkJycZhb3vTdNyg5C1rDcYOtP4Z4y0L0grlpeI1MyiEAtqpPsTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=TnaffeSL; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-781010ff051so4943493b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 21:45:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1759898738; x=1760503538; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5kr1L00wvOVr25j3yOIqLleOM/mW0MLWBZeaiqgZ8Wk=;
+        b=TnaffeSL0lm+9MMBv4ErPvZ8StuIMT0Kbv/+8PCrPX64MBPjAOJntXUkKQg86sBT2F
+         q3GAfUxTqQGpxR0Ii1CZtUAKqEdAnqC5ebIxUZDPouq9rEQQOdpmUPogXU7qLET+bsYP
+         J/a4wYfIh7zY15imAJN8V0FLvsV6b72G1odjY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759898738; x=1760503538;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5kr1L00wvOVr25j3yOIqLleOM/mW0MLWBZeaiqgZ8Wk=;
+        b=N3J8fJVBU8h11zmjBlz4MAqukVr2sQrT+Ut5j5f12QZIsOFmNRP99pbp4c/ZPdtMH/
+         7iaHKHWQpylIqT/o4eLHeLTlrsvij3kdqsRDmkxsqqf0U4kmq3Q+UDk6EDXkQBeyvGUX
+         DG1B3j6AF8o2XBLzlcc4TPrS2g7VvMZrBKm7Y9MfHughfmA3zId4x4TxCTrSXuJ5to0D
+         2RmZDcHa/7ZgrSGYWsMb9YgyH4arkIVgQ30evc1juEMSBQRVhbA6Vx/68v+M//MIVAZg
+         EhbnlAB2SMVa0CWTsRU+hmKmwgQ0PR43ahs/TbrGyHEz0s7GdwMGfs8B8Z8BiGewitjM
+         Qj7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUSFu2lYnFjVaV0sjkBmVNssJKwDMf3cr5OujD7HuYaMMZ177V2ZZ2P0ul1BAom8ij286dVC3A9yuLD31c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzot/9p4MNatLAZ63Xhp22EVAiM0yx8i+nxXPmlwti6pNH6yx4c
+	MNA8ZPPh2F3RFGKrgCkqMftT1pIULbpP5az6rWnoc8IQt7mY9o5wJF9GvQjijaszVQ==
+X-Gm-Gg: ASbGncstvPZyzfkt/AsjQ8YOPM+oDkDJQTxaNxZCO/Qc92foXkG+mKt7tOXJouXK5zY
+	YUH5Z61YMIohoAopIOsfjaf3vVIls1/Wo5PK5riyU4mRyL7mR8FN+1xuCBhnY2DDL7AaTnQXA6o
+	o7BK9bGsHrRcMNmKDWqdq6kwcXaVALlLZ5lTjqe7irxmjVEt780vYhaya/LDjtA6p13zt81hCKr
+	1CVIwqBFUmtLCx+IlS72Gbafl3k06kMp7N7NocYglGNg3WNtkEIRmESOT4kSYJwQfxEbqpPpkjP
+	BfgBppCw72UQ9bIenIZkFrsnXcGGdwyke+53p1CGItcDSL8Qj0Vy804CyG/p7A96T7YZQInCVxC
+	VdhQzASpG5zJfALuoYfD8lPxHbu9ynTJEzWOf/pTGy0KHAiwZPw==
+X-Google-Smtp-Source: AGHT+IFLUr0j2WR9Nd0qMRsWsIHFOH6znggjE7lmgxCqD3Uq946in/DRyGXhdUAnZKPPI7qOtPJMtQ==
+X-Received: by 2002:a05:6a00:2388:b0:772:3aa4:226e with SMTP id d2e1a72fcca58-79387242fa9mr2116159b3a.19.1759898738380;
+        Tue, 07 Oct 2025 21:45:38 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:465a:c20b:6935:23d8])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b02053b77sm17347590b3a.43.2025.10.07.21.45.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Oct 2025 21:45:37 -0700 (PDT)
+Date: Wed, 8 Oct 2025 13:45:32 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Will Deacon <will@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, 
+	Mark Brown <broonie@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Tomasz Figa <tfiga@chromium.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: kvm: arm64: stable commit "Fix kernel BUG() due to bad backport of
+ FPSIMD/SVE/SME fix" deadlocks host kernel
+Message-ID: <hjc7jwarhmwrvcswa7nax26vgvs2wl7256pf3ba3onoaj26s5x@qubtqvi3vy6u>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIRMOVGdWg5oRjNsRBgEjzIeIB8IgGabj6EAmTXuDcA7fJUJgHIrfZJAofpNyABqVtXsAE6XDP/s+yr4PA=
-Content-Language: en-in
-X-CMS-MailID: 20251008044532epcas5p23af935589ba8975d38fc28b5df113e5d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250903072936epcas5p4a28d0e63c7f0792b516b0cbc68bf3a8e
-References: <20250903073827.3015662-1-pritam.sutar@samsung.com>
-	<CGME20250903072936epcas5p4a28d0e63c7f0792b516b0cbc68bf3a8e@epcas5p4.samsung.com>
-	<20250903073827.3015662-2-pritam.sutar@samsung.com>
-	<0df74c2b-31b9-4f29-97d3-b778c8e3eaf1@kernel.org>
-	<007801dc2893$18ed4a20$4ac7de60$@samsung.com>
-	<02ef5180-ad56-45f0-a56f-87f442bf6793@kernel.org>
-	<007f01dc2b81$84ef19b0$8ecd4d10$@samsung.com>
-	<808d166a-b615-49c6-b0f5-bf5101721381@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Krzysztof,
+Commits 8f4dc4e54eed4 (6.1.y) and 23249dade24e6 (5.15.y) (maybe other
+stable kernels as well) deadlock the host kernel (presumably a
+recursive spinlock):
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski <krzk=40kernel.org>
-> Sent: 07 October 2025 11:54 AM
-> To: Pritam Manohar Sutar <pritam.sutar=40samsung.com>; vkoul=40kernel.org=
-;
-> kishon=40kernel.org; robh=40kernel.org; krzk+dt=40kernel.org;
-> conor+dt=40kernel.org; alim.akhtar=40samsung.com; andre.draszik=40linaro.=
-org;
-> peter.griffin=40linaro.org; kauschluss=40disroot.org;
-> ivo.ivanov.ivanov1=40gmail.com; igor.belwon=40mentallysanemainliners.org;
-> m.szyprowski=40samsung.com; s.nawrocki=40samsung.com
-> Cc: linux-phy=40lists.infradead.org; devicetree=40vger.kernel.org; linux-
-> kernel=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; linux-s=
-amsung-
-> soc=40vger.kernel.org; rosa.pila=40samsung.com; dev.tailor=40samsung.com;
-> faraz.ata=40samsung.com; muhammed.ali=40samsung.com;
-> selvarasu.g=40samsung.com
-> Subject: Re: =5BPATCH v8 1/6=5D dt-bindings: phy: samsung,usb3-drd-phy: a=
-dd
-> ExynosAutov920 HS phy compatible
->=20
-> On 22/09/2025 14:26, Pritam Manohar Sutar wrote:
-> > This phy needs 0.75v, 0.18v and 3.3v supplies for its internal
-> > functionally. Power Supply's names are as per phy's User Data-Book.
-> > These names, (dvdd, vdd18 and vdd33), are considered  for 0.75v, 1.8v
-> > and 3.3v respectively.
-> > =22
-> >
-> >>
-> >> I still cannot find constraints for the rest of properties, though.
-> >
-> > Sorry I didn't get it completely. Can you please elaborate on the same?
->=20
->=20
-> Writing bindings and introductory talks elaborate on that. You add proper=
-ties
-> without constraints. That's not what we want. We want constraints.
->=20
+ queued_spin_lock_slowpath+0x274/0x358
+ raw_spin_rq_lock_nested+0x2c/0x48
+ _raw_spin_rq_lock_irqsave+0x30/0x4c
+ run_rebalance_domains+0x808/0x2e18
+ __do_softirq+0x104/0x550
+ irq_exit+0x88/0xe0
+ handle_domain_irq+0x7c/0xb0
+ gic_handle_irq+0x1cc/0x420
+ call_on_irq_stack+0x20/0x48
+ do_interrupt_handler+0x3c/0x50
+ el1_interrupt+0x30/0x58
+ el1h_64_irq_handler+0x18/0x24
+ el1h_64_irq+0x7c/0x80
+ kvm_arch_vcpu_ioctl_run+0x24c/0x49c
+ kvm_vcpu_ioctl+0xc4/0x614
 
-Have added only supplies in this patch-set. However, was going=20
-through schema example and it says nothing is needed to define
-in terms of supply.=20
+We found out a similar report at [1], but it doesn't seem like a formal
+patch was ever posted.  Will, can you please send a formal patch so that
+stable kernels can run VMs again?
 
-ref:=20
-1. Documentation/devicetree/bindings/writing-schema.rst +151
-
-... A =22description=22 property is always required.
-
-2. Documentation/devicetree/bindings/example-schema.yaml +135
-
-=23 *-supply is always a single phandle, so nothing more to define.
-foo-supply: true
-
-Please confirm and let me know if your expectations are something=20
-else in terms of constraints of the properties.
-
->=20
-> Best regards,
-> Krzysztof
-
-Thank you,
-
-Regards,
-Pritam
-
+[1] https://lists.linaro.org/archives/list/linux-stable-mirror@lists.linaro.org/thread/3FQHC4GVN57SM2CNST3EMVEBUXMSFOGR/#AQB4LMHLGTUO73GVCVV5QLCEJT3MRTN4
 
