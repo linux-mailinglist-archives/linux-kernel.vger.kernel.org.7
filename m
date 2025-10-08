@@ -1,223 +1,152 @@
-Return-Path: <linux-kernel+bounces-845106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A311BC3874
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 08:58:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55D0ABC387D
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 09:03:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E3E533428D9
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 06:58:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 35AA94F3749
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 07:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 109FF2EDD60;
-	Wed,  8 Oct 2025 06:58:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794812F0C75;
+	Wed,  8 Oct 2025 07:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Qbd6nFuJ"
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013041.outbound.protection.outlook.com [40.107.201.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GWSKKDAE"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720612ED163;
-	Wed,  8 Oct 2025 06:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759906705; cv=fail; b=DSNFKXCT/fJjkgNVMUoBLnVsZJCOQ3GRpliTyz8UnQyTQS+0snwViSeZD+m1UXPo0bHf6zBfo893Y2QSwAwmBnSCYHmKNwBNffZ+rVwTQeQZ7xAnIzfFBTjrGUMuqFXh7SSzl7RHMv37Za3wvpYMyNIB+Xei74IRUHCfttt5mAE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759906705; c=relaxed/simple;
-	bh=vFgvBtwpkUdpLmFiju+L5rIZPqoQr4M8WCQ2AQbxp/c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=DQxM2ZNKwGZQ7L/9TwCkII/E3D6bKkO61IN5rk1Q3InKG+2W4peTBt8PxSQ/xqT/mUv5XVSU0egtQVd5E3IHhy1Q5aZj8W1YdGtZVUskAAVV8I7zcZH2Oqo11kkKC6yOOsEjwngQBrc8npowhvGXbiQlG6j9A8tFgPXb8Jq0if8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Qbd6nFuJ; arc=fail smtp.client-ip=40.107.201.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hV9dyFd1reWi/dJu00KdwvoqWmeLIS9LaZKnFipyKpD1ycZg95FTV2S0jOEu1z1Sg7nBlSeIxqS9VJtx+AtSgSnVaPhhaqF3l3JrS3ejqQSixqq7UI3RhiELnKvmWEA58SyV5Q8JNj8xZFzcg6CRwa7cTvsB8foB36XAHEtERzA2/XRxGnIeZchJ/Fo9SqIIMNR0enMPwj3+HEMKEk7xqOrrIzbEFhPOpLml3cpi9EI4ptaYutj8dDD+Mf51JgFmMe8fjS/LHUXjH+rr9j3BoIREBmWAduLx+tcz8ntlHmwMKsIhZqy3FnuR9S4OpGI/KFm2ESrr0FzK6QSRZu5Enw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XyFG1oGlVSIvqyzrTWTxBzUKfa80YV3GIEwbtkBnmXM=;
- b=Sn4c0OekElKuDveBty1oiIDuQkNKVtbIDLzgje0hIDVlkd56/QlxG8iQOT3wlBEnWYazLQJSWPWRIqI19uLABUFcUCe7kyKpe4KSdnqcD/bpGeIrX9eJUnpHLCu371wWJWoiFYcSfilLKMP9lmhe6Vfn8ZYe1S2c0UOxrz07n3T534wdQ0O4spdrCPjV5teoHjf5oZDd1rnZbu8hJeC4mBkj9YPei7cqkv8Wp9Oz6RO5ODvV/ctPhmqBp8pIVwDg7qvN7qsC38T57YvQg7Zoo1Y1u0xqkZBfxnCnrwykcdaJnWd+ebqwTdLKZM2zvO3mxaiczzig8pO9v86NcDzupw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XyFG1oGlVSIvqyzrTWTxBzUKfa80YV3GIEwbtkBnmXM=;
- b=Qbd6nFuJc9ltn9QLXbguwMk4KRHhqyWP338vlMm11im+JKHrewnUCGWM9NH7iLJWWM+a+/jtthCtihnv1jWGgjwPWD7hezsbCKupWjQA5kek7znCPLhLYnB0xDtL+fqHWrfbMCIkYJNaWRpPs/AJowMBbMiOjO8lNfETNRgHhh6tusJIu0p4RUolGz4CYKjHkfQQRGegdtGqcQJuQobZIF9NUiE7FEh9Pab4pJbxeWI3Ai6C2GGeHxwM2pDP4jm6t7hROPtAvT922vOREnUtvrALFNxffb8/1vlpDopyg55s5GWW+w/iEDeRFTGE+RDgfUD8hE22aZSYWxMCYXVZwA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
- by DS0PR12MB8526.namprd12.prod.outlook.com (2603:10b6:8:163::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Wed, 8 Oct
- 2025 06:58:13 +0000
-Received: from LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
- ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9182.017; Wed, 8 Oct 2025
- 06:58:13 +0000
-Date: Wed, 8 Oct 2025 08:58:05 +0200
-From: Andrea Righi <arighi@nvidia.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: tj@kernel.org, linux-kernel@vger.kernel.org, mingo@kernel.org,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, longman@redhat.com,
-	hannes@cmpxchg.org, mkoutny@suse.com, void@manifault.com,
-	changwoo@igalia.com, cgroups@vger.kernel.org,
-	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de
-Subject: Re: [PATCH 01/12] sched: Employ sched_change guards
-Message-ID: <aOYLfSfePpgL4gMQ@gpd4>
-References: <20251006104402.946760805@infradead.org>
- <20251006104526.613879143@infradead.org>
- <aOTNXPTyk4zth-1C@gpd4>
- <20251008065103.GQ4067720@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251008065103.GQ4067720@noisy.programming.kicks-ass.net>
-X-ClientProxiedBy: MR1P264CA0033.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:501:2f::20) To LV8PR12MB9620.namprd12.prod.outlook.com
- (2603:10b6:408:2a1::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF201A9F8D
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 07:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759907030; cv=none; b=J1LcuSGujUfoJzohRc+x/7ZtSRGg3G2COHC7zTkluK4xsWNbUylAeg+9fEY5ahyhOxc/dz/M0hGzjDUoYzNTLDdfIbKXppoxmFO3rKdeQwQ85KC7PHPa/IN2YX+/rPGH0kiCtazEJGCdIAYYNOSROTyGhXLVA7nw6T/5oxrtwEw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759907030; c=relaxed/simple;
+	bh=ZIBontMI3JXOfH0koR9RkZgD7vrZZLov/LpVr4jsmxQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rg9qxW0TRqy5xO5MGyivgnjT/6c/SfF4D47MLG+N7gWIojzz1+dwUbmb7P53f/5rY8bmYW4zi6rPj3809McGU9aV2yVi834lrzSxY+UKLFS9Fve0kssPRVakoZTLCBi88yCSkvNRd+wbNfNyVfOmHlGPsorSTsP3eBNSXAByDqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GWSKKDAE; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-70ba7aa131fso77174886d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 00:03:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759907028; x=1760511828; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZIBontMI3JXOfH0koR9RkZgD7vrZZLov/LpVr4jsmxQ=;
+        b=GWSKKDAEvQrV7su8NC9s0viCQk9hrOTV3vHcDiJZpbP2DslEHA05H+E5qd7IiAyd24
+         a4HCrSnRoqrKoElO1JHha8Nw1MfJIhYLRWw6WLaDX72XA4UTze7PS8hod42l9thQWIso
+         00QzSfgVdQbVS6ix+l1w1FTbY1nMPdvYQza7+a3dG4x5PRxvM69TAKiqD5+j6cwaEVdV
+         6O4rM918JTTIBudbCn5rcwAnzx9E7mVUWB9lD5sNOpup9QVUO3yux1uLNj5ysj4Nbit4
+         gQmfLptggOSxpCuJF2xovP+y2pCaiwzvTZeWVVpm6+pOFhYDw45enUhYznPFZWehyAMi
+         haGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759907028; x=1760511828;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZIBontMI3JXOfH0koR9RkZgD7vrZZLov/LpVr4jsmxQ=;
+        b=du9WfvopDOPQmTZ9jWj63+cjAo3qVwi4askn4meXhfYUXrChLuDpvy1yaGq9U045RG
+         l6qbq/nJfq0Eyu0sNc4FT5LaU9yPqrur1nAO72r8NBR8hpdVlTARcx5gcIl6wAxRK7aW
+         Zbe9DAhXOhIDkDEYjA7AChws0uMXIvF1YNJu9RoDoCm6aCECzZZAoE1peO9B7wcL7C0j
+         UJ1kdyggml7pzuHFl8ryWtvguc89cwq7lgMmKNRGOeEBcQLtYwNnFOFCKmdolY0vRQMQ
+         FoKacrHho7Q/UOYuQWR2jmTRFqqxY5n+ckkfLm10qrasPIej4/eBt+krUyzYfnjgzZvT
+         9DPw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1IxfIYiHXdlaKZk56AXar594tCRH7HtlvDuuSjDx7LYq950Fw8bS8XhgcQzL4wlZvpld0fYGDKOUdkBs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyxxu8jVpl/cMM6znfk6tqIvqfoe32ImZHz1YivsaQayJQHtan8
+	R7kblhKSy1J38VsuLNNpHcadD5qpYaaCxroxUNunHna4FxMhhQEXvC9jSr7HshgmNAahQAWve16
+	1YWFNg7JHgnRg56ZF8RodvazmQWThAcQ=
+X-Gm-Gg: ASbGnctX41GVKVgyyEfrgOzH1iD+1yTO13Scs4aZhtcyhimXPDcgQx74hgdNeN5FunI
+	zQ7mdgFLMlWboaVnrvMzywZNpn2zNQcK3A3JOXDWzmeIk1muepgMDHTd4928b8yKFyN9ROfMlel
+	hULdpygCbS95zLjrb3r1IqYZ4L/ssEO3BiuseCJoxeUHlgbtaj9taH29NFM9PnrJUyGjVTkEE3v
+	19telAHPSewJXYxOtOXasAocMVVypq+
+X-Google-Smtp-Source: AGHT+IHedmjtfrfQZ6kW8QKuwAdECr6I1hiXfVOXlZcxsFN061YcDFnfXfAPwRPbs6K5+eMFaH0JseZMD/Jr2viOYaM=
+X-Received: by 2002:a05:6214:5199:b0:720:3cd9:1f7e with SMTP id
+ 6a1803df08f44-87b1bb42849mr30308086d6.0.1759907027966; Wed, 08 Oct 2025
+ 00:03:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|DS0PR12MB8526:EE_
-X-MS-Office365-Filtering-Correlation-Id: d9f5da38-b47f-4852-3a5c-08de06380c6f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Lhe1gMaXSZsb7Vl/MNrgJkXSOFzsTi3ViIKxHpXX6yFKNkOmROk7n4A2Nu5d?=
- =?us-ascii?Q?xVx12TKBG/7bVHaxAIiAo+oUmfDWZ7/5+RCVXTCGhhOqpCwfII9phfjLSZ6S?=
- =?us-ascii?Q?CF4vjipN1xT7v3giAtxk9cJInE3Cni4h58RI/bUkjP20YgYGAo1gE/KddIwm?=
- =?us-ascii?Q?VRGhMLgcBEJPdCeoV9pPI+pYvRUMWf8InfJSSBGnxQ23bAq+FiBu7fMsSzgR?=
- =?us-ascii?Q?k2I/6nG02j+GaHBOJHxpGLWXa0IvomgSLSRTDKtRHilAybn1/ll5gztgd3al?=
- =?us-ascii?Q?M58en0Q0X0l7qmVtN+quTx5dP/E3Uyka+l2Vl2CgPi1jnMZSzDQrxRe6qqKp?=
- =?us-ascii?Q?jke2c84opItp+6Yc77I2k/AAU4EOYOmNWqx16GWaEKwYNV+gLLOcO8yNQ4Mc?=
- =?us-ascii?Q?yM8ELkEopizpv63naMlLEh8kjtJ00Y9yr9RToHMH4n3L24rFKrXjAKFk3yfB?=
- =?us-ascii?Q?mHVwdX8+ZA/Q4CpW9viqbyd1p8wCyvZ0N3T8fdHvkuSgADe8WkIDGK3/XKNm?=
- =?us-ascii?Q?jcA4u9KoYtCRFGk3SSS/81v/lsqWdVT9PtUoRP7+lGzoSJIYE9UroXEz6QI4?=
- =?us-ascii?Q?GtKDsEsqeYz4+/1TnGFTBEwxS06jvxXh1ILPWBcMxmS8Ca3E4pTndV2uhzoO?=
- =?us-ascii?Q?5OsEskHJEzP6pmSatPDCPoFfx3gJfppXnyCpsDm3fCWzuAQVcqu7QL0/JWDo?=
- =?us-ascii?Q?Y8fRibrbtYjutqc6yApHverIPNYG7RUSPuCI5YVXUB5vlHeMLqS942bQQN4n?=
- =?us-ascii?Q?xQrax8gIs6FKqfqTm8ckweN6ic7QX0WjA7lV5L0juZGF7zLzexk6jD0HMY6Y?=
- =?us-ascii?Q?6Xo+dFmJ925NIsatFYbFx36HKHqszt3H2DhJv1YRXwCit4fFc42XjejjHotT?=
- =?us-ascii?Q?5s7ZPQPYXxmIQ2QSth1NzCNRHAhwMd6pAIu/8PT/BIbQHRGmaylYz+vobcg+?=
- =?us-ascii?Q?PA8mhL4ZulHGKx1jQ3U3yuft5wUBI+ZJH60J8WrAx5hDvtzrGDQ504AZYT5y?=
- =?us-ascii?Q?FOZ51FczPPge1ewGjJH0ILcfzKv5S2zMqzLHUu2tnsO+M1sKw022wW5GJWRx?=
- =?us-ascii?Q?p0lNlDBJd1mHPKRPKEQ/WGkhBIDY8uNLk2CpoRPAonvHdc91gX+kmo2iJP3x?=
- =?us-ascii?Q?WR2itJWPCBxQgl4OURfZT52ylX4ON3DeY6TV78TvYiTVFnaB07uOCHlnJTLj?=
- =?us-ascii?Q?ouERtMlPz6MA8l5bUeBdacUR3sUJlJPnBbuNvw8QqfGK+QNSwtuAs21no9aN?=
- =?us-ascii?Q?KnLNQh4fDZOE21CCuS3+Sq60bDmc/U8v55ZBsVxfObQ1glDLPLqObro/45y1?=
- =?us-ascii?Q?9bAbJ9kSBCwIqQGwnPSMgPpMCA5dh6VeBO7C1LmvjJZdWEZzq+cQNssdYdvP?=
- =?us-ascii?Q?Scgi4RkjCYjvtQEP/IFUnpvfN27HQflHU629VkytMg1x08pcsg2DKwWjJyYE?=
- =?us-ascii?Q?31wM7x+vqgwVPzG5Ch3ow9ptXupKOcxO?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?QT7ikVfjaZN1UBTSJZ7dASG4UJk5VChr54kakUTSrJ1ZBEUjTzY947MJG9+k?=
- =?us-ascii?Q?H0vS4i+Acd5lCLbm/wOsSnK4Z0hz0qpGKprbb3Iaqz01z8FWMSvyTaEwbJKH?=
- =?us-ascii?Q?8LmkpmxO/JGWeHjFTeCAHcPfxBK3xVPg46Ff/QKeGc5kdBVLe0bmBJCDb24c?=
- =?us-ascii?Q?Ca+dvnSQTVIpwvJJxilj/nNd0RquIQaBEE17xHjhCXnJdE6aXLRFb8XVHdAG?=
- =?us-ascii?Q?auqu/hOTb490NP4ajVa9//A12mLVg7rAXCMZTLWf3NhqoAdvPR1uNFpsJ9BS?=
- =?us-ascii?Q?aLU0ACsnrmO5lE1NOChqner1yAU7howgNinyK6v4WjT4JwXB7kec99wwkeVA?=
- =?us-ascii?Q?ovSx2L/kOOqLkkAA3lUA3Z0KSONlrrab6h9aLmzAo4baGDu4VeqY2+DBPO4x?=
- =?us-ascii?Q?HjdNNNpWP5Phl3tbwN5Ej9sKJlWOOwIhkzWVk+wde9Zox48yb6YPqBTAXyhV?=
- =?us-ascii?Q?pidAty2wLguLfaGKULEgGaREiLGvYWHfvMRZCTPGUmjEUckpw6lynx3FYYtx?=
- =?us-ascii?Q?imF8tGCoQcga4AhvdUUy+vvsPQT2BCQGjpJ0ZzKyLNgL5tpJUWxM1YLpszH6?=
- =?us-ascii?Q?SInir89nJ/hGnjQZfLBjEa0Sq1zZyzm4xD01w05BbEOaw6nkG6fslyov92Sb?=
- =?us-ascii?Q?6xqHS3vmE0IoDFZSTQELg2RA0hvUo0TSISsm1j/5F0N/n2fElTtXtiv9eVlK?=
- =?us-ascii?Q?PW6+RNUjS8n2XkcAkGV3RlfhJ0+4WrP4iMSqsUaSohh7TZvAiq8K0kbkY4GK?=
- =?us-ascii?Q?rMv7l482niO1NvmsOXSiPV/PhuYk21969Mhuo1qf82RG9B+gQ58OGCMj4KL6?=
- =?us-ascii?Q?8v417yLz/Zj80NsgO8LDlnb0fkyUQzdLnFZsRjX+pABfBn06RJORHtVvbwDy?=
- =?us-ascii?Q?VWmpoRwFNM2amlWyAOtSMFr5ZX2r1aVFcYUZZRSkPJ0pvSY2Z2I1CYpU+fLU?=
- =?us-ascii?Q?erR/GwalHRDMnUub3yy1BLiZNjjO2pTiGFaPDmeFpbxLmSB3xBRIwzuMzLwB?=
- =?us-ascii?Q?sGNeFNBW/3MHm0zsgwSsIvMZH9G5Vsyl/im00hDDcmFsalfL7/25hXtIPdAS?=
- =?us-ascii?Q?U4DPeuaVGXQ4lUDTvA/Mv+k8FOQXQ5HuOCfvTMmKppG2W8mwU0vytTA8Gu8D?=
- =?us-ascii?Q?M3YjSlJJiwwI3xWpXBkcuiDjCq1uGZS3yRgezOtHZRJUNPStVB9ziQbP+QnP?=
- =?us-ascii?Q?vkVSzpfDOHb+xd/J/tSHzDze3M6Ohp5iOpvnVrZ9WQaViBiBfZcgvXU0Z+8M?=
- =?us-ascii?Q?TfR/kQfDrxMeNm/qlcWCj80Xtge7TkF1UZM/EBIR12CEJ7ZMpGlTjmTzd5Fp?=
- =?us-ascii?Q?cDrzL9tNumfiGt8zKhAaoHHreqwEAQBdmjOKum6Y2l1bZ+SNgEQDlopDdFkq?=
- =?us-ascii?Q?D/iLluXlkRVBr/XOolFNj/nxU0NAkRMAXlnd/LSweuc+WqWT/PX9WiwFlWqM?=
- =?us-ascii?Q?hF+oDc3bQrSWoyzmqpFRSVWFyG4zdZC/cPDQlqCftcsT1DEcuiQHZBXmW956?=
- =?us-ascii?Q?2AGxRhNXE9/0Q3hed2QK+xhuN8nYvaBzP7sjo/CmKu1nfBVk3SUI7rGiU7Mc?=
- =?us-ascii?Q?VRNs27FrI37BXKWzOeBm20TzQy7PQm44rkFYLPkS?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d9f5da38-b47f-4852-3a5c-08de06380c6f
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2025 06:58:13.1675
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: iwRIqB0a9sTeC3KygGqH7o7gcrgf/t9kasUXPyiCcRIF5RAHi6dZyMjnJkhq63BHUqLrMF2KkmAd33ckOmCLOA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8526
+References: <20250818170136.209169-1-roman.gushchin@linux.dev>
+ <20250818170136.209169-2-roman.gushchin@linux.dev> <CAP01T76AUkN_v425s5DjCyOg_xxFGQ=P1jGBDv6XkbL5wwetHA@mail.gmail.com>
+ <87ms7tldwo.fsf@linux.dev> <1f2711b1-d809-4063-804b-7b2a3c8d933e@linux.dev>
+ <87wm6rwd4d.fsf@linux.dev> <ef890e96-5c2a-4023-bcb2-7ffd799155be@linux.dev>
+ <CAADnVQ+LGbXXHHTbBB9b-RjAXO4B6=3Z=G0=7ToZVuH61OONWA@mail.gmail.com>
+ <87iki0n4lm.fsf@linux.dev> <a76ad1e9-07d5-4ba1-83e4-22fe36a32df0@linux.dev>
+ <877bxb77eh.fsf@linux.dev> <CAEf4BzafXv-PstSAP6krers=S74ri1+zTB4Y2oT6f+33yznqsA@mail.gmail.com>
+ <871pnfk2px.fsf@linux.dev> <CAEf4BzaVvNwt18eqVpigKh8Ftm=KfO_EsB2Hoh+LQCDLsWxRwg@mail.gmail.com>
+ <87tt0bfsq7.fsf@linux.dev> <CAHzjS_v+N7UO-yEt-d0w3nE5_Y1LExQ5hFWYnHqARp9L-5P_cg@mail.gmail.com>
+ <87playf8ab.fsf@linux.dev>
+In-Reply-To: <87playf8ab.fsf@linux.dev>
+From: Song Liu <liu.song.linuxdev@gmail.com>
+Date: Wed, 8 Oct 2025 00:03:37 -0700
+X-Gm-Features: AS18NWAyjZKWTXeQJNB3PaOT3WzsTXBdhqC-Rkcj8nywQj_gcgCbw3kGbTWlhpA
+Message-ID: <CAHzjS_tq34QC4NDQd_L8crQii2QZCxZr28ywSw=gMnFnqD_z2A@mail.gmail.com>
+Subject: Re: [PATCH v1 01/14] mm: introduce bpf struct ops for OOM handling
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Song Liu <song@kernel.org>, Andrii Nakryiko <andrii.nakryiko@gmail.com>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Alexei Starovoitov <alexei.starovoitov@gmail.com>, 
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>, linux-mm <linux-mm@kvack.org>, bpf <bpf@vger.kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@suse.com>, 
+	David Rientjes <rientjes@google.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Peter,
+On Tue, Oct 7, 2025 at 7:15=E2=80=AFPM Roman Gushchin <roman.gushchin@linux=
+.dev> wrote:
+[...]
+> >
+> > I am not sure what is the best option for cgroup oom killer. There
+> > are multiple options. Technically, it can even be a sysfs entry.
+> > We can use it as:
+> >
+> > # load and pin oom killers first
+> > $ cat /sys/fs/cgroup/user.slice/oom.killer
+> > [oom_a] oom_b oom_c
+> > $ echo oom_b > /sys/fs/cgroup/user.slice/oom.killer
+> > $ cat /sys/fs/cgroup/user.slice/oom.killer
+> > oom_a [oom_b] oom_c
+>
+> It actually looks nice!
+> But I expect that most users of bpf_oom won't use it directly,
+> but through some sort of middleware (e.g. systemd), so Idk if
+> such a user-oriented interface makes a lot of sense.
+>
+> > Note that, I am not proposing to use sysfs entries for oom killer.
+> > I just want to say it is an option.
+> >
+> > Given attach() can be implemented in different ways, we probably
+> > don't need to add it to bpf_struct_ops. But if that turns out to be
+> > the best option, I would not argue against it. OTOH, I think it is
+> > better to keep reg() and attach() separate, though sched_ext is
+> > using reg() for both options.
+>
+> I'm inclining towards a similar approach, except that I don't want
+> to embed cgroup_id into the struct_ops, but keep it in the link,
+> as Martin suggested. But I need to implement it end-to-end before I can
+> be sure that it's the best option. Working on it...
 
-On Wed, Oct 08, 2025 at 08:51:03AM +0200, Peter Zijlstra wrote:
-> On Tue, Oct 07, 2025 at 10:20:44AM +0200, Andrea Righi wrote:
-> > Hi Peter,
-> > 
-> > On Mon, Oct 06, 2025 at 12:44:03PM +0200, Peter Zijlstra wrote:
-> > > As proposed a long while ago -- and half done by scx -- wrap the
-> > > scheduler's 'change' pattern in a guard helper.
-> > > 
-> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > > Acked-by: Tejun Heo <tj@kernel.org>
-> > > ---
-> > ...
-> > > --- a/kernel/sched/sched.h
-> > > +++ b/kernel/sched/sched.h
-> > > @@ -3885,23 +3885,22 @@ extern void check_class_changed(struct r
-> > >  extern struct balance_callback *splice_balance_callbacks(struct rq *rq);
-> > >  extern void balance_callbacks(struct rq *rq, struct balance_callback *head);
-> > >  
-> > > -#ifdef CONFIG_SCHED_CLASS_EXT
-> > > -/*
-> > > - * Used by SCX in the enable/disable paths to move tasks between sched_classes
-> > > - * and establish invariants.
-> > > - */
-> > > -struct sched_enq_and_set_ctx {
-> > 
-> > Not necessarily for this patch, we can add it later, but I kinda liked the
-> > comment that briefly explained how the context is used. Maybe having
-> > something along these lines could be helpful?
-> 
-> I have changed it thus:
-> 
-> 
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -3885,6 +3885,22 @@ extern void check_class_changed(struct r
->  extern struct balance_callback *splice_balance_callbacks(struct rq *rq);
->  extern void balance_callbacks(struct rq *rq, struct balance_callback *head);
->  
-> +/*
-> + * The 'sched_change' pattern is the safe, easy and slow way of changing a
-> + * task's scheduling properties. It dequeues a task, such that the scheduler
-> + * is fully unaware of it; at which point its properties can be modified;
-> + * after which it is enqueued again.
-> + *
-> + * Typically this must be called while holding task_rq_lock, since most/all
-> + * properties are serialized under those locks. There is currently one
-> + * exception to this rule in sched/ext which only holds rq->lock.
-> + */
-> +
-> +/*
-> + * This structure is a temporary, used to preserve/convey the queueing state
-> + * of the task between sched_change_begin() and sched_change_end(). Ensuring
-> + * the task's queueing state is idempotent across the operation.
-> + */
+If we add cgroup_id to the link, I guess this means we need the link
+(some fd in user space) to hold reference on the attachment of this
+oom struct_ops on this is cgroup. Do we also need this link to hold
+a reference on the cgroup?
 
-Looks great and very clear, thanks!
+Alternatively, we can have the cgroup hold a reference to this
+struct_ops. This way, we don't need a link to hold reference to the
+struct_ops. I think this might be a cleaner design.
 
--Andrea
+Just an idea. If this doesn't make sense, we can revisit this with
+the code.
+
+Thanks,
+Song
 
