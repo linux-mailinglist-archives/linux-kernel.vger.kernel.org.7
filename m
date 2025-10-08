@@ -1,111 +1,120 @@
-Return-Path: <linux-kernel+bounces-845472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 924B6BC5174
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:02:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 538E8BC5155
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:01:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BA8F3B3DF3
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:00:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC6F81882E5E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D01253356;
-	Wed,  8 Oct 2025 13:00:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76191FA859;
+	Wed,  8 Oct 2025 13:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AwKnMQKO"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=newwheatzjz@zohomail.com header.b="Um8pxC1s"
+Received: from sender4-pp-o95.zoho.com (sender4-pp-o95.zoho.com [136.143.188.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D50311FCF41
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 13:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759928444; cv=none; b=mn6Fn7ox4ST2tiY8FLCrNQSLEr0xulnu3UhfLT4KvhySbx2Z6eJAeq+9DVjquIjDSwC54Bh7ZKSHqNdnqapBX/wkFsKZpPoqnzMBK5upJfDLRb8J+0e4BHO3svkVTyKTB1fa3ta4J0nx4IQ1+2tzZSXuGRt0+BFCd6fDzh2Ai4c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759928444; c=relaxed/simple;
-	bh=Xn7kzTEF/V6ednxDOkE1/Sg4/wO2XSCQ16Jb55Z1Ze4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jOXSA8Up5PMQMoxjNrJC/B46d3YvSHRHhtWym1ZU3tbPHzyw0VkYW6yCw6NM5ZocRSVqRImcWbTT8gw8o+s68/DPzyM/lkXkeq1/gr42+47rP7wDm4M3eYcLAT0TX1xBpYsJ5k1UHF3COpLs7oII2s9ZG4WqTd09zw6FfM3Vjlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=AwKnMQKO; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-330631e534eso8209898a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 06:00:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1759928442; x=1760533242; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2LSe4ertuHY5UCTpJu4xbHCRSqUTutEtA/GWNFzMyBY=;
-        b=AwKnMQKOaFoH/XFAA1/2aFogbjB90KoEfAiA3+7zP/LwFMKTRA842ob3V5opWrm8Lb
-         FGrSK5MEw48bRJJvVG4T9bSYo0SKYtTjuSuvJLi+0CUllcNWvy6ccsXsj5g7bCYR1WHw
-         /I8Egi5sASZojloStSr315jM7Q8g3bHIfqe8w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759928442; x=1760533242;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2LSe4ertuHY5UCTpJu4xbHCRSqUTutEtA/GWNFzMyBY=;
-        b=G2dmKjX82nMl5gOyHcbtX6YL9alJkApkKSi3ohQc7eYmT3WZDegkcvdkk6Eq7BlR1F
-         FIPyh115tP6H4LttmJEUx9+NPHxO0QqZgpgdhhNrjjcovLqZbSrPNslMi9Q3ZVMpOJZd
-         sePFM13oFRxkexTEneG/GFHAZBkXS2ZkywSIUpY9PTs6ZR96PqIC8WNyEOGdnYJUGoI0
-         qMSD1NrfNjsJwQz5mT/LzTy61oyZTSexvYSmnc619IlN1o9WUSLuwJOhrD4GhAkYq/W4
-         mt6zDb6POaZ5ciURU8R1Poh1N8SFK9JvofB4xaQoBYdDNIDH0yrbBhTDw0VAXBaFvoQF
-         gmMA==
-X-Forwarded-Encrypted: i=1; AJvYcCV6+vgs+Wv7KKR5gzpUUF6fVGbBCNSbQGi8RP7Bbo334MoRObhMRUL2aIKMZynpMsRN+eCrES6PVvd3SSY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhuiKhCl0hbsQIv+60kc41n7KEjxI6XT8dzk4qJHjjtGtX/BUT
-	9UMlVQoDjqcjBTy8w4CRZ/PdjgyQWZmZQrH8PclVlplgn47N//yiO+HrlOcP0fpE2g==
-X-Gm-Gg: ASbGncvDhqjQGZ68V1mBZZftu0BMiMhS9M8/7gEiJUqtEm6S3mPP6LVUN9E9yqcIR9y
-	K7BaqZypiPDSwSSS99bo8lcldOAcpNV8vPeQGVQuDZzO+3TkNv+CcbsC9lM1Jjaj/y+bZ8GAFDA
-	+2q6Iq1GLySDgamGeGBKnq4ef1CHf/ztFqPZV1Vhl4Zusjiws39WVlIJfO1xrijEMc0D7be82x4
-	Eb4J1EFsdQDU8qxjasJ1gkh3Bpv+TqJVg+4khvtVRNsZoGcnZ6E3A3HLFE2aEf7l2h4VzuKAd2q
-	LnK4Q53EBiPK+8J5R4p3H5TLKNtWKv+pY/4grTjoAVMCba08M4jZ5+yvomA8DCmoltYm+ZzCoVB
-	1pFQxaYiz6C1jqzLcnRQ5TZNPdqzL2bQUF9lh3oicl9E0pVj371FZgAOrr8iwdXOF7ArOR4s=
-X-Google-Smtp-Source: AGHT+IHp6lps6Tj0HDAkAwY/QdXKotjR6QS87QUoHQkIeAqcTqgqsc53Y+CMU+TaHQbQnjsgq+4XVw==
-X-Received: by 2002:a17:90b:3e82:b0:32e:e3af:45f6 with SMTP id 98e67ed59e1d1-33b51112242mr4111189a91.10.1759928440572;
-        Wed, 08 Oct 2025 06:00:40 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:465a:c20b:6935:23d8])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b51113776sm3396141a91.14.2025.10.08.06.00.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 06:00:40 -0700 (PDT)
-Date: Wed, 8 Oct 2025 22:00:35 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Will Deacon <will@kernel.org>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Mark Brown <broonie@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Tomasz Figa <tfiga@chromium.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: kvm: arm64: stable commit "Fix kernel BUG() due to bad backport
- of FPSIMD/SVE/SME fix" deadlocks host kernel
-Message-ID: <qbiybep4kcm7hijtvg6qum4ubic37s6xnlzq2jvr5jwqjoffc4@htxzojej2zsv>
-References: <hjc7jwarhmwrvcswa7nax26vgvs2wl7256pf3ba3onoaj26s5x@qubtqvi3vy6u>
- <aOYkuatjNVyiQzU1@willie-the-truck>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565F91C3306;
+	Wed,  8 Oct 2025 13:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759928469; cv=pass; b=BWX/kRlUXb4IiZlawTd6XY6TubKrhbPjSy2tY4SOFVH34nvBlUqJREu0aDWBfFnPxGK0kbYJ/sxrR3pkRRU1+1jB4Xaf66D9cUrQZBfpuIYnB9B7G4CrPvkDViOjLdgk4csuecXgN8Y7NWXxJuaKuXKU3WCly946MhIMrdhV3nA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759928469; c=relaxed/simple;
+	bh=Jl05ydmdikzLsEiYX4kjqrnPQ5Sb5lANeN3XmQsbghs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CMVv4B8pglOWWCrCy6U12ASc12V8FmeFKbGFtXe/J1PNWYk8TyWGgpjHvoWrsgkv2KYqDgwMobJb0PJ/GE+p8I98tDDzslKJ3vg6Za3Qat1V7FtgNtF4hFOLkRPi7Zoqb0Ixt5RRw4reBVcKHbH/tVSm7Jxzwg7QjMgKWWeKQ7o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=newwheatzjz@zohomail.com header.b=Um8pxC1s; arc=pass smtp.client-ip=136.143.188.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1759928462; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=KriMtnIZOcVzEvx1ZlF+ba5fHzsEGZSMnzPQR1SxnDAa1PO+DHH2cHGebkD0HFEgd7szIh6NAatf+zz8j31/szl2JRtMGL5ajIPU4uOJPM4a6OW8lbehAdwmfNtGcKIIWIb/ZFvPCUXmolQOeRFrS9Dh87VOT95x5bGYLL8y/DY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1759928462; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=vvSzGzappQ2DIa8Z8JIp2DCABJeZOABIXE23Kpa7obk=; 
+	b=D/meXYcr/1uXSPqJ2Ej6MCzUqv4RCFt0bzyHevBDz2oEV0j0to+FU/6QHvwdUgDrIhUbaBV0wHFwH0Q0WLmwMuDaS9eq64TouXHpeMc6JUdSMQY8lpgmhRz9uHPIra/u6xta7Qw9KFQ/XUNoTwS8F0owGhXCXCaY5ADwswktJKY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=newwheatzjz@zohomail.com;
+	dmarc=pass header.from=<newwheatzjz@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759928462;
+	s=zm2022; d=zohomail.com; i=newwheatzjz@zohomail.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=vvSzGzappQ2DIa8Z8JIp2DCABJeZOABIXE23Kpa7obk=;
+	b=Um8pxC1sO8Q/h15zkxQeNbVGPmSRu3dYYjboSWbsdhnPo4es/hWnxhqm21Q6mcdF
+	jaS8UUgSk7tP/jG1qTNCUe5CR4Wk5StUr1hKUmjgH3J2Uqbf6T2OP0TJEwZCoDLAz2f
+	GVhNBFqzvwSlSP24be7Hqyrihp7Lxp/L2DemtXn8=
+Received: by mx.zohomail.com with SMTPS id 1759928459515119.56493147883725;
+	Wed, 8 Oct 2025 06:00:59 -0700 (PDT)
+From: Jingzhou Zhu <newwheatzjz@zohomail.com>
+To: andersson@kernel.org,
+	konradybcio@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jingzhou Zhu <newwheatzjz@zohomail.com>
+Subject: [PATCH v6 0/2] arm64: dts: qcom: Introduce Huawei MateBook E 2019
+Date: Wed,  8 Oct 2025 21:00:50 +0800
+Message-ID: <20251008130052.11427-1-newwheatzjz@zohomail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aOYkuatjNVyiQzU1@willie-the-truck>
+Content-Transfer-Encoding: 8bit
+Feedback-ID: rr0801122729bcf230bba7811d4fce1bac00006db2bdc9c55547d897731858920e6701971d166bfc98f853a0:zu080112276cb30eea9ceb5594f45ae46e0000b7d03e5f36d5c2315622e68500e562f11e935ca3ab60b75a69:rf08011226b35178edd6f0ea9fae52863c0000ca786c8ad019c635939d03be7d1475c2c2895189b183cb81:ZohoMail
+X-ZohoMailClient: External
 
-On (25/10/08 09:45), Will Deacon wrote:
-[..]
-> > We found out a similar report at [1], but it doesn't seem like a formal
-> > patch was ever posted.  Will, can you please send a formal patch so that
-> > stable kernels can run VMs again?
-> 
-> Yup, already queued up for stable:
-> 
-> https://lore.kernel.org/r/20251003183917.4209-1-will@kernel.org
-> https://lore.kernel.org/r/20251003184018.4264-1-will@kernel.org
-> https://lore.kernel.org/r/20251003184054.4286-1-will@kernel.org
+Huawei MateBook E 2019 is a 2-in-1 tablet shipped with Windows on ARM.
+It is one of the early WoA devices powered by Qualcomm Snapdragon 850,
+or the sdm850 platform. This series adds mainline Linux support for this
+device using device tree.
 
-Splendid!
+Changes since v1:
+ - Removed 'enable-active-high' property from &vreg_s4a_1p8 and
+   'input-enable' property from &i2c5_hid_active to avoid warnings
+   mentioned by "Rob Herring (Arm)" <robh@kernel.org>
 
-> Sorry for the breakage.
+Changes since v2:
+ - Rearranged the order of nodes and properties suggested by Bjorn to meet
+   the dts coding guidelines
 
-No worries!
+Changes since v3:
+ - Added new lines before 'status' property and subnodes for better code 
+   formatting
+ - Rearranged the node order of regulators and pinctrls
+ - Renamed the pm8998 pinctrl nodes suggested by Dmitry
+
+Changes since v4:
+ - Collected Acked-by and Reviewed-by tags
+
+Changes since v5:
+ - Fixed cosmetic issues as suggested by Konrad
+ - Added comment explaining gpio-reserved-ranges
+
+base-commit: 47a8d4b89844f5974f634b4189a39d5ccbacd81c
+
+Signed-off-by: Jingzhou Zhu <newwheatzjz@zohomail.com>
+---
+Jingzhou Zhu (2):
+  dt-bindings: arm: qcom: Document Huawei MateBook E 2019
+  arm64: dts: qcom: Add support for Huawei MateBook E 2019
+
+ .../devicetree/bindings/arm/qcom.yaml         |   1 +
+ arch/arm64/boot/dts/qcom/Makefile             |   1 +
+ .../qcom/sdm850-huawei-matebook-e-2019.dts    | 972 ++++++++++++++++++
+ 3 files changed, 974 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/sdm850-huawei-matebook-e-2019.dts
+
+-- 
+2.47.3
+
 
