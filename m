@@ -1,202 +1,255 @@
-Return-Path: <linux-kernel+bounces-845343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D859DBC4856
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:14:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F60DBC485C
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:15:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFE0C3C3D26
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:14:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2BE1F4EA38D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:15:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED452F6571;
-	Wed,  8 Oct 2025 11:14:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483431D95A3;
+	Wed,  8 Oct 2025 11:15:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kVw51J2j";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="33peweNC";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kZPVtsqf";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uN3dwGld"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZSXCnHEA"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDAAF2F60CB
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 11:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB6824679F
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 11:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759922082; cv=none; b=cqp0qvFXmC0M4emxtntyBRtzJ+cmE+CV6Z8ZgvorMqXI2ksglPLNp4gY4I5sE4QpoXyFBtLjK33EUsKLniRj1XAux4pWjdOtxHQw4yGqYFi0XiZHTtxbWtZP0NxUpWDXJn56OPzUVlFjdlZY/+gThjaii8GuTV31CiALmd5ddU8=
+	t=1759922116; cv=none; b=nJ8Sht2TzhEmWwKdxVqwDJx5Dk9FSDQiMHaCkD2RL13CPV9pWNo5U2YaWkOpWU4YYxUP10Vc1b957HNPuLOgEjHBFmKgB2Hcr40rkTYX/mSZxA5mDbtxwRAN8cA6hvY9TWCKbClo6aZo9bzbzl3Ide34o5pFkkn0600fRZ1I+E0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759922082; c=relaxed/simple;
-	bh=6DQNYqui5CozLrzJOv+yfVgFFIg4Lgpaj3p9yDDWsoQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RzMe6WXRN3IQaTWszB3rwVtduPQfKFLciHkHElj+BR6kuy604xjEk2DX8s1RW0SuDX4RAtK64t8PvkDsu2qkGneBzZdrBw16X9ySlmVoYKsEzJljPmNQGfUGbF3WsinMNy2bosBw8q8Oldi5QwklCy+zDH8DXxaPOLSNXFi7stA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kVw51J2j; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=33peweNC; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kZPVtsqf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uN3dwGld; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C73731F395;
-	Wed,  8 Oct 2025 11:14:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759922078; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fc/04qoN/PMDbssSJP/92cG5yZ5biHITDhDiKMO97Aw=;
-	b=kVw51J2j/E7tVEzyyLxqoBAdREbgmWnsf7WzPsMcIJapYif0H4STyvrK1SMgv22387PxqI
-	iWllC/fTDgNaYsMzOPRNJfRU3i4BtM2copjCIkvFfrTnaixx906B7oZvwmlwWnEEGV8mq8
-	pyBciYIPSqmTg15kLuNUZr0lw252dXE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759922078;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fc/04qoN/PMDbssSJP/92cG5yZ5biHITDhDiKMO97Aw=;
-	b=33peweNCNeyqrEz6ctw6e1p+yxnDOi1e0j0cOxH6XAGtg1VtpaoD0rsyURzQ+lsAPoG63b
-	GUvKBK03sGptvNBQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=kZPVtsqf;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=uN3dwGld
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759922077; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fc/04qoN/PMDbssSJP/92cG5yZ5biHITDhDiKMO97Aw=;
-	b=kZPVtsqfdZ2/Jrw2DnxoypL8H4w9ijLGDAr+bd4fOEHIR4vWQsag1GLODvhW7ST0+TQyd+
-	mmTSJVnAtnPbRi9kA8G1rWBUOg5Sst6e7vlnCo7sJrO9qOAg0nV5CVBlj0dj+p20nyq50o
-	V5jHx7B+iVqolmZVQzvgXCx31OFC+cs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759922077;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fc/04qoN/PMDbssSJP/92cG5yZ5biHITDhDiKMO97Aw=;
-	b=uN3dwGld1DTLfMpItq+thAviWSsxYb24QSwhOHDw+hd5D1u1kB8cdEE+PF4kP/EqVXs1lc
-	fZvmJxbm3ZmFkTBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B498713693;
-	Wed,  8 Oct 2025 11:14:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id YQ0FLJ1H5mizIwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 08 Oct 2025 11:14:37 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 386DDA0ACD; Wed,  8 Oct 2025 13:14:37 +0200 (CEST)
-Date: Wed, 8 Oct 2025 13:14:37 +0200
-From: Jan Kara <jack@suse.cz>
-To: Joshua Watt <jpewhacker@gmail.com>
-Cc: jimzhao.ai@gmail.com, akpm@linux-foundation.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	willy@infradead.org, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH] mm/page-writeback: Consolidate wb_thresh bumping logic
- into __wb_calc_thresh
-Message-ID: <ywwhwyc4el6vikghnd5yoejteld6dudemta7lsrtacvecshst5@avvpac27felp>
-References: <20241121100539.605818-1-jimzhao.ai@gmail.com>
- <20251007161711.468149-1-JPEWhacker@gmail.com>
+	s=arc-20240116; t=1759922116; c=relaxed/simple;
+	bh=wWnVyzijTaXYM8xRXWXruZLI0i53tO5UZxS0bwONy4M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WkAoiNOPgBwcCPRGxy5BQEI3m3g38Uywqj2ug8g5iiK64ppslLMS/5AQy6xA44cIJXD/IpfGUFW2om9NBMHjovXkv7CoRgzZMikGjXo8/rS1D6ptEviw65i3+ktoTHNqFKKZUrfVPuSuxaU5Mgpv+PUjXnh8rZ/X55de7lxhUmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZSXCnHEA; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59890OSb028818
+	for <linux-kernel@vger.kernel.org>; Wed, 8 Oct 2025 11:15:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	EffddiefyYfOOHaQK61w1botCVru6MZ1eFfoN02Iyrs=; b=ZSXCnHEADqmTBe4U
+	0ReFXRa/SSZ7GCIiNdfSQhS7xYhfkP3PNgDdIjRoPmexk2TVhP2CoEbCJlL0xOrO
+	zCwqy4mtIV8L3OV49s/dAjY6uAo6xM+XN0ydiMSlZ9nncuZ0gSbooene1sHdy42s
+	9IbT3CyTOo3HBW5tEXtGuXElst0gSkPZdtvd7pRE71pF/e49qx7R7TY4z4gRFq3f
+	pV92ynk10rpCygUo0j+YWTQGxeH9LHD20DihSuSzPRsK7LaJ3prUKwWPwNbLhbJF
+	42k0riTdF0apM2lfTx4/38r/CgeTA7V6Pk1ylXApBWqYM9ZDQlbM92JDf+cQOy0z
+	1sXtpw==
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49js9e2cxs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 11:15:13 +0000 (GMT)
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b62ebb4e7c7so3793664a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 04:15:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759922112; x=1760526912;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EffddiefyYfOOHaQK61w1botCVru6MZ1eFfoN02Iyrs=;
+        b=BEJkcDL6WnuXSXebmrys1flyx2tDnZf2fLfwMVaJsPEyFq1HNTjNluW4QQ/wjQiuyA
+         vzX/N6MOZLfAI45hdR9imaseH6Oje4pkgtsPLk1kjMcFV+Y7fTLYbYequASbArHEik3/
+         l5iyb08l/LCA10yPoShxWNUrBTYi4fldVeIrMD0szFyb1PVRqkzKXI6ir8Y+IXpn7eoF
+         NKOotTH1hvEOFFh4VGNvMeRUXQ0BThJbzJLb9gcYilSSTfsC/6hW0iDxkYJwJwwuhY+J
+         G+4AJxHKVUjD4ViMGGTgYMfdA8gBeLmJc8JJ5XFMEn/j88uKr0wBUPvEdMnZggJ1NpqR
+         Eucg==
+X-Forwarded-Encrypted: i=1; AJvYcCXGS50oah5k2GzWs3/l5fgoFcEGK+qWUMIMAWjD5YJt4G4s9UuaeRRfq4gL/uxcYsac3V1qCLk6PVgKwyU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyv1jPUlDMGC4SmfHeYEok16HDOY5IW5ss7006CHCOw0R/QqBre
+	ZAN3Q4L+vHB57yH992jbtq/UhftAuQTJ0zv0AFcj+8I0i+mldIifJng9u9e5ipb+iZP+LJVxaD5
+	mSMx1Am2T0PHTKcyaWqFxHe/W82xwPiIBuPbP6TsI6YzpK7mEgiqLf5hmZHU3f9KONJsOCjCPEX
+	8=
+X-Gm-Gg: ASbGncu3ilIDf3jzb1yyMuRjtB1AqCa6Q/YGK8DphYErGwzF0VIwYcuhvQQTsT7vLGt
+	t3lBG9qV270vrPVJhQiyzt5mhyHlAQ/BRSk0GvUnbxYzHIfXLIIDfQDx8sH86ssiSMBmsYg6WuP
+	bbfG+U7umD7ztesgoy3Aiblho2CmSC2fRJbjUMWC2doxe1YODybkpvOrntedWxVe9mFZn9LscQ5
+	UXBy6wbB8mmzC7leIC5jrzqgONjxj80oVKDQXhRU+tb4PCqCyU12KVBEjSV9HlbnYeelQhONBbC
+	QKeP3yZo3oY6gS+nJ/PxisJwS6/Ez9hA6NCqPfjMhxhIOXY7K8Xa83epqrtDHhHyAq9v6z3AEMr
+	wFQU=
+X-Received: by 2002:a05:6a20:72a2:b0:32b:6e33:7cf8 with SMTP id adf61e73a8af0-32da83e0614mr4191369637.42.1759922112402;
+        Wed, 08 Oct 2025 04:15:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHD86ge8saAFK6qXLniY8kj2xnoyg29DHHxFtqkJCu4J95pDu9HmYbmCPGlP2aG0dKTCHvZZA==
+X-Received: by 2002:a05:6a20:72a2:b0:32b:6e33:7cf8 with SMTP id adf61e73a8af0-32da83e0614mr4191337637.42.1759922111902;
+        Wed, 08 Oct 2025 04:15:11 -0700 (PDT)
+Received: from [10.218.1.199] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6099f7ab4fsm17822615a12.44.2025.10.08.04.15.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Oct 2025 04:15:11 -0700 (PDT)
+Message-ID: <1a428b7f-5d20-4d55-aa3a-e4feb580b82e@oss.qualcomm.com>
+Date: Wed, 8 Oct 2025 16:45:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251007161711.468149-1-JPEWhacker@gmail.com>
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,linux-foundation.org,suse.cz,vger.kernel.org,kvack.org,infradead.org];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: C73731F395
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -2.51
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] usb: typec: hd3ss3220: Enable VBUS based on ID pin
+ state
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251002172539.586538-1-krishna.kurapati@oss.qualcomm.com>
+ <20251002172539.586538-3-krishna.kurapati@oss.qualcomm.com>
+ <aOZGgZc1F968uoR6@kuha.fi.intel.com>
+Content-Language: en-US
+From: Krishna Kurapati PSSNV <krishna.kurapati@oss.qualcomm.com>
+In-Reply-To: <aOZGgZc1F968uoR6@kuha.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=Hrl72kTS c=1 sm=1 tr=0 ts=68e647c1 cx=c_pps
+ a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=JreEDKClX95j7y97460A:9
+ a=QEXdDO2ut3YA:10 a=_Vgx9l1VpLgwpw_dHYaR:22
+X-Proofpoint-GUID: v3H6oTMJMJtS-jvDhpxj5hqtAARRw8Bz
+X-Proofpoint-ORIG-GUID: v3H6oTMJMJtS-jvDhpxj5hqtAARRw8Bz
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAwNCBTYWx0ZWRfXxNmgD863ADn0
+ HCnVQWuJTc0wKD/cXPqdVvNu0C5TBksY+GRdcP5uVZnoUSc3apwASiOs2U36msbVUjttfhEELd8
+ zZqAnyoU5PBDkI2wC/rhY9DjDepdKH/tWgEm4pVUj9kWnqhXlhhoGD3iNpTQYXjpeZs7ICGKGZx
+ 8pswJ7tKuUMedSRnpXh1ckd5737WByZlHaPa4BziWmmKeOYpgUPN5uIvfZSfjlgbdFBxctIiAkF
+ Oz5SzRUwZA5avHk45kPhkP7RPgi/mjhj6pTTebs2KJ1L+TuxPVB0cdtafUYSprnA4aH+R3QvYTW
+ IL6HWUKFkJQd3XyKW/JuM0Bhi3Ls6pqMqbKGcQrTkDd6qCO+J8ICZm3F0me2z2QkVEYaevZCz11
+ n91ArvMvDwgNA3ujCEDvparScaY/9A==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-08_03,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 phishscore=0 spamscore=0 adultscore=0 lowpriorityscore=0
+ bulkscore=0 priorityscore=1501 malwarescore=0 impostorscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040004
 
-Hello!
 
-On Tue 07-10-25 10:17:11, Joshua Watt wrote:
-> From: Joshua Watt <jpewhacker@gmail.com>
+
+On 10/8/2025 4:39 PM, Heikki Krogerus wrote:
+> On Thu, Oct 02, 2025 at 10:55:39PM +0530, Krishna Kurapati wrote:
+>> Enable VBUS on HD3SS3220 when the ID pin is low, as required by the Type-C
+>> specification.
 > 
-> This patch strangely breaks NFS 4 clients for me. The behavior is that a
-> client will start getting an I/O error which in turn is caused by the client
-> getting a NFS3ERR_BADSESSION when attempting to write data to the server. I
-> bisected the kernel from the latest master
-> (9029dc666353504ea7c1ebfdf09bc1aab40f6147) to this commit (log below). Also,
-> when I revert this commit on master the bug disappears.
+> There is not ID pin on Type-C connector.
+
+There is an ID pin coming out from HD3SS3220 controller to SoC that is 
+being referred to here.
+
 > 
-> The server is running kernel 5.4.161, and the client that exhibits the
-> behavior is running in qemux86, and has mounted the server with the options
-> rw,relatime,vers=4.1,rsize=1048576,wsize=1048576,namlen=255,soft,proto=tcp,port=52049,timeo=600,retrans=2,sec=null,clientaddr=172.16.6.90,local_lock=none,addr=172.16.6.0
+>> The ID pin stays high when VBUS is not at VSafe0V, and goes
+>> low when VBUS is at VSafe0V.
+>>
+>> Add support to read the ID pin state and enable VBUS accordingly.
 > 
-> The program that I wrote to reproduce this is pretty simple; it does a file
-> lock over NFS, then writes data to the file once per second. After about 32
-> seconds, it receives the I/O error, and this reproduced every time. I can
-> provide the sample program if necessary.
-
-This is indeed rather curious.
-
-> I also captured the NFS traffic both in the passing case and the failure case,
-> and can provide them if useful.
+> I'm a bit confused about this... Why can't you just check the attached
+> state, and if it's DFP, then you drive VBUS?
 > 
-> I did look at the two dumps and I'm not exactly sure what the difference is,
-> other than with this patch the client tries to write every 30 seconds (and
-> fails), where as without it attempts to write back every 5 seconds. I have no
-> idea why this patch would cause this problem.
 
-So the change in writeback behavior is not surprising. The commit does
-modify the logic computing dirty limits in some corner cases and your
-description matches the fact that previously the computed limits were lower
-so we've started writeback after 5s (dirty_writeback_interval) while with
-the patch we didn't cross the threshold and thus started writeback only
-once the dirty data was old enough, which is 30s (dirty_expire_interval).
+We could, but checking for DFP doesn't ensure VBUS is at VSafe0V as per 
+the datasheet. So using the ID pin to enable vbus.
 
-But that's all, you should be able to observe exactly the same writeback
-behavior if you write less even without this patch. So I suspect that the
-different writeback behavior is just triggering some bug in the NFS (either
-on the client or the server side). The NFS3ERR_BADSESSION error you're
-getting back sounds like something times out somewhere, falls out of cache
-and reports this error (which doesn't happen if we writeback after 5s
-instead of 30s). NFS guys maybe have better idea what's going on here.
+Regards,
+Krishna,
 
-You could possibly workaround this problem (and verify my theory) by tuning
-/proc/sys/vm/dirty_expire_centisecs to a lower value (say 500). This will
-make inode writeback start earlier and thus should effectively mask the
-problem again.
+> thanks,
+> 
+>> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+>> ---
+>>   drivers/usb/typec/hd3ss3220.c | 58 +++++++++++++++++++++++++++++++++++
+>>   1 file changed, 58 insertions(+)
+>>
+>> diff --git a/drivers/usb/typec/hd3ss3220.c b/drivers/usb/typec/hd3ss3220.c
+>> index 3ecc688dda82..44ee0be27644 100644
+>> --- a/drivers/usb/typec/hd3ss3220.c
+>> +++ b/drivers/usb/typec/hd3ss3220.c
+>> @@ -54,6 +54,11 @@ struct hd3ss3220 {
+>>   	struct delayed_work output_poll_work;
+>>   	enum usb_role role_state;
+>>   	bool poll;
+>> +
+>> +	struct gpio_desc *id_gpiod;
+>> +	int id_irq;
+>> +
+>> +	struct regulator *vbus;
+>>   };
+>>   
+>>   static int hd3ss3220_set_power_opmode(struct hd3ss3220 *hd3ss3220, int power_opmode)
+>> @@ -319,6 +324,28 @@ static const struct regmap_config config = {
+>>   	.max_register = 0x0A,
+>>   };
+>>   
+>> +static irqreturn_t hd3ss3220_id_isr(int irq, void *dev_id)
+>> +{
+>> +	struct hd3ss3220 *hd3ss3220 = dev_id;
+>> +	int ret;
+>> +	int id;
+>> +
+>> +	if (IS_ERR_OR_NULL(hd3ss3220->vbus))
+>> +		return IRQ_HANDLED;
+>> +
+>> +	id = hd3ss3220->id_gpiod ? gpiod_get_value_cansleep(hd3ss3220->id_gpiod) : 1;
+>> +
+>> +	if (!id) {
+>> +		ret = regulator_enable(hd3ss3220->vbus);
+>> +		if (ret)
+>> +			dev_err(hd3ss3220->dev, "enable vbus regulator failed\n");
+>> +	} else {
+>> +		regulator_disable(hd3ss3220->vbus);
+>> +	}
+>> +
+>> +	return IRQ_HANDLED;
+>> +}
+>> +
+>>   static int hd3ss3220_probe(struct i2c_client *client)
+>>   {
+>>   	struct typec_capability typec_cap = { };
+>> @@ -354,6 +381,37 @@ static int hd3ss3220_probe(struct i2c_client *client)
+>>   		hd3ss3220->role_sw = usb_role_switch_get(hd3ss3220->dev);
+>>   	}
+>>   
+>> +	hd3ss3220->id_gpiod = devm_gpiod_get_optional(hd3ss3220->dev, "id", GPIOD_IN);
+>> +	if (IS_ERR(hd3ss3220->id_gpiod))
+>> +		return PTR_ERR(hd3ss3220->id_gpiod);
+>> +
+>> +	if (hd3ss3220->id_gpiod) {
+>> +		hd3ss3220->id_irq = gpiod_to_irq(hd3ss3220->id_gpiod);
+>> +		if (hd3ss3220->id_irq < 0) {
+>> +			dev_err(hd3ss3220->dev, "failed to get ID IRQ\n");
+>> +			return hd3ss3220->id_irq;
+>> +		}
+>> +
+>> +		ret = devm_request_threaded_irq(hd3ss3220->dev,
+>> +						hd3ss3220->id_irq, NULL,
+>> +						hd3ss3220_id_isr,
+>> +						IRQF_TRIGGER_RISING |
+>> +						IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
+>> +						dev_name(hd3ss3220->dev), hd3ss3220);
+>> +		if (ret < 0) {
+>> +			dev_err(hd3ss3220->dev, "failed to get id irq\n");
+>> +			return ret;
+>> +		}
+>> +	}
+>> +
+>> +	hd3ss3220->vbus = devm_regulator_get_optional(hd3ss3220->dev, "vbus");
+>> +	if (PTR_ERR(hd3ss3220->vbus) == -ENODEV)
+>> +		hd3ss3220->vbus = NULL;
+>> +
+>> +	if (IS_ERR(hd3ss3220->vbus))
+>> +		return dev_err_probe(hd3ss3220->dev,
+>> +				     PTR_ERR(hd3ss3220->vbus), "failed to get vbus\n");
+>> +
+>>   	if (IS_ERR(hd3ss3220->role_sw)) {
+>>   		ret = PTR_ERR(hd3ss3220->role_sw);
+>>   		goto err_put_fwnode;
+>> -- 
+>> 2.34.1
+> 
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
 
