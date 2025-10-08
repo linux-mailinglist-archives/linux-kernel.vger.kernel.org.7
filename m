@@ -1,134 +1,114 @@
-Return-Path: <linux-kernel+bounces-844927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D757CBC311E
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 02:16:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9BA7BC3128
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 02:19:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8C531881ED7
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 00:16:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E87B18853BB
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 00:20:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31DE1E9B3F;
-	Wed,  8 Oct 2025 00:14:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pONNbh0T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760582367C1;
+	Wed,  8 Oct 2025 00:19:32 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7971E7C38
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 00:14:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFBC822B8B6;
+	Wed,  8 Oct 2025 00:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759882472; cv=none; b=nLcOyF4J18oBGdJM75dyTSOPxVODqPrP9PADXQ04EaoaGLH8XMGmrmwLW3B5O8AEJDhLnlDgXvJENbUyT5p1bUs/cAtoY8POal8a9pmFrMrgzFEsCYkLoN0MV2P1NBxbi5cP1EogDnljijt81qzeikT3NNYPsxkeX2PTxDkGrDc=
+	t=1759882772; cv=none; b=LzBDDJ1A0CRa/Miq2VvYN8872vPGsXHrKMItk4nV1NmY/CCyk/uk4h/dRAdRpm+kiOa5hj/VuyGkGM3Hv/dw0dNpCKhzggP9zzQ7rpvkm3oFG+rGon6oV4gTIZuj1p9lRG1c3vqCQxvU4gVKn+tXLhe3lG2qO/Xc/dIpV5RfYZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759882472; c=relaxed/simple;
-	bh=noaNR+tXTDyT2MUl9g79bBK6OJaozaTOKjCXS6VWRt4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TmnmK3HqqbmxWC6XfQLAlmB+kMYSYjWepshEuqj9JHE1NJIZV285jI5VmjvBVWEb5A2k/veCBQI4l7G9kL/J8FA6KyGx4zQkIgcWFy5lpumFTxOp+NI58zbXWCCtqPon3gKK935wC+ayrfiQBAbVBbhB5qyWg6/red4zlw1W9Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pONNbh0T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFF38C4CEF1;
-	Wed,  8 Oct 2025 00:14:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759882471;
-	bh=noaNR+tXTDyT2MUl9g79bBK6OJaozaTOKjCXS6VWRt4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pONNbh0T9yXPn3qM1umy+e243MNnjZnc2NFm9A9WYAEhH2Wzsww9AN4lOUI/9D2b0
-	 9Z/cPsVTdjOLo1vIVLmMY9X8wL+J76fjItlKxE6tOtX5VjfB/dwoFhaoY11+umwGwq
-	 44M1AhND3+wjjp6vh5ra9mYxuHbUlGyCDd5KNSo9LBcXdvbkIFT3+pnVNZ8ZW/ueNx
-	 nWEVp/iaYExeqKO1VEHEXNsJPQ25eA6OfcKCw+W/IM7WACRFsFJUzH+2xV8iRs2oPn
-	 h9i5NUVyY++zHhmMF43MqO3UzJwDnHgVIrpZg1xiRRq8X++YMFzbrRG6ZeyhW2A0Bh
-	 GDCYHMmOAOyAw==
-Date: Tue, 7 Oct 2025 17:14:29 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: Borislav Petkov <bp@alien8.de>, "Kaplan, David" <David.Kaplan@amd.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	"x86@kernel.org" <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, 
-	Klaus Kusche <klaus.kusche@computerix.info>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86/bugs: Qualify RETBLEED_INTEL_MSG
-Message-ID: <sb7p6quwxkn4w4etgsxlqd6fcsia4xobf73d3fnybxafxrmvwi@ajg5lkdxtnfy>
-References: <20251003171936.155391-1-david.kaplan@amd.com>
- <20251006131126.GBaOO__iUbQHNR6QhW@fat_crate.local>
- <LV3PR12MB9265B9AA81E01A539214764A94E3A@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20251006140442.GDaOPMemqB7SRJSHWL@fat_crate.local>
- <20251007182257.ywrqrrhgrtrviila@desk>
- <20251007221229.GAaOWQTadGWlZSeAo_@fat_crate.local>
- <20251007230821.5shpa3pusyzaohb2@desk>
+	s=arc-20240116; t=1759882772; c=relaxed/simple;
+	bh=BN8cuSEBg66C2lF8YtmhtyuvN4mkZSwQNm7AYTmbIB0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fmkqM95OLOVvgGdXJogNu1eci4Lq1tcNOT3jYgVq790JZNuM7O4WLBYT1UKMo2W8B0so+ZlhCD3pgM9LtnEeOFJKcraTyikHF4tSSUxt/YUgzmjVhfKK5fsMCv9fwGkVbUiX+4WnqLCyL9OwEMVqYVXefvTKS6K6iWh3eU+RZ/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay03.hostedemail.com (Postfix) with ESMTP id 3137FB8BB4;
+	Wed,  8 Oct 2025 00:19:23 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id 2C8D020016;
+	Wed,  8 Oct 2025 00:19:21 +0000 (UTC)
+Date: Tue, 7 Oct 2025 20:21:13 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Runping Lai <runpinglai@google.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Wattson CI <wattson-external@google.com>,
+ kernel-team@android.com, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Luo Gengkun
+ <luogengkun@huaweicloud.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v1] Revert "tracing: Fix tracing_marker may trigger page
+ fault during preempt_disable"
+Message-ID: <20251007202113.1ce212a9@gandalf.local.home>
+In-Reply-To: <CABgk4RSxm8mNJcRn0HdNH3+Y=VDL5gNVvyhhR26wjBme+i5X-g@mail.gmail.com>
+References: <20251007003417.3470979-2-runpinglai@google.com>
+	<20251006221043.07cdb0fd@gandalf.local.home>
+	<CABgk4RQwGsn4CdP0K+_7A0j7RVOiHNfoF1ESk17wEuzCea16pA@mail.gmail.com>
+	<20251007154308.5b158d04@gandalf.local.home>
+	<20251007163141.1034b120@gandalf.local.home>
+	<20251007174208.11fd02da@gandalf.local.home>
+	<CABgk4RSxm8mNJcRn0HdNH3+Y=VDL5gNVvyhhR26wjBme+i5X-g@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251007230821.5shpa3pusyzaohb2@desk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Rspamd-Server: rspamout04
+X-Rspamd-Queue-Id: 2C8D020016
+X-Stat-Signature: rf5cg3xifex3t66bs9jw94qdiqjq6pbu
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18Rc+590qhmKGx8oRxPsAh+DI/ZSCruAn8=
+X-HE-Tag: 1759882761-301618
+X-HE-Meta: U2FsdGVkX19GlOxcxf6tQkRlJFy//VkzJRGPw+yeonaZjGjSxCkZNGrqaYnW7OkiliRr3vV4EWAzhhxMCTYJ2Kl4quFViXj8+IC0IVLevaIzctQ3GZPFwq7BUAyYIgTCksJgIXfbbrWSh8EXRqe8dLUlmRCtL/2XYrepW460cw1/2HnZuzP1vOl5CfKWxWjcSqqsEZk8hkPTmgUGc+dSRKnuVnfD6NW6NGMaHq4nMpkAC6YzblhL23pGt1OmeHheF2+zDq5pfwxGJABj+7mFG9+NQAq+WuBXRCvRhf50rn3ux9bOroiMx6+bEQUQWhtPJsVxKq29N1sRcsSBy1/U7g7o3Of81g85SvYfptJKiueTM5gh8+FhPG+67jcL/iXdIBW81v2XE4qG2TWQu6kflQ==
 
-On Tue, Oct 07, 2025 at 04:08:21PM -0700, Pawan Gupta wrote:
-> On Wed, Oct 08, 2025 at 12:12:29AM +0200, Borislav Petkov wrote:
-> > On Tue, Oct 07, 2025 at 11:22:57AM -0700, Pawan Gupta wrote:
-> > > IMO, rather than targeting the mitigation enabling code it might make more
-> > > sense to compile out the actual mitigations scattered accross the kernel.
-> > > This may also improve performance by reducing the code footprint, and can
-> > > also help getting a cleaner disassembly.
+On Tue, 7 Oct 2025 16:25:41 -0700
+Runping Lai <runpinglai@google.com> wrote:
 
-Isn't that what CONFIG_CPU_MITIGATIONS=n already does today?
+> On Tue, Oct 7, 2025 at 2:40=E2=80=AFPM Steven Rostedt <rostedt@goodmis.or=
+g> wrote:
+> >
+> > On Tue, 7 Oct 2025 16:31:41 -0400
+> > Steven Rostedt <rostedt@goodmis.org> wrote:
+> > =20
+> > > +static void trace_user_fault_buffer_free(struct trace_user_buf_info =
+*tinfo)
+> > > +{
+> > > +     char *buf;
+> > > +     int cpu;
+> > > +
+> > > +     for_each_possible_cpu(cpu) {
+> > > +             buf =3D per_cpu_ptr(tinfo->tbuf, cpu)->buf;
+> > > +             kfree(buf);
+> > > +     } =20
+> >
+> > Oops, missed:
+> >
+> >         free_percpu(tinfo->tbuf);
+> >
+> > here. =20
+>=20
+> Hey Steve,
+>=20
+> Thanks for providing the buffer-based solution. I tried it and it
+> fixes the problem!
+> However, the first experiment, adding pagefault_disable/enable()
+> around copy_nofault()
+> doesn't help. Still having the same problem. I suppose the issue is
+> more than pagefault?
+>=20
+> Can you please suggest the next move? I can also do more tests if needed.
+>=20
 
-> > Probably... however, it needs to be done smartly because sprinkling ifdeffery
-> > and turning what is an already unreadable mess into a bigger abomination,
-> > won't fly. Perhaps split out the mitigations glue into separate compilation
-> > units and build-disable them... we'll see.
-> 
-> Ya, that would be better.
+I may need to make this patch the official solution.
 
-On a sort of related note, it's confusing that there are two completely
-different classes of MITIGATION options which get conflated:
-
-1) compile the kernel with support for certain mitigations:
-
-    MITIGATION_RETPOLINE
-    MITIGATION_RETHUNK
-    MITIGATION_PAGE_TABLE_ISOLATION
-    MITIGATION_UNRET_ENTRY
-    MITIGATION_CALL_DEPTH_TRACKING
-    MITIGATION_IBPB_ENTRY
-    MITIGATION_IBRS_ENTRY
-    MITIGATION_SRSO
-    MITIGATION_SLS
-
-2) enable bug-specific runtime defaults:
-
-    MITIGATION_GDS
-    MITIGATION_RFDS
-    MITIGATION_SPECTRE_BHI
-    MITIGATION_MDS
-    MITIGATION_TAA
-    MITIGATION_MMIO_STALE_DATA
-    MITIGATION_L1TF
-    MITIGATION_RETBLEED
-    MITIGATION_SPECTRE_V1
-    MITIGATION_SPECTRE_V2
-    MITIGATION_SRBDS
-    MITIGATION_SSB
-    MITIGATION_ITS
-    MITIGATION_TSA
-    MITIGATION_VMSCAPE
-
-In general, #1 uglify the kernel.  And some #2 depend on #1.
-
-IMO, we should rename the #1 options.  For example:
-
-  MITIGATION_RETPOLINE -> X86_UGLY_INDIRECT_THUNKS
-  MITIGATION_RETHUNK   -> X86_UGLY_RETURN_THUNKS
-
-  etc...
-
-Then one only needs to grep their .config file for UGLY to understand
-why their disassembly is so inscrutable ;-)
-
--- 
-Josh
+-- Steve
 
