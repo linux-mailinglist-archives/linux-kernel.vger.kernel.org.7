@@ -1,66 +1,89 @@
-Return-Path: <linux-kernel+bounces-845240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 350A6BC41FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 11:12:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D202BC4208
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 11:12:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 58CA04E3A29
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 09:12:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 800C519E2CB7
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 09:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F1A2EBB8A;
-	Wed,  8 Oct 2025 09:12:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56ECC2F291D;
+	Wed,  8 Oct 2025 09:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NyHnFk7e"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qvdNYe4+"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505F11C3BFC;
-	Wed,  8 Oct 2025 09:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202991339A4;
+	Wed,  8 Oct 2025 09:12:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759914727; cv=none; b=a0r8AgGNXDfydjNIRokq11sSoI45gSMHTMpctAnfvA1JjNgNbhanv+JuSTcHY4B1RIoeDrD1/2yNKnb0Fu2z7EuV78iXwVdxv4laxGf+424vVC3PhnU+Qs5+ouQsFKT4DrpRuWt/7AM7z3UdRCo4Tc17a/ZRl04zp6FIWisHdfU=
+	t=1759914760; cv=none; b=mWbdlvQup0gzCR23WGAd6gUmIF1teXss5UxjsSYcVzGSNSmgOWH4ZJf1EyMZol0KvotficmB4lHBGL3G0KgLKLAkyxuLwYLUroXUxqtbUo9A7vKDXQ1g8W/1wnK47Uvtdvg160L+vVt7QU+hansixeOgG6P/9qMboN9m3pvtqj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759914727; c=relaxed/simple;
-	bh=ygXITDmxgvDk+9cP2O8aFdDtbMfbLt+Ei6n5Zf6JZJU=;
+	s=arc-20240116; t=1759914760; c=relaxed/simple;
+	bh=Kp07gAsJlNKZ5fUadYzAELKG5ORsDtrNuDEpygEuihE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qNEF2dJjju0hloXwVGgKuh4o4sv8mt6t1d/+ithKKPojC2Evxk7Tv0OeTOLe9PoRxYL8z71Qi5ZYYfw/nuOocr3z5pzbze5wPNrmUzK/GVLSvKneAvsoTiGguijTWcybwwWSoqJXUc06t+8jNRuF1hg2XGXlm2dokeiCQ+QyM5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NyHnFk7e; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Db+CrnXqBi3Tsj3WH0wxL6XqdkCufvMszezt0PqY9p0=; b=NyHnFk7eGuWHxzE78yd0m6MZwy
-	TZdLA66TcGjWVURTSHhixSseDeeHznOOPFpSdeEL0LTTRG5W6CG8VIGqbvjJ3pxYaCKO628y1Z0rM
-	YJN+tMqltqWK7rH7NWRd1D0v0KLPn4FHAeR+xTfH6UY8yEzJRgX0PTMA+6SKERcggZmUgHfCSz64x
-	Rm/jD5PAPlH9GSHTg6EepNLf7aF/Wa0sa76Y2yZTlq7MNwiICf9Pw8Sw2NaCa6BVR1S/XSSrCgdXX
-	st009Qdb+sNRnm3wGaJxs+fT34ZmpbwwXg2czhnxJecx2n3Epa0EzDKuqx1YN2jvdI9dDMWmMP54D
-	wWOITh/A==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v6QDA-00000000bhN-1hZf;
-	Wed, 08 Oct 2025 09:11:52 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 40B62300220; Wed, 08 Oct 2025 11:11:51 +0200 (CEST)
-Date: Wed, 8 Oct 2025 11:11:51 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
-	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
-	changwoo@igalia.com, cgroups@vger.kernel.org,
-	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de,
-	alexei.starovoitov@gmail.com
-Subject: Re: [RFC][PATCH 0/3] sched/ext: Cleanup pick_task_scx()
-Message-ID: <20251008091151.GS4067720@noisy.programming.kicks-ass.net>
-References: <20251006104652.630431579@infradead.org>
- <aOWKn6f0OtegV1q0@slm.duckdns.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UohiDHTeKFuyEaNLB8a0ekJJqChN4lcju23ONYw5u6f8LfPYSZY5sYYyxIgEbjPVdqvQzA6MfnjIFONOO62uUpg6L0hBwQcz6xbwlpuh3Lvskw9QzgZ/OD0kRssy76HC22K61LWKovhilqisOrUuib+jVbmHu8dxJVhpf/Ygxso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qvdNYe4+; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5980ZHXr032558;
+	Wed, 8 Oct 2025 09:12:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=aK9mCC/RHPHdTK5kHYQdLWTNRy23qH
+	+qQ26TBsTBalM=; b=qvdNYe4+5EA++mkwOCUGVGO+t2OONxB1DygeOEhFhJ5hMY
+	gk/gCN8a1/xtNWL0X8oW6VJ9t2nfHg67GfVs1J6jEIAA7fBGBXCMZGoS0M9bGAiu
+	movKI9GmUUVyfDFXZe7w/RXgp6Rirw14jCYkiLnvQigQOfgZ29PmuribvX2o25Ak
+	ykSxexPnFs03HU6QAYwu1yn7dLKciVfAwGrdCA51oTOnjvxFJC1uvZQPrOXWUrsJ
+	L9Vd06JsF5jRFObwC9YQA1jK7HiO1KKhjhaLFaOraOMjSj7RPqeAhfMY2UCEh8xe
+	aEFvEqbd5uDXcYPbOsd95OIm2GF6dGPKDBu6Rn+w==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49jt0pkh2k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 08 Oct 2025 09:12:32 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59892jtF000922;
+	Wed, 8 Oct 2025 09:12:32 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49ke9y7vvb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 08 Oct 2025 09:12:31 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5989CSnE54133064
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 8 Oct 2025 09:12:28 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 08F2420043;
+	Wed,  8 Oct 2025 09:12:28 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C1A062004B;
+	Wed,  8 Oct 2025 09:12:27 +0000 (GMT)
+Received: from osiris (unknown [9.155.211.25])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed,  8 Oct 2025 09:12:27 +0000 (GMT)
+Date: Wed, 8 Oct 2025 11:12:26 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Sumanth Korikkar <sumanthk@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>
+Subject: Re: [PATCH 0/4] Support dynamic (de)configuration of memory
+Message-ID: <20251008091226.7407Ba1-hca@linux.ibm.com>
+References: <20250926131527.3260733-1-sumanthk@linux.ibm.com>
+ <ab366c03-8c78-449d-bfc4-2d155212d9d7@redhat.com>
+ <aOVUNmDiWgrDJ1dJ@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
+ <5e3b16ec-9ef9-483e-b97e-bff0c1915b19@redhat.com>
+ <aOX_L1_2S30XhLRA@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
+ <1efcb368-fcdf-4bdd-8b94-a705b7806bc2@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,128 +92,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aOWKn6f0OtegV1q0@slm.duckdns.org>
+In-Reply-To: <1efcb368-fcdf-4bdd-8b94-a705b7806bc2@redhat.com>
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=XvT3+FF9 c=1 sm=1 tr=0 ts=68e62b00 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=jU7K009U6UgGpLyiXvsA:9
+ a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: gQe57XFfwFvGSr-qkxi9m24GyXfNLFtK
+X-Proofpoint-GUID: gQe57XFfwFvGSr-qkxi9m24GyXfNLFtK
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAwOSBTYWx0ZWRfX/lr/owc4waxF
+ aHEV/cPN1MWRV5BM10eao/zGoE2x2fKeLvek1NljdqlnGVdRUGXcWyrA694yVz+M1GLdJnB5dIk
+ i91NXmWl8V9L0dDPfHzcA4TnMB2T59mYlEbp+PyIt5LD4oyvdmC2FjkeDTrsa1L4zRLVn1WwOdG
+ +R2k1RGEaGso1b+mWHbRNFM/GgExy7PDrkBIalJ3dHM64PN/hvJ3B3/Exx/XTdiJKnA8OlSagza
+ XrXADd6SUsz2d8ytrwwTrX3qILR48CuBV4klUs8izLjYHzv225xCAO+heSkU39+gXr3SsXuaQDI
+ WmERe9y+E9uRhNW9opr5WthMidZt+GFktfsA9TkhtvOPF1dI6UUA8hoGAHEKvDiND9gqJLCmS97
+ ZB6MBbYm1sx4nAtvoaCUsTDmusz3hQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-08_02,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 spamscore=0 lowpriorityscore=0 suspectscore=0
+ phishscore=0 priorityscore=1501 clxscore=1015 adultscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040009
 
-On Tue, Oct 07, 2025 at 11:48:15AM -1000, Tejun Heo wrote:
-> On Mon, Oct 06, 2025 at 12:46:52PM +0200, Peter Zijlstra wrote:
-> > Hi,
-> > 
-> > So I had a poke at 'give @rf to pick_task() and fold balance_scx() into
-> > pick_task_scx()' option to see how terrible it was. Turns out, not terrible at
-> > all.
-> > 
-> > I've ran the sched_ext selftest and stress-ng --race-sched 0 thing with various
-> > scx_* thingies on.
+On Wed, Oct 08, 2025 at 10:02:26AM +0200, David Hildenbrand wrote:
+> On 08.10.25 08:05, Sumanth Korikkar wrote:
+> > > > chmem changes would look like:
+> > > > chmem -c 128M -m 1 : configure memory with memmap-on-memory enabled
+> > > > chmem -g 128M : deconfigure memory
+> > > 
+> > > I wonder if the above two are really required. I would expect most/all users
+> > > to simply keep using -e / -d.
+> > > 
+> > > Sure, there might be some corner cases, but I would assume most people to
+> > > not want to care about memmap-on-memory with the new model.
+
+...
+
+> > 2) If the administrator forgets to configure
+> > memory_hotplug.memmap_on_memory=Y, the following steps can be taken:
+> > Rescue from OOM situations: configure with memmap-on-memory enabled, online it.
 > 
-> This is great. I was thinking that I needed to call pick_task() of other
-> classes to detect the retry conditions but yeah enqueue() must be the
-> triggering event and this is way neater. 
+> That's my point: I don't consider either very likely to be used by actual
+> admins.
 
-:-)
+But does it really hurt to add those options? If really needed then all of
+the sudden admins would have to deal with architecture specific sysfs
+layout - so the very rare emergency case becomes even more complicated.
 
-> Does this mean that balance() can be dropped from other classes too?
-
-Possibly. But lets stick that on a todo list :-) I was also looking to
-get rid of sched_class::pick_next_task() -- the only reason that
-currently still exists is because of that fair cgroup nonsense.
-
-I was looking at bringing back Rik's flatten series (easier now that the
-cfs bandwidth throttle thing is fixed). That should get rid of that
-hierarchical pick; and thus obviate that whole mess in
-pick_next_task_fair().
-
-> For the whole series:
-> 
->  Acked-by: Tejun Heo <tj@kernel.org>
-> 
-
-Thanks!
-
-Now, I do have a few questions from staring at this ext stuff for a
-while:
-
- - So the 'RT' problem with balance_one() is due to:
-
-    o rq-lock-break allowing higher prio task to come in
-    o placing a task on the local dsq
-
-   which results in that local-dsq getting 'starved'. The patches want
-   to call switch_class(), which I suppose will work, this is something
-   like:
-
-   if (rq_modified_above(rq, &ext_sched_class)) {
-      /*
-       * We don't have a next task at this point, but can guess at its
-       * class based on the highest set bit in the queue_mask.
-       */
-      scx_cpu_release(reason_from_mask(rq->queue_mask), NULL);
-      return RETRY_TASK;
-   }
-
-   But I was thinking that we could also just stick that task back onto
-   some global dsq, right? (presumably the one we just pulled it from is
-   a good target). This would effectively 'undo' the balance_one().
-
-
- - finish_dispatch() -- one of the problems that I ran into with the
-   shared rq lock implementation is that pick_task_scx() will in fact
-   try and enqueue on a non-local dsq.
-
-   The callchain is something like:
-
-     pick_task_scx()
-       bpf__sched_ext_ops_dispatch()
-         scx_bpf_dsq_move_to_local()
-	   flush_dispatch_buf()
-	     dispatch_enqueue() // dsq->id != SCX_DSQ_LOCAL
- 
-   And this completely messes up the locking -- I'm not sure how to fix
-   this yet. But adding this flush to do random other things to various
-   code paths really complicates things. Per the function what we really
-   want to do is move-to-local, but then we end up doing random other
-   things instead :/
-
-
- - finish_dispatch() -- per the above problem I read this function and
-   found that:
-
-     "the BPF scheduler is allowed to dispatch tasks spuriously"
-
-   and I had to go and buy a new WTF'o'meter again :/ Why would you
-   allow such a thing? Detect the case because the BPF thing is
-   untrusted and can do crazy things, sure. But then kill it dead; don't
-   try and excuse badness.
-
-
- - scx_bpf_dsq_move_to_local() found per the above problem, but per its
-   comment it is possible BPF calls this with its own locks held. This
-   then results in:
-
-   CPU1 
-
-   try_to_wake_up()
-     rq_lock();
-     enqueue_task() := enqueue_task_scx()
-       bpf__sched_ext_ops_something_or_other()
-         your bpf area lock thing
-
-   // rq->lock
-   // bpf area lock
-
-   CPU2
-     bpf__sched_ext_whatever()
-       bpf area lock
-         scx_bpf_move_to_local()
-	   rq_lock()
-
-   // bpf area lock
-   // rq->lock
-
-  and we have a deadlock -- I thought BPF was supposed to be safe? And
-  while the recent rqspinlock has a timeout, and there the bpf validator
-  knows a spinlock exists and can prohibit kernel helper calls, this
-  bpf area lock you have has no such things (afaict) and BPF can
-  completely mess up the kernel. How is this okay?
-
-
+Given that these tools exist to help that people don't have to deal with
+such details, I'm much in favor of adding those options.
 
