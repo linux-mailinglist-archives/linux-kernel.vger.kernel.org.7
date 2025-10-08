@@ -1,158 +1,120 @@
-Return-Path: <linux-kernel+bounces-845562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F51FBC5629
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 16:08:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9739BC572D
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 16:37:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3CE714F4EF5
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 14:06:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2B6A189E294
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 14:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0330E2EBDE9;
-	Wed,  8 Oct 2025 14:05:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E982EBDC5;
+	Wed,  8 Oct 2025 14:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FHkFArTi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="PYiweDzo"
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8F529346F;
-	Wed,  8 Oct 2025 14:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D562EB870;
+	Wed,  8 Oct 2025 14:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759932331; cv=none; b=oXxeFGajoqTMwnjetaA753XksFLNLdppLj9tuDYjPo4uax0rz+Gefs4w98kPILBKqlQ4A29OSVHqT4xhGl3eJv3u3S827ZT/aOpbtDqQ4CJ0h46M2vNK/LYRpB7NqUBJuF02qRPdmQyH/ANZb4T4LE1HLT04ciGV9W75xNE1+Gk=
+	t=1759934256; cv=none; b=L6zYhCoxr4eTkJQgJWI3of7Lv2muCz6aKD2zFlhlYDDISEy/xwVt5NYc4zUOjN9MeStPffO2GEySAc1U41derYSkWBRRnYDAEHtLNLWxVdUUE4uv9BZ59vOHPwZPbca65/POh67Ia7PQTZmdr3KlmaRLkflO6j/WllwAd2HEyzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759932331; c=relaxed/simple;
-	bh=HSYJCjE24K+57IxjnTOBA3vYmKAgeNl1JgEZHnukAHQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UGVJKIQiQugaDSNcnTODwuKwMV1VdeH3IIBbRvbKRpcnn30rOCpBSiGT+opA1i3E83sigSEa1X6eRAV93SHLlqeoWRQeHKVLDElI4RnEGnU0bZobKtzIrKO31Qc7BAdnfNOsLnEc/gzSRZmDd65wwKn6RUlZk8TjEdwD7EVZ3KQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FHkFArTi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 16D2BC19422;
-	Wed,  8 Oct 2025 14:05:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759932331;
-	bh=HSYJCjE24K+57IxjnTOBA3vYmKAgeNl1JgEZHnukAHQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=FHkFArTiqLjHtD8UBeA9BjDpTEDP/ze8wv76kxhwQ5ee+Z/LQ5l+TxLM/T5Uje6S3
-	 ZzZ+MnVufUO4SVls5xUeaS9ZzEmaUEk1NqKXcowndG6T7HACqYHUdFoV1vTW4Kc3K2
-	 T0BYjAcmdJPuGQg1tMmGFVqpiFRSY4J0CiGBGaqUGH0EV5rF/g5MbJMXX2clr8uy3x
-	 wjMylQ24HaRr5QaaCSBqLBiU800+UlMIq5LL5W5xl8suoBoTM8VGwIIBcNHTowg8zi
-	 j1oynPpClm7CgY76SZifUR2vWQMwfPB4utrUlQ66QhstJsbf1v4Zy7lXJxI3oKasmj
-	 2nYBBBLTxpmCQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ACB3CCA470;
-	Wed,  8 Oct 2025 14:05:31 +0000 (UTC)
-From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
-Date: Wed, 08 Oct 2025 16:05:34 +0200
-Subject: [PATCH v2 7/7] arm64: dts: qcom: sdm845-oneplus: Implement panel
- sleep pinctrl
+	s=arc-20240116; t=1759934256; c=relaxed/simple;
+	bh=fM/soW1wxcm6ZUoUCSrXUsq1Ch641FejBxdWZ2T9VTY=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RP5mZRQ0fLWRtYpLvlvoEZKmvK4Iavn4+YMrZrjc5vxVkUUkBU5xDWFueylwAFXMqZ/JSK2h0FYtrzzlWsZfj4M/EgfS5Yq5AKsNxx8Gbc9aZ0ZSj+DjkRl7A6dgUqIJUfV6mFReX6AXyJI3OrdwxXH6FgVLfTEzTEEJ/imj6iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=PYiweDzo; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1759934244; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=y8JH2A/X+FfSGLqk5PRkD3V44OnLqwLLX/lM69mSF2o=;
+	b=PYiweDzo0YOeOsiHJRq0QGRmJ9YqbxqcuL9iWNng1x09kPqvoXGqNwd4OkNnfukheFXOny3gBGe03TOO1dX55vQ9oua8uirGGE34OHhIw/OjYMnzoFT13PRP7a/CLvBK7yUsU2ZKhQXe7p97lzCkAv5TQiosJyA8Wn9kZ4rGzA0=
+Received: from localhost(mailfrom:dust.li@linux.alibaba.com fp:SMTPD_---0WpfC3B0_1759932368 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 08 Oct 2025 22:06:08 +0800
+Date: Wed, 8 Oct 2025 22:06:08 +0800
+From: Dust Li <dust.li@linux.alibaba.com>
+To: Mahanta Jambigi <mjambigi@linux.ibm.com>,
+	Halil Pasic <pasic@linux.ibm.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	"D. Wythe" <alibuda@linux.alibaba.com>,
+	Sidraya Jayagond <sidraya@linux.ibm.com>,
+	Wenjia Zhang <wenjia@linux.ibm.com>,
+	Tony Lu <tonylu@linux.alibaba.com>,
+	Wen Gu <guwen@linux.alibaba.com>,
+	Guangguan Wang <guangguan.wang@linux.alibaba.com>,
+	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+	linux-s390@vger.kernel.org
+Subject: Re: [PATCH net-next v5 2/2] net/smc: handle -ENOMEM from
+ smc_wr_alloc_link_mem gracefully
+Message-ID: <aOZv0NmekKIgpc5M@linux.alibaba.com>
+Reply-To: dust.li@linux.alibaba.com
+References: <20250929000001.1752206-1-pasic@linux.ibm.com>
+ <20250929000001.1752206-3-pasic@linux.ibm.com>
+ <aNnl_CfV0EvIujK0@linux.alibaba.com>
+ <de0baa92-417c-475a-a342-9041f8fb5b8e@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251008-s6e3fc2x01-v2-7-21eca1d5c289@ixit.cz>
-References: <20251008-s6e3fc2x01-v2-0-21eca1d5c289@ixit.cz>
-In-Reply-To: <20251008-s6e3fc2x01-v2-0-21eca1d5c289@ixit.cz>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Casey Connolly <casey.connolly@linaro.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- phone-devel@vger.kernel.org, David Heidelberg <david@ixit.cz>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1489; i=david@ixit.cz;
- h=from:subject:message-id;
- bh=mp3HRjBZ7F75KJMOIKY0ujssyiub4Jy/WN4kGAY5j8g=;
- b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBo5m+piiWLIGs1xMLHjYcw1Kxi+dVr02ZH7Mmqu
- OeABLuKSjSJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaOZvqQAKCRBgAj/E00kg
- ctV3D/9lubFbmrou5+gTBa2JMEdcOKJUmBFaw+Vy/vJFor0U3Uxr5rhDtLdAK9/eQ3o2dfZ9LUM
- MJRT5qoA3SorlFBSrV5nVa5HdxdW5b+3hqIupb45Dhr0dm2DfAzT8UFHE1fj60Z57LgEEkVhFVq
- xVY9s9zGXToPHmA1QCvS5RDXCIMyQY76fKWEkKfB5e59hMJHTk0OsE2bbsyRwlMt1u9IWPArgrn
- hzRdI5DQerHDgdav/UHwrw83n/nS2t5R69n3BRGX0inbVaBiTtJZ7AzcDx6dN2sK00TyqYcRRiY
- FN680Vy6dXpP3Hbm6d07dFJbJ3Fm852k4Wc05+8bb0C693tE2JN5XjzFxDxCCggx+yGmhkrMuxo
- v6DqgVAlC1Xt33L0TXhFkslf5ULO1g/dMX3m4Dj7FGdT372tyY4n1J07zXihjgmsjMtZ0SkQTfF
- j1sfS2Q9TVq/f7gHXHhNvUysJitJXJeY7uneJ2ZxJvisOGJHWPh3ljoeOQdlD6350h3WAcgzSAZ
- 86felmyHVVn3k08JiNEwuvnD+pb0kJSyzuYhc9235+xO35LPjEXTWmNKgnh3EF1ziQm9m27xrbm
- HtL7grNbnYgi29vGxCd8+pZUUCDMhhzsaDgYLIEMrxxUkV6MBpcuOCKXuehVmMkSwQdDcq/L4qT
- 6H3nus+UNFuUMBA==
-X-Developer-Key: i=david@ixit.cz; a=openpgp;
- fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
-X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
-X-Original-From: David Heidelberg <david@ixit.cz>
-Reply-To: david@ixit.cz
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <de0baa92-417c-475a-a342-9041f8fb5b8e@linux.ibm.com>
 
-From: David Heidelberg <david@ixit.cz>
+On 2025-10-06 11:25:22, Mahanta Jambigi wrote:
+>On 29/09/25 7:20 am, Dust Li wrote:
+>>> diff --git a/net/smc/smc_core.h b/net/smc/smc_core.h
+>>> index 8d06c8bb14e9..5c18f08a4c8a 100644
+>>> --- a/net/smc/smc_core.h
+>>> +++ b/net/smc/smc_core.h
+>>> @@ -175,6 +175,8 @@ struct smc_link {
+>>> 	struct completion	llc_testlink_resp; /* wait for rx of testlink */
+>>> 	int			llc_testlink_time; /* testlink interval */
+>>> 	atomic_t		conn_cnt; /* connections on this link */
+>>> +	u16			max_send_wr;
+>>> +	u16			max_recv_wr;
+>> 
+>> Here, you've moved max_send_wr/max_recv_wr from the link group to individual links.
+>> This means we can now have different max_send_wr/max_recv_wr values on two
+>> different links within the same link group.
+>> Since in Alibaba we doesn't use multi-link configurations, we haven't tested
+>
+>Does Alibaba always use a single RoCE device for SMC-R? In that case how
+>redundancy is achieved if that link goes down?
 
-We can DSI pin from 8mA to 2mA while suspend, do it.
+We expose a virtual RDMA device to our client inside their virtual
+machine. The underlying network is already redundant, so it’s got
+built-in reliability. You can think of it kind of like virtio-net, but
+instead of a regular virtual NIC, it’s an RDMA device.
 
-In theory, should give us extra 2 hours of idle battery life.
+>
+>> this scenario. Have you tested the link-down handling process in a multi-link
+>> setup?
+>I did test this after you query & don't see any issues. As Halil
+>mentioned in worst case scenario one link might perform lesser than the
+>other, that too if the kcalloc() failed for that link in
+>smc_wr_alloc_link_mem() & succeeded in subsequent request with reduced
+>max_send_wr/max_recv_wr size(half).
 
-Signed-off-by: David Heidelberg <david@ixit.cz>
----
- .../arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi | 26 +++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
+Great! You can add my
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi b/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
-index c216369fae237..fa538b37ef25b 100644
---- a/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
-@@ -463,8 +463,9 @@ display_panel: panel@0 {
- 		te-gpios = <&tlmm 30 GPIO_ACTIVE_HIGH>;
- 		reset-gpios = <&tlmm 6 GPIO_ACTIVE_LOW>;
- 
--		pinctrl-names = "default";
-+		pinctrl-names = "default", "sleep";
- 		pinctrl-0 = <&panel_default>;
-+		pinctrl-1 = <&panel_sleep>;
- 
- 		port {
- 			panel_in: endpoint {
-@@ -871,6 +872,29 @@ te-pins {
- 		};
- 	};
- 
-+	panel_sleep: panel-sleep-state {
-+		esd-pins {
-+			pins = "gpio30";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-down;
-+		};
-+
-+		reset-pins {
-+			pins = "gpio6";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-down;
-+		};
-+
-+		te-pins {
-+			pins = "gpio10";
-+			function = "mdp_vsync";
-+			drive-strength = <2>;
-+			bias-disable;
-+		};
-+	};
-+
- 	tri_state_key_default: tri-state-key-default-state {
- 		pins = "gpio40", "gpio42", "gpio26";
- 		function = "gpio";
+Reviewed-by: Dust Li <dust.li@linux.alibaba.com>
 
--- 
-2.51.0
-
-
+>> Otherwise, the patch looks good to me.
+>> 
+>> Best regards,
+>> Dust
 
