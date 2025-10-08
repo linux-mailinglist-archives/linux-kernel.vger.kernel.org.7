@@ -1,122 +1,180 @@
-Return-Path: <linux-kernel+bounces-845404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EA5BBC4BE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 14:17:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 350DFBC4B77
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 14:10:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D21323C32DD
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 12:16:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A5C03AC89A
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 12:10:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDBF11BD9C9;
-	Wed,  8 Oct 2025 12:16:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1BB32F83BA;
+	Wed,  8 Oct 2025 12:10:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="s6hmmsF+"
-Received: from ksmg01.maxima.ru (ksmg01.maxima.ru [81.200.124.38])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c/qBddYg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A671F3B8A;
-	Wed,  8 Oct 2025 12:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD7A42F7AB0;
+	Wed,  8 Oct 2025 12:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759925809; cv=none; b=HGA9HY3999YtsQJmMAXr+oDxXtkYPGNDIofyWZJ1PVWefcsc+SCgHgfNf1ox1UfeCtW/FUJbydS+Vo97UrV8ppIxtgoZUei3rq3XusDGbq0uKgC18XXkZ2oLGMPHCeEXw4BFTQdr5bVZ9Yz0rwSqr7Y5xyt7Pr/b/8iiWGj0Jy4=
+	t=1759925428; cv=none; b=hkHnusiUCIiMkdEy+IxuBY5GULidzL3wbsY4zBimhbBcXpVu/4L4s+95I9h4f17NG9J+L/2YPsGllinffLElItQ+GpK8oXpFXxID5lfyU20FbC0czWFXXDv/L4RAOwW/PWD7XiFB+iIARybKulyTRn2qvpnEuUL12nCFIoB/nlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759925809; c=relaxed/simple;
-	bh=JUaMixl2/3amEsk7Eppmq2pN7k2TpyMAl32N1KjHYFM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=f4HZIx6O3+OFEy7VquxE1pa35wVqDGO2WV9fVwzlRFnh0lJYNDZCoVf+7uBt6ktPyJjebXMzhT/oQuVFoMe6EZavgkZ+6YDuSO0uDvTQMk7AYIU4XogcorIsIA2PstXEB8LsOE+NrB/HdhjAPeAnfIcu4mZfj9VGmKA9rV6/EJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=s6hmmsF+; arc=none smtp.client-ip=81.200.124.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
-Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
-	by ksmg01.maxima.ru (Postfix) with ESMTP id 5BB89C0018;
-	Wed,  8 Oct 2025 15:07:24 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru 5BB89C0018
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
-	s=sl; t=1759925244; bh=C1IATWPM3mN9XKTAyH6DunLeD4/BZFtcmHgpuBRdGpc=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=s6hmmsF+sZfZohnOA8X7+qqFcMOM2ryFcUWOXEV1PQF+X2BfFC76VPG+2bOzQQ3Cg
-	 IBnNfhBqtpGOHhJ/fraHuJoNOXklnmLkZ6qO0zpWtxSNDXnIVO/pMbUQiLGnaNma4p
-	 eDdlPvZZ5cAjOnAhwKHm+EA4MLSESGDt5hj5uTJgDsC0aqoSXL2a82wrI2MO6m1AiV
-	 zCGRDgABvQTvKdYlTAKKkADGH4LHzAjnCH2EMftffAvxUHRWF568qYYr1jqa6+L3ja
-	 9Ycork/pa6cW//s4WXhB7d5CUIVPx1BPAR8gYjhqkxdCEGnpWFaUb/YOi/uGhRxG+n
-	 iYkpgB/JcLFWQ==
-Received: from ksmg01.maxima.ru (mail.maxima.ru [81.200.124.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client did not present a certificate)
-	by ksmg01.maxima.ru (Postfix) with ESMTPS;
-	Wed,  8 Oct 2025 15:07:24 +0300 (MSK)
-Received: from db126-1-abramov-14-d-mosos.mti-lab.com (172.25.20.118) by
- mmail-p-exch01.mt.ru (81.200.124.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 8 Oct 2025 15:07:22 +0300
-From: Ivan Abramov <i.abramov@mt-integration.ru>
-To: Tobias Schrammm <t.schramm@manjaro.org>
-CC: Ivan Abramov <i.abramov@mt-integration.ru>, Sebastian Reichel
-	<sre@kernel.org>, Zheyu Ma <zheyuma97@gmail.com>, <linux-pm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: [PATCH 1/1] power: supply: cw2015: Check devm_delayed_work_autocancel() return code
-Date: Wed, 8 Oct 2025 15:07:11 +0300
-Message-ID: <20251008120711.556021-1-i.abramov@mt-integration.ru>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1759925428; c=relaxed/simple;
+	bh=0Og/Yv2H3UYrtZ3KU1pRcOJr3otOKEz6cpop2r3nnpQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TtAg9QJJ9b/7gnEGwIEdy4UwVEGnZGYoGLRb20isOw+rD1zttpBO67qKzDVVzOOx73KpZKcL5hygiwVw+72E721zRp+GDNV6cWLXs0wRKcrn+O2x5/RXYbbyz7DWQBppuuKoNB1biG2NnJ2lkbW4C1cVGq/bAZrIeLnMBJEpwtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c/qBddYg; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759925426; x=1791461426;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0Og/Yv2H3UYrtZ3KU1pRcOJr3otOKEz6cpop2r3nnpQ=;
+  b=c/qBddYgIFGWzgi+bs38ApCZwKzmM5ffY5kvOJ5J9OOq04yC+xirEPPY
+   wvPRnJsmggpkg0G/NtVcKHrNhktQczwUP4IDMUw4WrAF34wSdM9G/vLWQ
+   Td77MTCW3L+wK1jmSIwJEe5TxBztZzNTq212OVOHM0D6q3suM8r0Qkn1M
+   st1T9IMs9nst4aTmswwjouPCu/AsMS20tLVR4iYUJIox2Atq09qGhK8AB
+   K6IWyc9iPeUGja2+LLuG0i7eUI7F2yRyL5tS0K5IJWaDO605WY0qMTlyn
+   PGzPP0oP/07ZgNP7XINXO+3AYdLt8mlXILSLIiSjBO69GNIcRvJQrEEdP
+   A==;
+X-CSE-ConnectionGUID: tfQ7bzsZTv2lz1Gh5z9eIQ==
+X-CSE-MsgGUID: AkItbHQiQSmPos4mxodoKw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11575"; a="72375319"
+X-IronPort-AV: E=Sophos;i="6.19,323,1754982000"; 
+   d="scan'208";a="72375319"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2025 05:10:25 -0700
+X-CSE-ConnectionGUID: zCMM01epQqOAsrjnyC85Fg==
+X-CSE-MsgGUID: wflDQcoZR7+Y2QBt5yi1Ow==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,323,1754982000"; 
+   d="scan'208";a="211370462"
+Received: from iherna2-mobl4.amr.corp.intel.com (HELO kuha.fi.intel.com) ([10.124.220.169])
+  by fmviesa001.fm.intel.com with SMTP; 08 Oct 2025 05:10:20 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 08 Oct 2025 15:10:19 +0300
+Date: Wed, 8 Oct 2025 15:10:19 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Jameson Thies <jthies@google.com>
+Cc: akuchynski@chromium.org, abhishekpandit@chromium.org,
+	krzk+dt@kernel.org, robh@kernel.org, bleung@chromium.org,
+	ukaszb@chromium.org, tzungbi@kernel.org, devicetree@vger.kernel.org,
+	chrome-platform@lists.linux.dev, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] mfd: cros_ec: Don't add cros_ec_ucsi if it is
+ defined in OF or ACPI
+Message-ID: <aOZUq6K8bZtciL6Q@kuha.fi.intel.com>
+References: <20251001193346.1724998-1-jthies@google.com>
+ <20251001193346.1724998-4-jthies@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mmail-p-exch02.mt.ru (81.200.124.62) To
- mmail-p-exch01.mt.ru (81.200.124.61)
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
-X-KSMG-AntiSpam-Envelope-From: i.abramov@mt-integration.ru
-X-KSMG-AntiSpam-Info: LuaCore: 69 0.3.69 3c9ee7b2dda8a12f0d3dc9d3a59fa717913bd018, {rep_avail}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, mt-integration.ru:7.1.1;127.0.0.199:7.1.2;81.200.124.61:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;ksmg01.maxima.ru:7.1.1, {Macro_SMTPFROM_NOT_MATCHES_SMTP}, FromAlignment: s, ApMailHostAddress: 81.200.124.61
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 196899 [Oct 08 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/10/08 08:37:00 #27892411
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251001193346.1724998-4-jthies@google.com>
 
-Since devm_delayed_work_autocancel() may fail, add return code check and
-exit cw_bat_probe() on error.
+On Wed, Oct 01, 2025 at 07:33:43PM +0000, Jameson Thies wrote:
+> On devices with a UCSI PPM in the EC, check for cros_ec_ucsi to be
+> defined in the OF device tree or an ACPI node. If it is defined by
+> either OF or ACPI, it does not need to be added as a subdevice of
+> cros_ec_dev.
+> 
+> Signed-off-by: Jameson Thies <jthies@google.com>
+> ---
+>  drivers/mfd/cros_ec_dev.c | 40 ++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 35 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+> index dc80a272726b..b0523f6541d2 100644
+> --- a/drivers/mfd/cros_ec_dev.c
+> +++ b/drivers/mfd/cros_ec_dev.c
+> @@ -5,6 +5,7 @@
+>   * Copyright (C) 2014 Google, Inc.
+>   */
+>  
+> +#include <linux/acpi.h>
+>  #include <linux/dmi.h>
+>  #include <linux/kconfig.h>
+>  #include <linux/mfd/core.h>
+> @@ -131,11 +132,6 @@ static const struct cros_feature_to_cells cros_subdevices[] = {
+>  		.mfd_cells	= cros_ec_rtc_cells,
+>  		.num_cells	= ARRAY_SIZE(cros_ec_rtc_cells),
+>  	},
+> -	{
+> -		.id		= EC_FEATURE_UCSI_PPM,
+> -		.mfd_cells	= cros_ec_ucsi_cells,
+> -		.num_cells	= ARRAY_SIZE(cros_ec_ucsi_cells),
+> -	},
+>  	{
+>  		.id		= EC_FEATURE_HANG_DETECT,
+>  		.mfd_cells	= cros_ec_wdt_cells,
+> @@ -177,6 +173,16 @@ static const struct mfd_cell cros_ec_vbc_cells[] = {
+>  	{ .name = "cros-ec-vbc", }
+>  };
+>  
+> +static int ucsi_acpi_match(struct device *dev, const void *data)
+> +{
+> +	struct acpi_device_id ucsi_acpi_device_ids[] = {
+> +		{ "GOOG0021", 0 },
+> +		{"", 0},
+> +	};
+> +	return !!acpi_match_device(ucsi_acpi_device_ids, dev);
+> +}
+> +
+> +
+>  static void cros_ec_class_release(struct device *dev)
+>  {
+>  	kfree(to_cros_ec_dev(dev));
+> @@ -264,6 +270,30 @@ static int ec_device_probe(struct platform_device *pdev)
+>  		}
+>  	}
+>  
+> +	/*
+> +	 * FW nodes can load cros_ec_ucsi, but early PDC devices did not define
+> +	 * the required nodes. On PDC systems without FW nodes for cros_ec_ucsi,
+> +	 * the driver should be added as an mfd subdevice.
+> +	 */
+> +	if (cros_ec_check_features(ec, EC_FEATURE_USB_PD) &&
+> +	    cros_ec_check_features(ec, EC_FEATURE_UCSI_PPM)) {
+> +		struct device *acpi_dev = device_find_child(ec->ec_dev->dev,
+> +							    NULL,
+> +							    ucsi_acpi_match);
+> +
+> +		if (!!acpi_dev) {
+> +			put_device(acpi_dev);
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+If you are not using that for anything, then couldn't you just use
+acpi_dev_found("GOOG0021") ?
 
-Fixes: 0cb172a4918e ("power: supply: cw2015: Use device managed API to simplify the code")
-Signed-off-by: Ivan Abramov <i.abramov@mt-integration.ru>
----
- drivers/power/supply/cw2015_battery.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Can there be multiple UCSI interfaces on these systems?
 
-diff --git a/drivers/power/supply/cw2015_battery.c b/drivers/power/supply/cw2015_battery.c
-index 2263d5d3448f..0806abea2372 100644
---- a/drivers/power/supply/cw2015_battery.c
-+++ b/drivers/power/supply/cw2015_battery.c
-@@ -699,7 +699,13 @@ static int cw_bat_probe(struct i2c_client *client)
- 	if (!cw_bat->battery_workqueue)
- 		return -ENOMEM;
- 
--	devm_delayed_work_autocancel(&client->dev, &cw_bat->battery_delay_work, cw_bat_work);
-+	ret = devm_delayed_work_autocancel(&client->dev, &cw_bat->battery_delay_work, cw_bat_work);
-+	if (ret) {
-+		dev_err_probe(&client->dev, ret,
-+			"Failed to register delayed work\n");
-+		return ret;
-+	}
-+
- 	queue_delayed_work(cw_bat->battery_workqueue,
- 			   &cw_bat->battery_delay_work, msecs_to_jiffies(10));
- 	return 0;
+thanks,
+
+> +		} else if (!of_find_compatible_node(NULL, NULL,
+> +						    "google,cros-ec-ucsi")) {
+> +			retval = mfd_add_hotplug_devices(
+> +				ec->dev, cros_ec_ucsi_cells,
+> +				ARRAY_SIZE(cros_ec_ucsi_cells));
+> +			if (retval)
+> +				dev_warn(ec->dev,
+> +				    "failed to add cros_ec_ucsi: %d\n", retval);
+> +		}
+> +	}
+> +
+>  	/*
+>  	 * UCSI provides power supply information so we don't need to separately
+>  	 * load the cros_usbpd_charger driver.
+> -- 
+> 2.51.0.618.g983fd99d29-goog
+
 -- 
-2.39.5
-
+heikki
 
