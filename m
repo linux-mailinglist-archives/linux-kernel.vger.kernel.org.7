@@ -1,80 +1,47 @@
-Return-Path: <linux-kernel+bounces-846068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E3AEBC6F2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 01:51:05 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACD3DBC6F4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 01:52:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7642D402088
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 23:51:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 412CD4ED865
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 23:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F197204F8B;
-	Wed,  8 Oct 2025 23:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663752D0617;
+	Wed,  8 Oct 2025 23:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eiT2hoft"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sH3L1Cyk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770DB28D83F
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 23:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B52A4A06;
+	Wed,  8 Oct 2025 23:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759967451; cv=none; b=eeeqiu8XjdgXZzyF37f2cpp8CbU7Hko2H1x0dVfFGqBotWNanXm3J6W0TFl/i5lgZMgieJRzdnHbtds65MPsp/oMkvrlm9xfeCweLmFuuMdq9H0JXWHrnHFFVadBND6LxO8RjRXwbBfa06tnApc+Kinc4jw+mJGRnOwufk2n9J4=
+	t=1759967560; cv=none; b=gjEl3gcWvSwFNfMR219M9wmlS0RznalpqpKSY13SlmpLIP9MwZC7j+fh3go97h9hI5nnEr+NsxdzUsBDfnsDOZuB7Id7GRXx2uMSzhvHufKXIztbxLNFAthabJhJpAMxf0To5edJVP7g7TB8BTfI3WsaoUY3h3J3Ik2Va9xBLdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759967451; c=relaxed/simple;
-	bh=PepEMbQ1yjF5c5BaPwxWL9iAuc14/s0OFz6xe0oNLLY=;
+	s=arc-20240116; t=1759967560; c=relaxed/simple;
+	bh=OJ+hwh1sqGOf99NdhUVXQqjYuq37xpta7BF0DZ7PRno=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uRxhPuQQv6DGpTd6q2XF7/XMCF63lf6xnmY4VV51+3mMr6GF4aLmp263XsDd0ofrFaDGOCQU+yfD/mXreMvh2cjC2tQRJN6cl7LEBhKwIMcWAEOHiFxeCzKN+IBp1M74avhofX9zeQsnrYDrkRBPbNJWO8eE75hw9597uhCic3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eiT2hoft; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-46faa5b0372so2219405e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 16:50:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759967448; x=1760572248; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=n+edhMv+0BzSlGdfFXwn7RqYiQQ8tm9NoUNnWq+dQx8=;
-        b=eiT2hoftdsWDJpwlLiZY29yaf5Nj4ncn2jodcOcCvNdGSyQofbHk6NP8QPANN8rPVX
-         HLcryKD8SyWF+xp0PUEEU/NkX7Qa6Gj/1uw9uL08Qdxy1Bgl2tcq/Ayds8GrAyUxDJmS
-         Tlkws3LAL1hTP0YTcLLjilVrew+6H37br6yBj1VOtoqoym+qA1RIwa45oDgKyOosbkT2
-         sSsrtn0LujDjCEZyh2NDkOL1haxzlDsAmL5+85uI0uaPHuXSUN3xKWUuvLFNWQiCtLvd
-         1OuiyMydu/2cr++4M5XFXrDX/RyJQ3u/IJ4dr/H1K5+Y9qLI2q7sTRmgbYpv8J/k4SGc
-         kwAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759967448; x=1760572248;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=n+edhMv+0BzSlGdfFXwn7RqYiQQ8tm9NoUNnWq+dQx8=;
-        b=DSK+mXImIJGWeWgk2erdx8DprqMFJQKJwar6hUxH9o9HJbJFMrxreCjwTHPouNqGOP
-         wObwJtJkTAH+Gw2tXjskWCfG9cl/TEbLliGEuu5gglDcJNoDfgWoc1f9k5W0pQ1BgqE3
-         aOim3TU330l4zhuwPmXjyx1H8WAYuG7xuxVgjoHrQKrPASXHLb9B4cX7nq7+zrrGvYNh
-         FYVLxX87GgfXoszLwBLaHyG8fmIUKCVtwf7T+GhCLeRNlcweQIAqBMcB9tV0l0zHeKe0
-         ZF00LdrTdUYY7ab3ZDUbhimeK+r/+zWKT06qRwqwHC6yeS7hY0h8m6SnciW/Y49MX7Eu
-         Qtgw==
-X-Forwarded-Encrypted: i=1; AJvYcCUX05pdAthSOueezIDxrOeqBKjsid5YmDJXQNCt7Y2/1uv3AE482IAG/HGSsrkDn1QxlFHz6CghC3xEIGk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDNcml51iKaflNwbOw0CWvWcPN7V+gKgWC2IFalsK76kGSSvhK
-	V95u3zUhPifqdbGIkXQQ3TTiDzZrG/OyaUhdL8LhD2rmXE87b9n+JnQpI9n7OaTuyNc=
-X-Gm-Gg: ASbGncsJNP59yHkl/w34XJxiIG0yGa8lPWqjAxvQwBDgGIcH+tWng5udsWAJWI4Sr+i
-	BUWz96xvErywoqIZQX5wwv/+XQlG/BcA29LpbofaMrB03B/1a4XK+XdhUdIRSQBr63xY5q/7AMp
-	wJqj3W1yemMS16C22pSgRrZiS8Z3kR4Q29o6cSTxSjQGqCv/+jvxncUt4DC+bZAsoiaYJYyCTfA
-	dU6XDMxbcnmnyxBduZQ4rXpmW552s9OxaDMEwm+lpFrSMvrHQbMOnRa/hQBSZT/Q6QyF7qhQoqi
-	qplMls1lIwV+IRlEqCAljgGd7ADK64+QDUeRKppjzy1rhbOVWUapmXCjmnRUXKfBvTM+rPHgabR
-	8Lm+uBj+jya0Bt/JWurcBuLOeqo3INQE2tjh1TqR/NKv+q7S8QAODPNQTNzBWyNHdcqMBAYxagN
-	NdERiVlw11+7PwbEpx
-X-Google-Smtp-Source: AGHT+IEpfshDCqBAHwNTTUCD0shn/QO6Rxgp954tKBhVfZ8/aMJ0AhoH55Q9PWrHm6CVn9Z286wuwA==
-X-Received: by 2002:a05:600c:a41c:b0:46f:aac5:daf with SMTP id 5b1f17b1804b1-46faac50ea8mr23797905e9.35.1759967447736;
-        Wed, 08 Oct 2025 16:50:47 -0700 (PDT)
-Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fa9bf7f80sm56797095e9.1.2025.10.08.16.50.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Oct 2025 16:50:46 -0700 (PDT)
-Message-ID: <536e8aed-a25b-4beb-830d-9b073d02905e@linaro.org>
-Date: Thu, 9 Oct 2025 00:50:44 +0100
+	 In-Reply-To:Content-Type; b=FvFhNSoHJcdoz7DwGOriVqUqN+5E+lST4yvCCPZmWS+CVII9hotUb+/q3/jq8yV2Thn7ent+58WlbqCL1Mu8tbUmRnSa2eE2R47jtQ7zYjpAoGnOySYnR4bC/0b6LqTXrDNnX045ykOJ6mG+aRJmUwbmf9C/ZgEFnPbhLeMKJFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sH3L1Cyk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F417C4CEE7;
+	Wed,  8 Oct 2025 23:52:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759967560;
+	bh=OJ+hwh1sqGOf99NdhUVXQqjYuq37xpta7BF0DZ7PRno=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=sH3L1CykXXKsnu5TF6elR7SZ5qdLe3dpScWlT9makIzIxtzFuzgU2LeLGmFJEy7kd
+	 wnlWXmXAHmExTP8RQB2VR3tGwt7R2iYRxWzvPO65dxQACPqsBaOUKapw9BKfsNcwP7
+	 N5XXGC5GL7ERUJNkorVuMbmF2NCijIi7tYnDSo7TyrF2mF8hwkxo+AwGHi9J4CpxTv
+	 KXGRiMTgG52641Arfo9fyu/ZQCliGUHC4uZ30PEtzhkcZzaR8gy7Q9GvWTUelLakd0
+	 wjZ7b7U07kVMQDnBvi1b2hEQcZ2t9IV/AA4tx9Yo+x6aP8OIiAn4gCkBDzS19WYoxX
+	 x0ycTdvZ6PhhA==
+Message-ID: <08eb477f-ea34-4a31-b181-bfc629aef4c8@kernel.org>
+Date: Thu, 9 Oct 2025 08:52:25 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,224 +49,204 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/8] media: iris: move common register definitions to the
- header
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
- Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251008-iris-sc7280-v1-0-def050ba5e1f@oss.qualcomm.com>
- <Upsv0z22Lrbf1B-YW_axrnAADZ6xN-nr46DpXCCNMZN5AHjEkowuebjDlRs7tpqRCSwQLaiKUk-_zMIdsd0YGg==@protonmail.internalid>
- <20251008-iris-sc7280-v1-7-def050ba5e1f@oss.qualcomm.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH V7 3/5] dt-bindings: iio: adc: Add support for QCOM PMIC5
+ Gen3 ADC
+To: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Jonathan Cameron <jic23@kernel.org>, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, agross@kernel.org, andersson@kernel.org,
+ lumag@kernel.org, dmitry.baryshkov@oss.qualcomm.com, konradybcio@kernel.org,
+ daniel.lezcano@linaro.org, sboyd@kernel.org, amitk@kernel.org,
+ thara.gopinath@gmail.com, lee@kernel.org, rafael@kernel.org,
+ subbaraman.narayanamurthy@oss.qualcomm.com, david.collins@oss.qualcomm.com,
+ anjelique.melendez@oss.qualcomm.com, kamal.wadhwa@oss.qualcomm.com,
+ rui.zhang@intel.com, lukasz.luba@arm.com, devicetree@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ cros-qcom-dts-watchers@chromium.org, quic_kotarake@quicinc.com,
+ neil.armstrong@linaro.org, stephan.gerhold@linaro.org,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>
+References: <20250826083657.4005727-1-jishnu.prakash@oss.qualcomm.com>
+ <20250826083657.4005727-4-jishnu.prakash@oss.qualcomm.com>
+ <20250829-classic-dynamic-clam-addbd8@kuoka>
+ <5d662148-408f-49e1-a769-2a5d61371cae@oss.qualcomm.com>
+ <4e974e77-adfc-49e5-90c8-cf8996ded513@kernel.org>
+ <a0e885be-e87d-411a-884e-3e38a0d761e5@oss.qualcomm.com>
+ <8c90cc3f-115e-4362-9293-05d9bee24214@linaro.org>
+ <5d4edecf-51f3-4d4a-861f-fce419e3a314@oss.qualcomm.com>
+ <20250927144757.4d36d5c8@jic23-huawei>
+ <a3158843-dfac-4adc-838a-35bb4b0cbea4@oss.qualcomm.com>
+ <CAGE=qrrCvq28pr9Y7it-CGMW=szKUnU+XBj1TmpoUwuASM05ig@mail.gmail.com>
+ <31bd08ce-823a-4a71-baca-a9d1e02fcb6a@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-In-Reply-To: <20251008-iris-sc7280-v1-7-def050ba5e1f@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <31bd08ce-823a-4a71-baca-a9d1e02fcb6a@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 08/10/2025 05:33, Dmitry Baryshkov wrote:
-> Simplify adding new platforms by moving common registers definitions
-> from VPU 3.x and "common" file to the header with other register
-> defines.
+On 08/10/2025 23:20, Jishnu Prakash wrote:
+> Hi Krzysztof,
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
->   drivers/media/platform/qcom/iris/iris_vpu3x.c      | 35 --------------
->   drivers/media/platform/qcom/iris/iris_vpu_common.c | 43 -----------------
->   .../platform/qcom/iris/iris_vpu_register_defines.h | 56 ++++++++++++++++++++++
->   3 files changed, 56 insertions(+), 78 deletions(-)
+> On 10/4/2025 12:22 PM, Krzysztof Kozlowski wrote:
+>> On Sat, 4 Oct 2025 at 11:42, Jishnu Prakash
+>> <jishnu.prakash@oss.qualcomm.com> wrote:
+>>>
+>>> Hi Jonathan,
+>>>
+>>> On 9/27/2025 7:17 PM, Jonathan Cameron wrote:
+>>>> On Fri, 19 Sep 2025 20:17:43 +0530
+>>>> Jishnu Prakash <jishnu.prakash@oss.qualcomm.com> wrote:
+>>>>
+>>>>> Hi Krzysztof,
+>>>>>
+>>>>> On 9/18/2025 5:45 AM, Krzysztof Kozlowski wrote:
+>>>>>> On 18/09/2025 04:47, Jishnu Prakash wrote:
+>>>>>>> Hi Krzysztof,
+>>>>>>>
+>>>>>>> On 9/17/2025 5:59 AM, Krzysztof Kozlowski wrote:
+>>>>>>>> On 16/09/2025 16:28, Jishnu Prakash wrote:
+>>>>>>>>>> You cannot have empty spaces in ID constants. These are abstract
+>>>>>>>>>> numbers.
+>>>>>>>>>>
+>>>>>>>>>> Otherwise please point me to driver using this constant.
+>>>>>>>>>
+>>>>>>>>> These constants are for ADC channel numbers, which are fixed in HW.
+>>>>>>>>>
+>>>>>>>>> They are used in this driver: drivers/iio/adc/qcom-spmi-adc5-gen3.c,
+>>>>>>>>> which is added in patch 4 of this series.
+>>>>>>>>>
+>>>>>>>>> They can be found in the array named adc5_gen3_chans_pmic[].
+>>>>>>>>
+>>>>>>>> Really? So point me to the line there using ADC5_GEN3_VREF_BAT_THERM.
+>>>>>>>>
+>>>>>>>
+>>>>>>> We may not be using all of these channels right now - we can add them
+>>>>>>> later based on requirements coming up. For now, I'll remove the channels
+>>>>>>> not used in adc5_gen3_chans_pmic[].
+>>>>>>
+>>>>>> You are not implementing the feedback then. Please read it carefully.
+>>>>>>
+>>>>>
+>>>>> Sorry, I misunderstood - so you actually meant I should remove the
+>>>>> empty spaces in the definitions, like this?
+>>>>>
+>>>>> -#define ADC5_GEN3_VREF_BAT_THERM               0x15
+>>>>> +#define ADC5_GEN3_VREF_BAT_THERM 0x15
+>>>>>
+>>>>> I thought this at first, but I somehow doubted this later, as I saw some
+>>>>> other recently added files with empty spaces in #define lines, like:
+>>>>>
+>>>>> include/dt-bindings/iio/adc/mediatek,mt6373-auxadc.h
+>>>>> include/dt-bindings/regulator/st,stm32mp15-regulator.h
+>>>>>
+>>>>> I can make this change, if you prefer this. Please let me know
+>>>>> if I'm still missing something.
+>>>>>
+>>>>> Also please let me know if you want me to remove the unused
+>>>>> channels - I would prefer to keep them if there's no issue,
+>>>>> as we might need them later.
+>>>>>
+>>>> He is referring to 0x14 and below not being defined values.  So what
+>>>> do they mean if they turn up in the DT?
+>>>>
+>>>
+>>> Thanks for your clarification. To address your first point above, the macros
+>>> added here only represent the ADC channel numbers which are supported for
+>>> ADC5 Gen3 devices. If there are numbers missing in between (like 0x14),
+>>> that is because there exist no valid ADC channels in HW matching those
+>>> channel numbers.
+>>>
+>>> For your question above, if any of the undefined channels are used in the DT,
+>>> they should ideally be treated as invalid when parsed in the driver probe and
+>>> lead to an error. When I checked the code again, I saw we do not have such an
+>>> explicit check right now, so I will add that in the next patch series.
+>>>
+>>> And to be clear on which channel numbers are supported, I think it may be
+>>> best if, for now, we only add support for the channel numbers referenced in
+>>> the array adc5_gen3_chans_pmic[] in drivers/iio/adc/qcom-spmi-adc5-gen3.c.
+>>>
+>>> There are only 18 channel numbers used in this array and I would remove
+>>> all channels except for these from the binding files. During parsing, we
+>>> would use this array to confirm if an ADC channel added in DT is supported.
+>>>
+>>> In case we need to add support for any more channels later, we could add
+>>> their macros in the binding file and update the array correspondingly at
+>>> that time.
+>>>
+>>> Does all this sound fine? Please let me know if you have any more concerns
+>>> or queries.
+>>
+>> No, it doesn't.  You keep ignoring my arguments and responding to
+>> something else. I prefer not to store hardware values as bindings,
+>> because these are not bindings (and you failed to prove which SW
+>> interface they bind) and it's really not necessary.
 > 
-> diff --git a/drivers/media/platform/qcom/iris/iris_vpu3x.c b/drivers/media/platform/qcom/iris/iris_vpu3x.c
-> index 339776a0b4672e246848c3a6a260eb83c7da6a60..78aede9ac497abafc0545647c34a53c63c595f72 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vpu3x.c
-> +++ b/drivers/media/platform/qcom/iris/iris_vpu3x.c
-> @@ -11,48 +11,13 @@
->   #include "iris_vpu_common.h"
->   #include "iris_vpu_register_defines.h"
-> 
-> -#define WRAPPER_TZ_BASE_OFFS			0x000C0000
-> -#define AON_BASE_OFFS				0x000E0000
->   #define AON_MVP_NOC_RESET			0x0001F000
-> 
-> -#define WRAPPER_DEBUG_BRIDGE_LPI_CONTROL	(WRAPPER_BASE_OFFS + 0x54)
-> -#define WRAPPER_DEBUG_BRIDGE_LPI_STATUS		(WRAPPER_BASE_OFFS + 0x58)
-> -#define WRAPPER_IRIS_CPU_NOC_LPI_CONTROL	(WRAPPER_BASE_OFFS + 0x5C)
-> -#define REQ_POWER_DOWN_PREP			BIT(0)
-> -#define WRAPPER_IRIS_CPU_NOC_LPI_STATUS		(WRAPPER_BASE_OFFS + 0x60)
-> -#define NOC_LPI_STATUS_DONE			BIT(0) /* Indicates the NOC handshake is complete */
-> -#define NOC_LPI_STATUS_DENY			BIT(1) /* Indicates the NOC handshake is denied */
-> -#define NOC_LPI_STATUS_ACTIVE		BIT(2) /* Indicates the NOC is active */
-> -#define WRAPPER_CORE_CLOCK_CONFIG		(WRAPPER_BASE_OFFS + 0x88)
-> -#define CORE_CLK_RUN				0x0
-> -/* VPU v3.5 */
-> -#define WRAPPER_IRIS_VCODEC_VPU_WRAPPER_SPARE_0	(WRAPPER_BASE_OFFS + 0x78)
-> -
-> -#define WRAPPER_TZ_CTL_AXI_CLOCK_CONFIG		(WRAPPER_TZ_BASE_OFFS + 0x14)
-> -#define CTL_AXI_CLK_HALT			BIT(0)
-> -#define CTL_CLK_HALT				BIT(1)
-> -
-> -#define WRAPPER_TZ_QNS4PDXFIFO_RESET		(WRAPPER_TZ_BASE_OFFS + 0x18)
-> -#define RESET_HIGH				BIT(0)
-> -
-> -#define CPU_CS_AHB_BRIDGE_SYNC_RESET		(CPU_CS_BASE_OFFS + 0x160)
-> -#define CORE_BRIDGE_SW_RESET			BIT(0)
-> -#define CORE_BRIDGE_HW_RESET_DISABLE		BIT(1)
-> -
-> -#define CPU_CS_X2RPMH				(CPU_CS_BASE_OFFS + 0x168)
-> -#define MSK_SIGNAL_FROM_TENSILICA		BIT(0)
-> -#define MSK_CORE_POWER_ON			BIT(1)
-> -
->   #define AON_WRAPPER_MVP_NOC_RESET_REQ		(AON_MVP_NOC_RESET + 0x000)
->   #define VIDEO_NOC_RESET_REQ			(BIT(0) | BIT(1))
-> 
->   #define AON_WRAPPER_MVP_NOC_RESET_ACK		(AON_MVP_NOC_RESET + 0x004)
-> 
-> -#define VCODEC_SS_IDLE_STATUSN			(VCODEC_BASE_OFFS + 0x70)
-> -
-> -#define AON_WRAPPER_MVP_NOC_LPI_CONTROL		(AON_BASE_OFFS)
-> -#define AON_WRAPPER_MVP_NOC_LPI_STATUS		(AON_BASE_OFFS + 0x4)
-> -
->   #define AON_WRAPPER_MVP_NOC_CORE_SW_RESET	(AON_BASE_OFFS + 0x18)
->   #define SW_RESET				BIT(0)
->   #define AON_WRAPPER_MVP_NOC_CORE_CLK_CONTROL	(AON_BASE_OFFS + 0x20)
-> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_common.c b/drivers/media/platform/qcom/iris/iris_vpu_common.c
-> index bb98950e018fadf69ac4f41b3037f7fd6ac33c5b..2d6548e47d47967c1c110489cb8088130fb625fd 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vpu_common.c
-> +++ b/drivers/media/platform/qcom/iris/iris_vpu_common.c
-> @@ -11,13 +11,6 @@
->   #include "iris_vpu_common.h"
->   #include "iris_vpu_register_defines.h"
-> 
-> -#define WRAPPER_TZ_BASE_OFFS			0x000C0000
-> -#define AON_BASE_OFFS				0x000E0000
-> -
-> -#define CPU_IC_BASE_OFFS			(CPU_BASE_OFFS)
-> -
-> -#define CPU_CS_A2HSOFTINTCLR			(CPU_CS_BASE_OFFS + 0x1C)
-> -#define CLEAR_XTENSA2HOST_INTR			BIT(0)
-> 
->   #define CTRL_INIT				(CPU_CS_BASE_OFFS + 0x48)
->   #define CTRL_STATUS				(CPU_CS_BASE_OFFS + 0x4C)
-> @@ -35,42 +28,6 @@
->   #define UC_REGION_ADDR				(CPU_CS_BASE_OFFS + 0x64)
->   #define UC_REGION_SIZE				(CPU_CS_BASE_OFFS + 0x68)
-> 
-> -#define CPU_CS_H2XSOFTINTEN			(CPU_CS_BASE_OFFS + 0x148)
-> -#define HOST2XTENSA_INTR_ENABLE			BIT(0)
-> -
-> -#define CPU_CS_X2RPMH				(CPU_CS_BASE_OFFS + 0x168)
-> -#define MSK_SIGNAL_FROM_TENSILICA		BIT(0)
-> -#define MSK_CORE_POWER_ON			BIT(1)
-> -
-> -#define CPU_IC_SOFTINT				(CPU_IC_BASE_OFFS + 0x150)
-> -#define CPU_IC_SOFTINT_H2A_SHFT			0x0
-> -
-> -#define WRAPPER_INTR_STATUS			(WRAPPER_BASE_OFFS + 0x0C)
-> -#define WRAPPER_INTR_STATUS_A2HWD_BMSK		BIT(3)
-> -#define WRAPPER_INTR_STATUS_A2H_BMSK		BIT(2)
-> -
-> -#define WRAPPER_INTR_MASK			(WRAPPER_BASE_OFFS + 0x10)
-> -#define WRAPPER_INTR_MASK_A2HWD_BMSK		BIT(3)
-> -#define WRAPPER_INTR_MASK_A2HCPU_BMSK		BIT(2)
-> -
-> -#define WRAPPER_DEBUG_BRIDGE_LPI_CONTROL	(WRAPPER_BASE_OFFS + 0x54)
-> -#define WRAPPER_DEBUG_BRIDGE_LPI_STATUS		(WRAPPER_BASE_OFFS + 0x58)
-> -#define WRAPPER_IRIS_CPU_NOC_LPI_CONTROL	(WRAPPER_BASE_OFFS + 0x5C)
-> -#define WRAPPER_IRIS_CPU_NOC_LPI_STATUS		(WRAPPER_BASE_OFFS + 0x60)
-> -
-> -#define WRAPPER_TZ_CPU_STATUS			(WRAPPER_TZ_BASE_OFFS + 0x10)
-> -#define WRAPPER_TZ_CTL_AXI_CLOCK_CONFIG		(WRAPPER_TZ_BASE_OFFS + 0x14)
-> -#define CTL_AXI_CLK_HALT			BIT(0)
-> -#define CTL_CLK_HALT				BIT(1)
-> -
-> -#define WRAPPER_TZ_QNS4PDXFIFO_RESET		(WRAPPER_TZ_BASE_OFFS + 0x18)
-> -#define RESET_HIGH				BIT(0)
-> -
-> -#define AON_WRAPPER_MVP_NOC_LPI_CONTROL		(AON_BASE_OFFS)
-> -#define REQ_POWER_DOWN_PREP			BIT(0)
-> -
-> -#define AON_WRAPPER_MVP_NOC_LPI_STATUS		(AON_BASE_OFFS + 0x4)
-> -
->   static void iris_vpu_interrupt_init(struct iris_core *core)
->   {
->   	u32 mask_val;
-> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_register_defines.h b/drivers/media/platform/qcom/iris/iris_vpu_register_defines.h
-> index fe8a39e5e5a3fc68dc3a706ffdba07a5558163cf..9955367a9f8179d2e364c41dcfe8ad445a0a13f4 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vpu_register_defines.h
-> +++ b/drivers/media/platform/qcom/iris/iris_vpu_register_defines.h
-> @@ -9,9 +9,65 @@
->   #define VCODEC_BASE_OFFS			0x00000000
->   #define CPU_BASE_OFFS				0x000A0000
->   #define WRAPPER_BASE_OFFS			0x000B0000
-> +#define WRAPPER_TZ_BASE_OFFS			0x000C0000
-> +#define AON_BASE_OFFS				0x000E0000
-> +
-> +#define VCODEC_SS_IDLE_STATUSN			(VCODEC_BASE_OFFS + 0x70)
-> 
->   #define CPU_CS_BASE_OFFS			(CPU_BASE_OFFS)
-> 
-> +#define CPU_CS_A2HSOFTINTCLR			(CPU_CS_BASE_OFFS + 0x1C)
-> +#define CLEAR_XTENSA2HOST_INTR			BIT(0)
-> +
-> +#define CPU_CS_H2XSOFTINTEN			(CPU_CS_BASE_OFFS + 0x148)
-> +#define HOST2XTENSA_INTR_ENABLE			BIT(0)
-> +
-> +#define CPU_IC_BASE_OFFS			(CPU_BASE_OFFS)
-> +#define CPU_IC_SOFTINT				(CPU_IC_BASE_OFFS + 0x150)
-> +#define CPU_IC_SOFTINT_H2A_SHFT			0x0
-> +
-> +#define CPU_CS_AHB_BRIDGE_SYNC_RESET		(CPU_CS_BASE_OFFS + 0x160)
-> +#define CORE_BRIDGE_SW_RESET			BIT(0)
-> +#define CORE_BRIDGE_HW_RESET_DISABLE		BIT(1)
-> +
-> +#define CPU_CS_X2RPMH				(CPU_CS_BASE_OFFS + 0x168)
-> +#define MSK_SIGNAL_FROM_TENSILICA		BIT(0)
-> +#define MSK_CORE_POWER_ON			BIT(1)
-> +
-> +#define WRAPPER_INTR_STATUS			(WRAPPER_BASE_OFFS + 0x0C)
-> +#define WRAPPER_INTR_STATUS_A2HWD_BMSK		BIT(3)
-> +#define WRAPPER_INTR_STATUS_A2H_BMSK		BIT(2)
-> +
-> +#define WRAPPER_INTR_MASK			(WRAPPER_BASE_OFFS + 0x10)
-> +#define WRAPPER_INTR_MASK_A2HWD_BMSK		BIT(3)
-> +#define WRAPPER_INTR_MASK_A2HCPU_BMSK		BIT(2)
-> +
->   #define WRAPPER_CORE_POWER_STATUS		(WRAPPER_BASE_OFFS + 0x80)
-> +#define WRAPPER_DEBUG_BRIDGE_LPI_CONTROL	(WRAPPER_BASE_OFFS + 0x54)
-> +#define WRAPPER_DEBUG_BRIDGE_LPI_STATUS		(WRAPPER_BASE_OFFS + 0x58)
-> +#define WRAPPER_IRIS_CPU_NOC_LPI_CONTROL	(WRAPPER_BASE_OFFS + 0x5C)
-> +#define REQ_POWER_DOWN_PREP			BIT(0)
-> +
-> +#define WRAPPER_IRIS_CPU_NOC_LPI_STATUS		(WRAPPER_BASE_OFFS + 0x60)
-> +#define NOC_LPI_STATUS_DONE			BIT(0) /* Indicates the NOC handshake is complete */
-> +#define NOC_LPI_STATUS_DENY			BIT(1) /* Indicates the NOC handshake is denied */
-> +#define NOC_LPI_STATUS_ACTIVE			BIT(2) /* Indicates the NOC is active */
-> +
-> +#define WRAPPER_IRIS_VCODEC_VPU_WRAPPER_SPARE_0	(WRAPPER_BASE_OFFS + 0x78)
-> +
-> +#define WRAPPER_CORE_CLOCK_CONFIG		(WRAPPER_BASE_OFFS + 0x88)
-> +#define CORE_CLK_RUN				0x0
-> +
-> +#define WRAPPER_TZ_CPU_STATUS			(WRAPPER_TZ_BASE_OFFS + 0x10)
-> +
-> +#define WRAPPER_TZ_CTL_AXI_CLOCK_CONFIG		(WRAPPER_TZ_BASE_OFFS + 0x14)
-> +#define CTL_AXI_CLK_HALT			BIT(0)
-> +#define CTL_CLK_HALT				BIT(1)
-> +
-> +#define WRAPPER_TZ_QNS4PDXFIFO_RESET		(WRAPPER_TZ_BASE_OFFS + 0x18)
-> +#define RESET_HIGH				BIT(0)
-> +
-> +#define AON_WRAPPER_MVP_NOC_LPI_CONTROL		(AON_BASE_OFFS)
-> +#define AON_WRAPPER_MVP_NOC_LPI_STATUS		(AON_BASE_OFFS + 0x4)
-> 
->   #endif
-> 
-> --
-> 2.47.3
-> 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> In my previous replies in this thread, I missed mentioning that the macros
+> defined in include/dt-bindings/iio/adc/qcom,spmi-vadc.h are also used in
+> other places than the driver file - they are also used in the PMIC-specific
+> binding files added in this patch, for channel definitions. Considering
+> one channel for example:
+>  
+> We have this in include/dt-bindings/iio/adc/qcom,spmi-vadc.h:
+> +#define ADC5_GEN3_DIE_TEMP			0x03
+>  
+> The above is used in include/dt-bindings/iio/adc/qcom,pm8550vx-adc5-gen3.h:
+> +#define PM8550VS_ADC5_GEN3_DIE_TEMP(sid)			((sid) << 8 | ADC5_GEN3_DIE_TEMP)
+>  
+> And the above definition may be used in device tree, like in the example added
+> in Documentation/devicetree/bindings/iio/adc/qcom,spmi-adc5-gen3.yaml:
+>  
+> +        channel@203 {
+> +          reg = <PM8550VS_ADC5_GEN3_DIE_TEMP(2)>;
+> +          label = "pm8550vs_c_die_temp";
+> +          qcom,pre-scaling = <1 1>;
+> +        };
+
+This is not a driver. I do not understand your argumentation at all.
+
+Best regards,
+Krzysztof
 
