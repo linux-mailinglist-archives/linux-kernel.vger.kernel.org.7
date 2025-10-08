@@ -1,122 +1,184 @@
-Return-Path: <linux-kernel+bounces-845500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A323BC52D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:23:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D84BABC52E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:24:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F33019E04D3
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:24:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C086C4E368F
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:24:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0C228488A;
-	Wed,  8 Oct 2025 13:23:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3744A255222;
+	Wed,  8 Oct 2025 13:24:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="mUKXEgOG";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Ea3gOZ88"
-Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dis6zV80"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D619277009;
-	Wed,  8 Oct 2025 13:23:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39A4250BEC
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 13:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759929832; cv=none; b=SA3k1aWKr0Xz+2d5L+9/ypksmkcuLp2MKd+/c8kxMsIfr7Zvhj+pkcL/cmQLl1H1FDY+mzeqnRNfLzpYyNwaQ7BwBUk3pMemgM0TFL8JAZ1pjlOOBVqQLcWt56r21XiLtYJ+1SDB3GR8bWqeFDjUeLyQwpHrpKWgN3CYLShO7Mw=
+	t=1759929875; cv=none; b=dxwtHaT5HBTB29jWcSjCfa+Db5LOB6Un76OzpT/FI6vBYfFK1HoXKtqsNgiwlbIUbza+oHWV0jdEOZ6W2LYWBLMgz8rNPdUU04COwsn8SNwjkrDANwjEhO4ZdFs0/JNCqlbhCvgU1I1Y5OMDDfiOsw2ucWj6/IrhUkdkucAz8mM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759929832; c=relaxed/simple;
-	bh=63LzR7X/Nh1WbOCrqzTruzI/5vXPhk1WxQz2hU/SmW0=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=lywZX8CFnEe9vmnQePTIkdVxxvdpnREh6xW/miqwGq90A/jhcQyhszeVm0laXKeMCknk1jQvuzCl0eVsMlrw97s4odEnmxEADe7JNr/ukkmJGNY348CyFvhl2qnTK3KmRgVmhwDlBmR6RjZ/tP/e4d9YKdppKWUkRH0GRiou2kI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=mUKXEgOG; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Ea3gOZ88; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id ED32CEC0232;
-	Wed,  8 Oct 2025 09:23:48 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Wed, 08 Oct 2025 09:23:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1759929828;
-	 x=1760016228; bh=63LzR7X/Nh1WbOCrqzTruzI/5vXPhk1WxQz2hU/SmW0=; b=
-	mUKXEgOGAxz9QPlqdp5yD+/sQHMAN7Wfbv+lATjU71v4KbYA5iTJCsUSexFdOf3M
-	NjGRg5BykvMrD0NYR14VOxNXiODiWBlt0He2XGs2cBzeJ54iRFIWZ+y5M3Lau7w2
-	k8Ne/InLXXJYseSBhyTll6rEwqWl6hC710Mm01JdPsRk4CzCcYpRhNyO2xzqbG7Y
-	PXvu9OmJypvoCNJTiTatrC2OXLa14oxL9U0GHK8H3a8r6EMPRCTy4iXBKecDzzsT
-	lIDyrVa9W7XUhfQNXAV57anDpYBFCFkaqF8Mk9WqC6jmdrmTFug+GYWMsyOONAeU
-	44gL+MZN4bPhDMUcyJCAww==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759929828; x=
-	1760016228; bh=63LzR7X/Nh1WbOCrqzTruzI/5vXPhk1WxQz2hU/SmW0=; b=E
-	a3gOZ88lGK2PiVL6Ct1aqG0C6VQaWn+X5VBdeVMs2InsxFGuEvpXs+hG275nNfq7
-	ok5RN2cNY/NfsTkgsE2N8ZY5fhBw1APxVqyX6bt+8SGnFr0wyvJrFCmh35nBYgJD
-	evcAAvVdn6II+eBq6t7wA+dWhiXfNN750URb1DcQmj8BDagpWVe531mYw88vDVT+
-	uoeopzqKsp5eJqZjM622GEth3ZNTt3zTInFM5qh+Si31fyGqykJ8cuSOyn3SimS9
-	3QL6JLmwTbDA+HABjwazYoL1cfrM0i05hx63iqo13qT7qUu+nQkjz6TZjTCk+LB2
-	A57sqNbuHD+Fg8d2TACAQ==
-X-ME-Sender: <xms:5GXmaH4b9fW8g1pMA0aRWSSB398qWM_Hu30OLVoQL476ZjtjhsmsSQ>
-    <xme:5GXmaHu8xmecwjnSNPlifG7xSyP2kdmZwb0GmL7vtl9CU_ClioXTGylHA_WljI9Cp
-    kmSdCquptO6blSbHpRM_oCCJ5G6LWv-JHTvzlrRnDXmHQWYnwThKX8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutdefgeduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
-    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtoheprggrlhgsvghrshhhsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    gsrhgruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjihhrihhslhgrsgih
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrrghlsggvrhhshhesrhgvughhrghtrd
-    gtohhmpdhrtghpthhtohepjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtoheplhhinhhu
-    gidqrghpihesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
-    hfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhu
-    gidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinh
-    hugidqgihfshesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:5GXmaDbtpROmjgydqMuUKqrfyzlZa_5A7qO6XWF3j4lGnLVHlcD5EA>
-    <xmx:5GXmaFeFASN-hNF3ArTS3he1WJHnM84Tr0f6tr4uSvr9aZe-j54-qw>
-    <xmx:5GXmaAnIw_8J33KVl1LtQ5KCt1MsCgoNBvysttAtVQ9Dg1VrImYPcA>
-    <xmx:5GXmaF25YtvRaMtZ7E8Njd66HWKAzvGdXnnRB634U-U4JnKLPCRLOQ>
-    <xmx:5GXmaHeWXam590hkTXUYoSnzMVqh4In3wyi2alVIr1T5y29ecpYeRzIX>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 6685C700065; Wed,  8 Oct 2025 09:23:48 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1759929875; c=relaxed/simple;
+	bh=+z4cw7Kh0UDzc/Mzt4faADLbEJpWktNXzAB2U/Vl3lc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j/bi+6Wc2xGYKHp6ttRkr/0181PBVRJ8phLsd7NbPB5v/cAtMRNapakxyhy8aFGmxiwWIUb528uTEP1LhA6YNuwLDroxB7Xs2VDmtVgKITluo5mDmoK8aBCyceUtL3256Pw4wc5nqIDnZljA3p9kEkyFKjiggsSbvlGXEQ6pl9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dis6zV80; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-637a2543127so13738037a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 06:24:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759929872; x=1760534672; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=BI/TCoi4LzxSA8XfIjZuhJqyGS6WzPwjqlZF4XU4Rk0=;
+        b=Dis6zV80iSK509rUExGQLSoy+RVXoHXGi8fTj6CG2vV7TtkqfKxGu9xq493Ha1XYuY
+         C/WWVZygORk25MH6P9GygIVR2vQyc9iWduSsCtLG5tXwKBa9VUD1bmWQz4mcXSKboCzn
+         /Gm6Uj8pyhxSYjUC4pPFiL6Jly8kNdpz7bzdXpDL6wSO0hR8Bx/RsfDzY8Jjwu41t2pz
+         h9T8Yyq2ma86O1P99CInYl/YJ1mK6IXSKvEcob8b03FTEKboVrPkFzkkSjTIV5+LIMFg
+         kASyOJGAMBCCXk1C35AMUkgfKw54H5QXDIa7Cd2LJpS4o7SdBGWK1Le6TBl9Lcz6Q3d5
+         2ngw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759929872; x=1760534672;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BI/TCoi4LzxSA8XfIjZuhJqyGS6WzPwjqlZF4XU4Rk0=;
+        b=bEd2mRnDJlxBiTJK7FkUVG674ySb4z6GpjmZPA+SsygYNfP3qYavAC5CN02bw6j/uP
+         zdXKfGuDGh5ti4Gvk84PVB9UUhknQP5incuBncgWhZjfLF+cSqvwnNO02sXshymOcRtm
+         z0+SN3QGeLBr/CvIjiL4lk46ptE99RvfeXTWSyYbbAmcqQF+32iDTr5q7PRAWHug9+EP
+         SbTF1C/1Y1YP0aMzSmh7EdwrkRoYF5jHMhoK5ZynzTg6N8znQMAzKiuLE2XvXkgxOs+C
+         RUhV/27IQ//c0TLr6pyxwUdunLipJROvk8E2lE2xRc5Ss31K6GFTeXqlXYRiNsPD5VXB
+         PocA==
+X-Forwarded-Encrypted: i=1; AJvYcCX5Ymyb9MVqaMIWjCeB0mLwuMxYkvKb6+iMXKdtv/FtaGbkIJ/1IEnkyvq121+Z6zvB1MZ2r+/Z8VV9738=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJwRlkFV9PNhkiNDz3VPvZZJ4S2hZCoT1VfLfFsJBl4mONU0TJ
+	PIqe0ul4qi9QDcbIBbOCMetco3o1rdSlTTWmXW7AjSfT7iIw+gx+Jklu
+X-Gm-Gg: ASbGncugIoTPXiMRf4m6p1BX2HNDwq27E51hOdZt+fQqD53X/L6Sri2Nr79kA5fPNhD
+	bZsZQfoDO5O0QLQvc+yiyhh3raAe3iF2gtiWSjAeDF1xrJi3d+bU3TAkAQT3IN0O/b0RfIl/Onl
+	wmbQELDzEQlnvuiZGewkVS/AtWCL5TWnjWuxdAOsjqE7ruy6th2lnWsAZ+JweOezbkQkPqD8cre
+	KUxrq+cZVG+Ir8C9spq5wzCIw2d01TNZmB9qeCbF2eJ9Viasox8Ip6yxr6hOVEEKeZUq0NjGF8r
+	gMkhJE/J5xTVj7bAWhd4zL6gfKgOmNBj9KKHnnhSLeQKZYvcteu+Fz7hsR6Xt/GPgguFT6P1jS4
+	KLc+KYw3I6JEvLnHZEct4ck3oQ3ThnqsGksEBytNX1WhBLEcjxw0ZI2lmWBoGZ7VsfiDNUKPnY+
+	R3yNpQiARio++9ikgxl+m6nxb4l8UUyps=
+X-Google-Smtp-Source: AGHT+IFoTe1GsKoLNfXidCZ8Czjg/nCNLCnzrvEUmCAiPJvugQ49+mFzHnMIpycIWZF3p+SyrTr4cg==
+X-Received: by 2002:a17:907:948f:b0:b07:c90a:8ade with SMTP id a640c23a62f3a-b50aa08f896mr397894066b.20.1759929871888;
+        Wed, 08 Oct 2025 06:24:31 -0700 (PDT)
+Received: from alessandro-pc (net-2-37-207-41.cust.vodafonedsl.it. [2.37.207.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48652aa040sm1650850166b.20.2025.10.08.06.24.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 06:24:31 -0700 (PDT)
+Date: Wed, 8 Oct 2025 15:24:29 +0200
+From: Alessandro Zanni <alessandrozanni.dev@gmail.com>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Alessandro Zanni <alessandro.zanni87@gmail.com>, jgg@ziepe.ca, 
+	kevin.tian@intel.com, shuah@kernel.org, iommu@lists.linux.dev, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] Fix to avoid the usage of the `res` variable
+ uninitialized in the following macro expansions.
+Message-ID: <rfwgp73zuyctbjgxvdgs67gq7g6glfxdd5peimqjiw5inw5h4g@cgmif7gyplct>
+References: <20250924165801.49523-1-alessandro.zanni87@gmail.com>
+ <dc360969-c1af-4b87-a259-cc265a8d553d@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AXClXubP6rjF
-Date: Wed, 08 Oct 2025 15:23:28 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Andrey Albershteyn" <aalbersh@redhat.com>, linux-api@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-xfs@vger.kernel.org
-Cc: "Jan Kara" <jack@suse.cz>, "Jiri Slaby" <jirislaby@kernel.org>,
- "Christian Brauner" <brauner@kernel.org>,
- "Andrey Albershteyn" <aalbersh@kernel.org>
-Message-Id: <5702a4d0-37f9-4131-bb4b-4a192088ec28@app.fastmail.com>
-In-Reply-To: <20251008-eopnosupp-fix-v1-2-5990de009c9f@kernel.org>
-References: <20251008-eopnosupp-fix-v1-0-5990de009c9f@kernel.org>
- <20251008-eopnosupp-fix-v1-2-5990de009c9f@kernel.org>
-Subject: Re: [PATCH 2/2] fs: return EOPNOTSUPP from file_setattr/file_getattr syscalls
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <dc360969-c1af-4b87-a259-cc265a8d553d@linuxfoundation.org>
 
-On Wed, Oct 8, 2025, at 14:44, Andrey Albershteyn wrote:
-> These syscalls call to vfs_fileattr_get/set functions which return
-> ENOIOCTLCMD if filesystem doesn't support setting file attribute on an
-> inode. For syscalls EOPNOTSUPP would be more appropriate return error.
+On Tue, Oct 07, 2025 at 03:28:29PM -0600, Shuah Khan wrote:
+> On 9/24/25 10:57, Alessandro Zanni wrote:
+> 
+> Fix to avoid the usage of the `res` variable uninitialized in the following macro expansions.
+> 
+> ret not res?
+> 
+> You can simplify the shortlog "Fix ret unitialized warning" perhaps.
+> 
+> 
+> > It solves the following warning:
+> 
+> Fix the following warning.
+> 
+> > In function ‘iommufd_viommu_vdevice_alloc’,
+> >    inlined from ‘wrapper_iommufd_viommu_vdevice_alloc’ at
+> > iommufd.c:2889:1:
+> > ../kselftest_harness.h:760:12: warning: ‘ret’ may be used uninitialized
+> > [-Wmaybe-uninitialized]
+> >    760 |   if (!(__exp _t __seen)) { \
+> >        |      ^
+> > ../kselftest_harness.h:513:9: note: in expansion of macro ‘__EXPECT’
+> >    513 |   __EXPECT(expected, #expected, seen, #seen, ==, 1)
+> >        |   ^~~~~~~~
+> > iommufd_utils.h:1057:9: note: in expansion of macro ‘ASSERT_EQ’
+> >   1057 |   ASSERT_EQ(0, _test_cmd_trigger_vevents(self->fd, dev_id,
+> > nvevents))
+> >        |   ^~~~~~~~~
+> > iommufd.c:2924:17: note: in expansion of macro
+> > ‘test_cmd_trigger_vevents’
+> >   2924 |   test_cmd_trigger_vevents(dev_id, 3);
+> >        |   ^~~~~~~~~~~~~~~~~~~~~~~~
+> > 
+> > The issue can be reproduced, building the tests, with the command:
+> > make -C tools/testing/selftests TARGETS=iommu
+> > 
+> > Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
+> > ---
+> >   tools/testing/selftests/iommu/iommufd_utils.h | 8 +++-----
+> >   1 file changed, 3 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/tools/testing/selftests/iommu/iommufd_utils.h b/tools/testing/selftests/iommu/iommufd_utils.h
+> > index 3c3e08b8c90e..772ca1db6e59 100644
+> > --- a/tools/testing/selftests/iommu/iommufd_utils.h
+> > +++ b/tools/testing/selftests/iommu/iommufd_utils.h
+> > @@ -1042,15 +1042,13 @@ static int _test_cmd_trigger_vevents(int fd, __u32 dev_id, __u32 nvevents)
+> >   			.dev_id = dev_id,
+> >   		},
+> >   	};
+> > -	int ret;
+> >   	while (nvevents--) {
+> > -		ret = ioctl(fd, _IOMMU_TEST_CMD(IOMMU_TEST_OP_TRIGGER_VEVENT),
+> > -			    &trigger_vevent_cmd);
+> > -		if (ret < 0)
+> > +		if (!ioctl(fd, _IOMMU_TEST_CMD(IOMMU_TEST_OP_TRIGGER_VEVENT),
+> > +			    &trigger_vevent_cmd))
+> >   			return -1;
+> >   	}
+> > -	return ret;
+> 
+> Hmm. with this change -1 is returned instead of ret
+> 
+> > +	return 0;
+> >   }
+> >   #define test_cmd_trigger_vevents(dev_id, nvevents) \
+> 
+> thanks,
+> -- Shuah
 >
-> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
 
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+This patch has a malformed title. Please refer to the patch called
+'[PATCH v2] selftests/iommu: prevent use of uninitialized variable'.
+But the typo `res`->`ret` is still present. Sorry for that.
+
+About the fix, the assert test just checks if the return value is 0 or
+not. That's why the variable has been deleted.
+By the way, if we prefer to return also the error values, the patch 
+v1 just solves the warnings returning the negative values.
+
+Let me know which version is preferable.
+Thank you,
+Alessandro
+
+
+
+
 
