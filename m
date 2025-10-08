@@ -1,184 +1,103 @@
-Return-Path: <linux-kernel+bounces-845299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C37CBC44ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 12:26:41 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39F31BC4505
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 12:27:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3C5794EB93B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 10:26:40 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DA2F3351059
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 10:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 565872F5A1E;
-	Wed,  8 Oct 2025 10:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD5812F617F;
+	Wed,  8 Oct 2025 10:26:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Pk96gmVc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RcSnmZFl"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CEAB25C6F1
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 10:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B57F2F617D
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 10:26:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759919195; cv=none; b=B9bLcqBWIlAYj5nuk6Ysii29AjlBZNmXTEfpi6fypnE26nWlLZNSLZhfF4L0ifrLNWl1CjIs7ZvGFHl0nHStT6J3K3uYnDOQnBD6u2tkp1IesFakmKWlNxf0NOBP7/qy6zOC/a8boK6gapwqALNoNn5OsyuCKd1oORJrdbmo6yo=
+	t=1759919217; cv=none; b=CUXf4HqQmec/rtOjfwUERk+zTFexYv5J7/jbxlcfC6+WYmSbEKY5XjUK27FdHAhz+Xwztq4+5WcBd9CYhA3vdFzI/qgHUfAjnX8KDlHjxQ4kmpuCa/XEYXa7pIKBKv70G0Dtc0p+tu54S4e78cvaKGIs5A/XQ111eEl5Yn+7zqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759919195; c=relaxed/simple;
-	bh=VjSHKxcJ0gNHVmNHz0fWfNR3mVbvHJ6z4Q+OH4xweJY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z9ZPSnwW3Ngb5SjRRT3pSq7ap41oMCFxlmexQM5h2OyDBikEU/sqZWm5CGU2+cT0InXP1jC+ZSwbV7zXq516zedaDG+NKMfb4B2JyiXJ1mLqXIlRghRMQDVhpR1fcepzTEA7P5cDKx1+y0Gc8eARAZgVeqyueqIGuzzpC9Czxjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Pk96gmVc; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759919192;
+	s=arc-20240116; t=1759919217; c=relaxed/simple;
+	bh=AEFel8Jyuz/acM4rK1Kr9Q7YLMR6GVipoE2WsOQReR4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=X0Hk79uMfFQvt1qtqAQ294r2/iLURsjvQjwdrRp9T4sk0QYhh8rTesfx6LeNxR/049CPY7NhY+0zXz+ecUszLiRqDFpXCa9cnzsHeHfmsb2UWQZ94mKXpQQIg8Jd+HhDrHDrt0owjwHIzSzaFtnLjTUHa4VH7WO7nFPPSpdWTJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RcSnmZFl; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759919202;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=UXwIJjBpKXO7E8fE5tUdln6v7OvJUq+AnJH9CrFMoFc=;
-	b=Pk96gmVcyYSQGvQSTNlxSV4HMdBpEFV6gISK8XDCtMOQ79f6H4SN1mLzrbHTcshapjqz8S
-	hVv2j2Dt9KcVuvFtbbmoWvawpOzHl9vM1kWe4nmI7Zb8yw2v+I84IDU4ttSWDSJTfhQs2R
-	VP0ujVN9p9TeuSe5asKdnz1vv/KBu90=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-140-yK-ZqfIaPKyBf7Q5RzbATQ-1; Wed, 08 Oct 2025 06:26:29 -0400
-X-MC-Unique: yK-ZqfIaPKyBf7Q5RzbATQ-1
-X-Mimecast-MFC-AGG-ID: yK-ZqfIaPKyBf7Q5RzbATQ_1759919188
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-401dbafbcfaso4422290f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 03:26:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759919188; x=1760523988;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UXwIJjBpKXO7E8fE5tUdln6v7OvJUq+AnJH9CrFMoFc=;
-        b=iB7y8+s2M5tcyOTH6xFt6G2cv3pO5yN8OxPIXJgITS9dplEO2ZqEmPCVnTjNSyN3ln
-         GBGbtaOJcVxTpFmhtCnAuTgvc5q/b423pqhX8RIjWg6JYdygrjCBJ7tKZcul+KY6ipFd
-         Rbo0IMzLPCLUcM+OxLsJ/hYBTXERdBldm6bNcczE+9D8+1man914j0w7Iem6LyGof4lL
-         qvramap4PpoXz6oBLZr7RM4mgYDmulra8nx1XAciEOGVc8uY1jlxztarn7nYHda4JTzS
-         PzjYJE9mBFDU0giGA4OfRI/7qE80icVzH1FG2e7VmwFfdTLaelnUYHnGB2cAoNz0dN4W
-         LjXw==
-X-Forwarded-Encrypted: i=1; AJvYcCUdfHMZ5X8sSQqm5xCQq2LbzyZUphjnf64arSL3wsTkQ75+eyonVTM5GuyDf/0t3WnD2dGOSLcU5GZnh7k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUjM9IoCk/cOb4Dm/mCtzSEMmzSq9lIxCS7QkLj17xE9xBL8e9
-	mNGhTe7bJT06XFsjjAMJMNF394xfs37z7bkGngqcbpn/hssxrA0CM2mH9boL0FULD5TrjNTolr3
-	WUjhBgnBwoSIlmwXZrQAcoCQ+G/8AXfm/aZdz5nxFAHSU52J1wfzrRP0IV/e7t1o8dQ==
-X-Gm-Gg: ASbGncuIenFaJ2TIJu8DnvOMGN1VAzAOJsE+s8wRxsgSZit3izlWvxrtk2Kb5fYzkxG
-	zI66xT83At0ZDgc45OCkXJg/0diDXuZYLZNZ61E6wq1YraNqZh+Rmk8h72A75SQKGjQ4m+Pn/T+
-	wA0yVAffWbfw8Enat7izI3MznYktqFGcFHbFRe2BNJWPIIICiD5IwkSyQ+h36EF0jIg1OeLANjl
-	ZPPcfIc3f/CKIi6nfOq0oK7hR+DcnLWcR3sB+UHavD0/cETQMuADOSTrBwCVRj/vhSHt9zBIWX5
-	HD+97CAVMjaC5fMKityjQuM1ZpWWD0VOTXIB+RxwszK+9WB6dRpRJuBzmiEFRXvRczTCaCUtrB5
-	NsqRL6tBe
-X-Received: by 2002:a05:6000:2681:b0:3fe:1d64:1871 with SMTP id ffacd0b85a97d-4266e8de136mr1541007f8f.43.1759919187619;
-        Wed, 08 Oct 2025 03:26:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHHSAhzc7EBO8Wv+Pho47zVV3pMt7ReDYmrIJqLkk48WveXox1GZPXN3xqLxQ5wez5fCeuzgw==
-X-Received: by 2002:a05:6000:2681:b0:3fe:1d64:1871 with SMTP id ffacd0b85a97d-4266e8de136mr1540982f8f.43.1759919187164;
-        Wed, 08 Oct 2025 03:26:27 -0700 (PDT)
-Received: from [192.168.3.141] (tmo-083-110.customers.d1-online.com. [80.187.83.110])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8a6c3esm29607923f8f.1.2025.10.08.03.26.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Oct 2025 03:26:26 -0700 (PDT)
-Message-ID: <41e7c36a-1349-4973-b133-316c823ead36@redhat.com>
-Date: Wed, 8 Oct 2025 12:26:24 +0200
+	 to:to:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=g6KcRE+7jq80YyojGjcpCzmM0DGnxx2JGBpTmSjkJUM=;
+	b=RcSnmZFl17t/tG5HV3zY0RGJUPLeSikcyFaU03nYTXtQes6lCzUELJg207w0XPfMz4CHcH
+	/68451It8zsEjMo/7eOXhISNnXMcUB1EFWrby2hSXnK7eJRknPUVJgYNWGwSi6qgXepnsp
+	XAcqKloTYrnAZhgATz6Xl3/+3wwOFQU=
+From: KaFai Wan <kafai.wan@linux.dev>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	shuah@kernel.org,
+	kafai.wan@linux.dev,
+	toke@redhat.com,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH bpf v3 0/2] bpf: Avoid RCU context warning when unpinning htab with internal structs
+Date: Wed,  8 Oct 2025 18:26:25 +0800
+Message-ID: <20251008102628.808045-1-kafai.wan@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] mm, swap: cleanup swap entry allocation parameter
-To: Nhat Pham <nphamcs@gmail.com>, Kairui Song <ryncsn@gmail.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
- Kemeng Shi <shikemeng@huaweicloud.com>, Baoquan He <bhe@redhat.com>,
- Barry Song <baohua@kernel.org>, Chris Li <chrisl@kernel.org>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Ying Huang <ying.huang@linux.alibaba.com>, linux-kernel@vger.kernel.org
-References: <20251007-swap-clean-after-swap-table-p1-v1-0-74860ef8ba74@tencent.com>
- <20251007-swap-clean-after-swap-table-p1-v1-3-74860ef8ba74@tencent.com>
- <CAMgjq7DGy_ZmPqcqUO6s5BN381Zuee_g3KWjVqM3amLhpwE=2g@mail.gmail.com>
- <CAKEwX=PLfQCWZV7i9YP9UvcTmnHZXr635t3BX9D2uLEVr-Fnqw@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <CAKEwX=PLfQCWZV7i9YP9UvcTmnHZXr635t3BX9D2uLEVr-Fnqw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
->>> diff --git a/mm/swapfile.c b/mm/swapfile.c
->>> index 732e07c70ce9..534b21aeef5a 100644
->>> --- a/mm/swapfile.c
->>> +++ b/mm/swapfile.c
->>> @@ -1425,7 +1425,7 @@ static bool swap_sync_discard(void)
->>>    * Context: Caller needs to hold the folio lock.
->>>    * Return: Whether the folio was added to the swap cache.
->>>    */
->>> -int folio_alloc_swap(struct folio *folio, gfp_t gfp)
->>> +int folio_alloc_swap(struct folio *folio)
->>>   {
->>>          unsigned int order = folio_order(folio);
->>>          unsigned int size = 1 << order;
->>
->> One trivial issue for myself, I better update the kerneldoc too...
->> sorry about this:
->>
-> 
-> LGTM, with the kerneldoc update:
-> 
-> Acked-by: Nhat Pham <nphamcs@gmail.com>
-> 
+This small patchset is about avoid RCU context warning when unpinning
+htab with internal structs (timer, workqueue, or task_work).
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+v3:
+  - fix nit (Yonghong Song)
+  - add Acked-by: Yonghong Song <yonghong.song@linux.dev>
+
+v2:
+  - rename bpf_free_inode() to bpf_destroy_inode() (Andrii)
+ https://lore.kernel.org/all/20251007012235.755853-1-kafai.wan@linux.dev/
+
+v1:
+ https://lore.kernel.org/all/20251003084528.502518-1-kafai.wan@linux.dev/
+
+---
+KaFai Wan (2):
+  bpf: Avoid RCU context warning when unpinning htab with internal
+    structs
+  selftests/bpf: Add test for unpinning htab with internal timer struct
+
+ kernel/bpf/inode.c                            |  4 +--
+ .../selftests/bpf/prog_tests/pinning_htab.c   | 36 +++++++++++++++++++
+ .../selftests/bpf/progs/test_pinning_htab.c   | 25 +++++++++++++
+ 3 files changed, 63 insertions(+), 2 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/pinning_htab.c
+ create mode 100644 tools/testing/selftests/bpf/progs/test_pinning_htab.c
 
 -- 
-Cheers
-
-David / dhildenb
+2.43.0
 
 
