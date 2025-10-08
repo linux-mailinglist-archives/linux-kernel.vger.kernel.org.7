@@ -1,121 +1,82 @@
-Return-Path: <linux-kernel+bounces-845110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 453FCBC389E
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 09:07:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7834ABC38A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 09:08:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C59513AEE94
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 07:07:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8009519E0820
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 07:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38E812F0C78;
-	Wed,  8 Oct 2025 07:07:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7AAA2F0C75;
+	Wed,  8 Oct 2025 07:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="khNh2FH9"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=lublin.se header.i=@lublin.se header.b="BXaV/Sjy"
+Received: from mailgate01.uberspace.is (mailgate01.uberspace.is [95.143.172.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F48D19F137;
-	Wed,  8 Oct 2025 07:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9217C2F0C6E
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 07:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.172.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759907231; cv=none; b=mZvqpUqNwCeKnKBbyF2rDLSuScUELUmXRHw8zuVX8U0CCt2actV/BbxRtEEjtSgBrgUSJ1H7EZClyvnsi5mPD/vPUkVEGwO+HOLPpy0sQq108HicPek/6Eb3yNrc7uKmiITzB9JyQK+WwrSsf85PXDDEdPbJMLCxnlZTliCshqA=
+	t=1759907298; cv=none; b=AhaXEnTyGJU+e7w8xaTL6elR+NyfDBkbIuQB4/D8xeQv1IVumRraY3SS5N6XAwtOZ8j3mZ4mvNiG9Uv36WUNnnPz8LV3vnjAHW5vtSuY0RZQvJo9LMkXWY3EI3JjB2WmALpAj8+FZNG738ORakTEaQtMjBm9ovDXk7eVypJchuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759907231; c=relaxed/simple;
-	bh=9s3DFkptPpbASkGIufDgeis2Emtgt5t72Kt2fxxiNIc=;
+	s=arc-20240116; t=1759907298; c=relaxed/simple;
+	bh=SuUvUUOMrXv9aKVf/ayIBD+ut6qLodp8LTtULaKwLS4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RHczZxj8ofmr7sbs3aMUlL3Mtl/FAbRxy7FRoiRnqI3FgE1eVXI9NcePJWmQ2ePKxgypnt/o1X6nrKB2qWbL8s2eTZIrHCng9vNRIUujwT2jQlWUkImloGgaFFpxes48/WC0cK+rs24yGZZTK1QrXfrSEDlh2Mi92fZgkmI58vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=khNh2FH9; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 2B4B84E40F7D;
-	Wed,  8 Oct 2025 07:07:03 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id EDCD0606E5;
-	Wed,  8 Oct 2025 07:07:02 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1B149102F1CA4;
-	Wed,  8 Oct 2025 09:06:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1759907222; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=eBNgKNNk2NNtvMNclSC/XfautocVXf61NgAtMNczS/k=;
-	b=khNh2FH98tNbjYfkWAKORU7PNO/K4DQaGVKeea3aWvvXF8RvK6y0qc+RxMbDVlpWvsqpIJ
-	a10L3h7pAtjStGLdu4LxqiGySb38yOyELhaZR+GEd2A2y3D7cL8MU1puy8eec9IQLp6bv3
-	JH+ambC9PBfy1ZZxWlelZet5R4rRYbnbVh9Zvc0jOM1KQpjq2+k00VrbKbMtUwrJG/OcMR
-	YYZQC7AwFiaiwrPaBegTrXD5BelATJ2Q9dIsxk68l/nTS+N/Mx3eN90NjX1Lzt2yhJzVRj
-	VcAacZ27C7P5rHh7knl8FalL92AQvqtUAusrM1jt7ulcoEKIcDCLENMeU7giuQ==
-Date: Wed, 8 Oct 2025 09:06:52 +0200
-From: Kamel Bouhara <kamel.bouhara@bootlin.com>
-To: Dharma Balasubiramani <dharma.b@microchip.com>, g@tpx1.home
-Cc: William Breathitt Gray <wbg@kernel.org>, 
-	Bence =?utf-8?B?Q3PDs2vDoXM=?= <bence98@sch.bme.hu>, linux-arm-kernel@lists.infradead.org, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] counter: microchip-tcb-capture: Allow shared IRQ for
- multi-channel TCBs
-Message-ID: <ijigaljlomxtyoy6ha2czocr7gnjqfdxs6kuhg3w4jxlwj4cr5@yum4paorabnm>
-References: <20251006-microchip-tcb-v1-1-09c19181bb4a@microchip.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=vAAo808eDTguHKbleGUwPLDZsRoRSFLiGNVq9pkNbYM7TQz3mduTRRQDcqiBLWGJ0tIG6Fb0bV8GazZ9vcNBzUAHhbDrSUkkdTSdPOtwJ2rdhi+cL1iI8FGzknfz2CvmYIiZDXMFMWYSXhsqwUt4OpB32tiqI58p5XommorQZfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lublin.se; spf=pass smtp.mailfrom=lublin.se; dkim=fail (0-bit key) header.d=lublin.se header.i=@lublin.se header.b=BXaV/Sjy reason="key not found in DNS"; arc=none smtp.client-ip=95.143.172.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lublin.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lublin.se
+Received: from dysnomia.uberspace.de (dysnomia.uberspace.de [185.26.156.223])
+	by mailgate01.uberspace.is (Postfix) with ESMTPS id 07EE160C3E
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 09:08:08 +0200 (CEST)
+Received: (qmail 31825 invoked by uid 989); 8 Oct 2025 07:08:02 -0000
+Authentication-Results: dysnomia.uberspace.de;
+	auth=pass (login)
+Received: from unknown (HELO unkown) (::1)
+	by dysnomia.uberspace.de (Haraka/3.0.1) with ESMTPSA; id 2D81A2689AB6; Wed, 08 Oct 2025 09:08:02 +0200 (CEST)
+Date: Wed, 8 Oct 2025 09:08:02 +0200
+From: Daniel Lublin <daniel@lublin.se>
+To: David Howells <dhowells@redhat.com>,
+	David Woodhouse <dwmw2@infradead.org>
+Cc: keyrings@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sign-file: Show -k flag in usage when built for CMS
+ signing
+Message-ID: <22283629-6386-4d04-99c9-947669f013a2@corax>
+References: <e66415d1953fbb074e2e32f0e6cdcaa0d027b550.1748951428.git.daniel@lublin.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251006-microchip-tcb-v1-1-09c19181bb4a@microchip.com>
-X-Last-TLS-Session-Version: TLSv1.3
+In-Reply-To: <e66415d1953fbb074e2e32f0e6cdcaa0d027b550.1748951428.git.daniel@lublin.se>
+X-Rspamd-Bar: --
+X-Rspamd-Report: BAYES_HAM(-2.835451) MID_RHS_NOT_FQDN(0.5) MIME_GOOD(-0.1)
+X-Rspamd-Score: -2.435451
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=lublin.se; s=uberspace;
+	h=from:to:cc:subject:date;
+	bh=SuUvUUOMrXv9aKVf/ayIBD+ut6qLodp8LTtULaKwLS4=;
+	b=BXaV/SjyYpgocKr7tuvCYGrfmJo4s8MRkEHb3dSyVDi0/TJibgBIzzJ/aH/gDQS/a7i1fPxqta
+	W6BayWbnVSoIvsHXQFWc0Fbp/XfYlA5EtyJ1rTqHQr63R+nXLyROqz6MSV80R9Yz6IonO2cmP6on
+	cj8gz4an5bbmfSMxfJaSL/gTj+4o7OxAfGESlmzWo5/l8LXKvtxKCMNSjHPLnRe/FVrg4KPzFDmf
+	4f1JNt8xsWUjVqg8HBC0oe6UtIctL0UsGt5aUs0QDwogHGjnN1G2pndIeDREsVvzO1fpTywEY1tm
+	bmvtlT029HuozlqZU0xSHn3NrEO2FrPdweopIF9n9fMt03lUG+ewHoENwAZ/GB2WT4UEi2SlM7Ua
+	NMisG+aowDIyDnUyyxd2IdRbw6PJ9QI7OG0nifqGT2Xf/LzKDVoHkIvj84ZkyXpNtlxx0Ly+aL2L
+	Xm1KmsF8vYY4ziR52vpMsu6oeAnxEQNEAblPsDr36zi5UYYRZSYcYHYPMD9Fzc6H5OYUlOOTeHqp
+	mFtVDFhFcPTAQ9yc+3GZw+9dcFnWX8b59O8x63y/TpyZ0giAR/LB3VGHUyKfJj9CXD5zhkvcQpyh
+	sEcZ827dW16VwRKvIJ1kvs93aApVmjAYhofY5sX127IRiqxkeB54cRZosAJP4ExCaVTD7FXqjuQY
+	E=
 
-On Mon, Oct 06, 2025 at 04:21:50PM +0530, Dharma Balasubiramani wrote:
+Any comments on this? Yay, or should we forget it?
 
-Hello Dharma,
-
-> Mark the interrupt as IRQF_SHARED to permit multiple counter channels to
-> share the same TCB IRQ line.
->
-> Each Timer/Counter Block (TCB) instance shares a single IRQ line among its
-> three internal channels. When multiple counter channels (e.g., counter@0
-> and counter@1) within the same TCB are enabled, the second call to
-> devm_request_irq() fails because the IRQ line is already requested by the
-> first channel.
->
-> Fixes: e5d581396821 ("counter: microchip-tcb-capture: Add IRQ handling")
-> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
-> ---
->  drivers/counter/microchip-tcb-capture.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/counter/microchip-tcb-capture.c b/drivers/counter/microchip-tcb-capture.c
-> index 1a299d1f350b..19d457ae4c3b 100644
-> --- a/drivers/counter/microchip-tcb-capture.c
-> +++ b/drivers/counter/microchip-tcb-capture.c
-> @@ -451,7 +451,7 @@ static void mchp_tc_irq_remove(void *ptr)
->  static int mchp_tc_irq_enable(struct counter_device *const counter, int irq)
->  {
->  	struct mchp_tc_data *const priv = counter_priv(counter);
-> -	int ret = devm_request_irq(counter->parent, irq, mchp_tc_isr, 0,
-> +	int ret = devm_request_irq(counter->parent, irq, mchp_tc_isr, IRQF_SHARED,
->  				   dev_name(counter->parent), counter);
->
->  	if (ret < 0)
->
-> ---
-> base-commit: fd94619c43360eb44d28bd3ef326a4f85c600a07
-> change-id: 20251006-microchip-tcb-edd8aeae36c4
->
-
-This change makes sense, thanks !
-
-Reviewed-by: Kamel Bouhara <kamel.bouhara@bootlin.com>
-
-> Best regards,
-> --
-> Dharma Balasubiramani <dharma.b@microchip.com>
->
-
---
-Kamel Bouhara, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+-- 
+Daniel
+lublin.se
 
