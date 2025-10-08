@@ -1,177 +1,126 @@
-Return-Path: <linux-kernel+bounces-845942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA3F7BC68A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:06:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 731C9BC6886
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:05:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ABA2B4F0752
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:06:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48E3219E0950
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A25528642B;
-	Wed,  8 Oct 2025 20:06:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE5E2777FC;
+	Wed,  8 Oct 2025 20:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kael-k.io header.i=@kael-k.io header.b="ZTq39Syw"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="c3rWTybu"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3CE828468B;
-	Wed,  8 Oct 2025 20:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F9442AA3
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 20:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759953973; cv=none; b=O5MtbUiLUr5qH4iaWk3i+tYCYhqPBDyj1tnsTcpWT2mlFY/CoDGo0AIeOIKRQqb7feJrisvFVd/suglm7Bv8LNe604PBdWkP+7po3h4U7NQiqg7N7GZO6KdxabqO/sfB80ASc1d/8Yo4bv9qQpmEc5fOK0UExgp62QJbt+yKLrg=
+	t=1759953904; cv=none; b=diW4pZfLsFBINIpjEmXUA9GM/xTtObn8rg2zzVtvneMkQWZF3DCG8QXbCB4NkhaWfQbq6QxIubNT8KO6WwRNed1Mr8H6+b4HzHxqEr2AMXEhZhaj+BXbt0gWzwsdWUGgg8nBoA3i+zBdyuiaujwQ3V34P1iQh7Mpx0V0ZmD7FFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759953973; c=relaxed/simple;
-	bh=5/BlZHxImdfT5nQx8NqwxqIt1Iw0n0mNCipRLrdIQb8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dju2mluCEegPKbg2R99PTKzyUgycidTdt8bN7XXNCzBnON2s2VdYqUxgy8g8CYxyjMtG+mJH3Ekc4pBXVHqxN3fVtWd5ol0cg9iVyF4Aw7hj4ZuOdntjhb/qsfpa6gLLN2RtiulpTFNYYfUJ7bvH2kZLETI2RvJY65hLD1qUIdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kael-k.io; spf=pass smtp.mailfrom=kael-k.io; dkim=pass (2048-bit key) header.d=kael-k.io header.i=@kael-k.io header.b=ZTq39Syw; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kael-k.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kael-k.io
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4chkXV1Ddtz9tGx;
-	Wed,  8 Oct 2025 22:06:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kael-k.io; s=MBO0001;
-	t=1759953962;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DkahFsDi6WgEBokAFq9960SlJ6AhkwmGq9ESS2G4GHA=;
-	b=ZTq39SywICPVWsc3J6SZbHMDsZqgJImqF1xooe7SaqIshULuijjA7ZB3b+iR8VqiNIFCIj
-	oFBSAeEv1Z9JrFEjr2MslebNh8G0OVaHfdUcRQPgPTKKqvm0rjZt1vvImUPKpv/IIwWSWy
-	p4ffyj2SVvqhUO65LIUm0FsuSoxyCsxKDEbiBHTS+kc4rli/pW461E5YeqK5NSvxC3OnjY
-	amGkL6ZdwFj0pKj0BttxFHDD8kjl7/sK96dBiYn7KsTyUD6pVTx08LsEPYStq8E0p57hbh
-	/qoMbCxtUYYaekTWJLHidyguj9Y5l6dlfafndrTBTcMYU/6DJ4ExTMAPHNKSHA==
-From: Kael D'Alcamo <dev@kael-k.io>
-To: Andi Shyti <andi.shyti@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Wei Yan <sledge.yanwei@huawei.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/1] dt-bindings: i2c: hisilicon,hix5hd2-i2c convert to DT schema
-Date: Wed,  8 Oct 2025 22:04:27 +0200
-Message-ID: <20251008200535.17464-2-dev@kael-k.io>
-In-Reply-To: <20251008200535.17464-1-dev@kael-k.io>
-References: <c2e81faf-4d2c-40e7-bdf0-e0d41fc76d9c@kernel.org>
- <20251008200535.17464-1-dev@kael-k.io>
+	s=arc-20240116; t=1759953904; c=relaxed/simple;
+	bh=gJ+kQ8Th5n7sm7JliFtNiVYTbO+kOF6/EavJhQDsQHk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Y2h064WkbXMGIBW/OUng3TH6w6dFoHeusL4Ux2TuFcR8YhCUVLbiiljrcjdrzqCVzsmqdUqFaB6Ed0ZTeIrB79W/FSw6GD9+WEhcD5ngiza0wSrPF7GtXAs4zy16+3ochmO/T+BagypyNgjtlscMm1CEEj+cpbURfl8C4qkidh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=c3rWTybu; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b3c2db014easo45620366b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 13:05:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sigma-star.at; s=google; t=1759953900; x=1760558700; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3kxgqcyx0jP4OzWdmCcz5dhr6b/zaz3Exv0oc29FIvs=;
+        b=c3rWTybuA8JzZQRVVgPh08xP+Y6vhu38n3jMNnMXSW0quajeRcWQFEN6EK8kBNQ500
+         LgiCtlYIvZ6cXrnJKNBkStFlXfTHxC3yjriHuNsvaUWBTjYph7ODhPLND85TsFBbM0Bn
+         dnjVEqBn1b0qMVz89ykOW6aHXmQ3ij07lbleum01z/sZgAIHaWz2TKYyWE+53hDVKzNv
+         v23uBlBW9tp6AdCY65Mf6/X7XywSQdmI4MnN8SYkf+c6GOxrFQFniK0oihSY/8Mn2uiq
+         78oAGoKmTE3uRzvOJhGDjw0xHBV4stjsyWUddnceDrein9EP7/QSRLWrTsZwgg0F0vFk
+         qZNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759953900; x=1760558700;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3kxgqcyx0jP4OzWdmCcz5dhr6b/zaz3Exv0oc29FIvs=;
+        b=GYqXxVsCgwh2GbtLiUi0LO0AVkcBRY43xO5DLMi1zQPL5MKFPFEAx0G+wNwxQ2cv9q
+         Mo8CoLVwrDltzUkMDDFUhnhy0fYPuk/wtfucoRBvZUmZmngrkkeLkuyst0II/VrC8Wfz
+         bWO0k5PBO4BqLBn8NyPGfloGof/aw/RlqE8aKPNdSHQxuCv1rlTXG4N6NHhNsNf2oz/p
+         0G3LqkmeymcpzjykKNIk2ZIksaQEOsr8DRBqqB/KY/IxricBmpdSdRiKfdaYk076Sr4C
+         uu9Vt/BSgstZsHvx0F6VmLKMCr+/z8ZN7kzDQch4Co6CCnhX1RW4h3udPQsYYjYB9dxT
+         W+RA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRvVj33ImYH3mgUtFoIugW3SvR3/VfHpiDPlJNO0ynz1xtoVsAhVoczfjb2OWS+8dVErSipGWtwwHylhg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyjl2X5HVM3bnEI2qgzqDFoB7k1R5aPfe7cH3huj3jNnmKm3YFg
+	zdN3cV6xnSaKlDXjmevpizTaTrEVSXaHeMTfELctlb1bh4hbWvZa4+7x1/dVKz1bMhw=
+X-Gm-Gg: ASbGncvGr29oUvxA/tpjv2HDhrOQYOHsGJP7HLcm8htTsND0NeoWuAJhrX0BbBtIwcF
+	55oLluGHXK2NXmJXbb/NmBTKuS3Z4gQfW/nFHMql1PJyyrvE0hPsPWRhmwJiPhLd5GzkFYaSNqS
+	uSD8Oq6y7/jiGVhuqQm+qjpkCI3MD4ffmitbD5f2/0Bhmhbl4R9JVv3okpMtvu/kn5AbrsETaem
+	e73Gp/L6+V1DzS0X/av00X77MsxZUY3H9nW9d7bKrimEdyOrcKJKrYRL5su8JnfdLrlcA4hfuFP
+	H33V+VTr1OBOos0iKFbXrMf2WHA2Q+l/d/MnQS83rwDZZ0xggFUnqJA6WeVvJhvw3EYge+ukvD6
+	LbI1X8zrPAMogtDKVohZTfpX1MX/Cwokvt4wgz9NrPbwKKV0etZQ2yc+g1SYB8AJw38YM+Qetx0
+	pAeKsXx5TcBOo=
+X-Google-Smtp-Source: AGHT+IEXXGVckslNWliP/tNzD5inE9P8uAQLj9Hu0Y4ERfwHRS/k5BADAG308Wsx5e+ABMKUAZeSfw==
+X-Received: by 2002:a17:907:3daa:b0:b46:31be:e8f0 with SMTP id a640c23a62f3a-b50a9c5b3c8mr584397866b.3.1759953899643;
+        Wed, 08 Oct 2025 13:04:59 -0700 (PDT)
+Received: from somecomputer (85-127-105-34.dsl.dynamic.surfer.at. [85.127.105.34])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b4869b4d9f5sm1758754566b.66.2025.10.08.13.04.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 13:04:59 -0700 (PDT)
+From: Richard Weinberger <richard@sigma-star.at>
+To: linux-remoteproc@vger.kernel.org
+Cc: andersson@kernel.org, mathieu.poirier@linaro.org, p.zabel@pengutronix.de,
+ s-anna@ti.com, t-kristo@ti.com, afd@ti.com, linux-kernel@vger.kernel.org,
+ upstream+rproc@sigma-star.at
+Subject: omap_remoteproc: Deadlock due to runtime PM
+Date: Wed, 08 Oct 2025 22:04:57 +0200
+Message-ID: <6460478.iFIW2sfyFC@nailgun>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-Convert the Devicetree binding documentation for:
-* hisilicon,hix5hd2-i2c
-from plain text to DT binding schema.
+Hi!
 
-Signed-off-by: Kael D'Alcamo <dev@kael-k.io>
----
- .../bindings/i2c/hisilicon,hix5hd2-i2c.yaml   | 51 +++++++++++++++++++
- .../devicetree/bindings/i2c/i2c-hix5hd2.txt   | 24 ---------
- 2 files changed, 51 insertions(+), 24 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/i2c/hisilicon,hix5hd2-i2c.yaml
- delete mode 100644 Documentation/devicetree/bindings/i2c/i2c-hix5hd2.txt
+I'm seeing a reproducible deadlock in omap_remoteproc during system
+reboot or shutdown while the remote processor is running.
 
-diff --git a/Documentation/devicetree/bindings/i2c/hisilicon,hix5hd2-i2c.yaml b/Documentation/devicetree/bindings/i2c/hisilicon,hix5hd2-i2c.yaml
-new file mode 100644
-index 000000000000..3faa7954e411
---- /dev/null
-+++ b/Documentation/devicetree/bindings/i2c/hisilicon,hix5hd2-i2c.yaml
-@@ -0,0 +1,51 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/i2c/hisilicon,hix5hd2-i2c.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+title: I2C for HiSilicon hix5hd2 chipset platform
-+
-+maintainers:
-+  - Wei Yan <sledge.yanwei@huawei.com>
-+
-+allOf:
-+  - $ref: /schemas/i2c/i2c-controller.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - hisilicon,hix5hd2-i2c
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-frequency:
-+    description: Desired I2C bus frequency in Hz
-+    default: 100000
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/hix5hd2-clock.h>
-+
-+    i2c@f8b10000 {
-+        compatible = "hisilicon,hix5hd2-i2c";
-+        reg = <0xf8b10000 0x1000>;
-+        interrupts = <0 38 4>;
-+        clocks = <&clock HIX5HD2_I2C0_RST>;
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+    };
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-hix5hd2.txt b/Documentation/devicetree/bindings/i2c/i2c-hix5hd2.txt
-deleted file mode 100644
-index f98b37401e6e..000000000000
---- a/Documentation/devicetree/bindings/i2c/i2c-hix5hd2.txt
-+++ /dev/null
-@@ -1,24 +0,0 @@
--I2C for Hisilicon hix5hd2 chipset platform
--
--Required properties:
--- compatible: Must be "hisilicon,hix5hd2-i2c"
--- reg: physical base address of the controller and length of memory mapped
--     region.
--- interrupts: interrupt number to the cpu.
--- #address-cells = <1>;
--- #size-cells = <0>;
--- clocks: phandles to input clocks.
--
--Optional properties:
--- clock-frequency: Desired I2C bus frequency in Hz, otherwise defaults to 100000
--- Child nodes conforming to i2c bus binding
--
--Examples:
--I2C0@f8b10000 {
--	compatible = "hisilicon,hix5hd2-i2c";
--	reg = <0xf8b10000 0x1000>;
--	interrupts = <0 38 4>;
--	clocks = <&clock HIX5HD2_I2C0_RST>;
--	#address-cells = <1>;
--	#size-cells = <0>;
--}
--- 
-2.51.0
+The deadlock occurs as follows:
+rproc_cdev_release() -> rproc_shutdown() -> mutex_lock_interruptible(&rproc->lock)
+-> rproc_stop() -> omap_rproc_stop() -> pm_runtime_get_sync()
+
+pm_runtime_get_sync() triggers omap_rproc_runtime_resume(),
+which attempts to take rproc->lock again, leading to a deadlock.
+
+In other words, rproc->lock is being used within the omap_remoteproc
+runtime PM ops, which can conflict with other call paths that already
+hold the same lock.
+
+It was introduced with the following change:
+
+commit 5f31b232c67434199558fd236e7644b432636b76
+Author: Suman Anna <s-anna@ti.com>
+Date:   Tue Mar 24 13:00:32 2020 +0200
+
+    remoteproc/omap: Add support for runtime auto-suspend/resume
+
+It seems the lock is taken in the PM ops likely because rproc->state 
+is accessed, but perhaps this can be relaxed or refactored to avoid
+the circular dependency.
+
+Has anyone else encountered this issue,
+or is there a known fix or approach to address it?
+
+Thanks,
+//richard
+
 
 
