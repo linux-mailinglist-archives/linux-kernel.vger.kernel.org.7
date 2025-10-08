@@ -1,65 +1,102 @@
-Return-Path: <linux-kernel+bounces-845342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12250BC4849
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:13:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D859DBC4856
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:14:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7EDDA4E210E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:13:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFE0C3C3D26
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB572F619B;
-	Wed,  8 Oct 2025 11:13:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED452F6571;
+	Wed,  8 Oct 2025 11:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NswvwVkB"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kVw51J2j";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="33peweNC";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kZPVtsqf";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uN3dwGld"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3954D2F6191
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 11:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDAAF2F60CB
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 11:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759922007; cv=none; b=pLUtvjdidc5RV4JiH8XEBi2vp0FHjLJ7QmUMXDH7qLf9r2d3wMtTgw94yierho5x+/UawrdkB4C/cQOLXaj8vILsjT1rmac74VMTpZntOyJHnceAeEA02b5crK/0OIRUMtWsn+gH/ulqoB3cf9+GjwjtzI42eKfQkrlQHWUzsLc=
+	t=1759922082; cv=none; b=cqp0qvFXmC0M4emxtntyBRtzJ+cmE+CV6Z8ZgvorMqXI2ksglPLNp4gY4I5sE4QpoXyFBtLjK33EUsKLniRj1XAux4pWjdOtxHQw4yGqYFi0XiZHTtxbWtZP0NxUpWDXJn56OPzUVlFjdlZY/+gThjaii8GuTV31CiALmd5ddU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759922007; c=relaxed/simple;
-	bh=FPytbSRlOjVWlhzAY9VHIBuO0copWLlWeNWQr7fesMU=;
+	s=arc-20240116; t=1759922082; c=relaxed/simple;
+	bh=6DQNYqui5CozLrzJOv+yfVgFFIg4Lgpaj3p9yDDWsoQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ht97WgVOvt0HPJC6db67q77UaAlOxYKkCxWjn4+sOcVB3nhN/zm7u3LyjRZPvPm6XqLgmfZ0CAn9GgH9VfbNgg4WEny9WOe15ca1Twpr9mc2+kxX0tebOu5MBQMQ967+eaUa1CSEj1rSL58FyX0I+l0mP19fg/bocBxmENPd0vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NswvwVkB; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=tdDIVtOYGpm2++YgbsDVSjiZxnJfoMZtqbtSNzOB9kQ=; b=NswvwVkBptMaMcaLLNDJraO0Bh
-	mQhVDp1UW00x1dp/H+LqT/PuWhQSihQwnbOF9akqqXSn6FS8Hy4zqB3XFeoZHhyesdQNjrKtv0ozS
-	RCHU7guF9oZHXzSSkFfu1A1CDhtj4P/bEOGEpqjSF1/h6WlX38m/NfDhzPHh0qiqMOo4w9h2No42x
-	i2kwadyqVdN7irBtCUVptwSyGiv9zhhwhi7cbhwbsiGaCrq7WtgM2QSYiZZbRcYq9fVvx+6vkLcD8
-	Cufxj3v6VFXQrFaJrGaj499JktPsXWWkN/esrhZVMgmmRHRo7XhE8ovR+F13gYdiB3g0QG+LEtwkk
-	PIEzWccQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v6S6c-00000003eAk-3UjU;
-	Wed, 08 Oct 2025 11:13:16 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id EC92E300220; Wed, 08 Oct 2025 13:13:14 +0200 (CEST)
-Date: Wed, 8 Oct 2025 13:13:14 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Shrikanth Hegde <sshegde@linux.ibm.com>
-Cc: Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>, jstultz@google.com,
-	stultz@google.com
-Subject: Re: [bisected][mainline]Kernel warnings at
- kernel/sched/cpudeadline.c:219
-Message-ID: <20251008111314.GI3289052@noisy.programming.kicks-ass.net>
-References: <8218e149-7718-4432-9312-f97297c352b9@linux.ibm.com>
- <20251008095039.GG3245006@noisy.programming.kicks-ass.net>
- <5a248390-ddaa-4127-a58a-794d0d70461a@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RzMe6WXRN3IQaTWszB3rwVtduPQfKFLciHkHElj+BR6kuy604xjEk2DX8s1RW0SuDX4RAtK64t8PvkDsu2qkGneBzZdrBw16X9ySlmVoYKsEzJljPmNQGfUGbF3WsinMNy2bosBw8q8Oldi5QwklCy+zDH8DXxaPOLSNXFi7stA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kVw51J2j; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=33peweNC; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kZPVtsqf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uN3dwGld; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C73731F395;
+	Wed,  8 Oct 2025 11:14:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759922078; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fc/04qoN/PMDbssSJP/92cG5yZ5biHITDhDiKMO97Aw=;
+	b=kVw51J2j/E7tVEzyyLxqoBAdREbgmWnsf7WzPsMcIJapYif0H4STyvrK1SMgv22387PxqI
+	iWllC/fTDgNaYsMzOPRNJfRU3i4BtM2copjCIkvFfrTnaixx906B7oZvwmlwWnEEGV8mq8
+	pyBciYIPSqmTg15kLuNUZr0lw252dXE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759922078;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fc/04qoN/PMDbssSJP/92cG5yZ5biHITDhDiKMO97Aw=;
+	b=33peweNCNeyqrEz6ctw6e1p+yxnDOi1e0j0cOxH6XAGtg1VtpaoD0rsyURzQ+lsAPoG63b
+	GUvKBK03sGptvNBQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=kZPVtsqf;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=uN3dwGld
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759922077; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fc/04qoN/PMDbssSJP/92cG5yZ5biHITDhDiKMO97Aw=;
+	b=kZPVtsqfdZ2/Jrw2DnxoypL8H4w9ijLGDAr+bd4fOEHIR4vWQsag1GLODvhW7ST0+TQyd+
+	mmTSJVnAtnPbRi9kA8G1rWBUOg5Sst6e7vlnCo7sJrO9qOAg0nV5CVBlj0dj+p20nyq50o
+	V5jHx7B+iVqolmZVQzvgXCx31OFC+cs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759922077;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fc/04qoN/PMDbssSJP/92cG5yZ5biHITDhDiKMO97Aw=;
+	b=uN3dwGld1DTLfMpItq+thAviWSsxYb24QSwhOHDw+hd5D1u1kB8cdEE+PF4kP/EqVXs1lc
+	fZvmJxbm3ZmFkTBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B498713693;
+	Wed,  8 Oct 2025 11:14:37 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id YQ0FLJ1H5mizIwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 08 Oct 2025 11:14:37 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 386DDA0ACD; Wed,  8 Oct 2025 13:14:37 +0200 (CEST)
+Date: Wed, 8 Oct 2025 13:14:37 +0200
+From: Jan Kara <jack@suse.cz>
+To: Joshua Watt <jpewhacker@gmail.com>
+Cc: jimzhao.ai@gmail.com, akpm@linux-foundation.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	willy@infradead.org, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH] mm/page-writeback: Consolidate wb_thresh bumping logic
+ into __wb_calc_thresh
+Message-ID: <ywwhwyc4el6vikghnd5yoejteld6dudemta7lsrtacvecshst5@avvpac27felp>
+References: <20241121100539.605818-1-jimzhao.ai@gmail.com>
+ <20251007161711.468149-1-JPEWhacker@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,114 +105,98 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5a248390-ddaa-4127-a58a-794d0d70461a@linux.ibm.com>
+In-Reply-To: <20251007161711.468149-1-JPEWhacker@gmail.com>
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,linux-foundation.org,suse.cz,vger.kernel.org,kvack.org,infradead.org];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: C73731F395
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -2.51
 
-On Wed, Oct 08, 2025 at 03:47:16PM +0530, Shrikanth Hegde wrote:
+Hello!
+
+On Tue 07-10-25 10:17:11, Joshua Watt wrote:
+> From: Joshua Watt <jpewhacker@gmail.com>
 > 
+> This patch strangely breaks NFS 4 clients for me. The behavior is that a
+> client will start getting an I/O error which in turn is caused by the client
+> getting a NFS3ERR_BADSESSION when attempting to write data to the server. I
+> bisected the kernel from the latest master
+> (9029dc666353504ea7c1ebfdf09bc1aab40f6147) to this commit (log below). Also,
+> when I revert this commit on master the bug disappears.
 > 
-> On 10/8/25 3:20 PM, Peter Zijlstra wrote:
-> > On Wed, Oct 08, 2025 at 07:41:10AM +0530, Venkat Rao Bagalkote wrote:
-> > > Greetings!!!
-> > > 
-> > > 
-> > > IBM CI has reported a kernel warnings while running CPU hot plug operation
-> > > on IBM Power9 system.
-> > > 
-> > > 
-> > > Command to reproduce the issue:
-> > > 
-> > > drmgr -c cpu -r -q 1
-> > > 
-> > > 
-> > > Git Bisect is pointing to below commit as the first bad commit.
-> > 
-> > Does something like this help?
-> > 
-> > (also, for future reference, please don't line wrap logs, it makes them
-> > very hard to read)
-> > 
-> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> > index 198d2dd45f59..65f37bfcd661 100644
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> > @@ -8328,6 +8328,7 @@ static inline void sched_set_rq_offline(struct rq *rq, int cpu)
-> >   		BUG_ON(!cpumask_test_cpu(cpu, rq->rd->span));
-> >   		set_rq_offline(rq);
-> >   	}
-> > +	dl_server_stop(&rq->fair_server);
-> >   	rq_unlock_irqrestore(rq, &rf);
-> >   }
+> The server is running kernel 5.4.161, and the client that exhibits the
+> behavior is running in qemux86, and has mounted the server with the options
+> rw,relatime,vers=4.1,rsize=1048576,wsize=1048576,namlen=255,soft,proto=tcp,port=52049,timeo=600,retrans=2,sec=null,clientaddr=172.16.6.90,local_lock=none,addr=172.16.6.0
 > 
+> The program that I wrote to reproduce this is pretty simple; it does a file
+> lock over NFS, then writes data to the file once per second. After about 32
+> seconds, it receives the I/O error, and this reproduced every time. I can
+> provide the sample program if necessary.
+
+This is indeed rather curious.
+
+> I also captured the NFS traffic both in the passing case and the failure case,
+> and can provide them if useful.
 > 
-> Hi Peter. Thanks for looking into it.
-> 
-> I was able to repro this issue on my system. This above diff didn't help. I still see the warning.
-> 
-> I have to understand this dl server stuff still.
-> So not sure if my understanding is completely correct.
-> 
-> Looks like the hrtimer is firing after the cpu was removed. The warn on hit only with
-> drmgr. Regular hotplug with chcpu doesn;t hit. That's because drmgr changes the cpu_present mask.
-> and warning is hit with it.
+> I did look at the two dumps and I'm not exactly sure what the difference is,
+> other than with this patch the client tries to write every 30 seconds (and
+> fails), where as without it attempts to write back every 5 seconds. I have no
+> idea why this patch would cause this problem.
 
-I do not know what drmgr is. I am not familiar with PowerPC tools.
-AFAICT x86 never modifies cpu_present_mask after boot.
+So the change in writeback behavior is not surprising. The commit does
+modify the logic computing dirty limits in some corner cases and your
+description matches the fact that previously the computed limits were lower
+so we've started writeback after 5s (dirty_writeback_interval) while with
+the patch we didn't cross the threshold and thus started writeback only
+once the dirty data was old enough, which is 30s (dirty_expire_interval).
 
-> maybe during drmgr, the dl server gets started again? Maybe that's why above patch it didn't work.
-> Will see and understand this bit more.
+But that's all, you should be able to observe exactly the same writeback
+behavior if you write less even without this patch. So I suspect that the
+different writeback behavior is just triggering some bug in the NFS (either
+on the client or the server side). The NFS3ERR_BADSESSION error you're
+getting back sounds like something times out somewhere, falls out of cache
+and reports this error (which doesn't happen if we writeback after 5s
+instead of 30s). NFS guys maybe have better idea what's going on here.
 
-dl_server is per cpu and is started on enqueue of a fair task when:
+You could possibly workaround this problem (and verify my theory) by tuning
+/proc/sys/vm/dirty_expire_centisecs to a lower value (say 500). This will
+make inode writeback start earlier and thus should effectively mask the
+problem again.
 
-  - the runqueue was empty; and
-  - the dl_server wasn't already active
-
-Once the dl_server is active it has this timer (you already found this),
-this timer is set for the 0-laxity moment (the last possible moment in
-time where it can still run its budget and not be late), during this
-time any fair runtime is accounted against it budget (subtracted from).
-
-Once the timer fires and it still has budget left; it will enqueue the
-deadline entity. However the more common case is that its budget will be
-depleted, in which case the timer is reset to its period end for
-replenish (where it gets new runtime budget), after which its back to
-the 0-laxity.
-
-If the deadline entity gets scheduled, it will try and pick a fair task
-and run that. In the case where there is no fair task, it will
-deactivate itself.
-
-The patch I sent earlier would force stop the deadline timer on CPU
-offline.
-
-
-> Also, i tried this below diff which fixes it. Just ignore the hrtimer if the cpu is offline.
-> Does this makes sense?
-> ---
-> 
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index 615411a0a881..a342cf5e4624 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -1160,6 +1160,9 @@ static enum hrtimer_restart dl_server_timer(struct hrtimer *timer, struct sched_
->  	scoped_guard (rq_lock, rq) {
->  		struct rq_flags *rf = &scope.rf;
-> +		if (!cpu_online(rq->cpu))
-> +			return HRTIMER_NORESTART;
-> +
->  		if (!dl_se->dl_throttled || !dl_se->dl_runtime)
->  			return HRTIMER_NORESTART;
-
-This could leave the dl_server in inconsistent state. It would have to
-call dl_server_stop() or something along those lines.
-
-Also, this really should not happen; per my previous patch we should be
-stopping the timer when we go offline.
-
-Since you can readily reproduce this; perhaps you could stick something
-like this in dl_server_start():
-
-	WARN_ON_ONCE(!cpu_online(rq->cpu))
-
-See if anybody is (re)starting the thing ?
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
