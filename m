@@ -1,277 +1,183 @@
-Return-Path: <linux-kernel+bounces-846008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE5E4BC6B59
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 23:51:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D350BC6B6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 23:55:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70FEC40710D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 21:51:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C0B634E3313
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 21:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170B12C15A0;
-	Wed,  8 Oct 2025 21:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D58232C0F89;
+	Wed,  8 Oct 2025 21:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="firdlSEl";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RfKzIlxO"
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dUr0AYZK"
+Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125E72C11E2;
-	Wed,  8 Oct 2025 21:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D22E266584;
+	Wed,  8 Oct 2025 21:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759960295; cv=none; b=tL4iOSEfupje4ZKAOfSn7Lx2/8cvbhCvsxhffx1PxVNl5UAz1j0STTgkBk3R+nCVJVcNbWIfiwbvNI+dLKY9MeVXnfWW4OJjnkFJX0Q3cA7pXqdFCEs6ZH33HVuVUJToVudsDHuK2SncSMkY1WjDKVpm00UUhot034PuDg8bulA=
+	t=1759960544; cv=none; b=NnhMfm7ztlDievSu7ey7v6JYU+VPCqbae0C6p229ebnjHzBDPoP0NxnyRKjEY2DFDbms/opJO9Dr9pxQJr/iRELhY7NcEsbeRvqtl3BCrF0jFwPK3FwWJCdr1IfBD0SMGRLx16PuyZy+5iay+7ih3fyoX1wMaQEHojs4wI5rhNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759960295; c=relaxed/simple;
-	bh=JgqxLekimCzzWFk3XbrVmtAd7ZdS+CuNlCW4JmfAqdw=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=XMoHk+VUBZc4kgPgxfJJhi9UvqTIixQ3uOcgFZfltYqWdSwkjOeHaeBgmurfoTfQgxvNesPULk+IhMpqwta5pWGA1HB9HC5/3uUzgVHbOVCVOFyAemq72GQVxCM8pU+48ZU7Zv+5+d/LH4C+VskpyVMyxG90yOmnv6bn+3+JY5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=firdlSEl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RfKzIlxO; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.phl.internal (Postfix) with ESMTP id 2A310EC0277;
-	Wed,  8 Oct 2025 17:51:32 -0400 (EDT)
+	s=arc-20240116; t=1759960544; c=relaxed/simple;
+	bh=W8sZ+BFTCFqdywOhx6jN5UpBCcjv8tYtA+nU9zRVybk=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ar9HdbKN0XeDD8aSoP6kJ5yllTHZ2har2CseybRe813fPkRpqFWIoSS4QjCXIwgMIQ5/EjHiOpODyGPlIbttp2LGoGt+p/N3mHUlLJloT91HTJHbPiThlJknyo+JGwv67p/O2ymID5N6cC2QfqQGLbS7c4Fd5Lm3CZEle84o8Oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dUr0AYZK; arc=none smtp.client-ip=202.12.124.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 9ABE77A0038;
+	Wed,  8 Oct 2025 17:55:40 -0400 (EDT)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Wed, 08 Oct 2025 17:51:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to; s=fm2; t=
-	1759960292; x=1760046692; bh=C0UcEy3s3N2N9VtG1+Jnhg5QL7Pw7mUWAVt
-	NL/r+tns=; b=firdlSEl1lJ1EiPM5L2/ZkuqpF5ThgZtm0FSw1A+tUd3na36Bl1
-	UR7M5VlZ9nd25jwTzZEdOVgwLslhtuGZ/Y467N/jVsv9FxJ+ShpKwWvbQ4xWuoUI
-	cEigsu48uFD3Wk26iX3ztLSZWk1fsNaFTrqknJs/6FBp0e5qTn9INlcYB5TT9M/+
-	CzJ+BnOcgLsM6kpKu6hIddEuCsa7/en66bbqsOm/D9tGErN46QJoc5NwroIeV+1O
-	z+2UeXMYCQsGqZlqGjKG9tqwWK+2ECD9ICxvWjh5ojE21M5R4YGswu3KKLgW753l
-	ugx9Cd58pSyBG1GRXRwiaRqxmqox6M6Zdvg==
+  by phl-compute-10.internal (MEProxy); Wed, 08 Oct 2025 17:55:41 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759960292; x=
-	1760046692; bh=C0UcEy3s3N2N9VtG1+Jnhg5QL7Pw7mUWAVtNL/r+tns=; b=R
-	fKzIlxOAVBysbwi5SChR5LCRxQ26oHbsGMwWGif1A7W0AqeQe8nHVkGHwTL6aZ6I
-	NsWeXlouQ+TsXZhtWL311O51rYzZRlu/dZnLLb6WVblb7MfG7jQielZ9cgb6VcdO
-	WUL8yvfwXY6677KLGTokbZFppD4Vj8T8USbSadGxxtJ6KJpxlSV0EimmR953FDfA
-	PexaRE6ckx+YfMVy7o2oif2iZhmJExBQmqCschJOLiuYDfcpqjn7Phd7HKwzlPqN
-	sXALziBDeqIUMAEAOKptK0+xrqJAoKbCoCjSKWTzl5WWIdDmEQtn9qdq0PTOCCqn
-	rieYFMXGkG2c4b6+e17wQ==
-X-ME-Sender: <xms:49zmaLu5eS2K2uMUU33QpvaQSLXTxxgVGQ7C-TurGlmHS_REmrT1FQ>
-    <xme:49zmaHIcw_pS0phYfgLSxximpbq3WeAxSM__ZCRCsiln6KZ71iAx2tkumMUtSdTCO
-    lg346fvD1x-voqJUHVzUpB4iiB4UdBY9Tp6aa3lpzXnMyVkgQ>
-X-ME-Received: <xmr:49zmaHdSO9MHCxZMBUF63VpQmtrQU4CXOdmt1AfkKUOCACDorGSeF6x9ya42e6nvyyx1_-wDyIoz47p93HYhFzmURDIaKVzGKT4E3mTXVhTH>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutdeggedvucetufdoteggodetrf
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1759960540; x=1760046940; bh=fR1Nie9bPqSH+8AGTkokUlJXi6wRqyLLqLK
+	19/Nvduo=; b=dUr0AYZKwOAHn5J/U/fC0j855M02UZTZeZe3m1DETCeso4o4uw9
+	X7d8h877mcox+pcfQI0tCk/ifSduIaU8VPTP/EJLC/NeAhwOjwBt02tuCqPKGjO0
+	qxhDetcxjkKsyxiQKZVXNZb7583tmyIv9ZV0aZRH9Wc/CJtuWpm8uRHFvGdoXRFx
+	WzlxmclTXm63fdljUwFP9SuDig9mItaiHR4pOCIs9yv6MTgol86OBbjX/7FVyymd
+	uoRXpKrcI6hQ6OAvAjEAfat3/q2BfH4lrH8MTC8A6MigRvLqwxCLGAk1NHGMni92
+	MBn3W8HhdBm/YekHwrLi56G5SQmsfiXKOpQ==
+X-ME-Sender: <xms:2t3maBwvwvd_fkOIocVdIZ0rNWggfRs8Mn_HzUEcukwT-tKHkFI2xg>
+    <xme:2t3maM8GdLZL4rGy6n6GXniEyLLf5rn2QfkM77Td9pjluPXwjqElwBEUDpyIMjZ4I
+    fvqtm3tHrOB780K8DGjOEQyLcQowavrJeIL7qRzvm6FABULtfKW46Q>
+X-ME-Received: <xmr:2t3maGA5oVI2dSq0qSDqeWqgOieFvHEJ_XBek4XuBA7R5OXDoK438_vTxOcYjIGMQOLfs9h6f8G9o5zmDsb-ocx1pCrHkk2l8Zc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutdeggeegucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
-    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
-    epleejtdefgeeukeeiteduveehudevfeffvedutefgteduhfegvdfgtdeigeeuudejnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
-    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepudejpdhmohguvgepshhmthhp
-    ohhuthdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtohepthhomhesthgrlhhpvgihrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehr
-    vgguhhgrthdrtghomhdprhgtphhtthhopehokhhorhhnihgvvhesrhgvughhrghtrdgtoh
-    hmpdhrtghpthhtohepughhohifvghllhhssehrvgguhhgrthdrtghomhdprhgtphhtthho
-    pegthhhutghkrdhlvghvvghrsehorhgrtghlvgdrtghomhdprhgtphhtthhopegurghird
-    hnghhosehorhgrtghlvgdrtghomh
-X-ME-Proxy: <xmx:49zmaBWpAi5xlqhOuMSNiC7OUh1TzrAj3_xk9Y0xC_60cL2c7bQJcQ>
-    <xmx:49zmaNiaq1lGopw1IcQa_AKiBFq9sBegkmzOZgKy8CiAfClLHc6JPA>
-    <xmx:49zmaDiaMC2PJHS33FkeB43W7aqkBwxiQ00wRRNSKnfc1YlR0pmwqQ>
-    <xmx:49zmaKvShcZKtmk7f2a2s6fZZ7lV663qa6ve0tBd8tAvBSm1KcFnLQ>
-    <xmx:5NzmaE3QOdiAALtKxgQaqOLH_NX3sY-yKKsDACA9NIbwoQdaJhuIug5M>
-Feedback-ID: iab3e480c:Fastmail
+    gurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcuvfhh
+    rghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtth
+    gvrhhnpeefieehjedvtefgiedtudethfekieelhfevhefgvddtkeekvdekhefftdekvedv
+    ueenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomhepfhhthhgrihhnsehlihhnuhigqdhmieekkhdr
+    ohhrghdpnhgspghrtghpthhtohepvdegpdhmohguvgepshhmthhpohhuthdprhgtphhtth
+    hopehlrghntggvrdihrghngheslhhinhhugidruggvvhdprhgtphhtthhopegrkhhpmhes
+    lhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepghgvvghrtheslh
+    hinhhugidqmheikehkrdhorhhgpdhrtghpthhtohepohgrkheshhgvlhhsihhnkhhinhgv
+    thdrfhhipdhrtghpthhtohepkhgvnhhtrdhovhgvrhhsthhrvggvtheslhhinhhugidrug
+    gvvhdprhgtphhtthhopegrmhgrihhnuggvgiesohhuthhlohhokhdrtghomhdprhgtphht
+    thhopegrnhhnrgdrshgthhhumhgrkhgvrhesohhrrggtlhgvrdgtohhmpdhrtghpthhtoh
+    epsghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepihhofihorhhk
+    vghrtdesghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:2t3maEf12_pG5T9nV9gE7wjP-D7mq4YOC5ZasN0owRMgBj22pBjamQ>
+    <xmx:2t3maCF5NmYVOBFMIprk73QJ2uTkFeRl3fH9Vc3X3wqWfUuGyow1Kw>
+    <xmx:2t3maOVJTTAoNeB3Hgbt9bAdCBKi_nH_XZ67GJo2DrgD_KlsBIlmNA>
+    <xmx:2t3maCyHMIXYsbCYFUTtCaRxiZU3tWaSHtTP7IzXmPtba3rqp7ZILA>
+    <xmx:3N3maLM4FlHuBIcV-GzRksRrghG-si3XrDithXLxHXvJKsjLNvsNkJS7>
+Feedback-ID: i58a146ae:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 8 Oct 2025 17:51:27 -0400 (EDT)
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+ 8 Oct 2025 17:55:35 -0400 (EDT)
+Date: Thu, 9 Oct 2025 08:55:21 +1100 (AEDT)
+From: Finn Thain <fthain@linux-m68k.org>
+To: Lance Yang <lance.yang@linux.dev>
+cc: Andrew Morton <akpm@linux-foundation.org>, 
+    Geert Uytterhoeven <geert@linux-m68k.org>, 
+    Eero Tamminen <oak@helsinkinet.fi>, 
+    Kent Overstreet <kent.overstreet@linux.dev>, amaindex@outlook.com, 
+    anna.schumaker@oracle.com, boqun.feng@gmail.com, ioworker0@gmail.com, 
+    joel.granados@kernel.org, jstultz@google.com, leonylgao@tencent.com, 
+    linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org, 
+    longman@redhat.com, mhiramat@kernel.org, mingo@redhat.com, 
+    mingzhe.yang@ly.com, peterz@infradead.org, rostedt@goodmis.org, 
+    senozhatsky@chromium.org, tfiga@chromium.org, will@kernel.org, 
+    stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] hung_task: fix warnings caused by unaligned lock
+ pointers
+In-Reply-To: <3fa8182f-0195-43ee-b163-f908a9e2cba3@linux.dev>
+Message-ID: <ad7cb710-0d5a-93b1-fa4d-efb236760495@linux-m68k.org>
+References: <20250909145243.17119-1-lance.yang@linux.dev> <yqjkjxg25gh4bdtftsdngj5suturft2b4hjbfxwe6hehbg4ctq@6i55py3jaiov> <99410857-0e72-23e4-c60f-dea96427b85a@linux-m68k.org> <CAMuHMdVYiSLOk-zVopXV8i7OZdO7PAK7stZSJNJDMw=ZEqtktA@mail.gmail.com>
+ <inscijwnnydibdwwrkggvgxjtimajr5haixff77dbd7cxvvwc7@2t7l7oegsxcp> <20251007135600.6fc4a031c60b1384dffaead1@linux-foundation.org> <b43ce4a0-c2b5-53f2-e374-ea195227182d@linux-m68k.org> <56784853-b653-4587-b850-b03359306366@linux.dev>
+ <693a62e0-a2b5-113b-d5d9-ffb7f2521d6c@linux-m68k.org> <23b67f9d-20ff-4302-810c-bf2d77c52c63@linux.dev> <2bd2c4a8-456e-426a-aece-6d21afe80643@linux.dev> <ba00388c-1d5b-4d95-054d-a6f09af41e7b@linux-m68k.org> <3fa8182f-0195-43ee-b163-f908a9e2cba3@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: NeilBrown <neilb@ownmail.net>
-To: "Jeff Layton" <jlayton@kernel.org>
-Cc: "Chuck Lever" <chuck.lever@oracle.com>,
- "Olga Kornievskaia" <okorniev@redhat.com>, "Dai Ngo" <Dai.Ngo@oracle.com>,
- "Tom Talpey" <tom@talpey.com>, "Trond Myklebust" <trondmy@kernel.org>,
- "Anna Schumaker" <anna@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
- "Paolo Abeni" <pabeni@redhat.com>, "Simon Horman" <horms@kernel.org>,
- "David Howells" <dhowells@redhat.com>, "Brandon Adams" <brandona@meta.com>,
- linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, "Jeff Layton" <jlayton@kernel.org>
-Subject:
- Re: [PATCH v2 2/2] sunrpc: add a slot to rqstp->rq_bvec for TCP record marker
-In-reply-to: <20251008-rq_bvec-v2-2-823c0a85a27c@kernel.org>
-References: <20251008-rq_bvec-v2-0-823c0a85a27c@kernel.org>,
- <20251008-rq_bvec-v2-2-823c0a85a27c@kernel.org>
-Date: Thu, 09 Oct 2025 08:51:25 +1100
-Message-id: <175996028564.1793333.11431539077389693375@noble.neil.brown.name>
-Reply-To: NeilBrown <neil@brown.name>
-
-On Thu, 09 Oct 2025, Jeff Layton wrote:
-> We've seen some occurrences of messages like this in dmesg on some knfsd
-> servers:
->=20
->     xdr_buf_to_bvec: bio_vec array overflow
->=20
-> Usually followed by messages like this that indicate a short send (note
-> that this message is from an older kernel and the amount that it reports
-> attempting to send is short by 4 bytes):
->=20
->     rpc-srv/tcp: nfsd: sent 1048155 when sending 1048152 bytes - shutting d=
-own socket
->=20
-> svc_tcp_sendmsg() steals a slot in the rq_bvec array for the TCP record
-> marker. If the send is an unaligned READ call though, then there may not
-> be enough slots in the rq_bvec array in some cases.
->=20
-> Add a slot to the rq_bvec array, and fix up the array lengths in the
-> callers that care.
->=20
-> Fixes: e18e157bb5c8 ("SUNRPC: Send RPC message on TCP with a single sock_se=
-ndmsg() call")
-> Tested-by: Brandon Adams <brandona@meta.com>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/nfsd/vfs.c        | 6 +++---
->  net/sunrpc/svc.c     | 3 ++-
->  net/sunrpc/svcsock.c | 4 ++--
->  3 files changed, 7 insertions(+), 6 deletions(-)
-
-I can't say that I'm liking this patch.
-
-There are 11 place where (in nfsd-testing recently) where
-rq_maxpages is used (as opposed to declared or assigned).
-
-3 in nfsd/vfs.c
-4 in sunrpc/svc.c
-1 in sunrpc/svc_xprt.c
-2 in sunrpc/svcsock.c
-1 in xprtrdma/svc_rdma_rc.c
-
-Your patch changes six of those to add 1.  I guess the others aren't
-"callers that care".  It would help to have it clearly stated why, or
-why not, a caller might care.
-
-But also, what does "rq_maxpages" even mean now?
-The comment in svc.h still says "num of entries in rq_pages"
-which is certainly no longer the case.
-But if it was the case, we should have called it "rq_numpages"
-or similar.
-But maybe it wasn't meant to be the number of pages in the array,
-maybe it was meant to be the maximum number of pages is a request
-or a reply.....
-No - that is sv_max_mesg, to which we add 2 and 1.
-So I could ask "why not just add another 1 in svc_serv_maxpages()?"
-Would the callers that might not care be harmed if rq_maxpages were
-one larger than it is?
-
-It seems to me that rq_maxpages is rather confused and the bug you have
-found which requires this patch is some evidence to that confusion.  We
-should fix the confusion, not just the bug.
-
-So simple question to cut through my waffle:
-Would this:
--	return DIV_ROUND_UP(serv->sv_max_mesg, PAGE_SIZE) + 2 + 1;
-+	return DIV_ROUND_UP(serv->sv_max_mesg, PAGE_SIZE) + 2 + 1 + 1;
-
-fix the problem.  If not, why not?  If so, can we just do this?
-then look at renaming rq_maxpages to rq_numpages and audit all the uses
-(and maybe you have already audited...).
-
-Thanks,
-NeilBrown
+Content-Type: text/plain; charset=us-ascii
 
 
->=20
-> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-> index 77f6879c2e063fa79865100bbc2d1e64eb332f42..c4e9300d657cf7fdba23f2f4e4b=
-daad9cd99d1a3 100644
-> --- a/fs/nfsd/vfs.c
-> +++ b/fs/nfsd/vfs.c
-> @@ -1111,7 +1111,7 @@ nfsd_direct_read(struct svc_rqst *rqstp, struct svc_f=
-h *fhp,
-> =20
->  	v =3D 0;
->  	total =3D dio_end - dio_start;
-> -	while (total && v < rqstp->rq_maxpages &&
-> +	while (total && v < rqstp->rq_maxpages + 1 &&
->  	       rqstp->rq_next_page < rqstp->rq_page_end) {
->  		len =3D min_t(size_t, total, PAGE_SIZE);
->  		bvec_set_page(&rqstp->rq_bvec[v], *rqstp->rq_next_page,
-> @@ -1200,7 +1200,7 @@ __be32 nfsd_iter_read(struct svc_rqst *rqstp, struct =
-svc_fh *fhp,
-> =20
->  	v =3D 0;
->  	total =3D *count;
-> -	while (total && v < rqstp->rq_maxpages &&
-> +	while (total && v < rqstp->rq_maxpages + 1 &&
->  	       rqstp->rq_next_page < rqstp->rq_page_end) {
->  		len =3D min_t(size_t, total, PAGE_SIZE - base);
->  		bvec_set_page(&rqstp->rq_bvec[v], *rqstp->rq_next_page,
-> @@ -1318,7 +1318,7 @@ nfsd_vfs_write(struct svc_rqst *rqstp, struct svc_fh =
-*fhp,
->  	if (stable && !fhp->fh_use_wgather)
->  		kiocb.ki_flags |=3D IOCB_DSYNC;
-> =20
-> -	nvecs =3D xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages, payload);
-> +	nvecs =3D xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages + 1, payload=
-);
->  	iov_iter_bvec(&iter, ITER_SOURCE, rqstp->rq_bvec, nvecs, *cnt);
->  	since =3D READ_ONCE(file->f_wb_err);
->  	if (verf)
-> diff --git a/net/sunrpc/svc.c b/net/sunrpc/svc.c
-> index 4704dce7284eccc9e2bc64cf22947666facfa86a..919263a0c04e3f1afa607414bc1=
-893ba02206e38 100644
-> --- a/net/sunrpc/svc.c
-> +++ b/net/sunrpc/svc.c
-> @@ -706,7 +706,8 @@ svc_prepare_thread(struct svc_serv *serv, struct svc_po=
-ol *pool, int node)
->  	if (!svc_init_buffer(rqstp, serv, node))
->  		goto out_enomem;
-> =20
-> -	rqstp->rq_bvec =3D kcalloc_node(rqstp->rq_maxpages,
-> +	/* +1 for the TCP record marker */
-> +	rqstp->rq_bvec =3D kcalloc_node(rqstp->rq_maxpages + 1,
->  				      sizeof(struct bio_vec),
->  				      GFP_KERNEL, node);
->  	if (!rqstp->rq_bvec)
-> diff --git a/net/sunrpc/svcsock.c b/net/sunrpc/svcsock.c
-> index 377fcaaaa061463fc5c85fc09c7a8eab5e06af77..5f8bb11b686bcd7302b94476490=
-ba9b1b9ddc06a 100644
-> --- a/net/sunrpc/svcsock.c
-> +++ b/net/sunrpc/svcsock.c
-> @@ -740,7 +740,7 @@ static int svc_udp_sendto(struct svc_rqst *rqstp)
->  	if (svc_xprt_is_dead(xprt))
->  		goto out_notconn;
-> =20
-> -	count =3D xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages, xdr);
-> +	count =3D xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages + 1, xdr);
-> =20
->  	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, rqstp->rq_bvec,
->  		      count, rqstp->rq_res.len);
-> @@ -1244,7 +1244,7 @@ static int svc_tcp_sendmsg(struct svc_sock *svsk, str=
-uct svc_rqst *rqstp,
->  	memcpy(buf, &marker, sizeof(marker));
->  	bvec_set_virt(rqstp->rq_bvec, buf, sizeof(marker));
-> =20
-> -	count =3D xdr_buf_to_bvec(rqstp->rq_bvec + 1, rqstp->rq_maxpages - 1,
-> +	count =3D xdr_buf_to_bvec(rqstp->rq_bvec + 1, rqstp->rq_maxpages,
->  				&rqstp->rq_res);
-> =20
->  	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, rqstp->rq_bvec,
->=20
-> --=20
-> 2.51.0
->=20
->=20
+On Wed, 8 Oct 2025, Lance Yang wrote:
 
+> On 2025/10/8 18:12, Finn Thain wrote:
+> > 
+> > On Wed, 8 Oct 2025, Lance Yang wrote:
+> > 
+> >>
+> >> In other words, we are not just fixing the bug reported by Eero and 
+> >> Geert, but correcting the blocker tracking mechanism's flawed 
+> >> assumption for -stable ;)
+> >>
+> >> If you feel this doesn't qualify as a fix, I can change the Fixes: 
+> >> tag to point to the original commit that introduced this flawed 
+> >> mechanism instead.
+> >>
+> > 
+> > That's really a question for the bug reporters. I don't personally 
+> > have a problem with CONFIG_DETECT_HUNG_TASK_BLOCKER so I can't say 
+> > whether the fix meets the requirements set in 
+> > Documentation/process/stable-kernel-rules.rst. And I still don't know
+> 
+> I'm a bit confused, as I recall you previously stating that "It's wrong 
+> and should be fixed"[1].
+> 
+
+You took that quote out of context. Please go and read it again.
+
+> To clarify, is your current position that it should be fixed in general, 
+> but the fix should not be backported to -stable?
+> 
+
+To clarify, what do you mean by "it"? Is it the commentary discussed in 
+[1]? The misalignment of atomics? The misalignment of locks? The alignment 
+assumptions in your code? The WARN reported by Eero and Geert?
+
+> If so, then I have nothing further to add to this thread and am happy to 
+> let the maintainer @Andrew decide.
+> 
+> > what's meant by "unnecessary warnings in a few unexpected cases".
+> 
+> The blocker tracking mechanism will trigger a warning when it encounters 
+> any unaligned lock pointer (e.g., from a packed struct). I don't think 
+> that is the expected behavior.
+
+Sure, no-one was expecting false positives.
+
+I think you are conflating "misaligned" with "not 4-byte aligned". Your 
+algorithm does not strictly require natural alignment, it requires 4-byte 
+alignment of locks.
+
+Regarding your concern about packed structs, please re-read this message: 
+https://lore.kernel.org/all/CAMuHMdV-AtPm-W-QUC1HixJ8Koy_HdESwCCOhRs3Q26=wjWwog@mail.gmail.com/
+
+AFAIK the problem with your code is nothing more than the usual difficulty 
+encountered when porting between architectures that have different 
+alignment rules for scalar variables.
+
+Therefore, my question about the theoretical nature of the problem comes 
+down to this.
+
+Is the m68k architecture the only one producing actual false positives? 
+
+Do you know of actual instances of locks in packed structs?
+
+> Instead, it should simply skip any unaligned pointer it cannot handle. 
+> For the stable kernels, at least, this is the correct behavior.
+> 
+
+Why? Are users of the stable branch actually affected?
+
+> [1]
+> https://lore.kernel.org/lkml/6ec95c3f-365b-e352-301b-94ab3d8af73c@linux-m68k.org/
+> 
+> 
 
