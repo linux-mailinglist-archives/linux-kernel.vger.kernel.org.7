@@ -1,232 +1,207 @@
-Return-Path: <linux-kernel+bounces-845796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9134FBC61EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 19:06:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5F54BC61F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 19:09:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 711D24E8C56
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 17:06:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 910EB4EC5E5
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 17:09:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1EC28D8FD;
-	Wed,  8 Oct 2025 17:06:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E398129D293;
+	Wed,  8 Oct 2025 17:09:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="GFHL23jj"
-Received: from YT6PR01CU002.outbound.protection.outlook.com (mail-canadacentralazon11022093.outbound.protection.outlook.com [40.107.193.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FgBEjyJz"
+Received: from mail-ed1-f65.google.com (mail-ed1-f65.google.com [209.85.208.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FAF01E32D3
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 17:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.193.93
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759943187; cv=fail; b=b5yYRxuCkq+99nSeGhdwiOoARxI2zer0Wf8LC7gk4slN/aW4vI0qp0wQpzRkRowAyJBgQNtRez2uGLtfxqG4BhXHv+/IgeyWVlZ/4wI40m+Xv5+bCgixPSkV04Ph9BBlSZcmw/wPKRNZaJgRV7+hBf7Nt7zKSG3v3TD5CKXqRyU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759943187; c=relaxed/simple;
-	bh=4UromtNQlYUPJ+kwM61YfhL7wRKBqscHxJpP6kFugTk=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=kLhdVRadeKJK8KovzsYEc+An7VBhjzDC2A06Gte09tYUppaphPVzOFoOAWzXnUmGj9/tK22eVNL22owowR+OGX66Naxie8IppMFy23DDgQ1Vr28jbmV0u8KzDtMVw0KkMwCr2BF/FTWG04h8HEIzViIerxbFrmVOX7j2wtFIpck=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=GFHL23jj; arc=fail smtp.client-ip=40.107.193.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Wckx8KQpImK+QA5c1jNfbZLdUGfsI2Bq3q6WrGwo633SEZ16nDGC4+7TG5lqeiWpb8wXY/AusIwbPasklWjgEPHBKccHtG6Hu8gxUpraicc7bGuzOBDYABXQfNM+braEAC6LSfmbuCam/BZ4YeVF9faEge0ZTCU6sn5LHHnyN0m+Ztqlxs0wuss9J70tDXxdyS3TMHVynnTpoo7nWxBNFs7Xp/E8B6kBL3YCaoq+x5QdFK3XvmB3AjKugjehKn6RcFiSXY5ZZFkTeyN6yCRDJpMwzumMuT20IMdpo3EyX2NvGe20X91TvIAyY2WCNWAhvijYP4u7twnqscmoKUl9yg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Lc9hHXKwYwwyWaZyEJDcigjT2Uh1UV5K/d5MxHx2+G4=;
- b=mmbHmDBFd8PflhnZjIUa13kJtP+QIRbPtlkbM9W3DXsuvQrNiOe6rYXlov0lVw/9m2ZfLsqrPnw8jE763fL9sSOcF9L9rhIbDRnu8GiohOTiRpMlaJK14Yxh7HXucrWfhMrk4ULWo8oI4XeKnUNqOb7cN4oSRU1uNhi89lZFltpPnEgUDPD9Ik0UrloalOUJW/B0kXBJHMb0B7EBrjTYW52Rk/KYKKFgaQmI4CYvKOeDzQz+U+hvsuqLcjUbshbyjjn6BT+dbw/f7DjnYs8vQBAerU0LCi07W8aQMg9tSrAO2Iv0ufc5novICFZYZ5hwoSchk/nR6k8/sJEStcWs/w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Lc9hHXKwYwwyWaZyEJDcigjT2Uh1UV5K/d5MxHx2+G4=;
- b=GFHL23jjWszAeM/Fj5ikboTCerW1SxXMmkFHln7mPe++9cYMpHjPmD3hJfx7/4giw16BnCgooD2iMtfZ5oKU9ek7jZOponuj8zy7WJMBRqSCT4ReJQczdxPmSdBxaht0khA5yGn/VK7r3dz6oDw5xFcPZOJeACBS8aS+OihEnalfihtTZ1OaTW3Z2FoNXjD0Yj6yNuMeg8YRPSuMbo0y7nzxmEuOKLuKfR8FP0cSUawtTMbWrHYhGUxwwcdUEwd8xfUBRHrxF8XRJwNAApEdLDm1QuBXkwl9HFcuzSarde/iyXzgGcgoxt73nC7x9iKtkEZS58gDgzs7HURaZzL9iw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
- by YQBPR0101MB8944.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c01:5c::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.9; Wed, 8 Oct
- 2025 17:06:20 +0000
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4%5]) with mapi id 15.20.9182.017; Wed, 8 Oct 2025
- 17:06:20 +0000
-Message-ID: <1a0b35d0-d739-4f1c-9a50-95780eed02e4@efficios.com>
-Date: Wed, 8 Oct 2025 13:06:18 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] smp: simplify smp_call_function_any()
-To: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>,
- Thomas Gleixner <tglx@linutronix.de>, "Paul E. McKenney"
- <paulmck@kernel.org>, Rik van Riel <riel@surriel.com>,
- Ingo Molnar <mingo@kernel.org>, Joel Fernandes <joelagnelf@nvidia.com>,
- Roman Kisel <romank@linux.microsoft.com>,
- "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
- linux-kernel@vger.kernel.org
-References: <20251008165746.144503-1-yury.norov@gmail.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20251008165746.144503-1-yury.norov@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YQZPR01CA0101.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:83::20) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:be::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ACF520E030
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 17:09:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.65
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759943374; cv=none; b=Zr3tZ7gLSgAu8jSQqkIaHPQJcQyCPbP2eW189tg4XuIJxfYT2gaijrJFuXz9YfjX+XE6i57E5llJsE0eiYFtPZCAV0YTpo4ipKA2bCTtiD9aHl3wR2+SEo+Z1Dpz7uVukAXt9P6g+8yjGG/QJYhPfAkBvwu/oEJj8w6k/zAIF7M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759943374; c=relaxed/simple;
+	bh=q0rNAxg4DjEP/hoHH/PTjQm+3uqQRVCpSz5pRz7Z0hM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tbrYJTLFYypraof6k8SQDIX6M8D6pmRJ/aVqlEE+3wl6fcfajAcgGtZobJnNnfbbbDYlIMbMQDw+otinipLQszYz5zDiBBL7Oau5dxI08LjGD4408gQQktYE4lVLi/gciZaQmohGTIv+aVOCUDPNkByw6afmSH7lARcI4NQMjuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FgBEjyJz; arc=none smtp.client-ip=209.85.208.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f65.google.com with SMTP id 4fb4d7f45d1cf-636de696e18so62311a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 10:09:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759943370; x=1760548170; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jz9qwl9ylUOWf25zEeAiwwPcUX4IEwoawwp4R3pWXHk=;
+        b=FgBEjyJzNM9OGRqFNZpXFY0dBGMwEWd4ta6hRrvGKG9z7E1HAVdDubpHVJY5MfLbB8
+         P4JQfI5WLl2H7AojzD/DZ/XOJfHkc1wGucai4fgCqhp9lSGLmT82b70b05czoOq96mE/
+         kiHuYUvfyVHAk6uCjp96V2HEdV571X2kqShuwUvQvXEm6uy1WY/LqOzKb82SAPuntCng
+         M0bHef679eOa6qn8Fq7S3MfbM+Pc+p0TBTiFEN5cbOQsR0AGQeVIzMWSu1u68BTFnt+H
+         xsRLOsXHXeIXw+++gopYXn8js/kZM1Gl+aiVrImIZi1fHfsRPz2ex8DR950ru+2PFgUH
+         kItg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759943370; x=1760548170;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jz9qwl9ylUOWf25zEeAiwwPcUX4IEwoawwp4R3pWXHk=;
+        b=RIGkBDBvgYi1G1yMxi2InSHgFUHhYTqwsFFg3T7GLG9tgSbXORy2BZa6iLSMez7gKB
+         hXAMeK1PxAwfv2gX2ZyQe1rzz0A3X4EYQ6797IjJ+oFoO5qr6AfPDbW5vlRJHg2vPvRz
+         aC2cQqnkcZ6bWBUAGeNJXPYjcCiyodTUXy0NaBxxR3wQQtKF4sTrIulzBoR+piwxd405
+         J3uApMr63DyaBEMxDNez4Cl/DClx+9nmL/o7gxk9f0paJnd2fqJmHOwcqPsJrvsCqZa0
+         f6G4JnnwZZbk+HcnuTESM4nRYCMt1axKK5IoH8ZXtAY/XCKfTZXLXmwo2aoe88gTgM2X
+         jTGw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ49aQe7xItNiyqs5U9Cle4/KTfl0aakeByWzYaKRmBT8RcnxgphRvdiaQQXnw0+XyD7Yn0lqU8SGjMpc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdNCySwboz+xYa7Ey94jvFKnD4kJSWQGDf16tZmeBzVETXhEVn
+	TSWvfpwAiG6lBcToLe+NHVTUl7PkHZLsKKo5WzLWWuCqmpPqFiOm/M72ZwobLGQZdceRudFP1MI
+	gesQOGE13vl/7a3mCtoIhmebkoNRhfwQ=
+X-Gm-Gg: ASbGncuG8/bi9897XgASvm38GijAiv3CT5AUCyGsdYhJVaJWXFFjAUhlzhLMYqr59u/
+	84bFxd+q1h0ZtEu8s+R18kFlduqyTk8XeMhy7CNmBoRXJmnCPMGeJ+EygO+LD9fwc6Q+BnVIfCd
+	U0xkpInHzfXcRx/NQihoDqGIelEp/RxhGcr30C7m+1sZYB6Qga5lrAQt2p8iQwi2rEYQ+eehCh0
+	EAdJD2ftwXMbf/UfMCXklMq6LrADQzf/Jm7NO5w2PLrJzBxqDHVjAIY98Ij7KcM
+X-Google-Smtp-Source: AGHT+IGWKbwFn3pQh+oqiRBdGn/RoV710Mep4oesQYjLCtzVy294+wOH2skWT01UGyugGuSxO5vuBFKgvwJqzotX83w=
+X-Received: by 2002:a17:907:ea5:b0:b3f:f822:2db2 with SMTP id
+ a640c23a62f3a-b50a9c5b35emr469591566b.11.1759943369545; Wed, 08 Oct 2025
+ 10:09:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YQBPR0101MB8944:EE_
-X-MS-Office365-Filtering-Correlation-Id: b972fd69-0015-4951-4c2c-08de068d0026
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bUphcmZCck16TjN2anBHSTcvSml2em1pWVFwU3lpOHRVS21wcUZVQlhKN2ZE?=
- =?utf-8?B?em9zVW1FNUJ5UUtDRHRZTEY2UG8vb3BqRlBwR1R1R2dvSEpIZDNkNUxNVXk5?=
- =?utf-8?B?SE9ESWpiN25Oa0lGNzh6dVNNYzVwTmllOXhkWlpwUXA5Y3VycnhSTk8yajlq?=
- =?utf-8?B?ZVYzdXJNallBbmZDNWhqMlE2WW5hWGtzeWl4TFJ3UTA0aFFpWUptaXBFcG5r?=
- =?utf-8?B?RXlJR1RNZUREWlNneXkwMk15cWdGa0VCeVEwcXF2SjAycHN4VEVGWjk2U2pI?=
- =?utf-8?B?dWxLajlDN241d0RaU0E5Y1JCYmhKTitpMWR3ODV4emZqUzREc2piMXdmRGdr?=
- =?utf-8?B?aVR0RWxDYklQRTk2QWwwV3RuYXZ3aUQ1RjhSaW1qVk9ZLzltcG0yN21uWjFQ?=
- =?utf-8?B?Q1ErMVFpRWIxNnZOaEVJN1hTNkcxNTk4RFVvdnhjSjNSYzRMNHNKMXQzdGM5?=
- =?utf-8?B?YlpsTTAvMlc2RzBRZ0QxSm1hWVBZd0I2SmF0RUxDZXN3em5uYUdQSzZvUXA0?=
- =?utf-8?B?dDRjWE0xZDhFSjZrNlNsRklyVnVHemlPMytkdTFZc2xWZDl5U3pkSmRST3lO?=
- =?utf-8?B?OVV6cEYwMXBYRUoyYUlwUC9oYmlKQnNFNVgxV2Z1blBoVjR3MmFqaHVpMXZj?=
- =?utf-8?B?aVIweC9zOU9XR3BWMGw5Y3lqZlM1dEQ1U09tQ3ZEV1d1QzBMRWI0bEo4Z0RM?=
- =?utf-8?B?NE4wZXdFL29GekY5YUxBTGNGYlFWZ1RUcWRXZjhiT2NndkVlNk5IYll5azBl?=
- =?utf-8?B?VzhWTW5qUE9ORnd5dVpDbFNQRStIOE9lZFE1NlRCUytValRZaUgyTU9IU1Fz?=
- =?utf-8?B?ZWF5Q1ovbSs0STFETjJDRS91cmhicjR4SUN3WWdkR0s4bmpjY1BUUnJGOXQx?=
- =?utf-8?B?REpjZEw3TmNwcCtjaTQrYWR1WUlDcGNOZDIzZFhLVTNzbndKdUdTcW5udVBM?=
- =?utf-8?B?bE0yZG9yVXVCeE5LNnozZHpIc0x4SW5nYVJScWhnc01zOVNZcHJCc2c0RjZU?=
- =?utf-8?B?YWk1WjlOVldkSzRqQ2NpbHJJRVFDakNsblJveThSamxJNmhwWDBZY29paDlM?=
- =?utf-8?B?TnVlVkhaRWt5dnNUVzFVL2x5bC9HTHd0eUM5dkRiOC9ibDRMMWJxUFBlUjdK?=
- =?utf-8?B?Z2lhZlUycGx4S1dnYUl2eUtST01pQlNwcXExY2JWZDRNRmJIRVpPM0xJVkd3?=
- =?utf-8?B?YTFLQUoydnZvTHhRL1dISHFabnhhQWdTZDErZmx5OGd1RWFhbDFjNU1nNGsz?=
- =?utf-8?B?NXcvNVhsYzdpeHB3QTk4eVpxZ0ttZm1uUnp5WkpTYXRmREJYWEI0K3NuZzFD?=
- =?utf-8?B?TkQ5N2l1VE5sOHNvdDZTMlVRRHpjWitaanZ4RnROZzRhRHRzbTBDazB2QVp5?=
- =?utf-8?B?Mk4vdFdrZWhLMnRqNTZtU1lqMDFsVVRFb0oyRE9MQkJQdndaUDVqb2ovako0?=
- =?utf-8?B?Nm91QytmUzgvcE5uclhBWlBpVko0RW0rMkJRZmFHRm5sZ201Zzh5dWFydnJU?=
- =?utf-8?B?S2JRekVpcHRDQ3VZdEpTbndpdkJ2Ukk4TWI5ZEt5dWxOclo3YnBiNDF2RWMr?=
- =?utf-8?B?TGhld1pBOUdPWlNJYTJVZVJ0bWovTnl3WFBpZ1FtWjRTYTg2OXBHU3g1UVpG?=
- =?utf-8?B?VXNlZ2F3QytsVVZCdDVlcndHMWNNS0tkYTFxUG14dUFmYXI3UHVtZFg2MUwz?=
- =?utf-8?B?dCtkOUtacWREMzBsandqZ1ByUnhxOHVZMkI0TFN1UGMvV2w2eDA1Nmt0WHR4?=
- =?utf-8?B?WUpsTTUzc3pRR1lieTg5N1AyNm1YZmxEaDc3UEJ3WTI5UGswcXFNUW5xTzZY?=
- =?utf-8?B?a1pTTlJIM211aldjY1R4MGZLL1IzOGMwVEVEOGpyQjFycGgzbWRhQjRxU1hx?=
- =?utf-8?B?YUZubEp4aW5STnN2SE1EWHJuU3hlMjZVY3lOZzBkSHhaN3c9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OUJybVd0S0tndXY4SXJGS2xyWGV6L3ZUbmJqU29SQXY5Wk55djBPaXRzRERE?=
- =?utf-8?B?cG4yREg0QWFRUldWZndrVE5sMVMybUdSMzJ2Yk5Lc2YvV0VwQk9uYjJ4OGtk?=
- =?utf-8?B?a1pYUmFSTkxndGZ4OVVIb3J2Z0NIeDJiMmpHWVp0aURpdVE3SDF6cnB0dC9N?=
- =?utf-8?B?MU1HalRsS1d0VlRwN3pMS2JyMGY5TVIxeGZyUmtHS29vbDM4WjNrNzNEZFNr?=
- =?utf-8?B?c2FtVjJTT1VBUi9HWTVDa1pObU1veDFXYUZMNXFVZXBMeWZoRlQxclozNFJz?=
- =?utf-8?B?S01FMGNMSCtCWEE1a2FMcEpBWm45RklLOGpLb2RUdndib3B3ZklJbFNBZDJN?=
- =?utf-8?B?ckRhWm1vakp5cnZ5ZC9NOVNPQnlTbzIrSjJlVHpWQ0hzYXd5TzJEdExKcVMx?=
- =?utf-8?B?NlFvK1cwTWZzZkdZd2VUZWFGTEh6Zzc0K1B6c0Zzc1NlNStBNmJPR3VEVTJ2?=
- =?utf-8?B?bTQ2azI1MWh1cGd3azhITEs3M3hqazJFcklzbThHM1pacUtyRWp0QnhsMW9X?=
- =?utf-8?B?L1NKQnhJaStYNWhDbi9VRmFHcGh2amdlWTJvZk5LRUc0YmcvbVNPc1ovQUE1?=
- =?utf-8?B?LzF4NFhWeFc4dm9WZ1A2Q1VtS1ZLSXFXR01BbmxRQ0duTWNTSno3dzdsWHF6?=
- =?utf-8?B?M2JrYUxWcmxFeWo2UzdUdUorcW8vSE5MU3VUMVJMVDY3N1NiZUQxT2NNT3hp?=
- =?utf-8?B?OHlQRU9vWXV3ZW5sV1FyYWMyRDA0L3Q2RHNKcmNQR1pzSHAyVHovdmZtNjIz?=
- =?utf-8?B?OEsvUGs4ZUQycDdzYjk0Wk1XZ1JhZ0ZhTzZmVDFDcUQ2SUFxMU05Z2VNWERM?=
- =?utf-8?B?ZHVvNVpQdVBuejdGSGk5eitGMlVaZWYxS0xGRVZxZ1F6TEJYNWxGVWZUSksw?=
- =?utf-8?B?TWlseHErdWNmaksxVW5tTG4rbzJHNEpQc0lUTTdqUEl4cFV3TUUyUTVBSWNV?=
- =?utf-8?B?cmsvRHV1M1VTWW0vcXYwa1B2UU5TOXNLZER0R0FMTE9PMUJrMlY1TzJreVU3?=
- =?utf-8?B?UGFqN0NlcU9Nbkc1UlNiZVNGSjdvdkcvWUc4N1haWThwWDk1bjRURkgyY1dH?=
- =?utf-8?B?azRHVXFNWXllNUtKS2lGU0ZTOTJFNHNjb0MrUVljSlVFN0IxeDV2cnRlSHVl?=
- =?utf-8?B?MXBIYkl3ME1uR0d4d2ZxaXV0dHphT0V5SGhrdHhzNUNHdTE4Wk91bDFCdklK?=
- =?utf-8?B?QVQ3R3B1cDVHVVV5a1BsVGVwTEhtaFRvczBVczFUZHlFZGVkeCtQbHdqaU1u?=
- =?utf-8?B?bWxaYmRqelNMa3RvN3QzeHZHQXR6alJMRU9iUUp0bVp3VzhNSTQrbTZvNGVu?=
- =?utf-8?B?Yjh0LzlmdWx6MGg2WFZJOFhKTkcwbUxBaitSMUFIaUFVUy9ycXAxVzZrMVpQ?=
- =?utf-8?B?SFJBcDJvUlZmam9pT1JXaHNMWTZJWlJHU1ZIVGViUHZZc0lTSUFnbnNQOEpw?=
- =?utf-8?B?Z0hRRFFVTWRObFlRZ3hRSldndFF0SlhxQWpqMWN4TnVXckk4enA1clpsZWN5?=
- =?utf-8?B?U3liVVQ5OER1QXl4TjVWalpUeGIyU1c2SDEzSHlSYVNHc3lnS21NNXg5THM0?=
- =?utf-8?B?VGc0OHhCdFpJb25BbFpndkZKOG82Ty9BbEMxZ3Zqekp5dDArNzhJTWFzc2RQ?=
- =?utf-8?B?d3J3S1hWeUlYNTJZeHRYcXZjT3pJQThVNjluazVEWjZVbHhPUTZPUUFscU5J?=
- =?utf-8?B?V3NaNHJJZzAwVWlUSWVCYTI3YkYwaWY3bEhuWlFiamF6elZxRTlWT0FqY29R?=
- =?utf-8?B?dUhGOE51Wi9yR0JxZjlBaFdPbkZVWnJFTkZTQ205cEl3Rm55V28yQXNYK3dU?=
- =?utf-8?B?azlaTUlJNVVWZEZWY0pOU25nUHJ3ejFCZXJPMzdib1NZZkhOQ0tuMzE0LzhR?=
- =?utf-8?B?N0VWN2NhaEFEeit4Z0orZWhtazkrb3pEZW9uWWU4OXpjeHhONWs5d1VQc2dn?=
- =?utf-8?B?bDllZFhITkM0UGJNbTNlMjFKNk81ZjhRWlVLYVpxOXZPZnJ1ZDZmUFUzSFc2?=
- =?utf-8?B?WEx2SGFQVXk0TUQ4UkRoVHFnRDBYMkxPNWhZdDRDaDFRWW85WThzTkV5UFJw?=
- =?utf-8?B?ZzBFSWNxQ2Q1ZVN2dGdPa2loeUNkeFNscjdLb0lwNVdUazRWKzRiYTF2SWth?=
- =?utf-8?B?azBkZTBTR0VQUjNJVXhFNDVpUVhDM1BJcFBSWEZiQWl3dWlBcWMrSlhCcENa?=
- =?utf-8?Q?0VhMuTaeVSLPzDcfLSzLrcc=3D?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b972fd69-0015-4951-4c2c-08de068d0026
-X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2025 17:06:19.7401
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KRRyT8ndCmTGcj3Fws/a4QlFIXEXcqC0XuIIqpC+qM43uCiifh2dj18u27O0lpRcJAPU30SJN0eruyKyuIV/bT/59qxSGbp2GyN6uBhEuNs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQBPR0101MB8944
+References: <20250927061210.194502-1-menglong.dong@linux.dev>
+ <20250927061210.194502-2-menglong.dong@linux.dev> <CAADnVQJAdAxEOWT6avzwq6ZrXhEdovhx3yibgA6T8wnMEnnAjg@mail.gmail.com>
+ <3571660.QJadu78ljV@7950hx> <7f28937c-121a-4ea8-b66a-9da3be8bccad@gmail.com> <CAADnVQLxpUmjbsHeNizRMDkY1a4_gLD0VBFWS8QMYHzpYBs4EQ@mail.gmail.com>
+In-Reply-To: <CAADnVQLxpUmjbsHeNizRMDkY1a4_gLD0VBFWS8QMYHzpYBs4EQ@mail.gmail.com>
+From: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Date: Wed, 8 Oct 2025 19:08:51 +0200
+X-Gm-Features: AS18NWA7odH1HErK1kZmm5Nkkhj8jiRXGwc5vRm03R1MTC7gsrTHfFhzY-YDTH4
+Message-ID: <CAP01T75TegFO0DrZ=DvpNQBSnJqjn4HvM9OLsbJWFKJwzZeYXw@mail.gmail.com>
+Subject: Re: bpf_errno. Was: [PATCH RFC bpf-next 1/3] bpf: report probe fault
+ to BPF stderr
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Leon Hwang <hffilwlqm@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Menglong Dong <menglong.dong@linux.dev>, Menglong Dong <menglong8.dong@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, jiang.biao@linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-10-08 12:57, Yury Norov (NVIDIA) wrote:
-> The functions calls get_cpu()/put_cpu() meaningless because the actual
-> CPU that would execute the caller's function is not necessarily the
-> current one.
-> 
-> The smp_call_function_single() which is called by
-> smp_call_function_any() does the right get/put protection.
-> 
-> Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
-> ---
->   kernel/smp.c | 8 ++------
->   1 file changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/kernel/smp.c b/kernel/smp.c
-> index 02f52291fae4..fa50ed459703 100644
-> --- a/kernel/smp.c
-> +++ b/kernel/smp.c
-> @@ -754,17 +754,13 @@ EXPORT_SYMBOL_GPL(smp_call_function_single_async);
->   int smp_call_function_any(const struct cpumask *mask,
->   			  smp_call_func_t func, void *info, int wait)
->   {
-> -	unsigned int cpu;
-> -	int ret;
-> +	unsigned int cpu = smp_processor_id();
+On Wed, 8 Oct 2025 at 18:27, Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Wed, Oct 8, 2025 at 7:41=E2=80=AFAM Leon Hwang <hffilwlqm@gmail.com> w=
+rote:
+> >
+> >
+> >
+> > On 2025/10/7 14:14, Menglong Dong wrote:
+> > > On 2025/10/2 10:03, Alexei Starovoitov wrote:
+> > >> On Fri, Sep 26, 2025 at 11:12=E2=80=AFPM Menglong Dong <menglong8.do=
+ng@gmail.com> wrote:
+> > >>>
+> > >>> Introduce the function bpf_prog_report_probe_violation(), which is =
+used
+> > >>> to report the memory probe fault to the user by the BPF stderr.
+> > >>>
+> > >>> Signed-off-by: Menglong Dong <menglong.dong@linux.dev>
+> >
+> > [...]
+> >
+> > >>
+> > >> Interesting idea, but the above message is not helpful.
+> > >> Users cannot decipher a fault_ip within a bpf prog.
+> > >> It's just a random number.
+> > >
+> > > Yeah, I have noticed this too. What useful is the
+> > > bpf_stream_dump_stack(), which will print the code
+> > > line that trigger the fault.
+> > >
+> > >> But stepping back... just faults are common in tracing.
+> > >> If we start printing them we will just fill the stream to the max,
+> > >> but users won't know that the message is there, since no one
+> > >
+> > > You are right, we definitely can't output this message
+> > > to STDERR directly. We can add an extra flag for it, as you
+> > > said below.
+> > >
+> > > Or, maybe we can introduce a enum stream_type, and
+> > > the users can subscribe what kind of messages they
+> > > want to receive.
+> > >
+> > >> expects it. arena and lock errors are rare and arena faults
+> > >> were specifically requested by folks who develop progs that use aren=
+a.
+> > >> This one is different. These faults have been around for a long time
+> > >> and I don't recall people asking for more verbosity.
+> > >> We can add them with an extra flag specified at prog load time,
+> > >> but even then. Doesn't feel that useful.
+> > >
+> > > Generally speaking, users can do invalid checking before
+> > > they do the memory reading, such as NULL checking. And
+> > > the pointer in function arguments that we hook is initialized
+> > > in most case. So the fault is someting that can be prevented.
+> > >
+> > > I have a BPF tools which is writed for 4.X kernel and kprobe
+> > > based BPF is used. Now I'm planing to migrate it to 6.X kernel
+> > > and replace bpf_probe_read_kernel() with bpf_core_cast() to
+> > > obtain better performance. Then I find that I can't check if the
+> > > memory reading is success, which can lead to potential risk.
+> > > So my tool will be happy to get such fault event :)
+> > >
+> > > Leon suggested to add a global errno for each BPF programs,
+> > > and I haven't dig deeply on this idea yet.
+> > >
+> >
+> > Yeah, as we discussed, a global errno would be a much more lightweight
+> > approach for handling such faults.
+> >
+> > The idea would look like this:
+> >
+> > DEFINE_PER_CPU(int, bpf_errno);
+> >
+> > __bpf_kfunc void bpf_errno_clear(void);
+> > __bpf_kfunc void bpf_errno_set(int errno);
+> > __bpf_kfunc int bpf_errno_get(void);
+> >
+> > When a fault occurs, the kernel can simply call
+> > 'bpf_errno_set(-EFAULT);'.
+> >
+> > If users want to detect whether a fault happened, they can do:
+> >
+> > bpf_errno_clear();
+> > header =3D READ_ONCE(skb->network_header);
+> > if (header =3D=3D 0 && bpf_errno_get() =3D=3D -EFAULT)
+> >         /* handle fault */;
+> >
+> > This way, users can identify faults immediately and handle them gracefu=
+lly.
+> >
+> > Furthermore, these kfuncs can be inlined by the verifier, so there woul=
+d
+> > be no runtime function call overhead.
+>
+> Interesting idea, but errno as-is doesn't quite fit,
+> since we only have 2 (or 3 ?) cases without explicit error return:
+> probe_read_kernel above, arena read, arena write.
+> I guess we can add may_goto to this set as well.
+> But in all these cases we'll struggle to find an appropriate errno code,
+> so it probably should be a custom enum and not called "errno".
 
-I wonder whether this passes any moderate testing with kernel debug
-options enabled. I would at the very least expect a
-raw_smp_processor_id() call here not to trip debug warnings.
-
-AFAIU smp_call_function_any call be called from preemptible context,
-right ?
-
-Thanks,
-
-Mathieu
-
->   
->   	/* Try for same CPU (cheapest) */
-> -	cpu = get_cpu();
->   	if (!cpumask_test_cpu(cpu, mask))
->   		cpu = sched_numa_find_nth_cpu(mask, 0, cpu_to_node(cpu));
->   
-> -	ret = smp_call_function_single(cpu, func, info, wait);
-> -	put_cpu();
-> -	return ret;
-> +	return smp_call_function_single(cpu, func, info, wait);
->   }
->   EXPORT_SYMBOL_GPL(smp_call_function_any);
->   
-
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+Yeah, agreed that this would be useful, particularly in this case. I'm
+wondering how we'll end up implementing this.
+Sounds like it needs to be tied to the program's invocation, so it
+cannot be per-cpu per-program, since they nest. Most likely should be
+backed by run_ctx, but that is unavailable in all program types. Next
+best thing that comes to mind is reserving some space in the stack
+frame at a known offset in each subprog that invokes this helper, and
+use that to signal (by finding the program's bp and writing to the
+stack), the downside being it likely becomes yet-another arch-specific
+thing. Any other better ideas?
 
