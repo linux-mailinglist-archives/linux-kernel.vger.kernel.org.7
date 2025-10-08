@@ -1,87 +1,181 @@
-Return-Path: <linux-kernel+bounces-845341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDEB9BC4843
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:13:11 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12250BC4849
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:13:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E7E63BBFA0
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:13:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7EDDA4E210E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6412F6194;
-	Wed,  8 Oct 2025 11:13:05 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB572F619B;
+	Wed,  8 Oct 2025 11:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NswvwVkB"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B9CC2ECD19
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 11:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3954D2F6191
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 11:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759921984; cv=none; b=jnfWCXnBOztY9HUL//+avT4BFx/ykBU+4F0yFgyYtwc7uy/uBcvM2CdimBGIoVCsSzLXW2jggMrPLQVQA+3tJ7h86Ga4J9vnLSq/WEoUJU0dBLs2AJTJT5ii4fzNHhSaANMWPIvKlYDh76mOqZtHdJ+KIYUSiK+Bxc0FnewkrDQ=
+	t=1759922007; cv=none; b=pLUtvjdidc5RV4JiH8XEBi2vp0FHjLJ7QmUMXDH7qLf9r2d3wMtTgw94yierho5x+/UawrdkB4C/cQOLXaj8vILsjT1rmac74VMTpZntOyJHnceAeEA02b5crK/0OIRUMtWsn+gH/ulqoB3cf9+GjwjtzI42eKfQkrlQHWUzsLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759921984; c=relaxed/simple;
-	bh=FgpyuqyTnm/M5Ygn7dgLlENGe2+G/OyQohS1quCCeYo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Onhwc+dobIY6wAJHx5lw2vqNsa1F8iXRNymvBDIvT29IZZpUbiEghhmdLudSOp17+YM4pAqLqG3vUl/7vx78WfmD7i9FKdwQCAr0jWo35uXzBueZsVAoN1ssUmN4u1T6JwYDspeBnYE/BTGARU+FGvPsbMK/OnGZhrnFrpybUuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-93bbd28b4f3so385296739f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 04:13:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759921982; x=1760526782;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=so831p3r3onT6wTG6rzKoqe+/e6TXHQSkN0OAI58eaI=;
-        b=vCKtIdKXjdRh0qGYaagAQm/iRmU9ytmFHJYjLIJzMynwMSXSjrXZiFyU+irBgALpbn
-         8jP6b6CxugzxnsMq0acsRU8Y3tRuR8DSv20UbyOpsNMiYnphXpYLXwtn2H/wGvSj3sV8
-         LPgeaIuavd/V4pRBjAe1jrdiJ8pwc1GNBck5QqWxCq6+PFn5RYtda2ktXThIR5SamJpV
-         oDovZABfEQFf1q6/Wt8bGyuVy3zpFuq2o1BYAybbhc/sFEoKbQWwhaPWOJUFGKFyxWch
-         Qe1aXFxF+fU/PJuTUwsseracRC77BTeJVR0XPSnsacw9aXZgtIw1eltyAsD1luE11a4x
-         n7iQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUSEqNPHJ+XVKJp9b2h7vvjRqRp/ycqBeGV+oAVNKEvhO2DteRV6MlXGiKormpEisI+ntmCFCo+A6Qr1wk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx04Evlp4ThSaeURkLYBK9cI0dumrhBzrLreiwBfiHkveVd9H8I
-	/tHOgtXnmR0hDFc4r1Vh0lnET83ajcr9Q25Zo8aJYzThsnvhhfjG2Ifsmt8I/FkNe/KyACaXs/p
-	pvDuyN7R3JB4UgohXas51EmHQpvvTQcPzkPrNx1wYE8OQcxdzI72mJ+pgEDk=
-X-Google-Smtp-Source: AGHT+IGyTeaXnC/kOmbcpdl9gJUs9pp8j19h/8Jm/PTcdgTMt/Bxww4lavcsKwB+xdnkce0TsKi2sGufunJwUdQma9fhFLhwHoL9
+	s=arc-20240116; t=1759922007; c=relaxed/simple;
+	bh=FPytbSRlOjVWlhzAY9VHIBuO0copWLlWeNWQr7fesMU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ht97WgVOvt0HPJC6db67q77UaAlOxYKkCxWjn4+sOcVB3nhN/zm7u3LyjRZPvPm6XqLgmfZ0CAn9GgH9VfbNgg4WEny9WOe15ca1Twpr9mc2+kxX0tebOu5MBQMQ967+eaUa1CSEj1rSL58FyX0I+l0mP19fg/bocBxmENPd0vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NswvwVkB; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=tdDIVtOYGpm2++YgbsDVSjiZxnJfoMZtqbtSNzOB9kQ=; b=NswvwVkBptMaMcaLLNDJraO0Bh
+	mQhVDp1UW00x1dp/H+LqT/PuWhQSihQwnbOF9akqqXSn6FS8Hy4zqB3XFeoZHhyesdQNjrKtv0ozS
+	RCHU7guF9oZHXzSSkFfu1A1CDhtj4P/bEOGEpqjSF1/h6WlX38m/NfDhzPHh0qiqMOo4w9h2No42x
+	i2kwadyqVdN7irBtCUVptwSyGiv9zhhwhi7cbhwbsiGaCrq7WtgM2QSYiZZbRcYq9fVvx+6vkLcD8
+	Cufxj3v6VFXQrFaJrGaj499JktPsXWWkN/esrhZVMgmmRHRo7XhE8ovR+F13gYdiB3g0QG+LEtwkk
+	PIEzWccQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v6S6c-00000003eAk-3UjU;
+	Wed, 08 Oct 2025 11:13:16 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id EC92E300220; Wed, 08 Oct 2025 13:13:14 +0200 (CEST)
+Date: Wed, 8 Oct 2025 13:13:14 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Shrikanth Hegde <sshegde@linux.ibm.com>
+Cc: Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>, jstultz@google.com,
+	stultz@google.com
+Subject: Re: [bisected][mainline]Kernel warnings at
+ kernel/sched/cpudeadline.c:219
+Message-ID: <20251008111314.GI3289052@noisy.programming.kicks-ass.net>
+References: <8218e149-7718-4432-9312-f97297c352b9@linux.ibm.com>
+ <20251008095039.GG3245006@noisy.programming.kicks-ass.net>
+ <5a248390-ddaa-4127-a58a-794d0d70461a@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2c11:b0:93b:a239:6864 with SMTP id
- ca18e2360f4ac-93bd1851336mr286154439f.4.1759921982405; Wed, 08 Oct 2025
- 04:13:02 -0700 (PDT)
-Date: Wed, 08 Oct 2025 04:13:02 -0700
-In-Reply-To: <fbb0d602-f99c-44b8-a0a1-9d6ab5b3c107@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68e6473e.050a0220.2430e3.012c.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] kernel BUG in __ocfs2_move_extent
-From: syzbot <syzbot+727d161855d11d81e411@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5a248390-ddaa-4127-a58a-794d0d70461a@linux.ibm.com>
 
-Hello,
+On Wed, Oct 08, 2025 at 03:47:16PM +0530, Shrikanth Hegde wrote:
+> 
+> 
+> On 10/8/25 3:20 PM, Peter Zijlstra wrote:
+> > On Wed, Oct 08, 2025 at 07:41:10AM +0530, Venkat Rao Bagalkote wrote:
+> > > Greetings!!!
+> > > 
+> > > 
+> > > IBM CI has reported a kernel warnings while running CPU hot plug operation
+> > > on IBM Power9 system.
+> > > 
+> > > 
+> > > Command to reproduce the issue:
+> > > 
+> > > drmgr -c cpu -r -q 1
+> > > 
+> > > 
+> > > Git Bisect is pointing to below commit as the first bad commit.
+> > 
+> > Does something like this help?
+> > 
+> > (also, for future reference, please don't line wrap logs, it makes them
+> > very hard to read)
+> > 
+> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > index 198d2dd45f59..65f37bfcd661 100644
+> > --- a/kernel/sched/core.c
+> > +++ b/kernel/sched/core.c
+> > @@ -8328,6 +8328,7 @@ static inline void sched_set_rq_offline(struct rq *rq, int cpu)
+> >   		BUG_ON(!cpumask_test_cpu(cpu, rq->rd->span));
+> >   		set_rq_offline(rq);
+> >   	}
+> > +	dl_server_stop(&rq->fair_server);
+> >   	rq_unlock_irqrestore(rq, &rf);
+> >   }
+> 
+> 
+> Hi Peter. Thanks for looking into it.
+> 
+> I was able to repro this issue on my system. This above diff didn't help. I still see the warning.
+> 
+> I have to understand this dl server stuff still.
+> So not sure if my understanding is completely correct.
+> 
+> Looks like the hrtimer is firing after the cpu was removed. The warn on hit only with
+> drmgr. Regular hotplug with chcpu doesn;t hit. That's because drmgr changes the cpu_present mask.
+> and warning is hit with it.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+I do not know what drmgr is. I am not familiar with PowerPC tools.
+AFAICT x86 never modifies cpu_present_mask after boot.
 
-Reported-by: syzbot+727d161855d11d81e411@syzkaller.appspotmail.com
-Tested-by: syzbot+727d161855d11d81e411@syzkaller.appspotmail.com
+> maybe during drmgr, the dl server gets started again? Maybe that's why above patch it didn't work.
+> Will see and understand this bit more.
 
-Tested on:
+dl_server is per cpu and is started on enqueue of a fair task when:
 
-commit:         0d97f206 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=16fef334580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d6fcded704acad42
-dashboard link: https://syzkaller.appspot.com/bug?extid=727d161855d11d81e411
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1085c1e2580000
+  - the runqueue was empty; and
+  - the dl_server wasn't already active
 
-Note: testing is done by a robot and is best-effort only.
+Once the dl_server is active it has this timer (you already found this),
+this timer is set for the 0-laxity moment (the last possible moment in
+time where it can still run its budget and not be late), during this
+time any fair runtime is accounted against it budget (subtracted from).
+
+Once the timer fires and it still has budget left; it will enqueue the
+deadline entity. However the more common case is that its budget will be
+depleted, in which case the timer is reset to its period end for
+replenish (where it gets new runtime budget), after which its back to
+the 0-laxity.
+
+If the deadline entity gets scheduled, it will try and pick a fair task
+and run that. In the case where there is no fair task, it will
+deactivate itself.
+
+The patch I sent earlier would force stop the deadline timer on CPU
+offline.
+
+
+> Also, i tried this below diff which fixes it. Just ignore the hrtimer if the cpu is offline.
+> Does this makes sense?
+> ---
+> 
+> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+> index 615411a0a881..a342cf5e4624 100644
+> --- a/kernel/sched/deadline.c
+> +++ b/kernel/sched/deadline.c
+> @@ -1160,6 +1160,9 @@ static enum hrtimer_restart dl_server_timer(struct hrtimer *timer, struct sched_
+>  	scoped_guard (rq_lock, rq) {
+>  		struct rq_flags *rf = &scope.rf;
+> +		if (!cpu_online(rq->cpu))
+> +			return HRTIMER_NORESTART;
+> +
+>  		if (!dl_se->dl_throttled || !dl_se->dl_runtime)
+>  			return HRTIMER_NORESTART;
+
+This could leave the dl_server in inconsistent state. It would have to
+call dl_server_stop() or something along those lines.
+
+Also, this really should not happen; per my previous patch we should be
+stopping the timer when we go offline.
+
+Since you can readily reproduce this; perhaps you could stick something
+like this in dl_server_start():
+
+	WARN_ON_ONCE(!cpu_online(rq->cpu))
+
+See if anybody is (re)starting the thing ?
+
 
