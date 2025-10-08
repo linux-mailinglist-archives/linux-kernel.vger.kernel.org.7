@@ -1,100 +1,66 @@
-Return-Path: <linux-kernel+bounces-845457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 557C2BC5053
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 14:55:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C897BC5075
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 14:56:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1F4154F5812
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 12:55:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E034188B8CC
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 12:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F46274FFD;
-	Wed,  8 Oct 2025 12:55:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29AC428488A;
+	Wed,  8 Oct 2025 12:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uTP0LTdN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XxssVcb3";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uTP0LTdN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XxssVcb3"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Rhgzx+IC"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9330127055E
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 12:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D4D284884
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 12:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759928102; cv=none; b=E/cJAFSq14s12EjmAsBG5sEr3yOnJh0TcP+umXb4sLpnlMVJ97cnK2IjikIia8DxM8+BSE/OxjR7QiO+eARYNE1Tt+PIOSbW2PFZCFe4Rkw2ZSwHeXrxzFJmcakbM37ls4a8MrovpK9QZaOpnpbrt79UnSexE+Pbr6Hwbo/piiw=
+	t=1759928122; cv=none; b=miSsm4QjgZqf3hBzNP4um1X34ONbSTRqX/MY6jIRozlgu4zpvUb0GsCnXVo3HLqDXRCzYi7JbI/C1bf/tQeQOoxWCRZ8CtdkI7x8IaUVzMvWgiXmagx52Z6pUX2YXyT6BUwz9S3gHhaGfT1s0pxmy9A5tV/G2RW64dAVtYA2SD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759928102; c=relaxed/simple;
-	bh=UPdWiu75orYUiT/S17D2mvtCcxoV53pfo8sO6VIpeKA=;
+	s=arc-20240116; t=1759928122; c=relaxed/simple;
+	bh=Zn4K2VDfxQjdtMePzhXHGGcoZoCed8zNFgBVKMC/Tic=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SF0A3BuCkuyNj/HnmePUi2+eeAc2z3bCIuFj9AlEZvKJyy2nMY3w8pS3cDSfPH9UpBxoId/WLgt+h9BCthMrCO9sF855CYW+5XSXx2OgixblykBx5U9AS3xnD1yyqFdWaqzzif1vFAWw4GjRuNu9/xjLaicKKEXWRLQNVm5vTJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uTP0LTdN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XxssVcb3; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uTP0LTdN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XxssVcb3; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C677F1FC05;
-	Wed,  8 Oct 2025 12:54:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759928098; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e1CtbGSnAs+YF38WLCWa/DOZeDRzNvL7cxSmBij76wU=;
-	b=uTP0LTdNVRqTbtLXZvLoickB5NY6m8Lmbjp1CV/SyhWCAk7bLtD/eGMW8we0WE8PSZpoHl
-	X1tyhSSJ+I5+oO1Ymfo1/SMqi2KBuaeW7RL6q5ppj7kIySMTDmU2+ul+2ggwBrGcvwu417
-	0rXTYjHXHW429Xk9RvckxuQTnGgkouk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759928098;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e1CtbGSnAs+YF38WLCWa/DOZeDRzNvL7cxSmBij76wU=;
-	b=XxssVcb3huVBKPYWIbiOVZduv9XGAZrN3o/9gQKWUYDgzYiUHVeA6gbAJ58TKXrigByebE
-	s2M7/q/P4mgKWzCg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759928098; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e1CtbGSnAs+YF38WLCWa/DOZeDRzNvL7cxSmBij76wU=;
-	b=uTP0LTdNVRqTbtLXZvLoickB5NY6m8Lmbjp1CV/SyhWCAk7bLtD/eGMW8we0WE8PSZpoHl
-	X1tyhSSJ+I5+oO1Ymfo1/SMqi2KBuaeW7RL6q5ppj7kIySMTDmU2+ul+2ggwBrGcvwu417
-	0rXTYjHXHW429Xk9RvckxuQTnGgkouk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759928098;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e1CtbGSnAs+YF38WLCWa/DOZeDRzNvL7cxSmBij76wU=;
-	b=XxssVcb3huVBKPYWIbiOVZduv9XGAZrN3o/9gQKWUYDgzYiUHVeA6gbAJ58TKXrigByebE
-	s2M7/q/P4mgKWzCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AE5CD13693;
-	Wed,  8 Oct 2025 12:54:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id r8qPKiJf5miURQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 08 Oct 2025 12:54:58 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 17A34A0A9C; Wed,  8 Oct 2025 14:54:58 +0200 (CEST)
-Date: Wed, 8 Oct 2025 14:54:58 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
-	yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v2 13/13] ext4: add two trace points for moving extents
-Message-ID: <kkecvhazplnbbvv2omtwae6jckon3onaym5gbxp7bndnoqr5eq@xow35t5dhhph>
-References: <20250925092610.1936929-1-yi.zhang@huaweicloud.com>
- <20250925092610.1936929-14-yi.zhang@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=p5Dt+iEdd7NiLbSuNtsO5merzwRt4dQRGf3DhKKu1iO4CoS8hjfq/Upy3QNLnhuvlfI576C5tbTld74nGIAmeX46CV1LGL/BAFfO0dAK7VsCcEWB4/rUy2uLYZ6TDG8a3VzjvwwVKbO26km0t4bqrKmfALu0YzhlZ9zN6DC1azw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Rhgzx+IC; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=xaJ8r93kxW2ilCp+pdPnf+jgQJO/h1G4FxZx0FSfbB0=; b=Rhgzx+ICtTAZhl4O6v/i56Qhwf
+	rdG/Cb+Ury3nJVLClI5k8WNVlxcw5749jaF71cw4uO9kkniSNiMOizle1W7h6H07oNGJYheQfR/Lj
+	HaEl/uF7vBNjH0jn/1UEOjB2GiqclJ7zj4UroegyCqxm5xYhinB7bTByUxvmo/2Pih5NlmIp1thEM
+	/aXv3fYyBMks0CX68unaGRa1y2CL6D5gHYLkT40IE2QZu9ewfzerqF6EB4ntSb3NTNWcsLFY9GtT5
+	smAlVP4HrKqVr/uUzoMd2ijJxU5yoe4g0rp9vhu53uLc/eXMTa88/Me+czL9DtATR+bMx+tgVRGQr
+	g0gJG06g==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v6ThG-00000000i49-0ObV;
+	Wed, 08 Oct 2025 12:55:10 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id C0904300400; Wed, 08 Oct 2025 14:55:08 +0200 (CEST)
+Date: Wed, 8 Oct 2025 14:55:08 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	David Howells <dhowells@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+	Li RongQing <lirongqing@baidu.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] seqlock: introduce scoped_seqlock_read() and
+ scoped_seqlock_read_irqsave()
+Message-ID: <20251008125508.GJ3289052@noisy.programming.kicks-ass.net>
+References: <20251008123014.GA20413@redhat.com>
+ <20251008123045.GA20440@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,180 +69,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250925092610.1936929-14-yi.zhang@huaweicloud.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+In-Reply-To: <20251008123045.GA20440@redhat.com>
 
-On Thu 25-09-25 17:26:09, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
+On Wed, Oct 08, 2025 at 02:30:45PM +0200, Oleg Nesterov wrote:
+> The read_seqbegin/need_seqretry/done_seqretry API is cumbersome and
+> error prone. With the new helper the "typical" code like
 > 
-> To facilitate tracking the length, type, and outcome of the move extent,
-> add a trace point at both the entry and exit of mext_move_extent().
+> 	int seq, nextseq;
+> 	unsigned long flags;
 > 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/ext4/move_extent.c       | 14 ++++++-
->  include/trace/events/ext4.h | 74 +++++++++++++++++++++++++++++++++++++
->  2 files changed, 86 insertions(+), 2 deletions(-)
+> 	nextseq = 0;
+> 	do {
+> 		seq = nextseq;
+> 		flags = read_seqbegin_or_lock_irqsave(&seqlock, &seq);
 > 
-> diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
-> index 0fa97c207274..53a8b9caeeda 100644
-> --- a/fs/ext4/move_extent.c
-> +++ b/fs/ext4/move_extent.c
-> @@ -13,6 +13,8 @@
->  #include "ext4.h"
->  #include "ext4_extents.h"
->  
-> +#include <trace/events/ext4.h>
-> +
->  struct mext_data {
->  	struct inode *orig_inode;	/* Origin file inode */
->  	struct inode *donor_inode;	/* Donor file inode */
-> @@ -311,10 +313,14 @@ static int mext_move_extent(struct mext_data *mext, u64 *m_len)
->  	int ret, ret2;
->  
->  	*m_len = 0;
-> +	trace_ext4_move_extent_enter(orig_inode, orig_map, donor_inode,
-> +				     mext->donor_lblk);
->  	credits = ext4_chunk_trans_extent(orig_inode, 0) * 2;
->  	handle = ext4_journal_start(orig_inode, EXT4_HT_MOVE_EXTENTS, credits);
-> -	if (IS_ERR(handle))
-> -		return PTR_ERR(handle);
-> +	if (IS_ERR(handle)) {
-> +		ret = PTR_ERR(handle);
-> +		goto out;
-> +	}
->  
->  	ret = mext_move_begin(mext, folio, &move_type);
->  	if (ret)
-> @@ -372,6 +378,10 @@ static int mext_move_extent(struct mext_data *mext, u64 *m_len)
->  	mext_folio_double_unlock(folio);
->  stop_handle:
->  	ext4_journal_stop(handle);
-> +out:
-> +	trace_ext4_move_extent_exit(orig_inode, orig_map->m_lblk, donor_inode,
-> +				    mext->donor_lblk, orig_map->m_len, *m_len,
-> +				    move_type, ret);
->  	return ret;
->  
->  repair_branches:
-> diff --git a/include/trace/events/ext4.h b/include/trace/events/ext4.h
-> index 6a0754d38acf..a05bdd48e16e 100644
-> --- a/include/trace/events/ext4.h
-> +++ b/include/trace/events/ext4.h
-> @@ -3016,6 +3016,80 @@ TRACE_EVENT(ext4_update_sb,
->  		  __entry->fsblk, __entry->flags)
->  );
->  
-> +TRACE_EVENT(ext4_move_extent_enter,
-> +	TP_PROTO(struct inode *orig_inode, struct ext4_map_blocks *orig_map,
-> +		 struct inode *donor_inode, ext4_lblk_t donor_lblk),
-> +
-> +	TP_ARGS(orig_inode, orig_map, donor_inode, donor_lblk),
-> +
-> +	TP_STRUCT__entry(
-> +		__field(dev_t, dev)
-> +		__field(ino_t, orig_ino)
-> +		__field(ext4_lblk_t, orig_lblk)
-> +		__field(unsigned int, orig_flags)
-> +		__field(ino_t, donor_ino)
-> +		__field(ext4_lblk_t, donor_lblk)
-> +		__field(unsigned int, len)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__entry->dev		= orig_inode->i_sb->s_dev;
-> +		__entry->orig_ino	= orig_inode->i_ino;
-> +		__entry->orig_lblk	= orig_map->m_lblk;
-> +		__entry->orig_flags	= orig_map->m_flags;
-> +		__entry->donor_ino	= donor_inode->i_ino;
-> +		__entry->donor_lblk	= donor_lblk;
-> +		__entry->len		= orig_map->m_len;
-> +	),
-> +
-> +	TP_printk("dev %d,%d origin ino %lu lblk %u flags %s donor ino %lu lblk %u len %u",
-> +		  MAJOR(__entry->dev), MINOR(__entry->dev),
-> +		  (unsigned long) __entry->orig_ino,  __entry->orig_lblk,
-> +		  show_mflags(__entry->orig_flags),
-> +		  (unsigned long) __entry->donor_ino,  __entry->donor_lblk,
-> +		  __entry->len)
-> +);
-> +
-> +TRACE_EVENT(ext4_move_extent_exit,
-> +	TP_PROTO(struct inode *orig_inode, ext4_lblk_t orig_lblk,
-> +		 struct inode *donor_inode, ext4_lblk_t donor_lblk,
-> +		 unsigned int m_len, u64 move_len, int move_type, int ret),
-> +
-> +	TP_ARGS(orig_inode, orig_lblk, donor_inode, donor_lblk, m_len,
-> +		move_len, move_type, ret),
-> +
-> +	TP_STRUCT__entry(
-> +		__field(dev_t, dev)
-> +		__field(ino_t, orig_ino)
-> +		__field(ext4_lblk_t, orig_lblk)
-> +		__field(ino_t, donor_ino)
-> +		__field(ext4_lblk_t, donor_lblk)
-> +		__field(unsigned int, m_len)
-> +		__field(u64, move_len)
-> +		__field(int, move_type)
-> +		__field(int, ret)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__entry->dev		= orig_inode->i_sb->s_dev;
-> +		__entry->orig_ino	= orig_inode->i_ino;
-> +		__entry->orig_lblk	= orig_lblk;
-> +		__entry->donor_ino	= donor_inode->i_ino;
-> +		__entry->donor_lblk	= donor_lblk;
-> +		__entry->m_len		= m_len;
-> +		__entry->move_len	= move_len;
-> +		__entry->move_type	= move_type;
-> +		__entry->ret		= ret;
-> +	),
-> +
-> +	TP_printk("dev %d,%d origin ino %lu lblk %u donor ino %lu lblk %u m_len %u, move_len %llu type %d ret %d",
-> +		  MAJOR(__entry->dev), MINOR(__entry->dev),
-> +		  (unsigned long) __entry->orig_ino,  __entry->orig_lblk,
-> +		  (unsigned long) __entry->donor_ino,  __entry->donor_lblk,
-> +		  __entry->m_len, __entry->move_len, __entry->move_type,
-> +		  __entry->ret)
-> +);
-> +
->  #endif /* _TRACE_EXT4_H */
->  
->  /* This part must be outside protection */
-> -- 
-> 2.46.1
+> 		// read-side critical section
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> 		nextseq = 1;
+> 	} while (need_seqretry(&seqlock, seq));
+> 	done_seqretry_irqrestore(&seqlock, seq, flags);
+> 
+> can be rewritten as
+> 
+> 	scoped_seqlock_read_irqsave (&seqlock) {
+> 		// read-side critical section
+> 	}
+> 
+
+Hmm, on first reading I was expecting that to be:
+
+	do {
+		seq = read_seqbegin(&seqlock);
+
+		// read-side section
+
+	} while (read_seqretry(&seqlock, seq));
+
+for lack of that _or_lock() wording, but I suppose we can make that
+something like:
+
+ 	scoped_seqbegin_read (&seqlock) {
+		// read-side section
+	}
+
+which is distinctive enough.
+
+
 
