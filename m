@@ -1,52 +1,79 @@
-Return-Path: <linux-kernel+bounces-845337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24BC3BC481F
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:08:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3E57BC4831
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:10:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 026AB4F0CBC
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:08:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E015A19E0FC8
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98CE2F618F;
-	Wed,  8 Oct 2025 11:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 746CC2F619F;
+	Wed,  8 Oct 2025 11:10:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IhDEvBk1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ItsNtXB0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B472ECE9C;
-	Wed,  8 Oct 2025 11:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403C82F6168;
+	Wed,  8 Oct 2025 11:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759921714; cv=none; b=nes9LOssTDBwZHoSwdv846BD1PtBZjYtUJiaL4dk8v6WjI92RyNBdnVGRQKhsjEAGm0iR2p0P92CxyzGlRWvY1J4GgvcIc67x331gz1S8+m2cBWwJ03WJ+noOXWVglJU9tq9ySM1dqvf3pZtN9CBkPQtjzJYts9lWBDLFZT/6gk=
+	t=1759921801; cv=none; b=cBktaFT9d7R3XVG1QYdLCpy+5wPQqiMVD+xuD2fR1BbwFQ6zp/3nctO7poLPa7UNuoqIUrRs1DhQ3y8g5vr2pUe34PwCXXA05jTqsZBr1banoZmUj/og+P3g6noZwhHKX3CFXl5/wQj71QGNSZZzsBfSTVvhe5i0L1oF+FEuoX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759921714; c=relaxed/simple;
-	bh=skZYeuIwpcqOcK3DodmjQ8nM/TXM5C2KQs1Dnyo9exU=;
+	s=arc-20240116; t=1759921801; c=relaxed/simple;
+	bh=n5/diNwZRoFuwCO4P1Hp5ug4Zt0q4zG2ojtKzRbe3UQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EYBwQ0ZZTRdaTDu4ZE0TsMfMLkggLI/pgmIsW1NFA8sKUiyFc6O05MFfX/hB4jamhi4MY6sRkNl1oXHAh9TArIKVWvupeyvPM0Nr7+TQGc5qz7H1j7D9rucygQ++1hl0B7N2NUAx4GqcY5gmGXDXF13V8PfS9cshU19zVURYUJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IhDEvBk1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64C05C4CEF4;
-	Wed,  8 Oct 2025 11:08:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1759921713;
-	bh=skZYeuIwpcqOcK3DodmjQ8nM/TXM5C2KQs1Dnyo9exU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IhDEvBk1jLTtgERD/SCemibZCRCF1a96QcZh2uUyIZmSJumcHBvQFgfqGkbQZe0uF
-	 xz7yGMpl+JWZmC9SymZVLD4M9qwawVsdTj8rzAXsXK8mO13XZ1SQ7YA0vzQpzjT66k
-	 lbxw3nTazOAXbkP83JICJPFvbLC/8ueMyZ9YpoVg=
-Date: Wed, 8 Oct 2025 13:08:31 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Akshay Gujar <Akshay.Gujar@harman.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	naveen.v@harman.com, sankarkumar.krishnasamy@harman.com,
-	oneukum@suse.com
-Subject: Re: [PATCH] usb: core: notify unrecognized usb device
-Message-ID: <2025100805-resisting-target-419a@gregkh>
-References: <2025090610-donation-sprawl-f6f7@gregkh>
- <20250918172355.5118-1-Akshay.Gujar@harman.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=H6KhzrdEv91vvz5KtVS8F0Ro6QCZJpxb8dicH7HwkVTyPybGet9ExzVxjZlpCSYhXSczpOWaDLz4VYRRXee7vIAWC9IR0czxM++e+PaIfqMqRMSMJe1LDeMPN5Ii5dwZnxnvX8FFAfy8yvNbd+V2Cb/qkMJspI72RRfpIAmQqP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ItsNtXB0; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759921799; x=1791457799;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=n5/diNwZRoFuwCO4P1Hp5ug4Zt0q4zG2ojtKzRbe3UQ=;
+  b=ItsNtXB0lRMdwcw3s+HTPPDksNaGZXn7OZnoUJZCxSf+3SPibg2uOuk9
+   NG4BT2g+da+ZABrOF7EywvQYU+QmijT1qC3H/OQ/JZ0tBRB/uBoZ4jrsL
+   9joLP/ZUKbYZLOUmjSm86TnsEFHNQfuYp6rdlBYKC1KSe6jVpWYz1Jl7P
+   /tC6XH8skbAthGRDY5ahbdXHmIchhn6nyDCd6FzzbzWoarc6vsg9m3XB7
+   O7BfglLVDCzZ2A06tpwstY9A4EXL7l6s+nOdWfT2BBe5sCq5XmDkfXTyy
+   TFe1//d00oYTm7dl2QneSZwRWXFmnjhBW0+csqmdXyv/qheSc+jjD2+iK
+   A==;
+X-CSE-ConnectionGUID: TkEVDk9JTYmrw6+xYZhb2g==
+X-CSE-MsgGUID: 9F5tyfziTqqwGSDAogtwrg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11575"; a="62154348"
+X-IronPort-AV: E=Sophos;i="6.19,323,1754982000"; 
+   d="scan'208";a="62154348"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2025 04:09:58 -0700
+X-CSE-ConnectionGUID: LWQRulO9RpGWy0jNTtSnQg==
+X-CSE-MsgGUID: zK1Hcg2SR1S24IFwYh5k+g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,323,1754982000"; 
+   d="scan'208";a="211063918"
+Received: from iherna2-mobl4.amr.corp.intel.com (HELO kuha.fi.intel.com) ([10.124.220.169])
+  by orviesa002.jf.intel.com with SMTP; 08 Oct 2025 04:09:55 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 08 Oct 2025 14:09:53 +0300
+Date: Wed, 8 Oct 2025 14:09:53 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] usb: typec: hd3ss3220: Enable VBUS based on ID pin
+ state
+Message-ID: <aOZGgZc1F968uoR6@kuha.fi.intel.com>
+References: <20251002172539.586538-1-krishna.kurapati@oss.qualcomm.com>
+ <20251002172539.586538-3-krishna.kurapati@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,73 +82,115 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250918172355.5118-1-Akshay.Gujar@harman.com>
+In-Reply-To: <20251002172539.586538-3-krishna.kurapati@oss.qualcomm.com>
 
-On Thu, Sep 18, 2025 at 05:23:55PM +0000, Akshay Gujar wrote:
-> >On Sat, Sep 6, 2025 14:28:37AM +0200, Greg KH wrote:
+On Thu, Oct 02, 2025 at 10:55:39PM +0530, Krishna Kurapati wrote:
+> Enable VBUS on HD3SS3220 when the ID pin is low, as required by the Type-C
+> specification.
+
+There is not ID pin on Type-C connector.
+
+> The ID pin stays high when VBUS is not at VSafe0V, and goes
+> low when VBUS is at VSafe0V.
 > 
-> > >>> As per the usb compliance, USB-IF enforces a "no silent failure" rule.
-> > >>> This means that an implementation of USB must not appear broken to the
-> > >>> consumer. In configurations where the consumer's expectations are not
-> > >>> met, either the peripheral or host must provide appropriate and useful
-> > >>> feedback to the consumer regarding the problem.
-> > >>> 
-> > >>> Link: https://compliance.usb.org/index.asp?UpdateFile=Embedded%20Host&Format=Standard#10
-> > >
-> > >Odd, many Linux devices have passed usb-if testing since 2005 when this
-> > >was made a "rule", how did that happen?  What recently changed to
-> > >suddenly require this be a kernel issue?
-> > > 
-> > > Previously, OEMs handled this with private kernel patches or custom modifications. 
-> > > However, with Android's Generic Kernel Image (GKI) initiative, vendors can no longer make arbitrary kernel modifications. 
-> > > GKI requires using a common upstream kernel, so functionality like this needs to be up streamed rather than handled with vendor-specific patches.
-> > > This patch provides a standard upstream solution for what was previously handled with custom kernel modifications.
-> 
-> > That's good, but that does not mean that what you are attempting to do
-> > really is the correct thing to do.  Here you were trying to say that
-> > this is a requirement of USB-IF, but it really is not.  This is just
-> > wanting to add a new feature to the USB core that previously was only
-> > out-of-tree for your devices.  Please be more specific in your
-> > description of the problem and issues involved.
-> 
-> To clarify, this patch targets two needs: 
-> it helps with USB-IF compliance testing (where enumeration failures must be visible to userspace), 
+> Add support to read the ID pin state and enable VBUS accordingly.
 
-Why must it be visible to userspace?  How have we passed testing before
-now?
-
-> and it provides a generic mechanism for userspace to be notified of USB enumeration failures, 
-> which is currently missing in the USB core. This solution standardizes the notification, 
-> especially important for Android GKI and similar environments.
-
-But there is no user for this new user/kernel api anywhere.  Android
-does not do this today, what is the chance it really will use it?  Do
-you have working patches somewhere that will land if this is added?
-
-And where is any of this being documented? :)
-
-> >> that is probably not true. For once you can try another cable in many cases.
-> >> Currently we'd log this information. That is a worse way to handle this kind
-> >> of failure.
-> >> If there is an unrecoverable IO error, user space ought to be notified.
-> >> Syslog is not the best way to do so. There ought to be a standardized way
-> >> of doing this. However, this makes me say that this issue is not really
-> >> confined to USB. Other hotpluggable busses have the same issue.
-> 
-> >Yes, all busses have this type of issue for when devices can not be
-> >enumerated or fail.  We shouldn't make something that only works for
-> >USB.  I think PCI reports this type of thing somehow, so maybe
-> >generalize that api?
-> 
-> Agreed, this is a broader issue across hotpluggable busses. Generalizing the API to cover enumeration failures for USB, PCI, and others would be ideal. 
-> For now, this patch addresses USB specifically due to immediate needs.
-
-Great, but again, why not make it generic so that all can use it?
-
-Otherwise we end up with a USB-specific solution that no one else can
-ever use in the future.
+I'm a bit confused about this... Why can't you just check the attached
+state, and if it's DFP, then you drive VBUS?
 
 thanks,
 
-greg k-h
+> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+> ---
+>  drivers/usb/typec/hd3ss3220.c | 58 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 58 insertions(+)
+> 
+> diff --git a/drivers/usb/typec/hd3ss3220.c b/drivers/usb/typec/hd3ss3220.c
+> index 3ecc688dda82..44ee0be27644 100644
+> --- a/drivers/usb/typec/hd3ss3220.c
+> +++ b/drivers/usb/typec/hd3ss3220.c
+> @@ -54,6 +54,11 @@ struct hd3ss3220 {
+>  	struct delayed_work output_poll_work;
+>  	enum usb_role role_state;
+>  	bool poll;
+> +
+> +	struct gpio_desc *id_gpiod;
+> +	int id_irq;
+> +
+> +	struct regulator *vbus;
+>  };
+>  
+>  static int hd3ss3220_set_power_opmode(struct hd3ss3220 *hd3ss3220, int power_opmode)
+> @@ -319,6 +324,28 @@ static const struct regmap_config config = {
+>  	.max_register = 0x0A,
+>  };
+>  
+> +static irqreturn_t hd3ss3220_id_isr(int irq, void *dev_id)
+> +{
+> +	struct hd3ss3220 *hd3ss3220 = dev_id;
+> +	int ret;
+> +	int id;
+> +
+> +	if (IS_ERR_OR_NULL(hd3ss3220->vbus))
+> +		return IRQ_HANDLED;
+> +
+> +	id = hd3ss3220->id_gpiod ? gpiod_get_value_cansleep(hd3ss3220->id_gpiod) : 1;
+> +
+> +	if (!id) {
+> +		ret = regulator_enable(hd3ss3220->vbus);
+> +		if (ret)
+> +			dev_err(hd3ss3220->dev, "enable vbus regulator failed\n");
+> +	} else {
+> +		regulator_disable(hd3ss3220->vbus);
+> +	}
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+>  static int hd3ss3220_probe(struct i2c_client *client)
+>  {
+>  	struct typec_capability typec_cap = { };
+> @@ -354,6 +381,37 @@ static int hd3ss3220_probe(struct i2c_client *client)
+>  		hd3ss3220->role_sw = usb_role_switch_get(hd3ss3220->dev);
+>  	}
+>  
+> +	hd3ss3220->id_gpiod = devm_gpiod_get_optional(hd3ss3220->dev, "id", GPIOD_IN);
+> +	if (IS_ERR(hd3ss3220->id_gpiod))
+> +		return PTR_ERR(hd3ss3220->id_gpiod);
+> +
+> +	if (hd3ss3220->id_gpiod) {
+> +		hd3ss3220->id_irq = gpiod_to_irq(hd3ss3220->id_gpiod);
+> +		if (hd3ss3220->id_irq < 0) {
+> +			dev_err(hd3ss3220->dev, "failed to get ID IRQ\n");
+> +			return hd3ss3220->id_irq;
+> +		}
+> +
+> +		ret = devm_request_threaded_irq(hd3ss3220->dev,
+> +						hd3ss3220->id_irq, NULL,
+> +						hd3ss3220_id_isr,
+> +						IRQF_TRIGGER_RISING |
+> +						IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
+> +						dev_name(hd3ss3220->dev), hd3ss3220);
+> +		if (ret < 0) {
+> +			dev_err(hd3ss3220->dev, "failed to get id irq\n");
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	hd3ss3220->vbus = devm_regulator_get_optional(hd3ss3220->dev, "vbus");
+> +	if (PTR_ERR(hd3ss3220->vbus) == -ENODEV)
+> +		hd3ss3220->vbus = NULL;
+> +
+> +	if (IS_ERR(hd3ss3220->vbus))
+> +		return dev_err_probe(hd3ss3220->dev,
+> +				     PTR_ERR(hd3ss3220->vbus), "failed to get vbus\n");
+> +
+>  	if (IS_ERR(hd3ss3220->role_sw)) {
+>  		ret = PTR_ERR(hd3ss3220->role_sw);
+>  		goto err_put_fwnode;
+> -- 
+> 2.34.1
+
+-- 
+heikki
 
