@@ -1,102 +1,95 @@
-Return-Path: <linux-kernel+bounces-845379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 002D7BC4A05
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:52:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D9CEBC4A2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:54:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61FFA4039CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:51:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38A4F3AA111
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D35DE2F7ACF;
-	Wed,  8 Oct 2025 11:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82CF92F659B;
+	Wed,  8 Oct 2025 11:53:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="W5tuoW+g";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RYbPcZQH";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="W5tuoW+g";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RYbPcZQH"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="U/3wO0pm"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAE52F7AA6
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 11:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88ED02F4A0A
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 11:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759924294; cv=none; b=KU8ZHPCxheHMV2hX3Umvg7C8P2nUPZciSwnYA47Ls5/00PtIXp0WBxhD5OpBMKxIumY+K0mHtdQBmsZU4eHy+eoDRhae5kmf+UGTMttf9Tyr76ZVyECWHKmw89xMPRToag3m1EZ/BcmgroJ+Dh6DhoIttcM6bDiUR9X2O5Uh5sU=
+	t=1759924434; cv=none; b=drwjldw3OrybfQCLXDLHUfutWWaruix/u6ZtNAXY+oS96v1m2GBTqGKHpf+Az5Ngo6WTjDuUiNqMsY17OgYt2k8jfQYMVdXa+9ZZcqks+eEbzWJu8gvZdIwZf87tVRHDm5fVPSMDp3UbItSL3Ve7Gvocc3pTw8kq4Gz45YZDh9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759924294; c=relaxed/simple;
-	bh=8cag3zuNphr8CppeayVDLR81Rxb3ZdgnTZMEP5CeOaU=;
+	s=arc-20240116; t=1759924434; c=relaxed/simple;
+	bh=8cLt0ix1t/8cGuoBuDLR9JmN7BJAmYGQQ76ce4UTKC0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WNFfVHwCeRvkCkKr4Kk2y0SPNh+4sTR+xZwS1C8gvjZ0jkWUeE6XVwQgRpXJGr+3VC4yqdpkj3CiIq7xKhc7MuKAo8rxVLTZhi4K6BJODFk6Y93QDxsxnmbl2D+tXD73L2FuL2n2ck1DGj60qIGWjY+QNNsh/MfG3hQU9Rbm8Ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=W5tuoW+g; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RYbPcZQH; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=W5tuoW+g; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RYbPcZQH; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C030733682;
-	Wed,  8 Oct 2025 11:51:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759924290; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ryI3+xKFvG3c0t0tQvHX7EADdfWryz/6C8fjbSuKgwA=;
-	b=W5tuoW+guY+5vNNO8Am10H4oSJxdlVfucBdKw1Pz3RYkC1JPt5U+mPv2TYkndO4Wfsqh5T
-	EqDUoYibvVmndJLHk+GqnTfwaiBv99RF8cP7HgLfl5NC7u5SdLlIBOdarpAZouQqsyyiax
-	kMQtYOzor/Dnuw9Usa+5H4b4GmIBqlQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759924290;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ryI3+xKFvG3c0t0tQvHX7EADdfWryz/6C8fjbSuKgwA=;
-	b=RYbPcZQHwGQVu8SY7EP2G6sITOVIrSnaFVKVpjwIC8Z8Yxyo8KXH2ThmEZ+bq7exM8a5IK
-	YJLje4pLIySL9RCQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=W5tuoW+g;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=RYbPcZQH
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759924290; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ryI3+xKFvG3c0t0tQvHX7EADdfWryz/6C8fjbSuKgwA=;
-	b=W5tuoW+guY+5vNNO8Am10H4oSJxdlVfucBdKw1Pz3RYkC1JPt5U+mPv2TYkndO4Wfsqh5T
-	EqDUoYibvVmndJLHk+GqnTfwaiBv99RF8cP7HgLfl5NC7u5SdLlIBOdarpAZouQqsyyiax
-	kMQtYOzor/Dnuw9Usa+5H4b4GmIBqlQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759924290;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ryI3+xKFvG3c0t0tQvHX7EADdfWryz/6C8fjbSuKgwA=;
-	b=RYbPcZQHwGQVu8SY7EP2G6sITOVIrSnaFVKVpjwIC8Z8Yxyo8KXH2ThmEZ+bq7exM8a5IK
-	YJLje4pLIySL9RCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B4EE313A3D;
-	Wed,  8 Oct 2025 11:51:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id cKUqLEJQ5mhKMAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 08 Oct 2025 11:51:30 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 67FD3A0ACD; Wed,  8 Oct 2025 13:51:26 +0200 (CEST)
-Date: Wed, 8 Oct 2025 13:51:26 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
-	yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v2 09/13] ext4: rename mext_page_mkuptodate() to
- mext_folio_mkuptodate()
-Message-ID: <gxjjbokvnurzrwc64oqlisadx5anmwdv67qit7ttd3wlunj6d5@ab35hupg4zby>
-References: <20250925092610.1936929-1-yi.zhang@huaweicloud.com>
- <20250925092610.1936929-10-yi.zhang@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aX/rHVcANMqgBBvfdw1bj6hpaWTbhdyTgOhRwwd885lNvsfD3c++hjX/LZV9oHgkN+jm0RUF77aE5NUn4K26hZcsf+kYWIQWXreZTXS6SBhXGsGJCApf7eBhGvUcUNKJ063fSyxpjhh+zcNj+UoEKXKtsPmrvidVuvzIkC9mNto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=U/3wO0pm; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59890QWQ021165
+	for <linux-kernel@vger.kernel.org>; Wed, 8 Oct 2025 11:53:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=7avWY48JQfGVo18dxq+IcZTm
+	C3WfW4UmnkHNbWtjudY=; b=U/3wO0pmLwppCNGR0R/hKlknOd17qddFlblwFn9S
+	+QwVNYSaLQzsoRnZgaa4ZoiPW3hdajJJShwb5f+WHrXVj/NB86tCOe1+W63lDKPj
+	ME53H521nr1EyoXD0oGY0HYN8OHN0kImK3vvUtfb6X22p71wd1NpcpVBPsGsB2Rv
+	FmZrYRDh47nzj35flLLJl5nmIR+KGQ2uiW0p6V4d9VcWvvJqIhTX8bWrQhfOMh9G
+	MyYpqEOqxj1Z9VyuOU+lyvLNEzSn8uGtW5LVkFf8kOFTwnbMRu+sgw7/saRzpq0i
+	45bVINT8ZM2lo9DDWk+LUkZOJT/E2sk63z1OBAgzK3mwOA==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49jut1t87c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 11:53:52 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-28c58e009d1so130383475ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 04:53:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759924432; x=1760529232;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7avWY48JQfGVo18dxq+IcZTmC3WfW4UmnkHNbWtjudY=;
+        b=VJ5A5m9TwW7tSr92rPbqlZEgbwxT3HGdcmsWhX0YE2Y1IZigyAkTzenyagFerOjkKV
+         DUYa7g8EmLAxdrjHupT7I7ix0If4Tp4+98R3yxUK4+lBzLqlEqmQxzW3J5l3G62giymw
+         t4BYsQdaAGqO4XSeCezDq3CiWXMu/KZxf2/lOZ7ioiMo+NBESN9xJttZe/Qmpz+i7hlJ
+         kUMEOeGnVizDbNfLWdJb3F3A0Jt+UcdFrX8E2oug/SF3NG4VVXp3k37GnvJIXcamFmWw
+         1tqyIkqTGDYr1SUMj9I/y5Kn601xkUZdK73rInK6yLj9gZt8B4KVm8MMon8skU/RKIbr
+         RM1w==
+X-Forwarded-Encrypted: i=1; AJvYcCVVlPUEH+GtEudX5HZr+c3g2mGBwdQaScNMHU1mB5ZDD6yH4cQL8gapCxx89Io4SBarYIVkY5qMDsYocVI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRALSzqAh/20n638lZhlONC5MdqoRvH4nEXt2Cmf6DLzLgOC8w
+	2zMj+xZi4ejog9doRVP8qezJ2UihEpHOWYC6AWrvWhQFIrKlEog5j2fAKzhAF6k8UXKrafv3x4c
+	p95PYws3GlXVgmYJ1Mjwow3ZCJk9dvWOAPN7PJXK1+7AbblotUwXGNi/itAf2v4p1Iqc=
+X-Gm-Gg: ASbGncu4lPLGXmJjE7ZlaQFRn6IH6Ct9ifo2wM7PijpgT6OjGb1sBcLdnMrn+IBWlzp
+	Jsowxcmj8sIZpay/53iFb9PytUduJCacuHYqWC9qeXwPwY82AM/hJzHX6nD9DLJBVkSWRCFqKat
+	YivKN3z7ZAECDPEPqdqgcChkOEO2xCAOPgzTNxi9udPa5fk4yaqPWxRB1wSYiaKRgmTlnTJKBAG
+	8wri6nEIH5wSfkJj8aZD6UWN+kZWlgFL39QXzzb3ZPfyEKTad/FNEgitABoOpFy0O0c5E9czE5N
+	B45HD0j8J2VXioLUmv9huH/0uIWAS+t3nuA6OiC/+/QmInGV40pFzV0PiVRaEgep01Xd+mix
+X-Received: by 2002:a17:902:d607:b0:269:8f2e:e38 with SMTP id d9443c01a7336-29027356528mr40731075ad.6.1759924431582;
+        Wed, 08 Oct 2025 04:53:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGRY9xTDImRzSnKlgoFFobuVyXDP6jP1oDDD+SqAwOBHLbzNiWdEMYhZJqx0MiBZOgzFyc4Lw==
+X-Received: by 2002:a17:902:d607:b0:269:8f2e:e38 with SMTP id d9443c01a7336-29027356528mr40730695ad.6.1759924431009;
+        Wed, 08 Oct 2025 04:53:51 -0700 (PDT)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1d5680sm198422425ad.96.2025.10.08.04.53.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 04:53:50 -0700 (PDT)
+Date: Wed, 8 Oct 2025 17:23:44 +0530
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: maz@kernel.org, joey.gouly@arm.com, suzuki.poulose@arm.com,
+        yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org,
+        alexandru.elisei@arm.com, linux-arm-kernel@lists.infradead.org,
+        kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: arm64: Check cpu_has_spe() before initializing
+ PMSCR_EL1 in VHE
+Message-ID: <20251008115344.vwt3j24es7u5f6m4@hu-mojha-hyd.qualcomm.com>
+References: <20251007182356.2813920-1-mukesh.ojha@oss.qualcomm.com>
+ <aOVckTSJET5ORY1n@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,83 +98,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250925092610.1936929-10-yi.zhang@huaweicloud.com>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,huawei.com:email,suse.cz:email,suse.cz:dkim,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: C030733682
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
+In-Reply-To: <aOVckTSJET5ORY1n@linux.dev>
+X-Proofpoint-GUID: bSejFkj0w_CqXagypSlSqr6fpZPdwW0A
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAyNyBTYWx0ZWRfX1lVudxb14AJ5
+ HK8t0XJbFZz7U1yGZvZNPjLed2gDiG2Sugvmjcc9Sl5g0qfxpiEgAv8XUZV/WWe42SR8B0M9UUb
+ bo1mrlqAzALxz7yDsLFMs6O6EJmz4Bl812ARGuvKcn67Ao5siNL0d1i9AdpDit7N5l+2OVc2unL
+ 7qsC9Tb9KAwsf8S3tOCBAizLlS8nWZX8Clm8IG8Uyuc0cBNcXz6ErJSCGO5ZTc6RKqrNSGn7nVp
+ gLj8feQwFrSxlkkGFlN2avw0iSNeRH/xWQ4Ck6wzoiOseJAU0D1phgSjoLMrYFcjFYLzA4AbjHw
+ Kx2wfD84xne7f6EYl1kkhvcaJRQxf+cJC+LiMF6EE0+zSlgD6NeGZM3NWGnTcM8LFkrRCFD6EQR
+ 5+gQk5Tb3b1HJiJPyUAG3N04eRQRaA==
+X-Authority-Analysis: v=2.4 cv=Vqcuwu2n c=1 sm=1 tr=0 ts=68e650d0 cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=61sAA7mvWUCA7UW45uQA:9
+ a=CjuIK1q_8ugA:10 a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-ORIG-GUID: bSejFkj0w_CqXagypSlSqr6fpZPdwW0A
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-08_03,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 adultscore=0 malwarescore=0 spamscore=0 priorityscore=1501
+ suspectscore=0 bulkscore=0 clxscore=1015 impostorscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040027
 
-On Thu 25-09-25 17:26:05, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
+On Tue, Oct 07, 2025 at 11:31:45AM -0700, Oliver Upton wrote:
+> Hi Mukesh,
 > 
-> mext_page_mkuptodate() no longer works on a single page, so rename it to
-> mext_folio_mkuptodate().
+> I find it a bit odd to refer to cpu_has_spe() in the shortlog, which
+> doesn't exist prior to this patch.
+
+My bad !!
+will fix this
+
 > 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/ext4/move_extent.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> On Tue, Oct 07, 2025 at 11:53:56PM +0530, Mukesh Ojha wrote:
+> > commit efad60e46057 ("KVM: arm64: Initialize PMSCR_EL1 when in VHE")
+> > initializes PMSCR_EL1 to 0 which is making the boot up stuck when KVM
+> > runs in VHE mode and reverting the change is fixing the issue.
+> > 
+> > [    2.967447] RPC: Registered tcp NFSv4.1 backchannel transport module.
+> > [    2.974061] PCI: CLS 0 bytes, default 64
+> > [    2.978171] Unpacking initramfs...
+> > [    2.982889] kvm [1]: nv: 568 coarse grained trap handlers
+> > [    2.988573] kvm [1]: IPA Size Limit: 40 bits
+> > 
+> > Lets guard the change with cpu_has_spe() check so that it only affects
+> > the cpu which has SPE feature supported.
 > 
-> diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
-> index 0191a3c746db..2df6072b26c0 100644
-> --- a/fs/ext4/move_extent.c
-> +++ b/fs/ext4/move_extent.c
-> @@ -165,7 +165,7 @@ mext_folio_double_lock(struct inode *inode1, struct inode *inode2,
->  }
->  
->  /* Force folio buffers uptodate w/o dropping folio's lock */
-> -static int mext_page_mkuptodate(struct folio *folio, size_t from, size_t to)
-> +static int mext_folio_mkuptodate(struct folio *folio, size_t from, size_t to)
->  {
->  	struct inode *inode = folio->mapping->host;
->  	sector_t block;
-> @@ -358,7 +358,7 @@ move_extent_per_page(struct file *o_filp, struct inode *donor_inode,
->  data_copy:
->  	from = offset_in_folio(folio[0],
->  			       orig_blk_offset << orig_inode->i_blkbits);
-> -	*err = mext_page_mkuptodate(folio[0], from, from + replaced_size);
-> +	*err = mext_folio_mkuptodate(folio[0], from, from + replaced_size);
->  	if (*err)
->  		goto unlock_folios;
->  
-> -- 
-> 2.46.1
+> This could benefit from being spelled out a bit more. In both cases we
+> check for the presence of FEAT_SPE, however I believe the issue you
+> observe is EL3 hasn't delegated ownership of the Profiling Buffer to
+> Non-secure nor does it reinject an UNDEF in response to the sysreg trap.
+
+You are right, writing to SYS_PMSCR is causing an issue.
+
+is it not the right to check if the profiling buffer is implemented
+rather than just checking the version ?
+
 > 
+> I agree that the change is correct but the rationale needs to be clear.
+
+Will correct it.
+
+> 
+> Thanks,
+> Oliver
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+-Mukesh Ojha
 
