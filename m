@@ -1,116 +1,178 @@
-Return-Path: <linux-kernel+bounces-845577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B41E8BC56AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 16:18:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D77AEBC56D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 16:26:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B17E3A81B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 14:18:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B42B3AB018
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 14:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D8F29BDB9;
-	Wed,  8 Oct 2025 14:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AAF52E8DEA;
+	Wed,  8 Oct 2025 14:26:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IaGDGj46"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="J4XA8TNC"
+Received: from relay13.grserver.gr (relay13.grserver.gr [178.156.171.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0CC11C54A9
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 14:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0980279DCD
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 14:26:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.156.171.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759933110; cv=none; b=GDDko/xPrf/KqWSpGMW3zrpLPL8SH9ZJxpB+tBZjBGckBWu+3fvNPpSIZ2XNec8eKotzT1jopeGi8eKoAME5Isn5j3pbWkJCw1ANGX775cW1TBKNXhaSMc0cfjIqDQAX39FKqi3Bx6nYbc3cpNCzO+6FqQuBW2aaLShedYR78Os=
+	t=1759933562; cv=none; b=s33sogdqTjC5wNr3XffcXBaelh8NF4gK3WOrTUt1ozkEossAeXlli+bGw365dfRVwFmcDOXMxsD6SGf75vI3rSGVKNKVc0EKFkdVorEaszZ2r83uYjoR9TV4nReYaJn/J0GIP55dI4DtnFPXlD5lmEZQde/vYITXww2onZJY6qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759933110; c=relaxed/simple;
-	bh=02xoZOIaqCUk6gy50ED6DchHmI0JFVyHynhA2+ahuyk=;
+	s=arc-20240116; t=1759933562; c=relaxed/simple;
+	bh=6rKMdLNQeheV0nXKVJ7hMBXupmT9rhjbFh4r+fuSFxs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XFefBtoyqnJzCMKpk7j7K+9JMtFbnTPTPb8SxCwfbqe8QMeCFVZ0GhpxxQCB5ibD614ea4jyK3/zh6lFUFRYOvYidls8k4PHyH5RgMTJEg/b+6SOn/0zzyphkTDDg6FXaMDmMtzRkQlz4LlA5Skqw3pGVUpV5OKHoU7SaMyQATE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IaGDGj46; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-30cce534a91so2538778fac.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 07:18:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759933108; x=1760537908; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=02xoZOIaqCUk6gy50ED6DchHmI0JFVyHynhA2+ahuyk=;
-        b=IaGDGj46XIEWM6dLd2386Af36ZegkUCptIovx8XvpZKTl+wVuoyOBQarAhFN1G+BgG
-         DJ8tC6ckKAikqfIPHPej61PN9Ivr/3SeYnoAUVNz+oSTmHy/9SabA3rEnKbo29O7Wr//
-         7SAfsAPF0rEEdKmRf79xEIM7Kfj/BxvAJ6zn5rBd5vNVdMhcCV+SIuGSPkN6CDaoAqea
-         325UYRVXgFkOC3zN81ATwfO+SiFziKqJunpcqvnCqK/5HFKX9DfE/0LMv7IsCULDI1vB
-         OHs5MrCqnO4WWti5qToq/Zr4hgCsQmfqh9gyxXmrdBDwhPoZUCCKi/BYpoUNYJq5afuI
-         GyKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759933108; x=1760537908;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=02xoZOIaqCUk6gy50ED6DchHmI0JFVyHynhA2+ahuyk=;
-        b=TlCYDCN6aK5+WrVIEPVxNOe0GoKwUhfbDAfPtTIQWmo0CEv1aJwoyTDvNg6GyoNSS6
-         HBbc9CdfjdZfdwSs2mFuLxyY7m6fmVKuS9TVJ9exkNm3423+RUqT8LIAod6wAAB832sl
-         PxADqRb0BVf3nd9tY8tmg6KJlYaoTiVXnwOIi2RFJaRQr8RPnMxmcl+3ixlj1GXyUxQZ
-         t0snxuKfD675rZhnPzu/WO1NYmv2cegRUZt4Ulq20d1XVr/Cx3zMBdBEF8ywVYnlFQnl
-         VGupyG36hU5+OGAGeD6v6aJ3zRce9aRVSgQ0V6tNerTWEIMsjXD6jpA3vuokcQ1GHUqA
-         3HRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUzmz1BSoOhfo5h8CaEWm8UusfWaDrdW5naJb0rK/oJfdkgC6DaNQv8Mj9Jx/F+fHT3aGFgnfcwTY40MKA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXjmYPpV1/3swHoM//ChZ1KwwNwuziktny8hftmf9EUQ6gO0QP
-	TLeOIUaRT68EvbpeN5yUn3GR6Mh3QnqyySuww0SAwEZal8UbAkI2Y6QslOUmpPg51tDJF0elat/
-	igJ67Yz/8Y/7b5UYgko4ZKPDUa43aMwA=
-X-Gm-Gg: ASbGnctNtpj/KJQBJ9xuDUxT6ZGGm3VmU3wx1B7/O4luFy0AfoqlZGjoDwakCYPInka
-	rEP/mgeS27/7DH071X6gxT8KqGFBxGDAaD9PWJuadAU357pjAw/0NCpS4vpj3kqi+1k4v6GyGMC
-	4q6zsviOvCi4U9e0z/tQx6sPhVfNVq27aB4QMCJLQtdwNLjsI2t5UmKXjSIAKzvZd7NSBSmX9K3
-	Kq/jHaxDPgKP2k5wdIU50WTpI8gt87Zkb1Yn4ek2g==
-X-Google-Smtp-Source: AGHT+IFNFjVUAWMHKgGHXBLdjL+z9UZVnH3ivOrRi96WUbNTNIl/wqUCLJ3Eqxp4UI6lqYQhsmLvNTpljrWMA40Zw6Q=
-X-Received: by 2002:a05:6871:451a:b0:315:8b80:aa4a with SMTP id
- 586e51a60fabf-3c0fa86713fmr1692388fac.48.1759933107602; Wed, 08 Oct 2025
- 07:18:27 -0700 (PDT)
+	 To:Cc:Content-Type; b=tTFVKBazvnHn1NBh2Esongxmpdbe5MIFxPrMPnAAj9qj7MTc5Z4D6+Nel6/hriKN4E/xVVSdIoW8qwcsAiBBNSouu3btnzGZ2+vW7Z9uqPOXs5LAM8u4crrCHlYFkwM3os+RxeYKrPaHOwhwCMRej1VGqzL0exau+AV5McNqGDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=J4XA8TNC; arc=none smtp.client-ip=178.156.171.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay13 (localhost [127.0.0.1])
+	by relay13.grserver.gr (Proxmox) with ESMTP id AECCE5E7BB
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 17:18:50 +0300 (EEST)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by relay13.grserver.gr (Proxmox) with ESMTPS id 305235E72A
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 17:18:44 +0300 (EEST)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id E9F15200B11
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 17:18:42 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1759933123;
+	bh=jEyWwa68ZwN7vyBFbYqkt5R7Ucf0ICsYRPcjjiumWXs=;
+	h=Received:From:Subject:To;
+	b=J4XA8TNC76ZGkn8eGHAR3HkTaqvKbeGNuBrpS9MqSYwvBWpl6fd4sXYqn1kbNGeIb
+	 ZCaX+UrXqFHKVs1AFaaRetJHVECdzkqv+IgQ1nVzkFVOU1PNCNmMKViMLcoVL4KsQg
+	 f470Nkyfty51KmsG2n/AY4DDTVd20DksEldnE1FH5qWwVYuN+rEqRCH7VTUqBmI0rz
+	 uyrBafFV3+kBIvRJdlOq8EiQLAZ4n0Yp2qYTGUfSulwQE+Dq8DDq6EedjdPNlKBZFC
+	 icThL4DcE+JgVxE6Er1zIoypcM5tR8mW95wiFTVp0mUu+yHSoiaZzrmod740wvhllu
+	 9ykzvvdBb6vow==
+Authentication-Results: linux3247.grserver.gr;
+        spf=pass (sender IP is 209.85.208.179) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f179.google.com
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f179.google.com with SMTP id
+ 38308e7fff4ca-36a448c8aa2so62104521fa.0
+        for <linux-kernel@vger.kernel.org>;
+ Wed, 08 Oct 2025 07:18:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUZGdbMs+cj393k4GdpVgOOFpAKoRBerSfWEUUIvsO9JfSAzNYYyPlLwZgSCx7DK5PYargeaA5PesBL9/A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyU6eXjtWi3z8KMHEPskZYBMAwtBwfuNNF/PwCvO8qhyBEhMXPt
+	TloGMqBOAdg74I8steAck/8OBC7qO+UUb5CMrGi/Gc2YyZfMraMg6ODk4iDGTpbSDLcmYxruJJl
+	awJuAVMtqwV3py20C8AZv0FYQLANgMpY=
+X-Google-Smtp-Source: 
+ AGHT+IFYy3GO+YTWAYmdN6/49q9L3wpjcc/lY/h8o7FdkNkDsR4aHMFiemr5kMvKlBBLMn7v0jh2fLALd/qXuCqDT7A=
+X-Received: by 2002:a2e:a10b:0:b0:36d:6ae3:816b with SMTP id
+ 38308e7fff4ca-37609d3a324mr8299711fa.13.1759933122411; Wed, 08 Oct 2025
+ 07:18:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251007145028.1845-1-briansune@gmail.com> <aOUv69rMkyYFiHae@opensource.cirrus.com>
- <CAN7C2SDUiuMfPs_X5r0RDC56313aJsfhfx0-juhZRKGTb1OKuA@mail.gmail.com>
- <e78c9cc0-4a1f-4a22-9cba-a8213a7b9301@sirena.org.uk> <CAN7C2SDMB8_b-m0ZMzuSmhHxWpA10mcxxxDMKWuNe6wfiEXo-g@mail.gmail.com>
- <58756837-9be7-4027-b951-401ceeb69e4c@sirena.org.uk>
-In-Reply-To: <58756837-9be7-4027-b951-401ceeb69e4c@sirena.org.uk>
-From: Sune Brian <briansune@gmail.com>
-Date: Wed, 8 Oct 2025 22:18:15 +0800
-X-Gm-Features: AS18NWBAo1priwf20NfbC-WLbiCJ7RPYiCQuSQkiocxt57LiFHPz_plFqnbPsSw
-Message-ID: <CAN7C2SAHy=9S3_DWCEijr09KSc4s516XAcfVbwMhNoFr_PYYrA@mail.gmail.com>
-Subject: Re: [PATCH v3] ASoC: wm8978: add missing BCLK divider setup
-To: Mark Brown <broonie@kernel.org>
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linux-sound@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20251008135057.731928-1-lkml@antheas.dev>
+ <f6d4145b-3295-4a98-9074-d4d1b7b466ae@kernel.org>
+In-Reply-To: <f6d4145b-3295-4a98-9074-d4d1b7b466ae@kernel.org>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Wed, 8 Oct 2025 16:18:31 +0200
+X-Gmail-Original-Message-ID: 
+ <CAGwozwGkbJ7qQw6EXF96UjzF5GOi4qRxp2JZFsi4MPbNa97Cyg@mail.gmail.com>
+X-Gm-Features: AS18NWCGRSpMIJba1jh4CD-RedBHmwYK3QP0XlXHEKbGTMGty1V6GWNG_i9gtIk
+Message-ID: 
+ <CAGwozwGkbJ7qQw6EXF96UjzF5GOi4qRxp2JZFsi4MPbNa97Cyg@mail.gmail.com>
+Subject: Re: [PATCH v1] platform/x86/amd: pmc: Add Lenovo Legion Go 2 to pmc
+ quirk list
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Shyam-sundar.S-k@amd.com, hansg@kernel.org, ilpo.jarvinen@linux.intel.com,
+	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Mark Pearson <mpearson-lenovo@squebb.ca>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-PPP-Message-ID: 
+ <175993312312.2497748.7504576057015337101@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
-Mark Brown <broonie@kernel.org> =E6=96=BC 2025=E5=B9=B410=E6=9C=888=E6=97=
-=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=889:40=E5=AF=AB=E9=81=93=EF=BC=9A
+On Wed, 8 Oct 2025 at 16:06, Mario Limonciello <superm1@kernel.org> wrote:
+>
+> On 10/8/25 8:50 AM, Antheas Kapenekakis wrote:
+> > The Lenovo Legion Go 2 takes a long time to resume from suspend.
+> > This is due to it having an nvme resume handler that interferes
+> > with IOMMU mappings. It is a common issue with older Lenovo
+> > laptops. Adding it to that quirk list fixes this issue.
+> >
+> > Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/4618
+> > Suggested-by: Mario Limonciello <mario.limonciello@amd.com>
+> > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+>
+> This makes sense for BIOS in the field.
+> If this is fixed in the BIOS later I'd like to narrow the quirk at a
+> later time.
 
-> This is not OK, BCLK is 99 which is less than 100 so there are not
-> enough BCLK cycles to clock the samples.
+That would be ideal. Especially since the issue is known and fixed in
+Lenovo laptops from the last three years so it should be easy to fix.
+Currently, there are two BIOS versions that would need quirking,
+RRCN11WW, RRCN10WW.
 
-What you are questioning won't even fits under normal operation scope
-of this codec IC.
-This is simply arguing and I really hate these type of conversions.
-This is a patch for specific codec IC architecture.
-Such automated bclk seeker just runs on expected operatable scope of this c=
-odec.
-And such patch is to fix missing proper bclk register load from first place=
-.
-If there are cases that is this codec is allow but could generate
-wrong result on this patch.
-Willing to update this patch and learn from my errors.
+What are the side effects from blocking the Nvme handler? Other than
+OPAL support handled by the built in BIOS, which is a semi-antifeature
+for a device like this.
 
-Any one could do what you are expecting and could runs on this codec.
-Happy to learn as much as I can.
+I should note that there are other pressing issues with the device.
+Users report HDR brightness is not at correct levels compared to
+Windows and the brightness slider sometimes breaks after sleep.
 
-Brian
+HDR brightness might be a bug in Bazzite specifically, due to a
+blanket quirk we apply to disable the PQ curve on internal displays
+(essentially the panel that had the brightness bug on e.g. Zotac Zone
+also reports supporting PQ but it does not). I disabled it for the Go
+2 but have not double checked it is disabled due to not having a
+device. Users said there was an improvement after disabling it though.
+
+Antheas
+
+> Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
+>
+> > ---
+> >   drivers/platform/x86/amd/pmc/pmc-quirks.c | 17 +++++++++++++++++
+> >   1 file changed, 17 insertions(+)
+> >
+> > diff --git a/drivers/platform/x86/amd/pmc/pmc-quirks.c b/drivers/platform/x86/amd/pmc/pmc-quirks.c
+> > index d63aaad7ef59..0fadcf5f288a 100644
+> > --- a/drivers/platform/x86/amd/pmc/pmc-quirks.c
+> > +++ b/drivers/platform/x86/amd/pmc/pmc-quirks.c
+> > @@ -204,6 +204,23 @@ static const struct dmi_system_id fwbug_list[] = {
+> >                       DMI_MATCH(DMI_PRODUCT_NAME, "82ND"),
+> >               }
+> >       },
+> > +     /* https://gitlab.freedesktop.org/drm/amd/-/issues/4618 */
+> > +     {
+> > +             .ident = "Lenovo Legion Go 2",
+> > +             .driver_data = &quirk_s2idle_bug,
+> > +             .matches = {
+> > +                     DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
+> > +                     DMI_MATCH(DMI_PRODUCT_NAME, "83N0"),
+> > +             }
+> > +     },
+> > +     {
+> > +             .ident = "Lenovo Legion Go 2",
+> > +             .driver_data = &quirk_s2idle_bug,
+> > +             .matches = {
+> > +                     DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
+> > +                     DMI_MATCH(DMI_PRODUCT_NAME, "83N1"),
+> > +             }
+> > +     },
+> >       /* https://gitlab.freedesktop.org/drm/amd/-/issues/2684 */
+> >       {
+> >               .ident = "HP Laptop 15s-eq2xxx",
+> >
+> > base-commit: a8cdf51cda30f7461a98af821e8a28c5cb5f8878
+>
+>
+
 
