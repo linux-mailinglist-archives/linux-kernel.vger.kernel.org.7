@@ -1,236 +1,180 @@
-Return-Path: <linux-kernel+bounces-845351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EED1BC48EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:26:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0723BC48D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:26:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B60E4004BD
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:26:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0B3924E8256
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:26:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 638192F656C;
-	Wed,  8 Oct 2025 11:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33E92F6562;
+	Wed,  8 Oct 2025 11:26:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ktA2dXdb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BVVfsYwI"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B71421767A;
-	Wed,  8 Oct 2025 11:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301C921767A
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 11:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759922758; cv=none; b=KBd4PvCVRjFE/xSe036v2jBRr/mymyfMrGSKKn9TSAbRR/d1POteGCx4ErNmyGejayWBX5vMMhlXYp+Gi8tTloZQP68jftc4qHecbmurUCcBKm/WSOuo9yaVsFDqEn/r0gt8m9RacXFEMjokDQGe1OeYP/caSUCoaXjYsqCSzdI=
+	t=1759922779; cv=none; b=TG0af2RwtyaV81VwLygv3Ygj1pepY+fso1i/+bvz4+dyEmtqfBhvFp+2T81oxKf3SaJTlPt4KIANql/eOpLm6c4y+D+p3rPN9fhgh/jwMvI5E0/RviPrNjxYVy1jY8zxCOoENnE68n+G3hHW88nnF7jKZCkCXNrES2iRZFjMu7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759922758; c=relaxed/simple;
-	bh=7Lw7FRVW2MvH3/Rvixa0nWeKPm0OS8Ha2dMuaX2+roU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=c0V3yKNr7oSNzEEEXoxRM+1Yu1IcQ5wmgh8p95ojUidiV0vyVJ8CGZFWiiAx/z0Ksyk+dFcflIv7CrRKJD6zGqycmNyGJ9BwnTGSkHQ7ihLJP457ZdIIUAaSNipw1lcRyLulpTUM7sc0ZilwuJcQ2LbvB+GTCuOoikB3wQ+XEBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ktA2dXdb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45ED1C4CEF4;
-	Wed,  8 Oct 2025 11:25:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759922758;
-	bh=7Lw7FRVW2MvH3/Rvixa0nWeKPm0OS8Ha2dMuaX2+roU=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=ktA2dXdbQbuNanzrsjqfgX2MC/2+Jh0zzWF890G8rUPoYTZXdNrQyYyOhVleubPef
-	 Emre/paqk22DObvH2ikA85ll7I1TPTOVjE0sGjdfkvnkZz/fllGscmx6b+lrhNuYjc
-	 b4fuiP4mqvf46MZC7xovn8GHFyCs+XrFay1nOUP9EBjo8mGzrr9YM8vzrM0/w8g2T6
-	 IdpXzOXke2UFZi2uYKrPrL6HzoCMvOH8wT9U508E/O0a2k8u1U+Iu0neN1yCf7YQ01
-	 WQbubU4rhNDrEsbCmm7tnZfYj3TRpkNCmgar9qmBPtJ1dhm9m0cw7U21RXdDV1e1Zp
-	 XctQbZ0tZPnHg==
-Message-ID: <b784387b-5744-422e-92f5-3d575a24d01c@kernel.org>
-Date: Wed, 8 Oct 2025 20:25:51 +0900
+	s=arc-20240116; t=1759922779; c=relaxed/simple;
+	bh=pU/LeL0BDNULA3Qn5EUADo9AjEx+0IDSanHDAZBLtSA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b0IOtr8llpL9duwQPaPwM1ijZTs7dKrtjn9ZMVqhBxRwaZq8UmBXd9iodRwT3FAdJ3E+436z9n4HxQU8mfCoDh+d2jG08Rw0KMw2+AyVq1uY80EqsEdcK/eZOlXpI7MGmLJ3scdT++ZmLhSZzhNW7U+wz4UE0v0OdvU+F8unvQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BVVfsYwI; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=R373+0XLF4+cg4TjiwC78BGPI3GmHAsdBLimF0fyVvA=; b=BVVfsYwIm4201/iL1YTrOcOtxd
+	CMhan15A1wGOE1pZPV+D7L0tWmTgzDuwWiZVTjuUx73pKACzN3YqH3R1eFaQnmoq8FVPgbtAihhhs
+	V93/HAtFQJaSeZXu1HZkaQ3G3l+52giBPCEZLSrBbiHq9XdSp9xgKUtoWs9/oUZcGKp82NQm9QzP4
+	+ijY2dMXdIpC5rkAcawmN2KuhTH5mK306tKdphh6F7f/v5HQQyFNFh8vA8F9Jb36KTu1vnHbZHNnY
+	VtrA3hYSc286ceiXTp6ML6TdKzi+Z3Hu/cmztqvnguvybU9UcnAYbEvgpUW6tS9H+fea9ux7E4mWx
+	in39Xy4w==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v6SJ0-00000003n5o-3o2j;
+	Wed, 08 Oct 2025 11:26:04 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id A66F4300220; Wed, 08 Oct 2025 13:26:03 +0200 (CEST)
+Date: Wed, 8 Oct 2025 13:26:03 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: John Stultz <jstultz@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Metin Kaya <Metin.Kaya@arm.com>,
+	Xuewen Yan <xuewen.yan94@gmail.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Suleiman Souhlal <suleiman@google.com>,
+	kuyo chang <kuyo.chang@mediatek.com>, hupu <hupu.gm@gmail.com>,
+	kernel-team@android.com
+Subject: Re: [PATCH v22 2/6] sched/locking: Add blocked_on_state to provide
+ necessary tri-state for proxy return-migration
+Message-ID: <20251008112603.GU3419281@noisy.programming.kicks-ass.net>
+References: <20250926032931.27663-1-jstultz@google.com>
+ <20250926032931.27663-3-jstultz@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 14/24] arm64: dts: qcom: Update the pmh0110.dtsi for
- Glymur
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Pankaj Patil <pankaj.patil@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Abel Vesa <abel.vesa@linaro.org>
-References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
- <20250925-v3_glymur_introduction-v1-14-24b601bbecc0@oss.qualcomm.com>
- <CAJKOXPdQH2jXcEY6ZpkmixvUt26SqdzYgDAiJ3RHMG7xkPyi_A@mail.gmail.com>
- <lcbcjpoazpwbltedkiqlw4l3aomwvi3qsfwvmwghb6uf5wvnme@kh7qdpunfuwr>
- <CAJKOXPcyhDdFW_u4YQLiHYj8gM7wYB-LOmB_PJs+5OOgn8WZFw@mail.gmail.com>
- <mzoctelzfp6h2ezzkc3j7gnghsaf67flxqlvfhtlpdfxtddsvi@zqihmnygvdjk>
- <20251008073123.GA20592@hu-kamalw-hyd.qualcomm.com>
- <799374b4-0c41-4ccb-9f99-954c7ce6d044@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <799374b4-0c41-4ccb-9f99-954c7ce6d044@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250926032931.27663-3-jstultz@google.com>
 
-On 08/10/2025 17:02, Krzysztof Kozlowski wrote:
-> On 08/10/2025 16:31, Kamal Wadhwa wrote:
->> Hi Krzysztof, Dmitry, Konrad,
->>
->> On Thu, Sep 25, 2025 at 09:57:02PM +0300, Dmitry Baryshkov wrote:
->>> On Thu, Sep 25, 2025 at 10:34:52PM +0900, Krzysztof Kozlowski wrote:
->>>> On Thu, 25 Sept 2025 at 22:14, Dmitry Baryshkov
->>>> <dmitry.baryshkov@oss.qualcomm.com> wrote:
->>>>>
->>>>> On Thu, Sep 25, 2025 at 05:08:54PM +0900, Krzysztof Kozlowski wrote:
->>>>>> On Thu, 25 Sept 2025 at 15:34, Pankaj Patil
->>>>>> <pankaj.patil@oss.qualcomm.com> wrote:
->>>>>>>
->>>>>>> From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
->>>>>>>
->>>>>>> Add multiple instance of PMH0110 DT node, one for each assigned
->>>>>>> SID for this PMIC on the spmi_bus0 and spmi_bus1 on the Glymur
->>>>>>> CRD.
->>>>>>>
->>>>>>> Take care to avoid compilation issue with the existing nodes by
->>>>>>> gaurding each PMH0110 nodes with `#ifdef` for its corresponding
->>>>>>> SID macro. So that only the nodes which have the their SID macro
->>>>>>> defined are the only ones picked for compilation.
->>>>>>>
->>>>>>> Signed-off-by: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
->>>>>>> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
->>>>>>> ---
->>>>>>>  arch/arm64/boot/dts/qcom/pmh0110.dtsi | 66 ++++++++++++++++++++++++++++++++++-
->>>>>>>  1 file changed, 65 insertions(+), 1 deletion(-)
->>>>>>>
->>>>>>> diff --git a/arch/arm64/boot/dts/qcom/pmh0110.dtsi b/arch/arm64/boot/dts/qcom/pmh0110.dtsi
->>>>>>> index b99c33cba8860f1852231db33a127646c08c1e23..4a5c66e5c9fbc35cedb67601f4568844dc41fbea 100644
->>>>>>> --- a/arch/arm64/boot/dts/qcom/pmh0110.dtsi
->>>>>>> +++ b/arch/arm64/boot/dts/qcom/pmh0110.dtsi
->>>>>>> @@ -7,6 +7,8 @@
->>>>>>>  #include <dt-bindings/spmi/spmi.h>
->>>>>>>
->>>>>>>  &spmi_bus0 {
->>>>>>> +
->>>>>>> +#ifdef PMH0110_D_E0_SID
->>>>>>
->>>>>> NAK
->>>>>>
->>>>>> I already explained on IRC in great details why.
->>>>>
->>>>> A short summary or a link to a channel / date would be nice in order to
->>>>> include other people into the discussion.
->>>>>
->>>>
->>>> Of course but:
->>>> 1. You were there so maybe you remember the arguments, and:
->>>> 2. I'm offline, using phone, not having laptop, replying during my
->>>> personal time off just before merge window so any emergency time
->>>> should be spent on important matters instead these two huge patch
->>>> bombs adding such usage I already said: NO, don't do this.
->>>
->>>
->>> Well, If I'm asking, it means I don't rememebr the discussion. And I
->>> defeinitely didn't know that you are spending your personal vacation
->>> time in ML. And if the discussion was with some other people, then
->>> somebody else can drop the response to the question.
->>
->> Just wanted to give some background on this patch.
->> Even though PMH0104 and PMH0110 are common (b/w Kaanapali and Glymur),
->> they don't share the SIDs. So we tried to use status="disabled" to handle
->> this but we observed that because of the node name being common in the
->> two included files, it ends up overwriting the previous node with the
->> same name.
->>
->> eg-
->> #include "pmh0104.dtsi"  // assume contains pmic@4 { ...};
->> #include "pmh0110.dtsi"  // assume contains pmic@4 { status=disabled;};
->>
->> Here intention was to use the pmh0104 on sid-4, but it gets overwritten
->> with the pmh0110 on sid-4 ( with status disabled). This is why we ended
->> up using the `#ifdef`, ensuring that we can control the exact pmic that
->> gets picked by using the PMXXX_SID macro.
->>
->> side note, i did `grep` in the `/arch/arm64/boot/dts/` and i see a lot
->> of instances of `#if...` present in that.  Assuming the concern here is
->> about the use of `#ifdef`.
+On Fri, Sep 26, 2025 at 03:29:10AM +0000, John Stultz wrote:
+> As we add functionality to proxy execution, we may migrate a
+> donor task to a runqueue where it can't run due to cpu affinity.
+> Thus, we must be careful to ensure we return-migrate the task
+> back to a cpu in its cpumask when it becomes unblocked.
 > 
+> Thus we need more then just a binary concept of the task being
+> blocked on a mutex or not.
 > 
-> #if are not desired in C code, so why would they be acceptable in DTS?
-> It is not making the code easier to read at all.
+> So add a blocked_on_state value to the task, that allows the
+> task to move through BO_RUNNING -> BO_BLOCKED -> BO_WAKING
+> and back to BO_RUNNING. This provides a guard state in
+> BO_WAKING so we can know the task is no longer blocked
+> but we don't want to run it until we have potentially
+> done return migration, back to a usable cpu.
 > 
-> On IRC in these older discussions I was very strongly against any DTSI
-> which depends on some sort of outside values, except basic usage of
-> defines. Original pmh0110.dtsi from kaanapali is fine:
-> 	pmh0110_d_e0: pmic@PMH0110_D_E0_SID {
+> Signed-off-by: John Stultz <jstultz@google.com>
+> ---
+>  include/linux/sched.h     | 92 +++++++++++++++++++++++++++++++++------
+>  init/init_task.c          |  3 ++
+>  kernel/fork.c             |  3 ++
+>  kernel/locking/mutex.c    | 15 ++++---
+>  kernel/locking/ww_mutex.h | 20 ++++-----
+>  kernel/sched/core.c       | 45 +++++++++++++++++--
+>  kernel/sched/sched.h      |  6 ++-
+>  7 files changed, 146 insertions(+), 38 deletions(-)
 > 
-> but doing ifdefs here that this define depends on something else makes
-> code ungreppable (lookup unit address from sysfs and then git grep
-> pmic@4) and difficult to follow.
-> 
-> My recommendation is either duplicate code or change DTSI files to not
-> contain entire node, but its contents. At least these are
-> recommendations I remember now.
-> 
-One more recommendation:
-Different DTSI files per SoC, so pmh0110-kaanapali.dtsi and
-pmh0110-glymur.dtsi.
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index cb4e81d9d9b67..8245940783c77 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -813,6 +813,12 @@ struct kmap_ctrl {
+>  #endif
+>  };
+>  
+> +enum blocked_on_state {
+> +	BO_RUNNABLE,
+> +	BO_BLOCKED,
+> +	BO_WAKING,
+> +};
 
-We do not move the QUP engines into separate DTSI file to avoid
-duplication. Each SoC has all of them duplicated. And then new SoC also
-duplicates them.
+I am still struggling with all this.
 
-We do not move SPI touchscreens or other I2C/SPI devices to separate
-DTSI files. Each board duplicates such SPI device (and SPI can have
-different <reg> - chip select! I2C as well, although a bit rarer).
+  RUNNABLE is !p->blocked_on
+  BLOCKED is !!p->blocked_on
+  WAKING is !!p->blocked_on but you need magical beans
 
-Therefore I do not see any need for some #ifdefs in this code, just to
-avoid duplication because that duplication is nothing odd.
+I'm not sure I follow the argument above, and there is a distinct lack
+of comments with this enum explaining the states (although there are
+some comments scattered across the patch itself).
 
-Best regards,
-Krzysztof
+Last time we talked about this:
+
+  https://lkml.kernel.org/r/20241216165419.GE35539@noisy.programming.kicks-ass.net
+
+I was equally confused; and suggested not having the WAKING state by
+simply dequeueing the offending task and letting ttwu() sort it out --
+since we know a wakeup will be coming our way.
+
+I'm thinking that suggesting didn't work out somehow, but I'm still not
+sure I understand why.
+
+There is this comment:
+
+
++               /*
++                * If a ww_mutex hits the die/wound case, it marks the task as
++                * BO_WAKING and calls try_to_wake_up(), so that the mutex
++                * cycle can be broken and we avoid a deadlock.
++                *
++                * However, if at that moment, we are here on the cpu which the
++                * die/wounded task is enqueued, we might loop on the cycle as
++                * BO_WAKING still causes task_is_blocked() to return true
++                * (since we want return migration to occur before we run the
++                * task).
++                *
++                * Unfortunately since we hold the rq lock, it will block
++                * try_to_wake_up from completing and doing the return
++                * migration.
++                *
++                * So when we hit a !BO_BLOCKED task briefly schedule idle
++                * so we release the rq and let the wakeup complete.
++                */
++               if (p->blocked_on_state != BO_BLOCKED)
++                       return proxy_resched_idle(rq);
+
+
+Which I presume tries to clarify things, but that only had me scratching
+my head again. Why would you need task_is_blocked() to affect return
+migration?
+
+
 
