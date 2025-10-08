@@ -1,135 +1,105 @@
-Return-Path: <linux-kernel+bounces-845697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93F8DBC5EDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:03:26 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD1D1BC5D06
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:46:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B7AF42744E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:50:03 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 89127350B86
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F40B2FC891;
-	Wed,  8 Oct 2025 15:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38181220F5C;
+	Wed,  8 Oct 2025 15:46:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QUv55FJ4"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VLqhv60k"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9DC2FBDF1
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1340217A30A
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759938425; cv=none; b=pqcHYz/rUSNz4tJVWh2aSdvwdcU8ke4KKhZgU7JGVt1hDcZcqzeRnkfQjE2SUeFVjovJUI3qj9p0hI4R6XYlq8w00nhGSPCC95Jw1XUoRboDinCn26jZYsu4Cqv0vtTXPBr0G46jKbfFxlo0/yEOvH+u2xS0QwLWct5fhMJ7ZUY=
+	t=1759938365; cv=none; b=D+2KDX2+NpakPF2SXhLuE3erUgBmqYl4QwUQbzW597Ig/T5TiaZn5JeH+AfWTSSsdxK6qbelpfSITXqqGLnGsVjbRxATbyLVTzRX/akQ9kCCl0bScWPe5IyvyOUxWorkizDf7d3K6Hx3xctZTW/bV1/SsnoUjl1D6oFXh6D+Cf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759938425; c=relaxed/simple;
-	bh=FQD/z+6lXiIcL/7kTxCFE2DLvjr2aRXNJXgQtJfNEVM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=fG1buJ5xVwSWGjUGjYVcZKowrXczaW+lKMylCxWOvpm2WbgB6NXYnIbKZZOrfzU9fuAFHpUEAyQGgcYOs5GjZzvYgBpjqlnu3yVS3dAnGFWOqSZ5m7ZTK4xP3vBFFhCDzF7kEi8c7GVqO454/G7Rk4P8ij98PWVHUF1p9uIz6uA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QUv55FJ4; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-426c4d733c4so34942f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:47:03 -0700 (PDT)
+	s=arc-20240116; t=1759938365; c=relaxed/simple;
+	bh=jtCWUN9qKHv9+z3G9i+tyP1pYkaMZxiy3AmNabxncSA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h98Obe4Q7V68PbZkrTkxwcItpZbuk67iJWfDGgvaiFrFqpacWyjtsmWlNKxrz0d6yaRWQwk9qrw4J7B7GWRxnePnDnm7cCOsR56gopgRVa/3i8fsI2ZdHo6kgPUapqBEMUgDQOp5lHQuhfE6mayzgHQuynAfYKHK8B61e8bSxiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VLqhv60k; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-92790f12293so362445139f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:46:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759938422; x=1760543222; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=s9LVoYmYTtGptKcGaIqz4TtHmJpnpszkhgfxtgMZN1E=;
-        b=QUv55FJ41cyPQSy1Go9/Fx3VS66mEDNWnKAcDNwDq2WMUilUm+w2uRu5CzwU7NWdYM
-         4X4ClEq1r7Xg1EJxQnMpPNElfXYTp3Kq8pkbC6N1jrW9xdfu/MqLsruvxONNz0MBucgM
-         9cGSlHfARvzdkAp2LIYvuD0cqEBn8p61Gp0YASB54kmvDY4ZVyr8jrgWrV3wx8RfU0l8
-         SV+VMFR49gnXviJxyHPzfT+bM2ZgNppSc5S0hMiusfIr9v9Cij/qkq7VesmQZ93HfCzL
-         10AMs86L3i0b/DIQolYfyCS9gxxK+SverYdiACrwHW0aHIKmrpxiK18kKygh6TsAtI7L
-         W6Zg==
+        d=gmail.com; s=20230601; t=1759938362; x=1760543162; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MyHmjI+Pp+1EZQYG4RmZ+oWmdMUJujz0MvnC7rq6UVA=;
+        b=VLqhv60kg8QpX6zf3sdqbw6ZOJGas8u1ShxuCEpQw0Y5dRI5AZzZsx02vUxwB3bD//
+         BfQWCusvCwQr9rYfH/M+yl5WbF3/2NZtH4qyYSzYcCLCniwu190cuMs32tWT5zgV7Ey8
+         sBsWrNPvhS/1pFVJr7IN2AMVT00qa5TY5rRLsNsrwwO9soaw2PsMvuVv1ezvmdFn5MUA
+         pAcHxhsnZB22xRUPy6TBkWj9kJmuD+n9H/BHvjbOLNMdYtPrqNAXFHpJ3/FFq5RNt5rF
+         NRI30Pjf2ZWVuNGX3QeSxVEoBvoK25UCTFAj7D68pLJTQZ3DFVqoigcXMbYa1yZGYLde
+         VIYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759938422; x=1760543222;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s9LVoYmYTtGptKcGaIqz4TtHmJpnpszkhgfxtgMZN1E=;
-        b=URj0H8AeaA166E81y/OhQk8M9jlndhxHhD7hyBwb8aQ1MVTT9ODpzpx3H5C1P0H4F4
-         PVLz7PN5+IC+WoqrNLw7w6zBCzvipDSShziKGOu9qQE7qrEDFjRjkhi+jKcBGgzuXvao
-         +vLPujwwmKQ9dl2S0ntHArG0H5xFRrtoioCpZeEm4zUb17jpjZJEbxiPdwNdmY/O3Uom
-         d9nxH9+nr2jdYDUrRETl0mimYEGn1cFP/AKXO16bKm98pJtMuXRRM/7Lejos5jNMenjq
-         drloP7ZeHVVdcw9QfFkCVWTfLm6HkuMG7+boV5s3t/jfdZB5jLvEXzQweGO7H1TaQUIl
-         m9UA==
-X-Gm-Message-State: AOJu0YwW8gHH4LJNqIj48gdIQ0EhngZPLjVJghvMOAFQmUf1aIByZg/Z
-	SpoDqz8D7mf9Zer/rcUoWiQBE3UolJPGhkii8Pt3YwMy7LQ/zydw2Brl2UHUHYUjN655iw+l4g=
-	=
-X-Google-Smtp-Source: AGHT+IHpvSRci2gpv7ZU1IAhZM+xVMFiXHJZypmfvURMXvnTa0pwgCk5eYUgWECkxlzPguEf0Tz1w3HD
-X-Received: from wmbd24.prod.google.com ([2002:a05:600c:58d8:b0:46e:4943:289b])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a5d:5d03:0:b0:3ec:e0d0:60e5
- with SMTP id ffacd0b85a97d-42667177bd4mr2760140f8f.15.1759938421849; Wed, 08
- Oct 2025 08:47:01 -0700 (PDT)
-Date: Wed,  8 Oct 2025 17:45:49 +0200
-In-Reply-To: <20251008154533.3089255-23-ardb+git@google.com>
+        d=1e100.net; s=20230601; t=1759938362; x=1760543162;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MyHmjI+Pp+1EZQYG4RmZ+oWmdMUJujz0MvnC7rq6UVA=;
+        b=kvey4kBNOcnw0XwIByKGwyUi9agApVGBonfTeg6vnUiKFpfvAWjFIHnZNMxgELTD+Q
+         UXPfU/mmCxWJ+C/NLeDZPFRIxExX9P42jIF00p35COUbUfZgXlyT6Bv1kP5RU4EorfvZ
+         1mZRk3Abnn5WB+UjqeWqXe/46AaB8Dk4tFSZNfrYviVP9o8XNhCpDQaJyC1uV3BgxfVg
+         rmk2NbPHfe6L5g2eRjt2WDJuBk9oDElGhH1STusYILLh2PDvM7SoPGl6IM5oHGaRnucq
+         4aVTh4PynZ7ca1W8e61olSQ89XcKKBWGFylVM9aOKAw2H+GOIAZiqesuS3qhz2U2NhJH
+         1Eog==
+X-Forwarded-Encrypted: i=1; AJvYcCUiXtWS5tPUmksvBrWkAdO8Rg3z8/b/rUHEzCyqGfCTB0kTr7fN4jBTEwirAVRKqN+rJA9K/bz7PKTtuqc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZ+JRNzapQyCNswnX7T1FoWZUHezrDjCxPFQFLnbL4UW4ndSV7
+	gn+rRNFzF7K5txz8Uv07Cty+bD5FZx1j6yfIl3X+JHj1yJd2ov5ZqFygXuDE9AY3SZOyVcoDUnf
+	v1uo9tJDe227rDkdqcsMv2tSYeqUqLdM=
+X-Gm-Gg: ASbGncvxbFZaosvBb5DsdlmtrqO7GLkTRnPodtu8KmN3ptv3vv4eeDdV/5hwNLhOLX0
+	8WMDkwPfazAb/jYCl289jRPnsvcpzidS0gk8a6kMvMuucAlkBgayQtQFu8bT5qn5QkasK2H3F8b
+	XQozzuued3HMBz2n66NW/4xLqqZ6Jh8cKKN6bOIrYDobpkenvw4GfxubctdB1Qk8YTwhOieAru9
+	aHtAU+GUjfiYrhHoen0h3drekBx
+X-Google-Smtp-Source: AGHT+IFDpgA15TDMxrEIdhDPUBzLl6q8kmft2wJ5V4tEM840WRm8RlBVABfwKbO7llkfJMYpVHKnB9gld3VrwW2meYE=
+X-Received: by 2002:a05:6e02:440f:20b0:42f:8e88:faed with SMTP id
+ e9e14a558f8ab-42f8e88fdd7mr8430765ab.7.1759938361936; Wed, 08 Oct 2025
+ 08:46:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251008154533.3089255-23-ardb+git@google.com>
-X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1531; i=ardb@kernel.org;
- h=from:subject; bh=KbLRn3K+fhgTbW1ynT/DmRKNIqX5FUyDJ4LA4JLPqDs=;
- b=kA0DAAoWMG4JVi59LVwByyZiAGjmh0mgHwxNRpFR0uLeyEM/7Ru0XZRuTjmbCFMD+pwVKCMPv
- Ih1BAAWCgAdFiEEEJv97rnLkRp9Q5odMG4JVi59LVwFAmjmh0kACgkQMG4JVi59LVyXkwD9GvEh
- GB4myAwRpn32iKqBOQuzHl9IIEadlLMcTujoQkgA/ie4fhaKFva43l0IM40cGryU1yaSMyBQQI8 ARZPeCzsG
-X-Mailer: git-send-email 2.51.0.710.ga91ca5db03-goog
-Message-ID: <20251008154533.3089255-38-ardb+git@google.com>
-Subject: [PATCH v3 15/21] crypto/arm64: sha3 - Switch to 'ksimd' scoped guard API
-From: Ard Biesheuvel <ardb+git@google.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	herbert@gondor.apana.org.au, ebiggers@kernel.org, 
-	Ard Biesheuvel <ardb@kernel.org>
+MIME-Version: 1.0
+References: <20251003203851.43128-1-sj@kernel.org> <20251003203851.43128-2-sj@kernel.org>
+In-Reply-To: <20251003203851.43128-2-sj@kernel.org>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Wed, 8 Oct 2025 08:45:51 -0700
+X-Gm-Features: AS18NWD8AQK_m0J9OQQ2568NHQvCpLirccXoMfHk6y_3-THO678-BMip4zWDvSk
+Message-ID: <CAKEwX=NOr96gbdEDJR8aTkwPfYzObEBq6W3Ow4-e8Q5k=v__MA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] mm/zswap: remove unnecessary dlen writes for
+ incompressible pages
+To: SeongJae Park <sj@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosry.ahmed@linux.dev>, kernel-team@meta.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Ard Biesheuvel <ardb@kernel.org>
+On Fri, Oct 3, 2025 at 1:38=E2=80=AFPM SeongJae Park <sj@kernel.org> wrote:
+>
+> Incompressible pages handling logic in zswap_compress() is setting
+> 'dlen' as PAGE_SIZE twice.  Once before deciding whether to save the
+> content as is, and once again after it is decided to save it as is.
+> But the value of 'dlen' is used only if it is decided to save the
+> content as is, so the first write is unnecessary.  It is not causing
+> real user issues, but making code confusing to read.  Remove the
+> unnecessary write operation.
+>
+> Signed-off-by: SeongJae Park <sj@kernel.org>
 
-Switch to the more abstract 'scoped_ksimd()' API, which will be modified
-in a future patch to transparently allocate a kernel mode FP/SIMD state
-buffer on the stack, so that kernel mode FP/SIMD code remains
-preemptible in principe, but without the memory overhead that adds 528
-bytes to the size of struct task_struct.
-
-Reviewed-by: Eric Biggers <ebiggers@kernel.org>
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
----
- arch/arm64/crypto/sha3-ce-glue.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm64/crypto/sha3-ce-glue.c b/arch/arm64/crypto/sha3-ce-glue.c
-index b4f1001046c9..22732760edd3 100644
---- a/arch/arm64/crypto/sha3-ce-glue.c
-+++ b/arch/arm64/crypto/sha3-ce-glue.c
-@@ -46,9 +46,8 @@ static int sha3_update(struct shash_desc *desc, const u8 *data,
- 	do {
- 		int rem;
- 
--		kernel_neon_begin();
--		rem = sha3_ce_transform(sctx->st, data, blocks, ds);
--		kernel_neon_end();
-+		scoped_ksimd()
-+			rem = sha3_ce_transform(sctx->st, data, blocks, ds);
- 		data += (blocks - rem) * bs;
- 		blocks = rem;
- 	} while (blocks);
-@@ -73,9 +72,8 @@ static int sha3_finup(struct shash_desc *desc, const u8 *src, unsigned int len,
- 	memset(block + len, 0, bs - len);
- 	block[bs - 1] |= 0x80;
- 
--	kernel_neon_begin();
--	sha3_ce_transform(sctx->st, block, 1, ds);
--	kernel_neon_end();
-+	scoped_ksimd()
-+		sha3_ce_transform(sctx->st, block, 1, ds);
- 	memzero_explicit(block , sizeof(block));
- 
- 	for (i = 0; i < ds / 8; i++)
--- 
-2.51.0.710.ga91ca5db03-goog
-
+Acked-by: Nhat Pham <nphamcs@gmail.com>
 
