@@ -1,182 +1,231 @@
-Return-Path: <linux-kernel+bounces-845235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83A7ABC41BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 11:06:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C269BBC41CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 11:06:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C59A3C3A49
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 09:06:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93F574015D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 09:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 207882EBB80;
-	Wed,  8 Oct 2025 09:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956662F7ACA;
+	Wed,  8 Oct 2025 09:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="V+fOwSP5"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aBa4EzJy"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB81A2F291D;
-	Wed,  8 Oct 2025 09:05:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7642F5A1D
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 09:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759914322; cv=none; b=TTxj4JDH4wis/RPjJoDuOjxe7M9KDOLMCK37+fEr7+YAPwa8+g+VjASaBafhfUVW9KxQCAtCK2Xk+F84nYmWorhXYxNEp3gIA7FyAC/JSPvotrUatspLKGquerihxIUWJ1/mWI1yVQh0oOSDrdKSRqPNnmC3yudp0lskJr0cT60=
+	t=1759914324; cv=none; b=sjqXPPujm/9W0372HOBdZ+rNxJQtAyCowxltHmo2ztoeBNJ7XeLWZqWxJo8OX4AwPNlVDQM1U2RmxXiM7Cyay+etflkKsY51s6BbYnwaFxzWfgNV2JRZCuaCCgq08XiG6IQcORX9ht4BvvKoRfMUxH0kG9UzO6sqi3pCT4DESrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759914322; c=relaxed/simple;
-	bh=zG2SFgAnMTvX66JU4U3aOYt1Khpl+xBXFVeSii48E0U=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iGvGH+EGhaozZkN/w8qf7bF7cU6rL7uW1XmoZbrskyd/Zokq+/X4QiI5T0C2MkH7BaVY/uyxoY80A/Bz6LNLlEeF7W6cyR6SIkE0hwh2r4c9ixs+Ir3p9g1qoUkmuYjEy1QaYjBXzpquR9d8V9la1RrLw/7awJjmha6N/tuffLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=V+fOwSP5; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59890NNj009328;
-	Wed, 8 Oct 2025 09:05:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Ya5YD8J5ZfX8Sq9ehJaERVblUtQVWIBl5djuMxZL1Kk=; b=V+fOwSP5DosBlZOA
-	5YGUaC/GyFnDY3KwPhW+Z/folGaIDxq2ZCDDv4aPNbeDDDDlnRBgEBGJC1jCvPSi
-	5yrvSQipG3R/bKCNV9z5ssS6rAi6n6MXcY2ITX3yk4lhY5V1TRup5bgIZ1BFMfct
-	W282U/kKTn1JMsgaxcemReKgLaIPhR5W5qeROodaynEVYmtWpKmwxsYeEq/2UX/o
-	HjthsS5buBoXKHVedGX1MbrVL7Y+lUKYvj3b603kvvHJeHGyBHYZgQ4ngKWkxusl
-	p63G7gPKbJLgrdZlF6wFMACN6+zUWK1CwRY7/e5+HtLqxQ0ZhzhohwcwrW4/yj9D
-	Ifb2Gw==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49junu9vym-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 Oct 2025 09:05:17 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 59895F1S011846
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 8 Oct 2025 09:05:15 GMT
-Received: from hu-mdalam-blr.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.24; Wed, 8 Oct 2025 02:05:10 -0700
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-To: <broonie@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <vkoul@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dmaengine@vger.kernel.org>
-CC: <quic_varada@quicinc.com>, <quic_mdalam@quicinc.com>
-Subject: [PATCH v2 9/9] arm64: dts: qcom: ipq5332-rdp442: Remove eMMC support
-Date: Wed, 8 Oct 2025 14:34:13 +0530
-Message-ID: <20251008090413.458791-10-quic_mdalam@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251008090413.458791-1-quic_mdalam@quicinc.com>
-References: <20251008090413.458791-1-quic_mdalam@quicinc.com>
+	s=arc-20240116; t=1759914324; c=relaxed/simple;
+	bh=O5jvZp7YSs8BkOVk59YxrtO8UmzmgVwYrqDwI5aX2fE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qNcoZrgb/7jJZmMpSsVxIYKF5S2zzj8LbsTB/lzKQebQqcOPY4f9eMX1Z+8Lwsh2Dnt4Gf1L/0TUXMD7UArPPzZHGm8dgMZaVRyd9+izg1Rsx90RtQwDl7gn3BvwEV+ON5Ccnsh384BNzor6BPFGNqPURFPxKpgZOdK/qmYqv8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aBa4EzJy; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-79a7d439efbso66322786d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 02:05:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759914322; x=1760519122; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e4cYZmadA8mCAkJgxHGzRBrmoQCHtUHFnir9NGk0Mxs=;
+        b=aBa4EzJy3HlZhHVePegvhxnRl7flkQOGJ/1AmPgYErrVPZfQvHFkdziSsmQH86SM6a
+         iIuVUgsuYKehSCBk3V8Mx45VOBL55/l2fhtlTTLlgrpEWU3SCfitYCAYmbiJvdK5Ss5l
+         paReAFa7Lw+75k4kX4+33hjoL8BBc6TOy2xtY9dyo2QlZCZWEEc2qbWbYdb+IHYK2S9L
+         tAy/Ue3/7RuHDvUDMLTITnO04UMWQ41X6rlwAixbA8ZAZgZqjD7z0bR0axnFwXt6mIIv
+         zInx0EdhWi+2ZILUVyXAI/W9PEiMUjOSlom4V6S4Dh5aGasiqLSr3t58HprtyGmjgW0W
+         MfEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759914322; x=1760519122;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e4cYZmadA8mCAkJgxHGzRBrmoQCHtUHFnir9NGk0Mxs=;
+        b=d+7rJd74ar2PNvU8eeEKtsF9NjPLRxUjDPjISnUv54DePNCYYk1n3V3eHs3kK8liE4
+         6t7BG9yjKvitKQASe9tGknktG8//4M9wYW1zsTuePnMRs5XIr7v177WVRV5rXAmc6Hfo
+         hM5kicYVBt4S8Mhba0TQ8z4tBeISKPuNJD8eRo1BjR+4rJF99oN7Up7gR5fr+An3xp8P
+         wHdijN11r/ooSzn3PBT0btXzxVJlfTU2Dp81cg1dCUeunmpxDUuYmvYsUUtXvPdbO+hO
+         nA53FjA+bVKru76nD7z1Ag+HM6Vbd3t4dhJ/OPysyqwinXTOARMcXC3cyH0EIt+X+Ec2
+         1JJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWkdlTO+v/IbD6ECYhmOS+tZee88fLhdTJX4LRVFwUL86vKk1OirgQRP8S2CJEWR30wDue4W2TKc2K42o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQvfWuIaXV7GWFIZSRkPCsSIYuAnTtoOj0NiX5a71YEeD02bJ1
+	5SaMwJTTEHuPDKdKq6983xnnIMeSp7yp9pJjSC2d/OFnYQZm2JZ5PmDD0a0hQ2Gopn18cD3byQj
+	oZ/gE26ReKYLLACRhLkn8T7DVfsOSpOI=
+X-Gm-Gg: ASbGncsxQOknhwA/7QoKwBTxQjh7OQt5hCfY8gsq1LbRtnf8NoWn4fnY512n6/DbviF
+	YUAMRZTfR0z3Z685sIv2KsHOgJoBfYrJk4BK0cwheZFI9kiO3RjOopLSeja6OmAV0rZmHiejW/s
+	jgaMYdVggWxsmAuvPqAoUWniU6fM6/DwT/nYlFWMFtYuKY2RhQLrkO1h6NNIWbUDTgu5fsbEG5/
+	GjHUioJFw46DEcmmGr/Jg+xm902PKsXNIUrCgosB3MCn3kONK5ol2JNZe/4BQPj
+X-Google-Smtp-Source: AGHT+IFtF/lJgRUwcJ1lVxRX1vX8QykTlCWe2klEiz/B5NPbX3cSQGIv9tHJapmtZwhENtdJSXzQ5eGIRt0iWburmhc=
+X-Received: by 2002:a05:6214:2a8a:b0:782:1086:f659 with SMTP id
+ 6a1803df08f44-87b2107dd72mr31942296d6.26.1759914321370; Wed, 08 Oct 2025
+ 02:05:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Kraq27VDwgEbpSjrNyordR9aADVuwCjK
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAyMyBTYWx0ZWRfX+JVdjiAOsGT1
- 4ZGI/4H1Dk5MG2R5+gyw85a7kvF+ZcYpKdQBZ22/amd+/ab5odLg5y4u8CM5PjR1Agg2FsnVFZe
- 2OEqOQ/6lsd6hPGGmMmBzC5DiTwvk/8q5/chLQvMXzXcnbTmnPtCEwXnMPSgJes79HyKQgFiv1g
- 6zLJhgminLkds/MbyJye0QnhfobuY/ewJya8/kQ2Nw5AbBV/e3/GcwDnsit01NLFHon1Cv4w67s
- vhSDJOeJuhy3ONfUH1Zdf19hwwtPmwvCQw907r0lcyZjIhSv3wUcLNt/fBTnT0IQNHjnwVEFY/x
- ToQI1ClV9mUQ3GeCwRl6Y7FiUcHF6PVQWcX6F8KF072XNbFp4W1sSl0umMx2cwMRE7mYu+UVtr9
- QJ+zPqUlzIczYNkg48JHR5OYGKDxCQ==
-X-Authority-Analysis: v=2.4 cv=CbIFJbrl c=1 sm=1 tr=0 ts=68e6294d cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=x6icFKpwvdMA:10 a=COk6AnOGAAAA:8 a=fuWxvNZPvO_ztXA3lyEA:9
- a=TjNXssC_j7lpFel5tvFf:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: Kraq27VDwgEbpSjrNyordR9aADVuwCjK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-08_02,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 malwarescore=0 clxscore=1015 adultscore=0 suspectscore=0
- spamscore=0 priorityscore=1501 phishscore=0 impostorscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040023
+References: <20250930055826.9810-1-laoar.shao@gmail.com> <20250930055826.9810-4-laoar.shao@gmail.com>
+ <CAADnVQJtrJZOCWZKH498GBA8M0mYVztApk54mOEejs8Wr3nSiw@mail.gmail.com>
+ <27e002e3-b39f-40f9-b095-52da0fbd0fc7@redhat.com> <CALOAHbBFNNXHdzp1zNuD530r9ZjpQF__wGWyAdR7oDLvemYSMw@mail.gmail.com>
+ <7723a2c7-3750-44f7-9eb5-4ef64b64fbb8@redhat.com>
+In-Reply-To: <7723a2c7-3750-44f7-9eb5-4ef64b64fbb8@redhat.com>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Wed, 8 Oct 2025 17:04:44 +0800
+X-Gm-Features: AS18NWAJwXG18rE8UjAVYGwSMRoVGqsV4lXBJi6ePSpLgxcjj8cRCthEf3HoP2g
+Message-ID: <CALOAHbD_tRSyx1LXKfFrUriH6BcRS6Hw9N1=KddCJpgXH8vZug@mail.gmail.com>
+Subject: Re: [PATCH v9 mm-new 03/11] mm: thp: add support for BPF based THP
+ order selection
+To: David Hildenbrand <david@redhat.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	ziy@nvidia.com, baolin.wang@linux.alibaba.com, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Liam Howlett <Liam.Howlett@oracle.com>, npache@redhat.com, 
+	ryan.roberts@arm.com, dev.jain@arm.com, Johannes Weiner <hannes@cmpxchg.org>, 
+	usamaarif642@gmail.com, gutierrez.asier@huawei-partners.com, 
+	Matthew Wilcox <willy@infradead.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Amery Hung <ameryhung@gmail.com>, David Rientjes <rientjes@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, 21cnbao@gmail.com, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Tejun Heo <tj@kernel.org>, lance.yang@linux.dev, Randy Dunlap <rdunlap@infradead.org>, 
+	bpf <bpf@vger.kernel.org>, linux-mm <linux-mm@kvack.org>, 
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Remove eMMC support from the IPQ5332 RDP442 board configuration to
-align with the board's default NOR+NAND boot mode design.
+On Wed, Oct 8, 2025 at 4:28=E2=80=AFPM David Hildenbrand <david@redhat.com>=
+ wrote:
+>
+> On 08.10.25 10:18, Yafang Shao wrote:
+> > On Wed, Oct 8, 2025 at 4:08=E2=80=AFPM David Hildenbrand <david@redhat.=
+com> wrote:
+> >>
+> >> On 03.10.25 04:18, Alexei Starovoitov wrote:
+> >>> On Mon, Sep 29, 2025 at 10:59=E2=80=AFPM Yafang Shao <laoar.shao@gmai=
+l.com> wrote:
+> >>>>
+> >>>> +unsigned long bpf_hook_thp_get_orders(struct vm_area_struct *vma,
+> >>>> +                                     enum tva_type type,
+> >>>> +                                     unsigned long orders)
+> >>>> +{
+> >>>> +       thp_order_fn_t *bpf_hook_thp_get_order;
+> >>>> +       int bpf_order;
+> >>>> +
+> >>>> +       /* No BPF program is attached */
+> >>>> +       if (!test_bit(TRANSPARENT_HUGEPAGE_BPF_ATTACHED,
+> >>>> +                     &transparent_hugepage_flags))
+> >>>> +               return orders;
+> >>>> +
+> >>>> +       rcu_read_lock();
+> >>>> +       bpf_hook_thp_get_order =3D rcu_dereference(bpf_thp.thp_get_o=
+rder);
+> >>>> +       if (WARN_ON_ONCE(!bpf_hook_thp_get_order))
+> >>>> +               goto out;
+> >>>> +
+> >>>> +       bpf_order =3D bpf_hook_thp_get_order(vma, type, orders);
+> >>>> +       orders &=3D BIT(bpf_order);
+> >>>> +
+> >>>> +out:
+> >>>> +       rcu_read_unlock();
+> >>>> +       return orders;
+> >>>> +}
+> >>>
+> >>> I thought I explained it earlier.
+> >>> Nack to a single global prog approach.
+> >>
+> >> I agree. We should have the option to either specify a policy globally=
+,
+> >> or more refined for cgroups/processes.
+> >>
+> >> It's an interesting question if a program would ever want to ship its
+> >> own policy: I can see use cases for that.
+> >>
+> >> So I agree that we should make it more flexible right from the start.
+> >
+> > To achieve per-process granularity, the struct-ops must be embedded
+> > within the mm_struct as follows:
+> >
+> > +#ifdef CONFIG_BPF_MM
+> > +struct bpf_mm_ops {
+> > +#ifdef CONFIG_BPF_THP
+> > +       struct bpf_thp_ops bpf_thp;
+> > +#endif
+> > +};
+> > +#endif
+> > +
+> >   /*
+> >    * Opaque type representing current mm_struct flag state. Must be acc=
+essed via
+> >    * mm_flags_xxx() helper functions.
+> > @@ -1268,6 +1281,10 @@ struct mm_struct {
+> >   #ifdef CONFIG_MM_ID
+> >                  mm_id_t mm_id;
+> >   #endif /* CONFIG_MM_ID */
+> > +
+> > +#ifdef CONFIG_BPF_MM
+> > +               struct bpf_mm_ops bpf_mm;
+> > +#endif
+> >          } __randomize_layout;
+> >
+> > We should be aware that this will involve extensive changes in mm/.
+>
+> That's what we do on linux-mm :)
+>
+> It would be great to use Alexei's feedback/experience to come up with
+> something that is flexible for various use cases.
 
-The IPQ5332 RDP442 board is designed with NOR+NAND as the default boot
-mode configuration. The eMMC and SPI NAND interface share
-same GPIO
+I'm still not entirely convinced that allowing individual processes or
+cgroups to run independent progs is a valid use case. However, since
+we have a consensus that this is the right direction, I will proceed
+with this approach.
 
-Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
----
+>
+> So I think this is likely the right direction.
+>
+> It would be great to evaluate which scenarios we could unlock with this
+> (global vs. per-process vs. per-cgroup) approach, and how
+> extensive/involved the changes will be.
 
-Change in [v2]
+1. Global Approach
+   - Pros:
+     Simple;
+     Can manage different THP policies for different cgroups or processes.
+  - Cons:
+     Does not allow individual processes to run their own BPF programs.
 
-* updated board name commit message header
+2. Per-Process Approach
+    - Pros:
+      Enables each process to run its own BPF program.
+    - Cons:
+      Introduces significant complexity, as it requires handling the
+BPF program's lifecycle (creation, destruction, inheritance) within
+every mm_struct.
 
-Change in [v1]
+3. Per-Cgroup Approach
+    - Pros:
+       Allows individual cgroups to run their own BPF programs.
+       Less complex than the per-process model, as it can leverage the
+existing cgroup operations structure.
+    - Cons:
+       Creates a dependency on the cgroup subsystem.
+       might not be easy to control at the per-process level.
 
-* Removed eMMC node
+>
+> If we need a slot in the bi-weekly mm alignment session to brainstorm,
+> we can ask Dave R. for one in the upcoming weeks.
 
- arch/arm64/boot/dts/qcom/ipq5332-rdp442.dts | 34 ---------------------
- 1 file changed, 34 deletions(-)
+I will draft an RFC to outline the required changes in both the mm/
+and bpf/ subsystems and solicit feedback.
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq5332-rdp442.dts b/arch/arm64/boot/dts/qcom/ipq5332-rdp442.dts
-index ed8a54eb95c0..6e2abde9ed89 100644
---- a/arch/arm64/boot/dts/qcom/ipq5332-rdp442.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq5332-rdp442.dts
-@@ -35,17 +35,6 @@ flash@0 {
- 	};
- };
- 
--&sdhc {
--	bus-width = <4>;
--	max-frequency = <192000000>;
--	mmc-ddr-1_8v;
--	mmc-hs200-1_8v;
--	non-removable;
--	pinctrl-0 = <&sdc_default_state>;
--	pinctrl-names = "default";
--	status = "okay";
--};
--
- &tlmm {
- 	i2c_1_pins: i2c-1-state {
- 		pins = "gpio29", "gpio30";
-@@ -54,29 +43,6 @@ i2c_1_pins: i2c-1-state {
- 		bias-pull-up;
- 	};
- 
--	sdc_default_state: sdc-default-state {
--		clk-pins {
--			pins = "gpio13";
--			function = "sdc_clk";
--			drive-strength = <8>;
--			bias-disable;
--		};
--
--		cmd-pins {
--			pins = "gpio12";
--			function = "sdc_cmd";
--			drive-strength = <8>;
--			bias-pull-up;
--		};
--
--		data-pins {
--			pins = "gpio8", "gpio9", "gpio10", "gpio11";
--			function = "sdc_data";
--			drive-strength = <8>;
--			bias-pull-up;
--		};
--	};
--
- 	spi_0_data_clk_pins: spi-0-data-clk-state {
- 		pins = "gpio14", "gpio15", "gpio16";
- 		function = "blsp0_spi";
--- 
-2.34.1
-
+--
+Regards
+Yafang
 
