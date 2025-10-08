@@ -1,213 +1,159 @@
-Return-Path: <linux-kernel+bounces-845724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7AD3BC5F0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:05:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0E7FBC600A
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:21:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A95411892105
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 16:06:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B82024270DA
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 16:07:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43BE29E109;
-	Wed,  8 Oct 2025 16:05:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1062BDC01;
+	Wed,  8 Oct 2025 16:07:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="D3J9+q3z"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="Gl+StA1H"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B59E209F5A
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 16:05:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759939543; cv=none; b=BrVdWEjfIrjIXicmWiQp5Hr0la41Htb5eFcxA/1x3ZILWtre31v+1S5pNfJvW+C1z2nGMEZoDMJyjCHDI22T0EY7gwe1mTzmYt95VPiE21yxQqy7mjXqKsHRYk1rmBDUgzh4qjzejHSjR9rGkBoqNKxdweXK0pcuPG0OPpzmliw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759939543; c=relaxed/simple;
-	bh=yEQRjSwB6AJN4UUymCqU3OU64k64HmUpry2T3Ix/f1Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kDucSGdwzzD9RMsOG7nJK6cTxaS+xsDYAuv953E59No/pM62LSWw/f+iRasBl9ihW3sXROQCEMGA/tEBQFaZm+JDmuB3aAJjuey8Hehe/6BYKyC1C+f6pi7HFg35yLZeUYosJTs49GMxWGK8uLwgR+TpHSRFzBES/+g6z9njf2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=D3J9+q3z; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b3e9d633b78so23711966b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 09:05:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1759939538; x=1760544338; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=1Q1/gcptaduq0AJp5G/NOWu9M2fXYMwaSCGFrpoYsoc=;
-        b=D3J9+q3z/VzUStwjy2ymKw3U0Iw9F3xnNG1wLLzQF3yZvjCdWvBB40ycFjzeU2fgQn
-         TYoG2Vwcui2v6O5W5SzXAnCAkB16kddkqBqMWFBw3MHFEUBwF8JcXf/SbRb1vnNU5sPb
-         6zl5R6e1otDclOe8OSJPWILKLR4GEqFd9cg5c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759939538; x=1760544338;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1Q1/gcptaduq0AJp5G/NOWu9M2fXYMwaSCGFrpoYsoc=;
-        b=fBqqmUa+JGjKJXiMv7UJM9qyHFPglDaU5HL+tAi57JO0zj83PYxdNPAip3IhXbhDTt
-         mEtPFBT1knE4MsbekInLq77Il6RYuABKPeCLFT/hkxdwebeTi3jam0ivF/lLLWCkAvLd
-         IptZ8AoB7koia2WzcEMz/fPq+/SEgHnThgyOsWGvKlJLrks4TlDCDi2mNk8HINSaYlDd
-         lGZ5zYCZswqRxAOoebODFFwW4Go9DL/tNXv/bJUlyYp/0KBtp8x5bG+HAq9NgH/kIi5z
-         IRIjKhKGwvL1231+8zdtEOTBM+wrsK8WnpiC3BbmNnPt6djw0fpTnuZePp2mh3Y/V9Tn
-         JrBA==
-X-Forwarded-Encrypted: i=1; AJvYcCXoBfhjG7EgfjV6wbO4g6GRHuTFHMow9qy/LiZb10VaJ0IwQnzOjVJiue9mZsTAii12VHCgwP9Cxe3hcXI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrB4VM+uXUws8oyTqsnLudr+TMCzaKuzIAb4wCgMkz7mSR8zRb
-	Cool9XWG6L5A7h66LziPQ5ymi2OdTlMVOItLCH+UF3WX7xRiE80giGlRYOSm4Z8CpGB9J0VPoCx
-	7y7XF7pk=
-X-Gm-Gg: ASbGncsl+deLkZ70Vn92xCRCO9TfjDKUQN7DEs936u0WZV6Cxv6gADne93JsnTFJDW0
-	8mXX3OZcVnKdeAwnDMcgodzSOK2mQD9zEV9DcbT6+Dzkv6SChaH6jl8el5yNMIzvw6tDde6oSPV
-	G2LlbSNuxKwEjoHZmZhwKNfTERWFmrh2EJQpCyoVqt9zG4h7zVJVoWLm9iRRSH7zECgtEjv5esW
-	w5uaGA3G6UBGOVWsbCT7wIJKwo5xzYP5Q9Fqf1RT30hTVY2oHWrScvjTCGfwsdvpLUHuCq3bPWl
-	7fthF6fJqOcgG0f7AozI06k3g1eDcKN18zdjDYbqVvujUbVKAKwITBlnFY/PPasZjI+T6LvMk5J
-	qoxIbxMYYtSKiNLIZLU8CH/P/Q/I9SBTzw9znnPQXy43h1FpFgJr1LcQc5y9hvmgP1shiMtKyxs
-	jugelH2usP/Wg+EJGaKAMK
-X-Google-Smtp-Source: AGHT+IEBAU/1+Mk/shZIO/8rxFy0L5QBvzqdemfBlLyVcWX3nEzeHe0vuvNNxNxWSpHwF3vVtSRCBg==
-X-Received: by 2002:a17:906:ee87:b0:afa:1d2c:bbd1 with SMTP id a640c23a62f3a-b50bf7eb3cfmr439899866b.30.1759939537957;
-        Wed, 08 Oct 2025 09:05:37 -0700 (PDT)
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b4c83adec08sm985359666b.56.2025.10.08.09.05.36
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Oct 2025 09:05:36 -0700 (PDT)
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b3d80891c6cso176352466b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 09:05:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX0GeGRK5OtbXmvTL4FstRgI8pJ2Xzkz4yK+nUr6EYf11li7uUW5IQ0QUxCKsP0rd7XxPyqGWwr9FTnggQ=@vger.kernel.org
-X-Received: by 2002:a17:907:c717:b0:b4c:629b:aa67 with SMTP id
- a640c23a62f3a-b4f43730a1dmr943906366b.32.1759939535669; Wed, 08 Oct 2025
- 09:05:35 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D51122BD02A;
+	Wed,  8 Oct 2025 16:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759939656; cv=pass; b=MaGfpnhuGtV7yVCS3RXAtOyFoZaieTCQ+bavZ1oDSNxZ+GO+k4yJRswLAXBI5hwxxmexqI/k3j7N5MR1Jnbk8wZoQHGGyYUrFySHfqxlFUf5aby6brIzO16dPa6ix6UnK6wM43R4FrtLd1o4hVZUV0aO1IMfKSNVx5YhSjpctoM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759939656; c=relaxed/simple;
+	bh=/96yJw7IOpqI6hPVch1F2jY7Dzoyi6NmuPvpTMa3hV4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rdB4fQ1msiL1cXT5aWLF3nI4WAywBT8NDiz7BzsB1A8jh43SSOJoOC+DCgwfWa+G/fhR1fT2FmFDVIaufv9CKWKT2o/uZw1/8YdZtWsA1HvJyAUhOjDrZdzXi/0cN2Or/gS4c05P/flpSUphLLVUKJMZs7TyY+HU/K8ohJcGDCc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=Gl+StA1H; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1759939547; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=WvgFhNQjFuF2w7vmkBR33tizRowq9p5DChLX8HhxldVQyoKsQkuYzE3pdwHFYTQdGsdchmtK17UD1kygsfd0bCK6whtHz6k2tVnzqk+Uk2lX9xKlJntcMRg/KaX9F9PbaMY/iWjBaA94yyA2V2Q8SnEqvTjB6/cnx2sJwfHp74w=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1759939547; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=C6Dgx4PSW53d7cGyuFXrxBnWUw2p9vWZj5GWMum1gdM=; 
+	b=aPXjLwxLRuF1Ai31FkBFBgrdapHSU9DNfeEavQ8deQnSSeG/kwoh/7N8meg0EjxmWFhxK6iFX5CPGLt0s3RZl64ZmzqIIevNEAbnhnLfTas/jBgcJOmT9OkljH7FzhvybEyERehKKqkZv0ZKLaVFNk1vnM9ONpox3xwPfpLzs6w=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759939547;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
+	bh=C6Dgx4PSW53d7cGyuFXrxBnWUw2p9vWZj5GWMum1gdM=;
+	b=Gl+StA1H5jP7fNz2zNLRrP4kTVV8+at5FSUtga0KJk4xGBU449nWNrfKz8Ud7hjh
+	dFA0fzNiGmI0rVkKpmJfEG8UYQyQ3IBYy1tjxbheiFQh6y8OcEqo/QAigf4HqSren6b
+	N2F3xp81jLH0zoFJfdRf5UawBAgEw2bMcp1BtCXM=
+Received: by mx.zohomail.com with SMTPS id 1759939544761761.1705555269986;
+	Wed, 8 Oct 2025 09:05:44 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject: [PATCH v2 0/5] MediaTek PLL Refactors and Fixes
+Date: Wed, 08 Oct 2025 18:05:34 +0200
+Message-Id: <20251008-mtk-pll-rpm-v2-0-170ed0698560@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251008123014.GA20413@redhat.com> <20251008123045.GA20440@redhat.com>
-In-Reply-To: <20251008123045.GA20440@redhat.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 8 Oct 2025 09:05:17 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjozC9_JCdEW9K_uruJqzTLzhtcVpgDk1OuqErNRUS7Mg@mail.gmail.com>
-X-Gm-Features: AS18NWBMsj5s5FP73yEhAeSQmI8SrDvh10NOgnRoQVy4jaZaA2b3rqSxd9LPdxw
-Message-ID: <CAHk-=wjozC9_JCdEW9K_uruJqzTLzhtcVpgDk1OuqErNRUS7Mg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] seqlock: introduce scoped_seqlock_read() and scoped_seqlock_read_irqsave()
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Boqun Feng <boqun.feng@gmail.com>, 
-	David Howells <dhowells@redhat.com>, Ingo Molnar <mingo@redhat.com>, 
-	Li RongQing <lirongqing@baidu.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAM+L5mgC/22OQQ6CMBBFr0Jm7Zi2AWlZeQ/DosAgjUCxrQRDu
+ LsFti7fJO/9WcGTM+ShSFZwNBtv7BhBXBKoOz0+CU0TGQQTGVNC4RBeOPU9umnAqhWSK9E0jN8
+ gGpOj1ixH7VGe7Oj9idFwHqHSnrC2w2BCkYy0BNzDnDEJu9AZH6z7Ht/M/DD+Ds8cGaYqS3me5
+ zKXzb22fa8r6/Q11qHctu0HXBHsAtsAAAA=
+X-Change-ID: 20250929-mtk-pll-rpm-bf28192dd016
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Dong Aisheng <aisheng.dong@nxp.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ Yassine Oudjana <y.oudjana@protonmail.com>, 
+ Laura Nao <laura.nao@collabora.com>, 
+ =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>, 
+ Chia-I Wu <olvaffe@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>
+Cc: kernel@collabora.com, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, Stephen Boyd <sboyd@codeaurora.org>, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+X-Mailer: b4 0.14.2
 
-Bah.
+This series refactors all users of mtk-pll, just so we can enable
+runtime power management for the clock controllers that want it. It's
+also generally more useful to have the struct device in the pll code,
+rather than the device node.
 
-Now I'm reading this again, and going through it more carefully, and
-now I hate your helper.
+Also fix up MT8196 mfgpll to declare its parent-child relationship with
+mfg_eb, and fix the common clock framework core to take
+CLK_OPS_PARENT_ENABLE into account for the recalc_rate op as well.
 
-Why?
+The reason why this is all in the same series is that it grew out of me
+first modelling this as an RPM clock for mfgpll, which Angelo disagreed
+with, so I did some investigation and it seems MFG_EB indeed is a parent
+clock. However, the earlier refactoring to pass the device pointer down
+is still useful.
 
-Because I think that with the new organization, you can do so much better.
+Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+---
+Changes in v2:
+- Drop bindings patch
+- Drop mfgpll RPM patch
+- Add patch to also transition pllfh to passing device
+- Add fixes patch to make CLK_OPS_PARENT_ENABLE also apply to the
+  recalc_rate operation
+- Remodel mfgpll's mfg_eb dependency as parent-child with
+  CLK_OPS_PARENT_ENABLE
+- Link to v1: https://lore.kernel.org/r/20250929-mtk-pll-rpm-v1-0-49541777878d@collabora.com
 
-So the old code used "seq" as two different values:
+---
+Nicolas Frattaroli (5):
+      clk: Respect CLK_OPS_PARENT_ENABLE during recalc
+      clk: mediatek: Refactor pll registration to pass device
+      clk: mediatek: Pass device to clk_hw_register for PLLs
+      clk: mediatek: Refactor pllfh registration to pass device
+      clk: mediatek: Add mfg_eb as parent to mt8196 mfgpll clocks
 
- - the first loop around, it's the sequence count for the lockless
-attempt and is always even because of how read_seqbegin() works (and
-because the original code had that whole 'nextseq' hackery.
+ drivers/clk/clk.c                            | 13 +++++++++++++
+ drivers/clk/mediatek/clk-mt2701.c            |  2 +-
+ drivers/clk/mediatek/clk-mt2712-apmixedsys.c |  2 +-
+ drivers/clk/mediatek/clk-mt6735-apmixedsys.c |  4 ++--
+ drivers/clk/mediatek/clk-mt6765.c            |  2 +-
+ drivers/clk/mediatek/clk-mt6779.c            |  2 +-
+ drivers/clk/mediatek/clk-mt6795-apmixedsys.c |  2 +-
+ drivers/clk/mediatek/clk-mt6797.c            |  2 +-
+ drivers/clk/mediatek/clk-mt7622-apmixedsys.c |  2 +-
+ drivers/clk/mediatek/clk-mt7629.c            |  2 +-
+ drivers/clk/mediatek/clk-mt7981-apmixed.c    |  2 +-
+ drivers/clk/mediatek/clk-mt7986-apmixed.c    |  2 +-
+ drivers/clk/mediatek/clk-mt7988-apmixed.c    |  2 +-
+ drivers/clk/mediatek/clk-mt8135-apmixedsys.c |  3 ++-
+ drivers/clk/mediatek/clk-mt8167-apmixedsys.c |  2 +-
+ drivers/clk/mediatek/clk-mt8173-apmixedsys.c | 14 +++++++-------
+ drivers/clk/mediatek/clk-mt8183-apmixedsys.c |  2 +-
+ drivers/clk/mediatek/clk-mt8186-apmixedsys.c |  2 +-
+ drivers/clk/mediatek/clk-mt8188-apmixedsys.c |  2 +-
+ drivers/clk/mediatek/clk-mt8192-apmixedsys.c |  2 +-
+ drivers/clk/mediatek/clk-mt8195-apmixedsys.c |  2 +-
+ drivers/clk/mediatek/clk-mt8195-apusys_pll.c |  3 ++-
+ drivers/clk/mediatek/clk-mt8196-apmixedsys.c |  3 ++-
+ drivers/clk/mediatek/clk-mt8196-mcu.c        |  2 +-
+ drivers/clk/mediatek/clk-mt8196-mfg.c        |  5 +++--
+ drivers/clk/mediatek/clk-mt8196-vlpckgen.c   |  2 +-
+ drivers/clk/mediatek/clk-mt8365-apmixedsys.c |  2 +-
+ drivers/clk/mediatek/clk-mt8516-apmixedsys.c |  2 +-
+ drivers/clk/mediatek/clk-pll.c               | 19 +++++++++++++------
+ drivers/clk/mediatek/clk-pll.h               | 11 +++++++----
+ drivers/clk/mediatek/clk-pllfh.c             | 13 ++++++++-----
+ drivers/clk/mediatek/clk-pllfh.h             |  2 +-
+ 32 files changed, 81 insertions(+), 51 deletions(-)
+---
+base-commit: adff43957b0d8b9f6ad0e1b1f6daa7136f9ffbef
+change-id: 20250929-mtk-pll-rpm-bf28192dd016
 
- - the second loop around, it's just a flag that now we hold the lock
+Best regards,
+-- 
+Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-and you converted the new scheme to that same model.
-
-Which works, but in the new scheme, it's just all *pointless*.
-
-Why do I say that?
-
-Because in the new scheme, you have that explicit "lockless" flag
-which is so much more legible in the first place.
-
-You use it in the for-loop, but you don't use it in the helper function.
-
-So all the games with
-
-        if (*seq & 1) {
-       ...
-                *seq = 1;
-
-are horribly non-intuitive and shouldn't exist because it would be
-much more logical to just use the 'lockless' boolean instead.
-
-Those games only make the code harder to understand, and I think they
-also make the compiler unable to just until the "loop" twice.
-
-So instead of this:
-
-  static inline bool
-  __scoped_seqlock_read_retry(seqlock_t *lock, int *seq, unsigned long *flags)
-  {
-         bool retry = false;
-
-         if (*seq & 1) {
-                 if (flags)
-                         read_sequnlock_excl_irqrestore(lock, *flags);
-                 else
-                         read_sequnlock_excl(lock);
-         } else if (read_seqretry(lock, *seq)) {
-                 *seq = 1;
-                 retry = true;
-                 if (flags)
-                         read_seqlock_excl_irqsave(lock, *flags);
-                 else
-                         read_seqlock_excl(lock);
-         }
-
-         return retry;
-  }
-
-I think that you should make that helper function be a macro - so that
-it can take the unnamed union type as its argument - and then make it
-do something like this instead:
-
-  #define __scoped_seqlock_read_retry(s) ({ s.lockless ?       \
-        (s.lockless = false) || read_seqretry(lock, s.seq) ?   \
-                ({ read_seqlock_excl(lock); true }) : false :  \
-        ({ read_sequnlock_excl(lock); false }) })
-
-Ok, that hasn't even been close to a compiler and may be completely
-buggy, but basically the logic is
-
- - if lockless: set lockless to false (unconditionally to make it real
-easy for the compiler), then do the seq_retry, and if that says we
-should retry, it does the locking and returns true (so that the loop
-is re-done)
-
- - if not lockless, just unlock the lock and return false to say we're done
-
-And yes, you'd need the irqsafe version too, and yes, you could do it
-with the "if (flags)" thing or you could duplicate that macro, but you
-could also just pass the lock/unlock sequence as an argument, and now
-that macro looks even simpler
-
-  #define __scoped_seqlock_retry(s, lock, unlock) ({ s.lockless ?  \
-        (s.lockless = false) || read_seqretry(lock, s.seq) ?       \
-                ({ lock ; true; }) : false :                       \
-        ({ unlock ; false }) })
-
-although then the users or that macro will be a bit uglier (maybe do
-that with another level of macro to make each step simpler).
-
-And I think the compiler will be able to optimize this better, because
-the compiler actually can just follow the 's.lockless' tests and turn
-all those tests into static jumps when it unrolls that loop twice
-(first the lockless = true, then the lockless = false).
-
-Again: I DID NOT FEED THIS TO A COMPILER. It may have syntax errors.
-It may have logic errors,
-
-Or it may be me having a complete breakdown and spouting nonsense. But
-when re-reading your __scoped_seqlock_read_retry() helper, I really
-really hated how it played those games with even/odd *seq, and I think
-it's unnecessary.
-
-Am I making sense? Who knows?
-
-             Linus
 
