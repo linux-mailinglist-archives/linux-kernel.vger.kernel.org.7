@@ -1,265 +1,315 @@
-Return-Path: <linux-kernel+bounces-845976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2982ABC69D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:54:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54C48BC69E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:58:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C67919E3A33
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:54:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2F8364E6595
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:58:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39440264634;
-	Wed,  8 Oct 2025 20:54:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C132228642B;
+	Wed,  8 Oct 2025 20:58:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aNpYkMKZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CYiBhD9n"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 675B724EA81
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 20:54:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92BD1E7C12;
+	Wed,  8 Oct 2025 20:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759956860; cv=none; b=sKEprX93IrnAANuvxfI5b/4pDO6v2WsbOb94hvwCYhGqvBrhkeRIhqV/Ihwpicyp0eipy+jkd9rUyyb7DkKHxfZJZC1LPmLLFY7Ic/bbaipIDK5FaAdO17DXn7UhyW2ERVL5ms9lEIEp9gv1OfkY9b8LeQguPXuB046LT+cTW1I=
+	t=1759957125; cv=none; b=Fxbtyo2mQfvC8rkaS9QWxwrskiXS3quXpGx2X2LCtFHoi/SAhl4ugY4NKi+BDURDuH6xqaI0CKpqphblNFR8ZvxUPINCP2NpHVCeaMKH+XMWOYgjAKDiLVtu7pC1gzpnpHi2woN0Po8fhrKDleM0blbxXLqPSo68kqnbFEdB9Gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759956860; c=relaxed/simple;
-	bh=agL9NQjRm83/yHaWQQb9LP2YNW141HDrTz3t3n7+nWc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=codbqsfH8V8Ri+jkn2r2fdjR/azgCJIKHPvhTCHg9XiQI/VMPtQTNWpBL5OoCZdzI//C4Em/rWf/l7lPF+CDL8vpDzEY0aSp4rki5DLOjArErOU2RPukFOUoDoNPh5E2tI6TehQCnnPR569OceCsbZ5tLAk9RwjQtOOJsaLIW3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aNpYkMKZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 175D7C116C6
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 20:54:20 +0000 (UTC)
+	s=arc-20240116; t=1759957125; c=relaxed/simple;
+	bh=u+7t08X/+SbXaDtAVRzGtlvNbiihuB51BPXTkQ6Q1NQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VhwcDrQ4rXQ+jJY6ifm3/kKsw2mGUzsjWe7JO2Gz0f1jNtzrWVhXMhG88XZ31CTGQIVNrjWAltHKj4/65Sb7NzCCQPLJWL6eWEAoInRjYvP4fspw4yKyT1qnxC6ehm4hzAu0eHai7jYs3gh+enjPcXEA5XdtX8Sf+/xNixWV7+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CYiBhD9n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE588C4CEE7;
+	Wed,  8 Oct 2025 20:58:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759956860;
-	bh=agL9NQjRm83/yHaWQQb9LP2YNW141HDrTz3t3n7+nWc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=aNpYkMKZfCFMWJKhtFzH9ssZDk+h5QDwRDs6/raKHPcAjEdn5aAlINFU1ys/sGiE3
-	 v0oOf3aZOVksaFkJyHY1P2B56MsfVxccy5i25BCfvczrn7YXWpCJKvQesr35u69+Sk
-	 mbh7+wFiNRR6n4lZ3TETnyHaLccM8C43xfjOz5Datmuaqwvqh7kn+7j4OXcnYvoM5j
-	 R+noBr0BQQK+dHuhCP6V0ldfVYyUkS5pXM5nJ4RxksOe0hbz8Uwc0hU1DwAwQbntoT
-	 2sbikPEgHZCvPhlZK8ArXxkuNFD6+WFWLMn753uGqV1mLzXcMsmIENMnJ4uCDPnoiN
-	 ppLiDdXRuMtew==
-Received: by mail-yx1-f54.google.com with SMTP id 956f58d0204a3-633b87e7b9fso316742d50.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 13:54:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVMMUf+yUbUMvcMfjjLz+SgzpI7WBWooWnXsB4UjN7A6aIZURVvY2aD0En2GXekmyEDz8yFp1QjPRuVZK4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5HNjs0UccZdFA1xmqst8Xwt02KxOC3JNCzuFIcn8U3jv7f4/H
-	VX3nsCLrdaDnS2eEqp/4iKZhQ3wkSJ2kDeQ8paU+7gUa0Cb3YXLY9puvbZ6ZcxmHgHPh/Q1KLxa
-	53Xf7OzyxlDEDwPyio0eLmTpS7yfACmANmcUIYrtqrA==
-X-Google-Smtp-Source: AGHT+IGXcPsre3jPnzCXfW/NrHxTfes0Zrdq4yHGtjhgwz7kNPMXwSCxT4ITZ6YQG7WRPEjbYGDlrMXAh/E7qHIvmVo=
-X-Received: by 2002:a05:690e:2486:b0:628:2e16:6566 with SMTP id
- 956f58d0204a3-63ccb6763d1mr4749241d50.0.1759956859230; Wed, 08 Oct 2025
- 13:54:19 -0700 (PDT)
+	s=k20201202; t=1759957124;
+	bh=u+7t08X/+SbXaDtAVRzGtlvNbiihuB51BPXTkQ6Q1NQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CYiBhD9nU7UHGrRGOhKpxtOeu42UNvpeEXnvJKO1AnKCri3uTHSCori2F/6oV6Ao/
+	 uuJokJ8HQ08GhcO0eTjQALWfr1p6RAayHNshP7rPXMZGXaJPYImHTQVl9jLOpFgYOh
+	 FA94dHDio0zVtvWA55xRllxDJKRTjgnx6lZKjicRCev47oZHY6UsXym1Tg2qO2y02R
+	 7N5TFRQk4qL72c3x0zMX3G/Nqr0xQP09nlSvOIXT8uMWF91fMJukIu0h0FIMjlPTzq
+	 hHHkTXlTOVVOOzW5mY7EOaTpZGvjM0M0+a1RftrIMGUKeTkxcSUlAyY60AejzPWlrt
+	 RbDZyraGvszpA==
+Date: Wed, 8 Oct 2025 21:58:38 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Roy Luo <royluo@google.com>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Joy Chakraborty <joychakr@google.com>,
+	Naveen Kumar <mnkumar@google.com>,
+	Badhri Jagan Sridharan <badhri@google.com>,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] dt-bindings: usb: dwc3: Add Google Tensor G5 DWC3
+Message-ID: <20251008-slider-uncombed-66790ea92ea0@spud>
+References: <20251008060000.3136021-1-royluo@google.com>
+ <20251008060000.3136021-2-royluo@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251007-swap-clean-after-swap-table-p1-v1-0-74860ef8ba74@tencent.com>
- <20251007-swap-clean-after-swap-table-p1-v1-1-74860ef8ba74@tencent.com>
-In-Reply-To: <20251007-swap-clean-after-swap-table-p1-v1-1-74860ef8ba74@tencent.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Wed, 8 Oct 2025 13:54:06 -0700
-X-Gmail-Original-Message-ID: <CACePvbWs3hFWt0tZc4jbvFN1OXRR5wvNXiMjBBC4871wQjtqMw@mail.gmail.com>
-X-Gm-Features: AS18NWDV4-kH86tXLtXJeQUM8aNsKlZYE7T0tTk3LlA5GEJjYTJActBrpZqaAP8
-Message-ID: <CACePvbWs3hFWt0tZc4jbvFN1OXRR5wvNXiMjBBC4871wQjtqMw@mail.gmail.com>
-Subject: Re: [PATCH 1/4] mm, swap: do not perform synchronous discard during allocation
-To: Kairui Song <ryncsn@gmail.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, 
-	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, David Hildenbrand <david@redhat.com>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Ying Huang <ying.huang@linux.alibaba.com>, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="H4E5skbR47wtHuC7"
+Content-Disposition: inline
+In-Reply-To: <20251008060000.3136021-2-royluo@google.com>
+
+
+--H4E5skbR47wtHuC7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Kairui,
-
-First of all, your title is a bit misleading:
-"do not perform synchronous discard during allocation"
-
-You still do the synchronous discard, just limited to order 0 failing.
-
-Also your commit did not describe the behavior change of this patch.
-The behavior change is that, it now prefers to allocate from the
-fragment list before waiting for the discard. Which I feel is not
-justified.
-
-After reading your patch, I feel that you still do the synchronous
-discard, just now you do it with less lock held.
-I suggest you just fix the lock held issue without changing the
-discard ordering behavior.
-
-On Mon, Oct 6, 2025 at 1:03=E2=80=AFPM Kairui Song <ryncsn@gmail.com> wrote=
-:
->
-> From: Kairui Song <kasong@tencent.com>
->
-> Since commit 1b7e90020eb77 ("mm, swap: use percpu cluster as allocation
-> fast path"), swap allocation is protected by a local lock, which means
-> we can't do any sleeping calls during allocation.
->
-> However, the discard routine is not taken well care of. When the swap
-> allocator failed to find any usable cluster, it would look at the
-> pending discard cluster and try to issue some blocking discards. It may
-> not necessarily sleep, but the cond_resched at the bio layer indicates
-> this is wrong when combined with a local lock. And the bio GFP flag used
-> for discard bio is also wrong (not atomic).
-
-If lock is the issue, let's fix the lock issue.
-
-> It's arguable whether this synchronous discard is helpful at all. In
-> most cases, the async discard is good enough. And the swap allocator is
-> doing very differently at organizing the clusters since the recent
-> change, so it is very rare to see discard clusters piling up.
-
-Very rare does not mean this never happens. If you have a cluster on
-the discarding queue, I think it is better to wait for the discard to
-complete before using the fragmented list, to reduce the
-fragmentation. So it seems the real issue is holding a lock while
-doing the block discard?
-
-> So far, no issues have been observed or reported with typical SSD setups
-> under months of high pressure. This issue was found during my code
-> review. But by hacking the kernel a bit: adding a mdelay(100) in the
-> async discard path, this issue will be observable with WARNING triggered
-> by the wrong GFP and cond_resched in the bio layer.
-
-I think that makes an assumption on how slow the SSD discard is. Some
-SSD can be really slow. We want our kernel to work for those slow
-discard SSD cases as well.
-
-> So let's fix this issue in a safe way: remove the synchronous discard in
-> the swap allocation path. And when order 0 is failing with all cluster
-> list drained on all swap devices, try to do a discard following the swap
-
-I don't feel that changing the discard behavior is justified here, the
-real fix is discarding with less lock held. Am I missing something?
-If I understand correctly, we should be able to keep the current
-discard ordering behavior, discard before the fragment list. But with
-less lock held as your current patch does.
-
-I suggest the allocation here detects there is a discard pending and
-running out of free blocks. Return there and indicate the need to
-discard. The caller performs the discard without holding the lock,
-similar to what you do with the order =3D=3D 0 case.
-
-> device priority list. If any discards released some cluster, try the
-> allocation again. This way, we can still avoid OOM due to swap failure
-> if the hardware is very slow and memory pressure is extremely high.
->
-> Cc: <stable@vger.kernel.org>
-> Fixes: 1b7e90020eb77 ("mm, swap: use percpu cluster as allocation fast pa=
-th")
-> Signed-off-by: Kairui Song <kasong@tencent.com>
+On Wed, Oct 08, 2025 at 05:59:57AM +0000, Roy Luo wrote:
+> Document the device tree bindings for the DWC3 USB controller found in
+> Google Tensor SoCs, starting with the G5 generation.
+>=20
+> The Tensor G5 silicon represents a complete architectural departure from
+> previous generations (like gs101), including entirely new clock/reset
+> schemes, top-level wrapper and register interface. Consequently,
+> existing Samsung/Exynos DWC3 USB bindings and drivers are incompatible,
+> necessitating this new device tree binding.
+>=20
+> The USB controller on Tensor G5 is based on Synopsys DWC3 IP and features
+> Dual-Role Device single port with hibernation support.
+>=20
+> Signed-off-by: Roy Luo <royluo@google.com>
 > ---
->  mm/swapfile.c | 40 +++++++++++++++++++++++++++++++++-------
->  1 file changed, 33 insertions(+), 7 deletions(-)
->
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index cb2392ed8e0e..0d1924f6f495 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -1101,13 +1101,6 @@ static unsigned long cluster_alloc_swap_entry(stru=
-ct swap_info_struct *si, int o
->                         goto done;
->         }
->
-> -       /*
-> -        * We don't have free cluster but have some clusters in discardin=
-g,
-> -        * do discard now and reclaim them.
-> -        */
-> -       if ((si->flags & SWP_PAGE_DISCARD) && swap_do_scheduled_discard(s=
-i))
-> -               goto new_cluster;
+>  .../bindings/usb/google,gs-dwc3.yaml          | 145 ++++++++++++++++++
+>  1 file changed, 145 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/usb/google,gs-dwc3.=
+yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/usb/google,gs-dwc3.yaml b/=
+Documentation/devicetree/bindings/usb/google,gs-dwc3.yaml
+> new file mode 100644
+> index 000000000000..9eb0bf726e8d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/usb/google,gs-dwc3.yaml
 
-Assume you follow my suggestion.
-Change this to some function to detect if there is a pending discard
-on this device. Return to the caller indicating that you need a
-discard for this device that has a pending discard.
-Add an output argument to indicate the discard device "discard" if needed.
+filename matching the compatible please.
 
-> -
->         if (order)
->                 goto done;
->
-> @@ -1394,6 +1387,33 @@ static bool swap_alloc_slow(swp_entry_t *entry,
->         return false;
->  }
->
-> +/*
-> + * Discard pending clusters in a synchronized way when under high pressu=
-re.
-> + * Return: true if any cluster is discarded.
-> + */
-> +static bool swap_sync_discard(void)
-> +{
-
-This function discards all swap devices. I am wondering if we should
-just discard the current working device instead.
-Another device supposedly discarded is already on going with the work
-queue. We don't have to wait for that.
-
-To unblock the current swap allocation.  We only need to wait for the
-discard on the current swap device to indicate it needs to wait for
-discard. Assume you take my above suggestion.
-
-> +       bool ret =3D false;
-> +       int nid =3D numa_node_id();
-> +       struct swap_info_struct *si, *next;
+> @@ -0,0 +1,145 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +# Copyright (c) 2025, Google LLC
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/usb/google,gs-dwc3.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +       spin_lock(&swap_avail_lock);
-> +       plist_for_each_entry_safe(si, next, &swap_avail_heads[nid], avail=
-_lists[nid]) {
-> +               spin_unlock(&swap_avail_lock);
-> +               if (get_swap_device_info(si)) {
-> +                       if (si->flags & SWP_PAGE_DISCARD)
-> +                               ret =3D swap_do_scheduled_discard(si);
-> +                       put_swap_device(si);
-> +               }
-> +               if (ret)
-> +                       break;
-> +               spin_lock(&swap_avail_lock);
-> +       }
-> +       spin_unlock(&swap_avail_lock);
+> +title: Google Tensor Series (G5+) DWC3 USB SoC Controller
 > +
-> +       return ret;
-> +}
+> +maintainers:
+> +  - Roy Luo <royluo@google.com>
 > +
->  /**
->   * folio_alloc_swap - allocate swap space for a folio
->   * @folio: folio we want to move to swap
-> @@ -1432,11 +1452,17 @@ int folio_alloc_swap(struct folio *folio, gfp_t g=
-fp)
->                 }
->         }
->
-> +again:
->         local_lock(&percpu_swap_cluster.lock);
->         if (!swap_alloc_fast(&entry, order))
->                 swap_alloc_slow(&entry, order);
-
-Here we can have a "discard" output function argument to indicate
-which swap device needs to be discarded.
-
->         local_unlock(&percpu_swap_cluster.lock);
->
-> +       if (unlikely(!order && !entry.val)) {
-
-If you take the above suggestion, here will be just check if the
-"discard" device is not NULL, perform discard on that device and done.
-
-> +               if (swap_sync_discard())
-> +                       goto again;
-> +       }
+> +description: |
+> +  Describes the DWC3 USB controller block implemented on Google Tensor S=
+oCs,
+> +  starting with the G5 generation. Based on Synopsys DWC3 IP, the contro=
+ller
+> +  features Dual-Role Device single port with hibernation add-on.
 > +
->         /* Need to call this even if allocation failed, for MEMCG_SWAP_FA=
-IL. */
->         if (mem_cgroup_try_charge_swap(folio, entry))
->                 goto out_free;
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - google,gs5-dwc3
 
-Chris
+items is redundant here.
+
+> +
+> +  reg:
+> +    minItems: 3
+> +    maxItems: 3
+> +
+> +  reg-names:
+> +    description: |
+> +      The following memory regions must present:
+> +        - dwc3_core: Core DWC3 IP registers.
+> +        - host_cfg_csr: Hibernation control registers.
+> +        - usbint_csr: Hibernation interrupt registers.
+
+Put this into reg as an items list, and you can drop the min/max items
+=66rom there.
+Same applies to interrupts and power-domains.
+
+> +    items:
+> +      - const: dwc3_core
+> +      - const: host_cfg_csr
+> +      - const: usbint_csr
+> +
+> +  interrupts:
+> +    minItems: 3
+> +    maxItems: 3
+> +
+> +  interrupt-names:
+> +    description: |
+> +      The following interrupts must present:
+> +        - dwc_usb3: Core DWC3 interrupt.
+> +        - hs_pme_irq: High speed remote wakeup interrupt for hibernation.
+> +        - ss_pme_irq: Super speed remote wakeup interrupt for hibernatio=
+n.
+> +    items:
+> +      - const: dwc_usb3
+> +      - const: hs_pme_irq
+> +      - const: ss_pme_irq
+
+s/_irq//
+
+> +
+> +  clocks:
+> +    minItems: 3
+> +    maxItems: 3
+> +
+> +  clock-names:
+> +    minItems: 3
+> +    maxItems: 3
+> +
+> +  resets:
+> +    minItems: 5
+> +    maxItems: 5
+
+For clocks and resets, please provide descriptions. For clock-names, you
+provided no names and therefore cannot use the property since anything
+is valid!
+
+> +
+> +  reset-names:
+> +    items:
+> +      - const: usbc_non_sticky
+> +      - const: usbc_sticky
+> +      - const: usb_drd_bus
+> +      - const: u2phy_apb
+> +      - const: usb_top_csr
+
+"csr" is an odd thing to have in a reset name, since it usually means
+"control and status register". Why is it here.
+
+> +
+> +  power-domains:
+> +    minItems: 2
+> +    maxItems: 2
+> +
+> +  power-domain-names:
+> +    description: |
+> +      The following power domain must present:
+> +          - usb_psw_pd: The child power domain of usb_top_pd. Turning it=
+ on puts the controller
+> +                         into full power state, turning it off puts the =
+controller into power
+> +                         gated state.
+> +          - usb_top_pd: The parent power domain of usb_psw_pd. Turning i=
+t on puts the controller
+> +                         into power gated state, turning it off complete=
+ly shuts off the
+> +                         controller.
+> +    items:
+> +      - const: usb_psw_pd
+> +      - const: usb_top_pd
+
+s/_pd// at the very least, but I would question the need to put "usb" in
+any of the names given that this is a usb device.
+
+> +
+> +  iommus:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - interrupts
+> +  - interrupt-names
+> +  - clocks
+> +  - resets
+> +  - reset-names
+> +  - power-domains
+> +  - power-domain-names
+> +
+> +allOf:
+> +  - $ref: snps,dwc3-common.yaml#
+> +
+> +unevaluatedProperties: false
+
+So every property from snps,dwc3-common.yaml is valid here, with any of
+the permitted values?
+
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    soc {
+> +        #address-cells =3D <2>;
+> +        #size-cells =3D <2>;
+> +
+> +        usb@c400000 {
+> +            compatible =3D "google,gs5-dwc3";
+> +            reg =3D <0 0x0c400000  0 0xd060>, <0 0x0c450000 0 0x14>, <0 =
+0x0c450020 0 0x8>;
+> +            reg-names =3D "dwc3_core", "host_cfg_csr", "usbint_csr";
+> +            interrupts =3D <GIC_SPI 580 IRQ_TYPE_LEVEL_HIGH 0>,
+> +                         <GIC_SPI 597 IRQ_TYPE_LEVEL_HIGH 0>,
+> +                         <GIC_SPI 598 IRQ_TYPE_LEVEL_HIGH 0>;
+> +            interrupt-names =3D "dwc_usb3", "hs_pme_irq", "ss_pme_irq";
+> +            clocks =3D <&hsion_usbc_non_sticky_clk>,  <&hsion_usbc_stick=
+y_clk>,
+> +                     <&hsion_u2phy_apb_clk>;
+> +            clock-names =3D "usbc_non_sticky", "usbc_sticky", "u2phy_apb=
+";
+> +            resets =3D <&hsion_resets_usbc_non_sticky>, <&hsion_resets_u=
+sbc_sticky>,
+> +                     <&hsion_resets_usb_drd_bus>, <&hsion_resets_u2phy_a=
+pb>,
+> +                     <&hsion_resets_usb_top_csr>;
+> +            reset-names =3D "usbc_non_sticky", "usbc_sticky",
+> +                     "usb_drd_bus", "u2phy_apb",
+> +                     "usb_top_csr";
+> +            power-domains =3D <&hsio_n_usb_psw_pd>, <&hsio_n_usb_pd>;
+> +            power-domain-names =3D "usb_psw_pd", "usb_top_pd";
+> +            phys =3D <&usb_phy 0>;
+> +            phy-names =3D "usb2-phy";
+> +            snps,quirk-frame-length-adjustment =3D <0x20>;
+> +            snps,gfladj-refclk-lpm-sel-quirk;
+> +            snps,incr-burst-type-adjustment =3D <4>;
+> +        };
+> +    };
+> +...
+
+pw-bot: cr
+
+--H4E5skbR47wtHuC7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaObQfgAKCRB4tDGHoIJi
+0oWjAP9YqWk7a/FyW8foR/yT+VNOq+XI66exHNNQBPvOdVgC9AEArKBNkcUi0g8z
+w38R4cEA+3VrU78OnQDQNAfK5wcUdg8=
+=Lg9K
+-----END PGP SIGNATURE-----
+
+--H4E5skbR47wtHuC7--
 
