@@ -1,62 +1,111 @@
-Return-Path: <linux-kernel+bounces-846026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17FDFBC6CEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 00:44:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CA58BC6CFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 00:47:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25CC519E14F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 22:44:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 367A840435A
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 22:47:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E2542C21EF;
-	Wed,  8 Oct 2025 22:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 189672C08C2;
+	Wed,  8 Oct 2025 22:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="qi7JBrye"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A0622C21CF;
-	Wed,  8 Oct 2025 22:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KO6HrilE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6473384039;
+	Wed,  8 Oct 2025 22:47:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759963436; cv=none; b=lF8NUPSxa2v0eZAaZuMaOvC0YBNZz6uZGIiE/fYVJQxUsJJ5MGSPMndBg9D4GivW40kkMpTlCy4UhhG3Z92kIP133CJogbpdjOMHwwzgeQqvXnIkd4YIaMA0gfh1Xlg3CeloqnGmp8FldPuvsbZI1F3ZVOHwdVIJzZSPlFmm0v8=
+	t=1759963623; cv=none; b=hEL6gKp/3bKzPl8nhi32xfhqIsTOG9ajsm1w+ErfEi4o8PuQfwNY1t4rdu097CP5fdjYvSWWq4IwglsllG1AEL+SQEuHvu2Odp4KfpXNGdHdXQVl1veBF+qapmqroLyYFUSWbxDTt2uFigEGD/4WjiZd7/X0Ho/xzB9TYvczYGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759963436; c=relaxed/simple;
-	bh=JoQ9cIyiKqjzBd1Wubf0x85PFpoY7gElHhkRO1LMxT4=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iRECKi5OmGoFX7xGsomI9nzX2hh9h0QKKDy1KWZVTT1WivyibgmdQ4+G/g8ZmaXcjexm7Q+if8aJEmVSYSZXPB1Ln4GgqcyT66X2MvSOCFCJs7ZnGid19Q9hg4YH2Obb0yojrP9xPWOSEqv+W7iHzQCm4MudQgRbMjolO29Gkrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=qi7JBrye; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from skinsburskii.localdomain (unknown [20.236.10.66])
-	by linux.microsoft.com (Postfix) with ESMTPSA id C49DE2038B7E;
-	Wed,  8 Oct 2025 15:43:54 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C49DE2038B7E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1759963434;
-	bh=JoQ9cIyiKqjzBd1Wubf0x85PFpoY7gElHhkRO1LMxT4=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=qi7JBrye+ZgvxM2wgtjgc4m+kp9x9nOAyIhJNkYTzqNHwrYHf2DYEQmMne1mkB5va
-	 QfN7T5XbkT7WXdH/1u8vbz6tC3TNaBvsNh80yhTV/5FufYD5UNEcYKTzfPNCGX2OlU
-	 ZeN+P9lxPuY5H/2s2G0tIG2AH+kSNndw86MqZW0I=
-Date: Wed, 8 Oct 2025 15:43:53 -0700
-From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
-To: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH
- --to=kys@microsoft.com,haiyangz@microsoft.com,wei.liu@kernel.org,decui@microsoft.com]
- Drivers: hv: Resolve ambiguity in hypervisor version log
-Message-ID: <aObpKYXKbc9D8fuM@skinsburskii.localdomain>
-References: <175996333379.107949.887881974668560955.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+	s=arc-20240116; t=1759963623; c=relaxed/simple;
+	bh=vy0cdTjBCP17fnaUtam7ndt5AAkcVL5PvEI4IC1UcA8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RzaC0WGW6OMAA04bcvM4EKzuqfNf2njD4IIXoL/nCnNAfSNgUHhBW+78Ng0TVS5LwZW0GiLDZUQ5MyK2PLo2OukQtbgcaj3qyDvGDvFrL3kYicULKAj1kcP+SpzXk1l48IyWqnnoEztBZO//QDuPSC+lw5UYTSsvszvFAueTvgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KO6HrilE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F3DAC4CEE7;
+	Wed,  8 Oct 2025 22:46:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759963623;
+	bh=vy0cdTjBCP17fnaUtam7ndt5AAkcVL5PvEI4IC1UcA8=;
+	h=From:Subject:Date:To:Cc:From;
+	b=KO6HrilErsxh11FruCjdBhaLifunJhKM1uD3q622E9iAFsp+YvXTiBkQuJXT4TK9G
+	 OZKzhd2e5k2Hza804aygqnXmhO8QmTcEVNH9PUXtRmrRE0kFMrvjtXF4ipgDv1KN6E
+	 vLBljLljtB5EPtkJ89YZoLS6Qu+uHBsGu5X9/6++V/OpySr3bi665KTTDgV9kPQeDh
+	 6+n/EjKjFc1JbGID+r80lkKCUuhxD0lfuzsj0JLdhjwUJ0rpnZmRWGTEd/qg1KoM9p
+	 Jxur4YGCk5AwD+p2qzrorimK7kPZrrWXlNl0qQQq3TPmkxQWOcPXIa5SfL7hzxylnb
+	 zFNXM6i+kCMuw==
+From: Nathan Chancellor <nathan@kernel.org>
+Subject: [PATCH 0/3] kbuild: Fixes for fallout from recent
+ modules.builtin.modinfo series
+Date: Wed, 08 Oct 2025 15:46:43 -0700
+Message-Id: <20251008-kbuild-fix-modinfo-regressions-v1-0-9fc776c5887c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <175996333379.107949.887881974668560955.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANPp5mgC/x2N0QrCMBAEf6XcswdJJWD9FemD9jb1qCblDkUo/
+ XejjwM7Oxs5TOF07jYyvNW1lgbx0NF0v5YZrNKY+tCnGMKJl9tLH8JZP/ysoiVXNswG/5nOQ8I
+ xS0xRMFE7WQ1t+g9cxn3/ArMY+PhwAAAA
+X-Change-ID: 20251008-kbuild-fix-modinfo-regressions-95e3fd151dec
+To: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nsc@kernel.org>
+Cc: Alexey Gladkov <legion@kernel.org>, 
+ Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, 
+ Alexandre Ghiti <alexghiti@rivosinc.com>, 
+ Linux Kernel Functional Testing <lkft@linaro.org>, 
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+ Alexander Gordeev <agordeev@linux.ibm.com>, 
+ Christian Borntraeger <borntraeger@linux.ibm.com>, 
+ Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1217; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=vy0cdTjBCP17fnaUtam7ndt5AAkcVL5PvEI4IC1UcA8=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDBnPXj52OX67+ZFJ/fK1mUlm8zdwSsZPVZi2+vitt27da
+ z/ol4nv6yhlYRDjYpAVU2Spfqx63NBwzlnGG6cmwcxhZQIZwsDFKQATObuJ4X+Q/b7T6lpOAhKL
+ X1oFxi90vbrBt/+Wef3/Cxt2hPyvj1zL8FdYYwGr6Yewet4KtaxJ2gwlx2wmBc6oqJC4prV/nlV
+ dEwcA
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-Please disregard
+Hi all,
+
+This is a series to address some problems that were exposed by the
+recent modules.builtin.modinfo series that landed in commit c7d3dd9163e6
+("Merge patch series "Add generated modalias to
+modules.builtin.modinfo"").
+
+The third patch is not directly related to the aforementioned series, as
+the warning it fixes happens prior to the series but commit 8d18ef04f940
+("s390: vmlinux.lds.S: Reorder sections") from the series creates
+conflicts in this area, so I included it here.
+
+I plan to send at least the first two patches to Linus by Saturday for
+-rc1 but I will take the third with an Ack.
+
+---
+Nathan Chancellor (3):
+      kbuild: Restore pattern to avoid stripping .rela.dyn from vmlinux
+      kbuild: Add '.rel.*' strip pattern for vmlinux
+      s390/vmlinux.lds.S: Move .vmlinux.info to end of allocatable sections
+
+ arch/s390/kernel/vmlinux.lds.S | 44 +++++++++++++++++++++---------------------
+ scripts/Makefile.vmlinux       |  5 ++++-
+ 2 files changed, 26 insertions(+), 23 deletions(-)
+---
+base-commit: 38492c5743f8b7213ca86f0cd72ea625af35d5ef
+change-id: 20251008-kbuild-fix-modinfo-regressions-95e3fd151dec
+
+Best regards,
+--  
+Nathan Chancellor <nathan@kernel.org>
 
 
