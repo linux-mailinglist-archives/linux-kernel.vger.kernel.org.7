@@ -1,210 +1,163 @@
-Return-Path: <linux-kernel+bounces-845381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id D74FBBC4A38
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:55:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E16DBC4947
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:36:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1C7FE3517AE
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:55:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 345CD188A03E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05D032F7462;
-	Wed,  8 Oct 2025 11:55:10 +0000 (UTC)
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 680692F744A;
+	Wed,  8 Oct 2025 11:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pQOFmVmO"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3200E2EC542;
-	Wed,  8 Oct 2025 11:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B7F2E9EAA
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 11:35:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759924509; cv=none; b=PPH9bdEFNbaywqKsgIJfTwSejQJr+ur+5P6eN4hLTRh/t7BYTSJ945OtyrDZRCmRmm3bgLSUmD+LN1EucHAPT+9sF1Yh5QSEhoavaOQJU7GQ0dCGNqy5rFnS0inWWgjSUFTc26ScDI+v+nWaBD7NMYPfDGIOOdAM9sk9sKeCKKk=
+	t=1759923361; cv=none; b=GLpSONyFoxqh8BhXTdzaZRZU3XU3hfmJZLgiaNb1/kcYW4nhiq7wOhvNyV1vgnwW6QvKCvTYfJkCRPgOdKHoZl4qQ6jyLx8UxinhWAvEEeWjMY9GTpM3sgN4AY6vPW8wBZXD6Uy1WpVzkD2xeMSKu8tRCQsGasJFsp+2foxiBmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759924509; c=relaxed/simple;
-	bh=8TrVwN/q3Nk7L6pUZrAiLWRdDBPrOqJoGid4/qG/l4Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ivjGEPPco37agiTqX66Xwt1srzs5TTlAEbOOeb6gzMUH7jhiJ8MVXfyb5cNLT4MwXkMNF9ruTgT5ZKvVktnbebMqRVD0YX9nxw1s5crrij4tzZSGRlNI+5kW2z8f6AgSCLV6BEr8A6x9VggnXeZKPg9PkzArPbJ1EM/pIsbpRnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTPS id 4chWCr5tnXzpSvj;
-	Wed,  8 Oct 2025 19:35:52 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 4367B1402DA;
-	Wed,  8 Oct 2025 19:36:15 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwCXsJKkTOZoNH9JAQ--.56566S2;
-	Wed, 08 Oct 2025 12:36:14 +0100 (CET)
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: zohar@linux.ibm.com,
-	dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com
-Cc: linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Matthew Garrett <mjg59@srcf.ucam.org>,
-	"Eric W . Biederman" <ebiederm@xmission.com>,
-	Jann Horn <jannh@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Kees Cook <keescook@chromium.org>
-Subject: [PATCH] ima: Attach CREDS_CHECK IMA hook to bprm_creds_from_file LSM hook
-Date: Wed,  8 Oct 2025 13:35:03 +0200
-Message-ID: <20251008113503.2433343-1-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1759923361; c=relaxed/simple;
+	bh=5Y1g8IlsAUsUyZg4rL9NNl2CE/y+DiX7jrFayofh7Go=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aILkH7x4ys3zrj4UpJoz//QDiYLvyLdcfLm8AgfxEVkjnDY7meJZgJx8xuo5Zu+xBgG6DtF8DIT9beNv0dEPexeqLH+9uwtuGgn6252pbNnetRZeTu8aSY6eNlY++ffoXfF2SzcUj4ZCRwtNegVPTgAzm65E5PUh3XN4jB1b+nM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pQOFmVmO; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59890Px6031366
+	for <linux-kernel@vger.kernel.org>; Wed, 8 Oct 2025 11:35:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	UcxtLcFi/NHIwxXXVTKMaEEjGDe7tRYGlHaZ/t/nCmw=; b=pQOFmVmO4VUYyJUR
+	WsJp1Alph3OVUyni6JKCB8fp03H/V6aPEbFeV7wwvucNFgmZYHRXgg3qM8DaCZ+g
+	Iw9dqWVVJz7Ea5BUNina3v7Cmc8/wupTeEJU2d9SpJ4AWcyrgSpn6LNzLx9x0QYY
+	BhPtQTEfy3Z+pkxhLt03iZIWi2bMfsqZsVYeHb/C+Kr1i4zfZd1LMrBSZ2bzinLy
+	ugIFRORtuZ2Ylct0NjedOlXc04Z/qccVTwkysrSOwgRfbfYxkJSw5OpK6Vzm6CN3
+	cx54w1U+gU0o3ZgxL5gXGCQys3tlN1Yk6V7wWZekmEBn9dTsKgYzUgZZy2jlJzKy
+	sWVwoA==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49jvv7t4m2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 11:35:58 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-879e3de728aso157101985a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 04:35:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759923357; x=1760528157;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UcxtLcFi/NHIwxXXVTKMaEEjGDe7tRYGlHaZ/t/nCmw=;
+        b=irqtxJcJCsp1BedGQXvUI1JX3086TXoqeckkj4kNYvMFgG+2a/pLNqvVm1GA3FJ0yC
+         7PLzxP6raGDatsxAEYkGGSCualCINakQBexPViQgUavqCWkdIM9g6B1UyY7p89NFFIxh
+         a1+5Jb+lh8/eaje1nTtMCanhv3FVixhwmN+dkK7JSmXkTqVbKfL9ygfrGyhUCsyZsJg4
+         OHBFkw/nXW4L7eQQw5SeDQ+zBlXeVEfcwBUg7PIiodh8Ss0twlLxPQjD29CBHdPK6ikH
+         6xuIjHi3qAmoSNHpe7kI83SqICoshAm0FO6v6Fg0WTIBavUTmLIeFyIAKgOBnGH0xKbs
+         drnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX84lvB+800sjNOKcc/sXtGiYWmBbd6NRqJOGvq3tPlEMaFeqV49PsHSaCImm8NQKnvxS36GzmnhgcLwL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz5x4HFLFzVZMQFCrhIU9KqeYAs4peXkzuSjaqHp5z8tqrAcX4
+	mXRc+7pgrZOHrQd30d1LQe2RHpeS18WGoLvlPvXl8jAuAu0sfRS36hblFirU6eGy0CgIg1C7UB1
+	pFXEclxJXSk6bzMDiHJbmWgLAavnIo1MOO+kYPQKlJ+sgwHCHxqoXhnJlR/1d2RE1AfE=
+X-Gm-Gg: ASbGncvvQbSYNHyVVEslmibddA/1gxFcpYcWfaqbVyx2PYDn2qcfFtWUdFC85H0uSFs
+	oAgbamv8U9P7+GnWa60GJo4WTlhyiKpg436IuNtd5+b3LfgK7z48fwu4Cxg/0cwm6tHfrWebDmA
+	oHUehJYk3oSD2xvU09elF3nkCM0Az74xVlEeZn6DDxlvLd47JkV914Co+HzCX1/rVu+LbpCSMk7
+	wX/pWs77G56TKllxhxA2lChZQ9vZ8WYMb7KCVk0h5MMN2lCgt2ObkZvExE/JmJeyBaeWmom1GSj
+	JXTi0Z+/m3NQSf33sRq5lGqvEaOywtp2etinV9qk2nyZP2GgSBt/aQnmszdDf0xowSO9kaFGBQP
+	pOuyt3T34HGJ5z0rnT0Z+QJlWHXg=
+X-Received: by 2002:a05:620a:17a7:b0:812:81c6:266c with SMTP id af79cd13be357-8835420965cmr273038085a.9.1759923356970;
+        Wed, 08 Oct 2025 04:35:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEt/p9KWaL1e9SZdVmnvmGbbEbWOxiPEBK7bXd20TZj+ydCuPVXuNpIcjVWSXqwKTr1FFN+RA==
+X-Received: by 2002:a05:620a:17a7:b0:812:81c6:266c with SMTP id af79cd13be357-8835420965cmr273034785a.9.1759923356368;
+        Wed, 08 Oct 2025 04:35:56 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b486970b0c7sm1705829566b.57.2025.10.08.04.35.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Oct 2025 04:35:55 -0700 (PDT)
+Message-ID: <aa06df81-e594-469a-85ee-9dd1e192e2f4@oss.qualcomm.com>
+Date: Wed, 8 Oct 2025 13:35:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:GxC2BwCXsJKkTOZoNH9JAQ--.56566S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxtFWxKw13JryxtryrXw4rAFb_yoW7tr1rpa
-	9agay5JrWDGF1xCr1fGa17ZF1Sk3yrJrW3WF9Ig3s5Zas8Ar10vrWaqFn0vFy5JryFy3Zr
-	t3ya9rW7Aa4qyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
-	w2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
-	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
-	xUF1v3UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAPBGjmC20DGgAAs4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/9] dma: qcom: bam_dma: Fix command element mask field
+ for BAM v1.6.0+
+To: Md Sadre Alam <quic_mdalam@quicinc.com>, broonie@kernel.org,
+        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+        andersson@kernel.org, konradybcio@kernel.org, vkoul@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dmaengine@vger.kernel.org
+Cc: quic_varada@quicinc.com
+References: <20250918094017.3844338-1-quic_mdalam@quicinc.com>
+ <20250918094017.3844338-4-quic_mdalam@quicinc.com>
+ <c5d5c026-3240-4828-b9b3-455f057fb041@oss.qualcomm.com>
+ <2394e63f-1df7-764e-5489-3567065707a1@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <2394e63f-1df7-764e-5489-3567065707a1@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAzNyBTYWx0ZWRfX/+bnkrosPjtd
+ LhUVOVTF/8hDgTQn0+7/5+y33M01JP2kTvufS7Vk+yqqcVorWCSc2Yoep4yDWDi8P3uBe8I6yCQ
+ e0RTVgI6RI3CKs+U+c76lvU2bdxF9g8f+5PK6y6GC3YztAIxBnxT88gdJslkCJ5VGCdiILwsYxj
+ 1KkWR/zUqUKWHYVSxALWn8HpiWRj4xEkjQ2yMaEdOouxJzTUHGNGkgSyywsfyjLCwdrEm3n5XZK
+ cj8pTRRmy7A0vQfZ/GwiabWSzeTJooJaJp/HFOKmxjK9jtcKLXUpv5Wl4JzaDuwt7EAiZUDQ+6l
+ M6JDFXSg6OAWg1rW+ZN6GNI1yFlB6SFfmTXKGPBzFM3Ef9rz2+myvkpMRcsqodiKkbN1mBJIggU
+ pG+dbu1sHm+xYbfxWCiE/d0i8PLt8A==
+X-Proofpoint-ORIG-GUID: 01hxdkXpL2ZVbfkRVTvNFYq68hwiQpw2
+X-Authority-Analysis: v=2.4 cv=WIdyn3sR c=1 sm=1 tr=0 ts=68e64c9e cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=W9ArKkagtRzJc8iw_qMA:9
+ a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22
+X-Proofpoint-GUID: 01hxdkXpL2ZVbfkRVTvNFYq68hwiQpw2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-08_03,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 priorityscore=1501 impostorscore=0 malwarescore=0
+ bulkscore=0 spamscore=0 adultscore=0 clxscore=1015 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040037
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+On 9/19/25 7:56 AM, Md Sadre Alam wrote:
+> 
+> 
+> On 9/18/2025 3:57 PM, Konrad Dybcio wrote:
+>> On 9/18/25 11:40 AM, Md Sadre Alam wrote:
+>>> BAM version 1.6.0 and later changed the behavior of the mask field in
+>>> command elements for read operations. In newer BAM versions, the mask
+>>> field for read commands contains the upper 4 bits of the destination
+>>> address to support 36-bit addressing, while for write commands it
+>>> continues to function as a traditional write mask.
+>>
+>> So the hardware can read from higher addresses but not write to them?
+> No,
+> Write Operations: Can target any 32-bit address in the peripheral address space (up to 4GB)
+> 
+> Read Operations: Can read from any 32-bit peripheral address and
+> place the data into 36-bit memory addresses (up to 64GB) starting
+> from BAM v1.6.0
 
-Since commit 56305aa9b6fa ("exec: Compute file based creds only once"), the
-credentials to be applied to the process after execution are not calculated
-anymore for each step of finding intermediate interpreters (including the
-final binary), but only after the final binary to be executed without
-interpreter has been found.
+OK I misread your commit message
 
-In particular, that means that the bprm_check_security LSM hook will not
-see the updated cred->e[ug]id for the intermediate and for the final binary
-to be executed, since the function doing this task has been moved from
-prepare_binprm(), which calls the bprm_check_security hook, to
-bprm_creds_from_file().
+[...]
 
-This breaks the IMA expectation for the CREDS_CHECK hook, introduced with
-commit d906c10d8a31 ("IMA: Support using new creds in appraisal policy"),
-which expects to evaluate "the credentials that will be committed when the
-new process is started". This is clearly not the case for the CREDS_CHECK
-IMA hook, which is attached to bprm_check_security.
+> For Read Commands:
+> - BAM < v1.6.0: 3rd Dword completely ignored by hardware
+> - BAM >= v1.6.0: 3rd Dword[3:0] contains upper 4 bits of destination
+> address
 
-This issue does not affect systems which load a policy with the BPRM_CHECK
-hook with no other criteria, as is the case with the built-in "tcb" and/or
-"appraise_tcb" IMA policies. The "tcb" built-in policy measures all
-executions regardless of the new credentials, and the "appraise_tcb" policy
-is written in terms of the file owner, rather than IMA hooks.
+This is important to point out. With that, the change looks sane indeed
 
-However, it does affect systems without a BPRM_CHECK policy rule or with a
-BPRM_CHECK policy rule that does not include what CREDS_CHECK evaluates. As
-an extreme example, taking a standalone rule like:
-
-measure func=CREDS_CHECK euid=0
-
-This will not measure for example sudo (because CREDS_CHECK still sees the
-bprm->cred->euid set to the regular user UID), but only the subsequent
-commands after the euid was applied to the children.
-
-Make set[ug]id programs measured/appraised again by splitting
-ima_bprm_check() in two separate hook implementations (CREDS_CHECK now
-being implemented by ima_creds_check()), and by attaching CREDS_CHECK to
-the bprm_creds_from_file LSM hook.
-
-The limitation of this approach is that CREDS_CHECK will not be invoked
-anymore for the intermediate interpreters, like it was before, but only for
-the final binary. This limitation can be removed only by reverting commit
-56305aa9b6fa ("exec: Compute file based creds only once").
-
-Link: https://github.com/linux-integrity/linux/issues/3
-Fixes: 56305aa9b6fa ("exec: Compute file based creds only once")
-Cc: Serge E. Hallyn <serge@hallyn.com>
-Cc: Matthew Garrett <mjg59@srcf.ucam.org>
-Cc: Eric W. Biederman <ebiederm@xmission.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/integrity/ima/ima_main.c | 42 ++++++++++++++++++++++++-------
- 1 file changed, 33 insertions(+), 9 deletions(-)
-
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index cdd225f65a62..ebaebccfbe9a 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -573,18 +573,41 @@ static int ima_file_mprotect(struct vm_area_struct *vma, unsigned long reqprot,
-  */
- static int ima_bprm_check(struct linux_binprm *bprm)
- {
--	int ret;
- 	struct lsm_prop prop;
- 
- 	security_current_getlsmprop_subj(&prop);
--	ret = process_measurement(bprm->file, current_cred(),
--				  &prop, NULL, 0, MAY_EXEC, BPRM_CHECK);
--	if (ret)
--		return ret;
--
--	security_cred_getlsmprop(bprm->cred, &prop);
--	return process_measurement(bprm->file, bprm->cred, &prop, NULL, 0,
--				   MAY_EXEC, CREDS_CHECK);
-+	return process_measurement(bprm->file, current_cred(),
-+				   &prop, NULL, 0, MAY_EXEC, BPRM_CHECK);
-+}
-+
-+/**
-+ * ima_creds_check - based on policy, collect/store measurement.
-+ * @bprm: contains the linux_binprm structure
-+ * @file: contains the file descriptor of the binary being executed
-+ *
-+ * The OS protects against an executable file, already open for write,
-+ * from being executed in deny_write_access() and an executable file,
-+ * already open for execute, from being modified in get_write_access().
-+ * So we can be certain that what we verify and measure here is actually
-+ * what is being executed.
-+ *
-+ * The difference from ima_bprm_check() is that ima_creds_check() is invoked
-+ * only after determining the final binary to be executed without interpreter,
-+ * and not when searching for intermediate binaries. The reason is that since
-+ * commit 56305aa9b6fab ("exec: Compute file based creds only once"), the
-+ * credentials to be applied to the process are calculated only at that stage
-+ * (bprm_creds_from_file security hook instead of bprm_check_security).
-+ *
-+ * On success return 0.  On integrity appraisal error, assuming the file
-+ * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
-+ */
-+static int ima_creds_check(struct linux_binprm *bprm, const struct file *file)
-+{
-+	struct lsm_prop prop;
-+
-+	security_current_getlsmprop_subj(&prop);
-+	return process_measurement((struct file *)file, bprm->cred, &prop, NULL,
-+				   0, MAY_EXEC, CREDS_CHECK);
- }
- 
- /**
-@@ -1242,6 +1265,7 @@ static int __init init_ima(void)
- static struct security_hook_list ima_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(bprm_check_security, ima_bprm_check),
- 	LSM_HOOK_INIT(bprm_creds_for_exec, ima_bprm_creds_for_exec),
-+	LSM_HOOK_INIT(bprm_creds_from_file, ima_creds_check),
- 	LSM_HOOK_INIT(file_post_open, ima_file_check),
- 	LSM_HOOK_INIT(inode_post_create_tmpfile, ima_post_create_tmpfile),
- 	LSM_HOOK_INIT(file_release, ima_file_free),
--- 
-2.43.0
-
+Konrad
 
