@@ -1,164 +1,294 @@
-Return-Path: <linux-kernel+bounces-845578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FA4BBC56B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 16:18:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA1A2BC56CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 16:21:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08FFB188DDFE
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 14:19:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3FCE3B68DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 14:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8126F29C343;
-	Wed,  8 Oct 2025 14:18:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C222EB865;
+	Wed,  8 Oct 2025 14:20:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="VHdp7bKL"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QDp66+LY"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C9E2989BA
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 14:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384032E0919
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 14:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759933116; cv=none; b=V2hKz/11eCjVc9SDhAeAlzKG2PsghpowaMRy3EWwsdeYPznkLJqH9Tqsp2x2qk5nPxyMjUiUmd5M5/g761klZJCKWrKQ9jMG+46V4LBvVk1QJCSv9s3VqybGIpU7Z9CU91eMoeN84Utf61PPQKqBwp1lI3sLa526/TF8UJp2YuQ=
+	t=1759933249; cv=none; b=L9ivC5L4dAF6XCGwcXIblMamQIlgpUuIg0A1RiQP7xTBbf3DIA6hWCKsPHx1bWOElG0nYYGxyq4RCNBzpIA2CNi9WynIeLP8d7SYb3DfbZPvEYf04gNHwc+qNdi5enF1ZOLyUEYxZWXWa76DMS3icMnYMslM+OQxyPd33+tIdM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759933116; c=relaxed/simple;
-	bh=dBoanlnE/kFlixsj+N7u+C4Z7KMpeDGfloepU+PPEJo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U684XgO7AWY3y7c9uN4keQb9BmJT0aqdP4E2PMKxyklmkPzPlzFj+BA35hEGRFSWFFzS/xQ85UC8pMGBEGvSepqKZVYnKVfZOCEilVxNBKMj5WqMAnORWUoqcX4FdD6MJeIvjgBFc3Jt9OzoCGdNnFbSG5+v+3VurbVJuBaN4Eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=VHdp7bKL; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-7ea50f94045so9605216d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 07:18:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1759933114; x=1760537914; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5QJIQKG0sT9rZgBfipH2pnXvFssK3HlZCOf/vlaj8bs=;
-        b=VHdp7bKL5g0CKP4voEaQfrlOikUGCd05QtJgxrMmnjfDrYVx+58R+IbJucANt60AQ+
-         lMslHiMZzbHODXxDDECSjFgdYdIJ9GyVPqj0wRLRoew4NGIgSBu/+LlDa4HzEXdDuICy
-         NWZ9SqWKiqhTfnxagGH6OmthmCmYVLw7TI+sFFdq0HBbCIKKmx+a0v+9rJaMFJr4RNn6
-         1JpeWYK/sQ4aZWokfoxPx6AvAKuX87QgNRo0FZGLe5IFDqSPAtCuQMfhMvofVEoKU6et
-         EPHXCTXJUJJWxfOFNhUYgnrWwr6EGcJyJZyyHOHw2IzdVDHVFvWJm6JuTmS1q4gPDaW5
-         Ehdw==
+	s=arc-20240116; t=1759933249; c=relaxed/simple;
+	bh=ogVrD0uTLTGMHdtliGwCwN+ClgfrGrSZ+Dkn7g0gOoc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tuiHLaO06E2uTACW+wKN5CE7+1rC9gYbszflV438DEqe0VbbEmxptSD10YuXI0WGYfqaUljJE2UgNz5QuhNAL1HDfpl7fZO4+QSVeWvJrr4LEUK9kjAjaUVoViuJnwVB+umK/EyeWf5VW/ZO+WtxlPvoOfM044FU1p4wCBfeais=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QDp66+LY; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59890OFA011614
+	for <linux-kernel@vger.kernel.org>; Wed, 8 Oct 2025 14:20:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	lz+mS6MZ/rvjqUHxrGonwzbwHQ0rOQOZyEdg73FnsuY=; b=QDp66+LYc7Ey9J9J
+	KfqhiFLBeK+NSDCnP9WmCY/oOwqilBBuhvJGAz28Q4xiNrTVxZYjJY14eAa1l6qN
+	QaGkm7jxCkcjBmCNCy/jZa1ZKoBOldXS3/XjkOCesmLMb2pIDnmPNTgbQ84J1lvY
+	snV7ku/Fy6FA+YR2AXLUfo8hc2Dv1lWy7WykDF0W94zeGGmfWpvs9tYiGFUzxipk
+	v91MK3DQlQrtKi1bszdLF2VdbC5htJc0j1cmbsRgxB5DnMmtX+n0lrv8XIXfoMKz
+	If/DJsOL7Y4Iy4z+V80/go/yrVJkAzFK9ToDwTPn1ui9rSmhakgK/ucksBkKMLYu
+	C8V9Ow==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49mnkpwnwt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 14:20:47 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-277f0ea6fc6so183451555ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 07:20:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759933114; x=1760537914;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5QJIQKG0sT9rZgBfipH2pnXvFssK3HlZCOf/vlaj8bs=;
-        b=jd9st2vukJmBbrOtm3/tIX5uoGWNuF3Aqx0gZDeQ2ZbFRnE1Di5rk2M+KL7rqOgv68
-         C/2dASRR2uoPUTbSpA1wDCEqiKql7yBs3M1MPhSyhFhLJFEGGznxsSL2nBlQkWACqL+0
-         M73KQWkjy/sLpUyRkWcXJe0BYjGBGaE2T73kX2HRqbreUaZpethOr7UnArayQcT/J4+t
-         8Xn85c85H0VPfKNL9NG3QfxF8l3kHQ9uXUr1GyxaRTwJv3fUz5oYmKdUszjwB86sfbGu
-         oObV3heOeUG06awmOCNr82amCZiG+AtelwhUmHqHlA84q4vNLErW8VjyPfdpw5w5s/In
-         kjpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVXiQFqETYvCgUUWPgS4C/2Y9AoD2mlBTAJ0SdRy1VrEB54iWF6R95zwA9IOU3URb6HimA1dNnZi083SFE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnDhpfTNw7Yphss40FqX0ji/zWXlSAD2lKCt/Vid4Mgs6IsmH3
-	wNC4cNfaOO0cevMtPmjuDK5oWcuk5psdJpYXN7zo3DA96dZIYoMncAnkYSFx/uYfBy0=
-X-Gm-Gg: ASbGncuN5VeooymXUb1HuO8i5ABM6r4sC81mjrvgqBmI4y07ykRPEQ+lvTUhfkM9k6e
-	/wuC0vNxfi4trSF66B791vTexcG+czhX5ja/WNAQxuUAaqff8ozUYLvPVpXTAt+ZrdXMmG0ApPP
-	HpW4c9PzOcp6EUrbOFhpXAidvoNcNdeGMQQp1H/mlN64pqqTScHFy09ejBV9ujH+y2fpx4y1sof
-	FNUI8CsTBClDiVMl2dkx9xxTpvfJTosrkY3UL0jgw8efOgU8sBw8xTcOuzpQdKxVFTSM6rsaQ3X
-	kEawz/vvL8cGktVKP5365gOIEfsNx0lKqW9r226sdNrLr2U27eq9Iejl4o+KzI/e4tNa5hwVYJr
-	KVBS68Z0XCw24GPSLLqz7j89Gdf+FizvXqvvZ24Q416EX4Xv2cuLghBbxIyK4Nru9Sw9V3ZQ3nh
-	DHX5wKJ+WYJWGruZ3cx3GNl9oY9FJddF8d9mbgwCr0dom1IdkhTxQ=
-X-Google-Smtp-Source: AGHT+IFNKG/GrbiRc1bEn8TWwx08M4SbG5dcVn/TJ2EzZl4DHVGIFZ6s6jij2fTulKfOfOsdd1koyg==
-X-Received: by 2002:a05:6214:2027:b0:802:67ee:bdae with SMTP id 6a1803df08f44-87a052a63a4mr114908286d6.25.1759933113566;
-        Wed, 08 Oct 2025 07:18:33 -0700 (PDT)
-Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-878bdf53134sm162645246d6.55.2025.10.08.07.18.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 07:18:33 -0700 (PDT)
-Date: Wed, 8 Oct 2025 10:18:31 -0400
-From: Gregory Price <gourry@gourry.net>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-mm@kvack.org, corbet@lwn.net, muchun.song@linux.dev,
-	osalvador@suse.de, akpm@linux-foundation.org, hannes@cmpxchg.org,
-	laoar.shao@gmail.com, brauner@kernel.org, mclapinski@google.com,
-	joel.granados@kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Mel Gorman <mgorman@suse.de>,
-	Michal Hocko <mhocko@suse.com>,
-	Alexandru Moise <00moses.alexander00@gmail.com>,
-	David Rientjes <rientjes@google.com>
-Subject: Re: [PATCH] Revert "mm, hugetlb: remove hugepages_treat_as_movable
- sysctl"
-Message-ID: <aOZyt-7sf5PFCdpb@gourry-fedora-PF4VCD3F>
-References: <20251007214412.3832340-1-gourry@gourry.net>
- <402170e6-c49f-4d28-a010-eb253fc2f923@redhat.com>
+        d=1e100.net; s=20230601; t=1759933247; x=1760538047;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lz+mS6MZ/rvjqUHxrGonwzbwHQ0rOQOZyEdg73FnsuY=;
+        b=hi/1q5Ew3Ny2mZctzWAjzKzNR/3O+rE4/9PLAlIaiTEMJQ+26KzviM+4yJicIcKtkY
+         MGEP7XqqUTEe3y4OC1e+CC/eD6MVjRc98PVhKRYHyDQcHtkQG39RE4snYwQIfMoSSoMN
+         UOLYOS+tEXPjGVGurpMaubE5qyEUHxveMouca8BOljTW+57N28AOxGAb5t4c94Czto3h
+         /B0l4pRDoHTjt7vIEAxqFWljKSrTtF6pO4uEmOkGgHHbsfnI/P+MgsSceFIwV0TNdQ8Z
+         NJYClFof4rb7BKLbxePEvdVAkS9gBO31o2DzLw4IJcnu4i9KhZ+7Od5bNFLKZUPdN1NS
+         OMvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVgZm2jn/lIIy9nVRxHAWvPLXUKPQCg2z/TYu9wwP3ljWMZawehqHKUdW7ntwplKVA6afB7CLhjAQjuUL8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxUBqzpiTedwZgQwYVQXEpgaiQ+rduWtPzwxLnQdc46Uk5/vUv
+	E9/8MBi+nnaPv9zMbLr9zjDlmcNFMdRcJ7XeGZciPbHPGXArVhGoDhi8owH3DWNVGi2aookgkVv
+	Ntj5Xa7gUIgpwaafSaAPVS9d28KWGXjHtVgCeGxttdfN7b09eofHMEDbuKTPd7dW56uY=
+X-Gm-Gg: ASbGncuQS9YMdK/bc86hs1yzpQJ3rNRMa6/HL/WJA2eXcqqR3PYELbDtjVLTVW9Z79a
+	vzfnPVzwOXjvsTC1HogBofhdT0BK8AX41+ZYdcm/nHUMcF7v74tTS8sIN7LFjPPVpcITh+v94tw
+	muw/Ty1cDCbb1HSG+Qu/wr2QkBorjFCz15QXM0M56MOi0VIN7lN9mWKdhx79p2PF9/tolkbsB4W
+	LjEEeLl3uFHtcDNUwJ/n7xU1qglY1k8Bcdg4ddbCvdDwT1s1cqkj3pl6V51zvmdwEg6Xe+UVG4m
+	Tucb4hXFriybBgt8ihpklhxX0qcvSYKgNSONMIfUAs98C8OdqQIydGuEZEItgBAaElKn0dpMqsx
+	3zQ==
+X-Received: by 2002:a17:903:a8b:b0:265:89c:251b with SMTP id d9443c01a7336-290273ef081mr47036375ad.29.1759933246105;
+        Wed, 08 Oct 2025 07:20:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHr9LK963P5BA7uXceHHrVsADE8b2KBpElj7O1ory5mflnm4HtE6Ymq0IImskdB3TNDjo+0PQ==
+X-Received: by 2002:a17:903:a8b:b0:265:89c:251b with SMTP id d9443c01a7336-290273ef081mr47035815ad.29.1759933245508;
+        Wed, 08 Oct 2025 07:20:45 -0700 (PDT)
+Received: from [10.217.217.28] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1d584esm200797495ad.107.2025.10.08.07.20.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Oct 2025 07:20:43 -0700 (PDT)
+Message-ID: <31bd08ce-823a-4a71-baca-a9d1e02fcb6a@oss.qualcomm.com>
+Date: Wed, 8 Oct 2025 19:50:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <402170e6-c49f-4d28-a010-eb253fc2f923@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V7 3/5] dt-bindings: iio: adc: Add support for QCOM PMIC5
+ Gen3 ADC
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+        Krzysztof Kozlowski
+ <krzk@kernel.org>, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, agross@kernel.org,
+        andersson@kernel.org, lumag@kernel.org,
+        dmitry.baryshkov@oss.qualcomm.com, konradybcio@kernel.org,
+        daniel.lezcano@linaro.org, sboyd@kernel.org, amitk@kernel.org,
+        thara.gopinath@gmail.com, lee@kernel.org, rafael@kernel.org,
+        subbaraman.narayanamurthy@oss.qualcomm.com,
+        david.collins@oss.qualcomm.com, anjelique.melendez@oss.qualcomm.com,
+        kamal.wadhwa@oss.qualcomm.com, rui.zhang@intel.com,
+        lukasz.luba@arm.com, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        cros-qcom-dts-watchers@chromium.org, quic_kotarake@quicinc.com,
+        neil.armstrong@linaro.org, stephan.gerhold@linaro.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+References: <20250826083657.4005727-1-jishnu.prakash@oss.qualcomm.com>
+ <20250826083657.4005727-4-jishnu.prakash@oss.qualcomm.com>
+ <20250829-classic-dynamic-clam-addbd8@kuoka>
+ <5d662148-408f-49e1-a769-2a5d61371cae@oss.qualcomm.com>
+ <4e974e77-adfc-49e5-90c8-cf8996ded513@kernel.org>
+ <a0e885be-e87d-411a-884e-3e38a0d761e5@oss.qualcomm.com>
+ <8c90cc3f-115e-4362-9293-05d9bee24214@linaro.org>
+ <5d4edecf-51f3-4d4a-861f-fce419e3a314@oss.qualcomm.com>
+ <20250927144757.4d36d5c8@jic23-huawei>
+ <a3158843-dfac-4adc-838a-35bb4b0cbea4@oss.qualcomm.com>
+ <CAGE=qrrCvq28pr9Y7it-CGMW=szKUnU+XBj1TmpoUwuASM05ig@mail.gmail.com>
+Content-Language: en-US
+From: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+In-Reply-To: <CAGE=qrrCvq28pr9Y7it-CGMW=szKUnU+XBj1TmpoUwuASM05ig@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: KzxeDoebDbR1RzcR9I6Ky2xK_5-48zmv
+X-Proofpoint-ORIG-GUID: KzxeDoebDbR1RzcR9I6Ky2xK_5-48zmv
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA2MDE2OCBTYWx0ZWRfX8NTBUKwIfK58
+ EJJsEjy0Zce7pjIGhNnVUwZfx9RTdnP3zOvmIf151rdG/qrYdBeFFpgaBqkACEdP6L1yXdEkh59
+ WqDGLVyR6ozjV9oRJOCUSlMOCcmEAUk7lFemkQcehjinxhExaI8RRkry+aYIZpCNwWKLVZxJgPp
+ qtHD+S6x9gCv9FOv11UHmIbLIiO4rUvnVoGHrj+UuupQvs1yfQvioB22mHvoaQolvKAgw4cOht7
+ IyPdGSbnVmEseHuCfOYvsawzg57y4UcrnYL989Q27Y7+ZXixYbfgb29N5dJLR8qV6n8micg8oHt
+ qisKN1ebPmgHOkY62gDn+4w+24kFhnpkkMsKfhK7q4MpwQknZTaLVTvD6FnHo9KrdBYpGmFonRu
+ Exywr5jRFoPZ9zOMv9GlyN6vyKPuLg==
+X-Authority-Analysis: v=2.4 cv=BuCQAIX5 c=1 sm=1 tr=0 ts=68e6733f cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=AgmdEbom9n3Jum9HLqIA:9
+ a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-08_04,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 bulkscore=0 adultscore=0 priorityscore=1501 phishscore=0
+ lowpriorityscore=0 clxscore=1015 spamscore=0 suspectscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510060168
 
-On Wed, Oct 08, 2025 at 10:58:23AM +0200, David Hildenbrand wrote:
-> On 07.10.25 23:44, Gregory Price wrote:
-> I mean, this is as ugly as it gets.
+Hi Krzysztof,
+
+On 10/4/2025 12:22 PM, Krzysztof Kozlowski wrote:
+> On Sat, 4 Oct 2025 at 11:42, Jishnu Prakash
+> <jishnu.prakash@oss.qualcomm.com> wrote:
+>>
+>> Hi Jonathan,
+>>
+>> On 9/27/2025 7:17 PM, Jonathan Cameron wrote:
+>>> On Fri, 19 Sep 2025 20:17:43 +0530
+>>> Jishnu Prakash <jishnu.prakash@oss.qualcomm.com> wrote:
+>>>
+>>>> Hi Krzysztof,
+>>>>
+>>>> On 9/18/2025 5:45 AM, Krzysztof Kozlowski wrote:
+>>>>> On 18/09/2025 04:47, Jishnu Prakash wrote:
+>>>>>> Hi Krzysztof,
+>>>>>>
+>>>>>> On 9/17/2025 5:59 AM, Krzysztof Kozlowski wrote:
+>>>>>>> On 16/09/2025 16:28, Jishnu Prakash wrote:
+>>>>>>>>> You cannot have empty spaces in ID constants. These are abstract
+>>>>>>>>> numbers.
+>>>>>>>>>
+>>>>>>>>> Otherwise please point me to driver using this constant.
+>>>>>>>>
+>>>>>>>> These constants are for ADC channel numbers, which are fixed in HW.
+>>>>>>>>
+>>>>>>>> They are used in this driver: drivers/iio/adc/qcom-spmi-adc5-gen3.c,
+>>>>>>>> which is added in patch 4 of this series.
+>>>>>>>>
+>>>>>>>> They can be found in the array named adc5_gen3_chans_pmic[].
+>>>>>>>
+>>>>>>> Really? So point me to the line there using ADC5_GEN3_VREF_BAT_THERM.
+>>>>>>>
+>>>>>>
+>>>>>> We may not be using all of these channels right now - we can add them
+>>>>>> later based on requirements coming up. For now, I'll remove the channels
+>>>>>> not used in adc5_gen3_chans_pmic[].
+>>>>>
+>>>>> You are not implementing the feedback then. Please read it carefully.
+>>>>>
+>>>>
+>>>> Sorry, I misunderstood - so you actually meant I should remove the
+>>>> empty spaces in the definitions, like this?
+>>>>
+>>>> -#define ADC5_GEN3_VREF_BAT_THERM               0x15
+>>>> +#define ADC5_GEN3_VREF_BAT_THERM 0x15
+>>>>
+>>>> I thought this at first, but I somehow doubted this later, as I saw some
+>>>> other recently added files with empty spaces in #define lines, like:
+>>>>
+>>>> include/dt-bindings/iio/adc/mediatek,mt6373-auxadc.h
+>>>> include/dt-bindings/regulator/st,stm32mp15-regulator.h
+>>>>
+>>>> I can make this change, if you prefer this. Please let me know
+>>>> if I'm still missing something.
+>>>>
+>>>> Also please let me know if you want me to remove the unused
+>>>> channels - I would prefer to keep them if there's no issue,
+>>>> as we might need them later.
+>>>>
+>>> He is referring to 0x14 and below not being defined values.  So what
+>>> do they mean if they turn up in the DT?
+>>>
+>>
+>> Thanks for your clarification. To address your first point above, the macros
+>> added here only represent the ADC channel numbers which are supported for
+>> ADC5 Gen3 devices. If there are numbers missing in between (like 0x14),
+>> that is because there exist no valid ADC channels in HW matching those
+>> channel numbers.
+>>
+>> For your question above, if any of the undefined channels are used in the DT,
+>> they should ideally be treated as invalid when parsed in the driver probe and
+>> lead to an error. When I checked the code again, I saw we do not have such an
+>> explicit check right now, so I will add that in the next patch series.
+>>
+>> And to be clear on which channel numbers are supported, I think it may be
+>> best if, for now, we only add support for the channel numbers referenced in
+>> the array adc5_gen3_chans_pmic[] in drivers/iio/adc/qcom-spmi-adc5-gen3.c.
+>>
+>> There are only 18 channel numbers used in this array and I would remove
+>> all channels except for these from the binding files. During parsing, we
+>> would use this array to confirm if an ADC channel added in DT is supported.
+>>
+>> In case we need to add support for any more channels later, we could add
+>> their macros in the binding file and update the array correspondingly at
+>> that time.
+>>
+>> Does all this sound fine? Please let me know if you have any more concerns
+>> or queries.
 > 
-> Can't we just let that old approach RIP where it belongs? :)
-> 
+> No, it doesn't.  You keep ignoring my arguments and responding to
+> something else. I prefer not to store hardware values as bindings,
+> because these are not bindings (and you failed to prove which SW
+> interface they bind) and it's really not necessary.
 
-Definitely - just found this previously existed and wanted to probe for
-how offensive reintroducing it would be. Seems the answer is essentially
-"lets do it a little differently".
+In my previous replies in this thread, I missed mentioning that the macros
+defined in include/dt-bindings/iio/adc/qcom,spmi-vadc.h are also used in
+other places than the driver file - they are also used in the PMIC-specific
+binding files added in this patch, for channel definitions. Considering
+one channel for example:
+ 
+We have this in include/dt-bindings/iio/adc/qcom,spmi-vadc.h:
++#define ADC5_GEN3_DIE_TEMP			0x03
+ 
+The above is used in include/dt-bindings/iio/adc/qcom,pm8550vx-adc5-gen3.h:
++#define PM8550VS_ADC5_GEN3_DIE_TEMP(sid)			((sid) << 8 | ADC5_GEN3_DIE_TEMP)
+ 
+And the above definition may be used in device tree, like in the example added
+in Documentation/devicetree/bindings/iio/adc/qcom,spmi-adc5-gen3.yaml:
+ 
++        channel@203 {
++          reg = <PM8550VS_ADC5_GEN3_DIE_TEMP(2)>;
++          label = "pm8550vs_c_die_temp";
++          qcom,pre-scaling = <1 1>;
++        };
 
-> Something I could sympathize is is treaing gigantic pages that are actually
-> migratable as movable.
-> 
-...
-> -       gfp |= hugepage_movable_supported(h) ? GFP_HIGHUSER_MOVABLE : GFP_HIGHUSER;
-> +       gfp |= hugepage_migration_supported(h) ? GFP_HIGHUSER_MOVABLE : GFP_HIGHUSER;
-> 
-> Assume you want to offline part of the ZONE_MOVABLE there might still be sufficient
-> space to possibly allocate a 1 GiB area elsewhere and actually move the gigantic page.
-> 
-> IIRC, we do the same for memory offlining already.
-> 
+Referencing the same macros in driver and device tree should also help with
+readability and lower the chances of accidental wrong configurations.
+Based on this, can we consider ADC5_GEN3_DIE_TEMP is a valid binding and keep
+it in place?
+ 
+If not, and if you want the ADC5_GEN3_DIE_TEMP definition removed from bindings,
+I can see two ways to do this:
+ 
+1. Keep the PMIC-specific binding definitions, making updates to them like this:
+ 
+-#define PM8550VS_ADC5_GEN3_DIE_TEMP(sid)			((sid) << 8 | ADC5_GEN3_DIE_TEMP)
++#define PM8550VS_ADC5_GEN3_DIE_TEMP(sid)			((sid) << 8 | 0x03)
+ 
+and use the same macros in device tree, like above.
+ 
+2. Drop the PMIC-specific binding definitions completely and update reg property like this:
 
-This is generally true of other page sizes as well, though, isn't it?
-If the system is truly so pressured that it can't successfully move a
-2MB page - offline may still fail.  So allowing 1GB pages is only a risk
-in the sense that they're harder to allocate new targets.
+-          reg = <PM8550VS_ADC5_GEN3_DIE_TEMP(2)>;
++          reg = <0x203>;
+ 
+Which way would you prefer here?
 
-It matters more if your system has 64GB than it does if it has 4TB.
+Thanks,
+Jishnu
 
-> Now, maybe we want to make the configurable. But then, I would much rather tweak the
-> hstate_is_gigantic() check in hugepage_movable_supported(). And the parameter
-> would need a much better name than some "treat as movable".
-> 
 
-Makes sense - I think the change is logically equivalent.
 
-So it would look like...
-
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index 42f374e828a2..36b1eec58e6f 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -924,7 +924,7 @@ static inline bool hugepage_movable_supported(struct hstate *h)
-        if (!hugepage_migration_supported(h))
-                return false;
-
--       if (hstate_is_gigantic(h))
-+       if (hstate_is_gigantic(h) && !movable_gigantic_pages)
-                return false;
-        return true;
- }
-
-And adjust documentation accordingly.
-
-I'm running some tests in QEMU atm, but it's taking a bit.  Will report
-back if I see issues with migration when this is turned on.
-
-If that's acceptable, I'll hack this up.
-
-Thanks David,
-~Gregory
 
