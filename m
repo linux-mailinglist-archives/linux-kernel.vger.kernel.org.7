@@ -1,249 +1,352 @@
-Return-Path: <linux-kernel+bounces-845147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28762BC3B5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 09:40:09 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E334FBC3B35
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 09:39:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C1A464F915D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 07:38:58 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 69F6235240E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 07:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4CB2F39C9;
-	Wed,  8 Oct 2025 07:34:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A7B2F260B;
+	Wed,  8 Oct 2025 07:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="M50ZSHpC"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="FSDMMQK5"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8715321CC55
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 07:34:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C3F21CC55
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 07:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759908848; cv=none; b=GI0TA4M/pngp2LGC5fck5xNLjKDV9VuoUHdqTh6v7Peq/mcLYEx1xsC8Cptqxnh0HL5Vgi5FGfCJmKTm1GmJrfsv3fBqJKHtmYw1pZBA7JcxALCxSiG+j2mfaqHA1OxRmYqFNp1cuObPxVA1mCSu7t3uDfePvBvKTteHFHkYwJ0=
+	t=1759908873; cv=none; b=D+/tCPHvlSpw0Yk9dHeW/aMt7DeU9rlhAS9RTmTjJdUOJDCVneuWEptr89dlHufM097W3BuNL1/ykbuX5zVLM7wuUxCAiTEYZYqOCHn+BrWIWGEYnQSE/NQy+MVQHi7HDYrmoETqhLpZTvuwvz4UUH1UnzQ552taV6D1VkAdshA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759908848; c=relaxed/simple;
-	bh=7bptb2G06hdAdq2PKR7nNXkha4mvqjQyF5eSFMelo0o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t/YH5gsZ1Yj+zkVQI47FqgSzvW0F2cMuJO/FG0xn5BrqkYsKbC2Ndb/FZmmuhsGMkMoLOFGzYQKAPjv2AvHZuqZrWkdIao37PeQOjg82hg82E5cffeUz8YoZqLFzYDILDtCrS+gWCpbLojYg5kmsEhRp0+flLz3cw96HA+tJU/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=M50ZSHpC; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59803jYj018027
-	for <linux-kernel@vger.kernel.org>; Wed, 8 Oct 2025 07:34:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Hlhli3jcVHPyvAqlPzswYc3dq0CKsbFj/LuCjRLAF2o=; b=M50ZSHpCm4W/U4ER
-	Fx7ZUXvhLcdp5KzduxqkqZO6h6RTz15aoQ/f1S0+izqeR5bmNf9rfzhmAH6RskVw
-	U0mIhgDrWPaDyzkmS3rlDcB3OFjQb4r6SNxwKyjG+asItsozpnyku8nlaD0caSAL
-	1pfC1Ka3LPWuj9I4LkQgYJcZZSXQ3KwWQRAggrQUcTgjaXSLLA+Oz7/WCiyWUiF6
-	1riERq/KpielhVlte0+/8h4dOZhMF0oPsZECT/4bjgkrrKKzeC49NfbNEpM9ZZdy
-	tSQ6dItWxYUI1Sbzr4NunFfjZ/HoQzFbvEr+AtydOnEQhLRsw8NMjVHtnmc6mYNu
-	F12Kiw==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49mnkpvgtp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 07:34:05 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-28e538b5f23so79668945ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 00:34:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759908845; x=1760513645;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hlhli3jcVHPyvAqlPzswYc3dq0CKsbFj/LuCjRLAF2o=;
-        b=FLpFT1aEXQl7CQZ+gphSVk0VImae1EBQ0uknG/S9ArEtUTaHbEdeARh5qkdSo+3khv
-         VILOWWjV7PduhJ2RFbAlOQW6SDRip8Uuxe5sGedS1oerYW0YL2V+WM2eFm7WuXvtD4cK
-         8nAAPca7Q4F/HunCCQ+H3v8Q02zSzNMcub63wGsL/diOxFGkFEl+fgEntGhJWFEFNKhy
-         99I1zkkIGHOXZzmU+H/yS7JbswkjGOOXDbMrOnJ8DGXSQ2urMsgk4Z1HF1giRDXlQXgT
-         ubjOUaZoHkbhIlgcf8iQ1xLqhZGFfx9nx6jHCaEZZ+F1bjPC/4aypPtvd7mllIE7ujOH
-         L3mA==
-X-Forwarded-Encrypted: i=1; AJvYcCW9fbEQdFU1NHo++Wf3MswyUcU6yHW6d95gdo1sWMPSzWuLjTYjnuTlVWq8bKgcJH8ul8W0rxeXSPmT9vY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywf+AEHUy/hrWfoJvkJnrTb7xFkM4qYtjbXHfxCS7ZG4ce/igOQ
-	mEEP0n/7THxUzkZ9LT8f+kBLVPcnQgogUMW36tsSvHCmiEZTlfLpuZ9th2bBPc1JmDhXKa72IYi
-	01auYY3QFCe8ud9MW0obxnTsX8EOj2ZJc+19Vcbsd9TALyTJ4d1oYTGeqZazbYWtHt/I=
-X-Gm-Gg: ASbGncvbdPaRV3a9nAHRnikjpBl4VqqoFVvdC3ecEPE0Ff8wf6rEayOol1Dl8RuI7ap
-	Upp6wtbM87Y0O1owj5aHPaVrcfWCBQuRJcf8HMb7dYfiBvWWPbfziQb4n9bdG+avocGWdvRbta6
-	eAovMODocyKkhvL4jUG+mgGLl/yRs/4PDe4MHMkICDCUkTaDjhjMYFM53pN7FkXLRvxJRl+0wWh
-	OXE/Lr+MDdUg7L3xCn9kTRmM+969IrkTH6q7MInynAPZcqhToFzfJEP6GWl0tRldt9etbse58xf
-	FMo5tPkjPOy3yg4EQTV6lc1tofYOqZp2pCWZofxVuni7N/85drBGQZ5JsCNvLJBMalDxTl3I
-X-Received: by 2002:a17:903:1b64:b0:240:9dd8:219b with SMTP id d9443c01a7336-290272e6eacmr33271225ad.49.1759908844510;
-        Wed, 08 Oct 2025 00:34:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH4+KlUdtRRvYkXMICVc9fL+WCUzUirgQjCnrKXBz5Lo7RGote9A2zVrM+JHyCOFQn/qLfxNg==
-X-Received: by 2002:a17:903:1b64:b0:240:9dd8:219b with SMTP id d9443c01a7336-290272e6eacmr33270805ad.49.1759908843871;
-        Wed, 08 Oct 2025 00:34:03 -0700 (PDT)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d135d71sm189292385ad.58.2025.10.08.00.34.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 00:34:03 -0700 (PDT)
-Date: Wed, 8 Oct 2025 13:03:57 +0530
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 10/12] remoteproc: pas: Extend parse_fw callback to
- fetch resources via SMC call
-Message-ID: <20251008073357.vjvmeatrzrphewnn@hu-mojha-hyd.qualcomm.com>
-References: <20251007-kvm_rprocv4_next-20251007-v4-0-de841623af3c@oss.qualcomm.com>
- <20251007-kvm_rprocv4_next-20251007-v4-10-de841623af3c@oss.qualcomm.com>
- <hwjfb7rudsdsxxoluxyu4n7wumzyyn73xnzi2ww4fkkfkpg3a3@esvajcrmhcus>
+	s=arc-20240116; t=1759908873; c=relaxed/simple;
+	bh=aSSVV3MZV80vt0f5cNvmiBKaH7Njep1w4mgCUlCU/a0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=T+cE0i1k8jZuzQOk4bOACPVd1xiKWOb02AmBbJxTuxXtsflmjn7qa5roPiAxxtYYGME9/qefIKd6v3fpgkKkZXHjT37ziarb6pY6ZzSBa94rSmh+lh0AUIxmq8x19S24Y6/sLafG2U3xj5sDJZc5HEl1zcidJU8hvfuOh3sx53w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=FSDMMQK5; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4chPsH0yF2z9tLj;
+	Wed,  8 Oct 2025 09:34:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1759908867; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SqsYZSEv3wPkkO5CjL60oHf/kDiHMVtuA54/1pd5yLc=;
+	b=FSDMMQK5HbVIUqxT3oioKTUgynIczROfwnDNepIrRvWqsFMZl5hv2fk71dcBz2DjY1foKT
+	wxELCJI5w/c6clR0S9Z9ikGNruabThtOvMP2MwBnyzgU8C7R1jkXNf3AG+Q29BEqtotXoC
+	h1a6oTaB4wKR/jkYw5HhMbFnnodgOHw8HfB0VAQwOQUdighb1CQsIiybkQtwnvlLpA+UzF
+	mE7/DFX5WIMT1uoM86Bea25KS0T+u35+hmbBYCYmle054p0Gkqowv4ONnoRmh7BUX9sHsG
+	lADrs1J5RgctJ7DfQLx0qgAfKpXl4iMO8rZBYAVXAeMhAPDhQV3BQcIxKZD8vg==
+Message-ID: <6ecf62805e3d3bb6007d9bf645ed10006b599349.camel@mailbox.org>
+Subject: Re: [PATCH v2] Revert "drm/nouveau: Remove waitque for sched
+ teardown"
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Matthew Brost <matthew.brost@intel.com>, Philipp Stanner
+ <phasta@kernel.org>
+Cc: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, David
+ Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sumit Semwal
+	 <sumit.semwal@linaro.org>, Christian =?ISO-8859-1?Q?K=F6nig?=
+	 <christian.koenig@amd.com>, dri-devel@lists.freedesktop.org, 
+	nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Date: Wed, 08 Oct 2025 09:34:22 +0200
+In-Reply-To: <aOVKt1kQlBEYxctO@lstrano-desk.jf.intel.com>
+References: <20250901083107.10206-2-phasta@kernel.org>
+	 <aOVKt1kQlBEYxctO@lstrano-desk.jf.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <hwjfb7rudsdsxxoluxyu4n7wumzyyn73xnzi2ww4fkkfkpg3a3@esvajcrmhcus>
-X-Proofpoint-GUID: BM_CvhRJmDTfr6KWdE7Fglx1IiPD_Dxw
-X-Proofpoint-ORIG-GUID: BM_CvhRJmDTfr6KWdE7Fglx1IiPD_Dxw
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA2MDE2OCBTYWx0ZWRfX1shi6sItnhOi
- 83NVWRbZ9tMxANoCsKrfJJuI5dLEiFn4kRAkWS5daHni0U6adrllvCCGJ+CJi+FHa/liwDhfUcU
- u0/Ypk9eDxfXVf7xnNC5Yn2CFRSsH05HWiXQngwhyMV9XKawcd3vA1ZMw6kBzrBZYQ644ZMZHrW
- MKdeT5TJb3wLi4jOMAau3m1nWqq0NQ8ESTQT8YVSscvOq08CI5GYQ/7kS9D22Rv9SbSv7ChGarj
- CmoVKjYGevZG1bxWQ1OVpJHw7K0pVEQIrOw+sGq/yiRZhFFHN2EaxOpcP0PP8O2MZPSKPtqHwix
- WebJRYsVLuNFIGYENL/TDquw7zBcJpAfiOr2Th12JiXu+h/SJKLMGcihz7gNINGBY9Kd2JFG731
- WV70D+HioqV161dC8fQ+01Q6CraGKQ==
-X-Authority-Analysis: v=2.4 cv=BuCQAIX5 c=1 sm=1 tr=0 ts=68e613ed cx=c_pps
- a=cmESyDAEBpBGqyK7t0alAg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=1wm0BNpoZKb8wzEvCIcA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=1OuFwYUASf3TG4hYMiVC:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-08_01,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 bulkscore=0 adultscore=0 priorityscore=1501 phishscore=0
- lowpriorityscore=0 clxscore=1015 spamscore=0 suspectscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510060168
+X-MBO-RS-META: iiacjepudk81ydpppfc6q3f174z8ez4j
+X-MBO-RS-ID: 1586c1d58911504b8ff
 
-On Tue, Oct 07, 2025 at 02:48:26PM -0700, Manivannan Sadhasivam wrote:
-> On Tue, Oct 07, 2025 at 10:18:55PM +0530, Mukesh Ojha wrote:
-> > Qualcomm remote processor may rely on static and dynamic resources for
-> > it to be functional. For most of the Qualcomm SoCs, when run with Gunyah
-> > or older QHEE hypervisor, all the resources whether it is static or
-> > dynamic, is managed by the hypervisor. Dynamic resources if it is
-> > present for a remote processor will always be coming from secure world
-> > via SMC call while static resources may be present in remote processor
-> > firmware binary or it may be coming from SMC call along with dynamic
-> > resources.
-> > 
-> > Remoteproc already has method like rproc_elf_load_rsc_table() to check
-> > firmware binary has resources or not and if it is not having then we
-> > pass NULL and zero as input resource table and its size argument
-> > respectively to qcom_scm_pas_get_rsc_table() and while it has resource
-> > present then it should pass the present resources to Trustzone(TZ) so that
-> > it could authenticate the present resources and append dynamic resource
-> > to return in output_rt argument along with authenticated resources.
-> > 
-> > Extend parse_fw callback to include SMC call to get resources from
-> > Trustzone and to leverage resource table parsing and mapping and
-> > unmapping code from the remoteproc framework.
-> > 
-> > Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+On Tue, 2025-10-07 at 10:15 -0700, Matthew Brost wrote:
+> On Mon, Sep 01, 2025 at 10:31:08AM +0200, Philipp Stanner wrote:
+> > This reverts:
+> >=20
+> > commit bead88002227 ("drm/nouveau: Remove waitque for sched teardown")
+> > commit 5f46f5c7af8c ("drm/nouveau: Add new callback for scheduler teard=
+own")
+>=20
+> I've been scanning some recent DRM scheduler changes.
+>=20
+> I think we should likely revert:
+>=20
+> bf8bbaefaa6a drm/sched: Avoid memory leaks with cancel_job() callback
+>=20
+> 5f46f5c7af8c was the only user of cancel_job. I'm not sure why we'd
+> carry dead code in DRM scheduler unless you have plans to make use of
+> this function soon.
+
+That will be added back to Nouveau soon. The reason it was removed from
+Nouveau was not that cancel_job() is broken, but that removing the
+waitqueue is not possible for other reasons.
+
+Implementing cancel_job() has the canonical way of handling the
+difficult life time issues and memory leaks associated with drm_sched
+has been discussed literally for about 8-9 months on the lists.
+
+If we can't get to a solution for a problem after 9 months of on-list
+discussions, then we are lost.
+
+P.
+
+>=20
+> Matt
+>=20
+> >=20
+> > from the drm/sched teardown leak fix series:
+> >=20
+> > https://lore.kernel.org/dri-devel/20250710125412.128476-2-phasta@kernel=
+.org/
+> >=20
+> > The aforementioned series removed a blocking waitqueue from
+> > nouveau_sched_fini(). It was mistakenly assumed that this waitqueue onl=
+y
+> > prevents jobs from leaking, which the series fixed.
+> >=20
+> > The waitqueue, however, also guarantees that all VM_BIND related jobs
+> > are finished in order, cleaning up mappings in the GPU's MMU. These job=
+s
+> > must be executed sequentially. Without the waitqueue, this is no longer
+> > guaranteed, because entity and scheduler teardown can race with each
+> > other.
+> >=20
+> > Revert all patches related to the waitqueue removal.
+> >=20
+> > Fixes: bead88002227 ("drm/nouveau: Remove waitque for sched teardown")
+> > Suggested-by: Danilo Krummrich <dakr@kernel.org>
+> > Signed-off-by: Philipp Stanner <phasta@kernel.org>
 > > ---
-> >  drivers/remoteproc/qcom_q6v5_pas.c | 60 ++++++++++++++++++++++++++++++++++++--
-> >  1 file changed, 58 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> > index 46a23fdefd48..ed7bd931dfd5 100644
-> > --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> > +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> > @@ -34,6 +34,7 @@
-> >  #define QCOM_PAS_DECRYPT_SHUTDOWN_DELAY_MS	100
-> >  
-> >  #define MAX_ASSIGN_COUNT 3
-> > +#define MAX_RSCTABLE_SIZE	SZ_16K
-> >  
-> >  struct qcom_pas_data {
-> >  	int crash_reason_smem;
-> > @@ -412,6 +413,61 @@ static void *qcom_pas_da_to_va(struct rproc *rproc, u64 da, size_t len, bool *is
-> >  	return pas->mem_region + offset;
-> >  }
-> >  
-> > +static int qcom_pas_parse_firmware(struct rproc *rproc, const struct firmware *fw)
-> > +{
-> > +	size_t output_rt_size = MAX_RSCTABLE_SIZE;
-> > +	struct qcom_pas *pas = rproc->priv;
-> > +	struct resource_table *table = NULL;
-> > +	void *output_rt;
-> > +	size_t table_sz;
-> > +	int ret;
+> > Changes in v2:
+> > =C2=A0 - Don't revert commit 89b2675198ab ("drm/nouveau: Make fence con=
+tainer helper usable driver-wide")
+> > =C2=A0 - Add Fixes-tag
+> > ---
+> > =C2=A0drivers/gpu/drm/nouveau/nouveau_fence.c | 15 -----------
+> > =C2=A0drivers/gpu/drm/nouveau/nouveau_fence.h |=C2=A0 1 -
+> > =C2=A0drivers/gpu/drm/nouveau/nouveau_sched.c | 35 ++++++++++----------=
+-----
+> > =C2=A0drivers/gpu/drm/nouveau/nouveau_sched.h |=C2=A0 9 ++++---
+> > =C2=A0drivers/gpu/drm/nouveau/nouveau_uvmm.c=C2=A0 |=C2=A0 8 +++---
+> > =C2=A05 files changed, 24 insertions(+), 44 deletions(-)
+> >=20
+> > diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.c b/drivers/gpu/drm/=
+nouveau/nouveau_fence.c
+> > index 9f345a008717..869d4335c0f4 100644
+> > --- a/drivers/gpu/drm/nouveau/nouveau_fence.c
+> > +++ b/drivers/gpu/drm/nouveau/nouveau_fence.c
+> > @@ -240,21 +240,6 @@ nouveau_fence_emit(struct nouveau_fence *fence)
+> > =C2=A0	return ret;
+> > =C2=A0}
+> > =C2=A0
+> > -void
+> > -nouveau_fence_cancel(struct nouveau_fence *fence)
+> > -{
+> > -	struct nouveau_fence_chan *fctx =3D nouveau_fctx(fence);
+> > -	unsigned long flags;
+> > -
+> > -	spin_lock_irqsave(&fctx->lock, flags);
+> > -	if (!dma_fence_is_signaled_locked(&fence->base)) {
+> > -		dma_fence_set_error(&fence->base, -ECANCELED);
+> > -		if (nouveau_fence_signal(fence))
+> > -			nvif_event_block(&fctx->event);
+> > -	}
+> > -	spin_unlock_irqrestore(&fctx->lock, flags);
+> > -}
+> > -
+> > =C2=A0bool
+> > =C2=A0nouveau_fence_done(struct nouveau_fence *fence)
+> > =C2=A0{
+> > diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.h b/drivers/gpu/drm/=
+nouveau/nouveau_fence.h
+> > index 9957a919bd38..183dd43ecfff 100644
+> > --- a/drivers/gpu/drm/nouveau/nouveau_fence.h
+> > +++ b/drivers/gpu/drm/nouveau/nouveau_fence.h
+> > @@ -29,7 +29,6 @@ void nouveau_fence_unref(struct nouveau_fence **);
+> > =C2=A0
+> > =C2=A0int=C2=A0 nouveau_fence_emit(struct nouveau_fence *);
+> > =C2=A0bool nouveau_fence_done(struct nouveau_fence *);
+> > -void nouveau_fence_cancel(struct nouveau_fence *fence);
+> > =C2=A0int=C2=A0 nouveau_fence_wait(struct nouveau_fence *, bool lazy, b=
+ool intr);
+> > =C2=A0int=C2=A0 nouveau_fence_sync(struct nouveau_bo *, struct nouveau_=
+channel *, bool exclusive, bool intr);
+> > =C2=A0
+> > diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.c b/drivers/gpu/drm/=
+nouveau/nouveau_sched.c
+> > index 0cc0bc9f9952..e60f7892f5ce 100644
+> > --- a/drivers/gpu/drm/nouveau/nouveau_sched.c
+> > +++ b/drivers/gpu/drm/nouveau/nouveau_sched.c
+> > @@ -11,7 +11,6 @@
+> > =C2=A0#include "nouveau_exec.h"
+> > =C2=A0#include "nouveau_abi16.h"
+> > =C2=A0#include "nouveau_sched.h"
+> > -#include "nouveau_chan.h"
+> > =C2=A0
+> > =C2=A0#define NOUVEAU_SCHED_JOB_TIMEOUT_MS		10000
+> > =C2=A0
+> > @@ -122,9 +121,11 @@ nouveau_job_done(struct nouveau_job *job)
+> > =C2=A0{
+> > =C2=A0	struct nouveau_sched *sched =3D job->sched;
+> > =C2=A0
+> > -	spin_lock(&sched->job_list.lock);
+> > +	spin_lock(&sched->job.list.lock);
+> > =C2=A0	list_del(&job->entry);
+> > -	spin_unlock(&sched->job_list.lock);
+> > +	spin_unlock(&sched->job.list.lock);
 > > +
-> > +	ret = qcom_register_dump_segments(rproc, fw);
-> > +	if (ret) {
-> > +		dev_err(pas->dev, "Error in registering dump segments\n");
-> > +		return ret;
-> > +	}
+> > +	wake_up(&sched->job.wq);
+> > =C2=A0}
+> > =C2=A0
+> > =C2=A0void
+> > @@ -305,9 +306,9 @@ nouveau_job_submit(struct nouveau_job *job)
+> > =C2=A0	}
+> > =C2=A0
+> > =C2=A0	/* Submit was successful; add the job to the schedulers job list=
+. */
+> > -	spin_lock(&sched->job_list.lock);
+> > -	list_add(&job->entry, &sched->job_list.head);
+> > -	spin_unlock(&sched->job_list.lock);
+> > +	spin_lock(&sched->job.list.lock);
+> > +	list_add(&job->entry, &sched->job.list.head);
+> > +	spin_unlock(&sched->job.list.lock);
+> > =C2=A0
+> > =C2=A0	drm_sched_job_arm(&job->base);
+> > =C2=A0	job->done_fence =3D dma_fence_get(&job->base.s_fence->finished);
+> > @@ -392,23 +393,10 @@ nouveau_sched_free_job(struct drm_sched_job *sche=
+d_job)
+> > =C2=A0	nouveau_job_fini(job);
+> > =C2=A0}
+> > =C2=A0
+> > -static void
+> > -nouveau_sched_cancel_job(struct drm_sched_job *sched_job)
+> > -{
+> > -	struct nouveau_fence *fence;
+> > -	struct nouveau_job *job;
+> > -
+> > -	job =3D to_nouveau_job(sched_job);
+> > -	fence =3D to_nouveau_fence(job->done_fence);
+> > -
+> > -	nouveau_fence_cancel(fence);
+> > -}
+> > -
+> > =C2=A0static const struct drm_sched_backend_ops nouveau_sched_ops =3D {
+> > =C2=A0	.run_job =3D nouveau_sched_run_job,
+> > =C2=A0	.timedout_job =3D nouveau_sched_timedout_job,
+> > =C2=A0	.free_job =3D nouveau_sched_free_job,
+> > -	.cancel_job =3D nouveau_sched_cancel_job,
+> > =C2=A0};
+> > =C2=A0
+> > =C2=A0static int
+> > @@ -458,8 +446,9 @@ nouveau_sched_init(struct nouveau_sched *sched, str=
+uct nouveau_drm *drm,
+> > =C2=A0		goto fail_sched;
+> > =C2=A0
+> > =C2=A0	mutex_init(&sched->mutex);
+> > -	spin_lock_init(&sched->job_list.lock);
+> > -	INIT_LIST_HEAD(&sched->job_list.head);
+> > +	spin_lock_init(&sched->job.list.lock);
+> > +	INIT_LIST_HEAD(&sched->job.list.head);
+> > +	init_waitqueue_head(&sched->job.wq);
+> > =C2=A0
+> > =C2=A0	return 0;
+> > =C2=A0
+> > @@ -493,12 +482,16 @@ nouveau_sched_create(struct nouveau_sched **psche=
+d, struct nouveau_drm *drm,
+> > =C2=A0	return 0;
+> > =C2=A0}
+> > =C2=A0
 > > +
-> > +	if (!rproc->has_iommu)
-> > +		return ret;
+> > =C2=A0static void
+> > =C2=A0nouveau_sched_fini(struct nouveau_sched *sched)
+> > =C2=A0{
+> > =C2=A0	struct drm_gpu_scheduler *drm_sched =3D &sched->base;
+> > =C2=A0	struct drm_sched_entity *entity =3D &sched->entity;
+> > =C2=A0
+> > +	rmb(); /* for list_empty to work without lock */
+> > +	wait_event(sched->job.wq, list_empty(&sched->job.list.head));
 > > +
-> > +	ret = rproc_elf_load_rsc_table(rproc, fw);
-> > +	if (ret)
-> > +		dev_info(&rproc->dev, "Error in loading resource table from firmware\n");
-> > +
-> > +	table = rproc->table_ptr;
-> > +	table_sz = rproc->table_sz;
-> 
-> Are 'rproc->table_ptr' and 'rproc->table_sz' guaranteed to be 0 in the case of
-> above error?
+> > =C2=A0	drm_sched_entity_fini(entity);
+> > =C2=A0	drm_sched_fini(drm_sched);
+> > =C2=A0
+> > diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.h b/drivers/gpu/drm/=
+nouveau/nouveau_sched.h
+> > index b98c3f0bef30..20cd1da8db73 100644
+> > --- a/drivers/gpu/drm/nouveau/nouveau_sched.h
+> > +++ b/drivers/gpu/drm/nouveau/nouveau_sched.h
+> > @@ -103,9 +103,12 @@ struct nouveau_sched {
+> > =C2=A0	struct mutex mutex;
+> > =C2=A0
+> > =C2=A0	struct {
+> > -		struct list_head head;
+> > -		spinlock_t lock;
+> > -	} job_list;
+> > +		struct {
+> > +			struct list_head head;
+> > +			spinlock_t lock;
+> > +		} list;
+> > +		struct wait_queue_head wq;
+> > +	} job;
+> > =C2=A0};
+> > =C2=A0
+> > =C2=A0int nouveau_sched_create(struct nouveau_sched **psched, struct no=
+uveau_drm *drm,
+> > diff --git a/drivers/gpu/drm/nouveau/nouveau_uvmm.c b/drivers/gpu/drm/n=
+ouveau/nouveau_uvmm.c
+> > index d94a85509176..79eefdfd08a2 100644
+> > --- a/drivers/gpu/drm/nouveau/nouveau_uvmm.c
+> > +++ b/drivers/gpu/drm/nouveau/nouveau_uvmm.c
+> > @@ -1019,8 +1019,8 @@ bind_validate_map_sparse(struct nouveau_job *job,=
+ u64 addr, u64 range)
+> > =C2=A0	u64 end =3D addr + range;
+> > =C2=A0
+> > =C2=A0again:
+> > -	spin_lock(&sched->job_list.lock);
+> > -	list_for_each_entry(__job, &sched->job_list.head, entry) {
+> > +	spin_lock(&sched->job.list.lock);
+> > +	list_for_each_entry(__job, &sched->job.list.head, entry) {
+> > =C2=A0		struct nouveau_uvmm_bind_job *bind_job =3D to_uvmm_bind_job(__j=
+ob);
+> > =C2=A0
+> > =C2=A0		list_for_each_op(op, &bind_job->ops) {
+> > @@ -1030,7 +1030,7 @@ bind_validate_map_sparse(struct nouveau_job *job,=
+ u64 addr, u64 range)
+> > =C2=A0
+> > =C2=A0				if (!(end <=3D op_addr || addr >=3D op_end)) {
+> > =C2=A0					nouveau_uvmm_bind_job_get(bind_job);
+> > -					spin_unlock(&sched->job_list.lock);
+> > +					spin_unlock(&sched->job.list.lock);
+> > =C2=A0					wait_for_completion(&bind_job->complete);
+> > =C2=A0					nouveau_uvmm_bind_job_put(bind_job);
+> > =C2=A0					goto again;
+> > @@ -1038,7 +1038,7 @@ bind_validate_map_sparse(struct nouveau_job *job,=
+ u64 addr, u64 range)
+> > =C2=A0			}
+> > =C2=A0		}
+> > =C2=A0	}
+> > -	spin_unlock(&sched->job_list.lock);
+> > +	spin_unlock(&sched->job.list.lock);
+> > =C2=A0}
+> > =C2=A0
+> > =C2=A0static int
+> > --=20
+> > 2.49.0
+> >=20
 
-As far as remote processor firmware does not have resource table, it
-will be 0.
-
-> 
-> > +
-> > +	/*
-> > +	 * Qualcomm remote processor may rely on static and dynamic resources for
-> > +	 * it to be functional. For most of the Qualcomm SoCs, when run with Gunyah
-> > +	 * or older QHEE hypervisor, all the resources whether it is static or dynamic,
-> > +	 * is managed by present hypervisor. Dynamic resources if it is present for
-> > +	 * a remote processor will always be coming from secure world via SMC call
-> > +	 * while static resources may be present in remote processor firmware binary
-> > +	 * or it may be coming from SMC call along with dynamic resources.
-> > +	 *
-> > +	 * Here, we call rproc_elf_load_rsc_table() to check firmware binary has resources
-> > +	 * or not and if it is not having then we pass NULL and zero as input resource
-> > +	 * table pointer and size respectively to the argument of qcom_scm_pas_get_rsc_table()
-> > +	 * and this is even true for Qualcomm remote processor who does follow remoteproc
-> > +	 * framework.
-> > +	 */
-> > +	ret = qcom_scm_pas_get_rsc_table(pas->pas_ctx, table, table_sz, &output_rt,
-> > +					 &output_rt_size);
-> > +	if (ret) {
-> > +		dev_err(pas->dev, "error %d getting resource_table\n", ret);
-> 
-> 	"Error in getting resource table: %d\n"
-> 
-> > +		return ret;
-> > +	}
-> > +
-> > +	kfree(rproc->cached_table);
-> > +	rproc->cached_table = output_rt;
-> > +	rproc->table_ptr = rproc->cached_table;
-> > +	rproc->table_sz = output_rt_size;
-> > +
-> > +	return ret;
-> 
-> 	return 0;
-> 
-> - Mani
-> 
-> -- 
-> மணிவண்ணன் சதாசிவம்
-
--- 
--Mukesh Ojha
 
