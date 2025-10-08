@@ -1,203 +1,196 @@
-Return-Path: <linux-kernel+bounces-845713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE953BC5FAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:14:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C4B1BC5FBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:15:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CE015403F3
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:56:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73A5D423E20
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 16:04:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E48529BDAA;
-	Wed,  8 Oct 2025 15:56:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E43317A2E0;
+	Wed,  8 Oct 2025 16:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nfSdeRqD"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="tFkGT4Vf"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D5A25EFB6
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723B32BE020;
+	Wed,  8 Oct 2025 16:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759938976; cv=none; b=j28ygtxk3VVxuddwThyqOoDe5YQe69DXIMnFjQyY7wIAX//KM0Oi7h36DxtpqvthdCXoHr90lfMOBFem/ouRFv9qoeIHLxEXPjqJAROfB2omN+JeqNXxMoBhOoPZKwR+JTpC2omCjlcGDZbbzDQ+VE7ijQEC7su1XdrKQf4TzY0=
+	t=1759939441; cv=none; b=gi6p7LEA3p6nbQSR6LjskhQCuMJ+wtHglfSEgMwbvtCQkU7xuDDZ3eja672dOak6/XOonrZ+GkUn/jv7DokBK0wikFEsNsi5svsaTCwoGf8924HUdbw1x8rS/6iTRsWe2HqmUmZxnK1bM4gUo7OMkJ3JuCjZuBRPltFZlbDWxzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759938976; c=relaxed/simple;
-	bh=eecEdOXcvpQE5ckhRbenhXOq+0yEF6ISwrbgrM35NgU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rgLgtXKvLn1XHhIvH2TCDzFHNmM7QUAD96B1vfA7+WPoN29VRinoPC7b3jisFh1pyJmYsVNzP8EsGWaB6JNoP807RIsVIr6ImtyYMI1eOJ6yAOTm83AXzgkg8coMUb0H5rUb2obZBhdbXzmuUWu78RKbfhk2/RGKUlTg4olpk3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nfSdeRqD; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-7946137e7a2so996576d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:56:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759938973; x=1760543773; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hFEIMC2U9jb57qswe7OpbYJsyYuAd7DLz3tJrfS5gFQ=;
-        b=nfSdeRqDzgYXhKMYOA5OAv61Gy/A6Yz268vmUpoBSuTOxLGjZabf/U/nZnPIO1J91+
-         8v4sNwevdx/XpAGzcPC67NgkeMfDjNQOENX+Fh1SXfZxkjbEQEFm1vKv+Vy14HZotuNU
-         AbAf3IuoVoCOuhg/GDyLuZZxYxzX6PMvYt/jKti0pstwAlv8wEmUUFuE21vALr3c1OCm
-         +0euUBI8QqouLLiYJkQ+a6RCfC7WE4fIa5E5za3dD+fMCwhObXiurRfmtP50k9wZxHLu
-         TOjAneC+xx3/iOsg7TDgijc0izuSD+Q53NzstTANC/Uxla+rWsPbO2NUIgo8GMD6qrgz
-         wQcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759938973; x=1760543773;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hFEIMC2U9jb57qswe7OpbYJsyYuAd7DLz3tJrfS5gFQ=;
-        b=QzbDvQ/05Zs0XHo/IKXpI6uY8HW2QzhbDftsF1suo9LXi2zFmvjR5YT2klW9phaZ2o
-         XuN1cGWOvUIjAwz7R6G7OYCjYmHFyhm1Wsa0yg6LzkePL6vnZ4y4DBVMxhMo8EEyPr2O
-         SjZoLxvsJUbZ8K+/IoGf3g7REIKD51GzgBXgh8sIBv0xqFoKJ41RzzLJq9adsLzg9IXb
-         HARMHOvPAMMXBGf9U7jMO27F7t+rietqmEK/o6eJPm/K3IIhqBT96WexjLLcGAgvWM6m
-         1N3v8Hfi+vNUsbFifolv1AcvlU1hR65THxJBz4ekF6cEsBt87pezJ4n7YFHbTwG6w4ND
-         zG9Q==
-X-Gm-Message-State: AOJu0YyHVZFPfgSJXxGd6R/4P33RxahSneWfd5Qu+kKogZJfbRaUvIv2
-	/IkQxC2fhfw3/+0h6nq/6wV3Ca1z0u0AJLybNi6/sNMdRIYtAc4Bzm8j
-X-Gm-Gg: ASbGnctNVU/50XE0kxikqarFwwQuRS3infsVUZtqxq4uXpJOCXy7LmAeqGZr5u1pbBw
-	HR5B5hLBwhG5/vktk/jT3Y6EfQdMx5O9mTL6LHnuJo9IVqH3NElmVJoXEXPTBJuE6sW37rLh0xy
-	EdFWFeEmG9mVSJ3hkpost+hYdahEaM5Y+R8cp5fFMPXHJmWp89Kl0QTpXlDWOrM6kAS0CJycui4
-	b9Csih7vuUfvoZUIAIjFemyFtHYKcLu6ooVfdUCQzmFV9c7IsfINXWclsrLTa1Yqotb4d0MQjfZ
-	Q8YEZXOctJCIflgbsSBxQ0tOki6jBM+Zp5qcyxbNfuDe76FEN0FeucxXaicOe0b43MS6i+wD36b
-	qCsuJtzZz9g90gXZV+hkDA7nvRdLTje9IGaZ4Agsyk1Lr9tvyZsBFATN9avMtQjcs5hyNI8F21m
-	W3cUM9vk340eaI1DL54AKeA/pCHOIUGCkg3vGYAykBtLTqyYI=
-X-Google-Smtp-Source: AGHT+IFnsP6b3viJv8/ZjQSPmyqTukLCG864oTDaEeVKrhW3aBRAqFOSfqGTwi30ZMtg70D/Qovaaw==
-X-Received: by 2002:ad4:4ea6:0:b0:73f:a7c8:980b with SMTP id 6a1803df08f44-87b21001056mr59669626d6.4.1759938972538;
-        Wed, 08 Oct 2025 08:56:12 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-878be61fb57sm166271366d6.62.2025.10.08.08.56.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 08:56:11 -0700 (PDT)
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 706C7F4006E;
-	Wed,  8 Oct 2025 11:56:11 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Wed, 08 Oct 2025 11:56:11 -0400
-X-ME-Sender: <xms:m4nmaNMPdssR-w678MoKxNjT5JgI2HBwFLRHw_XJ8ysc8xvcq5TiRA>
-    <xme:m4nmaBiMrnYw8q7z0sVCT67quT5kCPQp3uzXNsQtx61g7ILQVO2ZhZeVaVicNu8BI
-    hH5F86FEYU6Q3qCQUbmSdllvx_4toD_gnE-fLYtFc5GUq1sZt3Q0Q>
-X-ME-Received: <xmr:m4nmaLjM2Zb2J4qR7uobfQgzl3EYA7WkCKNy5o_VS7MosMASLW9STjMue7c>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutdefjeduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtrodttddtvdenucfhrhhomhepuehoqhhunhcu
-    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtth
-    gvrhhnpeejffegieejvddtgfekkefhjeegjeevuedugfehfedtkeffjedtleeiuefhvdef
-    geenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgv
-    rhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfh
-    gvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthho
-    peduvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhgrrhgtohdrtghrihhvvg
-    hllhgrrhhisehsuhhsvgdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhes
-    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehruhhsthdqfhhorhdqlhhinh
-    hugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehtjheskhgvrhhnvghl
-    rdhorhhgpdhrtghpthhtohepjhhirghnghhshhgrnhhlrghisehgmhgrihhlrdgtohhmpd
-    hrtghpthhtohepfhhrvgguvghrihgtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegs
-    ihhgvggrshihsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepmhhhohgtkhhose
-    hsuhhsvgdrtghomhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:m4nmaAJMSF2dHxU4DqYXtkgdd5r9de_OkEORjVangMGQHxmGSfUQcA>
-    <xmx:m4nmaKk2g0MPNjxIL-Wcgaoz1sXaIQIHYFtbQVipTAEUUL2CfJAgLw>
-    <xmx:m4nmaIOaMObif4Ftq2TSOWjbJvb7GAUpB3_ybkDTaV3UIlZltMAY2A>
-    <xmx:m4nmaE6dNzXs9ZnS8zjfyj4Lma2sGTQVQD6n6D8O2tR4rwego77WIA>
-    <xmx:m4nmaMatV60ev3vopmh080nzBd4QwEwZKo_y29vnl9qkw1ka7i0i9XzT>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 8 Oct 2025 11:56:10 -0400 (EDT)
-Date: Wed, 8 Oct 2025 08:56:04 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Marco Crivellari <marco.crivellari@suse.com>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Michal Hocko <mhocko@suse.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Alice Ryhl <aliceryhl@google.com>
-Subject: Re: [PATCH v3 2/2] rust: add system_percpu() around the new
- system_percpu_wq
-Message-ID: <aOaJlHEPzHcAdcUx@tardis-2.local>
-References: <20251008151554.340806-1-marco.crivellari@suse.com>
- <20251008151554.340806-3-marco.crivellari@suse.com>
+	s=arc-20240116; t=1759939441; c=relaxed/simple;
+	bh=qRGrciwh24/r0rMBH/z4DnVMPsm6JU9NYKa2O2p8Cyc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aeCoQhdvUjk6t4uUBIvjvDEIhQHiqg91g2fplRc1QJm0xMKCkse0qiF3V+0BGzKgd7IVm6hbhO+k1DK/LU+g99s0iMbqRZmAFMj6Jkjll8TJ3KtYgo2UGeHAzNCoy4PAZGt54iLSdaAoodlezbLYsk94rzPll5/111TBmj0xRMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=tFkGT4Vf; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4chd996c7nzlgqxl;
+	Wed,  8 Oct 2025 16:03:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1759939435; x=1762531436; bh=i6kqsxtRDB6sbvfO8K5y5sD6
+	F6tM1jHqnp6pWG6pxyE=; b=tFkGT4VfJJcWaquPYtJUVWn6+2R7UPy2umFOl7vZ
+	EKYy2S6I+F4azcO/nk7Bb8vbC4doD6ahROVbHe8VzqrvBZy/ImUmjtKXw4B465GN
+	VD/wuQxVsd5eoE7tx/fhwq+AsRHKPhv6HnVYvKf3CY0JGUO2DPn4bi2ER7pOT+1n
+	EDAhkqwVAT3wXnKOx2HuGGtPBh5evU/WKp+OVR18NoKvOUAd9pH9QVZSIxBWiXQT
+	MrBL2ovgRJkuMvFwP7iEZt1FX5WWD8VdXAtIJTbF5lE2aN5TSshVauFYy3rV9U13
+	uKpIlqROl2sMR9B9C4B/LtCS6tRqReCNbe3Irlda8j6jhw==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id S2QNzb7VcNYK; Wed,  8 Oct 2025 16:03:55 +0000 (UTC)
+Received: from [100.119.48.131] (unknown [104.135.180.219])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4chd8v4c7KzlgqyY;
+	Wed,  8 Oct 2025 16:03:42 +0000 (UTC)
+Message-ID: <3fb0bc7b-bcde-417a-96ef-239af94cff54@acm.org>
+Date: Wed, 8 Oct 2025 09:03:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251008151554.340806-3-marco.crivellari@suse.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] scsi: ufs: core: Remove duplicate macro
+ definitions
+To: Bean Huo <beanhuo@iokpp.de>, avri.altman@wdc.com,
+ avri.altman@sandisk.com, alim.akhtar@samsung.com, jejb@linux.ibm.com,
+ martin.petersen@oracle.com, can.guo@oss.qualcomm.com,
+ ulf.hansson@linaro.org, beanhuo@micron.com, jens.wiklander@linaro.org
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251008145854.68510-1-beanhuo@iokpp.de>
+ <20251008145854.68510-2-beanhuo@iokpp.de>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20251008145854.68510-2-beanhuo@iokpp.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 08, 2025 at 05:15:54PM +0200, Marco Crivellari wrote:
-> The C code defines 2 new workqueues: system_percpu_wq and system_dfl_wq,
-> respectively the futures replacement for system_wq and system_unbound_wq.
+On 10/8/25 7:58 AM, Bean Huo wrote:
+> Remove duplicate definitions of SD_ASCII_STD and SD_RAW macros from
+> ufshcd-priv.h as they are already defined in include/ufs/ufshcd.h.
 > 
-> This change introduce system_percpu(), that use the new system_percpu_wq.
-> 
-> system_wq will be replaced in a future release cycle and should
-> not be used.
-> 
-> Suggested-by: Tejun Heo <tj@kernel.org>
-> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
-
-If we were to expose the system_percpu_wq to Rust, then we should also
-add queue_work_on() API to Rust, otherwise it's kinda pointless IMO.
-
-PS. We can use the CpuId abstraction:
-
-	http://rust.docs.kernel.org/kernel/cpu/struct.CpuId.html
-
-and have an API like:
-
-    ipml Queue {
-        pub fn queue_on(&self, cpu: CpuId, w: W) -> W::EqueueOutput
-    }
-
-or maybe a different new type `PerCpuQueue`?
-
-Regards,
-Boqun
-
+> Suggested-by: Avri Altman <Avri.Altman@sandisk.com>
+> Signed-off-by: Bean Huo <beanhuo@micron.com>
 > ---
->  rust/kernel/workqueue.rs | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
+>   drivers/ufs/core/ufshcd-priv.h | 3 ---
+>   1 file changed, 3 deletions(-)
 > 
-> diff --git a/rust/kernel/workqueue.rs b/rust/kernel/workqueue.rs
-> index 300cc2bfe012..05f213444b91 100644
-> --- a/rust/kernel/workqueue.rs
-> +++ b/rust/kernel/workqueue.rs
-> @@ -940,11 +940,26 @@ unsafe impl<T, const ID: u64> RawDelayedWorkItem<ID> for Pin<KBox<T>>
->  /// users which expect relatively short queue flush time.
->  ///
->  /// Callers shouldn't queue work items which can run for too long.
-> +///
-> +/// Note: `system_wq` will be removed in a future release cycle. Use [`system_percpu_wq`] instead.
->  pub fn system() -> &'static Queue {
->      // SAFETY: `system_wq` is a C global, always available.
->      unsafe { Queue::from_raw(bindings::system_wq) }
->  }
->  
-> +/// Returns the system work queue (`system_percpu_wq`).
-> +///
-> +/// It is the one used by `schedule[_delayed]_work[_on]()`. Multi-CPU multi-threaded. There are
-> +/// users which expect relatively short queue flush time.
-> +///
-> +/// Callers shouldn't queue work items which can run for too long.
-> +///
-> +/// Note: `system_percpu_wq` will replace ['system_wq`] in a future relase cycle.
-> +pub fn system_percpu() -> &'static Queue {
-> +    // SAFETY: `system_percpu_wq` is a C global, always available.
-> +    unsafe { Queue::from_raw(bindings::system_percpu_wq) }
-> +}
-> +
->  /// Returns the system high-priority work queue (`system_highpri_wq`).
->  ///
->  /// It is similar to the one returned by [`system`] but for work items which require higher
-> -- 
-> 2.51.0
-> 
+> diff --git a/drivers/ufs/core/ufshcd-priv.h b/drivers/ufs/core/ufshcd-priv.h
+> index d0a2c963a27d..cadee685eb5e 100644
+> --- a/drivers/ufs/core/ufshcd-priv.h
+> +++ b/drivers/ufs/core/ufshcd-priv.h
+> @@ -77,9 +77,6 @@ int ufshcd_mcq_abort(struct scsi_cmnd *cmd);
+>   int ufshcd_try_to_abort_task(struct ufs_hba *hba, int tag);
+>   void ufshcd_release_scsi_cmd(struct ufs_hba *hba,
+>   			     struct ufshcd_lrb *lrbp);
+> -
+> -#define SD_ASCII_STD true
+> -#define SD_RAW false
+>   int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index,
+>   			    u8 **buf, bool ascii);
+>   
+
+Please improve this patch as follows:
+- Remove the ufshcd_read_string_desc() declaration from
+   include/ufs/ufshcd.h because this function has not been exported.
+- Change the type of the 'ascii' argument into an enumeration type.
+   Code readability improves significantly if boolean arguments are
+   replaced with enumeration type arguments.
+
+Below there is an untested patch that illustrates the above.
+
+Thanks,
+
+Bart.
+
+
+diff --git a/drivers/ufs/core/ufshcd-priv.h b/drivers/ufs/core/ufshcd-priv.h
+index 1f0d38aa37f9..85d3d9e64bd7 100644
+--- a/drivers/ufs/core/ufshcd-priv.h
++++ b/drivers/ufs/core/ufshcd-priv.h
+@@ -80,10 +80,12 @@ int ufshcd_try_to_abort_task(struct ufs_hba *hba, 
+int tag);
+  void ufshcd_release_scsi_cmd(struct ufs_hba *hba,
+  			     struct ufshcd_lrb *lrbp);
+
+-#define SD_ASCII_STD true
+-#define SD_RAW false
+-int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index,
+-			    u8 **buf, bool ascii);
++enum ufs_descr_fmt {
++	SD_RAW = 0,
++	SD_ASCII_STD = 1,
++};
++int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index, u8 **buf,
++			    enum ufs_descr_fmt fmt);
+
+  int ufshcd_send_uic_cmd(struct ufs_hba *hba, struct uic_command *uic_cmd);
+  int ufshcd_send_bsg_uic_cmd(struct ufs_hba *hba, struct uic_command 
+*uic_cmd);
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index be4bf435da09..b10de1ade23b 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -3759,16 +3759,15 @@ static inline char 
+ufshcd_remove_non_printable(u8 ch)
+   * @desc_index: descriptor index
+   * @buf: pointer to buffer where descriptor would be read,
+   *       the caller should free the memory.
+- * @ascii: if true convert from unicode to ascii characters
+- *         null terminated string.
++ * @ufs_descr_fmt: if %SD_ASCII_STD, convert from UTF-16 to ASCII
+   *
+   * Return:
+   * *      string size on success.
+   * *      -ENOMEM: on allocation failure
+   * *      -EINVAL: on a wrong parameter
+   */
+-int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index,
+-			    u8 **buf, bool ascii)
++int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index, u8 **buf,
++			    enum ufs_descr_fmt fmt)
+  {
+  	struct uc_string_id *uc_str;
+  	u8 *str;
+@@ -3797,7 +3796,7 @@ int ufshcd_read_string_desc(struct ufs_hba *hba, 
+u8 desc_index,
+  		goto out;
+  	}
+
+-	if (ascii) {
++	if (fmt == SD_ASCII_STD) {
+  		ssize_t ascii_len;
+  		int i;
+  		/* remove header and divide by 2 to move from UTF16 to UTF8 */
+diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
+index 8a5649933715..f030e9a062a3 100644
+--- a/include/ufs/ufshcd.h
++++ b/include/ufs/ufshcd.h
+@@ -1428,10 +1428,6 @@ static inline int 
+ufshcd_disable_host_tx_lcc(struct ufs_hba *hba)
+  void ufshcd_auto_hibern8_update(struct ufs_hba *hba, u32 ahit);
+  void ufshcd_fixup_dev_quirks(struct ufs_hba *hba,
+  			     const struct ufs_dev_quirk *fixups);
+-#define SD_ASCII_STD true
+-#define SD_RAW false
+-int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index,
+-			    u8 **buf, bool ascii);
+
+  void ufshcd_hold(struct ufs_hba *hba);
+  void ufshcd_release(struct ufs_hba *hba);
+
 
