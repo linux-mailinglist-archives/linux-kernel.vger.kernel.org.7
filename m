@@ -1,148 +1,142 @@
-Return-Path: <linux-kernel+bounces-844937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4E13BC3197
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 03:06:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F561BC319D
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 03:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E75913C51D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 01:06:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9EA594E3E34
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 01:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D744028B407;
-	Wed,  8 Oct 2025 01:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936C228B7D7;
+	Wed,  8 Oct 2025 01:07:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="brTwry31"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YgN/V3wA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30FA963CB;
-	Wed,  8 Oct 2025 01:06:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7A728A701
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 01:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759885578; cv=none; b=Kb+JMKl58zZR8PFFFre/w/NL10O8QlZPHNXA6aiMXeA/W1utLuoLyBzAfSbm9ho5kNh1C71tr31TUZphL9B3KxCbE9ea+O+Z79wBSobq6TwLdldulOZZN9VtAG6L9B9gth/L23yQaDk3gUV6ssmrEmQoIJ0i8fRLcorJsdiqjLU=
+	t=1759885638; cv=none; b=IQxStbMH9FEEnpY1miZtLpKgXHGaneVhsFzjW6DCTOSV6M17RZGeeT7s32D9wGsu6zaoTXp8YQ9XUiAQwRkZbhq6qJHKbhYEY+x+nRB2/xl4b5MxPGlVa10N3TzDnirkhbBuFkACj72zWAgyU5Ffr+4ZMW74Brg+t+qCyyKVbbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759885578; c=relaxed/simple;
-	bh=b2QR7rAkEeRXVWZAYkoYdNvI9KgEwZEWE8tXc7shBAk=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=n2iZXan73MpWOkgH4skSQJWi1Mux/OH4y9RHbx9XEj2+9a4U5TPItPZWlt1KDzG/FioEsde/Hs7FxBnHAUv1rt+a/3PLYcrnq8V1ebK2914TnjXlXXKwkM3PBV78eBcUv8hd8u2fnn5bFcI2F22MeATuSf6kgRAP/Ic66/cBgKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=brTwry31; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1232BC4CEF1;
-	Wed,  8 Oct 2025 01:06:13 +0000 (UTC)
+	s=arc-20240116; t=1759885638; c=relaxed/simple;
+	bh=zBCqyJMWlRsL+4LATvFpWbApDg0JJQI3CUv1g8acmHA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dm5YGLFQh5wuOsW6BbeBp20S6a2MdxcxWmckxE0hVgstu754eUxexVQ2RbdyfxIJ03u/MK9tBDmXaTggjCe2fgvVRV1egpGFKwgjmyv51hAIZ9cTHW2olaqXrhQ8rjRMNQzYZmW6Y+OD45SyWdOkHIh2D+GaHmTXmDaH49nKEYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YgN/V3wA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EB15C19422
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 01:07:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759885576;
-	bh=b2QR7rAkEeRXVWZAYkoYdNvI9KgEwZEWE8tXc7shBAk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=brTwry31GxoRDxZcHwwNJlf8Lzb8IFK1LrPmW2JQ6ueJjrmiLTwB9a3NHkxoXKe3L
-	 n6zVEjETTQX2opE4YqYHhexSr2Q05+tQIzpNZ2bE4YD2gvcQDL7oB2PonLFk17U1c5
-	 q+w7WpKB/UsPvEJ4FE2hbqQ8ZXch+lunrSEhgg0NnhtUnlTYzV84Owmv1Q7mLjIhII
-	 Cv1Tqipo7jw3aCAp6MbZ61j+F8CTB5sWn+2GSNWdmFGmJt8LO+2w5dpafzVhqXGE7/
-	 tpBQAuz03cnahUkkURfm8IdXU7oNf0FQReXNH09tSStmNnAgoT8uAIcSJrIbLEmzJ1
-	 fn6iXXqf+KndA==
-Date: Wed, 8 Oct 2025 10:06:11 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Ryan Chung <seokwoo.chung130@gmail.com>
-Cc: rostedt@goodmis.org, mathieu.desnoyers@efficios.com, shuah@kernel.org,
- hca@linux.ibm.com, corbet@lwn.net, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3 1/5] docs: tracing: fprobe: document list filters and
- :entry/:exit
-Message-Id: <20251008100611.6fb5f0b9d49c9d0c403e2670@kernel.org>
-In-Reply-To: <20251004235001.133111-2-seokwoo.chung130@gmail.com>
-References: <20251004235001.133111-1-seokwoo.chung130@gmail.com>
-	<20251004235001.133111-2-seokwoo.chung130@gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1759885637;
+	bh=zBCqyJMWlRsL+4LATvFpWbApDg0JJQI3CUv1g8acmHA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=YgN/V3wAL5l8gU911XAnxezLGZznwYAlmCRXe3Ovvevboxu0GX2EcRWaIensz5R+e
+	 8z1dSIXKO7hq3F/pXbQryVb/AWs6jqG4Nik+dLdt5Sl7JtT/H9bM5g9RSIIu8CPZf2
+	 Z0LhS1pRVa6E+PA3OMsh8A9GaLdMShsX4AtgRGQtmP2RFPnnT/EB+40FGp0CT5Fe7k
+	 HxfE8hYtzbuQpIEBERPhdWRYGM53FARCPG+MhWzGWoX9QoyYCvq3W5YfVaZ4tnbZmK
+	 e4zAkqe2ImVEIh+5gtHVYKSF1zi6C7DMKrpSkTH7jByb34vG4S5XcamUaJfS2olsfG
+	 rtEN6VaSzLL5Q==
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-795be3a3644so41210436d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 18:07:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW5OT/0piigk65ya1Cqp6tGDacpYLZOkrwGsnj5RSeTPEsoqtSXW+ZHs2pQ6tYCKNmT8002C4D/TaNSlqM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwK3z0UEWYYAMUTkFo/y3E1dSfIUeR8KtM4/UimL+yVFAf1/Wfn
+	E06ZeBVQh+ggAKLc5xkNwkMBtKMF/JN7MUee3h2o1uqIvf0l92+PrsLHv4uswLmGES16grnT4lp
+	CtKSutVNHFJQvk7vaDV/de1uZrPG7KA8=
+X-Google-Smtp-Source: AGHT+IEcmF6j99P7KkUpn2/4L6HaFID6zbkjSdls+iCzttgJ43409b0C4AVN/zVkcxiO3cU7SJ9+sGQsQOMolE5AhVI=
+X-Received: by 2002:ad4:5c65:0:b0:786:2d5e:fdda with SMTP id
+ 6a1803df08f44-87b2101ec96mr26440866d6.18.1759885636562; Tue, 07 Oct 2025
+ 18:07:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20250818170136.209169-1-roman.gushchin@linux.dev>
+ <20250818170136.209169-2-roman.gushchin@linux.dev> <CAP01T76AUkN_v425s5DjCyOg_xxFGQ=P1jGBDv6XkbL5wwetHA@mail.gmail.com>
+ <87ms7tldwo.fsf@linux.dev> <1f2711b1-d809-4063-804b-7b2a3c8d933e@linux.dev>
+ <87wm6rwd4d.fsf@linux.dev> <ef890e96-5c2a-4023-bcb2-7ffd799155be@linux.dev>
+ <CAADnVQ+LGbXXHHTbBB9b-RjAXO4B6=3Z=G0=7ToZVuH61OONWA@mail.gmail.com>
+ <87iki0n4lm.fsf@linux.dev> <a76ad1e9-07d5-4ba1-83e4-22fe36a32df0@linux.dev>
+ <877bxb77eh.fsf@linux.dev> <CAEf4BzafXv-PstSAP6krers=S74ri1+zTB4Y2oT6f+33yznqsA@mail.gmail.com>
+ <871pnfk2px.fsf@linux.dev> <CAEf4BzaVvNwt18eqVpigKh8Ftm=KfO_EsB2Hoh+LQCDLsWxRwg@mail.gmail.com>
+ <87tt0bfsq7.fsf@linux.dev>
+In-Reply-To: <87tt0bfsq7.fsf@linux.dev>
+From: Song Liu <song@kernel.org>
+Date: Tue, 7 Oct 2025 18:07:03 -0700
+X-Gmail-Original-Message-ID: <CAHzjS_v+N7UO-yEt-d0w3nE5_Y1LExQ5hFWYnHqARp9L-5P_cg@mail.gmail.com>
+X-Gm-Features: AS18NWAx-XMC-g3j9uutWYIZTxRO0r1IXmHmgo-2RkWcxjCjTc5QNe70onU4eO4
+Message-ID: <CAHzjS_v+N7UO-yEt-d0w3nE5_Y1LExQ5hFWYnHqARp9L-5P_cg@mail.gmail.com>
+Subject: Re: [PATCH v1 01/14] mm: introduce bpf struct ops for OOM handling
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Alexei Starovoitov <alexei.starovoitov@gmail.com>, Kumar Kartikeya Dwivedi <memxor@gmail.com>, 
+	linux-mm <linux-mm@kvack.org>, bpf <bpf@vger.kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@suse.com>, 
+	David Rientjes <rientjes@google.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Song Liu <song@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun,  5 Oct 2025 08:46:55 +0900
-Ryan Chung <seokwoo.chung130@gmail.com> wrote:
+On Mon, Oct 6, 2025 at 5:42=E2=80=AFPM Roman Gushchin <roman.gushchin@linux=
+.dev> wrote:
+[...]
+> >> >
+> >> > So, there cannot be bpf_link__attach_cgroup(), but there can be (at
+> >> > least conceptually) bpf_map__attach_cgroup(), where map is struct_op=
+s
+> >> > map.
+> >>
+> >> I see...
+> >> So basically when a struct ops map is created we have a fd and then
+> >> we can attach it (theoretically multiple times) using BPF_LINK_CREATE.
+> >
+> > Yes, exactly. "theoretically" part is true right now because of how
+> > things are wired up internally, but this must be fixable
+>
+> Ok, one more question: do you think it's better to alter the existing
+> bpf_struct_ops.reg() callback and add the bpf_attr parameter
+> or add the new .attach() callback?
 
-> Signed-off-by: Ryan Chung <seokwoo.chung130@gmail.com>
-> ---
->  Documentation/trace/fprobetrace.rst | 27 +++++++++++++++++++++------
->  1 file changed, 21 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/trace/fprobetrace.rst b/Documentation/trace/fprobetrace.rst
-> index b4c2ca3d02c1..629e2d7402bd 100644
-> --- a/Documentation/trace/fprobetrace.rst
-> +++ b/Documentation/trace/fprobetrace.rst
-> @@ -25,21 +25,36 @@ Synopsis of fprobe-events
->  -------------------------
->  ::
->  
-> -  f[:[GRP1/][EVENT1]] SYM [FETCHARGS]                       : Probe on function entry
-> -  f[MAXACTIVE][:[GRP1/][EVENT1]] SYM%return [FETCHARGS]     : Probe on function exit
-> -  t[:[GRP2/][EVENT2]] TRACEPOINT [FETCHARGS]                : Probe on tracepoint
-> +  # fprobe (function entry/exit)
-> +  f[:[GRP1/][EVENT1]] SYM_OR_LIST[:entry|:exit] [FETCHARGS]
-> +
-> +  # legacy single-symbol exit
-> +  f[MAXACTIVE][:[GRP1/][EVENT1]] SYM%return [FETCHARGS]
-> +
-> +  # Probe on tracepoint
-> +  t[:[GRP2/][EVENT2]] TRACEPOINT [FETCHARGS]
->  
->   GRP1           : Group name for fprobe. If omitted, use "fprobes" for it.
->   GRP2           : Group name for tprobe. If omitted, use "tracepoints" for it.
-> - EVENT1         : Event name for fprobe. If omitted, the event name is
-> -                  "SYM__entry" or "SYM__exit".
-> + EVENT1         : Event name for fprobe. If omitted,
-> +                  - For a single literal symbol, the event name is
-> +                    "SYM__entry" or "SYM__exit".
-> +                  - For a *list or any wildcard*, an explicit [GRP1/][EVENT1]
-> +                    is required; otherwise the parser rejects it.
->   EVENT2         : Event name for tprobe. If omitted, the event name is
->                    the same as "TRACEPOINT", but if the "TRACEPOINT" starts
->                    with a digit character, "_TRACEPOINT" is used.
->   MAXACTIVE      : Maximum number of instances of the specified function that
->                    can be probed simultaneously, or 0 for the default value
->                    as defined in Documentation/trace/fprobe.rst
-> -
-> + SYM_OR_LIST    : Either a single symbol, or a comma-separated list of
-> +                  include/exclude patterns:
-> +                  - Tokens are matched as symbols; wildcards may be used.
-> +                  - Tokens prefixed with '!' are exclusions.
-> +                  - Examples:
-> +                        foo             # single literal (entry)
-> +                        foo:exit        # single literal exit
-> +                        foo%return      # legacy single-symbol exit
+IIUC, bpf_struct_ops_link is just for bpf_struct_ops.reg(). The
+attach() operation can be separate, and it doesn't need to be
+implemented in sys_bpf() syscall. BPF TCP congestion control
+uses setsockopt() to do the attach(). Current sched_ext does
+the attach as part of reg(). Tejun is proposing to use reg() for
+sub scheduler [1]. In my earlier patch set for fanotify-bpf, I
+was planning to use ioctl on the fanotify fd [2]. I think these
+all work for the given use case.
 
-So you can explain it in syntax formats:
+I am not sure what is the best option for cgroup oom killer. There
+are multiple options. Technically, it can even be a sysfs entry.
+We can use it as:
 
-Single function (including wildcard):
+# load and pin oom killers first
+$ cat /sys/fs/cgroup/user.slice/oom.killer
+[oom_a] oom_b oom_c
+$ echo oom_b > /sys/fs/cgroup/user.slice/oom.killer
+$ cat /sys/fs/cgroup/user.slice/oom.killer
+oom_a [oom_b] oom_c
 
-  f[:[GRP1/][EVENT1]] SYM[%return] [FETCHARGS]
+Note that, I am not proposing to use sysfs entries for oom killer.
+I just want to say it is an option.
 
-Multiple functions:
+Given attach() can be implemented in different ways, we probably
+don't need to add it to bpf_struct_ops. But if that turns out to be
+the best option, I would not argue against it. OTOH, I think it is
+better to keep reg() and attach() separate, though sched_ext is
+using reg() for both options.
 
-  f[:[GRP1/]EVENT3 SYM[,[!]SYM[,...]][:entry|:exit] [FETCHARGS]
+Does this make sense?
 
-Where,
- - SYM prefixed with '!' are exclusions.
- - ":entry" suffix means it probes entry of given symbols. (default)
- - ":exit" suffix means it probes exit of given symbols.
- - "%return" suffix means it probes exit of SYM (single symbol).
+Thanks,
+Song
 
-Thank you,
-
-
->   FETCHARGS      : Arguments. Each probe can have up to 128 args.
->    ARG           : Fetch "ARG" function argument using BTF (only for function
->                    entry or tracepoint.) (\*1)
-> -- 
-> 2.43.0
-> 
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+[1] https://lore.kernel.org/bpf/20250920005931.2753828-1-tj@kernel.org/
+[2] https://lore.kernel.org/bpf/20241114084345.1564165-1-song@kernel.org/
 
