@@ -1,111 +1,277 @@
-Return-Path: <linux-kernel+bounces-846007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63972BC6B3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 23:44:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE5E4BC6B59
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 23:51:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0EAE64E93FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 21:44:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70FEC40710D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 21:51:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5A72C11E0;
-	Wed,  8 Oct 2025 21:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170B12C15A0;
+	Wed,  8 Oct 2025 21:51:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qyg5ucnw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="firdlSEl";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RfKzIlxO"
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7319C26E6FD;
-	Wed,  8 Oct 2025 21:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125E72C11E2;
+	Wed,  8 Oct 2025 21:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759959886; cv=none; b=VP2C8B2IHDO5Rcv2SHezEsgC3KtlfK4/DvoG39aOkDQl8ilolQaTDHx56AQSFStcjZY4iWMQkoxaI8Bu3AMlB5nowXZuCOr87gfLcNKul6ag6mkarwLCT4mrVsrmSsQkVjVVfwS94F+346ooevKibg+M1AZY64lXJxp9jIhZpQI=
+	t=1759960295; cv=none; b=tL4iOSEfupje4ZKAOfSn7Lx2/8cvbhCvsxhffx1PxVNl5UAz1j0STTgkBk3R+nCVJVcNbWIfiwbvNI+dLKY9MeVXnfWW4OJjnkFJX0Q3cA7pXqdFCEs6ZH33HVuVUJToVudsDHuK2SncSMkY1WjDKVpm00UUhot034PuDg8bulA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759959886; c=relaxed/simple;
-	bh=llAbSKdnreqTt7I3McYr/8TsZ9LCpQRFJxOOErxnxog=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iKdtQj8ZoRxb8LI2P5tuGppNIUSMhHvxqNX0LpFWcV6wCXzaWtXJ42PbJtKHGjIWmuSQiq8LSYtoIL9oNnox8JCTADPcsut74kpL7d4SlWgJ6h4TVEjRUQsEY8GKCv1ex0HTygFEXPBjYchcr96HHG1uIwg5M4XT2ESYyy0KB5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qyg5ucnw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A007FC4CEE7;
-	Wed,  8 Oct 2025 21:44:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759959886;
-	bh=llAbSKdnreqTt7I3McYr/8TsZ9LCpQRFJxOOErxnxog=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qyg5ucnwUvTrp7i1wv4cZMM90sFmmEpLauYs+/JZCLk2Fo/bDAWRgFMVQp4iOQ7Xe
-	 ZvUZspBAWK3opFyz58Ur4U4Idd54FyWvJTjOe7I27n+vJj2RhO94uhHeI9vj/vWUYX
-	 0j3Dqx9ofL2SrQqQuTetphL6lBHM+I9DYhZxaHK1cHS077/oztHWhGw1ff2BBWC3+O
-	 +xVXmc4RZ61ImEZNd/+G8V99I9X+RAwTcN8ceeK0nJP0tCgpL+g1bup0+iu1E0nWHM
-	 5jE6jf0kNA/E3qvhiWW5DYK1WOxkw3IAT+dwplgnLpkX8yYCRj36XZoqqLuk0N09ew
-	 2GOyj8rBKDlVA==
-Date: Wed, 8 Oct 2025 22:44:41 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Sune Brian <briansune@gmail.com>
-Cc: Charles Keepax <ckeepax@opensource.cirrus.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] ASoC: wm8978: add missing BCLK divider setup
-Message-ID: <72ca91be-e953-428b-8314-d32de3478bc0@sirena.org.uk>
-References: <20251008162719.1829-1-briansune@gmail.com>
- <aOacZAiWxG9XfWLS@opensource.cirrus.com>
- <CAN7C2SCDNz5TB3deVziuNNYFnPV_hmrsPL1k-j5Dsj58wvC2rw@mail.gmail.com>
- <aObHCq6JAHbtTJZ8@opensource.cirrus.com>
- <200b17e5-9655-49c7-a4af-7adaf2838168@sirena.org.uk>
- <CAN7C2SApVuEBTpq-E=bT=1yS+hQVv4J6FSe4ACa5_1a7pSprkg@mail.gmail.com>
+	s=arc-20240116; t=1759960295; c=relaxed/simple;
+	bh=JgqxLekimCzzWFk3XbrVmtAd7ZdS+CuNlCW4JmfAqdw=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=XMoHk+VUBZc4kgPgxfJJhi9UvqTIixQ3uOcgFZfltYqWdSwkjOeHaeBgmurfoTfQgxvNesPULk+IhMpqwta5pWGA1HB9HC5/3uUzgVHbOVCVOFyAemq72GQVxCM8pU+48ZU7Zv+5+d/LH4C+VskpyVMyxG90yOmnv6bn+3+JY5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=firdlSEl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RfKzIlxO; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id 2A310EC0277;
+	Wed,  8 Oct 2025 17:51:32 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Wed, 08 Oct 2025 17:51:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm2; t=
+	1759960292; x=1760046692; bh=C0UcEy3s3N2N9VtG1+Jnhg5QL7Pw7mUWAVt
+	NL/r+tns=; b=firdlSEl1lJ1EiPM5L2/ZkuqpF5ThgZtm0FSw1A+tUd3na36Bl1
+	UR7M5VlZ9nd25jwTzZEdOVgwLslhtuGZ/Y467N/jVsv9FxJ+ShpKwWvbQ4xWuoUI
+	cEigsu48uFD3Wk26iX3ztLSZWk1fsNaFTrqknJs/6FBp0e5qTn9INlcYB5TT9M/+
+	CzJ+BnOcgLsM6kpKu6hIddEuCsa7/en66bbqsOm/D9tGErN46QJoc5NwroIeV+1O
+	z+2UeXMYCQsGqZlqGjKG9tqwWK+2ECD9ICxvWjh5ojE21M5R4YGswu3KKLgW753l
+	ugx9Cd58pSyBG1GRXRwiaRqxmqox6M6Zdvg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759960292; x=
+	1760046692; bh=C0UcEy3s3N2N9VtG1+Jnhg5QL7Pw7mUWAVtNL/r+tns=; b=R
+	fKzIlxOAVBysbwi5SChR5LCRxQ26oHbsGMwWGif1A7W0AqeQe8nHVkGHwTL6aZ6I
+	NsWeXlouQ+TsXZhtWL311O51rYzZRlu/dZnLLb6WVblb7MfG7jQielZ9cgb6VcdO
+	WUL8yvfwXY6677KLGTokbZFppD4Vj8T8USbSadGxxtJ6KJpxlSV0EimmR953FDfA
+	PexaRE6ckx+YfMVy7o2oif2iZhmJExBQmqCschJOLiuYDfcpqjn7Phd7HKwzlPqN
+	sXALziBDeqIUMAEAOKptK0+xrqJAoKbCoCjSKWTzl5WWIdDmEQtn9qdq0PTOCCqn
+	rieYFMXGkG2c4b6+e17wQ==
+X-ME-Sender: <xms:49zmaLu5eS2K2uMUU33QpvaQSLXTxxgVGQ7C-TurGlmHS_REmrT1FQ>
+    <xme:49zmaHIcw_pS0phYfgLSxximpbq3WeAxSM__ZCRCsiln6KZ71iAx2tkumMUtSdTCO
+    lg346fvD1x-voqJUHVzUpB4iiB4UdBY9Tp6aa3lpzXnMyVkgQ>
+X-ME-Received: <xmr:49zmaHdSO9MHCxZMBUF63VpQmtrQU4CXOdmt1AfkKUOCACDorGSeF6x9ya42e6nvyyx1_-wDyIoz47p93HYhFzmURDIaKVzGKT4E3mTXVhTH>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutdeggedvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurheptgfgggfhvfevufgjfhffkfhrsehtqhertddttdejnecuhfhrohhmpefpvghilheu
+    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epleejtdefgeeukeeiteduveehudevfeffvedutefgteduhfegvdfgtdeigeeuudejnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
+    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepudejpdhmohguvgepshhmthhp
+    ohhuthdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtohepthhomhesthgrlhhpvgihrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehr
+    vgguhhgrthdrtghomhdprhgtphhtthhopehokhhorhhnihgvvhesrhgvughhrghtrdgtoh
+    hmpdhrtghpthhtohepughhohifvghllhhssehrvgguhhgrthdrtghomhdprhgtphhtthho
+    pegthhhutghkrdhlvghvvghrsehorhgrtghlvgdrtghomhdprhgtphhtthhopegurghird
+    hnghhosehorhgrtghlvgdrtghomh
+X-ME-Proxy: <xmx:49zmaBWpAi5xlqhOuMSNiC7OUh1TzrAj3_xk9Y0xC_60cL2c7bQJcQ>
+    <xmx:49zmaNiaq1lGopw1IcQa_AKiBFq9sBegkmzOZgKy8CiAfClLHc6JPA>
+    <xmx:49zmaDiaMC2PJHS33FkeB43W7aqkBwxiQ00wRRNSKnfc1YlR0pmwqQ>
+    <xmx:49zmaKvShcZKtmk7f2a2s6fZZ7lV663qa6ve0tBd8tAvBSm1KcFnLQ>
+    <xmx:5NzmaE3QOdiAALtKxgQaqOLH_NX3sY-yKKsDACA9NIbwoQdaJhuIug5M>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 8 Oct 2025 17:51:27 -0400 (EDT)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Bei0OJtGpep5JNp8"
-Content-Disposition: inline
-In-Reply-To: <CAN7C2SApVuEBTpq-E=bT=1yS+hQVv4J6FSe4ACa5_1a7pSprkg@mail.gmail.com>
-X-Cookie: 10.0 times 0.1 is hardly ever 1.0.
+From: NeilBrown <neilb@ownmail.net>
+To: "Jeff Layton" <jlayton@kernel.org>
+Cc: "Chuck Lever" <chuck.lever@oracle.com>,
+ "Olga Kornievskaia" <okorniev@redhat.com>, "Dai Ngo" <Dai.Ngo@oracle.com>,
+ "Tom Talpey" <tom@talpey.com>, "Trond Myklebust" <trondmy@kernel.org>,
+ "Anna Schumaker" <anna@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+ "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
+ "Paolo Abeni" <pabeni@redhat.com>, "Simon Horman" <horms@kernel.org>,
+ "David Howells" <dhowells@redhat.com>, "Brandon Adams" <brandona@meta.com>,
+ linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "Jeff Layton" <jlayton@kernel.org>
+Subject:
+ Re: [PATCH v2 2/2] sunrpc: add a slot to rqstp->rq_bvec for TCP record marker
+In-reply-to: <20251008-rq_bvec-v2-2-823c0a85a27c@kernel.org>
+References: <20251008-rq_bvec-v2-0-823c0a85a27c@kernel.org>,
+ <20251008-rq_bvec-v2-2-823c0a85a27c@kernel.org>
+Date: Thu, 09 Oct 2025 08:51:25 +1100
+Message-id: <175996028564.1793333.11431539077389693375@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
+
+On Thu, 09 Oct 2025, Jeff Layton wrote:
+> We've seen some occurrences of messages like this in dmesg on some knfsd
+> servers:
+>=20
+>     xdr_buf_to_bvec: bio_vec array overflow
+>=20
+> Usually followed by messages like this that indicate a short send (note
+> that this message is from an older kernel and the amount that it reports
+> attempting to send is short by 4 bytes):
+>=20
+>     rpc-srv/tcp: nfsd: sent 1048155 when sending 1048152 bytes - shutting d=
+own socket
+>=20
+> svc_tcp_sendmsg() steals a slot in the rq_bvec array for the TCP record
+> marker. If the send is an unaligned READ call though, then there may not
+> be enough slots in the rq_bvec array in some cases.
+>=20
+> Add a slot to the rq_bvec array, and fix up the array lengths in the
+> callers that care.
+>=20
+> Fixes: e18e157bb5c8 ("SUNRPC: Send RPC message on TCP with a single sock_se=
+ndmsg() call")
+> Tested-by: Brandon Adams <brandona@meta.com>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/nfsd/vfs.c        | 6 +++---
+>  net/sunrpc/svc.c     | 3 ++-
+>  net/sunrpc/svcsock.c | 4 ++--
+>  3 files changed, 7 insertions(+), 6 deletions(-)
+
+I can't say that I'm liking this patch.
+
+There are 11 place where (in nfsd-testing recently) where
+rq_maxpages is used (as opposed to declared or assigned).
+
+3 in nfsd/vfs.c
+4 in sunrpc/svc.c
+1 in sunrpc/svc_xprt.c
+2 in sunrpc/svcsock.c
+1 in xprtrdma/svc_rdma_rc.c
+
+Your patch changes six of those to add 1.  I guess the others aren't
+"callers that care".  It would help to have it clearly stated why, or
+why not, a caller might care.
+
+But also, what does "rq_maxpages" even mean now?
+The comment in svc.h still says "num of entries in rq_pages"
+which is certainly no longer the case.
+But if it was the case, we should have called it "rq_numpages"
+or similar.
+But maybe it wasn't meant to be the number of pages in the array,
+maybe it was meant to be the maximum number of pages is a request
+or a reply.....
+No - that is sv_max_mesg, to which we add 2 and 1.
+So I could ask "why not just add another 1 in svc_serv_maxpages()?"
+Would the callers that might not care be harmed if rq_maxpages were
+one larger than it is?
+
+It seems to me that rq_maxpages is rather confused and the bug you have
+found which requires this patch is some evidence to that confusion.  We
+should fix the confusion, not just the bug.
+
+So simple question to cut through my waffle:
+Would this:
+-	return DIV_ROUND_UP(serv->sv_max_mesg, PAGE_SIZE) + 2 + 1;
++	return DIV_ROUND_UP(serv->sv_max_mesg, PAGE_SIZE) + 2 + 1 + 1;
+
+fix the problem.  If not, why not?  If so, can we just do this?
+then look at renaming rq_maxpages to rq_numpages and audit all the uses
+(and maybe you have already audited...).
+
+Thanks,
+NeilBrown
 
 
---Bei0OJtGpep5JNp8
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>=20
+> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+> index 77f6879c2e063fa79865100bbc2d1e64eb332f42..c4e9300d657cf7fdba23f2f4e4b=
+daad9cd99d1a3 100644
+> --- a/fs/nfsd/vfs.c
+> +++ b/fs/nfsd/vfs.c
+> @@ -1111,7 +1111,7 @@ nfsd_direct_read(struct svc_rqst *rqstp, struct svc_f=
+h *fhp,
+> =20
+>  	v =3D 0;
+>  	total =3D dio_end - dio_start;
+> -	while (total && v < rqstp->rq_maxpages &&
+> +	while (total && v < rqstp->rq_maxpages + 1 &&
+>  	       rqstp->rq_next_page < rqstp->rq_page_end) {
+>  		len =3D min_t(size_t, total, PAGE_SIZE);
+>  		bvec_set_page(&rqstp->rq_bvec[v], *rqstp->rq_next_page,
+> @@ -1200,7 +1200,7 @@ __be32 nfsd_iter_read(struct svc_rqst *rqstp, struct =
+svc_fh *fhp,
+> =20
+>  	v =3D 0;
+>  	total =3D *count;
+> -	while (total && v < rqstp->rq_maxpages &&
+> +	while (total && v < rqstp->rq_maxpages + 1 &&
+>  	       rqstp->rq_next_page < rqstp->rq_page_end) {
+>  		len =3D min_t(size_t, total, PAGE_SIZE - base);
+>  		bvec_set_page(&rqstp->rq_bvec[v], *rqstp->rq_next_page,
+> @@ -1318,7 +1318,7 @@ nfsd_vfs_write(struct svc_rqst *rqstp, struct svc_fh =
+*fhp,
+>  	if (stable && !fhp->fh_use_wgather)
+>  		kiocb.ki_flags |=3D IOCB_DSYNC;
+> =20
+> -	nvecs =3D xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages, payload);
+> +	nvecs =3D xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages + 1, payload=
+);
+>  	iov_iter_bvec(&iter, ITER_SOURCE, rqstp->rq_bvec, nvecs, *cnt);
+>  	since =3D READ_ONCE(file->f_wb_err);
+>  	if (verf)
+> diff --git a/net/sunrpc/svc.c b/net/sunrpc/svc.c
+> index 4704dce7284eccc9e2bc64cf22947666facfa86a..919263a0c04e3f1afa607414bc1=
+893ba02206e38 100644
+> --- a/net/sunrpc/svc.c
+> +++ b/net/sunrpc/svc.c
+> @@ -706,7 +706,8 @@ svc_prepare_thread(struct svc_serv *serv, struct svc_po=
+ol *pool, int node)
+>  	if (!svc_init_buffer(rqstp, serv, node))
+>  		goto out_enomem;
+> =20
+> -	rqstp->rq_bvec =3D kcalloc_node(rqstp->rq_maxpages,
+> +	/* +1 for the TCP record marker */
+> +	rqstp->rq_bvec =3D kcalloc_node(rqstp->rq_maxpages + 1,
+>  				      sizeof(struct bio_vec),
+>  				      GFP_KERNEL, node);
+>  	if (!rqstp->rq_bvec)
+> diff --git a/net/sunrpc/svcsock.c b/net/sunrpc/svcsock.c
+> index 377fcaaaa061463fc5c85fc09c7a8eab5e06af77..5f8bb11b686bcd7302b94476490=
+ba9b1b9ddc06a 100644
+> --- a/net/sunrpc/svcsock.c
+> +++ b/net/sunrpc/svcsock.c
+> @@ -740,7 +740,7 @@ static int svc_udp_sendto(struct svc_rqst *rqstp)
+>  	if (svc_xprt_is_dead(xprt))
+>  		goto out_notconn;
+> =20
+> -	count =3D xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages, xdr);
+> +	count =3D xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages + 1, xdr);
+> =20
+>  	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, rqstp->rq_bvec,
+>  		      count, rqstp->rq_res.len);
+> @@ -1244,7 +1244,7 @@ static int svc_tcp_sendmsg(struct svc_sock *svsk, str=
+uct svc_rqst *rqstp,
+>  	memcpy(buf, &marker, sizeof(marker));
+>  	bvec_set_virt(rqstp->rq_bvec, buf, sizeof(marker));
+> =20
+> -	count =3D xdr_buf_to_bvec(rqstp->rq_bvec + 1, rqstp->rq_maxpages - 1,
+> +	count =3D xdr_buf_to_bvec(rqstp->rq_bvec + 1, rqstp->rq_maxpages,
+>  				&rqstp->rq_res);
+> =20
+>  	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, rqstp->rq_bvec,
+>=20
+> --=20
+> 2.51.0
+>=20
+>=20
 
-On Thu, Oct 09, 2025 at 05:27:58AM +0800, Sune Brian wrote:
-> Mark Brown <broonie@kernel.org> =E6=96=BC 2025=E5=B9=B410=E6=9C=889=E6=97=
-=A5 =E9=80=B1=E5=9B=9B =E4=B8=8A=E5=8D=884:26=E5=AF=AB=E9=81=93=EF=BC=9A
-
-> > Another one I've seen is that you're using the BCLK as the MCLK for
-> > another part (a few devices even require this), you might want to run
-> > BCLK at 256fs or whatever for the MCLK even though it's not needed for
-> > when used as BCLK.
-
-> If you need BCLK as MCLK same clock rate why you need to use BCLK from
-> first place?
-
-This is often partly a pinmuxing/routing question - if the CODEC is the
-clock provider (and perhaps you're using a CODEC PLL so the clock isn't
-visible without being output by the CODEC) then using a fast BCLK can
-either be needed due to a lack of other places to output the MCLK or
-just seem convenient to the board designer due to where the available
-pins are.
-
---Bei0OJtGpep5JNp8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjm20gACgkQJNaLcl1U
-h9AFTQf/ZI84eDZdvvWhnjhG6GU2Tdr4TpQiAAyKcwdEFaFV5ylOeHx5cbG86AGA
-MI2avQT8SPC7t5Nf6Uc35j6MJC1A590J40jnOxofYIaQO63CccDDNF9yS7z60wrP
-W2uUcq/USBdzyWnn1yVCgZXj4ZaNUBjfwIBYt2U6Cw9J/VFKvNQuCViuhrBTMdFy
-cbbFkPz2Yqni9+pGIb22mLH0kItj2tHqShLHy2r1rtH3O7BgetFclEzMfTrXovCD
-vQM5i39ghxE7DYLmqx6F5Yl59fKu8gCfsGCZ70msQPVhRfutDvHV2KFHRTUarpSn
-V1t1C0VLXt5+MLCXVkUXxkUc/5TuTQ==
-=RgEv
------END PGP SIGNATURE-----
-
---Bei0OJtGpep5JNp8--
 
