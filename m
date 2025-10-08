@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-845698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 034DEBC5F6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:10:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C61DBC5F88
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:13:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32B29541A94
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:50:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CA89424D5D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:50:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D4E2BD01B;
-	Wed,  8 Oct 2025 15:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB89221DB1;
+	Wed,  8 Oct 2025 15:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pxg5SCVK"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jkr9eYNL"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C452FC032
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66E52FCBED
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759938427; cv=none; b=piS/GUUtca/gfJi02JMqyD3wGpYOynVCS35CFkabipSistHKhjPaU+DTX0vLR6DVEeZ0rtcSVQivTMN7FTlLS0sdadJcs4DXuuv2liZzzfmwyFHfpi09CSN8EwtmneaLI7+3zsCuNXkxnCnXIoRxrrh0A9jFH4cNm3jCb8+n7+o=
+	t=1759938428; cv=none; b=VCYsK26nQ3KlSHWYJ+BUmaWZEfCxb22Wqesd99WVdNBrx4+ek3SPm81E9J/4oZt/mSHxuDePkER8Kx/65jzzzAYWRIKTazohebPQ7lZYn++c+E36fhLVWxZx8ZCZ+jrgPXyMzU/VlGc71qVdulbfr/MkfnTg7O3G0YyyY8i1UeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759938427; c=relaxed/simple;
-	bh=2Y4ovck1VNEDJT/eJTVGRHTacMKXujIutu/8KsCMop0=;
+	s=arc-20240116; t=1759938428; c=relaxed/simple;
+	bh=e1uCNgvDUPL6Q8IGrP4fE1tjT9jxmUxE+KdCoB9JZM4=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=YywoeDC3CkzhO4ZXtBn111gDVERNRQSlPZ4dqCv+2JhcS7l1ZKSEk1APAcfQ2k246hJiHERxRDCKERTpTUwI6FdQjeTv+emgvOhKHpXko3iuoXxxFRj23R9RgZ+UYwSYQkXUNHGkh1KRnfaGtsa1OhgQZq24vJ+7vUZ55OpfxAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pxg5SCVK; arc=none smtp.client-ip=209.85.128.73
+	 To:Cc:Content-Type; b=ZZB2ALfb1f3zrFSoGgPZu22NklCWQcM4UpTTXY1fvT3HbSViwlNoU0oXBevbmFsk4gHGJ8xdVQWQMVZor9A30er8mM6xnY1NWb5ENCFPtLuvJGTCqpb4/dTSjrTwct+4aSJQ5BA2CZYSItJpdS4DskcilFiW3NVycABVnOA4BOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jkr9eYNL; arc=none smtp.client-ip=209.85.128.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-46e407c600eso40374935e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:47:04 -0700 (PDT)
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-46e36686ca1so71992295e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:47:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759938423; x=1760543223; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1759938425; x=1760543225; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rx/I2mYB3NrCk/vXv2cfgvi3kC2D2Tey/+p9VMElDFg=;
-        b=pxg5SCVKNNqh8TDdVWkQPvvXN7OooA1Js2WevrLevaGOPsFFxAPViEhZXfzNiP7CKp
-         fK1MNg5VRRQWQ1fvsr8rP/rWPPq3M1tiBCnDVhOXScIgJm+mjPV8ZbhKwVGGUIsSHp/q
-         L8hEzUVODdv4b+r0DLhpI6EKiuCD4tEGSW44De/bOo5/i9eOBGUOXEi37sKng8WnkIDN
-         jwwwkqPsRt6Mv/JS4sOLvk18bxdAdpjebwLk9P7iRgw0/OZpUtQ0zcdrefLjT0t91SZV
-         eFr0QcS+PuEmyP5xcIKbSQD5wKb57yiZ8wsLWEvFaFy8BsmIZPfI1B4c9gxfz98ejxV+
-         +L/w==
+        bh=pCqfiDMNXwNp3eFCLlUtfPhbgD3LgIedHtp2uSYpz9o=;
+        b=jkr9eYNLbk7wVyDI6UHYi+5oKhLyYsw+OAeiiWWIFWyV5yvpSWfSZBSDHo+RKdGlP+
+         /NyCCmyoxiZt/jGygIUbRKurDRf2frvj5PfpuhjgnMlTmcOE18dPlVwhP8e5LDC1YRhS
+         xfoCcUbbOchJIBv7Qkcv3PbllSQNnhdUvD/qBbAnKv1T9pZKvyNuCL2LxFf3+ZLGpWNH
+         BwPmlJg74Rvp+SYSaoL9VyyHBCi0F4lIf8wdHTLPtShc1Wy2+QTepdbmc8ExbYFM5AyU
+         t5wgrgOQhvDOO+pPNkonT55FBjrvuWVIc2fibVTRZfQCVY3pvbVlmlTIKUGfeLJ1pfkx
+         8mBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759938423; x=1760543223;
+        d=1e100.net; s=20230601; t=1759938425; x=1760543225;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rx/I2mYB3NrCk/vXv2cfgvi3kC2D2Tey/+p9VMElDFg=;
-        b=rwxUSepbuPdkf6AoffVDhodJ5TlgiGEbYscSFowDkBDjtO0WQOZUFFu/OJJmjNFYqF
-         V9L0HGFuF/ZjTbJaSeIqfFS5/HNzwtfVmnRKHxJeulMx2FlnHQNMfAm+yx95gHQFmYyX
-         NLe0/L0OoGGnO4Nkvv6Fvi2RVQfwV0LFscxIMd4NMkKynrM/JEZcLM9xce7oTgpI4iBT
-         4jQ9K1M7+xgku/TLHT7doU749udHBxrPSpQthDATD1B4W1JASofGt5CBlee3z0GXBIuV
-         auHpQFT5MqVPvoUVrtgzVIa6llhQddD7XPQAYMkkbNXRWbxoTaA045P0E/x4/YXu4CZv
-         zeRQ==
-X-Gm-Message-State: AOJu0YxV4P1IhdFyy3tbpxpiVx262xANHqWru91c25gB6cImGnfCwpZQ
-	y/ucJT4rzlDTNSCUcMEv3eZ8FtgRNPne9iG/xugf//jyDvs4BPoEcV/8ONHxu9L0dAMgMAZNkQ=
+        bh=pCqfiDMNXwNp3eFCLlUtfPhbgD3LgIedHtp2uSYpz9o=;
+        b=At5ilA6Z+o2jDeaT+O14FEpojR1BHctZVoUzsX8esR4Qd0iZnuRC6RqTdfXDXeo9+i
+         zhaTQNeMNJo3eSkyI3seJnndDm/YBBY1mztSwhn2OAA4uGtJxTczI0Q6Pu03kBLChtjl
+         tOr8MkyjSKCmLwLv68OAQl3wPhMfrNKhCjBgFoFwvPsypAkqJHwexjXDkqM/VjGAuw9c
+         bqDAdJenYp3cVhO6wFu3QDxPK9xiu/wTJ0OcGgCQFHRJzY13cFDzOe1seaj/YnYJZ4br
+         OaxffCYdaNVZiNpUF8pQFEALeqIiTgbtoeequdz1zLeeQdbKZEwixjY5i0/gQEATCTia
+         a/gg==
+X-Gm-Message-State: AOJu0YxXJbUewxrSY7rJqKslcGRQUJtT+TvKI07Ypt8sb124FZhGEEkZ
+	Hd9VzSGWy/+R5t/EGx4zT1PU6HWHdIhWum9Y6jdiYA4lAEDmpao4fQdmIjY9dRZR39FRDIN5NQ=
 	=
-X-Google-Smtp-Source: AGHT+IGgGXd0YwsnNbBmOjS8U85+nouh42Fv0MQo/IxganC0g4CIjlugauCG5GDY/nU4c6gjRWBTho+b
-X-Received: from wmvy7.prod.google.com ([2002:a05:600d:4307:b0:46f:aa50:d706])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:5028:b0:46e:428a:b4c7
- with SMTP id 5b1f17b1804b1-46fa9af2ff1mr27394355e9.23.1759938422874; Wed, 08
- Oct 2025 08:47:02 -0700 (PDT)
-Date: Wed,  8 Oct 2025 17:45:50 +0200
+X-Google-Smtp-Source: AGHT+IEstc5WbaKR984lcE73yhlUqY4mnQpun5Em/Dltp0yYfhzejBDQJd+oDTcw6HoRIbI7W/BkGtQg
+X-Received: from wmjf4.prod.google.com ([2002:a7b:cd04:0:b0:46e:38c2:1a34])
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:468e:b0:46e:4b79:551
+ with SMTP id 5b1f17b1804b1-46fa9b092femr34512895e9.31.1759938425183; Wed, 08
+ Oct 2025 08:47:05 -0700 (PDT)
+Date: Wed,  8 Oct 2025 17:45:52 +0200
 In-Reply-To: <20251008154533.3089255-23-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,14 +72,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251008154533.3089255-23-ardb+git@google.com>
 X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3235; i=ardb@kernel.org;
- h=from:subject; bh=jIptOtZmKOCZwDiEu+JvA9/u7XRZR8J3wVrBatzcfYQ=;
- b=kA0DAAoWMG4JVi59LVwByyZiAGjmh0uhjRILxkNErSHRqZl7bCOk8F2GbmbuEihaJS52zdYRB
- 4h1BAAWCgAdFiEEEJv97rnLkRp9Q5odMG4JVi59LVwFAmjmh0sACgkQMG4JVi59LVwfRQD9FKpH
- Q9qKX3oWwmzrLHOlLSPFAhIUtqFZBlk/vuE50v4BAPJ2xQQvHPUUD1P6GRLlf3WTDIgb0IKpfQw jPHxyFbcH
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2401; i=ardb@kernel.org;
+ h=from:subject; bh=5nhtgxb3dS2zVbgouam5e+M4Gmu5K56lN9xZqYXBI3s=;
+ b=owGbwMvMwCVmkMcZplerG8N4Wi2JIeNZe6DOTtbCqP/MvEdnNO/+dDayK/WX4sFtL+4vEJj/I
+ +l81yPtjlIWBjEuBlkxRRaB2X/f7Tw9UarWeZYszBxWJpAhDFycAjCRyBUM/6z/Z+Z7rrJVsj3o
+ NKFtdgfTrePKpyWn38q/ubvk6uoTq6UZGebIWslEbD0dYrpZ+BV3WHF94Ya0X7/LTFfJp3Rny69 v4AMA
 X-Mailer: git-send-email 2.51.0.710.ga91ca5db03-goog
-Message-ID: <20251008154533.3089255-39-ardb+git@google.com>
-Subject: [PATCH v3 16/21] crypto/arm64: sm3 - Switch to 'ksimd' scoped guard API
+Message-ID: <20251008154533.3089255-41-ardb+git@google.com>
+Subject: [PATCH v3 18/21] arm64/xorblocks:  Switch to 'ksimd' scoped guard API
 From: Ard Biesheuvel <ardb+git@google.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, 
@@ -98,95 +98,70 @@ bytes to the size of struct task_struct.
 Reviewed-by: Eric Biggers <ebiggers@kernel.org>
 Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 ---
- arch/arm64/crypto/sm3-ce-glue.c   | 15 ++++++++-------
- arch/arm64/crypto/sm3-neon-glue.c | 16 ++++++----------
- 2 files changed, 14 insertions(+), 17 deletions(-)
+ arch/arm64/include/asm/xor.h | 22 ++++++++------------
+ 1 file changed, 9 insertions(+), 13 deletions(-)
 
-diff --git a/arch/arm64/crypto/sm3-ce-glue.c b/arch/arm64/crypto/sm3-ce-glue.c
-index eac6f5fa0abe..24c1fcfae072 100644
---- a/arch/arm64/crypto/sm3-ce-glue.c
-+++ b/arch/arm64/crypto/sm3-ce-glue.c
-@@ -5,7 +5,6 @@
-  * Copyright (C) 2018 Linaro Ltd <ard.biesheuvel@linaro.org>
-  */
- 
--#include <asm/neon.h>
- #include <crypto/internal/hash.h>
- #include <crypto/sm3.h>
- #include <crypto/sm3_base.h>
-@@ -13,6 +12,8 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- 
-+#include <asm/simd.h>
-+
- MODULE_DESCRIPTION("SM3 secure hash using ARMv8 Crypto Extensions");
- MODULE_AUTHOR("Ard Biesheuvel <ard.biesheuvel@linaro.org>");
- MODULE_LICENSE("GPL v2");
-@@ -25,18 +26,18 @@ static int sm3_ce_update(struct shash_desc *desc, const u8 *data,
- {
- 	int remain;
- 
--	kernel_neon_begin();
--	remain = sm3_base_do_update_blocks(desc, data, len, sm3_ce_transform);
--	kernel_neon_end();
-+	scoped_ksimd() {
-+		remain = sm3_base_do_update_blocks(desc, data, len, sm3_ce_transform);
-+	}
- 	return remain;
- }
- 
- static int sm3_ce_finup(struct shash_desc *desc, const u8 *data,
- 			unsigned int len, u8 *out)
- {
--	kernel_neon_begin();
--	sm3_base_do_finup(desc, data, len, sm3_ce_transform);
--	kernel_neon_end();
-+	scoped_ksimd() {
-+		sm3_base_do_finup(desc, data, len, sm3_ce_transform);
-+	}
- 	return sm3_base_finish(desc, out);
- }
- 
-diff --git a/arch/arm64/crypto/sm3-neon-glue.c b/arch/arm64/crypto/sm3-neon-glue.c
-index 6c4611a503a3..15f30cc24f32 100644
---- a/arch/arm64/crypto/sm3-neon-glue.c
-+++ b/arch/arm64/crypto/sm3-neon-glue.c
-@@ -5,7 +5,7 @@
-  * Copyright (C) 2022 Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-  */
- 
+diff --git a/arch/arm64/include/asm/xor.h b/arch/arm64/include/asm/xor.h
+index befcd8a7abc9..c38e3d017a79 100644
+--- a/arch/arm64/include/asm/xor.h
++++ b/arch/arm64/include/asm/xor.h
+@@ -9,7 +9,7 @@
+ #include <linux/hardirq.h>
+ #include <asm-generic/xor.h>
+ #include <asm/hwcap.h>
 -#include <asm/neon.h>
 +#include <asm/simd.h>
- #include <crypto/internal/hash.h>
- #include <crypto/sm3.h>
- #include <crypto/sm3_base.h>
-@@ -20,20 +20,16 @@ asmlinkage void sm3_neon_transform(struct sm3_state *sst, u8 const *src,
- static int sm3_neon_update(struct shash_desc *desc, const u8 *data,
- 			   unsigned int len)
- {
--	int remain;
--
--	kernel_neon_begin();
--	remain = sm3_base_do_update_blocks(desc, data, len, sm3_neon_transform);
--	kernel_neon_end();
--	return remain;
-+	scoped_ksimd()
-+		return sm3_base_do_update_blocks(desc, data, len,
-+						 sm3_neon_transform);
- }
  
- static int sm3_neon_finup(struct shash_desc *desc, const u8 *data,
- 			  unsigned int len, u8 *out)
+ #ifdef CONFIG_KERNEL_MODE_NEON
+ 
+@@ -19,9 +19,8 @@ static void
+ xor_neon_2(unsigned long bytes, unsigned long * __restrict p1,
+ 	   const unsigned long * __restrict p2)
  {
 -	kernel_neon_begin();
--	sm3_base_do_finup(desc, data, len, sm3_neon_transform);
+-	xor_block_inner_neon.do_2(bytes, p1, p2);
 -	kernel_neon_end();
 +	scoped_ksimd()
-+		sm3_base_do_finup(desc, data, len, sm3_neon_transform);
- 	return sm3_base_finish(desc, out);
++		xor_block_inner_neon.do_2(bytes, p1, p2);
  }
  
+ static void
+@@ -29,9 +28,8 @@ xor_neon_3(unsigned long bytes, unsigned long * __restrict p1,
+ 	   const unsigned long * __restrict p2,
+ 	   const unsigned long * __restrict p3)
+ {
+-	kernel_neon_begin();
+-	xor_block_inner_neon.do_3(bytes, p1, p2, p3);
+-	kernel_neon_end();
++	scoped_ksimd()
++		xor_block_inner_neon.do_3(bytes, p1, p2, p3);
+ }
+ 
+ static void
+@@ -40,9 +38,8 @@ xor_neon_4(unsigned long bytes, unsigned long * __restrict p1,
+ 	   const unsigned long * __restrict p3,
+ 	   const unsigned long * __restrict p4)
+ {
+-	kernel_neon_begin();
+-	xor_block_inner_neon.do_4(bytes, p1, p2, p3, p4);
+-	kernel_neon_end();
++	scoped_ksimd()
++		xor_block_inner_neon.do_4(bytes, p1, p2, p3, p4);
+ }
+ 
+ static void
+@@ -52,9 +49,8 @@ xor_neon_5(unsigned long bytes, unsigned long * __restrict p1,
+ 	   const unsigned long * __restrict p4,
+ 	   const unsigned long * __restrict p5)
+ {
+-	kernel_neon_begin();
+-	xor_block_inner_neon.do_5(bytes, p1, p2, p3, p4, p5);
+-	kernel_neon_end();
++	scoped_ksimd()
++		xor_block_inner_neon.do_5(bytes, p1, p2, p3, p4, p5);
+ }
+ 
+ static struct xor_block_template xor_block_arm64 = {
 -- 
 2.51.0.710.ga91ca5db03-goog
 
