@@ -1,263 +1,414 @@
-Return-Path: <linux-kernel+bounces-845491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDE6DBC5259
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:12:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B306BC5248
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:11:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 360781898DBF
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:12:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 428071897BE2
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CAE527E1AC;
-	Wed,  8 Oct 2025 13:12:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7257927A900;
+	Wed,  8 Oct 2025 13:11:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AfzQuLW2"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CvR2V9C7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7A1A31
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 13:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB7821D3F4
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 13:11:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759929139; cv=none; b=Wh//9l4bhMc7SFg282yigKr+2S8agbX00AP+dfVx+oAU/i2ThSAs/MjRJdNn/BNXAjydAFZ7jROTiJKEi97hYIWbJBpYLd44mI23s3DDMqP72HceZDZuPB6zvo6MIqWzRnnBDUnf70qT8NhtlwCi2PyLp8rj8bDQ+cTBz+FGAS8=
+	t=1759929107; cv=none; b=WtghWSwQJv7lbW+paRIVGmfQr6rX9Uhbcp1bs3GsGudm1b7lSXCM6IFz8ABGKFYDyZ/EVczSqrUHc9ypHyONvBdkHNaMZ7nhZVleZb6VEREDNz943pcqF1N2S1Hi5W3Bo4qOhQMytV0kEcdSoPBOIT1VP8eQhaRtypTny+dF9C4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759929139; c=relaxed/simple;
-	bh=xpmGg4c/Cl5ZY8pMnlzNFA1QPQP86/btg3j7tq3p2As=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eRyBIKbrt7htuxAlrEm/eD+eQZTX8/YzmrAFPgB27PmVVAtQbPLNfszQ/lC0NjJIyGNBvgoxrDDeC8Co0o+fbYQJB1epZDkoAqMeSZ0HizFrclQLSzOD9fWLsSoVl5/MXbb01ds8BcI6rbrPLWVHBMinfFf2bB89c5Xcj9PZEfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AfzQuLW2; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-7900f7f4ba9so71750516d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 06:12:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759929137; x=1760533937; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fBKwa75rcl5jnXtV/oS/WIGH19YZKQyj0WoGa9cCm+I=;
-        b=AfzQuLW26qLV0TO7J0YgyYvNWLNPTP+63uUk5+wQH7LcU/y06cOHO92q/9QCxgyLIs
-         ZJTMMMjbd8kzYT4Wl2KaPQN6rAx3z90MAKJhYUq+9XN2QhfKkRnumtDWq+DtL92JK/x/
-         D9+qjNLJBHIZoUy5HTjCnuQ7cxrYCPCDIIJiH+yJJxBMHC+00Tm6qU1ZaNa5GTO0ed0T
-         JLHc0ZOOrJ+AvvfjAI4SYHWfJe6IX3ol1dyGJRPNJOJhN9a+Xqr+BvSISEvrdluc4ly0
-         +/SaJCpENX8XbfSwnGTgUtfTbUzeConzbS/GEclFORfYcLkBx5nLayKmf4qiYKqeBgoe
-         syyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759929137; x=1760533937;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fBKwa75rcl5jnXtV/oS/WIGH19YZKQyj0WoGa9cCm+I=;
-        b=KY538CqCsjWIdQghLHUor2BRY43RhtffMVCtaa7iNwdT3IbrqlIv4nZE2XDjy8/Oud
-         tY8+VZ0y94F13qREPWbeTa8S0lj+nI094+4N6hPUW0C4xNzvSHxD3I68fHZywuYLUiFP
-         lhE/RcCsy62qm6rlzU1NdRiMSYicsE6D7YKz9y+SvZ5kiuMDHN8fFdUYFQytWZqxVtsl
-         qdQOjBtUWyam00NR5fMHIwZXsEIiC4gN0LJk1tl3ylyrzx3DgpmN0R3aIUqjShYmlmj6
-         VLuxgTPOEhnmbdEyYvq1zHWti41Kuzp65NyX9fL0o8442tzOHdqpFqLMsL7eTbuB+0dv
-         uXMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVD3T6Yj9fwWiOzjKG7TsBACH1j2H2OA7aoR3lcGNoXg3AfkJ6Gx6TAotP/tl+8jXY2bVH4CYJSE/OdWNI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweBQQb0NotYWKMoOyOq1Z3nnf3Qj2wjwItoz6khXgDdT23fz58
-	bchTUdq78HfY9df8bGGPElBY6bItSj27ICEUO4ilTcz8Q1nMEya7pfpYnbVxdwGYuSTWTmU1guJ
-	p9GKmemvA10lu02BX0pkel2IPeJSEHdM=
-X-Gm-Gg: ASbGncv5eyAM0ZUN0wiSP65CgbdYkiugasmnZLzrb0Is0aJMxDeBF4GNeegpMDSC35k
-	OyqPWOoT5jnMjQi4xI/WJFxmUmGfsAFXtnN1Smo7Yb2QvtNuAAd44edzEWj328RxIsjqGQbvq4F
-	FN1Z6TiMGA2PflcCGUz/Z0CIomBfoBjbk62QibC/g9lepEuMLOTBQqypdj0EKWd/ar0cfygRwtr
-	ter75YQY44o/Rw04SDwqiVJQEvJJ2aSKVNqWPAwRJlrLYz/yhB/2U55fGvMi6yzFS2y/ken670=
-X-Google-Smtp-Source: AGHT+IFzUXffB1zB7vnWpuKrlcQPdtVGJfSjZp7EPf6PBL/bCYvn3+y9LWXlhXOmcWWw4fXUcxkyECmMdiurn0kjvhs=
-X-Received: by 2002:a05:6214:268b:b0:796:6034:c0fb with SMTP id
- 6a1803df08f44-87b20ff9e9fmr42443166d6.13.1759929136653; Wed, 08 Oct 2025
- 06:12:16 -0700 (PDT)
+	s=arc-20240116; t=1759929107; c=relaxed/simple;
+	bh=Rjxnb9v8OPdRmchJHGE4ToAHqtgpWsjRyLajQl5ctos=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=USy3vONs+qWLHIKMgRjXytMlLHrFLfVqra5oYk6hyQtqgVXt/gE67/GGacHpZqWDJn6iJAGKgUgbFG+clLHxNCbazPFPR9dENiwQWaP9Vk0UvPskcoxZO280gyznZbl/crVGF/FoobNkjf76+adm5BKl2B1XxRDhjqaELpfkGCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CvR2V9C7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F5B4C4CEF4;
+	Wed,  8 Oct 2025 13:11:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759929106;
+	bh=Rjxnb9v8OPdRmchJHGE4ToAHqtgpWsjRyLajQl5ctos=;
+	h=From:Date:Subject:To:Cc:From;
+	b=CvR2V9C7Oh+kS3sJN1+u6DuzWtq1byguoOwq0sfOn1xd9iB4yD9U90I3W9UhEyc9R
+	 I7Maw9f3tCpvB0h7UEMDpl/KiPiJ8HOQKeb+jpzIyoNnV8mt4bEoVPPi/KkRJ/6iQO
+	 xl2MB5FR6IhkeHwqtoPvVLnMKNK7Kjegcax8BsWBaYoDp0WhD7IusBqPEjlbbI0pLc
+	 1xO0ldYE/RKs4/Owh8r9NDu8kdsRfxt0KOelYbmTY/eqyzY2nm52kdTc4lCJ9WTMmj
+	 5wsotfhTdV6OktU6LOXZ4VdodBLPuVsAItGU+/9o3NLUR2pWwSNhw6DQY1CYJeOM18
+	 2GEIgUPGmahRw==
+From: Maxime Ripard <mripard@kernel.org>
+Date: Wed, 08 Oct 2025 15:11:42 +0200
+Subject: [PATCH v2] drm/atomic: Change state pointers to a more meaningful
+ name
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250930055826.9810-1-laoar.shao@gmail.com> <20250930055826.9810-4-laoar.shao@gmail.com>
- <CAADnVQJtrJZOCWZKH498GBA8M0mYVztApk54mOEejs8Wr3nSiw@mail.gmail.com>
- <27e002e3-b39f-40f9-b095-52da0fbd0fc7@redhat.com> <CALOAHbBFNNXHdzp1zNuD530r9ZjpQF__wGWyAdR7oDLvemYSMw@mail.gmail.com>
- <7723a2c7-3750-44f7-9eb5-4ef64b64fbb8@redhat.com> <CALOAHbD_tRSyx1LXKfFrUriH6BcRS6Hw9N1=KddCJpgXH8vZug@mail.gmail.com>
- <96AE1C18-3833-4EB8-9145-202517331DF5@nvidia.com> <f743cfcd-2467-42c5-9a3c-3dceb6ff7aa8@redhat.com>
-In-Reply-To: <f743cfcd-2467-42c5-9a3c-3dceb6ff7aa8@redhat.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Wed, 8 Oct 2025 21:11:39 +0800
-X-Gm-Features: AS18NWAfLSZj5vVPHQEFQdqoJ0RU1U5dgEf--oeMfkY_sJP1b_wNMDZYIuMpIdc
-Message-ID: <CALOAHbAY9sjG-M=nwWRdbp3_m2cx_YJCb7DToaXn-kHNV+A5Zg@mail.gmail.com>
-Subject: Re: [PATCH v9 mm-new 03/11] mm: thp: add support for BPF based THP
- order selection
-To: David Hildenbrand <david@redhat.com>
-Cc: Zi Yan <ziy@nvidia.com>, Alexei Starovoitov <alexei.starovoitov@gmail.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	baolin.wang@linux.alibaba.com, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Liam Howlett <Liam.Howlett@oracle.com>, npache@redhat.com, ryan.roberts@arm.com, 
-	dev.jain@arm.com, usamaarif642@gmail.com, gutierrez.asier@huawei-partners.com, 
-	Matthew Wilcox <willy@infradead.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Amery Hung <ameryhung@gmail.com>, David Rientjes <rientjes@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, 21cnbao@gmail.com, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Tejun Heo <tj@kernel.org>, lance.yang@linux.dev, Randy Dunlap <rdunlap@infradead.org>, 
-	bpf <bpf@vger.kernel.org>, linux-mm <linux-mm@kvack.org>, 
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251008-drm-rename-state-v2-1-49b490b2676a@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAA1j5mgC/32NQQ6CMBBFr0Jm7Zh2QsW48h6GRQsDNEoh04ZoS
+ O9u5QAu30v++ztEFs8RbtUOwpuPfgkF6FRBN9kwMvq+MJAio5W6YC8zCgc7M8ZkE6MjpwbulRm
+ uBGW2Cg/+fSQfbeHJx7TI53jY9M/+iW0aNRrXdLU2ddOQuz9ZAr/Oi4zQ5py/MIx2QbEAAAA=
+X-Change-ID: 20251006-drm-rename-state-b2b0fed05f82
+To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
+ Rodrigo Siqueira <siqueira@igalia.com>, 
+ Alex Deucher <alexander.deucher@amd.com>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, Maxime Ripard <mripard@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11832; i=mripard@kernel.org;
+ h=from:subject:message-id; bh=Rjxnb9v8OPdRmchJHGE4ToAHqtgpWsjRyLajQl5ctos=;
+ b=owGbwMvMwCmsHn9OcpHtvjLG02pJDBnPkvlzWjyua9/S2DL9pb2PzC1dNgO9a99a9vhf2M71V
+ LT/3ZzOjqksDMKcDLJiiixPZMJOL29fXOVgv/IHzBxWJpAhDFycAjCR7bcYG9YKfyyOc68T7X6V
+ nGK0tzbT+Iy0JJ/mFi+/ALGth1MntdXfduhdL5Qo9iJ3XfnvM4GujPWe0bLH364WMShhjlF2c5h
+ 081sN/7c7Rjd1Da6bNxza8UYwXX3xxSdrUrhOnzpab9008zsA
+X-Developer-Key: i=mripard@kernel.org; a=openpgp;
+ fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
-On Wed, Oct 8, 2025 at 8:07=E2=80=AFPM David Hildenbrand <david@redhat.com>=
- wrote:
->
-> On 08.10.25 13:27, Zi Yan wrote:
-> > On 8 Oct 2025, at 5:04, Yafang Shao wrote:
-> >
-> >> On Wed, Oct 8, 2025 at 4:28=E2=80=AFPM David Hildenbrand <david@redhat=
-.com> wrote:
-> >>>
-> >>> On 08.10.25 10:18, Yafang Shao wrote:
-> >>>> On Wed, Oct 8, 2025 at 4:08=E2=80=AFPM David Hildenbrand <david@redh=
-at.com> wrote:
-> >>>>>
-> >>>>> On 03.10.25 04:18, Alexei Starovoitov wrote:
-> >>>>>> On Mon, Sep 29, 2025 at 10:59=E2=80=AFPM Yafang Shao <laoar.shao@g=
-mail.com> wrote:
-> >>>>>>>
-> >>>>>>> +unsigned long bpf_hook_thp_get_orders(struct vm_area_struct *vma=
-,
-> >>>>>>> +                                     enum tva_type type,
-> >>>>>>> +                                     unsigned long orders)
-> >>>>>>> +{
-> >>>>>>> +       thp_order_fn_t *bpf_hook_thp_get_order;
-> >>>>>>> +       int bpf_order;
-> >>>>>>> +
-> >>>>>>> +       /* No BPF program is attached */
-> >>>>>>> +       if (!test_bit(TRANSPARENT_HUGEPAGE_BPF_ATTACHED,
-> >>>>>>> +                     &transparent_hugepage_flags))
-> >>>>>>> +               return orders;
-> >>>>>>> +
-> >>>>>>> +       rcu_read_lock();
-> >>>>>>> +       bpf_hook_thp_get_order =3D rcu_dereference(bpf_thp.thp_ge=
-t_order);
-> >>>>>>> +       if (WARN_ON_ONCE(!bpf_hook_thp_get_order))
-> >>>>>>> +               goto out;
-> >>>>>>> +
-> >>>>>>> +       bpf_order =3D bpf_hook_thp_get_order(vma, type, orders);
-> >>>>>>> +       orders &=3D BIT(bpf_order);
-> >>>>>>> +
-> >>>>>>> +out:
-> >>>>>>> +       rcu_read_unlock();
-> >>>>>>> +       return orders;
-> >>>>>>> +}
-> >>>>>>
-> >>>>>> I thought I explained it earlier.
-> >>>>>> Nack to a single global prog approach.
-> >>>>>
-> >>>>> I agree. We should have the option to either specify a policy globa=
-lly,
-> >>>>> or more refined for cgroups/processes.
-> >>>>>
-> >>>>> It's an interesting question if a program would ever want to ship i=
-ts
-> >>>>> own policy: I can see use cases for that.
-> >>>>>
-> >>>>> So I agree that we should make it more flexible right from the star=
-t.
-> >>>>
-> >>>> To achieve per-process granularity, the struct-ops must be embedded
-> >>>> within the mm_struct as follows:
-> >>>>
-> >>>> +#ifdef CONFIG_BPF_MM
-> >>>> +struct bpf_mm_ops {
-> >>>> +#ifdef CONFIG_BPF_THP
-> >>>> +       struct bpf_thp_ops bpf_thp;
-> >>>> +#endif
-> >>>> +};
-> >>>> +#endif
-> >>>> +
-> >>>>    /*
-> >>>>     * Opaque type representing current mm_struct flag state. Must be=
- accessed via
-> >>>>     * mm_flags_xxx() helper functions.
-> >>>> @@ -1268,6 +1281,10 @@ struct mm_struct {
-> >>>>    #ifdef CONFIG_MM_ID
-> >>>>                   mm_id_t mm_id;
-> >>>>    #endif /* CONFIG_MM_ID */
-> >>>> +
-> >>>> +#ifdef CONFIG_BPF_MM
-> >>>> +               struct bpf_mm_ops bpf_mm;
-> >>>> +#endif
-> >>>>           } __randomize_layout;
-> >>>>
-> >>>> We should be aware that this will involve extensive changes in mm/.
-> >>>
-> >>> That's what we do on linux-mm :)
-> >>>
-> >>> It would be great to use Alexei's feedback/experience to come up with
-> >>> something that is flexible for various use cases.
-> >>
-> >> I'm still not entirely convinced that allowing individual processes or
-> >> cgroups to run independent progs is a valid use case. However, since
-> >> we have a consensus that this is the right direction, I will proceed
-> >> with this approach.
-> >>
-> >>>
-> >>> So I think this is likely the right direction.
-> >>>
-> >>> It would be great to evaluate which scenarios we could unlock with th=
-is
-> >>> (global vs. per-process vs. per-cgroup) approach, and how
-> >>> extensive/involved the changes will be.
-> >>
-> >> 1. Global Approach
-> >>     - Pros:
-> >>       Simple;
-> >>       Can manage different THP policies for different cgroups or proce=
-sses.
-> >>    - Cons:
-> >>       Does not allow individual processes to run their own BPF program=
-s.
-> >>
-> >> 2. Per-Process Approach
-> >>      - Pros:
-> >>        Enables each process to run its own BPF program.
-> >>      - Cons:
-> >>        Introduces significant complexity, as it requires handling the
-> >> BPF program's lifecycle (creation, destruction, inheritance) within
-> >> every mm_struct.
-> >>
-> >> 3. Per-Cgroup Approach
-> >>      - Pros:
-> >>         Allows individual cgroups to run their own BPF programs.
-> >>         Less complex than the per-process model, as it can leverage th=
-e
-> >> existing cgroup operations structure.
-> >>      - Cons:
-> >>         Creates a dependency on the cgroup subsystem.
-> >>         might not be easy to control at the per-process level.
-> >
-> > Another issue is that how and who to deal with hierarchical cgroup, whe=
-re one
-> > cgroup is a parent of another. Should bpf program to do that or mm code
-> > to do that? I remember hierarchical cgroup is the main reason THP contr=
-ol
-> > at cgroup level is rejected. If we do per-cgroup bpf control, wouldn't =
-we
-> > get the same rejection from cgroup folks?
->
-> Valid point.
->
-> I do wonder if that problem was already encountered elsewhere with bpf
-> and if there is already a solution.
+The state pointer found in the struct drm_atomic_state internals for
+most object is a bit ambiguous, and confusing when those internals also
+have old state and new state.
 
-Our standard is to run only one instance of a BPF program type
-system-wide to avoid conflicts. For example, we can't have both
-systemd and a container runtime running bpf-thp simultaneously.
+After the recent cleanups, the state pointer only use is to point to the
+state we need to free when destroying the atomic state.
 
-Perhaps Alexei can enlighten us, though we'd need to read between his
-characteristically brief lines. ;-)
+We can thus rename it something less ambiguous, and hopefully more
+meaningful.
 
->
-> Focusing on processes instead of cgroups might be easier initially.
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
+---
+Changes in v2:
+- Switch from freeable_state to state_to_destroy
+- Link to v1: https://lore.kernel.org/r/20251006-drm-rename-state-v1-1-5b7c4154772b@kernel.org
+---
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |  4 ++--
+ drivers/gpu/drm/drm_atomic.c                      | 24 +++++++++++------------
+ drivers/gpu/drm/drm_atomic_helper.c               |  8 ++++----
+ include/drm/drm_atomic.h                          | 16 +++++++--------
+ 4 files changed, 26 insertions(+), 26 deletions(-)
 
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 62defeccbb5ca09c89523fc4112d2085bbdbb0a9..275e237c1058b76640c8dd36443b034c6c71f84f 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -12335,22 +12335,22 @@ static int amdgpu_dm_atomic_check(struct drm_device *dev,
+ 
+ 			if (obj->funcs == adev->dm.atomic_obj.funcs) {
+ 				int j = state->num_private_objs-1;
+ 
+ 				dm_atomic_destroy_state(obj,
+-						state->private_objs[i].state);
++						state->private_objs[i].state_to_destroy);
+ 
+ 				/* If i is not at the end of the array then the
+ 				 * last element needs to be moved to where i was
+ 				 * before the array can safely be truncated.
+ 				 */
+ 				if (i != j)
+ 					state->private_objs[i] =
+ 						state->private_objs[j];
+ 
+ 				state->private_objs[j].ptr = NULL;
+-				state->private_objs[j].state = NULL;
++				state->private_objs[j].state_to_destroy = NULL;
+ 				state->private_objs[j].old_state = NULL;
+ 				state->private_objs[j].new_state = NULL;
+ 
+ 				state->num_private_objs = j;
+ 				break;
+diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+index 0fda567c390057b10bce691d9ddc11308088d92e..be2cb6e43cb07fbe553d1ab875911253be628d1a 100644
+--- a/drivers/gpu/drm/drm_atomic.c
++++ b/drivers/gpu/drm/drm_atomic.c
+@@ -205,13 +205,13 @@ void drm_atomic_state_default_clear(struct drm_atomic_state *state)
+ 
+ 		if (!connector)
+ 			continue;
+ 
+ 		connector->funcs->atomic_destroy_state(connector,
+-						       state->connectors[i].state);
++						       state->connectors[i].state_to_destroy);
+ 		state->connectors[i].ptr = NULL;
+-		state->connectors[i].state = NULL;
++		state->connectors[i].state_to_destroy = NULL;
+ 		state->connectors[i].old_state = NULL;
+ 		state->connectors[i].new_state = NULL;
+ 		drm_connector_put(connector);
+ 	}
+ 
+@@ -220,14 +220,14 @@ void drm_atomic_state_default_clear(struct drm_atomic_state *state)
+ 
+ 		if (!crtc)
+ 			continue;
+ 
+ 		crtc->funcs->atomic_destroy_state(crtc,
+-						  state->crtcs[i].state);
++						  state->crtcs[i].state_to_destroy);
+ 
+ 		state->crtcs[i].ptr = NULL;
+-		state->crtcs[i].state = NULL;
++		state->crtcs[i].state_to_destroy = NULL;
+ 		state->crtcs[i].old_state = NULL;
+ 		state->crtcs[i].new_state = NULL;
+ 
+ 		if (state->crtcs[i].commit) {
+ 			drm_crtc_commit_put(state->crtcs[i].commit);
+@@ -240,24 +240,24 @@ void drm_atomic_state_default_clear(struct drm_atomic_state *state)
+ 
+ 		if (!plane)
+ 			continue;
+ 
+ 		plane->funcs->atomic_destroy_state(plane,
+-						   state->planes[i].state);
++						   state->planes[i].state_to_destroy);
+ 		state->planes[i].ptr = NULL;
+-		state->planes[i].state = NULL;
++		state->planes[i].state_to_destroy = NULL;
+ 		state->planes[i].old_state = NULL;
+ 		state->planes[i].new_state = NULL;
+ 	}
+ 
+ 	for (i = 0; i < state->num_private_objs; i++) {
+ 		struct drm_private_obj *obj = state->private_objs[i].ptr;
+ 
+ 		obj->funcs->atomic_destroy_state(obj,
+-						 state->private_objs[i].state);
++						 state->private_objs[i].state_to_destroy);
+ 		state->private_objs[i].ptr = NULL;
+-		state->private_objs[i].state = NULL;
++		state->private_objs[i].state_to_destroy = NULL;
+ 		state->private_objs[i].old_state = NULL;
+ 		state->private_objs[i].new_state = NULL;
+ 	}
+ 	state->num_private_objs = 0;
+ 
+@@ -359,11 +359,11 @@ drm_atomic_get_crtc_state(struct drm_atomic_state *state,
+ 
+ 	crtc_state = crtc->funcs->atomic_duplicate_state(crtc);
+ 	if (!crtc_state)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	state->crtcs[index].state = crtc_state;
++	state->crtcs[index].state_to_destroy = crtc_state;
+ 	state->crtcs[index].old_state = crtc->state;
+ 	state->crtcs[index].new_state = crtc_state;
+ 	state->crtcs[index].ptr = crtc;
+ 	crtc_state->state = state;
+ 
+@@ -544,11 +544,11 @@ drm_atomic_get_plane_state(struct drm_atomic_state *state,
+ 
+ 	plane_state = plane->funcs->atomic_duplicate_state(plane);
+ 	if (!plane_state)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	state->planes[index].state = plane_state;
++	state->planes[index].state_to_destroy = plane_state;
+ 	state->planes[index].ptr = plane;
+ 	state->planes[index].old_state = plane->state;
+ 	state->planes[index].new_state = plane_state;
+ 	plane_state->state = state;
+ 
+@@ -856,11 +856,11 @@ drm_atomic_get_private_obj_state(struct drm_atomic_state *state,
+ 
+ 	obj_state = obj->funcs->atomic_duplicate_state(obj);
+ 	if (!obj_state)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	state->private_objs[index].state = obj_state;
++	state->private_objs[index].state_to_destroy = obj_state;
+ 	state->private_objs[index].old_state = obj->state;
+ 	state->private_objs[index].new_state = obj_state;
+ 	state->private_objs[index].ptr = obj;
+ 	obj_state->state = state;
+ 
+@@ -1159,11 +1159,11 @@ drm_atomic_get_connector_state(struct drm_atomic_state *state,
+ 	connector_state = connector->funcs->atomic_duplicate_state(connector);
+ 	if (!connector_state)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	drm_connector_get(connector);
+-	state->connectors[index].state = connector_state;
++	state->connectors[index].state_to_destroy = connector_state;
+ 	state->connectors[index].old_state = connector->state;
+ 	state->connectors[index].new_state = connector_state;
+ 	state->connectors[index].ptr = connector;
+ 	connector_state->state = state;
+ 
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index d5ebe6ea0acbc5a08aef7fa41ecb9ed5d8fa8e80..5a473a274ff06d7ab83039e0a6328e1372b80a00 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -3234,21 +3234,21 @@ int drm_atomic_helper_swap_state(struct drm_atomic_state *state,
+ 		WARN_ON(connector->state != old_conn_state);
+ 
+ 		old_conn_state->state = state;
+ 		new_conn_state->state = NULL;
+ 
+-		state->connectors[i].state = old_conn_state;
++		state->connectors[i].state_to_destroy = old_conn_state;
+ 		connector->state = new_conn_state;
+ 	}
+ 
+ 	for_each_oldnew_crtc_in_state(state, crtc, old_crtc_state, new_crtc_state, i) {
+ 		WARN_ON(crtc->state != old_crtc_state);
+ 
+ 		old_crtc_state->state = state;
+ 		new_crtc_state->state = NULL;
+ 
+-		state->crtcs[i].state = old_crtc_state;
++		state->crtcs[i].state_to_destroy = old_crtc_state;
+ 		crtc->state = new_crtc_state;
+ 
+ 		if (new_crtc_state->commit) {
+ 			spin_lock(&crtc->commit_lock);
+ 			list_add(&new_crtc_state->commit->commit_entry,
+@@ -3264,22 +3264,22 @@ int drm_atomic_helper_swap_state(struct drm_atomic_state *state,
+ 		WARN_ON(plane->state != old_plane_state);
+ 
+ 		old_plane_state->state = state;
+ 		new_plane_state->state = NULL;
+ 
+-		state->planes[i].state = old_plane_state;
++		state->planes[i].state_to_destroy = old_plane_state;
+ 		plane->state = new_plane_state;
+ 	}
+ 	drm_panic_unlock(state->dev, flags);
+ 
+ 	for_each_oldnew_private_obj_in_state(state, obj, old_obj_state, new_obj_state, i) {
+ 		WARN_ON(obj->state != old_obj_state);
+ 
+ 		old_obj_state->state = state;
+ 		new_obj_state->state = NULL;
+ 
+-		state->private_objs[i].state = old_obj_state;
++		state->private_objs[i].state_to_destroy = old_obj_state;
+ 		obj->state = new_obj_state;
+ 	}
+ 
+ 	return 0;
+ }
+diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
+index c8ab2163bf658cd06b12a8dabada7c088a328654..155e82f87e4d47161475b57fc28762d7ba8fd206 100644
+--- a/include/drm/drm_atomic.h
++++ b/include/drm/drm_atomic.h
+@@ -159,11 +159,11 @@ struct drm_crtc_commit {
+ 
+ struct __drm_planes_state {
+ 	struct drm_plane *ptr;
+ 
+ 	/**
+-	 * @state:
++	 * @state_to_destroy:
+ 	 *
+ 	 * Used to track the @drm_plane_state we will need to free when
+ 	 * tearing down the associated &drm_atomic_state in
+ 	 * $drm_mode_config_funcs.atomic_state_clear or
+ 	 * drm_atomic_state_default_clear().
+@@ -171,20 +171,20 @@ struct __drm_planes_state {
+ 	 * Before a commit, and the call to
+ 	 * drm_atomic_helper_swap_state() in particular, it points to
+ 	 * the same state than @new_state. After a commit, it points to
+ 	 * the same state than @old_state.
+ 	 */
+-	struct drm_plane_state *state;
++	struct drm_plane_state *state_to_destroy;
+ 
+ 	struct drm_plane_state *old_state, *new_state;
+ };
+ 
+ struct __drm_crtcs_state {
+ 	struct drm_crtc *ptr;
+ 
+ 	/**
+-	 * @state:
++	 * @state_to_destroy:
+ 	 *
+ 	 * Used to track the @drm_crtc_state we will need to free when
+ 	 * tearing down the associated &drm_atomic_state in
+ 	 * $drm_mode_config_funcs.atomic_state_clear or
+ 	 * drm_atomic_state_default_clear().
+@@ -192,11 +192,11 @@ struct __drm_crtcs_state {
+ 	 * Before a commit, and the call to
+ 	 * drm_atomic_helper_swap_state() in particular, it points to
+ 	 * the same state than @new_state. After a commit, it points to
+ 	 * the same state than @old_state.
+ 	 */
+-	struct drm_crtc_state *state;
++	struct drm_crtc_state *state_to_destroy;
+ 
+ 	struct drm_crtc_state *old_state, *new_state;
+ 
+ 	/**
+ 	 * @commit:
+@@ -214,11 +214,11 @@ struct __drm_crtcs_state {
+ 
+ struct __drm_connnectors_state {
+ 	struct drm_connector *ptr;
+ 
+ 	/**
+-	 * @state:
++	 * @state_to_destroy:
+ 	 *
+ 	 * Used to track the @drm_connector_state we will need to free
+ 	 * when tearing down the associated &drm_atomic_state in
+ 	 * $drm_mode_config_funcs.atomic_state_clear or
+ 	 * drm_atomic_state_default_clear().
+@@ -226,11 +226,11 @@ struct __drm_connnectors_state {
+ 	 * Before a commit, and the call to
+ 	 * drm_atomic_helper_swap_state() in particular, it points to
+ 	 * the same state than @new_state. After a commit, it points to
+ 	 * the same state than @old_state.
+ 	 */
+-	struct drm_connector_state *state;
++	struct drm_connector_state *state_to_destroy;
+ 
+ 	struct drm_connector_state *old_state, *new_state;
+ 
+ 	/**
+ 	 * @out_fence_ptr:
+@@ -391,11 +391,11 @@ struct drm_private_state {
+ 
+ struct __drm_private_objs_state {
+ 	struct drm_private_obj *ptr;
+ 
+ 	/**
+-	 * @state:
++	 * @state_to_destroy:
+ 	 *
+ 	 * Used to track the @drm_private_state we will need to free
+ 	 * when tearing down the associated &drm_atomic_state in
+ 	 * $drm_mode_config_funcs.atomic_state_clear or
+ 	 * drm_atomic_state_default_clear().
+@@ -403,11 +403,11 @@ struct __drm_private_objs_state {
+ 	 * Before a commit, and the call to
+ 	 * drm_atomic_helper_swap_state() in particular, it points to
+ 	 * the same state than @new_state. After a commit, it points to
+ 	 * the same state than @old_state.
+ 	 */
+-	struct drm_private_state *state;
++	struct drm_private_state *state_to_destroy;
+ 
+ 	struct drm_private_state *old_state, *new_state;
+ };
+ 
+ /**
 
---=20
-Regards
-Yafang
+---
+base-commit: 7a031e8d3528ba0860d282ffd3c88fbda4bf8c4c
+change-id: 20251006-drm-rename-state-b2b0fed05f82
+
+Best regards,
+-- 
+Maxime Ripard <mripard@kernel.org>
+
 
