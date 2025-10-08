@@ -1,394 +1,315 @@
-Return-Path: <linux-kernel+bounces-846005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51673BC6B38
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 23:42:06 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 670A6BC6B3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 23:43:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E035C3B8A36
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 21:42:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 406544EEA59
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 21:43:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87CB42C11F4;
-	Wed,  8 Oct 2025 21:41:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2CE32C11E0;
+	Wed,  8 Oct 2025 21:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E/1/Q51B"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mBgCsz8J"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE8027055E;
-	Wed,  8 Oct 2025 21:41:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759959714; cv=fail; b=j7dTkUkG0+J/HNLd7kR412zqSyUNJ4Kk4yYf9yCc6d2PI5kqQUfe8xxhWdFWfc0BhauANWo+miEiEw5h9cydFnI0I5Z2APmhnUOqXxzKwkm+8VY+1yi3JDubsHN/DG0LEsTdgv/sVOcD4SNSP8C7aSZSGMJdW9Ena/XR9GjnwgE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759959714; c=relaxed/simple;
-	bh=+cbH02yNj+vETcHln1p0QXcMo7VcG4yJU5EpL2V9taY=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=QMgVDhHHN8vD01aIMKPP3svH+fmFLJeouCBASvZbKrxS2rA+0ysSzKyhbr5xOkHWu0Aa5WNFzy4JGCBe2YNdXqp0N9Lv+gE19O6sR0FXlkg7N1U/6uC4Nn/rHCogSaG1v43O6bfBzgw+GKr0HZ4rmKdFjPatLTu/TRu/ULr6SCw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E/1/Q51B; arc=fail smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759959713; x=1791495713;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:mime-version;
-  bh=+cbH02yNj+vETcHln1p0QXcMo7VcG4yJU5EpL2V9taY=;
-  b=E/1/Q51BFJ70BRX7/dV730OCqHpepVolZxEPlLoqD2zKdnZNSh62gnVO
-   YzSm1dWPC3FOM5WJ9Y2mO1Rztp5E+XQtnugthddTasnmqDQDcpGlPVbMh
-   8Nig2dJnsQaXoFBgavoJDEdHCJO2xhnRVcPClcf3LmPdHSdvQF2+bfPi/
-   JIwrTyrAgPf/RFuqgSdS2SCaX4kTh5OotEZtHg3hwe/s7hfyzZ9D4ZVdX
-   rgHsbm7r9My7nNIeGgLtPpqvXp3aXdILypeniXJ6pz9bjtTonYMt3LEID
-   EwoWtFo/APn6jE7mOnG+gN37wpfUqsYqmNA8lqvjatemHZXNUgfKAig+c
-   A==;
-X-CSE-ConnectionGUID: 6hm2XfXZQQWjNUgCDiMgWg==
-X-CSE-MsgGUID: 1ZvYtNKURSqcTaf/ACHJJA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11576"; a="49726403"
-X-IronPort-AV: E=Sophos;i="6.19,214,1754982000"; 
-   d="asc'?scan'208";a="49726403"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2025 14:41:51 -0700
-X-CSE-ConnectionGUID: VeUGuIu9QFawwPubE4PQtA==
-X-CSE-MsgGUID: Lf3pUxiMSQ+6DmSrdgb9Eg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,214,1754982000"; 
-   d="asc'?scan'208";a="179665237"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2025 14:41:51 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Wed, 8 Oct 2025 14:41:49 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Wed, 8 Oct 2025 14:41:49 -0700
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (52.101.43.9) by
- edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Wed, 8 Oct 2025 14:41:49 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Xr4Ubbwhf70A2mkoo905CiO5Ia1Cr20x4MN2zEPzO+Q3lISYsw5ufR1BjpAuGmaOsXVVkrdftlfDQ4EI8oIB4/GCJccBfdLPBAEeg6p+WVWizIzl3dv8Wv0DNBKV8+FqjCF9A0rsXAIidac5B0YMjgLA9owNbaF5Pddy+SJ1INPCQ+c5kpri7Ie7MowX0RjQvSGlq8q/D4h1hDaYpn/e2EyA+QcO9u87hO62hYWHzGU/SQDmAPNe4W4lVFKVVUdPQS2viZrHuRd4KXmDjnEmMizZYyRxWnEXWynbUe0i/C8hM8im/vlG48bkrk/SEtuwGEeJyAT2Rua7JZzKnf5DIA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xsZTP8omrSQ63bNIeGNIROQLJKRkK0K9E0WTRIRB404=;
- b=HR35aXHDq6GPGymeeJw58FIJbHRPIXzVBIbUUlpPPHow55igk0Hc8/z8B7JKHt9nDr/5ac7GHSrNHohjdvCYmUwbJB1eLBZe7A1l60VgLxT+b/PcmJ5EGNVifPnEcWWF1I84qKe+xajwWvgtrHBXOANXMwDGlYn95NKy52fJBenP/xmbE848muobCFJVimGhnh5HOmZ1BwUJL5RG8EXIbFTjUyziTDFawT56OoydO8EikGOvFb+bs+DEIlyYpeePTJFUiPf0Aju2CMuzNNOSsSib1fEBMNw/kLCChynyFW3rsfa0tOnhk/LcBnmjz9cDzHsWelkv8KTiTY2AHcurDg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
- by SA1PR11MB6894.namprd11.prod.outlook.com (2603:10b6:806:2b1::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Wed, 8 Oct
- 2025 21:41:43 +0000
-Received: from CO1PR11MB5089.namprd11.prod.outlook.com
- ([fe80::81f7:c6c0:ca43:11c3]) by CO1PR11MB5089.namprd11.prod.outlook.com
- ([fe80::81f7:c6c0:ca43:11c3%4]) with mapi id 15.20.9182.017; Wed, 8 Oct 2025
- 21:41:43 +0000
-Message-ID: <ae493f48-ae07-4091-98dd-db254f2ee12f@intel.com>
-Date: Wed, 8 Oct 2025 14:41:40 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net 3/8] idpf: fix possible race in idpf_vport_stop()
-To: "Tantilov, Emil S" <emil.s.tantilov@intel.com>, Jakub Kicinski
-	<kuba@kernel.org>
-CC: Przemek Kitszel <przemyslaw.kitszel@intel.com>, Andrew Lunn
-	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, "Pavan Kumar
- Linga" <pavan.kumar.linga@intel.com>, Alexander Lobakin
-	<aleksander.lobakin@intel.com>, Willem de Bruijn <willemb@google.com>,
-	Sridhar Samudrala <sridhar.samudrala@intel.com>, Phani Burra
-	<phani.r.burra@intel.com>, Piotr Kwapulinski <piotr.kwapulinski@intel.com>,
-	Simon Horman <horms@kernel.org>, Radoslaw Tyl <radoslawx.tyl@intel.com>,
-	Jedrzej Jagielski <jedrzej.jagielski@intel.com>, Mateusz Polchlopek
-	<mateusz.polchlopek@intel.com>, Anton Nadezhdin <anton.nadezhdin@intel.com>,
-	Konstantin Ilichev <konstantin.ilichev@intel.com>, Milena Olech
-	<milena.olech@intel.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Joshua Hay <joshua.a.hay@intel.com>,
-	Aleksandr Loktionov <aleksandr.loktionov@intel.com>, Chittim Madhu
-	<madhu.chittim@intel.com>, Samuel Salin <Samuel.salin@intel.com>
-References: <20251001-jk-iwl-net-2025-10-01-v1-0-49fa99e86600@intel.com>
- <20251001-jk-iwl-net-2025-10-01-v1-3-49fa99e86600@intel.com>
- <20251003104332.40581946@kernel.org>
- <4a128348-48f9-40d7-b5bf-c3f1af27679c@intel.com>
- <20251006102659.595825fe@kernel.org>
- <048833d9-01f5-438d-a3fa-354a008ebbd3@intel.com>
-Content-Language: en-US
-From: Jacob Keller <jacob.e.keller@intel.com>
-Autocrypt: addr=jacob.e.keller@intel.com; keydata=
- xjMEaFx9ShYJKwYBBAHaRw8BAQdAE+TQsi9s60VNWijGeBIKU6hsXLwMt/JY9ni1wnsVd7nN
- J0phY29iIEtlbGxlciA8amFjb2IuZS5rZWxsZXJAaW50ZWwuY29tPsKTBBMWCgA7FiEEIEBU
- qdczkFYq7EMeapZdPm8PKOgFAmhcfUoCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AA
- CgkQapZdPm8PKOiZAAEA4UV0uM2PhFAw+tlK81gP+fgRqBVYlhmMyroXadv0lH4BAIf4jLxI
- UPEL4+zzp4ekaw8IyFz+mRMUBaS2l+cpoBUBzjgEaFx9ShIKKwYBBAGXVQEFAQEHQF386lYe
- MPZBiQHGXwjbBWS5OMBems5rgajcBMKc4W4aAwEIB8J4BBgWCgAgFiEEIEBUqdczkFYq7EMe
- apZdPm8PKOgFAmhcfUoCGwwACgkQapZdPm8PKOjbUQD+MsPBANqBUiNt+7w0dC73R6UcQzbg
- cFx4Yvms6cJjeD4BAKf193xbq7W3T7r9BdfTw6HRFYDiHXgkyoc/2Q4/T+8H
-In-Reply-To: <048833d9-01f5-438d-a3fa-354a008ebbd3@intel.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="------------QIqlPG5WBpJ0Po19oeiyfZ3M"
-X-ClientProxiedBy: MW4PR04CA0372.namprd04.prod.outlook.com
- (2603:10b6:303:81::17) To CO1PR11MB5089.namprd11.prod.outlook.com
- (2603:10b6:303:9b::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F6327055E
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 21:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759959798; cv=none; b=h1x8gxIdqF301rXcR8PRRvYW0c7EnfnZ46Lg+CzbhPN1aqgFDEwueWzQlt7T+4D+UpylIUoo9BsWk4Pq7jJqjwKI7SnRPCqy3W8VGHk9eFsHRiWK7Idn8ktONy7pBFXzPu8FGq6Rsml9pG3LGwAxGpVE/twoXoDU8HhtwMdwPqk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759959798; c=relaxed/simple;
+	bh=ARXYGRH0hqA9+AeyMzxmDEW0dBxT+zTXpJjEa0sXjmE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LbIXJbOwSYyC128Rv+JehHBGhBokWHQ/BjiRgELi1Yvvyn4vRNrMTt1HJLNRWQMLIBfm2s8ip4X00hO86FRPeeN7HFEjIQxuik9lDCexvohJlgz2+JXV5qwi5jmX4g3dKcYMcTzMPfebp1QnMQVDvcXZ2fHDCs0EuewGMjngkuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mBgCsz8J; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2731ff54949so29465ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 14:43:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759959796; x=1760564596; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D2fuMCP1sy89+lhYN3DsuIIe7UgVwgx4dMuIb3MIPfg=;
+        b=mBgCsz8JSBmUyNks9qwqnvxfX+kzUCEhZNk47DN0ho1kagoBUsBepNWBYomam+73OV
+         FmUD/0R94c4WlnK7k3V/RTaAMPHEkqRgnui4kw9ne4nL1wPB+H+kbXgXztfB9CbVGQdf
+         uqylEKUXZNTWyifsAP7vOJ0iUxoBMT2BseiZ4uf/wE3Z0gca/YcjcYN0o+LB+POdULnL
+         5AHCW5hOOLh30JFN+UciAU2Vw4zkCuhvLNzUILJCBEi7K43YC5qvlDNL3oe7GCjIeBNP
+         1gSMtX35J0OjJ7fxffgwpWOZU3HLI68Bi3rUKXbglSJLvBfMClmlGAXER9ed6d2a/KS4
+         sZfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759959796; x=1760564596;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=D2fuMCP1sy89+lhYN3DsuIIe7UgVwgx4dMuIb3MIPfg=;
+        b=aCfKyZ2G0ryB5QGxUIUfVL6UHqhBTGORufS5olUOfDhBNhpjjrKuvkONbeQ6WU5kVs
+         Zg2M3rWQ1e9AROiafCf8INvnyVf1L1q8VgJZj19phZJ3k/lv/GXpcgLkiUpkOPRxVNlo
+         MYHl/N1FOQOIhy2T1TquI0EzUssOcsRU8XoO+zMhNgoCTXeDs/Ea5JbxJVCp4H3m3ZVG
+         g2ui7/MhaMRsctME6hNeLFgPUbPkTMmALXIReQnXpMp+Ne+ocI+W7Ni+0F9vH6C+fO3o
+         8awc+OtDf69TKW5k6vBB8jOmBkuiksnHEKI04kxc1Ko09HJ3+JvjGVPUxyQtOChKOJns
+         1lEw==
+X-Forwarded-Encrypted: i=1; AJvYcCUA7RhcN0F+Ru1JTR2mntdjt9VXxsfCxzMReqB10udnF52wGabQHVNhPkZIF8FD0q4McdeAD+igw56Xwok=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbDnZf6fswht8LFgWp546xZPzZT8WEMZJyQGPie1GKnrfegvrB
+	h4aQr+w9tMYzNp2YNtEUq2h6rTYcGKLYCvgopnnQpGvf8B4vBlz2WOif7o4pYnMpp+Kfre3qtsW
+	le6pqVZESjPwFhQaE/9+poD+R/Z1ndhn8gFHWhu5F
+X-Gm-Gg: ASbGncuksddoipWj1r4cWbP5NKuxvTI1eLrXXzWjy3r3ohDvJiuHKuY4SwBb1ITPVKz
+	1FgF4mybcTEKtUtoURqgprE+En80TT3RSH58iIvruNnobk2NUqv4vN+cKkJ/m8O64rAvI9e7t+H
+	iXbB4fGtcw05vglsAaZGUSOfe1byt13K38JBtMY9ZsmOdCjHMsTRUM6EnNReGVAlMn5RxwSV2fH
+	70q6uA/tu9EzRoYpN9jbfOmmYzP/p09Gpyiec2cPyUj15qfj3/q5uIu1ShxmPlEtK17
+X-Google-Smtp-Source: AGHT+IFxnsq2l/VAiZk5mWvuxYgF3CQXfnpHofl+6taTokvrZwh7Sdn4YSXETaHvpi7HQ0E16Ci6oHNCDywBNSrwBWg=
+X-Received: by 2002:a17:902:da85:b0:24b:131c:48b4 with SMTP id
+ d9443c01a7336-290276035b7mr8435375ad.5.1759959795207; Wed, 08 Oct 2025
+ 14:43:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PR11MB5089:EE_|SA1PR11MB6894:EE_
-X-MS-Office365-Filtering-Correlation-Id: f7dd01ea-dfb2-4a51-2b4d-08de06b378a1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?azh6NW14ZHpKY3ZiOW5saTdLYURJaVdHTW4rb0RQTkhyYmNUVTZodXpMdDEr?=
- =?utf-8?B?a3hDQndoQUc2MGRpcUlMTm5LcEJVL0dLcUs2RGVBSWVQbjhXVno0dTFER2JM?=
- =?utf-8?B?OUZGOEpqSEJTK29KU053VFlNbVFRalczNTA1YmY3KzdHRGpvSXZBREZRREJu?=
- =?utf-8?B?eTd2OUlrNjJ0V2NrM1JVclpHSEthOHYyeEZlWEl6VFFjSlRoTW82WkJEWDdp?=
- =?utf-8?B?d2c3aUdnQ2xuUEFJb1Q5bUFad3NhUkt5Rk1BQ3JQWGFzR3hjVTc4Vkw4aW15?=
- =?utf-8?B?TmRMTmlTUk55dzkwRmQwVkpkbDV0Z0hpNm1vdnAvVlFUVFM2d3dPYUVOellC?=
- =?utf-8?B?WTM2L1UxNzdrMVFPR0JUUm5jeG1FTXdySkF3blo2d0lhZXAweVV6Y1J3cGEv?=
- =?utf-8?B?TU5RT2dzNmZFK0cvUHpJYmFuaVRid3BCd0N0N0pkUkduTTBTRW8xVnhoZld3?=
- =?utf-8?B?L3pKbTJ5ZVAxL2FRWkVsTVhXWWlhQ2ZHc1QwS2pCMXRFbmVkdDZOcnJzL0Uv?=
- =?utf-8?B?eVliM3Nhd3ZkMWtXWmk1NU5udGk5d3lJZXEvUFlLb2t2TTNlaDUwZjJ5MTdp?=
- =?utf-8?B?NWJ4cWJlL21USTRIRk4zZ0xUWjlzODY5bmthOVJwZ2Y2WDhBalVTdHpwc0tX?=
- =?utf-8?B?ZVRJVDBVZ1BITzdrdFp6RkFIUWhLY3dVY1ByTm5ReUpNU3ZkSndQQU9yZTg5?=
- =?utf-8?B?WnRHMk14aUpUK0k1WlA0ZHJ1RS9mMWlDQmJ6d2lMWG5nQ0o1Njd1V1A4empE?=
- =?utf-8?B?c0JOazlPVk10dXAvQUR0QWdXbU1kTG1xdjY2UGxJamplWldyd0QvQ2JHVXdh?=
- =?utf-8?B?VXc5cTZDN3RkQ2RzZUQrYW5RK2h5dDhOSmp3YVRUMUsySlF3YnhFekc3cDJF?=
- =?utf-8?B?ZXV1djRvUlZZZzBLZG5LYlAwb3dXMXg3U1Jyb1E4anA0RnBmMXdrZ0ZSVVlR?=
- =?utf-8?B?WDBKZXVuSUtuRkpsRm9oSko3a0JrTlIzaFN5WCtjY2pod2NIVE92cDR4ZWJU?=
- =?utf-8?B?b3VjUHhaM2E2U1lYM0FDYzRzemwyNElYQmV6alZQVzRFWDJFUTdmZVN6R2t2?=
- =?utf-8?B?MmFNaHJRWWNHMXJmQXJxMWRXVUFrYmZIaG1XRXdmTVI0SVQyY08xOHYvUitQ?=
- =?utf-8?B?MEs3MDlGUUkvTDNBbzcyeFJSMEtLUzRRdjRLcldWSnBubWlEZlBHMUVLcUtR?=
- =?utf-8?B?NHdGRW9Qa1VCRWNUYS9wVmRsMjFaRXMzVzJ3OFFWUVhRek5TRXRza21PY1Fz?=
- =?utf-8?B?TlpNc2ZlbGtabWhkUTdSVlBTUzhHQjhYdTFnS3JyYm1CdGFSQmM0bXYwYXJG?=
- =?utf-8?B?MkNSS0JKOXUwY3VWT1V4NG5CcnMwOGd3K0Q5aTNmYW9XOGxVUkpkVFJUZXFS?=
- =?utf-8?B?S2R2YWVzL2tDenNOb3hISGEwZVJSOXc2c2M3L1FHOVE5VktkbHRpdnEyTHYw?=
- =?utf-8?B?ODhkRUIyVzMzWnloeG9yUVVzb05kbjRCbjIwQXZpVlBoVFVmR3g1dTZVcktL?=
- =?utf-8?B?R2FlNEdyT2dONzBHUmI0Nk9Pek05YldJbWNYTmUyY0EwTU5BYjJiUDlza0J1?=
- =?utf-8?B?cm1vVmszemFZbUFlRkw0aCtSUjFBd0FVVm5hNTRmNVpIekdDbWx4Z2czOW5z?=
- =?utf-8?B?WlorQVM2TTlkYk13S04rWW1wMis4dC8vVmM5OTI0RnVBMzRPSEtIcHdyKzly?=
- =?utf-8?B?bmYwNjhJeU5JREF0NlAyeGorNVJXMjlnZDZabkFyNmd5citOd2JmVU92akFq?=
- =?utf-8?B?M1p6K0hJSTFYMFNaYkU1MEhQOXduUnNqZlI3cXVsTkMzSjEram5GM3lWTVN4?=
- =?utf-8?B?M1h3YzBmVXNrTUNDL2YvOEh1bTY3bVZwNzVLYkFVR0tPOVpHKzY2QVF0K1k1?=
- =?utf-8?B?TmMxa2trMTRiMjhxOTQyV3lickVkUjdBSXozSW5aWmYwajFOYWoxTkthWEZm?=
- =?utf-8?Q?fi+y5SgI1Hbwyfm8EPXukOONLIKj1lOj?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?OXEyOWJadk5pVjNVcEJZREhPTXJRdmZUQXFoME0vSFo2UE5ZR25RWEJsbGQr?=
- =?utf-8?B?a2RKcDFnTCtMZjhBK0NTMS82dnFyVlN6OVhNdmVJQ1NBdUdQS1ByK2pSRzE2?=
- =?utf-8?B?dFozK0RvUnlnUnExWG5rZk84MFV0RFRRNWZyNXlZOFhJeGZJVHY4Vk1BZzdl?=
- =?utf-8?B?M2Q2anR4OUdlQldZV25OYzBVWjkzcWRBMWduczE5Q1FOUnMxT0pGNm1lc2wz?=
- =?utf-8?B?bHVPVjRlMDJvWjJvbE1aV3E1N0ZjdkhONE9zNytOZjJ2YjlOZTByV1laY1pE?=
- =?utf-8?B?VTJxcHFwWktXRGJXaG9lbVVPSk80cEkvRFJIK0w1amtBZEpzTlJ6QllHMjNj?=
- =?utf-8?B?alFEMHQ4UkZCVDArQXM4dGY4Y0pRaTZBejY2elo4UHZpVTRjMUpmekxBUkN6?=
- =?utf-8?B?Vk54b1VyOFczL3FEUnlHU1pSU0l1d3ltTVc0ZzFRZlVMY3luRkMySjBOVUZr?=
- =?utf-8?B?MUZhaVF3b1JLcDVRWGlwbVRhY2haVGdmWHUvb2lsR3pFc1I3bktJWFN0cnJE?=
- =?utf-8?B?cVNaT2pxNmtBNEtxRDVDUmZnam5jT0NWM0N1TmxDTkdKM3FacTMxbzFCQndY?=
- =?utf-8?B?Z1VXRWNsdytsQ0lHTjRGZ21PMTh0SjRqTkJuVTdHeXh3UENicktRNkc5SkxT?=
- =?utf-8?B?UkE1S0Y2dXZFbFduUnFjR1FhbytHZk1VMk5jU3l2d0FkWmZ4dnB6S3c3UnpY?=
- =?utf-8?B?QVhFUW1VWFZRRmViMVQwSkl0djZrSW5MdGlNTXNYcElITGE5a3FxcVFXM01j?=
- =?utf-8?B?NHFwVjViRFFKQ2V0VHE2OFpjMGRZWDk4UDE0MXcvaXVLWjZNaFVTRWxwUElH?=
- =?utf-8?B?VUZzdVBZWTRiYzRrRDQ2dFlReDlTZVFLK2tCRWVybmhBZ2V0S3lvYUQ1RFpp?=
- =?utf-8?B?dzZyU0tkaXhRU2ZFSGM4S2J1SHV5bmZreUJGbmRId2NrWDJmTDdwbFNsNkNu?=
- =?utf-8?B?V2YwdTVrOExKdEdKWUlveWNUZXQxclVyZ1NtbmRhQktVMm5Va1NLbXdmckN1?=
- =?utf-8?B?L0FHWU1YazA2dldGN1kwQU5CYldaR0d6QlZBbUFHcEdnUU5MNUFZaWp0Uy9n?=
- =?utf-8?B?R1RwdnNYUlUwcTFWaFZxUnFIamlCZlc2ajNQMVQ0YmxpbDlpalBUQ1pOelcr?=
- =?utf-8?B?d2VtRnpqUDE4aTFWV2c0U1JvcnFiZ1RVOThteXMxaE9mZHlGOU4xbTltWFRF?=
- =?utf-8?B?UlRZM0I2R0p2NC96dndYczlBRVVKaGFMbG8xWWkyMTVPdHBBeDBzUDRrZkJk?=
- =?utf-8?B?MDBDRWRxVGtrM1Zaczl1ano4ZURSUjFWc1dVbUxEOUVPN2txVG4xa0lmMGJk?=
- =?utf-8?B?S2NrNHRqMklJb21lUHhlZ1NFRklINzB3Y1pkVWZzdGxwUHBjNG0xQUl6QnRH?=
- =?utf-8?B?ZE45ZHBNbGplRXRLTXVGNzhXZy9JOFhWMHNJdEdPaUg0eERKR2IvWDlaTmF0?=
- =?utf-8?B?WjFFekJTSmZvbFlCOG1OUTZ6dkZTYlR2WDJVN1pzQzVUSlJkakRDVzRsSHBW?=
- =?utf-8?B?RUIvU2srdTZkelJ0elJzM1dJakM3TTdwSTkzWUFYOWgzOFBpL0VvbTloOGc2?=
- =?utf-8?B?MkhSZmNLc1JLWnR6aDljbUsrTXF1QzhYdXlkR1lncTVLUDYzVGcvVHR3VHpQ?=
- =?utf-8?B?a1grbWRzdzExSEFTTDhZZ29QYkJQY2IvNTAvT0F5QUNQZGtrbndTTkhJMzlX?=
- =?utf-8?B?NkYxRjEwNlN1cEZWVkFSSi9waStTM1lrOXpnRWlDVytyTTE0ZGxveCtPYWFV?=
- =?utf-8?B?NVRLY2w0NUZhWEZRRWsxS2F6WkxWRlMvckxmaEJNSVczOFd1Q1BLcW9HdkV6?=
- =?utf-8?B?S3pQUkU3OE81VXhqcVhMc1lIaENRUWtzSmFpdWpoRWgxeW9qT21ZYlhpNngx?=
- =?utf-8?B?TDFseGQ5dzlQMzdDWDVtRWdpSGJxZnR0MDdyK0pWdEp4MExRR2lmeTNySjZt?=
- =?utf-8?B?L0puR20rM04yTndsNmFIaFNjbWovKzJvSXNYMlBSZGRFanNBSmtmVHRrQWpn?=
- =?utf-8?B?bXBtNG5nNS92enFJTHJzVGZaYjFFQ0c4UThlc3phcllPdFBSS2lqMEpyZU1l?=
- =?utf-8?B?d2JoV0xEZ3VoYTM1Q3lJWFRDTFV1Y3Z5dnlReVY5MXhPeVkyMkFERHhNSTZy?=
- =?utf-8?B?KzhJNFlUei9JdC9FZmtVdTA2Qi9hdUNLTk4rVmc0MVdVVlRtaFNCWUZMcCt2?=
- =?utf-8?B?ZXc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: f7dd01ea-dfb2-4a51-2b4d-08de06b378a1
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2025 21:41:42.8492
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wnIk9hoTTtaVO1UfmYT6lTQT121QGGsXp2bb+FNmV7GR7+u1gneZ1/baCCYQcUQ3dWIxtYEaI6ukVo4Oo3DywLXIzQdhNYswL9Lm8DJMzwc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6894
-X-OriginatorOrg: intel.com
-
---------------QIqlPG5WBpJ0Po19oeiyfZ3M
-Content-Type: multipart/mixed; boundary="------------tzGNokCTVRmE3Dx0ck6JSCnc";
- protected-headers="v1"
-From: Jacob Keller <jacob.e.keller@intel.com>
-To: "Tantilov, Emil S" <emil.s.tantilov@intel.com>,
- Jakub Kicinski <kuba@kernel.org>
-Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>,
- Pavan Kumar Linga <pavan.kumar.linga@intel.com>,
- Alexander Lobakin <aleksander.lobakin@intel.com>,
- Willem de Bruijn <willemb@google.com>,
- Sridhar Samudrala <sridhar.samudrala@intel.com>,
- Phani Burra <phani.r.burra@intel.com>,
- Piotr Kwapulinski <piotr.kwapulinski@intel.com>,
- Simon Horman <horms@kernel.org>, Radoslaw Tyl <radoslawx.tyl@intel.com>,
- Jedrzej Jagielski <jedrzej.jagielski@intel.com>,
- Mateusz Polchlopek <mateusz.polchlopek@intel.com>,
- Anton Nadezhdin <anton.nadezhdin@intel.com>,
- Konstantin Ilichev <konstantin.ilichev@intel.com>,
- Milena Olech <milena.olech@intel.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Joshua Hay <joshua.a.hay@intel.com>,
- Aleksandr Loktionov <aleksandr.loktionov@intel.com>,
- Chittim Madhu <madhu.chittim@intel.com>,
- Samuel Salin <Samuel.salin@intel.com>
-Message-ID: <ae493f48-ae07-4091-98dd-db254f2ee12f@intel.com>
-Subject: Re: [PATCH net 3/8] idpf: fix possible race in idpf_vport_stop()
-References: <20251001-jk-iwl-net-2025-10-01-v1-0-49fa99e86600@intel.com>
- <20251001-jk-iwl-net-2025-10-01-v1-3-49fa99e86600@intel.com>
- <20251003104332.40581946@kernel.org>
- <4a128348-48f9-40d7-b5bf-c3f1af27679c@intel.com>
- <20251006102659.595825fe@kernel.org>
- <048833d9-01f5-438d-a3fa-354a008ebbd3@intel.com>
-In-Reply-To: <048833d9-01f5-438d-a3fa-354a008ebbd3@intel.com>
-
---------------tzGNokCTVRmE3Dx0ck6JSCnc
-Content-Type: text/plain; charset=UTF-8
+References: <20251005182430.2791371-1-irogers@google.com> <20251005182430.2791371-6-irogers@google.com>
+ <fcba9459-9a5a-44c9-976a-323a6f4e0429@linaro.org> <CAP-5=fVervG=fmG7naTut3ERzwTTp7yQvuwqNkoKxSBSLsbgGA@mail.gmail.com>
+ <947c4e39-ee4e-4798-b783-8dec9a58f75d@linaro.org>
+In-Reply-To: <947c4e39-ee4e-4798-b783-8dec9a58f75d@linaro.org>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 8 Oct 2025 14:43:03 -0700
+X-Gm-Features: AS18NWDCYIaft8DrNuOj6VtwSQS0-WqQy6TsOFCzOxDNw3H_Rxxf_w3tcmlRKoY
+Message-ID: <CAP-5=fWLH4GjgKBt3_QERoYyHreswj8qTQ326gRKkFL0SROyUw@mail.gmail.com>
+Subject: Re: [PATCH v7 05/27] perf jevents: Support copying the source json
+ files to OUTPUT
+To: James Clark <james.clark@linaro.org>
+Cc: Thomas Richter <tmricht@linux.ibm.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Xu Yang <xu.yang_2@nxp.com>, 
+	Thomas Falcon <thomas.falcon@intel.com>, Andi Kleen <ak@linux.intel.com>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	Atish Patra <atishp@rivosinc.com>, Beeman Strong <beeman@rivosinc.com>, Leo Yan <leo.yan@arm.com>, 
+	Vince Weaver <vincent.weaver@maine.edu>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-
-
-On 10/6/2025 5:07 PM, Tantilov, Emil S wrote:
->=20
->=20
-> On 10/6/2025 10:26 AM, Jakub Kicinski wrote:
->> On Mon, 6 Oct 2025 07:49:32 -0700 Tantilov, Emil S wrote:
->>>> Argh, please stop using the flag based state machines. They CANNOT
->>>> replace locking. If there was proper locking in place it wouldn't
->>>> have mattered when we clear the flag.
->>>
->>> This patch is resolving a bug in the current logic of how the flag is=
-
->>> used (not being atomic and not being cleared properly). I don't think=
-
->>> there is an existing lock in place to address this issue, though we a=
-re
->>> looking to refactor the code over time to remove and/or limit how the=
-se
->>> flags are used.
->>
->> Can you share more details about the race? If there is no lock in plac=
-e
->> there's always the risk that:
->>
->>    CPU 0                         CPU 1
->>   idpf_vport_stop()             whatever()
->>                                   if (test_bit(UP))
->>                                    # sees true
->>                                  # !< long IRQ arrives
->>   test_and_clear(UP)
->>     ...
->>     all the rest
->>     ...
->>                                  # > long IRQ ends
->>                                  proceed but UP isn't really set any m=
-ore
->>
->=20
-> The specific case I was targeting with this patch is for when both
-> idpf_vport_stop() and idpf_addr_unsync(), called via set_rx_mode attemp=
-t
-> to delete the MAC filters. At least in my testing I have not seen a cas=
-e
-> where the set_rx_mode callback will happen before idpf_vport_stop(). I
-> am assuming due to userspace reacting to the removal of the netdevs.
->=20
->             rmmod-6089    [021] .....  3521.291596: idpf_remove=20
-> <-pci_device_remove
->             rmmod-6089    [021] .....  3521.292686: idpf_vport_stop=20
-> <-idpf_vport_dealloc
->   systemd-resolve-1633    [022] b..1.  3521.295320: idpf_set_rx_mode=20
-> <-dev_mc_del
->   systemd-resolve-1633    [022] b..1.  3521.295338: idpf_addr_unsync=20
-> <-__hw_addr_sync_dev
->   systemd-resolve-1633    [022] b..1.  3521.295339: idpf_del_mac_filter=
-=20
-> <-idpf_addr_unsync
->   systemd-resolve-1633    [022] b..1.  3521.295450: idpf_set_rx_mode=20
-> <-dev_mc_del
->   systemd-resolve-1633    [022] b..1.  3521.295451: idpf_addr_unsync=20
-> <-__hw_addr_sync_dev
->   systemd-resolve-1633    [022] b..1.  3521.295451: idpf_del_mac_filter=
-=20
-> <-idpf_addr_unsync
->             rmmod-6089    [002] .....  3521.934980: idpf_vport_stop=20
-> <-idpf_vport_dealloc
->   systemd-resolve-1633    [022] b..1.  3522.297299: idpf_set_rx_mode=20
-> <-dev_mc_del
->   systemd-resolve-1633    [022] b..1.  3522.297316: idpf_addr_unsync=20
-> <-__hw_addr_sync_dev
->   systemd-resolve-1633    [022] b..1.  3522.297317: idpf_del_mac_filter=
-=20
-> <-idpf_addr_unsync
->    kworker/u261:2-3157    [037] ...1.  3522.297931:=20
-> idpf_mac_filter_async_handler: Received invalid MAC filter payload (op =
-
-> 536) (len 0)
->             rmmod-6089    [020] .....  3522.573251: idpf_vport_stop=20
-> <-idpf_vport_dealloc
->             rmmod-6089    [002] .....  3523.229936: idpf_vport_stop=20
-> <-idpf_vport_dealloc
->   systemd-resolve-1633    [022] b..1.  3523.311435: idpf_set_rx_mode=20
-> <-dev_mc_del
->   systemd-resolve-1633    [022] b..1.  3523.311452: idpf_addr_unsync=20
-> <-__hw_addr_sync_dev
->   systemd-resolve-1633    [022] b..1.  3523.311453: idpf_del_mac_filter=
-=20
-> <-idpf_addr_unsync
->=20
+On Wed, Oct 8, 2025 at 8:14=E2=80=AFAM James Clark <james.clark@linaro.org>=
+ wrote:
 >
+>
+>
+> On 08/10/2025 3:58 pm, Ian Rogers wrote:
+> > On Wed, Oct 8, 2025 at 4:10=E2=80=AFAM James Clark <james.clark@linaro.=
+org> wrote:
+> >> On 05/10/2025 7:24 pm, Ian Rogers wrote:
+> >>> The jevents command expects all json files to be organized under a
+> >>> single directory. When generating json files from scripts (to reduce
+> >>> laborious copy and paste in the json) we don't want to generate the
+> >>> json into the source directory if there is an OUTPUT directory
+> >>> specified. This change adds a GEN_JSON for this case where the
+> >>> GEN_JSON copies the JSON files to OUTPUT, only when OUTPUT is
+> >>> specified. The Makefile.perf clean code is updated to clean up this
+> >>> directory when present.
+> >>>
+> >>> This patch is part of:
+> >>> https://lore.kernel.org/lkml/20240926173554.404411-12-irogers@google.=
+com/
+> >>> which was similarly adding support for generating json in scripts for
+> >>> the consumption of jevents.py.
+> >>>
+> >>> Tested-by: Thomas Richter <tmricht@linux.ibm.com>
+> >>> Signed-off-by: Ian Rogers <irogers@google.com>
+> >>
+> >> Hi Ian,
+> >>
+> >> This commit breaks the build on x86 for me, but not Arm. I also had to
+> >> do a clean build when bisecting as it seemed to be sticky in some way.
+> >>
+> >> It fails on the empty pmu events file diff check:
+> >>
+> >> diff -u pmu-events/empty-pmu-events.c
+> >> /home/james/workspace/linux/build/local/pmu-events/test-empty-pmu-even=
+ts.c
+> >> 2>
+> >> /home/james/workspace/linux/build/local/pmu-events/empty-pmu-events.lo=
+g
+> >> || (cat
+> >> /home/james/workspace/linux/build/local/pmu-events/empty-pmu-events.lo=
+g
+> >> && false)
+> >> --- pmu-events/empty-pmu-events.c       2025-10-08 11:49:46.341849139 =
++0100
+> >> +++
+> >> /home/james/workspace/linux/build/local/pmu-events/test-empty-pmu-even=
+ts.c
+> >>    2025-10-08 11:54:40.619999115 +0100
+> >> @@ -19,239 +19,8 @@
+> >>    };
+> >>
+> >>    static const char *const big_c_string =3D
+> >> -/* offset=3D0 */ "software\000"
+> >> ...
+> >>
+> >> The output continues with the rest of the diff, but I assume it's not
+> >> important to reproduce the issue.
+> >
+> > I've similarly had issues with empty-pmu-events.c and the test that as
+> > you say are resolved by a clean build. When I've investigated in the
+> > past it is the dependencies on the files are accurate but some are
+> > added or removed, I think adding the Makefile as a dependency for
+> > building empty-pmu-events.c was a resolution but in general we've not
+> > done that so I didn't send out a fix.
+> >
+> > Thanks,
+> > Ian
+> >
+>
+> Yeah this is the second time I've hit this, but this time it didn't get
+> me stuck for too long because I recognized it.
+>
+> I double checked building the last commit of the series after a clean
+> and it still fails, so I think that's an issue in addition to the
+> dependency issue. Considering this change touches the Makefile maybe we
+> can ignore the dependency issue for now and assume that a clean is requir=
+ed.
 
-Jakub, from this thread it still seems like you won't accept this patch
-as-is?
-
-I'm working on a v3 of this series resolving the other issues Simon
-pointed out, and want to know if I should continue excluding Emil's
-patches for now.
+Agreed. I'm wondering if/when this series will get picked up for
+perf-tools-next now that it has tags?
+I need to rebase the python metrics on it. I'd also like to migrate
+the hard coded metrics to being in json using the legacy json events.
 
 Thanks,
-Jake
+Ian
 
-
-
---------------tzGNokCTVRmE3Dx0ck6JSCnc--
-
---------------QIqlPG5WBpJ0Po19oeiyfZ3M
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQQgQFSp1zOQVirsQx5qll0+bw8o6AUCaObalAUDAAAAAAAKCRBqll0+bw8o6D3t
-AQCOMUOxx3e8ynnKspYfB46QoLQ+8HcQMk0MFt7eYqgkLwEAtu+qQSAZ3pUGeLcWLnd339kQN+ZI
-p21H5x2x0omNOg4=
-=G3o0
------END PGP SIGNATURE-----
-
---------------QIqlPG5WBpJ0Po19oeiyfZ3M--
+> >> Thanks
+> >> James
+> >>
+> >>> ---
+> >>>    tools/perf/Makefile.perf    | 21 ++++++++++++++++-----
+> >>>    tools/perf/pmu-events/Build | 18 ++++++++++++------
+> >>>    2 files changed, 28 insertions(+), 11 deletions(-)
+> >>>
+> >>> diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+> >>> index 7d6ac03a7109..278e51e4b5c6 100644
+> >>> --- a/tools/perf/Makefile.perf
+> >>> +++ b/tools/perf/Makefile.perf
+> >>> @@ -1272,9 +1272,24 @@ endif # CONFIG_PERF_BPF_SKEL
+> >>>    bpf-skel-clean:
+> >>>        $(call QUIET_CLEAN, bpf-skel) $(RM) -r $(SKEL_TMP_OUT) $(SKELE=
+TONS) $(SKEL_OUT)/vmlinux.h
+> >>>
+> >>> +pmu-events-clean:
+> >>> +ifeq ($(OUTPUT),)
+> >>> +     $(call QUIET_CLEAN, pmu-events) $(RM) \
+> >>> +             pmu-events/pmu-events.c \
+> >>> +             pmu-events/metric_test.log \
+> >>> +             pmu-events/test-empty-pmu-events.c \
+> >>> +             pmu-events/empty-pmu-events.log
+> >>> +else # When an OUTPUT directory is present, clean up the copied pmu-=
+events/arch directory.
+> >>> +     $(call QUIET_CLEAN, pmu-events) $(RM) -r $(OUTPUT)pmu-events/ar=
+ch \
+> >>> +             $(OUTPUT)pmu-events/pmu-events.c \
+> >>> +             $(OUTPUT)pmu-events/metric_test.log \
+> >>> +             $(OUTPUT)pmu-events/test-empty-pmu-events.c \
+> >>> +             $(OUTPUT)pmu-events/empty-pmu-events.log
+> >>> +endif
+> >>> +
+> >>>    clean:: $(LIBAPI)-clean $(LIBBPF)-clean $(LIBSUBCMD)-clean $(LIBSY=
+MBOL)-clean $(LIBPERF)-clean \
+> >>>                arm64-sysreg-defs-clean fixdep-clean python-clean bpf-=
+skel-clean \
+> >>> -             tests-coresight-targets-clean
+> >>> +             tests-coresight-targets-clean pmu-events-clean
+> >>>        $(call QUIET_CLEAN, core-objs)  $(RM) $(LIBPERF_A) $(OUTPUT)pe=
+rf-archive \
+> >>>                $(OUTPUT)perf-iostat $(LANG_BINDINGS)
+> >>>        $(Q)find $(or $(OUTPUT),.) -name '*.o' -delete -o -name '*.a' =
+-delete -o \
+> >>> @@ -1287,10 +1302,6 @@ clean:: $(LIBAPI)-clean $(LIBBPF)-clean $(LIBS=
+UBCMD)-clean $(LIBSYMBOL)-clean $(
+> >>>                $(OUTPUT)FEATURE-DUMP $(OUTPUT)util/*-bison* $(OUTPUT)=
+util/*-flex* \
+> >>>                $(OUTPUT)util/intel-pt-decoder/inat-tables.c \
+> >>>                $(OUTPUT)tests/llvm-src-{base,kbuild,prologue,relocati=
+on}.c \
+> >>> -             $(OUTPUT)pmu-events/pmu-events.c \
+> >>> -             $(OUTPUT)pmu-events/test-empty-pmu-events.c \
+> >>> -             $(OUTPUT)pmu-events/empty-pmu-events.log \
+> >>> -             $(OUTPUT)pmu-events/metric_test.log \
+> >>>                $(OUTPUT)$(fadvise_advice_array) \
+> >>>                $(OUTPUT)$(fsconfig_arrays) \
+> >>>                $(OUTPUT)$(fsmount_arrays) \
+> >>> diff --git a/tools/perf/pmu-events/Build b/tools/perf/pmu-events/Buil=
+d
+> >>> index 32f387d48908..1503a16e662a 100644
+> >>> --- a/tools/perf/pmu-events/Build
+> >>> +++ b/tools/perf/pmu-events/Build
+> >>> @@ -1,7 +1,6 @@
+> >>>    pmu-events-y        +=3D pmu-events.o
+> >>>    JDIR                =3D  pmu-events/arch/$(SRCARCH)
+> >>> -JSON         =3D  $(shell [ -d $(JDIR) ] &&                         =
+   \
+> >>> -                     find $(JDIR) -name '*.json' -o -name 'mapfile.c=
+sv')
+> >>> +JSON         =3D  $(shell find pmu-events/arch -name *.json -o -name=
+ *.csv)
+> >>>    JDIR_TEST   =3D  pmu-events/arch/test
+> >>>    JSON_TEST   =3D  $(shell [ -d $(JDIR_TEST) ] &&                   =
+    \
+> >>>                        find $(JDIR_TEST) -name '*.json')
+> >>> @@ -29,13 +28,20 @@ $(PMU_EVENTS_C): $(EMPTY_PMU_EVENTS_C)
+> >>>        $(call rule_mkdir)
+> >>>        $(Q)$(call echo-cmd,gen)cp $< $@
+> >>>    else
+> >>> +# Copy checked-in json for generation.
+> >>> +$(OUTPUT)pmu-events/arch/%: pmu-events/arch/%
+> >>> +     $(call rule_mkdir)
+> >>> +     $(Q)$(call echo-cmd,gen)cp $< $@
+> >>> +
+> >>> +GEN_JSON =3D $(patsubst %,$(OUTPUT)%,$(JSON))
+> >>> +
+> >>>    $(METRIC_TEST_LOG): $(METRIC_TEST_PY) $(METRIC_PY)
+> >>>        $(call rule_mkdir)
+> >>>        $(Q)$(call echo-cmd,test)$(PYTHON) $< 2> $@ || (cat $@ && fals=
+e)
+> >>>
+> >>> -$(TEST_EMPTY_PMU_EVENTS_C): $(JSON) $(JSON_TEST) $(JEVENTS_PY) $(MET=
+RIC_PY) $(METRIC_TEST_LOG)
+> >>> +$(TEST_EMPTY_PMU_EVENTS_C): $(GEN_JSON) $(JSON_TEST) $(JEVENTS_PY) $=
+(METRIC_PY) $(METRIC_TEST_LOG)
+> >>>        $(call rule_mkdir)
+> >>> -     $(Q)$(call echo-cmd,gen)$(PYTHON) $(JEVENTS_PY) none none pmu-e=
+vents/arch $@
+> >>> +     $(Q)$(call echo-cmd,gen)$(PYTHON) $(JEVENTS_PY) none none $(OUT=
+PUT)pmu-events/arch $@
+> >>>
+> >>>    $(EMPTY_PMU_EVENTS_TEST_LOG): $(EMPTY_PMU_EVENTS_C) $(TEST_EMPTY_P=
+MU_EVENTS_C)
+> >>>        $(call rule_mkdir)
+> >>> @@ -63,10 +69,10 @@ $(OUTPUT)%.pylint_log: %
+> >>>        $(call rule_mkdir)
+> >>>        $(Q)$(call echo-cmd,test)pylint "$<" > $@ || (cat $@ && rm $@ =
+&& false)
+> >>>
+> >>> -$(PMU_EVENTS_C): $(JSON) $(JSON_TEST) $(JEVENTS_PY) $(METRIC_PY) $(M=
+ETRIC_TEST_LOG) \
+> >>> +$(PMU_EVENTS_C): $(GEN_JSON) $(JSON_TEST) $(JEVENTS_PY) $(METRIC_PY)=
+ $(METRIC_TEST_LOG) \
+> >>>        $(EMPTY_PMU_EVENTS_TEST_LOG) $(PMU_EVENTS_MYPY_TEST_LOGS) $(PM=
+U_EVENTS_PYLINT_TEST_LOGS)
+> >>>        $(call rule_mkdir)
+> >>> -     $(Q)$(call echo-cmd,gen)$(PYTHON) $(JEVENTS_PY) $(JEVENTS_ARCH)=
+ $(JEVENTS_MODEL) pmu-events/arch $@
+> >>> +     $(Q)$(call echo-cmd,gen)$(PYTHON) $(JEVENTS_PY) $(JEVENTS_ARCH)=
+ $(JEVENTS_MODEL) $(OUTPUT)pmu-events/arch $@
+> >>>    endif
+> >>>
+> >>>    # pmu-events.c file is generated in the OUTPUT directory so it nee=
+ds a
+> >>
+>
 
