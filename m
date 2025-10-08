@@ -1,122 +1,120 @@
-Return-Path: <linux-kernel+bounces-845656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CF78BC5BF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:41:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E4C5BC5BA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:39:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 72CA04FAD5E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:38:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03F6019E3CE9
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7CD2FF643;
-	Wed,  8 Oct 2025 15:33:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B84BE2FBE10;
+	Wed,  8 Oct 2025 15:34:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JOvkIdvK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wYBMgz54"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5458E2F998A;
-	Wed,  8 Oct 2025 15:33:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5771B2FBE09
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:34:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759937627; cv=none; b=tmV7Q6ZbQ78NwM+RhHREPgJ9GolIwaJcUTXG6sznqopFogA8d9/Vu0In+cx6aLf8010+7vcoy2ZC0UJDgcdoJXJ/+RCKqJgMRfDw7deUMG3C6HJO+H+bewkM7laBvKse1vuHV6iAO3oeDD7rD1KN0Ldqy+dmXjBS+GqGOb4vtR0=
+	t=1759937646; cv=none; b=RYm6Z/o+RFIEB0Xwld7QvK9m03afnILHiu3a3RHqQT1lvu8QYqVP379R2JgbrllFaUfedGwRXCdRe5b3IpzXCR0pVYJGKjDbT2aX+GS87jeWSb8WFFGg6tdL3xERPo7CateFbLmLUcj4knrL+UTZHx2BGhvqgt7pTYpNDT+EJNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759937627; c=relaxed/simple;
-	bh=eVOsFH8osOeZ8GHSlQlqi0o9HHh6RBAnnXxTD6MchR0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XhmN5IfDYuZh1kJJTsv42kUDqXcmHE6QESphXDJ5ogSzgHRY6W/fATWhxB6b8nEeUACREsdpkM7W2QO0QC8vHRS4uw+4joe0GaObY/2CFqhige+KJzpBTAw+Si6N6KET8X6o6yCqRHkPPLqzUL0eiQeUgHcKtJGxi25lJHybJQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JOvkIdvK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1C4EEC116D0;
-	Wed,  8 Oct 2025 15:33:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759937627;
-	bh=eVOsFH8osOeZ8GHSlQlqi0o9HHh6RBAnnXxTD6MchR0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=JOvkIdvKAasO3xCoq/L5vJozz+ODbzwBc0z5L17uzeoK2L+bffNxUdtXm8sBNiFxs
-	 4Ta5uLvWKrFBIzDWyDaJHHy3ENMR0l7Ebavm8rk2IP//Sn4LKIdG/L9a1H1Erelq5m
-	 XrZDzAMYXsB3ZrCRhTLN1eF0d251rWveB1gdA0+iXaJEtGtvIKDcQmLz0zKoFmIlZE
-	 OLdjrpMPQhU0GXpxl61+qcCs3poHTTha50DDMU9eT0gJqMrMxhA+7DZKWHaQKVfFda
-	 XHu8OUmigZPw/KrrLFJhmzKV3DiWTAkao0YWs4caur94kOlBOve/eH5tNB3OJVRR0a
-	 k1eJPQp6d939A==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 117B4CCA470;
-	Wed,  8 Oct 2025 15:33:47 +0000 (UTC)
-From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
-Date: Wed, 08 Oct 2025 19:33:01 +0400
-Subject: [PATCH v17 9/9] arm64: dts: qcom: ipq9574: add pwm node
+	s=arc-20240116; t=1759937646; c=relaxed/simple;
+	bh=42RqGuehjRDSpY2gsrVZJlk6zt2QYdS+W6t8m/VoWXA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e0ros2Kcw9lLzhlbrwWLIA6790We3XaxWuQXavJXE+rYQxZPNXuNLYqWlLlPxqB4jEhO/c2QPQ6MWFglSq83CHZFS6dBQi4kwJGYU+Rykdlxyta/ZbyF/BphPOItP/uxYR8G/KVgt6P5yXjS7iG1hksSZUUx7Kw/5Znt3brbUZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wYBMgz54; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-46e5980471eso38622815e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:34:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759937643; x=1760542443; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3nT10c9+RtbCyZpgzKMKOftV2ncNLF5WtmF89g9eodc=;
+        b=wYBMgz54rI2qanBpnS/yUaLctWQRbskcCwiHIiuLdt00vfamaLNmUQSdpKDXfbxn1I
+         a6z2V2dDEKYb5QdKAlP/2HwY0M30bMBaCQlHIKgKbcmRoKYsTSUshurlpuQRGrrBtwai
+         DPXNyMaqyAuFXTj5wvvUaorLOUd6o/VidvrMHSnVvujIDpSk1qXZ1TU1xdizwyJLXGll
+         dHV5rA+ei/8m/wzGYxZ2nDP8DK5gPeeJkIgmX50SCl9kZJL+7BlhAWtbKG3VwMgBjWie
+         EnpQcDsSnf5FcIOKcOknRetHXcNauTRl1AFhlwYeoMxVlmthrDor60HNiTQooud8UVg2
+         1JzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759937643; x=1760542443;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3nT10c9+RtbCyZpgzKMKOftV2ncNLF5WtmF89g9eodc=;
+        b=d+pzOKzZ6c3Mr9E/VPrKIZZkvknzyxpauH4bkBK/dkHDV/bsg6SF/pnzk76mgDeTLN
+         Rdm0Stn6KAUHtzloJZ4HU+Y8r+Jz1fKGUIJHiqYaiseVmJSsTmvzTARf6yH7WG8W7f7W
+         Ff1WW5YgvXL6dan6eBlOHaWjrvSt+gJ9/yxFZhllqQkdwgy93AaDot8dby1rd6MYVDW7
+         4U67c2y8gtbZoCTtKmnQ3XOAfB4eMDCU8tJ5CXjcuvFQ91STE3QfB+Sam3LPyICCeRiA
+         +6HjaK23Fe+D4gyRz4H97zSqiHcFyA+R1Dwo2KOJEZjCG+zaMMtBGHjPVAzpg4y8XJAC
+         QHlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVJyHT59st0Yjif9p5RqNhxrEL0+lT82CI+zAG+MiSiNHo4s14kMfMIkvGN5TW1RTBa+ovCyXWFTX4BNmg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4iAQqNRWksqqVUs1y+di8cCWfYZnCyU1u9WS7tGHUoBj9e1Rd
+	pLkHFLhDba0CcrB18zNI+jdUY96TS8bJZbYYx/+qb/UiNKsyXPYc/WaMSiVNMxlv068=
+X-Gm-Gg: ASbGncsqePVom95HKcJHAR2F9L/2HcTqCKR97bEnkeeEz8ehjnhybe3e6Lui4uXGfFz
+	dY/SJh+kOTyjnAZQhS1Cnxi5KtZ4b49cMmI8/UJhIccEVSrtqzm5uoEg158NBMdXDLKvQpTEf85
+	fB1/dlj1RyAEx0KrHVYCUJLynulmpp4NzANNT3Px+Blg5g0y3w6Dw4y4GG5uatIJdlE6PBBBwXl
+	B9k/uAka+uRC0uND8rrIi7mAbIX7PFbiptLcfTBFkgfbXkJesjtg1fAD/DxSIIG9mfNog1j8bYg
+	+9fGn7Ro5SRmExnl+4TCYbCQVO9lsBLHABxlMnaqgJVkPTaxJP4/jLMMNfJl6SOLnCoUzulhcyn
+	6KaMSQGNJ9wDoEpHGwk8HrXBwTO5Djqarm8hRp+W6f6p85bwNUDKVepMqIUPmkrbvRfI=
+X-Google-Smtp-Source: AGHT+IHWKpjkgnJ6mZ4SxdFrASKIm3+agiqKwM+jn1niikJVBh/tK845v90Y+pp2KpRiWUEcs/aoDQ==
+X-Received: by 2002:a05:600c:1f93:b0:46e:376c:b1f0 with SMTP id 5b1f17b1804b1-46fa9a8ca9fmr25983455e9.7.1759937642542;
+        Wed, 08 Oct 2025 08:34:02 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46fab3d7df4sm17562785e9.1.2025.10.08.08.34.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 08:34:02 -0700 (PDT)
+Date: Wed, 8 Oct 2025 18:33:58 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Mattijs Korpershoek <mkorpershoek@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>,
+	Khairul Anuar Romli <khairul.anuar.romli@altera.com>,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] spi: cadence-quadspi: Fix pm_runtime unbalance on dma
+ EPROBE_DEFER
+Message-ID: <aOaEZmrWgy_g0u7c@stanley.mountain>
+References: <20251008-cadence-quadspi-fix-pm-runtime-v1-1-33bcb4b83a2e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251008-ipq-pwm-v17-9-9bd43edfc7f7@outlook.com>
-References: <20251008-ipq-pwm-v17-0-9bd43edfc7f7@outlook.com>
-In-Reply-To: <20251008-ipq-pwm-v17-0-9bd43edfc7f7@outlook.com>
-To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Baruch Siach <baruch@tkos.co.il>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-pwm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- George Moussalem <george.moussalem@outlook.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759937623; l=1234;
- i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
- bh=qc4VIzmfGZ/Xd+TOMpfJif2wj3plsSY0LnXsUU/Cm6A=;
- b=kdV2vbA1Dga3vyES71ONOlSMDOa1obqQ9fBP2whZgu3oe3HCJspmEAOggz5qK9ydJxnCXqMgD
- 3z1S8ogGsRuCv9c2BeNpVoRQ2k13z4v7IvAoO6q5cIhZ0fyXRIZZfWz
-X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
- pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
-X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
- with auth_id=364
-X-Original-From: George Moussalem <george.moussalem@outlook.com>
-Reply-To: george.moussalem@outlook.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251008-cadence-quadspi-fix-pm-runtime-v1-1-33bcb4b83a2e@kernel.org>
 
-From: George Moussalem <george.moussalem@outlook.com>
+On Wed, Oct 08, 2025 at 03:38:39PM +0200, Mattijs Korpershoek wrote:
+> In csqspi_probe(), when cqspi_request_mmap_dma() returns -EPROBE_DEFER,
+> we handle the error by jumping to probe_setup_failed.
+> In that label, we call pm_runtime_disable(), even if we never called
+> pm_runtime_enable() before.
+> 
+> Because of this, the driver cannot probe:
+> 
+> [    2.690018] cadence-qspi 47040000.spi: No Rx DMA available
+> [    2.699735] spi-nor spi0.0: resume failed with -13
+> [    2.699741] spi-nor: probe of spi0.0 failed with error -13
+> 
+> Only call pm_runtime_disable() if it was enabled by adding a new
+> label to handle cqspi_request_mmap_dma() failures.
+> 
+> Fixes: 04a8ff1bc351 ("spi: cadence-quadspi: fix cleanup of rx_chan on failure paths")
+> Signed-off-by: Mattijs Korpershoek <mkorpershoek@kernel.org>
+> ---
+> This has been tested on a AM69 SK board.
 
-Describe the PWM block on IPQ9574.
+The patch seems correct, but the correct Fixes tag is:
+Fixes: b07f349d1864 ("spi: spi-cadence-quadspi: Fix pm runtime unbalance")
 
-Although PWM is in the TCSR area, make pwm its own node as simple-mfd
-has been removed from the bindings and as such hardware components
-should have its own node.
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Signed-off-by: George Moussalem <george.moussalem@outlook.com>
----
- arch/arm64/boot/dts/qcom/ipq9574.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-index 86c9cb9fffc98fdd1b0b08e81428ce5e7bb87e17..8dba80d76d609a317a66f514c64ab8f5612e6938 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-@@ -449,6 +449,16 @@ tcsr: syscon@1937000 {
- 			reg = <0x01937000 0x21000>;
- 		};
- 
-+		pwm: pwm@1941010 {
-+			compatible = "qcom,ipq9574-pwm", "qcom,ipq6018-pwm";
-+			reg = <0x01941010 0x20>;
-+			clocks = <&gcc GCC_ADSS_PWM_CLK>;
-+			assigned-clocks = <&gcc GCC_ADSS_PWM_CLK>;
-+			assigned-clock-rates = <100000000>;
-+			#pwm-cells = <2>;
-+			status = "disabled";
-+		};
-+
- 		sdhc_1: mmc@7804000 {
- 			compatible = "qcom,ipq9574-sdhci", "qcom,sdhci-msm-v5";
- 			reg = <0x07804000 0x1000>,
-
--- 
-2.51.0
-
+regards,
+dan carpenter
 
 
