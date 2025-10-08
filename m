@@ -1,139 +1,196 @@
-Return-Path: <linux-kernel+bounces-845076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 632F9BC3728
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 08:15:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D3FBBC372B
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 08:15:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 190263AB1AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 06:15:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7122619E1486
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 06:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2097C2D3EDF;
-	Wed,  8 Oct 2025 06:15:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6A62D3EDF;
+	Wed,  8 Oct 2025 06:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="H4pIYGV1"
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nm/NHsEr"
+Received: from mail-pf1-f196.google.com (mail-pf1-f196.google.com [209.85.210.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56AF71EA7CF;
-	Wed,  8 Oct 2025 06:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15AA242A8B
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 06:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759904109; cv=none; b=ffQtRW6XGFpWNSy7E+nd3wU3fvaGkpt7B/eeuO8HY8pv2BFrFFFWO+U2GoTNOo4Kognw7fetYG3mw9dJeMqYqjIlqFIb4uU5m758YxEi3MCPazG3ELtbAMacUTL5AVDBInm2pAsfk5cIUwvtbK3yCfF2mt/pi4U7HTIW9lIFXOo=
+	t=1759904134; cv=none; b=Ic+Wm75CFmEcHX7DmZwi1lYXYLg7tKg2HY5UeTWV/kFs4PhLeedDVqBUuVJDh72eRApOzQHu2fAg7+dBGvUJnZB7KAaPWvx7MzXjJPbrcwnINhYUobXFk9SNApvlaoaRWNxiA6625FmfY5bGoKQ8JPm8IgTDrtoXQE5BE++CSqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759904109; c=relaxed/simple;
-	bh=/ysWvONG/rRVXYMAmJinyLug2h51k7AZJtFHEIsBFSs=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=SNDVBu9qyDdxBfUxXlau5OKbFqO81Iz8rxI/8Pk0Ij8ESTbN4Nlmd1AGRGUGGwyQppZAHFw92zFj60/sr5pf3eehTCxJcv9jm6A1W/ZPkU9RQi6khbnYJydwx3W+gkEoKV9xOUnENH34UlOS+hqGAIRAcPk+G/cFXRWAFG6oNgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=H4pIYGV1; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id D0D641D000F6;
-	Wed,  8 Oct 2025 02:15:05 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Wed, 08 Oct 2025 02:15:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1759904105; x=1759990505; bh=OR22NrgfEglb+PpHIQeRBTrbvW1PJ4Cuam0
-	YJIEfV0I=; b=H4pIYGV1EQNs1jQJwTh4cFbdIOIqDSRbUJOrNMgSNleCr1uaDbz
-	83gtppMOOi95c+qeZe0RZ6vT582FQQ61PIefr9Q4yZJ310MpqhxVG7cj2kaK7tH4
-	R6Qtmse+wvoJQAPKfkJ9OxTnb8KM0V04PyvutoH0qntdFmDnVWd7neyq5+6jqhD+
-	X2UTfd1xSNAAczuhzRZIxIhZ/JTdWQ/iKVgmrMDrjKm4O7fPXgNdTgezoH6zR7yA
-	RiB+X5Ep/bT+FXlCqIvQb94rYcoGzq+kMkVr573/rrsyWX3YSyFjo/X8r6jLI1ZJ
-	qkTnRMoUf9OodVOhWmo9IS3w0f05X0II3dQ==
-X-ME-Sender: <xms:ZwHmaNI3P6wZKZ5XO7ttzt61tyxCx8Bx_CNiJVfGMKAb6DxNBsDI_Q>
-    <xme:ZwHmaKfJ8VDqB04FBE21xAuXhTQMhnrAO0UagQJw9ZEow9A3k0WtjFPbv083SVBMy
-    xJctAfMKO9TLLuVMOooppePT3bL5m2ahbddAFSjLHUMS_F6Q8o0CA>
-X-ME-Received: <xmr:ZwHmaIItPTjqlOlS8uTwwV3QhM0Ud-0jiIvtel90eiw981OOu0gJ2HBYf3ZSoWkj_XJMV_cCIfL-X4N1kS-pOSyuZHkfsguImyc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutddvheehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcuvfhh
-    rghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtth
-    gvrhhnpeelueehleehkefgueevtdevteejkefhffekfeffffdtgfejveekgeefvdeuheeu
-    leenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehfth
-    hhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopedvgedpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtoheplhgrnhgtvgdrhigrnhhgsehlihhnuhigrd
-    guvghvpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhr
-    ghdprhgtphhtthhopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtth
-    hopehorghksehhvghlshhinhhkihhnvghtrdhfihdprhgtphhtthhopehkvghnthdrohhv
-    vghrshhtrhgvvghtsehlihhnuhigrdguvghvpdhrtghpthhtoheprghmrghinhguvgigse
-    houhhtlhhoohhkrdgtohhmpdhrtghpthhtoheprghnnhgrrdhstghhuhhmrghkvghrseho
-    rhgrtghlvgdrtghomhdprhgtphhtthhopegsohhquhhnrdhfvghnghesghhmrghilhdrtg
-    homhdprhgtphhtthhopehiohifohhrkhgvrhdtsehgmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:ZwHmaEBshOGlofW4dgdH5pof2eeL8jG8Uku8px4j0R_klQ9lsJySTA>
-    <xmx:ZwHmaBiof7ulRVDPwVSy9Bpjh9MPMSbYOSsyMXNNNAHM7E4HjLu2Jg>
-    <xmx:ZwHmaON0SBtdBi7Q3fvlg8CEdc4pqpySVuxNjfHvktaxb05saU-6WQ>
-    <xmx:ZwHmaIbIalGzzuNpmRJXqOfdvkK4sOffNS7H0h-RNQIHyNP-_xL39w>
-    <xmx:aQHmaJbYvfqHNm6XqREz3Fom4EgOagPCSmFgJ5--AAVtb_uujybWKyuf>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 8 Oct 2025 02:15:01 -0400 (EDT)
-Date: Wed, 8 Oct 2025 17:14:51 +1100 (AEDT)
-From: Finn Thain <fthain@linux-m68k.org>
-To: Lance Yang <lance.yang@linux.dev>
-cc: Andrew Morton <akpm@linux-foundation.org>, 
-    Geert Uytterhoeven <geert@linux-m68k.org>, 
-    Eero Tamminen <oak@helsinkinet.fi>, 
-    Kent Overstreet <kent.overstreet@linux.dev>, amaindex@outlook.com, 
-    anna.schumaker@oracle.com, boqun.feng@gmail.com, ioworker0@gmail.com, 
-    joel.granados@kernel.org, jstultz@google.com, leonylgao@tencent.com, 
-    linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org, 
-    longman@redhat.com, mhiramat@kernel.org, mingo@redhat.com, 
-    mingzhe.yang@ly.com, peterz@infradead.org, rostedt@goodmis.org, 
-    senozhatsky@chromium.org, tfiga@chromium.org, will@kernel.org, 
-    stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] hung_task: fix warnings caused by unaligned lock
- pointers
-In-Reply-To: <56784853-b653-4587-b850-b03359306366@linux.dev>
-Message-ID: <693a62e0-a2b5-113b-d5d9-ffb7f2521d6c@linux-m68k.org>
-References: <20250909145243.17119-1-lance.yang@linux.dev> <yqjkjxg25gh4bdtftsdngj5suturft2b4hjbfxwe6hehbg4ctq@6i55py3jaiov> <99410857-0e72-23e4-c60f-dea96427b85a@linux-m68k.org> <CAMuHMdVYiSLOk-zVopXV8i7OZdO7PAK7stZSJNJDMw=ZEqtktA@mail.gmail.com>
- <inscijwnnydibdwwrkggvgxjtimajr5haixff77dbd7cxvvwc7@2t7l7oegsxcp> <20251007135600.6fc4a031c60b1384dffaead1@linux-foundation.org> <b43ce4a0-c2b5-53f2-e374-ea195227182d@linux-m68k.org> <56784853-b653-4587-b850-b03359306366@linux.dev>
+	s=arc-20240116; t=1759904134; c=relaxed/simple;
+	bh=uKCxhwmwY0Ji0CDl09f49JOa6JF3kmVktdq4VvynfEc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sFTjtYpesHdGxk3UAJ0rqB5b4P5KbUlSVmN+Ee1m02Y83ra1geD72KGw4/mDCH0JJY93VJu0kt6pihQf+H7CwoLofLyvCsm9GXCxv1pu+sKvqiDz4xnFMsUhwVYPr6BY31EHirTCLpExGhvg5YFHAJ+A39wnYueMYe4a3nX6rb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nm/NHsEr; arc=none smtp.client-ip=209.85.210.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f196.google.com with SMTP id d2e1a72fcca58-781db5068b8so5889683b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 23:15:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759904132; x=1760508932; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8WDMjYNVDGB7nxB23mvy74axT0H9whIV+VVsLhh4xxk=;
+        b=nm/NHsErBvRkgmDd+0qv7LcXmCSLMV7V3kGGbFaGdx+Q+J5Lu3h4n9sAmvvVi8gMDW
+         BKNYUj1wQkUIaiYfcuuY8Wh2lEKySQDMOxgV9GP/wIfwDkutppEYY+fj8910medXglQL
+         YCkwfLfysrMOK77Zk2i4UAYBu06ZALR7El3Khi2gfuq4gOlaN3/llsH9cvxx7G1pNZir
+         ALuhp9qIjsJDJcPDwoGr8cPGF0TkEUtJyCuehu4lARJn8xXB+xdQbjEzCJwEHSCVysL1
+         9VRAUjQzq1CLNggurqwSSbiTahViq/dWAr5qm4Cs+pfE2SnNQaVjn9ADgyBNidyvHizu
+         J/VA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759904132; x=1760508932;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8WDMjYNVDGB7nxB23mvy74axT0H9whIV+VVsLhh4xxk=;
+        b=G+m/g82lmURhpaSI1KjyQnVPYgsOin6vJTzS4EqO93rwoYR4QBINT7H6DLiSioiY8H
+         xzLfmzzVhlNnZdN1l6c5zywveGaE3ASbsUuW2+QQ2Y+QwIjk1OQkBbJPuFssMiLuKm7Q
+         giZLK2QEveTaLaihtjrhlTW8/tgWJFOYvK+pcTWR90p378j7IE5EqpWewT9P9ijLHmED
+         OECSpyIw4M1cbHG2fzxH9DvvivQq/zDL7Z+PE/b4fjnjPYxiL7qb70kw1NUcjznpPzoT
+         CHpObbpC8nrLdoNXgTa4eulJ966doYeLHg6vCDXLhaxzF9jBWLOOj2Je/M1VL/HGACx8
+         zvrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8ciRlxicjthSBrmr0SZ9opcQbpKw0Gpokt77OBWTbwE80xjs90wm8k5bHfgzZ727fd9E7iWgoOZMwjuo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEzAybdlEBJw86hAqdOIyse13mwOV+8ZHcoY3+9Wgusm5ul6gV
+	WAolnWEcmXCfDmuFPgm9OYIBfY/tdcXgIzN1AsAtUjYHIWgSVFE9jZg=
+X-Gm-Gg: ASbGnctsNGWSL8jKVdcldcKbF2BFx93omV6aKStxNu5/xXxf9oBygyq/HfyRqlmH61j
+	i9k62QmFCEI43w+GiCCl9NXwTysJdWseGv3CXnT4UNbMRL9GF4HGlBLE5hqYGl8QahVT7fd4LdF
+	XFZmUdES4P1EPLWqoTNVZYTa3iP1wVWZJ9wFemqwMTtHBrHyQ1yzdm4qU9TwU+yebpGbtJEiRvr
+	6I7eEFd9sKTCQfi3FXHa31ff1pq06K/NzaqgFgYxp8cWysMikmZ0N6v30qz0s/PkEfEeLWHXKL4
+	E+J1QEzagcyfYCG0JhB5mwGOkFCOfNyETZ7Y4pO5gYHHC/Br2e7mk+BgIHOi+4cpeo2SSEwwsgm
+	bV67X9DGFtJ8ZFYPtIuAeof6fgqjEWfGpMQ1XvvxKpOB6x1o/XBtsO3XvAv9TRO5c4A==
+X-Google-Smtp-Source: AGHT+IHVOUFBQzcyHHC2300S+MTlQPkVnUZmXbxHmKEFYJYegXscv3bRUT1/yEoYhhrLX7UroRd5+w==
+X-Received: by 2002:a05:6a20:7351:b0:2a2:850:5605 with SMTP id adf61e73a8af0-32da8130f75mr2873766637.23.1759904132236;
+        Tue, 07 Oct 2025 23:15:32 -0700 (PDT)
+Received: from [192.168.0.113] ([139.227.17.83])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b52a2522asm481872a91.8.2025.10.07.23.15.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Oct 2025 23:15:31 -0700 (PDT)
+Message-ID: <d2a58601-f458-421b-8df3-b11cf2aeb5e0@gmail.com>
+Date: Wed, 8 Oct 2025 14:15:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] x86/pci: Check signature before assigning shadow
+ ROM
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250815162041.14826-1-tomitamoeko@gmail.com>
+ <aKGkrSWUA8BTYniZ@wunner.de>
+From: Tomita Moeko <tomitamoeko@gmail.com>
+In-Reply-To: <aKGkrSWUA8BTYniZ@wunner.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Sorry for my extreme late reply...I didn't noticed this message
+until I searched this topic in lore.kernel.org. Somehow it didn't
+reached my inbox, or maybe I deleted it by mistake :(
 
-On Wed, 8 Oct 2025, Lance Yang wrote:
-
-> On 2025/10/8 08:40, Finn Thain wrote:
-> > 
-> > On Tue, 7 Oct 2025, Andrew Morton wrote:
-> > 
-> >> Getting back to the $Subject at hand, are people OK with proceeding
-> >> with Lance's original fix?
-> >>
-> > 
-> > Lance's patch is probably more appropriate for -stable than the patch I
-> > proposed -- assuming a fix is needed for -stable.
+On 8/17/2025 5:45 PM, Lukas Wunner wrote:
+> On Sat, Aug 16, 2025 at 12:20:41AM +0800, Tomita Moeko wrote:
+>> Modern platforms without VBIOS or UEFI CSM support do not contain
+>> VGA ROM at 0xC0000, this is observed on Intel Ice Lake and later
+>> systems. Check whether the VGA ROM region is a valid PCI option ROM
+>> with 0xAA55 signature before assigning the shadow ROM to device.
 > 
-> Thanks!
+> Which spec is the 0xAA55 magic number coming from?
 > 
-> Apart from that, I believe this fix is still needed for the hung task 
-> detector itself, to prevent unnecessary warnings in a few unexpected 
-> cases.
+> Could you add a spec reference for it in a code comment and the
+> commit message?
+
+Sorry I am unable to find the exact spec as PCI-SIG only prvide spec
+access to their members. I think I should reuse the ROMSIGNATURE macro
+mentioned below.
+> I note that arch/x86/kernel/probe_roms.c contains ...
+> 
+>   #define ROMSIGNATURE 0xaa55
+> 
+> ... and a function romsignature() to check the signature.
+> I'm wondering why that existing check isn't sufficient?
+> Why is it necessary to check again elsewhere?
+
+The check itself for accessing the Option ROM is sufficient, kernel reports
+"Invalid PCI ROM header signature: expecting 0xaa55, got 0x****" error when
+an invalid ROM is accessed.
+
+However, the issue here is that the VGA BIOS region is always exposed as
+PCI Option ROM on the primary VGA device, even when it doesn’t actually
+contain a valid Option ROM (for example, on modern platforms without
+VBIOS). In such cases, exposing this region as an Option ROM is unnecessary
+and results in misleading "Invalid PCI ROM header signature" errors.
+Checking the signature before exposing the region helps to avoid that.
+>> +++ b/arch/x86/pci/fixup.c
+>> @@ -317,6 +317,7 @@ static void pci_fixup_video(struct pci_dev *pdev)
+>>  	struct pci_bus *bus;
+>>  	u16 config;
+>>  	struct resource *res;
+>> +	void __iomem *rom;
+>>  
+>>  	/* Is VGA routed to us? */
+>>  	bus = pdev->bus;
+>> @@ -338,9 +339,12 @@ static void pci_fixup_video(struct pci_dev *pdev)
+>>  		}
+>>  		bus = bus->parent;
+>>  	}
+>> -	if (!vga_default_device() || pdev == vga_default_device()) {
+>> +
+>> +	rom = ioremap(0xC0000, 0x20000);
+> 
+> There's a code comment preceding pci_fixup_video() which says that
+> "BIOS [is] copied to 0xC0000 in system RAM".  So this isn't MMIO,
+> it's system memory and you can use memremap() instead if ioremap().
+> 
+> Since you're only interested in the first two bytes, you don't need
+> to map the whole 0x20000 bytes.
+> 
+> Instead of amending the if-condition ...
+> 
+>> +	if (rom && (!vga_default_device() || pdev == vga_default_device())) {
+>>  		pci_read_config_word(pdev, PCI_COMMAND, &config);
+>> -		if (config & (PCI_COMMAND_IO | PCI_COMMAND_MEMORY)) {
+>> +		if ((config & (PCI_COMMAND_IO | PCI_COMMAND_MEMORY)) &&
+>> +		    (readw(rom) == 0xAA55)) {
+>>  			res = &pdev->resource[PCI_ROM_RESOURCE];
+> 
+> ... you could just return on failure to find a valid signature, i.e.:
+> 
+> +	rom = memremap(0xC0000, sizeof(sig), MEMREMAP_WB);
+> +	if (!rom)
+> +		return;
+> +
+> +	memcpy(&sig, rom, sizeof(sig));
+> +	memunmap(rom);
+> +	if (sig != 0xAA55)
+> +		return;
+> 
+> May want to emit an error on failure to memremap().
+> 
+> Amending the if-condition makes it messier to find an offending commit
+> with "git blame" (more iterations needed).  And returning early reduces
+> indentation levels per section 1 of Documentation/process/coding-style.rst.
+
+Got it, will fix in v2.
+
+Thanks,
+Moeko
+> 
+> Thanks,
+> 
+> Lukas
 > 
 
-Can you be more specific about those cases? A fix for a theoretical bug 
-doesn't qualify for -stable branches. But if it's a fix for a real bug, I 
-have misunderstood Andrew's question...
-
-> > 
-> > Besides those two alternatives, there is also a workaround:
-> > $ ./scripts/config -d DETECT_HUNG_TASK_BLOCKER
-> > which may be acceptable to the interested parties (i.e. m68k users).
-> > 
-> > I don't have a preference. I'll leave it up to the bug reporters (Eero 
-> > and Geert).
-> 
 
