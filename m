@@ -1,445 +1,297 @@
-Return-Path: <linux-kernel+bounces-845099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3664BC381A
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 08:47:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2BB9BC383E
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 08:49:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4A08935205D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 06:47:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BE753A46CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 06:49:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E7C1E1A3D;
-	Wed,  8 Oct 2025 06:46:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54ED22EBB8D;
+	Wed,  8 Oct 2025 06:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Tg/o41NQ"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="bGNIizbK"
+Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazon11012022.outbound.protection.outlook.com [40.107.200.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5661DE3DB;
-	Wed,  8 Oct 2025 06:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759906017; cv=none; b=Xr+3kkAWVirSh/RMfXmZtcZftVVWsIAVsRpWPupOvSD0reCN1X7kum7FEfc6NjkIMQ9MZYF/umS1GwfqLDeNGep8fBcjNHXLAUzcMJeVj2I9jKVUsDDwTxtX0cUgtb/WYyXZb8N/c8C9jlGcK/2QX/rTuBP1Frl8D2kgtq+a3E8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759906017; c=relaxed/simple;
-	bh=ELJUZNVXN1Mg6KFpZ8Rj3g0FIRt2gLZFtGPtI89y5V0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eFBISceKhNqKrl4tYlUiTjTAGFXxTe7ncy90iiAOgUsGnX9ASYC8FuiUen12pbvOorPcoYTasGfoF98m2fVGOxms815XgXcwggc8wMF36kJ4mIvs17Rr23PXl+ZGBGtxKvKTUfTAkkjS10Px0aYyFRpUndUXPIJrny/RwDwS7+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Tg/o41NQ; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 597JvRol023877;
-	Wed, 8 Oct 2025 06:46:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=Sp0zBwq0Bh5uCXTC/zQduQKA2VE//U
-	qtoRaO4GquUkI=; b=Tg/o41NQpIJUDE8aQCEps3Kw46Z13bCwR+Vbc0vjyEEVU4
-	l2R0MSxsjtUhp/cI/gf7kQuvc9dDiqbar8FPsPnHLmMyO5qeQwY8dtZotPhslHe+
-	YNJrIsLoLgxwT8iFmO60V1vGvwn/0OpZXG4fFhAgYYUJn+2sw5K5iTpOUCYMx46x
-	7VK1pGdCtO2N93VI4N3ueAQYsWLPoDZSkP4lV6JVTaOsJHe96NN7uJaPiOrSd2Ft
-	f8YWoUn8sO+cfyAF66LKeY+OVOlM8YiFryzAa5wT3uqQhTUuChUSjgnaa9aiSsxL
-	xahDGbZQaE77RHNaR75+zXp9Y6ahtWcs5cz/Pn4A==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49ju93ke7v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 Oct 2025 06:46:49 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5986kbU8021272;
-	Wed, 8 Oct 2025 06:46:48 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49kgm1exgj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 Oct 2025 06:46:48 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5986ki4146596540
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 8 Oct 2025 06:46:44 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 88B392004B;
-	Wed,  8 Oct 2025 06:46:44 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 88B8220040;
-	Wed,  8 Oct 2025 06:46:40 +0000 (GMT)
-Received: from li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com (unknown [9.111.14.160])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed,  8 Oct 2025 06:46:40 +0000 (GMT)
-Date: Wed, 8 Oct 2025 08:46:24 +0200
-From: Sumanth Korikkar <sumanthk@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>
-Subject: Re: [PATCH 2/4] s390/sclp: Add support for dynamic (de)configuration
- of memory
-Message-ID: <aOYIwEGgrjpNMGKD@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
-References: <20250926131527.3260733-1-sumanthk@linux.ibm.com>
- <20250926131527.3260733-3-sumanthk@linux.ibm.com>
- <4e832570-32f8-46a5-80d0-40570db862b2@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED212222D0;
+	Wed,  8 Oct 2025 06:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.200.22
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759906173; cv=fail; b=L3DlH39BSVWN+S+GsdN4VC2VFhfRS1/5vu4/tl5BOqEpQx9HL9hkzflEkuev1nFclPVDdAhxqFQEvl2Zypis55N6VFkFHjh0aIIC6DcT3j80f8Q2h8c9UHdEZxnuSp/GuLr33WmTJ7Slv1ZHaPYYhexFWuHDrd8O5wGoODoPwOQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759906173; c=relaxed/simple;
+	bh=B5XiMeQSJVNt/kJeKbcO4y3OazfZwOuEFjjT1CjXcSE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AgbdM9EUIR3ZgjqI8tFVR9VLim7fXmHXaf/Wkhy6RpAp3Uc4c7q6ppHq19jlK0CZek8+fvLBOKR0KJPfZk9FZNeiWgmz0n5DINItprJHsXtP0OSW+q1MCw8B3RI2oa9KLMkbQ58wdskfNXrWO6fdSf//GMSxxP5KN4TyNxlZcfY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=bGNIizbK; arc=fail smtp.client-ip=40.107.200.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IfiXRCNJ+UeA/XBQkflU41s0o2crAWitH7mxyBAY1e+W4wUShoZcmSFp9endQqJzRIzq0Lf7a6uyfR9umP9X4JLY6fOcFgYtAOy9LurPYvvvXEKXhJifGZKFrbEUj4QNn0yVKegYP6IYvmQIqd8pY7drtYvhqOpD49ZwQhzxV/7bbnH3zSKacR5ReVPkKZb0QTRhub6nOj5O7KZEsDWzwjcXFzcNMLkP9V2ggl6eiGyl+rf3jd2SUE7WmYDqGJkBrchs+2vZt28iTrjprfe6QxDTFE7Jun7harVwT49shhDaIID98+TfE9BSOy1kYmmRgV36gcX95XOoVs3usvpXFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ij3PpZhjEQ94Q1zwgeQZRYQaT2HCAZV9cnWtkw0AX30=;
+ b=nbNfU4RVoo2QCKR3XF+g6EZ4PPHOddt1bfcrVdhOVYSPvkUFv4xRRWriY2ivJvvgnfkKs30pzcE301HZwwcf1FBLvZqqD/35OfKCU5XKbtSFEyxA6kjrlxehNL1oSzn44Z71facoLgWiYbZsy+UaiA0Xwg9GA/pyj3lk8P4Bdto6Wot+WZHNQvEVGAST7o277r8TaYPofJIzvUe3d5NWKavupoyuc4pqNZy4REfFu9LSqv8f9Q1yw6UMgdrWlDi8BbPnP3j2/fsHj1qGfgnkTSLcKYspk+avFVF73r4y3jln1wpPXJR944sYZTCOXQDcFOTY9ntRLKBxdslSawa77g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ij3PpZhjEQ94Q1zwgeQZRYQaT2HCAZV9cnWtkw0AX30=;
+ b=bGNIizbKspDy+q976TYvpaSZNa5Wl3DcsvihZ3ngP1qJxLzj6phhVLaruGdS4ho6xNrytSTm6sk2MHjpJFw4vwG6xzH8HSveCN6xqhipnafA2drIMUeE8tD9yf3S5oVCqgAAPKVeipOxaghL89VxKxDmiRcCZ3RljNJPZgkTi3bxwMLsm0hCnHnLO3jC6WzWRzNyyIC+g8a2nGyPcLOeUBhF6Wh9nZW587nYXJkV8pTh1zUIXoVDpE5vPHMvjGwbEINrI+7NBJz9nz4sPcJ/S/j4ZG72nLXLfRsAB1RIqWtMIfNHbgd6j690ao5mIUjCRJ6soE+K1iBx7W7g7zfa5w==
+Received: from BY3PR03CA0028.namprd03.prod.outlook.com (2603:10b6:a03:39a::33)
+ by IA0PR12MB8646.namprd12.prod.outlook.com (2603:10b6:208:489::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.18; Wed, 8 Oct
+ 2025 06:49:22 +0000
+Received: from SJ1PEPF00001CE9.namprd03.prod.outlook.com
+ (2603:10b6:a03:39a:cafe::7e) by BY3PR03CA0028.outlook.office365.com
+ (2603:10b6:a03:39a::33) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9182.19 via Frontend Transport; Wed,
+ 8 Oct 2025 06:49:21 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ SJ1PEPF00001CE9.mail.protection.outlook.com (10.167.242.25) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9203.9 via Frontend Transport; Wed, 8 Oct 2025 06:49:21 +0000
+Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 7 Oct
+ 2025 23:49:12 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Tue, 7 Oct 2025 23:49:12 -0700
+Received: from kkartik-desktop.nvidia.com (10.127.8.13) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server id 15.2.2562.20 via Frontend
+ Transport; Tue, 7 Oct 2025 23:49:08 -0700
+From: Kartik Rajput <kkartik@nvidia.com>
+To: <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <thierry.reding@gmail.com>,
+	<jonathanh@nvidia.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+CC: Prathamesh Shete <pshete@nvidia.com>, Nathan Hartman
+	<nhartman@nvidia.com>, Kartik Rajput <kkartik@nvidia.com>
+Subject: [PATCH v2] gpio: tegra186: Add support for Tegra410
+Date: Wed, 8 Oct 2025 12:19:05 +0530
+Message-ID: <20251008064905.702582-1-kkartik@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4e832570-32f8-46a5-80d0-40570db862b2@redhat.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: lhaUsBPuKtPFfyoxk5ODsubvb1IbGELj
-X-Proofpoint-ORIG-GUID: lhaUsBPuKtPFfyoxk5ODsubvb1IbGELj
-X-Authority-Analysis: v=2.4 cv=Fec6BZ+6 c=1 sm=1 tr=0 ts=68e608d9 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=Uk5sRPGcfaKE-AGN8r8A:9
- a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAyMiBTYWx0ZWRfXxvcC32YPIvrD
- sNVxv7+5yzVkDhmIL5dwuYng0vDR9GrY13Av8QHzE0YKQk6epHKr7+WICDaVyryj8VLG2LBGZL5
- WrHh9mT0yy/dKMqt/1aa2UMP3KofyP1DzHUWuim58t3M/b+HkJnmKmdvmwoKtO9+eeLSXQCbsXA
- NTD+7KVi/VkA+U8iaAMYHjkfGSJ7Y9y7s9aQBiVpKr4EO8YLjB/3RO0op5SHQ91iWSU52BpM7aN
- YHpZ14VrB4hHPI53f78gY/nfSeGl1muX2rCKj7XJyhoU9D5sdOlT5HHB9CEYBehKNhVm27RDxyB
- QpdpTBhkDxWRvgI7YLZ5aBxGxy/lQfTsng6dlPg4diJNDpcm3y7R4yd9PIW4czXcaRi//6znDla
- wvHje1I8BLNY6OL7EWlvKhpapp+PMw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-08_01,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 impostorscore=0 suspectscore=0 spamscore=0 adultscore=0
- clxscore=1015 malwarescore=0 priorityscore=1501 phishscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040022
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE9:EE_|IA0PR12MB8646:EE_
+X-MS-Office365-Filtering-Correlation-Id: cd52fe53-5913-484c-b0a3-08de0636cfae
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?O6vncUFXjQ6SszAikPZwKH0pEFNitLpJ38gS30REMo5kpPaUbaxKUT/u7Oq0?=
+ =?us-ascii?Q?6Di65rgylpOa+z/hEwrrD0DGOG/xoyZgNWJtp4TMOEOU7AAhafTDWUGmLP00?=
+ =?us-ascii?Q?e7ayHM7EFcIOJjeBq3CbV9jLhAvop36i5PKDbjcO1/AFkPfka8rBH/ui2Gau?=
+ =?us-ascii?Q?ayPqgIxBJdMIhtDKL29//KuVNk2RkgBN5fG/w7dW9x3oFq7PdN+y/WlkF780?=
+ =?us-ascii?Q?uTZpT8UZxBF5mUksazCij2+pDkEB3Xmi9bkjKzvaYxKR+ARw86pXMmSAWp4B?=
+ =?us-ascii?Q?q6B/CzmvjtobbM2KTElV2kRHKZxSIRL1d1g0y8MRP1xGi3zxCYEOU7MlAj60?=
+ =?us-ascii?Q?rWbCR9CquyfEA86GH7ZwegEObc4zcKOecCAZhGTsrHFA7Vw5BMOt/AOPGZLC?=
+ =?us-ascii?Q?eUoiUdKCznKoZTmUjXmzv/bJa7omarxzAFBq98VOA7Y9a+sxHsqK3qctiMlW?=
+ =?us-ascii?Q?h88Y1WGcun0rtxg49XBKZCj21KWABkQpjR8Tq3YV9ZBrCM+0vKEdSvA0SN6y?=
+ =?us-ascii?Q?QiKe6HP5SGUobKYqOO6tOkv6ue7LWSt8omgMSfgmWtboK+pPkleamDEkjxdb?=
+ =?us-ascii?Q?SUwfT2fRqIlpI8xEFJCxoiCnp83yerv2YFWkp0k4K6/gImg87i78bK3uJ5PA?=
+ =?us-ascii?Q?tRAESpzPYjatNvpMFQESXSGFebx0t+1uZJCHfmuaoVYxbTKog/LedWieBIvj?=
+ =?us-ascii?Q?R3/ZEk9aihbs4/veix+GU9DTdTrtbMDKHYRSN8IT2Q2J3KEPgvqtTn0X8fz1?=
+ =?us-ascii?Q?oPngN7rERB5O3fKfyYqJ2WoMjTLDSnBrWth31yS2/7tZvPTXH73SfqiQF8KS?=
+ =?us-ascii?Q?9hHmAKKXMaYV4wnWSfcA8HeY2HjDoLy/bIzqxSaskQ8NyGEWUbYrD14gbCPx?=
+ =?us-ascii?Q?77qcmJingSim2bYb0B9gfwjkosL91UPAF5rJVZAaicB/2GkPZqrpM/tv7C8f?=
+ =?us-ascii?Q?R4+uVyN4EZ4nOX6GPdjzzsLABChJA0fLRLN7NNxKnd6zHdeyJkzvkBHYijYQ?=
+ =?us-ascii?Q?xNrgLg74OwdC8Jivkw378ns03vsU/HWhx0227pb/5ykSjZeI4yLcVcT6jcQ0?=
+ =?us-ascii?Q?DY9xgsqZUbk5ZVDai25wI2i9BDwAf8uuaaR4Jk+isnSTWINIk+p1duHkYmcw?=
+ =?us-ascii?Q?jtmcsvMh9EHgr8LKYOJcS0phbVBqjAaaWxJrGuo4u8zKan9vjRhvfHykK7Vu?=
+ =?us-ascii?Q?CsC5azNNCbs92FIu9d9H0zCd8L7wOsqmFx1s940czYgaIzulc25tZ8HcWtMn?=
+ =?us-ascii?Q?5sRFR+fGKPKPVulmVjir3kkLWJLtj5N/+Ada3GwTChhVtv2upKNSNMo9C/j2?=
+ =?us-ascii?Q?2KWy0jY6vmHwrkkdurk/WYp25+lzOixk0af73ZJD6J/91IFx4LyrBxA/BQL6?=
+ =?us-ascii?Q?MsG/k1bNqvEm+wZcxGgU+hZm4suv8QxDBAFMDbDMZU4ULB+SQzE8ZeyWZXql?=
+ =?us-ascii?Q?eYafpTGusZFCX8jFSe0o03KsoTy4qOnLJVQYruGn1/7tMZsWyoaH5QzZ3Mia?=
+ =?us-ascii?Q?tajSjC6RHNTTYpOq3HzjJ0JFRFEFwg2uS44b8oRFRokj878fGvKMofrWWV5E?=
+ =?us-ascii?Q?NRYn/imscGGevuTJ99+PvRhInOCRng4czcNqNCba?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2025 06:49:21.5210
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: cd52fe53-5913-484c-b0a3-08de0636cfae
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00001CE9.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8646
 
-On Tue, Oct 07, 2025 at 10:07:43PM +0200, David Hildenbrand wrote:
-> [...]
-> 
-> > ---
-> >   drivers/s390/char/sclp_mem.c | 291 +++++++++++++++++++++++++++++------
-> >   1 file changed, 241 insertions(+), 50 deletions(-)
-> > 
-> > diff --git a/drivers/s390/char/sclp_mem.c b/drivers/s390/char/sclp_mem.c
-> > index 27f49f5fd358..802439230294 100644
-> > --- a/drivers/s390/char/sclp_mem.c
-> > +++ b/drivers/s390/char/sclp_mem.c
-> > @@ -9,9 +9,12 @@
-> >   #define pr_fmt(fmt) KMSG_COMPONENT ": " fmt
-> >   #include <linux/cpufeature.h>
-> > +#include <linux/container_of.h>
-> >   #include <linux/err.h>
-> >   #include <linux/errno.h>
-> >   #include <linux/init.h>
-> > +#include <linux/kobject.h>
-> > +#include <linux/kstrtox.h>
-> >   #include <linux/memory.h>
-> >   #include <linux/memory_hotplug.h>
-> >   #include <linux/mm.h>
-> > @@ -27,7 +30,6 @@
-> >   #define SCLP_CMDW_ASSIGN_STORAGE		0x000d0001
-> >   #define SCLP_CMDW_UNASSIGN_STORAGE		0x000c0001
-> > -static DEFINE_MUTEX(sclp_mem_mutex);
-> >   static LIST_HEAD(sclp_mem_list);
-> >   static u8 sclp_max_storage_id;
-> >   static DECLARE_BITMAP(sclp_storage_ids, 256);
-> > @@ -38,6 +40,18 @@ struct memory_increment {
-> >   	int standby;
-> >   };
-> > +struct mblock {
-> > +	struct kobject kobj;
-> > +	unsigned int id;
-> > +	unsigned int memmap_on_memory;
-> > +	unsigned int config;
-> > +};
-> > +
-> > +struct memory_block_arg {
-> > +	struct mblock *mblocks;
-> > +	struct kset *kset;
-> > +};
-> 
-> I would avoid using "memory_block_arg" as it reminds of core mm "struct memory_block".
-> 
-> Similarly, I'd not call this "mblock".
-> 
-> What about incorporating the "sclp" side of things?
-> 
-> "struct sclp_mem" / "struct sclp_mem_arg"
-> 
-> Nicely fits "sclp_mem.c" ;)
-> 
-> Something like that might be better.
+From: Prathamesh Shete <pshete@nvidia.com>
 
-Sure. I will change it. Thanks
+Extend the existing Tegra186 GPIO controller driver with support for
+the GPIO controller found on Tegra410. Tegra410 supports two GPIO
+controllers referred to as 'COMPUTE' and 'SYSTEM'.
 
-> > +
-> >   struct assign_storage_sccb {
-> >   	struct sccb_header header;
-> >   	u16 rn;
-> > @@ -185,15 +199,11 @@ static int sclp_mem_notifier(struct notifier_block *nb,
-> >   {
-> >   	unsigned long start, size;
-> >   	struct memory_notify *arg;
-> > -	unsigned char id;
-> >   	int rc = 0;
-> >   	arg = data;
-> >   	start = arg->start_pfn << PAGE_SHIFT;
-> >   	size = arg->nr_pages << PAGE_SHIFT;
-> > -	mutex_lock(&sclp_mem_mutex);
-> > -	for_each_clear_bit(id, sclp_storage_ids, sclp_max_storage_id + 1)
-> > -		sclp_attach_storage(id);
-> >   	switch (action) {
-> >   	case MEM_GOING_OFFLINE:
-> >   		/*
-> > @@ -204,45 +214,201 @@ static int sclp_mem_notifier(struct notifier_block *nb,
-> >   		if (contains_standby_increment(start, start + size))
-> >   			rc = -EPERM;
-> >   		break;
-> 
-> Is there any reson this notifier is still needed? I'd assume we can just allow
-> for offlining + re-onlining as we please now.
-> 
-> In fact, I'd assume we can get rid of the notifier entirely now?
+Co-developed-by: Nathan Hartman <nhartman@nvidia.com>
+Signed-off-by: Nathan Hartman <nhartman@nvidia.com>
+Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
+Signed-off-by: Kartik Rajput <kkartik@nvidia.com>
+---
+v1 -> v2:
+        * Move Tegra410 GPIO Ports definition to gpio-tegra186.c
+        * Rename Tegra410 Main GPIO as System GPIO.
+        * Add Compute GPIOs.
+        * Update ACPI IDs.
+	* Set instance ID as 0 for SYSTEM and COMPUTE GPIOs.
+	* Added Nathan as co-author for adding compute GPIO support
+	  and renaming MAIN GPIOs as SYSTEM GPIOs.
+---
+ drivers/gpio/gpio-tegra186.c | 90 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 89 insertions(+), 1 deletion(-)
 
-I was initially uncertain about contains_standby_increment() use case
-and didnt change it here.  However, after testing by removing the
-contains_standby_increment() checks, I observed that the common memory
-hotplug code already prevents offlining a memory block that contains
-holes. This ensures safety without relying on these checks.
+diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
+index 4d3db6e06eeb..0485a7b98347 100644
+--- a/drivers/gpio/gpio-tegra186.c
++++ b/drivers/gpio/gpio-tegra186.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * Copyright (c) 2016-2022 NVIDIA Corporation
++ * Copyright (c) 2016-2025 NVIDIA Corporation
+  *
+  * Author: Thierry Reding <treding@nvidia.com>
+  *	   Dipen Patel <dpatel@nvidia.com>
+@@ -69,6 +69,36 @@
+ 
+ #define TEGRA186_GPIO_INTERRUPT_STATUS(x) (0x100 + (x) * 4)
+ 
++/* Tegra410 GPIOs implemented by the COMPUTE GPIO controller */
++#define TEGRA410_COMPUTE_GPIO_PORT_A 0
++#define TEGRA410_COMPUTE_GPIO_PORT_B 1
++#define TEGRA410_COMPUTE_GPIO_PORT_C 2
++#define TEGRA410_COMPUTE_GPIO_PORT_D 3
++#define TEGRA410_COMPUTE_GPIO_PORT_E 4
++
++#define TEGRA410_COMPUTE_GPIO(port, offset) \
++	((TEGRA410_COMPUTE_GPIO_PORT_##port * 8) + (offset))
++
++/* Tegra410 GPIOs implemented by the SYSTEM GPIO controller */
++#define TEGRA410_SYSTEM_GPIO_PORT_A 0
++#define TEGRA410_SYSTEM_GPIO_PORT_B 1
++#define TEGRA410_SYSTEM_GPIO_PORT_C 2
++#define TEGRA410_SYSTEM_GPIO_PORT_D 3
++#define TEGRA410_SYSTEM_GPIO_PORT_E 4
++#define TEGRA410_SYSTEM_GPIO_PORT_I 5
++#define TEGRA410_SYSTEM_GPIO_PORT_J 6
++#define TEGRA410_SYSTEM_GPIO_PORT_K 7
++#define TEGRA410_SYSTEM_GPIO_PORT_L 8
++#define TEGRA410_SYSTEM_GPIO_PORT_M 9
++#define TEGRA410_SYSTEM_GPIO_PORT_N 10
++#define TEGRA410_SYSTEM_GPIO_PORT_P 11
++#define TEGRA410_SYSTEM_GPIO_PORT_Q 12
++#define TEGRA410_SYSTEM_GPIO_PORT_R 13
++#define TEGRA410_SYSTEM_GPIO_PORT_V 14
++
++#define TEGRA410_SYSTEM_GPIO(port, offset) \
++	((TEGRA410_SYSTEM_GPIO_PORT_##port * 8) + (offset))
++
+ struct tegra_gpio_port {
+ 	const char *name;
+ 	unsigned int bank;
+@@ -1304,6 +1334,62 @@ static const struct tegra_gpio_soc tegra256_main_soc = {
+ 	.has_vm_support = true,
+ };
+ 
++#define TEGRA410_GPIO_PORT(_die, _name, _bank, _port, _pins)	\
++	[TEGRA410_##_die##_GPIO_PORT_##_name] = {		\
++		.name = "_" #_die "_" #_name,					\
++		.bank = _bank,					\
++		.port = _port,					\
++		.pins = _pins,					\
++	}
++
++#define TEGRA410_COMPUTE_GPIO_PORT(_name, _bank, _port, _pins)	\
++	TEGRA410_GPIO_PORT(COMPUTE, _name, _bank, _port, _pins)
++
++static const struct tegra_gpio_port tegra410_compute_ports[] = {
++	TEGRA410_COMPUTE_GPIO_PORT(A, 0, 0, 3),
++	TEGRA410_COMPUTE_GPIO_PORT(B, 1, 0, 8),
++	TEGRA410_COMPUTE_GPIO_PORT(C, 1, 1, 3),
++	TEGRA410_COMPUTE_GPIO_PORT(D, 2, 0, 8),
++	TEGRA410_COMPUTE_GPIO_PORT(E, 2, 1, 8),
++};
++
++static const struct tegra_gpio_soc tegra410_compute_soc = {
++	.num_ports = ARRAY_SIZE(tegra410_compute_ports),
++	.ports = tegra410_compute_ports,
++	.name = "tegra410-gpio-compute",
++	.num_irqs_per_bank = 8,
++	.instance = 0,
++};
++
++#define TEGRA410_SYSTEM_GPIO_PORT(_name, _bank, _port, _pins)	\
++	TEGRA410_GPIO_PORT(SYSTEM, _name, _bank, _port, _pins)
++
++static const struct tegra_gpio_port tegra410_system_ports[] = {
++	TEGRA410_SYSTEM_GPIO_PORT(A, 0, 0, 7),
++	TEGRA410_SYSTEM_GPIO_PORT(B, 0, 1, 8),
++	TEGRA410_SYSTEM_GPIO_PORT(C, 0, 2, 8),
++	TEGRA410_SYSTEM_GPIO_PORT(D, 0, 3, 8),
++	TEGRA410_SYSTEM_GPIO_PORT(E, 0, 4, 6),
++	TEGRA410_SYSTEM_GPIO_PORT(I, 1, 0, 8),
++	TEGRA410_SYSTEM_GPIO_PORT(J, 1, 1, 7),
++	TEGRA410_SYSTEM_GPIO_PORT(K, 1, 2, 7),
++	TEGRA410_SYSTEM_GPIO_PORT(L, 1, 3, 7),
++	TEGRA410_SYSTEM_GPIO_PORT(M, 2, 0, 7),
++	TEGRA410_SYSTEM_GPIO_PORT(N, 2, 1, 6),
++	TEGRA410_SYSTEM_GPIO_PORT(P, 2, 2, 8),
++	TEGRA410_SYSTEM_GPIO_PORT(Q, 2, 3, 3),
++	TEGRA410_SYSTEM_GPIO_PORT(R, 2, 4, 2),
++	TEGRA410_SYSTEM_GPIO_PORT(V, 1, 4, 2),
++};
++
++static const struct tegra_gpio_soc tegra410_system_soc = {
++	.num_ports = ARRAY_SIZE(tegra410_system_ports),
++	.ports = tegra410_system_ports,
++	.name = "tegra410-gpio-system",
++	.num_irqs_per_bank = 8,
++	.instance = 0,
++};
++
+ static const struct of_device_id tegra186_gpio_of_match[] = {
+ 	{
+ 		.compatible = "nvidia,tegra186-gpio",
+@@ -1339,6 +1425,8 @@ static const struct acpi_device_id  tegra186_gpio_acpi_match[] = {
+ 	{ .id = "NVDA0408", .driver_data = (kernel_ulong_t)&tegra194_aon_soc },
+ 	{ .id = "NVDA0508", .driver_data = (kernel_ulong_t)&tegra241_main_soc },
+ 	{ .id = "NVDA0608", .driver_data = (kernel_ulong_t)&tegra241_aon_soc },
++	{ .id = "NVDA0708", .driver_data = (kernel_ulong_t)&tegra410_compute_soc },
++	{ .id = "NVDA0808", .driver_data = (kernel_ulong_t)&tegra410_system_soc },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(acpi, tegra186_gpio_acpi_match);
+-- 
+2.43.0
 
-c5e79ef561b0 ("mm/memory_hotplug.c: don't allow to online/offline memory blocks with holes")
-
-i.e. #cp define storage 3504M standby 2148M
-This leads to a configuration where memory block 27 contains both
-assigned and standby incr.
-
-But, offlining it will not succeed:
-chmem -d 0x00000000d8000000-0x00000000dfffffff
-chmem: Memory Block 27 (0x00000000d8000000-0x00000000dfffffff) disable
-failed: Invalid argument
-
-Hence, I will remove it. Thanks.
-
-> > -	case MEM_PREPARE_ONLINE:
-> > -		/*
-> > -		 * Access the altmap_start_pfn and altmap_nr_pages fields
-> > -		 * within the struct memory_notify specifically when dealing
-> > -		 * with only MEM_PREPARE_ONLINE/MEM_FINISH_OFFLINE notifiers.
-> > -		 *
-> > -		 * When altmap is in use, take the specified memory range
-> > -		 * online, which includes the altmap.
-> > -		 */
-> > -		if (arg->altmap_nr_pages) {
-> > -			start = PFN_PHYS(arg->altmap_start_pfn);
-> > -			size += PFN_PHYS(arg->altmap_nr_pages);
-> > -		}
-> > -		rc = sclp_mem_change_state(start, size, 1);
-> > -		if (rc || !arg->altmap_nr_pages)
-> > -			break;
-> > -		/*
-> > -		 * Set CMMA state to nodat here, since the struct page memory
-> > -		 * at the beginning of the memory block will not go through the
-> > -		 * buddy allocator later.
-> > -		 */
-> > -		__arch_set_page_nodat((void *)__va(start), arg->altmap_nr_pages);
-> > +	default:
-> >   		break;
-> > -	case MEM_FINISH_OFFLINE:
-> > +	}
-> > +	return rc ? NOTIFY_BAD : NOTIFY_OK;
-> > +}
-> > +
-> > +static ssize_t config_mblock_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
-> > +{
-> > +	struct mblock *mblock = container_of(kobj, struct mblock, kobj);
-> > +
-> > +	return sysfs_emit(buf, "%u\n", READ_ONCE(mblock->config));
-> > +}
-> > +
-> > +static ssize_t config_mblock_store(struct kobject *kobj, struct kobj_attribute *attr,
-> > +				   const char *buf, size_t count)
-> > +{
-> > +	unsigned long long addr, block_size;
-> 
-> "unsigned long" should be sufficient I'm sure :)
-
-Left over. I will do so.
-
-> > +	struct memory_block *mem;
-> > +	struct mblock *mblock;
-> > +	unsigned char id;
-> > +	bool value;
-> > +	int rc;
-> > +
-> > +	rc = kstrtobool(buf, &value);
-> > +	if (rc)
-> > +		return rc;
-> > +	mblock = container_of(kobj, struct mblock, kobj);
-> > +	block_size = memory_block_size_bytes();
-> > +	addr = mblock->id * block_size;
-> > +	/*
-> > +	 * Hold device_hotplug_lock when adding/removing memory blocks.
-> > +	 * Additionally, also protect calls to find_memory_block() and
-> > +	 * sclp_attach_storage().
-> > +	 */
-> > +	rc = lock_device_hotplug_sysfs();
-> > +	if (rc)
-> > +		goto out;
-> > +	for_each_clear_bit(id, sclp_storage_ids, sclp_max_storage_id + 1)
-> > +		sclp_attach_storage(id);
-> > +	if (value) {
-> > +		if (mblock->config)
-> > +			goto out_unlock;
-> > +		rc = sclp_mem_change_state(addr, block_size, 1);
-> > +		if (rc)
-> > +			goto out_unlock;
-> >   		/*
-> > -		 * When altmap is in use, take the specified memory range
-> > -		 * offline, which includes the altmap.
-> > +		 * Set entire memory block CMMA state to nodat. Later, when
-> > +		 * page tables pages are allocated via __add_memory(), those
-> > +		 * regions are marked __arch_set_page_dat().
-> >   		 */
-> > -		if (arg->altmap_nr_pages) {
-> > -			start = PFN_PHYS(arg->altmap_start_pfn);
-> > -			size += PFN_PHYS(arg->altmap_nr_pages);
-> > +		__arch_set_page_nodat((void *)__va(addr), block_size >> PAGE_SHIFT);
-> > +		rc = __add_memory(0, addr, block_size,
-> > +				  mblock->memmap_on_memory ?
-> > +				  MHP_MEMMAP_ON_MEMORY | MHP_OFFLINE_INACCESSIBLE : MHP_NONE);
-> > +		if (rc)
-> > +			goto out_unlock;
-> 
-> Do we have to undo the state change?
-
-Intention was to keep error handling simple. In case of failure in
-add_memory(), we would have state set to 1 (not given back). But,
-subsequent configuration request for that block will not have an impact.
-
-...
-
-> > +static int create_mblock(struct mblock *mblock, struct kset *kset,
-> > +			 unsigned int id, bool config, bool memmap_on_memory)
-> > +{
-> > +	int rc;
-> > +
-> > +	mblock->memmap_on_memory = memmap_on_memory;
-> > +	mblock->config = config;
-> > +	mblock->id = id;
-> > +	kobject_init(&mblock->kobj, &ktype);
-> > +	rc = kobject_add(&mblock->kobj, &kset->kobj, "memory%d", id);
-> > +	if (rc)
-> > +		return rc;
-> > +	rc = sysfs_create_group(&mblock->kobj, &mblock_attr_group);
-> > +	if (rc)
-> > +		kobject_put(&mblock->kobj);
-> > +	return rc;
-> > +}
-> > +
-> > +/*
-> > + * Create /sys/firmware/memory/memoryX for boottime configured online memory
-> > + * blocks
-> > + */
-> > +static int create_online_mblock(struct memory_block *mem, void *argument)
-> 
-> "online" is conusing. It's "initial" / "configured". Same applies to the other functions
-> that mention "online".
-
-Sure. I will change it.
-
-> > +{
-> > +	struct memory_block_arg *arg;
-> > +	struct mblock *mblocks;
-> > +	struct kset *kset;
-> > +	unsigned int id;
-> > +
-> > +	id = mem->dev.id;
-> > +	arg = (struct memory_block_arg *)argument;
-> > +	mblocks = arg->mblocks;
-> > +	kset = arg->kset;
-> > +	return create_mblock(&mblocks[id], kset, id, true, false);
-> > +}
-> > +
-> > +static int __init create_initial_online_mblocks(struct mblock *mblocks, struct kset *kset)
-> > +{
-> > +	struct memory_block_arg arg;
-> > +
-> > +	arg.mblocks = mblocks;
-> > +	arg.kset = kset;
-> > +	return for_each_memory_block(&arg, create_online_mblock);
-> > +}
-> > +
-> > +static struct mblock * __init allocate_mblocks(void)
-> > +{
-> > +	u64 max_mblocks;
-> 
-> Nit: why an u64? The block ids are "unsigned int id;"
-
-Sure. I will correct it.
-
-> > +	u64 block_size;
-> > +
-> > +	block_size = memory_block_size_bytes();
-> > +	max_mblocks = roundup(sclp.rnmax * sclp.rzm, block_size) / block_size;
-> > +	return kcalloc(max_mblocks, sizeof(struct mblock), GFP_KERNEL);
-> 
-> 
-> I think you should structure the code a bit differently, not splitting
-> the function up into tiny helpers.
-> 
-> static int __init init_sclp_mem(void)
-> {
-> 	const u64 block_size = memory_block_size_bytes();
-> 	const u64 max_mblocks = roundup(sclp.rnmax * sclp.rzm, block_size) / block_size;
-> 	struct sclp_mem_arg arg;
-> 	struct kset *kset;
-> 	int rc;
-> 	
-> 	/* We'll allocate memory for all blocks ahead of time. */
-> 	sclp_mem = kcalloc(max_mblocks, sizeof(struct mblock), GFP_KERNEL);
-> 	if (!sclp_mem)
-> 		return -ENOMEM;
-> 
-> 	kset = kset_create_and_add("memory", NULL, firmware_kobj);
-> 	if (!kset)
-> 		return -ENOMEM;
-> 
-> 	/* Initial memory is in the "configured" state already. */
-> 	arg.sclp_mem = sclp_mem;
-> 	arg.kset = kset;
-> 	rc = for_each_memory_block(&arg, create_configured_sclp_mem);
-> 	if (rc)
-> 		return rc;
-> 
-> 	/* Standby memory is "deconfigured". */
-> 	return create_standby_sclp_mem(sclp_mem, kset);
-> }
-> 
-> Should still be quite readable.
-
-Then, I'll make use of it.
-
-...
-
-> > -static int __init sclp_detect_standby_memory(void)
-> > +static int __init sclp_setup_memory(void)
-> >   {
-> >   	struct read_storage_sccb *sccb;
-> >   	int i, id, assigned, rc;
-> > +	struct mblock *mblocks;
-> > +	struct kset *kset;
-> >   	/* No standby memory in kdump mode */
-> >   	if (oldmem_data.start)
-> 
-> Wouldn't we still want to create the ones for initial memory at least?
-
-Intention was the following: 
-configuration and deconfiguration of memory with optional
-memmap-on-memory is mostly needed for only standby memory.
-
-If standby memory is absent or sclp is unavailable, we continue using
-the previous behavior (only software offline/online), since the sclp
-memory notifier was not registered in that case before either.
-
-Thank you David
 
