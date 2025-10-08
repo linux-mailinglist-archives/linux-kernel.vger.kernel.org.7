@@ -1,235 +1,171 @@
-Return-Path: <linux-kernel+bounces-845972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 709F9BC69BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:46:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 494EABC69C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:52:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 546DD4E992E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:46:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B1A2404CE5
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AAA72609E3;
-	Wed,  8 Oct 2025 20:46:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780192609E3;
+	Wed,  8 Oct 2025 20:52:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sch.bme.hu header.i=@sch.bme.hu header.b="srZmrjVd"
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11021072.outbound.protection.outlook.com [40.107.130.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mmfPIluN"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BFD1EB36;
-	Wed,  8 Oct 2025 20:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759956391; cv=fail; b=nzpYxy+CfpkPwXST4Ru6K6oujWuS4IreeTwgyj+cKWFkhbvxn2JNPDgZWG+wNo2CbbpGQtv4+T91kUFDwHqfT5VrM4qXXUOuFJSF/mAgczF+Hy5UnOcHSYewKxIAag5JFZD6s302HLKmeL21ZMss9Zw3KB23fLSaqQM7F+XiEig=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759956391; c=relaxed/simple;
-	bh=rRClyo0HbOEqgvw8UX91rcVhqX12SXScaopllw7YGYI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ljMeYE+KlKCAOBsv1LRgUKYWnRe2bBbO6CF7Rc4Xn1K3fnwbN3OMPMV5f57qRoDG81oMizGmbNRJVX/g3jTtOYsajY+5VziQ0RTdooevhIbryYHrR2C1eUKtm7EvyqA/yge2n/8ogk/u9r6D3/2r4J07YqxJMNxAqoO6qDqYH9A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sch.bme.hu; spf=pass smtp.mailfrom=sch.bme.hu; dkim=pass (1024-bit key) header.d=sch.bme.hu header.i=@sch.bme.hu header.b=srZmrjVd; arc=fail smtp.client-ip=40.107.130.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sch.bme.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sch.bme.hu
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nHUXiVX6Hz5CN8W72Eh16HrOQbDsXPPH8D+lPAKdrF+2amDa0BLP6JsEfA0fxS16xURAdR3CBi7SW//ffnVZDfz7/j9Iap3VtHUEjmnK31jfaBcDYZLnx+ukfGxWxxBtwiG1z8O0e6t8Xo4tncpirhPbFkldVf6PeAMCfncMMovPQjsR7+JjEhOlZJXdhJ2GPU0RKaHFe+EpXLPEe3xdtFJ0228ekwHX4zmBhH9QHhGF+2XrVrt91SDbHnwdYLsHEWPlzLg9J4EmBMUC50hnkNEmXXkyFxsD4RQB1CqPXHxyWhIAMOIuwX9OsR88JZGwdhiVH3tmjtSzpd74rB44bQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LLw7LAl3W9Gfi3zx88F0A8c2LqwMzoBMxjou/u43v1w=;
- b=tc7IHvTg17V4L1eJ8g6mPK/CAKIzC09QWck4cOVLp+dgsl/9artvTV6UfdY75rPn5cbZvysBrogAkqrlR9zi2ZXn6MpEKEOtcfwgrd71xU1ubDWVLWdi/5dEIBBCTslH1EGixqjWMbZsSIaPUKiIu3z44ZaMFmKVEzk8+RbjOf6zPUVvf9OvV0SbeWdOPv9cw2xSARJHo0tpHWq1xzAXugDt4UgqryM9IZxtmnZpW9qYfO33mQOApJgXNWh4RqOrPUof6fy47YzbCt+WRqqXDRknDHnsMMZ49Y/LZzkdX91Eh1o+WF59k3kNvzsIb2KIaouUBGC/vAAKKqevLnW+OQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=sch.bme.hu; dmarc=pass action=none header.from=sch.bme.hu;
- dkim=pass header.d=sch.bme.hu; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sch.bme.hu;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LLw7LAl3W9Gfi3zx88F0A8c2LqwMzoBMxjou/u43v1w=;
- b=srZmrjVdo0KwjY2uLrVk1jOjrX8rVEOxkq6iYHbATP6R/N62438VA3+csPVW/1QI9tyI8O+8mO4wO3AGvXinJg7lZI9p7KrnTQuzyT9Ifv/fCoxpbLZU3Z4qx/ajNol308T5ufe0Pfjn6OR/T4AkM3JAbh8l70Xnoy+TWjh2BmY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=sch.bme.hu;
-Received: from PAWPR04MB9806.eurprd04.prod.outlook.com (2603:10a6:102:389::22)
- by FRWPR04MB11151.eurprd04.prod.outlook.com (2603:10a6:d10:170::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.9; Wed, 8 Oct
- 2025 20:46:24 +0000
-Received: from PAWPR04MB9806.eurprd04.prod.outlook.com
- ([fe80::7619:14c3:6aaa:fae5]) by PAWPR04MB9806.eurprd04.prod.outlook.com
- ([fe80::7619:14c3:6aaa:fae5%6]) with mapi id 15.20.9203.007; Wed, 8 Oct 2025
- 20:46:23 +0000
-Message-ID: <ee87c8c2-eaa2-4fb2-98b6-1da0cabee056@sch.bme.hu>
-Date: Wed, 8 Oct 2025 22:46:20 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re:
-To: Kamel Bouhara <kamel.bouhara@bootlin.com>,
- Dharma Balasubiramani <dharma.b@microchip.com>, g@tpx1.home
-Cc: William Breathitt Gray <wbg@kernel.org>, =?UTF-8?B?QmVuY2UgQ3PDs2vDoXM=?=
- <bence98@sch.bme.hu>, linux-arm-kernel@lists.infradead.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251006-microchip-tcb-v1-1-09c19181bb4a@microchip.com>
- <ijigaljlomxtyoy6ha2czocr7gnjqfdxs6kuhg3w4jxlwj4cr5@yum4paorabnm>
-Content-Language: en-US
-From: =?UTF-8?B?QmVuY2UgQ3PDs2vDoXM=?= <bence98@sch.bme.hu>
-In-Reply-To: <ijigaljlomxtyoy6ha2czocr7gnjqfdxs6kuhg3w4jxlwj4cr5@yum4paorabnm>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: AM0PR07CA0012.eurprd07.prod.outlook.com
- (2603:10a6:208:ac::25) To PAWPR04MB9806.eurprd04.prod.outlook.com
- (2603:10a6:102:389::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68BC11EB36
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 20:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759956745; cv=none; b=WN7yxPVMgtcj3zSTv0RZDoWxXhS/08+Pjh4Tupdnokvy1cvrLlzyqVHnyoJo5Zs49NtIsM+Q4C+fhEhV7rKKXQ9ySimMZRuweMPT/iyMboSs67tSbTZg74VPDp3dfRsSSGOCloK9ZZuLYuYEUUQbWYmjyW1vSwfEleCjXcTOoSw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759956745; c=relaxed/simple;
+	bh=ndOxXvsp/HMrhb1gAwYlnHVXo3TWMDryCNFBD/jxrYM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bJCX6P4uA9MU+PnoC/b14x6GvsKkdpPVXt/U9i/sdDljOG3RY2962OlZrY1qIZ1g0dSGkDxnSJgXaTk6r48LsIstOk4C9/KRZxB3EfjjhpT+SEoNlDdiJyd31qx7hk3Tgj10IWtGesquC6ouoby44/Av84QbwI0EowGg0z3phJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mmfPIluN; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-78af3fe5b17so189506b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 13:52:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759956744; x=1760561544; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MPwoB9zLVW7tkMuQ4svlkxNKyj7FKo1ljzHs+tkoCwg=;
+        b=mmfPIluNOdEUJ2hsENRfjhPtzR8nP90zWxC4PxD8Mm8UFbcv8zuTVY+9uh3Wb0UOdT
+         zPHorXGSvhSijTHLcSXbTpZpq+CZlVJKU0tsavWleIJxU131wW977L0JeKqaDoZUNssI
+         ++k7xtkGmSsOEdVBi1IjgzHIS4AKEAMQ5j5fdd/uJH4UECpUeFUQAPROwh85d2PECJtT
+         0EiSD90C2133dY8H12K/coEX7/yo4OtACJ3TTthl73F3JDiRJJkqY9R7Q/C9ilx6HDmM
+         xUrakd1Tgb9hjqPYYra4DFw9W9YrH4fmSx0Ajb6I1vuHzUKwbUZKysuQQlaQmfSDui4d
+         3S6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759956744; x=1760561544;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MPwoB9zLVW7tkMuQ4svlkxNKyj7FKo1ljzHs+tkoCwg=;
+        b=PfXHqtAuEr/rPvhggGBXugFmQaE2shexfAQjap8qe56YkD9FDX2xxTAEcML0n4+6Nl
+         Js2KY3iyeDvq+mCfv5NLozhenKaVwYzn5N3E13UIvnWDPyRNqdwGhBxmobtDEmagxMq5
+         zE6Y51BWasJXAnhfyyTXcpvi4dXo1ZPQccy8YELsQHr0haDwrdxN5NcM1fFDKsy/5rZk
+         p2jKunXSK4gE/1Rb/33KCAoovmwMHEseFRN6ojN3O/OCIo77yH98HnTATFDizlkuEB3d
+         nJIscRTdi06IR+PXcZJLqdQsCloFb+x7jRUxrvftq6YIS67QaSxh/T3HHajjxKJMwwxm
+         hkKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVIZYPjgj5uE6r6PeLJ/UuQgVGTJW69QeYRlfFC4MGTlNuQOIGreINAvxuPEB3v8rlXPFVuPZcMlnjH+y4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2lI/J+mCr+GfztYtZAau4kYNKSkEUUSSOAUwQxYJj71wRzMmV
+	8N53vCnL51Q/VbJO1+pVsYkKO20UoC6MkXaxbt7qrWjh0BVw1qLInoLv
+X-Gm-Gg: ASbGnct+EylZaLzsFnJl2y78do6EXqV/z+KNRBypLIkDQ/GmCu1ILKy1lGgsi2qUrsf
+	E7bAL7GAgS6EaF6G853ervMx5PNNXrIP7owkBXm38MTAwaXbRnBb0jyR2QCzWfLne0xYDDZYdE6
+	OLc2Uo6WzsEzstfp6AwlSBq5Ktm4Vo58MfivOX1ITxZEuyuepcIdkBfXJXhAPkRccwq3k9auNjf
+	PFfi/SQN8uD1+okwTso5X0KySVhOXGoPFLuaGbsXXt3YojLKZh64ts8bBpARbtYIY3zWEouabTb
+	vQAx8mf067bX3Eh0H4rfA1g/J+a/oeU/1a9Q2QxyFKSa04YzZS//97KCvRCdxcAVCse9k/5Lv3O
+	QPDkiObeBokNpIiGQx68s3aWxaq9YV+AkTUTKyjMeEG4KqoH5Hb0fw7ZgRoNoCKZbARksPskf+V
+	PUjwFMkNY=
+X-Google-Smtp-Source: AGHT+IFHOUwcEcxaUjJKJWy7oLOI7A7a4YH2TSqQazR9yR60OyYjDJ8uXuy2atf8vLqEWBv9FkhxwA==
+X-Received: by 2002:a05:6a00:3e27:b0:781:2582:822a with SMTP id d2e1a72fcca58-79385ed2f30mr5982076b3a.8.1759956743557;
+        Wed, 08 Oct 2025 13:52:23 -0700 (PDT)
+Received: from localhost.localdomain ([185.213.82.31])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-794dbc5af68sm647244b3a.48.2025.10.08.13.52.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 13:52:23 -0700 (PDT)
+From: Brian Sune <briansune@gmail.com>
+To: Charles Keepax <ckeepax@opensource.cirrus.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v6] ASoC: wm8978: add missing BCLK divider setup
+Date: Thu,  9 Oct 2025 04:52:07 +0800
+Message-ID: <20251008205207.1781-1-briansune@gmail.com>
+X-Mailer: git-send-email 2.47.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAWPR04MB9806:EE_|FRWPR04MB11151:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0bd8b9e9-1f38-494e-e83a-08de06abbdd2
-X-LD-Processed: 79f0ae63-ef51-49f5-9f51-78a3346e1507,ExtFwd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|10070799003|376014|366016|1800799024|41320700013|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eXpYYjFKdDF4SkpXU1RrQzE1M0FneUhCWTZnOFdQVDNLNnJrNmpwZm1EeXhM?=
- =?utf-8?B?ODVNUjF4QmNXbVl2R3BBT1IxMHlDYlM3SVJDcnpZTVZaTUNpUCs1OVloMjVK?=
- =?utf-8?B?S05wOGFEdWdyVG9JU0MzZnpyRXRZVEJ0U2RSRFlmRjlGMUNmNjZsMlNwOUh6?=
- =?utf-8?B?OW1OSjZnYmw3bldTRFpxMHZoTlJJSHRYMFVvUU1xR3VXcW5rWkx1VVFjekdL?=
- =?utf-8?B?eEEyakMvbkdTRWI3WndNcktuYXYzSkFIOGt6OURWZFdzaXBYOGJZcjBhTE5V?=
- =?utf-8?B?TDhPUXBMSmtidG9ic1ZBUER0Q2RtZWw2cmJGenpYSU9idGJERW1wOHdzQUc0?=
- =?utf-8?B?RTdTN3NsRDBEWXhaK3JkamZJQ1RYSVN3NUhmNStXL2hXdEdKSFlKS05lWVdZ?=
- =?utf-8?B?QnBsdlpFc29ydUN4b3kyWUdIQmNtbkoveTNOUHQvclR3aVM1ZXhGVi8wSlVy?=
- =?utf-8?B?U2VPNXY4MldOcFFuUkFzZGh4MVdIbW91QTBNc2RPLzRWWGlOVUpSdDBRYnJq?=
- =?utf-8?B?YjUrQ0hoWit0ejJhT1cweEo3aTlXNzhFN3dSKzFXSEZSYzB4czFMTHJ4aEVJ?=
- =?utf-8?B?NG9kcXpkcmlQTnlMb2Z6RkJHREtRQ3RHSkh0QTlNdEVLVmdsTWZCbXpIanQ0?=
- =?utf-8?B?OHl4eEV0RjRIaTB5OFlXVVFkMEZ3blBHOWtTeWlZWWhsWDRQVDdDQnNjUzFm?=
- =?utf-8?B?V0dnRmYwN1pqUFhxVzdTUFlMSFY0b0tkRE1CbFNHT2RhblV6eHBqMGtkWU1x?=
- =?utf-8?B?UlQ1ZW9jZWNOS2hZT3ZkRUE1N1Q5SHp4ZXJYRnRjdzRVUjA1ZGlOSStOWHgw?=
- =?utf-8?B?UEN2Tnc0UWkzaVYzaVNWNWNXZzhQTW9MdFQrbzZydUtKVHd1aVRnbmtucTdD?=
- =?utf-8?B?ME1ESWx4YnVoQW91MzRMTFgvTHR3YTR3OVY0Z2QwRUpIUW5LcDY4am1YU2gy?=
- =?utf-8?B?SDFDQzRyZldzbUdCeEhvQ0N2c2lqYm5mL2plUFAyWERCVm0wOGw3Z0NpTWRP?=
- =?utf-8?B?QWdPazFSUmFMaXNpZU5UaHVwRm5EMTR6NThJOCtISElVU0FscFBJL2pZVzdo?=
- =?utf-8?B?Nk5qMkI4cXE2WTg3M2tZMmZqOEs5c3hXdTBqVWpzMTZncWphMUp5UGkzTDMx?=
- =?utf-8?B?QTh5TVZVcVNKWndKSVRtb0o2eS9zdk9sME1SZ2x2em5jRjQzdHFCNmtqNE9k?=
- =?utf-8?B?MjBCNDVoUWwvWG54QWdXbHJpZm45TDBRbUdhaG9nMExTVmlEMnp1QWp4RWNx?=
- =?utf-8?B?VGVIVDJHbTJlRUNWMmJtUjd2NmJXVWxvSXdHUDVZNjRmTkUxZnUwME5Dcng0?=
- =?utf-8?B?U3BxZ2VVQkZ6NnpWZ1p5NkFRbm1WMW1UOUtNcmhPUEZPZGdpdHJvS3R0M1Q3?=
- =?utf-8?B?WHNSMHhTV0MxODNaM2o2OFByd2E1QjJmOGE1YmFuMzYvNzA5Zm5aRThPWVRo?=
- =?utf-8?B?OXZGU3QwNG02dGRCR21vZGVGSUNRSGpGanB2UmpwZi9OcU10TkFZeHRjS1FV?=
- =?utf-8?B?dG1pVDFpL29DMm1XYnJVRlQ1SWVlMWpZaC9kZTVodG9naGNsZitKeVEwVGQ1?=
- =?utf-8?B?L244V0RaSm1rckt2TVIwL3hNT3hUV2MzZWZtUmMyNTBaWGpGSjRaVlN4MHBo?=
- =?utf-8?B?TENhdzI3RUlzdXJMZGFHcmpUQ0lnRjVwczRsd1IwL1FHRkdjWCtIQ21zbndP?=
- =?utf-8?B?SHhMamRKeTdtdGlDekdlQjAxWjdUYVBGaE8yT09FTDg4cEJmQTRqcURTRlFK?=
- =?utf-8?B?ZkNKTkx1OHNOcVZFSTZzTEMzdEt3ZGFReGw5NWhsYmdmM2RrTE1DNTMzRk9l?=
- =?utf-8?B?YjJKVmhLTmh5dDFFb1RUWCsxditlcHZnOURWM01oWFdneSt0T0o3S2U5Qjd6?=
- =?utf-8?Q?qyExixs75vraf?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAWPR04MB9806.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(10070799003)(376014)(366016)(1800799024)(41320700013)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?anBvUnNxOE1zSHJNeWhVaUJYMTBSNTZ5cTdUOTl1cDNiQnRjNmhzK2E5VE90?=
- =?utf-8?B?WWpjU09KYzVpSytUaVh4b3ZEUzExa2lqTng0RldvWTIwT1VEWW9PSWFIR0tK?=
- =?utf-8?B?R084MGJULytQczNvUHA2dUYwL3Zrejc4U2dWOUE2SVhhcTkrQUplOWtHYzEx?=
- =?utf-8?B?N0JlaWZTS1RaMHpHMUcyclpBNGZZb1FFZnowVzBCQlBoanVoV2d1VTF3OXdO?=
- =?utf-8?B?K2dZdCtncld5aGpiWjBvZHkzdFpuSlF5eXB5bG5ZTjR2ZXJXVis3bG5hbk5q?=
- =?utf-8?B?N0JRVlUwTkhubEdqeXlITFNQSTVrZk1qQ0gzbkxWT3JrZXZ1b3ZhTzRiWXgz?=
- =?utf-8?B?Sm9CWWhMekJ1ZHB5VWRIZ2JCM3dJS2JmS3Z5Mmx0bmJEVmVGbVl5Y0dKTVA4?=
- =?utf-8?B?YzVsaHZXckp1QVRDNjJ2dmpFSVIwNnlqQncyYkFKT21kVzdXOFNtMFloYmg1?=
- =?utf-8?B?ZE56dWd1ZTFMeXFFdmdZcU9vUExYZlF0SnRpME1lczNMbVl6ZGFodHlCKzZw?=
- =?utf-8?B?YlkwRndJa1pYL2lwWnpiVDhHS0FrWFlPbzdxcTNHL3RIT2tyWktTNzl5Yklw?=
- =?utf-8?B?dVV1VGJWRkZGbmtWZW1BSWJtdnB5RHFoL1J4UEsrazI3UTZld0ZOYkpNQ1lk?=
- =?utf-8?B?ZHlDVkVlN1dWY2NMQ3B3SEZ3N1pMR2xEY2l3cFBIK0ZJOTFGVUxyYzkrR1ZC?=
- =?utf-8?B?VFlWbDdqZG81NGRyT2FmSVJIUGJINUUycG9kL2xPZGV6MzZWRUxEdXB6TXZF?=
- =?utf-8?B?S1piSmRkVitQL0EwNGwzMFVSNEk5bWt2N29xbGJZUklWZHR6ejhFV2I2OEpu?=
- =?utf-8?B?S1Y2OGVZVGJzUW5hOTdFcmhpbXZuUGVaajFPSVE5MmJ0QXNUN2xzbXB1OEFS?=
- =?utf-8?B?Yjg3SXZKVW1vWitadldXdVpDUFU0NEFteW43RHZvK1JISW53OXFHUUdVRTZi?=
- =?utf-8?B?WEk2c1p5ODcxOGEvN3hIdUFNK05IRjNnelFDNHk4OGxvVGRNeHBtU1hZd21O?=
- =?utf-8?B?bGxFb09tdjVmcCtwRlJZQnIzK1NzMlp1Y2ZncnlMQXRYZW9iTWdGU3VaREFC?=
- =?utf-8?B?UVhad1JMcTZaa1FpSFlqY09zaWFhTkpFbVVwcmpmc1BHOVF6bGYrTzlmdENH?=
- =?utf-8?B?amtZSUMwRy94enlGdEp3bmh5WEgvUUJEN24wTXlYYlVwc3MvOXVIS1JZN1FQ?=
- =?utf-8?B?bjY5WDJaVGZ4OWxGYkdzRzhIWHIzYTU2a01EWkdFNE1ucjVNeGdvb3NNZVJj?=
- =?utf-8?B?cXh5T3o1L0dJM0dDOC9lc2NNUVNvcTFMc3hnMlNhbVRFUFZrWXhaWk5UMWNn?=
- =?utf-8?B?MmhWdlpJQUNVWnk1cWQ3N015MlVkVGNHRXJxeDBpR2FhSzZaT2lpejJIM3ZG?=
- =?utf-8?B?bEVaWFlZc3g1OGUrQ1FRWEliT0g2bzFuSlBvTHdsUDN5UldBS2F5bzVlSy9J?=
- =?utf-8?B?K2hGeWFIaDlBSUtCemNydHYrUGZuWk1Gc0kxekplQmxUQnhkc1dnM2ZBTnBU?=
- =?utf-8?B?bDRjQkt6U2dZOFBFVnltSkV2bU1rbTRBR0lJbUlUY3M0SXFKUnVvbmlVT1pP?=
- =?utf-8?B?K3NpNlpEVE8vSWRKSEIySDRDaExJSkF4cnBhc0pFOTd3WERHVGFvbVI5OWRJ?=
- =?utf-8?B?OVgwRDMzdHk3WWpwWjUvSFROQW4vUzZ6SlVEeDc2TGFXODFzY204Q3MrN2Fy?=
- =?utf-8?B?NkEwZFJIenBlUUpsYjhiRVArRzNBQ0JLdHJieWtXTUNhM3dwSTA2RVp2Y0N4?=
- =?utf-8?B?OFg3VWJIeDdEOTNIcmk5YUNYWUllTjV0Ky9JRmdGa0JFQi9pR1FYU3RsYUxJ?=
- =?utf-8?B?enIxaTluMUUyZjRkeXlSQVZsS2ZNS3JFTkNtSFVDNmpRUGNDdW00WFRhcEVp?=
- =?utf-8?B?OU1kRlNRWFJCeDF6ZklpRGt2MXlLLy8wZjVBbUo4U25yaHo0S2JIRU1MR0My?=
- =?utf-8?B?SVp2S2hNREZ3K2JhaFdGRytkdnpVekRqRm1XczVJVUFJV3BDc2RWWGRKQUhV?=
- =?utf-8?B?ZStidmpPa2pyS3pKRVR0RHAyc3QzcEh1NFlYbDFVQWxRYitRaWwzNGxWODVm?=
- =?utf-8?B?cjdLd0dGbXFDRmNUbFJ2dW1MOFB4SmZlM1d5RkxCVGFQT1RmNXFjcGdYZ0Np?=
- =?utf-8?B?RDg4Q2ZQVVVmaWpocWFQaUNINExNbjBtQW9uYnJCeElpSVpwUDdxdkNKVWNn?=
- =?utf-8?Q?u9sIUQ1B/mYFsJ0ugS4KpSk0A2/3Mp7gjchELLgk6Z6+?=
-X-OriginatorOrg: sch.bme.hu
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0bd8b9e9-1f38-494e-e83a-08de06abbdd2
-X-MS-Exchange-CrossTenant-AuthSource: PAWPR04MB9806.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2025 20:46:22.9747
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 79f0ae63-ef51-49f5-9f51-78a3346e1507
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Xo9g+dfK6y4QCt8TMYlL4TVrOxfgG9AELNwdjZ3qqnd8LeMU4WEBI7DP+Rn4QO873zrLgOGyztF5iT5eFtomhQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: FRWPR04MB11151
+Content-Transfer-Encoding: 8bit
 
-Hi,
+In previous WM8978 codec driver versions, wm8978_set_dai_clkdiv
+might not have been called for BCLK, leaving the bit clock
+divider unconfigured. This could cause incorrect or unstable audio
+clocks depending on sample rate and word length.
 
-> On Mon, Oct 06, 2025 at 04:21:50PM +0530, Dharma Balasubiramani wrote:
-> 
-> Hello Dharma,
-> 
->> Mark the interrupt as IRQF_SHARED to permit multiple counter channels to
->> share the same TCB IRQ line.
->>
->> Each Timer/Counter Block (TCB) instance shares a single IRQ line among its
->> three internal channels. When multiple counter channels (e.g., counter@0
->> and counter@1) within the same TCB are enabled, the second call to
->> devm_request_irq() fails because the IRQ line is already requested by the
->> first channel.
->>
->> Fixes: e5d581396821 ("counter: microchip-tcb-capture: Add IRQ handling")
->> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
->> ---
->>   drivers/counter/microchip-tcb-capture.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/counter/microchip-tcb-capture.c b/drivers/counter/microchip-tcb-capture.c
->> index 1a299d1f350b..19d457ae4c3b 100644
->> --- a/drivers/counter/microchip-tcb-capture.c
->> +++ b/drivers/counter/microchip-tcb-capture.c
->> @@ -451,7 +451,7 @@ static void mchp_tc_irq_remove(void *ptr)
->>   static int mchp_tc_irq_enable(struct counter_device *const counter, int irq)
->>   {
->>   	struct mchp_tc_data *const priv = counter_priv(counter);
->> -	int ret = devm_request_irq(counter->parent, irq, mchp_tc_isr, 0,
->> +	int ret = devm_request_irq(counter->parent, irq, mchp_tc_isr, IRQF_SHARED,
->>   				   dev_name(counter->parent), counter);
->>
->>   	if (ret < 0)
->>
->> ---
->> base-commit: fd94619c43360eb44d28bd3ef326a4f85c600a07
->> change-id: 20251006-microchip-tcb-edd8aeae36c4
->>
-> 
-> This change makes sense, thanks !
-> 
-> Reviewed-by: Kamel Bouhara <kamel.bouhara@bootlin.com>
-> 
->> Best regards,
->> --
->> Dharma Balasubiramani <dharma.b@microchip.com>
->>
-> 
-> --
-> Kamel Bouhara, Bootlin
-> Embedded Linux and kernel engineering
-> https://bootlin.com
+This patch adds a check in wm8978_hw_params: if the BCLK divider
+has not been set via wm8978_set_dai_clkdiv, it is dynamically
+calculated and configured at runtime.
+This ensures that BCLK is always correctly set, whether the
+machine driver configures it explicitly or not.
 
-Looks reasonable to me as well.
+Whatever relieved from hell~
 
-Reviewed-by: Bence Csókás <bence98@sch.bme.hu>
+Signed-off-by: Brian Sune <briansune@gmail.com>
+---
+ sound/soc/codecs/wm8978.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+diff --git a/sound/soc/codecs/wm8978.c b/sound/soc/codecs/wm8978.c
+index 8c45ba6fc4c3..23e6b874180b 100644
+--- a/sound/soc/codecs/wm8978.c
++++ b/sound/soc/codecs/wm8978.c
+@@ -99,6 +99,7 @@ struct wm8978_priv {
+ 	unsigned int f_mclk;
+ 	unsigned int f_256fs;
+ 	unsigned int f_opclk;
++	bool bclk_set;
+ 	int mclk_idx;
+ 	enum wm8978_sysclk_src sysclk;
+ };
+@@ -590,6 +591,7 @@ static int wm8978_set_dai_clkdiv(struct snd_soc_dai *codec_dai,
+ 	case WM8978_BCLKDIV:
+ 		if (div & ~0x1c)
+ 			return -EINVAL;
++		wm8978->bclk_set = true;
+ 		snd_soc_component_update_bits(component, WM8978_CLOCKING, 0x1c, div);
+ 		break;
+ 	default:
+@@ -717,6 +719,11 @@ static int wm8978_hw_params(struct snd_pcm_substream *substream,
+ 			    struct snd_pcm_hw_params *params,
+ 			    struct snd_soc_dai *dai)
+ {
++	unsigned int bclk, bclkdiv = 0;
++	unsigned int target_bclk = params_rate(params) * params_width(params) * 2;
++	/* WM8978 supports divisors */
++	static const int bclk_divs[] = {1, 2, 4, 8, 16, 32};
++
+ 	struct snd_soc_component *component = dai->component;
+ 	struct wm8978_priv *wm8978 = snd_soc_component_get_drvdata(component);
+ 	/* Word length mask = 0x60 */
+@@ -820,6 +827,24 @@ static int wm8978_hw_params(struct snd_pcm_substream *substream,
+ 	/* MCLK divisor mask = 0xe0 */
+ 	snd_soc_component_update_bits(component, WM8978_CLOCKING, 0xe0, best << 5);
+ 
++	if (!wm8978->bclk_set) {
++		for (i = 0; i < ARRAY_SIZE(bclk_divs); i++) {
++			bclk = wm8978->f_256fs / bclk_divs[i];
++
++			if (bclk < target_bclk)
++				break;
++
++			bclkdiv = i;
++		}
++
++		dev_dbg(component->dev, "%s: fs=%u width=%u -> target BCLK=%u, using div #%u\n",
++			__func__, params_rate(params), params_width(params), target_bclk,
++			bclk_divs[bclkdiv]);
++
++		/* BCLKDIV divisor mask = 0x1c */
++		snd_soc_component_update_bits(component, WM8978_CLOCKING, 0x1c, bclkdiv << 2);
++	}
++
+ 	snd_soc_component_write(component, WM8978_AUDIO_INTERFACE, iface_ctl);
+ 	snd_soc_component_write(component, WM8978_ADDITIONAL_CONTROL, add_ctl);
+ 
+-- 
+2.47.1.windows.1
+
 
