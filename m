@@ -1,133 +1,128 @@
-Return-Path: <linux-kernel+bounces-845519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2E4FBC53BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:35:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB7FDBC53CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:37:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 60B514E3346
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:35:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A01E3E220C
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9CB285C84;
-	Wed,  8 Oct 2025 13:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1511251795;
+	Wed,  8 Oct 2025 13:37:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dywjDn0h"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="HeAdt0qC"
+Received: from ksmg01.maxima.ru (ksmg01.maxima.ru [81.200.124.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C5521B185
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 13:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB2B285CAD;
+	Wed,  8 Oct 2025 13:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759930536; cv=none; b=sLPA0Zr915Hy8x5GBQcM6dTunhQJ6yM28pye5U1keliGnsgNHRZoZnBDevZEL5Bf4EXA1uZAa6reWieZmZ3LTqrs22oq5124xvxtegPjMOt57h886VYb6ip3qCfCz3qO+8L3HYvCG0ubWPtGnGD//YrU8W+cTkPkLUBssWztiGA=
+	t=1759930633; cv=none; b=fFOYZgiT1qP73o/D58k7m+K+DN+6By6BGTiKgCsmLFBdShpZvWTXffebKYp60xp1PQqaM8q3iwO8OZDV48AJIkHVaHgy2KtLPBYqR7gBRUC88n/Ogyvqd435LY7sqqkMmi3D6Ebny/fdUJdCUIkD0JnvwoKfopoK8AIoeCrFcRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759930536; c=relaxed/simple;
-	bh=7vGH8N/m6PE6lnr/uLWOIY85RQ6MjHgDYrjIeFb+YNg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=vDGTF6RCbSZrJ0Imaa1rOPzMsMSxRcORu0xzosbUFoE8q/EJ/dNLLfKQP90bT4vFOuJBkQMyvVS4OvgBc/kMIFPG/4ab0IE7VkXQzfQTaHXQ6xQGnE8CU58VGXiQbFgr8cwf8JomLpDNixbjocDQxmEGiV6NhPOU+qqsWWl8UgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dywjDn0h; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-46e504975dbso45386045e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 06:35:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1759930532; x=1760535332; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hDHlNMCgPWfKcx9mEMfAa7rnZ2ePjEXMkf1KPca5jNs=;
-        b=dywjDn0hZVcYnCqsGOJwB9zIwhAuPBx6/MnaRssTC2JfxFetIhJNqVQHO9Glfw/Mzl
-         jdCKVnXimtkCw+nFxD3dFnOx4hTdnFv3SbJ5xkAh87EiDw6ziOab7IrwKFiDG1dvfCNd
-         zBYEFhKO89Acm6ztRue/IbFMpeXzKHV5zH5R+BhNi/y0az0Q0aLDXYMhdJKVuVLQsclY
-         yZcjxPi+91EiGK8WBuDigRSxaFesJlkjC1nKNfND+ejLHMimqJvAFU/kRvEiRA7THLqA
-         odnmDDe3Drz2vcYt5g/ZyOvD3MWFevAngP95s6KBpFuSxrjXluGXf9FpghAzLon+0V8D
-         T86A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759930532; x=1760535332;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hDHlNMCgPWfKcx9mEMfAa7rnZ2ePjEXMkf1KPca5jNs=;
-        b=WD3irnp1+m7sO2tUQm9X5Em8yTAbDouKDYl6GpyHMKIpF1Y3H2SpF38UiErKMNaIcd
-         nn1nIr0W4vcUCqjG9QrWlohKGlCoigZyfcJ7RjIW1SdNL3BBYvbz0QJqU70wvtXbnYBA
-         Dj1cpQQOn7xMSpYhFuipg26zk0m+E2jlUBSKzv7hh1eO11Ij51WKPogX5kQtsjXFt87g
-         5CoLOamxrjL+UHWzBN8hORclaiPEtfgfDofifr2opA0/xLthUVzrPsyEpt+4lIAkCnwR
-         H3sd3p8OdJkAz4ikWiV078wUIQC1KopL+crvQTEkY3lxgsEz1ajU+SDd0V+h7usK69Qk
-         2YDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWz4IHDJDqd7qIl7ZN+0ecvubu5yU8UXzMltLpKiE/0m9lP9JWchttwPakcTXgJLTLnnghaavKn+qgS7/s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjPH0JsmbFD/7bSmQMVPHw2qgRw7e3oOt+0ZZYa1PtGq4k5ozN
-	G3CaNaKdnGGjLhgr63DH6z1ks6d8hknbKLaIKH4iFBvJl1/eTcAOZ7m7RSCbxfhIeRU=
-X-Gm-Gg: ASbGncv1QGOdxlkbyto9AGtCoUKVQk/UUgRPtmD2Pv9ytgQhqrm/GFKdSB6ZXiNgm2a
-	zA5b6Dl+fYBUI1MgbZs9MgCJz5/4cJjlTg4wCWWaq40/JmAk1H9Upmgq1Vdgf0cepbNP7vzJ3R/
-	JM4EM/un7dso5R8RST0E/rp7RPnNrHb5SjIiV9gC5G5ei528Fdt7JEtSfmrAPwmkpZLKPtjRWtq
-	pu82WKSWhWR55nXlYFvVC6eGkRf5fLXy9WUUgt6cVhNxg8hrNavH2NfVxq4g4RXoW+d1GYpfyFY
-	/IMzJM6PVtIIzSfpTSttV6F4epeVnRD3n9s/bCZwIHURsrYeWItCewc74I1MKM6QPuDYwyl9JaS
-	nqZX2m0N6zocYv6JOQSHy6Yt+KhU+HeTIrCNJMzJIlz+zWfV2VpF9GV3/23l7Tq4V
-X-Google-Smtp-Source: AGHT+IEXN1OK+uUWcZYHcu8mGQCE4xlOe4D5UqEffJSE6zNfCHiuL17ImKFC3KKJ16P8hPWOZxwfnw==
-X-Received: by 2002:a05:600c:4f92:b0:458:c094:8ba5 with SMTP id 5b1f17b1804b1-46fa9a96588mr24061795e9.12.1759930531814;
-        Wed, 08 Oct 2025 06:35:31 -0700 (PDT)
-Received: from [10.0.1.22] (109-81-1-107.rct.o2.cz. [109.81.1.107])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8e9762sm30365608f8f.38.2025.10.08.06.35.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Oct 2025 06:35:31 -0700 (PDT)
-Message-ID: <6e057525-ca8d-4f96-bb52-cca6cafbe835@suse.com>
-Date: Wed, 8 Oct 2025 15:35:30 +0200
+	s=arc-20240116; t=1759930633; c=relaxed/simple;
+	bh=hlVYUy3P6BSlf4FEPSlIuLygUtVLUMPzXgCP+Lr8i4Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MIAezdax5oCcROdFxnrUWgA8h+CFZvBJnpcCGVzkCNeebFSAwzI7Ze9BCMTJq9VgggxA0XVKfI2XEIo/asc+IagoP2Xb+rlIRuasGwHymNF8s4IHYlfHHxsS+CuJEFYtk5IuN3IJu/+ppgg1NxMlAEWYvOfegAI179sohObyoec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=HeAdt0qC; arc=none smtp.client-ip=81.200.124.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
+Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
+	by ksmg01.maxima.ru (Postfix) with ESMTP id B6FBDC0018;
+	Wed,  8 Oct 2025 16:37:06 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru B6FBDC0018
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
+	s=sl; t=1759930626; bh=8NrFbemJMQpyQnN2QJdvsYbMfmpY6k0fZOgMiygtL+g=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=HeAdt0qCdRrPlAi9IouSBhAqNFVPUMWUo50o5RqbNoo7NRF4cGLIeBmXVeCbsFlpW
+	 yqbd8MMXIO+w70/Xt6bZWAEvYiDEjxo1qG4PS7LFKHBx6Mm8hpO4tZnnAzdqPesvuz
+	 SjEzRG6H5ctZNIkCvfuwWEM6cJAg8QuT7itiCcit1ZD+tegsfV2VOnfMq6NsALsIHM
+	 gEr2pHr5tM4h+8656ni4VXKal7sdS6/NNP717SKFp+dBII+0KJSFfdyAn6QKe/UVca
+	 pUTBVNSI5XmV8Y2rkJ0HY+3wgTF1Bz0MyNEJZHLF1D3sMHqtE1XjwOzACxX3/OcPhX
+	 se7thMgpC817Q==
+Received: from ksmg01.maxima.ru (mail.maxima.ru [81.200.124.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client did not present a certificate)
+	by ksmg01.maxima.ru (Postfix) with ESMTPS;
+	Wed,  8 Oct 2025 16:37:06 +0300 (MSK)
+Received: from db126-1-abramov-14-d-mosos.mti-lab.com (172.25.20.118) by
+ mmail-p-exch01.mt.ru (81.200.124.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 8 Oct 2025 16:37:05 +0300
+From: Ivan Abramov <i.abramov@mt-integration.ru>
+To: Iskren Chernev <me@iskren.info>
+CC: Ivan Abramov <i.abramov@mt-integration.ru>, Krzysztof Kozlowski
+	<krzk@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Matheus
+ Castello <matheus@castello.eng.br>, Sebastian Reichel <sre@kernel.org>,
+	Svyatoslav Ryhel <clamor95@gmail.com>, <linux-pm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+Subject: [PATCH 1/1] power: supply: max17040: Check iio_read_channel_processed() return code
+Date: Wed, 8 Oct 2025 16:36:47 +0300
+Message-ID: <20251008133648.559286-1-i.abramov@mt-integration.ru>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/10] modpost: add symbol import protection flag to
- kflagstab
-To: Siddharth Nayyar <sidnayyar@google.com>
-Cc: Nathan Chancellor <nathan@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>, Sami Tolvanen
- <samitolvanen@google.com>, Nicolas Schier <nicolas.schier@linux.dev>,
- Arnd Bergmann <arnd@arndb.de>, linux-kbuild@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250829105418.3053274-1-sidnayyar@google.com>
- <20250829105418.3053274-10-sidnayyar@google.com>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20250829105418.3053274-10-sidnayyar@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: mmail-p-exch02.mt.ru (81.200.124.62) To
+ mmail-p-exch01.mt.ru (81.200.124.61)
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
+X-KSMG-AntiSpam-Envelope-From: i.abramov@mt-integration.ru
+X-KSMG-AntiSpam-Info: LuaCore: 69 0.3.69 3c9ee7b2dda8a12f0d3dc9d3a59fa717913bd018, {rep_avail}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, mt-integration.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;81.200.124.61:7.1.2;127.0.0.199:7.1.2;ksmg01.maxima.ru:7.1.1, {Macro_SMTPFROM_NOT_MATCHES_SMTP}, FromAlignment: s, ApMailHostAddress: 81.200.124.61
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiSpam-Lua-Profiles: 196902 [Oct 08 2025]
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Version: 6.1.1.11
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/10/08 08:37:00 #27892411
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 7
 
-On 8/29/25 12:54 PM, Siddharth Nayyar wrote:
-> When the unused exports whitelist is provided, the symbol protection bit
-> is set for symbols not present in the unused exports whitelist.
-> 
-> The flag will be used in the following commit to prevent unsigned
-> modules from the using symbols other than those explicitly declared by
-> the such modules ahead of time.
-> 
-> Signed-off-by: Siddharth Nayyar <sidnayyar@google.com>
-> ---
-> [...]
-> diff --git a/include/linux/module_symbol.h b/include/linux/module_symbol.h
-> index 574609aced99..96fe3f4d7424 100644
-> --- a/include/linux/module_symbol.h
-> +++ b/include/linux/module_symbol.h
-> @@ -3,8 +3,9 @@
->  #define _LINUX_MODULE_SYMBOL_H
->  
->  /* Kernel symbol flags bitset. */
-> -enum ksym_flags {
-> +enum symbol_flags {
->  	KSYM_FLAG_GPL_ONLY	= 1 << 0,
-> +	KSYM_FLAG_PROTECTED	= 1 << 1,
->  };
->  
+Since iio_read_channel_processed() may fail, return its exit code on error.
 
-Nit: The ksym_flags enum is added in patch #1. If you prefer a different
-name, you can change it in that patch.
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
+Fixes: 814755c48f8b ("power: max17040: get thermal data from adc if available")
+Signed-off-by: Ivan Abramov <i.abramov@mt-integration.ru>
+---
+ drivers/power/supply/max17040_battery.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/power/supply/max17040_battery.c b/drivers/power/supply/max17040_battery.c
+index c1640bc6accd..48453508688a 100644
+--- a/drivers/power/supply/max17040_battery.c
++++ b/drivers/power/supply/max17040_battery.c
+@@ -388,6 +388,7 @@ static int max17040_get_property(struct power_supply *psy,
+ 			    union power_supply_propval *val)
+ {
+ 	struct max17040_chip *chip = power_supply_get_drvdata(psy);
++	int ret;
+ 
+ 	switch (psp) {
+ 	case POWER_SUPPLY_PROP_ONLINE:
+@@ -410,7 +411,10 @@ static int max17040_get_property(struct power_supply *psy,
+ 		if (!chip->channel_temp)
+ 			return -ENODATA;
+ 
+-		iio_read_channel_processed(chip->channel_temp, &val->intval);
++		ret = iio_read_channel_processed(chip->channel_temp, &val->intval);
++		if (ret)
++			return ret;
++
+ 		val->intval /= 100; /* Convert from milli- to deci-degree */
+ 
+ 		break;
 -- 
-Thanks,
-Petr
+2.39.5
+
 
