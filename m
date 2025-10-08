@@ -1,133 +1,163 @@
-Return-Path: <linux-kernel+bounces-845947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D101BC68E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:18:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2D00BC68F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:20:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 438113BF448
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:18:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6B8E64F2C4E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8B7291C1E;
-	Wed,  8 Oct 2025 20:18:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557DD2BE7A6;
+	Wed,  8 Oct 2025 20:20:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eWEuV7Nd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=iokpp.de header.i=@iokpp.de header.b="Cm6Uv/kS"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82B727B347;
-	Wed,  8 Oct 2025 20:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759954719; cv=none; b=qZthjgjKaPG68e/jV14r++le9aW2Ay4qpSbqRcPL50DkU7mUdaKmCqVJekVzz1LU302FubAwiiL13XWxGnxI6pndmJVpAbnQ48/I113DzdEzgz8YFcXWgdrIS0pXN3il1/qkTPQdP9KP8pn8EI2L37ShdHzjqZOPsRyx0cyWLKo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759954719; c=relaxed/simple;
-	bh=NPfFVoW/LsVVuz6xy4asuQtfUdYNXIh1K0Bl95lxHK0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K7cHN5gIrC3B0Oap6S/R+GFVEuHea0q47V4O0NNo765elBwB3FJTAQqCwh1eaSRAx1dEO4gp6KDfAFslr/5e3GY34ieStalMFAjHuopPBRuxgsBRIbEjFA2ehc1KvilA3/ThjyXD9Uz/X3nheZrBDy1fuv3vzJ6fE9vwMyXnfGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eWEuV7Nd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51887C4CEE7;
-	Wed,  8 Oct 2025 20:18:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759954719;
-	bh=NPfFVoW/LsVVuz6xy4asuQtfUdYNXIh1K0Bl95lxHK0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eWEuV7Nd5F7lsXWr/UkCGuvskUUzW9C9N2qKdcElDqx/deuTzBTWJueKZCqT5MWC/
-	 kE9/oj3IagxHP2hfMgU4vzc/Njx/JocASOAc5uKkczRX+NIlOw6Mqyp/fQefLpzg8G
-	 wdZ0PE/DJ3aqz4hxPAy53TqIx2L5wSKfK5n3GRFbuiq6XWwlUvSyo5gBcH5hYoqXPG
-	 MjuNTh9Zt8dK2y/pJsA6K5jRLX+DyJVYc+XBwb5npwxFnU6Tg5tJW+37C8v8Bly8tm
-	 xAGkxk47sVjIiMklhP2bNpjIUHz4ummV0re5RGFKkE0hpc6l4oMmX042tikLqLgpwE
-	 JgOoQ+b6LPL7g==
-Date: Wed, 8 Oct 2025 21:18:34 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-i3c@lists.infradead.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-iio@vger.kernel.org, joshua.yeong@starfivetech.com,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 4/5] dt-bindings: trivial-devices: add MEMSIC 3-axis
- magnetometer
-Message-ID: <20251008-subtitle-estranged-b35dfcd2d3a7@spud>
-References: <20251007-i3c_ddr-v5-0-444184f7725e@nxp.com>
- <20251007-i3c_ddr-v5-4-444184f7725e@nxp.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D515728E579;
+	Wed,  8 Oct 2025 20:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759954808; cv=pass; b=OaCl6T7tm6WF7bGXrDPkQUTaZGwwcGEtAHzQGNBJ8kYJHcIkIDeOLL/sKoHx0VGLaD/yQV1wGMo0qGRV57bReD74prBq4t05ju8qfI7UUJE9AphHC90YyE902ZTmTRYwIBrtnro/KrU3Hrarv2h5FNMCeanVN55RMWbmw107P2w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759954808; c=relaxed/simple;
+	bh=Wu8UVCYXlK3TtapPadzpanl3pcuceOvJ0JDnPqiN1Zs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=VADcRofAMW/fJ0Gwgoa3tonlADyKm+cpTq/O/j1sLbKunIyni3Hb3pHA6+fB35+g4NGWfMO86YM5yKlPYa+aDQWH5d7fHhEkf3MFwBMg6Of3iI5Fyd1aiSA8zvz6vL6q5AE3f8gEqJ5HgqmvqA4GXuE/o9Rx83D5rKt9tTFhLqY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iokpp.de; spf=none smtp.mailfrom=iokpp.de; dkim=pass (2048-bit key) header.d=iokpp.de header.i=@iokpp.de header.b=Cm6Uv/kS; arc=pass smtp.client-ip=85.215.255.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iokpp.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=iokpp.de
+ARC-Seal: i=1; a=rsa-sha256; t=1759954796; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=ac4rEXPgl+LVhAC0v/TY0LtKTEpGkpIvQY+wJ+dNZLM4wZSRDSlanUlCQWSsXVi38M
+    VLotoTysOTwvK7mw9Suso5BUZBsnAKtjB4RavpUF43zX6awxdU9MwCR5NtGC4hFRaSwP
+    pyanckasVNG9sLcTGIo0xN4NkzZgqyjXPGeG/wGSobRcFYCFUkKAS0FgXN8wjr6NHDAW
+    3ptePr9UroFdZi1BSNlZjTZ/LX4QJp9yvo6o3oU4oJSuBWblNPUttRxZypy4liWF9daL
+    UyQaAZMJPhIrK3u9LAdshH/mgDMyJ2S0F5VbtccCmRQS6vGR+jf6sa4WerGCfFsBYN9j
+    tr2w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1759954796;
+    s=strato-dkim-0002; d=strato.com;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=tlm2BgO1wb7weN1i2EzSMXR8kPH0yzp2XFdQ6GUhOxs=;
+    b=pECXER553I/LLUDju11LHiAuc+r7CW34/tmvkuF28/bjqZ0eEPfn+zba//gUC7XRjP
+    O0dT0+kz/s1ACr3hTvbCZQ2qDo/YWCUokYF/+4aHresg7UH/26YaHUPxRWcAlRv9jcvb
+    X6PQzR3L3Xzcg56g5iXVf5wQJR4yGxy4Ism5EHe3wxS6od8COBjyEUObZzwrOwhE8tJ1
+    XWtZyG/ppbWTb4WdG9mZNFK2/C5N+SGoFt6jPJG6yADkP4tKGSgp379z/ly7sHK6Vjlj
+    qC9sSG9PBOBXgtUJ8DhZnxAE+WcaCJdfjmzm4hHYg7ta9s6Rpk4AhWn54AJmla1U8eZO
+    c2rQ==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1759954796;
+    s=strato-dkim-0002; d=iokpp.de;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=tlm2BgO1wb7weN1i2EzSMXR8kPH0yzp2XFdQ6GUhOxs=;
+    b=Cm6Uv/kScjHx3E9BAf2zYECPsGY3VqJTbMaIQYQ8dLmckJdmJCVvqhmY8750ojI9cf
+    6GjWQuZx7ZQ+3F7ZcQTfEVDZYjlNIiSvuWf9YHA6vqXJLOjjqhypJaP5T0dkYJ+xrwO1
+    bxjzGbEk9foIGlW0rW7q35aSYScsTGYhbqFxGSEoyoC3CJWT9cXj1rcZPnN4+aqqoC+L
+    HCiyiyQJWvle0aAvmXRjUQlqwcbv/hG1tQ1U3Tw3uwsy524t80E3Y+mGHPf1fa337AvO
+    xx8MXI5YrqqkzxmWYUhu3hokA4l36i5Mq+33IBqad7laNlykD6ZJKvLhbGHmeTrMRkyO
+    UEAw==
+X-RZG-AUTH: ":LmkFe0i9dN8c2t4QQyGBB/NDXvjDB6pBSfNuhhDSDt3O256fJ4HnWXON1RX36IbE0bahBk7fQ77Y5cN0Av1YXTvXCMGxpd0="
+Received: from Munilab01-lab.speedport.ip
+    by smtp.strato.de (RZmta 53.4.2 AUTH)
+    with ESMTPSA id z293fb198KJt3Tz
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Wed, 8 Oct 2025 22:19:55 +0200 (CEST)
+From: Bean Huo <beanhuo@iokpp.de>
+To: avri.altman@wdc.com,
+	avri.altman@sandisk.com,
+	bvanassche@acm.org,
+	alim.akhtar@samsung.com,
+	jejb@linux.ibm.com,
+	martin.petersen@oracle.com,
+	can.guo@oss.qualcomm.com,
+	ulf.hansson@linaro.org,
+	beanhuo@micron.com,
+	jens.wiklander@linaro.org
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bean Huo <beanhuo@iokpp.de>
+Subject: [PATCH v4 0/3] Add OP-TEE based RPMB driver for UFS devices
+Date: Wed,  8 Oct 2025 22:19:17 +0200
+Message-Id: <20251008201920.89575-1-beanhuo@iokpp.de>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="sqGdDHF1UKLk1vs2"
-Content-Disposition: inline
-In-Reply-To: <20251007-i3c_ddr-v5-4-444184f7725e@nxp.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+
+This patch series introduces OP-TEE based RPMB (Replay Protected Memory Block)
+support for UFS devices, extending the kernel-level secure storage capabilities
+that are currently available for eMMC devices.
+
+Previously, OP-TEE required a userspace supplicant to access RPMB partitions,
+which created complex dependencies and reliability issues, especially during
+early boot scenarios. Recent work by Linaro has moved core supplicant
+functionality directly into the Linux kernel for eMMC devices, eliminating
+userspace dependencies and enabling immediate secure storage access. This series
+extends the same approach to UFS devices, which are used in enterprise and mobile
+applications that require secure storage capabilities.
+
+Benefits:
+- Eliminates dependency on userspace supplicant for UFS RPMB access
+- Enables early boot secure storage access (e.g., fTPM, secure UEFI variables)
+- Provides kernel-level RPMB access as soon as UFS driver is initialized
+- Removes complex initramfs dependencies and boot ordering requirements
+- Ensures reliable and deterministic secure storage operations
+- Supports both built-in and modular fTPM configurations.
+
+v3 -- v4:
+    1. Replaced patch "scsi: ufs: core: Remove duplicate macro definitions" with
+       "scsi: ufs: core: Convert string descriptor format macros to enum" based on
+       feedback from Bart Van Assche
+    2. Converted SD_ASCII_STD and SD_RAW from boolean macros to enum type for
+       improved code readability
+    3. Moved ufshcd_read_string_desc() declaration from include/ufs/ufshcd.h to
+       drivers/ufs/core/ufshcd-priv.h since it's not exported
+
+v2 -- v3:
+    1. Removed patch "rpmb: move rpmb_frame struct and constants to common header". since it
+       has been queued in mmc tree, and added a new patch:
+       "scsi: ufs: core: Remove duplicate macro definitions"
+    2. Incorporated suggestions from Jens
+    3. Added check if Advanced RPMB is enabled, if enabled we will not register UFS OP-TEE RPMB.
+
+v1 -- v2:
+    1. Added fix tag for patch [2/3]
+    2. Incorporated feedback and suggestions from Bart
+
+RFC v1 -- v1:
+    1. Added support for all UFS RPMB regions based on https://github.com/OP-TEE/optee_os/issues/7532
+    2. Incorporated feedback and suggestions from Bart
 
 
---sqGdDHF1UKLk1vs2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 07, 2025 at 04:06:16PM -0400, Frank Li wrote:
-> Add compatible string 'memsic,mmc5603' and 'memsic,mmc5633' for
-> MEMSIC 3-axis magnetometer.
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+Bean Huo (3):
+  scsi: ufs: core: Convert string descriptor format macros to enum
+  scsi: ufs: core: fix incorrect buffer duplication in
+    ufshcd_read_string_desc()
+  scsi: ufs: core: Add OP-TEE based RPMB driver for UFS devices
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
---
-pw-bot: handled-elsewhere
+ drivers/misc/Kconfig           |   2 +-
+ drivers/ufs/core/Makefile      |   1 +
+ drivers/ufs/core/ufs-rpmb.c    | 249 +++++++++++++++++++++++++++++++++
+ drivers/ufs/core/ufshcd-priv.h |  27 +++-
+ drivers/ufs/core/ufshcd.c      |  40 ++++--
+ include/ufs/ufs.h              |   4 +
+ include/ufs/ufshcd.h           |  12 +-
+ 7 files changed, 314 insertions(+), 21 deletions(-)
+ create mode 100644 drivers/ufs/core/ufs-rpmb.c
 
-> ---
-> Changes in v4
-> - add memsic,mmc5603
->=20
-> Changes from v1 .. v3
-> - None
-> ---
->  Documentation/devicetree/bindings/trivial-devices.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Doc=
-umentation/devicetree/bindings/trivial-devices.yaml
-> index 7609acaa752d5c1c89a26bb007fa38357dee1a28..72786eebfbd63beffd2a09fc2=
-0c7aedbe9e96a8e 100644
-> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
-> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
-> @@ -225,6 +225,10 @@ properties:
->            - meas,tsys01
->              # MEMSIC magnetometer
->            - memsic,mmc35240
-> +            # MEMSIC 3-axis magnetometer
-> +          - memsic,mmc5603
-> +            # MEMSIC 3-axis magnetometer (Support I3C HDR)
-> +          - memsic,mmc5633
->              # MEMSIC 3-axis accelerometer
->            - memsic,mxc4005
->              # MEMSIC 2-axis 8-bit digital accelerometer
->=20
-> --=20
-> 2.34.1
->=20
+-- 
+2.34.1
 
---sqGdDHF1UKLk1vs2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaObHGQAKCRB4tDGHoIJi
-0kYFAQDlJRBo3V6un4TdXGebaBOYpaei0g/okMdZdefOo2s6WAEA7JKupNoV9yYg
-TZOT/iUlzA563LqVO58o6aXWJEQGyQk=
-=vzKo
------END PGP SIGNATURE-----
-
---sqGdDHF1UKLk1vs2--
 
