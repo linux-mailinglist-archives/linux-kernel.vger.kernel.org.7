@@ -1,232 +1,458 @@
-Return-Path: <linux-kernel+bounces-845592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56510BC5784
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 16:44:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3272BC5799
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 16:48:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F7DA3BD746
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 14:44:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF47F3C7F61
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 14:48:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87EC82EBBAD;
-	Wed,  8 Oct 2025 14:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C7E2EBDC2;
+	Wed,  8 Oct 2025 14:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AQl07CPX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="hXBvjDql"
+Received: from outbound.pv.icloud.com (p-west1-cluster4-host6-snip4-10.eps.apple.com [57.103.65.251])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210942AD31
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 14:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B270D244691
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 14:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.65.251
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759934671; cv=none; b=lesSBg3W5CcT2P3dJDGB8n6HYXfu4xg0QfJoZIOSmINfoAMycZEipsoXkJIfJwb7XgqoPa1XA3KZ1p3mjVEeDMDBIsU19e7GSA6Jn6KtgzQ169O8Y4/o9FSvecdZnTLkly76ZhPSA5UsViSN6vod1bz05FB8uYZXEUeIO5A+4lA=
+	t=1759934878; cv=none; b=Z3/bjLjVEiF+Jqthzc5+km0rUyJxk2v6b7zB2G6zgyvPlPHS2GC3LgUAG/pyVvolXd9+/Pn9DrzOeB7psVM1+h2KTegziXjgo7I//U0S1fylemxiOU6WK1WKjkK4/Pc6sP/vUizKGq89Ydk8dVxC0mLfgo6RfibNFtvmXn+g7eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759934671; c=relaxed/simple;
-	bh=mqtJTf77FO0OqBC1ebGqrXe0vOjT6F1YNSSqtSlVUQA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XjY/bVkn3cZN9kZzrkfNPTsaQ5h1OS9wuy/Vi6OkuE/prCRR014Si3/msIxMXCCXT/fsjXCXUizkUL0QrVmD4narCUJyDs+dRnKgkGP7RWVA1tDF+4AvOLMTlX3KcWHoxf2JJDmTLh/a9NS0Vw11FM2XRESH+jfC2gAnEtFW0OI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AQl07CPX; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759934668;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5D2ZBCJD8c3xdACE6ypAt6xt/+t9lS2ExG+K8u97CUY=;
-	b=AQl07CPXXSLAE+ex3QQEffkerjMHd1pxtmLD9niw3Y8Hyfc1gfuv4YReldeTVzYghXhmJA
-	H6N5QoBCjQWTH8G1Ca5l/jCaryogb7WNu6icq9csx/cyVcDOV3I5H4Bp/zGxGA0N7M/j6T
-	KM8Z+x/szwUsOffLcwbnhp0RkgBVDkg=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-356-F2v4pXL1P5mcMtxOvb_Qog-1; Wed, 08 Oct 2025 10:44:27 -0400
-X-MC-Unique: F2v4pXL1P5mcMtxOvb_Qog-1
-X-Mimecast-MFC-AGG-ID: F2v4pXL1P5mcMtxOvb_Qog_1759934666
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3f030846a41so4640602f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 07:44:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759934665; x=1760539465;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5D2ZBCJD8c3xdACE6ypAt6xt/+t9lS2ExG+K8u97CUY=;
-        b=TzsKiy2IzxTEMuqcjFVieZ5nWqedrejfnWzmer6v9PUDPNpcBqvAk1WqDEJT+/WMgc
-         mzQlHAImLHPvhvgT3ZI/qe1rWcDAPuo8n2/N879zCVUyXGp85/nM03bET6cm2eRFBCwo
-         QeAtSdLumT3O3BHN/jzvlQWkc8pFDXxx+GG24CN7rRLM3FYJ6Ye68mexvKs7tk+CcNcC
-         jPSJCnGO3pO0aRt4RSXC3SU8ow2fNSXYCc9BLEcQwzA9EJyM6TjtJqo4D6+IXxPI1UMl
-         R3G3rOU1r0Rgmd7hQc3j4hvHX393bG29IoSymxwuY64oy2E9o9RVEphTAtD2rs98N9ZE
-         ggFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXxedEvjDyl0sKBvU2ggBGFUICm2YAntfUpQO2S7fa8F/EERtOHe72i8hHcBeijrh7RvQIcaPljE6eE1Fs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwraFPmt1JOMhvR3dS+96j3PUB9JlxUpJaq3BA1zOwplxNaMaAn
-	mnWZrPd5CZPgLrGx7Ign+JZWeX0ejqZlBXEbbpWeKsVpHnlv2b7gw9dbbOMwVUjialEuOUInlg5
-	PS8gedVSyQ+7vIceOh9J/dT5r4JK/8Qeb0Lvv1kcyOzKbrfBYYDqg1qsjUPaRsQE/Iw==
-X-Gm-Gg: ASbGncu2O81vL8SBAvN7D4CYWgB0XjTh1pNFUZ2MHe+2sv/lNnrFPKzMTERZdZjqkQY
-	SOKsvl0xmajA/bc6rLeaE6buTZa/qyk+kcqMrMryr9ok/l2XSw0ylMFSfdDBns8vI5cPWXUqu4p
-	pvYtEzmzYKr/bvLFgB4sWuqfePgR1OehKeL3mebmtkyRWRHthN6SR2SnVltOKeTGe7oH5YnrJbT
-	iSBkPdCpNx/En5Bi2pwr6+ifQ8cIBZi419yqZmRp5vhHhro07HWf4mtptPs0hYpkVqvag21l6UU
-	6RAVOAfJ3h++RhMqCOA2MTQNNDr6lHdFJpWC9mxccws6KhhbjAc9yRRgLywmRZ/Ac3/WNCmuD5l
-	52ay3/v5l
-X-Received: by 2002:a05:6000:230e:b0:3ee:1294:4780 with SMTP id ffacd0b85a97d-4266e7e00ccmr2235079f8f.30.1759934665542;
-        Wed, 08 Oct 2025 07:44:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGDdqP+nWR/r0XOQYHaQ5RL5v2xthoAhXKsv0Fsa8RBq0AE9+JjgtYjdggoihs5m7bBq+ToxA==
-X-Received: by 2002:a05:6000:230e:b0:3ee:1294:4780 with SMTP id ffacd0b85a97d-4266e7e00ccmr2235064f8f.30.1759934665153;
-        Wed, 08 Oct 2025 07:44:25 -0700 (PDT)
-Received: from [192.168.3.141] (tmo-083-189.customers.d1-online.com. [80.187.83.189])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8ab909sm29664745f8f.19.2025.10.08.07.44.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Oct 2025 07:44:24 -0700 (PDT)
-Message-ID: <f4d0e176-b1d4-47f0-be76-4bff3dd7339a@redhat.com>
-Date: Wed, 8 Oct 2025 16:44:22 +0200
+	s=arc-20240116; t=1759934878; c=relaxed/simple;
+	bh=9nVM8+eVYZFS+qvWMCCjTInimml7xtK7ll0/66iOhAM=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=ChYkz23cSOjiVxXrnDcFedaYiq9hcebAak5FdSaCtnytf1n6MqskNu7GtbOXnvRoBqu0VNKxDMfCUkAS2kRI3vaPS9Mwin0uY2xWO0u6L6CvOG2QWjiZ0jc6H2BoawySrtBIWR8E7k9uVVIM2K6cJFKPtGlqym5wRzOzm7RslzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=hXBvjDql; arc=none smtp.client-ip=57.103.65.251
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+Received: from outbound.pv.icloud.com (unknown [127.0.0.2])
+	by p00-icloudmta-asmtp-us-west-1a-20-percent-0 (Postfix) with ESMTPS id E408D180226B;
+	Wed,  8 Oct 2025 14:47:51 +0000 (UTC)
+Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com; s=1a1hai; bh=Hz96QNKL/WUmHBSf7yZr+YKfOAXk+udHFIUTjd9N0oA=; h=Content-Type:Mime-Version:Subject:From:Date:Message-Id:To:x-icloud-hme; b=hXBvjDqlWNAvCV6GY5jxxodMaqwBQY6LJxceCixH3K0Ms6MH/6UgSN+KptYKwyrbnxm7A9p0ftomyusS6kJg8ZgQi4hI7RsgARMZVKfQ0xBsEl/aRBVAIfMdX08QUGeH2wiLDMnJkMBqMht54U+BR9/23SlfORMwtQRUgRE4IK+mwLTdNVYgCHH8O99tFbpuiZs2pQnm02p4HXOZB5hLCNrTsfK+a39UxdD90oyDwGJmk3wqK/3dpzmisltRuOza1PRWhRsX8FF6FSjYwD2Opi3GPnQ9VaQG6EY12ibsBPME/+PagamOBu6DgegUtLcTO/yZnZqVfwtlMYgFjVzNRQ==
+Received: from smtpclient.apple (unknown [17.56.9.36])
+	by p00-icloudmta-asmtp-us-west-1a-20-percent-0 (Postfix) with ESMTPSA id CE7181802A0E;
+	Wed,  8 Oct 2025 14:47:48 +0000 (UTC)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Revert "mm, hugetlb: remove hugepages_treat_as_movable
- sysctl"
-To: Gregory Price <gourry@gourry.net>
-Cc: linux-mm@kvack.org, corbet@lwn.net, muchun.song@linux.dev,
- osalvador@suse.de, akpm@linux-foundation.org, hannes@cmpxchg.org,
- laoar.shao@gmail.com, brauner@kernel.org, mclapinski@google.com,
- joel.granados@kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Mel Gorman <mgorman@suse.de>,
- Michal Hocko <mhocko@suse.com>,
- Alexandru Moise <00moses.alexander00@gmail.com>,
- David Rientjes <rientjes@google.com>
-References: <20251007214412.3832340-1-gourry@gourry.net>
- <402170e6-c49f-4d28-a010-eb253fc2f923@redhat.com>
- <aOZyt-7sf5PFCdpb@gourry-fedora-PF4VCD3F>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <aOZyt-7sf5PFCdpb@gourry-fedora-PF4VCD3F>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3864.100.1.1.5\))
+Subject: Re: [PATCH v2 20/24] PCI: Refactor distributing available memory to
+ use loops
+From: john_chen_chn@icloud.com
+In-Reply-To: <20250829131113.36754-21-ilpo.jarvinen@linux.intel.com>
+Date: Wed, 8 Oct 2025 22:47:35 +0800
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+ linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <F833CC81-7C60-48FC-A31C-B9999DCC6FA2@icloud.com>
+References: <20250829131113.36754-1-ilpo.jarvinen@linux.intel.com>
+ <20250829131113.36754-21-ilpo.jarvinen@linux.intel.com>
+To: =?utf-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+X-Mailer: Apple Mail (2.3864.100.1.1.5)
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEwNCBTYWx0ZWRfXxpz/HBm7BKAZ
+ 2RTEzIvP/ohqAQtGqinfGtLSrm8cxQ7XwGDEY/mDu2PYFLU5+DE6wl2Fu28gOR5neBao2ebva9U
+ Vb5gSZE4XLUPBWYWndLE/+SfTmiSAAPkZDVPSgLbSPI85a8KKn8O5W2f9Ebfyd3i8r3SluU0DfD
+ DYQk5GsWKl8U0TdlwzqS1Aknd6fm6Fyu0UWM47M/Op5D49sVrClbIYpnS116Ro1ima/b5tAQrOp
+ zjSU2jJnqfOpxkTG5lRv4Y57G0ksF3sKloZJW/7MNfQE9V6C8Mj7lg71SPGIuKVQGtfdn5cgg=
+X-Proofpoint-GUID: FC3xdniGWII-p-UfSb-4grJ7fLA8mVvl
+X-Proofpoint-ORIG-GUID: FC3xdniGWII-p-UfSb-4grJ7fLA8mVvl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-08_04,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0
+ spamscore=0 phishscore=0 clxscore=1011 malwarescore=0 mlxlogscore=999
+ suspectscore=0 mlxscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.22.0-2506270000 definitions=main-2510080104
 
-On 08.10.25 16:18, Gregory Price wrote:
-> On Wed, Oct 08, 2025 at 10:58:23AM +0200, David Hildenbrand wrote:
->> On 07.10.25 23:44, Gregory Price wrote:
->> I mean, this is as ugly as it gets.
->>
->> Can't we just let that old approach RIP where it belongs? :)
->>
-> 
-> Definitely - just found this previously existed and wanted to probe for
-> how offensive reintroducing it would be. Seems the answer is essentially
-> "lets do it a little differently".
-> 
->> Something I could sympathize is is treaing gigantic pages that are actually
->> migratable as movable.
->>
-> ...
->> -       gfp |= hugepage_movable_supported(h) ? GFP_HIGHUSER_MOVABLE : GFP_HIGHUSER;
->> +       gfp |= hugepage_migration_supported(h) ? GFP_HIGHUSER_MOVABLE : GFP_HIGHUSER;
->>
->> Assume you want to offline part of the ZONE_MOVABLE there might still be sufficient
->> space to possibly allocate a 1 GiB area elsewhere and actually move the gigantic page.
->>
->> IIRC, we do the same for memory offlining already.
->>
-> 
-> This is generally true of other page sizes as well, though, isn't it?
-> If the system is truly so pressured that it can't successfully move a
-> 2MB page - offline may still fail.  So allowing 1GB pages is only a risk
-> in the sense that they're harder to allocate new targets.
+Hi Ilpo J=C3=A4rvinen,
 
-Right, but memory defragmentation works on pageblock level, so 2 MiB is 
-much MUCH more reliable :)
+This patch makes Thunderbolt unusable on my AMD Strix Halo platform.
 
-> 
-> It matters more if your system has 64GB than it does if it has 4TB.
-> 
->> Now, maybe we want to make the configurable. But then, I would much rather tweak the
->> hstate_is_gigantic() check in hugepage_movable_supported(). And the parameter
->> would need a much better name than some "treat as movable".
->>
-> 
-> Makes sense - I think the change is logically equivalent.
-> 
-> So it would look like...
-> 
-> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-> index 42f374e828a2..36b1eec58e6f 100644
-> --- a/include/linux/hugetlb.h
-> +++ b/include/linux/hugetlb.h
-> @@ -924,7 +924,7 @@ static inline bool hugepage_movable_supported(struct hstate *h)
->          if (!hugepage_migration_supported(h))
->                  return false;
-> 
-> -       if (hstate_is_gigantic(h))
-> +       if (hstate_is_gigantic(h) && !movable_gigantic_pages)
->                  return false;
->          return true;
->   }
-> 
-> And adjust documentation accordingly.
-> 
-> I'm running some tests in QEMU atm, but it's taking a bit.  Will report
-> back if I see issues with migration when this is turned on.
-> 
-> If that's acceptable, I'll hack this up.
+Here's the dmesg output:
 
-That looks better to me indeed.
+[ 4.212389] ------------[ cut here ]------------
+[ 4.212391] WARNING: CPU: 6 PID: 272 at drivers/pci/pci.h:471 =
+pci_bus_distribute_available_resources+0x6ad/0x6d0
+[ 4.212400] Modules linked in: raid6_pq(+) hid_generic uas usb_storage =
+scsi_mod usbhid hid scsi_common amdgpu amdxcp drm_panel_backlight_quirks =
+gpu_sched drm_buddy drm_ttm_helper ttm drm_exec i2c_algo_bit =
+drm_suballoc_helper drm_display_helper cec rc_core drm_client_lib =
+drm_kms_helper sdhci_pci sdhci_uhs2 xhci_pci sp5100_tco xhci_hcd r8169 =
+drm nvme sdhci watchdog realtek usbcore thunderbolt cqhci atlantic =
+nvme_core mdio_devres psmouse libphy mmc_core nvme_keyring video =
+i2c_piix4 macsec nvme_auth serio_raw mdio_bus i2c_smbus usb_common crc16 =
+hkdf wmi
+[ 4.212443] CPU: 6 UID: 0 PID: 272 Comm: irq/33-pciehp Not tainted =
+6.17.0+ #1 PREEMPT(voluntary)
+[ 4.212447] Hardware name: PELADN YO Series/YO1, BIOS 1.04 05/15/2025
+[ 4.212449] RIP: 0010:pci_bus_distribute_available_resources+0x6ad/0x6d0
+[ 4.212453] Code: ff e9 a2 48 c7 c7 b8 b7 83 a3 4c 89 4c 24 18 e8 a9 2a =
+fb ff 4c 8b 4c 24 18 e9 ca fd ff ff 48 8b 05 60 53 47 01 e9 94 fe ff ff =
+<0f> 0b e9 5d fe ff ff 48 8b 05 55 53 47 01 e9 81 fe ff ff e8 4b 87
+[ 4.212455] RSP: 0018:ffffaffcc0d4f9a8 EFLAGS: 00010206
+[ 4.212458] RAX: 00000000000000cd RBX: ffff9721a687f800 RCX: =
+ffff9721a687c828
+[ 4.212459] RDX: 0000000000000000 RSI: 00000000000000cd RDI: =
+ffff97218bc8a3c0
+[ 4.212461] RBP: ffff9721a687c828 R08: ffffaffcc0d4f9f8 R09: =
+0000000000000001
+[ 4.212462] R10: ffff97218bc8d700 R11: 0000000000000000 R12: =
+ffffaffcc0d4f9f8
+[ 4.212462] R13: ffffaffcc0d4f9f8 R14: 0000000000000000 R15: =
+ffff97218bc8a000
+[ 4.212464] FS: 0000000000000000(0000) GS:ffff973ee1ad9000(0000) =
+knlGS:0000000000000000
+[ 4.212465] CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 4.212467] CR2: 00005640b0f29360 CR3: 0000000ccb224000 CR4: =
+0000000000f50ef0
+[ 4.212469] PKRU: 55555554
+[ 4.212470] Call Trace:
+[ 4.212473] <TASK>
+[ 4.212478] pci_bus_distribute_available_resources+0x590/0x6d0
+[ 4.212483] pci_bridge_distribute_available_resources+0x62/0xb0
+[ 4.212487] pci_assign_unassigned_bridge_resources+0x65/0x1b0
+[ 4.212490] pciehp_configure_device+0x92/0x160
+[ 4.212495] pciehp_handle_presence_or_link_change+0x1b5/0x350
+[ 4.212498] pciehp_ist+0x147/0x1c0
+[ 4.212502] irq_thread_fn+0x20/0x60
+[ 4.212508] irq_thread+0x1cc/0x360
+[ 4.212511] ? __pfx_irq_thread_fn+0x10/0x10
+[ 4.212515] ? __pfx_irq_thread_dtor+0x10/0x10
+[ 4.212518] ? __pfx_irq_thread+0x10/0x10
+[ 4.212521] kthread+0xf9/0x240
+[ 4.212525] ? __pfx_kthread+0x10/0x10
+[ 4.212528] ret_from_fork+0x195/0x1d0
+[ 4.212533] ? __pfx_kthread+0x10/0x10
+[ 4.212536] ret_from_fork_asm+0x1a/0x30
+[ 4.212540] </TASK>
+[ 4.212541] ---[ end trace 0000000000000000 ]=E2=80=94
 
-Maybe we can export this toggle only if the arch supports migration? 
-Then there is also nothing odd to document.
+Perhaps there's something you forgot to modify while copying and
+pasting, as shown below:
 
--- 
-Cheers
+> On 29 Aug 2025, at 21:11, Ilpo J=C3=A4rvinen =
+<ilpo.jarvinen@linux.intel.com> wrote:
+>=20
+> pci_bus_distribute_available_resources() and
+> pci_bridge_distribute_available_resources() retain bridge window =
+resources
+> and related data needed for distributing the available window in
+> independent variables for io, memory, and prefetchable memory windows. =
+The
+> code is essentially the same for all of them and therefore repeated =
+three
+> times with different variable names.
+>=20
+> Refactor pci_bus_distribute_available_resources() to take an array. =
+This
+> is complicated slightly by the function taking advantage of passing =
+the
+> struct as value, which cannot be done for arrays in C. Therefore, copy =
+the
+> data into a local array in the stack in the first loop.
+>=20
+> Variable names are (hopefully) improved slightly as well.
+>=20
+> Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+> ---
+> drivers/pci/setup-bus.c | 162 ++++++++++++++++++----------------------
+> include/linux/pci.h     |   3 +-
+> 2 files changed, 74 insertions(+), 91 deletions(-)
+>=20
+> diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+> index 720159bca54d..3bc329b1b923 100644
+> --- a/drivers/pci/setup-bus.c
+> +++ b/drivers/pci/setup-bus.c
+> @@ -2059,15 +2059,16 @@ static void remove_dev_resource(struct =
+resource *avail, struct pci_dev *dev,
+> avail->start =3D min(avail->start + tmp, avail->end + 1);
+> }
+>=20
+> -static void remove_dev_resources(struct pci_dev *dev, struct resource =
+*io,
+> - struct resource *mmio,
+> - struct resource *mmio_pref)
+> +static void remove_dev_resources(struct pci_dev *dev,
+> + struct resource available[PCI_P2P_BRIDGE_RESOURCE_NUM])
+> {
+> + struct resource *mmio_pref =3D =
+&available[PCI_BUS_BRIDGE_PREF_MEM_WINDOW];
+> struct resource *res;
+>=20
+> pci_dev_for_each_resource(dev, res) {
+> if (resource_type(res) =3D=3D IORESOURCE_IO) {
+> - remove_dev_resource(io, dev, res);
+> + remove_dev_resource(&available[PCI_BUS_BRIDGE_IO_WINDOW],
+> +    dev, res);
+> } else if (resource_type(res) =3D=3D IORESOURCE_MEM) {
+>=20
+> /*
+> @@ -2081,10 +2082,13 @@ static void remove_dev_resources(struct =
+pci_dev *dev, struct resource *io,
+> */
+> if ((res->flags & IORESOURCE_PREFETCH) &&
+>    ((res->flags & IORESOURCE_MEM_64) =3D=3D
+> -     (mmio_pref->flags & IORESOURCE_MEM_64)))
+> - remove_dev_resource(mmio_pref, dev, res);
+> - else
+> - remove_dev_resource(mmio, dev, res);
+> +     (mmio_pref->flags & IORESOURCE_MEM_64))) {
+> + remove_dev_resource(&available[PCI_BUS_BRIDGE_PREF_MEM_WINDOW],
+> +    dev, res);
+> + } else {
+> + remove_dev_resource(&available[PCI_BUS_BRIDGE_MEM_WINDOW],
+> +    dev, res);
+> + }
+> }
+> }
+> }
+> @@ -2099,45 +2103,39 @@ static void remove_dev_resources(struct =
+pci_dev *dev, struct resource *io,
+>  * shared with the bridges.
+>  */
+> static void pci_bus_distribute_available_resources(struct pci_bus =
+*bus,
+> -    struct list_head *add_list,
+> -    struct resource io,
+> -    struct resource mmio,
+> -    struct resource mmio_pref)
+> +    struct list_head *add_list,
+> +    struct resource available_in[PCI_P2P_BRIDGE_RESOURCE_NUM])
+> {
+> + struct resource available[PCI_P2P_BRIDGE_RESOURCE_NUM];
+> unsigned int normal_bridges =3D 0, hotplug_bridges =3D 0;
+> - struct resource *io_res, *mmio_res, *mmio_pref_res;
+> struct pci_dev *dev, *bridge =3D bus->self;
+> - resource_size_t io_per_b, mmio_per_b, mmio_pref_per_b, align;
+> + resource_size_t per_bridge[PCI_P2P_BRIDGE_RESOURCE_NUM];
+> + resource_size_t align;
+> + int i;
+>=20
+> - io_res =3D &bridge->resource[PCI_BRIDGE_IO_WINDOW];
+> - mmio_res =3D &bridge->resource[PCI_BRIDGE_MEM_WINDOW];
+> - mmio_pref_res =3D &bridge->resource[PCI_BRIDGE_PREF_MEM_WINDOW];
+> + for (i =3D 0; i < PCI_P2P_BRIDGE_RESOURCE_NUM; i++) {
+> + struct resource *res =3D pci_bus_resource_n(bus, i);
 
-David / dhildenb
+Here should be: pci_resource_n(bridge, PCI_BRIDGE_RESOURCES + i);
+
+>=20
+> - /*
+> - * The alignment of this bridge is yet to be considered, hence it =
+must
+> - * be done now before extending its bridge window.
+> - */
+> - align =3D pci_resource_alignment(bridge, io_res);
+> - if (!io_res->parent && align)
+> - io.start =3D min(ALIGN(io.start, align), io.end + 1);
+> -
+> - align =3D pci_resource_alignment(bridge, mmio_res);
+> - if (!mmio_res->parent && align)
+> - mmio.start =3D min(ALIGN(mmio.start, align), mmio.end + 1);
+> + available[i] =3D available_in[i];
+>=20
+> - align =3D pci_resource_alignment(bridge, mmio_pref_res);
+> - if (!mmio_pref_res->parent && align)
+> - mmio_pref.start =3D min(ALIGN(mmio_pref.start, align),
+> - mmio_pref.end + 1);
+> + /*
+> + * The alignment of this bridge is yet to be considered,
+> + * hence it must be done now before extending its bridge
+> + * window.
+> + */
+> + align =3D pci_resource_alignment(bridge, res);
+> + if (!res->parent && align)
+> + available[i].start =3D min(ALIGN(available[i].start, align),
+> + available[i].end + 1);
+>=20
+> - /*
+> - * Now that we have adjusted for alignment, update the bridge window
+> - * resources to fill as much remaining resource space as possible.
+> - */
+> - adjust_bridge_window(bridge, io_res, add_list, resource_size(&io));
+> - adjust_bridge_window(bridge, mmio_res, add_list, =
+resource_size(&mmio));
+> - adjust_bridge_window(bridge, mmio_pref_res, add_list,
+> -     resource_size(&mmio_pref));
+> + /*
+> + * Now that we have adjusted for alignment, update the
+> + * bridge window resources to fill as much remaining
+> + * resource space as possible.
+> + */
+> + adjust_bridge_window(bridge, res, add_list,
+> +     resource_size(&available[i]));
+> + }
+>=20
+> /*
+> * Calculate how many hotplug bridges and normal bridges there
+> @@ -2161,7 +2159,7 @@ static void =
+pci_bus_distribute_available_resources(struct pci_bus *bus,
+> */
+> list_for_each_entry(dev, &bus->devices, bus_list) {
+> if (!dev->is_virtfn)
+> - remove_dev_resources(dev, &io, &mmio, &mmio_pref);
+> + remove_dev_resources(dev, available);
+> }
+>=20
+> /*
+> @@ -2173,16 +2171,9 @@ static void =
+pci_bus_distribute_available_resources(struct pci_bus *bus,
+> * split between non-hotplug bridges. This is to allow possible
+> * hotplug bridges below them to get the extra space as well.
+> */
+> - if (hotplug_bridges) {
+> - io_per_b =3D div64_ul(resource_size(&io), hotplug_bridges);
+> - mmio_per_b =3D div64_ul(resource_size(&mmio), hotplug_bridges);
+> - mmio_pref_per_b =3D div64_ul(resource_size(&mmio_pref),
+> -   hotplug_bridges);
+> - } else {
+> - io_per_b =3D div64_ul(resource_size(&io), normal_bridges);
+> - mmio_per_b =3D div64_ul(resource_size(&mmio), normal_bridges);
+> - mmio_pref_per_b =3D div64_ul(resource_size(&mmio_pref),
+> -   normal_bridges);
+> + for (i =3D 0; i < PCI_P2P_BRIDGE_RESOURCE_NUM; i++) {
+> + per_bridge[i] =3D div64_ul(resource_size(&available[i]),
+> + hotplug_bridges ?: normal_bridges);
+> }
+>=20
+> for_each_pci_bridge(dev, bus) {
+> @@ -2195,49 +2186,41 @@ static void =
+pci_bus_distribute_available_resources(struct pci_bus *bus,
+> if (hotplug_bridges && !dev->is_hotplug_bridge)
+> continue;
+>=20
+> - res =3D &dev->resource[PCI_BRIDGE_IO_WINDOW];
+> + for (i =3D 0; i < PCI_P2P_BRIDGE_RESOURCE_NUM; i++) {
+> + res =3D pci_bus_resource_n(bus, i);
+
+Same here, should be: pci_resource_n(dev, PCI_BRIDGE_RESOURCES + i);
+
+I have written a patch to resolve these issues:
+=
+https://lore.kernel.org/lkml/tencent_8C54420E1B0FF8D804C1B4651DF970716309@=
+qq.com/
+
+Thanks,
+Yangyu Chen
+
+>=20
+> - /*
+> - * Make sure the split resource space is properly aligned
+> - * for bridge windows (align it down to avoid going above
+> - * what is available).
+> - */
+> - align =3D pci_resource_alignment(dev, res);
+> - resource_set_size(&io, ALIGN_DOWN_IF_NONZERO(io_per_b, align));
+> -
+> - /*
+> - * The x_per_b holds the extra resource space that can be
+> - * added for each bridge but there is the minimal already
+> - * reserved as well so adjust x.start down accordingly to
+> - * cover the whole space.
+> - */
+> - io.start -=3D resource_size(res);
+> -
+> - res =3D &dev->resource[PCI_BRIDGE_MEM_WINDOW];
+> - align =3D pci_resource_alignment(dev, res);
+> - resource_set_size(&mmio,
+> -  ALIGN_DOWN_IF_NONZERO(mmio_per_b,align));
+> - mmio.start -=3D resource_size(res);
+> + /*
+> + * Make sure the split resource space is properly
+> + * aligned for bridge windows (align it down to
+> + * avoid going above what is available).
+> + */
+> + align =3D pci_resource_alignment(dev, res);
+> + resource_set_size(&available[i],
+> +  ALIGN_DOWN_IF_NONZERO(per_bridge[i],
+> + align));
+>=20
+> - res =3D &dev->resource[PCI_BRIDGE_PREF_MEM_WINDOW];
+> - align =3D pci_resource_alignment(dev, res);
+> - resource_set_size(&mmio_pref,
+> -  ALIGN_DOWN_IF_NONZERO(mmio_pref_per_b, align));
+> - mmio_pref.start -=3D resource_size(res);
+> + /*
+> + * The per_bridge holds the extra resource space
+> + * that can be added for each bridge but there is
+> + * the minimal already reserved as well so adjust
+> + * x.start down accordingly to cover the whole
+> + * space.
+> + */
+> + available[i].start -=3D resource_size(res);
+> + }
+>=20
+> - pci_bus_distribute_available_resources(b, add_list, io, mmio,
+> -       mmio_pref);
+> + pci_bus_distribute_available_resources(b, add_list, available);
+>=20
+> - io.start +=3D io.end + 1;
+> - mmio.start +=3D mmio.end + 1;
+> - mmio_pref.start +=3D mmio_pref.end + 1;
+> + for (i =3D 0; i < PCI_P2P_BRIDGE_RESOURCE_NUM; i++)
+> + available[i].start +=3D available[i].end + 1;
+> }
+> }
+>=20
+> static void pci_bridge_distribute_available_resources(struct pci_dev =
+*bridge,
+>      struct list_head *add_list)
+> {
+> - struct resource available_io, available_mmio, available_mmio_pref;
+> + struct resource *res, available[PCI_P2P_BRIDGE_RESOURCE_NUM];
+> + unsigned int i;
+>=20
+> if (!bridge->is_hotplug_bridge)
+> return;
+> @@ -2245,14 +2228,13 @@ static void =
+pci_bridge_distribute_available_resources(struct pci_dev *bridge,
+> pci_dbg(bridge, "distributing available resources\n");
+>=20
+> /* Take the initial extra resources from the hotplug port */
+> - available_io =3D bridge->resource[PCI_BRIDGE_IO_WINDOW];
+> - available_mmio =3D bridge->resource[PCI_BRIDGE_MEM_WINDOW];
+> - available_mmio_pref =3D =
+bridge->resource[PCI_BRIDGE_PREF_MEM_WINDOW];
+> + for (i =3D 0; i < PCI_P2P_BRIDGE_RESOURCE_NUM; i++) {
+> + res =3D pci_resource_n(bridge, PCI_BRIDGE_RESOURCES + i);
+> + available[i] =3D *res;
+> + }
+>=20
+> pci_bus_distribute_available_resources(bridge->subordinate,
+> -       add_list, available_io,
+> -       available_mmio,
+> -       available_mmio_pref);
+> +       add_list, available);
+> }
+>=20
+> static bool pci_bridge_resources_not_assigned(struct pci_dev *dev)
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index 275df4058767..723e9cede69d 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -119,7 +119,8 @@ enum {
+> #define PCI_CB_BRIDGE_MEM_1_WINDOW (PCI_BRIDGE_RESOURCES + 3)
+>=20
+> /* Total number of bridge resources for P2P and CardBus */
+> -#define PCI_BRIDGE_RESOURCE_NUM 4
+> +#define PCI_P2P_BRIDGE_RESOURCE_NUM 3
+> +#define PCI_BRIDGE_RESOURCE_NUM 4
+>=20
+> /* Resources assigned to buses behind the bridge */
+> PCI_BRIDGE_RESOURCES,
+> --=20
+> 2.39.5
+>=20
+>=20
 
 
