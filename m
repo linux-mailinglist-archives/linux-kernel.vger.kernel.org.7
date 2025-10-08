@@ -1,66 +1,79 @@
-Return-Path: <linux-kernel+bounces-845251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57CFDBC427A
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 11:29:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28D3BBC4280
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 11:29:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC4313C5B2E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 09:29:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E1AD74E91D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 09:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C95D52F25E6;
-	Wed,  8 Oct 2025 09:29:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E492F5463;
+	Wed,  8 Oct 2025 09:29:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="Jjm8kFud"
-Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="U9TLX21l"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30E91339A4
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 09:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A88B2C0260
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 09:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759915753; cv=none; b=J+/+I6WMP4jza6iU3sTdPEpFXdVn6fyI5WoGJLyZrJgRe7UmgQrcrQSHKGCyom9YeCKpXmc/BTEP5VuH9WXcp623xZL/jwbzHiRJ1urzioD3fpty/IWhAsae1StPAuiLtB/OHKX300c433Mb6y87uKU9KOCTsdtSp9oCs4Mm8bk=
+	t=1759915766; cv=none; b=osfSspChfJeWNhZQlts1ltp5DyAe+GA5lKxLmu5WyXbPOJGS1Qfbuzo5beqyAb0Dlo/ggVOZEjhjW5vrzahvxqZbRfTFLPMwqOOCTSxYjTX/NB3Gq6VDkapWSYviO9LJlSJK6/mFgW4wqFigzjPRM8INU8fGZtS20gKvmyGcoic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759915753; c=relaxed/simple;
-	bh=jXnx8JiSjcT/CZMMwzNBjBGmLVfuIY1yxMSER2if6dM=;
+	s=arc-20240116; t=1759915766; c=relaxed/simple;
+	bh=LxBBVtzwMKr2JTNUqHeq1IBThOaQgqw0EM0HLAomf20=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pqvGPfEzn7jHxig9o4lAMIbnHTVJwbrcr9z2fs0MmFKYmOohiJ9W/OKcbxf2YpsKrUXreijr2ZKy6gHLUCjVItb547xfSFF4ZEr5Zv0RYb36PvdDZFxULPnXSksDg6sxh1Q1tZicxOltvZg9OorHFWPFD+cnZZZwNh9XmlwajZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=Jjm8kFud; arc=none smtp.client-ip=44.202.169.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-5007b.ext.cloudfilter.net ([10.0.29.167])
-	by cmsmtp with ESMTPS
-	id 6PJkvbhCWSkcf6QTrvq1qm; Wed, 08 Oct 2025 09:29:07 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id 6QTqvh9JNFT7u6QTrv2LhB; Wed, 08 Oct 2025 09:29:07 +0000
-X-Authority-Analysis: v=2.4 cv=Du5W+H/+ c=1 sm=1 tr=0 ts=68e62ee3
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=4oHATN8Nx7vVUZJYxp75bA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=7T7KSl7uo7wA:10
- a=EQC9fkTS1saQ4aXz80UA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=xYX6OU9JNrHFPr8prv8u:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Uhm8m3dm0cws/aSg7uFXy6zdQFIsZg9S5XN1svy4Fdc=; b=Jjm8kFud2QXOpJjo4z2+vsEsyj
-	5JibvFMUGXCvyd5kxn/H1LfbjfmLf5WApujShjuhZ0VzG+eAV1UtR3VaNP7iIu/ZBQu8fKm2e7YH5
-	Wy6hD5neDgAbQEi38PYqiRtGDKXjOG3XyPFq3XljmgBeprne01ZLKNcn/PbNZJzvZVkKfGgWPdm3c
-	Pyh0+rL7iFE3nkFfmzezLJ54px5sIL496OtzBO9cOVJBMDzs+JHrOiu46Gr3W4eah/8pJo5cADB7q
-	XfafQSVnDUItQOMv20ZGYWZvHS5RorE5ZGfnMhxCJkVrSlx8AN6Kza1eQCaGSyJ76ieTzj13X4KWj
-	7ZJPb/tA==;
-Received: from [185.134.146.81] (port=50916 helo=[10.21.53.44])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.98.1)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1v6QTp-00000001r6Z-1KKv;
-	Wed, 08 Oct 2025 04:29:06 -0500
-Message-ID: <a157b190-74f4-443b-b52f-1fe0280f9bb3@embeddedor.com>
-Date: Wed, 8 Oct 2025 10:28:38 +0100
+	 In-Reply-To:Content-Type; b=uyN0l3JkBYjRjEEmKs0IqVbGzs3qnnqySwffiOxJL4NcuatUraYTZvG/VteRvM43Tb7jCVatpJpJ99z0Dv/n+9mBioE90iJo2U+lJQfIiBvzLVGfXA3E8jq457WSOJiyU0qyb6vwei7Fhqupze+XWOgb/zZ1URdfl03z9rd1yV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=U9TLX21l; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e2c3b6d4cso57956915e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 02:29:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1759915763; x=1760520563; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dGH1zm2/CVREaNWSZfTdihfB75bi/nZyvw0cv7dYup8=;
+        b=U9TLX21leKyslAw2MI0m1zpegQdPHdmStWvlkATRiHabQjfYOqTUizy5IT3IiQ6P6C
+         SLPvyUm/zsczGtAq0fPVyi9vlkjBG37HO454+TJG/AhRdQ/nW1ZKE2WoebjoK8q0oVq9
+         E1FnlG1OvrKFgg4fNizgBdwNWfkiXNsk+TIP/NnRvLlzdjtoYE4gVXqMsRSRFEpiq67J
+         n1fpVJyMppa83xNnxLRJTonJdPppl7U8QvNx5ZqIKxbWtEbcdoTqvdHZAT+951SxJ96n
+         Qte3l9XiSB9OZxT4W5lYVMEiGvuzyRYivRqmOCk/1yz9wGI2ttlWmsWR/yXVJZJUDdyt
+         eGyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759915763; x=1760520563;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dGH1zm2/CVREaNWSZfTdihfB75bi/nZyvw0cv7dYup8=;
+        b=ka00oxh3HiLFL2NtJOjOhAf8OH/ly29V3pJ1IFdvI1W4UALaFr6Et0RRhq91mE3kJV
+         hgY2edqpxQbuLK63xxcCmtL2A65Tt6Eg51wQQJlHzL7b//MAR/EKs8wGY2JNnuPdPVfO
+         8nzc+B+8gzbwAPy7k5KByxsqVRfIUEK2dHxsxL/O74paiZ+fWRG58xRohCTYbGst9ufG
+         UH1S5zWtCs/wqxck4L6T8Y8oBkK27vXdcjRO+AWrAaHGPnpnADy6XYWtIDY+SrAHrzDv
+         N6Jiwq7DBjTY577mNx2r6YOU7a3k7+SZqPCUBKag+qydH1/I/I3/ctC1ieSCfKXcqbUY
+         NogQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWzry2Bf+b0vLBswqatefsSS5dYs8ig279JScsJ2Fl2PgOAZ+a98AMY3XOS5I3EweGkgKMBh8ZUULxeXs0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMoaQpOi9NY/mtkDt3K5EWh1pFxfWE9dd/gDR0eSftMsOwo3N6
+	VI2Qhgdil0/PIl4/wA7vEVxZMyqlFAd9WUly+MiVxHkkzVK4QNoCcsA1WXTrLKgK+KM=
+X-Gm-Gg: ASbGncvkUggajVSabUL4U/oVc98mMexqD+eH0s0tz+3QADKrRD+HGf+0kLj8E/6qBgq
+	rwQ2VuHQ4YPhv4l25hwjiaWtNSR+dt//lDtOtqxMC/eqIcHk5fgMNbDJHQMNaIxi6LJ1JuCCboa
+	r3IpEghrbOl4m5dTMVDG9ntkFbTYbZIQxqeJKwJltJyKS6UNpLm1UkYepk0sDsm1xOR5pIBlguE
+	Lhg0p0eDqrPPZB8jgGpf0Nz3brrc9LIIdU7YhF/yoNQOXMxhHMNjIKgHDTH6GNfbLF/7CC5fXYN
+	g9NPtbhu4OKqB1nOnJKrA0yKmmumnmpnSzLmwC3iD+kxGcfE4YDcZQBHCcuTcBam1yJFGECI10J
+	YgYTd5XI8VaiWMWTBhVd9Ye3cLgUwiYtxa9gkqtYenb0fRJ+05TDpAQ==
+X-Google-Smtp-Source: AGHT+IFVhJVXs1UnSSIhLaMtG8uwdc3i+sqmZ5ZivzOR9x4tm0KSEE5lliZtWtRctkFNlouI6CE90w==
+X-Received: by 2002:a05:600c:3546:b0:46e:33a6:46b2 with SMTP id 5b1f17b1804b1-46fa9a96a70mr17610385e9.12.1759915762221;
+        Wed, 08 Oct 2025 02:29:22 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.59])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fa9d6fb41sm28973635e9.17.2025.10.08.02.29.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Oct 2025 02:29:21 -0700 (PDT)
+Message-ID: <66d85e70-efb8-4a45-9164-55b123691b70@tuxon.dev>
+Date: Wed, 8 Oct 2025 12:29:20 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,154 +81,307 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2][next] scsi: megaraid_sas: Avoid a couple
- -Wflex-array-member-not-at-end warnings
-To: James Bottomley <James.Bottomley@HansenPartnership.com>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Kashyap Desai <kashyap.desai@broadcom.com>,
- Sumit Saxena <sumit.saxena@broadcom.com>,
- Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
- Chandrakanth patil <chandrakanth.patil@broadcom.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <aM1E7Xa8qYdZ598N@kspp>
- <3a80fd1d-5a05-4db3-9dda-3ad38bedfb38@embeddedor.com>
- <4cf727c56c4fda8d28df920214b3824c9739bc8f.camel@HansenPartnership.com>
- <5b23ae5a-bd47-49c7-bca7-7019abc631f7@embeddedor.com>
- <ca77643eab8e10319db31690baaf031b8bfd32ae.camel@HansenPartnership.com>
+Subject: Re: [PATCH v7 4/7] reset: rzg2l-usbphy-ctrl: Add support for USB
+ PWRRDY
+To: Philipp Zabel <p.zabel@pengutronix.de>, vkoul@kernel.org,
+ kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com,
+ yoshihiro.shimoda.uh@renesas.com, biju.das.jz@bp.renesas.com
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+References: <20250925100302.3508038-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250925100302.3508038-5-claudiu.beznea.uj@bp.renesas.com>
+ <c7fc31f1247332196516394a22f6feef9733a0b4.camel@pengutronix.de>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <ca77643eab8e10319db31690baaf031b8bfd32ae.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <c7fc31f1247332196516394a22f6feef9733a0b4.camel@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 185.134.146.81
-X-Source-L: No
-X-Exim-ID: 1v6QTp-00000001r6Z-1KKv
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([10.21.53.44]) [185.134.146.81]:50916
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfECgz/uQ/tcoy0dOntQWCLIu8vgUOLu5GoRx/B7wF5foQxf+mJVnCm4jJiXNcQ41viedhDKC3E4Yd4YqCa8Lu1URQiygQQhe8GeR/0T+2A8Tbffjucsy
- z3XGKspHREUJAQNQRAUzVtM5J2ydAWJODib6ZhV3Oysb/akTSRQOsRkP1Y4zhW9DWl5EiYubvfNqoWFQIzJrKQZ90g3PT++BWmsAl9DJauJXGgmW286NRNIQ
 
+Hi, Philipp,
 
-
-On 10/7/25 23:56, James Bottomley wrote:
-> On Tue, 2025-10-07 at 15:18 +0100, Gustavo A. R. Silva wrote:
->>
->>
->> On 10/7/25 12:59, James Bottomley wrote:
->>> On Tue, 2025-10-07 at 11:43 +0100, Gustavo A. R. Silva wrote:
->>>> Hi all,
->>>>
->>>> Friendly ping: who can take this, please?
->>>
->>> After what happened with the qla2xxx driver, everyone is a bit wary
->>> of these changes, particularly when they affect structures shared
->>> with the hardware. Megaraid is a broadcom acquisition so although
->>> maintained it might take them a while to check this.
->>
->> I've been in constant communication with the people involved. So far,
->> none of them has expressed any concerns about this to me. However, I
->> appreciate your feedback.
->>
->> In any case, I promptly submitted a bugfix minutes after getting the
->> report.
+On 10/8/25 11:34, Philipp Zabel wrote:
+> Hi Claudiu,
 > 
-> I'm not criticizing the response, just saying that problems like this
-> cause me to think that someone who understands and can test the
-> hardware needs to look at this.  However ...
+> On Do, 2025-09-25 at 13:02 +0300, Claudiu wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> On the Renesas RZ/G3S SoC, the USB PHY block has an input signal called
+>> PWRRDY. This signal is managed by the system controller and must be
+>> de-asserted after powering on the area where USB PHY resides and asserted
+>> before powering it off.
+>>
+>> On power-on the USB PWRRDY signal need to be de-asserted before enabling
+>> clock and switching the module to normal state (through MSTOP support). The
+>> power-on configuration sequence
+> 
+> The wording makes me wonder, have you considered implementing this as a
+> power sequencing driver?
 
-That's true. I agree.
+No, haven't tried as power sequencing. At the moment this was started I
+think the power sequencing support wasn't merged.
+
+The approaches considered were:
+a/ power domain
+b/ regulator
+c/ as a reference counted bit done through regmap read/writes APIs
+
+a and b failed as a result of discussions in the previous posted versions.
+
+c was abandoned by me after long discussions with Renesas HW team which
+revealed the block schema b/w individual USB blocks (presented in the patch
+description).
+
+The point is that this bit doesn't actually power anything, at the moment
+the bit is set, the power to USB is already applied. Software just need to
+set the bit before/after setting the clocks and the associated MSTOP and
+applying any USB specific settings. Each clock has an MSTOP associated and
+the MSTOP is set though the clock driver when the clock is set.
+
 
 > 
->>> However, you could help us with this: as I understand it (there is
->>> a bit of a no documentation problem here), the TRAILING_OVERLAP
->>> formalism merely gets the compiler not to warn about the situation
->>> rather than actually changing anything in the layout of the
->>> structure?  In which case you should be able to demonstrate the
->>> binary produced before and after this patch is the same, which
->>> would very much reduce the risk of taking it.
+>> must be:
 >>
->> This is quite simple. Here you go the pahole output before and after
->> changes.
+>> 1/ PWRRDY=0
+>> 2/ CLK_ON=1
+>> 3/ MSTOP=0
 >>
->> BEFORE CHANGES:
+>> On power-off the configuration sequence should be:
 >>
->> pahole -C MR_FW_RAID_MAP_ALL drivers/scsi/megaraid/megaraid_sas_fp.o
->> struct MR_FW_RAID_MAP_ALL {
->>           struct MR_FW_RAID_MAP      raidMap;              /*     0
->> 10408 */
->>           /* --- cacheline 162 boundary (10368 bytes) was 40 bytes ago
->> --- */
->>           struct MR_LD_SPAN_MAP      ldSpanMap[64];        /* 10408
->> 161792 */
+>> 1/ MSTOP=1
+>> 2/ CLK_ON=0
+>> 3/ PWRRDY=1
 >>
->>           /* size: 172200, cachelines: 2691, members: 2 */
->>           /* last cacheline: 40 bytes */
->> };
+>> The CLK_ON and MSTOP functionalities are controlled by clock drivers.
 >>
->> AFTER CHANGES:
+>> After long discussions with the internal HW team, it has been confirmed
+>> that the HW connection b/w USB PHY block, the USB channels, the system
+>> controller, clock, MSTOP, PWRRDY signal is as follows:
 >>
->> pahole -C MR_FW_RAID_MAP_ALL drivers/scsi/megaraid/megaraid_sas_fp.o
->> struct MR_FW_RAID_MAP_ALL {
->>           union {
->>                   struct MR_FW_RAID_MAP raidMap;           /*     0
->> 10408 */
->>                   struct {
->>                           unsigned char __offset_to_FAM[10408]; /*
->> 0 10408 */
->>                           /* --- cacheline 162 boundary (10368 bytes)
->> was 40 bytes ago --- */
->>                           struct MR_LD_SPAN_MAP ldSpanMap[64]; /*
->> 10408 161792 */
->>                   };                                       /*     0
->> 172200 */
->>           };                                               /*     0
->> 172200 */
+>>                                ┌──────────────────────────────┐
+>>                                │                              │◄── CPG_CLKON_USB.CLK0_ON
+>>                                │     USB CH0                  │
+>> ┌──────────────────────────┐   │┌───────────────────────────┐ │◄── CPG_CLKON_USB.CLK2_ON
+>> │                 ┌────────┐   ││host controller registers  │ │
+>> │                 │        │   ││function controller registers│
+>> │                 │ PHY0   │◄──┤└───────────────────────────┘ │
+>> │     USB PHY     │        │   └────────────▲─────────────────┘
+>> │                 └────────┘                │
+>> │                          │    CPG_BUS_PERI_COM_MSTOP.MSTOP{6, 5}_ON
+>> │┌──────────────┐ ┌────────┐
+>> ││USHPHY control│ │        │
+>> ││  registers   │ │ PHY1   │   ┌──────────────────────────────┐
+>> │└──────────────┘ │        │◄──┤     USB CH1                  │
+>> │                 └────────┘   │┌───────────────────────────┐ │◄── CPG_CLKON_USB.CLK1_ON
+>> └─▲───────▲─────────▲──────┘   ││ host controller registers │ │
+>>   │       │         │          │└───────────────────────────┘ │
+>>   │       │         │          └────────────▲─────────────────┘
+>>   │       │         │                       │
+>>   │       │         │           CPG_BUS_PERI_COM_MSTOP.MSTOP7_ON
+>>   │PWRRDY │         │
+>>   │       │   CPG_CLK_ON_USB.CLK3_ON
+>>   │       │
+>>   │  CPG_BUS_PERI_COM_MSTOP.MSTOP4_ON
+>>   │
+>> ┌────┐
+>> │SYSC│
+>> └────┘
 >>
->>           /* size: 172200, cachelines: 2691, members: 1 */
->>           /* last cacheline: 40 bytes */
->> };
+>> where:
+>> - CPG_CLKON_USB.CLK.CLKX_ON is the register bit controlling the clock X
+>>   of different USB blocks, X in {0, 1, 2, 3}
+>> - CPG_BUS_PERI_COM_MSTOP.MSTOPX_ON is the register bit controlling the
+>>   MSTOP of different USB blocks, X in {4, 5, 6, 7}
+>> - USB PHY is the USB PHY block exposing 2 ports, port0 and port1, used
+>>   by the USB CH0, USB CH1
+>> - SYSC is the system controller block controlling the PWRRDY signal
+>> - USB CHx are individual USB block with host and function capabilities
+>>   (USB CH0 have both host and function capabilities, USB CH1 has only
+>>   host capabilities)
 >>
->> As you can see, the size is exactly the same, as are the offsets for
->> both members raidMap and ldSpanMap.
+>> The USBPHY control registers are controlled though the
+>> reset-rzg2l-usbphy-ctrl driver. The USB PHY ports are controlled by
+>> phy_rcar_gen3_usb2 (drivers/phy/renesas/phy-rcar-gen3-usb2.c file). The
+>> USB PHY ports request resets from the reset-rzg2l-usbphy-ctrl driver.
+>>
+>> The connection b/w the system controller and the USB PHY CTRL driver is
+>> implemented through the renesas,sysc-pwrrdy device tree property
+>> proposed in this patch. This property specifies the register offset and the
+>> bitmask required to control the PWRRDY signal.
+>>
+>> Since the USB PHY CTRL driver needs to be probed before any other
+>> USB-specific driver on RZ/G3S, control of PWRRDY is passed exclusively
+>> to it. This guarantees the correct configuration sequence between clocks,
+>> MSTOP bits, and the PWRRDY bit. At the same time, changes are kept minimal
+>> by avoiding modifications to the USB PHY driver to also handle the PWRRDY
+>> itself.
+>>
+>> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> ---
+>>
+>> Changes in v7:
+>> - used proper regmap update value on rzg2l_usbphy_ctrl_set_pwrrdy()
+>>
+>> Changes in v6:
+>> - used syscon_regmap_lookup_by_phandle_args() to simplify the code
+>> - collected tags
+>>
+>> Changes in v5:
+>> - none
+>>
+>> Changes in v4:
+>> - updated patch description
+>> - updated rzg2l_usbphy_ctrl_pwrrdy_init() to map directly the
+>>   "renesas,sysc-pwrrdy" as the SYSC signal abstraction was dropped
+>>   in this version, along with rz_sysc_get_signal_map()
+>> - dropped priv member of rzg2l_usbphy_ctrl_pwrrdy_init() as it is
+>>   not needed in this version
+>> - shift left !power_on with pwrrdy->mask as this is how the
+>>   regmap_update_bits() needs the last member to be
+>> - selected MFD_SYSCON
+>>
+>> Changes in v3:
+>> - none; this patch is new
+>>
+>>
+>>  drivers/reset/Kconfig                   |  1 +
+>>  drivers/reset/reset-rzg2l-usbphy-ctrl.c | 62 +++++++++++++++++++++++++
+>>  2 files changed, 63 insertions(+)
+>>
+>> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+>> index 78b7078478d4..329730cbcfb9 100644
+>> --- a/drivers/reset/Kconfig
+>> +++ b/drivers/reset/Kconfig
+>> @@ -237,6 +237,7 @@ config RESET_RASPBERRYPI
+>>  config RESET_RZG2L_USBPHY_CTRL
+>>  	tristate "Renesas RZ/G2L USBPHY control driver"
+>>  	depends on ARCH_RZG2L || COMPILE_TEST
+>> +	select MFD_SYSCON
+>>  	help
+>>  	  Support for USBPHY Control found on RZ/G2L family. It mainly
+>>  	  controls reset and power down of the USB/PHY.
+>> diff --git a/drivers/reset/reset-rzg2l-usbphy-ctrl.c b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
+>> index 8a7f167e405e..be315199e2b0 100644
+>> --- a/drivers/reset/reset-rzg2l-usbphy-ctrl.c
+>> +++ b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
+>> @@ -13,6 +13,7 @@
+>>  #include <linux/regmap.h>
+>>  #include <linux/reset.h>
+>>  #include <linux/reset-controller.h>
+>> +#include <linux/mfd/syscon.h>
+>>  
+>>  #define RESET			0x000
+>>  #define VBENCTL			0x03c
+>> @@ -41,6 +42,18 @@ struct rzg2l_usbphy_ctrl_priv {
+>>  
+>>  #define rcdev_to_priv(x)	container_of(x, struct rzg2l_usbphy_ctrl_priv, rcdev)
+>>  
+>> +/**
+>> + * struct rzg2l_usbphy_ctrl_pwrrdy - SYSC PWRRDY signal descriptor
+>> + * @regmap: SYSC regmap
+>> + * @offset: offset into the SYSC address space for accessing PWRRDY
+>> + * @mask: mask into the register at offset for accessing PWRRDY
+>> + */
+>> +struct rzg2l_usbphy_ctrl_pwrrdy {
+>> +	struct regmap *regmap;
+>> +	u32 offset;
+>> +	u32 mask;
+>> +};
+>> +
+>>  static int rzg2l_usbphy_ctrl_assert(struct reset_controller_dev *rcdev,
+>>  				    unsigned long id)
+>>  {
+>> @@ -91,6 +104,8 @@ static int rzg2l_usbphy_ctrl_status(struct reset_controller_dev *rcdev,
+>>  	return !!(readl(priv->base + RESET) & port_mask);
+>>  }
+>>  
+>> +#define RZG2L_USBPHY_CTRL_PWRRDY	1
+>> +
+>>  static const struct of_device_id rzg2l_usbphy_ctrl_match_table[] = {
+>>  	{ .compatible = "renesas,rzg2l-usbphy-ctrl" },
+>>  	{ /* Sentinel */ }
+>> @@ -110,6 +125,49 @@ static const struct regmap_config rzg2l_usb_regconf = {
+>>  	.max_register = 1,
+>>  };
+>>  
+>> +static void rzg2l_usbphy_ctrl_set_pwrrdy(struct rzg2l_usbphy_ctrl_pwrrdy *pwrrdy,
+>> +					 bool power_on)
+>> +{
+>> +	u32 val = (!power_on << (ffs(pwrrdy->mask) - 1)) & pwrrdy->mask;
 > 
-> ... this is good enough to prove that the binary before and after is
-> identical and thus there's no change to the structures, which means the
-> risk of accepting the patch is significantly lower.
 > 
->>   The trick is that, thanks to the union and __offset_to_FAM, the
->> flexible-array member raidMap.ldSpanMap[] now appears as the last
->> member instead of somewhere in the middle.
->>
->> So both ldSpanMap and raidMap.ldSpanMap[] now cleanly overlap, as
->> seems to have been intended.
->>
->> (Exactly the same applies for struct MR_DRV_RAID_MAP_ALL)
->>
->> I can include this explanation to the changelog text if you'd like.
+> Why not just:
 > 
-> I'll leave it up to Martin, but I think going forwards it would be
-> helpful if you could indicate that you've checked that the binary
-> layout before and after is unchanged and thus the risk of merging the
-> patch is low.
+> 	u32 val = power_on ? 0 : pwrrdy->mask;
 
-Absolutely. I'll do that.
+This would work as well. I wanted to be sure it doesn't fail in case the
+mask is more than one bit (as it comes from device tree).
 
-Thanks for the feedback.
--Gustavo
+> 
+> You could simplify this further by using a regmap_field instead of
+> rzg2l_usbphy_ctrl_pwrrdy.
 
+I'll look to it. I wasn't aware of regmap_field :)
+
+> 
+>> +
+>> +	regmap_update_bits(pwrrdy->regmap, pwrrdy->offset, pwrrdy->mask, val);
+>> +}
+>> +
+>> +static void rzg2l_usbphy_ctrl_pwrrdy_off(void *data)
+>> +{
+>> +	rzg2l_usbphy_ctrl_set_pwrrdy(data, false);
+>> +}
+>> +
+>> +static int rzg2l_usbphy_ctrl_pwrrdy_init(struct device *dev)
+>> +{
+>> +	struct rzg2l_usbphy_ctrl_pwrrdy *pwrrdy;
+>> +	struct regmap *regmap;
+>> +	const int *data;
+>> +	u32 args[2];
+>> +
+>> +	data = device_get_match_data(dev);
+>> +	if (data != (int *)RZG2L_USBPHY_CTRL_PWRRDY)
+> 
+> Better not to compare pointers here:
+> 
+> 	if ((uintptr_t)data != RZG2L_USBPHY_CTRL_PWRRDY)
+
+OK
+
+> 
+>> +		return 0;
+>> +
+>> +	regmap = syscon_regmap_lookup_by_phandle_args(dev->of_node,
+>> +						      "renesas,sysc-pwrrdy",
+>> +						      ARRAY_SIZE(args), args);
+>> +	if (IS_ERR(regmap))
+>> +		return PTR_ERR(regmap);
+>> +
+>> +	pwrrdy = devm_kzalloc(dev, sizeof(*pwrrdy), GFP_KERNEL);
+>> +	if (!pwrrdy)
+>> +		return -ENOMEM;
+>> +
+>> +	pwrrdy->regmap = regmap;
+>> +	pwrrdy->offset = args[0];
+>> +	pwrrdy->mask = args[1];
+>> +
+>> +	rzg2l_usbphy_ctrl_set_pwrrdy(pwrrdy, true);
+>> +
+>> +	return devm_add_action_or_reset(dev, rzg2l_usbphy_ctrl_pwrrdy_off, pwrrdy);
+>> +}
+> 
+> So we deassert PWRRDY on probe and assert on remove. What about
+> suspend/resume ordering?
+
+As this driver has no suspend/resume support yet, my intention was to take
+care of this bit on suspend/resume after it will be established how it is
+handled on probe/remove. Adding suspend/resume support to this series will
+make it bigger.
+
+Thank you for your review,
+Claudiu
 
