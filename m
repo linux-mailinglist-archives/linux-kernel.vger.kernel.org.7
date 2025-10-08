@@ -1,150 +1,111 @@
-Return-Path: <linux-kernel+bounces-844994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E349BC33CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 05:31:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 911C4BC33D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 05:37:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EB85188D10E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 03:31:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A028D189FCBD
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 03:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169402BD001;
-	Wed,  8 Oct 2025 03:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E88FB2BD036;
+	Wed,  8 Oct 2025 03:37:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dUMcassV"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YIxnlv6m"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3CDD29BD90
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 03:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F2B29ACFC
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 03:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759894274; cv=none; b=gPqUb2hmG7fxR82EpqkYyLIPuKEAidsqGpm9pXF4fqPXxkfxNWpxbfuaNcI2Qn9+GumWTp7xNQLyrtlwbDwD/f4Zq9dRrFXAALEOVj69ulCPRh6nphwooNM38nlE/cu1TJlBaoiPu+lcejHC4qxUfPe38AwOt30vCbWsdD7zN2s=
+	t=1759894637; cv=none; b=L6D5XbPhvJQclNkGTHA89/TOKsqIaKptVSveDKsL5kVrK9r+Md1uS0e9PFvN48tquL++IsN676T0iD7RqqtNxEzgrH7Ls+ymcd1tRsqbyqqIP31+kFl5maLubvfB/bP92oDf3H9UzXcd9R8kzfzPfTPyFmX0TUsn5AQo94X098w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759894274; c=relaxed/simple;
-	bh=2a3OrLH67QU4fsm474jcgPYn16EzoMNKGPvctGw+AQY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tSc0We8/Dn5JRBVLOtzywuJtti4tWMfpdcrppWUyOlfdA4fL1YUzES6hdO0pEzLFXskwyuud4VuWBWZHKFN3Tk5PFVEK67O3m9FddiUgOWKnV8CHWc2zCV9Adx8ogjtymXYscIhR3I+7ea9+q3p4/kQ+fOcIxepANxriBaU/e8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dUMcassV; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59803UPr023166
-	for <linux-kernel@vger.kernel.org>; Wed, 8 Oct 2025 03:31:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=WWL+oxTaknWPjEJ9W43cr4xK
-	NIzu1kCbsEoFeNIlit0=; b=dUMcassVp3gMljPZyMDp1hQaii9A5T70+AeLfRZp
-	oHAi5RF9lsSo+5SRAGRXA38s0UjlaJHa6uVD0bYcRV1rPMOqq31eCi0MW8VUMVJr
-	5+L81wNwxLn4+ub7dk4O6tEwCAR+W7V270Y6G46xuT/9Sv56LvwwVqVSS5DsgLJr
-	Ay+yCN+ZaSh52FUIpvJzmAqQmIqGUVmDNYWAmBi7Dd/OagOepNA7QytESBy2w6mf
-	feLaGvZ5sv63G83b7UMlPqUOuT6uPJm0NtP//duPyap3E3eY43habQBBm9a8m/qR
-	hR9pjcMcgEKNvixJwt2gYHUpJRR6X19zRQpJv4pe7p6yyg==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49jtk718r5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 03:31:11 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4e576157d54so125140431cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 20:31:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759894271; x=1760499071;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1759894637; c=relaxed/simple;
+	bh=Zx04ah/IYXegpf5FVcljzAJSZIUmnHslBnom7Csei1k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tuohtfT5lLfdERFqrZw4LPeBeDaHUUHRcXP6pP6WAI2vWSQNVRgAQRRN6E8OjVv/R5WQaKYfXcRcvi6WykUbMEehwzCk4wv0XS/kjLPHdG75dSFt7WWMEzoymKQSSy5s+ZaYrF22p9J/35BJv5W8owvkaAlWc8i6bXCu9e/4rqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YIxnlv6m; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-62fca216e4aso1206190a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 20:37:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759894632; x=1760499432; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WWL+oxTaknWPjEJ9W43cr4xKNIzu1kCbsEoFeNIlit0=;
-        b=UdNAHgnS/0iEM/mIs9s/B41UF0unjK/qzoQ1s43L3/8I3p4PQKaqS3b0m0ZbTFhe7h
-         MiOTwjsdDoblMwf2mVvurNSwt6s2ewVOdbGtSGHlM1L5pWGAEcTJLEmMrd43rApSxBMi
-         ZPsBvGh8BJdKid+SnjmDZIiBUP/whpy8cDohdar0UDA3td6wVYWNsvpfgIfPiEGZ/hgL
-         lTLTnu9TNhJZG3sPMXo9k0Sy18uDs42lgy/ST5e2qM3pECIXW120msV2VtAztSpwqGFG
-         IGEg7erZVthNqXSAJ9a1cLv0j+TgvSGg2KRjKy4oEBHQHWnjABp9kB8QhkUuFkJkPerP
-         oJ3g==
-X-Forwarded-Encrypted: i=1; AJvYcCWYfe2okkrojvFHDQ9lv6MImGSkYEarkW07N9DkY16HoNfZz44ouJq2H1DMrvZpzafBX1tf4WoXWRCyD7w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4MewxDVHi6dRukDK+Lwld6X09U7rbs1uQx8L9sn1dsx+kKxBx
-	6yMurV2xyXrsKEmfEyjPoKImASo6zmYnduys6leSJBBPtuSeA0/1rIXwEAD+Nu6K8EnJqOZLd6Z
-	ffpHqGWm5ymN/xWtTQW24c3gVIP2q+ifiZ+UhYp2sryE8k/mNzWycuB3gCppGZuSAFkY=
-X-Gm-Gg: ASbGncthlYpm6a/KrHOledcBKha8S2zUVCX/PTY6nSTW8YWXY9y30EDZ00/oJR4gjwb
-	96dRSkpwxYg2uRxlHyRbg/xhOWb1F/O7oLuSdfw6tREZDGRjFgHMANIkyDaAousYcwVCaVdKmNa
-	l/sjVwNwLaUAfQXLSQO/M/yYbKcsZhFKrAn9v8DGk417/siCeQcp2UgbFk8A8GRFmKp9Zx23KUo
-	hQpi3L65pyQTs1dav3BZW1SmowofzPUA1QxSfZ8B4l0oso11SoAOtVhPuVxPfKTouaLXUFBdjXs
-	m1YZWt5wcJTGI8vHxWBLkSr0+FjbK7ptZSleJFEVLL0HR+DnNcgBGoog8E6JrAo/Zj4wY0OraAb
-	D40PaPUH4+MQYgJO1xTLfNRtq3MwKOz39z/FwjqX6eBHij8T3UZuLxydElg==
-X-Received: by 2002:ac8:5d05:0:b0:4de:9f9a:b8e1 with SMTP id d75a77b69052e-4e6eacd1632mr28143151cf.18.1759894270938;
-        Tue, 07 Oct 2025 20:31:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGpJi9YDeXIx8aKnVS2WDaUwvZAKAbXdQcjcWyTLCETRGIS0rZ8bznBq56g1sVuq6qO6sT9iw==
-X-Received: by 2002:ac8:5d05:0:b0:4de:9f9a:b8e1 with SMTP id d75a77b69052e-4e6eacd1632mr28142891cf.18.1759894270521;
-        Tue, 07 Oct 2025 20:31:10 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5906775d5desm979249e87.72.2025.10.07.20.31.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Oct 2025 20:31:09 -0700 (PDT)
-Date: Wed, 8 Oct 2025 06:31:06 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Wesley Cheng <wesley.cheng@oss.qualcomm.com>, krzk+dt@kernel.org,
-        conor+dt@kernel.org, konrad.dybcio@oss.qualcomm.com, kishon@kernel.org,
-        vkoul@kernel.org, gregkh@linuxfoundation.org, robh@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 00/10] Introduce Glymur USB support
-Message-ID: <llyanh7h7xbojo5n5npglokotkuqagbkqdgcquj6aagu6u7zal@wazru6ihqamp>
-References: <20251006222002.2182777-1-wesley.cheng@oss.qualcomm.com>
- <a6690fbc-0b86-4725-99ca-6b4cc477b4ec@kernel.org>
+        bh=Zx04ah/IYXegpf5FVcljzAJSZIUmnHslBnom7Csei1k=;
+        b=YIxnlv6mCJ6ehncdiXVji8DOVRDffpIvwwovJ6YMRDPAxO5DOyRfJkP8eF0sFFNiJa
+         wmztyNwzya6ckbQNK1VLqfkH+AedpxEVKbPD3gUrLJGOmVAVAJE6bn7f7i+HnUPCvTVf
+         gyMdKLsY28D38z6JsrJoye/ZDpWNthN2hsmpkwHPopyZkY75+eYaxj8nJVE3nzvdz/Zd
+         2iCZqir2Jet0OI278ZvKdqZSmPKVNtI5gJKtAl3/w63gIrjZFC98FIrfhncVLWoMI1gg
+         H3DV21yHajGyurWsR8S0Wvdovgnb/b8UM88uckQYGjkMpxrWjula9Pz8DDHPPYyhhOcA
+         PB7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759894632; x=1760499432;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Zx04ah/IYXegpf5FVcljzAJSZIUmnHslBnom7Csei1k=;
+        b=VlRxwbeaEqRvfTI8h7XZjSA1eWOTUv/2fku4E4e5LU8Pcf2lAfj/YLTSl8RGXdDeR8
+         O7PHsC4YNX6lOM3bOSkGOI5wgJHEw/jIGVXH/Hlv2suEuqiVx+5Bj/PZ2nbOQOlsSpVM
+         zG9FAxKvjwRZu+G0QzBiIiJaUupG5QtMGCCOrVpQHx5hJxbVo6NUdMPxUnhGlM1aLE8D
+         uxIZMajLL/slQJb6c9Mg9D4M5lgQnvcNWFayiHyGhAyEA+BWvtA9Qphf/6037Odx0IP8
+         kLXcRAMS3DoNuoEMmIK1DX3Qlqaoruw2T3KXsmhcj4NfNN75IWytjt8eC+fwnfUGoMsN
+         Gh+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWucWYqbrFhBKY8oGm8NV6Sv4UrajEPiBVfILP9dTZPH/RCP0j5qBfivqdHiJEY1R2gH3eB8JuV4dL7cbM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLJPwapGqkyE545QeKL/r9I5jIo/gG+N89A1vruJ/PzDUM3/25
+	IB83PWRYCrA4k3EfeRuo5T9iPd95lSh5lRYrhnTD+ZPTbGDFL6R9wHYZo7+dYTxw3a19b+sdgwL
+	CQG4BRnJM4r8uOKQSCwnQ/ERgbXOI4aw=
+X-Gm-Gg: ASbGnctCcFd99u0ECR/OrHG6PocQ11rhw2Qv40AeowB7/4p44e57kZkAPUXOFAgKc3o
+	Opv5uL3X41lWGAPR9aBUJM+1O6i5l6GcyoYB+ACw0ZP8HTLK5bo2Vnu3Vkudm2iXqhaa+HoYmcf
+	R6nJJmjBXX4hwMwIyxbgKYwFKrG4G8djevcha//g1mgOOXKZFfSrDaE9p8h/dZsNdK0Z+/scCfz
+	rQk/pr3IoUapf9aQSRGWXVcdE6x3SMli2bGSAlvpX+3LDd5FWf4Kvm3O188q+pZYg==
+X-Google-Smtp-Source: AGHT+IFdakwpHCbhBv8L8ewQ8YL1xFOcXFkqwuOUaP1m0nKJBrxbVsaF6mhz+pLN4b219pRES/JDwQc0A3VoDQDnZvo=
+X-Received: by 2002:a05:6402:4019:b0:639:e04d:b0cd with SMTP id
+ 4fb4d7f45d1cf-639e04db5bdmr313287a12.10.1759894631994; Tue, 07 Oct 2025
+ 20:37:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a6690fbc-0b86-4725-99ca-6b4cc477b4ec@kernel.org>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAxNyBTYWx0ZWRfXzDr7flDIsXYg
- WCOSydyzciMT2vZ1W503R2q2QG0oAa8Mr0a2LbkgPHwsRW9iwnXknwdm1YUZX4eZHiHq/8jL0qL
- 1eQePTt5qcI3QPVDsrZLECKriBbZjUbXAADQnnf4wVMX99ribK1Y3hKzB70G2yTfhXRnYsqdawi
- 3jSY/McgVza1dqxDERBctcBeCbUWYAOoRFrzDxrkZCJMBwESky9fLuagH2aML6EPIxjmRi5to0C
- CGhLqwSzVzLdIlMt4zrkgjPHpY3dZ6+7KCv+0D8H6Tdha80dKQSgCwMmD+HEelxHU6Nx3egJBEc
- gibquwBN3ot5F1p0Ij2ulUUtEky5D0gAa7eQtQ+e1W7wMoqOzLrwJjS4paGWAgTVi81z1PDEcIG
- 8UwBaXG8R0TQplO/ARiQ/T/SIWA2/A==
-X-Authority-Analysis: v=2.4 cv=do3Wylg4 c=1 sm=1 tr=0 ts=68e5daff cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=ukQvhT9bAo9IVCr4j54A:9 a=CjuIK1q_8ugA:10
- a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-GUID: zK78OFcVvbJU3tiMqBWOIHyVDobOtpFx
-X-Proofpoint-ORIG-GUID: zK78OFcVvbJU3tiMqBWOIHyVDobOtpFx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-07_02,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 adultscore=0 lowpriorityscore=0 phishscore=0 clxscore=1015
- malwarescore=0 spamscore=0 impostorscore=0 priorityscore=1501 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040017
+References: <20250924145552.55058-1-sidharthseela@gmail.com> <c87d45dc-d545-4359-9e2f-11e43a45859f@linuxfoundation.org>
+In-Reply-To: <c87d45dc-d545-4359-9e2f-11e43a45859f@linuxfoundation.org>
+From: Sidharth Seela <sidharthseela@gmail.com>
+Date: Wed, 8 Oct 2025 09:07:00 +0530
+X-Gm-Features: AS18NWAJtkfAkiglYcQF83q4sQMGaqHzh0wb2Unau5kJ3UCJfzcYdxQwGuDuKzM
+Message-ID: <CAJE-K+A_xFPPDbPFQiOwH5nUJdrrGHxvV9xVppXWTNJ5g2bUHw@mail.gmail.com>
+Subject: Re: [PATCH RESEND] clk: at91: sam9x7: Use kmalloc_array() instead of kmalloc()
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, nicolas.ferre@microchip.com, 
+	alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev, 
+	varshini.rajendran@microchip.com, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	david.hunter.linux@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 07, 2025 at 10:02:11AM +0900, Krzysztof Kozlowski wrote:
-> On 07/10/2025 07:19, Wesley Cheng wrote:
-> > This series enables the PHY level changes that are required to support
-> > the type C based controllers and the multiport controller.  The typeC
-> > ports utilize a usb43dp based QMP PHY for the SSUSB path, while using
-> > the M31 eUSB2 PHY for the HSUSB path.  For the multiport controller,
-> > it will utilize two QMP UNI PHYs for the SSUSB path, and two M31 eUSB2
-> > PHYs for the HSUSB path.
-> > 
-> > -----
-> > Changes in v5:
-> > - Moved phy-qcom-qmp-usb43-pcs-v8.h into USB specific QMP driver
-> > - Fixed DT bindings for clock properties for QMP combo PHY
-> > 
-> 
-> Where are lore links? Why aren't you using b4?
+On Wed, Oct 8, 2025 at 2:36=E2=80=AFAM Shuah Khan <skhan@linuxfoundation.or=
+g> wrote:
+> This following line doesn't belong in commit log.
 
-Using b4 is the best current practice and it is strongly recommended,
-but I don't think that it is a requirement for contributing to Linux
-kernel.
+This was one of my early patches. It won't happen again.
 
--- 
-With best wishes
-Dmitry
+> Can you add details on how you tested this patch and also how
+> you found the problem to begin with.
+
+I used grep to find instances of kmalloc and went through the ones
+with size calculations inside them.
+I did compile testing, My mistake, I forgot to add request for test.
+I would like to retract this patch for the same.
+
+--=20
+Thanks,
+Sidharth Seela
+www.realtimedesign.org
 
