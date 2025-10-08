@@ -1,118 +1,125 @@
-Return-Path: <linux-kernel+bounces-845460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C897BC5075
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 14:56:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D70B6BC50A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 14:57:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E034188B8CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 12:56:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 422CE3C57B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 12:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29AC428488A;
-	Wed,  8 Oct 2025 12:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06666265CCB;
+	Wed,  8 Oct 2025 12:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Rhgzx+IC"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rWPnkPHQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D4D284884
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 12:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52542255F24;
+	Wed,  8 Oct 2025 12:55:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759928122; cv=none; b=miSsm4QjgZqf3hBzNP4um1X34ONbSTRqX/MY6jIRozlgu4zpvUb0GsCnXVo3HLqDXRCzYi7JbI/C1bf/tQeQOoxWCRZ8CtdkI7x8IaUVzMvWgiXmagx52Z6pUX2YXyT6BUwz9S3gHhaGfT1s0pxmy9A5tV/G2RW64dAVtYA2SD8=
+	t=1759928152; cv=none; b=GX7jj3gWKmZxL1kEtdiRorLgIKlYBTkGPv7AhVdm/fYYwcksVBVIoSWDHPsWBJC6S5q++kSo3wrWsRZFqPpamaU9nGykOoUcH4sO5KEDG6WkUM0pEnKBORZ+CriLYKWqUEdRmrFK2Vhtpzz/YvwE4CKGerytcRGYTzpQSB543GQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759928122; c=relaxed/simple;
-	bh=Zn4K2VDfxQjdtMePzhXHGGcoZoCed8zNFgBVKMC/Tic=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p5Dt+iEdd7NiLbSuNtsO5merzwRt4dQRGf3DhKKu1iO4CoS8hjfq/Upy3QNLnhuvlfI576C5tbTld74nGIAmeX46CV1LGL/BAFfO0dAK7VsCcEWB4/rUy2uLYZ6TDG8a3VzjvwwVKbO26km0t4bqrKmfALu0YzhlZ9zN6DC1azw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Rhgzx+IC; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=xaJ8r93kxW2ilCp+pdPnf+jgQJO/h1G4FxZx0FSfbB0=; b=Rhgzx+ICtTAZhl4O6v/i56Qhwf
-	rdG/Cb+Ury3nJVLClI5k8WNVlxcw5749jaF71cw4uO9kkniSNiMOizle1W7h6H07oNGJYheQfR/Lj
-	HaEl/uF7vBNjH0jn/1UEOjB2GiqclJ7zj4UroegyCqxm5xYhinB7bTByUxvmo/2Pih5NlmIp1thEM
-	/aXv3fYyBMks0CX68unaGRa1y2CL6D5gHYLkT40IE2QZu9ewfzerqF6EB4ntSb3NTNWcsLFY9GtT5
-	smAlVP4HrKqVr/uUzoMd2ijJxU5yoe4g0rp9vhu53uLc/eXMTa88/Me+czL9DtATR+bMx+tgVRGQr
-	g0gJG06g==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v6ThG-00000000i49-0ObV;
-	Wed, 08 Oct 2025 12:55:10 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id C0904300400; Wed, 08 Oct 2025 14:55:08 +0200 (CEST)
-Date: Wed, 8 Oct 2025 14:55:08 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	David Howells <dhowells@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-	Li RongQing <lirongqing@baidu.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] seqlock: introduce scoped_seqlock_read() and
- scoped_seqlock_read_irqsave()
-Message-ID: <20251008125508.GJ3289052@noisy.programming.kicks-ass.net>
-References: <20251008123014.GA20413@redhat.com>
- <20251008123045.GA20440@redhat.com>
+	s=arc-20240116; t=1759928152; c=relaxed/simple;
+	bh=DMgCM8Rc0kLgkamSZaom9HUWXV9UAxoJPBdKB7RHH7c=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=h5XIhIkP5gW/NQHoVbchlScy4HjP3JqE6yxkaHRommw5vbAnWL38H1l769/OtJtR+CmqjPRL0vnELknhYpo7jzXTTcUHpAjjvy4yC0QQFCWFXdxsdjk5NZIz4vxwK5ydmBkTRfRu2+d1K8nvU3Vy95mqs3bFgKMv1se+bvw9Fgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rWPnkPHQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99C8AC4CEF4;
+	Wed,  8 Oct 2025 12:55:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759928151;
+	bh=DMgCM8Rc0kLgkamSZaom9HUWXV9UAxoJPBdKB7RHH7c=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=rWPnkPHQV206SdcqMZFz1M4eR5sCKi1C97lbi02WtRxGi2zU2PPvFUlvZMY8slS7x
+	 3Sg3ut8GsOZ/txVaCUngXdp63QDJscf/aZ39cJBkTunbowzP+uvuzdJZJGJGMmGm50
+	 M7yvSBaKoHvEVdUhu3LRMO6EtWJda4dC2kKzwoOYqxZLhgAGEQiwlkOxE/erwyqYmc
+	 v/w7hBWTWqKaA4NIXILd0QGnSN0YR5jofh0bgvXRyi216iA+0rMYlcP1XJT3Nb8ekc
+	 qH0YylMsUNW3Nbz4pDvcfvYpxkqlUu6qWQ4YUzhH0K1sEK19aLrJrwd9slB2pR8z4H
+	 gbEC/yuzme5RA==
+Date: Wed, 08 Oct 2025 07:55:50 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251008123045.GA20440@redhat.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: nuno.sa@analog.com, dlechner@baylibre.com, linux-kernel@vger.kernel.org, 
+ andy@kernel.org, linux-iio@vger.kernel.org, matt@ranostay.sg, 
+ linux-kernel-mentees@lists.linux.dev, krzk+dt@kernel.org, 
+ devicetree@vger.kernel.org, skhan@linuxfoundation.org, jic23@kernel.org, 
+ conor+dt@kernel.org, david.hunter.linux@gmail.com
+To: Shrikant Raskar <raskar.shree97@gmail.com>
+In-Reply-To: <20251008031737.7321-2-raskar.shree97@gmail.com>
+References: <20251008031737.7321-1-raskar.shree97@gmail.com>
+ <20251008031737.7321-2-raskar.shree97@gmail.com>
+Message-Id: <175992812188.3371104.5716471946724146308.robh@kernel.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: iio: max30100: Add pulse-width
+ property
 
-On Wed, Oct 08, 2025 at 02:30:45PM +0200, Oleg Nesterov wrote:
-> The read_seqbegin/need_seqretry/done_seqretry API is cumbersome and
-> error prone. With the new helper the "typical" code like
+
+On Wed, 08 Oct 2025 08:47:36 +0530, Shrikant Raskar wrote:
+> The appropriate LED pulse width for the MAX30100 depends on
+> board-specific optical and mechanical design (lens, enclosure,
+> LED-to-sensor distance) and the trade-off between measurement
+> resolution and power consumption. Encoding it in Device Tree
+> documents these platform choices and ensures consistent behavior.
 > 
-> 	int seq, nextseq;
-> 	unsigned long flags;
+> Tested on: Raspberry Pi 3B + MAX30100 breakout board.
 > 
-> 	nextseq = 0;
-> 	do {
-> 		seq = nextseq;
-> 		flags = read_seqbegin_or_lock_irqsave(&seqlock, &seq);
+> Signed-off-by: Shrikant Raskar <raskar.shree97@gmail.com>
 > 
-> 		// read-side critical section
+> Changes since v1:
+> Add unit suffix.
+> Drop redundant description.
 > 
-> 		nextseq = 1;
-> 	} while (need_seqretry(&seqlock, seq));
-> 	done_seqretry_irqrestore(&seqlock, seq, flags);
-> 
-> can be rewritten as
-> 
-> 	scoped_seqlock_read_irqsave (&seqlock) {
-> 		// read-side critical section
-> 	}
+> Link to v1:
+> https://lore.kernel.org/all/20251004015623.7019-2-raskar.shree97@gmail.com/
+> ---
+>  .../devicetree/bindings/iio/health/maxim,max30100.yaml      | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
 
-Hmm, on first reading I was expecting that to be:
+My bot found errors running 'make dt_binding_check' on your patch:
 
-	do {
-		seq = read_seqbegin(&seqlock);
+yamllint warnings/errors:
 
-		// read-side section
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/health/maxim,max30100.yaml: properties:maxim,pulse-width-us: 'enum' should not be valid under {'enum': ['const', 'enum', 'exclusiveMaximum', 'exclusiveMinimum', 'minimum', 'maximum', 'multipleOf', 'pattern']}
+	hint: Scalar and array keywords cannot be mixed
+	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/health/maxim,max30100.yaml: properties:maxim,pulse-width-us: 'anyOf' conditional failed, one must be fixed:
+	'enum' is not one of ['maxItems', 'description', 'deprecated']
+		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
+	Additional properties are not allowed ('enum' was unexpected)
+		hint: Arrays must be described with a combination of minItems/maxItems/items
+	'maxItems' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
+	1 is less than the minimum of 2
+		hint: Arrays must be described with a combination of minItems/maxItems/items
+	hint: cell array properties must define how many entries and what the entries are when there is more than one entry.
+	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
 
-	} while (read_seqretry(&seqlock, seq));
+doc reference errors (make refcheckdocs):
 
-for lack of that _or_lock() wording, but I suppose we can make that
-something like:
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251008031737.7321-2-raskar.shree97@gmail.com
 
- 	scoped_seqbegin_read (&seqlock) {
-		// read-side section
-	}
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
-which is distinctive enough.
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
