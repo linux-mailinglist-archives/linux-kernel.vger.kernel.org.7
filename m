@@ -1,247 +1,176 @@
-Return-Path: <linux-kernel+bounces-845916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45214BC67DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 21:41:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B430BC67E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 21:43:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C0DC404FFC
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 19:41:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4338D188A8EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 19:43:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C57272E6A;
-	Wed,  8 Oct 2025 19:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29C4241690;
+	Wed,  8 Oct 2025 19:42:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BrCoFU31"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Chtqds1f"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42FED265620
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 19:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABA0B237A4F
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 19:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759952449; cv=none; b=SoreFs+amZjBwUeBT2xQrGG/4MMyYuQALPqd5nD9TUT8kbdkJzo88jNmOb8PxOQjJ+rVdoMcwzR9eD5HA6UOZvScx7x8JHnLp0yjcavLKKjrfURO7GDLcM/2KJ1kqsPwyVHUz4tyECljvktmNwNxIjWKkv635FTXaw3oMXMhL+0=
+	t=1759952576; cv=none; b=U0CAxSc3mt+laJFXm6DYrt1xcg6szzLo3WRnJI4XQxbAywITQ3EE5s91DPeLJ9coaRmmHJI9bs1SFD8T8JhGD0s1vA6Nzxe/ey9LqJCwUv+nPmh4/dgCWHyfl9vo5cF1RkjqX4pBvvQsnji9O9iSQ9m5hj+S5o43bLKhK12L1yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759952449; c=relaxed/simple;
-	bh=wQSVggMO9rRkpwuF0JE7Xv1Qwj36d37Nyd6py2yeaTc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=acFXzk68d6LA/HPGLLs5bWqvGy2pEKR6jBDkdGr/TJWyvPHFz36/xxT4TgVnyncFRyWVLmihpdcbO/bmfygDuvVbE3Qvao1Np+rOUsV2hBEYT7GE1fVGc1zrV930Ayj8T74VmhybHAcuaSFdneXQep+F4m6dSPVYONz+X7fyM+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BrCoFU31; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 598I5KOt027679
-	for <linux-kernel@vger.kernel.org>; Wed, 8 Oct 2025 19:40:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BtratBBxMg1ixyPYUlq5M5pLFBJ+PhbCyrjACUqLIOk=; b=BrCoFU31o/H/HOCY
-	gZSZi5L6ppFxsWNzIeUXusGh3y3l8kXd8/QxbERrbWIWkNE0CwVg2bSKfTpNEw+1
-	/01ESgWMGAvwj6LGFQYPp9AdFLhYuFmTwArKejT21JmOxFE321sRUhvxvdcFJ+nz
-	Ms/mO1nQedwr3G43fb70NoZncfoeUFT6ZqCHd18wjHnCidPmlwL7WuBLVttZn5/W
-	uS3yHVt43I00X47asnMibYrZkU4HNszypEo+BHK8nNq4025Yxsy/mu+PH2KNLDsr
-	OibKYhVSPgiSEky2PcKzOsDRXs6XpnvpTMtihDpEkd2oAEj/FmErHe+O5O3kQU8K
-	89Rc/A==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv4nrddv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 19:40:46 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4d6a41b5b66so7498681cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 12:40:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759952445; x=1760557245;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BtratBBxMg1ixyPYUlq5M5pLFBJ+PhbCyrjACUqLIOk=;
-        b=d9Pag1yJSXRtv7UN2nYNqLD3DmS9BwXcSkmNnCJJDD9YikJCrWdg4zsbNZEgvf80QA
-         My5JOSNWndg3JOVT2gxB7fmRCfoGQf4Khx4X1Sv+YM4mayGkEotwuOxtooggXvmBqWD5
-         ghN6iN5d/RsT09vVUzUgH7pXTLRuAFZDxrATvIidmlTGY6SDplX8XbT6d8JM9yqm9KIa
-         q6zLTgTPbrEZrz6KHA6Eb30voYAhte13snXcpDLn4Ql38Gz644bOd56qvPxjWjoFWlPv
-         RlIwrtuFhFH26b9EcM3p9U9udlC1WWGMrnb+7P+wM+wA8a4lB6rAolvTcuNRcUTyPZ7M
-         jvYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXv8ubmeyIM40cgyIfFRBpW456theIV5KVchZoI/uGDjbF/7EfxBTX6wyITm9Dlqq3AKC8mjqSedVJQAck=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGyQ0U3qBsnVqkBlCrOySiofjQORtHAoZhtPNItQZsSZmQ+s7a
-	a6z51eM+6Oof/DdFMj4S3vUX9n7QM3LHZrudlA3c3yRsS/MK+e4MhX7zMYorC1DQ0Z0OeH8W/TO
-	JjCl4b6OkB3rGY2jQw6AL/QdwkV3b1ruo2eTZAwQI9wqb0qmxVhU5Xr/kJnI0wQrRrzo=
-X-Gm-Gg: ASbGncsnaX+9AvZnv7Rbx+jv/iK9Fd5GISRUqvg2XuclHvFGteJC8WrwPjCEzJljcEa
-	NFnqCDSwNsThrO7inNQB5QiE7/bn/f5098XIVzSZjE/W4H2Nx29BnQu1Tjmqf50C+2aS6JQ3LfL
-	5bfrj6zMaAHMXUbZdKC41pOOJWtK+ASgjMO1535YAZVUSYqoC4bsFuLAtI/jL+C9bbhLz4t7lJ7
-	pHerhmHb+tnm1BBVLg5VLii9VamzIOx1ExYhfGJ1cCd2KdvYMxZaD3rEwcZS20okrZ7q9xOGdbQ
-	tWVW/bDoJ1bZ6C6yJBlJxlWtuu77wWPyWBiSgItlxtp5iAKDgn7a794YF+KwsIE+e/c+9Upan5U
-	qBV4RGncGNNloXiFaOmhIndP61n5rXCJFH56/DaE+TXtK7QFrqGDGO1s2ow==
-X-Received: by 2002:a05:622a:507:b0:4c9:3d38:1107 with SMTP id d75a77b69052e-4e6ead4a2abmr65665101cf.48.1759952445316;
-        Wed, 08 Oct 2025 12:40:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGFEJXDPLLxzLnybFXlAAWwjDEdwLt1QerezkvfofYClTYGZm1AnZl4wYTYnkBSsh86yJaleg==
-X-Received: by 2002:a05:622a:507:b0:4c9:3d38:1107 with SMTP id d75a77b69052e-4e6ead4a2abmr65664301cf.48.1759952444493;
-        Wed, 08 Oct 2025 12:40:44 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-375f39f93d6sm22669541fa.18.2025.10.08.12.40.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 12:40:42 -0700 (PDT)
-Date: Wed, 8 Oct 2025 22:40:39 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Yongxing Mou <yongxing.mou@oss.qualcomm.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v12 3/5] dt-bindings: display/msm: Document MDSS on
- QCS8300
-Message-ID: <cwuecyparlinhtdqckff7vdqpkio2kk7dwemzfao6qkhnuzhul@mfyqdphfvbdg>
-References: <20250911-qcs8300_mdss-v12-0-5f7d076e2b81@oss.qualcomm.com>
- <20250911-qcs8300_mdss-v12-3-5f7d076e2b81@oss.qualcomm.com>
- <20250918-spectral-seahorse-of-witchcraft-69553c@kuoka>
- <b745c515-2264-42aa-8d92-663efc7f6276@oss.qualcomm.com>
- <6c195b42-d994-4d24-9c40-48d8069304e3@kernel.org>
- <rkuihu3pmhexeahfch6j7bvwn5rn4ecccbhamluh7fas5qgaup@av2foeiwmcz3>
- <8a6861a0-f546-475b-907c-65b691d1d340@kernel.org>
+	s=arc-20240116; t=1759952576; c=relaxed/simple;
+	bh=N3wUMr4zilqdOSdwWk6l78xey8r2OSlsB3dkEbi6Xv0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ZZwUESljswn1iN0kNcgVUWul91pJUcsNKKKo3FNV0nJorZStvYdF/G38SREifDC04zqJ4oQ9i8SY0o8wU2oezrDhYaet+3+Mmnjd1jqO0g+sU3Yu8kSQluoDb0lq/ExbIllMEgPUHhFN+BQm73vMbP2UUJQpvRsL96PnsI5+uas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Chtqds1f; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759952574; x=1791488574;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=N3wUMr4zilqdOSdwWk6l78xey8r2OSlsB3dkEbi6Xv0=;
+  b=Chtqds1fQFY697MDTXT2GcSg6qLUbnLYlZvixFkvV8HpsSsfArl65vEE
+   rCT5lMKnPXIFnbDnES+e/AHTB+pF9hkBwJTRceMTzvgfMI7UtZUQfONXh
+   47TWxY8RvZWJXkCkyT1LJL73xWsVdR1p6JT7SnmMhGoeOgsU5M45vJo7c
+   mQrsQGCsTH1crvxWbDK6M97R+cqllw3/u3s1kg+KaoaD+Z93n9pSjYqcn
+   LM+nNQa9FJgQce2rNg5xSJgHzUWIStnTeUSOoHq0kAfYF+11EnyvWWsiN
+   80lBDzab++ewHqlTAfMRxp5LFB7/gn6YFHwqIZc1/gxdLkRk/OmyBtPht
+   Q==;
+X-CSE-ConnectionGUID: YB82MzgeQf+52CjWdPJdJQ==
+X-CSE-MsgGUID: WK9dOE47SuO1Afqwmirpww==
+X-IronPort-AV: E=McAfee;i="6800,10657,11576"; a="79597289"
+X-IronPort-AV: E=Sophos;i="6.19,214,1754982000"; 
+   d="scan'208";a="79597289"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2025 12:42:53 -0700
+X-CSE-ConnectionGUID: FOAw+Ys+ToyoW+RRavHDSQ==
+X-CSE-MsgGUID: vp3HlePQT0CuBfXNohA7mg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,214,1754982000"; 
+   d="scan'208";a="181283817"
+Received: from rchatre-mobl4.amr.corp.intel.com (HELO [10.125.110.204]) ([10.125.110.204])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2025 12:42:51 -0700
+Message-ID: <d3cf3716-98ec-419b-90b7-b91b83599498@intel.com>
+Date: Wed, 8 Oct 2025 12:42:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8a6861a0-f546-475b-907c-65b691d1d340@kernel.org>
-X-Proofpoint-ORIG-GUID: eqvoWtliv3B1R900BOaNdiIS7NmW0shV
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX9JZtRFEkCSSC
- yn3PFkGV3U09LZlYZ865JrIIxhIJ4l0NCI4c9u/O7YYMvLFDA/dgNXx4cLQrqM0LtYCFZBdClAH
- D89AorD7YKHVVHA0C+IuzmiLQ9xeypgfMTmmuDHvz5IsQJ6jpMGuyUcp5VQ8y1OrgJexfSH7gLK
- PO83VS5Irb5kBecIiBlcVt7DjqPhxYjOwcogE1sAv7J/ADGAbiuVKQEebmLh5vq+HDJ5HVe+sHg
- 3u9AdKuVMDCtbyzIOtVMAFrBamKFtXi/rbbvoIXMr5rswGT5sN/SFviDh5Z4bTY/zcwTJylLNKy
- hE3xscNTxm12+66tinOPgo2jqb58HVpyDI2orrmVkZd9T/+mcNwOhQH9hKR+Bi4keNLeflwHPI3
- YvJIJrPPdybeXBGXFcnBw6CnQjsYAA==
-X-Proofpoint-GUID: eqvoWtliv3B1R900BOaNdiIS7NmW0shV
-X-Authority-Analysis: v=2.4 cv=b6a/I9Gx c=1 sm=1 tr=0 ts=68e6be3e cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=x6icFKpwvdMA:10 a=P-IC7800AAAA:8 a=EUspDBNiAAAA:8 a=C8UiGOM6HYQv_yXpghgA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22
- a=d3PnA9EDa4IxuAV0gXij:22 a=HhbK4dLum7pmb74im6QT:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-08_05,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 suspectscore=0 lowpriorityscore=0 adultscore=0 phishscore=0
- clxscore=1015 spamscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/8] Fix stale IOTLB entries for kernel address space
+From: Dave Hansen <dave.hansen@intel.com>
+To: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Kevin Tian <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
+ Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Alistair Popple <apopple@nvidia.com>,
+ Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>,
+ David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>, Michal Hocko <mhocko@kernel.org>,
+ Matthew Wilcox <willy@infradead.org>
+Cc: iommu@lists.linux.dev, security@kernel.org, x86@kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250919054007.472493-1-baolu.lu@linux.intel.com>
+ <c04d4c9d-e868-4883-af92-26f142bc84be@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <c04d4c9d-e868-4883-af92-26f142bc84be@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 07, 2025 at 03:43:56PM +0900, Krzysztof Kozlowski wrote:
-> On 27/09/2025 08:26, Dmitry Baryshkov wrote:
-> > On Fri, Sep 19, 2025 at 01:34:39PM +0900, Krzysztof Kozlowski wrote:
-> >> On 18/09/2025 13:14, Yongxing Mou wrote:
-> >>>
-> >>>
-> >>> On 9/18/2025 9:01 AM, Krzysztof Kozlowski wrote:
-> >>>> On Thu, Sep 11, 2025 at 07:24:03PM +0800, Yongxing Mou wrote:
-> >>>>> Document the MDSS hardware found on the Qualcomm QCS8300 platform.
-> >>>>>
-> >>>>> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-> >>>>
-> >>>> Patch v11 and still basic issues. I am very dissapointed.
-> >>>>
-> >>>> <form letter>
-> >>>> This is a friendly reminder during the review process.
-> >>>>
-> >>>> It looks like you received a tag and forgot to add it.
-> >>>>
-> >>>> If you do not know the process, here is a short explanation:
-> >>>> Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-> >>>> versions of patchset, under or above your Signed-off-by tag, unless
-> >>>> patch changed significantly (e.g. new properties added to the DT
-> >>>> bindings). Tag is "received", when provided in a message replied to you
-> >>>> on the mailing list. Tools like b4 can help here. However, there's no
-> >>>> need to repost patches *only* to add the tags. The upstream maintainer
-> >>>> will do that for tags received on the version they apply.
-> >>>>
-> >>>> Please read:
-> >>>> https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
-> >>>>
-> >>>> If a tag was not added on purpose, please state why and what changed.
-> >>>> </form letter>
-> >>>>
-> >>>> Best regards,
-> >>>> Krzysztof
-> >>>>
-> >>> Hi,
-> >>> Sorry for the confusion. I did intend to remove the Reviewed-by tag, and 
-> >>> I mentioned this in the cover letter, but maybe explanation in 
-> >>> cover-letter was probe not clear at all.
-> >>>
-> >>> This patch includes three changes:
-> >>>
-> >>> 1.In the displayport-controller compatible property, "items" was changed 
-> >>> to "contains".
-> >>> 2.Use "qcom,sa8775p-dp" as fallback.
-> >>>
-> >>> These changes might not be considered significant. So I’ll be more 
-> >>> careful next time. Thanks~
-> >>
-> >>
-> >> I really do not expect v12 to receive so significant changes in the
-> >> first place. If you keep sending us buggy code, which then you keep
-> >> changing after review, I will just not do the review. It's easier for me
-> >> to wait for v20...
-> > 
-> > I'm not sure how to react to this missage. The changes reflect the
-> 
-> 
-> This message represents my annoyance with low quality submissions from
-> Qualcomm, which needs multiple iterations and often apply tag, then
-> change significantly thus drop the tag or completely ignore the review
-> tag. And I review again.. and tag is dropped again because patch was
-> again seriously reworked. Or even without serious rework - Qualcomm
-> authors drop the tags, just "because".
-> 
-> ~2 months ago simple patch from Qualcomm required three involvements
-> from DT maintainers, because even trivial patch was being continuously
-> changed and author was dropping or ignoring review tags.
+I wondered why no mm folks were commenting on this. linux-mm@ was cc'd,
+but the _people_ on cc seem to have been almost all IOMMU and x86 folks.
+so I added a few mm folks...
 
-Well... 'Simple' DP MST bindings also required several authors and more
-than enough revisions because the hardware is not that simple. Gaining
-more understanding of the hardware caused changes to this patchset too.
+On 9/25/25 13:24, Dave Hansen wrote:
+> On 9/18/25 22:39, Lu Baolu wrote:
+>> This solution introduces a deferred freeing mechanism for kernel page
+>> table pages, which provides a safe window to notify the IOMMU to
+>> invalidate its caches before the page is reused.
+> 
+> I think all the activity has died down and I everyone seems happy enough
+> with how this looks. Right?
+> 
+> So is this something we should prod Andrew to take through the mm tree,
+> or is it x86-specific enough it should go through tip?
 
-> 
-> 
-> 
-> > process in other patchsets and in my understanding on how to describe
-> > the particular hardware block. The changes were reflected in the
-> > changelog. If you plan to review this patchset once you get back from
-> > your vacation, that's fine. If you don't plan to, I can ask Yongxing to
-> > send v20 just for that number.
-> 
-> Solution for me could be to ignore Qualcomm patches till they reach some
-> sort of maturity.
-> 
-> I am not planning to review this patch, because:
-> 1. I already reviewed it, so not really necessary, but even if I wanted:
-> 2. It is gone from my inbox...
+Hi Folks! We've got a bug fix here that has impact on x86, mm, and IOMMU
+code. I know I've talked with a few of you about this along the way, but
+it's really thin on mm reviews, probably because mm folks haven't been
+cc'd. Any eyeballs on it would be appreciated!
 
-So... Should it be resent to get it back to your inbox or should
-Yongxing just restore your tag on the grounds that the changes were not
-significant enough to drop it?
+It seems like it should _probably_ go through the mm tree, although I'm
+happy to send it through tip if folks disagree.
 
--- 
-With best wishes
-Dmitry
+Diffstat for reference:
+
+ arch/x86/Kconfig              |  1 +
+ arch/x86/mm/init_64.c         |  2 +-
+ arch/x86/mm/pat/set_memory.c  |  2 +-
+ arch/x86/mm/pgtable.c         | 12 ++++-----
+ drivers/iommu/iommu-sva.c     | 29 +++++++++++++++++++++-
+ include/asm-generic/pgalloc.h | 18 ++++++++++++++
+ include/linux/iommu.h         |  4 +++
+ include/linux/mm.h            | 24 +++++++++++++++---
+ include/linux/page-flags.h    | 46 +++++++++++++++++++++++++++++++++++
+ mm/Kconfig                    |  3 +++
+ mm/pgtable-generic.c          | 39 +++++++++++++++++++++++++++++
+ 11 files changed, 168 insertions(+), 12 deletions(-)
 
