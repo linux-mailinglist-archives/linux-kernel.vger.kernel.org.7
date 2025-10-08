@@ -1,132 +1,203 @@
-Return-Path: <linux-kernel+bounces-845711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09ACCBC5F85
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:13:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE953BC5FAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:14:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 097454223D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:55:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CE015403F3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2164E29E0E7;
-	Wed,  8 Oct 2025 15:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E48529BDAA;
+	Wed,  8 Oct 2025 15:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Rmzgu+5J"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nfSdeRqD"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA2D221DB1
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D5A25EFB6
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759938927; cv=none; b=VpeUzeb2vzfg4AUKi0HaLnR/0mmBhAC7kADn+6jChj5t7BUf32rQCZ/cYlAHbNeP7Gu5fQcUlBnw/tnbbJYEccGASPlinAVxRckdHoDFi/ITS8aEqcAegLuKnvMCVlqlfbmWKGVGlgqv/d5Y3+T2a9Bo8NWvSAUSUNxdmw+QNMA=
+	t=1759938976; cv=none; b=j28ygtxk3VVxuddwThyqOoDe5YQe69DXIMnFjQyY7wIAX//KM0Oi7h36DxtpqvthdCXoHr90lfMOBFem/ouRFv9qoeIHLxEXPjqJAROfB2omN+JeqNXxMoBhOoPZKwR+JTpC2omCjlcGDZbbzDQ+VE7ijQEC7su1XdrKQf4TzY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759938927; c=relaxed/simple;
-	bh=85/mm3sXpOoNOn6cTJ/JXyXBRwl6do61EpL+5QUva/0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=bYhXyHSCF9ge8em0T0tFVMDUunn+xLU1H7f/6gtGqt2SIRM9NFV+myhW6+xLQuqTGL/gllJNHOn/iBb6Ff+qIkjFtV7axFRBayCp30Sj+vV51eGaO+MXYvZhFM7bpVi+Dm97z3X4JH5nQRlFCjK7Eh0aqIz3+AlVBPAVXWBl3wM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Rmzgu+5J; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-272ed8c106eso50763165ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:55:25 -0700 (PDT)
+	s=arc-20240116; t=1759938976; c=relaxed/simple;
+	bh=eecEdOXcvpQE5ckhRbenhXOq+0yEF6ISwrbgrM35NgU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rgLgtXKvLn1XHhIvH2TCDzFHNmM7QUAD96B1vfA7+WPoN29VRinoPC7b3jisFh1pyJmYsVNzP8EsGWaB6JNoP807RIsVIr6ImtyYMI1eOJ6yAOTm83AXzgkg8coMUb0H5rUb2obZBhdbXzmuUWu78RKbfhk2/RGKUlTg4olpk3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nfSdeRqD; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-7946137e7a2so996576d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:56:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759938925; x=1760543725; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yE/1NjviAjYgzvKEBWocmDsuG1eu4K2fZd8EwARCmAo=;
-        b=Rmzgu+5JNaP/UN9JgmylzNruOIukS2R/xVk7j7Iqnnhl7MKPZ1UjPISJYpLxpxV/6u
-         s+lQHSnOnijkTV0g2ym7gBYtC7eJsR7CAQGVFVR0aNCjeDWVu1a5MpmtRGFhw2re+oek
-         FDQ16zrGEgJr3qBS2LnUS7Gctro8DA/G8Qys02TF0kqGX3R94iL5ZkJJnpdOHD97Xa+l
-         xOVX9Gzja6xl2NIO+mWzGnpNeFTqEwdNiJ/FnK94+nxPN2bDNqZvp60mCCtF7gAx8xnE
-         GicmN0Fa8TLdlu+KlUx2LU5sZHiA5CmaQ++OO0UfqWJPo2TQrcPwwYFQ0CxlOh0gwS8k
-         WuYA==
+        d=gmail.com; s=20230601; t=1759938973; x=1760543773; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hFEIMC2U9jb57qswe7OpbYJsyYuAd7DLz3tJrfS5gFQ=;
+        b=nfSdeRqDzgYXhKMYOA5OAv61Gy/A6Yz268vmUpoBSuTOxLGjZabf/U/nZnPIO1J91+
+         8v4sNwevdx/XpAGzcPC67NgkeMfDjNQOENX+Fh1SXfZxkjbEQEFm1vKv+Vy14HZotuNU
+         AbAf3IuoVoCOuhg/GDyLuZZxYxzX6PMvYt/jKti0pstwAlv8wEmUUFuE21vALr3c1OCm
+         +0euUBI8QqouLLiYJkQ+a6RCfC7WE4fIa5E5za3dD+fMCwhObXiurRfmtP50k9wZxHLu
+         TOjAneC+xx3/iOsg7TDgijc0izuSD+Q53NzstTANC/Uxla+rWsPbO2NUIgo8GMD6qrgz
+         wQcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759938925; x=1760543725;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=yE/1NjviAjYgzvKEBWocmDsuG1eu4K2fZd8EwARCmAo=;
-        b=uhVKt8WsPeHY+tsELxxZowG5e3eVIrExV3xIKT/JTG97neA3h80b1Re1eQF6FClMZ+
-         vB0DndPko3NemtbaGfIGq8OIknC49MFM07WHPiZBxlIhgTEIb+T/x/wAhkdmquawK3sM
-         IHEYqaRkpAJMEIET15nViH5F6oI/T7npBy3xjh9w7xR2EwtaWAn9VJ3MyRlbHmosR6iC
-         j67SkpEP2cKtz/RGHp1Ueqo0UGcMEerExS/6Jw89aE76B+wgGfsAslWLRXkod7CiwqxX
-         MHmH50Sqx5BnAO09famu+TtSEQv5nJTOPUn9tB9HobtBrLiqKYarnkOAtyd2VZte4APx
-         koeA==
-X-Forwarded-Encrypted: i=1; AJvYcCX281/BX1Z6OsRPo8IzC/Ci+Fkn82UiM0iqLg0ykD9rm15J7068A8hJiv4lf11HCZWSlk5Y0XlXRKnvEgQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnGFJzpdSE2+liGxr1J3HYli7ddMMDK/K3ix0EtBTqUN3eRYZn
-	sb44jfBl+/9kJZujVAsG4jlQE/2cKmxZ13N1C579fapRRTtb9ZpyrYL2nvYKIXegNnc0z4bkdko
-	aDqN5Ug==
-X-Google-Smtp-Source: AGHT+IHNZ9o1aucHiV07bHDBIvskxFmukfMK9SZ5tpZZEnJ+tyDCdecEFDLxuqTyrcbJu7v6jlO0OKadLqQ=
-X-Received: from plblv11.prod.google.com ([2002:a17:903:2a8b:b0:234:c104:43f1])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:ac7:b0:269:9a8f:a4ab
- with SMTP id d9443c01a7336-29027321d6fmr43055485ad.60.1759938925410; Wed, 08
- Oct 2025 08:55:25 -0700 (PDT)
-Date: Wed, 8 Oct 2025 08:55:24 -0700
-In-Reply-To: <CAMGffE=P5HJkJxh2mj3c_oh6busFKYb0TGuhAc36toc5_uD72w@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1759938973; x=1760543773;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hFEIMC2U9jb57qswe7OpbYJsyYuAd7DLz3tJrfS5gFQ=;
+        b=QzbDvQ/05Zs0XHo/IKXpI6uY8HW2QzhbDftsF1suo9LXi2zFmvjR5YT2klW9phaZ2o
+         XuN1cGWOvUIjAwz7R6G7OYCjYmHFyhm1Wsa0yg6LzkePL6vnZ4y4DBVMxhMo8EEyPr2O
+         SjZoLxvsJUbZ8K+/IoGf3g7REIKD51GzgBXgh8sIBv0xqFoKJ41RzzLJq9adsLzg9IXb
+         HARMHOvPAMMXBGf9U7jMO27F7t+rietqmEK/o6eJPm/K3IIhqBT96WexjLLcGAgvWM6m
+         1N3v8Hfi+vNUsbFifolv1AcvlU1hR65THxJBz4ekF6cEsBt87pezJ4n7YFHbTwG6w4ND
+         zG9Q==
+X-Gm-Message-State: AOJu0YyHVZFPfgSJXxGd6R/4P33RxahSneWfd5Qu+kKogZJfbRaUvIv2
+	/IkQxC2fhfw3/+0h6nq/6wV3Ca1z0u0AJLybNi6/sNMdRIYtAc4Bzm8j
+X-Gm-Gg: ASbGnctNVU/50XE0kxikqarFwwQuRS3infsVUZtqxq4uXpJOCXy7LmAeqGZr5u1pbBw
+	HR5B5hLBwhG5/vktk/jT3Y6EfQdMx5O9mTL6LHnuJo9IVqH3NElmVJoXEXPTBJuE6sW37rLh0xy
+	EdFWFeEmG9mVSJ3hkpost+hYdahEaM5Y+R8cp5fFMPXHJmWp89Kl0QTpXlDWOrM6kAS0CJycui4
+	b9Csih7vuUfvoZUIAIjFemyFtHYKcLu6ooVfdUCQzmFV9c7IsfINXWclsrLTa1Yqotb4d0MQjfZ
+	Q8YEZXOctJCIflgbsSBxQ0tOki6jBM+Zp5qcyxbNfuDe76FEN0FeucxXaicOe0b43MS6i+wD36b
+	qCsuJtzZz9g90gXZV+hkDA7nvRdLTje9IGaZ4Agsyk1Lr9tvyZsBFATN9avMtQjcs5hyNI8F21m
+	W3cUM9vk340eaI1DL54AKeA/pCHOIUGCkg3vGYAykBtLTqyYI=
+X-Google-Smtp-Source: AGHT+IFnsP6b3viJv8/ZjQSPmyqTukLCG864oTDaEeVKrhW3aBRAqFOSfqGTwi30ZMtg70D/Qovaaw==
+X-Received: by 2002:ad4:4ea6:0:b0:73f:a7c8:980b with SMTP id 6a1803df08f44-87b21001056mr59669626d6.4.1759938972538;
+        Wed, 08 Oct 2025 08:56:12 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-878be61fb57sm166271366d6.62.2025.10.08.08.56.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 08:56:11 -0700 (PDT)
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 706C7F4006E;
+	Wed,  8 Oct 2025 11:56:11 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Wed, 08 Oct 2025 11:56:11 -0400
+X-ME-Sender: <xms:m4nmaNMPdssR-w678MoKxNjT5JgI2HBwFLRHw_XJ8ysc8xvcq5TiRA>
+    <xme:m4nmaBiMrnYw8q7z0sVCT67quT5kCPQp3uzXNsQtx61g7ILQVO2ZhZeVaVicNu8BI
+    hH5F86FEYU6Q3qCQUbmSdllvx_4toD_gnE-fLYtFc5GUq1sZt3Q0Q>
+X-ME-Received: <xmr:m4nmaLjM2Zb2J4qR7uobfQgzl3EYA7WkCKNy5o_VS7MosMASLW9STjMue7c>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutdefjeduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtrodttddtvdenucfhrhhomhepuehoqhhunhcu
+    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtth
+    gvrhhnpeejffegieejvddtgfekkefhjeegjeevuedugfehfedtkeffjedtleeiuefhvdef
+    geenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgv
+    rhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfh
+    gvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthho
+    peduvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhgrrhgtohdrtghrihhvvg
+    hllhgrrhhisehsuhhsvgdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhes
+    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehruhhsthdqfhhorhdqlhhinh
+    hugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehtjheskhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtohepjhhirghnghhshhgrnhhlrghisehgmhgrihhlrdgtohhmpd
+    hrtghpthhtohepfhhrvgguvghrihgtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegs
+    ihhgvggrshihsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepmhhhohgtkhhose
+    hsuhhsvgdrtghomhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:m4nmaAJMSF2dHxU4DqYXtkgdd5r9de_OkEORjVangMGQHxmGSfUQcA>
+    <xmx:m4nmaKk2g0MPNjxIL-Wcgaoz1sXaIQIHYFtbQVipTAEUUL2CfJAgLw>
+    <xmx:m4nmaIOaMObif4Ftq2TSOWjbJvb7GAUpB3_ybkDTaV3UIlZltMAY2A>
+    <xmx:m4nmaE6dNzXs9ZnS8zjfyj4Lma2sGTQVQD6n6D8O2tR4rwego77WIA>
+    <xmx:m4nmaMatV60ev3vopmh080nzBd4QwEwZKo_y29vnl9qkw1ka7i0i9XzT>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 8 Oct 2025 11:56:10 -0400 (EDT)
+Date: Wed, 8 Oct 2025 08:56:04 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Marco Crivellari <marco.crivellari@suse.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Michal Hocko <mhocko@suse.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Alice Ryhl <aliceryhl@google.com>
+Subject: Re: [PATCH v3 2/2] rust: add system_percpu() around the new
+ system_percpu_wq
+Message-ID: <aOaJlHEPzHcAdcUx@tardis-2.local>
+References: <20251008151554.340806-1-marco.crivellari@suse.com>
+ <20251008151554.340806-3-marco.crivellari@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <539FC243.2070906@redhat.com> <20140617060500.GA20764@minantech.com>
- <FFEF5F78-D9E6-4333-BC1A-78076C132CBF@jnielsen.net> <6850B127-F16B-465F-BDDB-BA3F99B9E446@jnielsen.net>
- <jpgioafjtxb.fsf@redhat.com> <74412BDB-EF6F-4C20-84C8-C6EF3A25885C@jnielsen.net>
- <558AD1B0.5060200@redhat.com> <FAFB2BA9-E924-4E70-A84A-E5F2D97BC2F0@jnielsen.net>
- <CACzj_yVTyescyWBRuA3MMCC0Ymg7TKF-+sCW1N+Xwfffvw_Wsg@mail.gmail.com> <CAMGffE=P5HJkJxh2mj3c_oh6busFKYb0TGuhAc36toc5_uD72w@mail.gmail.com>
-Message-ID: <aOaJbHPBXHwxlC1S@google.com>
-Subject: Re: Hang on reboot in multi-core FreeBSD guest on Linux KVM host with
- Intel Sierra Forest CPU
-From: Sean Christopherson <seanjc@google.com>
-To: Jinpu Wang <jinpu.wang@ionos.com>
-Cc: fanwenyi0529@gmail.com, kvm@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, Xiaoyao Li <xiaoyao.li@intel.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251008151554.340806-3-marco.crivellari@suse.com>
 
-Trimmed Cc: to drop people from the original thread.  In the future, just s=
-tart
-a new bug report.  Piggybacking a 10 year old bug just because the symptoms=
- are
-similar does more harm than good.  Whatever the old thread was chasing was =
-already
-fixed, _10 years_ ago; they were just trying to identy exactly what commit =
-fixed
-the problem.  I.e. whatever they were chasing _can't_ be the same root caus=
-e,
-because even if it's literally the same code bug, it would require a code c=
-hange
-and thus a regression between v4.0 and v6.1.
+On Wed, Oct 08, 2025 at 05:15:54PM +0200, Marco Crivellari wrote:
+> The C code defines 2 new workqueues: system_percpu_wq and system_dfl_wq,
+> respectively the futures replacement for system_wq and system_unbound_wq.
+> 
+> This change introduce system_percpu(), that use the new system_percpu_wq.
+> 
+> system_wq will be replaced in a future release cycle and should
+> not be used.
+> 
+> Suggested-by: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
 
-On Wed, Oct 08, 2025, Jinpu Wang wrote:
-> On Wed, Oct 8, 2025 at 2:44=E2=80=AFPM Jack Wang <jinpu.wang@ionos.com> w=
-rote:
-> > Sorry for bump this old thread, we hit same issue on Intel Sierra Fores=
-t
-> > machines with LTS kernel 6.1/6.12, maybe KVM comunity could help fix it=
-.
+If we were to expose the system_percpu_wq to Rust, then we should also
+add queue_work_on() API to Rust, otherwise it's kinda pointless IMO.
 
-Are there any host kernels that _do_ work?  E.g. have you tried a bleeding =
-edge
-host kernel?
+PS. We can use the CpuId abstraction:
 
-> > ### **[BUG] Hang on FreeBSD Guest Reboot under KVM on Intel SierraFores=
-t (Xeon 6710E)**
-> >
-> > **Summary:**
-> > Multi-cores FreeBSD guests hang during reboot under KVM on systems with
-> > Intel(R) Xeon(R) 6710E (SierraForest). The issue is fully reproducible =
-with
-> > APICv enabled and disappears when disabling APICv (`enable_apicv=3DN`).=
- The
-> > same configuration works correctly on Ice Lake (Xeon Gold 6338).
+	http://rust.docs.kernel.org/kernel/cpu/struct.CpuId.html
 
-Does Sierra Forest have IPI virtualization?  If so, you could try running w=
-ith
-APICv enabled, but enable_ipiv=3Dfalse to specifically disable IPI virtuali=
-zation.
+and have an API like:
+
+    ipml Queue {
+        pub fn queue_on(&self, cpu: CpuId, w: W) -> W::EqueueOutput
+    }
+
+or maybe a different new type `PerCpuQueue`?
+
+Regards,
+Boqun
+
+> ---
+>  rust/kernel/workqueue.rs | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/rust/kernel/workqueue.rs b/rust/kernel/workqueue.rs
+> index 300cc2bfe012..05f213444b91 100644
+> --- a/rust/kernel/workqueue.rs
+> +++ b/rust/kernel/workqueue.rs
+> @@ -940,11 +940,26 @@ unsafe impl<T, const ID: u64> RawDelayedWorkItem<ID> for Pin<KBox<T>>
+>  /// users which expect relatively short queue flush time.
+>  ///
+>  /// Callers shouldn't queue work items which can run for too long.
+> +///
+> +/// Note: `system_wq` will be removed in a future release cycle. Use [`system_percpu_wq`] instead.
+>  pub fn system() -> &'static Queue {
+>      // SAFETY: `system_wq` is a C global, always available.
+>      unsafe { Queue::from_raw(bindings::system_wq) }
+>  }
+>  
+> +/// Returns the system work queue (`system_percpu_wq`).
+> +///
+> +/// It is the one used by `schedule[_delayed]_work[_on]()`. Multi-CPU multi-threaded. There are
+> +/// users which expect relatively short queue flush time.
+> +///
+> +/// Callers shouldn't queue work items which can run for too long.
+> +///
+> +/// Note: `system_percpu_wq` will replace ['system_wq`] in a future relase cycle.
+> +pub fn system_percpu() -> &'static Queue {
+> +    // SAFETY: `system_percpu_wq` is a C global, always available.
+> +    unsafe { Queue::from_raw(bindings::system_percpu_wq) }
+> +}
+> +
+>  /// Returns the system high-priority work queue (`system_highpri_wq`).
+>  ///
+>  /// It is similar to the one returned by [`system`] but for work items which require higher
+> -- 
+> 2.51.0
+> 
 
