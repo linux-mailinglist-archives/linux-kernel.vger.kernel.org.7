@@ -1,241 +1,155 @@
-Return-Path: <linux-kernel+bounces-844990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6D11BC33A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 05:29:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20FDFBC33AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 05:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 559EB34C223
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 03:29:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8CD43B274E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 03:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FC72BD00C;
-	Wed,  8 Oct 2025 03:29:16 +0000 (UTC)
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E88E2BD015;
+	Wed,  8 Oct 2025 03:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LO4bZPhY"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5712429E109
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 03:29:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D13722BD001
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 03:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759894156; cv=none; b=cMTG0if/EZJ798OCvXmvwVhBsXv2BJQFBMUxB1CiEwVUuUC20u0XaIA86yvnfuDgnFiPoEo9Ctr1Kr+AxC2JazXg8TWxWG6InjzuIBJhUDwDySkyQrg8UoSI+JG0aI+2+PnA4JFXJ/OyuzcTyr/vExXZjFFs8UGxFqfduSIODTU=
+	t=1759894170; cv=none; b=oMlUVNTtDjIZfoNw3XRyDax8ehgsmkT+AflhovOOWhro0RDNKJbCbjqzskamxfQxI1Dn6SEuQ8z/3R/XFjXtTRbXR20gKzcoafuWMNZXkKHl7hRg5exeMaf2oBsfU8NHf9BuDjlQX4f+cE//iIJopbd3u4YH1UN0k3CEXXsrxPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759894156; c=relaxed/simple;
-	bh=MibfgT6y8XlCuYOJ/nOCtSg0uG9o9l2BOrCuUBn65S8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Er0+jl9ZCjPMCuNZlZ7hmcTMfkdYvoWvzlgsHDKrUoDFFx7aTPoKdKaSsyy7bNFla9w1Uf0h0gNJSLrsuenboXTdsXW5k+FKnXNA37CwkNSFvlPi6ZEP/OW0S/40TKD3ZerdHlRH0mUQdbGfQCFvGZ2hZwycA6619/Gp/tt5hWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-421851bca51so4507440f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 20:29:14 -0700 (PDT)
+	s=arc-20240116; t=1759894170; c=relaxed/simple;
+	bh=PhC/2B+2mSbFA9P1cevxdTv+G9a2xtf0omNJybKc1wU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hRnCy8oZQDejB8V4xkTJxhVP2+O70JcpY37/cUeHlfaWIVDoP5Y9mI7zgimp4NuufiqxCcy+T3KOlX3hi2hf6l5SMIN/yamy6PKy68moUk+OITKhIxP5VzwpNYKhKuX/L+xy9heICErMlkaFC97eOg7rgO+Wy1jr/XqxykEvNmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LO4bZPhY; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59803XWK028187
+	for <linux-kernel@vger.kernel.org>; Wed, 8 Oct 2025 03:29:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=hb5DjFcBZ/27YR59szZGZtjq
+	+9HN8vs9l1pnCZa9knw=; b=LO4bZPhYIUWjzodfMIGxtaOkz6y3sCxainM1BKWI
+	R8vql3u8rKdDuIPiFKSuEXYWCFU0Bnm7dhoTsLxl/ZmpnuAjcGOVmA1lC9XeQbfB
+	5Gmxhmspv1CdZFAKG1Wv1SX3Iz4ZA75kPBK1YdIDZ1Alx2qO9TSGldVFCJw3/sMa
+	avcenaQUTcR+x+bg5SMAeALK7Tiyiq9GGmbOqWzpK9DpjzDYNTF4LLH8bz8EGNKF
+	PkLBLshs1NpMff43sgCr7wZfhzU6I/rQxHgk28U+0fhM+MTFeca2N0mj7kc+psK5
+	sZSHlyu82qsht+4YRsrAy2DJlzwudzYT5gCLKlw33YxMAA==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49n4wksp20-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 03:29:27 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4d77ae03937so188029711cf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 20:29:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759894153; x=1760498953;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=j4qILVJfm7DfhssJ0ueEnYCl55Tf6EovTh892sb6XGE=;
-        b=q64/DMIEGegh3oYhY1dzDTwRukDaGgSzoKPF/vd7blP6aMdT1g1qIunzchNYzkguYI
-         nnmNvJPSSXLr3KORp5iJ3TN9/Q6eBxxWvditiNghzPKM3EGM1e8CQLwL3OK8RP96FcNZ
-         PEsxQweNrEToaKLu3eQfsp4SxuCzW9+8HhWLiZL9Bdn26CBQSGbxXLcRQ+d4fv0z53ZA
-         6TE66Dwx+RXFRMxHFT7U6LgAVnTXFzQYpfgRWcmW99P4jCGRXJYZnnBvnpUVux5M34CZ
-         QNDAAWkgWb5KGd0Qwxvst1V5L9GnXcX7jQBEpIWDtcNJY9UhF2ZQtXifpbNItA16j364
-         UKMA==
-X-Forwarded-Encrypted: i=1; AJvYcCWMvCcSGLxnERDVO3hGTjhvCZkZ1U7yjU4sjilUd0eyNcXubgpuqVknUP9wqCQ/upxGW6NUpCDAfR5015E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjHQm2tFmWCl+cv67OCqWlAtS1uj61UQJaSW/KlARsazvyrWiK
-	0YOkYSbp8QfkYi4jejM5EoaUiT1jpDIgHUwBogAYhVBxW43YtVnSgbnS
-X-Gm-Gg: ASbGncv0R4LsWq08+roCdgOAKEwF6E7h+PBigz8RNBTemxvJPxT54xoCQdFr6FiNUmb
-	16dVH57kywf6JVzqE5s+6YGP0u8XBU5Oh8Y3dMaI7doPodL1SKSVQ1J3SBMXIR4G436CHEU3K2s
-	iid6XIK1ohOuRfVxFhqgBZDoLT27qQvsi9LyYUkxW59MpGMDAw+hOgJ81OfUU94WyAR+6WvmXaF
-	lcZnwLI5Yohhr2Jgl15LO6Na+tZmsimctQ54/mkU1qJvcyDTzpkCVEM5q4+Xuiujgimi/vqV1dj
-	uvLc/95C3BQ1LFo5+cQywYKxMoY4CU08VjJe/SyUa+4ynq/CZEkWseXa8FEmuUcEhihsBDMOwHf
-	fUFszlb6ilTX/yusmNjcBMt47Dhc+KJ0VAuVF/hk=
-X-Google-Smtp-Source: AGHT+IEqyPpRTF2bZhw/gcKv2q3t9mfW/SB+36ieW0hvddjq7ne03GNKUlJjLVfRv6Vn4FOWpuwBsQ==
-X-Received: by 2002:a05:6000:2305:b0:3ec:dd26:6405 with SMTP id ffacd0b85a97d-42666ac73a0mr986043f8f.26.1759894152435;
-        Tue, 07 Oct 2025 20:29:12 -0700 (PDT)
-Received: from localhost.localdomain ([2a09:0:1:2::30b2])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8abe90sm27644519f8f.23.2025.10.07.20.29.05
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 07 Oct 2025 20:29:12 -0700 (PDT)
-From: Lance Yang <lance.yang@linux.dev>
-To: akpm@linux-foundation.org
-Cc: david@redhat.com,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	baohua@kernel.org,
-	baolin.wang@linux.alibaba.com,
-	dev.jain@arm.com,
-	hughd@google.com,
-	ioworker0@gmail.com,
-	kirill@shutemov.name,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	mpenttil@redhat.com,
-	npache@redhat.com,
-	ryan.roberts@arm.com,
-	ziy@nvidia.com,
-	richard.weiyang@gmail.com,
-	Lance Yang <lance.yang@linux.dev>
-Subject: [PATCH mm-new v3 1/1] mm/khugepaged: abort collapse scan on non-swap entries
-Date: Wed,  8 Oct 2025 11:26:57 +0800
-Message-ID: <20251008032657.72406-1-lance.yang@linux.dev>
-X-Mailer: git-send-email 2.49.0
+        d=1e100.net; s=20230601; t=1759894166; x=1760498966;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hb5DjFcBZ/27YR59szZGZtjq+9HN8vs9l1pnCZa9knw=;
+        b=NxKXHTkkZDybMsFYisXLDxvp4wt/cLAJE2BYHeXpMG3kaaVL3ctb1hRVhXS3+Mce5s
+         K/5iyCj2q1mKWmcblYthJSGqstB0K7W6RMs1H2S+2AbxjhgcBhyzh2hUIdZfZ/vBIL5T
+         OpFvLNE3uBfT9qboGnpTyhdOoWDE3a5OjZgCk9RtgOELBj4NROa70O0sD1icUizUMeKZ
+         LfgnZ8gEhpRx4/bX89fVd3OOve+1XmsIYrJL9aZLaKMRsg4erwhB0wgEadR//+2gx51J
+         HEcjBW3RpUlezvYhrx+hiDOTu434N3d6ox9EjB0NxlsQyvIS7Occn9we6XHBbuyOOUaW
+         7DHg==
+X-Forwarded-Encrypted: i=1; AJvYcCWhiZC7SgGwVYUTd47dwf4VYTr4M7vcbMUxtcJA5SQp2MXS5r0M8mjGl6cV/5aZDuqoBfYtz8q7h7xLxYo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcFW13TTmpWpBt14F8dEcBZn7VedXluqfqxQqqO/OdKDsayqFu
+	yQQAW16DVD4oVnhP4WzMmZ3mk0MmU35ZecADbnQ1bYHclQoJiAtRaFnmIc5v+zR5GUw/Ww1kfQj
+	elSjKnmjexSJbTrSY088HRdiky2FkB7zvyysLZZjExOvY7IV6uM98S5mYeNCMYPBxV5c=
+X-Gm-Gg: ASbGncsJcR3PWpkYXd5vqSc/s4kh2N0XZoccCyFUNJuVCW1Wkbj37SuFa96hlBleQIy
+	c65LK8SYjTOuUZFP6BswVvezT2T6ZZche5dEyGlOUduWb+Z6Ps4FPAl5G4SLIEuMeaW74AfYpQk
+	GjcqykVLOTyyb0KGoBshGLdP9nGczRly5W0Kl/dJ8ZpcQR6X9USOkmhBqH1arJJLiun4AEbALJ5
+	aiVnOJlGSUlgkqBMx69CldD55O4WySYnnRe3Ig93PzBfvRKtkB+eFIojtWS+e+o8LAy78ee6Ebx
+	TXtBrjZ4u5ATTbbLP1HNFkBzZaU82TZINXPmObIRjl4b4QL1/R7JU4GusCGjhen9Csj/Da0ihQi
+	P7GAcWvmLjhJwaqk2Twqy6L1Okg+cbDyzyJFbx83IZkVGbkgIA6XMGvDkHA==
+X-Received: by 2002:a05:622a:5a08:b0:4d8:67fb:4185 with SMTP id d75a77b69052e-4e6eacdacf4mr25643381cf.15.1759894166666;
+        Tue, 07 Oct 2025 20:29:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF0ym17qd6d8i8m9rZB6O5niP9nPtV34vtdf+6ORfgYkgZ/ZUEANvQEfhGIf/ybRQkhY43jCw==
+X-Received: by 2002:a05:622a:5a08:b0:4d8:67fb:4185 with SMTP id d75a77b69052e-4e6eacdacf4mr25643231cf.15.1759894166258;
+        Tue, 07 Oct 2025 20:29:26 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b011ab25asm6715686e87.119.2025.10.07.20.29.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Oct 2025 20:29:23 -0700 (PDT)
+Date: Wed, 8 Oct 2025 06:29:21 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Erikas Bitovtas <xerikasxx@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+Subject: Re: [PATCH 2/2] arm64: dts: qcom: msm8939-asus-z00t: add initial
+ device tree
+Message-ID: <cphv74xpoaltdlk5qjksmfjmsdk7fvpu6dvpo3bz2wdhtshaai@dxzk7qxro4tx>
+References: <20250930132556.266434-1-xerikasxx@gmail.com>
+ <20250930132556.266434-3-xerikasxx@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250930132556.266434-3-xerikasxx@gmail.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA3MDExNyBTYWx0ZWRfX6yBRgy7EZIJa
+ DYgYvP0pjgUaJZgNGhN3WD0gEWRkSdSa/aabRAQorEV4WHiYn7aP3QEyiiD8hkBpxYSbo6cZbbM
+ rbkeiMD7DeZE+JheolCBR28PAI9PCufW2Td7AiEQBSTxLod8xPJ/Gpp0Bk1bN30alNbLTyqTdda
+ 5lGZj2pvkCrnY4F5xngRttZ3JLxOdkdxraiZ+9k/IRfoOFsdauaGRHJyiBSF6khHvuFqEQzKGSB
+ sljpRprVHCKhtA7ON0S2w5H9mXTniQMnd9yBCNdlPK+uNWfYq4AE54uqXPHAUK1EBNNawQZIW48
+ lFX6crDTrIcmj/OInilfAglEKoIH7OqeDfXHOquO8u54I1+Gy5y92iYrxHkl/AAkkgX54CXplVi
+ 7Z7gfqC90b/1S+S9Vu6nkK9UAlw0HQ==
+X-Authority-Analysis: v=2.4 cv=BP2+bVQG c=1 sm=1 tr=0 ts=68e5da98 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8 a=rlI1ognr9DFfacYL9GkA:9
+ a=CjuIK1q_8ugA:10 a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-GUID: Qm-haQ2jUkqdB27IASBFPyOeIu5nu81-
+X-Proofpoint-ORIG-GUID: Qm-haQ2jUkqdB27IASBFPyOeIu5nu81-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-07_02,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 bulkscore=0 malwarescore=0 impostorscore=0 suspectscore=0
+ phishscore=0 lowpriorityscore=0 priorityscore=1501 spamscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510070117
 
-From: Lance Yang <lance.yang@linux.dev>
+On Tue, Sep 30, 2025 at 04:20:10PM +0300, Erikas Bitovtas wrote:
+> Add an initial device tree for Asus ZenFone 2 Laser/Selfie. This
+> includes support for:
+> - UART
+> - USB
+> - Internal storage
+> - MicroSD
+> - Volume keys
+> - Touchscreen: Focaltech FT5306
+> - Accelerometer: Invensense MPU6515
+> - Magnetometer: Asahi Kasei AK09911
+> - Vibrator
+> - Audio input and output
+> - Modem
+> 
+> Signed-off-by: Erikas Bitovtas <xerikasxx@gmail.com>
+> ---
+>  arch/arm64/boot/dts/qcom/Makefile             |   1 +
+>  .../arm64/boot/dts/qcom/msm8939-asus-z00t.dts | 255 ++++++++++++++++++
+>  2 files changed, 256 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/qcom/msm8939-asus-z00t.dts
+> 
 
-Currently, special non-swap entries (like PTE markers) are not caught
-early in hpage_collapse_scan_pmd(), leading to failures deep in the
-swap-in logic.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-A function that is called __collapse_huge_page_swapin() and documented
-to "Bring missing pages in from swap" will handle other types as well.
-
-As analyzed by David[1], we could have ended up with the following
-entry types right before do_swap_page():
-
-  (1) Migration entries. We would have waited.
-      -> Maybe worth it to wait, maybe not. We suspect we don't stumble
-         into that frequently such that we don't care. We could always
-         unlock this separately later.
-
-  (2) Device-exclusive entries. We would have converted to non-exclusive.
-      -> See make_device_exclusive(), we cannot tolerate PMD entries and
-         have to split them through FOLL_SPLIT_PMD. As popped up during
-         a recent discussion, collapsing here is actually
-         counter-productive, because the next conversion will PTE-map
-         it again.
-      -> Ok to not collapse.
-
-  (3) Device-private entries. We would have migrated to RAM.
-      -> Device-private still does not support THPs, so collapsing right
-         now just means that the next device access would split the
-         folio again.
-      -> Ok to not collapse.
-
-  (4) HWPoison entries
-      -> Cannot collapse
-
-  (5) Markers
-      -> Cannot collapse
-
-First, this patch adds an early check for these non-swap entries. If
-any one is found, the scan is aborted immediately with the
-SCAN_PTE_NON_PRESENT result, as Lorenzo suggested[2], avoiding wasted
-work. While at it, convert pte_swp_uffd_wp_any() to pte_swp_uffd_wp()
-since we are in the swap pte branch.
-
-Second, as Wei pointed out[3], we may have a chance to get a non-swap
-entry, since we will drop and re-acquire the mmap lock before
-__collapse_huge_page_swapin(). To handle this, we also add a
-non_swap_entry() check there.
-
-Note that we can unlock later what we really need, and not account it
-towards max_swap_ptes.
-
-[1] https://lore.kernel.org/linux-mm/09eaca7b-9988-41c7-8d6e-4802055b3f1e@redhat.com
-[2] https://lore.kernel.org/linux-mm/7df49fe7-c6b7-426a-8680-dcd55219c8bd@lucifer.local
-[3] https://lore.kernel.org/linux-mm/20251005010511.ysek2nqojebqngf3@master
-
-Acked-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
-Reviewed-by: Dev Jain <dev.jain@arm.com>
-Suggested-by: David Hildenbrand <david@redhat.com>
-Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Signed-off-by: Lance Yang <lance.yang@linux.dev>
----
-v2 -> v3:
- - Collect Acked-by from David - thanks!
- - Collect Reviewed-by from Wei and Dev - thanks!
- - Add a non_swap_entry() check in __collapse_huge_page_swapin() (per Wei
-   and David) - thanks!
- - Rework the changelog to incorporate David's detailed analysis of
-   non-swap entry types - thanks!!!
- - https://lore.kernel.org/linux-mm/20251001032251.85888-1-lance.yang@linux.dev/
-
-v1 -> v2:
- - Skip all non-present entries except swap entries (per David) thanks!
- - https://lore.kernel.org/linux-mm/20250924100207.28332-1-lance.yang@linux.dev/
-
- mm/khugepaged.c | 37 +++++++++++++++++++++++--------------
- 1 file changed, 23 insertions(+), 14 deletions(-)
-
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index abe54f0043c7..bec3e268dc76 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1020,6 +1020,11 @@ static int __collapse_huge_page_swapin(struct mm_struct *mm,
- 		if (!is_swap_pte(vmf.orig_pte))
- 			continue;
- 
-+		if (non_swap_entry(pte_to_swp_entry(vmf.orig_pte))) {
-+			result = SCAN_PTE_NON_PRESENT;
-+			goto out;
-+		}
-+
- 		vmf.pte = pte;
- 		vmf.ptl = ptl;
- 		ret = do_swap_page(&vmf);
-@@ -1281,7 +1286,23 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
- 	for (addr = start_addr, _pte = pte; _pte < pte + HPAGE_PMD_NR;
- 	     _pte++, addr += PAGE_SIZE) {
- 		pte_t pteval = ptep_get(_pte);
--		if (is_swap_pte(pteval)) {
-+		if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
-+			++none_or_zero;
-+			if (!userfaultfd_armed(vma) &&
-+			    (!cc->is_khugepaged ||
-+			     none_or_zero <= khugepaged_max_ptes_none)) {
-+				continue;
-+			} else {
-+				result = SCAN_EXCEED_NONE_PTE;
-+				count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
-+				goto out_unmap;
-+			}
-+		} else if (!pte_present(pteval)) {
-+			if (non_swap_entry(pte_to_swp_entry(pteval))) {
-+				result = SCAN_PTE_NON_PRESENT;
-+				goto out_unmap;
-+			}
-+
- 			++unmapped;
- 			if (!cc->is_khugepaged ||
- 			    unmapped <= khugepaged_max_ptes_swap) {
-@@ -1290,7 +1311,7 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
- 				 * enabled swap entries.  Please see
- 				 * comment below for pte_uffd_wp().
- 				 */
--				if (pte_swp_uffd_wp_any(pteval)) {
-+				if (pte_swp_uffd_wp(pteval)) {
- 					result = SCAN_PTE_UFFD_WP;
- 					goto out_unmap;
- 				}
-@@ -1301,18 +1322,6 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
- 				goto out_unmap;
- 			}
- 		}
--		if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
--			++none_or_zero;
--			if (!userfaultfd_armed(vma) &&
--			    (!cc->is_khugepaged ||
--			     none_or_zero <= khugepaged_max_ptes_none)) {
--				continue;
--			} else {
--				result = SCAN_EXCEED_NONE_PTE;
--				count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
--				goto out_unmap;
--			}
--		}
- 		if (pte_uffd_wp(pteval)) {
- 			/*
- 			 * Don't collapse the page if any of the small
 -- 
-2.49.0
-
+With best wishes
+Dmitry
 
