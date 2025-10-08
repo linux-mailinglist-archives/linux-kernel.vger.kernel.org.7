@@ -1,306 +1,127 @@
-Return-Path: <linux-kernel+bounces-845336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3092BC481C
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:08:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24BC3BC481F
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:08:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7C3419E0E5F
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:08:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 026AB4F0CBC
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4597C2F6183;
-	Wed,  8 Oct 2025 11:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98CE2F618F;
+	Wed,  8 Oct 2025 11:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="m4BepKPY"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IhDEvBk1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07E722D4F6;
-	Wed,  8 Oct 2025 11:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B472ECE9C;
+	Wed,  8 Oct 2025 11:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759921703; cv=none; b=rGFuRc/FYIM/XY2E4CohozIFucJ7cqbZK5NU7fP+YwQPQSLijyp1bEFugt93f1Ajx2VsbtDzLlvbB5QGKS2oMSYw24Dl9tOsbbwLVOUoTLQNseJYSVoZHAbtyi+ORMcdnvY4Cqb7/7Unccfo1Oz/vDcY7d44FKObmT4yLZvyWc0=
+	t=1759921714; cv=none; b=nes9LOssTDBwZHoSwdv846BD1PtBZjYtUJiaL4dk8v6WjI92RyNBdnVGRQKhsjEAGm0iR2p0P92CxyzGlRWvY1J4GgvcIc67x331gz1S8+m2cBWwJ03WJ+noOXWVglJU9tq9ySM1dqvf3pZtN9CBkPQtjzJYts9lWBDLFZT/6gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759921703; c=relaxed/simple;
-	bh=sk5WIvRK0N1Tm1xpfKtFMrUft4y8QAQc6kkNgLrBUeE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WfzSbtdiguN0ybDesTY4O7ZACUPXRAN2n/sOnzkzFtRYhyMo4TxRsdHN6jLjGKVtJvjA9pnBJexzwk1BDmgwxhBwaRU7gqoGtrYVnd+Oq2QUcC67OCW+Nl0GWHvylZ03jVClIRWJXrGU0cl26ZUXarrmAutAuGm8AmaUN1uORrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=m4BepKPY; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59890nR4029797;
-	Wed, 8 Oct 2025 11:08:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=pWZh6qeNk7G0jxoHNP7vx3
-	oxC+FCtYWHP7fnDeNwkMA=; b=m4BepKPYqBQ/36Njjrjg+q5uNvK1BC3kCmcCTj
-	3QwrOqVbsb2ZTkxN1L7kTm7XYb1uPmoLVy/TEuFjnUNzqbanyh9YMoxi0zCfoOqA
-	y2ajVwS2jIrCfrgcG79eACCJ8nmt80y6Gn7UmSxXVsLsVbA1TF/B4CT4NSAKAwpz
-	wl4LuQ8g11n7UP+Ea0ARaBNOD7sbFxKv2RwxzD3SpFsuHiQkZm73yHMZXPj1l2Ed
-	sAeG+jfiCNZGLfpct+hn9RxZfLTE861Hvspn5okIA+i+SJFYuwgHFAao9E/jTXSJ
-	c+4K9ndtmNUb4nbIXNFbRZTvJCul9OH5bsH1PUzif1DpkdtA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49js9e2c7q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 Oct 2025 11:08:18 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 598B8I22012236
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 8 Oct 2025 11:08:18 GMT
-Received: from hu-mdalam-blr.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.24; Wed, 8 Oct 2025 04:08:15 -0700
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-To: <adrian.hunter@intel.com>, <quic_asutoshd@quicinc.com>,
-        <ulf.hansson@linaro.org>, <linux-mmc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_varada@quicinc.com>
-CC: <quic_mdalam@quicinc.com>
-Subject: [PATCH] mmc: sdhci-msm: Enable ICE support for non-cmdq eMMC devices
-Date: Wed, 8 Oct 2025 16:37:58 +0530
-Message-ID: <20251008110758.718944-1-quic_mdalam@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1759921714; c=relaxed/simple;
+	bh=skZYeuIwpcqOcK3DodmjQ8nM/TXM5C2KQs1Dnyo9exU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EYBwQ0ZZTRdaTDu4ZE0TsMfMLkggLI/pgmIsW1NFA8sKUiyFc6O05MFfX/hB4jamhi4MY6sRkNl1oXHAh9TArIKVWvupeyvPM0Nr7+TQGc5qz7H1j7D9rucygQ++1hl0B7N2NUAx4GqcY5gmGXDXF13V8PfS9cshU19zVURYUJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IhDEvBk1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64C05C4CEF4;
+	Wed,  8 Oct 2025 11:08:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1759921713;
+	bh=skZYeuIwpcqOcK3DodmjQ8nM/TXM5C2KQs1Dnyo9exU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IhDEvBk1jLTtgERD/SCemibZCRCF1a96QcZh2uUyIZmSJumcHBvQFgfqGkbQZe0uF
+	 xz7yGMpl+JWZmC9SymZVLD4M9qwawVsdTj8rzAXsXK8mO13XZ1SQ7YA0vzQpzjT66k
+	 lbxw3nTazOAXbkP83JICJPFvbLC/8ueMyZ9YpoVg=
+Date: Wed, 8 Oct 2025 13:08:31 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Akshay Gujar <Akshay.Gujar@harman.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	naveen.v@harman.com, sankarkumar.krishnasamy@harman.com,
+	oneukum@suse.com
+Subject: Re: [PATCH] usb: core: notify unrecognized usb device
+Message-ID: <2025100805-resisting-target-419a@gregkh>
+References: <2025090610-donation-sprawl-f6f7@gregkh>
+ <20250918172355.5118-1-Akshay.Gujar@harman.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=Hrl72kTS c=1 sm=1 tr=0 ts=68e64622 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=x6icFKpwvdMA:10 a=COk6AnOGAAAA:8 a=x0BWNmWj6fMoAQ0tY0IA:9
- a=TjNXssC_j7lpFel5tvFf:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: VsMqdFUa2BqiPYpGR7DorjRO2db1ox-i
-X-Proofpoint-ORIG-GUID: VsMqdFUa2BqiPYpGR7DorjRO2db1ox-i
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAwNCBTYWx0ZWRfX0+2APgXc54oc
- JvDHCm7ew2UX0J7GghP3WU2ejxA0CRLhvsO3LIFy14OFx7b2KsxKm7SByRhnCxlGNs1vNK/1U/U
- F6uZxiWRIn40ZP0DifDGC9+rqthSrLsMlUVOB0QS3hBHy5LgIGxaO/7iGwjgj0zLyUZSXsCA/ZI
- cSyq6EsSi5b+Ml1FTMoUL1GtTVNeGWmPw7S8MOQsQNqLPBtaHHAofIah+SrgPI4ZaNt16jFAjzH
- mSBkX9M1IOgwr29ePuUxJ373JmQQleTT8LBksps30Ybak+K1fsJsOSv2FHAxEkChJt4GyU4Guyg
- IdSMWDRgDZWzrbPewxj3AC/JHUmWCGi4lGIvIms0d3sE9cT2MLpRXj9AVXQS7qfFkjz7Q3VEeZB
- n1z45njy3e0VNU+4TUhKgURd0mzpEg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-08_03,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 phishscore=0 spamscore=0 adultscore=0 lowpriorityscore=0
- bulkscore=0 priorityscore=1501 malwarescore=0 impostorscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040004
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250918172355.5118-1-Akshay.Gujar@harman.com>
 
-Enable Inline Crypto Engine (ICE) support for eMMC devices that don't
-use command queuing (CQE). This allows hardware-accelerated encryption
-and decryption for standard eMMC operations without command queuing.
+On Thu, Sep 18, 2025 at 05:23:55PM +0000, Akshay Gujar wrote:
+> >On Sat, Sep 6, 2025 14:28:37AM +0200, Greg KH wrote:
+> 
+> > >>> As per the usb compliance, USB-IF enforces a "no silent failure" rule.
+> > >>> This means that an implementation of USB must not appear broken to the
+> > >>> consumer. In configurations where the consumer's expectations are not
+> > >>> met, either the peripheral or host must provide appropriate and useful
+> > >>> feedback to the consumer regarding the problem.
+> > >>> 
+> > >>> Link: https://compliance.usb.org/index.asp?UpdateFile=Embedded%20Host&Format=Standard#10
+> > >
+> > >Odd, many Linux devices have passed usb-if testing since 2005 when this
+> > >was made a "rule", how did that happen?  What recently changed to
+> > >suddenly require this be a kernel issue?
+> > > 
+> > > Previously, OEMs handled this with private kernel patches or custom modifications. 
+> > > However, with Android's Generic Kernel Image (GKI) initiative, vendors can no longer make arbitrary kernel modifications. 
+> > > GKI requires using a common upstream kernel, so functionality like this needs to be up streamed rather than handled with vendor-specific patches.
+> > > This patch provides a standard upstream solution for what was previously handled with custom kernel modifications.
+> 
+> > That's good, but that does not mean that what you are attempting to do
+> > really is the correct thing to do.  Here you were trying to say that
+> > this is a requirement of USB-IF, but it really is not.  This is just
+> > wanting to add a new feature to the USB core that previously was only
+> > out-of-tree for your devices.  Please be more specific in your
+> > description of the problem and issues involved.
+> 
+> To clarify, this patch targets two needs: 
+> it helps with USB-IF compliance testing (where enumeration failures must be visible to userspace), 
 
-The changes include:
-- Add non-cmdq crypto register definitions
-- Implement crypto configuration callback for non-cmdq operations
-- Initialize ICE hardware during host setup for non-cmdq devices
-- Integrate crypto configuration into the main request path
+Why must it be visible to userspace?  How have we passed testing before
+now?
 
-This enables non-cmdq eMMC devices to benefit from hardware crypto
-acceleration, improving performance for encrypted storage operations
-while maintaining compatibility with existing cmdq crypto support.
+> and it provides a generic mechanism for userspace to be notified of USB enumeration failures, 
+> which is currently missing in the USB core. This solution standardizes the notification, 
+> especially important for Android GKI and similar environments.
 
-Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
----
- drivers/mmc/host/cqhci.h     |  4 ++
- drivers/mmc/host/sdhci-msm.c | 74 +++++++++++++++++++++++++++++++++++-
- drivers/mmc/host/sdhci.c     | 20 ++++++++++
- drivers/mmc/host/sdhci.h     |  2 +
- 4 files changed, 99 insertions(+), 1 deletion(-)
+But there is no user for this new user/kernel api anywhere.  Android
+does not do this today, what is the chance it really will use it?  Do
+you have working patches somewhere that will land if this is added?
 
-diff --git a/drivers/mmc/host/cqhci.h b/drivers/mmc/host/cqhci.h
-index ce189a1866b9..9bf236e27675 100644
---- a/drivers/mmc/host/cqhci.h
-+++ b/drivers/mmc/host/cqhci.h
-@@ -119,6 +119,10 @@
- /* command response argument */
- #define CQHCI_CRA			0x5C
- 
-+/* non command queue crypto enable register*/
-+#define NONCQ_CRYPTO_PARM		0x70
-+#define NONCQ_CRYPTO_DUN		0x74
-+
- /* crypto capabilities */
- #define CQHCI_CCAP			0x100
- #define CQHCI_CRYPTOCAP			0x104
-diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-index 4e5edbf2fc9b..2204c6abb3fe 100644
---- a/drivers/mmc/host/sdhci-msm.c
-+++ b/drivers/mmc/host/sdhci-msm.c
-@@ -157,6 +157,23 @@
- #define CQHCI_VENDOR_CFG1	0xA00
- #define CQHCI_VENDOR_DIS_RST_ON_CQ_EN	(0x3 << 13)
- 
-+#define DISABLE_CRYPTO			BIT(15)
-+#define CRYPTO_GENERAL_ENABLE		BIT(1)
-+#define HC_VENDOR_SPECIFIC_FUNC4	0x260
-+#define ICE_HCI_SUPPORT			BIT(28)
-+
-+/* SDHCI MSM ICE CTRL Info register offset */
-+enum {
-+	OFFSET_SDHCI_MSM_ICE_HCI_PARAM_CCI	= 0,
-+	OFFSET_SDHCI_MSM_ICE_HCI_PARAM_CE	= 8,
-+};
-+
-+/* SDHCI MSM ICE CTRL Info register masks */
-+enum {
-+	MASK_SDHCI_MSM_ICE_HCI_PARAM_CE		= 0x1,
-+	MASK_SDHCI_MSM_ICE_HCI_PARAM_CCI	= 0xff
-+};
-+
- struct sdhci_msm_offset {
- 	u32 core_hc_mode;
- 	u32 core_mci_data_cnt;
-@@ -1882,9 +1899,47 @@ static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
-  * Inline Crypto Engine (ICE) support                                        *
-  *                                                                           *
- \*****************************************************************************/
--
- #ifdef CONFIG_MMC_CRYPTO
- 
-+static int sdhci_msm_ice_cfg(struct sdhci_host *host, struct mmc_request *mrq,
-+			     u32 slot)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
-+	struct mmc_host *mmc = msm_host->mmc;
-+	struct cqhci_host *cq_host = mmc->cqe_private;
-+	unsigned int crypto_params = 0;
-+	int key_index = 0;
-+	bool bypass = true;
-+	u64 dun = 0;
-+
-+	if (!mrq || !cq_host)
-+		return -EINVAL;
-+
-+	if (mrq->crypto_ctx) {
-+		dun = mrq->crypto_ctx->bc_dun[0];
-+		bypass = false;
-+		key_index = mrq->crypto_key_slot;
-+	}
-+
-+	/* Configure ICE bypass mode */
-+	crypto_params |= ((!bypass) & MASK_SDHCI_MSM_ICE_HCI_PARAM_CE)
-+			 << OFFSET_SDHCI_MSM_ICE_HCI_PARAM_CE;
-+	/* Configure Crypto Configure Index (CCI) */
-+	crypto_params |= (key_index & MASK_SDHCI_MSM_ICE_HCI_PARAM_CCI)
-+			 << OFFSET_SDHCI_MSM_ICE_HCI_PARAM_CCI;
-+
-+	cqhci_writel(cq_host, crypto_params, NONCQ_CRYPTO_PARM);
-+
-+	if (mrq->crypto_ctx)
-+		cqhci_writel(cq_host, lower_32_bits(dun), NONCQ_CRYPTO_DUN);
-+
-+	/* Ensure crypto configuration is written before proceeding */
-+	wmb();
-+
-+	return 0;
-+}
-+
- static const struct blk_crypto_ll_ops sdhci_msm_crypto_ops; /* forward decl */
- 
- static int sdhci_msm_ice_init(struct sdhci_msm_host *msm_host,
-@@ -2131,6 +2186,8 @@ static int sdhci_msm_cqe_add_host(struct sdhci_host *host,
- 	struct cqhci_host *cq_host;
- 	bool dma64;
- 	u32 cqcfg;
-+	u32 config;
-+	u32 ice_cap;
- 	int ret;
- 
- 	/*
-@@ -2185,6 +2242,18 @@ static int sdhci_msm_cqe_add_host(struct sdhci_host *host,
- 	if (ret)
- 		goto cleanup;
- 
-+	/* Initialize ICE for non-CMDQ eMMC devices */
-+	config = sdhci_readl(host, HC_VENDOR_SPECIFIC_FUNC4);
-+	config &= ~DISABLE_CRYPTO;
-+	sdhci_writel(host, config, HC_VENDOR_SPECIFIC_FUNC4);
-+	ice_cap = cqhci_readl(cq_host, CQHCI_CAP);
-+	if (ice_cap & ICE_HCI_SUPPORT) {
-+		config = cqhci_readl(cq_host, CQHCI_CFG);
-+		config |= CRYPTO_GENERAL_ENABLE;
-+		cqhci_writel(cq_host, config, CQHCI_CFG);
-+	}
-+	sdhci_msm_ice_enable(msm_host);
-+
- 	dev_info(&pdev->dev, "%s: CQE init: success\n",
- 			mmc_hostname(host->mmc));
- 	return ret;
-@@ -2450,6 +2519,9 @@ static const struct of_device_id sdhci_msm_dt_match[] = {
- MODULE_DEVICE_TABLE(of, sdhci_msm_dt_match);
- 
- static const struct sdhci_ops sdhci_msm_ops = {
-+#ifdef CONFIG_MMC_CRYPTO
-+	.crypto_engine_cfg = sdhci_msm_ice_cfg,
-+#endif
- 	.reset = sdhci_and_cqhci_reset,
- 	.set_clock = sdhci_msm_set_clock,
- 	.get_min_clock = sdhci_msm_get_min_clock,
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index ac7e11f37af7..2d636a8ee452 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -2202,6 +2202,21 @@ void sdhci_set_power_and_bus_voltage(struct sdhci_host *host,
- }
- EXPORT_SYMBOL_GPL(sdhci_set_power_and_bus_voltage);
- 
-+static int sdhci_crypto_cfg(struct sdhci_host *host, struct mmc_request *mrq,
-+			    u32 slot)
-+{
-+	int err = 0;
-+
-+	if (host->ops->crypto_engine_cfg) {
-+		err = host->ops->crypto_engine_cfg(host, mrq, slot);
-+		if (err)
-+			pr_err("%s: failed to configure crypto: %d\n",
-+			       mmc_hostname(host->mmc), err);
-+	}
-+
-+	return err;
-+}
-+
- /*****************************************************************************\
-  *                                                                           *
-  * MMC callbacks                                                             *
-@@ -2227,6 +2242,11 @@ void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 
- 	cmd = sdhci_manual_cmd23(host, mrq) ? mrq->sbc : mrq->cmd;
- 
-+	if (mmc->caps2 & MMC_CAP2_CRYPTO) {
-+		if (sdhci_crypto_cfg(host, mrq, 0))
-+			goto out_finish;
-+	}
-+
- 	if (!sdhci_send_command_retry(host, cmd, flags))
- 		goto out_finish;
- 
-diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-index b6a571d866fa..9ac32a787270 100644
---- a/drivers/mmc/host/sdhci.h
-+++ b/drivers/mmc/host/sdhci.h
-@@ -709,6 +709,8 @@ struct sdhci_ops {
- 	unsigned int    (*get_ro)(struct sdhci_host *host);
- 	void		(*reset)(struct sdhci_host *host, u8 mask);
- 	int	(*platform_execute_tuning)(struct sdhci_host *host, u32 opcode);
-+	int	(*crypto_engine_cfg)(struct sdhci_host *host,
-+				     struct mmc_request *mrq, u32 slot);
- 	void	(*set_uhs_signaling)(struct sdhci_host *host, unsigned int uhs);
- 	void	(*hw_reset)(struct sdhci_host *host);
- 	void    (*adma_workaround)(struct sdhci_host *host, u32 intmask);
--- 
-2.34.1
+And where is any of this being documented? :)
 
+> >> that is probably not true. For once you can try another cable in many cases.
+> >> Currently we'd log this information. That is a worse way to handle this kind
+> >> of failure.
+> >> If there is an unrecoverable IO error, user space ought to be notified.
+> >> Syslog is not the best way to do so. There ought to be a standardized way
+> >> of doing this. However, this makes me say that this issue is not really
+> >> confined to USB. Other hotpluggable busses have the same issue.
+> 
+> >Yes, all busses have this type of issue for when devices can not be
+> >enumerated or fail.  We shouldn't make something that only works for
+> >USB.  I think PCI reports this type of thing somehow, so maybe
+> >generalize that api?
+> 
+> Agreed, this is a broader issue across hotpluggable busses. Generalizing the API to cover enumeration failures for USB, PCI, and others would be ideal. 
+> For now, this patch addresses USB specifically due to immediate needs.
+
+Great, but again, why not make it generic so that all can use it?
+
+Otherwise we end up with a USB-specific solution that no one else can
+ever use in the future.
+
+thanks,
+
+greg k-h
 
