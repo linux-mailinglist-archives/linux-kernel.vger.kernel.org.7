@@ -1,114 +1,123 @@
-Return-Path: <linux-kernel+bounces-844928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9BA7BC3128
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 02:19:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF881BC313D
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 02:40:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E87B18853BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 00:20:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 741D73A563A
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 00:40:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760582367C1;
-	Wed,  8 Oct 2025 00:19:32 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 899EB285C83;
+	Wed,  8 Oct 2025 00:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VwdkZqZ4"
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFBC822B8B6;
-	Wed,  8 Oct 2025 00:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F011FA859;
+	Wed,  8 Oct 2025 00:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759882772; cv=none; b=LzBDDJ1A0CRa/Miq2VvYN8872vPGsXHrKMItk4nV1NmY/CCyk/uk4h/dRAdRpm+kiOa5hj/VuyGkGM3Hv/dw0dNpCKhzggP9zzQ7rpvkm3oFG+rGon6oV4gTIZuj1p9lRG1c3vqCQxvU4gVKn+tXLhe3lG2qO/Xc/dIpV5RfYZc=
+	t=1759884024; cv=none; b=i9T1b80TRU0C0P731yUDzYlt6vu/5MrBARE/gPzSpAubPpnsSg0MPG8g9SsflpzV/rtvxP0Fxx+94SR5s5obYhBE4GY88j8zFFXWqBUJK6/bo1SrkEfbkiKnFuB4Ycpl74rgo69q5xzPEEY1a2P/dhiwKbGjdbql9hwfmUPMKMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759882772; c=relaxed/simple;
-	bh=BN8cuSEBg66C2lF8YtmhtyuvN4mkZSwQNm7AYTmbIB0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fmkqM95OLOVvgGdXJogNu1eci4Lq1tcNOT3jYgVq790JZNuM7O4WLBYT1UKMo2W8B0so+ZlhCD3pgM9LtnEeOFJKcraTyikHF4tSSUxt/YUgzmjVhfKK5fsMCv9fwGkVbUiX+4WnqLCyL9OwEMVqYVXefvTKS6K6iWh3eU+RZ/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay03.hostedemail.com (Postfix) with ESMTP id 3137FB8BB4;
-	Wed,  8 Oct 2025 00:19:23 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id 2C8D020016;
-	Wed,  8 Oct 2025 00:19:21 +0000 (UTC)
-Date: Tue, 7 Oct 2025 20:21:13 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Runping Lai <runpinglai@google.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Wattson CI <wattson-external@google.com>,
- kernel-team@android.com, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, Luo Gengkun
- <luogengkun@huaweicloud.com>, Linus Torvalds
- <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v1] Revert "tracing: Fix tracing_marker may trigger page
- fault during preempt_disable"
-Message-ID: <20251007202113.1ce212a9@gandalf.local.home>
-In-Reply-To: <CABgk4RSxm8mNJcRn0HdNH3+Y=VDL5gNVvyhhR26wjBme+i5X-g@mail.gmail.com>
-References: <20251007003417.3470979-2-runpinglai@google.com>
-	<20251006221043.07cdb0fd@gandalf.local.home>
-	<CABgk4RQwGsn4CdP0K+_7A0j7RVOiHNfoF1ESk17wEuzCea16pA@mail.gmail.com>
-	<20251007154308.5b158d04@gandalf.local.home>
-	<20251007163141.1034b120@gandalf.local.home>
-	<20251007174208.11fd02da@gandalf.local.home>
-	<CABgk4RSxm8mNJcRn0HdNH3+Y=VDL5gNVvyhhR26wjBme+i5X-g@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1759884024; c=relaxed/simple;
+	bh=4Lj6XaN2MmCn4Ty31dhCcFk/RRrhqYrrk/p2EtLxfgs=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=vDheB1fNuMC2SLvcUvXe+qLl/a/rgJzQNdAgkNPqN1GGRNnjhz6N5B3RS+yP2KTchc46nItR2miuCIjDm/PNDK+Jrc+fZumHj/spuDlj5s/ony93FfCg47CjXUTpAJUl2bLB0Cx7MIlcQ0Mq4kQF8zK4pIGa2hd34uHRaPb4VOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VwdkZqZ4; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 229E914005B1;
+	Tue,  7 Oct 2025 20:40:22 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Tue, 07 Oct 2025 20:40:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1759884022; x=1759970422; bh=GIQqrOTmZqlirCfdm3X1h0B9JmIfdK5suLW
+	7FpXibLA=; b=VwdkZqZ4D9mMNQ50FJ8vt034npGjIiVnaoOm/Cr6hYN0i76aTFC
+	DAX/kfGxEMubDBgsZOKO3wTPxRaVEAQD61LBIhIxHPBJfPWdPLhyUjTwE9/IOaoY
+	c+/Rcd6CM5Pv/PdH3DPRtUqQaGSXMCcKpP9vz4sER/7ixtx3lCixEpauRin/sCYT
+	t2cMvqb50YEo6n/0VTAU4EZUxSATg8uIEMEmFJybkeZEsAJUIruT23P0QJfOQ24g
+	rSZ8es58kqIxlrFbGEBbjXC2G6+wCX72ibbAYIN31Uq++o07ZaEVo6QfNcxlp4JV
+	4IfZmQXnzsS9Me/lR4hB0GQW1SL25wEyldQ==
+X-ME-Sender: <xms:87LlaNp5q7HArd0fhgaJV7uvZQG6_a_eJPncjOasx8yIma_2qD2AwQ>
+    <xme:87LlaLWNFyMVVQgBqSvK-kxSyJ2DZK7Di3aMZNWFr1qEuRzvXW4wwR2fRHrSWymoW
+    NyokvQVFEBkef4HVZxY561ayUhxq8XvLD72_L8jC1P8KyiEOcq8PIE>
+X-ME-Received: <xmr:87LlaE5NfE9cpCiamDcg51BfyMGBd3Gb2UTyy7ckRUFU8hCmrRC2xMnzbJupfQP0PUvA3ObD3juOMQupCSNClqrl1I95HmeoLPU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutddukeelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcuvfhh
+    rghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtth
+    gvrhhnpeelueehleehkefgueevtdevteejkefhffekfeffffdtgfejveekgeefvdeuheeu
+    leenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehfth
+    hhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopedvgedpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurg
+    htihhonhdrohhrghdprhgtphhtthhopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhr
+    ghdprhgtphhtthhopehorghksehhvghlshhinhhkihhnvghtrdhfihdprhgtphhtthhope
+    hkvghnthdrohhvvghrshhtrhgvvghtsehlihhnuhigrdguvghvpdhrtghpthhtoheplhgr
+    nhgtvgdrhigrnhhgsehlihhnuhigrdguvghvpdhrtghpthhtoheprghmrghinhguvgigse
+    houhhtlhhoohhkrdgtohhmpdhrtghpthhtoheprghnnhgrrdhstghhuhhmrghkvghrseho
+    rhgrtghlvgdrtghomhdprhgtphhtthhopegsohhquhhnrdhfvghnghesghhmrghilhdrtg
+    homhdprhgtphhtthhopehiohifohhrkhgvrhdtsehgmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:87LlaJ1FczvzMhYXPa0JGQElbUfGWoiZGJkuFow5sf0FqicGrvIc3Q>
+    <xmx:87LlaL_xGHyojH9SdXJQOn9BYEjUJQIu8tLodRgilRsxOUEZz7rYwQ>
+    <xmx:87LlaCuZwC_-s-n_W5DetwBmZRfR5rDbh4ZKCIXU72FuhOH-fknO4Q>
+    <xmx:87LlaPorCqtvHMBeN_xkH7zPAltn74kZjyUlNGacXr7gsFIhTjRGOA>
+    <xmx:9rLlaOk84XAnOx4ieLBPJf7Fc1DQLRWoIpvkPx00d0A0IuFkcLFfBkyU>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 7 Oct 2025 20:40:17 -0400 (EDT)
+Date: Wed, 8 Oct 2025 11:40:09 +1100 (AEDT)
+From: Finn Thain <fthain@linux-m68k.org>
+To: Andrew Morton <akpm@linux-foundation.org>, 
+    Geert Uytterhoeven <geert@linux-m68k.org>, 
+    Eero Tamminen <oak@helsinkinet.fi>
+cc: Kent Overstreet <kent.overstreet@linux.dev>, 
+    Lance Yang <lance.yang@linux.dev>, amaindex@outlook.com, 
+    anna.schumaker@oracle.com, boqun.feng@gmail.com, ioworker0@gmail.com, 
+    joel.granados@kernel.org, jstultz@google.com, leonylgao@tencent.com, 
+    linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org, 
+    longman@redhat.com, mhiramat@kernel.org, mingo@redhat.com, 
+    mingzhe.yang@ly.com, peterz@infradead.org, rostedt@goodmis.org, 
+    senozhatsky@chromium.org, tfiga@chromium.org, will@kernel.org, 
+    stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] hung_task: fix warnings caused by unaligned lock
+ pointers
+In-Reply-To: <20251007135600.6fc4a031c60b1384dffaead1@linux-foundation.org>
+Message-ID: <b43ce4a0-c2b5-53f2-e374-ea195227182d@linux-m68k.org>
+References: <20250909145243.17119-1-lance.yang@linux.dev> <yqjkjxg25gh4bdtftsdngj5suturft2b4hjbfxwe6hehbg4ctq@6i55py3jaiov> <99410857-0e72-23e4-c60f-dea96427b85a@linux-m68k.org> <CAMuHMdVYiSLOk-zVopXV8i7OZdO7PAK7stZSJNJDMw=ZEqtktA@mail.gmail.com>
+ <inscijwnnydibdwwrkggvgxjtimajr5haixff77dbd7cxvvwc7@2t7l7oegsxcp> <20251007135600.6fc4a031c60b1384dffaead1@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Rspamd-Server: rspamout04
-X-Rspamd-Queue-Id: 2C8D020016
-X-Stat-Signature: rf5cg3xifex3t66bs9jw94qdiqjq6pbu
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18Rc+590qhmKGx8oRxPsAh+DI/ZSCruAn8=
-X-HE-Tag: 1759882761-301618
-X-HE-Meta: U2FsdGVkX19GlOxcxf6tQkRlJFy//VkzJRGPw+yeonaZjGjSxCkZNGrqaYnW7OkiliRr3vV4EWAzhhxMCTYJ2Kl4quFViXj8+IC0IVLevaIzctQ3GZPFwq7BUAyYIgTCksJgIXfbbrWSh8EXRqe8dLUlmRCtL/2XYrepW460cw1/2HnZuzP1vOl5CfKWxWjcSqqsEZk8hkPTmgUGc+dSRKnuVnfD6NW6NGMaHq4nMpkAC6YzblhL23pGt1OmeHheF2+zDq5pfwxGJABj+7mFG9+NQAq+WuBXRCvRhf50rn3ux9bOroiMx6+bEQUQWhtPJsVxKq29N1sRcsSBy1/U7g7o3Of81g85SvYfptJKiueTM5gh8+FhPG+67jcL/iXdIBW81v2XE4qG2TWQu6kflQ==
+Content-Type: text/plain; charset=us-ascii
 
-On Tue, 7 Oct 2025 16:25:41 -0700
-Runping Lai <runpinglai@google.com> wrote:
 
-> On Tue, Oct 7, 2025 at 2:40=E2=80=AFPM Steven Rostedt <rostedt@goodmis.or=
-g> wrote:
-> >
-> > On Tue, 7 Oct 2025 16:31:41 -0400
-> > Steven Rostedt <rostedt@goodmis.org> wrote:
-> > =20
-> > > +static void trace_user_fault_buffer_free(struct trace_user_buf_info =
-*tinfo)
-> > > +{
-> > > +     char *buf;
-> > > +     int cpu;
-> > > +
-> > > +     for_each_possible_cpu(cpu) {
-> > > +             buf =3D per_cpu_ptr(tinfo->tbuf, cpu)->buf;
-> > > +             kfree(buf);
-> > > +     } =20
-> >
-> > Oops, missed:
-> >
-> >         free_percpu(tinfo->tbuf);
-> >
-> > here. =20
->=20
-> Hey Steve,
->=20
-> Thanks for providing the buffer-based solution. I tried it and it
-> fixes the problem!
-> However, the first experiment, adding pagefault_disable/enable()
-> around copy_nofault()
-> doesn't help. Still having the same problem. I suppose the issue is
-> more than pagefault?
->=20
-> Can you please suggest the next move? I can also do more tests if needed.
->=20
+On Tue, 7 Oct 2025, Andrew Morton wrote:
 
-I may need to make this patch the official solution.
+> 
+> Getting back to the $Subject at hand, are people OK with proceeding
+> with Lance's original fix?
+> 
 
--- Steve
+Lance's patch is probably more appropriate for -stable than the patch I 
+proposed -- assuming a fix is needed for -stable.
+
+Besides those two alternatives, there is also a workaround:
+$ ./scripts/config -d DETECT_HUNG_TASK_BLOCKER
+which may be acceptable to the interested parties (i.e. m68k users).
+
+I don't have a preference. I'll leave it up to the bug reporters (Eero and 
+Geert).
 
