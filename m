@@ -1,177 +1,78 @@
-Return-Path: <linux-kernel+bounces-845346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE7BDBC4872
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:17:23 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CC98BC4881
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:19:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C823D3C37D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:17:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C0BD24EC7DE
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B621D95A3;
-	Wed,  8 Oct 2025 11:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KukutOIP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FV7zwkrJ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KukutOIP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FV7zwkrJ"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE0B226D02
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 11:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A3B2EC0B5;
+	Wed,  8 Oct 2025 11:19:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2861D95A3
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 11:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759922235; cv=none; b=RRjShVqg73hhhpEhD54vJi/nuBlzEB3cDINf5taqb7lOeKBQncqXlJV+6QoOeSvo1MLHT47URiQE0MxCqkdWIotX9z9t/TdHLMAg2ENNJByQ9e4NHPiifUPu4uS2VZBRICnfn6oCnVeWB7FlzsVvQHtWFus+eV7KxxsnBGgsfno=
+	t=1759922371; cv=none; b=Fp9gHu3eTlJul0+HcOQaL+q2/cF/me3WXPMjhLOTX8HtPhYhc7QxTIQEU/vmvKPA/gVss81gDpXOEE5wVse3jAKfcdPDWa9tgEi6xSbrn+bIyK+SjGT95tclP0EbLspM4nqt4Ez1lFmVUcdzIiMNZdv7PzYc77H0PoMPFc50DEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759922235; c=relaxed/simple;
-	bh=AoC205ZCscoSQyKJaZepCNFk+bxBuPZeEOgpEFpBkGQ=;
+	s=arc-20240116; t=1759922371; c=relaxed/simple;
+	bh=yqm9uziGZRLVLkTR7mGhsq0j/8l9Hgkqke8/vTtrqvI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N0CnAz/oy7wFhsdGLa2mtNSdcjfKX7Ggrh1QoLIJELsMz3pCB1x013mGSyDiD4G8KzIDt7ComWbe2nb0J5A0k7PCOnHdRE9EZztqdgXkvXxHyXtXgVQZC+TRgQLzoUqMS7fxbtAX00BzfOqWTRTp1lXalN330jJU61bkEDEX1oA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KukutOIP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FV7zwkrJ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KukutOIP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FV7zwkrJ; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 45AC41F395;
-	Wed,  8 Oct 2025 11:17:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759922232; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pBcLPFstRaZgEJff90hg+kcbxCfTKgX+9v2BJhOSZAQ=;
-	b=KukutOIPjhJT9YAsQ/GNOdlhaBxLJTZyVXWbVNe2k6d6WZcZhwZ/mkCymz15QuDBqCgskT
-	/HDTz94/it1r2bgGdHipyxI+HzSNE650CGVmGCiP27RGNZkB3vm0ar/DQ/kllT5RbnyXyL
-	g2A/r20RRRnZ3FYu/HRgdx1WJ4YRZdE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759922232;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pBcLPFstRaZgEJff90hg+kcbxCfTKgX+9v2BJhOSZAQ=;
-	b=FV7zwkrJhhdMCbqn8L++G516ZO94Fa/LSq+HjbS7yI37s4pCcp2Q4Duuhiyn9sgerqvEbq
-	FCVi6TrM7ByljGCg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=KukutOIP;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=FV7zwkrJ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759922232; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pBcLPFstRaZgEJff90hg+kcbxCfTKgX+9v2BJhOSZAQ=;
-	b=KukutOIPjhJT9YAsQ/GNOdlhaBxLJTZyVXWbVNe2k6d6WZcZhwZ/mkCymz15QuDBqCgskT
-	/HDTz94/it1r2bgGdHipyxI+HzSNE650CGVmGCiP27RGNZkB3vm0ar/DQ/kllT5RbnyXyL
-	g2A/r20RRRnZ3FYu/HRgdx1WJ4YRZdE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759922232;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pBcLPFstRaZgEJff90hg+kcbxCfTKgX+9v2BJhOSZAQ=;
-	b=FV7zwkrJhhdMCbqn8L++G516ZO94Fa/LSq+HjbS7yI37s4pCcp2Q4Duuhiyn9sgerqvEbq
-	FCVi6TrM7ByljGCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 357CA13693;
-	Wed,  8 Oct 2025 11:17:12 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id CYEADThI5miuJAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 08 Oct 2025 11:17:12 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B1417A0ACD; Wed,  8 Oct 2025 13:17:11 +0200 (CEST)
-Date: Wed, 8 Oct 2025 13:17:11 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
-	yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v2 02/13] ext4: correct the checking of quota files
- before moving extents
-Message-ID: <le2eumghjeqpmng4wubvwgp5tqevhc35q3qxxkczuvthrregbw@errdd2w7d3hs>
-References: <20250925092610.1936929-1-yi.zhang@huaweicloud.com>
- <20250925092610.1936929-3-yi.zhang@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=o9ut5ilp/9nieJpvbDBmHQnZOC1fddvCdBkmpQzp90Uh8VMjVdEQGnj4gBHoxx1igsdx9zCn+acOXh+sd7j2I3pkB77jiaCklma7gxJqi1nUURPqMwIpb/eY8LmpxNiSYhajte/gnTXp78TIVBnER/vv5rqd0UFVMdX2j5M1y6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0BE0222FC;
+	Wed,  8 Oct 2025 04:19:21 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1DF243F66E;
+	Wed,  8 Oct 2025 04:19:27 -0700 (PDT)
+Date: Wed, 8 Oct 2025 12:19:22 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Li Mengchen <mengchenli64@gmail.com>
+Cc: catalin.marinas@arm.com, will@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: kgdb: Ensure atomic single-step execution
+Message-ID: <aOZIusaX-fpeLAz4@J2N7QTR9R3>
+References: <1756972043-12854-1-git-send-email-mengchenli64@gmail.com>
+ <aNPiUbdRhaRklebF@J2N7QTR9R3>
+ <CAEkTZs2x4RzUbYWXO=B1ZGtxycbryNT4YbROH2k_k+0L_B6Erg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250925092610.1936929-3-yi.zhang@huaweicloud.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 45AC41F395
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Score: -4.01
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEkTZs2x4RzUbYWXO=B1ZGtxycbryNT4YbROH2k_k+0L_B6Erg@mail.gmail.com>
 
-On Thu 25-09-25 17:25:58, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> The move extent operation should return -EOPNOTSUPP if any of the inodes
-> is a quota inode, rather than requiring both to be quota inodes.
-> 
-> Fixes: 02749a4c2082 ("ext4: add ext4_is_quota_file()")
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+On Wed, Oct 08, 2025 at 09:01:22AM +0800, Li Mengchen wrote:
+> I am writing to address a persistent issue in the community’s code
+> related to single-step tracing, which has remained unresolved for over
+> a decade. The code I have provided has been extensively tested and
+> proven to work across multiple hardware platforms and kernel versions,
+> from 3.10 to the latest releases. Its correctness and effectiveness
+> are not up for debate.
 
-Funny bug. Feel free to add:
+There is no debate; it is a statement of fact that those changes are
+incomplete (e.g. failing to address other asynchronous exceptions),
+incorrect (e.g. erroneously *unmasking* interrupts in some cases), and
+contain unjustified changes which are themselves incorrect (e.g. using
+task_pt_regs(), which *never* contains kernel register state).
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+I appreciate that those changes may be sufficient in the scenarios that
+you have tested, but as I have already commented (with examples), there
+are real scenarios where those changes make matters worse.
 
-								Honza
+I agree that there are some longstanding issues here, but (as-is) the
+changes you have proposed are not a suitable solution.
 
-> ---
->  fs/ext4/move_extent.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
-> index 4b091c21908f..0f4b7c89edd3 100644
-> --- a/fs/ext4/move_extent.c
-> +++ b/fs/ext4/move_extent.c
-> @@ -485,7 +485,7 @@ mext_check_arguments(struct inode *orig_inode,
->  		return -ETXTBSY;
->  	}
->  
-> -	if (ext4_is_quota_file(orig_inode) && ext4_is_quota_file(donor_inode)) {
-> +	if (ext4_is_quota_file(orig_inode) || ext4_is_quota_file(donor_inode)) {
->  		ext4_debug("ext4 move extent: The argument files should not be quota files [ino:orig %lu, donor %lu]\n",
->  			orig_inode->i_ino, donor_inode->i_ino);
->  		return -EOPNOTSUPP;
-> -- 
-> 2.46.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Mark.
 
