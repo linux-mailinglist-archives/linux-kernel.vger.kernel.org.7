@@ -1,144 +1,239 @@
-Return-Path: <linux-kernel+bounces-845748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DB94BC602B
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:24:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCC5BBC603A
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:25:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EE6994E730D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 16:24:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 801B53A740C
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 16:25:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC54C29AB07;
-	Wed,  8 Oct 2025 16:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iy7y2qa+"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A6B29BDB6;
+	Wed,  8 Oct 2025 16:25:08 +0000 (UTC)
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A02288529
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 16:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4634528468B
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 16:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759940635; cv=none; b=XWYokIqGqh+pPay5HpjgWFtVSpgV9cOi720rNTas1o/0WmF07y2wshMp4eq5JRGfsOtFe9Nv54zDQZFJsgWXSCWWxFNJe2npjxmIuIp00MTVnrjZrBP7uA+25aQAbWQLyN9kKTlFMokTUMsuaXS2/M821Zk+33DgK+WTGIE35Tc=
+	t=1759940707; cv=none; b=JjRNvp01l7rLyqty78HLHgBwB4DDXCbI4VSlCK24qvEMZkylSmHgf+CY8n4EukIkcyTSGB4kRjuUViC4PRZd9AsnobGRB2erQcsUMRoPheDTxtGctbUCPMWNg9ukEExE/BqDsHqG3inJb/w/1AUkdRsZ0U4XN8YiukMRBmraseo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759940635; c=relaxed/simple;
-	bh=R96bbATMZSPb9OIoAzn4ym9WVGJOuOpN7eTc3TttFUU=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=ChlIuWOFGfrIzdDzpeaCbyZ4e0b5M9pa73PLUa8cg5sTqG8TvFeowpReGsRSxaUYvjGiIbY7Gwl7QphpUbxOG+OKLeX65rDffZpuN526+TEC6lJ5YagqVk1p35Uh8uEIvi4aei89A0x9lnJBmc51jKt1ri558iv9/f2+fMQk0d8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iy7y2qa+; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2711a55da20so28095ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 09:23:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759940633; x=1760545433; darn=vger.kernel.org;
-        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=wRJXz112Re1ju3vdnrYT2DZaPKwj05gRwzq+1yeUNKs=;
-        b=iy7y2qa+qFPnh/GNdnES7DUT+XWqeKyU7leSrWj7r+av4drQg3hluMvf3ekwaf8wh9
-         JqIsZghLlaz42PQI0AhOMDdEyW9OGaZZ+zD/PA+DVZAGg7g++e8XkhySoyM2whKc/wM5
-         dDj++rTiM4TKRZzBRMT4Sq8+DRIjkgUZ2Ms0oEsli3ulBnp0nv+uzuF6NEwD90xLyAfJ
-         4P0EVj9A7JzPGAL/ZPDZvAuX7OpxV4AS4BShOp9iUlt3SJB+rOFqKWJEyTJkx0PyqakX
-         HSxC7UrO7AUDdUBRMM/WuduL14fqWubS7fJ9QYOSdhu5m2k1JxaQPMRnc5jBeeFrRy73
-         9p9A==
+	s=arc-20240116; t=1759940707; c=relaxed/simple;
+	bh=Dmiwn2mr2rCHOc0TQSND9LLrXQRFE4B6R8jw0RE9nok=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PE2OlYvnpoxHQLgwvdKmltKtWt25LIZ6+aD3xkptYN6xbUCtUq2djJi67wbMvlsOYuq0wzzr+Y3/QZAyQOuK8DCLEbO/ZW+IsHVXgcbe+5fKb6VYVOa1wbimIAO0LW95O1o4qqL1ozlLVs0k0TpE8EBpZm11MfxBDSEd2LXveFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7930132f59aso9977b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 09:25:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759940633; x=1760545433;
-        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wRJXz112Re1ju3vdnrYT2DZaPKwj05gRwzq+1yeUNKs=;
-        b=RixByaOzGZe/36N94DcQvjUsGlgmmSMKta4Y16apmuk/gLtVVjzwitXzrVH3OSEVIm
-         zNkbdEOt7D4FATegKZIXLV+5fvdCHTFz9lS2oLai4+wlOovVZ2+sQUU1APoel+/6TkXx
-         QWj83i/G7++VGPM7+jvnA5rXtUMiD9rDD0TOXYqpR7AXHGS/cir/jcqIqhBEs2oRvUUR
-         jBcNG7Qf8Du9nYrU14+rNUB4Tk0uOiHwqHX8sAuWpnrLySxQsphccpkAFH6m81kuYRAw
-         bi6TrUzSk6Jng5NiJKLi8RqcR7oGUeJKGXBf0GfHWWNt8/zFMhjkoGiIxIf2QCIDiwpX
-         SjbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVbSQFUzz4Z/yqd4ZF/plBpJSGPzN8uuLmeRZk9u9dZeUKl4/85/bEKxo6EYQywLsVakIZTx4oNZkx05b8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBY1bO4+aAZVgdT1sVk89dtkrLkTzx1B8do0m8alrIeIbmr/H7
-	ugJ485att5PCGkh/B012SkV5QJrBKqpHOiV6qUxhOHVW8teZpuAyPL5DtP+JDdmGdIzpCTSzMZE
-	LU/08T/+Pxg==
-X-Google-Smtp-Source: AGHT+IGKggukMuWythYr3qzc7hKbOfyUWxXaNl2ZkzSjXOY2nzoCMvWkDw+/XtALg86o1p0QKnOwEdiv1B2m
-X-Received: from plez12.prod.google.com ([2002:a17:902:cccc:b0:26a:23c7:68d3])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ef10:b0:27e:eabd:4b41
- with SMTP id d9443c01a7336-29027216505mr56267885ad.7.1759940632569; Wed, 08
- Oct 2025 09:23:52 -0700 (PDT)
-Date: Wed,  8 Oct 2025 09:23:47 -0700
+        d=1e100.net; s=20230601; t=1759940704; x=1760545504;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lha07SgLr6YajsxSBvN4itwnfzekQjZC85rngCVcAvE=;
+        b=dI3+Kd+rnrogogOpnC3EWfdQGoDfr1y0rirlXv3Chhd4iParKE1s+cREI8uEoRFbKn
+         3BX4kFGgRHku4mT1fp7kNUlGALRCv/gnw6rwbH3A7w+a1XveW+Y7hJIPnycsH3tbdm76
+         uXEtUe2JtI0526Z9cIZ5m5N7fIfpICzJNRFEpzfcZk6mIdzh/P2iN6iXeCs64NeDbpJG
+         NzjNnp9g6caUio8RYSLRYG8iM9tIY7N7rAKnw0IPi/CR9lgnii9/BqxxX31xUie4VQ8o
+         nXzziKt6gFJmY9KF9VFLG5IyXUQ236TeyBl2MNejXrXcg0GlQXbulKRs7xMSpid0lCsP
+         UO8g==
+X-Forwarded-Encrypted: i=1; AJvYcCXC+X0RHWTjbw2omWYvcQjOJPTRhhPAEWWaIEhiZJyWF5k+LMkMEiY50HhGipeCdUANhXqf0Mm+XMrEHgA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCqFmZUfCWVHERCyBKLUxVeQXuQ4zEKsb630Zik+/j5gKYF7A6
+	Hx2ZWGEL5BZz9VJY69yd4J+KACCFQO0xJQgqfqKIdApYMAm9xJqQxT8=
+X-Gm-Gg: ASbGncuhj/xKaShuA05ins/NbSir55Hx/3c8Q0ntSvnJtFmYiczin39v8xYcLPOgH/P
+	g6+Tb88ibfhsLEWgf4YAjvz3Xq57T3M6EOQHTdddNTi5/8ppCq4EEDnHHspDQ2JzZvqJ9tvXKdI
+	1w1dfQnDbAq0fRy+zFE+POuV6XvepqR8jWaBUTWXMlbrQU69Nnd1p5zC/T9KErPwQqQZNoVWJgd
+	bTN+sdEtmAVetdFX8t/lTfSRn8ku+Hazyd9e+uW2CXh5/CmTOnKuxKCGmnsxPUstecdqtIuipq6
+	ZbhyNcowd74TKsbHJgmABNW+b4OkYZvcekBLjRijO+HcjPRN/Ic7qNi9Gt4u5brKz7Zr0EKMaZv
+	PLpzqiVawP/MhC+oWTo5UENMZA25Ry6oJG7IFo/q4iSOZoQ8w45N5xLljULpXXdBWykfdilox+w
+	imz28/r5vZBOCDLGcImMKyrVoDpsnnYuJKELmLEKmlg5IS5W/mr7COPsbG2qtdIKOl2BX1V2Ll9
+	fzWYAoGTjbDekl83IJAM1ZmBmwHVg==
+X-Google-Smtp-Source: AGHT+IG7rJeTc7BaYSRW2mgEZOIvuZo+hdU8tJz9alDLAEj9qzpkoBMt/mHdSNCv2yx7KPQXHG9lGA==
+X-Received: by 2002:a05:6a00:398b:b0:77d:51e5:e5d1 with SMTP id d2e1a72fcca58-7938723dab3mr4584210b3a.19.1759940703895;
+        Wed, 08 Oct 2025 09:25:03 -0700 (PDT)
+Received: from localhost (c-73-158-218-242.hsd1.ca.comcast.net. [73.158.218.242])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-794e2a4cb5asm156736b3a.71.2025.10.08.09.25.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 09:25:03 -0700 (PDT)
+From: Stanislav Fomichev <sdf@fomichev.me>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	andrew+netdev@lunn.ch,
+	shuah@kernel.org,
+	horms@kernel.org,
+	willemb@google.com,
+	daniel.zahka@gmail.com,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net v2] selftests: drv-net: update remaining Python init files
+Date: Wed,  8 Oct 2025 09:25:03 -0700
+Message-ID: <20251008162503.1403966-1-sdf@fomichev.me>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.710.ga91ca5db03-goog
-Message-ID: <20251008162347.4005288-1-irogers@google.com>
-Subject: [PATCH v2] perf bpf_counter: Fix opening of "any"(-1) CPU events
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Tengda Wu <wutengda@huaweicloud.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The bperf BPF counter code doesn't handle "any"(-1) CPU events, always
-wanting to aggregate a count against a CPU, which avoids the need for
-atomics so let's not change that. Force evsels used for BPF counters
-to require a CPU when not in system-wide mode so that the "any"(-1)
-value isn't used during map propagation and evsel's CPU map matches
-that of the PMU.
+From: Jakub Kicinski <kuba@kernel.org>
 
-Fixes: b91917c0c6fa ("perf bpf_counter: Fix handling of cpumap fixing hybrid")
-Signed-off-by: Ian Rogers <irogers@google.com>
+Convert remaining __init__ files similar to what we did in
+commit b615879dbfea ("selftests: drv-net: make linters happy with our imports")
+
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
 ---
- tools/perf/builtin-stat.c     | 13 +++++++++++++
- tools/perf/util/bpf_counter.c |  1 +
- 2 files changed, 14 insertions(+)
+v2:
+ - remove tool from imports in driver __init__s it's not actually used
+v1: https://lore.kernel.org/20251007144326.1763309-1-kuba@kernel.org
 
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 7006f848f87a..0fc6884c1bf1 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -2540,6 +2540,7 @@ int cmd_stat(int argc, const char **argv)
- 	unsigned int interval, timeout;
- 	const char * const stat_subcommands[] = { "record", "report" };
- 	char errbuf[BUFSIZ];
-+	struct evsel *counter;
+CC: shuah@kernel.org
+CC: willemb@google.com
+CC: daniel.zahka@gmail.com
+CC: linux-kselftest@vger.kernel.org
+---
+ .../drivers/net/hw/lib/py/__init__.py         | 40 ++++++++++++++-----
+ .../selftests/drivers/net/lib/py/__init__.py  |  4 +-
+ .../testing/selftests/net/lib/py/__init__.py  | 29 ++++++++++++--
+ 3 files changed, 57 insertions(+), 16 deletions(-)
+
+diff --git a/tools/testing/selftests/drivers/net/hw/lib/py/__init__.py b/tools/testing/selftests/drivers/net/hw/lib/py/__init__.py
+index 0ceb297e7757..fb010a48a5a1 100644
+--- a/tools/testing/selftests/drivers/net/hw/lib/py/__init__.py
++++ b/tools/testing/selftests/drivers/net/hw/lib/py/__init__.py
+@@ -1,5 +1,13 @@
+ # SPDX-License-Identifier: GPL-2.0
  
- 	setlocale(LC_ALL, "");
- 
-@@ -2797,6 +2798,18 @@ int cmd_stat(int argc, const char **argv)
- 
- 	evlist__warn_user_requested_cpus(evsel_list, target.cpu_list);
- 
-+	evlist__for_each_entry(evsel_list, counter) {
-+		/*
-+		 * Setup BPF counters to require CPUs as any(-1) isn't
-+		 * supported. evlist__create_maps below will propagate this
-+		 * information to the evsels. Note, evsel__is_bperf isn't yet
-+		 * set up, and this change must happen early, so directly use
-+		 * the bpf_counter variable.
-+		 */
-+		if (counter->bpf_counter)
-+			counter->core.requires_cpu = true;
-+	}
++"""
++Driver test environment (hardware-only tests).
++NetDrvEnv and NetDrvEpEnv are the main environment classes.
++Former is for local host only tests, latter creates / connects
++to a remote endpoint. See NIPA wiki for more information about
++running and writing driver tests.
++"""
 +
- 	if (evlist__create_maps(evsel_list, &target) < 0) {
- 		if (target__has_task(&target)) {
- 			pr_err("Problems finding threads of monitor\n");
-diff --git a/tools/perf/util/bpf_counter.c b/tools/perf/util/bpf_counter.c
-index ca5d01b9017d..d3e5933b171b 100644
---- a/tools/perf/util/bpf_counter.c
-+++ b/tools/perf/util/bpf_counter.c
-@@ -495,6 +495,7 @@ static int bperf_reload_leader_program(struct evsel *evsel, int attr_map_fd,
- 	 * following evsel__open_per_cpu call
- 	 */
- 	evsel->leader_skel = skel;
-+	assert(!perf_cpu_map__has_any_cpu_or_is_empty(evsel->core.cpus));
- 	evsel__open(evsel, evsel->core.cpus, evsel->core.threads);
+ import sys
+ from pathlib import Path
  
- out:
+@@ -8,26 +16,36 @@ KSFT_DIR = (Path(__file__).parent / "../../../../..").resolve()
+ try:
+     sys.path.append(KSFT_DIR.as_posix())
+ 
+-    from net.lib.py import *
+-    from drivers.net.lib.py import *
+-
+     # Import one by one to avoid pylint false positives
++    from net.lib.py import NetNS, NetNSEnter, NetdevSimDev
+     from net.lib.py import EthtoolFamily, NetdevFamily, NetshaperFamily, \
+         NlError, RtnlFamily, DevlinkFamily, PSPFamily
+     from net.lib.py import CmdExitFailure
+-    from net.lib.py import bkg, cmd, defer, ethtool, fd_read_timeout, ip, \
+-        rand_port, tool, wait_port_listen
+-    from net.lib.py import fd_read_timeout
++    from net.lib.py import bkg, cmd, bpftool, bpftrace, defer, ethtool, \
++        fd_read_timeout, ip, rand_port, wait_port_listen, wait_file
+     from net.lib.py import KsftSkipEx, KsftFailEx, KsftXfailEx
+     from net.lib.py import ksft_disruptive, ksft_exit, ksft_pr, ksft_run, \
+         ksft_setup
+     from net.lib.py import ksft_eq, ksft_ge, ksft_in, ksft_is, ksft_lt, \
+         ksft_ne, ksft_not_in, ksft_raises, ksft_true, ksft_gt, ksft_not_none
+-    from net.lib.py import NetNSEnter
+-    from drivers.net.lib.py import GenerateTraffic
++    from drivers.net.lib.py import GenerateTraffic, Remote
+     from drivers.net.lib.py import NetDrvEnv, NetDrvEpEnv
++
++    __all__ = ["NetNS", "NetNSEnter", "NetdevSimDev",
++               "EthtoolFamily", "NetdevFamily", "NetshaperFamily",
++               "NlError", "RtnlFamily", "DevlinkFamily", "PSPFamily",
++               "CmdExitFailure",
++               "bkg", "cmd", "bpftool", "bpftrace", "defer", "ethtool",
++               "fd_read_timeout", "ip", "rand_port",
++               "wait_port_listen", "wait_file",
++               "KsftSkipEx", "KsftFailEx", "KsftXfailEx",
++               "ksft_disruptive", "ksft_exit", "ksft_pr", "ksft_run",
++               "ksft_setup",
++               "ksft_eq", "ksft_ge", "ksft_in", "ksft_is", "ksft_lt",
++               "ksft_ne", "ksft_not_in", "ksft_raises", "ksft_true", "ksft_gt",
++               "ksft_not_none", "ksft_not_none",
++               "NetDrvEnv", "NetDrvEpEnv", "GenerateTraffic", "Remote"]
+ except ModuleNotFoundError as e:
+-    ksft_pr("Failed importing `net` library from kernel sources")
+-    ksft_pr(str(e))
+-    ktap_result(True, comment="SKIP")
++    print("Failed importing `net` library from kernel sources")
++    print(str(e))
+     sys.exit(4)
+diff --git a/tools/testing/selftests/drivers/net/lib/py/__init__.py b/tools/testing/selftests/drivers/net/lib/py/__init__.py
+index e6c070f32f51..b0c6300150fb 100644
+--- a/tools/testing/selftests/drivers/net/lib/py/__init__.py
++++ b/tools/testing/selftests/drivers/net/lib/py/__init__.py
+@@ -22,7 +22,7 @@ KSFT_DIR = (Path(__file__).parent / "../../../..").resolve()
+         NlError, RtnlFamily, DevlinkFamily, PSPFamily
+     from net.lib.py import CmdExitFailure
+     from net.lib.py import bkg, cmd, bpftool, bpftrace, defer, ethtool, \
+-        fd_read_timeout, ip, rand_port, tool, wait_port_listen, wait_file
++        fd_read_timeout, ip, rand_port, wait_port_listen, wait_file
+     from net.lib.py import KsftSkipEx, KsftFailEx, KsftXfailEx
+     from net.lib.py import ksft_disruptive, ksft_exit, ksft_pr, ksft_run, \
+         ksft_setup
+@@ -34,7 +34,7 @@ KSFT_DIR = (Path(__file__).parent / "../../../..").resolve()
+                "NlError", "RtnlFamily", "DevlinkFamily", "PSPFamily",
+                "CmdExitFailure",
+                "bkg", "cmd", "bpftool", "bpftrace", "defer", "ethtool",
+-               "fd_read_timeout", "ip", "rand_port", "tool",
++               "fd_read_timeout", "ip", "rand_port",
+                "wait_port_listen", "wait_file",
+                "KsftSkipEx", "KsftFailEx", "KsftXfailEx",
+                "ksft_disruptive", "ksft_exit", "ksft_pr", "ksft_run",
+diff --git a/tools/testing/selftests/net/lib/py/__init__.py b/tools/testing/selftests/net/lib/py/__init__.py
+index 997b85cc216a..97b7cf2b20eb 100644
+--- a/tools/testing/selftests/net/lib/py/__init__.py
++++ b/tools/testing/selftests/net/lib/py/__init__.py
+@@ -1,9 +1,32 @@
+ # SPDX-License-Identifier: GPL-2.0
+ 
++"""
++Python selftest helpers for netdev.
++"""
++
+ from .consts import KSRC
+-from .ksft import *
++from .ksft import KsftFailEx, KsftSkipEx, KsftXfailEx, ksft_pr, ksft_eq, \
++    ksft_ne, ksft_true, ksft_not_none, ksft_in, ksft_not_in, ksft_is, \
++    ksft_ge, ksft_gt, ksft_lt, ksft_raises, ksft_busy_wait, \
++    ktap_result, ksft_disruptive, ksft_setup, ksft_run, ksft_exit
+ from .netns import NetNS, NetNSEnter
+-from .nsim import *
+-from .utils import *
++from .nsim import NetdevSim, NetdevSimDev
++from .utils import CmdExitFailure, fd_read_timeout, cmd, bkg, defer, \
++    bpftool, ip, ethtool, bpftrace, rand_port, wait_port_listen, wait_file
+ from .ynl import NlError, YnlFamily, EthtoolFamily, NetdevFamily, RtnlFamily, RtnlAddrFamily
+ from .ynl import NetshaperFamily, DevlinkFamily, PSPFamily
++
++__all__ = ["KSRC",
++           "KsftFailEx", "KsftSkipEx", "KsftXfailEx", "ksft_pr", "ksft_eq",
++           "ksft_ne", "ksft_true", "ksft_not_none", "ksft_in", "ksft_not_in",
++           "ksft_is", "ksft_ge", "ksft_gt", "ksft_lt", "ksft_raises",
++           "ksft_busy_wait", "ktap_result", "ksft_disruptive", "ksft_setup",
++           "ksft_run", "ksft_exit",
++           "NetNS", "NetNSEnter",
++           "CmdExitFailure", "fd_read_timeout", "cmd", "bkg", "defer",
++           "bpftool", "ip", "ethtool", "bpftrace", "rand_port",
++           "wait_port_listen", "wait_file",
++           "NetdevSim", "NetdevSimDev",
++           "NetshaperFamily", "DevlinkFamily", "PSPFamily", "NlError",
++           "YnlFamily", "EthtoolFamily", "NetdevFamily", "RtnlFamily",
++           "RtnlAddrFamily"]
 -- 
-2.51.0.710.ga91ca5db03-goog
+2.51.0
 
 
