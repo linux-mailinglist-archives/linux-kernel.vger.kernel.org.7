@@ -1,115 +1,287 @@
-Return-Path: <linux-kernel+bounces-845718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E498CBC5ECE
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:02:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E42EBC5ED7
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:03:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 64FCE4F7229
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 16:01:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AFDDE4F9B40
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 16:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11CA82BD58C;
-	Wed,  8 Oct 2025 16:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E9E2BD034;
+	Wed,  8 Oct 2025 16:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yv++MPdZ"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jE/MAz4+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3FD20D4E9
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 16:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C985A25EFB6;
+	Wed,  8 Oct 2025 16:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759939303; cv=none; b=prVT85oILnqTOafnetEqYR2qGEUe/8Ysjn1cDNSgWmxHRJisr0ue11kObOq6IlEq98NifC91H7lcJVqnCcxFlvDVnBUWFqn+mJa1wJ3XwJxFwcnkgWEXBmxQoKHCFEiOH6Y9osaEVaeXBoN0OLJimEtNFAHIfEwNqLu5AMG+Tt4=
+	t=1759939316; cv=none; b=hOW3cW8Z0RE8OjW2VugRWbsXuroKwv9+Tq1VdGCOxlMAk8FdK67KAjrdX6EfPwJtrhbdjyZ7vv9ISqK46WLIDS+QcyGpSWu8ZT023SrDgD+mtjRJhTtJTbwDQy43QeVZnnArvhCnXcBUiNv05Nbnp5KOPA+++wgH/j7FYyqmoL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759939303; c=relaxed/simple;
-	bh=xYh4PhxzbTcEyrXy1Mkkh6Pa1QxZgkilHtvq3B/2VFU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=WqCH9GJVJigSxEbWMj+/NPGU5tUMEWRU+Pz5AKKi1KASOVzC2UgEmArI0QfKA2pL33CEjoNQxXqxeTla+Eg9kFBZ9DBNonNGNlvw9PdgG/v6AtdhmidXiddjN01swt8qmCKCGY3dTt3D12CSc6LgQt8mRw0fFaOjpwxrPSVrtaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yv++MPdZ; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-46e38957979so29355845e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 09:01:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759939300; x=1760544100; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xYh4PhxzbTcEyrXy1Mkkh6Pa1QxZgkilHtvq3B/2VFU=;
-        b=yv++MPdZcHITuQbQ6i0mJIg0YXkTl7I6bqCnmxOHzTdymZZITsES8fHTmDtyd52tYP
-         xco8aitOPootqW6tS2kruev9vwe0mXor9t3OJ7B8C6iUGipO6Hy9muJThnkc2mXj6lOc
-         8inqIoN9iQJuXl2UAP49xjd8YGDFpsySnRPPJChvKqtxxMRSoap9oo+CeJpxRmz6j/eX
-         5gzAmuuSR50NBuV1DwFuIZWuNGmUkprHFohYeCBruo8FP+wLmnn9Ls7MkRzNuJuNnM9Z
-         3i9iwSzKU9F2gLzAHHFgd0BCrFu6JsJNh8QYJsALBtvvntjTHRAsdiuY8HabXhfr0vtb
-         BXMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759939300; x=1760544100;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xYh4PhxzbTcEyrXy1Mkkh6Pa1QxZgkilHtvq3B/2VFU=;
-        b=vEOxa4Sn2U2IsxQ9U+ihcgtj9Tw3OKdeCsPd7TsDdgSMj3br2/yVtE2KfG3sQXQZSZ
-         MJ9oFnM380kj0OnTtnqHSyb04S7no1XKGlu1Xwqo1KTpVzSceET7wjbsmu4QDd9XEA2s
-         nfu0GEWbmQEqd1fgIoqWQddLMMlXSJjSU3sKddDAauZx+b8ngH6Ye/DInoxzEsAUbZaN
-         eWoFNAg9pQ4CO56PPjBpzYkK9TvCudxIGAS9mxDVemSPflcqPDXn2/NrmS7gQ4PvAnLA
-         q9FnPNuYb5RP8YcEGm2kyvfsdCuSgeGIsZaw4mG3GQxml8RRT/y1yW2kMVF6oRw5xWNh
-         BTdg==
-X-Forwarded-Encrypted: i=1; AJvYcCXOhGoMTdqhBoTdND5QPyLVuKHvPUqVluymbR7EdO8PslGa0SGPXiyuG74aieTqug6a0l5uHtiwpfhkbY8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVSvW+xOVqwh0NH5eOCXnSuTSU/2WhfymYXNg0rRJ5eik4Lbxo
-	hrMilBS/7KpRWCKg5cGsvlkGcyi9n57wUEsA69CGnbZs6Ri6Hx5NomIMq7L8aRuwwrDKAzbnvrd
-	fSw5cJOiym63S32HK8Q==
-X-Google-Smtp-Source: AGHT+IG0br1+bgUuaMaUnq0S2Elir4XOEyWa+b5sYyNn+cxnkAq5WDjWumGgOW6VKTnYScj4dr68tdDpcOI/pds=
-X-Received: from wmmi15.prod.google.com ([2002:a05:600c:400f:b0:46e:1f26:9212])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:8593:b0:46e:32d4:46a1 with SMTP id 5b1f17b1804b1-46fab89b7a0mr10906725e9.22.1759939300423;
- Wed, 08 Oct 2025 09:01:40 -0700 (PDT)
-Date: Wed, 8 Oct 2025 16:01:39 +0000
-In-Reply-To: <20251008162201.79e76046@nimda.home>
+	s=arc-20240116; t=1759939316; c=relaxed/simple;
+	bh=Z/pj9EeEZpiRWDMECyNi+t/QOBBplB0dNcZFdOYufDo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=YHDJx++LnA/QDu2Anuq62e3n+NP94Id9Ygw7f3wIENKM37TzO9fQYLqBwFmqhUbDGZPdiURIIvDQNfXLPhOiBuoQ+yXD6VTPtjCEH4tdMQwp+rKVyCAtNv5bPGLOCMO/m4ZxyQoDyOb4rAPZZVs+NWK5MPInWfontPxVvkAHSwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jE/MAz4+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22906C4CEE7;
+	Wed,  8 Oct 2025 16:01:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759939316;
+	bh=Z/pj9EeEZpiRWDMECyNi+t/QOBBplB0dNcZFdOYufDo=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=jE/MAz4+Nz4X3fT4mtJ3cMIdN4wPoZHinJvgnfIAk9QPL4FOJhWLZ4qI+oip4xdef
+	 tCYXw292xXo5ZiaIMREIpNY88NFlwD52X0X+EEZh0LOWF/3IEfgwRNFacnf6Lkd3qs
+	 qjB4Vs06mgAg+RBSHu6ajV1Jyu+kYwdeXna1AjhCAfCGp4m1SvJ6LlWACdxRJisT8/
+	 wFxrPJPo1LI76WAghoEMLk8iMlIIc3gy0vBX5IsB4iJClG/bXIwrDLp1L27mZuBDoG
+	 8IH36Zom0hPrchFgv9GMEimHKlSIJRnEaoVWTYLOrp1H8hBu1xfzCWe5Bwu33C3PwC
+	 mgEOPDeIiT/JQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20251006163024.18473-1-work@onurozkan.dev> <20251006163024.18473-2-work@onurozkan.dev>
- <DDBHMNEIU9HJ.68MGF28IF58I@kernel.org> <aOTyVzpJNDOaxxs6@google.com>
- <DDCV43KW9OGL.27I8HP4TSTQ6N@kernel.org> <aOZgrhsNrKpxM_PW@google.com> <20251008162201.79e76046@nimda.home>
-Message-ID: <aOaK44WhBTZcnUfU@google.com>
-Subject: Re: [PATCH 1/3] rust: xarray: abstract `xa_alloc`
-From: Alice Ryhl <aliceryhl@google.com>
-To: "Onur =?utf-8?B?w5Z6a2Fu?=" <work@onurozkan.dev>
-Cc: Benno Lossin <lossin@kernel.org>, rust-for-linux@vger.kernel.org, ojeda@kernel.org, 
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, tmgross@umich.edu, dakr@kernel.org, 
-	linux-kernel@vger.kernel.org, acourbot@nvidia.com, airlied@gmail.com, 
-	simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, corbet@lwn.net, lyude@redhat.com, 
-	linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 08 Oct 2025 18:01:50 +0200
+Message-Id: <DDD2F1NSSTVN.1VDRSX5O9ZIKM@kernel.org>
+Subject: Re: [PATCH v4 02/13] gpu: nova-core: Create initial Gsp
+Cc: <rust-for-linux@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+ <acourbot@nvidia.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
+ <jhubbard@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur
+ Tabi" <ttabi@nvidia.com>, <linux-kernel@vger.kernel.org>,
+ <nouveau@lists.freedesktop.org>
+To: "Alistair Popple" <apopple@nvidia.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20251008001253.437911-1-apopple@nvidia.com>
+ <20251008001253.437911-3-apopple@nvidia.com>
+In-Reply-To: <20251008001253.437911-3-apopple@nvidia.com>
 
-On Wed, Oct 08, 2025 at 04:22:01PM +0300, Onur =C3=96zkan wrote:
-> On Wed, 8 Oct 2025 13:01:34 +0000
-> Alice Ryhl <aliceryhl@google.com> wrote:
->=20
-> > On Wed, Oct 08, 2025 at 12:18:24PM +0200, Benno Lossin wrote:
-> > > On Tue Oct 7, 2025 at 12:58 PM CEST, Alice Ryhl wrote:
-> > > The documentation says "allocated id", so I assumed that it was some
-> > > internal, implementation-dependent thing, not an index. In that
-> > > case we should change the docs instead.
-> >=20
-> > An xarray is a map from integer to pointer. The allocated id the key
-> > in this map. The alloc method picks the smallest unused key in a given
-> > range.
-> >=20
-> > Alice
->=20
-> Perhaps we should document it as "allocated key" or "allocated id (key)"
-> ?
+On Wed Oct 8, 2025 at 2:12 AM CEST, Alistair Popple wrote:
+> diff --git a/drivers/gpu/nova-core/gsp.rs b/drivers/gpu/nova-core/gsp.rs
+> index 221281da1a45..63099df77348 100644
+> --- a/drivers/gpu/nova-core/gsp.rs
+> +++ b/drivers/gpu/nova-core/gsp.rs
+> @@ -2,25 +2,94 @@
+> =20
+>  mod boot;
+> =20
+> +use kernel::device;
+> +use kernel::dma::CoherentAllocation;
+> +use kernel::dma::DmaAddress;
+> +use kernel::dma_write;
+> +use kernel::pci;
+>  use kernel::prelude::*;
+>  use kernel::ptr::Alignment;
+> +use kernel::transmute::AsBytes;
+> =20
+>  pub(crate) use fw::{GspFwWprMeta, LibosParams};
+> =20
+>  mod fw;
+> =20
+> +use fw::LibosMemoryRegionInitArgument;
+> +
+>  pub(crate) const GSP_PAGE_SHIFT: usize =3D 12;
+>  pub(crate) const GSP_PAGE_SIZE: usize =3D 1 << GSP_PAGE_SHIFT;
+>  pub(crate) const GSP_HEAP_ALIGNMENT: Alignment =3D Alignment::new::<{ 1 =
+<< 20 }>();
 
-I think 'allocated key' makes sense.
+This looks like it could depend on the firmware version in the future, henc=
+e it
+should probably defined somewhere in fw/ with a corresponding comment. The
+actual version switch is fine to omit for now of course (we agreed to add t=
+he
+infrastructure for the version switch subsequently).
 
-Alice
+> +/// Number of GSP pages to use in a RM log buffer.
+> +const RM_LOG_BUFFER_NUM_PAGES: usize =3D 0x10;
+
+Why 0x10? Is there a specific reason?
+
+> +
+>  /// GSP runtime data.
+> -///
+> -/// This is an empty pinned placeholder for now.
+>  #[pin_data]
+> -pub(crate) struct Gsp {}
+> +pub(crate) struct Gsp {
+> +    libos: CoherentAllocation<LibosMemoryRegionInitArgument>,
+> +    pub loginit: CoherentAllocation<u8>,
+> +    pub logintr: CoherentAllocation<u8>,
+> +    pub logrm: CoherentAllocation<u8>,
+
+This creates warnings for older compiler version, please use pub(crate) ins=
+tead.
+
+> +}
+> +
+> +#[repr(C)]
+> +struct PteArray<const NUM_ENTRIES: usize>([u64; NUM_ENTRIES]);
+> +/// SAFETY: arrays of `u64` implement `AsBytes` and we are but a wrapper=
+ around it.
+> +unsafe impl<const NUM_ENTRIES: usize> AsBytes for PteArray<NUM_ENTRIES> =
+{}
+
+Please separate struct definitions and impl blocks with an empty line.
+
+> +impl<const NUM_PAGES: usize> PteArray<NUM_PAGES> {
+> +    fn new(handle: DmaAddress) -> Self {
+
+No check that NUM_PAGES actually fits the size of the DMA buffer handle pas=
+sed
+in? What happens if they do not match?
+
+> +        let mut ptes =3D [0u64; NUM_PAGES];
+> +        for (i, pte) in ptes.iter_mut().enumerate() {
+> +            *pte =3D handle + ((i as u64) << GSP_PAGE_SHIFT);
+
+I think this should be handle.checked_add(). Additionally we should add the
+following compile time check to make sure that the shift can never overflow=
+:
+
+	const _MAX_OFFSET: usize =3D NUM_PAGES << GSP_PAGE_SHIFT;
+
+> +        }
+> +
+> +        Self(ptes)
+> +    }
+> +}
+> +
+> +/// Creates a new `CoherentAllocation<A>` with `name` of `size` elements=
+, and
+> +/// register it into the `libos` object at argument position `libos_arg_=
+nr`.
+> +fn create_logbuffer_dma_object(
+> +    dev: &device::Device<device::Bound>,
+> +) -> Result<CoherentAllocation<u8>> {
+> +    let mut obj =3D CoherentAllocation::<u8>::alloc_coherent(
+> +        dev,
+> +        RM_LOG_BUFFER_NUM_PAGES * GSP_PAGE_SIZE,
+> +        GFP_KERNEL | __GFP_ZERO,
+> +    )?;
+> +    let ptes =3D PteArray::<RM_LOG_BUFFER_NUM_PAGES>::new(obj.dma_handle=
+());
+> +
+> +    // SAFETY: `obj` has just been created and we are its sole user.
+> +    unsafe {
+> +        // Copy the self-mapping PTE at the expected location.
+> +        obj.as_slice_mut(size_of::<u64>(), size_of_val(&ptes))?
+> +            .copy_from_slice(ptes.as_bytes())
+> +    };
+> +
+> +    Ok(obj)
+> +}
+
+I think we should just create a new gsp::Logbuffer type for this rather tha=
+n
+have a function as object constructor.
+
+> =20
+>  impl Gsp {
+> -    pub(crate) fn new() -> impl PinInit<Self> {
+> -        pin_init!(Self {})
+> +    pub(crate) fn new(pdev: &pci::Device<device::Bound>) -> Result<impl =
+PinInit<Self, Error>> {
+> +        let dev =3D pdev.as_ref();
+> +        let libos =3D CoherentAllocation::<LibosMemoryRegionInitArgument=
+>::alloc_coherent(
+> +            dev,
+> +            GSP_PAGE_SIZE / size_of::<LibosMemoryRegionInitArgument>(),
+> +            GFP_KERNEL | __GFP_ZERO,
+> +        )?;
+> +        let loginit =3D create_logbuffer_dma_object(dev)?;
+> +        dma_write!(libos[0] =3D LibosMemoryRegionInitArgument::new("LOGI=
+NIT", &loginit))?;
+> +        let logintr =3D create_logbuffer_dma_object(dev)?;
+> +        dma_write!(libos[1] =3D LibosMemoryRegionInitArgument::new("LOGI=
+NTR", &logintr))?;
+> +        let logrm =3D create_logbuffer_dma_object(dev)?;
+> +        dma_write!(libos[2] =3D LibosMemoryRegionInitArgument::new("LOGR=
+M", &logrm))?;
+> +
+> +        Ok(try_pin_init!(Self {
+> +            libos,
+> +            loginit,
+> +            logintr,
+> +            logrm,
+> +        }))
+>      }
+>  }
+> diff --git a/drivers/gpu/nova-core/gsp/fw.rs b/drivers/gpu/nova-core/gsp/=
+fw.rs
+> index 181baa401770..dd1e7fc85d85 100644
+> --- a/drivers/gpu/nova-core/gsp/fw.rs
+> +++ b/drivers/gpu/nova-core/gsp/fw.rs
+> @@ -7,8 +7,10 @@
+> =20
+>  use core::ops::Range;
+> =20
+> +use kernel::dma::CoherentAllocation;
+>  use kernel::ptr::Alignable;
+>  use kernel::sizes::SZ_1M;
+> +use kernel::transmute::{AsBytes, FromBytes};
+> =20
+>  use crate::gpu::Chipset;
+>  use crate::gsp;
+> @@ -99,3 +101,40 @@ pub(crate) fn wpr_heap_size(&self, chipset: Chipset, =
+fb_size: u64) -> u64 {
+>  /// addresses of the GSP bootloader and firmware.
+>  #[repr(transparent)]
+>  pub(crate) struct GspFwWprMeta(bindings::GspFwWprMeta);
+> +
+> +#[repr(transparent)]
+> +pub(crate) struct LibosMemoryRegionInitArgument(bindings::LibosMemoryReg=
+ionInitArgument);
+
+Please add some documentation for the type.
+
+> +
+> +// SAFETY: Padding is explicit and will not contain uninitialized data.
+> +unsafe impl AsBytes for LibosMemoryRegionInitArgument {}
+> +
+> +// SAFETY: This struct only contains integer types for which all bit pat=
+terns
+> +// are valid.
+> +unsafe impl FromBytes for LibosMemoryRegionInitArgument {}
+> +
+> +impl LibosMemoryRegionInitArgument {
+> +    pub(crate) fn new<A: AsBytes + FromBytes>(
+> +        name: &'static str,
+> +        obj: &CoherentAllocation<A>,
+> +    ) -> Self {
+> +        /// Generates the `ID8` identifier required for some GSP objects=
+.
+> +        fn id8(name: &str) -> u64 {
+> +            let mut bytes =3D [0u8; core::mem::size_of::<u64>()];
+> +
+> +            for (c, b) in name.bytes().rev().zip(&mut bytes) {
+> +                *b =3D c;
+> +            }
+> +
+> +            u64::from_ne_bytes(bytes)
+> +        }
+> +
+> +        Self(bindings::LibosMemoryRegionInitArgument {
+> +            id8: id8(name),
+> +            pa: obj.dma_handle(),
+> +            size: obj.size() as u64,
+> +            kind: bindings::LibosMemoryRegionKind_LIBOS_MEMORY_REGION_CO=
+NTIGUOUS as u8,
+> +            loc: bindings::LibosMemoryRegionLoc_LIBOS_MEMORY_REGION_LOC_=
+SYSMEM as u8,
+
+Please prefer into() if possible.
 
