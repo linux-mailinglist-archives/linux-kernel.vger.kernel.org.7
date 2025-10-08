@@ -1,55 +1,58 @@
-Return-Path: <linux-kernel+bounces-845208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B54A9BC3E5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 10:43:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A3C0BC3E5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 10:44:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 687DF4E02F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 08:43:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A5DE24F7F9C
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 08:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 655532F3618;
-	Wed,  8 Oct 2025 08:43:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A062EC084;
+	Wed,  8 Oct 2025 08:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GGC93WON"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G51zqWp1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53E32EB851
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 08:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 267302EC087;
+	Wed,  8 Oct 2025 08:43:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759913009; cv=none; b=qL2KVIuIVkDK0KRmhKLXnRJfUF3BSPt2RolbMfaNoVd3GgW28ZhlnfHEXl7PWcq8eXNRTeumfU/Uilua7b0o7wpkGBicAP6oKsrxvkgP6MVBavoQljTe0ZYBYn1iII87N3LpbAzNZGjVqUw3CuRtR1h12mi4UFN3sc6/XaMUFBc=
+	t=1759913035; cv=none; b=tbKv4OewLq9GIv2QZK06sh4IqbnJ3KYbNFzLc60ge3rK7ADWoQiMPqjciRiGBspM3zX0qvJUftE7w907kxm3qaLNoF4zXNCST8LtNT4i9o+wVuz2cA1pgtLiE2qsfppZRok8hVWkxbsOPoajAjhtVNPhPHEa57ER3VayZiB5rsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759913009; c=relaxed/simple;
-	bh=8OIe0p1Hm72TWcZ007AOZ5v4Wu/FbHR/ip6j0BQUFzg=;
+	s=arc-20240116; t=1759913035; c=relaxed/simple;
+	bh=f3Nb+HgY38YNSFdjvaL6hPWK/70O12LVEeSvZY06YNg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HmiqN6LBzS5UH8m0smCgPo9T7olooFaOwSekDIeHuIQ96Nr3coLgPpHhLgtg974mdHuuO6GJmDthTy4GVrR+UGvqe2G8Oo//yU5yUw/7ghthTxJm06SS9KDlR/5vzLfkyRoxkDZqUPP0AxfzCOarlfMhevUz+2UiRNl9bqgsPo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GGC93WON; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E1F0C4CEF9;
-	Wed,  8 Oct 2025 08:43:27 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=n8tyes7TGkUNa3Gle7OV/geaOJcRki6dPz+sJHRa7wRuYxG1i7zbupB8jroXJT+73Gv9e7OpXZravEwRxcPHMjwyHiFwUx1UE/usOPDWswaicOcFY3Tt77lrNUWi9UqzOQUH8Z2+A1oY21rHmK2eztcV9pqoirxJvT1ksPyCi9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G51zqWp1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1DE1C4CEF4;
+	Wed,  8 Oct 2025 08:43:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759913009;
-	bh=8OIe0p1Hm72TWcZ007AOZ5v4Wu/FbHR/ip6j0BQUFzg=;
+	s=k20201202; t=1759913034;
+	bh=f3Nb+HgY38YNSFdjvaL6hPWK/70O12LVEeSvZY06YNg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GGC93WONLn2hBON0l0RHXZ0oOiPOzZXazbIFXUy3uzdG0uLQYRXZvHQkSBb8FBgGt
-	 eA+xBTRVHfzDMB0xssKDbYwjQ6B/9sF74n4fYbfaTI9arfSxuk72+PdeD1/cPSMvMb
-	 FYB4a8dU0+8I16AMgfMhXkUgGz16aAPN4M2WrGJJ+I1KSnuDv1+VnBIP37vPmh1xdi
-	 GVhgE3RUOnYrdZpF3QfbSUcSThVlb3CLTYyf2SXUu80LNYOyu3oQhoemzfp6Q1nSn6
-	 m5DFa0/pjzXrSOtH6Xv+2fQiII94sM/164+ouIDVI9yA9kjqIsOJDQuLoaUqv6Gqyx
-	 jB9wcsgEsgsUA==
-Date: Wed, 8 Oct 2025 09:43:24 +0100
-From: Will Deacon <will@kernel.org>
-To: Li Mengchen <mengchenli64@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, catalin.marinas@arm.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: kgdb: Ensure atomic single-step execution
-Message-ID: <aOYkLOz9enrTaVVk@willie-the-truck>
-References: <1756972043-12854-1-git-send-email-mengchenli64@gmail.com>
- <aNPiUbdRhaRklebF@J2N7QTR9R3>
- <CAEkTZs2x4RzUbYWXO=B1ZGtxycbryNT4YbROH2k_k+0L_B6Erg@mail.gmail.com>
+	b=G51zqWp18VzrgS9epcn8HnnTT512Xn08C+2TS7eJzGpSuYxSPFmXPQd2oM/tsySEL
+	 Zdphi5Vkuv8TRbtse89geif6BI6aq/UFpiZiTYv/Lk6G7qgKiwZBukNT41s14XH2k2
+	 kJaID8YyMr8Oz6YguCDFhWbSAhbdoFJm8UTuYtSABdjY0D4ui/q1ENuRUz6A6PlVLW
+	 pm6uHorrQl79FXFd/zZSfHC8DChDXGjlnE3Z0Q7LiWQfUht+nmr+NtfFlvX9rz9S4s
+	 BcO0M1pEiHpBn7f6wkb7nGin6oD9Au+ZepKgpqrSuHan2lgKwuOtDy20098GHfsmhp
+	 kVslc6AooSbdQ==
+Date: Wed, 8 Oct 2025 17:43:49 +0900
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] perf stat: Additional verbose details for <not
+ supported> events
+Message-ID: <aOYkRdU5pn_jTOq3@google.com>
+References: <20251005181421.2787960-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,21 +61,127 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEkTZs2x4RzUbYWXO=B1ZGtxycbryNT4YbROH2k_k+0L_B6Erg@mail.gmail.com>
+In-Reply-To: <20251005181421.2787960-1-irogers@google.com>
 
-On Wed, Oct 08, 2025 at 09:01:22AM +0800, Li Mengchen wrote:
->    I am writing to address a persistent issue in the community’s code related
->    to single-step tracing, which has remained unresolved for over a decade.
->    The code I have provided has been extensively tested and proven to work
->    across multiple hardware platforms and kernel versions, from 3.10 to the
->    latest releases. Its correctness and effectiveness are not up for debate.
+On Sun, Oct 05, 2025 at 11:14:21AM -0700, Ian Rogers wrote:
+> If an event shows as "<not supported>" in perf stat output, in verbose
+> mode add the strerror output to help diagnose the issue.
+> 
+> Consider:
+> ```
+> $ perf stat -e cycles,data_read,instructions true
+> 
+>  Performance counter stats for 'true':
+> 
+>            357,457      cycles:u
+>    <not supported> MiB  data_read:u
+>            156,182      instructions:u                   #    0.44  insn per cycle
+> 
+>        0.001250315 seconds time elapsed
+> 
+>        0.001283000 seconds user
+>        0.000000000 seconds sys
+> ```
+> 
+> To understand why the data_read uncore event failed, with this change:
+> ```
+> $ perf stat -v -e cycles,data_read,instructions true
+> Using CPUID GenuineIntel-6-8D-1
+> cycles -> cpu/cycles/
+> data_read -> uncore_imc_free_running_0/data_read/
+> data_read -> uncore_imc_free_running_1/data_read/
+> instructions -> cpu/instructions/
+> Control descriptor is not initialized
+> Warning:
+> kernel.perf_event_paranoid=2, trying to fall back to excluding kernel and hypervisor  samples
+> Warning:
+> kernel.perf_event_paranoid=2, trying to fall back to excluding kernel and hypervisor  samples
+> Warning:
+> kernel.perf_event_paranoid=2, trying to fall back to excluding kernel and hypervisor  samples
+> Warning:
+> data_read:u event is not supported by the kernel.
+> Invalid event (data_read:u) in per-thread mode, enable system wide with '-a'.
+> Warning:
+> kernel.perf_event_paranoid=2, trying to fall back to excluding kernel and hypervisor  samples
+> Warning:
+> data_read:u event is not supported by the kernel.
+> Invalid event (data_read:u) in per-thread mode, enable system wide with '-a'.
+> cycles:u: 351621 362833 362833
+> failed to read counter data_read:u
+> failed to read counter data_read:u
+> instructions:u: 156184 362833 362833
+> 
+>  Performance counter stats for 'true':
+> 
+>            351,621      cycles:u
+>    <not supported> MiB  data_read:u
+>            156,184      instructions:u                   #    0.44  insn per cycle
+> 
+>        0.001584472 seconds time elapsed
+> 
+>        0.001811000 seconds user
+>        0.000000000 seconds sys
+> ```
+> where without this change only "data_read:u event is not supported by
+> the kernel." is shown.
 
-Ha! You're joking, right?
+I think what you say is:
 
-If you're not willing to discuss the details of your patch then I guess
-I can just delete it instead. If you change your mind, please respond
-to Mark's comments, thanks.
+Before:
+  data_read:u event is not supported by the kernel.
 
-Will
+After:
+  data_read:u event is not supported by the kernel.
+  Invalid event (data_read:u) in per-thread mode, enable system wide with '-a'.
+ 
+
+Off-topic, it'd be great if we reduce the number of the same warning
+messages.  I think the data_read is from two uncore PMUs so the message
+was repeated.  If we can connect the related evsels and show the
+messages once, then the output is more readable.  Maybe we also want to
+show the fallback message just once (globally).
+
+Thanks,
+Namhyung
+
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/builtin-stat.c | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+> index 7006f848f87a..84e06ec09cc2 100644
+> --- a/tools/perf/builtin-stat.c
+> +++ b/tools/perf/builtin-stat.c
+> @@ -624,8 +624,9 @@ static enum counter_recovery stat_handle_error(struct evsel *counter, int err)
+>  	 */
+>  	if (err == EINVAL || err == ENOSYS || err == ENOENT || err == ENXIO) {
+>  		if (verbose > 0) {
+> -			ui__warning("%s event is not supported by the kernel.\n",
+> -				    evsel__name(counter));
+> +			evsel__open_strerror(counter, &target, err, msg, sizeof(msg));
+> +			ui__warning("%s event is not supported by the kernel.\n%s\n",
+> +				    evsel__name(counter), msg);
+>  		}
+>  		return COUNTER_SKIP;
+>  	}
+> @@ -649,10 +650,11 @@ static enum counter_recovery stat_handle_error(struct evsel *counter, int err)
+>  		}
+>  	}
+>  	if (verbose > 0) {
+> +		evsel__open_strerror(counter, &target, err, msg, sizeof(msg));
+>  		ui__warning(err == EOPNOTSUPP
+> -			? "%s event is not supported by the kernel.\n"
+> -			: "skipping event %s that kernel failed to open.\n",
+> -			evsel__name(counter));
+> +			? "%s event is not supported by the kernel.\n%s\n"
+> +			: "skipping event %s that kernel failed to open.\n%s\n",
+> +			evsel__name(counter), msg);
+>  	}
+>  	return COUNTER_SKIP;
+>  }
+> -- 
+> 2.51.0.618.g983fd99d29-goog
+> 
 
