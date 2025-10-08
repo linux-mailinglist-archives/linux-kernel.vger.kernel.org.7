@@ -1,120 +1,116 @@
-Return-Path: <linux-kernel+bounces-845589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9739BC572D
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 16:37:53 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C2A6BC5617
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 16:07:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2B6A189E294
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 14:38:16 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0728934EE41
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 14:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E982EBDC5;
-	Wed,  8 Oct 2025 14:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F37128CF66;
+	Wed,  8 Oct 2025 14:06:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="PYiweDzo"
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q2zrPpkg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D562EB870;
-	Wed,  8 Oct 2025 14:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74722874E0;
+	Wed,  8 Oct 2025 14:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759934256; cv=none; b=L6zYhCoxr4eTkJQgJWI3of7Lv2muCz6aKD2zFlhlYDDISEy/xwVt5NYc4zUOjN9MeStPffO2GEySAc1U41derYSkWBRRnYDAEHtLNLWxVdUUE4uv9BZ59vOHPwZPbca65/POh67Ia7PQTZmdr3KlmaRLkflO6j/WllwAd2HEyzM=
+	t=1759932394; cv=none; b=ULZCAV2oPRbhwsj48SyLXjRgiN+t8mAh8cSFP+29L4gsBlwpeNdPCfemN89JRgjzGRUeeN6x7yuxTQwvvbMtOgtzrmU6DgbMB6i9WyfK/Hm1SBQUDA4zNjOk4kT18Gd4ipZ96psFURSKz2+Tn1kV+v02vC4sgy713xUru1059YI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759934256; c=relaxed/simple;
-	bh=fM/soW1wxcm6ZUoUCSrXUsq1Ch641FejBxdWZ2T9VTY=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RP5mZRQ0fLWRtYpLvlvoEZKmvK4Iavn4+YMrZrjc5vxVkUUkBU5xDWFueylwAFXMqZ/JSK2h0FYtrzzlWsZfj4M/EgfS5Yq5AKsNxx8Gbc9aZ0ZSj+DjkRl7A6dgUqIJUfV6mFReX6AXyJI3OrdwxXH6FgVLfTEzTEEJ/imj6iM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=PYiweDzo; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1759934244; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=y8JH2A/X+FfSGLqk5PRkD3V44OnLqwLLX/lM69mSF2o=;
-	b=PYiweDzo0YOeOsiHJRq0QGRmJ9YqbxqcuL9iWNng1x09kPqvoXGqNwd4OkNnfukheFXOny3gBGe03TOO1dX55vQ9oua8uirGGE34OHhIw/OjYMnzoFT13PRP7a/CLvBK7yUsU2ZKhQXe7p97lzCkAv5TQiosJyA8Wn9kZ4rGzA0=
-Received: from localhost(mailfrom:dust.li@linux.alibaba.com fp:SMTPD_---0WpfC3B0_1759932368 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 08 Oct 2025 22:06:08 +0800
-Date: Wed, 8 Oct 2025 22:06:08 +0800
-From: Dust Li <dust.li@linux.alibaba.com>
-To: Mahanta Jambigi <mjambigi@linux.ibm.com>,
-	Halil Pasic <pasic@linux.ibm.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	"D. Wythe" <alibuda@linux.alibaba.com>,
-	Sidraya Jayagond <sidraya@linux.ibm.com>,
-	Wenjia Zhang <wenjia@linux.ibm.com>,
-	Tony Lu <tonylu@linux.alibaba.com>,
-	Wen Gu <guwen@linux.alibaba.com>,
-	Guangguan Wang <guangguan.wang@linux.alibaba.com>,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-s390@vger.kernel.org
-Subject: Re: [PATCH net-next v5 2/2] net/smc: handle -ENOMEM from
- smc_wr_alloc_link_mem gracefully
-Message-ID: <aOZv0NmekKIgpc5M@linux.alibaba.com>
-Reply-To: dust.li@linux.alibaba.com
-References: <20250929000001.1752206-1-pasic@linux.ibm.com>
- <20250929000001.1752206-3-pasic@linux.ibm.com>
- <aNnl_CfV0EvIujK0@linux.alibaba.com>
- <de0baa92-417c-475a-a342-9041f8fb5b8e@linux.ibm.com>
+	s=arc-20240116; t=1759932394; c=relaxed/simple;
+	bh=BuwQI0ywp1QTrfR2PtbUc2upP5PnlKtENsOpFyFhISE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oURG4Zw1Ao+lMZDUrdWv6DkxRqUavswSMAl8zKscgpzTk4tc21TuqdC2odQ2dsNhJHz1Og2e2m+mUpsVYfX94IGuDXPP1Z3XqJhQSuC+z/VGAvJoMdLMgrtcHgSGbEikidbfBy01xeo/Z8ZWZv1UBwZmgvvCps0O9j8WYhcnNiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q2zrPpkg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3F64C4CEE7;
+	Wed,  8 Oct 2025 14:06:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759932393;
+	bh=BuwQI0ywp1QTrfR2PtbUc2upP5PnlKtENsOpFyFhISE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=q2zrPpkgOWoOQJrVrNbEQKUzRJ2io4s8pRUZGfmmj5zYZCF4Pt0TWLWf36IZ7eKii
+	 aVwBqsb5B4VoD3Q9NDgKSBpM0J29A9mAB/7PltfhZUbxAIMeNsKbPGohqNWI0B8nor
+	 7ubN0WtAMrOoUo/Su9QMmEFU/dBLBLchl1B/dS3CoEqCmOL2+FiipvccyMLgLLaFrH
+	 I9G4ZUwmI7kftqojDsgR1idpL3h2djmCahxdYn8Bu4PaMEdIT8lY7CU3+0mNUmQ6jt
+	 6AB8oCPx/q/prmLsRIUYODU4JNtotuT+SyP45MGOy5GpND+8AWLcuafswlamNKHkAi
+	 O95eMlomOH+9Q==
+Message-ID: <f6d4145b-3295-4a98-9074-d4d1b7b466ae@kernel.org>
+Date: Wed, 8 Oct 2025 09:06:32 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <de0baa92-417c-475a-a342-9041f8fb5b8e@linux.ibm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] platform/x86/amd: pmc: Add Lenovo Legion Go 2 to pmc
+ quirk list
+To: Antheas Kapenekakis <lkml@antheas.dev>, Shyam-sundar.S-k@amd.com,
+ hansg@kernel.org, ilpo.jarvinen@linux.intel.com
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Mark Pearson <mpearson-lenovo@squebb.ca>
+References: <20251008135057.731928-1-lkml@antheas.dev>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <20251008135057.731928-1-lkml@antheas.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2025-10-06 11:25:22, Mahanta Jambigi wrote:
->On 29/09/25 7:20 am, Dust Li wrote:
->>> diff --git a/net/smc/smc_core.h b/net/smc/smc_core.h
->>> index 8d06c8bb14e9..5c18f08a4c8a 100644
->>> --- a/net/smc/smc_core.h
->>> +++ b/net/smc/smc_core.h
->>> @@ -175,6 +175,8 @@ struct smc_link {
->>> 	struct completion	llc_testlink_resp; /* wait for rx of testlink */
->>> 	int			llc_testlink_time; /* testlink interval */
->>> 	atomic_t		conn_cnt; /* connections on this link */
->>> +	u16			max_send_wr;
->>> +	u16			max_recv_wr;
->> 
->> Here, you've moved max_send_wr/max_recv_wr from the link group to individual links.
->> This means we can now have different max_send_wr/max_recv_wr values on two
->> different links within the same link group.
->> Since in Alibaba we doesn't use multi-link configurations, we haven't tested
->
->Does Alibaba always use a single RoCE device for SMC-R? In that case how
->redundancy is achieved if that link goes down?
+On 10/8/25 8:50 AM, Antheas Kapenekakis wrote:
+> The Lenovo Legion Go 2 takes a long time to resume from suspend.
+> This is due to it having an nvme resume handler that interferes
+> with IOMMU mappings. It is a common issue with older Lenovo
+> laptops. Adding it to that quirk list fixes this issue.
+> 
+> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/4618
+> Suggested-by: Mario Limonciello <mario.limonciello@amd.com>
+> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
 
-We expose a virtual RDMA device to our client inside their virtual
-machine. The underlying network is already redundant, so it’s got
-built-in reliability. You can think of it kind of like virtio-net, but
-instead of a regular virtual NIC, it’s an RDMA device.
+This makes sense for BIOS in the field.
+If this is fixed in the BIOS later I'd like to narrow the quirk at a 
+later time.
 
->
->> this scenario. Have you tested the link-down handling process in a multi-link
->> setup?
->I did test this after you query & don't see any issues. As Halil
->mentioned in worst case scenario one link might perform lesser than the
->other, that too if the kcalloc() failed for that link in
->smc_wr_alloc_link_mem() & succeeded in subsequent request with reduced
->max_send_wr/max_recv_wr size(half).
+Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
 
-Great! You can add my
+> ---
+>   drivers/platform/x86/amd/pmc/pmc-quirks.c | 17 +++++++++++++++++
+>   1 file changed, 17 insertions(+)
+> 
+> diff --git a/drivers/platform/x86/amd/pmc/pmc-quirks.c b/drivers/platform/x86/amd/pmc/pmc-quirks.c
+> index d63aaad7ef59..0fadcf5f288a 100644
+> --- a/drivers/platform/x86/amd/pmc/pmc-quirks.c
+> +++ b/drivers/platform/x86/amd/pmc/pmc-quirks.c
+> @@ -204,6 +204,23 @@ static const struct dmi_system_id fwbug_list[] = {
+>   			DMI_MATCH(DMI_PRODUCT_NAME, "82ND"),
+>   		}
+>   	},
+> +	/* https://gitlab.freedesktop.org/drm/amd/-/issues/4618 */
+> +	{
+> +		.ident = "Lenovo Legion Go 2",
+> +		.driver_data = &quirk_s2idle_bug,
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "83N0"),
+> +		}
+> +	},
+> +	{
+> +		.ident = "Lenovo Legion Go 2",
+> +		.driver_data = &quirk_s2idle_bug,
+> +		.matches = {
+> +			DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "83N1"),
+> +		}
+> +	},
+>   	/* https://gitlab.freedesktop.org/drm/amd/-/issues/2684 */
+>   	{
+>   		.ident = "HP Laptop 15s-eq2xxx",
+> 
+> base-commit: a8cdf51cda30f7461a98af821e8a28c5cb5f8878
 
-Reviewed-by: Dust Li <dust.li@linux.alibaba.com>
-
->> Otherwise, the patch looks good to me.
->> 
->> Best regards,
->> Dust
 
