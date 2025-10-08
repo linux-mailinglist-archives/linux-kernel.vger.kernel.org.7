@@ -1,157 +1,109 @@
-Return-Path: <linux-kernel+bounces-845492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B132BC525C
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:12:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02A17BC525F
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:13:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8938189CD75
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:13:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1661C189C697
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ECA9283124;
-	Wed,  8 Oct 2025 13:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA4927B34E;
+	Wed,  8 Oct 2025 13:13:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g4X0YvC1"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cpWzYXB7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8D82820BF
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 13:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7656F170A11
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 13:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759929144; cv=none; b=Qrq+4/hVKejG7FMFgY/C7j/pMhN7miKUUY1cqXlRzohnK8VLAUI9dCBojrxDMuxeipTF6fbVhqRwxXA2vR2uJPcjQs8Hfd24BZhyOUMBwgpcw7I9rSTf3aJXoXK6XPKVlsyTbcu+bT/+Nz7dL/aJNt8L4i5h/yeOL+GLBi1i8Mg=
+	t=1759929196; cv=none; b=uTZTIzn8HF/fKPCgYHNCArdSdxioVZgrtvy2famJrrISt+OVWR/201iwJr9bMh8kCNrpyljsohRU30z2eaOmIEU+yrJrc5SyBLIR+q/h/jnm+atQLAMaz0JxRSzdAM0bRP/6GHtjWPaQl0J9ISp4qZH7ajlauvv7TlyVrRYh2fY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759929144; c=relaxed/simple;
-	bh=4p1UWinSDvuUnC7Lvhny+4np9cwJcE7c98wT0kmH9qk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pdI3vFD4DaMMaR1El4HjAv3KFwkm1SwusAFFEBQcjCvZ1/RF6DJiRYbdVIPh0h5/g7wHyUsZEmcUdSG4ZwFVUWkohrC0+H+iTDhoSXJS4SZYfW0quDXa4+DVtlR2ahj+uBdXuyr7GdpDmDWfSeAt7U2IrEQLD8ZzSKwlgvsut5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g4X0YvC1; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-46e6674caa5so4994375e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 06:12:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759929141; x=1760533941; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9+tj3sYGck50rH2sadY+CKJOkmDA2rPQZromxu+7Slg=;
-        b=g4X0YvC1zTi2lbMy7ipEagPpz3RA35+CiVaTmIigWDyY4AnZBKkFSg9zNXM4Qz9pAK
-         hc0YBo3RGBMO5M0UkDgkCDDWoamKs5vNUuXJZZZspAheWSTbNrvbZeA9Uls3c+1U64tH
-         qFkTr9lYM8Kws/iVWGrf0gIqO9GIapNZAJy4wD883qBWuAbHN7e2eb+v+AwgF7XKZabb
-         T8Ph91aMXGmgMyA08yNFBwHeeFBrI9BBJLBiWJa9GkrU15syUGPMI4Qgzh/L2wJ4iUqy
-         ZLvvxhWnVB5yLS7px5bM3LRPHOwDy95TBvqW3TdDh5FXf2Sg5VrLkH3KAFR+H9Jalv4O
-         9uhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759929141; x=1760533941;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9+tj3sYGck50rH2sadY+CKJOkmDA2rPQZromxu+7Slg=;
-        b=N5+Ce1XHGug9KgQUBCukQdUIX7GyfcLUl073J8EIO40OYARfutNkSUYIEI0+XU9jGB
-         r+Dgw1KhAPIwq4v6d9Nf4/xvD4D/4rmJzWepMWhDGna5ywRrkjLWDPfE9ClUgp8ik+wV
-         sjq0/O2HXO6KNwejhYbm6W3fPakrerTZDzyow0ZFE/CZW8LXTck9eVCX2zbEkUI4T8su
-         7hyeSdzQOmxg5bipaSy/5OXv3spty3LLZEuUIW2iNis8s50BPji0CRy8OHQpLam46Q7L
-         AaPS/cvpUe/oLcA8x1Q1fzyZe2646oVVvqp6Oe/UvKL8JYVnMUBkVaXOnQW6k584cpZc
-         v+CA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOfHCMCV3n3+2MYmKSH3mKfN0O5eNKKsR3XQhjJkASvfNZ6Cyb90ceZHe178aDreXq2Z/l4dGNpBmVuvE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwX/5lcO1cbS9ynwtrxMgo0X1FyrNMRUhL0f75ivX+G/XCUFSWh
-	f0w6mr5r1pffaUlFOJwXuOs0keErsRgMLKQrksZvoFXh3zgMKg5rsreVEBfG3R0Sa70=
-X-Gm-Gg: ASbGnctG0CbNNEG0Muh3c78S8VgRATF5elrfj5J8Fha9qTn2DKxcdkQOc/8JJqWcV6N
-	XRnEwsrWVws3WoCnwmpMkVG9lSqIc6r0gPhOhuz+q5w6ZyZb9rVtm1KXHL3FvJDEFThtEab8BC9
-	Wc9YBjwXfHI8rsCws23nagdFt/dQwW2onICqTc/ceWaSaTiSyx9N98uMxPpUIiBwkbhDR5Y4E+r
-	3ywP/oOFAhupquW2vOIAWRQX6jJZCW9mQlyhzlukyDN5OQoWjMBlMUYSO7zGxYSWwJlcPNQe67R
-	s8MMdW08lqLvAOCQoSKTqiuLO8DPG68JvE5mC1GhseahYxMCifgUplYLv2VDqCQIBAZZxbjhrtr
-	Ve5GTADCUS638rKLrePA7YAgVWy/sL6qk8ovKmiDnbj6T084Ko5tvDuiMrFA=
-X-Google-Smtp-Source: AGHT+IEdp21lHWucjnH31ZPHqsp0lnQX0xwMEiA8mNoUsUUWDWTriY07NKlpecIVmqT3CXJzuP6A6w==
-X-Received: by 2002:a7b:c341:0:b0:46e:24a4:c247 with SMTP id 5b1f17b1804b1-46fa296e01amr35605835e9.5.1759929141178;
-        Wed, 08 Oct 2025 06:12:21 -0700 (PDT)
-Received: from vingu-cube.. ([2a01:e0a:f:6020:5123:5650:449b:dc1c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fa9c077acsm38270865e9.5.2025.10.08.06.12.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 06:12:20 -0700 (PDT)
-From: Vincent Guittot <vincent.guittot@linaro.org>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
+	s=arc-20240116; t=1759929196; c=relaxed/simple;
+	bh=J0UgBcMVZShSgTRFPqyT3w8kAQB687JxSVIhZQnew44=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JMVN3n2d2zks4Zbhk32hVCd0efsWSusPrped57ZUiQ94fIQVvyhmTtlvpeQlR6A9zgD+iiiCpJtKPI94f4+yzLsRTkTn/SfN+KX0+rRjXkO2X8Wjdu6j63MnOsIqJwkIltPIKsrvTZqDvdVOxnfEtsN40FumoqwHjQTrCaIWef4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cpWzYXB7; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759929193;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KfO3HcuzilzdD2IT8B5zQurZ7lvUWM/OXF8M+sb0TFY=;
+	b=cpWzYXB7+5i7crgqV0MGtknN66Jer/ITM3ogBhqWxyVTScjYd/mqpXfLBdFIxRB0zH3Hug
+	KpIVB5Q2qIQpcjkYZZyWHItrpBQ61ArKAf1Au7te+VZteKi3wHM/ijXuwBQo9pamEqARO0
+	n2TqMaZgTX83aqiHgWaeu+UiV69akhE=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-59-WK4l7uOGMXqH89epSJtmVA-1; Wed,
+ 08 Oct 2025 09:13:10 -0400
+X-MC-Unique: WK4l7uOGMXqH89epSJtmVA-1
+X-Mimecast-MFC-AGG-ID: WK4l7uOGMXqH89epSJtmVA_1759929189
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 032901800292;
+	Wed,  8 Oct 2025 13:13:09 +0000 (UTC)
+Received: from fedora (unknown [10.44.34.240])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 759451956056;
+	Wed,  8 Oct 2025 13:13:04 +0000 (UTC)
+Received: by fedora (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed,  8 Oct 2025 15:13:08 +0200 (CEST)
+Date: Wed, 8 Oct 2025 15:13:02 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	David Howells <dhowells@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+	Li RongQing <lirongqing@baidu.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
 	linux-kernel@vger.kernel.org
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH] sched/fair: Fix pelt lost idle time detection
-Date: Wed,  8 Oct 2025 15:12:14 +0200
-Message-ID: <20251008131214.3759798-1-vincent.guittot@linaro.org>
-X-Mailer: git-send-email 2.43.0
+Subject: Re: [PATCH v2 0/4] seqlock: introduce scoped_seqlock_read() and
+ scoped_seqlock_read_irqsave()
+Message-ID: <aOZjXq8u8fV_kABe@redhat.com>
+References: <20250928161953.GA3112@redhat.com>
+ <20251008123014.GA20413@redhat.com>
+ <20251008125639.GK3289052@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251008125639.GK3289052@noisy.programming.kicks-ass.net>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-The check for some lost idle pelt time should be always done when 
-pick_next_task_fair() fails to pick a task and not only when we call it
-from the fair fast-path.
+On 10/08, Peter Zijlstra wrote:
+>
+> On Wed, Oct 08, 2025 at 02:30:14PM +0200, Oleg Nesterov wrote:
+> > Only 1/4 was changed according to comments from Linus and Waiman,
+> > but let me resend 2-4 as well.
+>
+> Shall I put this in tip/locking/core once -rc1 happens or so?
 
-The case happens when the last running task on rq is a RT or DL task. When
-the latter goes to sleep and the /Sum of util_sum of the rq is at the max
-value, we don't account the lost of idle time whereas we should.
+Would be great ;) If nobody objects.
 
-Fixes: 67692435c411 ("sched: Rework pick_next_task() slow-path")
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
----
+Can you also take the trivial
 
-I Noticed this while reviewing [1]
+	[PATCH 1/1] documentation: seqlock: fix the wrong documentation of read_seqbegin_or_lock/need_seqretry
+	https://lore.kernel.org/all/20250928162029.GA3121@redhat.com/
 
-[1] https://lore.kernel.org/all/20251006105453.648473106@infradead.org/
+?
 
- kernel/sched/fair.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+OTOH, if this series is merged, this doc fix should be updated to
+mention scoped_seqlock_read()...
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index b3be1e2749ce..dd0ea01af730 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -8920,21 +8920,21 @@ pick_next_task_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf
- 	return p;
- 
- idle:
--	if (!rf)
--		return NULL;
--
--	new_tasks = sched_balance_newidle(rq, rf);
-+	if (rf) {
-+		new_tasks = sched_balance_newidle(rq, rf);
- 
--	/*
--	 * Because sched_balance_newidle() releases (and re-acquires) rq->lock, it is
--	 * possible for any higher priority task to appear. In that case we
--	 * must re-start the pick_next_entity() loop.
--	 */
--	if (new_tasks < 0)
--		return RETRY_TASK;
-+		/*
-+		 * Because sched_balance_newidle() releases (and re-acquires)
-+		 * rq->lock, it is possible for any higher priority task to
-+		 * appear. In that case we must re-start the pick_next_entity()
-+		 * loop.
-+		 */
-+		if (new_tasks < 0)
-+			return RETRY_TASK;
- 
--	if (new_tasks > 0)
--		goto again;
-+		if (new_tasks > 0)
-+			goto again;
-+	}
- 
- 	/*
- 	 * rq is about to be idle, check if we need to update the
--- 
-2.43.0
+Oleg.
 
 
