@@ -1,191 +1,297 @@
-Return-Path: <linux-kernel+bounces-845921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A042BC6813
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 21:52:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB2FBBC681C
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 21:52:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26AA5405012
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 19:52:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE5A31899548
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 19:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9C9D270ED9;
-	Wed,  8 Oct 2025 19:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AKAlqxU4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F7627703A;
+	Wed,  8 Oct 2025 19:52:33 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80DE21C8630
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 19:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571E026F29F
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 19:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759953151; cv=none; b=VaHQzWl3k6BwlvMNneZrH8xGTeV/5Dtheg6maI16/luu2WDpgKEiw+NcG00Wla89EWjU6W3QkXnTuanQevnIeL2ngDWnpVQjj12YuVVjvcLkpEfL8z2/3z9qXGteK3euwxxJnKJDz4nmU7103yw+M4X5pn5Hfd6wlP31J35OBmE=
+	t=1759953153; cv=none; b=mJPmadwplUqNf0s1nS73RiFVbJVFBcwecnah1A+kDiTpUJPEZ9ir2SU1touzpRNwygvq98WSprMO1iwtCk6QYHMumDGXaNkXfdn3makQ9LeKIYsPZV96ziTClNIFVWTk5dAqz+371U2Fi+JX8feUzNfpWmnPmJGLWMi6hUwA41o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759953151; c=relaxed/simple;
-	bh=f4lr5plTPmT72ZArDdPUKOMGD7bcpZzT/GwCWENFslQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FNgE0yoWDDZebbCMvYLM/P1wV7YOamld1/CyTkcy7k/9qaPNbsR6XdqveUFi9FkZ0HRdaddDVEkvljc4fb9zkwN72UXcrlW/IAEoSt5LM70deSmjABO65+l65BhvXxKqZHjLvUSAdqpFnZswT2oi6/olhKHZYtpqfz+lz6BmCl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AKAlqxU4; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759953148;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=RtTlwRw/t9hpT+l94+pAzSz0mGXw5QPtsOjkoODOmNY=;
-	b=AKAlqxU4+Icxrnmj+wGyWqPwFKKTtFeVh33XXj9pneYNBkZzmtJ968dbQGvdPrkAmsEKMI
-	iIkXpPVo0g9z1kn4+iG7tjaq3GYa/sbLX1litS8TlEFLMSb9OwB4qXKYrZDZE7fNE2XiH4
-	bkt2VzBQBFkhwGBhaLTdnvljpSct+K0=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-363-lgI9oqXYPRuxP80d4yBk0Q-1; Wed, 08 Oct 2025 15:52:26 -0400
-X-MC-Unique: lgI9oqXYPRuxP80d4yBk0Q-1
-X-Mimecast-MFC-AGG-ID: lgI9oqXYPRuxP80d4yBk0Q_1759953146
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-46e44b9779eso1018425e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 12:52:26 -0700 (PDT)
+	s=arc-20240116; t=1759953153; c=relaxed/simple;
+	bh=3qvhve7Rso2XU2XgoExBwYUUKw6NRkuDdIdAxjxD/nA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BsG+RwZEJG5EyVo7gjAcxOyhxWf9eS+3L2vRDaySBd5ztTGme5czDbvhQ6HXaxdZwgd8EwFoC0nVzp5h/1Ppb9Y4XeYq63v9j9xyzo7vQSGofoFcpN2P0rOfepcKT69JwITd+6oGn7F/UtmS0Y+q2ZUUq78EYYrV+Y0wPJgaf7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-90e469a7f6bso28695239f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 12:52:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759953146; x=1760557946;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RtTlwRw/t9hpT+l94+pAzSz0mGXw5QPtsOjkoODOmNY=;
-        b=ea2gyL8ZGiaPY1iCyvz36b1LAR6VJM9n0XL+CNZkk6MjFZ9yvXzyioqp6fOaCj6Df0
-         RjYLuAeTijfxas+5AC9IiF44hLYlhQqtCUwriRPEp1o8bKjtxqlCMMM/32UF9knUtWPO
-         KVAxkHVX9SjlUitVLga/Tzj5as1W/QpxEUNjAGHNjnSZ9d5tDq56UpoA/jA4fsphHZ9U
-         +MfHsxZ5WVkrdOVuuxJIscOoYqEAg3YFIgwkrpREpJ12hDFxBJIuYTsLfaC4QY8QQ6jE
-         bDAmQb00EY32x9W8yaq4iMsHK3qF1Yg5KZqRYjM2nSoRuurksPTtYke0QM3PzClp/FEI
-         21aA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUJxsvWyZF2dQUNWYu934TCMbsGUUD4KRB41iXhv6aRvy12KjmjbOoAdLEAViNrV1THEBFwQ29/cxms4g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymtIPkdJxPAHoXT89wQ0Jswi/UQ/ZnXtia/G9Fuk0KfM7zmIuJ
-	ahjhW7v16MFS+RZ8bEebdXzmPqeVQRNsjsDCaJJcqNQxODq2OUJQhu2Dj6XEcAXhlQSQiII5EBz
-	99yHWab5FPe4eHU9hb1jS+W+ZvZ7sIt+lv9xXUAQwJlqJGRU0ceaPJn3rkJxAay2ouw==
-X-Gm-Gg: ASbGnctBXYZcpHJuVHB6rLj+3AZ6nS5Eh0sNGGMu1p1hThdZ53rUlQ3KhdVGhx6pnA+
-	wz86k2PvaZ3v4H1XqcLIYKYDEnHcgM7+BDltCKLDCNSriCTP93qNisJiuo94tS14W78I3/MrlEC
-	SiK3BudYJ2LRtmIWr79YSg9O6l03CiBHf8Aev0bRYpBk7KsN09IlkC3a6Iv+3sN9acc9iHg0XmO
-	joPHGjOReUYiyquuqRmIUg+o9XDxVQAn6L90VgUQhy2lGdIkX6vCv/JI6a0bZZd5bTx/JzCV+kg
-	Dp2CY93iXW5TdUzeHTqMbJvvK1mGiYBndMmWG6jkYFIAMNYDmyDodeEcPclItEOdyHqc9MH55ti
-	XCfp1U5El
-X-Received: by 2002:a05:600c:529a:b0:46e:3e25:1626 with SMTP id 5b1f17b1804b1-46fa9aefe15mr33101615e9.19.1759953145618;
-        Wed, 08 Oct 2025 12:52:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFMCtqEpQgXh2ZeUUnrUMZuhOCP6i4VisyQMUewSPB0pVRauuNVK/j/FRYcpK2qrZwm7+c6bg==
-X-Received: by 2002:a05:600c:529a:b0:46e:3e25:1626 with SMTP id 5b1f17b1804b1-46fa9aefe15mr33101455e9.19.1759953145211;
-        Wed, 08 Oct 2025 12:52:25 -0700 (PDT)
-Received: from [192.168.3.141] (tmo-083-189.customers.d1-online.com. [80.187.83.189])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8e9719sm31915894f8f.31.2025.10.08.12.52.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Oct 2025 12:52:23 -0700 (PDT)
-Message-ID: <1763f0d9-37fc-4c3e-b31b-2cfac33d5c95@redhat.com>
-Date: Wed, 8 Oct 2025 21:52:09 +0200
+        d=1e100.net; s=20230601; t=1759953150; x=1760557950;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8f8h9X2xHHXFOQHQkm3eM+Ir5Rg89jA1iRVzsZRgPdc=;
+        b=VGyNc1awhBMgEvyHgCjrZIY0Rgdd/FYkaCR9VozFLLLYs8qbuKjgaWd/Xmo70hU7F9
+         hNH7H1wGAZNL0W7q1LWRGXD0uqHnqpVbVrpballAUCy1emIy8faHWBrC94KkdXZztCmo
+         foHyYhJecUhpVZLUemn3GnHpx8h4gjFdR2aaW+Dt6SLa8qUD2/ABxI351f4mOMN6J04v
+         V9ugFf+bp4oda8fcMPBz0e6vlBeJHtIs5Pqi7gmTRyYC0/cs+59gSdZA7zg0yjN9D0PG
+         iN1oLePROjxRcEn6z0gXKt0a/hsXThfP5/Uiiy42UcUHPUzV9iYCF3MQzK5ssVuFMvQr
+         +w5w==
+X-Forwarded-Encrypted: i=1; AJvYcCXx1meoGN/EtPel4MmQI31R47bH+fbzSew8D1iTY5OIJ2y2z04MBGhszyqQlBsRY3BXAeKO+LJA8i4zO08=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1xMaqOIjA1pwSck8kwX/mYQG84ghedY5flRZRKd8WyaQQPP53
+	XiDwfj7QlmbTOgVa5s1gqJpleY2ILFIuUMoySXcAa0pwGlBPLMMCRqKMzVgr9bduWQOW0Qj/XvN
+	7+WnmxijU77MniIAYyScXCTuJhedl9tdwtoNwUQLSJY4Tj1T0EMnl2S2NCCs=
+X-Google-Smtp-Source: AGHT+IHsZxV5nsNonIVmbO0X7KSK4ZaLtZ39CaA3Jtmp7pU6nOO7au7fncFTbX2qGYt8lIzIcCtE99Cnt74hdyiGtqvW5G5eld8u
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Revert "mm, hugetlb: remove hugepages_treat_as_movable
- sysctl"
-To: Gregory Price <gourry@gourry.net>
-Cc: linux-mm@kvack.org, corbet@lwn.net, muchun.song@linux.dev,
- osalvador@suse.de, akpm@linux-foundation.org, hannes@cmpxchg.org,
- laoar.shao@gmail.com, brauner@kernel.org, mclapinski@google.com,
- joel.granados@kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Mel Gorman <mgorman@suse.de>,
- Michal Hocko <mhocko@suse.com>,
- Alexandru Moise <00moses.alexander00@gmail.com>,
- David Rientjes <rientjes@google.com>
-References: <20251007214412.3832340-1-gourry@gourry.net>
- <402170e6-c49f-4d28-a010-eb253fc2f923@redhat.com>
- <aOZyt-7sf5PFCdpb@gourry-fedora-PF4VCD3F>
- <f4d0e176-b1d4-47f0-be76-4bff3dd7339a@redhat.com>
- <aOa0UPnxJVGvqc8S@gourry-fedora-PF4VCD3F>
- <b6d472ba-e6cf-4c96-935d-88c842ab3cd8@redhat.com>
- <aOa_A_i1HUt1wzCj@gourry-fedora-PF4VCD3F>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <aOa_A_i1HUt1wzCj@gourry-fedora-PF4VCD3F>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6602:6d8b:b0:91a:695a:cb61 with SMTP id
+ ca18e2360f4ac-93bd199772emr474759039f.13.1759953150264; Wed, 08 Oct 2025
+ 12:52:30 -0700 (PDT)
+Date: Wed, 08 Oct 2025 12:52:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68e6c0fe.050a0220.256323.00fe.GAE@google.com>
+Subject: [syzbot] [ocfs2?] possible deadlock in ocfs2_nfs_sync_lock (2)
+From: syzbot <syzbot+961597646899ae06073f@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 08.10.25 21:44, Gregory Price wrote:
-> On Wed, Oct 08, 2025 at 09:01:09PM +0200, David Hildenbrand wrote:
->>>
->>> fwiw this works cleanly.  Just dropping this here, but should continue
->>> the zone conversation.  I need to check, but does this actually allow
->>> pinnable allocations?  I thought pinning kicked off migration.
->>
->> Yes, it should because longterm pinning -> unmovable.
->>
-> 
-> You know i just realized, my test here only works before I allocated 1GB
-> pages on both node0 and node1.  If I only allocate 1gb hugetlb on node1,
-> then the migrate pages call fails - because there are no 1gb pages
-> available there.
-> 
-> I imagine this would cause hot-unplug/offline to fail since it uses the
-> same migration mechanisms.
-> 
-> Worse I would imagine this would fail for 2MB.
-> 
-> Seems like the 1GB limitation is arbitrary if 2MB causes the same issue.
+Hello,
 
-Yeah, with hugetlb allocations there are no guarantees either. It's just 
-that page compaction / defragmentation makes it much less likely to fail 
-in many scenarios.
+syzbot found the following issue on:
 
--- 
-Cheers
+HEAD commit:    cbf33b8e0b36 Merge tag 'bpf-fixes' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=177ec458580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1b4263e12240e6e1
+dashboard link: https://syzkaller.appspot.com/bug?extid=961597646899ae06073f
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-David / dhildenb
+Unfortunately, I don't have any reproducer for this issue yet.
 
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-cbf33b8e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/54786e46ef23/vmlinux-cbf33b8e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/dd6f88ce083b/bzImage-cbf33b8e.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+961597646899ae06073f@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+syzkaller #0 Not tainted
+------------------------------------------------------
+kswapd0/77 is trying to acquire lock:
+ffff888032ee4bd0 (&osb->nfs_sync_rwlock){.+.+}-{4:4}, at: ocfs2_nfs_sync_lock+0x106/0x250 fs/ocfs2/dlmglue.c:2875
+
+but task is already holding lock:
+ffffffff8de44f40 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:7015 [inline]
+ffffffff8de44f40 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0x951/0x2800 mm/vmscan.c:7389
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #3 (fs_reclaim){+.+.}-{0:0}:
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       __fs_reclaim_acquire mm/page_alloc.c:4269 [inline]
+       fs_reclaim_acquire+0x72/0x100 mm/page_alloc.c:4283
+       might_alloc include/linux/sched/mm.h:318 [inline]
+       slab_pre_alloc_hook mm/slub.c:4897 [inline]
+       slab_alloc_node mm/slub.c:5221 [inline]
+       __kmalloc_cache_noprof+0x40/0x6f0 mm/slub.c:5719
+       kmalloc_noprof include/linux/slab.h:957 [inline]
+       kzalloc_noprof include/linux/slab.h:1094 [inline]
+       ocfs2_reserve_new_metadata_blocks+0x113/0x940 fs/ocfs2/suballoc.c:968
+       ocfs2_mknod+0xe08/0x2050 fs/ocfs2/namei.c:350
+       ocfs2_mkdir+0x191/0x440 fs/ocfs2/namei.c:659
+       vfs_mkdir+0x303/0x510 fs/namei.c:4453
+       do_mkdirat+0x247/0x590 fs/namei.c:4486
+       __do_sys_mkdirat fs/namei.c:4503 [inline]
+       __se_sys_mkdirat fs/namei.c:4501 [inline]
+       __x64_sys_mkdirat+0x87/0xa0 fs/namei.c:4501
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #2 (&ocfs2_sysfile_lock_key[INODE_ALLOC_SYSTEM_INODE]){+.+.}-{4:4}:
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       down_write+0x96/0x1f0 kernel/locking/rwsem.c:1590
+       inode_lock include/linux/fs.h:979 [inline]
+       ocfs2_remove_inode fs/ocfs2/inode.c:731 [inline]
+       ocfs2_wipe_inode fs/ocfs2/inode.c:894 [inline]
+       ocfs2_delete_inode fs/ocfs2/inode.c:1155 [inline]
+       ocfs2_evict_inode+0x153d/0x4100 fs/ocfs2/inode.c:1295
+       evict+0x504/0x9c0 fs/inode.c:810
+       ocfs2_dentry_iput+0x247/0x370 fs/ocfs2/dcache.c:407
+       __dentry_kill+0x209/0x660 fs/dcache.c:669
+       dput+0x19f/0x2b0 fs/dcache.c:911
+       ovl_check_rename_whiteout fs/overlayfs/super.c:619 [inline]
+       ovl_make_workdir fs/overlayfs/super.c:714 [inline]
+       ovl_get_workdir+0xac3/0x17b0 fs/overlayfs/super.c:837
+       ovl_fill_super+0x154a/0x3da0 fs/overlayfs/super.c:1468
+       vfs_get_super fs/super.c:1324 [inline]
+       get_tree_nodev+0xb8/0x150 fs/super.c:1343
+       vfs_get_tree+0x8f/0x2b0 fs/super.c:1751
+       fc_mount fs/namespace.c:1208 [inline]
+       do_new_mount_fc fs/namespace.c:3651 [inline]
+       do_new_mount+0x302/0xa10 fs/namespace.c:3727
+       do_mount fs/namespace.c:4050 [inline]
+       __do_sys_mount fs/namespace.c:4238 [inline]
+       __se_sys_mount+0x313/0x410 fs/namespace.c:4215
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (&ocfs2_sysfile_lock_key[ORPHAN_DIR_SYSTEM_INODE]){+.+.}-{4:4}:
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       down_write+0x96/0x1f0 kernel/locking/rwsem.c:1590
+       inode_lock include/linux/fs.h:979 [inline]
+       ocfs2_wipe_inode fs/ocfs2/inode.c:852 [inline]
+       ocfs2_delete_inode fs/ocfs2/inode.c:1155 [inline]
+       ocfs2_evict_inode+0xf86/0x4100 fs/ocfs2/inode.c:1295
+       evict+0x504/0x9c0 fs/inode.c:810
+       ocfs2_dentry_iput+0x247/0x370 fs/ocfs2/dcache.c:407
+       __dentry_kill+0x209/0x660 fs/dcache.c:669
+       dput+0x19f/0x2b0 fs/dcache.c:911
+       ovl_check_rename_whiteout fs/overlayfs/super.c:619 [inline]
+       ovl_make_workdir fs/overlayfs/super.c:714 [inline]
+       ovl_get_workdir+0xac3/0x17b0 fs/overlayfs/super.c:837
+       ovl_fill_super+0x154a/0x3da0 fs/overlayfs/super.c:1468
+       vfs_get_super fs/super.c:1324 [inline]
+       get_tree_nodev+0xb8/0x150 fs/super.c:1343
+       vfs_get_tree+0x8f/0x2b0 fs/super.c:1751
+       fc_mount fs/namespace.c:1208 [inline]
+       do_new_mount_fc fs/namespace.c:3651 [inline]
+       do_new_mount+0x302/0xa10 fs/namespace.c:3727
+       do_mount fs/namespace.c:4050 [inline]
+       __do_sys_mount fs/namespace.c:4238 [inline]
+       __se_sys_mount+0x313/0x410 fs/namespace.c:4215
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&osb->nfs_sync_rwlock){.+.+}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3165 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+       validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
+       __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
+       lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+       down_read+0x46/0x2e0 kernel/locking/rwsem.c:1537
+       ocfs2_nfs_sync_lock+0x106/0x250 fs/ocfs2/dlmglue.c:2875
+       ocfs2_delete_inode fs/ocfs2/inode.c:1106 [inline]
+       ocfs2_evict_inode+0x390/0x4100 fs/ocfs2/inode.c:1295
+       evict+0x504/0x9c0 fs/inode.c:810
+       ocfs2_dentry_iput+0x247/0x370 fs/ocfs2/dcache.c:407
+       __dentry_kill+0x209/0x660 fs/dcache.c:669
+       shrink_kill+0xa9/0x2c0 fs/dcache.c:1114
+       shrink_dentry_list+0x2e0/0x5e0 fs/dcache.c:1141
+       prune_dcache_sb+0x10e/0x180 fs/dcache.c:1222
+       super_cache_scan+0x369/0x4b0 fs/super.c:222
+       do_shrink_slab+0x6ef/0x1110 mm/shrinker.c:437
+       shrink_slab_memcg mm/shrinker.c:550 [inline]
+       shrink_slab+0x7ef/0x10d0 mm/shrinker.c:628
+       shrink_one+0x28a/0x7c0 mm/vmscan.c:4955
+       shrink_many mm/vmscan.c:5016 [inline]
+       lru_gen_shrink_node mm/vmscan.c:5094 [inline]
+       shrink_node+0x315d/0x3780 mm/vmscan.c:6081
+       kswapd_shrink_node mm/vmscan.c:6941 [inline]
+       balance_pgdat mm/vmscan.c:7124 [inline]
+       kswapd+0x147c/0x2800 mm/vmscan.c:7389
+       kthread+0x70e/0x8a0 kernel/kthread.c:463
+       ret_from_fork+0x436/0x7d0 arch/x86/kernel/process.c:148
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+other info that might help us debug this:
+
+Chain exists of:
+  &osb->nfs_sync_rwlock --> &ocfs2_sysfile_lock_key[INODE_ALLOC_SYSTEM_INODE] --> fs_reclaim
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(fs_reclaim);
+                               lock(&ocfs2_sysfile_lock_key[INODE_ALLOC_SYSTEM_INODE]);
+                               lock(fs_reclaim);
+  rlock(&osb->nfs_sync_rwlock);
+
+ *** DEADLOCK ***
+
+2 locks held by kswapd0/77:
+ #0: ffffffff8de44f40 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:7015 [inline]
+ #0: ffffffff8de44f40 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0x951/0x2800 mm/vmscan.c:7389
+ #1: ffff88803b1de0e0 (&type->s_umount_key#51){.+.+}-{4:4}, at: super_trylock_shared fs/super.c:562 [inline]
+ #1: ffff88803b1de0e0 (&type->s_umount_key#51){.+.+}-{4:4}, at: super_cache_scan+0x91/0x4b0 fs/super.c:197
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 77 Comm: kswapd0 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ print_circular_bug+0x2ee/0x310 kernel/locking/lockdep.c:2043
+ check_noncircular+0x134/0x160 kernel/locking/lockdep.c:2175
+ check_prev_add kernel/locking/lockdep.c:3165 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3284 [inline]
+ validate_chain+0xb9b/0x2140 kernel/locking/lockdep.c:3908
+ __lock_acquire+0xab9/0xd20 kernel/locking/lockdep.c:5237
+ lock_acquire+0x120/0x360 kernel/locking/lockdep.c:5868
+ down_read+0x46/0x2e0 kernel/locking/rwsem.c:1537
+ ocfs2_nfs_sync_lock+0x106/0x250 fs/ocfs2/dlmglue.c:2875
+ ocfs2_delete_inode fs/ocfs2/inode.c:1106 [inline]
+ ocfs2_evict_inode+0x390/0x4100 fs/ocfs2/inode.c:1295
+ evict+0x504/0x9c0 fs/inode.c:810
+ ocfs2_dentry_iput+0x247/0x370 fs/ocfs2/dcache.c:407
+ __dentry_kill+0x209/0x660 fs/dcache.c:669
+ shrink_kill+0xa9/0x2c0 fs/dcache.c:1114
+ shrink_dentry_list+0x2e0/0x5e0 fs/dcache.c:1141
+ prune_dcache_sb+0x10e/0x180 fs/dcache.c:1222
+ super_cache_scan+0x369/0x4b0 fs/super.c:222
+ do_shrink_slab+0x6ef/0x1110 mm/shrinker.c:437
+ shrink_slab_memcg mm/shrinker.c:550 [inline]
+ shrink_slab+0x7ef/0x10d0 mm/shrinker.c:628
+ shrink_one+0x28a/0x7c0 mm/vmscan.c:4955
+ shrink_many mm/vmscan.c:5016 [inline]
+ lru_gen_shrink_node mm/vmscan.c:5094 [inline]
+ shrink_node+0x315d/0x3780 mm/vmscan.c:6081
+ kswapd_shrink_node mm/vmscan.c:6941 [inline]
+ balance_pgdat mm/vmscan.c:7124 [inline]
+ kswapd+0x147c/0x2800 mm/vmscan.c:7389
+ kthread+0x70e/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x436/0x7d0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
