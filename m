@@ -1,149 +1,176 @@
-Return-Path: <linux-kernel+bounces-845594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C6EFBC579F
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 16:48:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 386EABC57A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 16:49:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5293019E0C48
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 14:48:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 620213C7E5B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 14:49:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7A62EAB71;
-	Wed,  8 Oct 2025 14:48:20 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F3725742C
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 14:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A86A2EC555;
+	Wed,  8 Oct 2025 14:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fqCOyJXR"
+Received: from mail-yx1-f49.google.com (mail-yx1-f49.google.com [74.125.224.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA162EBBA8
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 14:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759934900; cv=none; b=ur/gkldlD6Js+g3jb8M0Loi1sz0a6FBSzsh/ppp70dJ3+An2X6UUXvkfs/y49p2OdWEsmx6drDqYIm3o3RdL80Z5ho6Rz5W+1ZztIRyApzWdKE+gNFu+0dnpTMkiN0Z9Rf0lzHAEUolxJlMbsLUtLVVadB4r8J1fjaijO9Kuhv8=
+	t=1759934974; cv=none; b=BneeMll5jXYyimY6AQa03fDfOZfcJBWQEAidS0cL4tucuUfUqg2AxSyPXFl3RDkyLnXnIU0dynDbqXERoVgLm55dtd+hbBCLiyPhXBtTbeALLxuY7CyboPDPLdan8pI596wQBYlV3nU/yj73AeGlpU6DUXCX18Vz2WgpP5P1zkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759934900; c=relaxed/simple;
-	bh=MSLnVgLUNFbIKrWw2FzcH0R8XK0T5k5ELgYs5IakANQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PhoyA9nBNxUpROYfJwsFXJa+zexEK6Iv6Uyoup0taZrWL1nHo3HTf/rYYY5tcwX5A4owVLKTP4pNH1AbPxn8BCrzBGRm3Vnz66Ayh5R5Vxerx+fSN321gFV9NffrRs7RCb75JkMqrIJj189qJbjtDdxWb79jm+vodaHGjwyNPag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EE04122FC;
-	Wed,  8 Oct 2025 07:48:08 -0700 (PDT)
-Received: from [10.1.28.50] (e122027.cambridge.arm.com [10.1.28.50])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C5F2B3F738;
-	Wed,  8 Oct 2025 07:48:14 -0700 (PDT)
-Message-ID: <5f095b02-2561-49d7-88a9-0fd82a1c9e00@arm.com>
-Date: Wed, 8 Oct 2025 15:48:12 +0100
+	s=arc-20240116; t=1759934974; c=relaxed/simple;
+	bh=2oz4055tSs+ZLXmvAtmckJ9z5uGepgRmiB+RNzcDoZk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PmaIyvM4IVrfcH5CYARN+IjdKrOp4lon5s1soIceWq5e0YYbZTORj/x6NdtKLws9ja1cFXYY5vM0IdLIEylfCx1mUcaAhMLFj9QQgxDe/t+Pf8kY6lsj9eNB8wdehnyAavFgxw4VMCc/UxljPxaYVwJqHoIk8qjzOBy2zIQor3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fqCOyJXR; arc=none smtp.client-ip=74.125.224.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-63bcdf5f241so1520347d50.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 07:49:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759934972; x=1760539772; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lcyaXLUPShgmIDCl33cHm/vwKuNgk2xrFWZ6LINoljM=;
+        b=fqCOyJXR+xxnYM34HBhJfbxalqBTWYYIDFA+INmQykJpkFZ2+KiTrqJ/37pyAP1FTx
+         QlJx8tvA647GFwCJ67FOKkbmfKemsC7wvb6Mmeyc7WAg7lwbLD4APo0QhX+thwdZfO15
+         vjpKl+7JkxbvcXHcuKjd3OSbPi2Oexpgf2EyGluNjgcYIe9TF3PbszAWxOUjXjF61PUb
+         7YWOA+Dt8NK3nhuUHwe6P5K3tduixazIORhkGl7qptxKpKMxXOxPhY945iLxMuzptFeT
+         +d/K6kG8Ejda4+Z1AoA7rJhTpUmbsgbhaHv5ss7JpcVxm4Qc6gyOuVff8xPtMDsKLEn4
+         /TZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759934972; x=1760539772;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lcyaXLUPShgmIDCl33cHm/vwKuNgk2xrFWZ6LINoljM=;
+        b=NBTZBOcOMOXWikxLL2A3mXwPO0HBWN7G9NsT2rp3mVsNr6zQolmf4BIIzIxtWta8Oy
+         wLZxpOGxCWoomdz5i74ta8qCEJ5zgQRflDFXhqB48GdOLHdKSEI5NbSeWox5UZiDNrC1
+         pqkxj7BBXkXZXxclPRHocyWP8cTkQbTITdcV1eKPAqJ2SdFTaA2C9G95hMh5p9G5ZylO
+         fsTQTPf2aW6PS3p1kLXvSosAE+AagrccBQPBHYEx4iGl46k9APtXhxQB30cU67JtJMCq
+         WCcw/H6Dw/aVfJLE3RZsaOLDirjq2GFcm5IA5uOVnZKrm8eUSsNQUoiY22D4ItLYK61G
+         dR2g==
+X-Forwarded-Encrypted: i=1; AJvYcCWtegWGGFjpVgDFyW4gbOguZ59HwoJikQisVBHZBg1CPvIv7nS5CJ8IRqtQ3HRGkd6mv5g/RPg4tXXCw3E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoQ2w5V9iWcWdp9S+bLjzPshKRDQxxZknCwXFBFSJEOe91vTao
+	8SlDmePF6D9hxuGFUDHezmHeFlQ8IIeQ9AA1e9QeGMaUpRlGOL+ohBuDAzbu5+bjUcKGgHeWK7G
+	9fS8luwAYRQ99Psc8VY6PuGKy98jGs8w=
+X-Gm-Gg: ASbGncvQ79KDCSaRmFPRLcFkyxLLG0sBqNvNrALNNpt5Pi8E+pSrh9kDlR+QmOo4T8c
+	/BLM/P7TzhFGiaaU1UyPgwDvxy+sOGHJ2U5Jf6H/qDGkFMXYRlMLSHpj0F1XQMBCkDChiruAT0P
+	zfwHSp+ubU10JcpFYz+R24oijJqXUksUMEce6tnnXM0tTfJ5kDjKKyMhyD+uTI33senAUVukXA5
+	vXWb3YdUYtgRUhQcPxErrhNrWmEISLsM8MSFJdb1Hd+7w==
+X-Google-Smtp-Source: AGHT+IEEvRqkuJ82Z/1uDguuR+kVgtpAwObB6vWeI3q8N/eP1FxDL09AonZPB36dClmDoJcAb7GULptIPduQRTZOjdw=
+X-Received: by 2002:a53:b847:0:b0:635:4ecf:f0ce with SMTP id
+ 956f58d0204a3-63cbe14cc08mr6282876d50.26.1759934971823; Wed, 08 Oct 2025
+ 07:49:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/panfrost: Name scheduler queues after their job slots
-To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
- linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org,
- Boris Brezillon <boris.brezillon@collabora.com>, kernel@collabora.com,
- Rob Herring <robh@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-References: <20251002171139.2067139-1-adrian.larumbe@collabora.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20251002171139.2067139-1-adrian.larumbe@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241121100539.605818-1-jimzhao.ai@gmail.com> <20251007161711.468149-1-JPEWhacker@gmail.com>
+ <ywwhwyc4el6vikghnd5yoejteld6dudemta7lsrtacvecshst5@avvpac27felp>
+In-Reply-To: <ywwhwyc4el6vikghnd5yoejteld6dudemta7lsrtacvecshst5@avvpac27felp>
+From: Joshua Watt <jpewhacker@gmail.com>
+Date: Wed, 8 Oct 2025 08:49:20 -0600
+X-Gm-Features: AS18NWCpKHFseMz7HnNNaZWGPOtA5ZcFiGPgcQxn7wnVm-h7S75ViS7O41MSTZM
+Message-ID: <CAJdd5GY1mmi83V8DyiUJSZoLRVhUz_hY=qR-SjZ8Ss9bxQ002w@mail.gmail.com>
+Subject: Re: [PATCH] mm/page-writeback: Consolidate wb_thresh bumping logic
+ into __wb_calc_thresh
+To: Jan Kara <jack@suse.cz>
+Cc: jimzhao.ai@gmail.com, akpm@linux-foundation.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, willy@infradead.org, linux-nfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 02/10/2025 18:11, Adrián Larumbe wrote:
-> Drawing from commit d2624d90a0b7 ("drm/panthor: assign unique names to
-> queues"), give scheduler queues proper names that reflect the function
-> of their JM slot, so that this will be shown when gathering DRM
-> scheduler tracepoints.
-> 
-> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+On Wed, Oct 8, 2025 at 5:14=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
+>
+> Hello!
+>
+> On Tue 07-10-25 10:17:11, Joshua Watt wrote:
+> > From: Joshua Watt <jpewhacker@gmail.com>
+> >
+> > This patch strangely breaks NFS 4 clients for me. The behavior is that =
+a
+> > client will start getting an I/O error which in turn is caused by the c=
+lient
+> > getting a NFS3ERR_BADSESSION when attempting to write data to the serve=
+r. I
+> > bisected the kernel from the latest master
+> > (9029dc666353504ea7c1ebfdf09bc1aab40f6147) to this commit (log below). =
+Also,
+> > when I revert this commit on master the bug disappears.
+> >
+> > The server is running kernel 5.4.161, and the client that exhibits the
+> > behavior is running in qemux86, and has mounted the server with the opt=
+ions
+> > rw,relatime,vers=3D4.1,rsize=3D1048576,wsize=3D1048576,namlen=3D255,sof=
+t,proto=3Dtcp,port=3D52049,timeo=3D600,retrans=3D2,sec=3Dnull,clientaddr=3D=
+172.16.6.90,local_lock=3Dnone,addr=3D172.16.6.0
+> >
+> > The program that I wrote to reproduce this is pretty simple; it does a =
+file
+> > lock over NFS, then writes data to the file once per second. After abou=
+t 32
+> > seconds, it receives the I/O error, and this reproduced every time. I c=
+an
+> > provide the sample program if necessary.
+>
+> This is indeed rather curious.
+>
+> > I also captured the NFS traffic both in the passing case and the failur=
+e case,
+> > and can provide them if useful.
+> >
+> > I did look at the two dumps and I'm not exactly sure what the differenc=
+e is,
+> > other than with this patch the client tries to write every 30 seconds (=
+and
+> > fails), where as without it attempts to write back every 5 seconds. I h=
+ave no
+> > idea why this patch would cause this problem.
+>
+> So the change in writeback behavior is not surprising. The commit does
+> modify the logic computing dirty limits in some corner cases and your
+> description matches the fact that previously the computed limits were low=
+er
+> so we've started writeback after 5s (dirty_writeback_interval) while with
+> the patch we didn't cross the threshold and thus started writeback only
+> once the dirty data was old enough, which is 30s (dirty_expire_interval).
+>
+> But that's all, you should be able to observe exactly the same writeback
+> behavior if you write less even without this patch. So I suspect that the
+> different writeback behavior is just triggering some bug in the NFS (eith=
+er
+> on the client or the server side). The NFS3ERR_BADSESSION error you're
+> getting back sounds like something times out somewhere, falls out of cach=
+e
+> and reports this error (which doesn't happen if we writeback after 5s
+> instead of 30s). NFS guys maybe have better idea what's going on here.
+>
+> You could possibly workaround this problem (and verify my theory) by tuni=
+ng
+> /proc/sys/vm/dirty_expire_centisecs to a lower value (say 500). This will
+> make inode writeback start earlier and thus should effectively mask the
+> problem again.
 
-Two minor things below, but with those fixed:
+Changing /proc/sys/vm/dirty_expire_centisecs did indeed prevent the
+issue from occurring. As an experiment, I tried to see what the lowest
+value I could use that worked, and it was also 500. Even setting it to
+600 would cause it to error out eventually. This would indicate to me
+a server problem (which is unfortunate because that's much harder for
+me to debug), but perhaps the NFS folks could weigh in.
 
-Reviewed-by: Steven Price <steven.price@arm.com>
-
-> ---
->  drivers/gpu/drm/panfrost/panfrost_drv.c | 6 ------
->  drivers/gpu/drm/panfrost/panfrost_job.c | 6 +++++-
->  drivers/gpu/drm/panfrost/panfrost_job.h | 2 ++
->  3 files changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
-> index 22350ce8a08f..d08c87bc63a2 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
-> @@ -668,12 +668,6 @@ static void panfrost_gpu_show_fdinfo(struct panfrost_device *pfdev,
->  	 *   job spent on the GPU.
->  	 */
->  
-> -	static const char * const engine_names[] = {
-> -		"fragment", "vertex-tiler", "compute-only"
-> -	};
-> -
-> -	BUILD_BUG_ON(ARRAY_SIZE(engine_names) != NUM_JOB_SLOTS);
-
-NIT: We could move this to panfrost_job.c and keep the BUILD_BUG_ON.
-
-> -
->  	for (i = 0; i < NUM_JOB_SLOTS - 1; i++) {
->  		if (pfdev->profile_mode) {
->  			drm_printf(p, "drm-engine-%s:\t%llu ns\n",
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c b/drivers/gpu/drm/panfrost/panfrost_job.c
-> index c47d14eabbae..0f0340ffee19 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_job.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_job.c
-> @@ -28,6 +28,10 @@
->  #define job_write(dev, reg, data) writel(data, dev->iomem + (reg))
->  #define job_read(dev, reg) readl(dev->iomem + (reg))
->  
-> +const char * const engine_names[] = {
-> +	"fragment", "vertex-tiler-compute", "compute-only"
-> +};
-> +
->  struct panfrost_queue_state {
->  	struct drm_gpu_scheduler sched;
->  	u64 fence_context;
-> @@ -846,7 +850,6 @@ int panfrost_job_init(struct panfrost_device *pfdev)
->  		.num_rqs = DRM_SCHED_PRIORITY_COUNT,
->  		.credit_limit = 2,
->  		.timeout = msecs_to_jiffies(JOB_TIMEOUT_MS),
-> -		.name = "pan_js",
->  		.dev = pfdev->dev,
->  	};
->  	struct panfrost_job_slot *js;
-> @@ -887,6 +890,7 @@ int panfrost_job_init(struct panfrost_device *pfdev)
->  
->  	for (j = 0; j < NUM_JOB_SLOTS; j++) {
->  		js->queue[j].fence_context = dma_fence_context_alloc(1);
-> +		args.name = engine_names[j];
->  
->  		ret = drm_sched_init(&js->queue[j].sched, &args);
->  		if (ret) {
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_job.h b/drivers/gpu/drm/panfrost/panfrost_job.h
-> index 5a30ff1503c6..52ff10b8d3d0 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_job.h
-> +++ b/drivers/gpu/drm/panfrost/panfrost_job.h
-> @@ -53,6 +53,8 @@ struct panfrost_jm_ctx {
->  	struct drm_sched_entity slot_entity[NUM_JOB_SLOTS];
->  };
->  
-> +extern const char * const engine_names[];
-
-NIT: Now this is no longer a local variable I think we should prefix it,
-e.g. panfrost_engine_names.
-
-> +
->  int panfrost_jm_ctx_create(struct drm_file *file,
->  			   struct drm_panfrost_jm_ctx_create *args);
->  int panfrost_jm_ctx_destroy(struct drm_file *file, u32 handle);
-> 
-> base-commit: 30531e9ca7cd4f8c5740babd35cdb465edf73a2d
-
+>
+>                                                                 Honza
+> --
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
