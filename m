@@ -1,150 +1,113 @@
-Return-Path: <linux-kernel+bounces-845221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3444BC402F
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 10:56:28 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0084ABC400E
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 10:55:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44D8418872E9
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 08:56:47 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9FFE435288E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 08:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B03B2F4A18;
-	Wed,  8 Oct 2025 08:56:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8097E2F49F4;
+	Wed,  8 Oct 2025 08:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="VqzCtDDG"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IfZztZSN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E07272F3632;
-	Wed,  8 Oct 2025 08:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7302E22B4
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 08:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759913776; cv=none; b=nYYCPtHJepk7hxe1uOebv9uwV0W8H0ZLjJtsvS3lsKIVmzvM5/wzyptEql94hvvgGVF7h7ojRdLdAhI1rN4QNq+D9MlUTQXgPLNGFN4paLn8bAyyYQAvSNTWcD9koYvZ6X7upXqay0Qlq/4t8uuEIyg6ntYMrqnkH5e3YJ4eW/o=
+	t=1759913710; cv=none; b=iOtxLH7GToa8XXARvTEh6p7xokMUeCcZwZX1AHkNKuQuZAcU2E1YJSgG1BlIhUkI5u+SEV24VlY3QknIxb50ipPBEzw+BUJjYIL2t/ZkSl7dsSBtWmUNw2GqU73hiD7ed0gWdv6N20uiQgFMTZBU24HuuW48euB8Fpbvnr2qDoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759913776; c=relaxed/simple;
-	bh=H/ik4pU3HkalHVwzw773zJ63OWJtWJ8qrNm4n1O+v/Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PIowZPuDCTPBK4WAAwGfB8QgCXEzgYEcNcnJBeE61dFujmTxuOySSnKHp2hxiDbQMbkuq+SsMoXFmiViDZW5iwnwC/vH29n9quXZ4kFdOHSLMgOd0b+/nVrSHp3T53Ep5/TfgXW4hV5s9HMIJnzuiE2iH/OI4Cs4pBDja1mi4d8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=VqzCtDDG; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=si
-	54P4hhGgXr8g3ksCyz7KRzFUMFtbJhWpk8XEnsyFU=; b=VqzCtDDGa1swIt+8DM
-	IVv4UNWYMMzRkAASqV2FsH6sbCNweGBu2oCG5skunIEd70DlCwH4uibNVeNENFoQ
-	bu4x1fA8DI9H67N8eBmMI7xpS8Sld4TCOmIgByUiF5LYpKw815EsMDfUzg5mmLXu
-	cTpFN69Fc6oGcYu8Y4MqRyUxA=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wDXL7fpJuZoLo0ZCw--.24071S4;
-	Wed, 08 Oct 2025 16:55:06 +0800 (CST)
-From: Haoxiang Li <haoxiang_li2024@163.com>
-To: minghsiu.tsai@mediatek.com,
-	houlong.wei@mediatek.com,
-	andrew-ct.chen@mediatek.com,
-	mchehab@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	hans.verkuil@cisco.com,
-	christophe.jaillet@wanadoo.fr,
-	nicolas@ndufresne.ca
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	s=arc-20240116; t=1759913710; c=relaxed/simple;
+	bh=eyr6gDi37Ru8nuj21CkAi6nqiQrd/Us5xWlLiGHLy2Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QtuKZ2XCsD9HG6+vuvNQMRyJSKL7n5UaP9ippBOGMVTjy7K6f1BMcKoWq4zIuEtWQHb3GzXk3K4mmU7nTcYX7dz5Hpj7zqCYTh+6evEr9OfP4dFa6q/BBWj+2uZRuv8r5s1jOZJquFTarjMeUMl1MQQKMLn+vaZ99AqYZDjqcTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IfZztZSN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3B61C4CEF4;
+	Wed,  8 Oct 2025 08:55:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759913710;
+	bh=eyr6gDi37Ru8nuj21CkAi6nqiQrd/Us5xWlLiGHLy2Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IfZztZSNbIcLHWEXxmGMy7WBI7I5FnPLuHesKunLdfxwEVd7YFIJ/4HujdZFo74+m
+	 mQArzKq0O8VkfyQ0NaHGmQIAg1rAaJj4yCyGnsJCsPWR/PgLeD8/uSeetV6EMkClQ0
+	 /Ih7G0bIn9npYMYVfLHHazcjL9kB9XlFPX2029pGTi7NNohqpQ9FZoxWznon7ATN+Q
+	 plbj5FBms3j8zXWeUlMn9TK7+eZ4fdgKRyZLrqqTmes2csL8h7o8BbZhJU166YF95S
+	 4NoCKzuHrq+ijolrj7C/xeIQu4mfXyBCf9DOn0ZKJrZEdLiXNpFvJcX8k0ZRBKjypN
+	 V5fwjJIW3Uv2g==
+Date: Wed, 8 Oct 2025 09:55:05 +0100
+From: Will Deacon <will@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Haoxiang Li <haoxiang_li2024@163.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v3] media: mtk-mdp: Fix error handling in probe function
-Date: Wed,  8 Oct 2025 16:55:03 +0800
-Message-Id: <20251008085503.12434-1-haoxiang_li2024@163.com>
-X-Mailer: git-send-email 2.25.1
+	Sascha Bischoff <sascha.bischoff@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <maz@kernel.org>
+Subject: Re: [PATCH v2] arm64/sysreg: Fix GIC CDEOI instruction encoding
+Message-ID: <aOYm6SUnPo1VEvdM@willie-the-truck>
+References: <20251007102600.879337-1-lpieralisi@kernel.org>
+ <aOUsjRkq4DTcLujW@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDXL7fpJuZoLo0ZCw--.24071S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxuF4xZF13Kr15ArWDtFyrWFg_yoW5Jw48pF
-	yDKayFkrWUCFW29r47Ja18A3Z8Cw1S9w48Ww4xJw4xC345WrWrJryrta48t3yxtr97Ca43
-	Jw1avFWrCFWYvF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0p_oGHUUUUUU=
-X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/xtbBEhXbbmjf66NFhwACsN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aOUsjRkq4DTcLujW@arm.com>
 
-Add mtk_mdp_unregister_m2m_device() on the error handling path to prevent
-resource leak.
+On Tue, Oct 07, 2025 at 04:06:53PM +0100, Catalin Marinas wrote:
+> On Tue, Oct 07, 2025 at 12:26:00PM +0200, Lorenzo Pieralisi wrote:
+> > The GIC CDEOI system instruction requires the Rt field to be set to 0b11111
+> > otherwise the instruction behaviour becomes CONSTRAINED UNPREDICTABLE.
+> > 
+> > Currenly, its usage is encoded as a system register write, with a constant
+> > 0 value:
+> > 
+> > write_sysreg_s(0, GICV5_OP_GIC_CDEOI)
+> > 
+> > While compiling with GCC, the 0 constant value, through these asm
+> > constraints and modifiers ('x' modifier and 'Z' constraint combo):
+> > 
+> > asm volatile(__msr_s(r, "%x0") : : "rZ" (__val));
+> > 
+> > forces the compiler to issue the XZR register for the MSR operation (ie
+> > that corresponds to Rt == 0b11111) issuing the right instruction encoding.
+> > 
+> > Unfortunately LLVM does not yet understand that modifier/constraint
+> > combo so it ends up issuing a different register from XZR for the MSR
+> > source, which in turns means that it encodes the GIC CDEOI instruction
+> > wrongly and the instruction behaviour becomes CONSTRAINED UNPREDICTABLE
+> > that we must prevent.
+> > 
+> > Add a conditional to write_sysreg_s() macro that detects whether it
+> > is passed a constant 0 value and issues an MSR write with XZR as source
+> > register - explicitly doing what the asm modifier/constraint is meant to
+> > achieve through constraints/modifiers, fixing the LLVM compilation issue.
+> > 
+> > Fixes: 7ec80fb3f025 ("irqchip/gic-v5: Add GICv5 PPI support")
+> > Suggested-by: Catalin Marinas <catalin.marinas@arm.com>
+> > Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> > Acked-by: Marc Zyngier <maz@kernel.org>
+> > Cc: stable@vger.kernel.org
+> > Cc: Sascha Bischoff <sascha.bischoff@arm.com>
+> > Cc: Will Deacon <will@kernel.org>
+> > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> > Cc: Mark Rutland <mark.rutland@arm.com>
+> > Cc: Marc Zyngier <maz@kernel.org>
+> 
+> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+> 
+> (unless Will sends another pull request before -rc1, I'll pick this
+> patch shortly after)
 
-Add check for the return value of vpu_get_plat_device() to prevent null
-pointer dereference. And vpu_get_plat_device() increases the reference
-count of the returned platform device. Add platform_device_put() to
-prevent reference leak.
+I'm not planning to send anything until the -rc3 timeframe now as I'm
+going fishing for a couple of weeks :)
 
-Fixes: c8eb2d7e8202 ("[media] media: Add Mediatek MDP Driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
----
-Changes in v3:
-- Modify the patch subject and description.
-- Patch v2 is a little bit verbose and trivial, so I changed the
-  subject and moved the fixes of mtk_mdp_remove to a separate patch.
-  Thanks, Nicolas!
-Changes in v2:
-- Add check for vpu_get_plat_device()
-- Add platform_device_put() in mtk_mdp_remove()
-- Add mtk_mdp_unregister_m2m_device() on the error handling path.
-- Modify the patch title and description. I think you are right.
-  Thanks, CJ!
----
- .../media/platform/mediatek/mdp/mtk_mdp_core.c   | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/platform/mediatek/mdp/mtk_mdp_core.c b/drivers/media/platform/mediatek/mdp/mtk_mdp_core.c
-index 80fdc6ff57e0..f78fa30f1864 100644
---- a/drivers/media/platform/mediatek/mdp/mtk_mdp_core.c
-+++ b/drivers/media/platform/mediatek/mdp/mtk_mdp_core.c
-@@ -194,11 +194,17 @@ static int mtk_mdp_probe(struct platform_device *pdev)
- 	}
- 
- 	mdp->vpu_dev = vpu_get_plat_device(pdev);
-+	if (!mdp->vpu_dev) {
-+		dev_err(&pdev->dev, "Failed to get vpu device\n");
-+		ret = -ENODEV;
-+		goto err_vpu_get_dev;
-+	}
-+
- 	ret = vpu_wdt_reg_handler(mdp->vpu_dev, mtk_mdp_reset_handler, mdp,
- 				  VPU_RST_MDP);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to register reset handler\n");
--		goto err_m2m_register;
-+		goto err_reg_handler;
- 	}
- 
- 	platform_set_drvdata(pdev, mdp);
-@@ -206,7 +212,7 @@ static int mtk_mdp_probe(struct platform_device *pdev)
- 	ret = vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to set vb2 dma mag seg size\n");
--		goto err_m2m_register;
-+		goto err_reg_handler;
- 	}
- 
- 	pm_runtime_enable(dev);
-@@ -214,6 +220,12 @@ static int mtk_mdp_probe(struct platform_device *pdev)
- 
- 	return 0;
- 
-+err_reg_handler:
-+	platform_device_put(mdp->vpu_dev);
-+
-+err_vpu_get_dev:
-+	mtk_mdp_unregister_m2m_device(mdp);
-+
- err_m2m_register:
- 	v4l2_device_unregister(&mdp->v4l2_dev);
- 
--- 
-2.25.1
-
+Will
 
