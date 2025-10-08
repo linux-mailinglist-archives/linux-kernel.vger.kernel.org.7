@@ -1,100 +1,59 @@
-Return-Path: <linux-kernel+bounces-844929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF881BC313D
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 02:40:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 537ACBC314C
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 02:42:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 741D73A563A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 00:40:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E2B9189EAA3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 00:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 899EB285C83;
-	Wed,  8 Oct 2025 00:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8941828643C;
+	Wed,  8 Oct 2025 00:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VwdkZqZ4"
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X5bgyMdA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2F011FA859;
-	Wed,  8 Oct 2025 00:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAA1285CBD;
+	Wed,  8 Oct 2025 00:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759884024; cv=none; b=i9T1b80TRU0C0P731yUDzYlt6vu/5MrBARE/gPzSpAubPpnsSg0MPG8g9SsflpzV/rtvxP0Fxx+94SR5s5obYhBE4GY88j8zFFXWqBUJK6/bo1SrkEfbkiKnFuB4Ycpl74rgo69q5xzPEEY1a2P/dhiwKbGjdbql9hwfmUPMKMU=
+	t=1759884158; cv=none; b=Fejqf/Y/VXIRUSTfKxplslXY439ubmNLo/GoWYy/+Zec+s0Gd3UbkErLnzIzqH7wLJomzUsKBlLOFG2dtjmq/TMH5/SZjcXLD+ovwtxXH1ZF/q8n3EM4v8nwD5JiEOuTAbO6002fLZWDdYkyn/4wDHH0C5fn+BHBlSKZcBkGCP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759884024; c=relaxed/simple;
-	bh=4Lj6XaN2MmCn4Ty31dhCcFk/RRrhqYrrk/p2EtLxfgs=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=vDheB1fNuMC2SLvcUvXe+qLl/a/rgJzQNdAgkNPqN1GGRNnjhz6N5B3RS+yP2KTchc46nItR2miuCIjDm/PNDK+Jrc+fZumHj/spuDlj5s/ony93FfCg47CjXUTpAJUl2bLB0Cx7MIlcQ0Mq4kQF8zK4pIGa2hd34uHRaPb4VOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VwdkZqZ4; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 229E914005B1;
-	Tue,  7 Oct 2025 20:40:22 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Tue, 07 Oct 2025 20:40:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1759884022; x=1759970422; bh=GIQqrOTmZqlirCfdm3X1h0B9JmIfdK5suLW
-	7FpXibLA=; b=VwdkZqZ4D9mMNQ50FJ8vt034npGjIiVnaoOm/Cr6hYN0i76aTFC
-	DAX/kfGxEMubDBgsZOKO3wTPxRaVEAQD61LBIhIxHPBJfPWdPLhyUjTwE9/IOaoY
-	c+/Rcd6CM5Pv/PdH3DPRtUqQaGSXMCcKpP9vz4sER/7ixtx3lCixEpauRin/sCYT
-	t2cMvqb50YEo6n/0VTAU4EZUxSATg8uIEMEmFJybkeZEsAJUIruT23P0QJfOQ24g
-	rSZ8es58kqIxlrFbGEBbjXC2G6+wCX72ibbAYIN31Uq++o07ZaEVo6QfNcxlp4JV
-	4IfZmQXnzsS9Me/lR4hB0GQW1SL25wEyldQ==
-X-ME-Sender: <xms:87LlaNp5q7HArd0fhgaJV7uvZQG6_a_eJPncjOasx8yIma_2qD2AwQ>
-    <xme:87LlaLWNFyMVVQgBqSvK-kxSyJ2DZK7Di3aMZNWFr1qEuRzvXW4wwR2fRHrSWymoW
-    NyokvQVFEBkef4HVZxY561ayUhxq8XvLD72_L8jC1P8KyiEOcq8PIE>
-X-ME-Received: <xmr:87LlaE5NfE9cpCiamDcg51BfyMGBd3Gb2UTyy7ckRUFU8hCmrRC2xMnzbJupfQP0PUvA3ObD3juOMQupCSNClqrl1I95HmeoLPU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutddukeelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcuvfhh
-    rghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtth
-    gvrhhnpeelueehleehkefgueevtdevteejkefhffekfeffffdtgfejveekgeefvdeuheeu
-    leenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehfth
-    hhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopedvgedpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurg
-    htihhonhdrohhrghdprhgtphhtthhopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhr
-    ghdprhgtphhtthhopehorghksehhvghlshhinhhkihhnvghtrdhfihdprhgtphhtthhope
-    hkvghnthdrohhvvghrshhtrhgvvghtsehlihhnuhigrdguvghvpdhrtghpthhtoheplhgr
-    nhgtvgdrhigrnhhgsehlihhnuhigrdguvghvpdhrtghpthhtoheprghmrghinhguvgigse
-    houhhtlhhoohhkrdgtohhmpdhrtghpthhtoheprghnnhgrrdhstghhuhhmrghkvghrseho
-    rhgrtghlvgdrtghomhdprhgtphhtthhopegsohhquhhnrdhfvghnghesghhmrghilhdrtg
-    homhdprhgtphhtthhopehiohifohhrkhgvrhdtsehgmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:87LlaJ1FczvzMhYXPa0JGQElbUfGWoiZGJkuFow5sf0FqicGrvIc3Q>
-    <xmx:87LlaL_xGHyojH9SdXJQOn9BYEjUJQIu8tLodRgilRsxOUEZz7rYwQ>
-    <xmx:87LlaCuZwC_-s-n_W5DetwBmZRfR5rDbh4ZKCIXU72FuhOH-fknO4Q>
-    <xmx:87LlaPorCqtvHMBeN_xkH7zPAltn74kZjyUlNGacXr7gsFIhTjRGOA>
-    <xmx:9rLlaOk84XAnOx4ieLBPJf7Fc1DQLRWoIpvkPx00d0A0IuFkcLFfBkyU>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 7 Oct 2025 20:40:17 -0400 (EDT)
-Date: Wed, 8 Oct 2025 11:40:09 +1100 (AEDT)
-From: Finn Thain <fthain@linux-m68k.org>
-To: Andrew Morton <akpm@linux-foundation.org>, 
-    Geert Uytterhoeven <geert@linux-m68k.org>, 
-    Eero Tamminen <oak@helsinkinet.fi>
-cc: Kent Overstreet <kent.overstreet@linux.dev>, 
-    Lance Yang <lance.yang@linux.dev>, amaindex@outlook.com, 
-    anna.schumaker@oracle.com, boqun.feng@gmail.com, ioworker0@gmail.com, 
-    joel.granados@kernel.org, jstultz@google.com, leonylgao@tencent.com, 
-    linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org, 
-    longman@redhat.com, mhiramat@kernel.org, mingo@redhat.com, 
-    mingzhe.yang@ly.com, peterz@infradead.org, rostedt@goodmis.org, 
-    senozhatsky@chromium.org, tfiga@chromium.org, will@kernel.org, 
-    stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] hung_task: fix warnings caused by unaligned lock
- pointers
-In-Reply-To: <20251007135600.6fc4a031c60b1384dffaead1@linux-foundation.org>
-Message-ID: <b43ce4a0-c2b5-53f2-e374-ea195227182d@linux-m68k.org>
-References: <20250909145243.17119-1-lance.yang@linux.dev> <yqjkjxg25gh4bdtftsdngj5suturft2b4hjbfxwe6hehbg4ctq@6i55py3jaiov> <99410857-0e72-23e4-c60f-dea96427b85a@linux-m68k.org> <CAMuHMdVYiSLOk-zVopXV8i7OZdO7PAK7stZSJNJDMw=ZEqtktA@mail.gmail.com>
- <inscijwnnydibdwwrkggvgxjtimajr5haixff77dbd7cxvvwc7@2t7l7oegsxcp> <20251007135600.6fc4a031c60b1384dffaead1@linux-foundation.org>
+	s=arc-20240116; t=1759884158; c=relaxed/simple;
+	bh=Us9OmsgR+fW1SGZHE7rtfd59UKKbvLz88NLfSMaVR9E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c+uU8scr/uDT8QEoFMbJj91jOPKxRk6OjQiHLYXpIJsuNtWSiZg2Ue5e4GvlAkywRUBjOGsXo50VRspSZdC7N1eBq09IMPFjfiuzKFYFNe6WC+qCrNrEghEarHhBoXdLmkxbVkIbxt10E9Ekd4dRo7mR9wgdBdSgyq+D1t9ckLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X5bgyMdA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23134C4CEF1;
+	Wed,  8 Oct 2025 00:42:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759884157;
+	bh=Us9OmsgR+fW1SGZHE7rtfd59UKKbvLz88NLfSMaVR9E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X5bgyMdAHLgoj3RqWaTvyULA6IPdyY+GtixaZvBRBwHVxogMHzWjE4U8tYiEp/ZWb
+	 iP95JSBYpR/KyeZGAly0AfC7uS0/Sr8myiQm/VsFutyJwpHuYxGLzEqo8VJe+r/OJc
+	 c5gHIHWkRBYKPPmbG66dtK9u0CwvRSnT0q3Bs+SNDuT88USobBwjHmESPjM3a2D+tU
+	 kJVpYTUlx0P41ebg4JdO5X6DG/YPeLe/z+aEPnUxUdj6juAVkWuAteBDCXTTdJjKcu
+	 7HQpVt8GAsxrmZs9esQCIB2r/sjk0kAjk/vyr5OuXh0MgD4Xd04qdZzNfx/ktU5egp
+	 cPTjlXVhKXc7g==
+Date: Tue, 7 Oct 2025 19:42:36 -0500
+From: Rob Herring <robh@kernel.org>
+To: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
+Cc: krzk+dt@kernel.org, conor+dt@kernel.org, konrad.dybcio@oss.qualcomm.com,
+	dmitry.baryshkov@oss.qualcomm.com, kishon@kernel.org,
+	vkoul@kernel.org, gregkh@linuxfoundation.org,
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 01/10] dt-bindings: phy:
+ qcom,sc8280xp-qmp-usb43dp-phy: Add Glymur compatible
+Message-ID: <20251008004236.GA1833490-robh@kernel.org>
+References: <20251006222002.2182777-1-wesley.cheng@oss.qualcomm.com>
+ <20251006222002.2182777-2-wesley.cheng@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,22 +61,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251006222002.2182777-2-wesley.cheng@oss.qualcomm.com>
 
-
-On Tue, 7 Oct 2025, Andrew Morton wrote:
-
+On Mon, Oct 06, 2025 at 03:19:53PM -0700, Wesley Cheng wrote:
+> Define a Glymur compatible string for the QMP PHY combo driver, along with
+> resource requirements.  Add a different identifier for the primary QMP PHY
+> instance as it does not require a clkref entry.
 > 
-> Getting back to the $Subject at hand, are people OK with proceeding
-> with Lance's original fix?
-> 
+> Signed-off-by: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
+> ---
+>  .../phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml    | 72 +++++++++++++++++--
+>  1 file changed, 65 insertions(+), 7 deletions(-)
 
-Lance's patch is probably more appropriate for -stable than the patch I 
-proposed -- assuming a fix is needed for -stable.
-
-Besides those two alternatives, there is also a workaround:
-$ ./scripts/config -d DETECT_HUNG_TASK_BLOCKER
-which may be acceptable to the interested parties (i.e. m68k users).
-
-I don't have a preference. I'll leave it up to the bug reporters (Eero and 
-Geert).
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml: allOf:1:then:properties:clock-names: {'maxItems': 5, 'items': [{'const': 'aux'}, {'const': 'ref'}, {'const': 'com_aux'}, {'const': 'usb3_pipe'}, {'const': 'clkref'}]} should not be valid under {'required': ['maxItems']}
+	hint: "maxItems" is not needed with an "items" list
+	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml: allOf:2:then:properties:clock-names: {'maxItems': 5, 'items': [{'const': 'aux'}, {'const': 'ref'}, {'const': 'com_aux'}, {'const': 'usb3_pipe'}, {'const': 'cfg_ahb'}]} should not be valid under {'required': ['maxItems']}
+	hint: "maxItems" is not needed with an "items" list
+	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml: allOf:3:then:properties:clock-names: {'maxItems': 4, 'items': [{'const': 'aux'}, {'const': 'ref'}, {'const': 'com_aux'}, {'const': 'usb3_pipe'}]} should not be valid under {'required': ['maxItems']}
+	hint: "maxItems" is not needed with an "items" list
+	from schema $id: http://devicetree.org/meta-schemas/items.yaml#
 
