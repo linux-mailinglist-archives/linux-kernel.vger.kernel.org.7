@@ -1,388 +1,196 @@
-Return-Path: <linux-kernel+bounces-845358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5D59BC4920
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:31:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C17FBC4926
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:31:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B6E43B3A18
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:30:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F1EE3B5646
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC1462EB852;
-	Wed,  8 Oct 2025 11:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD7A2F744B;
+	Wed,  8 Oct 2025 11:31:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rp02//Qu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Cav5u0+G"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF2E19D8BC;
-	Wed,  8 Oct 2025 11:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759923056; cv=fail; b=ul7w5ZUb20/OuQ8RKOYNiJrJoER8exuUD/R+d2se6hgcvCdXzUpsXaWa2EC2Sav5Gf+mHPnDZvH6ajmNUFIGN6tYVLkvYpCa+zjrd1Z/FS7udxsGZeMWV5m7Q5Pf0y2GLDdyA5vxqtINhzDP86cWtHooki6fyIPXM93TbXAuUJE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759923056; c=relaxed/simple;
-	bh=aqn1irst1xMskBZvmaNBS/RsLq9ISFs8or8nm0dBdNE=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZJL3qZYqmfWjlbZN1xZitRaF9PJOsiRkzM/Xp8H7ZO9BPXJ0xLUe7m6ASy2TUSxnLHEOPRsSyun4sxDQGuTxQ2QkYATg0ByOdan4q8AeQwd4Jdb4u082YQIpxgyF04tvJjEsIit8R0KJzzoCDAKCJ/e0brKb/rsjt6PIvngK4VM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rp02//Qu; arc=fail smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759923054; x=1791459054;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=aqn1irst1xMskBZvmaNBS/RsLq9ISFs8or8nm0dBdNE=;
-  b=Rp02//QuN8HuD39cotyArTMX5rWMjcE+Ov94MlLQbBdDw1rLLW2C0aY3
-   XoEinjyYA+PuMENaY6ONlvjmKQCdNb/ZD1EuZ6LItY02TxkkWKEMI1BHo
-   ai7u4ua9lUgt4e8gADImXMKWwVr9BsKT3k7bhDS71XYwr08YmEVhDBI9N
-   dOpO6+QMN/yn6oSMEa1i5zarvI0gTZRpvr5hXQlE1Lfd7dR04biRY5VXz
-   f1pFHxIdLqmpH569CbViBQoaXgSCh0mUNgjxtPoB5INq8sWyapCxstlZM
-   NABgrmdQrJAOIaVXaoi1wOMf8dkjzjulqAQ0p+4TyzzrMUrwQfHQcq06W
-   Q==;
-X-CSE-ConnectionGUID: zg+ZxSqoRvSAdh+QsJQZMg==
-X-CSE-MsgGUID: a827O4WqT8Ox4DjMZ1/WKg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11575"; a="79760168"
-X-IronPort-AV: E=Sophos;i="6.19,323,1754982000"; 
-   d="scan'208";a="79760168"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2025 04:30:52 -0700
-X-CSE-ConnectionGUID: uOwKbfgcSCSd5tLwT4DcKA==
-X-CSE-MsgGUID: Vy/ITJ1rSFmPe/S1RCLe4w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,323,1754982000"; 
-   d="scan'208";a="184789684"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2025 04:30:49 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Wed, 8 Oct 2025 04:30:49 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Wed, 8 Oct 2025 04:30:49 -0700
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (40.93.194.43)
- by edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Wed, 8 Oct 2025 04:30:48 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Is7Xbrwjmja7oaRBeMwCgA6bhiAjI7iyrBoXUDFljwkhsV1zP4OKlAzC3jyqumQJCbTArAAFbzBr5TvrlibR/R3q1yVnOTnqVGIc8dypd8x3HAqdLpLzLpVHgR4uaHjrL+qBhFgwsXDuNSk60rNjlNf+R4AQwOZARr3sK4QeQ2ASW6Ne4pvhr1n3hKAtU0C2QEelOouqVzq5DnL9sbusxgeFieGws5p/nFK4SOUrts9CujWyBxKWIWWXk6T5n7kBdJdWFemTyrR0oX0DZ7+pBQgC3RYLWBMAIR31ParUeGm7g7b9q4m7KO/s78h9R+oBFSqT22F2t2LHkF/QrOBlHg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Lb6GC43NpkcVOKceR1+gDEKv9Fpfay0jr8yvTi+AxHU=;
- b=FRsNVCUAr1EPT0sL9yrn9iY0VDKBXXKEzgGmZs4fJD44QcfrR+rkpuGItezIsxXbdIury5VF0zLETCyXEh34OAHegxDAHkymgWRSbEEBE/aBuj2jrwboreTB2St905U5gaAYHg8lHbgNTwyLIvotj9AyQCcEzvwXKwSnzfHwePYOaJBPWo2lRVGcJiiyg9sCLhAcUdPvVhfkbplbDVmyK4U/0iZU47ysGg+igeeOhKMhv/5BVXKet3U7bB/uhmA1vnmSYtR7EHan9UcJx1uRmJ306wpvHD2zb4GRGVFe1YQznRolvIijPyvm6y8yrc0OfxkJ3JVfxvswlzUIA1yqQw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from IA1PR11MB7198.namprd11.prod.outlook.com (2603:10b6:208:419::15)
- by SA2PR11MB5193.namprd11.prod.outlook.com (2603:10b6:806:fa::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.9; Wed, 8 Oct
- 2025 11:30:47 +0000
-Received: from IA1PR11MB7198.namprd11.prod.outlook.com
- ([fe80::2c4e:e92a:4fa:a456]) by IA1PR11MB7198.namprd11.prod.outlook.com
- ([fe80::2c4e:e92a:4fa:a456%3]) with mapi id 15.20.9182.017; Wed, 8 Oct 2025
- 11:30:46 +0000
-Message-ID: <c895cd11-4d8d-475c-8ef8-3007f9037aef@intel.com>
-Date: Wed, 8 Oct 2025 14:30:42 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] mmc: sdhci: add quirk to disable bounce buffer
-To: Michael Garofalo <officialtechflashyt@gmail.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-	<ulf.hansson@linaro.org>
-References: <6294fb07-31b4-4c0e-9023-7c5ab604bbf1@intel.com>
- <20251008011041.3298938-1-officialTechflashYT@gmail.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: c/o Alberga Business Park,
- 6 krs, Bertel Jungin Aukio 5, 02600 Espoo, Business Identity Code: 0357606 -
- 4, Domiciled in Helsinki
-In-Reply-To: <20251008011041.3298938-1-officialTechflashYT@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DB8PR06CA0016.eurprd06.prod.outlook.com
- (2603:10a6:10:100::29) To IA1PR11MB7198.namprd11.prod.outlook.com
- (2603:10b6:208:419::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003DA2F39C9
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 11:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759923061; cv=none; b=F3UrdV7m9IwPTHBELIsFH66oHDgeI80N7cB5L3henJyEV1tVwUN2pRHAQJtW/3eZzd62DdAk4jVl2Uy4upkblqR+DEJRq5EEz541hMhaWTuJ63NeEanoP0yXgLK3Y9KhU/flZwfkJFUutp/E2i0o9Gjikt5zuH98JlFzRIX3NDc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759923061; c=relaxed/simple;
+	bh=zu8srtjs/VvDHGLC2NU4E6Rl5RoR5FKBFQQLdfu8gKM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QHncaRQrdsbNMuAHJrv3ts6niDPpX7mw0GJZMWB6uWPkjRDlH7go+jh++cUjgVXolzao2kFthpmHY1PPMZT8jBjVmkfzVcyrr3bRhwNy1/FUbmsr3ueIKdptv6E2pCs6NRIU8mkMxXvEqF114rKcljK0JgVxrYRge1sxdQmACHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Cav5u0+G; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59890OND031357
+	for <linux-kernel@vger.kernel.org>; Wed, 8 Oct 2025 11:30:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	oeyjEDktIox9UBLyHqazReHxq3mp8y+F8tUeuGtBHUU=; b=Cav5u0+GM3KmIWYD
+	wkaWInk/R/COwo1MmoHFo0qKXFhEKaNl0Tt8B+/9VU8T5sZnjecKg+5o/nmYOlTu
+	bT/+9l2gFbf8RgcQe4r96ZenrQMe2Ohe7e1K6Gil22sLJ4VwCB85RpFdx1429g49
+	eheqb9OrYFH5ORTn8Sp7rBtwJuEd4gPS/pvEq7vIJAkrC6acz4B86OEidb1Gk8Es
+	OfSNFM8wXlcX9Fekf+LIiy0wiXJJaIdjllohi9shM7JswfxflftUJVpCzzXMUhAA
+	7dV7KEl4PB+Rg2fh1aBo4Q8CMsuEpLx3cE7WljrJuZnux424TZwrHzKRva/3dHWW
+	vr2JGQ==
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49jvv7t48f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 11:30:59 +0000 (GMT)
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-7900f597d08so3388441b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 04:30:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759923058; x=1760527858;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oeyjEDktIox9UBLyHqazReHxq3mp8y+F8tUeuGtBHUU=;
+        b=g9RZbUPnaJB1bTsC+1/O7tR/N18FcbQUVVYz9dpV+SHZvwJEB3qWfLD4yYGDiiT0oq
+         iZ38VzTf0R1IuTWxeAYYKUYK20NPANct9lPrt7IfAo2vp/XLTjO+sW5ELB+Gxw40XQ0K
+         w+AsLFDyGJ4P3AvKlZ6KKZFNPKWqetRtrjnq7P8F0UQkC3nR8WZv9zHDxBGdRBgtgt+a
+         cZAitSj5wiEiebq2/jU3xdxE4fB1fUJpXeFDYya0QyILCOlz3xHGlinS2Buc1Qdobs8D
+         /wbar0QyJeEYy6Qab7Q9uKB1rhcmzZmYGbkMspMGisYZ5I5RKpHrk9oZP2E9b09cFTrA
+         /VzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/YS0/zMd3wYIf78AcQB602eonHnsyHOYK1O4tCi+fAGGayFAIX6yNyYMJx+eUS/FF6Q7SyKdUvbI6Kmk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwC9XOZ8VELl6f90WX3p6+qoZYzSjzoAu+tGB4/ARV6rzvmo54H
+	OXMUN01MXoSYdiMwVqUUUlgYc3Pr0QcZf9Jtk565CnZNpfKY3vamNx9S8jc88hqbTwnGzvPaZhv
+	/CU2Fr3V4fbLyoAI0PJ/1Ba3NZML2jjAxwMzZy9JBi6OLK42RIp4Yp5yEvcXQVXAv7pE=
+X-Gm-Gg: ASbGncv6+fwnq8gHNJDApWn7k4Jg+ejhQ1RGPBPvgLierXCCcfVLXP70Uh7KP50g7jc
+	soECB34GBzrM559ZxZagjHf8QIjv56i7sVkwDHE63rmBzmsjHySw8QzGmFzPAqD+C3qggMhNc9J
+	Kj20ByL2HQR5e/tFzUk+064DprunbCfUYPVV7MVE/8D6vgGpuxwQlW1zc3PF/WCtqIimZJZpeuc
+	IRQQ2bvp8yTMhKA5pceE6sSrcyUMNtoywGi8zo6+0kxkxUw7MYfCjVocZGc/BXfIUBKTG3Cf5ze
+	UepDyWre4sSHfHHU8hXMyzya7R5GpOLtZUt54vPKmbLauCMj19nWGALG5mAD4Axyp5P4ZIpGPQD
+	Crb0Z8ADv4VGhy2Xl7KnqolVNaPnJpkFjoNLfDM+WDXf6TVrWgqt9gpAEhkOszsM=
+X-Received: by 2002:a05:6a21:9999:b0:32b:7001:6601 with SMTP id adf61e73a8af0-32da814f674mr3981166637.25.1759923058246;
+        Wed, 08 Oct 2025 04:30:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFKUu9FJQdAllcNJOPLYlAIk3iB9sIRFpyX5MjL+2NG5pT1aPZFr8VldEU2DqxpUxZzi+Cjkg==
+X-Received: by 2002:a05:6a21:9999:b0:32b:7001:6601 with SMTP id adf61e73a8af0-32da814f674mr3981116637.25.1759923057714;
+        Wed, 08 Oct 2025 04:30:57 -0700 (PDT)
+Received: from [10.79.195.127] (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b510ff9a8sm3107175a91.8.2025.10.08.04.30.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Oct 2025 04:30:57 -0700 (PDT)
+Message-ID: <6563611c-b7da-49b2-822b-79c5c5c67237@oss.qualcomm.com>
+Date: Wed, 8 Oct 2025 17:00:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR11MB7198:EE_|SA2PR11MB5193:EE_
-X-MS-Office365-Filtering-Correlation-Id: f65f14f7-29ad-47b8-3bd5-08de065e1f80
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?cytJMTBRWFR2dWFISTJZd3hWMTd2dEN3NnlnVm5Rd2dMTlpQc05MRFhyd25u?=
- =?utf-8?B?Q3Iza29pUlZpRTRsbVZPbDVMdGNybnN0N00yWmJrSWlRNGFJMHpTUVdOYzA4?=
- =?utf-8?B?cklmQ1huaUlTMHpyUWthVlAvRE1INWVTeGhaNlB2elR5WVRDVHlQdGRBaVJM?=
- =?utf-8?B?L2JkUG9ObjJoZkVCblI5TTZVVy9mQ2tHbzZvYlN6R2FKMWdXYU9oQVVwTHow?=
- =?utf-8?B?OHd5enM4UDVhTkg1TjJjTnlCN3ZXeU1HR2FTZGNZMlk0YUdWK0hnWEY3MFR2?=
- =?utf-8?B?RFpQV0VEUFR3Uzl6QVJxTi9UbUo2SXBJTDhTcEZNVU1SL0lvN3ZxU2NsaThQ?=
- =?utf-8?B?eW9uRWtWR3ExRkZ0dUdZcDZhSENRL1JTaUxPR2dnRDhtNVJOVmZNaENZaGNI?=
- =?utf-8?B?Q1JHRXFUT2pMWFVLdzhLNTVlTks3NFBOeW5SWUREbkxiZTViQ0lURWRraUNz?=
- =?utf-8?B?ZTI5bFFXZjVLTi8zcnFOUDJ0RUxXOU1wMmd3QzRmTWJ2V0htUXNHMFFFS1hx?=
- =?utf-8?B?TVRJcTRaSlc3aVJRZ1RSd1VEOHhYRjE4THE0di9LVXBzcFlKQUcxTHVDNndT?=
- =?utf-8?B?c0hONm5kT3lycjZHVTVCRjVSRkRaMlNDZU9JcmlkYWVHU0lhaDRmcHdPbjAw?=
- =?utf-8?B?RTE2SGVHM3NxaHoyeEg5RUpnQ2l1UGhFdFNPbHJXUHFSOWJjV0lYUGtOaXMr?=
- =?utf-8?B?Vk1CLzlCVFpieVY0STdZRm9LRWlXUHpBZG85SVh5MFYvNGlqQ3pmWmkrM3B6?=
- =?utf-8?B?eXdjZkJXcml2OE9JQVJXUGlyUGJOdXMzVTVRbk84b1NKUEljanZ0aFJkQVFG?=
- =?utf-8?B?dWV6dVJFU09KR2ZIRit6KzlycXFRQno2K0Q5ck5qS2VDNjB0cUxWUm9NaTFM?=
- =?utf-8?B?Z0N1SkNCSmx4U2gxZEFHdEpISmQ0eXRxeU1yL0lBc2ZHZzQ3UXdQcEhmNWF2?=
- =?utf-8?B?TnBTTC9OeXlab2hoZCtUdEgveUpHL3h5UEF2YmM3MmNkM053WnlIcE0wV2tW?=
- =?utf-8?B?dGNscjA1bElmWDJ6Sm5NeTEzbFVIeFpNRE1qbWJCKzRWU2xQN3NzRU4vNmtG?=
- =?utf-8?B?RFMrOFBmdnJYQXB3Ui9hRC9zZUljZzl5UnBSZTEwWGFxVnMyRUZVZlFETExQ?=
- =?utf-8?B?R0NHdFZ2cExNZG1lZTF6a2xrVTQyb0NrbWhrMCsycThSazdaNkdhZWNjejBs?=
- =?utf-8?B?ZmZDOTJyYnBEZnY1MFVocGVRQ3pRS2N3MzhNdmd1N2EwU1VCNENEL01HSXRS?=
- =?utf-8?B?eENOU3lHTXQzZmVpRitiSXJMbTRPQ0JHVkRYV3M4YXkrN3FuTXJ0RURiMVlQ?=
- =?utf-8?B?QVViUEVTeHd5SnF0dVpTY2tBQ0grNEhScXU3OTduV1Z3UFlKWFJYZHlOc2VE?=
- =?utf-8?B?MkxGS0hWbXNmVmoyWFBnRSt4eWVBT0dLL1FvK2g4dVhDQXhHZkNSQ0R1UW9R?=
- =?utf-8?B?WXlSQ2dpV2tFbkpac1QweUozbVZIb2EycmtMRkRHU2VwYkcwdzhNZlhhaUlU?=
- =?utf-8?B?dHBUUXNyZDZRTlByZmRGZ2hrNjkyRmM1MUFOZ1dGYlFWWWszYkpCSVMwcmZo?=
- =?utf-8?B?QXkzWVlld1IxV3FidzNyaVlwb3FMSHlIV1RiRDNiaUxZektLbVkxcWJWaTB1?=
- =?utf-8?B?am9IMU9iS0syQnJEMFd0QjMxWXpNang2UlFCNWFTeENBQ2U1aDVxYTk3dEI4?=
- =?utf-8?B?d1FsQm5reDI1MlBxYjNGbnNFbFBzaitlRVFIc3cyb0ZuTUtMU3p4TWdlQm1M?=
- =?utf-8?B?RmhiZ09HenJGZ2RBTXZhZURpVEJnc3ltSWNTZW9JdUZGMXl5Y2YrMDIyYlMv?=
- =?utf-8?B?N1FLWXhyc2JISE5vNHZ4ZitpNmhobEVna3ZsWGh0Q0prNU0rdE5PMUZtOVhT?=
- =?utf-8?B?Qm9YTFREbDByZEczZDh3U2VoY3BjcHNOUWd6ZFUxdjFXeFBiUmZGZXBTQllz?=
- =?utf-8?Q?4DVZDk3qS+K9JCYz//JVURKHdPQvzix+?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR11MB7198.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?M0VDVHJkRmdTazJzQ2VXQzBLRXF1YUlFMnZPc2lNNDVuQ1ZnbU5OYzNvQWxL?=
- =?utf-8?B?dTNKUG5acWtEV3JDVDJYTUMwb1BMbGpraWNRRXVTWXdMbEdlc2thZW8xNXVO?=
- =?utf-8?B?S0xsc2sxamNBTytQbm1haDJHSndnQ1hHcG45NE5tUkcvWUI2REdld3V2M25B?=
- =?utf-8?B?Y0RRZDNYUWpMT1FsUHkyck43Z2ViWElVMEpHbWZOL00ycExWMlRJcklPU0pq?=
- =?utf-8?B?b2dvTEtYZzFnVkxjTmM5VlIrV2RmMi9UR1lTVWNGNlhQQ0xuS1hzL05lc1lh?=
- =?utf-8?B?dzdUQjFYQVBYcDFncm4zcDlkVDVEbTNGY0VmcDNpL281NkdWYWpxczB2MzhE?=
- =?utf-8?B?K01FYlBMN201UnFNc3dQUkxueURDSjRxa0w4cUdYWUc2cldOTzArT1kwUUVo?=
- =?utf-8?B?aXlnM0l6Z3pIMjVyeFZ3QUVhN1QyTS9lZk9RM2UyQldZUHg5TmhhUlRnVU90?=
- =?utf-8?B?SU9FL0txbytmaXlDTVpWQkpPTkFMV2hwcFBQQmR6aFRTcEpBSDZsYWtnTHdY?=
- =?utf-8?B?TGFpbm1LRFFHQklBVTNUb1BUTHRrdEVlYVhYdis1Ri9KN0J5US9oR2FoNEp3?=
- =?utf-8?B?UE5JZFpMc3NGdmZJbE9MSVAxUWE3amM5S1JZRHc3d2RESmtvcktJSWxjRzVE?=
- =?utf-8?B?Q3FyTTNhakZuRDhYVGpTemM2c2hxTWpMc1pUejEvVTduOGZHMmZHeVdjbXdQ?=
- =?utf-8?B?NXEvUWFPQ0lvNm90cVZjajdUU3hpNXc3Zk96SWdDMDhpeFMrcVZzK2pqbjZq?=
- =?utf-8?B?ckNObW9ubkVLWmRsSktOc0hoa0VBZ3VnMXY3Z1daakU3S2NjL3JMYk1YTzZo?=
- =?utf-8?B?UVZZRHJIdE44bHV3NHNxNEswOHExT0g3b0RGUGE0L2V3ZHBDYjEzdTlQRnZQ?=
- =?utf-8?B?TzljTXZHVWFEQjNXNHhwbFdWNHpjSkVyK1NIeDdvVUcxUjBhTE9oUk1LMGoz?=
- =?utf-8?B?S0htazl1c2UrS2FidHNqaDVOaHFHa0pzVkNmbk9CcDN0VWRvWkQ3OGo0QjZj?=
- =?utf-8?B?SGZ5YVhicDhNUVZkUWRrRHVIWEJ6Q2JJNS8rRTVnaVhJNjRiT3lYbDFPQlNx?=
- =?utf-8?B?UmtoYnJZVHpOL3hXNU54WWhndVpOQXlJWld3Qy9RUGNPalZjYWd6cW5CQ3VM?=
- =?utf-8?B?MDdNKzdvUWhHV0Z3R2tFRVBWaFlKbWdlN1BrUzEwZCtPMHRSMFUrQUNGMzRF?=
- =?utf-8?B?OG9MbjBtRnVZRTdCYzVDMkxEdmhHNlVtNHh6WlJ3c0crK1JXN0tnV3BnQ2hF?=
- =?utf-8?B?cWtGdUJUOVVsVWwvRHFBMlUvblJIeWRGcnFwMXBZZVFYbytucDd0dm9rakt2?=
- =?utf-8?B?TVhic2FNa0E0dW5hVjZ2MUxzakZ0RHF0aTNRK0JXTkJwK2Q2ZENCMXFaSS9G?=
- =?utf-8?B?ZEhiRmVnS1llRUhFN2tVSXBhWmpIMkVBUUtGek1oSys3N3dkV2VaK1NleGhQ?=
- =?utf-8?B?Nno1RkN5azlGcGRQcEJtbTZrUXQ2TWlqckx5MHNNRFErU2F3NEljWElqWHZC?=
- =?utf-8?B?STdrZGJOakYyaFpJdEg2di9BQnRma2NLWFpoSmxyVzJnVHJPai8yNUdlaVJ6?=
- =?utf-8?B?b1Nac3RoaVJIbDJEOVNLYW1UZU1ZTHRCcCthaUVBZHl4ZjhDb0VJSHRqRXZK?=
- =?utf-8?B?Y0ZuWXY2TG45WTY5QnFPemFHb2NwdmJpRXF6cTFWbnJnb0VEU0RiTDhPblp6?=
- =?utf-8?B?UHZCVWg2aHo2OHlJLzRuWk9jc2x0RTAwNjZVVDg1NERYRGc4UXkwbU5jV1ph?=
- =?utf-8?B?L0pac2FDaFlwSnQwa1ZLbUI0YnlyeDB0WHJTNUdoNXhkZDRlZm1xc0Ryb3Fy?=
- =?utf-8?B?RUpGOFQvZGlIN2JwaytLckJrNHE1S0tPME02Z3lYc2Jra3dtUFFQd25uczdS?=
- =?utf-8?B?c0RaSXdra0FwalRubGlERmVTUWgrdnZwblpyNUJ5NmJjV1VsdHBPQWhSSFJG?=
- =?utf-8?B?ZzNmdGQ0TXNjSnFBQXAzZ0hWbFBQMkJWWStKUWpYVEFpbTQza3Q4dFNWRWk0?=
- =?utf-8?B?QjN4SUlYdUJtbEltSTR1MkwwZTEwakVHQ01uOWxvT1BLanVnS2tkaXZqTUg2?=
- =?utf-8?B?b0thWVRoMjgvbkU0b3BVdUVQN0VyU3NrWm9Yd2hKS3pBeHFKQ0RmY1lFSDNU?=
- =?utf-8?B?emwzdW9tSGp0bkQ0R2s2bGsvZXkrQUhic3dRejFWYVozTUxoU2wxZkdDYzhz?=
- =?utf-8?B?S0E9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: f65f14f7-29ad-47b8-3bd5-08de065e1f80
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR11MB7198.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2025 11:30:46.1728
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: C+FlPWzHfq+VXWh7dY6L3r9my2wNFmZArT1XQBgRvNA0Qh+OF/6SFaPlvF652n35DAG3wsa8VWcd2c44FEi6XA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB5193
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/24] arm64: dts: qcom: Introduce Glymur base dtsi and
+ CRD dts
+To: Marc Zyngier <maz@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
+ <20250925-v3_glymur_introduction-v1-3-24b601bbecc0@oss.qualcomm.com>
+ <867bxm1y8j.wl-maz@kernel.org>
+Content-Language: en-US
+From: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+In-Reply-To: <867bxm1y8j.wl-maz@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAzNyBTYWx0ZWRfX7QmqDCuC0ejp
+ vOMqeAeE5vFhiBGydgDe7FpElfk/sOxxL4iJfA2xTq3uoomPJ3jTmTiS9nmvJtWUpTv/LDqJTZj
+ mwN8/sG66OVyDIXKvhylJTzsf2tnaZSHXJLwDcPoOEqgqOVSodGCImll5hXPHKmNRTXqG9zTKBA
+ 6rU1A1FF56X+YPCUMOOFC0P1FJ64whHPktuVw4jK0RtJhB0jCieL4v8hpZIXVuf3JiWZqh8sf4q
+ AiGrR3kjhO78jwTGSe6YFrp6VSpBO4NMmmw5Zf4nanWSGfQy0Bz6u6+2B5VERC/Ima0M1X2MKwh
+ HstH7alQNEwZlQuWlb2XYLRuWBnMgk42VMyrMbdpjWtwD/tb3hxwXu2qK5vHXgLBE93jrfuFcvC
+ bnE4yF5kqGoGnOvvKuU9GCObrdFBIw==
+X-Proofpoint-ORIG-GUID: qzGTrsSk15msqsRhJhAhsP07AVTDy7I4
+X-Authority-Analysis: v=2.4 cv=WIdyn3sR c=1 sm=1 tr=0 ts=68e64b73 cx=c_pps
+ a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=mQOHZLyPYVvQyi9y9SsA:9
+ a=QEXdDO2ut3YA:10 a=2VI0MkxyNR6bbpdq8BZq:22
+X-Proofpoint-GUID: qzGTrsSk15msqsRhJhAhsP07AVTDy7I4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-08_03,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 priorityscore=1501 impostorscore=0 malwarescore=0
+ bulkscore=0 spamscore=0 adultscore=0 clxscore=1015 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040037
 
-On 08/10/2025 04:10, Michael Garofalo wrote:
->> On 06/10/2025 12:28, Michael Garofalo wrote:
->>>> On 06/10/2025 10:35, Adrian Hunter wrote:
->>>>> On 06/10/2025 04:36, Michael Garofalo wrote:
->>>>>> This patch series adds a new bit to quirks2 for disabling the bounce
->>>>>> buffer.  On some hardware, this is required for proper operation.  An
->>>>>> example of such hardware is the SDHCI controller of the Nintendo Wii's
->>>>>> "Hollywood" chipset.  Without this patch, the onboard Broadcom 4318
->>>>>> Wi-Fi fails to connect to any networks.
->>>>>
->>>>> The bounce buffer should not make any difference, so it is likely
->>>>> a different problem that gets hidden when the bounce buffer is not
->>>>> used.
->>>>>
->>>>>> Could you enable dynamic debug messages and show the messages
->>>>>> for the failing case?
->>>>>
->>>>> Actually will also need to see the messages in the "fixed" case
->>>>> to compare.
->>> I'm afraid I won't be able to provide those easily, at least not with the
->>> commands you've provided.  Since the rootfs is _also_ running from SD,
->>> turning on full MMC logs like this produces an obscene amount of noise
->>> from the storage, unrelated to the SDIO wireless.  It gets even worse with
->>> my original intention, which was to save the logs to SD Card, (since my USB
->>> Gecko serial console is rather flakey, and introduces corruption now and then),
->>> since it's now logging the writes of it's own logs in a permanent loop.
->>> If there's a way to narrow down the logs to specifically whatever portions
->>> you're interested in, and filter out the noise, I would happily provide it.
+On 9/25/2025 6:32 PM, Marc Zyngier wrote:
+> On Thu, 25 Sep 2025 07:32:11 +0100,
+> Pankaj Patil <pankaj.patil@oss.qualcomm.com> wrote:
+>> Introduce initial device tree support for Glymur - Qualcomm's
+>> next-generation compute SoC and it's associated Compute Reference
+>> Device (CRD) platform.
 >>
->> Are there any error messages?
-> If I drop the debug logs you mentioned so that I can actually see what's
-> going on (they produce hundreds of lines / sec), here's what the Wi-Fi card
-> actually reports with, vs without, MMC bounce buffers.  With bounce buffers on,
-> it takes several tries to load the firmware, and it can't authenticate to any
-> network.  I've tested and confirmed this effect on multiple consoles, across
-> multiple reboots, on multiple Wi-Fi networks.  Meanwhile with MMC bounce buffers
-> off, it's much more functional.
-> 
-> Logs with MMC bounce buffers *on* (without my patches):
-> [  168.492687] b43-sdio mmc1:0001:1: Chip ID 14e4:4318
-> [  168.493516] ssb: Found chip with id 0x4710, rev 0x00 an package 0x00
-> [  168.508519] ssb: WARNING: Multiple ChipCommon found
-> [  168.510597] b43-sdio mmc1:0001:1: Sonics Silicon Backplane found on SDIO device mmc1:0001:1
-> [  168.510886] b43-phy0: Broadcom 4710 WLAN found (core revision 9)
-> [  168.530151] b43-phy0: Found PHY: Analog 3, Type 2 (G), Revision 7
-> [  168.538447] b43-phy0: Found Radio: Manuf 0x17F, ID 0x2050, Revision 8, Version 0
-> [  168.719257] Broadcom 43xx driver loaded [ Features: S ]
-> [  168.722231] b43 ssb0:0: Direct firmware load for b43/ucode5.fw failed with error -2
-> [  168.724613] b43 ssb0:0: Direct firmware load for b43/ucode5.fw failed with error -2
-> [  168.740666] b43 ssb0:0: Direct firmware load for b43-open/pcm5.fw failed with error -2
-> [  168.762630] ieee80211 phy0: Slected rate control algorithm 'minstrel_ht'
-> [  176.156693] b43-phy0: Loading OpenSource firmware version 410.31754
-> [  176.157159] b43-phy0: Hardware crypto acceleration not supported by firmware
-> [  179.993008] b43-phy0: Loading OpenSource firmware version 410.31754
-> [  179.994373] b43-phy0: Hardware crypto acceleration not supported by firmware
-> [  186.940346] b43-phy0: Loading OpenSource firmware version 410.31754
-> [  186.942559] b43-phy0: Hardware crypto acceleration not supported by firmware
-> [  216.368668] b43-phy0: Loading OpenSource firmware version 410.31754
-> [  216.369135] b43-phy0: Hardware crypto acceleration not supported by firmware
-> [  221.750016] b43-phy0: Loading OpenSource firmware version 410.31754
-> [  221.757700] b43-phy0: Hardware crypto acceleration not supported by firmware
-> [  223.437731] wlan0: authenticate with da:b3:70:18:7c:14 (local address=00:1c:be:ab:73:27)
-> [  223.437764] wlan0: send auth to da:b3:70:18:7c:14 (try 1/3)
-> [  223.648472] wlan0: send auth to da:b3:70:18:7c:14 (try 2/3)
-> [  223.859770] wlan0: send auth to da:b3:70:18:7c:14 (try 3/3)
-> [  224.064469] wlan0: authentication with da:b3:70:18:7c:14 timed out
-> [  226.045361] wlan0: authenticate with da:b3:70:18:7c:14 (local address=00:1c:be:ab:73:27)
-> [  226.045393] wlan0: send auth to da:b3:70:18:7c:14 (try 1/3)
-> [  226.248488] wlan0: send auth to da:b3:70:18:7c:14 (try 2/3)
-> [  226.462378] wlan0: send auth to da:b3:70:18:7c:14 (try 3/3)
-> [  226.664487] wlan0: authentication with da:b3:70:18:7c:14 timed out
-> [  250.424168] b43-phy0: Loading OpenSource firmware version 410.31754
-> [  250.425629] b43-phy0: Hardware crypto acceleration not supported by firmware
-> [  255.806790] b43-phy0: Loading OpenSource firmware version 410.31754
-> [  255.807256] b43-phy0: Hardware crypto acceleration not supported by firmware
-> [  257.467380] wlan0: authenticate with da:b3:70:18:7c:14 (local address=00:1c:be:ab:73:27)
-> [  257.467414] wlan0: send auth to da:b3:70:18:7c:14 (try 1/3)
-> [  257.672475] wlan0: send auth to da:b3:70:18:7c:14 (try 2/3)
-> [  257.880474] wlan0: send auth to da:b3:70:18:7c:14 (try 3/3)
-> [  258.093974] wlan0: authentication with da:b3:70:18:7c:14 timed out
-> [  284.326415] b43-phy0: Loading OpenSource firmware version 410.31754
-> [  284.326922] b43-phy0: Hardware crypto acceleration not supported by firmware
-> [  289.836233] b43-phy0: Loading OpenSource firmware version 410.31754
-> [  289.837612] b43-phy0: Hardware crypto acceleration not supported by firmware
-> [  291.528250] wlan0: authenticate with da:b3:70:18:7c:14 (local address=00:1c:be:ab:73:27)
-> [  291.528283] wlan0: send auth to da:b3:70:18:7c:14 (try 1/3)
-> [  291.736473] wlan0: send auth to da:b3:70:18:7c:14 (try 2/3)
-> [  291.944482] wlan0: send auth to da:b3:70:18:7c:14 (try 3/3)
-> [  292.152470] wlan0: authentication with da:b3:70:18:7c:14 timed out
-> <keeps trying and failing forever....>
-> 
-> Logs with MMC bounce buffers *off* (with my patches):
-> [  383.974268] b43-sdio mmc1:0001:1: Chip ID 14e4:4318
-> [  383.975824] ssb: Found chip with id 0x4710, rev 0x00 and package 0x00
-> [  383.986645] ssb: WARNING: Multiple ChipCommon found
-> [  383.987414] b43-sdio mmc1:0001:1: Sonics Silicon Backplane found on SDIO device mmc1:0001:1
-> [  383.987744] b43-phy0: Broadcom 4710 WLAN found (core revision 9)
-> [  383.995898] b43-phy0: Found PHY: Analog 3, Type 2 (G), Revision 7
-> [  383.996249] b43-phy0: Found Radio: Manuf 0x17F, ID 0x2050, Revision 8, Version 0
-> [  384.077562] b43 ssb0:0: Direct firmware load for b43/ucode5.fw failed with error -2
-> [  384.077687] b43 ssb0:0: Direct firmware load for b43/ucode5.fw failed with error -2
-> [  384.086571] Broadcom 43xx driver loaded [ Features: S ]
-> [  384.144620] b43 ssb0:0: Direct firmware load for b43-open/pcm5.fw failed with error -2
-> [  384.190831] ieee80211 phy0: Selected rate control algorithm 'minstrel_ht'
-> [  395.097838] b43-phy0: Loading OpenSource firmware version 410.31754
-> [  395.098158] b43-phy0: Hardware crypto acceleration not supported by firmware
-> [  397.667851] b43-phy0: Loading OpenSource firmware version 410.31754
-> [  397.668171] b43-phy0: Hardware crypto acceleration not supported by firmware
-> [  403.940787] b43-phy0: Loading OpenSource firmware version 410.31754
-> [  403.941110] b43-phy0: Hardware crypto acceleration not supported by firmware
-> [  405.366065] wlan0: authenticate with da:b3:70:18:7c:14 (local address=00:1c:be:ab:73:27)
-> [  405.366095] wlan0: send auth to da:b3:70:18:7c:14 (try 1/3)
-> [  405.389013] wlan0: authenticated
-> [  405.392814] wlan0: associate with da:b3:70:18:7c:14 (try 1/3)
-> [  405.600498] wlan0: associate with da:b3:70:18:7c:14 (try 2/3)
-> [  405.808479] wlan0: associate with da:b3:70:18:7c:14 (try 3/3)
-> [  406.016481] wlan0: association with da:b3:70:18:7c:14 timed out
-> [  414.301216] wlan0: authenticate with da:b3:70:18:7c:14 (local address=00:1c:be:ab:73:27)
-> [  414.301245] wlan0: send auth to da:b3:70:18:7c:14 (try 1/3)
-> [  414.351544] wlan0: authenticated
-> [  414.403769] wlan0: associate with da:b3:70:18:7c:14 (try 1/3)
-> [  414.422775] wlan0: RX AssocResp from da:b3:70:18:7c:14 (capab=0x1411 status=0 aid=25)
-> [  414.431879] wlan0: associated
-> [  415.272393] wlan0: Limiting TX power to 36 (36 - 0) dBm as advertised by da:b3:70:18:7c:14
-> 
-> If there's anything further that would be useful here, let me know and I'd be happy to provide them.
-
-Seems the SDIO function driver b43-sdio does not print any error
-messages.  All the error paths in drivers/ssb/sdio.c print debug
-messages instead.
-
-I would suggest the following, which would limit messages to
-host mmc1 which is what is shown in message "b43-sdio mmc1:0001:1:
-Chip ID 14e4:4318"
-
-diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-index 860378bea557..2719b21783ad 100644
---- a/drivers/mmc/core/core.c
-+++ b/drivers/mmc/core/core.c
-@@ -169,33 +169,33 @@ void mmc_request_done(struct mmc_host *host, struct mmc_request *mrq)
- 	 * - The card was removed (...so just complete everything no matter
- 	 *   if there are errors or retries)
- 	 */
--	if (!err || !cmd->retries || mmc_card_removed(host->card)) {
-+	if (host->index == 1 && (!err || !cmd->retries || mmc_card_removed(host->card))) {
- 		mmc_should_fail_request(host, mrq);
- 
- 		if (!host->ongoing_mrq)
- 			led_trigger_event(host->led, LED_OFF);
- 
- 		if (mrq->sbc) {
--			pr_debug("%s: req done <CMD%u>: %d: %08x %08x %08x %08x\n",
-+			pr_info("%s: req done <CMD%u>: %d: %08x %08x %08x %08x\n",
- 				mmc_hostname(host), mrq->sbc->opcode,
- 				mrq->sbc->error,
- 				mrq->sbc->resp[0], mrq->sbc->resp[1],
- 				mrq->sbc->resp[2], mrq->sbc->resp[3]);
- 		}
- 
--		pr_debug("%s: req done (CMD%u): %d: %08x %08x %08x %08x\n",
-+		pr_info("%s: req done (CMD%u): %d: %08x %08x %08x %08x\n",
- 			mmc_hostname(host), cmd->opcode, err,
- 			cmd->resp[0], cmd->resp[1],
- 			cmd->resp[2], cmd->resp[3]);
- 
- 		if (mrq->data) {
--			pr_debug("%s:     %d bytes transferred: %d\n",
-+			pr_info("%s:     %d bytes transferred: %d\n",
- 				mmc_hostname(host),
- 				mrq->data->bytes_xfered, mrq->data->error);
- 		}
- 
- 		if (mrq->stop) {
--			pr_debug("%s:     (CMD%u): %d: %08x %08x %08x %08x\n",
-+			pr_info("%s:     (CMD%u): %d: %08x %08x %08x %08x\n",
- 				mmc_hostname(host), mrq->stop->opcode,
- 				mrq->stop->error,
- 				mrq->stop->resp[0], mrq->stop->resp[1],
+>> The dt describes CPUs, CPU map, GCC and RPMHCC clock controllers,
+>> geni UART, interrupt controller, TLMM, reserved memory,
+>> interconnects, SMMU, firmware scm, watchdog, apps rsc, RPMHPD,
+>> SRAM, PSCI and pmu nodes.
+>>
+>> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+>> ---
+>>  arch/arm64/boot/dts/qcom/Makefile       |    1 +
+>>  arch/arm64/boot/dts/qcom/glymur-crd.dts |   25 +
+>>  arch/arm64/boot/dts/qcom/glymur.dtsi    | 1320 +++++++++++++++++++++++++++++++
+>>  3 files changed, 1346 insertions(+)
+>>
+> [...]
+>
+>> +		intc: interrupt-controller@17000000 {
+>> +			compatible = "arm,gic-v3";
+>> +			reg = <0x0 0x17000000 0x0 0x10000>,
+>> +			      <0x0 0x17080000 0x0 0x480000>;
+>> +
+>> +			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+>> +
+>> +			#interrupt-cells = <3>;
+>> +			interrupt-controller;
+>> +
+>> +			#redistributor-regions = <1>;
+>> +			redistributor-stride = <0x0 0x40000>;
+> Drop these two properties. I assume that your GIC implementation is
+> compliant with the architecture, and doesn't need hand-holding.
+>
+>> +
+>> +			#address-cells = <2>;
+>> +			#size-cells = <2>;
+>> +			ranges;
+>> +
+>> +			gic_its: gic-its@17040000 {
+>> +				compatible = "arm,gic-v3-its";
+>> +				reg = <0x0 0x17040000 0x0 0x40000>;
+>> +
+>> +				msi-controller;
+>> +				#msi-cells = <1>;
+>> +			};
+>> +		};
+> [...]
+>
+>> +	timer {
+>> +		compatible = "arm,armv8-timer";
+>> +		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
+>> +			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
+>> +			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
+>> +			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
+> You are missing at one interrupt here, as the CPUs have both secure
+> security state and FEAT_VHE (hint: the EL2 virtual timer also has an
+> interrupt, usually on PPI 12).
+>
+> 	M.
+>
+Will fix both nodes
 
 
