@@ -1,445 +1,246 @@
-Return-Path: <linux-kernel+bounces-845402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 799E6BC4BD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 14:17:14 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C50F7BC4BC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 14:16:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45EA93E0CF0
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 12:16:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 141CE4F38D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 12:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C39204096;
-	Wed,  8 Oct 2025 12:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A4A2116F6;
+	Wed,  8 Oct 2025 12:16:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="mFU2nAuc"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sandisk.com header.i=@sandisk.com header.b="TkkErI6E"
+Received: from esa.hc6817-7.iphmx.com (esa.hc6817-7.iphmx.com [216.71.152.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0C41F5433
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 12:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759925781; cv=none; b=Y6//lDhQpQZJWYwb+d50/HFHukXAgRru/hghQ7M6W650mk8QujN4eWiEeZoNGxo7wLNrU05dbTMw+F+2G48TGOw8iT4tcJjRGe7LO5I2HM3E0b3elNb5TxF1xRTG2gJ3klTTo4Joo2VuwcsYWcfOWBHGC4CPSuuBPhj1n72sMc4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759925781; c=relaxed/simple;
-	bh=kwPgUfwoVyb4zf8KwYkiVYCOXB7KcIbWTRUpHv4SgYg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FaDZsHxjtr2mswo54DfnmLW26NC3bwxp7mlzd24HhUDYGvmcC0bINgBx4CWTgpQDmjtU0w2o1D39hzLis30PC3jqHxhjs9PCKQB0kHiwIjazMrqofFnM9oXEVKFVgfq72caGaDS+Ys5/lgaryf70HJYbcoxNOpcPBG4pmmDxZcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=mFU2nAuc; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3ee1221ceaaso5536726f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 05:16:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1759925777; x=1760530577; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JxKRQONGzwOttwvgnC2LAlH+BX31PKH3osfZx+Nd7XI=;
-        b=mFU2nAuc+GffPRUMjreTzzdKMFvDI30kbwHNFHf8WZJKCNSNbYoWj6JXLsfRaCvnI0
-         N6LOVequAyXJuJEh/Z4I/hrWzXyv2U3e4zz6Tn0Zrc1XhBwdq9/ppuGycu79ak+N6v36
-         Lh+sqq/cr1rvmBX7OXa0BJeV1z+1qnOocxgP8sKDnJX/J+kfx3OfxcWwWj6X4VllKvlY
-         OCceqq8COVsUGU38wVzGVN+CgbqbOKufdMN1XKKmdypHo/BraLUmbcL1yoJj2K/Ij8SW
-         XpDMhDCQmH70tkFY5M6DRRvqzlfRtwyRRJVjtmwfIWZxgyOMfAcKAkvUOosJZrJYQhX5
-         o0gA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759925777; x=1760530577;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JxKRQONGzwOttwvgnC2LAlH+BX31PKH3osfZx+Nd7XI=;
-        b=mkEbwAwqLamNfdo8tgi7J4XRz3lyALvE76HKKN2Z/rsyIDu81oPdBLJ+6iNzuw/NKo
-         es2E5iubKcofiaIQlnDe4W7HigNGneZwZQAOx5sPsPUwPcvtmBJCfTSKnSr4hewHFsOa
-         Sda5/su+P6zXWQ5rOvx8CS1btsCzV5a+uclQHhGdsNu92RG/XzCqsLbP2fotHWGTqbOo
-         NJUut2vIrjkKd5hblBknaCRp7Ap1EzqWm/vIxn3cv0itG6K2YkmfFMCdYRu3aukB2XiP
-         4R9VKe/Q5J8g0DQxpHLb9biEIKrjtL2cca2WwakCjHmC+HPiOqZDRqQPEao/TH7RV0qN
-         wqpg==
-X-Forwarded-Encrypted: i=1; AJvYcCXY4SN4Av3c9hqL3DswGTKhxxXDwRmLu3NzrYqtQuI0mLSvGK5SiQATFFMH5B0XRFMt2hDiRxNRN0FVcbM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZkiFavlxt+861ZMigcC+f0lO0bA8ebEKAZyNOFhhvVaSSWkzu
-	hbJiDVwMM8hNMXhGG5rhngZMvHG4+sDYkHjR9XNxbzXTEG5uhlptsri3zLjtSkuqzzk=
-X-Gm-Gg: ASbGncvO/AefPvZsGJ1gpqC2VTffIsuusrVGO6rQik4AB+bsZmkGy1wZGVjMlZhg1aB
-	zGOwLWObjGNxFCGeAuMsPm8a5dodySZTbj50IOh59+BU8bLxKszbGtEm8grSRgYu7rLKkmx+1Ot
-	9HcubRuT+7KrCPrQe248veTLugchxYcc8weTxYpXqq3B15wDLnSGmfJVV57MIcSsAFb5ZsiX4bU
-	lmm33VGObsaW4EPQEP+5VEV2S+5vhQ5DiK+nkeWWSuNCS3DpPnYddD8lAXJhDOp2HbJGrlQ+D4R
-	mlfnantMeTRnfcJbksWhq0+SfKvsd9nOKlihTO6kmkt5sQbUTq4jZViUmmhbqezirgiPcxJD7h/
-	3grkyI747RB8PIhn/APpxjw/KW/ZjhpEckHPt04yxW2gWebyw73DgSvhv9tG5FLJn
-X-Google-Smtp-Source: AGHT+IEimZmCk3/6Ggy9NCh0WE/6r4yeGO/nMGAdxmVGecm/Oa5AC8YxXdOW/M1RgQIyk9DqorAVqA==
-X-Received: by 2002:a5d:64c8:0:b0:3e7:63b0:bf3c with SMTP id ffacd0b85a97d-4266e7c6209mr2266780f8f.27.1759925777385;
-        Wed, 08 Oct 2025 05:16:17 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.59])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8a6daasm30018667f8f.7.2025.10.08.05.16.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Oct 2025 05:16:16 -0700 (PDT)
-Message-ID: <cca1061e-df67-4b5b-99bd-9721c72a0f88@tuxon.dev>
-Date: Wed, 8 Oct 2025 15:16:15 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1089D1C84A2;
+	Wed,  8 Oct 2025 12:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=216.71.152.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759925795; cv=fail; b=h31/eSC30B02tLETkIDsCsgOfBoRCzEYvMOnEgg5vYBdborlI2z94TLWTDSjdPo2uKrAXfXQvgJwEVvXhtov68ThontHn05fbc8CGApy2Nw6fuW7xbWlA4sQ0TSHinKHGgyU+uOhDG9CDRMiVjwmIjCVyZunOcmRVUcut0aRpoQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759925795; c=relaxed/simple;
+	bh=0VkNeKMJLgwBPrZYWbxFbEA2POb1qu94Nj4eOpCDnOM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=McCek4oglZJMEJydI0RifkLWXsvW7iC9c/F9QDI98VVF3AWp12rivLT/F7+JpuShGm3lnCq8jh5JvzEx8hF/p+ssLoMeVx1a9NESkcRchi92USWsQPl+WZjIz06oGnGjVnOVR00iLj53gnk0N2QQuJJAffnJKUpH1UDdeRP9f14=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sandisk.com; spf=pass smtp.mailfrom=sandisk.com; dkim=pass (2048-bit key) header.d=sandisk.com header.i=@sandisk.com header.b=TkkErI6E; arc=fail smtp.client-ip=216.71.152.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sandisk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sandisk.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=sandisk.com; i=@sandisk.com; q=dns/txt;
+  s=dkimnew.sandisk.com; t=1759925794; x=1791461794;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=0VkNeKMJLgwBPrZYWbxFbEA2POb1qu94Nj4eOpCDnOM=;
+  b=TkkErI6E0KvBcSdbXuE2I49li9soxZ+uQU3Tqf7NfwuMtMahN6o4gPnl
+   Uju8ziDPspixhp3ToPKDas+20YCpEI/aEEq/eKbaRtnWiNQ3Hy88IPowa
+   PD1m+F3l2+V7i3/Li6mivvPG1YnjL+MdEs9s2ik4KMf3LjTHXf4lcY4Br
+   +jay1E5bkuEgue2gybk7SM5AGHJNMqlUqmbsZM4BdTzJTruMgtrYAzCFw
+   L8PUDACp1iD2O5BLs+XQArCdFlMwLfisD4q+UUSsb6KEjL8A/UyJdvll3
+   rJkhcqZ+a1KKcb1l9fArIQSVVvTK12KGtZB7QUl6USQWehmQvD8IfY2IA
+   Q==;
+X-CSE-ConnectionGUID: klqR2qSLRym5esrxfL8jsA==
+X-CSE-MsgGUID: 6QBV5+uYRSKxAkOa5Y3AJg==
+Received: from mail-westus2azon11020095.outbound.protection.outlook.com (HELO CO1PR03CU002.outbound.protection.outlook.com) ([52.101.46.95])
+  by ob1.hc6817-7.iphmx.com with ESMTP; 08 Oct 2025 05:16:26 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qRx4FLJrcXDnBUNjrLfjAK24owTwA+KONittrNE4GksCJ6oKcNwjM3GqjSp2WO1EhR1OFfHpARKcpw4wB0pzKVMrxmqW9xrmwjY969mjNolNbuEGs9zUFVFAp1FssNZfhdJcV89xXaRTnKC7T09CzyKUsLgtm7ifRykCvvRtKEX1PnXWDys5bmG3Q/QtdsNNNU8fYw3a2HixgVQch7gORAAa/O8ZjgCevxa6XD3xYln3I50QJ1EitYMyweG72qc2e9MjbEePUJyK+yVGlo3SjG4xDT0ry09N2KIfZ0l2Sn5ydQCHhBbN7nLs52A48Tejb5GYRzA4lkYnsgwCzFPT9Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0VkNeKMJLgwBPrZYWbxFbEA2POb1qu94Nj4eOpCDnOM=;
+ b=I439cSrpkWLM4mwTR1ZRGrtzt+zPLfybCk1evnKmGWFDLuSdv3YFV4ZtE7USJQZcQwUjzJ4voCo1DMPJo4ktiH691MMm5UbAxxyUv8VGG7DO5/boGmLWO5XVa7NyPY6P9q6co0f844T5CGZYQMCr225FoVAhMtx5DutDNMEVpzcJuphMvXH/L8hCDxapr2WJNbNxyw9zY3qceSpg9GSj0DRBWSOo6suv38vdMeFQ02LrXxWpoALBQHLCv3BEcmGh+whskwv/jVI0qAX+U11xM8/5Qa0kjM75Wv9+a4tj5nrhHvHEsY496k4xWGg7OYzfz7+jCZRBj2c8TAy8Ha5rAw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=sandisk.com; dmarc=pass action=none header.from=sandisk.com;
+ dkim=pass header.d=sandisk.com; arc=none
+Received: from PH7PR16MB6196.namprd16.prod.outlook.com (2603:10b6:510:312::5)
+ by CH3PR16MB6447.namprd16.prod.outlook.com (2603:10b6:610:1de::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.9; Wed, 8 Oct
+ 2025 12:16:24 +0000
+Received: from PH7PR16MB6196.namprd16.prod.outlook.com
+ ([fe80::df4a:1576:a40e:5491]) by PH7PR16MB6196.namprd16.prod.outlook.com
+ ([fe80::df4a:1576:a40e:5491%6]) with mapi id 15.20.9182.017; Wed, 8 Oct 2025
+ 12:16:24 +0000
+From: Avri Altman <Avri.Altman@sandisk.com>
+To: Bean Huo <huobean@gmail.com>, "avri.altman@wdc.com" <avri.altman@wdc.com>,
+	"bvanassche@acm.org" <bvanassche@acm.org>, "alim.akhtar@samsung.com"
+	<alim.akhtar@samsung.com>, "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+	"martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+	"can.guo@oss.qualcomm.com" <can.guo@oss.qualcomm.com>,
+	"ulf.hansson@linaro.org" <ulf.hansson@linaro.org>, "beanhuo@micron.com"
+	<beanhuo@micron.com>, "jens.wiklander@linaro.org" <jens.wiklander@linaro.org>
+CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2 3/3] scsi: ufs: core: Add OP-TEE based RPMB driver for
+ UFS devices
+Thread-Topic: [PATCH v2 3/3] scsi: ufs: core: Add OP-TEE based RPMB driver for
+ UFS devices
+Thread-Index: AQHcMpninJZ2iAUFjkahnHpKkVJvdrStEBWAgAsdOgCAAAgCIA==
+Date: Wed, 8 Oct 2025 12:16:24 +0000
+Message-ID:
+ <PH7PR16MB61966F897DF133E14AC693DAE5E1A@PH7PR16MB6196.namprd16.prod.outlook.com>
+References: <20251001060805.26462-1-beanhuo@iokpp.de>
+	 <20251001060805.26462-4-beanhuo@iokpp.de>
+	 <PH7PR16MB6196ADF912182709D465970DE5E6A@PH7PR16MB6196.namprd16.prod.outlook.com>
+ <5f12fdaaa49aad21403a0a9b96d2b8b3a6d3ca1e.camel@gmail.com>
+In-Reply-To: <5f12fdaaa49aad21403a0a9b96d2b8b3a6d3ca1e.camel@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=sandisk.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH7PR16MB6196:EE_|CH3PR16MB6447:EE_
+x-ms-office365-filtering-correlation-id: cc45bb83-ce82-4f9a-a904-08de06647ff8
+x-ms-exchange-atpmessageproperties: SA
+sndkipoutbound: EOP-TRUE
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|7416014|1800799024|366016|38070700021|921020;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?SDkwcS9XOXhYa1BxdGkwUGFlZjNMUU1MZ1lWL3dONi9MdHYwdW92SEUra0lK?=
+ =?utf-8?B?OWtvK2VPVlhJSUowc3I2a1AxS2xUTVRtREd1ckJWeXlBZmtFK09BTE9TaEls?=
+ =?utf-8?B?VGNSUzF2V2tjaEhwdi9xS0hLUTZ0YktzWFRydEpvK3QzZ3lXZVc3dEFCQllV?=
+ =?utf-8?B?dDhra3R5SGpIekFRWERhdDF2YkNJZ1pJVHp3cmJ3NGJxYXhuTktnbEdoMld3?=
+ =?utf-8?B?UERITHVNMU93M1liSnR0UU4rSkE0UDVKSG1zVWFOemdYaFNFSndoVWMyZG1s?=
+ =?utf-8?B?c0trRlhkWmpjY3YrazJ2Y2t5b2hsL2ZpK3c3T1ppQnVtRW5UUk9ya3U2MGor?=
+ =?utf-8?B?MmhQWDlMZm9Kd2FDTmRHK3Fnb0VYYittcnFHb08xa3lEZ1JaR0RqTGJMNUxF?=
+ =?utf-8?B?UVJCbEZiQ3Z6eVBhZWliZG1sWjJ3eThsVEtFcjlwUmlwWWtOZE1Ncy9IR3Na?=
+ =?utf-8?B?ck1CZnJaYzZYWTdiRXk1emJJY2lvNzZJUGI3OVgyTGE4STdYU3hKZ09VKzhp?=
+ =?utf-8?B?eTdPMXFWL3l3eUtxcmtQY1lOTm1XMndPa2NQQ3hJMUNtNk5rQmVpNXZUUGJI?=
+ =?utf-8?B?c2VVNGNhYklPd05GZ0xXS01XQjFSTWFaazRCSmJ0OEcrWVlnNzRkZWppNEF1?=
+ =?utf-8?B?S2JrUjZkQXhiV2t1OW1oNlJmcjhBVTl1VjUvWEhtVjROaDdIblhjVEgreGZS?=
+ =?utf-8?B?TmdFN2Y1VkhLUVpyUGdxZ25vUCtNOVQwS3pacjBuby9rWjJ2Z1ZWNkhGc0Ix?=
+ =?utf-8?B?VGlaS0diRS9GaTZ0ODBpbmhjc3VuRGxVSHhUVG5INUhBdTYyU01kR21tRHpW?=
+ =?utf-8?B?d3JodFJ6eEd3WkdpdXkvWk5QbUgwKzNabUFIZUxTNEhYQkRQd2pOL3JPeGZv?=
+ =?utf-8?B?WmJjVURMbk9nZHYzc2prbjYzRVNaTzh1V2VmM0xDWW8xZkZOYVk3SjdXVUhy?=
+ =?utf-8?B?SWlNeXFON1MzaFZSTHBwUFdMcjhnK2ZwdU1uMW5zU3JXU3F5VllsYTlkVU96?=
+ =?utf-8?B?OFNUOGNHUEV0OENnZ29Gd3Jha0U1NUFla3cyS2NpY0NaVzhhWTlCNFdLZ1o5?=
+ =?utf-8?B?blVFWE9SVC9BOTJwYTRzb0lHWEQ2WDkrSmFySGVmcFE2dE9Rd3Y0ZWpicmpZ?=
+ =?utf-8?B?bExrb1Q1NmhoblJMc1VnUThkNXNzZHB6OUNuaDB5a0haU2x6VGloMnV0Q0Ft?=
+ =?utf-8?B?WDJ2ek01bmJzRnJhNnZEdklUUTN6SFg1MHpoQ3hpTTJMSnpKMUFMSFhYYkRE?=
+ =?utf-8?B?OVJBYnM3RVhtSkFDZFVMcWtkem1EMjRIanRIRFYwV1Y5TVFtS0w1alVGTUxR?=
+ =?utf-8?B?UFZmY3FLTEUxTzc3aWQ4dkhvWVJMaDhXQlBhWXNPZ3lSM09IZHcyZ05TVkMz?=
+ =?utf-8?B?T3l0S29udXM1QmJTMm9JdVZNRXhxclJwdk1TOFlaRmdjbGhlK2J2NG1TbStl?=
+ =?utf-8?B?VzJnOVlGN1ZibWJPNlU3alNCbTNRZXQxMFl3akpESzVPODkzUnRQZ1N1T3NX?=
+ =?utf-8?B?RTlCdnQva0YwZmRwNDljUzJhSHFoZ2QvVVFwenNhRzAyeC94TGh2MGU1SjQw?=
+ =?utf-8?B?QzM4VWtOd2VpamJIQkZkQWdqV1JIbmZYeEdNYzBvV0xxc3lpdlFSTFdsUld4?=
+ =?utf-8?B?VnQvVkxaRDFzSzlrc1FHNWlqN2w2VW5jb0hvSmg0TFI3enVYLzczRUY5R0Mr?=
+ =?utf-8?B?QlFpcSsxWFdMYXVnOUxReEh6YllLUVovZWdQbmJrVnFzaFhpMlZiQUNGU1Ji?=
+ =?utf-8?B?cGJqL1lVT0dKQ3FNOE5nTjB2aDFvYTBjeStxVElRcDZEaExXSURlZVpxNTF2?=
+ =?utf-8?B?OVljaVhGcngzdEtmcW5BY2lnZEsyQTZ2M3hzdnhjZHVCcS9TM1FDbzhMVG1S?=
+ =?utf-8?B?Q1FDRHlsQVduU0NNOUZPdHZIL01qeStXT2IzVWxqaVp0LzBHbjU4WWQ1RFh5?=
+ =?utf-8?B?UmVPa2JZODZnbUZLUUtGMlJTOFJBQlFpRzBaMERyR2hCdDRwdE5Qb0RhUVFw?=
+ =?utf-8?B?QlhNTzIyQ2wwSE8ydlBsMnN3Z3BQdm1jbFc5UWFrUGhQY3J3RVhNYjdoSXM4?=
+ =?utf-8?B?T3lmdE8wNW1TOTZzTm1xTDk3cXB5b3czYlVzQT09?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR16MB6196.namprd16.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700021)(921020);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?azRTcTNnUGFXWGdFbkcvTnlMSXdoK0ZYMTdOVmpOL3ROellHdFhuNTFBSktU?=
+ =?utf-8?B?SHErcDEvbnpjU1FkNkNlamNEbG8rNDVrb0k2OUcxbnFLR0x1QVZ5TFEzVW5I?=
+ =?utf-8?B?U0tRRVd6TmRablFHem1jZkZ3SzZOeVBSUjY2YzVtZ2h0azd5TlNVaVhvUGdM?=
+ =?utf-8?B?OVVWUjFCRFI0MEdPMU9XNG5BRXdOU1BjWG5LOTlCRlpUek0vS0FLUnRRWGJp?=
+ =?utf-8?B?SlFwUzJVN1pnNHdrQjY2aG1tQUo0c1BaRVJ1TnkrYi84cmFzNkFOakIrTXR1?=
+ =?utf-8?B?bjN6R3I5WTRuM1ZTaTQvZlpKeENPMjJUdTk2NUtndVFzRWp0ZmlEZGFyL3Nz?=
+ =?utf-8?B?WU02bC9JSTF5M3B3Z3VuSnR2blRUYWlhdllXL3VoTG9mK293Z0VHaDdib0pr?=
+ =?utf-8?B?UXVVR0pkZWxueGU2a3duZ3ZsUndyMHpFSkg5L2pvUFhDMzNOMVlodk9uUzBH?=
+ =?utf-8?B?cEVYMWQ4QUdMWi9DbVNGdzllcHh5N2Q5QU5hNzFqTUVkaHRmWVpueGZ1NTZL?=
+ =?utf-8?B?bjAzRk5NMTMzSWtsNUpRZUZHU2tQMHR5SS9lUkZ0R29oYnhERndYVHJac2FZ?=
+ =?utf-8?B?Qi9kWG1EMGpFbE1lT1FVK01Uc3pMNUZiNDFQWVpuNVJXT2sxdEZ1dGNxUG5u?=
+ =?utf-8?B?L1o4VGZFZzJNWWxwcHIwMlgxayt4ZWx2bzZ4YmZZMlhDMWZTS081RnRnNE94?=
+ =?utf-8?B?VlVrR28vZ2ZOY2VZaktRMjFDTEFtamt0MGd5M2tqa1FSZFVwZU5Ob29WR0Rn?=
+ =?utf-8?B?L3diZG8rTU96SitpMVZ4YkMzak5lYVdXaHRBWGhCUmM4bnJDZ0lEZTR2SC9x?=
+ =?utf-8?B?cDZ3UkFwUE5ta096WmpveGhxcXY0T1lKMmhtNGNmTXN2U0VuKy9hemNWQzBj?=
+ =?utf-8?B?VVVydGFzOUtjanVEODY2cUc5cDFhdlY2SUk0SDM3djdjTkg5WjlGVnVhd2g0?=
+ =?utf-8?B?bi8xVnpCa2x2bzYzZU9RVXRLVnFwRnBjTi9OYXJNWWN1SmdDMjFOdkRXYk1Y?=
+ =?utf-8?B?eUk5NTVwYXhoc004Tk5IYXlhQktHd3RnSHhwdmZCYnF6dXk0ZVFqbFcrUzV6?=
+ =?utf-8?B?NFVMMVUrdXMrZndrWnpnVUlINHVNdW1Eb3NjL1EzOVVhQUFmQm5HbUNMM1BD?=
+ =?utf-8?B?d28vaENjd1g4N3p5a2d1RGRxWkVQZDlZSjROanRhSUM3ZnhsZk10dCtXNjdQ?=
+ =?utf-8?B?R2haeTNObGZhbVpvV1VUVDBRQ2pnaTJhSFdidndXYUtjNnNPd3BBREU5Z1JB?=
+ =?utf-8?B?OHRxaDlBc1MxREpnSnJucG85RGo3SUVRWVdUblNWTyt6ODZDYmNTNlFkclBj?=
+ =?utf-8?B?eU9YQllUcWxFNlhmY0NCUEJUQUdSR2V3YWEvcjkvdUdpK1pVL2hWSitDMXdo?=
+ =?utf-8?B?Q2lpSFhZRmVEbUhKTU9OdW1WZnVvNzVNeGh3RWpDWkF4Q2lqVlRraXNYQnVa?=
+ =?utf-8?B?RldXSXYrcTVoRUN1V01oUUpZTS8vSEtlMEZtNkpWdmlKWWFvUWVYNWtLQ1Fl?=
+ =?utf-8?B?Nlp2cEtLeHR4MEdxNnFqbU9kY3l5WEJxcUZlTTJESyt6ZlYxM2NlREt6TUVv?=
+ =?utf-8?B?ZzU5QUlVNHo5M1J4SGt3N1ZoMExuVzFZdG9ETTY2d0NXRDlHOXV4cXFyZGxV?=
+ =?utf-8?B?R1Z6WkVpMnZ0SWE5L09VbGZLRE1pNStzS3l3QWZiWGlGYVhPckthQndUbWRH?=
+ =?utf-8?B?ZnNrQTE3d2E4aVJtOEJnZURVRTZrNm5UY0tHUFpaN2FzaDdUcUtuMjlKdTh4?=
+ =?utf-8?B?ZE5yRm1aSHh2OFcvQ2lvREVuREZuRkZSR0NEUjVNMjY1OWg0MWh2UlkxeWI5?=
+ =?utf-8?B?b2FDTGxVRlgrTGRaaVlPNzQ2QW9HREVncm9ydXhsRXVZRk1iTVdYU2R2ZWN1?=
+ =?utf-8?B?eVcrbzNuVlE4bmQ4bHlidmxnbmh6RUFOTDlpNVdzYjlKNVhnbm5tSTd5MTJM?=
+ =?utf-8?B?MXlIMUZoSXRCdkZUQWZUaHAxOGg0c0lzaHpZbC9wVS9iUkdkaElJdk4yK2g5?=
+ =?utf-8?B?OFhaK3FIV0JBYi8xWDhjKzU0WmhXZzNRSUREblYxWjlObytWUk1YalFOYmxG?=
+ =?utf-8?B?OVU4dlV3SGRENUQySEhyMW93K2xualJhR1Y3bWNpeCtDV3V5UXZJcE1zRytJ?=
+ =?utf-8?Q?oXIZ9yM8J3EGDlegmxDXdcSkP?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 4/7] reset: rzg2l-usbphy-ctrl: Add support for USB
- PWRRDY
-To: Philipp Zabel <p.zabel@pengutronix.de>, vkoul@kernel.org,
- kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- geert+renesas@glider.be, magnus.damm@gmail.com,
- yoshihiro.shimoda.uh@renesas.com, biju.das.jz@bp.renesas.com
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-References: <20250925100302.3508038-1-claudiu.beznea.uj@bp.renesas.com>
- <20250925100302.3508038-5-claudiu.beznea.uj@bp.renesas.com>
- <c7fc31f1247332196516394a22f6feef9733a0b4.camel@pengutronix.de>
- <66d85e70-efb8-4a45-9164-55b123691b70@tuxon.dev>
- <bcf6113b0025777db1cb2ace1618fed8fac2dfc6.camel@pengutronix.de>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <bcf6113b0025777db1cb2ace1618fed8fac2dfc6.camel@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	rcRdR8jjnQQtb6+sJKqxfxKUI2JqSd2BTqpPvQXkV2IrEQI52+xGwfbOhKCGFm9rW/lL+qi9UFMbMoAJH3C7zmwUFiYoxeZJjTG727+EeEgAYQqcUaQmyaPo4p97Pc3wJz4+gUNZH693wWQspQhBne7hwE22wo0XjoVM3LTnx3Ww5Af7Lwlg3cEBHujPu85/U/wdI+KyxXhAUHApsRF33FsWuat6tRA41n/y9Lkzchtr6/9XQt7CL4DIfe8CJml11okEBDzEbWA1Vif4QHw0uneuLIPEzk07i7LMEGebGlLjJ+ieuJ7vI4/GymXBxr66JT7qbkZAVQpr2PfzM2V1bRNGdp9ybKf9EG8N6qvp8l3QrDPuPOxUoY8RLac/kWmhXzDtJhcfILNL9EM0Ow/nI2JaCorQTvUREZur7XqMDOlIhr8YkFeyqkHYiOW/WEJa1rI9jaHNhXPiBx+/Y6W3aV7IbAmeHvP8dqftiOzihcleJswCcGPpl5y8IXBIiU+Bxo6rN92U4GOLBRU9bm9TxEA+2QdTdhbizSon1tXjNpcx3mp6y2G8bZXUfS/zNropM4dbLC48cRmLTRdWVAConbPtCuZb0rcUul27ziPNUHd0xWFB9vWvzFetufzmPtUSp0q+agg+BV/BONzeuTYD0Q==
+X-OriginatorOrg: sandisk.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR16MB6196.namprd16.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cc45bb83-ce82-4f9a-a904-08de06647ff8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Oct 2025 12:16:24.6212
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 7ffe0ff2-35d0-407e-a107-79fc32e84ec4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: OLhBqBz/ehTqdKngQR36J9LQqi7ZtbLjHsvfmjP3JOGwWgH9fvJXpWEWKsohFx6KC2vfwbNchHGg4/BW3WC6Tg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR16MB6447
 
-Hi, Philipp,
-
-On 10/8/25 13:23, Philipp Zabel wrote:
-> Hi Claudiu,
-> 
-> On Mi, 2025-10-08 at 12:29 +0300, Claudiu Beznea wrote:
->> Hi, Philipp,
->>
->> On 10/8/25 11:34, Philipp Zabel wrote:
->>> Hi Claudiu,
->>>
->>> On Do, 2025-09-25 at 13:02 +0300, Claudiu wrote:
->>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>
->>>> On the Renesas RZ/G3S SoC, the USB PHY block has an input signal called
->>>> PWRRDY. This signal is managed by the system controller and must be
->>>> de-asserted after powering on the area where USB PHY resides and asserted
->>>> before powering it off.
->>>>
->>>> On power-on the USB PWRRDY signal need to be de-asserted before enabling
->>>> clock and switching the module to normal state (through MSTOP support). The
->>>> power-on configuration sequence
->>>
->>> The wording makes me wonder, have you considered implementing this as a
->>> power sequencing driver?
->>
->> No, haven't tried as power sequencing. At the moment this was started I
->> think the power sequencing support wasn't merged.
->>
->> The approaches considered were:
->> a/ power domain
-> 
-> Letting a power domain control a corresponding power ready signal would
-> have been my first instinct as well.
-> 
->> b/ regulator
->> c/ as a reference counted bit done through regmap read/writes APIs
->>
->> a and b failed as a result of discussions in the previous posted versions.
-> 
-> Could you point me to the discussion related to a?
-
-It's this one
-https://lore.kernel.org/all/CAPDyKFrS4Dhd7DZa2zz=oPro1TiTJFix0awzzzp8Qatm-8Z2Ug@mail.gmail.com/
-
-
-> 
-> I see v2 and v3 tried to control the bit from the PHY drivers, and in
-> v4 we were are already back to the reset driver.
-
-v2 passed the system controller (SYSC) phandle to the USB PHYs only (though
-renesas,sysc-signals DT property) where the PWRRDY bit was set. The PWRRDY
-bit was referenced counted in the SYSC driver though regmap APIs.
-
-v3 used the approach from v2 but passed the renesas,sysc-signals to all the
-USB related drivers.
-
-Then, in v4, the PWRRDY refcounting was dropped and passed
-renesas,sysc-signals only to the USB PHY CTRL DT node in the idea that this
-is the node that will always be probed first as all the other USB blocks
-need it and request resets from it.
-
-v5 and v6 kept the approach from v4 and only addressed misc comments or
-things that I noticed.
-
-> 
->> c was abandoned by me after long discussions with Renesas HW team which
->> revealed the block schema b/w individual USB blocks (presented in the patch
->> description).
->>
->> The point is that this bit doesn't actually power anything, at the moment
->> the bit is set, the power to USB is already applied. Software just need to
->> set the bit before/after setting the clocks and the associated MSTOP and
->> applying any USB specific settings. Each clock has an MSTOP associated and
->> the MSTOP is set though the clock driver when the clock is set.
-> 
-> I understand.
-> 
-> Apart from having to carry non-reset-related code in reset drivers, I
-> worry about the implicit ordering that the PHY driver depends on with
-> this:
-> 
-> The power-up (probe) order is guaranteed by probe order via the
-> reset_control_get() check in the PHY driver, and power-down (remove)
-> order is guaranteed by the reset controller device reference that the
-> reset control holds. That's all very hidden and indirect when the
-> actual dependency is between a bit being set in SYSC and the clock
-> handling in (either) PHY driver.
-
-
-The USB PHY CTRL block controlled by this driver is also part of the USB
-PHY block:
-
-┌──────────────────────────┐
-│                 ┌────────┐
-│                 │        │
-│                 │ PHY0   │
-│     USB PHY     │        │
-│                 └────────┘
-│                          │
-│┌──────────────┐ ┌────────┐
-││USHPHY control│ │        │
-││  registers   │ │ PHY1   │
-│└──────────────┘ │        │
-│                 └────────┘
-└─▲───────▲─────────▲──────┘
-  │       │         │
-  │       │         │
-  │       │         │
-  │PWRRDY │         │
-  │       │   CPG_CLK_ON_USB.CLK3_ON
-  │       │
-  │  CPG_BUS_PERI_COM_MSTOP.MSTOP4_ON
-  │
-┌────┐
-│SYSC│
-└────┘
-
-Thus, touching USB PHY CTRL registers, though this driver, will also have
-to be done after setting PWRRDY, clk, MSTOP.
-
-In v3 the PWRRDY SYSC phandle was passed to all the drivers in charge of
-controlling the blocks from the USB PHY area. And the PWRRDY was referenced
-counted through regmap APIs. In v3 I was in the middle of keeping vs
-dropping the refcounting and, thus, posted it and asked for feedback on
-this approach. I didn't get any input about it, I've dropped in v4.
-
-In v4, I dropped it as I considered it too much and unnecessary taking into
-account that the USB PHY CTRL driver will be probed/remove all the time
-first/last as all the other drivers depends on it. And, due to this, it
-will be last/first in suspend/resume sequence.
-
-
-> 
->>>
->>>> must be:
->>>>
->>>> 1/ PWRRDY=0
->>>> 2/ CLK_ON=1
->>>> 3/ MSTOP=0
->>>>
->>>> On power-off the configuration sequence should be:
->>>>
->>>> 1/ MSTOP=1
->>>> 2/ CLK_ON=0
->>>> 3/ PWRRDY=1
->>>>
->>>> The CLK_ON and MSTOP functionalities are controlled by clock drivers.
->>>>
->>>> After long discussions with the internal HW team, it has been confirmed
->>>> that the HW connection b/w USB PHY block, the USB channels, the system
->>>> controller, clock, MSTOP, PWRRDY signal is as follows:
->>>>
->>>>                                ┌──────────────────────────────┐
->>>>                                │                              │◄── CPG_CLKON_USB.CLK0_ON
->>>>                                │     USB CH0                  │
->>>> ┌──────────────────────────┐   │┌───────────────────────────┐ │◄── CPG_CLKON_USB.CLK2_ON
->>>> │                 ┌────────┐   ││host controller registers  │ │
->>>> │                 │        │   ││function controller registers│
->>>> │                 │ PHY0   │◄──┤└───────────────────────────┘ │
->>>> │     USB PHY     │        │   └────────────▲─────────────────┘
->>>> │                 └────────┘                │
->>>> │                          │    CPG_BUS_PERI_COM_MSTOP.MSTOP{6, 5}_ON
->>>> │┌──────────────┐ ┌────────┐
->>>> ││USHPHY control│ │        │
->>>> ││  registers   │ │ PHY1   │   ┌──────────────────────────────┐
->>>> │└──────────────┘ │        │◄──┤     USB CH1                  │
->>>> │                 └────────┘   │┌───────────────────────────┐ │◄── CPG_CLKON_USB.CLK1_ON
->>>> └─▲───────▲─────────▲──────┘   ││ host controller registers │ │
->>>>   │       │         │          │└───────────────────────────┘ │
->>>>   │       │         │          └────────────▲─────────────────┘
->>>>   │       │         │                       │
->>>>   │       │         │           CPG_BUS_PERI_COM_MSTOP.MSTOP7_ON
->>>>   │PWRRDY │         │
->>>>   │       │   CPG_CLK_ON_USB.CLK3_ON
->>>>   │       │
->>>>   │  CPG_BUS_PERI_COM_MSTOP.MSTOP4_ON
->>>>   │
->>>> ┌────┐
->>>> │SYSC│
->>>> └────┘
->>>>
->>>> where:
->>>> - CPG_CLKON_USB.CLK.CLKX_ON is the register bit controlling the clock X
->>>>   of different USB blocks, X in {0, 1, 2, 3}
->>>> - CPG_BUS_PERI_COM_MSTOP.MSTOPX_ON is the register bit controlling the
->>>>   MSTOP of different USB blocks, X in {4, 5, 6, 7}
->>>> - USB PHY is the USB PHY block exposing 2 ports, port0 and port1, used
->>>>   by the USB CH0, USB CH1
->>>> - SYSC is the system controller block controlling the PWRRDY signal
->>>> - USB CHx are individual USB block with host and function capabilities
->>>>   (USB CH0 have both host and function capabilities, USB CH1 has only
->>>>   host capabilities)
->>>>
->>>> The USBPHY control registers are controlled though the
->>>> reset-rzg2l-usbphy-ctrl driver. The USB PHY ports are controlled by
->>>> phy_rcar_gen3_usb2 (drivers/phy/renesas/phy-rcar-gen3-usb2.c file). The
->>>> USB PHY ports request resets from the reset-rzg2l-usbphy-ctrl driver.
->>>>
->>>> The connection b/w the system controller and the USB PHY CTRL driver is
->>>> implemented through the renesas,sysc-pwrrdy device tree property
->>>> proposed in this patch. This property specifies the register offset and the
->>>> bitmask required to control the PWRRDY signal.
->>>>
->>>> Since the USB PHY CTRL driver needs to be probed before any other
->>>> USB-specific driver on RZ/G3S, control of PWRRDY is passed exclusively
->>>> to it. This guarantees the correct configuration sequence between clocks,
->>>> MSTOP bits, and the PWRRDY bit. At the same time, changes are kept minimal
->>>> by avoiding modifications to the USB PHY driver to also handle the PWRRDY
->>>> itself.
->>>>
->>>> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>> ---
->>>>
->>>> Changes in v7:
->>>> - used proper regmap update value on rzg2l_usbphy_ctrl_set_pwrrdy()
->>>>
->>>> Changes in v6:
->>>> - used syscon_regmap_lookup_by_phandle_args() to simplify the code
->>>> - collected tags
->>>>
->>>> Changes in v5:
->>>> - none
->>>>
->>>> Changes in v4:
->>>> - updated patch description
->>>> - updated rzg2l_usbphy_ctrl_pwrrdy_init() to map directly the
->>>>   "renesas,sysc-pwrrdy" as the SYSC signal abstraction was dropped
->>>>   in this version, along with rz_sysc_get_signal_map()
->>>> - dropped priv member of rzg2l_usbphy_ctrl_pwrrdy_init() as it is
->>>>   not needed in this version
->>>> - shift left !power_on with pwrrdy->mask as this is how the
->>>>   regmap_update_bits() needs the last member to be
->>>> - selected MFD_SYSCON
->>>>
->>>> Changes in v3:
->>>> - none; this patch is new
->>>>
->>>>
->>>>  drivers/reset/Kconfig                   |  1 +
->>>>  drivers/reset/reset-rzg2l-usbphy-ctrl.c | 62 +++++++++++++++++++++++++
->>>>  2 files changed, 63 insertions(+)
->>>>
->>>> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
->>>> index 78b7078478d4..329730cbcfb9 100644
->>>> --- a/drivers/reset/Kconfig
->>>> +++ b/drivers/reset/Kconfig
->>>> @@ -237,6 +237,7 @@ config RESET_RASPBERRYPI
->>>>  config RESET_RZG2L_USBPHY_CTRL
->>>>  	tristate "Renesas RZ/G2L USBPHY control driver"
->>>>  	depends on ARCH_RZG2L || COMPILE_TEST
->>>> +	select MFD_SYSCON
->>>>  	help
->>>>  	  Support for USBPHY Control found on RZ/G2L family. It mainly
->>>>  	  controls reset and power down of the USB/PHY.
->>>> diff --git a/drivers/reset/reset-rzg2l-usbphy-ctrl.c b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
->>>> index 8a7f167e405e..be315199e2b0 100644
->>>> --- a/drivers/reset/reset-rzg2l-usbphy-ctrl.c
->>>> +++ b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
->>>> @@ -13,6 +13,7 @@
->>>>  #include <linux/regmap.h>
->>>>  #include <linux/reset.h>
->>>>  #include <linux/reset-controller.h>
->>>> +#include <linux/mfd/syscon.h>
->>>>  
->>>>  #define RESET			0x000
->>>>  #define VBENCTL			0x03c
->>>> @@ -41,6 +42,18 @@ struct rzg2l_usbphy_ctrl_priv {
->>>>  
->>>>  #define rcdev_to_priv(x)	container_of(x, struct rzg2l_usbphy_ctrl_priv, rcdev)
->>>>  
->>>> +/**
->>>> + * struct rzg2l_usbphy_ctrl_pwrrdy - SYSC PWRRDY signal descriptor
->>>> + * @regmap: SYSC regmap
->>>> + * @offset: offset into the SYSC address space for accessing PWRRDY
->>>> + * @mask: mask into the register at offset for accessing PWRRDY
->>>> + */
->>>> +struct rzg2l_usbphy_ctrl_pwrrdy {
->>>> +	struct regmap *regmap;
->>>> +	u32 offset;
->>>> +	u32 mask;
->>>> +};
->>>> +
->>>>  static int rzg2l_usbphy_ctrl_assert(struct reset_controller_dev *rcdev,
->>>>  				    unsigned long id)
->>>>  {
->>>> @@ -91,6 +104,8 @@ static int rzg2l_usbphy_ctrl_status(struct reset_controller_dev *rcdev,
->>>>  	return !!(readl(priv->base + RESET) & port_mask);
->>>>  }
->>>>  
->>>> +#define RZG2L_USBPHY_CTRL_PWRRDY	1
->>>> +
->>>>  static const struct of_device_id rzg2l_usbphy_ctrl_match_table[] = {
->>>>  	{ .compatible = "renesas,rzg2l-usbphy-ctrl" },
->>>>  	{ /* Sentinel */ }
->>>> @@ -110,6 +125,49 @@ static const struct regmap_config rzg2l_usb_regconf = {
->>>>  	.max_register = 1,
->>>>  };
->>>>  
->>>> +static void rzg2l_usbphy_ctrl_set_pwrrdy(struct rzg2l_usbphy_ctrl_pwrrdy *pwrrdy,
->>>> +					 bool power_on)
->>>> +{
->>>> +	u32 val = (!power_on << (ffs(pwrrdy->mask) - 1)) & pwrrdy->mask;
->>>
->>>
->>> Why not just:
->>>
->>> 	u32 val = power_on ? 0 : pwrrdy->mask;
->>
->> This would work as well. I wanted to be sure it doesn't fail in case the
->> mask is more than one bit (as it comes from device tree).
-> 
-> I'd just check this in rzg2l_usbphy_ctrl_pwrrdy_init() and fail if more
-> than one bit is set.
-
-OK
-
-> 
-> [...]
->>
->>> So we deassert PWRRDY on probe and assert on remove. What about
->>> suspend/resume ordering?
->>
->> As this driver has no suspend/resume support yet, my intention was to take
->> care of this bit on suspend/resume after it will be established how it is
->> handled on probe/remove. Adding suspend/resume support to this series will
->> make it bigger.
-> 
-> Ok, please add that to the commit description.
-
-OK
-
-> I'm just asking because the dt-bindings patch mentions how PWRRDY must
-> be set during suspend/resume, and then this patch doesn't do it.
-
-OK
-
-Thank you for your review,
-Claudiu
+PiANCj4gT24gV2VkLCAyMDI1LTEwLTAxIGF0IDEwOjA2ICswMDAwLCBBdnJpIEFsdG1hbiB3cm90
+ZToNCj4gPiA+IEZyb206IEJlYW4gSHVvIDxiZWFuaHVvQG1pY3Jvbi5jb20+DQo+ID4gPg0KPiA+
+ID4gVGhpcyBwYXRjaCBhZGRzIE9QLVRFRSBiYXNlZCBSUE1CIHN1cHBvcnQgZm9yIFVGUyBkZXZp
+Y2VzLiBUaGlzDQo+ID4gPiBlbmFibGVzIHNlY3VyZSBSUE1CIG9wZXJhdGlvbnMgb24gVUZTIGRl
+dmljZXMgdGhyb3VnaCBPUC1URUUsDQo+ID4gPiBwcm92aWRpbmcgdGhlIHNhbWUgZnVuY3Rpb25h
+bGl0eSBhdmFpbGFibGUgZm9yIGVNTUMgZGV2aWNlcyBhbmQNCj4gPiA+IGV4dGVuZGluZyBrZXJu
+ZWwtYmFzZWQgc2VjdXJlIHN0b3JhZ2Ugc3VwcG9ydCB0byBVRlMtYmFzZWQgc3lzdGVtcy4NCj4g
+PiA+DQo+ID4gPiBCZW5lZml0cyBvZiBPUC1URUUgYmFzZWQgUlBNQiBpbXBsZW1lbnRhdGlvbjoN
+Cj4gPiA+IC0gRWxpbWluYXRlcyBkZXBlbmRlbmN5IG9uIHVzZXJzcGFjZSBzdXBwbGljYW50IGZv
+ciBSUE1CIGFjY2Vzcw0KPiA+ID4gLSBFbmFibGVzIGVhcmx5IGJvb3Qgc2VjdXJlIHN0b3JhZ2Ug
+YWNjZXNzIChlLmcuLCBmVFBNLCBzZWN1cmUgVUVGSQ0KPiA+ID4gdmFyaWFibGVzKQ0KPiA+ID4g
+LSBQcm92aWRlcyBrZXJuZWwtbGV2ZWwgUlBNQiBhY2Nlc3MgYXMgc29vbiBhcyBVRlMgZHJpdmVy
+IGlzDQo+ID4gPiBpbml0aWFsaXplZA0KPiA+ID4gLSBSZW1vdmVzIGNvbXBsZXggaW5pdHJhbWZz
+IGRlcGVuZGVuY2llcyBhbmQgYm9vdCBvcmRlcmluZw0KPiA+ID4gcmVxdWlyZW1lbnRzDQo+ID4g
+PiAtIEVuc3VyZXMgcmVsaWFibGUgYW5kIGRldGVybWluaXN0aWMgc2VjdXJlIHN0b3JhZ2Ugb3Bl
+cmF0aW9ucw0KPiA+ID4gLSBTdXBwb3J0cyBib3RoIGJ1aWx0LWluIGFuZCBtb2R1bGFyIGZUUE0g
+Y29uZmlndXJhdGlvbnMNCj4gPiA+DQo+ID4gPiBDby1kZXZlbG9wZWQtYnk6IENhbiBHdW8gPGNh
+bi5ndW9Ab3NzLnF1YWxjb21tLmNvbT4NCj4gPiA+IFNpZ25lZC1vZmYtYnk6IENhbiBHdW8gPGNh
+bi5ndW9Ab3NzLnF1YWxjb21tLmNvbT4NCj4gPiA+IFNpZ25lZC1vZmYtYnk6IEJlYW4gSHVvIDxi
+ZWFuaHVvQG1pY3Jvbi5jb20+DQo+ID4gUmV2aWV3ZWQtYnk6IEF2cmkgQWx0bWFuIDxhdnJpLmFs
+dG1hbkBzYW5kaXNrLmNvbT4NCj4gPg0KPiA+IE5pdDogV291bGQgaXQgbWFrZSBzZW5zZSB0byBz
+aW1wbGlmeSB0aGluZ3MsIGUuZy4gOg0KPiA+IEluc3RlYWQgb2Ygc3RydWN0IGxpc3RfaGVhZCBy
+cG1iczsNCj4gPiBVc2U6DQo+ID4gc3RydWN0IHVmc19ycG1iX2RldiAqcnBtYnNbNF07DQo+IA0K
+PiANCj4gSGkgQXZyaSwNCj4gDQo+IEkgYW0gd29ya2luZyBvbiB0aGUgbmV4dCB2ZXJzaW9uLCBz
+ZWVtcyB3ZSBzaG91bGQga2VlcCBzdHJ1Y3QgbGlzdF9oZWFkDQo+IHJwbWJzLg0KPiANCj4gT24g
+dGhlIGhvdCBwYXRoLCBydW50aW1lIFJQTUIgSS9PIG9wZXJhdGlvbnMgdXNlIGRldl9nZXRfZHJ2
+ZGF0YShkZXYpIHRvDQo+IGdldCB0aGUgZGV2aWNlIHBvaW50ZXIgZGlyZWN0bHksIG5ldmVyIHNl
+YXJjaGluZyB0aHJvdWdoIGhiYS0+cnBtYnMuIEFycmF5J3MNCj4gTygxKSBkaXJlY3QgYWNjZXNz
+IGFkdmFudGFnZSBpcyB0aGVyZWZvcmUgaXJyZWxldmFudC4gYW5kIHRoZSBsaXN0IGlzIG9ubHkN
+Cj4gYWNjZXNzZWQgZHVyaW5nIHByb2JlL3JlbW92ZSAob25lLXRpbWUgb3BlcmF0aW9ucyBhdCBi
+b290L3NodXRkb3duKQ0KPiB3aGVyZSBwZXJmb3JtYW5jZSBkaWZmZXJlbmNlcyBhcmUgbmVnbGln
+aWJsZS4gVGhlIGxpc3QgaXRlcmF0ZXMgb25seSBvdmVyIGFjdGl2ZQ0KPiByZWdpb25zIHdpdGhv
+dXQgTlVMTCBjaGVja3MsIHdoaWxlIGFuIGFycmF5IHJlcXVpcmVzIGNoZWNraW5nIGFsbCA0IHNs
+b3RzLg0KPiANCj4gTGlzdCB1c2VzIDE2IGJ5dGVzIHBlciBhY3RpdmUgcmVnaW9uLCBhcnJheSB1
+c2VzIDMyIGJ5dGVzICg0IMOXIDgtYnl0ZSBwb2ludGVycykNCj4gcmVnYXJkbGVzcyBvZiBob3cg
+bWFueSByZWdpb25zIGFyZSBhY3RpdmUsIG1vc3Qgb2YgVUZTIGRldmljZXMgb25seSBlbmFibGVk
+DQo+IDEtMiBSUE1CIHJlZ2lvbnMsIG1ha2luZyB0aGUgbGlzdCBtb3JlIG1lbW9yeS1lZmZpY2ll
+bnQsIHJpZ2h0Pw0KWWVzLiAgVGhlIGNvZGUgbG9va3MgZ29vZCBhcyBpdCBpcy4NCg0KVGhhbmtz
+LA0KQXZyaQ0KDQo+IA0KPiANCj4gaG93IGRvIHlvdSB0aGluaz8NCj4gDQo+IEtpbmQgcmVnYXJk
+cywNCj4gQmVhbg0KPiANCj4gDQoNCg==
 
