@@ -1,217 +1,146 @@
-Return-Path: <linux-kernel+bounces-845524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64B94BC53E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:39:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80CEDBC53F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:40:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 52FE14EDE71
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:39:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ED9274ECE25
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:40:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FEC3285CAE;
-	Wed,  8 Oct 2025 13:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53788285CB8;
+	Wed,  8 Oct 2025 13:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x2GUn6CR"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LbWj7Q43"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E0B249EB
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 13:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8D02857C1
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 13:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759930780; cv=none; b=eQG0FaH34msh4taBX+vHE7XYNGguBgnYjANnjlZZWscVW5QQisWuUDxm2RWoX568fQLsGLp6gJFIq4NUar5pYc3ndli+Zv4HrHtlSBs5ROFyDgTjbNHXDfMKA1HdAdOMkgsuRE7RvMNnHGakNu9wq1qanEk49arOxLjYE5iMZmM=
+	t=1759930823; cv=none; b=Gjq/lpCPO4b2Cw2F+6OAUcCCtW6WfevPBtgqX/wSwryNsNo4dqDDlnA79+iNJpkaexGN5SvXYfS/xhKZbmUoPHd8PszfPGfgkD0nM05b9uXa2nK0WzfZw75hmSk0JcEK1x+ECdLNIGDwpUEQSGvJWOT+h0LYOwVjsniGxslxViQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759930780; c=relaxed/simple;
-	bh=/Qs0oIyWheEc3zWX81NSETq42rB7JfdxsDIJJfgGAdc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E/QaD0sKfEdlEk864aBcHN6MFUUJbCyW0Lg0iTeYmwDls6vMr+DAWHRMLuvi6c+AI9cb5ulcG6Xztt/C3EGv3MMMij/DBkWEMXFBsqYyEmEGchg1q6Tvwo/EBBHCl8SYrXYFofPJKNEIAcKpqvvMIMDQO/XUOHf8PLOdu2Wg2oA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x2GUn6CR; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-46e3af7889fso45650515e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 06:39:38 -0700 (PDT)
+	s=arc-20240116; t=1759930823; c=relaxed/simple;
+	bh=LKLMI7jVIBXqnCINko8P7Uc6iPO097WNdhlQpADJv1g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pOUobCIVUWHlzEm835PZkSQnuM/ExM6i/OBzxDcwTvoPWv1qbz62m1qsFWp0s5FbkFrvIIniEiwtLzw7nDNaLxigCJ7geQpvvdz99FzBH5EEDJdS4q5+RIM6GXO+godMJanrjAnth9ohBJzzOl9ObYVPOxbIk75EiL2OrvPo7gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LbWj7Q43; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6394b4ff908so12346578a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 06:40:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759930777; x=1760535577; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Vn6BpMsAh9r4IbRE1UUdGGWd28vzfH5FktGYeaYOaFg=;
-        b=x2GUn6CR+AcRZQ1l78p5I+0mC23jUut6jEZaogw1gyVEjkdNWQNV7fwStFBb6YSrkm
-         KiJjeBg4Ds+bz2/9LSP0T6DVuj9MQ/ZdyEBWFq57wm0aQxsEAB0XYzinTW9v2YOrvBHa
-         gm1vupU7wUKQtX53Sm3Qc4k69FGg2PDdr6F7wdGUcBSBHYZGnbKaxJBjLnyVx4qvjTR0
-         L+lTXtBlb7sHT4T67Fp4H+cRcGNvR2LuxZRoTX3jQ8rJdsri/4GLnVFWVZNuBJfoiXNP
-         riUFid+dCQELDo2ym2cFe8ThqnTUlPzuHNIZyS2W4oS3oqY18+3h+IfxOm2Gti2kDwEp
-         Tt2g==
+        d=gmail.com; s=20230601; t=1759930820; x=1760535620; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zB8dGHM529xx30JxD8pLx7WECan5YqHewyo+iNLeAnM=;
+        b=LbWj7Q43G5hona31gDyDgNa3GxOq4M8qW5ofvvXTJ9SqLzR9R4T/ovMRFmF3Apk5j5
+         H4P6pwbbv4/rSRysM461uLDGxjmqU2axzpgia89DYgl07QkYtU5WZfH/WNLl2FlOrO+I
+         Tpbc6YZ54LL+fV4+n5A+K240bivQb/TyXpyvUMppYZG7SnolXbk/VKNOpaPQn6hiVqDl
+         RXt4k3Os26eUzworJH4svnWNxA2Tzz6jgpXuax/cda/g3YOuTs1Plr2cKKizcc1zXhid
+         JfS9HBxniBhA4Bi9FgkYeIwT2RoY2ygclfGtWaaZvQUx1OvdkhtxKZl+xQUimEsSOPl/
+         ALig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759930777; x=1760535577;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vn6BpMsAh9r4IbRE1UUdGGWd28vzfH5FktGYeaYOaFg=;
-        b=bdquIfhmCSM8zJY/tsEU3yHxphd4TckXjOXmFtdj4TsAV1BR0VriLt2ucOS5cMdWsH
-         3XmxCRFtxPJ+PeoOpJ8G+gLHm1gqKAJb5NzbNT2oIthh72WY2E6oGQcoH0au9Hw98Q9T
-         2YCl1GSx7gE2NV4Kle+ENm8oheL04StF8YJckdwFhjumo+urEYJUymHm7Sz5nXS95+xa
-         0MV7wClZml9BgzQuC2+nRl3BD/KFvd21vwSdQ+00a9SoQUw6+oVfkX6kKbbnuivBUifI
-         5AQ911z69r+ofTNSv919+oG67/rZ48fBvZ7xlffQ3BTTQ/vF4Wg4+qwCfiRi18AWRbnw
-         PK7A==
-X-Forwarded-Encrypted: i=1; AJvYcCXXxQgb7FBkDfGJnKpVjcRyW8+Po3hy7RtTUEeZul7VydDBKmyrPdvE7b+tndK6VwaSlsq4ra3h3O8vcfg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNngYL1CdWnKwZ1ZTnVh56Sdt6Cu8yvbwT7NBDRnfNvlqtsmeU
-	unGtkfIgK2w6UU5Ry0TPqDoBIvA2VKSueHvICS6TQYTHk1hllqCBXRvOhoYS/qcOSjQ=
-X-Gm-Gg: ASbGnctU4SiMmGkSzawtTFhJH0+mRfJPBEqgmX9B1mQImTFqQdDDP7Cs+ZGPrIoo0NA
-	iubRF/4tRmcvs4xa55UbqvsGe4HbiSARuzq9VPRRJZJIJXDb43ggBNkYl+raK27qkDdpuWF7fT9
-	PsxtR4PdlX/xPlwwqb9AebH3didV70NTYH2w5ZuB46hpwZn5SRglrNY4a5BZ6rJn0SaBVDHdRYK
-	IKQ+UCCadUMifI+BwQg4DUAOInGukW68Od+T7E0M2aGVa3ck/gUKWxbcUMtqqi1jdatCQBeUgXm
-	RfvGPb+Ucmzu5jfy3SdFlo+O1EytHXOEkLXI2VIA5cU1CLb28+arTNQFfLqEWPzduPS0fj8g8KJ
-	L9KDCvQJ5miT0M/WApTgxpr9QFHQoVCoKOWBrR9HhJ6QvKZ+q1fyYfWU0
-X-Google-Smtp-Source: AGHT+IEGhf1M0IfGRsKkHgegIRsELI5GO3Yw29dOQ7cZNfxg5VRZxd2tA7cNQ01uOfaqYYNWwFlArQ==
-X-Received: by 2002:a05:600c:8586:b0:46e:37a7:48d1 with SMTP id 5b1f17b1804b1-46fab89b7abmr12921045e9.34.1759930776614;
-        Wed, 08 Oct 2025 06:39:36 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46fa9d4c89esm38044165e9.13.2025.10.08.06.39.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 06:39:36 -0700 (PDT)
-Date: Wed, 8 Oct 2025 16:39:32 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: James Clark <james.clark@linaro.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>, Leo Yan <leo.yan@arm.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf tests: Don't retest sections in "Object code
- reading"
-Message-ID: <aOZplPKCRwvlOgUA@stanley.mountain>
-References: <20251006-james-perf-object-code-reading-v1-1-acab2129747d@linaro.org>
- <CAP-5=fXmAbz7Gp5eCRFYsYu_pZoFNSR+mcJgE6Eu6YewHyLNtg@mail.gmail.com>
- <b39ffdd5-1692-46ed-86d9-726011c92036@linaro.org>
- <aOVxlEXDMKJyIhME@x1>
- <a7698f4f-6541-4d3c-afea-d30baa4776f5@linaro.org>
- <887ff02c-c221-4b98-be98-efe62e043727@linaro.org>
+        d=1e100.net; s=20230601; t=1759930820; x=1760535620;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zB8dGHM529xx30JxD8pLx7WECan5YqHewyo+iNLeAnM=;
+        b=fnkNucs2dM+aONSJz7+mcBy5pqHQir8zM3w4zw3GlV+ttoKfMvZLSexajED3RvJ0ua
+         yjAkG0GFHf555yXScJQU7ATf2wI1eUQ1BPAg2BPUPAShf2bJto35gOdIiAd7I0rQJSeV
+         /iJFnvp/p5jwfYXlYur4Xv8DkcOWGhUjrK400BaH417S8VO1ofMCypNGjnSkNR5ARnDq
+         l0W8/PNJDGjBbFh2u2p7wVGb7R5I8xpNPnTL/0agDoRw3gr/Y15AS8BCuyGqGhcL0qpL
+         IZGqnKTY4HiJAtVaY8TAyWukUs9GR1plf2vqux0eBiB+k39lgimSWR+o+CTM9xcJvaZJ
+         iFxg==
+X-Forwarded-Encrypted: i=1; AJvYcCV2PoQayzBIfudqgofyi89zBVQMWuWEnbSfmXMGyhn/Px3FafgMVd/jQF3cVKivPDcxTUVcypBlLRw6fpQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzcc7tE39iViDkLVijJ98r+wxXiG7zCSs41BX2rtOVZidYk+GLl
+	hQyi8sP/myVg9yrIb1kF1NvGODRKop5Jpb5b2+D29M0j7jmFGh4tPz0vk2dkd2oiyUx94++nD0S
+	E288S7onnhN/nyetwV+GI1qsZlh+/hrI=
+X-Gm-Gg: ASbGncthFrNOheZdhRty4HopABu8CU02Kb5fJAYI3dqfifjH5clXfJyACviw22wV3Ty
+	4vL6p6OCzCrL48CJyvXmlVQ5vaSC9VdYs6zkFT6oP/YqiaLZj8UscBd4ireiW9LXC4y8VbZIm2+
+	1N9VBTOqM33Uoxsej4wFaMLr81JafWjxBNqkTdRI4HCWe9PmvMDVW1sF5AxvvkMWQzSimExkZO/
+	hrDXt0kqNkUy9VojaP3yo6rEovqQ4T2Mq2jjdxjoj9A4TPZbXihqpn3tRqZfQ==
+X-Google-Smtp-Source: AGHT+IFz3kQI6AfyX1eKxyqA+EEjSrFTpQAPMpdC4B14fHGxY8Y0OX0pY6hc0oAuuFffQVR5VeBnPKULag9YHQ5g3Vw=
+X-Received: by 2002:a05:6402:1cc1:b0:638:3f72:1266 with SMTP id
+ 4fb4d7f45d1cf-639d5b90ba0mr3298613a12.16.1759930820078; Wed, 08 Oct 2025
+ 06:40:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <887ff02c-c221-4b98-be98-efe62e043727@linaro.org>
+References: <20251007234221.28643-2-eraykrdg1@gmail.com> <20251008123418.GK386127@mit.edu>
+In-Reply-To: <20251008123418.GK386127@mit.edu>
+From: Ahmet Eray Karadag <eraykrdg1@gmail.com>
+Date: Wed, 8 Oct 2025 16:40:09 +0300
+X-Gm-Features: AS18NWAZTdb6J8bIgiCvZr0JlREiiNK9rxDbS29dtNRgNkclFA3tJ5WLbFroC5Q
+Message-ID: <CAHxJ8O_HF9cy5mg-W77M02E=WHrMsSOTmyxZYogUut3jJgEyFQ@mail.gmail.com>
+Subject: Re: [PATCH] Fix: ext4: add sanity check for inode inline write range
+To: "Theodore Ts'o" <tytso@mit.edu>
+Cc: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, david.hunter.linux@gmail.com, 
+	skhan@linuxfoundation.org, 
+	syzbot+f3185be57d7e8dda32b8@syzkaller.appspotmail.com, 
+	Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 08, 2025 at 11:21:34AM +0100, James Clark wrote:
-> 
-> 
-> On 08/10/2025 9:32 am, James Clark wrote:
-> > 
-> > 
-> > On 07/10/2025 9:01 pm, Arnaldo Carvalho de Melo wrote:
-> > > On Tue, Oct 07, 2025 at 10:10:12AM +0100, James Clark wrote:
-> > > > On 06/10/2025 4:21 pm, Ian Rogers wrote:
-> > > > > On Mon, Oct 6, 2025 at 6:11 AM James Clark
-> > > > > <james.clark@linaro.org> wrote:
-> > > > > > +       data = zalloc(sizeof(*data));
-> > > > > > +       if (!data)
-> > > > > > +               return true;
-> > > 
-> > > > > > +       data->addr = addr;
-> > > > > > +       strlcpy(data->path, path, sizeof(data->path));
-> > > > > nit: perhaps strdup rather than having 4kb per tested_section.
-> > > 
-> > > > Oh yeah that would have been better, not sure why I didn't do it
-> > > > that way.
-> > > > Although the max sections I saw was around 50, and it's usually
-> > > > a lot less
-> > > > so it's probably not worth the churn to change it now that
-> > > > Arnaldo's applied
-> > > > it?
-> > > 
-> > > I see you submitted a patch for using strdup() and then there is a need
-> > > for checking the strdup(), etc.
-> > > 
-> > > Since at this point this is an improvement on a test and all is sitting
-> > > in linux-next and the window is closing for v6.18, lets leave this for
-> > > the next window, ok?
-> > > 
-> > 
-> > Makes sense.
-> > 
-> > > These would be good things for some tool to catch, before it gets sent,
-> > > but that is another rabbit hole :-)
-> > > 
-> > > Thanks,
-> > > 
-> > > - Arnaldo
-> > 
-> > Does Smatch work on Perf? I imagine it would catch this if it does. Or
-> > just plain old cppcheck. I'll take a look.
-> > 
-> > James
-> > 
-> 
-> Smatch doesn't know about strdup and seems to be more focused on kernel so
-> probably isn't a good fit.
-> 
+Hi Ted,
 
-No one is going to write a check which tells people when to use a fixed
-array vs when to allocate memory dynamically.  Those sorts of decisions
-are too complicated.
+Thanks for the feedback.
 
-> Cppcheck struggles with a lot of the kernely style that's used in Perf,
-> especially the headers. We'd either have to silence a lot of the warnings,
-> or start with almost no warnings enabled.
-> 
-> It doesn't have a warning for usage of a malloc return value without NULL
-> checking, so in this case it wouldn't be useful.
+You=E2=80=99re right =E2=80=94 the commit description didn=E2=80=99t match =
+the actual change,
+and I appreciate you pointing that out.
+After reading Darrick=E2=80=99s reply, I realized our patch was only
+preventing the final crash rather than fixing the underlying issue.
+Sorry for the confusion =E2=80=94 I noticed that a bit too late after sendi=
+ng it out.
 
-In the kernel we care a lot about missing NULL checks but in userspace
-it doesn't really matter in the same way...  It's easy enough to write
-a check for this in Smatch.
+I=E2=80=99ll review things more carefully before sending any follow-ups.
 
-> 
-> I'm not 100% convinced that the effort of integrating one of these into the
-> build system would be worth it. I know that once they're in, there would be
-> constant maintenance of silencing false positives etc. And a lot of the
-> warnings are more style or opinions about undefined behavior according to
-> the standard, but aren't real based on what the compiler actually does.
-> 
+Thanks again for the guidance.
 
-The thing about false positives is that people should just ignore all the
-warnings except the new ones.  In the kernel, this works well because we
-fix all the real bugs right away.  And if we haven't eventually someone
-will look at the code again and after 10 years or so it all either gets
-fixed or it doesn't matter.
+Best regards,
+Eray
 
-> As an example, cppcheck on code-reading.c with --enable=all gives 17
-> portability, 11 style, 3 warning and 1 error outputs. Out of all of these
-> only two of the warnings are significant, from commit 0f9ad973b095 ("perf
-> tests code-reading: Handle change in objdump output from binutils >= 2.41 on
-> riscv"):
-> 
->   token = strsep(&version, ".");
->   version_tmp = atoi(token);
->   if (token)
->       version_num += version_tmp * 100;
-> 
->   token = strsep(&version, ".");
->   version_tmp = atoi(token);
->   if (token)
->       version_num += version_tmp;
-> 			
-> "token" has already been passed to atoi() so can't be NULL in the if
-> statement. I think the atoi() needs to come after the null check.
+Theodore Ts'o <tytso@mit.edu>, 8 Eki 2025 =C3=87ar, 15:34 tarihinde =C5=9Fu=
+nu yazd=C4=B1:
 >
-
-Yep.  Smatch does cross function analysis so it would have caught that.
-(I haven't tested).
-
-regards,
-dan carpenter
-
+> On Wed, Oct 08, 2025 at 02:42:22AM +0300, Ahmet Eray Karadag wrote:
+> > Add a simple check in ext4_try_to_write_inline_data() to prevent
+> > writes that extend past the inode's inline data area. The function
+> > now returns -EINVAL if pos + len exceeds i_inline_size.
+>
+> The commit description doesn't match with what the patch does.  The
+> patch changes ext4_write_inline_data_end() and not
+> ext4_try_to_write_inline().  Ext4_try_to_write_inline_data() called
+> from ext4_write_begin(), and it does this:
+>
+>         if (pos + len > ext4_get_max_inline_size(inode))
+>                 return ext4_convert_inline_data_to_extent(mapping, inode)=
+;
+>
+> So the write extends past the inline data area, in ext4_write_begin(),
+> it will have already been converted to a non-inline function.
+>
+> The ext4_write_inline_data_end() function is called from
+> ext4_write_end(), so you need to figure out why we hadn't configured
+> the file away from inline data in ext4_write_begin().
+>
+> > Reported-by: syzbot+f3185be57d7e8dda32b8@syzkaller.appspotmail.com
+> > Link: https://syzkaller.appspot.com/bug?extid=3Df3185be57d7e8dda32b8
+>
+> Did you just randomly bash the code until the syzbot reproducer
+> stopped failing?  Please try to understand the code and the failure
+> much more deeply before attempting to change the code.
+>
+> Cheers,
+>
+>                                         - Ted
 
