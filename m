@@ -1,120 +1,163 @@
-Return-Path: <linux-kernel+bounces-845739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCE20BC6010
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:22:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28D51BC6013
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:22:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20CF042113D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 16:11:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 190F8421DF2
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 16:12:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0BB82BE032;
-	Wed,  8 Oct 2025 16:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1912BE032;
+	Wed,  8 Oct 2025 16:12:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="asIk0kiQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tyCG0l6t"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3442328D83E;
-	Wed,  8 Oct 2025 16:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D35429D27E;
+	Wed,  8 Oct 2025 16:12:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759939898; cv=none; b=YvvDl7N6Rf9KEnpAPN8lKw++PqNzm3GbXmtZE0NV5PoFrEQ+FjqNK44OVvwL3gqY8lmDYcDwWQG/rrcSSF7PrgIHRTvO5Cx3ukjrQ5nzf3Mnqx/Yx4oNNgmzJXZblzfi+an9/bZO2pJDEwv976K7XjZYkLoJmBlKeAKR+4xO0KE=
+	t=1759939959; cv=none; b=XISO4mjukDLNGwuaWr0+RTqAGccikBUBdbcHgYW2Kf++JjrZEf8aqxPFM9wZ/wE3ZpR9xiDIMaK4xwysRTzDvboQ39+2Pw5TqamjGPY2Ojo+oEqmfY3LR4Bpl1fz7yucwsI7+CBOpxOq+9Th2eQvmE7zTXGcoTyOyXG4A7XFAAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759939898; c=relaxed/simple;
-	bh=ACz4ZOOMhZbxhmAt8VTRP3ni7TyEiwNE94dkxqZtfaA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
-	 References:In-Reply-To; b=t3iV6W+hVxFEyWwl8KquGZEEnCVvf+2ttwjeZwE1mNtKrg5hiLcTXlc1mUd44hCGn0HIRAMEs78IUwE0D+VrwfXLeqnYlezN0TjsZFA8RPgf5azcOpdCU/O9a63WjsOLMfrCbpYmyook+VUspDT3ZWdD7WTxH9ylHQVsgW3hz2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=asIk0kiQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C224C4CEF4;
-	Wed,  8 Oct 2025 16:11:33 +0000 (UTC)
+	s=arc-20240116; t=1759939959; c=relaxed/simple;
+	bh=GSLhHE+jLJmDn587I8Vc9P6oopRm4TApxDA0Te8Um7M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L/d+hDg6JZf3l2m3ieUC5Gv2o/SPWtizMszCz8RiqXOwxykM+wUiibhmU6dUPGBnyDZFbAde9syPfjRPxWh5kEifg0t8FmeFi0EpWkM5oMjiC6SZVNABxmRk7fAMvrjRSaV7Tzl+5ZS1d4P77vu/+5+y935TgD34xzStpMAwSLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tyCG0l6t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53D7BC4CEE7;
+	Wed,  8 Oct 2025 16:12:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759939897;
-	bh=ACz4ZOOMhZbxhmAt8VTRP3ni7TyEiwNE94dkxqZtfaA=;
-	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
-	b=asIk0kiQJvkkBiX8hWXJHC1Uhs1I9jwaUKwIZvJ2k2vJTOVtrUuVbwhJLeePftHVv
-	 m9Am6uqpxr2WRN4j1Y0EgSQGFLrLmk+5G2B+D0ZIR+hj9Z5PVb0bgXv0G48CDa4Qha
-	 0QKGYb6fvUpbcbFYs9crZoU2UjhogVKko0uZZdTWj6Z1BSAhJQ2cIWjMEFTmklmufF
-	 5oDzKrOIUWV1HSyVQAGkz9gzQ4c/V7h1WSw7GAmf7U5wxmNtM7CZA3Uz8aZhQpEocy
-	 dmyMsgAMt8OMFLnLDsJFUeXbLabz4etiyk48XEW82i7fvdqPUy1XzD0UPwNc3to2pU
-	 gmIvst6nCBlDw==
+	s=k20201202; t=1759939959;
+	bh=GSLhHE+jLJmDn587I8Vc9P6oopRm4TApxDA0Te8Um7M=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tyCG0l6tNTE0LM6z0M0layIp6vBh4VNNHNBa/SGRxsVOOEdRJIIBdOwqyrhZRkeCv
+	 sgrsrVK+1KX3X+aV0Bnym6cxMRswiYTzx9pWlr6oDe7+sNGwRizQ/9LjgecMeXqf7i
+	 qg0DuGX2IDkkxULzyYm37hP/NH7N53pmYqKHAK5Nm1uWTs/WPNZCja8Yc8FwTFu4Se
+	 g96mH9yMeC392Ws6EhaNdVAStiU4kUy4J4F1XCJzjE4y7eVZaRM/BYAKNBwaPG7wgx
+	 GBhOnjn1wT37A9td91fmo/Adge0RrAItJia1WFQeNBSplHxO0OnV/6sS4lQnouSemM
+	 40MjkyZEU4UDw==
+Message-ID: <317f4edc-0592-492f-8c3d-f0cdb0d013cd@kernel.org>
+Date: Wed, 8 Oct 2025 17:12:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] ASoC: soc-pcm: Fix mute and unmute control for
+ non-dynamic DAI links
+To: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>,
+ Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel@oss.qualcomm.com, prasad.kumpatla@oss.qualcomm.com,
+ ajay.nandam@oss.qualcomm.com, stable@vger.kernel.org
+References: <20251007023325.853640-1-mohammad.rafi.shaik@oss.qualcomm.com>
+ <d9971ca4-1911-4204-b175-1ceeaae7c238@kernel.org>
+ <b257d715-cc12-46cc-ba31-7f7fc257f763@oss.qualcomm.com>
+Content-Language: en-US
+From: Srinivas Kandagatla <srini@kernel.org>
+In-Reply-To: <b257d715-cc12-46cc-ba31-7f7fc257f763@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 08 Oct 2025 18:11:31 +0200
-Message-Id: <DDD2MGRNMEWB.1ZSVQ2HW7V4BY@kernel.org>
-To: "Alistair Popple" <apopple@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v4 03/13] gpu: nova-core: gsp: Create wpr metadata
-Cc: <rust-for-linux@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
- <acourbot@nvidia.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
- <jhubbard@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur
- Tabi" <ttabi@nvidia.com>, <linux-kernel@vger.kernel.org>,
- <nouveau@lists.freedesktop.org>
-References: <20251008001253.437911-1-apopple@nvidia.com>
- <20251008001253.437911-4-apopple@nvidia.com>
-In-Reply-To: <20251008001253.437911-4-apopple@nvidia.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed Oct 8, 2025 at 2:12 AM CEST, Alistair Popple wrote:
-> --- a/drivers/gpu/nova-core/firmware/gsp.rs
-> +++ b/drivers/gpu/nova-core/firmware/gsp.rs
-> @@ -131,7 +131,7 @@ pub(crate) struct GspFirmware {
->      /// Size in bytes of the firmware contained in [`Self::fw`].
->      pub size: usize,
->      /// Device-mapped GSP signatures matching the GPU's [`Chipset`].
-> -    signatures: DmaObject,
-> +    pub signatures: DmaObject,
->      /// GSP bootloader, verifies the GSP firmware before loading and run=
-ning it.
->      pub bootloader: RiscvFirmware,
->  }
-> @@ -216,7 +216,6 @@ pub(crate) fn new<'a, 'b>(
->          }))
->      }
-> =20
-> -    #[expect(unused)]
->      /// Returns the DMA handle of the radix3 level 0 page table.
->      pub(crate) fn radix3_dma_handle(&self) -> DmaAddress {
->          self.level0.dma_handle()
-> diff --git a/drivers/gpu/nova-core/firmware/riscv.rs b/drivers/gpu/nova-c=
-ore/firmware/riscv.rs
-> index 04f1283abb72..76d0d36fee3e 100644
-> --- a/drivers/gpu/nova-core/firmware/riscv.rs
-> +++ b/drivers/gpu/nova-core/firmware/riscv.rs
-> @@ -55,11 +55,11 @@ fn new(bin_fw: &BinFirmware<'_>) -> Result<Self> {
->  #[expect(unused)]
->  pub(crate) struct RiscvFirmware {
->      /// Offset at which the code starts in the firmware image.
-> -    code_offset: u32,
-> +    pub code_offset: u32,
->      /// Offset at which the data starts in the firmware image.
-> -    data_offset: u32,
-> +    pub data_offset: u32,
->      /// Offset at which the manifest starts in the firmware image.
-> -    manifest_offset: u32,
-> +    pub manifest_offset: u32,
->      /// Application version.
->      app_version: u32,
->      /// Device-mapped firmware image.
 
-As mentioned in a previous patch, the member visibility should at most matc=
-h the
-stuct visibility.
 
-Otherwise, LGTM!
+On 10/8/25 5:08 PM, Mohammad Rafi Shaik wrote:
+> 
+> 
+> On 10/8/2025 7:16 PM, Srinivas Kandagatla wrote:
+>>
+>>
+>> On 10/7/25 3:33 AM, Mohammad Rafi Shaik wrote:
+>>> In setups where the same codec DAI is reused across multiple DAI
+>>> links, mute controls via `snd_soc_dai_digital_mute()` is skipped for
+>>
+>> Please explain the problem.
+>>
+> In Qualcomm audioreach setup, if platform dai not specified in DT, then
+> cpu dai using as platform and initialize as static dai-link and created
+> pcm device and link-dynamic == false by default.
+> 
+> In existing setup if dynamic==false, it's skipping trigger snd-ops and
+> the codec is always on mute state.
+> 
+>>> non-dynamic links. The trigger operations are not invoked when
+>>> `dai_link->dynamic == 0`, and mute controls is currently conditioned
+>>
+>> I dont think any of the Qualcomm upstream platforms use this flag.
+>>
+> 
+> Yes, we are using dynamic flag and it's set to true in Qualcomm platforms.
+> 
+> Please check: https://git.kernel.org/pub/scm/linux/kernel/git/broonie/
+> sound.git/tree/sound/soc/qcom/qdsp6/topology.c#n1093
+> 
+>>> only on `snd_soc_dai_mute_is_ctrled_at_trigger()`. This patch ensures
+>>> that mute and unmute is applied explicitly for non-dynamic links.
+>> How is this resolving the issue, mute on these codecs happens at trigger
+>> level instead of prepare.
+>>
+> yes agree, but if link->dynamic==false the trigger ops not getting
+> called, which leading to codec always on mute state.
+
+This is because you are using something very different solution to what
+ASoC kernel provides.
+
+I dont think this is a problem with as long as you use kernel ABI..
+
+This patch looks totally a hack from something that does not belong to
+kernel, so is  NAK  from my side on this.
+
+--srini
+
+
+> 
+> Thanks & Regards,
+> Rafi.
+> 
+>> --srini
+>>>
+>>> Fixes: f0220575e65a ("ASoC: soc-dai: add flag to mute and unmute
+>>> stream during trigger")
+>>> Cc: stable@vger.kernel.org
+>>> Signed-off-by: Mohammad Rafi Shaik
+>>> <mohammad.rafi.shaik@oss.qualcomm.com>
+>>> ---
+>>>   sound/soc/soc-pcm.c | 4 ++--
+>>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
+>>> index 2c21fd528afd..4ed829b49bc2 100644
+>>> --- a/sound/soc/soc-pcm.c
+>>> +++ b/sound/soc/soc-pcm.c
+>>> @@ -949,7 +949,7 @@ static int __soc_pcm_prepare(struct
+>>> snd_soc_pcm_runtime *rtd,
+>>>               SND_SOC_DAPM_STREAM_START);
+>>>         for_each_rtd_dais(rtd, i, dai) {
+>>> -        if (!snd_soc_dai_mute_is_ctrled_at_trigger(dai))
+>>> +        if (!snd_soc_dai_mute_is_ctrled_at_trigger(dai) || !rtd-
+>>> >dai_link->dynamic)
+>>>               snd_soc_dai_digital_mute(dai, 0, substream->stream);
+>>>       }
+>>>   @@ -1007,7 +1007,7 @@ static int soc_pcm_hw_clean(struct
+>>> snd_soc_pcm_runtime *rtd,
+>>>               soc_pcm_set_dai_params(dai, NULL);
+>>>             if (snd_soc_dai_stream_active(dai, substream->stream) ==
+>>> 1) {
+>>> -            if (!snd_soc_dai_mute_is_ctrled_at_trigger(dai))
+>>> +            if (!snd_soc_dai_mute_is_ctrled_at_trigger(dai) || !rtd-
+>>> >dai_link->dynamic)
+>>>                   snd_soc_dai_digital_mute(dai, 1, substream->stream);
+>>>           }
+>>>       }
+>>
+> 
+
 
