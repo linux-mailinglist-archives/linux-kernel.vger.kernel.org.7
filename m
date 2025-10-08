@@ -1,147 +1,217 @@
-Return-Path: <linux-kernel+bounces-845400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A79D0BC4BB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 14:16:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A66F6BC4BB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 14:16:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E80723B93EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 12:16:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66E8F189F124
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 12:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F331F583D;
-	Wed,  8 Oct 2025 12:16:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2925421B9C0;
+	Wed,  8 Oct 2025 12:16:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b="I2Udx5M7"
-Received: from mout-y-209.mailbox.org (mout-y-209.mailbox.org [91.198.250.237])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BYp4jDFZ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QoHzBTBT";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BYp4jDFZ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QoHzBTBT"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35C51BD9C9;
-	Wed,  8 Oct 2025 12:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.250.237
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D6D224249
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 12:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759925761; cv=none; b=c3PG52KWcK2WHb3iWB1FD5VuvO3fvBfIHF/lFwwBstP4tjcpirtblR46NU1Hq8CpLfVwYS2qmusoA6hR6xu1m5dxrHbuyw2pqX2jLHB6f0T1mHStgXOcdMgilF5sSpcpSTwiTzmjqM3iNzJ1QYlAPUK6elhdE73iosXbmAowFCU=
+	t=1759925768; cv=none; b=N3KVf3OzvDnWJQwKvmmXo3OtWcpSl+kiv795jYx41oGsLqPPILgDZESPeMNEk8P889XYBrVPayNWmjEhNgKhIZqYr6Qd8BFEFs5UzE/rGaaZHfND89pT0WaaOf3LYw4uJI+lhFEaBdCXaXisjTce4mt8gracQW43gf+1lFaqThA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759925761; c=relaxed/simple;
-	bh=93IyCHjB3Ax0uc0tApTUMsWRh68t21wrn+aAJm7g6jQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hSlqFMKcNxncuR4Mkiz8AJ/2Ww6utKVGut9k46BvbNelUaK/QRiwK/N85nW8sSl8djmrME/eh13WBPuj2R16TDhGnZRJ1iI6uFxCpCLsgEN9N5QuYR8KWvrJaJCy/NNKeh+unOYJ88l83N+Je01eZN8puQ8Asqf4LjmpiHl7CzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com; spf=fail smtp.mailfrom=mssola.com; dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b=I2Udx5M7; arc=none smtp.client-ip=91.198.250.237
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mssola.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	s=arc-20240116; t=1759925768; c=relaxed/simple;
+	bh=t0lTvZ6X+XWSt22q1tWSMfP6gGwXSJ/Kzub4TBam+kI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PketSXQZKTMU/4qM4FnpxZshFTmOQ4in4I6Wiq/0DJdyoYCaelH+oYEXxFn7hRzInZ9YlpzZmcHMS5zY8qRV5OAehDxL6M8nYSKXKu57Ah3MS0Sk4CDti4Ux+wPI3SFzQn6ejAcEsTRrp79phL0WX0XPcborGPm5jY2K9LpqWwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BYp4jDFZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QoHzBTBT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BYp4jDFZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QoHzBTBT; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-y-209.mailbox.org (Postfix) with ESMTPS id 4chX5w64gxzB0G7;
-	Wed,  8 Oct 2025 14:15:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mssola.com; s=MBO0001;
-	t=1759925748;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 916881F792;
+	Wed,  8 Oct 2025 12:16:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759925764; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=WsKcMA7Np9zfXutebWNor08si/Vz6e3ZvS1//Dcsj0M=;
-	b=I2Udx5M7RxxlAvZkXvNx01SznjlinivyB64MRDnVg+pllPJPCpV2EqIigyuHXbwAo2VNma
-	fd6E4oc4yQLKDBI1qm9vIblTlKQfyABTLrGq3ORLJyiXH0Pm3KKdN2QDR0Pl5v1LJKCoQX
-	r8UXR9rXYNEdvu2cry0rcVHqmERh2OBNvfGSaUsj9O4gqgPox5N0mpG+SIfaouxJXBJN4C
-	MMa1KLj9NlKUEMzvTzlvOg27WNhy55p8lfxf9FvVieiiqR7Yp2R1nK/LaT07BvmQQOqo1P
-	TBhvnP4upCWfDHEEBvp+ys6sXTAu+rhCsmu5nhrLGTji7eOFuB8/H4gOUXr73w==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=softfail (outgoing_mbo_mout: 2001:67c:2050:b231:465::102 is neither permitted nor denied by domain of mssola@mssola.com) smtp.mailfrom=mssola@mssola.com
-From: =?utf-8?Q?Miquel_Sabat=C3=A9_Sol=C3=A0?= <mssola@mssola.com>
-To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-Cc: "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-  "clm@fb.com" <clm@fb.com>,  "dsterba@suse.com" <dsterba@suse.com>,
-  Naohiro Aota <Naohiro.Aota@wdc.com>,  "boris@bur.io" <boris@bur.io>,
-  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] btrfs: fix memory leaks when rejecting a non SINGLE
- data profile without an RST
-In-Reply-To: <2e943abf-2adc-4726-85db-c2ee5dd97017@wdc.com> (Johannes
-	Thumshirn's message of "Wed, 8 Oct 2025 12:04:12 +0000")
-References: <20251008074031.17830-1-mssola@mssola.com>
-	<2e943abf-2adc-4726-85db-c2ee5dd97017@wdc.com>
-Date: Wed, 08 Oct 2025 14:15:45 +0200
-Message-ID: <878qhld1xq.fsf@>
+	bh=lFU/C/Oy4l92biDocMS0dOZ4DgWNv2XUCD/V5cwxPoU=;
+	b=BYp4jDFZ1z8m0GX38YokIKtCZF27ZZP6JHaz+1RaGIyMv9do6a2G+DEX34nIfRa4K5yGn+
+	hcI2m6LSbWagZp9sA2bAc+Ot1Ihb6BaKKc9XQwAhFoGpTOLA1J4NlBlMarUR2hchjHy8n5
+	dBR1LLfFrcV0NLJKNNAS9ZFndHGZEK8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759925764;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lFU/C/Oy4l92biDocMS0dOZ4DgWNv2XUCD/V5cwxPoU=;
+	b=QoHzBTBTu0cjWuChqsoL0nBHbK4JJht65GUe/Rl3vRVte6jYXWy/8YluNzlOcj5KZKnCu0
+	bLB27GzIFVXlV7Dw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759925764; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lFU/C/Oy4l92biDocMS0dOZ4DgWNv2XUCD/V5cwxPoU=;
+	b=BYp4jDFZ1z8m0GX38YokIKtCZF27ZZP6JHaz+1RaGIyMv9do6a2G+DEX34nIfRa4K5yGn+
+	hcI2m6LSbWagZp9sA2bAc+Ot1Ihb6BaKKc9XQwAhFoGpTOLA1J4NlBlMarUR2hchjHy8n5
+	dBR1LLfFrcV0NLJKNNAS9ZFndHGZEK8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759925764;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lFU/C/Oy4l92biDocMS0dOZ4DgWNv2XUCD/V5cwxPoU=;
+	b=QoHzBTBTu0cjWuChqsoL0nBHbK4JJht65GUe/Rl3vRVte6jYXWy/8YluNzlOcj5KZKnCu0
+	bLB27GzIFVXlV7Dw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7D41C13A3D;
+	Wed,  8 Oct 2025 12:16:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id iWuJHgRW5mjAOAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 08 Oct 2025 12:16:04 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 1A845A0A9C; Wed,  8 Oct 2025 14:16:04 +0200 (CEST)
+Date: Wed, 8 Oct 2025 14:16:04 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
+	yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH v2 10/13] ext4: introduce mext_move_extent()
+Message-ID: <2fxg5kszehzzaw5zbj6ptkxujzslxmudk3izentavxlkarm5mw@3yissfw5dru7>
+References: <20250925092610.1936929-1-yi.zhang@huaweicloud.com>
+ <20250925092610.1936929-11-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
-X-Rspamd-Queue-Id: 4chX5w64gxzB0G7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250925092610.1936929-11-yi.zhang@huaweicloud.com>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,suse.cz:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.80
 
---=-=-=
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+On Thu 25-09-25 17:26:06, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> When moving extents, the current move_extent_per_page() process can only
+> move extents of length PAGE_SIZE at a time, which is highly inefficient,
+> especially when the fragmentation of the file is not particularly
+> severe, this will result in a large number of unnecessary extent split
+> and merge operations. Moreover, since the ext4 file system now supports
+> large folios, using PAGE_SIZE as the processing unit is no longer
+> practical.
+> 
+> Therefore, introduce a new move extents method, mext_move_extent(). It
+> moves one extent of the origin inode at a time, but not exceeding the
+> size of a folio. The parameters for the move are passed through the new
+> mext_data data structure, which includes the origin inode, donor inode,
+> the mapping extent of the origin inode to be moved, and the starting
+> offset of the donor inode.
+> 
+> The move process is similar to move_extent_per_page() and can be
+> categorized into three types: MEXT_SKIP_EXTENT, MEXT_MOVE_EXTENT, and
+> MEXT_COPY_DATA. MEXT_SKIP_EXTENT indicates that the corresponding area
+> of the donor file is a hole, meaning no actual space is allocated, so
+> the move is skipped. MEXT_MOVE_EXTENT indicates that the corresponding
+> areas of both the origin and donor files are unwritten, so no data needs
+> to be copied; only the extents are swapped. MEXT_COPY_DATA indicates
+> that the corresponding areas of both the origin and donor files contain
+> data, so data must be copied. The data copying is performed in three
+> steps: first, the data from the original location is read into the page
+> cache; then, the extents are swapped, and the page cache is rebuilt to
+> reflect the index of the physical blocks; finally, the dirty page cache
+> is marked and written back to ensure that the data is written to disk
+> before the metadata is persisted.
+> 
+> One important point to note is that the folio lock and i_data_sem are
+> held only during the moving process. Therefore, before moving an extent,
+> it is necessary to check whether the sequence cookie of the area to be
+> moved has changed while holding the folio lock. If a change is detected,
+> it indicates that concurrent write-back operations may have occurred
+> during this period, and the type of the extent to be moved can no longer
+> be considered reliable. For example, it may have changed from unwritten
+> to written. In such cases, return -ESTALE, and the calling function
+> should reacquire the move extent of the original file and retry the
+> movement.
+> 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-Johannes Thumshirn @ 2025-10-08 12:04 GMT:
+Nice, just one nit below. Feel free to add:
 
-> On 10/8/25 9:41 AM, Miquel Sabat=C3=A9 Sol=C3=A0 wrote:
->> diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
->> index e3341a84f4ab..8f767a6cd49b 100644
->> --- a/fs/btrfs/zoned.c
->> +++ b/fs/btrfs/zoned.c
->> @@ -1753,7 +1753,11 @@ int btrfs_load_block_group_zone_info(struct btrfs=
-_block_group *cache, bool new)
->>   	    !fs_info->stripe_root) {
->>   		btrfs_err(fs_info, "zoned: data %s needs raid-stripe-tree",
->>   			  btrfs_bg_type_to_raid_name(map->type));
->> -		return -EINVAL;
->> +		/*
->> +		 * Note that this might be overwritten by later if statements,
->> +		 * but the error will be at least printed by the line above.
->> +		 */
->
->
-> Not convinced the comment is useful.
->
->> +		ret =3D -EINVAL;
->>   	}
->>
->>   	if (unlikely(cache->alloc_offset > cache->zone_capacity)) {
->> @@ -1785,6 +1789,7 @@ int btrfs_load_block_group_zone_info(struct btrfs_=
-block_group *cache, bool new)
->>   		btrfs_free_chunk_map(cache->physical_map);
->>   		cache->physical_map =3D NULL;
->>   	}
->> +
->>   	bitmap_free(active);
->>   	kfree(zone_info);
->>
->
->
-> Stray newline.
->
-> Other than that,
->
-> Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Thanks for the review! Let me send a v3 shortly with your comments
-applied.
+> +static int mext_move_begin(struct mext_data *mext, struct folio *folio[2],
+> +			   enum mext_move_type *move_type)
+> +{
+> +	struct inode *orig_inode = mext->orig_inode;
+> +	struct inode *donor_inode = mext->donor_inode;
+> +	unsigned int blkbits = orig_inode->i_blkbits;
+> +	struct ext4_map_blocks donor_map = {0};
+> +	loff_t orig_pos, donor_pos;
+> +	size_t move_len;
+> +	int ret;
+> +
+> +	orig_pos = ((loff_t)mext->orig_map.m_lblk) << blkbits;
+> +	donor_pos = ((loff_t)mext->donor_lblk) << blkbits;
+> +	ret = mext_folio_double_lock(orig_inode, donor_inode,
+> +			orig_pos >> PAGE_SHIFT, donor_pos >> PAGE_SHIFT, folio);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * Check the origin inode's mapping information again under the
+> +	 * folio lock, as we do not hold the i_data_sem at all times, and
+> +	 * it may change during the concurrent write-back operation.
+> +	 */
+> +	if (mext->orig_map.m_seq != READ_ONCE(EXT4_I(orig_inode)->i_es_seq)) {
+> +		ret = -ESTALE;
+> +		goto error;
+> +	}
+> +
+> +	/* Adjust the moving length according to the minor folios length. */
+						 ^^^ ... the length of shorter folio
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQJiBAEBCgBMFiEEG6U8esk9yirP39qXlr6Mb9idZWUFAmjmVfEbFIAAAAAABAAO
-bWFudTIsMi41KzEuMTEsMiwyEhxtc3NvbGFAbXNzb2xhLmNvbQAKCRCWvoxv2J1l
-ZVtcEACmUM9RHg4i24f6OzrhxEtMXLpJZ5PTHyAIYibSw4RqemAFv9CZ+sQprrkH
-z/RztJWSzeWo3FFcLHE8qCPLSI/UrrgRK+ztj8RlBFwU0tDjxOEavFEbxbMbG29o
-6NmnIP/R6pePAhjvvRaZzoMBfpwqZ4izFAMDutQyrQv4pxwlm1XwdU1kQM5X7soH
-4V9i+pSOETaE4eNSNlcCTZK6gjdqucrJB7LoSPiLSvWXHqIEELF5a2BEgy1F/Z0Y
-RCLYJ4kB80VUtGrBGsUHTm6jGEbbgP2KVfNBcQkaGzLPxuampR7SavEmNdiTpdzB
-Uec4XSmQpLc3RMUpzFB+jZA1QkcOd4cHbxbCYG4FJkTjW8RTwuHrNV4DdYuH4Akk
-iOJTr62ZzM7G+CZ7W17PK0A7qQNmFBBFExXOGaNFB0ST8UFrNXfIdcrPui8e364I
-n++6bHa92fs9fFGiCdPBQSeDn8LjhgKvxyVXPjWlaD5rJ4fH93zJh4HKn96A7JPm
-oANdRtXRDTMLpF8pfEFemgIIBugphrZtRzkTg4gytrqx0U6KPyJbwWNxWkLM08Nr
-yF72LY7AcbRRaEzd2hwU4X7pdZDbIfnluG2zjqbE51RxLYQtgdWiDGJ5lHRh0GM/
-N0BClw+XpfsnlA5tXek8kaqDxHT4krCz+OO7GMKUGQgGdni2iQ==
-=bdCs
------END PGP SIGNATURE-----
---=-=-=--
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
