@@ -1,198 +1,197 @@
-Return-Path: <linux-kernel+bounces-846038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46915BC6D6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 01:11:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03A3CBC6D76
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 01:14:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7B97406B35
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 23:11:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 155364EAB28
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 23:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04CC52C11ED;
-	Wed,  8 Oct 2025 23:11:03 +0000 (UTC)
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A17B2C2340;
+	Wed,  8 Oct 2025 23:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lKbQjfER"
+Received: from mail-yx1-f46.google.com (mail-yx1-f46.google.com [74.125.224.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA760199FB0
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 23:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D56FA23E334
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 23:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759965062; cv=none; b=XL1+x+qM9JEIybqY0VxNir+VwiTY1Js7o4GFBtUqLeIMfPzaIIvt+yBvT+6HgTlMsfmv10AEUPvorurCXkgi9I0oZsBLPfqPyyJbzSDAFRc9D280pQFRjoehY6p3suVZzCoBWJbg4uIqJjjbDb3b7xk7DBJI02CfHOhOzLlMEOE=
+	t=1759965285; cv=none; b=rom3Agc9PR9i/WJ6IA1dWeW/kiHNyw+TO+tLV5RU6m9bx1VasELo0gDRSTxdNXpT0t61olYQ38NqchwgMX3OzQuGv6vAWfl82vn11h6GS4SbU1SNFhSA2/r62UvJkePFGiFttKVwYbHFUHANr16b/YgVoC3gtZJknJMc+peUsVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759965062; c=relaxed/simple;
-	bh=reMMTVk9GCgjLzWhC5u6ZW9yEjOlsH5unRf9z9L8ptk=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=AutzLqoQtc468e/34CaUA67qR18yIPVexEYXky2NrRGnnq6NEGT3G2/2PbAQjfcRnyR22Uwz3cj0FZkLAosxZxs9qTjJCoA4qXSx/O4GlONq7Q8D9EW9WWWbtD/nQQilP+s/RvEMPgljFgGb3JhV4ugv6xFZQPgZYBZx/WGnDHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
+	s=arc-20240116; t=1759965285; c=relaxed/simple;
+	bh=jVLivBl7pCfYDlt8EIUEeHcqHw9OvdE5U9UTtxMzJsA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N3NMP6RGE/b4N2kAOXuPNCD2kc5FN0F12WGDgoGA5ZTjKWRToQaZNz6PTDtFaMfIHKdFCDXdZnKlnt1W85rqemTCJegqk40rpbpAc3KmACBn7Q+BA6rWKevxeF0nfW6ldV6E0jewGHr6+1mXxmQgn4FqZFSmwqCrOQh7R9hdcFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lKbQjfER; arc=none smtp.client-ip=74.125.224.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-3307e8979f2so88571a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 16:10:59 -0700 (PDT)
+Received: by mail-yx1-f46.google.com with SMTP id 956f58d0204a3-633c1b740c5so426952d50.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 16:14:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759965283; x=1760570083; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SFbI6yfd+yg4dKJ49IX+g9zgZu5r7fNCwf9LHJwcps4=;
+        b=lKbQjfER508S9eSw/VL2PHKa7VZzMa42jRWBQKUz2/IEgvOUwm3IglyJrsTXSnvw5w
+         HCtYoIXpBBer1vj7G+gmohqwEARI6kkpZ9HoAvjTQByuIYeFuAZ+L9mlcce0moM/F6bx
+         i8bS73QJ5/N5Vwv7KgtjsHW4g8nNqt90vwB2QzUojDijryQP58mzTSAsgiMn72Y+Q+K2
+         EdyXygStc5ZmXdUaG9x2DLvzCBIDr0qBR2WKanRmoj1qbj0QDb/ztdq6E28t5QMSAaEp
+         0r/DuSmVt3366ULvNeJTblh7cCJcmpCHBahRb9PM9F0w1OlbagIreu/4uNvqZoly9AM6
+         LkKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759965059; x=1760569859;
-        h=content-transfer-encoding:in-reply-to:organization:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+f6ArVeWZd2reFq0nlx9DebYmTrmGwR2XKW8kYdyUtM=;
-        b=XMcqPKta6X97dahLiiPM4Wi+lC8jSc2KiO9Oz7SNC8t4HxWM/t3IsQ94XT1FE3KyaK
-         2rHSl5nrRhNEmnbaepanvIe/I79XnRBd31lmz1ay1yWOyLahrTRIRR4GMmli1b2GG7Tp
-         buMNgNtoLANokR5HvE/FnYqTt7NNz2dd+dQxwF6oiDbBq/aQpzmh3HTDTUZCMIdmStZR
-         CwmgHrIcmvhZW+bv8B/UhNxOuClA83qSz5rIMAf85+4+iPrbJELVPCtz8tck6gz81uni
-         9I91MIRzU1EVmqW2GT/y5eA2WkJAam8eQezzi4tyx2bRt614Qmoyw10nlwOMO+s1ZVGT
-         iDIw==
-X-Forwarded-Encrypted: i=1; AJvYcCXtIn4WAIJuZVfh5xY3cxJBLuMId24y3oW1B9hSccJF01UkzFT8UMfBlgpWDIWvBB3JBg8PKPR9+3sPTeg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzC8tomiFfOGtf8CZTPMYGdKWZMrHx8T01lKd0PzTdG3QowxDMC
-	0ESjAC8Um+G1lxWP1iCSxeZv3tEfD3ld+hd8UNtvGWSbOziwUjQz3NEs
-X-Gm-Gg: ASbGncs5Qb7ck0VGH+qQDZc/QKbCd+MO/rcqMdrYAEODj1XKjb4rmbj34jDgzENRZTH
-	kkwU/Pa9aGCn3dn5ECLSft12S/rStJIhuDry08ufI3Vza8/DBlUUGOsHobjtyjZ626Fhq8bYrqk
-	bknmVkSBLNG/alSaYuwEVmoWf/04kiX3SeETg2jmg8wRd9VCwC60J4Diw5Plk7dX8Y+iL9ilhHz
-	O26A3P75E4WeRwrfaUzov0bvtOggfVBZmIXJx25x4dop6fr7JS2J/pOVppdVlbtTbj0gJW0IwHl
-	lvPx60I2z6W3jCXoAeMZ/pw3YGssGVNIyZBw6a1FqFYzHC1jYBT6kC+J5kWfiOCO3woQxeABlCo
-	OnhfqNH+RRrDwq8y7W9I410l+SN8lgexsVB5ob/t/MaWI40Mpju917e0/IkPiYShOa4+KdnVbEe
-	bQD86xrUSQ0pCB7VNZYVpO0viXz9dBoIrXJTpFtIVryA==
-X-Google-Smtp-Source: AGHT+IHYx7yW+JTJ5Vs8n0h3lqIBDwvHJUxcle/Y9dCGu8zkNMcwMzSHyFZOcfaJ/LG/hQU90oGRKA==
-X-Received: by 2002:a17:90b:3889:b0:32b:dfd7:e42c with SMTP id 98e67ed59e1d1-33b5139575bmr3708891a91.5.1759965058889;
-        Wed, 08 Oct 2025 16:10:58 -0700 (PDT)
-Received: from [192.168.50.136] ([118.32.98.101])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b510ff99dsm4801947a91.6.2025.10.08.16.10.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Oct 2025 16:10:58 -0700 (PDT)
-Message-ID: <2b8e3ca5-1645-489c-9d7f-dd13e5fc43ed@kzalloc.com>
-Date: Thu, 9 Oct 2025 08:10:53 +0900
+        d=1e100.net; s=20230601; t=1759965283; x=1760570083;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SFbI6yfd+yg4dKJ49IX+g9zgZu5r7fNCwf9LHJwcps4=;
+        b=IKKEsDhB2QIUGtyvgSWwiCdBvvmikWzY5PiqABO7cbd/nAHSrjcJobxJ7JcvUlk72X
+         8CiUcEgcl21nqdGGJXyJEm4Ksx1QJte+SoQBQT3QPPRdnALuvBx/1kA+tvU1HYQQfzC6
+         5h76mNv7Y8er2n4rdrxI8Cr5moBGCuVufn1wrUmKbqvzFt88shOvzHz/Fzytbw9JVDzg
+         aeATYI5NTkPLCwqaLOVzKknJ/gDa/T6VAmYdrcLRRakBpeG6oO0tgVuGpWEIEUxOmPyF
+         V8pqujD6B2c/GjI8YQRKQ7z2s/3iOZIQmJPpSMIgSw3esL7C505GE3c2ZmZ+2a8oGL6u
+         HJRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWgCliap+0k+CiJOxhNzT7JChb0pJTHCBqQ+qNIse6CdnVuBio002AO0oqCQcZXQvDqfbpP6XeTj8/MF64=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyX781dgyzaTWggfyn0qxrsiT0Lpu/QrsYbBdigGGS0ysU5wVNf
+	8rbfdGGzBFADxi2NEqWlGiDoAoWzWEfM9ZkINCl0MlCOZew0xgnMZLJb3BdcGod5zOPdshWgTb4
+	TBcD9cW42ugDHXSJTXpGbtg5ZGGFJKnU=
+X-Gm-Gg: ASbGncuP5MXEG6oUP9vTg9sFgzNsb4xRDPmg4OWiN/39I4jrD7TNclXBVx2ngpHi+IM
+	YYrT7QiK15Mp8SrR3btNJiWgF1+LwsorEPP0Yd7tsOYpz5HoAT6pF+8rKdFxF0JJeGuafzkkASy
+	ekRGHhP2YWCdlk+uNOMNxr5a1TSJ2kEpFThC5Q32vECN45rBSB9JDiRffj+1PkjXhxvSULizrHb
+	75DOdUEcbQuF2rV2hKwRGaWjwTYu35eM184lkf1RZf//Z3MGUtyOgZkunu7oZT1LyQ=
+X-Google-Smtp-Source: AGHT+IFCEYGN+m/q1FKnlQZmsAbbOkqHlLXzoklzuXn/5KxWd8KUCLsi/0JemznMrYIDBz4LiBajWdwhGS2HtwHJwdw=
+X-Received: by 2002:a05:690e:5ce:b0:62a:38ab:fc31 with SMTP id
+ 956f58d0204a3-63ccb884e07mr3868762d50.14.1759965282757; Wed, 08 Oct 2025
+ 16:14:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: cpufeature: Don't cpu_enable_mte() when
- KASAN_GENERIC is active
-From: Yunseong Kim <ysk@kzalloc.com>
-To: Catalin Marinas <catalin.marinas@arm.com>,
- James Morse <james.morse@arm.com>, Will Deacon <will@kernel.org>,
- Yeoreum Yun <yeoreum.yun@arm.com>,
- Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc: Andrey Konovalov <andreyknvl@gmail.com>, Marc Zyngier <maz@kernel.org>,
- Mark Brown <broonie@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- Ard Biesheuvel <ardb@kernel.org>, Andrey Ryabinin <ryabinin.a.a@gmail.com>,
- Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- kasan-dev@googlegroups.com
-References: <20251008210425.125021-3-ysk@kzalloc.com>
- <CA+fCnZcknrhCOskgLLcTn_-o5jSiQsFni7ihMWuc1Qsd-Pu7gg@mail.gmail.com>
- <d0fc7dd9-d921-4d82-9b70-bedca7056961@kzalloc.com>
-Content-Language: en-US
-Organization: kzalloc
-In-Reply-To: <d0fc7dd9-d921-4d82-9b70-bedca7056961@kzalloc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241121100539.605818-1-jimzhao.ai@gmail.com> <20251007161711.468149-1-JPEWhacker@gmail.com>
+ <ywwhwyc4el6vikghnd5yoejteld6dudemta7lsrtacvecshst5@avvpac27felp> <CAJdd5GY1mmi83V8DyiUJSZoLRVhUz_hY=qR-SjZ8Ss9bxQ002w@mail.gmail.com>
+In-Reply-To: <CAJdd5GY1mmi83V8DyiUJSZoLRVhUz_hY=qR-SjZ8Ss9bxQ002w@mail.gmail.com>
+From: Joshua Watt <jpewhacker@gmail.com>
+Date: Wed, 8 Oct 2025 17:14:31 -0600
+X-Gm-Features: AS18NWAhRXVS4bQVIwtYDJ5b-jz2OHqNOhjsxYSwMfqqDJlxC7ftCg-fC_O8rrU
+Message-ID: <CAJdd5GaQ1LdS=n52AWQwZ=Q9woSjFYiVD9E_1SkEeDPoT=bmjw@mail.gmail.com>
+Subject: Re: [PATCH] mm/page-writeback: Consolidate wb_thresh bumping logic
+ into __wb_calc_thresh
+To: Jan Kara <jack@suse.cz>
+Cc: jimzhao.ai@gmail.com, akpm@linux-foundation.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, willy@infradead.org, linux-nfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-To summarize my situation, I thought the boot panic issue might be due
-to incompatibility between MTE and KASAN Generic, so I sent this patch.
+On Wed, Oct 8, 2025 at 8:49=E2=80=AFAM Joshua Watt <jpewhacker@gmail.com> w=
+rote:
+>
+> On Wed, Oct 8, 2025 at 5:14=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
+> >
+> > Hello!
+> >
+> > On Tue 07-10-25 10:17:11, Joshua Watt wrote:
+> > > From: Joshua Watt <jpewhacker@gmail.com>
+> > >
+> > > This patch strangely breaks NFS 4 clients for me. The behavior is tha=
+t a
+> > > client will start getting an I/O error which in turn is caused by the=
+ client
+> > > getting a NFS3ERR_BADSESSION when attempting to write data to the ser=
+ver. I
+> > > bisected the kernel from the latest master
+> > > (9029dc666353504ea7c1ebfdf09bc1aab40f6147) to this commit (log below)=
+. Also,
+> > > when I revert this commit on master the bug disappears.
+> > >
+> > > The server is running kernel 5.4.161, and the client that exhibits th=
+e
+> > > behavior is running in qemux86, and has mounted the server with the o=
+ptions
+> > > rw,relatime,vers=3D4.1,rsize=3D1048576,wsize=3D1048576,namlen=3D255,s=
+oft,proto=3Dtcp,port=3D52049,timeo=3D600,retrans=3D2,sec=3Dnull,clientaddr=
+=3D172.16.6.90,local_lock=3Dnone,addr=3D172.16.6.0
+> > >
+> > > The program that I wrote to reproduce this is pretty simple; it does =
+a file
+> > > lock over NFS, then writes data to the file once per second. After ab=
+out 32
+> > > seconds, it receives the I/O error, and this reproduced every time. I=
+ can
+> > > provide the sample program if necessary.
+> >
+> > This is indeed rather curious.
+> >
+> > > I also captured the NFS traffic both in the passing case and the fail=
+ure case,
+> > > and can provide them if useful.
+> > >
+> > > I did look at the two dumps and I'm not exactly sure what the differe=
+nce is,
+> > > other than with this patch the client tries to write every 30 seconds=
+ (and
+> > > fails), where as without it attempts to write back every 5 seconds. I=
+ have no
+> > > idea why this patch would cause this problem.
+> >
+> > So the change in writeback behavior is not surprising. The commit does
+> > modify the logic computing dirty limits in some corner cases and your
+> > description matches the fact that previously the computed limits were l=
+ower
+> > so we've started writeback after 5s (dirty_writeback_interval) while wi=
+th
+> > the patch we didn't cross the threshold and thus started writeback only
+> > once the dirty data was old enough, which is 30s (dirty_expire_interval=
+).
+> >
+> > But that's all, you should be able to observe exactly the same writebac=
+k
+> > behavior if you write less even without this patch. So I suspect that t=
+he
+> > different writeback behavior is just triggering some bug in the NFS (ei=
+ther
+> > on the client or the server side). The NFS3ERR_BADSESSION error you're
+> > getting back sounds like something times out somewhere, falls out of ca=
+che
+> > and reports this error (which doesn't happen if we writeback after 5s
+> > instead of 30s). NFS guys maybe have better idea what's going on here.
+> >
+> > You could possibly workaround this problem (and verify my theory) by tu=
+ning
+> > /proc/sys/vm/dirty_expire_centisecs to a lower value (say 500). This wi=
+ll
+> > make inode writeback start earlier and thus should effectively mask the
+> > problem again.
+>
+> Changing /proc/sys/vm/dirty_expire_centisecs did indeed prevent the
+> issue from occurring. As an experiment, I tried to see what the lowest
+> value I could use that worked, and it was also 500. Even setting it to
+> 600 would cause it to error out eventually. This would indicate to me
+> a server problem (which is unfortunate because that's much harder for
+> me to debug), but perhaps the NFS folks could weigh in.
 
-However, it seems that the problem is related to the call path involving
-ZERO page. Also, I am curious how it works correctly in other machine.
+I figured out the problem. There was a bug in the NFS client where it
+would not send state renewals within the first 5 minutes after
+booting; prior to this change, that was masked in my test case because
+the 5 second dirty writeback interval would keep the connection alive
+without needing the state renewals (and my test always did a reboot).
+I've submitted a patch to fix the NFS client to the mailing list [1].
 
-On 10/9/25 7:28 AM, Yunseong Kim wrote:
-> Hi Andrey,
-> 
-> On 10/9/25 6:36 AM, Andrey Konovalov wrote:
->> On Wed, Oct 8, 2025 at 11:13 PM Yunseong Kim <ysk@kzalloc.com> wrote:
->>> [...]
->> I do not understand this. Why is Generic KASAN incompatible with MTE?
-> 
-> My board wouldn't boot on the debian debug kernel, so I enabled
-> earlycon=pl011,0x40d0000 and checked via the UART console.
-> 
->> Running Generic KASAN in the kernel while having MTE enabled (and e.g.
->> used in userspace) seems like a valid combination.
-> 
-> Then it must be caused by something else. Thank you for letting me know.
-> 
-> It seems to be occurring in the call path as follows:
-> 
-> cpu_enable_mte()
->  -> try_page_mte_tagging(ZERO_PAGE(0))
->    -> VM_WARN_ON_ONCE(folio_test_hugetlb(page_folio(page)));
-> 
->  https://elixir.bootlin.com/linux/v6.17/source/arch/arm64/include/asm/mte.h#L83
+Sorry for the noise, and thanks for your help.
 
- -> page_folio(ZERO_PAGE(0))
-  -> (struct folio *)_compound_head(ZERO_PAGE(0))
-
- https://elixir.bootlin.com/linux/v6.17/source/include/linux/page-flags.h#L307
-
->> The crash log above looks like a NULL-ptr-deref. On which line of code
->> does it happen?
-> 
-> Decoded stack trace here:
-> 
-> [    0.000000] Unable to handle kernel paging request at virtual address dfff800000000005
-> [    0.000000] KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]
-> [    0.000000] Mem abort info:
-> [    0.000000]   ESR = 0x0000000096000005
-> [    0.000000]   EC = 0x25: DABT (current EL), IL = 32 bits
-> [    0.000000]   SET = 0, FnV = 0
-> [    0.000000]   EA = 0, S1PTW = 0
-> [    0.000000]   FSC = 0x05: level 1 translation fault
-> [    0.000000] Data abort info:
-> [    0.000000]   ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
-> [    0.000000]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-> [    0.000000]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> [    0.000000] [dfff800000000005] address between user and kernel address ranges
-> [    0.000000] Internal error: Oops: 0000000096000005 [#1]  SMP
-> [    0.000000] Modules linked in:
-> [    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.17+unreleased-debug-arm64 #1 PREEMPTLAZY  Debian 6.17-1~exp1
-> [    0.000000] pstate: 800000c9 (Nzcv daIF -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [    0.000000] pc : cpu_enable_mte (debian/build/build_arm64_none_debug-arm64/include/linux/page-flags.h:1065 (discriminator 1) debian/build/build_arm64_none_debug-arm64/arch/arm64/include/asm/mte.h:83 (discriminator 1) debian/build/build_arm64_none_debug-arm64/arch/arm64/kernel/cpufeature.c:2419 (discriminator 1))
-> [    0.000000] lr : cpu_enable_mte (debian/build/build_arm64_none_debug-arm64/include/linux/page-flags.h:1065 (discriminator 1) debian/build/build_arm64_none_debug-arm64/arch/arm64/include/asm/mte.h:83 (discriminator 1) debian/build/build_arm64_none_debug-arm64/arch/arm64/kernel/cpufeature.c:2419 (discriminator 1))
-> [    0.000000] sp : ffff800084f67d80
-> [    0.000000] x29: ffff800084f67d80 x28: 0000000000000043 x27: 0000000000000001
-> [    0.000000] x26: 0000000000000001 x25: ffff800084204008 x24: ffff800084203da8
-> [    0.000000] x23: ffff800084204000 x22: ffff800084203000 x21: ffff8000865a8000
-> [    0.000000] x20: fffffffffffffffe x19: fffffdffddaa6a00 x18: 0000000000000011
-> [    0.000000] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
-> [    0.000000] x14: 0000000000000000 x13: 0000000000000001 x12: ffff700010a04829
-> [    0.000000] x11: 1ffff00010a04828 x10: ffff700010a04828 x9 : dfff800000000000
-> [    0.000000] x8 : ffff800085024143 x7 : 0000000000000001 x6 : ffff700010a04828
-> [    0.000000] x5 : ffff800084f9d200 x4 : 0000000000000000 x3 : ffff8000800794ac
-> [    0.000000] x2 : 0000000000000005 x1 : dfff800000000000 x0 : 000000000000002e
-> [    0.000000] Call trace:
-> [    0.000000]  cpu_enable_mte (debian/build/build_arm64_none_debug-arm64/√ (discriminator 1) debian/build/build_arm64_none_debug-arm64/arch/arm64/include/asm/mte.h:83 (discriminator 1) debian/build/build_arm64_none_debug-arm64/arch/arm64/kernel/cpufeature.c:2419 (discriminator 1)) (P)
-> [    0.000000]  enable_cpu_capabilities (debian/build/build_arm64_none_debug-arm64/arch/arm64/kernel/cpufeature.c:3561 (discriminator 2))
-> [    0.000000]  setup_boot_cpu_features (debian/build/build_arm64_none_debug-arm64/arch/arm64/kernel/cpufeature.c:3888 debian/build/build_arm64_none_debug-arm64/arch/arm64/kernel/cpufeature.c:3906)
-> [    0.000000]  smp_prepare_boot_cpu (debian/build/build_arm64_none_debug-arm64/arch/arm64/kernel/smp.c:466)
-> [    0.000000]  start_kernel (debian/build/build_arm64_none_debug-arm64/init/main.c:929)
-> [    0.000000]  __primary_switched (debian/build/build_arm64_none_debug-arm64/arch/arm64/kernel/head.S:247)
-> [    0.000000] Code: 9100c280 d2d00001 f2fbffe1 d343fc02 (38e16841)
-> All code
-> ========
->    0:	9100c280 	add	x0, x20, #0x30
->    4:	d2d00001 	mov	x1, #0x800000000000        	// #140737488355328
->    8:	f2fbffe1 	movk	x1, #0xdfff, lsl #48
->    c:	d343fc02 	lsr	x2, x0, #3
->   10:*	38e16841 	ldrsb	w1, [x2, x1]		<-- trapping instruction
-> 
-> Code starting with the faulting instruction
-> ===========================================
->    0:	38e16841 	ldrsb	w1, [x2, x1]
-> [    0.000000] ---[ end trace 0000000000000000 ]---
-> [    0.000000] Kernel panic - not syncing: Attempted to kill the idle task!
-> [    0.000000] ---[ end Kernel panic - not syncing: Attempted to kill the idle task! ]---
-> 
-> 
-> If there are any other points you'd like me to check or directions, please
-> let me know.
-> 
-> Thank you!
-> 
-> Yunseong
-
-Best regards,
-Yunseong
-
+[1]: https://lore.kernel.org/linux-nfs/20251008230935.738405-1-JPEWhacker@g=
+mail.com/T/#u
+>
+> >
+> >                                                                 Honza
+> > --
+> > Jan Kara <jack@suse.com>
+> > SUSE Labs, CR
 
