@@ -1,223 +1,181 @@
-Return-Path: <linux-kernel+bounces-845912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69D57BC67AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 21:36:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC3D8BC67B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 21:36:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C459434C6A9
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 19:36:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49CF2404C24
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 19:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C4C3265CA8;
-	Wed,  8 Oct 2025 19:36:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90EA72638B2;
+	Wed,  8 Oct 2025 19:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="L5XX8XM7"
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012056.outbound.protection.outlook.com [40.107.209.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aA97Um01"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869F521ADCB;
-	Wed,  8 Oct 2025 19:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759952165; cv=fail; b=JDqNvOI4d/D4O229ICI9yHEt8dX0pXjwA/7g3sFh2mbXWN1LgERlI6HInsQfLYmNqda7Z6DFmKsjM9sFJu2Vfbdy5UzEy3YnjVkAQYh5iy33tfY4rgX3k+MiQalIWq4/P7uWeMFlMZEJYmYrMPCzlr2hhWfFkM376LdojU1oPVk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759952165; c=relaxed/simple;
-	bh=k+lgYAibXwQIpvIIm3ukGnNLCz5PmNROJeh8IVOxdoU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=gs+Pd9T6tNWHjmpopQ2GWmqyQ25U/ciuXOel8XALNtX3KIRCnHNop3Z4bdMXi0aQ17yorSpx615gpPNziUnDWbaliU6Q7zO7sV52zCVpuour6KnbF5UIH5IXYarFS4ZBzMvZexRkUA/EM15rSVl2ik2dngZBgg3cq5TR9nFa44Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=L5XX8XM7; arc=fail smtp.client-ip=40.107.209.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZUiz4nBG4WOkhosJVA3J3BQa/PH11kVhhNI1ZYfjc35WUz0wXhNES0yPAsjEUCTVr+HXr2mEGV5ujtmRmhr630JU9tPzf0An88RWd5U6+zsIwxrJZ65T4xDokVIngCmiRTxyQ1wbMXPKc/dJQzjsRtAEn1QMr5MmxF27YDTho1K4bU+HPfs5xSOjcLd96xysRava3dvHj0gkJ7cxTaSAd9F87udJpi8zWFV1N3FDea/kFuFKEqGnAvmA7ZiXFas7drZ9zE/aKme4q4O7EVoUyDEf72c7fKfOz5V3uOqDPVZwT3g0DcyU6RACO/LwMfZPuAU0gC7hfbelwjJwDmOZnA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=k+lgYAibXwQIpvIIm3ukGnNLCz5PmNROJeh8IVOxdoU=;
- b=TFDYcmS0Ff/yK+y98VVLNB99pIQYn1hfYpk8Qu0y0BHEEHeFgZCzSN8jVCbwovGBJm45xFBQv/AOndCn8fOWdXBVeCCtnV7jtpBDXAB0ljgCCrkC66iIUauTuoO2MXFvvda1WImM3+TTFIgD38CNT6VK6ue9gZbmK6sCe9SGR90pFpKshBxoUtKpc9MqmMUYQoz4LJUbgEQjpIQ+q25melZmxpb7Ho53dEAQbz+2K+OhHSSgauGnOW9pvQPjq4+uebsPwbr37uRVnhhII47FqkP+xN/8S9W0iBwZ4TZJwIbUMD2pKFYWwtoBq0HcZ+cJ5BcCG7TqNbAFQVcictS7Sw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=k+lgYAibXwQIpvIIm3ukGnNLCz5PmNROJeh8IVOxdoU=;
- b=L5XX8XM7EslepGZ1IF/wZdFuDj0PmoN4RyyZKvEYYaRlPH2Rpyxtt7oM5bADnb3eCBlifuPqqu2GUNvE6BmSnlZhst4PMrrssYvZzxuojEQLPeowr4nfJ4NohbogUb+0D0MwuOaiCCtfTsRkC08tKSrrwLA6iLI5+2CePvogk2VsSr/OJ38kZRXIQPjiFeF1Pw7q7kD0WJ3/iXEXm8VdmsdvwvSiUU9V+HtxKuG84HiGavEO7YttsNIV9p8KGsqbzkK4rXKOtjhtaAp54VilhEn39sIFw0bHfyq9IUQu9lRT3iFYADzgdoK/oqr4pRKJta9iDA6FxjX0Zb8KUzu4cg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BN8PR12MB3604.namprd12.prod.outlook.com (2603:10b6:408:45::31)
- by SN7PR12MB6669.namprd12.prod.outlook.com (2603:10b6:806:26f::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Wed, 8 Oct
- 2025 19:35:54 +0000
-Received: from BN8PR12MB3604.namprd12.prod.outlook.com
- ([fe80::9629:2c9f:f386:841f]) by BN8PR12MB3604.namprd12.prod.outlook.com
- ([fe80::9629:2c9f:f386:841f%5]) with mapi id 15.20.9182.017; Wed, 8 Oct 2025
- 19:35:54 +0000
-Date: Wed, 8 Oct 2025 16:35:51 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Samiullah Khawaja <skhawaja@google.com>, pratyush@kernel.org,
-	jasonmiu@google.com, graf@amazon.com, changyuanl@google.com,
-	rppt@kernel.org, dmatlack@google.com, rientjes@google.com,
-	corbet@lwn.net, rdunlap@infradead.org,
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com,
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org,
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr,
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com,
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com,
-	vincent.guittot@linaro.org, hannes@cmpxchg.org,
-	dan.j.williams@intel.com, david@redhat.com,
-	joel.granados@kernel.org, rostedt@goodmis.org,
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
-	linux@weissschuh.net, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org,
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com,
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com,
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
-	aleksander.lobakin@intel.com, ira.weiny@intel.com,
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
-	brauner@kernel.org, linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
-	ajayachandra@nvidia.com, parav@nvidia.com, leonro@nvidia.com,
-	witu@nvidia.com, hughd@google.com, chrisl@kernel.org,
-	steven.sistare@oracle.com
-Subject: Re: [PATCH v4 00/30] Live Update Orchestrator
-Message-ID: <20251008193551.GA3839422@nvidia.com>
-References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
- <CA+CK2bB+RdapsozPHe84MP4NVSPLo6vje5hji5MKSg8L6ViAbw@mail.gmail.com>
- <CAAywjhSP=ugnSJOHPGmTUPGh82wt+qnaqZAqo99EfhF-XHD5Sg@mail.gmail.com>
- <CA+CK2bAG+YAS7oSpdrZYDK0LU2mhfRuj2qTJtT-Hn8FLUbt=Dw@mail.gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+CK2bAG+YAS7oSpdrZYDK0LU2mhfRuj2qTJtT-Hn8FLUbt=Dw@mail.gmail.com>
-X-ClientProxiedBy: SJ0PR03CA0369.namprd03.prod.outlook.com
- (2603:10b6:a03:3a1::14) To BN8PR12MB3604.namprd12.prod.outlook.com
- (2603:10b6:408:45::31)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E372259C80
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 19:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759952206; cv=none; b=B5S/sD4UJnfma1guyEzQjOyt4XOSsSThNTydi3z46XHEBNC+SFEqNuF5vU7hriC67rHDF1gj9jxOUwXkaEC8TB3QHRPoK0IlT6whP3jTD+qby+MpOR3JpqUzOcE0amXzGyb+u+JppNGwAPqGGCw6XwNUHKJULMr5qhNRLCsvz9A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759952206; c=relaxed/simple;
+	bh=Ll7E79Gg4d1JPkSdUd3Vazrtozyg144vEKsT+UQDLNM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TyUM05Y3iOri0Bi0g1jPNE5O48ZBrcHlKslMetaL1SaygvKf8Seh3u8R/DO4RRrgaHQ4RoOAlwzNu1QqcGhoqbwpzD9Ywo+3SeVRKHbyulK9UKuEiOMo+6yq4GiHJHUN2V0CfQsPpK3f6yxxEemhI5zWIHoV2haiCTISH6db5qI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aA97Um01; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-71d71bcac45so2717777b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 12:36:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759952204; x=1760557004; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=moKwOhdpUyJ4bZcyz0xhC/UoJ3xCwW2GSEFAUi/lwOw=;
+        b=aA97Um01LxoOqoyCbeXulN8kTxFvb3cexUYmThsfBmijl4UCGV23O/peJBGgcDi4Wq
+         MlAxO4FcjBhe67+sJ5mf+nt5qeD+HLzLkKZsfboJq1qY7UrAOfHQOtL8UTKDcGXh2kEI
+         hRYIMxTn1ekgZCeqAyuIu9mnjgUxk6oplaiMj2gBon4nlwakVf0lxpl5GwHGgKHuYkI2
+         Rg+ZaH0jhtDKaKNtv5dhR0IIb1lNG0CEmihNokj5laSf55ih2toqvl9jX8cxu9U1hkLJ
+         JxFLGBCc4bh9LGIvrl6oUEMBeNLTHJWPanSAy6JYCxedLm4OwcG/+W+UDlXYnccJRSrY
+         /YuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759952204; x=1760557004;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=moKwOhdpUyJ4bZcyz0xhC/UoJ3xCwW2GSEFAUi/lwOw=;
+        b=rO8VoDcYU8vEkKAaRzho1cDZV+vB5rP1McMSsEex0fZoE+w7Ij0AGtu0sp45oHccGr
+         /3x7jYLaFFNLDefwLowiuy1MEA8mQiuKFJKSlsd6K3zqFgU/FW7SafB1LoutYoCXKiv+
+         2MpYEXxKJ66yL2/uyEMR20RygJU9Yg8qsfgNWIFk0bxGki5myAeM8Pgbwx2JYarbWXd/
+         WrVRkYejdUUB3cc7rT1OKnNMxgS3DuW/2Ud08DLgzFbPXWD4KmK1c9aV7KWaesnTOR7e
+         qmHyklwSFdmdJRWv3OjunIP54RXrKFKNbuBWZc9cm7e/o0rhXxUYf22btg2HnWYig41v
+         TVDg==
+X-Forwarded-Encrypted: i=1; AJvYcCXG782AVeTF/RfXUKhhsaMkMJ2Fe50cqaP9pLFkJdmUdFd2lqXEx6CVGSNY7syTbSdwbMyPr1Z36XRbjVA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyftansIHQ6SU/UX1f+kpUfg88w+mk5bEwc17M8h25S4/7QHiqm
+	9Ft8+VhLTtqp/xp/h2ncys54muNlPrFPTeFSR48ZPrQfUL9Do16P6jsh/w+Ufw==
+X-Gm-Gg: ASbGncuk9Ruhd7la4Z/j8G52Hk/sS2bNbhDlHfmM18QKz39iFo4TqzEmPd2gnhYfQap
+	AScrUKU32pceKrrvzUFrKrRIWPFtd4Et+tlx788dPxv3yQIdTcbr5BjKuy4Wx6JB5jQt57Uph0W
+	7PZ/tDHACx8REAR0mGNnjVjH6/PznOxAzMA4FmC4AtRYi8jE/ydSqs6W/26/TbUg3B6OkE2z0fK
+	hkwjbvLUF0smumHoNrYz4nqwPo0MMUWCXqO9vPZhUOFTEUPnye6++vXcxNlasdkCHySQl51w7vg
+	Xz7et6EKfKXQtKPmJGk1bXaNzDYQW5yYKhLpwFPiyiy7olHG4PfLJ3i/HtrhT53V9+P9ojWpxaB
+	RbJPL/eJR7TGmmb/Bn7luJHOnesj0FS3jEsSJBoPGcBxkBIdGIU7HiXJM+9XBusV+LankKSQPrq
+	caHNHArMfnLViv0g==
+X-Google-Smtp-Source: AGHT+IHtB8Z8ID/pyVnrYXDZZOQNzUqtOOHCwxuT0b7AWpclaN93NeUezX9digLJSKp1/ekVgKu9Tg==
+X-Received: by 2002:a05:690c:9a8d:b0:772:72d1:15bd with SMTP id 00721157ae682-780e15bd334mr60790547b3.44.1759952204064;
+        Wed, 08 Oct 2025 12:36:44 -0700 (PDT)
+Received: from localhost ([2a03:2880:25ff:4d::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-77fa89e5b38sm46859517b3.44.2025.10.08.12.36.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 12:36:43 -0700 (PDT)
+From: Joshua Hahn <joshua.hahnjy@gmail.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Brendan Jackman <jackmanb@google.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@suse.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Zi Yan <ziy@nvidia.com>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	ying.huang@linux.alibaba.com
+Subject: Re: [RFC] [PATCH] mm/page_alloc: pcp->batch tuning
+Date: Wed,  8 Oct 2025 12:36:41 -0700
+Message-ID: <20251008193642.953032-1-joshua.hahnjy@gmail.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <1b72c0b1-4615-4287-bac2-c8806e56f44a@intel.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8PR12MB3604:EE_|SN7PR12MB6669:EE_
-X-MS-Office365-Filtering-Correlation-Id: b2ddbe27-ce71-463e-423b-08de06a1e550
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?QMql/sVp5aeTE2DQRW1hBeguhp9Z0CxkvSr94WFxRN7nqmdaTPWx/VIf41o+?=
- =?us-ascii?Q?CgiVcppLyBz2oPjR/R0sDu2bgBIIMcJ/j57B1gYvHAoOxHesEtAu3dQMpyAx?=
- =?us-ascii?Q?fqYvl1E1PLqqhsgx5F3VrV6eTxgt4sKp/v2Xzj9HldDp45I8quV466af/da0?=
- =?us-ascii?Q?eW7Uw1vjjGPTMnH/h8hA294+m4DBYhpTVpD6zjSLIzX/9laRgbqc18i5xdGo?=
- =?us-ascii?Q?CHjwkvnQgoNkoR7oh3pyyAlZotyaSd8G0trBdxx4fkDh095DQ5fEJu6hz8H+?=
- =?us-ascii?Q?tsNw43DLOyT3Evks/xBMM14kn0TCv9HtJbT67AAnN/j7Yf16hUsl+qrY9Adz?=
- =?us-ascii?Q?JCgYlMJMDDEmwKjGB1xSMintryWc6dUrNPD2K7xhSaxRMEV+bybsSmI0X59e?=
- =?us-ascii?Q?x6Za04hWM4pxvmFwSQPNvQzNQhY9uGNI6lRqaU6vjzJ9pieX4SG7lUB1IQgC?=
- =?us-ascii?Q?ueYyamQ7k8+k+GTKOL8cxbzW0GfOo4VXn+ZWs/w09WqLdnZu50+K+4RpANZt?=
- =?us-ascii?Q?QRG8LqsFg9Y91fz7Tz/Soof3BtUfKmOw6KJGfK7iofir0h7cnFIsxJGTXnJm?=
- =?us-ascii?Q?hTgIQ2uADDAKVGvv7+V9JtqHCm3nxnZ0iG3k2txQlK95ygxWyRomg/X9lj56?=
- =?us-ascii?Q?wVp6tTyIyfkUtT/eDWTZJ54dmTBDfvs4XM+vWUy2va22NrZkSgKGo5ruPlGH?=
- =?us-ascii?Q?GC27ZKqVNgOtBfCM8Won7cqlpRwFkbv7cq4WMCvYcbJQHvU1qx36xykEacXy?=
- =?us-ascii?Q?9cc4AQBB4BCdshZR5/9KOImIQgTWMNjtlLyIxRbD2CMs0U/MtYveZsBN8cRx?=
- =?us-ascii?Q?zS5txV4RlZUSgvwAnjTYiQg32JvC3s041zwemPzfJwxAHIVWwvPEG6fvzFj9?=
- =?us-ascii?Q?aqQ//+3SyKNZrzN20CxtnxiK9PC6/TFyMk05HW94qwCw6J4IJwU0ov45daPz?=
- =?us-ascii?Q?gRvlIKKdY7kaZ1vYdC0f5cb+RvFdGOmC4gV0Bimt1IJd6Ul686rIHemQ6Oso?=
- =?us-ascii?Q?JSDDUBvcLwaxuaZ27XO4WLVDrTHPlXsRz5/xvGL8kheczcZtd9w4/6Fa2BxV?=
- =?us-ascii?Q?kZjwPuXJ1OrBhIzNYLRPqzUovkNmdBm1loqnFfmOp0ZfJRoK+ntljh4mqUW4?=
- =?us-ascii?Q?3IoSZ7z8UWUSgf1hNc6ExjoFP0YUacXyxpUa1a2CgWo3BPxc5c5jwqV+qyEb?=
- =?us-ascii?Q?PgVWrpIY6AsTG8jxv7lMF9FBDZ3egnSRRGw3QqWErgg4RyZBZA8VNF7gy2PV?=
- =?us-ascii?Q?OUVAn3W7c/0542I99G1DHKX7oBsa9UH30AOLLIx23LCLhPECs+XUtNXA2xa9?=
- =?us-ascii?Q?d9INEsJzpYwm2PRvuFl+vQr6HnT8ImewtiOWktCqdLQBeQVXdNOheUP02sxr?=
- =?us-ascii?Q?f3DGjDwlMS61ItUIwmruGUmh8/Aj4B8JOht7Rlt09Sxxxry7UMPtBW93khMQ?=
- =?us-ascii?Q?mDJAozhft8eCc9AusgMtMPYmCxPpEydF?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN8PR12MB3604.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?B31ShBGf8lJA+QAyPOfJBeeJdUtiiskST0AmrGJXnY9mDUcxLHZ0kcgGYFRj?=
- =?us-ascii?Q?cY3KNiQdmj30BInKuZA8ppy7z00KEq86aV1M3NmXa0GuuCXnPtGvs5AUg7tJ?=
- =?us-ascii?Q?aqlbXF9COZTguXCL1a4x+t6t6F6czdMtkicNcrznNFSVayxKVpH39Wnkii3a?=
- =?us-ascii?Q?9mdpMljk3hYxx2uX6+bT5akTFtk63Vl9zhtHITSPlld5b9Lk6EaYEFWL10wx?=
- =?us-ascii?Q?guw98rlMB1WX7A41wK9phrCmQhOO8DwR6+z+N8pHe1xLAT7enanW17PyWeth?=
- =?us-ascii?Q?tOQfNuPz2YaoZuP4lfNZCtDC1ijcm8ARLIpwAo0ssiExlzYckHcH7NYy2AIE?=
- =?us-ascii?Q?IMLCXQjnsNUFe4cB5y9xTW8IqnwQb6MZWtUYyvwGbW9Q5QXiz9ESwXcURnfb?=
- =?us-ascii?Q?GRUw2Ca1h4idkaE3hNdxVlZdTKwEou1SEblNgwvwWUO3Cxz51Vvs0R79haCp?=
- =?us-ascii?Q?QvOsZWuIB058VP+y+S159GGvU2yUFC9KfgzOvBpHZrdW77BUyt3xr1nC6Hpf?=
- =?us-ascii?Q?hB09fOOx89TGp1Q+0ki0QWdGqEFK37tzbcYQSVH7jiQy63E0fRn+5LvHFfHY?=
- =?us-ascii?Q?fQgliqxR044HytFdokayn6iG7Iv0J85ChxxC01qtC7lMu8wWU2yJfW2FsmXb?=
- =?us-ascii?Q?TZrd5e5+ndR8wzHrPTbhCj9GcCGyzYU9jQgSIGS2F35HEsJhifskTvoE2K4K?=
- =?us-ascii?Q?iveipCGJ8Cv8mrxcYt2f7C+u/EAcUZ89f694Hm/th4xEsZItyS7A/J3Id+P6?=
- =?us-ascii?Q?YJ+OdyNldbHK/rV6UXMpXH/aNsbqGjVDC1/7VY2CXguCTuvzFULC/b39O81T?=
- =?us-ascii?Q?2UKAmL6XFDN+aYJguOFUMkPZdGuKjw3cTDCOvZp6fQ1M9rSaX/4wHs+acCU1?=
- =?us-ascii?Q?VqXOUT/47wnOopDn9Eq1lsL2SPLdtUuBLcAek3T5sn4BbOw8S2woC09MWMTY?=
- =?us-ascii?Q?gD5OwpfPfNppfW0erI6AuXggH7pxydI2AAxSi/PvGBLfAM1uQrokaEeYp/4f?=
- =?us-ascii?Q?sH0rETOdGwPPEynE3nt3vsGmXlQMtyqxFDNWGVIZx0MTt39QkZrGTj7Q1FgS?=
- =?us-ascii?Q?VYoCi3ObFBFf8P8+wBDK8Ar1b5GDZ0DoUTRRlQeXSoypPoCiOOoHZZvqYdDE?=
- =?us-ascii?Q?U2+PJ1d5DSnCjPobnc9TF4OvVkz//9BDUDx+fiDqBZB69WORPcBSazGee8ls?=
- =?us-ascii?Q?bNhgkWSE6vdFW3METY6ryQO4rNhk8eqr53GHKM1rvzgTLqcCgsEcVwOGJyvl?=
- =?us-ascii?Q?57pdPSg/QoxQIXyNef1xI3ViIF59wfZI2LC5gWoSCx22hIMXM7guTjrXANVg?=
- =?us-ascii?Q?ploqT2EThmogfZMc8S/lS+uZS44ju7BdD7z9jd0v1iPQhx0f8wp2vl8K9h69?=
- =?us-ascii?Q?7iIJXNzn7mS50UBXNKw7zP8oDlaCjIUxvUKybqrPy21a+tol7TjQRGy32H3+?=
- =?us-ascii?Q?bzytdVVTMPaxpwqCfMUq80J5A07GLK2h4iVi3eoMOs3fFauh74ilINcpoew7?=
- =?us-ascii?Q?vd6qx5naQyXtfCbmXPKEqE41f7FCqPm3igiHPJi1XxCq9VMPmjaWdhVqqq3O?=
- =?us-ascii?Q?GWrrgHt3MqBUpMAIXpENNxiks83hxivrf2KArTSn?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b2ddbe27-ce71-463e-423b-08de06a1e550
-X-MS-Exchange-CrossTenant-AuthSource: BN8PR12MB3604.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2025 19:35:54.4565
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NyDJv+Wz4VQrLU6LfZy81J8uYpz6JDea1aiVAR6pNbosWOLDCSCT/oUc2ao3DdtD
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6669
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 08, 2025 at 12:40:34PM -0400, Pasha Tatashin wrote:
-> 1. Ordered Un-preservation
-> The un-preservation of file descriptors must also be ordered and must
-> occur in the reverse order of preservation. For example, if a user
-> preserves a memfd first and then an iommufd that depends on it, the
-> iommufd must be un-preserved before the memfd when the session is
-> closed or the FDs are explicitly un-preserved.
+On Wed, 8 Oct 2025 08:34:21 -0700 Dave Hansen <dave.hansen@intel.com> wrote:
 
-Why?
+Hello Dave, thank you for your feedback!
 
-I imagined the first to unpreserve would restore the struct file * -
-that would satisfy the order.
+> First of all, I do agree that the comment should go away or get fixed up.
+> 
+> But...
+> 
+> On 10/6/25 07:54, Joshua Hahn wrote:
+> > This leaves us with a /= 4 with no corresponding *= 4 anywhere, which
+> > leaves pcp->batch mistuned from the original intent when it was
+> > introduced. This is made worse by the fact that pcp lists are generally
+> > larger today than they were in 2013, meaning batch sizes should have
+> > increased, not decreased.
+> 
+> pcp->batch and pcp->high do very different things. pcp->high is a limit
+> on the amount of memory that can be tied up. pcp->batch balances
+> throughput with latency. I'm not sure I buy the idea that a higher
+> pcp->high means we should necessarily do larger batches.
 
-The ioctl version that is to get back a FD would recover the struct
-file and fd_install it.
+I agree with your observation that a higher pcp->high doesn't mean we should
+do larger batches. I think what I was trying to get at here was that if
+pcp lists are bigger, some other values might want to scale.
 
-Meaning preserve side is retaining a database of labels to restored
-struct file *'s.
+For instance, in nr_pcp_free, pcp->batch is used to determine how many
+pages should be left in the pcplist (and the rest be freed). Should this
+value scale with a bigger pcp? (This is not a rhetorical question, I really
+do want to understand what the implications are here).
 
-As discussed unpreserve a FD does not imply unfreeze, which is the
-opposite of how preserver works.
+Another thing that I would like to note is that pcp->high is actually at
+least in part a function of pcp->batch. In decay_pcp_high, we set
 
-> 2. New API to Check Preservation Status
-> A new LUO API will be needed to check if a struct file is already
-> preserved within a session. This is needed for dependency validation.
-> The proposed function would look like this:
+pcp->high = max3(pcp->count - (batch << CONFIG_PCP_BATCH_SCALE_MAX), ...)
 
-This doesn't seem right, the API should be more like 'luo get
-serialization handle for this file *'
+So here, it seems like a higher batch value would actually lead to a much
+lower pcp->high instead. This actually seems actively harmful to the system.
+So I'll do a take two of this patch and take your advice below and instead
+of getting rid of the /= 4, just fold it in (or add a better explanation)
+as to why we do this. Another candidate place to do this seems to be
+where we do the rounddown_pow_of_two.
 
-If it hasn't been preserved then there won't be a handle, otherwise it
-should return something to allow the unpreserving side to recover this
-struct file *.
+> So I dunno... f someone wanted to alter the initial batch size, they'd
+> ideally repeat some of Ying's experiments from: 52166607ecc9 ("mm:
+> restrict the pcp batch scale factor to avoid too long latency").
 
-That's the general use case at least, there may be some narrower use
-cases where the preserver throws away the handle.
+I ran a few very naive and quick tests on kernel builds, and it seems like
+for larger machines (1TB memory, 316 processors), this leads to a very
+significant speedup in system time during a kernel compilation (~10%).
 
-Jason
+But for smaller machines (250G memory, 176 processors) and (62G memory and 36
+processors), this leads to quite a regression (~5%).
+
+So maybe the answer is that this should actually be defined by the machine's
+size. In zone_batchsize, we set the value of the batch to: 
+
+min(zone_managed_pages(zone) >> 10, SZ_1M / PAGE_SIZE)
+
+But maybe it makes sense to let this value grow bigger for larger machines? If
+anything, I think that the experiment results above do show that batch size does
+have an impact on the performance, and the effect can either be positive or
+negative based on the machine's size. I can run some more experiments to 
+see if there's an opportunity to better tune pcp->batch.
+
+> Better yet, just absorb the /=4 into the two existing batch assignments.
+> It will probably compile to exactly the same code and have no functional
+> changes and get rid of the comment.
+> 
+> Wouldn't this compile to the same thing?
+> 
+>         batch = zone->managed_pages / 4096;
+>         if (batch * PAGE_SIZE > 128 * 1024)
+>                 batch = (128 * 1024) / PAGE_SIZE;
+
+But for now, this seems good to me. I'll get rid of the confusing comment,
+and try to fold in the batch value and leave a new comment leaving this
+as an explanation. 
+
+Thank you for your thoughtful review, Dave. I hope you have a great day!
+Joshua
 
