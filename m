@@ -1,180 +1,195 @@
-Return-Path: <linux-kernel+bounces-845352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0723BC48D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:26:23 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0895BC48D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:26:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0B3924E8256
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:26:22 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 732243511DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:26:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33E92F6562;
-	Wed,  8 Oct 2025 11:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1702F6593;
+	Wed,  8 Oct 2025 11:26:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BVVfsYwI"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KKhtng6U"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301C921767A
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 11:26:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60E32F6180
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 11:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759922779; cv=none; b=TG0af2RwtyaV81VwLygv3Ygj1pepY+fso1i/+bvz4+dyEmtqfBhvFp+2T81oxKf3SaJTlPt4KIANql/eOpLm6c4y+D+p3rPN9fhgh/jwMvI5E0/RviPrNjxYVy1jY8zxCOoENnE68n+G3hHW88nnF7jKZCkCXNrES2iRZFjMu7k=
+	t=1759922785; cv=none; b=TlUzUB42w4KMEMAnB14fJ0/QNrb1hpVUfa1rbixE+vNZugC3TNibm28RwIbLThmg/RpQbNH45iL4RPE/X4obQpF4fzahAHNhjVsHbM1AOzU71aTd1mwCCsVpWCFXWeXgj9LuRw9q5RXb+AUcESAdDTiUMB8d1jDAuJLLTrnWXfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759922779; c=relaxed/simple;
-	bh=pU/LeL0BDNULA3Qn5EUADo9AjEx+0IDSanHDAZBLtSA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b0IOtr8llpL9duwQPaPwM1ijZTs7dKrtjn9ZMVqhBxRwaZq8UmBXd9iodRwT3FAdJ3E+436z9n4HxQU8mfCoDh+d2jG08Rw0KMw2+AyVq1uY80EqsEdcK/eZOlXpI7MGmLJ3scdT++ZmLhSZzhNW7U+wz4UE0v0OdvU+F8unvQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BVVfsYwI; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=R373+0XLF4+cg4TjiwC78BGPI3GmHAsdBLimF0fyVvA=; b=BVVfsYwIm4201/iL1YTrOcOtxd
-	CMhan15A1wGOE1pZPV+D7L0tWmTgzDuwWiZVTjuUx73pKACzN3YqH3R1eFaQnmoq8FVPgbtAihhhs
-	V93/HAtFQJaSeZXu1HZkaQ3G3l+52giBPCEZLSrBbiHq9XdSp9xgKUtoWs9/oUZcGKp82NQm9QzP4
-	+ijY2dMXdIpC5rkAcawmN2KuhTH5mK306tKdphh6F7f/v5HQQyFNFh8vA8F9Jb36KTu1vnHbZHNnY
-	VtrA3hYSc286ceiXTp6ML6TdKzi+Z3Hu/cmztqvnguvybU9UcnAYbEvgpUW6tS9H+fea9ux7E4mWx
-	in39Xy4w==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v6SJ0-00000003n5o-3o2j;
-	Wed, 08 Oct 2025 11:26:04 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id A66F4300220; Wed, 08 Oct 2025 13:26:03 +0200 (CEST)
-Date: Wed, 8 Oct 2025 13:26:03 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: John Stultz <jstultz@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Metin Kaya <Metin.Kaya@arm.com>,
-	Xuewen Yan <xuewen.yan94@gmail.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Suleiman Souhlal <suleiman@google.com>,
-	kuyo chang <kuyo.chang@mediatek.com>, hupu <hupu.gm@gmail.com>,
-	kernel-team@android.com
-Subject: Re: [PATCH v22 2/6] sched/locking: Add blocked_on_state to provide
- necessary tri-state for proxy return-migration
-Message-ID: <20251008112603.GU3419281@noisy.programming.kicks-ass.net>
-References: <20250926032931.27663-1-jstultz@google.com>
- <20250926032931.27663-3-jstultz@google.com>
+	s=arc-20240116; t=1759922785; c=relaxed/simple;
+	bh=zmQqrvSLVyGIszXxsV+9QQQ1xfgpsxVe2UdDesppq8U=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=gDme3UPVc4Eg4IKk4UYbVrDg+IcyAK1FnPouOnHjAFhy9nsT2HrTDQNcPlcUUfbBIfLySjP30Q1I69x+BAJbU/bMURM22Q72Vn97vmaCWoh914Iwk5M/PLBk7LquOdCMiLCyEaU6YSHhV2VJs1W1KOSgut8OmgdUq0M6Kkog484=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KKhtng6U; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59890OVZ028852
+	for <linux-kernel@vger.kernel.org>; Wed, 8 Oct 2025 11:26:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	9bAEHpLRtg7/7iLS6JiIyW6dZF5yK9pmMVgvxBMFriQ=; b=KKhtng6UJp/9yUUa
+	OUR4iMwhNJmqwqxN+uSTFbU4u1SGQAdOSwBgZ1pBca9+Rkhoillod9cwkLya+y61
+	jmn7NBH0Cz023FZIe5xmierHyfXLYdyzpDaxixVrp8oi8Inndq/1oR/8JtZnHXAt
+	QypxdZBrdofa1t5B2/RUaWNypaxvvgwbvmGEIgjq5droyrPgvq1ASwnvMg4GoWmP
+	qVMdTxSbT0J/oN3iTUh0FPSH86GztFa0D/DTYbZhDB3ymhJlbVwUNLhaRPYplO0O
+	NlSJ/z1EfYHuxlfTSBT5f5k5Cuyrx75wxduacfIOlsLks9dFMKU8Sx/Ssa7LmdZb
+	2bQxyw==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49js9e2dqn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 11:26:23 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-7810e5a22f3so12895979b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 04:26:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759922782; x=1760527582;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9bAEHpLRtg7/7iLS6JiIyW6dZF5yK9pmMVgvxBMFriQ=;
+        b=KTYyUWOmdx8KJOfIVuqkrkrWfeypZ4M4zGhwAJnhg9lpLrYDhn9dtIBkItbbhzbYPh
+         kZySXNmGuxNdQeoZnl5Y575vYJ3WxDQBwdNM2URBfDDCaardmW8RL+arTRGEp1JAa+Tq
+         H/HlYauKmb7QHtX+49y+HzZI/8MKV1Q4i2Hy07NnhjbI9AHUipBaPDbn8dq+E1LGM2Qo
+         9oF5Gaqi2EYzlt60e/MJ98ObsdCroEbAa4C2fFhKr8hfKHNRRRwexPZsmmr3IW5EcX6/
+         rGEkWXebvy20TG9cAm94rhzlMN32GxCcXsHB/zUsZrtSDObR0M/O0Tr3iScrlk/c6z2t
+         UU1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUbDPeDZ3wZXNqb1HFSy9Yoqru1oD4JeR6tzwKTV21gi7QsIvS5q2sQnHIQJc+Ato/Bu2MWzBS3+vdRvng=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvCkxRQYmilN83Du3D6Qi83njOCy3eYL064B2GpuLq2NzKU+1I
+	ZGuXarR3NUXy+r4W27vxu1hqBkzTaE5cWfve3v2d79oMmp7pzkzvlowIPldWapX+v+KHALsMVRN
+	lWafQQNusbq4UMKcsGdbLvBZ6F/MSF05f2Qo4Uzdki+KCopOMM70VfeidyaFnD20fNs4=
+X-Gm-Gg: ASbGnctGwIXrKYHToQTOQiqWfedpgAYEbDzEHgIxaaf/NqFwDzz0jwrCiIu08HUHpyq
+	/uP8GrySS5MTTzgVbp/aiD8WZWKPNq2ja/dcu7fqH/reC2aJPTeRWi95Tm60MMPSo17elmYVP4Q
+	Kc69x/Se7Yt7zxMB4/f81p/HSMywsTq0tTlvt5GphvSWcy9fjRYwhh7hJ/x+N8cQxNiJTXEEHiG
+	NgdfPDi/bIViw4VAug16wAdghpOiRKd9tF323fXdAjCFOahXtf7QBPV2Xjs0rhlP1c7y5scOyF9
+	eFJc6sWMn0wY5+BfHyLmtisD+cGuw1I1GX0/JfqFjrwjd4nAFo8EwWOGqgqPjIyPVeSGTK25Qwo
+	aeSk8NvlFBXAX8pbqrfQl2qR4n8t973TXDECPmTCJWH4/zoOYWNfJDtoW15t1o+U=
+X-Received: by 2002:a05:6a00:2e96:b0:781:2290:e7e7 with SMTP id d2e1a72fcca58-79387146b8dmr4069704b3a.18.1759922782020;
+        Wed, 08 Oct 2025 04:26:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHwkCALuNVCYFwP3XEP4gTbIwLjt69B5Q1k2f0+ktcAs8HwYgmPvg3v5458J4vNacVtt7Pg6A==
+X-Received: by 2002:a05:6a00:2e96:b0:781:2290:e7e7 with SMTP id d2e1a72fcca58-79387146b8dmr4069667b3a.18.1759922781561;
+        Wed, 08 Oct 2025 04:26:21 -0700 (PDT)
+Received: from [10.79.195.127] (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b01f9dadbsm18532948b3a.18.2025.10.08.04.26.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Oct 2025 04:26:21 -0700 (PDT)
+Message-ID: <d7125f03-ae6e-4907-a739-840b68593804@oss.qualcomm.com>
+Date: Wed, 8 Oct 2025 16:56:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250926032931.27663-3-jstultz@google.com>
+User-Agent: Mozilla Thunderbird
+From: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+Subject: Re: [PATCH 02/24] arm64: defconfig: Enable Glymur configs for boot to
+ shell
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
+ <20250925-v3_glymur_introduction-v1-2-24b601bbecc0@oss.qualcomm.com>
+ <wzhfv4v5urehjjlldsdznrnv244pdzpuolofalvj3cerscipch@7gkb5dvjwl4i>
+Content-Language: en-US
+In-Reply-To: <wzhfv4v5urehjjlldsdznrnv244pdzpuolofalvj3cerscipch@7gkb5dvjwl4i>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=Hrl72kTS c=1 sm=1 tr=0 ts=68e64a5f cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=oJttokzAQODEBWIVO_QA:9
+ a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
+X-Proofpoint-GUID: txjtiDzwYXn-pMn8sggODDZkwmspCvD4
+X-Proofpoint-ORIG-GUID: txjtiDzwYXn-pMn8sggODDZkwmspCvD4
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAwNCBTYWx0ZWRfX8H82kkBvOhP1
+ 01028WhbrmiGxe6NhEtRvKsORBl27vg0VTkhA7okNcPJGz0UV5qOlGkMlzkrQAQ8ZAKkYZvZ38J
+ HNUhlL5HZ3dObhFtnf/hjiqypcN7mB06yB/fybWDB6U6mX/01fci40ZIjDLuWLNhfA7d4Pfv2MF
+ qYOYljSPQu7EA/FSWy6Xi61JtyC+igqLOFotJP0CcBv/uGmnozpgO3/wgLnTumRMuFCioqd3sxx
+ HmstrcX4pAvqtaZnX3WsPVTL1tumrMnvnLj7sWTWVxXqM6A6hAdeFVGbtdfkbguCdHUGdfA+MME
+ eo6QKz/LIOQvOiayYa3Y5HjNrodppwwhKkI29JAESJJd+dQbq//nfebnOr92Mg3CB9ywDFkiuPN
+ PidJ31uOYjcZf9AUR24Rhki+SGpVIA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-08_03,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 phishscore=0 spamscore=0 adultscore=0 lowpriorityscore=0
+ bulkscore=0 priorityscore=1501 malwarescore=0 impostorscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040004
 
-On Fri, Sep 26, 2025 at 03:29:10AM +0000, John Stultz wrote:
-> As we add functionality to proxy execution, we may migrate a
-> donor task to a runqueue where it can't run due to cpu affinity.
-> Thus, we must be careful to ensure we return-migrate the task
-> back to a cpu in its cpumask when it becomes unblocked.
-> 
-> Thus we need more then just a binary concept of the task being
-> blocked on a mutex or not.
-> 
-> So add a blocked_on_state value to the task, that allows the
-> task to move through BO_RUNNING -> BO_BLOCKED -> BO_WAKING
-> and back to BO_RUNNING. This provides a guard state in
-> BO_WAKING so we can know the task is no longer blocked
-> but we don't want to run it until we have potentially
-> done return migration, back to a usable cpu.
-> 
-> Signed-off-by: John Stultz <jstultz@google.com>
-> ---
->  include/linux/sched.h     | 92 +++++++++++++++++++++++++++++++++------
->  init/init_task.c          |  3 ++
->  kernel/fork.c             |  3 ++
->  kernel/locking/mutex.c    | 15 ++++---
->  kernel/locking/ww_mutex.h | 20 ++++-----
->  kernel/sched/core.c       | 45 +++++++++++++++++--
->  kernel/sched/sched.h      |  6 ++-
->  7 files changed, 146 insertions(+), 38 deletions(-)
-> 
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index cb4e81d9d9b67..8245940783c77 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -813,6 +813,12 @@ struct kmap_ctrl {
->  #endif
->  };
->  
-> +enum blocked_on_state {
-> +	BO_RUNNABLE,
-> +	BO_BLOCKED,
-> +	BO_WAKING,
-> +};
+On 9/25/2025 11:01 PM, Dmitry Baryshkov wrote:
+> On Thu, Sep 25, 2025 at 12:02:10PM +0530, Pankaj Patil wrote:
+>> The serial engine must be properly setup before kernel reaches
+>> "init",so UART driver and its dependencies needs to be built in.
+>> Enable its dependency clocks,interconnect and pinctrl as built-in
+>> to boot Glymur CRD board to UART console with full USB support.
+>>
+>> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+>> ---
+>>  arch/arm64/configs/defconfig | 6 ++++++
+>>  1 file changed, 6 insertions(+)
+>>
+>> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+>> index e3a2d37bd10423b028f59dc40d6e8ee1c610d6b8..9dfec01d347b57b4eae1621a69dc06bb8ecbdff1 100644
+>> --- a/arch/arm64/configs/defconfig
+>> +++ b/arch/arm64/configs/defconfig
+>> @@ -616,6 +616,7 @@ CONFIG_PINCTRL_IMX8ULP=y
+>>  CONFIG_PINCTRL_IMX91=y
+>>  CONFIG_PINCTRL_IMX93=y
+>>  CONFIG_PINCTRL_MSM=y
+>> +CONFIG_PINCTRL_GLYMUR=y
+>>  CONFIG_PINCTRL_IPQ5018=y
+>>  CONFIG_PINCTRL_IPQ5332=y
+>>  CONFIG_PINCTRL_IPQ5424=y
+>> @@ -1363,6 +1364,9 @@ CONFIG_COMMON_CLK_MT8192_SCP_ADSP=y
+>>  CONFIG_COMMON_CLK_MT8192_VDECSYS=y
+>>  CONFIG_COMMON_CLK_MT8192_VENCSYS=y
+>>  CONFIG_COMMON_CLK_QCOM=y
+>> +CONFIG_CLK_GLYMUR_DISPCC=y
+> DISPCC should not be required for the UART, it can go to =m
 
-I am still struggling with all this.
+Sure, will mark it as =m
 
-  RUNNABLE is !p->blocked_on
-  BLOCKED is !!p->blocked_on
-  WAKING is !!p->blocked_on but you need magical beans
+>> +CONFIG_CLK_GLYMUR_GCC=y
+>> +CONFIG_CLK_GLYMUR_TCSRCC=y
+>>  CONFIG_CLK_X1E80100_CAMCC=m
+>>  CONFIG_CLK_X1E80100_DISPCC=m
+>>  CONFIG_CLK_X1E80100_GCC=y
+>> @@ -1641,6 +1645,7 @@ CONFIG_PHY_QCOM_QMP=m
+>>  CONFIG_PHY_QCOM_QUSB2=m
+>>  CONFIG_PHY_QCOM_EUSB2_REPEATER=m
+>>  CONFIG_PHY_QCOM_M31_USB=m
+>> +CONFIG_PHY_QCOM_M31_EUSB=m
+> Is this also a dependency for UART?
 
-I'm not sure I follow the argument above, and there is a distinct lack
-of comments with this enum explaining the states (although there are
-some comments scattered across the patch itself).
+No, it's a dependency for USB, commit message mentions
+full USB support being enabled
 
-Last time we talked about this:
-
-  https://lkml.kernel.org/r/20241216165419.GE35539@noisy.programming.kicks-ass.net
-
-I was equally confused; and suggested not having the WAKING state by
-simply dequeueing the offending task and letting ttwu() sort it out --
-since we know a wakeup will be coming our way.
-
-I'm thinking that suggesting didn't work out somehow, but I'm still not
-sure I understand why.
-
-There is this comment:
-
-
-+               /*
-+                * If a ww_mutex hits the die/wound case, it marks the task as
-+                * BO_WAKING and calls try_to_wake_up(), so that the mutex
-+                * cycle can be broken and we avoid a deadlock.
-+                *
-+                * However, if at that moment, we are here on the cpu which the
-+                * die/wounded task is enqueued, we might loop on the cycle as
-+                * BO_WAKING still causes task_is_blocked() to return true
-+                * (since we want return migration to occur before we run the
-+                * task).
-+                *
-+                * Unfortunately since we hold the rq lock, it will block
-+                * try_to_wake_up from completing and doing the return
-+                * migration.
-+                *
-+                * So when we hit a !BO_BLOCKED task briefly schedule idle
-+                * so we release the rq and let the wakeup complete.
-+                */
-+               if (p->blocked_on_state != BO_BLOCKED)
-+                       return proxy_resched_idle(rq);
-
-
-Which I presume tries to clarify things, but that only had me scratching
-my head again. Why would you need task_is_blocked() to affect return
-migration?
-
+>>  CONFIG_PHY_QCOM_USB_HS=m
+>>  CONFIG_PHY_QCOM_USB_SNPS_FEMTO_V2=m
+>>  CONFIG_PHY_QCOM_USB_HS_28NM=m
+>> @@ -1718,6 +1723,7 @@ CONFIG_INTERCONNECT_IMX8MN=m
+>>  CONFIG_INTERCONNECT_IMX8MQ=m
+>>  CONFIG_INTERCONNECT_IMX8MP=y
+>>  CONFIG_INTERCONNECT_QCOM=y
+>> +CONFIG_INTERCONNECT_QCOM_GLYMUR=y
+>>  CONFIG_INTERCONNECT_QCOM_MSM8916=m
+>>  CONFIG_INTERCONNECT_QCOM_MSM8996=y
+>>  CONFIG_INTERCONNECT_QCOM_OSM_L3=m
+>>
+>> -- 
+>> 2.34.1
+>>
 
 
