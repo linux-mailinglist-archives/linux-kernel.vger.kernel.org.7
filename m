@@ -1,158 +1,171 @@
-Return-Path: <linux-kernel+bounces-845613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFB66BC5854
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:09:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 233A8BC5857
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:09:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED2D04032DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:08:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE86440360B
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:08:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0AD27E1DC;
-	Wed,  8 Oct 2025 15:08:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5187A2F360C;
+	Wed,  8 Oct 2025 15:08:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="oHevIM8p"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fGylAEVa"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F71D287505;
-	Wed,  8 Oct 2025 15:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF47298CDE
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759936120; cv=none; b=AurcZYQcSbaOBrXB4mt2ldZPPdVo4jixfAZ5wy0MYwtr6AOsQ2wL/mCUWXaKfMeG4RFpWcw7ignDaSGjX4QI3El6FTNFG4n5uYfDgXRM+YArnpHh/AYIBkWkIzit/r8BVSG2YxB7OCBZ47ckpJ1VLv/3NNxKsrIEd0WCFFhmgtY=
+	t=1759936121; cv=none; b=ekcclPhKXMDcOroWU5wkOs6qWg2smNg60nXA4bNRR7T+eEnKZtfUtoMODjAOUa5QqvcCBGVM7LT9/u0LcGGNs3LtSLIaGnQx8PJfAxw6mG0QvmMxBAs9nMl3pdBiYg4kfU79S4J/NtOY1NaRmN7vKD4Tukf49lSFRU5qqh/wx20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759936120; c=relaxed/simple;
-	bh=gw1n2k3bVJ4HnM5jaOKbNiYxoog8PqFFa15xtHSaS+k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ONxxYeNAH6uQ4mUWfRF1hglj+Vm/096tGT6V6QmuI94QIxGzaiOCxUY8cngBD277B7xbMRmZV4yJ2siMWvgOkhdxrZWs19USgusl1iqcpI54S+W+JcoBtYSQZ0hxlYi42/1rw1ce3KGFyazwj4kyCaGxPtT38tar5zrNs0XGO5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=oHevIM8p; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5985mRu5005704;
-	Wed, 8 Oct 2025 15:08:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=IXws27
-	uw2P8rHXdGXnTEjb2JtZYE6gL7w+ozNAxwm1o=; b=oHevIM8pNtQ0Z0x1IWJzqW
-	E9BxZczdrfEsuaGsno8xZuzbQfWrIQZ/rG+EcwDszX5ck3edbHjHDVS0u2hSZiHl
-	c7un0r20XkUf8tXfqqpDRV9+SrH1v+X3gdJ5mENcIRa6FvfYtIowLbPUWUWlroZt
-	FXTmu+VNAr0/ntcGRg4O2qtxvIojAHlNGBX/aqDrcpdBerYXYjT5zoPo6SwlOdlU
-	Wx5JcyXX7lOumiItlJLyFlhpmvJc3qZPYhNOeKZ6VFa/CIHUDdcY08UCa8FBDAYg
-	oSXIBDxXtI6iO0OiRFErndu3sBjB/AfmuBbd1sCFZBnXgINuFR4XHTzIUscMrjSw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49ju3h5xcf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 Oct 2025 15:08:26 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 598EtZoL029518;
-	Wed, 8 Oct 2025 15:08:26 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49ju3h5xcb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 Oct 2025 15:08:26 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 598E5tPY028463;
-	Wed, 8 Oct 2025 15:08:24 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49kewn934e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 Oct 2025 15:08:24 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 598F8K1L60293552
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 8 Oct 2025 15:08:20 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8E41C2004B;
-	Wed,  8 Oct 2025 15:08:20 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B466020043;
-	Wed,  8 Oct 2025 15:08:19 +0000 (GMT)
-Received: from li-ce58cfcc-320b-11b2-a85c-85e19b5285e0 (unknown [9.111.55.136])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with SMTP;
-	Wed,  8 Oct 2025 15:08:19 +0000 (GMT)
-Date: Wed, 8 Oct 2025 17:08:18 +0200
-From: Halil Pasic <pasic@linux.ibm.com>
-To: Dust Li <dust.li@linux.alibaba.com>
-Cc: Mahanta Jambigi <mjambigi@linux.ibm.com>,
-        "David S. Miller"
- <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Simon Horman
- <horms@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "D. Wythe"
- <alibuda@linux.alibaba.com>,
-        Sidraya Jayagond <sidraya@linux.ibm.com>,
-        Wenjia Zhang <wenjia@linux.ibm.com>,
-        Tony Lu <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
-        Guangguan Wang
- <guangguan.wang@linux.alibaba.com>,
-        netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-s390@vger.kernel.org, Halil Pasic
- <pasic@linux.ibm.com>
-Subject: Re: [PATCH net-next v5 2/2] net/smc: handle -ENOMEM from
- smc_wr_alloc_link_mem gracefully
-Message-ID: <20251008170818.35825f55.pasic@linux.ibm.com>
-In-Reply-To: <aOZv0NmekKIgpc5M@linux.alibaba.com>
-References: <20250929000001.1752206-1-pasic@linux.ibm.com>
-	<20250929000001.1752206-3-pasic@linux.ibm.com>
-	<aNnl_CfV0EvIujK0@linux.alibaba.com>
-	<de0baa92-417c-475a-a342-9041f8fb5b8e@linux.ibm.com>
-	<aOZv0NmekKIgpc5M@linux.alibaba.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1759936121; c=relaxed/simple;
+	bh=0jgaG0UnD4RYPzbpJrP+C6lzU5NmS3WZz+jQE8vDcWA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QjFQR5RVr6VIPCQUwHnZHtHHasymb/fxFzU+2ASsvGUNUX7nEDy8gJIgIBpFS9c/Rml9YbebuhEmC0hU/aIUiYPK7KM7Dfq7gYH4S9cXa1peM7hVobsMobvgpBsVXvjzUn47AQyWF6kYMSyyumePkmki1pzPbvpz1RzXwaef88E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fGylAEVa; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2731ff54949so198835ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:08:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759936119; x=1760540919; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=10+A/Wgf9iHzcdJ56ejMI3GBStWLH8FDWnolqzz3WNY=;
+        b=fGylAEVa1+rMWFxR8aIYsgd4HAFrEWuTWQ0Durw2Y1lIrlkwPDiCsARBuLbQ4Quvmq
+         s1K+Q3smkBZn1xEuATIzNYrD+YaZ2TkedFkMasuYe4nHtX8I9O1xvjUowBYWoJg3uRmg
+         f6RFidLAukUwKIFxL8/MixQMj6uQdY+iNwJIcaQSel2MABZ1yLTSAgO7iqfafMc/GSJs
+         v3Gs9c/UXjmH9rxUvhUlivTG4fw4m0w6qNDfLgUGeqGRdEqikMcc5RkPJQvhdxbAfVKP
+         ZrCvZ2IMDM8ErVCGpzDtyhvnSvRiU+pAOEPyNEU/fwHW3kW2KqcaVz5SuQHStP+LRskr
+         X5+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759936119; x=1760540919;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=10+A/Wgf9iHzcdJ56ejMI3GBStWLH8FDWnolqzz3WNY=;
+        b=J9rLFrITW7Ra4PPVKmqKRiP/d65p9QKGo0jsXeoNUQmRBkphCNJXiW8UA6ngzQsIwN
+         Mx1zDzVUrasr55wvQa70Uq7xPgOH1KAzy3d8AgAn1z3dCj/W4J9KR25TuKEQOJSQvYS4
+         HleG3MHH1S6DSPteOVqcr3MLWMYeuoBx0qGMMGc8YKQdp1RDjT1O3aNSSZpkja9j958t
+         J41Na0S0D0seWkQzMOgTc4qhH0MXsUQTtIlU7s+7Kx1/xe2evzUpnT6EHYUyF2OqNJz4
+         8pDbj5LvhRULN3Np7AA1Nas8RZ1WtMEKzNZmadJnnwqB4+m74EDbZT1a7LrziAMv7wf8
+         gbCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW2vPJlx/FUCZf37LcHQ/82edg/IGEe5q9QBQ2DeMeflPXnwiTrMSunr2trLRr/XAQrWkWdfzD+X4qtq2g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztHSPxz4o+nJOaxmWoQDM7bsVKhN84HBzj46RJ6fo7mQLDmvbB
+	NGSu2kimsXwypi/fR8rGsjNjsN5u1zDpVJAkoNyKM6kVwo9mdUvxzXPa54styz4lNcCZGqn7h2H
+	G0flxFH50I7wbnr3F0y+RZwjRtDJ+XRTBVIGd8moW
+X-Gm-Gg: ASbGncvQt6nSRpooxUOSvOmaoATvUSosJ/rvp59YHb/e7ELppzHZFfC48N5LtY2b3vm
+	AokXVbOw4kYalaBgGkSorgsCQumn6kGzp7REOTWab3QxnHzF5QkMqpCeVbaL/SnzL6VmD/7531D
+	20v4cveXll0sTMBCQ2QXf974ooNsQOSvzVAFJfDBA/cvahpGefbRSsfOHz42VsRnT/ikZBA53Uv
+	q+4r7Sp0PEQGPzTMSUUMTGX0UTlVBqhRLy046+hy5PL431Ha7HGhnNli8gdiEVgxvXZrw0VRlPL
+	YjI=
+X-Google-Smtp-Source: AGHT+IEA5bfAGEnmxgkEpgYbLlFKR6/UnvKbH6owwoQlKj5SmNQgcG1ODYv9uPu3CrB5mPkR3Em57VbOB1dHDQGAg9U=
+X-Received: by 2002:a17:903:2408:b0:261:83d2:9d91 with SMTP id
+ d9443c01a7336-290276de56cmr5322015ad.15.1759936118954; Wed, 08 Oct 2025
+ 08:08:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAxOCBTYWx0ZWRfX6VjEahsoUcmG
- smHgSy/AKpBINebCo5oEvoRscM2tO9XOv7LMLb1Ky/1R8nGtJUEvOJi1hN/Kbiwv2VkdQ8I8dnX
- RfX1uelw3SbTRpmoHhnkBA9i5KdvIBsHLsjZO8toToW2juiknDZ8xK8cXzDFftMmElSpwgRwLUR
- rbpKt3oFd0nFnLuQE4VqlD6ERvLVmMizpmledmUMH3uSwW0xSeW0GOITBvCkW8gkPY0eGeQs6N/
- NxWx5+Z8ln23T0+BSdLDkt4YX/Yw22tPXtPQHpt/fBqEAlfCUdnkkApecS7Md0TvmuFAhwbg3Vh
- Tc/XGXGu/FuTVMl33O6q4IptCPRaZ1ZVO2I0jXaxGUoe+1h03eSBdItNqLSA7/kdUO9TKB8o+97
- BS/DIb2WJsrT6gnb+DcYhGiMTgwFBA==
-X-Authority-Analysis: v=2.4 cv=I4dohdgg c=1 sm=1 tr=0 ts=68e67e6a cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=SRrdq9N9AAAA:8 a=akCnWnY-8Ao0MBcy0-UA:9
- a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: kEXar_J4G3Eih2Gc8x4pvjM3-V64uZDW
-X-Proofpoint-ORIG-GUID: r0GVS5MJD2DScOkInXjzo5VyvaqWyUXS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-08_04,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 lowpriorityscore=0 malwarescore=0 adultscore=0 spamscore=0
- bulkscore=0 suspectscore=0 clxscore=1015 priorityscore=1501 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040018
+References: <20251007185826.3674908-1-irogers@google.com> <aOYUPWbyQv53hrjE@google.com>
+In-Reply-To: <aOYUPWbyQv53hrjE@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 8 Oct 2025 08:08:27 -0700
+X-Gm-Features: AS18NWBWQqG-RTUR2EkYdMU1qeQqpxuHV0_UrNufBtuGJQoxMeBwbPhE2TZXFrc
+Message-ID: <CAP-5=fW946mri4wEKBzR+XYzbfBH_foV8KW+AG6bU=H=byt2_Q@mail.gmail.com>
+Subject: Re: [PATCH v1] perf bpf_counter: Fix opening of "any"(-1) CPU events
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Tengda Wu <wutengda@huaweicloud.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 8 Oct 2025 22:06:08 +0800
-Dust Li <dust.li@linux.alibaba.com> wrote:
+On Wed, Oct 8, 2025 at 12:35=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> Hi Ian,
+>
+> On Tue, Oct 07, 2025 at 11:58:26AM -0700, Ian Rogers wrote:
+> > The bperf BPF counter code doesn't handle "any"(-1) CPU events, always
+> > wanting to aggregate a count against a CPU, which avoids the need for
+> > atomics. Force evsels used for BPF counters to require a CPU when not
+> > in system-wide mode so that the "any"(-1) value isn't used during map
+> > propagation and evsel's CPU map matches that of the PMU.
+> >
+> > Fixes: b91917c0c6fa ("perf bpf_counter: Fix handling of cpumap fixing h=
+ybrid")
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> >  tools/perf/builtin-stat.c     | 12 ++++++++++++
+> >  tools/perf/util/bpf_counter.c |  1 +
+> >  2 files changed, 13 insertions(+)
+> >
+> > diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+> > index 7006f848f87a..7fdc7f273a48 100644
+> > --- a/tools/perf/builtin-stat.c
+> > +++ b/tools/perf/builtin-stat.c
+> > @@ -2797,6 +2797,18 @@ int cmd_stat(int argc, const char **argv)
+> >
+> >       evlist__warn_user_requested_cpus(evsel_list, target.cpu_list);
+> >
+> > +     if (target.use_bpf && !target.system_wide) {
+>
+> The target.use_bpf only checks the --bpf-counters option.  But IIUC it's
+> possible to use BPF only for selected events with ':b' modifier.  I
+> think you need to check each evsel with evsel__is_bperf().
+>
+> Also system_wide might not be set for -C/--cpu option.  Probably you
+> want target__has_cpu() instead of target.system_wide.
 
-> >I did test this after you query & don't see any issues. As Halil
-> >mentioned in worst case scenario one link might perform lesser than the
-> >other, that too if the kcalloc() failed for that link in
-> >smc_wr_alloc_link_mem() & succeeded in subsequent request with reduced
-> >max_send_wr/max_recv_wr size(half).  
-> 
-> Great! You can add my
-> 
-> Reviewed-by: Dust Li <dust.li@linux.alibaba.com>
+Thanks Namhyung, I'll fix in v2.
 
-Thank you! Will do and respin once net-next is open again.
+Ian
 
-Regards,
-Halil
+> Thanks,
+> Namhyung
+>
+>
+> > +             /*
+> > +              * Setup BPF counters to require CPUs as any(-1) isn't
+> > +              * supported. evlist__create_maps below will propagate th=
+is
+> > +              * information to the evsels.
+> > +              */
+> > +             struct evsel *counter;
+> > +
+> > +             evlist__for_each_entry(evsel_list, counter)
+> > +                     counter->core.requires_cpu =3D true;
+> > +     }
+> > +
+> >       if (evlist__create_maps(evsel_list, &target) < 0) {
+> >               if (target__has_task(&target)) {
+> >                       pr_err("Problems finding threads of monitor\n");
+> > diff --git a/tools/perf/util/bpf_counter.c b/tools/perf/util/bpf_counte=
+r.c
+> > index ca5d01b9017d..d3e5933b171b 100644
+> > --- a/tools/perf/util/bpf_counter.c
+> > +++ b/tools/perf/util/bpf_counter.c
+> > @@ -495,6 +495,7 @@ static int bperf_reload_leader_program(struct evsel=
+ *evsel, int attr_map_fd,
+> >        * following evsel__open_per_cpu call
+> >        */
+> >       evsel->leader_skel =3D skel;
+> > +     assert(!perf_cpu_map__has_any_cpu_or_is_empty(evsel->core.cpus));
+> >       evsel__open(evsel, evsel->core.cpus, evsel->core.threads);
+> >
+> >  out:
+> > --
+> > 2.51.0.710.ga91ca5db03-goog
+> >
 
