@@ -1,60 +1,68 @@
-Return-Path: <linux-kernel+bounces-845985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1E06BC6A44
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 23:07:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1CD0BC6A56
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 23:11:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D03C24EF0AE
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 21:07:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C1793B019D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 21:11:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42EC2BEC4A;
-	Wed,  8 Oct 2025 21:07:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650F72BFC60;
+	Wed,  8 Oct 2025 21:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z6M/6/Fj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rW3m53ug"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F64226657B;
-	Wed,  8 Oct 2025 21:07:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8FD0208994;
+	Wed,  8 Oct 2025 21:11:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759957638; cv=none; b=DhNKU2+OEP/Fots/wbMHCTuQiCEwwFJ7F4V2DTpuwOzZE8VTJeYeiKv5gSPUpc/pN5fAGSXmZbagkaCxdIjb7SjybeZBoaXTjmIYI2Z2pD5AcuRAvO1a5aC+Z79Ty1yqclUW4CmAh7QCSxojgEzcfb8Kd4KhD9NdwZUx+RrIMYo=
+	t=1759957890; cv=none; b=lTZQUZjKx/xQbWCMmJBwv3RxdfVpX8GVshooZwgcIDo/oBG7DVcgSrqxxxenP1VYopTv3iys6tXo5YzZL0J4VFDs3W04IODO8SCGl0RMR33XMKun7wok2TDHho3x5wmIovMLJ97eDs+a41Y+JPKygUo3qhJhESp+DqKU39OUQ3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759957638; c=relaxed/simple;
-	bh=LL0RamBUFR6PAe5GMWukxqVeDNw7wqwAhfyL2dF64hc=;
+	s=arc-20240116; t=1759957890; c=relaxed/simple;
+	bh=ydFtpo6dhi61s4kQmCQFz/+cR86DGUMPR5XGUXkkB6I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RQyVc/2PWmiBZfGq82cCYK2HfsSlbLvwPXFEnHm1tTIV73oiLCd8yu3j0+JwX7adT5Wam1kaRQk/vbKu1QnzKz8tMW9ulPqeeAVeS7V0x/2bMTsQHwzHx7uiFXcM8OKFaog0zlOO3XOW06zuSfmtiP96lAR4q3x3fLkLOfyLxbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z6M/6/Fj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FFE7C4CEE7;
-	Wed,  8 Oct 2025 21:07:13 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rByBK8DYZkyc8116m7fyRcj1BONxh2+elKvNsdxul7nzlhW0L53R5Jdl38XWoxuXciXDR5jT1gn25jzWwtAlSUHh+/I76LR8plKjzDHk97aqr6oYuddXsJpASps9+GtX1ZoqyPQeLWy9FyhOSmvlUILV7Ho7gCInH+vLBBnnbtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rW3m53ug; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF188C4CEE7;
+	Wed,  8 Oct 2025 21:11:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759957637;
-	bh=LL0RamBUFR6PAe5GMWukxqVeDNw7wqwAhfyL2dF64hc=;
+	s=k20201202; t=1759957890;
+	bh=ydFtpo6dhi61s4kQmCQFz/+cR86DGUMPR5XGUXkkB6I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z6M/6/Fj7ZD78LRctQ7ZlY+xTd9UrxG7l5pdUcND8ftAhZ6QmIWCyedWPkJZ/ygIJ
-	 TMhUZUZjlEyekemtUFw05lM+1GEPBc8JjKsguYrsrI/2hBDpgAiNHdaUJt/aoh8MTt
-	 LTrSxa3gYa6eElTKy2fSdT5JfjpdLdXJtmwF6CZaRCegYkuSbxcx06bop9yy5vziI9
-	 zWPFOpO2HqNhQca42YFMgh5X1BW3WCaWJGc9CV9+HhQerxJY16Ow5Naxwu+SREXkJL
-	 fvitdkW+gEkKLeRw9pNKKufZxCw8+8EECfM3ODN/7n4I+UgjGi+kccmG/tX/gDRoa1
-	 5KyCbNVLqVxRA==
-Date: Wed, 8 Oct 2025 22:07:12 +0100
+	b=rW3m53ugZgeXGhdMiJOyM/Nn4cAr/stSD5us2KKk76NyxJf4CNpfkGw96c+EssgpE
+	 P4ckMojIWnOxwDBQd/riR8lOK2fn2E4gWCN/+XUEw2hRgZAjRZG0jStHjranbYjRnw
+	 f/Vb5vLiw3yAPUJqQ8mkE208jFjLiC9HZ/f94BSHJlp17FjajFqIDLWosr+CEMKCNb
+	 FJWkR+XhRnG8AtywVXx0D8Dmmgsttu60pi6IruHA58tfgQTFE/wCjkyuJxtxMM8APQ
+	 wa3iNXXOxCopSU8dBgaIbKIEd1r7/FqUanP5eKfXH8Bx4GC5yUl4L1tcocXI6lE1Kk
+	 /7VHMRJiypVhw==
+Date: Wed, 8 Oct 2025 22:11:24 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-pwm@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	jic23@kernel.org, ukleinek@kernel.org, michael.hennerich@analog.com,
-	nuno.sa@analog.com, eblanc@baylibre.com, dlechner@baylibre.com,
-	andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, corbet@lwn.net, marcelo.schmitt1@gmail.com
-Subject: Re: [PATCH v4 7/8] dt-bindings: iio: adc: adi,ad4030: Add ADAQ4216
- and ADAQ4224
-Message-ID: <20251008-swooned-closable-fbc8b71601c0@spud>
-References: <cover.1759929814.git.marcelo.schmitt@analog.com>
- <7e51e036ba930284c74cf42afd53b17d49093654.1759929814.git.marcelo.schmitt@analog.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v2 1/7] dt-bindings: display: panel: properly document LG
+ LD070WX3 panel
+Message-ID: <20251008-safely-reach-9274474a2ec8@spud>
+References: <20251008082800.67718-1-clamor95@gmail.com>
+ <20251008082800.67718-2-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,189 +70,147 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hM/C8yvENSUKZA1u"
+	protocol="application/pgp-signature"; boundary="t0NOkuCq/S/rhM4m"
 Content-Disposition: inline
-In-Reply-To: <7e51e036ba930284c74cf42afd53b17d49093654.1759929814.git.marcelo.schmitt@analog.com>
+In-Reply-To: <20251008082800.67718-2-clamor95@gmail.com>
 
 
---hM/C8yvENSUKZA1u
-Content-Type: text/plain; charset=us-ascii
+--t0NOkuCq/S/rhM4m
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 08, 2025 at 10:51:37AM -0300, Marcelo Schmitt wrote:
-> ADAQ4216 and ADAQ4224 are similar to AD4030 except that ADAQ devices have=
- a
-> PGA (programmable gain amplifier) that scales the input signal prior to it
-> reaching the ADC inputs. The PGA is controlled through a couple of pins (=
-A0
-> and A1) that set one of four possible signal gain configurations.
+On Wed, Oct 08, 2025 at 11:27:53AM +0300, Svyatoslav Ryhel wrote:
+> LG LD070WX3-SL01 was mistakenly documented as a simple DSI panel, which it
+> clearly is not. Address this by adding the proper schema for this panel.
 >=20
-> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> There is only one user of this panel binding in the mainline Linux kernel,
+> which is the Nvidia tablet Tegra Note 7. Its panel is broken anyway since
+> it cannot initialize properly if the bootloader does not leave a
+> pre-initialized panel. It also cannot suspend or re-initialize properly,
+> since no DSI configuration is set and it has a loose regulator which
+> relies on an always-on property rather than being hooked to the panel
+> where it belongs.
+
+I think this is a reasonable justification. For my own enlightenment,
+what happens if a new kernel uses the old simple-panel devicetree?
+
+> Tegra Note 7 device tree is adjusted as a part of this series.
+>=20
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 > ---
-> Change log v3 -> v4
-> - Now only documenting GPIO setup to control ADAQ PGA pins.
+>  .../bindings/display/panel/lg,ld070wx3.yaml   | 60 +++++++++++++++++++
+>  .../display/panel/panel-simple-dsi.yaml       |  2 -
+>  2 files changed, 60 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/display/panel/lg,ld=
+070wx3.yaml
 >=20
-> Pin strapped/hardwired connections to PGA pins may benefit from a "fixed-=
-gpios"
-> driver which may (or may not?) use the shared GPIO abstraction layer [1].=
- I may
-> propose support for pin-strapped/hardwired connections when I get a worki=
-ng
-> fixed-gpios implementation.
+> diff --git a/Documentation/devicetree/bindings/display/panel/lg,ld070wx3.=
+yaml b/Documentation/devicetree/bindings/display/panel/lg,ld070wx3.yaml
+> new file mode 100644
+> index 000000000000..0a82cf311452
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/panel/lg,ld070wx3.yaml
+> @@ -0,0 +1,60 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/panel/lg,ld070wx3.yaml#
 
-What is a "fixed-gpio" as compared to a hog, from a dt point of view?
-Is it purely a software change?
-
-This looks fine other than the potential oversight I pointed out in the
-other mail.
+Could you make the filename match the compatible please?
+With that,
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
 Cheers,
-COnor
+Conor.
 
->=20
-> [1]: https://lore.kernel.org/linux-gpio/CAMRc=3DMdb_cUG+hKq8GyfUP1SYBh0p1=
-9J+4dFG7G3JSuZTr4n8Q@mail.gmail.com/T/#t
->=20
->  .../bindings/iio/adc/adi,ad4030.yaml          | 71 +++++++++++++++++--
->  1 file changed, 66 insertions(+), 5 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml b/=
-Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml
-> index 564b6f67a96e..d0e8452598d4 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml
-> @@ -19,6 +19,8 @@ description: |
->    * https://www.analog.com/media/en/technical-documentation/data-sheets/=
-ad4030-24-4032-24.pdf
->    * https://www.analog.com/media/en/technical-documentation/data-sheets/=
-ad4630-24_ad4632-24.pdf
->    * https://www.analog.com/media/en/technical-documentation/data-sheets/=
-ad4630-16-4632-16.pdf
-> +  * https://www.analog.com/media/en/technical-documentation/data-sheets/=
-adaq4216.pdf
-> +  * https://www.analog.com/media/en/technical-documentation/data-sheets/=
-adaq4224.pdf
-> =20
->  $ref: /schemas/spi/spi-peripheral-props.yaml#
-> =20
-> @@ -31,6 +33,8 @@ properties:
->        - adi,ad4630-24
->        - adi,ad4632-16
->        - adi,ad4632-24
-> +      - adi,adaq4216
-> +      - adi,adaq4224
-> =20
->    reg:
->      maxItems: 1
-> @@ -54,6 +58,14 @@ properties:
->      description:
->        Internal buffered Reference. Used when ref-supply is not connected.
-> =20
-> +  vddh-supply:
-> +    description:
-> +      PGIA Positive Power Supply.
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +  vdd-fda-supply:
-> +    description:
-> +      FDA Positive Power Supply.
+> +title: LG Corporation 7" WXGA TFT LCD panel
 > +
->    cnv-gpios:
->      description:
->        The Convert Input (CNV). It initiates the sampling conversions.
-> @@ -64,6 +76,13 @@ properties:
->        The Reset Input (/RST). Used for asynchronous device reset.
->      maxItems: 1
-> =20
-> +  pga-gpios:
-> +    description:
-> +      A0 and A1 pins for gain selection. For devices that have PGA confi=
-guration
-> +      input pins, pga-gpios should be defined.
-> +    minItems: 2
-> +    maxItems: 2
+> +maintainers:
+> +  - Svyatoslav Ryhel <clamor95@gmail.com>
 > +
->    pwms:
->      description: PWM signal connected to the CNV pin.
->      maxItems: 1
-> @@ -86,11 +105,30 @@ required:
->    - vio-supply
->    - cnv-gpios
-> =20
-> -oneOf:
-> -  - required:
-> -      - ref-supply
-> -  - required:
-> -      - refin-supply
 > +allOf:
-> +  - oneOf:
-> +      - required:
-> +          - ref-supply
-> +      - required:
-> +          - refin-supply
-> +  # ADAQ devices require a gain property to indicate how hardware PGA is=
- set
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            pattern: ^adi,adaq
-> +    then:
-> +      required:
-> +        - vddh-supply
-> +        - vdd-fda-supply
-> +        - pga-gpios
-> +      properties:
-> +        ref-supply: false
-> +    else:
-> +      properties:
-> +        adi,pga-value: false
-> +        pga-gpios: false
+> +  - $ref: panel-common.yaml#
 > +
-> =20
->  unevaluatedProperties: false
-> =20
-> @@ -114,3 +152,26 @@ examples:
->              reset-gpios =3D <&gpio0 1 GPIO_ACTIVE_LOW>;
->          };
->      };
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: lg,ld070wx3-sl01
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  vdd-supply: true
+> +  vcc-supply: true
+> +
+> +  backlight: true
+> +  port: true
+> +
+> +required:
+> +  - compatible
+> +  - vdd-supply
+> +  - vcc-supply
+> +
+> +additionalProperties: false
+> +
+> +examples:
 > +  - |
 > +    #include <dt-bindings/gpio/gpio.h>
-> +    spi {
+> +
+> +    dsi {
 > +        #address-cells =3D <1>;
 > +        #size-cells =3D <0>;
 > +
-> +        adc@0 {
-> +            compatible =3D "adi,adaq4216";
+> +        panel@0 {
+> +            compatible =3D "lg,ld070wx3-sl01";
 > +            reg =3D <0>;
-> +            spi-max-frequency =3D <80000000>;
-> +            vdd-5v-supply =3D <&supply_5V>;
-> +            vdd-1v8-supply =3D <&supply_1_8V>;
-> +            vio-supply =3D <&supply_1_8V>;
-> +            refin-supply =3D <&refin_sup>;
-> +            vddh-supply =3D <&vddh>;
-> +            vdd-fda-supply =3D <&vdd_fda>;
-> +            cnv-gpios =3D <&gpio0 0 GPIO_ACTIVE_HIGH>;
-> +            reset-gpios =3D <&gpio0 1 GPIO_ACTIVE_LOW>;
-> +            pga-gpios =3D <&gpio0 2 GPIO_ACTIVE_HIGH>,
-> +                        <&gpio0 3 GPIO_ACTIVE_HIGH>;
+> +
+> +            vdd-supply =3D <&vdd_3v3_lcd>;
+> +            vcc-supply =3D <&vcc_1v8_lcd>;
+> +
+> +            backlight =3D <&backlight>;
+> +
+> +            port {
+> +                endpoint {
+> +                    remote-endpoint =3D <&dsi0_out>;
+> +                };
+> +            };
 > +        };
 > +    };
 > +...
+> diff --git a/Documentation/devicetree/bindings/display/panel/panel-simple=
+-dsi.yaml b/Documentation/devicetree/bindings/display/panel/panel-simple-ds=
+i.yaml
+> index 9b92a05791cc..f9f1e76a810c 100644
+> --- a/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.ya=
+ml
+> +++ b/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.ya=
+ml
+> @@ -42,8 +42,6 @@ properties:
+>        - kingdisplay,kd097d04
+>          # LG ACX467AKM-7 4.95" 1080=D71920 LCD Panel
+>        - lg,acx467akm-7
+> -        # LG Corporation 7" WXGA TFT LCD panel
+> -      - lg,ld070wx3-sl01
+>          # LG Corporation 5" HD TFT LCD panel
+>        - lg,lh500wx1-sd03
+>          # Lincoln LCD197 5" 1080x1920 LCD panel
 > --=20
-> 2.39.2
+> 2.48.1
 >=20
 
---hM/C8yvENSUKZA1u
+--t0NOkuCq/S/rhM4m
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaObSfwAKCRB4tDGHoIJi
-0lY/AP42s28WKlj6/TAIKE6lAwmWLAu1DcM4p1Bryw3PGPhnJgD6ApdUoeyu5DO7
-1uw1V7gwEEBZrvdT7xrics1a+2bZ1QQ=
-=dpHV
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaObTfAAKCRB4tDGHoIJi
+0sbPAP9ETzchfCEkgEW+0XNFC12oWkarcESlSeMmYHZJP6sHnAD/XuI1z+hb9MER
+rys8wD8HxNJLhaDCclO3joS0zYisJQ8=
+=DFYj
 -----END PGP SIGNATURE-----
 
---hM/C8yvENSUKZA1u--
+--t0NOkuCq/S/rhM4m--
 
