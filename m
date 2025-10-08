@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-845701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 048A8BC5EA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:00:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0DA3BC5E4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:55:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BFAD406440
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:50:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3E81D4FDB1A
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:51:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B592FDC35;
-	Wed,  8 Oct 2025 15:47:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8F12FE072;
+	Wed,  8 Oct 2025 15:47:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BySEllG6"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3rrIPHws"
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8792FD1BC
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:47:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D167E2BD034
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759938430; cv=none; b=Vh8NRsuGPmNftg+j1GyYb79TM+fl3I0sXBbNwe7MQfBbjtnfze/fdMA8qEflIdO9+m6Yl8AQtXihQHx23XMuxeLuhesDmMFeLoyE80ka7BNHgc/7II+wM+n5HMBShSW/XPqMyKwORglrOnFKnMEwQpmbTsAtN4ET7NqvGDUjf2U=
+	t=1759938432; cv=none; b=sgaQE6vO5wE2aFr0nSDX6YOBN0uWZR1gILCWd2E4eavAImMokPr141E1NlGajl/Z/XAGvQ4SyZ1tgDOX0HsR7AcWKqFhp5w7VlTNFPHGJUFoiLE651nC4MyQ1ycwUoSWPRZ4mn+uzEB/v2YiB0J1B7dEzvFl8bwsswz9d8HjKbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759938430; c=relaxed/simple;
-	bh=T2a3v4NeDZkwfqj85MbBcAieCeChFKaNVae0DBFB4FA=;
+	s=arc-20240116; t=1759938432; c=relaxed/simple;
+	bh=dcsoTMvU6BQfqDU8Ebpep4KV5tTYSoNmzT6aKXdDKSo=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=XIMlBN7rOEy+Yus0KvcfG/n9l/xVXL92JzXvInDT47tm8ExqKuhTTzTGPTzTGoC+OgPTsGf96iNPrPfpCwYy1X4jt/jLq6GdrZc1VymFTrqSak0bgefhuV6JtXTsxXkwD4aZIcKJrBQOQYw8XPOP2vGsfU8DxJpNgeTq1JP/qpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BySEllG6; arc=none smtp.client-ip=209.85.128.74
+	 To:Cc:Content-Type; b=bZnunxqWEU/jgZS1psGASlglgJURcWwBscZY8rJrMLvGmgjhO3+Yld5KN/7KV5gnf7C01JkVpJd2JOJRhoDDM7pQBXyb0gj8R/jGejncoPZ4MZTiLHJd/wMGNZsE7OtAD8ZvNb/KAXkEHNoJisfI27DIFwvW0MM2LgTH4eZ9iVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3rrIPHws; arc=none smtp.client-ip=209.85.221.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-46e2c11b94cso43144435e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:47:08 -0700 (PDT)
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3ee13baf21dso67702f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:47:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759938426; x=1760543226; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1759938429; x=1760543229; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XyDqe41TOpzGrced2VguyWuuhzoYjsOPlRjpRYq84qU=;
-        b=BySEllG6wojB+KZsMULQMHRXoFN4DXyJU68ZCAFMYCafvtg2Wj6W89tuOfZep6bDhT
-         9HwCRChfqn/SCZRqPRbQ3q9/trngZw6xtk2NVRtPnhfCKUHrQvJTf8gWmF1mRD+yKW75
-         GrQUaZiCremDtp3ZyKD+ZDTtM66w8JumHL6strMkxp7TlhgDY4DjG5QeI4l1b0ufY5fn
-         f1A0kl7t9wbu2zUoyt1BoXZNAlZ6WS0pHOUZP8u93cccxACo3uQHcre17YTqmDoOuCpY
-         JiJN1ShCk021hRcBGQl2+w08vPjxeRyZrORUvkQyLdqlQT0JOeEAwQouYs8vKKOZO0NX
-         zjWw==
+        bh=P5EC4bnWWk+Vzr+mFCriKnKa8JCHW95jn5qMkKvnHLI=;
+        b=3rrIPHwsNJ4BUIKdC7qAiAwC+0vZ2xAb9dI8iG3MOV5mek8CmAzSYHB1J76PTeC3hS
+         ih2zDJM+cX29YJTMWTQqC8cvEapCgFvQsBmE/u/L5lbdop4fIKX+nPmMRkjR2cOBUUi0
+         bbHJQstoPTd+Qr/lGN3JwjR/jaj7F+yYgAXXga56Z21oq+BBkEmAHAxwYnPvpxtzJnnK
+         c2U+2NEoaUZj6wCogyLODuCjv7p9SBP7qmeTlfk6zucjOzlG2gOsVQybmEKa087SgM64
+         sSRvd/wAVizP/5PETwMZMUgUWe+LXKYjYlA7m6Fs6FNKoefjaInkVCJkql2NfgkY0GZv
+         WvEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759938426; x=1760543226;
+        d=1e100.net; s=20230601; t=1759938429; x=1760543229;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XyDqe41TOpzGrced2VguyWuuhzoYjsOPlRjpRYq84qU=;
-        b=PTMdhlzGtOIJa1ewk5DkB/eVgczL4UQb7wkFqQDIlOIgm1PUA9heRnagDDouJjlCbe
-         dG34zO1im1gfFTjNuFjhnor7sFghVsM9Q801jmrrthA9yux3iqdTvsx3dckf7EJvtIXC
-         lvhR1Vy1kS7N1I9G2C3DfcnXh9h9gCz5zVBb1P2yyocoaKxRm7Ori64qGxewec0u6vaD
-         lwPBFASFbae0rLWyiF5WW9Ga0liWQ85EGtDvEgQG3J7EnC+OoVDLY8hEvHpWkpDxQYyr
-         IbG0m+I4G0KHArKRm4eBA/T7hvULKM7v5NL/U1+XX93F5blaLYasMaxBOZIU+9GL+l5r
-         /DVw==
-X-Gm-Message-State: AOJu0YyvWBvxa7aGlzqYwxlGDHj5500PW7SJtsHf+6rLfI2zI8S8uNFa
-	psObqKj/pAm0hPbH5AWjH8pph0mun6ihweWsUiTqhsiU9M1OMKcN7eBtmO0/v6MOyBJXdxSyDQ=
+        bh=P5EC4bnWWk+Vzr+mFCriKnKa8JCHW95jn5qMkKvnHLI=;
+        b=m0Dct6d64xRHeMvZ+fw3AF8Ia6N5UwE9J7vLTirOGUUysg5UNqibsUYXfPRzJA+HU/
+         062NfRAQo4jk+KzTRhGK/DnEaJ6hURPDvUP4WVuxZwYbK+3wnOE7k/jBGVsWMkKCWLpO
+         osDvIaf24jJPO6Tdh/G0WxmyWooaVNuCFTSWA+31GnJZTHY+cF3rr81sDanY3USa2fhu
+         DxJq1yIRXzAoV1Eub6rN1REXwZ2pUVZtSX3q6+c04t/iNXAQNs8hvE9+8+sLSgFOcrXA
+         /sFNYkd4gZdvMFw4foYr4wOYKtlppq5zQAawMVfztLbawxsrjy5SAOlwOIxHFpokTBq4
+         cBMQ==
+X-Gm-Message-State: AOJu0YzMCMcqZLZjsaz0IFghKX6jo5k5kGjJSRQzVVO6dz6cq8yfNfTF
+	6zS03hsvFFtmJA6cjbA0+rwhihi9yLT2wICrj7x6ZnpOAYxnKXhwwTQm/tyqlvqMLHYkBJX1UQ=
 	=
-X-Google-Smtp-Source: AGHT+IGd+xyyENe4mDMwHsq1XM4LCrOZp0Y90ZGldhJ1LzDJeD7pXJXrRWavBZZTJfyTw+krJ8EAav3c
-X-Received: from wmjs21.prod.google.com ([2002:a7b:c395:0:b0:46f:aafc:e6d4])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:c4a8:b0:46e:4921:9443
- with SMTP id 5b1f17b1804b1-46fa9b1b277mr26777065e9.37.1759938426503; Wed, 08
- Oct 2025 08:47:06 -0700 (PDT)
-Date: Wed,  8 Oct 2025 17:45:53 +0200
+X-Google-Smtp-Source: AGHT+IFKBOFngZ4tgCIe5stSYpbVjOkdovhSMBx+KSFMPmr5szglET/KMW92mtXFPvgDpIR9UTC1qiLy
+X-Received: from wrpb3.prod.google.com ([2002:adf:f243:0:b0:408:941a:35ac])
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6000:186c:b0:3ec:c50c:715b
+ with SMTP id ffacd0b85a97d-4266726d746mr2480961f8f.19.1759938428971; Wed, 08
+ Oct 2025 08:47:08 -0700 (PDT)
+Date: Wed,  8 Oct 2025 17:45:55 +0200
 In-Reply-To: <20251008154533.3089255-23-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,15 +72,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251008154533.3089255-23-ardb+git@google.com>
 X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1762; i=ardb@kernel.org;
- h=from:subject; bh=LscVi7axqbts3F3wdJxDdLq4C5QXUNo3h535UnzCneo=;
- b=owGbwMvMwCVmkMcZplerG8N4Wi2JIeNZe/By5YdKnzyPLFhZtfvlkqQJPIGL7q0zd1kx5X1Om
- 6tMZcC8jlIWBjEuBlkxRRaB2X/f7Tw9UarWeZYszBxWJpAhDFycAjCRGUEM/0Mi6397J6ztaDx5
- 4LfWJuaoVCufzUVPp960Sz/e4/wj6h4jw8XefzPlvzT+lC6UnnrnMc+9e7+mPeQ7s8nt6e9pZ/O Zr/MAAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8211; i=ardb@kernel.org;
+ h=from:subject; bh=qFYb9c8NrpZLi3t0kBZMhSZQnTeMa7rAW/va1fm5iKE=;
+ b=owGbwMvMwCVmkMcZplerG8N4Wi2JIeNZe6RrMdOP7WWaXEZtnOWrti149D/yfIGH75Sc8K5pV
+ 7iPvpHuKGVhEONikBVTZBGY/ffdztMTpWqdZ8nCzGFlAhnCwMUpABMJiWP4X7jkwKn7H/dZuW4x
+ ODbr7eZbykva9wkk/ljVKvx577T7C/gY/mmdXv3TQeCF1AfldQYdfqv08sQkbmlNt3dnzp139Kh lNhsA
 X-Mailer: git-send-email 2.51.0.710.ga91ca5db03-goog
-Message-ID: <20251008154533.3089255-42-ardb+git@google.com>
-Subject: [PATCH v3 19/21] net/mlx5: Switch to more abstract scoped ksimd guard
- API on arm64
+Message-ID: <20251008154533.3089255-44-ardb+git@google.com>
+Subject: [PATCH v3 21/21] arm64/fpsimd: Allocate kernel mode FP/SIMD buffers
+ on the stack
 From: Ard Biesheuvel <ardb+git@google.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, 
@@ -90,54 +90,229 @@ Content-Type: text/plain; charset="UTF-8"
 
 From: Ard Biesheuvel <ardb@kernel.org>
 
-Instead of calling kernel_neon_begin/end directly, switch to the scoped
-guard API which encapsulates those calls. This is needed because the
-prototypes of those APIs are going to be modified and will require a
-kernel mode FP/SIMD buffer to be provided, which the scoped guard API
-will do transparently.
+Commit aefbab8e77eb16b5
+
+  ("arm64: fpsimd: Preserve/restore kernel mode NEON at context switch")
+
+added a 'kernel_fpsimd_state' field to struct thread_struct, which is
+the arch-specific portion of struct task_struct, and is allocated for
+each task in the system. The size of this field is 528 bytes, resulting
+in non-negligible bloat of task_struct, and the resulting memory
+overhead may impact performance on systems with many processes.
+
+This allocation is only used if the task is scheduled out or interrupted
+by a softirq while using the FP/SIMD unit in kernel mode, and so it is
+possible to transparently allocate this buffer on the caller's stack
+instead.
+
+So tweak the 'ksimd' scoped guard implementation so that a stack buffer
+is allocated and passed to both kernel_neon_begin() and
+kernel_neon_end(), and either record it in the task struct, or use it
+directly to preserve the task mode kernel FP/SIMD when running in
+softirq context. Passing the address to both functions, and checking the
+addresses for consistency ensures that callers of the updated bare
+begin/end API use it in a manner that is consistent with the new context
+switch semantics.
 
 Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/wc.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ arch/arm64/include/asm/fpu.h       |  4 +-
+ arch/arm64/include/asm/neon.h      |  4 +-
+ arch/arm64/include/asm/processor.h |  2 +-
+ arch/arm64/include/asm/simd.h      |  7 +++-
+ arch/arm64/kernel/fpsimd.c         | 44 +++++++++++++-------
+ 5 files changed, 40 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/wc.c b/drivers/net/ethernet/mellanox/mlx5/core/wc.c
-index c281153bd411..815a7c97d6b0 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/wc.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/wc.c
-@@ -9,6 +9,7 @@
- 
- #if IS_ENABLED(CONFIG_KERNEL_MODE_NEON) && IS_ENABLED(CONFIG_ARM64)
- #include <asm/neon.h>
-+#include <asm/simd.h>
- #endif
- 
- #define TEST_WC_NUM_WQES 255
-@@ -264,15 +265,15 @@ static void mlx5_iowrite64_copy(struct mlx5_wc_sq *sq, __be32 mmio_wqe[16],
+diff --git a/arch/arm64/include/asm/fpu.h b/arch/arm64/include/asm/fpu.h
+index 52a1c513bdf3..e252c518de05 100644
+--- a/arch/arm64/include/asm/fpu.h
++++ b/arch/arm64/include/asm/fpu.h
+@@ -15,12 +15,12 @@ static inline void kernel_fpu_begin(void)
  {
- #if IS_ENABLED(CONFIG_KERNEL_MODE_NEON) && IS_ENABLED(CONFIG_ARM64)
- 	if (cpu_has_neon()) {
--		kernel_neon_begin();
--		asm volatile
--		(".arch_extension simd;\n\t"
--		"ld1 {v0.16b, v1.16b, v2.16b, v3.16b}, [%0]\n\t"
--		"st1 {v0.16b, v1.16b, v2.16b, v3.16b}, [%1]"
--		:
--		: "r"(mmio_wqe), "r"(sq->bfreg.map + offset)
--		: "memory", "v0", "v1", "v2", "v3");
--		kernel_neon_end();
-+		scoped_ksimd() {
-+			asm volatile(
-+				".arch_extension simd\n\t"
-+				"ld1 {v0.16b, v1.16b, v2.16b, v3.16b}, [%0]\n\t"
-+				"st1 {v0.16b, v1.16b, v2.16b, v3.16b}, [%1]"
-+				:
-+				: "r"(mmio_wqe), "r"(sq->bfreg.map + offset)
-+				: "memory", "v0", "v1", "v2", "v3");
-+		}
- 		return;
- 	}
+ 	BUG_ON(!in_task());
+ 	preempt_disable();
+-	kernel_neon_begin();
++	kernel_neon_begin(NULL);
+ }
+ 
+ static inline void kernel_fpu_end(void)
+ {
+-	kernel_neon_end();
++	kernel_neon_end(NULL);
+ 	preempt_disable();
+ }
+ 
+diff --git a/arch/arm64/include/asm/neon.h b/arch/arm64/include/asm/neon.h
+index d4b1d172a79b..acebee4605b5 100644
+--- a/arch/arm64/include/asm/neon.h
++++ b/arch/arm64/include/asm/neon.h
+@@ -13,7 +13,7 @@
+ 
+ #define cpu_has_neon()		system_supports_fpsimd()
+ 
+-void kernel_neon_begin(void);
+-void kernel_neon_end(void);
++void kernel_neon_begin(struct user_fpsimd_state *);
++void kernel_neon_end(struct user_fpsimd_state *);
+ 
+ #endif /* ! __ASM_NEON_H */
+diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
+index 61d62bfd5a7b..226e635c53d9 100644
+--- a/arch/arm64/include/asm/processor.h
++++ b/arch/arm64/include/asm/processor.h
+@@ -172,7 +172,7 @@ struct thread_struct {
+ 	unsigned long		fault_code;	/* ESR_EL1 value */
+ 	struct debug_info	debug;		/* debugging */
+ 
+-	struct user_fpsimd_state	kernel_fpsimd_state;
++	struct user_fpsimd_state	*kernel_fpsimd_state;
+ 	unsigned int			kernel_fpsimd_cpu;
+ #ifdef CONFIG_ARM64_PTR_AUTH
+ 	struct ptrauth_keys_user	keys_user;
+diff --git a/arch/arm64/include/asm/simd.h b/arch/arm64/include/asm/simd.h
+index d9f83c478736..7ddb25df5c98 100644
+--- a/arch/arm64/include/asm/simd.h
++++ b/arch/arm64/include/asm/simd.h
+@@ -43,8 +43,11 @@ static __must_check inline bool may_use_simd(void) {
+ 
+ #endif /* ! CONFIG_KERNEL_MODE_NEON */
+ 
+-DEFINE_LOCK_GUARD_0(ksimd, kernel_neon_begin(), kernel_neon_end())
++DEFINE_LOCK_GUARD_1(ksimd,
++		    struct user_fpsimd_state,
++		    kernel_neon_begin(_T->lock),
++		    kernel_neon_end(_T->lock))
+ 
+-#define scoped_ksimd()	scoped_guard(ksimd)
++#define scoped_ksimd()	scoped_guard(ksimd, &(struct user_fpsimd_state){})
+ 
  #endif
+diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
+index e3f8f51748bc..cab866d52bb7 100644
+--- a/arch/arm64/kernel/fpsimd.c
++++ b/arch/arm64/kernel/fpsimd.c
+@@ -1489,21 +1489,23 @@ static void fpsimd_load_kernel_state(struct task_struct *task)
+ 	 * Elide the load if this CPU holds the most recent kernel mode
+ 	 * FPSIMD context of the current task.
+ 	 */
+-	if (last->st == &task->thread.kernel_fpsimd_state &&
++	if (last->st == task->thread.kernel_fpsimd_state &&
+ 	    task->thread.kernel_fpsimd_cpu == smp_processor_id())
+ 		return;
+ 
+-	fpsimd_load_state(&task->thread.kernel_fpsimd_state);
++	fpsimd_load_state(task->thread.kernel_fpsimd_state);
+ }
+ 
+ static void fpsimd_save_kernel_state(struct task_struct *task)
+ {
+ 	struct cpu_fp_state cpu_fp_state = {
+-		.st		= &task->thread.kernel_fpsimd_state,
++		.st		= task->thread.kernel_fpsimd_state,
+ 		.to_save	= FP_STATE_FPSIMD,
+ 	};
+ 
+-	fpsimd_save_state(&task->thread.kernel_fpsimd_state);
++	BUG_ON(!cpu_fp_state.st);
++
++	fpsimd_save_state(task->thread.kernel_fpsimd_state);
+ 	fpsimd_bind_state_to_cpu(&cpu_fp_state);
+ 
+ 	task->thread.kernel_fpsimd_cpu = smp_processor_id();
+@@ -1774,6 +1776,7 @@ void fpsimd_update_current_state(struct user_fpsimd_state const *state)
+ void fpsimd_flush_task_state(struct task_struct *t)
+ {
+ 	t->thread.fpsimd_cpu = NR_CPUS;
++	t->thread.kernel_fpsimd_state = NULL;
+ 	/*
+ 	 * If we don't support fpsimd, bail out after we have
+ 	 * reset the fpsimd_cpu for this task and clear the
+@@ -1834,7 +1837,7 @@ void fpsimd_save_and_flush_cpu_state(void)
+  * The caller may freely use the FPSIMD registers until kernel_neon_end() is
+  * called.
+  */
+-void kernel_neon_begin(void)
++void kernel_neon_begin(struct user_fpsimd_state *state)
+ {
+ 	if (WARN_ON(!system_supports_fpsimd()))
+ 		return;
+@@ -1846,7 +1849,7 @@ void kernel_neon_begin(void)
+ 	/* Save unsaved fpsimd state, if any: */
+ 	if (test_thread_flag(TIF_KERNEL_FPSTATE)) {
+ 		BUG_ON(IS_ENABLED(CONFIG_PREEMPT_RT) || !in_serving_softirq());
+-		fpsimd_save_kernel_state(current);
++		fpsimd_save_state(state);
+ 	} else {
+ 		fpsimd_save_user_state();
+ 
+@@ -1867,8 +1870,16 @@ void kernel_neon_begin(void)
+ 		 * mode in task context. So in this case, setting the flag here
+ 		 * is always appropriate.
+ 		 */
+-		if (IS_ENABLED(CONFIG_PREEMPT_RT) || !in_serving_softirq())
++		if (IS_ENABLED(CONFIG_PREEMPT_RT) || !in_serving_softirq()) {
++			/*
++			 * Record the caller provided buffer as the kernel mode
++			 * FP/SIMD buffer for this task, so that the state can
++			 * be preserved and restored on a context switch.
++			 */
++			WARN_ON(current->thread.kernel_fpsimd_state != NULL);
++			current->thread.kernel_fpsimd_state = state;
+ 			set_thread_flag(TIF_KERNEL_FPSTATE);
++		}
+ 	}
+ 
+ 	/* Invalidate any task state remaining in the fpsimd regs: */
+@@ -1887,21 +1898,26 @@ EXPORT_SYMBOL_GPL(kernel_neon_begin);
+  * The caller must not use the FPSIMD registers after this function is called,
+  * unless kernel_neon_begin() is called again in the meantime.
+  */
+-void kernel_neon_end(void)
++void kernel_neon_end(struct user_fpsimd_state *state)
+ {
+ 	if (!system_supports_fpsimd())
+ 		return;
+ 
++	if (!test_thread_flag(TIF_KERNEL_FPSTATE))
++		return;
++
+ 	/*
+ 	 * If we are returning from a nested use of kernel mode FPSIMD, restore
+ 	 * the task context kernel mode FPSIMD state. This can only happen when
+ 	 * running in softirq context on non-PREEMPT_RT.
+ 	 */
+-	if (!IS_ENABLED(CONFIG_PREEMPT_RT) && in_serving_softirq() &&
+-	    test_thread_flag(TIF_KERNEL_FPSTATE))
+-		fpsimd_load_kernel_state(current);
+-	else
++	if (!IS_ENABLED(CONFIG_PREEMPT_RT) && in_serving_softirq()) {
++		fpsimd_load_state(state);
++	} else {
+ 		clear_thread_flag(TIF_KERNEL_FPSTATE);
++		WARN_ON(current->thread.kernel_fpsimd_state != state);
++		current->thread.kernel_fpsimd_state = NULL;
++	}
+ }
+ EXPORT_SYMBOL_GPL(kernel_neon_end);
+ 
+@@ -1937,7 +1953,7 @@ void __efi_fpsimd_begin(void)
+ 	WARN_ON(preemptible());
+ 
+ 	if (may_use_simd()) {
+-		kernel_neon_begin();
++		kernel_neon_begin(&efi_fpsimd_state);
+ 	} else {
+ 		/*
+ 		 * If !efi_sve_state, SVE can't be in use yet and doesn't need
+@@ -1986,7 +2002,7 @@ void __efi_fpsimd_end(void)
+ 		return;
+ 
+ 	if (!efi_fpsimd_state_used) {
+-		kernel_neon_end();
++		kernel_neon_end(&efi_fpsimd_state);
+ 	} else {
+ 		if (system_supports_sve() && efi_sve_state_used) {
+ 			bool ffr = true;
 -- 
 2.51.0.710.ga91ca5db03-goog
 
