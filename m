@@ -1,130 +1,133 @@
-Return-Path: <linux-kernel+bounces-845522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2333BC53D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:37:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2E4FBC53BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:35:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F13004EC23E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:37:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 60B514E3346
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:35:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B752B285C98;
-	Wed,  8 Oct 2025 13:37:21 +0000 (UTC)
-Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9CB285C84;
+	Wed,  8 Oct 2025 13:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dywjDn0h"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74ED134BA44;
-	Wed,  8 Oct 2025 13:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C5521B185
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 13:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759930641; cv=none; b=MkySk+ty+H3zGktCEAhBuqj7bMmNpgZJ+0FWr+F6RbjcCVyjzqtMYorwSD6cwLoEG+WXmRjD+oQWj/IF4bqUkHNucRp+4pAaR3duo/7CUHTm/5PoWToBFEQruoB/sGY2+lamSI3WGMKwXEOwUKJ0/xxnMmLtJxbC6y9rqTU5/zw=
+	t=1759930536; cv=none; b=sLPA0Zr915Hy8x5GBQcM6dTunhQJ6yM28pye5U1keliGnsgNHRZoZnBDevZEL5Bf4EXA1uZAa6reWieZmZ3LTqrs22oq5124xvxtegPjMOt57h886VYb6ip3qCfCz3qO+8L3HYvCG0ubWPtGnGD//YrU8W+cTkPkLUBssWztiGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759930641; c=relaxed/simple;
-	bh=2++gi+3fbP2waS3+p89+F+/Sm7MsrHb0KRMpSa7Niw0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pEnrdvFQKHg/lMQKCOLw7xYox5ejB6dkaf62FIlyVFXvSAAhKIIm2E6FlsFBX6HN7EsEMbwcaf6qlSvDhFSbff6Up0D3K8+jg6VkE4hHiYxCNDwhmf08LaXq2Ntu8Z6dJcTfOBrMXA4wQtRE06b0QymhT6kauowOc/Pz1GQVA2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
-Received: from mail.andestech.com (ATCPCS31.andestech.com [10.0.1.89])
-	by Atcsqr.andestech.com with ESMTPS id 598DZFiu019619
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 8 Oct 2025 21:35:15 +0800 (+08)
-	(envelope-from cl634@andestech.com)
-Received: from swlinux02 (10.0.15.183) by ATCPCS31.andestech.com (10.0.1.89)
- with Microsoft SMTP Server id 14.3.498.0; Wed, 8 Oct 2025 21:35:15 +0800
-Date: Wed, 8 Oct 2025 21:35:15 +0800
-From: CL Wang <cl634@andestech.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	<gg@swlinux02.smtp.subspace.kernel.org>
-CC: Conor Dooley <conor@kernel.org>, <vkoul@kernel.org>,
-        <dmaengine@vger.kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <tim609@andestech.com>,
-        <cl634@andestech.com>
-Subject: Re: [PATCH V1 1/2] dt-bindings: dmaengine: Add support for
- ATCDMAC300 DMA engine
-Message-ID: <aOZokztqpHHX0JPq@swlinux02>
-References: <20251002131659.973955-1-cl634@andestech.com>
- <20251002131659.973955-2-cl634@andestech.com>
- <20251002-absolute-spinning-f899e75b2c4a@spud>
- <aOUIfaZY7-eUYoOS@swlinux02>
- <734de17e-a712-4eb5-96fa-b7e75f86d880@kernel.org>
- <aOXW7HUMeOyABuUG@swlinux02>
- <dcd14886-f2cc-41ec-8bb5-9cb5ed50c452@kernel.org>
+	s=arc-20240116; t=1759930536; c=relaxed/simple;
+	bh=7vGH8N/m6PE6lnr/uLWOIY85RQ6MjHgDYrjIeFb+YNg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vDGTF6RCbSZrJ0Imaa1rOPzMsMSxRcORu0xzosbUFoE8q/EJ/dNLLfKQP90bT4vFOuJBkQMyvVS4OvgBc/kMIFPG/4ab0IE7VkXQzfQTaHXQ6xQGnE8CU58VGXiQbFgr8cwf8JomLpDNixbjocDQxmEGiV6NhPOU+qqsWWl8UgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dywjDn0h; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-46e504975dbso45386045e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 06:35:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1759930532; x=1760535332; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hDHlNMCgPWfKcx9mEMfAa7rnZ2ePjEXMkf1KPca5jNs=;
+        b=dywjDn0hZVcYnCqsGOJwB9zIwhAuPBx6/MnaRssTC2JfxFetIhJNqVQHO9Glfw/Mzl
+         jdCKVnXimtkCw+nFxD3dFnOx4hTdnFv3SbJ5xkAh87EiDw6ziOab7IrwKFiDG1dvfCNd
+         zBYEFhKO89Acm6ztRue/IbFMpeXzKHV5zH5R+BhNi/y0az0Q0aLDXYMhdJKVuVLQsclY
+         yZcjxPi+91EiGK8WBuDigRSxaFesJlkjC1nKNfND+ejLHMimqJvAFU/kRvEiRA7THLqA
+         odnmDDe3Drz2vcYt5g/ZyOvD3MWFevAngP95s6KBpFuSxrjXluGXf9FpghAzLon+0V8D
+         T86A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759930532; x=1760535332;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hDHlNMCgPWfKcx9mEMfAa7rnZ2ePjEXMkf1KPca5jNs=;
+        b=WD3irnp1+m7sO2tUQm9X5Em8yTAbDouKDYl6GpyHMKIpF1Y3H2SpF38UiErKMNaIcd
+         nn1nIr0W4vcUCqjG9QrWlohKGlCoigZyfcJ7RjIW1SdNL3BBYvbz0QJqU70wvtXbnYBA
+         Dj1cpQQOn7xMSpYhFuipg26zk0m+E2jlUBSKzv7hh1eO11Ij51WKPogX5kQtsjXFt87g
+         5CoLOamxrjL+UHWzBN8hORclaiPEtfgfDofifr2opA0/xLthUVzrPsyEpt+4lIAkCnwR
+         H3sd3p8OdJkAz4ikWiV078wUIQC1KopL+crvQTEkY3lxgsEz1ajU+SDd0V+h7usK69Qk
+         2YDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWz4IHDJDqd7qIl7ZN+0ecvubu5yU8UXzMltLpKiE/0m9lP9JWchttwPakcTXgJLTLnnghaavKn+qgS7/s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjPH0JsmbFD/7bSmQMVPHw2qgRw7e3oOt+0ZZYa1PtGq4k5ozN
+	G3CaNaKdnGGjLhgr63DH6z1ks6d8hknbKLaIKH4iFBvJl1/eTcAOZ7m7RSCbxfhIeRU=
+X-Gm-Gg: ASbGncv1QGOdxlkbyto9AGtCoUKVQk/UUgRPtmD2Pv9ytgQhqrm/GFKdSB6ZXiNgm2a
+	zA5b6Dl+fYBUI1MgbZs9MgCJz5/4cJjlTg4wCWWaq40/JmAk1H9Upmgq1Vdgf0cepbNP7vzJ3R/
+	JM4EM/un7dso5R8RST0E/rp7RPnNrHb5SjIiV9gC5G5ei528Fdt7JEtSfmrAPwmkpZLKPtjRWtq
+	pu82WKSWhWR55nXlYFvVC6eGkRf5fLXy9WUUgt6cVhNxg8hrNavH2NfVxq4g4RXoW+d1GYpfyFY
+	/IMzJM6PVtIIzSfpTSttV6F4epeVnRD3n9s/bCZwIHURsrYeWItCewc74I1MKM6QPuDYwyl9JaS
+	nqZX2m0N6zocYv6JOQSHy6Yt+KhU+HeTIrCNJMzJIlz+zWfV2VpF9GV3/23l7Tq4V
+X-Google-Smtp-Source: AGHT+IEXN1OK+uUWcZYHcu8mGQCE4xlOe4D5UqEffJSE6zNfCHiuL17ImKFC3KKJ16P8hPWOZxwfnw==
+X-Received: by 2002:a05:600c:4f92:b0:458:c094:8ba5 with SMTP id 5b1f17b1804b1-46fa9a96588mr24061795e9.12.1759930531814;
+        Wed, 08 Oct 2025 06:35:31 -0700 (PDT)
+Received: from [10.0.1.22] (109-81-1-107.rct.o2.cz. [109.81.1.107])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8e9762sm30365608f8f.38.2025.10.08.06.35.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Oct 2025 06:35:31 -0700 (PDT)
+Message-ID: <6e057525-ca8d-4f96-bb52-cca6cafbe835@suse.com>
+Date: Wed, 8 Oct 2025 15:35:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <dcd14886-f2cc-41ec-8bb5-9cb5ed50c452@kernel.org>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-DKIM-Results: atcpcs31.andestech.com; dkim=none;
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 598DZFiu019619
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/10] modpost: add symbol import protection flag to
+ kflagstab
+To: Siddharth Nayyar <sidnayyar@google.com>
+Cc: Nathan Chancellor <nathan@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>, Sami Tolvanen
+ <samitolvanen@google.com>, Nicolas Schier <nicolas.schier@linux.dev>,
+ Arnd Bergmann <arnd@arndb.de>, linux-kbuild@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250829105418.3053274-1-sidnayyar@google.com>
+ <20250829105418.3053274-10-sidnayyar@google.com>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20250829105418.3053274-10-sidnayyar@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Krzysztof,
-
-Thanks for the clarification, and sorry for the earlier confusion.
-
-To elaborate on the rationale:
-"andestech,atcdmac300" is the IP core name of the DMA controller, which serves
-as a generic fallback compatible shared across multiple Andes SoCs.
-
-Primary compatible (SoC-specific):
-andestech,qilai-dma refers to the DMA controller instance implemented on the
-Qilai SoC, following the SoC-specific recommendation.
-
-Fallback compatible (IP-core specific):
-andestech,atcdmac300 represents the reusable IP block used across different
-Andes SoCs that share the same register map and programming model.
-
-Keeping andestech,atcdmac300 as a fallback helps avoid code duplication and
-allows a single driver to support future SoCs using the same hardware IP.
-
-This approach follows the DeviceTree binding guideline:
-
-“DO use a SoC-specific compatible for all SoC devices, followed by a fallback
-if appropriate. SoC-specific compatibles are also preferred for the fallbacks.”
-— Documentation/devicetree/bindings/writing-bindings.rst, line 42
-
-Please let me know if this aligns with your expectation.
-
-Best regards,
-CL
-
-On Wed, Oct 08, 2025 at 05:04:53PM +0900, Krzysztof Kozlowski wrote:
-> [EXTERNAL MAIL]
+On 8/29/25 12:54 PM, Siddharth Nayyar wrote:
+> When the unused exports whitelist is provided, the symbol protection bit
+> is set for symbols not present in the unused exports whitelist.
 > 
-> On 08/10/2025 12:13, CL Wang wrote:
-> > Hi Krzysztof,
-> >
-> > Thank you for pointing this out.
-> >
-> > "ATCDMAC300" is the IP block name of the DMA controller used in Andes SoC.
-> > According to your suggestion, I have updated the binding to use SoC-specific
-> > compatibles with "andestech,atcdmac300" as a fallback, as shown below:
-> >
-> > -  const: andestech,atcdmac300
-> > +  items:
-> > +    - enum:
-> > +        - andestech,qilai-dma
-> > +    - const: andestech,atcdmac300
-> > ...
-> >    dma-controller@f0c00000 {
-> > -      compatible = "andestech,atcdmac300";
-> > +      compatible = "andestech,qilai-dma", "andestech,atcdmac300";
+> The flag will be used in the following commit to prevent unsigned
+> modules from the using symbols other than those explicitly declared by
+> the such modules ahead of time.
 > 
-> That's exactly the same code as you pasted before. Please do not repeat
-> the same as argument to my comment.
-> 
-> Best regards,
-> Krzysztof
+> Signed-off-by: Siddharth Nayyar <sidnayyar@google.com>
+> ---
+> [...]
+> diff --git a/include/linux/module_symbol.h b/include/linux/module_symbol.h
+> index 574609aced99..96fe3f4d7424 100644
+> --- a/include/linux/module_symbol.h
+> +++ b/include/linux/module_symbol.h
+> @@ -3,8 +3,9 @@
+>  #define _LINUX_MODULE_SYMBOL_H
+>  
+>  /* Kernel symbol flags bitset. */
+> -enum ksym_flags {
+> +enum symbol_flags {
+>  	KSYM_FLAG_GPL_ONLY	= 1 << 0,
+> +	KSYM_FLAG_PROTECTED	= 1 << 1,
+>  };
+>  
+
+Nit: The ksym_flags enum is added in patch #1. If you prefer a different
+name, you can change it in that patch.
+
+-- 
+Thanks,
+Petr
 
