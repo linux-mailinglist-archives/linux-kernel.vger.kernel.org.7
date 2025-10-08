@@ -1,115 +1,132 @@
-Return-Path: <linux-kernel+bounces-845349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72C1DBC489F
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:23:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C0A0BC48A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:24:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 780AC4EF90A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:23:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD9923AA8A2
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060442F6180;
-	Wed,  8 Oct 2025 11:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9422F3625;
+	Wed,  8 Oct 2025 11:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NX4a40xh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KS6b8rgL"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3695A2F6164
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 11:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B675222562
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 11:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759922627; cv=none; b=k6gXnob5SYtuCaCQzrfXXjwyqo0LHmsL9jheA/TzG8bMpf332o5KoNq6/rn2CvlsUGc0V0jo5u95lBNYZO2VW9foVIBgDihQCx/WNmO51jViW8jVQu8W9iJmknMSTAmSDiH3GiGoY95yfK4H6b5euPtbyUzjohFED+sMIA6iZlI=
+	t=1759922665; cv=none; b=uhWmldgIWeXkMHEvLj+ScpkiAwKYAvGl8vZHIms0fLvDYTsVYoeXSuSuXw/LHuQTWLTyc5tuYy7I3mTvKORut+GOC5BLH8z4eKJKInQt34qadhsGBmCJZ9FTs5tSHpqtYWgIggHo0sxEBQkzYpdqgjk/KjVmvAL74Zz9TdZNtdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759922627; c=relaxed/simple;
-	bh=KEhEuKwCPJ3dLWcFCbexBiSGqiFxn45TrcIsnxqvYiw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JlqfofhQnOY9s8SJRi3el6A7VTVNc/jKLDtpMNvAy6WjyIYAySyKfZIEjTZ1nsDmAGPbAo4Aj8MhyHZ7L5KU1SPq9+54WLudeOyMUJYoVTg6ew8I5wwmC/VU6a4R/2BRU6TRDMznySMaPGU1JhxI1+Oh2Ai7AVXiKbCqx4oDZbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NX4a40xh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD2EDC113D0
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 11:23:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759922626;
-	bh=KEhEuKwCPJ3dLWcFCbexBiSGqiFxn45TrcIsnxqvYiw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=NX4a40xhNABgkz8Z6R4NxHZTvgo+0Pl0SBI1/3/MBCIgLwjbC3DX22waCZbvr+zoc
-	 MKOuZHZ7vuBgQnXYr0pacrBsO1k4QySTbJXUsr429nqF+LX511+AaEi4vkWrQtihLH
-	 XNWzvGZZ5o/M1npyU9eOHq3mNw2YD5Pq6m/XEVOD1lpnBMOS6HoIvaxpBI3X7bx5n+
-	 0B5M5GZ1x3f/MjP2m1zbFiU5HNLSQZOvOIDtlebMtMjuw7FML6RK1WoeErIGEPBv8D
-	 WLbmp3rMqDWaI3wmnhynko12/BTqMSyTbAnGtFmzG1WXWXn3Y2O/7rMb3aOIMx7K97
-	 Z25KQjg+6DtmQ==
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-43f494764a2so3763970b6e.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 04:23:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU3L3ys/HGkVZQLF4ny1N3qt7S0IR7JmL8oAO9MtqxnOYCyQGtaln8wnkmheOGzZBxIf9NP3Q6VwgcpwDQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCyM1ZaMriTIH3niEMMEWOj1LRYVR5/3UbRJFljkwY1dVQDL7y
-	fqjEFiUGi86e0oyQ5vUkXJagbkY52qOaoftw9uL3f89k0K58AHAAWUlqkU5Slwwnz5eeuT6doyi
-	UgHVRZSaSaL7LS0gEEQWaXiJmICfiuGU=
-X-Google-Smtp-Source: AGHT+IFfHZ8HGqxj7f466AKKrLHNXLEqnoShIi3UA9a8omxTcg0b+75+V45dqCAudPzoBHdRpOZxL0eWLd6272/GIuA=
-X-Received: by 2002:a05:6808:2201:b0:43f:ac2d:dd3a with SMTP id
- 5614622812f47-4417b38ffd3mr1450551b6e.26.1759922626108; Wed, 08 Oct 2025
- 04:23:46 -0700 (PDT)
+	s=arc-20240116; t=1759922665; c=relaxed/simple;
+	bh=KhgwqCmWQnKf1NGRM9QzpocddkHPlKhp9lU+qW/BhUw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LK57oMo5WNuTNkJ3WKQICdQIK+AKka3rOGyqMrXhb1M3aqEM+wu1HAnxzaRBj6pNsh+hHiBSWj0UcYfBKcLRM/0fdh59FGpuQpPVc9sXDLS9Q2K7AR4i1LV25WbNORxeGnzDfRTAQJ2wjfR37W6IWfPMq5GaJ2lu1zBYmjRvLOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KS6b8rgL; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b556284db11so6866906a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 04:24:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759922663; x=1760527463; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cpunCpJAgk2eLHa/FgrPVIG+nR6l3Db8tqGL3tL6T3Q=;
+        b=KS6b8rgLfxaiL0nJqMlG9AFR6qZ7W6E69TeujeBoPC/fESE32iPnnK4oMT1Wlrfx5S
+         1t19E4aRcoCV+vhk17rxCTOWopt7Jcnhl8AFqqS7ILz39yglcbio1mKTqPD3jLlvBsZY
+         BkMxibSlYRO58lyipLmoIX2dVI1W0Gke+Hcv/1N36bYm5j0Vv0hlaNQhAm+MinUbu9n0
+         9GPyfvXXReZOgxKt2xzGJ2YQwG4DWYf3RiR1DBpH8pWyYmeHsIvT21ZF/SLrJqzyQtwg
+         qAnsNcTUcWHTNFjHh6LGhLzWPQ7tAzkENjR1n2YS8h/vLN4cH4NX2TDFgtHVUqet4ExF
+         AvzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759922663; x=1760527463;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cpunCpJAgk2eLHa/FgrPVIG+nR6l3Db8tqGL3tL6T3Q=;
+        b=F6v0AUZte/XsG9H9JQBJv1duoXmA4lOWHWvR9u1gkVPfjN3G8Suh4VNchktp3xwhng
+         s3rhgXFl67qp+U9VtaFTREaOy+KjNHqj4mkbs1cRI/e3HzSUGSV4lkr6XnykD5ELIst4
+         TVrebiPuV8OakFGZVJRdollZAMv0B71gRBgh3PtDoZvT3xSFhouYTPVWuUKapN7tsUoZ
+         nnmyE+kSV+nsMXER4BoG9MHBfpUYPN6ynlowTzd5OhYmIfckkSWCkDBb6i26yTtD1sHV
+         Btwkzc0dagFgisYH/EuKFPkhW3btqaHJsJ3nq9IqX+kmGFpoNF1UpirArPdAVyxcN9wC
+         XPzQ==
+X-Gm-Message-State: AOJu0YyBupFZS1SI09PhAFNRr01AqA2TcsbC2yZxFdzBLqQ6PmZFzID9
+	SZetBAJbxX4zaB1OzF3KVvcOtp6NkFO+HaWgR59xo5uim4/A2EFQI8Rq
+X-Gm-Gg: ASbGnctGGQpyrg2kIJYdVVcIssTXpK4Nf9cg29SszSDPhH7wNFEXYLeTnNQHZUUNhnP
+	fHDy6BqcYgdYCeOr0YUB15qjlPs3Ipp+3AYVYoPgCeHTk/LzU6VKlWtVZkFzMDsCY/pLp/mQx0B
+	Nb5QZzTKTkcX54kdsOPaGK3PA+/JaCkTkNq4sutQ5I7lU6hWyyxXUMATLk/KeaV87NlCB5GG6Lq
+	uupvDFcHED/lwNRsZRtkHxbcrQfGgA47Ax8XAayqcxZ4HPf2VA3wFBZwaGuk/0+XHwT1knXrxGf
+	BhvKgTBzJnzNKoUdjJ4P76XupIWPBC1F+wqk3nQRI+PRu+cnwa282c9XIqyIWsxi19pnVtbzs6n
+	Jmi11e6m3k/pWycA+bSaU3D8H+HAInZnhQBX9shHJmH/D7i4t0A==
+X-Google-Smtp-Source: AGHT+IGzccRUgsYIfQOv4mK4YMIOcoXs/vxnypDZjs9mlFa+b6ZL037YONwW6vYEs5SdhyVUnUekog==
+X-Received: by 2002:a17:902:e786:b0:269:b30c:c9b8 with SMTP id d9443c01a7336-2902741e45bmr39405215ad.56.1759922663079;
+        Wed, 08 Oct 2025 04:24:23 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1b87acsm197346765ad.76.2025.10.08.04.24.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 04:24:21 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 88AF54235ADC; Wed, 08 Oct 2025 18:24:18 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Serial <linux-serial@vger.kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Cengiz Can <cengiz@kernel.wtf>,
+	Bagas Sanjaya <bagasdotme@gmail.com>,
+	Tomas Mudrunka <tomas.mudrunka@gmail.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	=?UTF-8?q?Anselm=20Sch=C3=BCler?= <mail@anselmschueler.com>
+Subject: [PATCH] Documentation: sysrq: Remove contradicting sentence on extra /proc/sysrq-trigger characters
+Date: Wed,  8 Oct 2025 18:24:09 +0700
+Message-ID: <20251008112409.33622-1-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251007063551.3147937-1-senozhatsky@chromium.org> <20251008101408.dj46r66gcfo26sgl@lcpd911>
-In-Reply-To: <20251008101408.dj46r66gcfo26sgl@lcpd911>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 8 Oct 2025 13:23:33 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hBzgJP2L0yg4JtP2c=NxA=MqAY_m+9GJ9P8kszb1hWvw@mail.gmail.com>
-X-Gm-Features: AS18NWDaaxCc6gY2WMGLj5YvkDBRtJ44YZ9x_aKJx5HSqrLThkqUCL3iGoGDloo
-Message-ID: <CAJZ5v0hBzgJP2L0yg4JtP2c=NxA=MqAY_m+9GJ9P8kszb1hWvw@mail.gmail.com>
-Subject: Re: [PATCHv2] PM: dpm: add module param to backtrace all CPUs
-To: Dhruva Gole <d-gole@ti.com>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Pavel Machek <pavel@kernel.org>, Tomasz Figa <tfiga@chromium.org>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1253; i=bagasdotme@gmail.com; h=from:subject; bh=KhgwqCmWQnKf1NGRM9QzpocddkHPlKhp9lU+qW/BhUw=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBnPPNX+/1pfwGCQKK3s+DfytrPq9rOHNWqEbr17qcH5O qasWDmvo5SFQYyLQVZMkWVSIl/T6V1GIhfa1zrCzGFlAhnCwMUpABP5uoWRYd0dllWvI757CZ/P Xq8s+DNbUjkyhFvf0IBjQolASOktc4Y//Lph27lub92yaKuATKC6kUfyz8MvfrRkFWS9tjsik1j HDQA=
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 8, 2025 at 12:14=E2=80=AFPM Dhruva Gole <d-gole@ti.com> wrote:
->
-> On Oct 07, 2025 at 15:35:40 +0900, Sergey Senozhatsky wrote:
-> > Add dpm_watchdog_all_cpu_backtrace module parameter which
-> > controls all CPU backtrace dump before DPM panics the system.
-> > This is expected to help understanding what might have caused
-> > device timeout.
->
-> This will indeed be really helpful for debugging some nasty bugs!
->
-> >
-> > Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-> > ---
-> >  drivers/base/power/main.c | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> >
-> > diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-> > index e83503bdc1fd..7a8807ec9a5d 100644
-> > --- a/drivers/base/power/main.c
-> > +++ b/drivers/base/power/main.c
-> > @@ -34,6 +34,7 @@
-> >  #include <linux/cpufreq.h>
-> >  #include <linux/devfreq.h>
-> >  #include <linux/timer.h>
-> > +#include <linux/nmi.h>
-> >
-> >  #include "../base.h"
-> >  #include "power.h"
-> > @@ -515,6 +516,11 @@ struct dpm_watchdog {
-> >  #define DECLARE_DPM_WATCHDOG_ON_STACK(wd) \
-> >       struct dpm_watchdog wd
-> >
-> > +static bool __read_mostly dpm_watchdog_all_cpu_backtrace;
-> > +module_param(dpm_watchdog_all_cpu_backtrace, bool, 0644);
-> > +MODULE_PARM_DESC(dpm_watchdog_all_cpu_backtrace,
-> > +              "Backtrace all CPUs on DPM watchdog timeout");
-> > +
->
-> Have you considered runtime configurability instead of a module param?
+/proc/sysrq-trigger documentation states that only first character is
+processed and the rest is ignored, yet it is not recommended to write
+any extra characters to it. The latter statement is contradictive as
+these characters are also ignored as implied by preceding sentence.
 
-This one can be updated at run time AFAICS.
+Remove it.
+
+Link: https://lore.kernel.org/lkml/7ca05672-dc20-413f-a923-f77ce0a9d307@anselmschueler.com/
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+---
+ Documentation/admin-guide/sysrq.rst | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/Documentation/admin-guide/sysrq.rst b/Documentation/admin-guide/sysrq.rst
+index 9c7aa817adc72d..63ff415ce85d66 100644
+--- a/Documentation/admin-guide/sysrq.rst
++++ b/Documentation/admin-guide/sysrq.rst
+@@ -77,9 +77,7 @@ On other
+ On all
+ 	Write a single character to /proc/sysrq-trigger.
+ 	Only the first character is processed, the rest of the string is
+-	ignored. However, it is not recommended to write any extra characters
+-	as the behavior is undefined and might change in the future versions.
+-	E.g.::
++	ignored. E.g.::
+ 
+ 		echo t > /proc/sysrq-trigger
+ 
+
+base-commit: c746c3b5169831d7fb032a1051d8b45592ae8d78
+-- 
+An old man doll... just what I always wanted! - Clara
+
 
