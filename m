@@ -1,130 +1,142 @@
-Return-Path: <linux-kernel+bounces-845088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3D46BC3786
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 08:27:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A91EABC3790
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 08:27:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19A823A8DB4
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 06:27:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD6323A95AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 06:27:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D922E8E06;
-	Wed,  8 Oct 2025 06:26:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C34612E9EAC;
+	Wed,  8 Oct 2025 06:27:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="La3EXbgP"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="azS+FmN6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015BD28C5DE
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 06:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181BA25C818;
+	Wed,  8 Oct 2025 06:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759904814; cv=none; b=lhoTgqG82qD8lkYMxcT1Q1Mdi3KWDPVlsS78Xi0xE1z/u/iLPg8pFh401v6tn4BpFrmnih1ZWMEAsoRnHoyx/i8WNgdcADntgm9uwx4uNhUNJjF4ZtJ/lPaSfvkAor1qSpGTzTPCgC9N8uf/JZgbHigf0ukLU56bf1YwtqEFrFc=
+	t=1759904850; cv=none; b=e9SZgfcqfLdLt1cPVeXnm/4+0NatduZflWlWcCXgpD/4RinOD1ma0hqYo7fLpqg0zIcC61vWBTqLbVZR/oc0EjEdpE6XWV2l/kUtm6dVTP7xE+OezY5XivsGVGjAoB6Qalrf1MTnVgraZCDJDaGlPBLgeCQD7tDVt9mZy8yHPsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759904814; c=relaxed/simple;
-	bh=AhYd9h60tgJkroSdF4MzOtQ6cgDPvUr1kxsXqDrcUJM=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=M+/PObNpev5LZz2kcvxhfyUob1ZDKWV2Qx2La7g1PbiTX+HbQxl/TSvzbiRyizc8y1XY7MIp/p5VKxiPQ0uQzRpnjrAumE8qprDQhGTCIOMhB4MfpW3zgLL/Cafda1Irl4nMW37JH6y0nuB/8PgKbLbzUJN2g2T/zyzA+80LU68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=La3EXbgP; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20251008062649epoutp04848edd480b429c498a82fdf64da493a2~scBmnZQjV1057310573epoutp048
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 06:26:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20251008062649epoutp04848edd480b429c498a82fdf64da493a2~scBmnZQjV1057310573epoutp048
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1759904809;
-	bh=AhYd9h60tgJkroSdF4MzOtQ6cgDPvUr1kxsXqDrcUJM=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=La3EXbgPcWsZqUzCmKKEVCjL0X8zn4DEH+vqhOabEOPGnfXLxPcmW5MkomUK4d10P
-	 CiXHidO3JihmKYOJxs3tBGpemXVDwsrfsYLshZzxStxhsFwWRIBzQiBBy/skVHJvn6
-	 L6jD93bWLBnTA5A6AernzM2d+dJ92Y23HWApneU0=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20251008062649epcas5p134e702f60be854fa21fddb87920336da~scBl2HGr90191501915epcas5p1O;
-	Wed,  8 Oct 2025 06:26:49 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.91]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4chNMD0bv1z6B9m6; Wed,  8 Oct
-	2025 06:26:48 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20251008062647epcas5p4ea70f83990f96d4e9d28b6cfdd8e5f72~scBkO7nfN2366923669epcas5p46;
-	Wed,  8 Oct 2025 06:26:47 +0000 (GMT)
-Received: from INBRO002756 (unknown [107.122.3.168]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20251008062645epsmtip204fc4a5b2f19c5b084b6bc37f715eb75~scBiRvGvY1681616816epsmtip2G;
-	Wed,  8 Oct 2025 06:26:45 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: =?utf-8?Q?'Andr=C3=A9_Draszik'?= <andre.draszik@linaro.org>, "'Vinod
- Koul'" <vkoul@kernel.org>, "'Kishon Vijay Abraham I'" <kishon@kernel.org>,
-	"'Rob Herring'" <robh@kernel.org>, "'Krzysztof Kozlowski'"
-	<krzk+dt@kernel.org>, "'Conor Dooley'" <conor+dt@kernel.org>
-Cc: "'Peter Griffin'" <peter.griffin@linaro.org>, "'Tudor Ambarus'"
-	<tudor.ambarus@linaro.org>, "'Will McVicker'" <willmcvicker@google.com>,
-	<kernel-team@android.com>, <linux-phy@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20251007-power-domains-dt-bindings-phy-samsung-ufs-phy-v1-1-d9030d14af59@linaro.org>
-Subject: RE: [PATCH] dt-bindings: phy: samsung,ufs-phy: add power-domains
-Date: Wed, 8 Oct 2025 11:56:43 +0530
-Message-ID: <002001dc381c$85e17fa0$91a47ee0$@samsung.com>
+	s=arc-20240116; t=1759904850; c=relaxed/simple;
+	bh=Qs1mNKauEw169pWFmjRqxX8J2h7bFNuvRtn6dhC3lr4=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=nhtbC9dtaRHEtEtFnba1tUQ5BNm7MSPgG7suy18ZRdDc23nqLLLYLzfUr5AaZCrVim2o5NfRM5YfQMv3RARKC76fFBe9fS2KVYHD8o+h1/d+HsrDBsgtnjIyu9FfTEaoUtht/F7kwBpPE6J18Vr4PQoymCtBScKu06E0+SJCil0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=azS+FmN6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E225BC4CEF4;
+	Wed,  8 Oct 2025 06:27:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759904849;
+	bh=Qs1mNKauEw169pWFmjRqxX8J2h7bFNuvRtn6dhC3lr4=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=azS+FmN6dIyzD1eIVCxubWtazWLtaoDUeK3PqV5cZV7w9EyJLXmyzaceBLK3e3jcQ
+	 z5e+RtAeJ3UoEMDALYdMxfrnFVOMZZzywYqSgRXnTyXWqs4RR1i95NePCTkNSosYFu
+	 fnPCU9AcVFc7knxgFmexMs2CLks9TCmxjI2vxtPsm+niYTyf3yMMzu5Gstg+GDxsXb
+	 gTJ1ZbLsllbur8fMDeME7aKDrRKVH+kNUYzoSYgA2WlkoirPhXDtbDC4NY97x3MVCK
+	 XllIHN7zwV2O0z+haCBYfR6B01oZftRpxnRaXvxQeEKaKLYasGVFIrpWmoNwRxb9Bk
+	 RVdF4Xb0ZLqVA==
+Message-ID: <f3e5b44f-9944-474c-9850-39e91b0ae7ea@kernel.org>
+Date: Wed, 8 Oct 2025 08:27:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQLlf+KWxfwWEHq87cswdN59mt3ZswNwaTJusom1c8A=
-Content-Language: en-us
-X-CMS-MailID: 20251008062647epcas5p4ea70f83990f96d4e9d28b6cfdd8e5f72
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20251007160147epcas5p305e74b7b3449b934687396e9c8aa3ff4
-References: <CGME20251007160147epcas5p305e74b7b3449b934687396e9c8aa3ff4@epcas5p3.samsung.com>
-	<20251007-power-domains-dt-bindings-phy-samsung-ufs-phy-v1-1-d9030d14af59@linaro.org>
+User-Agent: Mozilla Thunderbird
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [PATCH 0/3] module: Add compile-time check for embedded NUL
+ characters
+To: Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>
+Cc: Malcolm Priestley <tvboxspy@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Rusty Russell <rusty@rustcorp.com.au>, Petr Pavlu <petr.pavlu@suse.com>,
+ Daniel Gomez <da.gomez@kernel.org>, Sami Tolvanen <samitolvanen@google.com>,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-modules@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20251008033844.work.801-kees@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <20251008033844.work.801-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 08/10/2025 05:59, Kees Cook wrote:
+> Hi,
+> 
+> A long time ago we had an issue with embedded NUL bytes in MODULE_INFO
+> strings[1]. While this stands out pretty strongly when you look at the
+> code, and we can't do anything about a binary module that just plain lies,
+> we never actually implemented the trivial compile-time check needed to
+> detect it.
+> 
+> Add this check (and fix 2 instances of needless trailing semicolons that
+> this change exposed).
+> 
+> Note that these patches were produced as part of another LLM exercise.
+> This time I wanted to try "what happens if I ask an LLM to go read
+> a specific LWN article and write a patch based on a discussion?" It
+> pretty effortlessly chose and implemented a suggested solution, tested
+> the change, and fixed new build warnings in the process.
+> 
+> Since this was a relatively short session, here's an overview of the
+> prompts involved as I guided it through a clean change and tried to see
+> how it would reason about static_assert vs _Static_assert. (It wanted
+> to use what was most common, not what was the current style -- we may
+> want to update the comment above the static_assert macro to suggest
+> using _Static_assert directly these days...)
+> 
+>   I want to fix a weakness in the module info strings. Read about it
+>   here: https://lwn.net/Articles/82305/
+> 
+>   Since it's only "info" that we need to check, can you reduce the checks
+>   to just that instead of all the other stuff?
+> 
+>   I think the change to the comment is redundent, and that should be
+>   in a commit log instead. Let's just keep the change to the static assert.
+> 
+>   Is "static_assert" the idiomatic way to use a static assert in this
+>   code base? I've seen _Static_assert used sometimes.
+> 
+>   What's the difference between the two?
+> 
+>   Does Linux use C11 by default now?
+> 
+>   Then let's not use the wrapper any more.
+> 
+>   Do an "allmodconfig all -s" build to verify this works for all modules
+>   in the kernel.
+> 
+> 
+> Thanks!
+> 
+> -Kees
+> 
+> [1] https://lwn.net/Articles/82305/
+> 
+> Kees Cook (3):
+>   media: dvb-usb-v2: lmedm04: Fix firmware macro definitions
+>   media: radio: si470x: Fix DRIVER_AUTHOR macro definition
+>   module: Add compile-time check for embedded NUL characters
 
+I reviewed the two media patches. Feel free to take this series.
+If you prefer that I take the two media patches, then let me know
+but it makes more sense in this case that you take all three.
 
-> -----Original Message-----
-> From: Andr=C3=A9=20Draszik=20<andre.draszik=40linaro.org>=0D=0A>=20Sent:=
-=20Tuesday,=20October=207,=202025=209:32=20PM=0D=0A>=20To:=20Vinod=20Koul=
-=20<vkoul=40kernel.org>;=20Kishon=20Vijay=20Abraham=20I=0D=0A>=20<kishon=40=
-kernel.org>;=20Rob=20Herring=20<robh=40kernel.org>;=20Krzysztof=20Kozlowski=
-=0D=0A>=20<krzk+dt=40kernel.org>;=20Conor=20Dooley=20<conor+dt=40kernel.org=
->;=20Alim=20Akhtar=0D=0A>=20<alim.akhtar=40samsung.com>=0D=0A>=20Cc:=20Pete=
-r=20Griffin=20<peter.griffin=40linaro.org>;=20Tudor=20Ambarus=0D=0A>=20<tud=
-or.ambarus=40linaro.org>;=20Will=20McVicker=20<willmcvicker=40google.com>;=
-=0D=0A>=20kernel-team=40android.com;=20linux-phy=40lists.infradead.org;=0D=
-=0A>=20devicetree=40vger.kernel.org;=20linux-kernel=40vger.kernel.org;=20An=
-dr=C3=A9=20Draszik=0D=0A>=20<andre.draszik=40linaro.org>=0D=0A>=20Subject:=
-=20=5BPATCH=5D=20dt-bindings:=20phy:=20samsung,ufs-phy:=20add=20power-domai=
-ns=0D=0A>=20=0D=0A>=20The=20UFS=20phy=20can=20be=20part=20of=20a=20power=20=
-domain,=20so=20we=20need=20to=20allow=20the=0D=0A>=20relevant=20property=20=
-'power-domains'.=0D=0A>=20=0D=0ACan=20you=20cross=20check=20if=20there=20is=
-=20a=20separate=20power=20domain=20control=20for=20ufs-phy?=20=0D=0A=0D=0A>=
-=20Signed-off-by:=20Andr=C3=A9=20Draszik=20<andre.draszik=40linaro.org>=0D=
-=0A>=20---=0D=0A>=20=20Documentation/devicetree/bindings/phy/samsung,ufs-ph=
-y.yaml=20=7C=203=20+++=0D=0A>=20=201=20file=20changed,=203=20insertions(+)=
-=0D=0A>=20=0D=0A>=20diff=20--git=20a/Documentation/devicetree/bindings/phy/=
-samsung,ufs-phy.yaml=0D=0A>=20b/Documentation/devicetree/bindings/phy/samsu=
-ng,ufs-phy.yaml=0D=0A>=20index=0D=0A>=20d70ffeb6e824bfc19668e0f678276acd879=
-a6217..2b20c0a5e5094889eb3e80dcc2=0D=0A>=201b505943c68523=20100644=0D=0A>=
-=20---=20a/Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml=0D=0A=
->=20+++=20b/Documentation/devicetree/bindings/phy/samsung,ufs-phy.yaml=0D=
-=0A>=20=40=40=20-36,6=20+36,9=20=40=40=20properties:=0D=0A>=20=20=20=20=20=
-=20minItems:=201=0D=0A>=20=20=20=20=20=20maxItems:=204=0D=0A>=20=0D=0A>=20+=
-=20=20power-domains:=0D=0A>=20+=20=20=20=20maxItems:=201=0D=0A>=20+=0D=0A>=
-=20=20=20=20samsung,pmu-syscon:=0D=0A>=20=20=20=20=20=20=24ref:=20/schemas/=
-types.yaml=23/definitions/phandle-array=0D=0A>=20=20=20=20=20=20maxItems:=
-=201=0D=0A>=20=0D=0A>=20---=0D=0A>=20base-commit:=203b9b1f8df454caa453c7fb0=
-7689064edb2eda90a=0D=0A>=20change-id:=2020251007-power-domains-dt-bindings-=
-phy-samsung-ufs-phy-=0D=0A>=20fce95e2eae38=0D=0A>=20=0D=0A>=20Best=20regard=
-s,=0D=0A>=20--=0D=0A>=20Andr=C3=A9=20Draszik=20<andre.draszik=40linaro.org>=
-=0D=0A=0D=0A=0D=0A
+Regards,
+
+	Hans
+
+> 
+>  include/linux/moduleparam.h                   |  3 +++
+>  drivers/media/radio/si470x/radio-si470x-i2c.c |  2 +-
+>  drivers/media/usb/dvb-usb-v2/lmedm04.c        | 12 ++++++------
+>  3 files changed, 10 insertions(+), 7 deletions(-)
+> 
+
 
