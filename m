@@ -1,165 +1,419 @@
-Return-Path: <linux-kernel+bounces-845857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48C45BC6516
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 20:44:49 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1AFFBC651F
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 20:45:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C79D8406934
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 18:44:47 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6BE4D34D0BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 18:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015F02C0F83;
-	Wed,  8 Oct 2025 18:44:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A173D2BDC14;
+	Wed,  8 Oct 2025 18:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="R4y8o+8l"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QdJXDdh/"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99CE120010A;
-	Wed,  8 Oct 2025 18:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62B01FBCA1
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 18:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759949080; cv=none; b=qP9unTJ8ifj3He4VjxqoQbuR9C2qEsO3C7bCy7EI41gOAKihSzRe1q60rz8QCy0CHwco0XHxRdGxoopPGsgvR7YGn1PTdktLHT0xr5VvUnq6XHFEPDRq+QGCH3Ln6695rldJBEF2tIpcbNtXnA4gim/KOhjrXfgIyhHXn+1M9Lg=
+	t=1759949141; cv=none; b=EzcdZnnvIIgm8cd+CcFrQvdMf/HIPiTiPPXmk5FbHujUjsV69DwQ5gdQVTcCk6cpdPrS9kzomN26Cw57IkxKamDK2mtn2hI0coXOVAoa6NKz7bv6Xmrel6dNG/f236R3SRcKryf2biCY0dPvkjC8/O8dYbm0zAuzduG6uXPzuzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759949080; c=relaxed/simple;
-	bh=fTYunW4t7t47MMRiUGCUVIF01pr+p18ctTZiu6aojnU=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=DAc6ueporA3rachz6YkSMmilZ23lYQxHvhkj0GDdezL31pVkVM+kAwy3FeH0yMSJzd5Ya7aHnQatXUi5DoFJ+jKz58xelmdzvNDA5yuZRsQf36PDpgYqYDynNrq7nBEdu3tixEZQQm5CCS+FoDgn7hJnwHg2KGaJP5bqI4uxF+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=R4y8o+8l; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1759949059; x=1760553859; i=markus.elfring@web.de;
-	bh=2Mkgu0J9/upFgAVIGiaWO6c706dLU+k2IGYo2Y1t1Tw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=R4y8o+8l/Ria3JhccecWZAz72bWP/3sKBJ/1xGbibSb7rDCLrze2Atv+9sXs1BOi
-	 s8Ky39BRkHMooipVoURTtZQC03QQuM+K4y0pn8gyaPcnY2aP07OhgCCDc0Lr47/wV
-	 5qDIscNnHxWrmyQT4uNuy0N0NAviK34PixbnBweRWkUXlCSdY3IK0SIuddhoJxccZ
-	 1fl1H1Jtarx+Dzt8uW9qd+YEEZ4/qR4n97VNrYtWxr8aTeUTEhOQpBv8qRxRe0Fo9
-	 48NAQAbyPEoNl9IShpZakfraI581lHp14u6NPJM6Qmn91uDT/YM/2FYPcQVfj01Vz
-	 +PFfdvjvjYqzqybqwA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.249]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mv3Yg-1uFhXn1wWW-012454; Wed, 08
- Oct 2025 20:44:19 +0200
-Message-ID: <98b5e2a8-4bc4-4282-987e-01cd6fcd8f00@web.de>
-Date: Wed, 8 Oct 2025 20:44:18 +0200
+	s=arc-20240116; t=1759949141; c=relaxed/simple;
+	bh=edXk8mtRHT4a8ETEoUk6fnwmMYrwd+sjN5R/6vm0mR8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=lOfztoYKYb4D/MNb7g4deOeZ92SnMuZ7ZN6Lv8Me+fDkhNxnFH95JQ7IbMONlgtRZ8yNr6kqohxv79wK6KgPkYieFJC0rwOg2YHCUfw5GCap4ZBdCkuT6qYeAtbowhtHyB1vsgLZqYJkM+znbCbjU8rQoqlL5YJA+xs5MJVEoi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QdJXDdh/; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b550a522a49so85622a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 11:45:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759949139; x=1760553939; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lKFx0l4hKy28sNRGiaGfhcTL+cuug9ElvubKP0ftiiA=;
+        b=QdJXDdh/GshcSTpdRFT780eJDYirm4VuIJDYYOzIR9P6iYcL9l7g3yr3j4W5Yx6eeA
+         FtWqYNwd69byncgbvcNGLDl06vPJHyzwana5dv99UGXrFEmUXhgTe6IcT8mOcen26ie5
+         lsn9p5DpxQKERtDoy6nNTvRMknd+ZBDUNY5sumrtA7f9Spa3OBgKCCuMbp6NUYlWo4si
+         kwoMPsLonUEIvsy75tmNT2K9rwpOx1tmf6ni5hDWKHJPcrbD7iGOlW2pbOWBi7J7K/1i
+         wXAfiCfTPcAqNtpcWGrUSLf+ymi4yb8zIitEIlB75d7zJ9JRYmi4aoxxue2JzD2B/mjX
+         23YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759949139; x=1760553939;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lKFx0l4hKy28sNRGiaGfhcTL+cuug9ElvubKP0ftiiA=;
+        b=IYCIl0aBmOf7tdw8IancMVwLpAc1Rs70ObyymT1jvSQbV9SNCkhPwkRdk69D9m2Daf
+         xgsmNGE/FcFV/ZIDRKl5ij0DulhWBjwDNRR+dJiHTUi3ugPnImuGNiMlL/jHixOkyeJK
+         aEESmaKf0Q6csP/v9JDJSqXh7B5TkCawx1uoDXjduUTV35/ZBU0W+D7awtoh8gp3CIXY
+         5oWzQTQdYbECWdQG69W/7HJDpXanOiZgtwNSePyxgNFTgBWeoO3kenqPD22IwWUfTBlp
+         katGSDVbcKM6vkb1880dhlMxO7112EAvwRQR9HmCPHmC+ZNXfMi8UKAIYOJNpOFbx4/u
+         RQ5A==
+X-Forwarded-Encrypted: i=1; AJvYcCUexU4fkxwJXIv6dcHm4xyReCo5NCnqiyzL4T126C+c2xeeDqf2wGu3DJJK3wk6Rp4elmTShW8cCHtmobQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxK8AkKS1EW7T0gwKACmaCIeRV3KiXglza1B8Ps+qeEMlw8qoJ0
+	HmYqyd+bbKkVUoH6dR5v9Ds3D6l7uxRpyjBpXOPyifniL5Mrj56dFTZl
+X-Gm-Gg: ASbGncvBkl1wGJWT4xzH4SE5DVWz9wTzfA0RwRn57Fenkk8gcWFSqsAPZhByxEcKkAm
+	honWNfDnlPuXg7UmuzlLpfpMPCh6AYoL5ac2rVBBVmC18hEAL8l8Nqof4mwdBsk39fvHp+tliYS
+	WBbh76o9ANmiIVpGMorf4PFmlClLGxL/CXojFZdrg5Uo4XyM/gLJVdHHjqxGpR8Y2ZVCw0JDMr+
+	TDNyKR8jH31300SuwdiTuH9ftF/DZuUSbEQSdGDP8mpDfhfWRAQetZ+GEGvKIzEjPdbykZLqO5P
+	wrq286WiQvw8xINQxHThUP/MQ/75sz58i2eR4N00SibzIFl22qoOxW3ih3Pe/62cSpSYgWXVxTB
+	vYQIh4sNof65a713kB5ATW8FgTFFeOe+VwcV8EXTnRwQMfAo+xNrlzArB3UFfWEvNoA==
+X-Google-Smtp-Source: AGHT+IEd5WiSyo2hmpGstizzrex7tB8cFdu2ns5Jd22RUeKtlhdiFjAbWyQDibswlubOmwWAnvx9Og==
+X-Received: by 2002:a17:903:2f84:b0:28c:834f:d855 with SMTP id d9443c01a7336-290272667bcmr65196645ad.27.1759949138787;
+        Wed, 08 Oct 2025 11:45:38 -0700 (PDT)
+Received: from kforge.gk.pfsense.com ([103.70.166.143])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f36929sm4218175ad.95.2025.10.08.11.45.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 11:45:38 -0700 (PDT)
+From: Gopi Krishna Menon <krishnagopi487@gmail.com>
+To: rostedt@goodmis.org,
+	corbet@lwn.net,
+	tglozar@redhat.com
+Cc: Gopi Krishna Menon <krishnagopi487@gmail.com>,
+	linux-trace-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	khalid@kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	crwood@redhat.com,
+	costa.shul@redhat.com,
+	jkacur@redhat.com,
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: [PATCH v2] Documentation/rtla: rename common_xxx.rst files to common_xxx.txt
+Date: Thu,  9 Oct 2025 00:14:27 +0530
+Message-ID: <20251008184522.13201-1-krishnagopi487@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CAP4=nvTjauRawBPTnGEztZpdDSNhGpgSJtjoTFuq+cCQHP5oEg@mail.gmail.com>
+References: <CAP4=nvTjauRawBPTnGEztZpdDSNhGpgSJtjoTFuq+cCQHP5oEg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-GB, de-DE
-To: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
- Aurelien Aptel <aaptel@suse.com>, Bharath SM <bharathsm@microsoft.com>,
- Paulo Alcantara <pc@manguebit.org>,
- Ronnie Sahlberg <ronniesahlberg@gmail.com>,
- Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>,
- Tom Talpey <tom@talpey.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH 0/2] smb: client: Better exception handling in
- smb3_simple_fallocate_range()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:LWoKGg2/DD7PR1sb+oR+OzIVRdLjRuiR8rZmgi23R4CtTQDrzbv
- 7IdD6b4oIJUwm1KhDHG6KSG2pHgUuIsmDJrRR0ctD/7uCDyrEPtCFBEB6tXhDRFqOieco8i
- Rr28h3KNZvLc60aQBW2oIPog/WNumUTrKsWuXFioGXub6OJ0CEIEaXfMFiL5+8LwBQWQve5
- 8iUCOj3DY5tmmhRGBfXqQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:PJaZ0hofEpM=;ORHhkRAXHmf+sZaprrOz+fGkQYm
- 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
+Content-Transfer-Encoding: 8bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 8 Oct 2025 20:36:40 +0200
+Running "make htmldocs" reports the following build errors for
+common_options.rst:
 
-Refine a few implementation details for further development considerations=
-.
+Documentation/tools/rtla/common_options.rst:58: ERROR: Undefined substitution referenced: "threshold".
+Documentation/tools/rtla/common_options.rst:88: ERROR: Undefined substitution referenced: "tool".
+Documentation/tools/rtla/common_options.rst:88: ERROR: Undefined substitution referenced: "thresharg".
+Documentation/tools/rtla/common_options.rst:88: ERROR: Undefined substitution referenced: "tracer".
+Documentation/tools/rtla/common_options.rst:92: ERROR: Undefined substitution referenced: "tracer".
+Documentation/tools/rtla/common_options.rst:98: ERROR: Undefined substitution referenced: "actionsperf".
+Documentation/tools/rtla/common_options.rst:113: ERROR: Undefined substitution referenced: "tool".
 
-Markus Elfring (2):
-  Return directly after a failed SMB2_ioctl()
-  Improve memory release
+common_*.rst files are intended to be included by other rtla documents
+and are not meant to be built as a standalone document.
+common_options.rst in particular contains substitutions that are only
+resolved by other documents, so building it independently results in
+'undefined substitution referenced' errors.
 
- fs/smb/client/smb2ops.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+Rename all common_*.rst files to common_*.txt to prevent Sphinx from
+building them as standalone documents and update all include references
+accordingly.
 
-=2D-=20
-2.51.0
+Suggested-by: Tomas Glozar <tglozar@redhat.com>
+Suggested-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Signed-off-by: Gopi Krishna Menon <krishnagopi487@gmail.com>
+---
+Note: reStructuredText substitutions -
+https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html#substitutions
+
+Tested by running "make htmldocs" before and after the change,
+verifying that no build errors are generated and the 
+output renders correctly in browsers.
+
+ .../{common_appendix.rst => common_appendix.txt}     |  0
+ ...mmon_hist_options.rst => common_hist_options.txt} |  0
+ .../rtla/{common_options.rst => common_options.txt}  |  0
+ ...escription.rst => common_osnoise_description.txt} |  0
+ ...snoise_options.rst => common_osnoise_options.txt} |  0
+ ...common_timerlat_aa.rst => common_timerlat_aa.txt} |  0
+ ...scription.rst => common_timerlat_description.txt} |  0
+ ...erlat_options.rst => common_timerlat_options.txt} |  0
+ ...common_top_options.rst => common_top_options.txt} |  0
+ Documentation/tools/rtla/rtla-hwnoise.rst            |  8 ++++----
+ Documentation/tools/rtla/rtla-osnoise-hist.rst       | 10 +++++-----
+ Documentation/tools/rtla/rtla-osnoise-top.rst        | 10 +++++-----
+ Documentation/tools/rtla/rtla-osnoise.rst            |  4 ++--
+ Documentation/tools/rtla/rtla-timerlat-hist.rst      | 12 ++++++------
+ Documentation/tools/rtla/rtla-timerlat-top.rst       | 12 ++++++------
+ Documentation/tools/rtla/rtla-timerlat.rst           |  4 ++--
+ Documentation/tools/rtla/rtla.rst                    |  2 +-
+ 17 files changed, 31 insertions(+), 31 deletions(-)
+ rename Documentation/tools/rtla/{common_appendix.rst => common_appendix.txt} (100%)
+ rename Documentation/tools/rtla/{common_hist_options.rst => common_hist_options.txt} (100%)
+ rename Documentation/tools/rtla/{common_options.rst => common_options.txt} (100%)
+ rename Documentation/tools/rtla/{common_osnoise_description.rst => common_osnoise_description.txt} (100%)
+ rename Documentation/tools/rtla/{common_osnoise_options.rst => common_osnoise_options.txt} (100%)
+ rename Documentation/tools/rtla/{common_timerlat_aa.rst => common_timerlat_aa.txt} (100%)
+ rename Documentation/tools/rtla/{common_timerlat_description.rst => common_timerlat_description.txt} (100%)
+ rename Documentation/tools/rtla/{common_timerlat_options.rst => common_timerlat_options.txt} (100%)
+ rename Documentation/tools/rtla/{common_top_options.rst => common_top_options.txt} (100%)
+
+diff --git a/Documentation/tools/rtla/common_appendix.rst b/Documentation/tools/rtla/common_appendix.txt
+similarity index 100%
+rename from Documentation/tools/rtla/common_appendix.rst
+rename to Documentation/tools/rtla/common_appendix.txt
+diff --git a/Documentation/tools/rtla/common_hist_options.rst b/Documentation/tools/rtla/common_hist_options.txt
+similarity index 100%
+rename from Documentation/tools/rtla/common_hist_options.rst
+rename to Documentation/tools/rtla/common_hist_options.txt
+diff --git a/Documentation/tools/rtla/common_options.rst b/Documentation/tools/rtla/common_options.txt
+similarity index 100%
+rename from Documentation/tools/rtla/common_options.rst
+rename to Documentation/tools/rtla/common_options.txt
+diff --git a/Documentation/tools/rtla/common_osnoise_description.rst b/Documentation/tools/rtla/common_osnoise_description.txt
+similarity index 100%
+rename from Documentation/tools/rtla/common_osnoise_description.rst
+rename to Documentation/tools/rtla/common_osnoise_description.txt
+diff --git a/Documentation/tools/rtla/common_osnoise_options.rst b/Documentation/tools/rtla/common_osnoise_options.txt
+similarity index 100%
+rename from Documentation/tools/rtla/common_osnoise_options.rst
+rename to Documentation/tools/rtla/common_osnoise_options.txt
+diff --git a/Documentation/tools/rtla/common_timerlat_aa.rst b/Documentation/tools/rtla/common_timerlat_aa.txt
+similarity index 100%
+rename from Documentation/tools/rtla/common_timerlat_aa.rst
+rename to Documentation/tools/rtla/common_timerlat_aa.txt
+diff --git a/Documentation/tools/rtla/common_timerlat_description.rst b/Documentation/tools/rtla/common_timerlat_description.txt
+similarity index 100%
+rename from Documentation/tools/rtla/common_timerlat_description.rst
+rename to Documentation/tools/rtla/common_timerlat_description.txt
+diff --git a/Documentation/tools/rtla/common_timerlat_options.rst b/Documentation/tools/rtla/common_timerlat_options.txt
+similarity index 100%
+rename from Documentation/tools/rtla/common_timerlat_options.rst
+rename to Documentation/tools/rtla/common_timerlat_options.txt
+diff --git a/Documentation/tools/rtla/common_top_options.rst b/Documentation/tools/rtla/common_top_options.txt
+similarity index 100%
+rename from Documentation/tools/rtla/common_top_options.rst
+rename to Documentation/tools/rtla/common_top_options.txt
+diff --git a/Documentation/tools/rtla/rtla-hwnoise.rst b/Documentation/tools/rtla/rtla-hwnoise.rst
+index 3a7163c02ac8..26512b15fe7b 100644
+--- a/Documentation/tools/rtla/rtla-hwnoise.rst
++++ b/Documentation/tools/rtla/rtla-hwnoise.rst
+@@ -29,11 +29,11 @@ collection of the tracer output.
+ 
+ OPTIONS
+ =======
+-.. include:: common_osnoise_options.rst
++.. include:: common_osnoise_options.txt
+ 
+-.. include:: common_top_options.rst
++.. include:: common_top_options.txt
+ 
+-.. include:: common_options.rst
++.. include:: common_options.txt
+ 
+ EXAMPLE
+ =======
+@@ -106,4 +106,4 @@ AUTHOR
+ ======
+ Written by Daniel Bristot de Oliveira <bristot@kernel.org>
+ 
+-.. include:: common_appendix.rst
++.. include:: common_appendix.txt
+diff --git a/Documentation/tools/rtla/rtla-osnoise-hist.rst b/Documentation/tools/rtla/rtla-osnoise-hist.rst
+index 1fc60ef26106..007521c865d9 100644
+--- a/Documentation/tools/rtla/rtla-osnoise-hist.rst
++++ b/Documentation/tools/rtla/rtla-osnoise-hist.rst
+@@ -15,7 +15,7 @@ SYNOPSIS
+ 
+ DESCRIPTION
+ ===========
+-.. include:: common_osnoise_description.rst
++.. include:: common_osnoise_description.txt
+ 
+ The **rtla osnoise hist** tool collects all **osnoise:sample_threshold**
+ occurrence in a histogram, displaying the results in a user-friendly way.
+@@ -24,11 +24,11 @@ collection of the tracer output.
+ 
+ OPTIONS
+ =======
+-.. include:: common_osnoise_options.rst
++.. include:: common_osnoise_options.txt
+ 
+-.. include:: common_hist_options.rst
++.. include:: common_hist_options.txt
+ 
+-.. include:: common_options.rst
++.. include:: common_options.txt
+ 
+ EXAMPLE
+ =======
+@@ -65,4 +65,4 @@ AUTHOR
+ ======
+ Written by Daniel Bristot de Oliveira <bristot@kernel.org>
+ 
+-.. include:: common_appendix.rst
++.. include:: common_appendix.txt
+diff --git a/Documentation/tools/rtla/rtla-osnoise-top.rst b/Documentation/tools/rtla/rtla-osnoise-top.rst
+index b1cbd7bcd4ae..6ccadae38945 100644
+--- a/Documentation/tools/rtla/rtla-osnoise-top.rst
++++ b/Documentation/tools/rtla/rtla-osnoise-top.rst
+@@ -15,7 +15,7 @@ SYNOPSIS
+ 
+ DESCRIPTION
+ ===========
+-.. include:: common_osnoise_description.rst
++.. include:: common_osnoise_description.txt
+ 
+ **rtla osnoise top** collects the periodic summary from the *osnoise* tracer,
+ including the counters of the occurrence of the interference source,
+@@ -26,11 +26,11 @@ collection of the tracer output.
+ 
+ OPTIONS
+ =======
+-.. include:: common_osnoise_options.rst
++.. include:: common_osnoise_options.txt
+ 
+-.. include:: common_top_options.rst
++.. include:: common_top_options.txt
+ 
+-.. include:: common_options.rst
++.. include:: common_options.txt
+ 
+ EXAMPLE
+ =======
+@@ -60,4 +60,4 @@ AUTHOR
+ ======
+ Written by Daniel Bristot de Oliveira <bristot@kernel.org>
+ 
+-.. include:: common_appendix.rst
++.. include:: common_appendix.txt
+diff --git a/Documentation/tools/rtla/rtla-osnoise.rst b/Documentation/tools/rtla/rtla-osnoise.rst
+index c129b206ce34..540d2bf6c152 100644
+--- a/Documentation/tools/rtla/rtla-osnoise.rst
++++ b/Documentation/tools/rtla/rtla-osnoise.rst
+@@ -14,7 +14,7 @@ SYNOPSIS
+ DESCRIPTION
+ ===========
+ 
+-.. include:: common_osnoise_description.rst
++.. include:: common_osnoise_description.txt
+ 
+ The *osnoise* tracer outputs information in two ways. It periodically prints
+ a summary of the noise of the operating system, including the counters of
+@@ -56,4 +56,4 @@ AUTHOR
+ ======
+ Written by Daniel Bristot de Oliveira <bristot@kernel.org>
+ 
+-.. include:: common_appendix.rst
++.. include:: common_appendix.txt
+diff --git a/Documentation/tools/rtla/rtla-timerlat-hist.rst b/Documentation/tools/rtla/rtla-timerlat-hist.rst
+index 4923a362129b..f56fe546411b 100644
+--- a/Documentation/tools/rtla/rtla-timerlat-hist.rst
++++ b/Documentation/tools/rtla/rtla-timerlat-hist.rst
+@@ -16,7 +16,7 @@ SYNOPSIS
+ DESCRIPTION
+ ===========
+ 
+-.. include:: common_timerlat_description.rst
++.. include:: common_timerlat_description.txt
+ 
+ The **rtla timerlat hist** displays a histogram of each tracer event
+ occurrence. This tool uses the periodic information, and the
+@@ -25,13 +25,13 @@ occurrence. This tool uses the periodic information, and the
+ OPTIONS
+ =======
+ 
+-.. include:: common_timerlat_options.rst
++.. include:: common_timerlat_options.txt
+ 
+-.. include:: common_hist_options.rst
++.. include:: common_hist_options.txt
+ 
+-.. include:: common_options.rst
++.. include:: common_options.txt
+ 
+-.. include:: common_timerlat_aa.rst
++.. include:: common_timerlat_aa.txt
+ 
+ EXAMPLE
+ =======
+@@ -110,4 +110,4 @@ AUTHOR
+ ======
+ Written by Daniel Bristot de Oliveira <bristot@kernel.org>
+ 
+-.. include:: common_appendix.rst
++.. include:: common_appendix.txt
+diff --git a/Documentation/tools/rtla/rtla-timerlat-top.rst b/Documentation/tools/rtla/rtla-timerlat-top.rst
+index 50968cdd2095..7dbe625d0c42 100644
+--- a/Documentation/tools/rtla/rtla-timerlat-top.rst
++++ b/Documentation/tools/rtla/rtla-timerlat-top.rst
+@@ -16,7 +16,7 @@ SYNOPSIS
+ DESCRIPTION
+ ===========
+ 
+-.. include:: common_timerlat_description.rst
++.. include:: common_timerlat_description.txt
+ 
+ The **rtla timerlat top** displays a summary of the periodic output
+ from the *timerlat* tracer. It also provides information for each
+@@ -26,13 +26,13 @@ seem with the option **-T**.
+ OPTIONS
+ =======
+ 
+-.. include:: common_timerlat_options.rst
++.. include:: common_timerlat_options.txt
+ 
+-.. include:: common_top_options.rst
++.. include:: common_top_options.txt
+ 
+-.. include:: common_options.rst
++.. include:: common_options.txt
+ 
+-.. include:: common_timerlat_aa.rst
++.. include:: common_timerlat_aa.txt
+ 
+ **--aa-only** *us*
+ 
+@@ -133,4 +133,4 @@ AUTHOR
+ ------
+ Written by Daniel Bristot de Oliveira <bristot@kernel.org>
+ 
+-.. include:: common_appendix.rst
++.. include:: common_appendix.txt
+diff --git a/Documentation/tools/rtla/rtla-timerlat.rst b/Documentation/tools/rtla/rtla-timerlat.rst
+index 20e2d259467f..ce9f57e038c3 100644
+--- a/Documentation/tools/rtla/rtla-timerlat.rst
++++ b/Documentation/tools/rtla/rtla-timerlat.rst
+@@ -14,7 +14,7 @@ SYNOPSIS
+ DESCRIPTION
+ ===========
+ 
+-.. include:: common_timerlat_description.rst
++.. include:: common_timerlat_description.txt
+ 
+ The **rtla timerlat top** mode displays a summary of the periodic output
+ from the *timerlat* tracer. The **rtla timerlat hist** mode displays
+@@ -51,4 +51,4 @@ AUTHOR
+ ======
+ Written by Daniel Bristot de Oliveira <bristot@kernel.org>
+ 
+-.. include:: common_appendix.rst
++.. include:: common_appendix.txt
+diff --git a/Documentation/tools/rtla/rtla.rst b/Documentation/tools/rtla/rtla.rst
+index fc0d233efcd5..2a5fb7004ad4 100644
+--- a/Documentation/tools/rtla/rtla.rst
++++ b/Documentation/tools/rtla/rtla.rst
+@@ -45,4 +45,4 @@ AUTHOR
+ ======
+ Daniel Bristot de Oliveira <bristot@kernel.org>
+ 
+-.. include:: common_appendix.rst
++.. include:: common_appendix.txt
+-- 
+2.43.0
 
 
