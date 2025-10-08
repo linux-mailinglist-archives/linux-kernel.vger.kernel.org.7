@@ -1,157 +1,120 @@
-Return-Path: <linux-kernel+bounces-844964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA70DBC3294
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 04:19:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69F28BC329A
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 04:20:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 089BA189129E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 02:19:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77E861892084
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 02:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2C829B237;
-	Wed,  8 Oct 2025 02:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4067E29B237;
+	Wed,  8 Oct 2025 02:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ahaQ+NAg"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FnIqH4cc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6680729B789
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 02:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DAE0205E25
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 02:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759889933; cv=none; b=HGLc0Mdkyo9Oep0zicT69+svA+8NBCHb3JaOSqPxCTw8gJ3OVxHpQ7bpUqO2KXcEgTGmAr2BLjV4blz7EYD+PJkufOkD79WVq1yO95s3hCHKAtg2z4ZtO5dlY3dBvxL2YBm6idZQ4tYLqJ/9yjX+I4RhPXepZgQjxluvSkCYyvw=
+	t=1759890003; cv=none; b=FUVbc4k6MmEa/YTRyFdnAQs/6L9MfYnmCmuRWkgueLubYxIjefsoHo58KHiURIw2ZAhPQPLjwaT9zloUYScc+wD0tE68VGDoa2o8iYY6HpNgVW10b3Tlck038T2mjjEP6Jl2At+ciDILQfGqw3ri2U7CQMk+JA8VxId4tSOB3wA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759889933; c=relaxed/simple;
-	bh=eLUKCid2mCzEr3f2IULaa6Mi8dzk04iOMQ1Cu+awDD0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=IQVTycfxv6JYg5dDkHuhASnE4u2S3n5qXLVyGKqSM6YRux4kht99d4P0wzfECW8Bifg1YtJFicCfvGrfM8t5KYipL7NktB7UVMy6TValRNdeQ1IYbfnp1K8hg1dXCRQR7lgtSv0TTHn47kotMBMB/4WjrBCG1G5PuZKuxzoPcFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ahaQ+NAg; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3f99ac9acc4so1458291f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 19:18:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759889929; x=1760494729; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=micbjQhFRi56rmBZKMQCddkVTulgFVdWxWszGqRTF54=;
-        b=ahaQ+NAgrWEPQIWuYqcDIOvUoZ3mn+pgDminfwb0D23x9JG3hjU5U92zv2E3HqJMO6
-         gNawUbzwU2KVurUIPikMg9FOl2X/zB+5JZ0Qm+pQTMzwia3+/qHPF+/sJYrxsMj9KqHg
-         GoiozcubMSwutgCST7fk3Fgh46HutkmdyGafcQJL76KUMdnL2bIzwpprswGJp1Bj7NAu
-         AMIis8KZLI4JdFV6TBfdsfK+MuDnA0/wI6omoHxCAKvg9/t7Jnp2XCSBUx4AdDbCYeKf
-         LXok8IgB0KIRL1Jr6znbw2hpYMT643pXKwmSLOn6d1VFMzZIHvJekxYTtk8bW8p+fG1m
-         fK3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759889929; x=1760494729;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=micbjQhFRi56rmBZKMQCddkVTulgFVdWxWszGqRTF54=;
-        b=LslPyM074vlEKVoQc4hyahzsPRK/A94RwSQmw+5NJEAumF9iLwGXhVlsASqSvtuy8U
-         HvWB8b79mDja3oDJoTjKIkJN7GLDw+5hGFCVSx/evjflm0qGdE50+6oVj7l/Qn9bhMq+
-         btpur2oc6GXJy3axdhT3HqZpC2YoSZc/3GPv3aZjjKpjorih3CLaCNn9QbPeBxncZUVf
-         mq4IdjPg7axlmOErKiJjM34o8AlEU5tuUoPrrJmmHcaUZ7//alJUHDdjFocvQrJ8EYqs
-         lpo5KAFgLA9u/Dkdj/EdPwhdG4F79iAJd3KbjCW6hAWiCQqQzYH/fYXDmmbvFrKbyBnp
-         dQHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9Gt4aGlkwYAiAR1yGLOyBdV53aHdq4/JCiCbj2pZ9lXYQI6AhXZA01YFEMjryofGdo3ZbwwufPjAQcKk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxayGLkKw+3YuRB82o5OTfOBBZeUF3zP18rr1gSGmX8HNv+YWbK
-	sIzX424JdXD8XGg7QrxH8x/jC7gmTwkNneDhngGF8m6G+DrAg2BviMjhPKQShyqiMew=
-X-Gm-Gg: ASbGnct/wzZEw0YjVYm8kLKcQhqGN5DM8CiOb1xAC7I4NikapPflyxAmtztbljERIor
-	GkgPiMrqyEd304ppVAh4uyj3vGL2TFOZw25qiPButXegamh1qXNJUZeGzHxzP6+TXD/a7gj238B
-	d7RBQZ1fkgI5XKtSoHJiFGB0xNxQ009Qj6R2ndXKzKQQHrTEKWHjr23spqm98CLCO/qddUkFIlq
-	31rI4Rl3v9mrWe3MT/UG0VLVydZWLe8uOwP0o5wZEsAUwppDofokAEC7pY6Fvdcvv4rQyHccnfo
-	vPZsCubPsX4UTIYfWTfcI9MCh6OOHfdDyekK2yJqDGGlwdz/qDb6EQHvu8FOsCimFQ0v+w6MPin
-	28cCboWGF2m0uWk9q6CCz7e1kYCw8u1z5vXb6I3H7qLl5EXlqHmSgvko=
-X-Google-Smtp-Source: AGHT+IFPMFJByHAQ3JW76Qjmt7UP+fMZMpkYgj4Y9V9tn3CZdsWTV3HC+ojk6qaBDfa1ihXXI4WNNA==
-X-Received: by 2002:a05:6000:3105:b0:3fc:54ff:edb6 with SMTP id ffacd0b85a97d-4266e7dfdb3mr815912f8f.35.1759889928751;
-        Tue, 07 Oct 2025 19:18:48 -0700 (PDT)
-Received: from localhost ([2a02:c7c:7259:a00:8c32:dd4d:57f2:8be7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fa9c16990sm15668705e9.10.2025.10.07.19.18.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Oct 2025 19:18:48 -0700 (PDT)
+	s=arc-20240116; t=1759890003; c=relaxed/simple;
+	bh=YCxQqeUyFhTrHt15C9RFmiynERMtcxKYfJ7HLF7B2xM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sUEFBLrX2I0X/kw9aGuS/sh9AXQiGU7BbYrX5r09uvoop0scJgSgoGrygq3WCBQQ9jmxJh0m5PyOV2W5qiQWjjsFyEtDje5O1vf9XkeJ1Q2yTrxWgeUjoyL7Qbra1u9ucpB/ff8P36zB3xhCYSTGfnKSZctiy2KI4xmR0WKKeYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FnIqH4cc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E951C113D0
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 02:20:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759890003;
+	bh=YCxQqeUyFhTrHt15C9RFmiynERMtcxKYfJ7HLF7B2xM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=FnIqH4ccSanW/Wp1LRtkqe+nd8kUwBmtOYgk2Cta+xbfl7r151a00fPr776E6CxiC
+	 kqEKWFnPgVB+u0/FXeI8tcWmTEZ7qbnLdSydn7NrXhtlTPj/nGgmyNVW1REVTXnjhl
+	 kuDkkELxzMWesz4PaLQ4wYHc07g618yMJFJsamh5q/IIB3Rlz8jwZhfllCjvRv3KSF
+	 sQ1PpP69D18EBv+pldBxl2JKz1yNCfTVvMp9BNZIbBjbFFokn9x2je88vn69+eTiMN
+	 Ob3msLcQvko1n2qi7ucaA07vS8nx6bRMs9Q1OrJukaW9TfR1mNaE0EX/1K/zEJSmhK
+	 kQ00elWaFOR7A==
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3f0308469a4so3947394f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 19:20:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUR09X4lskoOB+R+LJCBbdFEfEInZd89JBSrSo0sH1RkftDihvOBWTSwG2vTftnGjQ2WH33XXcRjtswN1Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytqtDWH1t6NtDVq9Tlr7iq2SLj+eeSS7uzHFAc4PL+Z+SElusD
+	iz7gPy02Co3o/Vtg4IyEhaG7TteCKSy3J4AnJSfA+MDxypVupgcbqFb8cd6mvQunmeccsjgfP/U
+	sysZ8B5ToNb2nO2lXTZtadYuUHwOtYjo=
+X-Google-Smtp-Source: AGHT+IE49Ut3K0iDJkRwoaA4pG+jQRbjMeKF3N1ZvxV56NRURvyQRm+OalScdRWTDPzbXy9freMthjrU3URoDPoL6dY=
+X-Received: by 2002:a05:6000:2410:b0:3da:e7d7:f1e0 with SMTP id
+ ffacd0b85a97d-4266e7c61c6mr807123f8f.27.1759890001781; Tue, 07 Oct 2025
+ 19:20:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20251006-csky-folio-flags-v1-1-a91dcbdbf988@linutronix.de>
+In-Reply-To: <20251006-csky-folio-flags-v1-1-a91dcbdbf988@linutronix.de>
+From: Guo Ren <guoren@kernel.org>
+Date: Wed, 8 Oct 2025 10:19:49 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTTgbXgVcLeC9eJ2+Rf-+5Zq0tysEV5coZVai1mw+NZCuw@mail.gmail.com>
+X-Gm-Features: AS18NWA9kNLOnkhi6ozusphJKXdIh54LkYxnWdkc3Fqr_o4LAL9qKkGMioXiEeg
+Message-ID: <CAJF2gTTgbXgVcLeC9eJ2+Rf-+5Zq0tysEV5coZVai1mw+NZCuw@mail.gmail.com>
+Subject: Re: [PATCH] csky: abiv2: Adapt to new folio flags field
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>, Zi Yan <ziy@nvidia.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-csky@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 08 Oct 2025 03:18:47 +0100
-Message-Id: <DDCKWVH8ORLM.357D9IKQK9YN8@linaro.org>
-Cc: "Srinivas Kandagatla" <srini@kernel.org>, "Liam Girdwood"
- <lgirdwood@gmail.com>, "Mark Brown" <broonie@kernel.org>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Stephen Boyd" <sboyd@kernel.org>, "Lee
- Jones" <lee@kernel.org>, "Jaroslav Kysela" <perex@perex.cz>, "Takashi Iwai"
- <tiwai@suse.com>, <linux-arm-msm@vger.kernel.org>,
- <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Dmitry Baryshkov"
- <dmitry.baryshkov@oss.qualcomm.com>, "Srinivas Kandagatla"
- <srinivas.kandagatla@oss.qualcomm.com>, <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH v4 2/4] dt-bindings: mfd: qcom,spmi-pmic: add
- qcom,pm4125-codec compatible
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>
-X-Mailer: aerc 0.20.0
-References: <20250915-pm4125_audio_codec_v1-v4-0-b247b64eec52@linaro.org>
- <20250915-pm4125_audio_codec_v1-v4-2-b247b64eec52@linaro.org>
- <20250918-wonderful-deft-jackal-7d3bbc@kuoka>
-In-Reply-To: <20250918-wonderful-deft-jackal-7d3bbc@kuoka>
 
-On Thu Sep 18, 2025 at 3:03 AM BST, Krzysztof Kozlowski wrote:
-> On Mon, Sep 15, 2025 at 05:27:49PM +0100, Alexey Klimov wrote:
->> Add qcom,pm4125-codec compatible to pattern properties in mfd
->> qcom,spmi-pmic schema so the devicetree for this audio block of PMIC
->> can be validated properly.
->>=20
->> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
->> ---
->>  Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml | 6 ++++++
->>  1 file changed, 6 insertions(+)
->>=20
->> diff --git a/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml b=
-/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml
->> index 078a6886f8b1e9ceb2187e988ce7c9514ff6dc2c..776c51a66f6e7260b7e3e183=
-d693e3508cbc531e 100644
->> --- a/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml
->> +++ b/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml
->> @@ -137,6 +137,12 @@ patternProperties:
->> =20
->>    "^audio-codec@[0-9a-f]+$":
->>      type: object
->> +    oneOf:
->> +      - $ref: /schemas/sound/qcom,pm8916-wcd-analog-codec.yaml#
->> +      - properties:
->> +          compatible:
->> +            const: qcom,pm4125-codec
+On Mon, Oct 6, 2025 at 8:13=E2=80=AFPM Thomas Wei=C3=9Fschuh
+<thomas.weissschuh@linutronix.de> wrote:
+>
+> Recent changes require the raw folio flags to be accessed via ".f".
+> The merge commit introducing this change adapted most architecture code
+> but forgot the csky abiv2.
+>
+> Fixes: 53fbef56e07d ("mm: introduce memdesc_flags_t")
+> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+> ---
+>  arch/csky/abiv2/inc/abi/cacheflush.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/csky/abiv2/inc/abi/cacheflush.h b/arch/csky/abiv2/inc/a=
+bi/cacheflush.h
+> index 6513ac5d257888fbd41385c9263305dfefd18de6..da51a0f02391f7d391ce26a2b=
+11ca82b8c0b6755 100644
+> --- a/arch/csky/abiv2/inc/abi/cacheflush.h
+> +++ b/arch/csky/abiv2/inc/abi/cacheflush.h
+> @@ -20,8 +20,8 @@
+>
+>  static inline void flush_dcache_folio(struct folio *folio)
+>  {
+> -       if (test_bit(PG_dcache_clean, &folio->flags))
+> -               clear_bit(PG_dcache_clean, &folio->flags);
+> +       if (test_bit(PG_dcache_clean, &folio->flags.f))
+> +               clear_bit(PG_dcache_clean, &folio->flags.f);
+>  }
+>  #define flush_dcache_folio flush_dcache_folio
 >
 >
-> Not much improved. Same feedback applies.
+> ---
+> base-commit: fd94619c43360eb44d28bd3ef326a4f85c600a07
+> change-id: 20251006-csky-folio-flags-1376908acbea
+>
+> Best regards,
+> --
+> Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+>
+LGTM!
 
-Around the time of sending this I thought to set separate follow-up patch
-that fixes the other part here -- pm8916-wcd-analog-codec.
+Acked-by: Guo Ren <guoren@kernel.org>
 
-At this point, is it fine to send follow-up patch that does smth like
-this:
-
-+    oneOf:
-+      - $ref: /schemas/sound/qcom,pm8916-wcd-analog-codec.yaml#
-+      - properties:
-+          compatible:
-+              - enaum:
-+                - qcom,pm4125-codec
-+                - qcom,pm8916-wcd-analog-codec
-
-?
-
-(I didn't check how if it will compile or pass checks)
-
-Hope this is okay.
-
-Best regards,
-Alexey
+--=20
+Best Regards
+ Guo Ren
 
