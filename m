@@ -1,82 +1,138 @@
-Return-Path: <linux-kernel+bounces-845111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7834ABC38A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 09:08:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F40ABC38AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 09:10:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8009519E0820
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 07:08:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3D17402E06
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 07:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7AAA2F0C75;
-	Wed,  8 Oct 2025 07:08:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEACF2F0C79;
+	Wed,  8 Oct 2025 07:10:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=lublin.se header.i=@lublin.se header.b="BXaV/Sjy"
-Received: from mailgate01.uberspace.is (mailgate01.uberspace.is [95.143.172.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="F5wmyozk"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9217C2F0C6E
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 07:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.172.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E59C165F16;
+	Wed,  8 Oct 2025 07:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759907298; cv=none; b=AhaXEnTyGJU+e7w8xaTL6elR+NyfDBkbIuQB4/D8xeQv1IVumRraY3SS5N6XAwtOZ8j3mZ4mvNiG9Uv36WUNnnPz8LV3vnjAHW5vtSuY0RZQvJo9LMkXWY3EI3JjB2WmALpAj8+FZNG738ORakTEaQtMjBm9ovDXk7eVypJchuY=
+	t=1759907409; cv=none; b=WBCPWFry78ERbaeEmfbuOR4RT2GnY0Ds3Wwj0SPW0ob7v+vCoMtu2IOVZzSBa/lIb76ftvxDgFEx0doI9OWF7BTamU1Qu3CgYGWimAsmO7g68MeHFrDDpLpxNBZYoBrjeI4dAdVjtIe5xAFjWXg9wJNGf//1pYjhAjFTqNtzPtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759907298; c=relaxed/simple;
-	bh=SuUvUUOMrXv9aKVf/ayIBD+ut6qLodp8LTtULaKwLS4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vAAo808eDTguHKbleGUwPLDZsRoRSFLiGNVq9pkNbYM7TQz3mduTRRQDcqiBLWGJ0tIG6Fb0bV8GazZ9vcNBzUAHhbDrSUkkdTSdPOtwJ2rdhi+cL1iI8FGzknfz2CvmYIiZDXMFMWYSXhsqwUt4OpB32tiqI58p5XommorQZfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lublin.se; spf=pass smtp.mailfrom=lublin.se; dkim=fail (0-bit key) header.d=lublin.se header.i=@lublin.se header.b=BXaV/Sjy reason="key not found in DNS"; arc=none smtp.client-ip=95.143.172.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lublin.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lublin.se
-Received: from dysnomia.uberspace.de (dysnomia.uberspace.de [185.26.156.223])
-	by mailgate01.uberspace.is (Postfix) with ESMTPS id 07EE160C3E
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 09:08:08 +0200 (CEST)
-Received: (qmail 31825 invoked by uid 989); 8 Oct 2025 07:08:02 -0000
-Authentication-Results: dysnomia.uberspace.de;
-	auth=pass (login)
-Received: from unknown (HELO unkown) (::1)
-	by dysnomia.uberspace.de (Haraka/3.0.1) with ESMTPSA; id 2D81A2689AB6; Wed, 08 Oct 2025 09:08:02 +0200 (CEST)
-Date: Wed, 8 Oct 2025 09:08:02 +0200
-From: Daniel Lublin <daniel@lublin.se>
-To: David Howells <dhowells@redhat.com>,
-	David Woodhouse <dwmw2@infradead.org>
-Cc: keyrings@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sign-file: Show -k flag in usage when built for CMS
- signing
-Message-ID: <22283629-6386-4d04-99c9-947669f013a2@corax>
-References: <e66415d1953fbb074e2e32f0e6cdcaa0d027b550.1748951428.git.daniel@lublin.se>
+	s=arc-20240116; t=1759907409; c=relaxed/simple;
+	bh=VQJRkZRtjm9yYWfgQgpaOG+NO/ZbwOJN3/eg/6wIot4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ud0H+9+SgrTQtHTn2R5pQafjQc1AiEfCc7ikL37QzFvg9GAcgo/cxIXuzJ9LHa8C7unhk10rp9i1bvOscqUh7IgzOEUqfGq/YGl4lLv4ImCHGj31Zzh9vTkdbeyPtzy3QkGI5acfuKAWC1MdUBfJJwYzyANez/OM5FKMcgr06ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=F5wmyozk; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <23b67f9d-20ff-4302-810c-bf2d77c52c63@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759907403;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rJE2iJraxcGKQYdozv2wRe9vFO3p9uVwcxrTzZaEgVA=;
+	b=F5wmyozke8Z7AcxH5nXvRJXhnHUNF8spAp2HepNhPC948/KGjmk5rYgOkVRLqqjmzT4gOc
+	nHr3eFtstfJuEyxDUpUpOIJziHjK6CtXqBIlqKmGQmiApZoep+3PGjmiBvDc6RJDQ1OC+c
+	b7/wlbrLmCgrpuixony81PuBKC4BGU0=
+Date: Wed, 8 Oct 2025 15:09:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <e66415d1953fbb074e2e32f0e6cdcaa0d027b550.1748951428.git.daniel@lublin.se>
-X-Rspamd-Bar: --
-X-Rspamd-Report: BAYES_HAM(-2.835451) MID_RHS_NOT_FQDN(0.5) MIME_GOOD(-0.1)
-X-Rspamd-Score: -2.435451
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=lublin.se; s=uberspace;
-	h=from:to:cc:subject:date;
-	bh=SuUvUUOMrXv9aKVf/ayIBD+ut6qLodp8LTtULaKwLS4=;
-	b=BXaV/SjyYpgocKr7tuvCYGrfmJo4s8MRkEHb3dSyVDi0/TJibgBIzzJ/aH/gDQS/a7i1fPxqta
-	W6BayWbnVSoIvsHXQFWc0Fbp/XfYlA5EtyJ1rTqHQr63R+nXLyROqz6MSV80R9Yz6IonO2cmP6on
-	cj8gz4an5bbmfSMxfJaSL/gTj+4o7OxAfGESlmzWo5/l8LXKvtxKCMNSjHPLnRe/FVrg4KPzFDmf
-	4f1JNt8xsWUjVqg8HBC0oe6UtIctL0UsGt5aUs0QDwogHGjnN1G2pndIeDREsVvzO1fpTywEY1tm
-	bmvtlT029HuozlqZU0xSHn3NrEO2FrPdweopIF9n9fMt03lUG+ewHoENwAZ/GB2WT4UEi2SlM7Ua
-	NMisG+aowDIyDnUyyxd2IdRbw6PJ9QI7OG0nifqGT2Xf/LzKDVoHkIvj84ZkyXpNtlxx0Ly+aL2L
-	Xm1KmsF8vYY4ziR52vpMsu6oeAnxEQNEAblPsDr36zi5UYYRZSYcYHYPMD9Fzc6H5OYUlOOTeHqp
-	mFtVDFhFcPTAQ9yc+3GZw+9dcFnWX8b59O8x63y/TpyZ0giAR/LB3VGHUyKfJj9CXD5zhkvcQpyh
-	sEcZ827dW16VwRKvIJ1kvs93aApVmjAYhofY5sX127IRiqxkeB54cRZosAJP4ExCaVTD7FXqjuQY
-	E=
+Subject: Re: [PATCH v2 1/1] hung_task: fix warnings caused by unaligned lock
+ pointers
+To: Finn Thain <fthain@linux-m68k.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>, Eero Tamminen
+ <oak@helsinkinet.fi>, Kent Overstreet <kent.overstreet@linux.dev>,
+ amaindex@outlook.com, anna.schumaker@oracle.com, boqun.feng@gmail.com,
+ ioworker0@gmail.com, joel.granados@kernel.org, jstultz@google.com,
+ leonylgao@tencent.com, linux-kernel@vger.kernel.org,
+ linux-m68k@lists.linux-m68k.org, longman@redhat.com, mhiramat@kernel.org,
+ mingo@redhat.com, mingzhe.yang@ly.com, peterz@infradead.org,
+ rostedt@goodmis.org, senozhatsky@chromium.org, tfiga@chromium.org,
+ will@kernel.org, stable@vger.kernel.org
+References: <20250909145243.17119-1-lance.yang@linux.dev>
+ <yqjkjxg25gh4bdtftsdngj5suturft2b4hjbfxwe6hehbg4ctq@6i55py3jaiov>
+ <99410857-0e72-23e4-c60f-dea96427b85a@linux-m68k.org>
+ <CAMuHMdVYiSLOk-zVopXV8i7OZdO7PAK7stZSJNJDMw=ZEqtktA@mail.gmail.com>
+ <inscijwnnydibdwwrkggvgxjtimajr5haixff77dbd7cxvvwc7@2t7l7oegsxcp>
+ <20251007135600.6fc4a031c60b1384dffaead1@linux-foundation.org>
+ <b43ce4a0-c2b5-53f2-e374-ea195227182d@linux-m68k.org>
+ <56784853-b653-4587-b850-b03359306366@linux.dev>
+ <693a62e0-a2b5-113b-d5d9-ffb7f2521d6c@linux-m68k.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <693a62e0-a2b5-113b-d5d9-ffb7f2521d6c@linux-m68k.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Any comments on this? Yay, or should we forget it?
 
--- 
-Daniel
-lublin.se
+
+On 2025/10/8 14:14, Finn Thain wrote:
+> 
+> On Wed, 8 Oct 2025, Lance Yang wrote:
+> 
+>> On 2025/10/8 08:40, Finn Thain wrote:
+>>>
+>>> On Tue, 7 Oct 2025, Andrew Morton wrote:
+>>>
+>>>> Getting back to the $Subject at hand, are people OK with proceeding
+>>>> with Lance's original fix?
+>>>>
+>>>
+>>> Lance's patch is probably more appropriate for -stable than the patch I
+>>> proposed -- assuming a fix is needed for -stable.
+>>
+>> Thanks!
+>>
+>> Apart from that, I believe this fix is still needed for the hung task
+>> detector itself, to prevent unnecessary warnings in a few unexpected
+>> cases.
+>>
+> 
+> Can you be more specific about those cases? A fix for a theoretical bug
+> doesn't qualify for -stable branches. But if it's a fix for a real bug, I
+> have misunderstood Andrew's question...
+
+I believe it is a real bug, as it was reported by Eero and Geert[1].
+
+The blocker tracking mechanism in -stable assumes that lock pointers
+are at least 4-byte aligned. As I mentioned previously[2], this
+assumption fails for packed structs on architectures that don't trap
+on unaligned access.
+
+Of course, we could always improve the mechanism to not make
+assumptions. But for -stable, this fix completely resolves the issue
+by ignoring any unaligned pointer, whatever the cause (e.g., packed
+structs, non-native alignment, etc.).
+
+So we can all sleep well at night again :)
+
+[1] 
+https://lore.kernel.org/lkml/CAMuHMdW7Ab13DdGs2acMQcix5ObJK0O2dG_Fxzr8_g58Rc1_0g@mail.gmail.com/
+[2] 
+https://lore.kernel.org/lkml/cfb62b9d-9cbd-47dd-a894-3357027e2a50@linux.dev/
+
+> 
+>>>
+>>> Besides those two alternatives, there is also a workaround:
+>>> $ ./scripts/config -d DETECT_HUNG_TASK_BLOCKER
+>>> which may be acceptable to the interested parties (i.e. m68k users).
+>>>
+>>> I don't have a preference. I'll leave it up to the bug reporters (Eero
+>>> and Geert).
+>>
+
 
