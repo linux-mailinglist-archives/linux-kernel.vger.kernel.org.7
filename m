@@ -1,130 +1,126 @@
-Return-Path: <linux-kernel+bounces-845084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1058BC376B
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 08:24:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5073BBC3774
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 08:24:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8605819E183C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 06:24:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4464619E18BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 06:25:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309C72E22BE;
-	Wed,  8 Oct 2025 06:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F4A2EA736;
+	Wed,  8 Oct 2025 06:24:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="e343gnqj"
-Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nz0IC+Ac"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8FB29B8D0;
-	Wed,  8 Oct 2025 06:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CADD2E8E1F;
+	Wed,  8 Oct 2025 06:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759904659; cv=none; b=jgRWFf12WxPv0pM8Y5xk1kdJ+5CpwQoDw4rrejmuCBBK0d+Zaue0bM5GHIPTNprjflgW41WyAo/1WwmGgjcjUzgxy6AJw1GpsyL0M6o5yfRBXMaVmTXV10sESFuLSrPfOFwTA2AAdSDbnQksg+18n7qqnJ5FCJPObI+LjdnJAr8=
+	t=1759904668; cv=none; b=iiyncJCng6AiXacsUArkPBedKGYvtkciZsVfkrpm1mFnnsN+MyXAGUARUT+ploI+Qi1wJz7pbfwS+dOLIy+p99nIaqFoZwL4GjjBACtSe9avFF7FTzQ8KtsJGvV7HClYBEUrwkR5d4ONLed1+H++vHVknXnrEbLtMNikW73ggVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759904659; c=relaxed/simple;
-	bh=S7+jHto0uyDlubN6nNelCH1snqkJhKvmTzZHBlkWxTo=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=YPWWCcddPTIeAuBLsozj7aHg1bEoBV7kERThm4mKf9k89Y1ReJmFLBIHyrH3Mvu4KbCJmjBmH+2Ja96jO/OTFKZqwpdKQ/7XmS23L/fXn5jPGPdx1Nlutx5AJMGE9jWfsk/Sj5MeaUk/XG38XrRkCn1I+TSL6oXseulsBkNg4gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=e343gnqj; arc=none smtp.client-ip=202.12.124.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id AA7237A01A3;
-	Wed,  8 Oct 2025 02:24:16 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Wed, 08 Oct 2025 02:24:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1759904656; x=1759991056; bh=of/Zk3NoJ60SOfxlEHlLZ01daHGhpIzTjyp
-	dolQThQU=; b=e343gnqjFy1PppZY6uJWRoFww340axIIW38FzpYcbN7JFjIecxM
-	grKONPF4Dgw42i2E1UC0eZRmETN60ynrf2mzWJVGNrCLajA+rgC3Gwvb8E6RvvMc
-	ayB+CanQth/Lr/PwnXQaG4b/Tk05sKZwIGqbM2I0/zdA1X7Md8+gFIl4QT+NxMpF
-	yg9IAGj0y1CVWemZOvhxfHMGEsvk/BTssTmDRRuuAJ5ryVjQiY+0y/zUQ/0v5+NI
-	9ZHpMsJBFHW9TxgvQOeELO4Xiy1FcpdwG4+s8clzaVdslUrBamMXSvScsNRI+1zZ
-	0VRXU9h2nZsJKLgvssp25Q+850cHyD91bMA==
-X-ME-Sender: <xms:kAPmaHVdBDzzPaw1Lj9b1DhCcxAVu6aE3pUWBYR3Kz4b8RQEDf1x9g>
-    <xme:kAPmaLe7kw6iVouRMfyk6ZL0qUrDIwEF8Ocoh0VqNXOm1Ho-_ZzDN_iqx6NwV6c3N
-    woKPYZhtHu1OF5yw_efhAJyQTihDjIrcGFZle56SGNzvW6ke_yfJE8x>
-X-ME-Received: <xmr:kAPmaAZyDH5LNo-v358EcZkQJ9Vw1yimYihJsaH_heedAVIBbHq9pbX8Fca-XJv00PYWLk8p6TKAivI5R5rfsTbrCghbW_61gzU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutddvheejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcuvfhh
-    rghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtth
-    gvrhhnpeefieehjedvtefgiedtudethfekieelhfevhefgvddtkeekvdekhefftdekvedv
-    ueenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomhepfhhthhgrihhnsehlihhnuhigqdhmieekkhdr
-    ohhrghdpnhgspghrtghpthhtohepuddupdhmohguvgepshhmthhpohhuthdprhgtphhtth
-    hopegrrhhnugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfihilhhlsehkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprh
-    gtphhtthhopegsohhquhhnrdhfvghnghesghhmrghilhdrtghomhdprhgtphhtthhopehg
-    vggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrh
-    gthhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmieek
-    khesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegrrhhnugesrghrnhgusg
-    druggvpdhrtghpthhtohepmhgrrhhkrdhruhhtlhgrnhgusegrrhhmrdgtohhm
-X-ME-Proxy: <xmx:kAPmaHNbd-jlESmo_2aFmWEfHA20QqC529OOxm7GGAddWroafqG_eQ>
-    <xmx:kAPmaGV7UAeThoR0OdoUmhpZDAaZopiWvBhTYI_n3u0TGEAxOzOx4Q>
-    <xmx:kAPmaEKF6_WhGI5exe5jIpz1kntf9sCNwjCfRViPUHfq_UWAVjghPA>
-    <xmx:kAPmaJqfY6qtdz9Rlx60yTZOjiv0YkFTF_YoOa-DtVAreKRxVn4JCA>
-    <xmx:kAPmaIsLOPvMqH6rdlbp9yeS2SJMEjtZrFn8hCpnlFa5EtX0WU0L0KUy>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 8 Oct 2025 02:24:14 -0400 (EDT)
-Date: Wed, 8 Oct 2025 17:24:04 +1100 (AEDT)
-From: Finn Thain <fthain@linux-m68k.org>
-To: Arnd Bergmann <arnd@kernel.org>
-cc: Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-    Boqun Feng <boqun.feng@gmail.com>, 
-    Geert Uytterhoeven <geert@linux-m68k.org>, 
-    Linux-Arch <linux-arch@vger.kernel.org>, linux-m68k@vger.kernel.org, 
-    Arnd Bergmann <arnd@arndb.de>, Mark Rutland <mark.rutland@arm.com>, 
-    Gary Guo <gary@garyguo.net>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] atomic: skip alignment check for try_cmpxchg() old arg
-In-Reply-To: <20251006110740.468309-1-arnd@kernel.org>
-Message-ID: <7061992e-e8bd-e5e5-9e63-3fb131e0fdde@linux-m68k.org>
-References: <20251006110740.468309-1-arnd@kernel.org>
+	s=arc-20240116; t=1759904668; c=relaxed/simple;
+	bh=MA7BF74wxM3m4ZWXHIzJ1I9FLZfvTKTM8skpWqEEltM=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Bndhewxeef0bjY/C8smc/iHFk14d45puSSri62VVkV9nq6Ms87R9WsufCpT3ZJfCjUezmhaA++mb8ZqNYWv29pxULdsnWegoK+cv7WVng21VEUGLG1BqdY3UbF8wbDP71/vguSZyqU1lFeBqvjOnvCEKGPgw1TYYct5OZQueekQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nz0IC+Ac; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4092BC4CEF4;
+	Wed,  8 Oct 2025 06:24:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759904668;
+	bh=MA7BF74wxM3m4ZWXHIzJ1I9FLZfvTKTM8skpWqEEltM=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=nz0IC+AcSd+vHhGKRx6aHjxS+RLWjh5FV3fN4vPyVZFqPhY9eVcBoZvMGH/TLloyE
+	 LwAYajSUJ1eJwD4HoEn8QP5s17LOi2LE6kdng+CoowWWCwEgqHwaSz6NmIkI4skwc7
+	 zyh9hGqrHgRURcQEIv5u+5Re8tE4YRtZkepz4yOmU/tC4T0nSkqscObwJHbN6tEZG4
+	 fAdUuob3gbTMDGl3kLy42b/2M2nO6J12aSp4Q9DNV+lkcNfgzwidWl2VSWyE5AdvTw
+	 p3ltkntys8beGhS6IVNkQwCLrXAa/RO52b74RJMj0OD51/P0CBZH55ia0SJJIJYb+r
+	 OagTahCtGJ3Jg==
+Message-ID: <95abc732-b98c-4dd0-aeae-67e4c6ef7b91@kernel.org>
+Date: Wed, 8 Oct 2025 08:24:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+User-Agent: Mozilla Thunderbird
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [PATCH 1/3] media: dvb-usb-v2: lmedm04: Fix firmware macro
+ definitions
+To: Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>
+Cc: Malcolm Priestley <tvboxspy@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
+ Hans Verkuil <hverkuil@kernel.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Rusty Russell <rusty@rustcorp.com.au>, Petr Pavlu <petr.pavlu@suse.com>,
+ Daniel Gomez <da.gomez@kernel.org>, Sami Tolvanen <samitolvanen@google.com>,
+ linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <20251008033844.work.801-kees@kernel.org>
+ <20251008035938.838263-1-kees@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <20251008035938.838263-1-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-On Mon, 6 Oct 2025, Arnd Bergmann wrote:
-
-> From: Arnd Bergmann <arnd@arndb.de>
+On 08/10/2025 05:59, Kees Cook wrote:
+> The firmware filename macros incorrectly included semicolons in their
+> string literal definitions. Right now, this wasn't causing any real
+> problem, but coming changes to the MODULE_INFO() macro make this more
+> sensitive. Specifically, when used with MODULE_FIRMWARE(), this
+> created syntax errors during macro expansion:
 > 
-> The 'old' argument in atomic_try_cmpxchg() and related functions is a
-> pointer to a normal non-atomic integer number, which does not require
-> to be naturally aligned, unlike the atomic_t/atomic64_t types themselves.
+>     MODULE_FIRMWARE(LME2510_C_S7395);
 > 
-> In order to add an alignment check with CONFIG_DEBUG_ATOMIC into the
-> normal instrument_atomic_read_write() helper, change this check to use
-> the non-atomic instrument_read_write(), the same way that was done
-> earlier for try_cmpxchg() in commit ec570320b09f ("locking/atomic:
-> Correct (cmp)xchg() instrumentation").
+> expands to:
 > 
-> This prevents warnings on m68k calling the 32-bit atomic_try_cmpxchg()
-> with 16-bit aligned arguments as well as several more architectures
-> including x86-32 when calling atomic64_try_cmpxchg() with 32-bit
-> aligned u64 arguments.
+>     MODULE_INFO(firmware, "dvb-usb-lme2510c-s7395.fw";)
+>                                                      ^
+>                                           syntax error
 > 
-> Reported-by: Finn Thain <fthain@linux-m68k.org>
+> Remove the trailing semicolons from all six firmware filename macro
+> definitions. Semicolons should only appear at the point of use, not in
+> the macro definition.
+> 
+> Signed-off-by: Kees Cook <kees@kernel.org>
 
-Tested-by: Finn Thain <fthain@linux-m68k.org>
+Reviewed-by: Hans Verkuil <hverkuil+cisco@kernel.org>
 
-> Link: https://lore.kernel.org/all/cover.1757810729.git.fthain@linux-m68k.org/
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  include/linux/atomic/atomic-instrumented.h | 26 +++++++++++-----------
->  scripts/atomic/gen-atomic-instrumented.sh  | 11 +++++----
->  2 files changed, 20 insertions(+), 17 deletions(-)
+> Cc: Malcolm Priestley <tvboxspy@gmail.com>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: <linux-media@vger.kernel.org>
+> ---
+>  drivers/media/usb/dvb-usb-v2/lmedm04.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
 > 
+> diff --git a/drivers/media/usb/dvb-usb-v2/lmedm04.c b/drivers/media/usb/dvb-usb-v2/lmedm04.c
+> index 0c510035805b..05c18b6de5c6 100644
+> --- a/drivers/media/usb/dvb-usb-v2/lmedm04.c
+> +++ b/drivers/media/usb/dvb-usb-v2/lmedm04.c
+> @@ -70,12 +70,12 @@
+>  #include "ts2020.h"
+>  
+>  
+> -#define LME2510_C_S7395	"dvb-usb-lme2510c-s7395.fw";
+> -#define LME2510_C_LG	"dvb-usb-lme2510c-lg.fw";
+> -#define LME2510_C_S0194	"dvb-usb-lme2510c-s0194.fw";
+> -#define LME2510_C_RS2000 "dvb-usb-lme2510c-rs2000.fw";
+> -#define LME2510_LG	"dvb-usb-lme2510-lg.fw";
+> -#define LME2510_S0194	"dvb-usb-lme2510-s0194.fw";
+> +#define LME2510_C_S7395	"dvb-usb-lme2510c-s7395.fw"
+> +#define LME2510_C_LG	"dvb-usb-lme2510c-lg.fw"
+> +#define LME2510_C_S0194	"dvb-usb-lme2510c-s0194.fw"
+> +#define LME2510_C_RS2000 "dvb-usb-lme2510c-rs2000.fw"
+> +#define LME2510_LG	"dvb-usb-lme2510-lg.fw"
+> +#define LME2510_S0194	"dvb-usb-lme2510-s0194.fw"
+>  
+>  /* debug */
+>  static int dvb_usb_lme2510_debug;
+
 
