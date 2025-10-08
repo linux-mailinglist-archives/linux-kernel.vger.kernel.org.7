@@ -1,82 +1,72 @@
-Return-Path: <linux-kernel+bounces-845536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CCA3BC54C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:52:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9980ABC5581
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 16:03:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FD803E2013
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:51:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E3353E33B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 14:02:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B070287506;
-	Wed,  8 Oct 2025 13:51:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E35628CF66;
+	Wed,  8 Oct 2025 14:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="XpgkCwxW"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="FRYDrsor"
+Received: from relay12.grserver.gr (relay12.grserver.gr [88.99.38.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC01286408;
-	Wed,  8 Oct 2025 13:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9964528C039;
+	Wed,  8 Oct 2025 14:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.99.38.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759931462; cv=none; b=Ut1E1FTM9XIvTrhCimsYT3BHAja7w+HEbqNcc/TYUQDHuGx5I/tiUBYrXNMfIeznS/xfN+/o05tLu0b1i5mUm72YcH6tiHCG8e7meElA0zwcuyD1gAEPbnvgHSM+rOv+0AMHiLqREhIECf9bj58VVZkHGkOyHvxSl7zTEpR7rI0=
+	t=1759932165; cv=none; b=qt8/xs8EdCsXdFdSyYBGWsu//jTk4Z+AvUCmNRYQy2glkTudRQbLJIlF+vEkItqxrCsZTHU1I/6K3RkK+ZvVOi0M+TlcukTXU/y0Z9YV3HE+KBexsBEqSwpa8J3Fka6okpGO4Sm71LffGwIOvsxQ4TQPAP+4agNPx9tR8/ACkS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759931462; c=relaxed/simple;
-	bh=mMvQO9gUvkU4ydX38HzUe1NFpnjpQb6EoaNFMHqTHoo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MehVTOUq6Sp+Tpxj6mJylID8mM1iA/ISo8eCXtE/XHD3TEYjEehsTVBWuGuwh7sUQU2SVoi2EMCKE6GiVjYA69Y6OtesdTuZnuNnqAOjkOdq9xw0U7U2T1q53sMZL94XFUUpWZTJkK/s6rY38NYVGvo08DAtDqXj91RTGY5quxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=XpgkCwxW; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 598DOslm027046;
-	Wed, 8 Oct 2025 09:50:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=1Xf3P
-	4FaNtw7plQ3RNniLL6fpn0T247BbYMIn6GhM7Y=; b=XpgkCwxW9qqupRpHTx5cG
-	QwLqkRD+wsx2Ani5n6gjhg4lq4HQ+gyBgIe4olAXlR3HDNHkkhLY4KEMujfveOcx
-	9H/9gvEHiQj3vXXr4H1x3xTxGS+j+a6NmOaoHZ0hfVgqHJtyORi/vSGUpy0rC46/
-	pxV3ppwzxRXzWD+Pl9BMEP5GK106xjwPC4rM7BcghSAEu/z8J1nN4/jbra/UNp87
-	rdURN12ZyU/MBN4mjck6iZGD+ptGTm/E6w7HHf+PWSng6D3HY6JZaSrUty9S1r8M
-	1tPxx21Ft6AVN999QUWtdXoEbfLKbwRBQwyGinDkeWb9dsPTgai89SL6j5/nQQ4S
-	w==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 49ndssugn2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 Oct 2025 09:50:56 -0400 (EDT)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 598DotBq034765
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 8 Oct 2025 09:50:55 -0400
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.37; Wed, 8 Oct
- 2025 09:50:55 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.1748.37 via Frontend
- Transport; Wed, 8 Oct 2025 09:50:55 -0400
-Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.9])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 598DodVo023157;
-	Wed, 8 Oct 2025 09:50:42 -0400
-From: Marcelo Schmitt <marcelo.schmitt@analog.com>
-To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
-        <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <jic23@kernel.org>, <ukleinek@kernel.org>, <michael.hennerich@analog.com>,
-        <nuno.sa@analog.com>, <eblanc@baylibre.com>, <dlechner@baylibre.com>,
-        <andy@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <corbet@lwn.net>, <marcelo.schmitt1@gmail.com>,
-        Conor
- Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v4 4/8] dt-bindings: iio: adc: adi,ad4030: Add PWM
-Date: Wed, 8 Oct 2025 10:50:39 -0300
-Message-ID: <b61b5ae8af34ed104ed931bbd71a7fd45000783c.1759929814.git.marcelo.schmitt@analog.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <cover.1759929814.git.marcelo.schmitt@analog.com>
-References: <cover.1759929814.git.marcelo.schmitt@analog.com>
+	s=arc-20240116; t=1759932165; c=relaxed/simple;
+	bh=9Ftb8HT4U+94l+yfcnsxrP/I1TAJoIq3MmSp5vchlh0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=coY0SRtnpFlbjSy/ktAiinDiFU65KlvlK4WBjJ0tm2STqN0a3iGcPTZvxST111m1SqFpPuISO5PMg8bCWYvalL26faP5dFOU203YuDdIa/9VbzPi8XFN+52j8lT5nBXW69OpPhH2RgWIe6xutp8LrGbXP6znH9+UF06LoO/VGv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=FRYDrsor; arc=none smtp.client-ip=88.99.38.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay12 (localhost [127.0.0.1])
+	by relay12.grserver.gr (Proxmox) with ESMTP id 9C576BDC78;
+	Wed,  8 Oct 2025 16:53:03 +0300 (EEST)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by relay12.grserver.gr (Proxmox) with ESMTPS id C44B3BD728;
+	Wed,  8 Oct 2025 16:53:02 +0300 (EEST)
+Received: from antheas-z13 (x5996a8de.customers.hiper-net.dk [89.150.168.222])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id 97A43200AFF;
+	Wed,  8 Oct 2025 16:53:00 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1759931582;
+	bh=HF3GdUDqna0JtovzbxEWdz+Sil8SitjVp0gD5Y9pl0w=; h=From:To:Subject;
+	b=FRYDrsorGBLIH59iqyuWuZ8efMZTRc+4l2OAHhrOLi3uK6yUeNW5+r8ndfJRrMBiV
+	 VveXc8ehmK1wI2GrQ8NCeUxef9hZVxgx0ZLSHT+9QtLHvE6sayj71PJqNw8AXngy98
+	 i2drsw5pFKASUs/YDPa9kDK0XewhCzBMTF1iP0xJ1kn0mR+ZMsK5VLWExGFrptlSVX
+	 KWX2C7zzOP11ttAJyLWkjtEvyyc4SLRPSoJK6BPwVerMgd+CMlSOrsJ2F/cwAmiW0L
+	 AynNgrqOnUjsThHDrsh8hgNhmHawDFoC4A0uC2sftAyrfBDrotSqJFLzXoJgmZVXD9
+	 /eYPjCwXjSL0A==
+Authentication-Results: linux3247.grserver.gr;
+	spf=pass (sender IP is 89.150.168.222) smtp.mailfrom=lkml@antheas.dev smtp.helo=antheas-z13
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+From: Antheas Kapenekakis <lkml@antheas.dev>
+To: Mario Limonciello <mario.limonciello@amd.com>,
+	Shyam-sundar.S-k@amd.com,
+	hansg@kernel.org,
+	ilpo.jarvinen@linux.intel.com
+Cc: platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mark Pearson <mpearson-lenovo@squebb.ca>,
+	Antheas Kapenekakis <lkml@antheas.dev>
+Subject: [PATCH v1] platform/x86/amd: pmc: Add Lenovo Legion Go 2 to pmc quirk
+ list
+Date: Wed,  8 Oct 2025 15:50:57 +0200
+Message-ID: <20251008135057.731928-1-lkml@antheas.dev>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,58 +74,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDAwNCBTYWx0ZWRfX0TprBU8aneXz
- ojqimeL1mSfL/mCkF81JwbowU0RA+I14pZCA+Dc8Badk5nHRkdJAFJqgD3mG8fsHHPNXj8wqWdP
- g9rcxMOW4ZbZ6jJjz/3K+ClLiLeyU5BlDCky4Xp4Qc3DIBcekMRf7GRNb3oqWXmDgN4eDR2abY3
- aRc300v59XCNk9ZiqWwzvAgZoG/YtGREpRF+s9bwY3LXA0NEB3RzoKrUJa5TgXEAs2azxr/9mQc
- jPUBJcKUsQDsAbt/PPLQTxa5VMrKA0FsLeGMzaUSgjRhAkkcFtnbwhs8BULndut6vxJNVRDHbip
- C1JsC3+/I/h44PHtdR427EWMqN+9rjYyzIcZbKCPScBS68wvXAly2g4bCq6exWHaWWJ6QKHdRZe
- fErrBD+EiW9og0WkA+3BYfxKU4bcUQ==
-X-Proofpoint-ORIG-GUID: 8TKFLgtTOfaADDRXgwp2x43nBGF2OYy1
-X-Proofpoint-GUID: 8TKFLgtTOfaADDRXgwp2x43nBGF2OYy1
-X-Authority-Analysis: v=2.4 cv=e4ELiKp/ c=1 sm=1 tr=0 ts=68e66c41 cx=c_pps
- a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17
- a=x6icFKpwvdMA:10 a=IpJZQVW2AAAA:8 a=XYAwZIGsAAAA:8 a=gAnH3GRIAAAA:8
- a=DUOLLnRY7vFq0fwDtzIA:9 a=IawgGOuG5U0WyFbmm1f5:22 a=E8ToXWR_bxluHZ7gmE-Z:22
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-08_04,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 lowpriorityscore=0 impostorscore=0 suspectscore=0 adultscore=0
- priorityscore=1501 clxscore=1015 phishscore=0 bulkscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510080004
+X-PPP-Message-ID: 
+ <175993158218.2390865.6573007729673899082@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
-In setups designed for high speed data rate capture, a PWM is used to
-generate the CNV signal that issues data captures from the ADC. Document
-the use of a PWM for AD4030 and similar devices.
+The Lenovo Legion Go 2 takes a long time to resume from suspend.
+This is due to it having an nvme resume handler that interferes
+with IOMMU mappings. It is a common issue with older Lenovo
+laptops. Adding it to that quirk list fixes this issue.
 
-Reviewed-by: David Lechner <dlechner@baylibre.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/4618
+Suggested-by: Mario Limonciello <mario.limonciello@amd.com>
+Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
 ---
- Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/platform/x86/amd/pmc/pmc-quirks.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml
-index a8fee4062d0e..564b6f67a96e 100644
---- a/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml
-+++ b/Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml
-@@ -64,6 +64,10 @@ properties:
-       The Reset Input (/RST). Used for asynchronous device reset.
-     maxItems: 1
- 
-+  pwms:
-+    description: PWM signal connected to the CNV pin.
-+    maxItems: 1
-+
-   interrupts:
-     description:
-       The BUSY pin is used to signal that the conversions results are available
+diff --git a/drivers/platform/x86/amd/pmc/pmc-quirks.c b/drivers/platform/x86/amd/pmc/pmc-quirks.c
+index d63aaad7ef59..0fadcf5f288a 100644
+--- a/drivers/platform/x86/amd/pmc/pmc-quirks.c
++++ b/drivers/platform/x86/amd/pmc/pmc-quirks.c
+@@ -204,6 +204,23 @@ static const struct dmi_system_id fwbug_list[] = {
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "82ND"),
+ 		}
+ 	},
++	/* https://gitlab.freedesktop.org/drm/amd/-/issues/4618 */
++	{
++		.ident = "Lenovo Legion Go 2",
++		.driver_data = &quirk_s2idle_bug,
++		.matches = {
++			DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "83N0"),
++		}
++	},
++	{
++		.ident = "Lenovo Legion Go 2",
++		.driver_data = &quirk_s2idle_bug,
++		.matches = {
++			DMI_MATCH(DMI_BOARD_VENDOR, "LENOVO"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "83N1"),
++		}
++	},
+ 	/* https://gitlab.freedesktop.org/drm/amd/-/issues/2684 */
+ 	{
+ 		.ident = "HP Laptop 15s-eq2xxx",
+
+base-commit: a8cdf51cda30f7461a98af821e8a28c5cb5f8878
 -- 
-2.39.2
+2.51.0
+
 
 
