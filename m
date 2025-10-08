@@ -1,181 +1,286 @@
-Return-Path: <linux-kernel+bounces-845600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E61B8BC57E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 16:58:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15065BC57EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 16:58:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0994F4EADB8
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 14:58:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7CE518916F4
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 14:59:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E302ECD20;
-	Wed,  8 Oct 2025 14:58:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CA8D2ECD03;
+	Wed,  8 Oct 2025 14:58:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fpR31PHb"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WeMq0Xw9"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EAF62EC559
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 14:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84791C54A9
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 14:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759935491; cv=none; b=P5K7d0YEGb++YG7H8Swql9sz4ODeq5YAF3izNyjzx/fkHE8nVmQDtHNA1x5JZIBhgTOk1HBrJdCqO3VLg/5H8ZCBBfudI0DnnnpK5h4OWbeUVKCd5l43wQOSuEZsPsfA8LjjmNJBegtyb4BHpcxOH58y9ijX9nhirjbCoMHOM9E=
+	t=1759935530; cv=none; b=luW11FYVU5SH1LlnohfZr8JypgEs1CYWS0bzsQtuqN3fHDN8YlAvjEVFdnc/V+JqXWvlmZYMpwq43n0wpfosTSj0TBUdDWxPG0pLYYPz6kKrzMQy2vys5ElXP/uzef+5yRjaNTsRzXtQZvxix9nzWutYu4ANZvzPakhmmqRdjr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759935491; c=relaxed/simple;
-	bh=5V4FY1lGCPXLwOcBdDx/5qV1DoJAfuAXFe8DMG4W87o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FeMWqLccXH+kU/c9UNGhW8VWDKnqs/8m1++IP9uktYvrvF5eAOY89mCoXuK3O/3MEYI3+4zxOBT0Off4Un+E7sx0YpCFu9LktfeCPCdG31RxQgHH5wI0ZBzM96edpgLBN8odcHXegi9tZU1KQM4EbQVSkSX6nsfZ4wjtCGX5hpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fpR31PHb; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59890OSS028792
-	for <linux-kernel@vger.kernel.org>; Wed, 8 Oct 2025 14:58:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=gg2XGw954hw/rNzVk11kaod4ZGuB5Izji2/
-	QJiTgN50=; b=fpR31PHbNQFaoP0jHLmGl4/ob/VfzSwr+TexkvmZW/2LsaesVKc
-	hVcEvVpFm+Wqi/dKj/jCiyAeF6mhOGyOhw5Wh63RjkWS0Bd5Ma9xERWrQ8GvM2O8
-	Ba5sqwCOyLiampeTHEPlVJ/NL7cWjq72Ywab3Mv2MrysAv0420r+FVyd7n82S1Fk
-	TBTQ8nlXsgHDOw8kJjoejrAau1NJPEAsxwpsG4BUhceMYZuPk9XWQkfmCEprelx4
-	59PPG2TkYgaz5+1ZkrjNLgg5Hi7AO13oQHPmuz8xrnAR8bD5M6oTA54ZAszkO/1Q
-	8tXKbnEBcFEaWpGg4Y/1Kdab/CzWNcnOYBg==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49jtwgtyqs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 14:58:08 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-782063922ceso7005281b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 07:58:08 -0700 (PDT)
+	s=arc-20240116; t=1759935530; c=relaxed/simple;
+	bh=zatW9z7+BlJwtBT1+Ih7xLccccTvW54o/aTpYz4t0QE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fru9Iw66xsttFOjcGtzjIORtpPx1FbJjtS98ZwoLgAq4ZOXByRcr58vRwPRziFQjZ31dslx2Ri7TpaZMIwFQvWMVsJbZkY6It1InmOHMCuMWjFnj3WKFDQRhbKdE/2F7cgNm8JPqds2LL+IhqdPUki/3NkF2ND3fWxdow0v3iyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WeMq0Xw9; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2681645b7b6so194565ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 07:58:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759935527; x=1760540327; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YE2Qs8AzdRpLDpT1BMz7CfM7cxp6la5yYDPSZ12gux0=;
+        b=WeMq0Xw9/oQHwyafxfbQJ97DnMZgYlaYux2sfwIRUdUc/3NaNY0guyahQxpYG15cBC
+         c4YIKGkq/7q5VQngET045QWi5dGVLdN/Y4VWrltGbn+LZohJq7RYAXsQwwIv4z9ww09f
+         VBFRK2+sU59diVceHQJuHEGQoHyLmZ5MTF4TC3Ltj+mlQWnPzwdokz44o7YtDtT5abPT
+         soomYZMWgOVCCcp4j/Cuzm0zeMhmYRktNVxp8T+H4gZMsXP0ciG2cNvevqIPJFTusz8a
+         fmp4UvXyVeigpapNEEyKVzxvqFRxT5AWRsxuCm66CEU9kjphTC3she6WWtf0pEC/vFj5
+         UWMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759935487; x=1760540287;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gg2XGw954hw/rNzVk11kaod4ZGuB5Izji2/QJiTgN50=;
-        b=YodaCVJwMUBqIak8kgIERKKJtVWRQqqM3g0q3OGSRfyPP6EA1CTSno9kmfQc9BP+LX
-         MmCU6+kThJsJDHqQtuuAayIYtY6bFSHmOcaID4ergKcEot0TylBolkrvSlPecuk4U7tn
-         xAeHWbfyPbtBfBLmGp5wCFv8lWht0oRzX8ktdcDexICISk1KuCusxceuWnlt7gzLqJ2f
-         B/BmZh/KnzKgxGFm1hoXM7YQX1jeVBPz3zPKRT81vrGCkxI9RMml5kn0XmelbMjYEkZw
-         KjUk2n9z9AhV8KUYeYcYusTN3VXJsoinwb4qyXk3FB+7paHHGeTtK0/ofNEu5Z41frOz
-         Jpwg==
-X-Forwarded-Encrypted: i=1; AJvYcCX66RlwCXFzeXLL/egIlAwW/JXm6w/2xi4E0Ml+r8yOEaqTIO01KFgJg7BMoBr8o8jxWUCyFsX3aH/7yQY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBh+E4a1Veh3qP0L0mYVg95puP8mDJmPTVH1Bak4D1WKQW1wBf
-	vW0uvT9zKkgibyVOic7+ja/dzRb83RrYgl7y+HHkJ9cNBfsMciWz4WGSxpxDg53hKd6lzSVQfYW
-	4La+upi5P9dGL4a2rxhf4ZYarn7Soj3tHFJm0bSh5Vqzs7FuikbdNgqj28n4otUq29ls=
-X-Gm-Gg: ASbGncuaaCoaS7cN+bs+dEEwE9wryfi+cWrTrO5KVYtocPBQHODAgTx6zV/HXBJb2xL
-	p9SmLsI3O+zlr1f7zDygMLZuw55RGL4Zhc3fCQpmMJyrW6yloGyRq0biRDsVIP5qEzwLr/+0AvA
-	5g8NuAl7DdhpSfMSlqdL4ZBs41Lk8u64TLww1hJTwOVHHSkzFKpm0+cvcSXlbHG1Bye4fAwHxzB
-	Pmy3ZALt3JQDQ7+7zglPmrULo/QuToFNz0o85ZWd5ovrcC27RGqaSAzZbGBt/OvYqrxuVHnxNJd
-	1AxS5abufArKI5CRlOEw3aJLhqSRI5fphUK63znnSQRVSw37xmSR0JKWDaO+cCTZdt7WHsDtJMc
-	=
-X-Received: by 2002:a05:6a00:3911:b0:77f:3a99:77b1 with SMTP id d2e1a72fcca58-79385703346mr3825678b3a.9.1759935486552;
-        Wed, 08 Oct 2025 07:58:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFW5q5j+m+RGehMEdTTXNFPYB2WX/itVnHJwVii8g/LY0p0ro5CAl7jexOkZcXjHDnVYlqG9A==
-X-Received: by 2002:a05:6a00:3911:b0:77f:3a99:77b1 with SMTP id d2e1a72fcca58-79385703346mr3825645b3a.9.1759935486009;
-        Wed, 08 Oct 2025 07:58:06 -0700 (PDT)
-Received: from debian.Hyatt.com ([192.210.17.203])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b02053b84sm19068892b3a.53.2025.10.08.07.58.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 07:58:05 -0700 (PDT)
-From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-To: broonie@kernel.org
-Cc: srini@kernel.org, perex@perex.cz, tiwai@suse.com,
-        dmitry.baryshkov@oss.qualcomm.com, linux-sound@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: [PATCH] ASoC: codecs: wcd938x-sdw: remove redundant runtime pm calls
-Date: Wed,  8 Oct 2025 15:58:01 +0100
-Message-ID: <20251008145801.3479-1-srinivas.kandagatla@oss.qualcomm.com>
-X-Mailer: git-send-email 2.51.0
+        d=1e100.net; s=20230601; t=1759935527; x=1760540327;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YE2Qs8AzdRpLDpT1BMz7CfM7cxp6la5yYDPSZ12gux0=;
+        b=xK13dyImpxVdEI8gpJ7E31XWSTzfHrlqyKOusiANwVZILvVoJ/BOEYwyNbvXz7wls9
+         m4Iaym7HccYbpftNDQAW24ob5EegW41QQGA0WBdtbbAI/iw3Eh6ZZ4E+79rfQIdjAAlF
+         FsJU/LgmsxOEy4G4zSNgnPXQnBJZ/GPrXtke9t04bJFkMZ0jwXesupyV5k3we9YHyz4J
+         ku2iRnsb18UDZ7JCAknHtBG5BZdl9NFtzhpEDYOs6veZ1I/jbY/38zBOzW34LQPuZTCQ
+         30DzUL56bL3oeXZwlTkAQZaPAscea22b+d9cqiHZjFILqUuE+/vg6m/JZGCm/ty7sT+z
+         4s8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVQ2mIu6aLkVQLvjm198EhUAAtv5aYgUBb5wsLkNBzCwHCAzzX6U3Tr58n+PLDnDk/kD2NvbddIUeug3+s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKrwmwI9Ysdahgd7PRfKtJ1JCU5TVEeVAsl+C8cHkf0T5uI83U
+	ws10cnyLTZCbCBud6SFO3cx4Fe7uB9SmwyCkcnNkB5qCaqKEWEQH96fssOb44jN9Rdm/oV/WYe2
+	pmHS/aA2lbC4WM6YUYlt14p7GHphcUpI7ftoMZ/AX
+X-Gm-Gg: ASbGncvH+WZ263yv+9sRBYfvf3NctgYGNfxgVv04KzCeZW0yj3AZx6goJA3vERfnH7p
+	/OD3bcC7vxwk4dSo9FT4ZnArErMeg9SViqFDeERwRqsNzbWN7VixMbMFWM5yp/+j0xsEeUWqE7I
+	8D2TnuGyQP/N/mwO4ARpxIfHcPE86HOmvci9onsxkln8TKV0sQFN9sLJ0cstFQoLbyC8qG92JMz
+	gn5ssYOm0ybwz+pBUN1NnNofem9AhkhzEQIt8TVUVfq2Rov92otwc8CWtDsbSev6sVuyvQeAOJm
+	OeU=
+X-Google-Smtp-Source: AGHT+IFRlzQMIt76FcOgy9rt2zd/DLc7gxGeQb7DYEWr8wcv6vgl0GFuJT2bUyuZEkal3hjLZpnYHVTBO0UBsaFcvkc=
+X-Received: by 2002:a17:903:11c4:b0:269:2215:e672 with SMTP id
+ d9443c01a7336-29027699a6bmr5063445ad.12.1759935526647; Wed, 08 Oct 2025
+ 07:58:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAxOSBTYWx0ZWRfXxUgxiZ60qdLB
- 4AWxhpHcb6hJfcblenguk1jZGynvsQS8LsG31VEMOxbDZFu1iRl+uSScfQlfRXy5NWISf5z9K4+
- R3UocUrpGt3ikZhOch9GstCEe7mrKD7UPUv9Tp+RaHFPqGu32QHSXqmwLvHIhNaSGTpsMqNSJIT
- I+3LTgvaDMvtIYwTNe40QHRlDGelu+eFYzLcTJpjHZc0E3jzsqHvBVbpxLzDSIU5KOlditELusG
- Ji26KwxaLIg1GXy6sKMujJVI7p9QU8p7Ciac6uCU4lpXje6d5dqdLScRIrWF9t3Olg+yljBSyq1
- NY3PrDp929DEY+RHU76DufFswAdG150eBaGunJMVaE3bSIgLQ7R01ES+xbg6M1qWaCyWhUvcemU
- RVi70LyRDYQ2TAlQ6ie2e5mWk/HNbQ==
-X-Authority-Analysis: v=2.4 cv=B6O0EetM c=1 sm=1 tr=0 ts=68e67c00 cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=3CSVYe8HblTQFsWiJzwA3g==:17
- a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=J5h_BI_um8seuJrpCkEA:9
- a=OpyuDcXvxspvyRM73sMx:22
-X-Proofpoint-GUID: MLA1lcXUaQB-6L7al2YykILcgokrPB9P
-X-Proofpoint-ORIG-GUID: MLA1lcXUaQB-6L7al2YykILcgokrPB9P
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-08_04,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 lowpriorityscore=0 adultscore=0
- impostorscore=0 spamscore=0 bulkscore=0 phishscore=0 malwarescore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
- definitions=main-2510040019
+References: <20251005182430.2791371-1-irogers@google.com> <20251005182430.2791371-6-irogers@google.com>
+ <fcba9459-9a5a-44c9-976a-323a6f4e0429@linaro.org>
+In-Reply-To: <fcba9459-9a5a-44c9-976a-323a6f4e0429@linaro.org>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 8 Oct 2025 07:58:35 -0700
+X-Gm-Features: AS18NWDiuoJi-sThA-Lh2RXQOiDwJNmDyu8MKIgLUOZTrcVC_jG6TV2oU_hi3Tw
+Message-ID: <CAP-5=fVervG=fmG7naTut3ERzwTTp7yQvuwqNkoKxSBSLsbgGA@mail.gmail.com>
+Subject: Re: [PATCH v7 05/27] perf jevents: Support copying the source json
+ files to OUTPUT
+To: James Clark <james.clark@linaro.org>
+Cc: Thomas Richter <tmricht@linux.ibm.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Xu Yang <xu.yang_2@nxp.com>, 
+	Thomas Falcon <thomas.falcon@intel.com>, Andi Kleen <ak@linux.intel.com>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	Atish Patra <atishp@rivosinc.com>, Beeman Strong <beeman@rivosinc.com>, Leo Yan <leo.yan@arm.com>, 
+	Vince Weaver <vincent.weaver@maine.edu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Component bind callbacks already does runtime pm calls, soundwire codec
-also tries to do the exactly same thing resulting in Unbalanced
-pm_runtime_enable and disable calls.
+On Wed, Oct 8, 2025 at 4:10=E2=80=AFAM James Clark <james.clark@linaro.org>=
+ wrote:
+> On 05/10/2025 7:24 pm, Ian Rogers wrote:
+> > The jevents command expects all json files to be organized under a
+> > single directory. When generating json files from scripts (to reduce
+> > laborious copy and paste in the json) we don't want to generate the
+> > json into the source directory if there is an OUTPUT directory
+> > specified. This change adds a GEN_JSON for this case where the
+> > GEN_JSON copies the JSON files to OUTPUT, only when OUTPUT is
+> > specified. The Makefile.perf clean code is updated to clean up this
+> > directory when present.
+> >
+> > This patch is part of:
+> > https://lore.kernel.org/lkml/20240926173554.404411-12-irogers@google.co=
+m/
+> > which was similarly adding support for generating json in scripts for
+> > the consumption of jevents.py.
+> >
+> > Tested-by: Thomas Richter <tmricht@linux.ibm.com>
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+>
+> Hi Ian,
+>
+> This commit breaks the build on x86 for me, but not Arm. I also had to
+> do a clean build when bisecting as it seemed to be sticky in some way.
+>
+> It fails on the empty pmu events file diff check:
+>
+> diff -u pmu-events/empty-pmu-events.c
+> /home/james/workspace/linux/build/local/pmu-events/test-empty-pmu-events.=
+c
+> 2>
+> /home/james/workspace/linux/build/local/pmu-events/empty-pmu-events.log
+> || (cat
+> /home/james/workspace/linux/build/local/pmu-events/empty-pmu-events.log
+> && false)
+> --- pmu-events/empty-pmu-events.c       2025-10-08 11:49:46.341849139 +01=
+00
+> +++
+> /home/james/workspace/linux/build/local/pmu-events/test-empty-pmu-events.=
+c
+>   2025-10-08 11:54:40.619999115 +0100
+> @@ -19,239 +19,8 @@
+>   };
+>
+>   static const char *const big_c_string =3D
+> -/* offset=3D0 */ "software\000"
+> ...
+>
+> The output continues with the rest of the diff, but I assume it's not
+> important to reproduce the issue.
 
-Remove the redundant calls from wcd938x-sdw driver.
+I've similarly had issues with empty-pmu-events.c and the test that as
+you say are resolved by a clean build. When I've investigated in the
+past it is the dependencies on the files are accurate but some are
+added or removed, I think adding the Makefile as a dependency for
+building empty-pmu-events.c was a resolution but in general we've not
+done that so I didn't send out a fix.
 
-Reported-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Fixes: ebaf88c0546d ("ASoC: codecs: wcd-common: move component ops to common")
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
----
- sound/soc/codecs/wcd938x-sdw.c | 20 +++-----------------
- 1 file changed, 3 insertions(+), 17 deletions(-)
+Thanks,
+Ian
 
-diff --git a/sound/soc/codecs/wcd938x-sdw.c b/sound/soc/codecs/wcd938x-sdw.c
-index add907cb2706..8c8f39d04972 100644
---- a/sound/soc/codecs/wcd938x-sdw.c
-+++ b/sound/soc/codecs/wcd938x-sdw.c
-@@ -1207,24 +1207,14 @@ static int wcd9380_probe(struct sdw_slave *pdev,
- 		regcache_cache_only(wcd->regmap, true);
- 	}
- 
--	pm_runtime_set_autosuspend_delay(dev, 3000);
--	pm_runtime_use_autosuspend(dev);
--	pm_runtime_mark_last_busy(dev);
--	pm_runtime_set_active(dev);
--	pm_runtime_enable(dev);
--
- 	ret = component_add(dev, &wcd_sdw_component_ops);
- 	if (ret)
--		goto err_disable_rpm;
--
--	return 0;
-+		return ret;
- 
--err_disable_rpm:
--	pm_runtime_disable(dev);
-+	/* Set suspended until aggregate device is bind */
- 	pm_runtime_set_suspended(dev);
--	pm_runtime_dont_use_autosuspend(dev);
- 
--	return ret;
-+	return 0;
- }
- 
- static int wcd9380_remove(struct sdw_slave *pdev)
-@@ -1233,10 +1223,6 @@ static int wcd9380_remove(struct sdw_slave *pdev)
- 
- 	component_del(dev, &wcd_sdw_component_ops);
- 
--	pm_runtime_disable(dev);
--	pm_runtime_set_suspended(dev);
--	pm_runtime_dont_use_autosuspend(dev);
--
- 	return 0;
- }
- 
--- 
-2.51.0
-
+> Thanks
+> James
+>
+> > ---
+> >   tools/perf/Makefile.perf    | 21 ++++++++++++++++-----
+> >   tools/perf/pmu-events/Build | 18 ++++++++++++------
+> >   2 files changed, 28 insertions(+), 11 deletions(-)
+> >
+> > diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+> > index 7d6ac03a7109..278e51e4b5c6 100644
+> > --- a/tools/perf/Makefile.perf
+> > +++ b/tools/perf/Makefile.perf
+> > @@ -1272,9 +1272,24 @@ endif # CONFIG_PERF_BPF_SKEL
+> >   bpf-skel-clean:
+> >       $(call QUIET_CLEAN, bpf-skel) $(RM) -r $(SKEL_TMP_OUT) $(SKELETON=
+S) $(SKEL_OUT)/vmlinux.h
+> >
+> > +pmu-events-clean:
+> > +ifeq ($(OUTPUT),)
+> > +     $(call QUIET_CLEAN, pmu-events) $(RM) \
+> > +             pmu-events/pmu-events.c \
+> > +             pmu-events/metric_test.log \
+> > +             pmu-events/test-empty-pmu-events.c \
+> > +             pmu-events/empty-pmu-events.log
+> > +else # When an OUTPUT directory is present, clean up the copied pmu-ev=
+ents/arch directory.
+> > +     $(call QUIET_CLEAN, pmu-events) $(RM) -r $(OUTPUT)pmu-events/arch=
+ \
+> > +             $(OUTPUT)pmu-events/pmu-events.c \
+> > +             $(OUTPUT)pmu-events/metric_test.log \
+> > +             $(OUTPUT)pmu-events/test-empty-pmu-events.c \
+> > +             $(OUTPUT)pmu-events/empty-pmu-events.log
+> > +endif
+> > +
+> >   clean:: $(LIBAPI)-clean $(LIBBPF)-clean $(LIBSUBCMD)-clean $(LIBSYMBO=
+L)-clean $(LIBPERF)-clean \
+> >               arm64-sysreg-defs-clean fixdep-clean python-clean bpf-ske=
+l-clean \
+> > -             tests-coresight-targets-clean
+> > +             tests-coresight-targets-clean pmu-events-clean
+> >       $(call QUIET_CLEAN, core-objs)  $(RM) $(LIBPERF_A) $(OUTPUT)perf-=
+archive \
+> >               $(OUTPUT)perf-iostat $(LANG_BINDINGS)
+> >       $(Q)find $(or $(OUTPUT),.) -name '*.o' -delete -o -name '*.a' -de=
+lete -o \
+> > @@ -1287,10 +1302,6 @@ clean:: $(LIBAPI)-clean $(LIBBPF)-clean $(LIBSUB=
+CMD)-clean $(LIBSYMBOL)-clean $(
+> >               $(OUTPUT)FEATURE-DUMP $(OUTPUT)util/*-bison* $(OUTPUT)uti=
+l/*-flex* \
+> >               $(OUTPUT)util/intel-pt-decoder/inat-tables.c \
+> >               $(OUTPUT)tests/llvm-src-{base,kbuild,prologue,relocation}=
+.c \
+> > -             $(OUTPUT)pmu-events/pmu-events.c \
+> > -             $(OUTPUT)pmu-events/test-empty-pmu-events.c \
+> > -             $(OUTPUT)pmu-events/empty-pmu-events.log \
+> > -             $(OUTPUT)pmu-events/metric_test.log \
+> >               $(OUTPUT)$(fadvise_advice_array) \
+> >               $(OUTPUT)$(fsconfig_arrays) \
+> >               $(OUTPUT)$(fsmount_arrays) \
+> > diff --git a/tools/perf/pmu-events/Build b/tools/perf/pmu-events/Build
+> > index 32f387d48908..1503a16e662a 100644
+> > --- a/tools/perf/pmu-events/Build
+> > +++ b/tools/perf/pmu-events/Build
+> > @@ -1,7 +1,6 @@
+> >   pmu-events-y        +=3D pmu-events.o
+> >   JDIR                =3D  pmu-events/arch/$(SRCARCH)
+> > -JSON         =3D  $(shell [ -d $(JDIR) ] &&                           =
+ \
+> > -                     find $(JDIR) -name '*.json' -o -name 'mapfile.csv=
+')
+> > +JSON         =3D  $(shell find pmu-events/arch -name *.json -o -name *=
+.csv)
+> >   JDIR_TEST   =3D  pmu-events/arch/test
+> >   JSON_TEST   =3D  $(shell [ -d $(JDIR_TEST) ] &&                      =
+ \
+> >                       find $(JDIR_TEST) -name '*.json')
+> > @@ -29,13 +28,20 @@ $(PMU_EVENTS_C): $(EMPTY_PMU_EVENTS_C)
+> >       $(call rule_mkdir)
+> >       $(Q)$(call echo-cmd,gen)cp $< $@
+> >   else
+> > +# Copy checked-in json for generation.
+> > +$(OUTPUT)pmu-events/arch/%: pmu-events/arch/%
+> > +     $(call rule_mkdir)
+> > +     $(Q)$(call echo-cmd,gen)cp $< $@
+> > +
+> > +GEN_JSON =3D $(patsubst %,$(OUTPUT)%,$(JSON))
+> > +
+> >   $(METRIC_TEST_LOG): $(METRIC_TEST_PY) $(METRIC_PY)
+> >       $(call rule_mkdir)
+> >       $(Q)$(call echo-cmd,test)$(PYTHON) $< 2> $@ || (cat $@ && false)
+> >
+> > -$(TEST_EMPTY_PMU_EVENTS_C): $(JSON) $(JSON_TEST) $(JEVENTS_PY) $(METRI=
+C_PY) $(METRIC_TEST_LOG)
+> > +$(TEST_EMPTY_PMU_EVENTS_C): $(GEN_JSON) $(JSON_TEST) $(JEVENTS_PY) $(M=
+ETRIC_PY) $(METRIC_TEST_LOG)
+> >       $(call rule_mkdir)
+> > -     $(Q)$(call echo-cmd,gen)$(PYTHON) $(JEVENTS_PY) none none pmu-eve=
+nts/arch $@
+> > +     $(Q)$(call echo-cmd,gen)$(PYTHON) $(JEVENTS_PY) none none $(OUTPU=
+T)pmu-events/arch $@
+> >
+> >   $(EMPTY_PMU_EVENTS_TEST_LOG): $(EMPTY_PMU_EVENTS_C) $(TEST_EMPTY_PMU_=
+EVENTS_C)
+> >       $(call rule_mkdir)
+> > @@ -63,10 +69,10 @@ $(OUTPUT)%.pylint_log: %
+> >       $(call rule_mkdir)
+> >       $(Q)$(call echo-cmd,test)pylint "$<" > $@ || (cat $@ && rm $@ && =
+false)
+> >
+> > -$(PMU_EVENTS_C): $(JSON) $(JSON_TEST) $(JEVENTS_PY) $(METRIC_PY) $(MET=
+RIC_TEST_LOG) \
+> > +$(PMU_EVENTS_C): $(GEN_JSON) $(JSON_TEST) $(JEVENTS_PY) $(METRIC_PY) $=
+(METRIC_TEST_LOG) \
+> >       $(EMPTY_PMU_EVENTS_TEST_LOG) $(PMU_EVENTS_MYPY_TEST_LOGS) $(PMU_E=
+VENTS_PYLINT_TEST_LOGS)
+> >       $(call rule_mkdir)
+> > -     $(Q)$(call echo-cmd,gen)$(PYTHON) $(JEVENTS_PY) $(JEVENTS_ARCH) $=
+(JEVENTS_MODEL) pmu-events/arch $@
+> > +     $(Q)$(call echo-cmd,gen)$(PYTHON) $(JEVENTS_PY) $(JEVENTS_ARCH) $=
+(JEVENTS_MODEL) $(OUTPUT)pmu-events/arch $@
+> >   endif
+> >
+> >   # pmu-events.c file is generated in the OUTPUT directory so it needs =
+a
+>
 
