@@ -1,269 +1,147 @@
-Return-Path: <linux-kernel+bounces-846070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 788E7BC6F57
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 01:56:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96D9DBC6F5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 01:58:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E59A9402ADD
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 23:56:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1C0219E2761
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 23:58:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A16F2D0618;
-	Wed,  8 Oct 2025 23:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897462D060C;
+	Wed,  8 Oct 2025 23:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UA4mfs1J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bfeO5h5G"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A9C1F4C8E;
-	Wed,  8 Oct 2025 23:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F4D2C3745
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 23:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759967798; cv=none; b=Zk0B0iWslhJWgFx6C1Cx7Vi6OW0VR5uK5aJzpdYI1ElLHOb1uGqiYpmUbm11iqkklmRNEMdNGi1tsJ+LfbRli3BQ1/W0dEP6pR/yOJwrjjJ/BKb30KHFSHOSAm11hJ8d2heO3l4Cw4OhZ2Z23v/0bPJuw9csnDwMsAWPSZsEGOg=
+	t=1759967889; cv=none; b=pCVfQJl5fmMnAvitqDIaNcVahoZ/Lxk5If+GO4gP7KFA/VSDIg+l2Rr9WFBWPLxOloz/4a8CVNzE5Q5N5nB0Rm/AJtdkFlHLNG0oULwFgD75++VFiVZYXisvIE2btoqlNHJHm4qi9mXYjl2ARhMi3gFZcOay/FoLkEodjh0DhpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759967798; c=relaxed/simple;
-	bh=gfm6M2tF1gf+jvegzebAVXKYeH2HyBSskMG0yM3A/54=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k+809xW5kpfRRE+KoSfsB03e+OvGe447BKhjwEQwSd6ly9GLPdEB1HPv9UQNOBpJv/2Na1nUoG7Ap0+vkSgHv1LxZbNo5jSoTYtk1x/YyMg6cU/87/YNu943Hu6ASt6HMDNawiP++lNBQt++GGK3woZGr/XqM7QGEbRoVX8ruvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UA4mfs1J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DEB9C4CEE7;
-	Wed,  8 Oct 2025 23:56:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759967797;
-	bh=gfm6M2tF1gf+jvegzebAVXKYeH2HyBSskMG0yM3A/54=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UA4mfs1JJD6ewAp+USdjMUhIuzr4XJ23pisGajJVXqvBD7RgI8a6yu0W0jW6dKjNt
-	 YGIwi91/QPquvZs8LHga2eSZv2qjmGph+amPuaScNhraiq5qnknbYNhmm8TdHBN4Aw
-	 PANy69N4MCnUDeR5TZ2MrIh8biwgJYdg/X3IoOgoWuDw71PUspwUjqkP6hEFeFK3wB
-	 xgk40KaiaifdMW+XoMt2kwfe9Y6OrF8gntBHuLHX2abOiZgk4HACzN49Y6PNleQ17r
-	 zheb2XYra0mFw8CU1eScKVmZnYRREDvWlyU1WoY77XyJHvLpGHtPJU76ijTJaNw20J
-	 enNuPKKtKgAjw==
-Message-ID: <8966b6a9-ff70-4833-a5c7-c6d6c13c6c8b@kernel.org>
-Date: Thu, 9 Oct 2025 08:56:26 +0900
+	s=arc-20240116; t=1759967889; c=relaxed/simple;
+	bh=FWabBx1o2JRPXQzeKmabXmIF+PIs3CRXqrX7grDeR4Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HKLOjzleufn6h0JgDoPKN0qGaNEL8R7OyD17tgbmHv6diBiCKMNFLFLK9aJIT1R8E6mfzmr4nLZ56QxppJzFPX5aC1fsHXr/3/5DOqLf1sxoNXMjXuT5irgpSUYVdHPWX9Vd5rr6Zbv54Uuq2WD5zEYOQ9edDE/4LsMulxXR3Lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bfeO5h5G; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759967886;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yYml2VDxH0siTYU9ImG12BR4vPhtEsV9x6dMYi9DuW8=;
+	b=bfeO5h5GlA1OTU2OTg5a8KZXJvBYCcXrFdnWRXaU4gKnxtvlGcUdwbzn42Ju/mTo7KDM3B
+	CYUKCLdWfNiM39OZ1c3CVROE6t1MjeHve/9lmfGnJCUh7WwWB9Vc+WrVVOwSo8399QDZJb
+	2dqY/t+QepgsrgZAx+cy36EmMXX8KKs=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-398-OwdYTDjaOlOthpZ5uc63Vw-1; Wed, 08 Oct 2025 19:58:05 -0400
+X-MC-Unique: OwdYTDjaOlOthpZ5uc63Vw-1
+X-Mimecast-MFC-AGG-ID: OwdYTDjaOlOthpZ5uc63Vw_1759967885
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-829080582b4so131423285a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 16:58:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759967885; x=1760572685;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yYml2VDxH0siTYU9ImG12BR4vPhtEsV9x6dMYi9DuW8=;
+        b=vk/EWrq/mI6nYBbFQWLyxghjBGyG6C3em61V75V7/BRaUDUH9alc3fiqKBQEcyJRMj
+         59brBS2DkioLyR2GtDcnu0x1prhIYLTUy84OZNeBCQtmIbE1Zf3QKvc+JXgJCEHltuKZ
+         4ZjT90dYa4F32KvOBqE6ZFsj57eWOiG93Rx0GXRitNEUIss8/k2vPgj4FlQQ1d37e0QT
+         vQURx+yGIfnocYQLkb/64gXWp7dQ2UUf/oLjtM+nuEjC+s5CgSzuVUtW6V4ApNOxhHou
+         rU/+q2qvtkA5apYAa0i6snrH+0VjQGco3lMNVCgoX/+ynT5I/UySiWy1T77HTUUHbhE/
+         JE/A==
+X-Forwarded-Encrypted: i=1; AJvYcCVn9sQxaQ3nvvNpDKjyspizPfXWzcXZq6+UByZy05vIdEoWq2FJiO8bSo9YWRdOBuOKCKpPLhJ3c8LnAgw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtJSO99LVuQPP3bXKK7bOwo1EJ8mNdxXmmc9zflL/xufxrp7jn
+	OxPEhLFOQop/0Vr5eQuaV9jf3aREA6gPU6LD/dNDQiSvvvRbp8RtpxK5zU8UkMXxskv+gtA8PuV
+	7aLtD7fPOEYULkc7zKQEa6rATtGPUqIhpb/8su1f0K2bc+KJvzEYZuCvy2/83GxzSaA==
+X-Gm-Gg: ASbGncvnkQHS0D8qTyE5nqlnG84bb3x12hScSjnjk4bmBTDwzlsc9u7FO4SufTvzLxd
+	PbGYqnjHdCvQehSdnc7aXOV7Vl5gQ3IYhCQNv/NnqnTTH+Mk+IabEdl7XnDt0vYriw6Jn3Dhf1P
+	hmAbc+P5poPNFM5TaTX1FZ9j5p49AsiZqv+HUIVmCOFidW12yo4dknrpw2/krZQjAFzNoLHDL+4
+	HWIc7jo1mMCw0B9bl2E7D2Au7Hec36Dd0k6feu12htpcmAVg+5AkJIg07Z2te0n5IX/XA2aYV7G
+	YrWb2MnyRwtVR4HyLJZBo7qC8XGDWOyIypzfLKzvlqt39E76YoerafvSKh50t0gw6vVO443pG/F
+	/jBQT7I1c5tIjcn7oxjbEboMYEW/vGXzVnvs1
+X-Received: by 2002:a05:620a:2685:b0:864:1d18:497f with SMTP id af79cd13be357-8835088dbbdmr791584785a.20.1759967885068;
+        Wed, 08 Oct 2025 16:58:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHQXcFrO7Er3Q3mBDdQBcLXHQVE93CDbRMq7AeTkxsZVEPnKqRubMgwFgmWShVeh1oXVhT4lQ==
+X-Received: by 2002:a05:620a:2685:b0:864:1d18:497f with SMTP id af79cd13be357-8835088dbbdmr791582885a.20.1759967884635;
+        Wed, 08 Oct 2025 16:58:04 -0700 (PDT)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-884a1ca3f2esm87125585a.41.2025.10.08.16.58.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 16:58:03 -0700 (PDT)
+Date: Wed, 8 Oct 2025 19:58:00 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: tests: Add tests for clk lookup by name
+Message-ID: <aOb6iNR9T4R9Hp3R@redhat.com>
+References: <20251002092036.2504858-1-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] dt-bindings: usb: dwc3: Add Google Tensor G5 DWC3
-To: Roy Luo <royluo@google.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>,
- Badhri Jagan Sridharan <badhri@google.com>, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20251008060000.3136021-1-royluo@google.com>
- <20251008060000.3136021-2-royluo@google.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251008060000.3136021-2-royluo@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251002092036.2504858-1-wenst@chromium.org>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On 08/10/2025 14:59, Roy Luo wrote:
-> Document the device tree bindings for the DWC3 USB controller found in
-> Google Tensor SoCs, starting with the G5 generation.
+On Thu, Oct 02, 2025 at 05:20:35PM +0800, Chen-Yu Tsai wrote:
+> Clk lookup (by name) recently gained some performance improvements at
+> the expense of more complexity within the lookup code.
 > 
-> The Tensor G5 silicon represents a complete architectural departure from
-
-
-G5 does not have a model number like G1-G4?
-
-> previous generations (like gs101), including entirely new clock/reset
-> schemes, top-level wrapper and register interface. Consequently,
-> existing Samsung/Exynos DWC3 USB bindings and drivers are incompatible,
-
-Do not reference drivers. Explain the hardware.
-
-> necessitating this new device tree binding.
+> To make sure that this works as intended and doesn't break, add some
+> basic tests for this part of the CCF.
 > 
-> The USB controller on Tensor G5 is based on Synopsys DWC3 IP and features
-> Dual-Role Device single port with hibernation support.
+> A new "clk_hw_lookup()" function is added purely for running kunit
+> tests.
 > 
-> Signed-off-by: Roy Luo <royluo@google.com>
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 > ---
->  .../bindings/usb/google,gs-dwc3.yaml          | 145 ++++++++++++++++++
->  1 file changed, 145 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/usb/google,gs-dwc3.yaml
+>  drivers/clk/clk.c      | 11 +++++++
+>  drivers/clk/clk.h      |  4 +++
+>  drivers/clk/clk_test.c | 66 +++++++++++++++++++++++++++++++++++++++++-
+>  3 files changed, 80 insertions(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/usb/google,gs-dwc3.yaml b/Documentation/devicetree/bindings/usb/google,gs-dwc3.yaml
-> new file mode 100644
-> index 000000000000..9eb0bf726e8d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/usb/google,gs-dwc3.yaml
-> @@ -0,0 +1,145 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +# Copyright (c) 2025, Google LLC
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/usb/google,gs-dwc3.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 85d2f2481acf..a17d0070d11f 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -778,6 +778,17 @@ struct clk *__clk_lookup(const char *name)
+>  	return !core ? NULL : core->hw->clk;
+>  }
+>  
+> +#if IS_ENABLED(CONFIG_CLK_KUNIT_TEST)
+> +/* This is only provided for kunit tests to test the core lookup functions. */
+> +struct clk_hw *clk_hw_lookup(const char *name)
+> +{
+> +	struct clk_core *core = clk_core_lookup(name);
 > +
-> +title: Google Tensor Series (G5+) DWC3 USB SoC Controller
-> +
-> +maintainers:
-> +  - Roy Luo <royluo@google.com>
-> +
-> +description: |
+> +	return !core ? NULL : core->hw;
+> +}
+> +EXPORT_SYMBOL_GPL(clk_hw_lookup);
+> +#endif
 
+Use EXPORT_SYMBOL_IF_KUNIT instead for consistency with the rest of the
+kernel. In clk_test.c, you'll also need to add:
 
-Do not need '|' unless you need to preserve formatting.
+MODULE_IMPORT_NS("EXPORTED_FOR_KUNIT_TESTING");
 
-> +  Describes the DWC3 USB controller block implemented on Google Tensor SoCs,
-> +  starting with the G5 generation. Based on Synopsys DWC3 IP, the controller
-> +  features Dual-Role Device single port with hibernation add-on.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - google,gs5-dwc3
-> +
-> +  reg:
-> +    minItems: 3
+Since clk_hw_lookup() is only used by kunit, why not just put this new
+function in clk-test.c, and use EXPORT_SYMBOL_IF_KUNIT on
+clk_core_lookup?
 
-Drop
+Brian
 
-> +    maxItems: 3
-> +
-> +  reg-names:
-> +    description: |
-> +      The following memory regions must present:
-> +        - dwc3_core: Core DWC3 IP registers.
-> +        - host_cfg_csr: Hibernation control registers.
-> +        - usbint_csr: Hibernation interrupt registers.
-
-Drop description or move it to items in reg. See other bindings.
-
-> +    items:
-> +      - const: dwc3_core
-> +      - const: host_cfg_csr
-> +      - const: usbint_csr
-> +
-> +  interrupts:
-> +    minItems: 3
-
-Drop
-
-> +    maxItems: 3
-> +
-> +  interrupt-names:
-> +    description: |
-> +      The following interrupts must present:
-> +        - dwc_usb3: Core DWC3 interrupt.
-> +        - hs_pme_irq: High speed remote wakeup interrupt for hibernation.
-> +        - ss_pme_irq: Super speed remote wakeup interrupt for hibernation.
-
-From where did you get this style? Don't write bindings with chat gpt or
-whatever other tool. it is a waste of our time.
-
-> +    items:
-> +      - const: dwc_usb3
-> +      - const: hs_pme_irq
-> +      - const: ss_pme_irq
-> +
-> +  clocks:
-> +    minItems: 3
-> +    maxItems: 3
-> +
-> +  clock-names:
-> +    minItems: 3
-> +    maxItems: 3
-
-From where did you get such syntax?
-
-> +
-> +  resets:
-> +    minItems: 5
-> +    maxItems: 5
-> +
-> +  reset-names:
-> +    items:
-> +      - const: usbc_non_sticky
-> +      - const: usbc_sticky
-> +      - const: usb_drd_bus
-> +      - const: u2phy_apb
-> +      - const: usb_top_csr
-> +
-> +  power-domains:
-> +    minItems: 2
-> +    maxItems: 2
-> +
-> +  power-domain-names:
-> +    description: |
-> +      The following power domain must present:
-> +          - usb_psw_pd: The child power domain of usb_top_pd. Turning it on puts the controller
-> +                         into full power state, turning it off puts the controller into power
-> +                         gated state.
-> +          - usb_top_pd: The parent power domain of usb_psw_pd. Turning it on puts the controller
-> +                         into power gated state, turning it off completely shuts off the
-> +                         controller.
-
-Same comments.
-
-
-> +    items:
-> +      - const: usb_psw_pd
-> +      - const: usb_top_pd
-> +
-> +  iommus:
-> +    maxItems: 1
-> +
-Best regards,
-Krzysztof
 
