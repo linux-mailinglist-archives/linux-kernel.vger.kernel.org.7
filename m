@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-846063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7629BC6F06
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 01:47:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E128BC6F0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 01:48:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF89F189842D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 23:47:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 136E91897E2E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 23:48:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360142C3244;
-	Wed,  8 Oct 2025 23:46:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85EA52C3260;
+	Wed,  8 Oct 2025 23:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oIZVnmxG"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rgxDYrO2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E59221FAE;
-	Wed,  8 Oct 2025 23:46:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBBA429A9FA;
+	Wed,  8 Oct 2025 23:48:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759967213; cv=none; b=hPiqRoeafampj2hqPsSgFmtFdT8OfGEvOEzWHJiUKbfzz8XcpJw0vRxm4hazXaMXqMGmaWHhbai9khulXzaIx76jBVgPMcOO1BBAb8UUozV1HOqZLGU2uNcVP0UzZFTygJR+A5DygUCnxhyw/YQmGoTHWqWQJkiSlCFtmQpoVZk=
+	t=1759967287; cv=none; b=CxuM15oUlw4PNpS0rLHuAxcAhmimXrQWyHPb89sEKzFvXHIGhiqxXsOKa1EOvAPNMjMQHUgLsx3usMITnbgubouO40TJbGWE3k62a9h8a0yy1J9OguVOfu4R0WkrQkEPSrOhBEAQswn4f6zynjOFhCrotzofZ2qgnMw3yJvGo1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759967213; c=relaxed/simple;
-	bh=60o+HfuSsJMQwDdG60nj/x9q59RFDBqDo31TGDgXga8=;
+	s=arc-20240116; t=1759967287; c=relaxed/simple;
+	bh=ei5fTrRQetlx4PbWi0e374AeatGfy5m9T4ayTj3Ayow=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sbkyWhSh/RUZpXKpEmSI+G2bLUavFh/gkJH2/tdGkmX5BVJnhtqsZIv3lzELgajBtD1Fk+cUL8ZaT1U8qwrV9hgHfJUXf5Lk6l4wRZ9GT91aSYSyz/RMusRlmYEsRdrKMFI/QgPBpahY0sUoVobGjfdsb6kT0uI0fhZ/ST4+VcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oIZVnmxG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FD6AC4CEE7;
-	Wed,  8 Oct 2025 23:46:47 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=FQW8UiL10/KozP4wWu5X5+EswbzuzZaLt4nq6UvPoqGdqKh5w10glo05Sda5SEttRkxn4tFYI3YWCvKhbmWjFlFqwrxVL4x0BtNKEXoaI7LNQD1k12fKrdw4Y69d/1oF0qJyCg5H2TZmktpFInvg7z/IldqTwvD7ZhE90AOMbxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rgxDYrO2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15E0EC4CEE7;
+	Wed,  8 Oct 2025 23:48:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759967212;
-	bh=60o+HfuSsJMQwDdG60nj/x9q59RFDBqDo31TGDgXga8=;
+	s=k20201202; t=1759967287;
+	bh=ei5fTrRQetlx4PbWi0e374AeatGfy5m9T4ayTj3Ayow=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oIZVnmxGpSoFvsC+TnJRZAtjpGqeN+rr4+jnzKdoOKug59vua14+1oRplacwJ4tat
-	 H/JWj8NurWy3A4dD47gfEdfl6zDAH9m1/KGi5r/HWtCS2ucjo3S0Xy6ccUwxjy78VG
-	 WmpBdi40hI4VuJHpt9PT5ZVvS3ErU7Axg7LxLbFkXr86tcrB17EtIGOVls4oY1Kw37
-	 3lTtT88eQ9tI8s70NNsJSSwdrsDvPsio+PymPd8GNf6bdAH2XVjZIE0obRaWpHcPiZ
-	 pD3BtWfNh2dfCk3J3mg0k8k5hx1p1Mkc1ZZ1zgvi6c9s0SdMquVEo+NiPEdEfAuW/C
-	 MncftIOOwNpxw==
-Message-ID: <1b5f080f-2c18-43e7-9c47-b5b09847c51d@kernel.org>
-Date: Thu, 9 Oct 2025 08:46:44 +0900
+	b=rgxDYrO2wLreOOHgYrcqXhg4Mqr7P6Vym3ESKSpTzNFDEn/jxjdlVJP4K2nAE8inH
+	 YR8sJTMzhA9TnoxWaJmS5y8YR2v+yC4ESCrmP6lmV50CAtRNaxK1MyYNfBWsyMCuB3
+	 Dnac9OqFvoT876mjR/yD+YgIvWP6dPFc2LowJadWH9ykCiJw5zeC1v+IBJomKRnlMu
+	 N42lPJppGfrfO1zP4ZCe99SFN21qirASB9+jLfybzpxi3uuxeXwXACADlZ3/JKjZqQ
+	 +eGu1jq4HUl7RdKpJQHK3SnCIad0v8ty80DDzEQpzg355RxnEQgDkxIkiwbif7KsS1
+	 32cMHH/ow0pCg==
+Message-ID: <aabf395a-eef2-49b2-9938-b7bb8aa838c8@kernel.org>
+Date: Thu, 9 Oct 2025 08:48:00 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,14 +49,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/2] dt-bindings: Pinefeat cef168 lens control board
-To: Aliaksandr Smirnou <asmirnou@pinefeat.co.uk>,
- jacopo.mondi@ideasonboard.com, hverkuil@xs4all.nl, mchehab@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: devicetree@vger.kernel.org, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251007195732.16436-1-asmirnou@pinefeat.co.uk>
- <20251007195732.16436-2-asmirnou@pinefeat.co.uk>
+Subject: Re: [PATCH V1 1/2] dt-bindings: dmaengine: Add support for ATCDMAC300
+ DMA engine
+To: CL Wang <cl634@andestech.com>,
+	gg@swlinux02.smtp.subspace.kernel.org
+Cc: Conor Dooley <conor@kernel.org>, vkoul@kernel.org,
+ dmaengine@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tim609@andestech.com
+References: <20251002131659.973955-1-cl634@andestech.com>
+ <20251002131659.973955-2-cl634@andestech.com>
+ <20251002-absolute-spinning-f899e75b2c4a@spud> <aOUIfaZY7-eUYoOS@swlinux02>
+ <734de17e-a712-4eb5-96fa-b7e75f86d880@kernel.org>
+ <aOXW7HUMeOyABuUG@swlinux02>
+ <dcd14886-f2cc-41ec-8bb5-9cb5ed50c452@kernel.org>
+ <aOZokztqpHHX0JPq@swlinux02>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -102,44 +109,40 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251007195732.16436-2-asmirnou@pinefeat.co.uk>
+In-Reply-To: <aOZokztqpHHX0JPq@swlinux02>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 08/10/2025 04:57, Aliaksandr Smirnou wrote:
-> Add the Device Tree schema and examples for the Pinefeat cef168 lens
-> control board. This board interfaces Canon EF & EF-S lenses with
-> non-Canon camera bodies, enabling electronic control of focus and
-> aperture via V4L2.
+On 08/10/2025 22:35, CL Wang wrote:
+> Hi Krzysztof,
 > 
-> Power supply is derived from fixed supplies via connector or GPIO
-> header. Therefore, the driver does not manage any regulator, so
-> representing any supply in the binding is redundant.
+> Thanks for the clarification, and sorry for the earlier confusion.
 > 
-> Signed-off-by: Aliaksandr Smirnou <asmirnou@pinefeat.co.uk>
+> To elaborate on the rationale:
+> "andestech,atcdmac300" is the IP core name of the DMA controller, which serves
+> as a generic fallback compatible shared across multiple Andes SoCs.
+> 
+> Primary compatible (SoC-specific):
+> andestech,qilai-dma refers to the DMA controller instance implemented on the
+> Qilai SoC, following the SoC-specific recommendation.
+> 
+> Fallback compatible (IP-core specific):
+> andestech,atcdmac300 represents the reusable IP block used across different
+> Andes SoCs that share the same register map and programming model.
+> 
+> Keeping andestech,atcdmac300 as a fallback helps avoid code duplication and
+> allows a single driver to support future SoCs using the same hardware IP.
 
-You already got review at v4! Why are you forcing us to do the job
-multiple times?
+No, it helps in nothing.
 
-<form letter>
-This is a friendly reminder during the review process.
 
-It looks like you received a tag and forgot to add it.
+> 
+> This approach follows the DeviceTree binding guideline:
+> 
+> “DO use a SoC-specific compatible for all SoC devices, followed by a fallback
+> if appropriate. SoC-specific compatibles are also preferred for the fallbacks.”
 
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
-of patchset, under or above your Signed-off-by tag, unless patch changed
-significantly (e.g. new properties added to the DT bindings). Tag is
-"received", when provided in a message replied to you on the mailing
-list. Tools like b4 can help here. However, there's no need to repost
-patches *only* to add the tags. The upstream maintainer will do that for
-tags received on the version they apply.
-
-Please read:
-https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
-
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
+No, it does not. You just ignored completely last sentence.
 
 
 Best regards,
