@@ -1,101 +1,193 @@
-Return-Path: <linux-kernel+bounces-845057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 538E6BC3628
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 07:34:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 972F9BC3619
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 07:28:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 107274E42A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 05:34:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62B9F189D16D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 05:28:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DDDF2E9EAC;
-	Wed,  8 Oct 2025 05:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E39422D8390;
+	Wed,  8 Oct 2025 05:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="Oi7k3OwQ"
-Received: from forward500a.mail.yandex.net (forward500a.mail.yandex.net [178.154.239.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bmGEIvPF"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F831FECAB;
-	Wed,  8 Oct 2025 05:34:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B86C228C871
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 05:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759901645; cv=none; b=K/DlouPWmFD91pedVCIfVxns5HyNAsrlJDVb1cNGsJhl7X0XBtLL7OwqK1Ne8GLrDHpaEqNkP+ttcLINRb5RUtMTX5jeADDuwJSMO5VWcS9+nsjd2TRgX3MR9Uko7oBhD9odUuA8I/3ELoiFyXskXZU6FSe5HupP+QC9P8wPYsk=
+	t=1759901290; cv=none; b=JHN2JpYINhLvMcW2oDCfSJWTmG+dszMPX8yKoboxG9z+GQLN3+3hSbnjeeNfWL6WxOQquOTlFQU7KGlyqfA9trW7hx9eZQWDP/pVE4xv7bmmq2vCXvmZWBpreq1jIrvGXVfgQhlUzFHfcTKY4eToOUxSEQQIlzotq8lvkGD2xfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759901645; c=relaxed/simple;
-	bh=HTVYCQyDMrBag0JqlevpI1fMUY4FDOO8k6AmG5PTpJQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z7Kkg22n5UPY2PpDkzE7KxzN1f+6oFqS0jZBAgBDUMhA0HMU+F7escv22Rv6SSe24usKMCrG5mJj2LzzrAfa0pgPZRng7gH2+DZRlXARBHPejsa44mKivAxIKp5yNGKxXNNVNNv4d+JtT2Jhpm6x0g064xmppqCDy9kbmpR0f+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=Oi7k3OwQ; arc=none smtp.client-ip=178.154.239.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
-Received: from mail-nwsmtp-smtp-production-main-54.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-54.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1d:63d4:0:640:7fb:0])
-	by forward500a.mail.yandex.net (Yandex) with ESMTPS id 9658A81DEE;
-	Wed, 08 Oct 2025 08:26:58 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-54.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id pQeM59JLtKo0-ggYUaLP8;
-	Wed, 08 Oct 2025 08:26:57 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1759901217;
-	bh=GRs7GB4aRJ8yeDgtBXvZS/vdrRPxkhyCtpTVwFyur+0=;
-	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
-	b=Oi7k3OwQcSYkDUFtwNNKIHVWUixUGHLsehdVlt0Sv+AguDGOBwjWONqv9GTFs3cey
-	 jcc6ecoRlyyfj91BU5FwZ6SXNH//RFKI3RFkTbR2tUrnsjkNp5qcEzrtQLfsozagOL
-	 sXsudjNPnJWhcz6IEAiacq+wuGPV1VIMO0TV4Xus=
-Authentication-Results: mail-nwsmtp-smtp-production-main-54.vla.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
-Date: Wed, 8 Oct 2025 08:26:49 +0300
-From: Onur =?UTF-8?B?w5Z6a2Fu?= <work@onurozkan.dev>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
- ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
- gary@garyguo.net, bjorn3_gh@protonmail.com, lossin@kernel.org,
- tmgross@umich.edu, dakr@kernel.org, linux-kernel@vger.kernel.org,
- acourbot@nvidia.com, airlied@gmail.com, simona@ffwll.ch,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- corbet@lwn.net, lyude@redhat.com, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 2/3] rust: xarray: abstract `xa_alloc_cyclic`
-Message-ID: <20251008082649.1f9cacd0@nimda.home>
-In-Reply-To: <CANiq72m8t2j3+XoELfYFG9ivymueOGdwpZnFhRVZ8f3Xw9ygiA@mail.gmail.com>
-References: <20251006163024.18473-1-work@onurozkan.dev>
-	<20251006163024.18473-3-work@onurozkan.dev>
-	<aOTx-Oj_VN6fVV_s@google.com>
-	<20251007152724.2b33a899@nimda.home>
-	<CANiq72m8t2j3+XoELfYFG9ivymueOGdwpZnFhRVZ8f3Xw9ygiA@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-unknown-linux-gnu)
+	s=arc-20240116; t=1759901290; c=relaxed/simple;
+	bh=AC95x54JN1lRJt8eqwpof77duFRSx5Dj0tjKcKFDpSM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qcbingbZqDW9kBn2kUByqSFVFQhX1LCipW/mTDmzI6rQPYlXQ0+NhcsEvNP+tI8YPiTHJ3P4R/tOgDsSWZ7o/8/rgJMCqVSVq5bEPgfmhdkxCwtMelK3Cxcl8BZca/onLQmVaxqaH33PKBB5EbYTTsn7RjKyiFHsdqWAmwLOm9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bmGEIvPF; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b551350adfaso6257277a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 22:28:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759901288; x=1760506088; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BMqvRrCCbf00Rf1hkLneqb6IWYGGdZT3hFbhVoMk1mQ=;
+        b=bmGEIvPFRttG1TKlyDQhafPE4RZiPgGaQR8yjVBWPsrcWqCFzIPlFRG5c+FliHKsUS
+         QujdgvaRVHxnJ0goWQKAX0AHa1n8hg24D8Fg1sAN4AItLD/8frX96hVh2Oe4UAIr2qYh
+         6nLBfYO5lEQB7rNmdnsLMXDXvzeKIlahtcUzEE/2djvZUImBtSCeXAPr6soLyzUYBs7J
+         QSjun2gtFN4rZL0JlQUkQhsYkdJbBUsuSrLWKHPVvsDKYVdvilrc0hV/BF5rC0O/khqU
+         WYV+fVFq0KLTbKDlqHbk3gLGzcy5CTJBJeUdqSKjk2AaWT2u2WJyeMqSvp6xMjmqr14N
+         7Y9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759901288; x=1760506088;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BMqvRrCCbf00Rf1hkLneqb6IWYGGdZT3hFbhVoMk1mQ=;
+        b=JcJSwqQ0ZFH6dcRVgOfadYQ2YtDseVC6RzcZY2GOJPdeyMVjHjeueudasXiXD89JDC
+         WF41AwBuPMtvYlDlYDLi4b0DZY8o5t5KrQRVACHedrXAfKLazoJmlCtPQ/VFnf26mLwc
+         MUdshYj8Kkh6npme7rUJkVjkwh/g53vNkQbJVVT66LUvHTuTRASaF5lKWU7cMqnE0ZWC
+         L5ijPu5u7HxKINGIQefSfrInfhvQ4p1axButUS2fqg+OAVPAM3Q7KCtCudGzLVstE9K0
+         pj8nFFyH4bFfigY7ilfbGSFm7cSTFx1iWQS/qHa0uttS8980scFk7trfwLA3ikmdT6Cw
+         Lf2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWIW2ANU+buu+jTW8ajDtGqokBFW9eatKUUOw8o+4MdoagQxPI5KIAT+ee+5FWSpu5VQdyerIUYYSbbbOo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzW3yyufUjnAjRNsAuTNKdCb1AgzMratAT5AdQjFjl5RyK/JAa0
+	w5a2RziFbLbcHde5ykzOEpI38RjUr17SIXxRN51XxzaluoKQA7h3oK9g
+X-Gm-Gg: ASbGncsjxPfxIyIKi9bsOvraNmO/2PCLaWeStZeZxmdfuDLq8kWXM9JsCqpWlRDD6fs
+	bUHEO24uLFRCTubt6NU/IXMBLVcq8uI0tBoqTpjPduOL+MXqkkOlH9d82e6YH4sR6FXWvmc3MQs
+	1SLUqYMqxPeOW5YrBmtVpGBnSr0anyzWg4a+ft1uq57MMCVIaMUUvcvIpfP0CIARcFTAYHEoCKv
+	+gmXyi3362rv6d02poNV5nPDSca2fw6Vv2D0IRP4js+kzXVbuEi7DTRRdE8Dc1vNTNJCH3RlwUb
+	+EEZa3t3D4AxPvf3hBq/+j4xjpsgzAcAYyj29AJp8WzvtkJINtyDNRyUz5ZzQ1p4zboRsJmeD1y
+	WM1s9FNlO6ECig6jWHx9tHzj0wZdrgAurnLYLRc3O8M1pBeSFnz1vL12xNDW/drItfO4a57Izyu
+	1juz/5Tqxk8fSYvGlTGGPhrEI=
+X-Google-Smtp-Source: AGHT+IFbymgP7acspeJIYGYr+yCoZt35ZnCOv65FC9GFvmEZGXKh8iwKgmM+q7JvQSYy5hZmRSAA/Q==
+X-Received: by 2002:a17:903:3c4d:b0:267:44e6:11d3 with SMTP id d9443c01a7336-29027379986mr28771885ad.21.1759901287971;
+        Tue, 07 Oct 2025 22:28:07 -0700 (PDT)
+Received: from deepanshu-kernel-hacker.. ([2405:201:682f:389d:4c4:4e8:dff0:bf0])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1f1a75sm184147135ad.125.2025.10.07.22.28.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Oct 2025 22:28:07 -0700 (PDT)
+From: Deepanshu Kartikey <kartikey406@gmail.com>
+To: muchun.song@linux.dev,
+	osalvador@suse.de,
+	david@redhat.com,
+	akpm@linux-foundation.org,
+	broonie@kernel.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Deepanshu Kartikey <kartikey406@gmail.com>,
+	syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com
+Subject: [PATCH v4] hugetlbfs: check for shareable lock before calling  huge_pmd_unshare()
+Date: Wed,  8 Oct 2025 10:57:59 +0530
+Message-ID: <20251008052759.469714-1-kartikey406@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251003174553.3078839-1-kartikey406@gmail.com>
+References: <20251003174553.3078839-1-kartikey406@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, 7 Oct 2025 19:28:31 +0200
-Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> wrote:
+When hugetlb_vmdelete_list() processes VMAs during truncate operations,
+it may encounter VMAs where huge_pmd_unshare() is called without the
+required shareable lock. This triggers an assertion failure in
+hugetlb_vma_assert_locked().
 
-> On Tue, Oct 7, 2025 at 7:19=E2=80=AFPM Onur =C3=96zkan <work@onurozkan.de=
-v> wrote:
-> >
-> > Why do we not like to use the bindings type directly?
->=20
-> For public APIs, we generally try to avoid exposing C types:
->=20
->     https://docs.kernel.org/rust/general-information.html#abstractions-vs=
--bindings
->=20
-> Sometimes it still makes sense, of course, e.g. a method may return
-> an inner type so that it gets used by other abstractions to call into
-> C. But generally we want to avoid exposing those for drivers and other
-> abstractions wherever possible.
->=20
-> Cheers,
-> Miguel
+The previous fix in commit dd83609b8898 ("hugetlbfs: skip VMAs without
+shareable locks in hugetlb_vmdelete_list") skipped entire VMAs without
+shareable locks to avoid the assertion. However, this prevented pages
+from being unmapped and freed, causing a regression in fallocate(PUNCH_HOLE)
+operations where pages were not freed immediately, as reported by Mark Brown.
 
-Thank you for explaining it, I will drop the bindings type in the next
-version.
+Instead of skipping VMAs or adding new flags, check __vma_shareable_lock()
+directly in __unmap_hugepage_range() right before calling huge_pmd_unshare().
+This ensures PMD unsharing only happens when the VMA has a shareable lock
+structure, while still allowing page unmapping and freeing to proceed for
+all VMAs.
 
-Regards,
-Onur
+Reported-by: syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com
+Tested-by: syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com
+Reported-by: Mark Brown <broonie@kernel.org>
+Fixes: dd83609b8898 ("hugetlbfs: skip VMAs without shareable locks in hugetlb_vmdelete_list")
+Suggested-by: Oscar Salvador <osalvador@suse.de>
+Suggested-by: David Hildenbrand <david@redhat.com>
+Link: https://lore.kernel.org/mm-commits/20250925203504.7BE02C4CEF7@smtp.kernel.org/ [v1]
+Link: https://lore.kernel.org/mm-commits/20250928185232.BEDB6C4CEF0@smtp.kernel.org/ [v2]
+Link: https://lore.kernel.org/linux-mm/20251003174553.3078839-1-kartikey406@gmail.com/ [v3]
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+---
+Changes in v4:
+- Simplified approach per Oscar's suggestion: check __vma_shareable_lock()
+  directly in __unmap_hugepage_range() before calling huge_pmd_unshare()
+- Removed ZAP_FLAG_NO_UNSHARE flag per David's feedback to avoid polluting
+  generic mm.h header
+- Reverted hugetlb_vmdelete_list() to not skip VMAs
+
+Changes in v3:
+- Added ZAP_FLAG_NO_UNSHARE to skip only PMD unsharing, not entire VMA
+
+Changes in v2:
+- Skip entire VMAs without shareable locks in hugetlb_vmdelete_list()
+  (caused PUNCH_HOLE regression)
+
+Changes in v1:
+- Initial fix attempt
+---
+ fs/hugetlbfs/inode.c | 10 +---------
+ mm/hugetlb.c         |  2 +-
+ 2 files changed, 2 insertions(+), 10 deletions(-)
+
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index 9c94ed8c3ab0..1e040db18b20 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -478,14 +478,6 @@ hugetlb_vmdelete_list(struct rb_root_cached *root, pgoff_t start, pgoff_t end,
+ 		if (!hugetlb_vma_trylock_write(vma))
+ 			continue;
+ 
+-		/*
+-		 * Skip VMAs without shareable locks. Per the design in commit
+-		 * 40549ba8f8e0, these will be handled by remove_inode_hugepages()
+-		 * called after this function with proper locking.
+-		 */
+-		if (!__vma_shareable_lock(vma))
+-			goto skip;
+-
+ 		v_start = vma_offset_start(vma, start);
+ 		v_end = vma_offset_end(vma, end);
+ 
+@@ -496,7 +488,7 @@ hugetlb_vmdelete_list(struct rb_root_cached *root, pgoff_t start, pgoff_t end,
+ 		 * vmas.  Therefore, lock is not held when calling
+ 		 * unmap_hugepage_range for private vmas.
+ 		 */
+-skip:
++
+ 		hugetlb_vma_unlock_write(vma);
+ 	}
+ }
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 6cac826cb61f..9ed85ab8420e 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -5885,7 +5885,7 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
+ 		}
+ 
+ 		ptl = huge_pte_lock(h, mm, ptep);
+-		if (huge_pmd_unshare(mm, vma, address, ptep)) {
++		if (__vma_shareable_lock(vma) && huge_pmd_unshare(mm, vma, address, ptep)) {
+ 			spin_unlock(ptl);
+ 			tlb_flush_pmd_range(tlb, address & PUD_MASK, PUD_SIZE);
+ 			force_flush = true;
+-- 
+2.43.0
+
 
