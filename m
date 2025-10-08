@@ -1,330 +1,254 @@
-Return-Path: <linux-kernel+bounces-845355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB028BC48F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:28:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDDB8BC490E
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:29:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 75BDC4EF975
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:27:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 770683B3FE6
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:29:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2562F6593;
-	Wed,  8 Oct 2025 11:27:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 327F12F744C;
+	Wed,  8 Oct 2025 11:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Pm5cvewp"
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012066.outbound.protection.outlook.com [52.101.43.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="paMqCL3f";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="STRGpFEd";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="paMqCL3f";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="STRGpFEd"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3384E2EB878;
-	Wed,  8 Oct 2025 11:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759922871; cv=fail; b=C6xppgcWmsmlbCqbzwVEXDkjK8rEBVa0vehX2ICLz+0k6qsGmr1ReRpk8+gSZiX/1w0cTiOXp/pAycMG+gUZVq2Mo9yPv0PQ/QpfMyxscHtGUvvmeh13WA3sF2wzaXFI/bQiIn12AS/h4LQbB2K3+33FxKR+rNToBDdfVWL6KdA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759922871; c=relaxed/simple;
-	bh=KmYlJCGOwJeQt6J7GQE9BtURqSl5wKDjgmEw8fNVQS8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=e/Ao2PFi1i/QDHk+Q5hGVAugS36dDSmQk6G33CNB/y1825U54ZSX3z1v9dD2imty2XUajCkzfC+W9qag+ifgVrh1rCJ4eSN7QkPFqOeEtbp2YM5WaKgdlBK8lVzAJ7QqznOmUiZBKjp+Mn0v1Z4hkhvSa6Zc6MfLCbazt58LY/I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Pm5cvewp; arc=fail smtp.client-ip=52.101.43.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ewl3SnoYDozBPS+ONYGZQ30ONDO2AYAT5lt6L3buUZd4aFNtC+N1oKANmtFnSLAQPGjTxR6SMg6guOjVF0sOf9JfPVtSlMJ5KutGtgNH4KPyqvAP9fYb+cctC0+4WMcRvTBBP8p7eSYSy3vJ8+aLqwYI0H7iKUqABAG9ZJsnLaM+9j2RYVwDKmwu7oO0VDnpEfpNovlTR27slpFbOSCu2C4iEmmV8zUxHpUlaWUzDZI5m+mT/5FutR6KGKvqug0Pj3MX7g++t/jlNtB9jr1A17UdCmBLhRsMhsExmrCy0Whsw4Z5NU1IPkZhSfSuc7pfyDQo2waX9OP0XuRu8t87mw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lPLnRIzC4mUHjAUjB+XkOMyVPoZJL9+xGl5TZh9XDw8=;
- b=WhPp2WEw+uVLfugZyVWuK4BmH2e1ZKh3jYsXk1L7g12/oSvTd0zjLPOB1qqtA9GVmL5Pt2GEvpQTn4otfVmawgxxu/Fb5SwBt4SZEP5pB2AJrajWuaaJJDNySGKko2cALFi/+d4TmbUGyrqefiqwGUp76p9GLTALKXB9oNUrINKIYbtYj8fARvQDw4Ruthd0grK/K88p7CDJgVZruFa95MiagnZCPzMyG5kdCwgl+iUX1vq0SpWWSdHLSRot2UOaj+o+nX/Ak9OnOsJy+nAwq6kcxSom78mxrFVzzVGA5Dq0dqBv01eRuCpjb9rxX5LzMNJoQZyIAoCxMGkCdfTKrw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lPLnRIzC4mUHjAUjB+XkOMyVPoZJL9+xGl5TZh9XDw8=;
- b=Pm5cvewpJNNDb5C1HMZQThmqpXjkivViQp03NyBR+pR7QxdwcZOoVBRggqwQYqh5SFo3mc6JBgBUyE5OB1auaeDREyJuWTJi0PkDpetrMVkv+ZU5LjJDCqG8hlJj41UIx5Vd7eLPKE1Cv89kvmba0Q+XXr0FCU/EF3qtmG//nn0l77Qy8HVMva+5iM8elCDevFqbzSy/HEg8b+YcXvqZ3GbXPXZ+6OXSPdejm0Mbu3zMQtmhHBXVbFHM3mFbDZcil3/KMUXQyDKpBVzkGdZfImupaX+7gUkwSv2+bqYgs+2CgpIvdZeYkDO4QTmEgoA2RrEZwiUzdv6JJYggUR5dNQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- PH0PR12MB5605.namprd12.prod.outlook.com (2603:10b6:510:129::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Wed, 8 Oct
- 2025 11:27:41 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.9182.017; Wed, 8 Oct 2025
- 11:27:41 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: Yafang Shao <laoar.shao@gmail.com>, David Hildenbrand <david@redhat.com>,
- Alexei Starovoitov <alexei.starovoitov@gmail.com>,
- Johannes Weiner <hannes@cmpxchg.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, baolin.wang@linux.alibaba.com,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Liam Howlett <Liam.Howlett@oracle.com>, npache@redhat.com,
- ryan.roberts@arm.com, dev.jain@arm.com, usamaarif642@gmail.com,
- gutierrez.asier@huawei-partners.com, Matthew Wilcox <willy@infradead.org>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Amery Hung <ameryhung@gmail.com>,
- David Rientjes <rientjes@google.com>, Jonathan Corbet <corbet@lwn.net>,
- 21cnbao@gmail.com, Shakeel Butt <shakeel.butt@linux.dev>,
- Tejun Heo <tj@kernel.org>, lance.yang@linux.dev,
- Randy Dunlap <rdunlap@infradead.org>, bpf <bpf@vger.kernel.org>,
- linux-mm <linux-mm@kvack.org>,
- "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v9 mm-new 03/11] mm: thp: add support for BPF based THP
- order selection
-Date: Wed, 08 Oct 2025 07:27:38 -0400
-X-Mailer: MailMate (2.0r6272)
-Message-ID: <96AE1C18-3833-4EB8-9145-202517331DF5@nvidia.com>
-In-Reply-To: <CALOAHbD_tRSyx1LXKfFrUriH6BcRS6Hw9N1=KddCJpgXH8vZug@mail.gmail.com>
-References: <20250930055826.9810-1-laoar.shao@gmail.com>
- <20250930055826.9810-4-laoar.shao@gmail.com>
- <CAADnVQJtrJZOCWZKH498GBA8M0mYVztApk54mOEejs8Wr3nSiw@mail.gmail.com>
- <27e002e3-b39f-40f9-b095-52da0fbd0fc7@redhat.com>
- <CALOAHbBFNNXHdzp1zNuD530r9ZjpQF__wGWyAdR7oDLvemYSMw@mail.gmail.com>
- <7723a2c7-3750-44f7-9eb5-4ef64b64fbb8@redhat.com>
- <CALOAHbD_tRSyx1LXKfFrUriH6BcRS6Hw9N1=KddCJpgXH8vZug@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BN0PR03CA0007.namprd03.prod.outlook.com
- (2603:10b6:408:e6::12) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C3A52EBDF2
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 11:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759922941; cv=none; b=fjUU2PwoA3UZ2+X4cohiSp/gbIDU4ljGzA4kO9iZIBPkBCJPGHsTMZ5ilsG4O44Jwz8r4MzAQeHlGyZi5UPp2hhNsXydBn4RlWygbkwZkA1ABj3pZdQSEDBBAVxIkXI7Q+FeVCO4+sgg5lFF6PAUu5ga48L6YXYiwZ/eZlsPTjs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759922941; c=relaxed/simple;
+	bh=W6HYvSTQL+ketjlyhzJdSP6L024Oizxpa9h/796ZCMs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p5CbOqJiyao7dfe17ZmTHNVu8zW4meQRtii3IGUgFJ5HGqKoqIJgwvkUtrSQ88xiX2htaKjpbU9lo/a5TSqPUPRj1uAwjH2cW/6VBNClaYLk1htpRv574IoxPwTA+eGi6RkPjsCPdyOJcjPjteD0t42RDVPWK0/UUb/4cpiGbjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=paMqCL3f; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=STRGpFEd; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=paMqCL3f; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=STRGpFEd; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D21B71F395;
+	Wed,  8 Oct 2025 11:28:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759922937; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GyauT+WnInxx5CLov3DoOxTDXNUztAoU+zpFUnumpPA=;
+	b=paMqCL3fAwb0fTSPVxSQd8fseTsc4c3+0K+BEuXy1sG+jtqOZr5+bFkTA7kRqsezhJART9
+	XHAwCtiG4AODKd7GPbEvV5lxGeGb+fVK9NF2kdwCdKoS3NzWsuJbPEftXF14a6rVIxYzsj
+	VVhvdVq+UBr59Fv6yNYWPD+YpMcq+Vc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759922937;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GyauT+WnInxx5CLov3DoOxTDXNUztAoU+zpFUnumpPA=;
+	b=STRGpFEdm7btKUZ7Z/tCotIjuRk8ga3uVRciOm9op8ByhePT69VbsRfxrh53w9nzigwhpA
+	hXQHQ3peBHdpBBAw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759922937; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GyauT+WnInxx5CLov3DoOxTDXNUztAoU+zpFUnumpPA=;
+	b=paMqCL3fAwb0fTSPVxSQd8fseTsc4c3+0K+BEuXy1sG+jtqOZr5+bFkTA7kRqsezhJART9
+	XHAwCtiG4AODKd7GPbEvV5lxGeGb+fVK9NF2kdwCdKoS3NzWsuJbPEftXF14a6rVIxYzsj
+	VVhvdVq+UBr59Fv6yNYWPD+YpMcq+Vc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759922937;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GyauT+WnInxx5CLov3DoOxTDXNUztAoU+zpFUnumpPA=;
+	b=STRGpFEdm7btKUZ7Z/tCotIjuRk8ga3uVRciOm9op8ByhePT69VbsRfxrh53w9nzigwhpA
+	hXQHQ3peBHdpBBAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B97A713693;
+	Wed,  8 Oct 2025 11:28:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id +HpFLflK5mjlKAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 08 Oct 2025 11:28:57 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 3B9DBA0ACD; Wed,  8 Oct 2025 13:28:57 +0200 (CEST)
+Date: Wed, 8 Oct 2025 13:28:57 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
+	yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH v2 04/13] ext4: make ext4_es_lookup_extent() pass out the
+ extent seq counter
+Message-ID: <5qdt2outacmgyrz4w5lqokwhp3haifs5z22hrgg22fd4kgbyzt@2y54npfzwwzv>
+References: <20250925092610.1936929-1-yi.zhang@huaweicloud.com>
+ <20250925092610.1936929-5-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|PH0PR12MB5605:EE_
-X-MS-Office365-Filtering-Correlation-Id: 37d3d5b8-8b94-4cec-a1e0-08de065db160
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aDJ4UFNSd256ZzQ0SEZzUXRIRmlKMEhzd2gyUGg4cFVIcFR5VzV6eWtuLzlW?=
- =?utf-8?B?TWh2WHpTV0JCOGs4OFpYN1Z2OUFlMjZOQ3ZyWGlXMWZ6WVlWRzJRM2RlSVNP?=
- =?utf-8?B?c3pYUVUyNklSMnZFbk5FYlQzams0UXcrL3dmZEI1REZDbmhQZThzSzRNVXl0?=
- =?utf-8?B?L2RNRWZOOTJRMi9xNE1STWh1N2JZZmZaT09NRzM5bFpsWDlzV2tTa0xJeWVS?=
- =?utf-8?B?NW9haXpYREdXbUkxa3VvbjhWWVZtamlSSE9vbElpNzdUWkxLb09OMjdPSk5o?=
- =?utf-8?B?Y2JONkM4WkdMNFpkWGMzUzkydVBwalVmeS9BYW9uSDJFUFVhSzlYSGU4STQ2?=
- =?utf-8?B?d2tLWEQ4YTJwbUFFeEpxakJOb09nRExWb2xLaWdsUGg5N0twMTEyd2hkTlg5?=
- =?utf-8?B?SjNyTEdiaTBITEFZaUJlZ2dZaXRiNzgrM3FZWmdmSzl1VzRyT3VZTHI5cXJ5?=
- =?utf-8?B?UmxMajJDVjJMaC9UNzJLWU9rcFNLdSt6SUp0cHFoVkg3L2JWSVhCV2UwRWht?=
- =?utf-8?B?TUNhbWFuNEFaV3ByUTFGN3ZtZVBxTjVNbDF3T3YwQUw4YTNzR0k3NFZjZmtM?=
- =?utf-8?B?YjM0QXFlTjNLVHpKTGZhZ01HQUtrcHBvV0ZuWkQzVmpHTmU2cWxlR0U2ZW5K?=
- =?utf-8?B?WEdZOEtkSlppRjlTZ0NpK2ZNTGZGV01ZQWcvd2V6RmV6SXpxRGdoM0VxQzVn?=
- =?utf-8?B?djluRzljQlYyS0RqWmdsdEVRWEJGT1g3cUhJNEhmZ21ibnowTkJDS3IxVU44?=
- =?utf-8?B?Y0szSkZrb3pSRnJNOWo4RmlvWVU5eXpWSmZ6SlcwUDE2dXhUNHBlNExWbU1r?=
- =?utf-8?B?c011Y0FsU3Bma21GS01pU1Q0YTNVM2dpRldLL0NZbWZhVUFxTmJkbzZWRnZX?=
- =?utf-8?B?ZnRhR3R1akFweTM1cml6ZmFvSFZPMmdET3V0Nm1pbktEL0gvWGpoWkYrVHBV?=
- =?utf-8?B?QkRYVUpVS2pOcm9kM0t0bGRCR1dNbmJZTzQxTmdKOFpnV3NubWxsOFEraVUv?=
- =?utf-8?B?a1ZXODdWNFg4YXgzc2EvdDBhd3ZwUExHY2YzUjRMaVpOTVhIeW1RaktTT0ZU?=
- =?utf-8?B?cCt6Z1hQdjFLQUdTRG5uV0lTYXp4MXNBc0NhUzAwbnJKcEhCeUFTSVg2U2Y0?=
- =?utf-8?B?UjB0Uk13K2gyMUhLTGdSYUFZZklRTjh2cmU2cjljU2FrVHVBYjhBOHkwSHdX?=
- =?utf-8?B?RkVNNEJXSlR3aXk0YmxmcUhLclVWTERva3NRY2xNS2NLb1Noa0JyRUxOSWpu?=
- =?utf-8?B?c2NFWG0wOTUvbi93Ni9xTUVkMVJ5NDBIUTlnNGF5cStSeU5hY2pQazQxWk96?=
- =?utf-8?B?cit3TFVkc0tKSDNuUWxQYXh2MlNYRUJLYmhEL29nQmZ3NjRlVjN4U0V0NkxN?=
- =?utf-8?B?clVQTytjQ2RDNktqc0dsaFFsWUY5Q3RWYWdibUVTQkpnNUJXaGQ5WHhFSlk3?=
- =?utf-8?B?eURlOGZ2eUpHSTVxdnU5UHVub2Zlb0hHMzdnWVVDVHlNbFBrbitMZlBZSTZs?=
- =?utf-8?B?MjN1SU9nVjBaWkt1bnhncmNSbU1RbVpkRENlZnJDMjVJU3lQL0hlbi9LRjlj?=
- =?utf-8?B?K2F6MnB4WjdOMnlVNXk0TEJ2dGJKdjlEMW9HUGpia2pKazlsM0tyM2h6bEpF?=
- =?utf-8?B?TzdrWUJlc1BuMGpCbmJLOGQycjJRVWpvcWFneUJBVm9rWjVaUXZsNWhHRUpW?=
- =?utf-8?B?dUtmdHcydWFWT21LbDRuQ0hyTEVnenJhTXhjUnpyeHN5T2o3WmdoNkRiZXlE?=
- =?utf-8?B?ZnNvMVdoL2U4OWtBcTNqUnFkSFl3L3lXSFA2WkJSVEg4NjdKVk9aNTZyVFly?=
- =?utf-8?B?RXI2ZWhsZndrRkZIeEJYMUNQZ1c4ODZUME1YTVJlcnhJcnpYaG9ucGRLaktF?=
- =?utf-8?B?VkpxRTlEN2tHUzlCRU1VUkJjT2NJeHBTajcvQ1hXMlBJTjBGUHRlNUZibkF0?=
- =?utf-8?Q?zyK10TvqkVE0f7+3A1M2oTW8rvLWSTKW?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TXBURUxjVmN1Rm1pczIrNEJtTVl6cjk4N2lLT29NYUJhVUk0enExNUJzT2lr?=
- =?utf-8?B?VS9RS0ZvVzdxTHVvOVFCc3c5dmpzV3V1b3V0byt0TnBCNnhBYk9CNTlDdDlU?=
- =?utf-8?B?V2JnbmQzSno1UFFtTTkweDZJR2xmN1U5ejN0RDFhb3ErbFdHRUx3MC8vZnJy?=
- =?utf-8?B?TVlGaTJUcmZ5bzVKOTVabUttMm03YnRlNUhiSHdCQlM0Mk1KSCtLM2F1VXhz?=
- =?utf-8?B?emtMKzdJTjJTVi9CS2ZxWWh1NGRwRlNxOXpvU2VseXR3MDNkUTAxa3dnczRm?=
- =?utf-8?B?S1pQNDJnMDV2bERZeXZQcU95ekxGZTF2RGJvNHk3dTlUa2FHZmtQbjg2aG9z?=
- =?utf-8?B?YndSVnpWWDdib0lyNUE0YWtuRnZOa0RyVW82cFdQZkhJKzRiTFpaZlYyRFRZ?=
- =?utf-8?B?Nm1uN1ViVlg4Zy9qWWpMYmxvVG5peFdud2VpV0IvYmZIbk4xbDhGckxwaGVV?=
- =?utf-8?B?M3pieTFRa00zdlpRZXJuczY4Nm1aOWtvdFN0a1QxZm5LK1hFeDNZdWlCVXZv?=
- =?utf-8?B?bENORUowUkJFWE9waEpJQWFkUkVWUCtYdkI5a04vSVArZzlQRmd2aGpmd2ZR?=
- =?utf-8?B?N1lYaCtveHE3c0s4MzBFNWlrMkZXOXdjaHk5aWd3ZGxKSFU5WnBVcCtXRzV6?=
- =?utf-8?B?eGhiRnJ5ZUlCQURRYldMWDd5VmREa3k5K1lKWnZMZHJvcXJvZTFJV3l2em5z?=
- =?utf-8?B?U25YRHVCbE5kYWxWSU9ad2NVdkZrZFUwdXJFVUg4VDh3VTdWQUF5cFhVNnJs?=
- =?utf-8?B?eUh1RDBjL1F1ckdCVEMrQVp5QjBrOCtUeDQ4WGpBelBDY0VDVkJLYkNYRkFG?=
- =?utf-8?B?ZFhqQlNWZ0h5a3ZyY1dXUURKVW9nczRrZXU5T1VHMzZFQldJbFVWU2h5bGlI?=
- =?utf-8?B?WFdSS0pnRHdOalpEc0RaU1YxbnpIVnFqR2l0VHRkQXhiZnVvN2pzK2RkczB6?=
- =?utf-8?B?cjBpWGwyZ0dhSDRQKzBJL2IyTTRRTGdaUGNmNDErR3M5cEQyNUFtNmpmNm5U?=
- =?utf-8?B?OHg1OVZUdm5jbTlBTFp0V3hlQUpNR1d0Nnhza1I2aE0wNGVRYnV0cG5BZVNL?=
- =?utf-8?B?THNvQXY3ZElDN2ZVa09CUSsvcTN4ajQ1Yzc3RTNUQnNIVHhmbUFLVnRKZGpy?=
- =?utf-8?B?RkxRZXp3M1Y1R2QwcmxGQmFVZmkzcG9oVUY2UXBqZ2l0RGU0QnhubEhnM1RB?=
- =?utf-8?B?R1MzbFlSTGhwSXdKcFZrTEdqYWpwMlBHa0xiRVRKTDBQL200Y3NTN2I5a3Nq?=
- =?utf-8?B?MldGRnM1bmNOTXo2Q1U0VlNJYmlVTGJmc1BhczlhM3A3QjY4dFA5TEwwOEI1?=
- =?utf-8?B?NVVFY0l1bEZZbmlPRk95TEZORUNyQ205UDc0Zm1IS1V3VXVJYS8rWitmYmVh?=
- =?utf-8?B?Q1A2Wk5BRDhQdzlnL0ZGYlcxQXpHV0JKUzJBTTQ5VVUwVTRvanJneElTWnBz?=
- =?utf-8?B?UGhPNUYxdDlhSWltRE02T2FSYjh2dzZNRzFkV1Q3TDE5Q2JNREVib1RSejFL?=
- =?utf-8?B?c3ZZVEhRZWpRM0VFQ0FsbWF2aGZRVnBwMWdLbE5pS2Q5M2dVdXN1WG8zVUZk?=
- =?utf-8?B?WnF3QW9VU3IwQ1ZsL3kyQmVsWVJERU1zSVplNmtkekxxckcxZVMzUEllZEM3?=
- =?utf-8?B?ZTVKWTBWQyt3MERteWNudDBNVmU1OXp2R1RUQmc2Vk1BVFJOMXlXVVdhT1dh?=
- =?utf-8?B?NE1lVVFXMEFUOFhnK2ZaMnRKMGVCT0E4UmwrK0lhMGpMZ092UXkzcWVwOVl3?=
- =?utf-8?B?Wk9aY3p5eVNFNE5RREZ4bGlFbzJ6OStKa0xEWCtHeWxaWDFXN3lNMEVJU2NE?=
- =?utf-8?B?WWY4YXFRMXNZNTU1VS9ieTA2OVFHM2crYkxldjIyQkhsLzcwdmg3STkwREtv?=
- =?utf-8?B?dk5vTmFQTVY0dEMvSVhtNlR2SjhGV3VoVTZyYWR3V0RxRU1TbkcrOExkOFNI?=
- =?utf-8?B?MUpzdm1UZ3k5ZTEvSTAyVU1FbVUwa3BXNklHL3ZHREY5TVJDSUd3YzhYZmtS?=
- =?utf-8?B?NlQzMVIrZG5xN2lMNXRkVGVyR1R5STFpaGVBcjZzS1lEYVlvRTFyWlpobUJG?=
- =?utf-8?B?RzRUWThwcTVQbmVpV21VbldJZWR3SHBleFhLYzIySkhJcjZrUnNaaXBxM1U5?=
- =?utf-8?Q?TLC4VM1uI83qdnsbdWaH9bnV4?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 37d3d5b8-8b94-4cec-a1e0-08de065db160
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2025 11:27:41.2383
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: V7nRJhPgfwBGFRwsbcywVBKBTdkInGv2Ana3xy30jPhZCKCYhuZi1i9P7ohT4LMH
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB5605
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250925092610.1936929-5-yi.zhang@huaweicloud.com>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo,huawei.com:email,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.80
 
-On 8 Oct 2025, at 5:04, Yafang Shao wrote:
+On Thu 25-09-25 17:26:00, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> When querying extents in the extent status tree, we should hold the
+> data_sem if we want to obtain the sequence number as a valid cookie
+> simultaneously. However, currently, ext4_map_blocks() calls
+> ext4_es_lookup_extent() without holding data_sem. Therefore, we should
+> acquire i_es_lock instead, which also ensures that the sequence cookie
+> and the extent remain consistent. Consequently, make
+> ext4_es_lookup_extent() to pass out the sequence number when necessary.
+> 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-> On Wed, Oct 8, 2025 at 4:28 PM David Hildenbrand <david@redhat.com> wrote:
->>
->> On 08.10.25 10:18, Yafang Shao wrote:
->>> On Wed, Oct 8, 2025 at 4:08 PM David Hildenbrand <david@redhat.com> wrote:
->>>>
->>>> On 03.10.25 04:18, Alexei Starovoitov wrote:
->>>>> On Mon, Sep 29, 2025 at 10:59 PM Yafang Shao <laoar.shao@gmail.com> wrote:
->>>>>>
->>>>>> +unsigned long bpf_hook_thp_get_orders(struct vm_area_struct *vma,
->>>>>> +                                     enum tva_type type,
->>>>>> +                                     unsigned long orders)
->>>>>> +{
->>>>>> +       thp_order_fn_t *bpf_hook_thp_get_order;
->>>>>> +       int bpf_order;
->>>>>> +
->>>>>> +       /* No BPF program is attached */
->>>>>> +       if (!test_bit(TRANSPARENT_HUGEPAGE_BPF_ATTACHED,
->>>>>> +                     &transparent_hugepage_flags))
->>>>>> +               return orders;
->>>>>> +
->>>>>> +       rcu_read_lock();
->>>>>> +       bpf_hook_thp_get_order = rcu_dereference(bpf_thp.thp_get_order);
->>>>>> +       if (WARN_ON_ONCE(!bpf_hook_thp_get_order))
->>>>>> +               goto out;
->>>>>> +
->>>>>> +       bpf_order = bpf_hook_thp_get_order(vma, type, orders);
->>>>>> +       orders &= BIT(bpf_order);
->>>>>> +
->>>>>> +out:
->>>>>> +       rcu_read_unlock();
->>>>>> +       return orders;
->>>>>> +}
->>>>>
->>>>> I thought I explained it earlier.
->>>>> Nack to a single global prog approach.
->>>>
->>>> I agree. We should have the option to either specify a policy globally,
->>>> or more refined for cgroups/processes.
->>>>
->>>> It's an interesting question if a program would ever want to ship its
->>>> own policy: I can see use cases for that.
->>>>
->>>> So I agree that we should make it more flexible right from the start.
->>>
->>> To achieve per-process granularity, the struct-ops must be embedded
->>> within the mm_struct as follows:
->>>
->>> +#ifdef CONFIG_BPF_MM
->>> +struct bpf_mm_ops {
->>> +#ifdef CONFIG_BPF_THP
->>> +       struct bpf_thp_ops bpf_thp;
->>> +#endif
->>> +};
->>> +#endif
->>> +
->>>   /*
->>>    * Opaque type representing current mm_struct flag state. Must be accessed via
->>>    * mm_flags_xxx() helper functions.
->>> @@ -1268,6 +1281,10 @@ struct mm_struct {
->>>   #ifdef CONFIG_MM_ID
->>>                  mm_id_t mm_id;
->>>   #endif /* CONFIG_MM_ID */
->>> +
->>> +#ifdef CONFIG_BPF_MM
->>> +               struct bpf_mm_ops bpf_mm;
->>> +#endif
->>>          } __randomize_layout;
->>>
->>> We should be aware that this will involve extensive changes in mm/.
->>
->> That's what we do on linux-mm :)
->>
->> It would be great to use Alexei's feedback/experience to come up with
->> something that is flexible for various use cases.
->
-> I'm still not entirely convinced that allowing individual processes or
-> cgroups to run independent progs is a valid use case. However, since
-> we have a consensus that this is the right direction, I will proceed
-> with this approach.
->
->>
->> So I think this is likely the right direction.
->>
->> It would be great to evaluate which scenarios we could unlock with this
->> (global vs. per-process vs. per-cgroup) approach, and how
->> extensive/involved the changes will be.
->
-> 1. Global Approach
->    - Pros:
->      Simple;
->      Can manage different THP policies for different cgroups or processes.
->   - Cons:
->      Does not allow individual processes to run their own BPF programs.
->
-> 2. Per-Process Approach
->     - Pros:
->       Enables each process to run its own BPF program.
->     - Cons:
->       Introduces significant complexity, as it requires handling the
-> BPF program's lifecycle (creation, destruction, inheritance) within
-> every mm_struct.
->
-> 3. Per-Cgroup Approach
->     - Pros:
->        Allows individual cgroups to run their own BPF programs.
->        Less complex than the per-process model, as it can leverage the
-> existing cgroup operations structure.
->     - Cons:
->        Creates a dependency on the cgroup subsystem.
->        might not be easy to control at the per-process level.
+Looks good. Feel free to add:
 
-Another issue is that how and who to deal with hierarchical cgroup, where one
-cgroup is a parent of another. Should bpf program to do that or mm code
-to do that? I remember hierarchical cgroup is the main reason THP control
-at cgroup level is rejected. If we do per-cgroup bpf control, wouldn't we
-get the same rejection from cgroup folks?
+Reviewed-by: Jan Kara <jack@suse.cz>
 
+								Honza
 
->
->>
->> If we need a slot in the bi-weekly mm alignment session to brainstorm,
->> we can ask Dave R. for one in the upcoming weeks.
->
-> I will draft an RFC to outline the required changes in both the mm/
-> and bpf/ subsystems and solicit feedback.
->
-> --
-> Regards
-> Yafang
-
-
---
-Best Regards,
-Yan, Zi
+> ---
+>  fs/ext4/extents.c        | 2 +-
+>  fs/ext4/extents_status.c | 6 ++++--
+>  fs/ext4/extents_status.h | 2 +-
+>  fs/ext4/inode.c          | 8 ++++----
+>  4 files changed, 10 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+> index ca5499e9412b..c7d219e6c6d8 100644
+> --- a/fs/ext4/extents.c
+> +++ b/fs/ext4/extents.c
+> @@ -2213,7 +2213,7 @@ static int ext4_fill_es_cache_info(struct inode *inode,
+>  	while (block <= end) {
+>  		next = 0;
+>  		flags = 0;
+> -		if (!ext4_es_lookup_extent(inode, block, &next, &es))
+> +		if (!ext4_es_lookup_extent(inode, block, &next, &es, NULL))
+>  			break;
+>  		if (ext4_es_is_unwritten(&es))
+>  			flags |= FIEMAP_EXTENT_UNWRITTEN;
+> diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
+> index 62886e18e2a3..9bf2f48d8ffe 100644
+> --- a/fs/ext4/extents_status.c
+> +++ b/fs/ext4/extents_status.c
+> @@ -1035,8 +1035,8 @@ void ext4_es_cache_extent(struct inode *inode, ext4_lblk_t lblk,
+>   * Return: 1 on found, 0 on not
+>   */
+>  int ext4_es_lookup_extent(struct inode *inode, ext4_lblk_t lblk,
+> -			  ext4_lblk_t *next_lblk,
+> -			  struct extent_status *es)
+> +			  ext4_lblk_t *next_lblk, struct extent_status *es,
+> +			  u64 *pseq)
+>  {
+>  	struct ext4_es_tree *tree;
+>  	struct ext4_es_stats *stats;
+> @@ -1095,6 +1095,8 @@ int ext4_es_lookup_extent(struct inode *inode, ext4_lblk_t lblk,
+>  			} else
+>  				*next_lblk = 0;
+>  		}
+> +		if (pseq)
+> +			*pseq = EXT4_I(inode)->i_es_seq;
+>  	} else {
+>  		percpu_counter_inc(&stats->es_stats_cache_misses);
+>  	}
+> diff --git a/fs/ext4/extents_status.h b/fs/ext4/extents_status.h
+> index 8f9c008d11e8..f3396cf32b44 100644
+> --- a/fs/ext4/extents_status.h
+> +++ b/fs/ext4/extents_status.h
+> @@ -148,7 +148,7 @@ extern void ext4_es_find_extent_range(struct inode *inode,
+>  				      struct extent_status *es);
+>  extern int ext4_es_lookup_extent(struct inode *inode, ext4_lblk_t lblk,
+>  				 ext4_lblk_t *next_lblk,
+> -				 struct extent_status *es);
+> +				 struct extent_status *es, u64 *pseq);
+>  extern bool ext4_es_scan_range(struct inode *inode,
+>  			       int (*matching_fn)(struct extent_status *es),
+>  			       ext4_lblk_t lblk, ext4_lblk_t end);
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 5b7a15db4953..c7fac4b89c88 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -649,7 +649,7 @@ static int ext4_map_create_blocks(handle_t *handle, struct inode *inode,
+>  	 * extent status tree.
+>  	 */
+>  	if (flags & EXT4_GET_BLOCKS_PRE_IO &&
+> -	    ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es)) {
+> +	    ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es, NULL)) {
+>  		if (ext4_es_is_written(&es))
+>  			return retval;
+>  	}
+> @@ -723,7 +723,7 @@ int ext4_map_blocks(handle_t *handle, struct inode *inode,
+>  		ext4_check_map_extents_env(inode);
+>  
+>  	/* Lookup extent status tree firstly */
+> -	if (ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es)) {
+> +	if (ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es, NULL)) {
+>  		if (ext4_es_is_written(&es) || ext4_es_is_unwritten(&es)) {
+>  			map->m_pblk = ext4_es_pblock(&es) +
+>  					map->m_lblk - es.es_lblk;
+> @@ -1908,7 +1908,7 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map)
+>  	ext4_check_map_extents_env(inode);
+>  
+>  	/* Lookup extent status tree firstly */
+> -	if (ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es)) {
+> +	if (ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es, NULL)) {
+>  		map->m_len = min_t(unsigned int, map->m_len,
+>  				   es.es_len - (map->m_lblk - es.es_lblk));
+>  
+> @@ -1961,7 +1961,7 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map)
+>  	 * is held in write mode, before inserting a new da entry in
+>  	 * the extent status tree.
+>  	 */
+> -	if (ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es)) {
+> +	if (ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es, NULL)) {
+>  		map->m_len = min_t(unsigned int, map->m_len,
+>  				   es.es_len - (map->m_lblk - es.es_lblk));
+>  
+> -- 
+> 2.46.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
