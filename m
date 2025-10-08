@@ -1,125 +1,116 @@
-Return-Path: <linux-kernel+bounces-845462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D70B6BC50A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 14:57:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A95ECBC51F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:06:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 422CE3C57B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 12:56:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7227218849FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:06:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06666265CCB;
-	Wed,  8 Oct 2025 12:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3FF3258EF5;
+	Wed,  8 Oct 2025 13:06:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rWPnkPHQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=helsinkinet.fi header.i=@helsinkinet.fi header.b="BQqPu1u4"
+Received: from smtp.dnamail.fi (sender001.dnamail.fi [83.102.40.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52542255F24;
-	Wed,  8 Oct 2025 12:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE88241691;
+	Wed,  8 Oct 2025 13:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.102.40.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759928152; cv=none; b=GX7jj3gWKmZxL1kEtdiRorLgIKlYBTkGPv7AhVdm/fYYwcksVBVIoSWDHPsWBJC6S5q++kSo3wrWsRZFqPpamaU9nGykOoUcH4sO5KEDG6WkUM0pEnKBORZ+CriLYKWqUEdRmrFK2Vhtpzz/YvwE4CKGerytcRGYTzpQSB543GQ=
+	t=1759928770; cv=none; b=krIuUmXs2pgu4/e8eDSPMW9biqKUYYSDulLuR6MyWH//Y8L31CY/HbgE38iL89ld3lTSO1vaXJCxB+VtSJh4JOatVDyhCJWRIDZt3MJgItR/KoQRhxFHXJc51k+v8iMPH88n82FmiNs+7uOd8ofm9b3FXwhkAD7y/+mzoHVgBe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759928152; c=relaxed/simple;
-	bh=DMgCM8Rc0kLgkamSZaom9HUWXV9UAxoJPBdKB7RHH7c=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=h5XIhIkP5gW/NQHoVbchlScy4HjP3JqE6yxkaHRommw5vbAnWL38H1l769/OtJtR+CmqjPRL0vnELknhYpo7jzXTTcUHpAjjvy4yC0QQFCWFXdxsdjk5NZIz4vxwK5ydmBkTRfRu2+d1K8nvU3Vy95mqs3bFgKMv1se+bvw9Fgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rWPnkPHQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99C8AC4CEF4;
-	Wed,  8 Oct 2025 12:55:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759928151;
-	bh=DMgCM8Rc0kLgkamSZaom9HUWXV9UAxoJPBdKB7RHH7c=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=rWPnkPHQV206SdcqMZFz1M4eR5sCKi1C97lbi02WtRxGi2zU2PPvFUlvZMY8slS7x
-	 3Sg3ut8GsOZ/txVaCUngXdp63QDJscf/aZ39cJBkTunbowzP+uvuzdJZJGJGMmGm50
-	 M7yvSBaKoHvEVdUhu3LRMO6EtWJda4dC2kKzwoOYqxZLhgAGEQiwlkOxE/erwyqYmc
-	 v/w7hBWTWqKaA4NIXILd0QGnSN0YR5jofh0bgvXRyi216iA+0rMYlcP1XJT3Nb8ekc
-	 qH0YylMsUNW3Nbz4pDvcfvYpxkqlUu6qWQ4YUzhH0K1sEK19aLrJrwd9slB2pR8z4H
-	 gbEC/yuzme5RA==
-Date: Wed, 08 Oct 2025 07:55:50 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1759928770; c=relaxed/simple;
+	bh=bDBSmVBWpfbY7PAaZEpHubLf7uYeTwh3B4k6cq15LUU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TssGNtr5mp7C+kuE25O5wRlE4TOkNzl0WNbU8eme8hljHoOIES13F+is29m7vH5OPD/eUXhc0d5j3cnOBUlmhYvIV7+Bkpp9a/4fJwJlvXVXkGTFaR1E+1CiPVdUTcGo6PBx0CQfsZHY/QS8Bd1X7eA9BbMqFbWXYHTqlVhCxXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=helsinkinet.fi; spf=pass smtp.mailfrom=helsinkinet.fi; dkim=pass (2048-bit key) header.d=helsinkinet.fi header.i=@helsinkinet.fi header.b=BQqPu1u4; arc=none smtp.client-ip=83.102.40.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=helsinkinet.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=helsinkinet.fi
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.dnamail.fi (Postfix) with ESMTP id 387E22113E0A;
+	Wed,  8 Oct 2025 15:56:24 +0300 (EEST)
+X-Virus-Scanned: X-Virus-Scanned: amavis at smtp.dnamail.fi
+Received: from smtp.dnamail.fi ([83.102.40.178])
+ by localhost (dmail-psmtp01.s.dnaip.fi [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id GDv7ZgzeFdQs; Wed,  8 Oct 2025 15:56:23 +0300 (EEST)
+Received: from [192.168.101.100] (87-92-77-37.bb.dnainternet.fi [87.92.77.37])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: oak@dnamail.internal)
+	by smtp.dnamail.fi (Postfix) with ESMTPSA id C32C62113FD1;
+	Wed,  8 Oct 2025 15:56:20 +0300 (EEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 smtp.dnamail.fi C32C62113FD1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=helsinkinet.fi;
+	s=2025-03; t=1759928183;
+	bh=OCj4WpQavSfPv91/WhnHhKdc5F/dvQGVXuCoN9OhquQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BQqPu1u4Gnwm7jNBwS6NTOLQjgETu9AVmi5nHDxfI0dT/1ZRe83rb2GFU2WAUcnK3
+	 oFcqed3tvdPWTDbLxqzwbcdTuCHH4jU2Zp7gzB2NiWOPnynpnWbJpUsNLsX38Fycbl
+	 OVoyJzG8lSDG6gocx12s+WcWk1QNRdMAj7ozKhWDWNj8qZB9C+Qza7V6v5VcWZQf7A
+	 /C91tytd4rio59SwMzMZzIs1RxWfUYdLd7dcrSwb4wWu27SSfy8qju6UFs278V6hfS
+	 Eo3Z3W+QirXeKTxcciVE7dDfaS0eh3h/0DAq5zzMXrQd5/8lg6QsU21X3nPovzJwUY
+	 8HYJOl/PfdZTg==
+Message-ID: <8864b0ad-d9c7-4de3-b7e7-95512778822d@helsinkinet.fi>
+Date: Wed, 8 Oct 2025 15:56:20 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: nuno.sa@analog.com, dlechner@baylibre.com, linux-kernel@vger.kernel.org, 
- andy@kernel.org, linux-iio@vger.kernel.org, matt@ranostay.sg, 
- linux-kernel-mentees@lists.linux.dev, krzk+dt@kernel.org, 
- devicetree@vger.kernel.org, skhan@linuxfoundation.org, jic23@kernel.org, 
- conor+dt@kernel.org, david.hunter.linux@gmail.com
-To: Shrikant Raskar <raskar.shree97@gmail.com>
-In-Reply-To: <20251008031737.7321-2-raskar.shree97@gmail.com>
-References: <20251008031737.7321-1-raskar.shree97@gmail.com>
- <20251008031737.7321-2-raskar.shree97@gmail.com>
-Message-Id: <175992812188.3371104.5716471946724146308.robh@kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: iio: max30100: Add pulse-width
- property
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] hung_task: fix warnings caused by unaligned lock
+ pointers
+To: Finn Thain <fthain@linux-m68k.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+ Lance Yang <lance.yang@linux.dev>, amaindex@outlook.com,
+ anna.schumaker@oracle.com, boqun.feng@gmail.com, ioworker0@gmail.com,
+ joel.granados@kernel.org, jstultz@google.com, leonylgao@tencent.com,
+ linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+ longman@redhat.com, mhiramat@kernel.org, mingo@redhat.com,
+ mingzhe.yang@ly.com, peterz@infradead.org, rostedt@goodmis.org,
+ senozhatsky@chromium.org, tfiga@chromium.org, will@kernel.org,
+ stable@vger.kernel.org
+References: <20250909145243.17119-1-lance.yang@linux.dev>
+ <yqjkjxg25gh4bdtftsdngj5suturft2b4hjbfxwe6hehbg4ctq@6i55py3jaiov>
+ <99410857-0e72-23e4-c60f-dea96427b85a@linux-m68k.org>
+ <CAMuHMdVYiSLOk-zVopXV8i7OZdO7PAK7stZSJNJDMw=ZEqtktA@mail.gmail.com>
+ <inscijwnnydibdwwrkggvgxjtimajr5haixff77dbd7cxvvwc7@2t7l7oegsxcp>
+ <20251007135600.6fc4a031c60b1384dffaead1@linux-foundation.org>
+ <b43ce4a0-c2b5-53f2-e374-ea195227182d@linux-m68k.org>
+Content-Language: en-US
+From: Eero Tamminen <oak@helsinkinet.fi>
+In-Reply-To: <b43ce4a0-c2b5-53f2-e374-ea195227182d@linux-m68k.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+Hi,
 
-On Wed, 08 Oct 2025 08:47:36 +0530, Shrikant Raskar wrote:
-> The appropriate LED pulse width for the MAX30100 depends on
-> board-specific optical and mechanical design (lens, enclosure,
-> LED-to-sensor distance) and the trade-off between measurement
-> resolution and power consumption. Encoding it in Device Tree
-> documents these platform choices and ensures consistent behavior.
+On 10/8/25 03:40, Finn Thain wrote:
+> On Tue, 7 Oct 2025, Andrew Morton wrote:
+>> Getting back to the $Subject at hand, are people OK with proceeding
+>> with Lance's original fix?
 > 
-> Tested on: Raspberry Pi 3B + MAX30100 breakout board.
+> Lance's patch is probably more appropriate for -stable than the patch I
+> proposed -- assuming a fix is needed for -stable.
 > 
-> Signed-off-by: Shrikant Raskar <raskar.shree97@gmail.com>
+> Besides those two alternatives, there is also a workaround:
+> $ ./scripts/config -d DETECT_HUNG_TASK_BLOCKER
+> which may be acceptable to the interested parties (i.e. m68k users).
 > 
-> Changes since v1:
-> Add unit suffix.
-> Drop redundant description.
-> 
-> Link to v1:
-> https://lore.kernel.org/all/20251004015623.7019-2-raskar.shree97@gmail.com/
-> ---
->  .../devicetree/bindings/iio/health/maxim,max30100.yaml      | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
+> I don't have a preference. I'll leave it up to the bug reporters (Eero and
+> Geert).
 
-My bot found errors running 'make dt_binding_check' on your patch:
+It's good for me.
 
-yamllint warnings/errors:
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/health/maxim,max30100.yaml: properties:maxim,pulse-width-us: 'enum' should not be valid under {'enum': ['const', 'enum', 'exclusiveMaximum', 'exclusiveMinimum', 'minimum', 'maximum', 'multipleOf', 'pattern']}
-	hint: Scalar and array keywords cannot be mixed
-	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/health/maxim,max30100.yaml: properties:maxim,pulse-width-us: 'anyOf' conditional failed, one must be fixed:
-	'enum' is not one of ['maxItems', 'description', 'deprecated']
-		hint: Only "maxItems" is required for a single entry if there are no constraints defined for the values.
-	Additional properties are not allowed ('enum' was unexpected)
-		hint: Arrays must be described with a combination of minItems/maxItems/items
-	'maxItems' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-	1 is less than the minimum of 2
-		hint: Arrays must be described with a combination of minItems/maxItems/items
-	hint: cell array properties must define how many entries and what the entries are when there is more than one entry.
-	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251008031737.7321-2-raskar.shree97@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+	- Eero
 
 
