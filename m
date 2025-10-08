@@ -1,132 +1,236 @@
-Return-Path: <linux-kernel+bounces-845350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C0A0BC48A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:24:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EED1BC48EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:26:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD9923AA8A2
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:24:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B60E4004BD
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:26:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9422F3625;
-	Wed,  8 Oct 2025 11:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 638192F656C;
+	Wed,  8 Oct 2025 11:25:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KS6b8rgL"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ktA2dXdb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B675222562
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 11:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B71421767A;
+	Wed,  8 Oct 2025 11:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759922665; cv=none; b=uhWmldgIWeXkMHEvLj+ScpkiAwKYAvGl8vZHIms0fLvDYTsVYoeXSuSuXw/LHuQTWLTyc5tuYy7I3mTvKORut+GOC5BLH8z4eKJKInQt34qadhsGBmCJZ9FTs5tSHpqtYWgIggHo0sxEBQkzYpdqgjk/KjVmvAL74Zz9TdZNtdk=
+	t=1759922758; cv=none; b=KBd4PvCVRjFE/xSe036v2jBRr/mymyfMrGSKKn9TSAbRR/d1POteGCx4ErNmyGejayWBX5vMMhlXYp+Gi8tTloZQP68jftc4qHecbmurUCcBKm/WSOuo9yaVsFDqEn/r0gt8m9RacXFEMjokDQGe1OeYP/caSUCoaXjYsqCSzdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759922665; c=relaxed/simple;
-	bh=KhgwqCmWQnKf1NGRM9QzpocddkHPlKhp9lU+qW/BhUw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LK57oMo5WNuTNkJ3WKQICdQIK+AKka3rOGyqMrXhb1M3aqEM+wu1HAnxzaRBj6pNsh+hHiBSWj0UcYfBKcLRM/0fdh59FGpuQpPVc9sXDLS9Q2K7AR4i1LV25WbNORxeGnzDfRTAQJ2wjfR37W6IWfPMq5GaJ2lu1zBYmjRvLOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KS6b8rgL; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b556284db11so6866906a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 04:24:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759922663; x=1760527463; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cpunCpJAgk2eLHa/FgrPVIG+nR6l3Db8tqGL3tL6T3Q=;
-        b=KS6b8rgLfxaiL0nJqMlG9AFR6qZ7W6E69TeujeBoPC/fESE32iPnnK4oMT1Wlrfx5S
-         1t19E4aRcoCV+vhk17rxCTOWopt7Jcnhl8AFqqS7ILz39yglcbio1mKTqPD3jLlvBsZY
-         BkMxibSlYRO58lyipLmoIX2dVI1W0Gke+Hcv/1N36bYm5j0Vv0hlaNQhAm+MinUbu9n0
-         9GPyfvXXReZOgxKt2xzGJ2YQwG4DWYf3RiR1DBpH8pWyYmeHsIvT21ZF/SLrJqzyQtwg
-         qAnsNcTUcWHTNFjHh6LGhLzWPQ7tAzkENjR1n2YS8h/vLN4cH4NX2TDFgtHVUqet4ExF
-         AvzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759922663; x=1760527463;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cpunCpJAgk2eLHa/FgrPVIG+nR6l3Db8tqGL3tL6T3Q=;
-        b=F6v0AUZte/XsG9H9JQBJv1duoXmA4lOWHWvR9u1gkVPfjN3G8Suh4VNchktp3xwhng
-         s3rhgXFl67qp+U9VtaFTREaOy+KjNHqj4mkbs1cRI/e3HzSUGSV4lkr6XnykD5ELIst4
-         TVrebiPuV8OakFGZVJRdollZAMv0B71gRBgh3PtDoZvT3xSFhouYTPVWuUKapN7tsUoZ
-         nnmyE+kSV+nsMXER4BoG9MHBfpUYPN6ynlowTzd5OhYmIfckkSWCkDBb6i26yTtD1sHV
-         Btwkzc0dagFgisYH/EuKFPkhW3btqaHJsJ3nq9IqX+kmGFpoNF1UpirArPdAVyxcN9wC
-         XPzQ==
-X-Gm-Message-State: AOJu0YyBupFZS1SI09PhAFNRr01AqA2TcsbC2yZxFdzBLqQ6PmZFzID9
-	SZetBAJbxX4zaB1OzF3KVvcOtp6NkFO+HaWgR59xo5uim4/A2EFQI8Rq
-X-Gm-Gg: ASbGnctGGQpyrg2kIJYdVVcIssTXpK4Nf9cg29SszSDPhH7wNFEXYLeTnNQHZUUNhnP
-	fHDy6BqcYgdYCeOr0YUB15qjlPs3Ipp+3AYVYoPgCeHTk/LzU6VKlWtVZkFzMDsCY/pLp/mQx0B
-	Nb5QZzTKTkcX54kdsOPaGK3PA+/JaCkTkNq4sutQ5I7lU6hWyyxXUMATLk/KeaV87NlCB5GG6Lq
-	uupvDFcHED/lwNRsZRtkHxbcrQfGgA47Ax8XAayqcxZ4HPf2VA3wFBZwaGuk/0+XHwT1knXrxGf
-	BhvKgTBzJnzNKoUdjJ4P76XupIWPBC1F+wqk3nQRI+PRu+cnwa282c9XIqyIWsxi19pnVtbzs6n
-	Jmi11e6m3k/pWycA+bSaU3D8H+HAInZnhQBX9shHJmH/D7i4t0A==
-X-Google-Smtp-Source: AGHT+IGzccRUgsYIfQOv4mK4YMIOcoXs/vxnypDZjs9mlFa+b6ZL037YONwW6vYEs5SdhyVUnUekog==
-X-Received: by 2002:a17:902:e786:b0:269:b30c:c9b8 with SMTP id d9443c01a7336-2902741e45bmr39405215ad.56.1759922663079;
-        Wed, 08 Oct 2025 04:24:23 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1b87acsm197346765ad.76.2025.10.08.04.24.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 04:24:21 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 88AF54235ADC; Wed, 08 Oct 2025 18:24:18 +0700 (WIB)
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux Serial <linux-serial@vger.kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Cengiz Can <cengiz@kernel.wtf>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	Tomas Mudrunka <tomas.mudrunka@gmail.com>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	=?UTF-8?q?Anselm=20Sch=C3=BCler?= <mail@anselmschueler.com>
-Subject: [PATCH] Documentation: sysrq: Remove contradicting sentence on extra /proc/sysrq-trigger characters
-Date: Wed,  8 Oct 2025 18:24:09 +0700
-Message-ID: <20251008112409.33622-1-bagasdotme@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1759922758; c=relaxed/simple;
+	bh=7Lw7FRVW2MvH3/Rvixa0nWeKPm0OS8Ha2dMuaX2+roU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=c0V3yKNr7oSNzEEEXoxRM+1Yu1IcQ5wmgh8p95ojUidiV0vyVJ8CGZFWiiAx/z0Ksyk+dFcflIv7CrRKJD6zGqycmNyGJ9BwnTGSkHQ7ihLJP457ZdIIUAaSNipw1lcRyLulpTUM7sc0ZilwuJcQ2LbvB+GTCuOoikB3wQ+XEBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ktA2dXdb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45ED1C4CEF4;
+	Wed,  8 Oct 2025 11:25:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759922758;
+	bh=7Lw7FRVW2MvH3/Rvixa0nWeKPm0OS8Ha2dMuaX2+roU=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=ktA2dXdbQbuNanzrsjqfgX2MC/2+Jh0zzWF890G8rUPoYTZXdNrQyYyOhVleubPef
+	 Emre/paqk22DObvH2ikA85ll7I1TPTOVjE0sGjdfkvnkZz/fllGscmx6b+lrhNuYjc
+	 b4fuiP4mqvf46MZC7xovn8GHFyCs+XrFay1nOUP9EBjo8mGzrr9YM8vzrM0/w8g2T6
+	 IdpXzOXke2UFZi2uYKrPrL6HzoCMvOH8wT9U508E/O0a2k8u1U+Iu0neN1yCf7YQ01
+	 WQbubU4rhNDrEsbCmm7tnZfYj3TRpkNCmgar9qmBPtJ1dhm9m0cw7U21RXdDV1e1Zp
+	 XctQbZ0tZPnHg==
+Message-ID: <b784387b-5744-422e-92f5-3d575a24d01c@kernel.org>
+Date: Wed, 8 Oct 2025 20:25:51 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1253; i=bagasdotme@gmail.com; h=from:subject; bh=KhgwqCmWQnKf1NGRM9QzpocddkHPlKhp9lU+qW/BhUw=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBnPPNX+/1pfwGCQKK3s+DfytrPq9rOHNWqEbr17qcH5O qasWDmvo5SFQYyLQVZMkWVSIl/T6V1GIhfa1zrCzGFlAhnCwMUpABP5uoWRYd0dllWvI757CZ/P Xq8s+DNbUjkyhFvf0IBjQolASOktc4Y//Lph27lub92yaKuATKC6kUfyz8MvfrRkFWS9tjsik1j HDQA=
-X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 14/24] arm64: dts: qcom: Update the pmh0110.dtsi for
+ Glymur
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Pankaj Patil <pankaj.patil@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Abel Vesa <abel.vesa@linaro.org>
+References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
+ <20250925-v3_glymur_introduction-v1-14-24b601bbecc0@oss.qualcomm.com>
+ <CAJKOXPdQH2jXcEY6ZpkmixvUt26SqdzYgDAiJ3RHMG7xkPyi_A@mail.gmail.com>
+ <lcbcjpoazpwbltedkiqlw4l3aomwvi3qsfwvmwghb6uf5wvnme@kh7qdpunfuwr>
+ <CAJKOXPcyhDdFW_u4YQLiHYj8gM7wYB-LOmB_PJs+5OOgn8WZFw@mail.gmail.com>
+ <mzoctelzfp6h2ezzkc3j7gnghsaf67flxqlvfhtlpdfxtddsvi@zqihmnygvdjk>
+ <20251008073123.GA20592@hu-kamalw-hyd.qualcomm.com>
+ <799374b4-0c41-4ccb-9f99-954c7ce6d044@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <799374b4-0c41-4ccb-9f99-954c7ce6d044@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-/proc/sysrq-trigger documentation states that only first character is
-processed and the rest is ignored, yet it is not recommended to write
-any extra characters to it. The latter statement is contradictive as
-these characters are also ignored as implied by preceding sentence.
+On 08/10/2025 17:02, Krzysztof Kozlowski wrote:
+> On 08/10/2025 16:31, Kamal Wadhwa wrote:
+>> Hi Krzysztof, Dmitry, Konrad,
+>>
+>> On Thu, Sep 25, 2025 at 09:57:02PM +0300, Dmitry Baryshkov wrote:
+>>> On Thu, Sep 25, 2025 at 10:34:52PM +0900, Krzysztof Kozlowski wrote:
+>>>> On Thu, 25 Sept 2025 at 22:14, Dmitry Baryshkov
+>>>> <dmitry.baryshkov@oss.qualcomm.com> wrote:
+>>>>>
+>>>>> On Thu, Sep 25, 2025 at 05:08:54PM +0900, Krzysztof Kozlowski wrote:
+>>>>>> On Thu, 25 Sept 2025 at 15:34, Pankaj Patil
+>>>>>> <pankaj.patil@oss.qualcomm.com> wrote:
+>>>>>>>
+>>>>>>> From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+>>>>>>>
+>>>>>>> Add multiple instance of PMH0110 DT node, one for each assigned
+>>>>>>> SID for this PMIC on the spmi_bus0 and spmi_bus1 on the Glymur
+>>>>>>> CRD.
+>>>>>>>
+>>>>>>> Take care to avoid compilation issue with the existing nodes by
+>>>>>>> gaurding each PMH0110 nodes with `#ifdef` for its corresponding
+>>>>>>> SID macro. So that only the nodes which have the their SID macro
+>>>>>>> defined are the only ones picked for compilation.
+>>>>>>>
+>>>>>>> Signed-off-by: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+>>>>>>> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+>>>>>>> ---
+>>>>>>>  arch/arm64/boot/dts/qcom/pmh0110.dtsi | 66 ++++++++++++++++++++++++++++++++++-
+>>>>>>>  1 file changed, 65 insertions(+), 1 deletion(-)
+>>>>>>>
+>>>>>>> diff --git a/arch/arm64/boot/dts/qcom/pmh0110.dtsi b/arch/arm64/boot/dts/qcom/pmh0110.dtsi
+>>>>>>> index b99c33cba8860f1852231db33a127646c08c1e23..4a5c66e5c9fbc35cedb67601f4568844dc41fbea 100644
+>>>>>>> --- a/arch/arm64/boot/dts/qcom/pmh0110.dtsi
+>>>>>>> +++ b/arch/arm64/boot/dts/qcom/pmh0110.dtsi
+>>>>>>> @@ -7,6 +7,8 @@
+>>>>>>>  #include <dt-bindings/spmi/spmi.h>
+>>>>>>>
+>>>>>>>  &spmi_bus0 {
+>>>>>>> +
+>>>>>>> +#ifdef PMH0110_D_E0_SID
+>>>>>>
+>>>>>> NAK
+>>>>>>
+>>>>>> I already explained on IRC in great details why.
+>>>>>
+>>>>> A short summary or a link to a channel / date would be nice in order to
+>>>>> include other people into the discussion.
+>>>>>
+>>>>
+>>>> Of course but:
+>>>> 1. You were there so maybe you remember the arguments, and:
+>>>> 2. I'm offline, using phone, not having laptop, replying during my
+>>>> personal time off just before merge window so any emergency time
+>>>> should be spent on important matters instead these two huge patch
+>>>> bombs adding such usage I already said: NO, don't do this.
+>>>
+>>>
+>>> Well, If I'm asking, it means I don't rememebr the discussion. And I
+>>> defeinitely didn't know that you are spending your personal vacation
+>>> time in ML. And if the discussion was with some other people, then
+>>> somebody else can drop the response to the question.
+>>
+>> Just wanted to give some background on this patch.
+>> Even though PMH0104 and PMH0110 are common (b/w Kaanapali and Glymur),
+>> they don't share the SIDs. So we tried to use status="disabled" to handle
+>> this but we observed that because of the node name being common in the
+>> two included files, it ends up overwriting the previous node with the
+>> same name.
+>>
+>> eg-
+>> #include "pmh0104.dtsi"  // assume contains pmic@4 { ...};
+>> #include "pmh0110.dtsi"  // assume contains pmic@4 { status=disabled;};
+>>
+>> Here intention was to use the pmh0104 on sid-4, but it gets overwritten
+>> with the pmh0110 on sid-4 ( with status disabled). This is why we ended
+>> up using the `#ifdef`, ensuring that we can control the exact pmic that
+>> gets picked by using the PMXXX_SID macro.
+>>
+>> side note, i did `grep` in the `/arch/arm64/boot/dts/` and i see a lot
+>> of instances of `#if...` present in that.  Assuming the concern here is
+>> about the use of `#ifdef`.
+> 
+> 
+> #if are not desired in C code, so why would they be acceptable in DTS?
+> It is not making the code easier to read at all.
+> 
+> On IRC in these older discussions I was very strongly against any DTSI
+> which depends on some sort of outside values, except basic usage of
+> defines. Original pmh0110.dtsi from kaanapali is fine:
+> 	pmh0110_d_e0: pmic@PMH0110_D_E0_SID {
+> 
+> but doing ifdefs here that this define depends on something else makes
+> code ungreppable (lookup unit address from sysfs and then git grep
+> pmic@4) and difficult to follow.
+> 
+> My recommendation is either duplicate code or change DTSI files to not
+> contain entire node, but its contents. At least these are
+> recommendations I remember now.
+> 
+One more recommendation:
+Different DTSI files per SoC, so pmh0110-kaanapali.dtsi and
+pmh0110-glymur.dtsi.
 
-Remove it.
+We do not move the QUP engines into separate DTSI file to avoid
+duplication. Each SoC has all of them duplicated. And then new SoC also
+duplicates them.
 
-Link: https://lore.kernel.org/lkml/7ca05672-dc20-413f-a923-f77ce0a9d307@anselmschueler.com/
-Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
- Documentation/admin-guide/sysrq.rst | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+We do not move SPI touchscreens or other I2C/SPI devices to separate
+DTSI files. Each board duplicates such SPI device (and SPI can have
+different <reg> - chip select! I2C as well, although a bit rarer).
 
-diff --git a/Documentation/admin-guide/sysrq.rst b/Documentation/admin-guide/sysrq.rst
-index 9c7aa817adc72d..63ff415ce85d66 100644
---- a/Documentation/admin-guide/sysrq.rst
-+++ b/Documentation/admin-guide/sysrq.rst
-@@ -77,9 +77,7 @@ On other
- On all
- 	Write a single character to /proc/sysrq-trigger.
- 	Only the first character is processed, the rest of the string is
--	ignored. However, it is not recommended to write any extra characters
--	as the behavior is undefined and might change in the future versions.
--	E.g.::
-+	ignored. E.g.::
- 
- 		echo t > /proc/sysrq-trigger
- 
+Therefore I do not see any need for some #ifdefs in this code, just to
+avoid duplication because that duplication is nothing odd.
 
-base-commit: c746c3b5169831d7fb032a1051d8b45592ae8d78
--- 
-An old man doll... just what I always wanted! - Clara
-
+Best regards,
+Krzysztof
 
