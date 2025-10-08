@@ -1,286 +1,154 @@
-Return-Path: <linux-kernel+bounces-845601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15065BC57EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 16:58:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B4CFBC5812
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:02:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7CE518916F4
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 14:59:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 041FC40253A
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CA8D2ECD03;
-	Wed,  8 Oct 2025 14:58:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D68F529BDB1;
+	Wed,  8 Oct 2025 15:02:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WeMq0Xw9"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=iokpp.de header.i=@iokpp.de header.b="a4xm/TU/"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.167])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84791C54A9
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 14:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759935530; cv=none; b=luW11FYVU5SH1LlnohfZr8JypgEs1CYWS0bzsQtuqN3fHDN8YlAvjEVFdnc/V+JqXWvlmZYMpwq43n0wpfosTSj0TBUdDWxPG0pLYYPz6kKrzMQy2vys5ElXP/uzef+5yRjaNTsRzXtQZvxix9nzWutYu4ANZvzPakhmmqRdjr0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759935530; c=relaxed/simple;
-	bh=zatW9z7+BlJwtBT1+Ih7xLccccTvW54o/aTpYz4t0QE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fru9Iw66xsttFOjcGtzjIORtpPx1FbJjtS98ZwoLgAq4ZOXByRcr58vRwPRziFQjZ31dslx2Ri7TpaZMIwFQvWMVsJbZkY6It1InmOHMCuMWjFnj3WKFDQRhbKdE/2F7cgNm8JPqds2LL+IhqdPUki/3NkF2ND3fWxdow0v3iyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WeMq0Xw9; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2681645b7b6so194565ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 07:58:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759935527; x=1760540327; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YE2Qs8AzdRpLDpT1BMz7CfM7cxp6la5yYDPSZ12gux0=;
-        b=WeMq0Xw9/oQHwyafxfbQJ97DnMZgYlaYux2sfwIRUdUc/3NaNY0guyahQxpYG15cBC
-         c4YIKGkq/7q5VQngET045QWi5dGVLdN/Y4VWrltGbn+LZohJq7RYAXsQwwIv4z9ww09f
-         VBFRK2+sU59diVceHQJuHEGQoHyLmZ5MTF4TC3Ltj+mlQWnPzwdokz44o7YtDtT5abPT
-         soomYZMWgOVCCcp4j/Cuzm0zeMhmYRktNVxp8T+H4gZMsXP0ciG2cNvevqIPJFTusz8a
-         fmp4UvXyVeigpapNEEyKVzxvqFRxT5AWRsxuCm66CEU9kjphTC3she6WWtf0pEC/vFj5
-         UWMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759935527; x=1760540327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YE2Qs8AzdRpLDpT1BMz7CfM7cxp6la5yYDPSZ12gux0=;
-        b=xK13dyImpxVdEI8gpJ7E31XWSTzfHrlqyKOusiANwVZILvVoJ/BOEYwyNbvXz7wls9
-         m4Iaym7HccYbpftNDQAW24ob5EegW41QQGA0WBdtbbAI/iw3Eh6ZZ4E+79rfQIdjAAlF
-         FsJU/LgmsxOEy4G4zSNgnPXQnBJZ/GPrXtke9t04bJFkMZ0jwXesupyV5k3we9YHyz4J
-         ku2iRnsb18UDZ7JCAknHtBG5BZdl9NFtzhpEDYOs6veZ1I/jbY/38zBOzW34LQPuZTCQ
-         30DzUL56bL3oeXZwlTkAQZaPAscea22b+d9cqiHZjFILqUuE+/vg6m/JZGCm/ty7sT+z
-         4s8g==
-X-Forwarded-Encrypted: i=1; AJvYcCVQ2mIu6aLkVQLvjm198EhUAAtv5aYgUBb5wsLkNBzCwHCAzzX6U3Tr58n+PLDnDk/kD2NvbddIUeug3+s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKrwmwI9Ysdahgd7PRfKtJ1JCU5TVEeVAsl+C8cHkf0T5uI83U
-	ws10cnyLTZCbCBud6SFO3cx4Fe7uB9SmwyCkcnNkB5qCaqKEWEQH96fssOb44jN9Rdm/oV/WYe2
-	pmHS/aA2lbC4WM6YUYlt14p7GHphcUpI7ftoMZ/AX
-X-Gm-Gg: ASbGncvH+WZ263yv+9sRBYfvf3NctgYGNfxgVv04KzCeZW0yj3AZx6goJA3vERfnH7p
-	/OD3bcC7vxwk4dSo9FT4ZnArErMeg9SViqFDeERwRqsNzbWN7VixMbMFWM5yp/+j0xsEeUWqE7I
-	8D2TnuGyQP/N/mwO4ARpxIfHcPE86HOmvci9onsxkln8TKV0sQFN9sLJ0cstFQoLbyC8qG92JMz
-	gn5ssYOm0ybwz+pBUN1NnNofem9AhkhzEQIt8TVUVfq2Rov92otwc8CWtDsbSev6sVuyvQeAOJm
-	OeU=
-X-Google-Smtp-Source: AGHT+IFRlzQMIt76FcOgy9rt2zd/DLc7gxGeQb7DYEWr8wcv6vgl0GFuJT2bUyuZEkal3hjLZpnYHVTBO0UBsaFcvkc=
-X-Received: by 2002:a17:903:11c4:b0:269:2215:e672 with SMTP id
- d9443c01a7336-29027699a6bmr5063445ad.12.1759935526647; Wed, 08 Oct 2025
- 07:58:46 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C4320B81B;
+	Wed,  8 Oct 2025 15:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.167
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759935745; cv=pass; b=XG1sre7TyciEhTomCPCbHT4Mg9IWdIO4rBOzCZrPVSteaJQw/o6UXHtRAI7gcRcOsvAu+7RcpKcuh5iel4cai9yZd0lh7RJwK28EeYgMepSiIQAtjYEep5D0VSkZE96wboc+Q7qRF0uh07TMWZetYv5FxuI6BGZbuSu5V1XBclk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759935745; c=relaxed/simple;
+	bh=8BYdubcN33XQRMwNL5x11GZOJ9KL7az6VFbYgDGsnJU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Si6/0LfZqIofMChzrh/CSmzpgDm+d4cI7rx2fDbDG/f8AazNyjtoljtTQFNJ7L8ZiejRFidZMnufIa/J5aHUgms/E9EtgrWOoltkLxB2BUFryIGyD7LNESEEmEZUTJPEJLtnpg6z/KEaxd/SxZn7M/kfBXDDYZD9eWKr9SZal4E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iokpp.de; spf=none smtp.mailfrom=iokpp.de; dkim=pass (2048-bit key) header.d=iokpp.de header.i=@iokpp.de header.b=a4xm/TU/; arc=pass smtp.client-ip=81.169.146.167
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iokpp.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=iokpp.de
+ARC-Seal: i=1; a=rsa-sha256; t=1759935548; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=fJ8qvLwFGOH8CzID6kGiQuZgg+ECo7VcpwYSSzKZ8YY5Nhh6N76F9P8zV5F60PZHUr
+    iZQdfcsBmnCAeUmhDWcVWKHZmlQEUzAf7KGxKEUDlxGPUVdEAx49T9A+VMDcx3qyL4re
+    h16nhwqy0hvUBUgKpBxTscPHJADb5QplEfYyJ1gewBgubmqB+1cnxt4AGopRpHVbrGOg
+    TDpJWCuoWQXUTWrWP+QOKOiBKBsYc0onvAYaCq4KzHjNM32AgGAQN5GLlCDmI5lr2bnX
+    XP4NNeOfMC6Y6UB0G74WbrlyRps7xWUaDwz6G1vd4+4+ilCrrfQCvLo/BnNAue413KYX
+    vB2A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1759935548;
+    s=strato-dkim-0002; d=strato.com;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=pZuTfJt990kgMbXjxTaGe/0IevJB83uAIgP/D8Hi6Rk=;
+    b=F3auZ+sRGx8/UDCrDPHW9Zg0Qv/WMv8Pz8tMQIwpUUz3H1uqJ5OPW3Pg41R5jVsxKI
+    Va/puzVwqczPwEDkOnOca04hYMGP0hv8IcFPGReD7j7suObYj1bs3NABM0jU2liMY7nj
+    dFknW+Bgq0WXBBE4JirDB4YWjnAXyl0oRGlv1GedXifkJyhPIyXIKliMUChKpDlLlSyE
+    Dw2GMxsSVNc2mmk+QjzKfpYMpNQnbXIKCBI5HrPa38V88qF1HMLp5AVLdOXMSoYgd1vj
+    +zLfkxZlaVk3RhrS8gqPRgdyRP9doRsyHMqQg2W0MyhAZMpwBVxNAyHVBecNH5CWHzt5
+    GiNw==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1759935548;
+    s=strato-dkim-0002; d=iokpp.de;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=pZuTfJt990kgMbXjxTaGe/0IevJB83uAIgP/D8Hi6Rk=;
+    b=a4xm/TU/1E8QlvM4vK+LE8EFzCPoxTwQh+WV1qGHUimHgClNiosMugfS4PNWDelzJR
+    1aACH6OxrDk61nF/bQ0WYAFZ7ts4lcgwTAoSZ+LkO42UEv+l4i1x30HSCkznf+7imGBg
+    52l49OBRCvEDZaOHNCSL1M4WiLihjmmLmd8lI5ryliSVniUKqcrGJSTvVbnYWqVH5Z3a
+    Raoqr2eiXdF7tIQtLQG54zRisrC2VXFZtibuNnlPAlLZAlla5jLid46O87FQMAMiFPP0
+    yK8G2+jW44n/1I++eIHgrlfZirJ9Gf5BQWnERFoe9U3jINP6+vQJ8lPtLY7aB0ifYRr/
+    W85w==
+X-RZG-AUTH: ":LmkFe0i9dN8c2t4QQyGBB/NDXvjDB6pBSfNuhhDSDt3O2J2YOom0XQaPis+nU/5K"
+Received: from Munilab01-lab.micron.com
+    by smtp.strato.de (RZmta 53.4.2 AUTH)
+    with ESMTPSA id z293fb198Ex72Tc
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Wed, 8 Oct 2025 16:59:07 +0200 (CEST)
+From: Bean Huo <beanhuo@iokpp.de>
+To: avri.altman@wdc.com,
+	avri.altman@sandisk.com,
+	bvanassche@acm.org,
+	alim.akhtar@samsung.com,
+	jejb@linux.ibm.com,
+	martin.petersen@oracle.com,
+	can.guo@oss.qualcomm.com,
+	ulf.hansson@linaro.org,
+	beanhuo@micron.com,
+	jens.wiklander@linaro.org
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] Add OP-TEE based RPMB driver for UFS devices
+Date: Wed,  8 Oct 2025 16:58:51 +0200
+Message-Id: <20251008145854.68510-1-beanhuo@iokpp.de>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251005182430.2791371-1-irogers@google.com> <20251005182430.2791371-6-irogers@google.com>
- <fcba9459-9a5a-44c9-976a-323a6f4e0429@linaro.org>
-In-Reply-To: <fcba9459-9a5a-44c9-976a-323a6f4e0429@linaro.org>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 8 Oct 2025 07:58:35 -0700
-X-Gm-Features: AS18NWDiuoJi-sThA-Lh2RXQOiDwJNmDyu8MKIgLUOZTrcVC_jG6TV2oU_hi3Tw
-Message-ID: <CAP-5=fVervG=fmG7naTut3ERzwTTp7yQvuwqNkoKxSBSLsbgGA@mail.gmail.com>
-Subject: Re: [PATCH v7 05/27] perf jevents: Support copying the source json
- files to OUTPUT
-To: James Clark <james.clark@linaro.org>
-Cc: Thomas Richter <tmricht@linux.ibm.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Xu Yang <xu.yang_2@nxp.com>, 
-	Thomas Falcon <thomas.falcon@intel.com>, Andi Kleen <ak@linux.intel.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	Atish Patra <atishp@rivosinc.com>, Beeman Strong <beeman@rivosinc.com>, Leo Yan <leo.yan@arm.com>, 
-	Vince Weaver <vincent.weaver@maine.edu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, Oct 8, 2025 at 4:10=E2=80=AFAM James Clark <james.clark@linaro.org>=
- wrote:
-> On 05/10/2025 7:24 pm, Ian Rogers wrote:
-> > The jevents command expects all json files to be organized under a
-> > single directory. When generating json files from scripts (to reduce
-> > laborious copy and paste in the json) we don't want to generate the
-> > json into the source directory if there is an OUTPUT directory
-> > specified. This change adds a GEN_JSON for this case where the
-> > GEN_JSON copies the JSON files to OUTPUT, only when OUTPUT is
-> > specified. The Makefile.perf clean code is updated to clean up this
-> > directory when present.
-> >
-> > This patch is part of:
-> > https://lore.kernel.org/lkml/20240926173554.404411-12-irogers@google.co=
-m/
-> > which was similarly adding support for generating json in scripts for
-> > the consumption of jevents.py.
-> >
-> > Tested-by: Thomas Richter <tmricht@linux.ibm.com>
-> > Signed-off-by: Ian Rogers <irogers@google.com>
->
-> Hi Ian,
->
-> This commit breaks the build on x86 for me, but not Arm. I also had to
-> do a clean build when bisecting as it seemed to be sticky in some way.
->
-> It fails on the empty pmu events file diff check:
->
-> diff -u pmu-events/empty-pmu-events.c
-> /home/james/workspace/linux/build/local/pmu-events/test-empty-pmu-events.=
-c
-> 2>
-> /home/james/workspace/linux/build/local/pmu-events/empty-pmu-events.log
-> || (cat
-> /home/james/workspace/linux/build/local/pmu-events/empty-pmu-events.log
-> && false)
-> --- pmu-events/empty-pmu-events.c       2025-10-08 11:49:46.341849139 +01=
-00
-> +++
-> /home/james/workspace/linux/build/local/pmu-events/test-empty-pmu-events.=
-c
->   2025-10-08 11:54:40.619999115 +0100
-> @@ -19,239 +19,8 @@
->   };
->
->   static const char *const big_c_string =3D
-> -/* offset=3D0 */ "software\000"
-> ...
->
-> The output continues with the rest of the diff, but I assume it's not
-> important to reproduce the issue.
+From: Bean Huo <beanhuo@micron.com>
 
-I've similarly had issues with empty-pmu-events.c and the test that as
-you say are resolved by a clean build. When I've investigated in the
-past it is the dependencies on the files are accurate but some are
-added or removed, I think adding the Makefile as a dependency for
-building empty-pmu-events.c was a resolution but in general we've not
-done that so I didn't send out a fix.
+This patch series introduces OP-TEE based RPMB (Replay Protected Memory Block)
+support for UFS devices, extending the kernel-level secure storage capabilities
+that are currently available for eMMC devices.
 
-Thanks,
-Ian
+Previously, OP-TEE required a userspace supplicant to access RPMB partitions,
+which created complex dependencies and reliability issues, especially during
+early boot scenarios. Recent work by Linaro has moved core supplicant
+functionality directly into the Linux kernel for eMMC devices, eliminating
+userspace dependencies and enabling immediate secure storage access. This series
+extends the same approach to UFS devices, which are used in enterprise and mobile
+applications that require secure storage capabilities.
 
-> Thanks
-> James
->
-> > ---
-> >   tools/perf/Makefile.perf    | 21 ++++++++++++++++-----
-> >   tools/perf/pmu-events/Build | 18 ++++++++++++------
-> >   2 files changed, 28 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-> > index 7d6ac03a7109..278e51e4b5c6 100644
-> > --- a/tools/perf/Makefile.perf
-> > +++ b/tools/perf/Makefile.perf
-> > @@ -1272,9 +1272,24 @@ endif # CONFIG_PERF_BPF_SKEL
-> >   bpf-skel-clean:
-> >       $(call QUIET_CLEAN, bpf-skel) $(RM) -r $(SKEL_TMP_OUT) $(SKELETON=
-S) $(SKEL_OUT)/vmlinux.h
-> >
-> > +pmu-events-clean:
-> > +ifeq ($(OUTPUT),)
-> > +     $(call QUIET_CLEAN, pmu-events) $(RM) \
-> > +             pmu-events/pmu-events.c \
-> > +             pmu-events/metric_test.log \
-> > +             pmu-events/test-empty-pmu-events.c \
-> > +             pmu-events/empty-pmu-events.log
-> > +else # When an OUTPUT directory is present, clean up the copied pmu-ev=
-ents/arch directory.
-> > +     $(call QUIET_CLEAN, pmu-events) $(RM) -r $(OUTPUT)pmu-events/arch=
- \
-> > +             $(OUTPUT)pmu-events/pmu-events.c \
-> > +             $(OUTPUT)pmu-events/metric_test.log \
-> > +             $(OUTPUT)pmu-events/test-empty-pmu-events.c \
-> > +             $(OUTPUT)pmu-events/empty-pmu-events.log
-> > +endif
-> > +
-> >   clean:: $(LIBAPI)-clean $(LIBBPF)-clean $(LIBSUBCMD)-clean $(LIBSYMBO=
-L)-clean $(LIBPERF)-clean \
-> >               arm64-sysreg-defs-clean fixdep-clean python-clean bpf-ske=
-l-clean \
-> > -             tests-coresight-targets-clean
-> > +             tests-coresight-targets-clean pmu-events-clean
-> >       $(call QUIET_CLEAN, core-objs)  $(RM) $(LIBPERF_A) $(OUTPUT)perf-=
-archive \
-> >               $(OUTPUT)perf-iostat $(LANG_BINDINGS)
-> >       $(Q)find $(or $(OUTPUT),.) -name '*.o' -delete -o -name '*.a' -de=
-lete -o \
-> > @@ -1287,10 +1302,6 @@ clean:: $(LIBAPI)-clean $(LIBBPF)-clean $(LIBSUB=
-CMD)-clean $(LIBSYMBOL)-clean $(
-> >               $(OUTPUT)FEATURE-DUMP $(OUTPUT)util/*-bison* $(OUTPUT)uti=
-l/*-flex* \
-> >               $(OUTPUT)util/intel-pt-decoder/inat-tables.c \
-> >               $(OUTPUT)tests/llvm-src-{base,kbuild,prologue,relocation}=
-.c \
-> > -             $(OUTPUT)pmu-events/pmu-events.c \
-> > -             $(OUTPUT)pmu-events/test-empty-pmu-events.c \
-> > -             $(OUTPUT)pmu-events/empty-pmu-events.log \
-> > -             $(OUTPUT)pmu-events/metric_test.log \
-> >               $(OUTPUT)$(fadvise_advice_array) \
-> >               $(OUTPUT)$(fsconfig_arrays) \
-> >               $(OUTPUT)$(fsmount_arrays) \
-> > diff --git a/tools/perf/pmu-events/Build b/tools/perf/pmu-events/Build
-> > index 32f387d48908..1503a16e662a 100644
-> > --- a/tools/perf/pmu-events/Build
-> > +++ b/tools/perf/pmu-events/Build
-> > @@ -1,7 +1,6 @@
-> >   pmu-events-y        +=3D pmu-events.o
-> >   JDIR                =3D  pmu-events/arch/$(SRCARCH)
-> > -JSON         =3D  $(shell [ -d $(JDIR) ] &&                           =
- \
-> > -                     find $(JDIR) -name '*.json' -o -name 'mapfile.csv=
-')
-> > +JSON         =3D  $(shell find pmu-events/arch -name *.json -o -name *=
-.csv)
-> >   JDIR_TEST   =3D  pmu-events/arch/test
-> >   JSON_TEST   =3D  $(shell [ -d $(JDIR_TEST) ] &&                      =
- \
-> >                       find $(JDIR_TEST) -name '*.json')
-> > @@ -29,13 +28,20 @@ $(PMU_EVENTS_C): $(EMPTY_PMU_EVENTS_C)
-> >       $(call rule_mkdir)
-> >       $(Q)$(call echo-cmd,gen)cp $< $@
-> >   else
-> > +# Copy checked-in json for generation.
-> > +$(OUTPUT)pmu-events/arch/%: pmu-events/arch/%
-> > +     $(call rule_mkdir)
-> > +     $(Q)$(call echo-cmd,gen)cp $< $@
-> > +
-> > +GEN_JSON =3D $(patsubst %,$(OUTPUT)%,$(JSON))
-> > +
-> >   $(METRIC_TEST_LOG): $(METRIC_TEST_PY) $(METRIC_PY)
-> >       $(call rule_mkdir)
-> >       $(Q)$(call echo-cmd,test)$(PYTHON) $< 2> $@ || (cat $@ && false)
-> >
-> > -$(TEST_EMPTY_PMU_EVENTS_C): $(JSON) $(JSON_TEST) $(JEVENTS_PY) $(METRI=
-C_PY) $(METRIC_TEST_LOG)
-> > +$(TEST_EMPTY_PMU_EVENTS_C): $(GEN_JSON) $(JSON_TEST) $(JEVENTS_PY) $(M=
-ETRIC_PY) $(METRIC_TEST_LOG)
-> >       $(call rule_mkdir)
-> > -     $(Q)$(call echo-cmd,gen)$(PYTHON) $(JEVENTS_PY) none none pmu-eve=
-nts/arch $@
-> > +     $(Q)$(call echo-cmd,gen)$(PYTHON) $(JEVENTS_PY) none none $(OUTPU=
-T)pmu-events/arch $@
-> >
-> >   $(EMPTY_PMU_EVENTS_TEST_LOG): $(EMPTY_PMU_EVENTS_C) $(TEST_EMPTY_PMU_=
-EVENTS_C)
-> >       $(call rule_mkdir)
-> > @@ -63,10 +69,10 @@ $(OUTPUT)%.pylint_log: %
-> >       $(call rule_mkdir)
-> >       $(Q)$(call echo-cmd,test)pylint "$<" > $@ || (cat $@ && rm $@ && =
-false)
-> >
-> > -$(PMU_EVENTS_C): $(JSON) $(JSON_TEST) $(JEVENTS_PY) $(METRIC_PY) $(MET=
-RIC_TEST_LOG) \
-> > +$(PMU_EVENTS_C): $(GEN_JSON) $(JSON_TEST) $(JEVENTS_PY) $(METRIC_PY) $=
-(METRIC_TEST_LOG) \
-> >       $(EMPTY_PMU_EVENTS_TEST_LOG) $(PMU_EVENTS_MYPY_TEST_LOGS) $(PMU_E=
-VENTS_PYLINT_TEST_LOGS)
-> >       $(call rule_mkdir)
-> > -     $(Q)$(call echo-cmd,gen)$(PYTHON) $(JEVENTS_PY) $(JEVENTS_ARCH) $=
-(JEVENTS_MODEL) pmu-events/arch $@
-> > +     $(Q)$(call echo-cmd,gen)$(PYTHON) $(JEVENTS_PY) $(JEVENTS_ARCH) $=
-(JEVENTS_MODEL) $(OUTPUT)pmu-events/arch $@
-> >   endif
-> >
-> >   # pmu-events.c file is generated in the OUTPUT directory so it needs =
-a
->
+Benefits:
+- Eliminates dependency on userspace supplicant for UFS RPMB access
+- Enables early boot secure storage access (e.g., fTPM, secure UEFI variables)
+- Provides kernel-level RPMB access as soon as UFS driver is initialized
+- Removes complex initramfs dependencies and boot ordering requirements
+- Ensures reliable and deterministic secure storage operations
+- Supports both built-in and modular fTPM configurations.
+
+v2 -- v3:
+	1. Removed patch "rpmb: move rpmb_frame struct and constants to common header". since it
+	   has been queued in mmc tree, and add anew patch:
+	   "scsi: ufs: core: Remove duplicate macro definitions"
+	2. Incorporated suggestions from Jens
+        3. Added check if Advanced RPMB is enabled, if enabled we will not register UFS OP-TEE RPMB.
+
+v1 -- v2:
+	1. Added fix tag for patch [2/3]
+	2. Incorporated feedback and suggestions from Bart
+
+RFC v1 -- v1:
+        1. Added support for all UFS RPMB regions based on https://github.com/OP-TEE/optee_os/issues/7532
+        2. Incorporated feedback and suggestions from Bart
+
+
+Bean Huo (3):
+  scsi: ufs: core: Remove duplicate macro definitions
+  scsi: ufs: core: fix incorrect buffer duplication in
+    ufshcd_read_string_desc()
+  scsi: ufs: core: Add OP-TEE based RPMB driver for UFS devices
+
+ drivers/misc/Kconfig           |   2 +-
+ drivers/ufs/core/Makefile      |   1 +
+ drivers/ufs/core/ufs-rpmb.c    | 249 +++++++++++++++++++++++++++++++++
+ drivers/ufs/core/ufshcd-priv.h |  16 ++-
+ drivers/ufs/core/ufshcd.c      |  32 ++++-
+ include/ufs/ufs.h              |   4 +
+ include/ufs/ufshcd.h           |   8 +-
+ 7 files changed, 301 insertions(+), 11 deletions(-)
+ create mode 100644 drivers/ufs/core/ufs-rpmb.c
+
+-- 
+2.34.1
+
 
