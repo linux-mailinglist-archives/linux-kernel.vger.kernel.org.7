@@ -1,171 +1,428 @@
-Return-Path: <linux-kernel+bounces-845292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6A37BC44B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 12:22:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E2F2BC44C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 12:23:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26BD83ADAB9
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 10:22:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 211513ADAAC
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 10:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 870D02F549C;
-	Wed,  8 Oct 2025 10:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="W0TVEo1B"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFF02F5A1E;
+	Wed,  8 Oct 2025 10:23:47 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DFB92F5A01
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 10:21:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6FF71F12E9
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 10:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759918924; cv=none; b=XDXca75qHI2ObHF9kGCCC9PLpseuBIcQ82XX7RfF5EgPCIwmQlyA4K71p2pQR5/5Pq4LJak8lCCNNNpWlnuyMwswI2baZr3cg7OxENlymPDnc86f61O1sqzAS4kUTfnwjs1xeujphNbygT+ofooR0ktkGSLhTwyvu8Mx47XnLoY=
+	t=1759919027; cv=none; b=gx16NErADVVRgoFAHNEGK6soPNTDPxzrgD7tX9U7kwVLDiyPg1MCg+kw2XUim9iDX8B3qiMkC/q3Dj1Xb0ThMQJC5OiZL9emQ0il2yUatK5CSN4DEokGduNcvd7JBLYkyND9rkfB9KUySpPxtL2pfxXuiT477D2SqX9387RC2do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759918924; c=relaxed/simple;
-	bh=qfqHbBIpB2XPm4SOcuA/T+YYxmxec8qw/7rZh96Rgtk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zp1mtJq62lt3ED9nhD5qGfMO5GnxS7jVz82aXcl/OCz+H3iF2Mcf57yA+eV7dTOW/8zqLb811iSHocJNl5A8Lu97jOuR6gdfXy58n+yG/T2mAtBN+FTt6AzfyOxJ9cwamqukxowhFmvPP4dwgyCx9fZdTlCXVO5VHv1u4MxAb8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=W0TVEo1B; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 599A340E01C9;
-	Wed,  8 Oct 2025 10:21:57 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id SLIGt5VvdLZq; Wed,  8 Oct 2025 10:21:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1759918913; bh=VAYvJAtRKA4WGZeh8ZtxhVkwCGgv4wzgcWujPkrV7WI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W0TVEo1Bbuh44ZPsDZ0tdeXkutIMYZic2naHA9b3NYmBM0IDrm/NzesQ8JLjRGce/
-	 S7s8CZ3Bbpv2/uMpoihxA0wKtmx/9EB/XHldO/y7WIv9w+VtkJtuhom9xTKVATHM+j
-	 XOXmaRogEP7aOWwuuYYcDQHOPBKZ7uMFVx8+G6+LId8aJI7Wa4sBrR9AUG2ntSmJQs
-	 Avspc/LgY3uRcmZR52F0fMxxLbNKure3lCRlXyt48WQld3+k+SXumsZEVrBbMrnmv4
-	 ChCnFHwHtDN4wjBiqHaT7F7eSDnoqxTQoU2O2MVZ3kj/dEAsTLBl15ObA2xD8j79oe
-	 1pCSi8Q+xUP6Pj7SbH4qORBTN9eno2PmVKLbXtlwmKOonvGfXUumpVn5fAXCbLLYI8
-	 b53qdWXcxTiL68rH0KA8NkXxv/E1vhddcj2ZcYg3My38U6h2WCRdBp/HmZuwWP+LHS
-	 n7ds5qFFAfGcT/ntk02h0Ia5BDbWqL3fQHUiMRrSe3kFeBG7NX8NJUNN7wR/nf5TiI
-	 mhhqquerxJlY81JW33bI7/yUrbPUZ3CcyDtP63j4WiHnbeZq/IkpuauXDS+wtYUe4n
-	 i1j9UtamNDkMVbm/hiSs2si6Y4/QBF2jmOiqr0iF80a5dCBZ38dPEXZckUm22uycTt
-	 9ZG9MJI8OIozmBo8Pimu7OrI=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 8722440E01AB;
-	Wed,  8 Oct 2025 10:21:42 +0000 (UTC)
-Date: Wed, 8 Oct 2025 12:21:36 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	"Kaplan, David" <David.Kaplan@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Klaus Kusche <klaus.kusche@computerix.info>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86/bugs: Qualify RETBLEED_INTEL_MSG
-Message-ID: <20251008102136.GAaOY7MBd4_VBPBNtG@fat_crate.local>
-References: <20251003171936.155391-1-david.kaplan@amd.com>
- <20251006131126.GBaOO__iUbQHNR6QhW@fat_crate.local>
- <LV3PR12MB9265B9AA81E01A539214764A94E3A@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20251006140442.GDaOPMemqB7SRJSHWL@fat_crate.local>
- <20251007182257.ywrqrrhgrtrviila@desk>
- <20251007221229.GAaOWQTadGWlZSeAo_@fat_crate.local>
- <20251007230821.5shpa3pusyzaohb2@desk>
- <sb7p6quwxkn4w4etgsxlqd6fcsia4xobf73d3fnybxafxrmvwi@ajg5lkdxtnfy>
+	s=arc-20240116; t=1759919027; c=relaxed/simple;
+	bh=KVcP0zeE2rLbJWsi7GzXOc+bfaq5XJLf3hwMWZhrbz8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=u4ihNOz7HxlxQIu1S3IJOt4QNrR+PU6YlT7xtHineq8I7blTKMe43fOIw6aUHvE0Aee08Bxi5isKWG88pCyt7HasWOTOIHIU64dtg5JbheFnSPpAxSGoNzOQ5HNprXe4fbJmTuwD5sn+cJm9WjwqkLk/Kx6zRgmS8DDu7ZRKL64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v6RKR-0000ya-Re; Wed, 08 Oct 2025 12:23:27 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v6RKQ-002YHf-2r;
+	Wed, 08 Oct 2025 12:23:26 +0200
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v6RKQ-0000000054Y-3JN9;
+	Wed, 08 Oct 2025 12:23:26 +0200
+Message-ID: <bcf6113b0025777db1cb2ace1618fed8fac2dfc6.camel@pengutronix.de>
+Subject: Re: [PATCH v7 4/7] reset: rzg2l-usbphy-ctrl: Add support for USB
+ PWRRDY
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>, vkoul@kernel.org, 
+	kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, 	geert+renesas@glider.be, magnus.damm@gmail.com,
+ yoshihiro.shimoda.uh@renesas.com, 	biju.das.jz@bp.renesas.com
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Claudiu
+ Beznea	 <claudiu.beznea.uj@bp.renesas.com>, Wolfram Sang	
+ <wsa+renesas@sang-engineering.com>
+Date: Wed, 08 Oct 2025 12:23:26 +0200
+In-Reply-To: <66d85e70-efb8-4a45-9164-55b123691b70@tuxon.dev>
+References: <20250925100302.3508038-1-claudiu.beznea.uj@bp.renesas.com>
+	 <20250925100302.3508038-5-claudiu.beznea.uj@bp.renesas.com>
+	 <c7fc31f1247332196516394a22f6feef9733a0b4.camel@pengutronix.de>
+	 <66d85e70-efb8-4a45-9164-55b123691b70@tuxon.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <sb7p6quwxkn4w4etgsxlqd6fcsia4xobf73d3fnybxafxrmvwi@ajg5lkdxtnfy>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, Oct 07, 2025 at 05:14:29PM -0700, Josh Poimboeuf wrote:
-> Isn't that what CONFIG_CPU_MITIGATIONS=n already does today?
+Hi Claudiu,
 
-I'd like =n to mean, code is not compiled in.
+On Mi, 2025-10-08 at 12:29 +0300, Claudiu Beznea wrote:
+> Hi, Philipp,
+>=20
+> On 10/8/25 11:34, Philipp Zabel wrote:
+> > Hi Claudiu,
+> >=20
+> > On Do, 2025-09-25 at 13:02 +0300, Claudiu wrote:
+> > > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > >=20
+> > > On the Renesas RZ/G3S SoC, the USB PHY block has an input signal call=
+ed
+> > > PWRRDY. This signal is managed by the system controller and must be
+> > > de-asserted after powering on the area where USB PHY resides and asse=
+rted
+> > > before powering it off.
+> > >=20
+> > > On power-on the USB PWRRDY signal need to be de-asserted before enabl=
+ing
+> > > clock and switching the module to normal state (through MSTOP support=
+). The
+> > > power-on configuration sequence
+> >=20
+> > The wording makes me wonder, have you considered implementing this as a
+> > power sequencing driver?
+>=20
+> No, haven't tried as power sequencing. At the moment this was started I
+> think the power sequencing support wasn't merged.
+>=20
+> The approaches considered were:
+> a/ power domain
 
-We do have some savings:
+Letting a power domain control a corresponding power ready signal would
+have been my first instinct as well.
 
-   text	   data	    bss	    dec	    hex	filename
-136442490	9737118		36764336	182943944	ae780c8	vmlinux 	# CONFIG_CPU_MITIGATIONS is not set
-138493310	10692818	37741668	186927796	b244ab4	vmlinux		# CONFIG_CPU_MITIGATIONS=y
+> b/ regulator
+> c/ as a reference counted bit done through regmap read/writes APIs
+>=20
+> a and b failed as a result of discussions in the previous posted versions=
+.
 
-but look at bugs.o:
+Could you point me to the discussion related to a?
 
-# CONFIG_CPU_MITIGATIONS is not set	599K arch/x86/kernel/cpu/bugs.o
-# CONFIG_CPU_MITIGATIONS=y		625K arch/x86/kernel/cpu/bugs.o
+I see v2 and v3 tried to control the bit from the PHY drivers, and in
+v4 we were are already back to the reset driver.
 
-and those unused 600K still go into vmlinux:
+> c was abandoned by me after long discussions with Renesas HW team which
+> revealed the block schema b/w individual USB blocks (presented in the pat=
+ch
+> description).
+>=20
+> The point is that this bit doesn't actually power anything, at the moment
+> the bit is set, the power to USB is already applied. Software just need t=
+o
+> set the bit before/after setting the clocks and the associated MSTOP and
+> applying any USB specific settings. Each clock has an MSTOP associated an=
+d
+> the MSTOP is set though the clock driver when the clock is set.
 
-$ readelf -W -s vmlinux | grep cpu_show_
- 38058: ffffffff81869d20    27 FUNC    LOCAL  DEFAULT    1 cpu_show_not_affected
- 91642: ffffffff81284980    70 FUNC    GLOBAL DEFAULT    1 cpu_show_vmscape
- 92944: ffffffff812840f0    68 FUNC    GLOBAL DEFAULT    1 cpu_show_spectre_v1
- 93449: ffffffff812847e0    70 FUNC    GLOBAL DEFAULT    1 cpu_show_gds
- 96967: ffffffff81869d20    27 FUNC    WEAK   DEFAULT    1 cpu_show_ghostwrite
- 99329: ffffffff812843b0    70 FUNC    GLOBAL DEFAULT    1 cpu_show_spec_store_bypass
-102119: ffffffff81284830    70 FUNC    GLOBAL DEFAULT    1 cpu_show_reg_file_data_sampling
-102618: ffffffff812845b0    56 FUNC    GLOBAL DEFAULT    1 cpu_show_itlb_multihit
-102660: ffffffff81284880    85 FUNC    GLOBAL DEFAULT    1 cpu_show_old_microcode
-103154: ffffffff812848e0    70 FUNC    GLOBAL DEFAULT    1 cpu_show_indirect_target_selection
-103474: ffffffff81284460   164 FUNC    GLOBAL DEFAULT    1 cpu_show_mds
-103673: ffffffff81284510   153 FUNC    GLOBAL DEFAULT    1 cpu_show_tsx_async_abort
-106613: ffffffff81284930    70 FUNC    GLOBAL DEFAULT    1 cpu_show_tsa
-109692: ffffffff81284400    92 FUNC    GLOBAL DEFAULT    1 cpu_show_l1tf
-111021: ffffffff81284640   150 FUNC    GLOBAL DEFAULT    1 cpu_show_mmio_stale_data
-111165: ffffffff812845f0    70 FUNC    GLOBAL DEFAULT    1 cpu_show_srbds
-112332: ffffffff81284090    83 FUNC    GLOBAL DEFAULT    1 cpu_show_meltdown
-114213: ffffffff812846e0   174 FUNC    GLOBAL DEFAULT    1 cpu_show_retbleed
-114312: ffffffff81284790    70 FUNC    GLOBAL DEFAULT    1 cpu_show_spec_rstack_overflow
-118586: ffffffff81284140   619 FUNC    GLOBAL DEFAULT    1 cpu_show_spectre_v2
+I understand.
 
-$ readelf -W -s vmlinux | grep _parse_cmdline
-  2575: ffffffff897a0050    27 FUNC    LOCAL  DEFAULT   18 nospectre_v2_parse_cmdline
-  2578: ffffffff897a0070    27 FUNC    LOCAL  DEFAULT   18 nossb_parse_cmdline
-  2587: ffffffff897a0110    37 FUNC    LOCAL  DEFAULT   18 its_parse_cmdline
-  2591: ffffffff897a01d0   138 FUNC    LOCAL  DEFAULT   18 tsx_async_abort_parse_cmdline
-  2594: ffffffff897a0260   138 FUNC    LOCAL  DEFAULT   18 mmio_stale_data_parse_cmdline
-  2597: ffffffff897a02f0    97 FUNC    LOCAL  DEFAULT   18 rfds_parse_cmdline
-  2599: ffffffff897a0360    56 FUNC    LOCAL  DEFAULT   18 srbds_parse_cmdline
-  2601: ffffffff897a03a0    38 FUNC    LOCAL  DEFAULT   18 l1d_flush_parse_cmdline
-  2603: ffffffff897a03d0    96 FUNC    LOCAL  DEFAULT   18 gds_parse_cmdline
-  2604: ffffffff897a0430   166 FUNC    LOCAL  DEFAULT   18 tsa_parse_cmdline
-  2606: ffffffff897a04e0   268 FUNC    LOCAL  DEFAULT   18 spectre_v2_user_parse_cmdline
-  2608: ffffffff897a05f0   487 FUNC    LOCAL  DEFAULT   18 spectre_v2_parse_cmdline
-  2609: ffffffff897a07e0   131 FUNC    LOCAL  DEFAULT   18 spectre_bhi_parse_cmdline
-  2611: ffffffff897a0870   206 FUNC    LOCAL  DEFAULT   18 ssb_parse_cmdline
-  2613: ffffffff897a0a30   200 FUNC    LOCAL  DEFAULT   18 srso_parse_cmdline
-  2615: ffffffff897a0b00   178 FUNC    LOCAL  DEFAULT   18 vmscape_parse_cmdline
-  2617: ffffffff897a0bc0   344 FUNC    LOCAL  DEFAULT   18 retbleed_parse_cmdline
+Apart from having to carry non-reset-related code in reset drivers, I
+worry about the implicit ordering that the PHY driver depends on with
+this:
 
-and so on...
+The power-up (probe) order is guaranteed by probe order via the
+reset_control_get() check in the PHY driver, and power-down (remove)
+order is guaranteed by the reset controller device reference that the
+reset control holds. That's all very hidden and indirect when the
+actual dependency is between a bit being set in SYSC and the clock
+handling in (either) PHY driver.
 
-So I'd like to try to see whether completely axing it off in the =n case
-without incurring a lot of ugly ifdeffery, would work.
+> >=20
+> > > must be:
+> > >=20
+> > > 1/ PWRRDY=3D0
+> > > 2/ CLK_ON=3D1
+> > > 3/ MSTOP=3D0
+> > >=20
+> > > On power-off the configuration sequence should be:
+> > >=20
+> > > 1/ MSTOP=3D1
+> > > 2/ CLK_ON=3D0
+> > > 3/ PWRRDY=3D1
+> > >=20
+> > > The CLK_ON and MSTOP functionalities are controlled by clock drivers.
+> > >=20
+> > > After long discussions with the internal HW team, it has been confirm=
+ed
+> > > that the HW connection b/w USB PHY block, the USB channels, the syste=
+m
+> > > controller, clock, MSTOP, PWRRDY signal is as follows:
+> > >=20
+> > >                                =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=90
+> > >                                =E2=94=82                             =
+ =E2=94=82=E2=97=84=E2=94=80=E2=94=80 CPG_CLKON_USB.CLK0_ON
+> > >                                =E2=94=82     USB CH0                 =
+ =E2=94=82
+> > > =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=90   =E2=94=82=E2=94=8C=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=90 =E2=94=82=E2=97=84=E2=94=80=E2=94=80 CPG_CLKON_USB.CLK2_ON
+> > > =E2=94=82                 =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90   =E2=94=82=E2=94=82host c=
+ontroller registers  =E2=94=82 =E2=94=82
+> > > =E2=94=82                 =E2=94=82        =E2=94=82   =E2=94=82=E2=
+=94=82function controller registers=E2=94=82
+> > > =E2=94=82                 =E2=94=82 PHY0   =E2=94=82=E2=97=84=E2=94=
+=80=E2=94=80=E2=94=A4=E2=94=94=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=98 =E2=94=82
+> > > =E2=94=82     USB PHY     =E2=94=82        =E2=94=82   =E2=94=94=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=96=B2=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=98
+> > > =E2=94=82                 =E2=94=94=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=98                =E2=94=82
+> > > =E2=94=82                          =E2=94=82    CPG_BUS_PERI_COM_MSTO=
+P.MSTOP{6, 5}_ON
+> > > =E2=94=82=E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=90 =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=90
+> > > =E2=94=82=E2=94=82USHPHY control=E2=94=82 =E2=94=82        =E2=94=82
+> > > =E2=94=82=E2=94=82  registers   =E2=94=82 =E2=94=82 PHY1   =E2=94=82 =
+  =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90
+> > > =E2=94=82=E2=94=94=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=98 =E2=94=82        =E2=94=82=E2=97=84=E2=94=80=E2=94=80=E2=94=A4   =
+  USB CH1                  =E2=94=82
+> > > =E2=94=82                 =E2=94=94=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=98   =E2=94=82=E2=94=8C=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=90 =E2=94=82=E2=97=84=E2=94=80=E2=94=80 CPG_CLKON_USB.CL=
+K1_ON
+> > > =E2=94=94=E2=94=80=E2=96=B2=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=96=B2=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=96=B2=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=98   =E2=94=82=E2=94=82 host controller regi=
+sters =E2=94=82 =E2=94=82
+> > >   =E2=94=82       =E2=94=82         =E2=94=82          =E2=94=82=E2=
+=94=94=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=98 =E2=94=82
+> > >   =E2=94=82       =E2=94=82         =E2=94=82          =E2=94=94=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=
+=80=E2=94=80=E2=94=80=E2=94=80=E2=96=B2=E2=94=80=E2=94=80=E2=94=80=E2=94=80=
+=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=
+=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=98
+> > >   =E2=94=82       =E2=94=82         =E2=94=82                       =
+=E2=94=82
+> > >   =E2=94=82       =E2=94=82         =E2=94=82           CPG_BUS_PERI_=
+COM_MSTOP.MSTOP7_ON
+> > >   =E2=94=82PWRRDY =E2=94=82         =E2=94=82
+> > >   =E2=94=82       =E2=94=82   CPG_CLK_ON_USB.CLK3_ON
+> > >   =E2=94=82       =E2=94=82
+> > >   =E2=94=82  CPG_BUS_PERI_COM_MSTOP.MSTOP4_ON
+> > >   =E2=94=82
+> > > =E2=94=8C=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=90
+> > > =E2=94=82SYSC=E2=94=82
+> > > =E2=94=94=E2=94=80=E2=94=80=E2=94=80=E2=94=80=E2=94=98
+> > >=20
+> > > where:
+> > > - CPG_CLKON_USB.CLK.CLKX_ON is the register bit controlling the clock=
+ X
+> > >   of different USB blocks, X in {0, 1, 2, 3}
+> > > - CPG_BUS_PERI_COM_MSTOP.MSTOPX_ON is the register bit controlling th=
+e
+> > >   MSTOP of different USB blocks, X in {4, 5, 6, 7}
+> > > - USB PHY is the USB PHY block exposing 2 ports, port0 and port1, use=
+d
+> > >   by the USB CH0, USB CH1
+> > > - SYSC is the system controller block controlling the PWRRDY signal
+> > > - USB CHx are individual USB block with host and function capabilitie=
+s
+> > >   (USB CH0 have both host and function capabilities, USB CH1 has only
+> > >   host capabilities)
+> > >=20
+> > > The USBPHY control registers are controlled though the
+> > > reset-rzg2l-usbphy-ctrl driver. The USB PHY ports are controlled by
+> > > phy_rcar_gen3_usb2 (drivers/phy/renesas/phy-rcar-gen3-usb2.c file). T=
+he
+> > > USB PHY ports request resets from the reset-rzg2l-usbphy-ctrl driver.
+> > >=20
+> > > The connection b/w the system controller and the USB PHY CTRL driver =
+is
+> > > implemented through the renesas,sysc-pwrrdy device tree property
+> > > proposed in this patch. This property specifies the register offset a=
+nd the
+> > > bitmask required to control the PWRRDY signal.
+> > >=20
+> > > Since the USB PHY CTRL driver needs to be probed before any other
+> > > USB-specific driver on RZ/G3S, control of PWRRDY is passed exclusivel=
+y
+> > > to it. This guarantees the correct configuration sequence between clo=
+cks,
+> > > MSTOP bits, and the PWRRDY bit. At the same time, changes are kept mi=
+nimal
+> > > by avoiding modifications to the USB PHY driver to also handle the PW=
+RRDY
+> > > itself.
+> > >=20
+> > > Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > > ---
+> > >=20
+> > > Changes in v7:
+> > > - used proper regmap update value on rzg2l_usbphy_ctrl_set_pwrrdy()
+> > >=20
+> > > Changes in v6:
+> > > - used syscon_regmap_lookup_by_phandle_args() to simplify the code
+> > > - collected tags
+> > >=20
+> > > Changes in v5:
+> > > - none
+> > >=20
+> > > Changes in v4:
+> > > - updated patch description
+> > > - updated rzg2l_usbphy_ctrl_pwrrdy_init() to map directly the
+> > >   "renesas,sysc-pwrrdy" as the SYSC signal abstraction was dropped
+> > >   in this version, along with rz_sysc_get_signal_map()
+> > > - dropped priv member of rzg2l_usbphy_ctrl_pwrrdy_init() as it is
+> > >   not needed in this version
+> > > - shift left !power_on with pwrrdy->mask as this is how the
+> > >   regmap_update_bits() needs the last member to be
+> > > - selected MFD_SYSCON
+> > >=20
+> > > Changes in v3:
+> > > - none; this patch is new
+> > >=20
+> > >=20
+> > >  drivers/reset/Kconfig                   |  1 +
+> > >  drivers/reset/reset-rzg2l-usbphy-ctrl.c | 62 +++++++++++++++++++++++=
+++
+> > >  2 files changed, 63 insertions(+)
+> > >=20
+> > > diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> > > index 78b7078478d4..329730cbcfb9 100644
+> > > --- a/drivers/reset/Kconfig
+> > > +++ b/drivers/reset/Kconfig
+> > > @@ -237,6 +237,7 @@ config RESET_RASPBERRYPI
+> > >  config RESET_RZG2L_USBPHY_CTRL
+> > >  	tristate "Renesas RZ/G2L USBPHY control driver"
+> > >  	depends on ARCH_RZG2L || COMPILE_TEST
+> > > +	select MFD_SYSCON
+> > >  	help
+> > >  	  Support for USBPHY Control found on RZ/G2L family. It mainly
+> > >  	  controls reset and power down of the USB/PHY.
+> > > diff --git a/drivers/reset/reset-rzg2l-usbphy-ctrl.c b/drivers/reset/=
+reset-rzg2l-usbphy-ctrl.c
+> > > index 8a7f167e405e..be315199e2b0 100644
+> > > --- a/drivers/reset/reset-rzg2l-usbphy-ctrl.c
+> > > +++ b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
+> > > @@ -13,6 +13,7 @@
+> > >  #include <linux/regmap.h>
+> > >  #include <linux/reset.h>
+> > >  #include <linux/reset-controller.h>
+> > > +#include <linux/mfd/syscon.h>
+> > > =20
+> > >  #define RESET			0x000
+> > >  #define VBENCTL			0x03c
+> > > @@ -41,6 +42,18 @@ struct rzg2l_usbphy_ctrl_priv {
+> > > =20
+> > >  #define rcdev_to_priv(x)	container_of(x, struct rzg2l_usbphy_ctrl_pr=
+iv, rcdev)
+> > > =20
+> > > +/**
+> > > + * struct rzg2l_usbphy_ctrl_pwrrdy - SYSC PWRRDY signal descriptor
+> > > + * @regmap: SYSC regmap
+> > > + * @offset: offset into the SYSC address space for accessing PWRRDY
+> > > + * @mask: mask into the register at offset for accessing PWRRDY
+> > > + */
+> > > +struct rzg2l_usbphy_ctrl_pwrrdy {
+> > > +	struct regmap *regmap;
+> > > +	u32 offset;
+> > > +	u32 mask;
+> > > +};
+> > > +
+> > >  static int rzg2l_usbphy_ctrl_assert(struct reset_controller_dev *rcd=
+ev,
+> > >  				    unsigned long id)
+> > >  {
+> > > @@ -91,6 +104,8 @@ static int rzg2l_usbphy_ctrl_status(struct reset_c=
+ontroller_dev *rcdev,
+> > >  	return !!(readl(priv->base + RESET) & port_mask);
+> > >  }
+> > > =20
+> > > +#define RZG2L_USBPHY_CTRL_PWRRDY	1
+> > > +
+> > >  static const struct of_device_id rzg2l_usbphy_ctrl_match_table[] =3D=
+ {
+> > >  	{ .compatible =3D "renesas,rzg2l-usbphy-ctrl" },
+> > >  	{ /* Sentinel */ }
+> > > @@ -110,6 +125,49 @@ static const struct regmap_config rzg2l_usb_regc=
+onf =3D {
+> > >  	.max_register =3D 1,
+> > >  };
+> > > =20
+> > > +static void rzg2l_usbphy_ctrl_set_pwrrdy(struct rzg2l_usbphy_ctrl_pw=
+rrdy *pwrrdy,
+> > > +					 bool power_on)
+> > > +{
+> > > +	u32 val =3D (!power_on << (ffs(pwrrdy->mask) - 1)) & pwrrdy->mask;
+> >=20
+> >=20
+> > Why not just:
+> >=20
+> > 	u32 val =3D power_on ? 0 : pwrrdy->mask;
+>=20
+> This would work as well. I wanted to be sure it doesn't fail in case the
+> mask is more than one bit (as it comes from device tree).
 
-> Then one only needs to grep their .config file for UGLY to understand
-> why their disassembly is so inscrutable ;-)
+I'd just check this in rzg2l_usbphy_ctrl_pwrrdy_init() and fail if more
+than one bit is set.
 
-Not sure about UGLY but if you can come up with a name that says "has impact
-on the resulting code and when you have them enabled, you have weird asm
-constructs all over the place", sure, why not.
+[...]
+>=20
+> > So we deassert PWRRDY on probe and assert on remove. What about
+> > suspend/resume ordering?
+>=20
+> As this driver has no suspend/resume support yet, my intention was to tak=
+e
+> care of this bit on suspend/resume after it will be established how it is
+> handled on probe/remove. Adding suspend/resume support to this series wil=
+l
+> make it bigger.
 
--- 
-Regards/Gruss,
-    Boris.
+Ok, please add that to the commit description.
+I'm just asking because the dt-bindings patch mentions how PWRRDY must
+be set during suspend/resume, and then this patch doesn't do it.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+regards
+Philipp
 
