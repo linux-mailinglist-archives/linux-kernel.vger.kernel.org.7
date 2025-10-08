@@ -1,133 +1,173 @@
-Return-Path: <linux-kernel+bounces-845568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8635BC564F
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 16:10:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B4F0BC5651
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 16:10:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4A3684F38EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 14:08:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 194A73B5C8E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 14:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E6728CF56;
-	Wed,  8 Oct 2025 14:08:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C69D28DB71;
+	Wed,  8 Oct 2025 14:10:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wXOIV+Tz"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AnfLECuv"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2394028B407
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 14:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F4E28D8F1
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 14:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759932517; cv=none; b=NscIcOXzruDOj2uZpJvyAyEle3idlxed03mDEAhsphpTo+iX1ttB5ro1mVKxFp7VjUORRsUOhDOhvS6GGLsxo+yOjCBNXLtew3zI10FHF2mto99pmT2njyPePi7b1odQMSkjavysG8az5JWAIJeOatukBfgffNmEPSj1AtHpPNU=
+	t=1759932643; cv=none; b=Mpwywo7OEbxcmjvG/36pLOqiBg7QA9FBjQGgSASMomkDlf1DneWPomHnl2DK4Whdb6Dfv6q24ayG7kdMOKjVUF7K4r93BEbmw/qvYYh58cWY7ENyGY5W3nDYcvDdZ9tGkeRZ7e5nE7BAfvqCfMYgt+/x2gWFyFNrbsgB0ZFRPsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759932517; c=relaxed/simple;
-	bh=tAwpicwtdQMUuNcHpBxjwYWrqxJs6DJpBsuCMldzPrs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dveWA5D6/AifDgpp7RhCAORQ+xNyi2JGvRn1ozKr9LAO28w50p3PIuKUprJ5GdqZcvwp94PDqOU0pcyuFdIf2iHuJW3QYzLwc+2vK4edCGpGT2R5Jy3xlgUaXInRaZw4ixSbJZrUtxpWmNOXoi5iGyl7n0pJAvahBsxOiy49ROU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wXOIV+Tz; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=5YGz17tjyVqkAUMXByj29FD7vbgf3YKY876usv36iw8=; b=wXOIV+TzesxELkvE57to+2D3yA
-	Dn1W4J3VkJABd/wmfZM7IawB+pzNnaQroxFIZabVznohvFA/OMN7Cr75JODv1JaTFjiVYnhbbRwh4
-	ExNiwUS8XGgxJ+X6ki40QUH6ePyzAd+XnHpXiVKYrqgMvX4hpLQz7RrkbcRKEK6RwXCScGtUjg+95
-	Xf/yIRgPT2XIFBUCAGZG+7/gdCqXg4NtpDZYEInaSD5QPhFKAugrGCExj3nifZWCX5Sa6ZvhIOqTw
-	osXIpqguYOPMhBq9JdUsAY/HXnCXa2s5IIy7T/X7c1ez2yLTqBuvCtjxdr39q5ixaRzfEgSAa2wWz
-	J7C13WUA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v6UqA-00000006Vrk-3oOT;
-	Wed, 08 Oct 2025 14:08:28 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 31671300400; Wed, 08 Oct 2025 16:08:27 +0200 (CEST)
-Date: Wed, 8 Oct 2025 16:08:27 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched/fair: Fix pelt lost idle time detection
-Message-ID: <20251008140827.GY4067720@noisy.programming.kicks-ass.net>
-References: <20251008131214.3759798-1-vincent.guittot@linaro.org>
+	s=arc-20240116; t=1759932643; c=relaxed/simple;
+	bh=IrnD2O8X5hB5MwrlfqWITqkYfIyt6OZiSNUedEcDcF8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D+kZbR0WNOe8BDpTujmZhouUd4h0nt3N8Mt7W6hbUqcy27oWBB7+hPo9zO0Jg/ChiU9ZFL1/Rwex7u0dnvhLVLklYM8sAT3wGgacBXzE0sfNvhK5aWW/te/GOWXxeHIyqzQuyqa5VUD8h1N75KRLKdi+y7YyzNx1HBU0jHdt56s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AnfLECuv; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so947591b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 07:10:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759932641; x=1760537441; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=2S2XrHAuOcCepyqws2PwWFNO5GZ8yv1xZPuvvSFngn8=;
+        b=AnfLECuvT+yWVI6AbqSe4Dss9iGBdYqsZRJuKfhK1b/788ZgsOLUro46ACuWveq8EA
+         8hkuOre1PN6jhAEQZT6Y9fWVgFJwmtvLq+TlnpJtXhMB3CqpGMDzQ8AA1mT1RmyHUV0a
+         uaH/jCfSJkdRSUsEj6UZKIhgtctwLGm8DhSD4EdltEpdCsw/qVCaBaKLRkXnO8RY96G+
+         xOw6avcrFn4hooau8guHNjQ1CKxsEAMcyCTvm0tCGRiNg7jMvGibUNbKwtGyhKnVKHuT
+         bmVpBxz7rLXVBSlhzihmpDawiSc/MNBbBtnAtyNPohXSfgDhXBixQnj+Tb3AYrA1kgFa
+         saTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759932641; x=1760537441;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2S2XrHAuOcCepyqws2PwWFNO5GZ8yv1xZPuvvSFngn8=;
+        b=lhwGQJBtNhXC6Xjg/26TpBasXGBUqucGYr1Sqcjlh3o+G1/Vn5+tkZRfQPaKoM/P7g
+         m0NJrbKYwdxe1kl+wEj97E8DbCHw1AxBgJMR5FRk3jUCU2lcclKcqFGDyLA+u6mw0lG4
+         S+/lPaUGwOaHdG0CrAkuNJLF/leDKUtSFKNvitjcfLQBqe0RVxCnQt9DWkpDHh6d3aq7
+         v8HlVHZ9qgedLdfQ4d2nHILN0cviuYow4d4etqc14iJm6HT4p8OII34/VTGCcG/pPhi0
+         klaIp6OA9XEodNTe99sYkxdHWkW7nGqrA7qt+ER0eNb4bju9Hg851tetxlMmL8VpWXRh
+         QlZg==
+X-Forwarded-Encrypted: i=1; AJvYcCVv8ZCUd8lzt9v9TwO3MQFYWogLG6NfoXsEff2x5LTw2YHYHERRp/VRA3OwK/7/VI/qL6FgFf2JwhDo4Ok=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1sGQdTv4BkLG5ZvSaDWVg3sIx7mj67MH+4EIUbs4W3IVACdm9
+	+M+CQGGl8X+cREfKWVVlkElE9h43quT/4ETDUktLQ+6mZU1bKVcVi/94
+X-Gm-Gg: ASbGncueY7wc8tyzfpBhCPi1QkarIGZhTCn/HR1yQLHaWGPTWS3H9LPoCoCshtMtKhH
+	STAJaryJFE8nCIG0iPEV3lNjz8ztf4hkKziJYaPPZZ0Xt1U5jZtPcBsbvfykWLSynd0v3P/tOyd
+	Vu3JDsL3guOGEaCmuq96QwqnlsOkYYs1EpOEBXrxcLMrj1mDFovBZhqj6uNxyQoVONsTEH2fDBL
+	m2gLcvZ0KevVMsXprMMeLWRqNRW4T4hYkoiskJyupIsvp3AYu9IRM/0brjXd1kij2WuHG0FB0jP
+	FIFAKlZo4ORhYaVGcawMOj5xFZ7WyuVkdKYno7N+7IJXYzgbCf6kPrBXJGVcMT9xzMD4qnkdgyV
+	Ei+LGURgOpv0y070slqa1CcMfr372L+rBXkkyYD9gq//ajJlEGZptUYbOT81Z22p1jjLT2qkZzh
+	qLpDQoOP6DZQ5bIFwwIX8=
+X-Google-Smtp-Source: AGHT+IHyX5D/x1kAgnyjYEICDRw+TCkp9jPNdAwsxvT++V1jJP2L7aAzg7L5pRnzV72nWvHalFzB7w==
+X-Received: by 2002:a05:6a21:6d90:b0:243:fe1e:2f95 with SMTP id adf61e73a8af0-32d96d8d186mr12375975637.6.1759932640578;
+        Wed, 08 Oct 2025 07:10:40 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6311462b24sm7698861a12.37.2025.10.08.07.10.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Oct 2025 07:10:39 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <96f5443f-5b40-4d05-b350-78d55a1d841d@roeck-us.net>
+Date: Wed, 8 Oct 2025 07:10:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251008131214.3759798-1-vincent.guittot@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/2] iio: temperature: Add support for NXP P3T175x
+ temperature sensors
+To: Lakshay Piplani <lakshay.piplani@nxp.com>, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, jic23@kernel.org, dlechner@baylibre.com,
+ nuno.sa@analog.com, andy@kernel.org, marcelo.schmitt1@gmail.com,
+ gregkh@linuxfoundation.org, viro@zeniv.linux.org.uk, peterz@infradead.org,
+ jstephan@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, devicetree@vger.kernel.org
+Cc: jdelvare@suse.com, vikash.bansal@nxp.com, priyanka.jain@nxp.com,
+ shashank.rebbapragada@nxp.com
+References: <20251008100713.1198461-1-lakshay.piplani@nxp.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20251008100713.1198461-1-lakshay.piplani@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 08, 2025 at 03:12:14PM +0200, Vincent Guittot wrote:
-> The check for some lost idle pelt time should be always done when 
-> pick_next_task_fair() fails to pick a task and not only when we call it
-> from the fair fast-path.
+On 10/8/25 03:07, Lakshay Piplani wrote:
+> This patch adds support for the P3T1750/P3T1755 temperature sensors under the IIO subsystem.
 > 
-> The case happens when the last running task on rq is a RT or DL task. When
-> the latter goes to sleep and the /Sum of util_sum of the rq is at the max
-> value, we don't account the lost of idle time whereas we should.
+> P3T1750/P3T1755 support two operational modes:
+> 1. Comparator Mode
+> 2. Interrupt (Latched) Mode
 > 
-> Fixes: 67692435c411 ("sched: Rework pick_next_task() slow-path")
-> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> The HWMON subsystem is more suitable for implementing drivers for comparator mode operations.
+> Reason:
+>    - Temperature thresholds can be polled and exposed via sysfs.
+>    - Register reads do not clear status, allowing safe alarm state derivation.
+>    - Matches existing drivers under hwmon.
+> 
+> The IIO subsystem is more suitable for implementing drivers for interrupt (latched) mode operations.
+> Reason:
+>    - Interrupt mode uses edge-triggered ALERT/IBI signal interrupts, which can be pushed to user space using iio_push_event.
+>    - IIO’s event API (IIO_EV_TYPE_THRESH) supports timestamped rising/falling edge events.
+>    - I3C IBI integration maps naturally to IIO’s event push model.
+>    - No persistent alarm bits are available; so polling in HWMON may result in  missing events.
+> 
 
-Durr, sorry about that. Let me go queue this.
+This is just wrong. Interrupt support can just as well be implemented
+in a hwmon driver.
 
-> ---
-> 
-> I Noticed this while reviewing [1]
-> 
-> [1] https://lore.kernel.org/all/20251006105453.648473106@infradead.org/
-> 
->  kernel/sched/fair.c | 26 +++++++++++++-------------
->  1 file changed, 13 insertions(+), 13 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index b3be1e2749ce..dd0ea01af730 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -8920,21 +8920,21 @@ pick_next_task_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf
->  	return p;
->  
->  idle:
-> -	if (!rf)
-> -		return NULL;
-> -
-> -	new_tasks = sched_balance_newidle(rq, rf);
-> +	if (rf) {
-> +		new_tasks = sched_balance_newidle(rq, rf);
->  
-> -	/*
-> -	 * Because sched_balance_newidle() releases (and re-acquires) rq->lock, it is
-> -	 * possible for any higher priority task to appear. In that case we
-> -	 * must re-start the pick_next_entity() loop.
-> -	 */
-> -	if (new_tasks < 0)
-> -		return RETRY_TASK;
-> +		/*
-> +		 * Because sched_balance_newidle() releases (and re-acquires)
-> +		 * rq->lock, it is possible for any higher priority task to
-> +		 * appear. In that case we must re-start the pick_next_entity()
-> +		 * loop.
-> +		 */
-> +		if (new_tasks < 0)
-> +			return RETRY_TASK;
->  
-> -	if (new_tasks > 0)
-> -		goto again;
-> +		if (new_tasks > 0)
-> +			goto again;
-> +	}
->  
->  	/*
->  	 * rq is about to be idle, check if we need to update the
-> -- 
-> 2.43.0
-> 
+Guenter
+
 
