@@ -1,239 +1,130 @@
-Return-Path: <linux-kernel+bounces-845749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCC5BBC603A
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:25:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48707BC6052
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:27:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 801B53A740C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 16:25:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23B0E3A456E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 16:27:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A6B29BDB6;
-	Wed,  8 Oct 2025 16:25:08 +0000 (UTC)
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE0A92BDC2A;
+	Wed,  8 Oct 2025 16:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="lQj3x4mp"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4634528468B
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 16:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962D329AB07
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 16:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759940707; cv=none; b=JjRNvp01l7rLyqty78HLHgBwB4DDXCbI4VSlCK24qvEMZkylSmHgf+CY8n4EukIkcyTSGB4kRjuUViC4PRZd9AsnobGRB2erQcsUMRoPheDTxtGctbUCPMWNg9ukEExE/BqDsHqG3inJb/w/1AUkdRsZ0U4XN8YiukMRBmraseo=
+	t=1759940852; cv=none; b=pqPX2cNDf53ARjsYg0A3COdr0bQG4CgFwhhjOjAEgNCBlbWbYzMXVK9e4Ni9JcjaevkK44Hz8G+WE8sbqu4IXwF4BbY/8jFu5Z2DyouW1LXYfIg5Ac9RxfJjPZpVfmYgDeUczDCignowEmrxe6gJtfELJR2SUFQ+b54oP+jNhgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759940707; c=relaxed/simple;
-	bh=Dmiwn2mr2rCHOc0TQSND9LLrXQRFE4B6R8jw0RE9nok=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PE2OlYvnpoxHQLgwvdKmltKtWt25LIZ6+aD3xkptYN6xbUCtUq2djJi67wbMvlsOYuq0wzzr+Y3/QZAyQOuK8DCLEbO/ZW+IsHVXgcbe+5fKb6VYVOa1wbimIAO0LW95O1o4qqL1ozlLVs0k0TpE8EBpZm11MfxBDSEd2LXveFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7930132f59aso9977b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 09:25:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759940704; x=1760545504;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lha07SgLr6YajsxSBvN4itwnfzekQjZC85rngCVcAvE=;
-        b=dI3+Kd+rnrogogOpnC3EWfdQGoDfr1y0rirlXv3Chhd4iParKE1s+cREI8uEoRFbKn
-         3BX4kFGgRHku4mT1fp7kNUlGALRCv/gnw6rwbH3A7w+a1XveW+Y7hJIPnycsH3tbdm76
-         uXEtUe2JtI0526Z9cIZ5m5N7fIfpICzJNRFEpzfcZk6mIdzh/P2iN6iXeCs64NeDbpJG
-         NzjNnp9g6caUio8RYSLRYG8iM9tIY7N7rAKnw0IPi/CR9lgnii9/BqxxX31xUie4VQ8o
-         nXzziKt6gFJmY9KF9VFLG5IyXUQ236TeyBl2MNejXrXcg0GlQXbulKRs7xMSpid0lCsP
-         UO8g==
-X-Forwarded-Encrypted: i=1; AJvYcCXC+X0RHWTjbw2omWYvcQjOJPTRhhPAEWWaIEhiZJyWF5k+LMkMEiY50HhGipeCdUANhXqf0Mm+XMrEHgA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCqFmZUfCWVHERCyBKLUxVeQXuQ4zEKsb630Zik+/j5gKYF7A6
-	Hx2ZWGEL5BZz9VJY69yd4J+KACCFQO0xJQgqfqKIdApYMAm9xJqQxT8=
-X-Gm-Gg: ASbGncuhj/xKaShuA05ins/NbSir55Hx/3c8Q0ntSvnJtFmYiczin39v8xYcLPOgH/P
-	g6+Tb88ibfhsLEWgf4YAjvz3Xq57T3M6EOQHTdddNTi5/8ppCq4EEDnHHspDQ2JzZvqJ9tvXKdI
-	1w1dfQnDbAq0fRy+zFE+POuV6XvepqR8jWaBUTWXMlbrQU69Nnd1p5zC/T9KErPwQqQZNoVWJgd
-	bTN+sdEtmAVetdFX8t/lTfSRn8ku+Hazyd9e+uW2CXh5/CmTOnKuxKCGmnsxPUstecdqtIuipq6
-	ZbhyNcowd74TKsbHJgmABNW+b4OkYZvcekBLjRijO+HcjPRN/Ic7qNi9Gt4u5brKz7Zr0EKMaZv
-	PLpzqiVawP/MhC+oWTo5UENMZA25Ry6oJG7IFo/q4iSOZoQ8w45N5xLljULpXXdBWykfdilox+w
-	imz28/r5vZBOCDLGcImMKyrVoDpsnnYuJKELmLEKmlg5IS5W/mr7COPsbG2qtdIKOl2BX1V2Ll9
-	fzWYAoGTjbDekl83IJAM1ZmBmwHVg==
-X-Google-Smtp-Source: AGHT+IG7rJeTc7BaYSRW2mgEZOIvuZo+hdU8tJz9alDLAEj9qzpkoBMt/mHdSNCv2yx7KPQXHG9lGA==
-X-Received: by 2002:a05:6a00:398b:b0:77d:51e5:e5d1 with SMTP id d2e1a72fcca58-7938723dab3mr4584210b3a.19.1759940703895;
-        Wed, 08 Oct 2025 09:25:03 -0700 (PDT)
-Received: from localhost (c-73-158-218-242.hsd1.ca.comcast.net. [73.158.218.242])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-794e2a4cb5asm156736b3a.71.2025.10.08.09.25.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 09:25:03 -0700 (PDT)
-From: Stanislav Fomichev <sdf@fomichev.me>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	andrew+netdev@lunn.ch,
-	shuah@kernel.org,
-	horms@kernel.org,
-	willemb@google.com,
-	daniel.zahka@gmail.com,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net v2] selftests: drv-net: update remaining Python init files
-Date: Wed,  8 Oct 2025 09:25:03 -0700
-Message-ID: <20251008162503.1403966-1-sdf@fomichev.me>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1759940852; c=relaxed/simple;
+	bh=Zq1tEArlsEXQW5eo5xbpfqLn2xRxba9VuPsiYdeTKqo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JcDHEG+BsNDKfDrj2zhZVaES422rFz1yLHNOF7oAGEIGh2a3hfHkRFgfpTmH1a0n/nvAj0nHqhMIUMNNe25VAubq2zLfPFS79pJgzBMckt7Usrw8o126zzZTYzId0Us/4OotiuWrvu6CRZEaR2F+Asa+gYNGxdtedm2hk7oFG4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=lQj3x4mp; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-102-192.bstnma.fios.verizon.net [173.48.102.192])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 598GQtnk004046
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 8 Oct 2025 12:26:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1759940818; bh=FCNB/7DTe1EWiGD4bUa1fSOu0PJxVjz3p4YNDqmutQ4=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=lQj3x4mpTVV71WA8iDQZOiOEa6huH2ThKIeMXaudULqBtg6mqTk5n71201FyQAeXH
+	 0Vsikq7SkfBAbrQ9qpIUyjvOLpydg+J75aWzwEQN0cBZzFaTn8Mmeoa8s9q/k6X5m1
+	 a1vy8pdFmIyTzlRW5reka5bZPh0PgKtZyvyGJxWPtO0+cSYhdlq7TGsPer3slMAa/k
+	 79c7nzeDgmrvYWuqCobc7oPfMhiagxXESQesTkxGBxbgP9t0BBUolQmgof+34Lr24p
+	 lgIJipNbOtBWT8KRo+NRX29UU7AzPyvn/TvpOCTGMXtV9PL/fjrcPIfoZvrovSmbUT
+	 kNtf3JSr3FGiw==
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id 576402E00D9; Wed, 08 Oct 2025 12:26:55 -0400 (EDT)
+Date: Wed, 8 Oct 2025 12:26:55 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Matt Fleming <matt@readmodwrite.com>
+Cc: adilger.kernel@dilger.ca, kernel-team@cloudflare.com,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, willy@infradead.org,
+        Baokun Li <libaokun1@huawei.com>, Jan Kara <jack@suse.cz>
+Subject: Re: ext4 writeback performance issue in 6.12
+Message-ID: <20251008162655.GB502448@mit.edu>
+References: <20251006115615.2289526-1-matt@readmodwrite.com>
+ <20251008150705.4090434-1-matt@readmodwrite.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251008150705.4090434-1-matt@readmodwrite.com>
 
-From: Jakub Kicinski <kuba@kernel.org>
+On Wed, Oct 08, 2025 at 04:07:05PM +0100, Matt Fleming wrote:
+> > 
+> > These machines are striped and are using noatime:
+> > 
+> > $ grep ext4 /proc/mounts
+> > /dev/md127 /state ext4 rw,noatime,stripe=1280 0 0
+> > 
+> > Is there some tunable or configuration option that I'm missing that
+> > could help here to avoid wasting time in
+> > ext4_mb_find_good_group_avg_frag_lists() when it's most likely going to
+> > fail an order 9 allocation anyway?
 
-Convert remaining __init__ files similar to what we did in
-commit b615879dbfea ("selftests: drv-net: make linters happy with our imports")
+Can you try disabling stripe parameter?  If you are willing to try the
+latest mainline kernel, there are some changes that *might* make a
+different, but RAID stripe alignment has been causing problems.
 
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
----
-v2:
- - remove tool from imports in driver __init__s it's not actually used
-v1: https://lore.kernel.org/20251007144326.1763309-1-kuba@kernel.org
+In fact, in the latest e2fsprogs release, we have added this change:
 
-CC: shuah@kernel.org
-CC: willemb@google.com
-CC: daniel.zahka@gmail.com
-CC: linux-kselftest@vger.kernel.org
----
- .../drivers/net/hw/lib/py/__init__.py         | 40 ++++++++++++++-----
- .../selftests/drivers/net/lib/py/__init__.py  |  4 +-
- .../testing/selftests/net/lib/py/__init__.py  | 29 ++++++++++++--
- 3 files changed, 57 insertions(+), 16 deletions(-)
+commit b61f182b2de1ea75cff935037883ba1a8c7db623
+Author: Theodore Ts'o <tytso@mit.edu>
+Date:   Sun May 4 14:07:14 2025 -0400
 
-diff --git a/tools/testing/selftests/drivers/net/hw/lib/py/__init__.py b/tools/testing/selftests/drivers/net/hw/lib/py/__init__.py
-index 0ceb297e7757..fb010a48a5a1 100644
---- a/tools/testing/selftests/drivers/net/hw/lib/py/__init__.py
-+++ b/tools/testing/selftests/drivers/net/hw/lib/py/__init__.py
-@@ -1,5 +1,13 @@
- # SPDX-License-Identifier: GPL-2.0
- 
-+"""
-+Driver test environment (hardware-only tests).
-+NetDrvEnv and NetDrvEpEnv are the main environment classes.
-+Former is for local host only tests, latter creates / connects
-+to a remote endpoint. See NIPA wiki for more information about
-+running and writing driver tests.
-+"""
-+
- import sys
- from pathlib import Path
- 
-@@ -8,26 +16,36 @@ KSFT_DIR = (Path(__file__).parent / "../../../../..").resolve()
- try:
-     sys.path.append(KSFT_DIR.as_posix())
- 
--    from net.lib.py import *
--    from drivers.net.lib.py import *
--
-     # Import one by one to avoid pylint false positives
-+    from net.lib.py import NetNS, NetNSEnter, NetdevSimDev
-     from net.lib.py import EthtoolFamily, NetdevFamily, NetshaperFamily, \
-         NlError, RtnlFamily, DevlinkFamily, PSPFamily
-     from net.lib.py import CmdExitFailure
--    from net.lib.py import bkg, cmd, defer, ethtool, fd_read_timeout, ip, \
--        rand_port, tool, wait_port_listen
--    from net.lib.py import fd_read_timeout
-+    from net.lib.py import bkg, cmd, bpftool, bpftrace, defer, ethtool, \
-+        fd_read_timeout, ip, rand_port, wait_port_listen, wait_file
-     from net.lib.py import KsftSkipEx, KsftFailEx, KsftXfailEx
-     from net.lib.py import ksft_disruptive, ksft_exit, ksft_pr, ksft_run, \
-         ksft_setup
-     from net.lib.py import ksft_eq, ksft_ge, ksft_in, ksft_is, ksft_lt, \
-         ksft_ne, ksft_not_in, ksft_raises, ksft_true, ksft_gt, ksft_not_none
--    from net.lib.py import NetNSEnter
--    from drivers.net.lib.py import GenerateTraffic
-+    from drivers.net.lib.py import GenerateTraffic, Remote
-     from drivers.net.lib.py import NetDrvEnv, NetDrvEpEnv
-+
-+    __all__ = ["NetNS", "NetNSEnter", "NetdevSimDev",
-+               "EthtoolFamily", "NetdevFamily", "NetshaperFamily",
-+               "NlError", "RtnlFamily", "DevlinkFamily", "PSPFamily",
-+               "CmdExitFailure",
-+               "bkg", "cmd", "bpftool", "bpftrace", "defer", "ethtool",
-+               "fd_read_timeout", "ip", "rand_port",
-+               "wait_port_listen", "wait_file",
-+               "KsftSkipEx", "KsftFailEx", "KsftXfailEx",
-+               "ksft_disruptive", "ksft_exit", "ksft_pr", "ksft_run",
-+               "ksft_setup",
-+               "ksft_eq", "ksft_ge", "ksft_in", "ksft_is", "ksft_lt",
-+               "ksft_ne", "ksft_not_in", "ksft_raises", "ksft_true", "ksft_gt",
-+               "ksft_not_none", "ksft_not_none",
-+               "NetDrvEnv", "NetDrvEpEnv", "GenerateTraffic", "Remote"]
- except ModuleNotFoundError as e:
--    ksft_pr("Failed importing `net` library from kernel sources")
--    ksft_pr(str(e))
--    ktap_result(True, comment="SKIP")
-+    print("Failed importing `net` library from kernel sources")
-+    print(str(e))
-     sys.exit(4)
-diff --git a/tools/testing/selftests/drivers/net/lib/py/__init__.py b/tools/testing/selftests/drivers/net/lib/py/__init__.py
-index e6c070f32f51..b0c6300150fb 100644
---- a/tools/testing/selftests/drivers/net/lib/py/__init__.py
-+++ b/tools/testing/selftests/drivers/net/lib/py/__init__.py
-@@ -22,7 +22,7 @@ KSFT_DIR = (Path(__file__).parent / "../../../..").resolve()
-         NlError, RtnlFamily, DevlinkFamily, PSPFamily
-     from net.lib.py import CmdExitFailure
-     from net.lib.py import bkg, cmd, bpftool, bpftrace, defer, ethtool, \
--        fd_read_timeout, ip, rand_port, tool, wait_port_listen, wait_file
-+        fd_read_timeout, ip, rand_port, wait_port_listen, wait_file
-     from net.lib.py import KsftSkipEx, KsftFailEx, KsftXfailEx
-     from net.lib.py import ksft_disruptive, ksft_exit, ksft_pr, ksft_run, \
-         ksft_setup
-@@ -34,7 +34,7 @@ KSFT_DIR = (Path(__file__).parent / "../../../..").resolve()
-                "NlError", "RtnlFamily", "DevlinkFamily", "PSPFamily",
-                "CmdExitFailure",
-                "bkg", "cmd", "bpftool", "bpftrace", "defer", "ethtool",
--               "fd_read_timeout", "ip", "rand_port", "tool",
-+               "fd_read_timeout", "ip", "rand_port",
-                "wait_port_listen", "wait_file",
-                "KsftSkipEx", "KsftFailEx", "KsftXfailEx",
-                "ksft_disruptive", "ksft_exit", "ksft_pr", "ksft_run",
-diff --git a/tools/testing/selftests/net/lib/py/__init__.py b/tools/testing/selftests/net/lib/py/__init__.py
-index 997b85cc216a..97b7cf2b20eb 100644
---- a/tools/testing/selftests/net/lib/py/__init__.py
-+++ b/tools/testing/selftests/net/lib/py/__init__.py
-@@ -1,9 +1,32 @@
- # SPDX-License-Identifier: GPL-2.0
- 
-+"""
-+Python selftest helpers for netdev.
-+"""
-+
- from .consts import KSRC
--from .ksft import *
-+from .ksft import KsftFailEx, KsftSkipEx, KsftXfailEx, ksft_pr, ksft_eq, \
-+    ksft_ne, ksft_true, ksft_not_none, ksft_in, ksft_not_in, ksft_is, \
-+    ksft_ge, ksft_gt, ksft_lt, ksft_raises, ksft_busy_wait, \
-+    ktap_result, ksft_disruptive, ksft_setup, ksft_run, ksft_exit
- from .netns import NetNS, NetNSEnter
--from .nsim import *
--from .utils import *
-+from .nsim import NetdevSim, NetdevSimDev
-+from .utils import CmdExitFailure, fd_read_timeout, cmd, bkg, defer, \
-+    bpftool, ip, ethtool, bpftrace, rand_port, wait_port_listen, wait_file
- from .ynl import NlError, YnlFamily, EthtoolFamily, NetdevFamily, RtnlFamily, RtnlAddrFamily
- from .ynl import NetshaperFamily, DevlinkFamily, PSPFamily
-+
-+__all__ = ["KSRC",
-+           "KsftFailEx", "KsftSkipEx", "KsftXfailEx", "ksft_pr", "ksft_eq",
-+           "ksft_ne", "ksft_true", "ksft_not_none", "ksft_in", "ksft_not_in",
-+           "ksft_is", "ksft_ge", "ksft_gt", "ksft_lt", "ksft_raises",
-+           "ksft_busy_wait", "ktap_result", "ksft_disruptive", "ksft_setup",
-+           "ksft_run", "ksft_exit",
-+           "NetNS", "NetNSEnter",
-+           "CmdExitFailure", "fd_read_timeout", "cmd", "bkg", "defer",
-+           "bpftool", "ip", "ethtool", "bpftrace", "rand_port",
-+           "wait_port_listen", "wait_file",
-+           "NetdevSim", "NetdevSimDev",
-+           "NetshaperFamily", "DevlinkFamily", "PSPFamily", "NlError",
-+           "YnlFamily", "EthtoolFamily", "NetdevFamily", "RtnlFamily",
-+           "RtnlAddrFamily"]
--- 
-2.51.0
+    mke2fs: don't set the raid stripe for non-rotational devices by default
+    
+    The ext4 block allocator is not at all efficient when it is asked to
+    enforce RAID alignment.  It is especially bad for flash-based devices,
+    or when the file system is highly fragmented.  For non-rotational
+    devices, it's fine to set the stride parameter (which controls
+    spreading the allocation bitmaps across the RAID component devices,
+    which always makessense); but for the stripe parameter (which asks the
+    ext4 block alocator to try _very_ hard to find RAID stripe aligned
+    devices) it's probably not a good idea.
+    
+    Add new mke2fs.conf parameters with the defaults:
+    
+    [defaults]
+       set_raid_stride = always
+       set_raid_stripe = disk
+    
+    Even for RAID arrays based on HDD's, we can still have problems for
+    highly fragmented file systems.  This will need to solved in the
+    kernel, probably by having some kind of wall clock or CPU time
+    limitation for each block allocation or adding some kind of
+    optimization which is faster than using our current buddy bitmap
+    implementation, especially if the stripe size is not multiple of a
+    power of two.  But for SSD's, it's much less likely to make sense even
+    if we have an optimized block allocator, because if you've paid $$$
+    for a flash-based RAID array, the cost/benefit tradeoffs of doing less
+    optimized stripe RMW cycles versus the block allocator time and CPU
+    overhead is harder to justify without a lot of optimization effort.
+    
+    If and when we can improve the ext4 kernel implementation (and it gets
+    rolled out to users using LTS kernels), we can change the defaults.
+    And of course, system administrators can always change
+    /etc/mke2fs.conf settings.
+    
+    Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 
+							- Ted
 
