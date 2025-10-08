@@ -1,47 +1,94 @@
-Return-Path: <linux-kernel+bounces-845089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A91EABC3790
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 08:27:39 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 563E9BC3796
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 08:28:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD6323A95AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 06:27:36 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CF668351DDE
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 06:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C34612E9EAC;
-	Wed,  8 Oct 2025 06:27:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700FB2E9EDA;
+	Wed,  8 Oct 2025 06:28:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="azS+FmN6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="p39IZFgJ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="m+69fe7W";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="p39IZFgJ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="m+69fe7W"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181BA25C818;
-	Wed,  8 Oct 2025 06:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDB825C818
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 06:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759904850; cv=none; b=e9SZgfcqfLdLt1cPVeXnm/4+0NatduZflWlWcCXgpD/4RinOD1ma0hqYo7fLpqg0zIcC61vWBTqLbVZR/oc0EjEdpE6XWV2l/kUtm6dVTP7xE+OezY5XivsGVGjAoB6Qalrf1MTnVgraZCDJDaGlPBLgeCQD7tDVt9mZy8yHPsI=
+	t=1759904900; cv=none; b=oZZVw4GFm5KiLC8VutG4/vMjWpLbp1wrtobsK41EiopDcnSpIsJ9NEYf6YxPIYwaKMmzPmAMOsu3XoDCKZ2UigQM8hSJGl6BnwSOjDCLwoE1nE7dOyp1agNDnKkWR4NlurQC7xdS35aUcNlhMhs5JgKCCs0/lzLYjTVpXBJu3JY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759904850; c=relaxed/simple;
-	bh=Qs1mNKauEw169pWFmjRqxX8J2h7bFNuvRtn6dhC3lr4=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=nhtbC9dtaRHEtEtFnba1tUQ5BNm7MSPgG7suy18ZRdDc23nqLLLYLzfUr5AaZCrVim2o5NfRM5YfQMv3RARKC76fFBe9fS2KVYHD8o+h1/d+HsrDBsgtnjIyu9FfTEaoUtht/F7kwBpPE6J18Vr4PQoymCtBScKu06E0+SJCil0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=azS+FmN6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E225BC4CEF4;
-	Wed,  8 Oct 2025 06:27:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759904849;
-	bh=Qs1mNKauEw169pWFmjRqxX8J2h7bFNuvRtn6dhC3lr4=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=azS+FmN6dIyzD1eIVCxubWtazWLtaoDUeK3PqV5cZV7w9EyJLXmyzaceBLK3e3jcQ
-	 z5e+RtAeJ3UoEMDALYdMxfrnFVOMZZzywYqSgRXnTyXWqs4RR1i95NePCTkNSosYFu
-	 fnPCU9AcVFc7knxgFmexMs2CLks9TCmxjI2vxtPsm+niYTyf3yMMzu5Gstg+GDxsXb
-	 gTJ1ZbLsllbur8fMDeME7aKDrRKVH+kNUYzoSYgA2WlkoirPhXDtbDC4NY97x3MVCK
-	 XllIHN7zwV2O0z+haCBYfR6B01oZftRpxnRaXvxQeEKaKLYasGVFIrpWmoNwRxb9Bk
-	 RVdF4Xb0ZLqVA==
-Message-ID: <f3e5b44f-9944-474c-9850-39e91b0ae7ea@kernel.org>
-Date: Wed, 8 Oct 2025 08:27:25 +0200
+	s=arc-20240116; t=1759904900; c=relaxed/simple;
+	bh=wa4bLhn/oHSpnMxDwdWDJ32noH/AEmOOr1Mif6Co1Qg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bpu0MgstaW6R1hV3+x67ubSXxqro1UWSKGV9dIcC/VOiYP0f+/OTiOnMBor5uxVBHE0/SKDCw3QBOc7krEz2fTL9RjalSwvTkqLqs+OjpUiMFheU2NmZ1PO8gRhZQ7DFC96srnhD2YYgjQyjV4O3dEW8S/PS1njEBbX5fqjMgR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=p39IZFgJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=m+69fe7W; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=p39IZFgJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=m+69fe7W; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8EC712203A;
+	Wed,  8 Oct 2025 06:28:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759904890; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G30fkVhy2gt4+zO5lsG/AarvvqJdFSCDE0XNQeDoy7Y=;
+	b=p39IZFgJGEXpxI8KHuPkVWfzKOGbDP01J9Yk+pbT1/Knpf7vdUBg0ddKe3J6i5cpP/DWr1
+	qVjG088Dyb2wMxBE6w/OIzouPuEuz13sh+JNyJixw8Y22MEMJCJ7QjV6TUSCWMC2hnX/4m
+	+vSMY3h8ZtqluRCfbI7Wl9ecnfuy2HI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759904890;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G30fkVhy2gt4+zO5lsG/AarvvqJdFSCDE0XNQeDoy7Y=;
+	b=m+69fe7Wbdvt+M1FfZytQ8kiqqgqxwUNDoQj5bQ5XOwQN6DW8Ue30/4zSwDUO7RsmTsWdF
+	Oh5KCLNkf5TdbfDQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759904890; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G30fkVhy2gt4+zO5lsG/AarvvqJdFSCDE0XNQeDoy7Y=;
+	b=p39IZFgJGEXpxI8KHuPkVWfzKOGbDP01J9Yk+pbT1/Knpf7vdUBg0ddKe3J6i5cpP/DWr1
+	qVjG088Dyb2wMxBE6w/OIzouPuEuz13sh+JNyJixw8Y22MEMJCJ7QjV6TUSCWMC2hnX/4m
+	+vSMY3h8ZtqluRCfbI7Wl9ecnfuy2HI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759904890;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G30fkVhy2gt4+zO5lsG/AarvvqJdFSCDE0XNQeDoy7Y=;
+	b=m+69fe7Wbdvt+M1FfZytQ8kiqqgqxwUNDoQj5bQ5XOwQN6DW8Ue30/4zSwDUO7RsmTsWdF
+	Oh5KCLNkf5TdbfDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E15C813693;
+	Wed,  8 Oct 2025 06:28:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id cschNXkE5mgGRQAAD6G6ig
+	(envelope-from <hare@suse.de>); Wed, 08 Oct 2025 06:28:09 +0000
+Message-ID: <c05ac7b9-d71b-4069-ac73-19a082eea559@suse.de>
+Date: Wed, 8 Oct 2025 08:28:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,94 +96,125 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH 0/3] module: Add compile-time check for embedded NUL
- characters
-To: Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>
-Cc: Malcolm Priestley <tvboxspy@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Rusty Russell <rusty@rustcorp.com.au>, Petr Pavlu <petr.pavlu@suse.com>,
- Daniel Gomez <da.gomez@kernel.org>, Sami Tolvanen <samitolvanen@google.com>,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-modules@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20251008033844.work.801-kees@kernel.org>
-Content-Language: en-US, nl
-In-Reply-To: <20251008033844.work.801-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] nvme/tcp: handle tls partially sent records in
+ write_space()
+To: Wilfred Mallawa <wilfred.opensource@gmail.com>,
+ linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org
+Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+ John Fastabend <john.fastabend@gmail.com>, Jakub Kicinski <kuba@kernel.org>,
+ Sabrina Dubroca <sd@queasysnail.net>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
+References: <20251007004634.38716-2-wilfred.opensource@gmail.com>
+ <0bf649d5-112f-42a8-bc8d-6ef2199ed19d@suse.de>
+ <339cbb66fbcd78d639d0d8463a3a67daf089f40d.camel@gmail.com>
+ <8e5a3ff3-d17a-488f-97fb-3904684edb47@suse.de>
+ <143591bfd3499f2ee90034190a94154a965f563d.camel@gmail.com>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <143591bfd3499f2ee90034190a94154a965f563d.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[gmail.com,lists.infradead.org,vger.kernel.org];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[kernel.org,kernel.dk,lst.de,grimberg.me,gmail.com,queasysnail.net,davemloft.net,google.com,redhat.com];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TAGGED_RCPT(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -2.80
 
-On 08/10/2025 05:59, Kees Cook wrote:
-> Hi,
+On 10/8/25 04:11, Wilfred Mallawa wrote:
+> On Tue, 2025-10-07 at 11:51 +0200, Hannes Reinecke wrote:
+>> On 10/7/25 11:24, Wilfred Mallawa wrote:
+>>> On Tue, 2025-10-07 at 07:19 +0200, Hannes Reinecke wrote:
+>>>> On 10/7/25 02:46, Wilfred Mallawa wrote:
+>>>>> From: Wilfred Mallawa <wilfred.mallawa@wdc.com>
+>>>>>
+>>>>
+>>> [...]
+>>>> I wonder: Do we really need to check for a partially assembled
+>>>> record,
+>>>> or wouldn't it be easier to call queue->write_space() every time
+>>>> here?
+>>>> We sure would end up with executing the callback more often, but
+>>>> if
+>>>> no
+>>>> data is present it shouldn't do any harm.
+>>>>
+>>>> IE just use
+>>>>
+>>>> if (nvme_tcp_queue_tls(queue)
+>>>>        queue->write_space(sk);
+>>>
+>>> Hey Hannes,
+>>>
+>>> This was my initial approach, but I figured using
+>>> tls_is_partially_sent_record() might be slightly more efficient.
+>>> But if
+>>> we think that's negligible, happy to go with this approach
+>>> (omitting
+>>> the partial record check).
+>>>
+>> Please do.
+>> Performance testing on NVMe-TCP is notoriously tricky, so for now we
+>> really should not assume anything here.
+>> And it's making the patch _vastly_ simpler, _and_ we don't have to
+>> involve the networking folks here.
 > 
-> A long time ago we had an issue with embedded NUL bytes in MODULE_INFO
-> strings[1]. While this stands out pretty strongly when you look at the
-> code, and we can't do anything about a binary module that just plain lies,
-> we never actually implemented the trivial compile-time check needed to
-> detect it.
+> Okay, will send a V2 with this approach.
 > 
-> Add this check (and fix 2 instances of needless trailing semicolons that
-> this change exposed).
+>> We have a similar patch for the data_ready() function in nvmet_tcp(),
+>> and that seemed to work, too.
+>> Nit: we don't unset the 'NOSPACE' flag there. Can you check if that's
+>> really required?
+>> And, if it is, fixup nvmet_tcp() to unset it?
+>> Or, if not, modify your patch to not clear it?
 > 
-> Note that these patches were produced as part of another LLM exercise.
-> This time I wanted to try "what happens if I ask an LLM to go read
-> a specific LWN article and write a patch based on a discussion?" It
-> pretty effortlessly chose and implemented a suggested solution, tested
-> the change, and fixed new build warnings in the process.
+> I don't see why we would need to clear the NOSPACE flag in
+> data_ready()? My understanding is that this flag is used when the send
+> buffer is full.
 > 
-> Since this was a relatively short session, here's an overview of the
-> prompts involved as I guided it through a clean change and tried to see
-> how it would reason about static_assert vs _Static_assert. (It wanted
-> to use what was most common, not what was the current style -- we may
-> want to update the comment above the static_assert macro to suggest
-> using _Static_assert directly these days...)
+> I would think the clear_bit() is necessary in write_space() since it
+> would typically get done in something like sk_stream_write_space()?
+> However, running some quick FIOs with the clear_bit() removed, things
+> seem to work. Not sure if removing it has any further implications
+> though...
 > 
->   I want to fix a weakness in the module info strings. Read about it
->   here: https://lwn.net/Articles/82305/
-> 
->   Since it's only "info" that we need to check, can you reduce the checks
->   to just that instead of all the other stuff?
-> 
->   I think the change to the comment is redundent, and that should be
->   in a commit log instead. Let's just keep the change to the static assert.
-> 
->   Is "static_assert" the idiomatic way to use a static assert in this
->   code base? I've seen _Static_assert used sometimes.
-> 
->   What's the difference between the two?
-> 
->   Does Linux use C11 by default now?
-> 
->   Then let's not use the wrapper any more.
-> 
->   Do an "allmodconfig all -s" build to verify this works for all modules
->   in the kernel.
-> 
-> 
-> Thanks!
-> 
-> -Kees
-> 
-> [1] https://lwn.net/Articles/82305/
-> 
-> Kees Cook (3):
->   media: dvb-usb-v2: lmedm04: Fix firmware macro definitions
->   media: radio: si470x: Fix DRIVER_AUTHOR macro definition
->   module: Add compile-time check for embedded NUL characters
+I am not sure, either. Code analysis suggests that we don't need to
+do that, but then we're the first ever to explore that area.
+So I would think we don't need to worry (as nvmet-tcp doesn't do that,
+either). Sounds like a question for LPC.
+So let's drop the 'NOSPACE' flag handling to get the
+partial records fixed, and address the NOSPACE issue separately.
 
-I reviewed the two media patches. Feel free to take this series.
-If you prefer that I take the two media patches, then let me know
-but it makes more sense in this case that you take all three.
+Cheers,
 
-Regards,
-
-	Hans
-
-> 
->  include/linux/moduleparam.h                   |  3 +++
->  drivers/media/radio/si470x/radio-si470x-i2c.c |  2 +-
->  drivers/media/usb/dvb-usb-v2/lmedm04.c        | 12 ++++++------
->  3 files changed, 10 insertions(+), 7 deletions(-)
-> 
-
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
