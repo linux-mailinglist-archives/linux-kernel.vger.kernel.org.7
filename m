@@ -1,135 +1,132 @@
-Return-Path: <linux-kernel+bounces-845704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10D64BC5F10
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:06:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09ACCBC5F85
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:13:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 097343A764C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:51:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 097454223D1
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F36F29E113;
-	Wed,  8 Oct 2025 15:47:55 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2164E29E0E7;
+	Wed,  8 Oct 2025 15:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Rmzgu+5J"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FBFC25486D;
-	Wed,  8 Oct 2025 15:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA2D221DB1
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759938474; cv=none; b=OonYmOZicDkzoTa5H3DlusSlZ5pyrq1Mm8G3X4IJKKTkjysSsaeZU7mT4AEypQjmjneTZRgh6pH/QcEtjZ2BqG5KXg7f1R/W8LmEOxcOnbmq1F/vC8qbZwcEitZ9UbPDA5BwnOiNpiZeX30cgZuzESAfdgrVuQHOIJk4DztUHlM=
+	t=1759938927; cv=none; b=VpeUzeb2vzfg4AUKi0HaLnR/0mmBhAC7kADn+6jChj5t7BUf32rQCZ/cYlAHbNeP7Gu5fQcUlBnw/tnbbJYEccGASPlinAVxRckdHoDFi/ITS8aEqcAegLuKnvMCVlqlfbmWKGVGlgqv/d5Y3+T2a9Bo8NWvSAUSUNxdmw+QNMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759938474; c=relaxed/simple;
-	bh=iTPbxraedZD3neNFGfY1HUmZOBnuTBKr9Z6Mu5jfHGE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=YpuQqslQZNT3+dZSjtp5pJLDHOqwRt0WDlV7ifcSwH14BB+nwQBtP2zl034YOxRBXTigrP/2jF0g77XMdhSRh2jjLyO45mGNUPQID0c0RPJnVdznxd2xaEbmosaixYXGiOaupTHsRzvkEgJE9vfiENFomZ54FU+HZBkqQZpmJwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay02.hostedemail.com (Postfix) with ESMTP id 5DB2613B347;
-	Wed,  8 Oct 2025 15:47:51 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf03.hostedemail.com (Postfix) with ESMTPA id 9EC056000D;
-	Wed,  8 Oct 2025 15:47:49 +0000 (UTC)
-Date: Wed, 8 Oct 2025 11:49:43 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH] tracing: Fix irqoff tracers on failure of acquiring
- calltime
-Message-ID: <20251008114943.6f60f30f@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1759938927; c=relaxed/simple;
+	bh=85/mm3sXpOoNOn6cTJ/JXyXBRwl6do61EpL+5QUva/0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=bYhXyHSCF9ge8em0T0tFVMDUunn+xLU1H7f/6gtGqt2SIRM9NFV+myhW6+xLQuqTGL/gllJNHOn/iBb6Ff+qIkjFtV7axFRBayCp30Sj+vV51eGaO+MXYvZhFM7bpVi+Dm97z3X4JH5nQRlFCjK7Eh0aqIz3+AlVBPAVXWBl3wM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Rmzgu+5J; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-272ed8c106eso50763165ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:55:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759938925; x=1760543725; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yE/1NjviAjYgzvKEBWocmDsuG1eu4K2fZd8EwARCmAo=;
+        b=Rmzgu+5JNaP/UN9JgmylzNruOIukS2R/xVk7j7Iqnnhl7MKPZ1UjPISJYpLxpxV/6u
+         s+lQHSnOnijkTV0g2ym7gBYtC7eJsR7CAQGVFVR0aNCjeDWVu1a5MpmtRGFhw2re+oek
+         FDQ16zrGEgJr3qBS2LnUS7Gctro8DA/G8Qys02TF0kqGX3R94iL5ZkJJnpdOHD97Xa+l
+         xOVX9Gzja6xl2NIO+mWzGnpNeFTqEwdNiJ/FnK94+nxPN2bDNqZvp60mCCtF7gAx8xnE
+         GicmN0Fa8TLdlu+KlUx2LU5sZHiA5CmaQ++OO0UfqWJPo2TQrcPwwYFQ0CxlOh0gwS8k
+         WuYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759938925; x=1760543725;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=yE/1NjviAjYgzvKEBWocmDsuG1eu4K2fZd8EwARCmAo=;
+        b=uhVKt8WsPeHY+tsELxxZowG5e3eVIrExV3xIKT/JTG97neA3h80b1Re1eQF6FClMZ+
+         vB0DndPko3NemtbaGfIGq8OIknC49MFM07WHPiZBxlIhgTEIb+T/x/wAhkdmquawK3sM
+         IHEYqaRkpAJMEIET15nViH5F6oI/T7npBy3xjh9w7xR2EwtaWAn9VJ3MyRlbHmosR6iC
+         j67SkpEP2cKtz/RGHp1Ueqo0UGcMEerExS/6Jw89aE76B+wgGfsAslWLRXkod7CiwqxX
+         MHmH50Sqx5BnAO09famu+TtSEQv5nJTOPUn9tB9HobtBrLiqKYarnkOAtyd2VZte4APx
+         koeA==
+X-Forwarded-Encrypted: i=1; AJvYcCX281/BX1Z6OsRPo8IzC/Ci+Fkn82UiM0iqLg0ykD9rm15J7068A8hJiv4lf11HCZWSlk5Y0XlXRKnvEgQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnGFJzpdSE2+liGxr1J3HYli7ddMMDK/K3ix0EtBTqUN3eRYZn
+	sb44jfBl+/9kJZujVAsG4jlQE/2cKmxZ13N1C579fapRRTtb9ZpyrYL2nvYKIXegNnc0z4bkdko
+	aDqN5Ug==
+X-Google-Smtp-Source: AGHT+IHNZ9o1aucHiV07bHDBIvskxFmukfMK9SZ5tpZZEnJ+tyDCdecEFDLxuqTyrcbJu7v6jlO0OKadLqQ=
+X-Received: from plblv11.prod.google.com ([2002:a17:903:2a8b:b0:234:c104:43f1])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:ac7:b0:269:9a8f:a4ab
+ with SMTP id d9443c01a7336-29027321d6fmr43055485ad.60.1759938925410; Wed, 08
+ Oct 2025 08:55:25 -0700 (PDT)
+Date: Wed, 8 Oct 2025 08:55:24 -0700
+In-Reply-To: <CAMGffE=P5HJkJxh2mj3c_oh6busFKYb0TGuhAc36toc5_uD72w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 9EC056000D
-X-Stat-Signature: pkk4u41ktrogas6r3u5u1mycyheyho9d
-X-Rspamd-Server: rspamout02
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+rO6qzSFGfBADFEp/Zv/mePxJvGgyc4Zs=
-X-HE-Tag: 1759938469-557830
-X-HE-Meta: U2FsdGVkX1+Likmk7TE9ksRVH3n6t+YtPSlpLPvHiZ/hcW6eNgRNHNpypuG3xqUETUqQNsDUCdY2A/s6gWQHGdGKOTfnL1vVZG7FWF1fJG7ZmFBOhN6pbeThgi0yAgxkhdbWG0+S2AnLJ5DgMLrSTC5DkwlcNAO53UtllWbXXgBLjw0LZMiQUrwi6c6DRCYFtxcV70i8yK6qkNXWg4pc+lTT7LUa6kVaOwL4TYNfsUcoL0FLpFtOVftnky5USYcdVG0/ncUI7HoZCK3g2ojph8RKip6+3sZIEu8ai1D5p7fM7c0wwqIG0bDjQbqYfzNc6SG2xVq8YQy5JCrOHmdB/PXHv6OKy3zYPwA9w57zibhA++ruLjhzn92HgLcP8M+edrQDvwIWBFJbiYngmPDnkg==
+Mime-Version: 1.0
+References: <539FC243.2070906@redhat.com> <20140617060500.GA20764@minantech.com>
+ <FFEF5F78-D9E6-4333-BC1A-78076C132CBF@jnielsen.net> <6850B127-F16B-465F-BDDB-BA3F99B9E446@jnielsen.net>
+ <jpgioafjtxb.fsf@redhat.com> <74412BDB-EF6F-4C20-84C8-C6EF3A25885C@jnielsen.net>
+ <558AD1B0.5060200@redhat.com> <FAFB2BA9-E924-4E70-A84A-E5F2D97BC2F0@jnielsen.net>
+ <CACzj_yVTyescyWBRuA3MMCC0Ymg7TKF-+sCW1N+Xwfffvw_Wsg@mail.gmail.com> <CAMGffE=P5HJkJxh2mj3c_oh6busFKYb0TGuhAc36toc5_uD72w@mail.gmail.com>
+Message-ID: <aOaJbHPBXHwxlC1S@google.com>
+Subject: Re: Hang on reboot in multi-core FreeBSD guest on Linux KVM host with
+ Intel Sierra Forest CPU
+From: Sean Christopherson <seanjc@google.com>
+To: Jinpu Wang <jinpu.wang@ionos.com>
+Cc: fanwenyi0529@gmail.com, kvm@vger.kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, Xiaoyao Li <xiaoyao.li@intel.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Steven Rostedt <rostedt@goodmis.org>
+Trimmed Cc: to drop people from the original thread.  In the future, just s=
+tart
+a new bug report.  Piggybacking a 10 year old bug just because the symptoms=
+ are
+similar does more harm than good.  Whatever the old thread was chasing was =
+already
+fixed, _10 years_ ago; they were just trying to identy exactly what commit =
+fixed
+the problem.  I.e. whatever they were chasing _can't_ be the same root caus=
+e,
+because even if it's literally the same code bug, it would require a code c=
+hange
+and thus a regression between v4.0 and v6.1.
 
-The functions irqsoff_graph_entry() and irqsoff_graph_return() both call
-func_prolog_dec() that will test if the data->disable is already set and
-if not, increment it and return. If it was set, it returns false and the
-caller exits.
+On Wed, Oct 08, 2025, Jinpu Wang wrote:
+> On Wed, Oct 8, 2025 at 2:44=E2=80=AFPM Jack Wang <jinpu.wang@ionos.com> w=
+rote:
+> > Sorry for bump this old thread, we hit same issue on Intel Sierra Fores=
+t
+> > machines with LTS kernel 6.1/6.12, maybe KVM comunity could help fix it=
+.
 
-The caller of this function must decrement the disable counter, but misses
-doing so if the calltime fails to be acquired.
+Are there any host kernels that _do_ work?  E.g. have you tried a bleeding =
+edge
+host kernel?
 
-Instead of exiting out when calltime is NULL, change the logic to do the
-work if it is not NULL and still do the clean up at the end of the
-function if it is NULL.
+> > ### **[BUG] Hang on FreeBSD Guest Reboot under KVM on Intel SierraFores=
+t (Xeon 6710E)**
+> >
+> > **Summary:**
+> > Multi-cores FreeBSD guests hang during reboot under KVM on systems with
+> > Intel(R) Xeon(R) 6710E (SierraForest). The issue is fully reproducible =
+with
+> > APICv enabled and disappears when disabling APICv (`enable_apicv=3DN`).=
+ The
+> > same configuration works correctly on Ice Lake (Xeon Gold 6338).
 
-Cc: stable@vger.kernel.org
-Fixes: a485ea9e3ef3 ("tracing: Fix irqsoff and wakeup latency tracers when using function graph")
-Reported-by: Sasha Levin <sashal@kernel.org>
-Closes: https://lore.kernel.org/linux-trace-kernel/20251006175848.1906912-2-sashal@kernel.org/
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/trace_irqsoff.c | 23 ++++++++++-------------
- 1 file changed, 10 insertions(+), 13 deletions(-)
-
-diff --git a/kernel/trace/trace_irqsoff.c b/kernel/trace/trace_irqsoff.c
-index 5496758b6c76..4c45c49b06c8 100644
---- a/kernel/trace/trace_irqsoff.c
-+++ b/kernel/trace/trace_irqsoff.c
-@@ -184,7 +184,7 @@ static int irqsoff_graph_entry(struct ftrace_graph_ent *trace,
- 	unsigned long flags;
- 	unsigned int trace_ctx;
- 	u64 *calltime;
--	int ret;
-+	int ret = 0;
- 
- 	if (ftrace_graph_ignore_func(gops, trace))
- 		return 0;
-@@ -202,13 +202,11 @@ static int irqsoff_graph_entry(struct ftrace_graph_ent *trace,
- 		return 0;
- 
- 	calltime = fgraph_reserve_data(gops->idx, sizeof(*calltime));
--	if (!calltime)
--		return 0;
--
--	*calltime = trace_clock_local();
--
--	trace_ctx = tracing_gen_ctx_flags(flags);
--	ret = __trace_graph_entry(tr, trace, trace_ctx);
-+	if (calltime) {
-+		*calltime = trace_clock_local();
-+		trace_ctx = tracing_gen_ctx_flags(flags);
-+		ret = __trace_graph_entry(tr, trace, trace_ctx);
-+	}
- 	local_dec(&data->disabled);
- 
- 	return ret;
-@@ -233,11 +231,10 @@ static void irqsoff_graph_return(struct ftrace_graph_ret *trace,
- 
- 	rettime = trace_clock_local();
- 	calltime = fgraph_retrieve_data(gops->idx, &size);
--	if (!calltime)
--		return;
--
--	trace_ctx = tracing_gen_ctx_flags(flags);
--	__trace_graph_return(tr, trace, trace_ctx, *calltime, rettime);
-+	if (calltime) {
-+		trace_ctx = tracing_gen_ctx_flags(flags);
-+		__trace_graph_return(tr, trace, trace_ctx, *calltime, rettime);
-+	}
- 	local_dec(&data->disabled);
- }
- 
--- 
-2.51.0
-
+Does Sierra Forest have IPI virtualization?  If so, you could try running w=
+ith
+APICv enabled, but enable_ipiv=3Dfalse to specifically disable IPI virtuali=
+zation.
 
