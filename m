@@ -1,191 +1,228 @@
-Return-Path: <linux-kernel+bounces-845750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45B89BC6049
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:27:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3123DBC6058
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:28:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BFB8A3511D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 16:27:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F53D3ADDA0
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 16:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E1E29B8D0;
-	Wed,  8 Oct 2025 16:27:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74E5E2EC548;
+	Wed,  8 Oct 2025 16:27:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ktKijQ2Z"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="A7XHfpHW";
+	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="aUaTTxIn"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B354204E
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 16:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759940843; cv=none; b=mebaJiMx5pTT0hMCNcTdgxygU8qWqRmyqZfL/1hi75JALh8IS29mZJY5VZQUm5akEflxZ1VAYF41+KtW9SywmOGwx4dktUqtbsELZngRMvyX3NdULuI+OcTpLRkjdO+bli2Ew+hoIgCl1nPqzckeH+wAYBKBD+6ERFf1cHksQ6Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759940843; c=relaxed/simple;
-	bh=ESYUvIrXIZf8LOINPbGCLLFX0IwDLy3Yro+8H8/WXj4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b24sBKOzlPX7HqIv+6vYL9fORTX6aGxslo075yjJAML4qhj37E7NwNzg/Ud5Jizf1Ug/pKONviBkbmN+v0MJ/PSPk/wHm65ZFp96zPFfuMso9ZArIlKHSZmjQgAvE+Gr12N5j5GuUDCNP+QVhNhZOwarefuW5sAQ3Ihb3neY+AY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ktKijQ2Z; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-46e2e6a708fso454205e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 09:27:19 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09532BE65F;
+	Wed,  8 Oct 2025 16:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.149.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759940860; cv=fail; b=d1fM0MoStKqbC7fiS8A0vlFQqTugkl4CKSSp0sMm1JFAyhaiG9ubCMbwneNVqAtBIE13V2xTycCFxnOQPbUA/I3ufXadpsLdIXCvik2DS1nvEu7gXpn9m+lsBRc2jyOs6HId+MS2ocr4VJYLZxaHqqNClwpYqLqW00NiJNMIhpw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759940860; c=relaxed/simple;
+	bh=lJVovH3rfH77XSt2Gt5KNweTWVAfSzOd+CmkI99PTPQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h80f444GaKkqAL6QilmbNYcEvFahr2mVWLWG6Ik26zCNeOA40zZRmdnL3MjAHD1PHUIVhW32m7+wS8AJDoSRZ7VnvZz+TkbzZTNAWcgzmnFFwPoKK6wQtAMYV/O56r8FJMYGygXtEEohwmG68suvtuT1Vadg472lMgijCBc+N00=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=A7XHfpHW; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=aUaTTxIn; arc=fail smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5985Yjk2073905;
+	Wed, 8 Oct 2025 11:27:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	PODMain02222019; bh=kJjrGi1FlZMZSQq51Kxud2faaf3FuLeYGLx1KHA0Eks=; b=
+	A7XHfpHWRaMoJWR0ulRH+S4dDXwCIDIbEr4OBqiTAi4rA9io7kcOXj5qajLFO5zN
+	viZ1ce9keRU0aF/lbjXocz3tkCep0KYPO5L4tv5kIZ2AcCSBHnTwuIdEB/7i3xIl
+	8Ac1x5fpRIm9J7U1jefDWg5oLkp1YycxMIA6yrZ56qAClxVdv0IzFNC9sYu5QHrm
+	AQOVazWn5NVZVE97nGOCa9CVzzboo3lySCZ2LlQZCBVLgsl+q2QX583XIluy4sls
+	9R0Abohn5IVAIFRWYB7jmMgRq0OA5sz6U/AS5PQfBZZwoAZPB2H4DPqkLMC72jmT
+	7GVZXIHFMTfzeelUf88Zeg==
+Received: from co1pr03cu002.outbound.protection.outlook.com (mail-westus2azon11020130.outbound.protection.outlook.com [52.101.46.130])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 49ktb7bsqx-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Wed, 08 Oct 2025 11:27:19 -0500 (CDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CuKvZcEP9ejM0ITDfdW/1nG15T7lT2xhIwpn1RM7CXWcdHnFKhP180sESY1z9Ck8mBsAwJ7VcTlLSWcea64I2XXlChao0J8cEGpJEh23M4OjD2ScjbRsFhYCqjPck2DD/qLmtD/le+agAx4c30GdhgDSvsDViwBNwdNjhYDVM93mV7YungSuC/E8oeU2ECAZDxk0GxxRp2sB30KHCB2ZUjO/tEjKIUT6K7MozMXG76L7M3paSiEuvqf2vGnmo7dXrABKA9lgJRgS3rt9qoqwsMDle8JuJ3dMj0+xfQUl1BY5Nq5BG6FiAPpvQKKYNJuBKXQkkhkJL4eXdZ/IZYRbIA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kJjrGi1FlZMZSQq51Kxud2faaf3FuLeYGLx1KHA0Eks=;
+ b=USgFbTctyZ/pgD/tGukRDm+NBoeDBRzbQR8zwuXxLfxZJCA2y1eKt/GUlaFu0b3vz99Fk0eHwcgz3LpPBSV0kMuQ67WSSD/8WRgnWB86PLnrfTEOWOEOKpIGtc5VIkXeloOH9aFOnBR8SSecyPF8yuNSk4di2odOYgkkcAwwaGnDCswiisMiZFuwyP2N/yzGagC4LXpb6KDT+VGS4BuJbjM6MHnQv91hHdFKJr/isgR1S7rNd/b5gJXHDrWcEa8HIZihVt4R15s2VW2dukuC9QIX+Lfbb+32CAPz68rbku0yDIDtY13wdmqZVdkmjKFMEEo7ZOj4nbc9pCTm78UPDA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 84.19.233.75) smtp.rcpttodomain=gmail.com
+ smtp.mailfrom=opensource.cirrus.com; dmarc=fail (p=reject sp=reject pct=100)
+ action=oreject header.from=opensource.cirrus.com; dkim=none (message not
+ signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759940838; x=1760545638; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VMmT0yBvVqJ1w9268h9UX0+UvY7Ypnz5qKgFPlEn+l4=;
-        b=ktKijQ2Zz61w+9Nb65gDjpEk7FqIES4Vs7UEtdWcb1yuqrDQmiGLWaU++F5+xO3mL6
-         9w8OgLBWH63jLJdGb6AAVn81KE9aExlZ/Z+mU34bAVfb1FpMym95A1KD5msOPDtkya1I
-         12//hGl9Xx+eOWhTH7MFL4q+xwtFkijLLzCigSTnYKgztpYfo9xhc04WpfQJLArGLXtv
-         Wvl80hcH9mAE4e85d05k2yvtG2/Gq4y+XRFKSP5ktgBy1z3n22QfeND6khI3IezBkZ4N
-         TIwvOWXazNv4zqXu1lB/ZpOVUvBItlAvMP6dmQxGaWhYIIeNPiiyN7pHQYwV6iY8d0br
-         dHAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759940838; x=1760545638;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VMmT0yBvVqJ1w9268h9UX0+UvY7Ypnz5qKgFPlEn+l4=;
-        b=KR5AgiBbUyk8aOYXdJ4GfmBzdqbpRV/plrzK7wz9800xA+d65lCR+ChRAJ6DlrhNMy
-         z7AFSmOlXOoSCQFGcylxXLOIBz/PwmZezxOjiJxe4tD3r7uD9FuN2wNJPf6sN4ykgmup
-         ineQKA6JF98OC+eDozqCYdyzshkK7kFJ+mr0Kcx/wwjJvi891k2YyysxYN0/zhT3Qol4
-         dFC3wyZZ6hbKilJjphb6eLB8hxKZ1JCdAa1X3eLsWQ+LOyY4t3Kl+HcbrIuZjqFLi6oD
-         5BGRBjmN/ZlwRj2n0HReIc/bp/q7E66wSMzemWGp46OnkNYg7ynKHLbdXlmyu0BvQPlN
-         nj7w==
-X-Forwarded-Encrypted: i=1; AJvYcCXyxOgROoWiK89/tfP9/kWnV4n7ou8E5BqzqUTPYQrA2v2fXEItAYVmTUg9drS400RJLH5u/iNb2WcucKk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG2kl4pElRviq3vuBQznT9leftELWbTiCxxQhSh4WPWB8lOdNx
-	ZKZHWt/aLhTshaYh+MTVAh6wG4dUBq3WBtUGVpEAUz+eSAi0dxI6wkWqSW2rA6w+An0YNa9BeAV
-	tW1BLIIfZh+JddofTYXfRg7pmRVH/b8E=
-X-Gm-Gg: ASbGncvPIcC9ZBEXhQhqNFOJDKKG1MKKrp7iN3rIl8DyNbCIX8LvPEAGrOqWXfezkvq
-	mUVpqhdE0hNX0+2hJ7anKRz6t+kmBeUCEvEO0SvZA6MZva6i6TsxQeDBCxmDxOs89Tz50+JxUnt
-	I6H+7DzfUfL+dy0ihSf0Op246y3jJgReyXqCsOTfF2UBfPqSMY92ZPder/NUrQ1cOj1vpHaaV5O
-	soCM0veI6+GT5CE5YPbR6IW/2M1sYI/WFWaW6i6sP0H33X3yaElOCN6+w==
-X-Google-Smtp-Source: AGHT+IGydoa+Uq4878Yb/9h/myuPsA/hLU+ClnU6wU58PGmdNNA/S+SuciJyS4EWhUfyI1GnU9R2Dc7R6qET/aovPX4=
-X-Received: by 2002:a05:6000:1449:b0:425:8559:5d17 with SMTP id
- ffacd0b85a97d-4266e7dfebfmr2645912f8f.30.1759940837904; Wed, 08 Oct 2025
- 09:27:17 -0700 (PDT)
+ d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kJjrGi1FlZMZSQq51Kxud2faaf3FuLeYGLx1KHA0Eks=;
+ b=aUaTTxInohmCwQ5V1qHfTRyKTR9BLrnIpe8+Ei8JknCQwY1kwCyP4wWRbZBm0kPeaFnnPO9vJAsMrUAtKlFHn2qM0168kOiJqFzXDyqKrSQtU4yVbzXtYwCmrvC0NTOZYHDfiairzrG/Kihea4cNrgsgSMfIQuC2gZI4Rk8ZbUs=
+Received: from PH7P220CA0036.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:32b::35)
+ by BL1PR19MB5746.namprd19.prod.outlook.com (2603:10b6:208:391::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Wed, 8 Oct
+ 2025 16:27:15 +0000
+Received: from SA2PEPF000015C7.namprd03.prod.outlook.com
+ (2603:10b6:510:32b:cafe::e2) by PH7P220CA0036.outlook.office365.com
+ (2603:10b6:510:32b::35) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.9 via Frontend Transport; Wed, 8
+ Oct 2025 16:27:15 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
+ smtp.mailfrom=opensource.cirrus.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
+Received-SPF: Fail (protection.outlook.com: domain of opensource.cirrus.com
+ does not designate 84.19.233.75 as permitted sender)
+ receiver=protection.outlook.com; client-ip=84.19.233.75;
+ helo=edirelay1.ad.cirrus.com;
+Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
+ SA2PEPF000015C7.mail.protection.outlook.com (10.167.241.197) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.9
+ via Frontend Transport; Wed, 8 Oct 2025 16:27:14 +0000
+Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id 1C86C406540;
+	Wed,  8 Oct 2025 16:27:13 +0000 (UTC)
+Received: from [198.90.208.24] (ediswws06.ad.cirrus.com [198.90.208.24])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPSA id 0D79E820244;
+	Wed,  8 Oct 2025 16:27:13 +0000 (UTC)
+Message-ID: <53ba5ea7-ab5f-41dd-853e-2e39efac1321@opensource.cirrus.com>
+Date: Wed, 8 Oct 2025 17:27:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250927061210.194502-1-menglong.dong@linux.dev>
- <20250927061210.194502-2-menglong.dong@linux.dev> <CAADnVQJAdAxEOWT6avzwq6ZrXhEdovhx3yibgA6T8wnMEnnAjg@mail.gmail.com>
- <3571660.QJadu78ljV@7950hx> <7f28937c-121a-4ea8-b66a-9da3be8bccad@gmail.com>
-In-Reply-To: <7f28937c-121a-4ea8-b66a-9da3be8bccad@gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 8 Oct 2025 09:27:04 -0700
-X-Gm-Features: AS18NWBNt40LsuCSwzLCuqapaMgwYyUIMoVcfLF6Ag31yVFMBDU-uVz2cE-RisI
-Message-ID: <CAADnVQLxpUmjbsHeNizRMDkY1a4_gLD0VBFWS8QMYHzpYBs4EQ@mail.gmail.com>
-Subject: bpf_errno. Was: [PATCH RFC bpf-next 1/3] bpf: report probe fault to
- BPF stderr
-To: Leon Hwang <hffilwlqm@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Cc: Menglong Dong <menglong.dong@linux.dev>, Menglong Dong <menglong8.dong@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, jiang.biao@linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] ASoC: wm8978: add missing BCLK divider setup
+To: Brian Sune <briansune@gmail.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251008160452.1741-1-briansune@gmail.com>
+Content-Language: en-GB
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+In-Reply-To: <20251008160452.1741-1-briansune@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF000015C7:EE_|BL1PR19MB5746:EE_
+X-MS-Office365-Filtering-Correlation-Id: 37441f9b-8b0f-4892-eb66-08de06878a59
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|36860700013|61400799027;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VGY0djU4a3BhVXliV1RyTTI2U280UVNqd0l0UFFtbTlpVmJrNmhoYUUxV1VQ?=
+ =?utf-8?B?ZElyK1VleUVYeFg5cmkzT3laVmdwTkJlYTZEWkM5cXEzZnltcHBBWkxZSHR1?=
+ =?utf-8?B?aTYxR3pUc3dTV3V2WUEwbjlBckIrM0JKS3k1bFFENmthdTNUb3BwbFJtWlZq?=
+ =?utf-8?B?aG9IRWE0NitobHducWt6TWlKMU1Kemd3RzR2RWVoTnh3d1plVHZQcHRsdEk5?=
+ =?utf-8?B?MFdsc2V6bDBqVS96dFZNczlSdFNJMThVRUdRb2J6UE03NVFSOW9lT3BsaGgx?=
+ =?utf-8?B?dWt0L1VFUEQrYXEvZU5FMjlNTzhEOWJwQVZnOWVlcDlLZU4rV2MwMTRjc1ZO?=
+ =?utf-8?B?WUEyV0xweDc2Z0xFQTA4NnhoTUdSZWNZSE5LZ29TOUh0NFl5b2tBQTl6Qk1U?=
+ =?utf-8?B?eTZRQk4yOUJtVVVQVWY1bi84YzZSaEI0K1V0WnAwRVM4VW9nd29FbWpWM1Zh?=
+ =?utf-8?B?NDgwWkZUeUFpYktxZ1RqWlRqRHJzeFV6TlNGOUlRYldKNlpVN2Y3MXJzcnht?=
+ =?utf-8?B?alVDblQ5T3FTMkRMa3d6SUNzdFcvQTZnS2JESHN3bTUvUGZlM0JnaGYwNk9L?=
+ =?utf-8?B?MHM5VUxGQ1lNeVJENHRodEFNa016SkQ3VkZEb0IwRk8vSFM5UFdEN0QrZFhq?=
+ =?utf-8?B?c1J3bjZmSVlRajZUMHlLcEl5eTFVYnlFWkJOdmJlWU9keW80eXBIMHpiMkRh?=
+ =?utf-8?B?WFl3QWpHQ0NXYkNQYjlHWkdXVXpzQTJDcDhSaEpBalEzYjdvUFdmczdJbFlk?=
+ =?utf-8?B?WWhiQ1ZBMjRzQXVNN2ZHQ0o4S3A0RmpWaWRDUzB3T1FUakVpM05tUnp6cDlz?=
+ =?utf-8?B?R2t3QnQ1UGRuZTZaK2hsNU1LRElLZVF1Tk00Z0FXTnBjeE92Q0xCUWxBWWVN?=
+ =?utf-8?B?TlBGNWNrRkxPWnBkd09uSjUwS3p6NjlLdkorS25BTzU4RXhmWmhCUE1HZ2Vo?=
+ =?utf-8?B?RnpvdVBaYmcxZndoQzFacWdDWHBITENVWkx6bUg0YzJZNlE3eVhsOE16NDNN?=
+ =?utf-8?B?cHlVc3gzNWJQVmN2TTVXK1pIZmdzSElGNHNsN2w2M0t5OHRSakNJQzdGeDR3?=
+ =?utf-8?B?cFFBQSsvMVV6aGZUSHYzT0xKV28vRno5WTUzQkVKaVY2RWk5YWo4ei94aEhm?=
+ =?utf-8?B?R0Q1ZXB0SnZNRFBrcFlzK1FuQm9yeEQwM3VQZnlHOUVNY1k3VGowSWtNYlFl?=
+ =?utf-8?B?bE40YVNPZ0dYZWxuNEk3L1lTbVJlOHNOZmFoN243eHFJRjFpQnlIaWJacTNC?=
+ =?utf-8?B?b3ZqeUtsOGwwYmFVR0lyZkZidEl2djQvZzdFTmFJRm9iczl5NXl5aklrVTFT?=
+ =?utf-8?B?eDFtVW40WVFNVitwUE1ENERHdjhVU2M3dmlrSitkWkQvbkE0eXhXWG81TGVQ?=
+ =?utf-8?B?NUFjaXkrQWI4Ny9hS2tFay9NOGlwNTFVVnQ4ck1teFdXWGFzSmxLVk5mQnJi?=
+ =?utf-8?B?NERjTE9OUzdTanRwV042R0NnUCtuU0E2VWdTRDVxaDhDZ3pyVllqZ29saEhh?=
+ =?utf-8?B?OS85L0kyaEN4WEZ6V3d0TDhCMHlGTHRCeWxmMEZvTHhiM296TmFYbHlzOXJD?=
+ =?utf-8?B?cGFTeEMza1JsRUFaeHhxWFNSS1dHNWY3aFgrQ3BTK2xGZC9YM0J0U2tMdUNw?=
+ =?utf-8?B?TGdyVHc4R3FVOGZZai96ZWw4bHVMMzJJc3J1b1dzdkpSUTlTamNocjhBV2Zy?=
+ =?utf-8?B?ZlJOeW5Dc01kU0lpWjZsSUQyVWdCUjlGVFIwSVg3dkczOHJjNlF6dldTL2Vt?=
+ =?utf-8?B?T3VNSzlIdFVjY25YdS80Wm9kL2J1WVFZOFI3ZUxKWU5STjNlTTZ4VmxCZ2N6?=
+ =?utf-8?B?TW53Q2hLa2oxMmRMZFFtM0RlRFdCTGJVOVNOR1J5T21EaEwyZ0J0MjZ1NEI5?=
+ =?utf-8?B?QUh2Rkc4bk4yUUw5SXc1QWtxSEZjbzF4UytzR0RPMnY5NFpGSVR5ZjRIVDBN?=
+ =?utf-8?B?c3I1a2VReDh3RGpGUXFtSVRsQ05Iampab2I1UU1Td0kyRFloN3dta0JpTGhw?=
+ =?utf-8?B?OGpOQ0Z1dE9vQ3JEWEZsQlpyWW1EcFdWdklGSVRmaUJlZDV5MThJNlo2MjMr?=
+ =?utf-8?B?NWZoTVF4UjI2Y3JUYkFwOS9RTW41bFpxZkdHbWZzS25adTR3VC9nRWVIZFJj?=
+ =?utf-8?Q?fjM0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(61400799027);DIR:OUT;SFP:1102;
+X-OriginatorOrg: opensource.cirrus.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2025 16:27:14.1948
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 37441f9b-8b0f-4892-eb66-08de06878a59
+X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-SA2PEPF000015C7.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR19MB5746
+X-Proofpoint-ORIG-GUID: QxOY2FbbAp1hFQCWDBOZMH7HG64zgu66
+X-Proofpoint-GUID: QxOY2FbbAp1hFQCWDBOZMH7HG64zgu66
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDExNiBTYWx0ZWRfXzDfuSQeP0mbq
+ P+ulWBPhgS5v0MGAshtljfn/5F+4cFjraNyidGkrrVuyp+VmPBiMg+yX+NG1rUhkIUaStk4ls/L
+ t26F2pWS452OdG/ELxihTT0ucMK+NdGa2KNHyGoXV31IoEBJ5WGMoGE5unVK0AJOt9m0nWFRDjC
+ OAa6tK7jDbql7wVpeze1YBn10uh8b5ovNyXjbMQ0hDox6qtH1c/Mj8V1XDtjDtcmWFW9S4ai82z
+ 9BnaeJS9az9ID2NexZlrQvGL4bZJW0ERlO/WHh4cBuAHvxDSM/I/kGnLGLJaYAvmOBR6rhBP4Rf
+ qqwW5cyztD/8tMzVLMRw/0/mDoU2BqA67tBgNVruS5x2+7qHDxRtltZv2A7MohAHqXfxDJw/AGI
+ 28HAFrzQN+bzBZaAxOAh2hrt0+6ttg==
+X-Authority-Analysis: v=2.4 cv=ePceTXp1 c=1 sm=1 tr=0 ts=68e690e8 cx=c_pps
+ a=9hhwatWKa7/vLw/BZzsOGQ==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s63m1ICgrNkA:10 a=RWc_ulEos4gA:10
+ a=U2_j2L6mtO50HzZEORoA:9 a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Reason: safe
 
-On Wed, Oct 8, 2025 at 7:41=E2=80=AFAM Leon Hwang <hffilwlqm@gmail.com> wro=
-te:
->
->
->
-> On 2025/10/7 14:14, Menglong Dong wrote:
-> > On 2025/10/2 10:03, Alexei Starovoitov wrote:
-> >> On Fri, Sep 26, 2025 at 11:12=E2=80=AFPM Menglong Dong <menglong8.dong=
-@gmail.com> wrote:
-> >>>
-> >>> Introduce the function bpf_prog_report_probe_violation(), which is us=
-ed
-> >>> to report the memory probe fault to the user by the BPF stderr.
-> >>>
-> >>> Signed-off-by: Menglong Dong <menglong.dong@linux.dev>
->
-> [...]
->
-> >>
-> >> Interesting idea, but the above message is not helpful.
-> >> Users cannot decipher a fault_ip within a bpf prog.
-> >> It's just a random number.
-> >
-> > Yeah, I have noticed this too. What useful is the
-> > bpf_stream_dump_stack(), which will print the code
-> > line that trigger the fault.
-> >
-> >> But stepping back... just faults are common in tracing.
-> >> If we start printing them we will just fill the stream to the max,
-> >> but users won't know that the message is there, since no one
-> >
-> > You are right, we definitely can't output this message
-> > to STDERR directly. We can add an extra flag for it, as you
-> > said below.
-> >
-> > Or, maybe we can introduce a enum stream_type, and
-> > the users can subscribe what kind of messages they
-> > want to receive.
-> >
-> >> expects it. arena and lock errors are rare and arena faults
-> >> were specifically requested by folks who develop progs that use arena.
-> >> This one is different. These faults have been around for a long time
-> >> and I don't recall people asking for more verbosity.
-> >> We can add them with an extra flag specified at prog load time,
-> >> but even then. Doesn't feel that useful.
-> >
-> > Generally speaking, users can do invalid checking before
-> > they do the memory reading, such as NULL checking. And
-> > the pointer in function arguments that we hook is initialized
-> > in most case. So the fault is someting that can be prevented.
-> >
-> > I have a BPF tools which is writed for 4.X kernel and kprobe
-> > based BPF is used. Now I'm planing to migrate it to 6.X kernel
-> > and replace bpf_probe_read_kernel() with bpf_core_cast() to
-> > obtain better performance. Then I find that I can't check if the
-> > memory reading is success, which can lead to potential risk.
-> > So my tool will be happy to get such fault event :)
-> >
-> > Leon suggested to add a global errno for each BPF programs,
-> > and I haven't dig deeply on this idea yet.
-> >
->
-> Yeah, as we discussed, a global errno would be a much more lightweight
-> approach for handling such faults.
->
-> The idea would look like this:
->
-> DEFINE_PER_CPU(int, bpf_errno);
->
-> __bpf_kfunc void bpf_errno_clear(void);
-> __bpf_kfunc void bpf_errno_set(int errno);
-> __bpf_kfunc int bpf_errno_get(void);
->
-> When a fault occurs, the kernel can simply call
-> 'bpf_errno_set(-EFAULT);'.
->
-> If users want to detect whether a fault happened, they can do:
->
-> bpf_errno_clear();
-> header =3D READ_ONCE(skb->network_header);
-> if (header =3D=3D 0 && bpf_errno_get() =3D=3D -EFAULT)
->         /* handle fault */;
->
-> This way, users can identify faults immediately and handle them gracefull=
-y.
->
-> Furthermore, these kfuncs can be inlined by the verifier, so there would
-> be no runtime function call overhead.
+On 08/10/2025 5:04 pm, Brian Sune wrote:
+> In previous WM8978 codec driver versions, wm8978_set_dai_clkdiv
+> might not have been called for BCLK, leaving the bit clock
+> divider unconfigured. This could cause incorrect or unstable audio
+> clocks depending on sample rate and word length.
+> 
+> This patch adds a check in wm8978_hw_params: if the BCLK divider
+> has not been set via wm8978_set_dai_clkdiv, it is dynamically
+> calculated and configured at runtime.
+> This ensures that BCLK is always correctly set, whether the
+> machine driver configures it explicitly or not.
+> 
+> Apart from this core patch, due to request from Mark Brown and
+> Charles Keepax. Overclock BCLK setup is applied, and dropped the
+> possible lowest error BCLK result.
 
-Interesting idea, but errno as-is doesn't quite fit,
-since we only have 2 (or 3 ?) cases without explicit error return:
-probe_read_kernel above, arena read, arena write.
-I guess we can add may_goto to this set as well.
-But in all these cases we'll struggle to find an appropriate errno code,
-so it probably should be a custom enum and not called "errno".
+Selecting a lowest-error rate is not valid I2S.
+You must have enough BCLK cycles to send all the data. If number
+of BCLK cycles < number of sample bits you cannot send all the
+sample bits. So that would be an incorrect setup.
+
+> On top of the overclocking,
+
+Using a higher BCLK is valid I2S. In fact, it is exactly defined in the
+I2S specification that there can be more BCLK cycles than data bits
+and the RX end should ignore extra cycles.
+
+> warning message is given to user as a reminding.
+
+Warning the user that you selected the correct BCLK is strange.
+
+> This patch author do not agree with this design nor
+> concept from first place!
+
+For example if you are sending stereo 16-bit samples at 48 kHz you must
+have a BCLK at least 48000 * 16 * 2 = 1536000 Hz.
+
+If the _nearest_ BCLK is < 1536000 you don't have enough clock
+cycles to send all the sample bits.
 
