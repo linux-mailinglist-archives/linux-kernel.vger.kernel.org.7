@@ -1,217 +1,445 @@
-Return-Path: <linux-kernel+bounces-845401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A66F6BC4BB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 14:16:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 799E6BC4BD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 14:17:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66E8F189F124
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 12:16:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45EA93E0CF0
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 12:16:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2925421B9C0;
-	Wed,  8 Oct 2025 12:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C39204096;
+	Wed,  8 Oct 2025 12:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BYp4jDFZ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QoHzBTBT";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BYp4jDFZ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QoHzBTBT"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="mFU2nAuc"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D6D224249
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 12:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0C41F5433
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 12:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759925768; cv=none; b=N3KVf3OzvDnWJQwKvmmXo3OtWcpSl+kiv795jYx41oGsLqPPILgDZESPeMNEk8P889XYBrVPayNWmjEhNgKhIZqYr6Qd8BFEFs5UzE/rGaaZHfND89pT0WaaOf3LYw4uJI+lhFEaBdCXaXisjTce4mt8gracQW43gf+1lFaqThA=
+	t=1759925781; cv=none; b=Y6//lDhQpQZJWYwb+d50/HFHukXAgRru/hghQ7M6W650mk8QujN4eWiEeZoNGxo7wLNrU05dbTMw+F+2G48TGOw8iT4tcJjRGe7LO5I2HM3E0b3elNb5TxF1xRTG2gJ3klTTo4Joo2VuwcsYWcfOWBHGC4CPSuuBPhj1n72sMc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759925768; c=relaxed/simple;
-	bh=t0lTvZ6X+XWSt22q1tWSMfP6gGwXSJ/Kzub4TBam+kI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PketSXQZKTMU/4qM4FnpxZshFTmOQ4in4I6Wiq/0DJdyoYCaelH+oYEXxFn7hRzInZ9YlpzZmcHMS5zY8qRV5OAehDxL6M8nYSKXKu57Ah3MS0Sk4CDti4Ux+wPI3SFzQn6ejAcEsTRrp79phL0WX0XPcborGPm5jY2K9LpqWwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BYp4jDFZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QoHzBTBT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BYp4jDFZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QoHzBTBT; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 916881F792;
-	Wed,  8 Oct 2025 12:16:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759925764; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lFU/C/Oy4l92biDocMS0dOZ4DgWNv2XUCD/V5cwxPoU=;
-	b=BYp4jDFZ1z8m0GX38YokIKtCZF27ZZP6JHaz+1RaGIyMv9do6a2G+DEX34nIfRa4K5yGn+
-	hcI2m6LSbWagZp9sA2bAc+Ot1Ihb6BaKKc9XQwAhFoGpTOLA1J4NlBlMarUR2hchjHy8n5
-	dBR1LLfFrcV0NLJKNNAS9ZFndHGZEK8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759925764;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lFU/C/Oy4l92biDocMS0dOZ4DgWNv2XUCD/V5cwxPoU=;
-	b=QoHzBTBTu0cjWuChqsoL0nBHbK4JJht65GUe/Rl3vRVte6jYXWy/8YluNzlOcj5KZKnCu0
-	bLB27GzIFVXlV7Dw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759925764; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lFU/C/Oy4l92biDocMS0dOZ4DgWNv2XUCD/V5cwxPoU=;
-	b=BYp4jDFZ1z8m0GX38YokIKtCZF27ZZP6JHaz+1RaGIyMv9do6a2G+DEX34nIfRa4K5yGn+
-	hcI2m6LSbWagZp9sA2bAc+Ot1Ihb6BaKKc9XQwAhFoGpTOLA1J4NlBlMarUR2hchjHy8n5
-	dBR1LLfFrcV0NLJKNNAS9ZFndHGZEK8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759925764;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lFU/C/Oy4l92biDocMS0dOZ4DgWNv2XUCD/V5cwxPoU=;
-	b=QoHzBTBTu0cjWuChqsoL0nBHbK4JJht65GUe/Rl3vRVte6jYXWy/8YluNzlOcj5KZKnCu0
-	bLB27GzIFVXlV7Dw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7D41C13A3D;
-	Wed,  8 Oct 2025 12:16:04 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id iWuJHgRW5mjAOAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 08 Oct 2025 12:16:04 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 1A845A0A9C; Wed,  8 Oct 2025 14:16:04 +0200 (CEST)
-Date: Wed, 8 Oct 2025 14:16:04 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
-	yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v2 10/13] ext4: introduce mext_move_extent()
-Message-ID: <2fxg5kszehzzaw5zbj6ptkxujzslxmudk3izentavxlkarm5mw@3yissfw5dru7>
-References: <20250925092610.1936929-1-yi.zhang@huaweicloud.com>
- <20250925092610.1936929-11-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1759925781; c=relaxed/simple;
+	bh=kwPgUfwoVyb4zf8KwYkiVYCOXB7KcIbWTRUpHv4SgYg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FaDZsHxjtr2mswo54DfnmLW26NC3bwxp7mlzd24HhUDYGvmcC0bINgBx4CWTgpQDmjtU0w2o1D39hzLis30PC3jqHxhjs9PCKQB0kHiwIjazMrqofFnM9oXEVKFVgfq72caGaDS+Ys5/lgaryf70HJYbcoxNOpcPBG4pmmDxZcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=mFU2nAuc; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3ee1221ceaaso5536726f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 05:16:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1759925777; x=1760530577; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JxKRQONGzwOttwvgnC2LAlH+BX31PKH3osfZx+Nd7XI=;
+        b=mFU2nAuc+GffPRUMjreTzzdKMFvDI30kbwHNFHf8WZJKCNSNbYoWj6JXLsfRaCvnI0
+         N6LOVequAyXJuJEh/Z4I/hrWzXyv2U3e4zz6Tn0Zrc1XhBwdq9/ppuGycu79ak+N6v36
+         Lh+sqq/cr1rvmBX7OXa0BJeV1z+1qnOocxgP8sKDnJX/J+kfx3OfxcWwWj6X4VllKvlY
+         OCceqq8COVsUGU38wVzGVN+CgbqbOKufdMN1XKKmdypHo/BraLUmbcL1yoJj2K/Ij8SW
+         XpDMhDCQmH70tkFY5M6DRRvqzlfRtwyRRJVjtmwfIWZxgyOMfAcKAkvUOosJZrJYQhX5
+         o0gA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759925777; x=1760530577;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JxKRQONGzwOttwvgnC2LAlH+BX31PKH3osfZx+Nd7XI=;
+        b=mkEbwAwqLamNfdo8tgi7J4XRz3lyALvE76HKKN2Z/rsyIDu81oPdBLJ+6iNzuw/NKo
+         es2E5iubKcofiaIQlnDe4W7HigNGneZwZQAOx5sPsPUwPcvtmBJCfTSKnSr4hewHFsOa
+         Sda5/su+P6zXWQ5rOvx8CS1btsCzV5a+uclQHhGdsNu92RG/XzCqsLbP2fotHWGTqbOo
+         NJUut2vIrjkKd5hblBknaCRp7Ap1EzqWm/vIxn3cv0itG6K2YkmfFMCdYRu3aukB2XiP
+         4R9VKe/Q5J8g0DQxpHLb9biEIKrjtL2cca2WwakCjHmC+HPiOqZDRqQPEao/TH7RV0qN
+         wqpg==
+X-Forwarded-Encrypted: i=1; AJvYcCXY4SN4Av3c9hqL3DswGTKhxxXDwRmLu3NzrYqtQuI0mLSvGK5SiQATFFMH5B0XRFMt2hDiRxNRN0FVcbM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZkiFavlxt+861ZMigcC+f0lO0bA8ebEKAZyNOFhhvVaSSWkzu
+	hbJiDVwMM8hNMXhGG5rhngZMvHG4+sDYkHjR9XNxbzXTEG5uhlptsri3zLjtSkuqzzk=
+X-Gm-Gg: ASbGncvO/AefPvZsGJ1gpqC2VTffIsuusrVGO6rQik4AB+bsZmkGy1wZGVjMlZhg1aB
+	zGOwLWObjGNxFCGeAuMsPm8a5dodySZTbj50IOh59+BU8bLxKszbGtEm8grSRgYu7rLKkmx+1Ot
+	9HcubRuT+7KrCPrQe248veTLugchxYcc8weTxYpXqq3B15wDLnSGmfJVV57MIcSsAFb5ZsiX4bU
+	lmm33VGObsaW4EPQEP+5VEV2S+5vhQ5DiK+nkeWWSuNCS3DpPnYddD8lAXJhDOp2HbJGrlQ+D4R
+	mlfnantMeTRnfcJbksWhq0+SfKvsd9nOKlihTO6kmkt5sQbUTq4jZViUmmhbqezirgiPcxJD7h/
+	3grkyI747RB8PIhn/APpxjw/KW/ZjhpEckHPt04yxW2gWebyw73DgSvhv9tG5FLJn
+X-Google-Smtp-Source: AGHT+IEimZmCk3/6Ggy9NCh0WE/6r4yeGO/nMGAdxmVGecm/Oa5AC8YxXdOW/M1RgQIyk9DqorAVqA==
+X-Received: by 2002:a5d:64c8:0:b0:3e7:63b0:bf3c with SMTP id ffacd0b85a97d-4266e7c6209mr2266780f8f.27.1759925777385;
+        Wed, 08 Oct 2025 05:16:17 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.59])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8a6daasm30018667f8f.7.2025.10.08.05.16.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Oct 2025 05:16:16 -0700 (PDT)
+Message-ID: <cca1061e-df67-4b5b-99bd-9721c72a0f88@tuxon.dev>
+Date: Wed, 8 Oct 2025 15:16:15 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250925092610.1936929-11-yi.zhang@huaweicloud.com>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,suse.cz:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -3.80
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 4/7] reset: rzg2l-usbphy-ctrl: Add support for USB
+ PWRRDY
+To: Philipp Zabel <p.zabel@pengutronix.de>, vkoul@kernel.org,
+ kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com,
+ yoshihiro.shimoda.uh@renesas.com, biju.das.jz@bp.renesas.com
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+References: <20250925100302.3508038-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250925100302.3508038-5-claudiu.beznea.uj@bp.renesas.com>
+ <c7fc31f1247332196516394a22f6feef9733a0b4.camel@pengutronix.de>
+ <66d85e70-efb8-4a45-9164-55b123691b70@tuxon.dev>
+ <bcf6113b0025777db1cb2ace1618fed8fac2dfc6.camel@pengutronix.de>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <bcf6113b0025777db1cb2ace1618fed8fac2dfc6.camel@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu 25-09-25 17:26:06, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
+Hi, Philipp,
+
+On 10/8/25 13:23, Philipp Zabel wrote:
+> Hi Claudiu,
 > 
-> When moving extents, the current move_extent_per_page() process can only
-> move extents of length PAGE_SIZE at a time, which is highly inefficient,
-> especially when the fragmentation of the file is not particularly
-> severe, this will result in a large number of unnecessary extent split
-> and merge operations. Moreover, since the ext4 file system now supports
-> large folios, using PAGE_SIZE as the processing unit is no longer
-> practical.
+> On Mi, 2025-10-08 at 12:29 +0300, Claudiu Beznea wrote:
+>> Hi, Philipp,
+>>
+>> On 10/8/25 11:34, Philipp Zabel wrote:
+>>> Hi Claudiu,
+>>>
+>>> On Do, 2025-09-25 at 13:02 +0300, Claudiu wrote:
+>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>
+>>>> On the Renesas RZ/G3S SoC, the USB PHY block has an input signal called
+>>>> PWRRDY. This signal is managed by the system controller and must be
+>>>> de-asserted after powering on the area where USB PHY resides and asserted
+>>>> before powering it off.
+>>>>
+>>>> On power-on the USB PWRRDY signal need to be de-asserted before enabling
+>>>> clock and switching the module to normal state (through MSTOP support). The
+>>>> power-on configuration sequence
+>>>
+>>> The wording makes me wonder, have you considered implementing this as a
+>>> power sequencing driver?
+>>
+>> No, haven't tried as power sequencing. At the moment this was started I
+>> think the power sequencing support wasn't merged.
+>>
+>> The approaches considered were:
+>> a/ power domain
 > 
-> Therefore, introduce a new move extents method, mext_move_extent(). It
-> moves one extent of the origin inode at a time, but not exceeding the
-> size of a folio. The parameters for the move are passed through the new
-> mext_data data structure, which includes the origin inode, donor inode,
-> the mapping extent of the origin inode to be moved, and the starting
-> offset of the donor inode.
+> Letting a power domain control a corresponding power ready signal would
+> have been my first instinct as well.
 > 
-> The move process is similar to move_extent_per_page() and can be
-> categorized into three types: MEXT_SKIP_EXTENT, MEXT_MOVE_EXTENT, and
-> MEXT_COPY_DATA. MEXT_SKIP_EXTENT indicates that the corresponding area
-> of the donor file is a hole, meaning no actual space is allocated, so
-> the move is skipped. MEXT_MOVE_EXTENT indicates that the corresponding
-> areas of both the origin and donor files are unwritten, so no data needs
-> to be copied; only the extents are swapped. MEXT_COPY_DATA indicates
-> that the corresponding areas of both the origin and donor files contain
-> data, so data must be copied. The data copying is performed in three
-> steps: first, the data from the original location is read into the page
-> cache; then, the extents are swapped, and the page cache is rebuilt to
-> reflect the index of the physical blocks; finally, the dirty page cache
-> is marked and written back to ensure that the data is written to disk
-> before the metadata is persisted.
+>> b/ regulator
+>> c/ as a reference counted bit done through regmap read/writes APIs
+>>
+>> a and b failed as a result of discussions in the previous posted versions.
 > 
-> One important point to note is that the folio lock and i_data_sem are
-> held only during the moving process. Therefore, before moving an extent,
-> it is necessary to check whether the sequence cookie of the area to be
-> moved has changed while holding the folio lock. If a change is detected,
-> it indicates that concurrent write-back operations may have occurred
-> during this period, and the type of the extent to be moved can no longer
-> be considered reliable. For example, it may have changed from unwritten
-> to written. In such cases, return -ESTALE, and the calling function
-> should reacquire the move extent of the original file and retry the
-> movement.
+> Could you point me to the discussion related to a?
+
+It's this one
+https://lore.kernel.org/all/CAPDyKFrS4Dhd7DZa2zz=oPro1TiTJFix0awzzzp8Qatm-8Z2Ug@mail.gmail.com/
+
+
 > 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> I see v2 and v3 tried to control the bit from the PHY drivers, and in
+> v4 we were are already back to the reset driver.
 
-Nice, just one nit below. Feel free to add:
+v2 passed the system controller (SYSC) phandle to the USB PHYs only (though
+renesas,sysc-signals DT property) where the PWRRDY bit was set. The PWRRDY
+bit was referenced counted in the SYSC driver though regmap APIs.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+v3 used the approach from v2 but passed the renesas,sysc-signals to all the
+USB related drivers.
 
-> +static int mext_move_begin(struct mext_data *mext, struct folio *folio[2],
-> +			   enum mext_move_type *move_type)
-> +{
-> +	struct inode *orig_inode = mext->orig_inode;
-> +	struct inode *donor_inode = mext->donor_inode;
-> +	unsigned int blkbits = orig_inode->i_blkbits;
-> +	struct ext4_map_blocks donor_map = {0};
-> +	loff_t orig_pos, donor_pos;
-> +	size_t move_len;
-> +	int ret;
-> +
-> +	orig_pos = ((loff_t)mext->orig_map.m_lblk) << blkbits;
-> +	donor_pos = ((loff_t)mext->donor_lblk) << blkbits;
-> +	ret = mext_folio_double_lock(orig_inode, donor_inode,
-> +			orig_pos >> PAGE_SHIFT, donor_pos >> PAGE_SHIFT, folio);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/*
-> +	 * Check the origin inode's mapping information again under the
-> +	 * folio lock, as we do not hold the i_data_sem at all times, and
-> +	 * it may change during the concurrent write-back operation.
-> +	 */
-> +	if (mext->orig_map.m_seq != READ_ONCE(EXT4_I(orig_inode)->i_es_seq)) {
-> +		ret = -ESTALE;
-> +		goto error;
-> +	}
-> +
-> +	/* Adjust the moving length according to the minor folios length. */
-						 ^^^ ... the length of shorter folio
+Then, in v4, the PWRRDY refcounting was dropped and passed
+renesas,sysc-signals only to the USB PHY CTRL DT node in the idea that this
+is the node that will always be probed first as all the other USB blocks
+need it and request resets from it.
+
+v5 and v6 kept the approach from v4 and only addressed misc comments or
+things that I noticed.
+
+> 
+>> c was abandoned by me after long discussions with Renesas HW team which
+>> revealed the block schema b/w individual USB blocks (presented in the patch
+>> description).
+>>
+>> The point is that this bit doesn't actually power anything, at the moment
+>> the bit is set, the power to USB is already applied. Software just need to
+>> set the bit before/after setting the clocks and the associated MSTOP and
+>> applying any USB specific settings. Each clock has an MSTOP associated and
+>> the MSTOP is set though the clock driver when the clock is set.
+> 
+> I understand.
+> 
+> Apart from having to carry non-reset-related code in reset drivers, I
+> worry about the implicit ordering that the PHY driver depends on with
+> this:
+> 
+> The power-up (probe) order is guaranteed by probe order via the
+> reset_control_get() check in the PHY driver, and power-down (remove)
+> order is guaranteed by the reset controller device reference that the
+> reset control holds. That's all very hidden and indirect when the
+> actual dependency is between a bit being set in SYSC and the clock
+> handling in (either) PHY driver.
 
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+The USB PHY CTRL block controlled by this driver is also part of the USB
+PHY block:
+
+┌──────────────────────────┐
+│                 ┌────────┐
+│                 │        │
+│                 │ PHY0   │
+│     USB PHY     │        │
+│                 └────────┘
+│                          │
+│┌──────────────┐ ┌────────┐
+││USHPHY control│ │        │
+││  registers   │ │ PHY1   │
+│└──────────────┘ │        │
+│                 └────────┘
+└─▲───────▲─────────▲──────┘
+  │       │         │
+  │       │         │
+  │       │         │
+  │PWRRDY │         │
+  │       │   CPG_CLK_ON_USB.CLK3_ON
+  │       │
+  │  CPG_BUS_PERI_COM_MSTOP.MSTOP4_ON
+  │
+┌────┐
+│SYSC│
+└────┘
+
+Thus, touching USB PHY CTRL registers, though this driver, will also have
+to be done after setting PWRRDY, clk, MSTOP.
+
+In v3 the PWRRDY SYSC phandle was passed to all the drivers in charge of
+controlling the blocks from the USB PHY area. And the PWRRDY was referenced
+counted through regmap APIs. In v3 I was in the middle of keeping vs
+dropping the refcounting and, thus, posted it and asked for feedback on
+this approach. I didn't get any input about it, I've dropped in v4.
+
+In v4, I dropped it as I considered it too much and unnecessary taking into
+account that the USB PHY CTRL driver will be probed/remove all the time
+first/last as all the other drivers depends on it. And, due to this, it
+will be last/first in suspend/resume sequence.
+
+
+> 
+>>>
+>>>> must be:
+>>>>
+>>>> 1/ PWRRDY=0
+>>>> 2/ CLK_ON=1
+>>>> 3/ MSTOP=0
+>>>>
+>>>> On power-off the configuration sequence should be:
+>>>>
+>>>> 1/ MSTOP=1
+>>>> 2/ CLK_ON=0
+>>>> 3/ PWRRDY=1
+>>>>
+>>>> The CLK_ON and MSTOP functionalities are controlled by clock drivers.
+>>>>
+>>>> After long discussions with the internal HW team, it has been confirmed
+>>>> that the HW connection b/w USB PHY block, the USB channels, the system
+>>>> controller, clock, MSTOP, PWRRDY signal is as follows:
+>>>>
+>>>>                                ┌──────────────────────────────┐
+>>>>                                │                              │◄── CPG_CLKON_USB.CLK0_ON
+>>>>                                │     USB CH0                  │
+>>>> ┌──────────────────────────┐   │┌───────────────────────────┐ │◄── CPG_CLKON_USB.CLK2_ON
+>>>> │                 ┌────────┐   ││host controller registers  │ │
+>>>> │                 │        │   ││function controller registers│
+>>>> │                 │ PHY0   │◄──┤└───────────────────────────┘ │
+>>>> │     USB PHY     │        │   └────────────▲─────────────────┘
+>>>> │                 └────────┘                │
+>>>> │                          │    CPG_BUS_PERI_COM_MSTOP.MSTOP{6, 5}_ON
+>>>> │┌──────────────┐ ┌────────┐
+>>>> ││USHPHY control│ │        │
+>>>> ││  registers   │ │ PHY1   │   ┌──────────────────────────────┐
+>>>> │└──────────────┘ │        │◄──┤     USB CH1                  │
+>>>> │                 └────────┘   │┌───────────────────────────┐ │◄── CPG_CLKON_USB.CLK1_ON
+>>>> └─▲───────▲─────────▲──────┘   ││ host controller registers │ │
+>>>>   │       │         │          │└───────────────────────────┘ │
+>>>>   │       │         │          └────────────▲─────────────────┘
+>>>>   │       │         │                       │
+>>>>   │       │         │           CPG_BUS_PERI_COM_MSTOP.MSTOP7_ON
+>>>>   │PWRRDY │         │
+>>>>   │       │   CPG_CLK_ON_USB.CLK3_ON
+>>>>   │       │
+>>>>   │  CPG_BUS_PERI_COM_MSTOP.MSTOP4_ON
+>>>>   │
+>>>> ┌────┐
+>>>> │SYSC│
+>>>> └────┘
+>>>>
+>>>> where:
+>>>> - CPG_CLKON_USB.CLK.CLKX_ON is the register bit controlling the clock X
+>>>>   of different USB blocks, X in {0, 1, 2, 3}
+>>>> - CPG_BUS_PERI_COM_MSTOP.MSTOPX_ON is the register bit controlling the
+>>>>   MSTOP of different USB blocks, X in {4, 5, 6, 7}
+>>>> - USB PHY is the USB PHY block exposing 2 ports, port0 and port1, used
+>>>>   by the USB CH0, USB CH1
+>>>> - SYSC is the system controller block controlling the PWRRDY signal
+>>>> - USB CHx are individual USB block with host and function capabilities
+>>>>   (USB CH0 have both host and function capabilities, USB CH1 has only
+>>>>   host capabilities)
+>>>>
+>>>> The USBPHY control registers are controlled though the
+>>>> reset-rzg2l-usbphy-ctrl driver. The USB PHY ports are controlled by
+>>>> phy_rcar_gen3_usb2 (drivers/phy/renesas/phy-rcar-gen3-usb2.c file). The
+>>>> USB PHY ports request resets from the reset-rzg2l-usbphy-ctrl driver.
+>>>>
+>>>> The connection b/w the system controller and the USB PHY CTRL driver is
+>>>> implemented through the renesas,sysc-pwrrdy device tree property
+>>>> proposed in this patch. This property specifies the register offset and the
+>>>> bitmask required to control the PWRRDY signal.
+>>>>
+>>>> Since the USB PHY CTRL driver needs to be probed before any other
+>>>> USB-specific driver on RZ/G3S, control of PWRRDY is passed exclusively
+>>>> to it. This guarantees the correct configuration sequence between clocks,
+>>>> MSTOP bits, and the PWRRDY bit. At the same time, changes are kept minimal
+>>>> by avoiding modifications to the USB PHY driver to also handle the PWRRDY
+>>>> itself.
+>>>>
+>>>> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>> ---
+>>>>
+>>>> Changes in v7:
+>>>> - used proper regmap update value on rzg2l_usbphy_ctrl_set_pwrrdy()
+>>>>
+>>>> Changes in v6:
+>>>> - used syscon_regmap_lookup_by_phandle_args() to simplify the code
+>>>> - collected tags
+>>>>
+>>>> Changes in v5:
+>>>> - none
+>>>>
+>>>> Changes in v4:
+>>>> - updated patch description
+>>>> - updated rzg2l_usbphy_ctrl_pwrrdy_init() to map directly the
+>>>>   "renesas,sysc-pwrrdy" as the SYSC signal abstraction was dropped
+>>>>   in this version, along with rz_sysc_get_signal_map()
+>>>> - dropped priv member of rzg2l_usbphy_ctrl_pwrrdy_init() as it is
+>>>>   not needed in this version
+>>>> - shift left !power_on with pwrrdy->mask as this is how the
+>>>>   regmap_update_bits() needs the last member to be
+>>>> - selected MFD_SYSCON
+>>>>
+>>>> Changes in v3:
+>>>> - none; this patch is new
+>>>>
+>>>>
+>>>>  drivers/reset/Kconfig                   |  1 +
+>>>>  drivers/reset/reset-rzg2l-usbphy-ctrl.c | 62 +++++++++++++++++++++++++
+>>>>  2 files changed, 63 insertions(+)
+>>>>
+>>>> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+>>>> index 78b7078478d4..329730cbcfb9 100644
+>>>> --- a/drivers/reset/Kconfig
+>>>> +++ b/drivers/reset/Kconfig
+>>>> @@ -237,6 +237,7 @@ config RESET_RASPBERRYPI
+>>>>  config RESET_RZG2L_USBPHY_CTRL
+>>>>  	tristate "Renesas RZ/G2L USBPHY control driver"
+>>>>  	depends on ARCH_RZG2L || COMPILE_TEST
+>>>> +	select MFD_SYSCON
+>>>>  	help
+>>>>  	  Support for USBPHY Control found on RZ/G2L family. It mainly
+>>>>  	  controls reset and power down of the USB/PHY.
+>>>> diff --git a/drivers/reset/reset-rzg2l-usbphy-ctrl.c b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
+>>>> index 8a7f167e405e..be315199e2b0 100644
+>>>> --- a/drivers/reset/reset-rzg2l-usbphy-ctrl.c
+>>>> +++ b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
+>>>> @@ -13,6 +13,7 @@
+>>>>  #include <linux/regmap.h>
+>>>>  #include <linux/reset.h>
+>>>>  #include <linux/reset-controller.h>
+>>>> +#include <linux/mfd/syscon.h>
+>>>>  
+>>>>  #define RESET			0x000
+>>>>  #define VBENCTL			0x03c
+>>>> @@ -41,6 +42,18 @@ struct rzg2l_usbphy_ctrl_priv {
+>>>>  
+>>>>  #define rcdev_to_priv(x)	container_of(x, struct rzg2l_usbphy_ctrl_priv, rcdev)
+>>>>  
+>>>> +/**
+>>>> + * struct rzg2l_usbphy_ctrl_pwrrdy - SYSC PWRRDY signal descriptor
+>>>> + * @regmap: SYSC regmap
+>>>> + * @offset: offset into the SYSC address space for accessing PWRRDY
+>>>> + * @mask: mask into the register at offset for accessing PWRRDY
+>>>> + */
+>>>> +struct rzg2l_usbphy_ctrl_pwrrdy {
+>>>> +	struct regmap *regmap;
+>>>> +	u32 offset;
+>>>> +	u32 mask;
+>>>> +};
+>>>> +
+>>>>  static int rzg2l_usbphy_ctrl_assert(struct reset_controller_dev *rcdev,
+>>>>  				    unsigned long id)
+>>>>  {
+>>>> @@ -91,6 +104,8 @@ static int rzg2l_usbphy_ctrl_status(struct reset_controller_dev *rcdev,
+>>>>  	return !!(readl(priv->base + RESET) & port_mask);
+>>>>  }
+>>>>  
+>>>> +#define RZG2L_USBPHY_CTRL_PWRRDY	1
+>>>> +
+>>>>  static const struct of_device_id rzg2l_usbphy_ctrl_match_table[] = {
+>>>>  	{ .compatible = "renesas,rzg2l-usbphy-ctrl" },
+>>>>  	{ /* Sentinel */ }
+>>>> @@ -110,6 +125,49 @@ static const struct regmap_config rzg2l_usb_regconf = {
+>>>>  	.max_register = 1,
+>>>>  };
+>>>>  
+>>>> +static void rzg2l_usbphy_ctrl_set_pwrrdy(struct rzg2l_usbphy_ctrl_pwrrdy *pwrrdy,
+>>>> +					 bool power_on)
+>>>> +{
+>>>> +	u32 val = (!power_on << (ffs(pwrrdy->mask) - 1)) & pwrrdy->mask;
+>>>
+>>>
+>>> Why not just:
+>>>
+>>> 	u32 val = power_on ? 0 : pwrrdy->mask;
+>>
+>> This would work as well. I wanted to be sure it doesn't fail in case the
+>> mask is more than one bit (as it comes from device tree).
+> 
+> I'd just check this in rzg2l_usbphy_ctrl_pwrrdy_init() and fail if more
+> than one bit is set.
+
+OK
+
+> 
+> [...]
+>>
+>>> So we deassert PWRRDY on probe and assert on remove. What about
+>>> suspend/resume ordering?
+>>
+>> As this driver has no suspend/resume support yet, my intention was to take
+>> care of this bit on suspend/resume after it will be established how it is
+>> handled on probe/remove. Adding suspend/resume support to this series will
+>> make it bigger.
+> 
+> Ok, please add that to the commit description.
+
+OK
+
+> I'm just asking because the dt-bindings patch mentions how PWRRDY must
+> be set during suspend/resume, and then this patch doesn't do it.
+
+OK
+
+Thank you for your review,
+Claudiu
 
