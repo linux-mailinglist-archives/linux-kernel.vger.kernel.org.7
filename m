@@ -1,147 +1,150 @@
-Return-Path: <linux-kernel+bounces-845635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7AECBC5913
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:27:55 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13D9BBC5925
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:29:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 103924053EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:27:54 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8FC6834B763
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:29:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546732F361C;
-	Wed,  8 Oct 2025 15:27:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF7D2F39DA;
+	Wed,  8 Oct 2025 15:29:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gVPWv9Kb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED802EBBA8;
-	Wed,  8 Oct 2025 15:27:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="r9t73sjk"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67612EBBA8;
+	Wed,  8 Oct 2025 15:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759937269; cv=none; b=Xg8c1mwkwUua7gmgVinV5X7NEVMKY4+a4ZUxlXGuQabDn8WM88Hmy/nXnmdssBmxguKhaa6vPX2rIkzieV1GiiaFy4pcF5KXuWXVnxuTrlOhKEZLbVbVVDzbsy5vfquIUNaDwBB3Cr7QkheEMNKe7xJu1XFQ15xdTGRVCVivLFU=
+	t=1759937350; cv=none; b=EnYrr7OBidEmrET/1mGhzX8GOERKQ+4tsqv38lJaBbgLbfhBlZObFAmB8iLIVse11bgwAZCBf63i01K/sKy+aT561UDKA4az/bkx6VdquGmPwP69EK13u5A8c1+Aij9SdFKeG1gXFtw13KZ7vmBMNhDA3fRJUUHD3bZzVd3QeHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759937269; c=relaxed/simple;
-	bh=m/gtv3txD5nG4mkTfb82QKREplefXMZgkwqiSnws77A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nC23kK+YPdIViV92M7OCqiEhGrnyVtDcUVTh2dB76davG/ubyxNWaUT8/gtWhZ8iDXnR5PdVU7+GLuB0p2RBRmh3AQVXnnflVOCYvKdTuhRpnx37rvXaMI34O5sbyBZWrsgei6nK+Rpr/UQ+jpqaUkiqdJNyENnFMLzHo8eBfRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gVPWv9Kb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 446F5C4CEE7;
-	Wed,  8 Oct 2025 15:27:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759937268;
-	bh=m/gtv3txD5nG4mkTfb82QKREplefXMZgkwqiSnws77A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gVPWv9Kb/h6zVn7KKibvBMp9NGAN+7ts+svazfyNIN5MJDlqa4+YD1XpLI3+S2sk3
-	 qUHNnACmwBRys/ww9v+64KxhlfYHFyiuViKfOhLvOFC70hvb6X0vWaauNeop1ln6D4
-	 nHsxSkA0AjUF53irjYN86tVT+YhzC5I1CCMSyBOf13AvMqEkFMIZoTtTk+hvssv98V
-	 n5r36F4A2Q4n97O+5AYMFFX4epM3uYWdNLYGsA9SkZ8xc88TYZfB8QDolwB91dBKtt
-	 1SUE0FU/Xxpv+5fOh88bmKxvTzMSncijGUD0SgPaijPoZD1xmYRJWAmSowVO7IPKAv
-	 7/WD7ymaqf1bg==
-Date: Wed, 8 Oct 2025 08:27:45 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Petr Mladek <pmladek@suse.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
-	Miroslav Benes <mbenes@suse.cz>, Joe Lawrence <joe.lawrence@redhat.com>, 
-	live-patching@vger.kernel.org, Song Liu <song@kernel.org>, laokz <laokz@foxmail.com>, 
-	Jiri Kosina <jikos@kernel.org>, Marcos Paulo de Souza <mpdesouza@suse.com>, 
-	Weinan Liu <wnliu@google.com>, Fazla Mehrab <a.mehrab@bytedance.com>, 
-	Chen Zhongjin <chenzhongjin@huawei.com>, Puranjay Mohan <puranjay@kernel.org>, 
-	Dylan Hatch <dylanbhatch@google.com>, Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v4 51/63] objtool/klp: Introduce klp diff subcommand for
- diffing object files
-Message-ID: <bnipx2pvsyxcd27uhxw5rr5yugm7iuint6rg3lzt3hdm7vkeue@g3wzb7kyr5da>
-References: <cover.1758067942.git.jpoimboe@kernel.org>
- <702078edac02ecf79f869575f06c5b2dba8cd768.1758067943.git.jpoimboe@kernel.org>
- <aOZuzj0vhKPF1bcW@pathway.suse.cz>
+	s=arc-20240116; t=1759937350; c=relaxed/simple;
+	bh=KD9mrhpm/9jxD+xvxfZWyyz/ZbfaFLVcFqSwAfyai84=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rn4F5xJcb/OZIZJxlq3ZjaPoXN8gwuebzMYatv+yH9eY+bpRP/dX25pEWk5Dwyqkw1xO9WOrEKHBnkrQT4Mn5hTdH/QE9jq2xHtJUypo1ZwFSxvKj12AeCdPs7dDZjZGwySNN6QMOj0yVZ+C/lL6qu5wqvlhkRH5Wsot3Wv6aSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=r9t73sjk; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.18.189.204] (unknown [167.220.238.76])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 178662038B68;
+	Wed,  8 Oct 2025 08:29:00 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 178662038B68
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1759937346;
+	bh=ZGkSKYPpStoCJnmnJ2C0D3KKEdglbi6pFFfgtydhTrw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=r9t73sjkyMgLL0RbNZ+lHPJGmo3+icT6T9iO6EA6FKYxbm92zixnLM9/dv4ZgziXE
+	 R7M5aPlxGSc8G57R0aeWTezPsijgYU6Q72JmQsmKvf7OjPLUzkJFFKdT6uc7LCvhMk
+	 ofrf6jPKPnAkRJg/npsByOOa0klk3fRwnYKvEWoM=
+Message-ID: <7bc327ba-0050-4d9e-86b6-1b7427a96f53@linux.microsoft.com>
+Date: Wed, 8 Oct 2025 20:58:58 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aOZuzj0vhKPF1bcW@pathway.suse.cz>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] net: mana: Linearize SKB if TX SGEs exceeds
+ hardware limit
+To: Eric Dumazet <edumazet@google.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ kuba@kernel.org, pabeni@redhat.com, longli@microsoft.com,
+ kotaranov@microsoft.com, horms@kernel.org, shradhagupta@linux.microsoft.com,
+ ernis@linux.microsoft.com, dipayanroy@linux.microsoft.com,
+ shirazsaleem@microsoft.com, linux-hyperv@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rdma@vger.kernel.org, gargaditya@microsoft.com,
+ ssengar@linux.microsoft.com
+References: <20251003154724.GA15670@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <CANn89iJwkbxC5HvSKmk807K-3HY+YR1kt-LhcYwnoFLAaeVVow@mail.gmail.com>
+ <9d886861-2e1f-4ea8-9f2c-604243bd751b@linux.microsoft.com>
+ <CANn89iKwHWdUaeAsdSuZUXG-W8XwyM2oppQL9spKkex0p9-Azw@mail.gmail.com>
+Content-Language: en-US
+From: Aditya Garg <gargaditya@linux.microsoft.com>
+In-Reply-To: <CANn89iKwHWdUaeAsdSuZUXG-W8XwyM2oppQL9spKkex0p9-Azw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 08, 2025 at 04:01:50PM +0200, Petr Mladek wrote:
-> On Wed 2025-09-17 09:03:59, Josh Poimboeuf wrote:
-> > +static int read_exports(void)
-> > +{
-> > +	const char *symvers = "Module.symvers";
-> > +	char line[1024], *path = NULL;
-> > +	unsigned int line_num = 1;
-> > +	FILE *file;
-> > +
-> > +	file = fopen(symvers, "r");
-> > +	if (!file) {
-> > +		path = top_level_dir(symvers);
-> > +		if (!path) {
-> > +			ERROR("can't open '%s', \"objtool diff\" should be run from the kernel tree", symvers);
-> > +			return -1;
-> > +		}
-> > +
-> > +		file = fopen(path, "r");
-> > +		if (!file) {
-> > +			ERROR_GLIBC("fopen");
-> > +			return -1;
-> > +		}
-> > +	}
-> > +
-> > +	while (fgets(line, 1024, file)) {
+On 08-10-2025 20:51, Eric Dumazet wrote:
+> On Wed, Oct 8, 2025 at 8:16 AM Aditya Garg
+> <gargaditya@linux.microsoft.com> wrote:
+>>
+>> On 03-10-2025 21:45, Eric Dumazet wrote:
+>>> On Fri, Oct 3, 2025 at 8:47 AM Aditya Garg
+>>> <gargaditya@linux.microsoft.com> wrote:
+>>>>
+>>>> The MANA hardware supports a maximum of 30 scatter-gather entries (SGEs)
+>>>> per TX WQE. In rare configurations where MAX_SKB_FRAGS + 2 exceeds this
+>>>> limit, the driver drops the skb. Add a check in mana_start_xmit() to
+>>>> detect such cases and linearize the SKB before transmission.
+>>>>
+>>>> Return NETDEV_TX_BUSY only for -ENOSPC from mana_gd_post_work_request(),
+>>>> send other errors to free_sgl_ptr to free resources and record the tx
+>>>> drop.
+>>>>
+>>>> Signed-off-by: Aditya Garg <gargaditya@linux.microsoft.com>
+>>>> Reviewed-by: Dipayaan Roy <dipayanroy@linux.microsoft.com>
+>>>> ---
+>>>>    drivers/net/ethernet/microsoft/mana/mana_en.c | 26 +++++++++++++++----
+>>>>    include/net/mana/gdma.h                       |  8 +++++-
+>>>>    include/net/mana/mana.h                       |  1 +
+>>>>    3 files changed, 29 insertions(+), 6 deletions(-)
+>>>>
+>>>> diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
+>>>> index f4fc86f20213..22605753ca84 100644
+>>>> --- a/drivers/net/ethernet/microsoft/mana/mana_en.c
+>>>> +++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
+>>>> @@ -20,6 +20,7 @@
+>>>>
+>>>>    #include <net/mana/mana.h>
+>>>>    #include <net/mana/mana_auxiliary.h>
+>>>> +#include <linux/skbuff.h>
+>>>>
+>>>>    static DEFINE_IDA(mana_adev_ida);
+>>>>
+>>>> @@ -289,6 +290,19 @@ netdev_tx_t mana_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+>>>>           cq = &apc->tx_qp[txq_idx].tx_cq;
+>>>>           tx_stats = &txq->stats;
+>>>>
+>>>> +       BUILD_BUG_ON(MAX_TX_WQE_SGL_ENTRIES != MANA_MAX_TX_WQE_SGL_ENTRIES);
+>>>> +       #if (MAX_SKB_FRAGS + 2 > MANA_MAX_TX_WQE_SGL_ENTRIES)
+>>>> +               if (skb_shinfo(skb)->nr_frags + 2 > MANA_MAX_TX_WQE_SGL_ENTRIES) {
+>>>> +                       netdev_info_once(ndev,
+>>>> +                                        "nr_frags %d exceeds max supported sge limit. Attempting skb_linearize\n",
+>>>> +                                        skb_shinfo(skb)->nr_frags);
+>>>> +                       if (skb_linearize(skb)) {
+>>>
+>>> This will fail in many cases.
+>>>
+>>> This sort of check is better done in ndo_features_check()
+>>>
+>>> Most probably this would occur for GSO packets, so can ask a software
+>>> segmentation
+>>> to avoid this big and risky kmalloc() by all means.
+>>>
+>>> Look at idpf_features_check()  which has something similar.
+>>
+>> Hi Eric,
+>> Thank you for your review. I understand your concerns regarding the use
+>> of skb_linearize() in the xmit path, as it can fail under memory
+>> pressure and introduces additional overhead in the transmit path. Based
+>> on your input, I will work on a v2 that will move the SGE limit check to
+>> the ndo_features_check() path and for GSO skbs exceding the hw limit
+>> will disable the NETIF_F_GSO_MASK to enforce software segmentation in
+>> kernel before the call to xmit.
+>> Also for non GSO skb exceeding the SGE hw limit should we go for using
+>> skb_linearize only then or would you suggest some other approach here?
 > 
-> Nit: It might be more safe to replace 1024 with sizeof(line).
->      It might be fixed later in a separate patch.
-
-Indeed.
-
-> > +/*
-> > + * Klp relocations aren't allowed for __jump_table and .static_call_sites if
-> > + * the referenced symbol lives in a kernel module, because such klp relocs may
-> > + * be applied after static branch/call init, resulting in code corruption.
-> > + *
-> > + * Validate a special section entry to avoid that.  Note that an inert
-> > + * tracepoint is harmless enough, in that case just skip the entry and print a
-> > + * warning.  Otherwise, return an error.
-> > + *
-> > + * This is only a temporary limitation which will be fixed when livepatch adds
-> > + * support for submodules: fully self-contained modules which are embedded in
-> > + * the top-level livepatch module's data and which can be loaded on demand when
-> > + * their corresponding to-be-patched module gets loaded.  Then klp relocs can
-> > + * be retired.
+> I think that for non GSO, the linearization attempt is fine.
 > 
-> I wonder how temporary this is ;-) The comment looks optimistic. I am
-> just curious. Do you have any plans to implement the support for
-> the submodules... ?
+> Note that this is extremely unlikely for non malicious users,
+> and MTU being usually small (9K or less),
+> the allocation will be much smaller than a GSO packet.
 
-I actually already have a working POC for that, but didn't want to make
-the patch set even longer ;-)
-
-It was surprisingly easy and straightforward to implement.
-
-> PS: To make some expectations. I am not doing a deep review.
->     I am just looking at the patchset to see how far and mature
->     it is. And I just comment what catches my eye.
-> 
->     My first impression is that it is already in a pretty good state.
->     And I do not see any big problem there. Well, some documentation
->     would be fine ;-)
-> 
->     What are your plans, please?
-
-From my perspective, it's testing well and in a good enough state for
-merging soon (after the merge window?), if there aren't any objections
-to that.
-
-There will be more patches to come, like the submodules and other arch
-support.  And of course there will be bugs discovered by broader
-testing.  But I think this is a good foundation to begin with.
-
-And the sooner we can get people using this, the sooner we can start
-deprecating kpatch-build, which would be really nice.
-
--- 
-Josh
+Okay. Will send a v2
 
