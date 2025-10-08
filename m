@@ -1,177 +1,96 @@
-Return-Path: <linux-kernel+bounces-845186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48C85BC3CFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 10:21:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 042A0BC3D06
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 10:22:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6840318881D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 08:21:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 317A34057BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 08:22:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80582F3C20;
-	Wed,  8 Oct 2025 08:19:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0FC821FF3B;
+	Wed,  8 Oct 2025 08:22:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bg3zAzwB"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="mQCC8b7q"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A096A2EC548
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 08:19:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFA82EBB96;
+	Wed,  8 Oct 2025 08:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759911556; cv=none; b=HTbENC0Mab9o5iwJ5wDPbLhWF8YcrjMAIdGCn2dhQ9whbk0He8n8RYffTRrLX9v8tkmukA6mId8IP0gy4CWjhDttCvIOco+Qgl6si0WhhSUf6p/tiH6/H0LT6qgMpCTb5pWfDNCIkm6db6G03AkAK4vgKucDmPn7uE2Dgg7Uiqg=
+	t=1759911724; cv=none; b=SPh17e/O1TWDZlRjeY02Ja8zIQ1YQAzUfScRrqefKtgj0xM21EmagHaw/MYazNreLvSq905tDlycyuYvcsgfWmFjfaYNWoCxBtJADbyLT/N/1EjpiLOVVnCFIMf8XtrMu2Zkh1puqfCSODs10wt3jbrC/Mb/XGOf+Bb2sKO2boY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759911556; c=relaxed/simple;
-	bh=ClTqU9A4l/7rsWUJLOHQy+IbYnmpNzYl8yg1dsQSgUY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gkCWUDOPK6KVigI5wsyXA9nFe4VQq9EbLpNqCvoEFPNhZtlUxkV0zQKJYHPn5Tn1aAL0pa4TszlkpprhXQ4115Ku8vL0rPXf7Ku7i8ePPTCEfepeOXDqVkyFHi30psPTl+0COvTuWsbVzCWnznhoCJ4iBSBDhhBz1Z4+bB1zDjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bg3zAzwB; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-78ed682e9d3so63985056d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 01:19:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759911553; x=1760516353; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ujkQmW6plJLZBDQO/36IgQfW49HabBHClJLGnLpua0c=;
-        b=Bg3zAzwB14x4jGmPD5x3/F4JtBe4c6+EFtVM6qthHlQoYDBOvScBvw6trOBBf4U8Ci
-         GEL8Nyds62/UGcEbBn9sGNZXRHbfzhGnWrk+VaQNXHCKC7QSce2rKRHwklU1uPmPyejF
-         CUziadW82Et/oiD1lZzSoRd0aNnB7vFBdoCvcSW+nj3dWVEnUbbkC74LyWETzVd2tPk0
-         JY+B2X1fQEJjNCREqAJTLge9ywbbKnRiVUcBrRf8ew6eKbgun/zIy1lInB4awc+FtV1n
-         y8h9cBEHqAsYcJGma7o/jrknPz071LjmW5nn8/OmzjoFyVEOjEX9paFHOgRHGUfPk2Um
-         uPMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759911553; x=1760516353;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ujkQmW6plJLZBDQO/36IgQfW49HabBHClJLGnLpua0c=;
-        b=R1vafDG6wVCysLqDPNOjx2Rla/Q9/NNYWyzkHrr3j309TTzkWnSEfhRars1zU6Q306
-         +UtxeApUMD7a0pedRT1GgOy282Qs0Xwx0uyKS7cQtn8eGX8GyZdtdYmsmLyxektbVsQs
-         1UOZwu64qvklWPtCvIzKvwg6xU0lDmNt8M9tOUpy9F2PdaVzurvM2NXvPUifGYPrfEW8
-         D/XYRFaBX5rpmwNSvG+SwQ/e01LOusUtG/+DR3DyYoLTbfcWKLFQYVPLm7LxOB6QChn9
-         EwFbOnKKg3QFwDKXKt8GSX+If2zgX0E6EDalHTyz6qOLKv/8MRZA9TaCBqh/SwzP9zxN
-         BUHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFWv7rQvF7ow1CKKd7g0UY+G9Uxxelr3cyUx5AkgoHYXamHc5rZ9G91vePhffDiAbPJsDuYK61VLPPvmw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3P+pA/idPeFrisqZj1/7Db3YEiKcDhVAA3JuHta7a/KGMD66G
-	0nMAWW/HObh8JbEHX1MZpzmM0t1rrGV97oezykJaZetYJ/kipZpBWQKAWhyLPSVrPOcsVURKleL
-	xC+1EujET+eA8Z+AwxjpdZ2Rb3Ko8xeo=
-X-Gm-Gg: ASbGncukwSWBY0lKauX1hf1JFZJi7uNlzrNE4+XC7Pcp+VwMbqDWO9R0j97jcEOXHpv
-	m8Y/FwTycVDH3MXUfYXaifr0BSiAbT6rgrWcooZTn59oVvVczlWHHHOUQvoIFnxwLYbKfVv10xf
-	f/URbSOpzftKgGtPYxYpb+MFY5PkJI9UC+uxBDwfdHIy5YaW+BSEhOFgaKIZ+csi1knZ/9/ofk/
-	Do5zKxz7i6MXvx4+xxcKAEHdSQ0ca+DZhLCi2OBcQ3xEsIZ8FWVVCnyrpPHJzyTBZ5b3jusEq0=
-X-Google-Smtp-Source: AGHT+IHZGUO4OF/QfunpmTKIRKSgOuGmZNfsONzgXodv17mKF+pXVLfT+JBj8J2eFByzmTADYXWLJpPNEeD4YOKOEG0=
-X-Received: by 2002:a05:6214:408:b0:78e:49a0:2ba4 with SMTP id
- 6a1803df08f44-87b2ef9480bmr33207836d6.58.1759911553333; Wed, 08 Oct 2025
- 01:19:13 -0700 (PDT)
+	s=arc-20240116; t=1759911724; c=relaxed/simple;
+	bh=K+0GF3zQ+KXrkkbJ4B7e0lEfxPNeqouIO11wYtJ8Z4Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UtR9Ej64rDGnqpkB7ZOtQSqG3hwHJNcFTWpscdDzk5xzG/uKD2bPYtg8aHsFb/lilvCZTeafm2SMVEmB5jeDPTAgdLRp8ciHKB+R0bxFZPJSI8g3Zl6Up3KxccP5RkKQooicRFy9GzYdHo/ImHLBDtfwQn/vTIprUx7T9hRwun8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=mQCC8b7q; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1759911719;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=H8SPZkt6+sp/5jeMGqBWc/VCT7Uionl7zaKARBI8kLs=;
+	b=mQCC8b7qJVTJ2Gh3LAMFqp3KGOlG7jriSk0cpd84DiSOlgRAkKL+A3k30friRJSM/2L7JZ
+	5YKRrU4J1Q/GLnkw4b88ld7CyL2IVWbJjKuaeBpaO5UX8+c2DNJ7zB/Dl+TgzKLO0I6gXi
+	YNsJggxr4usXcSfziAd+Cxy3GrEGN/a9uj3Un0hCYseiQkoAVkJmTf+bo61XsHXZfiVrjm
+	mDjkeZFbKRIJlNkvmlFrct/H/CtWHml4fRGuXKM24/7WjMid3iXSPP5wLtaEuDz81Wr0NW
+	FIcFAi35WN4gZ4et/POS89hqSWQuydEmZJRQS0auvEq7p3GMy9zcCxhEwhRMow==
+From: Diederik de Haas <didi.debian@cknow.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Johan Jonker <jbx6244@gmail.com>,
+	Alex Bee <knaerzche@gmail.com>,
+	Diederik de Haas <didi.debian@cknow.org>
+Subject: [PATCH] arm64: dts: rockchip: Drop 'rockchip,grf' prop from tsadc on rk3328
+Date: Wed,  8 Oct 2025 10:21:22 +0200
+Message-ID: <20251008082143.242270-1-didi.debian@cknow.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250930055826.9810-1-laoar.shao@gmail.com> <20250930055826.9810-4-laoar.shao@gmail.com>
- <CAADnVQJtrJZOCWZKH498GBA8M0mYVztApk54mOEejs8Wr3nSiw@mail.gmail.com> <27e002e3-b39f-40f9-b095-52da0fbd0fc7@redhat.com>
-In-Reply-To: <27e002e3-b39f-40f9-b095-52da0fbd0fc7@redhat.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Wed, 8 Oct 2025 16:18:37 +0800
-X-Gm-Features: AS18NWBqVaYKWhKnTCEHPPwnoyf7n1_vwGYnsczH0QG6uK9Ydgy_AQN3Vgm1uv0
-Message-ID: <CALOAHbBFNNXHdzp1zNuD530r9ZjpQF__wGWyAdR7oDLvemYSMw@mail.gmail.com>
-Subject: Re: [PATCH v9 mm-new 03/11] mm: thp: add support for BPF based THP
- order selection
-To: David Hildenbrand <david@redhat.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	ziy@nvidia.com, baolin.wang@linux.alibaba.com, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Liam Howlett <Liam.Howlett@oracle.com>, npache@redhat.com, 
-	ryan.roberts@arm.com, dev.jain@arm.com, Johannes Weiner <hannes@cmpxchg.org>, 
-	usamaarif642@gmail.com, gutierrez.asier@huawei-partners.com, 
-	Matthew Wilcox <willy@infradead.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Amery Hung <ameryhung@gmail.com>, David Rientjes <rientjes@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, 21cnbao@gmail.com, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Tejun Heo <tj@kernel.org>, lance.yang@linux.dev, Randy Dunlap <rdunlap@infradead.org>, 
-	bpf <bpf@vger.kernel.org>, linux-mm <linux-mm@kvack.org>, 
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Oct 8, 2025 at 4:08=E2=80=AFPM David Hildenbrand <david@redhat.com>=
- wrote:
->
-> On 03.10.25 04:18, Alexei Starovoitov wrote:
-> > On Mon, Sep 29, 2025 at 10:59=E2=80=AFPM Yafang Shao <laoar.shao@gmail.=
-com> wrote:
-> >>
-> >> +unsigned long bpf_hook_thp_get_orders(struct vm_area_struct *vma,
-> >> +                                     enum tva_type type,
-> >> +                                     unsigned long orders)
-> >> +{
-> >> +       thp_order_fn_t *bpf_hook_thp_get_order;
-> >> +       int bpf_order;
-> >> +
-> >> +       /* No BPF program is attached */
-> >> +       if (!test_bit(TRANSPARENT_HUGEPAGE_BPF_ATTACHED,
-> >> +                     &transparent_hugepage_flags))
-> >> +               return orders;
-> >> +
-> >> +       rcu_read_lock();
-> >> +       bpf_hook_thp_get_order =3D rcu_dereference(bpf_thp.thp_get_ord=
-er);
-> >> +       if (WARN_ON_ONCE(!bpf_hook_thp_get_order))
-> >> +               goto out;
-> >> +
-> >> +       bpf_order =3D bpf_hook_thp_get_order(vma, type, orders);
-> >> +       orders &=3D BIT(bpf_order);
-> >> +
-> >> +out:
-> >> +       rcu_read_unlock();
-> >> +       return orders;
-> >> +}
-> >
-> > I thought I explained it earlier.
-> > Nack to a single global prog approach.
->
-> I agree. We should have the option to either specify a policy globally,
-> or more refined for cgroups/processes.
->
-> It's an interesting question if a program would ever want to ship its
-> own policy: I can see use cases for that.
->
-> So I agree that we should make it more flexible right from the start.
+The 'rockchip,grf' property for tsadc in rk3328 wasn't actually used in
+the driver and is no longer allowed in the DT since commit
+e881662aa06a ("dt-bindings: thermal: rockchip: Tighten grf requirements")
 
-To achieve per-process granularity, the struct-ops must be embedded
-within the mm_struct as follows:
+So remove that property which fixes the following DT validation issue
 
-+#ifdef CONFIG_BPF_MM
-+struct bpf_mm_ops {
-+#ifdef CONFIG_BPF_THP
-+       struct bpf_thp_ops bpf_thp;
-+#endif
-+};
-+#endif
-+
- /*
-  * Opaque type representing current mm_struct flag state. Must be accessed=
- via
-  * mm_flags_xxx() helper functions.
-@@ -1268,6 +1281,10 @@ struct mm_struct {
- #ifdef CONFIG_MM_ID
-                mm_id_t mm_id;
- #endif /* CONFIG_MM_ID */
-+
-+#ifdef CONFIG_BPF_MM
-+               struct bpf_mm_ops bpf_mm;
-+#endif
-        } __randomize_layout;
+  tsadc@ff250000 (rockchip,rk3328-tsadc): rockchip,grf: False schema does not allow [[58]]
 
-We should be aware that this will involve extensive changes in mm/. If
-we're aligned on this direction, I'll start working on the patches.
+Signed-off-by: Diederik de Haas <didi.debian@cknow.org>
+---
+ arch/arm64/boot/dts/rockchip/rk3328.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
---=20
-Regards
-Yafang
+diff --git a/arch/arm64/boot/dts/rockchip/rk3328.dtsi b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+index 283d9cbc4368..03b7c4313750 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+@@ -598,7 +598,6 @@ tsadc: tsadc@ff250000 {
+ 		pinctrl-2 = <&otp_pin>;
+ 		resets = <&cru SRST_TSADC>;
+ 		reset-names = "tsadc-apb";
+-		rockchip,grf = <&grf>;
+ 		rockchip,hw-tshut-temp = <100000>;
+ 		#thermal-sensor-cells = <1>;
+ 		status = "disabled";
+-- 
+2.51.0
+
 
