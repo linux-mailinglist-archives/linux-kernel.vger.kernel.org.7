@@ -1,144 +1,265 @@
-Return-Path: <linux-kernel+bounces-845975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6846CBC69D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:53:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2982ABC69D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:54:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E61E404D8E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:53:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C67919E3A33
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 241E726E6FD;
-	Wed,  8 Oct 2025 20:53:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39440264634;
+	Wed,  8 Oct 2025 20:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CNZRUwTd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aNpYkMKZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C4B1EB36;
-	Wed,  8 Oct 2025 20:53:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 675B724EA81
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 20:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759956804; cv=none; b=eqM1UmHidM4WVxt94+CBvkq7gyRBNL0VdVO6l0OOVtTtqISabIL1rqKxP3k1jrju9kJeCWoiwZRwEkdbsnyoI4iEP6kCRyvib1h+ZR7QlSlFPiw4Lt8HHmkUL92Q34tpFyUAmWqEGRjVb/jX3ClEiNpo03YBcW1BQAy1TJhJ6sI=
+	t=1759956860; cv=none; b=sKEprX93IrnAANuvxfI5b/4pDO6v2WsbOb94hvwCYhGqvBrhkeRIhqV/Ihwpicyp0eipy+jkd9rUyyb7DkKHxfZJZC1LPmLLFY7Ic/bbaipIDK5FaAdO17DXn7UhyW2ERVL5ms9lEIEp9gv1OfkY9b8LeQguPXuB046LT+cTW1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759956804; c=relaxed/simple;
-	bh=kea3RxogjvdILzkpgzWw9gxfFKJCQ1AXuLQYBUx9CRE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Psyssz7+gB9wquDKEXif5Gkewh6z88cInhJbBIUm/DS9xZVdk58CSCi2jycKtvmYziYMfZio75g2H2wzisIw/s0+6aWHLO4NeS0bKGTsSp5EmtYz/uODfF8Hls3Lr1S2bdVG14fH/YC45SBcOSjps3ll2h0ly3Nc/KjbJq5bbaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CNZRUwTd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3E38C4CEE7;
-	Wed,  8 Oct 2025 20:53:20 +0000 (UTC)
+	s=arc-20240116; t=1759956860; c=relaxed/simple;
+	bh=agL9NQjRm83/yHaWQQb9LP2YNW141HDrTz3t3n7+nWc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=codbqsfH8V8Ri+jkn2r2fdjR/azgCJIKHPvhTCHg9XiQI/VMPtQTNWpBL5OoCZdzI//C4Em/rWf/l7lPF+CDL8vpDzEY0aSp4rki5DLOjArErOU2RPukFOUoDoNPh5E2tI6TehQCnnPR569OceCsbZ5tLAk9RwjQtOOJsaLIW3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aNpYkMKZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 175D7C116C6
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 20:54:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759956803;
-	bh=kea3RxogjvdILzkpgzWw9gxfFKJCQ1AXuLQYBUx9CRE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CNZRUwTdWwGhsqtnCst4mKL3Yvr3NhMYIU/7hltM7xRZs71ZKgOgc0KlZ2tDUwJT7
-	 wnrQgPgy0u3VgxbzXs5y4+1GOTqysPljVKwsYkGEHVGMo110kV91g/aDulcUc9nCiR
-	 RIQJo0aEDSKm+FtPlG7o8e7LpgFBZIkz69/KhCbj9gf0g7wCm1ECvurHmm78nMFOpE
-	 aXCBzEcQ7QXwg64Lw3LaYILuJJuFlHLOK/aIj6PgoDwowtUf1Ze/QD/8UUiXUJQ5B0
-	 Ad8zPQFD0z4LFCHOizNZ0tcXJVCCTd2P3cDQ/VJ0vVMOUCI+zpQnuNLilAHTXr9QZV
-	 fzGRcmIL9ahmQ==
-Date: Wed, 8 Oct 2025 21:53:18 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: usb: ti,hd3ss3220: Add support for VBUS
- based on ID state
-Message-ID: <20251008-reclusive-cilantro-cafe98a62922@spud>
-References: <20251002172539.586538-1-krishna.kurapati@oss.qualcomm.com>
- <20251002172539.586538-2-krishna.kurapati@oss.qualcomm.com>
+	s=k20201202; t=1759956860;
+	bh=agL9NQjRm83/yHaWQQb9LP2YNW141HDrTz3t3n7+nWc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=aNpYkMKZfCFMWJKhtFzH9ssZDk+h5QDwRDs6/raKHPcAjEdn5aAlINFU1ys/sGiE3
+	 v0oOf3aZOVksaFkJyHY1P2B56MsfVxccy5i25BCfvczrn7YXWpCJKvQesr35u69+Sk
+	 mbh7+wFiNRR6n4lZ3TETnyHaLccM8C43xfjOz5Datmuaqwvqh7kn+7j4OXcnYvoM5j
+	 R+noBr0BQQK+dHuhCP6V0ldfVYyUkS5pXM5nJ4RxksOe0hbz8Uwc0hU1DwAwQbntoT
+	 2sbikPEgHZCvPhlZK8ArXxkuNFD6+WFWLMn753uGqV1mLzXcMsmIENMnJ4uCDPnoiN
+	 ppLiDdXRuMtew==
+Received: by mail-yx1-f54.google.com with SMTP id 956f58d0204a3-633b87e7b9fso316742d50.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 13:54:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVMMUf+yUbUMvcMfjjLz+SgzpI7WBWooWnXsB4UjN7A6aIZURVvY2aD0En2GXekmyEDz8yFp1QjPRuVZK4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5HNjs0UccZdFA1xmqst8Xwt02KxOC3JNCzuFIcn8U3jv7f4/H
+	VX3nsCLrdaDnS2eEqp/4iKZhQ3wkSJ2kDeQ8paU+7gUa0Cb3YXLY9puvbZ6ZcxmHgHPh/Q1KLxa
+	53Xf7OzyxlDEDwPyio0eLmTpS7yfACmANmcUIYrtqrA==
+X-Google-Smtp-Source: AGHT+IGXcPsre3jPnzCXfW/NrHxTfes0Zrdq4yHGtjhgwz7kNPMXwSCxT4ITZ6YQG7WRPEjbYGDlrMXAh/E7qHIvmVo=
+X-Received: by 2002:a05:690e:2486:b0:628:2e16:6566 with SMTP id
+ 956f58d0204a3-63ccb6763d1mr4749241d50.0.1759956859230; Wed, 08 Oct 2025
+ 13:54:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="O2jSri3ANK3hWGRc"
-Content-Disposition: inline
-In-Reply-To: <20251002172539.586538-2-krishna.kurapati@oss.qualcomm.com>
-
-
---O2jSri3ANK3hWGRc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20251007-swap-clean-after-swap-table-p1-v1-0-74860ef8ba74@tencent.com>
+ <20251007-swap-clean-after-swap-table-p1-v1-1-74860ef8ba74@tencent.com>
+In-Reply-To: <20251007-swap-clean-after-swap-table-p1-v1-1-74860ef8ba74@tencent.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Wed, 8 Oct 2025 13:54:06 -0700
+X-Gmail-Original-Message-ID: <CACePvbWs3hFWt0tZc4jbvFN1OXRR5wvNXiMjBBC4871wQjtqMw@mail.gmail.com>
+X-Gm-Features: AS18NWDV4-kH86tXLtXJeQUM8aNsKlZYE7T0tTk3LlA5GEJjYTJActBrpZqaAP8
+Message-ID: <CACePvbWs3hFWt0tZc4jbvFN1OXRR5wvNXiMjBBC4871wQjtqMw@mail.gmail.com>
+Subject: Re: [PATCH 1/4] mm, swap: do not perform synchronous discard during allocation
+To: Kairui Song <ryncsn@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Kairui Song <kasong@tencent.com>, 
+	Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, David Hildenbrand <david@redhat.com>, 
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Ying Huang <ying.huang@linux.alibaba.com>, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 02, 2025 at 10:55:38PM +0530, Krishna Kurapati wrote:
-> Update the bindings to support reading ID state and VBUS, as per the
-> HD3SS3220 data sheet. The ID pin is kept high if VBUS is not at VSafe0V a=
-nd
-> asserted low once VBUS is at VSafe0V, enforcing the Type-C requirement th=
-at
-> VBUS must be at VSafe0V before re-enabling VBUS.
->=20
-> Add id-gpios property to describe the input gpio for USB ID pin and vbus-
-> supply property to describe the regulator for USB VBUS.
+Hi Kairui,
 
-IDK anything about this class of USB device, but I think the binding
-patch is acceptable.
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+First of all, your title is a bit misleading:
+"do not perform synchronous discard during allocation"
 
->=20
-> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+You still do the synchronous discard, just limited to order 0 failing.
+
+Also your commit did not describe the behavior change of this patch.
+The behavior change is that, it now prefers to allocate from the
+fragment list before waiting for the discard. Which I feel is not
+justified.
+
+After reading your patch, I feel that you still do the synchronous
+discard, just now you do it with less lock held.
+I suggest you just fix the lock held issue without changing the
+discard ordering behavior.
+
+On Mon, Oct 6, 2025 at 1:03=E2=80=AFPM Kairui Song <ryncsn@gmail.com> wrote=
+:
+>
+> From: Kairui Song <kasong@tencent.com>
+>
+> Since commit 1b7e90020eb77 ("mm, swap: use percpu cluster as allocation
+> fast path"), swap allocation is protected by a local lock, which means
+> we can't do any sleeping calls during allocation.
+>
+> However, the discard routine is not taken well care of. When the swap
+> allocator failed to find any usable cluster, it would look at the
+> pending discard cluster and try to issue some blocking discards. It may
+> not necessarily sleep, but the cond_resched at the bio layer indicates
+> this is wrong when combined with a local lock. And the bio GFP flag used
+> for discard bio is also wrong (not atomic).
+
+If lock is the issue, let's fix the lock issue.
+
+> It's arguable whether this synchronous discard is helpful at all. In
+> most cases, the async discard is good enough. And the swap allocator is
+> doing very differently at organizing the clusters since the recent
+> change, so it is very rare to see discard clusters piling up.
+
+Very rare does not mean this never happens. If you have a cluster on
+the discarding queue, I think it is better to wait for the discard to
+complete before using the fragmented list, to reduce the
+fragmentation. So it seems the real issue is holding a lock while
+doing the block discard?
+
+> So far, no issues have been observed or reported with typical SSD setups
+> under months of high pressure. This issue was found during my code
+> review. But by hacking the kernel a bit: adding a mdelay(100) in the
+> async discard path, this issue will be observable with WARNING triggered
+> by the wrong GFP and cond_resched in the bio layer.
+
+I think that makes an assumption on how slow the SSD discard is. Some
+SSD can be really slow. We want our kernel to work for those slow
+discard SSD cases as well.
+
+> So let's fix this issue in a safe way: remove the synchronous discard in
+> the swap allocation path. And when order 0 is failing with all cluster
+> list drained on all swap devices, try to do a discard following the swap
+
+I don't feel that changing the discard behavior is justified here, the
+real fix is discarding with less lock held. Am I missing something?
+If I understand correctly, we should be able to keep the current
+discard ordering behavior, discard before the fragment list. But with
+less lock held as your current patch does.
+
+I suggest the allocation here detects there is a discard pending and
+running out of free blocks. Return there and indicate the need to
+discard. The caller performs the discard without holding the lock,
+similar to what you do with the order =3D=3D 0 case.
+
+> device priority list. If any discards released some cluster, try the
+> allocation again. This way, we can still avoid OOM due to swap failure
+> if the hardware is very slow and memory pressure is extremely high.
+>
+> Cc: <stable@vger.kernel.org>
+> Fixes: 1b7e90020eb77 ("mm, swap: use percpu cluster as allocation fast pa=
+th")
+> Signed-off-by: Kairui Song <kasong@tencent.com>
 > ---
->  .../devicetree/bindings/usb/ti,hd3ss3220.yaml       | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml b/Do=
-cumentation/devicetree/bindings/usb/ti,hd3ss3220.yaml
-> index bec1c8047bc0..c869eece39a7 100644
-> --- a/Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml
-> +++ b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml
-> @@ -25,6 +25,19 @@ properties:
->    interrupts:
->      maxItems: 1
-> =20
-> +  id-gpios:
-> +    description:
-> +      An input gpio for USB ID pin. Upon detecting a UFP device, HD3SS32=
-20
-> +      will keep ID pin high if VBUS is not at VSafe0V. Once VBUS is at V=
-Safe0V,
-> +      the HD3SS3220 will assert ID pin low. This is done to enforce Type=
--C
-> +      requirement that VBUS must be at VSafe0V before re-enabling VBUS.
+>  mm/swapfile.c | 40 +++++++++++++++++++++++++++++++++-------
+>  1 file changed, 33 insertions(+), 7 deletions(-)
+>
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index cb2392ed8e0e..0d1924f6f495 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -1101,13 +1101,6 @@ static unsigned long cluster_alloc_swap_entry(stru=
+ct swap_info_struct *si, int o
+>                         goto done;
+>         }
+>
+> -       /*
+> -        * We don't have free cluster but have some clusters in discardin=
+g,
+> -        * do discard now and reclaim them.
+> -        */
+> -       if ((si->flags & SWP_PAGE_DISCARD) && swap_do_scheduled_discard(s=
+i))
+> -               goto new_cluster;
+
+Assume you follow my suggestion.
+Change this to some function to detect if there is a pending discard
+on this device. Return to the caller indicating that you need a
+discard for this device that has a pending discard.
+Add an output argument to indicate the discard device "discard" if needed.
+
+> -
+>         if (order)
+>                 goto done;
+>
+> @@ -1394,6 +1387,33 @@ static bool swap_alloc_slow(swp_entry_t *entry,
+>         return false;
+>  }
+>
+> +/*
+> + * Discard pending clusters in a synchronized way when under high pressu=
+re.
+> + * Return: true if any cluster is discarded.
+> + */
+> +static bool swap_sync_discard(void)
+> +{
+
+This function discards all swap devices. I am wondering if we should
+just discard the current working device instead.
+Another device supposedly discarded is already on going with the work
+queue. We don't have to wait for that.
+
+To unblock the current swap allocation.  We only need to wait for the
+discard on the current swap device to indicate it needs to wait for
+discard. Assume you take my above suggestion.
+
+> +       bool ret =3D false;
+> +       int nid =3D numa_node_id();
+> +       struct swap_info_struct *si, *next;
 > +
-> +    maxItems: 1
+> +       spin_lock(&swap_avail_lock);
+> +       plist_for_each_entry_safe(si, next, &swap_avail_heads[nid], avail=
+_lists[nid]) {
+> +               spin_unlock(&swap_avail_lock);
+> +               if (get_swap_device_info(si)) {
+> +                       if (si->flags & SWP_PAGE_DISCARD)
+> +                               ret =3D swap_do_scheduled_discard(si);
+> +                       put_swap_device(si);
+> +               }
+> +               if (ret)
+> +                       break;
+> +               spin_lock(&swap_avail_lock);
+> +       }
+> +       spin_unlock(&swap_avail_lock);
 > +
-> +  vbus-supply:
-> +    description: A phandle to the regulator for USB VBUS if needed when =
-host
-> +      mode or dual role mode is supported.
+> +       return ret;
+> +}
 > +
->    ports:
->      $ref: /schemas/graph.yaml#/properties/ports
->      description: OF graph bindings (specified in bindings/graph.txt) tha=
-t model
-> --=20
-> 2.34.1
->=20
+>  /**
+>   * folio_alloc_swap - allocate swap space for a folio
+>   * @folio: folio we want to move to swap
+> @@ -1432,11 +1452,17 @@ int folio_alloc_swap(struct folio *folio, gfp_t g=
+fp)
+>                 }
+>         }
+>
+> +again:
+>         local_lock(&percpu_swap_cluster.lock);
+>         if (!swap_alloc_fast(&entry, order))
+>                 swap_alloc_slow(&entry, order);
 
---O2jSri3ANK3hWGRc
-Content-Type: application/pgp-signature; name="signature.asc"
+Here we can have a "discard" output function argument to indicate
+which swap device needs to be discarded.
 
------BEGIN PGP SIGNATURE-----
+>         local_unlock(&percpu_swap_cluster.lock);
+>
+> +       if (unlikely(!order && !entry.val)) {
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaObPPgAKCRB4tDGHoIJi
-0k4bAPwOmhH3js+ZE10XCEiPUQjV+YFJjF9Xgp/60X3oq7DfNAEAnwxCcKYmCaFt
-glEzv5O/+W5lckpMgIxSHozXrlPBVQk=
-=wkef
------END PGP SIGNATURE-----
+If you take the above suggestion, here will be just check if the
+"discard" device is not NULL, perform discard on that device and done.
 
---O2jSri3ANK3hWGRc--
+> +               if (swap_sync_discard())
+> +                       goto again;
+> +       }
+> +
+>         /* Need to call this even if allocation failed, for MEMCG_SWAP_FA=
+IL. */
+>         if (mem_cgroup_try_charge_swap(folio, entry))
+>                 goto out_free;
+
+Chris
 
