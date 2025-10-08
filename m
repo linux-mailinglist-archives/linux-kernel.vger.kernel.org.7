@@ -1,184 +1,262 @@
-Return-Path: <linux-kernel+bounces-845957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94AE7BC6929
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:24:09 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DC9CBC692C
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:24:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 793F24F12E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:24:08 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2244B34C955
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDE962C1580;
-	Wed,  8 Oct 2025 20:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4BB0299ABF;
+	Wed,  8 Oct 2025 20:24:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KOkv2iLv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fqls7gkJ"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20A8D2C11E1;
-	Wed,  8 Oct 2025 20:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024272773E3
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 20:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759955020; cv=none; b=L32OZ9kUSpF5reM1r2yJdT2CJkdPNolFJdueA7eXG4FEBn9lUTpoLCCoe4or4lYvkQmlVMLTGhuVZum1Id+ifuG+2W1TQ6vBvE5Ju6WDVrjYpuLcSlu1q6qOLA7RRp+Wye7+kWenMt+0zIDOQqDKGtXRXcH9eBQhFVfF6E4mn1Y=
+	t=1759955052; cv=none; b=pdJI1vvmhPJFDnGK6RUQ86Zi6gG4zcPH1oRUNnOrZW5r7ov1ZmKjdG+5eyxCwNpct5dCobFgy9Ul1rFs8tnLIsSTXkjUV3cmvFF2qfht1+qdnm/jQlmCMspXkZsqOKC1Vg5HFLojCpfAjmG4mQhdFXHPas2EnFrWP0/JyJ5y/eA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759955020; c=relaxed/simple;
-	bh=8nDSP5DbElALu/4XwcTShL3Nf1KZZPQ4UIs/7Xnd0n0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WpxQLBFMJ5rC8WSyUPp2zEbMgfzP64IsywGD1rPIXq+GaZhSxNjaYTOfTOEfZCuNgPqgvb3pV7KU5fofb6RC6bGuuQkqIT3b7ppnbzXPcRSn058oqD/ILnU01CVP0KPF23b19wfAAD+m4j5BXWyksdtVnYFcd88vuN/anJpVMy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KOkv2iLv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D57A8C4CEE7;
-	Wed,  8 Oct 2025 20:23:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759955018;
-	bh=8nDSP5DbElALu/4XwcTShL3Nf1KZZPQ4UIs/7Xnd0n0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=KOkv2iLvhBy5ynBEleTaSwS/kZS9zWAsG8hiLTQPBbVH4B2f6KEavHlGAO7lBzfAo
-	 TbRb6wQqxMQ6sBrfoc/2fUOjoeTGG/X5KSUQyBVHwiC/JeDCxswl51ywaJlAA0rl+W
-	 jrMYYbeijCr2vq0IQBNxiZuH7mZU3dvp0ZJtWfgT+awryksQyLxJGbQva6gSFyqWb1
-	 gwK49hfS1t+l6sjxuFYlR534EMDV3ZLDBSLhE9v9uYTtXbFp6356mw+I5dKPTqEdjm
-	 KJfC31PvdB6/kaTU4QZRX4eZoD5X9SivlR1F0cbCrDB45Ok+XD0+ln79q1rFGy6NVG
-	 VHiejTpuETj9g==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 08 Oct 2025 16:23:29 -0400
-Subject: [PATCH v2 2/2] sunrpc: add a slot to rqstp->rq_bvec for TCP record
- marker
+	s=arc-20240116; t=1759955052; c=relaxed/simple;
+	bh=6ivGlTEXwaY+On8oXDGk0Rb+EFeEYRF144eAFJFzJj4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bb/JXpd62gFzyXWgTUJ+mg15nhK59TxCSt2moDnzw7M8ifH/Ds23UbrBtKTaZ2mSmkLooooBdG9NwrRAFBLtQzF0Ml8YrE/2lUjq5Hw/Vd1p7s3BZNxmz2pNwlj3EQrlmsQsj9wu1icoq79wG+vkMB2HWwEWVHbqFIKGXhVN7v8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fqls7gkJ; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46e29d65728so1488875e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 13:24:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759955049; x=1760559849; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6ivGlTEXwaY+On8oXDGk0Rb+EFeEYRF144eAFJFzJj4=;
+        b=fqls7gkJXfTC7+DIef7F8DqYWxvGh03AZoZFivPS7NcQVe6llLpwKlLA5Gl84SUBh+
+         eJRhhedmGQuL5fOtNUDTxW7yctJ6as1cvJ5dQcXiWDahrHbdIXdO0ok+ZQlJrbP9Wb0v
+         UADQgVBJAJNbZoBywfO7gGbz4d9zoYWyPN7dudhu/G5LVZT+Imya4qf5Ssz6zachvgWW
+         lyhrdlNRQci1x4RvsXMfNtRQiZ4+wHRgHpMRRg53G/7hWTgbflJEavHAt/JIK7ljXJDN
+         XosEbzD6tX2uR8cs/OChYrEkUcnBbUyQ0LrjNq7jUoCVtqIIJiWnsnTWj2NbNwCWM9tG
+         g5+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759955049; x=1760559849;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6ivGlTEXwaY+On8oXDGk0Rb+EFeEYRF144eAFJFzJj4=;
+        b=MSMoohHLTo2sGtDg74v06wdj8av9TVAi+ikTv1ZLM6+6O1KqITD3VNHrlWPsa7iEYW
+         ilmwOwkho1wmOlKCtkbzH04ac5bBZYMyFk9Neiev3+5j2AYK+A0R8Fd+omFPV094fjSZ
+         e3at+2CUbvVcmeNzGfOhxg5KHkmgX9ng8vYpu7TDCj0nNfvEnk7ffwT+GeR308utF70i
+         FXKSc+2h0PbsgBjFAytDg3h5nQC4eynFABH2//ifAVeH5p7X4SjGMV/AHyyveoMDB1vX
+         qwpxkCvqgyWrojYmuSPDmlvXl6hSePE47azf8ds/C/yVAVaxLeg0JRtbz20UeUOgD/v2
+         AHCA==
+X-Forwarded-Encrypted: i=1; AJvYcCVM0F2HTnbhXRpj3fnqJ2IPeyOOu/cK4pIxJtb8AZsDqEormePlbwtS7mRvHT8+gX9W8Dt5YKfGJfx38Ns=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLGjlVjNqFhEQMzjTe3fWgujKBZEAYzlpoIIkWEkbi447cm8JB
+	GQvbwrlZX10Kx/BEnahNhVT8jwyiZBnu1JXp8D/v+kxkPqCK+5yW98fC
+X-Gm-Gg: ASbGncu42oFGNtNOH5WnhHUaH0yQafTVUYHUM2fvnJhItyrzLWNIyMOeYJbz5KYOW4N
+	bMbjiz/D98aDfxd27f5JYCejVfC++apfdE1TZevikOBCUOtJZ4y3XsIHIB/mctBY/tATSM8hGYv
+	ds1iZNUNJ7Rxp2VoVWcULKYsIuoJnZmYFkbRtA9UMyzcVoQSoN/dekfUg35IfnFmJo87cayuAO+
+	5aKXvkzzcQE94Wh1v9f8IOjKhh/ME/kYmG4Pbvt00gt48GBd5/TmyjorbPEnXPJjiTbhzH3kua0
+	45tXXlOFFF/rF1+I/9Hl5jgNTHOKN2JesSaJSDFT5TcUGYYFQ9nVymLElBu4Q5Jvh0IAjBRB04A
+	XRcSTvN/KttXI/CVIbXymbYrlDZDFMx7vk4lpFUnlUHWOjHl37NDDRLw6iMTJvTPb7WmZRgKMC/
+	373m+knXD36/2JNs9Z+1uibCzg0UunFSPVwzY+YbUUhda1JP+spA4ZJJ83IRHs6xx4yBZzFrNFL
+	oS0/f88bdX35A==
+X-Google-Smtp-Source: AGHT+IG9nGb6RXJLy3R4KjeILRXXS6qOt+CwXB2ms/ya9AhoxApYV2AlS4ZiC1m4PiBSXPNIfMjxCw==
+X-Received: by 2002:a05:600c:19ce:b0:459:db7b:988e with SMTP id 5b1f17b1804b1-46fa9a96a48mr36550135e9.13.1759955049196;
+        Wed, 08 Oct 2025 13:24:09 -0700 (PDT)
+Received: from p200300c58741558db6dd2a4a25ba8f94.dip0.t-ipconnect.de (p200300c58741558db6dd2a4a25ba8f94.dip0.t-ipconnect.de. [2003:c5:8741:558d:b6dd:2a4a:25ba:8f94])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fa9d4c919sm51035585e9.10.2025.10.08.13.24.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 13:24:08 -0700 (PDT)
+Message-ID: <ebd28e82ff6825507a072c4883e156c45b7746dd.camel@gmail.com>
+Subject: Re: [PATCH v3 1/3] scsi: ufs: core: Remove duplicate macro
+ definitions
+From: Bean Huo <huobean@gmail.com>
+To: Bart Van Assche <bvanassche@acm.org>, avri.altman@wdc.com, 
+ avri.altman@sandisk.com, alim.akhtar@samsung.com, jejb@linux.ibm.com, 
+ martin.petersen@oracle.com, can.guo@oss.qualcomm.com,
+ ulf.hansson@linaro.org,  beanhuo@micron.com, jens.wiklander@linaro.org
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 08 Oct 2025 22:24:07 +0200
+In-Reply-To: <3fb0bc7b-bcde-417a-96ef-239af94cff54@acm.org>
+References: <20251008145854.68510-1-beanhuo@iokpp.de>
+	 <20251008145854.68510-2-beanhuo@iokpp.de>
+	 <3fb0bc7b-bcde-417a-96ef-239af94cff54@acm.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251008-rq_bvec-v2-2-823c0a85a27c@kernel.org>
-References: <20251008-rq_bvec-v2-0-823c0a85a27c@kernel.org>
-In-Reply-To: <20251008-rq_bvec-v2-0-823c0a85a27c@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
- Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, 
- Anna Schumaker <anna@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- David Howells <dhowells@redhat.com>
-Cc: Brandon Adams <brandona@meta.com>, linux-nfs@vger.kernel.org, 
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4031; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=8nDSP5DbElALu/4XwcTShL3Nf1KZZPQ4UIs/7Xnd0n0=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBo5shEGFZIHVCCntXGPRwPmy0neHUl73X8UKMkz
- tbI0oZUTkSJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaObIRAAKCRAADmhBGVaC
- FZgMD/0a8oUM55E4RjbtzrgvBJToMG3K7TfrbpR3vKzegis3w1wNku4Pri+XD3SKy4rGz7/gEN6
- Vwe76VCpYOgRlUYwE75YWgynVyziVphSBRpKU3y0mZnBu2H8+p6F/rTkz7utbaQDpnlk9WusN6B
- 5AKg2bJnRPRBpVs2u4OowFLk0reS2MYHJ1aDyOCJnVuGfX0kxsbIG4+I9JJZGa5ilsBp9d+jnAp
- hl/gb6DASxWCqjfAuZNUq5+vqQismi/KrY0d9iGpMVYPfK13ANvd9id2cUmjTsiRxHkUd/IwWsg
- 4QkdR9Gi6NgqhhWZonznGQZXSwb0Blk4ZbmWPNR9qpURUdBB78X/nndUmOAL6YxS0LRyLN6E+bU
- SfRIgRresDJHamdU4pGxjg5rB6jpcEcsVxC0C5MHr8hk/RSS/X4g+A41LaR8+8LY1exssGWrb2X
- ZHOCdMixJUuBTgSp/gXsnV7OwfD0OBAn0ztEF8xG1zOI1LOX2qksO3gXdI2CKJOVXkiyb4PKCGm
- k0sKOv9EigGJaiZoAeuIrTOGgFbtGq/4btSlXEJPcxCDoFqT1KfWRW3Zs6tMtjxKHlfEwHGJkja
- b4+O9n12+WvpXZT5se+1ZpAbZJur6V/aqwbbU9ZBsKFni7ZVnh3U1u4g10h/6apCwIe3s2a5Uoc
- EAubcOqHvPDgtHA==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-We've seen some occurrences of messages like this in dmesg on some knfsd
-servers:
+Bart,
 
-    xdr_buf_to_bvec: bio_vec array overflow
+improved in v4, thanks for reviewing!
 
-Usually followed by messages like this that indicate a short send (note
-that this message is from an older kernel and the amount that it reports
-attempting to send is short by 4 bytes):
 
-    rpc-srv/tcp: nfsd: sent 1048155 when sending 1048152 bytes - shutting down socket
+Kind regards,=C2=A0
+Bean
 
-svc_tcp_sendmsg() steals a slot in the rq_bvec array for the TCP record
-marker. If the send is an unaligned READ call though, then there may not
-be enough slots in the rq_bvec array in some cases.
-
-Add a slot to the rq_bvec array, and fix up the array lengths in the
-callers that care.
-
-Fixes: e18e157bb5c8 ("SUNRPC: Send RPC message on TCP with a single sock_sendmsg() call")
-Tested-by: Brandon Adams <brandona@meta.com>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/nfsd/vfs.c        | 6 +++---
- net/sunrpc/svc.c     | 3 ++-
- net/sunrpc/svcsock.c | 4 ++--
- 3 files changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-index 77f6879c2e063fa79865100bbc2d1e64eb332f42..c4e9300d657cf7fdba23f2f4e4bdaad9cd99d1a3 100644
---- a/fs/nfsd/vfs.c
-+++ b/fs/nfsd/vfs.c
-@@ -1111,7 +1111,7 @@ nfsd_direct_read(struct svc_rqst *rqstp, struct svc_fh *fhp,
- 
- 	v = 0;
- 	total = dio_end - dio_start;
--	while (total && v < rqstp->rq_maxpages &&
-+	while (total && v < rqstp->rq_maxpages + 1 &&
- 	       rqstp->rq_next_page < rqstp->rq_page_end) {
- 		len = min_t(size_t, total, PAGE_SIZE);
- 		bvec_set_page(&rqstp->rq_bvec[v], *rqstp->rq_next_page,
-@@ -1200,7 +1200,7 @@ __be32 nfsd_iter_read(struct svc_rqst *rqstp, struct svc_fh *fhp,
- 
- 	v = 0;
- 	total = *count;
--	while (total && v < rqstp->rq_maxpages &&
-+	while (total && v < rqstp->rq_maxpages + 1 &&
- 	       rqstp->rq_next_page < rqstp->rq_page_end) {
- 		len = min_t(size_t, total, PAGE_SIZE - base);
- 		bvec_set_page(&rqstp->rq_bvec[v], *rqstp->rq_next_page,
-@@ -1318,7 +1318,7 @@ nfsd_vfs_write(struct svc_rqst *rqstp, struct svc_fh *fhp,
- 	if (stable && !fhp->fh_use_wgather)
- 		kiocb.ki_flags |= IOCB_DSYNC;
- 
--	nvecs = xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages, payload);
-+	nvecs = xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages + 1, payload);
- 	iov_iter_bvec(&iter, ITER_SOURCE, rqstp->rq_bvec, nvecs, *cnt);
- 	since = READ_ONCE(file->f_wb_err);
- 	if (verf)
-diff --git a/net/sunrpc/svc.c b/net/sunrpc/svc.c
-index 4704dce7284eccc9e2bc64cf22947666facfa86a..919263a0c04e3f1afa607414bc1893ba02206e38 100644
---- a/net/sunrpc/svc.c
-+++ b/net/sunrpc/svc.c
-@@ -706,7 +706,8 @@ svc_prepare_thread(struct svc_serv *serv, struct svc_pool *pool, int node)
- 	if (!svc_init_buffer(rqstp, serv, node))
- 		goto out_enomem;
- 
--	rqstp->rq_bvec = kcalloc_node(rqstp->rq_maxpages,
-+	/* +1 for the TCP record marker */
-+	rqstp->rq_bvec = kcalloc_node(rqstp->rq_maxpages + 1,
- 				      sizeof(struct bio_vec),
- 				      GFP_KERNEL, node);
- 	if (!rqstp->rq_bvec)
-diff --git a/net/sunrpc/svcsock.c b/net/sunrpc/svcsock.c
-index 377fcaaaa061463fc5c85fc09c7a8eab5e06af77..5f8bb11b686bcd7302b94476490ba9b1b9ddc06a 100644
---- a/net/sunrpc/svcsock.c
-+++ b/net/sunrpc/svcsock.c
-@@ -740,7 +740,7 @@ static int svc_udp_sendto(struct svc_rqst *rqstp)
- 	if (svc_xprt_is_dead(xprt))
- 		goto out_notconn;
- 
--	count = xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages, xdr);
-+	count = xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages + 1, xdr);
- 
- 	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, rqstp->rq_bvec,
- 		      count, rqstp->rq_res.len);
-@@ -1244,7 +1244,7 @@ static int svc_tcp_sendmsg(struct svc_sock *svsk, struct svc_rqst *rqstp,
- 	memcpy(buf, &marker, sizeof(marker));
- 	bvec_set_virt(rqstp->rq_bvec, buf, sizeof(marker));
- 
--	count = xdr_buf_to_bvec(rqstp->rq_bvec + 1, rqstp->rq_maxpages - 1,
-+	count = xdr_buf_to_bvec(rqstp->rq_bvec + 1, rqstp->rq_maxpages,
- 				&rqstp->rq_res);
- 
- 	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, rqstp->rq_bvec,
-
--- 
-2.51.0
+On Wed, 2025-10-08 at 09:03 -0700, Bart Van Assche wrote:
+> On 10/8/25 7:58 AM, Bean Huo wrote:
+> > Remove duplicate definitions of SD_ASCII_STD and SD_RAW macros from
+> > ufshcd-priv.h as they are already defined in include/ufs/ufshcd.h.
+> >=20
+> > Suggested-by: Avri Altman <Avri.Altman@sandisk.com>
+> > Signed-off-by: Bean Huo <beanhuo@micron.com>
+> > ---
+> > =C2=A0 drivers/ufs/core/ufshcd-priv.h | 3 ---
+> > =C2=A0 1 file changed, 3 deletions(-)
+> >=20
+> > diff --git a/drivers/ufs/core/ufshcd-priv.h b/drivers/ufs/core/ufshcd-p=
+riv.h
+> > index d0a2c963a27d..cadee685eb5e 100644
+> > --- a/drivers/ufs/core/ufshcd-priv.h
+> > +++ b/drivers/ufs/core/ufshcd-priv.h
+> > @@ -77,9 +77,6 @@ int ufshcd_mcq_abort(struct scsi_cmnd *cmd);
+> > =C2=A0 int ufshcd_try_to_abort_task(struct ufs_hba *hba, int tag);
+> > =C2=A0 void ufshcd_release_scsi_cmd(struct ufs_hba *hba,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 struct ufshcd_lrb *lrbp);
+> > -
+> > -#define SD_ASCII_STD true
+> > -#define SD_RAW false
+> > =C2=A0 int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index,
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 u8 **buf, bool ascii);
+> > =C2=A0=20
+>=20
+> Please improve this patch as follows:
+> - Remove the ufshcd_read_string_desc() declaration from
+> =C2=A0=C2=A0 include/ufs/ufshcd.h because this function has not been expo=
+rted.
+> - Change the type of the 'ascii' argument into an enumeration type.
+> =C2=A0=C2=A0 Code readability improves significantly if boolean arguments=
+ are
+> =C2=A0=C2=A0 replaced with enumeration type arguments.
+>=20
+> Below there is an untested patch that illustrates the above.
+>=20
+> Thanks,
+>=20
+> Bart.
+>=20
+>=20
+> diff --git a/drivers/ufs/core/ufshcd-priv.h b/drivers/ufs/core/ufshcd-pri=
+v.h
+> index 1f0d38aa37f9..85d3d9e64bd7 100644
+> --- a/drivers/ufs/core/ufshcd-priv.h
+> +++ b/drivers/ufs/core/ufshcd-priv.h
+> @@ -80,10 +80,12 @@ int ufshcd_try_to_abort_task(struct ufs_hba *hba,=20
+> int tag);
+> =C2=A0 void ufshcd_release_scsi_cmd(struct ufs_hba *hba,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 struct ufshcd_lrb *lrbp);
+>=20
+> -#define SD_ASCII_STD true
+> -#define SD_RAW false
+> -int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index,
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 u8 **buf, bool ascii);
+> +enum ufs_descr_fmt {
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0SD_RAW =3D 0,
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0SD_ASCII_STD =3D 1,
+> +};
+> +int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index, u8 **buf=
+,
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 enum ufs_descr_fmt fmt);
+>=20
+> =C2=A0 int ufshcd_send_uic_cmd(struct ufs_hba *hba, struct uic_command *u=
+ic_cmd);
+> =C2=A0 int ufshcd_send_bsg_uic_cmd(struct ufs_hba *hba, struct uic_comman=
+d=20
+> *uic_cmd);
+> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+> index be4bf435da09..b10de1ade23b 100644
+> --- a/drivers/ufs/core/ufshcd.c
+> +++ b/drivers/ufs/core/ufshcd.c
+> @@ -3759,16 +3759,15 @@ static inline char=20
+> ufshcd_remove_non_printable(u8 ch)
+> =C2=A0=C2=A0 * @desc_index: descriptor index
+> =C2=A0=C2=A0 * @buf: pointer to buffer where descriptor would be read,
+> =C2=A0=C2=A0 *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 the caller should free=
+ the memory.
+> - * @ascii: if true convert from unicode to ascii characters
+> - *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 null terminated strin=
+g.
+> + * @ufs_descr_fmt: if %SD_ASCII_STD, convert from UTF-16 to ASCII
+> =C2=A0=C2=A0 *
+> =C2=A0=C2=A0 * Return:
+> =C2=A0=C2=A0 * *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 string size on success.
+> =C2=A0=C2=A0 * *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -ENOMEM: on allocation fai=
+lure
+> =C2=A0=C2=A0 * *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -EINVAL: on a wrong parame=
+ter
+> =C2=A0=C2=A0 */
+> -int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index,
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 u8 **buf, bool ascii)
+> +int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index, u8 **buf=
+,
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 enum ufs_descr_fmt fmt)
+> =C2=A0 {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct uc_string_id *uc_s=
+tr;
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u8 *str;
+> @@ -3797,7 +3796,7 @@ int ufshcd_read_string_desc(struct ufs_hba *hba,=
+=20
+> u8 desc_index,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0goto out;
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
+>=20
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (ascii) {
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (fmt =3D=3D SD_ASCII_STD) {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0ssize_t ascii_len;
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0int i;
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0/* remove header and divide by 2 to move from UTF16=
+ to UTF8 */
+> diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
+> index 8a5649933715..f030e9a062a3 100644
+> --- a/include/ufs/ufshcd.h
+> +++ b/include/ufs/ufshcd.h
+> @@ -1428,10 +1428,6 @@ static inline int=20
+> ufshcd_disable_host_tx_lcc(struct ufs_hba *hba)
+> =C2=A0 void ufshcd_auto_hibern8_update(struct ufs_hba *hba, u32 ahit);
+> =C2=A0 void ufshcd_fixup_dev_quirks(struct ufs_hba *hba,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 const struct ufs_dev_quirk *fixups);
+> -#define SD_ASCII_STD true
+> -#define SD_RAW false
+> -int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index,
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 u8 **buf, bool ascii);
+>=20
+> =C2=A0 void ufshcd_hold(struct ufs_hba *hba);
+> =C2=A0 void ufshcd_release(struct ufs_hba *hba);
+>=20
 
 
