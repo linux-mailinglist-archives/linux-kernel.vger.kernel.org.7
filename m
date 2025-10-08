@@ -1,56 +1,100 @@
-Return-Path: <linux-kernel+bounces-845075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6132BC3722
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 08:14:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 632F9BC3728
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 08:15:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D7B13A8E68
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 06:14:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 190263AB1AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 06:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077B52EA74D;
-	Wed,  8 Oct 2025 06:14:18 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2097C2D3EDF;
+	Wed,  8 Oct 2025 06:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="H4pIYGV1"
+Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872E629D292;
-	Wed,  8 Oct 2025 06:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56AF71EA7CF;
+	Wed,  8 Oct 2025 06:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759904057; cv=none; b=BqxSn11QM7pn8ZK+8gVtiGGZFpWqIUHJDo+Yf/ajMKT+G7oTXOdlWk/7gkpnjq7/dbtimAXcd3tSNH9RVRge87oCLWSpc8c2OGpJIJydZvv5nDcpMn4tgHgD6IuKx6WfFnySI4yBaCTf7Dp6b5RxKPsRj1C+f/ZmUZYvYRoLRZ0=
+	t=1759904109; cv=none; b=ffQtRW6XGFpWNSy7E+nd3wU3fvaGkpt7B/eeuO8HY8pv2BFrFFFWO+U2GoTNOo4Kognw7fetYG3mw9dJeMqYqjIlqFIb4uU5m758YxEi3MCPazG3ELtbAMacUTL5AVDBInm2pAsfk5cIUwvtbK3yCfF2mt/pi4U7HTIW9lIFXOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759904057; c=relaxed/simple;
-	bh=WswQbeUWBAMV25CA4i+SPcySveFy4PoQ1NaxzzlS4Fg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k2jbHiwmJQRpW0Xj1Y/a9Nfv26ojY42J5fJi79r8Fj7veLkhDLhRGY+DfGb+MNavL2taX12qASvnMpeWNjzea6bndaEwYNNZrXrsFe/i8R6N8u7TN3UnC5xSC5i9yBhpfOSDdol4ZxH029WfeofLMZ36LZPOHf9+dUtXGNtzyuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 35396227AAE; Wed,  8 Oct 2025 08:14:04 +0200 (CEST)
-Date: Wed, 8 Oct 2025 08:14:04 +0200
-From: hch <hch@lst.de>
-To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-Cc: hch <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
-	"linux-btrace@vger.kernel.org" <linux-btrace@vger.kernel.org>,
-	John Garry <john.g.garry@oracle.com>,
-	Hannes Reinecke <hare@suse.de>, Damien Le Moal <dlemoal@kernel.org>,
-	Naohiro Aota <Naohiro.Aota@wdc.com>,
-	Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
-	Chaitanya Kulkarni <chaitanyak@nvidia.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>
-Subject: Re: [PATCH v2 11/15] blktrace: add block trace commands for zone
- operations
-Message-ID: <20251008061403.GA13979@lst.de>
-References: <20250925150231.67342-1-johannes.thumshirn@wdc.com> <20250925150231.67342-12-johannes.thumshirn@wdc.com> <20251003073257.GE12624@lst.de> <4638c185-ac5c-41e3-8c79-5c995228ec0e@wdc.com>
+	s=arc-20240116; t=1759904109; c=relaxed/simple;
+	bh=/ysWvONG/rRVXYMAmJinyLug2h51k7AZJtFHEIsBFSs=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=SNDVBu9qyDdxBfUxXlau5OKbFqO81Iz8rxI/8Pk0Ij8ESTbN4Nlmd1AGRGUGGwyQppZAHFw92zFj60/sr5pf3eehTCxJcv9jm6A1W/ZPkU9RQi6khbnYJydwx3W+gkEoKV9xOUnENH34UlOS+hqGAIRAcPk+G/cFXRWAFG6oNgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=H4pIYGV1; arc=none smtp.client-ip=202.12.124.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfout.stl.internal (Postfix) with ESMTP id D0D641D000F6;
+	Wed,  8 Oct 2025 02:15:05 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Wed, 08 Oct 2025 02:15:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1759904105; x=1759990505; bh=OR22NrgfEglb+PpHIQeRBTrbvW1PJ4Cuam0
+	YJIEfV0I=; b=H4pIYGV1EQNs1jQJwTh4cFbdIOIqDSRbUJOrNMgSNleCr1uaDbz
+	83gtppMOOi95c+qeZe0RZ6vT582FQQ61PIefr9Q4yZJ310MpqhxVG7cj2kaK7tH4
+	R6Qtmse+wvoJQAPKfkJ9OxTnb8KM0V04PyvutoH0qntdFmDnVWd7neyq5+6jqhD+
+	X2UTfd1xSNAAczuhzRZIxIhZ/JTdWQ/iKVgmrMDrjKm4O7fPXgNdTgezoH6zR7yA
+	RiB+X5Ep/bT+FXlCqIvQb94rYcoGzq+kMkVr573/rrsyWX3YSyFjo/X8r6jLI1ZJ
+	qkTnRMoUf9OodVOhWmo9IS3w0f05X0II3dQ==
+X-ME-Sender: <xms:ZwHmaNI3P6wZKZ5XO7ttzt61tyxCx8Bx_CNiJVfGMKAb6DxNBsDI_Q>
+    <xme:ZwHmaKfJ8VDqB04FBE21xAuXhTQMhnrAO0UagQJw9ZEow9A3k0WtjFPbv083SVBMy
+    xJctAfMKO9TLLuVMOooppePT3bL5m2ahbddAFSjLHUMS_F6Q8o0CA>
+X-ME-Received: <xmr:ZwHmaIItPTjqlOlS8uTwwV3QhM0Ud-0jiIvtel90eiw981OOu0gJ2HBYf3ZSoWkj_XJMV_cCIfL-X4N1kS-pOSyuZHkfsguImyc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutddvheehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcuvfhh
+    rghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtth
+    gvrhhnpeelueehleehkefgueevtdevteejkefhffekfeffffdtgfejveekgeefvdeuheeu
+    leenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehfth
+    hhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopedvgedpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtoheplhgrnhgtvgdrhigrnhhgsehlihhnuhigrd
+    guvghvpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhr
+    ghdprhgtphhtthhopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtth
+    hopehorghksehhvghlshhinhhkihhnvghtrdhfihdprhgtphhtthhopehkvghnthdrohhv
+    vghrshhtrhgvvghtsehlihhnuhigrdguvghvpdhrtghpthhtoheprghmrghinhguvgigse
+    houhhtlhhoohhkrdgtohhmpdhrtghpthhtoheprghnnhgrrdhstghhuhhmrghkvghrseho
+    rhgrtghlvgdrtghomhdprhgtphhtthhopegsohhquhhnrdhfvghnghesghhmrghilhdrtg
+    homhdprhgtphhtthhopehiohifohhrkhgvrhdtsehgmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:ZwHmaEBshOGlofW4dgdH5pof2eeL8jG8Uku8px4j0R_klQ9lsJySTA>
+    <xmx:ZwHmaBiof7ulRVDPwVSy9Bpjh9MPMSbYOSsyMXNNNAHM7E4HjLu2Jg>
+    <xmx:ZwHmaON0SBtdBi7Q3fvlg8CEdc4pqpySVuxNjfHvktaxb05saU-6WQ>
+    <xmx:ZwHmaIbIalGzzuNpmRJXqOfdvkK4sOffNS7H0h-RNQIHyNP-_xL39w>
+    <xmx:aQHmaJbYvfqHNm6XqREz3Fom4EgOagPCSmFgJ5--AAVtb_uujybWKyuf>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 8 Oct 2025 02:15:01 -0400 (EDT)
+Date: Wed, 8 Oct 2025 17:14:51 +1100 (AEDT)
+From: Finn Thain <fthain@linux-m68k.org>
+To: Lance Yang <lance.yang@linux.dev>
+cc: Andrew Morton <akpm@linux-foundation.org>, 
+    Geert Uytterhoeven <geert@linux-m68k.org>, 
+    Eero Tamminen <oak@helsinkinet.fi>, 
+    Kent Overstreet <kent.overstreet@linux.dev>, amaindex@outlook.com, 
+    anna.schumaker@oracle.com, boqun.feng@gmail.com, ioworker0@gmail.com, 
+    joel.granados@kernel.org, jstultz@google.com, leonylgao@tencent.com, 
+    linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org, 
+    longman@redhat.com, mhiramat@kernel.org, mingo@redhat.com, 
+    mingzhe.yang@ly.com, peterz@infradead.org, rostedt@goodmis.org, 
+    senozhatsky@chromium.org, tfiga@chromium.org, will@kernel.org, 
+    stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] hung_task: fix warnings caused by unaligned lock
+ pointers
+In-Reply-To: <56784853-b653-4587-b850-b03359306366@linux.dev>
+Message-ID: <693a62e0-a2b5-113b-d5d9-ffb7f2521d6c@linux-m68k.org>
+References: <20250909145243.17119-1-lance.yang@linux.dev> <yqjkjxg25gh4bdtftsdngj5suturft2b4hjbfxwe6hehbg4ctq@6i55py3jaiov> <99410857-0e72-23e4-c60f-dea96427b85a@linux-m68k.org> <CAMuHMdVYiSLOk-zVopXV8i7OZdO7PAK7stZSJNJDMw=ZEqtktA@mail.gmail.com>
+ <inscijwnnydibdwwrkggvgxjtimajr5haixff77dbd7cxvvwc7@2t7l7oegsxcp> <20251007135600.6fc4a031c60b1384dffaead1@linux-foundation.org> <b43ce4a0-c2b5-53f2-e374-ea195227182d@linux-m68k.org> <56784853-b653-4587-b850-b03359306366@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,19 +102,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4638c185-ac5c-41e3-8c79-5c995228ec0e@wdc.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, Oct 07, 2025 at 01:08:00PM +0000, Johannes Thumshirn wrote:
-> Sure for the old commands everything is still in the lower 32bits, this 
-> has the nice property that we don't need to duplicate all the code for 
-> v1 and v2.
 
-I don't think you need to duplicate anything, just have a little
-function that maps from the free-form v2 commands and flags to the
-v1 field.  Preferably including a mapping of all unsupported ones to
-a catchall unsupported command and flag each to indicate that the
-trace includes something only visible with v2.
+On Wed, 8 Oct 2025, Lance Yang wrote:
 
+> On 2025/10/8 08:40, Finn Thain wrote:
+> > 
+> > On Tue, 7 Oct 2025, Andrew Morton wrote:
+> > 
+> >> Getting back to the $Subject at hand, are people OK with proceeding
+> >> with Lance's original fix?
+> >>
+> > 
+> > Lance's patch is probably more appropriate for -stable than the patch I
+> > proposed -- assuming a fix is needed for -stable.
+> 
+> Thanks!
+> 
+> Apart from that, I believe this fix is still needed for the hung task 
+> detector itself, to prevent unnecessary warnings in a few unexpected 
+> cases.
+> 
+
+Can you be more specific about those cases? A fix for a theoretical bug 
+doesn't qualify for -stable branches. But if it's a fix for a real bug, I 
+have misunderstood Andrew's question...
+
+> > 
+> > Besides those two alternatives, there is also a workaround:
+> > $ ./scripts/config -d DETECT_HUNG_TASK_BLOCKER
+> > which may be acceptable to the interested parties (i.e. m68k users).
+> > 
+> > I don't have a preference. I'll leave it up to the bug reporters (Eero 
+> > and Geert).
+> 
 
