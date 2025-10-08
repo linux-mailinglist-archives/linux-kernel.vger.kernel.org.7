@@ -1,93 +1,118 @@
-Return-Path: <linux-kernel+bounces-845738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2740BC600D
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:21:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25D08BC5F51
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:09:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01DFE423F80
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 16:10:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7F03E4E53AB
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 16:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AAF42BD5BC;
-	Wed,  8 Oct 2025 16:10:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U/ksyuQq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926C32BE032;
+	Wed,  8 Oct 2025 16:09:23 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A6FE2BD02A
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 16:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC7682BD029;
+	Wed,  8 Oct 2025 16:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759939816; cv=none; b=tBPB8ty6y65bMfGQLFpbu34C2YWYn91rFt6zmjkQ0DfxB5+za4Bw31IPoBumO9MPrfDHXzCsj8gehqLr/TZYH01ypyGzWSa1s3tMqXQ9cu4Dhxp56RYSZS1W7LRLOUyjoySZY5UdKDgfv3hx4SoItpSDQf8m7G8gyOk/+jRUA9c=
+	t=1759939763; cv=none; b=JsRGdmjkjtEhphDHnwIrAOdG5BgXUiLMGc4+6DUsZ11Mgx12yKMMtCYpWjXBlToyBZM08f3GeilEuID3TekCaAnFsa0aR2Mlrk+U2mygZNyosJYzgLUICCUKeF3FmWSF6IxnrqwviywrEatfMxYqjvT6z3OM915X5cRsK3omw+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759939816; c=relaxed/simple;
-	bh=goTEcupryoN6QUiZEUzRTSMl7QfriR7gWYTzou3o0to=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X6rBVxsCY/BItGeSgksR88hvFhh+Q+cHMaUA/RIoij4u9LUt8TeW6OS7MEaOYK0VjyKP/SeIdymWaH1SdYhgPmyhhLkthNNl+dlQITKc58EykHKC+NnBX2gDRFYSIBoU+l76bWuJO+51N70cxCWtc0eP6zxwfsCptV78akX04M4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U/ksyuQq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13170C4CEE7
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 16:10:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759939816;
-	bh=goTEcupryoN6QUiZEUzRTSMl7QfriR7gWYTzou3o0to=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=U/ksyuQqsMghFEXykj89s6LsVRYbXQ1yFnDKzvlSxZXAvRJmH55bw7F5rU/3q1pAF
-	 rp8thqpZq/Fk7TRbLqrTBF4cgGZKzL2D8D8dsebI9zv7pqFbiiHj+XSHbYiqRU7gX2
-	 6h7qfwoWvwn+Jz94UXSYpmoXo7P46qcMW8gQr+YvXRAnUltfT53QyxrJwA4v+gWd1U
-	 jOadHYC1/rmrl/Ex3XF24XgEGMtwEExe/K2Adf3G6+bkSWzGqWo1l8Jdm+c3MtskmG
-	 nbnJeAsn5XhkbZ+szgD/GGbiwfSdxWryc/RU1KLRS3d/1VAqW5s5dz3yv4un088teK
-	 vhPWBJIe4mOTA==
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-631787faf35so13769066a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 09:10:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWqXafQgjEPSxSdISEIFosXwJaXlzE0JpqAoxRTbMvvRNRmxhGhNg86ElIvgcWnLQM/dqYKaYvASF6Pm88=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+EliKOy0cRbpAXySCTY48bkd5FBW6UyYxnkXe04eIAl1WArow
-	Lb3bWRdXRDolYn2XyfQDrhUa8WhUx7AVBcojkGBIKK2dTd7KF6EwzCmY3RhSKY89HPBABFUW+wU
-	Yu8fs6FlzqNt10gBWOgkbAFA9+NiX+A==
-X-Google-Smtp-Source: AGHT+IEqrHQ5YX7OBsmt1eZUdq676qfFaJqx3N7C99kCf/DQhHV/vaSQXuouL5nGOkS7AxF19yhlgrfiOvXj+1KJy5E=
-X-Received: by 2002:a17:907:c06:b0:b40:2873:a61a with SMTP id
- a640c23a62f3a-b50aa48c4e5mr348335766b.6.1759939814548; Wed, 08 Oct 2025
- 09:10:14 -0700 (PDT)
+	s=arc-20240116; t=1759939763; c=relaxed/simple;
+	bh=7qG9+11u3mCpiyNEifUFS7i/al/DnxnwuP9mz9DKpxA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RByO7P1yGqATk9bYKbu2ypv3K2ELAh8bE6nN8EwPHWaun0NRh/PyOpR3ZsjwHa/3+gujHqgBElzmu5RurNBKzJcQMgJ4X0NeDMS57w7hDbgarWK/955pqzhFVPVuWkzPhuyaKzs2Ru9vxny/aMUU0lgaUyDM6vpXvhZSabvGvhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay04.hostedemail.com (Postfix) with ESMTP id 36FE71A05EE;
+	Wed,  8 Oct 2025 16:09:19 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id 012A520016;
+	Wed,  8 Oct 2025 16:09:16 +0000 (UTC)
+Date: Wed, 8 Oct 2025 12:11:10 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ david.hunter.linux@gmail.com, skhan@linuxfoundation.org,
+ linux-kernel-mentees@lists.linuxfoundation.org, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ syzbot+ddc001b92c083dbf2b97@syzkaller.appspotmail.com
+Subject: Re: [PATCH] ring buffer: propagate __rb_map_vma return value to
+ caller
+Message-ID: <20251008121110.4e7c3671@gandalf.local.home>
+In-Reply-To: <20251007171256.20884-1-ankitkhushwaha.linux@gmail.com>
+References: <20251007171256.20884-1-ankitkhushwaha.linux@gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251008045500.44477-1-baojun.xu@ti.com> <20251008045500.44477-2-baojun.xu@ti.com>
-In-Reply-To: <20251008045500.44477-2-baojun.xu@ti.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 8 Oct 2025 11:10:02 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJirBpnnXQ5utMbqrN1u-13e4todHRnnj1ZL7DnCjBNGw@mail.gmail.com>
-X-Gm-Features: AS18NWAckQs6ec54a-at1M_RdVU4timGukRtp2t8p-x0Pjpk8XrEQOH586Br-WA
-Message-ID: <CAL_JsqJirBpnnXQ5utMbqrN1u-13e4todHRnnj1ZL7DnCjBNGw@mail.gmail.com>
-Subject: Re: [PATCH v5 2/2] ASoC: dt-bindings: ti,tas2781: Add TAS58XX
-To: Baojun Xu <baojun.xu@ti.com>
-Cc: broonie@kernel.org, tiwai@suse.de, andriy.shevchenko@linux.intel.com, 
-	13916275206@139.com, shenghao-ding@ti.com, linux-sound@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, lgirdwood@gmail.com, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, devicetree@vger.kernel.org, k-yi@ti.com, henry.lo@ti.com, 
-	robinchen@ti.com, jesse-ji@ti.com, will-wang@ti.com, jim.shil@goertek.com, 
-	toastcheng@google.com, chinkaiting@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Server: rspamout04
+X-Rspamd-Queue-Id: 012A520016
+X-Stat-Signature: drgddpbyrfrhq5xtite7umqbhqhkufe1
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18o0hnhvzZVrS/THusq5BDX3T986j69cyg=
+X-HE-Tag: 1759939756-70540
+X-HE-Meta: U2FsdGVkX19193Sv84va4CFxLEBUFYDcm2cRgLxlqYnUKTMjNK8HnR/ZYDaveYfvYTb13tR6o6O03VHrvePJNGOBik4UjEa/kSgtkM16OsUV0CgYpFWtaEdFtJzHm2sq4r0F3Aj4pDCcxtLohjoRLW7AKZUAhyjWAfoOUyY3UX4IZgcPwUDOQQu60rdMBUr38EW8wwANmllQR8/FpZQ6gNmMb82nnRq5Oi4DJPxDve/J6lkvBKJY6u5uP2aMh6kAPant6SCmUw9MdhGAzVwzmAygch1lbuzYc2mJwaDrU16c8Ve3fKsxT3KB4H/xQ+lOyNZI+OEBGDb0HJp/a3y+jff8jlzUz21P8cyIf5HMfEBuJcCTsCJDQsqe4GdBc6EpYLOxVnderg5C9qENSbewg1oOsqu8lhTaQRAxxaIzv/P0BlSf9TGi3kyTHW2h51JQByflRNbupKgqoGCfXtcFvQ493Llp9T+UBU8+CMZyesE=
 
-On Tue, Oct 7, 2025 at 11:55=E2=80=AFPM Baojun Xu <baojun.xu@ti.com> wrote:
->
-> TAS5802, TAS5815, and TAS5828 are in same family with TAS5825, TAS5827.
->
-> Signed-off-by: Baojun Xu <baojun.xu@ti.com>
->
+On Tue,  7 Oct 2025 22:42:56 +0530
+Ankit Khushwaha <ankitkhushwaha.linux@gmail.com> wrote:
+
+Note, tracing subsystem expects the subject to start with a capital letter:
+
+ ring buffer: Propagate __rb_map_vma return value to caller
+
+> The return value from `__rb_map_vma()`, which rejects writable or
+> executable mappings (VM_WRITE, VM_EXEC, or !VM_MAYSHARE), was being
+> ignored. As a result the caller of `__rb_map_vma` always returned 0 
+> even when the mapping had actually failed, allowing it to proceed
+> with an invalid VMA.
+> 
+> Reported-by: syzbot+ddc001b92c083dbf2b97@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?id=194151be8eaebd826005329b2e123aecae714bdb
+> Signed-off-by: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
 > ---
-> v5:
->  - Change the patch title and the description
+> 
+> #syz test: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 4ff71af020ae
+> 
+> ---
+>  kernel/trace/ring_buffer.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+> index 43460949ad3f..4efb90364f48 100644
+> --- a/kernel/trace/ring_buffer.c
+> +++ b/kernel/trace/ring_buffer.c
+> @@ -7271,6 +7271,8 @@ int ring_buffer_map(struct trace_buffer *buffer, int cpu,
+>  		cpu_buffer->subbuf_ids = NULL;
+>  		rb_free_meta_page(cpu_buffer);
+>  		atomic_dec(&cpu_buffer->resize_disabled);
+> +		/* VM failed to be mapped */
 
-I gave you the exact subject to use... I would list out the parts
-rather than 'TAS58XX'. Your goal with the subject is it should be
-unique enough that the exact same subject never appears again in the
-commit history. With the wildcards, it may.
+No need to add the comment. It's obvious what happened.
 
-Rob
+> +		return err;
+
+Don't return here.
+
+>  	}
+>  
+>  	return 0;
+
+Change this to:
+
+	return err;
+
+as after that if statement, err will be 0 on success or the value you want
+to return.
+
+-- Steve
 
