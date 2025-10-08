@@ -1,201 +1,247 @@
-Return-Path: <linux-kernel+bounces-845915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13377BC67D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 21:40:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45214BC67DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 21:41:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4DD03A22AE
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 19:40:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C0DC404FFC
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 19:41:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9C126A0DB;
-	Wed,  8 Oct 2025 19:40:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C57272E6A;
+	Wed,  8 Oct 2025 19:40:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="mXABxiFt"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BrCoFU31"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3AF237A4F;
-	Wed,  8 Oct 2025 19:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42FED265620
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 19:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759952448; cv=none; b=Ixf4pkBh6pm2dnWyHEIoz/MT7XSBebdZ4axVzPw6Ht88AaQQlk/nCUvL/xi87iJHtyc03x2i/cyJTedLZ+Ad5T41o9uNGbNb30aWsoPcEv2pYs3CXOr3a8Ctf5rF2RGBaWw9JVg2xo1xNTGl6w4zziqBI8klF1TjJPqxoLYAg2E=
+	t=1759952449; cv=none; b=SoreFs+amZjBwUeBT2xQrGG/4MMyYuQALPqd5nD9TUT8kbdkJzo88jNmOb8PxOQjJ+rVdoMcwzR9eD5HA6UOZvScx7x8JHnLp0yjcavLKKjrfURO7GDLcM/2KJ1kqsPwyVHUz4tyECljvktmNwNxIjWKkv635FTXaw3oMXMhL+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759952448; c=relaxed/simple;
-	bh=XOnrmMWwxVFBnMVO7Ta7eL97SgQLueAuXSlhk5sHuxQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ApN04xOOaJZ4ZD1rjUPbjwU0AGuDwqry0QkYrbrgoW2Shql6QE57Vg4g4w01ERH/I62SbfGhenr49eqqEYSxYQ3FIWwWYR8m60cV3quL9ut99VZ2XayvI3rGWpDEA9kpUFNPcff0yUG0EmMMh6vZyyJioTz9+753IdZANFdO850=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=mXABxiFt; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1759952427; x=1760557227; i=markus.elfring@web.de;
-	bh=ryyxa63Wy3N8dRSeueUjZJIkSdeBzBk1q/YZMtKe2/Y=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=mXABxiFtOzewx/2064n6kVzyD0dRWgaa/bbs+oxXaQAdx4vZotHIIcYk6t00wB5A
-	 s4Vg2BIUC/LKzZnkIP9sV3+o9etUpZIeifKTNCXeLxNHDvpxep8lLofT4YNjjt/32
-	 kWhFBZAYeubuxWy3j49Fhvota3Po9BUj203pVAcDNWzrU68ictnBmsXzvzK10psy5
-	 12/lpK9hMhf4hICbyT3RrU3Qo1wvAZdaTwfC6eq5rOHZE+AmnrKBsPGkS8Yhoeohf
-	 aSajHfGO2/VN+P23bS12PvCl1fvNqXOx4CVs0ZEvN2BRnwOiBFtvM9x85W+8pU9Qb
-	 xNXuLehZ3vep+2d4Vg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.249]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MzkSZ-1uKNFy0Jph-015a57; Wed, 08
- Oct 2025 21:40:27 +0200
-Message-ID: <717a6d2a-b3f8-4296-b0b3-8738d1c1dab2@web.de>
-Date: Wed, 8 Oct 2025 21:40:25 +0200
+	s=arc-20240116; t=1759952449; c=relaxed/simple;
+	bh=wQSVggMO9rRkpwuF0JE7Xv1Qwj36d37Nyd6py2yeaTc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=acFXzk68d6LA/HPGLLs5bWqvGy2pEKR6jBDkdGr/TJWyvPHFz36/xxT4TgVnyncFRyWVLmihpdcbO/bmfygDuvVbE3Qvao1Np+rOUsV2hBEYT7GE1fVGc1zrV930Ayj8T74VmhybHAcuaSFdneXQep+F4m6dSPVYONz+X7fyM+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BrCoFU31; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 598I5KOt027679
+	for <linux-kernel@vger.kernel.org>; Wed, 8 Oct 2025 19:40:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	BtratBBxMg1ixyPYUlq5M5pLFBJ+PhbCyrjACUqLIOk=; b=BrCoFU31o/H/HOCY
+	gZSZi5L6ppFxsWNzIeUXusGh3y3l8kXd8/QxbERrbWIWkNE0CwVg2bSKfTpNEw+1
+	/01ESgWMGAvwj6LGFQYPp9AdFLhYuFmTwArKejT21JmOxFE321sRUhvxvdcFJ+nz
+	Ms/mO1nQedwr3G43fb70NoZncfoeUFT6ZqCHd18wjHnCidPmlwL7WuBLVttZn5/W
+	uS3yHVt43I00X47asnMibYrZkU4HNszypEo+BHK8nNq4025Yxsy/mu+PH2KNLDsr
+	OibKYhVSPgiSEky2PcKzOsDRXs6XpnvpTMtihDpEkd2oAEj/FmErHe+O5O3kQU8K
+	89Rc/A==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv4nrddv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 19:40:46 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4d6a41b5b66so7498681cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 12:40:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759952445; x=1760557245;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BtratBBxMg1ixyPYUlq5M5pLFBJ+PhbCyrjACUqLIOk=;
+        b=d9Pag1yJSXRtv7UN2nYNqLD3DmS9BwXcSkmNnCJJDD9YikJCrWdg4zsbNZEgvf80QA
+         My5JOSNWndg3JOVT2gxB7fmRCfoGQf4Khx4X1Sv+YM4mayGkEotwuOxtooggXvmBqWD5
+         ghN6iN5d/RsT09vVUzUgH7pXTLRuAFZDxrATvIidmlTGY6SDplX8XbT6d8JM9yqm9KIa
+         q6zLTgTPbrEZrz6KHA6Eb30voYAhte13snXcpDLn4Ql38Gz644bOd56qvPxjWjoFWlPv
+         RlIwrtuFhFH26b9EcM3p9U9udlC1WWGMrnb+7P+wM+wA8a4lB6rAolvTcuNRcUTyPZ7M
+         jvYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXv8ubmeyIM40cgyIfFRBpW456theIV5KVchZoI/uGDjbF/7EfxBTX6wyITm9Dlqq3AKC8mjqSedVJQAck=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGyQ0U3qBsnVqkBlCrOySiofjQORtHAoZhtPNItQZsSZmQ+s7a
+	a6z51eM+6Oof/DdFMj4S3vUX9n7QM3LHZrudlA3c3yRsS/MK+e4MhX7zMYorC1DQ0Z0OeH8W/TO
+	JjCl4b6OkB3rGY2jQw6AL/QdwkV3b1ruo2eTZAwQI9wqb0qmxVhU5Xr/kJnI0wQrRrzo=
+X-Gm-Gg: ASbGncsnaX+9AvZnv7Rbx+jv/iK9Fd5GISRUqvg2XuclHvFGteJC8WrwPjCEzJljcEa
+	NFnqCDSwNsThrO7inNQB5QiE7/bn/f5098XIVzSZjE/W4H2Nx29BnQu1Tjmqf50C+2aS6JQ3LfL
+	5bfrj6zMaAHMXUbZdKC41pOOJWtK+ASgjMO1535YAZVUSYqoC4bsFuLAtI/jL+C9bbhLz4t7lJ7
+	pHerhmHb+tnm1BBVLg5VLii9VamzIOx1ExYhfGJ1cCd2KdvYMxZaD3rEwcZS20okrZ7q9xOGdbQ
+	tWVW/bDoJ1bZ6C6yJBlJxlWtuu77wWPyWBiSgItlxtp5iAKDgn7a794YF+KwsIE+e/c+9Upan5U
+	qBV4RGncGNNloXiFaOmhIndP61n5rXCJFH56/DaE+TXtK7QFrqGDGO1s2ow==
+X-Received: by 2002:a05:622a:507:b0:4c9:3d38:1107 with SMTP id d75a77b69052e-4e6ead4a2abmr65665101cf.48.1759952445316;
+        Wed, 08 Oct 2025 12:40:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGFEJXDPLLxzLnybFXlAAWwjDEdwLt1QerezkvfofYClTYGZm1AnZl4wYTYnkBSsh86yJaleg==
+X-Received: by 2002:a05:622a:507:b0:4c9:3d38:1107 with SMTP id d75a77b69052e-4e6ead4a2abmr65664301cf.48.1759952444493;
+        Wed, 08 Oct 2025 12:40:44 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-375f39f93d6sm22669541fa.18.2025.10.08.12.40.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 12:40:42 -0700 (PDT)
+Date: Wed, 8 Oct 2025 22:40:39 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Yongxing Mou <yongxing.mou@oss.qualcomm.com>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kuogee Hsieh <quic_khsieh@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v12 3/5] dt-bindings: display/msm: Document MDSS on
+ QCS8300
+Message-ID: <cwuecyparlinhtdqckff7vdqpkio2kk7dwemzfao6qkhnuzhul@mfyqdphfvbdg>
+References: <20250911-qcs8300_mdss-v12-0-5f7d076e2b81@oss.qualcomm.com>
+ <20250911-qcs8300_mdss-v12-3-5f7d076e2b81@oss.qualcomm.com>
+ <20250918-spectral-seahorse-of-witchcraft-69553c@kuoka>
+ <b745c515-2264-42aa-8d92-663efc7f6276@oss.qualcomm.com>
+ <6c195b42-d994-4d24-9c40-48d8069304e3@kernel.org>
+ <rkuihu3pmhexeahfch6j7bvwn5rn4ecccbhamluh7fas5qgaup@av2foeiwmcz3>
+ <8a6861a0-f546-475b-907c-65b691d1d340@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] smb: client: Move an error code assignment in
- smb3_init_transform_rq()
-To: Henrique Carvalho <henrique.carvalho@suse.com>,
- linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
- Bharath SM <bharathsm@microsoft.com>, Paulo Alcantara <pc@manguebit.org>,
- Pavel Shilovsky <pshilov@microsoft.com>,
- Ronnie Sahlberg <ronniesahlberg@gmail.com>,
- Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>,
- Tom Talpey <tom@talpey.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-References: <02627021-da2f-41f8-9ea7-fd2da96e0503@web.de>
- <5bd37df6-1743-4b9c-a83a-a811e221489b@suse.com>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <5bd37df6-1743-4b9c-a83a-a811e221489b@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:jIVMvqdyoOWT9UqqOXm69WtFzMHQBCQdaRcA2wIh9HDAvjkNCad
- 8PmiSUFa6t0eLJDEW7PIjPDyujvIXWOvKi7pBulmQDVLBKDTLDv3AQQ5Yjoq+IxwkXz7QiE
- Sf9QWp99VVo6/DTUPNX8S8/S/D6awh+05m0Sosbndn/RWGjFH5dWxfNtiGz1Xwr4A7T5kB/
- ynDMpHUkGPTGGzRaxcxNQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:81HFVJ0zwQA=;RS/KV6zD6a2LP0xfMyEeHCxQ04B
- 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
- Jru4W7xTa3mDITHA8FVoRv6B5o=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8a6861a0-f546-475b-907c-65b691d1d340@kernel.org>
+X-Proofpoint-ORIG-GUID: eqvoWtliv3B1R900BOaNdiIS7NmW0shV
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX9JZtRFEkCSSC
+ yn3PFkGV3U09LZlYZ865JrIIxhIJ4l0NCI4c9u/O7YYMvLFDA/dgNXx4cLQrqM0LtYCFZBdClAH
+ D89AorD7YKHVVHA0C+IuzmiLQ9xeypgfMTmmuDHvz5IsQJ6jpMGuyUcp5VQ8y1OrgJexfSH7gLK
+ PO83VS5Irb5kBecIiBlcVt7DjqPhxYjOwcogE1sAv7J/ADGAbiuVKQEebmLh5vq+HDJ5HVe+sHg
+ 3u9AdKuVMDCtbyzIOtVMAFrBamKFtXi/rbbvoIXMr5rswGT5sN/SFviDh5Z4bTY/zcwTJylLNKy
+ hE3xscNTxm12+66tinOPgo2jqb58HVpyDI2orrmVkZd9T/+mcNwOhQH9hKR+Bi4keNLeflwHPI3
+ YvJIJrPPdybeXBGXFcnBw6CnQjsYAA==
+X-Proofpoint-GUID: eqvoWtliv3B1R900BOaNdiIS7NmW0shV
+X-Authority-Analysis: v=2.4 cv=b6a/I9Gx c=1 sm=1 tr=0 ts=68e6be3e cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=x6icFKpwvdMA:10 a=P-IC7800AAAA:8 a=EUspDBNiAAAA:8 a=C8UiGOM6HYQv_yXpghgA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22
+ a=d3PnA9EDa4IxuAV0gXij:22 a=HhbK4dLum7pmb74im6QT:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-08_05,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 suspectscore=0 lowpriorityscore=0 adultscore=0 phishscore=0
+ clxscore=1015 spamscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
 
->> Convert an initialisation for the variable =E2=80=9Crc=E2=80=9D into an=
- error code
->> assignment at the end of this function implementation.
-=E2=80=A6>> +++ b/fs/smb/client/smb2ops.c
-=E2=80=A6>> @@ -4611,7 +4611,7 @@ smb3_init_transform_rq(struct TCP_Server=
-_Info *server, int num_rqst,
->>  		if (size > 0) {
->>  			buffer =3D cifs_alloc_folioq_buffer(size);
->>  			if (!buffer)
->> -				goto err_free;
->> +				goto e_nomem;
->> =20
->>  			new->rq_buffer =3D buffer;
->>  			iov_iter_folio_queue(&new->rq_iter, ITER_SOURCE,
->> @@ -4634,6 +4634,8 @@ smb3_init_transform_rq(struct TCP_Server_Info *se=
-rver, int num_rqst,
->> =20
->>  	return rc;
->> =20
->> +e_nomem:
->> +	rc =3D -ENOMEM;
->>  err_free:
->>  	smb3_free_compound_rqst(num_rqst - 1, &new_rq[1]);
->>  	return rc;
->=20
-> I don't think this change improves readability.
->=20
-> I understand that making the assignment explicit is good,
+On Tue, Oct 07, 2025 at 03:43:56PM +0900, Krzysztof Kozlowski wrote:
+> On 27/09/2025 08:26, Dmitry Baryshkov wrote:
+> > On Fri, Sep 19, 2025 at 01:34:39PM +0900, Krzysztof Kozlowski wrote:
+> >> On 18/09/2025 13:14, Yongxing Mou wrote:
+> >>>
+> >>>
+> >>> On 9/18/2025 9:01 AM, Krzysztof Kozlowski wrote:
+> >>>> On Thu, Sep 11, 2025 at 07:24:03PM +0800, Yongxing Mou wrote:
+> >>>>> Document the MDSS hardware found on the Qualcomm QCS8300 platform.
+> >>>>>
+> >>>>> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+> >>>>
+> >>>> Patch v11 and still basic issues. I am very dissapointed.
+> >>>>
+> >>>> <form letter>
+> >>>> This is a friendly reminder during the review process.
+> >>>>
+> >>>> It looks like you received a tag and forgot to add it.
+> >>>>
+> >>>> If you do not know the process, here is a short explanation:
+> >>>> Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+> >>>> versions of patchset, under or above your Signed-off-by tag, unless
+> >>>> patch changed significantly (e.g. new properties added to the DT
+> >>>> bindings). Tag is "received", when provided in a message replied to you
+> >>>> on the mailing list. Tools like b4 can help here. However, there's no
+> >>>> need to repost patches *only* to add the tags. The upstream maintainer
+> >>>> will do that for tags received on the version they apply.
+> >>>>
+> >>>> Please read:
+> >>>> https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+> >>>>
+> >>>> If a tag was not added on purpose, please state why and what changed.
+> >>>> </form letter>
+> >>>>
+> >>>> Best regards,
+> >>>> Krzysztof
+> >>>>
+> >>> Hi,
+> >>> Sorry for the confusion. I did intend to remove the Reviewed-by tag, and 
+> >>> I mentioned this in the cover letter, but maybe explanation in 
+> >>> cover-letter was probe not clear at all.
+> >>>
+> >>> This patch includes three changes:
+> >>>
+> >>> 1.In the displayport-controller compatible property, "items" was changed 
+> >>> to "contains".
+> >>> 2.Use "qcom,sa8775p-dp" as fallback.
+> >>>
+> >>> These changes might not be considered significant. So I’ll be more 
+> >>> careful next time. Thanks~
+> >>
+> >>
+> >> I really do not expect v12 to receive so significant changes in the
+> >> first place. If you keep sending us buggy code, which then you keep
+> >> changing after review, I will just not do the review. It's easier for me
+> >> to wait for v20...
+> > 
+> > I'm not sure how to react to this missage. The changes reflect the
+> 
+> 
+> This message represents my annoyance with low quality submissions from
+> Qualcomm, which needs multiple iterations and often apply tag, then
+> change significantly thus drop the tag or completely ignore the review
+> tag. And I review again.. and tag is dropped again because patch was
+> again seriously reworked. Or even without serious rework - Qualcomm
+> authors drop the tags, just "because".
+> 
+> ~2 months ago simple patch from Qualcomm required three involvements
+> from DT maintainers, because even trivial patch was being continuously
+> changed and author was dropping or ignoring review tags.
 
-Thanks for this constructive feedback.
+Well... 'Simple' DP MST bindings also required several authors and more
+than enough revisions because the hardware is not that simple. Gaining
+more understanding of the hardware caused changes to this patchset too.
 
+> 
+> 
+> 
+> > process in other patchsets and in my understanding on how to describe
+> > the particular hardware block. The changes were reflected in the
+> > changelog. If you plan to review this patchset once you get back from
+> > your vacation, that's fine. If you don't plan to, I can ask Yongxing to
+> > send v20 just for that number.
+> 
+> Solution for me could be to ignore Qualcomm patches till they reach some
+> sort of maturity.
+> 
+> I am not planning to review this patch, because:
+> 1. I already reviewed it, so not really necessary, but even if I wanted:
+> 2. It is gone from my inbox...
 
-> but why not simply set rc to -ENOMEM if !buffer and then goto err_free?
+So... Should it be resent to get it back to your inbox or should
+Yongxing just restore your tag on the grounds that the changes were not
+significant enough to drop it?
 
-I proposed to adjust the affected if branch in this way
-because there is no need to add curly brackets then.
-
-
-> Also, I think its a bit confusing having inconsistent naming styles `e_`
-> `err_`...
-
-Which naming approach would you find more helpful for the marking
-of a variable assignment instead of a subsequent function call?
-
-Regards,
-Markus
+-- 
+With best wishes
+Dmitry
 
