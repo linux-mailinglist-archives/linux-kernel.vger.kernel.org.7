@@ -1,142 +1,110 @@
-Return-Path: <linux-kernel+bounces-844938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F561BC319D
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 03:07:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E569BC31AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 03:11:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9EA594E3E34
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 01:07:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AFCED4E91B0
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 01:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936C228B7D7;
-	Wed,  8 Oct 2025 01:07:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E089E28CF7C;
+	Wed,  8 Oct 2025 01:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YgN/V3wA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="r+Kuc63Y"
+Received: from smtp153-165.sina.com.cn (smtp153-165.sina.com.cn [61.135.153.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7A728A701
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 01:07:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B4D1DE4FB
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 01:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759885638; cv=none; b=IQxStbMH9FEEnpY1miZtLpKgXHGaneVhsFzjW6DCTOSV6M17RZGeeT7s32D9wGsu6zaoTXp8YQ9XUiAQwRkZbhq6qJHKbhYEY+x+nRB2/xl4b5MxPGlVa10N3TzDnirkhbBuFkACj72zWAgyU5Ffr+4ZMW74Brg+t+qCyyKVbbo=
+	t=1759885851; cv=none; b=dFi7n3DU60jfKPD+i9kREAVTCHNi1wCbOKMTbHj3JsfgfC8NmeA5ib31UGFFJpsdlGWzo5WDlPSPAK+X+Bbs6FbgRzPXpEKc0gq9wA/29nrzfzQ9x1K5IvPoy2woihapu7B95Jmz4/fWkFrhlmpvY6gaPjyfJwyZAIonWx9m1iY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759885638; c=relaxed/simple;
-	bh=zBCqyJMWlRsL+4LATvFpWbApDg0JJQI3CUv1g8acmHA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dm5YGLFQh5wuOsW6BbeBp20S6a2MdxcxWmckxE0hVgstu754eUxexVQ2RbdyfxIJ03u/MK9tBDmXaTggjCe2fgvVRV1egpGFKwgjmyv51hAIZ9cTHW2olaqXrhQ8rjRMNQzYZmW6Y+OD45SyWdOkHIh2D+GaHmTXmDaH49nKEYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YgN/V3wA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EB15C19422
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 01:07:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759885637;
-	bh=zBCqyJMWlRsL+4LATvFpWbApDg0JJQI3CUv1g8acmHA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=YgN/V3wAL5l8gU911XAnxezLGZznwYAlmCRXe3Ovvevboxu0GX2EcRWaIensz5R+e
-	 8z1dSIXKO7hq3F/pXbQryVb/AWs6jqG4Nik+dLdt5Sl7JtT/H9bM5g9RSIIu8CPZf2
-	 Z0LhS1pRVa6E+PA3OMsh8A9GaLdMShsX4AtgRGQtmP2RFPnnT/EB+40FGp0CT5Fe7k
-	 HxfE8hYtzbuQpIEBERPhdWRYGM53FARCPG+MhWzGWoX9QoyYCvq3W5YfVaZ4tnbZmK
-	 e4zAkqe2ImVEIh+5gtHVYKSF1zi6C7DMKrpSkTH7jByb34vG4S5XcamUaJfS2olsfG
-	 rtEN6VaSzLL5Q==
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-795be3a3644so41210436d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 18:07:17 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW5OT/0piigk65ya1Cqp6tGDacpYLZOkrwGsnj5RSeTPEsoqtSXW+ZHs2pQ6tYCKNmT8002C4D/TaNSlqM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwK3z0UEWYYAMUTkFo/y3E1dSfIUeR8KtM4/UimL+yVFAf1/Wfn
-	E06ZeBVQh+ggAKLc5xkNwkMBtKMF/JN7MUee3h2o1uqIvf0l92+PrsLHv4uswLmGES16grnT4lp
-	CtKSutVNHFJQvk7vaDV/de1uZrPG7KA8=
-X-Google-Smtp-Source: AGHT+IEcmF6j99P7KkUpn2/4L6HaFID6zbkjSdls+iCzttgJ43409b0C4AVN/zVkcxiO3cU7SJ9+sGQsQOMolE5AhVI=
-X-Received: by 2002:ad4:5c65:0:b0:786:2d5e:fdda with SMTP id
- 6a1803df08f44-87b2101ec96mr26440866d6.18.1759885636562; Tue, 07 Oct 2025
- 18:07:16 -0700 (PDT)
+	s=arc-20240116; t=1759885851; c=relaxed/simple;
+	bh=whGDHiCRfNS7j5DWDDgdMwTjwwfI6IJun0sN9QVlHaM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=LWkrphrxY4r1yd92qGcOd2JoDz93TErMkQeKx0zb/qpLL5R4vdSmbAPsKnK2WnURcBkOHEJxJXgl6DbkQUynG3jn8YNoh1mwjPv41HbAeM4p3L6ykjTN+OKlzqhztfbcmanmxHNOgFsO8u9x2mi0mgxiH1eLK5HOv2yGLjcEEdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=r+Kuc63Y; arc=none smtp.client-ip=61.135.153.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1759885842;
+	bh=jCebY8UK4SHidkoM7FSA/sJzpS1AI0S6Bypqpp6wEsE=;
+	h=From:Subject:Date:Message-ID;
+	b=r+Kuc63YMQJmQ7MlGzJIbwR7RpN82Bs1pt8dDk5wf6IunIYwqNBw+IruJ7Je9xcfA
+	 m3+eBvoy4seEdEH7L3dzmTRjKHoBV4rNgy9Ua5teB/5smvpxc9E08tyzDkyhWJUGYc
+	 poCtlZCuWQj0rJLaMlqfT58SFenq1+XHayW9Xfv4=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.32) with ESMTP
+	id 68E5BA070000733E; Wed, 8 Oct 2025 09:10:32 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 9110464457053
+X-SMAIL-UIID: A59A077D66C24934AA0D36DD0E91EBA3-20251008-091032-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+27727256237e6bdd3649@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [fuse?] possible deadlock in __folio_end_writeback
+Date: Wed,  8 Oct 2025 09:10:20 +0800
+Message-ID: <20251008011021.8322-1-hdanton@sina.com>
+In-Reply-To: <68e583e1.a00a0220.298cc0.0485.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250818170136.209169-1-roman.gushchin@linux.dev>
- <20250818170136.209169-2-roman.gushchin@linux.dev> <CAP01T76AUkN_v425s5DjCyOg_xxFGQ=P1jGBDv6XkbL5wwetHA@mail.gmail.com>
- <87ms7tldwo.fsf@linux.dev> <1f2711b1-d809-4063-804b-7b2a3c8d933e@linux.dev>
- <87wm6rwd4d.fsf@linux.dev> <ef890e96-5c2a-4023-bcb2-7ffd799155be@linux.dev>
- <CAADnVQ+LGbXXHHTbBB9b-RjAXO4B6=3Z=G0=7ToZVuH61OONWA@mail.gmail.com>
- <87iki0n4lm.fsf@linux.dev> <a76ad1e9-07d5-4ba1-83e4-22fe36a32df0@linux.dev>
- <877bxb77eh.fsf@linux.dev> <CAEf4BzafXv-PstSAP6krers=S74ri1+zTB4Y2oT6f+33yznqsA@mail.gmail.com>
- <871pnfk2px.fsf@linux.dev> <CAEf4BzaVvNwt18eqVpigKh8Ftm=KfO_EsB2Hoh+LQCDLsWxRwg@mail.gmail.com>
- <87tt0bfsq7.fsf@linux.dev>
-In-Reply-To: <87tt0bfsq7.fsf@linux.dev>
-From: Song Liu <song@kernel.org>
-Date: Tue, 7 Oct 2025 18:07:03 -0700
-X-Gmail-Original-Message-ID: <CAHzjS_v+N7UO-yEt-d0w3nE5_Y1LExQ5hFWYnHqARp9L-5P_cg@mail.gmail.com>
-X-Gm-Features: AS18NWAx-XMC-g3j9uutWYIZTxRO0r1IXmHmgo-2RkWcxjCjTc5QNe70onU4eO4
-Message-ID: <CAHzjS_v+N7UO-yEt-d0w3nE5_Y1LExQ5hFWYnHqARp9L-5P_cg@mail.gmail.com>
-Subject: Re: [PATCH v1 01/14] mm: introduce bpf struct ops for OOM handling
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>, Kumar Kartikeya Dwivedi <memxor@gmail.com>, 
-	linux-mm <linux-mm@kvack.org>, bpf <bpf@vger.kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@suse.com>, 
-	David Rientjes <rientjes@google.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Song Liu <song@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 6, 2025 at 5:42=E2=80=AFPM Roman Gushchin <roman.gushchin@linux=
-.dev> wrote:
-[...]
-> >> >
-> >> > So, there cannot be bpf_link__attach_cgroup(), but there can be (at
-> >> > least conceptually) bpf_map__attach_cgroup(), where map is struct_op=
-s
-> >> > map.
-> >>
-> >> I see...
-> >> So basically when a struct ops map is created we have a fd and then
-> >> we can attach it (theoretically multiple times) using BPF_LINK_CREATE.
-> >
-> > Yes, exactly. "theoretically" part is true right now because of how
-> > things are wired up internally, but this must be fixable
->
-> Ok, one more question: do you think it's better to alter the existing
-> bpf_struct_ops.reg() callback and add the bpf_attr parameter
-> or add the new .attach() callback?
+> Date: Tue, 07 Oct 2025 14:19:29 -0700	[thread overview]
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    cbf33b8e0b36 Merge tag 'bpf-fixes' of git://git.kernel.org..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17a25ee2580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=1b4263e12240e6e1
+> dashboard link: https://syzkaller.appspot.com/bug?extid=27727256237e6bdd3649
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14eaea7c580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=134c4304580000
 
-IIUC, bpf_struct_ops_link is just for bpf_struct_ops.reg(). The
-attach() operation can be separate, and it doesn't need to be
-implemented in sys_bpf() syscall. BPF TCP congestion control
-uses setsockopt() to do the attach(). Current sched_ext does
-the attach as part of reg(). Tejun is proposing to use reg() for
-sub scheduler [1]. In my earlier patch set for fanotify-bpf, I
-was planning to use ioctl on the fanotify fd [2]. I think these
-all work for the given use case.
+#syz test
 
-I am not sure what is the best option for cgroup oom killer. There
-are multiple options. Technically, it can even be a sysfs entry.
-We can use it as:
-
-# load and pin oom killers first
-$ cat /sys/fs/cgroup/user.slice/oom.killer
-[oom_a] oom_b oom_c
-$ echo oom_b > /sys/fs/cgroup/user.slice/oom.killer
-$ cat /sys/fs/cgroup/user.slice/oom.killer
-oom_a [oom_b] oom_c
-
-Note that, I am not proposing to use sysfs entries for oom killer.
-I just want to say it is an option.
-
-Given attach() can be implemented in different ways, we probably
-don't need to add it to bpf_struct_ops. But if that turns out to be
-the best option, I would not argue against it. OTOH, I think it is
-better to keep reg() and attach() separate, though sched_ext is
-using reg() for both options.
-
-Does this make sense?
-
-Thanks,
-Song
-
-[1] https://lore.kernel.org/bpf/20250920005931.2753828-1-tj@kernel.org/
-[2] https://lore.kernel.org/bpf/20241114084345.1564165-1-song@kernel.org/
+--- x/lib/flex_proportions.c
++++ y/lib/flex_proportions.c
+@@ -64,12 +64,14 @@ void fprop_global_destroy(struct fprop_g
+ bool fprop_new_period(struct fprop_global *p, int periods)
+ {
+ 	s64 events = percpu_counter_sum(&p->events);
++	unsigned long flags;
+ 
+ 	/*
+ 	 * Don't do anything if there are no events.
+ 	 */
+ 	if (events <= 1)
+ 		return false;
++	local_irq_save(flags);
+ 	preempt_disable_nested();
+ 	write_seqcount_begin(&p->sequence);
+ 	if (periods < 64)
+@@ -79,6 +81,7 @@ bool fprop_new_period(struct fprop_globa
+ 	p->period += periods;
+ 	write_seqcount_end(&p->sequence);
+ 	preempt_enable_nested();
++	local_irq_restore(flags);
+ 
+ 	return true;
+ }
+--
 
