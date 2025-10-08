@@ -1,158 +1,254 @@
-Return-Path: <linux-kernel+bounces-845412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E119BC4C4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 14:28:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21E1DBC4B5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 14:07:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DBCBF4E8A8D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 12:28:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED89F189EBE2
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 12:08:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81298242D89;
-	Wed,  8 Oct 2025 12:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63072F7479;
+	Wed,  8 Oct 2025 12:07:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wismer.xyz header.i=@wismer.xyz header.b="k/nuk2hb"
-Received: from out4.tophost.ch (out4.tophost.ch [46.232.182.213])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GfwAdR31"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 473FB21B9C0;
-	Wed,  8 Oct 2025 12:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.232.182.213
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E072F7477
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 12:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759926511; cv=none; b=Y9H0RaQVK8z/4H1TzDaRwoIOB/M0uA1GSqvKkxjCvKiMw1UsCBhP8C7jclwsf1OYkB3qt/1nz8ti8uwcBCrSzCFoFTgT+xAUVQXIg1qQi1OejfVHnqkmLGZHU3nWijBk3bpbg1sisy/C5CO3CDc/mxnt6K7ve0Te5N2E8a6eQHc=
+	t=1759925241; cv=none; b=Bf4IC8S8Blgp9pfAqBo/9C3Z20ANfK+Fr+XldEijbvOf3NQoUKb22QDGbYqzFKZ/aW0eDnKeS1Om/YYNhu1ePQercH9RXyhBoIuAnD1QeiiQsSffpDb7G4e5JqjK+/xkTA/T9slKN0nJ+gm5NB3rgwjbtUc6wtAwh3KZtfPFwsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759926511; c=relaxed/simple;
-	bh=bJZwQB0eD/a80IPP/m1ic8+FM4WfH8rPsVolRrikLtE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SIhR5MXafh2USq3PLWEH97X7bTbo4CMbf+FBFpJzVaLAtXh37JdbYrXavy0QJkTUKUfKw/LM/TQAs6QnQwxg6m/ngVbC112kRNexUPlyq0N7HL9FdFQji58hjbJdtJmLNxM+5jbD2TZUluGpudpSeA/GLsHxD/aR95c/FPu6PyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wismer.xyz; spf=pass smtp.mailfrom=wismer.xyz; dkim=pass (2048-bit key) header.d=wismer.xyz header.i=@wismer.xyz header.b=k/nuk2hb; arc=none smtp.client-ip=46.232.182.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wismer.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wismer.xyz
-Received: from srv125.tophost.ch ([194.150.248.5])
-	by filter3.tophost.ch with esmtps  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <thomas@wismer.xyz>)
-	id 1v6Siu-00HEio-1b; Wed, 08 Oct 2025 13:52:50 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=wismer.xyz;
-	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:
-	In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=jcrzgQaRo1s3Zc3rxVMNCH6Ga4jTLLoMlb1z0pI42TQ=; b=k/nuk2hb22e48eTiuOitgKNYnS
-	S6S+PxKSnOb0A/DjeNt+6wofSRKNGY34A2/XEAUq7QqQ5VyV7pTUL7GG6thx3tJYXEQit2zcHyCRL
-	8QswE0ABV3qgGyxpQVVcGImMHl3V5GbTnfyTrF20eaGHSTra+SGREiZascklXWkK3J3xN9drEEPs9
-	F9MNvA+UIeV1V888hTDQSyQ6Xe4fiu5y6FuaMMU13f1mlXMdsOd2hgFdilNgPtHBtPO7EAyYY7hhY
-	Cs0x9+sLanO4DYTP6Pjoh1Zw+M7VSHmLiVGUmo5lDoW/B7dhjev0EOEr+5QuoNiWBRa1zVkAF2zXG
-	FZwk7zfA==;
-Received: from [213.55.186.58] (port=20306 helo=pavilion)
-	by srv125.tophost.ch with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <thomas@wismer.xyz>)
-	id 1v6Sit-00000004Xlh-0ZFe;
-	Wed, 08 Oct 2025 13:52:45 +0200
-Date: Wed, 8 Oct 2025 13:52:43 +0200
-From: Thomas Wismer <thomas@wismer.xyz>
-To: Conor Dooley <conor@kernel.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>, Kory Maincent
- <kory.maincent@bootlin.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Thomas Wismer <thomas.wismer@scs.ch>,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] dt-bindings: pse-pd: ti,tps23881: Add TPS23881B
-Message-ID: <20251008135243.22a908ec@pavilion>
-In-Reply-To: <20251007-stipulate-replace-1be954b0e7d2@spud>
-References: <20251004180351.118779-2-thomas@wismer.xyz>
-	<20251004180351.118779-8-thomas@wismer.xyz>
-	<20251007-stipulate-replace-1be954b0e7d2@spud>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1759925241; c=relaxed/simple;
+	bh=BVu2EEg8ejklaIGY6WvonMMEPvoYw6A3F33Ut3458MU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TI0Qki0wyVA2j0h4pRgqZEs/6yMTEN/J+mNxrlm1JAAdCVS0cVbalvR4uFcdptxRwDMG0cETibcndNQTkAZMjCQlvKnTDZyOFw/0kc18KL2r2Y3ZteM7YjIGwo3+aYbXYxfOVwWjcl2iUGrg+i+dLe7BMIh29T4BqHTkAA0PFPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GfwAdR31; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-791875a9071so72173586d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 05:07:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759925238; x=1760530038; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EnTtsbSmHH4T9zX0iyH6U/3gYlbL4q2Uw39tvDIL9jc=;
+        b=GfwAdR31aFJ8IrZk+KKqE4Hf2uFVkUWir4ZFd4HK+nipILQpefIwmgCKh2/xekBYtN
+         7rlASY91j5Js/rd3ElIhT8I6f2Nn7uPuQdWluRnn9Ew8KUp9uCvxqLfSvq+Rg2Q8jPaW
+         hbz3mvKK8zlwNJABddhlYEpyW4h8iQw4wUzJjZbyX7owYxUkhS/asJT3ggcdENJg8V3q
+         XdRLdrj3w0Ht95GsjIS+OfMxb4JJF+JCCJ5vDgQf7LgEPwWE4R0UxhkCf0P1MTqIHcBS
+         cVJQHOFj02mFcNhIC0NPdCzNdhxGk1orGNw0LgFwEVrX7cohBYyaDAyqBH76JbD4HBEC
+         wB6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759925238; x=1760530038;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EnTtsbSmHH4T9zX0iyH6U/3gYlbL4q2Uw39tvDIL9jc=;
+        b=R4Lbwakfh1I85ax4k6VTcxF4+FRYZonLKHys8bpu0nM1P2KFe2zyzoTYUwrvdclDmj
+         VxX5fFCYo5yyLIl4pwMcYWsaW3xthNsVIhneGJQHMgA2K/gGzrG5RDE5IcP6WtWcgOKI
+         VuhoW9LNN8Le6nIzGdACWXOp4uoW/SIQGLGgzbCvq5/uXZq0c7P9CEJFQfHj4CkvEiSv
+         qMBEIZMmjp/p499Qx10KoUHjpLjfSx27hq47BQLvonAl0ATKJw+sKwJB9VhlVsOodciE
+         uLW94TJReC4ZzJ1iSoz8f5M5SrGLalJ1nKK59Yv3cOvGmv1j39lM1WASDH2P5Hn4/y0u
+         l+/A==
+X-Forwarded-Encrypted: i=1; AJvYcCXS2rMJZmLbNG91t6f1HgtoBUZkIX9EJy9ThsVYIZ3QCTTjdh5Pcv4oVVSYbq9DnWlaeVWx5joiV9fufO4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTP6/8OYzFT6Exv1pEjjBgv4Dg5Y6UIkDKtJr2gjdVTzFBjsya
+	M6qQV0xJscJYSunG/fkoHattKhu3c0+TWpBgfdOkEQ1yhUNZR8XDJzZb7DWGl7fYrQv3jZKqv3x
+	3Wx2QFkxvVeTUnqyDtS1GVG69ND1W6eI=
+X-Gm-Gg: ASbGnctQczIuSB7qY2zxbyP2ndMqqPMR8GByjI+VH5MOuFuScqZC5MinmsjruUK0a+W
+	pE1lo6tEgmh2MurikOAQ4MPPXF+VvM6Hb21ZwI5TGvPJuFXCrYSLUmP0eu/Sradtuvaz6lYJmAi
+	fcVR+daVNyk5m2xO7pu/UXNh1OjgMyN6uDkwMyWPX+BWbDy+/G0Uy3SW8/zNp89Q6MEPrTEIF9z
+	V56QaFHQ0Ay6fOHS+MMVoH5jc50mL6+Rh+FFiaLp04Q167NJKa4FSseQ5WL46lQGc9Ryi3O+GE=
+X-Google-Smtp-Source: AGHT+IEVKGmMv/tkSbd+O4UvvaCrDeP7UI1yITjpMQ8N+fjVNf2S7Zm9vVDrsesEpPbKlJ3VI/molVYwtOHeWvkfcWQ=
+X-Received: by 2002:ad4:5948:0:b0:820:a83:eaff with SMTP id
+ 6a1803df08f44-87b2ef7fab7mr37825166d6.64.1759925237890; Wed, 08 Oct 2025
+ 05:07:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Get-Message-Sender-Via: srv125.tophost.ch: authenticated_id: thomas@wismer.xyz
-X-Authenticated-Sender: srv125.tophost.ch: thomas@wismer.xyz
-X-Spampanel-Domain: smtpout.tophost.ch
-X-Spampanel-Username: 194.150.248.5
-Authentication-Results: tophost.ch; auth=pass smtp.auth=194.150.248.5@smtpout.tophost.ch
-X-Spampanel-Outgoing-Class: unsure
-X-Spampanel-Outgoing-Evidence: Combined (0.50)
-X-Recommended-Action: accept
-X-Filter-ID: 9kzQTOBWQUFZTohSKvQbgI7ZDo5ubYELi59AwcWUnuV5syPzpWv16mXo6WqDDpKEChjzQ3JIZVFF
- 8HV60IETFiu2SmbhJN1U9FKs8X3+Nt208ASTx3o2OZ4zYnDmkLm5Mv/tafLC72ko3Lqe/Da7zEtV
- 5r/L4Ot8UddBJecz0vF0xYCHwzEoZpUBagq+YQPMCtmoQhY2xrBb8C+tWUvqrqBKsSdhvd/J5sX5
- daZjkYsG4jVZi5Tfop5qjCZejidXzthz0vNkOX8Em4cj6D/wddIY3ooDH3xmALJ0KCcsszI9W7vD
- 6C469DIPe8wH3iOJ3xyMg3et4b3PQUopDmbZCssYHNuxAmlPRpR5yzngsxCROUzReCS8EpKh0It9
- L25JS816nuiE0t5pG6MLXGczoaQ34/6XxaNTDAhv7aV57JsPc1xQig4or8SGp+oEgVY8m5YhXjt1
- 1mZXDl6SZZzjGdqG2Lj5rCXX7a7k66n+dqZH8SumKJ6G2ITZ1QpN+fKl6MqQzpHx+R/se4ridaNZ
- B8TZI7fFfQwiuwD2LcLdqjNzWvfUWpSzeqsU5PCGCDUFaU8uhHiAnATVZ6fUz0ieq3c+galx1KGI
- Pp5jnkiI48QcVV/sevQbkxCuiwh6Dw2ezHpzBWCNEjuWRvIT4EJ2lr2fnvN0vyHJPWrtFePT1LWJ
- YkjVkiWyun89aYjOQVn+0u9hv6vc4kaDyrzZqOtFmCYx9ZUW4uF3IsCR4FQZzMS1+iCTTpBSBU9f
- +Vf3ILgJPePj0AiYMnkOYZl+Ft134+Tg4Kc9J0hnMXKx8pjHWEGHlWxPsl3WEfCK++QP7hwqRAUa
- ZyvXYsGqun+gsnRrwx4NiFDSlcM+Wn9owyaX/KlLn/njN5eSj526f3kLYY1TsMEeeHi+U6STQXMQ
- D692EpmpxHPQ6fdixDnE+NhRq2DzlcAJUjaLcRLsWJVw5FAS+DG0fESebuRosX/9DvJ1PqhoyZO+
- 55MGpfuy7J6qK9cOuNFQ+5eGIII/qgXB3gv2NI/ukWuQBNrXV+EmIqM8SxKOhcObZXWnkEw+6F9C
- GyYaSNdYCqWjx7tVBcUyWD6tuli72Uhh4KMdzekambyQyMd4zC4QeDwRSaOU1duojVsD0mcRXp3i
- H/O1nLlsNVT2ZXBi9hWEAP02Kq9O1EK/TYp24VOsP5eu885wo+t+ynT3Y80OmAux3oN13+ztUzne
- WewwEyDnbwd6egxf+5+PsAe2KUEdvp80LOErjFwUf/rlg8VmOc5TmmgdvZqrRINDmcHx2hb+kvjY
- MSg1O9jlcFeiwd6G/JABbKl/d5wvz25WxpLvJQch9a84ocD+HpMJ647lNwN4qOsSZg+fYhVZG4mh
- yjRtVCRmo/KLfKlWmgufHFIwhu0oznfSscIjbgCEW8FLB4OaDyJuGHToBIYrrlDXmPN7G7txF2nS
- g2cyQb8Y5qkVLHiOZSn5k9NADD0BBW1oT5qIEWguCTF5tOP3jj0yLjiiCMcv+tRXcSj1CD4=
-X-Report-Abuse-To: spam@filter1.tophost.ch
-X-Complaints-To: abuse@filter1.tophost.ch
+References: <20250930055826.9810-1-laoar.shao@gmail.com> <20250930055826.9810-4-laoar.shao@gmail.com>
+ <CAADnVQJtrJZOCWZKH498GBA8M0mYVztApk54mOEejs8Wr3nSiw@mail.gmail.com>
+ <27e002e3-b39f-40f9-b095-52da0fbd0fc7@redhat.com> <CALOAHbBFNNXHdzp1zNuD530r9ZjpQF__wGWyAdR7oDLvemYSMw@mail.gmail.com>
+ <7723a2c7-3750-44f7-9eb5-4ef64b64fbb8@redhat.com> <CALOAHbD_tRSyx1LXKfFrUriH6BcRS6Hw9N1=KddCJpgXH8vZug@mail.gmail.com>
+ <96AE1C18-3833-4EB8-9145-202517331DF5@nvidia.com>
+In-Reply-To: <96AE1C18-3833-4EB8-9145-202517331DF5@nvidia.com>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Wed, 8 Oct 2025 20:06:40 +0800
+X-Gm-Features: AS18NWBIxlsXVNTBzBqe9RKDEHMGwyRZXw76KJBRlynko-9PYAcMYCTd07kAK4o
+Message-ID: <CALOAHbCS0WvUSsK_rbtU8LTLuz_eynVEa1ULyYmyRcMW_hfZWg@mail.gmail.com>
+Subject: Re: [PATCH v9 mm-new 03/11] mm: thp: add support for BPF based THP
+ order selection
+To: Zi Yan <ziy@nvidia.com>
+Cc: David Hildenbrand <david@redhat.com>, Alexei Starovoitov <alexei.starovoitov@gmail.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	baolin.wang@linux.alibaba.com, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Liam Howlett <Liam.Howlett@oracle.com>, npache@redhat.com, ryan.roberts@arm.com, 
+	dev.jain@arm.com, usamaarif642@gmail.com, gutierrez.asier@huawei-partners.com, 
+	Matthew Wilcox <willy@infradead.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Amery Hung <ameryhung@gmail.com>, David Rientjes <rientjes@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, 21cnbao@gmail.com, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Tejun Heo <tj@kernel.org>, lance.yang@linux.dev, Randy Dunlap <rdunlap@infradead.org>, 
+	bpf <bpf@vger.kernel.org>, linux-mm <linux-mm@kvack.org>, 
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am Tue, 7 Oct 2025 21:40:03 +0100
-schrieb Conor Dooley <conor@kernel.org>:
+On Wed, Oct 8, 2025 at 7:27=E2=80=AFPM Zi Yan <ziy@nvidia.com> wrote:
+>
+> On 8 Oct 2025, at 5:04, Yafang Shao wrote:
+>
+> > On Wed, Oct 8, 2025 at 4:28=E2=80=AFPM David Hildenbrand <david@redhat.=
+com> wrote:
+> >>
+> >> On 08.10.25 10:18, Yafang Shao wrote:
+> >>> On Wed, Oct 8, 2025 at 4:08=E2=80=AFPM David Hildenbrand <david@redha=
+t.com> wrote:
+> >>>>
+> >>>> On 03.10.25 04:18, Alexei Starovoitov wrote:
+> >>>>> On Mon, Sep 29, 2025 at 10:59=E2=80=AFPM Yafang Shao <laoar.shao@gm=
+ail.com> wrote:
+> >>>>>>
+> >>>>>> +unsigned long bpf_hook_thp_get_orders(struct vm_area_struct *vma,
+> >>>>>> +                                     enum tva_type type,
+> >>>>>> +                                     unsigned long orders)
+> >>>>>> +{
+> >>>>>> +       thp_order_fn_t *bpf_hook_thp_get_order;
+> >>>>>> +       int bpf_order;
+> >>>>>> +
+> >>>>>> +       /* No BPF program is attached */
+> >>>>>> +       if (!test_bit(TRANSPARENT_HUGEPAGE_BPF_ATTACHED,
+> >>>>>> +                     &transparent_hugepage_flags))
+> >>>>>> +               return orders;
+> >>>>>> +
+> >>>>>> +       rcu_read_lock();
+> >>>>>> +       bpf_hook_thp_get_order =3D rcu_dereference(bpf_thp.thp_get=
+_order);
+> >>>>>> +       if (WARN_ON_ONCE(!bpf_hook_thp_get_order))
+> >>>>>> +               goto out;
+> >>>>>> +
+> >>>>>> +       bpf_order =3D bpf_hook_thp_get_order(vma, type, orders);
+> >>>>>> +       orders &=3D BIT(bpf_order);
+> >>>>>> +
+> >>>>>> +out:
+> >>>>>> +       rcu_read_unlock();
+> >>>>>> +       return orders;
+> >>>>>> +}
+> >>>>>
+> >>>>> I thought I explained it earlier.
+> >>>>> Nack to a single global prog approach.
+> >>>>
+> >>>> I agree. We should have the option to either specify a policy global=
+ly,
+> >>>> or more refined for cgroups/processes.
+> >>>>
+> >>>> It's an interesting question if a program would ever want to ship it=
+s
+> >>>> own policy: I can see use cases for that.
+> >>>>
+> >>>> So I agree that we should make it more flexible right from the start=
+.
+> >>>
+> >>> To achieve per-process granularity, the struct-ops must be embedded
+> >>> within the mm_struct as follows:
+> >>>
+> >>> +#ifdef CONFIG_BPF_MM
+> >>> +struct bpf_mm_ops {
+> >>> +#ifdef CONFIG_BPF_THP
+> >>> +       struct bpf_thp_ops bpf_thp;
+> >>> +#endif
+> >>> +};
+> >>> +#endif
+> >>> +
+> >>>   /*
+> >>>    * Opaque type representing current mm_struct flag state. Must be a=
+ccessed via
+> >>>    * mm_flags_xxx() helper functions.
+> >>> @@ -1268,6 +1281,10 @@ struct mm_struct {
+> >>>   #ifdef CONFIG_MM_ID
+> >>>                  mm_id_t mm_id;
+> >>>   #endif /* CONFIG_MM_ID */
+> >>> +
+> >>> +#ifdef CONFIG_BPF_MM
+> >>> +               struct bpf_mm_ops bpf_mm;
+> >>> +#endif
+> >>>          } __randomize_layout;
+> >>>
+> >>> We should be aware that this will involve extensive changes in mm/.
+> >>
+> >> That's what we do on linux-mm :)
+> >>
+> >> It would be great to use Alexei's feedback/experience to come up with
+> >> something that is flexible for various use cases.
+> >
+> > I'm still not entirely convinced that allowing individual processes or
+> > cgroups to run independent progs is a valid use case. However, since
+> > we have a consensus that this is the right direction, I will proceed
+> > with this approach.
+> >
+> >>
+> >> So I think this is likely the right direction.
+> >>
+> >> It would be great to evaluate which scenarios we could unlock with thi=
+s
+> >> (global vs. per-process vs. per-cgroup) approach, and how
+> >> extensive/involved the changes will be.
+> >
+> > 1. Global Approach
+> >    - Pros:
+> >      Simple;
+> >      Can manage different THP policies for different cgroups or process=
+es.
+> >   - Cons:
+> >      Does not allow individual processes to run their own BPF programs.
+> >
+> > 2. Per-Process Approach
+> >     - Pros:
+> >       Enables each process to run its own BPF program.
+> >     - Cons:
+> >       Introduces significant complexity, as it requires handling the
+> > BPF program's lifecycle (creation, destruction, inheritance) within
+> > every mm_struct.
+> >
+> > 3. Per-Cgroup Approach
+> >     - Pros:
+> >        Allows individual cgroups to run their own BPF programs.
+> >        Less complex than the per-process model, as it can leverage the
+> > existing cgroup operations structure.
+> >     - Cons:
+> >        Creates a dependency on the cgroup subsystem.
+> >        might not be easy to control at the per-process level.
+>
+> Another issue is that how and who to deal with hierarchical cgroup, where=
+ one
+> cgroup is a parent of another. Should bpf program to do that or mm code
+> to do that?
 
-> On Sat, Oct 04, 2025 at 08:03:53PM +0200, Thomas Wismer wrote:
-> > From: Thomas Wismer <thomas.wismer@scs.ch>
-> > 
-> > Add the TPS23881B I2C power sourcing equipment controller to the
-> > list of supported devices.  
-> 
-> Missing an explanation for why a fallback compatible is not suitable
-> here. Seems like it is, if the only difference is that the firmware is
-> not required to be refreshed, provided that loading the non-B firmware
-> on a B device would not be problematic.
+The cgroup subsystem handles this propagation automatically. When a
+BPF program is attached to a cgroup via cgroup_bpf_attach(), it's
+automatically inherited by all descendant cgroups.
 
-Loading the non-B firmware on a B device is indeed problematic. I'll
-append the following paragraph to the patch when reposting it after
-the current merge window has closed.
+Note: struct-ops programs aren't supported by cgroup_bpf_attach(),
+requiring us to build new attachment mechanisms for cgroup-based
+struct-ops.
 
-Falling back to the TPS23881 predecessor device is not suitable as firmware
-loading needs to handled differently by the driver. The TPS23881 and
-TPS23881B devices require different firmware. Trying to load the TPS23881
-firmware on a TPS23881B device fails and must therefore be omitted.
+> I remember hierarchical cgroup is the main reason THP control
+> at cgroup level is rejected. If we do per-cgroup bpf control, wouldn't we
+> get the same rejection from cgroup folks?
 
-> > 
-> > Signed-off-by: Thomas Wismer <thomas.wismer@scs.ch>
-> > ---
-> >  Documentation/devicetree/bindings/net/pse-pd/ti,tps23881.yaml | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git
-> > a/Documentation/devicetree/bindings/net/pse-pd/ti,tps23881.yaml
-> > b/Documentation/devicetree/bindings/net/pse-pd/ti,tps23881.yaml
-> > index bb1ee3398655..0b3803f647b7 100644 ---
-> > a/Documentation/devicetree/bindings/net/pse-pd/ti,tps23881.yaml +++
-> > b/Documentation/devicetree/bindings/net/pse-pd/ti,tps23881.yaml @@
-> > -16,6 +16,7 @@ properties: compatible: enum:
-> >        - ti,tps23881
-> > +      - ti,tps23881b
-> >  
-> >    reg:
-> >      maxItems: 1
-> > -- 
-> > 2.43.0
-> >   
+Right, it was rejected by the cgroup maintainers [0]
 
+[0]. https://lore.kernel.org/linux-mm/20241030150851.GB706616@cmpxchg.org/
+
+--=20
+Regards
+Yafang
 
