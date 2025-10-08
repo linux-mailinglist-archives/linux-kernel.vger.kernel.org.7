@@ -1,186 +1,97 @@
-Return-Path: <linux-kernel+bounces-845590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 165F3BC5769
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 16:41:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B594BBC5781
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 16:43:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C6D2D4E7D6D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 14:41:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 448144EACFC
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 14:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0D52EBBB4;
-	Wed,  8 Oct 2025 14:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E532EBBAF;
+	Wed,  8 Oct 2025 14:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RhaCNuNP"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="JWcf1aol"
+Received: from out203-205-221-205.mail.qq.com (out203-205-221-205.mail.qq.com [203.205.221.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D31279DCD
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 14:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F085F2AD31
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 14:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759934464; cv=none; b=QgWpMYZ6VYfiEuBGYtARagjnZ+C15yNZrziGrL49Mfa6hEOVVurajjQRQs6SB8IXbq/8/7EmJcDeZy9amVTFycdtOwbIhCwxae6KpX9sSsrr0mK8XRgT+teaFfLofT33ribT5vfP0E57q7dWYUxk3C5t5qeIm5cAt5z79LvG+lw=
+	t=1759934612; cv=none; b=tk/2DBn88PFvTW6hhcUF/FGVf+pcaX1JU9lFzA4y8TTDev7O3VeiltLY7TYxYKum+aonxgZCOF3VMlPa8IxKxgAdLvrvpF8oaz/nDTuQPcg/iU0WCcikQE1hc1Pu2fjmnSTw+2tOD9LXLWB8YCbzcz7AvVnq18TRzEKYSRk56E8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759934464; c=relaxed/simple;
-	bh=vHtHumejN87ncgya2ViWzvqch41xHhCK9RHyEy9NXFM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aSH1ho5gt6WfDRfrpsC4B0i9v1CuZK/jllopjKnIhG8nIJ5w+mTINcUm+5stMKZ385FwP/BZi8r0f4mTx0OPdmB51EggaAzkyGpLdNZ/pps099+K6iqhiAaAa/8n/sPlQWnVfp5hN2dDUPpS5Ghm4M82hFwyX6dM3zvVdciJlNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RhaCNuNP; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so7070383b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 07:41:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759934462; x=1760539262; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XRgXZBDqFKfDqLPTjTiL4KlNwfATNNhaPH2ClvCy9+g=;
-        b=RhaCNuNPm/Daj/eJYGaVERBTnTuSQ0eH6665Yjtn5DNLtjLXZNmPyNJH8LeOC3AtKO
-         70UNXk8fY8KDtFJqOuHr/j7ALWn4cv2qhcZKLj8XLIKD3unlPu8H9uUiqxIc+Q06xzV6
-         /N1+gNXFCQ7sp6wAXASY9CAAyelrfGlEXrR2ghtf5RTB0zvEtDeQqvA2uz1AehobIlcc
-         jUV/v9gay/LfMbNRPiS+08CwHTTm9R7Lu/zGe9wGxpM8Vsi2LRB9qNMbtHWoU3Z2N1zG
-         AFMDE0L1xuif+R6u1ROneshCqVi7FdbNGOVwFFgfopxE7zwR4c0G8ZgagiIa2nQPFs3A
-         nftw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759934462; x=1760539262;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XRgXZBDqFKfDqLPTjTiL4KlNwfATNNhaPH2ClvCy9+g=;
-        b=U934nUZVO0P/3K0MUlTX+cVx+a3gRWIc4vWwy1Wj9NJU3Fi/tEVoW/XAY304QquIIQ
-         28mU9YyZVJvaE2WXFI1vzpgAEUmz4fFAittmyJ4nDpM1f4gly+qpFYadhlbKU4bPQ02b
-         9oOZxUVfhIiG/Il10QrcmRRMVHg8UazCMYRzgC7m3T5oH/f/9jgHqIEi22N0hmIJMYIK
-         prEgxj1V21+3Ftp+wuGhyLad+4skUYbF32FNPW8h/r2ZuwENOEpIegD6SlWqZo4NYscz
-         9FE8D3/+L8lq6Qd1tzBlH8pc/rrhL33tnt7x/q6nrTBq9AadC7LTEq/3m4j2DQHBQAt1
-         jnYg==
-X-Forwarded-Encrypted: i=1; AJvYcCWr63gOh+REO35V70GWYKK2lWzVtRBT8MK8oRWis6uWbuPvlWr1y7ZAgkTz9aYon3Y2YA35vhHTOSRq4p8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMgkp3hd5wUAKnIuoHQi2ZvH8MOwzbczmf0fB5xpTBGqzwRch0
-	j6XcPC/Lvq6rHnJIi5EIpwZOdz8vcBvz+socxmfN7KsX6wBCaC718dHXfImrCQ==
-X-Gm-Gg: ASbGncvZJyjnNLXAZ2/Wt2HFA2WqnH616R9woVtuzR20lIpaEZb7Rm/ceDvGoYLgWb9
-	uw3lo6Smh4rxW4fOeYzs4yF4j4TuGnEFx27XWDgEsxhKT+BDT6fv+71QTPj71vmo0VAzzPQE4gS
-	7lRrWpAtGA9M7dehDHwD8UuRBia3nYhMUkYyZD2WQc8DCM4Ib+bsoUEooJuc4gj9vQdlMyhPWZN
-	LmWTFVFLbjRqX23l9wXU6ly4avzr/XtSbIzHdO8NUMbMh1rwG/GtGKGartvIgc+uWhgBMmtO8Ty
-	qSgqWWBQNJODMx09DABSbzSvZnfV70s6M7Fq+cRVtVvFveWBlutcPu5p2fKaBiqJHrJP6C91SJc
-	1IAp1DpKIz2meFRkFO8tbzI3ltYy3lbVEPICMmBcjr4GR7N8Z2kHi0VWymOw=
-X-Google-Smtp-Source: AGHT+IGSyyuPMEa9ur5aJQiYNGUh201mREentuTgFoSL+6iYa1/r7WdugU0gxZJgmxiXoNAAFCxmjA==
-X-Received: by 2002:a05:6a20:2584:b0:2e5:655c:7f8f with SMTP id adf61e73a8af0-32da83e6319mr5293800637.46.1759934462272;
-        Wed, 08 Oct 2025 07:41:02 -0700 (PDT)
-Received: from [172.20.10.4] ([117.20.154.54])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b01f9daf3sm19043382b3a.8.2025.10.08.07.40.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Oct 2025 07:41:01 -0700 (PDT)
-Message-ID: <7f28937c-121a-4ea8-b66a-9da3be8bccad@gmail.com>
-Date: Wed, 8 Oct 2025 22:40:57 +0800
+	s=arc-20240116; t=1759934612; c=relaxed/simple;
+	bh=+Mwd6O/6R0+UhWbbwOh4kyOOOxzLz+tRUgxLNNbpuYc=;
+	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID; b=qzbHiKBwolWBKJHS82UgfUKktAoQ751ZXUATtLScVM8c6vVJTR4aJgOqBbEhDnY3e8EMg74/0DQ677v5jFdMy2lZQsEuhFifBnxi680o060RsMQxs1U+85819wL4eEsjhNPg8xmoMCApLf21ViGGOjCKCjt25whx4Fg0xb66nhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=JWcf1aol; arc=none smtp.client-ip=203.205.221.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1759934601; bh=+Mwd6O/6R0+UhWbbwOh4kyOOOxzLz+tRUgxLNNbpuYc=;
+	h=From:To:Cc:Subject:Date;
+	b=JWcf1aolFnCsggqCCK5ov//c3DoKQMZ1+AQUlBHC+YbssHBkFlqhnPeEXrmWgxsb6
+	 S+k9IxmyF7ThX2SYYCvoUU6Uwz8Uexi80YT1dJLC4wkS76eeXWoZIg+3yJ+599Zz3E
+	 tnLoD07X7iIVLSge6/djpZNmLqWx3SyKuGHmu8uk=
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-XMAILINFO: NNde6qybtQwECC0vR34hGWq6wGRWwpT8CnG+b7xWG5a7I0wtAcX9HXtHcDZsM3
+	 0R3XkOnXIC17HgETTaw9RxA64lNgpy67X6PtJcRuh6d4GigJuIPeuc9HTYokPZgpnbKWQLIFJyJ4p
+	 JWXB93o1A96WlgtYtCY9DDZNlVtXAW2Wi5AAVHfHcgqOGReWHdBRIoNTzmdLw0JhDvYVYmpr4LnGU
+	 fFqNaLdJ8tWUYmWN50uxEPAluAH65lzDq1jKj1+ndocW0qHXMCc5LpDShcKDQJUietHvLa4Vwymh1
+	 M9+9eSMS5Kyv8DaOSEkI+D8Np47QK+sUpoaQzZi+u8SNqu4O+JTW2jwJP/Olcq2vbaNyOnnX4xeF7
+	 z8VI2ate8Mr/UWIWQcQ2tDXEOYI98GgZDhTTFmPbvyx9b8+vYlLIlV/u63Dz6LetQ/T1JOz5PnJZg
+	 ETU8NtK+BKY/EAfNTcIwJ/xPJnh9rTB/FGE3gtYLnGZNIDv25uRZAmkiCycmzUrTsa1ApqVLaBa/N
+	 i+nHR+M5ywjBsJOv6zhnaYfV0+8UGr91BgfagBIbj/oVOE0H34BkIplX8nxDg4sreHpIXitCqLY0T
+	 UxT+TL9WrCr2kwWGysdw7k8DrmI4nWBfhBpNWrnW3mzcV9BwcgSpJVAmUDsryrcb+mprAeHfr6hrY
+	 jjhCFWIvBajPx2FKdhTubl+U+SgRSijA5N1nyRLpAR5moQKRV3zmEO8m5TzB08Hkp2Ow8EdN+EEFf
+	 PBTdZLBcn+vXtYvzxrm4AUAeHEJyBUIvZ4ju0Szj/yRqwEGRQ0DKcfU4aOP52NZ7yAoVYuDw7lqVN
+	 rILkTf0jEq0Th5FxEI/z97Jzm2tIQz0nGSGqdkAW/N7xCwwLxg4S2A25aO/ndYOoNmvswrbFaDt9L
+	 ZVCxEKXKNXcZoiWLBvolGelToP1zuRRyvrO3cJ5LGsGA8OMbVzAGzkH0l1V0y5rM0X3s0TEuhHmHT
+	 dAao+4PuPym16lLrWJpnQ/O0siwU/vo5aybKotzjMjxNXwSepB65am8EWPws9wuZFU38Cxc/mmSJH
+	 g4AoNjBFUDBRMX69sfV43wMzP5gjjarA4tWrqK9xmq2svqZgBD0hFLfOArTvvBH/VEbvf
+From: "=?utf-8?B?c2hlbmdtaW5naHU1MTI=?=" <shengminghu512@qq.com>
+To: "=?utf-8?B?dGdseA==?=" <tglx@linutronix.de>, "=?utf-8?B?bWluZ28=?=" <mingo@redhat.com>, "=?utf-8?B?YnA=?=" <bp@alien8.de>, "=?utf-8?B?ZGF2ZS5oYW5zZW4=?=" <dave.hansen@linux.intel.com>, "=?utf-8?B?eDg2?=" <x86@kernel.org>
+Cc: "=?utf-8?B?aHBh?=" <hpa@zytor.com>, "=?utf-8?B?YnJvb25pZQ==?=" <broonie@kernel.org>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>, "=?utf-8?B?emhhbmcucnVu?=" <zhang.run@zte.com.cn>, "=?utf-8?B?aHUuc2hlbmdtaW5n?=" <hu.shengming@zte.com.cn>
+Subject: [PATCH v1] x86/boot: Use pgd_index(__START_KERNEL_map) instead of  hardcoded 511
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC bpf-next 1/3] bpf: report probe fault to BPF stderr
-To: Menglong Dong <menglong.dong@linux.dev>,
- Menglong Dong <menglong8.dong@gmail.com>,
- Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, jiang.biao@linux.dev
-References: <20250927061210.194502-1-menglong.dong@linux.dev>
- <20250927061210.194502-2-menglong.dong@linux.dev>
- <CAADnVQJAdAxEOWT6avzwq6ZrXhEdovhx3yibgA6T8wnMEnnAjg@mail.gmail.com>
- <3571660.QJadu78ljV@7950hx>
-Content-Language: en-US
-From: Leon Hwang <hffilwlqm@gmail.com>
-In-Reply-To: <3571660.QJadu78ljV@7950hx>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Date: Wed, 8 Oct 2025 22:43:00 +0800
+X-Priority: 3
+Message-ID: <tencent_AB982BDF5B2FBDD110C0ECB5A5474B9C4D0A@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
+X-QQ-mid: xmsezc43-1t1759934580tulx4ocqe
 
+RnJvbTogU2hlbmdtaW5nIEh1IDxzaGVuZ21pbmdodTUxMkBxcS5jb20+CkRhdGU6IFdlZCwg
+OCBPY3QgMjAyNSAyMTo0NjowMyArMDgwMApTdWJqZWN0OiBbUEFUQ0ggdjFdIHg4Ni9ib290
+OiBVc2UgcGdkX2luZGV4KF9fU1RBUlRfS0VSTkVMX21hcCkgaW5zdGVhZCBvZgogaGFyZGNv
+ZGVkIDUxMQoKVGhlIGluZGV4IDUxMSBpcyB1c2VkIHRvIHNldCB1cCB0aGUga2VybmVsIGhp
+Z2ggbWFwcGluZyBpbiB0aGUKdG9wLWxldmVsIHBhZ2UgdGFibGUuIAoKUmVwbGFjaW5nIHRo
+ZSBtYWdpYyBudW1iZXIgd2l0aCBwZ2RfaW5kZXgoX19TVEFSVF9LRVJORUxfbWFwKSAKaW1w
+cm92ZXMgY29kZSByZWFkYWJpbGl0eSBhbmQgZnV0dXJlLXByb29mcyB0aGUgY29kZSBhZ2Fp
+bnN0IApwb3NzaWJsZSBjaGFuZ2VzIGluIHBhZ2luZyBzdHJ1Y3R1cmUuCgpTaWduZWQtb2Zm
+LWJ5OiBTaGVuZ21pbmcgSHUgPHNoZW5nbWluZ2h1NTEyQHFxLmNvbT4KLS0tCiBhcmNoL3g4
+Ni9rZXJuZWwvaGVhZDY0LmMgfCA0ICsrKy0KIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlv
+bnMoKyksIDEgZGVsZXRpb24oLSkKCmRpZmYgLS1naXQgYS9hcmNoL3g4Ni9rZXJuZWwvaGVh
+ZDY0LmMgYi9hcmNoL3g4Ni9rZXJuZWwvaGVhZDY0LmMKaW5kZXggZmQyOGI1M2RiLi42NWQ0
+YzQ4NWEgMTAwNjQ0Ci0tLSBhL2FyY2gveDg2L2tlcm5lbC9oZWFkNjQuYworKysgYi9hcmNo
+L3g4Ni9rZXJuZWwvaGVhZDY0LmMKQEAgLTI4Niw3ICsyODYsOSBAQCBhc21saW5rYWdlIF9f
+dmlzaWJsZSB2b2lkIF9faW5pdCBfX25vcmV0dXJuIHg4Nl82NF9zdGFydF9rZXJuZWwoY2hh
+ciAqIHJlYWxfbW9kZQogCWxvYWRfdWNvZGVfYnNwKCk7CiAKIAkvKiBzZXQgaW5pdF90b3Bf
+cGd0IGtlcm5lbCBoaWdoIG1hcHBpbmcqLwotCWluaXRfdG9wX3BndFs1MTFdID0gZWFybHlf
+dG9wX3BndFs1MTFdOworCXVuc2lnbmVkIGludCBrZXJuZWxfcGdkID0gcGdkX2luZGV4KF9f
+U1RBUlRfS0VSTkVMX21hcCk7CisKKwlpbml0X3RvcF9wZ3Rba2VybmVsX3BnZF0gPSBlYXJs
+eV90b3BfcGd0W2tlcm5lbF9wZ2RdOwogCiAJeDg2XzY0X3N0YXJ0X3Jlc2VydmF0aW9ucyhy
+ZWFsX21vZGVfZGF0YSk7CiB9Ci0tIAoyLjM0LjEK
 
-
-On 2025/10/7 14:14, Menglong Dong wrote:
-> On 2025/10/2 10:03, Alexei Starovoitov wrote:
->> On Fri, Sep 26, 2025 at 11:12 PM Menglong Dong <menglong8.dong@gmail.com> wrote:
->>>
->>> Introduce the function bpf_prog_report_probe_violation(), which is used
->>> to report the memory probe fault to the user by the BPF stderr.
->>>
->>> Signed-off-by: Menglong Dong <menglong.dong@linux.dev>
-
-[...]
-
->>
->> Interesting idea, but the above message is not helpful.
->> Users cannot decipher a fault_ip within a bpf prog.
->> It's just a random number.
->
-> Yeah, I have noticed this too. What useful is the
-> bpf_stream_dump_stack(), which will print the code
-> line that trigger the fault.
->
->> But stepping back... just faults are common in tracing.
->> If we start printing them we will just fill the stream to the max,
->> but users won't know that the message is there, since no one
->
-> You are right, we definitely can't output this message
-> to STDERR directly. We can add an extra flag for it, as you
-> said below.
->
-> Or, maybe we can introduce a enum stream_type, and
-> the users can subscribe what kind of messages they
-> want to receive.
->
->> expects it. arena and lock errors are rare and arena faults
->> were specifically requested by folks who develop progs that use arena.
->> This one is different. These faults have been around for a long time
->> and I don't recall people asking for more verbosity.
->> We can add them with an extra flag specified at prog load time,
->> but even then. Doesn't feel that useful.
->
-> Generally speaking, users can do invalid checking before
-> they do the memory reading, such as NULL checking. And
-> the pointer in function arguments that we hook is initialized
-> in most case. So the fault is someting that can be prevented.
->
-> I have a BPF tools which is writed for 4.X kernel and kprobe
-> based BPF is used. Now I'm planing to migrate it to 6.X kernel
-> and replace bpf_probe_read_kernel() with bpf_core_cast() to
-> obtain better performance. Then I find that I can't check if the
-> memory reading is success, which can lead to potential risk.
-> So my tool will be happy to get such fault event :)
->
-> Leon suggested to add a global errno for each BPF programs,
-> and I haven't dig deeply on this idea yet.
->
-
-Yeah, as we discussed, a global errno would be a much more lightweight
-approach for handling such faults.
-
-The idea would look like this:
-
-DEFINE_PER_CPU(int, bpf_errno);
-
-__bpf_kfunc void bpf_errno_clear(void);
-__bpf_kfunc void bpf_errno_set(int errno);
-__bpf_kfunc int bpf_errno_get(void);
-
-When a fault occurs, the kernel can simply call
-'bpf_errno_set(-EFAULT);'.
-
-If users want to detect whether a fault happened, they can do:
-
-bpf_errno_clear();
-header = READ_ONCE(skb->network_header);
-if (header == 0 && bpf_errno_get() == -EFAULT)
-        /* handle fault */;
-
-This way, users can identify faults immediately and handle them gracefully.
-
-Furthermore, these kfuncs can be inlined by the verifier, so there would
-be no runtime function call overhead.
-
-Thanks,
-Leon
 
