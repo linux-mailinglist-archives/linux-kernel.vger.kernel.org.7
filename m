@@ -1,79 +1,80 @@
-Return-Path: <linux-kernel+bounces-845317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAD57BC4622
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 12:41:50 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FC55BC4632
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 12:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1C3174EAC9C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 10:41:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 92A7A4ECEA0
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 10:42:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05B82F60D8;
-	Wed,  8 Oct 2025 10:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kOhueycn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D932F60B3;
+	Wed,  8 Oct 2025 10:42:16 +0000 (UTC)
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7153E2571DA;
-	Wed,  8 Oct 2025 10:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E560725D528
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 10:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759920103; cv=none; b=sTH8olySTZzFXPxgJkVd12o9g5v4OD5MAJLIg9LiAcumY8Ej2igGmj/ZonEgFupx/NwbyQ6z24cntUtqFaofSg59TFn6ypRPzmZrl6y5Ds9vSUR8w5dy+HrYsK0n4mPNuxpEs+7LaCoKBzyaZa+MaqiHtOGy8m1lYAukGlOmW7Y=
+	t=1759920136; cv=none; b=WNLEyQN8h59IVx1HO9Zj3m1r45jQbxBrlyESNvAXwkdgtvqDBFGL5w6fKLiSn9cr+C05HIrYIKvtjBNnQ5J0IlD3f7l0TU37fUlSR8Qm/xNeH0yEqnq2AhIAUWlxFukHGFk5eXqHBy6XtKj54tRMRAbzAAZJ7BIiTV9zzPXDEsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759920103; c=relaxed/simple;
-	bh=N7kccmBEIRyE/cBZNjVeUwqAdkOgSbKp3zdpY3l3mJE=;
+	s=arc-20240116; t=1759920136; c=relaxed/simple;
+	bh=gXfZj39gOdPe4cV9/pLXEx0hRGUl/o9LSz6BtiMyxTo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mrbi736Iop0b2BLPsW7rA2uSLux10ZZLHZafUndZzk1+d7oZk720lDz6mFfu3a6Ggxswzaw0626cVRppz8GXt4wiy+TMwK1jQ2Rx2DWSn6Vgxr4w7I/cWe0pIL61c5oNIUPaRJ/pcP1Q+x418Iluq7ht+/4PIVIJ7jPiflSPZtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kOhueycn; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759920102; x=1791456102;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=N7kccmBEIRyE/cBZNjVeUwqAdkOgSbKp3zdpY3l3mJE=;
-  b=kOhueycnmRB7d7ATZjd+4D+XL+uPhX5pkD75A/Q8AYkEF085WFFKG3wn
-   eDwgN+Vhq5B76+gGqhyGsVPUl9GDzrBbNl5xV7BxYodDDr4oRw0O1SCZB
-   EsZbmQ1rcZW+FoY+e1X2gWWIbwYs6fFjw9og1T1U13Ly3LGQCpD9vHB/J
-   XtvSCIisEPnb3VIptewh7bvzHjVboD/Xs1R0DEaUuMIDVPlDxxgOp4ePl
-   MMTeWWCTF5A0rb/i59wuzkCDRhg8l4zNW8+3b6re3wbtBXk2Rw03psFGL
-   riHoxFfPICCpwWs6iIJ/CHaW6hEvDbCU6w5GIx5yvzW79dmqg1OQ0v27z
-   Q==;
-X-CSE-ConnectionGUID: dfQMXXziRQCQF9fX1Ht6Wg==
-X-CSE-MsgGUID: XEYfKb4zSpqMjypuHOF+0Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11575"; a="72369483"
-X-IronPort-AV: E=Sophos;i="6.19,323,1754982000"; 
-   d="scan'208";a="72369483"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2025 03:41:32 -0700
-X-CSE-ConnectionGUID: X6h6d2RKRKWaq6RvYmjFbA==
-X-CSE-MsgGUID: lffald/wQP+9tvvIOiENcA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,323,1754982000"; 
-   d="scan'208";a="180000565"
-Received: from iherna2-mobl4.amr.corp.intel.com (HELO kuha.fi.intel.com) ([10.124.220.169])
-  by orviesa009.jf.intel.com with SMTP; 08 Oct 2025 03:41:26 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 08 Oct 2025 13:41:24 +0300
-Date: Wed, 8 Oct 2025 13:41:24 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Benson Leung <bleung@chromium.org>,
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
-	Jameson Thies <jthies@google.com>,
-	Andrei Kuchynski <akuchynski@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Guenter Roeck <groeck@chromium.org>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH RFC] usb: typec: thunderbolt: Fix Thunderbolt adapter
- type bitfield values
-Message-ID: <aOY_1KhqJO2opqk2@kuha.fi.intel.com>
-References: <20250926-topic-tbt_header_bit_fix-v1-1-122238af5c82@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BLsTWNFmdYvUWTM4AHY2C5cD/B40H4agfFFj1b6DT+I9JrtBhvTWNMMZKyYSzA8D+L5ZJZ2BlXNfyOoy+KB5kgwjWIDjYph7HtH3ediTUZ8n+tsq5wRv+Z4p+gBqnR95KJF76WkmLSlPxHvNVQJNNAfPLxzz6LKDq6nirzyiIDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-637e74e9104so8005202a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 03:42:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759920132; x=1760524932;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gXfZj39gOdPe4cV9/pLXEx0hRGUl/o9LSz6BtiMyxTo=;
+        b=kA82cUJrcqFUTQocUqkQA8Cxtp9WKFiY4uZiSSAWb+X/vJYLclw2spQRwihGl6Q8zg
+         a3oepa8rT5zx/a5a/ZL3iiKwGR7I2/DqFgqeGkMf2C3WJNplekaeCGa38iXRC5FcjQ6H
+         6OlPu5rvFJcaS8x+8Zm5hT/ec7AFhQdBBTVCsF+kaF878C3YQ49G8El6nCvUB9C+NuD6
+         1qrKODl8zqio3b/gXMgYEtfZ0HCiLUuOOydEfReUTPlozCoKzD2mlbIc8aW3xWzHSnS+
+         f+6BmRSDKSKYXPBlnx9sI0anmnLvbm58R3t/fVAqqO+Tgm1XJdDXb0dbtEl9Ds8xp0Z6
+         +MYg==
+X-Forwarded-Encrypted: i=1; AJvYcCVeZkXeNd9XAmI56Y2GoPiygYG8HYtisx/ngev8oalF3kOKIJbUdIlApulgpAOM5MU5jUaVnAVbwo3zvxA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGyGuU+QN3QTPmI/PTdOUYpPpqKxbLF8Vu4oQiu0SOGgbMWYFt
+	YEG9p2/IiKd6lH2I2wlnfy9fqF/vUYk4dMFinzldDvXS9qGrkJJzilZJ
+X-Gm-Gg: ASbGncuXVab9IWpgSb5K5D71OxaHNJJ4elThku7N75aY+xAcsISD/OhcDP4e8RoB31r
+	Lhiwb1Rut0mVwDUDIsa0nk2bJDY0hNanmJuvu++GXwulZNuluRK8zAAGhox/R+TKGS0y2pqGRAV
+	sdHHyN6EwV6v6U1kEwyHabyFkI7QdLO5nh3lXDI/44Ul4p5eHrJ/tMLOAG60upIvf3MYgE3QNod
+	ptaA0M5jgbkf7DNQt9kEJUqR+VwNvy/UWr5QY1pSwTO8jWPRimGSIDGkYmoQc8Ch0jlBOvFqr1q
+	9z0F+U5acO3YDiWyGTBesslv8Uy2z/tmmgosLEHaHUbapdB6cMp4DL+4XeoK9jcmENrYIvxqTH9
+	9KUtoAjzIz3z7Wq5Tdq/8LgdTeIFiuz5qDWtZ3w==
+X-Google-Smtp-Source: AGHT+IECD7wKvTZ6+MU6CjYIhyoFNKuj3KFaek4NzDOSYMfoAgnsoXljdX2X/uCFDDf8Ajmh077qIA==
+X-Received: by 2002:a05:6402:50d1:b0:634:a32f:abbc with SMTP id 4fb4d7f45d1cf-639d5c53171mr2450513a12.25.1759920131891;
+        Wed, 08 Oct 2025 03:42:11 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff::])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-639773d4d8esm8697663a12.30.2025.10.08.03.42.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 03:42:11 -0700 (PDT)
+Date: Wed, 8 Oct 2025 03:42:08 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Baoquan He <bhe@redhat.com>
+Cc: David Hildenbrand <dhildenb@redhat.com>, kas@kernel.org, 
+	Jiri Bohac <jbohac@suse.cz>, riel@surriel.com, vbabka@suse.cz, nphamcs@gmail.com, 
+	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>, kexec@lists.infradead.org, 
+	akpm@linux-foundation.org, Philipp Rudo <prudo@redhat.com>, 
+	Donald Dutile <ddutile@redhat.com>, Pingfan Liu <piliu@redhat.com>, Tao Liu <ltao@redhat.com>, 
+	linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.cz>
+Subject: Re: [PATCH v5 0/5] kdump: crashkernel reservation from CMA
+Message-ID: <ctrpw2ppozwtsj7544jx45kpexmaackpzzyeyhkqsjrf7cz2tc@7fmuzvy7uwec>
+References: <aEqnxxfLZMllMC8I@dwarf.suse.cz>
+ <vojlxf5pelxlr6omsfsccd4e4cdzn5qyxpgiqajorkgmgd7ruh@e5wwhkmvntpb>
+ <26ae6b04-3beb-47e9-9639-b081003dc9bb@redhat.com>
+ <f7x2flir2c5zpkusgiyk7qnrdqo4dek3iksyldw6w22r55s4vy@4b47lrcv3fag>
+ <2e35b6dd-56dd-47e6-8dac-54f446f763f0@redhat.com>
+ <aOSO/e68pZ7FGKm1@MiWiFi-R3L-srv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,69 +83,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250926-topic-tbt_header_bit_fix-v1-1-122238af5c82@oss.qualcomm.com>
+In-Reply-To: <aOSO/e68pZ7FGKm1@MiWiFi-R3L-srv>
 
-On Fri, Sep 26, 2025 at 02:32:57PM +0200, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> The value has been amended with the release of the USB Type-C
-> Specification v2.1, reportedly as an erratum.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+On Tue, Oct 07, 2025 at 11:55:36AM +0800, Baoquan He wrote:
+> On 10/06/25 at 06:45pm, David Hildenbrand wrote:
+>
+> Have you encountered a real problem about the dumping, or you are just
+> worried about it?
 
-Makes sense to me. FWIW:
+I haven't encountered any issues so far, and I already have a set of
+machines running with this configuration.
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+I'm planning to roll out this feature to a larger group of servers, so
+I'm currently performing due diligence.
 
-> ---
-> I bundled a change to the CrOS EC driver based on the assumption that
-> it worked around the faulty definition. I see the Intel PMC mux driver
-> also checks for this bit, but it seems like that driver assumes that
-> the value is in-spec (i.e. it may be buggy as of right now).
-> 
-> Adding the respective maintainers to make sure everyone can see this.
-> ---
->  drivers/platform/chrome/cros_ec_typec.c | 2 +-
->  include/linux/usb/typec_tbt.h           | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/chrome/cros_ec_typec.c
-> index b712bcff6fb2674ec79286159090df6d79b32e9a..d80f3de1b87c362a2825bd19f826c5be077583aa 100644
-> --- a/drivers/platform/chrome/cros_ec_typec.c
-> +++ b/drivers/platform/chrome/cros_ec_typec.c
-> @@ -585,7 +585,7 @@ static int cros_typec_enable_tbt(struct cros_typec_data *typec,
->  	data.device_mode = TBT_MODE;
->  
->  	if (pd_ctrl->control_flags & USB_PD_CTRL_TBT_LEGACY_ADAPTER)
-> -		data.device_mode = TBT_SET_ADAPTER(TBT_ADAPTER_TBT3);
-> +		data.device_mode = TBT_SET_ADAPTER(TBT_ADAPTER_LEGACY);
->  
->  	/* Cable Discover Mode VDO */
->  	data.cable_mode = TBT_MODE;
-> diff --git a/include/linux/usb/typec_tbt.h b/include/linux/usb/typec_tbt.h
-> index 55dcea12082c80defeb6f199ad333279b58adcd7..6bf208c9dd5037f162678bc0be5be7ae1ca0deca 100644
-> --- a/include/linux/usb/typec_tbt.h
-> +++ b/include/linux/usb/typec_tbt.h
-> @@ -27,8 +27,8 @@ struct typec_thunderbolt_data {
->  /* TBT3 Device Discover Mode VDO bits */
->  #define TBT_MODE			BIT(0)
->  #define TBT_ADAPTER(_vdo_)		FIELD_GET(BIT(16), _vdo_)
-> -#define   TBT_ADAPTER_LEGACY		0
-> -#define   TBT_ADAPTER_TBT3		1
-> +#define   TBT_ADAPTER_TBT3		0
-> +#define   TBT_ADAPTER_LEGACY		1
->  #define TBT_INTEL_SPECIFIC_B0		BIT(26)
->  #define TBT_VENDOR_SPECIFIC_B0		BIT(30)
->  #define TBT_VENDOR_SPECIFIC_B1		BIT(31)
-> 
-> ---
-> base-commit: 8e2755d7779a95dd61d8997ebce33ff8b1efd3fb
-> change-id: 20250926-topic-tbt_header_bit_fix-17aeb524df4a
-> 
-> Best regards,
-> -- 
-> Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-
--- 
-heikki
+Thanks!
+--breno
 
