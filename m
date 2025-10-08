@@ -1,134 +1,148 @@
-Return-Path: <linux-kernel+bounces-845216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 714F8BC3F05
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 10:52:07 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16C0BBC3F23
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 10:53:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83F7D19E3064
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 08:52:30 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 909F135148D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 08:53:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5712F5315;
-	Wed,  8 Oct 2025 08:51:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A872F4A11;
+	Wed,  8 Oct 2025 08:53:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eYrCExUK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X7m4j1ko"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B362F49F9
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 08:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B661F92E
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 08:52:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759913514; cv=none; b=DlD3mPVcyRGZatkZ4AAv5N92jmojjWx+r0WpW3E9J/ozQCLyUFg4jMBXH7B94jbGgmh/ZrjkEXXOE9kiqVxQjeQChFKQwz2L5fh5oCgr4COblmHFtca7b1nyt9k6mtep1xw5EMNJOVdaMkM5h8zdQEb/AV3U6qrDn1zLb0XFs5k=
+	t=1759913580; cv=none; b=R6nh14hezKRVDWN5vU/pkGrisAj9FboV3hapICfOtA2G8PKJ9xedCHfr93rpIlx+vdLweEX79swEXsinchuWIXB5tMFS0fiZzHYOb3Kmti038PL5YYY2MaWW84BNE9SIKu9YPuWSF3FXBwi4HSKYvo8sVRCroC9WUXodIfcc0q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759913514; c=relaxed/simple;
-	bh=K1jLoSzEuFbqSezYfnU5tiO0InkAWReSzsHqNYir2gI=;
+	s=arc-20240116; t=1759913580; c=relaxed/simple;
+	bh=AYlPlEYnalDPu3mU+G9COpLgD9gYXaXXBqfIzZI0NhM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WzSFUN3LygC4DJYuuBzbpYDsD6jI5Sz+XJ2gwNGYym/qzgn5fUvuK2puE+eNzHLsGyr/EFgBgZo3mmha3ju5QQGzF9FOGEp7J0cbwWcUfrMBQN12EOmCWQvWQR1AtHaJoeCzf8y01DFswPgnWbBhSME+W96t45kpFHXWNrM+SoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eYrCExUK; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759913511;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K1jLoSzEuFbqSezYfnU5tiO0InkAWReSzsHqNYir2gI=;
-	b=eYrCExUKHdGGGxlBZx4q7w/wUeO/Y85AbM4PMugQu72/wNnbzxxVNGJX882evbCSIiY0af
-	cMYixdShgWFmr0sU6c4kFrNUKZRNpOy4scO9H5kIoa6iWvz/SMQAjzgbjRGlOwrsVyMI2+
-	S/C0rh42jx4Rj8fn2pPqIPOLcSn1cRw=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-534-Jk04xvKsNWKOtkvJl9T3Kw-1; Wed, 08 Oct 2025 04:51:50 -0400
-X-MC-Unique: Jk04xvKsNWKOtkvJl9T3Kw-1
-X-Mimecast-MFC-AGG-ID: Jk04xvKsNWKOtkvJl9T3Kw_1759913509
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-afe81959e5cso1033679066b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 01:51:50 -0700 (PDT)
+	 To:Cc:Content-Type; b=SjUBWidnpHZ3oZYHpyzHidIspfH/F7sLHLZTteAEg0xEYT/JP58Q5k+wCHxqHb4sRnaCEuvMynVWd64MQm67aOR7NuvCoeoj/hkTG0sQhV3VMy93NQtkT5n/F+BKdzfw3gX9t+b4SlTnEGac+oVbhN5T31fyOU6IsllJ64d1ddY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X7m4j1ko; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-28e7cd6dbc0so81547675ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 01:52:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759913578; x=1760518378; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/JRe+Ysw3ed28Q5I6fD0FZJYvYHKIT6y/Zbw+MVV2NU=;
+        b=X7m4j1ko+GpgLoWu+E+qXVENFgOVjCRRloSPKiko6o29gjI+idBHM/4+NvTbmMKc4S
+         wrFJXQH9CUiYZvRRlTyolb+oCtzCgDKGB7S+9C9WLiAbT7D7eaebtGfECTSV1MPosw/x
+         2eMtxarrphPZdU7R3Dc8+laGMb1KIcYliI6dprrV3QeP6GBrCSieQPFgBL0oqTGwI/ub
+         7FciQBAG9qJf8ldOY8p4XfO+AvwUmE5IF39m+qW+D8/xnES9N6x5udqZu//0b/iF1p9k
+         8ryrlxJ0kRVxGRokOTkH+zjIO8cedVeApFs6zGM4eGB3Pwjj6tWILyMMEbR3DKCNd9mD
+         ZT3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759913509; x=1760518309;
+        d=1e100.net; s=20230601; t=1759913578; x=1760518378;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=K1jLoSzEuFbqSezYfnU5tiO0InkAWReSzsHqNYir2gI=;
-        b=puC/g/hPEgqTEkrXtAqero7jKD71Qzx1w+BcNzp4M3XD5pNqiWom2nvx0onjQ6E6ZX
-         eOejHTyGVJZRtUJhQZUMABqYYoORzHDa/mJqhy5RqiR5uscYcxUDTvDrN/IlqDxDMge+
-         eUOarzyym5QYU63dUEkK74y9ySR9citnuXKb3Sq+9BhtP4jo3dcUTyG4eu779TFt853Y
-         t2f3PezLW2Pwiyq11UYJi84Z+mRZStU0OkNDMbeiV+io4koVtVpgDCqVzZxKVMB7mvLh
-         3HWXYxkJE4PpaKy+2tTr64XkF2bJCw5K3eN9J52fx/90Dz+yTRs9dbh6knEJppkc2h8u
-         K3sg==
-X-Forwarded-Encrypted: i=1; AJvYcCWOiWqpsJBcfVrD7LzU9R7R/6XbbBDO/jd6gR4LfucQT5l7ul8udF2SCbCG8Cukbq2X4ma14ehYbAJvIJ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1gf9fLudCNwkWDqFG8UWjeJiZwlPUA+JpSrTSiainIzil4ULn
-	kS8FPOLN7CwqaC6cLJ08SOq2PT+8sQrjBTD1KqrwrZ9FhXc+CuOObJSaC6qRjVrKLu4zEfM76x3
-	VZrSwOaa0042RElY4GWKrqWwuR3JX5AjSgHL7ldi3lRXFBdob+4XOx7F7HdUSzFHRPAMeFj/yrC
-	Dp/8R9MaeyaK/8yR9VmcmX8rtqGiLUjoQIhJ7z7Bqk
-X-Gm-Gg: ASbGncvzMWuceUTR0mBARoJczc1cfZ2oXSgLq8u/UWjXCKhYHNQm3yUpejes4Oue52/
-	7Hu//Ui1/vq5igKzOWUklSkXKqAJh49EZbYrvT86c8rGbdbl3JrkeKSOjtFXrtA+F9aaV/WanB/
-	5lHvmJO3lekqv32xQn/ga71a1BGbWo/S4S6QCp7EnGKl61hmejyKEwknGU
-X-Received: by 2002:a17:907:6ea9:b0:b0b:f228:25a with SMTP id a640c23a62f3a-b50ac8e5713mr267299066b.64.1759913509023;
-        Wed, 08 Oct 2025 01:51:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGlLGykibVDcNGYWtPcRHTDtWzH2pHaHbQcQI7lpz4Me5SQM9O1QhytKqyATgl/LGApHGlZOh3ARmF0O5i6ufo=
-X-Received: by 2002:a17:907:6ea9:b0:b0b:f228:25a with SMTP id
- a640c23a62f3a-b50ac8e5713mr267297266b.64.1759913508644; Wed, 08 Oct 2025
- 01:51:48 -0700 (PDT)
+        bh=/JRe+Ysw3ed28Q5I6fD0FZJYvYHKIT6y/Zbw+MVV2NU=;
+        b=tejov181MftX4O8AJnf++v2G6pMV6H2dsllzKiLwhzioyj1RaRyvqJqzn7b/Zp+C9G
+         YMU61JDoQjB/YEMeAuxH6mB68SWqv03klXjUdtrtrCfLZMS2fQN6cOUMSM2Gjkphd7Pw
+         u7cd9CqnvahzoNngF2hdU3J2A5c3PRuRJDVMEtMvKP9mux1UdqanyV2FdDHECmEfoZn7
+         oh2u9EiDd33SLLo3H7gj9bw1BHlY32ARNsJwG6+pUfXJULtQ3fuNi+exmEJobzy7pUVB
+         bxpWS2Gj5pBQS3zwUcBlnJivqyh/Qtw3dD+sDX6oaNP70dMWZBmEqKtWwpjzjiXCpoS2
+         xuiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVg7xC78lzqM8Pg0+Q5KmsPsEW+IDxR652PvVidXkIpsLlVyDRhaxnUVGrb+irdnfx5sUUE2NBnndo9T04=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwJMgfjQA4kL9STxjx1/azkGRJsIxW07EN3iHMgLM+fmYZ8Va1
+	J8Quxx/IJtV9hVT5cpHOWQYhv8oJXFpU6lHbVVq4CDMEbh2YwaXkXoRnek6eAXqlAaB2nIP4FpB
+	yIVcfRhqu0KZJYB8tbSx4KuMJZC6it/E=
+X-Gm-Gg: ASbGncsceYFSpNZm9uvQ5JZvtvmpvObWxKcsZTg2R1xlrGWEZ7d9PT1ZMI+vYh5HxE3
+	JDjohn3KYc8of5cvrOlapk7E/6ZO31+NAAIKE/QRG/8opO+LhWE3S/hLmIOdET/r3Wp6qLAHVxq
+	2xx0v6hTfF3Geurb158lo02jsdIgzkWnrsyvocttoikoxLy4E5A5/z45uy01CVPW7gOeCOKv+a3
+	ZEsQbvyudfjmV41lg4DX5MDeHoeephs0t8YbCRsbsbh
+X-Google-Smtp-Source: AGHT+IFKCMDzVKeMBL64zSYDRpRFM0H2rB7wq31qh9YFT8+du8n/p0Y5R8iH/2zbH4uxiGTK7bY6Wyb/b/TqjnRgSmI=
+X-Received: by 2002:a17:902:f607:b0:25c:7434:1c03 with SMTP id
+ d9443c01a7336-290273568e4mr34433325ad.10.1759913578515; Wed, 08 Oct 2025
+ 01:52:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aOUMyGvkibvOV0IS@archie.me> <20251007185508.40908-1-krishnagopi487@gmail.com>
- <20251007185508.40908-2-krishnagopi487@gmail.com>
-In-Reply-To: <20251007185508.40908-2-krishnagopi487@gmail.com>
-From: Tomas Glozar <tglozar@redhat.com>
-Date: Wed, 8 Oct 2025 10:51:37 +0200
-X-Gm-Features: AS18NWAa5UqMYPtJx16YwJk94Bme1M1kIPV6ZVpINM7KtV6NNimChhhnPaGzQko
-Message-ID: <CAP4=nvTjauRawBPTnGEztZpdDSNhGpgSJtjoTFuq+cCQHP5oEg@mail.gmail.com>
-Subject: Re: [PATCH 1/8] Documentation/rtla: rename common_appendix.rst
-To: Gopi Krishna Menon <krishnagopi487@gmail.com>
-Cc: rostedt@goodmis.org, corbet@lwn.net, linux-trace-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, david.hunter.linux@gmail.com, khalid@kernel.org, 
-	linux-kernel-mentees@lists.linux.dev, crwood@redhat.com, 
-	costa.shul@redhat.com, jkacur@redhat.com, 
-	Bagas Sanjaya <bagasdotme@gmail.com>
+References: <20251006114507.371788-1-aha310510@gmail.com> <CAKYAXd8pyEBm6cOBLQ_yKaoeb2QDkofprMK1Hq1c_r_pumRnxQ@mail.gmail.com>
+In-Reply-To: <CAKYAXd8pyEBm6cOBLQ_yKaoeb2QDkofprMK1Hq1c_r_pumRnxQ@mail.gmail.com>
+From: Jeongjun Park <aha310510@gmail.com>
+Date: Wed, 8 Oct 2025 17:52:47 +0900
+X-Gm-Features: AS18NWC61Zud4JgwiWJjoS2O6q9aZLnXpBR98-miFbKRgAfyGTqcKi4hwMhR8L4
+Message-ID: <CAO9qdTHx-EYBeo1mfgVzcwQT5M6iwtVsBZTjAEVQugcfTsVtjA@mail.gmail.com>
+Subject: Re: [PATCH] exfat: fix out-of-bounds in exfat_nls_to_ucs2()
+To: Namjae Jeon <linkinjeon@kernel.org>
+Cc: sj1557.seo@samsung.com, yuezhang.mo@sony.com, viro@zeniv.linux.org.uk, 
+	pali@kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org, syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-=C3=BAt 7. 10. 2025 v 20:55 odes=C3=ADlatel Gopi Krishna Menon
-<krishnagopi487@gmail.com> napsal:
+Hi Namjae,
+
+Namjae Jeon <linkinjeon@kernel.org> wrote:
 >
-> common_appendix.rst is intended to be included by other rtla documents
-> and is not meant to be built as a standalone document.
->
-> Rename common_appendix.rst to common_appendix.txt to maintain
-> consistency with other common_*.txt files and prevent Sphinx from
-> building it as a standalone document. Update all include references
-> accordingly.
->
-> Suggested-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> Signed-off-by: Gopi Krishna Menon <krishnagopi487@gmail.com>
-> ---
+> On Mon, Oct 6, 2025 at 8:45=E2=80=AFPM Jeongjun Park <aha310510@gmail.com=
+> wrote:
+> >
+> Hi Jeongjun,
+> > After the loop that converts characters to ucs2 ends, the variable i
+> > may be greater than or equal to len. However, when checking whether the
+> > last byte of p_cstring is NULL, the variable i is used as is, resulting
+> > in an out-of-bounds read if i >=3D len.
+> >
+> > Therefore, to prevent this, we need to modify the function to check
+> > whether i is less than len, and if i is greater than or equal to len,
+> > to check p_cstring[len - 1] byte.
+> I think we need to pass FSLABEL_MAX - 1 to exfat_nls_to_utf16, not FSLABE=
+L_MAX.
+> Can you check it and update the patch?
 
-Thanks for the patches! I completely missed that the refactoring of
-the docs broke Sphinx, I only tested RTLA's man page generation when
-doing the review...
+If the only reason to change len to FSLABEL_MAX - 1 is to prevent
+out-of-bounds, this isn't a very appropriate solution.
 
-Could you squash the changes into one patch? See the kernel documentation [=
-1]:
+Because the return value of exfat_convert_char_to_ucs2() can be greater
+than 1, even if len is set to FSLABEL_MAX - 1, i may still be FSLABEL_MAX
+when the loop ends. Therefore, checking the last byte of p_cstring with
+the min() function is essential to ensure out-of-bounds prevention.
 
-"... On the other hand, if you make a single change to numerous files,
-group those changes into a single patch. Thus a single logical change
-is contained within a single patch."
+> Thanks.
+> >
+> > Cc: <stable@vger.kernel.org>
+> > Reported-by: syzbot+98cc76a76de46b3714d4@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=3D98cc76a76de46b3714d4
+> > Fixes: 370e812b3ec1 ("exfat: add nls operations")
+> > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> > ---
+> >  fs/exfat/nls.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
+> > index 8243d94ceaf4..a52f3494eb20 100644
+> > --- a/fs/exfat/nls.c
+> > +++ b/fs/exfat/nls.c
+> > @@ -616,7 +616,7 @@ static int exfat_nls_to_ucs2(struct super_block *sb=
+,
+> >                 unilen++;
+> >         }
+> >
+> > -       if (p_cstring[i] !=3D '\0')
+> > +       if (p_cstring[min(i, len - 1)] !=3D '\0')
+> >                 lossy |=3D NLS_NAME_OVERLEN;
+> >
+> >         *uniname =3D '\0';
+> > --
 
-[1] https://www.kernel.org/doc/html/latest/process/submitting-patches.html#=
-separate-your-changes
-
-Thanks,
-
-Tomas
-
+Regards,
+Jeongjun Park
 
