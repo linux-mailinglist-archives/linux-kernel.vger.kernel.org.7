@@ -1,139 +1,130 @@
-Return-Path: <linux-kernel+bounces-845518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11752BC53A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:34:41 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2333BC53D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:37:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C0B64F3E8E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:34:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F13004EC23E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:37:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 604172857F2;
-	Wed,  8 Oct 2025 13:34:29 +0000 (UTC)
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B752B285C98;
+	Wed,  8 Oct 2025 13:37:21 +0000 (UTC)
+Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E1424E01D;
-	Wed,  8 Oct 2025 13:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74ED134BA44;
+	Wed,  8 Oct 2025 13:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759930469; cv=none; b=YZ2oamUITFXtcomblTxQwbk06Nv2DECJXC8EAxOjkDExRnMzTXgmIQK0GsU/HM8MjO3Vo4Ko00ypKKpSZgNXqEnlb4IDTPZSgwoEyj9fwL4iveTgH0TveQsbZOuOxKn7BXPLL2qB2faxpm9fDLCGulIst/ZZZuwppQ3gGJqDD00=
+	t=1759930641; cv=none; b=MkySk+ty+H3zGktCEAhBuqj7bMmNpgZJ+0FWr+F6RbjcCVyjzqtMYorwSD6cwLoEG+WXmRjD+oQWj/IF4bqUkHNucRp+4pAaR3duo/7CUHTm/5PoWToBFEQruoB/sGY2+lamSI3WGMKwXEOwUKJ0/xxnMmLtJxbC6y9rqTU5/zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759930469; c=relaxed/simple;
-	bh=L/JfgYUl9kx54NZaz4So/Tc7t9Ld6kXKMjxc+OdFfT4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ni7SAbaJWuGAuoQ95vzONXZNCDrr/CJv3rKukPbuKlAtns/PDSWeWinS3q3cENlBTBIRhEW5qBIGTkm1rxOr044NeYcIWrgY8eWWSfyPi3YNsJBnZspynp6DWHGITWrtUFdEzPU4Pr9WP+a3502j8vUSh8C4/7YAB2CAsH8AN34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout1.hostsharing.net (Postfix) with ESMTPS id C542E2C4E592;
-	Wed,  8 Oct 2025 15:34:16 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id B363A5F7D2E; Wed,  8 Oct 2025 15:34:16 +0200 (CEST)
-Date: Wed, 8 Oct 2025 15:34:16 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Farhan Ali <alifm@linux.ibm.com>
-Cc: Benjamin Block <bblock@linux.ibm.com>, linux-s390@vger.kernel.org,
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, alex.williamson@redhat.com,
-	helgaas@kernel.org, clg@redhat.com, schnelle@linux.ibm.com,
-	mjrosato@linux.ibm.com
-Subject: Re: [PATCH v4 01/10] PCI: Avoid saving error values for config space
-Message-ID: <aOZoWDQV0TNh-NiM@wunner.de>
-References: <20250924171628.826-1-alifm@linux.ibm.com>
- <20250924171628.826-2-alifm@linux.ibm.com>
- <20251001151543.GB408411@p1gen4-pw042f0m>
- <ae5b191d-ffc6-4d40-a44b-d08e04cac6be@linux.ibm.com>
- <aOE1JMryY_Oa663e@wunner.de>
- <c0818c13-8075-4db0-b76f-3c9b10516e7a@linux.ibm.com>
- <aOQX6ZTMvekd6gWy@wunner.de>
- <8c14d648-453c-4426-af69-4e911a1128c1@linux.ibm.com>
+	s=arc-20240116; t=1759930641; c=relaxed/simple;
+	bh=2++gi+3fbP2waS3+p89+F+/Sm7MsrHb0KRMpSa7Niw0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pEnrdvFQKHg/lMQKCOLw7xYox5ejB6dkaf62FIlyVFXvSAAhKIIm2E6FlsFBX6HN7EsEMbwcaf6qlSvDhFSbff6Up0D3K8+jg6VkE4hHiYxCNDwhmf08LaXq2Ntu8Z6dJcTfOBrMXA4wQtRE06b0QymhT6kauowOc/Pz1GQVA2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
+Received: from mail.andestech.com (ATCPCS31.andestech.com [10.0.1.89])
+	by Atcsqr.andestech.com with ESMTPS id 598DZFiu019619
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 8 Oct 2025 21:35:15 +0800 (+08)
+	(envelope-from cl634@andestech.com)
+Received: from swlinux02 (10.0.15.183) by ATCPCS31.andestech.com (10.0.1.89)
+ with Microsoft SMTP Server id 14.3.498.0; Wed, 8 Oct 2025 21:35:15 +0800
+Date: Wed, 8 Oct 2025 21:35:15 +0800
+From: CL Wang <cl634@andestech.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	<gg@swlinux02.smtp.subspace.kernel.org>
+CC: Conor Dooley <conor@kernel.org>, <vkoul@kernel.org>,
+        <dmaengine@vger.kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <tim609@andestech.com>,
+        <cl634@andestech.com>
+Subject: Re: [PATCH V1 1/2] dt-bindings: dmaengine: Add support for
+ ATCDMAC300 DMA engine
+Message-ID: <aOZokztqpHHX0JPq@swlinux02>
+References: <20251002131659.973955-1-cl634@andestech.com>
+ <20251002131659.973955-2-cl634@andestech.com>
+ <20251002-absolute-spinning-f899e75b2c4a@spud>
+ <aOUIfaZY7-eUYoOS@swlinux02>
+ <734de17e-a712-4eb5-96fa-b7e75f86d880@kernel.org>
+ <aOXW7HUMeOyABuUG@swlinux02>
+ <dcd14886-f2cc-41ec-8bb5-9cb5ed50c452@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <8c14d648-453c-4426-af69-4e911a1128c1@linux.ibm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <dcd14886-f2cc-41ec-8bb5-9cb5ed50c452@kernel.org>
+User-Agent: Mutt/2.2.12 (2023-09-09)
+X-DKIM-Results: atcpcs31.andestech.com; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:Atcsqr.andestech.com 598DZFiu019619
 
-On Mon, Oct 06, 2025 at 02:35:49PM -0700, Farhan Ali wrote:
-> On 10/6/2025 12:26 PM, Lukas Wunner wrote:
-> > On Mon, Oct 06, 2025 at 10:54:51AM -0700, Farhan Ali wrote:
-> > > On 10/4/2025 7:54 AM, Lukas Wunner wrote:
-> > > > I believe this also makes patch [01/10] in your series unnecessary.
-> > > I tested your patches + patches 2-10 of this series. It unfortunately didn't
-> > > completely help with the s390x use case. We still need the check to in
-> > > pci_save_state() from this patch to make sure we are not saving error
-> > > values, which can be written back to the device in pci_restore_state().
-> > What's the caller of pci_save_state() that needs this?
-> > 
-> > Can you move the check for PCI_POSSIBLE_ERROR() to the caller?
-> > I think plenty of other callers don't need this, so it adds
-> > extra overhead for them and down the road it'll be difficult
-> > to untangle which caller needs it and which doesn't.
+Hi Krzysztof,
+
+Thanks for the clarification, and sorry for the earlier confusion.
+
+To elaborate on the rationale:
+"andestech,atcdmac300" is the IP core name of the DMA controller, which serves
+as a generic fallback compatible shared across multiple Andes SoCs.
+
+Primary compatible (SoC-specific):
+andestech,qilai-dma refers to the DMA controller instance implemented on the
+Qilai SoC, following the SoC-specific recommendation.
+
+Fallback compatible (IP-core specific):
+andestech,atcdmac300 represents the reusable IP block used across different
+Andes SoCs that share the same register map and programming model.
+
+Keeping andestech,atcdmac300 as a fallback helps avoid code duplication and
+allows a single driver to support future SoCs using the same hardware IP.
+
+This approach follows the DeviceTree binding guideline:
+
+“DO use a SoC-specific compatible for all SoC devices, followed by a fallback
+if appropriate. SoC-specific compatibles are also preferred for the fallbacks.”
+— Documentation/devicetree/bindings/writing-bindings.rst, line 42
+
+Please let me know if this aligns with your expectation.
+
+Best regards,
+CL
+
+On Wed, Oct 08, 2025 at 05:04:53PM +0900, Krzysztof Kozlowski wrote:
+> [EXTERNAL MAIL]
 > 
-> The caller would be pci_dev_save_and_disable(). Are you suggesting moving
-> the PCI_POSSIBLE_ERROR() prior to calling pci_save_state()?
-
-I'm not sure yet.  Let's back up a little:  I'm missing an
-architectural description how you're intending to do error
-recovery in the VM.  If I understand correctly, you're
-informing the VM of the error via the ->error_detected() callback.
-
-You're saying you need to check for accessibility of the device
-prior to resetting it from the VM, does that mean you're attempting
-a reset from the ->error_detected() callback?
-
-According to Documentation/PCI/pci-error-recovery.rst, the device
-isn't supposed to be considered accessible in ->error_detected().
-The first callback which allows access is ->mmio_enabled().
-
-I also don't quite understand why the VM needs to perform a reset.
-Why can't you just let the VM tell the host that a reset is needed
-(PCI_ERS_RESULT_NEED_RESET) and then the host resets the device on
-behalf of the VM?
-
-Furthermore, I'm thinking that you should be using pci_channel_offline()
-to detect accessibility of the device, rather than reading from
-Config Space and checking for PCI_POSSIBLE_ERROR().
-
-> > The state saved on device addition is just the initial state and
-> > it is fine if later on it gets updated (which is a nicer term than
-> > "overwritten").  E.g. when portdrv.c instantiates port services
-> > and drivers are bound to them, various registers in Config Space
-> > are changed, hence pcie_portdrv_probe() calls pci_save_state()
-> > again.
-> > 
-> > However we can discuss whether pci_save_state() is still needed
-> > in pci_dev_save_and_disable().
+> On 08/10/2025 12:13, CL Wang wrote:
+> > Hi Krzysztof,
+> >
+> > Thank you for pointing this out.
+> >
+> > "ATCDMAC300" is the IP block name of the DMA controller used in Andes SoC.
+> > According to your suggestion, I have updated the binding to use SoC-specific
+> > compatibles with "andestech,atcdmac300" as a fallback, as shown below:
+> >
+> > -  const: andestech,atcdmac300
+> > +  items:
+> > +    - enum:
+> > +        - andestech,qilai-dma
+> > +    - const: andestech,atcdmac300
+> > ...
+> >    dma-controller@f0c00000 {
+> > -      compatible = "andestech,atcdmac300";
+> > +      compatible = "andestech,qilai-dma", "andestech,atcdmac300";
 > 
-> The commit 8dd7f8036c12 ("PCI: add support for function level reset")
-> introduced the logic of saving/restoring the device state after an FLR. My
-> assumption is it was done to save the most recent state of the device (as
-> the state could be updated by drivers). So I think it would still make sense
-> to save the device state in pci_dev_save_and_disable() if the Config Space
-> is still accessible?
-
-Yes, right now we can't assume that drivers call pci_save_state()
-in their probe hook if they modified Config Space.  They may rely
-on the state being saved prior to reset or a D3hot/D3cold transition.
-So we need to keep the pci_dev_save_and_disable() call for now.
-
-Generally the expectation is that Config Space is accessible when
-performing a reset with pci_try_reset_function().  Since that's
-apparently not guaranteed for your use case, I'm wondering if you
-might be using the function in a context it's not supposed to be used.
-
-Thanks,
-
-Lukas
+> That's exactly the same code as you pasted before. Please do not repeat
+> the same as argument to my comment.
+> 
+> Best regards,
+> Krzysztof
 
