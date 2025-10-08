@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-845172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 051A5BC3C3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 10:09:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FEAEBC3C57
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 10:12:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0E45B4F7580
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 08:09:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F6123C70D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 08:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC5062F3612;
-	Wed,  8 Oct 2025 08:09:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE32B2F3612;
+	Wed,  8 Oct 2025 08:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T6MboMnt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rGBjfUmI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E453434BA3C;
-	Wed,  8 Oct 2025 08:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3588034BA3C;
+	Wed,  8 Oct 2025 08:12:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759910983; cv=none; b=i5F3EcIfhPUpw5IaLMYPOkwI98ojNMRYDayZyXQRqNqzM12nV4b0Ojb97zjwknRnWidvujOYW8xr/SjYzhs34KK9ELpIcp8pNXbbQ0sCQTSuaD27VXLNb22QFSsPW+p65kp49SsnkKbMem5N2z3ajtoPpBSK5jtGpJUu5AuHWHg=
+	t=1759911134; cv=none; b=cYlcT/jRQ2lm9VLSBZ3xM7myHMgZA1pfcX+wGK92tJmfOtTyVsaeTEhWl3r+VFtN17HRtvo9hGwNXr8yQuYmtpOmkRYeO+G5j15vytGTHr1cjRctJ6quwajPJeLOGlH8ErpjGjwMxo41cRwwj2CUbHonACzA/+x0KvohRY4z+Z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759910983; c=relaxed/simple;
-	bh=IXWCRTYdBLEumsuXgGMxXBZVyJbFGdaqNj7ScZiFvj4=;
+	s=arc-20240116; t=1759911134; c=relaxed/simple;
+	bh=c2GoYT8KDL1eyEVGxGi2+EGCXK+Kst3nZpOtV/b7mRI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hNQBtg8EfMSRPUyFHwSFKdg1oiOAJtSYr3el317KMT9DdJHuEcyXcZTXe5n8JVNNaMMeyh94M6orbTr6JdeGce1tcxvUggvIqc67C+SNtskn0YrclJHTKapqQoxRd08SvptwyJmq1aBOWf//FQ4YlpKn/D8m16tIvltQPBebJ7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T6MboMnt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1809C4CEF4;
-	Wed,  8 Oct 2025 08:09:35 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=Pu+kHqKkfk8Tv2ix7OnQYLSlT4z2kX9/08XefEW/Ic12PyRRS+RjtHFGwrv40d5ahzBfHOqT5xFJtrr6hRv5LSxmyVr5LcXFJYeCu6MOa0EJOQ9kGaNxl1rv5rsSSNnExWMyUz6Fe0hXsSPXeOAZYi/sWEK4679IFgZoffxCs8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rGBjfUmI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E36D2C4CEF4;
+	Wed,  8 Oct 2025 08:12:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759910982;
-	bh=IXWCRTYdBLEumsuXgGMxXBZVyJbFGdaqNj7ScZiFvj4=;
+	s=k20201202; t=1759911133;
+	bh=c2GoYT8KDL1eyEVGxGi2+EGCXK+Kst3nZpOtV/b7mRI=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=T6MboMnt1jgWAGM56ZcstLu/AZtf9TzxW8H9EtV07NhACcdxQvClWVY7fOnbOIt4e
-	 n3/zF0pOVyFXTFbQqc6gpJ35ACobcHwoS7td7swOKFfUASrHZcsr3dCQ78zhen4E6p
-	 AiMOAIsKiGUOR19waTma8d0bs+Igo1orQhnJ74G5A9EqEPoMSbGqUgxZYjJHi8yvB3
-	 DpYSdIl0GJ8+gPv/oy5eIR73jOtoZ/2sn91TS2FLkpKGB4qDouZxYTQg/M5tPtzygh
-	 AD0OzBBzWIXCfuyNQmvCRZASjGYPFTeW9264TXfVgnq4MdDidwNlv4/m3qQFrTbc+I
-	 eQwHC3nJTR0pA==
-Message-ID: <ce03d7e7-9342-465b-881b-50aad29fd9d1@kernel.org>
-Date: Wed, 8 Oct 2025 17:09:32 +0900
+	b=rGBjfUmIyYr045AoFAFtC5WxvZZSyRdgeyLM8tzfmR56rQvImMVp2pNQ3wu8GG8h0
+	 uq3fYEE9KLbDy07nlDJYm6S/B8QVeZneKLnp95OvZHDlVFUv6b7d32LkEYICetaPQY
+	 8ft1ZIjmxLeQwqauQYwFh4pjWgTe3dsIFD+QU41nt0Js8soqRN2Yluveb/bTW1nY8T
+	 2Lq0fgOoOoFu9Dk87Gyu93qDIfkbkLJ+MaZi0lkJ/lyJFWAkhDcNt/RhpcUKr16opL
+	 hRSvLxtaXcKh/berPk2u5uoUFow/IwyGWqnmMm2n1vTst8WMPZGWVjDX8tcoLbyel+
+	 w9yUlBpM6ux1w==
+Message-ID: <c33a26a8-a054-4ce6-86d9-4945014f69cf@kernel.org>
+Date: Wed, 8 Oct 2025 17:12:01 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,19 +49,28 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/12] dt-bindings: remoteproc: qcom,pas: Add iommus
- property
-To: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-References: <20251007-kvm_rprocv4_next-20251007-v4-0-de841623af3c@oss.qualcomm.com>
- <20251007-kvm_rprocv4_next-20251007-v4-1-de841623af3c@oss.qualcomm.com>
+Subject: Re: [PATCH v8 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+ ExynosAutov920 HS phy compatible
+To: Pritam Manohar Sutar <pritam.sutar@samsung.com>, vkoul@kernel.org,
+ kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ alim.akhtar@samsung.com, andre.draszik@linaro.org, peter.griffin@linaro.org,
+ kauschluss@disroot.org, ivo.ivanov.ivanov1@gmail.com,
+ igor.belwon@mentallysanemainliners.org, m.szyprowski@samsung.com,
+ s.nawrocki@samsung.com
+Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, rosa.pila@samsung.com,
+ dev.tailor@samsung.com, faraz.ata@samsung.com, muhammed.ali@samsung.com,
+ selvarasu.g@samsung.com
+References: <20250903073827.3015662-1-pritam.sutar@samsung.com>
+ <CGME20250903072936epcas5p4a28d0e63c7f0792b516b0cbc68bf3a8e@epcas5p4.samsung.com>
+ <20250903073827.3015662-2-pritam.sutar@samsung.com>
+ <0df74c2b-31b9-4f29-97d3-b778c8e3eaf1@kernel.org>
+ <007801dc2893$18ed4a20$4ac7de60$@samsung.com>
+ <02ef5180-ad56-45f0-a56f-87f442bf6793@kernel.org>
+ <007f01dc2b81$84ef19b0$8ecd4d10$@samsung.com>
+ <808d166a-b615-49c6-b0f5-bf5101721381@kernel.org>
+ <000001dc380e$612b5680$23820380$@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -107,37 +116,58 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251007-kvm_rprocv4_next-20251007-v4-1-de841623af3c@oss.qualcomm.com>
+In-Reply-To: <000001dc380e$612b5680$23820380$@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 08/10/2025 01:48, Mukesh Ojha wrote:
-> Most Qualcomm platforms feature Gunyah hypervisor which handles IOMMU
-> configuration for remote processor and when it is not present, the
-> operating system must perform these configurations instead and for that
-> firmware stream should be presented to the operating system. Hence, add
-> iommus property as optional property for PAS supported devices.
+On 08/10/2025 13:45, Pritam Manohar Sutar wrote:
+> Hi Krzysztof,
 > 
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-> ---
->  Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml | 3 +++
->  1 file changed, 3 insertions(+)
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzk@kernel.org>
+>> Sent: 07 October 2025 11:54 AM
+>> To: Pritam Manohar Sutar <pritam.sutar@samsung.com>; vkoul@kernel.org;
+>> kishon@kernel.org; robh@kernel.org; krzk+dt@kernel.org;
+>> conor+dt@kernel.org; alim.akhtar@samsung.com; andre.draszik@linaro.org;
+>> peter.griffin@linaro.org; kauschluss@disroot.org;
+>> ivo.ivanov.ivanov1@gmail.com; igor.belwon@mentallysanemainliners.org;
+>> m.szyprowski@samsung.com; s.nawrocki@samsung.com
+>> Cc: linux-phy@lists.infradead.org; devicetree@vger.kernel.org; linux-
+>> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-samsung-
+>> soc@vger.kernel.org; rosa.pila@samsung.com; dev.tailor@samsung.com;
+>> faraz.ata@samsung.com; muhammed.ali@samsung.com;
+>> selvarasu.g@samsung.com
+>> Subject: Re: [PATCH v8 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add
+>> ExynosAutov920 HS phy compatible
+>>
+>> On 22/09/2025 14:26, Pritam Manohar Sutar wrote:
+>>> This phy needs 0.75v, 0.18v and 3.3v supplies for its internal
+>>> functionally. Power Supply's names are as per phy's User Data-Book.
+>>> These names, (dvdd, vdd18 and vdd33), are considered  for 0.75v, 1.8v
+>>> and 3.3v respectively.
+>>> "
+>>>
+>>>>
+>>>> I still cannot find constraints for the rest of properties, though.
+>>>
+>>> Sorry I didn't get it completely. Can you please elaborate on the same?
+>>
+>>
+>> Writing bindings and introductory talks elaborate on that. You add properties
+>> without constraints. That's not what we want. We want constraints.
+>>
 > 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
-> index 63a82e7a8bf8..8bd7d718be57 100644
-> --- a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
-> +++ b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
-> @@ -44,6 +44,9 @@ properties:
->        - const: stop-ack
->        - const: shutdown-ack
->  
-> +  iommus:
-> +    minItems: 1
+> Have added only supplies in this patch-set. However, was going 
+> through schema example and it says nothing is needed to define
+> in terms of supply. 
 
 
-Incorrect constraints, this must be maxItems instead.
+I don't have original patchset in my inbox anymore, so not sure what was
+there, but most likely you miss constraining the presence of these
+properties per each variant. IOW, not each of devices in the bindings
+have these supplies, so I expect syntax similar as in example-schema.
+
+https://elixir.bootlin.com/linux/v5.19/source/Documentation/devicetree/bindings/example-schema.yaml#L212
 
 
 Best regards,
