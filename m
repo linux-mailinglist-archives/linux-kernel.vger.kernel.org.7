@@ -1,136 +1,269 @@
-Return-Path: <linux-kernel+bounces-845792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD52CBC61C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 19:02:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BB10BC61D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 19:04:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92BCA403EF4
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 17:02:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05058188D7C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 17:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A40224AF9;
-	Wed,  8 Oct 2025 17:02:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D97FD29D27E;
+	Wed,  8 Oct 2025 17:04:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ImEtogTh"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RHhTsXmT"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6195E1DF75D
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 17:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E3BC20E030
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 17:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759942964; cv=none; b=GmCQZAB//1nfXStIQkypjeXOo3tEErhsFLbpuvw/Hn18uiibfSIJFHybGu4I6+4C2egj3xl4k+MT6uYPcuXdE6575Ny83MgpUeDY5FyPInFXXISxfjtDbnVMqoKksXsshDSmsIwOqCo4t/sMBZPrzrvWqJKUMGhedJR1MkBofkI=
+	t=1759943051; cv=none; b=W2AVajWue+TJzcp76TF1eCMpmO56HlOe6n9/qv9OjCzau+cFeDgOkowU7T/sPajwJmZ2cxvE96UqpOhsDEQKQx8Qvkfhr/gAi8I5BWFG2LzhFjNkanaWCsbuODSGfT/XVOJKOCfGpk2fNxolgxvF1xWJM2fVsF8KILwOmvhFm28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759942964; c=relaxed/simple;
-	bh=BODKjR/Yrua4uagxV7JAKQu5Y6484FclXcvnVtP0Ids=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=f6vHo1raL7wwuR9s5XM7Se3MrFOIbQhqNi9kMue+bZAI3Nokw/4g3dUWjKsTBAToTRytLmPIFV0K8XXi9HS78owZSce7Kv20IM2sHGQMOGAMbVplXzjn25mSTJTPUUqqUP0T83TsoUMg8QR1ffKHRf5RXIxX5m980fqfq6pumxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ImEtogTh; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759942960;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BODKjR/Yrua4uagxV7JAKQu5Y6484FclXcvnVtP0Ids=;
-	b=ImEtogTh0Qu0BQbbsIQhE3xhi2kpV56iAk7nUKH+E+BrfzLTe1IFnAs1u2nKXZ4WwXK+rP
-	N4Qk9gMKmXy+ZNj+q5FZFsQxoYmLp0idznsWNAYeTnVwQAUsZ+z4suI0RtYA3ZrCJZnGqD
-	4lTBro4kASUXODnrVr2/PzmbAiart0s=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Song Liu <liu.song.linuxdev@gmail.com>
-Cc: Song Liu <song@kernel.org>,  Andrii Nakryiko
- <andrii.nakryiko@gmail.com>,  Martin KaFai Lau <martin.lau@linux.dev>,
-  Alexei Starovoitov <alexei.starovoitov@gmail.com>,  Kumar Kartikeya
- Dwivedi <memxor@gmail.com>,  linux-mm <linux-mm@kvack.org>,  bpf
- <bpf@vger.kernel.org>,  Suren Baghdasaryan <surenb@google.com>,  Johannes
- Weiner <hannes@cmpxchg.org>,  Michal Hocko <mhocko@suse.com>,  David
- Rientjes <rientjes@google.com>,  Matt Bobrowski
- <mattbobrowski@google.com>,  Alexei Starovoitov <ast@kernel.org>,  Andrew
- Morton <akpm@linux-foundation.org>,  LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 01/14] mm: introduce bpf struct ops for OOM handling
-In-Reply-To: <CAHzjS_tq34QC4NDQd_L8crQii2QZCxZr28ywSw=gMnFnqD_z2A@mail.gmail.com>
-	(Song Liu's message of "Wed, 8 Oct 2025 00:03:37 -0700")
-References: <20250818170136.209169-1-roman.gushchin@linux.dev>
-	<20250818170136.209169-2-roman.gushchin@linux.dev>
-	<CAP01T76AUkN_v425s5DjCyOg_xxFGQ=P1jGBDv6XkbL5wwetHA@mail.gmail.com>
-	<87ms7tldwo.fsf@linux.dev>
-	<1f2711b1-d809-4063-804b-7b2a3c8d933e@linux.dev>
-	<87wm6rwd4d.fsf@linux.dev>
-	<ef890e96-5c2a-4023-bcb2-7ffd799155be@linux.dev>
-	<CAADnVQ+LGbXXHHTbBB9b-RjAXO4B6=3Z=G0=7ToZVuH61OONWA@mail.gmail.com>
-	<87iki0n4lm.fsf@linux.dev>
-	<a76ad1e9-07d5-4ba1-83e4-22fe36a32df0@linux.dev>
-	<877bxb77eh.fsf@linux.dev>
-	<CAEf4BzafXv-PstSAP6krers=S74ri1+zTB4Y2oT6f+33yznqsA@mail.gmail.com>
-	<871pnfk2px.fsf@linux.dev>
-	<CAEf4BzaVvNwt18eqVpigKh8Ftm=KfO_EsB2Hoh+LQCDLsWxRwg@mail.gmail.com>
-	<87tt0bfsq7.fsf@linux.dev>
-	<CAHzjS_v+N7UO-yEt-d0w3nE5_Y1LExQ5hFWYnHqARp9L-5P_cg@mail.gmail.com>
-	<87playf8ab.fsf@linux.dev>
-	<CAHzjS_tq34QC4NDQd_L8crQii2QZCxZr28ywSw=gMnFnqD_z2A@mail.gmail.com>
-Date: Wed, 08 Oct 2025 10:02:28 -0700
-Message-ID: <871pnd2uor.fsf@linux.dev>
+	s=arc-20240116; t=1759943051; c=relaxed/simple;
+	bh=iahh48D7RERH5E+U/K/mzMIQbVc8kAtvaHYWGIzytwo=;
+	h=From:To:Cc:Subject:References:Date:Message-ID:MIME-Version:
+	 Content-Type; b=TCsONtZ1G9Dlx81yqHR6fXTBQeqoQ+1JodyixAQiYO+/YqsizGTo15x499OQ9Id58B/7XidBow8PpdSj1JzAYa4fHS8hcW2/8xptVulTa2fFBLFXYGbE2bZr7ED/FKUgtC2cawyFyH/T5UUKpzT4Pvq6ZDC/Wj/9xoQDpvsWsaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RHhTsXmT; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-57a960fe78fso93585e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 10:04:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759943047; x=1760547847; darn=vger.kernel.org;
+        h=mime-version:user-agent:message-id:date:references:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uAv6wa5qH1yNLZ/tm/3w2Yzpi611u4yTaGZCwRBfLbA=;
+        b=RHhTsXmTNqUqp5lFBxYZ80ECscpxWbpnGzyCF2Tjsza462xVEOpsgU5oq6VDVpe9xc
+         b03g9zLe3Fawp6Srg8kC3kSIK045QbiNFeGNGyYPswP/UdrO2/aAqIm+lyY6VV7OIN9l
+         fCnNZm0NZ51nwlu6V4K4Hyxk0RnsbQ6YOc0LO3gUtMFqcnZttUpvaeg9t5A9illDL0ve
+         q/KGCtSbxCXLK5xitChsDMTfZwn0ym523Ak+nsvQmczJy3u9lOB1endKk+8ccb9Ms+8n
+         JDF9XrP4Ink8riSVHRAhbWYjZEFI4bxFwelwFQbcQn9hDAtvVtabVHRhN33f/f7cGIKH
+         2y0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759943047; x=1760547847;
+        h=mime-version:user-agent:message-id:date:references:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uAv6wa5qH1yNLZ/tm/3w2Yzpi611u4yTaGZCwRBfLbA=;
+        b=H37P3jIq3hy1/JJaj9+bMSYkASjzOeuB20zA2KHRCm4xidOf+3MnnaXiXI/WogLDRm
+         fKdZyXrSt+8kwJx2Auc0aEroC6qu7e+DKoeczinkLFgKlzGMHUCcQo+H+Jm1tXT46nSt
+         1TyCO23LSu/n/5Bna/aYpCX1JGJ8/0xBUCqlvoNTU6E73txER/ovCPY76+J//F16wG4A
+         BXQlk/3I2pJr0LpqWhvZPB0wajKKf3+Rgbwz0YvYVI3dAZo2VmfXc1VPRiXRCDTxK+BU
+         1EHqd1YG4YCfO1Zj8Lh9yKo/Y18pIFgEIwVbeJ2jRcAvBFTIie2mL9Lq6VkdiQP0cuY5
+         GvcA==
+X-Gm-Message-State: AOJu0YwYAxsl5HrZXj2KyruH7mwdiqAWkJYGYilFQJvaKEkrdtM8yttg
+	ErvU1r7S53yDNt+gi74VbHjVw9fC56E3RKfZFGqmsh0+tcy1HDKn8MIg
+X-Gm-Gg: ASbGncuyQxKWtKQTaJtD/pBg5zq0DOWpCmKQxRYkvt7tQGSmBvDQ4YAy88O8p+dg6OY
+	ruxXikj1G9V8905ikzAy2L+/ry4qurgzb/KZy2o7XVAi/zXdanpjpnEqL5pCx2lYTKlfgeLYY2x
+	nuQ4N+h0hBqNKo+B/0v3STuzk2Ce5HZU/50kzNtg2qcyrV9NQfScPvpOdnjzRua0E5XBwRpoH82
+	KNAgL+bWiLlPSC2efsRx0TqJaBzjeKlSL/proS3jrJHjq0hn296h3r7ZXWFuiKbkvWJ/t0jUA5H
+	MO0rpT4a1yFyoWlAGEIwgNCXCfsdQvsu4v0Uc2Dev58yprWz1h6mPoM4RRpgWf0QHyCB0L1NrFt
+	zr3XXw6hOcrFMpjoh21nx0aGvVO86as766CEvfCWMhXyUaVbKPQ==
+X-Google-Smtp-Source: AGHT+IF+WDxLtZAr0cpCBFj6F2HVd64uf/+ap01Oo616skSDfKtY89Vqb3BXrrghRkGavk8KU/ZfhQ==
+X-Received: by 2002:a05:6512:33c3:b0:573:8044:a98c with SMTP id 2adb3069b0e04-5906dc0e1d5mr1084934e87.18.1759943045619;
+        Wed, 08 Oct 2025 10:04:05 -0700 (PDT)
+Received: from osv.localdomain ([89.175.180.246])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5907adb3de9sm163234e87.106.2025.10.08.10.04.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 10:04:04 -0700 (PDT)
+From: Sergey Organov <sorganov@gmail.com>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: linux-kernel@vger.kernel.org,  Ulf Hansson <ulf.hansson@linaro.org>,
+  Shawn Guo <shawnguo@kernel.org>,  "Rob Herring (Arm)" <robh@kernel.org>
+Subject: Re: ARM iMX6sx board fails to boot with kernel 6.17
+References: <87v7l03pqe.fsf@osv.gnss.ru>
+	<CAOMZO5DG=cQtqyzihrFarEq6=1AOAPAMkeXajjGxiW0yvFRa0Q@mail.gmail.com>
+	<CAOMZO5BtXsjFFWDbt=Zuy_sUS-HySkcjhrtAg3+k211VY8SMcw@mail.gmail.com>
+	<87o6qjaiz7.fsf@osv.gnss.ru>
+	<CAOMZO5BwoAzf36-L0uCTdKriGaUHg1MqZoKg56Fvob6S4coMBQ@mail.gmail.com>
+	<87jz17afpb.fsf@osv.gnss.ru>
+	<CAOMZO5Dvc9AhudPkEuM6BL7F4n=5S4M6d52jzomWnJvCOWVaaQ@mail.gmail.com>
+	<87bjmih0nz.fsf@osv.gnss.ru>
+	<CAOMZO5Cmxqq6K4k7_yPjGOtMTOgv7WmpN9O2dZiX+UWies8mow@mail.gmail.com>
+Date: Wed, 08 Oct 2025 20:04:04 +0300
+Message-ID: <87zfa1z5ob.fsf@osv.gnss.ru>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="=-=-="
+
+--=-=-=
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-Song Liu <liu.song.linuxdev@gmail.com> writes:
+Fabio Estevam <festevam@gmail.com> writes:
 
-> On Tue, Oct 7, 2025 at 7:15=E2=80=AFPM Roman Gushchin <roman.gushchin@lin=
-ux.dev> wrote:
-> [...]
->> >
->> > I am not sure what is the best option for cgroup oom killer. There
->> > are multiple options. Technically, it can even be a sysfs entry.
->> > We can use it as:
->> >
->> > # load and pin oom killers first
->> > $ cat /sys/fs/cgroup/user.slice/oom.killer
->> > [oom_a] oom_b oom_c
->> > $ echo oom_b > /sys/fs/cgroup/user.slice/oom.killer
->> > $ cat /sys/fs/cgroup/user.slice/oom.killer
->> > oom_a [oom_b] oom_c
->>
->> It actually looks nice!
->> But I expect that most users of bpf_oom won't use it directly,
->> but through some sort of middleware (e.g. systemd), so Idk if
->> such a user-oriented interface makes a lot of sense.
->>
->> > Note that, I am not proposing to use sysfs entries for oom killer.
->> > I just want to say it is an option.
->> >
->> > Given attach() can be implemented in different ways, we probably
->> > don't need to add it to bpf_struct_ops. But if that turns out to be
->> > the best option, I would not argue against it. OTOH, I think it is
->> > better to keep reg() and attach() separate, though sched_ext is
->> > using reg() for both options.
->>
->> I'm inclining towards a similar approach, except that I don't want
->> to embed cgroup_id into the struct_ops, but keep it in the link,
->> as Martin suggested. But I need to implement it end-to-end before I can
->> be sure that it's the best option. Working on it...
+> Hi Sergey,
 >
-> If we add cgroup_id to the link, I guess this means we need the link
-> (some fd in user space) to hold reference on the attachment of this
-> oom struct_ops on this is cgroup. Do we also need this link to hold
-> a reference on the cgroup?
+> On Tue, Oct 7, 2025 at 6:17 PM Sergey Organov <sorganov@gmail.com> wrote:
+>>
+>> Please see attached minimum DTS. Maybe it misses something? Shouldn't
+>> DTS describe how eMMC chip is powered, provided it's powered from NXP
+>> MMPF0100F6ANES PMIC? I didn't find any hints in other DTS'es.
+>
+> Yes, the dts should describe the eMMC power supplies.
+>
+> The properties are: vmmc-supply and vqmmc-supply.
+>
+> Check arch/arm/boot/dts/nxp/imx/imx6qdl-colibri.dtsi for reference.
 
-Not necessarily. I agree that the struct_ops should not hold a reference
-to the cgroup, it's better to do the opposite.
-This is why the link can have cgroup_id, not cgroup pointer.
-I think it's similar to Tejun's approach to embed cgroup_id into the
-struct ops, but potentially more flexible.
+This uses:
 
-Thanks!
+        pmic: pmic@8 {                                                                                
+                compatible = "fsl,pfuze100";                                                          
+
+that doesn't look like the one I need, and I don't see anything among
+Documentation/devicetree/bindings/regulator/* for the NXP MMPF0100F6ANES
+PMIC that is used on my board.
+
+Does it mean that this regulator is unsupported? If so, doesn't it mean
+that kernel simply won't touch it, and thus it can't be the cause of the
+hang?
+
+Anyway, I added naive fixed regulators (see attached modified DTS), but
+it didn't change the outcome.
+
+>
+>> The point of hang is not entirely deterministic either, that suggests
+>> it's some power problem indeed. It may hang after random line among the
+>> following depending on exact build and sometimes even from run-to-run:
+>>
+>> ...
+>> mmc0: SDHCI controller on 219c000.mmc [219c000.mmc] using ADMA
+>> Loading compiled-in X.509 certificates
+>> clk: Disabling unused clocks
+>> PM: genpd: Disabling unused power domains
+>
+> Does it hang if you pass "pm_genpd_ignore_unused" and
+> "clk_ignore_unused" in the kernel command line?
+
+Yep, it still hangs (it's pd_ignore_unused, not pm_genpd_ignore_unused,
+btw):
+
+clk: Not disabling unused clocks                   
+PM: genpd: Not disabling unused power domains      
+check access for rdinit=/init failed: -2, ignoring 
+Waiting for root device /dev/mmcblk0p3...
+
+and I recall I've already tried it first thing to disable this right in
+the code to no avail either.
+
+>
+>> check access for rdinit=/init failed: -2, ignoring
+>> Waiting for root device /dev/mmcblk0p2...
+>>
+>> Also, I just tried to compile entire kernel with -DDEBUG, and it starts
+>> to see the eMMC, though still hangs not ever mounting the root FS:
+>
+> I saw Ulf's response about a potential regression in 6.17.
+>
+> Do you see the hang with 6.16?
+
+Yep, 6.16 still hangs for me the same way.
+
+-- Sergey Organov
+
+
+--=-=-=
+Content-Type: text/plain
+Content-Disposition: attachment; filename=javad-minimum.dts
+Content-Description: troublesome minimum dts
+
+/dts-v1/;
+
+#include "../imx6sx.dtsi"
+
+/ {
+	compatible = "javad,imx6sx", "fsl,imx6sx";
+
+	chosen {
+		stdout-path = &uart1;
+	};
+
+	aliases {
+		mmc0 = &usdhc4;
+		mmc1 = &usdhc3;
+		mmc2 = &usdhc2;
+		mmc3 = &usdhc1;
+	};
+
+	memory@80000000 {
+		device_type = "memory";
+		reg = <0x80000000 0x40000000>;
+	};
+
+	reg_module_3v3: regulator-module-3v3 {
+		compatible = "regulator-fixed";
+		regulator-name = "+V3.3";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-always-on;
+	};
+
+	reg_module_1v8: regulator-module-1v8 {
+		compatible = "regulator-fixed";
+		regulator-name = "+V1.8";
+		regulator-min-microvolt = <1800000>;
+		regulator-max-microvolt = <1800000>;
+		regulator-always-on;
+	};
+
+};
+
+&usdhc4 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_usdhc4>;
+	bus-width = <8>;
+	non-removable;
+	keep-power-in-suspend;
+	vmmc-supply = <&reg_module_3v3>;
+	vqmmc-supply = <&reg_module_1v8>;
+	status = "okay";
+};
+
+&uart1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_uart1>;
+	dma-names = "";
+	uart-has-rtscts;
+	status = "okay";
+};
+
+&iomuxc {
+	pinctrl-names = "default";
+	imx6x-sdb {
+		pinctrl_usdhc4: usdhc4grp {
+			fsl,pins = <
+				MX6SX_PAD_SD4_CLK__USDHC4_CLK		0x10059
+				MX6SX_PAD_SD4_CMD__USDHC4_CMD		0x17059
+				MX6SX_PAD_SD4_DATA0__USDHC4_DATA0	0x17059
+				MX6SX_PAD_SD4_DATA1__USDHC4_DATA1	0x17059
+				MX6SX_PAD_SD4_DATA2__USDHC4_DATA2	0x17059
+				MX6SX_PAD_SD4_DATA3__USDHC4_DATA3	0x17059
+				MX6SX_PAD_SD4_DATA4__USDHC4_DATA4	0x17059
+				MX6SX_PAD_SD4_DATA5__USDHC4_DATA5	0x17059
+				MX6SX_PAD_SD4_DATA6__USDHC4_DATA6	0x17059
+				MX6SX_PAD_SD4_DATA7__USDHC4_DATA7	0x17059
+				MX6SX_PAD_SD4_RESET_B__USDHC4_RESET_B	0x17068
+			>;
+		};
+		pinctrl_uart1: uart1grp {
+			fsl,pins = <
+				MX6SX_PAD_ENET2_CRS__UART1_TX		0x1b0b1
+				MX6SX_PAD_ENET2_COL__UART1_RX		0x1b0b1
+				MX6SX_PAD_ENET2_TX_CLK__UART1_CTS_B	0x1b0b1
+				MX6SX_PAD_ENET2_RX_CLK__UART1_RTS_B	0x1b0b1
+			>;
+		};
+	};
+};
+
+--=-=-=--
 
