@@ -1,124 +1,155 @@
-Return-Path: <linux-kernel+bounces-845631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B470BC58F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:23:06 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3769BC5904
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:23:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3061619E3746
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:23:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 83C764ED069
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:23:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 199022F2602;
-	Wed,  8 Oct 2025 15:22:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784C92F3609;
+	Wed,  8 Oct 2025 15:23:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RdHWSsWt"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cebxWFv8"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB00287505
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB77A22A7E6
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759936978; cv=none; b=KOiOvx1S99asLhIff9wwiinw4H8fHPjzJ861bh/9xXHEfBU4fop/M1tt7aVEVc3QyEHBXsNXFjlBlUX5ByhfqCiXWxr0dXmTZx3Vi2JMVDeArk88Y0KfwvVLOizAWL+4hOZdbilOcaKHrD0qGs0Q/FJPcJB6IZrSA5aFdHHDuy4=
+	t=1759937030; cv=none; b=HdAAowqQooSiJP97SOWjbCK+74lobj8dBFyX9vSJbxC4zMfkYDXh9trez/InGlpB1LYZCOMhGOwTODii2FouQkxSPYgGmytifR8PyTe5VKfpa3ILfIIzHeaM2OdUcjYGzZArpnA4sNjGn5EyG9rqGNqt8Y+eQhHIMqihLukrto8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759936978; c=relaxed/simple;
-	bh=2siM9yREqhk1evwBBV05rvjedon6J208mF1lxh+zAWA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ToRhopvNU/d6vxZjXHnVX4Bao1DbqyJSVCogRhYLIcFJTPLKN5o+yWU96GpFWUd10m4hQrSVXMjDd+Z4wZQ7AnQvDOs0IzZ7fXJPLmU9V1rz6LL8HZf8xCE9r6gyYutzpMxQwzGQPXjFb33NPU1ubsvaT7FwB2ZboALD1aFM3V0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RdHWSsWt; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-afcb7ae6ed0so1246155566b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:22:56 -0700 (PDT)
+	s=arc-20240116; t=1759937030; c=relaxed/simple;
+	bh=l9os6ZO8dPY7bfQh/0jGGJRonldCJsuxvWJYvxUUJAc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qez63AYrq3XHm42X62VwJ73+eF9eictlZWsO3EBF+07YP3andh3hAYd7FwpiDWpY0TNJHcyw7aVPbuxlWvfXg/wCZN153gtn1fOV7dM1U3gz3Ak4xt3AtY7rEsGWPXVtvPrTO2kFPUH41FpBQQC/XU1h+5QrDj5ZOrnIE+/XcdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cebxWFv8; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6399328ff1fso6500250a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:23:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759936975; x=1760541775; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=u8IL1MJVZcL+yeXHblmq6i6BaDGI2XMDGXwWjrVz72g=;
-        b=RdHWSsWtcUl3GCRzqjOMvlcnMd8OsFhEz0QnpHvBv4qfuAox8SppXksx/Qc3QEchPu
-         2NE2HPM88Pb6Na3iDya8bsWyj1juGEZpVsSO0xNNkQ2fu6jSaOMNeqJjHs+fgXWED9tE
-         ANIWfbHByTVhBblhBoeuw7w87EHv4/qLJWS8Sw3O0SzFNr7ZlUDqx4cYTlkNgzPbyVIS
-         h1WeqWV6+YnfCEyqap5aXx0GGCWsv+eopCa+DoNZ300pYbtwj+CxYb0fVSS8kBwrKveH
-         Tq6sKNFTEnyBZliM27xPgpnEg1sMNWo4CmYc9zORqmQTrB5IcBkGLniygYH4Dqaz/ZXF
-         1Y2A==
+        d=suse.com; s=google; t=1759937026; x=1760541826; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VEFKGIEcuas2Pari3eoGaAS3BufIbyvqNDimCw+KvpQ=;
+        b=cebxWFv8EJqPNUrzmjVbTGNroZHu/D3PH9uWTrbbR54e7gke8WRw0GnQwsYE6H2Bdf
+         m5ZKXmocBQrRLEQxUqkvM2ZhZ5kZe4d1qLImQwjuCUArAyZhRMpF++I+coXLDecnKIyY
+         2ccjiBPt8+JK4upy4cIU6gB36lN5n/h4d4zDE+P8sG4q+PaEql6T5XVvZI1lTLQaddTY
+         0rmzeJUiRtPsA4R5jAVI7EdZKrNLM9LRZMFPruEDf4YPZhV3Yz98rBjPOp90+8ITiNmm
+         ApDcTvjylchy+D5dxGyGHnmBgpSl/oJrWfTgdhlkF+I6fnoUNg53Cnio0HeRR85YsNfu
+         qAHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759936975; x=1760541775;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=u8IL1MJVZcL+yeXHblmq6i6BaDGI2XMDGXwWjrVz72g=;
-        b=T41QWhnWtkNFsxsAOHNidKOA40+rMs5tNsqVdotcLgkql4UthiZNA2oYK9FI1VTUfB
-         JSrSsgAGMAfXJJ0pXHCtW/Y/ZG3h/ZsYlk4WyFIUm1cdtIF0sCGAJeGcuExzw64sTIkR
-         c4nJmzKTxw4XE1K3czGkwmphmIcWxU5EvWV7qg/UWbPpycl+zUOIjHEr2ffr+8Wah/zN
-         eENG6I8O4xjD54nMQ6/kNUgrFYgTXUScdADga9KIX1MeQnO+3R2Z3QHrYaXQf72+NkdN
-         px9NsCp7QPpjZ1yNvFnaOm+uQzbJ46b5MaowQHtJmc3d0GKweDZpDBJjGdHrJ5l5XO34
-         gXgg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3Av3mjNeDYY5Zh9ndEHBi1+Q5jizf6iPI4z9lp2arxctryaoUh9lwEPbJsIQfVkcEYhR+1p+I9gCFXuQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBMUtiakMJ3aKhUki103v3rbmBCI04rTD8JgpgLVQPfyvbF+gW
-	xFPPcGzJsp5PlB+RIsIumzPuM9niE15aYfa2AVm9QXGXdPofuLk07gcwWosW5cAKOpjyBSmW344
-	ZhCDo1PqTMhRD7uzemg8T4Ibc826iSV7+o3/yrgzP9zAIpB/35JpiI78=
-X-Gm-Gg: ASbGnctOgFF7vIeFfaJNnyIgUBySxsDeMoRJewiS9x9mArZvd6pBeJ2n8gUUyixsJGY
-	xSl1ptxe0q5+FXmFWkxiQiIELB1dGjrbakER5FX+u56JINZvgMgCk7mOadSzCkMXtFcjHBT68L6
-	DEi+kOudFb3zdgiyc/PYPE3mxiD97l3Y0ec1fzxQhhHDckXlo734iKqgWdAPwSQnHUOz5Djvsqj
-	u7G9Xv7hsAtiIDDD6sGHxFbAdVNQ06/PncLlOF69KfvLfcNSE3iU0k3ngy/89bY
-X-Google-Smtp-Source: AGHT+IEv9slRsfR5X3TXspH/uXKr0CnvgtVOqHiGOTJdOEngGu5NvMTv0CV3ST5SsNBcsjOejLZBA905vSFz/HXp7oo=
-X-Received: by 2002:a17:907:9404:b0:b07:c1df:875 with SMTP id
- a640c23a62f3a-b50acc2f5camr471007566b.56.1759936975069; Wed, 08 Oct 2025
- 08:22:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759937026; x=1760541826;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VEFKGIEcuas2Pari3eoGaAS3BufIbyvqNDimCw+KvpQ=;
+        b=KS4HWepW5OTYyur49jEnmzENX2GR+UZXSDBdlIfEreza24QIL29isIW+FExE5NPXbu
+         ZQZkf8qGCP+ymt/nM3hbjm4JZBBFPq3TnclraeuZ3atmZ1k2vSRYFgscRm1AwIoQrsgA
+         P68eM/FjezoVZsML7u7iIRKnvS3hQRND6ZfmyHfYMzB0/P8o+9IZ9bRxOkVbY6Zx1czO
+         AS+vFaLrJqEWtwJ4iW09HfoENNEDjionYvZPRHGCY+wro5noWkqIlXH8Ql5bKL0xXtxY
+         Vab8R7Q5JK9fn1/W8MytVrGkNsANcJrFkA05LXELBDtebQxd89pdfhN7x5haQ5LoT1o9
+         dcJg==
+X-Forwarded-Encrypted: i=1; AJvYcCXVBVGmRsmh2RQPq9WhRQngOJ7Q0xyMpRNHIgIdQGdpHu85cpgrCbIkGfe56G5cei4hBfHMQDDR8TxgQAE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOSysOP7kx4ExenrsEqnU6AuVpfQCi//9XXc0IkG8OLGi/NYyB
+	zjBy9OjSMzJZaRVTqcWRrS37t1Qn97cKD3JguotwB0f3mANUiVraH6HCh76mYXoBj4Q=
+X-Gm-Gg: ASbGnctsm7288lmzAfNadq14STMHel7TlKLHXH0OVHwRL+dX8xTE/apFEtN3x/ABbdh
+	qk/1ZliBH9MHhVldJxiDvBX6ix4op/uVL7noxeUiq8Cc30+88gNIQqw1m1D6QdUIW+na5eJZyWR
+	gs57mJ4ISifniY1/ED8mqrJgxwj6Om1K+LRUSjzZl9u+F7LyBA/ohX2gbfgSTVdJD0ytAcP0zAO
+	Koidar4JHh7Vk9v9jJUuAlCDcGicp/e94m6Mm1XHz9ZR9lDfi1KtPpniiGEsex3CuSmi46skxBX
+	dXpD3XAStNi8yCTJ4AodGN6wx928yLYS7qx55T9Q3PGixvMxlEfB2jvh+11MDXDSH/4z5aMmrEN
+	3fkv0lb+Fkdk8nq+b7KePfRK+fHRGUx6+5PYex2/N42Qam46c43kDtONgkNN/
+X-Google-Smtp-Source: AGHT+IGNuMGqHdw+uNNDnAnIMkPJmLsC8kdVFIi2VETZkBtQkqYRsFlkZfBi/u6TL2LUyonVmTrK0w==
+X-Received: by 2002:a17:907:c14:b0:b45:8370:eef6 with SMTP id a640c23a62f3a-b50aaa9d0f5mr485367066b.19.1759937026160;
+        Wed, 08 Oct 2025 08:23:46 -0700 (PDT)
+Received: from localhost (109-81-95-234.rct.o2.cz. [109.81.95.234])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b486970b2ffsm1711555666b.47.2025.10.08.08.23.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 08:23:45 -0700 (PDT)
+Date: Wed, 8 Oct 2025 17:23:44 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Gregory Price <gourry@gourry.net>, linux-mm@kvack.org, corbet@lwn.net,
+	muchun.song@linux.dev, osalvador@suse.de, akpm@linux-foundation.org,
+	hannes@cmpxchg.org, laoar.shao@gmail.com, brauner@kernel.org,
+	mclapinski@google.com, joel.granados@kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Mel Gorman <mgorman@suse.de>,
+	Alexandru Moise <00moses.alexander00@gmail.com>,
+	Mike Kravetz <mike.kravetz@oracle.com>,
+	David Rientjes <rientjes@google.com>
+Subject: Re: [PATCH] Revert "mm, hugetlb: remove hugepages_treat_as_movable
+ sysctl"
+Message-ID: <aOaCAG6e5a7BDUxK@tiehlicka>
+References: <20251007214412.3832340-1-gourry@gourry.net>
+ <402170e6-c49f-4d28-a010-eb253fc2f923@redhat.com>
+ <aOZ8PPWMchRN_t5-@tiehlicka>
+ <271f9af4-695c-4aa5-9249-2d21ad3db76e@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251006104652.630431579@infradead.org> <20251006105453.648473106@infradead.org>
- <CAKfTPtCC3QF5DBn0u2zpYgaCWcoP2nXcvyKMf-aGomoH08NPbA@mail.gmail.com> <20251008135830.GW4067720@noisy.programming.kicks-ass.net>
-In-Reply-To: <20251008135830.GW4067720@noisy.programming.kicks-ass.net>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Wed, 8 Oct 2025 17:22:42 +0200
-X-Gm-Features: AS18NWCMZ89A2Uc8OjuCKIj0t-GYofpct9xdmPVvK_SHfZZWp3n4tWEOwjGeIvE
-Message-ID: <CAKfTPtDG9Fz8o1TVPe3w2eNA+Smhmq2utSA_c6X4GJJgt_dAJA@mail.gmail.com>
-Subject: Re: [RFC][PATCH 2/3] sched: Add support to pick functions to take rf
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: tj@kernel.org, linux-kernel@vger.kernel.org, mingo@kernel.org, 
-	juri.lelli@redhat.com, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
-	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, longman@redhat.com, 
-	hannes@cmpxchg.org, mkoutny@suse.com, void@manifault.com, arighi@nvidia.com, 
-	changwoo@igalia.com, cgroups@vger.kernel.org, sched-ext@lists.linux.dev, 
-	liuwenfang@honor.com, tglx@linutronix.de, 
-	Joel Fernandes <joelagnelf@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <271f9af4-695c-4aa5-9249-2d21ad3db76e@redhat.com>
 
-On Wed, 8 Oct 2025 at 15:58, Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Wed, Oct 08, 2025 at 03:16:58PM +0200, Vincent Guittot wrote:
->
-> > > +static struct task_struct *
-> > > +fair_server_pick_task(struct sched_dl_entity *dl_se, struct rq_flags *rf)
-> > >  {
-> > > -       return pick_next_task_fair(rq, prev, NULL);
-> >
-> > The special case of a NULL rf pointer is used to skip
-> > sched_balance_newidle() at the end of pick_next_task_fair() in the
-> > pick_next_task() slo path when prev_balance has already it. This means
-> > that it will be called twice if prev is not a fair task.
->
-> Oh right. I suppose we can simply remove balance_fair.
+On Wed 08-10-25 17:14:26, David Hildenbrand wrote:
+> On 08.10.25 16:59, Michal Hocko wrote:
+> > On Wed 08-10-25 10:58:23, David Hildenbrand wrote:
+> > > On 07.10.25 23:44, Gregory Price wrote:
+> > [...]
+> > > > @@ -926,7 +927,8 @@ static inline gfp_t htlb_alloc_mask(struct hstate *h)
+> > > >    {
+> > > >    	gfp_t gfp = __GFP_COMP | __GFP_NOWARN;
+> > > > -	gfp |= hugepage_movable_supported(h) ? GFP_HIGHUSER_MOVABLE : GFP_HIGHUSER;
+> > > > +	gfp |= (hugepage_movable_supported(h) || hugepages_treat_as_movable) ?
+> > > > +	       GFP_HIGHUSER_MOVABLE : GFP_HIGHUSER;
+> > > 
+> > > I mean, this is as ugly as it gets.
+> > > 
+> > > Can't we just let that old approach RIP where it belongs? :)
+> > > 
+> > > If something unmovable, it does not belong on ZONE_MOVABLE, as simple as that.
+> > 
+> > yes, I do agree. This is just muddying the semantic of the zone.
+> > 
+> > Maybe what we really want is to have a configurable zone rather than a
+> > very specific consumer of it instead. What do I mean by that? We clearly
+> > have physically (DMA, DMA32) and usability (NORMAL, MOVABLE) constrained
+> > zones. So rather than having a MOVABLE zone we can have a single zone
+> > $FOO_NAME zone with configurable attributes - like allocation
+> > constrains (kernel, user, movable, etc). Now that we can overlap zones
+> > this should allow for quite a lot flexibility. Implementation wise this
+> > would require some tricks as we have 2 zone types for potentially 3
+> > different major usecases (kernel allocations, userspace reserved ranges
+> > without movability and movable allocations). I haven't thought this
+> > through completely and mostly throwing this as an idea (maybe won't
+> > work). Does that make sense?
+> 
+> I suggested something called PREFER_MOVABLE in the past, that would prefer
+> movable allocations but nothing would stop unmovable allocations to end up
+> on it. But only as a last resort or when explicitly requested (e.g.,
+> gigantic pages).
+> 
+> Maybe that's similar to what you have in mind?
 
-That was the option that I also had in mind but this will change from
-current behavior and I'm afraid that sched_ext people will complain.
-Currently, if prev is sched_ext, we don't call higher class.balance()
-which includes the fair class balance_fair->sched_balance_newidle.  If
-we now always call sched_balance_newidle() at the end
-pick_next_task_fair(), we will try to pull a fair task at each
-schedule between sched_ext tasks
+Slightly different because what I was thinking about was more towards
+guarantee/predictability. Last resort is quite hard to plan around. It
+might be a peak memory pressure to eat up portion of a memory block and
+then fragmenting it to prevent other use planned for that memroy block.
+That is why I called it user allocations because those are supposed to
+be configured for userspace consumation and planned for that use. So you
+would get pretty much a guarantee that no kernel allocations will fall
+there.
 
->
-> > While reviewing this series, I also noticed an older issue that we
-> > have with check pelt lost idle time [1]
-> > [1] https://lore.kernel.org/all/20251008131214.3759798-1-vincent.guittot@linaro.org/
->
-> Let me go have a look.
+-- 
+Michal Hocko
+SUSE Labs
 
