@@ -1,175 +1,187 @@
-Return-Path: <linux-kernel+bounces-845377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76949BC49F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:51:34 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38041BC49F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:51:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F2E11890976
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:51:57 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AEBFE351375
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A8D2F7ACC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B464B2F619F;
 	Wed,  8 Oct 2025 11:51:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mCskzSUU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LwqS+2Up"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591F42F1FC3;
-	Wed,  8 Oct 2025 11:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6842F2F5339
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 11:51:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759924285; cv=none; b=hdnveIqg7vq6kz6Kh2CB8fnTZ4zlASli43NSQXhXvT+SPQVxy84f8ZpNCCmDZJgZ6qRBT4+FOq6K9stfvOWl4zj1fUn5Z9WU8mv9jCkkaDt35AA1AIyZnv1sYU3aVseyLkIp3hGsDXRWuMsWADy4i+nTwYkRtCIM45eLwFtIGZY=
+	t=1759924286; cv=none; b=to27/W/G914MtZec2Q58MMtvljh4uVEqCgK8YkN8YZ9lrKLCfv4mUWuajhntNEwcttVn04oTyiEkWG5+9ZoWZ/ymuh8mnAe3Rge/0gy8tzjl4PA9580Y1iKrADu6yh1zlv865JQWZlHg5Q7nZ4QixuwfIctD80qnO3kim1UgMGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759924285; c=relaxed/simple;
-	bh=ryM31503eMXvR81ecjmrnqZ+pmjpuK2RFkfc0Ve3/Hg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JTt0dL/2c239BPWFBHiXRgO56I3vPDFGTwxSJ6mZBa1QBjcDYyNNktsxKHmUneZDw265X5LMA5QP5OyMMgTMydCdTjGXLlZ1nJzJlVoMqgRRCV82twiMINwo9pPyGQW4A99O+N/TAF52nq29nUV3rEZy3MWwY6IyVpCUeBvEh8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mCskzSUU; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759924283; x=1791460283;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ryM31503eMXvR81ecjmrnqZ+pmjpuK2RFkfc0Ve3/Hg=;
-  b=mCskzSUU0eSmbldZjkfhpRfHhB7pSlBM2Q64Ext3mSc0NYgdtJLJSLrp
-   h7HL/wCWZyZOw0rGONBegAK/n0G8D97e5LY416jE/pMTVMyXSUNktpocG
-   0YwtrztRsi+dAUp6Jd2YLBs55LPJjTTcbhiWE5lLWC0Wa+CCUTZYqlefG
-   JnBcWbQhsNIjdCbaIhHeysKVtL7a/lswSG07cmUCkkoyXzXXFCYJlg17t
-   zosvN8T+ZTOXQODPfZtwWNxQTHuvGheLqOOupwCkbWjrxelhuA9PzGGDt
-   M7JSpLcfho3OBpYWtj8rm6Zk2wC+iDu9mFzBT2mk0UGxWNsu+VSiXO0Xp
-   A==;
-X-CSE-ConnectionGUID: xgumI4T8RY+dQaE0MDZUiw==
-X-CSE-MsgGUID: Yj1fq/C+Ri2bYuklKoLCRg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11575"; a="72373482"
-X-IronPort-AV: E=Sophos;i="6.19,323,1754982000"; 
-   d="scan'208";a="72373482"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2025 04:51:14 -0700
-X-CSE-ConnectionGUID: lSwJdvgRRKaNYFeRXQJS3g==
-X-CSE-MsgGUID: QEGKyH1oTsad5GTZg8HvNQ==
-X-ExtLoop1: 1
-Received: from iherna2-mobl4.amr.corp.intel.com (HELO kuha.fi.intel.com) ([10.124.220.169])
-  by fmviesa003.fm.intel.com with SMTP; 08 Oct 2025 04:51:08 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 08 Oct 2025 14:51:05 +0300
-Date: Wed, 8 Oct 2025 14:51:05 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Jameson Thies <jthies@google.com>
-Cc: akuchynski@chromium.org, abhishekpandit@chromium.org,
-	krzk+dt@kernel.org, robh@kernel.org, bleung@chromium.org,
-	ukaszb@chromium.org, tzungbi@kernel.org, devicetree@vger.kernel.org,
-	chrome-platform@lists.linux.dev, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] usb: typec: cros_ec_ucsi: Load driver from OF and
- ACPI definitions
-Message-ID: <aOZQKfKUpae1cSvo@kuha.fi.intel.com>
-References: <20251001193346.1724998-1-jthies@google.com>
- <20251001193346.1724998-3-jthies@google.com>
+	s=arc-20240116; t=1759924286; c=relaxed/simple;
+	bh=pa+gkLWrp2QAqUUYjdb+zf9q7W84puc3aqeGewFO0Tc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HxBjbpjzRuGG+QvUiNAQWOFSbycT5MWIVpucZEAGFs2gbVl/+8qCcgtsj+1nRzdFzs2gtj2l1atTQvknwTdaJZ257bAu20aCUU55xeI94fhML67AMRv7f4xm2FP85ZK6DUThHVnZjkIByPI7a+7Dg9BdVwW7pc3v5WsGHf9wWvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LwqS+2Up; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59890Lj3001556
+	for <linux-kernel@vger.kernel.org>; Wed, 8 Oct 2025 11:51:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	y0WlonZzhT+aPa6S+klAQl8ZLyn+O2jbA9B6NJTdYUU=; b=LwqS+2UpafhDGXMn
+	Md4iM6GKpIekhqaCFz7wXsm620Hpq15SUXKTd5hrq6u4CMxSSbdB7NU/JgbYYor6
+	eIl9p6Ie88g2nnDXQysZo3YslcjeJjAw4TY44eTsOyGaAKtyLrddepQrFtebSDTc
+	JpOBlhFTNmSqWwnGt2mJj8u2H2p6MNyKJJrrStfnifBDGgnnGQOPs13qnRePKx8S
+	fcKcgr8jWXjH/sWfDDIM+Zq96LbQZbEwxH4W6pxh9JMKq9VqI7JuuFNM/ShdG3C6
+	IhH9Jl/28oWOmhozi0AC8Zf4fLErFyoPHdnkp3DeXLaqKD3jMP4SdeFa7Z0Hje9v
+	rxAukg==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49jrxnakk8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 11:51:22 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4dc37a99897so18902991cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 04:51:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759924282; x=1760529082;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=y0WlonZzhT+aPa6S+klAQl8ZLyn+O2jbA9B6NJTdYUU=;
+        b=k41bWqr2grEbkhgdayxhBQHz0rAOWI3IgUkV39wOKDkGu4n/DoUeUdWUiUVTPXC8fB
+         ivNo7+W5ulAmG79dkoSgZhaMHcBI/AtOVKGVultTfZm/X6Sm27xV3xR5MiVICS5+wAs1
+         Lo8XmbBL3XHrvIavMP/oMSgduRvSMHSN6NMTGWvGM+vWbyneNSgTrkOWdNZlVBPYGYxn
+         vEQHe5GCt3hC5fI07VzO4LGIDIvUmj7qKKBYTfvVW1shoD7pJ6Lhh8wet7ab09SdtTTy
+         his7a09IVzJNilAM7M7zmaNBiQvECkiDniDuYA7DwqwEemuno5oZKjESAPJa2v+6X2JJ
+         W5Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCWRJ8uXCe4gatprTl7HcGsxqUExeFxgZDa5WGo8JJZKKEiSs+goMbjhHdAtgBnEaAdYo1hm2P7l+An0QEs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFSRJ+C/yMaYXgir12bOZ736wCx1A9WKl89LMelYqu06Khtltg
+	UdPhi1uvlaQBUUpMSiagkKmiaKDmdifhoN7z0A48byThG0U+y6BOKGW7PDRGHoQFYIF3TX8lmsk
+	me1BuyzwKXSZ02+Oi+RojNrX4RkiZRIjQlp33xy/9tmL9UApw+aPub1g6c9eqOmFUDaw=
+X-Gm-Gg: ASbGncssZv/k/bKbS5qCn8a1+6ZPWfgAvvvlm3XOcYhJXA/584dlEs9CsB1K5qHrqLK
+	oIJvi3ZHKa1JRJW7In9IoC4hYWTcOUKvIFTANQA3Fw7axbhuKZrSJLHqDOLQomQCsESuBknncds
+	1tX4fRbQowVXvCwD1rfj1tKGu5OSsHk37e1qnj/SEofwJcQqMRx962Zggj93aLSSuZt7FXg5syA
+	atrY1hVW1E/k9Ay8gtHKpEjiELnajDU385B05EwlqBcnlhu2XceLr++hT0L81jR2rA3s/6/+jJw
+	EEnd36sjn4t6UJ/NxbaZhK45Njsip4zUTBW16OJftdKHqxSPpwnnlvVuzmXg8B9TORPvGMToMYC
+	A3oGWBVMsJGb8zFmKb/T6VQ0NcPI=
+X-Received: by 2002:a05:622a:3d3:b0:4d8:85db:314 with SMTP id d75a77b69052e-4e6ead5eeb7mr27150121cf.11.1759924281851;
+        Wed, 08 Oct 2025 04:51:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE2gWRn31Utay2MX1qgHKnxPLPzAbFxKTM0QkU36eLSGUOX9zyx3iPasVrXq6nEJTPeMh4/9g==
+X-Received: by 2002:a05:622a:3d3:b0:4d8:85db:314 with SMTP id d75a77b69052e-4e6ead5eeb7mr27149701cf.11.1759924281298;
+        Wed, 08 Oct 2025 04:51:21 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b486970b37bsm1681982366b.53.2025.10.08.04.51.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Oct 2025 04:51:20 -0700 (PDT)
+Message-ID: <5a027440-8720-4df9-a793-5ac3a624ef60@oss.qualcomm.com>
+Date: Wed, 8 Oct 2025 13:51:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251001193346.1724998-3-jthies@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/17] drm/msm/a6xx: Rebase GMU register offsets
+To: Akhil P Oommen <akhilpo@oss.qualcomm.com>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Sean Paul <sean@poorly.run>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar
+ <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Jordan Crouse
+ <jordan@cosmicpenguin.net>,
+        Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+        devicetree@vger.kernel.org
+References: <20250930-kaana-gpu-support-v1-0-73530b0700ed@oss.qualcomm.com>
+ <20250930-kaana-gpu-support-v1-10-73530b0700ed@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250930-kaana-gpu-support-v1-10-73530b0700ed@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAwMSBTYWx0ZWRfX1GM4eoe5mW2S
+ aPBxUXSSzPMU/AlXSV5RCDwGSVMYmK74v96YTjlYTvJuJG27W1jEzyyl2b+jqdmLAcMdLPo9h/h
+ XZ4nWkhMZ8xDXfSy/Muzz7r/eSizyBvKMYRVgjSW3avGrGA82PEZ0RhKXVe9Nl+TyxMrmoLh2mg
+ 3GJ2pbO/al462zWom9S9Z7aU41pngUSKWIy9zri0jmHCGbn//lkPeKjV3jh77msAUqqze+nszdq
+ JsAwBkGKaQRdN6cq9a7SNTJb6/ui958K80BfCnioASEUPxPp177uSZpFtH+gFCesTui4b5fjLth
+ BCfK6poxBPcvHpsJo/8lBl3JEo//eoyJ6h9JwZH8BjVMY8w+ObBo/SgFZpE7NlwoY+fZbIhNP62
+ GyPqG7zhO9dGRBpuZV6C98H4tJMh9A==
+X-Proofpoint-GUID: ED8C3fNOf3FXouCR6N5b0cEDC-MbKQkt
+X-Proofpoint-ORIG-GUID: ED8C3fNOf3FXouCR6N5b0cEDC-MbKQkt
+X-Authority-Analysis: v=2.4 cv=EqnfbCcA c=1 sm=1 tr=0 ts=68e6503a cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=abYYEtMJDLCSMuBgjaEA:9
+ a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-08_03,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 priorityscore=1501 spamscore=0 lowpriorityscore=0 malwarescore=0
+ adultscore=0 suspectscore=0 bulkscore=0 impostorscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040001
 
-On Wed, Oct 01, 2025 at 07:33:42PM +0000, Jameson Thies wrote:
-> Add support for cros_ec_ucsi to load based on "google,cros-ec-ucsi"
-> compatible devices and "GOOG0021" ACPI nodes.
+On 9/30/25 7:48 AM, Akhil P Oommen wrote:
+> GMU registers are always at a fixed offset from the GPU base address,
+> a consistency maintained at least within a given architecture generation.
+> In A8x family, the base address of the GMU has changed, but the offsets
+> of the gmu registers remain largely the same. To enable reuse of the gmu
+> code for A8x chipsets, update the gmu register offsets to be relative
+> to the GPU's base address instead of GMU's.
 > 
-> Signed-off-by: Jameson Thies <jthies@google.com>
-
-One nitpick below. With that sorted out:
-
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-
+> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
 > ---
->  drivers/usb/typec/ucsi/cros_ec_ucsi.c | 25 +++++++++++++++++++++++--
->  1 file changed, 23 insertions(+), 2 deletions(-)
+>  drivers/gpu/drm/msm/adreno/a6xx_gmu.c             |  44 +++-
+>  drivers/gpu/drm/msm/adreno/a6xx_gmu.h             |  20 +-
+>  drivers/gpu/drm/msm/registers/adreno/a6xx_gmu.xml | 248 +++++++++++-----------
+>  3 files changed, 172 insertions(+), 140 deletions(-)
 > 
-> diff --git a/drivers/usb/typec/ucsi/cros_ec_ucsi.c b/drivers/usb/typec/ucsi/cros_ec_ucsi.c
-> index eed2a7d0ebc6..3d19560bbaa7 100644
-> --- a/drivers/usb/typec/ucsi/cros_ec_ucsi.c
-> +++ b/drivers/usb/typec/ucsi/cros_ec_ucsi.c
-> @@ -5,11 +5,13 @@
->   * Copyright 2024 Google LLC.
->   */
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> index fc717c9474ca5bdd386a8e4e19f43abce10ce591..72d64eb10ca931ee90c91f7e004771cf6d7997a4 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> @@ -585,14 +585,14 @@ static inline void pdc_write(void __iomem *ptr, u32 offset, u32 value)
+>  }
 >  
-> +#include <linux/acpi.h>
->  #include <linux/container_of.h>
->  #include <linux/dev_printk.h>
->  #include <linux/jiffies.h>
->  #include <linux/mod_devicetable.h>
->  #include <linux/module.h>
-> +#include <linux/of.h>
->  #include <linux/platform_data/cros_ec_commands.h>
->  #include <linux/platform_data/cros_usbpd_notify.h>
->  #include <linux/platform_data/cros_ec_proto.h>
-> @@ -235,7 +237,7 @@ static void cros_ucsi_destroy(struct cros_ucsi_data *udata)
->  static int cros_ucsi_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> -	struct cros_ec_dev *ec_data = dev_get_drvdata(dev->parent);
-> +	struct cros_ec_dev *ec_data;
->  	struct cros_ucsi_data *udata;
->  	int ret;
->  
-> @@ -244,8 +246,13 @@ static int cros_ucsi_probe(struct platform_device *pdev)
->  		return -ENOMEM;
->  
->  	udata->dev = dev;
-> +	if (is_acpi_device_node(dev->fwnode) || is_of_node(dev->fwnode)) {
-> +		udata->ec = dev_get_drvdata(pdev->dev.parent);
+>  static void __iomem *a6xx_gmu_get_mmio(struct platform_device *pdev,
+> -		const char *name);
+> +		const char *name, resource_size_t *start);
 
-udata->ec = dev_get_drvdata(dev->parent);
+Maybe you can keep this offset variant and switch to a simple
 
-> +	} else {
-> +		ec_data = dev_get_drvdata(dev->parent);
-> +		udata->ec = ec_data->ec_dev;
+devm_platform_get_and_ioremap_resource()
 
-and just as a proposal:
+for others (also letting us get rid of a number of iounmap() calls)
 
-udata->ec = ((struct cros_ec_dev *)dev_get_drvdata(dev->parent))->ec_dev;
+[...]
 
-> +	}
-> -	udata->ec = ec_data->ec_dev;
->  	if (!udata->ec)
->  		return dev_err_probe(dev, -ENODEV, "couldn't find parent EC device\n");
->  
-> @@ -326,10 +333,24 @@ static const struct platform_device_id cros_ucsi_id[] = {
->  };
->  MODULE_DEVICE_TABLE(platform, cros_ucsi_id);
->  
-> +static const struct acpi_device_id cros_ec_ucsi_acpi_device_ids[] = {
-> +	{ "GOOG0021", 0 },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(acpi, cros_ec_ucsi_acpi_device_ids);
-> +
-> +static const struct of_device_id cros_ucsi_of_match[] = {
-> +	{ .compatible = "google,cros-ec-ucsi", },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, cros_ucsi_of_match);
-> +
->  static struct platform_driver cros_ucsi_driver = {
->  	.driver = {
->  		.name = KBUILD_MODNAME,
->  		.pm = &cros_ucsi_pm_ops,
-> +		.acpi_match_table = cros_ec_ucsi_acpi_device_ids,
-> +		.of_match_table = cros_ucsi_of_match,
->  	},
->  	.id_table = cros_ucsi_id,
->  	.probe = cros_ucsi_probe,
+> +	/* The 'offset' is based on GPU's start address. Adjust it */
 
-thanks,
+That's what an offset is, no? ;)
 
--- 
-heikki
+I think we can drop this comment or move it above the #define
+
+Konrad
 
