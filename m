@@ -1,190 +1,205 @@
-Return-Path: <linux-kernel+bounces-845880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9024BBC664C
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 20:59:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D1AABC666D
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 21:02:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D51C19E42B3
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 19:00:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 406933A5D22
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 19:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449652C11FD;
-	Wed,  8 Oct 2025 18:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 971202C0F63;
+	Wed,  8 Oct 2025 19:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aPKn5zfy"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E3Vh8okr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF822C11EC
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 18:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17451285419
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 19:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759949964; cv=none; b=gfuZz5fWmwAvcd0W49BSueJ5xEHkHYYLyt1PPafCuy9VzvncTdCTEJPNeLUSlvT4FKGMbAarsKFPSupBcW3qaelGrpLnfC8ttYfP6aJ3+FsBsBPMk5aP/4ScsjzPgN7n/fpCdmdHGJcHZD/4KsjuI1fldtbJJyFvsSCuNDGoW1I=
+	t=1759950077; cv=none; b=ZC219JVZzXz/OIkqKwbrVqaKd31O3jzWo1RgSka1S5kepR5jPRFgmWnttb3cbLk+IOYye64DbEgvQtgCkMPJRSFMELL2QtVhdDCTXT5QnKyfb3l+zcDIHUFH/JArTkKCIQofx2hguBYmKi3A33I11BiwHVjRoRnCZ92QVDAB9gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759949964; c=relaxed/simple;
-	bh=pkKqRsIwDhc+RUJiMdhK9GH1Pl3ZLZDY4dZbArFqFqs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WQiUlnxdxas3PWyFFMIgE/l/BOpENW3IeqqJmzxBAyaLPhzdwFIYf6MeS2cUTbFL1ApeJPSxtM8uW+u4IdtviKA9b0+IcZbPVAlDGEyXI6QegLJZWG6wbiNwd+O63Gdu3fVPZ63B7rB4RdtvM8iec9jSsTGRwGb4nJw+b3tfUKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aPKn5zfy; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 598I5xCd002709
-	for <linux-kernel@vger.kernel.org>; Wed, 8 Oct 2025 18:59:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=0UdkETRPI6ZWbVUbfsUgaXMe
-	BnN/d50E+m0AcvlG3Bk=; b=aPKn5zfyCDXgHyxBiNSZBLkmEvt47oUi2RWDinGN
-	uQyvvHaFX7LMl4N+6Xg7E0U3ZeVF21BWfHPP8/CZu+uu5h34dEKRoIbzQB8J0TiE
-	DvOiVboPksV3SiAiPr6QtYJTignIEKkUErz5spHye4nfnnfOqKUBBAQoGQyTMiD3
-	ZI4+mGUQUxc6mOcJVvXDWreZvdia3EDeMCn4p3gz5nnLqZMjoF+PwYiZKnDaCdDW
-	hHwXINXjJlzCADrcoRbbyK468HCH703v1rkrq2SgJvhihFsk28r0YhAFs2+8Iok1
-	tSkAzrPEffpnZnS+t63g3pd0//gAPGz7VU8cmZOD8FpGTA==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv4kraj5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 18:59:21 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-879e66b788bso13668676d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 11:59:21 -0700 (PDT)
+	s=arc-20240116; t=1759950077; c=relaxed/simple;
+	bh=ZbOcDrJPTH73vir3XLHLdPGv6F1OMbzcI+LUEUpPNsU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=khCNHKSu8S6/AqOsFtcu01rf65/Mmd9kup52q0TbZ1FDP7Bcu7b18fkDALAIzO29H0KaiI93eNFqBjy/dI74xE0j0CEJ6tm9i7IOZqh5ShXQoLn3EpJcYCEbA5FY7LwxnveZhZUDwnluw1aw1Mn07uS2DY+jep+3MD8Imv6PGB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E3Vh8okr; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759950074;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=xbDB48GoIfubfhUk0lRIFFeY6aC6AxZ+kgHto7K7Oxc=;
+	b=E3Vh8okr7GrSruWQ+1WiyU+HbDNJuqEcM5YbAXvDtuB+56slsIGXx9DssTutrTrp1Sbi5B
+	MpXK4cXKbU2gpVhiy4eCnL1IiK6zPcBZ0TGFIbGKQDqYzeswxo31GeY63UFTZT2koWZvkp
+	mn3SXxeX5MwrCfbEFbZL8PBDGOMiEyw=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-602-CdfCQNG0OwG9SV8N3vwM_w-1; Wed, 08 Oct 2025 15:01:13 -0400
+X-MC-Unique: CdfCQNG0OwG9SV8N3vwM_w-1
+X-Mimecast-MFC-AGG-ID: CdfCQNG0OwG9SV8N3vwM_w_1759950072
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3ecdc9dbc5fso123531f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 12:01:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759949961; x=1760554761;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0UdkETRPI6ZWbVUbfsUgaXMeBnN/d50E+m0AcvlG3Bk=;
-        b=ERuhfZxtQGPHMXV6+hE9hDq5pyv34BCtJ2/5nYR0o6XyE57pfgeqDM0F5eQV8QSwcm
-         aM+Cx1fgfIrvrtys3BF9WyGa5eRiUdhW3yiuVWe2seUSOF2euecVx6/KdyPR6gAJJiSQ
-         p3zxOhYV2cjOYyRrnIZDFzEj8M2v62AdnqxBhjKxBI0ZYvCLI3MUB783XGBHxdF3t0gU
-         rtL9IZ4kWNo2uwtxLpx7zPVAlXKvPW9qedqlDdfvdDxLrqPCOzjjh2p7iKf+GfESMbDF
-         L/7p7PmHvK4Fy3U+SH75IwGvRkxwK+H0zn+vSJYPw+V4k+dRTivCDIK3AaBweOnJBX7V
-         08Jw==
-X-Forwarded-Encrypted: i=1; AJvYcCUUwm/NpGvB2H1kV7ojJ8YaK+k4B9+58YnutkgfHI7ftHyYzF8VHKpGYGfBx+93RH8tyhKXlCY1MGuNKj4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUvUroI8AGsSrVHuSZCDOScQxT9xKpM/iUefxZ47LcLqUttswQ
-	nb79CUJIGj6L7lM00AuWPtRh8Z6qKX1ZOUAcTIoE2CUgy2mid2f5o+thWfWlL7i7FfyRKym73me
-	qthToFaf7T5Vsh8SeEZdTtHphEKFnkXd1fA5qY869OGxrpylR4+J+ErRKIc9PKhEzvCM=
-X-Gm-Gg: ASbGnct4/UxVY+uLVkhtpMXqt/hTC0jMjwN1pIzArl5+l2sBAWOigCTLBaoAPvLQwaE
-	j03g2ORdhPbTFr0wES/AhoBFHR73tHJ05YK3Md8i20GDg4+wmunaOijWIpd/bT9HwSJaX6ARWpC
-	AjMy3bWyc81ltCj6IjbfltG4kEactT00lDlAGAzHCk6cZOFtkYSfyq6JJdE6TLqPSUzc59nfzFK
-	NRpH+RJ4ymLRavPuWsZl8U5FPcWcH/W91X5LPliKyocSbgNLDXaJu29OQmX5aVbdx7zSE1X8Gh7
-	Ka2shmB3hwSFSDccwaw00lghHMUrltxcNajAMneTD5NWxxv/nnUKCfkD8bIe1EWqOyoMfqDfpT9
-	nxJJw0k7qZ2k6LYDX4bpiUpBgl5vtZ6BTmsD0cnB4ODWebMit5UUlwgaN2A==
-X-Received: by 2002:a05:622a:1b24:b0:4e3:970:661a with SMTP id d75a77b69052e-4e6ead91fe2mr67087911cf.75.1759949960535;
-        Wed, 08 Oct 2025 11:59:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGaXzhWAKXAgn1FOnUImvO0Ih0s0vnFPkEOMy8MA4cgd7lRzHdrWt6cw5JjIrgIzgwo4fpdJg==
-X-Received: by 2002:a05:622a:1b24:b0:4e3:970:661a with SMTP id d75a77b69052e-4e6ead91fe2mr67087441cf.75.1759949960070;
-        Wed, 08 Oct 2025 11:59:20 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5907ac00be6sm263748e87.23.2025.10.08.11.59.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 11:59:19 -0700 (PDT)
-Date: Wed, 8 Oct 2025 21:59:17 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: david@ixit.cz
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Casey Connolly <casey.connolly@linaro.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        phone-devel@vger.kernel.org
-Subject: Re: [PATCH v2 5/7] drm/panel: Add Samsung S6E3FC2X01 DDIC with
- AMS641RW panel
-Message-ID: <6yp5udhm2g42basxeyjnn3onfons2k2besxfqwemnqrafsai6q@tfr74bfz7s7t>
-References: <20251008-s6e3fc2x01-v2-0-21eca1d5c289@ixit.cz>
- <20251008-s6e3fc2x01-v2-5-21eca1d5c289@ixit.cz>
+        d=1e100.net; s=20230601; t=1759950072; x=1760554872;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xbDB48GoIfubfhUk0lRIFFeY6aC6AxZ+kgHto7K7Oxc=;
+        b=WHUm4LmCdsW58Zn50TP2kB0tnAbL9/ykZV9qoNjiG8EUrQSUcNLo9nZduSGzzNLNUl
+         tsubmAsayW8eOECCQYJnRJhZb9inZHhqHGX77oIUBNniiluMx3By3VaCzb1rDy/7h6lF
+         UlmnYggktGlRE0V6CEmGT1UYJH6AYaZneuz81fTrbDB10VovCkzG96LIVZQlZmbwjzS3
+         +cgx/AZ9tgqXmECRBa1Sw8XcV1de4NAEZnURFKwt/NQZnELQAFoYRqYLWNldapSwX5XN
+         EaOSuDQaEmx4xHholNk0efPbqrg+48Jm7dA/PX2W98CK21esIJnTJXSoNJ7+SkOtgvqi
+         Sa4g==
+X-Forwarded-Encrypted: i=1; AJvYcCXH1sLQ8ACoC+VCC7qwm0rEAj7v5/NmZDJXTN2sY5u6RyNGs8KMiQw5tNfBh3BhoBrFbK1ayR1VWWxrtio=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz47WNxjrE7IRNb5QqBkUu3zdzMT7GREFnsqOlAtFgxhjpvG1Nt
+	qdofzcgZQkvcyTW6FznvTLm1aDTNGGidQTBI77fDo4axrT6JHrFKcANfmnghaAuOP89iN2k/wOa
+	Pns0o5PbKn2eALMkwUgxwUGxshT3Gx1X9UelrxcPVOIUCmnguRkpb2GzXskGzjdzbzg==
+X-Gm-Gg: ASbGncu7cwwoWHEpu/IAq/qTSLPoOf7iLOUX2G5yZvOR6Z4T5zZc93t9bz6HF5+Ir0h
+	wwJPu42anjkaq6lcngWNmWjun35GSp1iTbS9+uOlW+YkXJkvNf6pnFMqftbOrXNsmpLoHFvchZe
+	cUvWTjxd1NEUABsh5y167gsWEbu9WPqwDbc9UQIg3bj3OQ0HkUkHYCwiCTeyvDDCrehv3bp0ME4
+	x2jhWSijlXZs16FgvwT8L5hkvKrOL0ylNiuHLuG6154KN+BcONsBudz086P0KKd0KztSNna1BEc
+	RW5ber/GJPonUi1JHYyHFizZr1rZZdfdgpb2bP3LJG7cJq9TxJ++y5a0C+FCNr4++cYrD4PnKJt
+	nxfJDz1po
+X-Received: by 2002:a05:6000:4201:b0:400:1bbb:d257 with SMTP id ffacd0b85a97d-4266726c2f0mr3059258f8f.26.1759950072428;
+        Wed, 08 Oct 2025 12:01:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH+eGTotVGiFRKomIEq6GkpKr6FGrcxlMRZd7jUbDDAkTfSgQerCvnSBP6CMzqlbSkIjvKLIg==
+X-Received: by 2002:a05:6000:4201:b0:400:1bbb:d257 with SMTP id ffacd0b85a97d-4266726c2f0mr3059240f8f.26.1759950072025;
+        Wed, 08 Oct 2025 12:01:12 -0700 (PDT)
+Received: from [192.168.3.141] (tmo-083-189.customers.d1-online.com. [80.187.83.189])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8abe90sm31001480f8f.23.2025.10.08.12.01.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Oct 2025 12:01:11 -0700 (PDT)
+Message-ID: <b6d472ba-e6cf-4c96-935d-88c842ab3cd8@redhat.com>
+Date: Wed, 8 Oct 2025 21:01:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251008-s6e3fc2x01-v2-5-21eca1d5c289@ixit.cz>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX8hzwGPxSu6W7
- h5qRVajIDXcKKOSKm9Uz2kuyRi9+LYSnojapDnukNNiaeuOpdb9ipL+1qgT/Mv3aP0efRbWnD0U
- v4POz5ZAoqAyw77+Oz8T4sS1CWMjT7Fywq852ZJyQj/TAkpDmQDmNrXX0U/lRigmsqB8dtfXnvI
- zWL1OP+LpTS9KP5+n2nPINu9ZSmjmKWR+VUHryZoROvIvUPp79stA7vB+9OWt7/GTdKi+5Uzz+K
- Iks8aWHYFB3hIF2XP0PIUdt7eenq9kMB70zsd2ifhpNLp01OMXuH5Cl0cjjaz7fh0+aMzHKLzg8
- xgtMpOwPhDVwuS/CcFpxVcXF9WI2MlqD8birD2a70zvxOOP7jqKQunuCVMBnZUy2RNJc5uuB0jA
- bptbKKM9cSRcevM66Gzkt2Fp9rMjsg==
-X-Authority-Analysis: v=2.4 cv=CbcFJbrl c=1 sm=1 tr=0 ts=68e6b48a cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=WFa1dZBpAAAA:8 a=bBqXziUQAAAA:8 a=SYGtE8pA4Zq6nJvkfUIA:9
- a=CjuIK1q_8ugA:10 a=pJ04lnu7RYOZP9TFuWaZ:22 a=MZguhEFr_PtxzKXayD1K:22
- a=BjKv_IHbNJvPKzgot4uq:22
-X-Proofpoint-GUID: bH7G8aHdYGFoYcW_El7VBxFeh_GVMqJ_
-X-Proofpoint-ORIG-GUID: bH7G8aHdYGFoYcW_El7VBxFeh_GVMqJ_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-08_05,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 priorityscore=1501 malwarescore=0 spamscore=0 impostorscore=0
- lowpriorityscore=0 bulkscore=0 clxscore=1015 phishscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Revert "mm, hugetlb: remove hugepages_treat_as_movable
+ sysctl"
+To: Gregory Price <gourry@gourry.net>
+Cc: linux-mm@kvack.org, corbet@lwn.net, muchun.song@linux.dev,
+ osalvador@suse.de, akpm@linux-foundation.org, hannes@cmpxchg.org,
+ laoar.shao@gmail.com, brauner@kernel.org, mclapinski@google.com,
+ joel.granados@kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Mel Gorman <mgorman@suse.de>,
+ Michal Hocko <mhocko@suse.com>,
+ Alexandru Moise <00moses.alexander00@gmail.com>,
+ David Rientjes <rientjes@google.com>
+References: <20251007214412.3832340-1-gourry@gourry.net>
+ <402170e6-c49f-4d28-a010-eb253fc2f923@redhat.com>
+ <aOZyt-7sf5PFCdpb@gourry-fedora-PF4VCD3F>
+ <f4d0e176-b1d4-47f0-be76-4bff3dd7339a@redhat.com>
+ <aOa0UPnxJVGvqc8S@gourry-fedora-PF4VCD3F>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <aOa0UPnxJVGvqc8S@gourry-fedora-PF4VCD3F>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 08, 2025 at 04:05:32PM +0200, David Heidelberg via B4 Relay wrote:
-> From: David Heidelberg <david@ixit.cz>
+On 08.10.25 20:58, Gregory Price wrote:
+> On Wed, Oct 08, 2025 at 04:44:22PM +0200, David Hildenbrand wrote:
+>> On 08.10.25 16:18, Gregory Price wrote:
+>>> On Wed, Oct 08, 2025 at 10:58:23AM +0200, David Hildenbrand wrote:
+>>>> On 07.10.25 23:44, Gregory Price wrote:
+>>>> I mean, this is as ugly as it gets.
+>>>>
+>>>> Can't we just let that old approach RIP where it belongs? :)
+>>>>
+>>>
+>>> Definitely - just found this previously existed and wanted to probe for
+>>> how offensive reintroducing it would be. Seems the answer is essentially
+>>> "lets do it a little differently".
+>>>
+>>>> Something I could sympathize is is treaing gigantic pages that are actually
+>>>> migratable as movable.
+>>>>
+>>> ...
+>>>> -       gfp |= hugepage_movable_supported(h) ? GFP_HIGHUSER_MOVABLE : GFP_HIGHUSER;
+>>>> +       gfp |= hugepage_migration_supported(h) ? GFP_HIGHUSER_MOVABLE : GFP_HIGHUSER;
+>>>>
+>>>> Assume you want to offline part of the ZONE_MOVABLE there might still be sufficient
+>>>> space to possibly allocate a 1 GiB area elsewhere and actually move the gigantic page.
+>>>>
+>>>> IIRC, we do the same for memory offlining already.
+>>>>
+>>>
+>>> This is generally true of other page sizes as well, though, isn't it?
+>>> If the system is truly so pressured that it can't successfully move a
+>>> 2MB page - offline may still fail.  So allowing 1GB pages is only a risk
+>>> in the sense that they're harder to allocate new targets.
+>>
+>> Right, but memory defragmentation works on pageblock level, so 2 MiB is much
+>> MUCH more reliable :)
+>>
 > 
-> Add panel driver used in the OnePlus 6T.
-> 
-> No datasheet, based mostly on EDK2 init sequence and the downstream driver.
-> 
-> Based on work of:
->   Casey Connolly <casey@connolly.tech>
->   Joel Selvaraj <foss@joelselvaraj.com>
->   Nia Espera <a5b6@riseup.net>
-> 
-> Signed-off-by: David Heidelberg <david@ixit.cz>
-> ---
->  MAINTAINERS                                      |   1 +
->  drivers/gpu/drm/panel/Kconfig                    |  13 +
->  drivers/gpu/drm/panel/Makefile                   |   1 +
->  drivers/gpu/drm/panel/panel-samsung-s6e3fc2x01.c | 402 +++++++++++++++++++++++
->  4 files changed, 417 insertions(+)
-> 
-> +static const struct of_device_id s6e3fc2x01_of_match[] = {
-> +	{ .compatible = "samsung,s6e3fc2x01-ams641rw", .data = &ams641rw_mode },
+> fwiw this works cleanly.  Just dropping this here, but should continue
+> the zone conversation.  I need to check, but does this actually allow
+> pinnable allocations?  I thought pinning kicked off migration.
 
-Again, why can't we use defined compatible here?
-
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, s6e3fc2x01_of_match);
-> +
-> +static struct mipi_dsi_driver s6e3fc2x01_driver = {
-> +	.probe = s6e3fc2x01_probe,
-> +	.remove = s6e3fc2x01_remove,
-> +	.driver = {
-> +		.name = "panel-samsung-s6e3fc2x01",
-> +		.of_match_table = s6e3fc2x01_of_match,
-> +	},
-> +};
-> +module_mipi_dsi_driver(s6e3fc2x01_driver);
-> +
-> +MODULE_AUTHOR("David Heidelberg <david@ixit.cz>");
-> +MODULE_DESCRIPTION("DRM driver for Samsung S6E3FC2X01 DDIC");
-> +MODULE_LICENSE("GPL");
-> 
-> -- 
-> 2.51.0
-> 
-> 
+Yes, it should because longterm pinning -> unmovable.
 
 -- 
-With best wishes
-Dmitry
+Cheers
+
+David / dhildenb
+
 
