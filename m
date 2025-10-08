@@ -1,325 +1,144 @@
-Return-Path: <linux-kernel+bounces-845993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12EFDBC6AD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 23:23:06 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E4A1BC6ADB
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 23:24:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A63A43AC994
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 21:23:03 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AD55834F406
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 21:24:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86AE52C0F7C;
-	Wed,  8 Oct 2025 21:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81AB92C0F6D;
+	Wed,  8 Oct 2025 21:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aVUTLXxW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KXkJpkBh"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5B04A06;
-	Wed,  8 Oct 2025 21:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346F520487E
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 21:24:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759958573; cv=none; b=rb5JacrUgowqdzpI8M/ozm+HdEP61GnbWcCe9oeoTFdq1vZvYxEGCS6v2q0tkC9yv25zmt6gPpqH9hQCDwrLJUuhcv8uKXCIMT9URJg8CrTmVAPaQ4z7HAmO8c+j8pXPVy7QOcyCQfvxHKG20dS+jxhpO93OKjoi6DhNgaS4LnQ=
+	t=1759958645; cv=none; b=QYFY7je66xoK9iggfj2AqLYVUpj/EHuMNUrh5E7wsoCRU+mEHNiFHbJ/l4ux9fpUrxdnOHvjJxixBU6UqJlI8pAtTht3AFVnDZoiFGAj3v1gfn2p8DmknuFpLqzbliZpy3/ZmkAMA/5WQgFxPXv1C1hWANFTl+fEv6sitZdrXJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759958573; c=relaxed/simple;
-	bh=sOcycTE/foc4/tAc4gOrV9tZDXRBT7DUDt7ayt+7Ris=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YbL/hVdFZ4a0fl13DWB5sLf0GyGcESseLnBhdLMRggLHlSix2QMUtGKBeMzW0/eoaBMkW4exVpj0ePIFy6F0Z39Wb8NPu5pyzPzg4bl/v5DZ4SeiWgMkfaSmzNPDYR14X2PVl2HHo5JTPvs1y0PPTI/ruh8cxeIQEIxxBBMNSTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aVUTLXxW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D60BC4CEE7;
-	Wed,  8 Oct 2025 21:22:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759958573;
-	bh=sOcycTE/foc4/tAc4gOrV9tZDXRBT7DUDt7ayt+7Ris=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aVUTLXxWBoYM0/HW7KulNWhVQ5C7mB1Gqyqtqr/HQdQ1i+2hjgMjBAYEdpoJsaH+r
-	 zYkg4PHbCmxMDiBZPpVAoqHIKnS+WDjrGArjes3Dj0dwcCx9eM/jWACMc0rMDHBZox
-	 BGZJ4F1ysu6wMBkolk+pT/zbz/NTd7EzXdWEt19OsvluqIOoZaLzppDOWsgDsU+u7F
-	 oiz63lbePsa4CkbOlSDg3spbBhmYwAZ2OWOgTjm/Cun5cZ+CZwjbIOS9IhISdC2t8V
-	 d9aqR4hIL7TwFjuKNGv2Ff3JDWDvmIno2Q+P6elJXLmPL/VKEJdZva/TS+fIQGIWQN
-	 2RVJ62Ft1/fYw==
-Date: Wed, 8 Oct 2025 22:22:45 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jonas =?iso-8859-1?Q?Schw=F6bel?= <jonasschwoebel@yahoo.de>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Charan Pedumuru <charan.pedumuru@gmail.com>,
-	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
-	Aaron Kling <webgeek1234@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: Re: [PATCH v4 22/24] dt-bindings: display: tegra: document Tegra20
- and Tegra30 CSI
-Message-ID: <20251008-broaden-antennae-02de66094ad3@spud>
-References: <20251008073046.23231-1-clamor95@gmail.com>
- <20251008073046.23231-23-clamor95@gmail.com>
- <20251008-canopener-marsupial-a92355b656ef@spud>
+	s=arc-20240116; t=1759958645; c=relaxed/simple;
+	bh=HEFZfy/bOiUPVmOEzICFEBHZzqvYM+jSBmzbPiW2n0U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ud51RfE31NmHXOL+oQ4D1Zz1oZwVptN122ehSeZY5nwyT8Ig41Wn5AuJKkCn/YXeVrjct8O02Qx1UJmBUjYJ/uvLnEe6HjCXlL2BWj+bqg6+l2zf/lXcwR+d/q3bb4UhbuKVE9EZiNgB6nszL08oJ+14PMtEtLmqLctOUB02Lsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KXkJpkBh; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b403bb7843eso50693666b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 14:24:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1759958641; x=1760563441; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/9YY8RVzKysd/2FBRUq2EA9d+6aVFuf0Slin7qbDg94=;
+        b=KXkJpkBhUEUrOPzgoVtou9nJvlyGRrs9AIY2TnrnnwtsDmxNcePIfVtR1k4AJsgZ/A
+         JAouZfnxn1oLuCDqxB8a5ocLjTe6dOOq22LM2oGnL8EVZgLvS/LQNlWNgAd/atOys89m
+         nZr8pyRPIj0vDmLkq18Zu03S7s9BGiYH+23OYGRWr/cTzJpPrtpFHXXdeytiqydm/26u
+         XkPqfBmiXdEcMokX7QWMlO3ZNsDv9eeSEEKiT8aDzBYEBsauVeyVrFC3C3Jzb4EypzxX
+         kTBxHIEFDwhLOc39vBeZrmTTBzho6wFCewbEfRTlW4XUvWX3+fd+0QV9On6hN/Gd0CgB
+         Algw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759958641; x=1760563441;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/9YY8RVzKysd/2FBRUq2EA9d+6aVFuf0Slin7qbDg94=;
+        b=tLT87s1uf+6ZLn1GBW4JJE/fLTCoKlfmBcvgpFHkk42ihOXsyQO6ZFV+bCgPot6ihM
+         RDy+CfVSp324TunjEP6P/1FFvdE95dRov5KuYJ9nEiPJ6Cfi9inZY8OFleePDH20eenN
+         YlTnSqHDVJF9rn1GSg93eYoOuJnfyWv/wbyCgAI0SBCzisMRATpE9ONSnYk89dV4NUSG
+         xMiQPKEm2sr1dU8OwgEeqIEPEJrvs4blDopzLkTMicOQOREBLkIIJgY4yw2ltF+XRmXH
+         jEwlGWMwiFRX24cT4XHUegOaxwhB3WN+nmUSGALhmmptvnpKmO+MhzxyGF13bFFXxMmy
+         z+fg==
+X-Forwarded-Encrypted: i=1; AJvYcCXeNM9LBvmpIwBiZ1L56MJAciRKh1QPCgstrXrKPYJlBwJrq++l/Z+UdK9sMiCGXNmxPcVoKD1yNWqhdKQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxG2oURqZUjNZHbn0ihuNvJIkZqRy4sTldPD7XuUTiylpuI6bUh
+	3RRmRqk8RxUfGy5WnZNqLIoKOfutCPhh8Urvm8cIIeaf4KSykbX/QxYyKoXkSPDu29E=
+X-Gm-Gg: ASbGncsKrhabd+hnhHqWQUuYPQLa/8ROZCU0+MLZtGih4ggRbtp2gnmYpnyiiEWQG37
+	Q7yJDVnBihcde2rG3C87tpW0KgT4OSDHFco2o3Ph1sDagXm9ApI6hXoa8n6j0BRuPLBRUTxut4N
+	/ZNSp0GY2gXelwwi+JsoAzsvmrE2gj5c0jOdmm6EXKyKMqrBUNd8/8mrQuBPDaC3U6lwTZgLPrA
+	bhG7m3ndmZZTSZUe6TaLK4hCiRc/9KoYszEm2AbnMqB68olod/wPFslCPe6QbppUiCkNQqqai+8
+	Qcn7RuvOuZP/6HN2AtS19U3ItYZPK0CpyZlUpOgMj9KWczicoV9SAiN2lTr+r/JHLLa6kFouErD
+	1YgbAMJrjR47Qc3qsvQyadkkeXABT+m37Xlx0SCKZ/hHZSkAI2KKV22bC8UtYN3oJMYtymMqO/d
+	bThc2us94tyN/RATtShbebmSiR
+X-Google-Smtp-Source: AGHT+IEodokj7MVKCM1EevdonpV47bRYAPYiGng+Bgp+oHLQSF8yGoyDw+eU3u/c5A8f7XoLgE2gUg==
+X-Received: by 2002:a17:907:6d06:b0:b3d:98fa:b3fa with SMTP id a640c23a62f3a-b50ac5d090dmr530996966b.50.1759958641391;
+        Wed, 08 Oct 2025 14:24:01 -0700 (PDT)
+Received: from ?IPV6:2001:a61:13f0:5001:bea8:8e43:9eb1:6992? ([2001:a61:13f0:5001:bea8:8e43:9eb1:6992])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48652ade6esm1681457266b.18.2025.10.08.14.24.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Oct 2025 14:24:01 -0700 (PDT)
+Message-ID: <71613c2a-73d5-4f6e-a71b-03a2aa0f7bdf@suse.com>
+Date: Wed, 8 Oct 2025 23:23:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="RwPRYaE9Gdjg3a7O"
-Content-Disposition: inline
-In-Reply-To: <20251008-canopener-marsupial-a92355b656ef@spud>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] USB: core: replace kmalloc + copy_from_user with
+ memdup_user
+To: Thorsten Blum <thorsten.blum@linux.dev>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Alan Stern <stern@rowland.harvard.edu>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Jann Horn <jannh@google.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250919115654.1011141-2-thorsten.blum@linux.dev>
+Content-Language: en-US
+From: Oliver Neukum <oneukum@suse.com>
+In-Reply-To: <20250919115654.1011141-2-thorsten.blum@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+Hi,
 
---RwPRYaE9Gdjg3a7O
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 19.09.25 13:56, Thorsten Blum wrote:
+> Replace kmalloc() followed by copy_from_user() with memdup_user() to
+> simplify and improve proc_do_submiturb(). Replace the hard-coded 8 bytes
+> with the size of 'struct usb_ctrlrequest'.
+> 
+> Return early if an error occurs, and avoid manually setting 'ret' and
+> using 'goto error'.
+> 
+> No functional changes intended.
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+>   drivers/usb/core/devio.c | 10 +++-------
+>   1 file changed, 3 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/usb/core/devio.c b/drivers/usb/core/devio.c
+> index f6ce6e26e0d4..3bc54a5c59ff 100644
+> --- a/drivers/usb/core/devio.c
+> +++ b/drivers/usb/core/devio.c
+> @@ -1670,13 +1670,9 @@ static int proc_do_submiturb(struct usb_dev_state *ps, struct usbdevfs_urb *uurb
+>   		/* min 8 byte setup packet */
+>   		if (uurb->buffer_length < 8)
+>   			return -EINVAL;
+> -		dr = kmalloc(sizeof(struct usb_ctrlrequest), GFP_KERNEL);
+> -		if (!dr)
+> -			return -ENOMEM;
+> -		if (copy_from_user(dr, uurb->buffer, 8)) {
+> -			ret = -EFAULT;
+> -			goto error;
+> -		}
+> +		dr = memdup_user(uurb->buffer, sizeof(struct usb_ctrlrequest));
 
-On Wed, Oct 08, 2025 at 10:21:06PM +0100, Conor Dooley wrote:
-> On Wed, Oct 08, 2025 at 10:30:44AM +0300, Svyatoslav Ryhel wrote:
-> > Document CSI HW block found in Tegra20 and Tegra30 SoC.
-> >=20
-> > The #nvidia,mipi-calibrate-cells is not an introduction of property, su=
-ch
-> > property already exists in nvidia,tegra114-mipi.yaml and is used in
-> > multiple device trees. In case of Tegra30 and Tegra20 CSI block combines
-> > mipi calibration function and CSI function, in Tegra114+ mipi calibrati=
-on
-> > got a dedicated hardware block which is already supported. This property
-> > here is used to align with mipi-calibration logic used by Tegra114+.
-> >=20
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >  .../display/tegra/nvidia,tegra20-csi.yaml     | 135 ++++++++++++++++++
-> >  1 file changed, 135 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvi=
-dia,tegra20-csi.yaml
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,teg=
-ra20-csi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegr=
-a20-csi.yaml
-> > new file mode 100644
-> > index 000000000000..817b3097846b
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-cs=
-i.yaml
-> > @@ -0,0 +1,135 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-csi.ya=
-ml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: NVIDIA Tegra20 CSI controller
-> > +
-> > +maintainers:
-> > +  - Svyatoslav Ryhel <clamor95@gmail.com>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - nvidia,tegra20-csi
-> > +      - nvidia,tegra30-csi
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  clocks: true
-> > +  clock-names: true
-> > +
-> > +  avdd-dsi-csi-supply:
-> > +    description: DSI/CSI power supply. Must supply 1.2 V.
-> > +
-> > +  power-domains:
-> > +    maxItems: 1
-> > +
-> > +  "#nvidia,mipi-calibrate-cells":
-> > +    description:
-> > +      The number of cells in a MIPI calibration specifier. Should be 1.
-> > +      The single cell specifies an id of the pad that need to be
-> > +      calibrated for a given device. Valid pad ids for receiver would =
-be
-> > +      0 for CSI-A; 1 for CSI-B; 2 for DSI-A and 3 for DSI-B.
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +    const: 1
-> > +
-> > +  "#address-cells":
-> > +    const: 1
-> > +
-> > +  "#size-cells":
-> > +    const: 0
-> > +
-> > +patternProperties:
-> > +  "^channel@[0-1]$":
-> > +    type: object
-> > +    description: channel 0 represents CSI-A and 1 represents CSI-B
-> > +    additionalProperties: false
-> > +
-> > +    properties:
-> > +      reg:
-> > +        maximum: 1
-> > +
-> > +      nvidia,mipi-calibrate:
-> > +        description: Should contain a phandle and a specifier specifyi=
-ng
-> > +          which pad is used by this CSI channel and needs to be calibr=
-ated.
-> > +        $ref: /schemas/types.yaml#/definitions/phandle-array
-> > +
-> > +      "#address-cells":
-> > +        const: 1
-> > +
-> > +      "#size-cells":
-> > +        const: 0
-> > +
-> > +      port@0:
-> > +        $ref: /schemas/graph.yaml#/$defs/port-base
-> > +        unevaluatedProperties: false
-> > +        description: port receiving the video stream from the sensor
-> > +
-> > +        properties:
-> > +          endpoint:
-> > +            $ref: /schemas/media/video-interfaces.yaml#
-> > +            unevaluatedProperties: false
-> > +
-> > +            required:
-> > +              - data-lanes
-> > +
-> > +      port@1:
-> > +        $ref: /schemas/graph.yaml#/properties/port
-> > +        description: port sending the video stream to the VI
-> > +
-> > +    required:
-> > +      - reg
-> > +      - "#address-cells"
-> > +      - "#size-cells"
-> > +      - port@0
-> > +      - port@1
-> > +
-> > +allOf:
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            enum:
-> > +              - nvidia,tegra20-csi
-> > +    then:
-> > +      properties:
-> > +        clocks:
-> > +          items:
-> > +            - description: module clock
-> > +
-> > +        clock-names: false
-> > +
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            enum:
-> > +              - nvidia,tegra30-csi
-> > +    then:
-> > +      properties:
-> > +        clocks:
-> > +          items:
-> > +            - description: module clock
-> > +            - description: PAD A clock
-> > +            - description: PAD B clock
-> > +
-> > +        clock-names:
-> > +          items:
-> > +            - const: csi
-> > +            - const: csia-pad
-> > +            - const: csib-pad
->=20
-> This clocks section seems like it could get simpler. Since the clock
-> descriptions are shared, and tegra20 has no clock-names, you could just
-> move the detail of the properties out to where you have the ": true"
-> stuff (we prefer that properties are defined outside of if/then/else
-> blocks) and just restrict them here. For tegra20 that'd be
->=20
-> if:
->   properties:
->     compatible:
->       contains:
->         enum:
->           - nvidia,tegra20-csi
-> then:
->   properties:
->     clocks:
->       maxItems: 1
->=20
->     clock-names: false
->=20
-> (although it could easily be maxItems: 1 ?)
-> and for tegra30
->=20
-> if:
->   properties:
->     compatible:
->       contains:
->         enum:
->           - nvidia,tegra30-csi
-> then:
->   properties:
->     clocks:
->       minItems: 3
->=20
->     clock-names:
->       maxItems: 3
->=20
-> Of course you'd then have to add minItems: 1 and maxItems: 3 to the
-> extracted definitions.
+You cannot do this. User space cannot and must not know or care how long
+struct usb_ctrlrequest is. It is a data structure internal to the kernel.
+For the purpose of this API we copy 8 bytes. That is set in stone.
+If the kernel's data structure ever changes length, we will have
+to define a new ioctl.
 
-Oh, also: if you want clock-names to ever actually be usable, you have
-to require it. Otherwise a driver must be written to handle it not being
-there.
+You have to leave the literal 8.
 
-> > +additionalProperties: false
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - clocks
-> > +  - power-domains
-> > +  - "#address-cells"
-> > +  - "#size-cells"
-> > +
-> > +# see nvidia,tegra20-vi.yaml for an example
-> > --=20
-> > 2.48.1
-> >=20
+	Regards
+		Oliver
 
-
-
---RwPRYaE9Gdjg3a7O
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaObWJQAKCRB4tDGHoIJi
-0rdMAP0bO7fuCRBzgXRuU9adBFwpVmla4J/0SDMk3NczvgKdfQD/XkdtkeingVqx
-rtKfHJ5Y7NcgOigGl5g3m0wmDawYkQg=
-=/lHa
------END PGP SIGNATURE-----
-
---RwPRYaE9Gdjg3a7O--
 
