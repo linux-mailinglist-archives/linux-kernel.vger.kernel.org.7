@@ -1,261 +1,212 @@
-Return-Path: <linux-kernel+bounces-845049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3342BC35DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 07:13:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 724F4BC35E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 07:16:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 717004E4079
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 05:13:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E72A189240F
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 05:16:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30FCD2BF3DB;
-	Wed,  8 Oct 2025 05:12:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD47C2C0269;
+	Wed,  8 Oct 2025 05:16:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="spE6ZDj/"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LOHpaPM5"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E78529992A
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 05:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8365236451
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 05:16:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759900375; cv=none; b=YvkPMZJAd3eri8IhE3O3T8Dxp6P6nnVIGfEYKVFUhsRT/9q5+DGxi0dmCp6K0CHu+RdiV1a/2JB5jQ6fxFlX1t+RA2rwC2z1m4aZNeiSk3J4N7VYqlUtOvi2d9qGsH1ptJzaDbXud2DhyDCLfCAh72cFBjFZzP0XL5R80Oi2bl0=
+	t=1759900569; cv=none; b=c1WWB67zc0PCPGuiwMRAHPXlxbfugilku+Usy5S7urBy4puIBVnEwq48vrDGCRWhpuICjE+xyKs2qayjpLehdG0Y4LVy4DoxFdvHJsbOj8V8w4E5q510LAL5Sl5EQ7APhTbdhhT18Fsp3lHv5JFD60elJ589gOrX0RLxMCFYC80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759900375; c=relaxed/simple;
-	bh=26+P/l6pN90Nq8tF2HiBv9SoOmisERtfZoPROoat7fw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bDh8AMg3RfspxbeYtLoYV7+uNY4Zk7Pn2tmKrYOCbShC3/RJk+SHvpA6vfGY6a9mRY7oLh2dPvdXl3cEArTieYzySlcuOrd+cr9H62SRo/Al7KarvGWy8EKPzdYxrC9AXVJenyhEsE2PPgEEPMyf5rdYGtFoNb38citCe0v3mXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=spE6ZDj/; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4de66881569so298231cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 22:12:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759900372; x=1760505172; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5yQmSM/uaUVo69YQQYMlxvfL/vSIDIF2Y6rwq0Ar82A=;
-        b=spE6ZDj/6rrUU/0pIXeNPXzA6NyVVa68B3zTg7TES6fheSnaUf7t+eprfRFxJO1m01
-         1+2YO4b8rAFJjZt83sThZiIbzK3LFZXWpJxLqGusrPcWzz+9lYLTtlRm4DVbLC/EVZGS
-         UqlVMEhVazDZP8/R2yx9RROrvlGxkDEHLEYmzNAF7wlKdu+qw5uoI5EVaWax/L6qmfad
-         +Jd7tQZivsa1UrHADjPw8CF6QaLz81eYHsdd9VXC/kADZVRfgcjWa9qCC+NavVLSkdPt
-         FA+G0kVE+/Bq3imLsYhpYDUVJxGtI5btjlAa70dkHKa+MRFiP7pj3RW9BW9GVJcxhrP5
-         RmXQ==
+	s=arc-20240116; t=1759900569; c=relaxed/simple;
+	bh=Xk94Vuc6seJLdFlhJl0nzWNmxlsrdyIWoO3t0wdkjEo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XgEjo+c7kNc3UdP08mJMxgYbxGkLyp+Lov3zosnmlMmdjwr+WcEM/DVoSJnqOHXZagsXzoW85x6v1+fgGb2iMTa7lcnIUskICCIT0EeInyxbgXC34kxZDS0+Gxr4mnTolyWOh2UWnGcZBvk8EwCbw8YCfkGWoiFV2hICuJvC9tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LOHpaPM5; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 598045Df018762
+	for <linux-kernel@vger.kernel.org>; Wed, 8 Oct 2025 05:16:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	zN3inemXqS9KNGoW5/uyVfSNbK9UhPopJTspFYvxv78=; b=LOHpaPM5Vf0Tp2cb
+	fACNshV1ouHsFjzI5o50H3M2xZ8pCUMsYOcPoIKwpeUl0ImRUOGffZg4FkAYtUhV
+	TVKpb/GJRRx4OrlExfio7NfBIfayAQyS4xd2v8MozB4xe2/5uOrJZHtcpK6/Blwk
+	/QIMBRAfP7xX5QqOZXiExhQMfFw6UPBodmGPdpxKNE+2aeLavTNtAfqhM0LlBvXx
+	61J40quY5u1S2wSUhui9/HdYnBvXJJZF1vVo9cq1nGCVlLhKWquHB0XXxbwB+GxP
+	HNcAqelur5MjmEbG2G9QB6aS+Iqd6YGyNA5VWEOBfNVXCVl+GNhxZSY6KhvQ/H7Z
+	JSHYew==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49mgd0n526-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 05:16:04 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-32ec69d22b2so6802855a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 22:16:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759900372; x=1760505172;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5yQmSM/uaUVo69YQQYMlxvfL/vSIDIF2Y6rwq0Ar82A=;
-        b=pWbNusNPPe4ZSvduYPm9KpamGqUc546d8jfJtnw4EoNoMZx55ficy0hkiepZvBg33h
-         ZncEN80aQkWRdHsE53vjCSdsXi8Xq7N3umaqE263qMYEy/1646DMCywEbh+4QoIH9lx6
-         ktb6sIKqQxYWzo6DtEWNnpzDQc5dYpefdn3AkWXomDx2IZLkljv+WQbn9/6Fs+HBUyL7
-         O5ryjr1y1dVKbxjVv2YbPhzKM1WzwOWh5K+3U81em2yzMyb1iiOOQ/y0Z9rYFcrsPRZE
-         m1PmU0voz2v3RIywmAxGYFRer2p4bEk2YtMfqgj8ykW07vNBXECsM6Hq92DwWY59trQ9
-         vjLg==
-X-Forwarded-Encrypted: i=1; AJvYcCXsq8pDtXwUpsmYKSbA7J2gd1JATT8khgrK/qbMox3HNowmdeJNoeDXgC0weTinw0kgNsfbFqL7I4oWdYE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4QdFZQ91eQlLDxEGabSPXhboCzoNujDVNytTpTFf0SsSq9ZhD
-	rdKbuUI79p+zZ8bFG1hrt17nWlz4FfQ4yjvrWWvtr7vphDAWbOWOZBEOIU2TUBGb9i0IhbrB/Js
-	DXkGVGY753trbQLnXWp982SqT/VwB45M96cpMtWk3
-X-Gm-Gg: ASbGncsFOpz7Kbmt1OjnwdkxVPPivAolBXu7fISwHakpiCLCWmxLbT4Ci3ytZkU6GaN
-	8RlkWp07za2syFyRa3e7MdEjUpavFixAmvzMexHiwg906GtMG4iopRObV/uULUCfNFO9e5P+iXe
-	pRePCjf5lupLot0sErNCtZrb7kTOocx3xDrBTxXz3E+lzR6qysEDlgBMWeioan02KmUPYmm/ukl
-	LiHI9dFqrk/t0ayfPbZT7MeMe+eZa9OTb/H
-X-Google-Smtp-Source: AGHT+IG4sJFeuvb2AG5gI/HcK2YarilPlghpf1YyHM33PbZY6ifrEjxisgBmR6nILvWsrmH2xE6QBwG4UzAAPiPY334=
-X-Received: by 2002:ac8:5884:0:b0:4e5:7832:45b9 with SMTP id
- d75a77b69052e-4e6eac0ce76mr4568981cf.9.1759900371989; Tue, 07 Oct 2025
- 22:12:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759900563; x=1760505363;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zN3inemXqS9KNGoW5/uyVfSNbK9UhPopJTspFYvxv78=;
+        b=pmeDy+wxlYyDg/fPh9LO1UP9oB0Y+12nrcA1oI2iBhu7rNLYE6wtldukpwP3dlqhM/
+         7LUEV+KsWPzgm/a7Nm4J3APXB1RAdsWusLoTD6DzH/KTIzvyPvQRTglN2tD2dpN7peBZ
+         nJMHcZi5s1UQTP7kljyUDEXHZDQpkW+sypNlEt7yEbaE/V8sdL4jjMo7KqULetRA8S+a
+         Ez+uFz/aLEl2OnI7OKGa9bsYN4LUV+z666k1bkbSQ5yqftEhTVJfKV3k5VYV0r1tuDYH
+         8CmxrwlZlBT2xudAJ+egm+iql102BIWKajwo27opx5ASAdBp5uvSXMngjqNpCZ9tfQvh
+         Xtaw==
+X-Forwarded-Encrypted: i=1; AJvYcCXu5QwKA28d7ULhoCMyHX2lMXNvkerrcBUO/YGkK1TOw1bgHaHZoiHoowsufPXBtUqRAZ2W8P/0t93YXDI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYkBVGGWmg9Vqi6wNuqAPRRchN2x7PnC+lD17agFwlg4C55Q8a
+	xZUwiSkbVq/NjqPAxhG70mD2eRZh4q/hAjjnxNB2kIji8s18XCDhUhZBC/Rr7fGs616FiPvzjwx
+	94CFfOXgJC7a1n0XnK8sFOzImMHyf8tO4pt5crq5OKSCGWQM2tsUOc6AZ8r0dZGUVr1I=
+X-Gm-Gg: ASbGnctJ4hHbx5umoxyNFVjc9Hm+WftzCheNajsFZPW+q/jlIQ5WE4Wy7dOsHGnxvSm
+	waCOxIBXqntEaKCsNEx7C7okfxBWnnMGRzg/0E6VzOegI3R1z4dNI7kfX0GTBCX3sfj0TXOW2uL
+	401pQjFOynpIyTcpKipkTxmgB+KpleEzXEbLew4BS+HWn19ZIlVtHYx2AHiv8gIxe2fZK6jLqk8
+	G/tSTRP50JshiK4gn5Q8WfXGZYB6wh8Ui7o9PGaWP/6sohcjxAOYGSZYHw3nGBPKAUpThUzPvIi
+	3/IlM35QupZUwgPvf1lfyKT4UhbEqGTG5QKkISzFsEpao/gmWvZ7HwN5rfcHYvpsXemVej/V+yD
+	dSA==
+X-Received: by 2002:a17:90b:3ec4:b0:32e:51dd:46dd with SMTP id 98e67ed59e1d1-33b5116b782mr2662520a91.16.1759900562240;
+        Tue, 07 Oct 2025 22:16:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHJfXchZYLk7AwCGFqllzQgE2NliGSPz5KcimSGlsyuUs5e0R13CuQuC6i02t0y4fizJxZ2tA==
+X-Received: by 2002:a17:90b:3ec4:b0:32e:51dd:46dd with SMTP id 98e67ed59e1d1-33b5116b782mr2662477a91.16.1759900561622;
+        Tue, 07 Oct 2025 22:16:01 -0700 (PDT)
+Received: from [10.0.0.3] ([106.222.229.252])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b5114acb7sm1714505a91.24.2025.10.07.22.15.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Oct 2025 22:16:01 -0700 (PDT)
+Message-ID: <1530abc3-158b-a3e5-54a6-d96b24178406@oss.qualcomm.com>
+Date: Wed, 8 Oct 2025 10:45:56 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251006231845.3082485-2-robertpang@google.com> <744rdoputvsokkcgud6j7lrs5hlqnxy6oc2sjfxcvxancdinez@stncekhcbzzz>
-In-Reply-To: <744rdoputvsokkcgud6j7lrs5hlqnxy6oc2sjfxcvxancdinez@stncekhcbzzz>
-From: Robert Pang <robertpang@google.com>
-Date: Tue, 7 Oct 2025 22:12:40 -0700
-X-Gm-Features: AS18NWCUzEFtQrDEbshIUyM5znvWlVvRGg_Vm4zKqD_eTwWgNFSHL6-dck2o2zg
-Message-ID: <CAJhEC05B7qLDnxeAwqJfnuJiv4NuK6YaY4B37fP=q1RZB9p_bA@mail.gmail.com>
-Subject: Re: [PATCH] bcache: add "clock" cache replacement policy
-To: Coly Li <colyli@fnnas.com>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, linux-bcache@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v2] media: venus: prevent potential integer overflow in
+ decide_core()
+Content-Language: en-US
+To: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
+Cc: Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+        Bryan O'Donoghue <bod@kernel.org>,
+        Mauro Carvalho Chehab
+ <mchehab@kernel.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+References: <20251007103043.1969715-1-Pavel.Zhigulin@kaspersky.com>
+From: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+In-Reply-To: <20251007103043.1969715-1-Pavel.Zhigulin@kaspersky.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: QKa8qhMIs-H7-QkR4aCoYr6J-2mK7iIh
+X-Authority-Analysis: v=2.4 cv=T8aBjvKQ c=1 sm=1 tr=0 ts=68e5f394 cx=c_pps
+ a=0uOsjrqzRL749jD1oC5vDA==:117 a=L4UNg9I9cQSOxNpRiiGXlA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=ACEZY41XAAAA:8
+ a=HH5vDtPzAAAA:8 a=EUspDBNiAAAA:8 a=E45_vJ1-3OPGenHQyXEA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=mQ_c8vxmzFEMiUWkPHU9:22 a=QM_-zKB-Ew0MsOlNKMB5:22
+X-Proofpoint-ORIG-GUID: QKa8qhMIs-H7-QkR4aCoYr6J-2mK7iIh
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA2MDEyMyBTYWx0ZWRfXxgNsb3aOZFtk
+ V/ti3OqiTlW2FvuK/G8zfYcPUZKXh+iEzbC1xSVE5xKzlmtzLYvSLvvTf3cfKNmXM9PbOZUVzdm
+ AWPcuobsY1rdMFll8AtL1wpiiG3KyjjUUez+TgrEDZ0Qzw3uqwQqQ3m6KHdNc6sKpTZPEKShtOm
+ 2y+63lWNONaLszKNxKCLM3mOnJf3Mz4aCkhhlah5FvzY6mS4okdgM1LM0k0GGhcdiqkVBNS7bSM
+ yZS+wLtHQVBB4FenlTkJA++hZlEzXaR5qN0O1IuqoCghISdGx1HkqDStWcTKNxVtrpsqeUHzc/X
+ ptKpgbYRFyRKOpDvp341ioHSP3i/Ebg5LyH6iH7C2hs6syX4jQrqavMZvRcfhjhmuTeb3I6F7PG
+ GWzCEaiAFVIsHEUeDyoz64w242kzkg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-07_02,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 phishscore=0 clxscore=1015 priorityscore=1501
+ impostorscore=0 lowpriorityscore=0 suspectscore=0 bulkscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510060123
 
-Hi Coly
 
-Thank you for your quick look at this patch.
 
-On Mon, Oct 6, 2025 at 10:20=E2=80=AFPM Coly Li <colyli@fnnas.com> wrote:
->
-> On Mon, Oct 06, 2025 at 04:18:46PM +0800, Robert Pang wrote:
-> > This new policy extends the FIFO policy to approximate the classic cloc=
-k policy
-> > (O(n) time complexity) by considering bucket priority, similar to the L=
-RU
-> > policy.
-> >
->
-> Current bcache GC is single thread, clock is good here. BTW, could you pl=
-ease
-> also add the clock entry into bcache kernel document,
-> - Documentation/admin-guide/bcache.rst
-> - Documentation/ABI/testing/sysfs-block-bcache
+On 10/7/2025 4:00 PM, Pavel Zhigulin wrote:
+> The function 'decide_core()' contains the following code:
+> 
+> 	cur_inst_load = load_per_instance(inst);
+> 	cur_inst_load *= inst->clk_data.vpp_freq;
+> 	...
+> 	cur_inst_lp_load = load_per_instance(inst);
+> 	cur_inst_lp_load *= inst->clk_data.low_power_freq;
+> 
+> This can lead to an integer overflow because the variables
+> 'cur_inst_load' and 'cur_inst_lp_load' are of type u32.
+> 
+> The overflow can occur in the following scenario:
+> 
+>   1. The current FPS is 240 (VENUS_MAX_FPS constant).
+>      The processed image frame has a resolution of 4096x4096 pixels.
+>   2. According to 'codec_freq_data':
+>        - 'inst->clk_data.low_power_freq' can be up to 320
+>        - 'inst->clk_data.vpp_freq' can be up to 675
+>      (see drivers/media/platform/qcom/venus/hfi_platform_v4.c
+>       and drivers/media/platform/qcom/venus/hfi_platform_v6.c)
+>   3. 'load_per_instance()' returns 15728640 under these conditions.
+>   4. As a result:
+>        cur_inst_load *= inst->clk_data.vpp_freq → 10616832000
+>        cur_inst_lp_load *= inst->clk_data.low_power_freq → 5033164800
+> 
+> The proposed fix changes the type of these variables from u32 to u64
+> to prevent overflow.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Fixes: 3cfe5815ce0e ("media: venus: Enable low power setting for encoder")
+> Signed-off-by: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
+> ---
+> v2: Revert min_coreid and min_lp_coreid to u32 as
+>     Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com> suggested
+> 	during review
+> v1: https://lore.kernel.org/all/20251006154041.1804800-1-Pavel.Zhigulin@kaspersky.com/
+>  drivers/media/platform/qcom/venus/pm_helpers.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/venus/pm_helpers.c b/drivers/media/platform/qcom/venus/pm_helpers.c
+> index f0269524ac70..eec49590e806 100644
+> --- a/drivers/media/platform/qcom/venus/pm_helpers.c
+> +++ b/drivers/media/platform/qcom/venus/pm_helpers.c
+> @@ -582,9 +582,9 @@ static int move_core_to_power_save_mode(struct venus_core *core,
+>  }
+> 
+>  static void
+> -min_loaded_core(struct venus_inst *inst, u32 *min_coreid, u32 *min_load, bool low_power)
+> +min_loaded_core(struct venus_inst *inst, u32 *min_coreid, u64 *min_load, bool low_power)
+>  {
+> -	u32 mbs_per_sec, load, core1_load = 0, core2_load = 0;
+> +	u64 mbs_per_sec, load, core1_load = 0, core2_load = 0;
+>  	u32 cores_max = core_num_max(inst);
+>  	struct venus_core *core = inst->core;
+>  	struct venus_inst *inst_pos;
+> @@ -639,8 +639,9 @@ static int decide_core(struct venus_inst *inst)
+>  {
+>  	const u32 ptype = HFI_PROPERTY_CONFIG_VIDEOCORES_USAGE;
+>  	struct venus_core *core = inst->core;
+> -	u32 min_coreid, min_load, cur_inst_load;
+> -	u32 min_lp_coreid, min_lp_load, cur_inst_lp_load;
+> +	u32 min_coreid, min_lp_coreid;
+> +	u64 min_load, cur_inst_load;
+> +	u64 min_lp_load, cur_inst_lp_load;
+>  	struct hfi_videocores_usage_type cu;
+>  	unsigned long max_freq = ULONG_MAX;
+>  	struct device *dev = core->dev;
+> --
+> 2.43.0
+> 
+LGTM now.
 
-There is no reference to cache_replacement_policy in
-sysfs-block-bcache currently. Will add the clock entry in bcache.rst.
+Reviewed-by: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
 
-> > This policy addresses the high IO latency (1-2 seconds) experienced on
->   ^^^^^^^^^^^-> I assume this policy means LRU, am I correct?
-
-That's correct.
-
-> > multi-terabyte cache devices when the free list is empty. The default L=
-RU
-> > policy's O(n log n) complexity for sorting priorities for the entire bu=
-cket
-> > list causes this delay.
-> >
->
-> Can you provide performance numbers about lock replacement algorithm and =
-add
-> them into the commit log?
->
-> Yes, for performance optimization, we always need to see the difference m=
-ade
-> by this improvement.
-
-Will do it quickly.
-
-Best regards
-Robert Pang
-
-> Thanks.
->
-> Coly Li
->
->
->
-> > Signed-off-by: Robert Pang <robertpang@google.com>
-> > ---
-> >  drivers/md/bcache/alloc.c         | 34 +++++++++++++++++++++++++++----
-> >  drivers/md/bcache/bcache_ondisk.h |  1 +
-> >  drivers/md/bcache/sysfs.c         |  1 +
-> >  3 files changed, 32 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
-> > index 48ce750bf70a..c65c48eab169 100644
-> > --- a/drivers/md/bcache/alloc.c
-> > +++ b/drivers/md/bcache/alloc.c
-> > @@ -69,7 +69,8 @@
-> >  #include <linux/random.h>
-> >  #include <trace/events/bcache.h>
-> >
-> > -#define MAX_OPEN_BUCKETS 128
-> > +#define MAX_OPEN_BUCKETS     128
-> > +#define CHECK_PRIO_SLICES    16
-> >
-> >  /* Bucket heap / gen */
-> >
-> > @@ -211,19 +212,41 @@ static void invalidate_buckets_lru(struct cache *=
-ca)
-> >       }
-> >  }
-> >
-> > -static void invalidate_buckets_fifo(struct cache *ca)
-> > +/*
-> > + * When check_prio is true, this FIFO policy examines the priority of =
-the
-> > + * buckets and invalidates only the ones below a threshold in the prio=
-rity
-> > + * ladder. As it goes, the threshold will be raised if not enough buck=
-ets are
-> > + * invalidated. Empty buckets are also invalidated. This evaulation re=
-sembles
-> > + * the LRU policy, and is used to approximate the classic clock-sweep =
-cache
-> > + * replacement algorithm.
-> > + */
-> > +static void invalidate_buckets_fifo(struct cache *ca, bool check_prio)
-> >  {
-> >       struct bucket *b;
-> >       size_t checked =3D 0;
-> > +     size_t check_quota =3D 0;
-> > +     uint16_t prio_threshold =3D ca->set->min_prio;
-> >
-> >       while (!fifo_full(&ca->free_inc)) {
-> >               if (ca->fifo_last_bucket <  ca->sb.first_bucket ||
-> >                   ca->fifo_last_bucket >=3D ca->sb.nbuckets)
-> >                       ca->fifo_last_bucket =3D ca->sb.first_bucket;
-> >
-> > +             if (check_prio && checked >=3D check_quota) {
-> > +                     BUG_ON(ca->set->min_prio > INITIAL_PRIO);
-> > +                     prio_threshold +=3D
-> > +                             DIV_ROUND_UP(INITIAL_PRIO - ca->set->min_=
-prio,
-> > +                                          CHECK_PRIO_SLICES);
-> > +                     check_quota +=3D DIV_ROUND_UP(ca->sb.nbuckets,
-> > +                                                 CHECK_PRIO_SLICES);
-> > +             }
-> > +
-> >               b =3D ca->buckets + ca->fifo_last_bucket++;
-> >
-> > -             if (bch_can_invalidate_bucket(ca, b))
-> > +             if (bch_can_invalidate_bucket(ca, b) &&
-> > +                 (!check_prio ||
-> > +                  b->prio <=3D prio_threshold ||
-> > +                  !GC_SECTORS_USED(b)))
-> >                       bch_invalidate_one_bucket(ca, b);
-> >
-> >               if (++checked >=3D ca->sb.nbuckets) {
-> > @@ -269,11 +292,14 @@ static void invalidate_buckets(struct cache *ca)
-> >               invalidate_buckets_lru(ca);
-> >               break;
-> >       case CACHE_REPLACEMENT_FIFO:
-> > -             invalidate_buckets_fifo(ca);
-> > +             invalidate_buckets_fifo(ca, false);
-> >               break;
-> >       case CACHE_REPLACEMENT_RANDOM:
-> >               invalidate_buckets_random(ca);
-> >               break;
-> > +     case CACHE_REPLACEMENT_CLOCK:
-> > +             invalidate_buckets_fifo(ca, true);
-> > +             break;
-> >       }
-> >  }
-> >
-> > diff --git a/drivers/md/bcache/bcache_ondisk.h b/drivers/md/bcache/bcac=
-he_ondisk.h
-> > index 6620a7f8fffc..d45794e01fe1 100644
-> > --- a/drivers/md/bcache/bcache_ondisk.h
-> > +++ b/drivers/md/bcache/bcache_ondisk.h
-> > @@ -288,6 +288,7 @@ BITMASK(CACHE_REPLACEMENT,                struct ca=
-che_sb, flags, 2, 3);
-> >  #define CACHE_REPLACEMENT_LRU                0U
-> >  #define CACHE_REPLACEMENT_FIFO               1U
-> >  #define CACHE_REPLACEMENT_RANDOM     2U
-> > +#define CACHE_REPLACEMENT_CLOCK              3U
-> >
-> >  BITMASK(BDEV_CACHE_MODE,             struct cache_sb, flags, 0, 4);
-> >  #define CACHE_MODE_WRITETHROUGH              0U
-> > diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
-> > index 826b14cae4e5..c8617bad0648 100644
-> > --- a/drivers/md/bcache/sysfs.c
-> > +++ b/drivers/md/bcache/sysfs.c
-> > @@ -45,6 +45,7 @@ static const char * const cache_replacement_policies[=
-] =3D {
-> >       "lru",
-> >       "fifo",
-> >       "random",
-> > +     "clock",
-> >       NULL
-> >  };
-> >
-> > --
-> > 2.51.0.710.ga91ca5db03-goog
+Thanks,
+Dikshita
 
