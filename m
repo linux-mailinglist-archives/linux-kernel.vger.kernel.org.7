@@ -1,202 +1,120 @@
-Return-Path: <linux-kernel+bounces-845953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFF9EBC6908
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:21:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BEC6BC691A
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:23:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49A9E403B73
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:21:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 961D4408222
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191FF28E579;
-	Wed,  8 Oct 2025 20:21:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3FA29B239;
+	Wed,  8 Oct 2025 20:23:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f8chkTzt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EcCGtqnr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D5827814C;
-	Wed,  8 Oct 2025 20:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD0B27AC45;
+	Wed,  8 Oct 2025 20:23:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759954911; cv=none; b=NznY9sb1mon4wCLsINOWEB1n+YJL2qsTN8qppVFDVvp46p6MBDyvRS3FXWkR7f+MI2tEhSw5FGIdeUCT/C2bBrE9WC+MT5gQcDtvHVvub0c6k1Rm+H4Q3aHN9JTHR3xUUQ4QlOI02mRhsd1sN6xmQwK+H+SLXc+s4wHMvF8Zd1Q=
+	t=1759955015; cv=none; b=IcMWaN0mmIVI53ymBxDE9cb6yccEkeYZD0ybgpdGrc9tjggYCyILxlePs2ISTYPiWi/FnAv3LXOBmHNvUGyof0/tjbAUAlMsuWutCnwv/NeoZ64kPyL9LyrR0jlbPtJUw2lbOnOhBHmNlIW+X5T65G/OfHZ3MKFKOZyAP0WzVio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759954911; c=relaxed/simple;
-	bh=tuurgTUMyuS9ME6OcK+LydMC1ElS2DSUj+9T7OEsCiY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MW1H988elgbgnh8MgOYHkK4l0QLaCnlM6a2VRy8hRcCouI0wk0EqrkaUadt9ftoaA6/gpON1x9PjdBPS5UjTPMnTuu1cjJFloZFSqNtmbMrMA0tt4WJcmopa0UINN00IINi6uJ4Lu2uBcoXJOgEq24o6afd5Vw4aWWkC+HirzTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f8chkTzt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE8D2C4CEE7;
-	Wed,  8 Oct 2025 20:21:50 +0000 (UTC)
+	s=arc-20240116; t=1759955015; c=relaxed/simple;
+	bh=fbzRb9SPBILmdn78G4DhEwTZPvO9DQAxsQnJDWgmBwk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Mp8V7kl4dmTJLhlh8OJ++xtjkRSCbjdlKCPJE0RAAZ99a4wMGzg3eGa/b8F9WdbhJvk1k3uiWsmT4ZYBAWKu75QQTBiHtDXcxd0e5OlfBt7mVUGc6nYry6bAWbi3Kjc2Z/ekFuveK423dQcM19RVk6dkhDUAix06hqFdl+tTe3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EcCGtqnr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 888B3C4CEE7;
+	Wed,  8 Oct 2025 20:23:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759954910;
-	bh=tuurgTUMyuS9ME6OcK+LydMC1ElS2DSUj+9T7OEsCiY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f8chkTztumBR8hHNwOeXDgnchHDfG33CtgWlmmr/FSbUnoL8hJtTBJeXv4QOiiPRS
-	 aT2B1zaLvvTl4jwpsyeQb4ZTES7vgbyc89vOjQY4HPW7WrYtFCAbkC4OtLX1seaI+s
-	 s+FHbAx7L2JqskocRudSCBvFyGrAauaBRfWMVF1xjRLAaCAQv/kOlcqtAg+StK+LI3
-	 t41wj2H9gxt4LIcE6jCYsQasrDAKunwxVRAQAvIUomKIM2O0pDhgoi+R/ZNI4sWhu0
-	 e1Uh8a3dcDatJnptqeroPqa3xoP93MgUkKScx4lcO3inq2NDv7vZSLQ3oD6VhuCpVg
-	 8LfeP5kN+bLBg==
-Date: Wed, 8 Oct 2025 10:21:49 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
-	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
-	changwoo@igalia.com, cgroups@vger.kernel.org,
-	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de,
-	alexei.starovoitov@gmail.com
-Subject: Re: [RFC][PATCH 0/3] sched/ext: Cleanup pick_task_scx()
-Message-ID: <aObH3RNKbRX1FXNn@slm.duckdns.org>
-References: <20251006104652.630431579@infradead.org>
- <aOWKn6f0OtegV1q0@slm.duckdns.org>
- <20251008091151.GS4067720@noisy.programming.kicks-ass.net>
+	s=k20201202; t=1759955014;
+	bh=fbzRb9SPBILmdn78G4DhEwTZPvO9DQAxsQnJDWgmBwk=;
+	h=From:Subject:Date:To:Cc:From;
+	b=EcCGtqnrbCHXFJ2M86kLRcywMcCjW6YsOmT4O5tJ1PlKGYbyJ0pR/ZLmdjdVfuKlO
+	 PuSAvkLDBYxUIjSD01fajv9kxbDuXmqXfxFjDXzW7HFr8iSzQyAoLwYml+tar0Wcj7
+	 2bm10eyYYgOfetwbW2L9xfrO6MAL3R2eDrlGfyFdeJiF/1GOXwVeK2fftQxEsS0ukf
+	 1AYi5s+4FCsiLtvpqYO+9mo6vAMZF0eIwe9Qxx02DPMGoYKa65YeDlnduWPwIwHEm4
+	 IpSNo7fC0eRkChx0mELhiKaqKZAGQva9mKMCEVMf/sho3Nv2CbzZvrULM3koshJpeV
+	 //Chh07Kvifdw==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH v2 0/2] sunrpc: fix handling of rq_bvec array in svc_rqst
+Date: Wed, 08 Oct 2025 16:23:27 -0400
+Message-Id: <20251008-rq_bvec-v2-0-823c0a85a27c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251008091151.GS4067720@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAD/I5mgC/2XMQQrCMBCF4auUWRtJUtKKK+8hRZpm0g5KUicSl
+ JK7G7t1+T8e3wYJmTDBudmAMVOiGGroQwPTMoYZBbnaoKU2SsqT4OfNZpyE7brRO+mdtRbqe2X
+ 09N6l61B7ofSK/NnhrH7rv5GVkKL3unWtdr1Bc7kjB3wcI88wlFK+A0Sm1p8AAAA=
+X-Change-ID: 20251008-rq_bvec-b66afd0fdbbb
+To: Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
+ Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, 
+ Anna Schumaker <anna@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+ David Howells <dhowells@redhat.com>
+Cc: Brandon Adams <brandona@meta.com>, linux-nfs@vger.kernel.org, 
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1129; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=fbzRb9SPBILmdn78G4DhEwTZPvO9DQAxsQnJDWgmBwk=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBo5shDltqAB/k9572Hwata/lcqPAcC8iRySb2B+
+ 3ncrVTSiDSJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaObIQwAKCRAADmhBGVaC
+ FaYEEADJXxENs21dRYQgc4fIEbiyvkTep5NvksJozKxVfHz2uS75nCZ3ge3KY/ZwoHsT6pTrJGs
+ xeikziE8ST0GhC0/ZYVL1eloasO9xx/kFjgmaC7gh2dwq3TfWF+WV/ts6r+ChValKyh+SalYMzj
+ VKca+JaRlSR7AYU5XWuINA2oOo33CYH0oqoSlYuF6s8ofjXAgI5Za0Kl3lzcquiyHxR4uNv9m0q
+ Sox30gfcORbaTQufRiJvOSlkmD4IjAGeT3NSngGWYUI0t9JsACtmsPOElUa0OLRCcED3hz7FlTW
+ DKm5ZvdxgiEBvIV14eWDEWApeyZ/MjN0qssnHPKsqfzmMnxd9CJCSX7d6youMIx6VagY0aX2JbF
+ 9M35oWTZf1rTj2jtXrgUaMU122zYkF2vKhgMhhO11oF+F9dh9lM1aFILaFxMSgMGF5Wsaj1EQRY
+ KBUIgiu71tqtuLrg0Qp7SDZOa7/6moLP5I2ookTnDU+PWaHMSuLRIf2jlB8WC4Bhy43Q8bYfd4F
+ CxsJeg9m7wj2Dry58Q7zRtUNuU6ZqAuWGY8o3gZiMS5b5NJGVAQI2v9xDWCyaPgRUi4/5QlWu+B
+ K8/UStPtxAT4xzPFDIZkBh4QXQhzmKcdPOeHOqdAmgzlKLHHUzB24KY2HybTHJfIBw1CJ1tCpoo
+ Nnm2obybVI+zKHw==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Hello,
+I've seen this message pop intermittently on some knfsd servers:
 
-On Wed, Oct 08, 2025 at 11:11:51AM +0200, Peter Zijlstra wrote:
-...
-> Possibly. But lets stick that on a todo list :-) I was also looking to
-> get rid of sched_class::pick_next_task() -- the only reason that
-> currently still exists is because of that fair cgroup nonsense.
-> 
-> I was looking at bringing back Rik's flatten series (easier now that the
-> cfs bandwidth throttle thing is fixed). That should get rid of that
-> hierarchical pick; and thus obviate that whole mess in
-> pick_next_task_fair().
+    rpc-srv/tcp: nfsd: sent 1045870 when sending 1045868 bytes - shutting down socket
 
-Yeah, that'd be great. IIRC, the blocking issue was dealing with thundering
-herds. ISTR Rik discussing a way to resolve that.
+Unfortunately, I've not been able to reproduce this on my own, but I've
+noticed a bug that could cause this.
 
-> Now, I do have a few questions from staring at this ext stuff for a
-> while:
-> 
->  - So the 'RT' problem with balance_one() is due to:
-> 
->     o rq-lock-break allowing higher prio task to come in
->     o placing a task on the local dsq
-> 
->    which results in that local-dsq getting 'starved'. The patches want
->    to call switch_class(), which I suppose will work, this is something
->    like:
-> 
->    if (rq_modified_above(rq, &ext_sched_class)) {
->       /*
->        * We don't have a next task at this point, but can guess at its
->        * class based on the highest set bit in the queue_mask.
->        */
->       scx_cpu_release(reason_from_mask(rq->queue_mask), NULL);
->       return RETRY_TASK;
->    }
-> 
->    But I was thinking that we could also just stick that task back onto
->    some global dsq, right? (presumably the one we just pulled it from is
->    a good target). This would effectively 'undo' the balance_one().
+The first patch in this series fixes a bug in rq_bvec handling I noticed
+by inspection. The second patch adds a slot to rq_bvec to account for
+the slot used for the TCP record marker.
 
-From ops.cpu_release(), the BPF scheduler can call scx_bpf_reenqueue_local()
-which runs the enqueue path again for the queued tasks so that the scheduler
-can decide on what to do with these tasks including sticking it into a
-global DSQ or putting it back to the source DSQ. Yeah, it may make sense to
-make some bulit-in actions available through ops flags.
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Changes in v2:
+- Better changelog message for patch #2
+- Link to v1: https://lore.kernel.org/r/20251008-rq_bvec-v1-0-7f23d32d75e5@kernel.org
 
->  - finish_dispatch() -- one of the problems that I ran into with the
->    shared rq lock implementation is that pick_task_scx() will in fact
->    try and enqueue on a non-local dsq.
-> 
->    The callchain is something like:
-> 
->      pick_task_scx()
->        bpf__sched_ext_ops_dispatch()
->          scx_bpf_dsq_move_to_local()
-> 	   flush_dispatch_buf()
-> 	     dispatch_enqueue() // dsq->id != SCX_DSQ_LOCAL
->  
->    And this completely messes up the locking -- I'm not sure how to fix
->    this yet. But adding this flush to do random other things to various
->    code paths really complicates things. Per the function what we really
->    want to do is move-to-local, but then we end up doing random other
->    things instead :/
+---
+Jeff Layton (2):
+      sunrpc: account for TCP record marker in rq_bvec array when sending
+      sunrpc: add a slot to rqstp->rq_bvec for TCP record marker
 
-Hmm... this is deferred execution of tasks being dispatched to non-local
-DSQs. The reason why they're deferred is to avoid entanglement with BPF side
-synchronization, although BPF side locking developed in a different way than
-we were thinking back then, so we may be able to remove the deferred
-operations. Need to think more about that.
+ fs/nfsd/vfs.c        | 6 +++---
+ net/sunrpc/svc.c     | 3 ++-
+ net/sunrpc/svcsock.c | 2 +-
+ 3 files changed, 6 insertions(+), 5 deletions(-)
+---
+base-commit: 177818f176ef904fb18d237d1dbba00c2643aaf2
+change-id: 20251008-rq_bvec-b66afd0fdbbb
 
-However, I'm not sure that would change much w.r.t. how it interacts with
-core locking. While deferred, it's deferred within ops.dispatch(). ie.
-ops.dispatch() is allowed to move any task to any DSQ. Whether that's
-deferred or not within ops.dispatch() shouldn't make much difference.
-
->  - finish_dispatch() -- per the above problem I read this function and
->    found that:
-> 
->      "the BPF scheduler is allowed to dispatch tasks spuriously"
-> 
->    and I had to go and buy a new WTF'o'meter again :/ Why would you
->    allow such a thing? Detect the case because the BPF thing is
->    untrusted and can do crazy things, sure. But then kill it dead; don't
->    try and excuse badness.
-
-This came to be because the BPF data structures that we were playing with
-earlier didn't easily support arbitrary element removals. The kernel side
-needs to be able to reliably detect whether the dispatch attempt is allowed
-or not anyway, so, as a workaround, instead of aborting the scheduler, I
-just made it ignore spurious attempts. With new arena based data structures,
-this shouldn't be a problem anymore, and it'd make sense to make this
-stricter.
-
->  - scx_bpf_dsq_move_to_local() found per the above problem, but per its
->    comment it is possible BPF calls this with its own locks held. This
->    then results in:
-> 
->    CPU1 
-> 
->    try_to_wake_up()
->      rq_lock();
->      enqueue_task() := enqueue_task_scx()
->        bpf__sched_ext_ops_something_or_other()
->          your bpf area lock thing
-> 
->    // rq->lock
->    // bpf area lock
-> 
->    CPU2
->      bpf__sched_ext_whatever()
->        bpf area lock
->          scx_bpf_move_to_local()
-> 	   rq_lock()
-> 
->    // bpf area lock
->    // rq->lock
-> 
->   and we have a deadlock -- I thought BPF was supposed to be safe? And
->   while the recent rqspinlock has a timeout, and there the bpf validator
->   knows a spinlock exists and can prohibit kernel helper calls, this
->   bpf area lock you have has no such things (afaict) and BPF can
->   completely mess up the kernel. How is this okay?
-
-BPF arena locks are not allowed to spin indefinitely. It will break out of
-spinning and fail the locking attempt. Right now, such failures need to be
-handled manually, but, once the BPF program abort support is merged, we
-should be able to auto-abort schedulers.
-
-Thanks.
-
+Best regards,
 -- 
-tejun
+Jeff Layton <jlayton@kernel.org>
+
 
