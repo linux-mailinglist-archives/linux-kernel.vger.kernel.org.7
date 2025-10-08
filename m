@@ -1,171 +1,190 @@
-Return-Path: <linux-kernel+bounces-845879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01533BC6664
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 21:01:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9024BBC664C
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 20:59:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1614C4218CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 18:59:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D51C19E42B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 19:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3D942C15B1;
-	Wed,  8 Oct 2025 18:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449652C11FD;
+	Wed,  8 Oct 2025 18:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WV0EupLV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aPKn5zfy"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70692C21DA;
-	Wed,  8 Oct 2025 18:59:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF822C11EC
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 18:59:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759949953; cv=none; b=Tl+omA48Idh+eqbje94QMNqKQN6za2a4ri8GHzJ1smDlS3mEl+A5yhwBMLMXOCp152Mb2mZwF4dQjGcDUeJjqKQYZdpd0oY8omKLGU1gx5x4ZGmJWWxjS3d6CPL7k5h+dtWedP9ibmFCc0oJA0I2CmdrFxB180pZQtzY7nUpH7M=
+	t=1759949964; cv=none; b=gfuZz5fWmwAvcd0W49BSueJ5xEHkHYYLyt1PPafCuy9VzvncTdCTEJPNeLUSlvT4FKGMbAarsKFPSupBcW3qaelGrpLnfC8ttYfP6aJ3+FsBsBPMk5aP/4ScsjzPgN7n/fpCdmdHGJcHZD/4KsjuI1fldtbJJyFvsSCuNDGoW1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759949953; c=relaxed/simple;
-	bh=UiVGnSi7V58UwvWYVwmNngyeBVLlQrbzs8iMIl+lk7U=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UfuRq91ii8OVXGE8KFUvasF94lV1GrLKkLXwFwU0EaMe2F/6+OM51ffQDIYtpX1gFkzZ2ZCcYV2UMS2D3gFMA3vPOOBYu+LGVg2lFpbiZBVmDQ4dGPi7grVFrRsr3gYocd2qKR84nW5ZjYIFUmpMMthuoMxRXWiOsL3QqEaoq5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WV0EupLV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BE9FC4CEF4;
-	Wed,  8 Oct 2025 18:59:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759949952;
-	bh=UiVGnSi7V58UwvWYVwmNngyeBVLlQrbzs8iMIl+lk7U=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=WV0EupLV8NGMMmqprWMPf7WDJtFoCP8mFFeGCh3VEVW36C2XsQw28Pn502HLgofog
-	 AodP0oTYDP+3V3qeMislpdw79CcSVz9QxyDMZmSWvZr3DHyotfU52sDMFE5cd9O+EJ
-	 WwBnycJufiAE3kGwtj19UXam04bwQFiWQs0BPB2O7p0tisbgxrGjhEXhmPQ2l+eGDt
-	 v0LmvYDtlrp0XJTE/SXD6Bru0KMy8D+tirnRYdDbAYoG/V6Ee9I68fUVWYDSrlVeFG
-	 wGqyHgC3NRzMyZUMQ601ujfnURsYRlODyRvvi31C68QQ29AE51O/qk+QWimiMtCLAC
-	 8prGWOYirsTww==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 08 Oct 2025 14:58:53 -0400
-Subject: [PATCH 2/2] sunrpc: add a slot to rqstp->rq_bvec for TCP record
- marker
+	s=arc-20240116; t=1759949964; c=relaxed/simple;
+	bh=pkKqRsIwDhc+RUJiMdhK9GH1Pl3ZLZDY4dZbArFqFqs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WQiUlnxdxas3PWyFFMIgE/l/BOpENW3IeqqJmzxBAyaLPhzdwFIYf6MeS2cUTbFL1ApeJPSxtM8uW+u4IdtviKA9b0+IcZbPVAlDGEyXI6QegLJZWG6wbiNwd+O63Gdu3fVPZ63B7rB4RdtvM8iec9jSsTGRwGb4nJw+b3tfUKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aPKn5zfy; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 598I5xCd002709
+	for <linux-kernel@vger.kernel.org>; Wed, 8 Oct 2025 18:59:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=0UdkETRPI6ZWbVUbfsUgaXMe
+	BnN/d50E+m0AcvlG3Bk=; b=aPKn5zfyCDXgHyxBiNSZBLkmEvt47oUi2RWDinGN
+	uQyvvHaFX7LMl4N+6Xg7E0U3ZeVF21BWfHPP8/CZu+uu5h34dEKRoIbzQB8J0TiE
+	DvOiVboPksV3SiAiPr6QtYJTignIEKkUErz5spHye4nfnnfOqKUBBAQoGQyTMiD3
+	ZI4+mGUQUxc6mOcJVvXDWreZvdia3EDeMCn4p3gz5nnLqZMjoF+PwYiZKnDaCdDW
+	hHwXINXjJlzCADrcoRbbyK468HCH703v1rkrq2SgJvhihFsk28r0YhAFs2+8Iok1
+	tSkAzrPEffpnZnS+t63g3pd0//gAPGz7VU8cmZOD8FpGTA==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv4kraj5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 18:59:21 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-879e66b788bso13668676d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 11:59:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759949961; x=1760554761;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0UdkETRPI6ZWbVUbfsUgaXMeBnN/d50E+m0AcvlG3Bk=;
+        b=ERuhfZxtQGPHMXV6+hE9hDq5pyv34BCtJ2/5nYR0o6XyE57pfgeqDM0F5eQV8QSwcm
+         aM+Cx1fgfIrvrtys3BF9WyGa5eRiUdhW3yiuVWe2seUSOF2euecVx6/KdyPR6gAJJiSQ
+         p3zxOhYV2cjOYyRrnIZDFzEj8M2v62AdnqxBhjKxBI0ZYvCLI3MUB783XGBHxdF3t0gU
+         rtL9IZ4kWNo2uwtxLpx7zPVAlXKvPW9qedqlDdfvdDxLrqPCOzjjh2p7iKf+GfESMbDF
+         L/7p7PmHvK4Fy3U+SH75IwGvRkxwK+H0zn+vSJYPw+V4k+dRTivCDIK3AaBweOnJBX7V
+         08Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCUUwm/NpGvB2H1kV7ojJ8YaK+k4B9+58YnutkgfHI7ftHyYzF8VHKpGYGfBx+93RH8tyhKXlCY1MGuNKj4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUvUroI8AGsSrVHuSZCDOScQxT9xKpM/iUefxZ47LcLqUttswQ
+	nb79CUJIGj6L7lM00AuWPtRh8Z6qKX1ZOUAcTIoE2CUgy2mid2f5o+thWfWlL7i7FfyRKym73me
+	qthToFaf7T5Vsh8SeEZdTtHphEKFnkXd1fA5qY869OGxrpylR4+J+ErRKIc9PKhEzvCM=
+X-Gm-Gg: ASbGnct4/UxVY+uLVkhtpMXqt/hTC0jMjwN1pIzArl5+l2sBAWOigCTLBaoAPvLQwaE
+	j03g2ORdhPbTFr0wES/AhoBFHR73tHJ05YK3Md8i20GDg4+wmunaOijWIpd/bT9HwSJaX6ARWpC
+	AjMy3bWyc81ltCj6IjbfltG4kEactT00lDlAGAzHCk6cZOFtkYSfyq6JJdE6TLqPSUzc59nfzFK
+	NRpH+RJ4ymLRavPuWsZl8U5FPcWcH/W91X5LPliKyocSbgNLDXaJu29OQmX5aVbdx7zSE1X8Gh7
+	Ka2shmB3hwSFSDccwaw00lghHMUrltxcNajAMneTD5NWxxv/nnUKCfkD8bIe1EWqOyoMfqDfpT9
+	nxJJw0k7qZ2k6LYDX4bpiUpBgl5vtZ6BTmsD0cnB4ODWebMit5UUlwgaN2A==
+X-Received: by 2002:a05:622a:1b24:b0:4e3:970:661a with SMTP id d75a77b69052e-4e6ead91fe2mr67087911cf.75.1759949960535;
+        Wed, 08 Oct 2025 11:59:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGaXzhWAKXAgn1FOnUImvO0Ih0s0vnFPkEOMy8MA4cgd7lRzHdrWt6cw5JjIrgIzgwo4fpdJg==
+X-Received: by 2002:a05:622a:1b24:b0:4e3:970:661a with SMTP id d75a77b69052e-4e6ead91fe2mr67087441cf.75.1759949960070;
+        Wed, 08 Oct 2025 11:59:20 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5907ac00be6sm263748e87.23.2025.10.08.11.59.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 11:59:19 -0700 (PDT)
+Date: Wed, 8 Oct 2025 21:59:17 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: david@ixit.cz
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Casey Connolly <casey.connolly@linaro.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        phone-devel@vger.kernel.org
+Subject: Re: [PATCH v2 5/7] drm/panel: Add Samsung S6E3FC2X01 DDIC with
+ AMS641RW panel
+Message-ID: <6yp5udhm2g42basxeyjnn3onfons2k2besxfqwemnqrafsai6q@tfr74bfz7s7t>
+References: <20251008-s6e3fc2x01-v2-0-21eca1d5c289@ixit.cz>
+ <20251008-s6e3fc2x01-v2-5-21eca1d5c289@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251008-rq_bvec-v1-2-7f23d32d75e5@kernel.org>
-References: <20251008-rq_bvec-v1-0-7f23d32d75e5@kernel.org>
-In-Reply-To: <20251008-rq_bvec-v1-0-7f23d32d75e5@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
- Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, 
- Anna Schumaker <anna@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- David Howells <dhowells@redhat.com>
-Cc: linux-nfs@vger.kernel.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3543; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=UiVGnSi7V58UwvWYVwmNngyeBVLlQrbzs8iMIl+lk7U=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBo5rR5tQ0FvTVZCbZfd0an2dxVjsmqXo5gRpOMP
- 5txDP3gnmuJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaOa0eQAKCRAADmhBGVaC
- FTJoEADGiBU2q9VGU1AXdgokO8glagusbBXI/NLtYb3MNyAK0KrtjnBtjAj+5G/fm+5pgVZhnEh
- +U6dal1ux6vlGXoEq5wMq8t/1NXkhHV2BULWKd5fOGZddPHb2jR5Q5qW4i6D9BH7aO1r2iCk9uZ
- ODktXhoqZoGj5DZ/dCveubpWE+7J0z6SccZQI+4Y1ym8Kgw2rsWgL9ENM/D6MRZt4MCw8O9i7+u
- +yPdFPBGqzf4sZz1vhb3V6Zca/Ntk3jnourKvN9ZRUUjg1+OdBXVvPjI8+leOpgkApKfF4lDK+N
- vhXztVG4wgmMsZr1Hv3axRnOEpTevbOq0eeRSKbHf4VLGTKQk0IKbfY+lXOf28cZFwCEpePSkIK
- Sl+C76b0d27BSXIFMu83g1g+Sjr38I76EQYB+FkO9J6GFduXCMkFEkcFYVH5aDlY0nL2vJoicdM
- KtBxn3PlbffXh+KVQ8ao6qJBChDiQUbOL29BpNi2Eqb1X1Br2nVi7qzL51Mhz04WxiSAK5n4KKY
- ANk/Y+YDwYaTG7Kk/qs7g/ULonQSXLNxK+8iaX64gisAslxbk1yobGQgGEWTtwsDIRdsKrR9hVN
- o35IVJT26MbCFAuzUPWf7N/7N4SR5eT0jIkqyvgjcB5gw5X9STbh0GVU9EYvFLubblR0VuKD/GU
- uDODuWnKbUND8nA==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251008-s6e3fc2x01-v2-5-21eca1d5c289@ixit.cz>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX8hzwGPxSu6W7
+ h5qRVajIDXcKKOSKm9Uz2kuyRi9+LYSnojapDnukNNiaeuOpdb9ipL+1qgT/Mv3aP0efRbWnD0U
+ v4POz5ZAoqAyw77+Oz8T4sS1CWMjT7Fywq852ZJyQj/TAkpDmQDmNrXX0U/lRigmsqB8dtfXnvI
+ zWL1OP+LpTS9KP5+n2nPINu9ZSmjmKWR+VUHryZoROvIvUPp79stA7vB+9OWt7/GTdKi+5Uzz+K
+ Iks8aWHYFB3hIF2XP0PIUdt7eenq9kMB70zsd2ifhpNLp01OMXuH5Cl0cjjaz7fh0+aMzHKLzg8
+ xgtMpOwPhDVwuS/CcFpxVcXF9WI2MlqD8birD2a70zvxOOP7jqKQunuCVMBnZUy2RNJc5uuB0jA
+ bptbKKM9cSRcevM66Gzkt2Fp9rMjsg==
+X-Authority-Analysis: v=2.4 cv=CbcFJbrl c=1 sm=1 tr=0 ts=68e6b48a cx=c_pps
+ a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=WFa1dZBpAAAA:8 a=bBqXziUQAAAA:8 a=SYGtE8pA4Zq6nJvkfUIA:9
+ a=CjuIK1q_8ugA:10 a=pJ04lnu7RYOZP9TFuWaZ:22 a=MZguhEFr_PtxzKXayD1K:22
+ a=BjKv_IHbNJvPKzgot4uq:22
+X-Proofpoint-GUID: bH7G8aHdYGFoYcW_El7VBxFeh_GVMqJ_
+X-Proofpoint-ORIG-GUID: bH7G8aHdYGFoYcW_El7VBxFeh_GVMqJ_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-08_05,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 priorityscore=1501 malwarescore=0 spamscore=0 impostorscore=0
+ lowpriorityscore=0 bulkscore=0 clxscore=1015 phishscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
 
-svc_tcp_sendmsg steals a slot in the rq_bvec array for the TCP record
-marker. If the send is an unaligned READ call though, then there may not
-be enough slots in the rq_bvec array.
+On Wed, Oct 08, 2025 at 04:05:32PM +0200, David Heidelberg via B4 Relay wrote:
+> From: David Heidelberg <david@ixit.cz>
+> 
+> Add panel driver used in the OnePlus 6T.
+> 
+> No datasheet, based mostly on EDK2 init sequence and the downstream driver.
+> 
+> Based on work of:
+>   Casey Connolly <casey@connolly.tech>
+>   Joel Selvaraj <foss@joelselvaraj.com>
+>   Nia Espera <a5b6@riseup.net>
+> 
+> Signed-off-by: David Heidelberg <david@ixit.cz>
+> ---
+>  MAINTAINERS                                      |   1 +
+>  drivers/gpu/drm/panel/Kconfig                    |  13 +
+>  drivers/gpu/drm/panel/Makefile                   |   1 +
+>  drivers/gpu/drm/panel/panel-samsung-s6e3fc2x01.c | 402 +++++++++++++++++++++++
+>  4 files changed, 417 insertions(+)
+> 
+> +static const struct of_device_id s6e3fc2x01_of_match[] = {
+> +	{ .compatible = "samsung,s6e3fc2x01-ams641rw", .data = &ams641rw_mode },
 
-Add a slot to the rq_bvec array, and fix up the array length
-calculations.
+Again, why can't we use defined compatible here?
 
-Fixes: e18e157bb5c8 ("SUNRPC: Send RPC message on TCP with a single sock_sendmsg() call")
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/nfsd/vfs.c        | 6 +++---
- net/sunrpc/svc.c     | 3 ++-
- net/sunrpc/svcsock.c | 4 ++--
- 3 files changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-index 77f6879c2e063fa79865100bbc2d1e64eb332f42..c4e9300d657cf7fdba23f2f4e4bdaad9cd99d1a3 100644
---- a/fs/nfsd/vfs.c
-+++ b/fs/nfsd/vfs.c
-@@ -1111,7 +1111,7 @@ nfsd_direct_read(struct svc_rqst *rqstp, struct svc_fh *fhp,
- 
- 	v = 0;
- 	total = dio_end - dio_start;
--	while (total && v < rqstp->rq_maxpages &&
-+	while (total && v < rqstp->rq_maxpages + 1 &&
- 	       rqstp->rq_next_page < rqstp->rq_page_end) {
- 		len = min_t(size_t, total, PAGE_SIZE);
- 		bvec_set_page(&rqstp->rq_bvec[v], *rqstp->rq_next_page,
-@@ -1200,7 +1200,7 @@ __be32 nfsd_iter_read(struct svc_rqst *rqstp, struct svc_fh *fhp,
- 
- 	v = 0;
- 	total = *count;
--	while (total && v < rqstp->rq_maxpages &&
-+	while (total && v < rqstp->rq_maxpages + 1 &&
- 	       rqstp->rq_next_page < rqstp->rq_page_end) {
- 		len = min_t(size_t, total, PAGE_SIZE - base);
- 		bvec_set_page(&rqstp->rq_bvec[v], *rqstp->rq_next_page,
-@@ -1318,7 +1318,7 @@ nfsd_vfs_write(struct svc_rqst *rqstp, struct svc_fh *fhp,
- 	if (stable && !fhp->fh_use_wgather)
- 		kiocb.ki_flags |= IOCB_DSYNC;
- 
--	nvecs = xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages, payload);
-+	nvecs = xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages + 1, payload);
- 	iov_iter_bvec(&iter, ITER_SOURCE, rqstp->rq_bvec, nvecs, *cnt);
- 	since = READ_ONCE(file->f_wb_err);
- 	if (verf)
-diff --git a/net/sunrpc/svc.c b/net/sunrpc/svc.c
-index 4704dce7284eccc9e2bc64cf22947666facfa86a..919263a0c04e3f1afa607414bc1893ba02206e38 100644
---- a/net/sunrpc/svc.c
-+++ b/net/sunrpc/svc.c
-@@ -706,7 +706,8 @@ svc_prepare_thread(struct svc_serv *serv, struct svc_pool *pool, int node)
- 	if (!svc_init_buffer(rqstp, serv, node))
- 		goto out_enomem;
- 
--	rqstp->rq_bvec = kcalloc_node(rqstp->rq_maxpages,
-+	/* +1 for the TCP record marker */
-+	rqstp->rq_bvec = kcalloc_node(rqstp->rq_maxpages + 1,
- 				      sizeof(struct bio_vec),
- 				      GFP_KERNEL, node);
- 	if (!rqstp->rq_bvec)
-diff --git a/net/sunrpc/svcsock.c b/net/sunrpc/svcsock.c
-index 377fcaaaa061463fc5c85fc09c7a8eab5e06af77..5f8bb11b686bcd7302b94476490ba9b1b9ddc06a 100644
---- a/net/sunrpc/svcsock.c
-+++ b/net/sunrpc/svcsock.c
-@@ -740,7 +740,7 @@ static int svc_udp_sendto(struct svc_rqst *rqstp)
- 	if (svc_xprt_is_dead(xprt))
- 		goto out_notconn;
- 
--	count = xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages, xdr);
-+	count = xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages + 1, xdr);
- 
- 	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, rqstp->rq_bvec,
- 		      count, rqstp->rq_res.len);
-@@ -1244,7 +1244,7 @@ static int svc_tcp_sendmsg(struct svc_sock *svsk, struct svc_rqst *rqstp,
- 	memcpy(buf, &marker, sizeof(marker));
- 	bvec_set_virt(rqstp->rq_bvec, buf, sizeof(marker));
- 
--	count = xdr_buf_to_bvec(rqstp->rq_bvec + 1, rqstp->rq_maxpages - 1,
-+	count = xdr_buf_to_bvec(rqstp->rq_bvec + 1, rqstp->rq_maxpages,
- 				&rqstp->rq_res);
- 
- 	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, rqstp->rq_bvec,
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, s6e3fc2x01_of_match);
+> +
+> +static struct mipi_dsi_driver s6e3fc2x01_driver = {
+> +	.probe = s6e3fc2x01_probe,
+> +	.remove = s6e3fc2x01_remove,
+> +	.driver = {
+> +		.name = "panel-samsung-s6e3fc2x01",
+> +		.of_match_table = s6e3fc2x01_of_match,
+> +	},
+> +};
+> +module_mipi_dsi_driver(s6e3fc2x01_driver);
+> +
+> +MODULE_AUTHOR("David Heidelberg <david@ixit.cz>");
+> +MODULE_DESCRIPTION("DRM driver for Samsung S6E3FC2X01 DDIC");
+> +MODULE_LICENSE("GPL");
+> 
+> -- 
+> 2.51.0
+> 
+> 
 
 -- 
-2.51.0
-
+With best wishes
+Dmitry
 
