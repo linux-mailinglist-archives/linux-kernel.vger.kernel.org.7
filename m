@@ -1,117 +1,153 @@
-Return-Path: <linux-kernel+bounces-845322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51FF4BC46E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 12:47:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88F1CBC46ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 12:47:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AB6D74EF8DC
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 10:47:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E829188C058
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 10:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 875E72F60CB;
-	Wed,  8 Oct 2025 10:46:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 598532F6178;
+	Wed,  8 Oct 2025 10:47:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XG8n+htW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="T9ihapaF";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jm0Y3uQH"
+Received: from flow-a2-smtp.messagingengine.com (flow-a2-smtp.messagingengine.com [103.168.172.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3A92E8DEA;
-	Wed,  8 Oct 2025 10:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 541912F60AD;
+	Wed,  8 Oct 2025 10:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759920419; cv=none; b=o/If7S9ghjvMnQpmftQpVtT6PhL7pIDxw+GDuVq4LQaZvm0XhfXCZ7GdpBEGXTKeGotdIkYioOmyN3ioTdUvpyRGxeB5yKJIZh+fvQGCt/VD4qnOutCjFTeWHpgg1rm9I5j+biivO5G1m+5fVNnOvGblyjdipBhLHhAdv26tNao=
+	t=1759920434; cv=none; b=u4r7fx1/QLWThAaQ5qmUtmWEw02pbimLDICiPq+kvcolhQP1sxoN9ceArYAPNF5GHWeUHmnK8XxtM+mbeRTk3nuRfihGx16/lLphu8IbzJFX6NWntJIUHseT3P3Ri2/Z3K1Oz8DvyuZrh8RY8yKX/508S2++Rx++f0yQZ+rYAQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759920419; c=relaxed/simple;
-	bh=0Zfd3JxG/MTE4sDHQ96evynt+Sey4zJnf0P/n9lbvOU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gN1SxKb00/DzZhmfHKX08K2CNm+IKm1cxVZavPxmIsTPlQHFQlN/8XvI1qe2oArSj8Hz7y+1nIoO6EQc6lWDn8ZdAvHSEQHUJ8gXuHbzkZY19LuSqLvfwLUPsS0wopZ1we/9EpDraPxVS6mnUnOlhalWGl4635S/5CSUpahmH+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XG8n+htW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76FFCC4CEF4;
-	Wed,  8 Oct 2025 10:46:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759920418;
-	bh=0Zfd3JxG/MTE4sDHQ96evynt+Sey4zJnf0P/n9lbvOU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=XG8n+htWjrOEkpSmgMN4IruinvuWQMwSD8FNAFO/gGncG9Rtz+UsPsWbvupvfUFal
-	 aF3pVD5rIjq8/qA0z4lH8qW/rfFxonQajk4nGiKcN1R5wYLACiqvqyJ6gUWnX6vRCg
-	 +csuqh4gLbPBpjtaEcUCYGfVrkP5ftsoIJfchdoOF8qJRBut5sDu7lT7fKduZBF2vD
-	 lC2+5rvGuSCGxHJlNsXUbRvNCA0WjThiPim3QDvmp1oXEQK09X6CV5VNN6rBfP9vE6
-	 OvBP9tOdFxpi63q45YmLS2Z2SAJ3QVIyjRokKcWYDwiEDL0gwFLuGWwi5IwMDsyS5I
-	 +SLu5GeSAxfNg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1v6RhA-0000000CKEh-0xjF;
-	Wed, 08 Oct 2025 10:46:56 +0000
-Date: Wed, 08 Oct 2025 11:46:55 +0100
-Message-ID: <861pndzn4w.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To:  Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>, Oliver Upton <oliver.upton@linux.dev>
-Cc:	joey.gouly@arm.com,
-	suzuki.poulose@arm.com,
-	yuzenghui@huawei.com,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	alexandru.elisei@arm.com,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: arm64: Check cpu_has_spe() before initializing PMSCR_EL1 in VHE
-In-Reply-To: <aOVckTSJET5ORY1n@linux.dev>
-References: <20251007182356.2813920-1-mukesh.ojha@oss.qualcomm.com>
-	<aOVckTSJET5ORY1n@linux.dev>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1759920434; c=relaxed/simple;
+	bh=zeBFuoiMP111c2JRQQR6i6BXLXgsed7WGl2Grlpaed0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hLQ6XFxWpym+YrOCNdVAQi48po/WP+cY73c22Enq1AlUlkMNEgaeLLCdfSLP5lcBzJZAGy/fauzd1ffp4Svw+j4lS0at5o8piMabpKCxyrO19UxV1sDd7NJInHABwsbb7PHR53IAsuo+imtrX9z0VFwkud5DjBgMH/BHxvFNFQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=T9ihapaF; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jm0Y3uQH; arc=none smtp.client-ip=103.168.172.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailflow.phl.internal (Postfix) with ESMTP id 4804613801F3;
+	Wed,  8 Oct 2025 06:47:10 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Wed, 08 Oct 2025 06:47:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1759920430; x=1759927630; bh=KodlDpmgfd
+	X2u40mEiJbkv3Ym8M9RKnA7qbONd4olzE=; b=T9ihapaFrBFuoNcy7SFER+1K0q
+	LHqIui2qpBKHuyGRIYPlI3RsM1km+jzO2Kh5zgUvou7k6JrZZCVtW5ou0gVOQC+P
+	kjS170htgm4KMAXqvUDXr2d6RoYFsK9SDwqA7yGQLJQr85TSjiCZeDhorteKMXhW
+	SWl2+BWBwIDJ+/rdm6Wx3eOFv9dCEcSJr0qoqGBA1YCmAm7j79nDCok1/MF6dHoS
+	LKdUUrnUZ2Vz78KMlIVV8tOxJfwddwxj0dzjKZj8iiEy2NrfEeG7rkYtXpIXcDqV
+	GtRwwQJn+eSJ1K54Njxe1hcbGE8x0kvMQN3mJU8vVLZ+AS5EoBIKQZoaYbhQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1759920430; x=1759927630; bh=KodlDpmgfdX2u40mEiJbkv3Ym8M9RKnA7qb
+	ONd4olzE=; b=jm0Y3uQHebcIFICXNQ2+s/gyPQ1Fal0dXHaTv2jNga2iKWbAZtX
+	AlF5nPjbt9nfqOCfxKyNxr3Z79bWoAY6+YjjK7vwEb7ebHo4LtA2cquP4omW8CnA
+	rbnZwAkWVMVaYOqma3U0Rrcq+LDvYgXekiQ9QEKHUIe9GXFXMxmpwns+ky8v0zsi
+	y+0lAL4/BSyhz6AmXZzMYlQksJHe+c8LyT0X+dc6mwrJRuG68GSdOw8PpAnsmYjM
+	ZYYY61z3UHe53BP1kyJyUhP4RD6D/jL8BLPdw2HrjmTy6nJD73uto2gwQ9o3gtyN
+	+v6fkTYxeY0icBH3ZDIMSufb3fRKpJxyxCw==
+X-ME-Sender: <xms:LUHmaO5X62s-G3c_2_hisaMjNwilA8ldv9WWRcBGUO2aNLXCWghUNQ>
+    <xme:LUHmaFfZIcuqwZgX2OuSxV0Xgn0FotxNOW990p3mZL4y7niKK4aJvK64DMy_y3x9X
+    R5nz8-MuOcH5SrOy_29HIRHQLWhxpw_clZXi-eNbPBy9oCKUQ>
+X-ME-Received: <xmr:LUHmaGesQ4KpOhlAVa2CA5SPoiiVmgDv3aepNuMMizBAwTD8MWoADYQf-6M6qyrkNDi9M-tkU6PbPLRxGH0sz4U2p-PWeIzRw63mbw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutdefuddtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepifhrvghgucfm
+    jfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrfgrthhtvghrnhepgfejjefhje
+    ffieevjeeuveegledtheefjeevffevhffftefgtdfhjeefleejheetnecuffhomhgrihhn
+    pehruhhsthdqlhgrnhhgrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphhtthho
+    peehkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrkhhrsehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehjohgvlhgrghhnvghlfhesnhhvihguihgrrdgtohhmpdhr
+    tghpthhtoheprggtohhurhgsohhtsehnvhhiughirgdrtghomhdprhgtphhtthhopeihuh
+    hrhidrnhhorhhovhesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghr
+    nhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehruhhsthdqfhhorh
+    dqlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurhhiqdgu
+    vghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtoheprg
+    hpohhpphhlvgesnhhvihguihgrrdgtohhmpdhrtghpthhtohepohhjvggurgeskhgvrhhn
+    vghlrdhorhhg
+X-ME-Proxy: <xmx:LUHmaGDOywgI6IcKUOsyKHV9KDLCIXAw0wBxxvVhxeSzeBLofaFWuw>
+    <xmx:LUHmaMkxxlwWQ2LDk_2QfAmCsFnq7sfC_1GakeNzJg4RkfFYAfQwAA>
+    <xmx:LUHmaC_PBvKESOKj888waQ-abh5Fk2MgCU3swJME0mxJXBDfBekiBw>
+    <xmx:LUHmaM9H9q_26icMYoRuM24GbDROwzUCdA4_OLb8kRP8MvpOmDIcMw>
+    <xmx:LkHmaK_X7I47nfM_zLbe0I6OCLk4Aznxs-PFqy01kte5KzhJ89kvuE7M>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 8 Oct 2025 06:47:08 -0400 (EDT)
+Date: Wed, 8 Oct 2025 12:47:06 +0200
+From: Greg KH <greg@kroah.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Joel Fernandes <joelagnelf@nvidia.com>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	Yury Norov <yury.norov@gmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	Alistair Popple <apopple@nvidia.com>,	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,	Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+	"bjorn3_gh@protonmail.com" <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+	"joel@joelfernandes.org" <joel@joelfernandes.org>,
+	Elle Rhumsaa <elle@weathered-steel.dev>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Andrea Righi <arighi@nvidia.com>,
+	"nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>
+Subject: Re: [PATCH v6 0/5] Introduce bitfield and move register macro to
+ rust/kernel/
+Message-ID: <2025100808-unpadded-unsubtle-1053@gregkh>
+References: <695CCDCE-A205-4557-AA15-6F102B8CCF0C@nvidia.com>
+ <DDCV84IJHUML.126CB1CT0XMX5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: mukesh.ojha@oss.qualcomm.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, alexandru.elisei@arm.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DDCV84IJHUML.126CB1CT0XMX5@kernel.org>
 
-On Tue, 07 Oct 2025 19:31:45 +0100,
-Oliver Upton <oliver.upton@linux.dev> wrote:
+On Wed, Oct 08, 2025 at 12:23:40PM +0200, Danilo Krummrich wrote:
+> On Wed Oct 8, 2025 at 1:37 AM CEST, Joel Fernandes wrote:
+> > The Nvidia GPU architecture is little-endian (including MMU structures in VRAM).
 > 
-> Hi Mukesh,
+> Yes, I'm aware (and I'd assume that there is no reason to ever change that).
 > 
-> I find it a bit odd to refer to cpu_has_spe() in the shortlog, which
-> doesn't exist prior to this patch.
+> Just for the complete picture, there's also some endianness switch in the
+> NV_PMC_BOOT_1 register I think?
 > 
-> On Tue, Oct 07, 2025 at 11:53:56PM +0530, Mukesh Ojha wrote:
-> > commit efad60e46057 ("KVM: arm64: Initialize PMSCR_EL1 when in VHE")
-> > initializes PMSCR_EL1 to 0 which is making the boot up stuck when KVM
-> > runs in VHE mode and reverting the change is fixing the issue.
-> > 
-> > [    2.967447] RPC: Registered tcp NFSv4.1 backchannel transport module.
-> > [    2.974061] PCI: CLS 0 bytes, default 64
-> > [    2.978171] Unpacking initramfs...
-> > [    2.982889] kvm [1]: nv: 568 coarse grained trap handlers
-> > [    2.988573] kvm [1]: IPA Size Limit: 40 bits
-> > 
-> > Lets guard the change with cpu_has_spe() check so that it only affects
-> > the cpu which has SPE feature supported.
+> > All the CPU architectures our drivers support are expected to be little-endian.
 > 
-> This could benefit from being spelled out a bit more. In both cases we
-> check for the presence of FEAT_SPE, however I believe the issue you
-> observe is EL3 hasn't delegated ownership of the Profiling Buffer to
-> Non-secure nor does it reinject an UNDEF in response to the sysreg trap.
-> 
-> I agree that the change is correct but the rationale needs to be clear.
+> Technically, all Rust supported architectures are indeed little-endian.
 
-To me, this smells a lot more like some sort of papering over a
-firmware bug. Why isn't SPE available the first place?
+s390x is supported by rust as a tier2 output:
+	https://doc.rust-lang.org/beta/rustc/platform-support/s390x-unknown-linux-gnu.html
 
-	M.
+so there really shouldn't be any reason why that platform couldn't add
+rust support today, right?
 
--- 
-Without deviation from the norm, progress is not possible.
+thanks,
+
+greg k-h
 
