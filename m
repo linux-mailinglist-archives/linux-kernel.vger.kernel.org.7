@@ -1,142 +1,132 @@
-Return-Path: <linux-kernel+bounces-845012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CED52BC347E
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 06:10:51 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA2FFBC3489
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 06:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F8183C451E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 04:10:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B9FA44E9A67
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 04:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206572BE7B6;
-	Wed,  8 Oct 2025 04:10:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9642BE658;
+	Wed,  8 Oct 2025 04:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AfuGdehp"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J6CHq2N3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6826D2BE7BA
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 04:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB28C1DFFC;
+	Wed,  8 Oct 2025 04:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759896641; cv=none; b=OUFEKflMhZbLFVibsF9H7raD0PJuvtYQf3X66Q/nh2d+/0U8Dwr4pizR5asMCmOdoJTNwVJo0v6YgKl/Lvxr6DI8QvwTLYCekum3vu1S1Pf+Y8onCgH3nd+o3ss6br7j14kcyEC5oSoJ+bhj4/79T4LfAn5l9x9tJI3NOxQZkHM=
+	t=1759897218; cv=none; b=e7TymfbH+a5UzutNgEmZuZCdl4RgvlBzg4KfoQdV56Be39QHhw6UIPvsaNIjRBDiAHb2WmNOPiNhjPiGbTYSEk4N8m37NEg5pnl3+PVBCCZEyOMkabwGlEPQm5QnV4UwoGkSGYVzGuyj/avAhHrH1DDu3zzMKDla/jQXR5NFKyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759896641; c=relaxed/simple;
-	bh=k4kMP+g5RiEZcnhoRkeve+Z9tYSilH0RKGWoeHvR8Vo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Et1KHenXVydbH/3y1MgMlO+7hl9tNpkNDczys/jIt0iH/Iaf0o+zCp7cSadH+SDIpBDBwPOFKCmF/12hTv0O0vC5I5gFTvelhFSGiXaSI7kwdhiobp4Y1MZ+tcuEye9P6do/9Hg3LqliSCg6iqOc4rpf/SEZuq4/Y0wKb96kx9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AfuGdehp; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3f42b54d1b9so1732076f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 07 Oct 2025 21:10:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759896637; x=1760501437; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k4kMP+g5RiEZcnhoRkeve+Z9tYSilH0RKGWoeHvR8Vo=;
-        b=AfuGdehpws8psHDrxjZiAT5/r9OcqLXrTk4VEW5ru2d0xrcL45TSgJoiWjkR+6MJ5g
-         haxSIicFpoCjIqdLfDaTA4kduBhaltToSSUFgw4AgBQC/C+bjahqW1DrFpWmPFSJqu67
-         qxoXepTbQAbnaQS+7vxJeGBaIqieixnJrHbWLiodTFypiJSXz6UhbbQTJZhOkTTG5b6T
-         I8uLUVICXLqsr6GLNB9bRt6EIhZNHnxBEDss5QFfHTi3mNKFyqh7FMBuhxkmfZSbwQS3
-         Bd8KruVFfgqGT28dD6DFBFy6ZPvqCT0iUuP96KHuzblKZfzL4MGwAuu6/orGSr0voCdL
-         TopQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759896637; x=1760501437;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k4kMP+g5RiEZcnhoRkeve+Z9tYSilH0RKGWoeHvR8Vo=;
-        b=Y4AdDb0iJp6sejXZxn2A9Q0jUi/4l1CGhTqOaCrXzvMBGHdXHm8TGR21WKUd8aq7Sb
-         gG/ARmK3GXzhBcBv37J2DAqJGOpw7WXv6man5HSmFBjHPTsV/oNC/hQZZx5qqIc6I3kn
-         T/JjAodQAZYjLlgyI3e3tJYVGkgi2EW2Z1RsRX7Ir5ZRH1nilkjnVyuav4RbWdamG11G
-         OdMcwAe6IfBqQUo/eBv+THOQRxztF5Oux+OSi60ySxTX+hFwXUziEH3Xm89/QFxWI98R
-         lEONsHsvLHt3AHLNa3bsXF9ylIFpQBl7qWjKgU1pbL02SEa/cuCiGbMC+fzmfXoIbiMj
-         bGdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXSfJh8WDqaGnQpPXIf4oFgmFfebZe5e+M/dmELJFhXxeE9O6mB/RZGuBgpHgHOA4ALuINAdFSI8+v5SeQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQUZFrOAb2xHHim7D6BCHVArYemTKP5HRVAfy/STT4cLbeLTWo
-	A2EfS6rXE11J6fdvr7ZpdbW5LkCKzLcmK65pkcppX4vRnqXpTXWmHv8BQkJfkDXRarryZLXSS/2
-	jVbBGUrDIxQYZnFbbtSFXJDKv4PH4WcI=
-X-Gm-Gg: ASbGncsfoyzSreHJC9FnjTqq57aoeQ4DtYvcQTDqSr1vMIUBKWLhHVC2F9ShXaya3J9
-	WEr+4fH+eNdhqzN2mn2DxRgwdM6NywJciPdhtXFozyv4MXkVfbjpxmEOd5DS4iL2GH5KyEZNYdT
-	A3wk1PWvzfdRnZcvQlcJwXu9rIAPdxapFNHfuH76zZg4puZCnG2xPG5MDfxPBlLD7wdPOdF+VGR
-	thRhe0dgbJMiJppOQ+AQPz2pMYaDGxJv7+eppleDCYKRCvoHBJJk2EGDbJaC3Glhnpl2cKgDOA=
-X-Google-Smtp-Source: AGHT+IEbTF1Padja2a5VYTPxu9e01sfQgU7xUDhedDQcSi45ZcqbFc2By50SOlGmeATDd+z0rHt0ZHSn8owfVsEk02s=
-X-Received: by 2002:a5d:588b:0:b0:425:7f10:ada7 with SMTP id
- ffacd0b85a97d-42667458124mr907732f8f.20.1759896636654; Tue, 07 Oct 2025
- 21:10:36 -0700 (PDT)
+	s=arc-20240116; t=1759897218; c=relaxed/simple;
+	bh=gIXJCsumt6skJ3sfqf5pbZAzlXWzbFT/QpJ0QJ0WoEs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WADkLCgpC6hdYYJT8W6WEiPWYzKVtQ6FQ+NCz2s0oP+O0fIalWLA2fCmOVP+ddqn6P978w2VvA8qCvCPs9X2W8AzKQsUENvYhOgVLbtWjYGse7tKfkmgQ30j1F/YdMrhE6rPN2+Xa/Ph2W02DbQ4uEScJjyloHXiQ56zMbcphh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J6CHq2N3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E2A7C4CEF4;
+	Wed,  8 Oct 2025 04:20:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759897217;
+	bh=gIXJCsumt6skJ3sfqf5pbZAzlXWzbFT/QpJ0QJ0WoEs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J6CHq2N3l4B147CgJt+zLqKYq2OtHwUWOsO4RanJM4icby3afXquF+ndgYR6fOYWP
+	 H6OZ/NXfzhSG3ZWIrXgmRzfzJY6TdzUbkHIqcFx9jRuywjXfZ30C/ThFcJTssakaHa
+	 8Pl8ETsSK4AyBuzZstrEd3Z+lNP+xUGQozD3xFAuMI7GnQHPjOrN8VoYC7s+PuJIdL
+	 Sl/LucC+GWoVX24kZ80gXhCu1Zs8uXu1c7fSbZPdvVAmGxtpf/98jY+G3TKds5KbWT
+	 ai2+dQBiC4bZTzbrfJnZsICkltmpxolSNNxBAdpghqjU9ZLCyE+8IndaxY2QfLJdx4
+	 9jMu/5qAYT2JA==
+Date: Tue, 7 Oct 2025 21:20:17 -0700
+From: Kees Cook <kees@kernel.org>
+To: Marco Elver <elver@google.com>
+Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Vlastimil Babka <vbabka@suse.cz>, Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	"Gustavo A . R . Silva" <gustavoars@kernel.org>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, Jann Horn <jannh@google.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>, Jakub Kicinski <kuba@kernel.org>,
+	Yafang Shao <laoar.shao@gmail.com>,
+	Tony Ambardar <tony.ambardar@gmail.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Jan Hendrik Farr <kernel@jfarr.cc>,
+	Alexander Potapenko <glider@google.com>,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+	linux-doc@vger.kernel.org, llvm@lists.linux.dev,
+	Matteo Rizzo <matteorizzo@google.com>
+Subject: Re: [PATCH v4 2/2] slab: Introduce kmalloc_obj() and family
+Message-ID: <202510072114.52B93ED736@keescook>
+References: <20250315025852.it.568-kees@kernel.org>
+ <20250315031550.473587-2-kees@kernel.org>
+ <aOR15Xb6DfolYM0z@casper.infradead.org>
+ <202510071001.11497F6708@keescook>
+ <e019c59a-ba8b-ec04-dc5b-923cf9dd9d9c@gentwo.org>
+ <CANpmjNMsSGY+QEn=GV8S2sXuuQsioikPR+OhGa3+6EoTqYPkHQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250930055826.9810-1-laoar.shao@gmail.com> <20250930055826.9810-4-laoar.shao@gmail.com>
- <CAADnVQJtrJZOCWZKH498GBA8M0mYVztApk54mOEejs8Wr3nSiw@mail.gmail.com>
- <CALOAHbATDURsi265PGQ7022vC9QsKUxxyiDUL9wLKGgVpaxJUw@mail.gmail.com>
- <CAADnVQ+S590wKn0rdaDAHk=txQenXn6KyfhSZ3ks6vJA3nKrNg@mail.gmail.com> <CALOAHbBcU1m=2siwZn10MWYyNt15Y=3HwSGi7+t-YPWf0n=VRg@mail.gmail.com>
-In-Reply-To: <CALOAHbBcU1m=2siwZn10MWYyNt15Y=3HwSGi7+t-YPWf0n=VRg@mail.gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 7 Oct 2025 21:10:25 -0700
-X-Gm-Features: AS18NWAHpHX-o2MgG3uRPCIrdO8_WsGJ2z7_dnabrBdSIRdjp2sl6QIslommR8o
-Message-ID: <CAADnVQKzW0wuN3NfgCSqQKVqAVRdKVEYMyJg+SpH0ENKH6fnMA@mail.gmail.com>
-Subject: Re: [PATCH v9 mm-new 03/11] mm: thp: add support for BPF based THP
- order selection
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, ziy@nvidia.com, 
-	baolin.wang@linux.alibaba.com, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Liam Howlett <Liam.Howlett@oracle.com>, npache@redhat.com, ryan.roberts@arm.com, 
-	dev.jain@arm.com, Johannes Weiner <hannes@cmpxchg.org>, usamaarif642@gmail.com, 
-	gutierrez.asier@huawei-partners.com, Matthew Wilcox <willy@infradead.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Amery Hung <ameryhung@gmail.com>, 
-	David Rientjes <rientjes@google.com>, Jonathan Corbet <corbet@lwn.net>, 21cnbao@gmail.com, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Tejun Heo <tj@kernel.org>, lance.yang@linux.dev, 
-	Randy Dunlap <rdunlap@infradead.org>, bpf <bpf@vger.kernel.org>, 
-	linux-mm <linux-mm@kvack.org>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANpmjNMsSGY+QEn=GV8S2sXuuQsioikPR+OhGa3+6EoTqYPkHQ@mail.gmail.com>
 
-On Tue, Oct 7, 2025 at 8:51=E2=80=AFPM Yafang Shao <laoar.shao@gmail.com> w=
-rote:
->
-> On Wed, Oct 8, 2025 at 11:25=E2=80=AFAM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
+On Tue, Oct 07, 2025 at 08:18:28PM +0200, Marco Elver wrote:
+> On Tue, 7 Oct 2025 at 19:47, Christoph Lameter (Ampere) <cl@gentwo.org> wrote:
 > >
-> > On Tue, Oct 7, 2025 at 1:47=E2=80=AFAM Yafang Shao <laoar.shao@gmail.co=
-m> wrote:
-> > > has shown that multiple attachments often introduce conflicts. This i=
-s
-> > > precisely why system administrators prefer to manage BPF programs wit=
-h
-> > > a single manager=E2=80=94to avoid undefined behaviors from competing =
-programs.
+> > On Tue, 7 Oct 2025, Kees Cook wrote:
 > >
-> > I don't believe this a single bit.
->
-> You should spend some time seeing how users are actually applying BPF
-> in practice. Some information for you :
->
-> https://github.com/bpfman/bpfman
-> https://github.com/DataDog/ebpf-manager
-> https://github.com/ccfos/huatuo
+> > > But all of that is orthogonal to just _having_ the type info available.
+> >
+> > iOS did go the path of creating basically one slab cache for each
+> > "type" of kmalloc for security reasons.
+> >
+> > See https://security.apple.com/blog/towards-the-next-generation-of-xnu-memory-safety/
+> 
+> We can get something similar to that with:
+> https://lore.kernel.org/all/20250825154505.1558444-1-elver@google.com/
+> Pending compiler support which is going to become available in a few
+> months (probably).
+> That version used the existing RANDOM_KMALLOC_CACHES choice of 16 slab
+> caches, but there's no fundamental limitation to go higher.
 
-By seeing the above you learned the wrong lesson.
-These orchestrators and many others were created because
-we made mistakes in the kernel by not scoping the progs enough.
-XDP is a prime example. It allows one program per netdev.
-This was a massive mistake which we're still trying to fix.
+Right -- having compiler support for dealing with types at compile time
+means we can create the slab caches statically (instead of any particular
+fixed number, even the 16 from RANDOM_KMALLOC_CACHES). Another compiler
+feature that might help here is getting a unique u32 for arbitrary type
+info, which is also how KCFI works:
+https://lore.kernel.org/linux-hardening/20250926030252.2387681-1-kees@kernel.org/
 
-> > hid-bpf initially went with fmod_ret approach, deleted the whole thing
-> > and redesigned it with _scoped_ struct-ops.
->
-> I see little value in embedding a bpf_thp_struct_ops into the
-> task_struct. The benefits don't appear to justify the added
-> complexity.
+My main issue is that I prefer explicitly exposing the type instead of
+having the compiler have to guess. We want it for more than just slab
+isolation (e.g. examining alignment).
 
-huh? where did I say that struct-ops should be embedded in task_struct ?
+> Note, this mitigation is likely not as strong as we'd like to without
+> SLAB_VIRTUAL (or so I'm told): https://lwn.net/Articles/944647/
+
+True, but both "halves" are needed -- SLAB_VIRTUAL isn't as robust
+without the type separation either.
+
+-Kees
+
+-- 
+Kees Cook
 
