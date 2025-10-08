@@ -1,272 +1,239 @@
-Return-Path: <linux-kernel+bounces-845940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61B17BC6895
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:05:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73039BC68B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:09:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 979D64ECBD4
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:05:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C51A3C432D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C1827B358;
-	Wed,  8 Oct 2025 20:05:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA85827BF99;
+	Wed,  8 Oct 2025 20:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i/L3Mp6H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xf//uEyu"
+Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B90C92773E3;
-	Wed,  8 Oct 2025 20:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD59277CBC
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 20:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759953912; cv=none; b=YXMPn66d5u10EMVQps9VO4w8R4fnjRlH955SzsBUwTZiEssyrPwk11Zt+z0pDdEB0HoLXq0dStwxIrpj54+3ZT7UHGIZxte4q0+tg/lAhbpuI7NUkblFe5gLgS0GgW8LNrzKB+C4v6uksgfYWLq5oU30NsOO2eEaVIM7vCYHa24=
+	t=1759954142; cv=none; b=PR8eX5uKbFsBkEFHnsHfV70b/Rta4oIo50WXI5F7gt/o8FuZm37LUiARREH+FYJf3BMHwFvmWFyt4cTv3vHwtkzSYwJonHcruAwnzU/Ilx0E2SgdAE1JHSxPTyRubVGoOfMKPEPcnTTuuHaJgQJLHQSKRul3I1y6Xoj2VHyPsjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759953912; c=relaxed/simple;
-	bh=dC9R5uPZRb8FYi2xCT/Fs6uMB1LxYeB1rdgOthG8uEg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Q6N21CpUHb50LArr0ppY/Au6al1QrmwSvFpMXnZ7yoKC71YSWYX8kVyKUL1m7x7G1OWxPr27XQc+ZzgMWECLqyRMM3PSRTJgnCn3UgnlEEFjO10Vwr6Nh4KJF6SMabIqWIc2otBS5dN2E5kDW+ReqKXnRnR4g5Su9lm7rwo91p4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i/L3Mp6H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 025C8C4CEE7;
-	Wed,  8 Oct 2025 20:05:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759953912;
-	bh=dC9R5uPZRb8FYi2xCT/Fs6uMB1LxYeB1rdgOthG8uEg=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=i/L3Mp6H8f1HBHZiBEr6GNBhEnLPpLOX7Gh3CBNFFpMi5gvWaUCeGgsP74NjG+0Gf
-	 685Qgu4zvcrO97qB/19kz8DVVfrMp+0ArrfrHLh2UMiEYbkyiEI+tgsuy3crKUwUhE
-	 vfzl2k+81aFc3bghC2oJx2SHS7PxuQOkpP+jf2eKNdNfsawoOLlrpN5BRHSHyKhd2T
-	 asxIoBH+zev4c1LM7USRzXHgKMXnyBor5qjMBBeCnkKrTQuXeO5CQMR5ZqP1u3WSgv
-	 Iil2Te/+MciJImBg+bNG03OEfd2Je+kHgYcVK5ITezgLm6PahBGVFb1V1Xm8uLg7+m
-	 yrgUu2IL24iEg==
-Message-ID: <e2790cb8cc46a3272825a7e471d1352c5509ee98.camel@kernel.org>
-Subject: Re: [PATCH 2/2] sunrpc: add a slot to rqstp->rq_bvec for TCP record
- marker
-From: Jeff Layton <jlayton@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, Olga
- Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom
- Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, Anna
- Schumaker <anna@kernel.org>, "David S. Miller"	 <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski	 <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Simon Horman	 <horms@kernel.org>, David Howells
- <dhowells@redhat.com>
-Cc: linux-nfs@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Mike Snitzer <snitzer@kernel.org>, 
-	brandona@meta.com
-Date: Wed, 08 Oct 2025 16:05:08 -0400
-In-Reply-To: <20251008-rq_bvec-v1-2-7f23d32d75e5@kernel.org>
-References: <20251008-rq_bvec-v1-0-7f23d32d75e5@kernel.org>
-	 <20251008-rq_bvec-v1-2-7f23d32d75e5@kernel.org>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1759954142; c=relaxed/simple;
+	bh=+Jz94DqaV5+iKLV52tI1MBLzkq7tXiHQZ1RwfsddtlI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZxMlQJpHnC1zJXy4qRmWJvGNVVUG9w4C+ck1JqAiYA0Zwt+Q/r/UA/5gd3BKtyYJryz+IAWNZ8fAdb4dUERhJ6Wtm9oya0hbe5sz59SIvy+UI+DFC13D00oBVTCTMXVmfJHCAQXvu6jz9nnu1Qi8TZYLLe5uaIB2Pf+7s7Y5HFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xf//uEyu; arc=none smtp.client-ip=209.85.218.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-b3d5088259eso28886866b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 13:08:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759954138; x=1760558938; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ke8jtUXlpIlqR4j9qkChpdFTIiht1S8htIX7XlQ02Ac=;
+        b=Xf//uEyu8uQZnQqmmbhe9L4tcs1B0dRf2Ql2m/KuqSnj0Lt6rCA/jtwYmbAhoIqQlO
+         v+pB/MNwJUanHAW5LHH02TL9xApvnUbsU2r0l5tZNMH1MhUsH6TcbYJFiPTA9N8CPYHY
+         TAWqZ8I5szg2WJCI4ILPQ5XXT22JM1FNjJgz8dLuQnP2kk0T9ZGlwH+M3m1d7oa0WBhT
+         FvBBQuaVW26NzS34x1WmBtVWu50mCesCDszhSp/TjIKmGhKTVHl2W28zehsv28mldwkN
+         R+fih7ZFgcWFm++GOQdp5jmFm3C1D1d55rJea++YJfg6MgFiHIQ/hBUnb64IFJ2KrI+k
+         d/FA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759954138; x=1760558938;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ke8jtUXlpIlqR4j9qkChpdFTIiht1S8htIX7XlQ02Ac=;
+        b=cYWSdmXDimMrAGamB7ChVTGImnfgLHrmLtn/EIDM6qMexbDSF00KyfSk8KOfHvIzXN
+         Zn25Nk5jaxn5BDsjADzU59c1F6cM9KjxWmqdDgPyDtIrNE/BpZPqg21NJgIJGsIZakUm
+         06ltKbQKfevMd4Mn1j4YDqHtBh/qWOd5LPypFE8MOTqxWv365wzIOm+ZUYDFRmeKlnjK
+         RzEqZXzCeHXPxO4LmQ5YjEXxpMVR8NnxKEgsxOdO6lwaaURGRBVTv72fQQnSOxL4ExjK
+         +IWWeTvftWcyxIoB9ApovQ+o3/bkXFV5aop06DHRSijoIYegPM66Sew0AlogaI98wMeF
+         8acw==
+X-Forwarded-Encrypted: i=1; AJvYcCU89IWp5kO50PQrMJCyRSrSSbjju0LnqvmSZNVL9ygMUrTJuF//EoKb3nBiUc1dZRTHIHXVhH9kMKzrVFY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfMR3D5QSstgDqHkPrGuMWsEPn7MfIFh5h3GzDKKnNmDSNxcHD
+	Ucd4svEXZAkplL5czrNTUDDZ6Ay84s3WetxaylHrd91yUtIbXjNQ+tXYUxpIYe/ISqrc1LuTeZp
+	f+FgmBYbNnGcpggFNqLI056bJjB0bksw=
+X-Gm-Gg: ASbGnct6biYgf2bStUyGXM0elVjPbDLpTTpEfqBSZctSTuCEO4YHpxCKoUaXBCODLa9
+	wCotyfXrYMhcChsEFvMf4XXazGD7lCUndIe6zl8Wwfoig69ZapxmB/Q5BcmT0k9Qe/3B32KNrLA
+	D/AHYPhlV/KZqyWyTBXjEnM2eb2zQ9luBtpxmJqPzsAxNi8qNkKsRE0smHlM6tNr1lOK0U1JIas
+	TcnJCuDxQ4qnxtGXjkONfa6IQFA5TdGmt6vXMqOnXt1b5SK8raCo1GVojXxfUoF+Jq+fc8aHUOW
+	KUpmpVPCNI+A1OGnxc90
+X-Google-Smtp-Source: AGHT+IHxM5CEHHYNSHpDunt8on4GI5kZYNZcQI+vzvGqpepaQf37+nRgFrKHSbRRUcFVNv2vbrMqwU69bVrlpNAZJxg=
+X-Received: by 2002:a17:907:6d1f:b0:b41:6ab2:bc69 with SMTP id
+ a640c23a62f3a-b50aaa97cf5mr524364766b.22.1759954138185; Wed, 08 Oct 2025
+ 13:08:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250927061210.194502-1-menglong.dong@linux.dev>
+ <20250927061210.194502-2-menglong.dong@linux.dev> <CAADnVQJAdAxEOWT6avzwq6ZrXhEdovhx3yibgA6T8wnMEnnAjg@mail.gmail.com>
+ <3571660.QJadu78ljV@7950hx> <7f28937c-121a-4ea8-b66a-9da3be8bccad@gmail.com>
+ <CAADnVQLxpUmjbsHeNizRMDkY1a4_gLD0VBFWS8QMYHzpYBs4EQ@mail.gmail.com>
+ <CAP01T75TegFO0DrZ=DvpNQBSnJqjn4HvM9OLsbJWFKJwzZeYXw@mail.gmail.com> <0adc5d8a299483004f4796a418420fe1c69f24bc.camel@gmail.com>
+In-Reply-To: <0adc5d8a299483004f4796a418420fe1c69f24bc.camel@gmail.com>
+From: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Date: Wed, 8 Oct 2025 22:08:21 +0200
+X-Gm-Features: AS18NWAncctoHoktrPtSR3FECwREslCFfHw_6a_y-B9KdgoWQXhdjRttcGim4Sc
+Message-ID: <CAP01T77agpqQWY7zaPt9kb6+EmbUucGkgJ_wEwkPFpFNfxweBg@mail.gmail.com>
+Subject: Re: bpf_errno. Was: [PATCH RFC bpf-next 1/3] bpf: report probe fault
+ to BPF stderr
+To: Eduard Zingerman <eddyz87@gmail.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Leon Hwang <hffilwlqm@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Menglong Dong <menglong.dong@linux.dev>, 
+	Menglong Dong <menglong8.dong@gmail.com>, Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, jiang.biao@linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2025-10-08 at 14:58 -0400, Jeff Layton wrote:
-> svc_tcp_sendmsg steals a slot in the rq_bvec array for the TCP record
-> marker. If the send is an unaligned READ call though, then there may not
-> be enough slots in the rq_bvec array.
->=20
-> Add a slot to the rq_bvec array, and fix up the array length
-> calculations.
->=20
-> Fixes: e18e157bb5c8 ("SUNRPC: Send RPC message on TCP with a single sock_=
-sendmsg() call")
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/nfsd/vfs.c        | 6 +++---
->  net/sunrpc/svc.c     | 3 ++-
->  net/sunrpc/svcsock.c | 4 ++--
->  3 files changed, 7 insertions(+), 6 deletions(-)
->=20
-> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-> index 77f6879c2e063fa79865100bbc2d1e64eb332f42..c4e9300d657cf7fdba23f2f4e=
-4bdaad9cd99d1a3 100644
-> --- a/fs/nfsd/vfs.c
-> +++ b/fs/nfsd/vfs.c
-> @@ -1111,7 +1111,7 @@ nfsd_direct_read(struct svc_rqst *rqstp, struct svc=
-_fh *fhp,
-> =20
->  	v =3D 0;
->  	total =3D dio_end - dio_start;
-> -	while (total && v < rqstp->rq_maxpages &&
-> +	while (total && v < rqstp->rq_maxpages + 1 &&
->  	       rqstp->rq_next_page < rqstp->rq_page_end) {
->  		len =3D min_t(size_t, total, PAGE_SIZE);
->  		bvec_set_page(&rqstp->rq_bvec[v], *rqstp->rq_next_page,
-> @@ -1200,7 +1200,7 @@ __be32 nfsd_iter_read(struct svc_rqst *rqstp, struc=
-t svc_fh *fhp,
-> =20
->  	v =3D 0;
->  	total =3D *count;
-> -	while (total && v < rqstp->rq_maxpages &&
-> +	while (total && v < rqstp->rq_maxpages + 1 &&
->  	       rqstp->rq_next_page < rqstp->rq_page_end) {
->  		len =3D min_t(size_t, total, PAGE_SIZE - base);
->  		bvec_set_page(&rqstp->rq_bvec[v], *rqstp->rq_next_page,
-> @@ -1318,7 +1318,7 @@ nfsd_vfs_write(struct svc_rqst *rqstp, struct svc_f=
-h *fhp,
->  	if (stable && !fhp->fh_use_wgather)
->  		kiocb.ki_flags |=3D IOCB_DSYNC;
-> =20
-> -	nvecs =3D xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages, payload);
-> +	nvecs =3D xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages + 1, paylo=
-ad);
->  	iov_iter_bvec(&iter, ITER_SOURCE, rqstp->rq_bvec, nvecs, *cnt);
->  	since =3D READ_ONCE(file->f_wb_err);
->  	if (verf)
-> diff --git a/net/sunrpc/svc.c b/net/sunrpc/svc.c
-> index 4704dce7284eccc9e2bc64cf22947666facfa86a..919263a0c04e3f1afa607414b=
-c1893ba02206e38 100644
-> --- a/net/sunrpc/svc.c
-> +++ b/net/sunrpc/svc.c
-> @@ -706,7 +706,8 @@ svc_prepare_thread(struct svc_serv *serv, struct svc_=
-pool *pool, int node)
->  	if (!svc_init_buffer(rqstp, serv, node))
->  		goto out_enomem;
-> =20
-> -	rqstp->rq_bvec =3D kcalloc_node(rqstp->rq_maxpages,
-> +	/* +1 for the TCP record marker */
-> +	rqstp->rq_bvec =3D kcalloc_node(rqstp->rq_maxpages + 1,
->  				      sizeof(struct bio_vec),
->  				      GFP_KERNEL, node);
->  	if (!rqstp->rq_bvec)
-> diff --git a/net/sunrpc/svcsock.c b/net/sunrpc/svcsock.c
-> index 377fcaaaa061463fc5c85fc09c7a8eab5e06af77..5f8bb11b686bcd7302b944764=
-90ba9b1b9ddc06a 100644
-> --- a/net/sunrpc/svcsock.c
-> +++ b/net/sunrpc/svcsock.c
-> @@ -740,7 +740,7 @@ static int svc_udp_sendto(struct svc_rqst *rqstp)
->  	if (svc_xprt_is_dead(xprt))
->  		goto out_notconn;
-> =20
-> -	count =3D xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages, xdr);
-> +	count =3D xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages + 1, xdr);
-> =20
->  	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, rqstp->rq_bvec,
->  		      count, rqstp->rq_res.len);
-> @@ -1244,7 +1244,7 @@ static int svc_tcp_sendmsg(struct svc_sock *svsk, s=
-truct svc_rqst *rqstp,
->  	memcpy(buf, &marker, sizeof(marker));
->  	bvec_set_virt(rqstp->rq_bvec, buf, sizeof(marker));
-> =20
-> -	count =3D xdr_buf_to_bvec(rqstp->rq_bvec + 1, rqstp->rq_maxpages - 1,
-> +	count =3D xdr_buf_to_bvec(rqstp->rq_bvec + 1, rqstp->rq_maxpages,
->  				&rqstp->rq_res);
-> =20
->  	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, rqstp->rq_bvec,
+On Wed, 8 Oct 2025 at 21:34, Eduard Zingerman <eddyz87@gmail.com> wrote:
+>
+> On Wed, 2025-10-08 at 19:08 +0200, Kumar Kartikeya Dwivedi wrote:
+> > On Wed, 8 Oct 2025 at 18:27, Alexei Starovoitov
+> > <alexei.starovoitov@gmail.com> wrote:
+> > >
+> > > On Wed, Oct 8, 2025 at 7:41=E2=80=AFAM Leon Hwang <hffilwlqm@gmail.co=
+m> wrote:
+> > > >
+> > > >
+> > > >
+> > > > On 2025/10/7 14:14, Menglong Dong wrote:
+> > > > > On 2025/10/2 10:03, Alexei Starovoitov wrote:
+> > > > > > On Fri, Sep 26, 2025 at 11:12=E2=80=AFPM Menglong Dong <menglon=
+g8.dong@gmail.com> wrote:
+> > > > > > >
+> > > > > > > Introduce the function bpf_prog_report_probe_violation(), whi=
+ch is used
+> > > > > > > to report the memory probe fault to the user by the BPF stder=
+r.
+> > > > > > >
+> > > > > > > Signed-off-by: Menglong Dong <menglong.dong@linux.dev>
+> > > >
+> > > > [...]
+> > > >
+> > > > > >
+> > > > > > Interesting idea, but the above message is not helpful.
+> > > > > > Users cannot decipher a fault_ip within a bpf prog.
+> > > > > > It's just a random number.
+> > > > >
+> > > > > Yeah, I have noticed this too. What useful is the
+> > > > > bpf_stream_dump_stack(), which will print the code
+> > > > > line that trigger the fault.
+> > > > >
+> > > > > > But stepping back... just faults are common in tracing.
+> > > > > > If we start printing them we will just fill the stream to the m=
+ax,
+> > > > > > but users won't know that the message is there, since no one
+> > > > >
+> > > > > You are right, we definitely can't output this message
+> > > > > to STDERR directly. We can add an extra flag for it, as you
+> > > > > said below.
+> > > > >
+> > > > > Or, maybe we can introduce a enum stream_type, and
+> > > > > the users can subscribe what kind of messages they
+> > > > > want to receive.
+> > > > >
+> > > > > > expects it. arena and lock errors are rare and arena faults
+> > > > > > were specifically requested by folks who develop progs that use=
+ arena.
+> > > > > > This one is different. These faults have been around for a long=
+ time
+> > > > > > and I don't recall people asking for more verbosity.
+> > > > > > We can add them with an extra flag specified at prog load time,
+> > > > > > but even then. Doesn't feel that useful.
+> > > > >
+> > > > > Generally speaking, users can do invalid checking before
+> > > > > they do the memory reading, such as NULL checking. And
+> > > > > the pointer in function arguments that we hook is initialized
+> > > > > in most case. So the fault is someting that can be prevented.
+> > > > >
+> > > > > I have a BPF tools which is writed for 4.X kernel and kprobe
+> > > > > based BPF is used. Now I'm planing to migrate it to 6.X kernel
+> > > > > and replace bpf_probe_read_kernel() with bpf_core_cast() to
+> > > > > obtain better performance. Then I find that I can't check if the
+> > > > > memory reading is success, which can lead to potential risk.
+> > > > > So my tool will be happy to get such fault event :)
+> > > > >
+> > > > > Leon suggested to add a global errno for each BPF programs,
+> > > > > and I haven't dig deeply on this idea yet.
+> > > > >
+> > > >
+> > > > Yeah, as we discussed, a global errno would be a much more lightwei=
+ght
+> > > > approach for handling such faults.
+> > > >
+> > > > The idea would look like this:
+> > > >
+> > > > DEFINE_PER_CPU(int, bpf_errno);
+> > > >
+> > > > __bpf_kfunc void bpf_errno_clear(void);
+> > > > __bpf_kfunc void bpf_errno_set(int errno);
+> > > > __bpf_kfunc int bpf_errno_get(void);
+> > > >
+> > > > When a fault occurs, the kernel can simply call
+> > > > 'bpf_errno_set(-EFAULT);'.
+> > > >
+> > > > If users want to detect whether a fault happened, they can do:
+> > > >
+> > > > bpf_errno_clear();
+> > > > header =3D READ_ONCE(skb->network_header);
+> > > > if (header =3D=3D 0 && bpf_errno_get() =3D=3D -EFAULT)
+> > > >         /* handle fault */;
+> > > >
+> > > > This way, users can identify faults immediately and handle them gra=
+cefully.
+> > > >
+> > > > Furthermore, these kfuncs can be inlined by the verifier, so there =
+would
+> > > > be no runtime function call overhead.
+> > >
+> > > Interesting idea, but errno as-is doesn't quite fit,
+> > > since we only have 2 (or 3 ?) cases without explicit error return:
+> > > probe_read_kernel above, arena read, arena write.
+> > > I guess we can add may_goto to this set as well.
+> > > But in all these cases we'll struggle to find an appropriate errno co=
+de,
+> > > so it probably should be a custom enum and not called "errno".
+> >
+> > Yeah, agreed that this would be useful, particularly in this case. I'm
+> > wondering how we'll end up implementing this.
+> > Sounds like it needs to be tied to the program's invocation, so it
+> > cannot be per-cpu per-program, since they nest. Most likely should be
+> > backed by run_ctx, but that is unavailable in all program types. Next
+> > best thing that comes to mind is reserving some space in the stack
+> > frame at a known offset in each subprog that invokes this helper, and
+> > use that to signal (by finding the program's bp and writing to the
+> > stack), the downside being it likely becomes yet-another arch-specific
+> > thing. Any other better ideas?
+>
+> Another option is to lower probe_read to a BPF_PROBE_MEM instruction
+> and generate a special kind of exception handler, that would set r0 to
+> -EFAULT. (We don't do this already, right? Don't see anything like that
+> in verifier.c or x86/../bpf_jit_comp.c).
+>
+> This would avoid any user-visible changes and address performance
+> concern. Not so convenient for a chain of dereferences a->b->c->d,
+> though.
 
+Since we're piling on ideas, one of the other things that I think
+could be useful in general (and maybe should be done orthogonally to
+bpf_errno)
+is making some empty nop function and making it not traceable reliably
+across arches and invoke it in the bpf exception handler.
+Then if we expose prog_stream_dump_stack() as a kfunc (should be
+trivial), the user can write anything to stderr that is relevant to
+get more information on the fault.
 
-Mike suggested that we add more info to the changelog that will
-actually get committed to the kernel. How about this?
-
------------------------------8<---------------------------
-    sunrpc: add a slot to rqstp->rq_bvec for TCP record marker
-   =20
-    We've seen some occurrences of messages like this in dmesg on some knfs=
-d
-    servers:
-   =20
-        xdr_buf_to_bvec: bio_vec array overflow
-   =20
-    Usually followed by messages like this that indicate a short send:
-   =20
-        rpc-srv/tcp: nfsd: sent 1048155 when sending 1048152 bytes - shutti=
-ng down socket
-   =20
-    svc_tcp_sendmsg() steals a slot in the rq_bvec array for the TCP record
-    marker. If the send is an unaligned READ call though, then there may no=
-t
-    be enough slots in the rq_bvec array in some cases.
-   =20
-    Add a slot to the rq_bvec array, and fix up the array lengths in the
-    callers that care.
-   =20
-    Fixes: e18e157bb5c8 ("SUNRPC: Send RPC message on TCP with a single soc=
-k_sendmsg() call")
-    Tested-by: Brandon Adams <brandona@meta.com>
-    Signed-off-by: Jeff Layton <jlayton@kernel.org>
------------------------------8<---------------------------
---=20
-Jeff Layton <jlayton@kernel.org>
+It is then up to the user to decide the rate of messages for such
+faults etc. and get more information if needed.
 
