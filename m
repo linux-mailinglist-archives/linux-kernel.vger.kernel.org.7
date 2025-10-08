@@ -1,205 +1,122 @@
-Return-Path: <linux-kernel+bounces-845681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37DDDBC5DD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:51:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E840BC5DD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:51:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0B0C94FAFC8
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:47:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4F4B34FB076
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472752BDC03;
-	Wed,  8 Oct 2025 15:46:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178562BE02D;
+	Wed,  8 Oct 2025 15:46:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TaJiHCY6"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MkUEtHk4"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718AB24DCE2
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF9825B31D
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759938408; cv=none; b=odqUT/kel+ObZ1BAcoxoAXMx3zsRrwJ7MLReh++uxLoW+frTyuHy78bWYiGAxK8WJn2JYqkti34F2fgVGZ910xjDtug/LJv8d3HGuDjumpMfo1BF85HAwTBIWtMJPPGxb2WtDI9HmrpkBtgU+EYmqZM34j3F7DtsTxBAqu8H9Qw=
+	t=1759938409; cv=none; b=hBxuQSnQygSv4mLp3tPHXOKex5pEu9kySnu+T6fzJoMKTpH0HxFW8FIZy/hsGVU8I0wH3NORsZ34epNk1PjmQZEHOGiN4gLYBGzccCN1VnLV2pg92dHykxu0FsAJ8TruQBSNE1pFaUduaooG/IubRfiHs8CeFvhDGGB3sfdMOG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759938408; c=relaxed/simple;
-	bh=eYljyxwuI+sEYQ4DBbDW0JEyR8r3lwsS/SwNly4bZAw=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=I3iK41b3MxOManqdCQI9h9eJs89NeH8u1PyxkorCfTFy22ZjrszCiYt00ljZtZj1ZWwa9/uApOPtWnP/gPE3XX+C8C76geZMaJHzBEwb3KKfU3PT1B1ZOsBqlqYoZg1eDTQyupCbGG0c7L0yvE5+fi1wNF+J//3MYQ1XCtL7ruA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TaJiHCY6; arc=none smtp.client-ip=209.85.221.73
+	s=arc-20240116; t=1759938409; c=relaxed/simple;
+	bh=12RXdlH8WUVCzzyh4vIFws4ja8Gr26ZMeYscmOm7oNE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=jJfTPxOS6ebASY/YBQFzkHy9i7Z/ExkbdgeTKylLez0l/RZYptTdq5AzN7hECfgm7tn2g9WCCEE5UT6CS0Y0f9WZJE9zse0+WhGfsEf9tsPDfN9pqWco5Ebk4yVXQyl/2MejDvK1cdourqDUi0tFws9OdI9pXJyeFVtBFKQwbDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MkUEtHk4; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3f384f10762so53767f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:46:46 -0700 (PDT)
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-46e3af78819so35192775e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:46:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759938405; x=1760543205; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=wmLD0z7TTnPR9XvYGkCWmhX+K+BenlBYSASZKFMhffQ=;
-        b=TaJiHCY6pemf0LFD7VU0mJLyASz7yOO4nfgshw5x39q/xDqzFZ+20/Tp0n+EeiS1Ub
-         u71/nivkG2sC4lIqfpQIFvh5WHwd0FlgF1iumnC15Y0VtathiEi44/Jrz6/uKal4LFuE
-         3qxfleOB4QK9tbxxbCxvo5eJo7RV3i837srvjgu3sM0AkzG1T34cV7aCW3UB7+5xrvQT
-         d4mWJRcvpOsITnPPn260p058u0C4fROBEfgyqLMn2DxlE2Qa6k4Ec3CNcf6e5VvC9rs9
-         rY/XSkUh1hn9HPwEytUPnDUWi3eeMBwu7wbkEVHUQRW1T25RWsMvKG3E9/MfLZ3M2En4
-         h6FQ==
+        d=google.com; s=20230601; t=1759938406; x=1760543206; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0AhbZPensuqKG/yW0Qj7LE8IaoQDaRVlqpZyE8QDARA=;
+        b=MkUEtHk4snIs5lRXjuc0RGebRrxYuNBdxlqNzkB5nZ/9E+9mGNa75OK+/LDVlerJyh
+         0CvnrK97nno0ptq7K2lk9McykRedmKZzhJDexco23c8L/xnDd0E/N2oNlVKqM+E4Vocp
+         OFBeHsaRiwTE24y6gNMYzM78KmrsWTPcjgslga+cy4nVKvaeWtXVMNY/99/T+JPgitXS
+         LJM/8qzIHQm2IPA6KFlSi1NIjQziIot/G7O1Vm7pFWa7ey/nn+LWh8gF3y42skE5msUk
+         kXvJgcHg6zzKIaehoNaoMUvyjI41EJRfDtuZFKxp9LpjHz5XxapMq6j0/jk9wsskEDGs
+         Hf1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759938405; x=1760543205;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wmLD0z7TTnPR9XvYGkCWmhX+K+BenlBYSASZKFMhffQ=;
-        b=uSXSD+SNZMr+e4iWJStaD+D9P4/atFOWlBwsqsP6VyBa0CnNIjyNRSE9Ebx4ZDLLRu
-         VCIY1rDVibJa7ijrvNpAv1T8xRydWTz4ov76OPxdI+vm/q5+s5iXg5I7VSkZGfxxGn6A
-         cjN7X2URAu15o/yTer0FY+iI82N7aF4RAi+YgfYEl6G8BH1XOP8eO3lYg7aSJeS3uLmz
-         CajxNqQS7lhXUDYhIwMK8uVkox39OELTHjOSlGWWZTDc9BnLVLH+/Mrab8/lLO7nf0l9
-         aPnJ7E7sxEF3+NyoYwg8ayvrh/gB20BDtqPGSWW05woIeo+aCZ2XYbMF0HlsDSXIxkN6
-         Qhwg==
-X-Gm-Message-State: AOJu0YzjmPUpon+zCExWQQnNI+PWcVDOPjebKxryC8k08zi09Ap7UQoM
-	gLHKqJOwd5VGOTenU/HE7nUDUQz/o3nIOw1zTw23mOL9g0sYYkfeeeYRC4OCbV+ehAQNMrtiEA=
+        d=1e100.net; s=20230601; t=1759938406; x=1760543206;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0AhbZPensuqKG/yW0Qj7LE8IaoQDaRVlqpZyE8QDARA=;
+        b=pk7Ly/A4jn4q+vDsHOuXZTa+w+z6pf/xLwzVgAJMRpMIYcB+K7YF04k8L3sqidmfr5
+         h9eELU2+fmCchlxX4X6tG9I0XVYQCcTzo0x8Wi3vFYGhYcjwsZqMFcrRwNXh2WthLwEU
+         dudaVoAsstLBeHFzO6GYrpjKPSXb9ex18tIThT/7OJuj3XPOGgM12HK5oAvGev6f62m5
+         vHUHE6LrVNiHWrkvievAcP212di8nH/96Z3bBe9cLVbLyzCn3hHQLpsZDmqRvNFuAGyA
+         UZAHw01CVi9oeHL+J6/FrDZ3n8kf7Igg+TTx1sqgWIRS1MomMBYovSsLS2Pfd3PjY79L
+         AuMg==
+X-Gm-Message-State: AOJu0YzMpowqs6x0f6MKTCM6x44GriGH9o24vvVC8Noogghrj+CDy5Qr
+	EvzsjecIHR3xPkIMX4A488FCJFVYrl1MCJyImQCoMZx4wpKRf5I2cUGS7PCSUBBe4WAgF/E8lQ=
 	=
-X-Google-Smtp-Source: AGHT+IEt8nUcjBjxcOiz44sFz9PXJ/AXhgR8lEUeC1XvfiF6QMnIgBcNlVH+mEjJkP1BeJHVT50cUdMM
-X-Received: from wmvw6.prod.google.com ([2002:a05:600d:42c6:b0:46f:aa50:d703])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6000:1a8b:b0:425:8bd1:fbb4
- with SMTP id ffacd0b85a97d-4266e7df95cmr2665651f8f.50.1759938404873; Wed, 08
- Oct 2025 08:46:44 -0700 (PDT)
-Date: Wed,  8 Oct 2025 17:45:34 +0200
+X-Google-Smtp-Source: AGHT+IFGiSWygFLP8i64IlU/Ujr5WlDyO+2EV/4Cl8eQXXpZQ1evYrz2O0ebGMwfs5ylyK1bfixkdj8Z
+X-Received: from wmbgx7.prod.google.com ([2002:a05:600c:8587:b0:46f:aa50:d70a])
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:4f08:b0:46e:3dcb:35b0
+ with SMTP id 5b1f17b1804b1-46fa9a94553mr27472645e9.2.1759938405883; Wed, 08
+ Oct 2025 08:46:45 -0700 (PDT)
+Date: Wed,  8 Oct 2025 17:45:35 +0200
+In-Reply-To: <20251008154533.3089255-23-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20251008154533.3089255-23-ardb+git@google.com>
 X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5474; i=ardb@kernel.org;
- h=from:subject; bh=LjOVrXxuH78jPv7wKv3YJ7SsGzEQCTxGhw6lFU8BtRY=;
- b=owGbwMvMwCVmkMcZplerG8N4Wi2JIeNZu7zCPe21jfOED3k1nLNQCJywP8dNuDXL8HLf/FnGI
- spG+406SlkYxLgYZMUUWQRm/3238/REqVrnWbIwc1iZQIYwcHEKwESktBkZLp6++6JM65F7daoV
- s/Sn1sm5D8VK260PhC88PEfm6ox38xn+8HRwbb3GsW5TfZm/sb5G+evvX+fF3DE/s7fjdpKtw04 9JgA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=926; i=ardb@kernel.org;
+ h=from:subject; bh=dFhPhM339lpxbecIP5ywrFTMp3sezPQKRMrRY5eAeY4=;
+ b=owGbwMvMwCVmkMcZplerG8N4Wi2JIeNZu1Lfp9XzPjod2dxh3FPPsqyyScbs3OtNeYcfX7Y+w
+ Fm+oNm2o5SFQYyLQVZMkUVg9t93O09PlKp1niULM4eVCWQIAxenAEzE6QEjwxpeIaV+vccGIcs9
+ Dyc+unbs7fSJWqcyfXV2LPXdKGaT9ZmRYVXe3vsMtX7S1jcOe/o0fpbfGaJcmHeg7Mq7F+7nFwd d5gEA
 X-Mailer: git-send-email 2.51.0.710.ga91ca5db03-goog
-Message-ID: <20251008154533.3089255-23-ardb+git@google.com>
-Subject: [PATCH v3 00/21] arm64: Move kernel mode FPSIMD buffer to the stack
+Message-ID: <20251008154533.3089255-24-ardb+git@google.com>
+Subject: [PATCH v3 01/21] crypto/arm64: aes-ce-ccm - Avoid pointless yield of
+ the NEON unit
 From: Ard Biesheuvel <ardb+git@google.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, 
 	herbert@gondor.apana.org.au, ebiggers@kernel.org, 
-	Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Kees Cook <keescook@chromium.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Mark Brown <broonie@kernel.org>
+	Ard Biesheuvel <ardb@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
 From: Ard Biesheuvel <ardb@kernel.org>
 
-Move the buffer for preserving/restoring the kernel mode FPSIMD state on a
-context switch out of struct thread_struct, and onto the stack, so that
-the memory cost is not imposed needlessly on all tasks in the system.
+Kernel mode NEON sections are now preemptible on arm64, and so there is
+no need to yield it explicitly in order to prevent scheduling latency
+spikes.
 
-Changes since v2:
-- Fix generic kernel mode FPU api instead of removing it.
+Reviewed-by: Eric Biggers <ebiggers@kernel.org>
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+---
+ arch/arm64/crypto/aes-ce-ccm-glue.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-- Rebase onto v6.18-rc0 and fix the fallout
-
-- Prefer WARN() over BUG() in kernel_neon_begin/end
-
-- Avoid unnecessary cmpxchg() calls
-
-- When invoked in softirq context, use the caller provided buffer rather
-  than the one stored in the task struct - this permits callers from
-  task context (including users of the generic kernel mode FPU api) to
-  pass NULL as the buffer when running with preemption disabled.
-
-- Add acks from Kees and Eric; Mark's was dropped along with the patch
-  in question.
-
-- Fix new occurrence of kernel_neon_begin/end in Mellanox driver.
-
-Changes since v1:
-- Add a patch reverting the arm64 support for the generic
-  kernel_fpu_begin()/end() API, which is problematic on arm64.
-
-- Introduce a new 'ksimd' scoped guard that encapsulates the calls the
-  kernel_neon_begin() and kernel_neon_end() at a higher level of
-  abstraction. This makes it straight-forward to plumb in the stack
-  buffer without complicating the callers.
-
-- Move all kernel mode NEON users on arm64 (and some on ARM) over to the
-  new API.
-
-- Add Mark's ack to patches #6 - #8
-
-Cc: Marc Zyngier <maz@kernel.org>
-Cc: Will Deacon <will@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Eric Biggers <ebiggers@kernel.org>
-
-Ard Biesheuvel (21):
-  crypto/arm64: aes-ce-ccm - Avoid pointless yield of the NEON unit
-  crypto/arm64: sm4-ce-ccm - Avoid pointless yield of the NEON unit
-  crypto/arm64: sm4-ce-gcm - Avoid pointless yield of the NEON unit
-  arm64/simd: Add scoped guard API for kernel mode SIMD
-  ARM/simd: Add scoped guard API for kernel mode SIMD
-  crypto: aegis128-neon - Move to more abstract 'ksimd' guard API
-  raid6: Move to more abstract 'ksimd' guard API
-  lib/crc: Switch ARM and arm64 to 'ksimd' scoped guard API
-  lib/crypto: Switch ARM and arm64 to 'ksimd' scoped guard API
-  crypto/arm64: aes-ccm - Switch to 'ksimd' scoped guard API
-  crypto/arm64: aes-blk - Switch to 'ksimd' scoped guard API
-  crypto/arm64: aes-gcm - Switch to 'ksimd' scoped guard API
-  crypto/arm64: nhpoly1305 - Switch to 'ksimd' scoped guard API
-  crypto/arm64: polyval - Switch to 'ksimd' scoped guard API
-  crypto/arm64: sha3 - Switch to 'ksimd' scoped guard API
-  crypto/arm64: sm3 - Switch to 'ksimd' scoped guard API
-  crypto/arm64: sm4 - Switch to 'ksimd' scoped guard API
-  arm64/xorblocks:  Switch to 'ksimd' scoped guard API
-  net/mlx5: Switch to more abstract scoped ksimd guard API on arm64
-  arm64/fpu: Enforce task-context only for generic kernel mode FPU
-  arm64/fpsimd: Allocate kernel mode FP/SIMD buffers on the stack
-
- arch/arm/include/asm/simd.h                  |   7 +
- arch/arm64/crypto/aes-ce-ccm-glue.c          | 116 +++++------
- arch/arm64/crypto/aes-ce-glue.c              |  87 ++++----
- arch/arm64/crypto/aes-glue.c                 | 139 ++++++-------
- arch/arm64/crypto/aes-neonbs-glue.c          | 150 +++++++-------
- arch/arm64/crypto/ghash-ce-glue.c            |  27 ++-
- arch/arm64/crypto/nhpoly1305-neon-glue.c     |   5 +-
- arch/arm64/crypto/polyval-ce-glue.c          |  12 +-
- arch/arm64/crypto/sha3-ce-glue.c             |  10 +-
- arch/arm64/crypto/sm3-ce-glue.c              |  15 +-
- arch/arm64/crypto/sm3-neon-glue.c            |  16 +-
- arch/arm64/crypto/sm4-ce-ccm-glue.c          |  49 ++---
- arch/arm64/crypto/sm4-ce-cipher-glue.c       |  10 +-
- arch/arm64/crypto/sm4-ce-gcm-glue.c          |  62 ++----
- arch/arm64/crypto/sm4-ce-glue.c              | 214 +++++++++-----------
- arch/arm64/crypto/sm4-neon-glue.c            |  25 +--
- arch/arm64/include/asm/fpu.h                 |  16 +-
- arch/arm64/include/asm/neon.h                |   4 +-
- arch/arm64/include/asm/processor.h           |   2 +-
- arch/arm64/include/asm/simd.h                |  10 +
- arch/arm64/include/asm/xor.h                 |  22 +-
- arch/arm64/kernel/fpsimd.c                   |  44 ++--
- crypto/aegis128-neon.c                       |  33 ++-
- drivers/net/ethernet/mellanox/mlx5/core/wc.c |  19 +-
- lib/crc/arm/crc-t10dif.h                     |  16 +-
- lib/crc/arm/crc32.h                          |  11 +-
- lib/crc/arm64/crc-t10dif.h                   |  16 +-
- lib/crc/arm64/crc32.h                        |  16 +-
- lib/crypto/arm/chacha.h                      |   6 +-
- lib/crypto/arm/poly1305.h                    |   6 +-
- lib/crypto/arm/sha1.h                        |  13 +-
- lib/crypto/arm/sha256.h                      |  12 +-
- lib/crypto/arm/sha512.h                      |   6 +-
- lib/crypto/arm64/chacha.h                    |  11 +-
- lib/crypto/arm64/poly1305.h                  |   6 +-
- lib/crypto/arm64/sha1.h                      |   7 +-
- lib/crypto/arm64/sha256.h                    |  19 +-
- lib/crypto/arm64/sha512.h                    |   8 +-
- lib/raid6/neon.c                             |  17 +-
- lib/raid6/recov_neon.c                       |  15 +-
- 40 files changed, 587 insertions(+), 692 deletions(-)
-
-
-base-commit: 0d97f2067c166eb495771fede9f7b73999c67f66
+diff --git a/arch/arm64/crypto/aes-ce-ccm-glue.c b/arch/arm64/crypto/aes-ce-ccm-glue.c
+index 2d791d51891b..2eb4e76cabc3 100644
+--- a/arch/arm64/crypto/aes-ce-ccm-glue.c
++++ b/arch/arm64/crypto/aes-ce-ccm-glue.c
+@@ -114,11 +114,8 @@ static u32 ce_aes_ccm_auth_data(u8 mac[], u8 const in[], u32 abytes,
+ 			in += adv;
+ 			abytes -= adv;
+ 
+-			if (unlikely(rem)) {
+-				kernel_neon_end();
+-				kernel_neon_begin();
++			if (unlikely(rem))
+ 				macp = 0;
+-			}
+ 		} else {
+ 			u32 l = min(AES_BLOCK_SIZE - macp, abytes);
+ 
 -- 
 2.51.0.710.ga91ca5db03-goog
 
