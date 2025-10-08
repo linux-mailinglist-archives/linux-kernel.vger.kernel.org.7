@@ -1,239 +1,156 @@
-Return-Path: <linux-kernel+bounces-845943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73039BC68B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:09:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2698BC68B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:09:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C51A3C432D
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:09:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BABD3188CE6F
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA85827BF99;
-	Wed,  8 Oct 2025 20:09:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C218427AC45;
+	Wed,  8 Oct 2025 20:09:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xf//uEyu"
-Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QDY+fhUx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD59277CBC
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 20:08:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163E8278156;
+	Wed,  8 Oct 2025 20:09:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759954142; cv=none; b=PR8eX5uKbFsBkEFHnsHfV70b/Rta4oIo50WXI5F7gt/o8FuZm37LUiARREH+FYJf3BMHwFvmWFyt4cTv3vHwtkzSYwJonHcruAwnzU/Ilx0E2SgdAE1JHSxPTyRubVGoOfMKPEPcnTTuuHaJgQJLHQSKRul3I1y6Xoj2VHyPsjk=
+	t=1759954173; cv=none; b=TmNV51/Qpl2XTEEzb+++bNUhzq9wPlA+1e3wXzT5tcTqN/nhnz8cVolt62gw871z3HpclITkyfTMHz/WZgm1TP9cbTACv34HAs8ILXp8UM1dp5f77S0jkhmk+aqhM2ztfcaJm/IsIuDjqjejLHW8DVTttfo1NMQ1Y1XMgZQHfDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759954142; c=relaxed/simple;
-	bh=+Jz94DqaV5+iKLV52tI1MBLzkq7tXiHQZ1RwfsddtlI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZxMlQJpHnC1zJXy4qRmWJvGNVVUG9w4C+ck1JqAiYA0Zwt+Q/r/UA/5gd3BKtyYJryz+IAWNZ8fAdb4dUERhJ6Wtm9oya0hbe5sz59SIvy+UI+DFC13D00oBVTCTMXVmfJHCAQXvu6jz9nnu1Qi8TZYLLe5uaIB2Pf+7s7Y5HFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xf//uEyu; arc=none smtp.client-ip=209.85.218.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-b3d5088259eso28886866b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 13:08:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759954138; x=1760558938; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ke8jtUXlpIlqR4j9qkChpdFTIiht1S8htIX7XlQ02Ac=;
-        b=Xf//uEyu8uQZnQqmmbhe9L4tcs1B0dRf2Ql2m/KuqSnj0Lt6rCA/jtwYmbAhoIqQlO
-         v+pB/MNwJUanHAW5LHH02TL9xApvnUbsU2r0l5tZNMH1MhUsH6TcbYJFiPTA9N8CPYHY
-         TAWqZ8I5szg2WJCI4ILPQ5XXT22JM1FNjJgz8dLuQnP2kk0T9ZGlwH+M3m1d7oa0WBhT
-         FvBBQuaVW26NzS34x1WmBtVWu50mCesCDszhSp/TjIKmGhKTVHl2W28zehsv28mldwkN
-         R+fih7ZFgcWFm++GOQdp5jmFm3C1D1d55rJea++YJfg6MgFiHIQ/hBUnb64IFJ2KrI+k
-         d/FA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759954138; x=1760558938;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ke8jtUXlpIlqR4j9qkChpdFTIiht1S8htIX7XlQ02Ac=;
-        b=cYWSdmXDimMrAGamB7ChVTGImnfgLHrmLtn/EIDM6qMexbDSF00KyfSk8KOfHvIzXN
-         Zn25Nk5jaxn5BDsjADzU59c1F6cM9KjxWmqdDgPyDtIrNE/BpZPqg21NJgIJGsIZakUm
-         06ltKbQKfevMd4Mn1j4YDqHtBh/qWOd5LPypFE8MOTqxWv365wzIOm+ZUYDFRmeKlnjK
-         RzEqZXzCeHXPxO4LmQ5YjEXxpMVR8NnxKEgsxOdO6lwaaURGRBVTv72fQQnSOxL4ExjK
-         +IWWeTvftWcyxIoB9ApovQ+o3/bkXFV5aop06DHRSijoIYegPM66Sew0AlogaI98wMeF
-         8acw==
-X-Forwarded-Encrypted: i=1; AJvYcCU89IWp5kO50PQrMJCyRSrSSbjju0LnqvmSZNVL9ygMUrTJuF//EoKb3nBiUc1dZRTHIHXVhH9kMKzrVFY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfMR3D5QSstgDqHkPrGuMWsEPn7MfIFh5h3GzDKKnNmDSNxcHD
-	Ucd4svEXZAkplL5czrNTUDDZ6Ay84s3WetxaylHrd91yUtIbXjNQ+tXYUxpIYe/ISqrc1LuTeZp
-	f+FgmBYbNnGcpggFNqLI056bJjB0bksw=
-X-Gm-Gg: ASbGnct6biYgf2bStUyGXM0elVjPbDLpTTpEfqBSZctSTuCEO4YHpxCKoUaXBCODLa9
-	wCotyfXrYMhcChsEFvMf4XXazGD7lCUndIe6zl8Wwfoig69ZapxmB/Q5BcmT0k9Qe/3B32KNrLA
-	D/AHYPhlV/KZqyWyTBXjEnM2eb2zQ9luBtpxmJqPzsAxNi8qNkKsRE0smHlM6tNr1lOK0U1JIas
-	TcnJCuDxQ4qnxtGXjkONfa6IQFA5TdGmt6vXMqOnXt1b5SK8raCo1GVojXxfUoF+Jq+fc8aHUOW
-	KUpmpVPCNI+A1OGnxc90
-X-Google-Smtp-Source: AGHT+IHxM5CEHHYNSHpDunt8on4GI5kZYNZcQI+vzvGqpepaQf37+nRgFrKHSbRRUcFVNv2vbrMqwU69bVrlpNAZJxg=
-X-Received: by 2002:a17:907:6d1f:b0:b41:6ab2:bc69 with SMTP id
- a640c23a62f3a-b50aaa97cf5mr524364766b.22.1759954138185; Wed, 08 Oct 2025
- 13:08:58 -0700 (PDT)
+	s=arc-20240116; t=1759954173; c=relaxed/simple;
+	bh=094Dr4zx8rrSHogzBdvL1gJFQqQp1aTCmP4scR+TQl0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=uSksz96dgkbjBM2d3Gxmt1g2UhEKeKIzorRgro4Hk4ZxIuxNgT/H2QO3/NZzl4y0z/yd316KBYqRW+R9YWaRw8VUpWq/21W6ypzVIjy4Z7N6IXyJN9I7EtxuepT3+MjspvU0wV9FCw7VM7hc9fCkR1xT0sDxdXCOIY9Cn7/YRxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QDY+fhUx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E176C4CEE7;
+	Wed,  8 Oct 2025 20:09:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759954171;
+	bh=094Dr4zx8rrSHogzBdvL1gJFQqQp1aTCmP4scR+TQl0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=QDY+fhUxMKedMDab3rasEzVuN+VNc57PR5eWx6qOAvav8aVYC3sSim7myFiJ+sZhu
+	 Kieifv/dGfVy0i95OXt+Yixqdyu/0fGVMf7AnlTycPPvDUVNd1120aSfqukbZhKbdF
+	 YJDBfr9wDoxvJSgZxFeE+Ahsr3/u31Xhk4Gm+MObGH6XEPKy6UAsWClr7ebaMAJndk
+	 v9jSvRXA/491ZqJ3aSvjdPAVzLllSv5lv4qtzMD34diMGEZN+Mu1VM5E3IXHtadh6K
+	 FTbNnImNNV3izeaPr7Ke0CnbSiw8476r0fsKu6XdUHVrCK2IqaW2fjRnh1zFS4I/Hq
+	 l2quWxYWv9xgA==
+Date: Wed, 8 Oct 2025 15:09:30 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Yangyu Chen <cyy@cyyself.name>
+Cc: linux-pci@vger.kernel.org,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -fixes] PCI: Fix regression in
+ pci_bus_distribute_available_resources
+Message-ID: <20251008200930.GA638461@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250927061210.194502-1-menglong.dong@linux.dev>
- <20250927061210.194502-2-menglong.dong@linux.dev> <CAADnVQJAdAxEOWT6avzwq6ZrXhEdovhx3yibgA6T8wnMEnnAjg@mail.gmail.com>
- <3571660.QJadu78ljV@7950hx> <7f28937c-121a-4ea8-b66a-9da3be8bccad@gmail.com>
- <CAADnVQLxpUmjbsHeNizRMDkY1a4_gLD0VBFWS8QMYHzpYBs4EQ@mail.gmail.com>
- <CAP01T75TegFO0DrZ=DvpNQBSnJqjn4HvM9OLsbJWFKJwzZeYXw@mail.gmail.com> <0adc5d8a299483004f4796a418420fe1c69f24bc.camel@gmail.com>
-In-Reply-To: <0adc5d8a299483004f4796a418420fe1c69f24bc.camel@gmail.com>
-From: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Date: Wed, 8 Oct 2025 22:08:21 +0200
-X-Gm-Features: AS18NWAncctoHoktrPtSR3FECwREslCFfHw_6a_y-B9KdgoWQXhdjRttcGim4Sc
-Message-ID: <CAP01T77agpqQWY7zaPt9kb6+EmbUucGkgJ_wEwkPFpFNfxweBg@mail.gmail.com>
-Subject: Re: bpf_errno. Was: [PATCH RFC bpf-next 1/3] bpf: report probe fault
- to BPF stderr
-To: Eduard Zingerman <eddyz87@gmail.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Leon Hwang <hffilwlqm@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Menglong Dong <menglong.dong@linux.dev>, 
-	Menglong Dong <menglong8.dong@gmail.com>, Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, jiang.biao@linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_8C54420E1B0FF8D804C1B4651DF970716309@qq.com>
 
-On Wed, 8 Oct 2025 at 21:34, Eduard Zingerman <eddyz87@gmail.com> wrote:
->
-> On Wed, 2025-10-08 at 19:08 +0200, Kumar Kartikeya Dwivedi wrote:
-> > On Wed, 8 Oct 2025 at 18:27, Alexei Starovoitov
-> > <alexei.starovoitov@gmail.com> wrote:
-> > >
-> > > On Wed, Oct 8, 2025 at 7:41=E2=80=AFAM Leon Hwang <hffilwlqm@gmail.co=
-m> wrote:
-> > > >
-> > > >
-> > > >
-> > > > On 2025/10/7 14:14, Menglong Dong wrote:
-> > > > > On 2025/10/2 10:03, Alexei Starovoitov wrote:
-> > > > > > On Fri, Sep 26, 2025 at 11:12=E2=80=AFPM Menglong Dong <menglon=
-g8.dong@gmail.com> wrote:
-> > > > > > >
-> > > > > > > Introduce the function bpf_prog_report_probe_violation(), whi=
-ch is used
-> > > > > > > to report the memory probe fault to the user by the BPF stder=
-r.
-> > > > > > >
-> > > > > > > Signed-off-by: Menglong Dong <menglong.dong@linux.dev>
-> > > >
-> > > > [...]
-> > > >
-> > > > > >
-> > > > > > Interesting idea, but the above message is not helpful.
-> > > > > > Users cannot decipher a fault_ip within a bpf prog.
-> > > > > > It's just a random number.
-> > > > >
-> > > > > Yeah, I have noticed this too. What useful is the
-> > > > > bpf_stream_dump_stack(), which will print the code
-> > > > > line that trigger the fault.
-> > > > >
-> > > > > > But stepping back... just faults are common in tracing.
-> > > > > > If we start printing them we will just fill the stream to the m=
-ax,
-> > > > > > but users won't know that the message is there, since no one
-> > > > >
-> > > > > You are right, we definitely can't output this message
-> > > > > to STDERR directly. We can add an extra flag for it, as you
-> > > > > said below.
-> > > > >
-> > > > > Or, maybe we can introduce a enum stream_type, and
-> > > > > the users can subscribe what kind of messages they
-> > > > > want to receive.
-> > > > >
-> > > > > > expects it. arena and lock errors are rare and arena faults
-> > > > > > were specifically requested by folks who develop progs that use=
- arena.
-> > > > > > This one is different. These faults have been around for a long=
- time
-> > > > > > and I don't recall people asking for more verbosity.
-> > > > > > We can add them with an extra flag specified at prog load time,
-> > > > > > but even then. Doesn't feel that useful.
-> > > > >
-> > > > > Generally speaking, users can do invalid checking before
-> > > > > they do the memory reading, such as NULL checking. And
-> > > > > the pointer in function arguments that we hook is initialized
-> > > > > in most case. So the fault is someting that can be prevented.
-> > > > >
-> > > > > I have a BPF tools which is writed for 4.X kernel and kprobe
-> > > > > based BPF is used. Now I'm planing to migrate it to 6.X kernel
-> > > > > and replace bpf_probe_read_kernel() with bpf_core_cast() to
-> > > > > obtain better performance. Then I find that I can't check if the
-> > > > > memory reading is success, which can lead to potential risk.
-> > > > > So my tool will be happy to get such fault event :)
-> > > > >
-> > > > > Leon suggested to add a global errno for each BPF programs,
-> > > > > and I haven't dig deeply on this idea yet.
-> > > > >
-> > > >
-> > > > Yeah, as we discussed, a global errno would be a much more lightwei=
-ght
-> > > > approach for handling such faults.
-> > > >
-> > > > The idea would look like this:
-> > > >
-> > > > DEFINE_PER_CPU(int, bpf_errno);
-> > > >
-> > > > __bpf_kfunc void bpf_errno_clear(void);
-> > > > __bpf_kfunc void bpf_errno_set(int errno);
-> > > > __bpf_kfunc int bpf_errno_get(void);
-> > > >
-> > > > When a fault occurs, the kernel can simply call
-> > > > 'bpf_errno_set(-EFAULT);'.
-> > > >
-> > > > If users want to detect whether a fault happened, they can do:
-> > > >
-> > > > bpf_errno_clear();
-> > > > header =3D READ_ONCE(skb->network_header);
-> > > > if (header =3D=3D 0 && bpf_errno_get() =3D=3D -EFAULT)
-> > > >         /* handle fault */;
-> > > >
-> > > > This way, users can identify faults immediately and handle them gra=
-cefully.
-> > > >
-> > > > Furthermore, these kfuncs can be inlined by the verifier, so there =
-would
-> > > > be no runtime function call overhead.
-> > >
-> > > Interesting idea, but errno as-is doesn't quite fit,
-> > > since we only have 2 (or 3 ?) cases without explicit error return:
-> > > probe_read_kernel above, arena read, arena write.
-> > > I guess we can add may_goto to this set as well.
-> > > But in all these cases we'll struggle to find an appropriate errno co=
-de,
-> > > so it probably should be a custom enum and not called "errno".
-> >
-> > Yeah, agreed that this would be useful, particularly in this case. I'm
-> > wondering how we'll end up implementing this.
-> > Sounds like it needs to be tied to the program's invocation, so it
-> > cannot be per-cpu per-program, since they nest. Most likely should be
-> > backed by run_ctx, but that is unavailable in all program types. Next
-> > best thing that comes to mind is reserving some space in the stack
-> > frame at a known offset in each subprog that invokes this helper, and
-> > use that to signal (by finding the program's bp and writing to the
-> > stack), the downside being it likely becomes yet-another arch-specific
-> > thing. Any other better ideas?
->
-> Another option is to lower probe_read to a BPF_PROBE_MEM instruction
-> and generate a special kind of exception handler, that would set r0 to
-> -EFAULT. (We don't do this already, right? Don't see anything like that
-> in verifier.c or x86/../bpf_jit_comp.c).
->
-> This would avoid any user-visible changes and address performance
-> concern. Not so convenient for a chain of dereferences a->b->c->d,
-> though.
+On Wed, Oct 08, 2025 at 10:36:52PM +0800, Yangyu Chen wrote:
+> The refactoring in upstream commit 4292a1e45fd4 ("PCI: Refactor
+> distributing available memory to use loops") switched
+> pci_bus_distribute_available_resources to operate on an array of bridge
+> windows. That rewrite accidentally looked up bus resources via
+> pci_bus_resource_n and then passed those pointers to helper routines
+> that expect the resource to belong to the device. As soon as we
+> execute that code, pci_resource_num warned because the resource
+> wasn't in the bridge's resource array.
+> 
+> This happens on my AMD Strix Halo machine with Thunderbolt device, the
+> error message is shown below:
+> 
+> [    4.212389] ------------[ cut here ]------------
+> [    4.212391] WARNING: CPU: 6 PID: 272 at drivers/pci/pci.h:471 pci_bus_distribute_available_resources+0x6ad/0x6d0
+> [    4.212400] Modules linked in: raid6_pq(+) hid_generic uas usb_storage scsi_mod usbhid hid scsi_common amdgpu amdxcp drm_panel_backlight_quirks gpu_sched drm_buddy drm_ttm_helper ttm drm_exec i2c_algo_bit drm_suballoc_helper drm_display_helper cec rc_core drm_client_lib drm_kms_helper sdhci_pci sdhci_uhs2 xhci_pci sp5100_tco xhci_hcd r8169 drm nvme sdhci watchdog realtek usbcore thunderbolt cqhci atlantic nvme_core mdio_devres psmouse libphy mmc_core nvme_keyring video i2c_piix4 macsec nvme_auth serio_raw mdio_bus i2c_smbus usb_common crc16 hkdf wmi
+> [    4.212443] CPU: 6 UID: 0 PID: 272 Comm: irq/33-pciehp Not tainted 6.17.0+ #1 PREEMPT(voluntary)
+> [    4.212447] Hardware name: PELADN YO Series/YO1, BIOS 1.04 05/15/2025
+> [    4.212449] RIP: 0010:pci_bus_distribute_available_resources+0x6ad/0x6d0
+> [    4.212453] Code: ff e9 a2 48 c7 c7 b8 b7 83 a3 4c 89 4c 24 18 e8 a9 2a fb ff 4c 8b 4c 24 18 e9 ca fd ff ff 48 8b 05 60 53 47 01 e9 94 fe ff ff <0f> 0b e9 5d fe ff ff 48 8b 05 55 53 47 01 e9 81 fe ff ff e8 4b 87
+> [    4.212455] RSP: 0018:ffffaffcc0d4f9a8 EFLAGS: 00010206
+> [    4.212458] RAX: 00000000000000cd RBX: ffff9721a687f800 RCX: ffff9721a687c828
+> [    4.212459] RDX: 0000000000000000 RSI: 00000000000000cd RDI: ffff97218bc8a3c0
+> [    4.212461] RBP: ffff9721a687c828 R08: ffffaffcc0d4f9f8 R09: 0000000000000001
+> [    4.212462] R10: ffff97218bc8d700 R11: 0000000000000000 R12: ffffaffcc0d4f9f8
+> [    4.212462] R13: ffffaffcc0d4f9f8 R14: 0000000000000000 R15: ffff97218bc8a000
+> [    4.212464] FS:  0000000000000000(0000) GS:ffff973ee1ad9000(0000) knlGS:0000000000000000
+> [    4.212465] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [    4.212467] CR2: 00005640b0f29360 CR3: 0000000ccb224000 CR4: 0000000000f50ef0
+> [    4.212469] PKRU: 55555554
+> [    4.212470] Call Trace:
+> [    4.212473]  <TASK>
+> [    4.212478]  pci_bus_distribute_available_resources+0x590/0x6d0
+> [    4.212483]  pci_bridge_distribute_available_resources+0x62/0xb0
+> [    4.212487]  pci_assign_unassigned_bridge_resources+0x65/0x1b0
+> [    4.212490]  pciehp_configure_device+0x92/0x160
+> [    4.212495]  pciehp_handle_presence_or_link_change+0x1b5/0x350
+> [    4.212498]  pciehp_ist+0x147/0x1c0
+> [    4.212502]  irq_thread_fn+0x20/0x60
+> [    4.212508]  irq_thread+0x1cc/0x360
+> [    4.212511]  ? __pfx_irq_thread_fn+0x10/0x10
+> [    4.212515]  ? __pfx_irq_thread_dtor+0x10/0x10
+> [    4.212518]  ? __pfx_irq_thread+0x10/0x10
+> [    4.212521]  kthread+0xf9/0x240
+> [    4.212525]  ? __pfx_kthread+0x10/0x10
+> [    4.212528]  ret_from_fork+0x195/0x1d0
+> [    4.212533]  ? __pfx_kthread+0x10/0x10
+> [    4.212536]  ret_from_fork_asm+0x1a/0x30
+> [    4.212540]  </TASK>
+> [    4.212541] ---[ end trace 0000000000000000 ]---
+> 
+> Fix the regression by always fetching the resource directly from the
+> bridge: use pci_resource_n(bridge, PCI_BRIDGE_RESOURCES + i). This
+> restores the original behaviour while keeping the refactored structure.
+> And then we can successfully assign resources to the Thunderbolt device.
+> 
+> Fixes: 4292a1e45fd4 ("PCI: Refactor distributing available memory to use loops")
+> 
+> Signed-off-by: Yangyu Chen <cyy@cyyself.name>
 
-Since we're piling on ideas, one of the other things that I think
-could be useful in general (and maybe should be done orthogonally to
-bpf_errno)
-is making some empty nop function and making it not traceable reliably
-across arches and invoke it in the bpf exception handler.
-Then if we expose prog_stream_dump_stack() as a kfunc (should be
-trivial), the user can write anything to stderr that is relevant to
-get more information on the fault.
+Tentatively applied to pci/for-linus for v6.18, pending Ilpo's review.
 
-It is then up to the user to decide the rate of messages for such
-faults etc. and get more information if needed.
+Thank you very much for debugging and providing a patch!
+
+> ---
+>  drivers/pci/setup-bus.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+> index 362ad108794d..4a8735b275e4 100644
+> --- a/drivers/pci/setup-bus.c
+> +++ b/drivers/pci/setup-bus.c
+> @@ -2085,7 +2085,8 @@ static void pci_bus_distribute_available_resources(struct pci_bus *bus,
+>  	int i;
+>  
+>  	for (i = 0; i < PCI_P2P_BRIDGE_RESOURCE_NUM; i++) {
+> -		struct resource *res = pci_bus_resource_n(bus, i);
+> +		struct resource *res =
+> +			pci_resource_n(bridge, PCI_BRIDGE_RESOURCES + i);
+>  
+>  		available[i] = available_in[i];
+>  
+> @@ -2158,7 +2159,7 @@ static void pci_bus_distribute_available_resources(struct pci_bus *bus,
+>  			continue;
+>  
+>  		for (i = 0; i < PCI_P2P_BRIDGE_RESOURCE_NUM; i++) {
+> -			res = pci_bus_resource_n(bus, i);
+> +			res = pci_resource_n(dev, PCI_BRIDGE_RESOURCES + i);
+>  
+>  			/*
+>  			 * Make sure the split resource space is properly
+> -- 
+> 2.51.0
+> 
 
