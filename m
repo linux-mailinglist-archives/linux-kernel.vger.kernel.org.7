@@ -1,133 +1,116 @@
-Return-Path: <linux-kernel+bounces-845576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80F5EBC56A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 16:18:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B41E8BC56AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 16:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88E133A5C5A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 14:18:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B17E3A81B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 14:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5CE29C343;
-	Wed,  8 Oct 2025 14:17:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D8F29BDB9;
+	Wed,  8 Oct 2025 14:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cEmKfN8u"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IaGDGj46"
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3E92989BA
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 14:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0CC11C54A9
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 14:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759933077; cv=none; b=qU6+EE5ZzF3a3Rw4c5O5pkSf2EY2sk6+wqwydL5p4qNFr6KIZ/bYANaH0CTKYe0wuhR7zevIro8+RZTpfXJhtENP5RE/qtlPjEih9hYfievAna+CIffS6OuhMivU25K+XdiCY7zJG6Mdd6awoaM1sQoXiKo1sxZ9VwXgISsLtSg=
+	t=1759933110; cv=none; b=GDDko/xPrf/KqWSpGMW3zrpLPL8SH9ZJxpB+tBZjBGckBWu+3fvNPpSIZ2XNec8eKotzT1jopeGi8eKoAME5Isn5j3pbWkJCw1ANGX775cW1TBKNXhaSMc0cfjIqDQAX39FKqi3Bx6nYbc3cpNCzO+6FqQuBW2aaLShedYR78Os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759933077; c=relaxed/simple;
-	bh=8b4Tcv567R/kaA9VnSrKtjEgbT3r1bB5GN0b0RJGt3U=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uzpSPkx2Z9rGRIYpxYrbKXYMAWfzFly8KmHnLzxjDzBkwEOKU2IrAYK0gHKstgzsGKBimcsshEZIgYxme1AdCuQMMpLg4gKOotxFmhFaa8CTK8mJ96Xif9WXSYpD9aEmyO71IynU27atHRF+7l+B2nwR5mO9n1OUDpK4Q4Vp8WA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cEmKfN8u; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-639102bba31so12646713a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 07:17:55 -0700 (PDT)
+	s=arc-20240116; t=1759933110; c=relaxed/simple;
+	bh=02xoZOIaqCUk6gy50ED6DchHmI0JFVyHynhA2+ahuyk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XFefBtoyqnJzCMKpk7j7K+9JMtFbnTPTPb8SxCwfbqe8QMeCFVZ0GhpxxQCB5ibD614ea4jyK3/zh6lFUFRYOvYidls8k4PHyH5RgMTJEg/b+6SOn/0zzyphkTDDg6FXaMDmMtzRkQlz4LlA5Skqw3pGVUpV5OKHoU7SaMyQATE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IaGDGj46; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-30cce534a91so2538778fac.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 07:18:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759933074; x=1760537874; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=l0Mgl8edq5RLxNSk2dSPCx05BkpJ5f+Ni5BOyoikFEM=;
-        b=cEmKfN8u3h8Di2rKsa6FW2JDyYS+808R8+KEIk31k25m/lFiq+pWB7vICJaGrkrI0J
-         KQ3ww/4I5Gt5Pl5jjvIpqH5KoxQBja4cK2pbuoU53L93XipTY/z8dWM1llKm2wfH9FaK
-         FTl3qdMVD7CLZy5Vl2ttdLajEX5yfvOik3964gDqPivGlDvF1l6MnOwpMdcTjWi/lq04
-         GFLKV7fIyqzFlei6qeTpdprqpro6W1vf0ywoFrt0hq0jlMA4neGN4WR9iFoSuPOqFrS9
-         3QBQSjDfZ/BSdKGcZrCSY9euh3AEQzmYMcd0hJ1w7CEDA6SZZXXI+NrqUNjOwGYe0hbx
-         qHwQ==
+        d=gmail.com; s=20230601; t=1759933108; x=1760537908; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=02xoZOIaqCUk6gy50ED6DchHmI0JFVyHynhA2+ahuyk=;
+        b=IaGDGj46XIEWM6dLd2386Af36ZegkUCptIovx8XvpZKTl+wVuoyOBQarAhFN1G+BgG
+         DJ8tC6ckKAikqfIPHPej61PN9Ivr/3SeYnoAUVNz+oSTmHy/9SabA3rEnKbo29O7Wr//
+         7SAfsAPF0rEEdKmRf79xEIM7Kfj/BxvAJ6zn5rBd5vNVdMhcCV+SIuGSPkN6CDaoAqea
+         325UYRVXgFkOC3zN81ATwfO+SiFziKqJunpcqvnCqK/5HFKX9DfE/0LMv7IsCULDI1vB
+         OHs5MrCqnO4WWti5qToq/Zr4hgCsQmfqh9gyxXmrdBDwhPoZUCCKi/BYpoUNYJq5afuI
+         GyKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759933074; x=1760537874;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=l0Mgl8edq5RLxNSk2dSPCx05BkpJ5f+Ni5BOyoikFEM=;
-        b=VwNKhZFHLeRCnz+EO/op+8Nb/J8O5oZDuOLuq34inKwmg63OmV7VQpsTJsZhvnezzF
-         +cWanO0ris27s8yZOHk2HofENTypxNGGU8BKBcLCCoTxH8nIZ/Vb/raYaH6IOSt1036g
-         j87DFEI6Hy2J3UaWAlMXa2pKOlqRk5A+vLe/T7aexcEOU7ljIFcLoMFUyAb7lDZPhbZ7
-         pnmyRdAs/DUP+aEn5cbx7NWkRqnxzoZntUtCrvz3EvDBPz7FK14zrjeL5hjmuK/ZVuIF
-         nMbwTf44xNtOqTtTQ23FixfOVUGgYTXDTN/TORSqHKhjcuKa+tqM0TXnrOzs5u9xQl9s
-         0Bzg==
-X-Forwarded-Encrypted: i=1; AJvYcCWDgjkv3/N8YjPNdSKIGVjY2gGZzlWr5J73TF/dA5SjA6j6ZwsotlzVxih83SOpTO1r548pFq+ptANd89Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4pRPYwQnhIMVg6eYXzwq37St+FVtLXVnEcqaaB1Hz6e4ozE2D
-	0Topw9roZVc2EMWhUFEcp+0U0YQj/56nvm77rz6eLyW3hPXBVJZK8/ZT9C7m7WqrxMEpAf9ElU8
-	vzHMbBTg=
-X-Gm-Gg: ASbGncsb7asuYGimc7KTI2H+LVoXxP9KHZwC8n7ZHmpg2od08KLvGhghwC36FXLKsHB
-	Ocx4LS5W2w0Jwz6GxydNDeh1zA2DUaao7MEZvmUXm1bHLZ6rGk4ctBW1GeFrvgQdWZOhYjOXali
-	OpXZWRugM1F09rtPA7xpCN8GZeeO8NZST781bTi9dGux2fBuHkOGGiwWY7IeJbsXDOWIODYyg78
-	ESAyRCWHr09ZbT87NYNnWKxLJsv+00e+z3vgRNz6Fn8xVrW9hFAodrC9UMLJdHejePFnSRBukKk
-	e2qWdZ6N0dsCy1wsAAPF59PC7Eb9FI543rNpoZvPxqf5GQBQtAwCs9DWnYp22citJB8GTaLXiBx
-	/jKXSkXaCBI69DhnqEZUOIIiBNtXDHBnRV+XjF2xrtn03kcL/k6u4GgsMmiuC+mMp1u4boaUBR0
-	FSBOmyKWf1A4NHT6RGOHr6Y+kzR4y+zFjHJDH2CfiR
-X-Google-Smtp-Source: AGHT+IEC+Khx6oHHPzc66dMG7HFLPgpbH+NvJ4gD7eI0FKThBdRGPlHYqDkbnKuylc90hYn877bNzQ==
-X-Received: by 2002:a17:906:794f:b0:b3a:a16e:3db8 with SMTP id a640c23a62f3a-b50aa38733cmr389753666b.20.1759933074280;
-        Wed, 08 Oct 2025 07:17:54 -0700 (PDT)
-Received: from puffmais2.c.googlers.com (224.138.204.35.bc.googleusercontent.com. [35.204.138.224])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48652a9ea1sm1656287366b.16.2025.10.08.07.17.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 07:17:53 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Wed, 08 Oct 2025 15:17:53 +0100
-Subject: [PATCH] dt-bindings: soc: samsung: exynos-sysreg: add
- power-domains
+        d=1e100.net; s=20230601; t=1759933108; x=1760537908;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=02xoZOIaqCUk6gy50ED6DchHmI0JFVyHynhA2+ahuyk=;
+        b=TlCYDCN6aK5+WrVIEPVxNOe0GoKwUhfbDAfPtTIQWmo0CEv1aJwoyTDvNg6GyoNSS6
+         HBbc9CdfjdZfdwSs2mFuLxyY7m6fmVKuS9TVJ9exkNm3423+RUqT8LIAod6wAAB832sl
+         PxADqRb0BVf3nd9tY8tmg6KJlYaoTiVXnwOIi2RFJaRQr8RPnMxmcl+3ixlj1GXyUxQZ
+         t0snxuKfD675rZhnPzu/WO1NYmv2cegRUZt4Ulq20d1XVr/Cx3zMBdBEF8ywVYnlFQnl
+         VGupyG36hU5+OGAGeD6v6aJ3zRce9aRVSgQ0V6tNerTWEIMsjXD6jpA3vuokcQ1GHUqA
+         3HRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUzmz1BSoOhfo5h8CaEWm8UusfWaDrdW5naJb0rK/oJfdkgC6DaNQv8Mj9Jx/F+fHT3aGFgnfcwTY40MKA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXjmYPpV1/3swHoM//ChZ1KwwNwuziktny8hftmf9EUQ6gO0QP
+	TLeOIUaRT68EvbpeN5yUn3GR6Mh3QnqyySuww0SAwEZal8UbAkI2Y6QslOUmpPg51tDJF0elat/
+	igJ67Yz/8Y/7b5UYgko4ZKPDUa43aMwA=
+X-Gm-Gg: ASbGnctNtpj/KJQBJ9xuDUxT6ZGGm3VmU3wx1B7/O4luFy0AfoqlZGjoDwakCYPInka
+	rEP/mgeS27/7DH071X6gxT8KqGFBxGDAaD9PWJuadAU357pjAw/0NCpS4vpj3kqi+1k4v6GyGMC
+	4q6zsviOvCi4U9e0z/tQx6sPhVfNVq27aB4QMCJLQtdwNLjsI2t5UmKXjSIAKzvZd7NSBSmX9K3
+	Kq/jHaxDPgKP2k5wdIU50WTpI8gt87Zkb1Yn4ek2g==
+X-Google-Smtp-Source: AGHT+IFNFjVUAWMHKgGHXBLdjL+z9UZVnH3ivOrRi96WUbNTNIl/wqUCLJ3Eqxp4UI6lqYQhsmLvNTpljrWMA40Zw6Q=
+X-Received: by 2002:a05:6871:451a:b0:315:8b80:aa4a with SMTP id
+ 586e51a60fabf-3c0fa86713fmr1692388fac.48.1759933107602; Wed, 08 Oct 2025
+ 07:18:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251008-power-domains-dt-bindings-soc-samsung-exynos-sysreg-v1-1-ab41c517dec6@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAJBy5mgC/x2NMQ7CMAwAv1J5xlISqFD5CmJIYxM81KliCq2q/
- p2I8W6428G4Chvcuh0qf8SkaAN/6iC9omZGocYQXOi9c1ecy5crUpmiqCG9cRQl0WxoJaHFyRb
- NyOumpanNKmfsic6XYfBhdAlaea78lPV/vT+O4wcZQ5+DhQAAAA==
-X-Change-ID: 20251007-power-domains-dt-bindings-soc-samsung-exynos-sysreg-5dd349912b0c
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
+References: <20251007145028.1845-1-briansune@gmail.com> <aOUv69rMkyYFiHae@opensource.cirrus.com>
+ <CAN7C2SDUiuMfPs_X5r0RDC56313aJsfhfx0-juhZRKGTb1OKuA@mail.gmail.com>
+ <e78c9cc0-4a1f-4a22-9cba-a8213a7b9301@sirena.org.uk> <CAN7C2SDMB8_b-m0ZMzuSmhHxWpA10mcxxxDMKWuNe6wfiEXo-g@mail.gmail.com>
+ <58756837-9be7-4027-b951-401ceeb69e4c@sirena.org.uk>
+In-Reply-To: <58756837-9be7-4027-b951-401ceeb69e4c@sirena.org.uk>
+From: Sune Brian <briansune@gmail.com>
+Date: Wed, 8 Oct 2025 22:18:15 +0800
+X-Gm-Features: AS18NWBAo1priwf20NfbC-WLbiCJ7RPYiCQuSQkiocxt57LiFHPz_plFqnbPsSw
+Message-ID: <CAN7C2SAHy=9S3_DWCEijr09KSc4s516XAcfVbwMhNoFr_PYYrA@mail.gmail.com>
+Subject: Re: [PATCH v3] ASoC: wm8978: add missing BCLK divider setup
+To: Mark Brown <broonie@kernel.org>
+Cc: Charles Keepax <ckeepax@opensource.cirrus.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Sysreg can be part of a power domain, so we need to allow the relevant
-property 'power-domains'.
+Mark Brown <broonie@kernel.org> =E6=96=BC 2025=E5=B9=B410=E6=9C=888=E6=97=
+=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=889:40=E5=AF=AB=E9=81=93=EF=BC=9A
 
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- .../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml         | 3 +++
- 1 file changed, 3 insertions(+)
+> This is not OK, BCLK is 99 which is less than 100 so there are not
+> enough BCLK cycles to clock the samples.
 
-diff --git a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-index d8b302f975474a87e4886006cf0b21cf758e4479..c27d9f33d5a0501018aa3a52962a59257b723fa7 100644
---- a/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-+++ b/Documentation/devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml
-@@ -73,6 +73,9 @@ properties:
-   clocks:
-     maxItems: 1
- 
-+  power-domains:
-+    maxItems: 1
-+
- required:
-   - compatible
-   - reg
+What you are questioning won't even fits under normal operation scope
+of this codec IC.
+This is simply arguing and I really hate these type of conversions.
+This is a patch for specific codec IC architecture.
+Such automated bclk seeker just runs on expected operatable scope of this c=
+odec.
+And such patch is to fix missing proper bclk register load from first place=
+.
+If there are cases that is this codec is allow but could generate
+wrong result on this patch.
+Willing to update this patch and learn from my errors.
 
----
-base-commit: 3b9b1f8df454caa453c7fb07689064edb2eda90a
-change-id: 20251007-power-domains-dt-bindings-soc-samsung-exynos-sysreg-5dd349912b0c
+Any one could do what you are expecting and could runs on this codec.
+Happy to learn as much as I can.
 
-Best regards,
--- 
-André Draszik <andre.draszik@linaro.org>
-
+Brian
 
