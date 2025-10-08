@@ -1,105 +1,93 @@
-Return-Path: <linux-kernel+bounces-846023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F15FBC6CD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 00:41:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9902BC6CE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 00:42:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 094B63C7B4E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 22:41:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE9DA3C7AE9
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 22:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9992C21F2;
-	Wed,  8 Oct 2025 22:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580FA2C21E7;
+	Wed,  8 Oct 2025 22:42:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xf3+5pqO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232E51E25F9;
-	Wed,  8 Oct 2025 22:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="pevA0W1z"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672B31E25F9;
+	Wed,  8 Oct 2025 22:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759963292; cv=none; b=lUBFDb8VoqwZlLeIFbZdj4HAm1Dv90qButtbIss6GUW6PWZsr6o0wjILTcxdPDppUP/Hw35aRbRLqOyN/8KcpGGzsz5+eBuie8P+1dwF1HCOmgABSOZNbnc7I2wE6OM9P5VSj0JibEuqe6BdncExCwIFONqwjlt6q6gOwjsCDkc=
+	t=1759963335; cv=none; b=fK3x4FA4ZwouLQFHaNerMbOehnbR6gBns1gCXpPKBOMvoM4H5+QfplyYRMmlj6IgLR3p2Ly0yOY10VuE4QtzRmzT3kznZsDeeQdsg5hSTRpZskgX9brgb7E2vP727LiBf1QIeLaT0vE+nA8XfIawVjAQuPrvcF5Ms2iGN4CbXOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759963292; c=relaxed/simple;
-	bh=BmE5hJ8rbuCDGFjo8CBQ1PvsWoi7WyWjZG/68v+d69M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UNP5qc4+vJawxTqelxySOHW4BwNhuWW7VKFzWMbLJmATIrHMJpJUITQjcGeKNvgeFQQsHpltWem1K7Hii7q8WDsiggLxKDexwQZ1K7pn4VKCS76gV3MQrRSNxk4tGEEE0HYkjAMT6gYUeWCLK0k1hH47QgO2EJ9b3Qan63qhwSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xf3+5pqO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 407ACC4CEE7;
-	Wed,  8 Oct 2025 22:41:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759963291;
-	bh=BmE5hJ8rbuCDGFjo8CBQ1PvsWoi7WyWjZG/68v+d69M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Xf3+5pqOvOpZP8s+tB3IRecNIw27RavRuHuU+RdeEQaju8YVWm8lHYhQLtU3Z4L6i
-	 z7vl5lXvSEvnUTRgDegnaJrduiieZBYOlXuwn3xP/STiYJIHstJBhrXEWQsDuaSRNM
-	 x5KvkO1dDXZHLRwIJ0rViUti64MS4zaMs2k2WJZ9ULIqTOz1iVv15A28mC58/XOREK
-	 e1UWCQ3McNK9mYwPVjFnKWV9h8MCKik3JKlNAtUqLtpNlYBgGOrFRmIEwVmoSlf4Pv
-	 aUKmAizrHh/gc62IAIr/ZZJYKvl8ZVOgcLAUuKcUIRYirgg+3J1bECWH4PaITN6VBb
-	 7UOJAHyNHkmYw==
-Message-ID: <45f8532e-5aa2-4b32-ae53-bdf588133a3e@kernel.org>
-Date: Thu, 9 Oct 2025 07:41:22 +0900
+	s=arc-20240116; t=1759963335; c=relaxed/simple;
+	bh=4FrMUDcGUMvsqwXazXahedVwFjEFXGbW1XJeTBDqcUE=;
+	h=Subject:From:Cc:Date:Message-ID:MIME-Version:Content-Type; b=RLrlLKWRRcKjSHw81HRp69ezlsjkPc/oe9sfFdQ5cV2M6KkEvl0j0J5ESD7FeRqKUrDbjg2ZC9C8rWVBzLO+7/YblWKsacABTOk9u7HcMyjZKaiHyYZ31T/Ba3lzUbcMklA8SmIFi+51AzrtRsuQ1FyIxsIx504wUmrDQZgg79M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=pevA0W1z; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from skinsburskii-cloud-desktop.internal.cloudapp.net (unknown [4.155.116.186])
+	by linux.microsoft.com (Postfix) with ESMTPSA id E2B472078630;
+	Wed,  8 Oct 2025 15:42:13 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E2B472078630
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1759963333;
+	bh=LErNskLjh4BZ+2o5s0bJXU/v5paXrsipcOc4cy6keb4=;
+	h=Subject:From:Cc:Date:From;
+	b=pevA0W1zklh746AmazmUN3cDxs9i27cYfasLTyY+61GrbJEx6rhe/GJ/RhfhnA/tN
+	 XKmyvnWnCRK982P2550h88JREk38aKx0WMwUz1JbXWnSl1K1BhdsjScwsgaaE4lPuM
+	 YNAOu3BbvNY5Ou882MNkPTXXOw4gSy7KSTphRsag=
+Subject: [RFC PATCH
+ --to=kys@microsoft.com,haiyangz@microsoft.com,wei.liu@kernel.org,decui@microsoft.com]
+ Drivers: hv: Resolve ambiguity in hypervisor version log
+From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 08 Oct 2025 22:42:13 +0000
+Message-ID: 
+ <175996333379.107949.887881974668560955.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 13/15] blktrace: trace zone management operations
-To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
- Jens Axboe <axboe@kernel.dk>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
- "linux-btrace@vger.kernel.org" <linux-btrace@vger.kernel.org>,
- John Garry <john.g.garry@oracle.com>, Hannes Reinecke <hare@suse.de>,
- hch <hch@lst.de>, Naohiro Aota <Naohiro.Aota@wdc.com>,
- Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
- Chaitanya Kulkarni <chaitanyak@nvidia.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>
-References: <20250925150231.67342-1-johannes.thumshirn@wdc.com>
- <20250925150231.67342-14-johannes.thumshirn@wdc.com>
- <f5a5bc62-093b-4d4a-91ba-a7ec5718609f@kernel.org>
- <057c7e5f-6079-4451-829d-40c73c88fb60@wdc.com>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <057c7e5f-6079-4451-829d-40c73c88fb60@wdc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On 10/8/25 22:29, Johannes Thumshirn wrote:
-> I'm not sure if it makes sense to do completion tracing here. At least 
-> we cannot do it in the endio handler as usual.
-> 
-> One thing to get the error and the duration would be the following:
-> 
-> int blkdev_zone_mgmt(struct block_device *bdev, enum req_op op,
->                       sector_t sector, sector_t nr_sectors)
-> {
-> 
->          /* [...] */
-> 
->          trace_blkdev_zone_mgmt(bio, nr_sectors);
->          ret = submit_bio_wait(bio);
-> 
-> +     trace_blkdev_zone_mgmt_completion(bio, nr_sectors, bio->bi_error);
->          bio_put(bio);
+Update the log message in hv_common_init to explicitly state that the
+reported version is for the Microsoft Hypervisor, not the host OS.
 
-That does seem OK to me. Maybe try and see how it looks ?
-Though the request alloc, insert, dispatch and completion for this BIO will
-still be traced, right ? If these events show correctly that this is a zone
-management command (and which one it is), then we should not need the above.
+Previously, this message was accurate for guests running on Windows
+hosts, where the host and hypervisor versions matched. With support for
+Linux hosts running the Hyper-V hypervisor, the host OS and hypervisor
+versions may differ.
+
+This change avoids confusion by making it clear that the version refers to
+the Microsoft Hypervisor regardless of the host operating system.
+
+Signed-off-by: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+---
+ drivers/hv/hv_common.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
+index e109a620c83fc..0289ee4ed5ebf 100644
+--- a/drivers/hv/hv_common.c
++++ b/drivers/hv/hv_common.c
+@@ -315,9 +315,9 @@ int __init hv_common_init(void)
+ 	int i;
+ 	union hv_hypervisor_version_info version;
+ 
+-	/* Get information about the Hyper-V host version */
++	/* Get information about the Microsoft Hypervisor version */
+ 	if (!hv_get_hypervisor_version(&version))
+-		pr_info("Hyper-V: Host Build %d.%d.%d.%d-%d-%d\n",
++		pr_info("Hyper-V: Hypervisor Build %d.%d.%d.%d-%d-%d\n",
+ 			version.major_version, version.minor_version,
+ 			version.build_number, version.service_number,
+ 			version.service_pack, version.service_branch);
 
 
--- 
-Damien Le Moal
-Western Digital Research
 
