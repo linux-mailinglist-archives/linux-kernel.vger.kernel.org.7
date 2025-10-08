@@ -1,861 +1,1073 @@
-Return-Path: <linux-kernel+bounces-846065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0004BBC6F18
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 01:48:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D76FBC6F1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 01:49:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A64364EE8D4
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 23:48:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D5291898BFE
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 23:49:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5259D29A9FA;
-	Wed,  8 Oct 2025 23:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB8E2C234F;
+	Wed,  8 Oct 2025 23:49:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EKdXmlgU"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=llnl.gov header.i=@llnl.gov header.b="H/jIiMdI";
+	dkim=pass (1024-bit key) header.d=doellnl.onmicrosoft.com header.i=@doellnl.onmicrosoft.com header.b="H4Y2txTr"
+Received: from mx0f-00379502.gpphosted.com (mx0f-00379502.gpphosted.com [67.231.155.129])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F8F199FB0
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 23:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759967289; cv=none; b=GII2l+wu8RL0+6s7lUeEDU1z8Svfe5aImcSF6tn9/4NX8M0UVrRmPq2NPAyNqlXk8HszR5k1lGmhT68siBITIben1eGtDQF9z+yQQhQYTZSsejKUQlEK5vQF5H4XqGen3ZGqvPxwX/jjbcC7KESSnhqekjxLy1ZG2YUdUShoSds=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759967289; c=relaxed/simple;
-	bh=8ZTU7ZI4dOQz+oWLWUmekV68DhahEks06RCGsIgh8c0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EcVXROwm5EBbm0O2gqPBTJoR8BV/uOo9Bv8fitU6iaZBhuBezsbrf3laDZgZlhFCSTJWzsi9lPuExS5ddhVga3PuPqY81jiSYrI/xGT6JuJ9DAte2a0CcWAlXARSE7V0vqPd1ibPy0CASKVWtZi+dpk87pk+E35rsiKGzYq5+FE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EKdXmlgU; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3f2ae6fadb4so429328f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 16:48:05 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E92A204F8B;
+	Wed,  8 Oct 2025 23:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.155.129
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759967346; cv=fail; b=VjSXj+dHxsnA11L/UqSDuDr2IduOdg/mPuUwG8X0/2f5DM88v0asH4UzML0bvmAqmpt/sJ0KqkxNlpLEwhpqTiXHu5y5zrhx+TTlGdDVrA15MzOW4+DHiiAeGjE9tc42RT0UWrcN0dcjsRmczK7J3nMXTGUkPfe6Y4zNc2+tkWo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759967346; c=relaxed/simple;
+	bh=9m5Wg8XBtVkGwPlk4u5H2s/c9zObku3ESFNh+Oibtx4=;
+	h=Message-ID:Date:From:Subject:To:Cc:Content-Type:MIME-Version; b=RwRXehUqiSvlXITZHifMaeMGl5S+rsNQnLwLxc4omVfKwhs3b/HEyeEw5s8pF/jQ14kmaU/A9629Py/RKE/KoMsA6mz4q+yt7ygTj3rC2tJnzhO1+0aSTtu9s0fCJF5Tdzd1vUxHsZWyVWs/kBnohRaMWhzXzAoncBNWAXQhReM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=llnl.gov; spf=pass smtp.mailfrom=llnl.gov; dkim=pass (2048-bit key) header.d=llnl.gov header.i=@llnl.gov header.b=H/jIiMdI; dkim=pass (1024-bit key) header.d=doellnl.onmicrosoft.com header.i=@doellnl.onmicrosoft.com header.b=H4Y2txTr; arc=fail smtp.client-ip=67.231.155.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=llnl.gov
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=llnl.gov
+Received: from pps.filterd (m0218362.ppops.net [127.0.0.1])
+	by mx0f-00379502.gpphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 598H9f0G005515;
+	Wed, 8 Oct 2025 16:48:29 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=llnl.gov; h=message-id : date :
+ from : subject : to : cc : content-type : content-transfer-encoding :
+ mime-version; s=02022021-podllnl;
+ bh=2PN0GDAJoz3NLi2NhpsY4KoOue1YQ0Yhz8H4TdQuqMQ=;
+ b=H/jIiMdILM2uLnthKacA3lma+jKfRp2VsEGUvkZcaEOJdXB4qGfyP4jMS8XxW0sfsgXz
+ BE32bEBukNBIgGnDfXXpwWqDmR9Az6g3MZhzekba+MKsDZfrfIr8dV4HK68Zc0BNojzD
+ rKlh9JYIyDPeHvvVKKaqM9FPwFFfhZxig6L9eAiugMpAE5qaxWQQE1W0dwyzcAd6vWvt
+ DB+hLG+2XnmjWDe9kxa3rSuA1a4gqaIOLLFLl1MLif7jI/JNF24+MYebhu4JVyn5dZQ5
+ GpdiQAI41G9uJewQicEHwSf7Vmt3qqwAommL/ACKr2pmPxJtioS1f52lhcB9gVmlliH0 aA== 
+Received: from ch1pr09cu001.outbound.protection.outlook.com (mail-northcentralusazon11011017.outbound.protection.outlook.com [40.107.199.17])
+	by mx0f-00379502.gpphosted.com (PPS) with ESMTPS id 49nv42guj8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 08 Oct 2025 16:48:28 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tkl8EiGU9rJaW7RNr29fe5faeGBaC+JHGNtXkjD54oxMrI7xsvvbf+9stkjFwrAskqb1pP/EgR+RDc5x3gKBfDy7FdGO1tVrG9s0JZhcM7GOePNJh1XoRh51FbM4XhSiOFj2At2VXh1bz28DvAqzJd7IlwpMPLsHIg21JNSBq/GvhZ3ZWD1LkbapZNT5XrWrj9rt8JfCyRrDtm99JmqGRxNpB3k0eSmAC+iU0Y+cri0l7+8lcU1t2L3sb8pG5WE4/MU88HaseiEY6qDtDDWWOEU3Q0dAvzWN1HJZc3zFsrDunPd5NesBKRaYXN0IAAPCCNtT/VQmjRFiYQNGh880zw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2PN0GDAJoz3NLi2NhpsY4KoOue1YQ0Yhz8H4TdQuqMQ=;
+ b=OegXwZksL+8eU1JxAS/pVxzrwwJvY6Q6EG9Lq8UfXU9lpko9sADt3ZRD1An/o0Lbiq5tobu4Y6DfGfFK0LuQZiMq5foLlzUxXYWBpYJHB+svey6IpSlBYxIrgGQMr85XJ0nv6p46xZjXG76DD2sP1b2z0n0/QE/pTI5kFsZ20VpSGhV1iGPDUPST65JUvEsByCPZxE8JqAqyvxvHhK7RjXk68mAska32t5d9qQSNHW3Bi3ObHEKvhIdShuQR/tRzcdv33PtqjC4gbkGWrZAU3fRDJTpURC+YAEYHKQ18NnERD/WQuSZoLhP4Mq9sNOlbGR2S5YxELwCaq1JD0wz2XQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=llnl.gov; dmarc=pass action=none header.from=llnl.gov;
+ dkim=pass header.d=llnl.gov; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759967284; x=1760572084; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tfHx0KfaapEjiwM0tW/YvvhxPGY3AJttLQVN9hlDJ6Y=;
-        b=EKdXmlgUSGAwcnI9H3URtsGBW6A/eS668ZAQ+bPEtgG03sExA5mx9f8R/dwlIQP2GQ
-         R+Sqa0UR37CbtHZAxakCjyEFPCRPF42snlhMDAXBr6XR4Q34lhL+nT5AYeeNkwi5otMS
-         fOoBKsmDnvtpIYKrfwIMob++4PngWB/xuaiE8Cci45fvf02jMaPKTmFy4iCYv5uYliVd
-         YlIKf3zqO5/P6fF5mNQKu5DV69IF0dZBKzjGXiijHojGbj7x+FXcUKIPM/BMRDSPpR0n
-         OHizspKHWtQl5ohymuoKAvT70c98DDimZfI1HzJp/trVvMEEGFa8egEjMnUuBONGFakv
-         Ct5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759967284; x=1760572084;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tfHx0KfaapEjiwM0tW/YvvhxPGY3AJttLQVN9hlDJ6Y=;
-        b=BwQWmbv5zSY9gxVKb5nyQLvNjOAugF/YjxUPKuc6a6OImSK4yzjqda3yUA4D6O7GPd
-         1TjEuaqOt5QovjJTYVY4i2ZGLgNhIWu5rnY+m3YNTONnPiRnixolws3FtXI/oGQtU7CP
-         zq5u7YBsXYQHhNsW6xSgs7NH875EqOWmzq7j0dxwmqiFOW4k3qNdn9Y+kYGHNobXCEdq
-         083qHDNFF1jpEj7hACzQiv14W8XUurMndrjoSEKo7oCX0E9FuUzQ3zmpsi0opDJRjXq7
-         MhuM4PSdWWMsw1KET+/Ld4RH+w99cVhZiwXZYxdNs5qqMy5O4+FQ02Ge3/fUEIHqMhQd
-         6YPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVY7GeYpXmtYrtbXQO+2I4u3uXpHAuzzNJLAqNbuy3iW1V958oPsjWAnOMdrPE8Tx8Z9G/78zQgXzV3gn0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8ELo5Ic6WY5/GtWejWkF0uryxRl9t4Xe0GeGNtqCaKdZTYtEm
-	Y7JZMfSkGi2yruH9ucdnV3j0aeYZ3HxcIMNxYoWQ0/otNKtXgiF93ceLQRNNxdRO4Ek=
-X-Gm-Gg: ASbGncv+In/i58kwORH4VXxY74KZYAbb47Y3Mf0Cm96FaP3MaLH0UCRbkNU7H9I4nh1
-	G9RtCTaQ+8c8J77pYZKtOEcutJXLKPyMYtmpkaPD9c0Aies5NcSxhLQkftqvNs7z++F2D5c1Zg1
-	3Yc97vZ2am5keZ+yS0ilFPeYh4O7xNTl+8buMPQ4fXDYBGZJxDNYteryaE1TlIqKxKoLzgDaboC
-	zzJqn1IVlY7t1+l2baDyRYYAAk5M+tAOons6EsKO5MqQdklv+X5REO/N6xcKYvOJtUgqFoV0Y+b
-	83B7GFxFdgJLUTjjx4sH6eSelgZrPvPqoljBjj8MkDwO5bTYj3CqikunXX22Vf9dRoJDwWSBrEJ
-	ylAFCJnO7loVAaZRksv2Hm7nb4KBLsxWg+kqSujHaKLx4bhNWb+vKar+COnpbEWtZxyOY/XYyH/
-	RvtzdlN5ZKbjjlmSms
-X-Google-Smtp-Source: AGHT+IELSJRQI78RURkVWMFub+1nmQpBtlrGEe11X4pGowAAY1G6tWSvEw45NXJ4Bm06qoUBaF4PuQ==
-X-Received: by 2002:a05:6000:1a87:b0:3ee:b126:6b6 with SMTP id ffacd0b85a97d-4266e7dfee2mr2929865f8f.34.1759967284039;
-        Wed, 08 Oct 2025 16:48:04 -0700 (PDT)
-Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f011bsm32442627f8f.46.2025.10.08.16.48.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Oct 2025 16:48:02 -0700 (PDT)
-Message-ID: <b58f9dd3-6ace-474f-98ad-a5b9c5f0cf17@linaro.org>
-Date: Thu, 9 Oct 2025 00:48:00 +0100
+ d=doellnl.onmicrosoft.com; s=selector1-doellnl-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2PN0GDAJoz3NLi2NhpsY4KoOue1YQ0Yhz8H4TdQuqMQ=;
+ b=H4Y2txTrMHR9vWtdZAg4gvXmgsN/14qYedYJC9uWUepbfMeBF0hHUhhAzINDqnnoFaW6KjU67I43xWVcdx2n/Va9FBDk+mHhE+eNV65vBaXfk6wzBE7aY9CkeR+KSJi0h9oNrWNgnt5MUzoJlCe6TXyBk+TkZ9ITyy2+FI1Y/ew=
+Received: from SA1PR09MB11481.namprd09.prod.outlook.com (2603:10b6:806:372::6)
+ by DS0PR09MB10530.namprd09.prod.outlook.com (2603:10b6:8:174::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.9; Wed, 8 Oct
+ 2025 23:48:25 +0000
+Received: from SA1PR09MB11481.namprd09.prod.outlook.com
+ ([fe80::f6b3:25b7:844a:6d8a]) by SA1PR09MB11481.namprd09.prod.outlook.com
+ ([fe80::f6b3:25b7:844a:6d8a%5]) with mapi id 15.20.9203.009; Wed, 8 Oct 2025
+ 23:48:25 +0000
+Message-ID: <d485bd74-e49d-4c89-b986-1b45c93e7975@llnl.gov>
+Date: Wed, 8 Oct 2025 16:48:22 -0700
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+From: Tony Hutter <hutter2@llnl.gov>
+Subject: [PATCH v6] Introduce Cray ClusterStor E1000 NVMe slot LED driver
+To: Bjorn Helgaas <helgaas@kernel.org>, Lukas Wunner <lukas@wunner.de>
+Cc: corey@minyard.net, alok.a.tiwari@oracle.com,
+        mariusz.tkaczyk@linux.intel.com, minyard@acm.org,
+        linux-pci@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR03CA0120.namprd03.prod.outlook.com
+ (2603:10b6:a03:333::35) To SA1PR09MB11481.namprd09.prod.outlook.com
+ (2603:10b6:806:372::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/8] media: iris: stop copying r/o data
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
- Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251008-iris-sc7280-v1-0-def050ba5e1f@oss.qualcomm.com>
- <MNE6-NWyEnaQyvn4In-jfg6F21lf0p0GgcEsRO6lM610hKJwSHgpSoefqJ7PROY_eWIuyd08U3G5bDI8ufq0aQ==@protonmail.internalid>
- <20251008-iris-sc7280-v1-3-def050ba5e1f@oss.qualcomm.com>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20251008-iris-sc7280-v1-3-def050ba5e1f@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA1PR09MB11481:EE_|DS0PR09MB10530:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9c6d3510-b6bf-45d6-8222-08de06c52bdc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|19092799006|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dzF6OEY3eXg4K3pNVWE3UFhwU3hDYVpPVzd2bjJvWmQ4WnN1R0JvZVhHbHAz?=
+ =?utf-8?B?WjFXUVpmeUV1Wkw0bFRKajlHL0dNQWdNaUd4bnE3bi9iNzdUeFBiYzlZazNC?=
+ =?utf-8?B?SkV6bFJGUzlUVTRnZ2FneTFsZGZLeHdlQWZLTkg0MHpUSlZUTEQ2bGplclpn?=
+ =?utf-8?B?OUNzQnZIemlFSHN2Q1JQNWQrSGdMNFN0S1Y4OWZ4dzV5RWZkMmlRMk44NnFR?=
+ =?utf-8?B?Z1g0RHRRUTFvUTRPZ1hlV0k3NTRZM2xjdDFWZm1xVmM1RmdCZUtDTVQ0OFdo?=
+ =?utf-8?B?QUFYb1REUkFFUEY1eVBTNlhCdVRHVkdDRDZQRE5EOGY4THQ2RFFtcmlZSTY4?=
+ =?utf-8?B?QTBWMVlBTlFiTDQ2cE1IQjNqL0NjQ3VXMnFsdXZaSzFaU3NDd1NiOEh4OXRl?=
+ =?utf-8?B?cE1kRzYvUGs2UXR3OUp6RHNwWU94amRoYWpoMjBXYklweVBRTHlBdHAwbEM3?=
+ =?utf-8?B?bkxNMVI2WHg5TTFZKyttVEdpWlZQY1oyZUtVeUM1UGpMNE1VMytYREVXK2pm?=
+ =?utf-8?B?YVhmTVVkMTNjTGQwbm11SmZrR3UyMDBpU1krdkRJTE5iemFpbklISVluZVBn?=
+ =?utf-8?B?SGg4dURhT1VCbWsrWTBjTzBYWURDNXpZRWxjM0d3NlpId0g3cHlFNzlIVXU0?=
+ =?utf-8?B?Yjg0UkFIdUhmY1E5eEhOanhjc0ZJRDN2ZWFWZGpScGhRVUgrRWV3ZFJOdmZG?=
+ =?utf-8?B?bTFueFJIRVV0V1k3S3VmbWp2U2k1SnVDNTR1T2cwempYbWVBVzk5cEU2ZGlV?=
+ =?utf-8?B?ZnNUbUdEQjNFSTFxY21LbjhVeXJ5THZiQjQvblhtNFlLVU9MQ3FrWmNscUhW?=
+ =?utf-8?B?T0IzSHllU2xiWHhBc05lM3R1bGVWeG5PNUk2S1dkYUVCZTJua05tcEJWR3pX?=
+ =?utf-8?B?cFRIb1ZrYnRhRWducVdQa1haVXlORndYY0dKcjJFVmxkZWR6VllVbzhmTms1?=
+ =?utf-8?B?VEVLTEI3WXFtWHlndzdKenVnMWQ3ZlV6TFF6VDV1TTIxa1hZVDhhWXdmcVNS?=
+ =?utf-8?B?TUVXWmhIUFdBZTU4YTM1cnF2RzF4U0NBZGlRUis0azk0VFlQV1RSVXNqbjls?=
+ =?utf-8?B?czd3TGRQQVJ5eEhtV1pQYUlERCs1WXRVbUF0UVVHNVI1ZlMzajhuaHJ1WTFm?=
+ =?utf-8?B?QktET1dqUTg4YVVGNGZxTXcyRmtWenZWQlpIdUZBYVdrVHlyMm9zd1VFOUE3?=
+ =?utf-8?B?M0JRUUxmZHdEaHp1Z0o2SlVUdC9FTFlqU0FiQTg3a1lkaHNaYVlBZ1lheWhL?=
+ =?utf-8?B?MGhmYjB3L3dkTDZUT0dBc0NReE45MjVqc0RKSXhqMmxNRWpiZ1lwT3EvWHh5?=
+ =?utf-8?B?dFRseDBISVBZT1Y5Znc1MGsweU15S21Mb0plUENGSndpSjJ4VEdaNExpT1BJ?=
+ =?utf-8?B?TEFqNHNVVDhWYTc0YzNxdlRaZ2xuSzVJS1dKMzRlczhvNmZlTDNVcHc2ZWZj?=
+ =?utf-8?B?d3RJaVdMSDJyNHUyRlZRU3VLak5tdmFKejdVZ1ExdnFuVSt6VUZ1UHpDUys3?=
+ =?utf-8?B?bW5BemtOcEVyMDNldGEwMzRacUw4WGVtRTZRNWZiTDVoUG5Ud1gvRkZYdit4?=
+ =?utf-8?B?WHN4WkpkeUczK2d0WkV6YzFZa1VYbWNrTlhNRDVqd0hRdGRGNW9jRXRvZ1h2?=
+ =?utf-8?B?QzNLbThzTkxSY2tPK0ljakF3Zks3aWhDMk51Q1A1L1I5UnFTckxIR3hIWVFX?=
+ =?utf-8?B?Sk8vUHVwMzNWUC9Ta0g1TDEyRE9YRW1KcVZnNmlwYjJuRkN2dGdrQzZsUDc4?=
+ =?utf-8?B?U2hncUhNaTk3b2tWT01aWndwZUZ6T01Uc2lnSnYzUW43cHRwNnJOYU13Rnc0?=
+ =?utf-8?B?OHd2WllmR3FCOVNyelVodWU4V0tGcWtXUmVxU3Z4SFA0YVJpc2RFRjhvL0sy?=
+ =?utf-8?B?UE05djBQaFZqRUk5OXZ1bWtqc1dSTWx3czJLTmJYWW9FSlN4NHF6bnlUd2NR?=
+ =?utf-8?Q?/xz42p7Kq3eclyYzdJdpV+2UGzw6pmyI?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR09MB11481.namprd09.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?T3cyZDd0cmlxdlNlYVg5UVFMVmZHOXFOR1BJUGRlMWs2OEJrMllSc0t3UHJo?=
+ =?utf-8?B?WnZCQ1pPM055SllQOEdaMzZpRHFUVzVxZFRNaUVDZVZzNDRjUDNYdEtZc21a?=
+ =?utf-8?B?MVJDU3JiZXVjTmFlaDExZkE4UVdNMjY5dFpkRWMzaGk4dzFVcGorZTJmdVlN?=
+ =?utf-8?B?aEVGNFZIOWFnWE1MRGRXUnBFRnQ5MElmY04rQWZRYUVPcTVBNWhvWW8wdytB?=
+ =?utf-8?B?dENaMTlTbkNXNVZURWhtVVNjekRxWDg1bXpSeUxJa2YvU3BXeUpTKzhQMkdW?=
+ =?utf-8?B?azF1eE9nVC9UVmVvMWluWCtNa0Z4S2xxSEhSQ0xVZWxnSzIwRkMreG5Ha1JJ?=
+ =?utf-8?B?MGxQeFJ6KzlPNnZqcVpxL3FmYUZUTWlFUFl2NHh1SjNrL0llVERUaVVXU0RJ?=
+ =?utf-8?B?cFVvcVh0ZDhRZFlHOW85VmlvUzBjWmFpNytQajJKbHNHZ09NUHhWbllaa0pz?=
+ =?utf-8?B?Wmw5K1ZWbThnWW5DL1hWZ1pPY3NNTE8vVW1RQWVMRGljNkZ0QmhzY1hUZENj?=
+ =?utf-8?B?c1phakNNb2g1WTYwUHAzY212TlAzRGhCSk5uT1N1WTViZlZZKzVnM2RjUE9x?=
+ =?utf-8?B?dDZKTXpNMW9mSDd3TlJ5czJBanF2bTRQQTVDSWNqNjVHdWtWNzd4Vms3c0JQ?=
+ =?utf-8?B?R3hnUXpSRzJ0eitVNVMwUG42cHVBb21iWU1ycVpGdUkxdjVIVTV0Zkl2NHVT?=
+ =?utf-8?B?bk1LS0JhclUzNlBwNEUxQ3hXUmFyT1FackRUbHdnTG9yM2FTRGM1eUVoNCs5?=
+ =?utf-8?B?Q1RuMkRpazVQRHd2dGhid3FkYXc0ck9kTXFObEs4emxnQ2pVbzZOZFhLU2FQ?=
+ =?utf-8?B?dXIrUnBUYWhHNThwTXFNS2g0cHZGTmhIcm14T25wek9UOWNTWDA2T0pCekJq?=
+ =?utf-8?B?c3FxRytxbEV0enpMcVVIOXhSenp5Tm1XMXRIUmE0cEd6dmlSdlAxMWRpTlh5?=
+ =?utf-8?B?NGNqaUh0emxidEVEcm5odFVrejdGNXE0MkpTTTRaakRSYjlFNCtQSGpGcWlZ?=
+ =?utf-8?B?QUpHRHhkeVFoTFExcjllVkJxbzdrbHBWU3pGajJQTkJnbTF6UnBUdml2aG9P?=
+ =?utf-8?B?eVdRRk01NXRtTXVOTnhWbzgxNGFZWW5nRGx2aGxWNnFBQVZtNk9YaENUZ1lZ?=
+ =?utf-8?B?cnhTN0xvK2ZqYjdESG11UTBPdU5xOHpOamZWbjdPcFZjSlpnYXBERzVuNzV1?=
+ =?utf-8?B?djFTUkZ5dkVHMUswOGdPSGxKWWdLSUpPbFNNRGZmOW56a3J5bCsvbUsrTHV5?=
+ =?utf-8?B?dTMrMVlPVDRPRkh1LzIzL0ZZRmRveXoxeE92dlZCU0RKMHhQQy9obk85YStF?=
+ =?utf-8?B?QUlBR0RtMWJlc044amo3RjRvMTZKQnpBTDBVZGllUmhSWnZNSk9uRVVMSHBx?=
+ =?utf-8?B?cjR0eW9vY0Eyd1cvMFNJaEJtcFRtNUZFKzMxK2g2WTNGRldLV3BIRWlodlYz?=
+ =?utf-8?B?NitTbmVxUFJYV25iTWNHQ1I3emtTNnRiYXZMSi9wV25WTEd3d3ByMktmUDRh?=
+ =?utf-8?B?VW1mVDZRODExWi9PbTlqcVFpblRYSm0xaCtaeVltK09ES1phTzRWSDRKa0t4?=
+ =?utf-8?B?aFdyM01SQ2lkVGdNK0tXQTZpNEVFNm5SaUloQkNBZTdFT3d2M1JKa0F2dHlX?=
+ =?utf-8?B?NlFCYlVsZExmSzh2Tk13N3RZbnVMOHBhQmpET2k4QS9neXlwMmVZTXBBMERT?=
+ =?utf-8?B?aG04Tnp0ZzlpL3lTbExtcFFUcnM2WGhCQklXRVZvcnVRRVNTbXJIdWtJdHVN?=
+ =?utf-8?B?UG1GU2QxcFRnSDNoTHRpd1lRSWlUOXNJMy9USDdLLzRTNCtyUldOU2VxcW9X?=
+ =?utf-8?B?MXpzbTBiS29WRGpIaGtZSzJFMytGb25saUVBWGNGK2RWVW1QWlVYZTl3bzMv?=
+ =?utf-8?B?T3RnQm4wTXZqQnRvb1ZNTGk4QmwvUXRKRXJyTzVwNVhhWXJWTEFXYnJqeGtK?=
+ =?utf-8?B?SDBObXIrS3lGWGViM0tXMUhTZmlQdlNMSFpsZExMOEN6Mlc3bkprZkd2YjZx?=
+ =?utf-8?B?UDJBNmc3ZE1aR0xlQ3BBcktyaDdVVlB5RHoyRHpEaG81eHEwL2NWSkdxSFJS?=
+ =?utf-8?B?RktRSTVLeTBNOTNiVGxESDludCtlQXRXSERJSitUSFhYQmxDYnpvaEwyS3ht?=
+ =?utf-8?Q?IJNfQCxaaJPoIfoClCMk77/dQ?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	d7Yn2CjosehcuABzAkwJytZGZZPUogC6nBliKVIMxrcetxjr7N4Z39Ujna7bUDbYsc4K/D9u5tEnozEoF20aoGqDtwjfVIu3/hP5+uRYElljIOU/p8bJMHZjGMDVT9rhkCWO7B/oLIfDwX9MomFVMygMyt1zwDrOQGFZvAAq+TEbdDVUFCCU1tmIyEkilU4jtZh5zPv8FXF6bTKRMq5mfLx3v04U3w5MQirFnOUb1RwknrTL6oMzx/IXybeijy9uFdyWSTqSGMFO72sgxaS7wwSiueq+FjcurKU7Iz8okrCIPem2uIAxsR2wH3Jr+iRfCdpGr1deJtccRLUUVXBRe/wp2Tv6Mgo/usYogjlTGy1HiYuHJyWwF3nJqdMWHrwnoqgLVM5a3/FH0NwHLWYYjY+ozTy1dXCc2S1YZ0aQTmdRUxTAzSYo19vYa91KeXyzFTholeHOlnCOZqoiAsjGI9Wy4gX/C3smv3qHzm4Yg+fr3enLhA/wwtDjZW6SqNUMzfHeP3G/lRqErDpOcVWtQlkkJO4QhqvKP8w8g1kG+yfggO8vX5joaSvla6OEqmoKgA8UKY/22FI3XcptVV/GEg9/Ss7EdkOvNa9FA1kZ7XS+8XFD/NEKGxSkg1teY7MjGp6Dpe8IyN80V2VTl5GgAA==
+X-OriginatorOrg: llnl.gov
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9c6d3510-b6bf-45d6-8222-08de06c52bdc
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR09MB11481.namprd09.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Oct 2025 23:48:25.0263
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: a722dec9-ae4e-4ae3-9d75-fd66e2680a63
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR09MB10530
+X-Proofpoint-ORIG-GUID: rDllO0XNkDRMggeGZJ6pVE18Msu5UaEl
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDE2NSBTYWx0ZWRfXzTOavHjwpfAd kdOaz+/ojW/0FLp0UF7K/8zVAzAlytsH6MqO5RO51+OKwicys2s1LwIcZOR3RzJc4WdevFc93fb WPZV9erTAEfiXXzWKwKQyCyRLUsuvhu866sPK/UIe80yTFL7RmtanApwn0x4rOocSMaZQPYg1hR
+ +rURYA6odO1HZVnlXZQofpU7qjTkLrw9kRsrwYufhyI6IPZiunYjE7yhWKn3m+PY2eWwNAl5rBk LmuDRlIM9vqbCQh6GXKhcmjyWodPNGtXs52x68gQIsx5yt/eWNcY/ha3zX/SDNtDjb8z7DFoTcM fHHXoY8gx+lP307tIRrGJTymdxnwQq58XvTm1BCYSiMZyhgGrHl9NkgQnvIM2OQo2S+XWRoC0Pn net0qcao
+X-Proofpoint-GUID: rDllO0XNkDRMggeGZJ6pVE18Msu5UaEl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-08_08,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=999 priorityscore=1501 impostorscore=0 malwarescore=0
+ lowpriorityscore=0 phishscore=0 mlxscore=0 bulkscore=0 adultscore=0
+ clxscore=1011 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2510020000 definitions=main-2510080165
 
-On 08/10/2025 05:33, Dmitry Baryshkov wrote:
-> Most of the platform_inst_caps data is read-only. In order to lower the
-> amount of memory consumed by the driver, store the value and the
-> corresponding indice in the read-write data and use the rest via the
-> pointer to r/o capability data.
+Add driver to control the NVMe slot LEDs on the Cray ClusterStor E1000.
+The driver provides hotplug attention status callbacks for the 24 NVMe
+slots on the E1000.  This allows users to access the E1000's locate and
+fault LEDs via the normal /sys/bus/pci/slots/<slot>/attention sysfs
+entries.  This driver uses IPMI to communicate with the E1000 controller
+to toggle the LEDs.
 
-corresponding index
+Signed-off-by: Tony Hutter <hutter2@llnl.gov>
+---
+Changes in v6:
+ - Change some dev_info_ratelimited() calls to dev_info().
+ - Don't call craye1k_init() if pcie_port_service_register() fails.
+ - Fix stray indent in #define CRAYE1K_POST_CMD_WAIT_MS
 
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
->   drivers/media/platform/qcom/iris/iris_core.h       |   4 +-
->   drivers/media/platform/qcom/iris/iris_ctrls.c      | 238 ++++++++++-----------
->   drivers/media/platform/qcom/iris/iris_instance.h   |   3 +-
->   .../platform/qcom/iris/iris_platform_common.h      |   8 +-
->   drivers/media/platform/qcom/iris/iris_vdec.c       |   5 +-
->   drivers/media/platform/qcom/iris/iris_venc.c       |   5 +-
->   6 files changed, 135 insertions(+), 128 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/iris/iris_core.h b/drivers/media/platform/qcom/iris/iris_core.h
-> index fb194c967ad4f9b5e00cd74f0d41e0b827ef14db..b5037ae8c71921753c165a86a277a4a4b5083b30 100644
-> --- a/drivers/media/platform/qcom/iris/iris_core.h
-> +++ b/drivers/media/platform/qcom/iris/iris_core.h
-> @@ -115,8 +115,8 @@ struct iris_core {
->   	struct delayed_work			sys_error_handler;
->   	struct list_head			instances;
->   	/* encoder and decoder have overlapping caps, so two different arrays are required */
-> -	struct platform_inst_fw_cap		inst_fw_caps_dec[INST_FW_CAP_MAX];
-> -	struct platform_inst_fw_cap		inst_fw_caps_enc[INST_FW_CAP_MAX];
-> +	struct platform_inst_fw_cap_value	inst_fw_caps_dec[INST_FW_CAP_MAX];
-> +	struct platform_inst_fw_cap_value	inst_fw_caps_enc[INST_FW_CAP_MAX];
->   };
-> 
->   int iris_core_init(struct iris_core *core);
-> diff --git a/drivers/media/platform/qcom/iris/iris_ctrls.c b/drivers/media/platform/qcom/iris/iris_ctrls.c
-> index 9da050aa1f7ce8152dfa46a706e2c27adfb5d6ce..0e9adb3982a49cfd7cbe5110cfd5f573f0f7bb38 100644
-> --- a/drivers/media/platform/qcom/iris/iris_ctrls.c
-> +++ b/drivers/media/platform/qcom/iris/iris_ctrls.c
-> @@ -194,26 +194,28 @@ static int iris_op_s_ctrl(struct v4l2_ctrl *ctrl)
->   {
->   	struct iris_inst *inst = container_of(ctrl->handler, struct iris_inst, ctrl_handler);
->   	enum platform_inst_fw_cap_type cap_id;
-> -	struct platform_inst_fw_cap *cap;
-> +	unsigned int cap_idx;
->   	struct vb2_queue *q;
-> 
-> -	cap = &inst->fw_caps[0];
->   	cap_id = iris_get_cap_id(ctrl->id);
->   	if (!iris_valid_cap_id(cap_id))
->   		return -EINVAL;
-> 
-> +	cap_idx = inst->fw_caps[cap_id].idx;
-> +
->   	q = v4l2_m2m_get_src_vq(inst->m2m_ctx);
->   	if (vb2_is_streaming(q) &&
-> -	    (!(inst->fw_caps[cap_id].flags & CAP_FLAG_DYNAMIC_ALLOWED)))
-> +	    (!(inst->inst_fw_caps[cap_id].flags & CAP_FLAG_DYNAMIC_ALLOWED)))
->   		return -EINVAL;
-> 
-> -	cap[cap_id].flags |= CAP_FLAG_CLIENT_SET;
-> +	inst->fw_caps[cap_id].client_set = true;
+Changes in v5:
+ - Removed unnecessary ipmi_smi.h #include.
+ - Added WARN_ON() to craye1k_do_message() to sanity check that craye1k->lock
+   is held.
+ - Added additional comments for when craye1k->lock should be held.
 
-Why drop just this one bit - CAP_FLAG_CLIENT_SET.
+Changes in v4:
+ - Fix typo in Kconfig: "is it" ->  "it is"
+ - Rename some #defines to CRAYE1K_SUBCMD_*
+ - Use IS_ERR() check in craye1k_debugfs_init()
+ - Return -EIO instead of -EINVAL when LED value check fails
 
-Code seems neater with that bit retained in fw_caps to me, you have 
-fewer LOC changed that way too.
+Changes in v3:
+ - Add 'attention' values in Documentation/ABI/testing/sysfs-bus-pci.
+ - Remove ACPI_PCI_SLOT dependency.
+ - Cleanup craye1k_do_message() error checking.
+ - Skip unneeded memcpy() on failure in __craye1k_do_command().
+ - Merge craye1k_do_command_and_netfn() code into craye1k_do_command().
+ - Make craye1k_is_primary() return boolean.
+ - Return negative error code on failure in craye1k_set_primary().
 
-> 
->   	inst->fw_caps[cap_id].value = ctrl->val;
-> 
->   	if (vb2_is_streaming(q)) {
-> -		if (cap[cap_id].set)
-> -			cap[cap_id].set(inst, cap_id);
-> +
-> +		if (inst->inst_fw_caps[cap_idx].set)
-> +			inst->inst_fw_caps[cap_idx].set(inst, cap_id);
->   	}
-> 
->   	return 0;
-> @@ -225,13 +227,14 @@ static const struct v4l2_ctrl_ops iris_ctrl_ops = {
-> 
->   int iris_ctrls_init(struct iris_inst *inst)
->   {
-> -	struct platform_inst_fw_cap *cap = &inst->fw_caps[0];
->   	u32 num_ctrls = 0, ctrl_idx = 0, idx = 0;
->   	u32 v4l2_id;
->   	int ret;
-> 
->   	for (idx = 1; idx < INST_FW_CAP_MAX; idx++) {
-> -		if (iris_get_v4l2_id(cap[idx].cap_id))
-> +		unsigned int cap_idx = inst->fw_caps[idx].idx;
-> +
-> +		if (iris_get_v4l2_id(inst->inst_fw_caps[cap_idx].cap_id))
->   			num_ctrls++;
->   	}
-> 
-> @@ -245,9 +248,11 @@ int iris_ctrls_init(struct iris_inst *inst)
->   		return ret;
-> 
->   	for (idx = 1; idx < INST_FW_CAP_MAX; idx++) {
-> +		unsigned int cap_idx = inst->fw_caps[idx].idx;
-> +		const struct platform_inst_fw_cap *cap = &inst->inst_fw_caps[cap_idx];
->   		struct v4l2_ctrl *ctrl;
-> 
-> -		v4l2_id = iris_get_v4l2_id(cap[idx].cap_id);
-> +		v4l2_id = iris_get_v4l2_id(cap->cap_id);
->   		if (!v4l2_id)
->   			continue;
-> 
-> @@ -256,21 +261,21 @@ int iris_ctrls_init(struct iris_inst *inst)
->   			goto error;
->   		}
-> 
-> -		if (cap[idx].flags & CAP_FLAG_MENU) {
-> +		if (inst->inst_fw_caps[cap_idx].flags & CAP_FLAG_MENU) {
->   			ctrl = v4l2_ctrl_new_std_menu(&inst->ctrl_handler,
->   						      &iris_ctrl_ops,
->   						      v4l2_id,
-> -						      cap[idx].max,
-> -						      ~(cap[idx].step_or_mask),
-> -						      cap[idx].value);
-> +						      cap[cap_idx].max,
-> +						      ~(cap[cap_idx].step_or_mask),
-> +						      inst->fw_caps[idx].value);
->   		} else {
->   			ctrl = v4l2_ctrl_new_std(&inst->ctrl_handler,
->   						 &iris_ctrl_ops,
->   						 v4l2_id,
-> -						 cap[idx].min,
-> -						 cap[idx].max,
-> -						 cap[idx].step_or_mask,
-> -						 cap[idx].value);
-> +						 cap[cap_idx].min,
-> +						 cap[cap_idx].max,
-> +						 cap[cap_idx].step_or_mask,
-> +						 inst->fw_caps[idx].value);
->   		}
->   		if (!ctrl) {
->   			ret = -EINVAL;
-> @@ -312,14 +317,8 @@ void iris_session_init_caps(struct iris_core *core)
->   		if (!iris_valid_cap_id(cap_id))
->   			continue;
-> 
-> -		core->inst_fw_caps_dec[cap_id].cap_id = caps[i].cap_id;
-> -		core->inst_fw_caps_dec[cap_id].min = caps[i].min;
-> -		core->inst_fw_caps_dec[cap_id].max = caps[i].max;
-> -		core->inst_fw_caps_dec[cap_id].step_or_mask = caps[i].step_or_mask;
-> +		core->inst_fw_caps_dec[cap_id].idx = i;
->   		core->inst_fw_caps_dec[cap_id].value = caps[i].value;
-> -		core->inst_fw_caps_dec[cap_id].flags = caps[i].flags;
-> -		core->inst_fw_caps_dec[cap_id].hfi_id = caps[i].hfi_id;
-> -		core->inst_fw_caps_dec[cap_id].set = caps[i].set;
->   	}
-> 
->   	caps = core->iris_platform_data->inst_fw_caps_enc;
-> @@ -330,29 +329,23 @@ void iris_session_init_caps(struct iris_core *core)
->   		if (!iris_valid_cap_id(cap_id))
->   			continue;
-> 
-> -		core->inst_fw_caps_enc[cap_id].cap_id = caps[i].cap_id;
-> -		core->inst_fw_caps_enc[cap_id].min = caps[i].min;
-> -		core->inst_fw_caps_enc[cap_id].max = caps[i].max;
-> -		core->inst_fw_caps_enc[cap_id].step_or_mask = caps[i].step_or_mask;
-> +		core->inst_fw_caps_enc[cap_id].idx = i;
->   		core->inst_fw_caps_enc[cap_id].value = caps[i].value;
-> -		core->inst_fw_caps_enc[cap_id].flags = caps[i].flags;
-> -		core->inst_fw_caps_enc[cap_id].hfi_id = caps[i].hfi_id;
-> -		core->inst_fw_caps_enc[cap_id].set = caps[i].set;
->   	}
->   }
-> 
->   static u32 iris_get_port_info(struct iris_inst *inst,
-> -			      enum platform_inst_fw_cap_type cap_id)
-> +			      unsigned int cap_idx)
->   {
->   	if (inst->domain == DECODER) {
-> -		if (inst->fw_caps[cap_id].flags & CAP_FLAG_INPUT_PORT)
-> +		if (inst->inst_fw_caps[cap_idx].flags & CAP_FLAG_INPUT_PORT)
->   			return HFI_PORT_BITSTREAM;
-> -		else if (inst->fw_caps[cap_id].flags & CAP_FLAG_OUTPUT_PORT)
-> +		else if (inst->inst_fw_caps[cap_idx].flags & CAP_FLAG_OUTPUT_PORT)
->   			return HFI_PORT_RAW;
->   	} else {
-> -		if (inst->fw_caps[cap_id].flags & CAP_FLAG_INPUT_PORT)
-> +		if (inst->inst_fw_caps[cap_idx].flags & CAP_FLAG_INPUT_PORT)
->   			return HFI_PORT_RAW;
-> -		else if (inst->fw_caps[cap_id].flags & CAP_FLAG_OUTPUT_PORT)
-> +		else if (inst->inst_fw_caps[cap_idx].flags & CAP_FLAG_OUTPUT_PORT)
->   			return HFI_PORT_BITSTREAM;
->   	}
-> 
-> @@ -362,12 +355,13 @@ static u32 iris_get_port_info(struct iris_inst *inst,
->   int iris_set_u32_enum(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id)
->   {
->   	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
-> +	unsigned int cap_idx = inst->fw_caps[cap_id].idx;
->   	u32 hfi_value = inst->fw_caps[cap_id].value;
-> -	u32 hfi_id = inst->fw_caps[cap_id].hfi_id;
-> +	u32 hfi_id = inst->inst_fw_caps[cap_idx].hfi_id;
-> 
->   	return hfi_ops->session_set_property(inst, hfi_id,
->   					     HFI_HOST_FLAGS_NONE,
-> -					     iris_get_port_info(inst, cap_id),
-> +					     iris_get_port_info(inst, cap_idx),
->   					     HFI_PAYLOAD_U32_ENUM,
->   					     &hfi_value, sizeof(u32));
->   }
-> @@ -375,12 +369,13 @@ int iris_set_u32_enum(struct iris_inst *inst, enum platform_inst_fw_cap_type cap
->   int iris_set_u32(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id)
->   {
->   	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
-> +	unsigned int cap_idx = inst->fw_caps[cap_id].idx;
->   	u32 hfi_value = inst->fw_caps[cap_id].value;
-> -	u32 hfi_id = inst->fw_caps[cap_id].hfi_id;
-> +	u32 hfi_id = inst->inst_fw_caps[cap_idx].hfi_id;
-> 
->   	return hfi_ops->session_set_property(inst, hfi_id,
->   					     HFI_HOST_FLAGS_NONE,
-> -					     iris_get_port_info(inst, cap_id),
-> +					     iris_get_port_info(inst, cap_idx),
->   					     HFI_PAYLOAD_U32,
->   					     &hfi_value, sizeof(u32));
->   }
-> @@ -389,7 +384,8 @@ int iris_set_stage(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id
->   {
->   	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
->   	struct v4l2_format *inp_f = inst->fmt_src;
-> -	u32 hfi_id = inst->fw_caps[cap_id].hfi_id;
-> +	unsigned int cap_idx = inst->fw_caps[cap_id].idx;
-> +	u32 hfi_id = inst->inst_fw_caps[cap_idx].hfi_id;
->   	u32 height = inp_f->fmt.pix_mp.height;
->   	u32 width = inp_f->fmt.pix_mp.width;
->   	u32 work_mode = STAGE_2;
-> @@ -401,7 +397,7 @@ int iris_set_stage(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id
-> 
->   	return hfi_ops->session_set_property(inst, hfi_id,
->   					     HFI_HOST_FLAGS_NONE,
-> -					     iris_get_port_info(inst, cap_id),
-> +					     iris_get_port_info(inst, cap_idx),
->   					     HFI_PAYLOAD_U32,
->   					     &work_mode, sizeof(u32));
->   }
-> @@ -409,12 +405,13 @@ int iris_set_stage(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id
->   int iris_set_pipe(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id)
->   {
->   	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
-> +	unsigned int cap_idx = inst->fw_caps[cap_id].idx;
-> +	u32 hfi_id = inst->inst_fw_caps[cap_idx].hfi_id;
->   	u32 work_route = inst->fw_caps[PIPE].value;
-> -	u32 hfi_id = inst->fw_caps[cap_id].hfi_id;
-> 
->   	return hfi_ops->session_set_property(inst, hfi_id,
->   					     HFI_HOST_FLAGS_NONE,
-> -					     iris_get_port_info(inst, cap_id),
-> +					     iris_get_port_info(inst, cap_idx),
->   					     HFI_PAYLOAD_U32,
->   					     &work_route, sizeof(u32));
->   }
-> @@ -422,19 +419,13 @@ int iris_set_pipe(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id)
->   int iris_set_profile(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id)
->   {
->   	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
-> -	u32 hfi_id, hfi_value;
-> -
-> -	if (inst->codec == V4L2_PIX_FMT_H264) {
-> -		hfi_id = inst->fw_caps[PROFILE_H264].hfi_id;
-> -		hfi_value = inst->fw_caps[PROFILE_H264].value;
-> -	} else {
-> -		hfi_id = inst->fw_caps[PROFILE_HEVC].hfi_id;
-> -		hfi_value = inst->fw_caps[PROFILE_HEVC].value;
-> -	}
-> +	unsigned int cap_idx = inst->fw_caps[cap_id].idx;
-> +	u32 hfi_id = inst->inst_fw_caps[cap_idx].hfi_id;
-> +	u32 hfi_value = inst->fw_caps[cap_id].value;
-> 
->   	return hfi_ops->session_set_property(inst, hfi_id,
->   					     HFI_HOST_FLAGS_NONE,
-> -					     iris_get_port_info(inst, cap_id),
-> +					     iris_get_port_info(inst, cap_idx),
->   					     HFI_PAYLOAD_U32_ENUM,
->   					     &hfi_value, sizeof(u32));
->   }
-> @@ -442,19 +433,13 @@ int iris_set_profile(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_
->   int iris_set_level(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id)
->   {
->   	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
-> -	u32 hfi_id, hfi_value;
-> -
-> -	if (inst->codec == V4L2_PIX_FMT_H264) {
-> -		hfi_id = inst->fw_caps[LEVEL_H264].hfi_id;
-> -		hfi_value = inst->fw_caps[LEVEL_H264].value;
-> -	} else {
-> -		hfi_id = inst->fw_caps[LEVEL_HEVC].hfi_id;
-> -		hfi_value = inst->fw_caps[LEVEL_HEVC].value;
-> -	}
-> +	unsigned int cap_idx = inst->fw_caps[cap_id].idx;
-> +	u32 hfi_id = inst->inst_fw_caps[cap_idx].hfi_id;
-> +	u32 hfi_value = inst->fw_caps[cap_id].value;
-> 
->   	return hfi_ops->session_set_property(inst, hfi_id,
->   					     HFI_HOST_FLAGS_NONE,
-> -					     iris_get_port_info(inst, cap_id),
-> +					     iris_get_port_info(inst, cap_idx),
->   					     HFI_PAYLOAD_U32_ENUM,
->   					     &hfi_value, sizeof(u32));
->   }
-> @@ -462,20 +447,19 @@ int iris_set_level(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id
->   int iris_set_profile_level_gen1(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id)
->   {
->   	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
-> -	u32 hfi_id = inst->fw_caps[cap_id].hfi_id;
-> +	unsigned int cap_idx = inst->fw_caps[cap_id].idx;
-> +	u32 hfi_id = inst->inst_fw_caps[cap_idx].hfi_id;
->   	struct hfi_profile_level pl;
-> 
-> -	if (inst->codec == V4L2_PIX_FMT_H264) {
-> -		pl.profile = inst->fw_caps[PROFILE_H264].value;
-> +	pl.profile = inst->fw_caps[cap_id].value;
-> +	if (inst->codec == V4L2_PIX_FMT_H264)
->   		pl.level = inst->fw_caps[LEVEL_H264].value;
-> -	} else {
-> -		pl.profile = inst->fw_caps[PROFILE_HEVC].value;
-> +	else
->   		pl.level = inst->fw_caps[LEVEL_HEVC].value;
-> -	}
-> 
->   	return hfi_ops->session_set_property(inst, hfi_id,
->   					     HFI_HOST_FLAGS_NONE,
-> -					     iris_get_port_info(inst, cap_id),
-> +					     iris_get_port_info(inst, cap_idx),
->   					     HFI_PAYLOAD_U32_ENUM,
->   					     &pl, sizeof(u32));
->   }
-> @@ -484,7 +468,8 @@ int iris_set_header_mode_gen1(struct iris_inst *inst, enum platform_inst_fw_cap_
->   {
->   	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
->   	u32 header_mode = inst->fw_caps[cap_id].value;
-> -	u32 hfi_id = inst->fw_caps[cap_id].hfi_id;
-> +	unsigned int cap_idx = inst->fw_caps[cap_id].idx;
-> +	u32 hfi_id = inst->inst_fw_caps[cap_idx].hfi_id;
->   	u32 hfi_val;
-> 
->   	if (header_mode == V4L2_MPEG_VIDEO_HEADER_MODE_SEPARATE)
-> @@ -494,7 +479,7 @@ int iris_set_header_mode_gen1(struct iris_inst *inst, enum platform_inst_fw_cap_
-> 
->   	return hfi_ops->session_set_property(inst, hfi_id,
->   					 HFI_HOST_FLAGS_NONE,
-> -				     iris_get_port_info(inst, cap_id),
-> +				     iris_get_port_info(inst, cap_idx),
->   				     HFI_PAYLOAD_U32,
->   				     &hfi_val, sizeof(u32));
->   }
-> @@ -504,7 +489,8 @@ int iris_set_header_mode_gen2(struct iris_inst *inst, enum platform_inst_fw_cap_
->   	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
->   	u32 prepend_sps_pps = inst->fw_caps[PREPEND_SPSPPS_TO_IDR].value;
->   	u32 header_mode = inst->fw_caps[cap_id].value;
-> -	u32 hfi_id = inst->fw_caps[cap_id].hfi_id;
-> +	unsigned int cap_idx = inst->fw_caps[cap_id].idx;
-> +	u32 hfi_id = inst->inst_fw_caps[cap_idx].hfi_id;
->   	u32 hfi_val;
-> 
->   	if (prepend_sps_pps)
-> @@ -516,7 +502,7 @@ int iris_set_header_mode_gen2(struct iris_inst *inst, enum platform_inst_fw_cap_
-> 
->   	return hfi_ops->session_set_property(inst, hfi_id,
->   					 HFI_HOST_FLAGS_NONE,
-> -				     iris_get_port_info(inst, cap_id),
-> +				     iris_get_port_info(inst, cap_idx),
->   				     HFI_PAYLOAD_U32_ENUM,
->   				     &hfi_val, sizeof(u32));
->   }
-> @@ -526,7 +512,8 @@ int iris_set_bitrate(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_
->   	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
->   	u32 entropy_mode = inst->fw_caps[ENTROPY_MODE].value;
->   	u32 bitrate = inst->fw_caps[cap_id].value;
-> -	u32 hfi_id = inst->fw_caps[cap_id].hfi_id;
-> +	unsigned int cap_idx = inst->fw_caps[cap_id].idx;
-> +	u32 hfi_id = inst->inst_fw_caps[cap_idx].hfi_id;
->   	u32 max_bitrate;
-> 
->   	if (inst->codec == V4L2_PIX_FMT_HEVC)
-> @@ -541,7 +528,7 @@ int iris_set_bitrate(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_
-> 
->   	return hfi_ops->session_set_property(inst, hfi_id,
->   					 HFI_HOST_FLAGS_NONE,
-> -				     iris_get_port_info(inst, cap_id),
-> +				     iris_get_port_info(inst, cap_idx),
->   				     HFI_PAYLOAD_U32,
->   				     &bitrate, sizeof(u32));
->   }
-> @@ -552,12 +539,13 @@ int iris_set_peak_bitrate(struct iris_inst *inst, enum platform_inst_fw_cap_type
->   	u32 rc_mode = inst->fw_caps[BITRATE_MODE].value;
->   	u32 peak_bitrate = inst->fw_caps[cap_id].value;
->   	u32 bitrate = inst->fw_caps[BITRATE].value;
-> -	u32 hfi_id = inst->fw_caps[cap_id].hfi_id;
-> +	unsigned int cap_idx = inst->fw_caps[cap_id].idx;
-> +	u32 hfi_id = inst->inst_fw_caps[cap_idx].hfi_id;
-> 
->   	if (rc_mode != V4L2_MPEG_VIDEO_BITRATE_MODE_CBR)
->   		return 0;
-> 
-> -	if (inst->fw_caps[cap_id].flags & CAP_FLAG_CLIENT_SET) {
-> +	if (inst->fw_caps[cap_id].client_set) {
->   		if (peak_bitrate < bitrate)
->   			peak_bitrate = bitrate;
->   	} else {
-> @@ -568,7 +556,7 @@ int iris_set_peak_bitrate(struct iris_inst *inst, enum platform_inst_fw_cap_type
-> 
->   	return hfi_ops->session_set_property(inst, hfi_id,
->   					 HFI_HOST_FLAGS_NONE,
-> -				     iris_get_port_info(inst, cap_id),
-> +				     iris_get_port_info(inst, cap_idx),
->   				     HFI_PAYLOAD_U32,
->   				     &peak_bitrate, sizeof(u32));
->   }
-> @@ -579,7 +567,8 @@ int iris_set_bitrate_mode_gen1(struct iris_inst *inst, enum platform_inst_fw_cap
->   	u32 bitrate_mode = inst->fw_caps[BITRATE_MODE].value;
->   	u32 frame_rc = inst->fw_caps[FRAME_RC_ENABLE].value;
->   	u32 frame_skip = inst->fw_caps[FRAME_SKIP_MODE].value;
-> -	u32 hfi_id = inst->fw_caps[cap_id].hfi_id;
-> +	unsigned int cap_idx = inst->fw_caps[cap_id].idx;
-> +	u32 hfi_id = inst->inst_fw_caps[cap_idx].hfi_id;
->   	u32 rc_mode = 0;
-> 
->   	if (!frame_rc)
-> @@ -595,7 +584,7 @@ int iris_set_bitrate_mode_gen1(struct iris_inst *inst, enum platform_inst_fw_cap
-> 
->   	return hfi_ops->session_set_property(inst, hfi_id,
->   					 HFI_HOST_FLAGS_NONE,
-> -				     iris_get_port_info(inst, cap_id),
-> +				     iris_get_port_info(inst, cap_idx),
->   				     HFI_PAYLOAD_U32_ENUM,
->   				     &rc_mode, sizeof(u32));
->   }
-> @@ -606,7 +595,8 @@ int iris_set_bitrate_mode_gen2(struct iris_inst *inst, enum platform_inst_fw_cap
->   	u32 bitrate_mode = inst->fw_caps[BITRATE_MODE].value;
->   	u32 frame_rc = inst->fw_caps[FRAME_RC_ENABLE].value;
->   	u32 frame_skip = inst->fw_caps[FRAME_SKIP_MODE].value;
-> -	u32 hfi_id = inst->fw_caps[cap_id].hfi_id;
-> +	unsigned int cap_idx = inst->fw_caps[cap_id].idx;
-> +	u32 hfi_id = inst->inst_fw_caps[cap_idx].hfi_id;
->   	u32 rc_mode = 0;
-> 
->   	if (!frame_rc)
-> @@ -622,7 +612,7 @@ int iris_set_bitrate_mode_gen2(struct iris_inst *inst, enum platform_inst_fw_cap
-> 
->   	return hfi_ops->session_set_property(inst, hfi_id,
->   					 HFI_HOST_FLAGS_NONE,
-> -				     iris_get_port_info(inst, cap_id),
-> +				     iris_get_port_info(inst, cap_idx),
->   				     HFI_PAYLOAD_U32_ENUM,
->   				     &rc_mode, sizeof(u32));
->   }
-> @@ -631,7 +621,8 @@ int iris_set_entropy_mode_gen1(struct iris_inst *inst, enum platform_inst_fw_cap
->   {
->   	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
->   	u32 entropy_mode = inst->fw_caps[cap_id].value;
-> -	u32 hfi_id = inst->fw_caps[cap_id].hfi_id;
-> +	unsigned int cap_idx = inst->fw_caps[cap_id].idx;
-> +	u32 hfi_id = inst->inst_fw_caps[cap_idx].hfi_id;
->   	u32 hfi_val;
-> 
->   	if (inst->codec != V4L2_PIX_FMT_H264)
-> @@ -642,7 +633,7 @@ int iris_set_entropy_mode_gen1(struct iris_inst *inst, enum platform_inst_fw_cap
-> 
->   	return hfi_ops->session_set_property(inst, hfi_id,
->   					 HFI_HOST_FLAGS_NONE,
-> -				     iris_get_port_info(inst, cap_id),
-> +				     iris_get_port_info(inst, cap_idx),
->   				     HFI_PAYLOAD_U32,
->   				     &hfi_val, sizeof(u32));
->   }
-> @@ -651,7 +642,8 @@ int iris_set_entropy_mode_gen2(struct iris_inst *inst, enum platform_inst_fw_cap
->   {
->   	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
->   	u32 entropy_mode = inst->fw_caps[cap_id].value;
-> -	u32 hfi_id = inst->fw_caps[cap_id].hfi_id;
-> +	unsigned int cap_idx = inst->fw_caps[cap_id].idx;
-> +	u32 hfi_id = inst->inst_fw_caps[cap_idx].hfi_id;
->   	u32 profile;
-> 
->   	if (inst->codec != V4L2_PIX_FMT_H264)
-> @@ -667,7 +659,7 @@ int iris_set_entropy_mode_gen2(struct iris_inst *inst, enum platform_inst_fw_cap
-> 
->   	return hfi_ops->session_set_property(inst, hfi_id,
->   					 HFI_HOST_FLAGS_NONE,
-> -				     iris_get_port_info(inst, cap_id),
-> +				     iris_get_port_info(inst, cap_idx),
->   				     HFI_PAYLOAD_U32,
->   				     &entropy_mode, sizeof(u32));
->   }
-> @@ -678,32 +670,33 @@ int iris_set_min_qp(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_i
->   	u32 i_qp_enable = 0, p_qp_enable = 0, b_qp_enable = 0;
->   	u32 i_frame_qp = 0, p_frame_qp = 0, b_frame_qp = 0;
->   	u32 min_qp_enable = 0, client_qp_enable = 0;
-> -	u32 hfi_id = inst->fw_caps[cap_id].hfi_id;
-> +	unsigned int cap_idx = inst->fw_caps[cap_id].idx;
-> +	u32 hfi_id = inst->inst_fw_caps[cap_idx].hfi_id;
->   	u32 hfi_val;
-> 
->   	if (inst->codec == V4L2_PIX_FMT_H264) {
-> -		if (inst->fw_caps[MIN_FRAME_QP_H264].flags & CAP_FLAG_CLIENT_SET)
-> +		if (inst->fw_caps[MIN_FRAME_QP_H264].client_set)
->   			min_qp_enable = 1;
->   		if (min_qp_enable ||
-> -		    (inst->fw_caps[I_FRAME_MIN_QP_H264].flags & CAP_FLAG_CLIENT_SET))
-> +		    (inst->fw_caps[I_FRAME_MIN_QP_H264].client_set))
->   			i_qp_enable = 1;
->   		if (min_qp_enable ||
-> -		    (inst->fw_caps[P_FRAME_MIN_QP_H264].flags & CAP_FLAG_CLIENT_SET))
-> +		    (inst->fw_caps[P_FRAME_MIN_QP_H264].client_set))
->   			p_qp_enable = 1;
->   		if (min_qp_enable ||
-> -		    (inst->fw_caps[B_FRAME_MIN_QP_H264].flags & CAP_FLAG_CLIENT_SET))
-> +		    (inst->fw_caps[B_FRAME_MIN_QP_H264].client_set))
->   			b_qp_enable = 1;
->   	} else {
-> -		if (inst->fw_caps[MIN_FRAME_QP_HEVC].flags & CAP_FLAG_CLIENT_SET)
-> +		if (inst->fw_caps[MIN_FRAME_QP_HEVC].client_set)
->   			min_qp_enable = 1;
->   		if (min_qp_enable ||
-> -		    (inst->fw_caps[I_FRAME_MIN_QP_HEVC].flags & CAP_FLAG_CLIENT_SET))
-> +		    (inst->fw_caps[I_FRAME_MIN_QP_HEVC].client_set))
->   			i_qp_enable = 1;
->   		if (min_qp_enable ||
-> -		    (inst->fw_caps[P_FRAME_MIN_QP_HEVC].flags & CAP_FLAG_CLIENT_SET))
-> +		    (inst->fw_caps[P_FRAME_MIN_QP_HEVC].client_set))
->   			p_qp_enable = 1;
->   		if (min_qp_enable ||
-> -		    (inst->fw_caps[B_FRAME_MIN_QP_HEVC].flags & CAP_FLAG_CLIENT_SET))
-> +		    (inst->fw_caps[B_FRAME_MIN_QP_HEVC].client_set))
->   			b_qp_enable = 1;
->   	}
-> 
-> @@ -731,7 +724,7 @@ int iris_set_min_qp(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_i
-> 
->   	return hfi_ops->session_set_property(inst, hfi_id,
->   					 HFI_HOST_FLAGS_NONE,
-> -				     iris_get_port_info(inst, cap_id),
-> +				     iris_get_port_info(inst, cap_idx),
->   				     HFI_PAYLOAD_32_PACKED,
->   				     &hfi_val, sizeof(u32));
->   }
-> @@ -742,32 +735,33 @@ int iris_set_max_qp(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_i
->   	u32 i_qp_enable = 0, p_qp_enable = 0, b_qp_enable = 0;
->   	u32 max_qp_enable = 0, client_qp_enable;
->   	u32 i_frame_qp, p_frame_qp, b_frame_qp;
-> -	u32 hfi_id = inst->fw_caps[cap_id].hfi_id;
-> +	unsigned int cap_idx = inst->fw_caps[cap_id].idx;
-> +	u32 hfi_id = inst->inst_fw_caps[cap_idx].hfi_id;
->   	u32 hfi_val;
-> 
->   	if (inst->codec == V4L2_PIX_FMT_H264) {
-> -		if (inst->fw_caps[MAX_FRAME_QP_H264].flags & CAP_FLAG_CLIENT_SET)
-> +		if (inst->fw_caps[MAX_FRAME_QP_H264].client_set)
->   			max_qp_enable = 1;
->   		if (max_qp_enable ||
-> -		    (inst->fw_caps[I_FRAME_MAX_QP_H264].flags & CAP_FLAG_CLIENT_SET))
-> +		    (inst->fw_caps[I_FRAME_MAX_QP_H264].client_set))
->   			i_qp_enable = 1;
->   		if (max_qp_enable ||
-> -		    (inst->fw_caps[P_FRAME_MAX_QP_H264].flags & CAP_FLAG_CLIENT_SET))
-> +		    (inst->fw_caps[P_FRAME_MAX_QP_H264].client_set))
->   			p_qp_enable = 1;
->   		if (max_qp_enable ||
-> -		    (inst->fw_caps[B_FRAME_MAX_QP_H264].flags & CAP_FLAG_CLIENT_SET))
-> +		    (inst->fw_caps[B_FRAME_MAX_QP_H264].client_set))
->   			b_qp_enable = 1;
->   	} else {
-> -		if (inst->fw_caps[MAX_FRAME_QP_HEVC].flags & CAP_FLAG_CLIENT_SET)
-> +		if (inst->fw_caps[MAX_FRAME_QP_HEVC].client_set)
->   			max_qp_enable = 1;
->   		if (max_qp_enable ||
-> -		    (inst->fw_caps[I_FRAME_MAX_QP_HEVC].flags & CAP_FLAG_CLIENT_SET))
-> +		    (inst->fw_caps[I_FRAME_MAX_QP_HEVC].client_set))
->   			i_qp_enable = 1;
->   		if (max_qp_enable ||
-> -		    (inst->fw_caps[P_FRAME_MAX_QP_HEVC].flags & CAP_FLAG_CLIENT_SET))
-> +		    (inst->fw_caps[P_FRAME_MAX_QP_HEVC].client_set))
->   			p_qp_enable = 1;
->   		if (max_qp_enable ||
-> -		    (inst->fw_caps[B_FRAME_MAX_QP_HEVC].flags & CAP_FLAG_CLIENT_SET))
-> +		    (inst->fw_caps[B_FRAME_MAX_QP_HEVC].client_set))
->   			b_qp_enable = 1;
->   	}
-> 
-> @@ -796,7 +790,7 @@ int iris_set_max_qp(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_i
-> 
->   	return hfi_ops->session_set_property(inst, hfi_id,
->   					 HFI_HOST_FLAGS_NONE,
-> -				     iris_get_port_info(inst, cap_id),
-> +				     iris_get_port_info(inst, cap_idx),
->   				     HFI_PAYLOAD_32_PACKED,
->   				     &hfi_val, sizeof(u32));
->   }
-> @@ -806,7 +800,8 @@ int iris_set_frame_qp(struct iris_inst *inst, enum platform_inst_fw_cap_type cap
->   	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
->   	u32 i_qp_enable = 0, p_qp_enable = 0, b_qp_enable = 0, client_qp_enable;
->   	u32 i_frame_qp, p_frame_qp, b_frame_qp;
-> -	u32 hfi_id = inst->fw_caps[cap_id].hfi_id;
-> +	unsigned int cap_idx = inst->fw_caps[cap_id].idx;
-> +	u32 hfi_id = inst->inst_fw_caps[cap_idx].hfi_id;
->   	struct vb2_queue *q;
->   	u32 hfi_val;
-> 
-> @@ -822,18 +817,18 @@ int iris_set_frame_qp(struct iris_inst *inst, enum platform_inst_fw_cap_type cap
->   		b_qp_enable = 1;
->   	} else {
->   		if (inst->codec == V4L2_PIX_FMT_H264) {
-> -			if (inst->fw_caps[I_FRAME_QP_H264].flags & CAP_FLAG_CLIENT_SET)
-> +			if (inst->fw_caps[I_FRAME_QP_H264].client_set)
->   				i_qp_enable = 1;
-> -			if (inst->fw_caps[P_FRAME_QP_H264].flags & CAP_FLAG_CLIENT_SET)
-> +			if (inst->fw_caps[P_FRAME_QP_H264].client_set)
->   				p_qp_enable = 1;
-> -			if (inst->fw_caps[B_FRAME_QP_H264].flags & CAP_FLAG_CLIENT_SET)
-> +			if (inst->fw_caps[B_FRAME_QP_H264].client_set)
->   				b_qp_enable = 1;
->   		} else {
-> -			if (inst->fw_caps[I_FRAME_QP_HEVC].flags & CAP_FLAG_CLIENT_SET)
-> +			if (inst->fw_caps[I_FRAME_QP_HEVC].client_set)
->   				i_qp_enable = 1;
-> -			if (inst->fw_caps[P_FRAME_QP_HEVC].flags & CAP_FLAG_CLIENT_SET)
-> +			if (inst->fw_caps[P_FRAME_QP_HEVC].client_set)
->   				p_qp_enable = 1;
-> -			if (inst->fw_caps[B_FRAME_QP_HEVC].flags & CAP_FLAG_CLIENT_SET)
-> +			if (inst->fw_caps[B_FRAME_QP_HEVC].client_set)
->   				b_qp_enable = 1;
->   		}
->   	}
-> @@ -857,7 +852,7 @@ int iris_set_frame_qp(struct iris_inst *inst, enum platform_inst_fw_cap_type cap
-> 
->   	return hfi_ops->session_set_property(inst, hfi_id,
->   					 HFI_HOST_FLAGS_NONE,
-> -				     iris_get_port_info(inst, cap_id),
-> +				     iris_get_port_info(inst, cap_idx),
->   				     HFI_PAYLOAD_32_PACKED,
->   				     &hfi_val, sizeof(u32));
->   }
-> @@ -866,7 +861,8 @@ int iris_set_qp_range(struct iris_inst *inst, enum platform_inst_fw_cap_type cap
->   {
->   	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
->   	struct hfi_quantization_range_v2 range;
-> -	u32 hfi_id = inst->fw_caps[cap_id].hfi_id;
-> +	unsigned int cap_idx = inst->fw_caps[cap_id].idx;
-> +	u32 hfi_id = inst->inst_fw_caps[cap_idx].hfi_id;
-> 
->   	if (inst->codec == V4L2_PIX_FMT_HEVC) {
->   		range.min_qp.qp_packed = inst->fw_caps[MIN_FRAME_QP_HEVC].value;
-> @@ -878,7 +874,7 @@ int iris_set_qp_range(struct iris_inst *inst, enum platform_inst_fw_cap_type cap
-> 
->   	return hfi_ops->session_set_property(inst, hfi_id,
->   					 HFI_HOST_FLAGS_NONE,
-> -				     iris_get_port_info(inst, cap_id),
-> +				     iris_get_port_info(inst, cap_idx),
->   				     HFI_PAYLOAD_32_PACKED,
->   				     &range, sizeof(range));
->   }
-> @@ -886,7 +882,7 @@ int iris_set_qp_range(struct iris_inst *inst, enum platform_inst_fw_cap_type cap
->   int iris_set_properties(struct iris_inst *inst, u32 plane)
->   {
->   	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
-> -	struct platform_inst_fw_cap *cap;
-> +	const struct platform_inst_fw_cap *cap;
->   	int ret;
->   	u32 i;
-> 
-> @@ -895,7 +891,9 @@ int iris_set_properties(struct iris_inst *inst, u32 plane)
->   		return ret;
-> 
->   	for (i = 1; i < INST_FW_CAP_MAX; i++) {
-> -		cap = &inst->fw_caps[i];
-> +		unsigned int cap_idx = inst->fw_caps[i].idx;
-> +
-> +		cap = &inst->inst_fw_caps[cap_idx];
->   		if (!iris_valid_cap_id(cap->cap_id))
->   			continue;
-> 
-> diff --git a/drivers/media/platform/qcom/iris/iris_instance.h b/drivers/media/platform/qcom/iris/iris_instance.h
-> index 5982d7adefeab80905478b32cddba7bd4651a691..39d74bef4d188abb919c372b7529d1d0773bd96a 100644
-> --- a/drivers/media/platform/qcom/iris/iris_instance.h
-> +++ b/drivers/media/platform/qcom/iris/iris_instance.h
-> @@ -82,7 +82,8 @@ struct iris_inst {
->   	struct completion		completion;
->   	struct completion		flush_completion;
->   	u32				flush_responses_pending;
-> -	struct platform_inst_fw_cap	fw_caps[INST_FW_CAP_MAX];
-> +	struct platform_inst_fw_cap_value fw_caps[INST_FW_CAP_MAX];
-> +	const struct platform_inst_fw_cap *inst_fw_caps;
->   	struct iris_buffers		buffers[BUF_TYPE_MAX];
->   	u32				fw_min_count;
->   	enum iris_inst_state		state;
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
-> index 5ffc1874e8c6362b1c650e912c230e9c4e3bd160..104ff38219e30e6d52476d44b54338c55ef2ca7b 100644
-> --- a/drivers/media/platform/qcom/iris/iris_platform_common.h
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
-> @@ -148,7 +148,7 @@ enum platform_inst_fw_cap_flags {
->   	CAP_FLAG_MENU			= BIT(1),
->   	CAP_FLAG_INPUT_PORT		= BIT(2),
->   	CAP_FLAG_OUTPUT_PORT		= BIT(3),
-> -	CAP_FLAG_CLIENT_SET		= BIT(4),
-> +	// BIT(4)
+Changes in v2:
+ - Integrated E1000 code into the pciehp driver as an built-in
+   extention rather than as a standalone module.
+ - Moved debug tunables and counters to debugfs.
+ - Removed forward declarations.
+ - Kept the /sys/bus/pci/slots/<slot>/attention interface rather
+   than using NPEM/_DSM or led_classdev as suggested.  The "attention"
+   interface is more beneficial for our site, since it allows us to
+   control the NVMe slot LEDs agnostically across different enclosure
+   vendors and kernel versions using the same scripts.  It is also
+   nice to use the same /sys/bus/pci/slots/<slot>/ sysfs directory for
+   both slot LED toggling ("attention") and slot power control
+   ("power").
+---
+ Documentation/ABI/testing/sysfs-bus-pci |  21 +
+ MAINTAINERS                             |   5 +
+ drivers/pci/hotplug/Kconfig             |  10 +
+ drivers/pci/hotplug/Makefile            |   3 +
+ drivers/pci/hotplug/pciehp.h            |   7 +
+ drivers/pci/hotplug/pciehp_core.c       |  17 +-
+ drivers/pci/hotplug/pciehp_craye1k.c    | 671 ++++++++++++++++++++++++
+ 7 files changed, 733 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/pci/hotplug/pciehp_craye1k.c
 
-/* BIT(4) */
-
->   	CAP_FLAG_BITMASK		= BIT(5),
->   	CAP_FLAG_VOLATILE		= BIT(6),
->   };
-> @@ -165,6 +165,12 @@ struct platform_inst_fw_cap {
->   		   enum platform_inst_fw_cap_type cap_id);
->   };
-> 
-> +struct platform_inst_fw_cap_value {
-> +	unsigned int idx;
-> +	s64 value;
-> +	bool client_set;
-> +};
-> +
->   struct bw_info {
->   	u32 mbs_per_sec;
->   	u32 bw_ddr;
-> diff --git a/drivers/media/platform/qcom/iris/iris_vdec.c b/drivers/media/platform/qcom/iris/iris_vdec.c
-> index ae13c3e1b426bfd81a7b46dc6c3ff5eb5c4860cb..72559497e81c30373711e9b113582039f1fb5153 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vdec.c
-> +++ b/drivers/media/platform/qcom/iris/iris_vdec.c
-> @@ -55,8 +55,9 @@ int iris_vdec_inst_init(struct iris_inst *inst)
->   	inst->buffers[BUF_OUTPUT].min_count = iris_vpu_buf_count(inst, BUF_OUTPUT);
->   	inst->buffers[BUF_OUTPUT].size = f->fmt.pix_mp.plane_fmt[0].sizeimage;
-> 
-> -	memcpy(&inst->fw_caps[0], &core->inst_fw_caps_dec[0],
-> -	       INST_FW_CAP_MAX * sizeof(struct platform_inst_fw_cap));
-> +	memcpy(inst->fw_caps, core->inst_fw_caps_dec,
-> +	       sizeof(inst->fw_caps));
-> +	inst->inst_fw_caps = core->iris_platform_data->inst_fw_caps_dec;
-> 
->   	return iris_ctrls_init(inst);
->   }
-> diff --git a/drivers/media/platform/qcom/iris/iris_venc.c b/drivers/media/platform/qcom/iris/iris_venc.c
-> index 099bd5ed4ae0294725860305254c4cad1ec88d7e..3d1d481f8048305ef9a9bf0cb435ebca68563105 100644
-> --- a/drivers/media/platform/qcom/iris/iris_venc.c
-> +++ b/drivers/media/platform/qcom/iris/iris_venc.c
-> @@ -68,8 +68,9 @@ int iris_venc_inst_init(struct iris_inst *inst)
->   	inst->operating_rate = DEFAULT_FPS;
->   	inst->frame_rate = DEFAULT_FPS;
-> 
-> -	memcpy(&inst->fw_caps[0], &core->inst_fw_caps_enc[0],
-> -	       INST_FW_CAP_MAX * sizeof(struct platform_inst_fw_cap));
-> +	memcpy(inst->fw_caps, core->inst_fw_caps_enc,
-> +	       sizeof(inst->fw_caps));
-> +	inst->inst_fw_caps = core->iris_platform_data->inst_fw_caps_enc;
-> 
->   	return iris_ctrls_init(inst);
->   }
-> 
-> --
-> 2.47.3
-> 
-
+diff --git a/Documentation/ABI/testing/sysfs-bus-pci b/Documentation/ABI/testing/sysfs-bus-pci
+index 92debe879ffb..4c9350b11a17 100644
+--- a/Documentation/ABI/testing/sysfs-bus-pci
++++ b/Documentation/ABI/testing/sysfs-bus-pci
+@@ -231,6 +231,27 @@ Description:
+ 		    - scXX contains the device subclass;
+ 		    - iXX contains the device class programming interface.
+ 
++What:		/sys/bus/pci/slots/.../attention
++Date:		February 2025
++Contact:	linux-pci@vger.kernel.org
++Description:
++		The attention attribute is used to read or write the attention
++		status for an enclosure slot.  This is often used to set the
++		slot LED value on a NVMe storage enclosure.
++
++		Common values:
++		0 = OFF
++		1 = ON
++		2 = blink (ampere, ibmphp, pciehp, rpaphp, shpchp)
++
++		Using the pciehp_craye1k extensions:
++		0 = fault LED OFF, locate LED OFF
++		1 = fault LED ON,  locate LED OFF
++		2 = fault LED OFF, locate LED ON
++		3 = fault LED ON,  locate LED ON
++
++		Other values are no-op, OFF, or ON depending on the driver.
++
+ What:		/sys/bus/pci/slots/.../module
+ Date:		June 2009
+ Contact:	linux-pci@vger.kernel.org
+diff --git a/MAINTAINERS b/MAINTAINERS
+index b45db73e55df..0077befd022a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6531,6 +6531,11 @@ S:	Maintained
+ F:	Documentation/filesystems/cramfs.rst
+ F:	fs/cramfs/
+ 
++CRAY CLUSTERSTOR E1000 NVME SLOT LED DRIVER EXTENSIONS
++M:	Tony Hutter <hutter2@llnl.gov>
++S:	Maintained
++F:	drivers/pci/hotplug/pciehp_craye1k.c
++
+ CRC LIBRARY
+ M:	Eric Biggers <ebiggers@kernel.org>
+ R:	Ard Biesheuvel <ardb@kernel.org>
+diff --git a/drivers/pci/hotplug/Kconfig b/drivers/pci/hotplug/Kconfig
+index 3207860b52e4..8994bffe04c1 100644
+--- a/drivers/pci/hotplug/Kconfig
++++ b/drivers/pci/hotplug/Kconfig
+@@ -183,4 +183,14 @@ config HOTPLUG_PCI_S390
+ 
+ 	  When in doubt, say Y.
+ 
++config HOTPLUG_PCI_PCIE_CRAY_E1000
++	bool "PCIe Hotplug extensions for Cray ClusterStor E1000"
++	depends on HOTPLUG_PCI_PCIE && IPMI_HANDLER=y
++	help
++	  Say Y here if you have a Cray ClusterStor E1000 and want to control
++	  your NVMe slot LEDs.  Without this driver it is not possible
++	  to control the fault and locate LEDs on the E1000's 24 NVMe slots.
++
++	  When in doubt, say N.
++
+ endif # HOTPLUG_PCI
+diff --git a/drivers/pci/hotplug/Makefile b/drivers/pci/hotplug/Makefile
+index 40aaf31fe338..82a1f0592d0a 100644
+--- a/drivers/pci/hotplug/Makefile
++++ b/drivers/pci/hotplug/Makefile
+@@ -66,6 +66,9 @@ pciehp-objs		:=	pciehp_core.o	\
+ 				pciehp_ctrl.o	\
+ 				pciehp_pci.o	\
+ 				pciehp_hpc.o
++ifdef CONFIG_HOTPLUG_PCI_PCIE_CRAY_E1000
++pciehp-objs		+=	pciehp_craye1k.o
++endif
+ 
+ shpchp-objs		:=	shpchp_core.o	\
+ 				shpchp_ctrl.o	\
+diff --git a/drivers/pci/hotplug/pciehp.h b/drivers/pci/hotplug/pciehp.h
+index debc79b0adfb..f4c09a110a07 100644
+--- a/drivers/pci/hotplug/pciehp.h
++++ b/drivers/pci/hotplug/pciehp.h
+@@ -199,6 +199,13 @@ int pciehp_get_raw_indicator_status(struct hotplug_slot *h_slot, u8 *status);
+ 
+ int pciehp_slot_reset(struct pcie_device *dev);
+ 
++#ifdef CONFIG_HOTPLUG_PCI_PCIE_CRAY_E1000
++int craye1k_get_attention_status(struct hotplug_slot *hotplug_slot, u8 *status);
++int craye1k_set_attention_status(struct hotplug_slot *hotplug_slot, u8 status);
++bool is_craye1k_slot(struct controller *ctrl);
++int craye1k_init(void);
++#endif
++
+ static inline const char *slot_name(struct controller *ctrl)
+ {
+ 	return hotplug_slot_name(&ctrl->hotplug_slot);
+diff --git a/drivers/pci/hotplug/pciehp_core.c b/drivers/pci/hotplug/pciehp_core.c
+index f59baa912970..2113c52604ec 100644
+--- a/drivers/pci/hotplug/pciehp_core.c
++++ b/drivers/pci/hotplug/pciehp_core.c
+@@ -73,6 +73,13 @@ static int init_slot(struct controller *ctrl)
+ 		ops->get_attention_status = pciehp_get_raw_indicator_status;
+ 		ops->set_attention_status = pciehp_set_raw_indicator_status;
+ 	}
++#ifdef CONFIG_HOTPLUG_PCI_PCIE_CRAY_E1000
++	if (is_craye1k_slot(ctrl)) {
++		/* slots 1-24 on Cray E1000s are controlled differently */
++		ops->get_attention_status = craye1k_get_attention_status;
++		ops->set_attention_status = craye1k_set_attention_status;
++	}
++#endif
+ 
+ 	/* register this slot with the hotplug pci core */
+ 	ctrl->hotplug_slot.ops = ops;
+@@ -376,8 +383,16 @@ int __init pcie_hp_init(void)
+ 
+ 	retval = pcie_port_service_register(&hpdriver_portdrv);
+ 	pr_debug("pcie_port_service_register = %d\n", retval);
+-	if (retval)
++	if (retval) {
+ 		pr_debug("Failure to register service\n");
++		return retval;
++	}
++
++#ifdef CONFIG_HOTPLUG_PCI_PCIE_CRAY_E1000
++	retval = craye1k_init();
++	if (retval)
++		pr_debug("Failure to register Cray E1000 extensions");
++#endif
+ 
+ 	return retval;
+ }
+diff --git a/drivers/pci/hotplug/pciehp_craye1k.c b/drivers/pci/hotplug/pciehp_craye1k.c
+new file mode 100644
+index 000000000000..8e70b7dc6c65
+--- /dev/null
++++ b/drivers/pci/hotplug/pciehp_craye1k.c
+@@ -0,0 +1,671 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright 2022-2024 Lawrence Livermore National Security, LLC
++ */
++/*
++ * Cray ClusterStor E1000 hotplug slot LED driver extensions
++ *
++ * This driver controls the NVMe slot LEDs on the Cray ClusterStore E1000.
++ * It provides hotplug attention status callbacks for the 24 NVMe slots on
++ * the E1000.  This allows users to access the E1000's locate and fault
++ * LEDs via the normal /sys/bus/pci/slots/<slot>/attention sysfs entries.
++ * This driver uses IPMI to communicate with the E1000 controller to toggle
++ * the LEDs.
++ *
++ * This driver is based off of ibmpex.c
++ */
++
++#include <linux/debugfs.h>
++#include <linux/delay.h>
++#include <linux/errno.h>
++#include <linux/dmi.h>
++#include <linux/ipmi.h>
++#include <linux/module.h>
++#include <linux/pci.h>
++#include <linux/pci_hotplug.h>
++#include <linux/random.h>
++#include "pciehp.h"
++
++/* Cray E1000 commands */
++#define CRAYE1K_CMD_NETFN       0x3c
++#define CRAYE1K_CMD_PRIMARY     0x33
++#define CRAYE1K_CMD_FAULT_LED   0x39
++#define CRAYE1K_CMD_LOCATE_LED  0x22
++
++/* Subcommands */
++#define CRAYE1K_SUBCMD_GET_LED		0x0
++#define CRAYE1K_SUBCMD_SET_LED		0x1
++#define CRAYE1K_SUBCMD_SET_PRIMARY	0x1
++
++/*
++ * Milliseconds to wait after get/set LED command.  200ms value found though
++ * experimentation
++ */
++#define CRAYE1K_POST_CMD_WAIT_MS	200
++
++struct craye1k {
++	struct device *dev;   /* BMC device */
++	struct mutex lock;
++	struct completion read_complete;
++	struct ipmi_addr address;
++	struct ipmi_user *user;
++	int iface;
++
++	long tx_msg_id;
++	struct kernel_ipmi_msg tx_msg;
++	unsigned char tx_msg_data[IPMI_MAX_MSG_LENGTH];
++	unsigned char rx_msg_data[IPMI_MAX_MSG_LENGTH];
++	unsigned long rx_msg_len;
++	unsigned char rx_result;	/* IPMI completion code */
++
++	/* Parent dir for all our debugfs entries */
++	struct dentry *parent;
++
++	/* debugfs stats */
++	u64 check_primary;
++	u64 check_primary_failed;
++	u64 was_already_primary;
++	u64 was_not_already_primary;
++	u64 set_primary;
++	u64 set_initial_primary_failed;
++	u64 set_primary_failed;
++	u64 set_led_locate_failed;
++	u64 set_led_fault_failed;
++	u64 set_led_readback_failed;
++	u64 set_led_failed;
++	u64 get_led_failed;
++	u64 completion_timeout;
++	u64 wrong_msgid;
++	u64 request_failed;
++
++	/* debugfs configuration options */
++
++	/* Print info on spurious IPMI messages */
++	bool print_errors;
++
++	/* Retries for kernel IPMI layer */
++	u32 ipmi_retries;
++
++	/* Timeout in ms for IPMI (0 = use IPMI default_retry_ms) */
++	u32 ipmi_timeout_ms;
++
++	/* Timeout in ms to wait for E1000 message completion */
++	u32 completion_timeout_ms;
++};
++
++/*
++ * Make our craye1k a global so get/set_attention_status() can access it.
++ * This is safe since there's only one node controller on the board, and so it's
++ * impossible to instantiate more than one craye1k.
++ */
++static struct craye1k *craye1k_global;
++
++/* Return parent dir dentry */
++static struct dentry *
++craye1k_debugfs_init(struct craye1k *craye1k)
++{
++	umode_t mode = 0644;
++	struct dentry *parent = debugfs_create_dir("pciehp_craye1k", NULL);
++
++	if (IS_ERR(parent))
++		return NULL;
++
++	debugfs_create_x64("check_primary", mode, parent,
++			   &craye1k->check_primary);
++	debugfs_create_x64("check_primary_failed", mode, parent,
++			   &craye1k->check_primary_failed);
++	debugfs_create_x64("was_already_primary", mode, parent,
++			   &craye1k->was_already_primary);
++	debugfs_create_x64("was_not_already_primary", mode, parent,
++			   &craye1k->was_not_already_primary);
++	debugfs_create_x64("set_primary", mode, parent,
++			   &craye1k->set_primary);
++	debugfs_create_x64("set_initial_primary_failed", mode, parent,
++			   &craye1k->set_initial_primary_failed);
++	debugfs_create_x64("set_primary_failed", mode, parent,
++			   &craye1k->set_primary_failed);
++	debugfs_create_x64("set_led_locate_failed", mode, parent,
++			   &craye1k->set_led_locate_failed);
++	debugfs_create_x64("set_led_fault_failed", mode, parent,
++			   &craye1k->set_led_fault_failed);
++	debugfs_create_x64("set_led_readback_failed", mode, parent,
++			   &craye1k->set_led_readback_failed);
++	debugfs_create_x64("set_led_failed", mode, parent,
++			   &craye1k->set_led_failed);
++	debugfs_create_x64("get_led_failed", mode, parent,
++			   &craye1k->get_led_failed);
++	debugfs_create_x64("completion_timeout", mode, parent,
++			   &craye1k->completion_timeout);
++	debugfs_create_x64("wrong_msgid", mode, parent,
++			   &craye1k->wrong_msgid);
++	debugfs_create_x64("request_failed", mode, parent,
++			   &craye1k->request_failed);
++
++	debugfs_create_x32("ipmi_retries", mode, parent,
++			   &craye1k->ipmi_retries);
++	debugfs_create_x32("ipmi_timeout_ms", mode, parent,
++			   &craye1k->ipmi_timeout_ms);
++	debugfs_create_x32("completion_timeout_ms", mode, parent,
++			   &craye1k->completion_timeout_ms);
++	debugfs_create_bool("print_errors", mode, parent,
++			    &craye1k->print_errors);
++
++	return parent;
++}
++
++/*
++ * craye1k_msg_handler() - IPMI message response handler
++ */
++static void craye1k_msg_handler(struct ipmi_recv_msg *msg, void *user_msg_data)
++{
++	struct craye1k *craye1k = user_msg_data;
++
++	if (msg->msgid != craye1k->tx_msg_id) {
++		craye1k->wrong_msgid++;
++		if (craye1k->print_errors) {
++			dev_warn_ratelimited(craye1k->dev, "rx msgid %d != %d",
++					     (int)msg->msgid,
++					     (int)craye1k->tx_msg_id);
++		}
++		ipmi_free_recv_msg(msg);
++		return;
++	}
++
++	/* Set rx_result to the IPMI completion code */
++	if (msg->msg.data_len > 0)
++		craye1k->rx_result = msg->msg.data[0];
++	else
++		craye1k->rx_result = IPMI_UNKNOWN_ERR_COMPLETION_CODE;
++
++	if (msg->msg.data_len > 1) {
++		/* Exclude completion code from data bytes */
++		craye1k->rx_msg_len = msg->msg.data_len - 1;
++		memcpy(craye1k->rx_msg_data, msg->msg.data + 1,
++		       craye1k->rx_msg_len);
++	} else {
++		craye1k->rx_msg_len = 0;
++	}
++
++	ipmi_free_recv_msg(msg);
++
++	complete(&craye1k->read_complete);
++}
++
++static const struct ipmi_user_hndl craye1k_user_hndl = {
++	.ipmi_recv_hndl = craye1k_msg_handler
++};
++
++static void craye1k_new_smi(int iface, struct device *dev)
++{
++	int rc;
++	struct craye1k *craye1k;
++
++	/* There's only one node controller so driver data should not be set */
++	WARN_ON(craye1k_global);
++
++	craye1k = kzalloc(sizeof(*craye1k), GFP_KERNEL);
++	if (!craye1k)
++		return;
++
++	craye1k->address.addr_type = IPMI_SYSTEM_INTERFACE_ADDR_TYPE;
++	craye1k->address.channel = IPMI_BMC_CHANNEL;
++	craye1k->iface = iface;
++	craye1k->dev = dev;
++	craye1k->tx_msg.data = craye1k->tx_msg_data;
++	craye1k->ipmi_retries = 4;
++	craye1k->ipmi_timeout_ms = 500;
++	craye1k->completion_timeout_ms = 300;
++
++	init_completion(&craye1k->read_complete);
++	mutex_init(&craye1k->lock);
++
++	dev_set_drvdata(dev, craye1k);
++
++	rc = ipmi_create_user(craye1k->iface, &craye1k_user_hndl, craye1k,
++			      &craye1k->user);
++	if (rc < 0) {
++		dev_err(dev, "Unable to register IPMI user, iface %d\n",
++			craye1k->iface);
++		kfree(craye1k);
++		dev_set_drvdata(dev, NULL);
++		return;
++	}
++
++	craye1k_global = craye1k;
++
++	craye1k->parent = craye1k_debugfs_init(craye1k);
++	if (!craye1k->parent)
++		dev_warn(dev, "Cannot create debugfs");
++
++	dev_info(dev, "Cray ClusterStor E1000 slot LEDs registered");
++}
++
++static void craye1k_smi_gone(int iface)
++{
++	pr_warn("craye1k: Got unexpected smi_gone, iface=%d", iface);
++}
++
++static struct ipmi_smi_watcher craye1k_smi_watcher = {
++	.owner = THIS_MODULE,
++	.new_smi = craye1k_new_smi,
++	.smi_gone = craye1k_smi_gone
++};
++
++/*
++ * craye1k_send_message() - Send the message already setup in 'craye1k'
++ *
++ * Context: craye1k->lock is already held.
++ * Return: 0 on success, non-zero on error.
++ */
++static int craye1k_send_message(struct craye1k *craye1k)
++{
++	int rc;
++
++	rc = ipmi_validate_addr(&craye1k->address, sizeof(craye1k->address));
++	if (rc) {
++		dev_err_ratelimited(craye1k->dev, "ipmi_validate_addr() = %d\n",
++				    rc);
++		return rc;
++	}
++
++	craye1k->tx_msg_id++;
++
++	rc = ipmi_request_settime(craye1k->user, &craye1k->address,
++				  craye1k->tx_msg_id, &craye1k->tx_msg, craye1k,
++				  0, craye1k->ipmi_retries,
++				  craye1k->ipmi_timeout_ms);
++
++	if (rc) {
++		craye1k->request_failed++;
++		return rc;
++	}
++
++	return 0;
++}
++
++/*
++ * craye1k_do_message() - Send the message in 'craye1k' and wait for a response
++ *
++ * Context: craye1k->lock is already held.
++ * Return: 0 on success, non-zero on error.
++ */
++static int craye1k_do_message(struct craye1k *craye1k)
++{
++	int rc;
++	struct completion *read_complete = &craye1k->read_complete;
++	unsigned long tout = msecs_to_jiffies(craye1k->completion_timeout_ms);
++
++	WARN_ON(!mutex_is_locked(&craye1k->lock));
++
++	rc = craye1k_send_message(craye1k);
++	if (rc)
++		return rc;
++
++	rc = wait_for_completion_killable_timeout(read_complete, tout);
++	if (rc == 0) {
++		/* timed out */
++		craye1k->completion_timeout++;
++		return -ETIME;
++	}
++
++	return 0;
++}
++
++/*
++ * __craye1k_do_command() - Do an IPMI command
++ *
++ * Send a command with optional data bytes, and read back response bytes.
++ *
++ * Context: craye1k->lock is already held.
++ * Returns: 0 on success, non-zero on error.
++ */
++static int __craye1k_do_command(struct craye1k *craye1k, u8 netfn, u8 cmd,
++				u8 *send_data, u8 send_data_len, u8 *recv_data,
++				u8 recv_data_len)
++{
++	int rc;
++
++	craye1k->tx_msg.netfn = netfn;
++	craye1k->tx_msg.cmd = cmd;
++
++	if (send_data) {
++		memcpy(&craye1k->tx_msg_data[0], send_data, send_data_len);
++		craye1k->tx_msg.data_len = send_data_len;
++	} else {
++		craye1k->tx_msg_data[0] = 0;
++		craye1k->tx_msg.data_len = 0;
++	}
++
++	rc = craye1k_do_message(craye1k);
++	if (rc == 0)
++		memcpy(recv_data, craye1k->rx_msg_data, recv_data_len);
++
++	return rc;
++}
++
++/*
++ * craye1k_do_command() - Do a Cray E1000 specific IPMI command.
++ * @cmd: Cray E1000 specific command
++ * @send_data:  Data to send after the command
++ * @send_data_len: Data length
++ *
++ * Context: craye1k->lock is already held.
++ * Returns: the last byte from the response or 0 if response had no response
++ * data bytes, else -1 on error.
++ */
++static int craye1k_do_command(struct craye1k *craye1k, u8 cmd, u8 *send_data,
++			      u8 send_data_len)
++{
++	int rc;
++
++	rc = __craye1k_do_command(craye1k, CRAYE1K_CMD_NETFN, cmd, send_data,
++				  send_data_len, NULL, 0);
++	if (rc != 0) {
++		/* Error attempting command */
++		return -1;
++	}
++
++	if (craye1k->tx_msg.data_len == 0)
++		return 0;
++
++	/* Return last received byte value */
++	return craye1k->rx_msg_data[craye1k->rx_msg_len - 1];
++}
++
++/*
++ * __craye1k_set_primary() - Tell the BMC we want to be the primary server
++ *
++ * An E1000 board has two physical servers on it.  In order to set a slot
++ * NVMe LED, this server needs to first tell the BMC that it's the primary
++ * server.
++ *
++ * Context: craye1k->lock is already held.
++ * Returns: 0 on success, non-zero on error.
++ */
++static int __craye1k_set_primary(struct craye1k *craye1k)
++{
++	u8 bytes[2] = {CRAYE1K_SUBCMD_SET_PRIMARY, 1};	/* set primary to 1 */
++
++	craye1k->set_primary++;
++	return craye1k_do_command(craye1k, CRAYE1K_CMD_PRIMARY, bytes, 2);
++}
++
++/*
++ * craye1k_is_primary() - Are we the primary server?
++ *
++ * Context: craye1k->lock is already held.
++ * Returns: true if we are the primary server, false otherwise.
++ */
++static bool craye1k_is_primary(struct craye1k *craye1k)
++{
++	u8 byte = 0;
++	int rc;
++
++	/* Response byte is 0x1 on success */
++	rc = craye1k_do_command(craye1k, CRAYE1K_CMD_PRIMARY, &byte, 1);
++	craye1k->check_primary++;
++	if (rc == 0x1)
++		return true;   /* success */
++
++	craye1k->check_primary_failed++;
++	return false;   /* We are not the primary server node */
++}
++
++/*
++ * craye1k_set_primary() - Attempt to set ourselves as the primary server
++ *
++ * Context: craye1k->lock is already held.
++ * Returns: 0 on success, -1 otherwise.
++ */
++static int craye1k_set_primary(struct craye1k *craye1k)
++{
++	int tries = 10;
++
++	if (craye1k_is_primary(craye1k)) {
++		craye1k->was_already_primary++;
++		return 0;
++	}
++	craye1k->was_not_already_primary++;
++
++	/* delay found through experimentation */
++	msleep(300);
++
++	if (__craye1k_set_primary(craye1k) != 0) {
++		craye1k->set_initial_primary_failed++;
++		return -1;	/* error */
++	}
++
++	/*
++	 * It can take 2 to 3 seconds after setting primary for the controller
++	 * to report that it is the primary.
++	 */
++	while (tries--) {
++		msleep(500);
++		if (craye1k_is_primary(craye1k))
++			break;
++	}
++
++	if (tries == 0) {
++		craye1k->set_primary_failed++;
++		return -1;	/* never reported that it's primary */
++	}
++
++	/* Wait for primary switch to finish */
++	msleep(1500);
++
++	return 0;
++}
++
++/*
++ * craye1k_get_slot_led() - Get slot LED value
++ * @slot: Slot number (1-24)
++ * @is_locate_led: 0 = get fault LED value, 1 = get locate LED value
++ *
++ * Context: craye1k->lock is already held.
++ * Returns: slot value on success, -1 on failure.
++ */
++static int craye1k_get_slot_led(struct craye1k *craye1k, unsigned char slot,
++				bool is_locate_led)
++{
++	u8 bytes[2];
++	u8 cmd;
++
++	bytes[0] = CRAYE1K_SUBCMD_GET_LED;
++	bytes[1] = slot;
++
++	cmd = is_locate_led ? CRAYE1K_CMD_LOCATE_LED : CRAYE1K_CMD_FAULT_LED;
++
++	return craye1k_do_command(craye1k, cmd, bytes, 2);
++}
++
++/*
++ * craye1k_set_slot_led() - Attempt to set the locate/fault LED to a value
++ * @slot: Slot number (1-24)
++ * @is_locate_led: 0 = use fault LED, 1 = use locate LED
++ * @value: Value to set (0 or 1)
++ *
++ * Check the LED value after calling this function to ensure it has been set
++ * properly.
++ *
++ * Context: craye1k->lock is already held.
++ * Returns: 0 on success, non-zero on failure.
++ */
++static int craye1k_set_slot_led(struct craye1k *craye1k, unsigned char slot,
++				unsigned char is_locate_led,
++				unsigned char value)
++{
++	u8 bytes[3];
++	u8 cmd;
++
++	bytes[0] = CRAYE1K_SUBCMD_SET_LED;
++	bytes[1] = slot;
++	bytes[2] = value;
++
++	cmd = is_locate_led ? CRAYE1K_CMD_LOCATE_LED : CRAYE1K_CMD_FAULT_LED;
++
++	return craye1k_do_command(craye1k, cmd, bytes, 3);
++}
++
++/*
++ * __craye1k_get_attention_status() - Get LED value
++ *
++ * Context: craye1k->lock is already held.
++ * Returns: 0 on success, -EIO on failure.
++ */
++static int __craye1k_get_attention_status(struct hotplug_slot *hotplug_slot,
++					  u8 *status, bool set_primary)
++{
++	unsigned char slot;
++	int locate, fault;
++	struct craye1k *craye1k;
++
++	craye1k = craye1k_global;
++	slot = PSN(to_ctrl(hotplug_slot));
++
++	if (set_primary) {
++		if (craye1k_set_primary(craye1k) != 0) {
++			craye1k->get_led_failed++;
++			return -EIO;
++		}
++	}
++
++	locate = craye1k_get_slot_led(craye1k, slot, true);
++	if (locate == -1) {
++		craye1k->get_led_failed++;
++		return -EIO;
++	}
++	msleep(CRAYE1K_POST_CMD_WAIT_MS);
++
++	fault = craye1k_get_slot_led(craye1k, slot, false);
++	if (fault == -1) {
++		craye1k->get_led_failed++;
++		return -EIO;
++	}
++	msleep(CRAYE1K_POST_CMD_WAIT_MS);
++
++	*status = locate << 1 | fault;
++
++	return 0;
++}
++
++int craye1k_get_attention_status(struct hotplug_slot *hotplug_slot,
++				 u8 *status)
++{
++	int rc;
++	struct craye1k *craye1k;
++
++	craye1k = craye1k_global;
++
++	if (mutex_lock_interruptible(&craye1k->lock) != 0)
++		return -EINTR;
++
++	rc =  __craye1k_get_attention_status(hotplug_slot, status, true);
++
++	mutex_unlock(&craye1k->lock);
++	return rc;
++}
++
++int craye1k_set_attention_status(struct hotplug_slot *hotplug_slot,
++				 u8 status)
++{
++	unsigned char slot;
++	int tries = 4;
++	int rc;
++	u8 new_status;
++	struct craye1k *craye1k;
++	bool locate, fault;
++
++	craye1k = craye1k_global;
++
++	slot = PSN(to_ctrl(hotplug_slot));
++
++	if (mutex_lock_interruptible(&craye1k->lock) != 0)
++		return -EINTR;
++
++	/* Retry to ensure all LEDs are set */
++	while (tries--) {
++		/*
++		 * The node must first set itself to be the primary node before
++		 * setting the slot LEDs (each board has two nodes, or
++		 * "servers" as they're called by the manufacturer).  This can
++		 * lead to contention if both nodes are trying to set the LEDs
++		 * at the same time.
++		 */
++		rc = craye1k_set_primary(craye1k);
++		if (rc != 0) {
++			/* Could not set as primary node.  Just retry again. */
++			continue;
++		}
++
++		/* Write value twice to increase success rate */
++		locate = (status & 0x2) >> 1;
++		craye1k_set_slot_led(craye1k, slot, 1, locate);
++		if (craye1k_set_slot_led(craye1k, slot, 1, locate) != 0) {
++			craye1k->set_led_locate_failed++;
++			continue;	/* fail, retry */
++		}
++
++		msleep(CRAYE1K_POST_CMD_WAIT_MS);
++
++		fault = status & 0x1;
++		craye1k_set_slot_led(craye1k, slot, 0, fault);
++		if (craye1k_set_slot_led(craye1k, slot, 0, fault) != 0) {
++			craye1k->set_led_fault_failed++;
++			continue;	/* fail, retry */
++		}
++
++		msleep(CRAYE1K_POST_CMD_WAIT_MS);
++
++		rc = __craye1k_get_attention_status(hotplug_slot, &new_status,
++						    false);
++
++		msleep(CRAYE1K_POST_CMD_WAIT_MS);
++
++		if (rc == 0 && new_status == status)
++			break;	/* success */
++
++		craye1k->set_led_readback_failed++;
++
++		/*
++		 * At this point we weren't successful in setting the LED and
++		 * need to try again.
++		 *
++		 * Do a random back-off to reduce contention with other server
++		 * node in the unlikely case that both server nodes are trying to
++		 * trying to set a LED at the same time.
++		 *
++		 * The 500ms minimum in the back-off reduced the chance of this
++		 * whole retry loop failing from 1 in 700 to none in 10000.
++		 */
++		msleep(500 + (get_random_long() % 500));
++	}
++	mutex_unlock(&craye1k->lock);
++	if (tries == 0) {
++		craye1k->set_led_failed++;
++		return -EIO;
++	}
++
++	return 0;
++}
++
++static bool is_craye1k_board(void)
++{
++	return dmi_match(DMI_PRODUCT_NAME, "VSSEP1EC");
++}
++
++bool is_craye1k_slot(struct controller *ctrl)
++{
++	return (PSN(ctrl) >= 1 && PSN(ctrl) <= 24 && is_craye1k_board());
++}
++
++int craye1k_init(void)
++{
++	if (!is_craye1k_board())
++		return 0;
++
++	return ipmi_smi_watcher_register(&craye1k_smi_watcher);
++}
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Tony Hutter <hutter2@llnl.gov>");
++MODULE_DESCRIPTION("Cray E1000 NVMe Slot LED driver");
+-- 
+2.43.7
 
