@@ -1,204 +1,211 @@
-Return-Path: <linux-kernel+bounces-845042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C908BBC35A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 06:56:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4885EBC35B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 06:57:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8620B4E9D96
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 04:56:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 327011886461
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 04:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF912BFC60;
-	Wed,  8 Oct 2025 04:56:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE5C2BFC7B;
+	Wed,  8 Oct 2025 04:57:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="oeLrQ1Dr"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Nn/4N5wH"
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012014.outbound.protection.outlook.com [52.101.53.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EBA28C871;
-	Wed,  8 Oct 2025 04:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759899363; cv=none; b=NbXyogxHwIblKuM4tS4Js78bNHrlPph57UNljt/dzNeea7bSWqJ6KGymbXFk0T6HZDjjCv/HqmyKGJ/vkQCjGhio4yJ6qNHn24f4mTJDdlNgKMbsUCrVJdb/kpyLi3GjkCn02+405TE8LHa9qCh3KNjFvcHc9C6AbHlQHFLFHsQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759899363; c=relaxed/simple;
-	bh=V0GNeOk6Yb9a+PXldWhn3TuKk2jS4hh+yoe0F9aSbBs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YbD+/qFxibPiT7h+ybyDFwBZyxZ+9SaqWPMnXFauxdKmehLIdPy8/mEzb0u//OKNmFZw+fXZhg6yU8zMKsCFBen1uw4M5PjfMUdjw3j6+LeLJmBm5Aj0Fk+ZPJTbmRZXeWoRdig0vnlOOxVB5hCULuo2iXocDb6iV+IkESUEH6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=oeLrQ1Dr; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5984thZm3968494;
-	Tue, 7 Oct 2025 23:55:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1759899343;
-	bh=DdhlJmgv1OEzc891uVU86WV12G76t8SGWQ8hyvFzM18=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=oeLrQ1DrEl1hkbAsJpu8uYWmnjuywpAkcNk4lVlpjayE9qqgQPyjla3atcYeu/5vV
-	 9Xr7TYsx1UNsIMvn3PfLlW2oy9RxrNO+9Zg4UgWyB76gTeXifjsWkuGZbrZr8HH3Db
-	 ff3Eq26UUzKSllS0Il33MiyPnb22NSzVvKyf7Tzo=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5984tg1E1201214
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 7 Oct 2025 23:55:42 -0500
-Received: from DFLE205.ent.ti.com (10.64.6.63) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 7
- Oct 2025 23:55:42 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE205.ent.ti.com
- (10.64.6.63) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 7 Oct 2025 23:55:42 -0500
-Received: from lelvem-mr06.itg.ti.com ([10.250.165.138])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5984tQt82223240;
-	Tue, 7 Oct 2025 23:55:35 -0500
-From: Baojun Xu <baojun.xu@ti.com>
-To: <broonie@kernel.org>, <tiwai@suse.de>
-CC: <andriy.shevchenko@linux.intel.com>, <13916275206@139.com>,
-        <shenghao-ding@ti.com>, <baojun.xu@ti.com>,
-        <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <lgirdwood@gmail.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <devicetree@vger.kernel.org>, <k-yi@ti.com>,
-        <henry.lo@ti.com>, <robinchen@ti.com>, <jesse-ji@ti.com>,
-        <will-wang@ti.com>, <jim.shil@goertek.com>, <toastcheng@google.com>,
-        <chinkaiting@google.com>
-Subject: [PATCH v5 2/2] ASoC: dt-bindings: ti,tas2781: Add TAS58XX
-Date: Wed, 8 Oct 2025 12:54:59 +0800
-Message-ID: <20251008045500.44477-2-baojun.xu@ti.com>
-X-Mailer: git-send-email 2.43.0.windows.1
-In-Reply-To: <20251008045500.44477-1-baojun.xu@ti.com>
-References: <20251008045500.44477-1-baojun.xu@ti.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9E928C871;
+	Wed,  8 Oct 2025 04:57:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759899433; cv=fail; b=HJPNuNJB01M3zdmrIIguAH18MuOxDfZtDdbTZqZ+3Ukud8wWdkUKlqjXdZdCOj6tGxVyCwt6RjblcZTcq+TUpsXklDJ4xkWaYYPrOSjE87I9uWb13OGD+4NadO0ITVxfEJbredkaw2k5s5fgL/z1HNKNkXEv9HhYbKad/Ry8VPo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759899433; c=relaxed/simple;
+	bh=xLyU0tNHw8s7H9F/6F2wfUFnwDhEZHdpmTRkRhtMmbM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=WXWeqXaOW2bXtzRqRAFlK5Vkz66FMfhbbe8uLVRxnrtqD1ZzcYLDC/Jk+vqYDPNUR2zghzJnXwxHvie1QgdtFvFYjl3/DOqmFcu8t28Rpv2KrknS3j2yuem5K/5Zn76ouNvu+WlmgikehcEDph6l20XTvYju2xQODnTns1Ocy8w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Nn/4N5wH; arc=fail smtp.client-ip=52.101.53.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=K/MLSRmeRVMCZjGCcY9owemXlErOEsAsdyWB5yhkMA7UuNPAoGVzRpJvHMc05AWtLbGyr3IoCJfrrbyT4XIRfg3il30iJkzIiSXLJqhI4+ejowz6jyITbhiK98M+6uwNuq2B6RWUhygtNxfc35qfKwSZeFFUjIj8kPlbla1lJfsT0VwVoVC4lo0VGmfhSp0D3duSqQtpQ4gi6eeqTsImYGZ9WsokBF5jur2gowbiWwEgpQkvRP/eS3Wzxn7vAD2xgMxt2aOxbrNmI0vjiKAkX06v8wuV+Gqe2vD/vNcCxf1mhzhk6ARy9dyB2BiJwuUvzIN/JaDLTBjk/teTldXjeQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xLyU0tNHw8s7H9F/6F2wfUFnwDhEZHdpmTRkRhtMmbM=;
+ b=e3OaGBiTKOL0IAbdQ3hg0QzwaNipJ4ryUTNQ6/0tkeYxp4+QUqvzRak2etkMnqXbk2mf4xrftUaqfdFHJckujNddiqHUajuT6yqxQoNFfnychNF7JmwJyQrGvfU64pgAUvAcD1ka3yGXu0VtAIIN8Dg9sGJgU/s/nP1xF0I9mFr/GWLEV+yk3rdiv2L1qExSjKvx2KKqsJjEczJwn2UT/tVrn6yhH/Ei+mhSiulgcBOSzC5b+KMfjeGrtzVIHbRKv8ZVTHxl8DomTy5AwpGd2jhOYkq1Z8LIRfcJ0Jn5qLGxIbqCsbKVWeLU4pgMXzTfRluA0sy+vMufURM33Irydw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xLyU0tNHw8s7H9F/6F2wfUFnwDhEZHdpmTRkRhtMmbM=;
+ b=Nn/4N5wHJ3RdfMRUVuFh3ahD0OG3AwY2eWMTT/k3Bg2Z6dsActEJzRX0aoqU01MTJo2iMhoyzOq9mMOrqouH5XdRiejMOtgpHUs9GZr8Q0j5O852TMAsfzG1q7Fxli9H9oHkb51PdV4CcBWvQuIerOObgFKkrinUn7MiOfUEIdR5B72xuqhOPcCFWJUl9BEhpDVeXtZadJn+4n0DtlWmQSkwAZ70ajdsSjeTAC1rI8x+YLkD0+rBgo0EU4psBhzuVH147BN7oTIDgBw6i42FQ2ljD1aTXyQYJe0CoZx20SAJrjfDebYy7fuz4S/pH9TnfgbfPOJf/6Ps4tY7pvWsgg==
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by SJ2PR12MB9191.namprd12.prod.outlook.com (2603:10b6:a03:55a::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Wed, 8 Oct
+ 2025 04:56:56 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9182.017; Wed, 8 Oct 2025
+ 04:56:56 +0000
+From: Joel Fernandes <joelagnelf@nvidia.com>
+To: Timur Tabi <ttabi@nvidia.com>
+CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	Alistair Popple <apopple@nvidia.com>, Alexandre Courbot
+	<acourbot@nvidia.com>, "dakr@kernel.org" <dakr@kernel.org>,
+	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
+	"lossin@kernel.org" <lossin@kernel.org>, "ojeda@kernel.org"
+	<ojeda@kernel.org>, "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
+	"a.hindborg@kernel.org" <a.hindborg@kernel.org>, "tzimmermann@suse.de"
+	<tzimmermann@suse.de>, "tmgross@umich.edu" <tmgross@umich.edu>,
+	"alex.gaynor@gmail.com" <alex.gaynor@gmail.com>, "simona@ffwll.ch"
+	<simona@ffwll.ch>, "mripard@kernel.org" <mripard@kernel.org>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, John Hubbard
+	<jhubbard@nvidia.com>, "nouveau@lists.freedesktop.org"
+	<nouveau@lists.freedesktop.org>, "bjorn3_gh@protonmail.com"
+	<bjorn3_gh@protonmail.com>, "airlied@gmail.com" <airlied@gmail.com>,
+	"aliceryhl@google.com" <aliceryhl@google.com>, "gary@garyguo.net"
+	<gary@garyguo.net>, "lyude@redhat.com" <lyude@redhat.com>
+Subject: Re: [PATCH v4 12/13] nova-core: falcon: Add support to write firmware
+ version
+Thread-Topic: [PATCH v4 12/13] nova-core: falcon: Add support to write
+ firmware version
+Thread-Index: AQHcN+h2TYtDg/9gF0G9fWmuV06iR7S3lV4AgAAawqE=
+Date: Wed, 8 Oct 2025 04:56:56 +0000
+Message-ID: <2002AEC7-A3B6-4E77-BDCF-B21E9D7EA0CD@nvidia.com>
+References: <20251008001253.437911-1-apopple@nvidia.com>
+	 <20251008001253.437911-13-apopple@nvidia.com>
+ <aaf218306186aa8959d8f3971a62afb9f229548b.camel@nvidia.com>
+In-Reply-To: <aaf218306186aa8959d8f3971a62afb9f229548b.camel@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN7PR12MB8059:EE_|SJ2PR12MB9191:EE_
+x-ms-office365-filtering-correlation-id: d759a62f-e1bc-47cd-0ef7-08de06271b2f
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?Zm5XcTJFM3gyODJvM0l0bXFwRkxYOVpJZlg0WEM4YUhMOTZTRGFjV29lZFNo?=
+ =?utf-8?B?SkQ0RFlaSlAzREcycnlwYWU4clVodE80eDBPNTVuYTVqekRzUkQ1b1JxRW9V?=
+ =?utf-8?B?bEVvT1pmMlRpaDE3SzBRL2xIdGZnR2dSNVZhQWlnN2JMYmxZUVdFZXVCSVRT?=
+ =?utf-8?B?aENRMkFYaGlESVZpZCs0STJSWXErRGtMWnZVOVhPU2hxbTlNMm9mY0JQUFZR?=
+ =?utf-8?B?NjdLeXE0WDV5S2NZa05XaGtmdkM1UnF1NU9MNTN5dEpYbE1DQXVJOHVyaTRZ?=
+ =?utf-8?B?YXIzSXpFeEpDN0hRK015LzFHNjdSRkNkd28wYnRlb2FiSFR6MXVKaEpreGFL?=
+ =?utf-8?B?WXUxc2trbW45aG9jc1RDaG14M0I5MzFTTEtodWpZRXc4NnIySHFsa05iVi9C?=
+ =?utf-8?B?K1dSMitQcjRmTUJwdGt5UEh2YUNJWXZsUmJ3bXIvNFhCQzZubzNUQmsvUlcx?=
+ =?utf-8?B?UmN6N0NYcDMyU1dlSXZIUVVCSVBvRFNPblNMOXg4TWk2UEplczdlUkQ2d3lv?=
+ =?utf-8?B?bTBuaXRJeElKT1UwQmtEVEQwSHk1a1dsWWp1NXZTQVZXUGNXSWwxdVE4dm1m?=
+ =?utf-8?B?Mi9uMXZJSjZPZmt6enRXSTJ4UEhLdENPcm9WVUJBd05aVnIxbVk4cUN3b0lh?=
+ =?utf-8?B?aU9xTytsNmUzS1JxemI2Y2ZHVDJwSm0xMS9kM2xySnROajJGNFNFRTNjYlc3?=
+ =?utf-8?B?OUFXRmZJVE5NenJiTU94dnJPUEJjaVBrb1gyTXFlYmJ4RUxzeS9KOEZUcVJP?=
+ =?utf-8?B?Q2dKSWJnRzZHVnk2bWt5cG9UZkllclNFZjBMaVhwejNoeE15N2x1N0IrYzBI?=
+ =?utf-8?B?a2o5a0tLY25lU0hIa1E5cWlyak5xRzlHYzFTUFVGd0NWL0VFYjJ4eHZDTzVn?=
+ =?utf-8?B?MVVjYVdMOHp3RWNCVWFoVi95ZVhTY2t3THVjemdQZFZPMFREbVdJejNjM3FI?=
+ =?utf-8?B?WDJLUXNjOXFFaHBDV0tFRWowRTdwdi95dGIrNXBaeUsycE1aUnBBeGhwWHBs?=
+ =?utf-8?B?TmtCdlZqVVNIYkthbDhIUTBzT2ZVS1VpOHRZV0RCSktTZ3R0Z01lbkl4bTl6?=
+ =?utf-8?B?S0Y5TUxUTk5yS05XcElRNVFEcEYrZTFRZDZPQ2psR0FtYVladG9KMm83OHV1?=
+ =?utf-8?B?cW1zTzFveVlFdEpGallTOXQrT0VSOEZGaHQxZTJqc2ZEMjRxcUYvcU1PSFFJ?=
+ =?utf-8?B?S2NkOVh3T0trZEQxSzBGM1poWGR2TStCZGFEVHJZT2JHVTZENlBLakFmMWNR?=
+ =?utf-8?B?YmZ4bzlMcW1vdHBTS28vMldneUpTWXdpbXBsY2pETmN6NDNCcVpYbEhHZWJq?=
+ =?utf-8?B?ckc1QXF4NzVuOU5lYk9KUWlsLy83VC9EdkJWa2UwTnl3dGFqd2k5NDVmaTBQ?=
+ =?utf-8?B?aEZjQzUrY3R2Z2xQajlIL0R4MmpRUS9uWlJlL0xkS1UrY1diYUhZYXRadmhS?=
+ =?utf-8?B?Mml0bXRvVHA5S1MvK0hwYkdFd2VzWHFlclEzTXJod2wxQzRyTXZGaDd1a1JP?=
+ =?utf-8?B?RUFxak5ycjJoU1lrN0xTTUhmNktYSmJjdnR6OFpWaGtFa3pidkhnZ2JxM1B4?=
+ =?utf-8?B?T204Tlc4UE1yWVpxdzBhVnBsQm1MUy81TzNVS1dQR1lFNzF5c3Qwck53WmhM?=
+ =?utf-8?B?bVVOcmpMVGxOYWlKV1I1MENpVEJCa3dZMDlWR2RvdlpnL2syR3VvZHp2eGE5?=
+ =?utf-8?B?MzA2RWpzZzN3aWRuVzl5d1ZOWjRrSVpienU1RmhFdXJlNUxzQnVxZURNdXNK?=
+ =?utf-8?B?aWExdUovNHRKaTZkVWYxYUpnbXpFUE0vNHZYVXBUUG5JOUxOcjBEVmNvbDFX?=
+ =?utf-8?B?ZFFWTzl3Tmw5akNVd3c4L05FNEpDWWpsT2J3U25QMHJhcmNmcHltTExrT0dk?=
+ =?utf-8?B?VjVyaFQyb0FOelJqbmtmNFhFd2ZBYlZmUFlFSlRkcDlIOWdVZUxVZTBSM2xS?=
+ =?utf-8?B?MkI4cURxMnZNU3dwZllIRjRjUkJOd214Q25hZ1FuU3BhZnVPK3hqVnZDRFlj?=
+ =?utf-8?B?TmxpUThOQkhZVXBJQm5qODgrYmhPYzI1THp0UTd5TmlCVkx0UXBTcG9XWUNq?=
+ =?utf-8?Q?/0Ee2K?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?enVHa3F2SDROM1JZOWxzRkE1cVBlY2F1V1JpVEFSc0ttNUF3YVRFVmpqWG1n?=
+ =?utf-8?B?SlMwb1Zha0loZjFjeE1UdmtjRXlTNGRlNGNVeGJyTWpSMzkvZFYvWnlEUVB4?=
+ =?utf-8?B?WTFHNWhZTHltRUZmTWpqRHNSWi9PRkZoL3pMYWd1NFcxYmVoc0xyd3ZqQy9q?=
+ =?utf-8?B?TU9sS2F3UEdFallYQkdES2hrL0JmaFdzdE04ajRjMnMrSXdyVkVmcStNbUky?=
+ =?utf-8?B?cUs5OWNERDFUOWxDWUdlOVZrTEJ2NXl0U1FSNk45SEhxRXBpUmZZZDlkbnJD?=
+ =?utf-8?B?aEVFMEVrYzhROGlQUkhJbG5JRnB4Rm42bWdvbmNKeWE2dlRzdm9VdkpLZm41?=
+ =?utf-8?B?VmhNYkpJN05pYzVDaUlMMG5BcWJBYi8xakF5LzhDNDBjQnlvVkNLREhMMkps?=
+ =?utf-8?B?Zm1oNExYdmU1NGpieEdKY2V4T1M1S3VHdEZ1dlI4bjZnMlZlWmpvSFJaTFZv?=
+ =?utf-8?B?ZG5VMFF0TFZzNFZaTUlxT1A3VGlIbmttMlUvdkVHdm8vdDVUS05DclhLaFB6?=
+ =?utf-8?B?NTJaNklTV3UxRWRXMU1JbkdkQmdVaDVvK3lxOFFQdDZNZG54c2ZUNmVBdURE?=
+ =?utf-8?B?N0psanZPOUZlR1VCRFhhQk4vc1lHOGJrclRIYWxjWVdRUmUrZHVWUjFJMVVQ?=
+ =?utf-8?B?YlN3Q1V1Y0xaSHdvdWdYRTk4OWowTU5NSlppNjVrNTIzS0dWUUJpbXlvWkNt?=
+ =?utf-8?B?YklkU21sZk9IVGw3dDYvUk5DUXZlNW1OOWc5eFhVamM0bDFSa1RwQzRNam5h?=
+ =?utf-8?B?bFFrOVIyQ0FnRmhvRDdDK0pxL3dMUDg0Y2pkT0NBUGhxL2NVQjJtUmZGUTBa?=
+ =?utf-8?B?RkNuQ1FkbFczVGRqWWRzQnVGR0hXelRsVEZaY0p4U1lhenUyZTArYlNNR0Jj?=
+ =?utf-8?B?TWl6eXpMZXI2YnFmb0dJcGNTdWV6TW0zbnRObnk3QldMeVlBN25TblBpN1pS?=
+ =?utf-8?B?M0NyTnAxOTk3YklnU0pzcDdkTWU2YWpuRzVHVzN5QjZzV1BHL1ZFckNxZHFM?=
+ =?utf-8?B?TU5qUHFCQW1UTHFlanpITzVvTHRTdUFtUHREM0hmOGtXanhDd1F6bHR0WVRu?=
+ =?utf-8?B?enA0M3JpR285WWNlQjVQdHQ2eW50RHpRWDA5OXBYS1plM21jckpYOFRjVGlV?=
+ =?utf-8?B?M1JLbUNNTS9TZVhmSVVqMHlzKzdxK2RYdDdEQVdLbVpDK0M4YjhUT0cxZkc2?=
+ =?utf-8?B?R1dYUk9STWFpcVhHSDJvN3c4OFB5V2x2RWtDSHF6Z2pEYWVzV2pjTGsxVHB0?=
+ =?utf-8?B?ZXQ5aFhKN3VqdUwrTVUxcE1CSjROb3k4UThVejZBTzdKOFM0QlRGRm53V2Za?=
+ =?utf-8?B?eUh2NkRqRUZnZFlrcmxlWS9CSVVWeVIyZlVQY2JHei9UUWMyOVVzMGFtczdu?=
+ =?utf-8?B?NG5iUjcwK002aWFIRjdtQ2dxd1p0MVZjdzJLY0tUSHdRc05lT0drQ1JJOHcw?=
+ =?utf-8?B?VWZqbVRYTkdjYmthY3ArZWl6WW8zbzNIWEhqYjF3UzdnbE1HVVVMRnAzamRE?=
+ =?utf-8?B?UU1xSy94U216YTFLS0ZUUTc5cEdjMjMyMzU5NUE5NzUyMFdVZG9tdWZ3blUy?=
+ =?utf-8?B?cGVTaVhEUzVua3Z6ZHMreTFKTVdUSEJWYzJueVJpR01zM0lkcmZ2SHhiQjh6?=
+ =?utf-8?B?TllCeXd4MGpLZFRSZFVHOFFKUGd3UEh3UlNZSVVUMFZMWnNEdnM0R0RWVDNj?=
+ =?utf-8?B?QXlxVi9FcjR1R3kwdXZYZ1M3TEZzTGtNQUVkZTZCS1dBdGx6SlNwaWNuaHlv?=
+ =?utf-8?B?d1hSOFo4Mlo5cU1XODNWcVhlQkJwU2dYUUdlYjdId2dyYnM0SFFTWWE5SzJx?=
+ =?utf-8?B?aUJmOEpiQ2sxZmQwV3JwQUtYcG5zY2c1eVBOVnZTN2I1VzFoMjJucWd1bWMw?=
+ =?utf-8?B?ZFdsekNWT0NTZm05SGxmZEFCaFFLZkxFY3lqQmRmUVp4N3ZXcjdQUUxldUJC?=
+ =?utf-8?B?ck1ZdGFxbEJVUFdkWXloMXQ3cmdoOTZRYkY1TDkrdElQM2FNc2VnZ3lIZ0p1?=
+ =?utf-8?B?NDE3QnhNT21tSXg1cE1BcEJxSzFCZTQzem4vbFlTZUdmUGNFNTlkNjAzTE9w?=
+ =?utf-8?B?OE9pN29wUDlROUlDUVp1ejkyM3h5ZVlNbWZFTk1FRVp1WGJ6d3pLdFVCYlhP?=
+ =?utf-8?Q?h6nfpxg3+ilJoqdBdQgz2pY2s?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d759a62f-e1bc-47cd-0ef7-08de06271b2f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Oct 2025 04:56:56.2644
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: P3LbF59w0NZsaWjyBxrzXdfvoIDiwBu0gF4U/okXczWlcCtVTkBgKVkbzEdByNdW9d9fF1/ZG+SGk391VbMrUg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB9191
 
-TAS5802, TAS5815, and TAS5828 are in same family with TAS5825, TAS5827.
-
-Signed-off-by: Baojun Xu <baojun.xu@ti.com>
-
----
-v5:
- - Change the patch title and the description
-v4:
- - Change the patch title
- - Add TAS5802 support in yaml file
- - Change description for missed TAS5815
- - Change format to keep all lines within 80 bytes in length
-v3:
- - Rewrite the patch title
- - Add TAS5815 support in yaml file
-v2:
- - Update description for TAS5828
- - Change commit tree to .../tiwai/sound.git
----
- .../devicetree/bindings/sound/ti,tas2781.yaml | 43 ++++++++++++++++---
- 1 file changed, 37 insertions(+), 6 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/sound/ti,tas2781.yaml b/Documentation/devicetree/bindings/sound/ti,tas2781.yaml
-index bd00afa47d62..7f84f506013c 100644
---- a/Documentation/devicetree/bindings/sound/ti,tas2781.yaml
-+++ b/Documentation/devicetree/bindings/sound/ti,tas2781.yaml
-@@ -24,10 +24,10 @@ description: |
-   Instruments Smart Amp speaker protection algorithm. The
-   integrated speaker voltage and current sense provides for real time
-   monitoring of loudspeaker behavior.
--  The TAS5825/TAS5827 is a stereo, digital input Class-D audio
--  amplifier optimized for efficiently driving high peak power into
--  small loudspeakers. An integrated on-chip DSP supports Texas
--  Instruments Smart Amp speaker protection algorithm.
-+  The TAS5802/TAS5815/TAS5825/TAS5827/TAS5828 is a stereo, digital input
-+  Class-D audio amplifier optimized for efficiently driving high peak
-+  power into small loudspeakers. An integrated on-chip DSP supports
-+  Texas Instruments Smart Amp speaker protection algorithm.
- 
-   Specifications about the audio amplifier can be found at:
-     https://www.ti.com/lit/gpn/tas2120
-@@ -35,8 +35,10 @@ description: |
-     https://www.ti.com/lit/gpn/tas2563
-     https://www.ti.com/lit/gpn/tas2572
-     https://www.ti.com/lit/gpn/tas2781
-+    https://www.ti.com/lit/gpn/tas5815
-     https://www.ti.com/lit/gpn/tas5825m
-     https://www.ti.com/lit/gpn/tas5827
-+    https://www.ti.com/lit/gpn/tas5828m
- 
- properties:
-   compatible:
-@@ -65,11 +67,21 @@ properties:
-       Protection and Audio Processing, 16/20/24/32bit stereo I2S or
-       multichannel TDM.
- 
-+      ti,tas5802: 22-W, Inductor-Less, Digital Input, Closed-Loop Class-D
-+      Audio Amplifier with 96-Khz Extended Processing and Low Idle Power
-+      Dissipation.
-+
-+      ti,tas5815: 30-W, Digital Input, Stereo, Closed-loop Class-D Audio
-+      Amplifier with 96 kHz Enhanced Processing
-+
-       ti,tas5825: 38-W Stereo, Inductor-Less, Digital Input, Closed-Loop 4.5V
-       to 26.4V Class-D Audio Amplifier with 192-kHz Extended Audio Processing.
- 
--      ti,tas5827: 47-W Stereo, Digital Input, High Efficiency Closed-Loop Class-D
--      Amplifier with Class-H Algorithm
-+      ti,tas5827: 47-W Stereo, Digital Input, High Efficiency Closed-Loop
-+      Class-D Amplifier with Class-H Algorithm
-+
-+      ti,tas5828: 50-W Stereo, Digital Input, High Efficiency Closed-Loop
-+      Class-D Amplifier with Hybrid-Pro Algorithm
-     oneOf:
-       - items:
-           - enum:
-@@ -80,8 +92,11 @@ properties:
-               - ti,tas2563
-               - ti,tas2570
-               - ti,tas2572
-+              - ti,tas5802
-+              - ti,tas5815
-               - ti,tas5825
-               - ti,tas5827
-+              - ti,tas5828
-           - const: ti,tas2781
-       - enum:
-           - ti,tas2781
-@@ -177,12 +192,28 @@ allOf:
-             minimum: 0x38
-             maximum: 0x3f
- 
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - ti,tas5802
-+              - ti,tas5815
-+    then:
-+      properties:
-+        reg:
-+          maxItems: 4
-+          items:
-+            minimum: 0x54
-+            maximum: 0x57
-+
-   - if:
-       properties:
-         compatible:
-           contains:
-             enum:
-               - ti,tas5827
-+              - ti,tas5828
-     then:
-       properties:
-         reg:
--- 
-2.25.1
-
+DQoNCj4gT24gT2N0IDcsIDIwMjUsIGF0IDExOjIx4oCvUE0sIFRpbXVyIFRhYmkgPHR0YWJpQG52
+aWRpYS5jb20+IHdyb3RlOg0KPiANCj4g77u/T24gV2VkLCAyMDI1LTEwLTA4IGF0IDExOjEyICsx
+MTAwLCBBbGlzdGFpciBQb3BwbGUgd3JvdGU6DQo+PiArDQo+PiArICAgIC8vLyBXcml0ZSB0aGUg
+YXBwbGljYXRpb24gdmVyc2lvbiB0byB0aGUgT1MgcmVnaXN0ZXIuDQo+PiArICAgICNbZXhwZWN0
+KGRlYWRfY29kZSldDQo+PiArICAgIHB1YihjcmF0ZSkgZm4gd3JpdGVfb3NfdmVyc2lvbigmc2Vs
+ZiwgYmFyOiAmQmFyMCwgYXBwX3ZlcnNpb246IHUzMikgLT4gUmVzdWx0PCgpPiB7DQo+PiArICAg
+ICAgICByZWdzOjpOVl9QRkFMQ09OX0ZBTENPTl9PUzo6ZGVmYXVsdCgpDQo+PiArICAgICAgICAg
+ICAgLnNldF92YWx1ZShhcHBfdmVyc2lvbikNCj4+ICsgICAgICAgICAgICAud3JpdGUoYmFyLCAm
+RTo6SUQpOw0KPj4gKyAgICAgICAgT2soKCkpDQo+PiArICAgIH0NCj4gDQo+IEkgc2hvdWxkIGhh
+dmUgbm90aWNlZCB0aGlzIGluIHYzLCBidXQgd2h5IHJldHVybiBSZXN1bHQgaGVyZT8gIFRoaXMg
+aXMganVzdCBsaWtlIGlzX3Jpc2N2X2FjdGl2ZQ0KPiAtLSB0aGlzIGZ1bmN0aW9uIGNhbm5vdCBm
+YWlsLg0KDQpBY2suIExldCB1cyBmaXguIElJUkMsIGl0IGlzIGEgcmVtbmFudCBmcm9tIGEgdGlt
+ZSB3aGVuIHRoZSBmdW5jdGlvbiBjb3VsZCBmYWlsLg0KDQpJIGNhbiBzdWJtaXQgYSBmaXh1cCB0
+byBzcXVhc2ggaWYgdGhlcmUgYXJlIG5vIG90aGVyIGNoYW5nZXMgdG8gdGhlIHNlcmllcy4NCg0K
+VGhhbmtzLg==
 
