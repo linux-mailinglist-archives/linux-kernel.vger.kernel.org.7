@@ -1,137 +1,123 @@
-Return-Path: <linux-kernel+bounces-845705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19375BC5E54
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:56:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90F9DBC5D60
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:47:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D02CB4FC060
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:51:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CD91188BBB4
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5861B29DB9A;
-	Wed,  8 Oct 2025 15:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NjEQDZ0e"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E64BD20D4E9;
+	Wed,  8 Oct 2025 15:46:47 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA3D25486D
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5D217A30A;
+	Wed,  8 Oct 2025 15:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759938506; cv=none; b=Bsd7aGjGpfZN+MlRE0YOIEew7Ru7JBaBaJ+GxN3ErwnWCqjlCRxnL6CRT2mgyurQgRCXyjgAE0houloXbfa0dEPP/IvXp+LJgyWebecO5Hdl233nbDh1nUOcFWLd++OsOCB7Nfg32E5MMerg9FAHp2/2GvpmaoWQwvUAKKzTukA=
+	t=1759938407; cv=none; b=tOzO6+IIOxMetEmmwcKjqYxQo1bTPZJurQRnMHkp1JieMB+8bXiDQNG+Qhw/f+UNC3WShsPaL3n8SX5qdqv0owQfnexXMomUCDcMR3pxJyTeAEazfaRE8E2m+KKFw17bliUy3TM33Me+MAn+bvXk3N5k8/7fMKjlLs2TuW1GJ1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759938506; c=relaxed/simple;
-	bh=2LGlFA5NwtyOxfaDrKcUAZJIjkhQzJAUzFr0Gk/nflE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pEmoI0mJOLIb/qCd+bQY/SR76kvkhLQ0VR8DIHxwOm/fq9b0SDVatBRtwt63IQP+4MPGprbi3pEZenT2/kmd5VXBX45XesD+/HIagwRjgRq1Y9WqHWBPF/NaFsAhOYKujuuHy2uSfJhlk6daLlp25D7U0kuUlCJPEym5NaQmhuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NjEQDZ0e; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-93ba2eb817aso450292239f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:48:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759938504; x=1760543304; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jnz0wfzGjq/RWuaaZQleG175ixspg2bx6DBLy2dhJEw=;
-        b=NjEQDZ0e+OjvIUJHDRJM8zmfiSQou+zCsZhFrnHNymWHaO9R3AAaUawpvmsElBIic8
-         BEYrsmgKe6E0WdmwUDCqLsWBrQhlADzPcTrROf0bBSX+aWogmvmArCOZbqWFGJeXrO6Y
-         7r9dyCjYb5PFpyajmlklxCBM6RrFP44wcb8MgAG81oijFE++n+QVYPquZPlRHsbvjF6b
-         qQtwtPaRqIPd+996wRbTSSxObylYCnnO/2445hrBTEytMUGMyQ/GTMkpD6OxACJY4Xlf
-         ferb6lR/TukJWJ6TS0w+Fk6k1AzmLCEE9asIAWaulMcYDyP1tcqTeug0NB4b16B0OIg8
-         w4nA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759938504; x=1760543304;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jnz0wfzGjq/RWuaaZQleG175ixspg2bx6DBLy2dhJEw=;
-        b=LuybQw8Ft98t629duQzGS2pe73EQms0cEYqA7yQpPEQ44wqNqb9wvqrPAWnyPo6Ko/
-         cET8bCtvk7+Tlm81epSWUK2yfph6nXxSWya9fMX+D83NDdFWO0pTjeJTwuCbH2GYhPBy
-         iA2AHKFfxjGRimzRRh0wJVWHMTxx82BoxVILZMzxM04bj0K54lspIpdaShTNyh9E802Y
-         CgrL2HDrsFvfeplV/aq4sypAmMzrvnUIpRsrxuFYWH6MbpBCPnYEd3LPyd1QUw5efiWn
-         3ugfsgy0bhLGJ864DzJn3+L++cZgqaR9nxEsqhazvrXzm5geCgpzizwFvxyk5sXTw76u
-         y3Zg==
-X-Forwarded-Encrypted: i=1; AJvYcCVn7tQgdeMc8sZ+MY7DkwKILDhpfIql7FTboc2cRDislLs+sg30e6N1o4N9vR3JBdP/SgyBKxpSbNJXegM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziSP/ltBzUt7x/qNERCMyUX0Lpkds8PFap3uEStfvgtWCbxQ4J
-	QthAKRKceRMc2YvwidV/iiEbsA1d9RqOvAJUvdiUf/BL2uuHHDpxxB4mtijKqbpPKD7AFuilebD
-	QEVrk4Tb2YuHxj3c7KMH/Se+HCii8T+Q=
-X-Gm-Gg: ASbGncvFB6qrtCD5DvBNTvVusj923ij0W4J0NeGoaEcQ1A/gHXjwBXwhypC8lGHIwFi
-	l9NifBTsLB7o1NUAOPXaSaIfUv9iSsD4YjdS9a/W7rcd8G++lAoVPd/ieQ+YdEb/7QLUhtpkZVL
-	0Sil62K4RsEP1B+Ul6FIInQoQkx6PqrDV130Kua0LHxFYW+b+VEVHnv9NA2W87a1iVEl2T1aAzm
-	t8XAStuB7gjRB9qcrzcvTlUJ+N4
-X-Google-Smtp-Source: AGHT+IEkR8j835l36xMLsRghzDg6ytuUIEPKbr6li+EEc40XA820BGG77XOwW3X2r8mrb0/M/8veOVpZAajhmXsAn5Y=
-X-Received: by 2002:a05:6602:340d:b0:8d3:6ac1:4dd3 with SMTP id
- ca18e2360f4ac-93bd18b16bdmr434509839f.6.1759938504211; Wed, 08 Oct 2025
- 08:48:24 -0700 (PDT)
+	s=arc-20240116; t=1759938407; c=relaxed/simple;
+	bh=cG8Z++9MqU1jVbQULLbPfduIpRfSzHW5inD0MFvIdF4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=tGHeunO6yhNMMd7D4NHPWHev5xPrR/GUg9BFcrP+cInHK5u4q4aZ/pmrOzaVY14O9+FKbtI6b+XP3jdbC97gyAXhiu1Ka3AkFo5Z/5RHe2WQ9UA+oVHkqUJfuFpEFXn7RZ3r0H9racidylnixnKqFACElSvLWvA5RyAdr4p3Npw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf04.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay04.hostedemail.com (Postfix) with ESMTP id 89EAC1A05C1;
+	Wed,  8 Oct 2025 15:46:43 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf04.hostedemail.com (Postfix) with ESMTPA id CDB9C20023;
+	Wed,  8 Oct 2025 15:46:41 +0000 (UTC)
+Date: Wed, 8 Oct 2025 11:48:35 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH] tracing: Fix wakeup tracers on failure of acquiring
+ calltime
+Message-ID: <20251008114835.027b878a@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251003203851.43128-1-sj@kernel.org> <20251003203851.43128-5-sj@kernel.org>
-In-Reply-To: <20251003203851.43128-5-sj@kernel.org>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Wed, 8 Oct 2025 08:48:13 -0700
-X-Gm-Features: AS18NWC5GQ_ulUnl9tKx3ywuwAWkm3a_xsU1pqdxQwVuJQmPm7aLfdyq0B3aGXQ
-Message-ID: <CAKEwX=M1JiHzgLVvROjfd2Pz7E6c4DCgzn85aWHPS+6qKMeS1w@mail.gmail.com>
-Subject: Re: [PATCH 4/4] Docs/admin-guide/mm/zswap: s/red-black tree/xarray/
-To: SeongJae Park <sj@kernel.org>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, David Hildenbrand <david@redhat.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Michal Hocko <mhocko@suse.com>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Yosry Ahmed <yosry.ahmed@linux.dev>, kernel-team@meta.com, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: extpgh3ckzhr84gx9ge4fy8t8qi84tqw
+X-Rspamd-Server: rspamout05
+X-Rspamd-Queue-Id: CDB9C20023
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19G85XyZdYvgWhN3xopgT5MBr2bUI8qRos=
+X-HE-Tag: 1759938401-958537
+X-HE-Meta: U2FsdGVkX18Iowstsr98tm9Jg+aLRlctIFuDPdiWzToSJQJMkatc8cR5F+Yq712JN1RIHTrKTrk8eBqC7hS6ZKXyTe6ypjnrevjHJ4sS8AkNNWvfjMABB7yYiXZlZxqiFS6z5YRqdqp1TrsxQz0oRzydzyeWbyPTzJWWBXe6prW0uquwMdCDqPdS6/WC8EkmWlUXYv9d24w+3hBstptEAT9qG/tAxSS9GmhUyvQ0mrbG7aaRaKzGGYv+Ha6R8gSZTdm7ZFKmrTBSgj7aQA3rY8E4Sb++D4SIxF20TxHXw0MGm8T+TN96WGSFiY/5QbHxZKeW4hKyLzE9MsgbpmvIkKg6gw/wZCa8cbbOFu2njKT3MPDalR8uwPtxpn9yDDvR2DzKfrL+tERhIZuAOaluug==
 
-On Fri, Oct 3, 2025 at 1:38=E2=80=AFPM SeongJae Park <sj@kernel.org> wrote:
->
-> The change from commit 796c2c23e14e ("zswap: replace RB tree with
-> xarray") is not reflected on the document.  Update the document.
->
-> Signed-off-by: SeongJae Park <sj@kernel.org>
-> ---
->  Documentation/admin-guide/mm/zswap.rst | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/Documentation/admin-guide/mm/zswap.rst b/Documentation/admin=
--guide/mm/zswap.rst
-> index 283d77217c6f..2464425c783d 100644
-> --- a/Documentation/admin-guide/mm/zswap.rst
-> +++ b/Documentation/admin-guide/mm/zswap.rst
-> @@ -59,11 +59,11 @@ returned by the allocation routine and that handle mu=
-st be mapped before being
->  accessed.  The compressed memory pool grows on demand and shrinks as com=
-pressed
->  pages are freed.  The pool is not preallocated.
->
-> -When a swap page is passed from swapout to zswap, zswap maintains a mapp=
-ing
-> -of the swap entry, a combination of the swap type and swap offset, to th=
-e
-> -zsmalloc handle that references that compressed swap page.  This mapping=
- is
-> -achieved with a red-black tree per swap type.  The swap offset is the se=
-arch
-> -key for the tree nodes.
-> +When a swap page is passed from swapout to zswap, zswap maintains a mapp=
-ing of
-> +the swap entry, a combination of the swap type and swap offset, to the z=
-smalloc
-> +handle that references that compressed swap page.  This mapping is achie=
-ved
-> +with an xarray per swap type.  The swap offset is the search key for the=
- xarray
-> +nodes.
->
+From: Steven Rostedt <rostedt@goodmis.org>
 
-Acked-by: Nhat Pham <nphamcs@gmail.com>
+The functions wakeup_graph_entry() and wakeup_graph_return() both call
+func_prolog_preempt_disable() that will test if the data->disable is
+already set and if not, increment it and disable preemption. If it was
+set, it returns false and the caller exits.
+
+The caller of this function must decrement the disable counter, but misses
+doing so if the calltime fails to be acquired.
+
+Instead of exiting out when calltime is NULL, change the logic to do the
+work if it is not NULL and still do the clean up at the end of the
+function if it is NULL.
+
+Cc: stable@vger.kernel.org
+Fixes: a485ea9e3ef3 ("tracing: Fix irqsoff and wakeup latency tracers when using function graph")
+Reported-by: Sasha Levin <sashal@kernel.org>
+Closes: https://lore.kernel.org/linux-trace-kernel/20251006175848.1906912-1-sashal@kernel.org/
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ kernel/trace/trace_sched_wakeup.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
+
+diff --git a/kernel/trace/trace_sched_wakeup.c b/kernel/trace/trace_sched_wakeup.c
+index bf1cb80742ae..e3f2e4f56faa 100644
+--- a/kernel/trace/trace_sched_wakeup.c
++++ b/kernel/trace/trace_sched_wakeup.c
+@@ -138,12 +138,10 @@ static int wakeup_graph_entry(struct ftrace_graph_ent *trace,
+ 		return 0;
+ 
+ 	calltime = fgraph_reserve_data(gops->idx, sizeof(*calltime));
+-	if (!calltime)
+-		return 0;
+-
+-	*calltime = trace_clock_local();
+-
+-	ret = __trace_graph_entry(tr, trace, trace_ctx);
++	if (calltime) {
++		*calltime = trace_clock_local();
++		ret = __trace_graph_entry(tr, trace, trace_ctx);
++	}
+ 	local_dec(&data->disabled);
+ 	preempt_enable_notrace();
+ 
+@@ -169,12 +167,10 @@ static void wakeup_graph_return(struct ftrace_graph_ret *trace,
+ 	rettime = trace_clock_local();
+ 
+ 	calltime = fgraph_retrieve_data(gops->idx, &size);
+-	if (!calltime)
+-		return;
++	if (calltime)
++		__trace_graph_return(tr, trace, trace_ctx, *calltime, rettime);
+ 
+-	__trace_graph_return(tr, trace, trace_ctx, *calltime, rettime);
+ 	local_dec(&data->disabled);
+-
+ 	preempt_enable_notrace();
+ 	return;
+ }
+-- 
+2.51.0
+
 
