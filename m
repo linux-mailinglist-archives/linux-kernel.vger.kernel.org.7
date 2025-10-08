@@ -1,479 +1,228 @@
-Return-Path: <linux-kernel+bounces-845185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19D8DBC3CF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 10:21:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1521BC3CEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 10:20:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C00433B7C72
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 08:20:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A81AF19E3EE1
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 08:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F33D2F7AD7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344CC2F7AA7;
 	Wed,  8 Oct 2025 08:18:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="H8AY4beB"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XEhyXyt7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2F32F6582
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D142F657A
 	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 08:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759911500; cv=none; b=atczZUdEtcycHYpIwBZUyhvQ/AxBlz/6iO6To825F35d1qPqz3EpZAXrGIHJhzoIyjTZYw6/UMzxddj9f8D54VMb/QTFiS990MX+E7jC9ILGR+uDHMhenrxgBSiqG3/YCClRpCAXllEL2A8ZI2SfumwSxDPNLWzZV0+qImigfYA=
+	t=1759911500; cv=none; b=e4RvxB5Pm/vXpEdwW+hJNz0BjRgfeWGsuq7lxmn0VPbgpCqNsNJUa9T/JinZJt4RVYY9VGgk9qrEt8UkhcpsCttOxry3Hnkj1/Zv8kMOGxCSC0ygn67o6flieSc6819+8Q2ndAE4bLZgiYkWoudqerc/owDMkXJfJiOtSG1IG5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1759911500; c=relaxed/simple;
-	bh=oWXfa3SvJwwCEKqzllHDlbCszXa1p/f/sbqZPJo4AjM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=I1nR6pVJVleEg6E2GIq+B3eKenkBWJ9V469Vt+t2QtpxwMWz2JHTFdn9DmMbQgwESzySx3CayJFbLdXyAgRQ4RN6z0qDla5oDv2BfNGiS4v5fC6mD2/ifXL6kadb7ORl93+eArYI1d0jnTR2aPUZMXKMDSj+Ptiz5bZAWv5KzLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=H8AY4beB; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3f0ae439bc3so3323672f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 01:18:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1759911496; x=1760516296; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TVw9UEkU6CM7T/P7hDMj+CzXogm3wRYsQn+ddAlTT/k=;
-        b=H8AY4beBq//mIck38maeXxlNnZjK6xAUWNwGx7KhmlE7PTjgZ9oHu5IgeBSnm2feW/
-         DmseduC3GYZpkBV9Hi5KCNVw6tloJOE7E0I82dXGkJonKY8WACUBDjt8n7nosVHWxJ9C
-         VVa/Fmi7dTZNtpSkfzR34hRcpG9yH7zHc/NqtoiZnMApz6L9aGswcGDwi1/B/Iz3Q1+0
-         NedustTIT0J+k/nGfmIH+h5YZYqrPG+mxGZSx+uldf7T0hzAzSks+0HKO4u9RozrtmqI
-         hV2mgfEJSf6KgHcUSJgdKz/AoftphYkFsHhQtcITK86Ag9ceorNZUYGcGkV/1/mfiAEG
-         5cMg==
+	bh=9QSz0UBr1qcH6DHX15eW7V2Ihup+N9/N0aIE+Q79+oY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gsQhVGFGg+Br4hn+uOIoRGTqbOswbcEZasYTDXcO360vkU2Wh3qZQ2LnPbyY4h71Late5jGi3JJjK7JyWM3VV5jfUkCiMXFMxuHODDuseKNZLAJiDbffHLiiYYCreDjduf8KZOcLuRYactocObBT1RRmSLtGPnb0Z4qR174EJRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XEhyXyt7; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759911497;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=g2/UyH6Gp/CXE49aAkLm4ZAwJ2vJKxqomz6AYx7ZppY=;
+	b=XEhyXyt78a9FH358LcvaYz2KU0VBPPA62f9jwQpYDFsg+6IiEiCuduwHkml5ibH82He0io
+	/lMwuuBPCx6XW9zvBJExvaWxzkp0v1p2a+/iX6Xl3f30WX0utGkOg6TUu7n4XV5dqMaegy
+	mi4BKmfnwXnt5BL6GHo7/OLhZzQqtes=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-689-oNLrHmS6P7WnnnxJH7jc9A-1; Wed, 08 Oct 2025 04:18:15 -0400
+X-MC-Unique: oNLrHmS6P7WnnnxJH7jc9A-1
+X-Mimecast-MFC-AGG-ID: oNLrHmS6P7WnnnxJH7jc9A_1759911495
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-46e38bd6680so24212745e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 01:18:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759911496; x=1760516296;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TVw9UEkU6CM7T/P7hDMj+CzXogm3wRYsQn+ddAlTT/k=;
-        b=S8sHq3eewSZKxANoJHyVnrc0KIbRkeyjCn3Chao/n7mmbMBP8CFuhqvNwXym7HUkDp
-         WerOD5tCMAb2ZzyCJjjlNEFFI+KW5SeIKYkMLdL/1b3t3z2BHs4e2CqsFZi3V6vQIYWS
-         Xl7IzyIq/tZYQPWy9c1nK2GGuwW6xlUYETLZ4OLdifSh1gQ6Ayajd5EtE6jK6Z7Y7Eku
-         hlwAYPYo78gItbxFWSYFlZVYknqkBdAtB0LMe93HKPXy+UO+PQm0CBHLbAKjLiLIpUVf
-         hl4h4DLsY+iJ77nfUB5DHsHKy26xKDrW1ZwE+nF95YKu8o4zrljZxReno1A6LSCzqO2g
-         oVcA==
-X-Forwarded-Encrypted: i=1; AJvYcCX6C5kjTeyQBsoAWhhFg1CliqPS08mXcJVgrYwixFL8B06xrJUxgIqNt5ISphtgLblKNWBxtfJordXHFK0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5XX4RrSEFr1UzIMuttqogA0zLMr9WIkxCOiTlI6SGL6r7/0B+
-	u1CRbU3nLCuEvSobmmnLm3ay8zGiEUvUDkj9UFfHstT7FYu3hQ+89kbaL5uMwheHO6I=
-X-Gm-Gg: ASbGncsbtHrRGvocmEq4Xp+EwZLjaS/dmLj46RfDRtR1OcNYC1ZrS/y6BZIi/8q5R3s
-	NWci3eee6wafvocSsJhkZ7csXCYcto2lyZuoWRYGxa8B4B5b+TWdsIZisyioEbrmD9t0cK3dPwe
-	zeXCde9hiQjxt78KeMZrLY0UgGUk2K/NGSeMEvZ2+yTEi/ooNWlFE2IvA5y6CQ6NSNdAJURPH++
-	17YKqw2f3qNLWVuW2KB8OrrKA9zOBI7IddJYYFh0Khpb0WslLkUcbX5p6Qx2EULStKRps5S8StJ
-	od1+kPARIZBPFPrud3NUGz+LsoZgn17pQzRPOk/e1ZF1gYMvW8cfM2qqYuieeGLzls2I+GhPhV3
-	L+u419A60/Ih788xpFofKcKFT9ULRSX+6+vqXvE+SPA==
-X-Google-Smtp-Source: AGHT+IE5uwNDTxd4A0Ajiz4HMQ5bvHJui+XnjQLDJDUSnCNquZMiPjT26y9xkNQU0KHpuX271O4KKg==
-X-Received: by 2002:a05:6000:400a:b0:408:5363:8266 with SMTP id ffacd0b85a97d-4266e7df744mr1579631f8f.44.1759911496235;
-        Wed, 08 Oct 2025 01:18:16 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:286d:ff1d:8b7c:4328])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8e97f0sm28498943f8f.27.2025.10.08.01.18.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        d=1e100.net; s=20230601; t=1759911494; x=1760516294;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g2/UyH6Gp/CXE49aAkLm4ZAwJ2vJKxqomz6AYx7ZppY=;
+        b=wiUaWKlQYQnnoXYdFDRtQeqslNQYk5gW8mzxzpZBSESNQ/QgXl96So4SheEoE/02oK
+         dcNYw90X4AVtsjFF2EcOlFcXofejTgHY135t4DpmiFvoI23nhZxE+Vdq86NU8CCOhy3y
+         Oh/gdUHYYUKES+Z+pDDd9+Rwa6GZ3u3vbHwEOq1ttz2/LQrdZId8hZB7A5A479P59LB/
+         7miHLkMfya5Ze+GTvFDRaZvLGEA5DUsBaWCo0TSvibYdDZUUYWX9Eb/SvwebNCDEy70q
+         S600GMhLd9yIrb2VM55y+TdIHrgaCFAT5BN/uiADOlM6wGXFeRzEdc5mPHcKXC9uJ6SD
+         evMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW1XktFiTmXAX+8wW77T/bo1bWyy7wzHfrC5lYC7R0l9YY8V3B3gDNaqBu4P5XK9ZB7jY2m8s52QeHkOjw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+/Ix1j5N+7ROurCL/ZtQv5W8oJum/LUS+i5D1HAWbznZSa8u6
+	L5LslrYTz8eMC45/yZddwbc/eT/ra0wNSQcyGwG3cB1w/bDaEbXWAJRYKofh1Pl54/OEoclJu9H
+	YEAxqo1FrqdV04OukpBy9hYp7CrVYwyVp1zYBIzZrfcLf9aiqls5Q59frhX4ef2GDYQ==
+X-Gm-Gg: ASbGncvEHx6N1IMZf/MCbWLrHSCaHeQqtEefqLeXVD+cEgrhaJ1NgWg1MFzukFuykS/
+	73IvJ/zvb73ZUAp+9ydgZhsuEchRz0N1euSL9KktvQr98i0tFwAXcq+jxBtsCmY39g3WZiM5h/S
+	zMPC2as9SvM6/DiXP93X4Db/lO5dxWYo6e5LqKYXJZ0ZY5ZN9EzfKxAXrLa3O4zIX0ZKjU9AtBa
+	tu2k5dtrh7dnWAS8OsoS9hhCb9RY/ei1Lr/3+wjrsd5UvIYaDuG2RZt/vyPHOA4PZrJ2BEAb10C
+	VAONoOiQd/l9KNLnKhAGZceDyn7BcAejWKk9BR2R9K5rqBsulZgpdQvWQT4eQqT5XqdhsnbNqdH
+	lGSTju1js
+X-Received: by 2002:a05:600d:8221:b0:46f:aa02:98b2 with SMTP id 5b1f17b1804b1-46faa02ed74mr10646735e9.19.1759911494578;
         Wed, 08 Oct 2025 01:18:14 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 08 Oct 2025 10:17:55 +0200
-Subject: [PATCH v2 8/8] net: stmmac: qcom-ethqos: add support for sa8255p
+X-Google-Smtp-Source: AGHT+IHnk/Uz45vHv0Js/TEnqVijah4F9gyUTG/QIQ/MO0GiLdnBWej945AxIiLU6GGin5Yz5QFb0w==
+X-Received: by 2002:a05:600d:8221:b0:46f:aa02:98b2 with SMTP id 5b1f17b1804b1-46faa02ed74mr10646415e9.19.1759911494097;
+        Wed, 08 Oct 2025 01:18:14 -0700 (PDT)
+Received: from [192.168.3.141] (tmo-083-110.customers.d1-online.com. [80.187.83.110])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fa9c162f0sm26588105e9.9.2025.10.08.01.18.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Oct 2025 01:18:13 -0700 (PDT)
+Message-ID: <3c572565-0b21-4136-b0e0-59a5ed858104@redhat.com>
+Date: Wed, 8 Oct 2025 10:18:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH mm-new v3 1/1] mm/khugepaged: abort collapse scan on
+ non-swap entries
+To: Lance Yang <lance.yang@linux.dev>, akpm@linux-foundation.org
+Cc: lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, baohua@kernel.org,
+ baolin.wang@linux.alibaba.com, dev.jain@arm.com, hughd@google.com,
+ ioworker0@gmail.com, kirill@shutemov.name, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, mpenttil@redhat.com, npache@redhat.com,
+ ryan.roberts@arm.com, ziy@nvidia.com, richard.weiyang@gmail.com
+References: <20251008032657.72406-1-lance.yang@linux.dev>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZoEEwEIAEQCGwMCF4ACGQEFCwkIBwICIgIG
+ FQoJCAsCBBYCAwECHgcWIQQb2cqtc1xMOkYN/MpN3hD3AP+DWgUCaJzangUJJlgIpAAKCRBN
+ 3hD3AP+DWhAxD/9wcL0A+2rtaAmutaKTfxhTP0b4AAp1r/eLxjrbfbCCmh4pqzBhmSX/4z11
+ opn2KqcOsueRF1t2ENLOWzQu3Roiny2HOU7DajqB4dm1BVMaXQya5ae2ghzlJN9SIoopTWlR
+ 0Af3hPj5E2PYvQhlcqeoehKlBo9rROJv/rjmr2x0yOM8qeTroH/ZzNlCtJ56AsE6Tvl+r7cW
+ 3x7/Jq5WvWeudKrhFh7/yQ7eRvHCjd9bBrZTlgAfiHmX9AnCCPRPpNGNedV9Yty2Jnxhfmbv
+ Pw37LA/jef8zlCDyUh2KCU1xVEOWqg15o1RtTyGV1nXV2O/mfuQJud5vIgzBvHhypc3p6VZJ
+ lEf8YmT+Ol5P7SfCs5/uGdWUYQEMqOlg6w9R4Pe8d+mk8KGvfE9/zTwGg0nRgKqlQXrWRERv
+ cuEwQbridlPAoQHrFWtwpgYMXx2TaZ3sihcIPo9uU5eBs0rf4mOERY75SK+Ekayv2ucTfjxr
+ Kf014py2aoRJHuvy85ee/zIyLmve5hngZTTe3Wg3TInT9UTFzTPhItam6dZ1xqdTGHZYGU0O
+ otRHcwLGt470grdiob6PfVTXoHlBvkWRadMhSuG4RORCDpq89vu5QralFNIf3EysNohoFy2A
+ LYg2/D53xbU/aa4DDzBb5b1Rkg/udO1gZocVQWrDh6I2K3+cCs7BTQRVy5+RARAA59fefSDR
+ 9nMGCb9LbMX+TFAoIQo/wgP5XPyzLYakO+94GrgfZjfhdaxPXMsl2+o8jhp/hlIzG56taNdt
+ VZtPp3ih1AgbR8rHgXw1xwOpuAd5lE1qNd54ndHuADO9a9A0vPimIes78Hi1/yy+ZEEvRkHk
+ /kDa6F3AtTc1m4rbbOk2fiKzzsE9YXweFjQvl9p+AMw6qd/iC4lUk9g0+FQXNdRs+o4o6Qvy
+ iOQJfGQ4UcBuOy1IrkJrd8qq5jet1fcM2j4QvsW8CLDWZS1L7kZ5gT5EycMKxUWb8LuRjxzZ
+ 3QY1aQH2kkzn6acigU3HLtgFyV1gBNV44ehjgvJpRY2cC8VhanTx0dZ9mj1YKIky5N+C0f21
+ zvntBqcxV0+3p8MrxRRcgEtDZNav+xAoT3G0W4SahAaUTWXpsZoOecwtxi74CyneQNPTDjNg
+ azHmvpdBVEfj7k3p4dmJp5i0U66Onmf6mMFpArvBRSMOKU9DlAzMi4IvhiNWjKVaIE2Se9BY
+ FdKVAJaZq85P2y20ZBd08ILnKcj7XKZkLU5FkoA0udEBvQ0f9QLNyyy3DZMCQWcwRuj1m73D
+ sq8DEFBdZ5eEkj1dCyx+t/ga6x2rHyc8Sl86oK1tvAkwBNsfKou3v+jP/l14a7DGBvrmlYjO
+ 59o3t6inu6H7pt7OL6u6BQj7DoMAEQEAAcLBfAQYAQgAJgIbDBYhBBvZyq1zXEw6Rg38yk3e
+ EPcA/4NaBQJonNqrBQkmWAihAAoJEE3eEPcA/4NaKtMQALAJ8PzprBEXbXcEXwDKQu+P/vts
+ IfUb1UNMfMV76BicGa5NCZnJNQASDP/+bFg6O3gx5NbhHHPeaWz/VxlOmYHokHodOvtL0WCC
+ 8A5PEP8tOk6029Z+J+xUcMrJClNVFpzVvOpb1lCbhjwAV465Hy+NUSbbUiRxdzNQtLtgZzOV
+ Zw7jxUCs4UUZLQTCuBpFgb15bBxYZ/BL9MbzxPxvfUQIPbnzQMcqtpUs21CMK2PdfCh5c4gS
+ sDci6D5/ZIBw94UQWmGpM/O1ilGXde2ZzzGYl64glmccD8e87OnEgKnH3FbnJnT4iJchtSvx
+ yJNi1+t0+qDti4m88+/9IuPqCKb6Stl+s2dnLtJNrjXBGJtsQG/sRpqsJz5x1/2nPJSRMsx9
+ 5YfqbdrJSOFXDzZ8/r82HgQEtUvlSXNaXCa95ez0UkOG7+bDm2b3s0XahBQeLVCH0mw3RAQg
+ r7xDAYKIrAwfHHmMTnBQDPJwVqxJjVNr7yBic4yfzVWGCGNE4DnOW0vcIeoyhy9vnIa3w1uZ
+ 3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
+ CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
+ qIws/H2t
+In-Reply-To: <20251008032657.72406-1-lance.yang@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251008-qcom-sa8255p-emac-v2-8-92bc29309fce@linaro.org>
-References: <20251008-qcom-sa8255p-emac-v2-0-92bc29309fce@linaro.org>
-In-Reply-To: <20251008-qcom-sa8255p-emac-v2-0-92bc29309fce@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Richard Cochran <richardcochran@gmail.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Vinod Koul <vkoul@kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
- Jose Abreu <joabreu@synopsys.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11041;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=LTwoONxJf6sm0sg7eKQaSo0lKsmMiPsYLDmqFKmz5Bc=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBo5h4230eKuXA62F8il579ETUM0fL9gmdn2Fu9W
- 8fqg4Y8FA2JAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaOYeNgAKCRARpy6gFHHX
- ci33D/4lNVaP33gYWgUJsvyrkvrj5aqUsfbfzktrgvp9BYGpDP4xPSPKNoXmoynoeweRhaMyhzL
- AYDfyquKfF+Uh3HIwfQ7c9F2gKQ2/bsgdOvOgOSKGjA9xwdrRlSfEmQe5ZUnyWizNtzh+D5XU6g
- P9MbQOGm7/EiBhgUHrlfmkmszUWGAtcWJF6l2jPp8MW+g1GXKi49ap8EI4MwQVX0tw3bKCjUZTi
- 8zvDnLPVy3g+ECyU1YILAfISeXQymP/oJ9c8wjYR19zyuqs/SLH4VELVA2CoccOO2hTdgZ8xyEV
- jhpF/gMlKCxymUt6aO8mqF9DahJ1LT6nRzxS6fQazqBDMaaYqLe+yZkmb0kVEz/UsbmFBgmXEb/
- ji3EpDRMk3EFAp7AnHHQK1gKimMXD/QCiUaDVugCRsmbB6cAu6EtrxhpuLu0/UNmEhs45z+OmTg
- 9dnh1SadnPnNT/sdNSJDbjXlrbJwnaFbLMVrv6dRg7YtAEdRfCJNr3dTRj1PZDLvVQf+uz7WAM/
- kd+gJyrMQWjzqgL0JHsZsoe9VtHPcDtL4nNtK4vbp7Wk7x79ocweyFMU7vprmYHnvlYgqXZjMqN
- 156UUW5WTFLIafHtYbZWxJuUWqiATzLFTmCduahVR4a3isngnOjHF32JIF4DKVkBcODoV2+x278
- d6x9y2lDsHhQdiA==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On 08.10.25 05:26, Lance Yang wrote:
+> From: Lance Yang <lance.yang@linux.dev>
+> 
+> Currently, special non-swap entries (like PTE markers) are not caught
+> early in hpage_collapse_scan_pmd(), leading to failures deep in the
+> swap-in logic.
+> 
+> A function that is called __collapse_huge_page_swapin() and documented
+> to "Bring missing pages in from swap" will handle other types as well.
+> 
+> As analyzed by David[1], we could have ended up with the following
+> entry types right before do_swap_page():
+> 
+>    (1) Migration entries. We would have waited.
+>        -> Maybe worth it to wait, maybe not. We suspect we don't stumble
+>           into that frequently such that we don't care. We could always
+>           unlock this separately later.
+> 
+>    (2) Device-exclusive entries. We would have converted to non-exclusive.
+>        -> See make_device_exclusive(), we cannot tolerate PMD entries and
+>           have to split them through FOLL_SPLIT_PMD. As popped up during
+>           a recent discussion, collapsing here is actually
+>           counter-productive, because the next conversion will PTE-map
+>           it again.
+>        -> Ok to not collapse.
+> 
+>    (3) Device-private entries. We would have migrated to RAM.
+>        -> Device-private still does not support THPs, so collapsing right
+>           now just means that the next device access would split the
+>           folio again.
+>        -> Ok to not collapse.
+> 
+>    (4) HWPoison entries
+>        -> Cannot collapse
+> 
+>    (5) Markers
+>        -> Cannot collapse
+> 
+> First, this patch adds an early check for these non-swap entries. If
+> any one is found, the scan is aborted immediately with the
+> SCAN_PTE_NON_PRESENT result, as Lorenzo suggested[2], avoiding wasted
+> work. While at it, convert pte_swp_uffd_wp_any() to pte_swp_uffd_wp()
+> since we are in the swap pte branch.
+> 
+> Second, as Wei pointed out[3], we may have a chance to get a non-swap
+> entry, since we will drop and re-acquire the mmap lock before
+> __collapse_huge_page_swapin(). To handle this, we also add a
+> non_swap_entry() check there.
+> 
+> Note that we can unlock later what we really need, and not account it
+> towards max_swap_ptes.
+> 
+> [1] https://lore.kernel.org/linux-mm/09eaca7b-9988-41c7-8d6e-4802055b3f1e@redhat.com
+> [2] https://lore.kernel.org/linux-mm/7df49fe7-c6b7-426a-8680-dcd55219c8bd@lucifer.local
+> [3] https://lore.kernel.org/linux-mm/20251005010511.ysek2nqojebqngf3@master
+> 
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
+> Reviewed-by: Dev Jain <dev.jain@arm.com>
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+> ---
 
-Extend the driver to support a new model - sa8255p. Unlike the
-previously supported variants, this one's power management is done in
-the firmware using SCMI. This is modeled in linux using power domains so
-add support for them.
+Sorry for not replying earlier to your other mail.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- .../ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c    | 231 ++++++++++++++++++---
- 1 file changed, 201 insertions(+), 30 deletions(-)
+LGTM.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-index 2a6136a663268ed40f99b47c9f0694f30053b94a..e1620d724e18dd824ae9615dfef122836e5140fd 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-@@ -7,6 +7,8 @@
- #include <linux/platform_device.h>
- #include <linux/phy.h>
- #include <linux/phy/phy.h>
-+#include <linux/pm_opp.h>
-+#include <linux/pm_domain.h>
- 
- #include "stmmac.h"
- #include "stmmac_platform.h"
-@@ -85,6 +87,13 @@
- 
- #define SGMII_10M_RX_CLK_DVDR			0x31
- 
-+enum ethqos_pd_selector {
-+	ETHQOS_PD_CORE = 0,
-+	ETHQOS_PD_MDIO,
-+	ETHQOS_PD_SERDES,
-+	ETHQOS_NUM_PDS,
-+};
-+
- struct ethqos_emac_por {
- 	unsigned int offset;
- 	unsigned int value;
-@@ -103,6 +112,9 @@ struct ethqos_emac_driver_data {
- 
- struct ethqos_emac_pm_data {
- 	const char *link_clk_name;
-+	bool use_domains;
-+	struct dev_pm_domain_attach_data pd;
-+	unsigned int clk_ptp_rate;
- };
- 
- struct ethqos_emac_match_data {
-@@ -116,13 +128,20 @@ struct ethqos_emac_pm_ctx {
- 	struct phy *serdes_phy;
- };
- 
-+struct ethqos_emac_pd_ctx {
-+	struct dev_pm_domain_list *pd_list;
-+};
-+
- struct qcom_ethqos {
- 	struct platform_device *pdev;
- 	void __iomem *rgmii_base;
- 	void __iomem *mac_base;
- 	int (*configure_func)(struct qcom_ethqos *ethqos, int speed);
- 
--	struct ethqos_emac_pm_ctx pm;
-+	union {
-+		struct ethqos_emac_pm_ctx pm;
-+		struct ethqos_emac_pd_ctx pd;
-+	};
- 	phy_interface_t phy_mode;
- 	int serdes_speed;
- 	int (*set_serdes_speed)(struct qcom_ethqos *ethqos);
-@@ -336,6 +355,25 @@ static const struct ethqos_emac_match_data emac_sa8775p_data = {
- 	.pm_data = &emac_sa8775p_pm_data,
- };
- 
-+static const char * const emac_sa8255p_pd_names[] = {
-+	"power_core", "power_mdio", "perf_serdes"
-+};
-+
-+static const struct ethqos_emac_pm_data emac_sa8255p_pm_data = {
-+	.pd = {
-+		.pd_flags = PD_FLAG_NO_DEV_LINK,
-+		.pd_names = emac_sa8255p_pd_names,
-+		.num_pd_names = ETHQOS_NUM_PDS,
-+	},
-+	.use_domains = true,
-+	.clk_ptp_rate = 230400000,
-+};
-+
-+static const struct ethqos_emac_match_data emac_sa8255p_data = {
-+	.drv_data = &emac_v4_0_0_data,
-+	.pm_data = &emac_sa8255p_pm_data,
-+};
-+
- static int ethqos_dll_configure(struct qcom_ethqos *ethqos)
- {
- 	struct device *dev = &ethqos->pdev->dev;
-@@ -417,6 +455,28 @@ static int ethqos_dll_configure(struct qcom_ethqos *ethqos)
- 	return 0;
- }
- 
-+static int qcom_ethqos_domain_on(struct qcom_ethqos *ethqos,
-+				 enum ethqos_pd_selector sel)
-+{
-+	struct device *dev = ethqos->pd.pd_list->pd_devs[sel];
-+	int ret;
-+
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret < 0)
-+		dev_err(&ethqos->pdev->dev,
-+			"Failed to enable the power domain for %s\n",
-+			dev_name(dev));
-+	return ret;
-+}
-+
-+static void qcom_ethqos_domain_off(struct qcom_ethqos *ethqos,
-+				   enum ethqos_pd_selector sel)
-+{
-+	struct device *dev = ethqos->pd.pd_list->pd_devs[sel];
-+
-+	pm_runtime_put_sync(dev);
-+}
-+
- static int ethqos_rgmii_macro_init(struct qcom_ethqos *ethqos, int speed)
- {
- 	struct device *dev = &ethqos->pdev->dev;
-@@ -652,6 +712,13 @@ static int ethqos_set_serdes_speed_phy(struct qcom_ethqos *ethqos)
- 	return phy_set_speed(ethqos->pm.serdes_phy, ethqos->serdes_speed);
- }
- 
-+static int ethqos_set_serdes_speed_pd(struct qcom_ethqos *ethqos)
-+{
-+	struct device *dev = ethqos->pd.pd_list->pd_devs[ETHQOS_PD_SERDES];
-+
-+	return dev_pm_opp_set_level(dev, ethqos->serdes_speed);
-+}
-+
- static void ethqos_set_serdes_speed(struct qcom_ethqos *ethqos, int speed)
- {
- 	if (ethqos->serdes_speed != speed) {
-@@ -753,6 +820,27 @@ static void qcom_ethqos_serdes_powerdown(struct net_device *ndev, void *priv)
- 	phy_exit(ethqos->pm.serdes_phy);
- }
- 
-+static int qcom_ethqos_pd_serdes_powerup(struct net_device *ndev, void *priv)
-+{
-+	struct qcom_ethqos *ethqos = priv;
-+	struct device *dev = ethqos->pd.pd_list->pd_devs[ETHQOS_PD_SERDES];
-+	int ret;
-+
-+	ret = qcom_ethqos_domain_on(ethqos, ETHQOS_PD_SERDES);
-+	if (ret < 0)
-+		return ret;
-+
-+	return dev_pm_opp_set_level(dev, ethqos->serdes_speed);
-+}
-+
-+static void qcom_ethqos_pd_serdes_powerdown(struct net_device *ndev, void *priv)
-+{
-+	struct qcom_ethqos *ethqos = priv;
-+
-+	/* TODO set level */
-+	qcom_ethqos_domain_off(ethqos, ETHQOS_PD_SERDES);
-+}
-+
- static int ethqos_clks_config(void *priv, bool enabled)
- {
- 	struct qcom_ethqos *ethqos = priv;
-@@ -785,6 +873,61 @@ static void ethqos_clks_disable(void *data)
- 	ethqos_clks_config(ethqos, false);
- }
- 
-+static int ethqos_pd_clks_config(void *priv, bool enabled)
-+{
-+	struct qcom_ethqos *ethqos = priv;
-+	int ret = 0;
-+
-+	if (enabled) {
-+		ret = qcom_ethqos_domain_on(ethqos, ETHQOS_PD_MDIO);
-+		if (ret < 0) {
-+			dev_err(&ethqos->pdev->dev,
-+				"Failed to enable the MDIO power domain\n");
-+			return ret;
-+		}
-+
-+		ethqos_set_func_clk_en(ethqos);
-+	} else {
-+		qcom_ethqos_domain_off(ethqos, ETHQOS_PD_MDIO);
-+	}
-+
-+	return ret;
-+}
-+
-+static int qcom_ethqos_pd_init(struct platform_device *pdev, void *priv)
-+{
-+	struct qcom_ethqos *ethqos = priv;
-+	int ret;
-+
-+	/*
-+	 * Enable functional clock to prevent DMA reset after timeout due
-+	 * to no PHY clock being enabled after the hardware block has been
-+	 * power cycled. The actual configuration will be adjusted once
-+	 * ethqos_fix_mac_speed() is called.
-+	 */
-+	ethqos_set_func_clk_en(ethqos);
-+
-+	ret = qcom_ethqos_domain_on(ethqos, ETHQOS_PD_CORE);
-+	if (ret)
-+		return ret;
-+
-+	ret = qcom_ethqos_domain_on(ethqos, ETHQOS_PD_MDIO);
-+	if (ret) {
-+		qcom_ethqos_domain_off(ethqos, ETHQOS_PD_CORE);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void qcom_ethqos_pd_exit(struct platform_device *pdev, void *data)
-+{
-+	struct qcom_ethqos *ethqos = data;
-+
-+	qcom_ethqos_domain_off(ethqos, ETHQOS_PD_MDIO);
-+	qcom_ethqos_domain_off(ethqos, ETHQOS_PD_CORE);
-+}
-+
- static void ethqos_ptp_clk_freq_config(struct stmmac_priv *priv)
- {
- 	struct plat_stmmacenet_data *plat_dat = priv->plat;
-@@ -825,8 +968,6 @@ static int qcom_ethqos_probe(struct platform_device *pdev)
- 				     "dt configuration failed\n");
- 	}
- 
--	plat_dat->clks_config = ethqos_clks_config;
--
- 	ethqos = devm_kzalloc(dev, sizeof(*ethqos), GFP_KERNEL);
- 	if (!ethqos)
- 		return -ENOMEM;
-@@ -868,34 +1009,68 @@ static int qcom_ethqos_probe(struct platform_device *pdev)
- 	ethqos->rgmii_config_loopback_en = drv_data->rgmii_config_loopback_en;
- 	ethqos->has_emac_ge_3 = drv_data->has_emac_ge_3;
- 	ethqos->needs_sgmii_loopback = drv_data->needs_sgmii_loopback;
--
--	ethqos->pm.link_clk = devm_clk_get(dev, clk_name);
--	if (IS_ERR(ethqos->pm.link_clk))
--		return dev_err_probe(dev, PTR_ERR(ethqos->pm.link_clk),
--				     "Failed to get link_clk\n");
--
--	ret = ethqos_clks_config(ethqos, true);
--	if (ret)
--		return ret;
--
--	ret = devm_add_action_or_reset(dev, ethqos_clks_disable, ethqos);
--	if (ret)
--		return ret;
--
--	ethqos->pm.serdes_phy = devm_phy_optional_get(dev, "serdes");
--	if (IS_ERR(ethqos->pm.serdes_phy))
--		return dev_err_probe(dev, PTR_ERR(ethqos->pm.serdes_phy),
--				     "Failed to get serdes phy\n");
--
--	ethqos->set_serdes_speed = ethqos_set_serdes_speed_phy;
- 	ethqos->serdes_speed = SPEED_1000;
--	ethqos_update_link_clk(ethqos, SPEED_1000);
-+
-+	if (pm_data && pm_data->use_domains) {
-+		ethqos->set_serdes_speed = ethqos_set_serdes_speed_pd;
-+
-+		ret = devm_pm_domain_attach_list(dev, &pm_data->pd,
-+						 &ethqos->pd.pd_list);
-+		if (ret < 0)
-+			return dev_err_probe(dev, ret, "Failed to attach power domains\n");
-+
-+		plat_dat->clks_config = ethqos_pd_clks_config;
-+		plat_dat->serdes_powerup = qcom_ethqos_pd_serdes_powerup;
-+		plat_dat->serdes_powerdown = qcom_ethqos_pd_serdes_powerdown;
-+		plat_dat->exit = qcom_ethqos_pd_exit;
-+		plat_dat->init = qcom_ethqos_pd_init;
-+		plat_dat->clk_ptp_rate = pm_data->clk_ptp_rate;
-+
-+		ret = qcom_ethqos_pd_init(pdev, ethqos);
-+		if (ret)
-+			return ret;
-+
-+		ret = qcom_ethqos_domain_on(ethqos, ETHQOS_PD_SERDES);
-+		if (ret)
-+			return dev_err_probe(dev, ret,
-+					     "Failed to enable the serdes power domain\n");
-+	} else {
-+		ethqos->set_serdes_speed = ethqos_set_serdes_speed_phy;
-+
-+		ethqos->pm.link_clk = devm_clk_get(dev, clk_name);
-+		if (IS_ERR(ethqos->pm.link_clk))
-+			return dev_err_probe(dev, PTR_ERR(ethqos->pm.link_clk),
-+					     "Failed to get link_clk\n");
-+
-+		ret = ethqos_clks_config(ethqos, true);
-+		if (ret)
-+			return ret;
-+
-+		ret = devm_add_action_or_reset(dev, ethqos_clks_disable, ethqos);
-+		if (ret)
-+			return ret;
-+
-+		ethqos->pm.serdes_phy = devm_phy_optional_get(dev, "serdes");
-+		if (IS_ERR(ethqos->pm.serdes_phy))
-+			return dev_err_probe(dev, PTR_ERR(ethqos->pm.serdes_phy),
-+					     "Failed to get serdes phy\n");
-+
-+		ethqos_update_link_clk(ethqos, SPEED_1000);
-+
-+		plat_dat->clks_config = ethqos_clks_config;
-+		plat_dat->ptp_clk_freq_config = ethqos_ptp_clk_freq_config;
-+
-+		if (ethqos->pm.serdes_phy) {
-+			plat_dat->serdes_powerup = qcom_ethqos_serdes_powerup;
-+			plat_dat->serdes_powerdown  = qcom_ethqos_serdes_powerdown;
-+		}
-+	}
-+
- 	ethqos_set_func_clk_en(ethqos);
- 
- 	plat_dat->bsp_priv = ethqos;
- 	plat_dat->fix_mac_speed = ethqos_fix_mac_speed;
- 	plat_dat->dump_debug_regs = rgmii_dump;
--	plat_dat->ptp_clk_freq_config = ethqos_ptp_clk_freq_config;
- 	plat_dat->has_gmac4 = 1;
- 	if (ethqos->has_emac_ge_3)
- 		plat_dat->dwmac4_addrs = &drv_data->dwmac4_addrs;
-@@ -909,11 +1084,6 @@ static int qcom_ethqos_probe(struct platform_device *pdev)
- 	if (drv_data->dma_addr_width)
- 		plat_dat->host_dma_width = drv_data->dma_addr_width;
- 
--	if (ethqos->pm.serdes_phy) {
--		plat_dat->serdes_powerup = qcom_ethqos_serdes_powerup;
--		plat_dat->serdes_powerdown  = qcom_ethqos_serdes_powerdown;
--	}
--
- 	/* Enable TSO on queue0 and enable TBS on rest of the queues */
- 	for (i = 1; i < plat_dat->tx_queues_to_use; i++)
- 		plat_dat->tx_queues_cfg[i].tbs_en = 1;
-@@ -923,6 +1093,7 @@ static int qcom_ethqos_probe(struct platform_device *pdev)
- 
- static const struct of_device_id qcom_ethqos_match[] = {
- 	{ .compatible = "qcom,qcs404-ethqos", .data = &emac_qcs404_data},
-+	{ .compatible = "qcom,sa8255p-ethqos", .data = &emac_sa8255p_data},
- 	{ .compatible = "qcom,sa8775p-ethqos", .data = &emac_sa8775p_data},
- 	{ .compatible = "qcom,sc8280xp-ethqos", .data = &emac_sc8280xp_data},
- 	{ .compatible = "qcom,sm8150-ethqos", .data = &emac_sm8150_data},
+We can always handle migration entries later if this shows up to be a 
+problem (this time, in a clean way ...) and not count them towards 
+actual "swap" entries.
 
 -- 
-2.48.1
+Cheers
+
+David / dhildenb
 
 
