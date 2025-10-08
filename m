@@ -1,192 +1,171 @@
-Return-Path: <linux-kernel+bounces-845291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E504BC44AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 12:21:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6A37BC44B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 12:22:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 71A6D4E8AA4
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 10:21:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26BD83ADAB9
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 10:22:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 841282F5A1C;
-	Wed,  8 Oct 2025 10:21:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 870D02F549C;
+	Wed,  8 Oct 2025 10:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tlDENX4m"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="W0TVEo1B"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101661F12E9
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 10:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DFB92F5A01
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 10:21:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759918899; cv=none; b=NikENBFVBcLUPoRbwAcX4dNr2ZXlWhQ0+lYvWJzi1t8YAYp9ue/7xlrmNYXH/t9KwXqfS+crYa5+mpFaAZ1fYMO1zlKrhqFAc01IhdP6cZdPjHq4zII244iXWN0E4EpAs3DXE4qOVpwu/sVUhZnQTQNI1jBbgD+UpZKfo2xNmLc=
+	t=1759918924; cv=none; b=XDXca75qHI2ObHF9kGCCC9PLpseuBIcQ82XX7RfF5EgPCIwmQlyA4K71p2pQR5/5Pq4LJak8lCCNNNpWlnuyMwswI2baZr3cg7OxENlymPDnc86f61O1sqzAS4kUTfnwjs1xeujphNbygT+ofooR0ktkGSLhTwyvu8Mx47XnLoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759918899; c=relaxed/simple;
-	bh=EhLgvD7E0LABHvPRP91GEEdQZfhx3aehQkmOfRxJheE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=F79Q2PyHMqbyBLrjTboZJPlPNPkG6Zd2qTnTthOMqo0TiBUKMzw0lZr0BLsvJGMDcHs2mR28GkEd28zwy0KRKuXahThOKkOrffcMVvRdee9qBpMvf0k4IorgDV9Yrrggw90phVEdK4tvJcXV7i4NG4M6WfId8m0QyBRa1YwGenY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tlDENX4m; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46e2e6a708fso48268955e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 03:21:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759918896; x=1760523696; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=F3YnocctbkZ7er98rP3Yets/VbNBUnYoPrVtlDdecDc=;
-        b=tlDENX4mJM6+GtI5bY9xJqe3OSpmWleq57QyNwlSsoOAg/uRexxhlxEW693PXfcYYF
-         4GHFEhx7e+kQ88IvyeZMs89q42+MCTr6uc3DSk0QsgVqxdsED+vsG+zQy5vmVXpjoEtt
-         9zIzb+rZkFO3YuyJLFY/0rR59oSRd0F+jVTvWrvZgGnMVZoUVzbqXpnypce4i/nMHSzo
-         SImAPWWjFiq8wPtAxx2b1CiaN0e6HY8/2qsNeE1kNkYLRd+aVItpVJtz9uGPXSq5KpCm
-         cfCjrctx3yvc2V4TUTwnufXSerlxS6myX3wqOrFcNtH9ECcfTaJou3FK4ouXeqVeyn3p
-         Qv3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759918896; x=1760523696;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F3YnocctbkZ7er98rP3Yets/VbNBUnYoPrVtlDdecDc=;
-        b=snSNKm0OgIPqd+jNddOCZTm8CvUPGmDvsJDFHpq2O783/yMZD5WYOh1ger9BMs77ry
-         JIS/lmLGBMwtO+mE2TIJG7lulgZVtZkN/jux2tDLXt4tXewLV5vRoKkae4v/NU1Lcl1C
-         ar3C1MjhjIA0hg+WlgZ0WrkiB1o4wkOIaa9SEvF1rpLZoKWUr4Of4SVEWxbHC6Ce5TZd
-         WRHbJ6FJ1/69CS7ZVzgomh0EXNIsns43CQ0VYuEkQkmxX7yGvlamI5V2RyMFc+y2QqJ6
-         csIlEZzE7vX/whkfclarLD50MVNm4ujr3HMsoFkP3Z7VfyN1Gt/Ghv34rOl+STCvicpP
-         MonQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUOX8HkcZIb6e8qa21YZ3A4g3dItQjINBHhZM5iUoi1FdQXGUOKFd1jxFQUdaki3BQB5p1ho6qujIMddeA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzt1E/9mkf1VK91pzH19wg+j/fLRKlde/Vody64QUi10TcI2c37
-	cW52y/G/EVVpymlskuybedh5cQYHU8AWFntM01OrY1xqSxpwoZ+ZdBCb/RnvRCVZti0=
-X-Gm-Gg: ASbGncs16ZSBWIFgJlehcAeUdz228/So32FJ7g7HyPWnvJITHbbtytde6XNs/x4mJv3
-	Yo7wLNtstXCEeqhKvRwBeO40q3DmimgZrwj325UsiSKwohE/KQT58FaSnC4W0Y1xr97UVM8pTok
-	fEex3iaavbS9PFBFkwhCAYyw3HiHgusq6JYJxO1YGuQ8hwheNSPCK5kLFbHZ4GWMAO5+ymq5h+w
-	A+CEXZz4KuFBCCiyhzScA65A/GzdzuccwLDhhOsTHyxSRGKitolzIoOG4wCwRCnsZ+XNVOaMjrQ
-	6Jn+TV+B98sdUYaa+Lk1vsCpZx8lIqAgeNwZKUpJClhAeFNp9eVgjvh/L1Gw2WvkCAFMuBJSSEh
-	qBnuNRp9GfRCqauBn4kWxL/z/mlBX+t9wxI/v0kmDIBWkKzuazEfVZByO
-X-Google-Smtp-Source: AGHT+IGrZHG1I4BquDHt0Gxg3DnN1qvMxqgyFGE7TQYpvxCsyV5GBEgNIf4ntzhI0Sph+4sHQIV6HA==
-X-Received: by 2002:a05:600c:1e86:b0:46e:4784:cdf5 with SMTP id 5b1f17b1804b1-46fa9a9f254mr21670825e9.15.1759918896295;
-        Wed, 08 Oct 2025 03:21:36 -0700 (PDT)
-Received: from [192.168.1.3] ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fa9c0e35dsm32480825e9.8.2025.10.08.03.21.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Oct 2025 03:21:35 -0700 (PDT)
-Message-ID: <887ff02c-c221-4b98-be98-efe62e043727@linaro.org>
-Date: Wed, 8 Oct 2025 11:21:34 +0100
+	s=arc-20240116; t=1759918924; c=relaxed/simple;
+	bh=qfqHbBIpB2XPm4SOcuA/T+YYxmxec8qw/7rZh96Rgtk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zp1mtJq62lt3ED9nhD5qGfMO5GnxS7jVz82aXcl/OCz+H3iF2Mcf57yA+eV7dTOW/8zqLb811iSHocJNl5A8Lu97jOuR6gdfXy58n+yG/T2mAtBN+FTt6AzfyOxJ9cwamqukxowhFmvPP4dwgyCx9fZdTlCXVO5VHv1u4MxAb8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=W0TVEo1B; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 599A340E01C9;
+	Wed,  8 Oct 2025 10:21:57 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id SLIGt5VvdLZq; Wed,  8 Oct 2025 10:21:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1759918913; bh=VAYvJAtRKA4WGZeh8ZtxhVkwCGgv4wzgcWujPkrV7WI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W0TVEo1Bbuh44ZPsDZ0tdeXkutIMYZic2naHA9b3NYmBM0IDrm/NzesQ8JLjRGce/
+	 S7s8CZ3Bbpv2/uMpoihxA0wKtmx/9EB/XHldO/y7WIv9w+VtkJtuhom9xTKVATHM+j
+	 XOXmaRogEP7aOWwuuYYcDQHOPBKZ7uMFVx8+G6+LId8aJI7Wa4sBrR9AUG2ntSmJQs
+	 Avspc/LgY3uRcmZR52F0fMxxLbNKure3lCRlXyt48WQld3+k+SXumsZEVrBbMrnmv4
+	 ChCnFHwHtDN4wjBiqHaT7F7eSDnoqxTQoU2O2MVZ3kj/dEAsTLBl15ObA2xD8j79oe
+	 1pCSi8Q+xUP6Pj7SbH4qORBTN9eno2PmVKLbXtlwmKOonvGfXUumpVn5fAXCbLLYI8
+	 b53qdWXcxTiL68rH0KA8NkXxv/E1vhddcj2ZcYg3My38U6h2WCRdBp/HmZuwWP+LHS
+	 n7ds5qFFAfGcT/ntk02h0Ia5BDbWqL3fQHUiMRrSe3kFeBG7NX8NJUNN7wR/nf5TiI
+	 mhhqquerxJlY81JW33bI7/yUrbPUZ3CcyDtP63j4WiHnbeZq/IkpuauXDS+wtYUe4n
+	 i1j9UtamNDkMVbm/hiSs2si6Y4/QBF2jmOiqr0iF80a5dCBZ38dPEXZckUm22uycTt
+	 9ZG9MJI8OIozmBo8Pimu7OrI=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 8722440E01AB;
+	Wed,  8 Oct 2025 10:21:42 +0000 (UTC)
+Date: Wed, 8 Oct 2025 12:21:36 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	"Kaplan, David" <David.Kaplan@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Klaus Kusche <klaus.kusche@computerix.info>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86/bugs: Qualify RETBLEED_INTEL_MSG
+Message-ID: <20251008102136.GAaOY7MBd4_VBPBNtG@fat_crate.local>
+References: <20251003171936.155391-1-david.kaplan@amd.com>
+ <20251006131126.GBaOO__iUbQHNR6QhW@fat_crate.local>
+ <LV3PR12MB9265B9AA81E01A539214764A94E3A@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20251006140442.GDaOPMemqB7SRJSHWL@fat_crate.local>
+ <20251007182257.ywrqrrhgrtrviila@desk>
+ <20251007221229.GAaOWQTadGWlZSeAo_@fat_crate.local>
+ <20251007230821.5shpa3pusyzaohb2@desk>
+ <sb7p6quwxkn4w4etgsxlqd6fcsia4xobf73d3fnybxafxrmvwi@ajg5lkdxtnfy>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf tests: Don't retest sections in "Object code
- reading"
-From: James Clark <james.clark@linaro.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
- Ian Rogers <irogers@google.com>, Dan Carpenter <dan.carpenter@linaro.org>,
- Charlie Jenkins <charlie@rivosinc.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Leo Yan <leo.yan@arm.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251006-james-perf-object-code-reading-v1-1-acab2129747d@linaro.org>
- <CAP-5=fXmAbz7Gp5eCRFYsYu_pZoFNSR+mcJgE6Eu6YewHyLNtg@mail.gmail.com>
- <b39ffdd5-1692-46ed-86d9-726011c92036@linaro.org> <aOVxlEXDMKJyIhME@x1>
- <a7698f4f-6541-4d3c-afea-d30baa4776f5@linaro.org>
-Content-Language: en-US
-In-Reply-To: <a7698f4f-6541-4d3c-afea-d30baa4776f5@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <sb7p6quwxkn4w4etgsxlqd6fcsia4xobf73d3fnybxafxrmvwi@ajg5lkdxtnfy>
 
+On Tue, Oct 07, 2025 at 05:14:29PM -0700, Josh Poimboeuf wrote:
+> Isn't that what CONFIG_CPU_MITIGATIONS=n already does today?
 
+I'd like =n to mean, code is not compiled in.
 
-On 08/10/2025 9:32 am, James Clark wrote:
-> 
-> 
-> On 07/10/2025 9:01 pm, Arnaldo Carvalho de Melo wrote:
->> On Tue, Oct 07, 2025 at 10:10:12AM +0100, James Clark wrote:
->>> On 06/10/2025 4:21 pm, Ian Rogers wrote:
->>>> On Mon, Oct 6, 2025 at 6:11 AM James Clark <james.clark@linaro.org> 
->>>> wrote:
->>>>> +       data = zalloc(sizeof(*data));
->>>>> +       if (!data)
->>>>> +               return true;
->>
->>>>> +       data->addr = addr;
->>>>> +       strlcpy(data->path, path, sizeof(data->path));
->>>> nit: perhaps strdup rather than having 4kb per tested_section.
->>
->>> Oh yeah that would have been better, not sure why I didn't do it that 
->>> way.
->>> Although the max sections I saw was around 50, and it's usually a lot 
->>> less
->>> so it's probably not worth the churn to change it now that Arnaldo's 
->>> applied
->>> it?
->>
->> I see you submitted a patch for using strdup() and then there is a need
->> for checking the strdup(), etc.
->>
->> Since at this point this is an improvement on a test and all is sitting
->> in linux-next and the window is closing for v6.18, lets leave this for
->> the next window, ok?
->>
-> 
-> Makes sense.
-> 
->> These would be good things for some tool to catch, before it gets sent,
->> but that is another rabbit hole :-)
->>
->> Thanks,
->>
->> - Arnaldo
-> 
-> Does Smatch work on Perf? I imagine it would catch this if it does. Or 
-> just plain old cppcheck. I'll take a look.
-> 
-> James
-> 
+We do have some savings:
 
-Smatch doesn't know about strdup and seems to be more focused on kernel 
-so probably isn't a good fit.
+   text	   data	    bss	    dec	    hex	filename
+136442490	9737118		36764336	182943944	ae780c8	vmlinux 	# CONFIG_CPU_MITIGATIONS is not set
+138493310	10692818	37741668	186927796	b244ab4	vmlinux		# CONFIG_CPU_MITIGATIONS=y
 
-Cppcheck struggles with a lot of the kernely style that's used in Perf, 
-especially the headers. We'd either have to silence a lot of the 
-warnings, or start with almost no warnings enabled.
+but look at bugs.o:
 
-It doesn't have a warning for usage of a malloc return value without 
-NULL checking, so in this case it wouldn't be useful.
+# CONFIG_CPU_MITIGATIONS is not set	599K arch/x86/kernel/cpu/bugs.o
+# CONFIG_CPU_MITIGATIONS=y		625K arch/x86/kernel/cpu/bugs.o
 
-I'm not 100% convinced that the effort of integrating one of these into 
-the build system would be worth it. I know that once they're in, there 
-would be constant maintenance of silencing false positives etc. And a 
-lot of the warnings are more style or opinions about undefined behavior 
-according to the standard, but aren't real based on what the compiler 
-actually does.
+and those unused 600K still go into vmlinux:
 
-As an example, cppcheck on code-reading.c with --enable=all gives 17 
-portability, 11 style, 3 warning and 1 error outputs. Out of all of 
-these only two of the warnings are significant, from commit 0f9ad973b095 
-("perf tests code-reading: Handle change in objdump output from binutils 
- >= 2.41 on riscv"):
+$ readelf -W -s vmlinux | grep cpu_show_
+ 38058: ffffffff81869d20    27 FUNC    LOCAL  DEFAULT    1 cpu_show_not_affected
+ 91642: ffffffff81284980    70 FUNC    GLOBAL DEFAULT    1 cpu_show_vmscape
+ 92944: ffffffff812840f0    68 FUNC    GLOBAL DEFAULT    1 cpu_show_spectre_v1
+ 93449: ffffffff812847e0    70 FUNC    GLOBAL DEFAULT    1 cpu_show_gds
+ 96967: ffffffff81869d20    27 FUNC    WEAK   DEFAULT    1 cpu_show_ghostwrite
+ 99329: ffffffff812843b0    70 FUNC    GLOBAL DEFAULT    1 cpu_show_spec_store_bypass
+102119: ffffffff81284830    70 FUNC    GLOBAL DEFAULT    1 cpu_show_reg_file_data_sampling
+102618: ffffffff812845b0    56 FUNC    GLOBAL DEFAULT    1 cpu_show_itlb_multihit
+102660: ffffffff81284880    85 FUNC    GLOBAL DEFAULT    1 cpu_show_old_microcode
+103154: ffffffff812848e0    70 FUNC    GLOBAL DEFAULT    1 cpu_show_indirect_target_selection
+103474: ffffffff81284460   164 FUNC    GLOBAL DEFAULT    1 cpu_show_mds
+103673: ffffffff81284510   153 FUNC    GLOBAL DEFAULT    1 cpu_show_tsx_async_abort
+106613: ffffffff81284930    70 FUNC    GLOBAL DEFAULT    1 cpu_show_tsa
+109692: ffffffff81284400    92 FUNC    GLOBAL DEFAULT    1 cpu_show_l1tf
+111021: ffffffff81284640   150 FUNC    GLOBAL DEFAULT    1 cpu_show_mmio_stale_data
+111165: ffffffff812845f0    70 FUNC    GLOBAL DEFAULT    1 cpu_show_srbds
+112332: ffffffff81284090    83 FUNC    GLOBAL DEFAULT    1 cpu_show_meltdown
+114213: ffffffff812846e0   174 FUNC    GLOBAL DEFAULT    1 cpu_show_retbleed
+114312: ffffffff81284790    70 FUNC    GLOBAL DEFAULT    1 cpu_show_spec_rstack_overflow
+118586: ffffffff81284140   619 FUNC    GLOBAL DEFAULT    1 cpu_show_spectre_v2
 
-   token = strsep(&version, ".");
-   version_tmp = atoi(token);
-   if (token)
-       version_num += version_tmp * 100;
+$ readelf -W -s vmlinux | grep _parse_cmdline
+  2575: ffffffff897a0050    27 FUNC    LOCAL  DEFAULT   18 nospectre_v2_parse_cmdline
+  2578: ffffffff897a0070    27 FUNC    LOCAL  DEFAULT   18 nossb_parse_cmdline
+  2587: ffffffff897a0110    37 FUNC    LOCAL  DEFAULT   18 its_parse_cmdline
+  2591: ffffffff897a01d0   138 FUNC    LOCAL  DEFAULT   18 tsx_async_abort_parse_cmdline
+  2594: ffffffff897a0260   138 FUNC    LOCAL  DEFAULT   18 mmio_stale_data_parse_cmdline
+  2597: ffffffff897a02f0    97 FUNC    LOCAL  DEFAULT   18 rfds_parse_cmdline
+  2599: ffffffff897a0360    56 FUNC    LOCAL  DEFAULT   18 srbds_parse_cmdline
+  2601: ffffffff897a03a0    38 FUNC    LOCAL  DEFAULT   18 l1d_flush_parse_cmdline
+  2603: ffffffff897a03d0    96 FUNC    LOCAL  DEFAULT   18 gds_parse_cmdline
+  2604: ffffffff897a0430   166 FUNC    LOCAL  DEFAULT   18 tsa_parse_cmdline
+  2606: ffffffff897a04e0   268 FUNC    LOCAL  DEFAULT   18 spectre_v2_user_parse_cmdline
+  2608: ffffffff897a05f0   487 FUNC    LOCAL  DEFAULT   18 spectre_v2_parse_cmdline
+  2609: ffffffff897a07e0   131 FUNC    LOCAL  DEFAULT   18 spectre_bhi_parse_cmdline
+  2611: ffffffff897a0870   206 FUNC    LOCAL  DEFAULT   18 ssb_parse_cmdline
+  2613: ffffffff897a0a30   200 FUNC    LOCAL  DEFAULT   18 srso_parse_cmdline
+  2615: ffffffff897a0b00   178 FUNC    LOCAL  DEFAULT   18 vmscape_parse_cmdline
+  2617: ffffffff897a0bc0   344 FUNC    LOCAL  DEFAULT   18 retbleed_parse_cmdline
 
-   token = strsep(&version, ".");
-   version_tmp = atoi(token);
-   if (token)
-       version_num += version_tmp;
-			
-"token" has already been passed to atoi() so can't be NULL in the if 
-statement. I think the atoi() needs to come after the null check.
+and so on...
 
-James
+So I'd like to try to see whether completely axing it off in the =n case
+without incurring a lot of ugly ifdeffery, would work.
 
+> Then one only needs to grep their .config file for UGLY to understand
+> why their disassembly is so inscrutable ;-)
+
+Not sure about UGLY but if you can come up with a name that says "has impact
+on the resulting code and when you have them enabled, you have weird asm
+constructs all over the place", sure, why not.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
