@@ -1,78 +1,83 @@
-Return-Path: <linux-kernel+bounces-845493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02A17BC525F
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:13:20 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83BD0BC5265
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:13:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1661C189C697
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:13:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F2DFE4F70C3
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA4927B34E;
-	Wed,  8 Oct 2025 13:13:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8462225397;
+	Wed,  8 Oct 2025 13:13:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cpWzYXB7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NWBqOXDz"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7656F170A11
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 13:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99ACE170A11
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 13:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759929196; cv=none; b=uTZTIzn8HF/fKPCgYHNCArdSdxioVZgrtvy2famJrrISt+OVWR/201iwJr9bMh8kCNrpyljsohRU30z2eaOmIEU+yrJrc5SyBLIR+q/h/jnm+atQLAMaz0JxRSzdAM0bRP/6GHtjWPaQl0J9ISp4qZH7ajlauvv7TlyVrRYh2fY=
+	t=1759929202; cv=none; b=alxQ5Y0Bcx0dAtvc76ArUrXsv+bbHsPQs/KdaVA5e7RxAGRFrriXbuBNEjIqii0jZKrXmb6j+tA1jkW4HRKB3EBzqoZ98NZYtpymDarH2Z388kZvpLHguzKn7jqnOWnPaExlPTdU6UTy967hTCNeu9ykgUUqtrtgL0RQwfAnG/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759929196; c=relaxed/simple;
-	bh=J0UgBcMVZShSgTRFPqyT3w8kAQB687JxSVIhZQnew44=;
+	s=arc-20240116; t=1759929202; c=relaxed/simple;
+	bh=qdqX9jLMYGejaeiyk6FmUcIC5rmoUQxx8dbODQQWUc4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JMVN3n2d2zks4Zbhk32hVCd0efsWSusPrped57ZUiQ94fIQVvyhmTtlvpeQlR6A9zgD+iiiCpJtKPI94f4+yzLsRTkTn/SfN+KX0+rRjXkO2X8Wjdu6j63MnOsIqJwkIltPIKsrvTZqDvdVOxnfEtsN40FumoqwHjQTrCaIWef4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cpWzYXB7; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759929193;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KfO3HcuzilzdD2IT8B5zQurZ7lvUWM/OXF8M+sb0TFY=;
-	b=cpWzYXB7+5i7crgqV0MGtknN66Jer/ITM3ogBhqWxyVTScjYd/mqpXfLBdFIxRB0zH3Hug
-	KpIVB5Q2qIQpcjkYZZyWHItrpBQ61ArKAf1Au7te+VZteKi3wHM/ijXuwBQo9pamEqARO0
-	n2TqMaZgTX83aqiHgWaeu+UiV69akhE=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-59-WK4l7uOGMXqH89epSJtmVA-1; Wed,
- 08 Oct 2025 09:13:10 -0400
-X-MC-Unique: WK4l7uOGMXqH89epSJtmVA-1
-X-Mimecast-MFC-AGG-ID: WK4l7uOGMXqH89epSJtmVA_1759929189
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 032901800292;
-	Wed,  8 Oct 2025 13:13:09 +0000 (UTC)
-Received: from fedora (unknown [10.44.34.240])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 759451956056;
-	Wed,  8 Oct 2025 13:13:04 +0000 (UTC)
-Received: by fedora (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed,  8 Oct 2025 15:13:08 +0200 (CEST)
-Date: Wed, 8 Oct 2025 15:13:02 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	David Howells <dhowells@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-	Li RongQing <lirongqing@baidu.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/4] seqlock: introduce scoped_seqlock_read() and
- scoped_seqlock_read_irqsave()
-Message-ID: <aOZjXq8u8fV_kABe@redhat.com>
-References: <20250928161953.GA3112@redhat.com>
- <20251008123014.GA20413@redhat.com>
- <20251008125639.GK3289052@noisy.programming.kicks-ass.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=btL5dtMMdIRJ88Y1CwI3+SnCGZvtNifwuOYERerjuyMHdk1Ke5tmeuE+1etX5x4uTxUPZJltfke2TxWbtQC/uEdc+fwDwVlHL1y3G8g2MdiGU/M380Kor1zs75Ot4UaTxnNlkkAyVdP0b1mzfK/+uKyRz93wcyKrIZeomz0jryQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NWBqOXDz; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7833765433cso9206212b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 06:13:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1759929200; x=1760534000; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qhirsJUANkMy26KcoRueNjsC5oBNI6RBwD+2LVkuC8E=;
+        b=NWBqOXDzfumhglTVy2WJadtXAz0e/wAq+c66jaQcjSBqV4knmVJRF9q83AVAHT1xtv
+         B8S4T+35jcQfuGRnd/9Fb8pTNDtkdtezwn2RXZXUQ9izPjZorLp1MXDHLIMW4/tjIm4m
+         vPejQ6VmfNYcVazbYtcpfqL+Q237V3vxfJw1o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759929200; x=1760534000;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qhirsJUANkMy26KcoRueNjsC5oBNI6RBwD+2LVkuC8E=;
+        b=jAIKj3LhZFIhYhCuV85pUE+z0/OFI4v75fJYae2t7tBBAjMGhJmyEBjk7cxvadqPmi
+         fipgkz2Vlva+kRNvDBqoSEAZO10RfyhuUhPO9yT9MG6HB4MTVDrR6Qq/9ibea6a52j63
+         SAiU3FxiQFMI5fVXqxytpJUjWFQzeNwkhlIivWN1Zca7cuh1Wwoy1oO1ze63PfxOBhsW
+         MOXSZbmv40jEZonmvop7Ce+XnZcfX4QmZPkdcaIDEskbJYeEktVMlMVaJkMxwFzK4A3F
+         xbaD5jkyRlNYCPhajuC8lqXNlTslM4SCqKE1kqpjhxZ0XUtgTVEwJyarrFg9voSWja1o
+         Kp6w==
+X-Forwarded-Encrypted: i=1; AJvYcCW/bY8drF5vU0OsLAWIGRAD8A6AlMaIw02ALt7EFQHXypXHB9HxzZKlZPY48i1aEYWyy2EEeusjo9x7fZ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzY2v+GWyDEwHkfIOD4R/erl2xLZzc3rw8c/w3xlYi/f33NNQ9L
+	sDUIiw4xa7YopV/AQ4i3UbDl1Fd4NJRvyjaGqsI586CGTNRmRrcHlW49M1IrH1tJBw==
+X-Gm-Gg: ASbGncv3DFLVaF5HLo01wEd3HgakM00lfAWfB+PIDeNyIcX97omHd50jSjlWutF0r8L
+	R6LpYobaEMuku0Giqf+Njy9538WvY1fhswTFkd0zaUu+c0AFWegnNSl0OHG18T8wB8WbQ/lGoYp
+	NluyORm53LN2lFMbpGkOIAlwYzOgxRDowu7FAa5vk0QQxPdpPNd/K3qxVKGq0sGAvxJh5mrvXW1
+	8/Y/s/ZtZuAavvevsKluzI7ZkuK0D3BEKEGxhvkiteXOxX0xcJe9Pt4xBElBTmJoTm6wxltfmgz
+	edWhgSDfPLebUhFd9tdgahmgPxCltiRLNXBKs6+T2wAH9oFlP5DQajbIpFU7YgRka01nsnO0EEE
+	hMZwW2flqtQ2YLvC5vNGFVZsp5YJlsBmydL5BAGvRA9ohBSW6HQ==
+X-Google-Smtp-Source: AGHT+IEjV9K7Hiy+RpgvzEdGQO4CYiP7IP82yjQEQSkRFO4uHcWCY9san8fxpr1MwP0RF/E0cceMIg==
+X-Received: by 2002:a05:6a20:7353:b0:2e2:9575:3a32 with SMTP id adf61e73a8af0-32da80db40fmr4538147637.7.1759929199831;
+        Wed, 08 Oct 2025 06:13:19 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:465a:c20b:6935:23d8])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b62ea0758b5sm12777442a12.20.2025.10.08.06.13.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 06:13:19 -0700 (PDT)
+Date: Wed, 8 Oct 2025 22:13:14 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Dhruva Gole <d-gole@ti.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Tomasz Figa <tfiga@chromium.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2] PM: dpm: add module param to backtrace all CPUs
+Message-ID: <4dsz6s3zfwvfz5iv2labiycqeuu6klry2af4sgzuykpxbzwopg@lulgn7ubg2vu>
+References: <20251007063551.3147937-1-senozhatsky@chromium.org>
+ <20251008101408.dj46r66gcfo26sgl@lcpd911>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,29 +86,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251008125639.GK3289052@noisy.programming.kicks-ass.net>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <20251008101408.dj46r66gcfo26sgl@lcpd911>
 
-On 10/08, Peter Zijlstra wrote:
->
-> On Wed, Oct 08, 2025 at 02:30:14PM +0200, Oleg Nesterov wrote:
-> > Only 1/4 was changed according to comments from Linus and Waiman,
-> > but let me resend 2-4 as well.
->
-> Shall I put this in tip/locking/core once -rc1 happens or so?
+On (25/10/08 15:44), Dhruva Gole wrote:
+[..]
+> >  		dev_emerg(wd->dev, "**** DPM device timeout ****\n");
+> >  		show_stack(wd->tsk, NULL, KERN_EMERG);
+> > +		if (dpm_watchdog_all_cpu_backtrace)
+> > +			trigger_allbutcpu_cpu_backtrace(this_cpu);
+> 
+> IMO it would be useful to check the ret val of this as well, I mean just
+> incase this silently returns false it maybe confusing to figure out what
+> hapenned in the system inspite of setting the mod param.
 
-Would be great ;) If nobody objects.
-
-Can you also take the trivial
-
-	[PATCH 1/1] documentation: seqlock: fix the wrong documentation of read_seqbegin_or_lock/need_seqretry
-	https://lore.kernel.org/all/20250928162029.GA3121@redhat.com/
-
-?
-
-OTOH, if this series is merged, this doc fix should be updated to
-mention scoped_seqlock_read()...
-
-Oleg.
-
+Honestly, I haven't seen a system that constantly modifies
+its modules' params at runtime.  It's usually a pretty static
+configuration, so I'm not sure if this will address any real
+world problem.
 
