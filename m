@@ -1,120 +1,104 @@
-Return-Path: <linux-kernel+bounces-845486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BDD6BC521D
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:08:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D232BC5223
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 15:08:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A1A1B4F596A
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:08:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9F221888C88
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 13:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1DD227A900;
-	Wed,  8 Oct 2025 13:08:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F33B42836BE;
+	Wed,  8 Oct 2025 13:08:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DhgWGk2A"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XUCwiSES"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8461582866;
-	Wed,  8 Oct 2025 13:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5494327A45C
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 13:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759928892; cv=none; b=i1gVrNg4fVfIPo6MLjK0f2V2SbKORhR9/P+r2kjaVjB63CsQvv2obD7sUWzg4Kr2BzEkiuHnxjIOZUOIUwd7fyDEhDDjeeDeYovnpdAIMjeDGFWfF4I/Ac92hXKhMRzBagg+GTFNZSh1zp4eGI9fjhu9BLFLS8pI6wxvbuwINm0=
+	t=1759928910; cv=none; b=qxgWdzceps+wZ9eOZ7azGP76uRXra9rLJb0nynKdw31zvbt/vI4ZPC55lBKzL7r04F3bv22NhF2g94t2JpjmzqiWEonqdl0Flym4oD8W05S+HAoZEZpSpJ5rtUSfsWSjwa9ZfBh3j4DUBNnYXTC+mdr23xHL+WtohCo1n1Ojs9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759928892; c=relaxed/simple;
-	bh=Mv5oczhOGVfVfVYG1uth6aFgEe6kihw7TkAxnQR9Tms=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nDbkEMboCWT4SzOA+hIWMPaZ7D3GwTZx60uqOa+7cdrgW1+Hy1NV2Hd4n9JzJ8NZAynGBucObK9vsLCnxJNryVtrLsJAnKoV7xxPXS5YGfHPJXiRXhobB+avxyixzXPMhgofLCt9NKkjHspBzjm+pg3hSoEqH3fNtEROl/117lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DhgWGk2A; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759928890; x=1791464890;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Mv5oczhOGVfVfVYG1uth6aFgEe6kihw7TkAxnQR9Tms=;
-  b=DhgWGk2A+c8rc9Rl+R2I0OH+qMb6/SV5qFH0FTM7hiZxBOh+NQKcYJMd
-   4cokiZYOnw5o+izsSGj3JzU3S/y4yMyPTzITQmYRrWxwEmtgFhXsr38If
-   1ucovFSBlMgzqzko2uEcLgbjRkT7ny9WW46K7+QyeI0bYQEDtNIiJ/2eh
-   cy4nzhABcuEw4OoaGfh7viF9A79nOmkqDJrfx29tWjw5QXo66l3KMDSgc
-   tRgsNTfl3lCukKLl/3aDN3UCXI05wsCwxInG0/hGdJAzO1EIxxTL6H8NF
-   v6+yQQ9UntgYlN9/XEvdl9ZMiNFIQa/vI6oi0Dxg8iR64CV9knaVJLRTP
-   g==;
-X-CSE-ConnectionGUID: vWzeImCKQq++UYhD/uy8pw==
-X-CSE-MsgGUID: Dj8+pc1LSS+qwT2/wzC6+w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11576"; a="65765309"
-X-IronPort-AV: E=Sophos;i="6.19,213,1754982000"; 
-   d="scan'208";a="65765309"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2025 06:08:10 -0700
-X-CSE-ConnectionGUID: UEHZUsjGStuTSx9mnvqISg==
-X-CSE-MsgGUID: NMm7OjUSR1ONbBUar9z5Hg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,213,1754982000"; 
-   d="scan'208";a="185561140"
-Received: from iherna2-mobl4.amr.corp.intel.com (HELO kuha.fi.intel.com) ([10.124.220.169])
-  by orviesa005.jf.intel.com with SMTP; 08 Oct 2025 06:08:07 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 08 Oct 2025 16:08:04 +0300
-Date: Wed, 8 Oct 2025 16:08:04 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: Jameson Thies <jthies@google.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dmitry.baryshkov@oss.qualcomm.com, bleung@chromium.org,
-	gregkh@linuxfoundation.org, akuchynski@chromium.org,
-	abhishekpandit@chromium.org, sebastian.reichel@collabora.com,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH 5/6] usb: typec: ucsi: psy: Set max current to zero when
- disconnected
-Message-ID: <aOZiNH7UIMlHS2j2@kuha.fi.intel.com>
-References: <20251007000007.3724229-1-jthies@google.com>
- <20251007000007.3724229-6-jthies@google.com>
+	s=arc-20240116; t=1759928910; c=relaxed/simple;
+	bh=hCEpujIAQjzq+71JO1DtwhcA8vBsjBZGICHvXjHGXsw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o8ynhor4RIXKRUwKrk0Zz/uWaLdm5K5lpw5p2vC7TttXiMpOGNMYY8YOYzECG5FguejA5t4ckY5xxLBL+4otMgkU40s0NYSFXUpi96CQuBnGYkqMKmB612gAc9wOYwxZpSB7OGvBzTnUX3727anL/qOG+rZMQzZuR8FNF0JEXpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XUCwiSES; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-373a1ab2081so61788861fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 06:08:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1759928906; x=1760533706; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hCEpujIAQjzq+71JO1DtwhcA8vBsjBZGICHvXjHGXsw=;
+        b=XUCwiSESE+Yotrpsv8pPW/FW3Cs9vJToe9gNGoWlCm2Dw8Pp4BkWO6Bd/DfB7qgyjG
+         O4hL0SQPXWrJDNfrNTIL8GMC9zG/YT1Bqcb2pn70Tcp1kjGpkJN9gHCQ02Wc+ry0SB04
+         Rfehh74eKgT1hbjQKbcmaC8upPNe8N4XAb4Asjy7PfkQ8o+y4PsyJT8H2BthVOcL4Dks
+         j2FbIl1sPUqi92Zho093nNT8AiRLWP1kULtV1I3GTK35SHDJFoVoPTP9R0OQcTQH09rH
+         Sd/nomktOOOeLW3UHQaHstOt4cTM29iubdPwnwyysNJu/BVRh2VSLQXh0Aq1CUVm+A4N
+         9xDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759928906; x=1760533706;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hCEpujIAQjzq+71JO1DtwhcA8vBsjBZGICHvXjHGXsw=;
+        b=bRehvbxD2qZ/lbxnX/dcTtx5SRt1Hcr3BoKQHVyV8w7UL4wseSlmPesaRmOopx2wIy
+         cVfxHldorD+3Y5RZ+bBzpEUPoAiXy8DvGNpTHIEz3Y6gnc68eUs/3f1t4HKJ62FCAymW
+         SnaCh2hUifSc+YYu9ahqwMfGPIvEbomeZEFBE5N2CyQgLGEjFvSTala0kuiY2zFspiXh
+         JaaFF4d1H36w9NqN/Bi8i6dS+Gaw3y54jLzrVXwLFzxstMqeduAad/xGpQwGCzY5ZD7p
+         LwLDIqUoDBpEotqB18eXYtwYZufWSbNsX06Usn66Twwu+ABGmusueW+/4hpPgZFpuste
+         jd6w==
+X-Gm-Message-State: AOJu0Yw//qYsOc+wjI+AkptExId5RMmUQ445oabSCFFdkLnvCOCRIXD/
+	LTKpLXKDHzqAH50jrH5euRwrVYdPHTxN5jzkLz59KufAYrRSFmd4JZC9kGKrho+IatOa5rgr0hG
+	0/7eLfyiX6YzOFpDpD1fgzGduVayRIAiqt5cbM+g3Rg==
+X-Gm-Gg: ASbGnct0syZNJxTSnMLVnfgNDYa5mYnV+uQgsV3nVkKnCtvUO3R6ZuaatQ6/msI2SkW
+	sGuOhRXldqgu1BsrvZTBx85O76zo0XSRBRu2OvbweO01bGF8993gEz2dvT4n30Xv8zye+gO8HHr
+	JC96GN07fbEYQa6kGwdSftzLjVi8Wo+rcoGu7VOCygWTqPDXUZD8CFxi36QnQHuN+gLluNjbq5P
+	yZsJP+B8sF/AP4yypK+WIKQrAEmGkwPUzX4xW1O987/2q7Kynfdbm2T5UBuHqJF
+X-Google-Smtp-Source: AGHT+IFee/L1ihvsJoJN8qn9mdf5cQv75y1ErzWOfzWMnIXy8m5xgcvGSMTnVzjnBNArGE8jLQiNlkQeXTXf0/ONVM4=
+X-Received: by 2002:a05:651c:1990:b0:363:d806:7d5b with SMTP id
+ 38308e7fff4ca-37609a1a8e8mr7197091fa.0.1759928906448; Wed, 08 Oct 2025
+ 06:08:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251007000007.3724229-6-jthies@google.com>
+References: <20250908160224.376634-1-marco.crivellari@suse.com>
+ <20250908160224.376634-2-marco.crivellari@suse.com> <aOZgR7X5ZyXZh_jc@google.com>
+In-Reply-To: <aOZgR7X5ZyXZh_jc@google.com>
+From: Marco Crivellari <marco.crivellari@suse.com>
+Date: Wed, 8 Oct 2025 15:08:15 +0200
+X-Gm-Features: AS18NWCy8lu9sYT938kbcqk4cxkt4xkSfqGFbSwCDaUGQeBgodxXuFjXFCcOXyQ
+Message-ID: <CAAofZF74M3jrWJNZOy3KLyVg7mS7yKzofOUQ+gmmyxYoXbqBSg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] rust: replace use of system_unbound_wq with system_dfl_wq
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Michal Hocko <mhocko@suse.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 07, 2025 at 12:00:06AM +0000, Jameson Thies wrote:
-> The ucsi_psy_get_current_max function defaults to 0.1A when it is not
-> clear how much current the partner device can support. But this does
-> not check the port is connected, and will report 0.1A max current when
-> nothing is connected. Update ucsi_psy_get_current_max to report 0A when
-> there is no connection.
-> 
-> Signed-off-by: Jameson Thies <jthies@google.com>
+On Wed, Oct 8, 2025 at 2:59=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> wr=
+ote:
+> Please add documentation to the new methods, similar to the
+> documentation that existing methods already have.
 
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Sure, thanks for the feedback.
 
-> ---
->  drivers/usb/typec/ucsi/psy.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/usb/typec/ucsi/psy.c b/drivers/usb/typec/ucsi/psy.c
-> index 985a90d3f898..3a209de55c14 100644
-> --- a/drivers/usb/typec/ucsi/psy.c
-> +++ b/drivers/usb/typec/ucsi/psy.c
-> @@ -169,6 +169,11 @@ static int ucsi_psy_get_current_max(struct ucsi_connector *con,
->  {
->  	u32 pdo;
->  
-> +	if (!UCSI_CONSTAT(con, CONNECTED)) {
-> +		val->intval = 0;
-> +		return 0;
-> +	}
-> +
->  	switch (UCSI_CONSTAT(con, PWR_OPMODE)) {
->  	case UCSI_CONSTAT_PWR_OPMODE_PD:
->  		if (con->num_pdos > 0) {
-> -- 
-> 2.51.0.618.g983fd99d29-goog
+--=20
 
--- 
-heikki
+Marco Crivellari
+
+L3 Support Engineer, Technology & Product
 
