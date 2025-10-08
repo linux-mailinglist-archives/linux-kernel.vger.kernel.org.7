@@ -1,64 +1,87 @@
-Return-Path: <linux-kernel+bounces-845676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1282BBC5E3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:55:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8667BC5EC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:02:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D6794808AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:45:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B44034261F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E10572FB0A7;
-	Wed,  8 Oct 2025 15:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D5C2F0C7E;
+	Wed,  8 Oct 2025 15:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XmryXEaL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G0jy+nMg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DEF243956;
-	Wed,  8 Oct 2025 15:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F7F929D27E
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759938035; cv=none; b=f+ZEphFAagVIxeS0km9maycpetyb7eBpsUgdT6m0f4DNqlH8akfRGc5e9KiiG3FeBSXac07EdI5I57YY1T7Fqw7Y6spI3EZsjH+MJRBaUc28CAdLw+DsAP8njGCj2JHFvr7Mf8lLhxUMh2KqBYcdMq+pGOHGF3eZio1zacahJpE=
+	t=1759938211; cv=none; b=AY6Q/vhjJL5zthKauwJCbTaWUl4j3wsyKB6TdlHvIFloYbxEMzXTYbGNDy+gIlTh6rQPUzAD0fS3QZX7ke+UBUwr310c7HWvlrbDHm7/5rkOX4iYhAqULM3KkBDiIWMqXkZ4Q/KWtxl7usqAU2NqH+2gWUEK4b2efzt5V96sjok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759938035; c=relaxed/simple;
-	bh=UlvfyKMxLWiKKPCBd6sAWIadJGuh5KhE/Vp4up1n9MM=;
+	s=arc-20240116; t=1759938211; c=relaxed/simple;
+	bh=ERlHrk6EJ6JZBnRe2MdPcCm5Je+F3pbGM2LW3RuE074=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hloPmXRDdSe2C0tEvlzbOEBD+GYJncC6LshvSibPgZzmlAvoFr+ru3V/ylVbjIRG6krEpzqNS7Rm7j4Xa3YwDOF2PdyplsAlhE7dm6cWHzQbSte1DUOjpeuO6Ugvdy/YbAJvF6XtQ5lLDAzCps4t9fe2P8wLAeH9q6FhHRlq+JI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XmryXEaL; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759938034; x=1791474034;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=UlvfyKMxLWiKKPCBd6sAWIadJGuh5KhE/Vp4up1n9MM=;
-  b=XmryXEaLoT7Tib7K5QzNdKS/Ukw7KJJhCWGDRYqruxrXUSd5k7QzDrs/
-   fvUYIZsPUUUbEdWBLxRrfrmkcuuHRAZ0u3nPfvDKE1td2H8s8ni5jyvGD
-   /YQyEZlqHl7cT8jCbCbazpsxQlGPVPmNE4ORETtN/pLz+TDzVK27m7n/7
-   l7kOcFOfdRP4CLqAozmZLIyIges7gWZatIeDAhFGku1/OnvlEdSl7krxI
-   7Gy/1zEmYas2hRHyrdYPbx+gqz1DRmmgfrkMLzrRrvgjSzEJbPdbX3gkL
-   zA27tlWNEHEAR9AsLliZ9TQmhOdNJvR5IgbmSivkvLxO19EHVm454KvLW
-   w==;
-X-CSE-ConnectionGUID: dyeLeD50QZ+sS93ZNHbwYg==
-X-CSE-MsgGUID: iALhAs1BSr2qH7G/2nq21A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11576"; a="61340091"
-X-IronPort-AV: E=Sophos;i="6.19,213,1754982000"; 
-   d="scan'208";a="61340091"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2025 08:40:32 -0700
-X-CSE-ConnectionGUID: BFEC38dWRj6w95GURz76ig==
-X-CSE-MsgGUID: kgCZmnoUQiamyk0XYdDkKA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,213,1754982000"; 
-   d="scan'208";a="185759905"
-Received: from rchatre-mobl4.amr.corp.intel.com (HELO [10.125.110.204]) ([10.125.110.204])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2025 08:40:29 -0700
-Message-ID: <9d86698d-525e-4d8c-b3d9-b6a0e7634649@intel.com>
-Date: Wed, 8 Oct 2025 08:40:28 -0700
+	 In-Reply-To:Content-Type; b=lmX25xwYIVddBbCdCFtwLwOZR+5VN/MMvL3l3mSz5csnIYstztNJyGY3s5x0V6BT81chnFDMVNs+3l3/pdlDBNdE+FNNCFR4TiTuacv814YmrQGSnUaov+0GbF22ryMe+k7V0HOaeboX/3s6WmyhqE1mcpRH2cojXO5ExuZnG0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G0jy+nMg; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759938209;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=YUhSb2gRG9q7wfoqgmoV/rOSyHa9AmwtjacpyBWGooo=;
+	b=G0jy+nMgii99F7EGr5iZ/7JuNu0x3qu/y2h0XwlZtJphzo3mwSxZhAoqFpUnGdeBkIYHS1
+	wLQe3a2DoEJqVd7/9mA2cKJam/1COn85A7LWwdp3jhk0t96/DFDRQI77wZQGADe594MAoN
+	bFzO12lLqjhQOfrrwUc1xHVuPcGSzO8=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-158-JYRJAxNJNW-R7tWVMT_IrQ-1; Wed, 08 Oct 2025 11:43:28 -0400
+X-MC-Unique: JYRJAxNJNW-R7tWVMT_IrQ-1
+X-Mimecast-MFC-AGG-ID: JYRJAxNJNW-R7tWVMT_IrQ_1759938207
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3ee888281c3so68970f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:43:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759938207; x=1760543007;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YUhSb2gRG9q7wfoqgmoV/rOSyHa9AmwtjacpyBWGooo=;
+        b=RBLPjy0fL3DEEFu4uchoVGDlg6i8RIKKNPFhtAtvYr1wbHAEW6FP0dHHKd/wED+eNS
+         pNq6E0R+dL9mTm4zW0U//2tni56gQ+f6ilIWobsz0U85AdOPtOTwfDqLC2imSA7delfI
+         oR6Co4CvDxnP3HhGnxfXOb+gmqnWhyUzkHAl/u0aH8SN4yYaRPW8OiWzC/kuMm6iJNOr
+         uTBTVpLlP+f9UzVCBzm2Xy7xo545aVQcsWdwJwmet8xYa37T2OXPVT+HJc1Cas3MbOkH
+         7gqu0k+77+cYZpASOK5uau9z2RMrfF6s4nIDR7EvfUKAsla4j6lUnue/F6QROIxaql4U
+         gCUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUkrnYqTjf8L0ywkO1lZ8Kz/AkK4hJI8I93slfDYnTnkV15p9zTlV344fX3niiAIYGZyj0Tqliahezm9nM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3UVjdyIscjlUlaWlm2X89EKQ6Xi/ZeC2uqFWTVtvTB6YIjw7o
+	0itpS7Fgv4ptXYx/peR7u+IUYU9ojGWvQJ9HJwMY6AbDhakVo4RCLFOCtV2yZavasOWZgah4ZJb
+	aRK/yHj9/0fgXU3RbfmOxdROFxqBh4JnW2A84K8YQQqKZOgKA3AX3o5eDYo142cXdjA==
+X-Gm-Gg: ASbGnctABybYaf3V3UrVA+TUKl0ZRgKNM57RJFw//XB853Z3bfixEC8cpxrk8yw7lyP
+	6kJ2/qQ5mTGkgFu1gxOyId21z3YQAvPDibPnpGWI80Ypscbac1yCOU7C6A/3yjhzewJ7AR8mgdw
+	7aiD7bQKMTRVr58leSR1qitGvvuPHXUri+TEop6S3pHNkQM/hbxWxJ2mZhlQ19VnzPBUrNJ/o0R
+	OifolewBXCuwxXRaVUDDo5XgL3K4lKpvpVN8zcILWGgcf4Z8R6MF3FZ+PSVpr52Bu2sp4mr3/Ew
+	caA3FMhLA6Uoc+1e/9yVhaLr7xKbM+3EplzgCwbuDHM499YthXwqpFzFEAn+cr4P5Sjzu5Z9sTu
+	GKCxCKHX4
+X-Received: by 2002:a5d:5f47:0:b0:3eb:c276:a361 with SMTP id ffacd0b85a97d-4266e8dd630mr2663630f8f.54.1759938206741;
+        Wed, 08 Oct 2025 08:43:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEg/1BjAZFBrqRhTVifCxpXqhRM9mNYNtgY3LS18mLzhLVabrk7varIJms3tUeaWhS9aL+yvg==
+X-Received: by 2002:a5d:5f47:0:b0:3eb:c276:a361 with SMTP id ffacd0b85a97d-4266e8dd630mr2663607f8f.54.1759938206331;
+        Wed, 08 Oct 2025 08:43:26 -0700 (PDT)
+Received: from [192.168.3.141] (tmo-083-189.customers.d1-online.com. [80.187.83.189])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f4bdcsm30484973f8f.54.2025.10.08.08.43.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Oct 2025 08:43:25 -0700 (PDT)
+Message-ID: <83e33641-8c42-4341-8e6e-5c75d00f93b9@redhat.com>
+Date: Wed, 8 Oct 2025 17:43:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,96 +89,133 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] x86/kexec: Disable kexec/kdump on platforms with TDX
- partial write erratum
-To: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
- "Reshetova, Elena" <elena.reshetova@intel.com>,
- "Annapurve, Vishal" <vannapurve@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "bp@alien8.de" <bp@alien8.de>,
- "tglx@linutronix.de" <tglx@linutronix.de>,
- "peterz@infradead.org" <peterz@infradead.org>,
- "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
- "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
- "x86@kernel.org" <x86@kernel.org>, "kas@kernel.org" <kas@kernel.org>,
- "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, "Huang, Kai" <kai.huang@intel.com>,
- "seanjc@google.com" <seanjc@google.com>,
- "Chatre, Reinette" <reinette.chatre@intel.com>,
- "Yamahata, Isaku" <isaku.yamahata@intel.com>,
- "Williams, Dan J" <dan.j.williams@intel.com>,
- "ashish.kalra@amd.com" <ashish.kalra@amd.com>,
- "nik.borisov@suse.com" <nik.borisov@suse.com>, "Gao, Chao"
- <chao.gao@intel.com>, "sagis@google.com" <sagis@google.com>,
- "Chen, Farrah" <farrah.chen@intel.com>, Binbin Wu <binbin.wu@linux.intel.com>
-References: <20250901160930.1785244-1-pbonzini@redhat.com>
- <20250901160930.1785244-5-pbonzini@redhat.com>
- <CAGtprH__G96uUmiDkK0iYM2miXb31vYje9aN+J=stJQqLUUXEg@mail.gmail.com>
- <74a390a1-42a7-4e6b-a76a-f88f49323c93@intel.com>
- <CAGtprH-mb0Cw+OzBj-gSWenA9kSJyu-xgXhsTjjzyY6Qi4E=aw@mail.gmail.com>
- <a2042a7b-2e12-4893-ac8d-50c0f77f26e9@intel.com>
- <CAGtprH_nTBdX-VtMQJM4-y8KcB_F4CnafqpDX7ktASwhO0sxAg@mail.gmail.com>
- <DM8PR11MB575071F87791817215355DD8E7E7A@DM8PR11MB5750.namprd11.prod.outlook.com>
- <27d19ea5-d078-405b-a963-91d19b4229c8@suse.com>
- <5b007887-d475-4970-b01d-008631621192@intel.com>
- <5d792dc5-ea8e-46d2-8031-44f8e92b0188@suse.com>
-From: Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH] Revert "mm, hugetlb: remove hugepages_treat_as_movable
+ sysctl"
+To: Michal Hocko <mhocko@suse.com>
+Cc: Gregory Price <gourry@gourry.net>, linux-mm@kvack.org, corbet@lwn.net,
+ muchun.song@linux.dev, osalvador@suse.de, akpm@linux-foundation.org,
+ hannes@cmpxchg.org, laoar.shao@gmail.com, brauner@kernel.org,
+ mclapinski@google.com, joel.granados@kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Mel Gorman <mgorman@suse.de>,
+ Alexandru Moise <00moses.alexander00@gmail.com>,
+ Mike Kravetz <mike.kravetz@oracle.com>, David Rientjes <rientjes@google.com>
+References: <20251007214412.3832340-1-gourry@gourry.net>
+ <402170e6-c49f-4d28-a010-eb253fc2f923@redhat.com>
+ <aOZ8PPWMchRN_t5-@tiehlicka>
+ <271f9af4-695c-4aa5-9249-2d21ad3db76e@redhat.com>
+ <aOaCAG6e5a7BDUxK@tiehlicka>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <5d792dc5-ea8e-46d2-8031-44f8e92b0188@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZoEEwEIAEQCGwMCF4ACGQEFCwkIBwICIgIG
+ FQoJCAsCBBYCAwECHgcWIQQb2cqtc1xMOkYN/MpN3hD3AP+DWgUCaJzangUJJlgIpAAKCRBN
+ 3hD3AP+DWhAxD/9wcL0A+2rtaAmutaKTfxhTP0b4AAp1r/eLxjrbfbCCmh4pqzBhmSX/4z11
+ opn2KqcOsueRF1t2ENLOWzQu3Roiny2HOU7DajqB4dm1BVMaXQya5ae2ghzlJN9SIoopTWlR
+ 0Af3hPj5E2PYvQhlcqeoehKlBo9rROJv/rjmr2x0yOM8qeTroH/ZzNlCtJ56AsE6Tvl+r7cW
+ 3x7/Jq5WvWeudKrhFh7/yQ7eRvHCjd9bBrZTlgAfiHmX9AnCCPRPpNGNedV9Yty2Jnxhfmbv
+ Pw37LA/jef8zlCDyUh2KCU1xVEOWqg15o1RtTyGV1nXV2O/mfuQJud5vIgzBvHhypc3p6VZJ
+ lEf8YmT+Ol5P7SfCs5/uGdWUYQEMqOlg6w9R4Pe8d+mk8KGvfE9/zTwGg0nRgKqlQXrWRERv
+ cuEwQbridlPAoQHrFWtwpgYMXx2TaZ3sihcIPo9uU5eBs0rf4mOERY75SK+Ekayv2ucTfjxr
+ Kf014py2aoRJHuvy85ee/zIyLmve5hngZTTe3Wg3TInT9UTFzTPhItam6dZ1xqdTGHZYGU0O
+ otRHcwLGt470grdiob6PfVTXoHlBvkWRadMhSuG4RORCDpq89vu5QralFNIf3EysNohoFy2A
+ LYg2/D53xbU/aa4DDzBb5b1Rkg/udO1gZocVQWrDh6I2K3+cCs7BTQRVy5+RARAA59fefSDR
+ 9nMGCb9LbMX+TFAoIQo/wgP5XPyzLYakO+94GrgfZjfhdaxPXMsl2+o8jhp/hlIzG56taNdt
+ VZtPp3ih1AgbR8rHgXw1xwOpuAd5lE1qNd54ndHuADO9a9A0vPimIes78Hi1/yy+ZEEvRkHk
+ /kDa6F3AtTc1m4rbbOk2fiKzzsE9YXweFjQvl9p+AMw6qd/iC4lUk9g0+FQXNdRs+o4o6Qvy
+ iOQJfGQ4UcBuOy1IrkJrd8qq5jet1fcM2j4QvsW8CLDWZS1L7kZ5gT5EycMKxUWb8LuRjxzZ
+ 3QY1aQH2kkzn6acigU3HLtgFyV1gBNV44ehjgvJpRY2cC8VhanTx0dZ9mj1YKIky5N+C0f21
+ zvntBqcxV0+3p8MrxRRcgEtDZNav+xAoT3G0W4SahAaUTWXpsZoOecwtxi74CyneQNPTDjNg
+ azHmvpdBVEfj7k3p4dmJp5i0U66Onmf6mMFpArvBRSMOKU9DlAzMi4IvhiNWjKVaIE2Se9BY
+ FdKVAJaZq85P2y20ZBd08ILnKcj7XKZkLU5FkoA0udEBvQ0f9QLNyyy3DZMCQWcwRuj1m73D
+ sq8DEFBdZ5eEkj1dCyx+t/ga6x2rHyc8Sl86oK1tvAkwBNsfKou3v+jP/l14a7DGBvrmlYjO
+ 59o3t6inu6H7pt7OL6u6BQj7DoMAEQEAAcLBfAQYAQgAJgIbDBYhBBvZyq1zXEw6Rg38yk3e
+ EPcA/4NaBQJonNqrBQkmWAihAAoJEE3eEPcA/4NaKtMQALAJ8PzprBEXbXcEXwDKQu+P/vts
+ IfUb1UNMfMV76BicGa5NCZnJNQASDP/+bFg6O3gx5NbhHHPeaWz/VxlOmYHokHodOvtL0WCC
+ 8A5PEP8tOk6029Z+J+xUcMrJClNVFpzVvOpb1lCbhjwAV465Hy+NUSbbUiRxdzNQtLtgZzOV
+ Zw7jxUCs4UUZLQTCuBpFgb15bBxYZ/BL9MbzxPxvfUQIPbnzQMcqtpUs21CMK2PdfCh5c4gS
+ sDci6D5/ZIBw94UQWmGpM/O1ilGXde2ZzzGYl64glmccD8e87OnEgKnH3FbnJnT4iJchtSvx
+ yJNi1+t0+qDti4m88+/9IuPqCKb6Stl+s2dnLtJNrjXBGJtsQG/sRpqsJz5x1/2nPJSRMsx9
+ 5YfqbdrJSOFXDzZ8/r82HgQEtUvlSXNaXCa95ez0UkOG7+bDm2b3s0XahBQeLVCH0mw3RAQg
+ r7xDAYKIrAwfHHmMTnBQDPJwVqxJjVNr7yBic4yfzVWGCGNE4DnOW0vcIeoyhy9vnIa3w1uZ
+ 3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
+ CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
+ qIws/H2t
+In-Reply-To: <aOaCAG6e5a7BDUxK@tiehlicka>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 10/7/25 06:31, Jürgen Groß wrote:>
-> If we can't come to an agreement that kdump should be allowed in
-> spite of a potential #MC, maybe we could disable kdump only if TDX
-> guests have been active on the machine before?
+On 08.10.25 17:23, Michal Hocko wrote:
+> On Wed 08-10-25 17:14:26, David Hildenbrand wrote:
+>> On 08.10.25 16:59, Michal Hocko wrote:
+>>> On Wed 08-10-25 10:58:23, David Hildenbrand wrote:
+>>>> On 07.10.25 23:44, Gregory Price wrote:
+>>> [...]
+>>>>> @@ -926,7 +927,8 @@ static inline gfp_t htlb_alloc_mask(struct hstate *h)
+>>>>>     {
+>>>>>     	gfp_t gfp = __GFP_COMP | __GFP_NOWARN;
+>>>>> -	gfp |= hugepage_movable_supported(h) ? GFP_HIGHUSER_MOVABLE : GFP_HIGHUSER;
+>>>>> +	gfp |= (hugepage_movable_supported(h) || hugepages_treat_as_movable) ?
+>>>>> +	       GFP_HIGHUSER_MOVABLE : GFP_HIGHUSER;
+>>>>
+>>>> I mean, this is as ugly as it gets.
+>>>>
+>>>> Can't we just let that old approach RIP where it belongs? :)
+>>>>
+>>>> If something unmovable, it does not belong on ZONE_MOVABLE, as simple as that.
+>>>
+>>> yes, I do agree. This is just muddying the semantic of the zone.
+>>>
+>>> Maybe what we really want is to have a configurable zone rather than a
+>>> very specific consumer of it instead. What do I mean by that? We clearly
+>>> have physically (DMA, DMA32) and usability (NORMAL, MOVABLE) constrained
+>>> zones. So rather than having a MOVABLE zone we can have a single zone
+>>> $FOO_NAME zone with configurable attributes - like allocation
+>>> constrains (kernel, user, movable, etc). Now that we can overlap zones
+>>> this should allow for quite a lot flexibility. Implementation wise this
+>>> would require some tricks as we have 2 zone types for potentially 3
+>>> different major usecases (kernel allocations, userspace reserved ranges
+>>> without movability and movable allocations). I haven't thought this
+>>> through completely and mostly throwing this as an idea (maybe won't
+>>> work). Does that make sense?
+>>
+>> I suggested something called PREFER_MOVABLE in the past, that would prefer
+>> movable allocations but nothing would stop unmovable allocations to end up
+>> on it. But only as a last resort or when explicitly requested (e.g.,
+>> gigantic pages).
+>>
+>> Maybe that's similar to what you have in mind?
+> 
+> Slightly different because what I was thinking about was more towards
+> guarantee/predictability. Last resort is quite hard to plan around. It
+> might be a peak memory pressure to eat up portion of a memory block and
+> then fragmenting it to prevent other use planned for that memroy block.
+> That is why I called it user allocations because those are supposed to
+> be configured for userspace consumation and planned for that use. So you
+> would get pretty much a guarantee that no kernel allocations will fall
+> there.
 
-How would we determine that?
+What could end up on it that would not already end up on ZONE_MOVABLE? I 
+guess long-term pinned pages, secretmem, guest_memfd, gigantic pages.
 
-We can't just call the TDX module to see because it might have been
-running before but got shut down.
+Anything else?
+
+I'm not quite clear yet on the use case, though. If all the user 
+allocations end up fragmenting the memory, there is also not a lot of 
+benefit to be had from that zone long term.
+
+-- 
+Cheers
+
+David / dhildenb
+
 
