@@ -1,155 +1,104 @@
-Return-Path: <linux-kernel+bounces-845968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94B32BC697D
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:34:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFE63BC6989
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:34:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AEBA3A49EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:34:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE85419E4A3E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:35:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A3029BDAE;
-	Wed,  8 Oct 2025 20:33:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D707129BDAE;
+	Wed,  8 Oct 2025 20:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Qqr95zdR"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Le/qC5xJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C2515CD74;
-	Wed,  8 Oct 2025 20:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3433315CD74;
+	Wed,  8 Oct 2025 20:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759955636; cv=none; b=VMMVtPY+69xQ/9nHCYyFbVfTcLLiU/XDYJWqLIbqR/tWemG23i9HSfodBsAugq66MdANanLFmxoUAPS3kN/pjWrLnhirE4upsuc6/cGUM3+MBIOtMEHgwABJScWnA0/aQf9TK/wTTFdiAGSInN5Wkk8qXsp012t5aRwzD0AjDhM=
+	t=1759955674; cv=none; b=OzDj1l+N5ftDksnyFe/RT600sgWGuj2e3ieYmy1FWKTr6Zl5eKtmUurQvGlwkG7K/wDAxAE51hqUVfh94AtPUru2t+VFHvxEPptFBCc2HaN7RLZgjsRWHzIOerSwj8RSOPeMWGxEM6ndOn5wn2lpX9G42G1qmC4ZDN1lwiAuQ7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759955636; c=relaxed/simple;
-	bh=wkhAFtCzu3XVkh3ilfHMTjPgkSwz+wsx5+N+L6e1yQ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LFsqkz+9OOVeYfQ1ZqXIamrYwPUpcWeo2lrGPg8nlXcU/7vsV/q1hQ7i5/CU50hGT2BRgN0O19QH1yLClI6vIHn13u8kcg4cfhmw7nab9NwwTPQHFCH7dM2TA6AvqZ4NkFA1imzJEEXp1Ztu/RiM38bX9zpDmdgS2wvF9lQkb6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Qqr95zdR; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 598HIX6D002809;
-	Wed, 8 Oct 2025 20:33:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=WC5qp6
-	fkfr6TzxoEwxO1NY6ms7E1TbDePj28l360bm0=; b=Qqr95zdRhsJJ+m2gPeMmCG
-	3h8tqdIqRfJFZnr5NyzvdzSLfQePvxZ4O+YQ8MbQ3HEv85DCDxlqIT37K0N/Tr06
-	b8dAGVP6MEsDUkgK8h5V2FlWmvpbhsOR1JXakC3tUlVl2tHJJ/TrOER0/2w2aEni
-	LmvmYJitbtapUtKFjFD1hmAC35HyaQ+Bjg7X4QDh5/aLSYSIrLrytL6PInOoO44X
-	PNL3uYi/EwvVurS029jf6rd3qMIYwTvRun39Dx83K9wg20IcmKSYz8yRTc4QNj94
-	hYpdshmVfiB0doS3g7YvogFmzROwaVkNTgYbLTWMZ6zGFzL7GyrtszcqLlxipbpA
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49nv86rtf9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 Oct 2025 20:33:34 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 598KNBva025483;
-	Wed, 8 Oct 2025 20:33:34 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49nv86rtf7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 Oct 2025 20:33:34 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 598HNexQ013034;
-	Wed, 8 Oct 2025 20:33:33 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 49nvamrrpk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 Oct 2025 20:33:33 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 598KXTuw41419158
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 8 Oct 2025 20:33:29 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B66F12004B;
-	Wed,  8 Oct 2025 20:33:29 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8445C20040;
-	Wed,  8 Oct 2025 20:33:25 +0000 (GMT)
-Received: from [9.111.61.171] (unknown [9.111.61.171])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  8 Oct 2025 20:33:25 +0000 (GMT)
-Message-ID: <7dae0ecc-338f-4f37-a42b-13b4ceb5ed20@linux.ibm.com>
-Date: Thu, 9 Oct 2025 02:03:23 +0530
+	s=arc-20240116; t=1759955674; c=relaxed/simple;
+	bh=uOrnQlLlM/dsv+7QQ5bHgedTYfgtJ2zrymfXzVq6AFw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iY2TdMfL0c9bRaEJB0Ig31H5yaqAeD2nBv8RosOmmvDfRhH297f3GiJqTRS9pEMBy1ug+POUIBGITGTroEj3F/k1cfewNU3bmE3bsIiwGmAUm+1/hSoiO/CDE8vY8GV6JtAbNf1ikM5vCX/4Ih2xUrv0fRkOjCgD6KbLB8LNjkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Le/qC5xJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85063C4CEE7;
+	Wed,  8 Oct 2025 20:34:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759955673;
+	bh=uOrnQlLlM/dsv+7QQ5bHgedTYfgtJ2zrymfXzVq6AFw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Le/qC5xJF0vtw1r+NaxmhFBRG/BlENPk7cD6UDO3bfLGWG71v02OuYDWUMVPUzSfD
+	 G1MAVd00R02q6iG2NoS2vbpfamzC4ZduSW+RuXmvLQ4bGGvDA010zONkTbh5DELMdP
+	 RIaKgENya05Id10RkQcKOotWgLPZT8B6opuq+ncGav71sVm1e9xMsz7heeThwU14O8
+	 tPCtzJAlm3gWi49szm+KhfTSDLbIVmfqCNAPR6wdDOWH/1Wx1FO+56H1KAIXhKC5YD
+	 WQvMqcEfeNipOAjGpKP/yjKC+2pa8+dcUKeIshCm6wMmGKSfxYLoFLbgrF3ICAyx/P
+	 WxSctpmE/RCzg==
+Date: Wed, 8 Oct 2025 10:34:32 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+	mingo@kernel.org, juri.lelli@redhat.com, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
+	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
+	changwoo@igalia.com, cgroups@vger.kernel.org,
+	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de,
+	Joel Fernandes <joelagnelf@nvidia.com>
+Subject: Re: [RFC][PATCH 2/3] sched: Add support to pick functions to take rf
+Message-ID: <aObK2MfxPyFcovwr@slm.duckdns.org>
+References: <20251006104652.630431579@infradead.org>
+ <20251006105453.648473106@infradead.org>
+ <CAKfTPtCC3QF5DBn0u2zpYgaCWcoP2nXcvyKMf-aGomoH08NPbA@mail.gmail.com>
+ <20251008135830.GW4067720@noisy.programming.kicks-ass.net>
+ <CAKfTPtDG9Fz8o1TVPe3w2eNA+Smhmq2utSA_c6X4GJJgt_dAJA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] powerpc, ocxl: Fix extraction of struct xive_irq_data
-To: Nam Cao <namcao@linutronix.de>, Madhavan Srinivasan
- <maddy@linux.ibm.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Frederic Barrat <fbarrat@linux.ibm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, linuxppc-dev@lists.ozlabs.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Andrew Donnellan <ajd@linux.ibm.com>
-References: <20251008081359.1382699-1-namcao@linutronix.de>
-Content-Language: en-US
-From: Ganesh G R <ganeshgr@linux.ibm.com>
-In-Reply-To: <20251008081359.1382699-1-namcao@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: GcnWcb3UfBIiwED1j1qNXUlh9rkcDyA0
-X-Proofpoint-ORIG-GUID: d1R5iGGtTD8T2BnpzXkdY5qh4nbJRgCx
-X-Authority-Analysis: v=2.4 cv=MKNtWcZl c=1 sm=1 tr=0 ts=68e6ca9e cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8
- a=pGLkceISAAAA:8 a=VnNF1IyMAAAA:8 a=3HY11Wxk7Qll88ziligA:9 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX3eHLW7S6uMb1
- 853sEsarewi83qhJs/jC3bFZzggu2NqoPEYt9msa2eDAXywK4XyPPRAv+TX1EjVEoSOIcXnlujA
- +Yao+loS/bM9WBdXBOeSiHiyzshUz4v0XWWHhpakxmzwhkQ451e4xIuCUHbBl0/+OLSQErQF7mK
- oWwmhunJ4GTXEc9tDFC6BDJtvDXSEY8fc+p/h1lR6sUgRqRJwKLSCRbVUM/w6magD6jvyPRPpZP
- 8Z5V8NWJas60tFCtJ8RqIkPPgZrVVsgD1BeO/cEkvLcL0pmhqdMlJokf0szam8PpoY4M3olLpgV
- Jk+NHfR04GGXXIYN3bPxfjBDYwEU1eUz2F9/lM2IQia9rwsNOwqlob4pnuyZaYemFpO3E1GgS1Z
- S0avcMuUthlge53MPx4RBwFF69Wedw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-08_07,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 phishscore=0 malwarescore=0 bulkscore=0 spamscore=0
- priorityscore=1501 suspectscore=0 lowpriorityscore=0 clxscore=1011
- impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
- definitions=main-2510080121
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtDG9Fz8o1TVPe3w2eNA+Smhmq2utSA_c6X4GJJgt_dAJA@mail.gmail.com>
 
-On 10/8/25 1:43 PM, Nam Cao wrote:
-> Commit cc0cc23babc9 ("powerpc/xive: Untangle xive from child interrupt
-> controller drivers") changed xive_irq_data to be stashed to chip_data
-> instead of handler_data. However, multiple places are still attempting to
-> read xive_irq_data from handler_data and get a NULL pointer deference bug.
-> 
-> Update them to read xive_irq_data from chip_data.
-> 
-> Non-XIVE files which touch xive_irq_data seem quite strange to me,
-> especially the ocxl driver. I think there ought to be an alternative
-> platform-independent solution, instead of touching XIVE's data directly.
-> Therefore, I think this whole thing should be cleaned up. But perhaps I
-> just misunderstand something. In any case, this cleanup would not be
-> trivial; for now, just get things working again.
-> 
-> Fixes: cc0cc23babc9 ("powerpc/xive: Untangle xive from child interrupt controller drivers")
-> Reported-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> Closes: https://lore.kernel.org/linuxppc-dev/68e48df8.170a0220.4b4b0.217d@mx.google.com/
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
-> ---
-> VAS and OCXL has not been tested. I noticed them while grepping.
-> ---
+Hello,
 
-Looks good to me.
-Reviewed-by: Ganesh Goudar <ganeshgr@linux.ibm.com>
+On Wed, Oct 08, 2025 at 05:22:42PM +0200, Vincent Guittot wrote:
+> On Wed, 8 Oct 2025 at 15:58, Peter Zijlstra <peterz@infradead.org> wrote:
+> > On Wed, Oct 08, 2025 at 03:16:58PM +0200, Vincent Guittot wrote:
+> >
+> > > > +static struct task_struct *
+> > > > +fair_server_pick_task(struct sched_dl_entity *dl_se, struct rq_flags *rf)
+> > > >  {
+> > > > -       return pick_next_task_fair(rq, prev, NULL);
+> > >
+> > > The special case of a NULL rf pointer is used to skip
+> > > sched_balance_newidle() at the end of pick_next_task_fair() in the
+> > > pick_next_task() slo path when prev_balance has already it. This means
+> > > that it will be called twice if prev is not a fair task.
+> >
+> > Oh right. I suppose we can simply remove balance_fair.
+> 
+> That was the option that I also had in mind but this will change from
+> current behavior and I'm afraid that sched_ext people will complain.
+> Currently, if prev is sched_ext, we don't call higher class.balance()
+> which includes the fair class balance_fair->sched_balance_newidle.  If
+> we now always call sched_balance_newidle() at the end
+> pick_next_task_fair(), we will try to pull a fair task at each
+> schedule between sched_ext tasks
+
+If we pass in @prev into pick(), can't pick() decide whether to newidle
+balance or not based on that?
+
+Thanks.
+
+-- 
+tejun
 
