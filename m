@@ -1,143 +1,86 @@
-Return-Path: <linux-kernel+bounces-845758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15A1CBC607F
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:32:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAA0CBC6073
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:31:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26076188B75C
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 16:32:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C935D3B8EEE
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 16:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE55B29D29F;
-	Wed,  8 Oct 2025 16:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KzHXsBRN"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A1F2BDC15;
+	Wed,  8 Oct 2025 16:31:14 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C30132BDC3E
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 16:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4F77260A;
+	Wed,  8 Oct 2025 16:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759941134; cv=none; b=e94EgBB16B/ilNqbM1Yqe0FmXFy2LyiOctgWJYThx4kAudpKFi4uyZFHfDVRbKEruzUzyymnIyI83CGXI4M8ryPALh5LvjnxPwkcbpiG9OYsGnvQKzkWji013sSLaE13b4PKgbOuAXP0ors0qzR4INtq6EjEhEMo1xDST02iAvw=
+	t=1759941073; cv=none; b=d+wXX695ej/4yFZNpX64XPgsd8pu3x+8uqN6gpZgXmRJX7nCgvF9ydDb42Ids350VFtNVZjEkMfT+rwJbcw8rPN4w3UNUj/+LnQPUEOdlgUB6Vb5VxHrjPKgd+Xro+ArBUGNL8IkY+R87iQ6mi/jQEKOkEB2GlV5mBoC1PmFlkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759941134; c=relaxed/simple;
-	bh=uFCQkqaDqxzWRXeqursEtkXC8InvxKjCAxBAsyErIrQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fop2UkaZyyxvFGnMEHITM2uuvZTQQ8PxkAkfhVNdBgmp/qvU2hzI3YADXHXxxUWsHOwTWVNRXnebZ3yJNk+0K8u9poxPY+ojmZyB/bfgTCYPvG/cwGqbPwUjCkU78Dkilc/uPoexSFzVa4K13nxJsuoMAX3h+yVTGC1J0UR64EA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KzHXsBRN; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-27eeafd4882so1605ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 09:32:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759941129; x=1760545929; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Oe0JG+T87ZxryLGwcr3JQ+tSMOZN1k2GavGauckPJG4=;
-        b=KzHXsBRNRcfHADcpSNxCFEtZ3gGQDPnwUk5Wl2d4EjjSouigVZxHg8TgM4PRx7hdeb
-         DKSQtLb4TTu3+YTbpxfWsEXic2QtqQ6o8aE8K6wLatS+su4XO3ypEQDXemDIGn7jX9Bp
-         URjlTxuGuBs5JkDJrwC+FO5sLIljvtwjeZPM5scEtlUlauvTJciAQkOuhKNG7NSNfS/V
-         NUeXp6D0E8jATbdV9LOSengyvpf/jkK0N+Hpjv2HwCN3CdGWUoo2U7IwSkZdRMC3sIAT
-         ZifVF5KpJjcC3Vbkrf8PnsWucQ11QUOU4IHPLkO3h0TB6zKbJ5nHRchtaAat1bDmUa63
-         UbRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759941129; x=1760545929;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Oe0JG+T87ZxryLGwcr3JQ+tSMOZN1k2GavGauckPJG4=;
-        b=MD8VSkJJ8t5y4UW0nSoyBTgoA5+2CWgBAU7nu3NtfXCE5JDDv6V8xq4IYIpNWZuLDl
-         FnqD/oOBNJ6ooncOQM2qFOHCrQc99eRuypmg9gVxHADKY9IUFmstkhqYjWKuCOXTAI4E
-         x2Yc17nX8ZcP/9OheV/scEAyjbDlxQYTO3wkJ7cKxCYK80yg64eWeLbGYT8Oake7cAvp
-         LteCwHKIC5uzkqkzUzhHV7hi2pegC3/tfuykHvESpGE9a6g6hCiqHxAGOhOfMfyFLndw
-         tnpBCiGnvDZ/nFftHuJm3oOISRVMzDKNOfMbQPLxLxLd4gnY3lIoeR34CEH/5jgYBOzT
-         yz0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW7iIXjMuzNFobgT1OVpSsoeAQtxJxy3zqa43NJTHy17goRo/No+1PRwFU+jzxhlfzQDtmVTJTwq8AU0gY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyC5Sw+AHLImhXVjX2mZhQCMuhbczFoB+lvcgIwlRNJ/Tp1mHYZ
-	QDpoQcTvgtBv6A5O6RE7T/2hTRIE1+UUBPD5Q0RSietiggUQdrx63lj/ZMnPzjyZVA==
-X-Gm-Gg: ASbGnctsMhbq9ttphOJ6J+CMy1n0EAWYs0OuJePzYZf09AuQ6lfuHiqOUGkqnxST1db
-	CziiQveoaBTO+bq4swsvScnAxm3JzFxGBzSpKPq5npKs6CA+7eOkQedWG/w74F2O+JKqKF3VlTL
-	0ppifSB7xoLT3zkU85X/YLbnre2N0WUIlsEb2LQemUtk1mYTobsJDTGLjnCGGbj6FaJNZ0w8J7o
-	BJqP/kf5f+21MqoZwsYR+sgli+riAx9Lk4YT05R/VYcqpQ3e5p434O7wsGZkRgRrL3VaUBefDZw
-	ImstmGcpfOLsLCtvPuAfXScJNOAPok9s0+dmc37jV5V30o5f0calBN0FNFioNz/JbZ87UIoW2qK
-	62s9dKcVW2O+7IpT1WUnZNuWs/ivP+aRP3k0gF/AfYq5DI3LbdiUyjBMovwZpYpayCiMQMCA07W
-	cPr7ldMoKjcpDmyQ9ihUNUxoCQzMFB2IP847KzwDOtPvy4aaPyMmmQ72Lhl/8dcc7rBtQFytAqI
-	Q==
-X-Google-Smtp-Source: AGHT+IE4UeBVhlmr8nyjA+3MAY4U2585r8312anVnyz7SFqd1+ILwooYTIzTvCfZjIwwJ3yE1VoqjA==
-X-Received: by 2002:a17:902:cf03:b0:271:9873:80d9 with SMTP id d9443c01a7336-29027620d94mr5687375ad.7.1759941128492;
-        Wed, 08 Oct 2025 09:32:08 -0700 (PDT)
-Received: from google.com (235.215.125.34.bc.googleusercontent.com. [34.125.215.235])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b51116b57sm3952329a91.15.2025.10.08.09.32.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 09:32:07 -0700 (PDT)
-Date: Wed, 8 Oct 2025 16:32:03 +0000
-From: Carlos Llamas <cmllamas@google.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] rust_binder: freeze_notif_done should resend if
- wrong state
-Message-ID: <aOaSA0dPnY2I4a_D@google.com>
-References: <20251007-binder-freeze-v2-0-5376bd64fb59@google.com>
- <20251007-binder-freeze-v2-1-5376bd64fb59@google.com>
+	s=arc-20240116; t=1759941073; c=relaxed/simple;
+	bh=UMfc1arKuqqKbTbJGgsaLRixb7ETywbXtRgzQLKN4+4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U9oJYUNyjX0pSszZ71oi/PkxVHQ+0NSLEkPqwCtlqgzx+a91ogYw6ZXdwjxKPYvIT2bgu5pYIhJak+B4ZCX3Nw/jNm+WCCvLeHmMgiaSYafIEjn4Q0to123ZVgPfm8oMnvg0TNWsPP+FyhbodOi9DDYqFt/pfl+zJX7A+sH4uoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay04.hostedemail.com (Postfix) with ESMTP id 833AB1A05F7;
+	Wed,  8 Oct 2025 16:31:08 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf06.hostedemail.com (Postfix) with ESMTPA id 4EFAC2000E;
+	Wed,  8 Oct 2025 16:31:06 +0000 (UTC)
+Date: Wed, 8 Oct 2025 12:32:59 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Runping Lai <runpinglai@google.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Wattson CI <wattson-external@google.com>,
+ kernel-team@android.com, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Luo Gengkun
+ <luogengkun@huaweicloud.com>, Linus Torvalds
+ <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v1] Revert "tracing: Fix tracing_marker may trigger page
+ fault during preempt_disable"
+Message-ID: <20251008123259.1dfc621c@gandalf.local.home>
+In-Reply-To: <CABgk4RSxm8mNJcRn0HdNH3+Y=VDL5gNVvyhhR26wjBme+i5X-g@mail.gmail.com>
+References: <20251007003417.3470979-2-runpinglai@google.com>
+	<20251006221043.07cdb0fd@gandalf.local.home>
+	<CABgk4RQwGsn4CdP0K+_7A0j7RVOiHNfoF1ESk17wEuzCea16pA@mail.gmail.com>
+	<20251007154308.5b158d04@gandalf.local.home>
+	<20251007163141.1034b120@gandalf.local.home>
+	<20251007174208.11fd02da@gandalf.local.home>
+	<CABgk4RSxm8mNJcRn0HdNH3+Y=VDL5gNVvyhhR26wjBme+i5X-g@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251007-binder-freeze-v2-1-5376bd64fb59@google.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: r8zu49hxhpdtiahxkmdhao9657xztcda
+X-Rspamd-Server: rspamout05
+X-Rspamd-Queue-Id: 4EFAC2000E
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18tC6P4gP7j66n2PKCd8nKW1OXW/pV26ko=
+X-HE-Tag: 1759941066-448671
+X-HE-Meta: U2FsdGVkX1+QZzMwSruvokeThYzi+hXa0Wk0bWwyiURdyM5B42hJSk+podUQmJfd2Hzq+vTgZ2kpZGfnAgYHCq6rd/L+hrcmV4zPCZFiYXtZXkyegqYGxAy/khFmZA3cZd1obPiutLgcTUcUbUs+L6qlaoPmCZdE3STJ+LmlIXjyeKWOgjfHHLexmZ7rhsawF5FsLbMWD7GdfzyzLFhR1xfFd3aypAdTmDX7s0Ky/eXnhu9KQZCmZwsqIcKR5URZJos/momodRopgXI3FMjO2fWLoZRUBh0jw7VbSZbsLOoEBh4gEwsMAOVIpTgCywi0Pmsc/pCdc0ABP7u5F2Npdp9U+AyymGfPnrGN2R4INs01jzXf5J2vSA==
 
-On Tue, Oct 07, 2025 at 09:39:51AM +0000, Alice Ryhl wrote:
-> Consider the following scenario:
-> 1. A freeze notification is delivered to thread 1.
-> 2. The process becomes frozen or unfrozen.
-> 3. The message for step 2 is delivered to thread 2 and ignored because
->    there is already a pending notification from step 1.
-> 4. Thread 1 acknowledges the notification from step 1.
-> In this case, step 4 should ensure that the message ignored in step 3 is
-> resent as it can now be delivered.
+On Tue, 7 Oct 2025 16:25:41 -0700
+Runping Lai <runpinglai@google.com> wrote:
 
-hmmm, I wonder what happens with 3 threads involved where the state goes
-back to the (unconsumed) initial freeze notification. Userspace will
-probably see two separate notifications of the same state?
+> Hey Steve,
+> 
+> Thanks for providing the buffer-based solution. I tried it and it
+> fixes the problem!
 
-> 
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
->  drivers/android/binder/freeze.rs | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/android/binder/freeze.rs b/drivers/android/binder/freeze.rs
-> index e68c3c8bc55a203c32261c23915d8c427569e3b0..74bebb8d4d9b24860eed34363ce69b1c6df58028 100644
-> --- a/drivers/android/binder/freeze.rs
-> +++ b/drivers/android/binder/freeze.rs
-> @@ -245,8 +245,9 @@ pub(crate) fn freeze_notif_done(self: &Arc<Self>, reader: &mut UserSliceReader)
->                  );
->                  return Err(EINVAL);
->              }
-> -            if freeze.is_clearing {
-> -                // Immediately send another FreezeMessage for BR_CLEAR_FREEZE_NOTIFICATION_DONE.
-> +            let is_frozen = freeze.node.owner.inner.lock().is_frozen;
-> +            if freeze.is_clearing || freeze.last_is_frozen != Some(is_frozen) {
-> +                // Immediately send another FreezeMessage.
->                  clear_msg = Some(FreezeMessage::init(alloc, cookie));
->              }
->              freeze.is_pending = false;
-> 
-> -- 
-> 2.51.0.618.g983fd99d29-goog
-> 
+BTW, I'm about to post a real patch, and I'm adding:
 
-Acked-by: Carlos Llamas <cmllamas@google.com>
+Tested-by: Runping Lai <runpinglai@google.com>
+
+-- Steve
 
