@@ -1,151 +1,158 @@
-Return-Path: <linux-kernel+bounces-845611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09E7DBC584E
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:08:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFB66BC5854
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:09:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8556F4F861B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:07:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED2D04032DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784BF2EBBB0;
-	Wed,  8 Oct 2025 15:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0AD27E1DC;
+	Wed,  8 Oct 2025 15:08:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jeYxgttr"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="oHevIM8p"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D59F286413
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F71D287505;
+	Wed,  8 Oct 2025 15:08:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759936071; cv=none; b=jJmRbyA7JDult6blYkdcejUIPT44zyPITPzRDMiPme+C8zR4Y5QxFeEXnWEFA/KBPjZIvvXXJyuayKRidvCF7cXvWXCArBj8Qzznjr8IiVwqDTd42Sjvd50o2pe/aBco+4Kxm5oLK3JROp7TcCt6BI4N/putQgUxSBwnMtvR03Q=
+	t=1759936120; cv=none; b=AurcZYQcSbaOBrXB4mt2ldZPPdVo4jixfAZ5wy0MYwtr6AOsQ2wL/mCUWXaKfMeG4RFpWcw7ignDaSGjX4QI3El6FTNFG4n5uYfDgXRM+YArnpHh/AYIBkWkIzit/r8BVSG2YxB7OCBZ47ckpJ1VLv/3NNxKsrIEd0WCFFhmgtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759936071; c=relaxed/simple;
-	bh=cht59tIOV0KBWttxvPs+3jMxO8RPnxFFXpLBu4tS+3M=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=M/zyublcYKNvjog8/anmvUWqd9xQwBQCWxpdDTzgRJitA/NA31DZEzin7vVLfBdLEshyj8lu1LbRiolnrh6dhyQvzzV37R4TUjiAOE90anYZlIBcb2cJIdt1nkLa5XwE+E+ufbqJoTJbnZvKLxpa1ZXp609u7fLM0GYFE8p7VZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jeYxgttr; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b3b3a6f4dd4so1394036666b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:07:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759936068; x=1760540868; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=cht59tIOV0KBWttxvPs+3jMxO8RPnxFFXpLBu4tS+3M=;
-        b=jeYxgttrR9ztk6P9ejcjhmPJmwTgaBM+89VpfVDUmTbhdDYrTfGqSfewj+clQ9ecgW
-         dwqrQbmQCKYRTw1zXqM3MGQYRED8MnND7PahOGZl/cFGaC655PNHQOfsG/cz5H00lb2L
-         m/fGjuLv2kFAW8jeuKk5zO7dpFr+vuLSf+uh7sBOPjjTnZ7LCagktNaz413eAj/01dr7
-         OBUIvMnQrBkJ5MQMUqs8JAJqNeGDueccImi/pzAMsuS6/VXkd70tVBSODyAEHJgqx3M5
-         WpB6XrD7Ir5cyso1QIeLQG1z2yLgxvvSozdgMeTxsWssN1c4yn/opIo/C9yH0e1CgwYR
-         ms/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759936068; x=1760540868;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cht59tIOV0KBWttxvPs+3jMxO8RPnxFFXpLBu4tS+3M=;
-        b=w60hl9N0g/rithhU40aZgmbJ7x3Ah+R81I9XAcG2w+H5b6DAmBW2tI4s6BRvyCGko6
-         8YkpclaFHUwYHXJ3f97DTcZvRZSK+slhvI92p11tg6ttnOxNSusBvh18WBkgDiqAqCRQ
-         e5Q5Nesad+iRj4obRbEXA5/dY0Q8F85yn9nRvMACcHVNvZtOt6rXuSbWvTSkQJ/3146b
-         Ye+tlamkT9hAEr7sy9xro4tqd8qhQUh7Wn24dW9vrMHSe/W9G7O9aJ0AXNbfvefyil9s
-         ER/U70Cf2S/85dg36CBCYdXl+n8PbKoD6ok6Uj0UsA999duLXOxoq5vstkG9cAlLhyUb
-         i80Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWAwOgj8FeRw9pqZoj19+Okm34rgdYgyoNLNRxim4/CmMYZWKooATjvuGd5pBdY4x+ORBQU98aoEF0bk7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNKTqZh52c5vvtL9EJV7kT64bMf4JJsRAi3q1fuJjjor8nXZjD
-	u9a0Au5keO3lQGlsaxRVb1OcY/o+io4CkGR6bZCngbA263nST81yDwbR
-X-Gm-Gg: ASbGncscl5wDuiI99PX2CMmulc0/LCkfnc5POUY/oL9ktvhDHRpEAuX/FTfp6PPvds+
-	Kh7e9yH4fuDXmBPnJ7m8fUmh1S8kesXmrvlMRgFonKpCqFMZce1l0fWsY6qQEJ7zMmNI24LWZdY
-	rsLQf1is+cqAHCHHouKpnLWVNgUHWlI8/xvh8rqIh46tx85FgPSUte6nB/XcBrdo6HiiqUYgkrW
-	m7+53dZokesTAzV4ucbWW6BxOlvCza3Z4tTXGX+CoIJsdgRG8F8SpnhJuAO7KJ/uGD7fk014Kb9
-	zAHeVDDmshlBR3AlJUBbm88c+wqj3nCRucipef7vXetyXu4z9teyPYo0M2UH1HnDdIzGqsc4j5J
-	llro7iNajOryHvchc85HQKjzxtDLCeLxDRja9uGOCkQQWDGOTOQ==
-X-Google-Smtp-Source: AGHT+IETj/eEYHIbcpH9RCQeb94pCTXGLqKLtThMw+whCTYetguG/N32W3WQ2+0w2pr3TOAhygHBUA==
-X-Received: by 2002:a17:907:7244:b0:b40:6e13:1a82 with SMTP id a640c23a62f3a-b50aaf8caa1mr378744666b.26.1759936068245;
-        Wed, 08 Oct 2025 08:07:48 -0700 (PDT)
-Received: from [10.176.235.211] ([137.201.254.43])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b4869c4f94asm1673206466b.79.2025.10.08.08.07.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 08:07:47 -0700 (PDT)
-Message-ID: <893731e9c8e4e74bb0d967ab2e7039e862896dc5.camel@gmail.com>
-Subject: Re: [PATCH v2 3/3] scsi: ufs: core: Add OP-TEE based RPMB driver
- for UFS devices
-From: Bean Huo <huobean@gmail.com>
-To: Jens Wiklander <jens.wiklander@linaro.org>
-Cc: avri.altman@wdc.com, bvanassche@acm.org, alim.akhtar@samsung.com, 
-	jejb@linux.ibm.com, martin.petersen@oracle.com, can.guo@oss.qualcomm.com, 
-	ulf.hansson@linaro.org, beanhuo@micron.com, linux-scsi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Wed, 08 Oct 2025 17:07:46 +0200
-In-Reply-To: <CAHUa44HA0uoXbkKgyvF4Rb9OJa1Qj-Wh7QAmQxXYAf3grLdktw@mail.gmail.com>
-References: <20251001060805.26462-1-beanhuo@iokpp.de>
-	 <20251001060805.26462-4-beanhuo@iokpp.de>
-	 <CAHUa44HA0uoXbkKgyvF4Rb9OJa1Qj-Wh7QAmQxXYAf3grLdktw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1759936120; c=relaxed/simple;
+	bh=gw1n2k3bVJ4HnM5jaOKbNiYxoog8PqFFa15xtHSaS+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ONxxYeNAH6uQ4mUWfRF1hglj+Vm/096tGT6V6QmuI94QIxGzaiOCxUY8cngBD277B7xbMRmZV4yJ2siMWvgOkhdxrZWs19USgusl1iqcpI54S+W+JcoBtYSQZ0hxlYi42/1rw1ce3KGFyazwj4kyCaGxPtT38tar5zrNs0XGO5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=oHevIM8p; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5985mRu5005704;
+	Wed, 8 Oct 2025 15:08:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=IXws27
+	uw2P8rHXdGXnTEjb2JtZYE6gL7w+ozNAxwm1o=; b=oHevIM8pNtQ0Z0x1IWJzqW
+	E9BxZczdrfEsuaGsno8xZuzbQfWrIQZ/rG+EcwDszX5ck3edbHjHDVS0u2hSZiHl
+	c7un0r20XkUf8tXfqqpDRV9+SrH1v+X3gdJ5mENcIRa6FvfYtIowLbPUWUWlroZt
+	FXTmu+VNAr0/ntcGRg4O2qtxvIojAHlNGBX/aqDrcpdBerYXYjT5zoPo6SwlOdlU
+	Wx5JcyXX7lOumiItlJLyFlhpmvJc3qZPYhNOeKZ6VFa/CIHUDdcY08UCa8FBDAYg
+	oSXIBDxXtI6iO0OiRFErndu3sBjB/AfmuBbd1sCFZBnXgINuFR4XHTzIUscMrjSw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49ju3h5xcf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 08 Oct 2025 15:08:26 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 598EtZoL029518;
+	Wed, 8 Oct 2025 15:08:26 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49ju3h5xcb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 08 Oct 2025 15:08:26 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 598E5tPY028463;
+	Wed, 8 Oct 2025 15:08:24 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49kewn934e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 08 Oct 2025 15:08:24 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 598F8K1L60293552
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 8 Oct 2025 15:08:20 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8E41C2004B;
+	Wed,  8 Oct 2025 15:08:20 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B466020043;
+	Wed,  8 Oct 2025 15:08:19 +0000 (GMT)
+Received: from li-ce58cfcc-320b-11b2-a85c-85e19b5285e0 (unknown [9.111.55.136])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with SMTP;
+	Wed,  8 Oct 2025 15:08:19 +0000 (GMT)
+Date: Wed, 8 Oct 2025 17:08:18 +0200
+From: Halil Pasic <pasic@linux.ibm.com>
+To: Dust Li <dust.li@linux.alibaba.com>
+Cc: Mahanta Jambigi <mjambigi@linux.ibm.com>,
+        "David S. Miller"
+ <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Simon Horman
+ <horms@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "D. Wythe"
+ <alibuda@linux.alibaba.com>,
+        Sidraya Jayagond <sidraya@linux.ibm.com>,
+        Wenjia Zhang <wenjia@linux.ibm.com>,
+        Tony Lu <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
+        Guangguan Wang
+ <guangguan.wang@linux.alibaba.com>,
+        netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-s390@vger.kernel.org, Halil Pasic
+ <pasic@linux.ibm.com>
+Subject: Re: [PATCH net-next v5 2/2] net/smc: handle -ENOMEM from
+ smc_wr_alloc_link_mem gracefully
+Message-ID: <20251008170818.35825f55.pasic@linux.ibm.com>
+In-Reply-To: <aOZv0NmekKIgpc5M@linux.alibaba.com>
+References: <20250929000001.1752206-1-pasic@linux.ibm.com>
+	<20250929000001.1752206-3-pasic@linux.ibm.com>
+	<aNnl_CfV0EvIujK0@linux.alibaba.com>
+	<de0baa92-417c-475a-a342-9041f8fb5b8e@linux.ibm.com>
+	<aOZv0NmekKIgpc5M@linux.alibaba.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAxOCBTYWx0ZWRfX6VjEahsoUcmG
+ smHgSy/AKpBINebCo5oEvoRscM2tO9XOv7LMLb1Ky/1R8nGtJUEvOJi1hN/Kbiwv2VkdQ8I8dnX
+ RfX1uelw3SbTRpmoHhnkBA9i5KdvIBsHLsjZO8toToW2juiknDZ8xK8cXzDFftMmElSpwgRwLUR
+ rbpKt3oFd0nFnLuQE4VqlD6ERvLVmMizpmledmUMH3uSwW0xSeW0GOITBvCkW8gkPY0eGeQs6N/
+ NxWx5+Z8ln23T0+BSdLDkt4YX/Yw22tPXtPQHpt/fBqEAlfCUdnkkApecS7Md0TvmuFAhwbg3Vh
+ Tc/XGXGu/FuTVMl33O6q4IptCPRaZ1ZVO2I0jXaxGUoe+1h03eSBdItNqLSA7/kdUO9TKB8o+97
+ BS/DIb2WJsrT6gnb+DcYhGiMTgwFBA==
+X-Authority-Analysis: v=2.4 cv=I4dohdgg c=1 sm=1 tr=0 ts=68e67e6a cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=SRrdq9N9AAAA:8 a=akCnWnY-8Ao0MBcy0-UA:9
+ a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: kEXar_J4G3Eih2Gc8x4pvjM3-V64uZDW
+X-Proofpoint-ORIG-GUID: r0GVS5MJD2DScOkInXjzo5VyvaqWyUXS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-08_04,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 lowpriorityscore=0 malwarescore=0 adultscore=0 spamscore=0
+ bulkscore=0 suspectscore=0 clxscore=1015 priorityscore=1501 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040018
 
-Jens,=20
+On Wed, 8 Oct 2025 22:06:08 +0800
+Dust Li <dust.li@linux.alibaba.com> wrote:
 
-I incorporated your suggestions in my v3 excpet these two:
+> >I did test this after you query & don't see any issues. As Halil
+> >mentioned in worst case scenario one link might perform lesser than the
+> >other, that too if the kcalloc() failed for that link in
+> >smc_wr_alloc_link_mem() & succeeded in subsequent request with reduced
+> >max_send_wr/max_recv_wr size(half).  
+> 
+> Great! You can add my
+> 
+> Reviewed-by: Dust Li <dust.li@linux.alibaba.com>
 
+Thank you! Will do and respin once net-next is open again.
 
-On Wed, 2025-10-01 at 09:50 +0200, Jens Wiklander wrote:
-> > diff --git a/drivers/ufs/core/Makefile b/drivers/ufs/core/Makefile
-> > index cf820fa09a04..51e1867e524e 100644
-> > --- a/drivers/ufs/core/Makefile
-> > +++ b/drivers/ufs/core/Makefile
-> > @@ -2,6 +2,7 @@
-> >=20
-> > =C2=A0 obj-$(CONFIG_SCSI_UFSHCD)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 +=3D ufshcd-core.o
-> > =C2=A0 ufshcd-core-y=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 +=3D ufshcd.o ufs-sysfs.o ufs-mcq.o
-> > +ufshcd-core-$(CONFIG_RPMB)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 +=3D ufs-rpmb.o
->=20
-> SCSI_UFSHCD might need the same trick ("depends on RPMB || !RPMB") in
-> Kconfig as we have for MMC_BLOCK.
->=20
-> >=20
-When RPMB=3Dm and SCSI_UFSHCD=3Dy, the ufs-rpmb.o is compiled into the buil=
-t-in
-ufshcd-core, ufs-rpmb.c calls functions from the OP-TEE RPMB subsystem modu=
-le,
-The kernel allows built-in code to reference module symbols (they become ru=
-ntime
-dependencies, not link-time), please check, I tested.
-
-> >=20
-> >=20
->=20
-> > +
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct rpmb_descr descr =3D {
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 .type =3D RPMB_TYPE_UFS,
->=20
-> We'll need another type if the device uses the extended RPMB frame
-> format. How about you clarify this, where RPMB_TYPE_UFS is defined to
-> avoid confusion?
-
-As ufs-bsg.c, we could use ARPMB_TYPE_UFS for UFS advanced RPMB frame, if i=
-t is
-RPMB, we take it as normal RPMB, the frame should be the same as MMC RPMB.
-
-
-Kind regards,
-Bean=20
-
+Regards,
+Halil
 
