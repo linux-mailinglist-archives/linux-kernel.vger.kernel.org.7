@@ -1,87 +1,47 @@
-Return-Path: <linux-kernel+bounces-845163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFF6ABC3BED
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 10:02:41 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E05B0BC3BF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 10:03:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6BAF94F43BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 08:02:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 14B3C4F7E2E
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 08:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CC42F28E2;
-	Wed,  8 Oct 2025 08:02:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 795582F291D;
+	Wed,  8 Oct 2025 08:03:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aVQSMVrl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PWqt2IHS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6FAB2F1FC4
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 08:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DEC92F1FC4;
+	Wed,  8 Oct 2025 08:03:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759910555; cv=none; b=JnM6KxKAYLXPaYfTXQrq93/HNJtP2GHS2qj+eyBDXmMlOOYJ2emPC31hHtIatUGrQSwaSTiZyO7uf/qW27jpGT7K51ZTcfL3XTfn8NS1J/kdXwNa6UmZ6AW8pNjr56YoTkV+LXIuOeR424/iXZHFSlhAPYiIr8a3nTHB5w3rKZ0=
+	t=1759910588; cv=none; b=rQwzOr0fRPuMepJcCKsobaihVySwHeNVuqemp8qCPqNAA7DifZtKL91sUh0GHcfLd/vbr43k7WW4JHQLYDRELUAvjOgeIrh3ixoLcVDp4N1wYIEGvuC4UuhDC3Llxt7lnf7RLrhd1tZ7dE9xl6u6kgcbIo27/gPkfTb+j6T+Ask=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759910555; c=relaxed/simple;
-	bh=Y02Z5LfdT7QBwB7Olb29gAwh2+0LN36RT7fk6o03+Nc=;
+	s=arc-20240116; t=1759910588; c=relaxed/simple;
+	bh=c8ezxIkpcTLjKeibruziqgAt914e8kokjfvmBkUoTn0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kFcnAXID0P56Ecyx/zGc08rmKZfFu5OzU1wQ9heshAnlznNP8C5vqDfPxmnyoCxBld7lxOQLIlmWP6IPWiW1dERnPKo/2R22HhztDYSndYLQQmQPyTOcDjyrTq9L0h7lUaGh6Gsjgml1m/ZZ0oKizh6PeEegomst4NKNq6VVT7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aVQSMVrl; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759910552;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=pddHH/uKIG+2OdAE3dfwxjSpPlFOQuBykDEPMc5UKGA=;
-	b=aVQSMVrliEYvrPpdMO+VoIgDrNP8XV5XWd0ujqs0TJCak8xaF0l2B6LePTZpjK3DZR/WQE
-	jECg/Clk05Dr9kPOGrugJnht7GJX2wZP62PTYTtdF43zawcXT3u4SRE0xQPPezm1T5K4gE
-	H8dePjuwFY7+NN4x3RomFSU7tz6E4NA=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-662-sqEkl_RoO0KkNXraesGZ2g-1; Wed, 08 Oct 2025 04:02:31 -0400
-X-MC-Unique: sqEkl_RoO0KkNXraesGZ2g-1
-X-Mimecast-MFC-AGG-ID: sqEkl_RoO0KkNXraesGZ2g_1759910550
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-46e35baddc1so35629895e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 01:02:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759910550; x=1760515350;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pddHH/uKIG+2OdAE3dfwxjSpPlFOQuBykDEPMc5UKGA=;
-        b=bqkSTL+bBKIkJ4lxxjoQP5FH3SwmJYv56+IJgur6ERv5NlqdeO96r4Vl/cAqsXN8kv
-         QCEnMwik6t5Hh7NMPr3Nz1dOJVGcnSEWjtN/2sxOMpcr2Lwg8It8LvVDBYgLPuxdyVvQ
-         Gwxw71EwL73z3u5sJx7RVgMcSFHlY4qqKt4yI1CDf4cw4RXn16xHM5Eh2jCUx7Lg6una
-         IjoYiHIFPiuJ5gfBJIDi6REiZaU4YLG7tYXpN7lJ2Ynn9hjRt6PQByehZDrWJyn5wy4K
-         Oq5y42TOoPllAk8V3u/oagJs2/GMx5AlwEuaCTfTUUWq8JwPK4b8X63IAaF5Zt4JkdiK
-         9wBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXrjjDRsrJqlhBooHS5oeQkuyrzJvuv+cEa9Ops3dbyEC/0TBWP3PT2s3ulhUaXEhjnbnmpriWKLKkrw2s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOkno5hrosIls2N1DAxZSWvZw4Hf6B+kbagkJ9sMSbVqvlcoop
-	urFEj1q6pIzJVpqJWrGkD0IULBEtu52PfiP0mnGV53jh+RUjOKxLd5K/edib+oWZFX9w58Qarhm
-	fhzAZjaFGFkUrpq8WM/2CAfm/9gD0sI2Utrn0L5cMczwSdgOzNZLDTEdT7S82Q71s4Q==
-X-Gm-Gg: ASbGncvrfRsZdkZtyGnRg7nvEZxY9b74pey5p1tjddVgAp9wJ+knuakIJXo7YlGyKy+
-	CYyu2Mk7zb3fdwKTf3iWIXF+cwbVByHEP6svDiOY1wSOR5+T3yaqCdsiuO+8X5ZTSrsZKfQ/lnq
-	xEXByZoxZ1bzOSd38JJawroMbDq8pFEyAnhdeaVmwo8wnvKszLgXxKaiwoBFIqOiTrCKedWzt3l
-	QsJe+VtCq1Q5dEW+ULOslw9q+mIJ7+HeVAhAZ0LvvNu6uHJEJWcmBgP5FbOAMyEun2bZAl9AUT6
-	L+hILs/xo4Tk3yqzwconNdqXDU/517tShAqKKKX0GChihL2KrND2XFfCaqMB/s0ubtpztCxVLXM
-	IVo5eUafQ
-X-Received: by 2002:a05:600c:34c2:b0:46e:21c8:ad37 with SMTP id 5b1f17b1804b1-46fa9b06d3dmr14877365e9.25.1759910550017;
-        Wed, 08 Oct 2025 01:02:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGEbw0aJZMLEsvRDrluvzxmPzzAjNZ2fUN5jdXsXVmOstYYrD7freeeFECzzcJlyO/7OK6m0A==
-X-Received: by 2002:a05:600c:34c2:b0:46e:21c8:ad37 with SMTP id 5b1f17b1804b1-46fa9b06d3dmr14877115e9.25.1759910549578;
-        Wed, 08 Oct 2025 01:02:29 -0700 (PDT)
-Received: from [192.168.3.141] (tmo-083-110.customers.d1-online.com. [80.187.83.110])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f083asm28904014f8f.43.2025.10.08.01.02.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Oct 2025 01:02:28 -0700 (PDT)
-Message-ID: <1efcb368-fcdf-4bdd-8b94-a705b7806bc2@redhat.com>
-Date: Wed, 8 Oct 2025 10:02:26 +0200
+	 In-Reply-To:Content-Type; b=k831x7JhLWNCfeOICecd1h4EdSK7VcfIznuiWybP3wpYXayQGpBeGn7FmWckKXU8Ki0YEQ90oBQt5mjWjCNlYmtJ27x33qvtp7TB6w4VWJ4PhEfHgs6k/DyPJvtNvE1G7WdoSaahRUuajEYKhBHWgUPz+6qiSIWnJv+vU8bwXH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PWqt2IHS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80CE5C4CEF4;
+	Wed,  8 Oct 2025 08:03:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759910586;
+	bh=c8ezxIkpcTLjKeibruziqgAt914e8kokjfvmBkUoTn0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PWqt2IHSy/cPods2I0lXLczFCgpuntljKeisiOL/iemNJdOIFjJuPWyZ1ufNEUEhL
+	 g/oCcNa+OAH9ViTSbqBJ9N3q5AmCDKtS1GobhbAyrJxm4HvS9+DxoyklLHEaoIdsjy
+	 iGlpm6ZnaND+3nUXdmBH095+kfZA6gfmt3wS1toLaLCFF4S9VNR8X/F2xwHlQNmBmu
+	 72CRaVydEyI/GkK62XdbY2tOPxGRqkLI/3DvQIG6Y8+UXhQrUgDIv18LyKV82ESfIk
+	 vxdhnD2Dw7l4C7llTNyfqAwYzrKPP9Jjgk7SJlMgtrnR95OSMvPArbRqosq48VQovw
+	 T335YTKuL+WGA==
+Message-ID: <799374b4-0c41-4ccb-9f99-954c7ce6d044@kernel.org>
+Date: Wed, 8 Oct 2025 17:02:58 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,147 +49,171 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] Support dynamic (de)configuration of memory
-To: Sumanth Korikkar <sumanthk@linux.ibm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>,
- LKML <linux-kernel@vger.kernel.org>, linux-s390
- <linux-s390@vger.kernel.org>, Gerald Schaefer
- <gerald.schaefer@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>
-References: <20250926131527.3260733-1-sumanthk@linux.ibm.com>
- <ab366c03-8c78-449d-bfc4-2d155212d9d7@redhat.com>
- <aOVUNmDiWgrDJ1dJ@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
- <5e3b16ec-9ef9-483e-b97e-bff0c1915b19@redhat.com>
- <aOX_L1_2S30XhLRA@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 14/24] arm64: dts: qcom: Update the pmh0110.dtsi for
+ Glymur
+To: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Pankaj Patil <pankaj.patil@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Abel Vesa <abel.vesa@linaro.org>
+References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
+ <20250925-v3_glymur_introduction-v1-14-24b601bbecc0@oss.qualcomm.com>
+ <CAJKOXPdQH2jXcEY6ZpkmixvUt26SqdzYgDAiJ3RHMG7xkPyi_A@mail.gmail.com>
+ <lcbcjpoazpwbltedkiqlw4l3aomwvi3qsfwvmwghb6uf5wvnme@kh7qdpunfuwr>
+ <CAJKOXPcyhDdFW_u4YQLiHYj8gM7wYB-LOmB_PJs+5OOgn8WZFw@mail.gmail.com>
+ <mzoctelzfp6h2ezzkc3j7gnghsaf67flxqlvfhtlpdfxtddsvi@zqihmnygvdjk>
+ <20251008073123.GA20592@hu-kamalw-hyd.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <aOX_L1_2S30XhLRA@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251008073123.GA20592@hu-kamalw-hyd.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 08.10.25 08:05, Sumanth Korikkar wrote:
->> Care to share an example output? I only have a s390x VM with 2 CPUs and no
->> way to configure/deconfigure.
+On 08/10/2025 16:31, Kamal Wadhwa wrote:
+> Hi Krzysztof, Dmitry, Konrad,
 > 
-> lscpu -e
-> CPU NODE DRAWER BOOK SOCKET CORE L1d:L1i:L2 ONLINE CONFIGURED POLARIZATION ADDRESS
->    0    0      0    0      0    0 0:0:0         yes yes        vert-medium  0
->    1    0      0    0      0    0 1:1:1         yes yes        vert-medium  1
->    2    0      0    0      0    1 2:2:2         yes yes        vert-low     2
->    3    0      0    0      0    1 3:3:3         yes yes        vert-low     3
->    
-> # chcpu -d 2-3
-> CPU 2 disabled
-> CPU 3 disabled
-> # chcpu -g 2
-> CPU 2 deconfigured
-> # chcpu -c 2
-> CPU 2 configured
-> # chcpu -e 2-3
-> CPU 2 enabled
-> CPU 3 enabled
-
-Makes sense, thanks!
-
-> 
->>> chmem changes would look like:
->>> chmem -c 128M -m 1 : configure memory with memmap-on-memory enabled
->>> chmem -g 128M : deconfigure memory
+> On Thu, Sep 25, 2025 at 09:57:02PM +0300, Dmitry Baryshkov wrote:
+>> On Thu, Sep 25, 2025 at 10:34:52PM +0900, Krzysztof Kozlowski wrote:
+>>> On Thu, 25 Sept 2025 at 22:14, Dmitry Baryshkov
+>>> <dmitry.baryshkov@oss.qualcomm.com> wrote:
+>>>>
+>>>> On Thu, Sep 25, 2025 at 05:08:54PM +0900, Krzysztof Kozlowski wrote:
+>>>>> On Thu, 25 Sept 2025 at 15:34, Pankaj Patil
+>>>>> <pankaj.patil@oss.qualcomm.com> wrote:
+>>>>>>
+>>>>>> From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+>>>>>>
+>>>>>> Add multiple instance of PMH0110 DT node, one for each assigned
+>>>>>> SID for this PMIC on the spmi_bus0 and spmi_bus1 on the Glymur
+>>>>>> CRD.
+>>>>>>
+>>>>>> Take care to avoid compilation issue with the existing nodes by
+>>>>>> gaurding each PMH0110 nodes with `#ifdef` for its corresponding
+>>>>>> SID macro. So that only the nodes which have the their SID macro
+>>>>>> defined are the only ones picked for compilation.
+>>>>>>
+>>>>>> Signed-off-by: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+>>>>>> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+>>>>>> ---
+>>>>>>  arch/arm64/boot/dts/qcom/pmh0110.dtsi | 66 ++++++++++++++++++++++++++++++++++-
+>>>>>>  1 file changed, 65 insertions(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/arch/arm64/boot/dts/qcom/pmh0110.dtsi b/arch/arm64/boot/dts/qcom/pmh0110.dtsi
+>>>>>> index b99c33cba8860f1852231db33a127646c08c1e23..4a5c66e5c9fbc35cedb67601f4568844dc41fbea 100644
+>>>>>> --- a/arch/arm64/boot/dts/qcom/pmh0110.dtsi
+>>>>>> +++ b/arch/arm64/boot/dts/qcom/pmh0110.dtsi
+>>>>>> @@ -7,6 +7,8 @@
+>>>>>>  #include <dt-bindings/spmi/spmi.h>
+>>>>>>
+>>>>>>  &spmi_bus0 {
+>>>>>> +
+>>>>>> +#ifdef PMH0110_D_E0_SID
+>>>>>
+>>>>> NAK
+>>>>>
+>>>>> I already explained on IRC in great details why.
+>>>>
+>>>> A short summary or a link to a channel / date would be nice in order to
+>>>> include other people into the discussion.
+>>>>
+>>>
+>>> Of course but:
+>>> 1. You were there so maybe you remember the arguments, and:
+>>> 2. I'm offline, using phone, not having laptop, replying during my
+>>> personal time off just before merge window so any emergency time
+>>> should be spent on important matters instead these two huge patch
+>>> bombs adding such usage I already said: NO, don't do this.
 >>
->> I wonder if the above two are really required. I would expect most/all users
->> to simply keep using -e / -d.
 >>
->> Sure, there might be some corner cases, but I would assume most people to
->> not want to care about memmap-on-memory with the new model.
+>> Well, If I'm asking, it means I don't rememebr the discussion. And I
+>> defeinitely didn't know that you are spending your personal vacation
+>> time in ML. And if the discussion was with some other people, then
+>> somebody else can drop the response to the question.
 > 
-> I believe this remains very beneficial for customers in the following
-> scenario:
+> Just wanted to give some background on this patch.
+> Even though PMH0104 and PMH0110 are common (b/w Kaanapali and Glymur),
+> they don't share the SIDs. So we tried to use status="disabled" to handle
+> this but we observed that because of the node name being common in the
+> two included files, it ends up overwriting the previous node with the
+> same name.
 > 
-> 1) Initial memory layout:
-> 4 GB configured online
-> 512 GB standby
+> eg-
+> #include "pmh0104.dtsi"  // assume contains pmic@4 { ...};
+> #include "pmh0110.dtsi"  // assume contains pmic@4 { status=disabled;};
 > 
-> If memory_hotplug.memmap_on_memory=Y is set in the kernel command line:
-> Suppose user requires more memory and onlines 256 GB. With memmap-on-memory
-> enabled, this likely succeeds by default.
+> Here intention was to use the pmh0104 on sid-4, but it gets overwritten
+> with the pmh0110 on sid-4 ( with status disabled). This is why we ended
+> up using the `#ifdef`, ensuring that we can control the exact pmic that
+> gets picked by using the PMXXX_SID macro.
 > 
-> Later, the user needs 256 GB of contiguous physical memory across memory
-> blocks. Then, the user can still configure those memory blocks with
-> memmap-on-memory disabled and online it.
-> 
-> 2) If the administrator forgets to configure
-> memory_hotplug.memmap_on_memory=Y, the following steps can be taken:
-> Rescue from OOM situations: configure with memmap-on-memory enabled, online it.
+> side note, i did `grep` in the `/arch/arm64/boot/dts/` and i see a lot
+> of instances of `#if...` present in that.  Assuming the concern here is
+> about the use of `#ifdef`.
 
-That's my point: I don't consider either very likely to be used by 
-actual admins.
 
-I guess in (1) it really only is a problem with very big memory blocks. 
-Assuming a memory block is just 128 MiB (or even 1 GiB), you can 
-add+online them individually. Once you succeeded with the first one 
-(very likely), the other ones will follow.
+#if are not desired in C code, so why would they be acceptable in DTS?
+It is not making the code easier to read at all.
 
-Sure, if you are so low on memory that you cannot even a single memory 
-block, then memmap-on-memory makes sense.
+On IRC in these older discussions I was very strongly against any DTSI
+which depends on some sort of outside values, except basic usage of
+defines. Original pmh0110.dtsi from kaanapali is fine:
+	pmh0110_d_e0: pmic@PMH0110_D_E0_SID {
 
-But note that memmap-on-memory was added to handle hotplug of large 
-chunks of memory (large DIMM/NVDIMM, large CXL device) in one go, 
-without the chance to add+online individual memory blocks incrementally.
+but doing ifdefs here that this define depends on something else makes
+code ungreppable (lookup unit address from sysfs and then git grep
+pmic@4) and difficult to follow.
 
-That's also the reason why I didn't care so far to implement 
-memmap-on-memory support for virito-mem: as we add+online individual 
-(small) emmory blocks, the implementation effort for supporting 
-memmap_on_memory was so far not warranted.
+My recommendation is either duplicate code or change DTSI files to not
+contain entire node, but its contents. At least these are
+recommendations I remember now.
 
-(it's a bit trickier for virtio-mem to implement :) )
-
--- 
-Cheers
-
-David / dhildenb
-
+Best regards,
+Krzysztof
 
