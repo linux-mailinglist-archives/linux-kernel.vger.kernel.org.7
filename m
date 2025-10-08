@@ -1,192 +1,170 @@
-Return-Path: <linux-kernel+bounces-845386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3F37BC4AA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 14:00:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D24B7BC4A87
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 13:57:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9E7354F12A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 12:00:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D46BC3AAD57
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 11:57:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D66B2F7AA0;
-	Wed,  8 Oct 2025 12:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52982F7AA6;
+	Wed,  8 Oct 2025 11:57:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="w0jchSIj"
-Received: from forwardcorp1a.mail.yandex.net (forwardcorp1a.mail.yandex.net [178.154.239.72])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="B7dl0iAC"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1AE1F92E
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 11:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6DFD2F616F
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 11:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759924800; cv=none; b=KBztKiArHp+NraEIbKLFjQNiCNDHm4PZ7kluVjSeGAkgsj6/c2Hh+LrjuE4DV0mhNohOZqhmJLowa3eMMmqolCPmL5MNzOtFDMzXuBr0ffz1ME4lVbv7lFG45OaT4gX1PL67E3M1iHhkk617Ge7gkum/0EtYCR2oF9sNY2ca1jw=
+	t=1759924647; cv=none; b=rIKPwXDidNddv8sI6Pr4+FA+Pseq/F5ZX/83L/Emqh03beldDB3jtQTYIkhcJaEjGwmGqL1xGqayv6Zdk4TQc+dPQyb2iFiex061xiP+/6thUKc+2xaujol+NRqgq0JaNgdc5cMehr9Jbhpw8yLLafe7Qf0Vqku3rpzsS0V9dGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759924800; c=relaxed/simple;
-	bh=x4hcMVSqO+4VaWdGmJJjWEk8llEnHRDsj2WVzWfuEdk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MqtmIUebFqcawkWpyUZwVnT/VBpjDBhn4seuCTZXuVdLP8+bax6vCEYxJnoHJPWb1ZyE6VCif1i9kUeGd82u1EjPmsZZHRfrTGMSAGNbYuq0DRBRAGOmAZpbQCtnDvC6XyAZ6RNI2qqDj4C3pQRU/hfoQaESRdLWB+Y0P41eAx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=w0jchSIj; arc=none smtp.client-ip=178.154.239.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
-Received: from mail-nwsmtp-smtp-corp-main-83.vla.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-83.vla.yp-c.yandex.net [IPv6:2a02:6b8:c2d:7394:0:640:5a8a:0])
-	by forwardcorp1a.mail.yandex.net (Yandex) with ESMTPS id 7E73EC02C1;
-	Wed, 08 Oct 2025 14:57:55 +0300 (MSK)
-Received: from dev-vm2-nested.ru-central1.internal (unknown [2a02:6b8:c0e:501:0:fca5:0:123])
-	by mail-nwsmtp-smtp-corp-main-83.vla.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id Rvk7ub0FsW20-bml5UPFK;
-	Wed, 08 Oct 2025 14:57:55 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
-	s=default; t=1759924675;
-	bh=esLBptsdquH53haBk2OP87zikWv0XVIlRgzWrdsNBU0=;
-	h=Message-ID:Date:Cc:Subject:To:From;
-	b=w0jchSIjFNUrBzEojP36+EgWI8pIlo7K0wGBV6ornetiCMN2t/EgI021zY0UG1bjQ
-	 GKwKScbOpiuGlCMF3QquVsoRP6QUyNt3APxhvZTwwClxbhOFI9mJh+cV74FZYz68F9
-	 CT3pTg2K+Xm7YNG9fT+rRh2Tw4rlouijQD2Mrtco=
-Authentication-Results: mail-nwsmtp-smtp-corp-main-83.vla.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
-From: Kirill Martynov <stdcalllevi@yandex-team.ru>
-To: hannes@cmpxchg.org,
-	surenb@google.com
-Cc: peterz@infradead.org,
-	mingo@redhat.com,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	linux-kernel@vger.kernel.org,
-	Kirill Martynov <stdcalllevi@yandex-team.ru>
-Subject: [PATCH] sched/psi: add "abs" pressure type for memory resource
-Date: Wed,  8 Oct 2025 11:56:58 +0000
-Message-ID: <20251008115658.719006-1-stdcalllevi@yandex-team.ru>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1759924647; c=relaxed/simple;
+	bh=+VNqlLUrL2S0F8q0NhWGsHgRy8Zk0dmY4dvSjl9E7xc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rWG9x5iPGDNpFgEmzDu8ioqLTtQ2XdyfWwFU04mkPdYLuKciRT/dxu9K+2w6C7GsBfDdistcRxOiRpNDGBNidqbyDQFzWewdV+pMMTlsfPkM+DLnh64DZ263p5UxtrBxZJ1tuu7vM5E9D+5XuWN1rW6yen1d1NQ5F8mR3LfRraU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=B7dl0iAC; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59890eu4002274
+	for <linux-kernel@vger.kernel.org>; Wed, 8 Oct 2025 11:57:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=IvIqdTOEMlOB1aUq+P90kmaq
+	VRrdMXHPXR0BptFOObI=; b=B7dl0iAC0ebQmS4RvC+0fQwC+ny7v9BhIiF2VS6m
+	dF4eGP/oq3zr1qFXymAVGczqv7LfBj737K2g1uEjHKYLasujp++gGomWTbuHbqvd
+	/bFgUveBUOtPciAKPK0zkrsVzQUu0mulhBusrAIgy4rvbOlDvj5R/uUjaHXYZ/Jo
+	KEtcMgFNSq9sV3U/iPsb0ntw7VV93DxkUGcRJFul7chATv/Rsn8pkfr8Oc5H3Gp4
+	Gxq6trVLQ0g2H5Eu8k3CoL9bpqwc1VRSOyuayswpVnDe9lfXP93KaFVwYZijVekq
+	E7D9/zbyoob+BHI6GLQ+OStxjdyqRkS1yVgAvv3sziF7og==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49juy729h9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 11:57:24 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-78117b8e49fso12640375b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 04:57:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759924643; x=1760529443;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IvIqdTOEMlOB1aUq+P90kmaqVRrdMXHPXR0BptFOObI=;
+        b=P6aUUtI13jVMXyK7aLEAYClRHZaWPc9he0al87LZ5DH6fSRhFEZemXW3QZq77IwdyE
+         sg7l+mzQtW5b5FAe/JxpTajC+y3dTH1b9tFgUL4Bn0xn4z6hr9q/3jEe7mVJEiI0heob
+         2IyXSFb0sagx3yk5em41mLVxAabZhjvNiD2XAZpfYMg+5J342dMioptsAuT6BqGBD7Hm
+         P6lrgV3B5DhYeOGiEkhl5U/Xug7ae2GNIv636YXvIJY/LJlhWmwv/0X/+njJYxna9WmM
+         Cl5Hqi7Guih99KnDsr2tZdtEwZeuPw/xwVN0lItjHD2TdB8YKmFkx0f0jDIpwoqZmM67
+         NSww==
+X-Forwarded-Encrypted: i=1; AJvYcCXRbnt/i14ccIu3zC1v5sgJI0oBxv1KGm6fZpV3eJdEXhtQbySmxLyzHZv7lboodIvsZ8q2ZDWu0Re5Kww=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXkVBX2x8KnsU9KFLqxBmJ9BVej+ZugHZtPzOXMSXGxd3jmRF0
+	u2C2uB4U4ayOeCD7YeuITC4qTEiLgOcJsZ3tV8Bem6Zm8JULG7HKVfosq3Og94aE5Cc/zC4sAcM
+	tn5qRvXwH+FLMOZJ4c0bvfjWGkJvBsYZcM9Qy+9nmVyO/ZN50PUmt8lgiwk4m/XCqmoM=
+X-Gm-Gg: ASbGncuM9ereMu/7iFJq3r+5URbFskisvUYaWJdxtLrG+RAuEYDnzqvJh6ezLCoL6by
+	KwZe9Dy6Y5JbDT6QX4wm6SyJ02P/8PLrMSL075HA6ANYJuVG2A1HAi74U0zdPhCeNZHT69z1zDQ
+	SP5CyR0cnq1qrB/TQ4GSW6dLiJexL2QtIMYuRQlsw0r01JWwxt/8GYy6UodyS7fe1kTQckrP8Od
+	k8lH9SycxS+BajlOn/uTaw8F1vtn/A1jPXgOSkMTecvSoJYU5gEud6gttORqFjyBWPfvtyigkk1
+	ccTQSg7TUyeP4rXLgyuyFf71EaJPX3OE8yl4bPHTwkaxvJe4U6NloXKz5rC39K0dorvMiYZo
+X-Received: by 2002:a05:6a00:2384:b0:781:455:df62 with SMTP id d2e1a72fcca58-79384f488a2mr3750605b3a.5.1759924640902;
+        Wed, 08 Oct 2025 04:57:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEaaV0CNad2Np/BckgB4G9x2kyiSi6m3pXTtlqh/eBx1lGlL/DyqmRyKBbMygqe5tJdC1PP1Q==
+X-Received: by 2002:a05:6a00:2384:b0:781:455:df62 with SMTP id d2e1a72fcca58-79384f488a2mr3750434b3a.5.1759924638126;
+        Wed, 08 Oct 2025 04:57:18 -0700 (PDT)
+Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b0206e809sm18617848b3a.71.2025.10.08.04.57.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 04:57:17 -0700 (PDT)
+Date: Wed, 8 Oct 2025 17:27:11 +0530
+From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH v4 01/12] dt-bindings: remoteproc: qcom,pas: Add iommus
+ property
+Message-ID: <20251008115711.hi6uby5ivbxbsjgw@hu-mojha-hyd.qualcomm.com>
+References: <20251007-kvm_rprocv4_next-20251007-v4-0-de841623af3c@oss.qualcomm.com>
+ <20251007-kvm_rprocv4_next-20251007-v4-1-de841623af3c@oss.qualcomm.com>
+ <ce03d7e7-9342-465b-881b-50aad29fd9d1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ce03d7e7-9342-465b-881b-50aad29fd9d1@kernel.org>
+X-Authority-Analysis: v=2.4 cv=IrITsb/g c=1 sm=1 tr=0 ts=68e651a4 cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8
+ a=EUspDBNiAAAA:8 a=Nb9z0baHQhIVdLoCI4sA:9 a=CjuIK1q_8ugA:10
+ a=OpyuDcXvxspvyRM73sMx:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: hX66I71dEvCEgXtiyIF2W4Cksqv63ICL
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAyOSBTYWx0ZWRfXwzK7ISJIVO59
+ NVtmobTIu2qmbOb4X0/Zi2mORRNqT9lVLWWzNYMpIOd5NzeAGPcmwHWNrHE0vzY3QRXC1aZKbWY
+ IGzV+p5I8uzWrSCSvuoCAjEb1aMGFyj8y4X5s4oiyvLwHbAWX09rIlqSHAXoCfckWExuI1KcBSV
+ r8Ww8Oc3l6nZJSINSJJXtZP+pcbfoNh15WvMMGzDDTIqUTOP0nJOUHLscBjDejiVs1e5bMgOQjL
+ +39gt3gY1+ZaoiEPQRIQeBsUCDX5WPBVN/P1SfGEWL56RPT4aYmo6ULVEmw73xOrXWhNWhb5psw
+ Vc2rTumhHVhhYWCfLtETN+vbyE7nZ/MN232vZ5mtYu7xVYlCw/nKKNkW9bIAc+8SA77hl9UrQda
+ swsl+90eNehh+d3o0XBaTYw8xGdxkA==
+X-Proofpoint-ORIG-GUID: hX66I71dEvCEgXtiyIF2W4Cksqv63ICL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-08_03,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 priorityscore=1501 bulkscore=0 clxscore=1015 malwarescore=0
+ spamscore=0 phishscore=0 impostorscore=0 lowpriorityscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040029
 
-Current PSI memory pressure metrics ("some" and "full") are normalized
-against the number of non-idle tasks in the system. This means that
-reported stall ratios and trigger behavior depend on overall system load.
-When the system is mostly idle, even small stalls can appear as high
-pressure, while under heavy load the same stalls may look negligible.
+On Wed, Oct 08, 2025 at 05:09:32PM +0900, Krzysztof Kozlowski wrote:
+> On 08/10/2025 01:48, Mukesh Ojha wrote:
+> > Most Qualcomm platforms feature Gunyah hypervisor which handles IOMMU
+> > configuration for remote processor and when it is not present, the
+> > operating system must perform these configurations instead and for that
+> > firmware stream should be presented to the operating system. Hence, add
+> > iommus property as optional property for PAS supported devices.
+> > 
+> > Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> > Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> > Signed-off-by: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
+> > ---
+> >  Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
+> > index 63a82e7a8bf8..8bd7d718be57 100644
+> > --- a/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
+> > +++ b/Documentation/devicetree/bindings/remoteproc/qcom,pas-common.yaml
+> > @@ -44,6 +44,9 @@ properties:
+> >        - const: stop-ack
+> >        - const: shutdown-ack
+> >  
+> > +  iommus:
+> > +    minItems: 1
+> 
+> 
+> Incorrect constraints, this must be maxItems instead.
 
-In some use cases this normalization is not helpful. Userspace components
-that react early to memory pressure, for example by adjusting memory
-reserves or throttling background activity, need a signal that reflects
-the actual stall time regardless of task count.
+will fix it, thanks.
 
-This change introduces a new pressure type for memory called
-"abs" (absolute). Unlike "some" and "full", the "abs" calculation
-in collect_percpu_times() skips non-idle weighting when computing deltas,
-providing a load-independent measure of memory stalls.
+> 
+> 
+> Best regards,
+> Krzysztof
 
-The new metric allows detection of early memory pressure, which can be
-useful for proactive memory management.
-
-Signed-off-by: Kirill Martynov <stdcalllevi@yandex-team.ru>
----
- include/linux/psi_types.h |  1 +
- kernel/sched/psi.c        | 36 ++++++++++++++++++++++++++++++++----
- 2 files changed, 33 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/psi_types.h b/include/linux/psi_types.h
-index dd10c22299ab..65acd58f6766 100644
---- a/include/linux/psi_types.h
-+++ b/include/linux/psi_types.h
-@@ -61,6 +61,7 @@ enum psi_states {
- 	PSI_MEM_FULL,
- 	PSI_CPU_SOME,
- 	PSI_CPU_FULL,
-+	PSI_MEM_ABS,
- #ifdef CONFIG_IRQ_TIME_ACCOUNTING
- 	PSI_IRQ_FULL,
- #endif
-diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-index 59fdb7ebbf22..4da28df19bf5 100644
---- a/kernel/sched/psi.c
-+++ b/kernel/sched/psi.c
-@@ -252,6 +252,7 @@ static u32 test_states(unsigned int *tasks, u32 state_mask)
- 
- 	if (tasks[NR_MEMSTALL]) {
- 		state_mask |= BIT(PSI_MEM_SOME);
-+		state_mask |= BIT(PSI_MEM_ABS);
- 		if (tasks[NR_RUNNING] == tasks[NR_MEMSTALL_RUNNING])
- 			state_mask |= BIT(PSI_MEM_FULL);
- 	}
-@@ -389,8 +390,12 @@ static void collect_percpu_times(struct psi_group *group,
- 		nonidle = nsecs_to_jiffies(times[PSI_NONIDLE]);
- 		nonidle_total += nonidle;
- 
--		for (s = 0; s < PSI_NONIDLE; s++)
--			deltas[s] += (u64)times[s] * nonidle;
-+		for (s = 0; s < PSI_NONIDLE; s++) {
-+			if (s == PSI_MEM_ABS)
-+				deltas[s] += (u64)times[s];
-+			else
-+				deltas[s] += (u64)times[s] * nonidle;
-+		}
- 	}
- 
- 	/*
-@@ -406,9 +411,13 @@ static void collect_percpu_times(struct psi_group *group,
- 	 */
- 
- 	/* total= */
--	for (s = 0; s < NR_PSI_STATES - 1; s++)
--		group->total[aggregator][s] +=
-+	for (s = 0; s < NR_PSI_STATES - 1; s++) {
-+		if (s == PSI_MEM_ABS)
-+			group->total[aggregator][s] += deltas[s];
-+		else
-+			group->total[aggregator][s] +=
- 				div_u64(deltas[s], max(nonidle_total, 1UL));
-+	}
- 
- 	if (pchanged_states)
- 		*pchanged_states = changed_states;
-@@ -780,6 +789,10 @@ static void record_times(struct psi_group_cpu *groupc, u64 now)
- 			groupc->times[PSI_MEM_FULL] += delta;
- 	}
- 
-+	if (groupc->state_mask & (1 << PSI_MEM_ABS)) {
-+		groupc->times[PSI_MEM_ABS] += delta;
-+	}
-+
- 	if (groupc->state_mask & (1 << PSI_CPU_SOME)) {
- 		groupc->times[PSI_CPU_SOME] += delta;
- 		if (groupc->state_mask & (1 << PSI_CPU_FULL))
-@@ -1289,6 +1302,19 @@ int psi_show(struct seq_file *m, struct psi_group *group, enum psi_res res)
- 			   total);
- 	}
- 
-+	if (res == PSI_MEM) {
-+		unsigned long *avg = group->avg[PSI_MEM_ABS];
-+		u64 total = 0;
-+
-+		total = div_u64(group->total[PSI_AVGS][PSI_MEM_ABS],
-+				NSEC_PER_USEC);
-+		seq_printf(m, "abs avg10=%lu.%02lu avg60=%lu.%02lu avg300=%lu.%02lu total=%llu\n",
-+			   LOAD_INT(avg[0]), LOAD_FRAC(avg[0]),
-+			   LOAD_INT(avg[1]), LOAD_FRAC(avg[1]),
-+			   LOAD_INT(avg[2]), LOAD_FRAC(avg[2]),
-+			   total);
-+	}
-+
- 	return 0;
- }
- 
-@@ -1315,6 +1341,8 @@ struct psi_trigger *psi_trigger_create(struct psi_group *group, char *buf,
- 		state = PSI_IO_SOME + res * 2;
- 	else if (sscanf(buf, "full %u %u", &threshold_us, &window_us) == 2)
- 		state = PSI_IO_FULL + res * 2;
-+	else if (res == PSI_MEM && sscanf(buf, "all %u %u", &threshold_us, &window_us) == 2)
-+		state = PSI_MEM_ABS;
- 	else
- 		return ERR_PTR(-EINVAL);
- 
 -- 
-2.43.0
-
+-Mukesh Ojha
 
