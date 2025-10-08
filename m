@@ -1,135 +1,181 @@
-Return-Path: <linux-kernel+bounces-845319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA178BC4656
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 12:43:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B66DBC468E
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 12:45:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1D9744EF4A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 10:43:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CC35189D7FA
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 10:45:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561172F60B3;
-	Wed,  8 Oct 2025 10:43:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7182F60AD;
+	Wed,  8 Oct 2025 10:45:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="uTOykZeE"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ho6XeKt1"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293D42EC560
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 10:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077B82F5A1C
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 10:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759920196; cv=none; b=mpLrRzTPjpR1qZQEAMsE/Vhlcy7OQC7gIHfhO2lMHUEzxKar/nROS63ET9hf3e36/750rDV5iacLhYuIiD6sfScc2YlEYxhyg0KjGJq7uKMSyMOs773Ld2RKUrbIYR2pwC9tR26yqQIOHyjG2UayWz8tShpYr5clztZe8ecs18M=
+	t=1759920303; cv=none; b=nWt/oD/ono8EVQrT01puNTwbNzMNld8vfh6L033jnN9RDxsP12dbFnBIsMvm1oV6a2XrXIZnwe7We+14Rp+HkHJ0hZ/npXFbLPp+gOPLpjw0N0Zx0bjWHozNTHqVPp3Gu0ejsW28Aa01R2YYIKqfBmsKag7ZCgXExEcF/nKh6uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759920196; c=relaxed/simple;
-	bh=U/u/eowxh8ykqWPluGt9cIUTMqfcuowXol040OAY1I4=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=q2j5wbx56juQJLwCBcHEqKd9HmXc9aSpvoxIrhRpHohGcs5p29bMiip9cnDTi71spEVw/YeQW+lKtON4cFGiXiiNZ3+UDonxNDg4OP7hFvllXnadXooFZ4VtZ9NazRrdarp1waqv2Sorg3Ho8Vawkpskb/qa7eG55UGpn2Okr+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=uTOykZeE; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3ee12807d97so6354179f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 03:43:12 -0700 (PDT)
+	s=arc-20240116; t=1759920303; c=relaxed/simple;
+	bh=F/3SDSnCTPJ5R0aJCqe0TNl9koObzQspog17xqvd3fE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tPqyxO48zS/JUF1K0rNfW1mi0c/xSI0aLAIgTvXu4B0Fx2EhN6gDtBPnd8wjaOCYxdGl6JvmS9l0t8s3bWL8Q6EM0TbrEBvwsYN2RL0AtvK4c5f1NEOk+j/FZs6qrVnNWwj/hvWPiOsW/mJf+LUtdUEB/jztUgxA/VliSqhUeAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ho6XeKt1; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-789b93e9971so896111b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 03:45:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1759920191; x=1760524991; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=B0OwMCCoD8ii8nGpV6xfgZoqUxaH6ChQn4Lw2SHUWEY=;
-        b=uTOykZeET6pD2v3wkCZiTIDTXBiw1DAMsgmjniBFnCgUyplO33KQ+9oyn1LCtkRbto
-         0b1HuidfDeGCsiHBfrDxEraVAVZngfXSIurS1JzdKfcBuxCm0DhjOzRNiz6Et/QaNAFh
-         KHjnsin6l5MaaKjydO+2OUXXE6JKj2zvgMbFhoPu4ewj6nNQkTdt1t4Liv/hgO+NNYDY
-         FIOJc+FPvCFhhwFFSLvE2/RMe66gRNhBWTPm0+xyOWpH5E1ZJnT2t+xSDTTeS27ttSSS
-         FONsFIp4Bp1A6qP6hztldLKQhQazHdxo1Y28g4g3/SmmyL3grLvkAPcdEViV4Fi2oFdW
-         BGeA==
+        d=linaro.org; s=google; t=1759920301; x=1760525101; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/uqzprGMb0c1F9PzyQSr/KsKGC8sUWJiY/UfksYRhZU=;
+        b=Ho6XeKt12YeixC/jEN02LnSrdOB1ZKXaLVqTPALWAGGuBhxK1wpQUgaRghrjyE0X9T
+         GEumDn2x6S8t1Ce1dTe7RKA+V/aJanhFnfBMSUDVtdqjbFbWpx4H6ZAcv07T8/nex2mh
+         HgXzup8KUxSmP013Q58dVNZeWrLKkXSzClYaBIIY4ODIGOAH4d+4bsZvixnF/T1UKXSG
+         m430UUxYCtGTZ670Xy2tzxqz1hdMjVIxI/bajhddqlteKR4fI5A9mnpua3e+3SFTVqaF
+         /auYN1RswKH/CfklZWwq84eKWvrVZcTLHBQw3a82likA0QCcXDf/ORkUJ0eGau5vicun
+         2L2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759920191; x=1760524991;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B0OwMCCoD8ii8nGpV6xfgZoqUxaH6ChQn4Lw2SHUWEY=;
-        b=Io/8fBhwQnJIaJCQw8uDMa3PYxPOYxqtVsqrjIrR7tEjWyr0Gu5F+eCE0BuBfyyfev
-         fY99IwZxHwrN5AAAstEmrst+TcBnJZwHV8XcguHuMoEgejrPH5JM6HzVmicKmzmpcFuW
-         hyEh7kkkdK7bdjekz7Eeu75OiEZxPA+UBd1tpfV9qDk8UVHv00pSlQ8QHiTCld0+WAEB
-         MI9812NusaJP4mdDRFPbCykytkjqqk8Hj3ykjMfMiycw3+bxdWeqU2YHjgWnScR2NTj2
-         feAIS8edDQMWDisMlkEFBlpUIkLmqAgzUOZ7ulID8gALBrdKLHw0Q1CzvYQ/6kP15CgT
-         zpjg==
-X-Forwarded-Encrypted: i=1; AJvYcCUWY9ua8OKYgEF7hUK/+H1ydQYAsO+lpp6u1gEQ5BwhEQWkx9woFHx20UVBrcMJVEj2AOM7xt5WBALGgtM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwPxQuGkMWOe/WR758YzlREP7Q12YqkYT41C6gJGkUg+P0HCN2
-	9seOyNw6NSsrP5S6lPtCr7WeU35QySiTnMN7wSx/1/0ztV2NBSbKK2a0pKoAgpc4mVc=
-X-Gm-Gg: ASbGncuJ4eqWYeH+VSHCo84Kv9NdkBuOAPNWuaeplbfavmMCWOl1gVtFM92DF6AJs/5
-	8a3sY3RdWsDYaT4Pbc8kvRDU+bhlXEUnwH7YJXn4QbH+Z4MOuvCIS4Ap3JyE4lprwFAmXfVu8cY
-	/osZzDh8iFgqkTnt/cDaIJ6jou/LrpsBJN0uETVnbd3V4HQAA/7mzeF+RaFSklce4IjmIKOSDkA
-	+70rdE8gLejy3vOYnrUFbMUJeCfdqpwpK2Xal8ozWYFAUaeZF3D33GXuLWm88JYBonxHnutQj6X
-	0Q1RpDhPT+0EQWW/cZLj9q1YRzCVnjITnS2amthtzN/5i8J8sgEj25F5+qBzyKlrv3Fgxgo8emO
-	DGn3EUg/c58C0k/JyUPKqKpsENsqVSgke43JjIp6ZMU0SDzyu0VCpw+C3tDSgWIGd61e6v2WATr
-	4=
-X-Google-Smtp-Source: AGHT+IFnLxna9eNj0rGHU56dyhE9tf90bbvm/Bs51unq1s9ZiRzsv9xGR7isXB0YRqeC86NSqfUd6Q==
-X-Received: by 2002:a05:6000:2f87:b0:3ea:63d:44c6 with SMTP id ffacd0b85a97d-4266e8f70dcmr1846995f8f.35.1759920190710;
-        Wed, 08 Oct 2025 03:43:10 -0700 (PDT)
-Received: from localhost (mob-176-247-60-194.net.vodafone.it. [176.247.60.194])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4256866060fsm23607749f8f.14.2025.10.08.03.43.10
+        d=1e100.net; s=20230601; t=1759920301; x=1760525101;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/uqzprGMb0c1F9PzyQSr/KsKGC8sUWJiY/UfksYRhZU=;
+        b=ZaP2rOtrbBJK8aXRktSDhY2WU5ibAsvEh/hj8X0CdhfQSvau/bYGvKjwfyUO6fLiVt
+         izRZCRYDVS+BscnI+MbMpcPAESmZr7CUPnWTuDlAU3Mrn9V/OxdjeJwzWppbuZEeuvqC
+         UHMcPkZ1EOk31DgyOjd6DACNUwEOFu81z8bRJoUvvoskmT3XHCCI3VSuuoQZHFoPRg6j
+         0UB7o9Snm9ne2Z98mWQMuWRI4j1Rm96HKU0XrKK2EKGI9cKGWPDn39M8OCA09Cz/iUCA
+         CWl+caHnNmW+6OIUlxUx/txDaUpsEcGV6FvmVa0MSXnyYpkEeKgp5vWQHIDDGaNAn2x8
+         O/Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCVeTCHdrs8MrcscwkGZlhCNnuUkxt0jGMBIu5NtJscYRQqCNNUWwOxzqFm8e8rzBsAdxWQ5PHo3UDTicF0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWq+ynZzqCGmXojWYeNxoEYC7GXyaWxBofxHzD4wFlQZMYDQfB
+	tpdKWxTsnxo4OE07zdvguO4rTMbhzDwU97G5TEPdP1q0GG3WYtNh/aQq60cZgB8Nqgs=
+X-Gm-Gg: ASbGncuPyndf3hf/bV6y1nxj3Zd7kmWYNRJ0GDIhPpsawC/+yufbg1mczaQz85+3NOb
+	k7JzjIt/jbi+K5uLm159ohsY6Z5CIThMpln3gl+5KRZnB1E2yDPQ81dH6KVue6zqvvhPsqpNo4c
+	MV1SdoaHxo5d108Ylp57C7A5Qf3MoiMD+sfCRpEUFaI+6D7/2LpwX4BZSdxiSj+zByCFOHGMlPF
+	3o8h67QVsPp7YQ1jiNPlNYqrQpFlABLDoG3IlT8wdVsYe3VmyT7ymCZGkvmEVzdr8trP/u91lB+
+	tu5tiBCjUZunnEBKovK5GNRv1YTxl0nEzdEwJHIRqwTm9f7OLr0TP6yWm8LVme/mmykKrMuxITq
+	yCpjrl3ka0b6NqEzd8neBAYV92OX9JaHJVlmTagKjSC0BbxJAiu7uXZcuKm6V
+X-Google-Smtp-Source: AGHT+IHrLX9RbBOpvVqA3cJqDf8szpNGBJuW1i7M6GF7kGam2olRVH1kbgH2P5szP+gjyhnM7ZCWUw==
+X-Received: by 2002:a17:902:d4c1:b0:25c:b66e:9c2a with SMTP id d9443c01a7336-290272e3d33mr24052145ad.6.1759920301321;
+        Wed, 08 Oct 2025 03:45:01 -0700 (PDT)
+Received: from kuoka.. ([121.134.152.93])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1127c7sm196117135ad.28.2025.10.08.03.44.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 03:43:10 -0700 (PDT)
-From: Francesco Lavra <flavra@baylibre.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	linux-gpio@vger.kernel.org,
+        Wed, 08 Oct 2025 03:45:00 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Srinivas Kandagatla <srini@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] gpio: pca953x: enable latch only on edge-triggered inputs
-Date: Wed,  8 Oct 2025 12:43:09 +0200
-Message-Id: <20251008104309.794273-1-flavra@baylibre.com>
-X-Mailer: git-send-email 2.39.5
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+Subject: [PATCH v3 1/2] ASoC: qcom: audioreach: Add support for Speaker Protection module
+Date: Wed,  8 Oct 2025 19:44:49 +0900
+Message-ID: <20251008104448.117167-3-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1959; i=flavra@baylibre.com; h=from:subject; bh=U/u/eowxh8ykqWPluGt9cIUTMqfcuowXol040OAY1I4=; b=owEB7QES/pANAwAKAe3xO3POlDZfAcsmYgBo5j/w4fHdAUy8GeDL3yYxoY0qDCS6GwYHvmn4v xV33kL9OGKJAbMEAAEKAB0WIQSGV4VPlTvcox7DFObt8TtzzpQ2XwUCaOY/8AAKCRDt8TtzzpQ2 X0K3C/9s3zWhGO4wTbp4h46syZWk1Hv4c5jc4jN7NqZOpE+l7dS+ipawX8ISJixlDP/VpvrivkT 4m7AOaJHmZj29wlcjAL3aA36YEmMq6yPU/+D/Nkx7qR25Yik/Slfa9XSwPHA68Tm4QneY+2oO/y vVcV18/vItdV2GyPtjwoFoJiAk1dp52E0Q1N4klePyasqMzvAVhMnjLUsw9lU15GRWMuL9esmZG OMJ3QsFQdPqUcTOhMMjNETkElZq90elD/idcj6+uC6UKV+tI+WWJW4w53IaEkMGySPs4tMEDprL id2L8+egN7B+1mMJnDNIR1KWc5VwD7IYk/HF5lBD2EaBdH4+f635HnULaQTmxRoFSDx95BBy/5q aS6v41W/BsQZVU4dcRPBliwXE8nGmZdVmE6daPJSytfmxZqIC9niMYnsR8S2aqbM0NapvkEUZrm 1olLMt39IG5XOv4+iD8OGhDtS7yiYww7Z7O/h2sBf76Nb3pkLHwHSvuF1pAj4/YeSUeI4=
-X-Developer-Key: i=flavra@baylibre.com; a=openpgp; fpr=8657854F953BDCA31EC314E6EDF13B73CE94365F
 Content-Transfer-Encoding: 8bit
 
-The latched input feature of the pca953x GPIO controller is useful
-when an input is configured to trigger interrupts on rising or
-falling edges, because it allows retrieving which edge type caused
-a given interrupt even if the pin state changes again before the
-interrupt handler has a chance to run. But for level-triggered
-interrupts, reading the latched input state can cause an active
-interrupt condition to be missed, e.g. if an active-low signal (for
-which an IRQ_TYPE_LEVEL_LOW interrupt has been configured) triggers
-an interrupt when switching to the inactive state, but then becomes
-active again before the interrupt handler has a chance to run: in
-this case, if the interrupt handler reads the latched input state,
-it will wrongly assume that the interrupt is not pending.
-Fix the above issue by enabling the latch only on edge-triggered
-inputs, instead of all interrupt-enabled inputs.
+Speaker Protection is capability of ADSP to adjust the gain during
+playback to different speakers and their temperature.  This allows good
+playback without blowing the speakers up.
 
-Signed-off-by: Francesco Lavra <flavra@baylibre.com>
+Implement parsing MODULE_ID_SPEAKER_PROTECTION from Audioreach topology
+and sending it as command to the ADSP.
+
+Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/gpio/gpio-pca953x.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
-index e80a96f39788..e87ef2c3ff82 100644
---- a/drivers/gpio/gpio-pca953x.c
-+++ b/drivers/gpio/gpio-pca953x.c
-@@ -761,10 +761,13 @@ static void pca953x_irq_bus_sync_unlock(struct irq_data *d)
- 	int level;
+Changes in v3:
+1. Add Rb tag.
+
+Changes in v2:
+1. Add and use PARAM_ID_SP_OP_MODE_NORMAL
+---
+ sound/soc/qcom/qdsp6/audioreach.c | 13 +++++++++++++
+ sound/soc/qcom/qdsp6/audioreach.h | 12 ++++++++++++
+ 2 files changed, 25 insertions(+)
+
+diff --git a/sound/soc/qcom/qdsp6/audioreach.c b/sound/soc/qcom/qdsp6/audioreach.c
+index f4c53e84b4dc..3b7dffd696e7 100644
+--- a/sound/soc/qcom/qdsp6/audioreach.c
++++ b/sound/soc/qcom/qdsp6/audioreach.c
+@@ -1250,6 +1250,15 @@ static int audioreach_gain_set(struct q6apm_graph *graph, struct audioreach_modu
+ 	return rc;
+ }
  
- 	if (chip->driver_data & PCA_PCAL) {
-+		DECLARE_BITMAP(latched_inputs, MAX_LINE);
- 		guard(mutex)(&chip->i2c_lock);
++static int audioreach_speaker_protection(struct q6apm_graph *graph,
++					 struct audioreach_module *module,
++					 uint32_t operation_mode)
++{
++	return audioreach_send_u32_param(graph, module, PARAM_ID_SP_OP_MODE,
++					 operation_mode);
++}
++
++
+ int audioreach_set_media_format(struct q6apm_graph *graph, struct audioreach_module *module,
+ 				struct audioreach_module_config *cfg)
+ {
+@@ -1299,6 +1308,10 @@ int audioreach_set_media_format(struct q6apm_graph *graph, struct audioreach_mod
+ 	case MODULE_ID_GAPLESS:
+ 		rc = audioreach_gapless_set_media_format(graph, module, cfg);
+ 		break;
++	case MODULE_ID_SPEAKER_PROTECTION:
++		rc = audioreach_speaker_protection(graph, module,
++						   PARAM_ID_SP_OP_MODE_NORMAL);
++		break;
+ 	default:
+ 		rc = 0;
+ 	}
+diff --git a/sound/soc/qcom/qdsp6/audioreach.h b/sound/soc/qcom/qdsp6/audioreach.h
+index 790fba96e34d..9f6ddcf081ee 100644
+--- a/sound/soc/qcom/qdsp6/audioreach.h
++++ b/sound/soc/qcom/qdsp6/audioreach.h
+@@ -31,6 +31,7 @@ struct q6apm_graph;
+ #define MODULE_ID_MP3_DECODE		0x0700103B
+ #define MODULE_ID_GAPLESS		0x0700104D
+ #define MODULE_ID_DISPLAY_PORT_SINK	0x07001069
++#define MODULE_ID_SPEAKER_PROTECTION	0x070010E2
  
--		/* Enable latch on interrupt-enabled inputs */
--		pca953x_write_regs(chip, PCAL953X_IN_LATCH, chip->irq_mask);
-+		/* Enable latch on edge-triggered interrupt-enabled inputs */
-+		bitmap_or(latched_inputs, chip->irq_trig_fall, chip->irq_trig_raise, gc->ngpio);
-+		bitmap_and(latched_inputs, latched_inputs, chip->irq_mask, gc->ngpio);
-+		pca953x_write_regs(chip, PCAL953X_IN_LATCH, latched_inputs);
+ #define APM_CMD_GET_SPF_STATE		0x01001021
+ #define APM_CMD_RSP_GET_SPF_STATE	0x02001007
+@@ -542,6 +543,17 @@ struct data_logging_config {
+ 	uint32_t mode;
+ } __packed;
  
- 		bitmap_complement(irq_mask, chip->irq_mask, gc->ngpio);
- 
++/* Speaker Protection */
++#define PARAM_ID_SP_OP_MODE			0x080011e9
++#define PARAM_ID_SP_OP_MODE_NORMAL		0
++#define PARAM_ID_SP_OP_MODE_CALIBRATION		1
++#define PARAM_ID_SP_OP_MODE_FACTORY_TEST	2
++#define PARAM_ID_SP_OP_MODE_VALIDATION		3
++
++struct param_id_sp_op_mode {
++	uint32_t operation_mode;
++} __packed;
++
+ #define PARAM_ID_SAL_OUTPUT_CFG			0x08001016
+ struct param_id_sal_output_config {
+ 	uint32_t bits_per_sample;
 -- 
-2.39.5
+2.48.1
 
 
