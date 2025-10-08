@@ -1,178 +1,188 @@
-Return-Path: <linux-kernel+bounces-845416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0CA3BC4C9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 14:30:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5177CBC4D07
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 14:32:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9284319E200B
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 12:31:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B71919E25FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 12:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50960280334;
-	Wed,  8 Oct 2025 12:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A15C23D7C2;
+	Wed,  8 Oct 2025 12:32:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mJ+MRx7N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gm4yheLG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981D728468C
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 12:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532111E47A5
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 12:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759926623; cv=none; b=nE8n2epqPuscAb14CKwwT9L3s9uKgQnzIcE8FD31GmcsLCbgh7jO9RZ4w0qsCKkW+XQguTO9vHLRwVb6sjLxqKJT08fAnu57xofMEA+ZaEZgj47ArpsYXJq7QDDDhiMXhyuQB87D0TVT1gWyWU2xH4FoBRiYCpg+93jc+hsMwO0=
+	t=1759926740; cv=none; b=UQiY1ZSANEJGgO5osP1jY6Gx7MF/1eRCo4J2Zzz+r7rQqFvOje0MPRTiCu1AQwUJn6Y43znezSHQpr096YCDm3cigmznbBT1SanC6NAcV+iAUYLoJMsf7WZT1PLHmUC126EsmcZ/Ms3qiSahTo5yQf61vts1r7c1p2rvGie0z9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759926623; c=relaxed/simple;
-	bh=99UtFVSraJXTbEQj4nZPs6lfnYTFkqMP7nINYiynHic=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Y72jLa6j5H4X7sPy2xrKzbz+bgNelsMgGRKjN8KT1zd+BiVWOldZDW8BfolokLT2SGwut+ReQM+xpmnFPNsq4MrwhEhBpa3qDK8IJRHinxa56Ydiy9TIjOKgFqI73X/hv8UXxV6m7z6yxeSseSkA0VWVOajSXS++0EJLwIwtLbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mJ+MRx7N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93EA6C116B1;
-	Wed,  8 Oct 2025 12:30:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759926623;
-	bh=99UtFVSraJXTbEQj4nZPs6lfnYTFkqMP7nINYiynHic=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=mJ+MRx7NyfUJIIbAlwWI8IHTlq14/GShbflZBSlEJrGfgI3C+JGoj8a5KU6O0oPGU
-	 I1fOTUvmT0Jj++wu0ntmp+T06T+VsjnaOEEwNESZ1YzZ68hJnXuOa1itRLpHNqP/TL
-	 L3D//epe0M7hB4M/h8K5QCf5TdXZ88f3O60/d1hJBHQgpYXIRr3pQ0t6uwi4c4ejXy
-	 fEMjlnmLji1c6ReRa9kty3sIOQf0HmHDvP6luF7G+39MR2Mjh3855aZwTSWiCIWcqD
-	 EAE8knbjOEPBn3Uy1l2qadno145TBcncp829MB/Dz9M18YswlSSPVkdEdXwLaxuRVM
-	 OP/o2HLYQOv8A==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Pratyush Yadav <pratyush@kernel.org>,  Tudor Ambarus
- <tudor.ambarus@linaro.org>,  Michael Walle <mwalle@kernel.org>,
-  linux-mtd@lists.infradead.org,  Richard Weinberger <richard@nod.at>,
-  linux-kernel@vger.kernel.org,  Miquel Raynal <miquel.raynal@bootlin.com>,
-  Vignesh Raghavendra <vigneshr@ti.com>
-Subject: Re: [PATCH] mtd: spi-nor: Enable locking for n25q00a
-In-Reply-To: <4888cefa-e8be-4f0d-9d4a-c82f9ff6cda0@linux.dev> (Sean Anderson's
-	message of "Tue, 7 Oct 2025 10:20:01 -0400")
-References: <20251006223409.3475001-1-sean.anderson@linux.dev>
-	<mafs0ecreontu.fsf@kernel.org>
-	<4888cefa-e8be-4f0d-9d4a-c82f9ff6cda0@linux.dev>
-Date: Wed, 08 Oct 2025 14:30:20 +0200
-Message-ID: <mafs05xcpo9sz.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1759926740; c=relaxed/simple;
+	bh=uHqksmuJLKSt+GdkWV/u3ycsK4AeSgh5FUnv2EVyyqY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=VdyiUPjo+L2aLvnxbZGItAd6gnOR8STbG0/N89mEF4OABun1DHlVTKLyanH4683gQBogqrk55/cZ2CCnCQLheW/GDDbnV8LC4+db16w6h+iIhXx4plr6Ga6cPBwztBYEkIixLzx5+OyOPHyfm0xssVSHYHcKxQqEm9SvKDcKexY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gm4yheLG; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759926737;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to; bh=0Ag5D+pguf9nHfO9uoXExb7dGwEZzjEQQ2eIuAoJM0g=;
+	b=gm4yheLGF0lntM7cqwssxNQxwwDhTK7yfxKwyIhtIctBRgIJA1+BT2PMWf6pGjUAZKYvCg
+	sU/dZjZKuKu9Tgk86zjrsVLpB1klmrjbT5xhpyVsuwstEsMOjqtosavn5I28uvJfbd86xA
+	PnjUwihmrn2K+anyTebo66EgpSYaEps=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-322-RblnqmgiPrym8XO7raAsXQ-1; Wed,
+ 08 Oct 2025 08:32:14 -0400
+X-MC-Unique: RblnqmgiPrym8XO7raAsXQ-1
+X-Mimecast-MFC-AGG-ID: RblnqmgiPrym8XO7raAsXQ_1759926732
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4C0111800451;
+	Wed,  8 Oct 2025 12:32:12 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.227.6])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 110961956056;
+	Wed,  8 Oct 2025 12:32:07 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed,  8 Oct 2025 14:30:51 +0200 (CEST)
+Date: Wed, 8 Oct 2025 14:30:45 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	David Howells <dhowells@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+	Li RongQing <lirongqing@baidu.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/4] seqlock: introduce scoped_seqlock_read() and
+ scoped_seqlock_read_irqsave()
+Message-ID: <20251008123045.GA20440@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251008123014.GA20413@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Tue, Oct 07 2025, Sean Anderson wrote:
+The read_seqbegin/need_seqretry/done_seqretry API is cumbersome and
+error prone. With the new helper the "typical" code like
 
-> On 10/7/25 09:15, Pratyush Yadav wrote:
->> On Mon, Oct 06 2025, Sean Anderson wrote:
->> 
->>> The datasheet for n25q00a shows that the status register has the same
->>> layout as for n25q00, so use the same flags to enable locking support.
->>> These flags should have been added back in commit 150ccc181588 ("mtd:
->>> spi-nor: Enable locking for n25q128a11"), but they were removed by the
->>> maintainer...
->> 
->> This makes it sound like the maintainer did something wrong, which is
->> not true. Tudor had a good reason for removing them.
->
-> I disagree. The maintainer used his position of authority to make the
-> submitter second-guess their correct patch.
+	int seq, nextseq;
+	unsigned long flags;
 
-Sean, you are being very combative over such a small issue. You must
-test your changes. This is one of the most basic principles in software
-engineering. It was perfectly reasonable from Tudor to push back on
-untested changes.
+	nextseq = 0;
+	do {
+		seq = nextseq;
+		flags = read_seqbegin_or_lock_irqsave(&seqlock, &seq);
 
-There is no abuse of "position of authority" here. When things break, we
-get to do the work of putting the pieces back together. So of course, we
-are reluctant to take things that increase this burden for us. Having
-contributors test their changes is the simplest of things we ask for to
-keep the quality bar.
+		// read-side critical section
 
-Beyond that, I'd say that a little politeness goes a long way in life.
-Especially towards the people maintaining the software for free that you
-(or your employer) use. We are both wasting our energy on this debate.
-Please stop. Take a step back and think from the other side's
-perspective. And try to work _with_ people, not against them.
+		nextseq = 1;
+	} while (need_seqretry(&seqlock, seq));
+	done_seqretry_irqrestore(&seqlock, seq, flags);
 
->
-> These flashes have capacity of greater than the 8 MiB that can be
-> protected using 3 BP bits. Micron (and ST before them?) addressed this
-> by adding a fourth BP bit. This is consistent across every flash in this
-> series, and is clearly documented in every datasheet. Defaulting to 3
-> bits is buggy behavior: we should assume flashes behave per their
-> datasheets until proven otherwise, especially for less-popular features
+can be rewritten as
 
-If I had a euro every time I found a bug in a datasheet, well, I would
-have enough money to at least buy a nice dinner. My point is, datasheets
-are not perfect. Only running on real hardware gets you the true
-picture.
+	scoped_seqlock_read_irqsave (&seqlock) {
+		// read-side critical section
+	}
 
-> that the original submitter may not have tested.
->
-> The original patch was entirely correct, and the maintainer's
-> justification for removing the second hunk is flawed.
->
->> Jungseung did not
->> have the flash at hand and Tudor didn't want to apply patches that
->> weren't tested. Both were in agreement for removing the n25q00a changes.
->> 
->> If you are going to mention that commit, then mention the full context,
->> and then also mention what has changed since that makes it possible to
->> add those changes back in. Having tested them on the real hardware for
->> example.
->> 
->>>
->>> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
->>> ---
->>> Tested with a mt25qu01gbbb, which shares the same flash ID.
->> 
->> Ughh, is this another case of flash ID reuse? Do mt25qu and n25q00a
->> flashes behave exactly the same and only have two names? If not, then
->> how do you know if n25q00a will also work with these changes?
->
-> I examined the datasheet for the n25q00a and determined that it has the
-> same status register layout.
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+---
+ include/linux/seqlock.h | 64 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
 
-Can you share the links to the datasheets?
-
-Also, test logs would be nice to have.
-
->
-> In fact, every n25q and mt25q flash has the same status register layout,
-> which (as noted above) is necessary to support capacities greater than 8
-> MiB (and all flashes in this series have such capacity).
-
-Do they behave the same? If not, do you know how they differ? If they
-behave differently, we might need to have some code that detects which
-one is running. Not necessarily as part of this patch though.
-
->
-> --Sea
->
->>>
->>>  drivers/mtd/spi-nor/micron-st.c | 2 ++
->>>  1 file changed, 2 insertions(+)
->>>
->>> diff --git a/drivers/mtd/spi-nor/micron-st.c b/drivers/mtd/spi-nor/micron-st.c
->>> index 187239ccd549..17c7d6322508 100644
->>> --- a/drivers/mtd/spi-nor/micron-st.c
->>> +++ b/drivers/mtd/spi-nor/micron-st.c
->>> @@ -486,6 +486,8 @@ static const struct flash_info st_nor_parts[] = {
->>>  		.id = SNOR_ID(0x20, 0xbb, 0x21),
->>>  		.name = "n25q00a",
->>>  		.size = SZ_128M,
->>> +		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB | SPI_NOR_4BIT_BP |
->>> +			 SPI_NOR_BP3_SR_BIT6,
->>>  		.no_sfdp_flags = SECT_4K | SPI_NOR_QUAD_READ,
->>>  		.mfr_flags = USE_FSR,
->>>  		.fixups = &n25q00_fixups,
->> 
-
+diff --git a/include/linux/seqlock.h b/include/linux/seqlock.h
+index 5ce48eab7a2a..fa8d73668f4b 100644
+--- a/include/linux/seqlock.h
++++ b/include/linux/seqlock.h
+@@ -1209,4 +1209,68 @@ done_seqretry_irqrestore(seqlock_t *lock, int seq, unsigned long flags)
+ 	if (seq & 1)
+ 		read_sequnlock_excl_irqrestore(lock, flags);
+ }
++
++/* internal helper for scoped_seqlock_read/scoped_seqlock_read_irqsave */
++static inline bool
++__scoped_seqlock_read_retry(seqlock_t *lock, int *seq, unsigned long *flags)
++{
++	bool retry = false;
++
++	if (*seq & 1) {
++		if (flags)
++			read_sequnlock_excl_irqrestore(lock, *flags);
++		else
++			read_sequnlock_excl(lock);
++	} else if (read_seqretry(lock, *seq)) {
++		*seq = 1;
++		retry = true;
++		if (flags)
++			read_seqlock_excl_irqsave(lock, *flags);
++		else
++			read_seqlock_excl(lock);
++	}
++
++	return retry;
++}
++
++#define __scoped_seqlock_read(lock, s)	\
++	for (struct { bool lockless; int seq; }					\
++		s = { .lockless = true, .seq = read_seqbegin(lock) };		\
++	     s.lockless || __scoped_seqlock_read_retry(lock, &s.seq, NULL);	\
++	     s.lockless = false)
++
++#define __scoped_seqlock_read_irqsave(lock, s)	\
++	for (struct { bool lockless; int seq; unsigned long flags; }		\
++		s = { .lockless = true, .seq = read_seqbegin(lock) };		\
++	     s.lockless || __scoped_seqlock_read_retry(lock, &s.seq, &s.flags);	\
++	     s.lockless = false)
++
++/**
++ * scoped_seqlock_read(lock) - execute the read side critical section
++ *                             without manual sequence counter handling
++ *                             or calls to other helpers
++ * @lock: pointer to the seqlock_t protecting the data
++ *
++ * Example:
++ *
++ *	scoped_seqlock_read(&lock) {
++ *		// read-side critical section
++ *	}
++ *
++ * Starts with a lockless pass first. If it fails, restarts the critical
++ * section with the lock held.
++ *
++ * The critical section must not contain control flow that escapes the loop.
++ */
++#define scoped_seqlock_read(lock)	\
++	__scoped_seqlock_read(lock, __UNIQUE_ID(s))
++
++/**
++ * scoped_seqlock_read_irqsave(lock) - same as scoped_seqlock_read() but
++ *                                     disables irqs on a locking pass
++ * @lock: pointer to the seqlock_t protecting the data
++ */
++#define scoped_seqlock_read_irqsave(lock)	\
++	__scoped_seqlock_read_irqsave(lock, __UNIQUE_ID(s))
++
+ #endif /* __LINUX_SEQLOCK_H */
 -- 
-Regards,
-Pratyush Yadav
+2.25.1.362.g51ebf55
+
 
