@@ -1,129 +1,107 @@
-Return-Path: <linux-kernel+bounces-844974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-844975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 968F3BC32DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 04:57:23 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F2DBBC32E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 05:03:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 418BC34D4BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 02:57:23 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E900934D57D
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 03:03:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EFBD29BDA4;
-	Wed,  8 Oct 2025 02:57:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE54529AB07;
+	Wed,  8 Oct 2025 03:03:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CiTHsXEl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="T/3jXx84"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA1A29A309;
-	Wed,  8 Oct 2025 02:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F29B21423C
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 03:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759892234; cv=none; b=bbZXYaUZHjmgYl/cte2SZYkQ8S+kiUsu3qE3zE9PdZH6ay1xwXUXiCwcEWHpcc5vn/b65lWHqQtEYYkRUR4P5sg0GRFa+nUZwpyyWN5X0Uk9HFWSNGWyRya8LS3bfq2nlGhziFGBaFe6f1xJcl8lkM2QaYLK317Vb7I2AheIF64=
+	t=1759892622; cv=none; b=CAvuGcU/m5+sfbkuCbF4mDcQOQAKV/P4eZYhyVIcjAbMfCeML6nTRRRFmx0vvmpJxWgAPe6TJOWRgbrSsa7lm+yDJBjsAIJ9MJl9ZzV5B+PrZsH3dQ00bCaW9fLaLVSNsngZh8K0E+VTvAydghwt6f3Lz27FwoyOlonf6kbrJ9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759892234; c=relaxed/simple;
-	bh=QLsgnTR6OtChAePXKOtiLlD6pjZE6svkOh6gqg90pUU=;
+	s=arc-20240116; t=1759892622; c=relaxed/simple;
+	bh=5yStW0L1wEARM1VcACJHqDCy7X/TSWEwGB67a2Fqnmg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k/2ElLM3QzvXV7V4lAJAQnd3PB0CVZsIPY7wJHXk/buRc4Ai07ypd28XjEKlFUnN/R/M5fkiToWin0DgmHWw8uSTvKqCJ5LzE3q2oKd7k2G1aFlxAFRIi2L+xTwuUYUlHIx+BexkB5dVIW3fmr0I2i3sypf84YiP25UFmJa8zG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CiTHsXEl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44191C4CEF1;
-	Wed,  8 Oct 2025 02:57:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759892233;
-	bh=QLsgnTR6OtChAePXKOtiLlD6pjZE6svkOh6gqg90pUU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CiTHsXElcUHhWygfypCX3XlEBUZl2i9Paf9SiNhiK3xvy6n46FiRJ3J8XXi97nSre
-	 JCCD9EFzsqPwAYKxN8asO3QfYeg4Z1eGPfshjMzeKNY0IhVQJI1pbtBgWuno4mJ1Rc
-	 pk8ASqTRzLiLd4K/vL50G7FXt3X+ZUn1Qb/ZhZKFAZyPjRCaRMoVjWktBlFpBWDKqp
-	 lHbd/y427u/YmvNH+bPEtzdSpkToQiG3prbL0bWSKp6dmb+BULPaPBEerZADsigX8o
-	 pYv8zWZa/PcYypiOvYVguR04M2StiCDx76ZeE8kX5LrsVkjWPMKkP8nynJS3K4+4VP
-	 /Kntwb2SVTWug==
-Message-ID: <b4dc1a86-4d92-4029-badc-5b77ea23c4f9@kernel.org>
-Date: Wed, 8 Oct 2025 11:57:08 +0900
+	 In-Reply-To:Content-Type; b=YPx1XKIQX3ui3ZW32ot900fUdqMU+yct+3uHKyyjsqKG8WqgBC5kNNw49FTrvDooQVMXpnPjuDl/EBv5IvAnZ4Uro9JFcNk0SjQ3UBE2SUjkoL9r4XD1zONG7c6XKZ6cFBzI/rUxqeOodo4EH80Z9CkKVTflokc6S0uWQ9Xf5Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=T/3jXx84; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <56784853-b653-4587-b850-b03359306366@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759892608;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vSRrtrvWgwS90ySr5nF6OQKQum7o9S6zWNvqm6k9XvM=;
+	b=T/3jXx84Rfw++V6z2MKJJv5c/rPYfsL5Ui23RZkEQx9CDR0WnlRFujpQtx7DTK8morvqzQ
+	fGf+hxuXI0wGprlzykRqYh0W/J+sSVWQbdk1l39Qun/FBJqNpmP2TIBlXlxC4mcFM9II/u
+	MInrvhq4Nld0p1caXSOIDmVSFa3ddig=
+Date: Wed, 8 Oct 2025 11:03:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: sm8650: set ufs as dma coherent
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251007-topic-sm8650-upstream-ufs-dma-coherent-v1-1-f3cfeaee04ce@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 1/1] hung_task: fix warnings caused by unaligned lock
+ pointers
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251007-topic-sm8650-upstream-ufs-dma-coherent-v1-1-f3cfeaee04ce@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+To: Finn Thain <fthain@linux-m68k.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>, Eero Tamminen <oak@helsinkinet.fi>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>, amaindex@outlook.com,
+ anna.schumaker@oracle.com, boqun.feng@gmail.com, ioworker0@gmail.com,
+ joel.granados@kernel.org, jstultz@google.com, leonylgao@tencent.com,
+ linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+ longman@redhat.com, mhiramat@kernel.org, mingo@redhat.com,
+ mingzhe.yang@ly.com, peterz@infradead.org, rostedt@goodmis.org,
+ senozhatsky@chromium.org, tfiga@chromium.org, will@kernel.org,
+ stable@vger.kernel.org
+References: <20250909145243.17119-1-lance.yang@linux.dev>
+ <yqjkjxg25gh4bdtftsdngj5suturft2b4hjbfxwe6hehbg4ctq@6i55py3jaiov>
+ <99410857-0e72-23e4-c60f-dea96427b85a@linux-m68k.org>
+ <CAMuHMdVYiSLOk-zVopXV8i7OZdO7PAK7stZSJNJDMw=ZEqtktA@mail.gmail.com>
+ <inscijwnnydibdwwrkggvgxjtimajr5haixff77dbd7cxvvwc7@2t7l7oegsxcp>
+ <20251007135600.6fc4a031c60b1384dffaead1@linux-foundation.org>
+ <b43ce4a0-c2b5-53f2-e374-ea195227182d@linux-m68k.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <b43ce4a0-c2b5-53f2-e374-ea195227182d@linux-m68k.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On 08/10/2025 03:53, Neil Armstrong wrote:
-> The UFS device is ovbiously dma coherent like the other IOMMU devices
-> like usb, mmc, ... let's fix this by adding the flag.
-> 
-> To be sure an extensive test has been performed to be sure it's
-> safe, as downstream uses this flag for UFS as well.
-> 
-> As an experiment, I checked how the dma-coherent could impact
-> the UFS bandwidth, and it happens the max bandwidth on cached
-> write is slighly highter (up to 10%) while using less cpu time
-> since cache sync/flush is skipped.
-> 
-> Fixes: 10e024671295 ("arm64: dts: qcom: sm8650: add interconnect dependent device nodes")
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Best regards,
-Krzysztof
+On 2025/10/8 08:40, Finn Thain wrote:
+> 
+> On Tue, 7 Oct 2025, Andrew Morton wrote:
+> 
+>>
+>> Getting back to the $Subject at hand, are people OK with proceeding
+>> with Lance's original fix?
+>>
+> 
+> Lance's patch is probably more appropriate for -stable than the patch I
+> proposed -- assuming a fix is needed for -stable.
+
+Thanks!
+
+Apart from that, I believe this fix is still needed for the hung task
+detector itself, to prevent unnecessary warnings in a few unexpected
+cases.
+
+> 
+> Besides those two alternatives, there is also a workaround:
+> $ ./scripts/config -d DETECT_HUNG_TASK_BLOCKER
+> which may be acceptable to the interested parties (i.e. m68k users).
+> 
+> I don't have a preference. I'll leave it up to the bug reporters (Eero and
+> Geert).
+
 
