@@ -1,90 +1,91 @@
-Return-Path: <linux-kernel+bounces-845937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D7D0BC6877
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:02:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A5DFBC68A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:06:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1EE444EFCED
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:02:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E81553AEC5F
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128EB2777F9;
-	Wed,  8 Oct 2025 20:02:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228C9279329;
+	Wed,  8 Oct 2025 20:06:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EqRf9YIX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kael-k.io header.i=@kael-k.io header.b="pw6A5n5F"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64EC1221FBB;
-	Wed,  8 Oct 2025 20:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE0C1339A4;
+	Wed,  8 Oct 2025 20:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759953765; cv=none; b=YDoNzvIK8FK7pbQ5M++JJiiFUIXfBiQ5gDXtmAs3rZYRliRrgKl8FEUa4rUfdWFmufX8WYSZiGYYmB+CEyUH10biwxYIqVhlNSGsqkSmtI15dGUcTrXK9ihbqNrDbBB4F89zyLkI2VjQ8q/IuUrKq5QP/u8a35AoOOA6Xd2aI4I=
+	t=1759953968; cv=none; b=CSck1M6WxA4kb1FMOQmJmO7k1JxtB7d0Yz6ViiYPoRPd6f6QpfGNERFXxTIESjvSfK2GV0zF2dfQE5fsohyV5J/2f1xrgTA7LoeWV20ZoVnQn3tlR3b/B1m60t5LsCT+3tviIjUN2tZ2XJo57fXro040l37FtS3JmHmdHvWh76s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759953765; c=relaxed/simple;
-	bh=1NTrQfMk7I47irFXZzpnFfD40VIXny+JiR4rIQloyUs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LrbYxrgO4DRn/lets0SpADMYLRPmCjlQlwjexD5C7h0wosozzB8MDWgviDFM8+y5/ZBJCP0rct1yH9PDpHbH9ceNgH0s1UfJAUnvhhiF0UHLjwtwMVASJEhchXhX+qNypKJtVlWmVme7YyM2kehMVIKX0W6bMqrSAFP//IY4zFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EqRf9YIX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C44D6C4CEE7;
-	Wed,  8 Oct 2025 20:02:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759953765;
-	bh=1NTrQfMk7I47irFXZzpnFfD40VIXny+JiR4rIQloyUs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EqRf9YIX9eb12wp1TUgzMO+NSdtMQE6vJA81Mj+XBQfPgGfUsvzZxNAfOV1j78V4z
-	 0WNFM7tPSiWBcrnGWUJRK1cTTf/J4lmxrMhfO1/2ifoVBzljsTHXCma8rwX+9ZSsFU
-	 delriRw5KL5OCWNLohVOdMOgzf/LN1mKKi71UXJN1vysNe53WNyh2Kglh1NNkwQDHw
-	 ExtawShGsQl0N1331VsTaJt549aqUWPrjuHudcV7PDntX7iqtoUEl2IreI6taatjZ8
-	 80tSZLHnORlFF2W66KkXQZLfXXifvaQDcyquSu58pqhj1cvgs8qF285Ia1GyrPjG8p
-	 BSvOtSTX6y+YA==
-Date: Wed, 8 Oct 2025 15:02:43 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: devicetree@vger.kernel.org, imx@lists.linux.dev,
+	s=arc-20240116; t=1759953968; c=relaxed/simple;
+	bh=pdU1RlcVUpYkwATsqzgb3h9/A3NwKlJGBSZ9KzBPDtI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=JXSCGIqlS6+Dww3zVqa1pEEXUgrpLEV/y+DlIqtvUASo9nGAPSaaORiCSLnKJq0sXOABFibvBqe+jWjuVcDuWed4D/B4Nxvr5pxOHIg8Pg4udGa9ny1Q5MtpNccmRJ/Nbj7UPArVHjM8hQYM9z5LQ+YIe+zFP7niKoUd9ger8OA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kael-k.io; spf=pass smtp.mailfrom=kael-k.io; dkim=pass (2048-bit key) header.d=kael-k.io header.i=@kael-k.io header.b=pw6A5n5F; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kael-k.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kael-k.io
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4chkXH3ZXHz9tmC;
+	Wed,  8 Oct 2025 22:05:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kael-k.io; s=MBO0001;
+	t=1759953951;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SIbij9z0dC3IRW6XjmDR3VsDwV4PJMJLpy/NIUF3SVM=;
+	b=pw6A5n5FylBGIpHAkL/uoYoQ83OKORLRxT7B48Xj6H2pqQlZeGO3K/laD1nQxDbKgCPdyP
+	6HgCCXy2YMnVjvO5Ni5t+XghS0+V+XrjqAxaV2ZCTfDTtQl9JGnP356D6vl42cBAIog/s0
+	nJBYPAqSM2utwKnKsb4KRBDQa/lkR1M4Hdg2U/xPKs8I3CKwSEXhFU79yKXjAR1uk93B0t
+	N6JlsSWs9PSekFqLznSHP3oXfsAPT3jJuLcy8j8kul52HKfYQKepL0/s6tJyrZlVLw9GNd
+	EyDgO/0mRkrYqiAtHjCnbq4YyQxhDk4fJMRi1DQdAGbCnsHXMEvegqUFEAbfEQ==
+From: Kael D'Alcamo <dev@kael-k.io>
+To: Andi Shyti <andi.shyti@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: touchscreen: rename
- maxim,max11801.yaml to trivial-touch.yaml
-Message-ID: <175995376307.65934.4901589755709190733.robh@kernel.org>
-References: <20251002164413.1112136-1-Frank.Li@nxp.com>
+	Wei Yan <sledge.yanwei@huawei.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/1] dt-bindings: i2c: hisilicon,hix5hd2-i2c convert to DT schema
+Date: Wed,  8 Oct 2025 22:04:26 +0200
+Message-ID: <20251008200535.17464-1-dev@kael-k.io>
+In-Reply-To: <c2e81faf-4d2c-40e7-bdf0-e0d41fc76d9c@kernel.org>
+References: <c2e81faf-4d2c-40e7-bdf0-e0d41fc76d9c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251002164413.1112136-1-Frank.Li@nxp.com>
+Content-Transfer-Encoding: 8bit
 
+Thanks everybody for your feedback, here is the updated patch.
 
-On Thu, 02 Oct 2025 12:44:04 -0400, Frank Li wrote:
-> Rename maxim,max11801.yaml to trivial-touch.yaml for simple i2c touch
-> controller with one interrupt and common touch properties.
-> 
-> Add optional reset-gpios and wakeup-source properties.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> change in v3
-> - add wakeup-source and reset-gpios optional properties
-> 
-> change in v2
-> new patch
-> 
-> previous discussion
-> https://lore.kernel.org/imx/20250925-swimming-overspend-ddf7ab4a252c@spud/T/#t
-> ---
->  .../{maxim,max11801.yaml => trivial-touch.yaml}     | 13 ++++++++++---
->  1 file changed, 10 insertions(+), 3 deletions(-)
->  rename Documentation/devicetree/bindings/input/touchscreen/{maxim,max11801.yaml => trivial-touch.yaml} (70%)
-> 
+Changelog v1 -> v2:
+* removed redundant "#address-cells" and "#size-cells" properties
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Kael D'Alcamo (1):
+  dt-bindings: i2c: hisilicon,hix5hd2-i2c convert to DT schema
+
+ .../bindings/i2c/hisilicon,hix5hd2-i2c.yaml   | 51 +++++++++++++++++++
+ .../devicetree/bindings/i2c/i2c-hix5hd2.txt   | 24 ---------
+ 2 files changed, 51 insertions(+), 24 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/i2c/hisilicon,hix5hd2-i2c.yaml
+ delete mode 100644 Documentation/devicetree/bindings/i2c/i2c-hix5hd2.txt
+
+-- 
+2.51.0
 
 
