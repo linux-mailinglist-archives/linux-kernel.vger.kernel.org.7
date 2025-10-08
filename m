@@ -1,82 +1,82 @@
-Return-Path: <linux-kernel+bounces-845815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02562BC62F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 19:51:21 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33CADBC635A
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 19:53:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3918434EB6E
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 17:51:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8A6684E7A83
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 17:53:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C392BEC26;
-	Wed,  8 Oct 2025 17:51:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45CAA2BE7BA;
+	Wed,  8 Oct 2025 17:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yPnXhu5B"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PzqEJE4Z"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF1D2BE636
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 17:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0788D1FFC48
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 17:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759945866; cv=none; b=ZCauYQYVKK5KurHzL3Hwfh9qvrde3z4M+eScvYKH2V3GuKn4yCah4Lw9npSAHb/2C6reYnYGXMdX5tDY/ZHmZEEouua+5aV8enHPRU92o82VS8QJIjlpPzTmzQGQDCuWtGd4R1aErUqfpBKPzzqAuYrmnkPXC5u4g0lReH1Bpgg=
+	t=1759946001; cv=none; b=d6YVk8gPDvO+bmyOKKeXawl0y7C1iVmISRFbCNHIbNHxIFfl/S2cIjFRGghym9M3Q99fMDE9+M9uHrLpStuwG/AZVOL6Woj+B7euFjtIjamyhTOpjXrTCGH9Wj9y0r+Y2PwmCLZpYt4HJfsjCGUYwbhscU7EwvSFBndEiYie2Do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759945866; c=relaxed/simple;
-	bh=5zKR1u+5O6X6qT7L3XTDDpAJvDCMpie9d8WDsdi2TmY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ma2y3ia/RmMLXBg8iovEvRQgctgTexdlFIyjI0ltiXcQNYmumyBAfE7Cz9ygTLgkYMSPR7pwT1MlhyP/2lO6zIgveeIRSM53h+x65oCA4OS14zmL+HzcW+GlmshilWYwkjH04856pQKd9daDDZF9D2ZMLd77uwOCbJf9fiPhO+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yPnXhu5B; arc=none smtp.client-ip=209.85.128.42
+	s=arc-20240116; t=1759946001; c=relaxed/simple;
+	bh=7uenfxZbhN2COy+Pu0VQPMBd+KOfPBPVzZt14HH5Onk=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ty1rmRmBe4ieamUSSkKHVSkRfcoTJEW8MVtHFImm5DseKLAXH4JUVmSUC3LApFZ1eclvEnv9MlEvjtsr+82afy2YepKwYP6HSxENOTS/HaiovbmAzPBowJRLTJoA0lb/Kd99V6iE1OUrMOEUskMvd8DCfTW50Ycz1bPZbS0me10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PzqEJE4Z; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46e6c8bc46eso760885e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 10:51:03 -0700 (PDT)
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-421851bcb25so101188f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 10:53:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759945862; x=1760550662; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1759945997; x=1760550797; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:reply-to:user-agent
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=QMvlexrap1UfZtqdBkJ61xOQRQkYprF0LI3wVB2AJI8=;
-        b=yPnXhu5B8ZNxvWTC727ZNrsXBKz8e/rti5l0G7Dsw206JjDYrDqmjzP6FTCh9lRFdh
-         kM7FEmCVn84ZWCyUBx8i5BE2YXcam6/T/Fqf217tat/S++hW0c002cM1jxE5v5ffaPyb
-         0F9wMk8OChp0FtzdkX8ZJG2bRMU7RfeOhCRzx8cfbO91vPWPcX/K/5kfNE6osZI78nnT
-         54lbF/yeBuo+BepG+KF8BWmfxYemi6W2+OxnDohYAluaZ9EX05Olq+RG9Xogw5YzKlue
-         47rMbOmX4BlMXMhuz/Tjb5AK0RPWjxo/qUBRRXBa8EXDAQj4HvEUaapWI4BD0orvjtxU
-         0+JA==
+        bh=px+f0JQb/+e/m0dW9U+ZUXUOOFQQcWWAn8xrqf+sMwY=;
+        b=PzqEJE4ZYLc++5lVPFnpvm2jliGjgA3SnTIn9Ih7NQsQUHb7klAmTCr768vAezJ8kR
+         dd6gy4E5phJ0b1O9aCoo7gDFAkcGnqi/7A6aGiE3t4FSGjAA72WPuehqvItlH0Lgjs+A
+         tTKb1fe0F456nRV+OT6yf+dATEhx1HtzU5FnR9c5Qx8Z2DtwYA3x179nPNqF7DNaryEM
+         8D9JZC3r+PMKzC6PQ+QF87qfaYyejpVB+psILHgfXQgtfJDvuqr+st5Y5dmHlEWlwgG+
+         0MmXOtrt+0P2fAItmrvsJUK3SnwWbkNmf7HaldFDpLNq/5Nv6jQt4DJRdagmOtdKYWKx
+         RFuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759945862; x=1760550662;
+        d=1e100.net; s=20230601; t=1759945997; x=1760550797;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:reply-to:user-agent
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=QMvlexrap1UfZtqdBkJ61xOQRQkYprF0LI3wVB2AJI8=;
-        b=M4my2oaTuB6ZMB+i9aQKswFucsZld0cdNN0olPr7vyMmUS98Nkr0ZZgP4HHD8vgBYe
-         W3BJKEw9Oii7C1uCT51dJxYP1Gk0PoV8yw0VsgJBkwR96g3tuPYmEnlu3tXLcMihdgg4
-         YzNey2bL2a+mHYBTo+hWND4verjPNEeH2eRPeLjazxpZTgaWB/Gb1KGWfM/vS7WNxCgk
-         wHeOUjOPcIHPj9qyQycXqFdttqw3QPPHc7tSfLz4UvCwDC6JeaoAetyQIiGaJzl6iogD
-         OMx9ybi711gwbt6SN4v7gpJJsXaAT6Jla9QL2xfI+P3/UVIUBB/O43vb8c697c4ZHpMV
-         LFKw==
-X-Forwarded-Encrypted: i=1; AJvYcCV+/OCGHm1AxwNb0+VavMjTYs4BimBK6OYu/V482+6lg99k/5iTkznTxsTu23wIUujquv7rTPz+G3tiT3o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGjUWRLzf1VHgCWkJ+ojSLxtqNgdAPOtjzYXkN1kDdLxSYKGzb
-	qkwQBtfwb5RuN7i7nTRv3yykR+K3oBDPR5MF/vHERImtnWRIuY/xWZepoN4LtjyAfeU=
-X-Gm-Gg: ASbGncvu+sDcR9WkukPL1X/gJQwEMSkR1cXTpWX88yo+3P56i1pbo0/YmFvOq89LAo+
-	F3rIR4Mt/73Wm+0aU9RTvvXEJdWoGzAFVolhefX/SoPCnaNI+F53eCANHY0T3eWvz5vsuQWWERY
-	8qXLYJ2yX+tzIhAoOn8gpfyxaL5Kh7bRb2pBFH8GOF2uYTTMcXsp3D4taH2x9+mI/D5lxHos0iM
-	xOFFkOv3ncvV9B3Z+JXLcsPytZFXIcpbU0qQxsr6I12KyEycKNp+R4tlDk/7YUQLNs89fXkMEKz
-	2FgYuuU5Qrab5VLm2f/uLB3EaPynK804BymdA2KLMLrpEuTOO/+x8xsR/NQ397t0f3w75WAsWM0
-	TMLnJPQFkPd4s5KhX/lP3mnOQi4101wvkV9E2FI+2wpkDNZe9SXT2QyOigC1dJIb3AOaglLYuk/
-	PpOxNhXwdx/985SQQ70AY=
-X-Google-Smtp-Source: AGHT+IG7qpQnt1FsF9x3ySZnRp/NIaufnkQu3C1FxX1niEUSnihus2ASYwmcY3GOq7HcPld9Lp5UcA==
-X-Received: by 2002:a05:600c:a104:b0:46e:4329:a4d1 with SMTP id 5b1f17b1804b1-46fa9a945abmr21089735e9.4.1759945861396;
-        Wed, 08 Oct 2025 10:51:01 -0700 (PDT)
+        bh=px+f0JQb/+e/m0dW9U+ZUXUOOFQQcWWAn8xrqf+sMwY=;
+        b=cxXnqiWFR+617moBXvNKv1f+bKgXNlZreFiCPBZMDIPzEFS0qpUbpmBqht0whT1fHE
+         GgKyvRNBrRuBwvJ23plww69qFyDt2srJTjQLUhTqj5EZcTZVDb8WQBAMqgbpfYHmBPY8
+         ehEplpuAxXqGMplDN2krSLa9VDhcq71CZ9c8bKm/aaeUEtCdp02IPayQ2nAkTPWCpaPH
+         VQvrKUWnQXW6CdG+X7Kd6A1L4sRuJ/14Sr5levvqxOaX2RjqgxH0jcO6ySWG663LH/O6
+         DNfwGpIfOD2kbgdwy6CMK72pKKChAhwOhw1AWvAWM6p0BKDVfCfuLiK7IDYHBjHiIQ+L
+         iCnw==
+X-Forwarded-Encrypted: i=1; AJvYcCWmuMaKRFzYRUlTE7E9v5SxrkgjMi8BbLP56JHDMI4I0X7PBjvfNMawuCcJ5b/Wu7+4VFTK0X/sHJ+f18w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1HwIHgJpQGw+Q4LPfURKFZyqsSGr5TGGjYK795Zt4uOskz3WB
+	JlW+PTJDvrjSj55Y4TxskpOwpPyRtZbG+EY+cL6sa//nafaaLiXJGChbj60DA85fCP0=
+X-Gm-Gg: ASbGncuDxHtiGqqEvQs+Z9st/eP6MwInyjWJsHJRErBtiTDMnzuCHUgR0NKEph1OmQm
+	f6icytiy216bSxByDRyXevUJ2QbysUfRPLIFKeGr1QvOQM0dQuyEQBBIJRCUZAvGzFradX++iFQ
+	xzU6txfDWwkDJhypswmLaj/dTjy0EPRr6Z2uxzrrKd++/hjmU3JQs0DjRto6GL1toiA9CHWojG+
+	6EZQJVhK3BVSL/dbj0IjH/8iRG8K+Lppy3+UpwxiXSRituW0bfQ80+A3roRMAkeuQTu3SdKK572
+	FlcUkHygPUyrerq6uR/vKPnYzIKRdjPX1aQA49UBfLEC4cNSNQzW98L3FKGp7ZoR1sxmctHUUlz
+	ihRbwhBRa76AuQMfZywzFAfSxEn5ofWQB6rWOKY47Y2V47UPvp7hxPnzvjFuCzt4RF85dB4PkGn
+	YnepUX/ytTAWxmFWvDfYI=
+X-Google-Smtp-Source: AGHT+IHJw/r+nePLX03c3KX2qjVH82litB6OC27IzmUfEItja6F4LxTNp01tzn33pfo26Wfsoc01KQ==
+X-Received: by 2002:a05:6000:2905:b0:3d1:8d1e:8e9 with SMTP id ffacd0b85a97d-4266e8d8ce2mr2825869f8f.32.1759945997240;
+        Wed, 08 Oct 2025 10:53:17 -0700 (PDT)
 Received: from ?IPV6:2a01:e0a:3d9:2080:b264:afbc:dee:3d? ([2a01:e0a:3d9:2080:b264:afbc:dee:3d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fab5250e8sm18983425e9.5.2025.10.08.10.51.00
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46faf1118aasm9465955e9.5.2025.10.08.10.53.16
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Oct 2025 10:51:01 -0700 (PDT)
-Message-ID: <8ce94679-d6ec-4953-b430-24c493e318e2@linaro.org>
-Date: Wed, 8 Oct 2025 19:51:00 +0200
+        Wed, 08 Oct 2025 10:53:16 -0700 (PDT)
+Message-ID: <ac2188dc-d524-41ae-b9d2-f0f5ff9861f0@linaro.org>
+Date: Wed, 8 Oct 2025 19:53:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,10 +84,10 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH RFC 3/6] ASoC: soc: qcom: sc8280xp: add support for I2S
- clocks
 From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH RFC 2/6] ASoC: dt-bindings: qcom,sm8250: Add clocks
+ properties for I2S
 To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
  Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
  Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
@@ -98,11 +98,8 @@ To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
 Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
  linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 References: <20251006-topic-sm8x50-next-hdk-i2s-v1-0-184b15a87e0a@linaro.org>
- <20251006-topic-sm8x50-next-hdk-i2s-v1-3-184b15a87e0a@linaro.org>
- <6492e444-4196-4900-a741-a74a8c506a6d@kernel.org>
- <1eab5200-1292-4d39-bdf8-0c5084cfaab9@linaro.org>
- <f15ea346-43f7-49bc-bd5e-47510a48892d@oss.qualcomm.com>
- <a5dfaf2a-d2c8-468a-9bbe-38d11b1214a8@linaro.org>
+ <20251006-topic-sm8x50-next-hdk-i2s-v1-2-184b15a87e0a@linaro.org>
+ <6d9af57f-9174-405b-9131-145fd6d63a5f@oss.qualcomm.com>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -129,67 +126,62 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <a5dfaf2a-d2c8-468a-9bbe-38d11b1214a8@linaro.org>
+In-Reply-To: <6d9af57f-9174-405b-9131-145fd6d63a5f@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 10/7/25 17:48, Neil Armstrong wrote:
-> On 10/7/25 12:23, Konrad Dybcio wrote:
->> On 10/7/25 9:02 AM, Neil Armstrong wrote:
->>> On 10/7/25 00:21, Srinivas Kandagatla wrote:
->>>>
->>>>
->>>> On 10/6/25 7:37 PM, Neil Armstrong wrote:
->>>>> Add support for getting the I2S clocks used for the MI2S
->>>>> interfaces, and enable/disable the clocks on the PCM
->>>>> startup and shutdown card callbacks.
->>>>>
->>>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->>>>> ---
+On 10/7/25 12:21, Konrad Dybcio wrote:
+> On 10/6/25 8:37 PM, Neil Armstrong wrote:
+>> In order to describe the block and master clock of each I2S bus, add
+>> the first 5 I2S busses clock entries.
 >>
->> [...]
+>> The names (primary, secondary, tertiarty, quaternary, quinary) uses
+>> the LPASS clock naming which were used for a long time on Qualcomm
+>> LPASS firmware interfaces.
 >>
->>>>> +static int sc8280xp_snd_startup(struct snd_pcm_substream *substream)
->>>>> +{
->>>>> +    unsigned int codec_dai_fmt = SND_SOC_DAIFMT_BC_FC | SND_SOC_DAIFMT_NB_NF | SND_SOC_DAIFMT_I2S;
->>>>> +    struct snd_soc_pcm_runtime *rtd = substream->private_data;
->>>>> +    struct sc8280xp_snd_data *pdata = snd_soc_card_get_drvdata(rtd->card);
->>>>> +    struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
->>>>> +    struct snd_soc_dai *codec_dai = snd_soc_rtd_to_codec(rtd, 0);
->>>>> +    int index;
->>>>> +
->>>>> +    switch (cpu_dai->id) {
->>>>> +    case PRIMARY_MI2S_RX...QUATERNARY_MI2S_TX:
->>>>> +    case QUINARY_MI2S_RX...QUINARY_MI2S_TX:
->>>>> +        index = sc8280xp_snd_i2s_index(cpu_dai);
->>>>
->>>> What is the mclk and bitclk rate set here, we can not rely on the
->>>> default rate.
->>>
->>> The default rates are set in DT:
->>> +        assigned-clocks = <&q6prmcc LPASS_CLK_ID_PRI_MI2S_IBIT LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
->>> +                  <&q6prmcc LPASS_CLK_ID_MCLK_1 LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
->>> +        assigned-clock-rates = <1536000>,
->>> +                       <24576000>;
->>
->> Is there a way to infer these rates based on the DT audio
->> connection graph?
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>> ---
 > 
-> Good question, it's not done for pre-audioreach. Let me investigate.
+> There's also a senary (6th) I2S bus instance, which there is no reason
+> not to describe
 
-OK so since we have fixed 48KHz stereo setup, we can hardcode those frequencies in the card...
-
-FS is 512 and the MCLK / BCLK is 16, as standard so I can calculate those.
-
-Will drop the DT rates and do it in the card.
+Will add
 
 Neil
 
 > 
-> Neil
-> 
+>>   .../devicetree/bindings/sound/qcom,sm8250.yaml         | 18 ++++++++++++++++++
+>>   1 file changed, 18 insertions(+)
 >>
->> Konrad
+>> diff --git a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
+>> index 8ac91625dce5ccba5c5f31748c36296b12fac1a6..fd0d7a7ddc7b363a66e1e7bd72c7290666efb511 100644
+>> --- a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
+>> +++ b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
+>> @@ -64,6 +64,24 @@ properties:
+>>       $ref: /schemas/types.yaml#/definitions/string
+>>       description: User visible long sound card name
+>>   
+>> +  clocks:
+>> +    minItems: 2
+>> +    maxItems: 10
+>> +
+>> +  clock-names:
+>> +    minItems: 2
+>> +    items:
+>> +      - const: primary-mi2s    # Primary I2S Bit Clock
+>> +      - const: primary-mclk    # Primary I2S Master Clock
+>> +      - const: secondary-mi2s  # Secondary I2S Bit Clock
+>> +      - const: secondary-mclk  # Secondary I2S Master Clock
+>> +      - const: tertiary-mi2s   # Tertiary I2S Bit Clock
+>> +      - const: tertiary-mclk   # Tertiary I2S Master Clock
+>> +      - const: quaternary-mi2s # Quaternary I2S Bit Clock
+>> +      - const: quaternary-mclk # Quaternary I2S Master Clock
+>> +      - const: quinary-mi2s    # Quinary I2S Bit Clock
+>> +      - const: quinary-mclk    # Quinary I2S Master Clock
 > 
+> I think a single top-level comment saying "mclk" is the master
+> clock and the other one is a bit clock would suffice
+> 
+> Konrad
 
 
