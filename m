@@ -1,262 +1,200 @@
-Return-Path: <linux-kernel+bounces-845958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DC9CBC692C
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:24:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDDF4BC693B
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 22:25:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2244B34C955
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:24:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B03AA19E271A
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 20:25:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4BB0299ABF;
-	Wed,  8 Oct 2025 20:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02CAE29B239;
+	Wed,  8 Oct 2025 20:25:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fqls7gkJ"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="KeF8//sc"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024272773E3
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 20:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE952857E9;
+	Wed,  8 Oct 2025 20:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759955052; cv=none; b=pdJI1vvmhPJFDnGK6RUQ86Zi6gG4zcPH1oRUNnOrZW5r7ov1ZmKjdG+5eyxCwNpct5dCobFgy9Ul1rFs8tnLIsSTXkjUV3cmvFF2qfht1+qdnm/jQlmCMspXkZsqOKC1Vg5HFLojCpfAjmG4mQhdFXHPas2EnFrWP0/JyJ5y/eA=
+	t=1759955107; cv=none; b=HTJ2YrQar123cSB/nP2HVjMNv9FIcMEFM3H4e/K/6u5THiURUnMx8oyjmBbGCC7ZEBf26Q+4/xXTibZ3MHBiOJuXd+F/RwSzn3fv25Ln5mkZvAeqgda9RHJ6RGOKs9U5QdX93lZv5sKDJ89EO/nZlsTy3L/3jjcATyrHEwmXK9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759955052; c=relaxed/simple;
-	bh=6ivGlTEXwaY+On8oXDGk0Rb+EFeEYRF144eAFJFzJj4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bb/JXpd62gFzyXWgTUJ+mg15nhK59TxCSt2moDnzw7M8ifH/Ds23UbrBtKTaZ2mSmkLooooBdG9NwrRAFBLtQzF0Ml8YrE/2lUjq5Hw/Vd1p7s3BZNxmz2pNwlj3EQrlmsQsj9wu1icoq79wG+vkMB2HWwEWVHbqFIKGXhVN7v8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fqls7gkJ; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46e29d65728so1488875e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 13:24:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759955049; x=1760559849; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6ivGlTEXwaY+On8oXDGk0Rb+EFeEYRF144eAFJFzJj4=;
-        b=fqls7gkJXfTC7+DIef7F8DqYWxvGh03AZoZFivPS7NcQVe6llLpwKlLA5Gl84SUBh+
-         eJRhhedmGQuL5fOtNUDTxW7yctJ6as1cvJ5dQcXiWDahrHbdIXdO0ok+ZQlJrbP9Wb0v
-         UADQgVBJAJNbZoBywfO7gGbz4d9zoYWyPN7dudhu/G5LVZT+Imya4qf5Ssz6zachvgWW
-         lyhrdlNRQci1x4RvsXMfNtRQiZ4+wHRgHpMRRg53G/7hWTgbflJEavHAt/JIK7ljXJDN
-         XosEbzD6tX2uR8cs/OChYrEkUcnBbUyQ0LrjNq7jUoCVtqIIJiWnsnTWj2NbNwCWM9tG
-         g5+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759955049; x=1760559849;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6ivGlTEXwaY+On8oXDGk0Rb+EFeEYRF144eAFJFzJj4=;
-        b=MSMoohHLTo2sGtDg74v06wdj8av9TVAi+ikTv1ZLM6+6O1KqITD3VNHrlWPsa7iEYW
-         ilmwOwkho1wmOlKCtkbzH04ac5bBZYMyFk9Neiev3+5j2AYK+A0R8Fd+omFPV094fjSZ
-         e3at+2CUbvVcmeNzGfOhxg5KHkmgX9ng8vYpu7TDCj0nNfvEnk7ffwT+GeR308utF70i
-         FXKSc+2h0PbsgBjFAytDg3h5nQC4eynFABH2//ifAVeH5p7X4SjGMV/AHyyveoMDB1vX
-         qwpxkCvqgyWrojYmuSPDmlvXl6hSePE47azf8ds/C/yVAVaxLeg0JRtbz20UeUOgD/v2
-         AHCA==
-X-Forwarded-Encrypted: i=1; AJvYcCVM0F2HTnbhXRpj3fnqJ2IPeyOOu/cK4pIxJtb8AZsDqEormePlbwtS7mRvHT8+gX9W8Dt5YKfGJfx38Ns=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLGjlVjNqFhEQMzjTe3fWgujKBZEAYzlpoIIkWEkbi447cm8JB
-	GQvbwrlZX10Kx/BEnahNhVT8jwyiZBnu1JXp8D/v+kxkPqCK+5yW98fC
-X-Gm-Gg: ASbGncu42oFGNtNOH5WnhHUaH0yQafTVUYHUM2fvnJhItyrzLWNIyMOeYJbz5KYOW4N
-	bMbjiz/D98aDfxd27f5JYCejVfC++apfdE1TZevikOBCUOtJZ4y3XsIHIB/mctBY/tATSM8hGYv
-	ds1iZNUNJ7Rxp2VoVWcULKYsIuoJnZmYFkbRtA9UMyzcVoQSoN/dekfUg35IfnFmJo87cayuAO+
-	5aKXvkzzcQE94Wh1v9f8IOjKhh/ME/kYmG4Pbvt00gt48GBd5/TmyjorbPEnXPJjiTbhzH3kua0
-	45tXXlOFFF/rF1+I/9Hl5jgNTHOKN2JesSaJSDFT5TcUGYYFQ9nVymLElBu4Q5Jvh0IAjBRB04A
-	XRcSTvN/KttXI/CVIbXymbYrlDZDFMx7vk4lpFUnlUHWOjHl37NDDRLw6iMTJvTPb7WmZRgKMC/
-	373m+knXD36/2JNs9Z+1uibCzg0UunFSPVwzY+YbUUhda1JP+spA4ZJJ83IRHs6xx4yBZzFrNFL
-	oS0/f88bdX35A==
-X-Google-Smtp-Source: AGHT+IG9nGb6RXJLy3R4KjeILRXXS6qOt+CwXB2ms/ya9AhoxApYV2AlS4ZiC1m4PiBSXPNIfMjxCw==
-X-Received: by 2002:a05:600c:19ce:b0:459:db7b:988e with SMTP id 5b1f17b1804b1-46fa9a96a48mr36550135e9.13.1759955049196;
-        Wed, 08 Oct 2025 13:24:09 -0700 (PDT)
-Received: from p200300c58741558db6dd2a4a25ba8f94.dip0.t-ipconnect.de (p200300c58741558db6dd2a4a25ba8f94.dip0.t-ipconnect.de. [2003:c5:8741:558d:b6dd:2a4a:25ba:8f94])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fa9d4c919sm51035585e9.10.2025.10.08.13.24.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 13:24:08 -0700 (PDT)
-Message-ID: <ebd28e82ff6825507a072c4883e156c45b7746dd.camel@gmail.com>
-Subject: Re: [PATCH v3 1/3] scsi: ufs: core: Remove duplicate macro
- definitions
-From: Bean Huo <huobean@gmail.com>
-To: Bart Van Assche <bvanassche@acm.org>, avri.altman@wdc.com, 
- avri.altman@sandisk.com, alim.akhtar@samsung.com, jejb@linux.ibm.com, 
- martin.petersen@oracle.com, can.guo@oss.qualcomm.com,
- ulf.hansson@linaro.org,  beanhuo@micron.com, jens.wiklander@linaro.org
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 08 Oct 2025 22:24:07 +0200
-In-Reply-To: <3fb0bc7b-bcde-417a-96ef-239af94cff54@acm.org>
-References: <20251008145854.68510-1-beanhuo@iokpp.de>
-	 <20251008145854.68510-2-beanhuo@iokpp.de>
-	 <3fb0bc7b-bcde-417a-96ef-239af94cff54@acm.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1759955107; c=relaxed/simple;
+	bh=Cf4uqEmEDg5eLUoPVw30DI7kswVXxMmTiwiPFPnJuNk=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=cG86lyt3Gm9+6eBAFugaTAwBmRmxnXH1xq/9YncRn9zxGvfkdx6qJ+uk2u39Eo42+4xcHIO8b6ZnWynvdl4TfbeY+h8d7+xCtpbHYRxYj6fpi81OK8jSP8x4kvMLSWIa6fVVopW5gjXAZVV7dRKvwjfjsTUI3jKpucUAfgOXFeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=KeF8//sc; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1759955092; x=1760559892; i=markus.elfring@web.de;
+	bh=8KOpyCuLu7NRCnEauYvKAPC5UC9gog8ydIvIk3STNKY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=KeF8//scrO8kfnquCPMyvuTpfo9x9n/sOcWQyUsZ4hwx+rp8fZIM/Y9cPgFFyjNa
+	 c/Gf6/RNrBUQldqOx+Xhw3SxeuIa4KOxrqu2tWDdYpy1LomaI6j5hSGenBiHCjBTN
+	 rMJPHnria09rDllgIyDrkmKeePHf48cdLXmsK2zRxT4CkNZrIDbmx8/HsWO5Jj8pH
+	 voCUPlzQTeKHdl5vvetYxE3uXg8oU797VALoG4MOPMtz8fmP9ht8YP2wJ+uEVeAHn
+	 wwYKIo1gY316koQtSAwIM0eAZTRL/SGTGbzyn9vpXiMnu4qlDd0kTNxw3Pu78WxIj
+	 M4tZJKkCwlGHRrIetA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.249]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MgzeZ-1ud2mv0z6r-00p1El; Wed, 08
+ Oct 2025 22:24:52 +0200
+Message-ID: <91aeb350-89c6-44bb-8a2e-a629ee650c8b@web.de>
+Date: Wed, 8 Oct 2025 22:24:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Content-Language: en-GB, de-DE
+To: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+ Bharath SM <bharathsm@microsoft.com>, Paulo Alcantara <pc@manguebit.org>,
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>,
+ Tom Talpey <tom@talpey.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] smb: client: Use common code in smb3_notify()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:9yJYHiyD7Mz62H3C+VGbbcA6hJV5z/iqp17nCrFoOUwA9QtGNZ3
+ LJHHzW4uCsstYW+4Si0rYPoMoSlg0FR08BcbyTG0zhkqQv7sZZc5qu/tz9Y38mRESofIimJ
+ dqMZU2fVE6TSTLrYUb0wiKxU9UnNlgpuGdSPCeCwruKfDoou8URezfbQY/GWxKiMGAaB9rw
+ ZSYaqWYHGOTVep001JK/Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:UNJ3+pqgGeg=;MgOczF33i8r+P8c1NNo92OujfPb
+ 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
 
-Bart,
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 8 Oct 2025 22:16:59 +0200
 
-improved in v4, thanks for reviewing!
+Use an additional label so that a bit of common code can be better reused
+at the end of this function implementation.
 
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ fs/smb/client/smb2ops.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
-Kind regards,=C2=A0
-Bean
-
-On Wed, 2025-10-08 at 09:03 -0700, Bart Van Assche wrote:
-> On 10/8/25 7:58 AM, Bean Huo wrote:
-> > Remove duplicate definitions of SD_ASCII_STD and SD_RAW macros from
-> > ufshcd-priv.h as they are already defined in include/ufs/ufshcd.h.
-> >=20
-> > Suggested-by: Avri Altman <Avri.Altman@sandisk.com>
-> > Signed-off-by: Bean Huo <beanhuo@micron.com>
-> > ---
-> > =C2=A0 drivers/ufs/core/ufshcd-priv.h | 3 ---
-> > =C2=A0 1 file changed, 3 deletions(-)
-> >=20
-> > diff --git a/drivers/ufs/core/ufshcd-priv.h b/drivers/ufs/core/ufshcd-p=
-riv.h
-> > index d0a2c963a27d..cadee685eb5e 100644
-> > --- a/drivers/ufs/core/ufshcd-priv.h
-> > +++ b/drivers/ufs/core/ufshcd-priv.h
-> > @@ -77,9 +77,6 @@ int ufshcd_mcq_abort(struct scsi_cmnd *cmd);
-> > =C2=A0 int ufshcd_try_to_abort_task(struct ufs_hba *hba, int tag);
-> > =C2=A0 void ufshcd_release_scsi_cmd(struct ufs_hba *hba,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 struct ufshcd_lrb *lrbp);
-> > -
-> > -#define SD_ASCII_STD true
-> > -#define SD_RAW false
-> > =C2=A0 int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 u8 **buf, bool ascii);
-> > =C2=A0=20
->=20
-> Please improve this patch as follows:
-> - Remove the ufshcd_read_string_desc() declaration from
-> =C2=A0=C2=A0 include/ufs/ufshcd.h because this function has not been expo=
-rted.
-> - Change the type of the 'ascii' argument into an enumeration type.
-> =C2=A0=C2=A0 Code readability improves significantly if boolean arguments=
- are
-> =C2=A0=C2=A0 replaced with enumeration type arguments.
->=20
-> Below there is an untested patch that illustrates the above.
->=20
-> Thanks,
->=20
-> Bart.
->=20
->=20
-> diff --git a/drivers/ufs/core/ufshcd-priv.h b/drivers/ufs/core/ufshcd-pri=
-v.h
-> index 1f0d38aa37f9..85d3d9e64bd7 100644
-> --- a/drivers/ufs/core/ufshcd-priv.h
-> +++ b/drivers/ufs/core/ufshcd-priv.h
-> @@ -80,10 +80,12 @@ int ufshcd_try_to_abort_task(struct ufs_hba *hba,=20
-> int tag);
-> =C2=A0 void ufshcd_release_scsi_cmd(struct ufs_hba *hba,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 struct ufshcd_lrb *lrbp);
->=20
-> -#define SD_ASCII_STD true
-> -#define SD_RAW false
-> -int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index,
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 u8 **buf, bool ascii);
-> +enum ufs_descr_fmt {
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0SD_RAW =3D 0,
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0SD_ASCII_STD =3D 1,
-> +};
-> +int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index, u8 **buf=
-,
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 enum ufs_descr_fmt fmt);
->=20
-> =C2=A0 int ufshcd_send_uic_cmd(struct ufs_hba *hba, struct uic_command *u=
-ic_cmd);
-> =C2=A0 int ufshcd_send_bsg_uic_cmd(struct ufs_hba *hba, struct uic_comman=
-d=20
-> *uic_cmd);
-> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-> index be4bf435da09..b10de1ade23b 100644
-> --- a/drivers/ufs/core/ufshcd.c
-> +++ b/drivers/ufs/core/ufshcd.c
-> @@ -3759,16 +3759,15 @@ static inline char=20
-> ufshcd_remove_non_printable(u8 ch)
-> =C2=A0=C2=A0 * @desc_index: descriptor index
-> =C2=A0=C2=A0 * @buf: pointer to buffer where descriptor would be read,
-> =C2=A0=C2=A0 *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 the caller should free=
- the memory.
-> - * @ascii: if true convert from unicode to ascii characters
-> - *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 null terminated strin=
-g.
-> + * @ufs_descr_fmt: if %SD_ASCII_STD, convert from UTF-16 to ASCII
-> =C2=A0=C2=A0 *
-> =C2=A0=C2=A0 * Return:
-> =C2=A0=C2=A0 * *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 string size on success.
-> =C2=A0=C2=A0 * *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -ENOMEM: on allocation fai=
-lure
-> =C2=A0=C2=A0 * *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -EINVAL: on a wrong parame=
-ter
-> =C2=A0=C2=A0 */
-> -int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index,
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 u8 **buf, bool ascii)
-> +int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index, u8 **buf=
-,
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 enum ufs_descr_fmt fmt)
-> =C2=A0 {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0struct uc_string_id *uc_s=
-tr;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u8 *str;
-> @@ -3797,7 +3796,7 @@ int ufshcd_read_string_desc(struct ufs_hba *hba,=
+diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
+index 7c3e96260fd4..3a0fb4a4de86 100644
+=2D-- a/fs/smb/client/smb2ops.c
++++ b/fs/smb/client/smb2ops.c
+@@ -2369,15 +2369,12 @@ smb3_notify(const unsigned int xid, struct file *p=
+file,
+ 	}
 =20
-> u8 desc_index,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0goto out;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
->=20
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (ascii) {
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (fmt =3D=3D SD_ASCII_STD) {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0ssize_t ascii_len;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0int i;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0/* remove header and divide by 2 to move from UTF16=
- to UTF8 */
-> diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
-> index 8a5649933715..f030e9a062a3 100644
-> --- a/include/ufs/ufshcd.h
-> +++ b/include/ufs/ufshcd.h
-> @@ -1428,10 +1428,6 @@ static inline int=20
-> ufshcd_disable_host_tx_lcc(struct ufs_hba *hba)
-> =C2=A0 void ufshcd_auto_hibern8_update(struct ufs_hba *hba, u32 ahit);
-> =C2=A0 void ufshcd_fixup_dev_quirks(struct ufs_hba *hba,
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 const struct ufs_dev_quirk *fixups);
-> -#define SD_ASCII_STD true
-> -#define SD_RAW false
-> -int ufshcd_read_string_desc(struct ufs_hba *hba, u8 desc_index,
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 u8 **buf, bool ascii);
->=20
-> =C2=A0 void ufshcd_hold(struct ufs_hba *hba);
-> =C2=A0 void ufshcd_release(struct ufs_hba *hba);
->=20
+ 	if (return_changes) {
+-		if (copy_from_user(&notify, ioc_buf, sizeof(struct smb3_notify_info))) =
+{
+-			rc =3D -EFAULT;
+-			goto notify_exit;
+-		}
++		if (copy_from_user(&notify, ioc_buf, sizeof(struct smb3_notify_info)))
++			goto e_fault;
+ 	} else {
+-		if (copy_from_user(&notify, ioc_buf, sizeof(struct smb3_notify))) {
+-			rc =3D -EFAULT;
+-			goto notify_exit;
+-		}
++		if (copy_from_user(&notify, ioc_buf, sizeof(struct smb3_notify)))
++			goto e_fault;
++
+ 		notify.data_len =3D 0;
+ 	}
+=20
+@@ -2417,6 +2414,10 @@ smb3_notify(const unsigned int xid, struct file *pf=
+ile,
+ 	free_dentry_path(page);
+ 	kfree(utf16_path);
+ 	return rc;
++
++e_fault:
++	rc =3D -EFAULT;
++	goto notify_exit;
+ }
+=20
+ static int
+=2D-=20
+2.51.0
 
 
