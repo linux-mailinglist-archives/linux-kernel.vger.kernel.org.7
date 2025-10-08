@@ -1,180 +1,123 @@
-Return-Path: <linux-kernel+bounces-845159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC93CBC3BAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 09:52:25 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80B08BC3BAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 09:53:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7A9C4014EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 07:52:24 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1F37B341E2C
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 07:53:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C19C12F28F5;
-	Wed,  8 Oct 2025 07:52:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D5222F1FEF;
+	Wed,  8 Oct 2025 07:53:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nbEkQFpe"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="EjJ/IoJ9"
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E762F25FB
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 07:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467A821CC55
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 07:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759909926; cv=none; b=ARqgcqN2igX4G+CPSw88C879mWiIANwdZ/KJivQXCpQaUxAxYP0C1VM0hnYX/knMoRYOKHLsE9M88AP7sIHCQd0fhQ3BfHeN85qrbMWCS/QZUFeqRbJw2FKEA+jowdlVhq83vMMht1KEjhmI+Le7dEYU9rCf+GIB/ORSS12g9Dk=
+	t=1759910012; cv=none; b=nr0YNDrpvvtfTT6OX7EmIxN3jviunZRoDMCtPIBnbsswrq91a807d+sGUJkOoEqpefxnrcmhICYxKNKzDDs2B1zGpeCV3nAIhmYh6eDmTjCOmmUv0svDf9coSub48HVxRQ6jTAalqJ2iA6q/QptS32b6gDJHnzu1iotZ8TM/wTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759909926; c=relaxed/simple;
-	bh=jp/zJEcCPvf4jK9W6zx5g+YSKeu8yY8hjmywdRuZSmE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=akAUUkkcR6EBAeWUZMphHmxDYDQ+QFWMmo4G92XJoJVCcYaAbwImm7ggpk691ypDlFoOYL8+ZFKFFM5REfSn3IVy1AWKQHDAohwrBpwPZEurKexnKQ9pcl8Gf0ewjsCJDtZzcnaZYb/5w1FI6bU/3tS5Y4+H9lhO1JDIfzzwGCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nbEkQFpe; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5987bLsI018518
-	for <linux-kernel@vger.kernel.org>; Wed, 8 Oct 2025 07:52:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YRZFPPJQeCYCUJqQnDigqrNWBaX8OJqlWKA0JVc92S8=; b=nbEkQFpeRBLgPSQj
-	/f1GLwdqSYQnSLmOMzcCP/how7x3+eNBMtAEDUCjEX6Utd/E+yinB3QFfMMQlwSc
-	Uv2i54Y9RR30fXkrqie3pUnR3f9Cp0UQlYWlbniINnGP7l/4ADBxvbF9HlWpZawl
-	tUUh/kDy69TLdt2XWjXovWJT0u+AF2BWBzBoyWTd9UTyc0+dHg6Z+d148idjyTZv
-	B2gpn/vQoYrza6C3lHN0woop40T/CvLqET9ZGP+2k8ZNd0/k843l51L83fQV+v8G
-	36q/si8FyItZ4TygoYzZOVRK8RK03imRIVzfWprJVKf6VLO6AY5QEopuGSRsCy+w
-	Saq1sw==
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49jtk71rbs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 07:52:03 +0000 (GMT)
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-32ec67fcb88so6271245a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 00:52:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759909922; x=1760514722;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YRZFPPJQeCYCUJqQnDigqrNWBaX8OJqlWKA0JVc92S8=;
-        b=u+xe/3r9mMDT//2oYaU6+eCYjEKv+bV/jUpkutC3U2bEylkrn0q7HDbKJKE71tYqa+
-         Qg+9KOqQevt0Lb89+Zrkb1fIMMRCMlPIHDRk2IIkvs9vvu33wkBUj6AkvxahUMITN1J0
-         hCCKNHww1wHM4z5SyzqK8sfyGW9Mnde85fGrgSGFGvSg7H1QHJoddXCCyB/Yb6ncXWJh
-         bnt+uBVPVVovmPG81WWvx9iK7gzLPq4Ps5J70w6xyfvHTaA7sFQphsbrQ9JUOGI6pH8J
-         YsvRdmao387R7T62LgTKs/gqC7k0CzdsBSBRdozWOOms+huLKJNOaoHFqIGJBJn59WJD
-         5V2g==
-X-Forwarded-Encrypted: i=1; AJvYcCUW52HnYsDVzqg09lO+QgCAhSssNUoNyL1pE+PEZ5xhb4F8haiwgN5zpeVwXwFCCTk4APQULAoW9RzaJiA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yynwcv62xoKekGhGPg5s/DsVl7/OIV9S6AG2Q5Oay2e/TckTV9W
-	zxFYuIsyMQKeJggsS5E5Ar4lXyzU73I0czGefNXcbQouOjxRZnJWDgw4x5CNCi3EpCGOss/M5+p
-	T7NfPLlXHRUz0BczEiOpXKBvFs3chMLxGs6z7vWPNLduboTsayxoTOImW5QD0t+CEcNU=
-X-Gm-Gg: ASbGncvAHXS78wLbe9PNBVerWgHcoAOZVej5Mm/M9t3phaFIqzqhtkKVObR3EQ8leGB
-	STyLEe+sRs4v4zLd63oAOaTgS5fx4YcYU1K4MxZnU/taZkJMoN0fi89nU1DvoNMhOPFhZCCDqM/
-	FeXxY1seuDSTo8FQhYrPukzcuy2rz8imaEMKbpL1xpLBiZUF67cVzJKSbt2f1TNW+OFzEbadCzA
-	8JCcSiBlCK3Qf2HCtAZwUoFyS1eUPUzjZR4qWsmtUBdA+eq3EFhPwEs0i7sznHsWvZftC8vzBv3
-	43gggAun0cbqpl1MQpInWy3JAO96Or0IrL0s/Q08OWomEHzAyEgccgfvFFmgs/vldZzWtI4R
-X-Received: by 2002:a17:90b:4d12:b0:32e:3c57:8a9d with SMTP id 98e67ed59e1d1-33b5139a279mr3467249a91.30.1759909921542;
-        Wed, 08 Oct 2025 00:52:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHu01xYjaBLVLru0tk2ZrxcSyg6W5LORhAKpnIdoAjX3D22/ZziNpKkl1IjWF6AN1qDNFxpNQ==
-X-Received: by 2002:a17:90b:4d12:b0:32e:3c57:8a9d with SMTP id 98e67ed59e1d1-33b5139a279mr3467197a91.30.1759909920761;
-        Wed, 08 Oct 2025 00:52:00 -0700 (PDT)
-Received: from hu-mojha-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b5296d52esm888452a91.2.2025.10.08.00.51.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 00:52:00 -0700 (PDT)
-Date: Wed, 8 Oct 2025 13:21:53 +0530
-From: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Manivannan Sadhasivam <mani@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 03/12] firmware: qcom_scm: Introduce PAS context
- initialization and destroy helper
-Message-ID: <20251008075153.wjvlnjr3iuncfued@hu-mojha-hyd.qualcomm.com>
-References: <20251007-kvm_rprocv4_next-20251007-v4-0-de841623af3c@oss.qualcomm.com>
- <20251007-kvm_rprocv4_next-20251007-v4-3-de841623af3c@oss.qualcomm.com>
- <qqjynnzjhpe6elglh3xb4ghbtesfkr4ssxyq5flhcy7a5jp6ym@3viy7jyesamq>
- <45eb9c5b-bc8e-4866-bbaf-5afaed9fda21@linaro.org>
+	s=arc-20240116; t=1759910012; c=relaxed/simple;
+	bh=J0vin9G4M7B3OG2kiAsyEa99zFFAtW6G2CoPlAm8g04=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=nYePH4TwMLNRmOJupkEjXXm1Ibm5vt/diRKUa926gt4mmrSxSJhRlVM0Wxgz0jhtYhVNgWZZ3GOc3IRo8YPliNs9w1IBtAlWcstbc2oAQOjyiMf2fpJ0nNduGmu7iMrTf8yMGRk5yE/0BMAtu22mXkB+YQXB9BxEA/Ze/cVZFbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=EjJ/IoJ9; arc=none smtp.client-ip=43.163.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1759909990; bh=P7IvDczGiyfEhMXQssu7tGF5fwkZRWsiDziHUa3DUmk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=EjJ/IoJ9UAyI1OY/PMJfxmPOwpZujAA1MIhVmcu6syCCy+QI9B1Jq3Q7u4jA6qDWG
+	 gqBOMKOqXsSkxxTtRkxbSyQMPr+nbB6rqS4FQk5dPKbOgzrEt4E6s27tMja+PvxBpz
+	 NUnz9LYWYCOnlG8OKzHCVtK/79/hERgJUvTM9+9k=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
+	by newxmesmtplogicsvrszb20-1.qq.com (NewEsmtp) with SMTP
+	id D46A284A; Wed, 08 Oct 2025 15:53:06 +0800
+X-QQ-mid: xmsmtpt1759909986t1jgwmg6v
+Message-ID: <tencent_E46183A88440D77C977DA6CBD37DC362A905@qq.com>
+X-QQ-XMAILINFO: OKkKo7I1HxIeAg4IKih4f886w/ZvHqayDqcqGD5QSFnRrcO1knjmCq7Yc0nhfQ
+	 qCyKcnQdYpG7zLDX6FGAVeYqg9/FBeCfKiqowu6oyhwmkYYuknOM2GOgJe+ez46NlG9XXoit3ngR
+	 k8zll7UfE8sxeA9QZ+dyH2fes93J/IN+vNxZdB6kXj33p9dWxzph8fzkIjh6LYrSmT0xcmD+7nsd
+	 RvKAk1YLrNUBlJZTeKEmQsglgtlrrdEE0x/JUN2V+2NxJ7Cv7eIchyJ2RHtQqFIyPtwIzlhZQTnb
+	 5EOon0YOOZGR/QdxOAJO6s9L9HiP/w1AuH6b8oWIWyma6BQB7jKzt071olJQ/LvjqbFL69JB6Sqs
+	 Tlw5x/vXkyNbdTtLWoL8oIjOcm7kpqLyQEq1Mcety9jNK4W9K0XUtc02rTKs1Yefi69UHk8QCmRE
+	 udK1KKQaqsiMsyWWAlOPIMz2SZCKzgj6EsvRNmt/j1db1Ghd7W+o0wGvYs2RjulreOD6yVslppmj
+	 ViUyUd7GePZpRTOEMfCChvYFEoYOqVIsJWeF2ryUKywzwLutcZMKnAX6F/vS9EUdqSaKF/yQ4bRN
+	 VFp8yR+fbaSZ1LVJG7XlV0Q7uXqDnV72l9q7CCfZjVkGNY+bptuXcSWhddssdc5wItOFimjwz0t4
+	 uepbBYWz9obTGWz8udCGLyXhEo+/ZEcswTVVe+XiNBMh237SDzYk/g/T+eTp8noCgoz78UYbnTBJ
+	 MA6AzCZVl3C4zo5eGoXlAHX9WpMN+mU1BFZXoPP2wuzGfL3WI3QoHGwXl+rMn+bpHzcqgQSXq0su
+	 xZnLNoplBsZAy+D2jVoc9BFC+owdHii4GWwj6XOidxcRPj4E9NHn2MFD8+ZR31ZsrQEC/vpilGrH
+	 NNwOpYBHr3ilEbGR9L61Ghff6rLjomBsVwp+oNkbAc70u+Ey95NjlbVH6SkxidUM8bRgzIPhXWfC
+	 /SlfI/FXHWvIPkX35PDSQx5Yb4D3xOgq60194rZ1wSpqYP0lEloA==
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+093a8a8b859472e6c257@syzkaller.appspotmail.com
+Cc: iommu@lists.linux.dev,
+	jgg@ziepe.ca,
+	joro@8bytes.org,
+	kevin.tian@intel.com,
+	linux-kernel@vger.kernel.org,
+	robin.murphy@arm.com,
+	syzkaller-bugs@googlegroups.com,
+	will@kernel.org
+Subject: [PATCH] iommufd: Prevent the use of nil data
+Date: Wed,  8 Oct 2025 15:53:07 +0800
+X-OQ-MSGID: <20251008075306.1443836-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <68e5a30d.050a0220.256323.002e.GAE@google.com>
+References: <68e5a30d.050a0220.256323.002e.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <45eb9c5b-bc8e-4866-bbaf-5afaed9fda21@linaro.org>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA0MDAxNyBTYWx0ZWRfXytLSMvP5HsML
- y5WX6ItEV7Fr43QkXtn+95prLX9cS0YhR+lm8AbtY9tkFszLOFXqerHEwNUlMpQ9DjlrJBcvZQn
- bZFy+DHX+PfaVfd6t4t5/eFwfulurnCPiSBSKNII1FjAH3UtPUSMIWin9ho2Erd6z1OUUZmryDI
- 2xp14/RK47r5bIhAD1JZwrxaNaHjpR4wYzp1vCDeRAE3wZGnWzLDraAm38wYpBLZQPKTnybwisU
- 19F99mZRJH5tn5eF+RynI0lE7NHIByCe2iw2/9xOFqKVZXACLI69Sn3XI6aF5qTE7ASMEcyeeY7
- AKjKMwd7SkymjcEDm0bv8X5yX+q7sUW+xDPOdZNIOx2Ou5bUvRG3dy+lZ/KaN/rPg0IOH4SJIMT
- qIgqHmDMZ/7kfA0H99eV14CxUeXXeg==
-X-Authority-Analysis: v=2.4 cv=do3Wylg4 c=1 sm=1 tr=0 ts=68e61823 cx=c_pps
- a=0uOsjrqzRL749jD1oC5vDA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8
- a=3aEvWvYx403qF7UyPRkA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=mQ_c8vxmzFEMiUWkPHU9:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: piV9SMSzIP_WI5RZnAssmQr2h6kXgODJ
-X-Proofpoint-ORIG-GUID: piV9SMSzIP_WI5RZnAssmQr2h6kXgODJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-08_01,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 adultscore=0 lowpriorityscore=0 phishscore=0 clxscore=1015
- malwarescore=0 spamscore=0 impostorscore=0 priorityscore=1501 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2510040017
 
-On Tue, Oct 07, 2025 at 11:16:28PM +0100, Bryan O'Donoghue wrote:
-> On 07/10/2025 22:23, Manivannan Sadhasivam wrote:
-> > > +void qcom_scm_pas_context_destroy(struct qcom_scm_pas_context *ctx)
-> > > +{
-> > > +	kfree(ctx->metadata);
-> > > +	ctx->metadata = NULL;
-> > > +	ctx->dev = NULL;
-> > > +	ctx->pas_id = 0;
-> > > +	ctx->mem_phys = 0;
-> > > +	ctx->mem_size = 0;
-> > Why do you need to zero initialize these fields before freeing? Are they
-> > carrying any sensitive data that warrants zero initialization?
+The division exception occurs because:
+The denominator bitmap->bitmap is 0, which is derived from the nil value
+of bitmap->data passed in by the reproducer.
 
-Nothing special about the data.
+Before calling iova_bitmap_alloc() to allocate iter, add a check for a
+null value in data to avoid the division exception.
 
-> 
-> Mukesh, have to say I don't think adding my RB to this patch is really
-> warranted.
-> 
-> I gave review feedback that the above looked odd.
-> 
-> https://lore.kernel.org/linux-arm-msm/9139706a-708c-4be6-a994-120cce0cd0e6@linaro.org
-> 
-> Could you please drop my RB here, and fix the above in your next version.
+syzbot reported:
+divide error in iova_bitmap_alloc
 
-Sorry if I misunderstood your comment on this particular patch.
+Call Trace:
+ <TASK>
+ iommu_read_and_clear_dirty drivers/iommu/iommufd/io_pagetable.c:543 [inline]
+ iopt_read_and_clear_dirty_data+0x271/0x4c0 drivers/iommu/iommufd/io_pagetable.c:603
+ iommufd_hwpt_get_dirty_bitmap+0x1c3/0x340 drivers/iommu/iommufd/hw_pagetable.c:485
 
-I assumed your concern was regarding the manual destroy call, and I
-responded to that point. Since I didn’t receive a follow-up on that, I
-proceeded to address all other comments and added your Reviewed-by tag.
+Reported-by: syzbot+093a8a8b859472e6c257@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=093a8a8b859472e6c257
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ drivers/iommu/iommufd/io_pagetable.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-However, since we are revisiting this discussion, it seems appropriate
-to remove the destroy function altogether and switch to using devm_
-APIs.
-
-> 
-> Also please add me to the cc list for the whole series.
-
-Will surely do it, thanks.
-
-> 
-> ---
-> bod
-
+diff --git a/drivers/iommu/iommufd/io_pagetable.c b/drivers/iommu/iommufd/io_pagetable.c
+index c0360c450880..9ddaed95e79f 100644
+--- a/drivers/iommu/iommufd/io_pagetable.c
++++ b/drivers/iommu/iommufd/io_pagetable.c
+@@ -540,6 +540,9 @@ iommu_read_and_clear_dirty(struct iommu_domain *domain,
+ 	if (!ops || !ops->read_and_clear_dirty)
+ 		return -EOPNOTSUPP;
+ 
++	if (!bitmap->data)
++		return -EINVAL;
++
+ 	iter = iova_bitmap_alloc(bitmap->iova, bitmap->length,
+ 				 bitmap->page_size,
+ 				 u64_to_user_ptr(bitmap->data));
 -- 
--Mukesh Ojha
+2.43.0
+
 
