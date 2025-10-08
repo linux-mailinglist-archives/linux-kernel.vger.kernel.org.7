@@ -1,784 +1,522 @@
-Return-Path: <linux-kernel+bounces-845286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF2B4BC4472
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 12:17:46 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78AB3BC4421
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 12:09:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9182401B58
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 10:17:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4BD654E6790
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 10:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFAE22F549E;
-	Wed,  8 Oct 2025 10:17:04 +0000 (UTC)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CEFE2F5488;
+	Wed,  8 Oct 2025 10:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ae0QvNax"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6D62EC55E;
-	Wed,  8 Oct 2025 10:17:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93A6A221FBB;
+	Wed,  8 Oct 2025 10:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759918623; cv=none; b=H28JY2xjtXnJILd6GWQW744NDujyYUDoQkIquY+9M9UD7VyQJupOkcXSiSMOjGVVD11bpgaSmmZghpcdQQkqLVDbN1LJMJ74L0V61N7kA52Z+unzjBbtYndHUAY1i0DfA9eL6c4O/F2w6gu/xaISVVXw4sXlAExwBdzsceTlSDQ=
+	t=1759918180; cv=none; b=gfIzwFDDfMAVI9mLrLuhcprd4P6dvNSWpOubx4ZHCm7dhXJu40ZkKVm09i51av89U4xyMimxrxoFF9n3Ad3nf6ab6iJa1sTtXg88wbZ2P4WtL0MDhdCrQ87XdRQ873GgAzIXhnEdnzGEPzt3j9IyOGXb9ctVwwVXA93aOSsbylI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759918623; c=relaxed/simple;
-	bh=VlDle1txfwPo/0Xg+7szilp9AdWEVcZJo8udsKWiFSs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QyvxGSsdrCLzv09TD66cdNn8rNv/+5RPrpHOYxsN3UTS5v/NCUX5sbgCqnzvPs0PI7dOJPt3jqVaxZ7M4VK9MpVmMm04CkhbTfoThuKj1CnuN8zdRdjb8ddnZAkgWkhbLMGTF+hjQ/wHRNTzsY7XUpBSY8RKsFlBM9mmOrQ5y8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0996A2015E6;
-	Wed,  8 Oct 2025 12:07:23 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6B369201673;
-	Wed,  8 Oct 2025 12:07:22 +0200 (CEST)
-Received: from lsv03900.swis.in-blr01.nxp.com (lsv03900.swis.in-blr01.nxp.com [10.12.177.15])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id CA068180221C;
-	Wed,  8 Oct 2025 18:07:20 +0800 (+08)
-From: Lakshay Piplani <lakshay.piplani@nxp.com>
-To: linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	jic23@kernel.org,
-	dlechner@baylibre.com,
-	nuno.sa@analog.com,
-	andy@kernel.org,
-	marcelo.schmitt1@gmail.com,
-	gregkh@linuxfoundation.org,
-	viro@zeniv.linux.org.uk,
-	peterz@infradead.org,
-	jstephan@baylibre.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org
-Cc: jdelvare@suse.com,
-	linux@roeck-us.net,
-	vikash.bansal@nxp.com,
-	priyanka.jain@nxp.com,
-	shashank.rebbapragada@nxp.com,
-	Lakshay Piplani <lakshay.piplani@nxp.com>
-Subject: [PATCH v4 2/2] iio: temperature: Add driver for NXP P3T175x temperature sensor
-Date: Wed,  8 Oct 2025 15:37:13 +0530
-Message-Id: <20251008100713.1198461-3-lakshay.piplani@nxp.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20251008100713.1198461-1-lakshay.piplani@nxp.com>
-References: <20251008100713.1198461-1-lakshay.piplani@nxp.com>
+	s=arc-20240116; t=1759918180; c=relaxed/simple;
+	bh=hH5mbS/i6SnetVEpBGXLDwHNIj2omM4QhA8WO03ybls=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=bwnvxqLBpNyQbKAnI5VC/bchI6DqjganDng1vKB30FuOJLhC1SlKaovZyPE0vA8qc2PQ7Mty04IDJxWjUW0LUDNBVNUGK0D4aPLszr278DiYrh3cwQLfNHgqq6FqtKE0mk172oq8U348426QE2hmqMVft8g8xdOulZNmB1TysUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ae0QvNax; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1147C4CEF4;
+	Wed,  8 Oct 2025 10:09:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759918180;
+	bh=hH5mbS/i6SnetVEpBGXLDwHNIj2omM4QhA8WO03ybls=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Ae0QvNax/Gh4sEm/JPltRjXqVkzIsM/OkmTqTojsV0Fzr4j1dOvnOu/vLNB+TwHJj
+	 q6v1/e69VnypbSZe878SXf6wdPuzbcSsJCwhvmfbiM9b19SgxCDjOTKsB4MajwL5eo
+	 Px7FBFA4JZYqCoazXdtIzSFM3j0K5gBn5QV+OyOZAwJVnEWREus6zCmHXGAKNVBiAp
+	 9Q8Z4r0BOLYczGnwWJCbvH7OwxIqFGsSIXIeN9KTHwVYy0VJlzD2hE9rfgOXWkO39p
+	 jZhIpgN9EjUx0RHxXaoP4nzZfsiWljKDM2mhH3LzhUc7I+XCSmBeDGXICAHqxXkLm+
+	 n3IHujCzjW/PA==
+Date: Wed, 8 Oct 2025 19:09:37 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Ryan Chung <seokwoo.chung130@gmail.com>
+Cc: rostedt@goodmis.org, mathieu.desnoyers@efficios.com, shuah@kernel.org,
+ hca@linux.ibm.com, corbet@lwn.net, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3 3/5] tracing: fprobe: support comma-separated symbols
+ and :entry/:exit
+Message-Id: <20251008190937.c7c992e41b4397fecbc8176e@kernel.org>
+In-Reply-To: <20251004235001.133111-4-seokwoo.chung130@gmail.com>
+References: <20251004235001.133111-1-seokwoo.chung130@gmail.com>
+	<20251004235001.133111-4-seokwoo.chung130@gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Add support for the NXP P3T175x (P3T1750/P3T1755) family of temperature
-sensor devices. These devices communicates via both I2C or I3C interfaces.
+On Sun,  5 Oct 2025 08:46:57 +0900
+Ryan Chung <seokwoo.chung130@gmail.com> wrote:
 
-Signed-off-by: Lakshay Piplani <lakshay.piplani@nxp.com>
----
-V3 -> V4: Changes since V3
-	  - Added cover letter for the first time in the series.
-          - Replaced wildcard driver name `p3t175x_i2c` with specific part number `p3t1755_i2c`.
-          - Removed unnecessary cast in `p3t1755_free_ibi()` (void * to struct i3c_device *).
-          - Dropped error print for `devm_add_action_or_reset()` as only -ENOMEM is expected.
-V2 -> V3: Changes since V2:
-          - Dropped nxp,interrupt-mode and nxp,fault-queue from driver and YAML (not suitable for DT)
-          - Removed trigger_one_shot sysfs attribute and its ABI doc
-          - Applied IWYU principle: cleaned up unused headers
-          - Fixed sampling frequency handling
-          - Removed dev_err/dev_dbg statements wherever not necessary
-V1 -> V2: Changes since V1:
-          - Added endian-safe handling for register read (__be16 conversion)
-          - Replaced manual bit masking with FIELD_GET bit extraction
-          - Dropped sysfs attributes for fault queue length and thermostat mode (comparator or interrupt)
-          - Added ABI doc: Documentation/ABI/testing/sysfs-bus-iio-temperature-p3t1755 describing
-            trigger_one_shot attribute
-          - Updated Kconfig to allow building both I2C and I3C drivers simultaneously
-          - I3C: switched to device_property_* from of_property_*
-          - Added devm_add_action_or_reset() for IBI disable/free
+Please describe what this patch adds, for what reason.
 
- drivers/iio/temperature/Kconfig            |   2 +
- drivers/iio/temperature/p3t/Kconfig        |  28 ++
- drivers/iio/temperature/p3t/Makefile       |   5 +
- drivers/iio/temperature/p3t/p3t1755.h      |  45 +++
- drivers/iio/temperature/p3t/p3t1755_core.c | 363 +++++++++++++++++++++
- drivers/iio/temperature/p3t/p3t1755_i2c.c  |  67 ++++
- drivers/iio/temperature/p3t/p3t1755_i3c.c  | 108 ++++++
- 7 files changed, 618 insertions(+)
- create mode 100644 drivers/iio/temperature/p3t/Kconfig
- create mode 100644 drivers/iio/temperature/p3t/Makefile
- create mode 100644 drivers/iio/temperature/p3t/p3t1755.h
- create mode 100644 drivers/iio/temperature/p3t/p3t1755_core.c
- create mode 100644 drivers/iio/temperature/p3t/p3t1755_i2c.c
- create mode 100644 drivers/iio/temperature/p3t/p3t1755_i3c.c
+> Signed-off-by: Ryan Chung <seokwoo.chung130@gmail.com>
+> ---
+>  kernel/trace/trace_fprobe.c | 247 ++++++++++++++++++++++++++++--------
+>  1 file changed, 192 insertions(+), 55 deletions(-)
+> 
+> diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
+> index b36ade43d4b3..ec5b6e1c1a1b 100644
+> --- a/kernel/trace/trace_fprobe.c
+> +++ b/kernel/trace/trace_fprobe.c
+> @@ -191,6 +191,9 @@ struct trace_fprobe {
+>  	bool			tprobe;
+>  	struct tracepoint_user	*tuser;
+>  	struct trace_probe	tp;
+> +	char			*filter;
+> +	char			*nofilter;
+> +	bool			list_mode;
+>  };
+>  
+>  static bool is_trace_fprobe(struct dyn_event *ev)
+> @@ -203,14 +206,10 @@ static struct trace_fprobe *to_trace_fprobe(struct dyn_event *ev)
+>  	return container_of(ev, struct trace_fprobe, devent);
+>  }
+>  
+> -/**
+> - * for_each_trace_fprobe - iterate over the trace_fprobe list
+> - * @pos:	the struct trace_fprobe * for each entry
+> - * @dpos:	the struct dyn_event * to use as a loop cursor
+> - */
+> -#define for_each_trace_fprobe(pos, dpos)	\
+> -	for_each_dyn_event(dpos)		\
+> -		if (is_trace_fprobe(dpos) && (pos = to_trace_fprobe(dpos)))
 
-diff --git a/drivers/iio/temperature/Kconfig b/drivers/iio/temperature/Kconfig
-index 1244d8e17d50..d249721c1ea1 100644
---- a/drivers/iio/temperature/Kconfig
-+++ b/drivers/iio/temperature/Kconfig
-@@ -182,4 +182,6 @@ config MCP9600
- 	  This driver can also be built as a module. If so, the module
- 	  will be called mcp9600.
- 
-+source "drivers/iio/temperature/p3t/Kconfig"
-+
- endmenu
-diff --git a/drivers/iio/temperature/p3t/Kconfig b/drivers/iio/temperature/p3t/Kconfig
-new file mode 100644
-index 000000000000..0cfd881e065b
---- /dev/null
-+++ b/drivers/iio/temperature/p3t/Kconfig
-@@ -0,0 +1,28 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+
-+config IIO_P3T1755
-+	tristate
-+	depends on (I2C || I3C)
-+
-+config IIO_P3T1755_I2C
-+	tristate "NXP P3T1755 temperature sensor I2C driver"
-+	select IIO_P3T1755
-+	select REGMAP_I2C
-+	help
-+	  Say yes here to build support for NXP P3T1755 I2C temperature
-+	  sensor.
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called p3t1755_i2c
-+
-+config IIO_P3T1755_I3C
-+	tristate "NXP P3T1755 temperature sensor I3C driver"
-+	select IIO_P3T1755
-+	select REGMAP_I3C
-+	depends on I3C
-+	help
-+	  Say yes here to build support for NXP P3T1755 I3C temperature
-+	  sensor.
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called p3t1755_i3c
-diff --git a/drivers/iio/temperature/p3t/Makefile b/drivers/iio/temperature/p3t/Makefile
-new file mode 100644
-index 000000000000..7d33b507f1f1
---- /dev/null
-+++ b/drivers/iio/temperature/p3t/Makefile
-@@ -0,0 +1,5 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+
-+obj-$(CONFIG_IIO_P3T1755) += p3t1755_core.o
-+obj-$(CONFIG_IIO_P3T1755_I2C) += p3t1755_i2c.o
-+obj-$(CONFIG_IIO_P3T1755_I3C) += p3t1755_i3c.o
-diff --git a/drivers/iio/temperature/p3t/p3t1755.h b/drivers/iio/temperature/p3t/p3t1755.h
-new file mode 100644
-index 000000000000..29bf57e4ce89
---- /dev/null
-+++ b/drivers/iio/temperature/p3t/p3t1755.h
-@@ -0,0 +1,45 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * NXP P3T175x Temperature Sensor Driver
-+ *
-+ * Copyright 2025 NXP
-+ */
-+#ifndef P3T1755_H
-+#define P3T1755_H
-+
-+#include <linux/bits.h>
-+#include <linux/iio/iio.h>
-+
-+#define P3T1755_REG_TEMP	0x0
-+#define P3T1755_REG_CFGR	0x1
-+#define P3T1755_REG_LOW_LIM	0x2
-+#define P3T1755_REG_HIGH_LIM	0x3
-+
-+#define P3T1755_SHUTDOWN_BIT	BIT(0)
-+#define P3T1755_TM_BIT	BIT(1)
-+
-+#define P3T1755_CONVERSION_TIME_BITS	GENMASK(6, 5)
-+
-+#define MICRO 1000000
-+
-+struct p3t1755_info {
-+	const char *name;
-+	const struct iio_chan_spec *channels;
-+	int num_channels;
-+};
-+
-+struct p3t1755_data {
-+	struct device *dev;
-+	struct regmap *regmap;
-+};
-+
-+extern const struct p3t1755_info p3t1750_channels_info;
-+extern const struct p3t1755_info p3t1755_channels_info;
-+
-+int p3t1755_probe(struct device *dev, const struct p3t1755_info *chip,
-+		  struct regmap *regmap, int irq);
-+int p3t1755_get_temp_and_limits(struct p3t1755_data *data,
-+				int *temp_raw, int *thigh_raw, int *tlow_raw);
-+void p3t1755_push_thresh_event(struct iio_dev *indio_dev);
-+
-+#endif /* P3T1755_H */
-diff --git a/drivers/iio/temperature/p3t/p3t1755_core.c b/drivers/iio/temperature/p3t/p3t1755_core.c
-new file mode 100644
-index 000000000000..c7216e3fab06
---- /dev/null
-+++ b/drivers/iio/temperature/p3t/p3t1755_core.c
-@@ -0,0 +1,363 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * NXP P3T175x Temperature Sensor Driver
-+ *
-+ * Copyright 2025 NXP
-+ */
-+#include <linux/bitops.h>
-+#include <linux/bitfield.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/interrupt.h>
-+#include <linux/module.h>
-+#include <linux/regmap.h>
-+#include <linux/types.h>
-+
-+#include <linux/iio/iio.h>
-+#include <linux/iio/sysfs.h>
-+#include <linux/iio/events.h>
-+
-+#include "p3t1755.h"
-+
-+static const u32 p3t1755_samp_freqs_uhz[] = {
-+	36363636,
-+	18181818,
-+	9090909,
-+	4545454
-+};
-+
-+int p3t1755_get_temp_and_limits(struct p3t1755_data *data,
-+				int *temp_raw, int *thigh_raw, int *tlow_raw)
-+{
-+	__be16 be;
-+	int ret;
-+	int raw12;
-+
-+	ret = regmap_bulk_read(data->regmap, P3T1755_REG_TEMP, &be, sizeof(be));
-+	if (ret)
-+		return ret;
-+
-+	raw12 = sign_extend32(be16_to_cpu(be) >> 4, 11);
-+	*temp_raw = raw12;
-+
-+	ret = regmap_bulk_read(data->regmap, P3T1755_REG_HIGH_LIM, &be, sizeof(be));
-+	if (ret)
-+		return ret;
-+
-+	raw12 = sign_extend32(be16_to_cpu(be) >> 4, 11);
-+	*thigh_raw = raw12;
-+
-+	ret = regmap_bulk_read(data->regmap, P3T1755_REG_LOW_LIM, &be, sizeof(be));
-+	if (ret)
-+		return ret;
-+
-+	raw12 = sign_extend32(be16_to_cpu(be) >> 4, 11);
-+	*tlow_raw = raw12;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_NS_GPL(p3t1755_get_temp_and_limits, IIO_P3T1755);
-+
-+void p3t1755_push_thresh_event(struct iio_dev *indio_dev)
-+{
-+	struct p3t1755_data *data = iio_priv(indio_dev);
-+	int ret, temp, thigh, tlow;
-+	unsigned int cfgr;
-+
-+	/*
-+	 * Read CFGR register to check device mode and implicitly clear the ALERT latch.
-+	 * As per Datasheet: "Any register read will clear the interrupt"
-+	 */
-+	ret = regmap_read(data->regmap, P3T1755_REG_CFGR, &cfgr);
-+	if (ret) {
-+		dev_err(data->dev, "Failed to read CFGR register: %d\n", ret);
-+		return;
-+	}
-+
-+	if (FIELD_GET(P3T1755_SHUTDOWN_BIT, cfgr)) {
-+		dev_dbg(data->dev, "Device is in shutdown mode, skipping event push\n");
-+		return;
-+	}
-+
-+	ret = p3t1755_get_temp_and_limits(data, &temp, &thigh, &tlow);
-+	if (ret) {
-+		dev_err(data->dev, "Failed to get temperature and limits: %d\n", ret);
-+		return;
-+	}
-+
-+	if (temp >= thigh || temp <= tlow) {
-+		dev_dbg(data->dev, "Threshold event: DIR_EITHER (T=%d, TH=%d, TL=%d)\n",
-+			temp, thigh, tlow);
-+
-+		iio_push_event(indio_dev, IIO_MOD_EVENT_CODE(IIO_TEMP, 0, IIO_NO_MOD,
-+							     IIO_EV_TYPE_THRESH, IIO_EV_DIR_EITHER),
-+			       iio_get_time_ns(indio_dev));
-+	} else {
-+		dev_dbg(data->dev, "Temperature within limits: no event triggered (T=%d, TH=%d, TL=%d)\n",
-+			temp, thigh, tlow);
-+	}
-+}
-+EXPORT_SYMBOL_NS_GPL(p3t1755_push_thresh_event, IIO_P3T1755);
-+
-+static int p3t1755_read_raw(struct iio_dev *indio_dev,
-+			    struct iio_chan_spec const *channel, int *val,
-+			    int *val2, long mask)
-+{
-+	struct p3t1755_data *data = iio_priv(indio_dev);
-+	unsigned int cfgr;
-+	__be16 be;
-+	int ret;
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_RAW:
-+		ret = regmap_bulk_read(data->regmap, P3T1755_REG_TEMP, &be, sizeof(be));
-+		if (ret)
-+			return ret;
-+
-+		*val = sign_extend32(be16_to_cpu(be) >> 4, 11);
-+
-+		return IIO_VAL_INT;
-+
-+	case IIO_CHAN_INFO_SCALE:
-+		*val = 625;
-+		*val2 = 10000;
-+
-+		return IIO_VAL_FRACTIONAL;
-+
-+	case IIO_CHAN_INFO_ENABLE:
-+		ret = regmap_read(data->regmap, P3T1755_REG_CFGR, &cfgr);
-+		if (ret)
-+			return ret;
-+
-+		*val = !FIELD_GET(P3T1755_SHUTDOWN_BIT, cfgr);
-+
-+		return IIO_VAL_INT;
-+
-+	case IIO_CHAN_INFO_SAMP_FREQ: {
-+		unsigned int freq_uhz;
-+		u8 sel;
-+
-+		ret = regmap_read(data->regmap, P3T1755_REG_CFGR, &cfgr);
-+		if (ret)
-+			return ret;
-+
-+		sel = FIELD_GET(P3T1755_CONVERSION_TIME_BITS, cfgr);
-+		if (sel >= ARRAY_SIZE(p3t1755_samp_freqs_uhz))
-+			return -EINVAL;
-+
-+		freq_uhz = p3t1755_samp_freqs_uhz[sel];
-+
-+		*val = freq_uhz / MICRO;
-+		*val2 = freq_uhz % MICRO;
-+
-+		return IIO_VAL_INT_PLUS_MICRO;
-+	}
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int p3t1755_write_raw(struct iio_dev *indio_dev,
-+			     struct iio_chan_spec const *chan, int val,
-+			     int val2, long mask)
-+{
-+	struct p3t1755_data *data = iio_priv(indio_dev);
-+	int ret;
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_ENABLE:
-+		ret = regmap_update_bits(data->regmap, P3T1755_REG_CFGR,
-+					 P3T1755_SHUTDOWN_BIT,
-+					 val == 0 ? P3T1755_SHUTDOWN_BIT : 0);
-+		if (ret)
-+			return ret;
-+
-+		return 0;
-+	case IIO_CHAN_INFO_SAMP_FREQ: {
-+		unsigned int i;
-+		u32 regbits;
-+		u64 input_uhz;
-+
-+		input_uhz = (u64)val * MICRO + val2;
-+
-+		for (i = 0; i < ARRAY_SIZE(p3t1755_samp_freqs_uhz); i++) {
-+			if (p3t1755_samp_freqs_uhz[i] == input_uhz)
-+				break;
-+		}
-+
-+		if (i == ARRAY_SIZE(p3t1755_samp_freqs_uhz))
-+			return -EINVAL;
-+
-+		regbits = FIELD_PREP(P3T1755_CONVERSION_TIME_BITS, i);
-+
-+		return regmap_update_bits(data->regmap, P3T1755_REG_CFGR,
-+					  P3T1755_CONVERSION_TIME_BITS,
-+					  regbits);
-+	}
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int p3t1755_read_event_value(struct iio_dev *indio_dev,
-+				    const struct iio_chan_spec *chan,
-+				    enum iio_event_type type,
-+				    enum iio_event_direction dir,
-+				    enum iio_event_info info, int *val,
-+				    int *val2)
-+{
-+	struct p3t1755_data *data = iio_priv(indio_dev);
-+	unsigned int reg;
-+	__be16 be;
-+	int ret, raw;
-+
-+	if (type != IIO_EV_TYPE_THRESH || info != IIO_EV_INFO_VALUE)
-+		return -EINVAL;
-+
-+	reg = (dir == IIO_EV_DIR_RISING) ? P3T1755_REG_HIGH_LIM :
-+	       P3T1755_REG_LOW_LIM;
-+
-+	ret = regmap_bulk_read(data->regmap, reg, &be, sizeof(be));
-+	if (ret)
-+		return ret;
-+
-+	raw = sign_extend32(be16_to_cpu(be) >> 4, 11);
-+	*val = DIV_ROUND_CLOSEST(raw * 125, 2);
-+
-+	return IIO_VAL_INT;
-+}
-+
-+static int p3t1755_write_event_value(struct iio_dev *indio_dev,
-+				     const struct iio_chan_spec *chan,
-+				     enum iio_event_type type,
-+				     enum iio_event_direction dir,
-+				     enum iio_event_info info,
-+				     int val, int val2)
-+{
-+	struct p3t1755_data *data = iio_priv(indio_dev);
-+	unsigned int reg;
-+	__be16 be;
-+	int raw;
-+
-+	if (type != IIO_EV_TYPE_THRESH || info != IIO_EV_INFO_VALUE)
-+		return -EINVAL;
-+
-+	if (val2)
-+		return -EINVAL;
-+
-+	reg = (dir == IIO_EV_DIR_RISING) ? P3T1755_REG_HIGH_LIM :
-+	       P3T1755_REG_LOW_LIM;
-+
-+	raw = DIV_ROUND_CLOSEST(val * 2, 125);
-+
-+	if (raw < -2048 || raw > 2047)
-+		return -ERANGE;
-+
-+	be = cpu_to_be16((u16)(raw << 4));
-+
-+	/* Use raw_write to ensure 16-bit value is written exactly as formatted */
-+	return regmap_raw_write(data->regmap, reg, &be, sizeof(be));
-+}
-+
-+static const struct iio_event_spec p3t1755_events[] = {
-+	{
-+		.type = IIO_EV_TYPE_THRESH,
-+		.dir = IIO_EV_DIR_RISING,
-+		.mask_separate = BIT(IIO_EV_INFO_VALUE),
-+	},
-+	{
-+		.type = IIO_EV_TYPE_THRESH,
-+		.dir = IIO_EV_DIR_FALLING,
-+		.mask_separate = BIT(IIO_EV_INFO_VALUE),
-+	},
-+};
-+
-+static const struct iio_chan_spec p3t1755_channels[] = {
-+	{
-+		.type = IIO_TEMP,
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-+				      BIT(IIO_CHAN_INFO_ENABLE) |
-+				      BIT(IIO_CHAN_INFO_SAMP_FREQ),
-+		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),
-+		.event_spec = p3t1755_events,
-+		.num_event_specs = ARRAY_SIZE(p3t1755_events),
-+	},
-+};
-+
-+const struct p3t1755_info p3t1755_channels_info = {
-+	.name = "p3t1755",
-+	.channels = p3t1755_channels,
-+	.num_channels = ARRAY_SIZE(p3t1755_channels),
-+};
-+EXPORT_SYMBOL_NS(p3t1755_channels_info, IIO_P3T1755);
-+
-+const struct p3t1755_info p3t1750_channels_info = {
-+	.name = "p3t1750",
-+	.channels = p3t1755_channels,
-+	.num_channels = ARRAY_SIZE(p3t1755_channels),
-+};
-+EXPORT_SYMBOL_NS(p3t1750_channels_info, IIO_P3T1755);
-+
-+static const struct iio_info p3t1755_info = {
-+	.read_raw = p3t1755_read_raw,
-+	.write_raw = p3t1755_write_raw,
-+	.read_event_value = p3t1755_read_event_value,
-+	.write_event_value = p3t1755_write_event_value,
-+};
-+
-+static irqreturn_t p3t1755_irq_handler(int irq, void *dev_id)
-+{
-+	struct iio_dev *indio_dev = dev_id;
-+
-+	dev_dbg(&indio_dev->dev, "IRQ triggered, processing threshold event\n");
-+
-+	p3t1755_push_thresh_event(indio_dev);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+int p3t1755_probe(struct device *dev, const struct p3t1755_info *chip,
-+		  struct regmap *regmap, int irq)
-+{
-+	struct p3t1755_data *data;
-+	struct iio_dev *iio_dev;
-+	int ret;
-+
-+	iio_dev = devm_iio_device_alloc(dev, sizeof(*data));
-+	if (!iio_dev)
-+		return -ENOMEM;
-+
-+	data = iio_priv(iio_dev);
-+	data->dev = dev;
-+	data->regmap = regmap;
-+
-+	iio_dev->name = chip->name;
-+	iio_dev->modes = INDIO_DIRECT_MODE;
-+	iio_dev->info = &p3t1755_info;
-+	iio_dev->channels = chip->channels;
-+	iio_dev->num_channels = chip->num_channels;
-+
-+	ret = regmap_update_bits(data->regmap, P3T1755_REG_CFGR,
-+				 P3T1755_TM_BIT, P3T1755_TM_BIT);
-+	if (ret)
-+		return dev_err_probe(data->dev, ret, "Failed to update TM bit\n");
-+
-+	ret = devm_iio_device_register(dev, iio_dev);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Temperature sensor failed to register\n");
-+
-+	if (irq > 0) {
-+		ret = devm_request_threaded_irq(dev, irq, NULL,
-+						p3t1755_irq_handler, IRQF_ONESHOT,
-+						"p3t1755dp", iio_dev);
-+		if (ret)
-+			dev_err_probe(dev, ret, "Failed to request IRQ: %d\n", ret);
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_NS(p3t1755_probe, IIO_P3T1755);
-+
-+MODULE_AUTHOR("Lakshay Piplani <lakshay.piplani@nxp.com>");
-+MODULE_DESCRIPTION("NXP P3T1750/P3T1755 Driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/iio/temperature/p3t/p3t1755_i2c.c b/drivers/iio/temperature/p3t/p3t1755_i2c.c
-new file mode 100644
-index 000000000000..8d45fd7125dd
---- /dev/null
-+++ b/drivers/iio/temperature/p3t/p3t1755_i2c.c
-@@ -0,0 +1,67 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * NXP P3T175x Temperature Sensor Driver
-+ *
-+ * Copyright 2025 NXP
-+ */
-+#include <linux/i2c.h>
-+#include <linux/module.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+
-+#include "p3t1755.h"
-+
-+static const struct regmap_config p3t1755_i2c_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+};
-+
-+static const struct of_device_id p3t1755_i2c_of_match[] = {
-+	{ .compatible = "nxp,p3t1750dp", .data = &p3t1750_channels_info },
-+	{ .compatible = "nxp,p3t1755dp", .data = &p3t1755_channels_info },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, p3t1755_i2c_of_match);
-+
-+static const struct i2c_device_id p3t1755_i2c_id_table[] = {
-+	{ "p3t1750", (kernel_ulong_t)&p3t1750_channels_info },
-+	{ "p3t1755", (kernel_ulong_t)&p3t1755_channels_info },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, p3t1755_i2c_id_table);
-+
-+static int p3t1755_i2c_probe(struct i2c_client *client)
-+{
-+	struct device *dev = &client->dev;
-+	const struct p3t1755_info *chip;
-+	struct regmap *regmap;
-+	int ret;
-+
-+	regmap = devm_regmap_init_i2c(client, &p3t1755_i2c_regmap_config);
-+	if (IS_ERR(regmap))
-+		return dev_err_probe(dev, PTR_ERR(regmap),
-+				     "regmap init failed\n");
-+
-+	chip = i2c_get_match_data(client);
-+
-+	ret = p3t1755_probe(dev, chip, regmap, client->irq);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "p3t175x probe failed: %d\n", ret);
-+
-+	return 0;
-+}
-+
-+static struct i2c_driver p3t1755_driver = {
-+	.driver = {
-+		.name = "p3t1755_i2c",
-+		.of_match_table = p3t1755_i2c_of_match,
-+	},
-+	.probe = p3t1755_i2c_probe,
-+	.id_table = p3t1755_i2c_id_table,
-+};
-+module_i2c_driver(p3t1755_driver);
-+
-+MODULE_AUTHOR("Lakshay Piplani <lakshay.piplani@nxp.com>");
-+MODULE_DESCRIPTION("NXP P3T1750/P3T1755 I2C Driver");
-+MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(IIO_P3T1755);
-diff --git a/drivers/iio/temperature/p3t/p3t1755_i3c.c b/drivers/iio/temperature/p3t/p3t1755_i3c.c
-new file mode 100644
-index 000000000000..09810557391e
---- /dev/null
-+++ b/drivers/iio/temperature/p3t/p3t1755_i3c.c
-@@ -0,0 +1,108 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * NXP P3T175x Temperature Sensor Driver
-+ *
-+ * Copyright 2025 NXP
-+ */
-+#include <linux/i3c/device.h>
-+#include <linux/module.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/regmap.h>
-+
-+#include <linux/iio/iio.h>
-+#include <linux/iio/events.h>
-+
-+#include "p3t1755.h"
-+
-+static const struct regmap_config p3t1755_i3c_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+};
-+
-+static void p3t1755_ibi_handler(struct i3c_device *dev,
-+				const struct i3c_ibi_payload *payload)
-+{
-+	struct iio_dev *indio_dev = dev_get_drvdata(&dev->dev);
-+
-+	p3t1755_push_thresh_event(indio_dev);
-+}
-+
-+/*
-+ * Both P3T1755 and P3T1750 share the same I3C PID (0x011B:0x152A),
-+ * making runtime differentiation impossible, so using "p3t1755" as
-+ * name in sysfs and IIO for I3C based instances.
-+ */
-+static const struct i3c_device_id p3t1755_i3c_ids[] = {
-+	I3C_DEVICE(0x011B, 0x152A, &p3t1755_channels_info),
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i3c, p3t1755_i3c_ids);
-+
-+static void p3t1755_disable_ibi(void *data)
-+{
-+	i3c_device_disable_ibi(data);
-+}
-+
-+static void p3t1755_free_ibi(void *data)
-+{
-+	i3c_device_free_ibi(data);
-+}
-+
-+static int p3t1755_i3c_probe(struct i3c_device *i3cdev)
-+{
-+	const struct i3c_device_id *id = i3c_device_match_id(i3cdev, p3t1755_i3c_ids);
-+	const struct p3t1755_info *chip;
-+	struct device *dev = &i3cdev->dev;
-+	struct i3c_ibi_setup ibi_setup;
-+	struct regmap *regmap;
-+	int ret;
-+
-+	chip = id ? id->data : NULL;
-+
-+	regmap = devm_regmap_init_i3c(i3cdev, &p3t1755_i3c_regmap_config);
-+	if (IS_ERR(regmap))
-+		return dev_err_probe(&i3cdev->dev, PTR_ERR(regmap),
-+				     "Failed to register I3C regmap %ld\n", PTR_ERR(regmap));
-+
-+	ret = p3t1755_probe(dev, chip, regmap, 0);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "p3t175x probe failed: %d\n", ret);
-+
-+	ibi_setup = (struct i3c_ibi_setup) {
-+		.handler = p3t1755_ibi_handler,
-+		.num_slots = 4,
-+		.max_payload_len = 0,
-+	};
-+
-+	ret = i3c_device_request_ibi(i3cdev, &ibi_setup);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to request IBI\n");
-+
-+	ret = devm_add_action_or_reset(dev, p3t1755_free_ibi, i3cdev);
-+	if (ret)
-+		return ret;
-+
-+	ret = i3c_device_enable_ibi(i3cdev);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to enable IBI\n");
-+
-+	ret = devm_add_action_or_reset(dev, p3t1755_disable_ibi, i3cdev);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static struct i3c_driver p3t1755_driver = {
-+	.driver = {
-+		.name = "p3t1755_i3c",
-+	},
-+	.probe = p3t1755_i3c_probe,
-+	.id_table = p3t1755_i3c_ids,
-+};
-+module_i3c_driver(p3t1755_driver);
-+
-+MODULE_AUTHOR("Lakshay Piplani <lakshay.piplani@nxp.com>");
-+MODULE_DESCRIPTION("NXP P3T1750/P3T1755 I3C Driver");
-+MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(IIO_P3T1755);
+Why remove this? This is for finding all fprobes.
+
+> +static struct trace_fprobe *trace_fprobe_from_dyn(struct dyn_event *ev)
+> +{
+> +	return is_trace_fprobe(ev) ? to_trace_fprobe(ev) : NULL;
+> +}
+>  
+>  static bool trace_fprobe_is_return(struct trace_fprobe *tf)
+>  {
+> @@ -227,6 +226,109 @@ static const char *trace_fprobe_symbol(struct trace_fprobe *tf)
+>  	return tf->symbol ? tf->symbol : "unknown";
+>  }
+>  
+> +static bool has_wildcard(const char *s)
+> +{
+> +	return s && (strchr(s, '*') || strchr(s, '?'));
+> +}
+> +
+> +static int parse_fprobe_spec(const char *in, bool is_tracepoint,
+> +		char **base, bool *is_return, bool *list_mode,
+> +		char **filter, char **nofilter)
+> +{
+> +	const char *p;
+> +	char *work = NULL;
+> +	char *b = NULL, *f = NULL, *nf = NULL;
+
+See below (out: label)
+
+> +	bool legacy_ret = false;
+> +	bool list = false;
+> +	int ret = 0;
+
+nit: sort local variable by line length. (longer to shorter)
+
+> +
+> +	if (!in || !base || !is_return || !list_mode || !filter || !nofilter)
+> +		return -EINVAL;
+> +
+> +	*base = NULL; *filter = NULL; *nofilter = NULL;
+> +	*is_return = false; *list_mode = false;
+> +
+> +	if (is_tracepoint) {
+> +		if (strchr(in, ',') || strchr(in, ':'))
+> +			return -EINVAL;
+> +		if (strstr(in, "%return"))
+> +			return -EINVAL;
+
+It seems below loop checks all above cases.
+
+> +		for (p = in; *p; p++)
+> +			if (!isalnum(*p) && *p != '_')
+> +				return -EINVAL;
+
+This only allows that the @in must be a symbol name.
+
+> +		b = kstrdup(in, GFP_KERNEL);
+> +		if (!b)
+> +			return -ENOMEM;
+> +		*base = b;
+> +		return 0;
+> +	}
+> +
+> +	work = kstrdup(in, GFP_KERNEL);
+> +	if (!work)
+> +		return -ENOMEM;
+> +
+> +	p = strstr(work, "%return");
+
+Note that strstr does not care it ends with given string.
+
+> +	if (p) {
+> +		if (!strcmp(p, ":exit")) {
+> +			*is_return = true;
+> +			*p = '\0';
+> +		} else if (!strcmp(p, ":entry")) {
+> +			*p = '\0';
+> +		} else {
+> +			ret = -EINVAL;
+> +			goto out;
+> +		}
+> +	}
+> +
+> +	list = !!strchr(work, ',') || has_wildcard(work);
+
+Wildcard is OK for legacy.
+
+> +	if (legacy_ret)
+> +		*is_return = true;
+> +
+> +	b = kstrdup(work, GFP_KERNEL);
+> +	if (!b) {
+> +		ret = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	if (list) {
+> +		char *tmp = b, *tok;
+> +		size_t fsz = strlen(b) + 1, nfsz = strlen(b) + 1;
+
+size_t fsz, nfsz;
+
+fsz = nfsz = strlen(b) + 1;
+
+> +
+> +		f = kzalloc(fsz, GFP_KERNEL);
+> +		nf = kzalloc(nfsz, GFP_KERNEL);
+> +		if (!f || !nf) {
+> +			ret = -ENOMEM;
+> +			goto out;
+> +		}
+> +
+> +		while ((tok = strsep(&tmp, ",")) != NULL) {
+> +			char *dst;
+> +			bool neg = (*tok == '!');
+> +
+> +			if (*tok == '\0')
+> +				continue;
+> +			if (neg)
+> +				tok++;
+> +			dst = neg ? nf : f;
+> +			if (dst[0] != '\0')
+> +				strcat(dst, ",");
+> +			strcat(dst, tok);
+> +		}
+> +		*list_mode = true;
+> +	}
+> +
+> +	*base = b; b = NULL;
+> +	*filter = f; f = NULL;
+> +	*nofilter = nf; nf = NULL;
+> +
+> +out:
+> +	kfree(work);
+> +	kfree(b);
+> +	kfree(f);
+> +	kfree(nf);
+
+Instead of using goto only for kfree(), use __free(kfree)
+to clean those up automatically.
+
+> +	return ret;
+> +}
+> +
+>  static bool trace_fprobe_is_busy(struct dyn_event *ev)
+>  {
+>  	struct trace_fprobe *tf = to_trace_fprobe(ev);
+> @@ -556,13 +658,17 @@ static void free_trace_fprobe(struct trace_fprobe *tf)
+>  		trace_probe_cleanup(&tf->tp);
+>  		if (tf->tuser)
+>  			tracepoint_user_put(tf->tuser);
+> +		kfree(tf->filter);
+> +		kfree(tf->nofilter);
+>  		kfree(tf->symbol);
+>  		kfree(tf);
+>  	}
+>  }
+>  
+>  /* Since alloc_trace_fprobe() can return error, check the pointer is ERR too. */
+> -DEFINE_FREE(free_trace_fprobe, struct trace_fprobe *, if (!IS_ERR_OR_NULL(_T)) free_trace_fprobe(_T))
+> +DEFINE_FREE(free_trace_fprobe, struct trace_fprobe *,
+> +	if (!IS_ERR_OR_NULL(_T))
+> +		free_trace_fprobe(_T))
+
+OK, it looks good to clean up. But please do it separated patch.
+Do not touch if it is not related to your change.
+
+>  
+>  /*
+>   * Allocate new trace_probe and initialize it (including fprobe).
+> @@ -605,10 +711,16 @@ static struct trace_fprobe *find_trace_fprobe(const char *event,
+>  	struct dyn_event *pos;
+>  	struct trace_fprobe *tf;
+>  
+> -	for_each_trace_fprobe(tf, pos)
+> +	list_for_each_entry(pos, &dyn_event_list, list) {
+> +		tf = trace_fprobe_from_dyn(pos);
+> +		if (!tf)
+> +			continue;
+> +
+>  		if (strcmp(trace_probe_name(&tf->tp), event) == 0 &&
+>  		    strcmp(trace_probe_group_name(&tf->tp), group) == 0)
+>  			return tf;
+> +	}
+> +
+
+Ditto and there is no need to change.
+
+>  	return NULL;
+>  }
+>  
+> @@ -835,7 +947,12 @@ static int __register_trace_fprobe(struct trace_fprobe *tf)
+>  	if (trace_fprobe_is_tracepoint(tf))
+>  		return __regsiter_tracepoint_fprobe(tf);
+>  
+> -	/* TODO: handle filter, nofilter or symbol list */
+> +	/* Registration path:
+> +	 *  - list_mode: pass filter/nofilter
+> +	 *  - single: pass symbol only (legacy)
+> +	 */
+> +	if (tf->list_mode)
+> +		return register_fprobe(&tf->fp, tf->filter, tf->nofilter);
+>  	return register_fprobe(&tf->fp, tf->symbol, NULL);
+>  }
+>  
+> @@ -1114,7 +1231,11 @@ static int __tprobe_event_module_cb(struct notifier_block *self,
+>  		return NOTIFY_DONE;
+>  
+>  	mutex_lock(&event_mutex);
+> -	for_each_trace_fprobe(tf, pos) {
+> +	list_for_each_entry(pos, &dyn_event_list, list) {
+> +		tf = trace_fprobe_from_dyn(pos);
+> +		if (!tf)
+> +			continue;
+> +
+>  		/* Skip fprobe and disabled tprobe events. */
+>  		if (!trace_fprobe_is_tracepoint(tf) || !tf->tuser)
+>  			continue;
+> @@ -1155,55 +1276,35 @@ static int parse_symbol_and_return(int argc, const char *argv[],
+>  				   char **symbol, bool *is_return,
+>  				   bool is_tracepoint)
+>  {
+> -	char *tmp = strchr(argv[1], '%');
+> -	int i;
+> -
+> -	if (tmp) {
+> -		int len = tmp - argv[1];
+> -
+> -		if (!is_tracepoint && !strcmp(tmp, "%return")) {
+> -			*is_return = true;
+> -		} else {
+> -			trace_probe_log_err(len, BAD_ADDR_SUFFIX);
+> -			return -EINVAL;
+> -		}
+> -		*symbol = kmemdup_nul(argv[1], len, GFP_KERNEL);
+> -	} else
+> -		*symbol = kstrdup(argv[1], GFP_KERNEL);
+> -	if (!*symbol)
+> -		return -ENOMEM;
+> -
+> -	if (*is_return)
+> -		return 0;
+> +	int i, ret;
+> +	bool list_mode = false;
+> +	char *filter = NULL; *nofilter = NULL;
+
+Sort it as other functions. longer line to shorter.
+
+>  
+> -	if (is_tracepoint) {
+> -		tmp = *symbol;
+> -		while (*tmp && (isalnum(*tmp) || *tmp == '_'))
+> -			tmp++;
+> -		if (*tmp) {
+> -			/* find a wrong character. */
+> -			trace_probe_log_err(tmp - *symbol, BAD_TP_NAME);
+> -			kfree(*symbol);
+> -			*symbol = NULL;
+> -			return -EINVAL;
+> -		}
+> -	}
+> +	ret = parse_fprobe_spec(argv[1], is_tracepoint, symbol, is_return,
+> +			&list_mode, &filter, &nofilter);
+> +	if (ret)
+> +		return ret;
+>  
+> -	/* If there is $retval, this should be a return fprobe. */
+>  	for (i = 2; i < argc; i++) {
+> -		tmp = strstr(argv[i], "$retval");
+> +		char *tmp = strstr(argv[i], "$retval");
+> +
+>  		if (tmp && !isalnum(tmp[7]) && tmp[7] != '_') {
+>  			if (is_tracepoint) {
+>  				trace_probe_log_set_index(i);
+>  				trace_probe_log_err(tmp - argv[i], RETVAL_ON_PROBE);
+>  				kfree(*symbol);
+>  				*symbol = NULL;
+> +				kfree(filter);
+> +				kfree(nofilter);
+>  				return -EINVAL;
+>  			}
+>  			*is_return = true;
+>  			break;
+>  		}
+>  	}
+> +
+> +	kfree(filter);
+> +	kfree(nofilter);
+>  	return 0;
+>  }
+>  
+> @@ -1247,6 +1348,11 @@ static int trace_fprobe_create_internal(int argc, const char *argv[],
+>  	int i, new_argc = 0, ret = 0;
+>  	bool is_tracepoint = false;
+>  	bool is_return = false;
+> +	bool list_mode = false;
+> +
+
+Do not split local variable definitions with empty lines.
+
+> +	char *parsed_filter __free(kfree) = NULL;
+> +	char *parsed_nofilter __free(kfree) = NULL;
+> +	bool has_wild = false;
+
+Please sort.
+
+>  
+>  	if ((argv[0][0] != 'f' && argv[0][0] != 't') || argc < 2)
+>  		return -ECANCELED;
+> @@ -1267,8 +1373,9 @@ static int trace_fprobe_create_internal(int argc, const char *argv[],
+>  
+>  	trace_probe_log_set_index(1);
+>  
+> -	/* a symbol(or tracepoint) must be specified */
+> -	ret = parse_symbol_and_return(argc, argv, &symbol, &is_return, is_tracepoint);
+> +	/* Parse spec early (single vs list, suffix, base symbol) */
+> +	ret = parse_fprobe_spec(argv[1], is_tracepoint, &symbol, &is_return,
+> +			&list_mode, &parsed_filter, &parsed_nofilter);
+
+Hmm, if so, where is the parse_symbol_and_return() called?
+I think you can pick the $retval search loop from the 
+parse_symbol_and_return() for updating is_return (or make
+it failure if is_tracepoint == true).
+
+>  	if (ret < 0)
+>  		return -EINVAL;
+>  
+> @@ -1283,10 +1390,16 @@ static int trace_fprobe_create_internal(int argc, const char *argv[],
+>  			return -EINVAL;
+>  	}
+>  
+> -	if (!event) {
+> -		ebuf = kmalloc(MAX_EVENT_NAME_LEN, GFP_KERNEL);
+> -		if (!ebuf)
+> -			return -ENOMEM;
+> +		if (!event) {
+> +		/*
+> +		 * Event name rules:
+> +		 * - For list/wildcard: require explicit [GROUP/]EVENT
+> +		 * - For single literal: autogenerate symbol__entry/symbol__exit
+> +		 */
+
+nit: to avoid confusing, comment should be indented as same as the
+code. Or, put the comment right before the `if`.
+
+> +			if (list_mode || has_wildcard(symbol)) {
+> +				trace_probe_log_err(0, NO_GROUP_NAME);
+> +			return -EINVAL;
+> +		}
+>  		/* Make a new event name */
+>  		if (is_tracepoint)
+>  			snprintf(ebuf, MAX_EVENT_NAME_LEN, "%s%s",
+> @@ -1319,7 +1432,8 @@ static int trace_fprobe_create_internal(int argc, const char *argv[],
+>  							NULL, NULL, NULL, sbuf);
+>  		}
+>  	}
+> -	if (!ctx->funcname)
+> +
+> +	if (!list_mode && !has_wildcard(symbol) && !is_tracepoint)
+>  		ctx->funcname = symbol;
+>  
+>  	abuf = kmalloc(MAX_BTF_ARGS_LEN, GFP_KERNEL);
+> @@ -1353,6 +1467,21 @@ static int trace_fprobe_create_internal(int argc, const char *argv[],
+>  		return ret;
+>  	}
+>  
+> +	/* carry list parsing result into tf */
+> +	if (!is_tracepoint) {
+> +		tf->list_mode = list_mode;
+> +			if (parsed_filter) {
+> +				tf->filter = kstrdup(parsed_filter, GFP_KERNEL);
+> +				if (!tf->filter)
+> +					return -ENOMEM;
+> +			}
+> +			if (parsed_nofilter) {
+> +				tf->nofilter = kstrdup(parsed_nofilter, GFP_KERNEL);
+> +				if (!tf->nofilter)
+> +					return -ENOMEM;
+> +			}
+> +		}
+
+Odd indentation. Please fix.
+
+> +
+>  	/* parse arguments */
+>  	for (i = 0; i < argc; i++) {
+>  		trace_probe_log_set_index(i + 2);
+> @@ -1439,8 +1568,16 @@ static int trace_fprobe_show(struct seq_file *m, struct dyn_event *ev)
+>  	seq_printf(m, ":%s/%s", trace_probe_group_name(&tf->tp),
+>  				trace_probe_name(&tf->tp));
+>  
+> -	seq_printf(m, " %s%s", trace_fprobe_symbol(tf),
+> -			       trace_fprobe_is_return(tf) ? "%return" : "");
+> +	seq_printf(m, "%s", trace_fprobe_symbol(tf));
+> +	if (!trace_fprobe_is_tracepoint(tf)) {
+> +		if (tf->list_mode) {
+> +			if (trace_fprobe_is_return(tf))
+> +				seq_puts(m, ":exit");
+
+In both cases, we can use ":exit" suffix. This means we will
+accept legacy "%return" for backward compatibility, but
+shows ":exit" always.
+
+> +		} else {
+> +			if (trace_fprobe_is_return(tf))
+> +				seq_puts(m, "%return");
+> +		}
+> +	}
+>  
+>  	for (i = 0; i < tf->tp.nr_args; i++)
+>  		seq_printf(m, " %s=%s", tf->tp.args[i].name, tf->tp.args[i].comm);
+> -- 
+> 2.43.0
+> 
+
+Thank you,
+
+
 -- 
-2.25.1
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
