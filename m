@@ -1,146 +1,147 @@
-Return-Path: <linux-kernel+bounces-845277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00AAFBC43FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 12:06:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C240EBC4405
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 12:07:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DBDC3B5257
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 10:06:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8F1F04E94D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 10:07:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24052F49E9;
-	Wed,  8 Oct 2025 10:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D8AB2F532E;
+	Wed,  8 Oct 2025 10:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SUUYx/if"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2Z0AtejY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EBF425A642;
-	Wed,  8 Oct 2025 10:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2671253944;
+	Wed,  8 Oct 2025 10:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759917995; cv=none; b=KZ1JROKUVm8RmNpqiNHmuVjCmcP+FIg9n9Kl3hnYX0K5eON7HdRLBaoQcYW42cdUqP5KUC28bi0sPPMrajtTFUsQoDUilFisscm+uZRhfuToqp4GacpUQprGvm33NMdKT7twhWWN7sqV7qEA2Z1fSRlGYqGZvxG6NUR/e7a5oKs=
+	t=1759918021; cv=none; b=IepCfmv6HNFeziQWi39tHDdlX+FMnHws3y2A2A5xlKxIcRf+yslrg9pdawqqguCh6CIIfzXM6wHWGt08ikzo1jXtkgh6iRB+Nw5lb3aIClsiW7+j0pQNskLkKu5ek/wiVVLUK4CEPz08svWQvPjuZGev0Qov/xRzNdn0oXk0klA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759917995; c=relaxed/simple;
-	bh=IpTDSGi+U/6yVHzaqXgawVr4MhzhK/8BtNKXbNFOBhs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OpeTveXr9CdevKfY6zY3JAWKZVhowfRs++6Ga2ogP6WhKx7FxZAhCyJ8MqXsvIjpdqhLnHZmhexEYbDozRU7kySEszDsjXq8s1tZUXplLgncVZPFS5F1iMgqVB1+P17NC5jF9UeU8G8vj/J2wgVkATcVgUdW9kxGBKo1c09CjMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=SUUYx/if; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 598A6SR3275495;
-	Wed, 8 Oct 2025 05:06:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1759917988;
-	bh=/wsiKhWmVlt+wgkqRbRt+n5+sDIrvDvxgkpWZ7Y3ItA=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=SUUYx/ifSLvyXXJD8NCFTRu4gAsCQ2uizJFCNAJL2BQyRbO0w9NPUGBWz/7qRJZxw
-	 aoFiM6JaWbsxjh/wri738fEexvC9fS57YbgOJq2K4pWWqewP1GdcaD2YbNpYLKS8GV
-	 aX2kB/0vx+fY00xvq56dawusupXuPpOYKotIGfcU=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 598A6SZF1378273
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 8 Oct 2025 05:06:28 -0500
-Received: from DFLE201.ent.ti.com (10.64.6.59) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 8
- Oct 2025 05:06:27 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE201.ent.ti.com
- (10.64.6.59) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Wed, 8 Oct 2025 05:06:28 -0500
-Received: from [10.24.69.191] (pratham-workstation-pc.dhcp.ti.com [10.24.69.191])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 598A6OZi2606900;
-	Wed, 8 Oct 2025 05:06:25 -0500
-Message-ID: <ae7bafa8-600b-4d4d-9937-1084cbc7e0f4@ti.com>
-Date: Wed, 8 Oct 2025 15:36:24 +0530
+	s=arc-20240116; t=1759918021; c=relaxed/simple;
+	bh=KQXZN/ofW0OKkLGaG3YnpairLb8pItAMJg4NG+XRaQI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aWFDa3WUaTw4NHfYOVMbkTrV1OJdYecT05OrSuBt+QlaKYDd6bMPGUUWroPgzNDocCvQw3Vhjm4GOiXxMgRWSzbs/Colu0XaBTnaEhRAkSYHVsf3/X69nPbPE30PGgNz5Ytl6GOmJXZeoXMInM7RZ7QeBjCfXqJMu8nSULTEI5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2Z0AtejY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2106C4CEF4;
+	Wed,  8 Oct 2025 10:06:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1759918019;
+	bh=KQXZN/ofW0OKkLGaG3YnpairLb8pItAMJg4NG+XRaQI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=2Z0AtejYv/gO11P+YePtAAXSpl9OfNpwjNrkG/8IlcEcWlOVaSfWRtQXkgVp+a6pV
+	 Ycb0mON+I88I1GC5puf1wIFNQTT3OgHYhKXkqQuR17xcv+/1zfAy9x2pYDAx588ba8
+	 wYHwYyFDF+a9sT//mCTG9qHd9pfQn6o9zzCOlmi4=
+Date: Wed, 8 Oct 2025 12:06:56 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, tj@kernel.org,
+	linux-kernel@vger.kernel.org, mingo@kernel.org,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
+	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
+	changwoo@igalia.com, cgroups@vger.kernel.org,
+	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de
+Subject: Re: [PATCH 10/12] sched: Add locking comments to sched_class methods
+Message-ID: <2025100838-undermine-zit-83b6@gregkh>
+References: <20251006104402.946760805@infradead.org>
+ <20251006104527.694841522@infradead.org>
+ <aOTjSla1Yr3kz7op@jlelli-thinkpadt14gen4.remote.csb>
+ <20251008070419.GR4067720@noisy.programming.kicks-ass.net>
+ <2025100822-drained-foe-2426@gregkh>
+ <aOYyOYrzoKDLCl7F@jlelli-thinkpadt14gen4.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] crypto: api - fix reqsize handling for skciphers and
- aeads
-To: Herbert Xu <herbert@gondor.apana.org.au>
-CC: "David S. Miller" <davem@davemloft.net>,
-        Manorit Chawdhry
-	<m-chawdhry@ti.com>,
-        Kamlesh Gurudasani <kamlesh@ti.com>,
-        Shiva Tripathi
-	<s-tripathi1@ti.com>,
-        Kavitha Malarvizhi <k-malarvizhi@ti.com>,
-        Vishal
- Mahaveer <vishalm@ti.com>, Praneeth Bajjuri <praneeth@ti.com>,
-        <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20251007141852.726540-1-t-pratham@ti.com>
- <aOYdodeILYU2_Pjq@gondor.apana.org.au>
-Content-Language: en-US
-From: T Pratham <t-pratham@ti.com>
-In-Reply-To: <aOYdodeILYU2_Pjq@gondor.apana.org.au>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aOYyOYrzoKDLCl7F@jlelli-thinkpadt14gen4.remote.csb>
 
-On 08/10/25 13:45, Herbert Xu wrote:
-> On Tue, Oct 07, 2025 at 07:27:51PM +0530, T Pratham wrote:
->> Commit afddce13ce81d ("crypto: api - Add reqsize to crypto_alg")
->> introduced cra_reqsize field in crypto_alg struct to replace type
->> specific reqsize fields. It looks like this was introduced specifically
->> for ahash and acomp from the commit description as subsequent commits
->> add necessary changes in these alg frameworks.
->>
->> However, this is being recommended for use in all crypto algs [1]
->> instead of setting reqsize using crypto_*_set_reqsize(). Using
->> cra_reqsize in skcipher and aead algorithms, hence, causes memory
->> corruptions and crashes as the underlying functions in the algorithm
->> framework have not been updated to set the reqsize properly from
->> cra_reqsize. [2]
->>
->> Add proper set_reqsize calls in the skcipher and aead init functions to
->> properly initialize reqsize for these algorithms in the framework.
->>
->> [1]: https://lore.kernel.org/linux-crypto/aCL8BxpHr5OpT04k@gondor.apana.org.au/
->> [2]: https://gist.github.com/Pratham-T/24247446f1faf4b7843e4014d5089f6b
->>
->> Fixes: afddce13ce81d ("crypto: api - Add reqsize to crypto_alg")
->> Signed-off-by: T Pratham <t-pratham@ti.com>
->> ---
->>
->> Found this while developing TI DTHEv2 crypto driver. I narrowed that
->> these crashes in [2] are due to some upstream change and not my code as
->> the same driver is working fine in our internal 6.12 LTS version (with
->> daily CI builds not showing any regression from crypto subsystem). The
->> *only* change is replacing crypto_skcipher_set_reqsize() with
->> cra_reqsize in algorithms as this patch was introduced after 6.12.
->>
->> Now, these crashes were not caught earlier because [3] split the
->> in-kernel self-tests into two configs (CRYPTO_SELFTESTS and
->> CRYPTO_SELFTESTS_FULL) which went unnoticed in my local development flow
->> and the CRYPTO_SELFTESTS_FULL config was not enabled till recently. [2]
->> shows after applying this patch, the driver passes all selftests
->> succssfully with CRYPTO_SELFTESTS_FULL=y.
->>
->> [3]: https://lore.kernel.org/linux-crypto/20250612174709.26990-1-ebiggers@kernel.org/
->> ---
->>  crypto/aead.c     | 1 +
->>  crypto/skcipher.c | 2 ++
->>  2 files changed, 3 insertions(+)
+On Wed, Oct 08, 2025 at 11:43:21AM +0200, Juri Lelli wrote:
+> On 08/10/25 09:33, Greg Kroah-Hartman wrote:
+> > On Wed, Oct 08, 2025 at 09:04:19AM +0200, Peter Zijlstra wrote:
+> > > On Tue, Oct 07, 2025 at 11:54:18AM +0200, Juri Lelli wrote:
+> > > 
+> > > > Not for this patch, but I wondered if, while we are at it, we wanted to
+> > > > complete documentation of these flags. My new AI friend is suggesting
+> > > > the following, is it very much garbage? :)
+> > > 
+> > > Heh; its not terrible. I've been playing with local LLMs, but mostly
+> > > I've found they struggle with getting enough context to not be utterly
+> > > demented. And when you up the context window, they get unusable slow :/
+> > > 
+> > > Setting up and configuring the whole pile of subtly interlocking stacks
+> > > of software to get anything useful out of this stuff is non-trivial (it
+> > > reminds me of the sendmail m4 days).
+> > > 
+> > > > ---
+> > > > 
+> > > > From: Claude <claude-sonnet-4-5@anthropic.com>
+> > > > Date: Mon, 7 Oct 2025 12:44:13 +0200
+> > > > Subject: sched: Document remaining DEQUEUE/ENQUEUE flags
+> > > > 
+> > > > Complete the flag documentation by adding descriptions for the three
+> > > > previously undocumented flags: DEQUEUE_SPECIAL, DEQUEUE_THROTTLE, and
+> > > > ENQUEUE_INITIAL.
+> > > > 
+> > > > DEQUEUE_SPECIAL is used when dequeuing tasks in special states (stopped,
+> > > > traced, parked, dead, or frozen) that don't use the normal wait-loop
+> > > > pattern and must not use delayed dequeue.
+> > > > 
+> > > > DEQUEUE_THROTTLE is used when removing tasks from the runqueue due to
+> > > > CFS bandwidth throttling, preventing delayed dequeue to ensure proper
+> > > > throttling behavior.
+> > > > 
+> > > > ENQUEUE_INITIAL is used when enqueueing newly created tasks in
+> > > > wake_up_new_task(), allowing the fair scheduler to give them preferential
+> > > > initial placement (half vslice when PLACE_DEADLINE_INITIAL is enabled).
+> > > > 
+> > > > Signed-off-by: Claude <claude-sonnet-4-5@anthropic.com>
+> > > > Not-so-sure-yet: Juri Lelli <juri.lelli@redhat.com>
+> > > 
+> > > Is this the generally acceptable form of attribution for these things?
+> > > I'm not sure what the official guidance is on using these AI tools.
+> > > 
+> > > Greg, you have any insights here?
+> > 
+> > First off, Claude can NOT sign off on anything, so that's a non-starter.
+> > All Red Hat people should know that :)
 > 
-> Thanks.  I've applied the skcipher part of your patch.
+> Yep, knew that. But I felt guilty nontheless as I didn't touch the
+> change at all. Current SoB was kind of a (silly) joke. :)
 > 
-> Please repost the AEAD part as a separate patch.
+> > Otherwise, there is a draft of something that was going to address stuff
+> > like this floating around by Dave Hansen, I'll go poke him to see what
+> > the status of that is.
 > 
-> Cheers,
+> I believe it was suggested something like Co-developed-by: <model> and
+> then Signed-off-by: <human>, but indeed curious to know how that
+> discussion ended.
 
-Sent.
-https://lore.kernel.org/linux-crypto/20251008100117.808195-1-t-pratham@ti.com/T/#u
+The general answer is "you better know the copyright ownership
+information of the output of the tool you use" before you do anything
+with any of these tools.  Be careful about this, because adding your
+signed-off-by to a patch like makes it your responsibility :)
 
--- 
-Regards
-T Pratham <t-pratham@ti.com>
+After that, treat it like any other tool that you use to generate a
+patch, document what you used and why/how, and you should be fine.  You
+have to do this today if you were to use any type of tool, so in that
+way, "AI" is no different, with the exception of the ownership of the
+output result (again, consult the terms of the tool used.)
+
+Hopefully documentation updates to our process documents will reflect
+this in the near future.
+
+thanks,
+
+greg k-h
 
