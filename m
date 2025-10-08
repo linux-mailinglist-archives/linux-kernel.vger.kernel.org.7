@@ -1,64 +1,80 @@
-Return-Path: <linux-kernel+bounces-845666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2BE1BC5BF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 17:41:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34B81BC5E9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:00:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16F1F1884434
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:41:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAB87407353
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 15:43:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E71842F9DBB;
-	Wed,  8 Oct 2025 15:34:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2DA62FD1D0;
+	Wed,  8 Oct 2025 15:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lbkU968n"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gnF5NSC5"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75DDB301466
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29127303A22
+	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 15:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759937665; cv=none; b=dq/Zg4oKDgcKPE0vdUl0afhJconWFNbA8UVTFselu1HAkfoVreB+AAm57qGdGlLORnsfFDimcZfmysvC1GdnvVgHYK1po3+BG+LZ40FDZZEKkotQhOrEq/wGB9Wxi3+OU1BRzDU3dxvfnaZkU4kOEnFv8xn2WfHSzjxatpO8rW8=
+	t=1759937734; cv=none; b=KMK64wtthmB1lodvkr4md5FVKyQzLqzNBxb6zLsy5pvpbeAejPheHtyD+OieT7kusihfZG3qQGPPkQEjYhAD1keS/qY/Hb8NhYpT97mCF1Q47nWSCkJtT1f3ovhWnBNmWdr4F3dHWXNWDP6etpR4GMIkdJFJw0PwbGpeTwrfD48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759937665; c=relaxed/simple;
-	bh=3wlMUtRlVeX4swq5+CsB9qp3ch0ctpXp57Y4EX8++gE=;
+	s=arc-20240116; t=1759937734; c=relaxed/simple;
+	bh=MeMMelM99YxAP2TiJ88uHut4Vgu4VVwfVNl7tmbTWec=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iyN19pq3dg7R+nKjQPTASL3fZrJbFBkfu+QGfmuohOar9dSeZH5wOgDB9FZsrJjedo52kFaA92lxpiR0fkhOpPK7cSkZQtH8i0o/lJpiYJVibTVKTFJ0Fi2d2w8QBxhmjhHhP121YuXmBHK37cHTj+i2wkEhFgyE1TXdx5TzFY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lbkU968n; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759937663; x=1791473663;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=3wlMUtRlVeX4swq5+CsB9qp3ch0ctpXp57Y4EX8++gE=;
-  b=lbkU968n2dokx1sGaiOWECFGqeq/SiiZsbPNLNfoM77bfu4lX4EWTD2G
-   gjPfb3AK2WgI92G9t3zEVIVbE7WWpYki4Sebt4t9AqkSBEQLRVQ0a1HqQ
-   rIW7npQ6h4PJndMOQ34tcLHQ54fIVsF2wMRmLXu8a5EtgYApBCYsJ0NQt
-   bagfWy4ujZAq7LMSp8kUXK2f6zAxeiE0SA6SFX58OCUfiX4N+/wVkpdir
-   fZT00dHnjB+7zIF/kAqyh6WNiJUS9fl2YO1nDNj94wCUT9olZOsdfODUS
-   kjPLAHJ5VeL8FfxaGAp9jcOLZJm4h0/TgzXD577vx1Gf+WemL3RU94Ci8
-   Q==;
-X-CSE-ConnectionGUID: TmwTA/72SiiZQS0shpF2zA==
-X-CSE-MsgGUID: +mVZzp+pRiOnv465M3vjeA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11576"; a="62231924"
-X-IronPort-AV: E=Sophos;i="6.19,213,1754982000"; 
-   d="scan'208";a="62231924"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2025 08:34:22 -0700
-X-CSE-ConnectionGUID: 8H/0jZtwSDaZG5E5GxraUw==
-X-CSE-MsgGUID: wQBuL31YTiyKD06b34dK9g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,213,1754982000"; 
-   d="scan'208";a="179595806"
-Received: from rchatre-mobl4.amr.corp.intel.com (HELO [10.125.110.204]) ([10.125.110.204])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2025 08:34:22 -0700
-Message-ID: <1b72c0b1-4615-4287-bac2-c8806e56f44a@intel.com>
-Date: Wed, 8 Oct 2025 08:34:21 -0700
+	 In-Reply-To:Content-Type; b=GLZGKfA4mf6UvcVqHA7OOOpVxNQq3rRLpwcfYMIMEIms0yl9NHsOy5nMtYE4q7R6f/k9oX/9x49oBUuA1cEnMwmph/6nKFODjnbbyTGgxFMRXteZ0KOhilt1AyfCSgEq+nE7X1S7hvm1FaKQ+1qVn6Iq4X4PCDcqJVRxgrQ1+mY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gnF5NSC5; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-46b303f7469so49403435e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 08:35:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1759937730; x=1760542530; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ubNXaozyh7/Vs/XkTA5KuPjbCc9zS+vNuDnCIrZD13M=;
+        b=gnF5NSC50KY8J07hJipP4oSUoycsnB5USbLkXj+IRUeEwb3bhLFIKuLsoO+gxroQqH
+         hNZucazjbQHPSMYn+rF05W2Qm3NgXiO7yCF9cwfH9tWKSGGHfK4wkKRldds27153FYrR
+         8UKbPPGXjJxFj3MrHOd8mQaIZPKcL6NWlyyyQ1ZZiS22z8O/vCA1h6d/le88excK+PFp
+         Vo00gWI0eYa81mis8wk396h9ZHapvR1zw3LLf1tVJ3LsVduqBpxPIBGIToL6c1ssdr1o
+         ImqpvGWiGv1rwoShyyRI1RY5uMErpIXY+BSvv2MHpNpxoy+OWIoFZzY+yMlrBFVfwYoj
+         F3Nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759937730; x=1760542530;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ubNXaozyh7/Vs/XkTA5KuPjbCc9zS+vNuDnCIrZD13M=;
+        b=DOZ9F2oRID7ZeFGJtfJI+4mGRMwfiEJ8j1H169vlzpnqLvzKOUEJDyTIJcy3+NAjfv
+         B7TkOGyxss1X3Qi/HeedF69eNyYRG7AFrcWNzs2J4GjsYGSTNNEsbNfGqy+Xt2oaL4op
+         d9bCnL9q3QWDJSArosl7n/X0dS+6zlJbpOg15LESfCZQZnG3IcdQ72ZEjLRJWZ18y4E+
+         H1O5CN3eDl5C1OJQz2XEqKGyftr0H8DjXXRRXnCjmSpINkW1sOgVrv3xHrGyz2zdip9h
+         gS7GSg9E8iwIOIaC+BpOZKs86sTyesGCHSPbhOIVC5di54bUCVeMUFTMRFwm5KvVpL6h
+         W0gw==
+X-Forwarded-Encrypted: i=1; AJvYcCVrXC9olNoNqppm+UVZaelpapkYG3zddaJfgJ1cV1Fi50GO/QrTxFcgmrl8NnRg30WZbk9LebUt4rU9cZA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzb8rm9cQOA5Javr/ITVkzIL0yuUam2adNvLGwFrAqPmn1FuFyx
+	DGKW/F7a94SC7qmDLViPWFKpyrJQtMZz83UdDAoVi9zKGwSCvHtVdWZvV6BDIGhdmAA=
+X-Gm-Gg: ASbGnctWM7xRfgQFNoZJ7csasPxJw6VGyMcyChRcVmVtLTx5epVdqj18tfhUDcwKtMH
+	6Ao1a7DwCYebSVgDvkFXGLb4FkOdBUvxiyuZ6BMgoVGqtMX29xpkf91K+W6xZEkHG90Kbu2PHXT
+	MzNVzdDJaorw0oSZq/iKlz5tUCORN+N6Yjo5cV8/xNK4li94u87M5xpG4TOWQUTZfZrIPgQS5oW
+	gJliQ3UM8L64WwUqcNnL2LIUqkqc0yh8J8zspJlxK/S2LH3rnxNBAHFntLJyolyirzuTOvZ2GPB
+	nueuFDFqaQcZhvRfFrsygtvpoiCleXkNV+OTB0P/5No+4Bdb/rW1jyMHb5WQjiLqad/rzh/UKq5
+	zYI9ZgAgk+T+5QCSHLOjRPcqw0k8YW5His9gKb7MKX0PuOroAsQ+9rOHGRJ99i9wG1KpnKkWext
+	c=
+X-Google-Smtp-Source: AGHT+IGq0oHp24srWcJJTjTppYJ2gdwL9MgZY8IY0dg2EY9BvDrG3QQbJW280mmxjX7I0sdyPXCadA==
+X-Received: by 2002:a05:600c:529a:b0:46e:3e25:1626 with SMTP id 5b1f17b1804b1-46fa9aefe15mr27734775e9.19.1759937730499;
+        Wed, 08 Oct 2025 08:35:30 -0700 (PDT)
+Received: from [10.0.1.22] (109-81-1-107.rct.o2.cz. [109.81.1.107])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fab3cc939sm16809025e9.1.2025.10.08.08.35.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Oct 2025 08:35:29 -0700 (PDT)
+Message-ID: <75099eaa-4b51-4580-ac82-2c9f892f34b2@suse.com>
+Date: Wed, 8 Oct 2025 17:35:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,92 +82,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] [PATCH] mm/page_alloc: pcp->batch tuning
-To: Joshua Hahn <joshua.hahnjy@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Michal Hocko <mhocko@suse.com>, Suren Baghdasaryan <surenb@google.com>,
- Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- ying.huang@linux.alibaba.com
-References: <20251006145432.4132418-1-joshua.hahnjy@gmail.com>
-From: Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH 10/10] module loader: enforce symbol import protection
+To: Siddharth Nayyar <sidnayyar@google.com>
+Cc: Nathan Chancellor <nathan@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>, Sami Tolvanen
+ <samitolvanen@google.com>, Nicolas Schier <nicolas.schier@linux.dev>,
+ Arnd Bergmann <arnd@arndb.de>, linux-kbuild@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250829105418.3053274-1-sidnayyar@google.com>
+ <20250829105418.3053274-11-sidnayyar@google.com>
 Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20251006145432.4132418-1-joshua.hahnjy@gmail.com>
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20250829105418.3053274-11-sidnayyar@google.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-First of all, I do agree that the comment should go away or get fixed up.
+On 8/29/25 12:54 PM, Siddharth Nayyar wrote:
+> The module loader will reject unsigned modules from loading if such a
+> module attempts to import a symbol which has the import protection bit
+> set in the kflagstab entry for the symbol.
+> 
+> Signed-off-by: Siddharth Nayyar <sidnayyar@google.com>
+> ---
+> [...]
+> diff --git a/kernel/module/main.c b/kernel/module/main.c
+> index 4437c2a451ea..ece074a6ba7b 100644
+> --- a/kernel/module/main.c
+> +++ b/kernel/module/main.c
+> @@ -380,6 +380,7 @@ static bool find_exported_symbol_in_section(const struct symsearch *syms,
+>  	fsa->crc = symversion(syms->crcs, sym - syms->start);
+>  	fsa->sym = sym;
+>  	fsa->license = (sym_flags & KSYM_FLAG_GPL_ONLY) ? GPL_ONLY : NOT_GPL_ONLY;
+> +	fsa->is_protected = sym_flags & KSYM_FLAG_PROTECTED;
+>  
+>  	return true;
+>  }
+> @@ -1273,6 +1274,11 @@ static const struct kernel_symbol *resolve_symbol(struct module *mod,
+>  		goto getname;
+>  	}
+>  
+> +	if (fsa.is_protected && !mod->sig_ok) {
+> +		fsa.sym = ERR_PTR(-EACCES);
+> +		goto getname;
+> +	}
+> +
+>  getname:
+>  	/* We must make copy under the lock if we failed to get ref. */
+>  	strscpy(ownername, module_name(fsa.owner), MODULE_NAME_LEN);
 
-But...
+The is_protected check should be moved before the ref_module() call.
+Adding a reference to another module should be always the last step,
+after all symbol checks have been performed.
 
-On 10/6/25 07:54, Joshua Hahn wrote:
-> This leaves us with a /= 4 with no corresponding *= 4 anywhere, which
-> leaves pcp->batch mistuned from the original intent when it was
-> introduced. This is made worse by the fact that pcp lists are generally
-> larger today than they were in 2013, meaning batch sizes should have
-> increased, not decreased.
+> @@ -1550,8 +1556,12 @@ static int simplify_symbols(struct module *mod, const struct load_info *info)
+>  				break;
+>  
+>  			ret = PTR_ERR(ksym) ?: -ENOENT;
+> -			pr_warn("%s: Unknown symbol %s (err %d)\n",
+> -				mod->name, name, ret);
+> +			if (ret == -EACCES)
+> +				pr_warn("%s: Protected symbol %s (err %d)\n",
+> +					mod->name, name, ret);
+> +			else
+> +				pr_warn("%s: Unknown symbol %s (err %d)\n",
+> +					mod->name, name, ret);
+>  			break;
+>  
+>  		default:
 
-pcp->batch and pcp->high do very different things. pcp->high is a limit
-on the amount of memory that can be tied up. pcp->batch balances
-throughput with latency. I'm not sure I buy the idea that a higher
-pcp->high means we should necessarily do larger batches.
+I suggest moving the error message about the symbol being protected down
+into resolve_symbol(), at the point where this issue is detected. This
+approach is generally used for other checks, such as the CRC or
+namespace check. Additionally, I think it would make sense to change the
+current "Unknown symbol" warning here to "Unresolved symbol" to be more
+accurate.
 
-So I dunno... f someone wanted to alter the initial batch size, they'd
-ideally repeat some of Ying's experiments from: 52166607ecc9 ("mm:
-restrict the pcp batch scale factor to avoid too long latency").
-
-Better yet, just absorb the /=4 into the two existing batch assignments.
-It will probably compile to exactly the same code and have no functional
-changes and get rid of the comment.
-
-Wouldn't this compile to the same thing?
-
-        batch = zone->managed_pages / 4096;
-        if (batch * PAGE_SIZE > 128 * 1024)
-                batch = (128 * 1024) / PAGE_SIZE;
-
+-- 
+Thanks,
+Petr
 
