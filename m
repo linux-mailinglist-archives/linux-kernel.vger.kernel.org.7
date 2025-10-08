@@ -1,304 +1,117 @@
-Return-Path: <linux-kernel+bounces-845321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B222BC469D
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 12:45:26 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51FF4BC46E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 12:47:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7EB6D351420
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 10:45:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AB6D74EF8DC
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 10:47:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D93852F619D;
-	Wed,  8 Oct 2025 10:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 875E72F60CB;
+	Wed,  8 Oct 2025 10:46:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YvgZLBKS"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XG8n+htW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 382A72F6194
-	for <linux-kernel@vger.kernel.org>; Wed,  8 Oct 2025 10:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3A92E8DEA;
+	Wed,  8 Oct 2025 10:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759920309; cv=none; b=f/+0FJ2+NWAF55pNQD+RQEMfWwwq2TokrTzVE7HuDsQqktsWBJC5E23XD1bdlUY3HX736IQdzJvK/GlhfiBkdDjdzgzGCrCgu22cOsp5hNkKX0ldkcRuzJMFGhxRPTLsgydh/VI6igD7w5+FPzfJ++BVugyHfy3s05SZ/1T5/N8=
+	t=1759920419; cv=none; b=o/If7S9ghjvMnQpmftQpVtT6PhL7pIDxw+GDuVq4LQaZvm0XhfXCZ7GdpBEGXTKeGotdIkYioOmyN3ioTdUvpyRGxeB5yKJIZh+fvQGCt/VD4qnOutCjFTeWHpgg1rm9I5j+biivO5G1m+5fVNnOvGblyjdipBhLHhAdv26tNao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759920309; c=relaxed/simple;
-	bh=cRPMwx9imB8LGxt5KpydI9C23hTrae3cRPQY5wdiPss=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FzLUgsFXVYH9wLLo+u4Rhj+qn6YgChJu8gvEsRQSP/L+Ezfgi6wPlEfwmoviakTOI3cyqcQbB3USPyuX3ELGBDXM8t5eYfYZ0lXu9tBt0IEzcAsiJUXpcFCy+ImqPmxVu2JDe8CtWW2qH4q9SOpFzHfWRuU2NxoPqDknGd6HcAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YvgZLBKS; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-33257e0fb88so1264573a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 03:45:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759920305; x=1760525105; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6Hl1t16hNpxqBDLDUSMCyXh1Kc203/8UnUYsCqiLwTA=;
-        b=YvgZLBKSMzn/AKhECNfu2CuA5DwVEBBqaQTKPE6hLSzwE9NouqpEhstnyO75863t+d
-         GvB1WkyAQcJKIM1Zp4xxz4AvsPeF1u1O+gxjz8XY2dBgA99DPAYCsyUqQHVJeLVLm26x
-         9amvm7ueceRJURdNJQZFbLW61v50P8rKOR5UETGvjHfVfKNSlRVzdfd01HaMVygBtnsf
-         zWguOFHfR1qnl8RSxsew4AZ97GaeMvOol7G4qk//fSFuYdNbDia7RSbtI60v0v8eDZeJ
-         H9isY1d2FeD6Me95ogjnjW2j2St4bwWpGrRH/qrDkaBdiYs1Ag6Jec5Ig5xxfpl4KJoq
-         Q5qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759920305; x=1760525105;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6Hl1t16hNpxqBDLDUSMCyXh1Kc203/8UnUYsCqiLwTA=;
-        b=Rl5quudDXB/7Oz/zUesbsegveYnCJvzP94umTTlmnD3yutmgR+q3/dlsqKT3M+6SQG
-         TOkvqB2LXVIWOc/uv85FhXaQCQ+bWJuy9xbj9c1Id428ElewMucH7LZ5AXtn21WgO/Pq
-         8E7rE51X4FmeqL+Yzr4I6WThOzOfDjrcW53v55zdeKIQdDtXA4aF5/Z6SO6xdJfIUXEX
-         hj2aFV62sbpC/byjjGj8yL2mLB208PW7tD8A8nJqOZhEg8Txl2ttOecmJgAy2g4CWwHs
-         LvZAFPploHjzCr5kx4a9NEfENrmbwpprRmMBKAyqKUpl0pA2va0cVYiSLcW3MYfJ1nm8
-         kpCw==
-X-Forwarded-Encrypted: i=1; AJvYcCXkF9RS24RXrag5S0nAiVRyGlxHMIjmVx3l5CPavYqOdotC5b/L4jeAckHYl82J1XBkmJOqKA590lmDdE8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvEVp0YwnKjopfW0IBk815LUTP2hcG+rS3OAtUqNWFdzr3N7ky
-	nVSeR2OMwpoVotPqdrXe1kxN7wzDMhfClwrATzkJFL5UfGhNOQ/VlHkb1IlR9ryNskY=
-X-Gm-Gg: ASbGncsQBHvt2O2zMtTh4CDbQuGqXetlgWK/UfVL4PTSMYJzyVzkSCn+j2mZ0KX16SG
-	E0JkVO0j4yOAa9LuhcI5rk9BXNZ5lESj9qVwRJG6QBBLbZSIJxhlFLBTjg81HQeZObSHjcDDGrM
-	GT3ZvqpHdhmplBt2DGBe4gZ2wA+bj0W47CtaQ+cwLKLZRJPksyJogmHgKv5RY8u42USFOpnFn6U
-	l/jz5Nw6tfJL0gcCo9WZmZvdm3Am0Ndzi2ohpD7zulMFxslTgl2Rn1jwNZhLXBcxjjze4XUMfr5
-	ioAaNCI9XcYttOGSOloN47pZ0uudCR5HYAP8w7UDMkgaFAojk9f+pUmfX8VsewUaUPsh0clVhjl
-	XLoaxqe/UNgjDiFpaOXnNLeiw4tTTXJbEqWu0bDYf40nd1eo7v4D2HVorDdq/
-X-Google-Smtp-Source: AGHT+IHGiKKyXWaH2FUNU/8LIy8vFJtrsOw9lRDSztqkSkjNUEd36DnZQT6tGx3+jF6WFobJ4wCPtg==
-X-Received: by 2002:a17:902:d4c1:b0:25c:b66e:9c2a with SMTP id d9443c01a7336-290272e3d33mr24053345ad.6.1759920305547;
-        Wed, 08 Oct 2025 03:45:05 -0700 (PDT)
-Received: from kuoka.. ([121.134.152.93])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1127c7sm196117135ad.28.2025.10.08.03.45.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 03:45:05 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Srinivas Kandagatla <srini@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
+	s=arc-20240116; t=1759920419; c=relaxed/simple;
+	bh=0Zfd3JxG/MTE4sDHQ96evynt+Sey4zJnf0P/n9lbvOU=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gN1SxKb00/DzZhmfHKX08K2CNm+IKm1cxVZavPxmIsTPlQHFQlN/8XvI1qe2oArSj8Hz7y+1nIoO6EQc6lWDn8ZdAvHSEQHUJ8gXuHbzkZY19LuSqLvfwLUPsS0wopZ1we/9EpDraPxVS6mnUnOlhalWGl4635S/5CSUpahmH+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XG8n+htW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76FFCC4CEF4;
+	Wed,  8 Oct 2025 10:46:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759920418;
+	bh=0Zfd3JxG/MTE4sDHQ96evynt+Sey4zJnf0P/n9lbvOU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XG8n+htWjrOEkpSmgMN4IruinvuWQMwSD8FNAFO/gGncG9Rtz+UsPsWbvupvfUFal
+	 aF3pVD5rIjq8/qA0z4lH8qW/rfFxonQajk4nGiKcN1R5wYLACiqvqyJ6gUWnX6vRCg
+	 +csuqh4gLbPBpjtaEcUCYGfVrkP5ftsoIJfchdoOF8qJRBut5sDu7lT7fKduZBF2vD
+	 lC2+5rvGuSCGxHJlNsXUbRvNCA0WjThiPim3QDvmp1oXEQK09X6CV5VNN6rBfP9vE6
+	 OvBP9tOdFxpi63q45YmLS2Z2SAJ3QVIyjRokKcWYDwiEDL0gwFLuGWwi5IwMDsyS5I
+	 +SLu5GeSAxfNg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1v6RhA-0000000CKEh-0xjF;
+	Wed, 08 Oct 2025 10:46:56 +0000
+Date: Wed, 08 Oct 2025 11:46:55 +0100
+Message-ID: <861pndzn4w.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To:  Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>, Oliver Upton <oliver.upton@linux.dev>
+Cc:	joey.gouly@arm.com,
+	suzuki.poulose@arm.com,
+	yuzenghui@huawei.com,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	alexandru.elisei@arm.com,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-Subject: [PATCH v3 2/2] ASoC: qcom: audioreach: Add support for VI Sense module
-Date: Wed,  8 Oct 2025 19:44:50 +0900
-Message-ID: <20251008104448.117167-4-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20251008104448.117167-3-krzysztof.kozlowski@linaro.org>
-References: <20251008104448.117167-3-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] KVM: arm64: Check cpu_has_spe() before initializing PMSCR_EL1 in VHE
+In-Reply-To: <aOVckTSJET5ORY1n@linux.dev>
+References: <20251007182356.2813920-1-mukesh.ojha@oss.qualcomm.com>
+	<aOVckTSJET5ORY1n@linux.dev>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: mukesh.ojha@oss.qualcomm.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, alexandru.elisei@arm.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-VI Sense module in ADSP is responsible for feedback loop for measuring
-current and voltage of amplifiers, necessary for proper calibration of
-Speaker Protection algorightms.  Implement parsing
-MODULE_ID_SPEAKER_PROTECTION_VI from Audioreach topology and sending it
-as command to the ADSP.
+On Tue, 07 Oct 2025 19:31:45 +0100,
+Oliver Upton <oliver.upton@linux.dev> wrote:
+> 
+> Hi Mukesh,
+> 
+> I find it a bit odd to refer to cpu_has_spe() in the shortlog, which
+> doesn't exist prior to this patch.
+> 
+> On Tue, Oct 07, 2025 at 11:53:56PM +0530, Mukesh Ojha wrote:
+> > commit efad60e46057 ("KVM: arm64: Initialize PMSCR_EL1 when in VHE")
+> > initializes PMSCR_EL1 to 0 which is making the boot up stuck when KVM
+> > runs in VHE mode and reverting the change is fixing the issue.
+> > 
+> > [    2.967447] RPC: Registered tcp NFSv4.1 backchannel transport module.
+> > [    2.974061] PCI: CLS 0 bytes, default 64
+> > [    2.978171] Unpacking initramfs...
+> > [    2.982889] kvm [1]: nv: 568 coarse grained trap handlers
+> > [    2.988573] kvm [1]: IPA Size Limit: 40 bits
+> > 
+> > Lets guard the change with cpu_has_spe() check so that it only affects
+> > the cpu which has SPE feature supported.
+> 
+> This could benefit from being spelled out a bit more. In both cases we
+> check for the presence of FEAT_SPE, however I believe the issue you
+> observe is EL3 hasn't delegated ownership of the Profiling Buffer to
+> Non-secure nor does it reinject an UNDEF in response to the sysreg trap.
+> 
+> I agree that the change is correct but the rationale needs to be clear.
 
-Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
+To me, this smells a lot more like some sort of papering over a
+firmware bug. Why isn't SPE available the first place?
 
-Changes in v3:
-1. Add Rb tag.
-2. Drop setting cfg.quick_calibration (Srini).
-3. Correct indent in comment and drop stale r0t0 comment.
+	M.
 
-Changes in v2:
-1. Use PARAM_ID_SP_VI_OP_MODE_NORMAL
-2. Make num_channels u32
-3. I did not change uint32_t type in the header for consistency
----
- sound/soc/qcom/qdsp6/audioreach.c | 107 ++++++++++++++++++++++++++++++
- sound/soc/qcom/qdsp6/audioreach.h |  27 ++++++++
- 2 files changed, 134 insertions(+)
-
-diff --git a/sound/soc/qcom/qdsp6/audioreach.c b/sound/soc/qcom/qdsp6/audioreach.c
-index 3b7dffd696e7..664ab0be7f56 100644
---- a/sound/soc/qcom/qdsp6/audioreach.c
-+++ b/sound/soc/qcom/qdsp6/audioreach.c
-@@ -202,6 +202,31 @@ struct apm_display_port_module_intf_cfg {
- } __packed;
- #define APM_DP_INTF_CFG_PSIZE ALIGN(sizeof(struct apm_display_port_module_intf_cfg), 8)
- 
-+struct apm_module_sp_vi_op_mode_cfg {
-+	struct apm_module_param_data param_data;
-+	struct param_id_sp_vi_op_mode_cfg cfg;
-+} __packed;
-+
-+#define APM_SP_VI_OP_MODE_CFG_PSIZE(ch) ALIGN( \
-+				sizeof(struct apm_module_sp_vi_op_mode_cfg) + \
-+				(ch) * sizeof(uint32_t), 8)
-+
-+struct apm_module_sp_vi_ex_mode_cfg {
-+	struct apm_module_param_data param_data;
-+	struct param_id_sp_vi_ex_mode_cfg cfg;
-+} __packed;
-+
-+#define APM_SP_VI_EX_MODE_CFG_PSIZE ALIGN(sizeof(struct apm_module_sp_vi_ex_mode_cfg), 8)
-+
-+struct apm_module_sp_vi_channel_map_cfg {
-+	struct apm_module_param_data param_data;
-+	struct param_id_sp_vi_channel_map_cfg cfg;
-+} __packed;
-+
-+#define APM_SP_VI_CH_MAP_CFG_PSIZE(ch) ALIGN( \
-+				sizeof(struct apm_module_sp_vi_channel_map_cfg) + \
-+				(ch) * sizeof(uint32_t), 8)
-+
- static void *__audioreach_alloc_pkt(int payload_size, uint32_t opcode, uint32_t token,
- 				    uint32_t src_port, uint32_t dest_port, bool has_cmd_hdr)
- {
-@@ -1258,6 +1283,84 @@ static int audioreach_speaker_protection(struct q6apm_graph *graph,
- 					 operation_mode);
- }
- 
-+static int audioreach_speaker_protection_vi(struct q6apm_graph *graph,
-+					    struct audioreach_module *module,
-+					    struct audioreach_module_config *mcfg)
-+{
-+	u32 num_channels = mcfg->num_channels;
-+	struct apm_module_sp_vi_op_mode_cfg *op_cfg;
-+	struct apm_module_sp_vi_channel_map_cfg *cm_cfg;
-+	struct apm_module_sp_vi_ex_mode_cfg *ex_cfg;
-+	int op_sz, cm_sz, ex_sz;
-+	struct apm_module_param_data *param_data;
-+	int rc, i, payload_size;
-+	struct gpr_pkt *pkt;
-+	void *p;
-+
-+	if (num_channels > 2) {
-+		dev_err(graph->dev, "Error: Invalid channels (%d)!\n", num_channels);
-+		return -EINVAL;
-+	}
-+
-+	op_sz = APM_SP_VI_OP_MODE_CFG_PSIZE(num_channels);
-+	/* Channel mapping for Isense and Vsense, thus twice number of speakers. */
-+	cm_sz = APM_SP_VI_CH_MAP_CFG_PSIZE(num_channels * 2);
-+	ex_sz = APM_SP_VI_EX_MODE_CFG_PSIZE;
-+
-+	payload_size = op_sz + cm_sz + ex_sz;
-+
-+	pkt = audioreach_alloc_apm_cmd_pkt(payload_size, APM_CMD_SET_CFG, 0);
-+	if (IS_ERR(pkt))
-+		return PTR_ERR(pkt);
-+
-+	p = (void *)pkt + GPR_HDR_SIZE + APM_CMD_HDR_SIZE;
-+
-+	op_cfg = p;
-+	param_data = &op_cfg->param_data;
-+	param_data->module_instance_id = module->instance_id;
-+	param_data->error_code = 0;
-+	param_data->param_id = PARAM_ID_SP_VI_OP_MODE_CFG;
-+	param_data->param_size = op_sz - APM_MODULE_PARAM_DATA_SIZE;
-+
-+	op_cfg->cfg.num_channels = num_channels;
-+	op_cfg->cfg.operation_mode = PARAM_ID_SP_VI_OP_MODE_NORMAL;
-+	p += op_sz;
-+
-+	cm_cfg = p;
-+	param_data = &cm_cfg->param_data;
-+	param_data->module_instance_id = module->instance_id;
-+	param_data->error_code = 0;
-+	param_data->param_id = PARAM_ID_SP_VI_CHANNEL_MAP_CFG;
-+	param_data->param_size = cm_sz - APM_MODULE_PARAM_DATA_SIZE;
-+
-+	cm_cfg->cfg.num_channels = num_channels * 2;
-+	for (i = 0; i < num_channels; i++) {
-+		/*
-+		 * Map speakers into Vsense and then Isense of each channel.
-+		 * E.g. for PCM_CHANNEL_FL and PCM_CHANNEL_FR to:
-+		 * [1, 2, 3, 4]
-+		 */
-+		cm_cfg->cfg.channel_mapping[2 * i] = (mcfg->channel_map[i] - 1) * 2 + 1;
-+		cm_cfg->cfg.channel_mapping[2 * i + 1] = (mcfg->channel_map[i] - 1) * 2 + 2;
-+	}
-+
-+	p += cm_sz;
-+
-+	ex_cfg = p;
-+	param_data = &ex_cfg->param_data;
-+	param_data->module_instance_id = module->instance_id;
-+	param_data->error_code = 0;
-+	param_data->param_id = PARAM_ID_SP_VI_EX_MODE_CFG;
-+	param_data->param_size = ex_sz - APM_MODULE_PARAM_DATA_SIZE;
-+
-+	ex_cfg->cfg.factory_mode = 0;
-+
-+	rc = q6apm_send_cmd_sync(graph->apm, pkt, 0);
-+
-+	kfree(pkt);
-+
-+	return rc;
-+}
- 
- int audioreach_set_media_format(struct q6apm_graph *graph, struct audioreach_module *module,
- 				struct audioreach_module_config *cfg)
-@@ -1312,6 +1415,10 @@ int audioreach_set_media_format(struct q6apm_graph *graph, struct audioreach_mod
- 		rc = audioreach_speaker_protection(graph, module,
- 						   PARAM_ID_SP_OP_MODE_NORMAL);
- 		break;
-+	case MODULE_ID_SPEAKER_PROTECTION_VI:
-+		rc = audioreach_speaker_protection_vi(graph, module, cfg);
-+		break;
-+
- 	default:
- 		rc = 0;
- 	}
-diff --git a/sound/soc/qcom/qdsp6/audioreach.h b/sound/soc/qcom/qdsp6/audioreach.h
-index 9f6ddcf081ee..a03949b790bd 100644
---- a/sound/soc/qcom/qdsp6/audioreach.h
-+++ b/sound/soc/qcom/qdsp6/audioreach.h
-@@ -32,6 +32,7 @@ struct q6apm_graph;
- #define MODULE_ID_GAPLESS		0x0700104D
- #define MODULE_ID_DISPLAY_PORT_SINK	0x07001069
- #define MODULE_ID_SPEAKER_PROTECTION	0x070010E2
-+#define MODULE_ID_SPEAKER_PROTECTION_VI	0x070010E3
- 
- #define APM_CMD_GET_SPF_STATE		0x01001021
- #define APM_CMD_RSP_GET_SPF_STATE	0x02001007
-@@ -554,6 +555,32 @@ struct param_id_sp_op_mode {
- 	uint32_t operation_mode;
- } __packed;
- 
-+/* Speaker Protection VI */
-+
-+#define PARAM_ID_SP_VI_OP_MODE_CFG		0x080011f4
-+#define PARAM_ID_SP_VI_OP_MODE_NORMAL		0
-+#define PARAM_ID_SP_VI_OP_MODE_CALIBRATION	1
-+#define PARAM_ID_SP_VI_OP_MODE_FACTORY_TEST	2
-+#define PARAM_ID_SP_VI_OP_MODE_VALIDATION	3
-+struct param_id_sp_vi_op_mode_cfg {
-+	uint32_t num_channels;
-+	uint32_t operation_mode;
-+	uint32_t quick_calibration;
-+	uint32_t r0_t0_selection[];
-+} __packed;
-+
-+#define PARAM_ID_SP_VI_EX_MODE_CFG		0x080011ff
-+struct param_id_sp_vi_ex_mode_cfg {
-+	uint32_t factory_mode;
-+} __packed;
-+
-+#define PARAM_ID_SP_VI_CHANNEL_MAP_CFG		0x08001203
-+struct param_id_sp_vi_channel_map_cfg {
-+	uint32_t num_channels;
-+	/* [ Vsense of ch 1, Isense of ch 1, Vsense of ch 2, Isense of ch 2, ... ] */
-+	uint32_t channel_mapping[];
-+} __packed;
-+
- #define PARAM_ID_SAL_OUTPUT_CFG			0x08001016
- struct param_id_sal_output_config {
- 	uint32_t bits_per_sample;
 -- 
-2.48.1
-
+Without deviation from the norm, progress is not possible.
 
