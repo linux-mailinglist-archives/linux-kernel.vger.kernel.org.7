@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-845728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-845727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB840BC5F21
-	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:07:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59A4BBC6004
+	for <lists+linux-kernel@lfdr.de>; Wed, 08 Oct 2025 18:20:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 70E0D34ED06
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 16:06:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5313425501
+	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 16:06:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7A4029E109;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D418D2F0C7E;
 	Wed,  8 Oct 2025 16:06:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="XOn37LMy"
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="hA44IJRf"
 Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10EAE2BD5BC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E312BD597;
 	Wed,  8 Oct 2025 16:06:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759939592; cv=pass; b=gk2LRgBYlWRL6oS9ZoCorCjFXzTxRNtwj6REKamxMA+nmtPQDx22tAy/saG3tiWzCdY2OIZPqftHksaWxY1dvV0pRtma2UuXpbWqCqmqkXSGrjqDHpOQxFPuhS3Pm6Qf+V4sd+Xw+08ORcI9JpQAKSImsxIp1pyPnha1McliOrI=
+	t=1759939591; cv=pass; b=R7mxftPYYOMCTl3eVIg7KwtXIgNq8oVLUXcNNlz8d2IrUvb9KsExzx2/LgEkzKQX8L0iHYA2FgaAWQ5crlHpjtCFVgi9D20SDZXDMZT7rLerSNwbHr6LPRxDtAQiT6UF8ikxk6g21Xt0avkYWdBna4fFC5UVxwe19JkQyeazs4Q=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759939592; c=relaxed/simple;
-	bh=1eWMasfW+YMGFyIu6a2zSKcJWEXKDJPclNaQ2b6AxAA=;
+	s=arc-20240116; t=1759939591; c=relaxed/simple;
+	bh=gouVkJOIKw3V24i/ka8ELia/YmxceK6Sw5YERHj49p4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=t9uxQ8cNtDxbLBAzrWtrbX36CB82+Q6/06zIghuJaQLqq5R1BjwDqVf8DMNN6o3jZYRvuNnnTcFkS/Di1Lb59KlADGsHisLcaXLmGzxILz4eA+enVS+zH9XDlToHhyCZHb7dMWBPqJ0uYFUzGJ96Cvx7KcyjFi2lB2BLqg5s4WI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=XOn37LMy; arc=pass smtp.client-ip=136.143.188.112
+	 In-Reply-To:To:Cc; b=A0OFefnMSsHjepUB6CH4Ki0ze/CO7LWDxJVJiDuaQEXYUOl+QumHHohY4bO4VwmabSJvaIprKgsqIYNOJ0wgCJKwfpUeEvwBL5Wyl427lkvd9/R679fEqzjJFWiCW/2sfona6i0NLNoB+7LAzZhaeZacZQ1YVwsfFav0c2iK4sU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=hA44IJRf; arc=pass smtp.client-ip=136.143.188.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1759939557; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1759939561; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=NkSdHI8ANULyCBA4znvMfiLFKyiiN4bN1ATDgWcWjglxkZm1KMNCo6Bfs/lWPcgsCAvewHgJ0jmkLiccv4mZjSvfFruqlTzou6HdXeUP3xbr7f3ton5axk7pc0aWkQbpaudLVfOE+/FW5kabqgHYJKpZPglftskyZ1zVny/4OMA=
+	b=QgRdJAn8Jl/P3X7nwTIa8uDOmeFR9429gEB3jLoM5/7Ch6F9ZhUq0JVDZReC2cUCp3VcRWHgl0ibhDkTB6Cehe9WNS+iPyNMu128tTAnpfgJ6qSt4ZfAPo0VXk5nURldAftBqDQv+c1pqk+i9xaBrxuToQe6a8HoKQy2C+HanD0=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1759939557; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=UjHQYkUSghO0qzYp6RVgVcWd0WgU6nq+wKvC+3iLfOA=; 
-	b=k5KlLFEJjcPbPq+krlQm/IWzSNh1V60orw8Al11MBe24FLimI+aZSMxCtyjTQ758ZUNEqnu2YLOCryM2RHTSFnIc1kN2C9i2lRM/V+yfj9CcYZvV2mq5Iy5cbWJAKOzgLRnkxr7rTZUPrs7M2clgDms7CeNLIHjAvMLJebXBXfk=
+	t=1759939561; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=xW9tH0yg3kl/vRjeet5XdJsGRavZ+3xTuWKyzK8FeHs=; 
+	b=dD8nNkD+Xo8OE+HhP6F/JvHIFENeoHCya5nJirM96LeyJ9l6gHNwzjbUkZmjDcBjD/Iai4958vLRcpTJHKYVej6siKcuxdT0/ROaleXcFu2bWghuJJprxheBFR/CFxI0hPEzqqHVRt0ZHLpcUjjPFrV1SqOSjZKc3YCFQ8fouxc=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=collabora.com;
 	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
 	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759939557;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759939561;
 	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
 	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=UjHQYkUSghO0qzYp6RVgVcWd0WgU6nq+wKvC+3iLfOA=;
-	b=XOn37LMymSUh6RwNDDQ3fdXs+DLht8yRT2YprWCw6tBCPgl4NliZojUsZaLKz0dW
-	SIcTwglXi/ciq+gFlQS7mvizppEEduAZjnRPOb5Mi6VivZcliiGpSQjfzdhpW4Wp1b4
-	9SD4bYX+fcOcX9gly9NvteNAnk51xg2PeaBPCCFU=
-Received: by mx.zohomail.com with SMTPS id 1759939556382226.16509659324583;
-	Wed, 8 Oct 2025 09:05:56 -0700 (PDT)
+	bh=xW9tH0yg3kl/vRjeet5XdJsGRavZ+3xTuWKyzK8FeHs=;
+	b=hA44IJRfFA2dj/RQ3oCMnBXCtEKcHTlQWESofq/h5H5Zsdb+l8PmbJ6RMh96sfbb
+	e0C06yEexkub8/RYq+YG54wAX5OHmyBqZYx9p8lm6r78WPq3N6zOsgEBz3AN+DYVHmR
+	3gwr5DDB3iZ2F+m9pS+8OcL4dHuzNKw/fzihd17A=
+Received: by mx.zohomail.com with SMTPS id 17599395600104.658984879843274;
+	Wed, 8 Oct 2025 09:06:00 -0700 (PDT)
 From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Wed, 08 Oct 2025 18:05:37 +0200
-Subject: [PATCH v2 3/5] clk: mediatek: Pass device to clk_hw_register for
- PLLs
+Date: Wed, 08 Oct 2025 18:05:38 +0200
+Subject: [PATCH v2 4/5] clk: mediatek: Refactor pllfh registration to pass
+ device
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,7 +62,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251008-mtk-pll-rpm-v2-3-170ed0698560@collabora.com>
+Message-Id: <20251008-mtk-pll-rpm-v2-4-170ed0698560@collabora.com>
 References: <20251008-mtk-pll-rpm-v2-0-170ed0698560@collabora.com>
 In-Reply-To: <20251008-mtk-pll-rpm-v2-0-170ed0698560@collabora.com>
 To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
@@ -79,103 +79,200 @@ Cc: kernel@collabora.com, linux-clk@vger.kernel.org,
  Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 X-Mailer: b4 0.14.2
 
-Passing the struct device pointer to clk_hw_register allows for runtime
-power management to work for the registered clock controllers. However,
-the mediatek PLL clocks do not do this.
+After refactoring all of PLL to pass the device, it's now fairly easy to
+refactor pllfh and its users, as pllfh registration wraps PLL
+registration.
 
-Change this by adding a struct device pointer argument to
-mtk_clk_register_pll, and fix up the only other user of it. Also add a
-new member to the struct mtk_clk_pll for the struct device pointer,
-which is set by mtk_clk_register_pll and is used by
-mtk_clk_register_pll_ops.
-
-If mtk_clk_register_pll is called with a NULL struct device pointer,
-then everything still works as expected; the clock core will simply
-treat them as previously, i.e. without runtime power management.
+Do this refactor and move all of the pllfh users to pass the device as
+well.
 
 Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 ---
- drivers/clk/mediatek/clk-pll.c   | 9 ++++++---
- drivers/clk/mediatek/clk-pll.h   | 4 +++-
- drivers/clk/mediatek/clk-pllfh.c | 2 +-
- 3 files changed, 10 insertions(+), 5 deletions(-)
+ drivers/clk/mediatek/clk-mt6795-apmixedsys.c |  2 +-
+ drivers/clk/mediatek/clk-mt8173-apmixedsys.c | 14 +++++++-------
+ drivers/clk/mediatek/clk-mt8186-apmixedsys.c |  2 +-
+ drivers/clk/mediatek/clk-mt8192-apmixedsys.c |  2 +-
+ drivers/clk/mediatek/clk-mt8195-apmixedsys.c |  2 +-
+ drivers/clk/mediatek/clk-pllfh.c             | 13 ++++++++-----
+ drivers/clk/mediatek/clk-pllfh.h             |  2 +-
+ 7 files changed, 20 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
-index 5caf91ae9ddbe4f4d7052864adf0a5a70bda66bc..c4f9c06e5133dbc5902f261353c197fbde95e54d 100644
---- a/drivers/clk/mediatek/clk-pll.c
-+++ b/drivers/clk/mediatek/clk-pll.c
-@@ -366,7 +366,7 @@ struct clk_hw *mtk_clk_register_pll_ops(struct mtk_clk_pll *pll,
- 		init.parent_names = &parent_name;
- 	init.num_parents = 1;
+diff --git a/drivers/clk/mediatek/clk-mt6795-apmixedsys.c b/drivers/clk/mediatek/clk-mt6795-apmixedsys.c
+index 91665d7f125efde4941cc4de881c5b503a935529..123d5d7fea8554676364dc56f5c023e43325d516 100644
+--- a/drivers/clk/mediatek/clk-mt6795-apmixedsys.c
++++ b/drivers/clk/mediatek/clk-mt6795-apmixedsys.c
+@@ -152,7 +152,7 @@ static int clk_mt6795_apmixed_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
  
--	ret = clk_hw_register(NULL, &pll->hw);
-+	ret = clk_hw_register(pll->dev, &pll->hw);
- 
+ 	fhctl_parse_dt(fhctl_node, pllfhs, ARRAY_SIZE(pllfhs));
+-	ret = mtk_clk_register_pllfhs(node, plls, ARRAY_SIZE(plls),
++	ret = mtk_clk_register_pllfhs(dev, plls, ARRAY_SIZE(plls),
+ 				      pllfhs, ARRAY_SIZE(pllfhs), clk_data);
  	if (ret)
- 		return ERR_PTR(ret);
-@@ -374,7 +374,8 @@ struct clk_hw *mtk_clk_register_pll_ops(struct mtk_clk_pll *pll,
- 	return &pll->hw;
- }
- 
--struct clk_hw *mtk_clk_register_pll(const struct mtk_pll_data *data,
-+struct clk_hw *mtk_clk_register_pll(struct device *dev,
-+				    const struct mtk_pll_data *data,
- 				    void __iomem *base)
+ 		goto free_clk_data;
+diff --git a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c b/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
+index 95385bb67d5511eda3a851f81986e67eaf81e5fb..d7d416172ab35bc027ae67c163c1dc20dee857b6 100644
+--- a/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
++++ b/drivers/clk/mediatek/clk-mt8173-apmixedsys.c
+@@ -140,13 +140,13 @@ MODULE_DEVICE_TABLE(of, of_match_clk_mt8173_apmixed);
+ static int clk_mt8173_apmixed_probe(struct platform_device *pdev)
  {
- 	struct mtk_clk_pll *pll;
-@@ -385,6 +386,8 @@ struct clk_hw *mtk_clk_register_pll(const struct mtk_pll_data *data,
- 	if (!pll)
- 		return ERR_PTR(-ENOMEM);
+ 	const u8 *fhctl_node = "mediatek,mt8173-fhctl";
+-	struct device_node *node = pdev->dev.of_node;
+ 	struct clk_hw_onecell_data *clk_data;
++	struct device *dev = &pdev->dev;
+ 	void __iomem *base;
+ 	struct clk_hw *hw;
+ 	int r;
  
-+	pll->dev = dev;
-+
- 	hw = mtk_clk_register_pll_ops(pll, data, base, pll_ops);
- 	if (IS_ERR(hw))
- 		kfree(pll);
-@@ -428,7 +431,7 @@ int mtk_clk_register_plls(struct device *dev,
- 			continue;
- 		}
+-	base = of_iomap(node, 0);
++	base = of_iomap(dev->of_node, 0);
+ 	if (!base)
+ 		return -ENOMEM;
  
--		hw = mtk_clk_register_pll(pll, base);
-+		hw = mtk_clk_register_pll(dev, pll, base);
+@@ -157,25 +157,25 @@ static int clk_mt8173_apmixed_probe(struct platform_device *pdev)
+ 	}
  
- 		if (IS_ERR(hw)) {
- 			pr_err("Failed to register clk %s: %pe\n", pll->name,
-diff --git a/drivers/clk/mediatek/clk-pll.h b/drivers/clk/mediatek/clk-pll.h
-index 0e2b94b9cd4b56adceee3b04e9ab24c2526471da..0f2a1d19eea78b7390b221af47016eb9897f3596 100644
---- a/drivers/clk/mediatek/clk-pll.h
-+++ b/drivers/clk/mediatek/clk-pll.h
-@@ -63,6 +63,7 @@ struct mtk_pll_data {
-  */
+ 	fhctl_parse_dt(fhctl_node, pllfhs, ARRAY_SIZE(pllfhs));
+-	r = mtk_clk_register_pllfhs(node, plls, ARRAY_SIZE(plls),
+-				    pllfhs, ARRAY_SIZE(pllfhs), clk_data);
++	r = mtk_clk_register_pllfhs(dev, plls, ARRAY_SIZE(plls), pllfhs,
++				    ARRAY_SIZE(pllfhs), clk_data);
+ 	if (r)
+ 		goto free_clk_data;
  
- struct mtk_clk_pll {
-+	struct device *dev;
- 	struct clk_hw	hw;
- 	void __iomem	*base_addr;
- 	void __iomem	*pd_addr;
-@@ -110,7 +111,8 @@ struct clk_hw *mtk_clk_register_pll_ops(struct mtk_clk_pll *pll,
- 					const struct mtk_pll_data *data,
- 					void __iomem *base,
- 					const struct clk_ops *pll_ops);
--struct clk_hw *mtk_clk_register_pll(const struct mtk_pll_data *data,
-+struct clk_hw *mtk_clk_register_pll(struct device *dev,
-+				    const struct mtk_pll_data *data,
- 				    void __iomem *base);
- void mtk_clk_unregister_pll(struct clk_hw *hw);
+ 	hw = mtk_clk_register_ref2usb_tx("ref2usb_tx", "clk26m", base + REGOFF_REF2USB);
+ 	if (IS_ERR(hw)) {
+ 		r = PTR_ERR(hw);
+-		dev_err(&pdev->dev, "Failed to register ref2usb_tx: %d\n", r);
++		dev_err(dev, "Failed to register ref2usb_tx: %d\n", r);
+ 		goto unregister_plls;
+ 	}
+ 	clk_data->hws[CLK_APMIXED_REF2USB_TX] = hw;
  
+-	hw = devm_clk_hw_register_divider(&pdev->dev, "hdmi_ref", "tvdpll_594m", 0,
++	hw = devm_clk_hw_register_divider(dev, "hdmi_ref", "tvdpll_594m", 0,
+ 					  base + REGOFF_HDMI_REF, 16, 3,
+ 					  CLK_DIVIDER_POWER_OF_TWO, NULL);
+ 	clk_data->hws[CLK_APMIXED_HDMI_REF] = hw;
+ 
+-	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
++	r = of_clk_add_hw_provider(dev->of_node, of_clk_hw_onecell_get, clk_data);
+ 	if (r)
+ 		goto unregister_ref2usb;
+ 
+diff --git a/drivers/clk/mediatek/clk-mt8186-apmixedsys.c b/drivers/clk/mediatek/clk-mt8186-apmixedsys.c
+index 4b2b16578232d986f78deed4778c5fab7f460184..d35dd2632e43ab535b32b8b99f8d75de02d56fe2 100644
+--- a/drivers/clk/mediatek/clk-mt8186-apmixedsys.c
++++ b/drivers/clk/mediatek/clk-mt8186-apmixedsys.c
+@@ -151,7 +151,7 @@ static int clk_mt8186_apmixed_probe(struct platform_device *pdev)
+ 
+ 	fhctl_parse_dt(fhctl_node, pllfhs, ARRAY_SIZE(pllfhs));
+ 
+-	r = mtk_clk_register_pllfhs(node, plls, ARRAY_SIZE(plls),
++	r = mtk_clk_register_pllfhs(&pdev->dev, plls, ARRAY_SIZE(plls),
+ 				    pllfhs, ARRAY_SIZE(pllfhs), clk_data);
+ 	if (r)
+ 		goto free_apmixed_data;
+diff --git a/drivers/clk/mediatek/clk-mt8192-apmixedsys.c b/drivers/clk/mediatek/clk-mt8192-apmixedsys.c
+index 0b66a27e4d5ac68f09dc6a4197fd84ef82342df9..b0563a285bd666d492a7fa940733aad1ab1a0bae 100644
+--- a/drivers/clk/mediatek/clk-mt8192-apmixedsys.c
++++ b/drivers/clk/mediatek/clk-mt8192-apmixedsys.c
+@@ -162,7 +162,7 @@ static int clk_mt8192_apmixed_probe(struct platform_device *pdev)
+ 
+ 	fhctl_parse_dt(fhctl_node, pllfhs, ARRAY_SIZE(pllfhs));
+ 
+-	r = mtk_clk_register_pllfhs(node, plls, ARRAY_SIZE(plls),
++	r = mtk_clk_register_pllfhs(&pdev->dev, plls, ARRAY_SIZE(plls),
+ 				    pllfhs, ARRAY_SIZE(pllfhs), clk_data);
+ 	if (r)
+ 		goto free_clk_data;
+diff --git a/drivers/clk/mediatek/clk-mt8195-apmixedsys.c b/drivers/clk/mediatek/clk-mt8195-apmixedsys.c
+index 282a3137dc89419a6d0b574fd549cee941687900..44917ab034c56f01ef02d1957f17eb0655438d75 100644
+--- a/drivers/clk/mediatek/clk-mt8195-apmixedsys.c
++++ b/drivers/clk/mediatek/clk-mt8195-apmixedsys.c
+@@ -181,7 +181,7 @@ static int clk_mt8195_apmixed_probe(struct platform_device *pdev)
+ 
+ 	fhctl_parse_dt(fhctl_node, pllfhs, ARRAY_SIZE(pllfhs));
+ 
+-	r = mtk_clk_register_pllfhs(node, plls, ARRAY_SIZE(plls),
++	r = mtk_clk_register_pllfhs(&pdev->dev, plls, ARRAY_SIZE(plls),
+ 				    pllfhs, ARRAY_SIZE(pllfhs), clk_data);
+ 	if (r)
+ 		goto free_apmixed_data;
 diff --git a/drivers/clk/mediatek/clk-pllfh.c b/drivers/clk/mediatek/clk-pllfh.c
-index 83630ee07ee976bf980c8cf2dd35ea24c1b40821..62bfe4a480f14a0a742fb094aff0e6d1a79fe0c3 100644
+index 62bfe4a480f14a0a742fb094aff0e6d1a79fe0c3..8ad11023d91127e88900bc6bcabbaeafb1e00664 100644
 --- a/drivers/clk/mediatek/clk-pllfh.c
 +++ b/drivers/clk/mediatek/clk-pllfh.c
-@@ -220,7 +220,7 @@ int mtk_clk_register_pllfhs(struct device_node *node,
+@@ -10,6 +10,7 @@
+ #include <linux/slab.h>
+ #include <linux/clkdev.h>
+ #include <linux/delay.h>
++#include <linux/device.h>
+ 
+ #include "clk-mtk.h"
+ #include "clk-pllfh.h"
+@@ -149,7 +150,7 @@ static bool fhctl_is_supported_and_enabled(const struct mtk_pllfh_data *pllfh)
+ }
+ 
+ static struct clk_hw *
+-mtk_clk_register_pllfh(const struct mtk_pll_data *pll_data,
++mtk_clk_register_pllfh(struct device *dev, const struct mtk_pll_data *pll_data,
+ 		       struct mtk_pllfh_data *pllfh_data, void __iomem *base)
+ {
+ 	struct clk_hw *hw;
+@@ -166,6 +167,8 @@ mtk_clk_register_pllfh(const struct mtk_pll_data *pll_data,
+ 		goto out;
+ 	}
+ 
++	fh->clk_pll.dev = dev;
++
+ 	hw = mtk_clk_register_pll_ops(&fh->clk_pll, pll_data, base,
+ 				      &mtk_pllfh_ops);
+ 
+@@ -194,7 +197,7 @@ static void mtk_clk_unregister_pllfh(struct clk_hw *hw)
+ 	kfree(fh);
+ }
+ 
+-int mtk_clk_register_pllfhs(struct device_node *node,
++int mtk_clk_register_pllfhs(struct device *dev,
+ 			    const struct mtk_pll_data *plls, int num_plls,
+ 			    struct mtk_pllfh_data *pllfhs, int num_fhs,
+ 			    struct clk_hw_onecell_data *clk_data)
+@@ -203,7 +206,7 @@ int mtk_clk_register_pllfhs(struct device_node *node,
+ 	int i;
+ 	struct clk_hw *hw;
+ 
+-	base = of_iomap(node, 0);
++	base = of_iomap(dev->of_node, 0);
+ 	if (!base) {
+ 		pr_err("%s(): ioremap failed\n", __func__);
+ 		return -EINVAL;
+@@ -218,9 +221,9 @@ int mtk_clk_register_pllfhs(struct device_node *node,
+ 		use_fhctl = fhctl_is_supported_and_enabled(pllfh);
+ 
  		if (use_fhctl)
- 			hw = mtk_clk_register_pllfh(pll, pllfh, base);
+-			hw = mtk_clk_register_pllfh(pll, pllfh, base);
++			hw = mtk_clk_register_pllfh(dev, pll, pllfh, base);
  		else
--			hw = mtk_clk_register_pll(pll, base);
-+			hw = mtk_clk_register_pll(NULL, pll, base);
+-			hw = mtk_clk_register_pll(NULL, pll, base);
++			hw = mtk_clk_register_pll(dev, pll, base);
  
  		if (IS_ERR(hw)) {
  			pr_err("Failed to register %s clk %s: %ld\n",
+diff --git a/drivers/clk/mediatek/clk-pllfh.h b/drivers/clk/mediatek/clk-pllfh.h
+index 5f419c2ec01f988ede4e40289c6e5d5f8070ad14..a4f337acad71389f771187908882b09d0f801868 100644
+--- a/drivers/clk/mediatek/clk-pllfh.h
++++ b/drivers/clk/mediatek/clk-pllfh.h
+@@ -68,7 +68,7 @@ struct fh_operation {
+ 	int (*ssc_enable)(struct mtk_fh *fh, u32 rate);
+ };
+ 
+-int mtk_clk_register_pllfhs(struct device_node *node,
++int mtk_clk_register_pllfhs(struct device *dev,
+ 			    const struct mtk_pll_data *plls, int num_plls,
+ 			    struct mtk_pllfh_data *pllfhs, int num_pllfhs,
+ 			    struct clk_hw_onecell_data *clk_data);
 
 -- 
 2.51.0
