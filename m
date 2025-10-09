@@ -1,142 +1,184 @@
-Return-Path: <linux-kernel+bounces-847279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96DE4BCA6DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:50:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 581D1BCA6EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:51:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4324B4E7CB0
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:50:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61EBF19E43A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:52:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7811E2614;
-	Thu,  9 Oct 2025 17:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69EEF246BDE;
+	Thu,  9 Oct 2025 17:51:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b="SvPir9XI"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BQ0N2rW+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C18B223DD4
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 17:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5A81E2614;
+	Thu,  9 Oct 2025 17:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760032228; cv=none; b=pD07aq1v5N2MCR30xEo7xarVcqK1ORXsA/xIhw1SXwBQyLQGTafjvIa7jSgtBZBxa1xrbF0UARDOz2lSQ8fhq0XwvHpuf7w45vb86MdZKOMkhP0+iN0aJkYs7x5xP7BlRAlyK0z3Kss0eHPIKTBRcF0XH/kzTEsL8VZAXZlUj/s=
+	t=1760032302; cv=none; b=sttL76BbGKzswc5EvyqMTAt/MPZhgRXkdebP691w6WwdEmm94qSaFnLxrySHKCwSg7E6fqOGEspwrYTw85klup5n4QVIJ7n9U060erKFVlGKVGj/bJTl713wSdobk7xg0SvUrm/w0Q580kJ7EwhDA4//C63F6Hq9uONIk/7Fc54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760032228; c=relaxed/simple;
-	bh=81OCvozsxVuLtWUQCNblLzzY2eOGkAvorDqJmgZ1C8o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uHZ29RDw4aGwdroMMi+LLS1/hpsWvDVSolbBeRteH2acM4BXzntRUJ3ywJHYkvpCXx9K5gZRvvIYCq8YTRxE3AECYklmJPoOz/rLie80KAViMwVRlE07YFK2IqA4p6a+Hk7Man7QrwbnJrnAMyCYuBrpR9mRfq0FrjynKKpYGy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com; spf=none smtp.mailfrom=readmodwrite.com; dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b=SvPir9XI; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=readmodwrite.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-46e34052bb7so15181775e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 10:50:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=readmodwrite-com.20230601.gappssmtp.com; s=20230601; t=1760032225; x=1760637025; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/ks/MTKg0YoCjDlnUh+3C5Magvqx36EuPX64Sc6wPGg=;
-        b=SvPir9XI+1PqBLao4m+AHEUCbOksJnQSgh6Z5vtv2sZ335k+Gb8LFpoGZ+4ZA2XsNr
-         ebvR9GKed0htrNr++5gOEixkod2KjEzPSZnOd2Ci20vKQUVA4Gw9uY7Uom5c8kGyStlE
-         olsbsYICTWXk8pPI0S8WkNmPuk4xWVJsBaTzyV5EGHUjAignbgnhy/0s0C0dw/5ZOqut
-         ypvrWlERUDLmG7YN6O40iliD3UtS9a455qCLE0Fbus2Ano80Mxkw0tb4pqh23QJDDP3i
-         4oEoyOIOjQU/ra5WyMwd5hK+sSKywLsyBQHUKkjYSpKOITV9ggs+8ILRKxm/wuJegenV
-         cmuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760032225; x=1760637025;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/ks/MTKg0YoCjDlnUh+3C5Magvqx36EuPX64Sc6wPGg=;
-        b=C2npP4s9kpS6ts3Ms394zp7MrstfrigdKa7H2nur17gBHS0Y6h5S866sChqV8UA44X
-         s59xUSCcOsz7FIjpNLgq5hvDQEsdyxhKcMC+mdfXSZz6jsYLW6a0qOVP+qLOhZXC9wui
-         3Xe6MLga82EeTUghub6zWCrw1qjqsoUOOpiiybZS3UUcZOH0x48Aoq8kdR8WM29WIgcM
-         9hE37vC29KAMN0C4e9STbQGPrGiiQysX/z1NJTHcbvvW9t5ATRZ2Jr9BAClMWyojZq8Y
-         3PkpTbLNfUk7a+lzwD8pZfxlrf746v+CCk/XE+AX0KurPYozQfYbMt28/NadD4E49X7G
-         4q9g==
-X-Forwarded-Encrypted: i=1; AJvYcCVFMIhceB+m7gl06dTTA1IOuk8kasi6BCu2FL1ZEIt15VgoqlAvIZ1keP9hAxBbN7wr/0xVAZK2m+Ov8sg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy23WXBbX3J7gKLpj46zZNTOgugu/hrDXMZd0lLpf4vWY7cheU/
-	eKMpwjzVlvzDRG6NI7ihDzdIdhnMO+6JqUhANsynthcaNNr1b4aR3lzFwIFieFL/+mw=
-X-Gm-Gg: ASbGncsDh/Y4ZwLap22Mor9R/YtkucJ6DpHLpR2bDD+A3azLtJPn3KODrCHpdtWaDfE
-	qzBql6ivO/FzNBx0pINXzNbBjl96akLfwRrwKK5piuOD5mebgKSQIlIOD3hr8CrheDeo8QVBwUR
-	okqsGp05s3ych6jTu+JRdTjzOo0Gmrp0sZMPSQhiiMAqofqvKFlviEGcNyHpI43gbwH0NO4+z46
-	fHt9wpe7TeNjpc8aggvfw+DkkHx3Ta1rvMeKMGgqINdCU9nQzxeFQ5hFAyaqT8Q2Bgxu80WClRm
-	Dsg3rUXq6UzBG9kE7Puwf9UTSOghVXzSkxqcgFXYDW9g1q/XIH6WBWa3Gbwbo2OAEu2AzHYzkvz
-	hVRz9UOCFoI7299qGdB9wP9QDpGNruRU=
-X-Google-Smtp-Source: AGHT+IF1difQVKEJP2TbXWm1fao8I+fxiVlJ9Mz29m9hxZ4zGhUTJBidvU775n983cRscyRjCViJ8w==
-X-Received: by 2002:a05:6000:604:b0:408:9c48:e26c with SMTP id ffacd0b85a97d-4266e8e0b99mr5235827f8f.62.1760032224674;
-        Thu, 09 Oct 2025 10:50:24 -0700 (PDT)
-Received: from localhost ([2a09:bac1:2880:f0::3d8:48])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5e0efasm105756f8f.41.2025.10.09.10.50.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 10:50:24 -0700 (PDT)
-Date: Thu, 9 Oct 2025 18:50:23 +0100
-From: Matt Fleming <matt@readmodwrite.com>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-team@cloudflare.com, linux-fsdevel@vger.kernel.org,
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: ext4 writeback performance issue in 6.12
-Message-ID: <20251009175023.ftbnizjmabbe3x2l@matt-Precision-5490>
-References: <20251006115615.2289526-1-matt@readmodwrite.com>
- <aOesS6Feov9mrbJh@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+	s=arc-20240116; t=1760032302; c=relaxed/simple;
+	bh=Kt+BiiiB+9Tmir/AzFzW6CliEEaqbJVo8i+yrxbSlQk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ndqpZMA0dSCP1FyjEc0xp23gPHPs5+f3P2JzQ96c5fCGaupJKylzbFv2FWPHICD8HT/tCr/GbsdeNWGB55S7Oa2ExaiQ1jy9zmfN/qUeW0gRN9Ije9VAmzlK3VeJie4LBVfM63XpzeKMn1LxG9q+U87WsMYnpI0Z/97fkqopno0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BQ0N2rW+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4008EC4CEE7;
+	Thu,  9 Oct 2025 17:51:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760032302;
+	bh=Kt+BiiiB+9Tmir/AzFzW6CliEEaqbJVo8i+yrxbSlQk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BQ0N2rW+szIMjUf2wascL7R/iQOk/uvnN/PgHRqo93iqkxKkvE0iANes53td4HnvL
+	 n7NRLAn2bdlnsMsJxskuSEkexKvi7bmBkcJPQZSVI00zPW2dseh8916iBCvPBY35Sc
+	 00QEAZr5bX2bxn214tO54xxtcoOn7suEbRo9s4DzNYbp6xECzid8hsAP0suJISJcqV
+	 BjDpqp02bYx+XEmFt4uXpmeREDFyKhxNEMCqJRpMYOL85tHvOs/oqCqz7XZLmwbIAb
+	 TJFm3gWZsKVJ0yX5h1SJUSdF6XNICvq0a7YD+nqQpB0ftCuuQuhlcudgcAcc9IfXo3
+	 legK52LfcH0Pg==
+Message-ID: <dad227b8-7ff0-426c-80dd-aa3e725549b0@kernel.org>
+Date: Thu, 9 Oct 2025 19:51:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aOesS6Feov9mrbJh@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] input: goodix: Remove setting of RST pin to input
+To: Martyn Welch <martyn.welch@collabora.com>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: kernel@collabora.com, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251009134138.686215-1-martyn.welch@collabora.com>
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <20251009134138.686215-1-martyn.welch@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 09, 2025 at 06:06:27PM +0530, Ojaswin Mujoo wrote:
-> 
-> Hi Matt,
-> 
-> Thanks for the details, we have had issues in past where the allocator
-> gets stuck in a loop trying too hard to find blocks that are aligned to
-> the stripe size [1] but this particular issue was patched in an pre 6.12
-> kernel.
- 
-Yeah, we (Cloudflare) hit this exact issue last year.
+Hi,
 
-> Coming to the above details, ext4_mb_find_good_group_avg_frag_list()
-> exits early if there are no groups of the needed so if we do have many
-> order 9+ allocations we shouldn't have been spending more time there.
-> The issue I think are the order 9 allocations, which allocator thinks it
-> can satisfy but it ends up not being able to find the space easily.
-> If ext4_mb_find_group_avg_frag_list() is indeed a bottleneck, there
-> are 2 places where it could be getting called from:
+On 9-Oct-25 3:41 PM, Martyn Welch wrote:
+> The reset line is being set to input on non-ACPI devices apparently to
+> save power. This isn't being done on ACPI devices as it's been found
+> that some ACPI devices don't have a pull-up resistor fitted. This can
+> also be the case for non-ACPI devices, resulting in:
 > 
-> - ext4_mb_choose_next_group_goal_fast (criteria =
-> 	EXT4_MB_CR_GOAL_LEN_FAST)
-> - ext4_mb_choose_next_group_best_avail (criteria =
-> 	EXT4_MB_CR_BEST_AVAIL_LEN)
+> [  941.672207] Goodix-TS 1-0014: Error reading 10 bytes from 0x814e: -110
+> [  942.696168] Goodix-TS 1-0014: Error reading 10 bytes from 0x814e: -110
+> [  945.832208] Goodix-TS 1-0014: Error reading 10 bytes from 0x814e: -110
 > 
-> Will it be possible for you to use bpf to try to figure out which one of
-> the callers is actually the one bottlenecking (mihgt be tricky since
-> they will mostly get inlined) and a sample of values for ac_g_ex->fe_len
-> and ac_b_ex->fe_len if possible.
- 
-Mostly we go through ext4_mb_choose_next_group_goal_fast() but we also
-go through ext4_mb_choose_next_group_best_avail().
+> This behaviour appears to have been initialing introduced in
+> ec6e1b4082d9. This doesn't seem to be based on information in either the
+> GT911 or GT9271 datasheets cited as sources of information for this
+> change. Thus it seems likely that it is based on functionality in the
+> Android driver which it also lists. This behaviour may be viable in very
+> specific instances where the hardware is well known, but seems unwise in
+> the upstream kernel where such hardware requirements can't be
+> guaranteed.
+> 
+> Remove this over optimisation to improve reliability on non-ACPI
+> devices.
+> 
+> Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
+> 
+> ---
+> 
+> Changes since v1:
+>  - Dropping gpiod_rst_flags and directly passing GPIOD_ASIS when
+>    requesting the reset pin.
 
-> Also, can you share the ext4 mb stats by enabling it via:
-> 
->  echo 1 > /sys/fs/ext4/vda2/mb_stats
-> 
-> And then once you are able to replicate it for a few mins: 
-> 
->   cat /proc/fs/ext4/vda2/mb_stats
-> 
-> This will also give some idea on where the allocator is spending more
-> time.
-> 
-> Also, as Ted suggested, switching stripe off might also help here.
+Thanks, patch looks good to me:
 
-Preliminary results look very promising with stripe disabled.
+Reviewed-by: Hans de Goede <hansg@kernel.org>
+
+Regards,
+
+Hans
+
+
+
+
+> 
+>  drivers/input/touchscreen/goodix.c | 27 +--------------------------
+>  drivers/input/touchscreen/goodix.h |  1 -
+>  2 files changed, 1 insertion(+), 27 deletions(-)
+> 
+> diff --git a/drivers/input/touchscreen/goodix.c b/drivers/input/touchscreen/goodix.c
+> index 252dcae039f8..f838f92100c2 100644
+> --- a/drivers/input/touchscreen/goodix.c
+> +++ b/drivers/input/touchscreen/goodix.c
+> @@ -796,17 +796,6 @@ int goodix_reset_no_int_sync(struct goodix_ts_data *ts)
+>  
+>  	usleep_range(6000, 10000);		/* T4: > 5ms */
+>  
+> -	/*
+> -	 * Put the reset pin back in to input / high-impedance mode to save
+> -	 * power. Only do this in the non ACPI case since some ACPI boards
+> -	 * don't have a pull-up, so there the reset pin must stay active-high.
+> -	 */
+> -	if (ts->irq_pin_access_method == IRQ_PIN_ACCESS_GPIO) {
+> -		error = gpiod_direction_input(ts->gpiod_rst);
+> -		if (error)
+> -			goto error;
+> -	}
+> -
+>  	return 0;
+>  
+>  error:
+> @@ -957,14 +946,6 @@ static int goodix_add_acpi_gpio_mappings(struct goodix_ts_data *ts)
+>  		return -EINVAL;
+>  	}
+>  
+> -	/*
+> -	 * Normally we put the reset pin in input / high-impedance mode to save
+> -	 * power. But some x86/ACPI boards don't have a pull-up, so for the ACPI
+> -	 * case, leave the pin as is. This results in the pin not being touched
+> -	 * at all on x86/ACPI boards, except when needed for error-recover.
+> -	 */
+> -	ts->gpiod_rst_flags = GPIOD_ASIS;
+> -
+>  	return devm_acpi_dev_add_driver_gpios(dev, gpio_mapping);
+>  }
+>  #else
+> @@ -989,12 +970,6 @@ static int goodix_get_gpio_config(struct goodix_ts_data *ts)
+>  		return -EINVAL;
+>  	dev = &ts->client->dev;
+>  
+> -	/*
+> -	 * By default we request the reset pin as input, leaving it in
+> -	 * high-impedance when not resetting the controller to save power.
+> -	 */
+> -	ts->gpiod_rst_flags = GPIOD_IN;
+> -
+>  	ts->avdd28 = devm_regulator_get(dev, "AVDD28");
+>  	if (IS_ERR(ts->avdd28))
+>  		return dev_err_probe(dev, PTR_ERR(ts->avdd28), "Failed to get AVDD28 regulator\n");
+> @@ -1019,7 +994,7 @@ static int goodix_get_gpio_config(struct goodix_ts_data *ts)
+>  	ts->gpiod_int = gpiod;
+>  
+>  	/* Get the reset line GPIO pin number */
+> -	gpiod = devm_gpiod_get_optional(dev, GOODIX_GPIO_RST_NAME, ts->gpiod_rst_flags);
+> +	gpiod = devm_gpiod_get_optional(dev, GOODIX_GPIO_RST_NAME, GPIOD_ASIS);
+>  	if (IS_ERR(gpiod))
+>  		return dev_err_probe(dev, PTR_ERR(gpiod), "Failed to get %s GPIO\n",
+>  				     GOODIX_GPIO_RST_NAME);
+> diff --git a/drivers/input/touchscreen/goodix.h b/drivers/input/touchscreen/goodix.h
+> index 87797cc88b32..0d1e8a8d2cba 100644
+> --- a/drivers/input/touchscreen/goodix.h
+> +++ b/drivers/input/touchscreen/goodix.h
+> @@ -88,7 +88,6 @@ struct goodix_ts_data {
+>  	struct gpio_desc *gpiod_rst;
+>  	int gpio_count;
+>  	int gpio_int_idx;
+> -	enum gpiod_flags gpiod_rst_flags;
+>  	char id[GOODIX_ID_MAX_LEN + 1];
+>  	char cfg_name[64];
+>  	u16 version;
+
 
