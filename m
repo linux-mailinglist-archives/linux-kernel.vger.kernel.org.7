@@ -1,152 +1,135 @@
-Return-Path: <linux-kernel+bounces-846428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE6C4BC7F9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:15:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A44BBC7FA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:15:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DD97421A84
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:14:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAA173A2250
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A1B2D23BC;
-	Thu,  9 Oct 2025 08:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uh0DvYKE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A2F270ED9;
+	Thu,  9 Oct 2025 08:15:20 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE61320A5EA;
-	Thu,  9 Oct 2025 08:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8EC265614
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 08:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759997661; cv=none; b=bA3rB/Pix56TkTVDIL8AmQOPVrWyJ7JNLJ1nTQOSGaF+7+hybXjTKnmBtz8j6j7/jvWfp4heyoMSgqIrjw8rFNsnhmoE23efaBMzyp6YSfrGVr52DI23bzPO2euBbPA6Tdimo8Cqn4vd9fC0TSQT8nnnufH9cudgazaYHcbpRQ8=
+	t=1759997720; cv=none; b=M4s/3ldVHmzcTTQiOy6jEhJt/rpRHR39aq9Ig2naC8KHtnGt6u9CwHxuc1VNYFRc26gFc6letVd4NdBUrQH885sk4X5swJTaytJ4almSz7bIHY89lw9+sp+RxIlcy5CFzsdMekibJioV6sDfB0UB49nbhvQB2MwtoRbUgLdmkkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759997661; c=relaxed/simple;
-	bh=/WhW30MHXRu6mGrAJwcl9P5miyytRjumQkutPjxFgV8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ssLZCaP+Wr11GuOzLbfB/BJyQ5yDLoMNb+ufj5llamdzBFTBeQSbifn/69sXRrCWZCzXVlIKCMEmFhEVGqGzxg9WW+DXe/nIiXzzsolVXKecnUZ7a9uE/rRp++SJzZOCtlwjh1R1jyc0L6iq1ZQ4Z0q6ulZqBhzhhWbC1Hx0S3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uh0DvYKE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72438C4CEE7;
-	Thu,  9 Oct 2025 08:14:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759997660;
-	bh=/WhW30MHXRu6mGrAJwcl9P5miyytRjumQkutPjxFgV8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uh0DvYKEPvERp297/aerNwrvO2VPwyVb1BCVbwmYx8Am0Ld8q1p1JYrFge4sfM3Y+
-	 B3AJSctsFtZSWRQgI/FQJiPL9hLXOewlXH91iwx8Fuuw7um+ChPubaraerSAWFt2zv
-	 uWx+P8UocPxfOqOstOsmJS6I/WeWSRy9A3WAzDKbk6J3s6SxnMEXaHMhRPD++JCBj2
-	 JLCsd2sKGxk8sagLZna3R186sekSN5xP0FK7w5c7avZHFaAV3SWzBfQi3JH8421B11
-	 09KkxgCLCdQ9+V5dNPtIvsZQZe7SxgesgfCs2l2K4HvdfmGrv7nh0vb1DzN3ouxPpr
-	 qHV3JITVlNoLA==
-Message-ID: <84d0a611-586e-4e28-9be5-ef2cb58391cf@kernel.org>
-Date: Thu, 9 Oct 2025 17:14:12 +0900
+	s=arc-20240116; t=1759997720; c=relaxed/simple;
+	bh=u7P6hsW/hVnnjXXRY0turAm15SfZtAOwYrMkwCaVf9w=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=AQRM+S7IDcaqEBkKtzSl+e+Rxx/X3ddx3q7Rh1D6r0ePcOrHD3bdjingYyRMNaPcXW4l+vdVcZ6BRyz+YPomWrXxVeiTsS3x4Qz232TNkJi+QFPNy7i4S51tuhMWEXRjH2HAKqSxc261gWm5HtObYACs5u/A68/0p8h1lyUtytk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v6lnk-0001K9-BB; Thu, 09 Oct 2025 10:15:04 +0200
+Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v6lnj-002ha9-1W;
+	Thu, 09 Oct 2025 10:15:03 +0200
+Received: from pza by lupine with local (Exim 4.98.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1v6lnj-000000002Hu-1f20;
+	Thu, 09 Oct 2025 10:15:03 +0200
+Message-ID: <206e36398db6075bfb0bb0b98295ee7328c5f64f.camel@pengutronix.de>
+Subject: Re: [PATCH] i2c: designware-platdrv: handle reset control deassert
+ error
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Artem Shimko <a.shimko.dev@gmail.com>, Jarkko Nikula	
+ <jarkko.nikula@linux.intel.com>, Andy Shevchenko	
+ <andriy.shevchenko@linux.intel.com>, Mika Westerberg	
+ <mika.westerberg@linux.intel.com>, Jan Dabros <jsd@semihalf.com>, Andi
+ Shyti	 <andi.shyti@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 09 Oct 2025 10:15:03 +0200
+In-Reply-To: <20251009074443.2010699-1-a.shimko.dev@gmail.com>
+References: <20251009074443.2010699-1-a.shimko.dev@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/5] Introduce "non-pixel" sub node within iris video
- node
-To: Charan Teja Kalla <charan.kalla@oss.qualcomm.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Bryan O'Donoghue <bod@kernel.org>, Bryan O'Donoghue <bod.linux@nxsw.ie>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <7b6db4fa-2f73-376d-4eb3-64c1c7e6cda3@quicinc.com>
- <6840d462-8269-4359-a6e5-d154842b62db@oss.qualcomm.com>
- <af0da28c-3ca0-41dc-aaa4-572723ea74bf@linaro.org>
- <klhvgzizub33f46buqsog54wqksqp24a5tijwyv355l2ao2imo@wdkojfebc6s2>
- <e1a6e75a-2a5d-44a2-8bbc-140eb86d1806@linaro.org>
- <2hh3zkdwgqbdurpr4tibr3gjat6arwl3dd3gxakdaagafwjdrm@aj5em4tbsjen>
- <Ujyoj3HGLVFhS2b0XzcYAMjSiCAuO-lSJ8PMEQLOaaX83tk_0D5zjrL0VDyZAmD3i4zLB3ElKSZBltISb5jJHA==@protonmail.internalid>
- <4a32bbec-2baf-4210-a7c1-1ddcd45d30c8@oss.qualcomm.com>
- <SuwJuCIcLVJwN3YeN1il6tB9wO9OH6bYcnbRpxpuI9Dl7piYLN-hVdnyv0Mal6N-W5pi2aCZI8MxHZDEkoE63A==@protonmail.internalid>
- <4d87d1ca-55b2-426e-aa73-e3fd8c6fe7bd@kernel.org>
- <10a8ccda-4e27-4b06-9a0e-608d6ade5354@nxsw.ie>
- <4cb4a92d-2f20-47c7-881e-aadcc6f83aa0@kernel.org>
- <1516f21e-aee3-42cf-b75e-61142dc9578d@oss.qualcomm.com>
- <9bae595a-597e-46e6-8eb2-44424fe21db6@linaro.org>
- <bcfbf35b-69ed-4f39-8312-6a53123cd898@kernel.org>
- <6ead45a6-aac8-464d-9812-f5e0d1395709@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <6ead45a6-aac8-464d-9812-f5e0d1395709@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 09/10/2025 14:23, Charan Teja Kalla wrote:
-> 
-> 
-> On 10/9/2025 6:02 AM, Krzysztof Kozlowski wrote:
->>> If it is legitimate meta-data for the SMMU setup then why _shouldn't_ it 
->>> go into the DT ?
->>>
->> We talked about this two or three months ago. I don't understand why you
->> just ignored that entire part and come with new binding just to not
->> touch iommu code. List of entries in iommu must have strict order, just
->> like for every other list, and you should rely on that.
-> Hi Krzysztof,
-> 
-> I want to understand a bit more about the statement -- "List of entries
-> in iommu must have strict order."
+Hi Artem,
 
-See writing bindings (and countless of reviews on the mailing lists).
+On Do, 2025-10-09 at 10:44 +0300, Artem Shimko wrote:
+> Handle the error returned by reset_control_deassert() in the probe
+> function to prevent continuing probe when reset deassertion fails.
+>=20
+> Previously, reset_control_deassert() was called without checking its
+> return value, which could lead to probe continuing even when the
+> device reset wasn't properly deasserted.
+>=20
+> The fix checks the return value and returns an error with dev_err_probe()
+> if reset deassertion fails, providing better error handling and
+> diagnostics.
+>=20
+> Signed-off-by: Artem Shimko <a.shimko.dev@gmail.com>
+> ---
+> Hello maintainers and reviewers,
+>=20
+> This patch adds proper error handling for reset_control_deassert() in the=
+=20
+> DesignWare I2C platform driver probe function.
+>=20
+> Currently, if reset deassertion fails, the driver continues probing which
+> could lead to operating a device that is still held in reset. This patch
+> ensures we properly check the return value and fail the probe with a
+> meaningful error message if reset deassertion fails.
+>=20
+> The change is safe because:
+> 1. reset_control_deassert() handles NULL pointers (for optional resets)=
+=20
+>    by returning 0 (success)
+> 2. For non-NULL reset controls, we now properly validate the operation
+> 3. dev_err_probe() provides appropriate error context for diagnostics
+>=20
+> Thank you for your consideration.
+>=20
+> Best regards,
+> Artem Shimko
+>=20
+>  drivers/i2c/busses/i2c-designware-platdrv.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/bu=
+sses/i2c-designware-platdrv.c
+> index a35e4c64a1d4..4c57c79d4ce5 100644
+> --- a/drivers/i2c/busses/i2c-designware-platdrv.c
+> +++ b/drivers/i2c/busses/i2c-designware-platdrv.c
+> @@ -240,7 +240,9 @@ static int dw_i2c_plat_probe(struct platform_device *=
+pdev)
+>  	if (IS_ERR(dev->rst))
+>  		return PTR_ERR(dev->rst);
+> =20
+> -	reset_control_deassert(dev->rst);
+> +	ret =3D reset_control_deassert(dev->rst);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret, "Failed to deassert reset\n");
 
-Best regards,
-Krzysztof
+There is a local variable "struct device *device =3D &pdev->dev", better
+use that for consistency.
+
+regards
+Philipp
 
