@@ -1,197 +1,114 @@
-Return-Path: <linux-kernel+bounces-846375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CF71BC7C01
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:44:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49231BC77C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 08:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B693035219E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:44:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D7293E6D64
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 06:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866A12D0629;
-	Thu,  9 Oct 2025 07:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54304293C44;
+	Thu,  9 Oct 2025 06:04:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="g5bSR7Jc"
-Received: from mail-m3290.qiye.163.com (mail-m3290.qiye.163.com [220.197.32.90])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bs1HyzuV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338A82D0C7A;
-	Thu,  9 Oct 2025 07:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80AFE28E571
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 06:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759995871; cv=none; b=R8eqP3jl5AyTlGdMLOxb5cIwKL4FamVWbUFYcP9obNnWKKPjttL6je0nNZ7ARbs0nejuUT0wLFHCFpQwDP2xtG4NxEQhJrlpH7bhaZY0jxwsEUhUw9p9iK0WL/HBq5Kg1VejCicRlOqFJ0Y5T5RJSoREh012mD+1j7QjZMLOKNI=
+	t=1759989882; cv=none; b=MLyzCePxabJzn1q5H8XUOooGcC670/Nv93uo5KHx7t6TlfsbR7a7YhbVnNCsovQ2Ctsnwwkkm+chgC/QfbuHJCx7+FH9xE9bAIov/alZ9Jy6R0rok4UhIqX1s7G6WDHgbWK5CZGzGLn8zvu7P1rhBG1TJvW4RT5Lmbi3wXHdfj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759995871; c=relaxed/simple;
-	bh=A6klI/zLMxJ2hB4Xd5d1g4rb3kQELZncCrSJWRc97i8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AimM87RGF9WUg41YWxs6A2ga7v79+xHiwQSjrNaVbQnL9ll4jXVNOYTSN66bGauJmirIZHP48gAsiCoFEpBUnYCn+0oF8SbzBnI1XA9Up+4eyTEe5DjsNwiePtFM+nupuGoSFmL7zwoz4XI1xrmIfKXERKsgSf1s1CJNou5I+tQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=g5bSR7Jc; arc=none smtp.client-ip=220.197.32.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.26] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 253de3988;
-	Thu, 9 Oct 2025 10:01:38 +0800 (GMT+08:00)
-Message-ID: <d4353b1e-53e5-4a5f-8da0-df3493d95ec3@rock-chips.com>
-Date: Thu, 9 Oct 2025 10:01:39 +0800
+	s=arc-20240116; t=1759989882; c=relaxed/simple;
+	bh=YL+0zTQV2cCrw6w3DDtrszQnwQQe3CfuAxyQTWyVVMw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g3/vFYiT2puMgMSFQL6INHubFphT8gUgKd2JAu8Ny7N2j7s8PHrEVlEUsUzBjpRoF/MCg397vfUgod6iqu4lkwYPtOgOu59S500zilEjYwsrgTrevE7rx3IFDB9CFVgjiVUnGIg9QhhSGEm00UWkjK4F2m781AFD64Nz/em5+zY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bs1HyzuV; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759989881; x=1791525881;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YL+0zTQV2cCrw6w3DDtrszQnwQQe3CfuAxyQTWyVVMw=;
+  b=bs1HyzuVTfOXuWlzvD1s3mu3MRWm9Tgcaw846hljI+SwpT9BmMC/f+XA
+   rnPUvH4gX3EZHW0cbFIeDaBNnJ38/0QC48c3sU/sYoA+ujM4VAeKjr02U
+   Is9LZvLgo4hRH6JKAypwmk9KxcB9Ov5Ag+MHJg9R450JiwgGBpXLPRaiX
+   KpEX16rHPXFv41ipWUg7LwhFImN7pl6rZDEWt+DqjZWAxWA7SIrqwrL2w
+   pEFlIxYokcyCIXz/UYv8DQoYdXg9079m9sdvo5LhYWPdCvP1RgDJi3jLY
+   JEiJdJZdtV6UZ3iWhu5Ex4CQBhC1Sy/9RMxn5dzHEDR3PXNFjI30AE9XZ
+   Q==;
+X-CSE-ConnectionGUID: ITp8dvx4Q4CMzFwaeSKZLA==
+X-CSE-MsgGUID: LEXx7OxsQzGfcDjQCIpdSg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11576"; a="73620121"
+X-IronPort-AV: E=Sophos;i="6.19,215,1754982000"; 
+   d="scan'208";a="73620121"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2025 23:04:40 -0700
+X-CSE-ConnectionGUID: tsWIBUrhQCalcTif+YLI3w==
+X-CSE-MsgGUID: jGJRev0oTYSF7hrrYQSAVQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,215,1754982000"; 
+   d="scan'208";a="185003925"
+Received: from guptapa-dev.ostc.intel.com (HELO desk) ([10.54.69.136])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2025 23:04:39 -0700
+Date: Wed, 8 Oct 2025 23:04:32 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, 
+	"Kaplan, David" <David.Kaplan@amd.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"H . Peter Anvin" <hpa@zytor.com>, Klaus Kusche <klaus.kusche@computerix.info>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86/bugs: Qualify RETBLEED_INTEL_MSG
+Message-ID: <pnobm2r4icma6xzxvzklxoyoy3a4yhhxuxdoq2srmz6rpnegms@qneijnfu6fmz>
+References: <20251003171936.155391-1-david.kaplan@amd.com>
+ <20251006131126.GBaOO__iUbQHNR6QhW@fat_crate.local>
+ <LV3PR12MB9265B9AA81E01A539214764A94E3A@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20251006140442.GDaOPMemqB7SRJSHWL@fat_crate.local>
+ <20251007182257.ywrqrrhgrtrviila@desk>
+ <20251007221229.GAaOWQTadGWlZSeAo_@fat_crate.local>
+ <20251007230821.5shpa3pusyzaohb2@desk>
+ <sb7p6quwxkn4w4etgsxlqd6fcsia4xobf73d3fnybxafxrmvwi@ajg5lkdxtnfy>
+ <20251008102136.GAaOY7MBd4_VBPBNtG@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 07/18] drm/exynos: exynos_dp: Apply legacy bridge to
- parse the display-timings node
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
- festevam@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
- kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
- jingoohan1@gmail.com, p.zabel@pengutronix.de, hjc@rock-chips.com,
- heiko@sntech.de, andy.yan@rock-chips.com, dianders@chromium.org,
- m.szyprowski@samsung.com, luca.ceresoli@bootlin.com, jani.nikula@intel.com,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
-References: <20250930090920.131094-1-damon.ding@rock-chips.com>
- <20250930090920.131094-8-damon.ding@rock-chips.com>
- <73bpf77trhqdo5amfxbn4qhlwf4ta7hmouwfen7m3aslycd3bj@72artzwafbmq>
-Content-Language: en-US
-From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <73bpf77trhqdo5amfxbn4qhlwf4ta7hmouwfen7m3aslycd3bj@72artzwafbmq>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Tid: 0a99c6b3d38b03a3kunm9ba9a00aa3be80
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGRlLGFZPTh9CGUxIGUNMQklWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
-	1VSktLVUpCWQY+
-DKIM-Signature: a=rsa-sha256;
-	b=g5bSR7JcicF4l8Xg5hsi1shmjZSmPq7LMdHC3p6KV19qTLOcogrtafU3cM+wvqokGzzEZTkyzGaDS7cVjiwUCI4qOWmqVd+YzemXrDWbkfLuzNP5flW+RxlNr/fEBr7DyIgul3sJ5uvZLX97Z1l67egKD79TmgMoVQjFgU3sJ50=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=hZLQq1cFpDnE3WeOTXxYAWB3fTkXBtyZpLnTjz0oWFs=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251008102136.GAaOY7MBd4_VBPBNtG@fat_crate.local>
 
-Hi Dmitry,
+On Wed, Oct 08, 2025 at 12:21:36PM +0200, Borislav Petkov wrote:
+> On Tue, Oct 07, 2025 at 05:14:29PM -0700, Josh Poimboeuf wrote:
+> > Isn't that what CONFIG_CPU_MITIGATIONS=n already does today?
+> 
+> I'd like =n to mean, code is not compiled in.
+> 
+> We do have some savings:
+> 
+>    text	   data	    bss	    dec	    hex	filename
+> 136442490	9737118		36764336	182943944	ae780c8	vmlinux 	# CONFIG_CPU_MITIGATIONS is not set
+> 138493310	10692818	37741668	186927796	b244ab4	vmlinux		# CONFIG_CPU_MITIGATIONS=y
 
-On 10/1/2025 4:17 AM, Dmitry Baryshkov wrote:
-> On Tue, Sep 30, 2025 at 05:09:09PM +0800, Damon Ding wrote:
->> If there is neither a panel nor a bridge, the display timing can be
->> parsed from the display-timings node under the dp node.
->>
->> In order to get rid of &analogix_dp_plat_data.get_modes() and make
->> the codes more consistent, apply DRM legacy bridge to parse display
->> timings.
->>
->> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
->>
->> ------
->>
->> Changes in v6:
->> - Apply DRM legacy bridge to parse display timings intead of
->>    implementing the same codes only for Exynos DP.
->> ---
->>   drivers/gpu/drm/exynos/Kconfig     |  1 +
->>   drivers/gpu/drm/exynos/exynos_dp.c | 71 +++++++++---------------------
->>   2 files changed, 22 insertions(+), 50 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
->> index 0d13828e7d9e..66665d317848 100644
->> --- a/drivers/gpu/drm/exynos/Kconfig
->> +++ b/drivers/gpu/drm/exynos/Kconfig
->> @@ -72,6 +72,7 @@ config DRM_EXYNOS_DP
->>   	select DRM_ANALOGIX_DP
->>   	select DRM_DISPLAY_DP_HELPER
->>   	default DRM_EXYNOS
->> +	select DRM_LEGACY_BRIDGE
->>   	select DRM_PANEL
->>   	help
->>   	  This enables support for DP device.
->> diff --git a/drivers/gpu/drm/exynos/exynos_dp.c b/drivers/gpu/drm/exynos/exynos_dp.c
->> index e20513164032..507d0a98fe5b 100644
->> --- a/drivers/gpu/drm/exynos/exynos_dp.c
->> +++ b/drivers/gpu/drm/exynos/exynos_dp.c
->> @@ -19,6 +19,7 @@
->>   #include <video/videomode.h>
->>   
->>   #include <drm/bridge/analogix_dp.h>
->> +#include <drm/bridge/legacy-bridge.h>
->>   #include <drm/drm_atomic_helper.h>
->>   #include <drm/drm_bridge.h>
->>   #include <drm/drm_crtc.h>
->> @@ -38,11 +39,23 @@ struct exynos_dp_device {
->>   	struct drm_device          *drm_dev;
->>   	struct device              *dev;
->>   
->> -	struct videomode           vm;
->>   	struct analogix_dp_device *adp;
->>   	struct analogix_dp_plat_data plat_data;
->>   };
->>   
->> +static int exynos_dp_legacy_bridge_init(struct exynos_dp_device *dp,
->> +					struct drm_bridge **bridge)
->> +{
->> +	if (!bridge)
->> +		return -EINVAL;
-> 
-> Well, this can't happen, can it?
-> 
->> +
->> +	*bridge = devm_drm_legacy_bridge(dp->dev, dp->dev->of_node, DRM_MODE_CONNECTOR_eDP);
->> +	if (IS_ERR(*bridge))
->> +		return PTR_ERR(*bridge);
->> +
->> +	return 0;
->> +}
-> 
-> I'd suggest inlining the function. It doesn't make sense to have
-> one-line wrapper.
-> 
+I guess bulk of these savings are comming from CALL_THUNKS that force 16
+byte function alignment.
 
-Will do in v7.
-
->> +
->>   static int exynos_dp_crtc_clock_enable(struct analogix_dp_plat_data *plat_data,
->>   				bool enable)
->>   {
+> but look at bugs.o:
 > 
-> [...]
+> # CONFIG_CPU_MITIGATIONS is not set	599K arch/x86/kernel/cpu/bugs.o
+> # CONFIG_CPU_MITIGATIONS=y		625K arch/x86/kernel/cpu/bugs.o
 > 
->>   static int exynos_dp_bridge_attach(struct analogix_dp_plat_data *plat_data,
->>   				   struct drm_bridge *bridge,
->>   				   struct drm_connector *connector)
->>   {
->>   	struct exynos_dp_device *dp = to_dp(plat_data);
->> +	enum drm_bridge_attach_flags flags = 0;
->>   	int ret;
->>   
->>   	/* Pre-empt DP connector creation if there's a bridge */
->>   	if (plat_data->next_bridge) {
->> -		ret = drm_bridge_attach(&dp->encoder, plat_data->next_bridge, bridge,
->> -					0);
->> +		if (drm_bridge_is_legacy(plat_data->next_bridge))
-> 
-> I see... You are going to kill this line in one of the next patches, but
-> the API will stay. I suggest adding a flag to the exynos_dp_device and
-> then removing the flag once you migrate to drm_bridge_connector.
-> 
+> and those unused 600K still go into vmlinux:
 
-Yes, using a temporary flag is a better approach.
-
->> +			flags = DRM_BRIDGE_ATTACH_NO_CONNECTOR;
->> +
->> +		ret = drm_bridge_attach(&dp->encoder, plat_data->next_bridge, bridge, flags);
->>   		if (ret)
->>   			return ret;
->>   	}
-> 
-
-Best regards,
-Damon
-
+Thats a lot. OTOH, most of the bugs.c is __init code, do you think it is
+still problematic?
 
