@@ -1,141 +1,163 @@
-Return-Path: <linux-kernel+bounces-846196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06FD9BC7419
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 04:58:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1B13BC7413
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 04:57:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AA49F4F06BD
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 02:58:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A950C3AF346
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 02:57:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990851E6DC5;
-	Thu,  9 Oct 2025 02:57:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B551E51EE;
+	Thu,  9 Oct 2025 02:57:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nIQZcjHl"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="fYe/2lgh"
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E77B849C
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 02:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D811CA84
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 02:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759978677; cv=none; b=a9I0yFfMhJOKhLGutrXchaseNQ2JxJK8v//xmBtKlvSmL0DqlOBxYjI/RM8btccf4Hw//2eDHKLauoNp44o8aTEsL+RE0ynY3G/R0mUjQ65Nlc8HaLy0q6RyqXea2A/O0Fx7OmhuKga/2RNabWe/Cp6xzXF0nnNZ3Y8lerLfjT4=
+	t=1759978633; cv=none; b=cxs+3ZTNoBAEQcauXSxdlANArgJw1kr36CNQjH9xl2x3ho6+NtcxJAp8l+AUA7y/6AOZjHp7drabqXieOV/2LA3PZ4RmImdRCnes29S9ctEy8Lbskdev4PP7q5vl6F+8FTRmWbBKDX+5DKBgLIHFp17rjAckSizzW0gHMpCKQHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759978677; c=relaxed/simple;
-	bh=lF7BW2ohCLI1X07kVAARu7zfDJnU4/XAq0NhBy9tApk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tKJZ/3/rmg9pdp9GCrtnsaiTYoeCjfWVfR/vzoZSBPwGzxvtcHeNuKlxhWQOlELxRcJ6TC4KlnYv1KWb38bE++UwXHAgz+1pEIClJ2h+5ZDc8WkySvmbHLU7TH3Jv6zj0cE6yQeGeDTZgAjbavKaM9mId4JB7dAZ6O2uNWcnmvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nIQZcjHl; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-854585036e8so48273785a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 19:57:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759978674; x=1760583474; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vlG0GD1lh6iJAvDPmOa/rB/T6NwWaH3uKxr67w639yc=;
-        b=nIQZcjHlZ1PwaSL0fXgX6ELsoBgDdMETdRevkwI2OSzwZnLZlXisundfX/dPuetQn3
-         pBvAlhEY61HYn+1u0UqJEsuPGpxXIG/GBAK9TMYqE4CBaA2ouZaz/OeCQsA6h2PmnIBt
-         B2auZ1/N4Pgr5DPkFT2Ok0mjRgjAkitDEEcR3FUNz6238hzrePAKzT6KlyI1Bx0WMMmm
-         p0KziYOgQslSg9PfKqz4/0++6Qf1s3SkUJivyQlBFZJSNm0ruk0UmGZG6RRIIWvEUqvr
-         tpKjRAyuVxbMRDEnMOgMOA5TxTgJb/fxvDZp9p/NnBXnoZLuouqPWGT/6pjA4sWZ9tJv
-         a9pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759978674; x=1760583474;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vlG0GD1lh6iJAvDPmOa/rB/T6NwWaH3uKxr67w639yc=;
-        b=a0Gqf+EKk9Tvh1ZCvfHSQAgvSKQ614RbzweY/8YnsUPXbavVafkgIbdLx0Bdaic983
-         eW7MJnLwgMuH5anrwIQ0k5kSVrT78k5iaHQnzpC5WsLj6A1eRBrT7KL+xfiQmwLSQ7fZ
-         m4iHfiXwySlIABYf34bifP+fWHBR348rcF3tgwuBqVTiXPzAkzW6S8hvRf/xFc7XZlGe
-         vyq9qYylQYs2Q6g1TE36aZuUnPPo7+w0xXKAjrxi5QNJiWZbScUhkNauOYI5SpUEL8Rc
-         XUT/poQqno1BVgKwyfULHm0nxOgzP3DYqComZDA106kGf/+vDOIptVSgnaITbd8VLs4q
-         mRVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWMb6805clEobALh/pial/YqwmsnKnfeKVo6vWpy//JY8++k/mhrJ35KWy4BpgA4WYAZbTHqxNbOADM6OY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTxvnR+HXhoVi39N5afKnB+OtdzhxvzVundJRmM9gqpoMPT7Pi
-	yFruMCSfMQCnjUmSqkq1vnncZAosV7JZPzllSiz7h1kbA1G0c4/1IA8a
-X-Gm-Gg: ASbGnctVt0/ljtRyY4kTvYxXy+rRdBVptrVssu6j0iMV+reDQvNLLDkBQ2YgOjQ5pfB
-	A7uQRSSELSu5Iu6RMI51olyiULfS9/NVB33GN1KleEO8HqqtocruQvUTq+PE6bTkUj+ZgTAJmpZ
-	iwo0CayVQB5DwuK5D+FoZNTtyVh/zhw0dWPeytnQwUdN/1/QjGcu+dWUVB0fIBv+8w+vmSnkyEw
-	tqgEfYzyRA7zub4AXdWilsWi/J09SwecH5jPY3UdmdYRq9QfSZ1fE0amwKoL+YaZxxrddEP/gO/
-	KzYY2oqZ/Ostu0rypO/rjmZ8/mSTXON9exYZEOy+PeEn84HG8rZPaVdP0dPdX/rVb+3Jeyj56I1
-	vQ6DwwnWQrk5j8jkXOclgu/yEdkmHpoMXClMsqqueOsFtxOLNM/mlHTC3N6wxjXbjvcEwJGSjAR
-	1EpKXNbqQwGsE2LouOXiBt3GBddW78FkY=
-X-Google-Smtp-Source: AGHT+IFeXJCxTk34Ai1JrFRrwRib866Y526WpeJO+H78PvcAR+LJHG+ZBY6j7Bj7ixRivCbirG2znQ==
-X-Received: by 2002:a05:620a:25cf:b0:845:8f50:9d29 with SMTP id af79cd13be357-8834d1aa700mr867293485a.0.1759978674217;
-        Wed, 08 Oct 2025 19:57:54 -0700 (PDT)
-Received: from mango-teamkim.. ([129.170.197.108])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-884a2369a0dsm114261085a.48.2025.10.08.19.57.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 19:57:53 -0700 (PDT)
-From: pip-izony <eeodqql09@gmail.com>
-To: Marcel Holtmann <marcel@holtmann.org>
-Cc: Seungjin Bae <eeodqql09@gmail.com>,
-	Kyungtae Kim <Kyungtae.Kim@dartmouth.edu>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-bluetooth@vger.kernel.org
-Subject: [PATCH v3] Bluetooth: bfusb: Fix buffer over-read in rx processing loop
-Date: Wed,  8 Oct 2025 22:57:01 -0400
-Message-ID: <20251009025701.3756598-2-eeodqql09@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <77bde79f-2080-4e40-a013-52b480c0928c@molgen.mpg.de>
-References: <77bde79f-2080-4e40-a013-52b480c0928c@molgen.mpg.de>
+	s=arc-20240116; t=1759978633; c=relaxed/simple;
+	bh=i7wkiQjL9ohQ8Ue5iq3GfkPFKSdUQHloHW77Ji9ec/o=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=PC0/4rSsbl40y8rWpucOjQna+vpNc45LPYZbMjP+nl4sCm1Shp7JUjXwUEHhwp8btMp+vWJJtQpVDyKl1fxQZiYxv6U57OVz6IjBpWnf8I1/NHXlvBCAA6gvlcFUx/ykI2HNoVpAFQ1Eztqno1i24KtNG/NmDgET7rHH+Lfz8lU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=fYe/2lgh; arc=none smtp.client-ip=115.124.30.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1759978628; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	bh=GnDaONb6FN618EW5I46/MhGF+FSL1m5oZv89+qdE5Bc=;
+	b=fYe/2lghOMYeMGUij1Ve+oIx1BvwsJp8UNUxlljmBuQjLdE5auRmbDvIrFGeb90NVLizskzgyu31PIgtZheIej6lvgiVxWE+gwSJM51iw7OoxDbRFalNqm0A9+KGpLT7c7D2K1Qa21y1PTdxSnK393watYQ3laOeYiZj+dSBB9s=
+Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WphApVS_1759978626 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 09 Oct 2025 10:57:06 +0800
+From: "Huang, Ying" <ying.huang@linux.alibaba.com>
+To: Joshua Hahn <joshua.hahnjy@gmail.com>
+Cc: Dave Hansen <dave.hansen@intel.com>,  Andrew Morton
+ <akpm@linux-foundation.org>,  Brendan Jackman <jackmanb@google.com>,
+  Johannes Weiner <hannes@cmpxchg.org>,  Michal Hocko <mhocko@suse.com>,
+  Suren Baghdasaryan <surenb@google.com>,  Vlastimil Babka
+ <vbabka@suse.cz>,  Zi Yan <ziy@nvidia.com>,  linux-kernel@vger.kernel.org,
+  linux-mm@kvack.org
+Subject: Re: [RFC] [PATCH] mm/page_alloc: pcp->batch tuning
+In-Reply-To: <20251008193642.953032-1-joshua.hahnjy@gmail.com> (Joshua Hahn's
+	message of "Wed, 8 Oct 2025 12:36:41 -0700")
+References: <20251008193642.953032-1-joshua.hahnjy@gmail.com>
+Date: Thu, 09 Oct 2025 10:57:05 +0800
+Message-ID: <87ms60wzni.fsf@DESKTOP-5N7EMDA>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=ascii
 
-From: Seungjin Bae <eeodqql09@gmail.com>
+Hi, Joshua,
 
-The bfusb_rx_complete() function parses incoming URB data in a while loop.
-The logic does not sufficiently validate the remaining buffer size(count)
-across loop iterations, which can lead to a buffer over-read.
+Joshua Hahn <joshua.hahnjy@gmail.com> writes:
 
-For example, with 4-bytes remaining buffer, if the first iteration takes
-the `hdr & 0x4000` branch, 2-bytes are consumed. On the next iteration,
-only 2-bytes remain, but the else branch is trying to access the third
-byte(buf[2]). This causes an out-of-bounds read and a potential kernel
-panic.
+> On Wed, 8 Oct 2025 08:34:21 -0700 Dave Hansen <dave.hansen@intel.com> wrote:
+>
+> Hello Dave, thank you for your feedback!
+>
+>> First of all, I do agree that the comment should go away or get fixed up.
+>> 
+>> But...
+>> 
+>> On 10/6/25 07:54, Joshua Hahn wrote:
+>> > This leaves us with a /= 4 with no corresponding *= 4 anywhere, which
+>> > leaves pcp->batch mistuned from the original intent when it was
+>> > introduced. This is made worse by the fact that pcp lists are generally
+>> > larger today than they were in 2013, meaning batch sizes should have
+>> > increased, not decreased.
+>> 
+>> pcp->batch and pcp->high do very different things. pcp->high is a limit
+>> on the amount of memory that can be tied up. pcp->batch balances
+>> throughput with latency. I'm not sure I buy the idea that a higher
+>> pcp->high means we should necessarily do larger batches.
+>
+> I agree with your observation that a higher pcp->high doesn't mean we should
+> do larger batches. I think what I was trying to get at here was that if
+> pcp lists are bigger, some other values might want to scale.
+>
+> For instance, in nr_pcp_free, pcp->batch is used to determine how many
+> pages should be left in the pcplist (and the rest be freed). Should this
+> value scale with a bigger pcp? (This is not a rhetorical question, I really
+> do want to understand what the implications are here).
+>
+> Another thing that I would like to note is that pcp->high is actually at
+> least in part a function of pcp->batch. In decay_pcp_high, we set
+>
+> pcp->high = max3(pcp->count - (batch << CONFIG_PCP_BATCH_SCALE_MAX), ...)
+>
+> So here, it seems like a higher batch value would actually lead to a much
+> lower pcp->high instead. This actually seems actively harmful to the system.
 
-This patch fixes the vulnerability by adding checks to ensure enough
-data remains in the buffer before it is accessed.
+Batch here is used to control the latency to free the pages from PCP to
+buddy.  Larger batch will lead to larger latency, however it helps to
+reduce the size of PCP more quickly when it becomes idle.  So, we need
+to balance here.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Seungjin Bae <eeodqql09@gmail.com>
+> So I'll do a take two of this patch and take your advice below and instead
+> of getting rid of the /= 4, just fold it in (or add a better explanation)
+> as to why we do this. Another candidate place to do this seems to be
+> where we do the rounddown_pow_of_two.
+>
+>> So I dunno... f someone wanted to alter the initial batch size, they'd
+>> ideally repeat some of Ying's experiments from: 52166607ecc9 ("mm:
+>> restrict the pcp batch scale factor to avoid too long latency").
+>
+> I ran a few very naive and quick tests on kernel builds, and it seems like
+> for larger machines (1TB memory, 316 processors), this leads to a very
+> significant speedup in system time during a kernel compilation (~10%).
+>
+> But for smaller machines (250G memory, 176 processors) and (62G memory and 36
+> processors), this leads to quite a regression (~5%).
+>
+> So maybe the answer is that this should actually be defined by the machine's
+> size. In zone_batchsize, we set the value of the batch to: 
+>
+> min(zone_managed_pages(zone) >> 10, SZ_1M / PAGE_SIZE)
+>
+> But maybe it makes sense to let this value grow bigger for larger machines? If
+> anything, I think that the experiment results above do show that batch size does
+> have an impact on the performance, and the effect can either be positive or
+> negative based on the machine's size. I can run some more experiments to 
+> see if there's an opportunity to better tune pcp->batch.
+
+In fact, we do have some mechanism to scale batch size dynamically
+already, via pcp->alloc_factor and pcp->free_count.
+
+You could further tune them.  Per my understanding, it should be a
+balance between throughput and latency.
+
+>> Better yet, just absorb the /=4 into the two existing batch assignments.
+>> It will probably compile to exactly the same code and have no functional
+>> changes and get rid of the comment.
+>> 
+>> Wouldn't this compile to the same thing?
+>> 
+>>         batch = zone->managed_pages / 4096;
+>>         if (batch * PAGE_SIZE > 128 * 1024)
+>>                 batch = (128 * 1024) / PAGE_SIZE;
+>
+> But for now, this seems good to me. I'll get rid of the confusing comment,
+> and try to fold in the batch value and leave a new comment leaving this
+> as an explanation. 
+>
+> Thank you for your thoughtful review, Dave. I hope you have a great day!
+> Joshua
+
 ---
- v1 -> v2: Fixing the error function name
- v2 -> v3: Addressing feedback from Paul Menzel
-
- drivers/bluetooth/bfusb.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/bluetooth/bfusb.c b/drivers/bluetooth/bfusb.c
-index 8df310983bf6..90ca5ab2acc3 100644
---- a/drivers/bluetooth/bfusb.c
-+++ b/drivers/bluetooth/bfusb.c
-@@ -360,6 +360,12 @@ static void bfusb_rx_complete(struct urb *urb)
- 			count -= 2;
- 			buf   += 2;
- 		} else {
-+			if (count < 3) {
-+				bt_dev_err(data->hdev,
-+				       "block header is too short (count=%d, expected=3)",
-+				       count);
-+				break;
-+			}
- 			len = (buf[2] == 0) ? 256 : buf[2];
- 			count -= 3;
- 			buf   += 3;
--- 
-2.43.0
-
+Best Regards,
+Huang, Ying
 
