@@ -1,114 +1,168 @@
-Return-Path: <linux-kernel+bounces-846086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE7A4BC7001
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 02:25:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCA60BC7010
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 02:27:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5ACF334CD92
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 00:25:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 635274E9A1D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 00:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C817165F16;
-	Thu,  9 Oct 2025 00:25:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3F118DB1E;
+	Thu,  9 Oct 2025 00:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="ymJEhBwg"
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="goMbxqXr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B80833D8
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 00:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F661096F;
+	Thu,  9 Oct 2025 00:26:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759969537; cv=none; b=aacfEDsQmpV2bqDdBNqsRJ8Bk7Nv4viP/Z1LY+1L6K3PoOkDeM5fL44v7kyDOMTK95erxFmrrbYUi2ElhcYMgxav+abKEm8/od0Q6GLzMRd2GWKShcijAqynWqtKiP5KD9Rc/q5P52S4/l2HQijNngg8BFuFjlnsX1leo5KqNYU=
+	t=1759969615; cv=none; b=nxYl0Wuf+mxSh8nbKREYg3T+u+dUKaWlmaySyl/Hq8+9JJIEhOcvNK2453K/oGnHD6Nb2ynvFZXdlbZl5LzLWJCvYuMGDvIIy9nNc4PqC4Kn0nOW1hhdytjYRzVezS4GAWO2TVf7cKznluqbW3TZtcErag2h3oh8V4H3jiP/GrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759969537; c=relaxed/simple;
-	bh=PcaR3ijNAGMyV1U/9vsbgZvxsZcIAbjvyWUQoBaddVU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L40cLUVJVeGO5xb+Lm8SfdYOhLlzJpwJtgOyJrUeo6Ynhn26ko+kEMHADJyznvvKIhGLUUGEY406tqsqD+S+yP2pRzlgusdbz0fXbzN/5zqi0zt7EDhkXrXdFQwvO4EWyEDha7/qVNMRKpWBw3ywY2Ty8iO/Fsaw5ATND/diQuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=ymJEhBwg; arc=none smtp.client-ip=67.231.145.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 598JMwJK1765614
-	for <linux-kernel@vger.kernel.org>; Wed, 8 Oct 2025 17:25:35 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=s2048-2025-q2; bh=7qHq98nLKQJlzb7f7C1C
-	JcnNw/asTQ5NX1VF4pE3/i4=; b=ymJEhBwg5sfAZzur7mQKTXVFpanSPm/yRvhp
-	rQ5ieQOwuisp/uS+lExM6ZRdx/SbWPqzu3TzZedsIAJyBnymcfnAXuJBthOi0q4Z
-	qz4r9jExkXowB2GIFxXqku2k1qlSioBW4lFfJM4yazHWafRKztEm76eLveGD/o6M
-	6OjJy26eJodEHiveprwfIKIOhOyVcMoQScvaC9kHBzGuAZHPKrw9dCbQKLuYd+QC
-	zJQOAv6/SE4L0uQ1145SwfLXssxIifG3yQnFWn+YZIz6k/PfBiRaHU6NkRh/DmcE
-	0E+OYzHVdkdB3AplfEpMzeA6JSnRL1ddOxq+cVKJe7P9qEfy3g==
-Received: from maileast.thefacebook.com ([163.114.135.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 49nx2kj7tu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 17:25:35 -0700 (PDT)
-Received: from twshared18070.28.prn2.facebook.com (2620:10d:c0a8:1b::30) by
- mail.thefacebook.com (2620:10d:c0a9:6f::8fd4) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.20; Thu, 9 Oct 2025 00:25:34 +0000
-Received: by devgpu015.cco6.facebook.com (Postfix, from userid 199522)
-	id 9DDD1DBEADF; Wed,  8 Oct 2025 17:25:20 -0700 (PDT)
-Date: Wed, 8 Oct 2025 17:25:20 -0700
-From: Alex Mastro <amastro@fb.com>
-To: Alex Williamson <alex.williamson@redhat.com>
-CC: Jason Gunthorpe <jgg@ziepe.ca>,
-        Alejandro Jimenez
-	<alejandro.j.jimenez@oracle.com>,
-        <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 3/3] vfio/type1: handle DMA map/unmap up to the
- addressable limit
-Message-ID: <aOcA8LhIoWZPNOA5@devgpu015.cco6.facebook.com>
-References: <20251007-fix-unmap-v2-0-759bceb9792e@fb.com>
- <20251007-fix-unmap-v2-3-759bceb9792e@fb.com>
+	s=arc-20240116; t=1759969615; c=relaxed/simple;
+	bh=NTZOj9046h7xAft3krHWfXm/mCYPdn9MS2UGaxNZUto=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kF2lQYh0cuZyhX5N7Ac66d7ehFOCUnmDLi12yap26E/tFDSyjJGyxsijLfwkkEXPw+/83vjW2n+NRZylvBIkWaoQq5vYL1Wev4y6gETf7varWuhOdTEktuPqvqueeRbu1vZbTs5kfSTgj9F5MLWZSBVt4yJ3oh7YOMOgGMRw+ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=goMbxqXr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B9B4C4CEE7;
+	Thu,  9 Oct 2025 00:26:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759969614;
+	bh=NTZOj9046h7xAft3krHWfXm/mCYPdn9MS2UGaxNZUto=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=goMbxqXr4MWFYmCePEx7Xg7V26wqq/gs4vIWNe6wIVggKbHkW6+DqbcHi7tDvtRIF
+	 9DaPYBpQo6B3Ifc3a0UHmNX8ALV68uPzznohRAJYjG73s0PYWsp8uTbxd5qut1l1X9
+	 4EPPtzxg/sclnOPdqMi5WlsEdvvlNEbhveL9e136Krg9LogQwbojJzLVmDTkHiVyMv
+	 jx8mWIP7Lru8RL+IniPW8vMu+ggm12zs1QPjkmvxP9dDZ2Mp6Plc1VnSA/rdWgx/cW
+	 7D661dH39RjFrztPPG3688LFI69WRL2DzeEXISx5/08OjrmeUe8mhFfVGH1Q/LtlUg
+	 uuT9qTCKUfCZA==
+Message-ID: <1d36569c-55b9-4390-87d1-fd0c2f837014@kernel.org>
+Date: Thu, 9 Oct 2025 09:26:43 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251007-fix-unmap-v2-3-759bceb9792e@fb.com>
-X-FB-Internal: Safe
-X-Proofpoint-ORIG-GUID: TGme5PG_BiSGc1OAUA9HHo--NkuYT1zN
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA5MDAwMSBTYWx0ZWRfX5BzkB6JhBNmY
- QMRjEH/geNmonHrkWTFobfnozlJAeey3nQvoQLZ7iI/Z0o0eGC79tjomL+FIZCIXgCIpqVf3eUU
- aZcsmxOfX9DWVWI7mhKCgMvjLE0wAs4ig0whdp+vw3fidlsizv/+dnwtsLfynYSTb3iTnRG/lYX
- gL3bTZibbNIRmFCaG/YB7gt3VdgGGLJ0fS+nve253sr2nUbh5fP195qLcdHKLbd62lKWb3/fdzl
- JgRT89WwoiZk6vdrxY4mJWujxPC12EDUDuEdxhHi1kPWixhlyluGbnswe4ysifqGqKNoQIbJXQV
- pNTbYLDL+jfs21nkRma/As18JbLqrP4/fCw8js6yvXXtxgYfgVzXwLK9nhO++gSx8TpDyco7GQo
- xFAao7ETmkExP38b9AJA0zu/vjXdmg==
-X-Authority-Analysis: v=2.4 cv=H4LWAuYi c=1 sm=1 tr=0 ts=68e700ff cx=c_pps
- a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=ofdlg-NLLL_6ULEM8BEA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: TGme5PG_BiSGc1OAUA9HHo--NkuYT1zN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-08_08,2025-10-06_01,2025-03-28_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/3] Introduce iommu-map-masked for platform devices
+To: Rob Herring <robh@kernel.org>,
+ Charan Teja Kalla <charan.kalla@oss.qualcomm.com>
+Cc: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
+ saravanak@google.com, conor+dt@kernel.org, mchehab@kernel.org,
+ bod@kernel.org, krzk+dt@kernel.org, abhinav.kumar@linux.dev,
+ vikash.garodia@oss.qualcomm.com, dikshita.agarwal@oss.qualcomm.com,
+ linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ iommu@lists.linux.dev
+References: <20250928171718.436440-1-charan.kalla@oss.qualcomm.com>
+ <CAL_JsqK9waZK=i+ov0jV-PonWSfddwHvE94Q+pks4zAEtKc+yg@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <CAL_JsqK9waZK=i+ov0jV-PonWSfddwHvE94Q+pks4zAEtKc+yg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 07, 2025 at 09:08:48PM -0700, Alex Mastro wrote:
-> @@ -1401,17 +1409,17 @@ static int vfio_dma_do_unmap(struct vfio_iommu *iommu,
->  		if (dma && dma->iova != iova)
->  			goto unlock;
->  
-> -		dma = vfio_find_dma(iommu, iova_end, 0);
-> -		if (dma && dma->iova + dma->size != iova + size)
-> +		dma = vfio_find_dma(iommu, iova_end, 1);
-> +		if (dma && dma->iova + dma->size - 1 != iova_end)
->  			goto unlock;
->  	}
->  
->  	ret = 0;
-> -	n = first_n = vfio_find_dma_first_node(iommu, iova, size);
-> +	n = first_n = vfio_find_dma_first_node(iommu, iova, iova_end);
+On 29/09/2025 05:23, Rob Herring wrote:
+> On Sun, Sep 28, 2025 at 12:17 PM Charan Teja Kalla
+> <charan.kalla@oss.qualcomm.com> wrote:
+>>
+>> This series introduces a new iommu property called iommu-map-masked(may
+>> be there is a better name), which is used to represent the IOMMU
+>> specifier pairs for each function of a __multi-functional platform
+>> device__, where each function can emit unique master id(s) that can be
+>> associated with individual translation context.
+>>
+>> Currently, the iommu configuration - at least for arm architecture-
+>> requires all the functions of a platform device will be represented
+>> under single dt node thus endup in using only a single translation
+>> context.
+>>
+>> A simple solution to associate individual translation context for each
+>> function of a device can be through creating per function child nodes in
+>> the device tree, but dt is only to just represent the soc layout to
+>> linux kernel.
+>>
+>> Supporting such cases requires a new iommu property called,
+>> iommu-map-masked(taking cue from iommu-map for pci devices) and syntax
+>> is:
+>>    iommu-map-masked = <FUNCTION_ID1 &iommu ID1 MASK1>,
+>>                       <FUNCTION_ID2 &iommu ID2 MASK2>;
+>> NOTE: As an RFC, it is considered that this property always expects 4
+>> cells.
+>>
+>> During the probe phase of the driver for a multi-functional device
+>> behind an IOMMU, a child device is instantiated for each FUNCTION_ID.
+>> The call to of_dma_configure_id() on each child sets up the IOMMU
+>> configuration, ensuring that each function of the device is associated
+>> with a distinct translation context.
+>>
+>> This property can also be used in association with 'iommus=' when dt
+>> bindings requires the presence of 'iommus=', example[2]. For these
+>> cases, representation will be(on arm64):
+>>    iommus = <&iommu sid mask>; //for default function.
+>>    iommu-map-masked = <FUNCTION_ID &iommu sid mask>;//additional
+>> function.
+> 
+> Where does the FUNCTION_ID value come from?
+> 
+> Why can't you just have multiple "iommus" entries where the index
+> defines the default and any FUNCTION_ID entries? What's in each index
+> is specific to the device.
 
-I missed updating iova_end to be consistent in the unmap_all case, which is
-broken with this change. Currently, iova_end is only assigned by the
-check_add_overflow call in the !unmap_all path. Will address in v3.
- 
+
+We discussed the problem earlier and that is what I asked them to do.
+Apparently I was just ignored so now two maintainers say the same. We
+can get ignored still and the third maintainer will have to tell this.
+
+
+Best regards,
+Krzysztof
 
