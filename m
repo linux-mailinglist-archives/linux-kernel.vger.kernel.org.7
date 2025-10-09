@@ -1,177 +1,110 @@
-Return-Path: <linux-kernel+bounces-847416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70956BCAC68
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 22:16:31 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFD18BCAC78
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 22:18:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82D3519E2312
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 20:16:54 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 63390352E96
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 20:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFB326CE39;
-	Thu,  9 Oct 2025 20:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D7726E6F9;
+	Thu,  9 Oct 2025 20:17:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FP3xQ7GX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=pinefeat.co.uk header.i=@pinefeat.co.uk header.b="Pqrxkk+A"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5791EA7EC;
-	Thu,  9 Oct 2025 20:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92C0226D4C3
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 20:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760040982; cv=none; b=Ou5WvHtMq04NL0+5ZTnMiziz4h8O5Kkw//6B9OqngFo/VNaTW6NoBnfvyr36DyWOE7MgKzdsyxjxAAoeT6UwFZqAvAQbUYIO4flq7VD5rZtHB6Xo3E1rk45GJvlwvSdJz0iyL349WfhU+ipASc+VDPVBjfgkXGK5DWF8Fzl30Ak=
+	t=1760041076; cv=none; b=BM5gCRMTr1HRHbINfO3IROwrIVfEunDNd6Nm5BLvPjwn87F39Dv2XFHqfnnZCftcLirrtjFQI8dy7TN0T+u0wXk7GIpkEdZGFU5/vVaD3HrXeC1UMHhPqFHQERX1BD396xcY1rJSzGuqQ03ezprgH6y95IZulqOvujhw1gVtQDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760040982; c=relaxed/simple;
-	bh=IWSnNSei8RRn9htiOUVDRbUjeFnamuDaQ4nZ4n46zLw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I8Jt62rnU2jdMYe5ElXEDr8wSAZApD8nvyyjIP/LIVQO6K9/aN59qZDvyfKZrqBkadERKRboyiY51FS0Hk+uWuz8dHFyzqr2cijfAJeQep0tIZhcf2uUChZY+f7o5njr/XcdGJRJIAC313j5v7s5yOyceoQ/EfPomcIKQxzHFGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FP3xQ7GX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5526FC4CEE7;
-	Thu,  9 Oct 2025 20:16:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760040981;
-	bh=IWSnNSei8RRn9htiOUVDRbUjeFnamuDaQ4nZ4n46zLw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FP3xQ7GXQp/QP+gpUaLPNEvB4S8G+2unZHJq/Q3L3XBufoDkCFIjQs2cvk1nOhW5G
-	 X3oggIEsnEjcWhnuidq7ynvjwZ02SAFXfFXOmFldkxXKs0Y7zUR6HjoJIdCpXQW9cx
-	 +ALVNkipODgz9r+kGGUKPYeaU+c+hx/kumOpyqz6WFhscNLQ8ygVyRvZ0ZOcPP1jld
-	 cJh28wb1uKFTNw+A0YM3mQWqKgbo00hF/19PwY/hG33WUb3IOw9kbxqjVz1hF9eQhh
-	 ONefS/VVhVblCjmG9Q7OuE2HBFvbsIvzTQcuRNUy+dvD33FHoU8nK3YFF4wX1ZRunt
-	 Pc3RJXPJ0J/sw==
-Date: Thu, 9 Oct 2025 15:16:20 -0500
-From: Rob Herring <robh@kernel.org>
-To: Nam Tran <trannamatk@gmail.com>
-Cc: lee@kernel.org, pavel@kernel.org, gregkh@linuxfoundation.org,
-	rdunlap@infradead.org, christophe.jaillet@wanadoo.fr,
-	krzk+dt@kernel.org, conor+dt@kernel.org, corbet@lwn.net,
-	linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v15 1/3] dt-bindings: leds: add TI/National Semiconductor
- LP5812 LED Driver
-Message-ID: <20251009201620.GA3267176-robh@kernel.org>
-References: <20251005153337.94025-1-trannamatk@gmail.com>
- <20251005153337.94025-2-trannamatk@gmail.com>
+	s=arc-20240116; t=1760041076; c=relaxed/simple;
+	bh=yPJWbQEY90/TG+cwwBUl44wg4ZYHXxRi8GBxQs5oFrg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=fG+yj/kkKR1ruYsQyk2oaJLEjhT3NKGII+crXw6PHh9TKu8sVCP+V7AA+vYPcH3kRSpAuZKhneHXOIWByd3d27xx6L8vVMyioENocvhD5UJ5Ek/snApXh6JDf/OhfcyAHycElp+fRNZG3RVAckAxScFHc28FAAiUhVqskjmJdfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pinefeat.co.uk; spf=pass smtp.mailfrom=pinefeat.co.uk; dkim=pass (2048-bit key) header.d=pinefeat.co.uk header.i=@pinefeat.co.uk header.b=Pqrxkk+A; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pinefeat.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pinefeat.co.uk
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46e37d6c21eso8540635e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 13:17:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=pinefeat.co.uk; s=google; t=1760041073; x=1760645873; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yPJWbQEY90/TG+cwwBUl44wg4ZYHXxRi8GBxQs5oFrg=;
+        b=Pqrxkk+AxBwYVuH2v07YpwXFWCUSjNyk7mM3W68KoFS61x3YvhfDM8pZirUcC49jAG
+         Q85/UNoNXCUOHpKFdTEjduKLn/TN1sgZmGPl05xVsoVNSFnUMo3u0bIMn+t5eFQyWjtX
+         t1vDtZK7cpgFDAXq6Xgv3WniXdh/Zsmt8myT2Fp3EgP+EFCOsPxUNsy4vg+FMQEdI1Tn
+         Egq2uX/z/m4+iaIwiWm32eEPpgT88w1MQiUzPNr39a9YzLr5sQe42+F+2BCSy9rDFOsw
+         WzXnYYPbeDczKEz9+hFdutTfUMuqXQ7+fEub0/1SjnEc/XvUUTvv2P0lVjQh6G849tbm
+         X4fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760041073; x=1760645873;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yPJWbQEY90/TG+cwwBUl44wg4ZYHXxRi8GBxQs5oFrg=;
+        b=UaUQENdf0YUCs3l2efe9SNMZspnbjTTyl++TsqQ4kti7+/4o6HR9kuMf8r5CAax2f5
+         Mk6X1Q38n90yLqrG6sYqATpsiUZqvlGZwIR6tZTU9hB93d/mvsWk4I6OF0LoINdVZK5M
+         S+PUBEP6NDqfysk0bjUW86mS9XVPvAACuwMBHJss1fBvzBr6stS8KfNgwgJ+F0aXx9FV
+         8C4dRGkaOJDPyjvnQgguoSr9+lyg3l2ZbAwx8Fw1vHMfwqqt9Fe8ePtK9K35vQHm5rUb
+         IfOJdAq97kW41x6R6FWTRB3JZBNbJi2g17Ta38kiZOtRMPC9BhzO6BcDiVv1Ga7Im2d3
+         9Y6g==
+X-Forwarded-Encrypted: i=1; AJvYcCWxE8G1HLH92cKgdKKZ4uGJQa4mOlCB5SZiO/vHGeu8zxyAsjRawimyIOhLx1aaiJ+MVT6ElJYsmvLUW2E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIoeR8V9DIRab3FnqvuRH+wuPdMC977Meqg1FUBjzurMoFgG6H
+	A5QvRId/u8PKnMtNjQiRgA8ElNBeQA9lK7YYSfYmgI24zDVoN5jyqZhgPJNVyF6ZOzY=
+X-Gm-Gg: ASbGncua8tx2DrWiIer/+046zUXR+y6bRifq5T7CuC8obyHGjfMtSFaf85wDvTerD5y
+	wEPkVeTMN8lV8btlfAmR7iGoAu+wPaR3iWKMqh+zBeMOjyFv0mWr9Wo+EWDdR3+xDcyCgo+Ja6+
+	EcqmkEiP3DrE7xXla6kzCLD5ebYzm3ezxp7+MOXuE7SOc0RArEPJ+6B1CJF6vXctoA13mLEMC3s
+	dh8Jop4KfxqcOYmtmB6nINcJhDGgj4Ft1R2Ke4yGp1B0TbklGpSt6VNnpEe79firnAsN+1yOw+9
+	NyBIEa3iBBJdzg1Gghs7hrHZtT+SSBuUoI6/AkJ6vpIxAizOJomxXGFlGzlpf7bpOMgsxJAHfIs
+	2RhUOf5Dh+Pi5tvC4rT0zUQ2Xd/68Dh6N2bUyjj+HRA6PiJD/wLgbz8P3jlhJJxDAPAXGbQ3H+H
+	c=
+X-Google-Smtp-Source: AGHT+IFAX7+/e5dnmTL61t9BVALaD4efIOwMQtslWhHo9+H7zMZKmhsltEBeuzKspmSb6DMT6luYgw==
+X-Received: by 2002:a05:600c:37c9:b0:46e:477a:f3dd with SMTP id 5b1f17b1804b1-46fa9b1b18emr63175235e9.36.1760041072479;
+        Thu, 09 Oct 2025 13:17:52 -0700 (PDT)
+Received: from asmirnov-G751JM.Home ([2a02:c7c:b28c:1f00:3fd:ce82:c5e3:a5da])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb484c71csm12836805e9.8.2025.10.09.13.17.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 13:17:52 -0700 (PDT)
+From: Aliaksandr Smirnou <asmirnou@pinefeat.co.uk>
+To: krzk@kernel.org
+Cc: asmirnou@pinefeat.co.uk,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	hverkuil@xs4all.nl,
+	jacopo.mondi@ideasonboard.com,
+	krzk+dt@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	mchehab@kernel.org,
+	robh@kernel.org
+Subject: Re: [PATCH v6 1/2] dt-bindings: Pinefeat cef168 lens control board
+Date: Thu,  9 Oct 2025 21:17:51 +0100
+Message-Id: <20251009201751.9591-1-asmirnou@pinefeat.co.uk>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <1b5f080f-2c18-43e7-9c47-b5b09847c51d@kernel.org>
+References: <1b5f080f-2c18-43e7-9c47-b5b09847c51d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251005153337.94025-2-trannamatk@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Oct 05, 2025 at 10:33:35PM +0700, Nam Tran wrote:
-> The LP5812 is a 4x3 RGB LED driver with an autonomous animation
-> engine and time-cross-multiplexing (TCM) support for up to 12 LEDs
-> or 4 RGB LEDs. It supports both analog (256 levels) and PWM (8-bit)
-> dimming, including exponential PWM for smooth brightness control.
-> 
-> Signed-off-by: Nam Tran <trannamatk@gmail.com>
-> ---
->  .../devicetree/bindings/leds/ti,lp5812.yaml   | 290 ++++++++++++++++++
->  MAINTAINERS                                   |   6 +
->  2 files changed, 296 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/leds/ti,lp5812.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/leds/ti,lp5812.yaml b/Documentation/devicetree/bindings/leds/ti,lp5812.yaml
-> new file mode 100644
-> index 000000000000..d759ba7a86fc
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/ti,lp5812.yaml
-> @@ -0,0 +1,290 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/leds/ti,lp5812.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: TI LP5812 4x3 Matrix RGB LED Driver with Autonomous Control
-> +
-> +maintainers:
-> +  - Nam Tran <trannamatk@gmail.com>
-> +
-> +description: |
-> +  The LP5812 is a 4x3 matrix RGB LED driver with I2C interface
-> +  and autonomous animation engine control.
-> +  For more product information please see the link below:
-> +  https://www.ti.com/product/LP5812#tech-docs
-> +
-> +properties:
-> +  compatible:
-> +    const: ti,lp5812
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  ti,operation-mode:
-> +    description: |
-> +      Selects the LED operation mode of the LP5812. The device supports
-> +      three modes:
-> +        - Direct-drive mode ("direct_mode") drives up to 4 LEDs directly
-> +        by internal current sinks (LED0-LED3).
+On Thu, 9 Oct 2025 08:46:44 +0900, Krzysztof Kozlowski wrote:
 
-I would make this the default and call the property 'ti,scan-mode'.
+> You already got review at v4! Why are you forcing us to do the job
+> multiple times?
 
-> +        - TCM-drive mode ("tcmscan:<n>:<order...>") drives up to 12 LEDs
-> +        (4 RGB) using 1-4 scan multiplexing. The <n> specifies the number
-> +        of scans (1-4), and <order...> defines the scan order of the outputs.
-> +        - Mix-drive mode ("mixscan:<n>:<direct>:<order...>") combines
-> +        direct-drive and TCM-drive outputs. The <n> specifies the number
-> +        of scans, <direct> selects the direct-drive outputs, and <order...>
-> +        defines the scan order.
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    enum:
-> +      - direct_mode
-> +      - tcmscan:1:0
-> +      - tcmscan:1:1
-> +      - tcmscan:1:2
-> +      - tcmscan:1:3
-> +      - tcmscan:2:0:1
-> +      - tcmscan:2:0:2
-> +      - tcmscan:2:0:3
-> +      - tcmscan:2:1:2
-> +      - tcmscan:2:1:3
-> +      - tcmscan:2:2:3
-> +      - tcmscan:3:0:1:2
-> +      - tcmscan:3:0:1:3
-> +      - tcmscan:3:0:2:3
-> +      - tcmscan:4:0:1:2:3
-> +      - mixscan:1:0:1
-> +      - mixscan:1:0:2
-> +      - mixscan:1:0:3
-> +      - mixscan:1:1:0
-> +      - mixscan:1:1:2
-> +      - mixscan:1:1:3
-> +      - mixscan:1:2:0
-> +      - mixscan:1:2:1
-> +      - mixscan:1:2:3
-> +      - mixscan:1:3:0
-> +      - mixscan:1:3:1
-> +      - mixscan:1:3:2
-> +      - mixscan:2:0:1:2
-> +      - mixscan:2:0:1:3
-> +      - mixscan:2:0:2:3
-> +      - mixscan:2:1:0:2
-> +      - mixscan:2:1:0:3
-> +      - mixscan:2:1:2:3
-> +      - mixscan:2:2:0:1
-> +      - mixscan:2:2:0:3
-> +      - mixscan:2:2:1:3
-> +      - mixscan:2:3:0:1
-> +      - mixscan:2:3:0:2
-> +      - mixscan:2:3:1:2
-> +      - mixscan:3:0:1:2:3
-> +      - mixscan:3:1:0:2:3
-> +      - mixscan:3:2:0:1:3
-> +      - mixscan:3:3:0:1:2
-
-I'm not sure its worth listing out every combination. I'd just do this 
-even if illegal combinations are allowed:
-
-pattern: '^(tcm|mix):[1-4](:[0-3]){1,4}$'
-
-Rob
+Apologies for the oversight. There were no changes in the dt-bindings
+patch; I should have kept the Reviewed-by tag from the earlier one.
+I'll make sure to include it next time.
 
