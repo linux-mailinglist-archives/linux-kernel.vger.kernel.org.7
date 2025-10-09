@@ -1,87 +1,46 @@
-Return-Path: <linux-kernel+bounces-847373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74057BCAAAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 21:16:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D1EEBCAABA
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 21:18:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2823F421B95
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 19:16:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D0D71A651AF
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 19:18:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E8C2405EC;
-	Thu,  9 Oct 2025 19:16:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B1B244684;
+	Thu,  9 Oct 2025 19:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="euR6vlxf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C391E1A17
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 19:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="SNkWv8b5"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4FE1E0E1F;
+	Thu,  9 Oct 2025 19:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760037408; cv=none; b=qqs/NaQIUIBkSK5mZh4rv5dMikeYhjSFHvMWiOFzroqqDtGeKF4HjEI8bws/GlLqvTH8Dsv0/EHTCfEIJePxbZUI1vbO4TyqiJsYVZiUyeBYGWJCcVTjkqKgehHxbZ2SqXLtE8oP+ouif318JE2T4CakBmiAbJodtqDpVlfBd2o=
+	t=1760037506; cv=none; b=oavtkNCKUChpk+9k0DAypgVe5Jd9WOSwxSJpWSeTlTx/1lzuW4koDpdCHAYsPt+6q9cE+si2h22sQFG72g6q6PR5/PFQ40dbOCp/Nv0QRAxDrxasNwHogrunV0BsOAASMtkrS7/T26EcFpDVTh/65Cx8n+s9BKYsdUlB5Nd9iqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760037408; c=relaxed/simple;
-	bh=O8Zv30WGnZYC9mVrYMZ4C/OoFisrJ2rjhARUBD8ZGbE=;
+	s=arc-20240116; t=1760037506; c=relaxed/simple;
+	bh=6k3tK0qXy7u2mr+Ao4wTeUePRNN9Ep9HNgd9G+kU9ps=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iCr4PLHCZo7GNri5gJ4pGmGS68wOFYySpak34RyE0YDcRwyFr8/0CP52VHdEi5t/2JodHyeE/DpoW541dQC4n94IkxWNIypTUWfHivViRvp6Fqf6HR41njxJ0yjc/DzKyJ4FHUI13dD1Ui1x5zpuiyiDrjVV9kVihkTsOcz33ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=euR6vlxf; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760037402;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/jjq7BLRoYI2nQdmAcFZDfdFEssHTj+qWciljr1C06A=;
-	b=euR6vlxfrhdN+hZhhlZdizODLA6MMYzeMfbGhYDK40GGF4+fBrsFcs5einAhHOCJclxnrn
-	eqIV7OAs+GuYGDEDaVl/TybYXUuFP997t8ptm62aj3fM9kWqXsJ1u7aYVmis2apITV4DiX
-	+Ida4a2/CppmOl//adKnmK6SMbejYy4=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-643-D-6Wvo8MMnWZW76nCl36LQ-1; Thu, 09 Oct 2025 15:16:41 -0400
-X-MC-Unique: D-6Wvo8MMnWZW76nCl36LQ-1
-X-Mimecast-MFC-AGG-ID: D-6Wvo8MMnWZW76nCl36LQ_1760037400
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-46e407c600eso8422735e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 12:16:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760037400; x=1760642200;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/jjq7BLRoYI2nQdmAcFZDfdFEssHTj+qWciljr1C06A=;
-        b=S4QB3yckVLDODcEJlLGrG1+kj//F/CsSjF+e0jQmMsShPOJiM3XRV0evTUHuaz42mu
-         i8FXZrsH6rx+A9ZYk3ockD75Pqurjqt6/zOPkLPF6asP+03LHdsSktsa19ho8XmR5DRR
-         6lHUjPcaJxe/txpmElfL6o6ehTOTvQDIWZxjKGTXbp8IXEcPAB0+tDV/NmT0tinVlL6k
-         SKhga1Qjtysr6fEts/ky5JqhjJiJ4qZGxuMclNaHChoripl60/2GBkHzZvDBJmsbSyOQ
-         p5joA0f8xXp8bo5cis0xpkdOENar7Nm6N/enW2U9803B13zh3yDH+AHEDzpd0Mz5HOVf
-         XxpA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQK3Kf6yIikuku19Avhf64Wi8AulLew/UKAbQFlAvavPLbuDg8sw+xSK7j2ulO4QkM6j6pYmeSpPX3iNg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTGkV+Bung6qJbePj08o/bJXmVw7I2cVzBaLcvdzODxhkWBGst
-	eiL/OQKa4v3L7wQebtLIzm76qDnhTWE7LCAbSavff6D0TYCcaUqMaZVgd3ITtGirmMg17M69YZR
-	B1wQvgQYxp5iHRF47c5586HuV9zmiyYM3Sw10yi64xE6+SXU92J/PtPt0M7qcUDKJjw==
-X-Gm-Gg: ASbGncuk1DsaZ+UZp2w52a8C5rkytFPF6wx46wLjr5HRXgyZB8+OxBbt78xTeqNZJEl
-	YIxQux9q2GxPS51O7O2Ib1BY79HSMOMWpnNMS51dULBPDnoog0d3NiTtLkgWdMY1zlKAXjhFQ2E
-	Gu7S1NTZC7yjt6AFCYTa/Ci56bmQ7CJKTOuNW4Hu9+0r59mneEIsal9Rg71VoG0vKMqZulfm4KE
-	mkDPIPBQ35uvsN9OFK/HfCA5N0pgOEr7Co9BFa2slDG3zSChngPH1N2ETVbkd/kYZvSULABjPZP
-	srI9+7ISTan4mk+HMG64HMUnMfuz+8GsfMIDn0Ws7cdalC9Zp/f/5m8/h1k1YA+ZOP4R559j+MX
-	4JhOUcx2N
-X-Received: by 2002:a05:600c:3e87:b0:46e:3d41:6001 with SMTP id 5b1f17b1804b1-46fa9b17df1mr59434355e9.34.1760037400230;
-        Thu, 09 Oct 2025 12:16:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHxEViiRN8Lw2h0KvemsqiiXPHU95kQiydslrrD2f9G9rGLUFyRDI7eBLoEqJHlLxcoXRSxgA==
-X-Received: by 2002:a05:600c:3e87:b0:46e:3d41:6001 with SMTP id 5b1f17b1804b1-46fa9b17df1mr59433925e9.34.1760037399787;
-        Thu, 09 Oct 2025 12:16:39 -0700 (PDT)
-Received: from [192.168.3.141] (tmo-083-189.customers.d1-online.com. [80.187.83.189])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5e0a03sm403646f8f.37.2025.10.09.12.16.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Oct 2025 12:16:39 -0700 (PDT)
-Message-ID: <abe539bb-375a-43ec-ba36-6d10a35dd85d@redhat.com>
-Date: Thu, 9 Oct 2025 21:16:34 +0200
+	 In-Reply-To:Content-Type; b=X3NtmHZGK6kL6LfrQESeKWtArFR/a83E9XpTfnhxxv1rO3ViCaQ92fG0caO00odueld8Btf+VPC+lozfW2s/pNZ4XqcZr8+WmygKnpDFq3rnMJpPy4iJymrNbLD57KD2JKE/GL0hF1by/qDzvJ8dal1SIZS/idKR3JGXSHtZPcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=SNkWv8b5; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.64.193.78] (unknown [40.65.108.177])
+	by linux.microsoft.com (Postfix) with ESMTPSA id E63322038B73;
+	Thu,  9 Oct 2025 12:18:23 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E63322038B73
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1760037504;
+	bh=yAdcxRftK/ihOKpiiRulhPvNQBDAvdTDCAOhZ6097YM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SNkWv8b57kL4TuOFHzpMMmHvFmJLqa+SOvcg7CbfSrkkOLYF3s+ZQ6FJ+RUAkpe/t
+	 EXsbzxVGp13LtPUCnWsDQQ7ibHmRfKLB2sV4cYc55F2atBFr+a8jntGdiayY+w2HDa
+	 ZMAwl4efqXX/umhLafJd0H2qTCdrVvfvg3Oi58+Y=
+Message-ID: <cc3f877a-b5c3-4d51-8fac-8b454efd08e1@linux.microsoft.com>
+Date: Thu, 9 Oct 2025 12:18:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,129 +48,209 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/8] Fix stale IOTLB entries for kernel address space
-To: Dave Hansen <dave.hansen@intel.com>, Lu Baolu <baolu.lu@linux.intel.com>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>, Kevin Tian <kevin.tian@intel.com>,
- Jason Gunthorpe <jgg@nvidia.com>, Jann Horn <jannh@google.com>,
- Vasant Hegde <vasant.hegde@amd.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Alistair Popple <apopple@nvidia.com>, Peter Zijlstra <peterz@infradead.org>,
- Uladzislau Rezki <urezki@gmail.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>, Michal Hocko <mhocko@kernel.org>,
- Matthew Wilcox <willy@infradead.org>
-Cc: iommu@lists.linux.dev, security@kernel.org, x86@kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250919054007.472493-1-baolu.lu@linux.intel.com>
- <c04d4c9d-e868-4883-af92-26f142bc84be@intel.com>
- <d3cf3716-98ec-419b-90b7-b91b83599498@intel.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 2/2] hyperv: Enable clean shutdown for root partition with
+ MSHV
+To: Praveen K Paladugu <prapal@linux.microsoft.com>, kys@microsoft.com,
+ haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+ tglx@linutronix.de, mingo@redhat.com, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bp@alien8.de, dave.hansen@linux.intel.com,
+ x86@kernel.org, hpa@zytor.com, arnd@arndb.de
+Cc: anbelski@linux.microsoft.com
+References: <20251009160501.6356-1-prapal@linux.microsoft.com>
+ <20251009160501.6356-3-prapal@linux.microsoft.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <d3cf3716-98ec-419b-90b7-b91b83599498@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <20251009160501.6356-3-prapal@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 08.10.25 21:42, Dave Hansen wrote:
-> I wondered why no mm folks were commenting on this. linux-mm@ was cc'd,
-> but the _people_ on cc seem to have been almost all IOMMU and x86 folks.
-> so I added a few mm folks...
-
-Thanks. Lately I find myself scanning linux-mm only randomly. So if it's 
-not in my inbox, likely I won't realize easily that there is something 
-that needs our attention.
-
-Will take a look.
-
-> 
-> On 9/25/25 13:24, Dave Hansen wrote:
->> On 9/18/25 22:39, Lu Baolu wrote:
->>> This solution introduces a deferred freeing mechanism for kernel page
->>> table pages, which provides a safe window to notify the IOMMU to
->>> invalidate its caches before the page is reused.
->>
->> I think all the activity has died down and I everyone seems happy enough
->> with how this looks. Right?
->>
->> So is this something we should prod Andrew to take through the mm tree,
->> or is it x86-specific enough it should go through tip?
-> 
-> Hi Folks! We've got a bug fix here that has impact on x86, mm, and IOMMU
-> code. I know I've talked with a few of you about this along the way, but
-> it's really thin on mm reviews, probably because mm folks haven't been
-> cc'd. Any eyeballs on it would be appreciated!
-> 
-> It seems like it should _probably_ go through the mm tree, although I'm
-> happy to send it through tip if folks disagree.
-> 
-> Diffstat for reference:
-> 
->   arch/x86/Kconfig              |  1 +
->   arch/x86/mm/init_64.c         |  2 +-
->   arch/x86/mm/pat/set_memory.c  |  2 +-
->   arch/x86/mm/pgtable.c         | 12 ++++-----
->   drivers/iommu/iommu-sva.c     | 29 +++++++++++++++++++++-
->   include/asm-generic/pgalloc.h | 18 ++++++++++++++
->   include/linux/iommu.h         |  4 +++
->   include/linux/mm.h            | 24 +++++++++++++++---
->   include/linux/page-flags.h    | 46 +++++++++++++++++++++++++++++++++++
->   mm/Kconfig                    |  3 +++
->   mm/pgtable-generic.c          | 39 +++++++++++++++++++++++++++++
->   11 files changed, 168 insertions(+), 12 deletions(-)
+On 10/9/2025 8:58 AM, Praveen K Paladugu wrote:
+> This commit enables the root partition to perform a clean shutdown when
+> running with MSHV hypervisor.
 > 
 
+Commit message could briefly explain what the current problem is - what is
+wrong with the current shutdown and how does this fix it?
 
--- 
-Cheers
+> Signed-off-by: Praveen K Paladugu <prapal@linux.microsoft.com>
+> Co-developed-by: Anatol Belski <anbelski@linux.microsoft.com>
+> Signed-off-by: Anatol Belski <anbelski@linux.microsoft.com>
+> ---
+>  arch/x86/hyperv/hv_init.c      |   7 ++
+>  drivers/hv/hv_common.c         | 118 +++++++++++++++++++++++++++++++++
+>  include/asm-generic/mshyperv.h |   1 +
+>  3 files changed, 126 insertions(+)
+> 
+> diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
+> index afdbda2dd7b7..57bd96671ead 100644
+> --- a/arch/x86/hyperv/hv_init.c
+> +++ b/arch/x86/hyperv/hv_init.c
+> @@ -510,6 +510,13 @@ void __init hyperv_init(void)
+>  		memunmap(src);
+>  
+>  		hv_remap_tsc_clocksource();
+> +		/*
+> +		 * The notifier registration might fail at various hops.
+> +		 * Corresponding error messages will land in dmesg. There is
+> +		 * otherwise nothing that can be specifically done to handle
+> +		 * failures here.
+> +		 */
+> +		(void)hv_sleep_notifiers_register();
+>  	} else {
+>  		hypercall_msr.guest_physical_address = vmalloc_to_pfn(hv_hypercall_pg);
+>  		wrmsrq(HV_X64_MSR_HYPERCALL, hypercall_msr.as_uint64);
+> diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
+> index e109a620c83f..c5165deb5278 100644
+> --- a/drivers/hv/hv_common.c
+> +++ b/drivers/hv/hv_common.c
+> @@ -837,3 +837,121 @@ const char *hv_result_to_string(u64 status)
+>  	return "Unknown";
+>  }
+>  EXPORT_SYMBOL_GPL(hv_result_to_string);
+> +
+> +/*
+> + * Corresponding sleep states have to be initialized, in order for a subsequent
 
-David / dhildenb
+The comma in the above line is not needed.
+
+> + * HVCALL_ENTER_SLEEP_STATE call to succeed. Currently only S5 state as per
+> + * ACPI 6.4 chapter 7.4.2 is relevant, while S1, S2 and S3 can be supported.
+> + *
+> + * ACPI should be initialized and should support S5 sleep state when this method
+> + * is called, so that, it can extract correct PM values and pass them to hv.
+> + */
+> +static int hv_initialize_sleep_states(void)
+> +{
+> +	u64 status;
+> +	unsigned long flags;
+> +	struct hv_input_set_system_property *in;
+> +	acpi_status acpi_status;
+> +	u8 sleep_type_a, sleep_type_b;
+> +
+> +	if (!acpi_sleep_state_supported(ACPI_STATE_S5)) {
+> +		pr_err("%s: S5 sleep state not supported.\n", __func__);
+> +		return -ENODEV;
+> +	}
+> +
+> +	acpi_status = acpi_get_sleep_type_data(ACPI_STATE_S5,
+> +						&sleep_type_a, &sleep_type_b);
+> +	if (ACPI_FAILURE(acpi_status))
+> +		return -ENODEV;
+> +
+> +	local_irq_save(flags);
+> +	in = (struct hv_input_set_system_property *)(*this_cpu_ptr(
+> +		hyperv_pcpu_input_arg));
+> +
+
+The input struct contains a reserved field that should be zero.
+You could either set it to zero explicitly or preferably just zero the whole
+struct here. Doing that gives confidence to a reader that no field is left
+uninitialized even if they're not familiar with the struct.
+
+> +	in->property_id = HV_SYSTEM_PROPERTY_SLEEP_STATE;
+> +	in->set_sleep_state_info.sleep_state = HV_SLEEP_STATE_S5;
+> +	in->set_sleep_state_info.pm1a_slp_typ = sleep_type_a;
+> +	in->set_sleep_state_info.pm1b_slp_typ = sleep_type_b;
+> +
+> +	status = hv_do_hypercall(HVCALL_SET_SYSTEM_PROPERTY, in, NULL);
+> +	local_irq_restore(flags);
+> +
+> +	if (!hv_result_success(status)) {
+> +		pr_err("%s: %s\n", __func__, hv_result_to_string(status));
+
+Use hv_status_err(status, "\n");
+
+> +		return hv_result_to_errno(status);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int hv_call_enter_sleep_state(u32 sleep_state)
+> +{
+> +	u64 status;
+> +	int ret;
+> +	unsigned long flags;
+> +	struct hv_input_enter_sleep_state *in;
+> +
+> +	ret = hv_initialize_sleep_states();
+> +	if (ret)
+> +		return ret;
+> +
+> +	local_irq_save(flags);
+> +	in = (struct hv_input_enter_sleep_state *)
+> +			(*this_cpu_ptr(hyperv_pcpu_input_arg));
+> +	in->sleep_state = (enum hv_sleep_state)sleep_state;
+> +
+> +	status = hv_do_hypercall(HVCALL_ENTER_SLEEP_STATE, in, NULL);
+> +	local_irq_restore(flags);
+> +
+> +	if (!hv_result_success(status)) {
+> +		pr_err("%s: %s\n", __func__, hv_result_to_string(status));
+
+Use hv_status_err(status, "\n");
+
+> +		return hv_result_to_errno(status);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int hv_reboot_notifier_handler(struct notifier_block *this,
+> +				      unsigned long code, void *another)
+> +{
+> +	int ret = 0;
+> +
+> +	if (SYS_HALT == code || SYS_POWER_OFF == code)
+> +		ret = hv_call_enter_sleep_state(HV_SLEEP_STATE_S5);
+> +
+> +	return ret ? NOTIFY_DONE : NOTIFY_OK;
+> +}
+> +
+> +static struct notifier_block hv_reboot_notifier = {
+> +	.notifier_call  = hv_reboot_notifier_handler,
+> +};
+> +
+> +static int hv_acpi_sleep_handler(u8 sleep_state, u32 pm1a_cnt, u32 pm1b_cnt)
+> +{
+> +	int ret = 0;
+> +
+> +	if (sleep_state == ACPI_STATE_S5)
+> +		ret = hv_call_enter_sleep_state(HV_SLEEP_STATE_S5);
+> +
+> +	return ret == 0 ? 1 : -1;
+> +}
+> +
+> +static int hv_acpi_extended_sleep_handler(u8 sleep_state, u32 val_a, u32 val_b)
+> +{
+> +	return hv_acpi_sleep_handler(sleep_state, val_a, val_b);
+> +}
+> +
+> +int hv_sleep_notifiers_register(void)
+> +{
+> +	int ret;
+> +
+> +	acpi_os_set_prepare_sleep(&hv_acpi_sleep_handler);
+> +	acpi_os_set_prepare_extended_sleep(&hv_acpi_extended_sleep_handler);
+> +
+> +	ret = register_reboot_notifier(&hv_reboot_notifier);
+> +	if (ret)
+> +		pr_err("%s: cannot register reboot notifier %d\n",
+> +			__func__, ret);
+> +
+> +	return ret;
+> +}
+> diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyperv.h
+> index 64ba6bc807d9..903d089aba82 100644
+> --- a/include/asm-generic/mshyperv.h
+> +++ b/include/asm-generic/mshyperv.h
+> @@ -339,6 +339,7 @@ u64 hv_tdx_hypercall(u64 control, u64 param1, u64 param2);
+>  void hyperv_cleanup(void);
+>  bool hv_query_ext_cap(u64 cap_query);
+>  void hv_setup_dma_ops(struct device *dev, bool coherent);
+> +int hv_sleep_notifiers_register(void);
+>  #else /* CONFIG_HYPERV */
+>  static inline void hv_identify_partition_type(void) {}
+>  static inline bool hv_is_hyperv_initialized(void) { return false; }
 
 
