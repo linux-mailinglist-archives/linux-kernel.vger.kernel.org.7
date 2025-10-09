@@ -1,82 +1,54 @@
-Return-Path: <linux-kernel+bounces-847511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BF85BCB0E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 00:19:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB942BCB131
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 00:25:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9519319E672D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 22:19:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8456642664E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 22:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D51F2857E9;
-	Thu,  9 Oct 2025 22:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D5528641D;
+	Thu,  9 Oct 2025 22:25:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TiIh3L2o"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X4yKBXaG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A062848BA
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 22:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63CAF285CBC;
+	Thu,  9 Oct 2025 22:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760048345; cv=none; b=DF0parnaqiUQm3MI2UNkN/yy2FCMjcBHkME4lv7wgRxA3TjrO2pHoou6Ih5Z6IdFPqrAid4FIqjkvbxuIj0OfG2q+J8HaLlPFyi6+17erY2VJvLaEzgAhWwPQ0jxNeIRdn0OOrREv2LZczDHIW9b2B1wliexD954kMsv6cnFXGk=
+	t=1760048718; cv=none; b=ag469UAjihmruVA8Z//syyUKZ2emUE2b0JpQDH6VT6m0Ea6KgDBEbJ52r3nZuVsMIamL4CvUJT4MlFmwOJfN0thrpqaVzF/OOD50dGZX2xPhhS+seBgWeE+YJzfoiGy97vylV8BLAzVMeNP2GNBRWqFRRveN1Bnv5YU+13isZJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760048345; c=relaxed/simple;
-	bh=FH63L4f4agVldlvyuQWNSdonEKLJ0v2i3mUQaA7IUCg=;
+	s=arc-20240116; t=1760048718; c=relaxed/simple;
+	bh=83bdko5rwze4WW3bMGBsDUspQQmt7g8T21lnn+Xp8LI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nh7iFIIImrBtoY8Jvjo9bpmtWZtCJ0ach4UvOtKk7Ftl+ggEZkqmAweIKFsgCT0EQm5C2j/SEhguDOctOLCqifZXyGXUA4fNJsSkNiAy8YJDvCcImYbiPjUYUPvqXtxoY5jgtzE5TDanbbwcsFrgMnWNrkFdR2Do3KgiNd3t4EQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TiIh3L2o; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760048343; x=1791584343;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=FH63L4f4agVldlvyuQWNSdonEKLJ0v2i3mUQaA7IUCg=;
-  b=TiIh3L2oet/CpcmBhig5Y1p/JQFakObjEpv17IdbtvuINhQAd2m8TWGJ
-   Lss570dUuip0ySDAypfuwGVfhC0FCe//1sb7Qx7U1dhCoT2/dVCA1/07E
-   Fba7A3i6pVQQN+JAXeRcgushGnk3TrdhzfNJq2b9g5sL5QdZEt6XXUz3/
-   7Jr1mIxdVzcuTINh30Si22xrv/4/Oipyl2HA/8aU4Egt+caBeqyIUrPyg
-   NPEdS9eHeKKI7iooh63KAdIYXjgXrYT+kUo6ce+L94j4iEMimkckrRMAS
-   x81zKpScve/5+8Xgh+eFMA+AjpoQpd5hFQJUfIBtt5ccDy9TgZGvJidK4
-   g==;
-X-CSE-ConnectionGUID: 60Du13mnQBKJOA/yA9R4mA==
-X-CSE-MsgGUID: x/c7yxsCTva25m41n/UIIw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="73702918"
-X-IronPort-AV: E=Sophos;i="6.19,217,1754982000"; 
-   d="scan'208";a="73702918"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 15:19:02 -0700
-X-CSE-ConnectionGUID: mCaT9/RIROmRg9sraUUCIQ==
-X-CSE-MsgGUID: SW0EvskZSKGSF23Uh2V9TQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,217,1754982000"; 
-   d="scan'208";a="185080426"
-Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 09 Oct 2025 15:18:59 -0700
-Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v6yyO-0001YF-1t;
-	Thu, 09 Oct 2025 22:18:56 +0000
-Date: Fri, 10 Oct 2025 06:18:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ketil Johnsen <ketil.johnsen@arm.com>,
-	Boris Brezillon <bbrezillon@kernel.org>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: oe-kbuild-all@lists.linux.dev, Ketil Johnsen <ketil.johnsen@arm.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/panthor: Fix UAF race between device unplug and FW
- event processing
-Message-ID: <202510100644.YPzFXMEb-lkp@intel.com>
-References: <20251008105322.4077661-1-ketil.johnsen@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XrGhVAcdEWKl2y4HOTr5IkanZqZGsUySQNgh6445x6XEjwFBjFPPjXjhRNUW8sP8mX4u/V6UH+LCk0o2aVMOuH9E+j1cX20Ad/P/XjHzpZTH32Ni3gR9KZIF6Nn/LqBYIgUOFrHh6eqr8Fvan6bHbfkAaHwLxseBxknx6XGH5LI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X4yKBXaG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E595C4CEE7;
+	Thu,  9 Oct 2025 22:25:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760048718;
+	bh=83bdko5rwze4WW3bMGBsDUspQQmt7g8T21lnn+Xp8LI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X4yKBXaGBjJhWLfIbbtpbYAgAl8hynK+4LNpuLNDWw0smEGhcp5IsgjHYWOd+x7DE
+	 +R1vi+X3L1N94EgkT8t7iqNB/736JQSyntjQF24UwrQfnvc1wSlRW6J7k7r8vpdunq
+	 SoqaEpDg6knL2OJRYL3DwxlUsoS72dmMr0pjO5mlXjVBXQSjQX/8QIlEhQVc0AWAo4
+	 sb36U7Uw5IKT6jS1Jk/sThuOsN6t40dVorZdXLpmIAujDD+GXD/riQbnSo7t5ITNV2
+	 FCeeTZ1wZVPi3+FMVsJ1TsaFzJwjqj9PDmcstIlWx4PXf0NabB3MA6JznZqJrC8BXc
+	 5iltp3MkUMtgQ==
+Date: Fri, 10 Oct 2025 00:25:13 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: Peter Korsgaard <peter@korsgaard.com>, Andrew Lunn <andrew@lunn.ch>, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux@ew.tq-group.com
+Subject: Re: [PATCH 1/2] i2c: ocores: replace 1ms poll iteration timeout with
+ total transfer timeout
+Message-ID: <445z46hybgl2mdmhsapiitqccxkkpafqstgksov45sfd5v2c2m@mmiye6kt6itb>
+References: <1eb320b6b7d3a12e62785893ea68c4d16aa2560d.1759838476.git.matthias.schiffer@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,39 +57,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251008105322.4077661-1-ketil.johnsen@arm.com>
+In-Reply-To: <1eb320b6b7d3a12e62785893ea68c4d16aa2560d.1759838476.git.matthias.schiffer@ew.tq-group.com>
 
-Hi Ketil,
+Hi Matthias,
 
-kernel test robot noticed the following build warnings:
+On Tue, Oct 07, 2025 at 02:09:24PM +0200, Matthias Schiffer wrote:
+> When a target makes use of clock stretching, a timeout of 1ms may not be
+> enough. One extreme example is the NXP PTN3460 eDP to LVDS bridge, which
+> takes ~320ms to send its ACK after a flash command has been
+> submitted.
 
-[auto build test WARNING on drm-misc/drm-misc-next]
-[also build test WARNING on linus/master v6.17 next-20251009]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+besides, the specification doesn't impose any maximum time.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ketil-Johnsen/drm-panthor-Fix-UAF-race-between-device-unplug-and-FW-event-processing/20251009-184851
-base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
-patch link:    https://lore.kernel.org/r/20251008105322.4077661-1-ketil.johnsen%40arm.com
-patch subject: [PATCH] drm/panthor: Fix UAF race between device unplug and FW event processing
-config: i386-buildonly-randconfig-001-20251010 (https://download.01.org/0day-ci/archive/20251010/202510100644.YPzFXMEb-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251010/202510100644.YPzFXMEb-lkp@intel.com/reproduce)
+> Replace the per-iteration timeout of 1ms with limiting the total
+> transfer time to the timeout set in struct i2c_adapter (defaulting to
+> 1s, configurable through the I2C_TIMEOUT ioctl). While we're at it, also
+> add a cpu_relax() to the busy poll loop.
+> 
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510100644.YPzFXMEb-lkp@intel.com/
+...
 
-All warnings (new ones prefixed by >>):
+> @@ -269,17 +269,16 @@ static int ocores_wait(struct ocores_i2c *i2c,
+>  		       int reg, u8 mask, u8 val,
+>  		       const unsigned long timeout)
+>  {
+> -	unsigned long j;
+> -
+> -	j = jiffies + timeout;
 
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:1788 function parameter 'ptdev' not described in 'panthor_sched_report_fw_events'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:1788 function parameter 'events' not described in 'panthor_sched_report_fw_events'
->> Warning: drivers/gpu/drm/panthor/panthor_sched.c:1800 function parameter 'ptdev' not described in 'panthor_sched_stop_fw_events'
-   Warning: drivers/gpu/drm/panthor/panthor_sched.c:2693 function parameter 'ptdev' not described in 'panthor_sched_report_mmu_fault'
+Any reason we don't take "jiffies + i2c->adap.timeout" and avoud
+all the changes below? It also simplifies the parameters list.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>  	while (1) {
+>  		u8 status = oc_getreg(i2c, reg);
+>  
+>  		if ((status & mask) == val)
+>  			break;
+>  
+> -		if (time_after(jiffies, j))
+> +		if (time_after(jiffies, timeout))
+>  			return -ETIMEDOUT;
+> +
+> +		cpu_relax();
+
+Good.
+
+>  	}
+>  	return 0;
+>  }
+
+...
+
+> -	/*
+> -	 * once we are here we expect to get the expected result immediately
+> -	 * so if after 1ms we timeout then something is broken.
+> -	 */
+
+Why have you deleted this comment completely?
+
+> -	err = ocores_wait(i2c, OCI2C_STATUS, mask, 0, msecs_to_jiffies(1));
+> +	err = ocores_wait(i2c, OCI2C_STATUS, mask, 0, timeout);
+>  	if (err)
+> -		dev_warn(i2c->adap.dev.parent,
+> -			 "%s: STATUS timeout, bit 0x%x did not clear in 1ms\n",
+> -			 __func__, mask);
+> +		dev_dbg(i2c->adap.dev.parent,
+> +			"%s: STATUS timeout, bit 0x%x did not clear\n",
+> +			__func__, mask);
+
+Why are you changing from warn to dbg? This change is not
+mentioned in the commit log.
+
+Andi
+
+>  	return err;
+>  }
 
