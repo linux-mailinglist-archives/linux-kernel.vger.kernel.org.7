@@ -1,136 +1,129 @@
-Return-Path: <linux-kernel+bounces-846078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00BF7BC6FA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 02:12:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48BF6BC6FB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 02:13:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B02AA19E2B52
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 00:13:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A18773E10B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 00:13:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D5AF4F1;
-	Thu,  9 Oct 2025 00:12:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37FD20B22;
+	Thu,  9 Oct 2025 00:13:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DLDVNUOk"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TznPu+kt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF9C4C81
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 00:12:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282914A1A;
+	Thu,  9 Oct 2025 00:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759968758; cv=none; b=I1xC7d7Y8tHPEjehazmm9RLUBAvFAdpPCZ00TgcaHf97ug4hpJ/mnotKQNxqOjL6xYEVAeNfUg2GBki6rsnI98xDrkByJPDw77KX3raU2fw7nVibEeHC0tXVXpehUFwLC4d0s0CUZe08QYFBzqa+mpCdTP/zFNfGgkja9+NcwEA=
+	t=1759968808; cv=none; b=e41URlgr1+5eUardXQ/JtvSlJcjcZe5nC6Xl0SYB1YmsZWcYyKvcZEiHKhSwrgTgrPTlSbhDyNwZ+3rRN8WqCYYyATwwscbRJk3XR0oLMRZvECm/corMGI/Gs61wnDZKIEz+OFX/46jiMIsMNsSbSlJR2BeCIafTkgDwSROHO0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759968758; c=relaxed/simple;
-	bh=Z0JF/h8mBUCqcPAR13Gn4OPXCm3qaHZYWJB6uhLvJtA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D8oggi9b0qjxeQ5yAelcvLKBCsxDXn2qBnV0gPmvdwkF0o+JLuBhjCfttw1cj2wFpx7W2g1sBKyGybqMgX6eMvfBn7bw1KUEuP8TUoN8tYIkRogmPjUfUEVxxBHa2hbmp1+nfO+twIIlAXjJ/ifDcmFgpbSbBzgAe4D2ps8HvVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DLDVNUOk; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4e06163d9e9so3146201cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 17:12:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759968756; x=1760573556; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iLOs0m+C5vy8eU1JuQcMkicCaJKpraCdPB1zIalrqqQ=;
-        b=DLDVNUOkky4k1sok6w7IfZN1sYj1GMmOaLvooxszPDdZn8YxmOwoNqgnOjAiH4AQ+2
-         0Gg0nnLNt90ImTl0WeO7iuuVQnxwXl3pAnbusMS9TxlfPhILRqRqLBFGhCjxLiJ11mou
-         9gWxK/JMEcxZK2qysIR8oB5yB/CRC0QfPkzvRD+X4pyUEJR4b0SIEctQRUME+mVZ2Ocz
-         /hReImJNenpbKGAlmv5KOvkWsARcHHS+AFkIw+tiZoppOcFoieVtFTzHwB83Tq2Z2vib
-         PCuG8RpKWOjfwl5mJho2MlY/9XMfRFAPMI8TX56OQQgfg8S5hdKQwWIiMZRTdUiQjLBa
-         48Rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759968756; x=1760573556;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iLOs0m+C5vy8eU1JuQcMkicCaJKpraCdPB1zIalrqqQ=;
-        b=ZMgfjwCsQBud5JaGA174CJpT4JVm0RH7jTPFcEhLdXP9wZkainBQeHKyrTyOpw553c
-         Ad5OC6ZGmk0rFHgqQ/BoLn5i7K7PlDAWjjK29EUVqhIUnAeAjLfKSd5VAnJ2Rf1H+oG/
-         pf6ViwXCcnvlwuJ0rVlhKgkHVgSZVb5WU+dWVUScQPsVZI63WRW7VhLgnKb+dZcxMC6k
-         ozqXJC0iqZobcEfGKLI6QY5Z4s7ModMVdOhaIArynBNPSaIYp9YsSlILT2rNuhaPf1Sc
-         f3AY12iqwhz87aFrP7Fvbe31v9biyOvzH4naYFlncwVviNdWYsdcs8ACL41FRVcAwn46
-         S4Fw==
-X-Forwarded-Encrypted: i=1; AJvYcCWpb7VTX5J58UNxbakrnkFMnqxU7IhTW/Qc6/e+tHFNf3L6brHywDP4QJU28qoZiyy2GXq49ov3AGB3yn0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQHSMV2492KnR4eEtG5OsznbCUlD/rQTv0z7ifOErgSC1tq+lm
-	XUJuU6L2b2TMBNudxjqI1veZmkZ7U/ogBiMLMuCADk9esP3pbF5/g94FHZAwM6nz01PReOfAQ8j
-	a/rOrW582VocPPnPLxi4ppbpf+5PevaU=
-X-Gm-Gg: ASbGnct6YU0sDJJhUS9bHd/g3AibYlIiXDw/WQDmYoxJCAAUVIFCwsDR6RNblmVlHF0
-	qRx7+SJf/Uz+oUEh+BklVP8f0jMaKHo5tnWdStRQ9r4o7U4MWQb24GwEChdbCOKPGNpO4OlTz+5
-	nZJm3jm+EV8R63Um5AElhayCdLlwpWJ7HrWNOrXuiNQM40Kc4vT32qazxHZiMvxETkeorI3MXNF
-	mfqgNA3sJlU8JoSEhLGqnB1W9anZXmdFrOzWBw1UYgTQ6VQDgiWWMCycc/aOPIjBpaJL7QWk7Uo
-	jgwBY5/8g21eMDEIqgpI82VkLDxBY5b2sSFdZhz6M76Fe0P9OUQy0pZ3tBZHLe9NHOzgct9bzjV
-	rjfRgm7adkenbqmUgdl+ACp/qjMJiIuo3i8kBMdA+YdxeZg==
-X-Google-Smtp-Source: AGHT+IGTMJxEUzyjJOaL0+NNwHEI9UfsX87q17OQxRmhejzUvwBxmkwB9k17auDXhJE1cMaLG7jkj1CnKy1ELrzjvrA=
-X-Received: by 2002:a05:622a:6a42:b0:4e6:ee71:ee96 with SMTP id
- d75a77b69052e-4e6ee71f26cmr35134331cf.25.1759968756008; Wed, 08 Oct 2025
- 17:12:36 -0700 (PDT)
+	s=arc-20240116; t=1759968808; c=relaxed/simple;
+	bh=KeuM5jBfOWpmzREsI/2fXKOwApbsRNPOniejGQuUKOQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BCYY5WOCkdnrA6738EYoX6nx/lfTl0aaQqF7EMlEvz4rQVso28gGp6bkWPUEg7PCBuhoefyGPKSbpnRzgPeJ1SsTr4Ssa5H4hRnX4bGpsmVZ9dAbYqXzmycGUZi8BN5Z4yii24zFi6miADgcHe5ZJ+1oeUe4yGm/LFm+VVVOoUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TznPu+kt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CA78C4CEE7;
+	Thu,  9 Oct 2025 00:13:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759968806;
+	bh=KeuM5jBfOWpmzREsI/2fXKOwApbsRNPOniejGQuUKOQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TznPu+ktKHv2mu3aiVCfgbdLlNBqJSSJalxUY7dmEQ5GamLAOXR5HX1PyoCN4gJ+4
+	 6Ccp2DkC8lUTmITk13ZifWnsoW2+Td61zSlE1yMrZRFLbECwY38s8gFECPalXcVSHx
+	 DWelEtxQjxsoJTMWc1MllhpxG2xZIaX8qGZ/0Yl80/ddjGe3zDTxanusuu6nz+Zt3g
+	 K6iqYbsA+IbsiKxc1zMspQpC7De+VA5ovEgPfFqVyj4obzbdUfywt/b5TKVTl77N7D
+	 t0ergr9MEVp6iU9AcsfHB4bz5uRwQvF/hYdhZWpuwdQw5wOSVf//vQxnumvNP0MwDB
+	 CuKL9QeB228uA==
+Message-ID: <5df18f42-b567-4d27-9e12-29723af40d6e@kernel.org>
+Date: Thu, 9 Oct 2025 09:13:18 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <5b95806a-e72e-4d05-9db8-104be645e6e5@web.de>
-In-Reply-To: <5b95806a-e72e-4d05-9db8-104be645e6e5@web.de>
-From: Steve French <smfrench@gmail.com>
-Date: Wed, 8 Oct 2025 19:12:24 -0500
-X-Gm-Features: AS18NWBDO6yK69iSBzCC-3F6icpJXqhtpmdffwn6wWQE7dyQKytMaHCk49ryAxs
-Message-ID: <CAH2r5mtrT7m71i2928akVarmQ0FTKzaEOu2q4781U8a-_w__ZA@mail.gmail.com>
-Subject: Re: [PATCH] smb: client: Simplify a return statement in get_smb2_acl_by_path()
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
-	Bharath SM <bharathsm@microsoft.com>, Paulo Alcantara <pc@manguebit.org>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
-	Steve French <sfrench@samba.org>, Tom Talpey <tom@talpey.com>, LKML <linux-kernel@vger.kernel.org>, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/10] pmdomain: samsung: use to devm_kstrdup_const() to
+ simplify error handling
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+References: <20251006-gs101-pd-v1-0-f0cb0c01ea7b@linaro.org>
+ <20251006-gs101-pd-v1-3-f0cb0c01ea7b@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251006-gs101-pd-v1-3-f0cb0c01ea7b@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-merged into cifs-2.6.git for-next
-
-On Wed, Oct 8, 2025 at 3:02=E2=80=AFPM Markus Elfring <Markus.Elfring@web.d=
-e> wrote:
->
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 8 Oct 2025 21:56:34 +0200
->
-> Return an error pointer without referencing another local variable
-> in an if branch of this function implementation.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  fs/smb/client/smb2ops.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-> index 7c3e96260fd4..bb5eda032aa4 100644
-> --- a/fs/smb/client/smb2ops.c
-> +++ b/fs/smb/client/smb2ops.c
-> @@ -3216,9 +3216,8 @@ get_smb2_acl_by_path(struct cifs_sb_info *cifs_sb,
->
->         utf16_path =3D cifs_convert_path_to_utf16(path, cifs_sb);
->         if (!utf16_path) {
-> -               rc =3D -ENOMEM;
->                 free_xid(xid);
-> -               return ERR_PTR(rc);
-> +               return ERR_PTR(-ENOMEM);
->         }
->
->         oparms =3D (struct cifs_open_parms) {
-> --
-> 2.51.0
->
->
+On 07/10/2025 01:43, André Draszik wrote:
+> Convert to using devm_kstrdup_const() so as to simplify cleanup during
+> error handling.
 
 
---=20
-Thanks,
+This is either a fix (then describe the fixed issue and add Fixed tag)
+or you change the logic, not only simplify.
 
-Steve
+Previously on of_genpd_add_provider_simple() the memory was not
+kfree_const. Now it will be.
+
+
+Best regards,
+Krzysztof
 
