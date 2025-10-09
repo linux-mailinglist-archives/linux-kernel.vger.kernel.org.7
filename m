@@ -1,220 +1,146 @@
-Return-Path: <linux-kernel+bounces-847200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B969BCA3B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 18:47:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 126D9BCA39F
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 18:46:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 613864F9989
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 16:46:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5157C3C2931
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 16:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D8A239E9E;
-	Thu,  9 Oct 2025 16:46:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E232236EB;
+	Thu,  9 Oct 2025 16:46:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FGb46r6h"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="gxy8k/6i"
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38FF6155C88
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 16:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AEFA155C88
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 16:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760028392; cv=none; b=oYPP+fW32b1cLbYwPY4h6yVtJboOUz5AcOEBR7kcSpoMgV80GSOhu5cbrE3GhgObZeSBdUM+VmTSTIvh52LReKiowwMQpIAM50p1r94GHfJsQagolk9emromHOKkUBnFPEtLaYl2a6GUvpUGCb01S8rPjByeAAi9kwowWwJC4WI=
+	t=1760028386; cv=none; b=RQgN2gtPBf5iOieq1gopnsHcW+F2pthazvLjyr6ejWXPVBWcMwx2HiqY84/BsdeaJOOLMGm4cD1fJ0qwRk/fNFxYDE9RgNGe7C5Dy6Z9/TBmUEHcrtqKoJAjisSYkuaScmwI0TF9y7OEEcVjGutkzG2+KjdwS1RCLrz4IOdzdX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760028392; c=relaxed/simple;
-	bh=0YzEi/FKr4gAZLlOWGsCp0p08GtODGPitU0V9xWloho=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t7xgP8yaGFozLRrN1nuL1X0ljlw8lNPrFqhzXOzW8gvBU1uGeNO/jElws8F4OQ4kN6YsvdlnGLiZ4c9iPuNxl0qXpirLgyYWQ7pYcLRwVMHUPp94eQ0tK+QniNLgRiHDKMVjN04eDzqBpM9Rnkgjg2HxIxwcqqt16qYKztOLS6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FGb46r6h; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4e6ec0d1683so6631cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 09:46:30 -0700 (PDT)
+	s=arc-20240116; t=1760028386; c=relaxed/simple;
+	bh=uKkoVdHHQpINnOOc7yMyxMdnFxyYgw6tts6v+l9uMss=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MhUJvl6WwoTJxrbzPyRtEtuQgJ97fdHwQyR/nCWF2jPfJqLkK7nHD3cfFTFUUeJ+uk0tiLyDycrtH1IgV5LVmhafKvUnYdby7VZDw8Xdf1fpJsqTYxw2FyIuGVYa+NlQVd6X8AjdogT5tr2s//kfMymVWj/lszvA6ExZW4FajYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=gxy8k/6i; arc=none smtp.client-ip=209.85.166.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-91179e3fe34so67458739f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 09:46:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760028389; x=1760633189; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZzlluHwkUBhNfLLuHc1HKW2H+S+ipbeYuCHoUWYJ/AU=;
-        b=FGb46r6hSI4mLnolXEJ/yTaoR+b6l70oW2PLOJIjoLyS7rAQl7r7B7Se4F9saXsMFQ
-         Lqn/2eMDtw6Fpt13lXNjiuM7qPDcZ1DWmV3tFWHaZWmWxiQGucflA2Yczq5vPZJIJHPF
-         4GcBbbghvT56IRB0R6qn9ckTHcjJ7EDaqtl2LDonMZGVvoNdAI6+TuSsAApkEuEvyQfH
-         aBRIOEnwVAa6i4YUTEcUoM25KUNTe9pvZmvbck/f3mkSfschYpwvb3LI41+7oOEuJ2ww
-         VboX6unb3BkpfbTrpBT/LKQ2w2QSidadL869KKVyEDr3ic8ng7r6iQvx+VfDKSU2mjpB
-         YgjA==
+        d=ventanamicro.com; s=google; t=1760028383; x=1760633183; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=l69sAA+RqcMkjrNYYlZnvTMiAxsxuDk6BohwO3k0jM4=;
+        b=gxy8k/6iWbaPBMaHcPa6UBOZfPQZMJvh/8QzxvONUjVvaAbPF3qMZ+gZ59XeymltuN
+         Ft+vsm/hd6x/LYrjz99UnNAFNcFnkfZbub9wJ+f0/Ozh9IgHWOMmmb39RjmFFcN0CacI
+         qfAWvA5zcyCNy4Ce9fQ7/xo5NE9lMl9uium8PPZNlW6wDX4J9wrfwZxJtQ4SqjkOwjTZ
+         4RabWJxQ9A2smqPGhX+0StTD7h8KPQKMsYp8x7NRiDCXtnjQ5wTBcsP6nRLZs+eWD2sV
+         aeh1O84ypCXty9yPQfJxf66OvPe2oxowpOWWVH3gfsCUCIR0MYlFRnmmWrovIx4JXwFU
+         6o9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760028389; x=1760633189;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZzlluHwkUBhNfLLuHc1HKW2H+S+ipbeYuCHoUWYJ/AU=;
-        b=Zpg1Sec3Nrg+f2Pkk0RtXZQBIEPqsoxfP/TgfwsBAzJIhxACp/Gw8X3GBMJB0tqmPs
-         mDlKCu3O0yrs6fy/FbWg4DgcfaAUG15nyYOH9nboZl6rHgGjwscNCCLcc3aOpci+1yv/
-         N8DldIaIJ+IeKaJasHfmS9sWAaqp/7pP+9MgQpBqAQ+zGvRlqUJ1UkVQwoG8/0OqNCsA
-         K4OU2p9RfeiZirPRis4eJj4zV5aHvP+p7hKMB6gUShtiwKZIvMRV3kcK5XWLl+2QZBYC
-         Hrl5cKolOyAnJ5l/g6EPfjm2jDJtVNOVyflMndBe/F/PBGAVfO7clDBDFf9z7rA9eyVW
-         CIYg==
-X-Forwarded-Encrypted: i=1; AJvYcCV2M0NmdGl19ZVHkHXza8zRRnPHdyweq31TbjJF4csKsARDXkw9Kv/UcpzdIHCdjXdK6cLUuLLzf8LgUZI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfCE30W/FjX+Ru9UPpEn50DIIhvFHtR1ZMmJYxxymxE09AbDzq
-	rtRZ5mq7O6qGf7ihh6a1wR9PanGQtAiXRDaKnE65xNttYwT0atuvTFLYtd9iY+NfjqNtNFCmgvb
-	xo0Rg7vmXDdH/FJ4eTnG4Xqx608LmdC5ha2GjErVa
-X-Gm-Gg: ASbGnct9LmqFvDiX4Imh9o7wmTWJzGYL/1VIv5JsCzloolK6VuHNWe1VqfHpaN5N7gm
-	moFEpjsAD8Z7kpsQGD6M16KhhoqdRMT2GtX3PFghGYaLJjZgR3tLvejA1oFkPGknyu2qA69skaG
-	xKplJt0a0LsS5tV+HDjNsM3sZ2VhHqTuWEpMNjixTQVik0pw4a/TXXePKQWtjTAkdk4asqDvheD
-	V2eifCTopdfqpnmXgF6iuwQaf6rT+NoKIpEYT31Dn1rekLgz1pjrog9rwXJGPz6i0vxXeA=
-X-Google-Smtp-Source: AGHT+IF70ucIJMpJA0vPDQgicdHZr5JjOzPiEUk9y5SQTUUUNRoZE52nw8qSw3T5aRdmC55lZrWVgbTQ4VOEIK5o6D4=
-X-Received: by 2002:a05:622a:344:b0:4b7:9b7a:1cfc with SMTP id
- d75a77b69052e-4e6eabce6d2mr16470351cf.10.1760028388319; Thu, 09 Oct 2025
- 09:46:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760028383; x=1760633183;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l69sAA+RqcMkjrNYYlZnvTMiAxsxuDk6BohwO3k0jM4=;
+        b=uRuuYKsLeKcBoncZpxLiHOvNaap0OPxrdMuC3QSKNfLVrslZxoPzQzzt0LVin1QwwR
+         pC16PUWfMi28c5P56Yad7PEDAsEi4c20J/jpnT4d4z2O4IdRsJbmiM0pFWRS31ZG/xCk
+         q48JCB4bIqvfvgJRLUGYT6I/Lx3v+uLKbTyzwxysHt+GpnY3u19uA6YbQChXM+F+ppOK
+         UcFXxTWGJYm8yi0IpdBkSVryJPnB0T4L8epRTWrnFrcBOgNlm9/QhHsA5YppU9upd2TF
+         FwXkZXfWv0LfeMRbmZh/2E+qRP5rcj1syJvmh+8IL98HG5BP1Pnmr60PVSFyHndu1Ywq
+         tFxA==
+X-Forwarded-Encrypted: i=1; AJvYcCUel/JbEBsfTHeDKGU1fKrKMrEaP4kIIvMe0jaSs1OHi1QZxtxVntmTw0RnTd8/daOSMo5QTsx7PFvfn7s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRDHEUu3Bs373EWaXS3vWphVLB7khX1UUNgEz9F3Gn6qwBpA9E
+	ZZiPpK+5NX3se5vFqY7Megzhl4Ug+axBm5vcpHkeGmJAIEuKeertfFb+GkSGi2dT3FwmcZMw9YK
+	ln5WB6dk=
+X-Gm-Gg: ASbGncsxRIeICaxa6/OXooIrJ2Gknnu4VvfXFWxQKzQTOQBWgxjJzbaWQ1uvdEq/Vbb
+	2l9neoaVMUScUH0+0dHfaBB5FCXts43XKXyJt/CnNGuXwDFCGLv7Lm6AuxwMcy5Z6OwQbSwkh31
+	Orwd1K2Y5s+vbhAFL3olZIAV3UPhxrfe1BQflq2KbR/rsZsa1l83ce6ys5Fs3xTOP9YCCIVwlDO
+	2e9kM2jL6t/il2oCzNECnrl32WBShEQqUBoXjz5gktf/0qBHqUQ79+irfvdIFS/6csnKIhJ26JY
+	EUCz7NvHBVH/xVI/2x1SfgsGmDp9d1qQq4rr1LVeerO8zjjmLAOZenxMelqJiyEkFB3WqMcUuVa
+	ji/SmtYSxnorfvAI5hTNFCZCWx+guNkCSPw7lKtjdwEuSoQh7mCbI9YyrYUY=
+X-Google-Smtp-Source: AGHT+IHb56VLYwDyYpisbd61rv4b/ynpgAfxpu83YRCwm5JW7AaildP7fCF4cs3XdphAf5nkTFwpyQ==
+X-Received: by 2002:a6b:e916:0:b0:8c3:e106:74c2 with SMTP id ca18e2360f4ac-93bc4119105mr1227233739f.5.1760028383330;
+        Thu, 09 Oct 2025 09:46:23 -0700 (PDT)
+Received: from localhost ([140.82.166.162])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-93e2594a558sm8145139f.7.2025.10.09.09.46.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 09:46:22 -0700 (PDT)
+Date: Thu, 9 Oct 2025 11:46:21 -0500
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Yao Zihong <zihong.plct@isrc.iscas.ac.cn>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	alexghiti@rivosinc.com, shuah@kernel.org, samuel.holland@sifive.com, evan@rivosinc.com, 
+	cleger@rivosinc.com, zihongyao@outlook.com, zhangyin2018@iscas.ac.cn, 
+	Jonathan Corbet <corbet@lwn.net>, Paul Walmsley <pjw@kernel.org>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Charlie Jenkins <charlie@rivosinc.com>, 
+	Cyan Yang <cyan.yang@sifive.com>, Jesse Taube <jesse@rivosinc.com>, 
+	Yunhui Cui <cuiyunhui@bytedance.com>, Nam Cao <namcao@linutronix.de>, 
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v2 3/4] docs: riscv: Document hwprobe for Zicbop
+Message-ID: <20251009-27aafc23cb2a92c1c9b324b2@orel>
+References: <20251009134318.23040-1-zihong.plct@isrc.iscas.ac.cn>
+ <20251009134318.23040-4-zihong.plct@isrc.iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
- <CA+CK2bB+RdapsozPHe84MP4NVSPLo6vje5hji5MKSg8L6ViAbw@mail.gmail.com>
- <CAAywjhSP=ugnSJOHPGmTUPGh82wt+qnaqZAqo99EfhF-XHD5Sg@mail.gmail.com>
- <CA+CK2bAG+YAS7oSpdrZYDK0LU2mhfRuj2qTJtT-Hn8FLUbt=Dw@mail.gmail.com>
- <20251008193551.GA3839422@nvidia.com> <CA+CK2bDs1JsRCNFXkdUhdu5V-KMJXVTgETSHPvCtXKjkpD79Sw@mail.gmail.com>
- <20251009144822.GD3839422@nvidia.com> <CA+CK2bC_m5GRxCa1szw1v24Ssq8EnCWp4e985RJ5RRCdhztQWg@mail.gmail.com>
-In-Reply-To: <CA+CK2bC_m5GRxCa1szw1v24Ssq8EnCWp4e985RJ5RRCdhztQWg@mail.gmail.com>
-From: Samiullah Khawaja <skhawaja@google.com>
-Date: Thu, 9 Oct 2025 09:46:16 -0700
-X-Gm-Features: AS18NWBgKgmWhR1-EKut7z0eede2LXIJaTXH-__gJayThOTTr-r8gXegH0ezPFY
-Message-ID: <CAAywjhSU7ibji=Z50U+OcX7eemhid2sB7OK_fsgzds3vGTZOjw@mail.gmail.com>
-Subject: Re: [PATCH v4 00/30] Live Update Orchestrator
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, pratyush@kernel.org, jasonmiu@google.com, 
-	graf@amazon.com, changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
-	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
-	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
-	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
-	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
-	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
-	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
-	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, chrisl@kernel.org, 
-	steven.sistare@oracle.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251009134318.23040-4-zihong.plct@isrc.iscas.ac.cn>
 
-On Thu, Oct 9, 2025 at 8:02=E2=80=AFAM Pasha Tatashin <pasha.tatashin@solee=
-n.com> wrote:
->
-> On Thu, Oct 9, 2025 at 10:48=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com> =
-wrote:
-> >
-> > On Wed, Oct 08, 2025 at 04:26:39PM -0400, Pasha Tatashin wrote:
-> > > On Wed, Oct 8, 2025 at 3:36=E2=80=AFPM Jason Gunthorpe <jgg@nvidia.co=
-m> wrote:
-> > > >
-> > > > On Wed, Oct 08, 2025 at 12:40:34PM -0400, Pasha Tatashin wrote:
-> > > > > 1. Ordered Un-preservation
-> > > > > The un-preservation of file descriptors must also be ordered and =
-must
-> > > > > occur in the reverse order of preservation. For example, if a use=
-r
-> > > > > preserves a memfd first and then an iommufd that depends on it, t=
-he
-> > > > > iommufd must be un-preserved before the memfd when the session is
-> > > > > closed or the FDs are explicitly un-preserved.
-> > > >
-> > > > Why?
-> > > >
-> > > > I imagined the first to unpreserve would restore the struct file * =
--
-> > > > that would satisfy the order.
-> > >
-> > > In my description, "un-preserve" refers to the action of canceling a
-> > > preservation request in the outgoing kernel, before kexec ever
-> > > happens. It's the pre-reboot counterpart to the PRESERVE_FD ioctl,
-> > > used when a user decides not to go through with the live update for a
-> > > specific FD.
-> > >
-> > > The terminology I am using:
-> > > preserve: Put FD into LUO in the outgoing kernel
-> > > unpreserve: Remove FD from LUO from the outgoing kernel
-> > > retrieve: Restore FD and return it to user in the next kernel
-> >
-> > Ok
-> >
-> > > For the retrieval part, we are going to be using FIFO order, the same
-> > > as preserve.
-> >
-> > This won't work. retrieval is driven by early boot discovery ordering
-> > and then by userspace. It will be in whatever order it wants. We need
-> > to be able to do things like make the struct file * at the moment
-> > something requests it..
->
-> I thought we wanted only the user to do "struct file" creation when
-> the user retrieves FD back. In this case we can enforce strict
-> ordering during retrieval. If "struct file" can be retrieved by
-> anything within the kernel, then that could be any kernel process
-> during boot, meaning that charging is not going to be properly applied
-> when kernel allocations are performed.
->
-> We specifically decided that while "struct file"s are going to be
-> created only by the user, the other subsystems can have early access
-> to the preserved file data, if they know how to parse it.
->
-> > > > This doesn't seem right, the API should be more like 'luo get
-> > > > serialization handle for this file *'
-> > >
-> > > How about:
-> > >
-> > > int liveupdate_find_token(struct liveupdate_session *session,
-> > >                           struct file *file, u64 *token);
-> >
-> > This sort of thing should not be used on the preserve side..
-> >
-> > > And if needed:
-> > > int liveupdate_find_file(struct liveupdate_session *session,
-> > >                          u64 token, struct file **file);
-> > >
-> > > Return: 0 on success, or -ENOENT if the file is not preserved.
-> >
-> > I would argue it should always cause a preservation...
-> >
-> > But this is still backwards, what we need is something like
-> >
-> > liveupdate_preserve_file(session, file, &token);
-> > my_preserve_blob.file_token =3D token
+On Thu, Oct 09, 2025 at 09:41:53PM +0800, Yao Zihong wrote:
+> Update hwprobe.rst to include documentation of the new
+> :c:macro:`RISCV_HWPROBE_EXT_ZICBOP` and
+> :c:macro:`RISCV_HWPROBE_KEY_ZICBOP_BLOCK_SIZE`, following the same
+> style as the Zicbom and Zicboz entries.
+> 
+> The extension bit records support for the Zicbop extension, and
+> the block size key reports the block size in bytes.
+> 
+> Signed-off-by: Yao Zihong <zihong.plct@isrc.iscas.ac.cn>
+> ---
+>  Documentation/arch/riscv/hwprobe.rst | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
+> index 2f449c9b15bd..3b9c9d7e1409 100644
+> --- a/Documentation/arch/riscv/hwprobe.rst
+> +++ b/Documentation/arch/riscv/hwprobe.rst
+> @@ -275,6 +275,9 @@ The following keys are defined:
+>         ratified in commit 49f49c842ff9 ("Update to Rafified state") of
+>         riscv-zabha.
+>  
+> +  * :c:macro:`RISCV_HWPROBE_EXT_ZICBOP`: The Zicbop extension is supported, as
+> +       ratified in commit 3dd606f ("Create cmobase-v1.0.pdf") of riscv-CMOs.
+> +
+>  * :c:macro:`RISCV_HWPROBE_KEY_CPUPERF_0`: Deprecated.  Returns similar values to
+>       :c:macro:`RISCV_HWPROBE_KEY_MISALIGNED_SCALAR_PERF`, but the key was
+>       mistakenly classified as a bitmask rather than a value.
+> @@ -369,4 +372,7 @@ The following keys are defined:
+>  
+>      * :c:macro:`RISCV_HWPROBE_VENDOR_EXT_XSFVFWMACCQQQ`: The Xsfvfwmaccqqq
+>          vendor extension is supported in version 1.0 of Matrix Multiply Accumulate
+> -	Instruction Extensions Specification.
+> \ No newline at end of file
+> +	Instruction Extensions Specification.
+> +
+> +* :c:macro:`RISCV_HWPROBE_KEY_ZICBOP_BLOCK_SIZE`: An unsigned int which
+> +  represents the size of the Zicbop block in bytes.
+> \ No newline at end of file
 
-Please clarify if you still consider that the user does register the
-dependencies FDs explicitly, but this API just triggers the
-"prepare()" or "preserve()" callback so the preservation order is
-enforced/synchronized?
->
-> We cannot do that, the user should have already preserved that file
-> and provided us with a token to use, if that file was not preserved by
-> the user it is a bug. With this proposal, we would have to generate a
-> token, and it was argued that the kernel should not do that.
+Please ensure this file has a newline so the last line doesn't have
+to change every time we add new keys.
 
-Agreed. Another thing that I was wondering about is how does the user
-space know that its FD was preserved as dependency?
-
->
-> > file =3D liveupdate_retrieve_file(session, my_preserve_blob.file_token)=
-;
-> >
-> > And these can run in any order, and be called multiple times.
-> >
-> > Jason
+Thanks,
+drew
 
