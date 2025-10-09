@@ -1,149 +1,165 @@
-Return-Path: <linux-kernel+bounces-846103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14EB3BC70B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 03:04:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C419ABC70BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 03:04:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93E4F19E368F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 01:04:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 743DF3C4C75
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 01:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65989824BD;
-	Thu,  9 Oct 2025 01:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67EB914A4DB;
+	Thu,  9 Oct 2025 01:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DUtQdUQ/"
-Received: from mail-oa1-f73.google.com (mail-oa1-f73.google.com [209.85.160.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KgEld5bz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20331176FB1
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 01:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 976903D987;
+	Thu,  9 Oct 2025 01:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759971804; cv=none; b=emha6x4S8VLc/fiKOQS/ZPwYpEMyhv/VA42kRIhHt2GkR/pKkA7290wx9TIS/y9Hw2DmiccMr0s5y5F36lfouqpteBaTLDy1aRUyfHk2kIQ7OPh2aabWc1NQRX+hNLx2akRLR/lHjWuFl26U73UjL0RAgw2LsFu3u0Vl+qMucAo=
+	t=1759971876; cv=none; b=Liqh7PzqUdXj+TajA0lEXlLkRULPHoywX4f4Xhwr3jhWwG3LLxAzQTwu+qpm589loAfEd1gpZMwBFOQyig+Z5W7jQ+uNVRKATQe2gzWHYOxh+OL1b6eRIKfxiEJw0XkC9k0A9wXOfmolKAg0PG+/+x6hwKztZTqHCvl31gJ2QDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759971804; c=relaxed/simple;
-	bh=00pwX8rLB5k8Lb3COtxEncyyDckCIf4Wtb9DdeVqR3Q=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=LK9/weTWVluREXye1N6yFMODSfsHe3u0e4/DfoNg7kd5xDQnHwKtGOgV3NKdjgcz67fbNiliYK4zy+gthaGXIJ8/VEr0RYHVVX+YQpA3+WR2IsNjtiNiyCHxBMLE7Npaumht4dPmsn+dm7PB8f5Jtf3buc2f30GBVWUuLvSt7eQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthies.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DUtQdUQ/; arc=none smtp.client-ip=209.85.160.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthies.bounces.google.com
-Received: by mail-oa1-f73.google.com with SMTP id 586e51a60fabf-30cce8e3ceaso1002225fac.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 18:03:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759971802; x=1760576602; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kCeRiv6OyS5ejnolBPMxDl1i4JKGbiO+/woSsXQ2sg0=;
-        b=DUtQdUQ/KdrO3VMrApaSW5GRZJsnbHPigjWw5EYvd8qpxISNbqxCl+bYLTpVYDWRiE
-         835bSiCZwOWJojPkizxRHGEGYzeAP6FQ7onghHkvLJ4SZYjrpriPhYMOJLsvhE1IwWU4
-         UvUXsIG+Xm4RQ4ArONKMsEF/icJcpIN5p2nENXLUmkqQGuo7zngW/W5q80GJ1syF6v28
-         q/VJk97izsVHNgAQqvlaWXGuiOP88I20yCdNADSq/OPHKn4MAxdE2Rm2v2v0lxN+DAv6
-         ecoqOHMOMLCOl/1jjbYDA8+chSch+mz8WP5lCZOkNMIQz1zUpLt1oJPvYwb2r/hGnCBS
-         fN0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759971802; x=1760576602;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kCeRiv6OyS5ejnolBPMxDl1i4JKGbiO+/woSsXQ2sg0=;
-        b=QF/UajQHcSlFVAbl/DYTfAhVkX6VMY3C2LHPW1pCLc0L39Kq6MEAe0G6VvP46sKqd+
-         CVHheVOn17vgT/TT9WILxL32PhZBEdIEjsA2miMgKcdTwEOeEZ/Tl7fgiVEpyppRqmhP
-         kYbToK1Q/EJ0BkJ5LN/PBCCuVOIc6w29LHxlQiLVk6NLYtUc/5psWrGigonMn1XpkuzT
-         RNF7T0rCy/u/O9/pwjFpqhT0yPteny0fSZMe2HvLr4fPWfat98J1SqD2Bztn68dOlnEW
-         NLAXW3GdUZ8fi/h1+fIAFvQyadmv28q5pFyuh5+KTHTfYfKngq3xf8SkwijZz6akFKHx
-         aX6A==
-X-Forwarded-Encrypted: i=1; AJvYcCXcqY9erEcjrUT8Yg2NknP4GQAseClJ6XgRQ+iGk8Q9FSxIhfq67vPgTtILLkMrJD2cO6A1e0RafN9Azjc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN2nadJVxq/PzvbtcOn3Pm/Ni9VqWqWt1SotopTB6QXJmDV9L3
-	sanP5J5N76xtvvhToQjhjM1zK6yqrVi0eWzrEWsBjW/7iDcliLr7LRpw34hk3D+uPMyDrmNVPqf
-	3qZHDSQ==
-X-Google-Smtp-Source: AGHT+IF0qbDcxH3MGVrqr+Rn2sXSBv3+09P7txZ+7QoM8RfbyeoIQUaC8Byu4yqvRximfoLKLV3kORtUsFI=
-X-Received: from oabyy48.prod.google.com ([2002:a05:6871:25b0:b0:34b:1c16:5c46])
- (user=jthies job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6870:e992:b0:3b1:8e5d:d42a
- with SMTP id 586e51a60fabf-3c0fb72a8famr2648272fac.49.1759971802265; Wed, 08
- Oct 2025 18:03:22 -0700 (PDT)
-Date: Thu,  9 Oct 2025 01:03:08 +0000
-In-Reply-To: <20251009010312.2203812-1-jthies@google.com>
+	s=arc-20240116; t=1759971876; c=relaxed/simple;
+	bh=vmKpklX7s829t63sBLzCDRLIqN2vG9RpogG762iSHcg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ojwq4xuD8TEmCaexidhRoHC4b5P9uqPsHQHZOPVSN3vG3DOCHdO9QTxQIfaqi6RTSj5jMYpHC+4CILkW+QwG/y3huioPb/mEXuYOcRZRPl7ISNOqyeHmFscNlk69+wltWECbi0V8yzVi7OFECx5f4GzIyspurPdqAcnWib0hZ98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KgEld5bz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97443C4CEE7;
+	Thu,  9 Oct 2025 01:04:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759971876;
+	bh=vmKpklX7s829t63sBLzCDRLIqN2vG9RpogG762iSHcg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KgEld5bzkK5+gYk5w8JSRxNWT/2MRAK5juC/0uJ9vzeMfpxtcoFUko1FUyB241gVY
+	 dFTIFmCkdlA1V0DlnDFTUF/E6GA41cnJ5/rsotLyOB1MExy/6TLt09G5MwV5ZlhX//
+	 ZtujYyOYDpxDA45Yq3xB/tzUToXmkK8AANIy807W/KtWp8bnrD6+D3pjZbVEqWnG8v
+	 5TWce1neSHoEJ+74eC1vvsfwOAI7IooWUYFyYDM6ps9tlcXaQrn2Xq5VlPyeb00zAC
+	 QgxCNCMFwF9G1Rdr7ghvGKGFMKWStE/OPx3v2XjjS9x3nxGHDVFwHaYpS77eTcyNcw
+	 KAzl/59uFbpGw==
+Message-ID: <5085c857-f6e8-4faf-b61a-a9ee562ccf06@kernel.org>
+Date: Thu, 9 Oct 2025 10:04:24 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251009010312.2203812-1-jthies@google.com>
-X-Mailer: git-send-email 2.51.0.710.ga91ca5db03-goog
-Message-ID: <20251009010312.2203812-4-jthies@google.com>
-Subject: [PATCH v3 3/3] mfd: cros_ec: Don't add cros_ec_ucsi if it is defined
- in OF or ACPI
-From: Jameson Thies <jthies@google.com>
-To: akuchynski@chromium.org, abhishekpandit@chromium.org, krzk+dt@kernel.org, 
-	robh@kernel.org, bleung@chromium.org, heikki.krogerus@linux.intel.com, 
-	ukaszb@chromium.org, tzungbi@kernel.org
-Cc: devicetree@vger.kernel.org, chrome-platform@lists.linux.dev, 
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jameson Thies <jthies@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/5] Introduce "non-pixel" sub node within iris video
+ node
+To: Bryan O'Donoghue <bod@kernel.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Charan Teja Kalla <charan.kalla@oss.qualcomm.com>,
+ Bryan O'Donoghue <bod.linux@nxsw.ie>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <7b6db4fa-2f73-376d-4eb3-64c1c7e6cda3@quicinc.com>
+ <4a32bbec-2baf-4210-a7c1-1ddcd45d30c8@oss.qualcomm.com>
+ <SuwJuCIcLVJwN3YeN1il6tB9wO9OH6bYcnbRpxpuI9Dl7piYLN-hVdnyv0Mal6N-W5pi2aCZI8MxHZDEkoE63A==@protonmail.internalid>
+ <4d87d1ca-55b2-426e-aa73-e3fd8c6fe7bd@kernel.org>
+ <10a8ccda-4e27-4b06-9a0e-608d6ade5354@nxsw.ie>
+ <4cb4a92d-2f20-47c7-881e-aadcc6f83aa0@kernel.org>
+ <1516f21e-aee3-42cf-b75e-61142dc9578d@oss.qualcomm.com>
+ <9bae595a-597e-46e6-8eb2-44424fe21db6@linaro.org>
+ <MMSKAu89Ew7StAeFBV442KfKNzmqbTSQ-maFG35Jr9d8PkUV2L4sx44R2DRevXA8mC45vkA398l2mvVzarZwew==@protonmail.internalid>
+ <bcfbf35b-69ed-4f39-8312-6a53123cd898@kernel.org>
+ <d46c0335-99d6-469f-a61f-aca4c851f745@kernel.org>
+ <GyrcG3qBN7c5C7ajCs3EV81hWvuaVbg64CpzQ-X3d_p6EauoiKxSoG2aOKE21-j12SWFjNDjV-kVSwYYqVm_lQ==@protonmail.internalid>
+ <a0dc93ec-e35c-409b-8dfb-1642c92a9f0c@kernel.org>
+ <98e6acf8-80d7-4894-b4ce-ce74660722ef@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <98e6acf8-80d7-4894-b4ce-ce74660722ef@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On devices with a UCSI PPM in the EC, check for cros_ec_ucsi to be
-defined in the OF device tree or an ACPI node. If it is defined by
-either OF or ACPI, it does not need to be added as a subdevice of
-cros_ec_dev.
+On 09/10/2025 09:55, Bryan O'Donoghue wrote:
+> On 09/10/2025 01:47, Krzysztof Kozlowski wrote:
+>>> Maybe it would be possible to also use an inferred FUNCTION_ID somehow
+>>> though TBH I think that's a work-around.
+>> Three months ago I gave you the answer for that - it is inferred by
+>> index on the list.
+> 
+> But at least as I understand it, you can have multiple SID entries that 
+> need to map to a FUNCTION_ID which means you need to encode that 
+> inferred indexing in your driver.
 
-Signed-off-by: Jameson Thies <jthies@google.com>
----
- drivers/mfd/cros_ec_dev.c | 23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
+Yes.
 
-diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
-index dc80a272726b..1928c2ea2b8f 100644
---- a/drivers/mfd/cros_ec_dev.c
-+++ b/drivers/mfd/cros_ec_dev.c
-@@ -5,6 +5,7 @@
-  * Copyright (C) 2014 Google, Inc.
-  */
- 
-+#include <linux/acpi.h>
- #include <linux/dmi.h>
- #include <linux/kconfig.h>
- #include <linux/mfd/core.h>
-@@ -131,11 +132,6 @@ static const struct cros_feature_to_cells cros_subdevices[] = {
- 		.mfd_cells	= cros_ec_rtc_cells,
- 		.num_cells	= ARRAY_SIZE(cros_ec_rtc_cells),
- 	},
--	{
--		.id		= EC_FEATURE_UCSI_PPM,
--		.mfd_cells	= cros_ec_ucsi_cells,
--		.num_cells	= ARRAY_SIZE(cros_ec_ucsi_cells),
--	},
- 	{
- 		.id		= EC_FEATURE_HANG_DETECT,
- 		.mfd_cells	= cros_ec_wdt_cells,
-@@ -264,6 +260,23 @@ static int ec_device_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	/*
-+	 * FW nodes can load cros_ec_ucsi, but early PDC devices did not define
-+	 * the required nodes. On PDC systems without FW nodes for cros_ec_ucsi,
-+	 * the driver should be added as an mfd subdevice.
-+	 */
-+	if (cros_ec_check_features(ec, EC_FEATURE_USB_PD) &&
-+	    cros_ec_check_features(ec, EC_FEATURE_UCSI_PPM) &&
-+	    !acpi_dev_found("GOOG0021") &&
-+	    !of_find_compatible_node(NULL, NULL, "google,cros-ec-ucsi")) {
-+		retval = mfd_add_hotplug_devices(ec->dev,
-+						 cros_ec_ucsi_cells,
-+						 ARRAY_SIZE(cros_ec_ucsi_cells));
-+
-+		if (retval)
-+			dev_warn(ec->dev, "failed to add cros_ec_ucsi: %d\n", retval);
-+	}
-+
- 	/*
- 	 * UCSI provides power supply information so we don't need to separately
- 	 * load the cros_usbpd_charger driver.
--- 
-2.51.0.710.ga91ca5db03-goog
+> 
+> So you can't have the iommu code just know what to do.. it has to be 
+> driver specific.
 
+Yes.
+
+> 
+> The iommu description for this platform basically lacks the data that 
+> _should_ be there -> FUNCTION_ID.
+
+No. The index tells that already.
+
+> 
+> The rule is that the DT should really describe the hardware right ?
+
+It already does. Same as I wrote on IRC, DT already has all the
+information. Entry 0 has function ID-foo. Entry 1 has function ID-bar.
+Entry 2 has function ID-bar or whatever.
+
+Best regards,
+Krzysztof
 
