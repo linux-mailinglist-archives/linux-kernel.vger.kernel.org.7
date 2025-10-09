@@ -1,127 +1,195 @@
-Return-Path: <linux-kernel+bounces-847002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D9F3BC99D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:49:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47A75BC99F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41B3919E109D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:49:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E53C3B9283
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B762EB84F;
-	Thu,  9 Oct 2025 14:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="MntwWWGX"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80442282E1;
+	Thu,  9 Oct 2025 14:49:27 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86DD542065
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 14:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7944020B21E;
+	Thu,  9 Oct 2025 14:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760021344; cv=none; b=HHuNwTH3PmluT3+XRDRJRgB/GgXfsL2frYQxjYabMTsGi9SnlGHeFCpHP3+s4eEcy1iO9KNmIwQzGdOHTRyTJtaVDIeyqz2Uj4Yvd9hPrZBVuGNBAs2hkqO5ZpEl9iHnSOl0RGWOCVYQDy7wTmnpxonKiaKkqpntBXzuexh0+9o=
+	t=1760021367; cv=none; b=PppmtBMwxgMIik4HcJyFu5YO+Ozb6SMZXO/E32ioNgtYCX4ye3fUJpeu/wTPtf+o6QVOyKRHdUW0cnGDe8F6mC08csy9yZL7oiCVSodY9PlJ0pbERZ66M1BC4vwIUYb767c6XmNr2WBy7cZtiU59+4+WzyC+3aSnIzxMMX+05/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760021344; c=relaxed/simple;
-	bh=1XYLuOFbNFgiZvjhYKmjcRhWYH+0tPHq30+pyiPCvPM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LYKtgm/MlmbOin4p8qScjNjGKPlmW5vqEjuyunoiiwf2ryPhYTqUme+fvA01NDnEHnki/1O6vUagO+7dH53OserWzAfmgnQcdFDfwp4BlGKYmlOOUiUn2NU3AwsvmSqT1MIaRCK3hQk71oSPh4AXwJSb+mBCGceRACHE7IepDpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=MntwWWGX; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3ecde0be34eso1181320f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 07:49:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1760021341; x=1760626141; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=u3VbnVQItkD+tFNuLwAYfAssjXKroSj3yDUqMHNh5A0=;
-        b=MntwWWGX1REHHZn7h/G+PnaF9ijD8WBJNv+Mb5VEITfjkJJLoGWE6iW56T68GOocAv
-         adJposbyQI/GZOmZ7+UAiEuOqRBz2JJ/the2a7sdWwyRxeE6ahbhh0IgkRg/UVQ/CMF3
-         lz0yr9e/rBknCIS5uq+nZ2IFTNJf5en4T5N5pqXYD3Wnn8gxmirS3bnTWRrKH4SyfDgE
-         Tl/Nl2+g5e9lpksAFlz5gwulQdlgL8pSkv6VebVtLA9zrUdm5nljVdWJ44BlDay2tR2S
-         FZawlxWGLfCHJVWPOPTUSyNMiW1z+zSU2h4mtKpo1df1Xenm5TcPUl9rnLbWb4P8tQrv
-         BRaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760021341; x=1760626141;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u3VbnVQItkD+tFNuLwAYfAssjXKroSj3yDUqMHNh5A0=;
-        b=nBXGI+gR+QPlEGdviDhObc+AvId3j9Tg1Cbe1mIiBdqFd6T2G8YordMBauZpK+xAKW
-         ap4CSNxyYe0WgEte3P0Ris0yN3jR6BiHJUcgFcnpbv4dhpYtQraEF+6wmxXE60PNktpn
-         /T0vIV9E2b1w1IlQeron/wIfTTQHvRPT3nR9a6JKJFjIeoLzmqcTA54FtOpz9SWK/1oS
-         o9eeI7KN9sbp8gwZEzBifdE4z+Pex2lwOrzO8bZQcTEDyNhMlsEXUOH0BCp0scBWKY1q
-         GqFOb8mGL2ablITM91zgx1Zsa1mR4keMCduVtLhvoUXb5SEpVLA2LhIl27EQTxhsJk9Q
-         43jA==
-X-Forwarded-Encrypted: i=1; AJvYcCXt6zSF1FsIbs1g1qd5b+VGh5TH2JzAW6eQ5X/VGMtle1+GAQhg5fiKnFlIcGEaQZj1iljunGQvHOLsPqc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywiwd8kXJrvIt3+cuvueKxjOiZVpuVH0HwjGszzwB65Vpm0KwOn
-	EEMBCGXflOEINp1c17LvM9oTJB94YwhmpEQxXR+N8OpeCmqaQE9H4ns7UW+lMbp/EQA=
-X-Gm-Gg: ASbGncvMCXGxw+E4BcX0Mr6SgrRO/9C88q/19zDCqbXPzYe97C9Cn/TADiFW9/ECoDO
-	Fw8cAvCMBujlJVYuN1AS+x1d7A4mtGidxvl1QTb7CSauxhc0UkrXXr5gA5RAS45b+8Qp87n1YFL
-	t0ICzJu5WRlERp5kSYBz9/LDFWIZ6bAMYsGWq7WhC43r4Ros5JfC2Ds4eaaPLjRvRqrcCoKQgPK
-	Qjvbp/TNH5b60TvyqJj31lmZlUtAL56kYcN2Lcw9wcldmgb8cVZCapQ9E/TY/2dxMzB1Qqae23l
-	d6gYhYo/g+MtDplrU+haKmjr6WV90G1nNbSA/q96fqviG8XCff15CtnWj6fUT0n+8QWwY3+MYpY
-	Wxv1eJrD9ajO+xfr4X3btaq4qoj7n/GYCegeG7pxyNUZC+oqZIg==
-X-Google-Smtp-Source: AGHT+IH8jHNbOYW/v14vdGW4bYpGR39m3BaXqycMwxtKHRkIJeWjN9eQ43l0nvOX5TQ8cDXKACSXmg==
-X-Received: by 2002:a05:6000:2912:b0:3df:22a3:d240 with SMTP id ffacd0b85a97d-425829a5a07mr8047402f8f.4.1760021340783;
-        Thu, 09 Oct 2025 07:49:00 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fab500706sm39603055e9.3.2025.10.09.07.49.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 07:49:00 -0700 (PDT)
-Date: Thu, 9 Oct 2025 16:48:58 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Joel Granados <joel.granados@kernel.org>
-Cc: Daniel Xu <dlxu@meta.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] watchdog: move nmi_watchdog sysctl into .rodata
-Message-ID: <aOfLWoveGuFEcvwm@pathway.suse.cz>
-References: <20250929-jag-nmiwd_const-v1-1-92200d503b1f@kernel.org>
- <aOPa8RClyXaeyV6L@pathway.suse.cz>
- <lgunjvc6dqr7bofukwckd3435odkntc4trboiiwzg3pc55ebdg@hllo5da2yfkv>
+	s=arc-20240116; t=1760021367; c=relaxed/simple;
+	bh=9dpjBcmZz5pl+Hj8gon8cXH6oCPxRzysyVS2inFvLos=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BKErzglE1Zm/odF1bgACd2T4Vk4SNnhbH8vILodRZtpNQKODyhEnAACRWl/ZprnbTU4eQqM3w/5EZKsvynn9ubVZ8030VAcJhxeG7iu6wSe//fKCALpA6zlcgdWxLq6JJHMuessf68fRiHRnxG3/7OpMXQgZr7UAUqE7b4olkOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cjCPd6xhLz6L4v1;
+	Thu,  9 Oct 2025 22:46:45 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id CEE9B1402ED;
+	Thu,  9 Oct 2025 22:49:21 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 9 Oct
+ 2025 15:49:20 +0100
+Date: Thu, 9 Oct 2025 15:49:19 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Evangelos Petrongonas <epetron@amazon.de>
+CC: Bjorn Helgaas <bhelgaas@google.com>, Alex Williamson
+	<alex.williamson@redhat.com>, "Rafael J . Wysocki" <rafael@kernel.org>, Len
+ Brown <lenb@kernel.org>, Pasha Tatashin <pasha.tatashin@soleen.com>, David
+ Matlack <dmatlack@google.com>, Vipin Sharma <vipinsh@google.com>, Chris Li
+	<chrisl@kernel.org>, Jason Miu <jasonmiu@google.com>, "Pratyush Yadav"
+	<pratyush@kernel.org>, Stanislav Spassov <stanspas@amazon.de>,
+	<linux-pci@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <nh-open-source@amazon.com>
+Subject: Re: [RFC PATCH 06/13] pci: pcsc: handle device resets
+Message-ID: <20251009154919.00000ee2@huawei.com>
+In-Reply-To: <0fa6f46439b535eedaa82c360e1ea19e7f052fca.1759312886.git.epetron@amazon.de>
+References: <cover.1759312886.git.epetron@amazon.de>
+	<0fa6f46439b535eedaa82c360e1ea19e7f052fca.1759312886.git.epetron@amazon.de>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <lgunjvc6dqr7bofukwckd3435odkntc4trboiiwzg3pc55ebdg@hllo5da2yfkv>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Thu 2025-10-09 16:20:48, Joel Granados wrote:
-> On Mon, Oct 06, 2025 at 05:06:25PM +0200, Petr Mladek wrote:
-> > On Mon 2025-09-29 17:55:07, Joel Granados wrote:
-> > > Move nmi_watchdog into the watchdog_sysctls array to prevent it from
-> > > unnecessary modification. This move effectively moves it inside the
-> > > .rodata section.
-> > > 
-> > > Initially moved out into its own non-const array in commit 9ec272c586b0
-> > > ("watchdog/hardlockup: keep kernel.nmi_watchdog sysctl as 0444 if probe
-> > > fails"), which made it writable only when watchdog_hardlockup_available
-> > > was true. Moving it back to watchdog_sysctl keeps this behavior as
-> > > writing to nmi_watchdog still fails when watchdog_hardlockup_available
-> > > is false.
-> > > 
-> > > Signed-off-by: Joel Granados <joel.granados@kernel.org>
-> > 
-> > The patch looks good to me. Updating the access rights was nice to
-> > have. But it does not look not worth complicating the constification.
-> > And proc_nmi_watchdog() works correctly even when the access rights
-> > are always 0644.
-> > 
-> > Reviewed-by: Petr Mladek <pmladek@suse.com>
-> > 
-> > Best Regards,
-> > Petr
-> Thx for the review.
+On Fri, 3 Oct 2025 09:00:42 +0000
+Evangelos Petrongonas <epetron@amazon.de> wrote:
+
+> The PCI Configuration Space Cache (PCSC) maintains cached values of
+> configuration space registers for performance optimization. When a PCI
+> device is reset or bus operations are dynamically changed, cached values
+> become stale and can cause incorrect behavior. This patch ensures cache
+> coherency by invalidating the PCSC cache in all scenarios where the
+> underlying configuration space values may have changed.
 > 
-> I'll push this through the sysctl-next branch unless you want to handle
-> it somewhere else.
+> Device Reset Handling:
+> ----------------------
+> When PCI devices are reset, their configuration space registers return
+> to default values. Add pcsc_device_reset() calls after all device reset
+> operations to invalidate stale cached values:
+> 
+> - Function Level Resets (FLR) in `pcie_flr()`
+> - Advanced Features FLR in `pci_af_flr()`
+> - Power Management resets (D3hot->D0 transition) in `pci_pm_reset()`
+> - Device-specific resets in `pci_dev_specific_reset()`
+> - D3cold power state transitions in `__pci_set_power_state()`
+> - ACPI-based resets in `pci_dev_acpi_reset()`
+> - Bus restore operations in `pci_bus_restore_locked()`
+> - Slot restore operations in `pci_slot_restore_locked()`
+> - Secondary bus resets in `pci_bridge_secondary_bus_reset()`
 
-Feel free to push it via the sysctl-next branch.
+cxl bus reset? 
 
-Best Regards,
-Petr
+> 
+> For secondary bus resets, `pcsc_reset_bus_recursively()` invalidates the
+> cache for all devices on the secondary bus and subordinate buses. This
+> also covers hotplug slot reset operations since `pciehp_reset_slot()`
+> calls `pci_bridge_secondary_bus_reset()`.
+> 
+> In addition, functions like `pci_dev_wait` are configured to bypass the
+> cahce and reads the actual HW values.
+
+cache
+
+> 
+> Dynamic Ops Changes:
+> --------------------
+> The patch also addresses cache consistency issues when bus operations
+> are dynamically changed via `pci_bus_set_ops()``. Different ops
+> implementations may return different values for the same registers, and
+> hardware state may have changed while using the different ops. This
+> commit resets the cache for all devices on the affected bus
+> 
+> Implementation Details:
+> -----------------------
+> The cache invalidation clears the cached_bitmask while preserving the
+> cacheable_bitmask, as the configuration space layout remains unchanged
+> after a reset. This allows the cache to be repopulated with fresh values
+> on subsequent configuration space accesses.
+> 
+> Known Limitations:
+> ------------------
+> - There is currently a gap in handling PowerPC secondary bus resets, as
+> the architecture-specific `pcibios_reset_secondary_bus()` can bypass the
+> generic `pci_reset_secondary_bus()` where our cache invalidation occurs.
+> 
+> Signed-off-by: Evangelos Petrongonas <epetron@amazon.de>
+> Signed-off-by: Stanislav Spassov <stanspas@amazon.de>
+
+
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index f518cfa266b5..db940f8fd408 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -26,6 +26,7 @@
+>  #include <linux/device.h>
+>  #include <linux/pm_runtime.h>
+>  #include <linux/pci_hotplug.h>
+> +#include <linux/pcsc.h>
+>  #include <linux/vmalloc.h>
+>  #include <asm/dma.h>
+>  #include <linux/aer.h>
+> @@ -1248,11 +1249,19 @@ static int pci_dev_wait(struct pci_dev *dev, char *reset_type, int timeout)
+>  		}
+>  
+>  		if (root && root->config_rrs_sv) {
+> +#ifdef CONFIG_PCSC
+> +			pcsc_hw_config_read(dev->bus, dev->devfn, PCI_VENDOR_ID, 4, &id);
+> +#else
+>  			pci_read_config_dword(dev, PCI_VENDOR_ID, &id);
+> +#endif
+>  			if (!pci_bus_rrs_vendor_id(id))
+>  				break;
+>  		} else {
+> +#ifdef CONFIG_PCSC
+> +			pcsc_hw_config_read(dev->bus, dev->devfn, PCI_COMMAND, 4, &id);
+In the !CONFIG case define this to be pci_read_config_dword()
+
+> +#else
+>  			pci_read_config_dword(dev, PCI_COMMAND, &id);
+> +#endif
+>  			if (!PCI_POSSIBLE_ERROR(id))
+>  				break;
+>  		}
+
+>  void __weak pcibios_reset_secondary_bus(struct pci_dev *dev)
+> @@ -5542,6 +5594,9 @@ static void pci_bus_restore_locked(struct pci_bus *bus)
+>  
+>  	list_for_each_entry(dev, &bus->devices, bus_list) {
+>  		pci_dev_restore(dev);
+> +#ifdef CONFIG_PCSC
+> +		pcsc_device_reset(dev);
+> +#endif
+>  		if (dev->subordinate) {
+>  			pci_bridge_wait_for_secondary_bus(dev, "bus reset");
+>  			pci_bus_restore_locked(dev->subordinate);
+> @@ -5579,6 +5634,9 @@ static void pci_slot_restore_locked(struct pci_slot *slot)
+>  		if (!dev->slot || dev->slot != slot)
+>  			continue;
+>  		pci_dev_restore(dev);
+> +#ifdef CONFIG_PCSC
+> +		pcsc_device_reset(dev);
+
+Definitely use a stub for these.
+
+> +#endif
+>  		if (dev->subordinate) {
+>  			pci_bridge_wait_for_secondary_bus(dev, "slot reset");
+>  			pci_bus_restore_locked(dev->subordinate);
+
+
 
