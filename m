@@ -1,104 +1,218 @@
-Return-Path: <linux-kernel+bounces-847023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8659BC9ADC
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 17:03:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0501BC9AEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 17:04:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D7F9B4F654E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 15:03:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 89D2D4F733A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 15:04:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72B12EC098;
-	Thu,  9 Oct 2025 15:03:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977242ECD32;
+	Thu,  9 Oct 2025 15:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gAH4+PGM"
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="FNZJ5ue0"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A670C2E8DF0
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 15:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193202ECD0E
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 15:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760022192; cv=none; b=Pn86fh0q7TdB/3kE2d0UGPw2ev/S7Ftfokh8uusHtvmvhHEtuUSpftCydu+GDfeZBTiXfbc+n2XD2e4tC2vMhOMtyz2q4OgEmvGWe9PicY3gZVTnR01ELGQjr0ckD7GdLh9Nuyizmx8bmrXjzPZCkolcLEicmGkn+xB/6wGT2g8=
+	t=1760022265; cv=none; b=G9dtxZ/ca8BAxU8Xx+ba+ng2MXMhPgqAyIYtECad1Pma5tLLoCTfm2t/nGaF8FZneVE84GI0E/Fm5fouUq6twwoUT823E1gVzAgtB2/Ry13sR7h3lSfbfKCSjWxptcDCXWqayeJj9C1uO6XSl+annaxRArPjeD+1pYRgUsHEpKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760022192; c=relaxed/simple;
-	bh=4BYiBUJA2xuVMrn0owdsZSPlnr1Hd4TIlmp7Db9dIiY=;
+	s=arc-20240116; t=1760022265; c=relaxed/simple;
+	bh=nMCMKtDDnWMJHsk342fi+88ua8K8gM4/fZkYqcY0hoA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EF0LfZbERhgJV5kgliZd91eYg+J83PWRBzvaYnJ2s6okxuHA17eF3M0WIKyvieurzwo+PSkBpjHsECnqYyWIL7nuQbDjdBu3Y+6MNZZVKrOZ2NMMpSP1bJatyPnRjYOqCMAcQO6OPxLB9Km/gumCnrC9MUa4Bb+Bzrs1VugTIuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gAH4+PGM; arc=none smtp.client-ip=209.85.167.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-43f88d33872so534342b6e.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 08:03:10 -0700 (PDT)
+	 To:Cc:Content-Type; b=MqT+gB9frMdIjg2jy6hFPKjn6MxmD07jn0oEY6/55n+PpnveksW8KfP5VLDt0QsVZNo/+rEWnAjWRSJSYYmDJQnl1l2jfKTIiT1IiFE4xepe9OULaGBQG4FKRoy4rxc/EW8UTMO3x6g+XCNU87H6ohhdfRe9Zz4F8nvsO5CVfnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=FNZJ5ue0; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4db385e046dso9816731cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 08:04:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760022190; x=1760626990; darn=vger.kernel.org;
+        d=soleen.com; s=google; t=1760022263; x=1760627063; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4BYiBUJA2xuVMrn0owdsZSPlnr1Hd4TIlmp7Db9dIiY=;
-        b=gAH4+PGMXGHwPF8DW+4WJFvtMtAZG+jIB4M4B2XGl5BjLtPtNJm9J6E7kqk7CbVhI7
-         NbOvmYiq04evywZOkG2aJNvG69+01NVlkljxMSQ6QDK6eprrv8GQEqRB2uHTLZOgWVl6
-         Z2lrNLiu7EBsn/KpWGD/BciGooYBrCG6CyqoK1d/p5n6jE4XtdnmU6Nt6J/vwezMCtHT
-         dpVrBhJQH2jBERwXM7gjkOpfVSbiChLwn3sjqG05MWrpAPYSQURC96fgZLeTDLNjtqg6
-         tA/TcRU90cxB7ppBMA3xvtSxsov2mB00YfpBPCig1JVHtgqFba/WCK2sN9tY6LEyvrjI
-         UlQA==
+        bh=GiXnUieO2xScql0ch1/VZCkQk9SwXWpJ1Ui0K7fqWkw=;
+        b=FNZJ5ue0A+Ik7aARuS/f7dSCCDasQ3VBEz8IRjTpqfW5sLf0BqnbFgrxroFGGDqqet
+         aWl842KLjychOdCxzlUKZRmh/58cMrAPy7jT4uC/y0IA7BDTZeZUa86M4yTmkWwKescZ
+         qsHlLfvUcrFfKArISc9kHjAG8tXG5vroHYwx+34wVW7fuO0IxYUJhxd/mq1xdW6rRWrj
+         UcAx9N1xibBIuhLWROf0HKBIi4pAAnSCXtfQxe+yt3RRwPe9rs9r58oj9gqOVBmuXYtr
+         KZmEEUnIF7C0aP3ezNfar7Mi+dyrQwc1CdlJFVZJqDWyYZmw5L63/2DuModWVD9t3pmv
+         gGRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760022190; x=1760626990;
+        d=1e100.net; s=20230601; t=1760022263; x=1760627063;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4BYiBUJA2xuVMrn0owdsZSPlnr1Hd4TIlmp7Db9dIiY=;
-        b=AkH6rWhMkzhZKHyhgJZULdzvgfezWGnqSXk9U6J412z5sZO3CD8jSOZPTWKIcWVxol
-         0OmOgk+URiGeIlGJ+oZs/Wi8dOonBgwZj+jEEY8tM0t4u7PCnL7Lw7l7bYUiPJadWJGn
-         Lc7NbBPd42eQkhc1TFfCZF+hmm0KHzn9eFCC9zMLsHTR5pm/bR7oMwh7NO0Lsc//xnQg
-         17lKY3ovSsatRMEKtwOnhV1WA5zX2vV3glf5Y3Kt70k855AYTQvBs+QkU2mTiK3qGWSp
-         gKpN8XAs0hpw+Vx52NFJoQGK4215SLHnVMAuLs27yMhm2lOh5z2OAZCb0guV7U7HcJ8/
-         abrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWMrCxHQWmdvP3Uaej7nH8Z5TORSwYm6KOdLO/ldYMxqsSFD+9CheOIcBXEGOQH3TxxYay1DXDERltO1xI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0ujAY/3SCWHsSmbvgvOeyGwqXyDSGHRIKBYFmkKOg1YUtsUpc
-	pCU04LE8MQBQMjHk28l2Flf4G4wBvS5bbOdCd9a3LrendAqtnbpFD/EKjTRs8pzQNHLu7bFl8rY
-	UmEGoZMB2T8s45rpctznhU/QPCa1KG+8=
-X-Gm-Gg: ASbGncvIZQC5r4tN/iMa1vsKP36/1wzXcikSuM0xMoVMZ7bU/XOyFkUFHDclqJLp8bT
-	N59FrbrkO62M/HCFMkEvxjcS6jkQVxsuZVJ4mJRvaATu/zwZ1pIEx17F7YpJqJmhV2FRCmDfU1m
-	T6mFjHa8gdL2uDsWG2q1mnNbfjB+V9gGXqYyJxjMrbTcWG0ykABFfteYuLtO14Cy9uQaZjQ+HDJ
-	tKVAKuQucInL34zddsXYYjep1GW0KFwpy2sDoCodg==
-X-Google-Smtp-Source: AGHT+IFE+53ZwFZzygjApNRRk5IEXCWznQkiRJ3RFYsMZB+Snff4Qd2QBaS8PE2SAmylXqZYXSTkseD3wSbRcGsymC8=
-X-Received: by 2002:a05:6808:1a08:b0:43f:57cb:7fa0 with SMTP id
- 5614622812f47-4417b3e74dbmr3269515b6e.46.1760022189283; Thu, 09 Oct 2025
- 08:03:09 -0700 (PDT)
+        bh=GiXnUieO2xScql0ch1/VZCkQk9SwXWpJ1Ui0K7fqWkw=;
+        b=METGcEIEz4LT2ptGLpga4Kj6NibQLaJwC+fDwa7dZc4Xtb5+igjC/1Vfg08A5mfsXu
+         QTUAzLrsw3N6cXOYjnOJMGhq4+Z6yLDX+gogqihrGjIpQ8BI/t1V/yVjhC94cpYZ5Vmy
+         AtwXk/mDtsBoowX4q0AZf/th74YMhR0bWwq7DwIl7M2AQy94EJSRdf9ux/jBj0zua5vU
+         XQ6CmUw45Tb/5WaMVyNg7Y7bm6LOWARWqTk79dEc1r7tv9ykNY2UveCp8s0h4iGXUqhZ
+         wRMb9SW90r6AF3aNQ4DDCukol3ngAfMim1z5khN52IlPNMcLjhDjSlFvj1zfEuLgqvdX
+         ZHCA==
+X-Forwarded-Encrypted: i=1; AJvYcCXXcq2GPDxoIIHBps9ShXBL7bMpuphwyY2ew0nsOzkUwNaisdYb3XKMBFskfvfSoYBbkaB6eTFKA4HTvl4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfiDKJpG+xAIrWfKE8PzF7B6C/MdQe0qFU/sjhMoJiKwGfoZ4m
+	lau0THiVbOM43RPBM6njU6+49066QbntM7WQB9wnrY/7u5geG2my2VwMNO+nQ1u76EJXepQf09v
+	vY5+ru32VvJAzx95nLnL9Ztu5xJ3WMzZd3FSD42wxIQ==
+X-Gm-Gg: ASbGncuEamCVAJJlO6DjgrA1+Sbijby1oIqCek2TgDlZ9akpFICLVkwxUNFwcakzJbp
+	P4wkMwcRT8NJwWgZz1TRSpLLYJFHRC/qRnQ1HRZYgQE5IC2iu5U1kInsjjEgRhwcV0trNkBrSpI
+	rvr/ANJJ6ymtHA13OWLm8g7wvkNSZmzMd49ZpcyLo9WNa6guWvHHzKGd8eG90mvhnDsl/ppHG/i
+	lW8G/TJD0Pjx/28Dr9Dhvd/Z+HkXMFMnZyfEDg=
+X-Google-Smtp-Source: AGHT+IGHSYnwEnvnqmKsabQEceJc2q2+TNir49AdC6M2J+VmuPk/pcH5aGDEMoZErKTqhORDi+KuefUOCQVA2OYIhzI=
+X-Received: by 2002:a05:622a:5:b0:4de:73b2:afc7 with SMTP id
+ d75a77b69052e-4e6eaced976mr96420711cf.31.1760022262645; Thu, 09 Oct 2025
+ 08:04:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251008205207.1781-1-briansune@gmail.com> <aOd9yUj9H4L4fbtc@opensource.cirrus.com>
-In-Reply-To: <aOd9yUj9H4L4fbtc@opensource.cirrus.com>
-From: Sune Brian <briansune@gmail.com>
-Date: Thu, 9 Oct 2025 23:02:57 +0800
-X-Gm-Features: AS18NWDmwyXy1cfw3926lFmS_Pq4UdpsOBDp743TG8q62eoh-RX9vdnszMNCTZc
-Message-ID: <CAN7C2SBd8tDXG8OkjRt0sDw1OmtrLgtuStEfr=f=JHZMRvjq9w@mail.gmail.com>
-Subject: Re: [PATCH v6] ASoC: wm8978: add missing BCLK divider setup
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linux-sound@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
+ <CA+CK2bB+RdapsozPHe84MP4NVSPLo6vje5hji5MKSg8L6ViAbw@mail.gmail.com>
+ <CAAywjhSP=ugnSJOHPGmTUPGh82wt+qnaqZAqo99EfhF-XHD5Sg@mail.gmail.com>
+ <CA+CK2bAG+YAS7oSpdrZYDK0LU2mhfRuj2qTJtT-Hn8FLUbt=Dw@mail.gmail.com>
+ <20251008193551.GA3839422@nvidia.com> <CA+CK2bDs1JsRCNFXkdUhdu5V-KMJXVTgETSHPvCtXKjkpD79Sw@mail.gmail.com>
+ <20251009144822.GD3839422@nvidia.com> <CA+CK2bC_m5GRxCa1szw1v24Ssq8EnCWp4e985RJ5RRCdhztQWg@mail.gmail.com>
+In-Reply-To: <CA+CK2bC_m5GRxCa1szw1v24Ssq8EnCWp4e985RJ5RRCdhztQWg@mail.gmail.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Thu, 9 Oct 2025 11:03:45 -0400
+X-Gm-Features: AS18NWCvIxwxMrUeEufsjS7vH40gfGK_CglDZxzAQyGFJbNRzJDPR8YX8_lwq6A
+Message-ID: <CA+CK2bBs9FA-nVag-9QJ8zgocxhY9JOgkgOhFix1xScGyF3tKA@mail.gmail.com>
+Subject: Re: [PATCH v4 00/30] Live Update Orchestrator
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Samiullah Khawaja <skhawaja@google.com>, pratyush@kernel.org, jasonmiu@google.com, 
+	graf@amazon.com, changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
+	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
+	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
+	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
+	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
+	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
+	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
+	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	saeedm@nvidia.com, ajayachandra@nvidia.com, parav@nvidia.com, 
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, chrisl@kernel.org, 
+	steven.sistare@oracle.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Charles Keepax <ckeepax@opensource.cirrus.com> =E6=96=BC 2025=E5=B9=B410=E6=
-=9C=889=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=885:18=E5=AF=AB=E9=81=
-=93=EF=BC=9A
-
-> Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+On Thu, Oct 9, 2025 at 11:01=E2=80=AFAM Pasha Tatashin
+<pasha.tatashin@soleen.com> wrote:
 >
-> Thanks,
-> Charles
+> On Thu, Oct 9, 2025 at 10:48=E2=80=AFAM Jason Gunthorpe <jgg@nvidia.com> =
+wrote:
+> >
+> > On Wed, Oct 08, 2025 at 04:26:39PM -0400, Pasha Tatashin wrote:
+> > > On Wed, Oct 8, 2025 at 3:36=E2=80=AFPM Jason Gunthorpe <jgg@nvidia.co=
+m> wrote:
+> > > >
+> > > > On Wed, Oct 08, 2025 at 12:40:34PM -0400, Pasha Tatashin wrote:
+> > > > > 1. Ordered Un-preservation
+> > > > > The un-preservation of file descriptors must also be ordered and =
+must
+> > > > > occur in the reverse order of preservation. For example, if a use=
+r
+> > > > > preserves a memfd first and then an iommufd that depends on it, t=
+he
+> > > > > iommufd must be un-preserved before the memfd when the session is
+> > > > > closed or the FDs are explicitly un-preserved.
+> > > >
+> > > > Why?
+> > > >
+> > > > I imagined the first to unpreserve would restore the struct file * =
+-
+> > > > that would satisfy the order.
+> > >
+> > > In my description, "un-preserve" refers to the action of canceling a
+> > > preservation request in the outgoing kernel, before kexec ever
+> > > happens. It's the pre-reboot counterpart to the PRESERVE_FD ioctl,
+> > > used when a user decides not to go through with the live update for a
+> > > specific FD.
+> > >
+> > > The terminology I am using:
+> > > preserve: Put FD into LUO in the outgoing kernel
+> > > unpreserve: Remove FD from LUO from the outgoing kernel
+> > > retrieve: Restore FD and return it to user in the next kernel
+> >
+> > Ok
+> >
+> > > For the retrieval part, we are going to be using FIFO order, the same
+> > > as preserve.
+> >
+> > This won't work. retrieval is driven by early boot discovery ordering
+> > and then by userspace. It will be in whatever order it wants. We need
+> > to be able to do things like make the struct file * at the moment
+> > something requests it..
+>
+> I thought we wanted only the user to do "struct file" creation when
+> the user retrieves FD back. In this case we can enforce strict
+> ordering during retrieval. If "struct file" can be retrieved by
+> anything within the kernel, then that could be any kernel process
+> during boot, meaning that charging is not going to be properly applied
+> when kernel allocations are performed.
 
-Any documentations are required?
-i.e. .rst file or similar?
+There is a second reason: by the time we enter userspace, and are
+ready to retrieve FDs, we know that all file handlers that are to be
+registered have registered, if we do that during boot with-in kernel,
+then we can get into the problem, where we are trying to retrieve data
+of a file-handler that has not yet registered.
 
-Brian
+>
+> We specifically decided that while "struct file"s are going to be
+> created only by the user, the other subsystems can have early access
+> to the preserved file data, if they know how to parse it.
+>
+> > > > This doesn't seem right, the API should be more like 'luo get
+> > > > serialization handle for this file *'
+> > >
+> > > How about:
+> > >
+> > > int liveupdate_find_token(struct liveupdate_session *session,
+> > >                           struct file *file, u64 *token);
+> >
+> > This sort of thing should not be used on the preserve side..
+> >
+> > > And if needed:
+> > > int liveupdate_find_file(struct liveupdate_session *session,
+> > >                          u64 token, struct file **file);
+> > >
+> > > Return: 0 on success, or -ENOENT if the file is not preserved.
+> >
+> > I would argue it should always cause a preservation...
+> >
+> > But this is still backwards, what we need is something like
+> >
+> > liveupdate_preserve_file(session, file, &token);
+> > my_preserve_blob.file_token =3D token
+>
+> We cannot do that, the user should have already preserved that file
+> and provided us with a token to use, if that file was not preserved by
+> the user it is a bug. With this proposal, we would have to generate a
+> token, and it was argued that the kernel should not do that.
+>
+> > file =3D liveupdate_retrieve_file(session, my_preserve_blob.file_token)=
+;
+> >
+> > And these can run in any order, and be called multiple times.
+> >
+> > Jason
 
