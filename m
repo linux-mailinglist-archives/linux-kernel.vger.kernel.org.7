@@ -1,257 +1,214 @@
-Return-Path: <linux-kernel+bounces-847073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16AFBBC9CD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 17:31:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8098BC9CEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 17:33:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3F3484FA8DC
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 15:31:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73DE318835DC
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 15:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25D171F03DE;
-	Thu,  9 Oct 2025 15:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D501F2382;
+	Thu,  9 Oct 2025 15:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kAhsoOsL";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KOHDwic+"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="SoLuz0HG"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010054.outbound.protection.outlook.com [52.101.69.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FCF91DF73C;
-	Thu,  9 Oct 2025 15:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760023855; cv=none; b=u3L7jwILS7qHkFopOrXSa+gTo4jrNReSUIqeO8F9wsuShHgz9MX4eItVNc9V/pCewoZIL0ltace1ueC+ZE6HD5L0VkJRlS8ZptnRSL2fiUEMkPcb57cnujBYE244NYkTtZcUNpWV3XiNU2pA9fNuOmgK9U+C1IPCG8qwjTOKadA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760023855; c=relaxed/simple;
-	bh=YHvg+UnwH7eiIfj58JCP2jWxiBZSzrITGQpq930Xtkg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Cp8kW+5rmfUH115LriIH2rTmTDgidMp0YXoPU4CaFb7djctkrc+eKFekFndi5tSx/XOfngR1QABr1kO+c/6hVAnowRmr49DPAWKfo+hbTdMk6xwgYLrLzZIOjbsI3n/yD7Ep5ZiHam+QxJfL0kj3G1feMm1plVATsE8UXvQWOck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kAhsoOsL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KOHDwic+; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 9 Oct 2025 17:30:49 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1760023850;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=k/Atcw8FJK8QC24QJ8kPRtEJc6zGI4BdlyJuf9DRrH0=;
-	b=kAhsoOsLPKItWTcHgXzBytQuDBua99s/rwyB3Q7Ka3/QpykIay4aqLkRV88enlMbV/gE7g
-	tM3aB8avWUtV6YZ2Pwtrk7xiOI5gnLztsGSbAaPERYHQJQyK0rjMqGao+y0+yRoNKwO1pH
-	iIUyVJ9JbVRwZuJKy3sevsejWayk59XSK5OiT/MmSTC6XrFDiyV4d8AdxrS+hLIbYo2imD
-	U+eGZZwQ781uRcb6kSDV10uSYJJ6f9laX+C2xy+ZmynEWpwtgMbVIiyVHJZO+bgzAvfXF2
-	919jojCZkx3g9i5XLR8pNHpRwZFFuxLv0yzM0UtcWbecQB+kqLv4Hov1cACd8g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1760023850;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=k/Atcw8FJK8QC24QJ8kPRtEJc6zGI4BdlyJuf9DRrH0=;
-	b=KOHDwic+oKTt90Nx/Hce3E5KdlfR48+Fz7I47ctNZCq3UJCgr9fiZFUctVIx6wgYOwyZCJ
-	am7dFk8k7t8Ey2BA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Thomas Gleixner <tglx@linutronix.de>, linux-rt-devel@lists.linux.dev
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-rt-users@vger.kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>
-Subject: [ANNOUNCE] v6.17.1-rt5
-Message-ID: <20251009153049.OC9WFY8_@linutronix.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE591E9B3D;
+	Thu,  9 Oct 2025 15:32:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760023975; cv=fail; b=pBYezLcro7/11MbkzfzjA7DibPJWC+69qMhNObF0mCRF/+jAgNXyncrLBdjvv8ulN5uZAIfmsgkzTq47i1Rp8wuzJuzcLXFH9w11wNO1ig2tQugfHhX4ZxZqEhiFDZBYdVJgdhtoX3x6w/AiRH38XHZcl8brJftO+1HKsA+YTTg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760023975; c=relaxed/simple;
+	bh=t0saXMXh3ba9fNp1Q1wfVsPZjwDfZPVfY0YR5go6wgk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hBV6ndy3stjFvRl0QBUEVS3WPEG4npGMdY58r2DLH2CQSfY4KSl8HNI1F7RGdpU9dNSkEWStP7awra/mo68jPXYRfTm71GUxMB38RI3/sIhJliMpHx+R7J2Oc821A21FfXdxLABKGtY6k3tPE3QtQVohGP0B8dZsjaQpyuHgr3k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=SoLuz0HG; arc=fail smtp.client-ip=52.101.69.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=D4hencqsaoBPq6mng661uCf8+Mz3g1Qp5eHd1jnbZ+kcdoXMr+og6OElGp1rpMSO9XtDMmu87PbNUCojIuhF5z46JLFH8bZZaHSR0pR8U6Sty2+QWFpxofpZdmr7C8thfZQLVrFTPuEkEcTK5oFnLdpxWr0QqKTtuCrK1HIWGOJI5ZRos6scbJfTOu7y5nvDLvN+wssKRaTTAYVPl2qvapKXKPyZIgOkK1+8uGpRV+uwJq3KJZT5VegjOaQUn/rd2yD65nhMUxLNnCgCLhTy0w23lPQgGx3ptyCoy/Y67QKXbNgHq/dUPV0VJe3GsHLgDxSiM298VbGFAoq/6JdrOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gs2p4weYYoqCJsGVucmPH05AvAx9LyrVqswKJM8S5eM=;
+ b=XyQKdUM3tvNhwgGJFwbV2GO+p+BpUP8mONWS4QHsr+GBxPfF8m1AmNY9Wx/1o8dIelHKVH6yw5z733BpCqnAQnE9YL0zdORl/wsTXvQ0HciSkfCUnsmyMROlbYIlEy804EF/idc0kFU4NV0ZU7eJoDWKQ2Xm4D6GK5GoqxdNRjeeb4fV/cQhIPyVAdL750ImF5lUsPHX1Z4jl4JUtIHpe6DS6PnCD5sWp7z0Qb6EPWbICQbQ4El9sqwDbcCFzEwUD2MDSR+UB2ad3Ip/U2ijl8Tk1aakZrjcVNZTZlIz1cjzENpCHsz+JsJgX7LNwcbrkY1ru93D5GAlKgP3ZBRE7w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 139.15.153.205) smtp.rcpttodomain=kernel.org smtp.mailfrom=de.bosch.com;
+ dmarc=pass (p=reject sp=none pct=100) action=none header.from=de.bosch.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gs2p4weYYoqCJsGVucmPH05AvAx9LyrVqswKJM8S5eM=;
+ b=SoLuz0HG1JHmKBvbj7Q3+pXPkEH1Ypms52DHpd/EPg1DrlOL3TV7Epm3F9oe5ZwHgXSTFKe69mFaGiZBfvAHdjfLWb3Bb45B7GV+9nSLux+K2X9gxDW8PYsbAf6VkDbXca0etNVk9FXmjCldatZaeusah21qZAUxw1VDfOru+glwlv0bU0T2rHm/sdqpv6TqZ4c5ZXtB/c+Rz/HUBxKb3gKTT0tO7kll/6siJWe6meN8OL+eGw0IJzPqSY9hBpO8U23StjrNx4adUYDoifZZYzz8mFBH8YpiARjTUx8hMG+u/WlPWMCLQpOoZAyrwMATtMpM+ZyYDnulvFJsujJ7GQ==
+Received: from AS4P189CA0020.EURP189.PROD.OUTLOOK.COM (2603:10a6:20b:5db::9)
+ by DB5PR10MB7773.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:48c::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.9; Thu, 9 Oct
+ 2025 15:32:48 +0000
+Received: from AM3PEPF0000A793.eurprd04.prod.outlook.com
+ (2603:10a6:20b:5db:cafe::ed) by AS4P189CA0020.outlook.office365.com
+ (2603:10a6:20b:5db::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.10 via Frontend Transport; Thu,
+ 9 Oct 2025 15:32:47 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 139.15.153.205)
+ smtp.mailfrom=de.bosch.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=de.bosch.com;
+Received-SPF: Pass (protection.outlook.com: domain of de.bosch.com designates
+ 139.15.153.205 as permitted sender) receiver=protection.outlook.com;
+ client-ip=139.15.153.205; helo=eop.bosch-org.com; pr=C
+Received: from eop.bosch-org.com (139.15.153.205) by
+ AM3PEPF0000A793.mail.protection.outlook.com (10.167.16.122) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9203.9 via Frontend Transport; Thu, 9 Oct 2025 15:32:48 +0000
+Received: from RNGMBX3003.de.bosch.com (10.124.11.208) by eop.bosch-org.com
+ (139.15.153.205) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.27; Thu, 9 Oct
+ 2025 17:32:47 +0200
+Received: from LR-C-0008DVM.lr.de.bosch.com (10.13.188.136) by
+ smtp.app.bosch.com (10.124.11.208) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Thu, 9 Oct 2025 17:32:46 +0200
+From: <Jianping.Shen@de.bosch.com>
+To: <jic23@kernel.org>, <lars@metafoo.de>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <dima.fedrau@gmail.com>,
+	<marcelo.schmitt1@gmail.com>, <linux-iio@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<Jianping.Shen@de.bosch.com>, <Christian.Lorenz3@de.bosch.com>,
+	<Ulrike.Frauendorf@de.bosch.com>, <Kai.Dolde@de.bosch.com>
+Subject: [PATCH v5 0/2] iio: imu: smi330: add bosch smi330 driver
+Date: Thu, 9 Oct 2025 17:31:47 +0200
+Message-ID: <20251009153149.5162-1-Jianping.Shen@de.bosch.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM3PEPF0000A793:EE_|DB5PR10MB7773:EE_
+X-MS-Office365-Filtering-Correlation-Id: 866722f2-be34-4003-7030-08de07491a0d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|82310400026|1800799024|36860700013|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?wr4EQ6RLfnAuKAi6jwI91pqjnx1bCew79gtisHIIkPmuQGVZLvOXN8JzDKjy?=
+ =?us-ascii?Q?x0t7e+d/J6/JvfFBKl7snjOfFXo4IjE4QpScEteUtc4Vos1E9QkgRRIkNdbi?=
+ =?us-ascii?Q?maskD92ln+DxyHHLo6JMtOP5b1ziwm8nZcdkXlywvAcqGtIuAF2kMt0gDnp5?=
+ =?us-ascii?Q?52KnDpgpwxjh6Or3pWFzH1IsCpgemdXxZXnXrXZQvpFhQFfB9KJ0X5HoW0ii?=
+ =?us-ascii?Q?zL7s8qEWk+BfpmoK2W7SKMHbthDAl65tqgE+t2V57JRogrz8SGWanfo59Ikh?=
+ =?us-ascii?Q?KRrgE4OSXZ66AV3mk6133dp/eS6TO4HWI7OOwMSp/GQiKo7HMWOD9pRvYoLB?=
+ =?us-ascii?Q?Jhe6XOupj9EzfYI0WWNFgOIIswIXYXZ2oXgOcxsTcHXsLT4LRshxT6XV/x9q?=
+ =?us-ascii?Q?uDsMfqlDr31vNt02fmtKwl3LsN02GUTZEE95nm1rNHmC2/+aZnYOPjcQVLsN?=
+ =?us-ascii?Q?tKxhNsWCth9eQY5Elye/+JOa3Q7iYwA/Z16xR764rzKgmg1A/JPHPgfhOLXQ?=
+ =?us-ascii?Q?5xSwphoyuk00TOkp/VCFEAl4nHTWCeHlEyKRoaWb1Kq0SchUDtsqQsGTEIml?=
+ =?us-ascii?Q?kx9hoAhykd1s4hL4eAz8zsguN3T1dtzbpc4Ljf9LMTFxnOM83HzJ7U+Uu9da?=
+ =?us-ascii?Q?6+WKQzquJfQqG21YWPeR7EWYgWX5OTTvxF9Rg2Si6t7KX2JOZCUg2WoJoY7w?=
+ =?us-ascii?Q?Kfgwe1/HO9X9MRKGVa1/6xMuVDh0flOn4kzSFyxrJGxpQvZLxeyyYpWgWRyI?=
+ =?us-ascii?Q?dV+tVNJ60t4mFW4FsRGbDZ7jDdceZnZWh52sfT4SdtxP7SzOkuy+pLzmsEoh?=
+ =?us-ascii?Q?O4iQM0bEyI0VfHP4joL/QtgeH17k7vWXewCGqT7AgcDjYr1RnKtUu+2JBVwG?=
+ =?us-ascii?Q?N03oHgIfQJAEkq92/Rv8CqN7Z4072WUYsBgvrusR1ZGt3feoWy+L4YK6S1Uq?=
+ =?us-ascii?Q?fKn9sMga/FYrDNrhdAOsOEkt/fiYKUY0r0F8ocEHR/uvzvLojVOIxLpC8n2y?=
+ =?us-ascii?Q?X0DxSfhUGycz6/PihyahOElqQkQAueRd23uVCna7z63M5qL/QZV3080bckvg?=
+ =?us-ascii?Q?RSR8koAZxBAi7pwq9WZEo5U31zoVdwZrlfDmYjJ8i6MRFTZvyBC4RhEERdK6?=
+ =?us-ascii?Q?TfM1PoLDiQ3XzacS17dbG1qVGIYGhewaqlf2CFiSsYgsvMtRApocgc216KAu?=
+ =?us-ascii?Q?n30UnwjZ2Pqc6PHGj8R2At3zAJkCdVano6PLS7VZAWGi8CiQmiiJY2+LFyBX?=
+ =?us-ascii?Q?qHznyV8HXUYZg9R1RRxKT2eIS7u6wTuE3lOemdulsxRNDrFuaByhmeWP+Gpv?=
+ =?us-ascii?Q?zbME9OxX40MlVrfMxrzZLD1Y806hXySxg5d8NTI//v/2jgXYtBlcJ0sV7hEy?=
+ =?us-ascii?Q?tKdQYNnHr2CcMjJDgvQZgYkABXDyPPkPRX7mzdIvxKQmJ2X4O6ZVpTWzD5PD?=
+ =?us-ascii?Q?2glH34GraFT3OBHp3J6id01XxKKS7izccnkzCgiYspn/tzRhWfFKE05irqB8?=
+ =?us-ascii?Q?9m4dYzqmYao/fJ9bpvkVmhhYIVEVkqbEBcajkM1NRkNPU51afK2J9IGxyEx1?=
+ =?us-ascii?Q?AYsIDIimU1dZDSLKlm7yAH+WRevum+3nQr6hcAOY?=
+X-Forefront-Antispam-Report:
+	CIP:139.15.153.205;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:eop.bosch-org.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(1800799024)(36860700013)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: de.bosch.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2025 15:32:48.3585
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 866722f2-be34-4003-7030-08de07491a0d
+X-MS-Exchange-CrossTenant-Id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0ae51e19-07c8-4e4b-bb6d-648ee58410f4;Ip=[139.15.153.205];Helo=[eop.bosch-org.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM3PEPF0000A793.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR10MB7773
 
-Dear RT folks!
+From: Jianping Shen <Jianping.Shen@de.bosch.com>
 
-I'm pleased to announce the v6.17.1-rt5 patch set. 
+Add the iio driver for bosch imu smi330. The smi330 is a combined
+three axis angular rate and three axis acceleration sensor module.
+This driver provides raw data access for each axis through sysfs, 
+and tiggered buffer for continuous sampling.
 
-Changes since v6.17.1-rt4:
+dt-bindings:
+v1 -> v2
+    - Add missing type to drive-open-drain
+    - Adapt description of drive-open-drain
 
-  - Update the workqueue patch for BH-worker to the version which
-    merged.
+v2 -> v3
+    - No Changes
 
-  - Backport two patches for nft_set_pipapo from upstream which were
-    marked for stable nd clash somehow with already made backport of
-    nft_set_pipapo in order to drop the BH-lock.
+v3 -> v4
+    - No Changes
 
-  - syzbot report a failure in networking with GRO offloading caused by
-    the removal of the BH-lock.
+v4 -> v5
+    - No Changes
 
-Known issues
-    - Yoann Congal reported a bit spinlock in dm_exception_table_lock().
-        https://lore.kernel.org/all/Z8GTjqgDe_5EkE3t@P-ASN-ECS-830T8C3.local
+imu driver:
+v1 -> v2
+    - Strip back to a more minimal initial driver
 
-The delta patch against v6.17.1-rt4 is appended below and can be found here:
- 
-     https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.17/incr/patch-6.17.1-rt4-rt5.patch.xz
+v2 -> v3
+    - reorganize the driver as 1 core module, 1 I2C module, and 1 SPI module.
+    - remove build time INT pin choice
+    - change temperature channel definition
+    - improved reading data from sensor
+    - simplified timestamp acquisition
+    - some other minor finding fixes
 
-You can get this release via the git tree at:
+v3 -> v4
+    - move #define from header to c file
+    - add sanity check to i2c message size
+    - use available_scan_masks to simplfy the copying data to buffer (dependent on [PATCH RFT] iio: Fix core buffer demux failure to account for unwanted channels at tail)
+    - allow setting output data rate for acc and gyro separately
+    - some other minor finding fixes
 
-    https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v6.17.1-rt5
+v3 -> v5
+    - fix kernel test robot finding
+    - some other minor finding fixes
 
-The RT patch against v6.17.1 can be found here:
+Jianping Shen (2):
+  dt-bindings: iio: imu: smi330: Add binding
+  iio: imu: smi330: Add driver
 
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.17/older/patch-6.17.1-rt5.patch.xz
+ .../bindings/iio/imu/bosch,smi330.yaml        |  90 ++
+ drivers/iio/imu/Kconfig                       |   1 +
+ drivers/iio/imu/Makefile                      |   1 +
+ drivers/iio/imu/smi330/Kconfig                |  33 +
+ drivers/iio/imu/smi330/Makefile               |   7 +
+ drivers/iio/imu/smi330/smi330.h               |  25 +
+ drivers/iio/imu/smi330/smi330_core.c          | 918 ++++++++++++++++++
+ drivers/iio/imu/smi330/smi330_i2c.c           | 133 +++
+ drivers/iio/imu/smi330/smi330_spi.c           |  85 ++
+ 9 files changed, 1293 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/imu/bosch,smi330.yaml
+ create mode 100644 drivers/iio/imu/smi330/Kconfig
+ create mode 100644 drivers/iio/imu/smi330/Makefile
+ create mode 100644 drivers/iio/imu/smi330/smi330.h
+ create mode 100644 drivers/iio/imu/smi330/smi330_core.c
+ create mode 100644 drivers/iio/imu/smi330/smi330_i2c.c
+ create mode 100644 drivers/iio/imu/smi330/smi330_spi.c
 
-The split quilt queue is available at:
+-- 
+2.34.1
 
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.17/older/patches-6.17.1-rt5.tar.xz
-
-Sebastian
-
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index 94e226f637992..d6c94ee8edfc5 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -4258,11 +4258,10 @@ static bool __flush_work(struct work_struct *work, bool from_cancel)
- 				if (IS_ENABLED(CONFIG_PREEMPT_RT)) {
- 					struct worker_pool *pool;
- 
--					mutex_lock(&wq_pool_mutex);
-+					guard(rcu)();
- 					pool = get_work_pool(work);
- 					if (pool)
- 						workqueue_callback_cancel_wait_running(pool);
--					mutex_unlock(&wq_pool_mutex);
- 				} else {
- 					cpu_relax();
- 				}
-diff --git a/localversion-rt b/localversion-rt
-index ad3da1bcab7e8..0efe7ba1930e1 100644
---- a/localversion-rt
-+++ b/localversion-rt
-@@ -1 +1 @@
---rt4
-+-rt5
-diff --git a/net/core/gro_cells.c b/net/core/gro_cells.c
-index ff8e5b64bf6b7..b43911562f4d1 100644
---- a/net/core/gro_cells.c
-+++ b/net/core/gro_cells.c
-@@ -8,11 +8,13 @@
- struct gro_cell {
- 	struct sk_buff_head	napi_skbs;
- 	struct napi_struct	napi;
-+	local_lock_t		bh_lock;
- };
- 
- int gro_cells_receive(struct gro_cells *gcells, struct sk_buff *skb)
- {
- 	struct net_device *dev = skb->dev;
-+	bool have_bh_lock = false;
- 	struct gro_cell *cell;
- 	int res;
- 
-@@ -25,6 +27,8 @@ int gro_cells_receive(struct gro_cells *gcells, struct sk_buff *skb)
- 		goto unlock;
- 	}
- 
-+	local_lock_nested_bh(&gcells->cells->bh_lock);
-+	have_bh_lock = true;
- 	cell = this_cpu_ptr(gcells->cells);
- 
- 	if (skb_queue_len(&cell->napi_skbs) > READ_ONCE(net_hotdata.max_backlog)) {
-@@ -39,6 +43,9 @@ int gro_cells_receive(struct gro_cells *gcells, struct sk_buff *skb)
- 	if (skb_queue_len(&cell->napi_skbs) == 1)
- 		napi_schedule(&cell->napi);
- 
-+	if (have_bh_lock)
-+		local_unlock_nested_bh(&gcells->cells->bh_lock);
-+
- 	res = NET_RX_SUCCESS;
- 
- unlock:
-@@ -54,6 +61,7 @@ static int gro_cell_poll(struct napi_struct *napi, int budget)
- 	struct sk_buff *skb;
- 	int work_done = 0;
- 
-+	__local_lock_nested_bh(&cell->bh_lock);
- 	while (work_done < budget) {
- 		skb = __skb_dequeue(&cell->napi_skbs);
- 		if (!skb)
-@@ -64,6 +72,7 @@ static int gro_cell_poll(struct napi_struct *napi, int budget)
- 
- 	if (work_done < budget)
- 		napi_complete_done(napi, work_done);
-+	__local_unlock_nested_bh(&cell->bh_lock);
- 	return work_done;
- }
- 
-@@ -79,6 +88,7 @@ int gro_cells_init(struct gro_cells *gcells, struct net_device *dev)
- 		struct gro_cell *cell = per_cpu_ptr(gcells->cells, i);
- 
- 		__skb_queue_head_init(&cell->napi_skbs);
-+		local_lock_init(&cell->bh_lock);
- 
- 		set_bit(NAPI_STATE_NO_BUSY_POLL, &cell->napi.state);
- 
-diff --git a/net/netfilter/nft_set_pipapo.c b/net/netfilter/nft_set_pipapo.c
-index 96aefa504f57a..337daa777c353 100644
---- a/net/netfilter/nft_set_pipapo.c
-+++ b/net/netfilter/nft_set_pipapo.c
-@@ -550,8 +550,7 @@ static struct nft_pipapo_elem *pipapo_get(const struct nft_pipapo_match *m,
-  *
-  * This function is called from the data path.  It will search for
-  * an element matching the given key in the current active copy.
-- * Unlike other set types, this uses NFT_GENMASK_ANY instead of
-- * nft_genmask_cur().
-+ * Unlike other set types, this uses 0 instead of nft_genmask_cur().
-  *
-  * This is because new (future) elements are not reachable from
-  * priv->match, they get added to priv->clone instead.
-@@ -561,8 +560,8 @@ static struct nft_pipapo_elem *pipapo_get(const struct nft_pipapo_match *m,
-  * inconsistent state: matching old entries get skipped but thew
-  * newly matching entries are unreachable.
-  *
-- * GENMASK will still find the 'now old' entries which ensures consistent
-- * priv->match view.
-+ * GENMASK_ANY doesn't work for the same reason: old-gen entries get
-+ * skipped, new-gen entries are only reachable from priv->clone.
-  *
-  * nft_pipapo_commit swaps ->clone and ->match shortly after the
-  * genbit flip.  As ->clone doesn't contain the old entries in the first
-@@ -579,7 +578,7 @@ nft_pipapo_lookup(const struct net *net, const struct nft_set *set,
- 	const struct nft_pipapo_elem *e;
- 
- 	m = rcu_dereference(priv->match);
--	e = pipapo_get_slow(m, (const u8 *)key, NFT_GENMASK_ANY, get_jiffies_64());
-+	e = pipapo_get_slow(m, (const u8 *)key, 0, get_jiffies_64());
- 
- 	return e ? &e->ext : NULL;
- }
-diff --git a/net/netfilter/nft_set_pipapo_avx2.c b/net/netfilter/nft_set_pipapo_avx2.c
-index 3e584dc4ad20e..9235efb10dd52 100644
---- a/net/netfilter/nft_set_pipapo_avx2.c
-+++ b/net/netfilter/nft_set_pipapo_avx2.c
-@@ -1179,7 +1179,6 @@ struct nft_pipapo_elem *pipapo_get_avx2(const struct nft_pipapo_match *m,
- 
- 	nft_pipapo_avx2_prepare();
- 
--next_match:
- 	nft_pipapo_for_each_field(f, i, m) {
- 		bool last = i == m->field_count - 1, first = !i;
- 		int ret = 0;
-@@ -1226,6 +1225,7 @@ struct nft_pipapo_elem *pipapo_get_avx2(const struct nft_pipapo_match *m,
- 
- #undef NFT_SET_PIPAPO_AVX2_LOOKUP
- 
-+next_match:
- 		if (ret < 0) {
- 			scratch->map_index = map_index;
- 			kernel_fpu_end();
-@@ -1238,8 +1238,11 @@ struct nft_pipapo_elem *pipapo_get_avx2(const struct nft_pipapo_match *m,
- 
- 			e = f->mt[ret].e;
- 			if (unlikely(__nft_set_elem_expired(&e->ext, tstamp) ||
--				     !nft_set_elem_active(&e->ext, genmask)))
-+				     !nft_set_elem_active(&e->ext, genmask))) {
-+				ret = pipapo_refill(res, f->bsize, f->rules,
-+						    fill, f->mt, last);
- 				goto next_match;
-+			}
- 
- 			scratch->map_index = map_index;
- 			kernel_fpu_end();
 
