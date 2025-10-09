@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-846141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33300BC724F
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 03:59:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FD9BBC7240
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 03:59:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF30D3E51C8
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 01:59:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEF4619E2CBF
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 01:59:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A144D1A9FBA;
-	Thu,  9 Oct 2025 01:58:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26B101922FD;
+	Thu,  9 Oct 2025 01:58:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="PBnqgHKP"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Q21gbFYb"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038D513774D
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 01:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E924F1A9F8E
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 01:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759975127; cv=none; b=VVaupfa/Lw0BPXjj8cbamwDyBFvb6pEJ3F1UGXGmBLkJOjZUKk2MJMDKfLIi0rUeRx6a9TAFFxOLLrabAJoQG1PncJjXS9J1v5KfTSJaBJYb0hl3AqBuoFlbcr2oCgeuOSl3MI/ZG4lYjNoqZCBUPLxh7Fm7A+kU8q3dWHIbkTY=
+	t=1759975130; cv=none; b=LkTBtJvW4TPjsyYWIe/vQTt9cK41GLVDQLct6AfMnhZ3puumF2jSLFZnYdui164/HoQJ4Qirgc2WDmUVFJRAhG6/nlEolSklJJcMtOS7wHGLr/OdddbiGsBiDX/nevRtbKDMSVW2zU/rwCtaMuITbO7+3ISp9vHnbf/0q4t6oM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759975127; c=relaxed/simple;
-	bh=oJglb5F/DlqFnrzmYPs/4r/Iba0m9SkApy4w7J1Wklw=;
+	s=arc-20240116; t=1759975130; c=relaxed/simple;
+	bh=IuzWaZaq52AseT76aIk2++sO7Nvet3qY616LVEnMRL8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MOaArghlLs0CtDhbyoxCL7pw7HQHA+vkJPHg4Q/mPOFA2GfU2RMJpdp7sQd0xYEh08mtG3KF4xD+m8wfz/3EB0oIobHEPg4puJ9ia79xTEMefHO9faUm6QZweYnWDTt71tGvqnaRzfTEoJJ/KxEfR4+g50JNCczDttyaynztKL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=PBnqgHKP; arc=none smtp.client-ip=209.85.214.177
+	 MIME-Version; b=ngEMd5VQM3ZffM4WSwFzPkw41qX4swmflATboO/GCr3L4EjwGuFGhPHkGr4fh/4B6+MQeLXkHsAgbhA+g9kA3mLBBBeP+0kQC5q4MO5mo8xvkb8Lp4SyrxRQI4uG1oEc44LAHOnZVOZOGARJs2e+g7kmK1luxoZBlW2fVVmsGdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=Q21gbFYb; arc=none smtp.client-ip=209.85.214.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-271d1305ad7so7149835ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 18:58:42 -0700 (PDT)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-27d4d6b7ab5so6245115ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 18:58:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1759975122; x=1760579922; darn=vger.kernel.org;
+        d=sifive.com; s=google; t=1759975123; x=1760579923; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZAFzin3ivjrQZj/QpZ54jF9jkkD8Fld75BEMN783hL8=;
-        b=PBnqgHKPH/f+ABxinMMoGGVpjW39IFlsyAhMzrbEoy+rGzWARpwCG8Q2o5udjERFC0
-         G/Nvjed0ypLzcXtcUK4kwRmmBSiQFN7iWPgTS2rIXmgP3neOr3Sg1Uz1xmsZRjyuAWs+
-         WyG00GW4ERNbDQY7gLD0rpRvRnyy7jz3oKWVG4uoL0U4pFLf9OgJSm5QheU+6U+H/4iV
-         sWgKv3IboK7RpZrqebO5vlfqQW2ADc4BCvGr3TuNnT1ZoGgATBYl4JPEt9fq/KjkJ1QH
-         vAQzyiSlULoS/lnaXDtW1kjRXTbe/+NsY+jp3o++ZEtTa4i2K+v/woZaFvkYJo52zuIe
-         axKw==
+        bh=mdiVfcIiYEtPdSKu0CqenqZ/5C3LyfHi/KY36+7mBoA=;
+        b=Q21gbFYby36TOYfFh7lINpJ8iWH7CHwNdfVwWA6bEJJrseu8Ej27JBu/K2PxOAv3pc
+         J7TRnUYp8wH1LyH9brorXwrljspCNWk42SPagoD4xg1KzioebSCXobZAv/K4eEyGTqCb
+         jDBAjYRJOh1cTKE/wD+Yqr8/9uWl8o5V2M1PZpDPMee7bdjQeAkqykrD3z1vA8hX2KOp
+         rXUNQo7wHmkXD5UUlkWXc5VrKIbObb+C9PAjqcGa+TQ1Xpc2MXwzkhVv6W4E7sEv5bS/
+         ZfTV7jpYnmLP97VYv/D4RwKF+J6Qf+hRuky0uWd/ELotLqa3sSTWCRniSRFYS5AwZDmP
+         TbTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759975122; x=1760579922;
+        d=1e100.net; s=20230601; t=1759975123; x=1760579923;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZAFzin3ivjrQZj/QpZ54jF9jkkD8Fld75BEMN783hL8=;
-        b=KVYAwy0QDfqachjxAT+Q1vmuh8NJMfjFfTyAUbb4P4d+EvZR1GMKuIK063abOMmzOq
-         4bV4NqkEqHzGdkgJbWD1tgDxZm+bkWZ6xa+h3r5EysCPWKMFQXp16ITKMi2Mkc8BeLcK
-         HQhRxlRr7A5bbqVYU2WYXIxBDDx8RPNSpICuV5jZ5bNyYYhHIJCJZtfup8S6VWdbMRUU
-         bPts0rJA1k5qk2jv3Z05H746kTkCOXLFupdNBbvDkvE8FiVM6JcPRzQ5mGqSsqfSr56a
-         CHO05omWJhk0klKSukNVytsVs/71rDtIr0wwXHIAbptWBBT/hN/LXt5W93i1W4o8M9PT
-         Sckw==
-X-Forwarded-Encrypted: i=1; AJvYcCXRaZ2A33Ts8Ph/ojDym+g/MSzqFJdv82RmqAs59xCsZYAyU9P7VO5Wjvjx50pXQ920tG9Baj28hYpu574=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcPF23usmE+BUaR6pE/bPieUhz9S5yegwqH9t9r3u+2zE49if5
-	Ri6KekwWvZuIcSh9tTaZyYXdt40sRxWo+/doe3YP8RecwjktgIEXongP6wEtw+3lrTE=
-X-Gm-Gg: ASbGncsbQMGAI50vbeV39KXLR6Kjw4oYpN9jc6OnO9WgwiL/ZFCn0ICt00EL6a1nkZK
-	qvUw9xJgvf8J6ZGAEEZ84rSmuseotEOYD51veTkLcGhG82Cidiknj7/nA9pDhtaP8hANhFVz1py
-	P1WZ1Xxp7ljwE4z/TSsoY67PleNYhGbrih+/2JTnfAfKFOLjdmZXolHnfbamSVKo5ZCieeKCMVe
-	ZizXX4IMgj2WiRLSp1EGDg2WiMthkroHOd+Pg+2OtJuuXdxaRN3tj2mPn6174p+jnmWdOGvPxfZ
-	tXoSCMMinHkqfTiX8haQljxOi/gqDBaZ41smgnqSBgRorXjRBObOi2X5avtv9y9eqs8qui3Mdp+
-	JX2+jefrIj1TVY8PkMLyJeqvT3KyaeUGF0TkEakROvNLpzpYhaYgDD39QXwhOmEqFJlMKh1sYdU
-	CV730=
-X-Google-Smtp-Source: AGHT+IG2D+B4sYEjYqHTfYtptXhLnt1g1J3431Y1pnRWZqcWdGLQKwHj4/A4KlwSUJg/qQlrRp74lA==
-X-Received: by 2002:a17:902:d58d:b0:28a:2e51:9272 with SMTP id d9443c01a7336-290273ffcd2mr61826225ad.48.1759975122096;
-        Wed, 08 Oct 2025 18:58:42 -0700 (PDT)
+        bh=mdiVfcIiYEtPdSKu0CqenqZ/5C3LyfHi/KY36+7mBoA=;
+        b=jDxKtzeNYCxmXde+htXzRwUiya9d9VrPs+xh/5qfuX338FQQ+0qx5DLcCj85MmYAqy
+         QrQqU3tuhInPlkoadzgQQ0RHQGb8TutuMcgDP/Nrjk7P/4baxRgG8lKMVYdiIqewS/6o
+         izwHZGL37mgtAHGz2o0w+OAw5oZOpK9lkHBkAdUmews0H8vLr+eJqy1LHgy9hRkHjPNi
+         L8MArpWY0GiJWMsrRj4aJHcphde89Aoc9Nt3Ftv4v7OI/Exb0C2KVnWkFuIkTgRvJWYI
+         xbrDZyoP0lJF3RKOUm7WEtS9ytQh5iPO9EXwkmAXX0vyUD0HRBKRE9XrHuMUAVxY1vGu
+         a7dA==
+X-Forwarded-Encrypted: i=1; AJvYcCVPrbiEWRbJPGRcxaPUvL/zBisBgU75E0BnWXwcvJksVjR1iGEZIGg7bgtNE8kG0yIrjKCtO3wU0iUO4dQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCDyE+Eh1w5MwPPvzKzhnUR9rG/9eT31+/Tlq+Gnb4KFH7I/cY
+	90EiNAUOqXy1M8NqwQiURbPeLOYBn3mECnG4QvK/3aiYX1aG+xHsPPYBidVDrdjNIm0=
+X-Gm-Gg: ASbGnct6K9kpZyfBBKE8IDtdma+2P4C3LMfqS3iB9hqa/cOKqYGYno4g40fH0MwJhAq
+	XEoHvY1qXNcIdq0p9hQsvatUhr9dUjX1GwyO51jMKksbF0PteQsgMcUHZj1Bw99mDsiZbWiTk1j
+	L3i0Zxaipois2rOQcVu38N/8UryXYdUzLU4ZHtPonYAonMc6p5/dr2A5ZtDdAc87QlI22gwdzgj
+	om4fhKDdS9HIBCen15Yi6E2JdVYIzMII3J8lLrsL2CpNmemgf49dMs4/Uivq8z1Bj+w+TiDBNGE
+	uacR3vWp8EHLRNxN5Er9EeEXZV2s3sp3gTopcl8xP4dAP0wCfVflpSapH2U5pTCU6pJJieGCMhr
+	SFfOb2WCgRYsdiLWLFTrFifza1hBztG8rpo86sYnlO+SjcxtL0r5eBYyJTNNJhJlja9jM31KCDm
+	ygsU4=
+X-Google-Smtp-Source: AGHT+IEAHeuoGA0XLStPTncgvhvYEundXEr0shvSlmxf+pcjXId4G/S6mKP+GMbaTviYedqoip+3mg==
+X-Received: by 2002:a17:903:b4f:b0:288:e2ec:edfd with SMTP id d9443c01a7336-290272154a4mr64152045ad.10.1759975123319;
+        Wed, 08 Oct 2025 18:58:43 -0700 (PDT)
 Received: from sw06.internal.sifive.com ([4.53.31.132])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034de53f9sm11033585ad.14.2025.10.08.18.58.41
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034de53f9sm11033585ad.14.2025.10.08.18.58.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 18:58:41 -0700 (PDT)
+        Wed, 08 Oct 2025 18:58:43 -0700 (PDT)
 From: Samuel Holland <samuel.holland@sifive.com>
 To: Palmer Dabbelt <palmer@dabbelt.com>,
 	Paul Walmsley <pjw@kernel.org>,
@@ -86,15 +86,10 @@ Cc: devicetree@vger.kernel.org,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Rob Herring <robh+dt@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	David Hildenbrand <david@redhat.com>,
-	Dev Jain <dev.jain@arm.com>,
-	Lance Yang <lance.yang@linux.dev>,
-	SeongJae Park <sj@kernel.org>,
 	Samuel Holland <samuel.holland@sifive.com>
-Subject: [PATCH v2 01/18] mm/ptdump: Replace READ_ONCE() with standard page table accessors
-Date: Wed,  8 Oct 2025 18:57:37 -0700
-Message-ID: <20251009015839.3460231-2-samuel.holland@sifive.com>
+Subject: [PATCH v2 02/18] perf/core: Replace READ_ONCE() with standard page table accessors
+Date: Wed,  8 Oct 2025 18:57:38 -0700
+Message-ID: <20251009015839.3460231-3-samuel.holland@sifive.com>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20251009015839.3460231-1-samuel.holland@sifive.com>
 References: <20251009015839.3460231-1-samuel.holland@sifive.com>
@@ -106,80 +101,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Anshuman Khandual <anshuman.khandual@arm.com>
+Replace READ_ONCE() with standard page table accessors, i.e. pXXp_get(),
+which have a default implementation of READ_ONCE() if the architecture
+does not override them.
 
-Replace READ_ONCE() with standard page table accessors i.e pxdp_get() which
-anyways default into READ_ONCE() in cases where platform does not override.
-Also convert ptep_get_lockless() into ptep_get() as well.
-
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org
-Reviewed-by: Dev Jain <dev.jain@arm.com>
-Acked-by: Lance Yang <lance.yang@linux.dev>
-Acked-by: SeongJae Park <sj@kernel.org>
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-Acked-by: David Hildenbrand <david@redhat.com>
-Link: https://lore.kernel.org/r/20251001042502.1400726-1-anshuman.khandual@arm.com/
 Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
 ---
 
 Changes in v2:
- - New patch for v2 (taken from LKML)
+ - New patch for v2
 
- mm/ptdump.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ kernel/events/core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/mm/ptdump.c b/mm/ptdump.c
-index b600c7f864b8b..973020000096c 100644
---- a/mm/ptdump.c
-+++ b/mm/ptdump.c
-@@ -31,7 +31,7 @@ static int ptdump_pgd_entry(pgd_t *pgd, unsigned long addr,
- 			    unsigned long next, struct mm_walk *walk)
- {
- 	struct ptdump_state *st = walk->private;
--	pgd_t val = READ_ONCE(*pgd);
-+	pgd_t val = pgdp_get(pgd);
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 820127536e62b..952ba4e3d8815 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -8110,7 +8110,7 @@ static u64 perf_get_pgtable_size(struct mm_struct *mm, unsigned long addr)
+ 	pte_t *ptep, pte;
  
- #if CONFIG_PGTABLE_LEVELS > 4 && \
- 		(defined(CONFIG_KASAN_GENERIC) || defined(CONFIG_KASAN_SW_TAGS))
-@@ -54,7 +54,7 @@ static int ptdump_p4d_entry(p4d_t *p4d, unsigned long addr,
- 			    unsigned long next, struct mm_walk *walk)
- {
- 	struct ptdump_state *st = walk->private;
--	p4d_t val = READ_ONCE(*p4d);
-+	p4d_t val = p4dp_get(p4d);
+ 	pgdp = pgd_offset(mm, addr);
+-	pgd = READ_ONCE(*pgdp);
++	pgd = pgdp_get(pgdp);
+ 	if (pgd_none(pgd))
+ 		return 0;
  
- #if CONFIG_PGTABLE_LEVELS > 3 && \
- 		(defined(CONFIG_KASAN_GENERIC) || defined(CONFIG_KASAN_SW_TAGS))
-@@ -77,7 +77,7 @@ static int ptdump_pud_entry(pud_t *pud, unsigned long addr,
- 			    unsigned long next, struct mm_walk *walk)
- {
- 	struct ptdump_state *st = walk->private;
--	pud_t val = READ_ONCE(*pud);
-+	pud_t val = pudp_get(pud);
+@@ -8118,7 +8118,7 @@ static u64 perf_get_pgtable_size(struct mm_struct *mm, unsigned long addr)
+ 		return pgd_leaf_size(pgd);
  
- #if CONFIG_PGTABLE_LEVELS > 2 && \
- 		(defined(CONFIG_KASAN_GENERIC) || defined(CONFIG_KASAN_SW_TAGS))
-@@ -100,7 +100,7 @@ static int ptdump_pmd_entry(pmd_t *pmd, unsigned long addr,
- 			    unsigned long next, struct mm_walk *walk)
- {
- 	struct ptdump_state *st = walk->private;
--	pmd_t val = READ_ONCE(*pmd);
-+	pmd_t val = pmdp_get(pmd);
+ 	p4dp = p4d_offset_lockless(pgdp, pgd, addr);
+-	p4d = READ_ONCE(*p4dp);
++	p4d = p4dp_get(p4dp);
+ 	if (!p4d_present(p4d))
+ 		return 0;
  
- #if defined(CONFIG_KASAN_GENERIC) || defined(CONFIG_KASAN_SW_TAGS)
- 	if (pmd_page(val) == virt_to_page(lm_alias(kasan_early_shadow_pte)))
-@@ -121,7 +121,7 @@ static int ptdump_pte_entry(pte_t *pte, unsigned long addr,
- 			    unsigned long next, struct mm_walk *walk)
- {
- 	struct ptdump_state *st = walk->private;
--	pte_t val = ptep_get_lockless(pte);
-+	pte_t val = ptep_get(pte);
+@@ -8126,7 +8126,7 @@ static u64 perf_get_pgtable_size(struct mm_struct *mm, unsigned long addr)
+ 		return p4d_leaf_size(p4d);
  
- 	if (st->effective_prot_pte)
- 		st->effective_prot_pte(st, val);
+ 	pudp = pud_offset_lockless(p4dp, p4d, addr);
+-	pud = READ_ONCE(*pudp);
++	pud = pudp_get(pudp);
+ 	if (!pud_present(pud))
+ 		return 0;
+ 
 -- 
 2.47.2
 
