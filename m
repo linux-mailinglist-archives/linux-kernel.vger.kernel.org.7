@@ -1,354 +1,187 @@
-Return-Path: <linux-kernel+bounces-847521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A20EABCB182
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 00:30:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90B6FBCB18B
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 00:31:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9408E4E45F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 22:30:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 340FB3B86D7
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 22:31:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85AB228151E;
-	Thu,  9 Oct 2025 22:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6842868A6;
+	Thu,  9 Oct 2025 22:31:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TUbmYNhK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UfhPLGJZ"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A355663CB;
-	Thu,  9 Oct 2025 22:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E57463CB
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 22:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760049016; cv=none; b=l2UpZElhSlT6zMNM0ORnjA53D4l63bHSplW9CDm6f+Grm0YzlcDEq9t1UQfnHwgrmWO2x+PBncHGIagbTwg0gtp+c9d2Tiwdrr37EZZIa2zF3st3RK2ijdvaeUqelKKisFnrfg+HNcpHAc7oXjUCVOw+amQ2V0ajTXn/ck7GKmQ=
+	t=1760049078; cv=none; b=iJ9jx2euCTYszVbUNm5a64eHVNiISv5RkIOjb5JhwMZFZRr3nUAK4ad8ZkmfkjGYZ/LN7CQEtR+3S7loN/iHkggF+gsPIAUkS8GsOzJyQf4H/4v93Fk7Dd34evFlw7VPkBzJscFasoFdiIFGQvnM43ShebAJJ/KeF4VC9K6JjZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760049016; c=relaxed/simple;
-	bh=immcT5NCY31PjUseNWXytM+DbAd3mPnEzy59RGO2S3g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JkqKnuEsQetRMahBBJrWVn2Mz4HKxpZ+aIcE79xmnuMfp9YPnGaTaAXgONFlCnYrYPdwBDVgXtRgofsHEq6jj2L9r/HiT7X1dL7ST58yyGBFdpfI8i0PUDyassST3iHLuY0m8+1rPiwzuDhZUjo0DQLwTawX3u4NLNA48sMOI2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TUbmYNhK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2252DC4CEE7;
-	Thu,  9 Oct 2025 22:30:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760049016;
-	bh=immcT5NCY31PjUseNWXytM+DbAd3mPnEzy59RGO2S3g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TUbmYNhKMUfYFn4/E1ECl9v6f5QcBuuSDo1YXOhm1j19IH2L/zBkGdKhvLvftbEe6
-	 JSHOGL2RlNtvAlmgstirQd2pLnFa7Wov+kz/oHXj9R+zZZSamE9uQd3osghBZ9Wn8l
-	 5L9X4IDa9pt0wRSLYtqx1YOyE/Sl4Ta9q7aq/mu8tORM01nP1HSr0VFnNR/Ar87ngT
-	 Z5RxqLUL8lCRUCsKGS/kT9wVmP56BF9U1zcjW/S4AIAm1mGLu0qYn6hbQg7NgUQ89E
-	 A0MR0mzmGcQK2FOtJtssHFR7Mof29ZmuRkiN2j9uTc2c2JQoVhA83kdPgfuqy5gb1T
-	 /f7L9cevbLzhg==
-Date: Fri, 10 Oct 2025 00:30:14 +0200
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-To: Francesco Lavra <flavra@baylibre.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] iio: imu: st_lsm6dsx: Decouple sensor ODR from FIFO
- batch data rate
-Message-ID: <aOg3dg21aWNTF47x@lore-desk>
-References: <20251009173609.992452-1-flavra@baylibre.com>
- <20251009173609.992452-3-flavra@baylibre.com>
+	s=arc-20240116; t=1760049078; c=relaxed/simple;
+	bh=Yn2kvTm+mZNDuY39ANHX4G7xDC5i9BaIUGRte74CguA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=JmS8gvSUqbqD+6wMAbWKJq5W+bwH4JniyAg6oMBS7ETRGjkKJEntZj+sW3PwSM3ZdjHbkdMOjg5/r+oeLyGrY8U1uu9UeNhLydJJBhYmQoLxZBWyHt1JdKL1dJsTpm7AP8h7oobi2TN/CDgdT/IL2SOz5f6HxM+3h3UmyKonmX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UfhPLGJZ; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-339d5dbf58aso6049812a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 15:31:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760049076; x=1760653876; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oyn4fVoh4cjthxckvqweX9TO6N78roW7lipNMYAXPf4=;
+        b=UfhPLGJZg2MCu7YN2cvbfiB1UPKhc64m+14g+xx/Ql0onc00URbCsBqupmB8vaFzYM
+         42pnVZgnFXQtLPS7+q003QthozOV00skpEH/FapSRHmNQgX83Vm44Hsibt3f10CzqRfm
+         M6pBdK6rOp2Q1owOs345pdg2CorhqOFSZL6ssbyeuB814Ie9nfd3/QdRwWaDOacP62Rg
+         3JE43WGZt/doZLbnlQGfjbkTILkjf6F0xsEmPm+oWED7vanO0inCWgDQZ01MWFMrt37w
+         q5m/y2/puXFV7++OUr08FbKWFAEiNDCnGoTV/iuyBGvpJu/eRLu8ZZftqAShhlM3fhkT
+         TYNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760049076; x=1760653876;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oyn4fVoh4cjthxckvqweX9TO6N78roW7lipNMYAXPf4=;
+        b=sHN2dJBDnFzfPWAoRw8yFRUy5w/ZZnQ1doYYg6+kn1JpXztwJ3YPF0WnEeb5bwZXcu
+         VeKJiL40VVsdWgLFAOwWuG4C1/9QYZ470YWtdOazY++vvapwYL8Q/wy/sUOTXTv7SoyA
+         8x8Rg6bH+Ae5tWo1t104z8it0QTVEOeUy08xkgUnRS5/+9vNIc5kGYVXiu3GDr4j10l3
+         H5NjBk4514PNCE3FHUPYmSp2lPyidaTXlv08Pr3ULDMqfJsKfCtyI2FNzD6RMbGinRSI
+         IqseHrubjgUptovJIYycjoo3XdCqZEE8uEZ9y3lzGS5amyxTQ88YZLY4XM//6jNwQ7xS
+         PI+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXWpKNkjrNotxTd3djwSQbhiDrwZDWbUysLvJ5geE9LGMMe4rnN5Qy/BR61v23mE3Oq57/PD3EEd2hHwh0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRbzSPaopk2+DQ4QY34FxEj05UZADTvOsCJspsu587q2T/BVit
+	AtH8GU8qNV1B8DVjeRh0rkaAlDtDhOWaJTPu/BGX9QVLjFvN+Cr7lfFiEdLpac0GM7se+xIbe0G
+	CVGEuMrg65vUHshJ8xUQK41iKYQ==
+X-Google-Smtp-Source: AGHT+IEmelRZ9ZJu08/OiMaUmje11/Gsz4SbXx5oLReryhBGhZaItJQt2LKWHVGmxTYaiV6rsN3g3rToagNXnHp9Yg==
+X-Received: from pjboa10.prod.google.com ([2002:a17:90b:1bca:b0:330:7dd8:2dc2])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:268c:b0:330:6d5e:f17b with SMTP id 98e67ed59e1d1-33b513b3e20mr11757701a91.21.1760049076512;
+ Thu, 09 Oct 2025 15:31:16 -0700 (PDT)
+Date: Thu, 09 Oct 2025 15:31:15 -0700
+In-Reply-To: <20251007221420.344669-8-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="PZTB0aTF+sLXKEc+"
-Content-Disposition: inline
-In-Reply-To: <20251009173609.992452-3-flavra@baylibre.com>
+Mime-Version: 1.0
+References: <20251007221420.344669-1-seanjc@google.com> <20251007221420.344669-8-seanjc@google.com>
+Message-ID: <diqzikgnhfm4.fsf@google.com>
+Subject: Re: [PATCH v12 07/12] KVM: selftests: Report stacktraces SIGBUS,
+ SIGSEGV, SIGILL, and SIGFPE by default
+From: Ackerley Tng <ackerleytng@google.com>
+To: Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>, Shivank Garg <shivankg@amd.com>, 
+	Ashish Kalra <ashish.kalra@amd.com>, Vlastimil Babka <vbabka@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 
+Sean Christopherson <seanjc@google.com> writes:
 
---PZTB0aTF+sLXKEc+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Register handlers for signals for all selftests that are likely happen due
+> to test (or kernel) bugs, and explicitly fail tests on unexpected signals
+> so that users get a stack trace, i.e. don't have to go spelunking to do
+> basic triage.
+>
+> Register the handlers as early as possible, to catch as many unexpected
+> signals as possible, and also so that the common code doesn't clobber a
+> handler that's installed by test (or arch) code.
+>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-> The rate at which accelerometer or gyroscope sensor samples are fed
-> to the hardware FIFO (batch data rate, or BDR) does not have to
-> coincide with the sensor sampling frequency (output data rate, or
-> ODR); the only requirement is for the BDR to not be greater than
-> the ODR. Having a BDR lower than the ODR is useful in cases where
-> an application requires a high sampling rate for accurate detection
-> of motion events (e.g. wakeup events), but wants to read sensor
-> sample values from the device buffer at a lower data rate.
+I tested this with
 
-can you please provide more details here? Are you using the hw fifo to read
-data? If we configure the hw fifo according to the BDR (even assuming the
-watermark is set 1) the hw will generate interrupts according to the BDR
-(bdr < odr).
+diff --git i/tools/testing/selftests/kvm/guest_memfd_test.c w/tools/testing/selftests/kvm/guest_memfd_test.c
+index 618c937f3c90f..f6de2a678bf99 100644
+--- i/tools/testing/selftests/kvm/guest_memfd_test.c
++++ w/tools/testing/selftests/kvm/guest_memfd_test.c
+@@ -182,6 +182,8 @@ static void test_fault_sigbus(int fd, size_t accessible_size, size_t map_size)
+        TEST_EXPECT_SIGBUS(memset(mem, val, map_size));
+        TEST_EXPECT_SIGBUS((void)READ_ONCE(mem[accessible_size]));
+ 
++       mem[accessible_size] = 0xdd;
++
+        for (i = 0; i < accessible_size; i++)
+                TEST_ASSERT_EQ(READ_ONCE(mem[i]), val);
 
-> To support the above use case, add a sampling_frequency sysfs
-> attribute to the buffer directory of st_lsm6dsx IIO devices, which
-> controls the BDR for a given sensor independently from the "main"
-> sampling_frequency attribute (which controls the ODR); introduce a
-> new `bdr` field in struct st_lsm6dsx_sensor to keep track of the
-> current BDR value, and use this field instead of the `odr` field in
-> the code that deals with the FIFO data rate. In the sensor hub
-> driver, make the bdr value always mirror the odr value, since there
-> is no separate configuration setting to control the BDR for data
-> produced by the sensor hub functionality.
->=20
-> Signed-off-by: Francesco Lavra <flavra@baylibre.com>
+And got
+
+==== Test Assertion Failure ====
+  lib/kvm_util.c:2299: false
+  pid=388 tid=388 errno=29 - Illegal seek
+     1  0x000000000040a253: report_unexpected_signal at kvm_util.c:2299
+     2  0x000000000042615f: sigaction at ??:?
+     3  0x000000000040283f: test_fault_sigbus at guest_memfd_test.c:183 (discriminator 4)
+     4  0x0000000000402c1c: test_fault_private at guest_memfd_test.c:200
+     5   (inlined by) __test_guest_memfd at guest_memfd_test.c:376
+     6  0x0000000000401e15: test_guest_memfd at guest_memfd_test.c:401
+     7   (inlined by) main at guest_memfd_test.c:491
+     8  0x000000000041ea03: __libc_start_call_main at libc-start.o:?
+     9  0x0000000000420bac: __libc_start_main_impl at ??:?
+    10  0x0000000000401fe0: _start at ??:?
+  Unexpected SIGBUS (7)
+
+I expected the line number to be 185 but the report says 183. Not sure
+if this is a compiler issue or something caused by macros, or if it's
+because of signals mess with the tracking of instruction execution.
+
+Either way, this is a very useful test feature, thanks!
+
+Tested-by: Ackerley Tng <ackerleytng@google.com>
+Reviewed-by: Ackerley Tng <ackerleytng@google.com>
+
 > ---
->  drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h       |  2 +
->  .../iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c    | 64 ++++++++++++++++---
->  drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c  |  9 ++-
->  drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_shub.c  |  4 +-
->  4 files changed, 66 insertions(+), 13 deletions(-)
->=20
-> diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h b/drivers/iio/imu/st=
-_lsm6dsx/st_lsm6dsx.h
-> index bd366c6e282a..dc4aeea3a3b8 100644
-> --- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
-> +++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx.h
-> @@ -366,6 +366,7 @@ enum st_lsm6dsx_fifo_mode {
->   * @hw: Pointer to instance of struct st_lsm6dsx_hw.
->   * @gain: Configured sensor sensitivity.
->   * @odr: Output data rate of the sensor [mHz].
-> + * @bdr: Batch data rate [mHz]
->   * @samples_to_discard: Number of samples to discard for filters settlin=
-g time.
->   * @watermark: Sensor watermark level.
->   * @decimator: Sensor decimation factor.
-> @@ -380,6 +381,7 @@ struct st_lsm6dsx_sensor {
-> =20
->  	u32 gain;
->  	u32 odr;
-> +	u32 bdr;
-> =20
->  	u16 samples_to_discard;
->  	u16 watermark;
-> diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c b/drivers/iio=
-/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
-> index 8a9d2593576a..5912ea76d493 100644
-> --- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
-> +++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
-> @@ -56,6 +56,7 @@
->  #include <linux/iio/kfifo_buf.h>
->  #include <linux/iio/iio.h>
->  #include <linux/iio/buffer.h>
-> +#include <linux/iio/sysfs.h>
->  #include <linux/regmap.h>
->  #include <linux/bitfield.h>
-> =20
-> @@ -105,7 +106,7 @@ static int
->  st_lsm6dsx_get_decimator_val(struct st_lsm6dsx_sensor *sensor, u32 max_o=
-dr)
+>  tools/testing/selftests/kvm/lib/kvm_util.c | 24 ++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+>
+> diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
+> index 8b60b767224b..0c3a6a40d1a9 100644
+> --- a/tools/testing/selftests/kvm/lib/kvm_util.c
+> +++ b/tools/testing/selftests/kvm/lib/kvm_util.c
+> @@ -2290,11 +2290,35 @@ __weak void kvm_selftest_arch_init(void)
 >  {
->  	const int max_size =3D ARRAY_SIZE(st_lsm6dsx_decimator_table);
-> -	u32 decimator =3D  max_odr / sensor->odr;
-> +	u32 decimator =3D  max_odr / sensor->bdr;
->  	int i;
-> =20
->  	if (decimator > 1)
-> @@ -136,14 +137,14 @@ static void st_lsm6dsx_get_max_min_odr(struct st_ls=
-m6dsx_hw *hw,
->  		if (!(hw->enable_mask & BIT(sensor->id)))
->  			continue;
-> =20
-> -		*max_odr =3D max_t(u32, *max_odr, sensor->odr);
-> -		*min_odr =3D min_t(u32, *min_odr, sensor->odr);
-> +		*max_odr =3D max_t(u32, *max_odr, sensor->bdr);
-> +		*min_odr =3D min_t(u32, *min_odr, sensor->bdr);
->  	}
 >  }
-> =20
->  static u8 st_lsm6dsx_get_sip(struct st_lsm6dsx_sensor *sensor, u32 min_o=
-dr)
->  {
-> -	u8 sip =3D sensor->odr / min_odr;
-> +	u8 sip =3D sensor->bdr / min_odr;
-> =20
->  	return sip > 1 ? round_down(sip, 2) : sip;
->  }
-> @@ -231,7 +232,7 @@ static int st_lsm6dsx_set_fifo_odr(struct st_lsm6dsx_=
-sensor *sensor,
->  		if (enable) {
->  			int err;
-> =20
-> -			err =3D st_lsm6dsx_check_odr(sensor, sensor->odr,
-> +			err =3D st_lsm6dsx_check_odr(sensor, sensor->bdr,
->  						   &data);
->  			if (err < 0)
->  				return err;
-> @@ -713,7 +714,7 @@ st_lsm6dsx_update_samples_to_discard(struct st_lsm6ds=
-x_sensor *sensor)
-> =20
->  	data =3D &hw->settings->samples_to_discard[sensor->id];
->  	for (i =3D 0; i < ST_LSM6DSX_ODR_LIST_SIZE; i++) {
-> -		if (data->val[i].milli_hz =3D=3D sensor->odr) {
-> +		if (data->val[i].milli_hz =3D=3D sensor->bdr) {
->  			sensor->samples_to_discard =3D data->val[i].samples;
->  			return;
->  		}
-> @@ -799,6 +800,52 @@ static const struct iio_buffer_setup_ops st_lsm6dsx_=
-buffer_ops =3D {
->  	.postdisable =3D st_lsm6dsx_buffer_postdisable,
->  };
-> =20
-> +static ssize_t st_lsm6dsx_bdr_show(struct device *dev,
-> +				   struct device_attribute *attr, char *buf)
+>
+> +static void report_unexpected_signal(int signum)
 > +{
-> +	struct st_lsm6dsx_sensor *sensor =3D iio_priv(dev_to_iio_dev(dev));
-> +	u32 bdr =3D sensor->bdr;
+> +#define KVM_CASE_SIGNUM(sig)					\
+> +	case sig: TEST_FAIL("Unexpected " #sig " (%d)\n", signum)
 > +
-> +	return sysfs_emit(buf, "%d.%03d\n", bdr / 1000, bdr % 1000);
+> +	switch (signum) {
+> +	KVM_CASE_SIGNUM(SIGBUS);
+> +	KVM_CASE_SIGNUM(SIGSEGV);
+> +	KVM_CASE_SIGNUM(SIGILL);
+> +	KVM_CASE_SIGNUM(SIGFPE);
+> +	default:
+> +		TEST_FAIL("Unexpected signal %d\n", signum);
+> +	}
 > +}
 > +
-> +static ssize_t st_lsm6dsx_bdr_store(struct device *dev,
-> +				    struct device_attribute *attr,
-> +				    const char *buf, size_t len)
-> +{
-> +	struct iio_dev *iio_dev =3D dev_to_iio_dev(dev);
-> +	struct st_lsm6dsx_sensor *sensor =3D iio_priv(iio_dev);
-> +	int integer, fract;
-> +	int ret;
-> +	u32 bdr;
-> +	u8 data;
-> +
-> +	ret =3D iio_str_to_fixpoint(buf, 100, &integer, &fract);
-> +	if (ret)
-> +		return ret;
-nit: new line here.
-
-> +	bdr =3D integer * 1000 + fract;
-> +	ret =3D st_lsm6dsx_check_odr(sensor, bdr, &data);
-> +	if (ret < 0)
-> +		return ret;
-
-nit: new line here.
-
-> +	bdr =3D ret;
-> +	if (!iio_device_claim_direct(iio_dev))
-> +		return -EBUSY;
-
-I guess you can check it at the beginning of the routine.
-
-> +	/* the batch data rate must not exceed the sensor output data rate */
-> +	if (bdr <=3D sensor->odr)
-> +		sensor->bdr =3D bdr;
-> +	else
-> +		ret =3D -EINVAL;
-
-nit: new line here.
-
-> +	iio_device_release_direct(iio_dev);
-
-nit: new line here.
-
-> +	return (ret < 0) ? ret : len;
-
-nit: we do not need brackets here.
-
-> +}
-> +
-> +static IIO_DEV_ATTR_SAMP_FREQ(0664, st_lsm6dsx_bdr_show, st_lsm6dsx_bdr_=
-store);
-> +
-> +static const struct iio_dev_attr *st_lsm6dsx_buffer_attrs[] =3D {
-> +	&iio_dev_attr_sampling_frequency,
-> +	NULL
-> +};
-> +
->  int st_lsm6dsx_fifo_setup(struct st_lsm6dsx_hw *hw)
+>  void __attribute((constructor)) kvm_selftest_init(void)
 >  {
->  	int i, ret;
-> @@ -807,8 +854,9 @@ int st_lsm6dsx_fifo_setup(struct st_lsm6dsx_hw *hw)
->  		if (!hw->iio_devs[i])
->  			continue;
-> =20
-> -		ret =3D devm_iio_kfifo_buffer_setup(hw->dev, hw->iio_devs[i],
-> -						  &st_lsm6dsx_buffer_ops);
-> +		ret =3D devm_iio_kfifo_buffer_setup_ext(hw->dev, hw->iio_devs[i],
-> +						      &st_lsm6dsx_buffer_ops,
-> +						      st_lsm6dsx_buffer_attrs);
->  		if (ret)
->  			return ret;
->  	}
-> diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c b/drivers/iio/i=
-mu/st_lsm6dsx/st_lsm6dsx_core.c
-> index c65ad49829e7..e4922578329e 100644
-> --- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
-> +++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_core.c
-> @@ -1847,10 +1847,13 @@ static int st_lsm6dsx_write_raw(struct iio_dev *i=
-io_dev,
-> =20
->  		val =3D val * 1000 + val2 / 1000;
->  		val =3D st_lsm6dsx_check_odr(sensor, val, &data);
-> -		if (val < 0)
-> +		if (val < 0) {
->  			err =3D val;
-> -		else
-> +		} else {
->  			sensor->odr =3D val;
-> +			/* the batch data rate must not exceed the sensor ODR */
-> +			sensor->bdr =3D min_t(u32, sensor->bdr, sensor->odr);
-> +		}
->  		break;
->  	}
->  	default:
-> @@ -2383,7 +2386,7 @@ static struct iio_dev *st_lsm6dsx_alloc_iiodev(stru=
-ct st_lsm6dsx_hw *hw,
->  	sensor =3D iio_priv(iio_dev);
->  	sensor->id =3D id;
->  	sensor->hw =3D hw;
-> -	sensor->odr =3D hw->settings->odr_table[id].odr_avl[0].milli_hz;
-> +	sensor->odr =3D sensor->bdr =3D hw->settings->odr_table[id].odr_avl[0].=
-milli_hz;
-
-please add a new line to set sensor->bdr here.
-
->  	sensor->gain =3D hw->settings->fs_table[id].fs_avl[0].gain;
->  	sensor->watermark =3D 1;
-> =20
-> diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_shub.c b/drivers/iio/i=
-mu/st_lsm6dsx/st_lsm6dsx_shub.c
-> index 3c5e65dc0f97..01d73002e888 100644
-> --- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_shub.c
-> +++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_shub.c
-> @@ -639,7 +639,7 @@ __st_lsm6dsx_shub_write_raw(struct iio_dev *iio_dev,
->  			return odr;
-> =20
->  		sensor->ext_info.slv_odr =3D val;
-> -		sensor->odr =3D odr;
-> +		sensor->odr =3D sensor->bdr =3D odr;
->  		return 0;
->  	}
->  	case IIO_CHAN_INFO_SCALE:
-> @@ -745,7 +745,7 @@ st_lsm6dsx_shub_alloc_iiodev(struct st_lsm6dsx_hw *hw,
->  	sensor =3D iio_priv(iio_dev);
->  	sensor->id =3D id;
->  	sensor->hw =3D hw;
-> -	sensor->odr =3D hw->settings->odr_table[ref_id].odr_avl[0].milli_hz;
-> +	sensor->odr =3D sensor->bdr =3D hw->settings->odr_table[ref_id].odr_avl=
-[0].milli_hz;
-
-please add a new line to set sensor->bdr here.
-
->  	sensor->ext_info.slv_odr =3D info->odr_table.odr_avl[0].milli_hz;
->  	sensor->gain =3D info->fs_table.fs_avl[0].gain;
->  	sensor->ext_info.settings =3D info;
-> --=20
-> 2.39.5
->=20
-
---PZTB0aTF+sLXKEc+
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCaOg3dQAKCRA6cBh0uS2t
-rGGLAP0Qeyu28ZGU5aO8JUksXcrWeoIwL5c1BmPWw8Jmufk7xwEA5iWbjGgmKhSK
-giI13aHeE8LEl1tiUpawGoQ3Cs8B2A4=
-=G2P/
------END PGP SIGNATURE-----
-
---PZTB0aTF+sLXKEc+--
+> +	struct sigaction sig_sa = {
+> +		.sa_handler = report_unexpected_signal,
+> +	};
+> +
+>  	/* Tell stdout not to buffer its content. */
+>  	setbuf(stdout, NULL);
+>
+> +	sigaction(SIGBUS, &sig_sa, NULL);
+> +	sigaction(SIGSEGV, &sig_sa, NULL);
+> +	sigaction(SIGILL, &sig_sa, NULL);
+> +	sigaction(SIGFPE, &sig_sa, NULL);
+> +
+>  	guest_random_seed = last_guest_seed = random();
+>  	pr_info("Random seed: 0x%x\n", guest_random_seed);
+>
+> --
+> 2.51.0.710.ga91ca5db03-goog
 
