@@ -1,91 +1,150 @@
-Return-Path: <linux-kernel+bounces-847422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2599BCACAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 22:21:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 14373BCACB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 22:21:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8ECDE48251A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 20:21:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 363D648296A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 20:21:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB78270EA5;
-	Thu,  9 Oct 2025 20:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119EA26F2B8;
+	Thu,  9 Oct 2025 20:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="orz/AtsG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LWlH9ArZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83549212549;
-	Thu,  9 Oct 2025 20:21:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E7826E710;
+	Thu,  9 Oct 2025 20:21:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760041261; cv=none; b=QijXRbR1cVEnmBs69t0WOqcXvShuTh3JrxIBd4NUqM0b2j4N0ARR5VsUikrWyRF9Et0nXI5d1lhZbogvyrMDAUI6IQrxsVsIlveyfwsOmX3W5w4r/Tuh2PqpeyrST2NC4L/JSgjhwlvj6c+YtuwIw527+VpZDCwpy35Po/X44NM=
+	t=1760041293; cv=none; b=sR+Nj5ep42TE6MQgjwqsqUUb1Q2l8B/HGRG03ZpwZPNLcx57O4TvEVnEK/lYRopan8Ri0opyC7rvRgUMu8PkVubaRonsGJYnJKroDXXH/SR+uP3LSvNg0l7j6RTzbpFFRBF1zQvorhjfXGi/njdnE5ycch7+K0QrBwYB5RHQ6e8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760041261; c=relaxed/simple;
-	bh=aGXv2Pk1gOljG1ekFh588VDqSTo56s2dZdKfJW6cPzQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k3xrPPuU8a7sHJVXnstZoGvMfTgEg0e4CHWXtVyBF4JUZ500JOZN/k4Y1cljAFvMA51LcC614wp3PpWh1hB3XDx5FxMJtbAjD+5bZa1pQuvfzkyerB7pLOgStxpEDycNKMUM1w/rBo9rUTEaYculbITYa5zrHhmMp130lzApU10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=orz/AtsG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20D65C4CEE7;
-	Thu,  9 Oct 2025 20:21:01 +0000 (UTC)
+	s=arc-20240116; t=1760041293; c=relaxed/simple;
+	bh=VN/Ui4smGgyWuuJXBUqmus27UIibImS/ZHmC1ccNmD8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OXBen3K8TsKAf4IemOXUYZnnFxH83lhYY8OhhcBp4qR2ejzl2ie71bckONtFFM80mpMHWCZlY0/oBbs4xlyZk2kX/BJdMD/g8WUJvV4MKL8Hv1ApzLgBvFZQwR2UOQJm/WHlaSD8mg5WMLs/MdiP7QnrbmskeB4W1he5QGrhcm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LWlH9ArZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F39EAC113D0;
+	Thu,  9 Oct 2025 20:21:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760041261;
-	bh=aGXv2Pk1gOljG1ekFh588VDqSTo56s2dZdKfJW6cPzQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=orz/AtsGM6gEQLKwHfX7n60y9MSGapSc45ur62ZtGrZGEq9iATmok6hqinw33rPER
-	 KzCFSX8p0uMsP6AP4XaT6JmfxdOvwNLAC+18qsJXqAKr0jLU4I4J8rWa7zQ2OuFVWS
-	 N9MxhXC+aHPI01Zsy47EyXyIecCP7FVvYybMPPdYvnhrs5a8A7YPL16KgVXVJ9ogDP
-	 ltM1yqLBKLoDbvHJc18WhUg2HiU3PsnlY6cT0xnqs1wg8RRJQkDJKKO584KCJIB5xd
-	 PwrBS/sg0ylF2vrPxuNQ/vNretFKYnjN+YebTr5aaeuW3bUratIC4DmQPPATNrxO3C
-	 /TD7E8U9212VA==
-Date: Thu, 9 Oct 2025 15:21:00 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Kishon Vijay Abraham I <kishon@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Vinod Koul <vkoul@kernel.org>, linux-phy@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH] dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp: Add
- mode-switch
-Message-ID: <176004125928.3290331.16433221750974859532.robh@kernel.org>
-References: <20251006-topic-sm8x50-qmp-combo-allow-mode-switch-v1-1-3d79e7ea6824@linaro.org>
+	s=k20201202; t=1760041292;
+	bh=VN/Ui4smGgyWuuJXBUqmus27UIibImS/ZHmC1ccNmD8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LWlH9ArZh5+H8Vx79p2l6eTxzlU/7fIvGE2xjMKuHIWWOttwaFxsJYP62KJhnZS1M
+	 1dBJXKctq0NMux7MNWGb8f318nBbtv6aevXd1Gj7NPXtKpGbs2axxV6i5C5Qj1HRMs
+	 e6ycqVCT3V7lVrlHek7PIZWxMg3Lt5ywvFA8hqyvJk/qGqQwwFc5dybTB1HqZL5jTS
+	 /3gTCuW5i4v8Tt13miJdZwWhV+32K1EnuMOMMoMFDPljJVrGcCSyb3pZgikM4BNE3H
+	 jSN0wTaWDCPqurCljxJGkJAu7puX/ezW27pNnHChQhD3njvaowr5RJHmPfKFTCttPR
+	 9CK3AQuGFsAiQ==
+Message-ID: <bb362d12-b942-48f3-8414-e859cebb8862@kernel.org>
+Date: Fri, 10 Oct 2025 05:21:30 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251006-topic-sm8x50-qmp-combo-allow-mode-switch-v1-1-3d79e7ea6824@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] block/mq-deadline: adjust the timeout period of the
+ per_prio->dispatch
+To: Bart Van Assche <bvanassche@acm.org>, chengkaitao <pilgrimtao@gmail.com>,
+ axboe@kernel.dk
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Chengkaitao <chengkaitao@kylinos.cn>
+References: <20251009155253.14611-1-pilgrimtao@gmail.com>
+ <db87a85d-e433-4daf-97c7-d5156849db0f@acm.org>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <db87a85d-e433-4daf-97c7-d5156849db0f@acm.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 2025/10/10 1:50, Bart Van Assche wrote:
+> On 10/9/25 8:52 AM, chengkaitao wrote:
+>> On the other hand, the Commit (725f22a1477c) merges the effects of
+>> fifo_expire and prio_aging_expire on the same code behavior, creating
+>> redundant interactions. To address this, our new patch introduces
+>> numerical compensation for {dd->fifo_expire[data_dir]} when adding
+>> requests to dispatch lists. To maintain original logic as much as
+>> possible while enhancing dispatch list priority, we additionally
+>> subtract {dd->prio_aging_expire / 2} from the fifo_time, with default
+>> values, {dd->prio_aging_expire / 2} equals {dd->fifo_expire[DD_WRITE]}.
+> 
+> No assumptions should be made about the relative values of
+> dd->prio_aging_expire and dd->fifo_expire[DD_WRITE] since these values
+> can be modified via sysfs.
+> 
+>> diff --git a/block/mq-deadline.c b/block/mq-deadline.c
+>> index 3e741d33142d..fedc66187150 100644
+>> --- a/block/mq-deadline.c
+>> +++ b/block/mq-deadline.c
+>> @@ -659,7 +659,8 @@ static void dd_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
+>>   
+>>   	if (flags & BLK_MQ_INSERT_AT_HEAD) {
+>>   		list_add(&rq->queuelist, &per_prio->dispatch);
+>> -		rq->fifo_time = jiffies;
+>> +		rq->fifo_time = jiffies + dd->fifo_expire[data_dir]
+>> +				- dd->prio_aging_expire / 2;
+>>   	} else {
+>>   		deadline_add_rq_rb(per_prio, rq);
+> 
+> Thanks for having added a detailed patch description. Please remove
+> "/ 2" from the above patch to make sure that BLK_MQ_INSERT_AT_HEAD
+> requests are submitted to the block driver before other requests. This
+> is important if a request is requeued. Additionally, a comment should be
+> added above the modified line of code that explains the purpose of the
+> calculation. How about this untested patch?
+> 
+> diff --git a/block/mq-deadline.c b/block/mq-deadline.c
+> index 3e741d33142d..566646591ddd 100644
+> --- a/block/mq-deadline.c
+> +++ b/block/mq-deadline.c
+> @@ -659,7 +659,14 @@ static void dd_insert_request(struct blk_mq_hw_ctx 
+> *hctx, struct request *rq,
+> 
+>   	if (flags & BLK_MQ_INSERT_AT_HEAD) {
+>   		list_add(&rq->queuelist, &per_prio->dispatch);
+> -		rq->fifo_time = jiffies;
+> +		/*
+> +		 * started_after() subtracts dd->fifo_expire[data_dir] from
+> +		 * rq->fifo_time. Hence, add it here. Subtract
+> +		 * dd->prio_aging_expire to ensure that AT HEAD requests are
+> +		 * submitted before higher priority requests.
+> +		 */
+> +		rq->fifo_time = jiffies + dd->fifo_expire[data_dir] -
+> +				dd->prio_aging_expire;
+
+There is still something bothering me with this: the request is added to the
+dispatch list, and *NOT* to the fifo/sort list. So this should be considered as
+a scheduling decision in itself, and __dd_dispatch_request() reflects that as
+the first thing it does is pick the requests that are in the dispatch list
+already. However, __dd_dispatch_request() also has the check:
+
+		if (started_after(dd, rq, latest_start))
+                        return NULL;
+
+for requests that are already in the dispatch list. That is what does not make
+sense to me. Why ? There is no comment describing this. And I do not understand
+why we should bother with any time for requests that are in the dispatch list
+already. These should be sent to the drive first, always.
+
+This patch seems to be fixing a problem that is introduced by the above check.
+But why this check ? What am I missing here ?
+
+>   	} else {
+>   		deadline_add_rq_rb(per_prio, rq);
+> 
+> Thanks,
+> 
+> Bart.
 
 
-On Mon, 06 Oct 2025 15:51:53 +0200, Neil Armstrong wrote:
-> The QMP USB3/DP Combo PHY can work in 3 modes:
-> - DisplayPort Only
-> - USB3 Only
-> - USB3 + DisplayPort Combo mode
-> 
-> In order to switch between those modes, the PHY needs to receive
-> Type-C events, allow marking to the phy with the mode-switch
-> property in order to allow the PHY to receive Type-C events.
-> 
-> Referencing usb-switch.yaml lookkied like as a simpler way to allow
-> the mode-switch property instead of duplicating the property
-> definition but it causes some issues with the ports definitions.
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
-> Depends on:
-> [1] https://lore.kernel.org/all/20251006-topic-sm8x50-fix-qmp-usb43dp-usb-switch-v2-1-3249e511013b@linaro.org/
-> ---
->  .../devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml       | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
-
+-- 
+Damien Le Moal
+Western Digital Research
 
