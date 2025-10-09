@@ -1,124 +1,144 @@
-Return-Path: <linux-kernel+bounces-846135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0B9DBC71FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 03:39:11 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EAB3BC7207
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 03:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5C2119E4A1B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 01:39:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 14D064E5676
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 01:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9AE41917ED;
-	Thu,  9 Oct 2025 01:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681CE1581EE;
+	Thu,  9 Oct 2025 01:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="K48ecD6u"
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.52])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kOEckLtO"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3CDC154BE2;
-	Thu,  9 Oct 2025 01:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FAA4A06
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 01:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759973943; cv=none; b=jKeZd4PxKGSh/1u8N996vm8wGuf7MtldTG7oZVnBuiBu4MQVo3GGWVsey8zvOafxPu7Bjkjg2zRsLeQLsgdr75DDntlLDYYaM4KBusaQ77wPmw4nk0fzZpYtMv6EPO1XKnJhTVkHp7KXpRPlvWpvuFaY90z3bL6aRzGmFuUY0e4=
+	t=1759974569; cv=none; b=YLZhhnXmVsWUDBTVPSHJTvDU2U8cP+V6XTidaqBGq28+e4KTDD0M4pX7xi2lCoXyXs0vdk3KL3gBSS1MDPuDbZmqVjFi2toU58+aP940oEa0oN9HQ7ajPLvTgkAyYAdvS96pkAd/8Q9S3/G39IIutSrxX9AqT33JMYT57Kfcr88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759973943; c=relaxed/simple;
-	bh=apOQAZW6AWoaMslvlgsDKl/iISVpw2hHZmBdcUhzQsI=;
+	s=arc-20240116; t=1759974569; c=relaxed/simple;
+	bh=lDCRAYq2GAvTSXdImxsuJg6Oxwc90jpMIyIeWEWwW1c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HaIZe5DqN1ysG8CtLfFwHF+ZONTUzKl4+Yi28b6i9K44SZxx4Sa0/Mejr6l+JDS7LA819GoRPGhbNMOK1vXPAJUxPBJvZ9VL3KUamn/Ra2SXDb2AwqP7BVU2D+iuVcNVf9APQ2Ag/jOCHyqlThNMBX8VVLuzq4jRqJx2kZkPJFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=K48ecD6u; arc=none smtp.client-ip=43.163.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1759973931;
-	bh=tjd5N9A70oCjhg5VLw+85IbzLuTB3dBZOhfwR1b228Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=K48ecD6uLVMldpdkxPx2fqQelrOA1q333YT00i1oQXbsRletydUXFCHlhZx+oSdTn
-	 teKkX08s4bl3Jo+ty+GzVnFkbG2B+diXQSkIIRV5QBFnKdBcG9hz5axJCL3Cnb2loh
-	 2hBLz7AwZEqZ2fuT/LYG+8QX2wr/0OwaqqsSQd0o=
-Received: from [10.56.52.9] ([39.156.73.10])
-	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
-	id 9B0016B4; Thu, 09 Oct 2025 09:38:48 +0800
-X-QQ-mid: xmsmtpt1759973928tgk1z43m2
-Message-ID: <tencent_339E2EE755D05F67478310C70DD6843AB209@qq.com>
-X-QQ-XMAILINFO: No7DFzN00JnRbjY0trYmAOGRc/Y1F6YVrc2aqn/UnjYvdTuaEA+Beo5vlbPBCg
-	 S94YFJ8tT2hdcmZWF+PF8CJLnVEgUaEy9xO7MN/0zGsWJ2AKzEJyB2yIppeCfY3XItCtlhJnv3oF
-	 jJnGPDSy6WlJkHx2Cb9TFRI1HhpaxlXWMs6B828RqQlC+TCsgeEowCraE3SvPM/xsZ4hpWldhr70
-	 uKHCwY5Wjbks2YZk8FzM7u83ITbWydy2jUF14zZlOqfRq2+gXnRguCDkIQqGNZyn3lE8NXifZF6x
-	 LPZ99QqQShaFAMUPRFYZ89ykJpxeFH7CrdLUuLBDuaE3fhwMHmcGDqgCqCOchYvLsQdbV6jGwTYR
-	 xSrDF+3hz03inf50G/tYuOzwGBSA39CP9M5W//o7cGueAIKFsUKwAdb4bfbphCuLKXyzfNChqeE7
-	 v5WWgOP1BBWrsqBrQM3B9q0oQSkkGxLtImKpMDLJxPsEYFS/BG6ki6rawsuG5u9LhHrFVRok7GEW
-	 YLbXB2wIVBjmY499mNAkwWYVfep02CT43U1FCCvV+svomxQanwqnAUuVBy2uDqJIHCQjBFbhx+jv
-	 DzhRF7qJnCUziNeaTD16HJMeHOJDXX/ix0x39HhXAuJe4jGuzlyCgjRqOzajekgToyHuK2sdnFAV
-	 PMKqdcrW6k4QRHiNeuB8hu5ymZhdRGBOl/GjVI5tMQZteggFaueLk+EnJdKKtSYrp4lYI0h9hYZU
-	 6mOQmbuSygHAzCvba5ZiU6XJDQD/8C/t6uFrY9qFxX84vL9JgW60wJC6vhH0swaYMhoQfIhqGf5l
-	 RwEpBIFDECcSStJ7MxCW+OmnbIHZnxv9siPaJlY3uQoQrYnk01BTRgv0rsTYvQpqVpV9xW4QYVBA
-	 NPBUJNfSL5GTnFIaY+hAy/7V6q2uhzCqkN0plZDnuSqmMRbmleQ5RXan5sU7grzMMsdrFZFUt0E7
-	 Prl8a2YMR0eNRSbyaCOjsfjmfDnT7qJJeqHCDv+/vkJdLD/Sq3h5cyvWbaimLIRz65IhwmfmssKF
-	 3cTzYDpw==
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-OQ-MSGID: <88fc6ea7-157f-4bb8-b725-739b2be0409c@foxmail.com>
-Date: Thu, 9 Oct 2025 09:38:47 +0800
+	 In-Reply-To:Content-Type; b=ZrUzyOxPt54Qv275Eqh4gjv2RLHW7TXNgoRNARMu1Z3a29coS2OZicGhPIWBlUhWqPZI/szDkz0YZZYUUHGYGA4YW1qk3IZFvzdFumyeztX7y3HhDck9I3GhVxmavmBYKaXiWB8Af95BVT1N4JXqUfAUF5uIWxQmwRXt8NTVPJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kOEckLtO; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <2ddaaf80-f16d-44be-9032-974f7e501e36@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759974557;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gmbfo1v3pnUVofferszWtiV8RrDISxuLm2FSoyEqKmM=;
+	b=kOEckLtOeUsZQWf1SUasgVpDk7DgTsgPid27oYpunbvpT54dOsfvmrNhbfM4b9yPwfFKf2
+	ffL0R1SkMSQ1DAezJ60yzZiDpJ210td/RTCNjeNq0c1t/jnxRv+uuGzrGqOGlgDOjizX1H
+	ptlJVp+AMz3Oq+SkjxsEDD0F2sPWByA=
+Date: Thu, 9 Oct 2025 09:49:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v3 1/2] bpf: add bpf_strcasestr,bpf_strncasestr
- kfuncs
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Viktor Malik <vmalik@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
- Eduard <eddyz87@gmail.com>, Rong Tao <rongtao@cestc.cn>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
- "open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)"
- <bpf@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
- "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
-References: <cover.1759804822.git.rongtao@cestc.cn>
- <tencent_6E59062E4249590597452A06AFCDA3098808@qq.com>
- <CAADnVQJFBR5ecewWdDhTqyXTMWH_QVEPCm2PXxV_3j1wa+tWMQ@mail.gmail.com>
+Subject: Re: [PATCH mm-new v3 3/3] mm/khugepaged: merge PTE scanning logic
+ into a new helper
 Content-Language: en-US
-From: Rong Tao <rtoax@foxmail.com>
-In-Reply-To: <CAADnVQJFBR5ecewWdDhTqyXTMWH_QVEPCm2PXxV_3j1wa+tWMQ@mail.gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: david@redhat.com, lorenzo.stoakes@oracle.com, ziy@nvidia.com,
+ baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, npache@redhat.com,
+ ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org,
+ ioworker0@gmail.com, richard.weiyang@gmail.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20251008043748.45554-1-lance.yang@linux.dev>
+ <20251008043748.45554-4-lance.yang@linux.dev>
+ <20251008180744.008424134fbc29e9616899ad@linux-foundation.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <20251008180744.008424134fbc29e9616899ad@linux-foundation.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
 
-On 10/7/25 12:08, Alexei Starovoitov wrote:
-> On Mon, Oct 6, 2025 at 8:00 PM Rong Tao <rtoax@foxmail.com> wrote:
->> +/**
->> + * bpf_strnstr - Find the first substring in a length-limited string, ignoring
->> + *               the case of the characters
->> + * @s1__ign: The string to be searched
->> + * @s2__ign: The string to search for
->> + * @len: the maximum number of characters to search
->> + *
->> + * Return:
->> + * * >=0      - Index of the first character of the first occurrence of @s2__ign
->> + *              within the first @len characters of @s1__ign
->> + * * %-ENOENT - @s2__ign not found in the first @len characters of @s1__ign
->> + * * %-EFAULT - Cannot read one of the strings
->> + * * %-E2BIG  - One of the strings is too large
->> + * * %-ERANGE - One of the strings is outside of kernel address space
->> + */
->> +__bpf_kfunc int bpf_strncasestr(const char *s1__ign, const char *s2__ign,
->> +                                                               size_t len)
-> See AI review for the above part.
 
+On 2025/10/9 09:07, Andrew Morton wrote:
+> On Wed,  8 Oct 2025 12:37:48 +0800 Lance Yang <lance.yang@linux.dev> wrote:
+> 
+>> +		if (!cc->is_khugepaged ||
+>> +		    *unmapped <= khugepaged_max_ptes_swap) {
+>> +			/*
+>> +			 * Always be strict with uffd-wp enabled swap
+>> +			 * entries. Please see comment below for
+>> +			 * pte_uffd_wp().
+>> +			 */
+>> +			if (pte_swp_uffd_wp(pte)) {
+>> +				*scan_result = SCAN_PTE_UFFD_WP;
+>> +				return PTE_CHECK_FAIL;
+>> +			}
+>> +			return PTE_CHECK_CONTINUE;
+>> +		} else {
+>> +			*scan_result = SCAN_EXCEED_SWAP_PTE;
+>> +			count_vm_event(THP_SCAN_EXCEED_SWAP_PTE);
+>> +			return PTE_CHECK_FAIL;
+>> +		}
+> 
+> I'm inclined to agree with checkpatch here.
 
-I just submit the v4, please review, thanks :)
+Thanks!
 
-Rong Tao
+> 
+> WARNING: else is not generally useful after a break or return
+> #81: FILE: mm/khugepaged.c:574:
+> +			return PTE_CHECK_CONTINUE;
+> +		} else {
+> 
+> did you see this and disagree or did you forget to run checkpatch?
 
+Yes, I saw the warning. I kept the original style because this is just a 
+code move ...
 
->
-> pw-bot: cr
+> 
+> --- a/mm/khugepaged.c~mm-khugepaged-merge-pte-scanning-logic-into-a-new-helper-checkpatch-fixes
+> +++ a/mm/khugepaged.c
+> @@ -571,11 +571,10 @@ static inline int thp_collapse_check_pte
+>   		    (!cc->is_khugepaged ||
+>   		     *none_or_zero <= khugepaged_max_ptes_none)) {
+>   			return PTE_CHECK_CONTINUE;
+> -		} else {
+> -			*scan_result = SCAN_EXCEED_NONE_PTE;
+> -			count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
+> -			return PTE_CHECK_FAIL;
+>   		}
+> +		*scan_result = SCAN_EXCEED_NONE_PTE;
+> +		count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
+> +		return PTE_CHECK_FAIL;
+>   	} else if (!pte_present(pte)) {
+>   		if (!unmapped) {
+>   			*scan_result = SCAN_PTE_NON_PRESENT;
+> @@ -600,11 +599,10 @@ static inline int thp_collapse_check_pte
+>   				return PTE_CHECK_FAIL;
+>   			}
+>   			return PTE_CHECK_CONTINUE;
+> -		} else {
+> -			*scan_result = SCAN_EXCEED_SWAP_PTE;
+> -			count_vm_event(THP_SCAN_EXCEED_SWAP_PTE);
+> -			return PTE_CHECK_FAIL;
+>   		}
+> +		*scan_result = SCAN_EXCEED_SWAP_PTE;
+> +		count_vm_event(THP_SCAN_EXCEED_SWAP_PTE);
+> +		return PTE_CHECK_FAIL;
+>   	} else if (pte_uffd_wp(pte)) {
+>   		/*
+>   		 * Don't collapse the page if any of the small PTEs are
+> _
+> 
 
 
