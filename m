@@ -1,54 +1,47 @@
-Return-Path: <linux-kernel+bounces-846445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C013BC807F
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:24:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62C5BBC808E
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:24:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECC77422798
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:22:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A5163B2F0D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14222D1F61;
-	Thu,  9 Oct 2025 08:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF782D12EB;
+	Thu,  9 Oct 2025 08:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="fgFtgjAy"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z4TZyFPY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354AD2D0C70;
-	Thu,  9 Oct 2025 08:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A23C2737F3;
+	Thu,  9 Oct 2025 08:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759998153; cv=none; b=NIIweqlf0V925krSCsKgFFTY22BQAQ7c2RwmG1QKEzEAuadNbCFGEcPPjHnhLuX37aEmpWUQtHzhyrRyvsOnbvTCsftBzhsaIxLkQ0RxmHaOKaE6vBhly45yX202VdivZg7lxWwgPMH1WmVmkIolD5EnTRw5Zdr3pM4QlNy5ZmA=
+	t=1759998279; cv=none; b=ZRafVQWJAr1IG6T3B3XWnA0334lheM/3HPAxkyUWnB7Q6RxJctMvdDUG1ne3XBQNrc84yoIK4KhlN6hp1k3tPB5fdrVOzcfvdhd4xm1gLgrf2U1KDAWt8CvS3+sy+a2mSGTI+LnToz0p5xBt5upFqN65R1AdL4hHoWyzBeFSzMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759998153; c=relaxed/simple;
-	bh=RwXOzAEExmYYK2xWJ/GpwNUlwCJM7Pp4R1DD5Pw3L1c=;
+	s=arc-20240116; t=1759998279; c=relaxed/simple;
+	bh=IR/gJwZhczBTMD2l2Qm09Q1IiAI6onVSNlncXOq8wqs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IKUKBuSMLuMjmRz7V9eM+0GVF1Clr4dFyhkc8ZrtyqeyPA3K822M3PCvQ2DCwgqcIWFDBQekSY8CnVCC2NvmIrBlD4sl06tRaHG16Kk+3H3Y6UBck863srqaUf40jJibeuYzIn2c27i2kVQlwfRrdaCmq4nylyVP4uwZvAyYWiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=fgFtgjAy; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1759998149;
-	bh=RwXOzAEExmYYK2xWJ/GpwNUlwCJM7Pp4R1DD5Pw3L1c=;
+	 In-Reply-To:Content-Type; b=f6nrqayjmLqtvnDFYeET3VvyZUDZvvMtYuGNv6a2ctCN5JvsWzjSxz5fbb2gf7XUFlZjNkyC4PMdWINp0frtNjO06afBZZ2ugflpI5pJlIGsZk+aoQpboo4xBjxBW9SGb6Vi/4UQchkCCSx+uJ2o895IJ8cDPAWtQjL7avN/XjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z4TZyFPY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4D89C4CEF7;
+	Thu,  9 Oct 2025 08:24:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759998278;
+	bh=IR/gJwZhczBTMD2l2Qm09Q1IiAI6onVSNlncXOq8wqs=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fgFtgjAyu6QL1QdsnIAhHguOzXtqSBdlRXBxbEegyAgyTRV3Zi9Ww9p0/RboDVFs5
-	 ObdmYZ+uawvyAuTKsB4HGLZf8P+rYD5XZNAs+HdJu8TZe0Rb/WyUivwmsOcoRvZtJf
-	 in2KU9oWjEhG7RrqCN4Uubl9vB9TVSQKOl38kQ7NvcEq628ziYoU8BoZygCtdiYacz
-	 RAKrdXNrG7naXh+fULsQMIkrTLUGzUHh0WSloSSALUwSnsS5AaIh0bOxYmxgE8huVH
-	 leaLQVfdvgDWpR3IgRB6Ec1aYrtvAcDplcFQDpF7pVwAO/eE5gM7WHnt+Lszo5ZtHe
-	 fZ6glFgpx1wNA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C660817E1060;
-	Thu,  9 Oct 2025 10:22:28 +0200 (CEST)
-Message-ID: <6d3e4b81-b8fc-45b3-a12f-b8492d8dc892@collabora.com>
-Date: Thu, 9 Oct 2025 10:22:28 +0200
+	b=Z4TZyFPYpVzIsWgwaUODnzzBqe0w78fJIS9+twW5wrhBcgfdGeX1F6UZQwu4dNAR9
+	 HGsUksMsMxUw/CONkNyTMI20N/DgR3LkS+RG0yg0rNB5PpbPOp8HY9rY2M+N0pziMp
+	 9VYvFXkV/tgubMIzRFpd2XPM21dIK7375E2XOAh3766zfbtzVml4EOhYR7GloIHkSJ
+	 14N1LpUF0n03eetKyI18wjt9VO4L5Nm5KdpQc6HbqJQvwhLUe8FTL40U3/7Ut68r8Z
+	 agsEov6zAM1NcS1hrJ1QSHPFOeFQY1sbhEN+vdd9y3fFjdb9tsRCuqkw/jEW+2m89m
+	 FsgdAtFkCwGIg==
+Message-ID: <7184d170-0e96-4aff-83c1-8ab2ada4569e@kernel.org>
+Date: Thu, 9 Oct 2025 17:24:28 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,126 +49,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/5] clk: mediatek: Add mfg_eb as parent to mt8196
- mfgpll clocks
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Dong Aisheng <aisheng.dong@nxp.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Yassine Oudjana <y.oudjana@protonmail.com>,
- Laura Nao <laura.nao@collabora.com>,
- =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- Chia-I Wu <olvaffe@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>
-Cc: kernel@collabora.com, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, Stephen Boyd <sboyd@codeaurora.org>
-References: <20251008-mtk-pll-rpm-v2-0-170ed0698560@collabora.com>
- <20251008-mtk-pll-rpm-v2-5-170ed0698560@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH 4/5] arm64: dts: qcom: qcs615: add ufs and emmc inline
+ crypto engine nodes
+To: Abhinaba Rakshit <abhinaba.rakshit@oss.qualcomm.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>
+Cc: linux-arm-msm@vger.kernel.org, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-crypto@vger.kernel.org
+References: <20251009-add-separate-ice-ufs-and-emmc-device-nodes-for-qcs615-platform-v1-0-2a34d8d03c72@oss.qualcomm.com>
+ <20251009-add-separate-ice-ufs-and-emmc-device-nodes-for-qcs615-platform-v1-4-2a34d8d03c72@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-In-Reply-To: <20251008-mtk-pll-rpm-v2-5-170ed0698560@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251009-add-separate-ice-ufs-and-emmc-device-nodes-for-qcs615-platform-v1-4-2a34d8d03c72@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Il 08/10/25 18:05, Nicolas Frattaroli ha scritto:
-> All the MFGPLL require MFG_EB to be on for any operation on them, and
-> they only tick when MFG_EB is on as well, therefore making this a
-> parent-child relationship.
+On 09/10/2025 15:18, Abhinaba Rakshit wrote:
+> Add separate ICE nodes for eMMC and UFS for QCS615 platform.
 > 
-> This dependency wasn't clear during the initial upstreaming of these
-> clock controllers, as it only made itself known when I could observe
-> the effects of the clock by bringing up a different piece of hardware.
-> 
-> Add a new PLL_PARENT_EN flag to mediatek's clk-pll.h, and check for it
-> when initialising the pll to then translate it into the actual
-> CLK_OPS_PARENT_ENABLE flag.
-> 
-> Then add the mfg_eb parent to the mfgpll clocks, and set the new
-> PLL_PARENT_EN flag.
-> 
-> Fixes: 03dc02f8c7dc ("clk: mediatek: Add MT8196 mfg clock support")
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> Signed-off-by: Abhinaba Rakshit <abhinaba.rakshit@oss.qualcomm.com>
 > ---
->   drivers/clk/mediatek/clk-mt8196-mfg.c | 3 ++-
->   drivers/clk/mediatek/clk-pll.c        | 3 +++
->   drivers/clk/mediatek/clk-pll.h        | 1 +
->   3 files changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/mediatek/clk-mt8196-mfg.c b/drivers/clk/mediatek/clk-mt8196-mfg.c
-> index 8e09c0f7b7548f8e286671cea2dac64530b8ce47..de6f426f148184e1bb95b5cfca590b1763fc0573 100644
-> --- a/drivers/clk/mediatek/clk-mt8196-mfg.c
-> +++ b/drivers/clk/mediatek/clk-mt8196-mfg.c
-> @@ -45,7 +45,7 @@
->   		.en_reg = _en_reg,				\
->   		.en_mask = _en_mask,				\
->   		.pll_en_bit = _pll_en_bit,			\
-> -		.flags = _flags,				\
-> +		.flags = (_flags) | PLL_PARENT_EN,		\
-
-In the event that we may want, one day, maybe commonize the PLL macro to all of the
-PLL drivers, can you please add the PLL_PARENT_EN to the three clocks instead of
-doing it in the macro itself?
-
-static const struct mtk_pll_data mfg_ao_plls[] = {
-	PLL(CLK_MFG_AO_MFGPLL, "mfgpll", MFGPLL_CON0, MFGPLL_CON0, 0, 0,
-	    PLL_PARENT_EN, BIT(0), MFGPLL_CON1, 24, 0, 0, 0,
-	    MFGPLL_CON1, 0, 22),
-};
-
-static const struct mtk_pll_data mfgsc0_ao_plls[] = {
-	PLL(CLK_MFGSC0_AO_MFGPLL_SC0, "mfgpll-sc0", MFGPLL_SC0_CON0,
-	    MFGPLL_SC0_CON0, 0, 0, PLL_PARENT_EN, BIT(0),
-	    MFGPLL_SC0_CON1, 24, 0, 0, 0, MFGPLL_SC0_CON1, 0, 22),
-};
-
-static const struct mtk_pll_data mfgsc1_ao_plls[] = {
-	PLL(CLK_MFGSC1_AO_MFGPLL_SC1, "mfgpll-sc1", MFGPLL_SC1_CON0,
-	    MFGPLL_SC1_CON0, 0, 0, PLL_PARENT_EN, BIT(0),
-	    MFGPLL_SC1_CON1, 24, 0, 0, 0, MFGPLL_SC1_CON1, 0, 22),
-};
+>  arch/arm64/boot/dts/qcom/sm6150.dtsi | 51 +++++++++++++++++++++---------------
+>  1 file changed, 30 insertions(+), 21 deletions(-)
 
 
-After which,
+This is non-bisectable - breaks ICE on users.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
->   		.rst_bar_mask = _rst_bar_mask,			\
->   		.fmax = MT8196_PLL_FMAX,			\
->   		.fmin = MT8196_PLL_FMIN,			\
-> @@ -58,6 +58,7 @@
->   		.pcw_shift = _pcw_shift,			\
->   		.pcwbits = _pcwbits,				\
->   		.pcwibits = MT8196_INTEGER_BITS,		\
-> +		.parent_name = "mfg_eb",			\
->   	}
->   
->   static const struct mtk_pll_data mfg_ao_plls[] = {
-> diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
-> index c4f9c06e5133dbc5902f261353c197fbde95e54d..0f3759fcd9d0228c23f4916d041d17b731a6c838 100644
-> --- a/drivers/clk/mediatek/clk-pll.c
-> +++ b/drivers/clk/mediatek/clk-pll.c
-> @@ -359,6 +359,9 @@ struct clk_hw *mtk_clk_register_pll_ops(struct mtk_clk_pll *pll,
->   
->   	init.name = data->name;
->   	init.flags = (data->flags & PLL_AO) ? CLK_IS_CRITICAL : 0;
-> +	if (data->flags & PLL_PARENT_EN)
-> +		init.flags |= CLK_OPS_PARENT_ENABLE;
-> +
->   	init.ops = pll_ops;
->   	if (data->parent_name)
->   		init.parent_names = &data->parent_name;
-> diff --git a/drivers/clk/mediatek/clk-pll.h b/drivers/clk/mediatek/clk-pll.h
-> index 0f2a1d19eea78b7390b221af47016eb9897f3596..492cad8ff80ba31a78a96085285cb938e9b978e9 100644
-> --- a/drivers/clk/mediatek/clk-pll.h
-> +++ b/drivers/clk/mediatek/clk-pll.h
-> @@ -21,6 +21,7 @@ struct mtk_pll_div_table {
->   
->   #define HAVE_RST_BAR	BIT(0)
->   #define PLL_AO		BIT(1)
-> +#define PLL_PARENT_EN	BIT(2)
->   #define POSTDIV_MASK	GENMASK(2, 0)
->   
->   struct mtk_pll_data {
-> 
-
+Best regards,
+Krzysztof
 
