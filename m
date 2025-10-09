@@ -1,112 +1,99 @@
-Return-Path: <linux-kernel+bounces-847534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FAABBCB202
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 00:39:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C8AABCB205
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 00:40:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4B71D4E5A29
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 22:39:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FC943A9312
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 22:40:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E27A286D45;
-	Thu,  9 Oct 2025 22:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83651286D45;
+	Thu,  9 Oct 2025 22:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nTG94R/B"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UaJv1RVS"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838C9286883
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 22:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1F7283CB0
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 22:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760049545; cv=none; b=pMxC/wv4osIvQJsF+epJcabFgn6ixakbh177VwKOhgP9pgfncgVTkMPKpjyfUlxKTkYpgIOwh0j5zIVCezR3etgkweHzEu0o4b4YJbQ8eakmM8xSb/8YmEu4p9te4d+QiCj9bYR4qfdGpzopsqzFUrD3wu/P3MeWD/aeyLV0o8A=
+	t=1760049628; cv=none; b=RNMqSalMAYB4fR/4OAMzig3w/Y8Ekq45cbkQ2UvZDtj9hl1uTUvsum/ADwqurk0pXf5rVqXsAsDS9nVDncc4vtRNocGzVKuDcd807AhuiacG6+VovYtrlO/n4p2G5TzhHeFDQdBDNRJMGV4RKG85SlE6tVhmJ9m9N9PaCsdQWLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760049545; c=relaxed/simple;
-	bh=tjuWJC0yrFiqy88M5fh1ypslPt1a2+8jIXYY6rI0YfM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Lck/0cjQTuYQlri+1zUgcUFifJEgLpdkwLglqcK01+QBcsAbeK7togbER05j1lPdA6zY+oosr5UbKcm5x4RqIia8RXhs/vfTIAPqLxvL1NEByQnqrYKIuTXCUhkoESRdTYPF+Aog+fYtLrTtX/a/kOTwH96ekLh6ZbwGyMuceZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nTG94R/B; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760049543; x=1791585543;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=tjuWJC0yrFiqy88M5fh1ypslPt1a2+8jIXYY6rI0YfM=;
-  b=nTG94R/BCeGcPPrcCPswlfofmSlWSF9LnUWQXoC6Sauo7JD7jZT+A8Vv
-   0t6LddtYXUQqprEI8IjGDmdn10r72YSyIIJot5MYTcDEOF6YQV62DrORS
-   0ba7mvr/6fN3DE3Fp3pbpXulYp38InW2N7NSd40iEPYj+NSZiY6CVwByS
-   5mwuyU+AZhBWxzVe/xlDHaOiAR0VFdlVC7I72xBpiWfcAFn1H+jjAeayp
-   V3c/NZfpEolUCpfhWnv04H5TEaM/TP2VZ/TLQ9/EqCyzLUdW9UGRLrbHO
-   5s1NEdbZwnsVikcibzOVNHOw7dPKegbHIWOz4ZIfGqjmiGraAOFT3DxSF
-   Q==;
-X-CSE-ConnectionGUID: C28zoKMIRhuNnUeXa9NQBQ==
-X-CSE-MsgGUID: ougNt3rXQS2fZSwe+5TQNw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="62427694"
-X-IronPort-AV: E=Sophos;i="6.19,217,1754982000"; 
-   d="scan'208";a="62427694"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 15:39:02 -0700
-X-CSE-ConnectionGUID: V/spqdrbQZiY+ar5bHHv9Q==
-X-CSE-MsgGUID: 32aj+9Z9SQSIE1bG+Y58Fg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,217,1754982000"; 
-   d="scan'208";a="186093230"
-Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 09 Oct 2025 15:39:00 -0700
-Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v6zHm-0001ZQ-1P;
-	Thu, 09 Oct 2025 22:38:58 +0000
-Date: Fri, 10 Oct 2025 06:38:42 +0800
-From: kernel test robot <lkp@intel.com>
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Chia-I Wu <olvaffe@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Subject: drivers/mailbox/mtk-gpueb-mailbox.c:203:28: sparse: sparse: symbol
- 'mtk_gpueb_mbox_ops' was not declared. Should it be static?
-Message-ID: <202510100629.3nGvrhEU-lkp@intel.com>
+	s=arc-20240116; t=1760049628; c=relaxed/simple;
+	bh=M6e0lLo2ewKkd/kQqJgHVGQHIBCAr1kn4xh0t6SXKO8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=axMFwLCJq5R+dTOkwGHmz+MZ7njxln0R/VKFW9GcNqlnu7TX+iAikhX21lcCAqNXXzVc1p5Z740BavEiHP/FjWZwGj9zaoCqi8VB5wclaL58Z5PZyY5sBSh9C8+jqpuiDkuyguQRd9AqeFnvmYL6i4TljFscO70mzyyheOh8t8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UaJv1RVS; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-375eff817a3so15263481fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 15:40:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760049625; x=1760654425; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M6e0lLo2ewKkd/kQqJgHVGQHIBCAr1kn4xh0t6SXKO8=;
+        b=UaJv1RVS0X4Sp8PyxHJ8e3y/jhTiRr1tMcgFAW6xN1Ft4Dd3w8+0LotW61XHEUNW1+
+         xmMnXXESpGaqSxNrr7uC4Vul1olvCNgnqdWTrev5cE8YY61t/5Em2QkR5QVQxv9J3vNa
+         FP0NHvys7X87ASOoUfQ1yljAmz47Xv9D51iUF17aHrnJ4f70L6VKkzSgXTv6OxxK/dWD
+         IeJN9RTHkqR7KyPvd7mp7ZUMJdgHYgyoto4wfaxTZMANAzoU3riTMyqbcxGmKrY79kDd
+         2BgJm67a4++bMkLU3qfsjAgQk6fTp4j0rObBj0bVmvP8vsWY93sstdPcBy9eQJIrUJd1
+         OLvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760049625; x=1760654425;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=M6e0lLo2ewKkd/kQqJgHVGQHIBCAr1kn4xh0t6SXKO8=;
+        b=UGuwKLlVR90vyzsTfjjYY5UfqgZPsYm00w2lyfyQASiuFgRJWeQphh9SEH9zuQe6jN
+         O//9qqM3c1RjbeHiOFv1mUVKDOY2or4OYO+sLDq0j5ZaaSdmJu355AtoGCfl1Q/kjg3o
+         clHJZNL5yxRIN0ejrXI8iQwdtDLuSqThzi14JLlRg6YrvxDH20kT1ShqsoWnfHufHUds
+         WCWHwwjfzD+W5cwPE2/hlnoQXRRxCcSTnk9jxe+5AwdktgynNsm57o9wIDS+MJWf+ueq
+         NmSTZlpYfmhmU+xDselG/KzId+ElqEsClxziaraEI8g+GLXiMv9TR9Q3pXHRgE1mA0Zk
+         gokQ==
+X-Gm-Message-State: AOJu0YyPPKYJ/OnyUt7Dt6wZ+xd47nVhAuVxP0IaAgP39bdsNuJdZFZo
+	7IqAcWbMuxjmnNF+oQA/8acZ11mWN3ob8l1m2yJmyZ1LdEpKeJwgakr4bnjMdh31H6JqLPlBszF
+	vtG5C3a2gBoAEKXba6yn2kn2ZVi7eYPE=
+X-Gm-Gg: ASbGncvrLgFbQqKeqDtJFle/MYjiSMEH/zCT15e1fgK4wjbPd7F93Umeb/2TNG4C3qd
+	kb/5rDFeKp8zoK6cO5eFJHnD4CoH7bmn9CcsWLoq7ho5rYCHPgTfBIQ9JDG0HoM6ff1gw0ROfN4
+	avG6/53wZCMsC86QksckyqHLB53kP+ghrj5/X/9fydR5R3lw6At1FiX2vseh0P0b8/AFT9t2KEd
+	3+5pTUVnT6L6+ee3uhmci1rF/gvKTgU1lf5lXvt4Xo/8bLdNghbU8SBTdoZ25w=
+X-Google-Smtp-Source: AGHT+IGEW2alBWkjzDiYpgPpc/pGsbXu591PKEt5s3hg72/TqO9rtjwluxnWVjQhTZiPDkhtNCE1uF0d5x4jRBfipp4=
+X-Received: by 2002:a05:651c:2122:b0:36b:1a89:36b0 with SMTP id
+ 38308e7fff4ca-37609cf0b08mr24925021fa.10.1760049625034; Thu, 09 Oct 2025
+ 15:40:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <87v7l03pqe.fsf@osv.gnss.ru> <CAOMZO5DG=cQtqyzihrFarEq6=1AOAPAMkeXajjGxiW0yvFRa0Q@mail.gmail.com>
+ <87zfa016bd.fsf@osv.gnss.ru> <CAOMZO5AFer_Yy20fqD9oVSNVPR2ZvvwYbrkSuj7eFgS_uMJC3A@mail.gmail.com>
+ <87v7ko11iw.fsf@osv.gnss.ru> <CAOMZO5C0=vy6aABa6PGrD2iWBBRQ==LfpnRg3BTh_yTSn3vHcA@mail.gmail.com>
+ <87plav2186.fsf@osv.gnss.ru>
+In-Reply-To: <87plav2186.fsf@osv.gnss.ru>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Thu, 9 Oct 2025 19:40:13 -0300
+X-Gm-Features: AS18NWDjHwXil3ph_UNaumFxGYtEb_LFDe39C72IGkbQ0FqKmX4_8lofBvm8bo8
+Message-ID: <CAOMZO5CsY-zRPE4hm=1kdTVquY24Y4T3evQrn9E792xZ434vBA@mail.gmail.com>
+Subject: Re: ARM iMX6sx board fails to boot with kernel 6.17
+To: Sergey Organov <sorganov@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Shawn Guo <shawnguo@kernel.org>, 
+	"Rob Herring (Arm)" <robh@kernel.org>, Angelo Dureghello <angelo@kernel-space.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   5472d60c129f75282d94ae5ad072ee6dfb7c7246
-commit: dbca0eabb821a6278925712a7bb263d0997e9c8f mailbox: add MediaTek GPUEB IPI mailbox
-date:   3 days ago
-config: arc-randconfig-r112-20251010 (https://download.01.org/0day-ci/archive/20251010/202510100629.3nGvrhEU-lkp@intel.com/config)
-compiler: arc-linux-gcc (GCC) 12.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251010/202510100629.3nGvrhEU-lkp@intel.com/reproduce)
+On Thu, Oct 9, 2025 at 6:51=E2=80=AFPM Sergey Organov <sorganov@gmail.com> =
+wrote:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510100629.3nGvrhEU-lkp@intel.com/
+> What defconfig did you use?
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/mailbox/mtk-gpueb-mailbox.c:203:28: sparse: sparse: symbol 'mtk_gpueb_mbox_ops' was not declared. Should it be static?
-
-vim +/mtk_gpueb_mbox_ops +203 drivers/mailbox/mtk-gpueb-mailbox.c
-
-   202	
- > 203	const struct mbox_chan_ops mtk_gpueb_mbox_ops = {
-   204		.send_data = mtk_gpueb_mbox_send_data,
-   205		.startup = mtk_gpueb_mbox_startup,
-   206		.shutdown = mtk_gpueb_mbox_shutdown,
-   207		.last_tx_done = mtk_gpueb_mbox_last_tx_done,
-   208	};
-   209	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+mx6sxsabresd_defconfig
 
