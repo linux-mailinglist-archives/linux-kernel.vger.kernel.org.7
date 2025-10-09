@@ -1,78 +1,195 @@
-Return-Path: <linux-kernel+bounces-847407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0F24BCABED
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 22:01:25 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6117EBCACE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 22:29:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AD40B4E225C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 20:01:24 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0DD4D35403B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 20:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008E52638BF;
-	Thu,  9 Oct 2025 20:01:19 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9452727F3;
+	Thu,  9 Oct 2025 20:29:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=email-od.com header.i=@email-od.com header.b="c9BViWpu"
+Received: from s1-ba86.socketlabs.email-od.com (s1-ba86.socketlabs.email-od.com [142.0.186.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AE125A655;
-	Thu,  9 Oct 2025 20:01:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D02270EA5
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 20:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=142.0.186.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760040078; cv=none; b=OqMl+sLKslPCWLTHKIZNm19OehM8zHqv4Vz3tGs9cW5CtbXCwabbKS3VzIK1B/ZBVYotgpIyyMnMgnqGh2TyPSxYgAwIq7TVMteYn+Ftr3POr5pw2p8x6qlprC6emmzuRJf9PwcVEtca3ps9BIivDhZMPHhT4IcfgovxMvJTDYY=
+	t=1760041751; cv=none; b=iUFurERWgdAJYU+CjYEcNkFEQyFwUr/N77Wh06lj9/k+9eW6KJOH1HTM5tHKNZW5vwM0nUSQoCK7/VBZl45ACdMGrGlMuiESrQOiD37pQf6Jd+FPPJrmGVnAnac1VKYGTd+BCL+jQG0k+L0X+1T+iHAMQB1ZuDR47Qodij8L9Q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760040078; c=relaxed/simple;
-	bh=RUvu35+0YNtAinjMsjdcUAfU4+Xz002c5lWxDAfaSEg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=efIOKOWJCSFlyirqDisqsQvzVZvmn4NUOzIEUbbuq9NCiHfjh/p1UJ8uN2FrWX+pBG88O+s0PIr0cvbQfrR0Y8xQRYVEqbhcahcWu8l64d9Q9Te3or0raXoO2IbIOp1sv727zJBqAgz01DRUs7imr8z9ANFDA/0MsE2zQgVDsDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
-Received: from omf17.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay01.hostedemail.com (Postfix) with ESMTP id 48BA746826;
-	Thu,  9 Oct 2025 20:01:09 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf17.hostedemail.com (Postfix) with ESMTPA id 963AD20;
-	Thu,  9 Oct 2025 20:01:06 +0000 (UTC)
-Message-ID: <cd0a44fcedec36fdfb9540106ce62279613564e3.camel@perches.com>
-Subject: Re: [PATCH v2 0/2] checkpatch: add new check PLACEHOLDER_USE
-From: Joe Perches <joe@perches.com>
-To: Onur =?ISO-8859-1?Q?=D6zkan?= <work@onurozkan.dev>, 
-	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
-Cc: apw@canonical.com, dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com, 
-	corbet@lwn.net, workflows@vger.kernel.org, linux-doc@vger.kernel.org
-Date: Thu, 09 Oct 2025 13:01:05 -0700
-In-Reply-To: <20250917173725.22547-1-work@onurozkan.dev>
-References: <20250917173725.22547-1-work@onurozkan.dev>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1760041751; c=relaxed/simple;
+	bh=jxHNPvtonKIh6HD+twGlbhC/21NmPGMHzw7NpLnXoas=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tPIZYjQqmCMjnRU4jRF9m6DurgD/wjgUU+8v0Ybj4xJ+sfaHlYLhmvLgRJIl0auPxwjy6+YJ770HF5zmZ8MpRwIaF81dZP5WOKf48QYNFRV8WBt73EZPn3Y6maF40TAseWlUpONsFLSs+bHvgjnqX5AqhERaVbJ1rfRCo9mRhvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nalramli.com; spf=pass smtp.mailfrom=email-od.com; dkim=pass (1024-bit key) header.d=email-od.com header.i=@email-od.com header.b=c9BViWpu; arc=none smtp.client-ip=142.0.186.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nalramli.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=email-od.com
+DKIM-Signature: v=1; a=rsa-sha256; d=email-od.com;i=@email-od.com;s=dkim;
+	c=relaxed/relaxed; q=dns/txt; t=1760041750; x=1762633750;
+	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:subject:cc:to:from:x-thread-info:subject:to:from:cc:reply-to;
+	bh=K09yGhuPuz5y5DBtOYrDuFkQOt0DZmwIm4f7CMtsXxA=;
+	b=c9BViWpuF8EoF4fnZ/mA59/OaW2SGavgPAGzMFXgO0ctWhZVo4TgIFQTGPmoeSE9tVMZGPw8E3sOTFEKkTp4xwN9AdcbuwV9L+WWyuv/XSvLdgk0eZfdNjz2p2SGaXMiScPGa4MOR432sPRO+/uzguINZ7nQGTFKFErcGrK14TE=
+X-Thread-Info: NDUwNC4xMi42YjZmMTAwMDBiMDgxNzIubGludXgta2VybmVsPXZnZXIua2VybmVsLm9yZw==
+x-xsSpam: eyJTY29yZSI6MCwiRGV0YWlscyI6bnVsbH0=
+Received: from nalramli-fst-tp.. (d4-50-191-215.clv.wideopenwest.com [50.4.215.191])
+	by nalramli.com (Postfix) with ESMTPSA id 0F1382CE01B3;
+	Thu,  9 Oct 2025 15:28:41 -0400 (EDT)
+From: "Nabil S. Alramli" <dev@nalramli.com>
+To: anthony.l.nguyen@intel.com,
+	przemyslaw.kitszel@intel.com
+Cc: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	hawk@kernel.org,
+	john.fastabend@gmail.com,
+	lishujin@kuaishou.com,
+	xingwanli@kuaishou.com,
+	intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	team-kernel@fastly.com,
+	khubert@fastly.com,
+	nalramli@fastly.com,
+	dev@nalramli.com
+Subject: [RFC ixgbe 1/2] ixgbe: Implement support for ndo_xdp_xmit in skb mode
+Date: Thu,  9 Oct 2025 15:28:30 -0400
+Message-ID: <20251009192831.3333763-2-dev@nalramli.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251009192831.3333763-1-dev@nalramli.com>
+References: <20251009192831.3333763-1-dev@nalramli.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Stat-Signature: g34q1kzz84rxm8ze4zhn59kki3mmapu5
-X-Rspamd-Server: rspamout05
-X-Rspamd-Queue-Id: 963AD20
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX184dOLiXLyLh3s1X/Pt0yK+BJmlv0WYWg0=
-X-HE-Tag: 1760040066-35579
-X-HE-Meta: U2FsdGVkX1/zpFW/evcjquidmgjko7O7pqGck5cHdJXp2geKrSEahCYhrjsg32m5YosfPj+1PyshkBXXxTXEiyUxurK4OaQwugsxP9bs+a+TjomIbeZJrJSaGguJeTBZGv9FCcxEhSJnsF3ROa2GaKaOEpuse816sowIwRdBXknRLwRpIGmhzFSSdws7xPvR7ADrpIq70VjsWY4Hgk5pVH3b4DVf/sguNWW4fDtGuJgnY3BuoO+yKbw/BJxANVgP55ItOsM4u5iNRPr5qrwtmtmI06IwYPSkpirCdUsBRf4Pt7RZo3VuBFoK3hCKXms4YA5OxnTZnG9uuqiDQvI8tNBXMGakIKXOzycFW40qSb1uyG3jKeZARlw9EQgy3A4+
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2025-09-17 at 20:37 +0300, Onur =D6zkan wrote:
-> Changes in v2:
->   - The check is documented in Documentation/dev-tools/checkpatch.rst fil=
-e.
->   - Used ERROR instead of WARN on detection.
->=20
-> Onur =D6zkan (2):
->   checkpatch: detect unhandled placeholders in cover letters
->   checkpatch: document new check PLACEHOLDER_USE
->=20
->  Documentation/dev-tools/checkpatch.rst | 10 ++++++++++
->  scripts/checkpatch.pl                  |  7 +++++++
->  2 files changed, 17 insertions(+)
+This commit adds support for `ndo_xdp_xmit` in skb mode in the ixgbe
+ethernet driver, by allowing the call to continue to transmit the packets
+using `dev_direct_xmit`.
 
-Acked-by: Joe Perches <joe@perches.com>
+Previously, the driver did not support the operation in skb mode. The
+handler `ixgbe_xdp_xmit` had the following condition:
+
+```
+	ring =3D adapter->xdp_prog ? ixgbe_determine_xdp_ring(adapter) : NULL;
+	if (unlikely(!ring))
+		return -ENXIO;
+```
+
+That only works in native mode. In skb mode, `adapter->xdp_prog =3D=3D NU=
+LL` so
+the call returned an error, which prevented the ability to send packets
+using `bpf_prog_test_run_opts` with the `BPF_F_TEST_XDP_LIVE_FRAMES` flag=
+.
+
+Signed-off-by: Nabil S. Alramli <dev@nalramli.com>
+---
+ drivers/net/ethernet/intel/ixgbe/ixgbe.h      |  8 ++++
+ drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 43 +++++++++++++++++--
+ 2 files changed, 47 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe.h b/drivers/net/ether=
+net/intel/ixgbe/ixgbe.h
+index e6a380d4929b..26c378853755 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe.h
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe.h
+@@ -846,6 +846,14 @@ struct ixgbe_ring *ixgbe_determine_xdp_ring(struct i=
+xgbe_adapter *adapter)
+ 	return adapter->xdp_ring[index];
+ }
+=20
++static inline
++struct ixgbe_ring *ixgbe_determine_tx_ring(struct ixgbe_adapter *adapter=
+)
++{
++	int index =3D ixgbe_determine_xdp_q_idx(smp_processor_id());
++
++	return adapter->tx_ring[index];
++}
++
+ static inline u8 ixgbe_max_rss_indices(struct ixgbe_adapter *adapter)
+ {
+ 	switch (adapter->hw.mac.type) {
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/=
+ethernet/intel/ixgbe/ixgbe_main.c
+index 467f81239e12..fed70cbdb1b2 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+@@ -10748,7 +10748,8 @@ static int ixgbe_xdp_xmit(struct net_device *dev,=
+ int n,
+ 	/* During program transitions its possible adapter->xdp_prog is assigne=
+d
+ 	 * but ring has not been configured yet. In this case simply abort xmit=
+.
+ 	 */
+-	ring =3D adapter->xdp_prog ? ixgbe_determine_xdp_ring(adapter) : NULL;
++	ring =3D adapter->xdp_prog ? ixgbe_determine_xdp_ring(adapter) :
++		ixgbe_determine_tx_ring(adapter);
+ 	if (unlikely(!ring))
+ 		return -ENXIO;
+=20
+@@ -10762,9 +10763,43 @@ static int ixgbe_xdp_xmit(struct net_device *dev=
+, int n,
+ 		struct xdp_frame *xdpf =3D frames[i];
+ 		int err;
+=20
+-		err =3D ixgbe_xmit_xdp_ring(ring, xdpf);
+-		if (err !=3D IXGBE_XDP_TX)
+-			break;
++		if (adapter->xdp_prog) {
++			err =3D ixgbe_xmit_xdp_ring(ring, xdpf);
++			if (err !=3D IXGBE_XDP_TX)
++				break;
++		} else {
++			struct xdp_buff xdp =3D {0};
++			unsigned int metasize =3D 0;
++			unsigned int size =3D 0;
++			unsigned int truesize =3D 0;
++			struct sk_buff *skb =3D NULL;
++
++			xdp_convert_frame_to_buff(xdpf, &xdp);
++			size =3D xdp.data_end - xdp.data;
++			metasize =3D xdp.data - xdp.data_meta;
++			truesize =3D SKB_DATA_ALIGN(xdp.data_end - xdp.data_hard_start) +
++				   SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
++
++			skb =3D napi_alloc_skb(&ring->q_vector->napi, truesize);
++			if (likely(skb)) {
++				skb_reserve(skb, xdp.data - xdp.data_hard_start);
++				skb_put_data(skb, xdp.data, size);
++				build_skb_around(skb, skb->data, truesize);
++				if (metasize)
++					skb_metadata_set(skb, metasize);
++				skb->dev =3D dev;
++				skb->queue_mapping =3D ring->queue_index;
++
++				err =3D dev_direct_xmit(skb, ring->queue_index);
++				if (!dev_xmit_complete(err))
++					break;
++			} else {
++				break;
++			}
++
++			xdp_return_frame_rx_napi(xdpf);
++		}
++
+ 		nxmit++;
+ 	}
+=20
+--=20
+2.43.0
+
 
