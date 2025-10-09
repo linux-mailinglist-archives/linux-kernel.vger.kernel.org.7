@@ -1,88 +1,78 @@
-Return-Path: <linux-kernel+bounces-847338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1D00BCA909
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 20:26:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39FC5BCA90C
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 20:26:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A8E524F2AAC
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 18:26:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBF964834E1
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 18:26:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2C2724BBF0;
-	Thu,  9 Oct 2025 18:26:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3FAD24BBF0;
+	Thu,  9 Oct 2025 18:26:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LW9FQA/t"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JmnG3O0P"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0327A38D;
-	Thu,  9 Oct 2025 18:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B472243968
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 18:26:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760034383; cv=none; b=t9zbjDEwzCBjT/F0d/pdYEUZ2boafH92a2Zy5v8fFyfNqRyNtnMeXyL1XBaOEz3n3yPWm/YS2Y6a1tF1w8JRVpwHlSsClFwvPnmkdR6Axx834Ay8VywKtCd/2hubcmFtBRz3PgGxJwZ0vi+feNaSraItzCAwXvT7OVoltZW0k+0=
+	t=1760034398; cv=none; b=myePMpLmOEAHgTpsevn/x2ZQzvZK2m0t3ncdAjiWpbqy9mI3LUo8bEeHNZagZp+z4OQiu9zPD0Ks3b8tFPp3zMTeJnky+NE4v4kUFU9dL23q8BVXfw93n/7/2gc44rYNpbXKK5hel6mF7rtC6xe/EJQLJA8rsmdQqPKA/HeZajk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760034383; c=relaxed/simple;
-	bh=JWAhSnRiE8GPAZSm4oQQtqwekOOMPU0V6QfkW4vSi3Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rPKieVWcAi0b/7BZDo8euM1EgukprB234n42hZTiXeNvrM/C8eFrmvebPDteXf+Kr4tu69iZUcQXxHJWXbdw+SX5eBIQSdhqteF8uxH4hHFKNljpxVehT/mBqZa60k4qMAtO9pZP1zazW5Lv7f0EJ74bzOj6kjEozTUpoGsdXfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LW9FQA/t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E19AC4CEE7;
-	Thu,  9 Oct 2025 18:26:20 +0000 (UTC)
+	s=arc-20240116; t=1760034398; c=relaxed/simple;
+	bh=UEF4z8j/7wl0UuOCFvHdjudwgZUMGq17X1/dL2f9aaM=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Rioeq2Qg4hU/QbN/7Aeh04XuF1DOsStxHb5R6scx+Kqm0Y+ns/wpBo8aOJmW8d8Hwa70iMwkqetM+usJdboKEFjpRBDGuDGU/husWG8Cxe2cg6GnAVKRiMrvJyqkEPIptnaveJwsV1DMcVEnuo5cXa1m1z9F8lfPSLukBnEbfWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JmnG3O0P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECC03C4CEE7;
+	Thu,  9 Oct 2025 18:26:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760034382;
-	bh=JWAhSnRiE8GPAZSm4oQQtqwekOOMPU0V6QfkW4vSi3Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LW9FQA/t/VZ2QlytcYC19B7HGRg5novCD/Vl51YJWjjfz65BQozCs18mPZHmPYO/2
-	 EyxqhWZ7DHoXdqqsAZ1dqQjUnUSJ/I68qzv9/wABk8nMjbmx1ALvGHQALkpj+qUTSI
-	 2n0XbkngP28f80RwpbnPsYQ3zVyDgYV0ffyCPLc2lNbT960sPe4cn6jN/7g3GNErNf
-	 jVDPEj1tnnTmCPo43m57PIJSTMQJTchLP7tubHzm0u800U6/GRT3FlA8Gchpy6KaEV
-	 nCLB0yvyEF7jLIEzMeFaipLsfsn+QxhYpUv5cv2WvV3L/kBVSXBINvUtrYKywJ4dKD
-	 zDv7JZqT5TZfg==
-Date: Thu, 9 Oct 2025 19:26:18 +0100
-From: Conor Dooley <conor@kernel.org>
-To: maudspierings@gocontroll.com
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/5] dt-bindings: arm: fsl: Add GOcontroll Moduline
- IV/Mini
-Message-ID: <20251009-june-greasily-3b7315339c94@spud>
-References: <20251009-mini_iv-v1-0-f3889c492457@gocontroll.com>
- <20251009-mini_iv-v1-1-f3889c492457@gocontroll.com>
+	s=k20201202; t=1760034398;
+	bh=UEF4z8j/7wl0UuOCFvHdjudwgZUMGq17X1/dL2f9aaM=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=JmnG3O0PSMA/yc2wa1hw5xjLnD0YrQHOE3cIGfdFc747xUTsB6Zue7up0bZYnLnxt
+	 +14BriRPA29USuRw5ToavPMo7odL42Ui3F+HqRSODqWjSwVSiHmquG4XHLMzSsrwHn
+	 ZRR7Whg5gVIHcdEWRTJre5GqE/I1UAT0gxoFpaEmrhOVGsa/TyyY9t/+h5CZaCVd5m
+	 yLMXU7OY4kQ83m+4cUt1JYbSjx2MW7jlaCUrWYdnJC4fl1RLKMPQjcy+5zFcaYPofQ
+	 ettgjJ1081xOBHOO7+dJNF7/9Rooc0LnNQdUxHTGTtAQJHuzLr8c631U90xQuXJp9P
+	 63aDG2ABeyVeQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3409C3A55F9E;
+	Thu,  9 Oct 2025 18:26:27 +0000 (UTC)
+Subject: Re: [GIT PULL] slab fixes for 6.18-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <9ec4a43b-d016-40b2-996a-e8aa098c0001@suse.cz>
+References: <9ec4a43b-d016-40b2-996a-e8aa098c0001@suse.cz>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <9ec4a43b-d016-40b2-996a-e8aa098c0001@suse.cz>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git tags/slab-for-6.18-rc1
+X-PR-Tracked-Commit-Id: f7dfa0f31b13ee5f2ba598cdfcab9a831ed8a6b8
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: f6db358deaeafd9830c8bcba8f76f55f8a14b059
+Message-Id: <176003438570.230640.3897824331505748265.pr-tracker-bot@kernel.org>
+Date: Thu, 09 Oct 2025 18:26:25 +0000
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Harry Yoo <harry.yoo@oracle.com>, David Rientjes <rientjes@google.com>, Christoph Lameter <cl@gentwo.org>, Roman Gushchin <roman.gushchin@linux.dev>, "linux-mm@kvack.org" <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lfuq9rSWFptVSRA3"
-Content-Disposition: inline
-In-Reply-To: <20251009-mini_iv-v1-1-f3889c492457@gocontroll.com>
 
+The pull request you sent on Thu, 9 Oct 2025 11:36:21 +0200:
 
---lfuq9rSWFptVSRA3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git tags/slab-for-6.18-rc1
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/f6db358deaeafd9830c8bcba8f76f55f8a14b059
 
---lfuq9rSWFptVSRA3
-Content-Type: application/pgp-signature; name="signature.asc"
+Thank you!
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaOf+SgAKCRB4tDGHoIJi
-0pjkAQC9hkkb+EqvQuGO93dBxS/UYEXTZKdiGAckdllZ4l3NAQEAz15iBgfNIgV0
-nj7aKLkyVW135fPNT6jo9WLpCE4+IQ4=
-=8DJS
------END PGP SIGNATURE-----
-
---lfuq9rSWFptVSRA3--
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
