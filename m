@@ -1,109 +1,120 @@
-Return-Path: <linux-kernel+bounces-847486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4783CBCAF64
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 23:43:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31961BCAF6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 23:44:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A8281A6469A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 21:44:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 893AA3A8CED
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 21:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1334A28136B;
-	Thu,  9 Oct 2025 21:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742EE281520;
+	Thu,  9 Oct 2025 21:44:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="zGcpMwks"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rGNL5fV8"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECA9B272813;
-	Thu,  9 Oct 2025 21:43:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16848272813
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 21:44:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760046210; cv=none; b=e+DpqZbRb4+t/J2Irp5dlQIy7fademsFCetMuECQe7tTx92Wg7bOKHerZoWFLL2QtgagN5P3XAFdlnlwoH24EJTGpeH949FDu5VMsa76H2zCaAaK0XMoy8qW/dF1NKkJZstTpKCh5nGSIycnAYeuUC+23y9kZ5ZN8GjXnTBtt0w=
+	t=1760046250; cv=none; b=PgXsKxIPyrLm9mscmvMr/EPx2HN/UMZwbv2ClNV+bG4CU3QP9lGo33NDpZkp6kzX/PMQHGT9mUFgM33KqAxvrcAK52RISVRxrLyIdw+3NAPQXaPhj+dUaj7gbrrBsoA8A6YnMMEu9LCNnRVbnSAMFSBizXf+EtyOS9rRawLc6GM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760046210; c=relaxed/simple;
-	bh=gbMwi5Q/YfyiFX0zTtqxier25yUdBnuMUVbW24MeA84=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y2Pwhfp77256WgzOUoq1NQ4+Ye26S9z6AkIqVu4gXJ0u1OKbXUAxan2n2f4uVj3Dd3gOItKAIRdlULye+Rt1RNmy1TsEUr8FxcCm0/e7YVfP8lj0M5LEZoEdzDMOPKhGWIyQc2BfkZfKzwY2I9xpNIh4GEScVL+0E/t7/RXv+3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=zGcpMwks; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=18Q60dAN2hudvxDtD9baBPrd5WXXuMY6W/Hc1MxY5T4=; b=zGcpMwksSyyoWHyXLcX36ZowKH
-	UK7tKZjxWI93Y5uzvdR7121Kq/nDScg7t6XGiRdlIaT1aLxuSkli81PhhxKV2Mh2K1xGotY5XjL6f
-	q9xlR/51xub5KGPbnbklrnUdoLZtikFIKZ8qAPp4N0T4xuW4lqO5iawCXQBhjCH3Wx9c=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1v6yPh-00AYif-03; Thu, 09 Oct 2025 23:43:05 +0200
-Date: Thu, 9 Oct 2025 23:43:04 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Thomas Wismer <thomas@wismer.xyz>
-Cc: Conor Dooley <conor@kernel.org>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Wismer <thomas.wismer@scs.ch>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] dt-bindings: pse-pd: ti,tps23881: Add TPS23881B
-Message-ID: <8395a77f-b3ae-4328-9acb-58c6ac00bf9e@lunn.ch>
-References: <20251004180351.118779-2-thomas@wismer.xyz>
- <20251004180351.118779-8-thomas@wismer.xyz>
- <20251007-stipulate-replace-1be954b0e7d2@spud>
- <20251008135243.22a908ec@pavilion>
- <e14c6932-efc9-4bf2-a07b-6bbb56d7ffbd@lunn.ch>
- <20251009223302.306e036a@pavilion>
+	s=arc-20240116; t=1760046250; c=relaxed/simple;
+	bh=QBQZ/PII2nd+INm4UhOt/3mrsSRtqFBJsjEBnrwYuhk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ng+4yXVWT1YS0RWXL3STbtvenhsQb7iLdG+bbGCCRmlPCxXzltRZw4EIp5CFmoX0rtR5QfWPwaBcWJjlTqym4MR4GLKJqPVDHABZ2UVtbAWyYdpYseTQWfn1Zmlcnx7CuQxfJdaV3LqwUpi/zQoDgQkNR4BdiZD+yrycNpJhsJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rGNL5fV8; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-268149e1c28so29895395ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 14:44:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760046247; x=1760651047; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BDlvwYPz97Xgh+aeVzA9ej1JjFbOizVBMxc/gGXHNu8=;
+        b=rGNL5fV8HGFemdW0DNxhihVeGWcu3KegmIK19ub6iGFTlIxRvf7enkmsVmsp+T7hc6
+         SdJcFF7oIF1738G/Cy4mLpAOJifSDFFNnsPA5rGWyv5sK5Yo1b0ap0MsmQiVYsT97xSX
+         hRSoYwgthfM63LPNildG0CBls20U506bMy4y3Tp3Cui3VYp+XLVD8KHSKEQ0j7nm6Mws
+         MBEIdNnK9CElx2wFiBKsjQmY9rhc2PoJs8blqRm6Xv6MtQq8M6G4lg8KDlO/PDPbqHv0
+         /Mv3zwGe9Ft0lCC87gWi9ukJK5UvxfzG9gT88Wzxqde5LRuTwbxCbibt/XkwwCuFd8Bn
+         e1TQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760046247; x=1760651047;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BDlvwYPz97Xgh+aeVzA9ej1JjFbOizVBMxc/gGXHNu8=;
+        b=NQVGANGTNa31qNSGiWxchgCgl7NyVbosvKNHskiQPhzsa07L59q4kuB3y+dCcD4686
+         pjfQ3o7oqHSxuJMyjq8h29a6BHPMMgCCedbbwJhcGpy8MO+l7CtG4Js9u76/ecz2/PjS
+         3mlEi422Ei1pYH+PFf8FfmkalKeZGmMaeRpmtoz8M/MAXd0uPcxMh3rCjifmMb/QuZ8z
+         Nth+ZkjKqpOo1z+Bh11XTzBUzVHEKS9/3zwLDK+4fbY/3IjhxDQ2nKFp78z6dOt9fIVF
+         B2FFYh2mWvICq2FLR6cInFpl/6WHmggRCwpdGIBLAUcuyM2KzEhB8hVY7WlU+BeZCPa7
+         ALqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUaZ1qzuTkoa5WCpjsX8y50YlfdG3N1nKjH+FsgjuCyTdsgWxYbAiqLtPahnd4T3MCVqNwvXfrspPOARBE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz59xvDoxjpGHsW3JQ5JOcKmGAOiefHhsoZtT/2rzzbZnrD9Wtl
+	W/a+9pvzHzD+gwatt4MUjDMB3SjSAkDOflR41C6RXRfznHQT20B087eqsXrHNNKAmYqB8aBn1jQ
+	OqKPVwBeNDPmsYyjy4/hP1PcoMQ==
+X-Google-Smtp-Source: AGHT+IFQjHCm6wm7SAnAbDplPBJVQjkKsdlYJBsa6mhJlfSzzwa6PeU2oGKlk2TkpKhjDbxnR+qB7/kozxjMndhM2A==
+X-Received: from plnx24.prod.google.com ([2002:a17:902:8218:b0:24c:af07:f077])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:903:8cc:b0:267:e3af:ae67 with SMTP id d9443c01a7336-29027238ef6mr108267505ad.14.1760046247397;
+ Thu, 09 Oct 2025 14:44:07 -0700 (PDT)
+Date: Thu, 09 Oct 2025 14:44:06 -0700
+In-Reply-To: <20251007221420.344669-7-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251009223302.306e036a@pavilion>
+Mime-Version: 1.0
+References: <20251007221420.344669-1-seanjc@google.com> <20251007221420.344669-7-seanjc@google.com>
+Message-ID: <diqzqzvbhhsp.fsf@google.com>
+Subject: Re: [PATCH v12 06/12] KVM: selftests: Define wrappers for common
+ syscalls to assert success
+From: Ackerley Tng <ackerleytng@google.com>
+To: Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>, Shivank Garg <shivankg@amd.com>, 
+	Ashish Kalra <ashish.kalra@amd.com>, Vlastimil Babka <vbabka@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 
-> When adapting the driver, I also considered an auto-detection mechanism.
-> However, it felt safer to rely on the devicetree information than reading
-> a silicon revision register, which has a totally different meaning on
-> some other device. I have therefore decided to make the driver behaviour
-> solely dependent on the devicetree information and to use the silicon
-> revision only as a sanity check (as already implemented in the driver).
+Sean Christopherson <seanjc@google.com> writes:
 
-So if the silicon and the DT disagree, you get -ENODEV or similar?
-That is what i would recommend, so that broken DT blobs get found by
-the developer.
+> Add kvm_<sycall> wrappers for munmap(), close(), fallocate(), and
+> ftruncate() to cut down on boilerplate code when a sycall is expected
+> to succeed, and to make it easier for developers to remember to assert
+> success.
+>
+> Implement and use a macro framework similar to the kernel's SYSCALL_DEFINE
+> infrastructure to further cut down on boilerplate code, and to drastically
+> reduce the probability of typos as the kernel's syscall definitions can be
+> copy+paste almost verbatim.
+>
+> Provide macros to build the raw <sycall>() wrappers as well, e.g. to
+> replace hand-coded wrappers (NUMA) or pure open-coded calls.
+>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-> Is there any best practice when to use auto-detection with I2C devices?
+Reviewed-by: Ackerley Tng <ackerleytng@google.com>
+Tested-by: Ackerley Tng <ackerleytng@google.com>
 
-Not really. There are devices/drivers where the compatible is just
-used to indicate where to find the ID register in the hardware,
-nothing else. The ID register is then used by the driver to do the
-right thing, we trust the silicon to describe itself. But things like
-PHY devices have the ID in a well known location, so we actually don't
-require a compatible, but if one is given, we use that instead of the
-ID found in the silicon. So the exact opposite.
-
-> Regardless of whether the driver queries the silicon revision, the B
-> device declaration would look somehow strange to me with a driver having
-> one single compatible, i.e. compatible = "ti,tps23881b", "ti,tps23881".
-> The first one specifically names the hardware, the fallback is actually
-> the name of its predecessor, which is strictly speaking not 100%
-> compatible but required to have the driver loaded.
-
-If it is not compatible, a fallback will not actually work, don't list
-a fallback.
-
-	Andrew
+> ---
+>  tools/testing/selftests/kvm/arm64/vgic_irq.c  |  2 +-
+>  .../selftests/kvm/include/kvm_syscalls.h      | 81 +++++++++++++++++++
+>  .../testing/selftests/kvm/include/kvm_util.h  | 29 +------
+>  .../selftests/kvm/kvm_binary_stats_test.c     |  4 +-
+>  tools/testing/selftests/kvm/lib/kvm_util.c    | 31 ++-----
+>  .../kvm/x86/private_mem_conversions_test.c    |  9 +--
+>  6 files changed, 96 insertions(+), 60 deletions(-)
+>  create mode 100644 tools/testing/selftests/kvm/include/kvm_syscalls.h
+>
+> 
+> [...snip...]
+> 
 
