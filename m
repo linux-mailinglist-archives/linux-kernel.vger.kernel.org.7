@@ -1,162 +1,238 @@
-Return-Path: <linux-kernel+bounces-846254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DACABC7654
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 07:00:58 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFA7CBC7669
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 07:06:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1C61D34E93A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 05:00:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 771244E3963
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 05:06:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB33E214A64;
-	Thu,  9 Oct 2025 05:00:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08BE255248;
+	Thu,  9 Oct 2025 05:06:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MLYUAy1q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YDh69t0+"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245A71426C;
-	Thu,  9 Oct 2025 05:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6F32556E
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 05:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759986050; cv=none; b=SGbDz58x3HDqY/V+JyDxqQtL9vJS1qWM50hAFVXg+okZRGIVMOIuJaOAHFsvc0m0IFAUOFIXHVmKaZdYLvzf8imGGUrceUwfNRVjLT6uk2x0iS2FCMDdq9xj+zG/Qybkcbl9gQnZNGcTSI8gst2blS0MyAKI5/pnoq2a2nOibqU=
+	t=1759986396; cv=none; b=t5F34U4hAJFmKfy9cIDAWzWq+nxuA6k3tyIStZSrjns05oi5/iwTWtnpMWwKEPKxNPG3oeYWib6hroLs8LqvyuSWj7b6vaabXZXmRAPJ9EodKZbIMU599ejj2amXiwuQUldZB1WzEJNQ1ToXLaVgu3NxBXWlKtKccRjFVsZvpNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759986050; c=relaxed/simple;
-	bh=uM3x9ifdbeSCRTPz6Z1yuQ6p99Wfh//1kqt2rykLfTY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d3vNJHgf/l9ilr4sz1ews1OApG0A2klqefHoWKTJK5Uu0YIGfKGjqgIROITiYKk712Kg5pNjkJp98/qvUduOYbM3XDSF97/FbB8D93SlhzGW/VidB5Yqb4d+HWiVmF8aH58I92k75eoUSMkywctItTRrkd9+nAP3sS1ITnBFYwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MLYUAy1q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1356BC4CEE7;
-	Thu,  9 Oct 2025 05:00:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1759986049;
-	bh=uM3x9ifdbeSCRTPz6Z1yuQ6p99Wfh//1kqt2rykLfTY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MLYUAy1qaDvimbkU8zp/wLU5+DeClg5nTcZ+dJQcbewZIbyH7eD+j+QJ6sfzO3jdW
-	 GYU1uhhcUcd+ehiqxvcabuPlWVrEh3zundBsH3ox0zlllO/i6IRb/RBXsTUEwBORvk
-	 sUiaddxl1xt9jrTMnqoAW88X1nYVBUQZzcUB4AYA=
-Date: Thu, 9 Oct 2025 07:00:46 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Vivian Wang <wangruikang@iscas.ac.cn>
-Cc: stable@vger.kernel.org, Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Guo Ren <guoren@kernel.org>, Charlie Jenkins <charlie@rivosinc.com>,
-	Yangyu Chen <cyy@cyyself.name>, Han Gao <rabenda.cn@gmail.com>,
-	Icenowy Zheng <uwu@icenowy.me>, Inochi Amaoto <inochiama@gmail.com>,
-	Yao Zi <ziyao@disroot.org>, Palmer Dabbelt <palmer@rivosinc.com>,
-	Meng Zhuo <mengzhuo@iscas.ac.cn>
-Subject: Re: [PATCH 6.6.y 0/2] riscv: mm: Backport of mmap hint address fixes
-Message-ID: <2025100920-riverbank-congress-c7ee@gregkh>
-References: <20251008-riscv-mmap-addr-space-6-6-v1-0-9f47574a520f@iscas.ac.cn>
- <2025100812-raven-goes-4fd8@gregkh>
- <187fe5a3-99b9-49b6-be49-3d4f6f1fb16b@iscas.ac.cn>
+	s=arc-20240116; t=1759986396; c=relaxed/simple;
+	bh=KGYbVj0SYA7csaFCm338RExp7YkFD+VQLtFHDm1WmW8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O7kCvAqL8NnTrWvAr8vbGEc5ACKjUCJ5wkB5bFT8Ir1AcmIWhm5uoPdpmGL+2AuG7RZY4qbk/EO1QYpM4G3gwzgMbT14qTuil0nxXcIzVo40tZrQTsgyw8PK1o5PRz/MvCTitHaYtzD/eKCcg0iYv9OXZq8i6eOPEqTwAxGxLt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YDh69t0+; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-46e2e363118so4119825e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 22:06:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759986392; x=1760591192; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CdHEjQxG+FatWNW5/zKqLPCIUyKLAYeWhQuCe1gPWoU=;
+        b=YDh69t0+rmwsfWzTffPUN//wbJVma9c3310fGP1Bhbvb0WWNeI3A90enu9hpgTl6to
+         CJqDUF2juBWsjfl+o5oTmqlYFfrhJV88DDgmYK+Yjft07zF+jDYYh1q01Ord54hz0y2l
+         DW9yoVUy2uNH9fxMalRPW4FSj7qledjQ88fMKaMsx6Dbl6+AZhRLdixDgA6Jb6tOlbSJ
+         Qn/gtToySWed6AQwe/EhGiv1xRIfZgFreAcFUlWaKhOm9FcNfXKzpQ2fMM31RzlN11LD
+         dWQ618/qYs3T1NPfZM2JVeVB2DHpWWaxFKFWDlr3B8FHoQIC0a0f6Ysjbx/3FzbOUk3a
+         HuMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759986392; x=1760591192;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CdHEjQxG+FatWNW5/zKqLPCIUyKLAYeWhQuCe1gPWoU=;
+        b=XZs58Z+82a/HiQY1VE7H68Mzd6VSep+6r9PRbLqHybNqaVu1YafV8vkn73+x+ozMad
+         tnj8p7oiGkEih2JJnwhKJ2CIntfbJNRX3H15cUOZnd8voTosJnCVcIkvOl1Y2aap98Lv
+         oxE7LHm8QZwSO6nmUJgooObSiJjdwkQv3sWorhwFomQFgfvXMuPGCbjcK5UrlMTBnyGB
+         ywABSjLmyvkK9jopcS14K8WU4Othrre/MxhzH+mhDjXqK94tZ/oEtayacNiELLigFCv0
+         NxexU5eK/zfC8g5C5MYQh1FnD3M4C48ztCdO8K2Bw6K4P2YKdQ5TN7KZ4MpI4knKxt2j
+         zRRA==
+X-Forwarded-Encrypted: i=1; AJvYcCWylFQVyIcezN9JSszYFt5oPvS1ii6Y6cgJ2mbBOzklwrk5WT7eqnKdth26j1SvB2JbPWTuLTjeZ5yElF8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGn29ZksFIRp9/XJ1WbKref3hTRe5Yr0HqGDLvk8OZPutMMHcD
+	b8vm3mXUX533iMZP0xt2sRgIwGIssUShKsrO/kgrVnLm+EgxFSX/ddZpMzoc8TY2b8ab8LQOFbF
+	+tqO8OsO/tv6XYGEO7HLmGYSwe2vCngU=
+X-Gm-Gg: ASbGnct+PqQO0Lmd92pV11WPYH6cG6y55rrOCpaXUaSJ/be0XfXi+1Dq9F04919f0Ad
+	8lhuDl8G5N4MYeNSb2qQzl02fo20gQ0hKAiU4beX6pjTDC+CfIPeigcoLAwbJcvY3DzZUC5sfDt
+	FVrgBUURd486BJfSW06eWGbT7s53/+wWShR/YbSuYB+nt4EvZ8NEzV1bCjPfMzpD5IyF9NyWwSS
+	aMu3KCbQ+7TAhJwHGHqqOTY+gFrFRNt
+X-Google-Smtp-Source: AGHT+IHqYRmivewqb9zg+yu8zGgOx+vqqkeXoxUzMI4NUKSxwIhgIh4uZTenWgZghGln5muMkEwQ0EmS5xQOqziJeM4=
+X-Received: by 2002:a05:6000:603:b0:3ea:4e8b:c96a with SMTP id
+ ffacd0b85a97d-4266e8e64e4mr3654211f8f.57.1759986391521; Wed, 08 Oct 2025
+ 22:06:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <187fe5a3-99b9-49b6-be49-3d4f6f1fb16b@iscas.ac.cn>
+References: <20251008082800.67718-1-clamor95@gmail.com> <20251008082800.67718-2-clamor95@gmail.com>
+ <20251008-safely-reach-9274474a2ec8@spud>
+In-Reply-To: <20251008-safely-reach-9274474a2ec8@spud>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Thu, 9 Oct 2025 08:06:20 +0300
+X-Gm-Features: AS18NWC-fQyHK-rMvVxkxqV6S0I7hbIVFXE8xA55zUXu7V0ibTLESXEQf_mVWkM
+Message-ID: <CAPVz0n2pbAS3Qjm9WQGvcuJhkNnyjGCyJtVi=VMuUgPoQNE+wA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/7] dt-bindings: display: panel: properly document LG
+ LD070WX3 panel
+To: Conor Dooley <conor@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Douglas Anderson <dianders@chromium.org>, Sam Ravnborg <sam@ravnborg.org>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 09, 2025 at 12:19:46PM +0800, Vivian Wang wrote:
-> 
-> On 10/8/25 18:20, Greg KH wrote:
-> > On Wed, Oct 08, 2025 at 03:50:15PM +0800, Vivian Wang wrote:
-> >> Backport of the two riscv mmap patches from master. In effect, these two
-> >> patches removes arch_get_mmap_{base,end} for riscv.
-> > Why is this needed?  What bug does this fix?
-> 
-> The behavior of mmap hint address in current 6.6.y is broken when > 39
-> bits of virtual address is available (i.e. Sv48 or Sv57, having 48 and
-> 57 bits of VA available, respectively). The man-pages mmap(2) page
-> states, for the hint address [1]:
-> 
->        If addr is NULL, then the kernel chooses the (page-aligned)
->        address at which to create the mapping; this is the most portable
->        method of creating a new mapping.  If addr is not NULL, then the
->        kernel takes it as a hint about where to place the mapping; on
->        Linux, the kernel will pick a nearby page boundary (but always
->        above or equal to the value specified by
->        /proc/sys/vm/mmap_min_addr) and attempt to create the mapping
->        there.  If another mapping already exists there, the kernel picks
->        a new address that may or may not depend on the hint.  The address
->        of the new mapping is returned as the result of the call.
-> 
-> Therefore, if a userspace program specifies a large hint address of e.g.
-> 1<<50, and both the kernel and the hardware supports it, it should be
-> used even if MAP_FIXED is not specified. This is also the behavior
-> implemented in x86_64, arm64, and, on a recent enough (> 6.10) kernel,
-> riscv64.
-> 
-> However, current 6.6.y for riscv64 implements a bizarre behavior, where
-> the hint address is treated as an upper bound instead. Therefore,
-> passing 1<<50 would actually return a VA in 48-bit space.
-> 
-> To reproduce, call mmap with arguments like:
-> 
->        mmap(hint, 4096, PROT_READ, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
-> 
-> Comparison:
-> 
->         hint = 0x4000000000000 i.e. 1 << 50
-> 
->                     6.6.106             6.6.106 + patch
->             sv48    0x7fff90223000      0x7fff93b4e000
->             sv57    0x7fffb7d49000      0x4000000000000
-> 
-> When the hint is not used, the exact address is of course random, which
-> is expected. However, since the address 1<<50 is supported under Sv57,
-> it should be usable by mmap, but with current 6.6.y behavior it is not
-> used, and some other address from 48-bit space used instead.
-> 
-> There's not yet real riscv64 hardware with Sv57, but an analogous
-> problem arises on Sv48 with an address like 1<<40.
+=D1=87=D1=82, 9 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 00:11=
+ Conor Dooley <conor@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Wed, Oct 08, 2025 at 11:27:53AM +0300, Svyatoslav Ryhel wrote:
+> > LG LD070WX3-SL01 was mistakenly documented as a simple DSI panel, which=
+ it
+> > clearly is not. Address this by adding the proper schema for this panel=
+.
+> >
+> > There is only one user of this panel binding in the mainline Linux kern=
+el,
+> > which is the Nvidia tablet Tegra Note 7. Its panel is broken anyway sin=
+ce
+> > it cannot initialize properly if the bootloader does not leave a
+> > pre-initialized panel. It also cannot suspend or re-initialize properly=
+,
+> > since no DSI configuration is set and it has a loose regulator which
+> > relies on an always-on property rather than being hooked to the panel
+> > where it belongs.
+>
+> I think this is a reasonable justification. For my own enlightenment,
+> what happens if a new kernel uses the old simple-panel devicetree?
+>
 
-As this issue has been fixed for many years now, why is it just showing
-up now?  Shouldn't you be using 6.12.y for new hardware?
+Since regulator framework provides dummy regulators and compatible
+matches, driver should probe correctly. Panel should still work with
+unpatched device tree until disabling unused regulators/power domains
+kicks in.
 
-> One real userspace program that runs into this is the Go programming
-> language runtime with TSAN enabled. Excerpt from a test log [2], which
-> was run on an Eswin EIC7700x, which supports Sv48:
-> 
-> fatal error: too many address space collisions for -race mode
-> runtime stack:
-> runtime.throw({0x257eaa?, 0x4000000?})
->     /home/swarming/.swarming/w/ir/x/w/goroot/src/runtime/panic.go:1246 +0x38 fp=0x7ffff84af758 sp=0x7ffff84af730 pc=0xc9310
-> runtime.(*mheap).sysAlloc(0x3e3c20, 0x81cc8?, 0x3f3e28, 0x3f3e50)
->     /home/swarming/.swarming/w/ir/x/w/goroot/src/runtime/malloc.go:799 +0x56c fp=0x7ffff84af7f8 sp=0x7ffff84af758 pc=0x67944
-> runtime.(*mheap).grow(0x3e3c20, 0x7fffb69fee00?)
->     /home/swarming/.swarming/w/ir/x/w/goroot/src/runtime/mheap.go:1568 +0x9c fp=0x7ffff84af870 sp=0x7ffff84af7f8 pc=0x824c4
-> runtime.(*mheap).allocSpan(0x3e3c20, 0x1, 0x0, 0x10)
-> [...]
-> FAIL    runtime/race    0.285s
-> 
-> With TSAN enabled, the Go runtime allocates a lot of virtual address
-> space. As the message suggests, if the return value of mmap is not equal
-> to a non-zero hint, the runtime assumes that mmap is failing to allocate
-> the address because some other mapping is already there (in other words,
-> it assumes the man-pages documented behavior), and unmaps it and tries a
-> different address, until it tries too many times and gives up. This
-> means Go with TSAN fails to initialize on Sv48 and current 6.6.y.
-> 
-> (cc Meng Zhuo, in case of any questions about the Go runtime here.)
-> 
-> Patch 1 here addresses the above issue, but introduced regressions (see
-> replies in "Link"). Patch 2 addresses those regressions.
+> > Tegra Note 7 device tree is adjusted as a part of this series.
+> >
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > ---
+> >  .../bindings/display/panel/lg,ld070wx3.yaml   | 60 +++++++++++++++++++
+> >  .../display/panel/panel-simple-dsi.yaml       |  2 -
+> >  2 files changed, 60 insertions(+), 2 deletions(-)
+> >  create mode 100644 Documentation/devicetree/bindings/display/panel/lg,=
+ld070wx3.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/display/panel/lg,ld070wx=
+3.yaml b/Documentation/devicetree/bindings/display/panel/lg,ld070wx3.yaml
+> > new file mode 100644
+> > index 000000000000..0a82cf311452
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/display/panel/lg,ld070wx3.yaml
+> > @@ -0,0 +1,60 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/display/panel/lg,ld070wx3.yaml#
+>
+> Could you make the filename match the compatible please?
 
-Ok, that makes a bit more sense, but again, why is this just showing up
-now?  What changed to cause this to be noticed at and needed to be fixed
-at this moment in time and not before?
+Filename matches compatible, -XXNN after lg,ld070wx3 indicate
+revision. I have found at least two more -sm01 and -sh01, but since I
+was not able to get datasheet for them I cannot say for sure that they
+fully compatible with this schema.
 
-thanks,
-
-greg k-h
+> With that,
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+>
+> Cheers,
+> Conor.
+>
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: LG Corporation 7" WXGA TFT LCD panel
+> > +
+> > +maintainers:
+> > +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> > +
+> > +allOf:
+> > +  - $ref: panel-common.yaml#
+> > +
+> > +properties:
+> > +  compatible:
+> > +    items:
+> > +      - const: lg,ld070wx3-sl01
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  vdd-supply: true
+> > +  vcc-supply: true
+> > +
+> > +  backlight: true
+> > +  port: true
+> > +
+> > +required:
+> > +  - compatible
+> > +  - vdd-supply
+> > +  - vcc-supply
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/gpio/gpio.h>
+> > +
+> > +    dsi {
+> > +        #address-cells =3D <1>;
+> > +        #size-cells =3D <0>;
+> > +
+> > +        panel@0 {
+> > +            compatible =3D "lg,ld070wx3-sl01";
+> > +            reg =3D <0>;
+> > +
+> > +            vdd-supply =3D <&vdd_3v3_lcd>;
+> > +            vcc-supply =3D <&vcc_1v8_lcd>;
+> > +
+> > +            backlight =3D <&backlight>;
+> > +
+> > +            port {
+> > +                endpoint {
+> > +                    remote-endpoint =3D <&dsi0_out>;
+> > +                };
+> > +            };
+> > +        };
+> > +    };
+> > +...
+> > diff --git a/Documentation/devicetree/bindings/display/panel/panel-simp=
+le-dsi.yaml b/Documentation/devicetree/bindings/display/panel/panel-simple-=
+dsi.yaml
+> > index 9b92a05791cc..f9f1e76a810c 100644
+> > --- a/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.=
+yaml
+> > +++ b/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.=
+yaml
+> > @@ -42,8 +42,6 @@ properties:
+> >        - kingdisplay,kd097d04
+> >          # LG ACX467AKM-7 4.95" 1080=C3=971920 LCD Panel
+> >        - lg,acx467akm-7
+> > -        # LG Corporation 7" WXGA TFT LCD panel
+> > -      - lg,ld070wx3-sl01
+> >          # LG Corporation 5" HD TFT LCD panel
+> >        - lg,lh500wx1-sd03
+> >          # Lincoln LCD197 5" 1080x1920 LCD panel
+> > --
+> > 2.48.1
+> >
 
