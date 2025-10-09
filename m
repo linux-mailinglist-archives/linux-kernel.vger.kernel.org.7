@@ -1,126 +1,106 @@
-Return-Path: <linux-kernel+bounces-846833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16961BC9290
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:01:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5141EBC92AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:02:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0DB019E81E3
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:02:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A0D33B2DB0
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:02:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4AD2E2F13;
-	Thu,  9 Oct 2025 13:01:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B842E2DFA;
+	Thu,  9 Oct 2025 13:02:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bSrqB3rC"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U66bVbG+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020161339A4
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:01:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97D711713;
+	Thu,  9 Oct 2025 13:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760014907; cv=none; b=D+RTJ5N3OJCwphnDN+trsCU+URRmOtrfeZooGjz7ieC4bA9MjZHiQuNzNbFi7CTgZQbWkAe3ZL/zVQcaHS9lhMELQWNVOuo3apntX7qfGfA1oT3DukwO1btz80Mm/zM/+Bsoumb81gYIMo7zRvBqBYOQofuEYV8hgwHziypFrbs=
+	t=1760014968; cv=none; b=N4ylLmV19N/J4Ffd2CyzVbp+7BZvanvw1jOvvCKReFPEc2GUoIbRB7R4UYE6j3z92P2HXxfIrztzGdXcFrPVcSglp53qqog72Z9GgERxH1o+ANZvbzi/tbXRvzhZ9KzMS0tHuAYEp21f4wM7NUaPgEHpoJQ30akzl5KgGQqqBL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760014907; c=relaxed/simple;
-	bh=Gs47qKyjjCbUeDk5wi2/Q6Ba91DMd60WfEY1F85BEAs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ai71Az22211RLpFuRRByEgxoAOJD3p4GX7f748F+zs3DrD7kPh7GBsEmiu4ncu779vRqKy5rKhe8abTFLsbzQvWliTHxPcme716B9YJIflJn24hcrDIYCwdAg3pev8UCHxQQnz76en3hTmTc/hWbTdAZQeTyTgmHwJMiUl9ynyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bSrqB3rC; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b4ee87cc81eso773894a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 06:01:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760014905; x=1760619705; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YcgGyufeWrwbNvU76gdgcnETjaPRCIETyHV991hM71k=;
-        b=bSrqB3rCEnP8PsQUegBgfVVmHsiLaCuvDfV15AkZEaP/yCojaX6oE3kDqO1aoh2rVw
-         kHcok5YYKxEqwIR8yJkLZlKfO/cKn0XMbB3YCx0bpY2SwZXgOd4vYhw3TSDGysjW8slz
-         dl4rNGYXdL4qhF/hmZPMnXH+7i/xozM8MqemOwrtna3GY2gOjlqlobm4g/2rk9JtKXTv
-         Z1wMckwYZx1mULsXIHlFR0WRaxxEnLAUz6N14vwLiQVPlvUilLWhQPEZgSgiqBOX+FbW
-         7ge8N8iOQrZwo4+TdqTAI0jY7rpgWsfw5lx+kLBxbqtnzPzOwzW2ebwp2Zqtl/d/YdDQ
-         ISSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760014905; x=1760619705;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YcgGyufeWrwbNvU76gdgcnETjaPRCIETyHV991hM71k=;
-        b=wZ7wkSIcTyAWfvPUuzVE4x/d2+uaNSnvWJouzcsbvZR+dj/dINZCTAk0qGOl8ApF6D
-         9+yoO7Ld+Hb5eXkjNYvhJAKFJdjcZo8oratjnNhuwxYVmgc7j6paZsBtT3aj5nrJ5ijE
-         Cd0hN7AX2snsjVFx6wc/Mxk6ji91ZDdJBwoUvnyy2BiDzcHAE0hp8pp4sh6wsB8G3Pqb
-         aNdCG729LKyVwBh+QekS2QJNhzzl2EFYlXVidCnGCxVvIbYTzIdcMoEYjE7COWttL8n1
-         chUEkbZulf12QTcFaYUAmR6lg1Bh1Uxa9OnbNf+ZFzYaZbrElXVlU4AS7UqguDH/z3AH
-         geyA==
-X-Forwarded-Encrypted: i=1; AJvYcCWcbs5dIEn75daQvljotMZa0oH3UyTOnzySBJFQP4rFWUtDp9Vtig7ljIn72SBz6vR0Y0nrmDx0EO40KDg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyS+0vJfZOAECw7TB5FDltQh6uyxsnC5J1vvtoiqDu4q89T2D50
-	nNX6a85zVlvKNOKPAi6l9FJapl1LMeQpX+rCxsMlPsWvYzpSnlm1Rww4JQjQvVJk9uAqQJDUnIb
-	L8A7ureUZpZc0gqc+Z6IjN8FhsOhiAME=
-X-Gm-Gg: ASbGncvd86YouZ+j4KizqkrkfXd6+zhrKlNveKKZ0iCKQvhvrvjBqWrs7vSnz9bksyc
-	veAsD8MhgifFiT9JQuBauWHcmZLJczH746KixWCp9TlY3wMR1+bJ6tAVcdFVLAwgsolaOChMwz1
-	O2ZowJaBwA4DUgSZLBEeF/Wy8QQlHJQDlLG61YV5eI5cB4yXYb1EOAhau6NLr07HPHTcGuaZOkb
-	GhhArcPMCM7B4g+W0kjp/xpn6KrZttgdI9zZgv2LQ==
-X-Google-Smtp-Source: AGHT+IGYLUuOBqqW0GFGNDMWTwHGx99IL3xPXeKehrsNaPNEIwJoQjw5SqCX43PuDYbkab8vCV+1w3CcEjSwf8x0pa0=
-X-Received: by 2002:a17:903:3848:b0:272:a900:c42e with SMTP id
- d9443c01a7336-290273ef069mr91199775ad.35.1760014905030; Thu, 09 Oct 2025
- 06:01:45 -0700 (PDT)
+	s=arc-20240116; t=1760014968; c=relaxed/simple;
+	bh=PuBhH69ek7xCWvm0d6VlgDo84TLqDlLMyWF4mF3IQws=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=E7PaWS6ZdZNAz2oYtiMg8hTGmuOeIhEQOXZgArLi1s9Ui0AHrCqU5nGimrHNZFpCJcgCyeZU6rbAaMS+n2aJ3GouL2ZOtVPLwN+OJbrj5IqIqTdKitjOgLCrcBCMMgLiwUKCiDBxe86/M0FM+nKYx2mRIV4Lq+oL8LouqFEb+uM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U66bVbG+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B61CC4CEF5;
+	Thu,  9 Oct 2025 13:02:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760014966;
+	bh=PuBhH69ek7xCWvm0d6VlgDo84TLqDlLMyWF4mF3IQws=;
+	h=Date:From:Subject:Cc:To:References:In-Reply-To:From;
+	b=U66bVbG+u9ZGnv56xEL2UQJ9Tl/4GNHCEj+Mqn80qMl6u9YpHbHHwbLkJqIiiPnEk
+	 lgex3EvWzBOUt2UBiZ+zZTgSvL3x6OFmKMs/BLkJ+lQ2uCfye6y1ks+CoM1fc0PZsy
+	 7CSCR2AKg6/RSufXN1Id4LxgRJ8quweikpk2FFbqYnrIVpM7+kAQzzaA5r9dmEkAfo
+	 Av3xe7vwtYVfUWcvGcmwcaMTqMQUWeJoWUe8EpPIU8eF+eYW0gK9cy3v0XiiQkdECY
+	 vscTpXwzqBp3P1M7QC/W830ChoVgOg536Rsq4B9iJ2gSGwLt2mKm81pdNZSXYm3PFn
+	 VPxBVMjj0sS6A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250806094855.268799-1-max.kellermann@ionos.com>
- <20250806094855.268799-4-max.kellermann@ionos.com> <CAOi1vP_m5ovLLxpzyexq0vhVV8JPXAYcbzUqrQmn7jZkdhfmNA@mail.gmail.com>
- <CAKPOu+8a7yswmSQppossXDnLVzgg0Xd-cESMbJniCWnnMJYttQ@mail.gmail.com>
-In-Reply-To: <CAKPOu+8a7yswmSQppossXDnLVzgg0Xd-cESMbJniCWnnMJYttQ@mail.gmail.com>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Thu, 9 Oct 2025 15:01:31 +0200
-X-Gm-Features: AS18NWDgVXdJzaBexOMeDAOr15F2R2gpSg5qJuQMSqlDa3Ke0Sh3XNjKn1-fGxQ
-Message-ID: <CAOi1vP-FVKUUvQQT7=EuHij9uerqRvdrTQegMch4_JYQp64Qvg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] net/ceph/messenger: add empty check to ceph_con_get_out_msg()
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: xiubli@redhat.com, amarkuze@redhat.com, ceph-devel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 09 Oct 2025 15:02:39 +0200
+Message-Id: <DDDT8EEG7E8B.27YT6QAFIS9GK@kernel.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v6 0/5] Introduce bitfield and move register macro to
+ rust/kernel/
+Cc: "Alexandre Courbot" <acourbot@nvidia.com>, "Yury Norov"
+ <yury.norov@gmail.com>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "rust-for-linux@vger.kernel.org"
+ <rust-for-linux@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+ <dri-devel@lists.freedesktop.org>, "Alistair Popple" <apopple@nvidia.com>,
+ "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ "bjorn3_gh@protonmail.com" <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "David
+ Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "John
+ Hubbard" <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
+ "joel@joelfernandes.org" <joel@joelfernandes.org>, "Elle Rhumsaa"
+ <elle@weathered-steel.dev>, "Daniel Almeida"
+ <daniel.almeida@collabora.com>, "Andrea Righi" <arighi@nvidia.com>,
+ "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>
+To: "Joel Fernandes" <joelagnelf@nvidia.com>
+References: <695CCDCE-A205-4557-AA15-6F102B8CCF0C@nvidia.com>
+ <DDCV84IJHUML.126CB1CT0XMX5@kernel.org>
+ <22e8c33c-b444-4f58-b7ec-6374475e05be@nvidia.com>
+In-Reply-To: <22e8c33c-b444-4f58-b7ec-6374475e05be@nvidia.com>
 
-On Thu, Oct 9, 2025 at 1:47=E2=80=AFPM Max Kellermann <max.kellermann@ionos=
-.com> wrote:
+On Thu Oct 9, 2025 at 2:24 AM CEST, Joel Fernandes wrote:
+> On 10/8/2025 6:23 AM, Danilo Krummrich wrote:
+>> On Wed Oct 8, 2025 at 1:37 AM CEST, Joel Fernandes wrote:
+>>> The Nvidia GPU architecture is little-endian (including MMU structures =
+in VRAM).
+>>=20
+>> Yes, I'm aware (and I'd assume that there is no reason to ever change th=
+at).
+>>=20
+>> Just for the complete picture, there's also some endianness switch in th=
+e
+>> NV_PMC_BOOT_1 register I think?
 >
-> On Thu, Oct 9, 2025 at 1:18=E2=80=AFPM Ilya Dryomov <idryomov@gmail.com> =
-wrote:
-> > I made a change to net/ceph/messenger_v1.c hunks of this patch to
-> > follow what is done for msgr2 where ceph_con_get_out_msg() is called
-> > outside of the prepare helper and the new message is passed in.
-> > prepare_write_message() doesn't need to return a bool anymore.
->
-> But ... why?
-> Your change is not bad, but I don't believe it belongs in this patch,
-> because it is out of this patch's scope. It would have been a good
-> follow-up patch.
+> You are referring to old GPUs. NV_PMC_BOOT_1 does not have endianness swi=
+tch for
+> Turing and later.
 
-Changing a function to return a bool only to immediately undo that
-change in a follow-up patch (both touching the same 10-15 lines of
-code) seemed like pointless churn to me.
+Ok, then there's no point in considering big-endian CPUs.
 
->
-> There are lots of unnecessary (and sometimes confusing) differences
-> between the v1 and v2 messengers, but unifying these is out of the
-> scope of my patch. All my patch does is remove visibility of a
-> messenger.c implementation detail from the v1/v2 specializations.
+> If we want to add a Kconfig patch enabling Nova only on x86/ARM, that'll =
+be Ok
+> with me.
 
-ceph_con_get_out_msg() is a common helper and given that this series
-changed its signature and how it's supposed to be used, I wouldn't say
-that adjusting the specializations to do the same thing with it is out
-of scope.  This isn't unifying some completely unrelated aspect of v1
-vs v2 and the resulting patch actually ended up being smaller.
-
-Thanks,
-
-                Ilya
+I don't see why we'd constrain it to x86 and ARM, but we should indeed cons=
+train
+it to little-endian architectures.
 
