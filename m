@@ -1,153 +1,125 @@
-Return-Path: <linux-kernel+bounces-847063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A171DBC9C87
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 17:27:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2D51BC9CAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 17:29:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DBBDF4FA806
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 15:27:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 636263A1D2C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 15:28:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1802EFD99;
-	Thu,  9 Oct 2025 15:25:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301A11E260D;
+	Thu,  9 Oct 2025 15:25:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Af1yyeZA"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i7mMO3dD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E6AB1E1DE5
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 15:25:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840C91E0DD8
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 15:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760023517; cv=none; b=AFOq1yxXWOh610YJYqCaNxWU7GkBvmzBs9ICB3WWgCUJGw1MMXX06adACyNoH1RQOgzLAWRTRQfoUMn68h8axtARsN9pY5lbbliEd6nNS9h3l5ovNcIbi9UDKdAop5vpmk1iDjk/efkSID5OzS3YVKGbVOefvGK5Gs5+R6atSLw=
+	t=1760023534; cv=none; b=hQUmdETW9LtfG+K0whIb7Iq1jZKCHoaAObExnaLyHBHKIrFo6Aic1M+nPV9KVr0aV+zaNg6iD1MhkQwwA0oDJE2OyIN3UGaxnI28oKgXGzaDg8wvTBicYatDKy3ox4jelOsjbdIB6DTsMOjCOi7/t3DFbFhwtvOMt+LwQTRHmzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760023517; c=relaxed/simple;
-	bh=QW41kS606/q0M1jPNHEOuZDX62lb/ReQ5t7lhOrXCD4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lJSt2vzvQMPvas5eXx5xi+C3sFfe9PTEBLjnM1jzeicAnNdd6nDklEyVoANhEMRE9lMLE0jOpWNRAA070B77k+pgYdb/GuouLTw5PLCf1o+MCl9d+4zEANGNpAuQdBuvUzbSSx46ezlE3Unr5Ii3J/cwdryA7ncQEsyt7qJfu+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Af1yyeZA; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b4aed12cea3so172484966b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 08:25:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760023511; x=1760628311; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MC3uJwytBymNcNNUBl3ACIVe5vrNsKsuMCXz3oqIuhI=;
-        b=Af1yyeZAOAqEbOeGgYTym0mDHmPAwMGaoPz1O7eyYQz+Th0zjj+ivDHa0RsntCB4tL
-         wEFlq6qBrVa+eld8SXbwd/ccrNfz9gJt9fPyzShxT9XgMfXKjQkE7lnqvpbX4I8aaNUQ
-         uJeeP/2qDVl2yBHK359MBgqYBescyCVvLFXaL/FWBSYFmVs1smoyfBzcX3Z56QLc5gcM
-         RPlyf+1ZFuEChLJ1shNdr3K8sL8ZvTNiS3Tk90dN4bDLoyNvO4flR9o64PPBMfUXGbYa
-         dVbaFiejbNnYeErTt7svvejGNY983fv0l/z5i1D2YNvJnxZYkcUYUgtRM+Hh/I+0SGtA
-         HqEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760023511; x=1760628311;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MC3uJwytBymNcNNUBl3ACIVe5vrNsKsuMCXz3oqIuhI=;
-        b=wXz3X+W35JGn9eMepPXz19hljGVvZUqx6csYPVeTrZatnacAWZh7vscbPqrk9z6SEc
-         r5kYgpaCyeCdzrAfUtopxxLe7fqPrfZZvtB6DAxOoLytky2Gj0FJgYstx7J/uZTq68yk
-         cE2Go2mnEFQLjUGu1IWZaE0pfZBh2VNPGjCEuR+EjROVjDTB5Nha8Fx8VQVc5KdT8l0Y
-         xdjgnHQ2xuwaLksyvJUNogbGT+rreZq1hRWTOoVKI6bg4+UxA0YbtZHuqiQyJYg9tAm9
-         eGcBSJUw16zEB6QYQtPEArZ0QVYKDSqiVEvGLqq2v1rMsKKUcj3CaO8kvLFisO5MgQD2
-         fRYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUZn8kSry1KxUnf+3OI0mo+GHC6J5JNen1MOjOVeV0CuI64SlK1bT3ZiNMbA0Hq9L6lGkwxVbIKz4Wpn2Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpYxUVBGSLNIIdMN9Gi3DJQVFnZz2yImcSV6Lm+q2iZJSR9Qh9
-	mnZM4fXfoMd0zmVyLtvlJJ1msJ3CcIxvmMAtzJ3GZuCngV5eCz8KdETXzQH1tP+0Me4=
-X-Gm-Gg: ASbGncsF9liW9N+KLO95C5WJnlX9BGZbjG84L0tCKnoOSjA4tdipp4JaLzSKUpUoSfw
-	MsCR9VN6xbIAL4jTbTjqsr4TFYAHlQfjivNobOt5RlR0y7ugFyQNspHoJux1IzlQc31qw8x2CZZ
-	G97N8JD/TdILJ+JW41axBp+uXMdXZE6hhJfjBl1MOtwXvzQsMn7Uc9DwrBXFbENlfWl4f1wmPSh
-	eMtBAd7lV4JC7+3h0SLEQAkn0UvKa/cC4JL1eK2HKyDQmwWkx7J+GvEHyQd5l1FP8GdB6IC+r+T
-	xFpfuMgCQ8ck821yV55uxpciMErMgBg0Q0Wd7/F8jA4QpG0UY8BCb2C+rBKZqTikW7RMYhuHi7d
-	70qTY0WliWAeMKZ5yc9ibNBuUswOROt2VHJ659Skemxhmer/VeY6ijwaCG9GRIlghkwI/UxnUeF
-	5UT12mtaQiXMRyaLcedHRBM/mq+VlJEXIqXHBren2t
-X-Google-Smtp-Source: AGHT+IGUCw5TbDsbNDU12n89wz1xnvXjoWKEOoQfEfCs7xti4zjASJ6sSLgSUPyBLFyQO2HMcf/P7g==
-X-Received: by 2002:a17:907:6e8a:b0:b3d:5088:213d with SMTP id a640c23a62f3a-b50abfd4902mr890576066b.42.1760023511315;
-        Thu, 09 Oct 2025 08:25:11 -0700 (PDT)
-Received: from puffmais2.c.googlers.com (224.138.204.35.bc.googleusercontent.com. [35.204.138.224])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b486970b36fsm1908967566b.62.2025.10.09.08.25.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 08:25:10 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Thu, 09 Oct 2025 16:25:12 +0100
-Subject: [PATCH v2 10/10] pmdomain: samsung: use dev_err() instead of
- pr_err()
+	s=arc-20240116; t=1760023534; c=relaxed/simple;
+	bh=/ups0rdcsbhtlWRIsVepwZKH+PzYyefCRWijmztsG38=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eSzkbBu5CbJnQ/k3cKJ0NuRBeJBusIjzbNlrfB59VFgGxOkF9ZIEd1ubwQW4y5mePxmYK9NJjW34ouGDxusMsfDEFMlC24MwQ4plq2UGzA6hsonPyzRYK1FuAHT5Ci97PVQN4baVeNvek089mO0rchJYWyv/AjBgxJNMCDI16KI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i7mMO3dD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31115C116C6
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 15:25:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760023534;
+	bh=/ups0rdcsbhtlWRIsVepwZKH+PzYyefCRWijmztsG38=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=i7mMO3dD4j35Ge3GxNo6uQLuK2DZ3HINxs+jtEN1TGybsdza808OOeUCgY08yrXw2
+	 VW6iyAbWT5OjTYZ5Iks2S6OStDkve2UCSr2EFsO+OvKnl22+5kNKrWodjdeItWYzTr
+	 7qN0wDtL5Te9tob1LD7s0V73vgMq1GyAFJDHC7jWUgUL37JLv/rZii6WeLWj36xF7O
+	 vZrOz25DBOpiuvWD/P4chTnEkxVdrH4S7WPvIcDQQBRZKJfeYFniRHsRY8zbmHTxSF
+	 gYswlQC9SuCaxL7ENnANCVGw9pbs7KjtpirZT3xX7v3WQojMqb2/A9W1cLn/sNjm8E
+	 YfQxYWbAfvabg==
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-74526ca79beso693462a34.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 08:25:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV3Gx9guz8u1A2v6ku4YcWG9J4a4SDqXlaSMnxIZ9gOFe+vG0H6xacdHlqGsYeAaqCV2UhRvAE+HTnKOGs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFnMDZnK/1RLG/Rfedb0pXU6dT/JUmLoIsC0o11hA+6G+i15Eh
+	SFavftamugV9H4cRcAFnLr/T0Zn8LjSDgB8O0PI+NhhON/CjzR650oXqfMyS71pv96SbaSaqu8A
+	QZKFcTdoqOp1YDr/UvmyqbojXdb9WzE8=
+X-Google-Smtp-Source: AGHT+IGu70IFZQLlAO+3P4ybkBQVr1fPOMs/nnzKxe/rtOBJ7ieNtBACYGLI1c7T/YNJWaLDapxP8Kyk8iZDzISReqM=
+X-Received: by 2002:a05:6808:e88:b0:43f:b7f8:e216 with SMTP id
+ 5614622812f47-4417b2d1e98mr3887324b6e.4.1760023533432; Thu, 09 Oct 2025
+ 08:25:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251009-gs101-pd-v2-10-3f4a6db2af39@linaro.org>
-References: <20251009-gs101-pd-v2-0-3f4a6db2af39@linaro.org>
-In-Reply-To: <20251009-gs101-pd-v2-0-3f4a6db2af39@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Ulf Hansson <ulf.hansson@linaro.org>, 
- Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
+References: <20251009135646.8899-1-bigalex934@gmail.com>
+In-Reply-To: <20251009135646.8899-1-bigalex934@gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 9 Oct 2025 17:25:21 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0itqy9dXoS4ubq3MPdM2zCBQKah3R5B2SGiJE6auTugBw@mail.gmail.com>
+X-Gm-Features: AS18NWBnRSV55ReCkktNys3L2MAhOlsiQ_YiADq19oGN-jfD9E83LCPjtwGrdHg
+Message-ID: <CAJZ5v0itqy9dXoS4ubq3MPdM2zCBQKah3R5B2SGiJE6auTugBw@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: Add absent field_obj null check
+To: Alexey Simakov <bigalex934@gmail.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Robert Moore <robert.moore@intel.com>, 
+	Len Brown <lenb@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, linux-acpi@vger.kernel.org, 
+	acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	lvc-project@linuxtesting.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-dev_err() gives us more consistent error messages, which include the
-device. Switch to using dev_err().
+On Thu, Oct 9, 2025 at 3:57=E2=80=AFPM Alexey Simakov <bigalex934@gmail.com=
+> wrote:
+>
+> The acpi_ev_address_space_dispatch function is designed
+> in such way that assignning field_obj to NULL is valid case.
+>
+> Cover the missed execution path with this check.
+>
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+>
+> Fixes: 0acf24ad7e10 ("ACPICA: Add support for PCC Opregion special contex=
+t data")
+> Signed-off-by: Alexey Simakov <bigalex934@gmail.com>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/pmdomain/samsung/exynos-pm-domains.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ACPICA changes need to be submitted to the upstream ACPICA project on
+GitHub as pull requests (PRs).
 
-diff --git a/drivers/pmdomain/samsung/exynos-pm-domains.c b/drivers/pmdomain/samsung/exynos-pm-domains.c
-index a7e55624728a62545eac049c9a51012a229f44c2..387ee1c91caeae4519237af2ec659f56782e7bd7 100644
---- a/drivers/pmdomain/samsung/exynos-pm-domains.c
-+++ b/drivers/pmdomain/samsung/exynos-pm-domains.c
-@@ -29,6 +29,7 @@ struct exynos_pm_domain_config {
-  */
- struct exynos_pm_domain {
- 	struct regmap *regmap;
-+	struct device *dev;
- 	struct generic_pm_domain pd;
- 	u32 local_pwr_cfg;
- 	u32 configuration_reg;
-@@ -53,8 +54,9 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 				       (val & pd->local_pwr_cfg) == pwr,
- 				       100, 1 * USEC_PER_MSEC);
- 	if (err)
--		pr_err("Power domain %s %sable failed: %d (%#.2x)\n",
--		       domain->name, power_on ? "en" : "dis", err, val);
-+		dev_err(pd->dev,
-+			"Power domain %s %sable failed: %d (%#.2x)\n",
-+			domain->name, power_on ? "en" : "dis", err, val);
- 
- 	return err;
- }
-@@ -123,6 +125,8 @@ static int exynos_pd_probe(struct platform_device *pdev)
- 	if (!pd)
- 		return -ENOMEM;
- 
-+	pd->dev = dev;
-+
- 	pd->pd.name = exynos_get_domain_name(dev, np);
- 	if (!pd->pd.name)
- 		return -ENOMEM;
+Once a given PR has been merged upstream, a corresponding Linux patch
+can be sent (with a Link: tag pointing to the original upstream ACPICA
+commit), but it is not necessary to do so because released upstream
+ACPICA material is automatically included into the ACPICA code in
+Linux.
 
--- 
-2.51.0.710.ga91ca5db03-goog
-
+> ---
+>  drivers/acpi/acpica/evregion.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/acpi/acpica/evregion.c b/drivers/acpi/acpica/evregio=
+n.c
+> index fa3475da7ea9..fa01bcd3840d 100644
+> --- a/drivers/acpi/acpica/evregion.c
+> +++ b/drivers/acpi/acpica/evregion.c
+> @@ -163,7 +163,7 @@ acpi_ev_address_space_dispatch(union acpi_operand_obj=
+ect *region_obj,
+>                         return_ACPI_STATUS(AE_NOT_EXIST);
+>                 }
+>
+> -               if (region_obj->region.space_id =3D=3D ACPI_ADR_SPACE_PLA=
+TFORM_COMM) {
+> +               if (field_obj && region_obj->region.space_id =3D=3D ACPI_=
+ADR_SPACE_PLATFORM_COMM) {
+>                         struct acpi_pcc_info *ctx =3D
+>                             handler_desc->address_space.context;
+>
+> --
+> 2.34.1
+>
+> Just FYI, this patch was already merged to github ACPICA repository.
+> Commit hash with correspond changes at ACPICA repository: f421dd9dd897dfd=
+1e0c015afa90cd0de2464e23c
 
