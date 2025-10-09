@@ -1,76 +1,78 @@
-Return-Path: <linux-kernel+bounces-847285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC64CBCA711
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:58:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CECE2BCA753
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:59:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 291C119E5508
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:59:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8C0C94E580F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:59:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21DA92472A8;
-	Thu,  9 Oct 2025 17:58:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96DC24BD03;
+	Thu,  9 Oct 2025 17:58:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OLZvsHwy"
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dkFLngVJ"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16BC246BDE
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 17:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB9B248F4D
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 17:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760032723; cv=none; b=VEljyeoxQXq217eriQJXxDntDU5xVLbbBg4KlxsdZyir/+bbF6Agp6SJqVbFcqzI880KwCexrnqu4oKf8O3fAkQK/sNWKkZX55kIg33ajQLIbh1CZR/66xCVEP847kKoLKCOH8lkaw8biStIaDufU0ovib87uM+VW8XYFuWoyWc=
+	t=1760032727; cv=none; b=uMVptm1xSttv2/yBAgpKUNlsg6zVRYf4R4JOBQG+cXb/IXMZ9ThlSPnekGaGcPc6yquq9S+bbmR4uNghD0SrVTX9EJ1BlOKMwZhnA+xA3pwJEsoZAbyIi4d5ooeA4rTpi/WG5Vsa1R3jKp7FHbHo3Bcg04Nz2J8Eahc2lb4gFNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760032723; c=relaxed/simple;
-	bh=Sbu96s5vZuGPRg4fRsVlZ86LV1YqQR4fhB6s0mJ/7Js=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=M8ilkpke4E8f02KBDdjX5vy0gBEK0TKtsWq6BWVgGp4UuVEbEJw2qAqHol7xgL0GWeVTVIvxQs48gQPBVryrqpnuav9A6Wlj9+V50VWysvThf8Dm4BsYpCDUT6F5+cHZDqGaevkRq6sRs+VEm2G7yE95LpZT3vuYnRb8dupZk4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OLZvsHwy; arc=none smtp.client-ip=209.85.166.175
+	s=arc-20240116; t=1760032727; c=relaxed/simple;
+	bh=B8dcsyyggwYCkYkKNypzvAZE2goYIgWDA5Tm6W1R3oQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=b/+Mh/X5OingHolNNF0si36A+TrOuEqq87x6KHvmNXdvoJyUnzogO31kw1XwXIl1rnZfpeEpnO+3D+rDIyFm5+H0xJBywkt9Zb6TC6A1GjN4gbJNUrKcZZwVJyaUV+H0my6yOwI4cplwCRzDOlEUZesiqva6s/r4Foy/K9BE3qI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dkFLngVJ; arc=none smtp.client-ip=209.85.166.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-42486ed0706so7395585ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 10:58:41 -0700 (PDT)
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-42f91f09a6aso4649755ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 10:58:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760032721; x=1760637521; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lGMv5lHdrhywBVTV/PqaJfnG7AITk86FOlf4SxNuZNA=;
-        b=OLZvsHwy9h+IawGxNFnoyV8OdMhMJcK1JME8GAeQM8z9OWGkN2KXUHjY2icawHgkr0
-         QilbRLxSYACM70+0Ko+HGN7XqnTFWBQ7mBQI1dBV3Kb5JKB6iOJvCmqjvMDYAFSM83IX
-         i6bi25damdxKj3vMsW+p/V/GKr2JjCBoGf1Yrz7N8cO0Uq+ajol4Ti8vKH8bc8fptSnE
-         /AGGpF63IN4apAfCgim6zjQYl1O/zDKNlJpVvdw7URoHLNOnN4eHrI6B7VVkQoA88Gjh
-         9YqvRWHrk+EyJl1a1I4+rtLh+AXvKS99InI+y9yRznseCX+z4efjdLkHhrXeUYI+9zbp
-         kscA==
+        d=gmail.com; s=20230601; t=1760032724; x=1760637524; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7BFoISqrXfzunSW6Z4lpDyEbHwjrfmpqrwUs/T2P0T4=;
+        b=dkFLngVJsAdKNma/aUPsUkRdeks6ydSW8gKDO8s85c7fnWS4yFS1Lt4aRfEJa1IC/N
+         +fJaslVd0Jor1usg7ThTFWuEuwCw2/BZwLDdgmnZbGwyADXCNAnGibDrTTJVbFGpPA/J
+         9R9wB1pVmxPsrOJF5EMGL43o19pcI28S62WRMtGH7DPfCZ0n81NFyqFbvNOxlOqLFC1w
+         Nm5dei2mzi8RFm7IpMxTlZfRh53SJavoC1Vn+0f4PBELu11kRX8Rs2H79ifht2GSAePe
+         M4aIanbmkcMqtM3VRoj+aS6l2Cl2M6k1zCsJb47BM3GYDyAk/lkH1QLifMNt96RMoe3y
+         t18g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760032721; x=1760637521;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lGMv5lHdrhywBVTV/PqaJfnG7AITk86FOlf4SxNuZNA=;
-        b=OdyLX23VLhAUQTutLUcM1m2/qTAykXhAkANC/TizKOwETM+o/BLCVCZRKFRNV2YPrc
-         j8roDwYNiTwhMweykrQ4xVJk0j+md/LYR0dRQo1EfI8eysqF8tcZlBv8wk2BhwkzlR3U
-         DftOHs/F+eZ8f+lLeEl3rPMP0IABJZCpaoq7TnyU228clowLLSsOjaxmruvMtryvzplI
-         nk+TS0EPkMa1Q5g76YN+IHFhLJ0LDv2eZK0NcKjCutT03Q0Vd62bY8D+lL/Jkw1yzFI9
-         DFDkBOi3iv39FR3UQjVQRAjqZTCKGoLTS/VDGfE3LHOXI4d9fh668folQVrpv/lQMvvR
-         ykBA==
-X-Forwarded-Encrypted: i=1; AJvYcCXu0mI+G2OZ32YZcEsdzbjZBczKJoKWzTqYjfXKJe7RIOWJt1UtNled7xd7FohzLj+cMe6Qk0k4a/nVgMw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTv5KA/FXRl3U9HNS4V+WtaH9njgOBi12kaCzmaeLztssXSP0l
-	XYN3mQo29lq7Dq9mNiNH7AyM/if3VKaZxCXIV6ABwu/DloAIuYpQNfF2
-X-Gm-Gg: ASbGncudbuhbvwqeCRnQP/KlC2IWa5tBujfVH5y5huS0TV1V4mStfNw7EA9BC+UXj4E
-	o2Gy5dnjuiu9JfkMwK9dPyBQuSeYqzWIoeZrwQuFF0SwksaDV832JdD8Oe60u6PC1S+4+S1mqXn
-	xx6ieAWPnx8yEnpGC4MtqA8MG95Udv6QA63RjQL9RcmNPRh8f4cY3YJC2WMiHEROffzlXcdDg2l
-	6nfiHeXCCobS7ZN0qx0AFictBYPmXvKwCcyIvg9iYJxezhjQtu31Mz4dvDhUi+rRa9d6iPWG2K7
-	jrmqWzs3CvsWn+mUHTh+loF25eKQtS53qASYMJD9tWa/dxlOceV6vXlvXjM6wLkTOFZPuc2bxdx
-	9ItEDn5gzLGUHRy/fOA6gJgXQLJIBhHyDjF0k9176lPlDweoOljlMfGSawPqgz9s/WsH3C5lAzP
-	FdnjIPss2iLD1xKQal1WWsU0aHHjco2L4ZvKUuCKa2MOfAuWUP
-X-Google-Smtp-Source: AGHT+IH0kP4+vfxD+O9Wz2DP4UBxSThOXmUadGnkvBABGnXzdVOZ2Hbq3wUFuypfAQx9EkxOwcXsnQ==
-X-Received: by 2002:a05:6e02:3783:b0:42e:712e:52a0 with SMTP id e9e14a558f8ab-42f873540b2mr82406535ab.6.1760032720604;
-        Thu, 09 Oct 2025 10:58:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760032724; x=1760637524;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7BFoISqrXfzunSW6Z4lpDyEbHwjrfmpqrwUs/T2P0T4=;
+        b=KXm6Qyvo+16S/j1LB5oSWwqyhiQqKKNLH1uPxghuuBwTfE0xzdtGG18oz+RXUiaMic
+         GmNG6b0x8l/HXGjM/W3yozQP5dt44K/+W13iDZ3HAoG0dcMcm1fi3uOVT47NL5jkF8M6
+         A+u6ElJ1ZLupKeJOJmpBrImEbV0ENiT7MuxUOtKeFde0MJI+/6SuINhHgS1irHkcoh9t
+         jAMybaoKY2xnZtXpUX3znNNMEv9EqmcCKrfKFvJ4j4eBpSeQmCrKhKMNuyy5ApyfnRMN
+         HApUDNeVoOB/NBGOSVTCHxC1/l7U6s6KEiYCicUGttP53Cyq+L6GrLiLELr0t7vZGldt
+         A50A==
+X-Forwarded-Encrypted: i=1; AJvYcCXxZD9081B0gpoZjJvQuxO8guoYDqbJR2b7pcAidBJLS0upOr7EmHTwT8LQxnOumLnhC8Cs2gkEZnDRHF0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGiIJ3url7LmTuI3EdaV8+Ji6res5dRZmcd2mrSLHQLOyOnoDU
+	OQDoooVQzInFJVI2hnTMxTFVKwA01NWDFULewsdD12If7ker1vdTzok6k53UfA==
+X-Gm-Gg: ASbGncuZsW8fGiIAfwUdNn4hWUx7U2mqCLdTVqSsRGuKqd938L3bvrxHy6Tq7dgEHdw
+	SZbx0aOs3pApD9Xb3jmilhyNIyd0nVYVklnVPenf44hhp7Km1jFhcBFFOrtbRlI+sLCmwzNmK7T
+	inzvqX4tR2TMt7pDFEnWWPCIv0z17ZxZwcB+zUrOM9nJNtwKrngMXqQCOvYM9z8t9NrZSx0I9vj
+	zM73y5Ry2gjq0/BBCc42YH37RdTONT062X99zG2lvnCtHKUcAggCrWSFTnpf32tHB161HhQaELe
+	HQS5fjveL4vuGNdrTluzkLyqH8gxn4mkU2noU+EzetHjNUeboeoK/RAbCFixeOKkF9V9ixIGfzD
+	AvcJvu6x7nO43q4JXL9m86V77w2zwa6Kk9sApjhiYqstzHF4drXnhID3bVN0OdXMlioHlYXfcBy
+	K+29iVymQHc13u3j+y91XNW69+e0w=
+X-Google-Smtp-Source: AGHT+IFdvzN/Qe3kT6LC4KV36Vpx8Hont4QG2a9m6SfK0vqpuJ8k6n9bUCxYy5aRpvHqGEB15mxCww==
+X-Received: by 2002:a05:6e02:1946:b0:42f:96ec:50a5 with SMTP id e9e14a558f8ab-42f96ec51a2mr14056415ab.20.1760032724385;
+        Thu, 09 Oct 2025 10:58:44 -0700 (PDT)
 Received: from godzilla.raven-morpho.ts.net (c-98-38-17-99.hsd1.co.comcast.net. [98.38.17.99])
-        by smtp.googlemail.com with ESMTPSA id 8926c6da1cb9f-58f7200c4afsm30256173.35.2025.10.09.10.58.39
+        by smtp.googlemail.com with ESMTPSA id 8926c6da1cb9f-58f7200c4afsm30256173.35.2025.10.09.10.58.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 10:58:40 -0700 (PDT)
+        Thu, 09 Oct 2025 10:58:43 -0700 (PDT)
 From: Jim Cromie <jim.cromie@gmail.com>
 To: jbaron@akamai.com
 Cc: gregkh@linuxfoundation.org,
@@ -85,103 +87,72 @@ Cc: gregkh@linuxfoundation.org,
 	tvrtko.ursulin@linux.intel.com,
 	jani.nikula@intel.com,
 	ville.syrjala@linux.intel.com,
-	Jim Cromie <jim.cromie@gmail.com>,
-	andrewjballance@gmail.com
-Subject: [PATCH v5 00/30] Fix DYNAMIC_DEBUG classmaps for DRM
-Date: Thu,  9 Oct 2025 11:58:04 -0600
-Message-ID: <20251009175834.1024308-1-jim.cromie@gmail.com>
+	Jim Cromie <jim.cromie@gmail.com>
+Subject: [PATCH v5 01/30] docs/dyndbg: update examples \012 to \n
+Date: Thu,  9 Oct 2025 11:58:05 -0600
+Message-ID: <20251009175834.1024308-2-jim.cromie@gmail.com>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251009175834.1024308-1-jim.cromie@gmail.com>
+References: <20251009175834.1024308-1-jim.cromie@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-DYNAMIC_DEBUG classmaps is BROKEN for its 1st user: DRM. Lets Fix it.
+commit 47ea6f99d06e ("dyndbg: use ESCAPE_SPACE for cat control")
+changed the control-file to display format strings with "\n" rather
+than "\012".  Update the docs to match the new reality.
 
-The DECLARE_DYNDBG_CLASSMAP macro muddled the distinction between
-definition and reference; in use it failed K&R define once, refer many.
+Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
+Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+Tested-by: Louis Chauvet<louis.chauvet@bootlin.com>
+---
+-v2 fix missed \012's
+---
+ .../admin-guide/dynamic-debug-howto.rst       | 20 +++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-Replace it with:
-. DYNAMIC_DEBUG_CLASSMAP_DEFINE		for drm.ko
-. DYNAMIC_DEBUG_CLASSMAP_USE		for drivers etc
-
-Enhance test-dynamic-debug{,-submod}.ko to recapitulate DRM's 2+ module
-boss-workers failure scenario, and to selftest against them.  This allows
-dropping the DRM patches, formerly included to prove functionality.
-
-The latest (unversioned) rev:
-. I inexplicably fiddled with the patch subject
-. dropped DRM as OT for lib/
-https://lore.kernel.org/lkml/20250911213823.374806-1-jim.cromie@gmail.com/
-
-v1-4 saw significant review, thanks Louis Chauvet <louis.chauvet@bootlin.com>
-
-v4: https://lore.kernel.org/lkml/20250803035816.603405-1-jim.cromie@gmail.com/
-v3: https://lore.kernel.org/lkml/20250402174156.1246171-1-jim.cromie@gmail.com/#t
-v2: https://lore.kernel.org/lkml/20250320185238.447458-1-jim.cromie@gmail.com/
-v1: https://lore.kernel.org/lkml/20250125064619.8305-1-jim.cromie@gmail.com/
-v0: prehistoric versions are linked from v1,v2
-
-Jim Cromie (30):
-  docs/dyndbg: update examples \012 to \n
-  docs/dyndbg: explain flags parse 1st
-  test-dyndbg: fixup CLASSMAP usage error
-  dyndbg: reword "class unknown," to "class:_UNKNOWN_"
-  dyndbg: make ddebug_class_param union members same size
-  dyndbg: drop NUM_TYPE_ARRAY
-  dyndbg: tweak pr_fmt to avoid expansion conflicts
-  dyndbg: reduce verbose/debug clutter
-  dyndbg: refactor param_set_dyndbg_classes and below
-  dyndbg: tighten fn-sig of ddebug_apply_class_bitmap
-  dyndbg: replace classmap list with a vector
-  dyndbg: macrofy a 2-index for-loop pattern
-  dyndbg: DECLARE_DYNDBG_CLASSMAP needs stub defn
-  dyndbg,module: make proper substructs in _ddebug_info
-  dyndbg: hoist classmap-filter-by-modname up to ddebug_add_module
-  dyndbg: move mod_name from ddebug_table down to _ddebug_info
-  dyndbg-API: remove DD_CLASS_TYPE_(DISJOINT|LEVEL)_NAMES and code
-  selftests-dyndbg: add a dynamic_debug run_tests target
-  dyndbg: change __dynamic_func_call_cls* macros into expressions
-  dyndbg-API: replace DECLARE_DYNDBG_CLASSMAP
-  dyndbg: detect class_id reservation conflicts
-  dyndbg: check DYNAMIC_DEBUG_CLASSMAP_DEFINE args at compile-time
-  dyndbg-test: change do_prints testpoint to accept a loopct
-  dyndbg-API: promote DYNAMIC_DEBUG_CLASSMAP_PARAM to API
-  dyndbg: treat comma as a token separator
-  dyndbg: split multi-query strings with %
-  selftests-dyndbg: add test_mod_submod
-  dyndbg: resolve "protection" of class'd pr_debugs
-  dyndbg: add DYNAMIC_DEBUG_CLASSMAP_USE_(clname,_base)
-  docs/dyndbg: add classmap info to howto
-
-CC: Louis Chauvet <louis.chauvet@bootlin.com>
-Cc: ukaszb@chromium.org
-cc: andrewjballance@gmail.com
-
- .../admin-guide/dynamic-debug-howto.rst       | 179 ++++-
- MAINTAINERS                                   |   3 +-
- include/asm-generic/vmlinux.lds.h             |   5 +-
- include/linux/dynamic_debug.h                 | 304 ++++++--
- kernel/module/main.c                          |  15 +-
- lib/Kconfig.debug                             |  24 +-
- lib/Makefile                                  |   5 +
- lib/dynamic_debug.c                           | 678 +++++++++++-------
- lib/test_dynamic_debug.c                      | 198 +++--
- lib/test_dynamic_debug_submod.c               |  21 +
- tools/testing/selftests/Makefile              |   1 +
- .../testing/selftests/dynamic_debug/Makefile  |   9 +
- tools/testing/selftests/dynamic_debug/config  |   7 +
- .../dynamic_debug/dyndbg_selftest.sh          | 373 ++++++++++
- 14 files changed, 1393 insertions(+), 429 deletions(-)
- create mode 100644 lib/test_dynamic_debug_submod.c
- create mode 100644 tools/testing/selftests/dynamic_debug/Makefile
- create mode 100644 tools/testing/selftests/dynamic_debug/config
- create mode 100755 tools/testing/selftests/dynamic_debug/dyndbg_selftest.sh
-
+diff --git a/Documentation/admin-guide/dynamic-debug-howto.rst b/Documentation/admin-guide/dynamic-debug-howto.rst
+index 7c036590cd07..4ac18c0a1d95 100644
+--- a/Documentation/admin-guide/dynamic-debug-howto.rst
++++ b/Documentation/admin-guide/dynamic-debug-howto.rst
+@@ -38,12 +38,12 @@ You can view the currently configured behaviour in the *prdbg* catalog::
+ 
+   :#> head -n7 /proc/dynamic_debug/control
+   # filename:lineno [module]function flags format
+-  init/main.c:1179 [main]initcall_blacklist =_ "blacklisting initcall %s\012
+-  init/main.c:1218 [main]initcall_blacklisted =_ "initcall %s blacklisted\012"
+-  init/main.c:1424 [main]run_init_process =_ "  with arguments:\012"
+-  init/main.c:1426 [main]run_init_process =_ "    %s\012"
+-  init/main.c:1427 [main]run_init_process =_ "  with environment:\012"
+-  init/main.c:1429 [main]run_init_process =_ "    %s\012"
++  init/main.c:1179 [main]initcall_blacklist =_ "blacklisting initcall %s\n"
++  init/main.c:1218 [main]initcall_blacklisted =_ "initcall %s blacklisted\n"
++  init/main.c:1424 [main]run_init_process =_ "  with arguments:\n"
++  init/main.c:1426 [main]run_init_process =_ "    %s\n"
++  init/main.c:1427 [main]run_init_process =_ "  with environment:\n"
++  init/main.c:1429 [main]run_init_process =_ "    %s\n"
+ 
+ The 3rd space-delimited column shows the current flags, preceded by
+ a ``=`` for easy use with grep/cut. ``=p`` shows enabled callsites.
+@@ -59,10 +59,10 @@ query/commands to the control file.  Example::
+ 
+   :#> ddcmd '-p; module main func run* +p'
+   :#> grep =p /proc/dynamic_debug/control
+-  init/main.c:1424 [main]run_init_process =p "  with arguments:\012"
+-  init/main.c:1426 [main]run_init_process =p "    %s\012"
+-  init/main.c:1427 [main]run_init_process =p "  with environment:\012"
+-  init/main.c:1429 [main]run_init_process =p "    %s\012"
++  init/main.c:1424 [main]run_init_process =p "  with arguments:\n"
++  init/main.c:1426 [main]run_init_process =p "    %s\n"
++  init/main.c:1427 [main]run_init_process =p "  with environment:\n"
++  init/main.c:1429 [main]run_init_process =p "    %s\n"
+ 
+ Error messages go to console/syslog::
+ 
 -- 
 2.51.0
 
