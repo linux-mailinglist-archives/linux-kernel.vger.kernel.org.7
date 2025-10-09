@@ -1,119 +1,188 @@
-Return-Path: <linux-kernel+bounces-846953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2369BC9818
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:29:36 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5468DBC9821
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:29:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 62DC5353228
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:29:31 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CFA3335346D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5032EA753;
-	Thu,  9 Oct 2025 14:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C352EAB85;
+	Thu,  9 Oct 2025 14:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T/E0ctGs"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MgMuZsUV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1647B2EA735
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 14:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F71F2EA176;
+	Thu,  9 Oct 2025 14:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760020165; cv=none; b=e9RdTUXdXXMsAhlyqFO0973pJ5d8fr68G3Mr3t0Cq0uv8KtAI997qr4oqR3cPs0wzuD2YhhIp/I/xJAxp922RP0lQJoo7A5x5e4OFWAPRBeuvFuRPqR4nMj0O0AR+zG0lJgB+nhCQM/AiZ3Iog0F3WOJQ7LodJNWVbmgqbcoi8E=
+	t=1760020190; cv=none; b=aUeHMY1EonHmWwpgUteXH7SV9XMRkqaoHaDbuPzHncEirDK80xtcMKHIt87Rzk6WcW4DskONDi7TweFVtCn8b1GZedmd0nk6y1AlNAuNvS1jhlbo7/yzdgHVKSjDKQZzdkYdz5HQzPzy88hM42XqQvHQ+2tDkjqywwKX3l2yA4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760020165; c=relaxed/simple;
-	bh=zeDf6KdhYAzkJxWgKM7teSxvMdUp3SBOEpzJkkS8EKc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gx8A4EjQO+U8G+9gYT7kk51k2Feofh2FKxQxIxGOlFo+dbRk0rdCAFlFpzYGGBPfLYkFNCBC7gPUmVjKseDHCOSMpyq31Qz/rzGbtHJwS0uU8/+a4cxrQnGwh8VeW1SMjDjrFhDnste1+2CaYB/lkfHznh/ypoEw+H0yD2KuOrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T/E0ctGs; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-28e7cd6dbc0so11636855ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 07:29:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760020163; x=1760624963; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=U/74xq4XJsElEDgJYijZf54I5DhXyuQKsFilC0hgNrc=;
-        b=T/E0ctGs/T6zqe3TjdC4e3qAAwAUns3t+baptOWQWEqriIfQ6rPVly8XxzS5mL5GjD
-         QFJNCIIgncHHbu1BIKxDhmVOsMRpSA73YUqGCtEnWT4j1vssbzGlYETaUH/5LlIggOzS
-         CIT12ozREz7YG3JeYl2jXaOitSjk13kEhtYwmT0aTcSAmz5kTCa1GvkeoyL4AsTxlnha
-         va47Ja9I0DBSm2Fk7XJGK+XeRNqKGfhjqvtfzRX0Jn39dsqVU0N6RfN4PRN1KsOmnJ6c
-         rnVsHO07BIhbwAjy0sHGQZsCGhM9XBDoQARiqNh6nwMFWK/USuU3qlyy8k1VwAAdkblS
-         eitw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760020163; x=1760624963;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U/74xq4XJsElEDgJYijZf54I5DhXyuQKsFilC0hgNrc=;
-        b=pUfk1jzYh31mCHHE7RU3eTVuqpRIzjUrWNIB2VYiSSaaxZMva1p6sk1VocO41Ag+O6
-         yNH2w/TdmfnXMunN3dlFoyIlj0N0EBXSMb9NAawr1IRE3LcLusGFwjK59GKLDYACZJmD
-         74iXMUDni1qnR04Fztb/nKvaRNa7lBT9SH7BxOKFpRyZCTgI0O7Dabd8lC9UNTTC/IGq
-         UuZIIhfcyEvRxY7JdXmqrKqK5Z4xjRuxevPFYtrVIsHdVSR+kfWr1nyo/ie03fDwHjwv
-         NDxUomh+imKxjQCPpEGrf4zSKQTBgAjJx7iHJRdln1HCZfqcuGfg2kGOA2vD7txS7WQW
-         zMtw==
-X-Forwarded-Encrypted: i=1; AJvYcCVDN6wpo78E25RyZPCEzSa8FmvzGLRuRN7Fdy7EB7C1qCmGvYcsF+hlVonaAHBDrqzUrAxGHvQkeaK7MlE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxyOLiPhLH2XoOl8jZR1yAZrADC94nqHju1mbNcEM9teUmsPK7
-	3LHSSDSHhHVMdbgIRJ7TAWU1zGAm2zK2vvtkG8seWMrwKjTsRTWYREm5j0+8rB8v
-X-Gm-Gg: ASbGnctaa3p3lHhdIfreLDb50XZR3HBXfKYjtgQ7yqWw4mzX+pZDwJ6kauSPXQweAmP
-	FJHJGIeA24K3PFtQM5xifXC8bdCcdUNmTfWkdFvJ8VKHlobOpXnrFsp6PkAx2HYRbNyNUCWUW7D
-	gCbEZLW9uOegDd34kBTk8XKTLKxYImRECAa8tcnFPaxY92ONx+LcOHwJPJc6duuCNBw9GFelhX5
-	36cP1diFHl0BpNpbkV5aNKdvd93IIZe3ALjjbBRLmXBVRxbmoiDQPX9XgidnekjUcvGuczon9qF
-	iz6xGmexzwTjgL7rQDyfeDGYdbB/6J2+cCGhMgvnOKaQc3G2abfp08zb/d4jbuxP/zPMacRSIug
-	gjj0m+D/AimucM5WdOu3BPfOXtLyKlSZ6VoAbUM8h8W3CByG45G5SmP8oKRQstGT6fB0pUU1J+M
-	9M/qRRGjPa5hvwFAHLxJzqAIcDqBE=
-X-Google-Smtp-Source: AGHT+IFB4dSwBRuZ4Sz99mGQnC+OkqQeSCmKq0qSpJyArZKnozhvJoOda9lEv+5VZ+rvS9S7fjQ3xQ==
-X-Received: by 2002:a17:903:1ac8:b0:264:8a8d:92e8 with SMTP id d9443c01a7336-2902741cdfbmr105368775ad.59.1760020163233;
-        Thu, 09 Oct 2025 07:29:23 -0700 (PDT)
-Received: from deepanshu-kernel-hacker.. ([2405:201:682f:389d:60a2:fbdd:54e6:8eb3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f961c5sm30527265ad.129.2025.10.09.07.29.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 07:29:22 -0700 (PDT)
-From: Deepanshu Kartikey <kartikey406@gmail.com>
-To: joseph.qi@linux.alibaba.com,
-	mark@fasheh.com,
-	jlbec@evilplan.org
-Cc: ocfs2-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	syzbot+6fdd8fa3380730a4b22c@syzkaller.appspotmail.com
-Subject: Re: [PATCH] ocfs2: fix stale extent map cache during COW operations
-Date: Thu,  9 Oct 2025 19:59:16 +0530
-Message-ID: <20251009142917.517229-1-kartikey406@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1760020190; c=relaxed/simple;
+	bh=JeNJ+MOb6MbW2Adwn40uh6TWEREB7v7gXN/c9Y0+u0M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MSbPP904Nm1v9DiZB1bYRKVfY7eILaAlLiKsOo1th7uYWoN9GAQhSu+uGRoLfJii0dV0XvqZFcCy1E6BEzeZWVFPXCdK+0KMZAitj+QGAFQE4EQqZ9a6Q1aczCSYRlpeWnILRs8/4m4SxJ0/YNJrLRaSCAAY0TSa73e3anib9X0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MgMuZsUV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD03BC4CEE7;
+	Thu,  9 Oct 2025 14:29:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760020188;
+	bh=JeNJ+MOb6MbW2Adwn40uh6TWEREB7v7gXN/c9Y0+u0M=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MgMuZsUVxQHOeFFf6KNTzfqwMKZZMATdNU3Xr+gE26+27vAMjih/M2l02JtGbl93u
+	 MQR1sIR0iE+HX2RdohSj8VAq0Aad66+Bd9PAwMCLyr5x8wu6hKovMIKfVWXTKIFTRb
+	 pU8QXUj3QySjCK1YLk7vrG64AOBFF9DhCG4Vp41MFREgUUN+1hQzCRy/Aa6mA5k/ZA
+	 V9o+PWCf1npShSdn4KXCtpUFvI9N3/lHmbT8uvoO4DHMnNnGVNWtxj5ISoV2RzTY8R
+	 1yLCxG8jjb6C22Y3r3gDOPE2NgKyV5lLZjUlSScMR6wODpv+F8I/kvmAUiB2rDYODy
+	 TXcWiZ3XIZUvg==
+Message-ID: <b614913e-7ebf-4abe-9eb5-f41b81d91ad3@kernel.org>
+Date: Thu, 9 Oct 2025 15:29:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 2/6] ASoC: dt-bindings: qcom,sm8250: Add clocks
+ properties for I2S
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+ Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20251008-topic-sm8x50-next-hdk-i2s-v2-0-6b7d38d4ad5e@linaro.org>
+ <20251008-topic-sm8x50-next-hdk-i2s-v2-2-6b7d38d4ad5e@linaro.org>
+ <44606de8-3446-472f-aa6b-25ff8b76e0ec@kernel.org>
+ <3620feb6-12bf-48c1-b47a-ccb486e5b5de@linaro.org>
+ <c0b71974-65df-47ad-902b-45c2dbe66be0@kernel.org>
+ <f27cad88-b1fd-41a3-bdb1-b07de3dea8a2@linaro.org>
+Content-Language: en-US
+From: Srinivas Kandagatla <srini@kernel.org>
+In-Reply-To: <f27cad88-b1fd-41a3-bdb1-b07de3dea8a2@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 
-Hi Joseph,
 
-Thank you for the review. You are absolutely right - the cache clearing at the end of ocfs2_refcount_cow_hunk() should handle the COW path correctly.
+On 10/9/25 3:25 PM, Neil Armstrong wrote:
+> On 10/9/25 16:06, Srinivas Kandagatla wrote:
+>>
+>>
+>> On 10/9/25 3:03 PM, Neil Armstrong wrote:
+>>> On 10/9/25 15:36, Srinivas Kandagatla wrote:
+>>>>
+>>>>
+>>>> On 10/8/25 7:56 PM, Neil Armstrong wrote:
+>>>>> In order to describe the block and master clock of each I2S bus, add
+>>>>> the first 5 I2S busses clock entries.
+>>>>>
+>>>>> The names (primary, secondary, tertiarty, quaternary, quinary, senary)
+>>>>> uses the LPASS clock naming which were used for a long time on
+>>>>> Qualcomm
+>>>>> LPASS firmware interfaces.
+>>>>>
+>>>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>>>>> ---
+>>>>>    .../devicetree/bindings/sound/qcom,sm8250.yaml      | 21 ++++++++++
+>>>>> +++++++++++
+>>>>>    1 file changed, 21 insertions(+)
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
+>>>>> b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
+>>>>> index
+>>>>> 8ac91625dce5ccba5c5f31748c36296b12fac1a6..d1420d138b7ed8152aa53769c4d495e1674275e6 100644
+>>>>> --- a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
+>>>>> +++ b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
+>>>>> @@ -64,6 +64,27 @@ properties:
+>>>>>        $ref: /schemas/types.yaml#/definitions/string
+>>>>>        description: User visible long sound card name
+>>>>>    +  clocks:
+>>>>> +    minItems: 2
+>>>>> +    maxItems: 12
+>>>>> +
+>>>>> +  clock-names:
+>>>>> +    minItems: 2
+>>>>> +    items:
+>>>>> +      # mclk is the I2S Master Clock, mi2s the I2S Bit Clock
+>>>>> +      - const: primary-mi2s
+>>>>> +      - const: primary-mclk
+>>>>> +      - const: secondary-mi2s
+>>>>> +      - const: secondary-mclk
+>>>>> +      - const: tertiary-mi2s
+>>>>> +      - const: tertiary-mclk
+>>>>> +      - const: quaternary-mi2s
+>>>>> +      - const: quaternary-mclk
+>>>>> +      - const: quinary-mi2s
+>>>>> +      - const: quinary-mclk
+>>>>> +      - const: senary-mi2s
+>>>>> +      - const: senary-mclk
+>>>>> +
+>>>>
+>>>> I don't this is correct way to handling bitclk and mclks for I2S, these
+>>>> are normally handled as part of snd_soc_dai_set_sysclk() transparently
+>>>> without need of any device tree description.
+>>>>
+>>>> Also doing this way is an issue as this is going to break existing
+>>>> Elite
+>>>> based platforms, and the device description should not change across
+>>>> these both audio firmwares.
+>>>
+>>> This is only for AudioReach platforms, on those platforms the
+>>> clocks are registered in DT and are not accessible by the card.
+>>>
+>> Clocks will be acessable via snd_soc_dai_set_sysclk ->
+>> q6prm_set_lpass_clock once set_sysclk support is added to q6apm-lpass
+>> i2s dai ops.
+>>
+>>
+>>> Device description is obviously different for the AudioReach platforms.
+>>
+>> Why should it be different, its same device.
+>> We have platforms that use both Elite and Audioreach.
+> 
+> I'm perfectly aware of that, it's the case for sc7280/qcm6490. And I agree
+> the card bindings is the same, but it doesn't mean the DSP elements are the
+> same and uses in the same manner.
+> 
+> So let's forget the bindings and forget those clocks entries, and imagine
+> I'll implement those _sys_sysclk calls like for the Elite platforms.
+> This means I'll bypass the clock framework by directly setting the PRM
+> clocks, this is clearly a layer violation.
 
-After further investigation with the syzbot reproducer and extensive debugging, I found the real issue is in the FITRIM/move_extents code path. The bug occurs when:
+You can claim clocks in the dsp layer (q6apm-lpass-dais) instead of
+claiming it in machine layer, it does not necessarily have to bypass the
+clk framework.
 
-1. copy_file_range() creates a reflinked extent with flags=0x2 (OCFS2_EXT_REFCOUNTED)
-2. ioctl(FITRIM) is called, which triggers ocfs2_move_extents()
-3. In __ocfs2_move_extents_range(), the while loop:
-   - Calls ocfs2_get_clusters() which reads extent with flags=0x2 and caches it
-   - Then calls ocfs2_move_extent() or ocfs2_defrag_extent()
-   - Both eventually call __ocfs2_move_extent() which contains:
-       replace_rec.e_flags = ext_flags & ~OCFS2_EXT_REFCOUNTED;
-   - This clears the refcount flag and writes to disk with flags=0x0
-4. However, the extent map cache is NOT cleared after the move operation
-5. Cache still contains stale flags=0x2 while disk has flags=0x0
-6. Later, when write() triggers COW, ocfs2_refcount_cal_cow_clusters() reads:
-   - From cache: flags=0x2 (stale)
-   - From disk extent tree: flags=0x0 (correct)
-7. The mismatch triggers: BUG_ON(!(rec->e_flags & OCFS2_EXT_REFCOUNTED))
+--srini
+> 
+> Neil
+> 
+>>
+>> --srini
+>>>
+>>> Neil
+>>>
+>>>>
+>>>> thanks,
+>>>> Srini
+>>>>
+>>>>>    patternProperties:
+>>>>>      ".*-dai-link$":
+>>>>>        description:
+>>>>>
+>>>>
+>>>
+>>
+> 
 
-The proper fix should be in __ocfs2_move_extents_range() to clear the extent cache after each move/defrag operation completes. I will send a v2 patch with this fix.
-
-Thanks,
-Deepanshu
 
