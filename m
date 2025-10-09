@@ -1,230 +1,164 @@
-Return-Path: <linux-kernel+bounces-846337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EED9DBC79B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:05:06 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60F86BC79CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:08:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 472043E6620
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:05:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5CAC84F486A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F6412BE7B4;
-	Thu,  9 Oct 2025 07:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B78F2C0F68;
+	Thu,  9 Oct 2025 07:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AlFyrdTG"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Y3hBbt8z"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490291A23A4
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 07:04:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C585E1C1F02
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 07:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759993501; cv=none; b=sDyrVvAROJXqQNUf39ZwJ5xJPEfqfWM0sOzUcWbqsF70b8DC1S0FIjOSw2DNog3UNFDE4tP9SymOx8YD7pB3jgvG3uaA3uBKFWQAYd5BmifnkPgcmpQtdznqTi3MPI1uof4optpm+z/T8aEBUbOOF49gJr+lfRBzLaDwTuywoX0=
+	t=1759993690; cv=none; b=nkCch1DsBZFbeiJnZ0J31B6yKaKJzOVXWTkcyIe4ba/tqxJB7NqIsTRYrBPnuH6ewHXY5SQyBoS+LqTChf8GfoXbTS8JtBVudo3if47jtDJNwrM2bEULLBDbum6+R2Of1zpccO6RdTP8q8LVzwQvi3QH7Qb4+Yq08vmf7Y4GSaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759993501; c=relaxed/simple;
-	bh=X/A67aav9wnEVAviNgP8/3bMnmDDFoutZhBInzu4IGI=;
+	s=arc-20240116; t=1759993690; c=relaxed/simple;
+	bh=LhYyzk6WfYJhkKhEyLTwv9qmYjmpZeKxoucLrJ2XuEY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=etqYKWO+chkoa+pw2R3o1XdBBUwbgaM70RgS04r1SontJVklAlgRVfMmItZJ7SFQhZUuXo6rXTJ/kpsiduLY8NVFMVNnBachN8g/MKQexPT6YsHyjr9Pq5TpteZL2v7L7obmfoQnYXTcu/A25dxLJQkLerUcoLRHClYQxJsPqJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AlFyrdTG; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-62ecd3c21d3so958298a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 00:04:58 -0700 (PDT)
+	 To:Cc:Content-Type; b=J4TekzHwawwY9SY27xOE8eZ+lmm+4bEC7HaRRhspdHQrw29cZ9gC4gFIKr9bXx04inWOjC2aZ6AZYEVrZMo8bD6QNv8252X3xkWgkKMH14M3Yanx+0CyjP3HppgJDpKSyhUnFCq2KLL/zGT+l3s0AF5mj5D9zJvhTl2Zi4lseyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Y3hBbt8z; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-375eff817a3so6406051fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 00:08:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1759993497; x=1760598297; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=W4QKO1V1IaEeKnE/Y3uXu7YrKeGgjyQzfwEaf1mJzm8=;
-        b=AlFyrdTGJGSHEHq8uLhzVCop4tK9onlj+hKmngruEblQHmx6pvsBdxTOKetCbC3Tr+
-         8kSexQibzg8hqye6mwJvME6dQb9KsQY93sVzfKnIJm3ILBhvE3IDf9j3ks/a9eTM4nLU
-         qa7dNxqceHb4ac7C92vF+6SKslBXsNdsYomJw=
+        d=chromium.org; s=google; t=1759993687; x=1760598487; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VrEMSIgPZk1KeuuGhcj52P085Zkq+6alNWoGna9Zc/w=;
+        b=Y3hBbt8z8AwSILzcdkl6Bwx1zj7jBg53Puw9j1ElP818AHH9BIixjKVyOf7YpVu913
+         icKUHN92dLdHT45wRQcU0tg4N5eRUHAM1PRZZHE5zqt4BFCks5+dWLcvZjI6HguWdYvo
+         M6KnJcRCdR/J1RTW9Dg7ulpu6Se3NpttfzPR8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759993497; x=1760598297;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=W4QKO1V1IaEeKnE/Y3uXu7YrKeGgjyQzfwEaf1mJzm8=;
-        b=Sn+5v2ewGe8zWGhso5FMtIbB6NBc5IZglySVnJVKuiNSBLw01cU+m/wYxKz6WcTl3Y
-         CHm79pYqZhDQKFOPojq7K0MklYXb+PkilaJUJ5sAif1SJoWcjAU1LuVsVgi3rwPht50r
-         V/Vi1jEAjLYaigsc5YqND/wvpR3LbPYhPehQ8QD6A9nOYaKgpOeF3ainwf4WBIqyI8p7
-         zZYLRbBSZigRMAYu8f+HTdx8lYJQsNPpVUBVDwN/6NmupqEqcXLWeBeWMiZ22noY0S+m
-         hIA1xaR5ta5qUkVRSeS1WendrjTvitV42sYdzKQnsPTTu1vUMoYpyvAs9Ij4MM0Xk/8M
-         9JBg==
-X-Forwarded-Encrypted: i=1; AJvYcCVnC1luW+efaDTguarC3FPQK4qFDIfRyws9bv8Flwb6UQc8ryegMpD7c7gpxTuKl150+kMPbnOWOt4QZL0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbrdFZ6Wryz56O+XdIkBdUxytuMI8jZ8FNrCQevy9lF+8mpj2U
-	/gmrwsXjO+pVYlII+8hBWWH21r0rw5E+ja0LXWRu7qHXdiAeHHNjR8jiD+uEg/5nG0VE8LHPPt5
-	e0BYLk5sD2A==
-X-Gm-Gg: ASbGnctIApS9t4fzRhO5iQzTFL7fNAbRcqvB6PFK0zMPWewU+7SlwHomHqOUXaFeIFZ
-	fzcdPu9b9ZdZrdlAkbOS2ApxaHGzU+CpvsVi3/Dy097eOJH7f4ATSA7zTJAggWWxHasGX1d3azI
-	jBjJJ9UhBqf7G6xZ7Y7jIlC5mIzLqcasVQoibnrB5yhcn92lwl1SlH4PgqZFeVv2VEu3U2EicO9
-	6kjuvUh8jSCb1ulalWorSc/ypGK6tFlqRcJgFjNQrKi7wdfdCb7SEe60PbcDkL1GfztFKkFjFtV
-	emw5lB+RK7w3s5817DAbwOoIjGwKFzbOTBt4MPi26GSGuoHQzwjT9BFv5IQvOC0FIeSavQLdpRE
-	0qQwpF/bdSt8VPP/MhYRlexITXhseO3tPNV8ozhtMCyTNfIfFovLYLFDXQ0wrxghIyFdNHAscZQ
-	N/kCFx9r+U+ewrykbY4KSV
-X-Google-Smtp-Source: AGHT+IGPOZkUMw2Nc69/sM9iulaHOfFOqOTCA38TC1w1TC85nFLQMmszDYsPmcw+RxYrWBgOq7ukVA==
-X-Received: by 2002:a17:907:7290:b0:b45:a03f:d172 with SMTP id a640c23a62f3a-b50acc2f5bemr732686066b.57.1759993497239;
-        Thu, 09 Oct 2025 00:04:57 -0700 (PDT)
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5416dcaa11sm230200866b.51.2025.10.09.00.04.54
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Oct 2025 00:04:54 -0700 (PDT)
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6394938e0ecso937090a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 00:04:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWj5138d9VzkNS16E2fBiCP02dwLsWrKEGYrPKtz1Ps80UWhGzIUxAomsfI0N3Sdf1ZTvJvbvXQ6XdQbJI=@vger.kernel.org
-X-Received: by 2002:a05:6402:5241:b0:636:7c68:6e30 with SMTP id
- 4fb4d7f45d1cf-639d5c36a7emr5706814a12.21.1759993493766; Thu, 09 Oct 2025
- 00:04:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759993687; x=1760598487;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VrEMSIgPZk1KeuuGhcj52P085Zkq+6alNWoGna9Zc/w=;
+        b=J0qHD74Zyh80dCPulDHkL7S1P0U2I5+urRKb90rXxHFsvA1MEF2LvPlVaJoHQI+pp6
+         AmjDCERkNiBJ5gC/bpK9OGsecZwq+Vvz/cL5wiawr2l7E5cBnWXhImGYfuNvyNLHulLO
+         HHxSHFa3xa+/rR2KTviD/8jPYzfwXW7v9K3IDpP0h3mGDqSFrg8Okz7NDmBCqmtmRbCr
+         Sw82Liw4fZ5ccovHhpU0t7tOzg0KHfIIjNmk7s+tn417NKGjyudvWJ6vkkoXPZyzDQAo
+         eX2EUylxN+emQfu2+C2fwnTwFd92JNiPU5moC+CrChKDUblIPC7iUFLazKWpstCOyR2u
+         mVDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV8ihnowz+Aa1Futi/+46yKIMwLoiJGJIpnFkdxQ/4TKzxwsU3FRKgRX8SaohF7U+p0iYk7iBWzOTaTK30=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1Vi8QxqM8AzeYTWnqOR4TUO7OfIjVTNLijCtsdDdgrRB123Wb
+	8RG8Etif6CeA81oZWWteMnLhMniAy/L44YWw0BOxAQj+RfhBOg3kCl5lpVJzwAGUxLJm19CpVBJ
+	Gq6pi24OlRSTmFCqGTsdKyw9qWOVluzCkN//+4YUBqQ8QoyoZEzo=
+X-Gm-Gg: ASbGncuqejwa/O+WmK7QC0ko3mKuyr11A6mXN7JE3VHZ9gxRgxbzvpMPlbUPQJAspGO
+	5O6l0yae1bJbbmrasN+WnIxwXPWnWjV/82FxvFGzn1kz7x7yeHJeRyg9ZKiXN24y7PF0dyWLTpT
+	yH2ec7AVynNjnk+axEjMlucpvFWQWuTg+fjuthY1iFrvr69EFCdgtmIr3RGCvitEo/++EvDqwiI
+	iIwTx0YXZxniiwcV2oxar+5jTy2LaD7098nzNZUJC4KBHMCwVE+PM6RLksplQ==
+X-Google-Smtp-Source: AGHT+IHRoD8fUFYarUIhK/FMKZGr2CwU3Gj3Lvi6h5d/Em4hrbue6QlrL7H+4NXmnHM+zo7hkW3w3oPsj8Dawmy7Yjk=
+X-Received: by 2002:a2e:be26:0:b0:365:6b40:8687 with SMTP id
+ 38308e7fff4ca-37609e0ea58mr13923031fa.22.1759993686781; Thu, 09 Oct 2025
+ 00:08:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251008123014.GA20413@redhat.com> <20251008123045.GA20440@redhat.com>
- <CAHk-=wjozC9_JCdEW9K_uruJqzTLzhtcVpgDk1OuqErNRUS7Mg@mail.gmail.com> <CAHk-=wjuoFm9yZur_T4VOnX2iyDYD6T_gDRXE5ms9538W6Q35g@mail.gmail.com>
-In-Reply-To: <CAHk-=wjuoFm9yZur_T4VOnX2iyDYD6T_gDRXE5ms9538W6Q35g@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 9 Oct 2025 00:04:37 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiHbN+_LCmSj2sHswDRJ0yG3kkjptMvCXcMwk7jWK1F=Q@mail.gmail.com>
-X-Gm-Features: AS18NWBchGhZOYJ6zw6Au_d7AD0BGkNJJfUDWdDkMAR9OttIiePZPEqryMlcWrE
-Message-ID: <CAHk-=wiHbN+_LCmSj2sHswDRJ0yG3kkjptMvCXcMwk7jWK1F=Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] seqlock: introduce scoped_seqlock_read() and scoped_seqlock_read_irqsave()
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Boqun Feng <boqun.feng@gmail.com>, 
-	David Howells <dhowells@redhat.com>, Ingo Molnar <mingo@redhat.com>, 
-	Li RongQing <lirongqing@baidu.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: multipart/mixed; boundary="0000000000000146760640b46b55"
-
---0000000000000146760640b46b55
+References: <20251008-mtk-pll-rpm-v2-0-170ed0698560@collabora.com> <20251008-mtk-pll-rpm-v2-1-170ed0698560@collabora.com>
+In-Reply-To: <20251008-mtk-pll-rpm-v2-1-170ed0698560@collabora.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Thu, 9 Oct 2025 15:07:55 +0800
+X-Gm-Features: AS18NWBxQ-yW1drBobxZE5-xVOr4CwQCIc293oxeKqSrQOU5dPVPYMgKJ9ACvWg
+Message-ID: <CAGXv+5F_xeC_sGNB9Aev4CQbC_8Vo4YA1u7K60oKu8PseL=Qhw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] clk: Respect CLK_OPS_PARENT_ENABLE during recalc
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Dong Aisheng <aisheng.dong@nxp.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	Yassine Oudjana <y.oudjana@protonmail.com>, Laura Nao <laura.nao@collabora.com>, 
+	=?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>, 
+	Chia-I Wu <olvaffe@gmail.com>, kernel@collabora.com, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, Stephen Boyd <sboyd@codeaurora.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 8 Oct 2025 at 22:31, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Thu, Oct 9, 2025 at 12:07=E2=80=AFAM Nicolas Frattaroli
+<nicolas.frattaroli@collabora.com> wrote:
 >
-> But that hackery shouldn't even exist since it's all handled naturally
-> and much more cleanly by the surrounding for-loop.
+> When CLK_OPS_PARENT_ENABLE was introduced, it guarded various clock
+> operations, such as setting the rate or switching parents. However,
+> another operation that can and often does touch actual hardware state is
+> recalc_rate, which may also be affected by such a dependency.
+>
+> Add parent enables/disables where the recalc_rate op is called directly.
+>
+> Fixes: fc8726a2c021 ("clk: core: support clocks which requires parents en=
+able (part 2)")
+> Fixes: a4b3518d146f ("clk: core: support clocks which requires parents en=
+able (part 1)")
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-I'm batting zero. I still think it's true that this logic should be
-handled by the for-loop, but the *seq=1" hackery did actually do
-something.
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 
-Because it, together with the 'lockless' flag, enumerated three
-states, not two. It's just that the first state didn't _do_ anything,
-so it was kind of easy to miss it when I read through the code.
-
-So the three states are
-
- (a) before anything has been done (lockless, seq is even)
-
- (b) the "we've done the lockless, we need to end the loop or take the
-lock" (!lockless, seq is even)
-
- (c) we've done the locked, we need to unlock and end (seq is odd)
-
-and so relying on just a 'bool lockless' in the loop isn't enough.
-
-I do still think this could be done at the for-loop level, so that the
-compiler can statically see the stages and unroll it all to not be a
-loop at all.
-
-But I think it means that "lockless" would have to be a "phase", and go 0/1/2.
-
-And I did get it to work that way, and did get gcc to unroll it to
-generate really nice code. IOW, I can make this code
-
-        scoped_seqlock_read(lock) {
-                asm volatile("TEST");
-        }
-
-generate this assembly:
-
-.L12:
-        movl    (%rdi), %eax    #* lock, _25
-        testb   $1, %al #, _25
-        jne     .L14    #,
-        TEST
-        movl    (%rdi), %edx    # MEM[(const volatile unsigned int
-*)lock_6(D)], _70
-        cmpl    %edx, %eax      # _70, _25
-        jne     .L15    #,
-        ret
-.L15:
-        subq    $8, %rsp        #,
-        addq    $4, %rdi        #, _74
-        movq    %rdi, (%rsp)    # _74, %sfp
-        call    _raw_spin_lock  #
-        TEST
-        movq    (%rsp), %rdi    # %sfp, _74
-        addq    $8, %rsp        #,
-        jmp     _raw_spin_unlock        #
-.L14:
-        pause
-        jmp     .L12    #
-
-which is basically optimal, but I have to say, the hoops I had to jump
-through to get there makes me suspect it's not worth it.
-
-(Note above how there is no sign of 'phase' left in the code, and the
-only conditionals are on the actual sequence count state, and the nice
-default action of no sequence count problems is all linear
-fall-through code).
-
-The irqsave version looks the same, just (obviously) calling a
-different set of spinlock/unlock functions and having one extra
-register argument for that.
-
-But to get there, I had to use not only linux/unroll.h, but also make
-that for-loop explicitly have that s.phase < 3 test just to get the
-unrolling to actually trigger.
-
-I'm attaching the test-case I wrote that does this. It's not
-*horrific*, but the extra unrolling hackery makes me doubt that it's
-really worth it.
-
-So I suspect your patch is fine as-is, and I was not just wrong on
-relying on the (insufficient) "locked" boolean, but the more complete
-solution is just too damn ugly.
-
-But hey, I *did* get gcc to generate nice code. So you might look at
-my test-case below and decide that maybe there's something to be said
-for this.
-
-                 Linus
-
---0000000000000146760640b46b55
-Content-Type: text/x-csrc; charset="US-ASCII"; name="t.c"
-Content-Disposition: attachment; filename="t.c"
-Content-Transfer-Encoding: base64
-Content-ID: <f_mgj2o6o70>
-X-Attachment-Id: f_mgj2o6o70
-
-I2luY2x1ZGUgPGxpbnV4L3NlcWxvY2suaD4KI2luY2x1ZGUgPGxpbnV4L3Vucm9sbC5oPgoKI2Rl
-ZmluZSBfX3Njb3BlZF9zZXFsb2NrX3JlYWQobG9jaywgcywgY29uZCkgXAoJdW5yb2xsZWRfZnVs
-bCBmb3IgKHN0cnVjdCB7IHVuc2lnbmVkIGxvbmcgcGhhc2UsIGRhdGE7IH0gcyA9IHsgMCB9OyBc
-CgkJcy5waGFzZSA8IDMgJiYgY29uZChsb2NrLCBzLnBoYXNlLCAmcy5kYXRhKTsgcy5waGFzZSsr
-KQoKI2RlZmluZSBzY29wZWRfc2VxbG9ja19yZWFkKGxvY2spICAgICAgXAogICAgICAgX19zY29w
-ZWRfc2VxbG9ja19yZWFkKGxvY2ssIF9fVU5JUVVFX0lEKHMpLCBfX3NlcWxvY2tfY29uZCkKCiNk
-ZWZpbmUgc2NvcGVkX3NlcWxvY2tfcmVhZF9pcnFzYXZlKGxvY2spIFwKCV9fc2NvcGVkX3NlcWxv
-Y2tfcmVhZChsb2NrLCBfX1VOSVFVRV9JRChzKSwgX19zZXFsb2NrX2NvbmRfaXJxc2F2ZSkKCi8q
-IERvIHRoZSBwaGFzZSBhY3Rpb24gYW5kIHJldHVybiB0cnVlIGlmIHRoZSBsb29wIHNob3VsZCBn
-byBvbiAqLwpzdGF0aWMgX19hbHdheXNfaW5saW5lIGJvb2wgX19zZXFsb2NrX2NvbmQoc2VxbG9j
-a190ICpsb2NrLCBpbnQgcGhhc2UsIHVuc2lnbmVkIGxvbmcgKmRhdGEpCnsKCXN3aXRjaCAocGhh
-c2UpIHsKCWNhc2UgMDoKCQkqZGF0YSA9IHJlYWRfc2VxYmVnaW4obG9jayk7CgkJcmV0dXJuIHRy
-dWU7CgljYXNlIDE6CgkJaWYgKCFyZWFkX3NlcXJldHJ5KGxvY2ssICpkYXRhKSkKCQkJcmV0dXJu
-IGZhbHNlOwoJCXJlYWRfc2VxbG9ja19leGNsKGxvY2spOwoJCXJldHVybiB0cnVlOwoJZGVmYXVs
-dDoKCQlyZWFkX3NlcXVubG9ja19leGNsKGxvY2spOwoJCXJldHVybiBmYWxzZTsKCX0JCQp9Cgpz
-dGF0aWMgX19hbHdheXNfaW5saW5lIGJvb2wgX19zZXFsb2NrX2NvbmRfaXJxc2F2ZShzZXFsb2Nr
-X3QgKmxvY2ssIGludCBwaGFzZSwgdW5zaWduZWQgbG9uZyAqZGF0YSkKewoJc3dpdGNoIChwaGFz
-ZSkgewoJY2FzZSAwOgoJCSpkYXRhID0gcmVhZF9zZXFiZWdpbihsb2NrKTsKCQlyZXR1cm4gdHJ1
-ZTsKCWNhc2UgMToKCQlpZiAoIXJlYWRfc2VxcmV0cnkobG9jaywgKmRhdGEpKSAgCgkJCXJldHVy
-biBmYWxzZTsKCQlyZWFkX3NlcWxvY2tfZXhjbF9pcnFzYXZlKGxvY2ssICpkYXRhKTsKCQlyZXR1
-cm4gdHJ1ZTsKCWRlZmF1bHQ6CgkJcmVhZF9zZXF1bmxvY2tfZXhjbF9pcnFyZXN0b3JlKGxvY2ss
-ICpkYXRhKTsKCQlyZXR1cm4gZmFsc2U7Cgl9Cn0KCnZvaWQgdGVzdG1lKHNlcWxvY2tfdCAqbG9j
-ayk7CnZvaWQgdGVzdG1lKHNlcWxvY2tfdCAqbG9jaykKewoJc2NvcGVkX3NlcWxvY2tfcmVhZF9p
-cnFzYXZlKGxvY2spIHsKCQlhc20gdm9sYXRpbGUoIlRFU1QiKTsKCX0JCQp9Cg==
---0000000000000146760640b46b55--
+> ---
+>  drivers/clk/clk.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 85d2f2481acf360f0618a4a382fb51250e9c2fc4..1b0f9d567f48e003497afc98d=
+f0c0d2ad244eb90 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1921,7 +1921,14 @@ static unsigned long clk_recalc(struct clk_core *c=
+ore,
+>         unsigned long rate =3D parent_rate;
+>
+>         if (core->ops->recalc_rate && !clk_pm_runtime_get(core)) {
+> +               if (core->flags & CLK_OPS_PARENT_ENABLE)
+> +                       clk_core_prepare_enable(core->parent);
+> +
+>                 rate =3D core->ops->recalc_rate(core->hw, parent_rate);
+> +
+> +               if (core->flags & CLK_OPS_PARENT_ENABLE)
+> +                       clk_core_disable_unprepare(core->parent);
+> +
+>                 clk_pm_runtime_put(core);
+>         }
+>         return rate;
+> @@ -4031,6 +4038,9 @@ static int __clk_core_init(struct clk_core *core)
+>          */
+>         clk_core_update_duty_cycle_nolock(core);
+>
+> +       if (core->flags & CLK_OPS_PARENT_ENABLE)
+> +               clk_core_prepare_enable(core->parent);
+> +
+>         /*
+>          * Set clk's rate.  The preferred method is to use .recalc_rate. =
+ For
+>          * simple clocks and lazy developers the default fallback is to u=
+se the
+> @@ -4046,6 +4056,9 @@ static int __clk_core_init(struct clk_core *core)
+>                 rate =3D 0;
+>         core->rate =3D core->req_rate =3D rate;
+>
+> +       if (core->flags & CLK_OPS_PARENT_ENABLE)
+> +               clk_core_disable_unprepare(core->parent);
+> +
+>         /*
+>          * Enable CLK_IS_CRITICAL clocks so newly added critical clocks
+>          * don't get accidentally disabled when walking the orphan tree a=
+nd
+>
+> --
+> 2.51.0
+>
+>
 
