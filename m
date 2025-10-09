@@ -1,115 +1,189 @@
-Return-Path: <linux-kernel+bounces-846747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F0DDBC8E89
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:53:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F873BC8E97
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:54:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C7561A62369
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:54:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83A0A420332
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDDF12E0B64;
-	Thu,  9 Oct 2025 11:53:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D7E2E11CB;
+	Thu,  9 Oct 2025 11:54:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b="fVC3ezhF"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="q2uXQM5Q"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8862B2DE200
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 11:53:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB862DE200;
+	Thu,  9 Oct 2025 11:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760010825; cv=none; b=Y5TF4wnK8psxOHZde4B+YKmtqAvT2f52eqIYuGudDk/UjOeS+3oLTWVaB58x8aJMGx5ubfMKKZTrITd3S3H1S7b2Fkww3wv14qXFTBN7VONMwpYFIZywe25a8335PYpO9xivieyYqdOXLndskKTXSkIRQaw06LDWH3S43Lf/4UE=
+	t=1760010876; cv=none; b=dWIuDyxCpfKG67Rho14dOQF9HaE7xlVXr46yr9zSquQ+qeLHebUnvNZVtFEv+aiXgdwnn8gAeJWhHBEqVrmo3OEg/C70qL1p1DFY05v/F/QWKUHPVlIawC7XRWEG79isXFr1V3Yl+QKmRvByNBDtd8q/3x0HNXXX1ErSRrXLhpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760010825; c=relaxed/simple;
-	bh=MZtpDSAeX1Ovl9JMxKVz66NBtei7l7fHOjWklvLJYJY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jIqMQYREojEiGitGriIgFl32ijLh00PjsyLdVDZFy0dfKrjdPypzl+rxounX2pJ4TBJrcwuZSdYPg6Anuu1bgVe1Ym+ANiITN5DmO5hNmt60pa+XPfbCqHj3OW6u8ptMBdR7v7W54rDJ4u9I4MSSwDPSP2zyXfSct+Cz/yMS2ME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b=fVC3ezhF; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-46b303f7469so5274535e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 04:53:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thegoodpenguin-co-uk.20230601.gappssmtp.com; s=20230601; t=1760010822; x=1760615622; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0YRwRsv2JGxHdPcrSfhou6/e/A3dW1zrI7PLye/j7/c=;
-        b=fVC3ezhFMAmm4mdKlTYoHUvMgTE9yOcVnYxkneKBss7ZPznB9uBLiewHo21f0IDzQM
-         0dOvhsO3MS6WJ/lDPMhwcc3Pp5HlUvNs9iGUfxN9EYxfsOKGMVRIA5h7Kc1R1xgR2RPD
-         foOWFcYHKjn3s88Yto5jqWX05gvq/PideV/z4VXXE1bpXarlhT0t38RFPtOXWt/SyfUk
-         FaN3MsurnaIDF87tZdiQ5uygO/erOIZsLfIXdbPdgorcWyzjUcF6YhwaJPUntF87zP44
-         4iuBzYXKpEumhQ8B2eJxhdHEEnNxYMQGdlS5X2LTHcqaBRzPFcMDQIrGqIh147/dPBpY
-         T5GA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760010822; x=1760615622;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0YRwRsv2JGxHdPcrSfhou6/e/A3dW1zrI7PLye/j7/c=;
-        b=R+ijnz59utfWGl/RzncVOsn6ULH5g68d6yuw1CCZKxC7BvG4h/pjSdNLiDp8NjjWjU
-         cqhEBPCeOtVa/PAhv1r9IJAGkKbMxyTssEHGps2HKpmAr0iWG2nHlTfPuL4Kga4iNpml
-         YA2AqIEli/pc67F95L2IRCJ3yfiy5GvDIcgQigrfuBwZeGmSqBSD3ZKRHvsWyKndh/zc
-         c3XCsZwjDCvIuXqTUCpa6mPS57YJY7RuNZwzsXwMylMFwlwLJlkVLyM+U8q4H1eGnmun
-         6dEMeFy7EY7kaFDE0PHQGVvUTP5C/mOIJMbe/osIjoRiLV/abKx7sZ5gTzRbYfddiwKj
-         PwFA==
-X-Forwarded-Encrypted: i=1; AJvYcCURAIe3Tx+76vJr4Nnl6TwdjUDFI+p6/teRqf4gZH86/PPzkLF5s88HdadajbR2pIoESqToT1zIZ7nPKH8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwouFBMdpkbTxOvJrF2I8XKKroPw7HiJGWl11HOVfLD/qfycust
-	qHpQYx1gDkMeO9t6jeNB1CUtURhUc7I02YGgsZ/Eel5/rv09PtecnHriVGTnRgd3jDs=
-X-Gm-Gg: ASbGncuXk6Z+he9qqGje79II1WnGfJQ1NXvZEQD8ceAZMFHn6F0NIK+OGpWqkicOxSx
-	CxqpPGhrUrmHjpmbQ5hsRAYz7/WqGrDTKaAmS+7OmlAhBn7k8Y9GlVyf2Ru1PEwOdg1um0AbPL7
-	wGg15fukh5KjISl5laWssL/gPCIyRue0Rj5BnqAOUK7scyhmt16GDydgNXLPWpDnv+g0CA+D0VS
-	5qtpEAKAfYTh+Z6EcE8sVTCv0IkxYhfnRRBBf9BW159ofaysfWynkyAYe0VIgJ1BrV/C92HYlwa
-	lXxQagpTbZFN/q6esu8v9/9YEo4CJc6n/NE8HzSvD/tCgeZwerV/xYTL/oPZeL/DJdPyZP0JmDR
-	h5G4Szsud1FME5aa/ghX1kmmdqweeF8yB9HDAAmQYo4xJ/jRZrLx+MZMNgqgwswtX
-X-Google-Smtp-Source: AGHT+IFw0EStqMGoTf5b92X/Qw7EMLyDr1bZXyNDvXbXSyKiugbleDYUzHxfRXnql6r985fgqP+cfg==
-X-Received: by 2002:a05:600c:6304:b0:46f:b42e:e361 with SMTP id 5b1f17b1804b1-46fb42ee3camr741295e9.41.1760010821854;
-        Thu, 09 Oct 2025 04:53:41 -0700 (PDT)
-Received: from hapmop ([2a02:c7c:8a3e:8c00:2f34:274b:ef90:518a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46faf1841aasm42330685e9.18.2025.10.09.04.53.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 04:53:41 -0700 (PDT)
-From: Harrison Carter <hcarter@thegoodpenguin.co.uk>
-To: robh@kernel.org
-Cc: conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	hcarter@thegoodpenguin.co.uk,
-	jonas.gorski@gmail.com,
-	krzk+dt@kernel.org,
-	lee@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org,
-	pavel@kernel.org
-Subject: Re: [PATCH] dt-bindings: leds: bcm6358: Convert to DT Schema
-Date: Thu,  9 Oct 2025 12:53:39 +0100
-Message-ID: <20251009115339.2340708-1-hcarter@thegoodpenguin.co.uk>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251008015210.GA1925508-robh@kernel.org>
-References: <20251008015210.GA1925508-robh@kernel.org>
+	s=arc-20240116; t=1760010876; c=relaxed/simple;
+	bh=B/o080jiuYuwYnKuOkoaAn5+mc0G3zApBcZNRGwdUfE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IgBpxEWuRwgTz9dil7Rxlya21CIi+y3oMBOoZETx50u26JzqXc92NpTvj5PMLdf0GnFgdigDbA+o0Ubl21HilqMWqbiENDMhLEQothLZzhWpvuzBCPoTbBcIdAB4x6x7kpbVU0cVeGFgeQd+JBP9kMZ6fCzS4RCSQkRiCRlAuDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=q2uXQM5Q; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760010871;
+	bh=B/o080jiuYuwYnKuOkoaAn5+mc0G3zApBcZNRGwdUfE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=q2uXQM5Qory6uBVrxpZujNoEUOWY144usrDsAU5OLYJ8WE5QiljfYsbogXwMoaY5Z
+	 h2gFjgKTvmh7J0bIdg74aGnY1eayEdn2YhkF2PAzgz7LQCGosYlr2ItiWVepLh5WCO
+	 BW9JaJCvMlChK38CmZQnQdqfaQA7KxDKwfPgal8NfmsqDzrDDrkT6rvbCL/v4L/dc9
+	 3zzSsU3Eysjp81192joNSfLy57T6fgV6ibYrloPoV8lgOJSqPkNT6B8+R9ISIjUTWi
+	 t3nhTX1cJprc7RwTRPforX5FHWQtLDDfNdUJ6t4N5sxzsPxxLXKJUggadtwC0ylVJ3
+	 4T88QYdNXST8g==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id A649817E1060;
+	Thu,  9 Oct 2025 13:54:30 +0200 (CEST)
+Message-ID: <6690e20f-f88e-4c5a-8188-4d2a941fc6b1@collabora.com>
+Date: Thu, 9 Oct 2025 13:54:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 13/20] drm/mediatek: Add programming flow for
+ unsupported subsys ID hardware
+To: Jason-JH Lin <jason-jh.lin@mediatek.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+ Nicolas Dufresne <nicolas@ndufresne.ca>, Nancy Lin <nancy.lin@mediatek.com>,
+ Singo Chang <singo.chang@mediatek.com>,
+ Paul-PL Chen <paul-pl.chen@mediatek.com>, Moudy Ho <moudy.ho@mediatek.com>,
+ Xiandong Wang <xiandong.wang@mediatek.com>,
+ Sirius Wang <sirius.wang@mediatek.com>, Fei Shao <fshao@chromium.org>,
+ Chen-yu Tsai <wenst@chromium.org>,
+ Project_Global_Chrome_Upstream_Group@mediatek.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+References: <20250827114006.3310175-1-jason-jh.lin@mediatek.com>
+ <20250827114006.3310175-14-jason-jh.lin@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250827114006.3310175-14-jason-jh.lin@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Rob,
+Il 27/08/25 13:37, Jason-JH Lin ha scritto:
+> To support hardware without subsys IDs on new SoCs, add a programming
+> flow that checks whether the subsys ID is valid.
+> 
+> If the subsys ID is valid, the flow will call cmdq_pkt_write_subsys()
+> instead of the original cmdq_pkt_write().
+> 
+> If the subsys ID is invalid, the flow will call cmdq_pkt_write_mask_pa()
+> to achieve the same functionality.
+> 
+> Signed-off-by: Jason-JH Lin <jason-jh.lin@mediatek.com>
 
-Thanks for looking at my patch. There's an issue in the patch anyway that's 
-been noticed between the patternProperties's regex and the names of the 
-led nodes. Here it's just led@... but the nodes are named thing_colour.
+In mediatek-drm and in mtk-mdp3 the performance of mtk_ddp_write is important: in
+both, there are ways to know whether a platform is expected to always use the
+cmdq_pkt_write_mask_pa() or the subsys() one.
 
-On and off this regex has been done as .*_.*@, led@, and .*@ . What is the 
-preference? led@ would amend the led information to a label in the node. The 
-latter option is very promiscuous (but not uncommon in bindings), the former 
-sticks to what the examples are sort of expecting.
+Please check what platform is this driver running on - based on the platform, you
+can assign a function pointer, so that you always call it like
+
+priv->write_cmdq_pkt(cmdq_pkt, cmdq_reg, ofst, val, mask);
+
+write_cmdq_pkt() could point to, either:
+1. A function that checks if subsys != CMDQ_SUBSYS_INVALID, for platforms that
+    are expected to have mixed PA *and* SUBSYS (hopefully none!!!); or
+2. The cmdq_pkt_write_mask_subsys() function; or
+3. The cmdq_pkt_write_mask_pa() function.
+
+This removes lots and lots of branches at every call.
+
+I want to remind you that CMDQ packets are being generated in many cases in the
+mediatek-drm driver, one of which is upon VBLANK; Think of the case in which we
+are driving a high refresh rate display (>=120Hz): not just in DSI Video mode
+for which we manage just only vblanks and data pumping (which still needs quite
+a bit of GCE writes).. but something like DSI CMD mode would probably generate
+*a myriad* of GCE calls.... and that is only one of the cases, there are more
+that don't involve specifically DSI.
+
+Of course, for mtk-mdp3 there's a different story - but I guess it's useless to
+add a specific example for that, I'm sure you got the point here.
 
 Cheers,
+Angelo
 
-HarryC
+> ---
+>   drivers/gpu/drm/mediatek/mtk_ddp_comp.c | 24 ++++++++++++++++++------
+>   1 file changed, 18 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
+> index ac6620e10262..d902a65e1232 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
+> @@ -66,14 +66,28 @@ struct mtk_ddp_comp_dev {
+>   	struct cmdq_client_reg cmdq_reg;
+>   };
+>   
+> +#if IS_REACHABLE(CONFIG_MTK_CMDQ)
+> +static int mtk_ddp_write_cmdq_pkt(struct cmdq_pkt *cmdq_pkt, struct cmdq_client_reg *cmdq_reg,
+> +				  unsigned int offset, unsigned int value, unsigned int mask)
+> +{
+> +	offset += cmdq_reg->offset;
+> +
+> +	if (cmdq_reg->subsys != CMDQ_SUBSYS_INVALID)
+> +		return cmdq_pkt_write_mask_subsys(cmdq_pkt, cmdq_reg->subsys, cmdq_reg->pa_base,
+> +						  offset, value, mask);
+> +	else /* only MMIO access, no need to check mminfro_offset */
+> +		return cmdq_pkt_write_mask_pa(cmdq_pkt, cmdq_reg->subsys, cmdq_reg->pa_base,
+> +					      offset, value, mask);
+> +}
+> +#endif
+> +
+>   void mtk_ddp_write(struct cmdq_pkt *cmdq_pkt, unsigned int value,
+>   		   struct cmdq_client_reg *cmdq_reg, void __iomem *regs,
+>   		   unsigned int offset)
+>   {
+>   #if IS_REACHABLE(CONFIG_MTK_CMDQ)
+>   	if (cmdq_pkt)
+> -		cmdq_pkt_write(cmdq_pkt, cmdq_reg->subsys,
+> -			       cmdq_reg->offset + offset, value);
+> +		mtk_ddp_write_cmdq_pkt(cmdq_pkt, cmdq_reg, offset, value, GENMASK(31, 0));
+>   	else
+>   #endif
+>   		writel(value, regs + offset);
+> @@ -85,8 +99,7 @@ void mtk_ddp_write_relaxed(struct cmdq_pkt *cmdq_pkt, unsigned int value,
+>   {
+>   #if IS_REACHABLE(CONFIG_MTK_CMDQ)
+>   	if (cmdq_pkt)
+> -		cmdq_pkt_write(cmdq_pkt, cmdq_reg->subsys,
+> -			       cmdq_reg->offset + offset, value);
+> +		mtk_ddp_write_cmdq_pkt(cmdq_pkt, cmdq_reg, offset, value, GENMASK(31, 0));
+>   	else
+>   #endif
+>   		writel_relaxed(value, regs + offset);
+> @@ -98,8 +111,7 @@ void mtk_ddp_write_mask(struct cmdq_pkt *cmdq_pkt, unsigned int value,
+>   {
+>   #if IS_REACHABLE(CONFIG_MTK_CMDQ)
+>   	if (cmdq_pkt) {
+> -		cmdq_pkt_write_mask(cmdq_pkt, cmdq_reg->subsys,
+> -				    cmdq_reg->offset + offset, value, mask);
+> +		mtk_ddp_write_cmdq_pkt(cmdq_pkt, cmdq_reg, offset, value, mask);
+>   	} else {
+>   #endif
+>   		u32 tmp = readl(regs + offset);
+
 
 
