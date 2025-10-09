@@ -1,120 +1,101 @@
-Return-Path: <linux-kernel+bounces-847487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31961BCAF6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 23:44:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BCF8BCAF76
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 23:45:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 893AA3A8CED
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 21:44:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 372B11A64A6F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 21:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742EE281520;
-	Thu,  9 Oct 2025 21:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2644728152A;
+	Thu,  9 Oct 2025 21:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rGNL5fV8"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Zk0CMk1v"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16848272813
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 21:44:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA7A280325
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 21:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760046250; cv=none; b=PgXsKxIPyrLm9mscmvMr/EPx2HN/UMZwbv2ClNV+bG4CU3QP9lGo33NDpZkp6kzX/PMQHGT9mUFgM33KqAxvrcAK52RISVRxrLyIdw+3NAPQXaPhj+dUaj7gbrrBsoA8A6YnMMEu9LCNnRVbnSAMFSBizXf+EtyOS9rRawLc6GM=
+	t=1760046307; cv=none; b=SoxwUWm+Xa7ygHGHVTJdpdg2YWgeX3XNY1dToKarsykH+gg/3ud4Y59xBuYmmz4Rb97pevfEF9nEI7akuvwk2u2Yq+MydbukyevIlA95+gFKEe2GFYL34Fqk1m8MIWAPyisBMmSmGenK9YgJO9HNjvt3aZYR/B5Ke16/eq/Y3qY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760046250; c=relaxed/simple;
-	bh=QBQZ/PII2nd+INm4UhOt/3mrsSRtqFBJsjEBnrwYuhk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ng+4yXVWT1YS0RWXL3STbtvenhsQb7iLdG+bbGCCRmlPCxXzltRZw4EIp5CFmoX0rtR5QfWPwaBcWJjlTqym4MR4GLKJqPVDHABZ2UVtbAWyYdpYseTQWfn1Zmlcnx7CuQxfJdaV3LqwUpi/zQoDgQkNR4BdiZD+yrycNpJhsJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rGNL5fV8; arc=none smtp.client-ip=209.85.214.202
+	s=arc-20240116; t=1760046307; c=relaxed/simple;
+	bh=QreGZIUWwFSUpS0keexw5E+JPR6ESha9HKz5hFX0Bds=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S9bBqZ9rLiW5EXUfUyn7aHVhzzAV6keVAUmgaEeORaF1fIIo0MHBJJDqpmBne+9XFl7DY3qA1gGEnBCiZiJtp4DvEoiwZZUy+3k/Kg4WV/4x0POK8m84vYWetPdqAiaKBb/3LwyA/qaRElD+tKkF6h92ik6YD12KWVhRo37NTlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Zk0CMk1v; arc=none smtp.client-ip=209.85.208.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-268149e1c28so29895395ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 14:44:07 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-62fa84c6916so4903a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 14:45:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760046247; x=1760651047; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BDlvwYPz97Xgh+aeVzA9ej1JjFbOizVBMxc/gGXHNu8=;
-        b=rGNL5fV8HGFemdW0DNxhihVeGWcu3KegmIK19ub6iGFTlIxRvf7enkmsVmsp+T7hc6
-         SdJcFF7oIF1738G/Cy4mLpAOJifSDFFNnsPA5rGWyv5sK5Yo1b0ap0MsmQiVYsT97xSX
-         hRSoYwgthfM63LPNildG0CBls20U506bMy4y3Tp3Cui3VYp+XLVD8KHSKEQ0j7nm6Mws
-         MBEIdNnK9CElx2wFiBKsjQmY9rhc2PoJs8blqRm6Xv6MtQq8M6G4lg8KDlO/PDPbqHv0
-         /Mv3zwGe9Ft0lCC87gWi9ukJK5UvxfzG9gT88Wzxqde5LRuTwbxCbibt/XkwwCuFd8Bn
-         e1TQ==
+        d=google.com; s=20230601; t=1760046304; x=1760651104; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QreGZIUWwFSUpS0keexw5E+JPR6ESha9HKz5hFX0Bds=;
+        b=Zk0CMk1vQHyCII1f1WqnR56nHuFrfgEHSb7iFObRSNwFu2rb6OUyFbPF4lbf6nDGQ8
+         13PHIdof3xbPv0pwv+N9G4XUfR3/Ns+n3hr8JqwHc0vS+xciFcx7GiFXBBNmT9sv5EvL
+         s+rWnWtnY91jDUfA19r90eBNwWxrEhQh5i+AVh7vZhKm93t5SXXB19A8SZJhvVmL9XlJ
+         P2wqe8UqH8YRdOUs+z1bMTZ+ttTgKPGO+YlAdrYvcTUoAqjYJg3lTqCrPCoc6TjNW/97
+         aG4MKtHE5mLsNecCsSYZsFdWHOm8PCHFpE4i5QgebvZaM0VIZL6z1SptF//WTFX8ASCj
+         I5BA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760046247; x=1760651047;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BDlvwYPz97Xgh+aeVzA9ej1JjFbOizVBMxc/gGXHNu8=;
-        b=NQVGANGTNa31qNSGiWxchgCgl7NyVbosvKNHskiQPhzsa07L59q4kuB3y+dCcD4686
-         pjfQ3o7oqHSxuJMyjq8h29a6BHPMMgCCedbbwJhcGpy8MO+l7CtG4Js9u76/ecz2/PjS
-         3mlEi422Ei1pYH+PFf8FfmkalKeZGmMaeRpmtoz8M/MAXd0uPcxMh3rCjifmMb/QuZ8z
-         Nth+ZkjKqpOo1z+Bh11XTzBUzVHEKS9/3zwLDK+4fbY/3IjhxDQ2nKFp78z6dOt9fIVF
-         B2FFYh2mWvICq2FLR6cInFpl/6WHmggRCwpdGIBLAUcuyM2KzEhB8hVY7WlU+BeZCPa7
-         ALqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUaZ1qzuTkoa5WCpjsX8y50YlfdG3N1nKjH+FsgjuCyTdsgWxYbAiqLtPahnd4T3MCVqNwvXfrspPOARBE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz59xvDoxjpGHsW3JQ5JOcKmGAOiefHhsoZtT/2rzzbZnrD9Wtl
-	W/a+9pvzHzD+gwatt4MUjDMB3SjSAkDOflR41C6RXRfznHQT20B087eqsXrHNNKAmYqB8aBn1jQ
-	OqKPVwBeNDPmsYyjy4/hP1PcoMQ==
-X-Google-Smtp-Source: AGHT+IFQjHCm6wm7SAnAbDplPBJVQjkKsdlYJBsa6mhJlfSzzwa6PeU2oGKlk2TkpKhjDbxnR+qB7/kozxjMndhM2A==
-X-Received: from plnx24.prod.google.com ([2002:a17:902:8218:b0:24c:af07:f077])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:903:8cc:b0:267:e3af:ae67 with SMTP id d9443c01a7336-29027238ef6mr108267505ad.14.1760046247397;
- Thu, 09 Oct 2025 14:44:07 -0700 (PDT)
-Date: Thu, 09 Oct 2025 14:44:06 -0700
-In-Reply-To: <20251007221420.344669-7-seanjc@google.com>
+        d=1e100.net; s=20230601; t=1760046304; x=1760651104;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QreGZIUWwFSUpS0keexw5E+JPR6ESha9HKz5hFX0Bds=;
+        b=AUheQeRBwkncuNx8aFbEw7UX+/nKSUmb/r7pfJ1gFfGE3wBNdA9vmCEea5dGv4xCbZ
+         m5h5dEtTBVZNLrB/xRsQCzRsCmgE44DpeTWkJ/5p4Xv98d8i+aM8J/YBLeh4MYLELaa9
+         VWkgYexMRBQa2i3Ul/QMLADuC0a2QrEtp+9G7/UZRmwRFRbMe4UvIvZpXHakPs7BZ8sV
+         OZ9W2ahO6MZC9OXLRoxMyces461uPrO2cIUaoDzBcsk2bOB22v2U8PBUNPt6geJ3Pg02
+         jAuY1EwuSTuoRHzSnoscmEDnqd59IBLVZJftvu7+Zdpf+MQtMLtOjaNVkmkAdxrsj91k
+         IRQw==
+X-Forwarded-Encrypted: i=1; AJvYcCUfyJ+kUu9XErQslvB2NAZNYHJbk0ArZCph/D9PNno0SRwX8XbL8aHyt3fwN0F9CkT5L8vtAkr8Wisadxw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtnCyVIzE/rSBdcN1kcyx9eSN81AKnBzJ0emcBx0W0ESM4XlBp
+	F33kHulwAWgz5pij0aC+2qIzMRgXl7xBWpwKWHtOxDA4JfLzW68+0qMQFs4ezoiT0j8dmhxAMHu
+	iiorD+d3pDy/O4LccCaWJ93x9N9YjxabeWzMaX98N
+X-Gm-Gg: ASbGncsaDeSnXkDo1bhV2wMAEaVKaaQ/uCXPX2mkk6HwrrtHvEq4kuhNihk+UUCnhgC
+	KjVT+UKaQfTh1omFErvRCIg5flr1bBhk2dva6+VlEz7rdZX6JW3Jr6sJgp/g9XIWoVnMlQB3EyJ
+	esxbF4OAXCDajJKD10woyOlEUsE++aIsU2jMa1TckL4Z9mYbKVJN+xTheGWAV+s5rcGWu3epy8w
+	/HjdkX6pyisiGhMcWy4uOhEr8dOUVRm5YfgJelZtMF7g0Zb
+X-Google-Smtp-Source: AGHT+IF7ya22VR4MsSm2/ApcHvwUPsH55KorEJeGrqSsdbLUu0dLnfCzEQZXQiVR4PHOuAbLG3cDz/biyLB252V/zQI=
+X-Received: by 2002:a05:6402:70d:b0:62f:c78f:d0d4 with SMTP id
+ 4fb4d7f45d1cf-639d52ea25amr274550a12.6.1760046304074; Thu, 09 Oct 2025
+ 14:45:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251007221420.344669-1-seanjc@google.com> <20251007221420.344669-7-seanjc@google.com>
-Message-ID: <diqzqzvbhhsp.fsf@google.com>
-Subject: Re: [PATCH v12 06/12] KVM: selftests: Define wrappers for common
- syscalls to assert success
-From: Ackerley Tng <ackerleytng@google.com>
-To: Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>, Shivank Garg <shivankg@amd.com>, 
-	Ashish Kalra <ashish.kalra@amd.com>, Vlastimil Babka <vbabka@suse.cz>
+MIME-Version: 1.0
+References: <20251001145816.1414855-1-yosry.ahmed@linux.dev> <20251001145816.1414855-2-yosry.ahmed@linux.dev>
+In-Reply-To: <20251001145816.1414855-2-yosry.ahmed@linux.dev>
+From: Jim Mattson <jmattson@google.com>
+Date: Thu, 9 Oct 2025 14:44:51 -0700
+X-Gm-Features: AS18NWAuXxHhioaQeq_mMaK8Wdn5ce4wM5-COHrH8ohtUZg-eDZxQjR9lDMUiiY
+Message-ID: <CALMp9eTpUsozsbp2_6JDPdKJ5YT0SwcJ+2G9KZJEp46Ha8j9xQ@mail.gmail.com>
+Subject: Re: [PATCH 01/12] KVM: selftests: Minor improvements to asserts in test_vmx_nested_state()
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Yosry Ahmed <yosryahmed@google.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Sean Christopherson <seanjc@google.com> writes:
+On Wed, Oct 1, 2025 at 8:02=E2=80=AFAM Yosry Ahmed <yosry.ahmed@linux.dev> =
+wrote:
+>
+> From: Yosry Ahmed <yosryahmed@google.com>
+>
+> Display the address as hex if the asserts for the vmxon_pa and vmcs12_pa
+> fail, and assert that the flags are 0 as expected.
+>
+> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
 
-> Add kvm_<sycall> wrappers for munmap(), close(), fallocate(), and
-> ftruncate() to cut down on boilerplate code when a sycall is expected
-> to succeed, and to make it easier for developers to remember to assert
-> success.
->
-> Implement and use a macro framework similar to the kernel's SYSCALL_DEFINE
-> infrastructure to further cut down on boilerplate code, and to drastically
-> reduce the probability of typos as the kernel's syscall definitions can be
-> copy+paste almost verbatim.
->
-> Provide macros to build the raw <sycall>() wrappers as well, e.g. to
-> replace hand-coded wrappers (NUMA) or pure open-coded calls.
->
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-
-Reviewed-by: Ackerley Tng <ackerleytng@google.com>
-Tested-by: Ackerley Tng <ackerleytng@google.com>
-
-> ---
->  tools/testing/selftests/kvm/arm64/vgic_irq.c  |  2 +-
->  .../selftests/kvm/include/kvm_syscalls.h      | 81 +++++++++++++++++++
->  .../testing/selftests/kvm/include/kvm_util.h  | 29 +------
->  .../selftests/kvm/kvm_binary_stats_test.c     |  4 +-
->  tools/testing/selftests/kvm/lib/kvm_util.c    | 31 ++-----
->  .../kvm/x86/private_mem_conversions_test.c    |  9 +--
->  6 files changed, 96 insertions(+), 60 deletions(-)
->  create mode 100644 tools/testing/selftests/kvm/include/kvm_syscalls.h
->
-> 
-> [...snip...]
-> 
+Reviewed-by: Jim Mattson <jmattson@google.com>
 
