@@ -1,98 +1,114 @@
-Return-Path: <linux-kernel+bounces-846160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41F7EBC72BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 04:05:53 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 772D5BC72B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 04:03:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C0DE401B5E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 02:02:29 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 22023347FB9
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 02:03:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A2A1A9F8E;
-	Thu,  9 Oct 2025 02:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OxACerLf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05FE1A0BFA
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 02:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02EDF19922D;
+	Thu,  9 Oct 2025 02:03:15 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0B41397;
+	Thu,  9 Oct 2025 02:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759975318; cv=none; b=Kj9f3fPJYJKK3kK2zimcvNSdHYuxuAidA2on5lQihmRTJQ7oxWRQMt5LSx3YJ0BzbHvGsKLqxQ67iPyRekLqSU2+Ya+/j57KDkIiPrSIwtLUEGaTH+PyrUTFtF6MXBp2XeQwvgqPWGZuqXIINxuhAH+wdYM/PONv1yy7jjiDNZs=
+	t=1759975394; cv=none; b=R+C/QkF38p6ZMDHOaA1cTK3S9K6+9xIiH6yBny3bgvBCF+GtFOByCMUPSII8AWOk7aBmPCQ0uEHOGX2qfuh4Fys1+Gy0waiPxME3SdQ8G1I5ZwMnExuynUNzsK8DcFJfAZuaeQ/K5Ew1YUUzo7aBcjScir47rk1TmRb6ztQiD8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759975318; c=relaxed/simple;
-	bh=cmwJ00nux7/r0iE9bq3u7flM+mf5JWKL9Ygfu+DRbZU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=RKiE4+VNXfCegG5TJAl77uRN5BAKRT4Xkw//jJ8HK3Tz0g/si5kW07zdDmg1l2hd+PMGmWcKWBX9JN3IMiJV2OcQEgeLU7wcTrCcQGPL/rpFOZvWWt5p6C5uKv9rq+qXTM+g7Z9w/PlzEPK981nM0Fvw8N4YQVWSd+sHedLjWOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OxACerLf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2621C4CEE7;
-	Thu,  9 Oct 2025 02:01:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759975318;
-	bh=cmwJ00nux7/r0iE9bq3u7flM+mf5JWKL9Ygfu+DRbZU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=OxACerLfqf7L0d+AYAIEeeGyy5zqxC2ius15pBQc8ETUlL2stiRM2z2SXmX7FqoCe
-	 xM16zufcxWF/cjPtXKogBPhPdBmb9eAiLgUNAmUnIztHLtvYqsco8o478BXmuCv1iD
-	 hu0Ztn9gD/JRWTVkfk7NCiNdoM01TsTys1SQbx9aRf1wjBGo32ww7hHF0O/jf6Q1bl
-	 Sc6d7JhjzZThIKdp0yMNlPe3V8JLEDsQr2pEC9gRX+NQ6+vMVdnsH1XVqVW7xe5+eR
-	 3NsTdQgM/EKGMVj9MsZgktijPEJD5SjV3rq1WMdXrp7ZWls0TpJCOjKV+I2rDdvuRi
-	 VPAljXaAERqfQ==
-Date: Wed, 8 Oct 2025 20:01:54 -0600 (MDT)
-From: Paul Walmsley <pjw@kernel.org>
-To: duchangbin <changbin.du@huawei.com>, Alexandre Ghiti <alex@ghiti.fr>, 
-    andybnac@gmail.com
-cc: Paul Walmsley <paul.walmsley@sifive.com>, 
-    Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-    "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, 
-    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] riscv: Prevent early kernel panic in instrumented
- apply_early_boot_alternatives
-In-Reply-To: <d41d9c7a103f4600a4fc5beea77e0f4e@huawei.com>
-Message-ID: <2396743a-480e-2ab3-f7fe-569d8f2adfcf@kernel.org>
-References: <20250624113042.2123140-1-changbin.du@huawei.com> <a89f5970-5ea9-4d92-8952-6c26a22ac153@ghiti.fr> <d41d9c7a103f4600a4fc5beea77e0f4e@huawei.com>
+	s=arc-20240116; t=1759975394; c=relaxed/simple;
+	bh=FYeKjXCSa+sugLZNOvMXe+AcFfKj2MNmosBD05Z/05g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t087YLUUKXhLORZBdeovZlP9FdjrmuA1NBF5QI9x7Vvx4iGjuV8smIdincY/xJ1GRNK6SdF82xqBZNTzRxXmGdhEn+Sncaem6BCI2w7816p6dmM4E62WpVoEiMAJEbmgjhaBrlyxIMam3QVludhGlrxvIYpN9MrwYO/4yvwv5Gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C5AFA1A32;
+	Wed,  8 Oct 2025 19:03:02 -0700 (PDT)
+Received: from [10.163.35.84] (unknown [10.163.35.84])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E94173F738;
+	Wed,  8 Oct 2025 19:03:06 -0700 (PDT)
+Message-ID: <24beaa64-d144-42c3-945f-a37e1cac384d@arm.com>
+Date: Thu, 9 Oct 2025 07:33:03 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/18] perf/core: Replace READ_ONCE() with standard
+ page table accessors
+To: Samuel Holland <samuel.holland@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <pjw@kernel.org>,
+ linux-riscv@lists.infradead.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, Conor Dooley <conor@kernel.org>,
+ Alexandre Ghiti <alex@ghiti.fr>, Emil Renner Berthing <kernel@esmil.dk>,
+ Andrew Morton <akpm@linux-foundation.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+References: <20251009015839.3460231-1-samuel.holland@sifive.com>
+ <20251009015839.3460231-3-samuel.holland@sifive.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20251009015839.3460231-3-samuel.holland@sifive.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Alex, duchangbin, Andy,
 
-On Wed, 25 Jun 2025, duchangbin wrote:
 
-> On Tue, Jun 24, 2025 at 02:54:32PM +0200, Alexandre Ghiti wrote:
-> > Hi Changbin,
-> > 
-> > On 6/24/25 13:30, Changbin Du wrote:
-> > > Under FTRACE=y, DYNAMIC_FTRACE=n, and RISCV_ALTERNATIVE_EARLY=n, the kernel
-> > 
-> > 
-> > Your above config works fine for me, I guess you meant FUNCTION_TRACER &&
-> > !DYNAMIC_FTRACE (which fails).
-> >
-> Yes, it's FUNCTION_TRACER.
+On 09/10/25 7:27 AM, Samuel Holland wrote:
+> Replace READ_ONCE() with standard page table accessors, i.e. pXXp_get(),
+> which have a default implementation of READ_ONCE() if the architecture
+> does not override them.
 > 
-> > We were just talking with Andy about this configuration (FUNCTION_TRACER &&
-> > !DYNAMIC_FTRACE): do we really want to support static ftrace? Andy should
-> > send a patch soon to remove this possibility as IMO we don't want to support
-> > it. Let's wait for this patch and the discussion that will follow before
-> > merging your fix. I'll keep it in my list for 6.16 just in case someone
-> > comes up with a good argument to keep it.
-> > 
-> No problem. I'm unable to enable DYNAMIC_FTRACE because GCC_SUPPORTS_DYNAMIC_FTRACE=n
-> and CC_HAS_MIN_FUNCTION_ALIGNMENT=n are set. It seems that my GCC version (13.3.0)
-> does not support the option -fmin-function-alignment=8.
+> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+> ---
 > 
-> By the way, this change also eliminates an empty function call.
+> Changes in v2:
+>  - New patch for v2
+> 
+>  kernel/events/core.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 820127536e62b..952ba4e3d8815 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -8110,7 +8110,7 @@ static u64 perf_get_pgtable_size(struct mm_struct *mm, unsigned long addr)
+>  	pte_t *ptep, pte;
+>  
+>  	pgdp = pgd_offset(mm, addr);
+> -	pgd = READ_ONCE(*pgdp);
+> +	pgd = pgdp_get(pgdp);
+>  	if (pgd_none(pgd))
+>  		return 0;
+>  
+> @@ -8118,7 +8118,7 @@ static u64 perf_get_pgtable_size(struct mm_struct *mm, unsigned long addr)
+>  		return pgd_leaf_size(pgd);
+>  
+>  	p4dp = p4d_offset_lockless(pgdp, pgd, addr);
+> -	p4d = READ_ONCE(*p4dp);
+> +	p4d = p4dp_get(p4dp);
+>  	if (!p4d_present(p4d))
+>  		return 0;
+>  
+> @@ -8126,7 +8126,7 @@ static u64 perf_get_pgtable_size(struct mm_struct *mm, unsigned long addr)
+>  		return p4d_leaf_size(p4d);
+>  
+>  	pudp = pud_offset_lockless(p4dp, p4d, addr);
+> -	pud = READ_ONCE(*pudp);
+> +	pud = pudp_get(pudp);
+>  	if (!pud_present(pud))
+>  		return 0;
+>  
 
-Working on cleaning out Patchwork.  Was there any further conclusion 
-reached on this patch, or more broadly, static ftrace ?
+This is already under discussion here.
 
+https://lore.kernel.org/all/20251006042622.1743675-1-anshuman.khandual@arm.com/
 
-- Paul
 
