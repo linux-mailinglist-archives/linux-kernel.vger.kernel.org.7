@@ -1,47 +1,53 @@
-Return-Path: <linux-kernel+bounces-846919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F38CBC96D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:06:54 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58563BC97A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E29A93E43EC
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:06:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B9804F9BF3
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:21:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43DB2EA170;
-	Thu,  9 Oct 2025 14:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FbC0h8MK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE1F1E47A3;
-	Thu,  9 Oct 2025 14:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427A32EA74A;
+	Thu,  9 Oct 2025 14:20:51 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D73C2EA170;
+	Thu,  9 Oct 2025 14:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760018805; cv=none; b=BsOKW2uSUj57Td+gaYT7C+VnR8TSrbk7TYdSBEX4b0R56ziL0AQMUic0um2OaDTeF0jaVlIgzAbmor6j+OUIAh7/WHSmHIRR3LOpEGgFFZRRIu/0fDJUZ+idqaEh3F0YSyNbPhMymRIX9SDUCxwopyDUGCUjj9fMXXSbbTxN/x4=
+	t=1760019650; cv=none; b=Ag8bqjzKONbGanKz6owmISKBaSrcOowlZN+iyg/oN2d55iZ9uQfBsIan7S+31PE2cNKTz7FzC62TQwKxKYYRw6alFI+O0DzUGLzhgX4Iqj4tqEOtSyc0cysG1Atsn356Xzrjknnf3L2ryQUz45Xnd6mJujS58rzbox9DEhN9gu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760018805; c=relaxed/simple;
-	bh=9lGa0HwxRZ9Hy5gQI123eetQttvhSlWwIzzBFIMUFkk=;
+	s=arc-20240116; t=1760019650; c=relaxed/simple;
+	bh=FhgyhPtY0liXOQAb2fP1EH+Jjopfe12DodzpPIW2Rpk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jf1eFRuDmfeA1M2F6HcTMSgnfCYub7/apXzxPMu2BA5dR6Wl/8meKmmWi0IIYAeIi027cVS/zAhfB7lFGZEr7nl6frPL+10VwrRGSTSq1rbl2ENfoKJ2YEQTCK2H6LNUaPqxIQtxJFDWK/YZ9paMBy5U0JQObhDORRticcsL55k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FbC0h8MK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D29EC4CEE7;
-	Thu,  9 Oct 2025 14:06:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760018804;
-	bh=9lGa0HwxRZ9Hy5gQI123eetQttvhSlWwIzzBFIMUFkk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FbC0h8MKo7AodbU1nhaCdAj8zcH1dE+EaQjaekvgxOiY8MxWE7PR57aJ9AH+nUMM+
-	 Gb8uOzmcLxCdWoukRtpyblJPVfjGU8UNu5jlnWsdE1D6eSxyG99mVRGW/s65jgQaKm
-	 qEu9lpPuDAxv4YiSwhoPEihFBVX5OyG79jutS+Rw1kzARZQku7Y9UpQKIeBeWRv2Z/
-	 hlhlQIEpdECp5jWzAvh8l2EeF6DDsDmKGSZFZbsNoBOvS2Sonu0nxEn9bAfNMA+wmV
-	 Bt1OZceukkKqCEE4C8FPpe1r8A1QPiQ61/6RBcPRYkd6yvphf6wsILqsahrsvkNJ73
-	 w1zKduIseM5fQ==
-Message-ID: <c0b71974-65df-47ad-902b-45c2dbe66be0@kernel.org>
-Date: Thu, 9 Oct 2025 15:06:42 +0100
+	 In-Reply-To:Content-Type; b=T/tsboYM2KblZm1p8mVbr2a9lN5KtZmYWIg1r5Y/fGuJpnwZo5dQJGfc7OAoI3aSNXKShx4zQ7xA8k24O5+53PAuH80AiOOIA2LNRQLVQBl9xKGHB0xkQH2H5pAhBpGLqzRr3cwW3KIIOBlT2q40uIT2pKRbhjM7GQh02N1X6iI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cjBYm3DcQz9sVs;
+	Thu,  9 Oct 2025 16:08:44 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id u6Aqq1H6ISzC; Thu,  9 Oct 2025 16:08:44 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cjBYJ3yX0z9sV9;
+	Thu,  9 Oct 2025 16:08:20 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 76C4D8B774;
+	Thu,  9 Oct 2025 16:08:20 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id iN4ogB5yr0x2; Thu,  9 Oct 2025 16:08:20 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id A9A718B76D;
+	Thu,  9 Oct 2025 16:08:19 +0200 (CEST)
+Message-ID: <a987652d-db73-4ec9-b3b5-3a75114ff877@csgroup.eu>
+Date: Thu, 9 Oct 2025 16:08:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,112 +55,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 2/6] ASoC: dt-bindings: qcom,sm8250: Add clocks
- properties for I2S
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH 1/4] powerpc: 512x: Rename wdt@ node to watchdog@
+To: j.ne@posteo.net, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20251008-topic-sm8x50-next-hdk-i2s-v2-0-6b7d38d4ad5e@linaro.org>
- <20251008-topic-sm8x50-next-hdk-i2s-v2-2-6b7d38d4ad5e@linaro.org>
- <44606de8-3446-472f-aa6b-25ff8b76e0ec@kernel.org>
- <3620feb6-12bf-48c1-b47a-ccb486e5b5de@linaro.org>
-Content-Language: en-US
-From: Srinivas Kandagatla <srini@kernel.org>
-In-Reply-To: <3620feb6-12bf-48c1-b47a-ccb486e5b5de@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+ <conor+dt@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Naveen N Rao <naveen@kernel.org>
+Cc: devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+References: <20250418-watchdog-v1-0-987ff2046272@posteo.net>
+ <20250418-watchdog-v1-1-987ff2046272@posteo.net>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <20250418-watchdog-v1-1-987ff2046272@posteo.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
 
 
-On 10/9/25 3:03 PM, Neil Armstrong wrote:
-> On 10/9/25 15:36, Srinivas Kandagatla wrote:
->>
->>
->> On 10/8/25 7:56 PM, Neil Armstrong wrote:
->>> In order to describe the block and master clock of each I2S bus, add
->>> the first 5 I2S busses clock entries.
->>>
->>> The names (primary, secondary, tertiarty, quaternary, quinary, senary)
->>> uses the LPASS clock naming which were used for a long time on Qualcomm
->>> LPASS firmware interfaces.
->>>
->>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->>> ---
->>>   .../devicetree/bindings/sound/qcom,sm8250.yaml      | 21 ++++++++++
->>> +++++++++++
->>>   1 file changed, 21 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
->>> b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
->>> index
->>> 8ac91625dce5ccba5c5f31748c36296b12fac1a6..d1420d138b7ed8152aa53769c4d495e1674275e6 100644
->>> --- a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
->>> +++ b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
->>> @@ -64,6 +64,27 @@ properties:
->>>       $ref: /schemas/types.yaml#/definitions/string
->>>       description: User visible long sound card name
->>>   +  clocks:
->>> +    minItems: 2
->>> +    maxItems: 12
->>> +
->>> +  clock-names:
->>> +    minItems: 2
->>> +    items:
->>> +      # mclk is the I2S Master Clock, mi2s the I2S Bit Clock
->>> +      - const: primary-mi2s
->>> +      - const: primary-mclk
->>> +      - const: secondary-mi2s
->>> +      - const: secondary-mclk
->>> +      - const: tertiary-mi2s
->>> +      - const: tertiary-mclk
->>> +      - const: quaternary-mi2s
->>> +      - const: quaternary-mclk
->>> +      - const: quinary-mi2s
->>> +      - const: quinary-mclk
->>> +      - const: senary-mi2s
->>> +      - const: senary-mclk
->>> +
->>
->> I don't this is correct way to handling bitclk and mclks for I2S, these
->> are normally handled as part of snd_soc_dai_set_sysclk() transparently
->> without need of any device tree description.
->>
->> Also doing this way is an issue as this is going to break existing Elite
->> based platforms, and the device description should not change across
->> these both audio firmwares.
+Le 18/04/2025 à 21:28, J. Neuschäfer via B4 Relay a écrit :
+> From: "J. Neuschäfer" <j.ne@posteo.net>
 > 
-> This is only for AudioReach platforms, on those platforms the
-> clocks are registered in DT and are not accessible by the card.
+> The watchdog.yaml schema prescribes a node name of "timer" or "watchdog"
+> rather than the abbreviation "wdt".
 > 
-Clocks will be acessable via snd_soc_dai_set_sysclk ->
-q6prm_set_lpass_clock once set_sysclk support is added to q6apm-lpass
-i2s dai ops.
+> Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
 
+Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 
-> Device description is obviously different for the AudioReach platforms.
-
-Why should it be different, its same device.
-We have platforms that use both Elite and Audioreach.
-
---srini
+> ---
+>   arch/powerpc/boot/dts/mpc5121.dtsi | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Neil
-> 
->>
->> thanks,
->> Srini
->>
->>>   patternProperties:
->>>     ".*-dai-link$":
->>>       description:
->>>
->>
+> diff --git a/arch/powerpc/boot/dts/mpc5121.dtsi b/arch/powerpc/boot/dts/mpc5121.dtsi
+> index d3fc8062fbcd7b959a7edf17c8e9a28086034d69..a278fb7b9e71182582f658b30c2ea4e962edd7b7 100644
+> --- a/arch/powerpc/boot/dts/mpc5121.dtsi
+> +++ b/arch/powerpc/boot/dts/mpc5121.dtsi
+> @@ -112,7 +112,7 @@ ipic: interrupt-controller@c00 {
+>   		};
+>   
+>   		/* Watchdog timer */
+> -		wdt@900 {
+> +		watchdog@900 {
+>   			compatible = "fsl,mpc5121-wdt";
+>   			reg = <0x900 0x100>;
+>   		};
 > 
 
 
