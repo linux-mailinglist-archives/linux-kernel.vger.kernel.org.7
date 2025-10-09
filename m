@@ -1,122 +1,275 @@
-Return-Path: <linux-kernel+bounces-846877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66774BC94F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:31:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D091ABC94FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:32:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1A633352305
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:31:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C27611A618E9
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:32:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46B4B282EB;
-	Thu,  9 Oct 2025 13:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EBA31714B7;
+	Thu,  9 Oct 2025 13:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QOYpd02K"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WYXDwAUs"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78572D9EDF
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1F034BA2F
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760016684; cv=none; b=u2aQfaCy5dkbwTrAeICYvP/IhCj+aa0k/NyvM8X6WJfqs327i0DTVVbtVt2pUVDdmciVgWxqi6qEBSSaT0Lm1ZwsXg22Z7d2E/DRNJAe9nczT9vE0bRNFucZRk5E+9TP9flQlZiiS0NWl327usRLT4EEzQLptyf0XeKsjn/lyLo=
+	t=1760016728; cv=none; b=iPZsR05c6t2Z7TSTDf6A4mm9mYKEPsaoG4qM6mNGYtlopS3uetoLqjG43YejJtyMEYyKv/6xMwFrat5Ye0c/ThHgWfmiBj7prOTyD5MU6RcAvxH0xICXsrVr/aglLb/aC+LI4ScxblmbXCUW559DuNbagQM2o+5FBViZtfFhR+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760016684; c=relaxed/simple;
-	bh=4uMuw9n5pwbOi9ibO0Djym5GMms0Of0kx57oeDZ/s/s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=b0slTJ71UdZdYsIr03ZvfqRu1M/ZTKzyts0uTyBGHkChhtzaAuekL/Kzba+c2GWgI9MGzI+MWYneSXM+fqPlwlgNmaUZd1WmkFCLP6ly5nUGILMxQ09duBwS+AMZIWXDgwp0dJ5+BPYYVm+RkCN+Van/digQpQfVm1Dvta8IF2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QOYpd02K; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-639e1e8c8c8so1879653a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 06:31:22 -0700 (PDT)
+	s=arc-20240116; t=1760016728; c=relaxed/simple;
+	bh=h3NuZ12K3/lElcibtGA+QG5w/yrJTAfAVGN7114N2I0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Af+dXgh/iZXM2xhUV4N0wD8uBZ5X+J7zTYBiiomFsTYvyt4mbCadvvaOxxCeLEvZNTpqHs3ZYWl9m/xHoti0Ken70omfac0KxPkWv9KqgxTMYzozwkPznfDhnRL7lu7uZYx25DQih1l6CwAwdkjHsAXJdHZ53DW8Aq1vQbd2nRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WYXDwAUs; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-27d67abd215so252585ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 06:32:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760016681; x=1760621481; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4uMuw9n5pwbOi9ibO0Djym5GMms0Of0kx57oeDZ/s/s=;
-        b=QOYpd02K8BVgNunRW7q+mLlUaygR+qTqS46lbZKjTaHTxrBVGFu/XS56SXqS6lEl1s
-         AR9Z3Of9CdnuTxKzHufvGgPmBuMbj5wN7FdFS7OhblKcWPYcU0xVVk17QcnozeQc5NlN
-         3t58Ff9n8TcIXt5jbCIq2kiPrxypK/kxOAADc7VJU7FDn5QtnjF4jvkGa4RRJYvKs36g
-         CBdJOnige3e0uILxxLYTM0sW9xze/h9D4yZah453EBY7UqePVO6KOPtfXm303AkeAu7i
-         YZQ/qhx6NG+SZBA9vmKpN0skfQ1SbAVKZyEaZWwx8t+t/x4LCe1qt4ft4tdTVif1VQ6d
-         eXvA==
+        d=google.com; s=20230601; t=1760016724; x=1760621524; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LKgrX9I9H1E8Rzi9UZJixQg4AVl3hxGPKMOGQpXFZKY=;
+        b=WYXDwAUslJVv9B33sTxrzUROyXOdUAJUw2I83Y+TRSakmd8R6qjzVononSGrBedWj4
+         PQFAohIt7qKAuSUL/MOIPMtG6Y998nhRKt+1FII330JKyO0opC0iz9QbfKmOHyTrIVuS
+         da3b5Rrl1Nt9t0q/Bao99IRJqrh6nqJpqCf1RSMwn84560wKYIfUFGCjp0vUuuNfyaPh
+         BW/y3pzQjc9d7zSjN8FKsy7p73Yvw4r7Fs4bq/np0cToxTGTbE/w74C/YT0iWwga6Pls
+         ZiEpTOT614sGGlriz+QAtxCKQq68N/Zos2sgJBQRBjQJBPVsohWl9ku3aUJznPncEnWC
+         8vGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760016681; x=1760621481;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4uMuw9n5pwbOi9ibO0Djym5GMms0Of0kx57oeDZ/s/s=;
-        b=pkgnTGwBWtkV4s0uOXeOxIAMsbepk3iG6IG3Cbp75UpsrdYdAEjyTE5qHm1Oa097de
-         SNLNmjiQ7oY8efm7cfZFEXHUmeQhEp3LuA1dUE1+Dpea5MfGIKcRNdXbrIlSCxJ0Xy8X
-         JVVP20Ob4HoR4MboLINBZpuc5IucaTFR9GLzJy2ZoQiyssqCPWmcL2g03zlKHX1pLvC5
-         hlCmKZwz4ktnEYBg7LvEN/xL11jCaQ5wircu0aOMoZBoyun6TBtlmtm0YBGiNBp0jAcd
-         ARRFrSQYrawPODym18fpoCKqVe5AdnryFAKjtmUY4fs47V+jopcPA9QWNgmrhHjJp+/O
-         7CUw==
-X-Forwarded-Encrypted: i=1; AJvYcCW5zwN78mwE67zG/DFeeIiI9iYla64VzmUqoEaBNVLaU6zf9MGZW86yvgRR+Jk3UVs9dV/iFwURedXXInM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTV4r5h019/yYOZkDjru63uACP6j939sYhZiVAD2DyTQmCbwlY
-	UgY7E/zqB+ccpKEO4pfET0jwp7RPO3OSpW8u9HkmQJWPbLkEAOVFx1YhtS2tpa0LdOEcPFzZmqo
-	xQiD8zk8=
-X-Gm-Gg: ASbGncs2PuCet0eY/k28HbvJtumSHm1+ujfKJeIqpUebdELnTb6T5ujV3nnJirXT8Mu
-	rhzOH9EVDqWVsmUupqHZa5Dgm5PFRGWJZOs7EzNb2tcYLs+srfYYy0scUabSEYJtMOtV1ZL0OyM
-	lBegg1R7+TcPr9ricgZT//HzeLdyP01GUNeN3tGIXRN10zNgr5RlPLdjJ0WIO2EiJUJ9jz2hHMQ
-	7G/5YZNurbesXO8/rOi0z7ObOcyGhUNdeMr72+wpTfAYlK9InBcqRI/y6xzI0dVDNLo4FXjoiEz
-	ffAV4K6MxUc5s+Vn17wKHL5KQXsg0NMHKo5OyXxJUBnUmr1s8SRbHnFzYRBoAJBlRND6AzBmcfT
-	N1nd4eA88wZrOOYEXNW+ssfCf0ovpSFTG9nnttJEd2yfzGyE2l4VaXg==
-X-Google-Smtp-Source: AGHT+IEnaDw79r99A3B3756aMdxT7SHXjMqW6rLoG3x0RAXtUbJZNUbfM/vMx/v7BA9OApMfoCnFYg==
-X-Received: by 2002:a17:907:9720:b0:b4b:dd7e:65f8 with SMTP id a640c23a62f3a-b50aaa9bbe9mr879682766b.25.1760016681115;
-        Thu, 09 Oct 2025 06:31:21 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48652a9ebbsm1905425766b.7.2025.10.09.06.31.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 06:31:20 -0700 (PDT)
-Message-ID: <9d4ccadf76ccfff1a8b5f572b8aa190e2dc40c29.camel@linaro.org>
-Subject: Re: [PATCH 03/10] pmdomain: samsung: use to devm_kstrdup_const() to
- simplify error handling
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar
- <alim.akhtar@samsung.com>,  Rob Herring <robh@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,  Ulf
- Hansson <ulf.hansson@linaro.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus
-	 <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, 
-	kernel-team@android.com, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Date: Thu, 09 Oct 2025 14:31:19 +0100
-In-Reply-To: <5df18f42-b567-4d27-9e12-29723af40d6e@kernel.org>
-References: <20251006-gs101-pd-v1-0-f0cb0c01ea7b@linaro.org>
-	 <20251006-gs101-pd-v1-3-f0cb0c01ea7b@linaro.org>
-	 <5df18f42-b567-4d27-9e12-29723af40d6e@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-2 
+        d=1e100.net; s=20230601; t=1760016724; x=1760621524;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LKgrX9I9H1E8Rzi9UZJixQg4AVl3hxGPKMOGQpXFZKY=;
+        b=QaBcUjZFYZ09RfqTlmnHC84CiwrWSrQ4/ub4X7sqvuRFko5kTsB4zCKSNbxcXAvXKK
+         1TB3Q6jbe9bnNcgoveDDqDcDhNFvhznR6z2ugKtooNZJ3sATxMfVqod0uSBy7+KfzXp0
+         kX7+1HKLgEmQGlhUcDfkyByKAyPY6v8iNDttIhdOO/a1bJ2PvjNDHZk4TNivs9WyERkm
+         bEVyJs3Ieduix2MtNBsCYpyeEJxBQePwsrfWz+5hYPIFHANEEJMCiHjI5G/+/4u8V2a+
+         /rEwcHruYSH80q0O6PDxMt+LF8hTdI7YEPFb+Jx7UJySv60NNH7uyNiCYXSNYKGdeBth
+         yUvA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJV1oEcBFULvOLba/BMNXEGLj5FRJEislZHIDeXdV1gvFaffYsxuJew6oLgpnEsF2wjIkpPD5ikxi/b8A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLxIaBt1u5a3Rzd1LcJnst8W4qJmQUGpODFbJVhCePeoEEGqG1
+	5O4OycGXrKIJIJblI8lMidIa1RXnzYxPfiiaBzKk9+7yOxUxIhLKPuyzn0CZGOv8oDtJOA/o3aO
+	PXb1feSKVo/O3+RuYWAVlwMbfBfTXQPiIWLOrwhtX
+X-Gm-Gg: ASbGncum9JOyTOxWtQmVvJHGiCyABhYvVCSP6FgJT1B//V4hM1sZvMB6+K+NU5ADMHB
+	Wotn1LTp6zHDvyAFNNJ21k6p0Cr4B48JV+zWM1d/XR8ztgSFukmTC/yIndy7GkkhL/i49SowP0R
+	hYiotLUlfyXwdCxv4GRVhuTQ0/oVKfnKp3uHzgU6Wa9GbAyOr5SJF0itOCHnna7wvOqDIdwCWpH
+	G2KZorxjTzYxGrrhdcevtp0vdsLp4F8rSWuve/V/6MKR27Xfw==
+X-Google-Smtp-Source: AGHT+IFZJq65ep3s4bVMk6jxRxVRnjn2WyK+ZNQwtHI4t4HXIP6rXT96ATbGdNG/wBUzAgqVESqMBEwAWlzsE5261Jc=
+X-Received: by 2002:a17:902:d548:b0:25b:ce96:7109 with SMTP id
+ d9443c01a7336-290275de5a5mr9131235ad.3.1760016723556; Thu, 09 Oct 2025
+ 06:32:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20251005181421.2787960-1-irogers@google.com> <aOYkRdU5pn_jTOq3@google.com>
+ <CAP-5=fUqYeaE_P3ApXvq7j9SRuNXpLf+mK-4XBsvv2R=OTccbQ@mail.gmail.com> <aOdNWrIAQMkaVsqR@google.com>
+In-Reply-To: <aOdNWrIAQMkaVsqR@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 9 Oct 2025 06:31:51 -0700
+X-Gm-Features: AS18NWBVDbTPoqSC3Meaoii89yADm94rw5shK2Rf50XwIFJD_M3dwkPQDvt3OEs
+Message-ID: <CAP-5=fVERf8jf3MrwiEfQtChvC1KUe0EEASK1aVk-UKkk=Pb0w@mail.gmail.com>
+Subject: Re: [PATCH v1] perf stat: Additional verbose details for <not
+ supported> events
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2025-10-09 at 09:13 +0900, Krzysztof Kozlowski wrote:
-> On 07/10/2025 01:43, Andr=C3=A9 Draszik wrote:
-> > Convert to using devm_kstrdup_const() so as to simplify cleanup during
-> > error handling.
->=20
->=20
-> This is either a fix (then describe the fixed issue and add Fixed tag)
-> or you change the logic, not only simplify.
->=20
-> Previously on of_genpd_add_provider_simple() the memory was not
-> kfree_const. Now it will be.
+On Wed, Oct 8, 2025 at 10:51=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> On Wed, Oct 08, 2025 at 09:31:53AM -0700, Ian Rogers wrote:
+> > On Wed, Oct 8, 2025 at 1:43=E2=80=AFAM Namhyung Kim <namhyung@kernel.or=
+g> wrote:
+> > >
+> > > On Sun, Oct 05, 2025 at 11:14:21AM -0700, Ian Rogers wrote:
+> > > > If an event shows as "<not supported>" in perf stat output, in verb=
+ose
+> > > > mode add the strerror output to help diagnose the issue.
+> > > >
+> > > > Consider:
+> > > > ```
+> > > > $ perf stat -e cycles,data_read,instructions true
+> > > >
+> > > >  Performance counter stats for 'true':
+> > > >
+> > > >            357,457      cycles:u
+> > > >    <not supported> MiB  data_read:u
+> > > >            156,182      instructions:u                   #    0.44 =
+ insn per cycle
+> > > >
+> > > >        0.001250315 seconds time elapsed
+> > > >
+> > > >        0.001283000 seconds user
+> > > >        0.000000000 seconds sys
+> > > > ```
+> > > >
+> > > > To understand why the data_read uncore event failed, with this chan=
+ge:
+> > > > ```
+> > > > $ perf stat -v -e cycles,data_read,instructions true
+> > > > Using CPUID GenuineIntel-6-8D-1
+> > > > cycles -> cpu/cycles/
+> > > > data_read -> uncore_imc_free_running_0/data_read/
+> > > > data_read -> uncore_imc_free_running_1/data_read/
+> > > > instructions -> cpu/instructions/
+> > > > Control descriptor is not initialized
+> > > > Warning:
+> > > > kernel.perf_event_paranoid=3D2, trying to fall back to excluding ke=
+rnel and hypervisor  samples
+> > > > Warning:
+> > > > kernel.perf_event_paranoid=3D2, trying to fall back to excluding ke=
+rnel and hypervisor  samples
+> > > > Warning:
+> > > > kernel.perf_event_paranoid=3D2, trying to fall back to excluding ke=
+rnel and hypervisor  samples
+> > > > Warning:
+> > > > data_read:u event is not supported by the kernel.
+> > > > Invalid event (data_read:u) in per-thread mode, enable system wide =
+with '-a'.
+> > > > Warning:
+> > > > kernel.perf_event_paranoid=3D2, trying to fall back to excluding ke=
+rnel and hypervisor  samples
+> > > > Warning:
+> > > > data_read:u event is not supported by the kernel.
+> > > > Invalid event (data_read:u) in per-thread mode, enable system wide =
+with '-a'.
+> > > > cycles:u: 351621 362833 362833
+> > > > failed to read counter data_read:u
+> > > > failed to read counter data_read:u
+> > > > instructions:u: 156184 362833 362833
+> > > >
+> > > >  Performance counter stats for 'true':
+> > > >
+> > > >            351,621      cycles:u
+> > > >    <not supported> MiB  data_read:u
+> > > >            156,184      instructions:u                   #    0.44 =
+ insn per cycle
+> > > >
+> > > >        0.001584472 seconds time elapsed
+> > > >
+> > > >        0.001811000 seconds user
+> > > >        0.000000000 seconds sys
+> > > > ```
+> > > > where without this change only "data_read:u event is not supported =
+by
+> > > > the kernel." is shown.
+> > >
+> > > I think what you say is:
+> > >
+> > > Before:
+> > >   data_read:u event is not supported by the kernel.
+> > >
+> > > After:
+> > >   data_read:u event is not supported by the kernel.
+> > >   Invalid event (data_read:u) in per-thread mode, enable system wide =
+with '-a'.
+> >
+> > I kept things verbose as unfortunately the
+> > "kernel.perf_event_paranoid=3D2" is important as is the use of
+> > per-thread mode. Different paranoia levels lead to different errors
+> > and unfortunately a lot of the time the error gets reported as "
+> > data_read:u event is not supported by the kernel." and I'm not sure
+> > all users will get that the key part there is the :u modifier.
+>
+> Yep, I'm ok with the change.  But the changelog was a bit unclear what
+> is being added exactly.  IIUC we already have the paranoid message with
+> the verbose level 1.
 
-Indeed it's a fix after all - While the driver doesn't allow unbind,
-I added this patch due to the followup patches that add potential error
-returns during probe, but somehow missed an already-existing error
-return after this call.
+I thought the line:
+"""
+where without this change only "data_read:u event is not supported by
+the kernel." is shown.
+"""
+covered this?
 
-Thanks Krzysztof!
+Thanks,
+Ian
+
+> > However, fixing  evsel__open_strerror wasn't in scope for this change.
+>
+> Sure, we can handle that separately.
+>
+> Thanks,
+> Namhyung
+>
+> >
+> > > Off-topic, it'd be great if we reduce the number of the same warning
+> > > messages.  I think the data_read is from two uncore PMUs so the messa=
+ge
+> > > was repeated.  If we can connect the related evsels and show the
+> > > messages once, then the output is more readable.  Maybe we also want =
+to
+> > > show the fallback message just once (globally).
+> > >
+> > > Thanks,
+> > > Namhyung
+> > >
+> > > >
+> > > > Signed-off-by: Ian Rogers <irogers@google.com>
+> > > > ---
+> > > >  tools/perf/builtin-stat.c | 12 +++++++-----
+> > > >  1 file changed, 7 insertions(+), 5 deletions(-)
+> > > >
+> > > > diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+> > > > index 7006f848f87a..84e06ec09cc2 100644
+> > > > --- a/tools/perf/builtin-stat.c
+> > > > +++ b/tools/perf/builtin-stat.c
+> > > > @@ -624,8 +624,9 @@ static enum counter_recovery stat_handle_error(=
+struct evsel *counter, int err)
+> > > >        */
+> > > >       if (err =3D=3D EINVAL || err =3D=3D ENOSYS || err =3D=3D ENOE=
+NT || err =3D=3D ENXIO) {
+> > > >               if (verbose > 0) {
+> > > > -                     ui__warning("%s event is not supported by the=
+ kernel.\n",
+> > > > -                                 evsel__name(counter));
+> > > > +                     evsel__open_strerror(counter, &target, err, m=
+sg, sizeof(msg));
+> > > > +                     ui__warning("%s event is not supported by the=
+ kernel.\n%s\n",
+> > > > +                                 evsel__name(counter), msg);
+> > > >               }
+> > > >               return COUNTER_SKIP;
+> > > >       }
+> > > > @@ -649,10 +650,11 @@ static enum counter_recovery stat_handle_erro=
+r(struct evsel *counter, int err)
+> > > >               }
+> > > >       }
+> > > >       if (verbose > 0) {
+> > > > +             evsel__open_strerror(counter, &target, err, msg, size=
+of(msg));
+> > > >               ui__warning(err =3D=3D EOPNOTSUPP
+> > > > -                     ? "%s event is not supported by the kernel.\n=
+"
+> > > > -                     : "skipping event %s that kernel failed to op=
+en.\n",
+> > > > -                     evsel__name(counter));
+> > > > +                     ? "%s event is not supported by the kernel.\n=
+%s\n"
+> > > > +                     : "skipping event %s that kernel failed to op=
+en.\n%s\n",
+> > > > +                     evsel__name(counter), msg);
+> > > >       }
+> > > >       return COUNTER_SKIP;
+> > > >  }
+> > > > --
+> > > > 2.51.0.618.g983fd99d29-goog
+> > > >
 
