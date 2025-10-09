@@ -1,78 +1,77 @@
-Return-Path: <linux-kernel+bounces-846142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FD9BBC7240
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 03:59:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CFEEBC7252
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 03:59:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEF4619E2CBF
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 01:59:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 34F4B4F0C69
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 01:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26B101922FD;
-	Thu,  9 Oct 2025 01:58:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29331DE3DC;
+	Thu,  9 Oct 2025 01:58:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Q21gbFYb"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="axp07W5U"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E924F1A9F8E
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 01:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA95119922D
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 01:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759975130; cv=none; b=LkTBtJvW4TPjsyYWIe/vQTt9cK41GLVDQLct6AfMnhZ3puumF2jSLFZnYdui164/HoQJ4Qirgc2WDmUVFJRAhG6/nlEolSklJJcMtOS7wHGLr/OdddbiGsBiDX/nevRtbKDMSVW2zU/rwCtaMuITbO7+3ISp9vHnbf/0q4t6oM0=
+	t=1759975131; cv=none; b=HsnUqX8nFvq9/i0tYQHh6/tqk2eWBJXJY8aQtVcAueEc/t2Sdv0NVPzJKnp79rUY17goph0lRGDLkjPjHQK6f4mrGxBqeDWQAQgVJsbSUDgEE2W6UGxMk4t+9Kw5d6tCBulktYDmGWBOcc9YMoOhMqJtyrWDUCE3yrb6XCrURMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759975130; c=relaxed/simple;
-	bh=IuzWaZaq52AseT76aIk2++sO7Nvet3qY616LVEnMRL8=;
+	s=arc-20240116; t=1759975131; c=relaxed/simple;
+	bh=dnp0XWypO1Jm0LkDyhIDPv0l8JLiriuPVPkLklG6MQc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ngEMd5VQM3ZffM4WSwFzPkw41qX4swmflATboO/GCr3L4EjwGuFGhPHkGr4fh/4B6+MQeLXkHsAgbhA+g9kA3mLBBBeP+0kQC5q4MO5mo8xvkb8Lp4SyrxRQI4uG1oEc44LAHOnZVOZOGARJs2e+g7kmK1luxoZBlW2fVVmsGdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=Q21gbFYb; arc=none smtp.client-ip=209.85.214.178
+	 MIME-Version; b=UrZeu1EkWkgc73+SP8e2S7efuHchBn68cX3UGUdDtmh/DOVlsRWiduT2JkWPHaSsUYUc70tXkfBeb5k74ST/dmIo/ZxAUQQqM+S9AxnVbz77UgtmPCOlvPh9eF+53A3jILiUZcJ/0pYHA82vL185K1X374aaQuhSzzhujUeGDJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=axp07W5U; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-27d4d6b7ab5so6245115ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 18:58:44 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2680cf68265so3279655ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 18:58:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1759975123; x=1760579923; darn=vger.kernel.org;
+        d=sifive.com; s=google; t=1759975124; x=1760579924; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mdiVfcIiYEtPdSKu0CqenqZ/5C3LyfHi/KY36+7mBoA=;
-        b=Q21gbFYby36TOYfFh7lINpJ8iWH7CHwNdfVwWA6bEJJrseu8Ej27JBu/K2PxOAv3pc
-         J7TRnUYp8wH1LyH9brorXwrljspCNWk42SPagoD4xg1KzioebSCXobZAv/K4eEyGTqCb
-         jDBAjYRJOh1cTKE/wD+Yqr8/9uWl8o5V2M1PZpDPMee7bdjQeAkqykrD3z1vA8hX2KOp
-         rXUNQo7wHmkXD5UUlkWXc5VrKIbObb+C9PAjqcGa+TQ1Xpc2MXwzkhVv6W4E7sEv5bS/
-         ZfTV7jpYnmLP97VYv/D4RwKF+J6Qf+hRuky0uWd/ELotLqa3sSTWCRniSRFYS5AwZDmP
-         TbTA==
+        bh=MuPyEQssKNBDDveegAkkBylsREkSVusKsPA4YXKPGPk=;
+        b=axp07W5Ukzs4+Fnkb87WtayJUzpFF1dtxIU8fBV1VpmfiTJHznbxWu10LDBEc+JniS
+         PwTZ2cjNsSaunGs/+Fx2FIC5PliEjIN04Be1VZF58J1INejBPAXXZhMUC+X0zUy1CEXm
+         sDDcRvBant3MsDcpNk+wydfVCew8b77oFEXV/+tXOaRSTpz42hDC+6seDp1/VcdEHmQo
+         a2Jozg/cbtmXpzV1oehv9FtkjGGeOAjVxoUABjDPS+WjuiI0yGanwwTRqPM7C0Sr30PU
+         g0BKEUsKZkn1OeyNxLZBQQ4FESZabMRx6MFZLelWJjnB3HPXmoniIyE2BDicTdEtB1hj
+         gXnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759975123; x=1760579923;
+        d=1e100.net; s=20230601; t=1759975124; x=1760579924;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mdiVfcIiYEtPdSKu0CqenqZ/5C3LyfHi/KY36+7mBoA=;
-        b=jDxKtzeNYCxmXde+htXzRwUiya9d9VrPs+xh/5qfuX338FQQ+0qx5DLcCj85MmYAqy
-         QrQqU3tuhInPlkoadzgQQ0RHQGb8TutuMcgDP/Nrjk7P/4baxRgG8lKMVYdiIqewS/6o
-         izwHZGL37mgtAHGz2o0w+OAw5oZOpK9lkHBkAdUmews0H8vLr+eJqy1LHgy9hRkHjPNi
-         L8MArpWY0GiJWMsrRj4aJHcphde89Aoc9Nt3Ftv4v7OI/Exb0C2KVnWkFuIkTgRvJWYI
-         xbrDZyoP0lJF3RKOUm7WEtS9ytQh5iPO9EXwkmAXX0vyUD0HRBKRE9XrHuMUAVxY1vGu
-         a7dA==
-X-Forwarded-Encrypted: i=1; AJvYcCVPrbiEWRbJPGRcxaPUvL/zBisBgU75E0BnWXwcvJksVjR1iGEZIGg7bgtNE8kG0yIrjKCtO3wU0iUO4dQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCDyE+Eh1w5MwPPvzKzhnUR9rG/9eT31+/Tlq+Gnb4KFH7I/cY
-	90EiNAUOqXy1M8NqwQiURbPeLOYBn3mECnG4QvK/3aiYX1aG+xHsPPYBidVDrdjNIm0=
-X-Gm-Gg: ASbGnct6K9kpZyfBBKE8IDtdma+2P4C3LMfqS3iB9hqa/cOKqYGYno4g40fH0MwJhAq
-	XEoHvY1qXNcIdq0p9hQsvatUhr9dUjX1GwyO51jMKksbF0PteQsgMcUHZj1Bw99mDsiZbWiTk1j
-	L3i0Zxaipois2rOQcVu38N/8UryXYdUzLU4ZHtPonYAonMc6p5/dr2A5ZtDdAc87QlI22gwdzgj
-	om4fhKDdS9HIBCen15Yi6E2JdVYIzMII3J8lLrsL2CpNmemgf49dMs4/Uivq8z1Bj+w+TiDBNGE
-	uacR3vWp8EHLRNxN5Er9EeEXZV2s3sp3gTopcl8xP4dAP0wCfVflpSapH2U5pTCU6pJJieGCMhr
-	SFfOb2WCgRYsdiLWLFTrFifza1hBztG8rpo86sYnlO+SjcxtL0r5eBYyJTNNJhJlja9jM31KCDm
-	ygsU4=
-X-Google-Smtp-Source: AGHT+IEAHeuoGA0XLStPTncgvhvYEundXEr0shvSlmxf+pcjXId4G/S6mKP+GMbaTviYedqoip+3mg==
-X-Received: by 2002:a17:903:b4f:b0:288:e2ec:edfd with SMTP id d9443c01a7336-290272154a4mr64152045ad.10.1759975123319;
-        Wed, 08 Oct 2025 18:58:43 -0700 (PDT)
+        bh=MuPyEQssKNBDDveegAkkBylsREkSVusKsPA4YXKPGPk=;
+        b=jHgGwLW8ImqeaDvvrxCoUzll85c7kk8nq567E8Tg2NzctvJPT1pXj+EBMKzB+fykuJ
+         0yTS4NrvPuqWWwWY5y7usVFwksDkag//Y2XcJXyi+BgLteEN2lJoHJfSkvAnp+CLbLjq
+         qxtBw0y7lfGD2aOJVLmsEQoxrWtQ/KK9GlVbQl60ewULSgcyYYSOVuDlu3/oB69SN5h+
+         f3QgLj8sV/xeGI6QxCGXYYZP2oP67o4JvD5INTPiZ9b+xdWMc1UHQ4nfrVRbS/RTjuOW
+         cfooUd1MF0SoI25toVhTEFqWvuVpfjdruZhl0Fl5IFh1AjhVSF4sKanOJhv8nMAjx6LL
+         taSg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbY+iwvY5kcc9wc37S74KjFyQ3Cg1+az3Jx1OtGZHFXU9tlpAO0u5yUfIdakyN0dnRSgqNCNuS50DEz3s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy88M2Fi1SqG7ykfslkJM3Hf9CZSvig0Qav1DI+6wxazoZlpLZP
+	SjheLqzVPFxA47dht2fzpO11uq1P1oSeNxy2mxWknXnhMkzpLMAOMxAm3h+kfWbkJdY=
+X-Gm-Gg: ASbGnctNfY5VCFnTlYeCOZrcl9X9h4dF4POXq3ezwwx1521NVQ5WkOZHVuLQ+sy5k1y
+	f+smGnnpLwBpctApTCgePtk0D49W3hgAnNSFi3ixzLXfVYJ0w8PMt+f+6cDSkpUC60SD8MSBBxl
+	6UwaMF7VYqnsb4VGnj77kZtlo30nkQPi0LjF7vNntxFvtmIAPa603PBJEzs3WmqPHgWyazQvH0e
+	E8y0wkMqu0x3T9GAJYpWMeVZWLLWjj5Scz5vaUgBDXRqG+O4BEhsMybE/PbiJ7CzbpNcGny42C1
+	t37drbjUOABCro3g8nZ3tuIxAzHp96HvmL56MJtdnrpfQVohX+0Cn4UAjs46reJEYh7AqC4M+z6
+	GQ4U3g+gi6tlflA+25OZsyrWXH984//gwQc8pGJRB3KbxCwPrvcvB1iaYIbhz7wou6vzg
+X-Google-Smtp-Source: AGHT+IGRcheU2fSpI6wPrIrcXh76/ZT2qeR3VE5CvtyhdddJOl/Ib5LW5D+YkzJh3O0sYVd9k5LTng==
+X-Received: by 2002:a17:903:4b2f:b0:24c:cc32:788b with SMTP id d9443c01a7336-29027216103mr72693895ad.3.1759975124530;
+        Wed, 08 Oct 2025 18:58:44 -0700 (PDT)
 Received: from sw06.internal.sifive.com ([4.53.31.132])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034de53f9sm11033585ad.14.2025.10.08.18.58.42
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034de53f9sm11033585ad.14.2025.10.08.18.58.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 18:58:43 -0700 (PDT)
+        Wed, 08 Oct 2025 18:58:44 -0700 (PDT)
 From: Samuel Holland <samuel.holland@sifive.com>
 To: Palmer Dabbelt <palmer@dabbelt.com>,
 	Paul Walmsley <pjw@kernel.org>,
@@ -87,9 +86,9 @@ Cc: devicetree@vger.kernel.org,
 	Rob Herring <robh+dt@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Samuel Holland <samuel.holland@sifive.com>
-Subject: [PATCH v2 02/18] perf/core: Replace READ_ONCE() with standard page table accessors
-Date: Wed,  8 Oct 2025 18:57:38 -0700
-Message-ID: <20251009015839.3460231-3-samuel.holland@sifive.com>
+Subject: [PATCH v2 03/18] mm: Move the fallback definitions of pXXp_get()
+Date: Wed,  8 Oct 2025 18:57:39 -0700
+Message-ID: <20251009015839.3460231-4-samuel.holland@sifive.com>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20251009015839.3460231-1-samuel.holland@sifive.com>
 References: <20251009015839.3460231-1-samuel.holland@sifive.com>
@@ -101,9 +100,12 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Replace READ_ONCE() with standard page table accessors, i.e. pXXp_get(),
-which have a default implementation of READ_ONCE() if the architecture
-does not override them.
+Some platforms need to fix up the values when reading or writing page
+tables. Because of this, the accessors must always be used; it is not
+valid to simply dereference a pXX_t pointer.
+
+Move these definitions up by a few lines, so they will be in scope
+everywhere that currently dereferences a pXX_t pointer.
 
 Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
 ---
@@ -111,40 +113,97 @@ Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
 Changes in v2:
  - New patch for v2
 
- kernel/events/core.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ include/linux/pgtable.h | 70 ++++++++++++++++++++---------------------
+ 1 file changed, 35 insertions(+), 35 deletions(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 820127536e62b..952ba4e3d8815 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -8110,7 +8110,7 @@ static u64 perf_get_pgtable_size(struct mm_struct *mm, unsigned long addr)
- 	pte_t *ptep, pte;
+diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+index 25a7257052ff9..50286763b652f 100644
+--- a/include/linux/pgtable.h
++++ b/include/linux/pgtable.h
+@@ -90,6 +90,41 @@ static inline unsigned long pud_index(unsigned long address)
+ #define pgd_index(a)  (((a) >> PGDIR_SHIFT) & (PTRS_PER_PGD - 1))
+ #endif
  
- 	pgdp = pgd_offset(mm, addr);
--	pgd = READ_ONCE(*pgdp);
-+	pgd = pgdp_get(pgdp);
- 	if (pgd_none(pgd))
- 		return 0;
++#ifndef ptep_get
++static inline pte_t ptep_get(pte_t *ptep)
++{
++	return READ_ONCE(*ptep);
++}
++#endif
++
++#ifndef pmdp_get
++static inline pmd_t pmdp_get(pmd_t *pmdp)
++{
++	return READ_ONCE(*pmdp);
++}
++#endif
++
++#ifndef pudp_get
++static inline pud_t pudp_get(pud_t *pudp)
++{
++	return READ_ONCE(*pudp);
++}
++#endif
++
++#ifndef p4dp_get
++static inline p4d_t p4dp_get(p4d_t *p4dp)
++{
++	return READ_ONCE(*p4dp);
++}
++#endif
++
++#ifndef pgdp_get
++static inline pgd_t pgdp_get(pgd_t *pgdp)
++{
++	return READ_ONCE(*pgdp);
++}
++#endif
++
+ #ifndef kernel_pte_init
+ static inline void kernel_pte_init(void *addr)
+ {
+@@ -334,41 +369,6 @@ static inline int pudp_set_access_flags(struct vm_area_struct *vma,
+ #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+ #endif
  
-@@ -8118,7 +8118,7 @@ static u64 perf_get_pgtable_size(struct mm_struct *mm, unsigned long addr)
- 		return pgd_leaf_size(pgd);
- 
- 	p4dp = p4d_offset_lockless(pgdp, pgd, addr);
--	p4d = READ_ONCE(*p4dp);
-+	p4d = p4dp_get(p4dp);
- 	if (!p4d_present(p4d))
- 		return 0;
- 
-@@ -8126,7 +8126,7 @@ static u64 perf_get_pgtable_size(struct mm_struct *mm, unsigned long addr)
- 		return p4d_leaf_size(p4d);
- 
- 	pudp = pud_offset_lockless(p4dp, p4d, addr);
--	pud = READ_ONCE(*pudp);
-+	pud = pudp_get(pudp);
- 	if (!pud_present(pud))
- 		return 0;
- 
+-#ifndef ptep_get
+-static inline pte_t ptep_get(pte_t *ptep)
+-{
+-	return READ_ONCE(*ptep);
+-}
+-#endif
+-
+-#ifndef pmdp_get
+-static inline pmd_t pmdp_get(pmd_t *pmdp)
+-{
+-	return READ_ONCE(*pmdp);
+-}
+-#endif
+-
+-#ifndef pudp_get
+-static inline pud_t pudp_get(pud_t *pudp)
+-{
+-	return READ_ONCE(*pudp);
+-}
+-#endif
+-
+-#ifndef p4dp_get
+-static inline p4d_t p4dp_get(p4d_t *p4dp)
+-{
+-	return READ_ONCE(*p4dp);
+-}
+-#endif
+-
+-#ifndef pgdp_get
+-static inline pgd_t pgdp_get(pgd_t *pgdp)
+-{
+-	return READ_ONCE(*pgdp);
+-}
+-#endif
+-
+ #ifndef __HAVE_ARCH_PTEP_TEST_AND_CLEAR_YOUNG
+ static inline int ptep_test_and_clear_young(struct vm_area_struct *vma,
+ 					    unsigned long address,
 -- 
 2.47.2
 
