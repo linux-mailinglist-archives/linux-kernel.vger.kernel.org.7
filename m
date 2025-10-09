@@ -1,156 +1,106 @@
-Return-Path: <linux-kernel+bounces-846435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12E48BC8031
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:21:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A7B8BC7F3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:12:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FA413C4248
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:20:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C5B154FC95C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F4E2D0C7A;
-	Thu,  9 Oct 2025 08:20:38 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3808626B97E;
-	Thu,  9 Oct 2025 08:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427192641CA;
+	Thu,  9 Oct 2025 08:05:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=hacktheplanet.fi header.i=@hacktheplanet.fi header.b="kv4H7JCL";
+	dkim=pass (2048-bit key) header.d=hacktheplanet.fi header.i=@hacktheplanet.fi header.b="qp6nkWf5"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FFAF1DF26A
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 08:05:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759998038; cv=none; b=cWmqDwSIO66TD1ZBMCMVgwKNRiWvloggY2coS4at9fXePtT8MOw51LxiJ3XQhX92RBO2kvrWeULSy1z11gjjqEX91CtHVp9hyl4m1xDT1NTmCwNYMEusO/TBwx94MyoKt/W2QGQylRwQ9Se7lj6O6UvccDXgDB4BWi7iECcMy7E=
+	t=1759997115; cv=none; b=ez4blyPKNLB3EYN5KeKp+vQGHxV2ObBUbhJ7y9ThNyt3oUtNDStp6Zd+JwR0Bqh8KREMGKyNxq5seiygB3PM7E39gJMuv79r8jsmk4HyOOLNe3/Qp/Z9MtdnRcnT+KbnTNupHBAFxcLwLpbhU9z1gguQFpQR8RPvE9wecWtHP+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759998038; c=relaxed/simple;
-	bh=r4j7KL3ZDY2ItBlX7tAcF4DYZ7j4P2ykR08zNx+Sdac=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pUAvLRyzDeAVWYHKe7DJyGMf6wyYuSYTyZSEMDvDgsCP1+IwyuQ9+Ssk/26PD+pRfNG8XC8eUSzEFd1W0/YGDQEecLLr6zS8P8rnaictPJvLiO1Z56HTtRRundgDFDYU9IMVfjP+mDDcMRos/Py0Xz21XRAFFzIZ+Z+zWmqiIAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cj2Td0Mj6z9sSL;
-	Thu,  9 Oct 2025 10:04:37 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id qQ36Dhni13kk; Thu,  9 Oct 2025 10:04:36 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cj2Tc5kJ8z9sSC;
-	Thu,  9 Oct 2025 10:04:36 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id A8FDF8B770;
-	Thu,  9 Oct 2025 10:04:36 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id CnXkw3FAfnqR; Thu,  9 Oct 2025 10:04:36 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id AE04F8B76D;
-	Thu,  9 Oct 2025 10:04:34 +0200 (CEST)
-Message-ID: <faf62f20-8844-42a0-a7a7-846d8ead0622@csgroup.eu>
-Date: Thu, 9 Oct 2025 10:04:34 +0200
+	s=arc-20240116; t=1759997115; c=relaxed/simple;
+	bh=XXVOl+DFyBfDhbMh+21qG07OqPC7FNsXUqKBHtSsZpk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=biWxXBA0Eq5qF76IEwlS9F/NxuddPLZgJGeROtvh973taTqDu9VQj1ijJ4blol3RK0TITfAN4l+FqaALQl7VlsMXwalOpma6bn0/c3Ul+IpOuFWjaa6KAjREnCDDemfKBcA3mIWaNfGmA8WlsxEIAvRbr4y1EPfo3G7HL42KMr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hacktheplanet.fi; spf=pass smtp.mailfrom=hacktheplanet.fi; dkim=pass (2048-bit key) header.d=hacktheplanet.fi header.i=@hacktheplanet.fi header.b=kv4H7JCL; dkim=pass (2048-bit key) header.d=hacktheplanet.fi header.i=@hacktheplanet.fi header.b=qp6nkWf5; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hacktheplanet.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hacktheplanet.fi
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; s=gibson; bh=XXVOl+DFyBfDh
+	bMh+21qG07OqPC7FNsXUqKBHtSsZpk=; h=in-reply-to:references:subject:cc:
+	to:from:date; d=hacktheplanet.fi; b=kv4H7JCL2ogsW0kjaktWuZPgI1u0+8JIa9
+	c3Dq0kSg33A3lOoZxFhCBFY/yIaZviwPQ3Ve0gqVO3IIicVg+aVhztfKfL7BtRnegt7Ku1
+	kKDqeu96EhSJ/5J9twe+OgCVXzi0j/XbKq0Z9MaklRK2kLkrziPDmQeDKNW7fSCFSW0PQU
+	vPMJ+KGK5Ygb5HvYFkU86UZ/6HbCgdv8ixnSrIHySaLsARTB9uqHfEbntXlPD0MrsLEDLJ
+	HoyMwityxuUcLbPSAd5ixPxgjt4jsLJGlWI61kzK/35utVCaxu+mO0bFl0Vz2qUDl1GR1f
+	Gf3VElPAatjLVgTbmj3CLmFzNN7Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hacktheplanet.fi;
+	s=key1; t=1759997108;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SB45MneljJwT3bMtv8tAGzOm+Nx2swMrBqjFq0j8QuI=;
+	b=qp6nkWf5m8VHZ/XwdTWG0t4XElP4hF6wJ1D2mYitUVxMgF24ZM5i+tXP2Udd6qZ/zoVHQC
+	919kI2g3RMX8s765PSiR+Gh4AppMP3VMxa0ALp6wqxaGXU9sp9MlnmSj3zNq71CmsS5qMt
+	qJVZosS0z1SE3CBIwn/R71nQTR0njHIg3iPlci25h2PeVK5b3dHTrYlQV9HOjQwT6IkR9o
+	Y+xRRE2b6HKYrOVx6ZWpsHnOY2ma68jGDqBRQJG3/hzLkHkVJm0v+2x/W1ECxVSz1rARnh
+	ZCLsfM5OfhkUljo0ZIuBTyGl3W3mFWR2gnuSJNaXVv1bE4zZ3KrQnGrd4L2L8w==
+Date: Thu, 9 Oct 2025 17:04:56 +0900
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lauri Tirkkonen <lauri@hacktheplanet.fi>
+To: Benjamin Tissoires <bentiss@kernel.org>
+Cc: Jiri Kosina <jikos@kernel.org>, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] HID: i2c-hid: patch Lenovo Yoga Slim 7x Keyboard rdesc
+Message-ID: <aOdsqHznz1SJdadC@mail.hacktheplanet.fi>
+References: <aOdLxAEYQpV2zp77@mail.hacktheplanet.fi>
+ <lxtbtu5frygbw7qzfaelc63vgientm7d6oo7dt6jeassl3ttbh@f22h223wehbm>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: (bisected) [PATCH v2 08/37] mm/hugetlb: check for unreasonable
- folio sizes when registering hstate
-To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
-Cc: Zi Yan <ziy@nvidia.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Alexander Potapenko <glider@google.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
- Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
- dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- iommu@lists.linux.dev, io-uring@vger.kernel.org,
- Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
- Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
- kasan-dev@googlegroups.com, kvm@vger.kernel.org,
- Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
- linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
- linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-scsi@vger.kernel.org, Marco Elver <elver@google.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Muchun Song <muchun.song@linux.dev>,
- netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
- Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
- virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
- wireguard@lists.zx2c4.com, x86@kernel.org,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-References: <20250901150359.867252-1-david@redhat.com>
- <20250901150359.867252-9-david@redhat.com>
- <3e043453-3f27-48ad-b987-cc39f523060a@csgroup.eu>
- <d3fc12d4-0b59-4b1f-bb5c-13189a01e13d@redhat.com>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <d3fc12d4-0b59-4b1f-bb5c-13189a01e13d@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <lxtbtu5frygbw7qzfaelc63vgientm7d6oo7dt6jeassl3ttbh@f22h223wehbm>
+X-Migadu-Flow: FLOW_OUT
 
+Hi Benjamin,
 
-
-Le 09/10/2025 à 09:22, David Hildenbrand a écrit :
-> On 09.10.25 09:14, Christophe Leroy wrote:
->> Hi David,
->>
->> Le 01/09/2025 à 17:03, David Hildenbrand a écrit :
->>> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
->>> index 1e777cc51ad04..d3542e92a712e 100644
->>> --- a/mm/hugetlb.c
->>> +++ b/mm/hugetlb.c
->>> @@ -4657,6 +4657,7 @@ static int __init hugetlb_init(void)
->>>        BUILD_BUG_ON(sizeof_field(struct page, private) * BITS_PER_BYTE <
->>>                __NR_HPAGEFLAGS);
->>> +    BUILD_BUG_ON_INVALID(HUGETLB_PAGE_ORDER > MAX_FOLIO_ORDER);
->>>        if (!hugepages_supported()) {
->>>            if (hugetlb_max_hstate || default_hstate_max_huge_pages)
->>> @@ -4740,6 +4741,7 @@ void __init hugetlb_add_hstate(unsigned int order)
->>>        }
->>>        BUG_ON(hugetlb_max_hstate >= HUGE_MAX_HSTATE);
->>>        BUG_ON(order < order_base_2(__NR_USED_SUBPAGE));
->>> +    WARN_ON(order > MAX_FOLIO_ORDER);
->>>        h = &hstates[hugetlb_max_hstate++];
->>>        __mutex_init(&h->resize_lock, "resize mutex", &h->resize_key);
->>>        h->order = order;
+On Thu, Oct 09 2025 09:38:50 +0200, Benjamin Tissoires wrote:
+> > diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
+> > index 63f46a2e5788..d78bd97ec24e 100644
+> > --- a/drivers/hid/i2c-hid/i2c-hid-core.c
+> > +++ b/drivers/hid/i2c-hid/i2c-hid-core.c
 > 
-> We end up registering hugetlb folios that are bigger than 
-> MAX_FOLIO_ORDER. So we have to figure out how a config can trigger that 
-> (and if we have to support that).
+> Why patching i2c-hid-core when this is clearly a logical bug, not a
+> transport (I2C) bug?
 > 
+> I would rather see this fixup in hid-lenovo.c along with the other
+> lenovo fixes.
 
-MAX_FOLIO_ORDER is defined as:
+I'm not exactly familiar with HID; please bear with me :) If
+i2c-hid-core is not the correct place for this kind of thing, I can move
+it, but I'm going to need some guidance on where the correct place is.
 
-#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE
-#define MAX_FOLIO_ORDER		PUD_ORDER
-#else
-#define MAX_FOLIO_ORDER		MAX_PAGE_ORDER
-#endif
+This device uses hid-over-i2c, not hid-lenovo; I've got
+CONFIG_HID_LENOVO=m but the module is not even loaded. I don't see how
+putting the fixup in a module that does not attach to the device could
+work. So where should it go?
 
-MAX_PAGE_ORDER is the limit for dynamic creation of hugepages via 
-/sys/kernel/mm/hugepages/ but bigger pages can be created at boottime 
-with kernel boot parameters without CONFIG_ARCH_HAS_GIGANTIC_PAGE:
+	[  796.926931] input: hid-over-i2c 048D:8987 Keyboard as /devices/platform/soc@0/bc0000.geniqup/b80000.i2c/i2c-1/1-003a/0018:048D:8987.000F/input/input36
 
-   hugepagesz=64m hugepages=1 hugepagesz=256m hugepages=1
+As a side note: apparently there is at least one other device in
+existence with a similar error in the report descriptor, which works
+fine on Windows:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=652f3d00de523a17b0cebe7b90debccf13aa8c31
 
-Gives:
-
-HugeTLB: registered 1.00 GiB page size, pre-allocated 0 pages
-HugeTLB: 0 KiB vmemmap can be freed for a 1.00 GiB page
-HugeTLB: registered 64.0 MiB page size, pre-allocated 1 pages
-HugeTLB: 0 KiB vmemmap can be freed for a 64.0 MiB page
-HugeTLB: registered 256 MiB page size, pre-allocated 1 pages
-HugeTLB: 0 KiB vmemmap can be freed for a 256 MiB page
-HugeTLB: registered 4.00 MiB page size, pre-allocated 0 pages
-HugeTLB: 0 KiB vmemmap can be freed for a 4.00 MiB page
-HugeTLB: registered 16.0 MiB page size, pre-allocated 0 pages
-HugeTLB: 0 KiB vmemmap can be freed for a 16.0 MiB page
-
-
-Christophe
+-- 
+Lauri Tirkkonen | lotheac @ IRCnet
 
