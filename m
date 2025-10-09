@@ -1,203 +1,237 @@
-Return-Path: <linux-kernel+bounces-847194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53C39BCA37B
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 18:42:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1DD8BCA384
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 18:43:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4D5C84E3D5A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 16:42:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67A0B3E6A1E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 16:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 835062264DC;
-	Thu,  9 Oct 2025 16:42:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214ED225397;
+	Thu,  9 Oct 2025 16:42:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kXEPNCUh"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Eda23KLt"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69EB1223DEC
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 16:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EB7224B12
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 16:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760028166; cv=none; b=DIVm5QoAEfux0UloW7OZgK2fpBJ25Je4AbEpIx+OCEKcF2u1T4mtkZGPQ+lnXCAsg2ekRy59ot2FMZ48rak7z5UsUEILnn77JldSJVak4ueQDYJlSRriYhCmYn6kkOSY4O3ZbRJZsqy/MI/399kFjO1VXO2IRvDGwhDvC1bWReY=
+	t=1760028175; cv=none; b=H5m4XO4IfOJLrCpIdhLLCDf4QExpvMO+SmAiIKqMiDm0Rlu8x4LHgINEqgovU7xwNuCGEkyT0Fxa9gNiGHLf3GOTq4n0p2goqOFYoGqIzLOLxvwZIm2QhZX6NoymjfFNGquFhoUpxNp6n9CJ4m5UxdQmnFYfIIZslqw1aEBfIlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760028166; c=relaxed/simple;
-	bh=jpEMqFlCEK47jrlh7cNwBVNuJFzpm9xEWzxYgXkTIbg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i7Ni4Y/k040FyO8Fl0qLGlXP01/yZ2PibBKMp/AL31MWvpSCuGrSI5/8yW/2WOLlj2UcKkPXOHEAe0AL7hcWQCz+Wsyk5GqkIl9CMV3Dl8y1EP2xL1D1slT7KeJUGn5w632lBPP2zQCfrqw3YFcHzcg76mSi4BQ+mP8pgDMOr2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kXEPNCUh; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 599ETu1B012488
-	for <linux-kernel@vger.kernel.org>; Thu, 9 Oct 2025 16:42:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=agrtrs+DJSL7nf5oW/g8lusy
-	admL/3uHNzUwQtR+shY=; b=kXEPNCUh99s34FdTrDEhnVL9Tlwkm3qcVkRzxonM
-	1CQSiLwiRHPHdRWWhnrticBXCH3/nagiptcADiqpHh6iQTAHdhrwZbSN38KIpoIV
-	l5t3d0IYAKiR+1ivXhokKhIHVmETQC+KcpU04sP3goXxDeDmNqP778AloK71q7Wh
-	TVFmK9nMIZWk58TSa5BpjhQauerSARH4TIJfAFZPRR534N8G8hg0qQbLJC9XLya8
-	L5wE6cwr+wg1KutbOAEKUnhNkvAApZLHsTA8KSIKR+QOJOOMMiSDK3yZLrUT5TQ3
-	KaIfk60KfxJRw2FPuHbKvacL0pK5JHtGV1xlXRk/8pzEyg==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv4kkne8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 16:42:44 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4dec9293c62so42766391cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 09:42:44 -0700 (PDT)
+	s=arc-20240116; t=1760028175; c=relaxed/simple;
+	bh=Eqo3HvooxmtLu1uxDnc9goIHIKP18xkGp2XZ3XQ/klw=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=DqzApaJoWvlMEBUNUV+M9L/0PUyCsyS/IgqdYdiGlVTThzb03R8BFrFqO7nxcUZcGkd6wxQmMeqWSnNqm/8AUu9DrDvfaYPKz9qYIx0d1h2VnMX/pD/E9LKWDydfp12nojaI1YtMbmLBChcncFN8hSvVJbayF0Km0dquXuseOfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Eda23KLt; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-46e33b260b9so12053385e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 09:42:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760028172; x=1760632972; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NPMST/OYZXxOylWa/2TauSP8MZB4Vq6Zxq+da0/witg=;
+        b=Eda23KLtR5IwBUCn5xo+Nt88qPxcG3z29qBcQLDOJF6fXmYFRlKK+5CmHe/uOIg/6j
+         q271vOKb1GBDhyj+8yA2xdTAAXZ9HLCyj/wea3PE/zufgUPrXWQmJClRMEBMahfgQ3Zt
+         Ysp5+SMUxDzAGw08vGqolWCigo7oBwXehzbV2/XEum+yV1nUHn1Yr9LihlMJUbLb1xX5
+         6fjqECbwujCxnObXItI2FQea3TBWCqpfyeLBr0BORdDFffrfStg4bWB11n3KQmyb5z/g
+         Y5RtRTcwd/TgZEzDSlSif1HSLxKEbyqHzC9Zr0eiyEfwgmfv4wjmYHmx9zcxqDXWvohA
+         txOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760028163; x=1760632963;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=agrtrs+DJSL7nf5oW/g8lusyadmL/3uHNzUwQtR+shY=;
-        b=B2P2RbR52MRvMoWz/ZlhzFvjUqVyO74Ol+7YRThiMkC0FrShVB5ZNuIsLjUDRjjE57
-         VIf21JVZ3LwUen1IsHknj5kX4nNJDrokjyL8P2uriGK1dLoMzbxtrelVH1NNwP91utId
-         ldEBFt4ZqYdunD2lTDK8m5Uav+RDCc7/hO5RLfuDkZyXm6hRogThHZmkAvufEU2G4lRl
-         0WpUrW4Fut5YCStJM+fVJ1Yx+ZH3vaBjRxXSKkESqma6DT+0PbskTsqORU0VvMI8etBm
-         qhfQ9QtSP0B3cbUhtOJQKgvLyLXvWZRf6NjyKZ6H0IrALtTLy3GjEPNpa6+qDhvNuNc8
-         2whw==
-X-Forwarded-Encrypted: i=1; AJvYcCVaR+1rqMfSFgq/kmyFlV5+AW94ddPK8G+4lFJiRBi/8hQ8F9UtWxlSv+oKnYBlcVyx8Wbyo6DhRHB5RfQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH9rnXtjNj/Qh4W0/pa3QtojlrPASufyd75jN5Ytuj39NjXOVp
-	3IkkGhyOWGYQvXa+zzVHjc1gT1gTZ3hpiwm28WOkH8shJRyrTgB7MPRCOW7FH96fOJ5YFFFTSAC
-	XQgAwUddmcvNcPHq2Bd5dIv7x5grJA/JaQwq58z1xgRnTFCUytZ+UTcTu9ixBB6Cuo5Y=
-X-Gm-Gg: ASbGncufiAArxQiSWQLL8lN/BwImui2Xo1qOE9bzhcVFcz5J9Lc6hT7K9wlyDbBXAim
-	gqpYb2Yg0BVMb1jPikVBozMkNltdIvsdXqbWj3+6Z8NPoFxBdxIwnEdZiUN/14XwPlDrLp5uKa7
-	mCX7ON9MvaFG8AxxWpQX5F4k2XuP4335uP1cGsbPQf+Y3t57fGbluyPkY5V+x2eyNOn+xYMwuVu
-	6op6C/0+zAZmmLwtUqT+H/qfhsrGRsL43qPbJ6q7ULP+jPnfaljlBldrsdf2xC+ONaidgeYBUEz
-	a6uTw/C6nZpGn2nB630mLr/ysfJCAfl/+BvMk8XLGWJuYnm4fo7B2ZxvzVBmbbRPaxgUPFBHxLm
-	YuEBjSDO4EQgm2aSYPchG7+nEE5xwM6fCB0NfiTvJ62cFD2I3b/TuXX2aFg==
-X-Received: by 2002:a05:622a:1a94:b0:4d8:372b:e16a with SMTP id d75a77b69052e-4e6eacc5dd8mr122162291cf.4.1760028163217;
-        Thu, 09 Oct 2025 09:42:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHaQz67QvaR/gWsBxDITOOw9Xe6x4vHfjxb37JqA0HRLVHcGGuc5OS1bitAvcqNx2Bj+xJB/A==
-X-Received: by 2002:a05:622a:1a94:b0:4d8:372b:e16a with SMTP id d75a77b69052e-4e6eacc5dd8mr122161931cf.4.1760028162757;
-        Thu, 09 Oct 2025 09:42:42 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5907adb2705sm1174139e87.105.2025.10.09.09.42.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 09:42:40 -0700 (PDT)
-Date: Thu, 9 Oct 2025 19:42:37 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        quic_vbadigan@quicinc.com, quic_mrana@quicinc.com
-Subject: Re: [PATCH v3 2/3] arm64: dts: qcom: sm8750: Add PCIe PHY and
- controller node
-Message-ID: <53wepdhpn3fgvq5fum7u6n75su77dligfjtnxkfdh4r723a7yf@6u43pwkwt4yw>
-References: <20250826-pakala-v3-0-721627bd5bb0@oss.qualcomm.com>
- <20250826-pakala-v3-2-721627bd5bb0@oss.qualcomm.com>
- <aN22lamy86iesAJj@hu-bjorande-lv.qualcomm.com>
- <4d586f0f-c336-4bf6-81cb-c7c7b07fb3c5@oss.qualcomm.com>
- <73e72e48-bc8e-4f92-b486-43a5f1f4afb0@oss.qualcomm.com>
- <8f2e0631-6c59-4298-b36e-060708970ced@oss.qualcomm.com>
- <qref5ooh6pl2sznf7iifrbric7hsap63ffbytkizdyrzt6mtqz@q5r27ho2sbq3>
- <b5538a86-c166-4f20-9c3a-8170d3596660@oss.qualcomm.com>
+        d=1e100.net; s=20230601; t=1760028172; x=1760632972;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=NPMST/OYZXxOylWa/2TauSP8MZB4Vq6Zxq+da0/witg=;
+        b=UvwJeWeSiqRJf04vzgL0nBZn2qyhoDZrBbK2EH62tGlgeJb/j60PEZGI4rWdfKpNB9
+         K2jFVhiQPUHCIuT7h/Du9Jus7KLt6APmQYxPjp09uF801weKqvPlH0+Yp4QT3DniTHRQ
+         nGVSkfW5yXm9o7LwT+vb3oM6ZNPEpC+03Nxy6Mq6Y0IqvgFtTxygCvVCjVAhJJvFvzic
+         u+WU6kvvL/swsu14TDJhP8qj1kYWN1vCqdvDjXvLe79bq1pIvO74dmw7v38ZhlcsUulv
+         ncsfinFUxmdSYm7StWmbhV5fIzPnc2V7LOy1kVpYnTXgIHtTwQavrYE1OL42anZgJMYH
+         xK5g==
+X-Forwarded-Encrypted: i=1; AJvYcCWjqimlu5CoHFy6At5DxEAJtNLEps8nh+Rqjc+Yv+cm+YIdU5+WP9LO613U1GNga+wN8/dp2m1PhTt+0dA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhwYyxQVS4jwF42mhkKuZYOuQiP7q0eKg8VBULP0Is8bEH4kKh
+	RqAe71CUICfSzYw2+SVLx9coGUqzCP2QbF+hC4+tx5/lbKYrUTWxgSZV3Cbf44r8igI=
+X-Gm-Gg: ASbGnctCKQXTT/ZmDR7U920Jd1wq8UACEkL/dDkg68TCRXiKOSb3aTz4ust0Ipc7B65
+	5wcY4z27AHNvpZmo8RSF1D2W15WQ5cxK1emyOiWi/l0gB16cSd2VrkObWwNgnsrTP88SU+LCwZ+
+	r86OdzpGYkz8aVnWu8SsdF6RCqhwrqmcdUUgvWDlN6GFIXnbVhKevxXFgNkleJ/CKOczNLgAF4k
+	cQgXE3wpRyureTX9qeyp3TjzpY3n51ZSmKJdIUGu3LKdUrc9qXpk2rqx4ZLhXL7NLqhL0X045N4
+	XLr5SDuowqHrLbxvPkaXmo7Vv7eQ/KiTkkyh6sOugf1qTDyqnolgEMpB15Ovt68fujZ8BThKqZk
+	D9bPD14Jot3gDuusDidNYMjsdckqMdqO2vSO5spI0hwP28bl4j+p/2bGwJwqnnrjlxxagjpscnR
+	Q135+NJ1Re7vaFm2Mc1wwnxgTHSeU=
+X-Google-Smtp-Source: AGHT+IF5zvnDRbVTnzuyo7QCvds7DrqcKUP8pYldpNd7ZP9dP9q6luOXliT/fbdOtrdM86gZ/xBt1Q==
+X-Received: by 2002:a05:600c:1e28:b0:46e:394b:4991 with SMTP id 5b1f17b1804b1-46fa9aa0e3amr59814195e9.11.1760028171510;
+        Thu, 09 Oct 2025 09:42:51 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:7a0c:da2f:6591:67ee? ([2a01:e0a:3d9:2080:7a0c:da2f:6591:67ee])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fb489accbsm6885755e9.14.2025.10.09.09.42.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Oct 2025 09:42:51 -0700 (PDT)
+Message-ID: <e10594dd-cfc2-4d5e-bc1f-35aca05be027@linaro.org>
+Date: Thu, 9 Oct 2025 18:42:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b5538a86-c166-4f20-9c3a-8170d3596660@oss.qualcomm.com>
-X-Authority-Analysis: v=2.4 cv=dojWylg4 c=1 sm=1 tr=0 ts=68e7e604 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=AjAdDlCQjSUW_Sxw7NwA:9
- a=CjuIK1q_8ugA:10 a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-GUID: vVYRG4QUTeDE-KOR1A3Z_ixx6nzDeS-1
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX9GKTKjXA7zTm
- W8I6ajAOLi7tnNCAAbNxkmJH6QLSC4FfinBToDDuauCjzMKYZ/rRLx9biL/1r0gRRRV/QZ90AQ/
- y2OUc4/IER0pL9ih2keHZ1YETp9vffLxWV6ifMnUSVB9Rerwrwc+/OeP/17wDtiMb3lh4opDE9h
- dJVKlKfmxlDFT282vr8bWaJHjAg1UqFLoVhHy2ohnTxBAL/Ta2FNwQO7x5OJ08qi0eZfD2EMZsE
- /sBgCPLcgTLpOaCTcyB2O4FOSGo+t6JXNrxGxPAnMh/hubVtdN36w7yhYF72VaXYN+4SmhveFh4
- X/A7r6w4lLRpVMp0f+uwBARs5NXe86jPL2lOikv0SR106N7CbExBApT6TlV30tUq0H8DjPSVTN7
- kdLcH0ligVcKvcKo+JVP5sgOgPl/ww==
-X-Proofpoint-ORIG-GUID: vVYRG4QUTeDE-KOR1A3Z_ixx6nzDeS-1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-09_05,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 suspectscore=0 lowpriorityscore=0 adultscore=0
- bulkscore=0 spamscore=0 priorityscore=1501 phishscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH v5 2/3] phy: qcom: qmp-combo: get the USB3 & DisplayPort
+ lanes mapping from DT
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Xilin Wu <sophon@radxa.com>, linux-arm-msm@vger.kernel.org,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+References: <20251006-topic-x1e80100-hdmi-v5-0-c006311d59d7@linaro.org>
+ <20251006-topic-x1e80100-hdmi-v5-2-c006311d59d7@linaro.org>
+ <141e33fc-c963-4f58-a69c-e7068c9ec6e8@oss.qualcomm.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <141e33fc-c963-4f58-a69c-e7068c9ec6e8@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 09, 2025 at 10:35:52AM +0200, Konrad Dybcio wrote:
-> On 10/8/25 9:08 PM, Dmitry Baryshkov wrote:
-> > On Wed, Oct 08, 2025 at 11:11:43AM +0200, Konrad Dybcio wrote:
-> >> On 10/8/25 10:00 AM, Konrad Dybcio wrote:
-> >>> On 10/8/25 6:41 AM, Krishna Chaitanya Chundru wrote:
-> >>>>
-> >>>>
-> >>>> On 10/2/2025 5:07 AM, Bjorn Andersson wrote:
-> >>>>> On Tue, Aug 26, 2025 at 04:32:54PM +0530, Krishna Chaitanya Chundru wrote:
-> >>>>>> Add PCIe controller and PHY nodes which supports data rates of 8GT/s
-> >>>>>> and x2 lane.
-> >>>>>>
-> >>>>>
-> >>>>> I tried to boot the upstream kernel (next-20250925 defconfig) on my
-> >>>>> Pakala MTP with latest LA1.0 META and unless I disable &pcie0 the device
-> >>>>> is crashing during boot as PCIe is being probed.
-> >>>>>
-> >>>>> Is this a known problem? Is there any workaround/changes in flight that
-> >>>>> I'm missing?
-> >>>>>
-> >>>> Hi Bjorn,
-> >>>>
-> >>>> we need this fix for the PCIe to work properly. Please try it once.
-> >>>> https://lore.kernel.org/all/20251008-sm8750-v1-1-daeadfcae980@oss.qualcomm.com/
-> >>>
-> >>> This surely shouldn't cause/fix any issues, no?
-> >>
-> >> Apparently this is a real fix, because sm8750.dtsi defines the PCIe
-> >> PHY under a port node, while the MTP DT assigns perst-gpios to the RC
-> >> node, which the legacy binding ("everything under the RC node") parsing
-> >> code can't cope with (please mention that in the commit message, Krishna)
-> >>
-> >> And I couldn't come up with a way to describe "either both are required
-> >> if any is present under the RC node or none are allowed" in yaml
-> > 
-> > What about:
-> > 
-> > oneOf:
-> >   - required:
-> >      - foo
-> >      - bar
-> >   - properties:
-> >      foo: false
-> >      bar: false
+On 10/8/25 11:31, Konrad Dybcio wrote:
+> On 10/6/25 3:55 PM, Neil Armstrong wrote:
+>> The QMP USB3/DP Combo PHY hosts an USB3 phy and a DP PHY on top
+>> of a combo glue to route either lanes to the 4 shared physical lanes.
+>>
+>> The routing of the lanes can be:
+>> - 2 DP + 2 USB3
+>> - 4 DP
+>> - 2 USB3
+>>
+>> Get the lanes mapping from DT and stop registering the USB-C
+>> muxes in favor of a static mode and orientation detemined
+>> by the lanes mapping.
+>>
+>> This allows supporting boards with direct connection of USB3 and
+>> DisplayPort lanes to the QMP Combo PHY lanes, not using the
+>> USB-C Altmode feature.
+>>
+>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>> ---
 > 
-> Oh yeah, this works.. would you mind submitting a patch like this, with a
+> [...]
+> 
+>> +static int qmp_combo_get_dt_lanes_mapping(struct device *dev, unsigned int endpoint,
+>> +					  u32 *data_lanes, unsigned int max,
+>> +					  unsigned int *count)
+>> +{
+>> +	struct device_node *ep;
+>> +	int ret;
+>> +
+>> +	ep = of_graph_get_endpoint_by_regs(dev->of_node, 0, endpoint);
+>> +	if (!ep)
+>> +		return -EINVAL;
+>> +
+>> +	ret = of_property_count_u32_elems(ep, "data-lanes");
+>> +	if (ret < 0)
+>> +		goto err_node_put;
+>> +
+>> +	*count = ret;
+>> +
+>> +	ret = of_property_read_u32_array(ep, "data-lanes", data_lanes,
+>> +					 max_t(unsigned int, *count, max));
+> 
+> if (*count > max)
+> 	return -EINVAL;
 
-I'd prefer it it comes from somebody who is actually working on PCIe so
-that the explanations are not ridiculous. Mani?
+Yep
 
 > 
-> # These properties must either both be under the RC node or both under the port node
+>> +
+>> +err_node_put:
+>> +	of_node_put(ep);
 > 
-> or so?
-> 
-> Konrad> 
+> __free(device_node)
 
--- 
-With best wishes
-Dmitry
+why ? ep is not allocated, it goes up to:
+
+static struct device_node *__of_get_next_child(const struct device_node *node,
+						struct device_node *prev)
+{
+	struct device_node *next;
+
+	if (!node)
+		return NULL;
+
+	next = prev ? prev->sibling : node->child;
+	of_node_get(next);
+	of_node_put(prev);
+	return next;
+}
+
+> 
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static int qmp_combo_get_dt_dp_orientation(struct device *dev,
+>> +					     enum typec_orientation *orientation)
+>> +{
+>> +	unsigned int count;
+>> +	u32 data_lanes[4];
+>> +	int ret;
+>> +
+>> +	/* DP is described on the first endpoint of the first port */
+>> +	ret = qmp_combo_get_dt_lanes_mapping(dev, 0, data_lanes, 4, &count);
+>> +	if (ret < 0)
+>> +		return ret == -EINVAL ? 0 : ret;
+>> +
+>> +	/* Search for a match and only update orientation if found */
+>> +	qmp_combo_find_lanes_orientation(dp_data_lanes, ARRAY_SIZE(dp_data_lanes),
+>> +					 data_lanes, count, orientation);
+> 
+> You can zero-initialize `count` and drop the custom error parsing above
+
+Good idea
+
+
+Thanks,
+Neil
+
+> 
+> Konrad
+
 
