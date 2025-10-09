@@ -1,380 +1,112 @@
-Return-Path: <linux-kernel+bounces-847090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2FE5BC9D65
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 17:43:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F01BBC9D71
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 17:44:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3E3F7353660
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 15:43:54 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1AA36353979
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 15:44:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0073D21578F;
-	Thu,  9 Oct 2025 15:43:48 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 815D0215055
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 15:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A36D218580;
+	Thu,  9 Oct 2025 15:44:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lANZmlrP"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A92B211A14
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 15:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760024627; cv=none; b=Y4cCgsbLYFiXTDya8IAE+J4hRDZkKN9Etb6qhG/CRgsSZ5WFJR09Epk8KZ76m238OdaQkn+tZTG8VDdDcjW87k+kcCoqchPJTSKiXXDx7xDEz+ZU8IHJ/RO2HYp+QTvGe/g1B8PDsp5z7VAjyw99Oxeuwo0fH99F7GrKkpykR+M=
+	t=1760024689; cv=none; b=iNVgO39QUO8NgXE0TsIrK9QVNjf/jVhIhutZiN/KeeLy9mWDdNvZ8o3343t0RSDYK13dMrhtuLtsjcPzuJrlu5q7XJmVK/Wv8Y+pqmrZZpPD+qtgV462oQmocJmhVm60KTmgh1hU55jQuTd7sPs/d8gmsxZ3lNgCfJ1W80n01Aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760024627; c=relaxed/simple;
-	bh=bC4h6BJAj7PxI4b1SQQEj0SXHhudOlNpkVeCD/oQp9M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m+7UrNTNo/8ulM3ExqhyNd9JmFWdbeI5Ydx94jiiyjfAn9w8it9Au/eAN254QWsS+utya5z0zI9k5fHkHXUIf1pCrO5yoN7yDjmli/Xj6yUfw/1oCdRqAjXTEBU11mfwNeRGMjfUNb7QeHPLrgaVJNPbRVWbPYYDRtyoIcWKMMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E99571688;
-	Thu,  9 Oct 2025 08:43:36 -0700 (PDT)
-Received: from [10.1.34.29] (e122027.cambridge.arm.com [10.1.34.29])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 888FC3F59E;
-	Thu,  9 Oct 2025 08:43:42 -0700 (PDT)
-Message-ID: <36f2f67c-51a2-4f53-81a1-ab81a928b4d6@arm.com>
-Date: Thu, 9 Oct 2025 16:43:40 +0100
+	s=arc-20240116; t=1760024689; c=relaxed/simple;
+	bh=ISyXxX1CgQPxYK0n5WBhvNUsiBcHP1WQpSdLc5FTdtI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L6nlBGGnR+LxduIkKGybaIwTsiwVCBHEFkLWGU1IPPeMqeYV3cfut8aSzMnGjExpvsQSjMKyrxOzTLR3i41s4ARDr5jCfZmVv65BSHGR5PBWOGg3Hoyii51CnYVZNRZpHNvYBle4Oc+19YPqwohGbt4zR+5SYIRPtPLZFkSBRTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lANZmlrP; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-269640c2d4bso1688735ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 08:44:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760024687; x=1760629487; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ISyXxX1CgQPxYK0n5WBhvNUsiBcHP1WQpSdLc5FTdtI=;
+        b=lANZmlrP22CV1nc12xluFSHiQtQHbxQuv5+d/u4hEj7qpY/6BAD2+D9f4g9cUEHiWl
+         XYBrhv+yQ8fkHSPS8KOiYmgO3MLRbXHzgFZyjhdePb1OrJld24pmFnGwCBNcpsWNbkhj
+         B/UGqMdTBVAhX9ASyXt4ekNWOFqMGlt6pMqWqERK4TF2pAmTFgByjBCDY5w0Dhl7jzbT
+         oKlghFvIjCaJOAqphdTH8HT1eZsaTj+QcTi9P5+i6CDLG8rWVQwFO4P6OzUs5JVRBXLM
+         8a66CAltQGzVE/GkwQUSLxAxEUsnwPa7XjiF1Z1b7kUQEge0j54lRvyhlX+18dThS0Sf
+         uCjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760024687; x=1760629487;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ISyXxX1CgQPxYK0n5WBhvNUsiBcHP1WQpSdLc5FTdtI=;
+        b=sJebxPf/Cw502E0XITO3YNAPFvihWxuDK9ghTVFv0TnbHO7m7H0lQPBxEZvzgc9V/A
+         4+q9xdq/pORkRAnf9f2FTAX5Spfxcq1Vc0WNrVURqoLbfUlwHqbfD9TMl5u3FSisRQmo
+         UeLkaR8st1pEjrhfwSBlkdkgdUUkYR/y0sJeUsnU3V/Jd2hRXHgVAD4rihnWEP9OdpMw
+         OFlhcdt1PqLdJqlX1D6W6mOQvjfflZ+q5LgcwNQ9pA+OjfGEVSlk67aPHIL4ma5EMEmZ
+         so9k1kwbM33HXWyXscYSvCnyqRHQjPtYUQG9W0dXEmLQ/5lt2JpcqxvYbihGocLCgkCe
+         iBMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX266D6wjo9mR4IGPxSpKumH/K6Yvv8FI2VeIuliLfrXhq2NX9BxKTRqt9O60GrAVxn41qMqZPGiD4vGjc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyih7Fk1sCr4fOkS7Tdp6zWgNuOmcZ5T1ATPVizQCW4h1hZQM9F
+	JCyacWv5pQNKR9pLPSf32IXvCv2whBy8n+O9E2V1AiSRXXcNPq+++aWuGLj3X7wHrN3qdaj35Rr
+	nk9srDUWfoFmEiYnnjsvrdw6vposNv2I=
+X-Gm-Gg: ASbGncuUjBc6+oiVtMDeS7MtxwxGlBujbzGgqEMGHKwBIIktTDWvFaIqtcyUbYuZVdq
+	+7SM+qvCkOp5CTviqGBcYByv1kYrBgEbM1Reti2Uiidc4yhAYVcGv18UGdcvzYiNh80qpkjUKpe
+	LpRR+auDNldE/EQpP8AaoiF/AwZMh4YSw034+AS9ejDEpL/T+gNMNqHULC5TWem1q/NipbP715e
+	LVQqqStxXuzPsFcZD937Asu4kfN+fJwGGxwRHP0SoxP2/MY9CeSxEBhAOADp0Nn8Xb2UiKJYmnT
+	sUQV+/wMUsAWRVs8r34u3p24sMMp/nB3UKLGma9/DdcSG7tuHQ==
+X-Google-Smtp-Source: AGHT+IHVY42dVY/s3HGPNLm0YmAHrBSIuu8RB49AOjXxJqjSxRVehbPuC5RwOIEYcZqeiz2UmeZxv5xyJOuu3t5xZwo=
+X-Received: by 2002:a17:902:ea08:b0:28d:1904:6e77 with SMTP id
+ d9443c01a7336-2902726698dmr56840335ad.3.1760024687272; Thu, 09 Oct 2025
+ 08:44:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 11/12] drm/panfrost: Rename panfrost_job functions to
- reflect real role
-To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
- linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org,
- Boris Brezillon <boris.brezillon@collabora.com>, kernel@collabora.com,
- Rob Herring <robh@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-References: <20251007150216.254250-1-adrian.larumbe@collabora.com>
- <20251007150216.254250-12-adrian.larumbe@collabora.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20251007150216.254250-12-adrian.larumbe@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20251008000816.GA1856596@ax162>
+In-Reply-To: <20251008000816.GA1856596@ax162>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 9 Oct 2025 17:44:34 +0200
+X-Gm-Features: AS18NWDb2NjPVihD4F9J0jmsEojiUL0B8kovxxb4Y5UBQmW33TKAOCsYHpV-Q-0
+Message-ID: <CANiq72kgceVgcZnBzCTpJytb7GhjNWGVJR=4mexo1vtu3cAyXQ@mail.gmail.com>
+Subject: Re: Prebuilt LLVM 21.1.3 uploaded
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: llvm@lists.linux.dev, linux-kernel@vger.kernel.org, ojeda@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 07/10/2025 16:01, Adrián Larumbe wrote:
-> panfrost_job_* prefixed functions in panfrost_job.c deal with both
-> panfrost_job objects and also the more general JM (Job Manager) side of
-> the device itself. This is confusing.
-> 
-> Reprefix functions that program the JM to panfrosot_jm_* instead.
-> 
-> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+On Wed, Oct 8, 2025 at 2:08=E2=80=AFAM Nathan Chancellor <nathan@kernel.org=
+> wrote:
+>
+> I have built and uploaded LLVM 21.1.3 to
+> https://mirrors.edge.kernel.org/pub/tools/llvm/.
+>
+> If there are any issues found, please let us know via email or
+> https://github.com/ClangBuiltLinux/linux/issues/new, so that we have an
+> opportunity to get them fixed in main and backported before the 21.x
+> series is no longer supported.
 
-Reviewed-by: Steven Price <steven.price@arm.com>
+Thanks as usual!
 
-> ---
->  drivers/gpu/drm/panfrost/panfrost_device.c | 14 +++----
->  drivers/gpu/drm/panfrost/panfrost_drv.c    |  4 +-
->  drivers/gpu/drm/panfrost/panfrost_job.c    | 48 +++++++++++-----------
->  drivers/gpu/drm/panfrost/panfrost_job.h    | 16 ++++----
->  4 files changed, 41 insertions(+), 41 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_device.c b/drivers/gpu/drm/panfrost/panfrost_device.c
-> index f1d811a6de6c..c61b97af120c 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_device.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_device.c
-> @@ -259,7 +259,7 @@ int panfrost_device_init(struct panfrost_device *pfdev)
->  	if (err)
->  		goto out_gpu;
->  
-> -	err = panfrost_job_init(pfdev);
-> +	err = panfrost_jm_init(pfdev);
->  	if (err)
->  		goto out_mmu;
->  
-> @@ -269,7 +269,7 @@ int panfrost_device_init(struct panfrost_device *pfdev)
->  
->  	return 0;
->  out_job:
-> -	panfrost_job_fini(pfdev);
-> +	panfrost_jm_fini(pfdev);
->  out_mmu:
->  	panfrost_mmu_fini(pfdev);
->  out_gpu:
-> @@ -290,7 +290,7 @@ int panfrost_device_init(struct panfrost_device *pfdev)
->  void panfrost_device_fini(struct panfrost_device *pfdev)
->  {
->  	panfrost_perfcnt_fini(pfdev);
-> -	panfrost_job_fini(pfdev);
-> +	panfrost_jm_fini(pfdev);
->  	panfrost_mmu_fini(pfdev);
->  	panfrost_gpu_fini(pfdev);
->  	panfrost_devfreq_fini(pfdev);
-> @@ -407,9 +407,9 @@ void panfrost_device_reset(struct panfrost_device *pfdev, bool enable_job_int)
->  	panfrost_gpu_power_on(pfdev);
->  	panfrost_mmu_reset(pfdev);
->  
-> -	panfrost_job_reset_interrupts(pfdev);
-> +	panfrost_jm_reset_interrupts(pfdev);
->  	if (enable_job_int)
-> -		panfrost_job_enable_interrupts(pfdev);
-> +		panfrost_jm_enable_interrupts(pfdev);
->  }
->  
->  static int panfrost_device_runtime_resume(struct device *dev)
-> @@ -451,11 +451,11 @@ static int panfrost_device_runtime_suspend(struct device *dev)
->  {
->  	struct panfrost_device *pfdev = dev_get_drvdata(dev);
->  
-> -	if (!panfrost_job_is_idle(pfdev))
-> +	if (!panfrost_jm_is_idle(pfdev))
->  		return -EBUSY;
->  
->  	panfrost_devfreq_suspend(pfdev);
-> -	panfrost_job_suspend_irq(pfdev);
-> +	panfrost_jm_suspend_irq(pfdev);
->  	panfrost_mmu_suspend_irq(pfdev);
->  	panfrost_gpu_suspend_irq(pfdev);
->  	panfrost_gpu_power_off(pfdev);
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
-> index 2b57f6813714..3b79ebbccdf5 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
-> @@ -606,7 +606,7 @@ panfrost_open(struct drm_device *dev, struct drm_file *file)
->  		goto err_free;
->  	}
->  
-> -	ret = panfrost_job_open(file);
-> +	ret = panfrost_jm_open(file);
->  	if (ret)
->  		goto err_job;
->  
-> @@ -625,7 +625,7 @@ panfrost_postclose(struct drm_device *dev, struct drm_file *file)
->  	struct panfrost_file_priv *panfrost_priv = file->driver_priv;
->  
->  	panfrost_perfcnt_close(file);
-> -	panfrost_job_close(file);
-> +	panfrost_jm_close(file);
->  
->  	panfrost_mmu_ctx_put(panfrost_priv->mmu);
->  	kfree(panfrost_priv);
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c b/drivers/gpu/drm/panfrost/panfrost_job.c
-> index 541cdf80142d..7dfd96814ef2 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_job.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_job.c
-> @@ -426,18 +426,18 @@ static struct dma_fence *panfrost_job_run(struct drm_sched_job *sched_job)
->  	return fence;
->  }
->  
-> -void panfrost_job_reset_interrupts(struct panfrost_device *pfdev)
-> +void panfrost_jm_reset_interrupts(struct panfrost_device *pfdev)
->  {
->  	job_write(pfdev, JOB_INT_CLEAR, ALL_JS_INT_MASK);
->  }
->  
-> -void panfrost_job_enable_interrupts(struct panfrost_device *pfdev)
-> +void panfrost_jm_enable_interrupts(struct panfrost_device *pfdev)
->  {
->  	clear_bit(PANFROST_COMP_BIT_JOB, pfdev->is_suspended);
->  	job_write(pfdev, JOB_INT_MASK, ALL_JS_INT_MASK);
->  }
->  
-> -void panfrost_job_suspend_irq(struct panfrost_device *pfdev)
-> +void panfrost_jm_suspend_irq(struct panfrost_device *pfdev)
->  {
->  	set_bit(PANFROST_COMP_BIT_JOB, pfdev->is_suspended);
->  
-> @@ -499,8 +499,8 @@ static void panfrost_job_handle_err(struct panfrost_device *pfdev,
->  	}
->  }
->  
-> -static void panfrost_job_handle_done(struct panfrost_device *pfdev,
-> -				     struct panfrost_job *job)
-> +static void panfrost_jm_handle_done(struct panfrost_device *pfdev,
-> +				    struct panfrost_job *job)
->  {
->  	/* Set ->jc to 0 to avoid re-submitting an already finished job (can
->  	 * happen when we receive the DONE interrupt while doing a GPU reset).
-> @@ -513,7 +513,7 @@ static void panfrost_job_handle_done(struct panfrost_device *pfdev,
->  	pm_runtime_put_autosuspend(pfdev->base.dev);
->  }
->  
-> -static void panfrost_job_handle_irq(struct panfrost_device *pfdev, u32 status)
-> +static void panfrost_jm_handle_irq(struct panfrost_device *pfdev, u32 status)
->  {
->  	struct panfrost_job *done[NUM_JOB_SLOTS][2] = {};
->  	struct panfrost_job *failed[NUM_JOB_SLOTS] = {};
-> @@ -588,7 +588,7 @@ static void panfrost_job_handle_irq(struct panfrost_device *pfdev, u32 status)
->  		}
->  
->  		for (i = 0; i < ARRAY_SIZE(done[0]) && done[j][i]; i++)
-> -			panfrost_job_handle_done(pfdev, done[j][i]);
-> +			panfrost_jm_handle_done(pfdev, done[j][i]);
->  	}
->  
->  	/* And finally we requeue jobs that were waiting in the second slot
-> @@ -606,7 +606,7 @@ static void panfrost_job_handle_irq(struct panfrost_device *pfdev, u32 status)
->  			struct panfrost_job *canceled = panfrost_dequeue_job(pfdev, j);
->  
->  			dma_fence_set_error(canceled->done_fence, -ECANCELED);
-> -			panfrost_job_handle_done(pfdev, canceled);
-> +			panfrost_jm_handle_done(pfdev, canceled);
->  		} else if (!atomic_read(&pfdev->reset.pending)) {
->  			/* Requeue the job we removed if no reset is pending */
->  			job_write(pfdev, JS_COMMAND_NEXT(j), JS_COMMAND_START);
-> @@ -614,7 +614,7 @@ static void panfrost_job_handle_irq(struct panfrost_device *pfdev, u32 status)
->  	}
->  }
->  
-> -static void panfrost_job_handle_irqs(struct panfrost_device *pfdev)
-> +static void panfrost_jm_handle_irqs(struct panfrost_device *pfdev)
->  {
->  	u32 status = job_read(pfdev, JOB_INT_RAWSTAT);
->  
-> @@ -622,7 +622,7 @@ static void panfrost_job_handle_irqs(struct panfrost_device *pfdev)
->  		pm_runtime_mark_last_busy(pfdev->base.dev);
->  
->  		spin_lock(&pfdev->js->job_lock);
-> -		panfrost_job_handle_irq(pfdev, status);
-> +		panfrost_jm_handle_irq(pfdev, status);
->  		spin_unlock(&pfdev->js->job_lock);
->  		status = job_read(pfdev, JOB_INT_RAWSTAT);
->  	}
-> @@ -703,7 +703,7 @@ panfrost_reset(struct panfrost_device *pfdev,
->  		dev_err(pfdev->base.dev, "Soft-stop failed\n");
->  
->  	/* Handle the remaining interrupts before we reset. */
-> -	panfrost_job_handle_irqs(pfdev);
-> +	panfrost_jm_handle_irqs(pfdev);
->  
->  	/* Remaining interrupts have been handled, but we might still have
->  	 * stuck jobs. Let's make sure the PM counters stay balanced by
-> @@ -748,7 +748,7 @@ panfrost_reset(struct panfrost_device *pfdev,
->  		drm_sched_start(&pfdev->js->queue[i].sched, 0);
->  
->  	/* Re-enable job interrupts now that everything has been restarted. */
-> -	panfrost_job_enable_interrupts(pfdev);
-> +	panfrost_jm_enable_interrupts(pfdev);
->  
->  	dma_fence_end_signalling(cookie);
->  }
-> @@ -813,11 +813,11 @@ static const struct drm_sched_backend_ops panfrost_sched_ops = {
->  	.free_job = panfrost_job_free
->  };
->  
-> -static irqreturn_t panfrost_job_irq_handler_thread(int irq, void *data)
-> +static irqreturn_t panfrost_jm_irq_handler_thread(int irq, void *data)
->  {
->  	struct panfrost_device *pfdev = data;
->  
-> -	panfrost_job_handle_irqs(pfdev);
-> +	panfrost_jm_handle_irqs(pfdev);
->  
->  	/* Enable interrupts only if we're not about to get suspended */
->  	if (!test_bit(PANFROST_COMP_BIT_JOB, pfdev->is_suspended))
-> @@ -826,7 +826,7 @@ static irqreturn_t panfrost_job_irq_handler_thread(int irq, void *data)
->  	return IRQ_HANDLED;
->  }
->  
-> -static irqreturn_t panfrost_job_irq_handler(int irq, void *data)
-> +static irqreturn_t panfrost_jm_irq_handler(int irq, void *data)
->  {
->  	struct panfrost_device *pfdev = data;
->  	u32 status;
-> @@ -842,7 +842,7 @@ static irqreturn_t panfrost_job_irq_handler(int irq, void *data)
->  	return IRQ_WAKE_THREAD;
->  }
->  
-> -int panfrost_job_init(struct panfrost_device *pfdev)
-> +int panfrost_jm_init(struct panfrost_device *pfdev)
->  {
->  	struct drm_sched_init_args args = {
->  		.ops = &panfrost_sched_ops,
-> @@ -875,8 +875,8 @@ int panfrost_job_init(struct panfrost_device *pfdev)
->  		return js->irq;
->  
->  	ret = devm_request_threaded_irq(pfdev->base.dev, js->irq,
-> -					panfrost_job_irq_handler,
-> -					panfrost_job_irq_handler_thread,
-> +					panfrost_jm_irq_handler,
-> +					panfrost_jm_irq_handler_thread,
->  					IRQF_SHARED, KBUILD_MODNAME "-job",
->  					pfdev);
->  	if (ret) {
-> @@ -899,8 +899,8 @@ int panfrost_job_init(struct panfrost_device *pfdev)
->  		}
->  	}
->  
-> -	panfrost_job_reset_interrupts(pfdev);
-> -	panfrost_job_enable_interrupts(pfdev);
-> +	panfrost_jm_reset_interrupts(pfdev);
-> +	panfrost_jm_enable_interrupts(pfdev);
->  
->  	return 0;
->  
-> @@ -912,7 +912,7 @@ int panfrost_job_init(struct panfrost_device *pfdev)
->  	return ret;
->  }
->  
-> -void panfrost_job_fini(struct panfrost_device *pfdev)
-> +void panfrost_jm_fini(struct panfrost_device *pfdev)
->  {
->  	struct panfrost_job_slot *js = pfdev->js;
->  	int j;
-> @@ -927,7 +927,7 @@ void panfrost_job_fini(struct panfrost_device *pfdev)
->  	destroy_workqueue(pfdev->reset.wq);
->  }
->  
-> -int panfrost_job_open(struct drm_file *file)
-> +int panfrost_jm_open(struct drm_file *file)
->  {
->  	struct panfrost_file_priv *panfrost_priv = file->driver_priv;
->  	int ret;
-> @@ -949,7 +949,7 @@ int panfrost_job_open(struct drm_file *file)
->  	return 0;
->  }
->  
-> -void panfrost_job_close(struct drm_file *file)
-> +void panfrost_jm_close(struct drm_file *file)
->  {
->  	struct panfrost_file_priv *panfrost_priv = file->driver_priv;
->  	struct panfrost_jm_ctx *jm_ctx;
-> @@ -961,7 +961,7 @@ void panfrost_job_close(struct drm_file *file)
->  	xa_destroy(&panfrost_priv->jm_ctxs);
->  }
->  
-> -int panfrost_job_is_idle(struct panfrost_device *pfdev)
-> +int panfrost_jm_is_idle(struct panfrost_device *pfdev)
->  {
->  	struct panfrost_job_slot *js = pfdev->js;
->  	int i;
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_job.h b/drivers/gpu/drm/panfrost/panfrost_job.h
-> index 30eda74e3c34..da96c674d62b 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_job.h
-> +++ b/drivers/gpu/drm/panfrost/panfrost_job.h
-> @@ -60,16 +60,16 @@ void panfrost_jm_ctx_put(struct panfrost_jm_ctx *jm_ctx);
->  struct panfrost_jm_ctx *panfrost_jm_ctx_get(struct panfrost_jm_ctx *jm_ctx);
->  struct panfrost_jm_ctx *panfrost_jm_ctx_from_handle(struct drm_file *file, u32 handle);
->  
-> -int panfrost_job_init(struct panfrost_device *pfdev);
-> -void panfrost_job_fini(struct panfrost_device *pfdev);
-> -int panfrost_job_open(struct drm_file *file);
-> -void panfrost_job_close(struct drm_file *file);
-> +int panfrost_jm_init(struct panfrost_device *pfdev);
-> +void panfrost_jm_fini(struct panfrost_device *pfdev);
-> +int panfrost_jm_open(struct drm_file *file);
-> +void panfrost_jm_close(struct drm_file *file);
-> +void panfrost_jm_reset_interrupts(struct panfrost_device *pfdev);
-> +void panfrost_jm_enable_interrupts(struct panfrost_device *pfdev);
-> +void panfrost_jm_suspend_irq(struct panfrost_device *pfdev);
-> +int panfrost_jm_is_idle(struct panfrost_device *pfdev);
->  int panfrost_job_get_slot(struct panfrost_job *job);
->  int panfrost_job_push(struct panfrost_job *job);
->  void panfrost_job_put(struct panfrost_job *job);
-> -void panfrost_job_reset_interrupts(struct panfrost_device *pfdev);
-> -void panfrost_job_enable_interrupts(struct panfrost_device *pfdev);
-> -void panfrost_job_suspend_irq(struct panfrost_device *pfdev);
-> -int panfrost_job_is_idle(struct panfrost_device *pfdev);
->  
->  #endif
+For a build with Rust enabled:
 
+Tested-by: Miguel Ojeda <ojeda@kernel.org>
+
+(I have tested previous ones as usual, e.g. 21.1.2, but I didn't get
+to send the tag)
+
+Cheers,
+Miguel
 
