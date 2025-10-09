@@ -1,167 +1,298 @@
-Return-Path: <linux-kernel+bounces-846377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23777BC7C73
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:50:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE0BABC7C9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:52:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A19A54EF135
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:50:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 732D13E4FB8
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282D52D0639;
-	Thu,  9 Oct 2025 07:50:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 327692D0C68;
+	Thu,  9 Oct 2025 07:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HHRvISp/"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XCvzlzXY"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01BE434BA49
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 07:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A3E260565
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 07:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759996236; cv=none; b=H8fGQS5d76Co7/Rq8ynE+AcVlPH3/UTBr6XLQpCi55+C/nkVC4d/hGcDH3rd5mUboIw0BD8xGfBitnbDbjv6GFv4n5ssvaObxkEBzfsHzU/o8eyw5B1F8VQscR9kR23CF3AejOQ3jYMgNO96H7ysgFHw5P53UsI7uyNfymkmRCE=
+	t=1759996324; cv=none; b=lOz89ptK4W2zA4AfiXgtAsI6sF2WoBy5+YYbuLLEMXrEWZElqr2yfEVffKTW5wEnHcnBh88gc4nUuic++Z9Jf1BTneHUMSkGTb4caENfCfbB5sByYhu2HyT3LEZNMIjc1Oi3nVwy0T32WFb8m3OvQ+B/0E6LzECqmgSpBCjLnG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759996236; c=relaxed/simple;
-	bh=B4Vj89Csg/2pPQICPMyNe8JOJW/7eU9JySvWVJZyBT8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pQL7sf/UZrpsQSxohHcFv1x2/hno2O1EW1N/8TIKwMm4ZWP555SJ9mNlfiz13CwxNWbOwykR456xKXBuj+XGeE4F1PP7Rxuv3Kt7pIGiWWwKOcUxhkvd+QWiwyTMRhO4nUDJohZOO7src15Pz14Jah16sHO71G6HbL/VXgr8iMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HHRvISp/; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5996EI7M028491
-	for <linux-kernel@vger.kernel.org>; Thu, 9 Oct 2025 07:50:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YoM3fHf9aKLa5x5Ru3bP13mn03nmNd2yNTc3MJOCNo4=; b=HHRvISp/uGXMiW2M
-	KG5py2/1LefuUQ7IEVyAizFydZKxaHy5arXkaZWHcMKUgtoBArUxasXcquLNu7pd
-	FZQl0TGK6dnWDNXzdRnsY2qZf0N92YVEW1WvY29bCQPzaK66wGIrs3WsaB1AqiUm
-	fnKCjMHqMzm3eYyBK2DXxROm93dEUK1wY/cvYv9lDvdE7nHn1gj25zjD4JzvM5Ej
-	UXAB/FHxKN7mxxEKmIqVIC7HEZtalBdfV5jWT6/sneve0IKdZ151+6J70Y+ilnNi
-	qA1uRuh8fd2dtt2fKFwa3HiunMlbPHMtU42fpPsBCBZoETr4BGB7C3tBvyVyX9Pu
-	tIVE6Q==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv4kswwn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 07:50:28 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-27eed7bdff0so12439065ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 00:50:28 -0700 (PDT)
+	s=arc-20240116; t=1759996324; c=relaxed/simple;
+	bh=i9Z80guMca+sPD/TMXl+vTjZYLstDVRXzHS+lM+wG3Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TyHx/RNnZFt7DaxsJbATAvL5C+DOSS7LaPFs+Bt/oiZZUfKhzO0cmO/chGzUg6uMGsgUpDO5VQRK47S7+WkaCuX7UDl9p+ANarLmLxNBlNAb2ZyKuL9hj2WLCP7QXuV2uYFurmSPCYQgp7JpyZb8si8iSiPoo3Mwh4xP3bm26J4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XCvzlzXY; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3f0ae439b56so465149f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 00:52:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759996320; x=1760601120; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dq0wjjBNXf0WK9D3ya79rVciEE/qzZqTtznAwxjgERM=;
+        b=XCvzlzXYu3nnP3q+TaySbt2kkcQXRZufaYSmLok5gn6i0ehXKj+uGZ3ToQIfq3vJUo
+         VfF8pGLcAYIDHd8qqyGG4yz6VzP1Yqgne/YghKSYPlUjkLLXjuF6ybEa9UgYfOWPVSDF
+         eIGq/L72XudQ8/Xv2qyiZX2hnzNGoMOl70IS8fBsHDKsoi6OW8FTLkjsrvAYQ8njkNsO
+         QAM6PwPqAh+ATp38/RUTt+ZHCASJZiZtPuN8fyyamtdX7xTs215bgPXRHoBcO+4XRoHM
+         oCYlEhf0xMBrDFlzHxIo8ERjITGJ2jJfCE1RvfWBRsQFkGu1LzG1/mNriGNPbNOJyRgd
+         Tddw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759996227; x=1760601027;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YoM3fHf9aKLa5x5Ru3bP13mn03nmNd2yNTc3MJOCNo4=;
-        b=BG3fwSL9YUh79Z8yVPEp3cEUPcNeJSKWOriYnMyDSp23lMsNzXQlFKiLRgN7+T5Yal
-         Pjvbl97qFOB7McSyvmx1/rKrFoiioKs2D90hsUTtttZGAvbA2MI38arygNWs2bvacFbP
-         LHCOUpkeG44nRTk58ILO72z333nLDdWf8G3B64lx8JVuFa2HfesUY8Q2bWmDcDt9Kfqo
-         Vv4F57fT9E1gjNmSAi2TiSx6pqevkYbPdyfBvOCciu4UXgPEZVSZNuB461f1pSPGAIR9
-         WLfoADCQB1Hco/kneqetloZ7VxOasBWgLk9LUzoD1m6LrH+eIakOZNq+oPqMSxJNDqXZ
-         ognw==
-X-Forwarded-Encrypted: i=1; AJvYcCWFA3uc6jSZw6oPwjvyIAznvhWgFPaQWLW6sWLVc4m7TvFWrt7E22y9CgB8q5ZxTVX9EuZ3CYhxCLhx7/0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkUjIU6c7sHozuUnd5pkYJXPmOoHhpwg6lgczewAj6tjjnfH9V
-	MMy5S4HSRgzZpfZg0bBfeYSB3wr9R4PfSrVjS3W6Edul9r3cc7SFNpxwCVfdpNY1k77kCp8Rdw2
-	nofxPw+YusPMhij3YZmKd56D6y57y+W+oQwST4O5MNNW3RzUmbxOHomkLQJWN6kX6NGk=
-X-Gm-Gg: ASbGncuboTd9TvJzjqJlfDtMa4acCWyCRFVclxZ4Plm9YF2d8BUCF0Qh8wbskPJsKZP
-	npQEEZ9zs32L0AFY7lZ29NMMWw1UyQIpArEoS1WSRskDNut7o/gQUssNtjgYRyN9nfxOAFcvFcH
-	oD5hTE/ijpmsMkkxXuaYgZvGkyNoSoZlkUnpVrMakoiDkajVdraFuASq7o+maVpgR2FQP5FJUF0
-	utU3nCQsqpIEra3s2Nbs+KN73YxObphfqvQ68e8j+3/+FfyKMXF6pwJgRFtdzJKqOAe4UjPcQki
-	CoDd600hxaECJAjtwpFtZTaeEhMMK9NjGQDOjabTyJ9eJnCmDTOOJ0nEwd/MM/Zw/Avvle9eIfi
-	qUw==
-X-Received: by 2002:a17:902:ce0a:b0:26b:3cb5:a906 with SMTP id d9443c01a7336-28ec9c97565mr122961985ad.16.1759996227597;
-        Thu, 09 Oct 2025 00:50:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFRCIIEFNL9PxfVqSmk3+kqmgoJIsJR45HHjyjsfNgmlte+wJI3PPCLMHzRAxBj2NQ2sHRABQ==
-X-Received: by 2002:a17:902:ce0a:b0:26b:3cb5:a906 with SMTP id d9443c01a7336-28ec9c97565mr122961665ad.16.1759996227124;
-        Thu, 09 Oct 2025 00:50:27 -0700 (PDT)
-Received: from [10.0.0.3] ([106.222.229.252])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034de56desm20060245ad.19.2025.10.09.00.50.24
+        d=1e100.net; s=20230601; t=1759996320; x=1760601120;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dq0wjjBNXf0WK9D3ya79rVciEE/qzZqTtznAwxjgERM=;
+        b=HcSt9v6fXRRJLH3k+8HNqa3nkfWpM389auhVAQ0nwKm5AsYHp7HENlaL/4kJ4E4foz
+         EJm89Ir4UydI0TlbulBTdpzEliIajjnntZxtT1K5c3Cs+0QCaLUyh3CvKBR0aFi8V6R0
+         ODe4IMVrqN1nUQrx6LOCJ+zzmVI/ZHOO2nnXvHorKX9l/FgXTSyP+aLXP92vuDZc520O
+         BWiV/vOe+7obWKYDXH8Oz5hxaIaDOqyHs3fM3yAOnL5K3nYA6hmue8kzzGJy7XjfKlqy
+         lNAnWMbxlglYWQnsdRBKLzAg6e11fw3Uf3VBRGQ0Z402+c+T0G3k3Uli2pvqmslbIVh/
+         +mxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5IcdyM2X8/JHDZynUf4QTTr07Felx9s3Io/UkWYmTh/2VLvZlYFedL1quwwfpXgI9OrvV0DC1u2CfKdE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCFS0ckGL8N4qSoSdHnf0FupQi0d9pv7WQmubz2Ark7B7Kfqxk
+	ac0F25UHx1Oj2ysIzusNLNl3uMrK77LsP5EipL1ik5mh0QP7AEHQbLY7
+X-Gm-Gg: ASbGncsofAWy8AHzhnw7VPj7knrirYTKdAwBY/evRt+A4i5hkKTuK/SBHsfKgZD1hzX
+	EcXwcJziCU32avK2ieDjcsj6l0HAYz35QyWks3NHb40iU7iN+77aR4621icT0QXGX8CEx8XQ00u
+	fAuwKgrI+T6yQi9/smbeZzOcufMjBIW8iJhps4mou69eQrMMZ4A5A7dq5kqi4t+DfLbbgn3Vdx8
+	BKvbsLY8X4sNrmlvoOCDqfK2Ne6fU3rFFWroEmOLl67az4HLNaPM+zYnDOg+OUM9L4ZQDS4P13a
+	TZYFI9BqMbnUTSiq2NheVZ2ISN/alIfvRe9ECAz4tONvu3/xhyeT33TNy1JAPpwT7l0W6yzHnfO
+	vz8yaIEY/jqM5xfsnCN8kOCoYNiuKzbGPHEL6ITrzWJy1PBu8fPW1Pg==
+X-Google-Smtp-Source: AGHT+IEF2QgSVmoekGeeDdR+attcsPoP4ux+ZobTKCXEPtqIEA2gTGTVY1Xfifkg2IiD0GzYxV+OEw==
+X-Received: by 2002:a5d:5f82:0:b0:3fd:eb15:772 with SMTP id ffacd0b85a97d-42666ac39d7mr3287299f8f.9.1759996320291;
+        Thu, 09 Oct 2025 00:52:00 -0700 (PDT)
+Received: from localhost ([212.73.77.104])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4255d8a6bbesm33252549f8f.12.2025.10.09.00.51.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Oct 2025 00:50:26 -0700 (PDT)
-Message-ID: <c11dec36-a477-26f2-4081-fb0dc8188cec@oss.qualcomm.com>
-Date: Thu, 9 Oct 2025 13:20:22 +0530
+        Thu, 09 Oct 2025 00:51:59 -0700 (PDT)
+From: Askar Safin <safinaskar@gmail.com>
+To: linux-kbuild@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	regressions@lists.linux.dev
+Cc: nathan@kernel.org,
+	linux-kernel@vger.kernel.org,
+	miguel.ojeda.sandonis@gmail.com,
+	nsc@kernel.org,
+	ojeda@kernel.org,
+	sam@gentoo.org,
+	thomas.weissschuh@linutronix.de,
+	Daniel Xu <dxu@dxuuu.xyz>
+Subject: [REGRESSION][BISECTED] kbuild: CFLAGS=-w no longer works
+Date: Thu,  9 Oct 2025 10:51:49 +0300
+Message-ID: <20251009075149.1083040-1-safinaskar@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH 6/8] media: iris: rename sm8250 platform file to gen1
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bod@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20251008-iris-sc7280-v1-0-def050ba5e1f@oss.qualcomm.com>
- <20251008-iris-sc7280-v1-6-def050ba5e1f@oss.qualcomm.com>
-From: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
-In-Reply-To: <20251008-iris-sc7280-v1-6-def050ba5e1f@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX8PEcRvsFHxzs
- pu7KElPXn+u5I54V2W+14VKDSlyTTNsfRIaOoCmL7syJW/OUQhYGcyv0Zrg3+4nhzBfiJNkeiDp
- qtgo1+8UemZ3rbZ37+od36q1No+bWKDMQqfVIU8Dt+zihZsYQGzejYZqgPYY4xpwqC6TnpZuSIu
- QCYyIZqtYECuNEep0jO6Nh8T6dy9XAwmXfpHCVeezjVE0Rq0oa7fpTLNpaWnu46YWhf0Sb1g39M
- x4zMZb2yniVwkUrdrxhwRHm8BnqYPr4bpwKV013x9Y/ybBSB8WQdaODaR6LadqX/QMZWQfxdgOd
- H9q56FozH7HbKwQXLBX7NXu+Z/IaT5GcgPBGUDZX8r9JmgE3NNF3QImdKoZbSxLllLFQYe7Wlx9
- PwGYqkIdCY1vstmcpCfo/6cjTMjDbA==
-X-Proofpoint-GUID: c0T1Y7gknAYiyWyAcc1V8WRPElwJjXMG
-X-Proofpoint-ORIG-GUID: c0T1Y7gknAYiyWyAcc1V8WRPElwJjXMG
-X-Authority-Analysis: v=2.4 cv=SJxPlevH c=1 sm=1 tr=0 ts=68e76944 cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=L4UNg9I9cQSOxNpRiiGXlA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=6XGvkFmkmJ0ZWo89MKgA:9
- a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-09_02,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 impostorscore=0 spamscore=0 phishscore=0
- clxscore=1015 bulkscore=0 lowpriorityscore=0 priorityscore=1501 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
+Content-Transfer-Encoding: quoted-printable
 
+#regzbot introduced: d1d0963121769d8d16150b913fe886e48efefa51
 
+As well as I understand, if you want to disable warnings, you
+should pass "CFLAGS=3D-w" to "make". Starting with d1d096312176,
+this no longer works.
 
-On 10/8/2025 10:03 AM, Dmitry Baryshkov wrote:
-> In preparation to adding more Gen1 platforms, which will share a
-> significant amount of data, rename the SM8250 platform file to
-> iris_platform_gen1.c.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
->  drivers/media/platform/qcom/iris/Makefile                               | 2 +-
->  .../platform/qcom/iris/{iris_platform_sm8250.c => iris_platform_gen1.c} | 0
->  2 files changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/qcom/iris/Makefile b/drivers/media/platform/qcom/iris/Makefile
-> index 13270cd6d899852dded675b33d37f5919b81ccba..fad3be044e5fe783db697a592b4f09de4d42d0d2 100644
-> --- a/drivers/media/platform/qcom/iris/Makefile
-> +++ b/drivers/media/platform/qcom/iris/Makefile
-> @@ -26,7 +26,7 @@ qcom-iris-objs += iris_buffer.o \
->               iris_vpu_common.o \
->  
->  ifeq ($(CONFIG_VIDEO_QCOM_VENUS),)
-> -qcom-iris-objs += iris_platform_sm8250.o
-> +qcom-iris-objs += iris_platform_gen1.o
->  endif
->  
->  obj-$(CONFIG_VIDEO_QCOM_IRIS) += qcom-iris.o
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_sm8250.c b/drivers/media/platform/qcom/iris/iris_platform_gen1.c
-> similarity index 100%
-> rename from drivers/media/platform/qcom/iris/iris_platform_sm8250.c
-> rename to drivers/media/platform/qcom/iris/iris_platform_gen1.c
-> 
+Steps to reproduce:
 
-Reviewed-by: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+$ cd linux
+$ git clean -f -q -d -x  # To clean everything not controlled by git
+$ echo 'CONFIG_64BIT=3Dy' > /tmp/minimini
+$ make allnoconfig KCONFIG_ALLCONFIG=3D/tmp/minimini
+$ make -j32 CFLAGS=3D-w
 
-Thanks,
-Dikshita
+My system info:
+
+d-user@comp:~$ gcc -v
+Using built-in specs.
+COLLECT_GCC=3Dgcc
+COLLECT_LTO_WRAPPER=3D/usr/libexec/gcc/x86_64-linux-gnu/14/lto-wrapper
+OFFLOAD_TARGET_NAMES=3Dnvptx-none:amdgcn-amdhsa
+OFFLOAD_TARGET_DEFAULT=3D1
+Target: x86_64-linux-gnu
+Configured with: ../src/configure -v --with-pkgversion=3D'Debian 14.2.0-19'=
+ --with-bugurl=3Dfile:///usr/share/doc/gcc-14/README.Bugs --enable-language=
+s=3Dc,ada,c++,go,d,fortran,objc,obj-c++,m2,rust --prefix=3D/usr --with-gcc-=
+major-version-only --program-suffix=3D-14 --program-prefix=3Dx86_64-linux-g=
+nu- --enable-shared --enable-linker-build-id --libexecdir=3D/usr/libexec --=
+without-included-gettext --enable-threads=3Dposix --libdir=3D/usr/lib --ena=
+ble-nls --enable-bootstrap --enable-clocale=3Dgnu --enable-libstdcxx-debug =
+--enable-libstdcxx-time=3Dyes --with-default-libstdcxx-abi=3Dnew --enable-l=
+ibstdcxx-backtrace --enable-gnu-unique-object --disable-vtable-verify --ena=
+ble-plugin --enable-default-pie --with-system-zlib --enable-libphobos-check=
+ing=3Drelease --with-target-system-zlib=3Dauto --enable-objc-gc=3Dauto --en=
+able-multiarch --disable-werror --enable-cet --with-arch-32=3Di686 --with-a=
+bi=3Dm64 --with-multilib-list=3Dm32,m64,mx32 --enable-multilib --with-tune=
+=3Dgeneric --enable-offload-targets=3Dnvptx-none=3D/build/reproducible-path=
+/gcc-14-14.2.0/debian/tmp-nvptx/usr,amdgcn-amdhsa=3D/build/reproducible-pat=
+h/gcc-14-14.2.0/debian/tmp-gcn/usr --enable-offload-defaulted --without-cud=
+a-driver --enable-checking=3Drelease --build=3Dx86_64-linux-gnu --host=3Dx8=
+6_64-linux-gnu --target=3Dx86_64-linux-gnu --with-build-config=3Dbootstrap-=
+lto-lean --enable-link-serialization=3D3
+Thread model: posix
+Supported LTO compression algorithms: zlib zstd
+gcc version 14.2.0 (Debian 14.2.0-19)=20
+d-user@comp:~$ cat /etc/os-release=20
+PRETTY_NAME=3D"Debian GNU/Linux 13 (trixie)"
+NAME=3D"Debian GNU/Linux"
+VERSION_ID=3D"13"
+VERSION=3D"13 (trixie)"
+VERSION_CODENAME=3Dtrixie
+DEBIAN_VERSION_FULL=3D13.1
+ID=3Ddebian
+HOME_URL=3D"https://www.debian.org/"
+SUPPORT_URL=3D"https://www.debian.org/support"
+BUG_REPORT_URL=3D"https://bugs.debian.org/"
+
+Culpit commit (d1d096312176) produces this output:
+
+d-user@comp:/rbt$ cd linux
+d-user@comp:/rbt/linux$ git clean -f -q -d -x
+d-user@comp:/rbt/linux$ echo 'CONFIG_64BIT=3Dy' > /tmp/minimini
+d-user@comp:/rbt/linux$ make allnoconfig KCONFIG_ALLCONFIG=3D/tmp/minimini
+  HOSTCC  scripts/basic/fixdep
+  HOSTCC  scripts/kconfig/conf.o
+  HOSTCC  scripts/kconfig/confdata.o
+  HOSTCC  scripts/kconfig/expr.o
+  LEX     scripts/kconfig/lexer.lex.c
+  YACC    scripts/kconfig/parser.tab.[ch]
+  HOSTCC  scripts/kconfig/lexer.lex.o
+  HOSTCC  scripts/kconfig/menu.o
+  HOSTCC  scripts/kconfig/parser.tab.o
+  HOSTCC  scripts/kconfig/preprocess.o
+  HOSTCC  scripts/kconfig/symbol.o
+  HOSTCC  scripts/kconfig/util.o
+  HOSTLD  scripts/kconfig/conf
+#
+# configuration written to .config
+#
+d-user@comp:/rbt/linux$ make -j32 CFLAGS=3D-w
+  GEN     arch/x86/include/generated/asm/orc_hash.h
+  WRAP    arch/x86/include/generated/uapi/asm/bpf_perf_event.h
+  WRAP    arch/x86/include/generated/uapi/asm/errno.h
+  WRAP    arch/x86/include/generated/uapi/asm/fcntl.h
+  UPD     include/generated/uapi/linux/version.h
+  SYSHDR  arch/x86/include/generated/uapi/asm/unistd_32.h
+  WRAP    arch/x86/include/generated/uapi/asm/ioctl.h
+  SYSHDR  arch/x86/include/generated/uapi/asm/unistd_64.h
+  WRAP    arch/x86/include/generated/uapi/asm/ioctls.h
+  WRAP    arch/x86/include/generated/uapi/asm/ipcbuf.h
+  SYSHDR  arch/x86/include/generated/uapi/asm/unistd_x32.h
+  SYSTBL  arch/x86/include/generated/asm/syscalls_32.h
+  WRAP    arch/x86/include/generated/uapi/asm/param.h
+  SYSHDR  arch/x86/include/generated/asm/unistd_32_ia32.h
+  WRAP    arch/x86/include/generated/uapi/asm/poll.h
+  WRAP    arch/x86/include/generated/uapi/asm/resource.h
+  SYSHDR  arch/x86/include/generated/asm/unistd_64_x32.h
+  WRAP    arch/x86/include/generated/uapi/asm/socket.h
+  SYSTBL  arch/x86/include/generated/asm/syscalls_64.h
+  WRAP    arch/x86/include/generated/uapi/asm/sockios.h
+  WRAP    arch/x86/include/generated/uapi/asm/termbits.h
+  WRAP    arch/x86/include/generated/uapi/asm/termios.h
+  WRAP    arch/x86/include/generated/uapi/asm/types.h
+  HOSTCC  arch/x86/tools/relocs_32.o
+  HOSTCC  arch/x86/tools/relocs_64.o
+  HOSTCC  arch/x86/tools/relocs_common.o
+  UPD     include/generated/compile.h
+  WRAP    arch/x86/include/generated/asm/early_ioremap.h
+  WRAP    arch/x86/include/generated/asm/fprobe.h
+  HOSTCC  scripts/kallsyms
+  WRAP    arch/x86/include/generated/asm/mcs_spinlock.h
+  WRAP    arch/x86/include/generated/asm/mmzone.h
+  HOSTCC  scripts/sorttable
+  WRAP    arch/x86/include/generated/asm/irq_regs.h
+  WRAP    arch/x86/include/generated/asm/kmap_size.h
+  WRAP    arch/x86/include/generated/asm/local64.h
+  WRAP    arch/x86/include/generated/asm/mmiowb.h
+  WRAP    arch/x86/include/generated/asm/module.lds.h
+  UPD     include/config/kernel.release
+  WRAP    arch/x86/include/generated/asm/rwonce.h
+  DESCEND objtool
+  UPD     include/generated/utsrelease.h
+  INSTALL /rbt/linux/tools/objtool/libsubcmd/include/subcmd/exec-cmd.h
+  INSTALL /rbt/linux/tools/objtool/libsubcmd/include/subcmd/help.h
+  INSTALL /rbt/linux/tools/objtool/libsubcmd/include/subcmd/pager.h
+  INSTALL /rbt/linux/tools/objtool/libsubcmd/include/subcmd/parse-options.h
+  INSTALL /rbt/linux/tools/objtool/libsubcmd/include/subcmd/run-command.h
+  INSTALL libsubcmd_headers
+  HOSTLD  arch/x86/tools/relocs
+  CC      scripts/mod/empty.o
+  HOSTCC  scripts/mod/mk_elfconfig
+  CC      scripts/mod/devicetable-offsets.s
+  CC      /rbt/linux/tools/objtool/libsubcmd/exec-cmd.o
+  CC      /rbt/linux/tools/objtool/libsubcmd/help.o
+  CC      /rbt/linux/tools/objtool/libsubcmd/pager.o
+  CC      /rbt/linux/tools/objtool/libsubcmd/parse-options.o
+  CC      /rbt/linux/tools/objtool/libsubcmd/run-command.o
+  CC      /rbt/linux/tools/objtool/libsubcmd/sigchain.o
+  CC      /rbt/linux/tools/objtool/libsubcmd/subcmd-config.o
+exec-cmd.c:2:10: fatal error: linux/compiler.h: No such file or directory
+    2 | #include <linux/compiler.h>
+      |          ^~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[5]: *** [/rbt/linux/tools/build/Makefile.build:86: /rbt/linux/tools/ob=
+jtool/libsubcmd/exec-cmd.o] Error 1
+make[5]: *** Waiting for unfinished jobs....
+parse-options.c:2:10: fatal error: linux/compiler.h: No such file or direct=
+ory
+    2 | #include <linux/compiler.h>
+      |          ^~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[5]: *** [/rbt/linux/tools/build/Makefile.build:86: /rbt/linux/tools/ob=
+jtool/libsubcmd/parse-options.o] Error 1
+In file included from sigchain.c:3:
+subcmd-util.h:8:10: fatal error: linux/compiler.h: No such file or directory
+    8 | #include <linux/compiler.h>
+      |          ^~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[5]: *** [/rbt/linux/tools/build/Makefile.build:86: /rbt/linux/tools/ob=
+jtool/libsubcmd/sigchain.o] Error 1
+  MKELF   scripts/mod/elfconfig.h
+In file included from help.c:12:
+subcmd-util.h:8:10: fatal error: linux/compiler.h: No such file or directory
+    8 | #include <linux/compiler.h>
+      |          ^~~~~~~~~~~~~~~~~~
+compilation terminated.
+  HOSTCC  scripts/mod/modpost.o
+make[5]: *** [/rbt/linux/tools/build/Makefile.build:85: /rbt/linux/tools/ob=
+jtool/libsubcmd/help.o] Error 1
+  HOSTCC  scripts/mod/sumversion.o
+In file included from run-command.c:11:
+subcmd-util.h:8:10: fatal error: linux/compiler.h: No such file or directory
+    8 | #include <linux/compiler.h>
+      |          ^~~~~~~~~~~~~~~~~~
+compilation terminated.
+  HOSTCC  scripts/mod/symsearch.o
+make[5]: *** [/rbt/linux/tools/build/Makefile.build:85: /rbt/linux/tools/ob=
+jtool/libsubcmd/run-command.o] Error 1
+  UPD     scripts/mod/devicetable-offsets.h
+  HOSTCC  scripts/mod/file2alias.o
+make[4]: *** [Makefile:78: /rbt/linux/tools/objtool/libsubcmd/libsubcmd-in.=
+o] Error 2
+make[3]: *** [Makefile:83: /rbt/linux/tools/objtool/libsubcmd/libsubcmd.a] =
+Error 2
+make[2]: *** [Makefile:73: objtool] Error 2
+make[1]: *** [/rbt/linux/Makefile:1430: tools/objtool] Error 2
+make[1]: *** Waiting for unfinished jobs....
+  HOSTLD  scripts/mod/modpost
+  CC      kernel/bounds.s
+  CHKSHA1 include/linux/atomic/atomic-arch-fallback.h
+  CHKSHA1 include/linux/atomic/atomic-instrumented.h
+  CHKSHA1 include/linux/atomic/atomic-long.h
+  UPD     include/generated/timeconst.h
+  UPD     include/generated/bounds.h
+  CC      arch/x86/kernel/asm-offsets.s
+  UPD     include/generated/asm-offsets.h
+  CALL    scripts/checksyscalls.sh
+make: *** [Makefile:251: __sub-make] Error 2
+
+--=20
+Askar Safin
 
