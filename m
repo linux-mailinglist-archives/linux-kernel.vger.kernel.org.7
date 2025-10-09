@@ -1,189 +1,171 @@
-Return-Path: <linux-kernel+bounces-846748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F873BC8E97
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:54:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 734A3BC8E9D
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:54:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83A0A420332
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:54:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECCA0420393
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D7E2E11CB;
-	Thu,  9 Oct 2025 11:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2294E2E0939;
+	Thu,  9 Oct 2025 11:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="q2uXQM5Q"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bu192Bjv"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB862DE200;
-	Thu,  9 Oct 2025 11:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0862E1F13
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 11:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760010876; cv=none; b=dWIuDyxCpfKG67Rho14dOQF9HaE7xlVXr46yr9zSquQ+qeLHebUnvNZVtFEv+aiXgdwnn8gAeJWhHBEqVrmo3OEg/C70qL1p1DFY05v/F/QWKUHPVlIawC7XRWEG79isXFr1V3Yl+QKmRvByNBDtd8q/3x0HNXXX1ErSRrXLhpU=
+	t=1760010882; cv=none; b=t8jrhA4fdtjpu5NwWX8NoeI2gc/lyUyy6UvumpM347VK7MAqPx2KyULhG0Ehopvv6xpQQd76SmkyBQGCp0Zo168e0AK/wR3zC/iGrQTR5mIP+PqH4gePvp9pljLFps9fcZqUH3GGdrN8a0ssUKJDrL0njwwX0Ecvi/F/6RQhCzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760010876; c=relaxed/simple;
-	bh=B/o080jiuYuwYnKuOkoaAn5+mc0G3zApBcZNRGwdUfE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IgBpxEWuRwgTz9dil7Rxlya21CIi+y3oMBOoZETx50u26JzqXc92NpTvj5PMLdf0GnFgdigDbA+o0Ubl21HilqMWqbiENDMhLEQothLZzhWpvuzBCPoTbBcIdAB4x6x7kpbVU0cVeGFgeQd+JBP9kMZ6fCzS4RCSQkRiCRlAuDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=q2uXQM5Q; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1760010871;
-	bh=B/o080jiuYuwYnKuOkoaAn5+mc0G3zApBcZNRGwdUfE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=q2uXQM5Qory6uBVrxpZujNoEUOWY144usrDsAU5OLYJ8WE5QiljfYsbogXwMoaY5Z
-	 h2gFjgKTvmh7J0bIdg74aGnY1eayEdn2YhkF2PAzgz7LQCGosYlr2ItiWVepLh5WCO
-	 BW9JaJCvMlChK38CmZQnQdqfaQA7KxDKwfPgal8NfmsqDzrDDrkT6rvbCL/v4L/dc9
-	 3zzSsU3Eysjp81192joNSfLy57T6fgV6ibYrloPoV8lgOJSqPkNT6B8+R9ISIjUTWi
-	 t3nhTX1cJprc7RwTRPforX5FHWQtLDDfNdUJ6t4N5sxzsPxxLXKJUggadtwC0ylVJ3
-	 4T88QYdNXST8g==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id A649817E1060;
-	Thu,  9 Oct 2025 13:54:30 +0200 (CEST)
-Message-ID: <6690e20f-f88e-4c5a-8188-4d2a941fc6b1@collabora.com>
-Date: Thu, 9 Oct 2025 13:54:29 +0200
+	s=arc-20240116; t=1760010882; c=relaxed/simple;
+	bh=JC9jgIxIHsC0rpTcUOBqkaqzNLHG5l/luB/jXou2SH8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=f6cG12BH7C9PJvuj/MawNg4iToRqvGouUAscbzS6gbnO3qPyIX4tu0CcvGXiSLarEzmgNJa3WDlVGEq9OvcXFJC0xNZ/kSVh0dKCK/5gahAL2H5r7poHXv1tGG3bKVGliBpg8T7Dbi9pdHf6XyCG+gwM14xQaDUM7+Ejap7qIHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=bu192Bjv; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251009115436euoutp01cbe75eb3fdb658498eabdaca36828ad7~s0JFSX55L0788007880euoutp01W
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 11:54:36 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251009115436euoutp01cbe75eb3fdb658498eabdaca36828ad7~s0JFSX55L0788007880euoutp01W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1760010877;
+	bh=89YoilszcVgtY2WH9xkUBX5haHu7VfKEfNvtGBAHGdM=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=bu192Bjv4DCyMt7YU61OG1pYaDl8eyq6hJkNiecFAvJUn73QTZW1fP9YjBIisqt5f
+	 f/wiDSTUCbW6KbHBroFQzToTC/AGg4bO4n6ljDpOTc1+soTZpDNaY+TX7K4lWRGUui
+	 9wTa90wgFU9JWr5y2taU+ASF65/nFgLB++a56bOA=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20251009115436eucas1p23974f9afcd730fa3fdf66a7d6919d47f~s0JFAHA-N1574615746eucas1p2s;
+	Thu,  9 Oct 2025 11:54:36 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20251009115435eusmtip1e8fd4f06ffd3e6a355d1458090c4b984~s0JEHJ53D1953819538eusmtip1j;
+	Thu,  9 Oct 2025 11:54:35 +0000 (GMT)
+Message-ID: <0d3eb8e5-5588-4718-b01c-ef32b7dcb4a1@samsung.com>
+Date: Thu, 9 Oct 2025 13:54:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 13/20] drm/mediatek: Add programming flow for
- unsupported subsys ID hardware
-To: Jason-JH Lin <jason-jh.lin@mediatek.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
- Nicolas Dufresne <nicolas@ndufresne.ca>, Nancy Lin <nancy.lin@mediatek.com>,
- Singo Chang <singo.chang@mediatek.com>,
- Paul-PL Chen <paul-pl.chen@mediatek.com>, Moudy Ho <moudy.ho@mediatek.com>,
- Xiandong Wang <xiandong.wang@mediatek.com>,
- Sirius Wang <sirius.wang@mediatek.com>, Fei Shao <fshao@chromium.org>,
- Chen-yu Tsai <wenst@chromium.org>,
- Project_Global_Chrome_Upstream_Group@mediatek.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
-References: <20250827114006.3310175-1-jason-jh.lin@mediatek.com>
- <20250827114006.3310175-14-jason-jh.lin@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+User-Agent: Betterbird (Windows)
+Subject: Re: [bisected][mainline]Kernel warnings at
+ kernel/sched/cpudeadline.c:219
+To: Peter Zijlstra <peterz@infradead.org>, Shrikanth Hegde
+	<sshegde@linux.ibm.com>
+Cc: Venkat Rao Bagalkote <venkat88@linux.ibm.com>, LKML
+	<linux-kernel@vger.kernel.org>, linuxppc-dev
+	<linuxppc-dev@lists.ozlabs.org>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+	jstultz@google.com, stultz@google.com
 Content-Language: en-US
-In-Reply-To: <20250827114006.3310175-14-jason-jh.lin@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20251009080007.GH3245006@noisy.programming.kicks-ass.net>
 Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20251009115436eucas1p23974f9afcd730fa3fdf66a7d6919d47f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20251009115436eucas1p23974f9afcd730fa3fdf66a7d6919d47f
+X-EPHeader: CA
+X-CMS-RootMailID: 20251009115436eucas1p23974f9afcd730fa3fdf66a7d6919d47f
+References: <8218e149-7718-4432-9312-f97297c352b9@linux.ibm.com>
+	<20251008095039.GG3245006@noisy.programming.kicks-ass.net>
+	<5a248390-ddaa-4127-a58a-794d0d70461a@linux.ibm.com>
+	<20251008111314.GI3289052@noisy.programming.kicks-ass.net>
+	<86fbf707-9ecf-4941-ae70-3332c360533d@linux.ibm.com>
+	<20251009080007.GH3245006@noisy.programming.kicks-ass.net>
+	<CGME20251009115436eucas1p23974f9afcd730fa3fdf66a7d6919d47f@eucas1p2.samsung.com>
 
-Il 27/08/25 13:37, Jason-JH Lin ha scritto:
-> To support hardware without subsys IDs on new SoCs, add a programming
-> flow that checks whether the subsys ID is valid.
-> 
-> If the subsys ID is valid, the flow will call cmdq_pkt_write_subsys()
-> instead of the original cmdq_pkt_write().
-> 
-> If the subsys ID is invalid, the flow will call cmdq_pkt_write_mask_pa()
-> to achieve the same functionality.
-> 
-> Signed-off-by: Jason-JH Lin <jason-jh.lin@mediatek.com>
-
-In mediatek-drm and in mtk-mdp3 the performance of mtk_ddp_write is important: in
-both, there are ways to know whether a platform is expected to always use the
-cmdq_pkt_write_mask_pa() or the subsys() one.
-
-Please check what platform is this driver running on - based on the platform, you
-can assign a function pointer, so that you always call it like
-
-priv->write_cmdq_pkt(cmdq_pkt, cmdq_reg, ofst, val, mask);
-
-write_cmdq_pkt() could point to, either:
-1. A function that checks if subsys != CMDQ_SUBSYS_INVALID, for platforms that
-    are expected to have mixed PA *and* SUBSYS (hopefully none!!!); or
-2. The cmdq_pkt_write_mask_subsys() function; or
-3. The cmdq_pkt_write_mask_pa() function.
-
-This removes lots and lots of branches at every call.
-
-I want to remind you that CMDQ packets are being generated in many cases in the
-mediatek-drm driver, one of which is upon VBLANK; Think of the case in which we
-are driving a high refresh rate display (>=120Hz): not just in DSI Video mode
-for which we manage just only vblanks and data pumping (which still needs quite
-a bit of GCE writes).. but something like DSI CMD mode would probably generate
-*a myriad* of GCE calls.... and that is only one of the cases, there are more
-that don't involve specifically DSI.
-
-Of course, for mtk-mdp3 there's a different story - but I guess it's useless to
-add a specific example for that, I'm sure you got the point here.
-
-Cheers,
-Angelo
-
+On 09.10.2025 10:00, Peter Zijlstra wrote:
+> On Wed, Oct 08, 2025 at 11:39:11PM +0530, Shrikanth Hegde wrote:
+>> *It pointed to this*
+>>
+>> NIP [c0000000001fd798] dl_server_start+0x50/0xd8
+>> LR [c0000000001d9534] enqueue_task_fair+0x228/0x8ec
+>> Call Trace:
+>> [c000006684a579c0] [0000000000000001] 0x1 (unreliable)
+>> [c000006684a579f0] [c0000000001d9534] enqueue_task_fair+0x228/0x8ec
+>> [c000006684a57a60] [c0000000001bb344] enqueue_task+0x5c/0x1c8
+>> [c000006684a57aa0] [c0000000001c5fc0] ttwu_do_activate+0x98/0x2fc
+>> [c000006684a57af0] [c0000000001c671c] try_to_wake_up+0x2e0/0xa60
+>> [c000006684a57b80] [c00000000019fb48] kthread_park+0x7c/0xf0
+>> [c000006684a57bb0] [c00000000015fefc] takedown_cpu+0x60/0x194
+>> [c000006684a57c00] [c000000000161924] cpuhp_invoke_callback+0x1f4/0x9a4
+>> [c000006684a57c90] [c0000000001621a4] __cpuhp_invoke_callback_range+0xd0/0x188
+>> [c000006684a57d30] [c000000000165aec] _cpu_down+0x19c/0x560
+>> [c000006684a57df0] [c0000000001637c0] __cpu_down_maps_locked+0x2c/0x3c
+>> [c000006684a57e10] [c00000000018a100] work_for_cpu_fn+0x38/0x54
+>> [c000006684a57e40] [c00000000019075c] process_one_work+0x1d8/0x554
+>> [c000006684a57ef0] [c00000000019165c] worker_thread+0x308/0x46c
+>> [c000006684a57f90] [c00000000019e474] kthread+0x16c/0x19c
+>> [c000006684a57fe0] [c00000000000dd58] start_kernel_thread+0x14/0x18
+>>
+>> It is takedown_cpu called from CPU0(boot CPU) and it wakes up kthread
+>> which is CPU Bound I guess.  Since happens after rq was marked
+>> offline, it ends up starting the deadline server again.
+>>
+>> So i think it is sensible idea to stop the deadline server if the cpu
+>> is going down.  Once we stop the server we will return
+>> HRTIMER_NORESTART.
+> D'0h.. that stop was far too early.
+>
+> How about moving that dl_server_stop() into sched_cpu_dying() like so.
+>
+> This seems to survive a few hotplugs for me.
+>
 > ---
->   drivers/gpu/drm/mediatek/mtk_ddp_comp.c | 24 ++++++++++++++++++------
->   1 file changed, 18 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
-> index ac6620e10262..d902a65e1232 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_ddp_comp.c
-> @@ -66,14 +66,28 @@ struct mtk_ddp_comp_dev {
->   	struct cmdq_client_reg cmdq_reg;
->   };
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 198d2dd45f59..f1ebf67b48e2 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -8571,10 +8571,12 @@ int sched_cpu_dying(unsigned int cpu)
+>   	sched_tick_stop(cpu);
 >   
-> +#if IS_REACHABLE(CONFIG_MTK_CMDQ)
-> +static int mtk_ddp_write_cmdq_pkt(struct cmdq_pkt *cmdq_pkt, struct cmdq_client_reg *cmdq_reg,
-> +				  unsigned int offset, unsigned int value, unsigned int mask)
-> +{
-> +	offset += cmdq_reg->offset;
+>   	rq_lock_irqsave(rq, &rf);
+> +	update_rq_clock(rq);
+>   	if (rq->nr_running != 1 || rq_has_pinned_tasks(rq)) {
+>   		WARN(true, "Dying CPU not properly vacated!");
+>   		dump_rq_tasks(rq, KERN_WARNING);
+>   	}
+> +	dl_server_stop(&rq->fair_server);
+>   	rq_unlock_irqrestore(rq, &rf);
+>   
+>   	calc_load_migrate(rq);
+> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+> index 615411a0a881..7b7671060bf9 100644
+> --- a/kernel/sched/deadline.c
+> +++ b/kernel/sched/deadline.c
+> @@ -1582,6 +1582,9 @@ void dl_server_start(struct sched_dl_entity *dl_se)
+>   	if (!dl_server(dl_se) || dl_se->dl_server_active)
+>   		return;
+>   
+> +	if (WARN_ON_ONCE(!cpu_online(cpu_of(rq))))
+> +		return;
 > +
-> +	if (cmdq_reg->subsys != CMDQ_SUBSYS_INVALID)
-> +		return cmdq_pkt_write_mask_subsys(cmdq_pkt, cmdq_reg->subsys, cmdq_reg->pa_base,
-> +						  offset, value, mask);
-> +	else /* only MMIO access, no need to check mminfro_offset */
-> +		return cmdq_pkt_write_mask_pa(cmdq_pkt, cmdq_reg->subsys, cmdq_reg->pa_base,
-> +					      offset, value, mask);
-> +}
-> +#endif
-> +
->   void mtk_ddp_write(struct cmdq_pkt *cmdq_pkt, unsigned int value,
->   		   struct cmdq_client_reg *cmdq_reg, void __iomem *regs,
->   		   unsigned int offset)
->   {
->   #if IS_REACHABLE(CONFIG_MTK_CMDQ)
->   	if (cmdq_pkt)
-> -		cmdq_pkt_write(cmdq_pkt, cmdq_reg->subsys,
-> -			       cmdq_reg->offset + offset, value);
-> +		mtk_ddp_write_cmdq_pkt(cmdq_pkt, cmdq_reg, offset, value, GENMASK(31, 0));
->   	else
->   #endif
->   		writel(value, regs + offset);
-> @@ -85,8 +99,7 @@ void mtk_ddp_write_relaxed(struct cmdq_pkt *cmdq_pkt, unsigned int value,
->   {
->   #if IS_REACHABLE(CONFIG_MTK_CMDQ)
->   	if (cmdq_pkt)
-> -		cmdq_pkt_write(cmdq_pkt, cmdq_reg->subsys,
-> -			       cmdq_reg->offset + offset, value);
-> +		mtk_ddp_write_cmdq_pkt(cmdq_pkt, cmdq_reg, offset, value, GENMASK(31, 0));
->   	else
->   #endif
->   		writel_relaxed(value, regs + offset);
-> @@ -98,8 +111,7 @@ void mtk_ddp_write_mask(struct cmdq_pkt *cmdq_pkt, unsigned int value,
->   {
->   #if IS_REACHABLE(CONFIG_MTK_CMDQ)
->   	if (cmdq_pkt) {
-> -		cmdq_pkt_write_mask(cmdq_pkt, cmdq_reg->subsys,
-> -				    cmdq_reg->offset + offset, value, mask);
-> +		mtk_ddp_write_cmdq_pkt(cmdq_pkt, cmdq_reg, offset, value, mask);
->   	} else {
->   #endif
->   		u32 tmp = readl(regs + offset);
+>   	dl_se->dl_server_active = 1;
+>   	enqueue_dl_entity(dl_se, ENQUEUE_WAKEUP);
+>   	if (!dl_task(dl_se->rq->curr) || dl_entity_preempt(dl_se, &rq->curr->dl))
 
+This fixes a similar issue observed on Samsung Exynos SoC based boards 
+(ARM 32bit and 64bit) that I've reported in the following thread:
+
+https://lore.kernel.org/all/e56310b5-f7a9-4fad-b79a-dcbcdd3d3883@samsung.com/
+
+Thanks for the fix! Feel free to add:
+
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
 
