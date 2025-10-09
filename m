@@ -1,122 +1,119 @@
-Return-Path: <linux-kernel+bounces-846941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86924BC97A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:21:19 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D013BC97AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:21:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 00291352FA9
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:21:19 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D73DC35317B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20B0D2EAB71;
-	Thu,  9 Oct 2025 14:20:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8CFF2EA73D;
+	Thu,  9 Oct 2025 14:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XP7zn+/9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mjrV6+yZ"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA5E2EAB6C
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 14:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E612E9726
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 14:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760019654; cv=none; b=lm2F18WWlqV8i0H4hfLQyn9K+aMTK53HuMSIBzIylwFFYkXa6P+pmIpKMWN3N/gja7LAxNBpPmXlGelAcCK0p03r75zHpdL5bp+DzMXQWN5n0xoPFI0HypjVpUK9c2P7OM4J+53tDzlYCBffs8yC1JhrWMkztGwr1IIf1Y0ANYw=
+	t=1760019678; cv=none; b=RUIxRzyC2bdx8RfkQN5TbkH6vtT6Snvud7Xx27anUziAu0Xap8mYvFmDxNUp9CdDVUTBdUrMxQD3PVpq54NqLGg5J9SIFjRWxeYz/HXzMsMucwFVdd4Xve9eSn3Z/g0UntQdCSJDZF0IJhUpuJiZtv8x2HJKj/jZHbQydo98xx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760019654; c=relaxed/simple;
-	bh=dJL93EMW/6mOiIOAkHQ5cIhXyZv+4t1RhloI3PA26tE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=frUpuN0zmELAb2GztEG7ixIVsLU7Qr6YglSxuKVf9LkCXxLaUOJUiSUKUTLtWn9tEutnTbn49zSzo0D70marWeom2sosu9pjy3835IHPPi8x1phWtMDsq2ZuhUQlXjVAQRTRt0RkjnQA/ko05EQQgiE9puZ6BV01bHvdlMpKa14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XP7zn+/9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90A0DC4CEF5;
-	Thu,  9 Oct 2025 14:20:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760019653;
-	bh=dJL93EMW/6mOiIOAkHQ5cIhXyZv+4t1RhloI3PA26tE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XP7zn+/93k947sK3lmWQYJIhbHmzeWOmBpqH5cOjQvAbkGIRnA+WFc1CMkJNhxi9C
-	 o60frQ9hF1NxKOea+n0nLAKyKFU+XiCYhUN8iV0fQb2jJzxikynVrvpnxTFBPKehk5
-	 cpkBv7Xq4eQUNy3Ax+YYdGekpQFte/UN5j0XQsjnDXJLwY9/6GcAuKdtCLl6tNHvBV
-	 EgvQQrOG+YWruavdvT4hOeyj4svgyXOoL0DdPbCjCrs41Qe5sMBknM8DzaqRWzm0xw
-	 eKD7HXMnND3GgVBgWRttzVhNf7IzoRCYW+ANCXUVGHPn1atY9bPMIkxNfTuTP4+jDz
-	 LJ3a+DnMoHfIg==
-Date: Thu, 9 Oct 2025 16:20:48 +0200
-From: Joel Granados <joel.granados@kernel.org>
-To: Petr Mladek <pmladek@suse.com>
-Cc: Daniel Xu <dlxu@meta.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] watchdog: move nmi_watchdog sysctl into .rodata
-Message-ID: <lgunjvc6dqr7bofukwckd3435odkntc4trboiiwzg3pc55ebdg@hllo5da2yfkv>
-References: <20250929-jag-nmiwd_const-v1-1-92200d503b1f@kernel.org>
- <aOPa8RClyXaeyV6L@pathway.suse.cz>
+	s=arc-20240116; t=1760019678; c=relaxed/simple;
+	bh=hnQ43mlshaBsbrJ9WaCsfGbLahodDXpvt7Tbh9YbALw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WswX4PaP00oIVpRD8j2iHVFRYzN6CCdWXxBp3ImqfJ9+hbfbAJ0EVBXAqPaL/5ufwXIBy4sRwSHrllCRBthEPQcvySoao7Q7HNcA+Y/zmhC0ImtXM/VE4VGtoY5kTjkgGfzK16w8eZkXXvu4wUWGZsXaktBtK5NRmT7XpCstTuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mjrV6+yZ; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-780fe73e339so5183127b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 07:21:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760019676; x=1760624476; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hnQ43mlshaBsbrJ9WaCsfGbLahodDXpvt7Tbh9YbALw=;
+        b=mjrV6+yZhrWbga7FoeFg9w2MGW+rJzOnqhXIPT0fm7q5FpGS7K8cYSlrOpm/Ewf7lH
+         KNCFRLRYbRUvwPJgwM0+EOWBEeNbvgW4ABpAyH+2MSZTkZzT+eWXynBnCy9Ka7R9juy4
+         dxBkUHrDR65mj66xWU6CXLRqBILr3A4KAPs9eonf2weWiVh0qMvEWsS2JjN2f1iviHHY
+         5bbqzRlJggEYc/BMsq5M5fw0IeDJ1m6/dFKpDq4gxZ6iT3WqZQ6+PkJOocaoOft3S/uN
+         PBw1z2ZOX8hVndHrW9cwSVSpfiJnZN7ZSksCNoMScoxYIJCS39DPHk1LLClKEYnt5TX5
+         lD2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760019676; x=1760624476;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hnQ43mlshaBsbrJ9WaCsfGbLahodDXpvt7Tbh9YbALw=;
+        b=lg1Dl2+/Ge4mgSN/8qajH/FMbl4NZP4y0qoZHSeRtCLZuv6Fc5kvEpQIo+FZPjBaTa
+         wjVH4j62I8ggwW7Al1TlDrohxdNznilfv0jdwGnnbnNNmlG/RliiLrHduMMLldV5glC7
+         cZgMbBFwIq6+wG4hThLwP2QRvFnUyNgupFJaFctlbrork7h3n6Wf61jEbNi/Z1ncgDBh
+         Plgx00LLYUEKRajpgUqmTn08SHLhYGXWW13vIqNiWL2xQkv3JfiSbpq0LPvYSANvAFUn
+         E4Yf/282yi9KrDwosyohPyf1U/Rufk6HHnk3wJIyMxLDeEh5ZiWVYKPNBq2mNXoLTCku
+         6dZw==
+X-Forwarded-Encrypted: i=1; AJvYcCVStGd5BZlCjiovPPlWtL2rqU3LGWVhCfG91SSBbuq2ZoSLoRfe7C/R3kqLzIHUlP5AFSOKJzIol9fEaYA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPxwplIdFvEtv5w4wzaKlkFBTItmr3X1uxYPY5dU2Tp9B2lRBP
+	UvsiOJlVGfHnzCyTQh71kvvBUWr2OnE6GHU+Xhc1T0+fZlpVlNT2vwYV
+X-Gm-Gg: ASbGnctAqLTLYQvaAuxICoLPjZF6u0fRTBcpOQuqnucwTk6WY3dUUwM6HZUHN64/TVq
+	9VyG5uEFiUhQf1E0Cqsws9WFrbdLPMTqHm0yQwOpBC6U2NqF6K+yi8a7QsxqWrDRceW1GYuCcLR
+	aBDyyd2htW75Z1XZTQkyu1f6HpOUvlQ8JAs0s+c6NWKUYaTDp6tVSI4CeExedvYL8XRyRQq7Nev
+	H418oWQsCJ21kiFEDo4Jo8zMRbQTC6h7C1u1xxhk+ylEW87e/P9A0sOpZfLJxr0QJJ8/EyLJo9Q
+	+gyqwNTQSOfvMny1AD7lzqp+ewMNpUZppDYmpOWfkjoHQvu3NMugdmek2M39TBK3pzbohtVf/gy
+	WtZPVpG4/AYHGnrU6QuNVansvEc85CC4gsyI5kGKY8sa1pKicptnKuxKrxiJ4bd9fJO9oguJ2B3
+	48YSZUmEoUmTUmCsiy/lcNPh0V/oGV7pD3
+X-Google-Smtp-Source: AGHT+IGzX6tbZi0SUPeUfevUi8dyQ6CO14lnhiXYQ9QISYSYIOi8LIwUJKcnCAIMieqG5lf7wh/wgw==
+X-Received: by 2002:a05:690c:1e:b0:71e:7a40:7efb with SMTP id 00721157ae682-780d21c1a8fmr154320987b3.11.1760019675301;
+        Thu, 09 Oct 2025 07:21:15 -0700 (PDT)
+Received: from ?IPV6:2603:3020:2605:c100:7869:56ea:c12e:3c81? ([2603:3020:2605:c100:7869:56ea:c12e:3c81])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-781016bba20sm1629907b3.24.2025.10.09.07.21.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Oct 2025 07:21:14 -0700 (PDT)
+Message-ID: <dc942235-bf65-4841-bc1c-b3c66b39498a@gmail.com>
+Date: Thu, 9 Oct 2025 10:21:14 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3pa7zr6hc33hj3cn"
-Content-Disposition: inline
-In-Reply-To: <aOPa8RClyXaeyV6L@pathway.suse.cz>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Fix: ext4: add sanity check for inode inline write range
+To: Ahmet Eray Karadag <eraykrdg1@gmail.com>, Theodore Ts'o <tytso@mit.edu>
+Cc: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+ syzbot+f3185be57d7e8dda32b8@syzkaller.appspotmail.com,
+ Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+References: <20251007234221.28643-2-eraykrdg1@gmail.com>
+ <20251008123418.GK386127@mit.edu>
+ <CAHxJ8O_HF9cy5mg-W77M02E=WHrMsSOTmyxZYogUut3jJgEyFQ@mail.gmail.com>
+Content-Language: en-US
+From: David Hunter <david.hunter.linux@gmail.com>
+In-Reply-To: <CAHxJ8O_HF9cy5mg-W77M02E=WHrMsSOTmyxZYogUut3jJgEyFQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On 10/8/25 09:40, Ahmet Eray Karadag wrote:
+> I’ll review things more carefully before sending any follow-ups.
 
---3pa7zr6hc33hj3cn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hey,
 
-On Mon, Oct 06, 2025 at 05:06:25PM +0200, Petr Mladek wrote:
-> On Mon 2025-09-29 17:55:07, Joel Granados wrote:
-> > Move nmi_watchdog into the watchdog_sysctls array to prevent it from
-> > unnecessary modification. This move effectively moves it inside the
-> > .rodata section.
-> >=20
-> > Initially moved out into its own non-const array in commit 9ec272c586b0
-> > ("watchdog/hardlockup: keep kernel.nmi_watchdog sysctl as 0444 if probe
-> > fails"), which made it writable only when watchdog_hardlockup_available
-> > was true. Moving it back to watchdog_sysctl keeps this behavior as
-> > writing to nmi_watchdog still fails when watchdog_hardlockup_available
-> > is false.
-> >=20
-> > Signed-off-by: Joel Granados <joel.granados@kernel.org>
->=20
-> The patch looks good to me. Updating the access rights was nice to
-> have. But it does not look not worth complicating the constification.
-> And proc_nmi_watchdog() works correctly even when the access rights
-> are always 0644.
->=20
-> Reviewed-by: Petr Mladek <pmladek@suse.com>
->=20
-> Best Regards,
-> Petr
-Thx for the review.
+I wanted to make some suggestions for you to do before sending a patch.
+I recommend using tools like ftrace and the old classic printf
+statements to verify that the code is doing what you are saying that the
+code is doing.
 
-I'll push this through the sysctl-next branch unless you want to handle
-it somewhere else.
+If you are having trouble with the less intrusive tools, you can use
+kgdb to verify your own code does what is expected, but do not use it as
+a final verification because it is too intrusive and changes overall
+kernel behavior.
 
-Best
+Let me know if you are having any problems or need help with something.
 
---=20
-
-Joel Granados
-
---3pa7zr6hc33hj3cn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmjnxLEACgkQupfNUreW
-QU+Tbwv+OGr6zzoAdq0JyrDqq6OgiD8yejs8NSt7RMeXSwh2WMttVXLkW58WEjN9
-0ElqypZHbKIo1sm0uObI1umzl2e0PVy6SNXJKUr5xVZi/6tHZVFvV1GvUdnC/AGF
-pbN5DvWCG4RApGkeGbdb2p2lkBxM3MedUmeAiBeqJ3VPKRRI9SXYekBf91vdZrX9
-EO8l/58lOurf1ErhsAgIQejd05nuzPmUXJn8H5fX2TWflNy45dcOww+o1dbPhfy9
-O0o7hlZRxk/4nMBRjbYEXOkHstjYmuJOfnVNjTenkzQWRRdXGXfKU+1S1fTRz3zl
-5EgiwReBX6mJTe/v+jzx1KfrfbjUg2sd9hk2dEtMciFX3MWa3uJWmLOMCVD+6lpr
-++iDKJemdqHQGDj4miO/kIDqBEAcSCzG38qYqBYbvUDeQfVRJYYy/r/Xbe5pWqDU
-y69GeznBKwU5sevQNmoIK3idNZyfoh48KZiGBXD/t/QZkE860aYao4WvhxDplyXf
-BpUTMMym
-=lPup
------END PGP SIGNATURE-----
-
---3pa7zr6hc33hj3cn--
+Thanks,
+David Hunter
 
