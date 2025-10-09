@@ -1,139 +1,150 @@
-Return-Path: <linux-kernel+bounces-846378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57D14BC7C96
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:51:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C60A2BC7C07
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:44:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 10C824F587F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:50:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B549D4F07C5
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:44:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC7882D238C;
-	Thu,  9 Oct 2025 07:50:37 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4C22DF68;
-	Thu,  9 Oct 2025 07:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825AB2D0601;
+	Thu,  9 Oct 2025 07:44:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ftfLRdiU"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E30925F78F
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 07:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759996237; cv=none; b=gx63CIBjARugO2VYGHrYQQZvNjEHg0JOXg3TgmKZ5rVxO+dkr3rITN3yJvZJPB49zYUxVF3cGrn5Waqq82MdSWTdqOOivjhIBVJ7NU6Cw1HhQhBR03ew2VeekhSE4y+GJqJ3pU0wQhmSGdPK4ygpu1gjCFqNWD9Dm9bY+CijA04=
+	t=1759995889; cv=none; b=SDzD7lPhXLoaCt3VmM6lAtzJXKmbkwQVdjBcMU/M39NMrJCa15m1w/d8h0mw8/nqJLAB/QpMq3b9BHdGiPdybHO1PnjPgcF5kaNlrcjO5pw15OvHyrWN77VOMIZzwxlPT+IkRiYnSXqzDUG1mExx1tfDs2CkBtGzdX8a6i68yyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759996237; c=relaxed/simple;
-	bh=hSDqszayzc1URyLW0uaDx+454Q64tykY5sefroniNHg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V9LRw9WhHTQmz0MEMWmP71RVBP0QjzGhomMoTencmXvH00+R64ikqeZfJMH5mqEIGQQ+p6G5Ru9caJzrzZfF6wruvtZxQtqfB994OzTGp7PD+NB6h2+VBQzs4MBencSSMiu3V9pPwPrdTzDMi+Tdco3htJr8+1e+MW8eFyt4GB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cj22T4GVLz9sSy;
-	Thu,  9 Oct 2025 09:44:33 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id e-hrpkSiMM5A; Thu,  9 Oct 2025 09:44:33 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cj22T2bCVz9sSq;
-	Thu,  9 Oct 2025 09:44:33 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3E1858B768;
-	Thu,  9 Oct 2025 09:44:33 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id iEsvyTlwygx4; Thu,  9 Oct 2025 09:44:33 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 4940A8B767;
-	Thu,  9 Oct 2025 09:44:31 +0200 (CEST)
-Message-ID: <1fb2259f-65e1-4cd0-ae70-b355843970e4@csgroup.eu>
-Date: Thu, 9 Oct 2025 09:44:30 +0200
+	s=arc-20240116; t=1759995889; c=relaxed/simple;
+	bh=PFyF/2e1e/+3oQ3K/wXalt52DxrFeCjnhpvxqP9pXw4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ahe1V8b1ocYvLyJ9Ef+Avf+Iu1fww4VLL5yqXF53oDZtdV9RAsoA4IKaVM5/V4GdvmcP/dSOw2X3X/YLDe8XUVj0RYoA2+zqihD72+I4g7Hcq9Rk4fyrzbwIqwFkE/oAJlX4Svx5Gz/2cVkLuEja9rde/MVVhjeoQD2jNP9gucI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ftfLRdiU; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-57d8ff3944dso740398e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 00:44:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759995886; x=1760600686; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8Hq4tEYWxUzEgWsz0C9QYX3J9y7beXbVdVC71BzaPfc=;
+        b=ftfLRdiUfMhFnZCCHfQ2PiivvNMs5dhrhT8b3YaCVbYFt1qZN/TVaoI0un1i93Dgtd
+         vvS5Z1W+a1bc6aiMEXSvIqwlXOHuTT1ZafRpwPbmXyDhdzXBeJESi1crdAlv8mjkUxA/
+         9JQxntD2cZYb9YesahqvyjBUcFAeMYm1ZRSk1fihit2ouTlFwqCRvz/d4glw644DWAJo
+         tsSvcdXAyuUV4CexI7o8itUNGuhYnGeZPqzm1l3KFfdT3C+nyyStSKt8suqMEH3dKTOd
+         26oOBIj6Mhw12gYjoQTfFS47OlFCVze2nvgqb1ex08chxfwMKpAPOHej/yQBUst5+Ylh
+         IUDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759995886; x=1760600686;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8Hq4tEYWxUzEgWsz0C9QYX3J9y7beXbVdVC71BzaPfc=;
+        b=up3I3F8nTYXKRs07hg0JOxCgXPiElKWrykHByEGXr5nx491TQeHt5X2GlRhEEFqbNL
+         yjN/81TCDDHGOZ7wBXcSd68GPxTOcQBxKInEuhlcQCjWFlkvwdoS9UWd7szT0LjFvPMv
+         hlKKwlKzCpGIjtjXiOtEqW/vpA3IMACWYECRqgb0GXnfBWl38EC8THoTC4MgiM9BqOEm
+         VNIdPFUfCGHvBgxX3cQE8cVIkMXSlQezSOMgB1jDlo+mGnU2UOuVavIVsw4eM0sOs2es
+         5poFWmKleBpI46P67Vifa7h1xyX99OGchoiGBZNOYKjpsIVg/FedTCfNdZQqMFqwpYv4
+         ghRw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbum/NBU57Rurl0Y2AEc6GTqFR69OokTPDwKvVUwSMaGR/E09oYcJZoVw2NjZwyCSBL4W6acf2dJoQ2Cs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7fKS/wdC0HQdb5Jf56P+QRbGUjlnhbPzILWUPnciqm/L6zqk0
+	tNTjwrizcC6P4pjfmGP+x947ReODDeAVUexIueGpNUSU/eCT++Oja70DPs19pA==
+X-Gm-Gg: ASbGncuy0LVd7VP+Osgk0H+pdFOA2doyu+oQuEymu8p9GxiBrpIZUdY0OGeRnEwfRzd
+	A9wkmDsvOLCz4IH773WNmEbIeIoyPJHpyLig/9uFl1fxchdH74SLeIkj9hBIA2xXTqAp8qgZLcE
+	N5V1mK9DQ2GwhbhQxgHuXoaC+Q2y1RYrF+zye4+P66hJrdhK4bd51AbgWZtCH5dVx3ZdpEO/fwZ
+	4VSGod3RycWgTxYGewADrVr7BQre/N1pgWdJ9I3+R0dZsY5UTvsGY8d3O+xXgcNv/N2caRrSt0e
+	DoEhsMuGsx3WCgTz4bUTVSHLPzdIJi3W4ymMAhksbh2CL9CWH8F4dNtU9kNKg3KscrXBYSX/PM9
+	TU0CBTHfKj2XY4Vcp7ypHF1807rlAp1PkQ2JHbeCZIhsx/hbpOrPhmhrbKw6++EPa
+X-Google-Smtp-Source: AGHT+IEOgmWk7Fz4wvqBz+J+hHoNo/nYr91P4S3VAxGN2zP6aFWkQWDO2taB+0ag/Oi+tsqvBTldoQ==
+X-Received: by 2002:a05:6512:3ca8:b0:57d:92ec:67de with SMTP id 2adb3069b0e04-5906daeb7b6mr1973935e87.57.1759995885949;
+        Thu, 09 Oct 2025 00:44:45 -0700 (PDT)
+Received: from NB-6746.corp.yadro.com ([188.243.183.84])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5907ac00b40sm809797e87.6.2025.10.09.00.44.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 00:44:45 -0700 (PDT)
+From: Artem Shimko <a.shimko.dev@gmail.com>
+To: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Jan Dabros <jsd@semihalf.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: a.shimko.dev@gmail.com,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] i2c: designware-platdrv: handle reset control deassert error
+Date: Thu,  9 Oct 2025 10:44:43 +0300
+Message-ID: <20251009074443.2010699-1-a.shimko.dev@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: (bisected) [PATCH v2 08/37] mm/hugetlb: check for unreasonable
- folio sizes when registering hstate
-To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
-Cc: Zi Yan <ziy@nvidia.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Alexander Potapenko <glider@google.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
- Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
- dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- iommu@lists.linux.dev, io-uring@vger.kernel.org,
- Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
- Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
- kasan-dev@googlegroups.com, kvm@vger.kernel.org,
- Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
- linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
- linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-scsi@vger.kernel.org, Marco Elver <elver@google.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Muchun Song <muchun.song@linux.dev>,
- netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
- Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
- virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
- wireguard@lists.zx2c4.com, x86@kernel.org,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-References: <20250901150359.867252-1-david@redhat.com>
- <20250901150359.867252-9-david@redhat.com>
- <3e043453-3f27-48ad-b987-cc39f523060a@csgroup.eu>
- <d3fc12d4-0b59-4b1f-bb5c-13189a01e13d@redhat.com>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <d3fc12d4-0b59-4b1f-bb5c-13189a01e13d@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Handle the error returned by reset_control_deassert() in the probe
+function to prevent continuing probe when reset deassertion fails.
 
+Previously, reset_control_deassert() was called without checking its
+return value, which could lead to probe continuing even when the
+device reset wasn't properly deasserted.
 
-Le 09/10/2025 à 09:22, David Hildenbrand a écrit :
-> On 09.10.25 09:14, Christophe Leroy wrote:
->> Hi David,
->>
->> Le 01/09/2025 à 17:03, David Hildenbrand a écrit :
->>> Let's check that no hstate that corresponds to an unreasonable folio 
->>> size
->>> is registered by an architecture. If we were to succeed registering, we
->>> could later try allocating an unsupported gigantic folio size.
->>>
->>> Further, let's add a BUILD_BUG_ON() for checking that HUGETLB_PAGE_ORDER
->>> is sane at build time. As HUGETLB_PAGE_ORDER is dynamic on powerpc, 
->>> we have
->>> to use a BUILD_BUG_ON_INVALID() to make it compile.
->>>
->>> No existing kernel configuration should be able to trigger this check:
->>> either SPARSEMEM without SPARSEMEM_VMEMMAP cannot be configured or
->>> gigantic folios will not exceed a memory section (the case on sparse).
->>>
->>> Reviewed-by: Zi Yan <ziy@nvidia.com>
->>> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->>> Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
->>> Signed-off-by: David Hildenbrand <david@redhat.com>
->>
->> I get following warning on powerpc with linus tree, bisected to commit
->> 7b4f21f5e038 ("mm/hugetlb: check for unreasonable folio sizes when
->> registering hstate")
-> 
-> Do you have the kernel config around? Is it 32bit?
-> 
-> That would be helpful.
+The fix checks the return value and returns an error with dev_err_probe()
+if reset deassertion fails, providing better error handling and
+diagnostics.
 
-That's corenet64_smp_defconfig
+Signed-off-by: Artem Shimko <a.shimko.dev@gmail.com>
+---
+Hello maintainers and reviewers,
 
-Boot on QEMU with:
+This patch adds proper error handling for reset_control_deassert() in the 
+DesignWare I2C platform driver probe function.
 
-	qemu-system-ppc64 -smp 2 -nographic -M ppce500 -cpu e5500 -m 1G
+Currently, if reset deassertion fails, the driver continues probing which
+could lead to operating a device that is still held in reset. This patch
+ensures we properly check the return value and fail the probe with a
+meaningful error message if reset deassertion fails.
 
+The change is safe because:
+1. reset_control_deassert() handles NULL pointers (for optional resets) 
+   by returning 0 (success)
+2. For non-NULL reset controls, we now properly validate the operation
+3. dev_err_probe() provides appropriate error context for diagnostics
 
+Thank you for your consideration.
 
-Christophe
+Best regards,
+Artem Shimko
+
+ drivers/i2c/busses/i2c-designware-platdrv.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
+index a35e4c64a1d4..4c57c79d4ce5 100644
+--- a/drivers/i2c/busses/i2c-designware-platdrv.c
++++ b/drivers/i2c/busses/i2c-designware-platdrv.c
+@@ -240,7 +240,9 @@ static int dw_i2c_plat_probe(struct platform_device *pdev)
+ 	if (IS_ERR(dev->rst))
+ 		return PTR_ERR(dev->rst);
+ 
+-	reset_control_deassert(dev->rst);
++	ret = reset_control_deassert(dev->rst);
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret, "Failed to deassert reset\n");
+ 
+ 	ret = i2c_dw_fw_parse_and_configure(dev);
+ 	if (ret)
+-- 
+2.43.0
+
 
