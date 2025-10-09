@@ -1,266 +1,126 @@
-Return-Path: <linux-kernel+bounces-846905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3701BC962A
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:54:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F0BABC963C
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:58:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 067974FA767
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:54:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CFF719E6940
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:58:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 925952E9EA0;
-	Thu,  9 Oct 2025 13:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 799052E975F;
+	Thu,  9 Oct 2025 13:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eHQFTH11"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eYbfoC62"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303C32D0C6C
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354CF2E9726
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760018064; cv=none; b=bH2o8flArFKpYPSTJhHbCkNUNzO1W2ed2obwBHlKx8AwQmTnMlUObF6bvAEzAzbqQkCf3v1WzU3GkTzMHgW/g3XFFQ9dtXCEi6dFVfpVjUyALYOWs285o9x9C51pm9Yjp2mdJYawps0i0QcngdaXPCQ4HT+Uk6k4GlIDeqFUhRo=
+	t=1760018276; cv=none; b=LOawvqkuocaVhwgn+BsMh7meDdzhMZ82xqbgFf6z78PupNRuxJbtoaS+66mBb1WbN/lRPXFy9HIImrCEfORoVJPkscn2hpVXGC4jOwYhDmX/62AX4VMezG+K2bfgJ2MZQFvvODiMTSmwFqBOa8dBJYq6/1puMENic1H1RgDBiSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760018064; c=relaxed/simple;
-	bh=S0Qf3p1cD+btDLTWszuB+Mr4Kk8Kan6qouc5lMU4MsA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pF0zTQpvenoYXMFEDfttzpnVxMbNi9019cNf34taXKpMH9uRUYQuFPxO6PXnxdHYH2ZsCpZZwCBozKqaQG9kAJ580Shccf6Rj6sYQg17iNBT0I5d9SIdiYTqdtwFeaoHunwtHTS3DXJEQEnpZ9/89q4aP7jknJXfuouSHkwG9kI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eHQFTH11; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5996ETR6023705
-	for <linux-kernel@vger.kernel.org>; Thu, 9 Oct 2025 13:54:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	bT1BAW7H+Z9jwKo3kVgnMq1pxPx+D7qU+QOZRPdcRJw=; b=eHQFTH112zOQ8B25
-	vG2ZkFJprOarGTJLj3mBtwWZEF3jzVq9ZZqSO1dY+54VYnCshjrxif+/FKMMKV6g
-	hW2Yp2SHi0u9JHJmoifVn+k/I7QtkWoPgS9Sn7krf23xpp6VTucoV/cn9Ackhv3g
-	c37zEGAK5KVlFBj6zTVHGhbx9k84FriOr8gR428gVuvFxYOYlO2QwgWd6m82gZZh
-	d85IXlzuZcmZj8rlhUUANzFMAjfDL1MyBA0kwMn5ixIOkrt+ydqhH2M9P1k70VV/
-	eflIu4PopE4STSe0mwGYIhzdE4xe6JXX4Vzu90SMMlX9+qDgGhDAVo7PaFkQonwG
-	0BetnQ==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv4m322s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 13:54:22 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-277f0ea6fbaso21571695ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 06:54:22 -0700 (PDT)
+	s=arc-20240116; t=1760018276; c=relaxed/simple;
+	bh=aNMJD/jvy4Eo4PisGaBxwtDDj5VIcZ742XhFZPY72NY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sqG2kXkAO4sPDgcfkGVfNRsY4hLoqzSiDq6b0/SNRkOBHJC4vnxA/1gMAhSnPwQrc3aU05xRKIDiD/jE+5LEAcw3xXPzmdXqTTSgqRui9Blb7PzJJ0O3muKwv/4td5i3xjTXVJu8+utLQa2Ry+FpEWXzjnuPxLH3cyV3bjYvw1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eYbfoC62; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-57e03279bfeso1388841e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 06:57:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760018273; x=1760623073; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=A/MGlGn9iIYutzRbmuTIcRdh98fdrcz/bmBvtZd2PYA=;
+        b=eYbfoC62WGqXp7je6bdcNN/hQhsf/sgDakDMzqCG59Mu1xl4zzmN9xZFDJ+zKPGSwH
+         Lz69PC3FUDXoMFD4z6eg31mL7vHN55lAN1AoYjQVmHjzHl8sJyAGC/8Dwz4QGsn2Ybs7
+         ILEJSYkNzA9sbwEf1BYH3JKeLdH0d3qCDWgno1zC8GeKVnT/3tLAcCNMI0/c47UKVwtw
+         8LVlxQWlTUmVURPxmhT8/WYXS0Ld+z3tlSvRPzPCgCk5369kewJn7vN5XNYEjt6e0NRd
+         YjrmV1i0vVy3QozpnGFo4HfZ7LxIAeWlFk0qazfZ/0HGekauil7ujd6KNRmBj/yyohUk
+         z5Aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760018061; x=1760622861;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bT1BAW7H+Z9jwKo3kVgnMq1pxPx+D7qU+QOZRPdcRJw=;
-        b=eJnTL4FqKvP7fjg1sNuopfP755edRzlo9Ia8Jd2WTkUTb8r4887Y8gjHLHXxiEJxTA
-         mD63+RM2lXL7X7SmtacgcNoGjk5RK8f15soGDf7Jsu9f1y0R5M+HiJLTHZoU4n7k3C1K
-         V8lgfPwCyxknrITunWW3hi2HEYhM+z/4PrfNg5hALNaF/9qGzMa4i2tWzVJ+iL+dmTU8
-         B4xDrTn9UpfVdV7rlN4Cq3Vyl2e/tckt7aqhZAurRz89AeMp/5Uxl6dcFcHQLyF2AP++
-         lgrFxtg7xoAUZrLK2kpjbzGgy9gDfG9QjhUKhBf4ejwzK/dlnAmntkUHFhBmLPw4rnAM
-         5Ygw==
-X-Forwarded-Encrypted: i=1; AJvYcCVnjZ01fwFp0f0mImKfiH9PNMIEYIg1d+5pJ7xnaEBILQ3bDCZqggKnaBMd0mr+vp0i+YRG4SPZGR04AsU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiIhFnC7IBD8kH2V2iHc9Wunl34hEDBeTyuI6D0eRinotcK6QT
-	j3/Ff94mnbLpFgFI8VN2HFsL7QmiDH/QCXr3q1SwflBc8a7Zkz8Kj+mtkQ/gEqbi6wmZMSauIUN
-	hUuOCxXkpxzhwSRQa9QZ2p8Mm+YKu8pjCJOiNwLdjDYs2ipt5DQW5UMPmzRW8PXgeppM=
-X-Gm-Gg: ASbGncut2IiZjIpnLnPzEmkIX+UfOCdql/CNY86xNJEtW0UkWZXouj577gg0m0Vm4Ww
-	RnjWwlCdN/QC6XY5d4ooIt4lxf6may8/2fUBZxSMSAWhxpHId+L4OdMe9DG0vyha5HeSmrGqLx2
-	1wZFUvn8xt4heVdo6vXDTA+nIyVHaE1uVw8oUNo8GC76uXEQ2shkQuvISXIPdfQDLTY+Bjcfldl
-	osdfvHoFZp4cH70wk9L+0fS0xedHb99zjabDrhyOfPpJyMYz3Kr3zuidGIHKaLXklpHmYsce+51
-	JEcVN3tHaEmEKE05QxYG82szmjMVN8x53/SG/rINDS89TsmCZ+RJtD5qSH7Mk7yqakhOiGD4JJA
-	nvg==
-X-Received: by 2002:a17:903:298e:b0:28e:756c:7082 with SMTP id d9443c01a7336-29027374b38mr95773865ad.15.1760018061496;
-        Thu, 09 Oct 2025 06:54:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEJPH0bAlJvZir41ss8hqpNJRhwMQplwddOBUuqYzrHWOEttmDmU+J9gfXIh5Kv1JATtgZ2UA==
-X-Received: by 2002:a17:903:298e:b0:28e:756c:7082 with SMTP id d9443c01a7336-29027374b38mr95773525ad.15.1760018061026;
-        Thu, 09 Oct 2025 06:54:21 -0700 (PDT)
-Received: from [10.217.217.28] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034e1d56esm29919685ad.28.2025.10.09.06.54.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Oct 2025 06:54:19 -0700 (PDT)
-Message-ID: <831f6fd7-b81f-4d6f-b9bd-5a8fe514befb@oss.qualcomm.com>
-Date: Thu, 9 Oct 2025 19:24:13 +0530
+        d=1e100.net; s=20230601; t=1760018273; x=1760623073;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A/MGlGn9iIYutzRbmuTIcRdh98fdrcz/bmBvtZd2PYA=;
+        b=AU56FZriZPS+9qT+40RNrIyBYLi6Z2oMVg36pp42pedaFksvdNQeOjwkuLIB7AD5BX
+         DgCv226B5TC50wHuDwMf0EKoPyhmT9NPtzRbB6t/qIUHghb4UmIcil5kGbUN/bOR23tL
+         BbLny38Ikd7pu6WtAxb7PqE3SuFzzihWLcmwDw/r5Ma7sNuOIaMh0ftmasdSqtBoJQSN
+         qqnhfZi3XQmF0rmOXS+lsCOeYUSz9i8S+lNx9lkhbBF4UrF7oepRariC2g0hOuNESlhz
+         d6zOCRKCJgiCIFzi0mxCTiO1Oj5WlNAw5Rcatn2JD6+cDgN+7e0jEH1lk2cum7/11q7A
+         203A==
+X-Forwarded-Encrypted: i=1; AJvYcCUNaqxGE1dmNbUPxtihZ+lH63mhV4ZwdX8Mvv8ptGnozdmIYHOaNuqis/AidW4MYb2hp4LXGK4mnYhn5O4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLa5t3m/7zUAPC+U68BvKyTrCPglDAufcYEqSYQ6vthSxClZyV
+	MNIGCOMmP4h8PpewPGJyDMK362NY5tGrfR5jph7Q9Mnou1x/fLLSQvLD
+X-Gm-Gg: ASbGncur7ieLkGA+iDmnzjgNHt4NgYWJlZvRklkq3vd4e4pN4FLiftZtr75hbI9tee1
+	HeHWT3k4H1KgKUuxmbcZM+St7iCKLPB9Tc2SoiHardF6W4QMa7UnQCaSA/7MH1maOLvpXS09d3c
+	rVO2SzkEg012r1mbv0QSm1j+oEKYGR3N/znC51dTM8boF6D5FVy2gr0nNPQ9x3bYHiU3RJSQfYw
+	5CEY4NPT5Z+UKu2CgHkqavrK6z+6h3AU7nL51YATIzs0FPDN00kINqGOJpk9YoBaY3w+bBB6KRO
+	C6CFnj7aqOY0coRkyJ3E12f/7zxTtikrOlJNztNppDWU/SD9JIoHLugYIXHHCMwMeEQGAAE65nB
+	pGj1g5gsY1PcaaYY+wB5JBA1IO7D7qVphocBk3MZmU3A843pX8eax
+X-Google-Smtp-Source: AGHT+IHA8m/U23aYo0HxP+3yhD2Pn0UWeadCQA7OeCHX4f0bCNRxiynEaIMEXCIiEdfg2ltvNFQ3lQ==
+X-Received: by 2002:a05:6512:3a90:b0:58b:75:8fc6 with SMTP id 2adb3069b0e04-5905e28ba56mr3556064e87.19.1760018273097;
+        Thu, 09 Oct 2025 06:57:53 -0700 (PDT)
+Received: from home-server.lan ([82.208.126.183])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5907ad9e55esm1066082e87.78.2025.10.09.06.57.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 06:57:52 -0700 (PDT)
+From: Alexey Simakov <bigalex934@gmail.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Alexey Simakov <bigalex934@gmail.com>,
+	Robert Moore <robert.moore@intel.com>,
+	Len Brown <lenb@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-acpi@vger.kernel.org,
+	acpica-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH] ACPI: Add absent field_obj null check
+Date: Thu,  9 Oct 2025 16:56:47 +0300
+Message-Id: <20251009135646.8899-1-bigalex934@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 14/20] arm64: dts: qcom: kaanapali-mtp: Enable more
- features
-To: Eugen Hristev <eugen.hristev@linaro.org>,
-        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
-        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
-        yijie.yang@oss.qualcomm.com
-References: <20250924-knp-dts-v1-0-3fdbc4b9e1b1@oss.qualcomm.com>
- <20250924-knp-dts-v1-14-3fdbc4b9e1b1@oss.qualcomm.com>
- <588a7b68-2e2e-4e65-9249-fe8b18b67927@linaro.org>
-Content-Language: en-US
-From: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
-In-Reply-To: <588a7b68-2e2e-4e65-9249-fe8b18b67927@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX4jc/IJJxF/GL
- Y0VRE623lD6bW6dJ0OkeSx70i8osJcsxnzPHaq4c7bIECsaHwZgEu3/z5AxOOFIG8RMNSgO5yEg
- vDY87AtyPeMcJIc0EiuBuqT91d1d3NLyzFajCfbSLKcvHFdzhdSClzFW/mLsbMUf+Jkb3s1Tg9m
- 3OAI07kFbuJuKvPGE5GPm/ZdkoOUzIfT6bn+5EHx2Bvzi0vdohqXfINvlkvgzae+10hS32RMiYX
- rNAalZFuvUCynJThAfBSW3vIZV07OkKkDAIyCK+hTDkb24cI4+Ln8wgNXxFQ1QVCcMc6DYP6vJ+
- zWeX7/tfeEjUoni5ZcHARYqmxxaSpm2cUIM9mhszAXGV9yoZnXhVz77m819WwV96HrmqyLECymd
- fNxYNvZTQu+XlaqPH0vQXCOqeQhkkg==
-X-Authority-Analysis: v=2.4 cv=B6G0EetM c=1 sm=1 tr=0 ts=68e7be8e cx=c_pps
- a=JL+w9abYAAE89/QcEU+0QA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=_UWpYu-_HEzktCU8uygA:9
- a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22 a=HhbK4dLum7pmb74im6QT:22
-X-Proofpoint-GUID: dRSNAlQreoCSPXOzHBPWqga5rBIyXRjX
-X-Proofpoint-ORIG-GUID: dRSNAlQreoCSPXOzHBPWqga5rBIyXRjX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-09_04,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 lowpriorityscore=0 bulkscore=0 clxscore=1015 suspectscore=0
- malwarescore=0 adultscore=0 priorityscore=1501 phishscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
+Content-Transfer-Encoding: 8bit
 
-Hi Eugen,
+The acpi_ev_address_space_dispatch function is designed
+in such way that assignning field_obj to NULL is valid case.
 
-On 9/25/2025 1:33 PM, Eugen Hristev wrote:
-> 
-> 
-> On 9/25/25 03:17, Jingyi Wang wrote:
->> Enable more features on Kaanapali MTP boards including PMIC peripherals,
->> bus, SDHCI, remoteprocs, USB, PCIE, WLAN and Bluetooth.
->>
->> Written with help from Jyothi Kumar Seerapu(added bus), Ronak Raheja
->> (added USB), Manish Pandey(added SDHCI), Jishnu Prakash(added PMIC),
->> Qiang Yu(added PCIE), Yijie Yang(Added WLAN) and Zijun Hu(Added Bluetooth).
->>
->> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
->> ---
->>  arch/arm64/boot/dts/qcom/kaanapali-mtp.dts | 663 +++++++++++++++++++++++++++++
->>  1 file changed, 663 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/kaanapali-mtp.dts b/arch/arm64/boot/dts/qcom/kaanapali-mtp.dts
->> index 9cf3158e2712..2949579481a9 100644
->> --- a/arch/arm64/boot/dts/qcom/kaanapali-mtp.dts
->> +++ b/arch/arm64/boot/dts/qcom/kaanapali-mtp.dts
->> @@ -5,9 +5,23 @@
->>  
+Cover the missed execution path with this check.
 
-...
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
->> +
->> +&spmi_bus1 {
->> +	pmd8028: pmic@4 {
->> +		compatible = "qcom,pmd8028", "qcom,spmi-pmic";
->> +		reg = <0x4 SPMI_USID>;
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +
->> +		pmd8028_temp_alarm: temp-alarm@a00 {
->> +			compatible = "qcom,spmi-temp-alarm";
->> +			reg = <0xa00>;
->> +			interrupts = <0x4 0xa 0x0 IRQ_TYPE_EDGE_BOTH>;
->> +			#thermal-sensor-cells = <0>;
->> +		};
->> +
->> +		pmd8028_gpios: gpio@8800 {
->> +			compatible = "qcom,pmd8028-gpio", "qcom,spmi-gpio";
->> +			reg = <0x8800>;
->> +			gpio-controller;
->> +			gpio-ranges = <&pmd8028_gpios 0 0 4>;
->> +			#gpio-cells = <2>;
->> +			interrupt-controller;
->> +			#interrupt-cells = <2>;
->> +		};
->> +	};
->> +
->> +	pmih0108: pmic@7 {
->> +		compatible = "qcom,pmih0108", "qcom,spmi-pmic";
->> +		reg = <0x7 SPMI_USID>;
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +
->> +		pmih0108_temp_alarm: temp-alarm@a00 {
->> +			compatible = "qcom,spmi-temp-alarm";
->> +			reg = <0xa00>;
->> +			interrupts = <0x7 0xa 0x0 IRQ_TYPE_EDGE_BOTH>;
->> +			#thermal-sensor-cells = <0>;
->> +		};
->> +
->> +		pmih0108_gpios: gpio@8800 {
->> +			compatible = "qcom,pmih0108-gpio", "qcom,spmi-gpio";
->> +			reg = <0x8800>;
->> +			gpio-controller;
->> +			gpio-ranges = <&pmih0108_gpios 0 0 18>;
->> +			#gpio-cells = <2>;
->> +			interrupt-controller;
->> +			#interrupt-cells = <2>;
->> +		};
->> +
->> +		pmih0108_eusb2_repeater: phy@fd00 {
->> +			compatible = "qcom,pm8550b-eusb2-repeater";
->> +			reg = <0xfd00>;
->> +			#phy-cells = <0>;
->> +			vdd18-supply = <&vreg_l15b_1p8>;
->> +			vdd3-supply = <&vreg_l5b_3p1>;
->> +		};
->> +	};
->> +
->> +	pmr735d: pmic@a {
-> 
-> Hi,
-> 
-> The PMR735D is available in pmr735d_a.dtsi
-> 
-> Can we find a way to reuse that include file instead of duplicating it
-> here ?
+Fixes: 0acf24ad7e10 ("ACPICA: Add support for PCC Opregion special context data")
+Signed-off-by: Alexey Simakov <bigalex934@gmail.com>
+---
+ drivers/acpi/acpica/evregion.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-In pmr735d_a.dtsi, the peripherals are added under the parent phandle
-"spmi_bus", which was commonly used in older SoCs having only a single
-bus under the PMIC arbiter, but in Kaanapali, there are two buses
-present under the PMIC arbiter, with phandles "spmi_bus0" and "spmi_bus1",
-so we cannot include the file as it is.
+diff --git a/drivers/acpi/acpica/evregion.c b/drivers/acpi/acpica/evregion.c
+index fa3475da7ea9..fa01bcd3840d 100644
+--- a/drivers/acpi/acpica/evregion.c
++++ b/drivers/acpi/acpica/evregion.c
+@@ -163,7 +163,7 @@ acpi_ev_address_space_dispatch(union acpi_operand_object *region_obj,
+ 			return_ACPI_STATUS(AE_NOT_EXIST);
+ 		}
+ 
+-		if (region_obj->region.space_id == ACPI_ADR_SPACE_PLATFORM_COMM) {
++		if (field_obj && region_obj->region.space_id == ACPI_ADR_SPACE_PLATFORM_COMM) {
+ 			struct acpi_pcc_info *ctx =
+ 			    handler_desc->address_space.context;
+ 
+-- 
+2.34.1
 
-Thanks,
-Jishnu
-
-> 
->> +		compatible = "qcom,pmr735d", "qcom,spmi-pmic";
->> +		reg = <0xa SPMI_USID>;
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +
->> +		pmr735d_temp_alarm: temp-alarm@a00 {
->> +			compatible = "qcom,spmi-temp-alarm";
->> +			reg = <0xa00>;
->> +			interrupts = <0xa 0xa 0x0 IRQ_TYPE_EDGE_BOTH>;
->> +			#thermal-sensor-cells = <0>;
->> +		};
->> +
->> +		pmr735d_gpios: gpio@8800 {
->> +			compatible = "qcom,pmr735d-gpio", "qcom,spmi-gpio";
->> +			reg = <0x8800>;
->> +			gpio-controller;
->> +			gpio-ranges = <&pmr735d_gpios 0 0 2>;
->> +			#gpio-cells = <2>;
->> +			interrupt-controller;
->> +			#interrupt-cells = <2>;
->> +		};
->> +	};
->> +
-> 
-> 
-> [...]
-> 
-
+Just FYI, this patch was already merged to github ACPICA repository.
+Commit hash with correspond changes at ACPICA repository: f421dd9dd897dfd1e0c015afa90cd0de2464e23c
 
