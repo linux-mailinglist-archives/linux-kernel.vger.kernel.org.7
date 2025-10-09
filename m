@@ -1,93 +1,87 @@
-Return-Path: <linux-kernel+bounces-846202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A30D4BC744C
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 05:07:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99C3DBC744F
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 05:09:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 202E64EF4CB
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 03:07:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CC9C19E2B5B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 03:09:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7282153D2;
-	Thu,  9 Oct 2025 03:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rMpYlN+y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40980218845;
+	Thu,  9 Oct 2025 03:09:07 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 156971925BC
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 03:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619D521772A
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 03:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759979233; cv=none; b=B+X3wxM7duxVcHpRdA14RSWTe2+3lH0CqlQp/VlYNLdYkxYFMkw5bXbN3k2jOLhkhFIC3d/W42B9G407FYlx9hRRfPtank6xs11mvIAYMx2PBhycGAgNHo7+5YqfY+tw1aoA0n/8F5SoSYSrCfl5FsoAmzIvmpWpb9bjZxBPQrQ=
+	t=1759979346; cv=none; b=Uh66sySIMziEAAIrwjyy2CAr6DZxECjPamDArJXCgTBAKknoz+YHzShvnwBUToK7HXJvzD2vbnrV1K1Bsv7YVLMiVWiB3Of09ZoUZ2gXNZ+jT1lAJMMB+owQvcke/j6MFAfpVfyaNR6ncdAeiPlOqalP0eQk1nWi5qZ+DN5DGUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759979233; c=relaxed/simple;
-	bh=l6/QlNk1koJ4Ly2vwORRfIsejJwgCenfdKE/TobxbjQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IFgjkzmouYE6jX2/MAemKbjNnUrUHYOIjKvBNzpIJt7Ih8BAjaPh8XgYCYeE/5f14xYJGI7xutiYsRtAnfqVwqz967rqbtIkzZOnScuQpm4Ae7GdLvbZF1IwPLPtdsZF8uYHO7YkZmANjX8rECT0Hz47r1ypiOkPlJ7GMsZthDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rMpYlN+y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87E15C4CEF5
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 03:07:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759979231;
-	bh=l6/QlNk1koJ4Ly2vwORRfIsejJwgCenfdKE/TobxbjQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=rMpYlN+yJml5C+VAtFHlRCOPePwcYFPQaPv1GtVXKsGG5apLuSQHvEmljrrKJz+vw
-	 DTDedRbRP5xJ8q//2m+Q0iJFjnzR64jVzDo4lg5+QVE+JvSaD7YfL2aSVpeaWcwdNF
-	 Btz63An5DXVR6xDtfLmATUbi1TwUeeeqPfc9qIQcNvKQ0a7bJ+lG8JjeW7adE3wjiw
-	 yAnhB61oLxBoLVyuYFLnx+PlZExCp/Yy3Keljwlt47Q8xEnN/hRcNWn3OpUx9q98k5
-	 u6kFZCkCbdtY3oa6i1a6Y6QkiOkrJQBh3Vi5FJIAoUKIUtkaWw6G4bTu9QXMzvR3eM
-	 Lw3BEArdMMIIw==
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-62fc0b7bf62so673341a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 20:07:11 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUlau7SYcgkjgWzy5vnZy8941s3d91S0ELtssd23sAzcbXZrbRIon0irwAXnqEPEbBsJfHg1ITISkWqwZk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyexq7AL4wBhdmzpITQ9GSOnwZ4VuIP23s+bd2xzV+TPerm1WTf
-	fc/5+qZJnGxRXo27skeMQa5vQBJY9CDi0KF1WSWqIZ1WNSGVHDiNBW1eUuQlxhUeVPUZ/ZQwmJ+
-	AMHFWHAYLqAfnfNc/XnRkvj1quwGiURY=
-X-Google-Smtp-Source: AGHT+IFc8umF4spJGAquAd9G/hzMwu6C6pw1b+7LAkWABlQ0iMFfcdl67R0hJKF5Y90s9IMk0qQuXm/bl00Gn1A76uw=
-X-Received: by 2002:a05:6402:26c9:b0:639:dab5:d5e8 with SMTP id
- 4fb4d7f45d1cf-639dab5da69mr5050180a12.12.1759979230133; Wed, 08 Oct 2025
- 20:07:10 -0700 (PDT)
+	s=arc-20240116; t=1759979346; c=relaxed/simple;
+	bh=lpy+cAukm7PNJa5ZfnYLiEVyzbTvYOT1DchxCoboLz8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=j+jUIMCywa7/tnZv6In4RkPnnIP3LIUIbO+rBs0yMvhC6B/SbcE36ctA57hbBOB/wLswtkYWyCP7gRoSMYGOPAsw7ayWuFFX/SOiuiv1ikf7w7i6s0Ovrb/608EqNxTRMM9O9pp+R1zFn5gt9gf9EbdT2/h3rhO0fbCj9j/Ez1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-937ce715b90so379063439f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 20:09:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759979343; x=1760584143;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6vxLIdGWGTc6pMVOu43qkO5BzrV471hPoUk3GfZwLd4=;
+        b=o8gZIrNoF6tcRA9fxsQRsGQQ26lW0OHLclfdU5oGq6UunuFB7usvxS3XR9k9oYNnLo
+         biq8LK6hK+H1myTUcx43MXokNByEL+9M08QCdzpdwCy6zDx7fc+OKeEYdQnZTiTqexh1
+         bI95rYSKLjhpzjDd8qmdI5OW6bV9aWf9pM7Ht5yud3kg/a3x9pm5cURn6nRNrH5Fu9M4
+         nmxyxBChxLzbODPT/oi+7QIA/RXuxfhNGRXCJUzQNcKuSxd5cjans8XQscuP5mHisEY5
+         NF326IYLNmdkonOQGwCudDLkbIO+3S/i6VjvwhvWXBWbO+eISfUosrgq04vLS65fZIm6
+         mD4w==
+X-Forwarded-Encrypted: i=1; AJvYcCVPl/zzSgkgQa2Qo2Q5J2jhZSEmn5AadJKYEdbAvrTHuIjPO0Uu643iSukrVnC6T7MbCuN7Xp4YZetDMTk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/tRFpMzVbI5Ud0AbCaP4BUXpDqgvcIeLOr3Q/0F+MlTzkzYmL
+	4dDkDLKnapnVUsEFZABtlhJWfzBNoxl8wPYyJGHjH/rFLGf2Wy2aLoiBOzrhZhO228JwTcK7Fn8
+	FwKvNvbClzO48Ln1mR2MixA9EXdHcMkBzVYqQT0DSVSHhFWfyvorogFh/8ZA=
+X-Google-Smtp-Source: AGHT+IEKULW94bpMOmxDqOA1CVEAXE8R4hsqCZwXgJDV8IGayTQUQHy76hpWpO7tTOIfb/rsOzvqfsVrKNw6lAe5EUKLSQLQ91JK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1759478975.git.dan.carpenter@linaro.org>
-In-Reply-To: <cover.1759478975.git.dan.carpenter@linaro.org>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Thu, 9 Oct 2025 11:07:01 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4_O=qoF9q+si59_L3bzo_8qZ4cdmXOwMtLSDxtdeg3Xg@mail.gmail.com>
-X-Gm-Features: AS18NWCnKzxbXN0cnTO10iCNPoFw_Y9uEf0pFv7HxaZCZargsD1SGVjZqsMUkT8
-Message-ID: <CAAhV-H4_O=qoF9q+si59_L3bzo_8qZ4cdmXOwMtLSDxtdeg3Xg@mail.gmail.com>
-Subject: Re: [PATCH 0/2] mfd: ls2kbmc: Fix a couple Smatch warnings
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Binbin Zhou <zhoubinbin@loongson.cn>, Chong Qiao <qiaochong@loongson.cn>, 
-	Corey Minyard <corey@minyard.net>, Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org
+X-Received: by 2002:a6b:7b43:0:b0:8a9:4e94:704 with SMTP id
+ ca18e2360f4ac-93bc40a9a6dmr954795439f.3.1759979343448; Wed, 08 Oct 2025
+ 20:09:03 -0700 (PDT)
+Date: Wed, 08 Oct 2025 20:09:03 -0700
+In-Reply-To: <CADfthj2CUn1dQPVaoxHZ2x-6Jppnyf5gbETxOun+-05_OmXLGA@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68e7274f.050a0220.2430e3.01dd.GAE@google.com>
+Subject: Re: [syzbot] [ext4?] kernel BUG in ext4_write_inline_data (3)
+From: syzbot <syzbot+f3185be57d7e8dda32b8@syzkaller.appspotmail.com>
+To: albinbabuvarghese20@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 3, 2025 at 5:29=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro.=
-org> wrote:
->
-> These are two issues which were detected by Smatch.  They're not really
-> going to happen in real life.  Small kmalloc()s can't fail.
-> The devm_mfd_add_devices() function isn't going to fail either...
->
-> But still, they're worth fixing just for correctness sake.
-Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
->
-> Dan Carpenter (2):
->   mfd: ls2kbmc: Fix an IS_ERR() vs NULL check in probe()
->   mfd: ls2kbmc: check for devm_mfd_add_devices() failure
->
->  drivers/mfd/ls2k-bmc-core.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
->
-> --
-> 2.51.0
->
+Hello,
+
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+
+Reported-by: syzbot+f3185be57d7e8dda32b8@syzkaller.appspotmail.com
+Tested-by: syzbot+f3185be57d7e8dda32b8@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         cd5a0afb Merge tag 'mailbox-v6.18' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13ce3a7c580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=513361ac097cb4a5
+dashboard link: https://syzkaller.appspot.com/bug?extid=f3185be57d7e8dda32b8
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14ea4542580000
+
+Note: testing is done by a robot and is best-effort only.
 
