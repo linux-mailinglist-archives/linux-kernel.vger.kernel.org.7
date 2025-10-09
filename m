@@ -1,150 +1,132 @@
-Return-Path: <linux-kernel+bounces-846690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E726BC8C17
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:21:32 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC46BBC8BE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:20:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 912BD4FAEB9
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:20:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 320CF352EF0
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6DE2E092E;
-	Thu,  9 Oct 2025 11:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D2F82DA762;
+	Thu,  9 Oct 2025 11:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jnJhDsKo"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LzBCUEyg"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4292DF133
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 11:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361EB2C21F1;
+	Thu,  9 Oct 2025 11:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760008792; cv=none; b=FZFjUEc+GxZJ74M2KZgXZLUqGeivxiY72DPOiMES+uKklUPkHOn1Khr1KLoFVmB44Y/OVlQ57/6+9+9LFBBtCNDQY0Fc7JeN/947gF0FuEhYCVGl4A2BAi2g85fPCr2xW4VqNWriqrI06vV2p3OoEbFhn0lGwNBtT5JNnEHGukA=
+	t=1760008828; cv=none; b=eUlMN1bh0BUwzQ9JL5o3YNrTyb64xK+BdvCJO4d6Dusa2dTzPenQohvIIpG4xnwudJVsdSlQC1dt0VClKc7xvKpFp5mije58Nv9UwRcNnmmeSOroK8d2EK2VjuQsBvRoL1x4KsCA5xqfrlteNuvPyBvluey5h01EJuZ1HoZlXcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760008792; c=relaxed/simple;
-	bh=RzE7qmTe7VW1DwA3fxirB0NZxAahBI8Q2RnBonVma7w=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=BYmjyMyRH47VOQGNOQ75eQt+edk9jQ7MH5OMTyXx1U9+I4v2Sxx7zWzan2bsRhRU6jKr5zwDlJlyL8Nyz8w7Yv+b1T2vq0m5E3QUZ6F2ng2RuTVLfaKwXq5KHQw5PPheFyFTZcU8keuqA9TEkt3jtvHF1oOTJWpYB1ifjmKY1Ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jnJhDsKo; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-46e44b9779eso4285035e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 04:19:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760008789; x=1760613589; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2DUd84J0qxU625unTGoQRcfxjZI7PthQsRTwRgbjUIs=;
-        b=jnJhDsKouKH/2v8ag22OrYmiNA+LN5wqg5z1Jvz9EgKTvAUEQ+dAR+83C0pf8H/t50
-         0Vh6DTyL3my8UhIyPz9i26H71oUYkoQGQ6kHha2otMhNilb0saru1XEmoofMWUcVNtch
-         wthrPY37vpcajuI0bkLUvykuMKqDFjkFwvUHHejxTjAL6wOnMOcNnHwgsdn7Idub04tw
-         uZw3Dqe+7n9QplNHSS4v4svul2HdbYHL8+qfZDf/LQ+JOhEWzNtwaKu4ms/PuhmdUjnG
-         qexiHrk+PyHgzLorW1Jhrog962xFL8cYegghqb4/GiN8xhdbw2tJ8hXK7+mFFxQOd03Y
-         YXuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760008789; x=1760613589;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2DUd84J0qxU625unTGoQRcfxjZI7PthQsRTwRgbjUIs=;
-        b=jsY0JOnuHstu1/snqg2VEcagqCE85GZH5hQ9vDO8DpWnMjAJCVMzOXJDT9BvKYFBRV
-         uzQHhJ32YtV5dvabdILj49nv330W59R7bwFwvRqYC3q2VZ4JMp8JA6ijTfZHFayv7vz8
-         5UIIeah3nayjJlKLpJGGJK9bdCjGqDFqCSGOzLSYOQ1kCS7vBTaIJZSwh8zxNvEslm9b
-         qvu086GhxrbwbUDdKbWpBFJ/usYJQ+e/ugG8JFOFqj6ezrozrG8hH8CLGwilnn8uvRv7
-         2/V+8tx0lPTgc67kA53miGbVbxqX97Q9ZcaapXH7LnsaDon9+JPvEjSL1IJym+j67mbT
-         c0Lw==
-X-Forwarded-Encrypted: i=1; AJvYcCXGuXsy5cLfTI3TmrefttL+uSiThfoXB8BswhNNqStAOiRTYp1FzALJpaQHPVdYe2Ex3fHrm5/BdgWbNBI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmsOC/o7n+vYq0B01vj865YJ8N5bRv8ddSkaHsoTSFbKL2wH6p
-	WhbhcXLE8lveE/Zlni56mOthpFXkRNdMxUo8lHXgaQ9tmmTN8wgsuxP+w9Wii+uKzp13Oeken7D
-	4ZB2Qj3QgC3XEruC54w==
-X-Google-Smtp-Source: AGHT+IHDNiC37K6gv5N9rlmQWR84UKoo8mya5NIGmasE//q5bLN74a4a6FScJ09rff60l5B8yC3SZYWSCfFYwx4=
-X-Received: from wmro18.prod.google.com ([2002:a05:600c:3792:b0:45d:dc32:3d4a])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:314b:b0:46e:2109:f435 with SMTP id 5b1f17b1804b1-46fa9a966f6mr49436855e9.11.1760008789266;
- Thu, 09 Oct 2025 04:19:49 -0700 (PDT)
-Date: Thu, 9 Oct 2025 11:19:48 +0000
-In-Reply-To: <aOaW5s30sRc6gPnA@google.com>
+	s=arc-20240116; t=1760008828; c=relaxed/simple;
+	bh=QjcEKf99YwFjnzXuDCEeH98lWD1QPHRc5zZlVu3YH34=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rgNcjiLOp9fRe18q6V6F5gt4P5ReGlRejQpASyMkQfIdYaW53Mde7aXRVW3bbjkwMIno8OEyr3ufGWb4UbVdS4qIhTcCzMQnOYc/6iBEsscn/2AwtjwAPCpj7XeL033lfg6/2lxoNEsQHSoC1ZidfSbJFRehwZF5rBLP7vV71qI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LzBCUEyg; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5993GvX1002693;
+	Thu, 9 Oct 2025 11:20:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=oSyewR
+	1O86+iaGQRpRAhZnh2rN7TGtmaoIS6vlfie/8=; b=LzBCUEygy0jERqJm6s5HZB
+	5GaaPnjnepPcT6J6Nih7su9AnJd9BoyeEB/xOjRV3yDyYZDHEuXbBDNI1pm7WIVy
+	RZ/63cLpQRqsm0k/e0khIixj/z9TM1oTUYeeJIeULsXzEGr32vOJcjzwfkfaZsKY
+	6Uwc7Soekl3VIJaNm/dbeT3hbHbunVI2YuvD2q4TNAj5iG8RdvUCwNQjADu8L/1l
+	kixdPuSOtjxOtb/saXuIX0Ex9Yc+hIjArm0wsypC9XfnWP/FAxrwoPFY4bosHUkf
+	0hKcE64h0IPFFtRixIgMRf9u2UhAhkRHGzRvwhj5xzVGywAZGeX1naXDEnZfGpsg
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49nv86vawq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 09 Oct 2025 11:20:10 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5998LJm3020997;
+	Thu, 9 Oct 2025 11:20:09 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49nv9mv7dm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 09 Oct 2025 11:20:09 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 599BK96D22217458
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 9 Oct 2025 11:20:09 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 199A158055;
+	Thu,  9 Oct 2025 11:20:09 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F22E658043;
+	Thu,  9 Oct 2025 11:20:05 +0000 (GMT)
+Received: from [9.109.198.200] (unknown [9.109.198.200])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  9 Oct 2025 11:20:05 +0000 (GMT)
+Message-ID: <a79cb3bf-d9e4-4c29-85f8-e7bfc504b190@linux.ibm.com>
+Date: Thu, 9 Oct 2025 16:50:04 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251007-binder-freeze-v2-0-5376bd64fb59@google.com>
- <20251007-binder-freeze-v2-1-5376bd64fb59@google.com> <aOaSA0dPnY2I4a_D@google.com>
- <CAH5fLgiChj29SbwN-5vHhCNzaUa7wewOXe1D8mN3XFfyZr33gw@mail.gmail.com>
- <aOaTgDMY-VvM_r6m@google.com> <CAH5fLgha8DdiZ=XyyNRx8Y+GS6SCO2DHF4qMgKwMoq8tUXc3LQ@mail.gmail.com>
- <aOaW5s30sRc6gPnA@google.com>
-Message-ID: <aOeaVMHC2SWzg_Fe@google.com>
-Subject: Re: [PATCH v2 1/3] rust_binder: freeze_notif_done should resend if
- wrong state
-From: Alice Ryhl <aliceryhl@google.com>
-To: Carlos Llamas <cmllamas@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Arve =?utf-8?B?SGrDuG5uZXbDpWc=?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Christian Brauner <brauner@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch v2 3/7] blk-mq: add a new queue sysfs attribute
+ async_depth
+To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, bvanassche@acm.org,
+        ming.lei@redhat.com, jmoyer@redhat.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
+        johnny.chenyi@huawei.com
+References: <20251009074634.527661-1-yukuai1@huaweicloud.com>
+ <20251009074634.527661-4-yukuai1@huaweicloud.com>
+Content-Language: en-US
+From: Nilay Shroff <nilay@linux.ibm.com>
+In-Reply-To: <20251009074634.527661-4-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 3tSKUwcYMoDv2i0tC-7RPFnCX42ydJgl
+X-Proofpoint-ORIG-GUID: 3tSKUwcYMoDv2i0tC-7RPFnCX42ydJgl
+X-Authority-Analysis: v=2.4 cv=MKNtWcZl c=1 sm=1 tr=0 ts=68e79a6a cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=i0EeH86SAAAA:8 a=VnNF1IyMAAAA:8
+ a=DGc0GZ7HoTz3mdxrIMAA:9 a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfXwNyuhdlbddr8
+ /FG8OzwqNwedSBHu4YbDjLN1vzxIIZ/BOwm2OfenPOaAsPLjYbov7RkWv9q2z7bjQb1FVKNpY0q
+ OAynECB4KjVWjrgWmpu4tSrBWIoSPBLCxgAL4SLgqu5PjE8Mv4SMJSDTBOgPyNlVAoc8m8/JeRB
+ Lbz5v2NHcuHLcqcdd3fN8PMiFYOiwN2gJ08vKdb39m/xW3xM84gOYSA6eFv2/0soUScivDdtLmv
+ ZyQtCdatFQwdicsUuoszJCiWDo2TdfXUjnlFELu3eybOV7PA662tL41a5OKfN/hoZ7CGS2oj+rU
+ tustneQ0Utvg+5T+Lmrm3yDMPlTgwzOmG1PPmo3lIsdULN3fWyPBIQ6Pb5hCDr78a3aKnJchWiX
+ T52gJpKnqLo/fY35s0no8GPL5/nTsQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-09_03,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 phishscore=0 malwarescore=0 bulkscore=0 spamscore=0
+ priorityscore=1501 suspectscore=0 lowpriorityscore=0 clxscore=1011
+ impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510080121
 
-On Wed, Oct 08, 2025 at 04:52:54PM +0000, Carlos Llamas wrote:
-> On Wed, Oct 08, 2025 at 06:41:20PM +0200, Alice Ryhl wrote:
-> > On Wed, Oct 8, 2025 at 6:38=E2=80=AFPM Carlos Llamas <cmllamas@google.c=
-om> wrote:
-> > >
-> > > On Wed, Oct 08, 2025 at 06:34:54PM +0200, Alice Ryhl wrote:
-> > > > On Wed, Oct 8, 2025 at 6:32=E2=80=AFPM Carlos Llamas <cmllamas@goog=
-le.com> wrote:
-> > > > >
-> > > > > On Tue, Oct 07, 2025 at 09:39:51AM +0000, Alice Ryhl wrote:
-> > > > > > Consider the following scenario:
-> > > > > > 1. A freeze notification is delivered to thread 1.
-> > > > > > 2. The process becomes frozen or unfrozen.
-> > > > > > 3. The message for step 2 is delivered to thread 2 and ignored =
-because
-> > > > > >    there is already a pending notification from step 1.
-> > > > > > 4. Thread 1 acknowledges the notification from step 1.
-> > > > > > In this case, step 4 should ensure that the message ignored in =
-step 3 is
-> > > > > > resent as it can now be delivered.
-> > > > >
-> > > > > hmmm, I wonder what happens with 3 threads involved where the sta=
-te goes
-> > > > > back to the (unconsumed) initial freeze notification. Userspace w=
-ill
-> > > > > probably see two separate notifications of the same state?
-> > > >
-> > > > The way I implemented it, the work items report the current state w=
-hen
-> > > > the work item is *executed*, and they do nothing if there's no chan=
-ge
-> > > > since last notification.
-> > >
-> > > Oh I see, then that means the 2nd and 3rd notifications would do noth=
-ing
-> > > as the state went back to the last notification, correct?
-> >=20
-> > Yeah.
-> >=20
-> > If the state flips quickly, userspace might not get told about that if
-> > it's too slow to receive the update, but that's no different from C
-> > Binder.
->=20
-> I believe the difference is C binder doesn't report the current state at
-> the time of consuming the notification. So I'm thinking that it would
-> report two notifications regardless of the state, even if they are both
-> the same. Oh well.
 
-Yeah, I guess if it only toggles once, then C Binder will report that.
-On the other hand, if it toggles multiple times, then C Binder might not
-report it that many times.
 
-We could make Rust Binder faithfully report the callback the right
-number of times in the face of toggling, but it seems not worth it.
+On 10/9/25 1:16 PM, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> Add a new field async_depth to request_queue and related APIs, this is
+> currently not used, following patches will convert elevators to use
+> this instead of internal async_depth.
+> 
+> Also factor out a helper blk_mq_limit_depth() to make code cleaner.
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 
-Alice
+Looks good to me:
+Reviewed-by: Nilay Shroff <nilay@linux.ibm.com>
 
