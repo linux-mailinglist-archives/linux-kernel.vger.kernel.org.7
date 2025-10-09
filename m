@@ -1,152 +1,166 @@
-Return-Path: <linux-kernel+bounces-847360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 250A7BCA9DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 20:53:55 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60BECBCA9E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 20:56:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 705934EC3EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 18:53:53 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CF55C350505
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 18:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80702512FC;
-	Thu,  9 Oct 2025 18:53:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA59C248867;
+	Thu,  9 Oct 2025 18:56:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="tKCjmXIf"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABAEB21FF38;
-	Thu,  9 Oct 2025 18:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IinhdPH8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2E121A95D
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 18:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760036023; cv=none; b=D/QNq4Dz0pNkY67EIS7npu2qO25Jc0cmHu8mU85WqC2gCOS1UiYygqw0wYTGxQJxVg/jYR7JVyu8X5Q6vhdBtFz9XuXtNb9g46aQNKnpZymD2oMoUULpcroJxd/xstdNjFBG6+5ze9MvIVGY0ISy5kfo5+0BFM5km9rXuPcve0o=
+	t=1760036178; cv=none; b=BNVsXftxPLkFfT4nxIXk+D1TB2IXus2b5g8ExfPgr+m3N/asSmeL8GYd6betbaIq+gVGpfWFk8ZPJ99Sydb8rJoxXq2MMsgKsxrl1k5Vv7eh+tHDo2nSz2obXwHT7vif5wBK5p9UkIzDbzYOW58sPHsn7tqUwKGQiMF8zX1tGK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760036023; c=relaxed/simple;
-	bh=ahKsEBsebIAvxVEpnkpdGbJQSre6pnqocFTciVXlNVY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=OqPF0iO7RJ3lX7BpMJCYp7FeGnWfgor9yGwjZD5Fo95FuGnPho3qDIDH/QPT9TFv1Pd/2aWgaqr543f2XLKi1TuWTdWn5xJwN6RtBIeeXBekkn9jmGgIXVbJYsWmyRPhpyHGMbM4sTL8JtVMNt7sg7efHhNLoP36nhIjRrSpVNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=tKCjmXIf; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.64.193.78] (unknown [52.148.171.5])
-	by linux.microsoft.com (Postfix) with ESMTPSA id B3B672038B77;
-	Thu,  9 Oct 2025 11:53:40 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B3B672038B77
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1760036020;
-	bh=VmxKPO+i5KTsorZ+pMnJ55Bwhxr8Xq+S/RT8s6iZC3Y=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=tKCjmXIfvIIljj0G5qLBAQXiawr5IkJ/VrgzdjM4W0PjAGiAmqj3+pND4DVUBmzpv
-	 mVuGhSD+lgnJej3DV7Q948H+zzs+AkfS/UviVn9aAGsv4mHKljdub9XMJr29b12cWd
-	 0wS0ZHh0gV60zQz0LjFCITzG/UvvDLmEQzpF1i7s=
-Message-ID: <2768abf3-6974-49e6-9ea2-5e5e04f533a7@linux.microsoft.com>
-Date: Thu, 9 Oct 2025 11:53:39 -0700
+	s=arc-20240116; t=1760036178; c=relaxed/simple;
+	bh=4iB88tQw2WXsZzzM6xK3yQGqAvESZ/GXQ3GjoVzeMlU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YlJtHMyKwZmGF4WNINPPfrhizdhCdVRYBa+xc0hcPAol3EsBTXT7wOiJg3rIEASdvuNQHK4vxqRYrzvYWpJK6NTrRMGzjUWsz55fsTku/QUnn2p3npRD/6oKvM3ln/amTB8YEIWftCXB+KfG9wVUx93xYnCgeyLZoo7M49aX358=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IinhdPH8; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760036175;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=73VHJPHIbh12PnyxfeCzN+eZOdvnFxFQRvkYUUFjG6M=;
+	b=IinhdPH8Tazv+mxUKMAWYZmuw/aFfoO4o6MVU/4HB3XAiOfQnenv46Iy3qdcV48jKnW3tP
+	lVYjp2CkqSXS2iG8zJzseuyHFZFG/p96BihQHTNhgL6RORU63Tkhf2c7K+CNilbwUooutq
+	n2TuEGeKYZAUFT1UG3iOdvrttfNYm+Q=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-330-jhVYExrWOD2Wl5I8TiN2Pw-1; Thu, 09 Oct 2025 14:56:14 -0400
+X-MC-Unique: jhVYExrWOD2Wl5I8TiN2Pw-1
+X-Mimecast-MFC-AGG-ID: jhVYExrWOD2Wl5I8TiN2Pw_1760036173
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4e6e4f29c05so61997311cf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 11:56:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760036173; x=1760640973;
+        h=user-agent:in-reply-to:content-transfer-encoding
+         :content-disposition:mime-version:references:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=73VHJPHIbh12PnyxfeCzN+eZOdvnFxFQRvkYUUFjG6M=;
+        b=BMUOL7HY6IkG5mIF4IMyfP/7Wkr1imA3SlYQtVa8cZETOt40wt0YqulcOb84G/zdwZ
+         3Q6ERek/3sQKWaGXreH6gXX8iRMHywjOYpCKRvehbYTJXFAj1T1uiRAFSW4HZ3qfET70
+         WwQqQucHuRYE+qP4taVmbPY8PslDMkU6Kie5cgmmLpD9GR4i8e60u3bXZUcQUfU8iMtD
+         7r4bLKjsF85SFf/R5w0XtjBZyIGlzwWkC7dLWGXUddhyJqtjsYkanE8Jyr/IY6MfYC/Y
+         sYBtjM5Ge3ZTYdjm7GFIiBW7jiYiAinwo9YjkHzsxFJrOGKwUSxh0YjpG/ZBYVrKeIw7
+         LK+g==
+X-Forwarded-Encrypted: i=1; AJvYcCVWntAv5u8UzG/bjouui6Ad81bkdWFJHzQh8B+wEUDfYdLzva9pI2PwbEaJv4NvhP+4UldbJksVPhHG8CQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMeEMW2h4r8fuLfiIs3QOR4CRj0n84Gw2ADYPrNgdVhyNu5bbi
+	dKyEj3eEnFa8oE4oGQiXxZVm7rWK0jIT3rpLV3KIT9boFuKgSN8sbiZVZDEnnsyy34G0ssGGytX
+	RzUCcYRBYDce2tWihEAH+fGsNGrlZ8g9YQdPtJO0Ejd3UIOmJhuiJ0Z7e2kHEG8ONQg==
+X-Gm-Gg: ASbGncsz4DibBTBuswwJvYSwMYk/+KPlFUdS+vEPm32PSDhmQi9b8lvMppyX1NsV2xT
+	RwFPF5E2D/ZtCabJpPmRcbZlgUx1pxRAaxqmT/85rwRZfY0cn2Sfy8HiIH9+qMNxRK/td3edI+y
+	T3jugsFGZZxNYzYsaVwcASpy4iqe43IBlvUXcGJfayCrXf01dVzrr3DNzyOX0amZ2bDhuyY6wXP
+	LmhzKOgyz60YObAZYh3ol7bko2cLATq4T6pafm44PSz3aE1+95jmmZXRIkYu5h1NzZpmOl+hrgf
+	h4b7uAHxkmP/Sms/krsR2JRI7Fv/Vvkrf1s6JMGfPK4nf+DPKtmUtjlfj84UgF9sWi51oegZGNf
+	mHa8K67TY44HwPRmZLZMuxGy2YoLx4kBw5SWi
+X-Received: by 2002:ac8:584c:0:b0:4e5:7bd4:1beb with SMTP id d75a77b69052e-4e6ead65549mr104456761cf.68.1760036173459;
+        Thu, 09 Oct 2025 11:56:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE2AD5ZZcXckeSU9b450Mt8BqD9SOhoclS7nRF67Cec3FIHzgTkgVAjC1MmE6pVFS6HrvZ8kA==
+X-Received: by 2002:ac8:584c:0:b0:4e5:7bd4:1beb with SMTP id d75a77b69052e-4e6ead65549mr104456441cf.68.1760036172855;
+        Thu, 09 Oct 2025 11:56:12 -0700 (PDT)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e706dd1ceesm3026011cf.41.2025.10.09.11.56.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 11:56:12 -0700 (PDT)
+Date: Thu, 9 Oct 2025 14:56:10 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: tests: Add tests for clk lookup by name
+Message-ID: <aOgFSi_h95tfD8x2@redhat.com>
+References: <20251002092036.2504858-1-wenst@chromium.org>
+ <aOb6iNR9T4R9Hp3R@redhat.com>
+ <CAGXv+5HPjEnYh+zUi67+Y=nmFfdRFw0xd=rT7L_-GNxouga4Ow@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] Drivers: hv: Use better errno matches for HV_STATUS
- values
-To: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>,
- "K. Y. Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>,
- Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
- "open list:Hyper-V/Azure CORE AND DRIVERS" <linux-hyperv@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20251006230821.275642-1-easwar.hariharan@linux.microsoft.com>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <20251006230821.275642-1-easwar.hariharan@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGXv+5HPjEnYh+zUi67+Y=nmFfdRFw0xd=rT7L_-GNxouga4Ow@mail.gmail.com>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-On 10/6/2025 4:08 PM, Easwar Hariharan wrote:
-> Use a better mapping of hypervisor status codes to errno values and
-> disambiguate the catch-all -EIO value. While here, remove the duplicate
-> INVALID_LP_INDEX and INVALID_REGISTER_VALUES hypervisor status entries.
+On Thu, Oct 09, 2025 at 11:24:22AM +0800, Chen-Yu Tsai wrote:
+> On Thu, Oct 9, 2025 at 7:58 AM Brian Masney <bmasney@redhat.com> wrote:
+> >
+> > On Thu, Oct 02, 2025 at 05:20:35PM +0800, Chen-Yu Tsai wrote:
+> > > Clk lookup (by name) recently gained some performance improvements at
+> > > the expense of more complexity within the lookup code.
+> > >
+> > > To make sure that this works as intended and doesn't break, add some
+> > > basic tests for this part of the CCF.
+> > >
+> > > A new "clk_hw_lookup()" function is added purely for running kunit
+> > > tests.
+> > >
+> > > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> > > ---
+> > >  drivers/clk/clk.c      | 11 +++++++
+> > >  drivers/clk/clk.h      |  4 +++
+> > >  drivers/clk/clk_test.c | 66 +++++++++++++++++++++++++++++++++++++++++-
+> > >  3 files changed, 80 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > > index 85d2f2481acf..a17d0070d11f 100644
+> > > --- a/drivers/clk/clk.c
+> > > +++ b/drivers/clk/clk.c
+> > > @@ -778,6 +778,17 @@ struct clk *__clk_lookup(const char *name)
+> > >       return !core ? NULL : core->hw->clk;
+> > >  }
+> > >
+> > > +#if IS_ENABLED(CONFIG_CLK_KUNIT_TEST)
+> > > +/* This is only provided for kunit tests to test the core lookup functions. */
+> > > +struct clk_hw *clk_hw_lookup(const char *name)
+> > > +{
+> > > +     struct clk_core *core = clk_core_lookup(name);
+> > > +
+> > > +     return !core ? NULL : core->hw;
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(clk_hw_lookup);
+> > > +#endif
+> >
+> > Use EXPORT_SYMBOL_IF_KUNIT instead for consistency with the rest of the
+> > kernel. In clk_test.c, you'll also need to add:
+> >
+> > MODULE_IMPORT_NS("EXPORTED_FOR_KUNIT_TESTING");
 > 
-
-To be honest, in retrospect the idea of 'translating' the hypercall error
-codes is a bit pointless. hv_result_to_errno() allows the hypercall helper
-functions to be a bit cleaner, but that's about it. When debugging you
-almost always want to know the actual hypercall error code. Translating
-it imperfectly is often useless, and at worst creates a red
-herring/obfuscates the true source of the error.
-
-With that in mind, updating the errno mappings to be more accurate feels
-like unnecessary churn. It might even be better to remove the errno mappings
-altogether and just translate HV_STATUS_SUCCESS to 0 and any other error
-to -EIO or some other 'signal' error code to make it more obvious that
-a *hypercall* error occurred and not some other Linux error. We'd still
-want to keep the table in some form because it's also used for the error
-strings.
-
-The cleanup removing the duplicates in the table is welcome.
-
-Nuno
-
-> Fixes: 3817854ba89201 ("hyperv: Log hypercall status codes as strings")
-> Signed-off-by: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>
-> ---
-> Changes in v2: Change more values, delete duplicated entries
-> v1: https://lore.kernel.org/all/20251002221347.402320-1-easwar.hariharan@linux.microsoft.com/
-> ---
->  drivers/hv/hv_common.c | 22 ++++++++++------------
->  1 file changed, 10 insertions(+), 12 deletions(-)
+> Didn't know about this one. Thanks!
 > 
-> diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
-> index 49898d10fafff..bb32471a53d68 100644
-> --- a/drivers/hv/hv_common.c
-> +++ b/drivers/hv/hv_common.c
-> @@ -758,32 +758,30 @@ static const struct hv_status_info hv_status_infos[] = {
->  	_STATUS_INFO(HV_STATUS_SUCCESS,				0),
->  	_STATUS_INFO(HV_STATUS_INVALID_HYPERCALL_CODE,		-EINVAL),
->  	_STATUS_INFO(HV_STATUS_INVALID_HYPERCALL_INPUT,		-EINVAL),
-> -	_STATUS_INFO(HV_STATUS_INVALID_ALIGNMENT,		-EIO),
-> +	_STATUS_INFO(HV_STATUS_INVALID_ALIGNMENT,		-EINVAL),
->  	_STATUS_INFO(HV_STATUS_INVALID_PARAMETER,		-EINVAL),
-> -	_STATUS_INFO(HV_STATUS_ACCESS_DENIED,			-EIO),
-> -	_STATUS_INFO(HV_STATUS_INVALID_PARTITION_STATE,		-EIO),
-> -	_STATUS_INFO(HV_STATUS_OPERATION_DENIED,		-EIO),
-> +	_STATUS_INFO(HV_STATUS_ACCESS_DENIED,			-EACCES),
-> +	_STATUS_INFO(HV_STATUS_INVALID_PARTITION_STATE,		-EINVAL),
-> +	_STATUS_INFO(HV_STATUS_OPERATION_DENIED,		-EACCES),
->  	_STATUS_INFO(HV_STATUS_UNKNOWN_PROPERTY,		-EIO),
-> -	_STATUS_INFO(HV_STATUS_PROPERTY_VALUE_OUT_OF_RANGE,	-EIO),
-> +	_STATUS_INFO(HV_STATUS_PROPERTY_VALUE_OUT_OF_RANGE,	-ERANGE),
->  	_STATUS_INFO(HV_STATUS_INSUFFICIENT_MEMORY,		-ENOMEM),
->  	_STATUS_INFO(HV_STATUS_INVALID_PARTITION_ID,		-EINVAL),
->  	_STATUS_INFO(HV_STATUS_INVALID_VP_INDEX,		-EINVAL),
->  	_STATUS_INFO(HV_STATUS_NOT_FOUND,			-EIO),
->  	_STATUS_INFO(HV_STATUS_INVALID_PORT_ID,			-EINVAL),
->  	_STATUS_INFO(HV_STATUS_INVALID_CONNECTION_ID,		-EINVAL),
-> -	_STATUS_INFO(HV_STATUS_INSUFFICIENT_BUFFERS,		-EIO),
-> -	_STATUS_INFO(HV_STATUS_NOT_ACKNOWLEDGED,		-EIO),
-> -	_STATUS_INFO(HV_STATUS_INVALID_VP_STATE,		-EIO),
-> +	_STATUS_INFO(HV_STATUS_INSUFFICIENT_BUFFERS,		-ENOBUFS),
-> +	_STATUS_INFO(HV_STATUS_NOT_ACKNOWLEDGED,		-EBUSY),
-> +	_STATUS_INFO(HV_STATUS_INVALID_VP_STATE,		-EINVAL),
->  	_STATUS_INFO(HV_STATUS_NO_RESOURCES,			-EIO),
->  	_STATUS_INFO(HV_STATUS_PROCESSOR_FEATURE_NOT_SUPPORTED,	-EIO),
->  	_STATUS_INFO(HV_STATUS_INVALID_LP_INDEX,		-EINVAL),
->  	_STATUS_INFO(HV_STATUS_INVALID_REGISTER_VALUE,		-EINVAL),
-> -	_STATUS_INFO(HV_STATUS_INVALID_LP_INDEX,		-EIO),
-> -	_STATUS_INFO(HV_STATUS_INVALID_REGISTER_VALUE,		-EIO),
->  	_STATUS_INFO(HV_STATUS_OPERATION_FAILED,		-EIO),
-> -	_STATUS_INFO(HV_STATUS_TIME_OUT,			-EIO),
-> +	_STATUS_INFO(HV_STATUS_TIME_OUT,			-ETIMEDOUT),
->  	_STATUS_INFO(HV_STATUS_CALL_PENDING,			-EIO),
-> -	_STATUS_INFO(HV_STATUS_VTL_ALREADY_ENABLED,		-EIO),
-> +	_STATUS_INFO(HV_STATUS_VTL_ALREADY_ENABLED,		-EBUSY),
->  #undef _STATUS_INFO
->  };
->  
+> > Since clk_hw_lookup() is only used by kunit, why not just put this new
+> > function in clk-test.c, and use EXPORT_SYMBOL_IF_KUNIT on
+> > clk_core_lookup?
+> 
+> Then we end up sort of exposing clk_core_lookup as well?
+> 
+> I believe Stephen wants to keep things contained as much as possible.
 
+I agree about keeping things contained as much as possible as well.
+clk_core_lookup() would only be exposed to the kunit tests if you used
+EXPORT_SYMBOL_IF_KUNIT. Definitely go with whatever approach you think
+Stephen will prefer.
 
-
+Brian
 
 
