@@ -1,47 +1,87 @@
-Return-Path: <linux-kernel+bounces-846460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE30EBC80FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:35:39 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06AB9BC810C
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:36:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 28704352CF2
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:35:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DCC5C4EAA0A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430E6298991;
-	Thu,  9 Oct 2025 08:35:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250A22C027C;
+	Thu,  9 Oct 2025 08:36:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XK3IL3G2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lmfj4wba"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569944A01;
-	Thu,  9 Oct 2025 08:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0270727B327
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 08:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759998934; cv=none; b=V550O8PKzlyUdm3ev1dyBDCO9Ab0VVI/tnx72gIzEsmkqCmbveZN9TtMi8l/RZCrLw5nQJ5Nlj3zxJBmtwUrpI1YUzzkU25IT80rUxyvvQQiIpWWkd+Rr6LSKV1saDroPLtNUt9w6ymVTCXjb6+6PeeWx+IQpa/jCmVWfqJsAUY=
+	t=1759998960; cv=none; b=BVmbUjHsocoFlQ1k8KV8EVxnBl9AeLC+clHZ/6Gbeb8gh/YMxDsCm8Que1omzsPU38LVuh8hBiSeorri4FhonhzdAp+3xqRLmwUfLMlNbZeKEfiCjTMBQs0ubwvLdZRM84EvvT8L7vqEyNNToP5qd1I2nkJNpum2LmiyXyG7afA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759998934; c=relaxed/simple;
-	bh=iJ2gAtfZfSkAmmta5myZcy2q+0UiwW4oR9qXus1t1Qo=;
+	s=arc-20240116; t=1759998960; c=relaxed/simple;
+	bh=7SWnQZGkOgz7eDNwlU+qvn3WuBJRX72GuIMwJ21d7Yk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K1kdL5D6ZHr4wnZ0w6c/kcJJiQLMFRWTgSPTsyyVmWRa9xhXaF3+vqo2026Zt7rAbWHR4HFZy9c2hmn124fDR5GBGMDsPkN40asJNnH7UP15ioS3YmvXSF2RM4iA/ccmVE71HxjenV0fPWpLcyqJl+nHKnpXB9/qOVoRLhFQl5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XK3IL3G2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5825C4CEE7;
-	Thu,  9 Oct 2025 08:35:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759998933;
-	bh=iJ2gAtfZfSkAmmta5myZcy2q+0UiwW4oR9qXus1t1Qo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XK3IL3G2i/C5MvcOk/aViHDqOWlGhoELkqpohpehP7KriLonf025Kj9t0cCD4uFLp
-	 sU+F8tGqejn/0au5vEihmh/BPHCH3h/Ej0RPLTeW7vPFkbOPKANTczGtwLBCy5vTap
-	 fHlN82F5MEpgoQ40l+kSuSuRpKOQOMVO15HKHFlarv4tJRPROIFNoNILNaQt0D9xf0
-	 8VjCydbivuUjZlrfFacJ/CP6bo4PDichsELzZhKomRqwHpK9tfSMp0cgkzx9/swV4B
-	 7jx/Tqy1OhEuZjWLctvTqOXX7+trBRWyGJp1MYhLvwCyvWKAeKGxt5B9qKBbfrhwfa
-	 MXj4WOc5+2tOg==
-Message-ID: <66b75fc5-1d3c-4d43-b1c7-9be689e131e6@kernel.org>
-Date: Thu, 9 Oct 2025 17:35:28 +0900
+	 In-Reply-To:Content-Type; b=od6ZMF0rLr3Hae9oj2PpQTsWUquZVy5ymOZobuP8hNttJrRhQBIWV0d75aOIme6OJHbekzLJC+oEhE6aso66WqdDC1jPUZ0XQp/onc/iaKpB5/rRCKHF6K0qfyQcRMQYV+q9l1Zlx7lmOuKqeiLmNPdof7SxXmIh7ShtpESNt6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lmfj4wba; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5996EQLN029793
+	for <linux-kernel@vger.kernel.org>; Thu, 9 Oct 2025 08:35:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	hu/pRTCJV3pDmrBwILASxYyavlvjaPNiTFHY9r2ayxs=; b=lmfj4wbabWDD13c6
+	JeVHr+pPCPe7kDK9Y1i8X1lQ2nCVMO8lTSxi5q0/7SVBB1xnzPSfyk0o9CdVTVSi
+	dMqevlhBiPJR7OiUkwAMbtnn5eLCmrsOzjk8QLV6GKiZWDO9ykfb7BA1atP/fZzN
+	pkGg+sQyzvjcG1qRxrEaRzUdkgKoPxaPUjPGq1o4VC/v8ooGB56K5URUllq2Vp/h
+	FrrOfnjOgsxskL2nu3FWXMqf2qeqNkUQugSC2nirWS7yCZExFcVKpr5gl6XnTRvV
+	AkyZkJjhSxeHarMBiqY5+AJdvPre1Gq2u8ZXBFE9wSMuwCjovPJebEkcRR5Y0Y32
+	5Nk02Q==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv4na2ug-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 08:35:58 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-826b30ed087so2347686d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 01:35:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759998957; x=1760603757;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hu/pRTCJV3pDmrBwILASxYyavlvjaPNiTFHY9r2ayxs=;
+        b=LqMgKcnhnLPmHE+/Y2ot4s9e/q0dHK7ySuPVAdfkHVjT/+t0UyCW8hbKXsok2kWjon
+         vbtsYFskbH21y8TjhBYiXKtE1nnGvwmqBuei4jxDc5vjPwkeAa9Z65W2JG3hO5khOeFI
+         Jakn2t+HXRCLGR17oRu0tdpXOqH2ZqvDkGehVjzcTqUyt3rEbNFwKk8A87x9p1vEmIk9
+         8mPyMBBLHowAc8VHZmJkvKd5aJ5EZsNF/p0K3GZS7v0fw9F/H2S1CZB0VBgWx0ZQCZ8G
+         Zq715slYmEvegYAWfEQXEYp+N5n5uJdkTYD0ujyOAxSSXtWZ/pMItdMfKt11r2Rx6FRb
+         8XEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW9ZulAq8y8XXA4u3a0oxHzmDuF6hmqMUbq28yzEDEFPFqwsJ9brViZXJL+8t792uJye2F1mFhPCw4ZbMQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysEuTvGo+OYVxN5qjqTgVYdbxDGqTEfRZ9UfXPEj+q6xOmwRP+
+	JLqwIONZp5/oUbS+I/YpgC6E1eMS5j9fpLVWQGNsXduayGXP3/lORRLVSefVfmWoQY2gV7KStlK
+	Rc+UNLDMNF8/YMpOL/y5eCKb8fQqNRsnOC2P2cuMc9BIYgjjfGZx5rnDv+fI05727k/w=
+X-Gm-Gg: ASbGncv91lAYFqqa4VcNhepKaJ4acyaxrHFJcRiWqF1YMht7CgqKa5WlyozEWQ0MsZb
+	oP6iuXCe39yudZQFbsCuRNcW+oLC4c8EJGN+VDbru8f6H8w8mI6x4+IR/9h4qWueM1SZPehh+pK
+	ueEDqhuKOXqMuyYFM+5JFAZ/91HbColP4pIKlSb39gIhJxtz6ouSQiO7JBlbeDM2OAlDxghT5Nj
+	A6up8Rcp/b6G06YdnsLf7IBS6CvS1c0FpDxpTTkFrhb8XhJV3nrKmavy9q42PSjMcXyGDYCH0xU
+	g3cCV54GdpzFrLiIW3j21WeA0f4FsuXEixf//CvLdXEH3rHOyPDpaSoSPhPxjbxkO4KPzsH5+7z
+	h+hPQKTzYsPfiHflmTXyZ+YtyiQc=
+X-Received: by 2002:a05:622a:51:b0:4dd:2916:7983 with SMTP id d75a77b69052e-4e6eac949e9mr63918051cf.2.1759998956716;
+        Thu, 09 Oct 2025 01:35:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHgYQkiD0jOWnmXizRtOekJynoqnzXlVrb6i9wWQzty768o4CoBlYGKZEKsuxy0gFmxG00SRw==
+X-Received: by 2002:a05:622a:51:b0:4dd:2916:7983 with SMTP id d75a77b69052e-4e6eac949e9mr63917901cf.2.1759998956230;
+        Thu, 09 Oct 2025 01:35:56 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48652a9bd7sm1875117966b.3.2025.10.09.01.35.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Oct 2025 01:35:55 -0700 (PDT)
+Message-ID: <b5538a86-c166-4f20-9c3a-8170d3596660@oss.qualcomm.com>
+Date: Thu, 9 Oct 2025 10:35:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,204 +89,110 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [tip: sched/urgent] sched/deadline: Fix dl_server getting stuck
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
- Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
- John Stultz <jstultz@google.com>, x86@kernel.org,
- 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
- Mark Rutland <mark.rutland@arm.com>
-References: <20250916110155.GH3245006@noisy.programming.kicks-ass.net>
- <175817861820.709179.10538516755307778527.tip-bot2@tip-bot2>
- <CGME20250922215704eucas1p1f53a65a5cd1eafd3e0db006653231efd@eucas1p1.samsung.com>
- <e56310b5-f7a9-4fad-b79a-dcbcdd3d3883@samsung.com>
- <20250923220215.GH3419281@noisy.programming.kicks-ass.net>
- <eae77bd0-d874-4ddf-88d7-c1ab75358f91@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 2/3] arm64: dts: qcom: sm8750: Add PCIe PHY and
+ controller node
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Lorenzo Pieralisi
+ <lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        quic_vbadigan@quicinc.com, quic_mrana@quicinc.com
+References: <20250826-pakala-v3-0-721627bd5bb0@oss.qualcomm.com>
+ <20250826-pakala-v3-2-721627bd5bb0@oss.qualcomm.com>
+ <aN22lamy86iesAJj@hu-bjorande-lv.qualcomm.com>
+ <4d586f0f-c336-4bf6-81cb-c7c7b07fb3c5@oss.qualcomm.com>
+ <73e72e48-bc8e-4f92-b486-43a5f1f4afb0@oss.qualcomm.com>
+ <8f2e0631-6c59-4298-b36e-060708970ced@oss.qualcomm.com>
+ <qref5ooh6pl2sznf7iifrbric7hsap63ffbytkizdyrzt6mtqz@q5r27ho2sbq3>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <eae77bd0-d874-4ddf-88d7-c1ab75358f91@samsung.com>
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <qref5ooh6pl2sznf7iifrbric7hsap63ffbytkizdyrzt6mtqz@q5r27ho2sbq3>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=ZJzaWH7b c=1 sm=1 tr=0 ts=68e773ee cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=Nv7edSWLeOU3OsZLW8MA:9 a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22
+X-Proofpoint-ORIG-GUID: 2L1eJXWpyHlSuUlTL7QU_5UIr4YJSEas
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX3ZMaFoRLRJHa
+ AzEua89dzrkmTf6kXsJ9hnyNTYKBvP0z4E2gn1fg84Sizc2Kc3F3fHx2UKXS/25TmtOunlDfcdA
+ FX0G0RJk7xdCtEP8UFjAqWIuiB6xSzdC/E2eu1XUrDNHawLadmjD8/bCK9zJQTYN8iCkncbYQOy
+ qpNze3+IO5i6Ylkk8miOPv+LviAMhRuttc38AKqCc4tdbq9qQ5/ptY/6Y/1j5pbQ6LV7HfGOgTx
+ EJQmniZgozf0KDi+uvcWft0w85u60AGg7/TQVOoeGKVXk2CqFhsvF+Eoprjhjf+qg2lG6EdEZaL
+ czAVZW0CNicz55qKudPs5tKhSGqTh/yvz9qpzP0EsFWzk/zmnhIskAbZBwvaS2sSRPxSxZvuYhK
+ DajqIwAfkX+FcgOf5pRfRGmNUu2sbQ==
+X-Proofpoint-GUID: 2L1eJXWpyHlSuUlTL7QU_5UIr4YJSEas
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-09_02,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 clxscore=1015 malwarescore=0 lowpriorityscore=0
+ phishscore=0 priorityscore=1501 impostorscore=0 suspectscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
 
-On 30/09/2025 00:19, Marek Szyprowski wrote:
-> On 24.09.2025 00:02, Peter Zijlstra wrote:
->> On Mon, Sep 22, 2025 at 11:57:02PM +0200, Marek Szyprowski wrote:
->>> On 18.09.2025 08:56, tip-bot2 for Peter Zijlstra wrote:
->>>> The following commit has been merged into the sched/urgent branch of tip:
+On 10/8/25 9:08 PM, Dmitry Baryshkov wrote:
+> On Wed, Oct 08, 2025 at 11:11:43AM +0200, Konrad Dybcio wrote:
+>> On 10/8/25 10:00 AM, Konrad Dybcio wrote:
+>>> On 10/8/25 6:41 AM, Krishna Chaitanya Chundru wrote:
 >>>>
->>>> Commit-ID:     077e1e2e0015e5ba6538d1c5299fb299a3a92d60
->>>> Gitweb:https://git.kernel.org/tip/077e1e2e0015e5ba6538d1c5299fb299a3a92d60
->>>> Author:        Peter Zijlstra<peterz@infradead.org>
->>>> AuthorDate:    Tue, 16 Sep 2025 23:02:41 +02:00
->>>> Committer:     Peter Zijlstra<peterz@infradead.org>
->>>> CommitterDate: Thu, 18 Sep 2025 08:50:05 +02:00
 >>>>
->>>> sched/deadline: Fix dl_server getting stuck
+>>>> On 10/2/2025 5:07 AM, Bjorn Andersson wrote:
+>>>>> On Tue, Aug 26, 2025 at 04:32:54PM +0530, Krishna Chaitanya Chundru wrote:
+>>>>>> Add PCIe controller and PHY nodes which supports data rates of 8GT/s
+>>>>>> and x2 lane.
+>>>>>>
+>>>>>
+>>>>> I tried to boot the upstream kernel (next-20250925 defconfig) on my
+>>>>> Pakala MTP with latest LA1.0 META and unless I disable &pcie0 the device
+>>>>> is crashing during boot as PCIe is being probed.
+>>>>>
+>>>>> Is this a known problem? Is there any workaround/changes in flight that
+>>>>> I'm missing?
+>>>>>
+>>>> Hi Bjorn,
 >>>>
->>>> John found it was easy to hit lockup warnings when running locktorture
->>>> on a 2 CPU VM, which he bisected down to: commit cccb45d7c429
->>>> ("sched/deadline: Less agressive dl_server handling").
->>>>
->>>> While debugging it seems there is a chance where we end up with the
->>>> dl_server dequeued, with dl_se->dl_server_active. This causes
->>>> dl_server_start() to return without enqueueing the dl_server, thus it
->>>> fails to run when RT tasks starve the cpu.
->>>>
->>>> When this happens, dl_server_timer() catches the
->>>> '!dl_se->server_has_tasks(dl_se)' case, which then calls
->>>> replenish_dl_entity() and dl_server_stopped() and finally return
->>>> HRTIMER_NO_RESTART.
->>>>
->>>> This ends in no new timer and also no enqueue, leaving the dl_server
->>>> 'dead', allowing starvation.
->>>>
->>>> What should have happened is for the bandwidth timer to start the
->>>> zero-laxity timer, which in turn would enqueue the dl_server and cause
->>>> dl_se->server_pick_task() to be called -- which will stop the
->>>> dl_server if no fair tasks are observed for a whole period.
->>>>
->>>> IOW, it is totally irrelevant if there are fair tasks at the moment of
->>>> bandwidth refresh.
->>>>
->>>> This removes all dl_se->server_has_tasks() users, so remove the whole
->>>> thing.
->>>>
->>>> Fixes: cccb45d7c4295 ("sched/deadline: Less agressive dl_server handling")
->>>> Reported-by: John Stultz<jstultz@google.com>
->>>> Signed-off-by: Peter Zijlstra (Intel)<peterz@infradead.org>
->>>> Tested-by: John Stultz<jstultz@google.com>
->>>> ---
->>> This patch landed in today's linux-next as commit 077e1e2e0015
->>> ("sched/deadline: Fix dl_server getting stuck"). In my tests I found
->>> that it breaks CPU hotplug on some of my systems. On 64bit
->>> Exynos5433-based TM2e board I've captured the following lock dep warning
->>> (which unfortunately doesn't look like really related to CPU hotplug):
->> Right -- I've looked at this patch a few times over the day, and the
->> only thing I can think of is that we keep the dl_server timer running.
->> But I already gave you a patch that *should've* stopped it.
+>>>> we need this fix for the PCIe to work properly. Please try it once.
+>>>> https://lore.kernel.org/all/20251008-sm8750-v1-1-daeadfcae980@oss.qualcomm.com/
+>>>
+>>> This surely shouldn't cause/fix any issues, no?
 >>
->> There were a few issues with it -- notably if you've booted with
->> something like isolcpus / nohz_full it might not have worked because the
->> site I put the dl_server_stop() would only get ran if there was a root
->> domain attached to the CPU.
+>> Apparently this is a real fix, because sm8750.dtsi defines the PCIe
+>> PHY under a port node, while the MTP DT assigns perst-gpios to the RC
+>> node, which the legacy binding ("everything under the RC node") parsing
+>> code can't cope with (please mention that in the commit message, Krishna)
 >>
->> Put it in a different spot, just to make sure.
->>
->> There is also the fact that dl_server_stop() uses
->> hrtimer_try_to_cancel(), which can 'fail' when the timer is actively
->> running. But if that is the case, it must be spin-waiting on rq->lock
->> -- since the caller of dl_server_stop() will be holding that. Once
->> dl_server_stop() completes and the rq->lock is released, the timer will
->> see !dl_se->dl_throttled and immediately stop without restarting.
->>
->> So that *should* not be a problem.
->>
->> Anyway, clutching at staws here etc.
->>
->>> # for i in /sys/devices/system/cpu/cpu[1-9]; do echo 0 >$i/online; done
->>> Detected VIPT I-cache on CPU7
->>> CPU7: Booted secondary processor 0x0000000101 [0x410fd031]
->>> ------------[ cut here ]------------
->>> WARNING: CPU: 7 PID: 0 at kernel/rcu/tree.c:4329
->>> rcutree_report_cpu_starting+0x1e8/0x348
->> This is really weird; this does indeed look like CPU7 decides to boot
->> again. AFAICT it is not hotplug failing and bringing the CPU back again,
->> but it is really starting again.
->>
->> I'm not well versed enough in ARM64 foo to know what would cause a CPU
->> to boot -- but on x86_64 this isn't something that would easily happen
->> by accident.
->>
->> Not stopping a timer would certainly not be sufficient -- notably
->> hrtimers_cpu_dying() would have migrated the thing.
->>
->>> (system is frozen at this point).
->> The whole lockdep and freezing thing is typically printk choking on
->> itself.
->>
->> My personal way around this are these here patches:
->>
->>    git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git debug/experimental
->>
->> They don't apply cleanly anymore, but the conflict isn't hard, so I've
->> not taken the bother to rebase them yet. It relies on the platform
->> having earlyprintk configured, then add force_early_printk to your
->> kernel cmdline to have earlyprintk completely take over.
->>
->> Typical early serial drivers are lock-free and don't suffer from
->> lockups.
->>
->> If you get it to work, you might get more data out of it.
+>> And I couldn't come up with a way to describe "either both are required
+>> if any is present under the RC node or none are allowed" in yaml
 > 
-> Thanks for some hints, but unfortunately ARM64 doesn't support 
-> earlyprintk, so I was not able to use this method.
+> What about:
 > 
-> However I've played a bit with this code and found that this strange 
-> wake-up of the CPU7 seems to be caused by the timer. If I restore
-> 
->    if (!dl_se->server_has_tasks(dl_se))
->            return HRTIMER_NORESTART;
-> 
-> part in the dl_server_timer, the everything works again as before this 
-> patch.
-> 
-> This issue is however not Exynos5433 ARM 64bit specific. Similar lockup 
-> happens on Exynos5422 ARM 32bit boards, although there is no message in 
-> that case. Does it mean that handling of the hrtimers on Exynos boards 
-> is a bit broken in the context of CPU hotplug? I've never analyzed that 
-> part of Exynos SoC support. Krzysztof, any chance You remember how it works?
+> oneOf:
+>   - required:
+>      - foo
+>      - bar
+>   - properties:
+>      foo: false
+>      bar: false
 
+Oh yeah, this works.. would you mind submitting a patch like this, with a
 
-I don't recall anything around this, but I also don't remember that much
-of details anymore.
+# These properties must either both be under the RC node or both under the port node
 
-I believe long time ago - around 2014-2015 - were testing Exynos MCT
-against hotplug as well, so I think it was working. Many things could
-happen in between...
+or so?
 
-Best regards,
-Krzysztof
+Konrad> 
 
