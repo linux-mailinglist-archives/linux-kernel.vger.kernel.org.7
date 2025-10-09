@@ -1,105 +1,135 @@
-Return-Path: <linux-kernel+bounces-847247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCA2DBCA586
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:13:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23A99BCA58C
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:13:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CBCD94E7BE7
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:13:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31D931A6345B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:14:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B3B70830;
-	Thu,  9 Oct 2025 17:13:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486E8240611;
+	Thu,  9 Oct 2025 17:13:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PZTwpBpe"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sQ3mn/VD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F7223BCF7
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 17:13:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F3023B63F;
+	Thu,  9 Oct 2025 17:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760030021; cv=none; b=mEpVhhZa5cHeaJONYZAJWALCz5ePRYIt4mf1pVz4S5LXCf5Kq6DSb0tqr/Ke9W1ZMSijPe44mwdIPt9kfRIGrCXB+McbKZb17w5WzaA1aNgMuzJJr5C2BHPnrdh+aBgGPaq7/6ail7hJYQsMOtDVqESJMiQPxcPBc2ELvnHSHJ4=
+	t=1760030022; cv=none; b=G+8EE/IwY36esDsFdTrJFz0XGHjsfq0oC4fjSCa4Vuse6p5FmEnuAzDnGi308FsTCpJk9Z25kD1pjoVAZdmdxzMqTJ3X3qBT8efNkt8hYbDcawMDdv7Df+X2PY4xcwabrOXpwbya/2oNlS/Km48ofOYpoXorNE3AFbWP/ihWInw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760030021; c=relaxed/simple;
-	bh=XVWzHrtvsM3ZOFYaaTfLKyy4NiHdMVouDpFRrIpFw88=;
+	s=arc-20240116; t=1760030022; c=relaxed/simple;
+	bh=4m/b40Q8HlHAkCFpCXHLrFt6Ce02CTpjazD5P0VykkE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cwk1ANdqnNIE9TY8uCOzSWlzct+8imI+uJThMoCWkFB2y2Mo7GwVuwXJb5H1wvH923L9+5ZLrwXPnnma5+/MfljC/RlJDsqDsKv1oVSfmmu+sFUtPepXjOpydfVtlTMpXWvPnNeCSL094L7ZckegdNl6/7GrtDdFCc2w13Fn5Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PZTwpBpe; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760030019; x=1791566019;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XVWzHrtvsM3ZOFYaaTfLKyy4NiHdMVouDpFRrIpFw88=;
-  b=PZTwpBpe2v769F2R5UC47THz/Ztm+uP7veZztcT7eQLqtIoyB5rbk/Gw
-   GpPTzLZfeqh1bf5RO4ZroZJ6U3Tmnv/8jdXpu4chNZgLlBN1ZsEs2FVsY
-   nrEazbjfSExDu9t1kJdKIY3WTMXvO/bAqAUk4VlYKoBInoSF5LwBeSgoq
-   qtuVwn2GtyFY7QqiXfG8vm8bAIdH6SblVz9qY4TW6n0PQosMz4jopRr8K
-   i14JqZE3KCI3knx4m8du4M/sKYmoRs9zEj9NM37HCR2Nsx/9JR9JyCgQ2
-   QaP8eUH8eEtxcIcqgigEW3ZdxPvazzBVKVuqmq6Ihfrh+/pOImM+NEOAa
-   Q==;
-X-CSE-ConnectionGUID: KkOea2UTRh+zwDvzyz2Asw==
-X-CSE-MsgGUID: AM6Xdr1cQZmf2LeQQBe7fQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="66077636"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="66077636"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 10:13:38 -0700
-X-CSE-ConnectionGUID: cuGYk029Qh6eB2UrSEX5AA==
-X-CSE-MsgGUID: XcaczV4JQkuSXGpzCmys1A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,217,1754982000"; 
-   d="scan'208";a="180792808"
-Received: from dnelso2-mobl.amr.corp.intel.com (HELO desk) ([10.124.221.52])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 10:13:38 -0700
-Date: Thu, 9 Oct 2025 10:13:31 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
-	"Kaplan, David" <David.Kaplan@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Klaus Kusche <klaus.kusche@computerix.info>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86/bugs: Qualify RETBLEED_INTEL_MSG
-Message-ID: <20251009171331.vplg2zcfystojcxo@desk>
-References: <20251006131126.GBaOO__iUbQHNR6QhW@fat_crate.local>
- <LV3PR12MB9265B9AA81E01A539214764A94E3A@LV3PR12MB9265.namprd12.prod.outlook.com>
- <20251006140442.GDaOPMemqB7SRJSHWL@fat_crate.local>
- <20251007182257.ywrqrrhgrtrviila@desk>
- <20251007221229.GAaOWQTadGWlZSeAo_@fat_crate.local>
- <20251007230821.5shpa3pusyzaohb2@desk>
- <sb7p6quwxkn4w4etgsxlqd6fcsia4xobf73d3fnybxafxrmvwi@ajg5lkdxtnfy>
- <20251008102136.GAaOY7MBd4_VBPBNtG@fat_crate.local>
- <pnobm2r4icma6xzxvzklxoyoy3a4yhhxuxdoq2srmz6rpnegms@qneijnfu6fmz>
- <20251009101557.GAaOeLXYDjOnyFTWdg@fat_crate.local>
+	 Content-Type:Content-Disposition:In-Reply-To; b=l7n5E5FmZW9MJ/1vBbe0lh7J6JtgOjdHENmuYD1cw4WKDZjJiIPe8t/81Z7SsfmEC1E8dM35x1SjmsyTfbZR4QzUGBeY6B9favk+J8ZzS2yDiD40KEy2zS3qHqawHGMEb3N+w+DxUOaW3uw/mr+kz0dgvxaIAc6+VJmDgsvVJO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sQ3mn/VD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6127AC4CEE7;
+	Thu,  9 Oct 2025 17:13:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760030022;
+	bh=4m/b40Q8HlHAkCFpCXHLrFt6Ce02CTpjazD5P0VykkE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sQ3mn/VDly7N6oRo4YHgs3kB4pz8mCUs06Vf6MTzzHsGNRnR0UrMzRMakSX0IlDsO
+	 IDxfG4ti/zNQx92aK8O4FkV8izUQ88X1aD3M1R6rccbNrgaqDOqVUmw+wKTHXmvXyZ
+	 9gd7gPJF59QtGz5Gd++meMjtLhkcbufX0B2FzNwP1FJti+ONeTDDUvY5usngDNLJkM
+	 qzqMhuAFuIU8gNzmjiEWgHMP2w8VIIFi99yzpAR5rR09uEEQLHTUhbUAd2ZNqTCFkY
+	 1H/WAapbKklLusROb8CPfopsy7NKxeDDGtgzpxKWwV6PJtV1Gmv/+VXRK6gduHYyZS
+	 pJ9R2ZuMWH5vw==
+Date: Thu, 9 Oct 2025 18:13:36 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Roy Luo <royluo@google.com>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Joy Chakraborty <joychakr@google.com>,
+	Naveen Kumar <mnkumar@google.com>,
+	Badhri Jagan Sridharan <badhri@google.com>,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] dt-bindings: usb: dwc3: Add Google Tensor G5 DWC3
+Message-ID: <20251009-lizard-slapstick-4de7dfe2322d@spud>
+References: <20251008060000.3136021-1-royluo@google.com>
+ <20251008060000.3136021-2-royluo@google.com>
+ <20251008-slider-uncombed-66790ea92ea0@spud>
+ <CA+zupgxnBK_k2X0_KKX9pUMMTwY4VhsyTEEVz6v+__u=2xR8Ow@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="V8Kj8DQ2DFM161Td"
 Content-Disposition: inline
-In-Reply-To: <20251009101557.GAaOeLXYDjOnyFTWdg@fat_crate.local>
+In-Reply-To: <CA+zupgxnBK_k2X0_KKX9pUMMTwY4VhsyTEEVz6v+__u=2xR8Ow@mail.gmail.com>
 
-On Thu, Oct 09, 2025 at 12:15:57PM +0200, Borislav Petkov wrote:
-> On Wed, Oct 08, 2025 at 11:04:32PM -0700, Pawan Gupta wrote:
-> > Thats a lot. OTOH, most of the bugs.c is __init code, do you think it is
-> > still problematic?
-> 
-> What is wrong with aiming to not have dead code in the kernel if it can be
-> removed cleanly?
 
-Nothing wrong with that. There are certain things (like I mentioned
-earlier) that needs to be moved out of bugs.c.
+--V8Kj8DQ2DFM161Td
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Oct 08, 2025 at 09:40:57PM -0700, Roy Luo wrote:
+> On Wed, Oct 8, 2025 at 1:58=E2=80=AFPM Conor Dooley <conor@kernel.org> wr=
+ote:
+> >
+> > On Wed, Oct 08, 2025 at 05:59:57AM +0000, Roy Luo wrote:
+
+> > > +allOf:
+> > > +  - $ref: snps,dwc3-common.yaml#
+> > > +
+> > > +unevaluatedProperties: false
+> >
+> > So every property from snps,dwc3-common.yaml is valid here, with any of
+> > the permitted values?
+>=20
+> Conor,
+>=20
+> Appreciate the review.
+> Ack to all the comments, will fix them in the next patch.
+> And yes, every property from snps,dwc3-common.yaml is valid here.
+> You can find more context here [1], essentially the dwc3 glue would be
+> operating on the same platform device as the dwc3 core, hence all
+> properties are allowed.
+>=20
+> [1] https://lore.kernel.org/all/20250414-dwc3-refactor-v7-0-f015b358722d@=
+oss.qualcomm.com/
+
+I find it exceedingly hard to believe that every property from that
+file, with every permitted value, is possible. AFAIU, the tensor g5 is a
+phone chip that's only used in pixel devices, not something that people
+can just buy and integrate into whatever device they feel like. There
+should be a vanishingly small number of possible configurations,
+possibly exactly one configuration. There are dozens of properties in
+the dwc3 common binding, of which at least 10 are for "quirks" or other
+sorts of hardware errata that are not going to be variable from one
+phone to another.
+
+--V8Kj8DQ2DFM161Td
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaOftPwAKCRB4tDGHoIJi
+0orZAQDVQounnZp8XW0MZDnLxiorx4hG4jOujXdg9qHFe7k1qgD/eJp5UpO9UKjh
+jvA+gND8RxLGnuG3C6H3uJAs4WuugQw=
+=JWpo
+-----END PGP SIGNATURE-----
+
+--V8Kj8DQ2DFM161Td--
 
