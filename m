@@ -1,139 +1,161 @@
-Return-Path: <linux-kernel+bounces-846764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63180BC8F8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:16:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE7CFBC8FD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:23:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63E023B35E9
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:16:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3084F3E8441
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:23:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5179B2DFA32;
-	Thu,  9 Oct 2025 12:16:23 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBB9CBA3F;
-	Thu,  9 Oct 2025 12:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4AE2C327C;
+	Thu,  9 Oct 2025 12:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rTolYT8P"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F1025A659
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 12:22:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760012182; cv=none; b=JWWRBROHwkFiJekZawb+v5LyR+GfZXFCqLjrXszlISo+rDAko7Zq4ijH518Y6BcuYM+wvGW4TAOb9b/5LB6Jfo7bHVI4M2YoQ7uZqthVae3/DhLjOohqT8zkzs4G2Hl5hT8OdUSVbIzxZIoQwj64PrT6iEJRnqtmN6Z1L8rqa70=
+	t=1760012578; cv=none; b=Yy0XYSQOFJuNcAonsYqXx5LXhXfEkN9QRGsbmednccsN3IAMV+G9KGBcsR7AUjX8N4tU+UJ/5lBxDPwY9Qta82DcqaaC/r05SEzq2uipxWaBeYbtIsrcftD1xSHcV/eeh9QKVuk1zEA0IYQDiMcXGFGtt8vZGQEnBwqWt5QfMfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760012182; c=relaxed/simple;
-	bh=mCKEyRUdNIwoQi693Be3g9WMtS9hamqKlb0qQo8BiVE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EOFJ4/zk/fWkKdYnyYDgE43d8xtNDhjfUj/U+pIeBg1jfYa9/DTiNHLjTavYuQ/sOhhkitiABmkYXVTPX146+rFdfrQBzbALSF4MviBeLU1VaNsPmM6iAUZ7fwkHiwynuOUVkiZq3Ny/llCekvJhajGi+YT9E1d8S3fVBojSj/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0CB2D176A;
-	Thu,  9 Oct 2025 05:16:12 -0700 (PDT)
-Received: from [10.57.3.102] (unknown [10.57.3.102])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6A78E3F66E;
-	Thu,  9 Oct 2025 05:16:13 -0700 (PDT)
-Message-ID: <496c2d88-2558-42fe-8434-81c000955a84@arm.com>
-Date: Thu, 9 Oct 2025 13:16:10 +0100
+	s=arc-20240116; t=1760012578; c=relaxed/simple;
+	bh=WED1CaVoy7jTVdlX/Aw/IQWqtv/1nGQg+rNRCl+wjRg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QMHdnKsm9W2hUhHu2vGAJEx8q61cW6XnKcr51B0Zj9eSCANg3Iuo76kqEk5/dkkVn9o7N+LhR1dQidpTMJb7gFSx1g1Cn/SPQSB189tdxXbqM39vQLMeSDoil8tlsSWA1NWwh7RngBcDLSiCAovd+rlOms0zdmtzMUfzguzA7s8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rTolYT8P; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760012563;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=+LD5r01PNN7zm04H6bSvacVHamUM/2IZoCmv2ssIeCg=;
+	b=rTolYT8PhikH16sOIRDoUQet6iGvoyf7ONa/qlIsqyhBepgupyHs0OdGPTCEDLAqueqrJz
+	6+3xmVrUMMBHkVB7ZIHngJD7EoM4lGdiF3zRhX0S6KDP/7l/Cv6v4Pt+r8fqkvIrDOoPft
+	iWj+O/j9E1UXsQuYv7v6OYDkc2qBs2k=
+From: Matthew Schwartz <matthew.schwartz@linux.dev>
+To: harry.wentland@amd.com,
+	christian.koenig@amd.com,
+	sunpeng.li@amd.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	alexander.deucher@amd.com
+Cc: linux-kernel@vger.kernel.org,
+	mario.limonciello@amd.com,
+	amd-gfx@lists.freedesktop.org,
+	regressions@lists.linux.dev,
+	Matthew Schwartz <matthew.schwartz@linux.dev>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] Revert "drm/amd/display: Only restore backlight after amdgpu_dm_init or dm_resume"
+Date: Thu,  9 Oct 2025 14:19:00 +0200
+Message-ID: <20251009121900.12777-1-matthew.schwartz@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/3] Introduce iommu-map-masked for platform devices
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Charan Teja Kalla <charan.kalla@oss.qualcomm.com>
-Cc: joro@8bytes.org, will@kernel.org, saravanak@google.com,
- conor+dt@kernel.org, mchehab@kernel.org, bod@kernel.org, krzk+dt@kernel.org,
- abhinav.kumar@linux.dev, vikash.garodia@oss.qualcomm.com,
- dikshita.agarwal@oss.qualcomm.com, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-References: <20250928171718.436440-1-charan.kalla@oss.qualcomm.com>
- <CAL_JsqK9waZK=i+ov0jV-PonWSfddwHvE94Q+pks4zAEtKc+yg@mail.gmail.com>
- <1d36569c-55b9-4390-87d1-fd0c2f837014@kernel.org>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <1d36569c-55b9-4390-87d1-fd0c2f837014@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 2025-10-09 1:26 am, Krzysztof Kozlowski wrote:
-> On 29/09/2025 05:23, Rob Herring wrote:
->> On Sun, Sep 28, 2025 at 12:17 PM Charan Teja Kalla
->> <charan.kalla@oss.qualcomm.com> wrote:
->>>
->>> This series introduces a new iommu property called iommu-map-masked(may
->>> be there is a better name), which is used to represent the IOMMU
->>> specifier pairs for each function of a __multi-functional platform
->>> device__, where each function can emit unique master id(s) that can be
->>> associated with individual translation context.
->>>
->>> Currently, the iommu configuration - at least for arm architecture-
->>> requires all the functions of a platform device will be represented
->>> under single dt node thus endup in using only a single translation
->>> context.
->>>
->>> A simple solution to associate individual translation context for each
->>> function of a device can be through creating per function child nodes in
->>> the device tree, but dt is only to just represent the soc layout to
->>> linux kernel.
->>>
->>> Supporting such cases requires a new iommu property called,
->>> iommu-map-masked(taking cue from iommu-map for pci devices) and syntax
->>> is:
->>>     iommu-map-masked = <FUNCTION_ID1 &iommu ID1 MASK1>,
->>>                        <FUNCTION_ID2 &iommu ID2 MASK2>;
->>> NOTE: As an RFC, it is considered that this property always expects 4
->>> cells.
->>>
->>> During the probe phase of the driver for a multi-functional device
->>> behind an IOMMU, a child device is instantiated for each FUNCTION_ID.
->>> The call to of_dma_configure_id() on each child sets up the IOMMU
->>> configuration, ensuring that each function of the device is associated
->>> with a distinct translation context.
->>>
->>> This property can also be used in association with 'iommus=' when dt
->>> bindings requires the presence of 'iommus=', example[2]. For these
->>> cases, representation will be(on arm64):
->>>     iommus = <&iommu sid mask>; //for default function.
->>>     iommu-map-masked = <FUNCTION_ID &iommu sid mask>;//additional
->>> function.
->>
->> Where does the FUNCTION_ID value come from?
->>
->> Why can't you just have multiple "iommus" entries where the index
->> defines the default and any FUNCTION_ID entries? What's in each index
->> is specific to the device.
-> 
-> 
-> We discussed the problem earlier and that is what I asked them to do.
-> Apparently I was just ignored so now two maintainers say the same. We
-> can get ignored still and the third maintainer will have to tell this.
+This fix regressed the original issue that commit d83c747a1225
+("drm/amd/display: Fix brightness level not retained over reboot") solved,
+so revert it until a different approach to solve the regression that
+it caused with AMD_PRIVATE_COLOR is found.
 
-The reason why that isn't really viable is that the "iommus" property 
-needs to be consumed directly by the relevant IOMMU driver(s) without a 
-dependency on any driver for the client device represented by the node 
-itself. For security/isolation purposes the IOMMU has to know about all 
-potential DMA sources and be able to be configured for them *before* 
-anyone else gets a chance to start initiating DMA from them. If the DT 
-consumer is, say, a bare-metal hypervisor, it may have no understanding 
-whatsoever of what most of the client devices are nor how they work.
+Fixes: a490c8d77d50 ("drm/amd/display: Only restore backlight after amdgpu_dm_init or dm_resume")
+Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/4620
+Cc: stable@vger.kernel.org
+Signed-off-by: Matthew Schwartz <matthew.schwartz@linux.dev>
+---
+v1 -> v2:
+- Fix missing stable tag
+---
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 12 ++++--------
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h |  7 -------
+ 2 files changed, 4 insertions(+), 15 deletions(-)
 
-This is part of the reason why we went for a separate "iommu-map" 
-property for buses, so that an IOMMU consumer *can* easily tell when 
-multiple specifiers do not represent an indivisible set tied to the 
-given device, and thus it can expect help from a bus driver to subdivide 
-them later (but in the meantime can still safely isolate the entire bus 
-based on the output of the map without having to understand the inputs.)
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 8e1622bf7a42..21281e684b84 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -2081,8 +2081,6 @@ static int amdgpu_dm_init(struct amdgpu_device *adev)
+ 
+ 	dc_hardware_init(adev->dm.dc);
+ 
+-	adev->dm.restore_backlight = true;
+-
+ 	adev->dm.hpd_rx_offload_wq = hpd_rx_irq_create_workqueue(adev);
+ 	if (!adev->dm.hpd_rx_offload_wq) {
+ 		drm_err(adev_to_drm(adev), "failed to create hpd rx offload workqueue.\n");
+@@ -3438,7 +3436,6 @@ static int dm_resume(struct amdgpu_ip_block *ip_block)
+ 		dc_set_power_state(dm->dc, DC_ACPI_CM_POWER_STATE_D0);
+ 
+ 		dc_resume(dm->dc);
+-		adev->dm.restore_backlight = true;
+ 
+ 		amdgpu_dm_irq_resume_early(adev);
+ 
+@@ -9965,6 +9962,7 @@ static void amdgpu_dm_commit_streams(struct drm_atomic_state *state,
+ 	bool mode_set_reset_required = false;
+ 	u32 i;
+ 	struct dc_commit_streams_params params = {dc_state->streams, dc_state->stream_count};
++	bool set_backlight_level = false;
+ 
+ 	/* Disable writeback */
+ 	for_each_old_connector_in_state(state, connector, old_con_state, i) {
+@@ -10084,6 +10082,7 @@ static void amdgpu_dm_commit_streams(struct drm_atomic_state *state,
+ 			acrtc->hw_mode = new_crtc_state->mode;
+ 			crtc->hwmode = new_crtc_state->mode;
+ 			mode_set_reset_required = true;
++			set_backlight_level = true;
+ 		} else if (modereset_required(new_crtc_state)) {
+ 			drm_dbg_atomic(dev,
+ 				       "Atomic commit: RESET. crtc id %d:[%p]\n",
+@@ -10140,16 +10139,13 @@ static void amdgpu_dm_commit_streams(struct drm_atomic_state *state,
+ 	 * to fix a flicker issue.
+ 	 * It will cause the dm->actual_brightness is not the current panel brightness
+ 	 * level. (the dm->brightness is the correct panel level)
+-	 * So we set the backlight level with dm->brightness value after initial
+-	 * set mode. Use restore_backlight flag to avoid setting backlight level
+-	 * for every subsequent mode set.
++	 * So we set the backlight level with dm->brightness value after set mode
+ 	 */
+-	if (dm->restore_backlight) {
++	if (set_backlight_level) {
+ 		for (i = 0; i < dm->num_of_edps; i++) {
+ 			if (dm->backlight_dev[i])
+ 				amdgpu_dm_backlight_set_level(dm, i, dm->brightness[i]);
+ 		}
+-		dm->restore_backlight = false;
+ 	}
+ }
+ 
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
+index 009f206226f0..db75e991ac7b 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
+@@ -630,13 +630,6 @@ struct amdgpu_display_manager {
+ 	 */
+ 	u32 actual_brightness[AMDGPU_DM_MAX_NUM_EDP];
+ 
+-	/**
+-	 * @restore_backlight:
+-	 *
+-	 * Flag to indicate whether to restore backlight after modeset.
+-	 */
+-	bool restore_backlight;
+-
+ 	/**
+ 	 * @aux_hpd_discon_quirk:
+ 	 *
+-- 
+2.51.0
 
-Now, I suppose in some cases it might be technically possible for a 
-client device driver to collude with an IOMMU driver to divide a 
-monolithic DT device into logical functions after the fact, but for 
-Linux I don't see an acceptable way of doing that without some major 
-changes to the driver model abstraction and IOMMU API...
-
-Thanks,
-Robin.
 
