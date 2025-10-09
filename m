@@ -1,147 +1,105 @@
-Return-Path: <linux-kernel+bounces-847246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E841BCA57F
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:13:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCA2DBCA586
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:13:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B32D3B3EC0
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:13:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CBCD94E7BE7
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C81202976;
-	Thu,  9 Oct 2025 17:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B3B70830;
+	Thu,  9 Oct 2025 17:13:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mfZNt8xq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PZTwpBpe"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521FE1DDC3F
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 17:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F7223BCF7
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 17:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760029988; cv=none; b=Rdii5dw6E349QcWQjwqoHyDl+zey0a9OZO6dLVxWo7qFkVqfJpx/eCaCTKUBCKajYEsd1mJ2h5ragbeYAx29Zpj8R8UZF3iUkzt+IBh4lXVB0kYMosQ/YywKMbjBKMbV3PfPHfF4fxaWdTeMF7oHUEXLAJduPHBuca9Qn2r3y1g=
+	t=1760030021; cv=none; b=mEpVhhZa5cHeaJONYZAJWALCz5ePRYIt4mf1pVz4S5LXCf5Kq6DSb0tqr/Ke9W1ZMSijPe44mwdIPt9kfRIGrCXB+McbKZb17w5WzaA1aNgMuzJJr5C2BHPnrdh+aBgGPaq7/6ail7hJYQsMOtDVqESJMiQPxcPBc2ELvnHSHJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760029988; c=relaxed/simple;
-	bh=bTB6nX2n7XAcSgCZIN5w/wYw1ImzrVTnmr4PGKYcGd0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CNx1Gm5Q6Qoo5BwKzAkW1DYd8BZxz5qH7TUNAZpnqduarXwr6l1i3bDyIaf3o8BjnBj0X9exEDlnJJXV/XcexQ0eiWoN2VmuCr0OZFEKuLA7QXWWxbabbG9rB2KOTfF1vX0DSfFeNCzdCyNDJ8wtWfbWIUFOjHv6ZmAJTjlXwfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mfZNt8xq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCDA8C2BCB1
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 17:13:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760029987;
-	bh=bTB6nX2n7XAcSgCZIN5w/wYw1ImzrVTnmr4PGKYcGd0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=mfZNt8xqvdpCTliPpe2xucUF/4/F+DNTSCzJDSRqzoJ6nVbhhZu2FpeU+koIdhrd3
-	 Ke7xBLThovOm7N0AOhkLBYJoWHMSnkKWxlGk/D2VsdDGQd6RwfqvRkT11N1kqoWUmX
-	 lcX3SQc6dpWVnRW8+czBQF21uBUUSQAUayVY7OUPDRHOQ/4sYbjbFtGyN3xD+k/WFN
-	 vdp2pbxAj+NjL7Z+7M1AEfkmXgZf5lSolif3cLj+AdruZzLdOt7ErjxB1Q/ln8mtbu
-	 ODKZBtaw7Lbi1WP1NIE544dOO/B6JuehnOVn1ag/gIr88pLg8G1asfYtncp0ZC7+yH
-	 RAjnjY8z1WUwg==
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-780fe73e337so8677657b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 10:13:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVMAtWmYlltnEKj9t2x6j6XXYWN5XbM8PqZ7in5y6tJZfOl59/i980bOq6+NSNphCM4IAmrq42v1dxSPlY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCY3ZQ07ZC7sQs3a/+faXoP7Vwc3ENzlRItVba3WRTsdshNQEp
-	eyMM7eqRgXcrZvsVV1Jw09gM9jd62+nQBvk5TrxQoJRlbHR/CaDp5UzzdC/W1WtLyRCyTtgzd3B
-	1545PIvjv8cQQX6RvHprdAAFJAl4x0Bk1iTmgNeGpEg==
-X-Google-Smtp-Source: AGHT+IGvYxKDw71e40j1lde3uPEIM/7eVY+zWC2bZpCm7C1jqNV5j5uAWu76e8vqoG+EQXZTzoREFVL2qq1Yk9qPz+o=
-X-Received: by 2002:a05:690e:3c4:b0:627:4520:1374 with SMTP id
- 956f58d0204a3-63ccb8bb22cmr6753493d50.30.1760029987009; Thu, 09 Oct 2025
- 10:13:07 -0700 (PDT)
+	s=arc-20240116; t=1760030021; c=relaxed/simple;
+	bh=XVWzHrtvsM3ZOFYaaTfLKyy4NiHdMVouDpFRrIpFw88=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cwk1ANdqnNIE9TY8uCOzSWlzct+8imI+uJThMoCWkFB2y2Mo7GwVuwXJb5H1wvH923L9+5ZLrwXPnnma5+/MfljC/RlJDsqDsKv1oVSfmmu+sFUtPepXjOpydfVtlTMpXWvPnNeCSL094L7ZckegdNl6/7GrtDdFCc2w13Fn5Lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PZTwpBpe; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760030019; x=1791566019;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XVWzHrtvsM3ZOFYaaTfLKyy4NiHdMVouDpFRrIpFw88=;
+  b=PZTwpBpe2v769F2R5UC47THz/Ztm+uP7veZztcT7eQLqtIoyB5rbk/Gw
+   GpPTzLZfeqh1bf5RO4ZroZJ6U3Tmnv/8jdXpu4chNZgLlBN1ZsEs2FVsY
+   nrEazbjfSExDu9t1kJdKIY3WTMXvO/bAqAUk4VlYKoBInoSF5LwBeSgoq
+   qtuVwn2GtyFY7QqiXfG8vm8bAIdH6SblVz9qY4TW6n0PQosMz4jopRr8K
+   i14JqZE3KCI3knx4m8du4M/sKYmoRs9zEj9NM37HCR2Nsx/9JR9JyCgQ2
+   QaP8eUH8eEtxcIcqgigEW3ZdxPvazzBVKVuqmq6Ihfrh+/pOImM+NEOAa
+   Q==;
+X-CSE-ConnectionGUID: KkOea2UTRh+zwDvzyz2Asw==
+X-CSE-MsgGUID: AM6Xdr1cQZmf2LeQQBe7fQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="66077636"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="66077636"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 10:13:38 -0700
+X-CSE-ConnectionGUID: cuGYk029Qh6eB2UrSEX5AA==
+X-CSE-MsgGUID: XcaczV4JQkuSXGpzCmys1A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,217,1754982000"; 
+   d="scan'208";a="180792808"
+Received: from dnelso2-mobl.amr.corp.intel.com (HELO desk) ([10.124.221.52])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 10:13:38 -0700
+Date: Thu, 9 Oct 2025 10:13:31 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
+	"Kaplan, David" <David.Kaplan@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Klaus Kusche <klaus.kusche@computerix.info>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86/bugs: Qualify RETBLEED_INTEL_MSG
+Message-ID: <20251009171331.vplg2zcfystojcxo@desk>
+References: <20251006131126.GBaOO__iUbQHNR6QhW@fat_crate.local>
+ <LV3PR12MB9265B9AA81E01A539214764A94E3A@LV3PR12MB9265.namprd12.prod.outlook.com>
+ <20251006140442.GDaOPMemqB7SRJSHWL@fat_crate.local>
+ <20251007182257.ywrqrrhgrtrviila@desk>
+ <20251007221229.GAaOWQTadGWlZSeAo_@fat_crate.local>
+ <20251007230821.5shpa3pusyzaohb2@desk>
+ <sb7p6quwxkn4w4etgsxlqd6fcsia4xobf73d3fnybxafxrmvwi@ajg5lkdxtnfy>
+ <20251008102136.GAaOY7MBd4_VBPBNtG@fat_crate.local>
+ <pnobm2r4icma6xzxvzklxoyoy3a4yhhxuxdoq2srmz6rpnegms@qneijnfu6fmz>
+ <20251009101557.GAaOeLXYDjOnyFTWdg@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+CK2bAbB8YsheCwLi0ztY5LLWMyQ6He3sbYru697Ogq5+hR+Q@mail.gmail.com>
- <20250929150425.GA111624@bhelgaas> <CACePvbV+D6nu=gqjavv+hve4tcD+6WxQjC0O9TbNxLCeBhi5nQ@mail.gmail.com>
- <CACePvbUJ6mxgCNVy_0PdMP+-98D0Un8peRhsR45mbr9czfMkEA@mail.gmail.com> <CALzav=devrsJ2=3bt_=Z7BwT2CE1sv7AGDjh4uCC7mWzD7UR4Q@mail.gmail.com>
-In-Reply-To: <CALzav=devrsJ2=3bt_=Z7BwT2CE1sv7AGDjh4uCC7mWzD7UR4Q@mail.gmail.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Thu, 9 Oct 2025 10:12:56 -0700
-X-Gmail-Original-Message-ID: <CACePvbVD1qhRzZTbsxOdvmTsTPPxRGs0qD7QrO1pTWevzqhQGg@mail.gmail.com>
-X-Gm-Features: AS18NWBoA3GL6CZ9-SXewQlQu9-HnJTfh8iTD7RpkM2_ASr3xKBCEkoXrBXHk64
-Message-ID: <CACePvbVD1qhRzZTbsxOdvmTsTPPxRGs0qD7QrO1pTWevzqhQGg@mail.gmail.com>
-Subject: Re: [PATCH v2 00/10] LUO: PCI subsystem (phase I)
-To: David Matlack <dmatlack@google.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, Pasha Tatashin <pasha.tatashin@soleen.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, Pasha Tatashin <tatashin@google.com>, 
-	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>, 
-	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
-	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, Mike Rapoport <rppt@kernel.org>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, skhawaja@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251009101557.GAaOeLXYDjOnyFTWdg@fat_crate.local>
 
-On Wed, Oct 8, 2025 at 4:01=E2=80=AFPM David Matlack <dmatlack@google.com> =
-wrote:
->
-> On Tue, Oct 7, 2025 at 4:32=E2=80=AFPM Chris Li <chrisl@kernel.org> wrote=
-:
-> >
-> > Thanks to one that provides good feedback on the PCI series.
-> >
-> > I just want to give an update on the state of the LUO PCI series,
-> > based on the feedback I received. The LUO PCI series should be called
-> > from the memfd side and remove global subsystem state if possible.
->
-> By "memfd side" I believe you are referring to LUO fd preservation
-> (likely the VFIO cdev fd).
+On Thu, Oct 09, 2025 at 12:15:57PM +0200, Borislav Petkov wrote:
+> On Wed, Oct 08, 2025 at 11:04:32PM -0700, Pawan Gupta wrote:
+> > Thats a lot. OTOH, most of the bugs.c is __init code, do you think it is
+> > still problematic?
+> 
+> What is wrong with aiming to not have dead code in the kernel if it can be
+> removed cleanly?
 
-Yes. I haven't taken a closer look at the recent LUO fd preservation
-series. It is on my to do list, now I am depending on it.
-
-> > Which means the PCI series will depend on the VIFO or iommu series.
-> > I have some internal alignment with Vipin (for VFIO) and Samiullah
-> > (for iommu). Here is the new plan for upstream patch submission:
-> >
-> > 1)  KHO series go first, which is already happening with additional imp=
-rovement.
-> >
-> > 2) Next is Pasha's LUO series with memfd support, also happening right =
-now.
-> >
-> > 3) Next series will be Vipin's VFIO series with preserving one
-> > busmaster bit in the config space of the end point vfio device, there
-> > is no PCI layer involved yet. The VFIO will use some driver trick to
-> > prevent the native driver from binding to the liveupdate device used
-> > by VFIO after kexec. After kexec, the VFIO driver validates that the
-> > busmaster in the PCI config register is already set.
->
-> Yes. Last we discussed Vipin is planning to just compile out the
-> native driver of the device he is using to test. So we don't expect to
-> need any kernel code changes to unblock basic testing and posting the
-> RFC.
-
-Ack.
-
->
-> >
-> > 4) After the VFIO series, the PCI can start to preserve the livedupate
-> > device by BDF. Avoid the driver auto probe on the livedupate devices.
-> > At this point the VFIO driver in stage 3 will not need the other
-> > driver trick to avoid the auto bind of native driver. The PCI layer
-> > takes the core of that. This series PCI will have very limited
-> > support, most of the driver callback is not needed, no bridge device
-> > dependent as well.
->
-> I suspect we'll need the new file-lifecycle-bound global state thing
-> that Pasha is working on [1] to accomplish this. So please track
-> LUOv5+ as a dependency for this.
->
-> [1] https://lore.kernel.org/lkml/CA+CK2bB+RdapsozPHe84MP4NVSPLo6vje5hji5M=
-KSg8L6ViAbw@mail.gmail.com/
-
-Agree, I need to figure out the boiler plate change to hook up PCI to
-the file descriptors.
-
-Thanks for the clarification.
-
-Chris
+Nothing wrong with that. There are certain things (like I mentioned
+earlier) that needs to be moved out of bugs.c.
 
