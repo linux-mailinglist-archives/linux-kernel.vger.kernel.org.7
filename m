@@ -1,212 +1,171 @@
-Return-Path: <linux-kernel+bounces-847550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D590BCB2B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 01:08:58 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BAC4BCB2D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 01:12:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 713D44E9524
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 23:08:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F19184E5129
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 23:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B4328726C;
-	Thu,  9 Oct 2025 23:08:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24FD9287507;
+	Thu,  9 Oct 2025 23:12:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u1LrsfmA"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XeP1ebEf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F51E20487E
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 23:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BBE72625;
+	Thu,  9 Oct 2025 23:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760051328; cv=none; b=KEUv57VtyHPb2/xP/iCuED2cLMcLf9IOcEeiotNWn7NJu3LQlPnzrn17jiriK1efAMdOwRzu4lQoudQwBqrw4uT3+4+fAC2mRARWYocBIols+N/YlNnLZNQiFqRmPGwPrcgL9i8Bym9kDmMsrorx793RcI7UVZSI3qFlQ98sOQU=
+	t=1760051549; cv=none; b=srsmDu2axJT2VoIIj6qoIX0v2diLD008d7dc4dcIVauac0OXkIDlfnoPQQssIScCw/aZq6w9m/IvJQud7WhQca0dSZqrjKcOFUxicbEJ5OJ0emCD4x0jtxXAzIIbOFcKg9SvbQvge2KEJBpw9nhuAXlzpEKpAwNex6E0o8J2ezY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760051328; c=relaxed/simple;
-	bh=mO3BfBl7Y/2I52TbjPHtPsUEdKOX2+l8+hnFuUeuyKo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=GnbBzDXSYlw0KTjjgiYpIh1MFelKZA33byiZh5kpNBQu+arDYM8BFqq8hL6efox6fQbYM8XFMmxQTuUqwQR2rc96M/bM+aocTqh5NrcMHys0/DymOWA7XB7i8LauVDQRboYFJ6jw+glNWV2ZQ0hPdmmTOuOXVQC03ZbqyypasSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u1LrsfmA; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-334b0876195so3632620a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 16:08:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760051326; x=1760656126; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rDpIaffmoR6Qy88AeMwNPxO5iOtC8dDi++B0iTvo01A=;
-        b=u1LrsfmA3WrZtKf5hktbo5bfAjsWJWtD2zwrucbY+opy798sJyLX0i8LHuWmhQNcsG
-         ytI2MS0Q6+9x/btCzlaYdDTNxnjKOp4Uz0eywr8T5RBwryyjAfjWTnwrpQY141FEEtgc
-         Rlji/CClZrjvB96qrFqjDKApp8YDDpge4JxeY401x+ci1yRlHMsMx+RAKRhM8fxFHbJS
-         kyAORDGwsaBbhOwESzlfDD+c+o545SiltxCGBpAL/2KBGY4gmz5FuAFDE5PQ70Zfa0n0
-         1eMX6fcWWim3YlZHpyXDHEzEf1JB+8lmMQ3eYYdCl31I4BHNGwAoZQSFqVuX4iPcS9ya
-         LvTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760051326; x=1760656126;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rDpIaffmoR6Qy88AeMwNPxO5iOtC8dDi++B0iTvo01A=;
-        b=FQFBkbTYZdQ2AQthUnFsCqhP4MwyZLAdgtRkREbqpcWAAV//hxg1L64KMK571zjUEx
-         sZwqACk87EAqHfUglHQ6qc3tYgeI2lnvbhA03bOfIpsNL0p8jvOigts+E1bcBfLLH7zp
-         icW0CqVrzqwyVy6ylxsDlD61wZ9duVa1fNFutCyPCaPHMyX9iVdUHeVF2PXkrsljLUtj
-         3DlkqZo+YdpwjD5Y9gZ19NG+Lkq127EQj7XK27XM+Ws+IvDLBYdf3hKuoHvF3YuatDRh
-         1Frl7fWZjwapAigNXKFT5RwR8Wj+cqwzZ7vyZO4AZ7VHs7+YjbgKFGgrb9TH1pM8LAhs
-         FRsg==
-X-Forwarded-Encrypted: i=1; AJvYcCVTLIJJ7Vwbb5OKGiZsKvBcqw0dl1njfRhZpLBVgNVBH4Yyf3DxQS9eOufmFU9X6JcDD7utCm/lD/5p++M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzZKC/GjLNtIhJVfrKeSEQ8O4YL/rpCc7UXWg8NvyPB9+sOQAL
-	1WnzXarRt/Pej5ng+dve8TfX8A9/sgplr0MPVT33EWQeAc2lt6ANarqaYPvX3UlKpZVLgGuW+ti
-	VNLEXzgiBpZyz8Z524g5lE6KEDQ==
-X-Google-Smtp-Source: AGHT+IEKbmOpgQyGpF8iZG/gJeSzfxpKObXTtqbwqaHzaJgPnDoFIt/+KkqyzPgCgGNzWKTNkqyAjVnIwO8aJ2WY7Q==
-X-Received: from pjca12.prod.google.com ([2002:a17:90b:5b8c:b0:32b:35fb:187f])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:4d8b:b0:329:e703:d00b with SMTP id 98e67ed59e1d1-33b51386449mr12422922a91.19.1760051326203;
- Thu, 09 Oct 2025 16:08:46 -0700 (PDT)
-Date: Thu, 09 Oct 2025 16:08:44 -0700
-In-Reply-To: <20251007221420.344669-12-seanjc@google.com>
+	s=arc-20240116; t=1760051549; c=relaxed/simple;
+	bh=Z0b3bpB7s8l8nb1j4Ch+52gcGrqY0BNRSvWR/Vc+228=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Om4jEQENNIpsKlpydI5xWJ6rMFsYrcIHxJT1mHBYidLWgUm8ZmbgCoOI/iNQc52rKtEDAS8cOxcPxVBCEQza0eje4L/Pf5mFN7/HQ6LQ64AWhnqD3sQsYh292MHsqmbQylh0o//uHWWXr5Y65b3q4YhpRzgfkkboKvjvicUj4Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XeP1ebEf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8CC8C4CEE7;
+	Thu,  9 Oct 2025 23:12:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760051548;
+	bh=Z0b3bpB7s8l8nb1j4Ch+52gcGrqY0BNRSvWR/Vc+228=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=XeP1ebEfuiBjXqjcQeevK44aYYYNeTPG/dcoQip/pJY1CJsfvQmUvwxWR8TNIbmu3
+	 z36uH+8M6e5FiMhWm56P8q3P7UXHY9OZEViMS9l9btXwcjuj8eSzNbAruipDfd6FJN
+	 vlRIKwOHkFvj+jxAPSMsy204E2OiQpuXIhrtcc3RhDGIpX72Rod947g6w6DU5r9OOQ
+	 bzt5gxSc9tT/qBiShwr/7Wfj1PhA14WAm1o7J5CKUeuwXBwWiPjaxeBguiDXZ1FIjN
+	 TlM0rkP5+LHhf3rWxBlRA0hc51d5O4r0wAydJblwvKFjUqnzWRd3V4UMlxatBokmvw
+	 kCvEfBp7JIY8g==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: "Yanjun.Zhu" <yanjun.zhu@linux.dev>
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>,  Pratyush Yadav
+ <pratyush@kernel.org>,  jasonmiu@google.com,  graf@amazon.com,
+  changyuanl@google.com,  rppt@kernel.org,  dmatlack@google.com,
+  rientjes@google.com,  corbet@lwn.net,  rdunlap@infradead.org,
+  ilpo.jarvinen@linux.intel.com,  kanie@linux.alibaba.com,
+  ojeda@kernel.org,  aliceryhl@google.com,  masahiroy@kernel.org,
+  akpm@linux-foundation.org,  tj@kernel.org,  yoann.congal@smile.fr,
+  mmaurer@google.com,  roman.gushchin@linux.dev,  chenridong@huawei.com,
+  axboe@kernel.dk,  mark.rutland@arm.com,  jannh@google.com,
+  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
+  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
+  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
+  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
+  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
+  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
+  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
+  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
+  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
+  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
+  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
+  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
+  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
+  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
+  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
+  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
+  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com
+Subject: Re: [PATCH v3 19/30] liveupdate: luo_sysfs: add sysfs state monitoring
+In-Reply-To: <d09881f5-0e0b-4795-99bf-cd3711ee48ab@linux.dev> (Yanjun Zhu's
+	message of "Thu, 9 Oct 2025 10:56:33 -0700")
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+	<20250807014442.3829950-20-pasha.tatashin@soleen.com>
+	<a27f9f8f-dc03-441b-8aa7-7daeff6c82ae@linux.dev>
+	<mafs0qzvcmje2.fsf@kernel.org>
+	<CA+CK2bCx=kTVORq9dRE2h3Z4QQ-ggxanY2tDPRy13_ARhc+TqA@mail.gmail.com>
+	<dc71808c-c6a4-434a-aee9-b97601814c92@linux.dev>
+	<CA+CK2bBz3NvDmwUjCPiyTPH9yL6YpZ+vX=o2TkC2C7aViXO-pQ@mail.gmail.com>
+	<d09881f5-0e0b-4795-99bf-cd3711ee48ab@linux.dev>
+Date: Fri, 10 Oct 2025 01:12:18 +0200
+Message-ID: <mafs0ecrbmzzh.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251007221420.344669-1-seanjc@google.com> <20251007221420.344669-12-seanjc@google.com>
-Message-ID: <diqzcy6vhdvn.fsf@google.com>
-Subject: Re: [PATCH v12 11/12] KVM: selftests: Add guest_memfd tests for mmap
- and NUMA policy support
-From: Ackerley Tng <ackerleytng@google.com>
-To: Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>, Shivank Garg <shivankg@amd.com>, 
-	Ashish Kalra <ashish.kalra@amd.com>, Vlastimil Babka <vbabka@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Sean Christopherson <seanjc@google.com> writes:
+On Thu, Oct 09 2025, Yanjun.Zhu wrote:
 
-> From: Shivank Garg <shivankg@amd.com>
+> On 10/9/25 10:04 AM, Pasha Tatashin wrote:
+>> On Thu, Oct 9, 2025 at 11:35=E2=80=AFAM Zhu Yanjun <yanjun.zhu@linux.dev=
+> wrote:
+>>>
+>>> =E5=9C=A8 2025/10/9 5:01, Pasha Tatashin =E5=86=99=E9=81=93:
+>>>>>> Because the window of kernel live update is short, it is difficult t=
+o statistics
+>>>>>> how many times the kernel is live updated.
+>>>>>>
+>>>>>> Is it possible to add a variable to statistics the times that the ke=
+rnel is live
+>>>>>> updated?
+>>>>> The kernel doesn't do the live update on its own. The process is driv=
+en
+>>>>> and sequenced by userspace. So if you want to keep statistics, you
+>>>>> should do it from your userspace (luod maybe?). I don't see any need =
+for
+>>>>> this in the kernel.
+>>>>>
+>>>> One use case I can think of is including information in kdump or the
+>>>> backtrace warning/panic messages about how many times this machine has
+>>>> been live-updated. In the past, I've seen bugs (related to memory
+>>>> corruption) that occurred only after several kexecs, not on the first
+>>>> one. With live updates, especially while the code is being stabilized,
+>>>> I imagine we might have a similar situation. For that reason, it could
+>>>> be useful to have a count in the dmesg logs showing how many times
+>>>> this machine has been live-updated. While this information is also
+>>>> available in userspace, it would be simpler for kernel developers
+>>>> triaging these issues if everything were in one place.
+
+Hmm, good point.
+
+>>> I=E2=80=99m considering this issue from a system security perspective. =
+After the
+>>> kernel is automatically updated, user-space applications are usually
+>>> unaware of the change. In one possible scenario, an attacker could
+>>> replace the kernel with a compromised version, while user-space
+>>> applications remain unaware of it =E2=80=94 which poses a potential sec=
+urity risk.
+
+Wouldn't signing be the way to avoid that? Because if the kernel is
+compromised then it can very well fake the reboot count as well.
+
+>>>
+>>> To mitigate this, it would be useful to expose the number of kernel
+>>> updates through a sysfs interface, so that we can detect whether the
+>>> kernel has been updated and then collect information about the new
+>>> kernel to check for possible security issues.
+>>>
+>>> Of course, there are other ways to detect kernel updates =E2=80=94 for =
+example,
+>>> by using ftrace to monitor functions involved in live kernel updates =
+=E2=80=94
+>>> but such approaches tend to have a higher performance overhead. In
+>>> contrast, adding a simple update counter to track live kernel updates
+>>> would provide similar monitoring capability with minimal overhead.
+>> Would a print during boot, i.e. when we print that this kernel is live
+>> updating, we could include the number, work for you? Otherwise, we
+>> could export this number in a debugfs.
+> Since I received a notification that my previous message was not sent
+> successfully, I am resending it.
 >
-> Add tests for NUMA memory policy binding and NUMA aware allocation in
-> guest_memfd. This extends the existing selftests by adding proper
-> validation for:
->   - KVM GMEM set_policy and get_policy() vm_ops functionality using
->     mbind() and get_mempolicy()
->   - NUMA policy application before and after memory allocation
->
-> Run the NUMA mbind() test with and without INIT_SHARED, as KVM should allow
-> doing mbind(), madvise(), etc. on guest-private memory, e.g. so that
-> userspace can set NUMA policy for CoCo VMs.
->
-> Run the NUMA allocation test only for INIT_SHARED, i.e. if the host can't
-> fault-in memory (via direct access, madvise(), etc.) as move_pages()
-> returns -ENOENT if the page hasn't been faulted in (walks the host page
-> tables to find the associated folio)
->
-> Signed-off-by: Shivank Garg <shivankg@amd.com>
-> Tested-by: Ashish Kalra <ashish.kalra@amd.com>
-> [sean: don't skip entire test when running on non-NUMA system, test mbind()
->        with private memory, provide more info in assert messages]
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  .../testing/selftests/kvm/guest_memfd_test.c  | 98 +++++++++++++++++++
->  1 file changed, 98 insertions(+)
->
-> 
-> [...snip...]
-> 
-> +static void test_numa_allocation(int fd, size_t total_size)
-> +{
-> +	unsigned long node0_mask = 1;  /* Node 0 */
-> +	unsigned long node1_mask = 2;  /* Node 1 */
-> +	unsigned long maxnode = 8;
-> +	void *pages[4];
-> +	int status[4];
-> +	char *mem;
-> +	int i;
-> +
-> +	if (!is_multi_numa_node_system())
-> +		return;
-> +
-> +	mem = kvm_mmap(total_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd);
-> +
-> +	for (i = 0; i < 4; i++)
-> +		pages[i] = (char *)mem + page_size * i;
-> +
-> +	/* Set NUMA policy after allocation */
-> +	memset(mem, 0xaa, page_size);
-> +	kvm_mbind(pages[0], page_size, MPOL_BIND, &node0_mask, maxnode, 0);
-> +	kvm_fallocate(fd, FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE, 0, page_size);
-> +
-> +	/* Set NUMA policy before allocation */
-> +	kvm_mbind(pages[0], page_size * 2, MPOL_BIND, &node1_mask, maxnode, 0);
-> +	kvm_mbind(pages[2], page_size * 2, MPOL_BIND, &node0_mask, maxnode, 0);
-> +	memset(mem, 0xaa, total_size);
-> +
-> +	/* Validate if pages are allocated on specified NUMA nodes */
-> +	kvm_move_pages(0, 4, pages, NULL, status, 0);
-> +	TEST_ASSERT(status[0] == 1, "Expected page 0 on node 1, got it on node %d", status[0]);
-> +	TEST_ASSERT(status[1] == 1, "Expected page 1 on node 1, got it on node %d", status[1]);
-> +	TEST_ASSERT(status[2] == 0, "Expected page 2 on node 0, got it on node %d", status[2]);
-> +	TEST_ASSERT(status[3] == 0, "Expected page 3 on node 0, got it on node %d", status[3]);
-> +
-> +	/* Punch hole for all pages */
-> +	kvm_fallocate(fd, FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE, 0, total_size);
-> +
-> +	/* Change NUMA policy nodes and reallocate */
-> +	kvm_mbind(pages[0], page_size * 2, MPOL_BIND, &node0_mask, maxnode, 0);
-> +	kvm_mbind(pages[2], page_size * 2, MPOL_BIND, &node1_mask, maxnode, 0);
-> +	memset(mem, 0xaa, total_size);
-> +
-> +	kvm_move_pages(0, 4, pages, NULL, status, 0);
-> +	TEST_ASSERT(status[0] == 0, "Expected page 0 on node 0, got it on node %d", status[0]);
-> +	TEST_ASSERT(status[1] == 0, "Expected page 1 on node 0, got it on node %d", status[1]);
-> +	TEST_ASSERT(status[2] == 1, "Expected page 2 on node 1, got it on node %d", status[2]);
-> +	TEST_ASSERT(status[3] == 1, "Expected page 3 on node 1, got it on node %d", status[3]);
-> +
+> IMO, it would be better to export this number via debugfs. This approach =
+reduces
+> the overhead involved in detecting a kernel live update.
+> If the number is printed in logs instead, the overhead would be higher co=
+mpared
+> to using debugfs.
 
-Related to my comment on patch 5: might a test for guest_memfd with
-regard to the memory spread page cache feature provided by the cpuset
-subsystem be missing?
+Yeah, debugfs sounds fine. No ABI at least.
 
-Perhaps we need tests for
-
-1. Test that the allocation matches current's mempolicy, with no
-   mempolicy defined for specific indices.
-2. Test that during allocation, current's mempolicy can be overridden with
-   a mempolicy defined for specific indices.
-3. Test that during allocation, current's mempolicy and the effect of
-   cpuset config can be overridden with a mempolicy defined for specific
-   indices.
-4. Test that during allocation, without defining a mempolicy for given
-   index, current's mempolicy is overridden by the effect of cpuset
-   config
-
-I believe test 4, before patch 5, will show that guest_memfd respects
-cpuset config, but after patch 5, will show that guest_memfd no longer
-allows cpuset config to override current's mempolicy.
-
-> +	kvm_munmap(mem, total_size);
-> +}
-> +
->  static void test_fault_sigbus(int fd, size_t accessible_size, size_t map_size)
->  {
->  	const char val = 0xaa;
-> @@ -273,11 +369,13 @@ static void __test_guest_memfd(struct kvm_vm *vm, uint64_t flags)
->  		if (flags & GUEST_MEMFD_FLAG_INIT_SHARED) {
->  			gmem_test(mmap_supported, vm, flags);
->  			gmem_test(fault_overflow, vm, flags);
-> +			gmem_test(numa_allocation, vm, flags);
->  		} else {
->  			gmem_test(fault_private, vm, flags);
->  		}
->  
->  		gmem_test(mmap_cow, vm, flags);
-> +		gmem_test(mbind, vm, flags);
->  	} else {
->  		gmem_test(mmap_not_supported, vm, flags);
->  	}
-> -- 
-> 2.51.0.710.ga91ca5db03-goog
+--=20
+Regards,
+Pratyush Yadav
 
