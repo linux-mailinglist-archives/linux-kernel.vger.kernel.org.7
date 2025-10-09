@@ -1,180 +1,189 @@
-Return-Path: <linux-kernel+bounces-846193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E096BC7404
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 04:56:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1805BC740D
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 04:56:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6A6864E82AC
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 02:56:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 812E63AB170
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 02:56:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3B11DD543;
-	Thu,  9 Oct 2025 02:56:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A401DA60D;
+	Thu,  9 Oct 2025 02:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jve+KSKh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UMugnjF9"
+Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 436D3147C9B;
-	Thu,  9 Oct 2025 02:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B99E1C3027;
+	Thu,  9 Oct 2025 02:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759978571; cv=none; b=RJtaxEgTTRA/8vD7+UnprM/cmEw+2k+vTicMSv3H3Mgx5v9bR8e8r9u1rpO1gzWGMt9ztpywyzgHX2XchWVB/XkWdhqMG2n9UXiDykDCra1rC+4LeQTv6HlAbY6UbKdmczjRhNIWq8qOWyarGASf+SkbigUIQu1fS+uohmHvstY=
+	t=1759978598; cv=none; b=AbIRU+W3eACTfXJgagrC9dRNJWykfRGIEnYrk9j6xTq6I6PNbAP3uumaMKOTfz2hA829vxkBJibXsJiqTZ5levId3ghoy79tMOnm1l6cgBUc9KCMp4hGIzOP8KJcLbuxgrXF3NARCVxEH23T+0CqL1bv8du/jclPzj1Iq8TkzDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759978571; c=relaxed/simple;
-	bh=/L9DrTEALOgY5Wmjtt3i0oB/Xl3MAwLmrrfkO95rfn0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dun0jzySlSHs2LXZY8IOfIcvWwkVptT/1OHOo/flSS5dRoOrZgvSFinl4+qOP9j6tYgixHXbw0SGE8HUnBvXZAZKSnT+52CEvRu99jNzNn8tYgnhsX7+IkmVM13gZ+SHVDc6FAgFb3wSSoppsWGS82UmSEonwGIl5lfaCoLd+2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jve+KSKh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AAD6C4CEE7;
-	Thu,  9 Oct 2025 02:56:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759978569;
-	bh=/L9DrTEALOgY5Wmjtt3i0oB/Xl3MAwLmrrfkO95rfn0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jve+KSKhnLyY8l1YhGNfNC6WkwT2LTBJ+4Ps99EVMXx1yJN634wBc1TCJjjzyulYG
-	 YLlhSNZtGoVxOCeIebBMDqaVJ2OSSc6JZ1Hl3Ah4ut/r0gV0PZjese4/rzOoQ0HNsr
-	 BNYN6vaklz7xw7wYP13rLJkJXr5sIsqyZDjoFUV0b0Uc72Cs70KZqUJ7vSbqiiJGe7
-	 FxN7iczebyfD4I676v/oa/Ia4mNoq1EDBjljhjHTIrhABS0/ajXYiUu6orOPPhmYwE
-	 Q3NkRwqvRQeziqh3D8KEXahZHZrPZ0l7DM4K9z0kq9cYXr3J7plFShOm8pmiCrNahM
-	 Jl1Tif4FM6D3A==
-Message-ID: <18eebc8a-4965-4d92-8199-429144500431@kernel.org>
-Date: Thu, 9 Oct 2025 11:55:58 +0900
+	s=arc-20240116; t=1759978598; c=relaxed/simple;
+	bh=vQOfMX/6QF2frKlgI4zbsMZqKYzIvryKIPH3yqqBjlE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=l2H+cQNVyugmxETS0CBFUbBSGhtyk2ab51E7NTYyfz35ayXgUFb0KwBqDuTRp/+Ze8UWE+mCfHrrKVWGYN4e74Nw2z3yXkoxg9lqF4zzjbinqC20q73F/6uM8QnheOnVtnfifsjfcYkqWXAMmFcR/KXdgQrHxmCZ+bczh0Q9PRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=UMugnjF9; arc=none smtp.client-ip=202.12.124.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id C59A07A0055;
+	Wed,  8 Oct 2025 22:56:33 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-05.internal (MEProxy); Wed, 08 Oct 2025 22:56:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1759978593; x=1760064993; bh=uL1Z46mIMlWDqH+R1NLQjW+DW0aqB/vjTR7
+	Nvu5o2aM=; b=UMugnjF9bu7n2sl+cwKXR1JuyODQ4J9royl8Vmt8htBspEjb/K8
+	3GThAi/OyKvUjC6TA1lNcLNT+MStYcOFa/EhVHOCfJPi2bZ3WH/CYpCjiMd3ylSp
+	yshI7HkTa1W5pk551PpoeaUFDxcqMl6IvLElTTGuYEELG9u94+3c3cUg10jsBzSq
+	oCaKUDWaW1he1jove+3hPNOM1cCOZ6ocAwEHB7NQ0TV9lV4Dx6CXJyxfbtCxiSk0
+	QyQyUqaxXFNRuWD+1u0XvbhUP5AHYjKfzYkbPrJZO43gHmLzHeofgRXZSZ3h/Mb6
+	BX7aBvbtL7UOxIam5hlAyMLzdzFRDpWgZAw==
+X-ME-Sender: <xms:YCTnaIQgTpu88XeFOudQm1s8Mvwn9xUlf9lBt386_YtwmzENmA1qaQ>
+    <xme:YCTnaB6fzBs00EbWXLDGUohKl6Z1Ev2fKT6SRPL0SmR2R3K_TBapYAoUaThxb0jje
+    yyZ6A31xcv4edCFaJSaN-dh5Qs5RHSKIuVeBNH0ZxgrV6d1RfilIKg>
+X-ME-Received: <xmr:YCTnaBoAB4kEA85ynV8CCRlJyOqOoZH60jZMXS94IR0Wlcm-Jfwknqvh2egzuxACMB6TLQUiEg0K9qpjDHTK5rXE-o948fB4W5I>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutdehtdegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevufgjkfhfgggtsehmtderredttdejnecuhfhrohhmpefhihhnnhcuvfhh
+    rghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtth
+    gvrhhnpeelfeeklefggfetkedukeevfffgvdeuheetffekledtfeejteelieejteehgeel
+    ieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehfth
+    hhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopedvhedpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtoheprghlvgigvghirdhsthgrrhhovhhoihhtoh
+    hvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggu
+    rdhorhhgpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    grshhtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhesihhoghgvrghr
+    sghogidrnhgvthdprhgtphhtthhopegrnhgurhhiiheskhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphht
+    thhopegsohhquhhnrdhfvghnghesghhmrghilhdrtghomhdprhgtphhtthhopegtohhrsg
+    gvtheslhifnhdrnhgvth
+X-ME-Proxy: <xmx:YCTnaFUCZ9mbgctsCLbcsLNmMGb1mT-M1I_hBDo7nakitsT95jlwcA>
+    <xmx:YCTnaBoNT_YxL6gQ2kLiKXTBz5pwXVtKMpLptTcjRTdoQo8l8d4X9g>
+    <xmx:YCTnaMvl1N7XGHQ_G7jg7zlyGI-phTxv3lfe9xG0MoqHnoLwvwyQBA>
+    <xmx:YCTnaHSWqgw3FZEAMa5JuYFUjdCRwmOgwdxA0Q12-9XxKZWoXCJ4AA>
+    <xmx:YSTnaAw-_18wT2EamGw4uVXrGz7ejqXMMQC5arZ31uvydq_9YG0wh346>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 8 Oct 2025 22:56:29 -0400 (EDT)
+Date: Thu, 9 Oct 2025 13:56:19 +1100 (AEDT)
+From: Finn Thain <fthain@linux-m68k.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+cc: Peter Zijlstra <peterz@infradead.org>, Will Deacon <will@kernel.org>, 
+    Alexei Starovoitov <ast@kernel.org>, 
+    Daniel Borkmann <daniel@iogearbox.net>, 
+    Andrii Nakryiko <andrii@kernel.org>, 
+    Andrew Morton <akpm@linux-foundation.org>, 
+    Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
+    Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>, 
+    LKML <linux-kernel@vger.kernel.org>, 
+    linux-arch <linux-arch@vger.kernel.org>, 
+    Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k@vger.kernel.org, 
+    Martin KaFai Lau <martin.lau@linux.dev>, 
+    Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+    Yonghong Song <yonghong.song@linux.dev>, 
+    John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+    Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+    Jiri Olsa <jolsa@kernel.org>, bpf <bpf@vger.kernel.org>
+Subject: Re: [RFC v3 2/5] bpf: Explicitly align bpf_res_spin_lock
+In-Reply-To: <CAADnVQLOQq5m3yN4hqqrx4n1hagY73rV03d7g5Wm9OwVwR_0fA@mail.gmail.com>
+Message-ID: <fdda632e-bac9-e830-8840-2fcd6b2292b6@linux-m68k.org>
+References: <cover.1759875560.git.fthain@linux-m68k.org> <807cfee43bbcb34cdc6452b083ccdc754344d624.1759875560.git.fthain@linux-m68k.org> <CAADnVQLOQq5m3yN4hqqrx4n1hagY73rV03d7g5Wm9OwVwR_0fA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/5] Introduce "non-pixel" sub node within iris video
- node
-To: Vikash Garodia <quic_vgarodia@quicinc.com>,
- Bryan O'Donoghue <bod@kernel.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Charan Teja Kalla <charan.kalla@oss.qualcomm.com>,
- Bryan O'Donoghue <bod.linux@nxsw.ie>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <7b6db4fa-2f73-376d-4eb3-64c1c7e6cda3@quicinc.com>
- <SuwJuCIcLVJwN3YeN1il6tB9wO9OH6bYcnbRpxpuI9Dl7piYLN-hVdnyv0Mal6N-W5pi2aCZI8MxHZDEkoE63A==@protonmail.internalid>
- <4d87d1ca-55b2-426e-aa73-e3fd8c6fe7bd@kernel.org>
- <10a8ccda-4e27-4b06-9a0e-608d6ade5354@nxsw.ie>
- <4cb4a92d-2f20-47c7-881e-aadcc6f83aa0@kernel.org>
- <1516f21e-aee3-42cf-b75e-61142dc9578d@oss.qualcomm.com>
- <9bae595a-597e-46e6-8eb2-44424fe21db6@linaro.org>
- <MMSKAu89Ew7StAeFBV442KfKNzmqbTSQ-maFG35Jr9d8PkUV2L4sx44R2DRevXA8mC45vkA398l2mvVzarZwew==@protonmail.internalid>
- <bcfbf35b-69ed-4f39-8312-6a53123cd898@kernel.org>
- <d46c0335-99d6-469f-a61f-aca4c851f745@kernel.org>
- <GyrcG3qBN7c5C7ajCs3EV81hWvuaVbg64CpzQ-X3d_p6EauoiKxSoG2aOKE21-j12SWFjNDjV-kVSwYYqVm_lQ==@protonmail.internalid>
- <a0dc93ec-e35c-409b-8dfb-1642c92a9f0c@kernel.org>
- <98e6acf8-80d7-4894-b4ce-ce74660722ef@kernel.org>
- <5085c857-f6e8-4faf-b61a-a9ee562ccf06@kernel.org>
- <0c0b6491-1def-d055-b689-2bb99f4306df@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <0c0b6491-1def-d055-b689-2bb99f4306df@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary=-14638117742092801439175997857935
 
-On 09/10/2025 11:52, Vikash Garodia wrote:
-> 
-> On 10/9/2025 6:34 AM, Krzysztof Kozlowski wrote:
->> On 09/10/2025 09:55, Bryan O'Donoghue wrote:
->>> On 09/10/2025 01:47, Krzysztof Kozlowski wrote:
->>>>> Maybe it would be possible to also use an inferred FUNCTION_ID somehow
->>>>> though TBH I think that's a work-around.
->>>> Three months ago I gave you the answer for that - it is inferred by
->>>> index on the list.
->>>
->>> But at least as I understand it, you can have multiple SID entries that 
->>> need to map to a FUNCTION_ID which means you need to encode that 
->>> inferred indexing in your driver.
->>
->> Yes.
->>
->>>
->>> So you can't have the iommu code just know what to do.. it has to be 
->>> driver specific.
->>
->> Yes.
->>
->>>
->>> The iommu description for this platform basically lacks the data that 
->>> _should_ be there -> FUNCTION_ID.
->>
->> No. The index tells that already.
-> 
-> Hardware1 can have 2 iommus entries for FUNCTION_ID_1, while Hardware2 can have
-> 3 iommus entry. It would be good to keep this info in devicetree, as it is still
-> hardware specific (function_id is the hardware identifier).
-> Defaulting the index would imply, the common device driver would need to book
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-You don't "defaulting the index" but control the indices. All what you
-wrote is just irrelevant.
+---14638117742092801439175997857935
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-> keep the iommus and hardware id in driver for every SOC. Any mismatch in order
-> in DT and driver table would result in error too.
 
-It's irrelevant. You write buggy code, you are responsible for it.
+On Wed, 8 Oct 2025, Alexei Starovoitov wrote:
 
-> 
-> More importantly, this need to be agreed by IOMMU maintainer to extend the
-> iommus property.
-Luckily they are not hiding...
+> On Tue, Oct 7, 2025 at 4:50=E2=80=AFPM Finn Thain <fthain@linux-m68k.org>=
+ wrote:
+> >
+> > Align bpf_res_spin_lock to avoid a BUILD_BUG_ON() when the alignment
+> > changes, as it will do on m68k when, in a subsequent patch, the minimum
+> > alignment of the atomic_t member of struct rqspinlock gets increased.
+> > Drop the BUILD_BUG_ON() as it is now redundant.
+> >
+> > Cc: Martin KaFai Lau <martin.lau@linux.dev>
+> > Cc: Eduard Zingerman <eddyz87@gmail.com>
+> > Cc: Song Liu <song@kernel.org>
+> > Cc: Yonghong Song <yonghong.song@linux.dev>
+> > Cc: John Fastabend <john.fastabend@gmail.com>
+> > Cc: KP Singh <kpsingh@kernel.org>
+> > Cc: Stanislav Fomichev <sdf@fomichev.me>
+> > Cc: Hao Luo <haoluo@google.com>
+> > Cc: Jiri Olsa <jolsa@kernel.org>
+> > ---
+> >  include/asm-generic/rqspinlock.h | 2 +-
+> >  kernel/bpf/rqspinlock.c          | 1 -
+> >  2 files changed, 1 insertion(+), 2 deletions(-)
+> >
+> > diff --git a/include/asm-generic/rqspinlock.h b/include/asm-generic/rqs=
+pinlock.h
+> > index 6d4244d643df..eac2dcd31b83 100644
+> > --- a/include/asm-generic/rqspinlock.h
+> > +++ b/include/asm-generic/rqspinlock.h
+> > @@ -28,7 +28,7 @@ struct rqspinlock {
+> >   */
+> >  struct bpf_res_spin_lock {
+> >         u32 val;
+> > -};
+> > +} __aligned(__alignof__(struct rqspinlock));
+>=20
+> I don't follow.
+> In the next patch you do:
+>=20
+> typedef struct {
+> - int counter;
+> + int __aligned(sizeof(int)) counter;
+> } atomic_t;
+>=20
+> so it was 4 and still 4 ?
+> Are you saying 'int' on m68k is not 4 byte aligned by default,
+> so you have to force 4 byte align?
+>=20
 
-Best regards,
-Krzysztof
+Right. __alignof(int) =3D=3D 2 on m68k.
+
+> >  struct qspinlock;
+> >  #ifdef CONFIG_QUEUED_SPINLOCKS
+> > diff --git a/kernel/bpf/rqspinlock.c b/kernel/bpf/rqspinlock.c
+> > index 338305c8852c..a88a0e9749d7 100644
+> > --- a/kernel/bpf/rqspinlock.c
+> > +++ b/kernel/bpf/rqspinlock.c
+> > @@ -671,7 +671,6 @@ __bpf_kfunc int bpf_res_spin_lock(struct bpf_res_sp=
+in_lock *lock)
+> >         int ret;
+> >
+> >         BUILD_BUG_ON(sizeof(rqspinlock_t) !=3D sizeof(struct bpf_res_sp=
+in_lock));
+> > -       BUILD_BUG_ON(__alignof__(rqspinlock_t) !=3D __alignof__(struct =
+bpf_res_spin_lock));
+>=20
+> Why delete it? Didn't you make them equal in the above hunk?
+>=20
+
+I deleted it because it's tautological. I think "do not repeat yourself"=20
+applies here.
+---14638117742092801439175997857935--
 
