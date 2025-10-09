@@ -1,87 +1,53 @@
-Return-Path: <linux-kernel+bounces-846369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id E30D9BC7BC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:37:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00237BC7BCC
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:39:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8E56B3517C8
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:37:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08B7C19E488B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9A61E1E12;
-	Thu,  9 Oct 2025 07:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A17325D202;
+	Thu,  9 Oct 2025 07:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mDe9u+UK"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T/GwBC3i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E41018DB35
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 07:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1337F4FA;
+	Thu,  9 Oct 2025 07:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759995466; cv=none; b=TxPFHnjyhr0xnN8wryJCsWJfrG8v6OOwX4X7vATpXOLL4thu1LuonxtP6uVC/oOQTWc4D5SDYkGXvsapXmGt32HxZmw3hszFmqwzbmHh66Oe4hs6cCxhIfSRrn1i7wMlwJQXAzHWoxtdLqQXn2iPQ7h9FpeXCctTdOMqM/EGZ/M=
+	t=1759995535; cv=none; b=FlXbDD9hGiL0e+urrwN3mWF3EBtU9/bvAqzUZf2HkmJmlXg6Y8zMeokgHh+7RCXk6LuKoTgIazdE6AM58zHqWNiIWL6zu/H4JUOC9PpTf1ovb5wsHGGg3icq2blITrQ/wl/AAujm23AeL4K/XjrDE6AKEgALSRShSXKi+N95l7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759995466; c=relaxed/simple;
-	bh=dGju8AeWqVChK/btSkkXXitucm6kni2Hg7FXCU+eGHI=;
+	s=arc-20240116; t=1759995535; c=relaxed/simple;
+	bh=2mMu6kOhVPf03SVsCqm0CpeqPDE+im2OXyunq9ZbPsA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nt0DvISEnozaA4EMvyBff/pwxuEGKS9JezHnuy8rHWDxqlj2of/te4qDDLk8L4KsQX/JgW/VUY23t5z+yFruvgjqjC5X++AKROVIm3h2D/Ayw48VEZvHMYUZaFYi6nra1cTwwyouhz0UGa+wn7xDQ5XHnLgWloZo3ep0t73qnDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mDe9u+UK; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-62fc28843ecso869302a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 00:37:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759995463; x=1760600263; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QkBo4+o98aA49wUvu+G1xef2+IziwVoenRLYEe5BuKY=;
-        b=mDe9u+UK4Mwu6M18fO0TRloIRr1AIoR0KlO4CS6yjeyJsGvfj1CWv7qlTBQZWKEnHK
-         jM0FUy8uKYEeZIOIpavbq3oPWGMmXz9t+rDeqnvDaTyqSf0Fywgm8ykKtbSt4oG5Emf8
-         T9XTTjyinFnO4Br/iwGz1PSwwz+ICZ7yRT1leZzyjYGEzsidBkeKCCZx69MxVBfi2T0V
-         HJNvVfoLLJlz8H6ZC8wC1OByp6x8D0k98kL8le2fDn+ipcg7MqFU7tKspJs2HvMm4WDz
-         OjWO+BtwfQJCSChuXNn9N+uc+MPhV0z6KgLYeNTRA+VLbOPwtE25RoJQCc+6es4VcNKH
-         u5tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759995463; x=1760600263;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QkBo4+o98aA49wUvu+G1xef2+IziwVoenRLYEe5BuKY=;
-        b=nQHYQ5uwBvo6bVv12sTMai+5YDBr3HgroqMR1pSa+5mc3PKRYhRJWylpjHmjRkTvME
-         om7E+OxvdsurQ/SnxpabdNY+nHIpgy3ahrdQO9KfBFAjL/37VuTUwlq+XG/Myexq7si1
-         SRi9XuO2N7bZU5rWc56hPrSPVFzIe8avRA2XH8fy5WzWEE70eoo6b3nNWTaeX8Jfd33n
-         g6Z4qE0lmmj9F39FbadIUBK2jzU02KVpz0q3TxRJmPVGDm/I3miYUoMdPmCXDs1REQPA
-         iMSShjovvqTY/xOd9lt/KDhuE3LYWgrfhivqrFodp796ee7r+jskN7SHgp/LYGUN/dQC
-         9oVA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWTA1Bpf70uGESyC2oi7Sgf7vNL6U/2Z80N0km5QZO42bn9lljynX0/xYRt149h1xJuOr34DMB3qEAu3M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0Rcz+z8iwVj+1quQUlWXZYku7o+VXBwu26YSiCwh0dEYEBd3I
-	nKyupeOp3gV9+/xezjJUH0zRA/zTia+vnrkdiYigWqnpdqiWCF2zUuFzh8M2nP7T0DKQVL6n2vc
-	xQWiQ
-X-Gm-Gg: ASbGncuofrK5wLUwMrd5pbBZA5EZkF0n5QbqV5CvnfJARoFZZ+x9H9u99U8GCvUJLdm
-	4dEt4EsX4PbFfiG0LSw5C1EMdRIvUOQhFgGkDj6Kn3VMqaPMzRZ1V8bDTtJB1OHKILRcojre8os
-	ZpoGJGkGs0BPUKWTHnnsAQC8AlkWEjresLNLfiSDZqXLnrUQeKZ4z/sJbeXd6dmBlGFifYrpFJZ
-	y3zhPKrltGyPK99xXNk9boazTcwVkd87TsW4kMU+8dAplSLxokS+Kyg4mwAsa4GpFI/PqMXsBoQ
-	OG41tqPc6BVzv0NojDGzoAvhZAIHD0SKg4r+6h03Brax9FfbDrFdZ5HAFGo5Z6UECelRSr6un3q
-	z3dUYYauBlpWGifhbFiGVgiv/k9djkp3VBmfH181QbuVWN9DTG7fhEmpJguEMOV2Oms8=
-X-Google-Smtp-Source: AGHT+IFHi/yZs/pGR4qTm0LoEk0mx1AMmvxnoL+zqu9ZIvbq6rDqz2obSOnUoPzAuZGAuoj0ELKvaQ==
-X-Received: by 2002:a05:6402:2708:b0:639:c56d:2407 with SMTP id 4fb4d7f45d1cf-639d5c3f43fmr6045687a12.22.1759995462468;
-        Thu, 09 Oct 2025 00:37:42 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-639f30d9963sm1766971a12.15.2025.10.09.00.37.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 00:37:41 -0700 (PDT)
-Date: Thu, 9 Oct 2025 10:37:38 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Mattijs Korpershoek <mkorpershoek@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>,
-	Khairul Anuar Romli <khairul.anuar.romli@altera.com>,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] spi: cadence-quadspi: Fix pm_runtime unbalance on dma
- EPROBE_DEFER
-Message-ID: <aOdmQhGW27I6rGTB@stanley.mountain>
-References: <20251009-cadence-quadspi-fix-pm-runtime-v2-1-8bdfefc43902@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kYyWHXQPs2q0ld1KhKDAq8dUa3uTd0SyTpAJrpDy6jvdQXh5wYJK0Q4pukP09Jkl36Lb0pkHcTzqOdNzc7WmyO6ddyG55bLxJQl+aNfzSucOal1rURE2otomWVsCZrseoggxO+b0nS7c3zvjvtMKvK8Ue/6dhMpJgRyYr2+C/WU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T/GwBC3i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FD0BC4CEE7;
+	Thu,  9 Oct 2025 07:38:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759995534;
+	bh=2mMu6kOhVPf03SVsCqm0CpeqPDE+im2OXyunq9ZbPsA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T/GwBC3iQwj0P8jPvAhoWQ57HRFX0PoCqLs4wCl0/5m9IM+URbi32keOKTdsOAWDe
+	 f16NdGJIpiqfDac+qKHq+AgtsROgjxJ8VhYX30ahrY3L4UROrLf55Ce/n+MKc7b9Ju
+	 qksKsBBebmwE0gS6oVa0PyacotVzKYirL/vj1aYcn2/uzKzmaTjcrIo+qLhWPAsMAg
+	 JZErdb171aUNt6g9Op3otyycrhevvdeHfMcEr5yoJSlHEosFLnS9GT2GOAbUU5SfDY
+	 LW3u/l4m305QJaL3ntQXGFgU+YCwpZxPv5f4dSRuNYcljVw49IJY7QaSKv9A2WChCs
+	 b3ErO9/uVWeaA==
+Date: Thu, 9 Oct 2025 09:38:50 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Lauri Tirkkonen <lauri@hacktheplanet.fi>
+Cc: Jiri Kosina <jikos@kernel.org>, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] HID: i2c-hid: patch Lenovo Yoga Slim 7x Keyboard rdesc
+Message-ID: <lxtbtu5frygbw7qzfaelc63vgientm7d6oo7dt6jeassl3ttbh@f22h223wehbm>
+References: <aOdLxAEYQpV2zp77@mail.hacktheplanet.fi>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,37 +56,101 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251009-cadence-quadspi-fix-pm-runtime-v2-1-8bdfefc43902@kernel.org>
+In-Reply-To: <aOdLxAEYQpV2zp77@mail.hacktheplanet.fi>
 
-On Thu, Oct 09, 2025 at 09:10:38AM +0200, Mattijs Korpershoek wrote:
-> In csqspi_probe(), when cqspi_request_mmap_dma() returns -EPROBE_DEFER,
-> we handle the error by jumping to probe_setup_failed.
-> In that label, we call pm_runtime_disable(), even if we never called
-> pm_runtime_enable() before.
+On Oct 09 2025, Lauri Tirkkonen wrote:
+> The keyboard of this device has the following in its report description
+> for Usage (Keyboard) in Collection (Application):
 > 
-> Because of this, the driver cannot probe:
+> 	# 0x15, 0x00,                    //  Logical Minimum (0)                52
+> 	# 0x25, 0x65,                    //  Logical Maximum (101)              54
+> 	# 0x05, 0x07,                    //  Usage Page (Keyboard)              56
+> 	# 0x19, 0x00,                    //  Usage Minimum (0)                  58
+> 	# 0x29, 0xdd,                    //  Usage Maximum (221)                60
+> 	# 0x81, 0x00,                    //  Input (Data,Arr,Abs)               62
 > 
-> [    2.690018] cadence-qspi 47040000.spi: No Rx DMA available
-> [    2.699735] spi-nor spi0.0: resume failed with -13
-> [    2.699741] spi-nor: probe of spi0.0 failed with error -13
+> Since the Usage Min/Max range exceeds the Logical Min/Max range,
+> keypresses outside the Logical range are not recognized. This includes,
+> for example, the Japanese language keyboard variant's keys for |, _ and
+> \.
 > 
-> Only call pm_runtime_disable() if it was enabled by adding a new
-> label to handle cqspi_request_mmap_dma() failures.
+> Patch the report description to make the Logical range match the Usage
+> range, fixing the interpretation of keypresses above 101 on this device.
 > 
-> Fixes: b07f349d1864 ("spi: spi-cadence-quadspi: Fix pm runtime unbalance")
-> Signed-off-by: Mattijs Korpershoek <mkorpershoek@kernel.org>
+> Signed-off-by: Lauri Tirkkonen <lauri@hacktheplanet.fi>
 > ---
-> This has been tested on a AM69 SK board.
-> ---
-> Changes in v2:
-> - Updated message to use correct Fixes tag (Dan)
-> - Link to v1: https://lore.kernel.org/r/20251008-cadence-quadspi-fix-pm-runtime-v1-1-33bcb4b83a2e@kernel.org
+>  drivers/hid/hid-ids.h              |  1 +
+>  drivers/hid/i2c-hid/i2c-hid-core.c | 25 +++++++++++++++++++++++++
+>  2 files changed, 26 insertions(+)
+> 
+> diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+> index 5721b8414bbd..bbb932145d2c 100644
+> --- a/drivers/hid/hid-ids.h
+> +++ b/drivers/hid/hid-ids.h
+> @@ -715,6 +715,7 @@
+>  #define USB_DEVICE_ID_ITE_LENOVO_YOGA2  0x8350
+>  #define I2C_DEVICE_ID_ITE_LENOVO_LEGION_Y720	0x837a
+>  #define USB_DEVICE_ID_ITE_LENOVO_YOGA900	0x8396
+> +#define I2C_DEVICE_ID_ITE_LENOVO_YOGA_SLIM_7X	0x8987
+>  #define USB_DEVICE_ID_ITE8595		0x8595
+>  #define USB_DEVICE_ID_ITE_MEDION_E1239T	0xce50
+>  
+> diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
+> index 63f46a2e5788..d78bd97ec24e 100644
+> --- a/drivers/hid/i2c-hid/i2c-hid-core.c
+> +++ b/drivers/hid/i2c-hid/i2c-hid-core.c
 
-Thanks!
+Why patching i2c-hid-core when this is clearly a logical bug, not a
+transport (I2C) bug?
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+I would rather see this fixup in hid-lenovo.c along with the other
+lenovo fixes.
 
-regards,
-dan carpenter
+Cheers,
+Benjamin
 
+> @@ -740,6 +740,26 @@ static int i2c_hid_raw_request(struct hid_device *hid, unsigned char reportnum,
+>  	}
+>  }
+>  
+> +static void patch_lenovo_yoga_slim7x_keyboard_rdesc(struct i2c_hid *ihid,
+> +						    char *rdesc,
+> +						    unsigned int rsize)
+> +{
+> +	if (!(rsize == 0xb0 &&
+> +	      rdesc[0x34] == 0x15 && rdesc[0x35] == 0x00 && // Logical Minimum (0)
+> +	      rdesc[0x36] == 0x25 && rdesc[0x37] == 0x65 && // Logical Maximum (101)
+> +	      rdesc[0x38] == 0x05 && rdesc[0x39] == 0x07 && // Usage Page (Keyboard)
+> +	      rdesc[0x3a] == 0x19 && rdesc[0x3b] == 0x00 && // Usage Minimum (0)
+> +	      rdesc[0x3c] == 0x29 && rdesc[0x3d] == 0xdd))  // Usage Maximum (221)
+> +		return;
+> +
+> +	u8 logical_max = rdesc[0x37];
+> +	u8 usage_max = rdesc[0x3d];
+> +
+> +	rdesc[0x37] = usage_max;
+> +	i2c_hid_dbg(ihid, "%s: patched logical max from %u to %u\n", __func__,
+> +			logical_max, usage_max);
+> +}
+> +
+>  static int i2c_hid_parse(struct hid_device *hid)
+>  {
+>  	struct i2c_client *client = hid->driver_data;
+> @@ -793,6 +813,11 @@ static int i2c_hid_parse(struct hid_device *hid)
+>  		}
+>  	}
+>  
+> +	if (ihid->hid->vendor == USB_VENDOR_ID_ITE &&
+> +	    ihid->hid->product == I2C_DEVICE_ID_ITE_LENOVO_YOGA_SLIM_7X) {
+> +		patch_lenovo_yoga_slim7x_keyboard_rdesc(ihid, rdesc, rsize);
+> +	}
+> +
+>  	i2c_hid_dbg(ihid, "Report Descriptor: %*ph\n", rsize, rdesc);
+>  
+>  	ret = hid_parse_report(hid, rdesc, rsize);
+> -- 
+> 2.51.0
+> 
+> -- 
+> Lauri Tirkkonen | lotheac @ IRCnet
 
