@@ -1,144 +1,127 @@
-Return-Path: <linux-kernel+bounces-847399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A888FBCAB59
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 21:32:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AADFDBCAB5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 21:34:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58BDB3C7A9A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 19:32:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D10783B8A7C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 19:34:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3300625742C;
-	Thu,  9 Oct 2025 19:32:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64042257852;
+	Thu,  9 Oct 2025 19:34:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ntGbiAl/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DNz8/E0I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E3922836C
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 19:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF961B423B;
+	Thu,  9 Oct 2025 19:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760038333; cv=none; b=Y7gb0OC+JWxkcGkeNF2hhYvRPqC/zL1eU33d1vmKCdv5+tivzQVvWMkekJMrjV2xcxdj+32cOBl7KEEbvIn/zH1hrxEiotRENjzCGl3LsjEbAj/3bQWKX++HpHyEVcJpDhA/KJA494VZ4lH3XeEGjXrVcTMa1BMKsM/a74fywyY=
+	t=1760038449; cv=none; b=gIQivqGT+QxWpPNj6A90tV29fMlhuUo3mcilRfv5WvPUXaXKx3XP2KzqDM3JDFxzDjjpPnbPk1TuyeMlHgyMCf7IJTaIEfCZDK23PwhZ9X1FC9kiWOMsgfGnfc2EudVW8ifGWDkIdJHyYn7tU38EHCnQMwyBrRlTJQ5IiZgGBhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760038333; c=relaxed/simple;
-	bh=QTIZB4cXar6tcTAPv6wGI1eBlG8KHsLbakGl0mcnySY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OAcyBb+5r1NddTX7rJ5CmUOupXxhn4DAfuqfN7qdFCIUYrx0RD2FH4qC+pxWaV3FOOW1LomazL39C90A3vtVtAxgkV3iuqntODZA4s7MYLRnzRLiHn1fq2bvvR4dWYIRvXf3hIcz7iagjYHfsQcUqEgNaylrVgQwBxPUbFdGw+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ntGbiAl/; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760038332; x=1791574332;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=QTIZB4cXar6tcTAPv6wGI1eBlG8KHsLbakGl0mcnySY=;
-  b=ntGbiAl/Ih02aBgGZArtzulDgrRe6Qpw1aAEN5nWYn6xhsIaMHHb4lo6
-   g19HoY+c3uc2Oz4/9dttosYPREA8cZ3Gm4fNyobtw+kCzC3a7ucoKPfny
-   Xswg6DgWusHVOgB2ZnV9aSclzR1yXTJ+uLxIu1yllh1/Ef5zbBWuSS2k5
-   D72Lq1DsCX/MfSwTYPBkzpskctSxkK35FlMLMYi2ibClVcPFcKpy0Hy9j
-   zRhiXE8yF++08hjVpFHL4mYZBNJY3M4lWo4AYIMwrIIOpxfI8zpR0cAGl
-   xom2mjnc2JjGknw8Zf7viFRv4x+ExpBFC6um8HJ5i3gFQtQOHkEVHlFnr
-   w==;
-X-CSE-ConnectionGUID: 86hYOvHNQjaHcR8WbroLzA==
-X-CSE-MsgGUID: Qxkyz47qTS+tPCubFWdfEg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="62286574"
-X-IronPort-AV: E=Sophos;i="6.19,217,1754982000"; 
-   d="scan'208";a="62286574"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 12:32:05 -0700
-X-CSE-ConnectionGUID: 2dIFX4OXSYKjl+0raW5S5A==
-X-CSE-MsgGUID: ibQ1W0FOTVqpk0fcIifTxg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,217,1754982000"; 
-   d="scan'208";a="180815015"
-Received: from unknown (HELO [10.24.81.144]) ([10.24.81.144])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 12:32:02 -0700
-Message-ID: <aefa20f8-49d4-4fa9-9d18-39b7b0ffebf3@intel.com>
-Date: Thu, 9 Oct 2025 12:32:01 -0700
+	s=arc-20240116; t=1760038449; c=relaxed/simple;
+	bh=9wzBsfaQ4o3G21CLbZx/GZdiQupzsIsjHsxLz4XQQNo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=SB/QQeKwSeEwOPzYLWohH4yJz44KYa9iVO6UHw8vtzT5D4SJQ1paUJOfIvsRIuR/hxYPcMkgjg3GEcEKDDn5748Dr4NyTHEb/LRmu03D0gl+kEojmgeIEgIP8tL81CkFZahwu9LBrqzwrdpsUVBWc1gjX8Eg7+U7P+NsbcDWPCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DNz8/E0I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E8C9C4CEF8;
+	Thu,  9 Oct 2025 19:34:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760038449;
+	bh=9wzBsfaQ4o3G21CLbZx/GZdiQupzsIsjHsxLz4XQQNo=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=DNz8/E0Irw5AxbbhfZgLE1ZoPq4x03moJxzAnus/VheFh9O9pY3AoEOCEWP0WHhLZ
+	 VPjqFg2oErw0KEJ5kcu4ixRTRPp7Orox6rPVzahLrjm+nhlA6JP1tRty7/tsz4duEu
+	 Eu93DHXC5ZXGIxjCLCynTz6/ZZucMpFGJgPcYXj2uoh3JvekqMKm9fLZHMlgwtgSUk
+	 1oMlmLNeaaxEIgqaTdCYf1cMvHFKOtVq5156cVDtBSMUH3tSA1Z9VDtdT/s91Rc+3R
+	 SlSmhs9I6ZCifV7XV0iQPGN8TVvHZlC9dQpE9RgXfgO8GMw6ioRUvHlya9Vi76xOMQ
+	 l5qD9VK1lWafw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 6/8] mm: Introduce deferred freeing for kernel page
- tables
-To: David Hildenbrand <david@redhat.com>, Lu Baolu
- <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Kevin Tian <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
- Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Alistair Popple <apopple@nvidia.com>,
- Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>,
- Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>
-Cc: iommu@lists.linux.dev, security@kernel.org, x86@kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Dave Hansen <dave.hansen@linux.intel.com>
-References: <20250919054007.472493-1-baolu.lu@linux.intel.com>
- <20250919054007.472493-7-baolu.lu@linux.intel.com>
- <4858074d-f058-41ec-a581-a8254b8cc2d7@redhat.com>
-Content-Language: en-US
-From: Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <4858074d-f058-41ec-a581-a8254b8cc2d7@redhat.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Thu, 09 Oct 2025 21:34:04 +0200
+Message-Id: <DDE1K39EUXQK.17AAVZXFZ4KEQ@kernel.org>
+Subject: Re: [PATCH RFC v2 3/3] gpu: nova-core: use BoundedInt
+Cc: "Alexandre Courbot" <acourbot@nvidia.com>, "Joel Fernandes"
+ <joelagnelf@nvidia.com>, "Jesung Yang" <y.j3ms.n@gmail.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feong@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ <nouveau@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>
+To: "Yury Norov" <yury.norov@gmail.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20251009-bounded_ints-v2-0-ff3d7fee3ffd@nvidia.com>
+ <20251009-bounded_ints-v2-3-ff3d7fee3ffd@nvidia.com>
+ <aOflmmHe8O6Nx9Hp@yury> <DDDYOBOZTF7Q.124VJDF4C76B6@kernel.org>
+ <aOf-s-XuhbN7MUlx@yury>
+In-Reply-To: <aOf-s-XuhbN7MUlx@yury>
 
-On 10/9/25 12:28, David Hildenbrand wrote:
-...
-> Can we please squash #7 in here and make sure to call the config knob
-> something that indicates that it is for *kernel* page tables only?
-> 
-> ASYNC_KERNEL_PGTABLE_FREE
+On Thu Oct 9, 2025 at 8:28 PM CEST, Yury Norov wrote:
+> On Thu, Oct 09, 2025 at 07:18:33PM +0200, Danilo Krummrich wrote:
+>> On Thu Oct 9, 2025 at 6:40 PM CEST, Yury Norov wrote:
+>> > On Thu, Oct 09, 2025 at 09:37:10PM +0900, Alexandre Courbot wrote:
+>> >> Use BoundedInt with the register!() macro and adapt the nova-core cod=
+e
+>> >> accordingly. This makes it impossible to trim values when setting a
+>> >> register field, because either the value of the field has been inferr=
+ed
+>> >> at compile-time to fit within the bounds of the field, or the user ha=
+s
+>> >> been forced to check at runtime that it does indeed fit.
+>> >
+>> > In C23 we've got _BitInt(), which works like:
+>> >
+>> >         unsigned _BitInt(2) a =3D 5; // compile-time error
+>> >
+>> > Can you consider a similar name and syntax in rust?
+>>=20
+>> Rust is a different language and has its own syntax, I think we should n=
+ot try
+>> to use C syntax instead.
+>
+> Up to you guys. But having in mind that C is the only language that
+> really works for system engineering, I would rather consider to stay
+> in line with it on semantic level.
 
-I'm fine with both of those. That name ^ looks fine to me too.
+I think you asked about syntax above; semantically it is (and should be) ex=
+actly
+the same.
+
+> If your goal is to make rust adopted by system engineers, you may
+> want to make your language somewhat familiar to what people already
+> know.
+
+The goal is to add support for Rust in the Linux kernel; to adapt its advan=
+ced
+type system features offering compile time checked lifetime and ownership
+semantics leading to better memory safety and more compile time validation
+overall.
+
+In general I think we should stay as close to existing patterns as possible=
+,
+i.e. consistency does matter.
+
+However, sometimes it is necessary to break with existing patterns and desi=
+gn
+things slightly different to take full advantage of the capabilities we get=
+ from
+the language (BoundedInt / BitInt is not one of those).
+
+In other words, introducing a new language with capabilities that solve rea=
+l
+problems is pointless if we subsequently limit ourselfs to "what people alr=
+eady
+know" for people who haven't been in touch with the language before.
 
