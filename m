@@ -1,134 +1,113 @@
-Return-Path: <linux-kernel+bounces-847016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA0C7BC9A91
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:58:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6686BC9AA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:59:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 96485353617
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:58:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 925E73C180F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1452EB85C;
-	Thu,  9 Oct 2025 14:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BKBTAQ6Y"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D682EB84B;
+	Thu,  9 Oct 2025 14:59:04 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1DA2EAB8C
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 14:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF0C2EBB89;
+	Thu,  9 Oct 2025 14:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760021929; cv=none; b=MBv4pQzaHwgMAwLyTcKBeO0U4Nn6Kt03esR/TwtDRLlJiKbUxfeVaJrwJTGkncQP153nsOkgJwPxoDHJB+6XRqLb+Mo0+a7sy1m7zyAnI+mQLNt1is/f9EHk+/nfrBm2GU2XaVoarjsrXr7bi1x6ZI11pd4xK+GXFeynicbeYjE=
+	t=1760021943; cv=none; b=BclPVV+NloP+gjR7z60w5UBzA6FxG1eZH85xKVgeBaniZjIDwJQWA2taDc9vcScfiTcclcaG742+2HDLIkz0+CGYY/EMKsYf2yidQPXPSLe4PEoVapAD3vrHr6Rv3ngwfUpr4vCCJqYCAZmenvFzjJoKHTg4a2WSvV7n6ENqzDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760021929; c=relaxed/simple;
-	bh=4WbS4ZmE5ty+nbST9vhQZHro/QQI8iMbVDclpn84JuQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iNJhc09HYe6cfZb006eAONqEi7B9CvsWB1FHE1utqczgAtT1doolPVaeSFLyJNniwpz1hLE852l0v0YQAyhlRpnNhXmsyCzvLLayO8pdZ/s/Ip1F/tDTQJWsLXjSf87J/Hvgovo9i13tjKLcF1Q44bo+Cm+/PsTG0hUIDkgPrd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BKBTAQ6Y; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-780fe76f457so5364347b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 07:58:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760021927; x=1760626727; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HjQMy0W5zY49EbzVVSPPF91Ji19NK64fWKIXcHylS1U=;
-        b=BKBTAQ6Y1+5pWD0j//TaXDOZVjMUnFYrBlbHj3zOyX5+H+p5WdG17MoBZwAzN3RIO7
-         LqjjRdj/4Ra4An4h1aLzezn330DyQ3kqt6HsYw6pcsPFIyjOEPXnjA0h2qgwtO1v7+RF
-         UVbdAxlMX+a5EfFFYKsdh63dKw2Q4Z9ShjHiDWRwWY55QHM20lddlKNTUGzXDOTRh78L
-         u8ggZEslZ+Jdv6VD4D7n3Gs3Ks5RV4FH3WHiOwcuF403zLS7T0J5jopVIKOanrMjzXU3
-         6+65l636yjm/N5Tx6IEtsbzD48AS4DxNzaFbDAhY/9cINmPp65PA5CptCTMXy2gBGjx/
-         et7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760021927; x=1760626727;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HjQMy0W5zY49EbzVVSPPF91Ji19NK64fWKIXcHylS1U=;
-        b=XWpTnfQQuZnfeJiTdTr5fnTFayMZpb2kivrYJM5twuIbvSTHgivGYdruyrwxWnKQ2w
-         bkJIawwBWdlWQaCqLoVQxi+25SjehEzBdN+D1KWCp9XEUv14C18hq8h94moH5U4VGUKV
-         GfIhnKUe8LnysWYsdSEe5utL10qrKJKrGHUK3MRfiHtqC/H5qOeIYSmQNrtTEdeVHGJd
-         rkiC/b6CiudPWeogA9tDOvb630OT9JlIpZvPp+JDwDEh9BMi3lMZpTD+WBfu4gekkSMu
-         ibzjXQIB4tzFuFxUcB1lNLnISuTqS8eHe96EH9/RL6wkVFPN2XHguCWgZ5JVA+XRAuQ2
-         06gA==
-X-Forwarded-Encrypted: i=1; AJvYcCXwkdYHmFkZ2ll08DkIikHscQOP3q0VwcqKb6oM0Eug2Jy4MkIrIxMb0Qx2qi9pxmuvu/Nr1kj4u3I6lkU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3qjQLbYpp2+fjki4VuBqqckUxKzdn7ofr8dCFKq6HBvCFcOrk
-	au8D8/pii9ObZrQfFwcbsJgkYKD5HIDjlAfYoGJWh2+xR6ouRjBjwF41
-X-Gm-Gg: ASbGncvFpkb8bp2OtoYsqFSPZoS3uFMXKuEJJ34tOqUip9oW1l2b8dUE2Fn0TKIDKuT
-	ba7VSYm7RPRJ5OGkqVFT+ot/7FVkrcR+Hjo/txtbCHtNwhUxVkylNayx2H7/Dry1KDrXzGB0rPQ
-	Qz8uSGTQqd9afrV4YnkAEiap+Il59iWNj2Yb/L/8n2nU9DN9RGma0YZ6u809VuNbXxSSLSRpIDP
-	IBT/qg5svgP12EEr43HkO7AD9d7lHjJAwygCPEr1xwVZZWvo8FQPd6KVUoxQpv9N3FSNj2SqmPl
-	mJelTynoa+a4jA/WiivJmctNF4NQq1tl/FNCMO2uDY8OvcLEA9xlGf+cYiblRvqCV9ADVkoMDz1
-	JPJQy3fMzEVH0EkDEXQa6xI4eUwfp0sMDgo8VtLi4BaEmhcFTy+dS3aACsV8bh0goME7EN82gbb
-	dpwaQGAXcQgp+h6A==
-X-Google-Smtp-Source: AGHT+IEBlJeeD/fVPl432wy9c52nnaFfRNJyxt1nmVeSPsAdYf5XIPTW4lc8o6yEmNCIPpKliHt5NA==
-X-Received: by 2002:a05:690c:6204:b0:77e:5eb8:278c with SMTP id 00721157ae682-780e16fc173mr119127917b3.46.1760021926831;
-        Thu, 09 Oct 2025 07:58:46 -0700 (PDT)
-Received: from localhost (c-73-105-0-253.hsd1.fl.comcast.net. [73.105.0.253])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-77f81c4e065sm73855237b3.28.2025.10.09.07.58.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 07:58:46 -0700 (PDT)
-Date: Thu, 9 Oct 2025 10:58:45 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Rik van Riel <riel@surriel.com>, Ingo Molnar <mingo@kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Roman Kisel <romank@linux.microsoft.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] smp: simplify smp_call_function_any()
-Message-ID: <aOfNpZF5jlkVgN0k@yury>
-References: <20251008165746.144503-1-yury.norov@gmail.com>
- <1a0b35d0-d739-4f1c-9a50-95780eed02e4@efficios.com>
+	s=arc-20240116; t=1760021943; c=relaxed/simple;
+	bh=MV845+QAB8phKCuhPtan4pCwbZvBXPz7JcyZz9iT/U8=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=imRECNubSbdemb84Tbc8GWYrrmWr44yN5GZGCvlQgwC3ZnD27NRNflleY+uBvpdTF6aVTOYgBVUPPwhIXmYaybqoPyNxPBk3LSRorEzRpZIohxlcrY1uJj7Lwc5sVEUXphAi0WdA1PBhoYZ8Hf9wYpo6lQkYv0Nmi/H9V812QI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cjCfx2j8Wz6L5Ds;
+	Thu,  9 Oct 2025 22:58:17 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3C5CF1402FD;
+	Thu,  9 Oct 2025 22:59:00 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 9 Oct
+ 2025 15:58:59 +0100
+Date: Thu, 9 Oct 2025 15:58:58 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Evangelos Petrongonas <epetron@amazon.de>
+CC: Bjorn Helgaas <bhelgaas@google.com>, Alex Williamson
+	<alex.williamson@redhat.com>, "Rafael J . Wysocki" <rafael@kernel.org>, Len
+ Brown <lenb@kernel.org>, Pasha Tatashin <pasha.tatashin@soleen.com>, David
+ Matlack <dmatlack@google.com>, Vipin Sharma <vipinsh@google.com>, Chris Li
+	<chrisl@kernel.org>, Jason Miu <jasonmiu@google.com>, "Pratyush Yadav"
+	<pratyush@kernel.org>, Stanislav Spassov <stanspas@amazon.de>,
+	<linux-pci@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <nh-open-source@amazon.com>
+Subject: Re: [RFC PATCH 08/13] pci: Save only spec-defined configuration
+ space
+Message-ID: <20251009155858.0000179c@huawei.com>
+In-Reply-To: <93623324232f4ec4dcda830d497ac2890b19215f.1759312886.git.epetron@amazon.de>
+References: <cover.1759312886.git.epetron@amazon.de>
+	<93623324232f4ec4dcda830d497ac2890b19215f.1759312886.git.epetron@amazon.de>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1a0b35d0-d739-4f1c-9a50-95780eed02e4@efficios.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Wed, Oct 08, 2025 at 01:06:18PM -0400, Mathieu Desnoyers wrote:
-> On 2025-10-08 12:57, Yury Norov (NVIDIA) wrote:
-> > The functions calls get_cpu()/put_cpu() meaningless because the actual
-> > CPU that would execute the caller's function is not necessarily the
-> > current one.
-> > 
-> > The smp_call_function_single() which is called by
-> > smp_call_function_any() does the right get/put protection.
-> > 
-> > Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
-> > ---
-> >   kernel/smp.c | 8 ++------
-> >   1 file changed, 2 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/kernel/smp.c b/kernel/smp.c
-> > index 02f52291fae4..fa50ed459703 100644
-> > --- a/kernel/smp.c
-> > +++ b/kernel/smp.c
-> > @@ -754,17 +754,13 @@ EXPORT_SYMBOL_GPL(smp_call_function_single_async);
-> >   int smp_call_function_any(const struct cpumask *mask,
-> >   			  smp_call_func_t func, void *info, int wait)
-> >   {
-> > -	unsigned int cpu;
-> > -	int ret;
-> > +	unsigned int cpu = smp_processor_id();
-> 
-> I wonder whether this passes any moderate testing with kernel debug
-> options enabled. I would at the very least expect a
-> raw_smp_processor_id() call here not to trip debug warnings.
-> 
-> AFAIU smp_call_function_any call be called from preemptible context,
-> right ?
+On Fri, 3 Oct 2025 09:00:44 +0000
+Evangelos Petrongonas <epetron@amazon.de> wrote:
 
-You're right, we need to retain current CPU unless the work is
-scheduled. I need to test better. Sorry for the noise.
+> Change PCI configuration space save/restore operations by
+> saving only the regions defined by the PCI specification avoiding any
+> potential side effects of undefined behaviour.
+> 
+> The current implementation saves the entire configuration space for
+> device restore operations, including reserved and undefined regions.
+> This change modifies the save logic to save only architecturally defined
+> configuration space regions and skipping the undefined areas.
+> 
+> This benefits the PCSC hitrate, as a 4byte access to a region where only
+> 2 bytes are cacheable and 2 are undefined, therefore uncached, will lead
+> to a HW access instead.
+> 
+> Signed-off-by: Evangelos Petrongonas <epetron@amazon.de>
+> ---
+>  drivers/pci/pci.c | 61 +++++++++++++++++++++++++++++++++++++++++++----
+>  1 file changed, 56 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index db940f8fd408..3e99baaaf8cd 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -1752,11 +1752,62 @@ static void pci_restore_pcix_state(struct pci_dev *dev)
+>  int pci_save_state(struct pci_dev *dev)
+>  {
+>  	int i;
+> -	/* XXX: 100% dword access ok here? */
+> -	for (i = 0; i < 16; i++) {
+> -		pci_read_config_dword(dev, i * 4, &dev->saved_config_space[i]);
+> -		pci_dbg(dev, "save config %#04x: %#010x\n",
+> -			i * 4, dev->saved_config_space[i]);
+> +
+> +	if (dev->hdr_type == PCI_HEADER_TYPE_NORMAL) {
+> +		for (i = 0; i < 13; i++) {
+
+Needs basing on the register defines not magic numbers.
+
+Same for other cases.
+
+Jonathan
 
