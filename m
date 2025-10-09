@@ -1,47 +1,83 @@
-Return-Path: <linux-kernel+bounces-846947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0288DBC97E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:25:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32CB7BC97E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:25:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CC7364E40D9
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:25:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C082C4F2159
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A732EA72A;
-	Thu,  9 Oct 2025 14:25:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 471262EA753;
+	Thu,  9 Oct 2025 14:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JtCVhsBD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GgjLfA4D"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9723D2E92B2;
-	Thu,  9 Oct 2025 14:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61F042E8DF5
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 14:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760019919; cv=none; b=UybGlIdbgJA9CNwHtGYLRL2P4yM6Awwreey3tktd/TUEs4KU85lnflM1DLXyoTtyRdiu9H6Hau7UKUnkIMTGz5rpu5zX3qaDtrJy5yuI+UFITBC4Wry6aotn48uihAM5HkfPVXrbHpIF+AB/AYSn+OtB3mMbDncCy8NPG6SPeqU=
+	t=1760019946; cv=none; b=X/O/+4g50fx1usw9fWzHGPD/4/8QDN9+JHFPL2qWATaLYxTD5JLCDu/FiRH0Yum3PBbFkdnq/9X6Pd6zqW9v+2FBAbEit79miZxbMFz/TDefPJMs14lA/chBZ+2SmxI1Mmv2TEAQkKakWfjOZaVIjoSy+ptWmxDNNAlrtdV6KFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760019919; c=relaxed/simple;
-	bh=6wXkYwA9yN780412G6qSb0+U1yzHmlLYGrXboghpMvY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qVEn/2BaTjAjzvm7vaZ9hewI/EruCvf0EiMsfg6s8n/Dq4Q1nSi5yIvPn2h/cTMIYC7pRh/80MfcFqxyLABXXp4vcAgULGWtvHFyHRJYbG7biNo8veX3k7ABkSrfnbGJBEQsGhp8orTjQ4QDEhSyFixTEDH59rlw+abSfx5bUsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JtCVhsBD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80C11C4CEE7;
-	Thu,  9 Oct 2025 14:25:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760019919;
-	bh=6wXkYwA9yN780412G6qSb0+U1yzHmlLYGrXboghpMvY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JtCVhsBDEZUTNiJRf0sEjWXEYGGv3Eh7AT85Jy0q8jLWkLgRJlsBJ37H2iMuZBQN+
-	 7lBuTqu53Y2z1fxcNEiAUIaO6vm9tQZTTcyn686//qJhcaNmTvCh6JMZsfl/NApcBe
-	 2kUv09wPhi24p9eq7+SYnaBXU4JxTuJLHYqHBwHk8BVt1ZuCUDEZnKK6cYM9Fn3LVQ
-	 LS1I12OTuJkYWW0OaF6zlLvDUpwbFBxz72PISx1BhcUvyuaZ41r4EpMlyKCAI3K1PO
-	 WmFzenoxgNm3BV8Lwl0bkCKFFiE10JmlLMLksdu6z/+hvhcR52PwSlmAwKGCc4Qjxt
-	 czm80B6Fc80tw==
-Message-ID: <c1d2b2f5-1755-48f3-ac02-952bda718193@kernel.org>
-Date: Thu, 9 Oct 2025 23:25:11 +0900
+	s=arc-20240116; t=1760019946; c=relaxed/simple;
+	bh=MaJRnAFy1ncA6eMZY/T15zYs/ef0zF2VYEmtaIsfSTI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Y5X5JTHfcLxUq3ztS8CSrfcF4jgtv8DPZjfWH2Jv0MKRMrWPh/A1q2RIwYGW1QgdusPmEZhLyIZHaghzBi4I5mhK3ar1MBXUlykauviatZgh7cozWEx400rRd6mJAVAnMt1td32i6YmhzLOYOlzhWt9o7/zk1ZW83a45HUM0fA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GgjLfA4D; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-46e6ba26c50so5765225e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 07:25:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760019942; x=1760624742; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BptzwX/G3rtzdz+N5BUaxQeG70a/ubuAx0pM4UJNvLE=;
+        b=GgjLfA4DTJcOiaPRzMY4NMJzrZHXlyjwTKzjLZKVPCSn1MbBYrGOBhezjbvWfZmufC
+         9ahBkr5f9ZI7S856hPDg18dNvreTvAy8oNV8t5sJDzzI4Qad4BAu5KljcjyXrbRo9EoR
+         oTKT5p5t4KJ5ky0WjCUCYT4jGeM0KdYkTJj9dcIQSz6BL0/Nk8MoeGkScVJ+XkofhGsp
+         7yVCusmYnxSkyG5O7t78jhf2cDAjG5aoilRb1uU7V4UgYFEbCyS2Gth1M57O9ypr4xyo
+         7B9JswRbc0OcexR6YREZO2QoYF2t7sREWGEvLA7M7FXD4/ynI4KAT3b7ylxM/9zYcZlK
+         WswQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760019942; x=1760624742;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=BptzwX/G3rtzdz+N5BUaxQeG70a/ubuAx0pM4UJNvLE=;
+        b=IFUM7povCR9ApZrF8w2HOo5XUQDQQrekaxpfJFLURku3Z0Ka/Xib51G1NsOfAqv5i2
+         Fwr+yXh9oIXpVSPQh0Ro7EB/mNlGCNpR1wascMZM6TIQ6pJ8pEV6gztL47hFbm94bKYV
+         1fL6BVs0G/6SkVfJBHdew9LSn7dOhdL+na3dqo8OhNEVZSZkpMoMSPH6snl/PQW5H3Jf
+         /tb7iggsoORRJipxzrzPR25OgeX3zt9IvVvQWRF55CocftjuwFOsQ1Y4Wl1OglbuVz0V
+         p6LQgoGsQ3135ARgBwld+22lA+gGo358qAKP+ZZldiL722F/vID8Ie2lETkdEqjab50C
+         t9Vg==
+X-Forwarded-Encrypted: i=1; AJvYcCURk0iih5TBmkWJGxA1JW49ZSN86t9OVUDf5XDrnRTCQCZjTKDQwwaqbjeZ8BpMKvPR42YzzW1ptLncUbM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0YSLaZQ3CAzLmg0JUUAV7KA8pKSQurLBs9Q19eOOKQUfLgXRy
+	hsni+nZ62qdG5YiH0TvRklswmcbU/Rq4phjMo4o3BMc/dRNIVUo6d1qaIiS7BMxxl2BsVqJP7Sq
+	CrxAq
+X-Gm-Gg: ASbGncv+aSd5Rq+J+GO2uvamEt78uRd+mTKF2z8KtuL6NPEHsV10dbxercuWS4xgCDp
+	lfvIQvT66JynAKX3+2ZkA08CmNKQq2EpqGRqqhgQAECvQFeaWHv3QjRE584KbAwEFv59e7/dGJi
+	NGTMafSxfGtF4rHbT+YvyryZoU6RPLonnVrf04gG9+0FSQn1wFtRJODC9Akb+nm2j3YvayRV6yI
+	cPHsQecUbW+935RRy+uKqIi+Lf8c0bl1AE0qMc5BCTomIjBsAWLaKhu4wr0mZRTFjc0P7piOBzf
+	ufUEDP+3Ts5L2AV+/iAQAPeHi3Qe6DRVGrSe1uRYVUeUUCEE0g71Nc/GUgrnfAlmRu6bLBhnk9J
+	asqoKJdpUCPEMac/aEJrTiw4eE0jIPCaZqoRRQ1uOwgAv3Roa220ylnkc+aXS/qSTNouintHHhQ
+	Js71WUZZyx7pykAw3p7sh7a5ehmfs=
+X-Google-Smtp-Source: AGHT+IHe2JLlSfRzylV1UfRS2+ycvrdB9o6cDd1va7S0HyvWnvfu5gmTNjUam6/53yZOjArw3J9gNw==
+X-Received: by 2002:a05:600c:8b41:b0:45d:d88b:cca with SMTP id 5b1f17b1804b1-46fa9a87fc6mr56814495e9.1.1760019941505;
+        Thu, 09 Oct 2025 07:25:41 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:7a0c:da2f:6591:67ee? ([2a01:e0a:3d9:2080:7a0c:da2f:6591:67ee])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f01a0sm34774628f8f.48.2025.10.09.07.25.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Oct 2025 07:25:41 -0700 (PDT)
+Message-ID: <f27cad88-b1fd-41a3-bdb1-b07de3dea8a2@linaro.org>
+Date: Thu, 9 Oct 2025 16:25:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,346 +85,152 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] leds: Add Virtual Color LED Group driver
-To: Jonathan Brophy <professorjonny98@gmail.com>, lee Jones <lee@kernel.org>,
- Pavel Machek <pavel@kernel.org>,
- Jonathan Brophy <professor_jonny@hotmail.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Radoslav Tsvetkov <rtsvetkov@gradotech.eu>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-leds@vger.kernel.org
-References: <20251009084339.1586319-1-professorjonny98@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251009084339.1586319-1-professorjonny98@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH RFC v2 2/6] ASoC: dt-bindings: qcom,sm8250: Add clocks
+ properties for I2S
+To: Srinivas Kandagatla <srini@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20251008-topic-sm8x50-next-hdk-i2s-v2-0-6b7d38d4ad5e@linaro.org>
+ <20251008-topic-sm8x50-next-hdk-i2s-v2-2-6b7d38d4ad5e@linaro.org>
+ <44606de8-3446-472f-aa6b-25ff8b76e0ec@kernel.org>
+ <3620feb6-12bf-48c1-b47a-ccb486e5b5de@linaro.org>
+ <c0b71974-65df-47ad-902b-45c2dbe66be0@kernel.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <c0b71974-65df-47ad-902b-45c2dbe66be0@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 09/10/2025 17:43, Jonathan Brophy wrote:
-> From: Jonathan Brophy <professor_jonny@hotmail.com>
+On 10/9/25 16:06, Srinivas Kandagatla wrote:
 > 
-> This commit introduces a new driver that implements virtual LED groups
+> 
+> On 10/9/25 3:03 PM, Neil Armstrong wrote:
+>> On 10/9/25 15:36, Srinivas Kandagatla wrote:
+>>>
+>>>
+>>> On 10/8/25 7:56 PM, Neil Armstrong wrote:
+>>>> In order to describe the block and master clock of each I2S bus, add
+>>>> the first 5 I2S busses clock entries.
+>>>>
+>>>> The names (primary, secondary, tertiarty, quaternary, quinary, senary)
+>>>> uses the LPASS clock naming which were used for a long time on Qualcomm
+>>>> LPASS firmware interfaces.
+>>>>
+>>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>>>> ---
+>>>>    .../devicetree/bindings/sound/qcom,sm8250.yaml      | 21 ++++++++++
+>>>> +++++++++++
+>>>>    1 file changed, 21 insertions(+)
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
+>>>> b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
+>>>> index
+>>>> 8ac91625dce5ccba5c5f31748c36296b12fac1a6..d1420d138b7ed8152aa53769c4d495e1674275e6 100644
+>>>> --- a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
+>>>> +++ b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
+>>>> @@ -64,6 +64,27 @@ properties:
+>>>>        $ref: /schemas/types.yaml#/definitions/string
+>>>>        description: User visible long sound card name
+>>>>    +  clocks:
+>>>> +    minItems: 2
+>>>> +    maxItems: 12
+>>>> +
+>>>> +  clock-names:
+>>>> +    minItems: 2
+>>>> +    items:
+>>>> +      # mclk is the I2S Master Clock, mi2s the I2S Bit Clock
+>>>> +      - const: primary-mi2s
+>>>> +      - const: primary-mclk
+>>>> +      - const: secondary-mi2s
+>>>> +      - const: secondary-mclk
+>>>> +      - const: tertiary-mi2s
+>>>> +      - const: tertiary-mclk
+>>>> +      - const: quaternary-mi2s
+>>>> +      - const: quaternary-mclk
+>>>> +      - const: quinary-mi2s
+>>>> +      - const: quinary-mclk
+>>>> +      - const: senary-mi2s
+>>>> +      - const: senary-mclk
+>>>> +
+>>>
+>>> I don't this is correct way to handling bitclk and mclks for I2S, these
+>>> are normally handled as part of snd_soc_dai_set_sysclk() transparently
+>>> without need of any device tree description.
+>>>
+>>> Also doing this way is an issue as this is going to break existing Elite
+>>> based platforms, and the device description should not change across
+>>> these both audio firmwares.
+>>
+>> This is only for AudioReach platforms, on those platforms the
+>> clocks are registered in DT and are not accessible by the card.
+>>
+> Clocks will be acessable via snd_soc_dai_set_sysclk ->
+> q6prm_set_lpass_clock once set_sysclk support is added to q6apm-lpass
+> i2s dai ops.
+> 
+> 
+>> Device description is obviously different for the AudioReach platforms.
+> 
+> Why should it be different, its same device.
+> We have platforms that use both Elite and Audioreach.
 
+I'm perfectly aware of that, it's the case for sc7280/qcm6490. And I agree
+the card bindings is the same, but it doesn't mean the DSP elements are the
+same and uses in the same manner.
 
-Please do not use "This commit/patch/change", but imperative mood. See
-longer explanation here:
-https://elixir.bootlin.com/linux/v6.16/source/Documentation/process/submitting-patches.rst#L94
+So let's forget the bindings and forget those clocks entries, and imagine
+I'll implement those _sys_sysclk calls like for the Elite platforms.
+This means I'll bypass the clock framework by directly setting the PRM
+clocks, this is clearly a layer violation.
 
-> by aggregating multiple monochromatic LEDs. The driver provides
-> priority-based control to manage concurrent LED activation requests,
+Neil
 
+> 
+> --srini
+>>
+>> Neil
+>>
+>>>
+>>> thanks,
+>>> Srini
+>>>
+>>>>    patternProperties:
+>>>>      ".*-dai-link$":
+>>>>        description:
+>>>>
+>>>
+>>
+> 
 
-
-> +
-> +static int leds_virtualcolor_init_vled(struct device *dev, struct device_node *child,
-> +				       struct virtual_led *vled, struct leds_virtualcolor *vc_data)
-> +{
-> +	struct fwnode_handle *child_fwnode = of_fwnode_handle(child);
-> +	struct led_init_data init_data = {};
-> +	u32 blink_interval;
-> +	u32 phandle_count;
-> +	u32 max_brightness;
-> +	int ret, i;
-> +
-> +	ret = of_property_read_u32(child, "priority", &vled->priority);
-> +	if (ret)
-> +		vled->priority = 0;
-> +
-> +	ret = of_property_read_u32(child, "blink", &blink_interval);
-
-
-Where is this ABI documented? I do not see.
-
-> +	if (!ret) {
-> +		vled->blink_delay_on = blink_interval;
-> +		vled->blink_delay_off = blink_interval;
-> +	}
-> +
-> +	phandle_count = fwnode_property_count_u32(child_fwnode, "leds");
-
-
-No, don't mix OF and fwnode.
-
-> +	if (phandle_count <= 0) {
-> +		dev_err(dev, "No monochromatic LEDs specified for virtual LED %s\n",
-> +			vled->cdev.name);
-> +		return -EINVAL;
-> +	}
-> +
-> +	vled->num_monochromatics = phandle_count;
-> +	vled->monochromatics = devm_kcalloc(dev, vled->num_monochromatics,
-> +					    sizeof(*vled->monochromatics), GFP_KERNEL);
-> +	if (!vled->monochromatics)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < vled->num_monochromatics; i++) {
-> +		struct led_classdev *led_cdev;
-> +
-> +		led_cdev = devm_of_led_get_optional(dev, i);
-> +		if (IS_ERR(led_cdev)) {
-> +			/*
-> +			 * If the LED is not available yet, defer the probe.
-> +			 * The probe will be retried when it becomes available.
-> +			 */
-> +			if (PTR_ERR(led_cdev) == -EPROBE_DEFER)
-> +				return -EPROBE_DEFER;
-
-
-Pointless...
-
-> +
-> +			ret = PTR_ERR(led_cdev);
-> +			dev_err(dev, "Failed to get monochromatic LED for %s, error %d\n",
-> +				vled->cdev.name, ret);
-> +			return ret;
-
-
-...just return dev_err_probe
-
-> +		}
-> +
-> +		vled->monochromatics[i] = led_cdev;
-> +	}
-> +
-> +	ret = of_property_read_u32(child, "max-brightness", &max_brightness);
-> +	if (ret)
-> +		vled->cdev.max_brightness = LED_FULL;
-> +	else
-> +		vled->cdev.max_brightness = max_brightness;
-> +
-> +	vled->cdev.brightness_set_blocking = virtual_led_brightness_set;
-> +	vled->cdev.max_brightness = LED_FULL;
-> +	vled->cdev.flags = LED_CORE_SUSPENDRESUME;
-> +
-> +	init_data.fwnode = child_fwnode;
-> +	ret = devm_led_classdev_register_ext(dev, &vled->cdev, &init_data);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to register virtual LED %s\n", vled->cdev.name);
-> +		return ret;
-> +	}
-> +
-> +	ret = device_create_file(vled->cdev.dev, &dev_attr_priority);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to create sysfs attribute for priority\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = device_create_file(vled->cdev.dev, &dev_attr_blink_delay_on);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to create sysfs attribute for blink_delay_on\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = device_create_file(vled->cdev.dev, &dev_attr_blink_delay_off);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to create sysfs attribute for blink_delay_off\n");
-> +		return ret;
-> +	}
-> +
-> +	vled->vc_data = vc_data;
-> +
-> +	return 0;
-> +}
-> +
-> +static int leds_virtualcolor_disable_sysfs_access(struct device *dev, struct virtual_led *vled)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < vled->num_monochromatics; i++) {
-> +		struct led_classdev *led_cdev = vled->monochromatics[i];
-> +
-> +		mutex_lock(&led_cdev->led_access);
-> +		led_sysfs_disable(led_cdev);
-> +		mutex_unlock(&led_cdev->led_access);
-> +
-> +		devm_add_action_or_reset(dev, restore_sysfs_write_access, led_cdev);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int leds_virtualcolor_probe(struct platform_device *pdev)
-> +{
-> +	struct leds_virtualcolor *vc_data;
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *child;
-> +	int count = 0;
-> +	int ret;
-> +
-> +	vc_data = devm_kzalloc(dev, sizeof(*vc_data), GFP_KERNEL);
-> +	if (!vc_data)
-> +		return -ENOMEM;
-> +
-> +	mutex_init(&vc_data->lock);
-> +	INIT_LIST_HEAD(&vc_data->active_leds);
-> +
-> +	vc_data->num_vleds = of_get_child_count(dev->of_node);
-> +	if (vc_data->num_vleds == 0) {
-> +		dev_err(dev, "No virtual LEDs defined in device tree\n");
-> +		ret = -EINVAL;
-> +		goto err_mutex_destroy;
-> +	}
-> +
-> +	vc_data->vleds = devm_kcalloc(dev, vc_data->num_vleds, sizeof(*vc_data->vleds), GFP_KERNEL);
-> +	if (!vc_data->vleds) {
-> +		ret = -ENOMEM;
-> +		goto err_mutex_destroy;
-> +	}
-> +
-> +	for_each_child_of_node(dev->of_node, child) {
-> +		struct virtual_led *vled = &vc_data->vleds[count];
-> +
-> +		ret = leds_virtualcolor_init_vled(dev, child, vled, vc_data);
-> +		if (ret) {
-> +			if (ret != -EPROBE_DEFER)
-> +				dev_err(dev, "Failed to initialize virtual LED %d\n", count);
-> +
-> +			of_node_put(child);
-
-
-Just use scoped loop.
-
-> +			goto err_node_put;
-> +		}
-> +
-> +		count++;
-> +	}
-> +
-> +	platform_set_drvdata(pdev, vc_data);
-> +
-> +	if (of_property_read_bool(dev->of_node, "monochromatics-ro")) {
-> +		int i;
-> +
-> +		for (i = 0; i < count; i++) {
-> +			struct virtual_led *vled = &vc_data->vleds[i];
-> +
-> +			ret = leds_virtualcolor_disable_sysfs_access(dev, vled);
-> +			if (ret)
-> +				goto err_node_put;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +
-> +err_node_put:
-> +	of_node_put(child);
-
-
-Double of node release or your code is just confusing. Each functions
-cleans up only pieces it allocates, not some other function resources.
-
-> +err_mutex_destroy:
-> +	mutex_destroy(&vc_data->lock);
-> +
-> +	return ret;
-> +}
-> +
-> +static void leds_virtualcolor_remove(struct platform_device *pdev)
-> +{
-> +	struct leds_virtualcolor *vc_data = platform_get_drvdata(pdev);
-> +	int i;
-> +
-> +	for (i = 0; i < vc_data->num_vleds; i++) {
-> +		struct virtual_led *vled = &vc_data->vleds[i];
-> +		int j;
-> +
-> +		device_remove_file(vled->cdev.dev, &dev_attr_priority);
-> +		device_remove_file(vled->cdev.dev, &dev_attr_blink_delay_on);
-> +		device_remove_file(vled->cdev.dev, &dev_attr_blink_delay_off);
-> +
-> +		for (j = 0; j < vled->num_monochromatics; j++) {
-> +			if (vled->monochromatics[j]) {
-> +				led_put(vled->monochromatics[j]);
-> +				vled->monochromatics[j] = NULL;
-> +			}
-> +		}
-> +	}
-> +
-> +	mutex_destroy(&vc_data->lock);
-> +}
-> +
-> +static const struct of_device_id leds_virtualcolor_of_match[] = {
-> +	{ .compatible = "leds-group-virtualcolor" },
-
-
-Please organize the patch documenting compatible (DT bindings) before
-their user.
-See also:
-https://elixir.bootlin.com/linux/v6.14-rc6/source/Documentation/devicetree/bindings/submitting-patches.rst#L46
-
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, leds_virtualcolor_of_match);
-> +
-> +static struct platform_driver leds_virtualcolor_driver = {
-> +	.probe  = leds_virtualcolor_probe,
-> +	.remove = leds_virtualcolor_remove,
-> +	.driver = {
-> +		.name           = "leds_virtualcolor",
-> +		.of_match_table = leds_virtualcolor_of_match,
-> +	},
-> +};
-> +
-> +module_platform_driver(leds_virtualcolor_driver);
-> +
-> +MODULE_AUTHOR("Radoslav Tsvetkov <rtsvetkov@gradotech.eu>");
-> +MODULE_DESCRIPTION("LEDs Virtual Color Driver with Priority Handling");
-> +MODULE_LICENSE("GPL");
-> +MODULE_ALIAS("platform:leds-group-virtualcolor");
-
-
-You should not need MODULE_ALIAS() in normal cases. If you need it,
-usually it means your device ID table is wrong (e.g. misses either
-entries or MODULE_DEVICE_TABLE()). MODULE_ALIAS() is not a substitute
-for incomplete ID table.
-
-
-
-
-Best regards,
-Krzysztof
 
