@@ -1,101 +1,118 @@
-Return-Path: <linux-kernel+bounces-847488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BCF8BCAF76
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 23:45:14 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77EE2BCAF7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 23:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 372B11A64A6F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 21:45:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 434804EC1AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 21:45:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2644728152A;
-	Thu,  9 Oct 2025 21:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE671C5D44;
+	Thu,  9 Oct 2025 21:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Zk0CMk1v"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XhaeHpIr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA7A280325
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 21:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31402155C88
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 21:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760046307; cv=none; b=SoxwUWm+Xa7ygHGHVTJdpdg2YWgeX3XNY1dToKarsykH+gg/3ud4Y59xBuYmmz4Rb97pevfEF9nEI7akuvwk2u2Yq+MydbukyevIlA95+gFKEe2GFYL34Fqk1m8MIWAPyisBMmSmGenK9YgJO9HNjvt3aZYR/B5Ke16/eq/Y3qY=
+	t=1760046327; cv=none; b=XRJCvUWyb2p5r0sqUfCvoqUVB4ukq+Kkc26CJsQ6PEcNKvEVfxdcdPOCwmadVwUD7p3chTLSDZizVtTl9i/omN7v9sTjTaTVRSRrYlGNZVVFB3FO9s1HS5B3uDvMDi5g+HKKKawMnXU4S42O3P4VyyoIs9cQ6zBiute9blAfy7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760046307; c=relaxed/simple;
-	bh=QreGZIUWwFSUpS0keexw5E+JPR6ESha9HKz5hFX0Bds=;
+	s=arc-20240116; t=1760046327; c=relaxed/simple;
+	bh=JDf3RvnAJ/dSZU1DuUy77Eh2QFyUGi8T1WgDX4m65cQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S9bBqZ9rLiW5EXUfUyn7aHVhzzAV6keVAUmgaEeORaF1fIIo0MHBJJDqpmBne+9XFl7DY3qA1gGEnBCiZiJtp4DvEoiwZZUy+3k/Kg4WV/4x0POK8m84vYWetPdqAiaKBb/3LwyA/qaRElD+tKkF6h92ik6YD12KWVhRo37NTlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Zk0CMk1v; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-62fa84c6916so4903a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 14:45:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760046304; x=1760651104; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QreGZIUWwFSUpS0keexw5E+JPR6ESha9HKz5hFX0Bds=;
-        b=Zk0CMk1vQHyCII1f1WqnR56nHuFrfgEHSb7iFObRSNwFu2rb6OUyFbPF4lbf6nDGQ8
-         13PHIdof3xbPv0pwv+N9G4XUfR3/Ns+n3hr8JqwHc0vS+xciFcx7GiFXBBNmT9sv5EvL
-         s+rWnWtnY91jDUfA19r90eBNwWxrEhQh5i+AVh7vZhKm93t5SXXB19A8SZJhvVmL9XlJ
-         P2wqe8UqH8YRdOUs+z1bMTZ+ttTgKPGO+YlAdrYvcTUoAqjYJg3lTqCrPCoc6TjNW/97
-         aG4MKtHE5mLsNecCsSYZsFdWHOm8PCHFpE4i5QgebvZaM0VIZL6z1SptF//WTFX8ASCj
-         I5BA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760046304; x=1760651104;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QreGZIUWwFSUpS0keexw5E+JPR6ESha9HKz5hFX0Bds=;
-        b=AUheQeRBwkncuNx8aFbEw7UX+/nKSUmb/r7pfJ1gFfGE3wBNdA9vmCEea5dGv4xCbZ
-         m5h5dEtTBVZNLrB/xRsQCzRsCmgE44DpeTWkJ/5p4Xv98d8i+aM8J/YBLeh4MYLELaa9
-         VWkgYexMRBQa2i3Ul/QMLADuC0a2QrEtp+9G7/UZRmwRFRbMe4UvIvZpXHakPs7BZ8sV
-         OZ9W2ahO6MZC9OXLRoxMyces461uPrO2cIUaoDzBcsk2bOB22v2U8PBUNPt6geJ3Pg02
-         jAuY1EwuSTuoRHzSnoscmEDnqd59IBLVZJftvu7+Zdpf+MQtMLtOjaNVkmkAdxrsj91k
-         IRQw==
-X-Forwarded-Encrypted: i=1; AJvYcCUfyJ+kUu9XErQslvB2NAZNYHJbk0ArZCph/D9PNno0SRwX8XbL8aHyt3fwN0F9CkT5L8vtAkr8Wisadxw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtnCyVIzE/rSBdcN1kcyx9eSN81AKnBzJ0emcBx0W0ESM4XlBp
-	F33kHulwAWgz5pij0aC+2qIzMRgXl7xBWpwKWHtOxDA4JfLzW68+0qMQFs4ezoiT0j8dmhxAMHu
-	iiorD+d3pDy/O4LccCaWJ93x9N9YjxabeWzMaX98N
-X-Gm-Gg: ASbGncsaDeSnXkDo1bhV2wMAEaVKaaQ/uCXPX2mkk6HwrrtHvEq4kuhNihk+UUCnhgC
-	KjVT+UKaQfTh1omFErvRCIg5flr1bBhk2dva6+VlEz7rdZX6JW3Jr6sJgp/g9XIWoVnMlQB3EyJ
-	esxbF4OAXCDajJKD10woyOlEUsE++aIsU2jMa1TckL4Z9mYbKVJN+xTheGWAV+s5rcGWu3epy8w
-	/HjdkX6pyisiGhMcWy4uOhEr8dOUVRm5YfgJelZtMF7g0Zb
-X-Google-Smtp-Source: AGHT+IF7ya22VR4MsSm2/ApcHvwUPsH55KorEJeGrqSsdbLUu0dLnfCzEQZXQiVR4PHOuAbLG3cDz/biyLB252V/zQI=
-X-Received: by 2002:a05:6402:70d:b0:62f:c78f:d0d4 with SMTP id
- 4fb4d7f45d1cf-639d52ea25amr274550a12.6.1760046304074; Thu, 09 Oct 2025
- 14:45:04 -0700 (PDT)
+	 To:Cc:Content-Type; b=ox6ucs6dUCekpY1qxEudNiSfm32eishjZ1wOtV65uIUrzUVqp4pMHg9Jordr0DFY/Y6Rw6YfULYY2koz3XBwOPK7Ct4WwRyjj600Ue2l4hXgzaWJr5yGba4sH1/bqg4VrqUj4PjMZ8TdciEbJNNknBxDi1kMvYwTlHjfPMYgj+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XhaeHpIr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1A29C4CEE7
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 21:45:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760046326;
+	bh=JDf3RvnAJ/dSZU1DuUy77Eh2QFyUGi8T1WgDX4m65cQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=XhaeHpIr2R/7oEIbBUjdOYNm9eTASl973IABzfSiFC557ApGEuxMDkdaG47rJbzYd
+	 RPjJVVhKfaTAmMxxSFbEqQc0T3ECfckL+fG6EtbboaQMwJLIcaEIMxkJsFLIv9LekR
+	 YLoCD6U2UjY2L3/sgMemkuIeGYOzgH2Te+y2zcGKbbDSM8JOTlPcJS+EbSaBl/2yqj
+	 bpt6EYNJhdIZ3zKd5Yim+ODGmy20Lt9RNmnuXb7BsB/EH+uqogH0IsUyXxjMKK/LrX
+	 VvjfdMpDeV2CjQ2uEINaftlX6W2oYMt/Gyc3h3KhikIWPitKE+0ISJY97fomRhEJsp
+	 fqa5+NLt0I7lA==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5906665139cso1828739e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 14:45:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU8P72y1F2W6KPNfRut7c6d7pohFq0MRwfRcv7Z/iwS67icsv5/VCRly9DHJch6AEpaOjJD/V+qwWi1rFA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDJoYv9W1l5ULz6jT3LJV2cH/FRgO8mmT1wwsFKd+JzDvO0CcU
+	xqkYelh1yxuxMi4NC4pwXF0cvYsCn2ms7A5hx1ygO58lhDpSa5N/PsYfkchOIL/ewKn0GWDi8wR
+	s+4ImA2VD7sLw15U8zt1E6fTG3rK1kic=
+X-Google-Smtp-Source: AGHT+IFdXBbuZW52QrqTdHX+lhqTD+/sq95pRmf1cdQmeXGgR4GX2JwjaAoHyFnSrPPPmQHGx6K4ST8vlbfcsWWxaow=
+X-Received: by 2002:a05:6512:3a92:b0:55f:3525:3e52 with SMTP id
+ 2adb3069b0e04-5906dc0d3f1mr2585893e87.14.1760046325181; Thu, 09 Oct 2025
+ 14:45:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251001145816.1414855-1-yosry.ahmed@linux.dev> <20251001145816.1414855-2-yosry.ahmed@linux.dev>
-In-Reply-To: <20251001145816.1414855-2-yosry.ahmed@linux.dev>
-From: Jim Mattson <jmattson@google.com>
-Date: Thu, 9 Oct 2025 14:44:51 -0700
-X-Gm-Features: AS18NWAuXxHhioaQeq_mMaK8Wdn5ce4wM5-COHrH8ohtUZg-eDZxQjR9lDMUiiY
-Message-ID: <CALMp9eTpUsozsbp2_6JDPdKJ5YT0SwcJ+2G9KZJEp46Ha8j9xQ@mail.gmail.com>
-Subject: Re: [PATCH 01/12] KVM: selftests: Minor improvements to asserts in test_vmx_nested_state()
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Yosry Ahmed <yosryahmed@google.com>
+References: <20251006-arm64-text-offset-v1-1-bf0e8a27383b@oss.qualcomm.com>
+ <aOPLv_-f5sNGtG4e@willie-the-truck> <CAMj1kXHhetfN_bY5AAqqfC4=N9yQCO5R_n7H0BMXZ2VXudv5pQ@mail.gmail.com>
+ <obcgfnmgdemf5gtc7gdaj6nzoa2rwxsc6njt4fd2ouwzqj4y7y@ztxwyyoepuud>
+In-Reply-To: <obcgfnmgdemf5gtc7gdaj6nzoa2rwxsc6njt4fd2ouwzqj4y7y@ztxwyyoepuud>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 9 Oct 2025 14:45:14 -0700
+X-Gmail-Original-Message-ID: <CAMj1kXEphMAoCi5T4w99OgVA2VmF3ZBsZ5-t=Oan8r0S_EaY2w@mail.gmail.com>
+X-Gm-Features: AS18NWBbQ-eMZfEdM8Bn394IlzRr-fCZGuh5YoPpU-famY8LTSrZQTWP1N0nZoU
+Message-ID: <CAMj1kXEphMAoCi5T4w99OgVA2VmF3ZBsZ5-t=Oan8r0S_EaY2w@mail.gmail.com>
+Subject: Re: [PATCH] arm64: head: set TEXT_OFFSET to the historical value
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Will Deacon <will@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	David Heidelberg <david@ixit.cz>, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, mark.rutland@arm.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 1, 2025 at 8:02=E2=80=AFAM Yosry Ahmed <yosry.ahmed@linux.dev> =
-wrote:
+On Wed, 8 Oct 2025 at 12:51, Dmitry Baryshkov
+<dmitry.baryshkov@oss.qualcomm.com> wrote:
 >
-> From: Yosry Ahmed <yosryahmed@google.com>
+> On Tue, Oct 07, 2025 at 01:46:08AM +0200, Ard Biesheuvel wrote:
+...
+> >
+> > Just setting the header field and not updating the base address also
+> > means that the boot breaks without CONFIG_RELOCATABLE, and you will
+> > get a warning in the kernel log about the load address not being
+> > aligned to 2 MiB.
+> >
+> > So I don't think this is the right solution.
 >
-> Display the address as hex if the asserts for the vmxon_pa and vmcs12_pa
-> fail, and assert that the flags are 0 as expected.
+> Since most of the people build the kernel with CONFIG_RELOCATABLE, would
+> it be better to set it to 0x80000 for relocatable kernels and to 0
+> otherwise?
 >
-> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
 
-Reviewed-by: Jim Mattson <jmattson@google.com>
+When CONFIG_RELOCATABLE is set, any multiple of 64k is acceptable in
+practice, but given that this violates the documented boot protocol
+for arm64, we only permit this when booting via the EFI stub.
+
+When we set this field to 0x80000, we are basically instructing
+bootloaders to violate the boot protocol, which is not ideal, and we
+should definitely not issue the pr_warn() we have today in
+arch/arm64/kernel/setup.c.
+
+> >
+> > If this is really something that needs to be fixed upstream, we should
+> > just bring back TEXT_OFFSET in its entirety, but I'm not convinced
+> > that this is really justified here. As a workaround, you could just
+> > add 2 MiB - 0x80000 bytes of padding at the start of the image, and
+> > add your own header (as Will alludes to as well)
+>
+> Does it mean building a device specific kernel? Or just packing
+> everything while building the Android boot image?
+>
+
+No idea. What does the Android boot image contain? Is the first thing
+that gets loaded the kernel image? In that case, you would wrap the
+kernel image before sticking it into the Android boot image, yes.
 
