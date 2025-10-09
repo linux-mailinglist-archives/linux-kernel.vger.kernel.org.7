@@ -1,88 +1,62 @@
-Return-Path: <linux-kernel+bounces-847134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CAEFBC9F0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 18:05:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CDA5BCA0FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 18:14:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BC2F8354719
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 16:04:48 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3031E354DB0
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 16:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7872B2F83BB;
-	Thu,  9 Oct 2025 15:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA56225A5B;
+	Thu,  9 Oct 2025 16:05:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B2Rwh1V6"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71EE22EF67F
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 15:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="nDQns3t7"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DDD6202976;
+	Thu,  9 Oct 2025 16:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760025513; cv=none; b=iuNDIlLf0wTqQtj5oMaTYwpVaI3OKJ1pcHCQKvOUUzqKSOXCqdbPMrJqFjzLpO5RkMs7bDe8qBT0K1w2zRBYwrpp69rsSfnIUH9fLvuLQhxhfeuNl6gi6o+OTgkMRMgrQ3D4buYnIr+B0NjVkenkhxpBD/NCx3MJMRrwoiy++hY=
+	t=1760025918; cv=none; b=PAhuGa2PbR7PpLMqo7XvO+mftcJgNsugARlzB2zE413I5m1p6bfXR/EcGQqaOYBqQdtT0XAEsorZllwVqWb/EVPGuqW0kryxotm4rEx1QHdFSnfsiIBAqvB4Djb069j6toCaYduUVyjmibyQaa3q0VTJ47a7DLpAGx0SRqup3XY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760025513; c=relaxed/simple;
-	bh=8OZiH1BDPLJdfYF0II7is8iKCCoKggl/I/ld9NWAY60=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oNTvynThIwPkRVqRfFqT8RkTshn1o2pwQAHo5tIgeF7IOs0vaTk8ZPWgXGH1L4lOmQVfkzWHEBLOwmDQZUAOxMMK/aWqqnrxqtlnNLiOv8G8GDr/S6SQ0ybQlq/YQp3u7jhrlvDeH+NcuhnXc9obpnN8ykjybhMVI0mHgKY0iCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B2Rwh1V6; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b5507d3ccd8so914371a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 08:58:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760025512; x=1760630312; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gAdLvpKJCv4jbHmMWHwPbYfzoSafhf17EqbwEP2QLrE=;
-        b=B2Rwh1V6gts6iIuIMsEzf7WL/5UrgNanQjsNccUtZ3RRhDYGWsGgkseljHazD1Zkaq
-         NRxZz6j8b3TAau/Urexf7coUW+LPRnSyuDvjQqaWxMVSVMRonPS00WfeNTSpd1wwLHmI
-         T8CLJwJTSHSIKcoyZZBi1BI6QQ3aKkdLnUjj9b5jBynY4Wd44BdcE4dKaLbJ9CRnFCdB
-         /jq15Pafb8FjSRFnSUfvYd+8jBqt2CjyKXcPh4fyIXHi+i2SD2zNsNPKHlsWM1nBq4l4
-         MR1VhOg+Ary13CsqogyPZlVIocW//BdR6tRN5BHKpTchPZFd7CUpgkoyWUTdiT+2wWhe
-         4i1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760025512; x=1760630312;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gAdLvpKJCv4jbHmMWHwPbYfzoSafhf17EqbwEP2QLrE=;
-        b=k/myhCNvaSQblI/yQKu5NOq5G5+2pk1zDDPwgInoFrTEM3YLQraEg/Zbncj5fKfmVr
-         YA/a+QQW7vOjbbNOEOAZRmTMVq35ALqO/p5DSh2c+jJaYudfvBfCGlTj4JKkq4Ellsgs
-         5KcPzXPdf5GbahPoKzpLKE/p6zKPeTYTFk7+xdJ8RMKdkErXimbzPEcy20zRtQG3RKBp
-         bdXvCE62WmIsD8xiw0qX2TSLJyU/EWq3HMt8rnLKhMWaGB733GqAOhsmR8NadNWuu6s7
-         4sk0RTblAJZxbM+ng8V8eQXWlne92LrJt2j4l+25ds2OkwxmtqtGyu5jshY+LFmuNLwQ
-         8P+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXW0/YL6omHiu981z3YyuBx9xGXnQWu5bUE7vnv/WeMhoOACjv8U4aVDEFSemMEbpheupIX12os1nKm060=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO2RvI5rrILlTG2wmB7CQ4DQprBYmt0jm9MiAsBt8gOKvGZnaR
-	cETRwHhbIqsQYciOzfQYQqLLSzArDeoFkhD5cSUMTrpeKkOF1WRcKu+S
-X-Gm-Gg: ASbGnctUJkYlR9aclrclm/LpHuIvo0Zznjgrs1DP3qoRn8gX2DG5HipFur7zmHzSufZ
-	mL/Fm5J7fiwjHb2+6ORgE+GG8mZ1ek6PBRhckGRGIOFs3KyzWXdGLqOxilpTyjovmVkQsJz8aQQ
-	Jr4C9wxjzrQBJvmc6gxzNG3hsZJP2bloh6EzPDeMvzxu9RuBE+BE+5FjG17WyBNsBtPJtcUoBgl
-	KruOy3ySvXeWYAekc5kujDxij9xRphrtAyGuow6slBvOvCibbPIFrr43Mxrmf9wGgubDsqP/BW6
-	mtwVBD+T7hhrpCemlrJaKzbTPG35bo+fBdi6/da2Xr1dmhawGF2XhAZB7IbG1pLh1+rlV7qGbJm
-	9vnlwm1sQ08rCjhiWN4wI24Y7u4eUem2RTH4XauB3+bmU8v1ulUaezlwW5w==
-X-Google-Smtp-Source: AGHT+IH6oXZ0R/UodGK/kVJXi2B1T3lBvL0TuIS/Hh1ntLXXA4peFkl0J++JBh6etU+8qLRjDNuweA==
-X-Received: by 2002:a17:903:3885:b0:256:9c51:d752 with SMTP id d9443c01a7336-290273069bbmr105229465ad.56.1760025511618;
-        Thu, 09 Oct 2025 08:58:31 -0700 (PDT)
-Received: from mythos-cloud ([175.204.162.54])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034e44ef9sm32585005ad.52.2025.10.09.08.58.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 08:58:31 -0700 (PDT)
-From: Yeounsu Moon <yyyynoom@gmail.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
+	s=arc-20240116; t=1760025918; c=relaxed/simple;
+	bh=ZSv2zS+g76ID43d0Lc8Mh8gop1IY19oNgkdlP5TN/Tg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m06388PT67pob8Pljcc+OGHSH/l3s7h9P1VzB02kxx855B1h5h1ww4STXfIL++MJC8sZJwpTLwaK/TcC6xJHjotROAAMU7l4x8BszBHI7VpdllUnge8mh3vQg++71nznXQvkxHizTieenQWwfDDcvKXmQHnKzzVTU0juYSLC/Qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=nDQns3t7; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from home (syn-072-191-074-189.res.spectrum.com [72.191.74.189])
+	by linux.microsoft.com (Postfix) with ESMTPSA id BD4DD211CE0E;
+	Thu,  9 Oct 2025 09:05:09 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BD4DD211CE0E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1760025910;
+	bh=3CcayQJwYTqP1BYZ+NmvsUILe24zZrmyJoTdpIMw/KQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nDQns3t7aJwhO2EhuEZxZqgH3CAdCi5MY5+P8KglPduLeDbbLOqeC1mMK8YnTbSI3
+	 Erc1P1oQxFEk0OppWOihQw0SgWW8q6GJUGKlp57bdj+G5j54yVeaXCMg4ZYA7+Fsnd
+	 hCayFAffhzRUO96cBcNsIVHPAXzP5Do7DtXIrfzA=
+From: Praveen K Paladugu <prapal@linux.microsoft.com>
+To: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	linux-hyperv@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Yeounsu Moon <yyyynoom@gmail.com>,
-	Simon Horman <horms@kernel.org>
-Subject: [PATCH net v2] net: dlink: handle dma_map_single() failure properly
-Date: Fri, 10 Oct 2025 00:57:16 +0900
-Message-ID: <20251009155715.1576-2-yyyynoom@gmail.com>
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	arnd@arndb.de
+Cc: anbelski@linux.microsoft.com,
+	prapal@linux.microsoft.com
+Subject: [PATCH 0/2] Add support for clean shutdown with MSHV
+Date: Thu,  9 Oct 2025 10:58:49 -0500
+Message-ID: <20251009160501.6356-1-prapal@linux.microsoft.com>
 X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -92,71 +66,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There is no error handling for `dma_map_single()` failures.
+Add support for clean shutdown of the root partition when running on MSHV
+hypervisor.
 
-Add error handling by checking `dma_mapping_error()` and freeing
-the `skb` using `dev_kfree_skb()` (process context) when it fails.
+Praveen K Paladugu (2):
+  hyperv: Add definitions for MSHV sleep state configuration
+  hyperv: Enable clean shutdown for root partition with MSHV
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Yeounsu Moon <yyyynoom@gmail.com>
-Tested-on: D-Link DGE-550T Rev-A3
-Suggested-by: Simon Horman <horms@kernel.org>
----
-Changelog:
-v2:
-- fix one thing properly
-- use goto statement, per Simon's suggestion
-v1: https://lore.kernel.org/netdev/20251002152638.1165-1-yyyynoom@gmail.com/
----
- drivers/net/ethernet/dlink/dl2k.c | 23 ++++++++++++++++-------
- 1 file changed, 16 insertions(+), 7 deletions(-)
+ arch/x86/hyperv/hv_init.c      |   7 ++
+ drivers/hv/hv_common.c         | 118 +++++++++++++++++++++++++++++++++
+ include/asm-generic/mshyperv.h |   1 +
+ include/hyperv/hvgdk_mini.h    |   4 +-
+ include/hyperv/hvhdk_mini.h    |  33 +++++++++
+ 5 files changed, 162 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/dlink/dl2k.c b/drivers/net/ethernet/dlink/dl2k.c
-index 1996d2e4e3e2..7077d705e471 100644
---- a/drivers/net/ethernet/dlink/dl2k.c
-+++ b/drivers/net/ethernet/dlink/dl2k.c
-@@ -508,25 +508,34 @@ static int alloc_list(struct net_device *dev)
- 	for (i = 0; i < RX_RING_SIZE; i++) {
- 		/* Allocated fixed size of skbuff */
- 		struct sk_buff *skb;
-+		dma_addr_t addr;
- 
- 		skb = netdev_alloc_skb_ip_align(dev, np->rx_buf_sz);
- 		np->rx_skbuff[i] = skb;
--		if (!skb) {
--			free_list(dev);
--			return -ENOMEM;
--		}
-+		if (!skb)
-+			goto err_free_list;
-+
-+		addr = dma_map_single(&np->pdev->dev, skb->data,
-+				      np->rx_buf_sz, DMA_FROM_DEVICE);
-+		if (dma_mapping_error(&np->pdev->dev, addr))
-+			goto err_kfree_skb;
- 
- 		np->rx_ring[i].next_desc = cpu_to_le64(np->rx_ring_dma +
- 						((i + 1) % RX_RING_SIZE) *
- 						sizeof(struct netdev_desc));
- 		/* Rubicon now supports 40 bits of addressing space. */
--		np->rx_ring[i].fraginfo =
--		    cpu_to_le64(dma_map_single(&np->pdev->dev, skb->data,
--					       np->rx_buf_sz, DMA_FROM_DEVICE));
-+		np->rx_ring[i].fraginfo = cpu_to_le64(addr);
- 		np->rx_ring[i].fraginfo |= cpu_to_le64((u64)np->rx_buf_sz << 48);
- 	}
- 
- 	return 0;
-+
-+err_kfree_skb:
-+	dev_kfree_skb(np->rx_skbuff[i]);
-+	np->rx_skbuff[i] = NULL;
-+err_free_list:
-+	free_list(dev);
-+	return -ENOMEM;
- }
- 
- static void rio_hw_init(struct net_device *dev)
 -- 
 2.51.0
 
