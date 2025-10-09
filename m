@@ -1,99 +1,123 @@
-Return-Path: <linux-kernel+bounces-847560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57721BCB30D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 01:24:51 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DCFEBCB313
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 01:26:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A9C91A64729
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 23:25:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E26B24F41A7
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 23:26:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 269B7288504;
-	Thu,  9 Oct 2025 23:24:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D25B92882D6;
+	Thu,  9 Oct 2025 23:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Os0kfGXx"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="L8QCOKWS"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D362882D6;
-	Thu,  9 Oct 2025 23:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1063726A0BD
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 23:26:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760052284; cv=none; b=I7FgIpPZOvt9rq75VPllogzkylupGuVnBoTl5Cyd+TrsTLBZgvTj0xLLRfq8mY7isu54CG02fzVh5jARasJK2RRFs5ERrJRuKoMnYBDFG2DDOZQfZoCVONwNxIyFq+WZW5UFPT9YxLWKKJ5dgLO0YzPGtSy7kI7Z7v+uTqEobTs=
+	t=1760052408; cv=none; b=eUqqPNzZcVgTGU7zOkr2H+hbNIbiAFnAfkiXqNnxZZUJEQQMWKJKKefUGYzWnjg6bhRs6dQH1AiL3pb9WTt3PMyoNabESpg/SOmewSPCpnBAn7W3agfa53X5t0cRecR/A8kXsl01we6NraRktBV8hwOacm2bHsbsTl2vljL5Fus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760052284; c=relaxed/simple;
-	bh=o8PdJ3n/YRXUj29SjUpYCdemP3gvUweb7laI7SlAjag=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aS0mdi/8zHlyGEJklzDO0rMq/3WgMm9MuS3IiKs47T1rvBXgDCkUsaHpa8qrmjKmzstJNhyZ/IfKAEoiWKeYvt4A+aV5ZBKECo8B/XT7ATxPSNmiGHfbv2ENjwpQU+rsh3OSH0HMReCNh58fTI2MBcPu+FsauUZSV4UTZh+okaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Os0kfGXx; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 9 Oct 2025 23:24:32 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760052280;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ekzv12FLqXXEjwVTA45Ve5RsD0RRxaYzJjsJt90hwTc=;
-	b=Os0kfGXxsd/BsZZICxoOqt27qPB9SCL6CgptTs+6QWoaqMtTeQ32EFtGth9bqJeUUD3MUA
-	ZwOm1alhYyTCDzVSQf6da1qBPuziQowbd5hUPS8GC8sPoFXiyB9yL9/Zzhwkwu8Cl0nCjM
-	YSZk/d12JDz95pHaeiyB/Qs0SKzEPBI=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Jim Mattson <jmattson@google.com>
-Cc: Sean Christopherson <seanjc@google.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] KVM: SVM: Allow KVM_SET_NESTED_STATE to clear GIF
- when SVME==0
-Message-ID: <afzbx3uqqag6s4zfvpnlg7cjcev25zixkidor4xhuu7fudtdh2@tki2ahvkrttt>
-References: <20251009223153.3344555-1-jmattson@google.com>
- <20251009223153.3344555-2-jmattson@google.com>
+	s=arc-20240116; t=1760052408; c=relaxed/simple;
+	bh=hVL44E2rzDrw3Z4FeZH4xTzpF9jmYsqnLCtPwRQgUhs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KLGofKpIQDRZdxDmiSZtzb2CYkjYeCvNIPbiQHlD0PeTy1Jsq5yyLk/xJ6tGBChj04e4PfqGn2+NI5ghB3Fc6L3fn8CZuIX0+jU5ok5/gn7dSMF7/1FVd3hG3yFJ5jUf8Zm+Z/YN8ru6lTaJ2F3Qpqrud8yuzHlpz/AvWEZm7A4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=L8QCOKWS; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-637e9f9f9fbso2634331a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 16:26:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1760052404; x=1760657204; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=TaguQp4rjV7WTHF1XBdiOnRAL6LaynVZVmVVnMUiBb4=;
+        b=L8QCOKWSHYP0/t6mI3xAPmEgOopXSGm+/Z2BQulwlXtVA0tzqFxUAlxTPJwWxc9d52
+         lT4ZoW/eqt8zccwGpF8q6cjI31R3Ntz4cWKKsGZ4IwSQOyTQmAqA0etMhZQTacXRdlGJ
+         tUmlT7gzR7fwScEE/3Tg43nQRrffLRQoR1Unc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760052404; x=1760657204;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TaguQp4rjV7WTHF1XBdiOnRAL6LaynVZVmVVnMUiBb4=;
+        b=mxY/nCm40xuZHKagM1Lk+CgN6W+yhI6dmka1Nl6cWyjWXst0JGppMGrXnPEG+6ns8G
+         WZcagoxW7jdQDqdR83JCGh/yGDm3FTGz1LRCKmg4A+JfB4pI3hUHE3HgXU0rS7Z3tlLM
+         n8bATVTw6MdGD2rSTWGXi2LvMCxjPy6vebIt1QogKuA276JD9KYkFI+yxo6LMigZp14N
+         ndHEAJhFMEKHH+W2O+W9nohyLeFo+zIBmiv/Hm/EQ4EP093v4B5Xe2Hrf2APU/kkCnSo
+         UjBHG6tAdxr3AYwTZJJ4u09xzUVWe5Av/JFi+TReRsMEgeQ6+imXfcps5NyD7qVZJSum
+         TFVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVei/JbQFC4ODwCW4C89wVnMYoRXpq1uPS6XvTJsYS74pzUKAIOkIJNFhFMy7x+lnqDJexLCU+V6kJ5fMM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+MBdNEUoWq4qBctGkVrQAhigk9NZmBu1BuJwuZp7rLykB91Nb
+	7xYaGsCn7l9shJftq6QD5BbkL7UV6fVLgWYslXZfqOCwcOSZQmQRFlhJLXnY8cDGCSUhhpoI3rw
+	Wy9DEIp0=
+X-Gm-Gg: ASbGncv+4zJ7ZVwnPX9l/o8psT/LLzGeQOw5lGr/TKy1O8gMm4hJo9k13TYiFKr6Hqx
+	p20xsPihK608O21btxtMSYkq+llzdBOr9Xo7FZzfBoK05d+zfS91quj1nkCd2OVX/YrxnNVsnOc
+	BEKrCqShdFiOJ1zdjDenqckbbxu5z9NcpkOK/gpIFA9h0GWHUzMLTgSYfHy1JHmSxb8hbAg0CF9
+	U4kab+Cq6kX3Pt4w/Gcw+3R/qfmglGEa468wqjXOWXE3TFl68hgLlGeZKWXovd/6m1ki3BkDMW+
+	Q3O4lpO5AGGMekxoW/fhYjLuEpzq+lVwKm1GITom2TNeLAvsORALekwtLeweCGVcKbFcId3ZrRz
+	ypjPdQpZD+2+i8l2RCDpg8SnlzvCEMXBTB7RED1Jaj3dXWglQ3oGfXva60j80l1C8dvkTEg/E6F
+	g5ER0M1V2iFsscObyiHiYc
+X-Google-Smtp-Source: AGHT+IEkkipvCiHVTreQbGV7Mm3sdkKi9G1oHHd3hnrROCNTQVX/VyMeOiR8BOX1IeYWnYlA8FPq/g==
+X-Received: by 2002:a05:6402:274c:b0:638:7fca:adda with SMTP id 4fb4d7f45d1cf-639d5c52c6cmr9743997a12.28.1760052404124;
+        Thu, 09 Oct 2025 16:26:44 -0700 (PDT)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63a5c322e91sm739920a12.45.2025.10.09.16.26.40
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Oct 2025 16:26:42 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-636de696e18so3003119a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 16:26:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWgIbGIryzePCduCquoUSfWQuDf2/1E18GFooBgTb733voVOgUIYhmUq6f8QjgI9xfeH+fGpij/NYBm5uk=@vger.kernel.org
+X-Received: by 2002:a05:6402:520b:b0:61c:9852:bb9f with SMTP id
+ 4fb4d7f45d1cf-639d5b57922mr8168547a12.1.1760052400339; Thu, 09 Oct 2025
+ 16:26:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251009223153.3344555-2-jmattson@google.com>
-X-Migadu-Flow: FLOW_OUT
+References: <20251008123014.GA20413@redhat.com> <20251008123045.GA20440@redhat.com>
+ <CAHk-=wjozC9_JCdEW9K_uruJqzTLzhtcVpgDk1OuqErNRUS7Mg@mail.gmail.com>
+ <CAHk-=wjuoFm9yZur_T4VOnX2iyDYD6T_gDRXE5ms9538W6Q35g@mail.gmail.com>
+ <CAHk-=wiHbN+_LCmSj2sHswDRJ0yG3kkjptMvCXcMwk7jWK1F=Q@mail.gmail.com>
+ <20251009143748.GA2704@redhat.com> <20251009195024.GL3289052@noisy.programming.kicks-ass.net>
+ <20251009201154.GL1386988@noisy.programming.kicks-ass.net>
+ <CAHk-=wh3h5cV=UiTg+gvqB-T6+pStDNH0+6w4i34qMC1BQwmpg@mail.gmail.com>
+ <20251009221242.GX3419281@noisy.programming.kicks-ass.net> <20251009232008.GM1386988@noisy.programming.kicks-ass.net>
+In-Reply-To: <20251009232008.GM1386988@noisy.programming.kicks-ass.net>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 9 Oct 2025 16:26:23 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh5oLhtvxqTv9-rANYAaA+juN-kfdnbpqP2VpzzZYTTyA@mail.gmail.com>
+X-Gm-Features: AS18NWABRcZU2uY3wjqz9qNJ41KqaaD3wrimeCzV3Fkuy5GXV_aPidD_Wxav3yk
+Message-ID: <CAHk-=wh5oLhtvxqTv9-rANYAaA+juN-kfdnbpqP2VpzzZYTTyA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] seqlock: introduce scoped_seqlock_read() and scoped_seqlock_read_irqsave()
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Boqun Feng <boqun.feng@gmail.com>, David Howells <dhowells@redhat.com>, 
+	Ingo Molnar <mingo@redhat.com>, Li RongQing <lirongqing@baidu.com>, 
+	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 09, 2025 at 03:31:33PM -0700, Jim Mattson wrote:
-> GIF==0 together with EFER.SVME==0 is a valid architectural
-> state. Don't return -EINVAL for KVM_SET_NESTED_STATE when this
-> combination is specified.
-> 
-> Fixes: cc440cdad5b7 ("KVM: nSVM: implement KVM_GET_NESTED_STATE and KVM_SET_NESTED_STATE")
-> Signed-off-by: Jim Mattson <jmattson@google.com>
+On Thu, 9 Oct 2025 at 16:20, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> The moment I use a union gcc-14 creates the whole structure on the
+> stack, while without the union it mostly manages to keep the things
+> in registers without too much spilling.
 
-Reviewed-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+Ouch.
 
-> ---
->  arch/x86/kvm/svm/nested.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-> index a6443feab252..db0d4f2b128c 100644
-> --- a/arch/x86/kvm/svm/nested.c
-> +++ b/arch/x86/kvm/svm/nested.c
-> @@ -1798,8 +1798,8 @@ static int svm_set_nested_state(struct kvm_vcpu *vcpu,
->  	 * EFER.SVME, but EFER.SVME still has to be 1 for VMRUN to succeed.
->  	 */
->  	if (!(vcpu->arch.efer & EFER_SVME)) {
-> -		/* GIF=1 and no guest mode are required if SVME=0.  */
-> -		if (kvm_state->flags != KVM_STATE_NESTED_GIF_SET)
-> +		/* GUEST_MODE must be clear when SVME==0 */
-> +		if (kvm_state->flags & KVM_STATE_NESTED_GUEST_MODE)
->  			return -EINVAL;
->  	}
->  
-> -- 
-> 2.51.0.740.g6adb054d12-goog
-> 
+Do the union manually like I did by just using a "unsigned long" for
+both 'seq' and 'flags'.
+
+I bet that works fine - it seemed to work well for my - admittedly
+somewhat different - version.
+
+              Linus
 
