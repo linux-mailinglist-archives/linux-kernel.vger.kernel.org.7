@@ -1,117 +1,99 @@
-Return-Path: <linux-kernel+bounces-847233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CF6FBCA525
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:05:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9067FBCA540
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:06:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE6BC1A61AEA
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:05:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 047FD3B39E7
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:05:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B4B23A9BE;
-	Thu,  9 Oct 2025 17:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FFEE23F439;
+	Thu,  9 Oct 2025 17:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YSDSAwKi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="K5lAT7o+"
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39E2235045;
-	Thu,  9 Oct 2025 17:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2440323D2AB;
+	Thu,  9 Oct 2025 17:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760029523; cv=none; b=gZTdeC1+pG8EVb9AUfwU1/VqQ/MDRFgy1vp/W4g6XyrQnizpdf5rapqskAc4p0Aj7Hd7ID80Jq5hItztD2vJYtUtMbDEqmzJQFRp5GZ0CRiDD+mmlEZX5XC1gZNqSszeWw/76YLTouQxlHQvDvGZdqonN2THMQeBF5+Qsh9lSME=
+	t=1760029542; cv=none; b=sMAV4B/e9LdUz3HxL8/QLaWR2cpB/rlZquVbDp2+GPIlYaM5Wy4QNqErSwGpDpWl572n1hosQdwo+tIhUI9pO/CjD0tpaLntpIcqsbauRnAg9ofeFCb9UdK/gULgNHEVwovS0U+hKTLxg/1zRXjjm/AjZ54gZKRtHYkHIXEFmj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760029523; c=relaxed/simple;
-	bh=K/920CR2Ytam1wn7N7JUroePPcHUf353y47OxV5zx1Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rpKwv3g0I2tNy8ClmF5gvkNOExP/Ay8pZQvZzZLAr1QLALvetzU0eVyxiAA6VXzEWqZxtIjMuAjLr63C9wYmKMxjPFZYWdt5jBTCq2aEw57r2BohuXPRjSbNp7UGhJqn0c3mmQE9i8Z0HXyz3w0UCodJTsudwkgetRp6cBJUqvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YSDSAwKi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E870BC4CEE7;
-	Thu,  9 Oct 2025 17:05:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760029522;
-	bh=K/920CR2Ytam1wn7N7JUroePPcHUf353y47OxV5zx1Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YSDSAwKixJwAcuHpinVRh5i8UjuDftvpwmX8U+4+hsr3pjU0Kbr04cRyidWCCnkKM
-	 0Zjz/FeI+Ghya5Hv1eFFXoyr2eNZIcuCC1Rgs9j5NzmzqKQcRH0rNdrDwWL8L4FPlc
-	 12dmobDe6OngdQ5rB86UsySfUB3ZwpGiX9MhYMHlO2DlkXCuNys8WYxZbOrZU7DXq6
-	 2ORjBMXNo7aZziGRzAzMsbtE7rQNSvZXAcexQzPtX4GsFPF+oPa4dnSVExXvVg4EGk
-	 1YAqe20JovGVMdObbjqS2teB6rD0y/UbPgM7xVj0Q3ahKEZSDk64uxCety8RxbxE6n
-	 ipKVeFwUr/wpw==
-Date: Thu, 9 Oct 2025 19:05:20 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Elle Rhumsaa <elle@weathered-steel.dev>
-Cc: Michal Wilczynski <m.wilczynski@samsung.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Benno Lossin <lossin@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Drew Fustini <fustini@kernel.org>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v15 3/7] rust: pwm: Add complete abstraction layer
-Message-ID: <pxwzgjl4men4ia2jfky6i4pcpzmlxnuorzltfsurrosz27atbz@n2x7bt77nd5n>
-References: <20250930-rust-next-pwm-working-fan-for-sending-v15-0-5661c3090877@samsung.com>
- <CGME20250930122733eucas1p1017471af8564a40f60be74c5ae50bbc4@eucas1p1.samsung.com>
- <20250930-rust-next-pwm-working-fan-for-sending-v15-3-5661c3090877@samsung.com>
- <aN2Vrf97-uCR41x9@archiso>
+	s=arc-20240116; t=1760029542; c=relaxed/simple;
+	bh=0ZE/jGvm6aL4wVZv112il9NPd7AW4QAQ9v7SEMKi9Sk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n/93pemR7g4XAjv+yyDSBzUDa2lYIlCdFxmQ7C3Y9Dp9WaRjR2SPlPJ/UNX24CWwrIRNk8416kjbt9H6HLS8xpJlMa5wsrs/SovRCQ8bPvNkrsM18DYNc2WMFzXxQXByrjlo0HH8J+9/WBE9FxJHppG1i00URdlo/tM9u5tIi3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=K5lAT7o+; arc=none smtp.client-ip=199.89.3.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4cjGTw1C60zm0ytn;
+	Thu,  9 Oct 2025 17:05:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1760029538; x=1762621539; bh=ASbHD4hHgKK4/wqMUDMSHNZq
+	gmJoYXs6WYurcxNLSO8=; b=K5lAT7o+zrUYz2s5JXVTFJd2+KRR6up+NnKogSK7
+	cxwXJPWI9TiOpWyfXjFUHSgPBSMDN5h3Hd6+t6hlCcz0zPYrP9/O5v95MyGDj4Ob
+	S4Ktt4dfXSmh/k8HvxRiB3TVWxazsrHQ1bcDXimCXrQdN0ynq5udfY/inlp3YOT2
+	+T3GPF4SYe7bXCz41O17nB7ze6+QDPzKUSR2BHTZc/ypSnc7PDT6TFjWDRZ0hTb9
+	uqT2CDYYawAI4C/wHcf0XSLFzl6Y9Ja6gk8R3L5LB8PkZV+qDNSi80etkMbFsyND
+	/RREh8UPSZrO/i5iLmu7/yLKzzbtZkaW6yWdj+JGTFMGhA==
+X-Virus-Scanned: by MailRoute
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id 7Q1p1ARXfwZu; Thu,  9 Oct 2025 17:05:38 +0000 (UTC)
+Received: from [100.119.48.131] (unknown [104.135.180.219])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4cjGTj2hK6zm0ytk;
+	Thu,  9 Oct 2025 17:05:28 +0000 (UTC)
+Message-ID: <49647ccf-5d19-4ede-87b4-0f7ff8e9f5ea@acm.org>
+Date: Thu, 9 Oct 2025 10:05:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5mhwlegpqwr4uy3k"
-Content-Disposition: inline
-In-Reply-To: <aN2Vrf97-uCR41x9@archiso>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch v2 3/7] blk-mq: add a new queue sysfs attribute
+ async_depth
+To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, ming.lei@redhat.com,
+ nilay@linux.ibm.com, jmoyer@redhat.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
+ johnny.chenyi@huawei.com
+References: <20251009074634.527661-1-yukuai1@huaweicloud.com>
+ <20251009074634.527661-4-yukuai1@huaweicloud.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20251009074634.527661-4-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 10/9/25 12:46 AM, Yu Kuai wrote:
+> +static ssize_t queue_async_depth_show(struct gendisk *disk, char *page)
+> +{
+> +	ssize_t ret;
+> +
+> +	mutex_lock(&disk->queue->elevator_lock);
+> +	ret = queue_var_show(disk->queue->async_depth, page);
+> +	mutex_unlock(&disk->queue->elevator_lock);
+> +	return ret;
+> +}
 
---5mhwlegpqwr4uy3k
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v15 3/7] rust: pwm: Add complete abstraction layer
-MIME-Version: 1.0
+Functions like the above can be simplified by using guard(mutex)(...) or
+scoped_guard(mutex, ...).
 
-Hello Elle,
+Thanks,
 
-On Wed, Oct 01, 2025 at 08:57:17PM +0000, Elle Rhumsaa wrote:
-> On Tue, Sep 30, 2025 at 02:20:34PM +0200, Michal Wilczynski wrote:
-> > [... 700+ lines trimmed]
->=20
-> Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
-
-Can you please trim the quoted part when you reply to only contain the
-relevant part? Having to scroll several pages to see your one-line reply
-is not a good use of my time. Multiply that by the number of recipients
-of your mail.
-
-Thanks
-Uwe
-
---5mhwlegpqwr4uy3k
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjn600ACgkQj4D7WH0S
-/k5XeAgAnu0TfZoOsdkntucLzQ0zg0HTTAqaoe7N7MdLgsQQHxRpQxck6cJb3Vw+
-1J8jo8DQzCi+lwytWM5iubVukxGFCxFV5h4Qp0bW7/eYCK/fTscZ7g7uuKO+GS0D
-7s0Lr6MOsfe1MjqHyqAMKZYHWQjwZresPWVJCpyuInAhCoV60f1SSEoWsrwkpdZX
-CFREtKf1Gn5yYj0cNQHl8ubNIZ3uW4tlbvj93wZjztMXQROG/8tvJ29vcUTdSqDR
-UbF+xPvIu1hVRAtLjGwm3PBioLnwB01cV0g427s3pDSwNRUrsEC4flnJAqKa9r1g
-PvYN7XNxSwfgteGrqDjFVby3Ap8cBw==
-=Y2eC
------END PGP SIGNATURE-----
-
---5mhwlegpqwr4uy3k--
+Bart.
 
