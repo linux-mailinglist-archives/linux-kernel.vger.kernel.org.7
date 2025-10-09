@@ -1,103 +1,127 @@
-Return-Path: <linux-kernel+bounces-847067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FDC4BC9CA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 17:29:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4587BC9CAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 17:29:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7845E188458D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 15:28:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC5331A63213
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 15:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A579E1E7C23;
-	Thu,  9 Oct 2025 15:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E96F21FF61E;
+	Thu,  9 Oct 2025 15:27:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="mZ8KF4Hq"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fE5kcC50"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4341F1932
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 15:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46BCC1DE8AE;
+	Thu,  9 Oct 2025 15:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760023595; cv=none; b=gNKTJzKIX8hBlQtDlcUqwjt9icB40qLO4JcYo26Iw0cR7pm2vQwQFEBJpXdijxZft1jitUl3m8mepsG2jIYYFI/rHUYZpRSP76LTP12mWEDu5larEY1CqzsRP6WJuOF2iTvhywz0cU7OAMhitlJhczdMm/TMxHhai1bQJNZPt5E=
+	t=1760023636; cv=none; b=TFli3M/3UfmbbGv5axd9ZbhrQRL0bsqC6VhpiYfo3gyMjH2jDnMixgnG6I0dqYbggKLYQiGohZh2Fl8T/4jFOGwYif5F1hJxSsnW2fUuY2P190Jm0P84PSbceGoujw+SHK1yvSrBdS0xaIHoeur5ailSnNQDg8zU8mt805pSH+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760023595; c=relaxed/simple;
-	bh=vHT4mml/Nfbml0xk4/KK+lrmsPkXCmCZsxGJY9nykX4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N8Ui7kQMgQDGgRmK0YV17qyeg6UM66KURFaRSUBjtfVYYjIDSxg9qChkNRnzlyUDBWlCjN4U1pF5j1UKPB+p35duZj8A89qInZI0C3W9j5p831hKtKTnsfAxGNd2/ohcys1OViyUVWtA3g2wrIMWqNHJPtYN3h9bWs2oMjsaiZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=mZ8KF4Hq; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1760023591;
-	bh=vHT4mml/Nfbml0xk4/KK+lrmsPkXCmCZsxGJY9nykX4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mZ8KF4HqcHQ8cBZqIGrG9elLhSvonQ6hYdSdQkE44ec1oKFk4C0qfrf8ZuV2NIdh/
-	 802liWwnc59w0kL0NCGk/PsC7is5byP+r4T4XH6XWkDTtQTDpSEytTCu8VfChdJiU/
-	 odPNnzq1v/48tat5P1cp7o9DYUeAZ3KXDf8UQfhJdFGaLvnhSBs7iDi3SH/ZZ7B4Aa
-	 2uyTgTipJJbAygcLr1Rl/Z6nO8yMGbFtwY6D1PrV4VPbT9G0chN9fiz5kStI8NgzIn
-	 j+JRcx93ogCJ7b7M/TFxYEqxeM0iIGOdQxkOE+29PfaP2+hl2ZPCuajsmiU/D9ps21
-	 slWT607oUHxQg==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 14A0017E108C;
-	Thu,  9 Oct 2025 17:26:31 +0200 (CEST)
-Date: Thu, 9 Oct 2025 17:26:26 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Steven
- Price <steven.price@arm.com>, kernel@collabora.com
-Subject: Re: [PATCH v5 12/12] MAINTAINERS: Add Adrian Larumbe as Panfrost
- driver maintainer
-Message-ID: <20251009172626.45feb3ea@fedora>
-In-Reply-To: <20251007150216.254250-13-adrian.larumbe@collabora.com>
-References: <20251007150216.254250-1-adrian.larumbe@collabora.com>
-	<20251007150216.254250-13-adrian.larumbe@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1760023636; c=relaxed/simple;
+	bh=mmGYKciRNdjxJeWKpsJv6Woc1jASOtzqRmKHlNJJKRY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l/rnSHu053FROIeAaDmYiWSmzt95DT6gcYIlDmyVzMWk4L/+8v6GONe7fo6CO5+QE5U7/QIwqnFoPk/8oximNCsJ08wsndmbMSTb+Wv/UtkQjGxfYAzk/hA5D8bb5p0ov202eakAi44b7kMlJ8BRbzmFuQjP5+n0JbrCIgnpUgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fE5kcC50; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBDFAC4CEE7;
+	Thu,  9 Oct 2025 15:27:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760023635;
+	bh=mmGYKciRNdjxJeWKpsJv6Woc1jASOtzqRmKHlNJJKRY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fE5kcC50z+Off25M9rzlEmb3rVm9DTmA1FsHLUM+sy6uE+szyKARzhu5PuYHJNejx
+	 m+fYpfQNC7RmWaR4ffMy06GFdBRgMhLtLi8uCl8b4x7cFaoizmJ36LGekJtXJl//pM
+	 yHhhV1K6YumXVfHTC3UMLx8RdqK1hHLA3r1OQp+j20uCynU7EK1HaKoeLeJ9cou56c
+	 jVHL+SwOeCjGhK1otMdtt5A1FpkInAoAXeSGt2djiKYehtW/rDIQYLRjjXt5Hmj4eG
+	 /7K5LTBCu0FN92gEPKVKqaFAI7fPoqC4QtgtKotQ0Van8nLvXJ02ZI9EdboH/49DE1
+	 YkqRxh2ZGhwRQ==
+Date: Thu, 9 Oct 2025 16:27:10 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Cc: Yixun Lan <dlan@gentoo.org>, Troy Mitchell <troy.mitchell@linux.dev>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Yangyu Chen <cyy@cyyself.name>, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: riscv: spacemit: Add MusePi Pro board
+Message-ID: <20251009-crazy-outhouse-fe3e47d0dbe7@spud>
+References: <20250928-k1-musepi-pro-dts-v1-0-64d0659dfdbc@linux.spacemit.com>
+ <20250928-k1-musepi-pro-dts-v1-1-5efcca0ce3ae@linux.spacemit.com>
+ <20250928074914-GYA1344940@gentoo.org>
+ <20250929-challenge-molecular-947bb1f5962b@spud>
+ <A5845378AE731404+aOdtKmFPaYfc2n7n@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="TTeySwOLHeYm7U/L"
+Content-Disposition: inline
+In-Reply-To: <A5845378AE731404+aOdtKmFPaYfc2n7n@kernel.org>
+
+
+--TTeySwOLHeYm7U/L
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue,  7 Oct 2025 16:01:54 +0100
-Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
-
-> Add Adrian Larumbe as Panfrost driver maintainer.
+On Thu, Oct 09, 2025 at 04:07:06PM +0800, Troy Mitchell wrote:
+> On Mon, Sep 29, 2025 at 06:48:22PM +0100, Conor Dooley wrote:
+> > On Sun, Sep 28, 2025 at 03:49:14PM +0800, Yixun Lan wrote:
+> > > Hi Troy,
+> > >=20
+> > > On 12:16 Sun 28 Sep     , Troy Mitchell wrote:
+> > > > From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> > > >=20
+> > > > Document the compatible string for the MusePi Pro [1].
+> > > > It is a 1.8-inch single board computer based on the
+> > > > SpacemiT K1/M1 RISC-V SoC [2].
+> > > you could wrap at slightly more characters, I remember 72 chars
+> > > (haven't spent time to find a formal document link..)
+> > >=20
+> > > >=20
+> > > > Link:
+> > > > https://developer.spacemit.com/documentation?token=3DYJtdwnvvViPVcm=
+koPDpcvwfVnrh&type=3Dpdf
+> > > I'd suggest to list core features of this board, while using this lin=
+k as a complement,
+> > > base on previous experience, vendor may change the link address, thus=
+ the link vanish
+> >=20
+> > The link doesn't even work for me.
+> Could you double check if it really doesn't work now?
 >=20
-> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
+> > Is this board actually made by spacemit as a developer platform?
+> Yes.
 
-Acked-by: Boris Brezillon <boris.brezillon@collabora.com>
+With the link, that seems pretty clear. Not sure why the link didn't
+work before, but it is working now.
 
-Welcome to the team!
+Cheers,
+Conor.
 
-Once this is merged, you probably want to ask for drm-misc access so
-you can start merging panfrost patches yourself.
+--TTeySwOLHeYm7U/L
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> ---
->  MAINTAINERS | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 5257d52679d6..cb68fdec3da4 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2066,6 +2066,7 @@ F:	drivers/gpu/drm/arm/display/komeda/
->  ARM MALI PANFROST DRM DRIVER
->  M:	Boris Brezillon <boris.brezillon@collabora.com>
->  M:	Rob Herring <robh@kernel.org>
-> +M:      Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
->  R:	Steven Price <steven.price@arm.com>
->  L:	dri-devel@lists.freedesktop.org
->  S:	Supported
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaOfUSgAKCRB4tDGHoIJi
+0m1+AP0eT/PWdBBoKEsVOyd51NTvO64ceUYNyzdvNKX+jrdvAAD/RUig3ZZAszrn
+9sEmMD7SB2/wCBYFNmp+18Vv1noH4AU=
+=TzA+
+-----END PGP SIGNATURE-----
+
+--TTeySwOLHeYm7U/L--
 
