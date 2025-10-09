@@ -1,571 +1,120 @@
-Return-Path: <linux-kernel+bounces-846842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB054BC9353
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:08:57 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BDB1BC9414
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:21:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D72A91A61E4F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:09:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A80CB4FC3DA
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7600F2E7199;
-	Thu,  9 Oct 2025 13:08:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF15A2E8897;
+	Thu,  9 Oct 2025 13:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DJQLaO4F"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB3302E6CB3
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:08:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="GCvq1v9a"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5137F2E8B60
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760015331; cv=none; b=GMfWzexvXORwj32vr5+gC0rHub1YUs2593n4aQrMr57uIFJUqYoHMeODuZqASetabscrU48DErPb+HKhaY52hplC8Pw9vetJoDtoc9G066UvucdSWyHuJo7ax/m/J07RqIAZVtsSTaY8H+3YmdD9C5eFeU48JNlKs7vZtJqNvVQ=
+	t=1760015992; cv=none; b=XeA+wjT9u0lvnBkcDl2OVeizdsBgsGMxJV4OYGlSQgmW2kZeaKSYyBUwkspkwLhaUxkMGJ+RsHZis/BTLzBB7ibz1n22oPNOb4jkzf7/PWIpG16tTfq4zZqCSK9QoJ5i0ZKQIDt/0tYERXxHqSKZoh1BrGFohruL5+H5GHeFG6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760015331; c=relaxed/simple;
-	bh=brMLkJnhR4MJcvZ7cy6uJzkSB3AkGPRzWnGN9KMZzd8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=syhSpdgsnAoRgzSukqGiFt3bXaK2p5HP75eLK7pZnUME2ZJyXXU6ThiHtfzJUNlH3KY3lzA/pvP89G236J+nnH2krrdFSBevmV+gJrugXGvAF6sRpk4sxKRExXhlymWRnW2tjZlVdPMQ+yuVlRj7RSxQ2Hc4Vj0agOj1Z2xvAt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DJQLaO4F; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-46e3a50bc0fso7364105e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 06:08:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760015326; x=1760620126; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qhovi4HUngN4Wor+KHpxSd3sVb2276HUKfA4yNG8cvE=;
-        b=DJQLaO4FB2lD4k7FmMA9nhdVy6AEYVf3+5fAKbAuLPSeNxk56ltU+k7ISyUve9kfcn
-         hw+Pvxwut0qNVcuW9gOMGhQhRlJhGkUQilgs6kxad7aMT7IbLTGcq/wDe8J+sVHn7Kl7
-         WxD6DBcTiO/oyfmTwKBZEHzlmIDvADst7fbYd3Dkjvune1rUsmpLGpC8ZpBE/eBshOkM
-         xz3D/G4nn+7zGoLQbyXcGMzHwxpiPWwceANt+lkw+XKV7O1+v7tajMZerw/T++gi/dC2
-         QaXpCE7w3QqpxWS36NVdgcJIWz9/4WXGzWZx4hVqxnolm97yilYWZEMBqxMKobDrQmbo
-         nPug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760015326; x=1760620126;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qhovi4HUngN4Wor+KHpxSd3sVb2276HUKfA4yNG8cvE=;
-        b=NSLg+0VYjiW8fHPpOVW/jkWaROZRhW+JPTXo98ABsv/l3B/608EtUaPAI5SfcWs2ou
-         dT5jCwGNUe0Oy1t/ZAeLD1N3zlShaMmbg5q/KKQHoc/sPQ0G92FBqBXUVDVquJ8mBREW
-         O+H8eEGuxmF+oOsfq89lXKqY48l5Pc3V8WlnrjTCSKJHyhKTAUzjqZaPFAgxtcRf4oJQ
-         O4HgHRaB8DHSzR44elJP4rKzw+6L9XEMECCXJOT/DuGmR1h77WJbuvQXvmUA7dceDFnM
-         Wi0geRx7oDpQ3jZWiGs1lvvVgl37/D1z+/USN2tlzVEcSoRl0WPF0A+2N0gKn6dJ6ACv
-         mu1w==
-X-Forwarded-Encrypted: i=1; AJvYcCWFtDJZb0XwEWJw0AJ+n9TFQB5VykV448FC9nYZbBN+PyPDtyFb9sQVUi3FkjaRFDy5BxsFMSJkYNQ3ok4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyh2SxyVA47/uO4wkGDt4O5XI+vxftdyXG0ZfA6NsTX3UgWDJ2C
-	r1mQ6n0JLFLLo4hLjN3O21PeGFtyoXoSM5SvZbqaD3QOkm95y9O2W2B50oEk9BaaBlhPOURMLAT
-	abrheWjpauLMtc6KRSH5qqj6bxrd59U8=
-X-Gm-Gg: ASbGncu2jSUuPnhqzQpiD0hR5/2UicaTIxUYpi+J9bj4+lVCNPjA++aduaZj0HBnWct
-	Gh9QAwGCpnWxpe5xcRlIoPIAOIF2waBtP/JglzALhTLKbSXHXDQWzY4WymgcJP3w5ziiWmxyQtQ
-	rzmyXILL/sA7KGBPUhIXIaG1R6bXdbij8aqrny28peBP0T5+FI1E/zbTvNIlhtjFpY/sAhtnDHi
-	MmUbg5QiJpAI0RShD216CxBm01DYUhaylMuxZ9SPXJIKTDtPd5m+FHdIsPE5cOuagFRTT9Us2g=
-X-Google-Smtp-Source: AGHT+IFBEmfcqddrXrL/Z1EH2lks0Dwq8+yKxv5/UdWltkE4DG7UysEBFkKmbef4z8X6f+H3A2Gk6BgSHDVYwx1ZvP4=
-X-Received: by 2002:a05:600c:6383:b0:46e:32dd:1b1a with SMTP id
- 5b1f17b1804b1-46fa9a8f146mr49327895e9.7.1760015326038; Thu, 09 Oct 2025
- 06:08:46 -0700 (PDT)
+	s=arc-20240116; t=1760015992; c=relaxed/simple;
+	bh=rNLTq1LQFw8bHXqJQapbXIlJpzZHUR76vAyHIGqeW78=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=kByUFRZ2U3GknWI974AC642Nr449W5Tja6E57PPge/TB648koWuzO7ztMJ8Ag+iMfAgjIvdPS+GEtMwvhdAg/3qXEr4d8vzbuIhBJXp37jtdCkx4TUo2bccbwo5ZPbJ1m4f9Fr7vCcCeP8pVMzuakN3Reo2G7Z6iqMskGa16Bzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=GCvq1v9a; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 0B97014C2D3;
+	Thu,  9 Oct 2025 15:10:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1760015441;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=RSEzej2rMgZ/3dQXyeaxr2uE3jRK8E8SdoM2KwIIHvc=;
+	b=GCvq1v9aTg5FpSIPtWoorqiXzwQTMz83nHwr/4YiNUtsosP4PtDdQtyKlMjJFVNLWRXwLV
+	5pnPNYZm51/Dmf1pV9l9MvYOczeVYDkiqyIX+PA15TD2crMPIrjaH/dXUBJ8UD9ZZCwtLf
+	sgWLGkcREcmQKFin31e0cR/WPDTvGUrD8iSOCuJqKDnypCzg3WOtyT4JompyaylcOUKViK
+	rF3irMq8qBXy+e5hGpsbdjpWMHqMCWGII3O/pMKSvsgVyL8zn3ylJLxd+XZjbFoG30mUNV
+	YKVkLetDEpxD28O+CQ50axVPIM1flLCATD9Hj6M+wwbZ57DOaMbzqqaXW0qUKg==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id ec0f6332;
+	Thu, 9 Oct 2025 13:10:38 +0000 (UTC)
+Date: Thu, 9 Oct 2025 22:10:23 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Schoenebeck <linux_oss@crudebyte.com>,
+	Eric Van Hensbergen <ericvh@kernel.org>, v9fs@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] 9p fixes for 6.18-rc1
+Message-ID: <aOe0P8ixMEg4ul5K@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251002161728.186024-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20251002161728.186024-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVP4xgsc6rD_Z6OMAXR-mOe9WdfZb2jXZSzDmXdgZzFSw@mail.gmail.com>
-In-Reply-To: <CAMuHMdVP4xgsc6rD_Z6OMAXR-mOe9WdfZb2jXZSzDmXdgZzFSw@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 9 Oct 2025 14:08:19 +0100
-X-Gm-Features: AS18NWC5rsslB-cfQdgL7VawbRMgX6qh2J8jZ5sIkVStSJ8rbfHF59Zw3xWMXPw
-Message-ID: <CA+V-a8uWYsQcfHx-4BRaLoH30uy3vaT-e9zqrW_kwoX_bsb8Xw@mail.gmail.com>
-Subject: Re: [PATCH v9 2/6] clk: renesas: rzv2h-cpg: Add support for DSI clocks
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Hi Geert,
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
-Thank you for the review.
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
 
-On Mon, Oct 6, 2025 at 1:45=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
-.org> wrote:
->
-> Hi Prabhakar,
->
-> On Thu, 2 Oct 2025 at 18:17, Prabhakar <prabhakar.csengg@gmail.com> wrote=
-:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Add support for PLLDSI and its post-dividers in the RZ/V2H CPG driver a=
-nd
-> > export helper APIs for use by the DSI driver.
-> >
-> > Introduce per-PLL-DSI state in the CPG private structure and provide a
-> > set of helper functions that find valid PLL parameter combinations for
-> > a requested frequency. The new helpers are rzv2h_get_pll_pars(),
-> > rzv2h_get_pll_div_pars(), rzv2h_get_pll_divs_pars() and
-> > rzv2h_get_pll_dtable_pars() and they are exported in the "RZV2H_CPG"
-> > namespace for use by other consumers (notably the DSI driver). These
-> > helpers perform iterative searches over PLL parameters (M, K, P, S)
-> > and optional post-dividers and return the best match (or an exact
-> > match when possible).
-> >
-> > Move PLL/CLK related limits and parameter types into the shared
-> > include (include/linux/clk/renesas.h) by adding struct rzv2h_pll_limits=
-,
-> > struct rzv2h_pll_pars and struct rzv2h_pll_div_pars plus the
-> > RZV2H_CPG_PLL_DSI_LIMITS() helper macro to define DSI PLL limits.
-> >
-> > This change centralises the PLLDSI algorithms so the CPG and DSI
-> > drivers compute PLL parameters consistently and allows the DSI driver
-> > to accurately request rates and program its PLL.
-> >
-> > Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> > v8->v9:
-> > - Dropped `renesas-rzv2h-cpg-pll.h` header and merged into `renesas.h`
-> > - Exported the symbols for PLL calculation apis
-> > - Updated commit message
-> > - Dropped reviewed-by tags due to above changes
->
-> Thanks for the update!
->
-> > --- a/drivers/clk/renesas/rzv2h-cpg.c
-> > +++ b/drivers/clk/renesas/rzv2h-cpg.c
->
-> > +/*
-> > + * rzv2h_get_pll_div_pars - Finds the best combination of PLL paramete=
-rs
-> > + * and divider value for a given frequency.
-> > + *
-> > + * @limits: Pointer to the structure containing the limits for the PLL=
- parameters
-> > + * @pars: Pointer to the structure where the best calculated PLL param=
-eters and
-> > + * divider values will be stored
-> > + * @divider: Divider value to be applied to the PLL output
-> > + * @freq_millihz: Target output frequency in millihertz
-> > + *
-> > + * This function calculates the best set of PLL parameters (M, K, P, S=
-) where
-> > + * the divider value is already known. See rzv2h_get_pll_pars() for mo=
-re details
-> > + * on how the PLL parameters are calculated.
-> > + */
-> > +bool rzv2h_get_pll_div_pars(const struct rzv2h_pll_limits *limits,
-> > +                           struct rzv2h_pll_div_pars *pars, u8 divider=
-,
-> > +                           u64 freq_millihz)
-> > +{
-> > +       if (!rzv2h_get_pll_pars(limits, &pars->pll, freq_millihz * divi=
-der))
-> > +               return false;
-> > +
-> > +       pars->div.divider_value =3D divider;
-> > +       pars->div.freq_millihz =3D DIV_U64_ROUND_CLOSEST(pars->pll.freq=
-_millihz, divider);
-> > +       pars->div.error_millihz =3D freq_millihz - pars->div.freq_milli=
-hz;
-> > +
-> > +       return true;
-> > +}
-> > +EXPORT_SYMBOL_NS_GPL(rzv2h_get_pll_div_pars, "RZV2H_CPG");
->
-> This function does not seem to be used outside this module yet,
-> so why is it exported?
->
-Agreed, I will drop it.
+are available in the Git repository at:
 
-> If you do ever need it, you could define a simple wrapper in the
-> header file:
->
->     static inline bool rzv2h_get_pll_div_pars(const struct
-> rzv2h_pll_limits *limits,
->                                               struct rzv2h_pll_div_pars *=
-pars,
->                                               u8 divider, u64 freq_millih=
-z)
->     {
->             return rzv2h_get_pll_divs_pars(limits, pars, &divider, 1,
-> freq_millihz);
->     }
->
-Agreed.
+  https://github.com/martinetd/linux tags/9p-for-6.18-rc1
 
-> > +
-> > +/*
-> > + * rzv2h_get_pll_divs_pars - Finds the best combination of PLL paramet=
-ers
-> > + * and divider value for a given frequency.
-> > + *
-> > + * @limits: Pointer to the structure containing the limits for the PLL=
- parameters
-> > + * @pars: Pointer to the structure where the best calculated PLL param=
-eters and
-> > + * divider values will be stored
-> > + * @table: Pointer to the array of valid divider values
-> > + * @table_size: Size of the divider values array
-> > + * @freq_millihz: Target output frequency in millihertz
-> > + *
-> > + * This function calculates the best set of PLL parameters (M, K, P, S=
-) and divider
-> > + * value to achieve the desired frequency. See rzv2h_get_pll_pars() fo=
-r more details
-> > + * on how the PLL parameters are calculated.
-> > + *
-> > + * freq_millihz is the desired frequency generated by the PLL followed=
- by a
-> > + * a gear.
-> > + */
-> > +bool rzv2h_get_pll_divs_pars(const struct rzv2h_pll_limits *limits,
-> > +                            struct rzv2h_pll_div_pars *pars,
-> > +                            const u8 *table, u8 table_size, u64 freq_m=
-illihz)
-> > +{
-> > +       struct rzv2h_pll_div_pars p, best;
-> > +
-> > +       best.div.error_millihz =3D S64_MAX;
-> > +       p.div.error_millihz =3D S64_MAX;
-> > +       for (unsigned int i =3D 0; i < table_size; i++) {
-> > +               if (!rzv2h_get_pll_div_pars(limits, &p, table[i], freq_=
-millihz))
->
-> If you don't need rzv2h_get_pll_div_pars() elsewhere, you could just
-> expand it here.
->
-Agreed, I will expand it here and drop rzv2h_get_pll_div_pars().
+for you to fetch changes up to 528f218b31aac4bbfc58914d43766a22ab545d48:
 
-> > +                       continue;
-> > +
-> > +               if (p.div.error_millihz =3D=3D 0) {
-> > +                       *pars =3D p;
-> > +                       return true;
-> > +               }
-> > +
-> > +               if (abs(best.div.error_millihz) > abs(p.div.error_milli=
-hz))
-> > +                       best =3D p;
-> > +       }
-> > +
-> > +       if (best.div.error_millihz =3D=3D S64_MAX)
-> > +               return false;
-> > +
-> > +       *pars =3D best;
-> > +       return true;
-> > +}
-> > +EXPORT_SYMBOL_NS_GPL(rzv2h_get_pll_divs_pars, "RZV2H_CPG");
-> > +
-> > +/*
-> > + * rzv2h_get_pll_dtable_pars - Finds the best combination of PLL param=
-eters
-> > + * and divider value for a given frequency using a divider table.
-> > + *
-> > + * @limits: Pointer to the structure containing the limits for the PLL=
- parameters
-> > + * @pars: Pointer to the structure where the best calculated PLL param=
-eters and
-> > + * divider values will be stored
-> > + * @dtable: Pointer to the array of valid divider values
-> > + * @freq_millihz: Target output frequency in millihertz
-> > + *
-> > + * See rzv2h_get_pll_divs_pars() for more details on how the PLL
-> > + * parameters and divider values are calculated.
-> > + */
-> > +bool rzv2h_get_pll_dtable_pars(const struct rzv2h_pll_limits *limits,
-> > +                              struct rzv2h_pll_div_pars *pars,
-> > +                              const struct clk_div_table *dtable, u64 =
-freq_millihz)
-> > +{
-> > +       const struct clk_div_table *div =3D dtable;
-> > +       u8 table[RZV2H_MAX_DIV_TABLES] =3D { 0 };
-> > +       unsigned int i =3D 0;
-> > +
-> > +       for (; div->div; div++) {
-> > +               if (i >=3D RZV2H_MAX_DIV_TABLES)
-> > +                       return false;
-> > +               table[i++] =3D div->div;
-> > +       }
-> > +
-> > +       return rzv2h_get_pll_divs_pars(limits, pars, table, i, freq_mil=
-lihz);
-> > +}
-> > +EXPORT_SYMBOL_NS_GPL(rzv2h_get_pll_dtable_pars, "RZV2H_CPG");
->
-> This function does not seem to be used outside this module yet,
-> so why is it exported?
->
-Agreed, I will drop it.
+  9p: sysfs_init: don't hardcode error to ENOMEM (2025-09-27 21:44:38 +0900)
 
-> > +
-> > +static unsigned long rzv2h_cpg_plldsi_div_recalc_rate(struct clk_hw *h=
-w,
-> > +                                                     unsigned long par=
-ent_rate)
-> > +{
-> > +       struct rzv2h_plldsi_div_clk *dsi_div =3D to_plldsi_div_clk(hw);
-> > +       struct rzv2h_cpg_priv *priv =3D dsi_div->priv;
-> > +       struct ddiv ddiv =3D dsi_div->ddiv;
-> > +       u32 div;
-> > +
-> > +       div =3D readl(priv->base + ddiv.offset);
-> > +       div >>=3D ddiv.shift;
-> > +       div &=3D clk_div_mask(ddiv.width);
-> > +       div =3D dsi_div->dtable[div].div;
-> > +
-> > +       return DIV_ROUND_CLOSEST_ULL(parent_rate, div);
-> > +}
-> > +
-> > +static int rzv2h_cpg_plldsi_div_determine_rate(struct clk_hw *hw,
-> > +                                              struct clk_rate_request =
-*req)
-> > +{
-> > +       struct rzv2h_plldsi_div_clk *dsi_div =3D to_plldsi_div_clk(hw);
-> > +       struct pll_clk *pll_clk =3D to_pll(clk_hw_get_parent(hw));
-> > +       struct rzv2h_cpg_priv *priv =3D dsi_div->priv;
-> > +       struct rzv2h_pll_div_pars *dsi_params;
-> > +       struct rzv2h_pll_dsi_info *dsi_info;
-> > +       u64 rate_millihz;
-> > +
-> > +       dsi_info =3D &priv->pll_dsi_info[pll_clk->pll.instance];
-> > +       dsi_params =3D &dsi_info->pll_dsi_parameters;
-> > +
-> > +       rate_millihz =3D mul_u32_u32(req->rate, MILLI);
-> > +       if (rate_millihz =3D=3D dsi_params->div.error_millihz + dsi_par=
-ams->div.freq_millihz)
-> > +               goto exit_determine_rate;
-> > +
-> > +       if (!rzv2h_get_pll_dtable_pars(dsi_info->pll_dsi_limits, dsi_pa=
-rams, dsi_div->dtable,
-> > +                                      rate_millihz)) {
->
-> If you don't need rzv2h_get_pll_dtable_pars() elsewhere, you could just
-> expand it here.
->
-Ok, I will expand it here.
+----------------------------------------------------------------
+Bunch of unrelated fixes
 
-> > +               dev_err(priv->dev,
-> > +                       "failed to determine rate for req->rate: %lu\n"=
-,
-> > +                       req->rate);
-> > +               return -EINVAL;
-> > +       }
-> > +
-> > +exit_determine_rate:
-> > +       req->rate =3D DIV_ROUND_CLOSEST_ULL(dsi_params->div.freq_millih=
-z, MILLI);
-> > +       req->best_parent_rate =3D req->rate * dsi_params->div.divider_v=
-alue;
-> > +       dsi_info->req_pll_dsi_rate =3D req->best_parent_rate;
-> > +
-> > +       return 0;
-> > +}
->
-> > --- a/include/linux/clk/renesas.h
-> > +++ b/include/linux/clk/renesas.h
-> > @@ -10,7 +10,9 @@
-> >  #ifndef __LINUX_CLK_RENESAS_H_
-> >  #define __LINUX_CLK_RENESAS_H_
-> >
-> > +#include <linux/clk-provider.h>
-> >  #include <linux/types.h>
-> > +#include <linux/units.h>
-> >
-> >  struct device;
-> >  struct device_node;
-> > @@ -32,4 +34,138 @@ void cpg_mssr_detach_dev(struct generic_pm_domain *=
-unused, struct device *dev);
-> >  #define cpg_mssr_attach_dev    NULL
-> >  #define cpg_mssr_detach_dev    NULL
-> >  #endif
-> > +
-> > +/**
-> > + * struct rzv2h_pll_limits - PLL parameter constraints
-> > + *
-> > + * This structure defines the minimum and maximum allowed values for
-> > + * various parameters used to configure a PLL. These limits ensure
-> > + * the PLL operates within valid and stable ranges.
-> > + *
-> > + * @fout: Output frequency range (in MHz)
-> > + * @fout.min: Minimum allowed output frequency
-> > + * @fout.max: Maximum allowed output frequency
-> > + *
-> > + * @fvco: PLL oscillation frequency range (in MHz)
-> > + * @fvco.min: Minimum allowed VCO frequency
-> > + * @fvco.max: Maximum allowed VCO frequency
-> > + *
-> > + * @m: Main-divider range
-> > + * @m.min: Minimum main-divider value
-> > + * @m.max: Maximum main-divider value
-> > + *
-> > + * @p: Pre-divider range
-> > + * @p.min: Minimum pre-divider value
-> > + * @p.max: Maximum pre-divider value
-> > + *
-> > + * @s: Divider range
-> > + * @s.min: Minimum divider value
-> > + * @s.max: Maximum divider value
-> > + *
-> > + * @k: Delta-sigma modulator range (signed)
-> > + * @k.min: Minimum delta-sigma value
-> > + * @k.max: Maximum delta-sigma value
-> > + */
-> > +struct rzv2h_pll_limits {
-> > +       struct {
-> > +               u32 min;
-> > +               u32 max;
-> > +       } fout;
-> > +
-> > +       struct {
-> > +               u32 min;
-> > +               u32 max;
-> > +       } fvco;
-> > +
-> > +       struct {
-> > +               u16 min;
-> > +               u16 max;
-> > +       } m;
-> > +
-> > +       struct {
-> > +               u8 min;
-> > +               u8 max;
-> > +       } p;
-> > +
-> > +       struct {
-> > +               u8 min;
-> > +               u8 max;
-> > +       } s;
-> > +
-> > +       struct {
-> > +               s16 min;
-> > +               s16 max;
-> > +       } k;
-> > +};
-> > +
-> > +/**
-> > + * struct rzv2h_pll_pars - PLL configuration parameters
-> > + *
-> > + * This structure contains the configuration parameters for the
-> > + * Phase-Locked Loop (PLL), used to achieve a specific output frequenc=
-y.
-> > + *
-> > + * @m: Main divider value
-> > + * @p: Pre-divider value
-> > + * @s: Output divider value
-> > + * @k: Delta-sigma modulation value
-> > + * @freq_millihz: Calculated PLL output frequency in millihertz
-> > + * @error_millihz: Frequency error from target in millihertz (signed)
-> > + */
-> > +struct rzv2h_pll_pars {
-> > +       u16 m;
-> > +       u8 p;
-> > +       u8 s;
-> > +       s16 k;
-> > +       u64 freq_millihz;
-> > +       s64 error_millihz;
-> > +};
-> > +
-> > +/**
-> > + * struct rzv2h_pll_div_pars - PLL parameters with post-divider
-> > + *
-> > + * This structure is used for PLLs that include an additional post-div=
-ider
-> > + * stage after the main PLL block. It contains both the PLL configurat=
-ion
-> > + * parameters and the resulting frequency/error values after the divid=
-er.
-> > + *
-> > + * @pll: Main PLL configuration parameters (see struct rzv2h_pll_pars)
-> > + *
-> > + * @div: Post-divider configuration and result
-> > + * @div.divider_value: Divider applied to the PLL output
-> > + * @div.freq_millihz: Output frequency after divider in millihertz
-> > + * @div.error_millihz: Frequency error from target in millihertz (sign=
-ed)
-> > + */
-> > +struct rzv2h_pll_div_pars {
-> > +       struct rzv2h_pll_pars pll;
-> > +       struct {
-> > +               u8 divider_value;
-> > +               u64 freq_millihz;
-> > +               s64 error_millihz;
-> > +       } div;
-> > +};
-> > +
-> > +#define RZV2H_CPG_PLL_DSI_LIMITS(name)                                =
- \
-> > +       static const struct rzv2h_pll_limits (name) =3D {              =
-   \
-> > +               .fout =3D { .min =3D 25 * MEGA, .max =3D 375 * MEGA }, =
-       \
-> > +               .fvco =3D { .min =3D 1600 * MEGA, .max =3D 3200 * MEGA =
-},     \
-> > +               .m =3D { .min =3D 64, .max =3D 533 },                  =
-       \
-> > +               .p =3D { .min =3D 1, .max =3D 4 },                     =
-       \
-> > +               .s =3D { .min =3D 0, .max =3D 6 },                     =
-       \
-> > +               .k =3D { .min =3D -32768, .max =3D 32767 },            =
-       \
-> > +       }                                                              =
- \
-> > +
-> > +bool rzv2h_get_pll_pars(const struct rzv2h_pll_limits *limits,
-> > +                       struct rzv2h_pll_pars *pars, u64 freq_millihz);
->
-> Please add a dummy returning false for the !CONFIG_CLK_RZV2H case.
->
-Agreed, I will add a static inline helper returning false.
+- polling fix for trans fd that ought to have been fixed otherwise back
+in March, but apparently came back somewhere else...
+- USB transport buffer overflow fix
+- Some dentry lifetime rework to handle metadata update for currently
+opened files in uncached mode, or inode type change in cached mode
+- a double-put on invalid flush found by syzbot
+- and finally /sys/fs/9p/caches not advancing buffer and overwriting
+itself for large contents
 
-> > +
-> > +bool rzv2h_get_pll_div_pars(const struct rzv2h_pll_limits *limits,
-> > +                           struct rzv2h_pll_div_pars *pars, u8 divider=
-,
-> > +                           u64 freq_millihz);
->
-> Unused, please drop.
->
-OK.
+Thanks to everyone involved!
 
-> > +
-> > +bool rzv2h_get_pll_divs_pars(const struct rzv2h_pll_limits *limits,
-> > +                            struct rzv2h_pll_div_pars *pars,
-> > +                            const u8 *table, u8 table_size, u64 freq_m=
-illihz);
->
-> Please add a dummy returning false for the !CONFIG_CLK_RZV2H case.
->
-Agreed, I will add a static inline helper returning false.
+----------------------------------------------------------------
+Dominique Martinet (1):
+      net/9p: Fix buffer overflow in USB transport layer
 
-> > +
-> > +bool rzv2h_get_pll_dtable_pars(const struct rzv2h_pll_limits *limits,
-> > +                              struct rzv2h_pll_div_pars *pars,
-> > +                              const struct clk_div_table *dtable, u64 =
-freq_millihz);
->
-> Unused, please drop.
->
-Ok.
+Nalivayko Sergey (1):
+      net/9p: fix double req put in p9_fd_cancelled
 
-Cheers,
-Prabhakar
+Oleg Nesterov (1):
+      9p/trans_fd: p9_fd_request: kick rx thread if EPOLLIN
+
+Randall P. Embry (3):
+      9p: clean up comment typos
+      9p: fix /sys/fs/9p/caches overwriting itself
+      9p: sysfs_init: don't hardcode error to ENOMEM
+
+Tingmao Wang (3):
+      fs/9p: Refresh metadata in d_revalidate for uncached mode too
+      fs/9p: Invalidate dentry if inode type change detected in cached mode
+      fs/9p: Add p9_debug(VFS) in d_revalidate
+
+ fs/9p/v9fs.c           | 16 +++++++++-------
+ fs/9p/vfs_dentry.c     | 33 +++++++++++++++++++++++++++++----
+ fs/9p/vfs_inode.c      |  8 +++++++-
+ fs/9p/vfs_inode_dotl.c |  8 +++++++-
+ net/9p/trans_fd.c      | 17 +++++------------
+ net/9p/trans_usbg.c    | 16 +++++++++++++---
+ 6 files changed, 70 insertions(+), 28 deletions(-)
+ 
+-- 
+Dominique Martinet | Asmadeus
 
