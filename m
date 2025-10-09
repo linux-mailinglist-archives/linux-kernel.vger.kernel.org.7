@@ -1,80 +1,79 @@
-Return-Path: <linux-kernel+bounces-847509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90F53BCB0CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 00:15:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38DF7BCB0D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 00:17:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DF231A653C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 22:16:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D565E3A5288
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 22:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F74286409;
-	Thu,  9 Oct 2025 22:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39572848BA;
+	Thu,  9 Oct 2025 22:16:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xXAdcTHI"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XbsO3nQM"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DB5273FD
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 22:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86BD6273FD
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 22:16:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760048139; cv=none; b=RaPvGlqaFfrozS5nnGpxdxS0h1+2hjW1/f166S//Q+B7gdeEcAXoTkjOW0NDX8YetQuEUQ7ObVOO7bPU46vCjGkI2cutP7kQ0B5vtBbg8h3xHv1Ej3yrwfCwXQh0m4dCbUX9/1DhxKv4pvpzl4HjlFHCvKkEiUyspuCrCrUfkgo=
+	t=1760048219; cv=none; b=bPwtHbZ3ZNgm9FmY6+b6FG+zdOIIxYqFwyPbGS/MoTiTQSlwuEQLHfnaKxs68fMFSTbevfpBcooOlHWtE/S68EOffZaXCepuMxq/TjUnSugIfWr6RJ6Wb7KPvVYNJp/sS7iLNf7ZUwI8EqyRqBKargdvGJ31V5sYqTqjmK8aNkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760048139; c=relaxed/simple;
-	bh=rPMGm0dfGPMDOOmz7uP8n/Y9PsjG4xAePxsVEMFZ5Fs=;
+	s=arc-20240116; t=1760048219; c=relaxed/simple;
+	bh=krBRRfDdwyas1WntIR8CFkZ9BCSn/cu8ny6/qRRn7Ro=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=GOL+emSdirkEV0XGHYLfWZzkpzp10pMiF8v7vOB/6mJmIOSrvlJFzTqYXhhg0eOY+xeJ/WN/OlR6RFiZVCXk/Dk5SKc5blF+md8YhalzcDccVDtUAh+wXiZX2Kmb+TRUP7jdTLxcMJFI9fMmorTqiVNTGsq1tKKYtyjVsJM7hOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xXAdcTHI; arc=none smtp.client-ip=209.85.215.201
+	 To:Cc:Content-Type; b=RGbUp3Uwj0qIZIAT+IpAgvEfpgsI0O5K88xDEMEzrqrXkcD+N55gV5u27bJ8eVjiBrWbiZQ0BtPtZA+75zh5VYLaX8vcqXkGM9uqznJCHw+jYzj3HS18Vekqza6a72rSlO1Zr3mMBebQroF5EEQ5drX7WYLbMsnwTFTKNUA25q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XbsO3nQM; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b55118e2d01so1939760a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 15:15:36 -0700 (PDT)
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b62b7af4fddso1983536a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 15:16:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760048136; x=1760652936; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1760048216; x=1760653016; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Oll1MPE7hkNDT7M/Q1/FAEUqkNVEA+iYvJPlZMv+EKE=;
-        b=xXAdcTHIfMmoj6Wj292E+pBfjHulh5N8pit1x25y5XD0Eq+SyTynam0hUcU3lNaKMv
-         SQqDnaij6+6eH8PE4+6/8WFz3ofeeDYFvinwsfdyAlsA6Z53vlByvOrJVZ8A7VxRCHvv
-         MYqsC9OssUqc0BZWQpRxbklAzy8FYHEU6P0fL9VBv65faQSBnLZtHDiL+mj+geFUI+GG
-         Hk1LCAEjbkC/nfTzukqSUwJi8KVJaiZtv/s9tMNYJP40WSwHIagojyMAGCRWtAnd9bRG
-         1YEOAP2k0/cuYnELemvEd487jnjbStG7V4jdJ9fI/yMbTOjIXis19SRXKREzIhyA7b+G
-         5z0Q==
+        bh=1ouGIZ18YYsl/9GqodU9OqB8J+uPEhuPrGCcLgx0Wyc=;
+        b=XbsO3nQM1Mna5qRzBqZPyS7euFEdUWtNBUjmI7Jzm3hAKkEV72wr01CuidMVGG0wHL
+         Coz0NhdysKd22yc5UwJOqTGd6qcyR4ECDuikArNHinC+7CPu6trrEiz84rxSEHmxkod0
+         Vi6Ym0ncdzRg8r4o5dPmviFVWxnMShlt2KCzOIlHkunhKOuGWS1q4Vu9jqwCdNkMnS5X
+         TEReXEHilsll65a1V+0NmwITJKLBORZjy0kUtnI8HK7ncZMVpYY5cO70/g0biQIRcHpq
+         lFouhkq/8ZWKj+DQDOqMdpfcUxc5ChG/0tqeu2+lYocW9xiylVd3S5/0foQumLQccjDA
+         Hz0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760048136; x=1760652936;
+        d=1e100.net; s=20230601; t=1760048216; x=1760653016;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Oll1MPE7hkNDT7M/Q1/FAEUqkNVEA+iYvJPlZMv+EKE=;
-        b=Pxp11i5XYot6A4RgU+fpX1JwxOvfmVm1gmJAGfHkUnpF/XS8g+rfPryXAvsFzdvjUa
-         ILu4AkcfG87FsfXrGLjJjEejxFeuutO8aQ24Fk9NZuO1Ig9UQh4oNz3cj3l0vH3nMKiX
-         L6Mpq56iE4r6W2Q4Qp22dkbSlg5Og4YrUePpZ1dWw6LLwsMKHkS4CE1Clzp4wgEYdhY+
-         U3MOzm+xfXn/oo01oTCvjOINOrIYGf+zAVY3Va00TQt9vg8z2KYQWCWkBKlw9lLBgrBU
-         VDMelYrzCa1KVPtJczmflL81alyWy0dbwOPcwvIUmA5vbXlqvk2p+eALle7J9VUalBMN
-         fXkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX7LxH9QIsxtdXVF5Qzh9GZjDeIhMFHEV46cq+zHGmUGtp1Dra5rPbql9/z/a+kfkVgnF1U4LKMM4ryiiw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxeSd/ML/k7mETwwckUlW/+bdiqFNr6tFCAl14xZLDs71LkrUC
-	zf8tvm1ibywHNCjsoiW30P7zJM1OJTZp9tNTr6R6nbUe6Rf1FPsCxYwsQKLhCTYLBGQNXBtCSCE
-	oImdT4qzoDo302yNpfYJCiJUuQQ==
-X-Google-Smtp-Source: AGHT+IHgB0xcVfauc1u1HW+fOsPb84FTf4YqLuG37YUk27FkO9AUKT3em4wnlAFSqHZKd0l5szDhiTWCqndJLqsXJA==
-X-Received: from pjad22.prod.google.com ([2002:a17:90a:1116:b0:33b:51fe:1a77])
+        bh=1ouGIZ18YYsl/9GqodU9OqB8J+uPEhuPrGCcLgx0Wyc=;
+        b=odZlHVeoUaYLK4HnzC9zTCQXgziaxTKS4wF1L/8//AAAaMFE2RuC0IKLu44+sWXE1H
+         DfMjMXP8sP+oKkSHqdUXvRQBnMQHMb5C7UBDA6AwjzBuIY0NuU0+NWPysRHHkODu250L
+         22LGBmoeG4vvFGL50hjDWxo5sZ5CVDDMogeR2ROrqaX3BkdyU0LRvQbpdfSMtmC0ClQO
+         kj19C6fymYPHeQDMiB2F8CTongEe//rOoNiLU/6KRJIOykvj9fucuR+i2oS0lVKl7bQM
+         yo4lvq8LF1EJZbGuPLbTDlx+v87YICC3RnpDPlPzffY+kqtiapxYAzeK/FXs2J6RUpI4
+         TSrw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQQLUtVfpfJoaiY0LsAr3adwVR99suD94kNEocnSHrtg/G/DQC9i+n1OfDxr0v8Cri7z8t9HXi5CESVj0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywjyp92YOb+aLobk+uqXTwXJh0plWbxW5W2bP68HFZ7ONlbViQY
+	nnJ9nwhQR9pamxSDkcUOnSJtM1iRChxz3LPoB+YUahjHCoMN70EEov7+z63nG/GVPFB/dSlwm3h
+	uOb+OA7vWOFKcyKJTJ6IGTWl/ZQ==
+X-Google-Smtp-Source: AGHT+IEwKuAuCigrDNWiN+req1c5yFRzIFngZTOobnjj5hIhTotLZtUDLz/dT57kmfJHlodJGDgMWM9ut0fHatowOQ==
+X-Received: from pjwd3.prod.google.com ([2002:a17:90a:d3c3:b0:327:c20a:364])
  (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:38ce:b0:32e:5646:d448 with SMTP id 98e67ed59e1d1-33b513b2ab9mr11170579a91.21.1760048135969;
- Thu, 09 Oct 2025 15:15:35 -0700 (PDT)
-Date: Thu, 09 Oct 2025 15:15:34 -0700
-In-Reply-To: <20251007221420.344669-6-seanjc@google.com>
+ 2002:a17:90b:1e0d:b0:32e:a4d:41cb with SMTP id 98e67ed59e1d1-33b511174afmr11693801a91.1.1760048215831;
+ Thu, 09 Oct 2025 15:16:55 -0700 (PDT)
+Date: Thu, 09 Oct 2025 15:16:54 -0700
+In-Reply-To: <20251007221420.344669-5-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20251007221420.344669-1-seanjc@google.com> <20251007221420.344669-6-seanjc@google.com>
-Message-ID: <diqzo6qfhgc9.fsf@google.com>
-Subject: Re: [PATCH v12 05/12] KVM: guest_memfd: Enforce NUMA mempolicy using
- shared policy
+References: <20251007221420.344669-1-seanjc@google.com> <20251007221420.344669-5-seanjc@google.com>
+Message-ID: <diqzldljhga1.fsf@google.com>
+Subject: Re: [PATCH v12 04/12] KVM: guest_memfd: Add slab-allocated inode cache
 From: Ackerley Tng <ackerleytng@google.com>
 To: Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>, 
 	Oliver Upton <oliver.upton@linux.dev>, Paolo Bonzini <pbonzini@redhat.com>
@@ -88,188 +87,22 @@ Sean Christopherson <seanjc@google.com> writes:
 
 > From: Shivank Garg <shivankg@amd.com>
 >
-> Previously, guest-memfd allocations followed local NUMA node id in absence
-> of process mempolicy, resulting in arbitrary memory allocation.
-> Moreover, mbind() couldn't be used  by the VMM as guest memory wasn't
-> mapped into userspace when allocation occurred.
+> Add a dedicated gmem_inode structure and a slab-allocateda inode cache for
+
+Stray 'a' in slab-allocateda here!
+
+> guest memory backing, similar to how shmem handles inodes.
 >
-> Enable NUMA policy support by implementing vm_ops for guest-memfd mmap
-> operation. This allows the VMM to map the memory and use mbind() to set the
-> desired NUMA policy. The policy is stored in the inode structure via
-> kvm_gmem_inode_info, as memory policy is a property of the memory (struct
-> inode) itself. The policy is then retrieved via mpol_shared_policy_lookup()
-> and passed to filemap_grab_folio_mpol() to ensure that allocations follow
-> the specified memory policy.
+> This adds the necessary allocation/destruction functions and prepares
+> for upcoming guest_memfd NUMA policy support changes.  Using a dedicated
+> structure will also allow for additional cleanups, e.g. to track flags in
+> gmem_inode instead of i_private.
 >
-> This enables the VMM to control guest memory NUMA placement by calling
-> mbind() on the mapped memory regions, providing fine-grained control over
-> guest memory allocation across NUMA nodes.
->
-> The policy change only affect future allocations and does not migrate
-> existing memory. This matches mbind(2)'s default behavior which affects
-> only new allocations unless overridden with MPOL_MF_MOVE/MPOL_MF_MOVE_ALL
-> flags, which are not supported for guest_memfd as it is unmovable.
->
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
 > Signed-off-by: Shivank Garg <shivankg@amd.com>
 > Tested-by: Ashish Kalra <ashish.kalra@amd.com>
-> [sean: document the ABI impact of the ->get_policy() hook]
+> [sean: s/kvm_gmem_inode_info/gmem_inode, name init_once()]
 > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  virt/kvm/guest_memfd.c | 69 ++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 67 insertions(+), 2 deletions(-)
->
-> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-> index cc3b25155726..95267c92983b 100644
-> --- a/virt/kvm/guest_memfd.c
-> +++ b/virt/kvm/guest_memfd.c
-> @@ -4,6 +4,7 @@
->  #include <linux/falloc.h>
->  #include <linux/fs.h>
->  #include <linux/kvm_host.h>
-> +#include <linux/mempolicy.h>
->  #include <linux/pseudo_fs.h>
->  #include <linux/pagemap.h>
->  
-> @@ -27,6 +28,7 @@ struct gmem_file {
->  };
->  
->  struct gmem_inode {
-> +	struct shared_policy policy;
->  	struct inode vfs_inode;
->  };
->  
-> @@ -112,6 +114,19 @@ static int kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
->  	return r;
->  }
->  
-> +static struct mempolicy *kvm_gmem_get_folio_policy(struct gmem_inode *gi,
-> +						   pgoff_t index)
-
-How about kvm_gmem_get_index_policy() instead, since the policy is keyed
-by index?
-
-> +{
-> +#ifdef CONFIG_NUMA
-> +	struct mempolicy *mpol;
-> +
-> +	mpol = mpol_shared_policy_lookup(&gi->policy, index);
-> +	return mpol ? mpol : get_task_policy(current);
-
-Should we be returning NULL if no shared policy was defined?
-
-By returning NULL, __filemap_get_folio_mpol() can handle the case where
-cpuset_do_page_mem_spread().
-
-If we always return current's task policy, what if the user wants to use
-cpuset_do_page_mem_spread()?
-
-> +#else
-> +	return NULL;
-
-Returning current's task policy in the CONFIG_NUMA case seems to
-conflict with returning NULL here.
-
-> +#endif
-> +}
-> +
->  /*
->   * Returns a locked folio on success.  The caller is responsible for
->   * setting the up-to-date flag before the memory is mapped into the guest.
-> @@ -124,7 +139,25 @@ static int kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
->  static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index)
->  {
->  	/* TODO: Support huge pages. */
-> -	return filemap_grab_folio(inode->i_mapping, index);
-> +	struct mempolicy *policy;
-> +	struct folio *folio;
-> +
-> +	/*
-> +	 * Fast-path: See if folio is already present in mapping to avoid
-> +	 * policy_lookup.
-> +	 */
-> +	folio = __filemap_get_folio(inode->i_mapping, index,
-> +				    FGP_LOCK | FGP_ACCESSED, 0);
-> +	if (!IS_ERR(folio))
-> +		return folio;
-> +
-> +	policy = kvm_gmem_get_folio_policy(GMEM_I(inode), index);
-
-If we're going to return NULL if no shared policy is defined, then I
-believe we can directly call mpol_shared_policy_lookup() here.
-
-> +	folio = __filemap_get_folio_mpol(inode->i_mapping, index,
-> +					 FGP_LOCK | FGP_ACCESSED | FGP_CREAT,
-> +					 mapping_gfp_mask(inode->i_mapping), policy);
-> +	mpol_cond_put(policy);
-> +
-> +	return folio;
->  }
->  
->  static enum kvm_gfn_range_filter kvm_gmem_get_invalidate_filter(struct inode *inode)
-> @@ -413,8 +446,38 @@ static vm_fault_t kvm_gmem_fault_user_mapping(struct vm_fault *vmf)
->  	return ret;
->  }
->  
-> +#ifdef CONFIG_NUMA
-> +static int kvm_gmem_set_policy(struct vm_area_struct *vma, struct mempolicy *mpol)
-> +{
-> +	struct inode *inode = file_inode(vma->vm_file);
-> +
-> +	return mpol_set_shared_policy(&GMEM_I(inode)->policy, vma, mpol);
-> +}
-> +
-> +static struct mempolicy *kvm_gmem_get_policy(struct vm_area_struct *vma,
-> +					     unsigned long addr, pgoff_t *pgoff)
-> +{
-> +	struct inode *inode = file_inode(vma->vm_file);
-> +
-> +	*pgoff = vma->vm_pgoff + ((addr - vma->vm_start) >> PAGE_SHIFT);
-> +
-> +	/*
-> +	 * Note!  Directly return whatever the lookup returns, do NOT return
-> +	 * the current task's policy as is done when looking up the policy for
-> +	 * a specific folio.  Kernel ABI for get_mempolicy() is to return
-> +	 * MPOL_DEFAULT when there is no defined policy, not whatever the
-> +	 * default policy resolves to.
-
-To be more accurate, I think this sentence should be:
-
-Kernel ABI for .get_policy is to return NULL if no policy is specified
-at this index. The caller can then replace NULL with the default memory
-policy instead of current's memory policy.
-
-> +	 */
-> +	return mpol_shared_policy_lookup(&GMEM_I(inode)->policy, *pgoff);
-> +}
-> +#endif /* CONFIG_NUMA */
-> +
->  static const struct vm_operations_struct kvm_gmem_vm_ops = {
-> -	.fault = kvm_gmem_fault_user_mapping,
-> +	.fault		= kvm_gmem_fault_user_mapping,
-> +#ifdef CONFIG_NUMA
-> +	.get_policy	= kvm_gmem_get_policy,
-> +	.set_policy	= kvm_gmem_set_policy,
-> +#endif
->  };
->  
->  static int kvm_gmem_mmap(struct file *file, struct vm_area_struct *vma)
-> @@ -867,11 +930,13 @@ static struct inode *kvm_gmem_alloc_inode(struct super_block *sb)
->  	if (!gi)
->  		return NULL;
->  
-> +	mpol_shared_policy_init(&gi->policy, NULL);
->  	return &gi->vfs_inode;
->  }
->  
->  static void kvm_gmem_destroy_inode(struct inode *inode)
->  {
-> +	mpol_free_shared_policy(&GMEM_I(inode)->policy);
->  }
->  
->  static void kvm_gmem_free_inode(struct inode *inode)
-> -- 
-> 2.51.0.710.ga91ca5db03-goog
+> 
+> [...snip...]
+> 
 
