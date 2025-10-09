@@ -1,76 +1,80 @@
-Return-Path: <linux-kernel+bounces-846756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4614CBC8F0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:03:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B1B8BC8F19
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:04:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E6196350C19
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:03:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 14DB74E3A85
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:04:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437E22DEA6E;
-	Thu,  9 Oct 2025 12:03:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B572DD5EB;
+	Thu,  9 Oct 2025 12:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KJEcOpGF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oOT6AYbH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981CD34BA39;
-	Thu,  9 Oct 2025 12:03:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5FE2C0279;
+	Thu,  9 Oct 2025 12:04:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760011430; cv=none; b=QLP1I7nZQ9ogNMA62bexjIMcyhlYhYkuZOy0M9a/ba3czEeZTlBdCUV2qJuwbiS65mzzWAar6BgRw+Cmimfcy8ubEwwZZzOOa0BLRr4F9dSoz86IMlAGfDUik+/98blX2w2jUh7ZB+A5Ztqzf48gyePypPDck44qxQFLEIstLPA=
+	t=1760011462; cv=none; b=hP8ayXChWajyEgjPrHERWyHTVFMR/+9nXWyGpksBLzzyoIfh/KTstkHpTi0EE0DKxhLR9bCN0JDtFxfOoNxJCeGYANWXorc2PWmrC9kangpOEq96KAicBMin2Edf/WcuYdnFNopUVaY4d+cZlK/XeJQXmfR9gb8XRFVKkyxqLQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760011430; c=relaxed/simple;
-	bh=VfrSNghZOTHmu2Blgv7WaDJVPUKzB0Ze9oQL7/3AuPA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SrPkukUE24meN1AGI2pcPRwScXHCPdMsheuJKNvr3He1+4IIMZdkl+xp47mRpxOYNVRFlLuZ06Z67gPvbh7VKoLjkuLqYIVc+lcWWpoF2oHCFy1lWoLK/MnRK42XeaTkPyZYcRd6847iCSlvHS8KVshnR1mboaPhKpNGBoPGEjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KJEcOpGF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71480C4CEE7;
-	Thu,  9 Oct 2025 12:03:48 +0000 (UTC)
+	s=arc-20240116; t=1760011462; c=relaxed/simple;
+	bh=mUm9a7u1ihBXgDdOJmtbhRpw4PNkcXoZd5xz425rLz0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=J93vZSJyo5/JIXF4CdcgFfTWOiuqV51JFuVve8/+XzfLW/b2/4blfy2nDq6goCDHNTC8ZuCVfSa5cA6ACa900p9kTzsJeFJQJfdJwImE+hSlOl+S6T3yEzyh5vFTy2OJKp071t0iN2elRcO1YMGP1h/fblQPelgRlf6528DHPyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oOT6AYbH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE0E0C4CEE7;
+	Thu,  9 Oct 2025 12:04:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760011430;
-	bh=VfrSNghZOTHmu2Blgv7WaDJVPUKzB0Ze9oQL7/3AuPA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KJEcOpGFM9Hcl+5nQfV8EMA4sicQBJwR9hKGxtDCpSmvtbdRYuRMHBqmylCVYG4rZ
-	 iQoIKeztoWCju5NGno+PEx+ADHou6HBH1r1jq8jzmhtZsWt0dceSWcA9nMORuFTB+c
-	 ib0pxHK6wV+w4yX/BoMoFmmFRw4NMK3hzTRXjbKg3TkNpL6E+hLnMbXly08K3qNyPf
-	 QFOlCtV+e2po1isjU/XOnch3bguIHUrvl1if0LMSP2yEz0w2QghZtyY8dOxruP6oG3
-	 Q+5T6FomiL8BHD3u39ffv76YuXg+/R+xQJkPvuaXUKshDZzvNwQGGbvMj4L/cgycp7
-	 TqFvd5eApfPzg==
-Date: Thu, 9 Oct 2025 14:03:45 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Markus Probst <markus.probst@posteo.de>
-Cc: Damien Le Moal <dlemoal@kernel.org>,
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] ata: Use ACPI methods to power on ata ports
-Message-ID: <aOekoZ9fWmIFNOx3@ryzen>
-References: <8c3cb28c57462f9665b08fdaa022e6abc57fcd9e.camel@posteo.de>
- <20251009112433.108643-1-markus.probst@posteo.de>
- <20251009112433.108643-3-markus.probst@posteo.de>
- <aOejov5d_TlVkueH@ryzen>
+	s=k20201202; t=1760011462;
+	bh=mUm9a7u1ihBXgDdOJmtbhRpw4PNkcXoZd5xz425rLz0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=oOT6AYbHX2NtOYJGdpPMlp2RVHRO4tO7z4QfX8N5WVR2meCB/v4qodBsOm7M8JpZu
+	 IpsKsPzLAbbIkuSZPI6tMsJXhlGCVW6XeP0lkpGOZGUi4bhXBi+ZXTt3lGQLZm0lHJ
+	 Zpfh7Fy/mvT4bPlG7v6A9/06xCCC4X3iTYJTvRDJELQu6yZHfSaS00kT6wKAjX8aZI
+	 TxwJ257QoLa+oueX5odcDScZ2aFCLmPEqpemH3Navje0Dsi9wRfBeH8Foavqtuwz5X
+	 9Xg+5vFemCYw/VNoSE/8OiFxlQoe4LWlJNsO//HQ1NVvSugjDqfk+e/HswJGCcmE1m
+	 42Ik9LZk57HEw==
+From: Lee Jones <lee@kernel.org>
+To: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, 
+ Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Brian Dodge <bdodge@arcticsand.com>, 
+ Harrison Carter <hcarter@thegoodpenguin.co.uk>
+Cc: dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250925-arctic-sand-v1-1-735b5ed8faed@thegoodpenguin.co.uk>
+References: <20250925-arctic-sand-v1-1-735b5ed8faed@thegoodpenguin.co.uk>
+Subject: Re: (subset) [PATCH] dt-bindings: leds: arc,arc2c0608: Convert to
+ DT Schema
+Message-Id: <176001145951.2795757.17961348226563861071.b4-ty@kernel.org>
+Date: Thu, 09 Oct 2025 13:04:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aOejov5d_TlVkueH@ryzen>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-b87af
 
-Also, when sending a new version, please avoid linking using In-Reply-To to
-previous versions of the same series, as it creates an "unmanageable forest
-of references in email clients", see:
+On Thu, 25 Sep 2025 14:57:58 +0100, Harrison Carter wrote:
+> Convert the ArcticSand arc2c0608 LED driver to the dt-schema.
+> 
+> 
 
-https://www.kernel.org/doc/html/latest/process/submitting-patches.html#explicit-in-reply-to-headers
+Applied, thanks!
 
+[1/1] dt-bindings: leds: arc,arc2c0608: Convert to DT Schema
+      commit: 24482f2410428ca39d74f92deee38db2c2c6faf3
 
-Kind regards,
-Niklas
+--
+Lee Jones [李琼斯]
+
 
