@@ -1,248 +1,303 @@
-Return-Path: <linux-kernel+bounces-847334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CDD3BCA8D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 20:21:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B15CFBCA8E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 20:21:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2E3F74E85EB
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 18:21:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E3793BAB1C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 18:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6F924678E;
-	Thu,  9 Oct 2025 18:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B496F24A047;
+	Thu,  9 Oct 2025 18:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XzYVrdBX"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MHIkDUP8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86CAD2B9B7
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 18:20:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87502B9B7;
+	Thu,  9 Oct 2025 18:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760034057; cv=none; b=EEr6YDkggW1FF6WmkG1RpvjezM/rz9HXz3nLb7UZ9YD0AT4sDJnDhykm1+IuExwmiuVV7HEFQVzNWDUaMBGhpGFXt/td0w2LxKIz0WfNnVKnp9xgZOigQUKUAQJrSRxQahCUld+lET7Ic46aznXNtlqwDsWsTEA/cyI+xDYD1uM=
+	t=1760034069; cv=none; b=XE7m3bXRHtmNmrLhFHgb77efP/nxC0XawSLHpUzEnzZWdgFQuk26qET8gk6aeks5ehMOgwlFdl7Rk+8usJc6wjOP6qTTUxyqekni+zBvLObgQVKHWuvsf6RAWYqj1ZB+ywFq065CPYcVnySgsOmki4xekKM2UEkE8q/4kq7aLNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760034057; c=relaxed/simple;
-	bh=RaxdPKFJScVIlq0FW+7wQ/PS+0yalUqYWUt6pK/TZCA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lLw+ZdtEuOJiW+eooP0S1xkkU8tPxPfJYFHWzJhsf357VJeHVO18sas/tDaoZrlA8VouPeC0mghFnSDC+SNpixz+Lq3ZlBqakdqj7ArRtLF11DrC9CM1QehxACPr5AijnjcFqzbgIAQGaE4zyvqizG+APUH4JkD8W/0AOuGsr4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XzYVrdBX; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-27d2c35c459so9276615ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 11:20:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760034055; x=1760638855; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=JuUupcMDqphrT/DjTBoB8xePk/ppKSD6sZYPkh1mKYM=;
-        b=XzYVrdBXuorPXq/k+1cTlIXPzuSmhQkWShVY6B7TwqHepul+6B9KgaS4zA4fAX58lu
-         Yk1rbGupcXFrMkWgrg8qz0QeKp9S6BLRDDVCvq/UVc6tbYHIcR5+JTH3hs/e9rEyb8BG
-         yQg8P8oo+LA3q+N2epyLCo2T3AgjxV4OvQ2zyEOirtFf6ohJjLjMKDLpL/kFszVdUEPX
-         mbF85TF0kvyjvOVrHsmoC7oRVYdRSI1Ou8wmmeLd8fWIUBUeZKkrzX8g4Y9OsA9dtjGI
-         b9EpGhZwmanMlxgdrSJ198mdaYZ3Y5DgmFrfDecXxTMfElbgYHEizllzH4DIpvDmPMjp
-         HWmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760034055; x=1760638855;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JuUupcMDqphrT/DjTBoB8xePk/ppKSD6sZYPkh1mKYM=;
-        b=Y/0eTLCnh+VEFi2UlwA112/HU5alD63lF+QL7gTljfLXTGYztr3Hz6ckiIX1Os7Fzs
-         9YFhTL8ySeFjks7xi8RbpcoF+ZzWX6WqHTRls22oJHAR9vc86puhNlU1KlSbyfDPfnyY
-         SNpwJ2aKrbyMjkc2K9t9MJNwt1iBSDRjZNSK+RGZ5qxV8bPKRtFTnM+KT9G9JEzKWSor
-         ZsyHhCcMcbpwkrG/9//OWiMEfsSSSJvN9TzfAqj1p1lpMD1QbLI01GRgQDAWb7DfFa/o
-         DXVibaBcpoFYTqkKQM/E4DOF0EUcMngLehz4UrWoueZwIuKc2/CEonp84JYwAWajt0jq
-         IqJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQ7+eWWx6PmsSA9I7cJbcDeI8TtGmPv3ubyg8rpvyK3qcrWtv/wjbIYkr/gakNUpcBHnsHZdZt2+M8zL0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG5vgHJzqpyF5F9t1Oks+u2xWkI7YXdJUPo1Dow1nTNhmp7V1P
-	miSq/vnyP2jez7HLOq03u1UhRmBqND76YQlvcY20zxKqOYjxxOQbD2fC
-X-Gm-Gg: ASbGncv5kE1HROGnVol1bJDz5BCT7QXJPUvUcw2xu8eBJKGRARFvd9/4KUSI4AY+MMJ
-	9WL4xo33qdG/PmR5wFmkQArWMY5VByEmhxkr+j+EfM/KAxoI8fBh7Exq5tTXMSIfzsTk2Usm+8u
-	Iux0veTH8Xq+l2ftC43VwPzCCToovJIcyqBjCaGNV2PpURgV5WzppnpM5HuUfJLSGluB+xw4Bcj
-	BOl1wPIoqs65GXP31sCRTyKjkxy3ZHIDNb2Zjhd4rSZECDk3Q9yAJIb61PtJYELM4uQzFmUCMbM
-	EtZw6wewS8luJ51SRZQOIvCDBRDfdswYr9fIRkfJpZ8TjPtpNfNDe0fA4Ob8ymHl2g+yam6UHhU
-	x2/InLwsTwBCYJMSQ61gvX+2o8+ezJe0USDohDANO2ecvbxieNHIzeua0GLYWjzeQDSHSKxhTpI
-	B5I4c=
-X-Google-Smtp-Source: AGHT+IGgNcD3ah2CRxFtlH8pUkDXkJqsJ/GB2E4Pz3mzzYygMfG9jZNJcBRETytQS/K9dWx7qxbemA==
-X-Received: by 2002:a17:903:2305:b0:24f:8286:9e5d with SMTP id d9443c01a7336-290272cf65dmr109458155ad.26.1760034054549;
-        Thu, 09 Oct 2025 11:20:54 -0700 (PDT)
-Received: from localhost.localdomain ([2804:14d:4c64:860f:cf8e:9902:97e:45e2])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f08998sm34794875ad.80.2025.10.09.11.20.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 11:20:54 -0700 (PDT)
-From: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-To: gregkh@linuxfoundation.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	davidm@egauge.net
-Cc: ~lkcamp/patches@lists.sr.ht,
-	linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: usb: add yaml file for maxim,max3421
-Date: Thu,  9 Oct 2025 15:15:42 -0300
-Message-ID: <20251009182046.185520-1-rodrigo.gobbi.7@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1760034069; c=relaxed/simple;
+	bh=gSU8W5D4kBW7HRmvXDO5mEeTlq8vT4Rj7qnh9fKuWsc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hQhqk2Zn2whYLt7Jv15OCpHmpRTmhQdcjDPdYmjokYT9ShjjVF/3R0yaLXn3wSKIIGFROfJkMbWEnmBbtI8+8Fwq0eqF5vER2RJIqDI5iij0lY604svAEm3+jGcDn6+KQ/RwC2TDS0U3rp452li3+KjKKn4j1MlnYfLO/ltP+YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MHIkDUP8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3023DC4CEE7;
+	Thu,  9 Oct 2025 18:21:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760034067;
+	bh=gSU8W5D4kBW7HRmvXDO5mEeTlq8vT4Rj7qnh9fKuWsc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MHIkDUP8L1PxRA/oWJPqb0+xdtOgd6Cv0hkFUhfzjX963Uaq73ApP7JeaUXF65O9e
+	 ysw38t0EbeE1V2n/6itF9XDl8LbBFsb2EH0taFpB/2djmBnBoTCyxDbpzmgdHyFYcP
+	 aXQkyk3fOHuDgHq2z85I22XolPBpy4S2m/JixFojMjRRPF8yWczmM6BOnoVhAsr0Ub
+	 OycjLXvvfJ93Df/wglCnwldJOjkr4YNCc2U/i9ThK/tT4+iRHBUU0EpbSHngC8Z7D3
+	 5PRafWTVx4F09M/lMsA+ifwsDyhkNfsOnYo+ILl7RTNltlKERFxLCoohw4Xh98cMI2
+	 ff0UNX8hKmI/A==
+Date: Thu, 9 Oct 2025 19:21:00 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: maudspierings@gocontroll.com, Lee Jones <lee@kernel.org>,
+	Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, dri-devel@lists.freedesktop.org,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 1/4] dt-bindings: backlight: Add max25014 bindings
+Message-ID: <20251009-overjoyed-unpopular-54f69e9bd82c@spud>
+References: <20251009-max25014-v4-0-6adb2a0aa35f@gocontroll.com>
+ <20251009-max25014-v4-1-6adb2a0aa35f@gocontroll.com>
+ <aOfM7jnlPO77YSu1@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="GWNRbICvH2XFNKt7"
+Content-Disposition: inline
+In-Reply-To: <aOfM7jnlPO77YSu1@lizhi-Precision-Tower-5810>
 
-Convert maxim,max3421.txt to yaml format with a few extra properties like
-maxim,vbus-en-pin, maxim,gpx-pin, reset pin and supplies. Also add a
-maxim,max3421e compatible with a fallback, since the actually PN is with
-the 'e' suffix.
 
-Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
----
-I've converted the txt into yaml with a few extra things as mentioned
-in the commit msg. All of them were extracted from the datasheet and also
-looking at the current state of the driver.
+--GWNRbICvH2XFNKt7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-About the maintainer ref inside yaml, I'll quote the driver author:
+On Thu, Oct 09, 2025 at 10:55:42AM -0400, Frank Li wrote:
+> On Thu, Oct 09, 2025 at 08:48:25AM +0200, Maud Spierings via B4 Relay wro=
+te:
+> > From: Maud Spierings <maudspierings@gocontroll.com>
+>=20
+> Subject needn't double bindings.
+>=20
+> dt-bindings: backlight: Add max25014 support
+>=20
+> >
+> > The Maxim MAX25014 is a 4-channel automotive grade backlight driver IC
+> > with integrated boost controller.
+> >
+> > In the current implementation the control registers for channel 1,
+> > control all channels. So only one led subnode with led-sources is
+> > supported right now. If at some point the driver functionality is
+> > expanded the bindings can be easily extended with it.
+>=20
+> Need descript hardware, not driver. Need descript full functions even tho=
+ugh
+> driver have not implement yet.
+>=20
+> >
+> > Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+> > ---
+> >  .../bindings/leds/backlight/maxim,max25014.yaml    | 109 +++++++++++++=
+++++++++
+> >  MAINTAINERS                                        |   5 +
+> >  2 files changed, 114 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/leds/backlight/maxim,max=
+25014.yaml b/Documentation/devicetree/bindings/leds/backlight/maxim,max2501=
+4.yaml
+> > new file mode 100644
+> > index 0000000000000..496520e1374e5
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/leds/backlight/maxim,max25014.y=
+aml
+> > @@ -0,0 +1,109 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/leds/backlight/maxim,max25014.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Maxim max25014 backlight controller
+> > +
+> > +maintainers:
+> > +  - Maud Spierings <maudspierings@gocontroll.com>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - maxim,max25014
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  "#address-cells":
+> > +    const: 1
+> > +
+> > +  "#size-cells":
+> > +    const: 0
+> > +
+> > +  enable-gpios:
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    maxItems: 1
+> > +
+> > +  power-supply:
+> > +    description: Regulator which controls the boost converter input ra=
+il.
+> > +
+> > +  pwms:
+> > +    maxItems: 1
+> > +
+> > +  maxim,iset:
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > +    maximum: 15
+> > +    default: 11
+> > +    description:
+> > +      Value of the ISET register field. This controls the current scal=
+e of the
+> > +      outputs, a higher number means more current.
+>=20
+> Can't use register value directly, need use standard unit. or percentage
+>=20
+> 100: means max, 0: min.
 
-Dear @David Mosberger, the binding file for this driver was not converted
-to YAML format. This patch address this. I've noticed you were the original
-driver author, so I`m "quoting" you at the maintainer ref inside yaml.
-I would appreciate your comment or suggestion over this topic.
+=46rom that datasheet, it seems like the values here don't neatly map to
+currents, because it depends on the value of the iref register. I don't
+love percentages here either, too much of a force-fit for me.
 
-Tks and regards to all.
----
- .../devicetree/bindings/usb/maxim,3421.yaml   | 88 +++++++++++++++++++
- .../devicetree/bindings/usb/maxim,max3421.txt | 23 -----
- 2 files changed, 88 insertions(+), 23 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/usb/maxim,3421.yaml
- delete mode 100644 Documentation/devicetree/bindings/usb/maxim,max3421.txt
+If current is used, a property for the reference resistor will be
+needed, to compute the register values. That only makes sense to me if
+Maxim/Analog provide a formula that can be used to calculate the
+appropriate register value, and I did not find one in the datasheet from
+my quick skim, only two example current tables.
+Sure, those two examples can be reverse-engineered to give a way to
+compute it, but can we be sure that the numbers apply across the whole
+range of permitted values for the resistor?
 
-diff --git a/Documentation/devicetree/bindings/usb/maxim,3421.yaml b/Documentation/devicetree/bindings/usb/maxim,3421.yaml
-new file mode 100644
-index 000000000000..bccb22be74ff
---- /dev/null
-+++ b/Documentation/devicetree/bindings/usb/maxim,3421.yaml
-@@ -0,0 +1,88 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/usb/maxim,3421.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: MAXIM MAX3421e USB Peripheral/Host Controller
-+
-+maintainers:
-+  - David Mosberger <davidm@egauge.net>
-+
-+description: |
-+  The controller provides USB2.0 compliant with Full Speed or Low Speed when in
-+  the host mode. At peripheral, it operates at Full Speed. At both cases, it
-+  uses a SPI interface.
-+  Datasheet at:
-+    https://www.analog.com/media/en/technical-documentation/data-sheets/max3421e.pdf
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - items:
-+          - enum:
-+              - maxim,max3421e
-+          - const: maxim,max3421
-+      - const: maxim,max3421
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  spi-max-frequency:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    maximum: 26000000
-+    description:
-+      SPI interface that operates up to 26MHz in Hz.
-+
-+  maxim,vbus-en-pin:
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    description:
-+      One of eight GPOUT pins to control external VBUS power and the polarity
-+      of the active level. It's an array of GPIO number and the active level of it.
-+    minItems: 2
-+    maxItems: 2
-+
-+  maxim,gpx-pin:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: A property to define the behavior of the GPX pin, which is an
-+      output that may be selected in a 4-way multiplexer between OPERATE(0),
-+      VBUS_DETECT(1), BUSACT/INIRQ(2) and SOF(3) signals.
-+    enum: [0, 1, 2, 3]
-+    default: 0
-+
-+  reset-gpios:
-+    description: Active low to clear all of the internal registers except for
-+                 PINCTL (R17), USBCTL (R15), and SPI logic.
-+
-+  vdd-supply: true
-+
-+  vlogic-supply: true
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - maxim,vbus-en-pin
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    spi {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        usb@0 {
-+          compatible = "maxim,max3421";
-+          reg = <0>;
-+          maxim,vbus-en-pin = <3 1>;
-+          spi-max-frequency = <26000000>;
-+          interrupt-parent = <&gpio>;
-+          interrupts = <42>;
-+        };
-+    };
-diff --git a/Documentation/devicetree/bindings/usb/maxim,max3421.txt b/Documentation/devicetree/bindings/usb/maxim,max3421.txt
-deleted file mode 100644
-index 90495b1aeec2..000000000000
---- a/Documentation/devicetree/bindings/usb/maxim,max3421.txt
-+++ /dev/null
-@@ -1,23 +0,0 @@
--Maxim Integrated SPI-based USB 2.0 host controller MAX3421E
--
--Required properties:
-- - compatible: Should be "maxim,max3421"
-- - spi-max-frequency: maximum frequency for this device must not exceed 26 MHz.
-- - reg: chip select number to which this device is connected.
-- - maxim,vbus-en-pin: <GPOUTx ACTIVE_LEVEL>
--   GPOUTx is the number (1-8) of the GPOUT pin of MAX3421E to drive Vbus.
--   ACTIVE_LEVEL is 0 or 1.
-- - interrupts: the interrupt line description for the interrupt controller.
--   The driver configures MAX3421E for active low level triggered interrupts,
--   configure your interrupt line accordingly.
--
--Example:
--
--	usb@0 {
--		compatible = "maxim,max3421";
--		reg = <0>;
--		maxim,vbus-en-pin = <3 1>;
--		spi-max-frequency = <26000000>;
--		interrupt-parent = <&PIC>;
--		interrupts = <42>;
--	};
--- 
-2.48.1
+I don't like using register values for stuff, but I think it is the most
+accurate and least likely to cause problems way of representing this.
 
+Maud, on the language used - its the ISET field in the ISET register, I
+think the property should make that clear.
+
+> > +patternProperties:
+> > +  "^led@[01]$":
+
+Why does this have [01] if reg has to be zero?
+
+> > +    type: object
+> > +    description: Properties for a string of connected LEDs.
+> > +    $ref: common.yaml#
+> > +
+> > +    properties:
+> > +      reg:
+> > +        const: 0
+> > +
+> > +      led-sources:
+> > +        allOf:
+> > +          - minItems: 1
+> > +            maxItems: 4
+> > +            items:
+> > +              minimum: 0
+> > +              maximum: 3
+> > +            default: [0, 1, 2, 3]
+> > +
+> > +      default-brightness:
+> > +        minimum: 0
+> > +        maximum: 100
+> > +        default: 50
+> > +
+> > +    required:
+> > +      - reg
+> > +
+> > +    additionalProperties: false
+>=20
+> there are $ref, should use unevaluatedProperties: false
+
+Not always, looks like they've listed some properties from the file,
+which would make addtionalPropeties: false correct if they dont want
+the other properties in the file to be used.
+
+>=20
+> Frank
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/gpio/gpio.h>
+> > +    #include <dt-bindings/interrupt-controller/irq.h>
+> > +
+> > +    i2c {
+> > +        #address-cells =3D <1>;
+> > +        #size-cells =3D <0>;
+> > +
+> > +        backlight@6f {
+> > +            compatible =3D "maxim,max25014";
+> > +            reg =3D <0x6f>;
+> > +            enable-gpios =3D <&gpio1 4 GPIO_ACTIVE_HIGH>;
+> > +            interrupt-parent =3D <&gpio1>;
+> > +            interrupts =3D <2 IRQ_TYPE_EDGE_FALLING>;
+> > +            power-supply =3D <&reg_backlight>;
+> > +            pwms =3D <&pwm1>;
+> > +            maxim,iset =3D <7>;
+> > +
+> > +            #address-cells =3D <1>;
+> > +            #size-cells =3D <0>;
+> > +
+> > +            led@0 {
+> > +                reg =3D <0>;
+> > +                led-sources =3D <0 1 2 3>;
+> > +                default-brightness =3D <50>;
+> > +            };
+> > +        };
+> > +    };
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 47fbc5e06808f..be5e2515900ce 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -15171,6 +15171,11 @@ F:	Documentation/userspace-api/media/drivers/m=
+ax2175.rst
+> >  F:	drivers/media/i2c/max2175*
+> >  F:	include/uapi/linux/max2175.h
+> >
+> > +MAX25014 BACKLIGHT DRIVER
+> > +M:	Maud Spierings <maudspierings@gocontroll.com>
+> > +S:	Maintained
+> > +F:	Documentation/devicetree/bindings/leds/backlight/maxim,max25014.yaml
+> > +
+> >  MAX31335 RTC DRIVER
+> >  M:	Antoniu Miclaus <antoniu.miclaus@analog.com>
+> >  L:	linux-rtc@vger.kernel.org
+> >
+> > --
+> > 2.51.0
+> >
+> >
+
+--GWNRbICvH2XFNKt7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaOf9DAAKCRB4tDGHoIJi
+0p3tAP47AzB5bTLsDsM2hZCp4QQOrxzGbZd7QeTNZnPvuVKVjAD/ajHvzPM9GJH6
+JrmJ4TzHGEQovDKBG7x28JpYUVrfTQ8=
+=7s2i
+-----END PGP SIGNATURE-----
+
+--GWNRbICvH2XFNKt7--
 
