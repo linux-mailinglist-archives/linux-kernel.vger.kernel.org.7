@@ -1,141 +1,114 @@
-Return-Path: <linux-kernel+bounces-846898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 580D2BC95DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:48:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01955BC95ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:49:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 029D2350081
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:48:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 56DEF4EEF56
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7F62E6CA5;
-	Thu,  9 Oct 2025 13:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VFhfxFsO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B73F2AD0D;
+	Thu,  9 Oct 2025 13:49:18 +0000 (UTC)
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8F923BCED
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:48:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22892E8B6C
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760017723; cv=none; b=rwsvwRieN0yLoNBMyBmJE6OGg7Dh/gSIHbDtYkmK8HBiGu1fYXmbBRvpgPImvPjxmFqsgqfNZ9WiG2mdKKfJ7MwtnNOTGbKVJ29w6x7rlI1kxO97qBMJq+EuUccRp4s+zFBa8RZ0x6Y4RXtXF2Mt1gtSQQXTkahF0ax3QEfBe9I=
+	t=1760017758; cv=none; b=rybOgbr98ZGkQ1KjW8+nXCNyH2NWz1uWmca2osXXK3JxEYzpkA0RwGTLh88kxK8txtQut7faNlFonuahi3l03UAFZO3GKSUZjyVAh43CMAvkeOqc3y/43CW+TfPUsyeKxsE/2UDP8NTDXexHrdYBdpVLZT9Z134qzLGJ+AkZCvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760017723; c=relaxed/simple;
-	bh=yOPE8FhFDCKAnOAaZuxzb+46ozcT2L+rNhVYaTDtEeU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FIVLZZepUuYwMl0GgTiy0GVpaKvlgOrL3chO/HR960mw/B7kmhADlDdbCRrVwWPV/kpr+ZI44EMbz3iTCQcWLyRK6ibbfH2/dT3VGG1vKwbNrXI4gqn4tX3Bxlf3fvNKwDDS/aOl1ovO0osNQLVeLCCb8lIJpvjaZ/+1uMIacAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VFhfxFsO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F1EFC4CEE7;
-	Thu,  9 Oct 2025 13:48:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760017723;
-	bh=yOPE8FhFDCKAnOAaZuxzb+46ozcT2L+rNhVYaTDtEeU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VFhfxFsOcKAv6SuuT9uUV+W7DSKX5NHkXLEwuebXTq960Mh+d+BxtGNrg49a3GhYO
-	 nUO43NHbDniYGBAJcuxgW2VVDoWgd8VmLPIDhNmuB9KNoUe8QtnPn87MEtOOYBvRJw
-	 zZUZbd0T7oLmWSg2ITUD0JuWF5ZAWFwA+E48LEZLJt4Z1zkGggXKx91DXYqN6ppHbq
-	 /joUKuXXMHyFj/KBvSNAvTFu3p7Fw5xqHWAxsgQTpGTcWF0bImEe4DQprDD1hssyQa
-	 aHE+XCY8GjSpmxnBWvkOL/VNfc3SmM36mXerFaQtRHb+LYJ/N/6icGB/8rM5ZKfDAL
-	 adoGttQ4AJ1/g==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1v6r0a-0000000Ce22-2vNk;
-	Thu, 09 Oct 2025 13:48:40 +0000
-Date: Thu, 09 Oct 2025 14:48:40 +0100
-Message-ID: <86v7koxk1z.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: salil.mehta@opnsrc.net
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	salil.mehta@huawei.com,
-	jonathan.cameron@huawei.com,
-	will@kernel.org,
-	catalin.marinas@arm.com,
-	mark.rutland@arm.com,
-	james.morse@arm.com,
-	sudeep.holla@arm.com,
-	lpieralisi@kernel.org,
-	jean-philippe@linaro.org,
-	tglx@linutronix.de,
-	oliver.upton@linux.dev,
-	peter.maydell@linaro.org,
-	richard.henderson@linaro.org,
-	andrew.jones@linux.dev,
-	mst@redhat.com,
-	david@redhat.com,
-	philmd@linaro.org,
-	ardb@kernel.org,
-	borntraeger@linux.ibm.com,
-	alex.bennee@linaro.org,
-	gustavo.romero@linaro.org,
-	npiggin@gmail.com,
-	linux@armlinux.org.uk,
-	karl.heubaum@oracle.com,
-	miguel.luis@oracle.com,
-	darren@os.amperecomputing.com,
-	ilkka@os.amperecomputing.com,
-	vishnu@os.amperecomputing.com,
-	gankulkarni@os.amperecomputing.com,
-	wangyanan55@huawei.com,
-	wangzhou1@hisilicon.com,
-	linuxarm@huawei.com
-Subject: Re: [RFC PATCH] KVM: arm64: vgic-v3: Cache ICC_CTLR_EL1 and allow lockless read when ready
-In-Reply-To: <20251008201955.3919537-1-salil.mehta@opnsrc.net>
-References: <20251008201955.3919537-1-salil.mehta@opnsrc.net>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1760017758; c=relaxed/simple;
+	bh=yimaDht2VPmckuijnK7RHpnVJdwPGNmnTY4r/gDwrBM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pQ2q6KWi02oa8w07UvFDkPMIXAcrkDwbDSVCRIp0FtnpRntANcYLNBRRFrGas8t8YVEbGCtCIEEgt8D97eDkxT6QWujylpxAOSQWbZSZnXRqDklbjLEx5Bg3y6Hn7TSjAZ780dnoB2zyUSzAyj/vTP5lnCBGcQyL1YVZoHbTqEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-54bbc2a8586so292300e0c.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 06:49:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760017755; x=1760622555;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rG+VBn74V/FeJGvzOBH4i7MNFu3atTCKtUYOgAi8OVI=;
+        b=DVn7O1oznSbccqPACEfbnV16xqC13rCx5FACZQas6g+aefEOjDh/TxhtXZuuWj1RBs
+         EgR7HVL7u17/FMEM23hfO3YirR8zTPSchMQ1DGVomKWcBYA08GelPedvgTL9bmnbi/N0
+         ajaggkWOqIXqgNpy6HvuobyJlu7fv6fFalkFG++68kHTYOATEKw51IYll0gpLqrrI6bC
+         E8Oi6MsUX88gpzDUwwz4qsVXKT6TeHHWAmNEn5hRxuGYGG3DKpMlmHZalU+wP/B7w/sV
+         yI6/BblGe+g/0/DHFheaCIFKOBH5UQ9GBtGK183iI1cOXYs9unfRmib8X23sETa6eZrN
+         LDyw==
+X-Forwarded-Encrypted: i=1; AJvYcCW/lJJzJNyFvvtuuPne+coqfo5tKv+PgNE5Wz4aMu3DgAybo5EBt8M8IyAsqqTRytHDAnNOAluZYt+IzSw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIRs2jykxFw5lv/Nsc/K/VVk36oJB0QaFYxltrDlcH+Tjj8H7w
+	WpVQjMdr9R32Hl2ZU6o1chUwxntlVOe0QO4H3GBCEFWaGVULnMMhrEkiBoYfCrcN
+X-Gm-Gg: ASbGncsDq+aZz7wepLj6nDILC2oAluY2tmu09zc98MokdX18w4GzUq45zdsOFh6tLg4
+	Akd4DP9l2T0Zat/HqIKyoQBVQQU08Yr738tGIeBjWpSkG/ckzJbYnvQSNxMdRAT10ZwM5UiMJV3
+	2WUKu0IGxokgN5wXAgBJ7ys79oaT4M+yuZX71VkRcmuFzT7ukXPeVPBXTdgdsaYRojGABAKSTAS
+	/oCNWFLHwHKbYF4UtsFP8EKrIgROHojJRmtKAbnoRjVWlhRvKlRDEMa1gACLMFebt06bZP83o/m
+	kON/CvKw/apj2yR1lGY7wozKX1zpgMP3yVuf9ull5GQGYUOONUiXZQ5+A4pws7CnPkzxoTimWpF
+	i5aIbuwffqVCzhfhkTybMsjblRfmPfNvfC9ihU6I/TOSpJB891g4xQElb4x0op1vHDbUoLpTvLb
+	vi180TZeGdN5trewP8plc=
+X-Google-Smtp-Source: AGHT+IFwQ6YQcksFx4qktCaEqqz9AZwij1PYUtGoxMEFUC5Ek14nLPDGedI6pgBPC6pTQgdc2qrymw==
+X-Received: by 2002:a05:6122:251d:b0:54a:92f1:f9e4 with SMTP id 71dfb90a1353d-554b8b9132amr2912249e0c.9.1760017755360;
+        Thu, 09 Oct 2025 06:49:15 -0700 (PDT)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-554d17c4c1fsm222799e0c.3.2025.10.09.06.49.14
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Oct 2025 06:49:14 -0700 (PDT)
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-5ccccc1f7caso478874137.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 06:49:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUcoG15ehEyAktBKjanK/zmjgiMeGLKbE5rYB6s50aAavRQWtckHnyS1/axlOmJA47cSMoUs68+FaU9fSg=@vger.kernel.org
+X-Received: by 2002:a05:6102:b0f:b0:520:a44f:3ddf with SMTP id
+ ada2fe7eead31-5d5e224f3f9mr2430732137.10.1760017754092; Thu, 09 Oct 2025
+ 06:49:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: salil.mehta@opnsrc.net, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, salil.mehta@huawei.com, jonathan.cameron@huawei.com, will@kernel.org, catalin.marinas@arm.com, mark.rutland@arm.com, james.morse@arm.com, sudeep.holla@arm.com, lpieralisi@kernel.org, jean-philippe@linaro.org, tglx@linutronix.de, oliver.upton@linux.dev, peter.maydell@linaro.org, richard.henderson@linaro.org, andrew.jones@linux.dev, mst@redhat.com, david@redhat.com, philmd@linaro.org, ardb@kernel.org, borntraeger@linux.ibm.com, alex.bennee@linaro.org, gustavo.romero@linaro.org, npiggin@gmail.com, linux@armlinux.org.uk, karl.heubaum@oracle.com, miguel.luis@oracle.com, darren@os.amperecomputing.com, ilkka@os.amperecomputing.com, vishnu@os.amperecomputing.com, gankulkarni@os.amperecomputing.com, wangyanan55@huawei.com, wangzhou1@hisilicon.com, linuxarm@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20251001212709.579080-1-tommaso.merciai.xr@bp.renesas.com> <20251001212709.579080-10-tommaso.merciai.xr@bp.renesas.com>
+In-Reply-To: <20251001212709.579080-10-tommaso.merciai.xr@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 9 Oct 2025 15:49:02 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV0k0k4EQhQ9C_oPUPno7BsgN3tW3ydLrvzD783SgULyw@mail.gmail.com>
+X-Gm-Features: AS18NWBiuLuEjgmzyDSlSzZ5zrYLpzbrdlxBs-yvgfRSKSU9hkobcBub0EljavI
+Message-ID: <CAMuHMdV0k0k4EQhQ9C_oPUPno7BsgN3tW3ydLrvzD783SgULyw@mail.gmail.com>
+Subject: Re: [PATCH 09/18] clk: renesas: r9a09g047: Add clock and reset
+ entries for USB2
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
+	biju.das.jz@bp.renesas.com, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
+	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 08 Oct 2025 21:19:55 +0100,
-salil.mehta@opnsrc.net wrote:
-> 
-> From: Salil Mehta <salil.mehta@huawei.com>
-> 
-> [A rough illustration of the problem and the probable solution]
-> 
-> Userspace reads of ICC_CTLR_EL1 via KVM device attributes currently takes a slow
-> path that may acquire all vCPU locks. Under workloads that exercise userspace
-> PSCI CPU_ON flows or frequent vCPU resets, this can cause vCPU lock contention
-> in KVM and, in the worst cases, -EBUSY returns to userspace.
-> 
-> When PSCI CPU_ON and CPU_OFF calls are handled entirely in KVM, these operations
-> are executed under KVM vCPU locks in the host kernel (EL1) and appear atomic to
-> other vCPU threads. In this context, system register accesses are serialized
-> under KVM vCPU locks, ensuring atomicity with respect to other vCPUs. After
-> SMCCC filtering was introduced, PSCI CPU_ON and CPU_OFF calls can now exit to
-> userspace (QEMU). During the handling of PSCI CPU_ON call in userspace, a
-> cpu_reset() is exerted which reads ICC_CTLR_EL1 through KVM device attribute
-> IOCTLs. To avoid transient inconsistency and -EBUSY errors, QEMU is forced to
-> pause all vCPUs before issuing these IOCTLs.
+On Wed, 1 Oct 2025 at 23:28, Tommaso Merciai
+<tommaso.merciai.xr@bp.renesas.com> wrote:
+> Add clock and reset entries for USB2.
+>
+> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 
-I'm going to repeat in public what I already said in private.
+I couldn't verify all details, due to the lack of the Additional Manual,
+but the rest LGTM, so
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.19.
 
-Why does QEMU need to know this? I don't see how this is related to
-PSCI, and outside of save/restore, there is no reason why QEMU should
-poke at this. If QEMU needs fixing, please fix QEMU.
+Gr{oetje,eeting}s,
 
-Honestly, I don't see why the kernel should even care about this, and
-I have no intention of adopting anything of the sort for something
-that has all the hallmarks of a userspace bug.
-
-	M.
+                        Geert
 
 -- 
-Without deviation from the norm, progress is not possible.
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
