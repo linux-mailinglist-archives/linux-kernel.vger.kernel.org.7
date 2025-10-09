@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-846797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53B45BC9105
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:38:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D4807BC9109
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:38:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BB5A3E2B38
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:37:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68F413E3F13
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83EDD2E62C6;
-	Thu,  9 Oct 2025 12:37:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D442E6CDA;
+	Thu,  9 Oct 2025 12:37:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lpVNI5GP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uLPaI5z0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCEB62E3373;
-	Thu,  9 Oct 2025 12:37:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D41A2E62D1;
+	Thu,  9 Oct 2025 12:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760013459; cv=none; b=KwbKG+vFQVrGFfKxRpZkFevIcejxCykLqueobbGPn8PZWYJUHQscHR/I6L7bq2c73KlHm4mK0AJOTnPvwU1Av8fykbhMxbXS4XomPjrZha8bhVDOyYNHTKkqriNL2QCk5mnHstEv36Pns9LqdQcOEyugplx6+9xbb3Pc1YAypyg=
+	t=1760013460; cv=none; b=PsAcxUsz+PqVDj5g33NfOXZUyiWhNPYuQaVoU+X8DetRZrJQ5CZHPQiE/XP/Ke8Hqv6NV+LRE3/nMkNJLepnJ1schaOP6vYQwrFOIyVGnAuOigJ0G5xIe3rYlYZRQ68bEKBSA3/452DKq4i2w57X+Jr/RFlkK2XhdeEkXuQWPhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760013459; c=relaxed/simple;
-	bh=azd9FVCjk0aIj4ni+YQWAJAY9F/HKDjvW0AfWT0OlKo=;
+	s=arc-20240116; t=1760013460; c=relaxed/simple;
+	bh=aBDQiL8M6tlhzQPRf36HvQHITXaP9VMPI3YdAfgTYjo=;
 	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=fONEjVtLiMuUu241sdF3pWQ17wyYYx8Y/jx/TYMWFQSB3XLycLonqvwdvYKufH4tdmVTGSrUaDRHjRCuhsmCFCh1UHW21OuZQKQcS23F2gbSHg94qBJnbL8LfiqZAPu1orTQdUXQ3QJRloQfPwisRe5q2EDBJH9taHrU8yqEV7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lpVNI5GP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1255CC4CEF5;
-	Thu,  9 Oct 2025 12:37:37 +0000 (UTC)
+	 Message-Id:Subject; b=WWd+vtaupC/axiNuBFJCYebD7t9s0WqeY+ZTm8BtPJl/pVDwFEdolJ68ybJXlUISIkjolobHpnjTyMt7Mnsgv1r2lySy7JObf2FO6FLhlej2ppXmne4wqpRgJJFFtHcg9zDkJsJccs0o32n+DDp7ZskkN+J58uBA4c6pSraucHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uLPaI5z0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6DBEC4CEE7;
+	Thu,  9 Oct 2025 12:37:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760013458;
-	bh=azd9FVCjk0aIj4ni+YQWAJAY9F/HKDjvW0AfWT0OlKo=;
+	s=k20201202; t=1760013460;
+	bh=aBDQiL8M6tlhzQPRf36HvQHITXaP9VMPI3YdAfgTYjo=;
 	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=lpVNI5GPx3+9zLTr6fIc28Kr+bKLW7kKmT4TlSKdjdwNxM9DoPkWtk3j3BZaDgklH
-	 YuNjCvc4VqSq1v7swX3OuldWGdI3Z41FcJkecOo4F8DzPxKtn7jEDfLKkdzvkE/dpt
-	 +Qe9nPnM/1mfGXsVpxp02XOtenfCd/kFeiAHLM3E8txzqil3zs/jMdng85Yu8I0kmZ
-	 JQZeYZuoKYR4EAogYd16fbuqFnMYr9hnFI9UTk7K7j+w3BdCfLPVm6YiRGPglFU6QK
-	 36uc9cA6hmhJ5a9utKKm0LYMhgS/tDprx3Xfadx5tktACf7FGGgrCR2HHaaBR8E54q
-	 cIkI4jy9nU+Gw==
-Date: Thu, 09 Oct 2025 07:37:36 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	b=uLPaI5z0H/AGqRbfnAY/6dZMqsExqSC/5Vy60ccYAF5DDtB+/obHLb3EEOmuTIAnv
+	 srnQRecn8BcQ45g2HW+Twd1agmu4z00AAUn4EtLtDyWZqtHxw7Wj1e4y2o+DTGaWb1
+	 Ny6+G7iX6eOtzMXgiTeGzVPvV6rB7SJVICUR/STfhDHIDDPm9yJizr6Lx15OGaiiUQ
+	 iOdDZ9+ZUnflH307xWhlQ2Lh872oRoBGr38JFhsBw+ZA18QfR3/lL383VRq/FKeiEk
+	 OPbmtWAnlRVbi51r4gph29hE+qZd7CJFF/DgH3q7NG9f9Yw5L+N9rMo7Xv/WskAX9b
+	 BwVxTaax2ck8A==
+Date: Thu, 09 Oct 2025 07:37:38 -0500
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,45 +50,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, Palmer Dabbelt <palmer@dabbelt.com>, 
- Rob Herring <robh+dt@kernel.org>, Paul Walmsley <pjw@kernel.org>, 
- Alexandre Ghiti <alex@ghiti.fr>, Emil Renner Berthing <kernel@esmil.dk>, 
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
- linux-riscv@lists.infradead.org, Andrew Morton <akpm@linux-foundation.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor@kernel.org>
-To: Samuel Holland <samuel.holland@sifive.com>
-In-Reply-To: <20251009015839.3460231-16-samuel.holland@sifive.com>
-References: <20251009015839.3460231-1-samuel.holland@sifive.com>
- <20251009015839.3460231-16-samuel.holland@sifive.com>
-Message-Id: <176001310599.1845440.13113067302880070823.robh@kernel.org>
-Subject: Re: [PATCH v2 15/18] dt-bindings: riscv: Describe physical memory
- regions
+Cc: kishon@kernel.org, konradybcio@kernel.org, conor+dt@kernel.org, 
+ James.Bottomley@HansenPartnership.com, sean@poorly.run, 
+ linux-kernel@vger.kernel.org, freedreno@lists.freedesktop.org, 
+ abhinav.kumar@linux.dev, devicetree@vger.kernel.org, 
+ linux-phy@lists.infradead.org, mripard@kernel.org, 
+ marijn.suijten@somainline.org, tzimmermann@suse.de, lumag@kernel.org, 
+ airlied@gmail.com, krzk+dt@kernel.org, jessica.zhang@oss.qualcomm.com, 
+ maarten.lankhorst@linux.intel.com, linux-arm-msm@vger.kernel.org, 
+ simona@ffwll.ch, quic_mahap@quicinc.com, linux-scsi@vger.kernel.org, 
+ quic_vproddut@quicinc.com, mani@kernel.org, 
+ cros-qcom-dts-watchers@chromium.org, robin.clark@oss.qualcomm.com, 
+ dri-devel@lists.freedesktop.org, andersson@kernel.org, vkoul@kernel.org, 
+ martin.petersen@oracle.com
+To: Ritesh Kumar <quic_riteshk@quicinc.com>
+In-Reply-To: <20251009071127.26026-2-quic_riteshk@quicinc.com>
+References: <20251009071127.26026-1-quic_riteshk@quicinc.com>
+ <20251009071127.26026-2-quic_riteshk@quicinc.com>
+Message-Id: <176001310712.1845653.12786933655118707340.robh@kernel.org>
+Subject: Re: [PATCH 1/5] dt-bindings: phy: Add edp reference clock for
+ qcom,edp-phy
 
 
-On Wed, 08 Oct 2025 18:57:51 -0700, Samuel Holland wrote:
-> Information about physical memory regions is needed by both the kernel
-> and M-mode firmware. For example, the kernel needs to know about
-> noncacheable aliases of cacheable memory in order to allocate coherent
-> memory pages for DMA. M-mode firmware needs to know about those aliases
-> so it can protect itself from lower-privileged software.
+On Thu, 09 Oct 2025 12:41:23 +0530, Ritesh Kumar wrote:
+> Add edp reference clock for qcom,edp-phy which is required
+> to be enabled before eDP PHY initialization.
 > 
-> The RISC-V Privileged Architecture delegates the description of Physical
-> Memory Attributes (PMAs) to the platform. On DT-based platforms, it
-> makes sense to put this information in the devicetree.
-> 
-> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+> Signed-off-by: Ritesh Kumar <quic_riteshk@quicinc.com>
 > ---
-> 
-> Changes in v2:
->  - Remove references to Physical Address Width (no longer part of Smmpt)
->  - Remove special first entry from the list of physical memory regions
->  - Fix compatible string in example
-> 
->  .../bindings/riscv/physical-memory.yaml       | 91 +++++++++++++++++++
->  include/dt-bindings/riscv/physical-memory.h   | 44 +++++++++
->  2 files changed, 135 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/riscv/physical-memory.yaml
->  create mode 100644 include/dt-bindings/riscv/physical-memory.h
+>  Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
@@ -96,12 +87,18 @@ My bot found errors running 'make dt_binding_check' on your patch:
 yamllint warnings/errors:
 
 dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/riscv/physical-memory.example.dtb: / (beagle,beaglev-starlight-jh7100-r0): 'model' is a required property
-	from schema $id: http://devicetree.org/schemas/root-node.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.example.dtb: phy@aec2a00 (qcom,sa8775p-edp-phy): clock-names: ['aux', 'cfg_ahb'] is too short
+	from schema $id: http://devicetree.org/schemas/phy/qcom,edp-phy.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.example.dtb: phy@aec2a00 (qcom,sa8775p-edp-phy): clocks: [[4294967295, 11], [4294967295, 1]] is too short
+	from schema $id: http://devicetree.org/schemas/phy/qcom,edp-phy.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/msm/qcom,sc7280-mdss.example.dtb: phy@aec2a00 (qcom,sc7280-edp-phy): clock-names: ['aux', 'cfg_ahb'] is too short
+	from schema $id: http://devicetree.org/schemas/phy/qcom,edp-phy.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/msm/qcom,sc7280-mdss.example.dtb: phy@aec2a00 (qcom,sc7280-edp-phy): clocks: [[4294967295, 0], [4294967295, 183]] is too short
+	from schema $id: http://devicetree.org/schemas/phy/qcom,edp-phy.yaml#
 
 doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251009015839.3460231-16-samuel.holland@sifive.com
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251009071127.26026-2-quic_riteshk@quicinc.com
 
 The base for the series is generally the latest rc1. A different dependency
 should be noted in *this* patch.
