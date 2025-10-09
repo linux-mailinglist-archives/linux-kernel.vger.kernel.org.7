@@ -1,188 +1,175 @@
-Return-Path: <linux-kernel+bounces-846380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B08D1BC7CBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:52:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C05CBC7D32
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:56:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 734CC4F3B0E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:52:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AE751893F31
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04932D12E2;
-	Thu,  9 Oct 2025 07:52:30 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C15C2BEFE6;
+	Thu,  9 Oct 2025 07:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nWguEwY+"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF552BE7A7;
-	Thu,  9 Oct 2025 07:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A595E2DF68
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 07:56:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759996350; cv=none; b=F+JrDYYNrRuTVnFHNdiCqRukEZYzCNNNfJaRkOnrY0bKonxY2BIbm2ixOFTSnhtAh5vMTd0yG6/B7Hlrnre+1cxabTa2Dn2led1tD6EMkg9oxqEuaoe4ZFQKqfnX9JRPv6B3TYRXfEYtzpFvdfRbldPALV6ups6TOIu4hU/ewYc=
+	t=1759996586; cv=none; b=jfYHw+pirl5i8t8+Kmc3DyUt1RyyJEUYveSAUlQa0tQmqPpBBMP+druZ2vej4sX4eU7pHESyXkLf95trnmA7/hZDB4veFBT2K6+Z3sHevy8tPkduwtHsalSXtNbRNw4N53rAL7RUDzqDxOngpyL5PPblwn20BkI6Y9PDZZiHeaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759996350; c=relaxed/simple;
-	bh=8kwwddGg4oMEWNPflqm4C7Fd2mOvwuYEWTUuJXSTDEE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=nk2gYar3ETiOzMHqhWoogWsGUjHFaFKfgWROhW0OFMIo6DOVg1T06WK/2rdPeCCyM8t77TXhSKjOtTAHTDrNAnu0Fyt2OrII49JHbeR+jL0Y71m2JF/FMg8yljnYIaDmGm70vQkSX9qbq6ER1MTLUD9ZnukRtewYtOjPjyI87sY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cj2Bz0bDmzKHLvG;
-	Thu,  9 Oct 2025 15:51:55 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 98CDA1A13FE;
-	Thu,  9 Oct 2025 15:52:23 +0800 (CST)
-Received: from [10.67.110.36] (unknown [10.67.110.36])
-	by APP2 (Coremail) with SMTP id Syh0CgCX4RW2aedo1u4pCQ--.63468S2;
-	Thu, 09 Oct 2025 15:52:23 +0800 (CST)
-Message-ID: <02ac6916-7bfa-4b6b-8bae-64fe02580731@huaweicloud.com>
-Date: Thu, 9 Oct 2025 15:52:22 +0800
+	s=arc-20240116; t=1759996586; c=relaxed/simple;
+	bh=rhd2Vz+1e/iOi2LHto5xUh03sKP51Qg56huR5FisGJo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r+S+pjWkrYmgqeGVmmmW8pzJteKYCRW8v9Tk5t2+RE5FddHP7942bNEofTqpLuk90dgVTKLhlYEv0YRibs3O7yd1BfEc+hcbHIg22KFNsAA6gVdTn35uTlJbpaUuM3hk/xizYRV7OCzdL9HfPAUjSA/YpYFpn1K4dWJ8ja2YbOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nWguEwY+; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3ecdf2b1751so498540f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 00:56:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759996583; x=1760601383; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=T0a1fYc0MJ9EuqumxNBgOSane0jVrbsSTPrQvSq4lE4=;
+        b=nWguEwY+dp1rfzkVgoYo68UeyX8pTm+R7OayCMfo31qBdEZGuUxtM8OGSS3KZ2Udsb
+         D7YyPyFoSey16FgsYH1rY1cI6z0zAzekveMn8h6P+2SlIPdMRmiwvWplDlEWNpMn4duv
+         fkmCz/ABT2OI8vmgoMtv5T7p8ut+IDwGOyT5d9tR3KXCV/79wx9CTMRAueOKnukASYQI
+         0xoo5ohwvBXfBNUZ3JW5ANhILVvYd2YHu3kJrNJ9sNrPSroPdQJX9OGy1F5K1G6muNlF
+         kio502NkjsbTAsvrdg5wUqr+RNW4jwmM1uODNJ6m/OH6XyIa0zzIWta0wuxvsa+8a1uP
+         +JAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759996583; x=1760601383;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T0a1fYc0MJ9EuqumxNBgOSane0jVrbsSTPrQvSq4lE4=;
+        b=GPVTk052majafoCIDBTjE83qG9QC1cFHuHMeR9FkS48dde969e8r0YNAFetnWJx6Uy
+         QhHx330PBAdSL0Rn4rFgmSNC+CD++2Eih7ptqpsbSoFfFJUJ+tpmkuq9HzHYlAswaGWL
+         iflVY2c1dlSYcdgVF8T+qE64TsWMG+LRu7ktD2Mp+xG59pznW286YgRF4MwhPOJwzi8d
+         yM+oyyvmGhWo+Kt3/GLNdhV3JsRtAXDl7Zbp8wSRxBWJ4tYiTjF/ldPwhFvOTRDB3bFA
+         3y5CDg3vzAIkrJVls6yDvMCOA/BONhkUQ3eaTiu67eTQEJX/VW653QLzZfecjiClReLr
+         NzGg==
+X-Forwarded-Encrypted: i=1; AJvYcCWR3B7Nry61T/d6efC5yF3S7YU+fXx0Nvl8KaUiTlRDesRX3xB4ChbaCdc0ALro+QQVep1Ox4AHriW06mI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxd3GcDWwNhfNWSrdwcfTAxsFoZYzklt2iiM5MMqp9vhmEgL/Fh
+	k+vWKo5J1l9Sd63jKg2IPMePm/5jr1BsBiKzQUTGnZnCFKmpmsp073TB
+X-Gm-Gg: ASbGnctNUFR+kkzs+i6PXlw/0hEYlyhLTZQFZXzd95vopZEJN84dIIm9F5j5x+NTHiD
+	3Oij1e3B2EpinoLFy7ltj9cXrdcRYCT5dIeimh6/k1Oyna8qHhkB4iAnWk8x+UsBYaRX5VwAVd4
+	IMVaoajJ0GhF1I1vPyoky7nCbkGUnlvHrG76kFu+tTq5sE2SAKBQ6WY3tjpM8C3NF7fxwYVRaP0
+	RghDMAD5yQZPrYTotJpWc2L677/u//gmXPE/Ihqmu3yDsXM1BQg2/YDYB/SPvV6N/ekHhCJIvAE
+	Fil0oh6muLANzEMowGIqQTLoVN9ug8f0Qv87TzWRlDlAASNiX6wwB/d8LG+3DdqmWCcgGzunmLO
+	LbwppaNFiMOpUu0dWPlCFyBLkMr5sqyLpYUoBq+W9iissCK38PXvThhahB2r3g6HISVpRvj/7id
+	1WUf46C8vjkt+j3kKecz3LTHqa45GonRm+MQyBp0Opx7Cp
+X-Google-Smtp-Source: AGHT+IHdPDeElx1hyAYh5U0ai1YogNJIHEcNDQIevaS+npNxA1G4K3X5r3iKDWJLm2QYPiZpKcmqQA==
+X-Received: by 2002:a05:6000:2301:b0:425:72cd:8364 with SMTP id ffacd0b85a97d-4266e8e1afamr4240788f8f.53.1759996582753;
+        Thu, 09 Oct 2025 00:56:22 -0700 (PDT)
+Received: from orome (p200300e41f28f500f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:f500:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8a6bbesm33269369f8f.12.2025.10.09.00.56.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 00:56:20 -0700 (PDT)
+Date: Thu, 9 Oct 2025 09:56:18 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Johan Hovold <johan@kernel.org>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>, 
+	Rob Clark <robin.clark@oss.qualcomm.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Yong Wu <yong.wu@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Chen-Yu Tsai <wens@csie.org>, Krishna Reddy <vdumpa@nvidia.com>, 
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Thierry Reding <treding@nvidia.com>, Miaoqian Lin <linmq006@gmail.com>
+Subject: Re: [PATCH v2 14/14] iommu/tegra: fix device leak on probe_device()
+Message-ID: <rp2yiradenf3twznebagx7tgsruwh66exiikal37c4fwo75t4t@4breto65stqt>
+References: <20251007094327.11734-1-johan@kernel.org>
+ <20251007094327.11734-15-johan@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] perf bpf_counter: Fix opening of "any"(-1) CPU events
-To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251008162347.4005288-1-irogers@google.com>
-Content-Language: en-US
-From: Tengda Wu <wutengda@huaweicloud.com>
-In-Reply-To: <20251008162347.4005288-1-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgCX4RW2aedo1u4pCQ--.63468S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxAF1xCFyUur13Xry3JFWrZrb_yoWrXFWUpr
-	4vkr13KryrXr90y3W3tF42ga4kCws5ZryYgwn8trWUGFsxX3sIqa17Ja45KryUWr1v9a4Y
-	q34qgr4Uuay8JaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wgvpzj7uzsv4xh6z"
+Content-Disposition: inline
+In-Reply-To: <20251007094327.11734-15-johan@kernel.org>
 
 
+--wgvpzj7uzsv4xh6z
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 14/14] iommu/tegra: fix device leak on probe_device()
+MIME-Version: 1.0
 
-On 2025/10/9 0:23, Ian Rogers wrote:
-> The bperf BPF counter code doesn't handle "any"(-1) CPU events, always
-> wanting to aggregate a count against a CPU, which avoids the need for
-> atomics so let's not change that. Force evsels used for BPF counters
-> to require a CPU when not in system-wide mode so that the "any"(-1)
-> value isn't used during map propagation and evsel's CPU map matches
-> that of the PMU.
-> 
-> Fixes: b91917c0c6fa ("perf bpf_counter: Fix handling of cpumap fixing hybrid")
-> Signed-off-by: Ian Rogers <irogers@google.com>
+On Tue, Oct 07, 2025 at 11:43:27AM +0200, Johan Hovold wrote:
+> Make sure to drop the reference taken to the iommu platform device when
+> looking up its driver data during probe_device().
+>=20
+> Note that commit 9826e393e4a8 ("iommu/tegra-smmu: Fix missing
+> put_device() call in tegra_smmu_find") fixed the leak in an error path,
+> but the reference is still leaking on success.
+>=20
+> Fixes: 891846516317 ("memory: Add NVIDIA Tegra memory controller support")
+> Cc: stable@vger.kernel.org	# 3.19: 9826e393e4a8
+> Cc: Thierry Reding <treding@nvidia.com>
+> Cc: Miaoqian Lin <linmq006@gmail.com>
+> Acked-by: Robin Murphy <robin.murphy@arm.com>
+> Signed-off-by: Johan Hovold <johan@kernel.org>
 > ---
->  tools/perf/builtin-stat.c     | 13 +++++++++++++
->  tools/perf/util/bpf_counter.c |  1 +
->  2 files changed, 14 insertions(+)
-> 
-> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-> index 7006f848f87a..0fc6884c1bf1 100644
-> --- a/tools/perf/builtin-stat.c
-> +++ b/tools/perf/builtin-stat.c
-> @@ -2540,6 +2540,7 @@ int cmd_stat(int argc, const char **argv)
->  	unsigned int interval, timeout;
->  	const char * const stat_subcommands[] = { "record", "report" };
->  	char errbuf[BUFSIZ];
-> +	struct evsel *counter;
->  
->  	setlocale(LC_ALL, "");
->  
-> @@ -2797,6 +2798,18 @@ int cmd_stat(int argc, const char **argv)
->  
->  	evlist__warn_user_requested_cpus(evsel_list, target.cpu_list);
->  
-> +	evlist__for_each_entry(evsel_list, counter) {
-> +		/*
-> +		 * Setup BPF counters to require CPUs as any(-1) isn't
-> +		 * supported. evlist__create_maps below will propagate this
-> +		 * information to the evsels. Note, evsel__is_bperf isn't yet
-> +		 * set up, and this change must happen early, so directly use
-> +		 * the bpf_counter variable.
-> +		 */
-> +		if (counter->bpf_counter)
-> +			counter->core.requires_cpu = true;
-> +	}
-> +
->  	if (evlist__create_maps(evsel_list, &target) < 0) {
->  		if (target__has_task(&target)) {
->  			pr_err("Problems finding threads of monitor\n");
-> diff --git a/tools/perf/util/bpf_counter.c b/tools/perf/util/bpf_counter.c
-> index ca5d01b9017d..d3e5933b171b 100644
-> --- a/tools/perf/util/bpf_counter.c
-> +++ b/tools/perf/util/bpf_counter.c
-> @@ -495,6 +495,7 @@ static int bperf_reload_leader_program(struct evsel *evsel, int attr_map_fd,
->  	 * following evsel__open_per_cpu call
->  	 */
->  	evsel->leader_skel = skel;
-> +	assert(!perf_cpu_map__has_any_cpu_or_is_empty(evsel->core.cpus));
->  	evsel__open(evsel, evsel->core.cpus, evsel->core.threads);
->  
->  out:
+>  drivers/iommu/tegra-smmu.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
+> index 36cdd5fbab07..f6f26a072820 100644
+> --- a/drivers/iommu/tegra-smmu.c
+> +++ b/drivers/iommu/tegra-smmu.c
+> @@ -830,10 +830,9 @@ static struct tegra_smmu *tegra_smmu_find(struct dev=
+ice_node *np)
+>  		return NULL;
+> =20
+>  	mc =3D platform_get_drvdata(pdev);
+> -	if (!mc) {
+> -		put_device(&pdev->dev);
+> +	put_device(&pdev->dev);
+> +	if (!mc)
+>  		return NULL;
+> -	}
+> =20
+>  	return mc->smmu;
 
+pdev->dev is what's backing mc, so if we use put_device() here, then the
+MC could go away at any time, right?
 
-I must point out that `requires_cpu + evsel__open(evsel, evsel->core.cpus, evsel->core.threads)` 
-is not equivalent to the original `evsel__open_per_cpu(evsel, all_cpu_map, -1)`. The former
-specifies a pid, while the latter does not. This will lead to inaccurate final event counting.
+So the goal here was to make sure that the MC stays around during the
+entire lifetime of the IOMMU attachment. We don't currently release that
+reference, ever, so there is a leak, but wouldn't it be more appropriate
+to release it in a .release_device implementation?
 
+Thierry
 
-For `evsel__open_per_cpu(evsel, all_cpu_map, -1)`:
+--wgvpzj7uzsv4xh6z
+Content-Type: application/pgp-signature; name="signature.asc"
 
-$ ./perf stat -vv --bpf-counters -e task-clock ./perf test -w sqrtloop
-sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 = 13
-sys_perf_event_open: pid -1  cpu 1  group_fd -1  flags 0x8 = 14
-sys_perf_event_open: pid -1  cpu 2  group_fd -1  flags 0x8 = 15
-[...]
- Performance counter stats for './perf test -w sqrtloop':
+-----BEGIN PGP SIGNATURE-----
 
-     1,016,156,671      task-clock                       #    1.000 CPUs utilized             
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmjnaqIACgkQ3SOs138+
+s6GKbhAAsfz1wZw0MTC9RsEY4Yd9FfbGZFwUqkdbKTFeuIj2pdIDddlr1W27EUR4
+k8LSmG+B/zzQVAB+e6/9evMs0tBh7sAJqdN+4KS9Xu9oCSz0NZT/DVYKPEhAH44D
+/LkM2+RGcyVcF/2ebov9rCMzHJpcNbgjU6gg9NfQlCrl7diKXSUGhTcSL/Emycmg
+3FuBz6DDHAD0J1slkQ7Tfy+jUKm4Z8Ewh4NBTF0Cv8k+S6WdTq8TOlVhedYyOhii
+YGJeu84qQoOfIf3wFIWqIswb0NmzL/uN/kMw4eLy3FaJ+H9LjYVrfHkDO5lNfW/N
+wwj7QOHLllKcSavr7TPGLglzrRBj2l0ApXL+8Xe1zLvhTx7VX4ksEAVzkJY4mHmu
+5M2JLtgntGiyAY8Korl+NY0K3G42D48qa4fWIewpTEjbT5IQB3C0GQsDMaz0uaZT
+xQK1Ik2W4zP6w/de2FlZj7YF2D/8tAuS7Af8uEZXMny3addBpoICCgraDg4aU1XV
+Nqx/TP3mFHu4V/J6twarFQM7zTeKiKdUyp0yJ428Jed/yGVREBjAqS8Vvml/Zmpn
+e7LFJGHYCLUVymAE1z61G3HPSt1w1IAnRaHrSrq/IbanY3Jhfeu95Az/fpYcW2hU
+FOjysPFAigkUvlqz6M954uRgLGHixqtm3vI/VA+LtKqjR1PJo3w=
+=VlYs
+-----END PGP SIGNATURE-----
 
-       1.016294745 seconds time elapsed
-
-       1.005710000 seconds user
-       0.010637000 seconds sys
-
-
-For `requires_cpu + evsel__open(evsel, evsel->core.cpus, evsel->core.threads)`:
-
-$ ./perf stat -vv --bpf-counters -e task-clock ./perf test -w sqrtloop
-sys_perf_event_open: pid 75099  cpu 0  group_fd -1  flags 0x8 = 13
-sys_perf_event_open: pid 75099  cpu 1  group_fd -1  flags 0x8 = 14
-sys_perf_event_open: pid 75099  cpu 2  group_fd -1  flags 0x8 = 15
-[...]
- Performance counter stats for './perf test -w sqrtloop':
-
-        16,184,507      task-clock                       #    0.016 CPUs utilized             
-
-       1.018540734 seconds time elapsed
-
-       1.009143000 seconds user
-       0.009497000 seconds sys
-
-
-As you can see, after specifying a pid, the task-clock count has significantly decreased.
-So to correct the counting, we may also need to keep the pid as -1 without specifying it.
-
-Thanks,
-Tengda
-
+--wgvpzj7uzsv4xh6z--
 
