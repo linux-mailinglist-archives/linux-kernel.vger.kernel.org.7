@@ -1,125 +1,187 @@
-Return-Path: <linux-kernel+bounces-847065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2D51BC9CAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 17:29:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D156BC9CB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 17:30:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 636263A1D2C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 15:28:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43C07425FAD
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 15:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301A11E260D;
-	Thu,  9 Oct 2025 15:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE3F1F5827;
+	Thu,  9 Oct 2025 15:25:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i7mMO3dD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="WPKOmEWS"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840C91E0DD8
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 15:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85DB21E51E0
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 15:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760023534; cv=none; b=hQUmdETW9LtfG+K0whIb7Iq1jZKCHoaAObExnaLyHBHKIrFo6Aic1M+nPV9KVr0aV+zaNg6iD1MhkQwwA0oDJE2OyIN3UGaxnI28oKgXGzaDg8wvTBicYatDKy3ox4jelOsjbdIB6DTsMOjCOi7/t3DFbFhwtvOMt+LwQTRHmzA=
+	t=1760023555; cv=none; b=Mng8EMo0g9p0PXXFUeQpQV4EsbvQ0SMG6aP0ONY4Ib0APnAGoAY0bK5cbk0leyZCnuLjakRJ7qLN1XLxGDlQHY/Tnoyp6FCYaK0H3evfoTODnoLQA3yzeiFozOMIxosW9ppRURp+tgFMjuCb8pGise+4eh9R0ohzNerWSaXj/sI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760023534; c=relaxed/simple;
-	bh=/ups0rdcsbhtlWRIsVepwZKH+PzYyefCRWijmztsG38=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eSzkbBu5CbJnQ/k3cKJ0NuRBeJBusIjzbNlrfB59VFgGxOkF9ZIEd1ubwQW4y5mePxmYK9NJjW34ouGDxusMsfDEFMlC24MwQ4plq2UGzA6hsonPyzRYK1FuAHT5Ci97PVQN4baVeNvek089mO0rchJYWyv/AjBgxJNMCDI16KI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i7mMO3dD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31115C116C6
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 15:25:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760023534;
-	bh=/ups0rdcsbhtlWRIsVepwZKH+PzYyefCRWijmztsG38=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=i7mMO3dD4j35Ge3GxNo6uQLuK2DZ3HINxs+jtEN1TGybsdza808OOeUCgY08yrXw2
-	 VW6iyAbWT5OjTYZ5Iks2S6OStDkve2UCSr2EFsO+OvKnl22+5kNKrWodjdeItWYzTr
-	 7qN0wDtL5Te9tob1LD7s0V73vgMq1GyAFJDHC7jWUgUL37JLv/rZii6WeLWj36xF7O
-	 vZrOz25DBOpiuvWD/P4chTnEkxVdrH4S7WPvIcDQQBRZKJfeYFniRHsRY8zbmHTxSF
-	 gYswlQC9SuCaxL7ENnANCVGw9pbs7KjtpirZT3xX7v3WQojMqb2/A9W1cLn/sNjm8E
-	 YfQxYWbAfvabg==
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-74526ca79beso693462a34.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 08:25:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV3Gx9guz8u1A2v6ku4YcWG9J4a4SDqXlaSMnxIZ9gOFe+vG0H6xacdHlqGsYeAaqCV2UhRvAE+HTnKOGs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFnMDZnK/1RLG/Rfedb0pXU6dT/JUmLoIsC0o11hA+6G+i15Eh
-	SFavftamugV9H4cRcAFnLr/T0Zn8LjSDgB8O0PI+NhhON/CjzR650oXqfMyS71pv96SbaSaqu8A
-	QZKFcTdoqOp1YDr/UvmyqbojXdb9WzE8=
-X-Google-Smtp-Source: AGHT+IGu70IFZQLlAO+3P4ybkBQVr1fPOMs/nnzKxe/rtOBJ7ieNtBACYGLI1c7T/YNJWaLDapxP8Kyk8iZDzISReqM=
-X-Received: by 2002:a05:6808:e88:b0:43f:b7f8:e216 with SMTP id
- 5614622812f47-4417b2d1e98mr3887324b6e.4.1760023533432; Thu, 09 Oct 2025
- 08:25:33 -0700 (PDT)
+	s=arc-20240116; t=1760023555; c=relaxed/simple;
+	bh=JsLLQ5yNr+o/mS+W56Z8e89p6lgr5lT4mN5K6n+mRxY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UIaWHw3Er/CB5ATORdIs9IDAcpyxSLTeh2sZEnPrhQmr5wCwJDwj8Bxc175dlU1DvRL1l+uFkCw3Zo7FuG0TcGCX9vfucq5TTolfTfFGxCO5aU9Cx9FwcVBBW5ClhC5abw1G5mtkITz4OcSa+SPulY6RWbGDA1lh0eT+Tcx8D3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=WPKOmEWS; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=kOXdFJ3Jdp/tYQ7xod0w/SazY0fKVi5n5IRn+msTeC0=; b=WPKOmEWS8nCZC//B
+	+xUZ5Uf+Ffl6TYyMSjSRqUdvUG+yVLdpjntwbKMod7L8MZBE6JkhRa2kFUYAyxYfBThcW29eoPqs+
+	zklj1VgxwIgQibtO3O0qbDEyFFNHjf0fgIHk3gZvfVKpdjsycENzk/c/5tKx+Of3iFlCGvkC1epYn
+	AMpvvrhGlZ9C+kgTX2uN6MV6X4zvmBPGoHkAMGoN+V70tl33KP/xMIrv4/W7V65CnOspVZr8Z+fy6
+	hyF2+hwG3y7Rd1ptRiZyebKY0/CqUNJ99CkVMD9+NxLqujBzWro9b4KOAz0IbcNCubQ9V8PF+S4GB
+	zoIM9RM6jmmmbDEolw==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1v6sWR-00FWnJ-0M;
+	Thu, 09 Oct 2025 15:25:39 +0000
+Date: Thu, 9 Oct 2025 15:25:39 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Loic Poulain <loic.poulain@oss.qualcomm.com>
+Cc: wcn36xx@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] wifi: wcn36xx: Remove unused
+ wcn36xx_smd_update_scan_params
+Message-ID: <aOfT806hw7l2BeJu@gallifrey>
+References: <20250619010506.296494-1-linux@treblig.org>
+ <CAFEp6-3U2rQEUtntb0cdJeykURocEZQdeVHXFbXXogZV=wxGWg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251009135646.8899-1-bigalex934@gmail.com>
-In-Reply-To: <20251009135646.8899-1-bigalex934@gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 9 Oct 2025 17:25:21 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0itqy9dXoS4ubq3MPdM2zCBQKah3R5B2SGiJE6auTugBw@mail.gmail.com>
-X-Gm-Features: AS18NWBnRSV55ReCkktNys3L2MAhOlsiQ_YiADq19oGN-jfD9E83LCPjtwGrdHg
-Message-ID: <CAJZ5v0itqy9dXoS4ubq3MPdM2zCBQKah3R5B2SGiJE6auTugBw@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: Add absent field_obj null check
-To: Alexey Simakov <bigalex934@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Robert Moore <robert.moore@intel.com>, 
-	Len Brown <lenb@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, linux-acpi@vger.kernel.org, 
-	acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	lvc-project@linuxtesting.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFEp6-3U2rQEUtntb0cdJeykURocEZQdeVHXFbXXogZV=wxGWg@mail.gmail.com>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-34-amd64 (x86_64)
+X-Uptime: 15:25:08 up 164 days, 23:38,  1 user,  load average: 0.17, 0.06,
+ 0.02
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Thu, Oct 9, 2025 at 3:57=E2=80=AFPM Alexey Simakov <bigalex934@gmail.com=
-> wrote:
->
-> The acpi_ev_address_space_dispatch function is designed
-> in such way that assignning field_obj to NULL is valid case.
->
-> Cover the missed execution path with this check.
->
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
->
-> Fixes: 0acf24ad7e10 ("ACPICA: Add support for PCC Opregion special contex=
-t data")
-> Signed-off-by: Alexey Simakov <bigalex934@gmail.com>
+* Loic Poulain (loic.poulain@oss.qualcomm.com) wrote:
+> On Thu, Jun 19, 2025 at 3:05 AM <linux@treblig.org> wrote:
+> >
+> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> >
+> > wcn36xx_smd_update_scan_params() last use was removed in 2020 by
+> > commit 5973a2947430 ("wcn36xx: Fix software-driven scan")
+> >
+> > Remove it.
+> >
+> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> 
+> Reviewed-by: Loic Poulain <loic.poulain@oss.qualcomm.com>
 
-ACPICA changes need to be submitted to the upstream ACPICA project on
-GitHub as pull requests (PRs).
+Hi Loic,
+  Is this getting into a pull somewhere?
 
-Once a given PR has been merged upstream, a corresponding Linux patch
-can be sent (with a Link: tag pointing to the original upstream ACPICA
-commit), but it is not necessary to do so because released upstream
-ACPICA material is automatically included into the ACPICA code in
-Linux.
+Dave
 
-> ---
->  drivers/acpi/acpica/evregion.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/acpi/acpica/evregion.c b/drivers/acpi/acpica/evregio=
-n.c
-> index fa3475da7ea9..fa01bcd3840d 100644
-> --- a/drivers/acpi/acpica/evregion.c
-> +++ b/drivers/acpi/acpica/evregion.c
-> @@ -163,7 +163,7 @@ acpi_ev_address_space_dispatch(union acpi_operand_obj=
-ect *region_obj,
->                         return_ACPI_STATUS(AE_NOT_EXIST);
->                 }
->
-> -               if (region_obj->region.space_id =3D=3D ACPI_ADR_SPACE_PLA=
-TFORM_COMM) {
-> +               if (field_obj && region_obj->region.space_id =3D=3D ACPI_=
-ADR_SPACE_PLATFORM_COMM) {
->                         struct acpi_pcc_info *ctx =3D
->                             handler_desc->address_space.context;
->
-> --
-> 2.34.1
->
-> Just FYI, this patch was already merged to github ACPICA repository.
-> Commit hash with correspond changes at ACPICA repository: f421dd9dd897dfd=
-1e0c015afa90cd0de2464e23c
+> 
+> > ---
+> >  drivers/net/wireless/ath/wcn36xx/smd.c | 60 --------------------------
+> >  drivers/net/wireless/ath/wcn36xx/smd.h |  1 -
+> >  2 files changed, 61 deletions(-)
+> >
+> > diff --git a/drivers/net/wireless/ath/wcn36xx/smd.c b/drivers/net/wireless/ath/wcn36xx/smd.c
+> > index 2cf86fc3f8fe..136acc414714 100644
+> > --- a/drivers/net/wireless/ath/wcn36xx/smd.c
+> > +++ b/drivers/net/wireless/ath/wcn36xx/smd.c
+> > @@ -1127,66 +1127,6 @@ int wcn36xx_smd_process_ptt_msg(struct wcn36xx *wcn,
+> >         return ret;
+> >  }
+> >
+> > -static int wcn36xx_smd_update_scan_params_rsp(void *buf, size_t len)
+> > -{
+> > -       struct wcn36xx_hal_update_scan_params_resp *rsp;
+> > -
+> > -       rsp = buf;
+> > -
+> > -       /* Remove the PNO version bit */
+> > -       rsp->status &= (~(WCN36XX_FW_MSG_PNO_VERSION_MASK));
+> > -
+> > -       if (WCN36XX_FW_MSG_RESULT_SUCCESS != rsp->status) {
+> > -               wcn36xx_warn("error response from update scan\n");
+> > -               return rsp->status;
+> > -       }
+> > -
+> > -       return 0;
+> > -}
+> > -
+> > -int wcn36xx_smd_update_scan_params(struct wcn36xx *wcn,
+> > -                                  u8 *channels, size_t channel_count)
+> > -{
+> > -       struct wcn36xx_hal_update_scan_params_req_ex msg_body;
+> > -       int ret;
+> > -
+> > -       mutex_lock(&wcn->hal_mutex);
+> > -       INIT_HAL_MSG(msg_body, WCN36XX_HAL_UPDATE_SCAN_PARAM_REQ);
+> > -
+> > -       msg_body.dot11d_enabled = false;
+> > -       msg_body.dot11d_resolved = true;
+> > -
+> > -       msg_body.channel_count = channel_count;
+> > -       memcpy(msg_body.channels, channels, channel_count);
+> > -       msg_body.active_min_ch_time = 60;
+> > -       msg_body.active_max_ch_time = 120;
+> > -       msg_body.passive_min_ch_time = 60;
+> > -       msg_body.passive_max_ch_time = 110;
+> > -       msg_body.state = PHY_SINGLE_CHANNEL_CENTERED;
+> > -
+> > -       PREPARE_HAL_BUF(wcn->hal_buf, msg_body);
+> > -
+> > -       wcn36xx_dbg(WCN36XX_DBG_HAL,
+> > -                   "hal update scan params channel_count %d\n",
+> > -                   msg_body.channel_count);
+> > -
+> > -       ret = wcn36xx_smd_send_and_wait(wcn, msg_body.header.len);
+> > -       if (ret) {
+> > -               wcn36xx_err("Sending hal_update_scan_params failed\n");
+> > -               goto out;
+> > -       }
+> > -       ret = wcn36xx_smd_update_scan_params_rsp(wcn->hal_buf,
+> > -                                                wcn->hal_rsp_len);
+> > -       if (ret) {
+> > -               wcn36xx_err("hal_update_scan_params response failed err=%d\n",
+> > -                           ret);
+> > -               goto out;
+> > -       }
+> > -out:
+> > -       mutex_unlock(&wcn->hal_mutex);
+> > -       return ret;
+> > -}
+> > -
+> >  static int wcn36xx_smd_add_sta_self_rsp(struct wcn36xx *wcn,
+> >                                         struct ieee80211_vif *vif,
+> >                                         void *buf,
+> > diff --git a/drivers/net/wireless/ath/wcn36xx/smd.h b/drivers/net/wireless/ath/wcn36xx/smd.h
+> > index 2c1ed9e570bf..4e39df5589b3 100644
+> > --- a/drivers/net/wireless/ath/wcn36xx/smd.h
+> > +++ b/drivers/net/wireless/ath/wcn36xx/smd.h
+> > @@ -66,7 +66,6 @@ int wcn36xx_smd_finish_scan(struct wcn36xx *wcn, enum wcn36xx_hal_sys_mode mode,
+> >  int wcn36xx_smd_init_scan(struct wcn36xx *wcn, enum wcn36xx_hal_sys_mode mode,
+> >                           struct ieee80211_vif *vif);
+> >
+> > -int wcn36xx_smd_update_scan_params(struct wcn36xx *wcn, u8 *channels, size_t channel_count);
+> >  int wcn36xx_smd_start_hw_scan(struct wcn36xx *wcn, struct ieee80211_vif *vif,
+> >                               struct cfg80211_scan_request *req);
+> >  int wcn36xx_smd_stop_hw_scan(struct wcn36xx *wcn);
+> > --
+> > 2.49.0
+> >
+> 
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
