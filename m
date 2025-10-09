@@ -1,138 +1,114 @@
-Return-Path: <linux-kernel+bounces-846632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D056BC89A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 12:54:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A5ABBC89BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 12:54:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 51A084E35B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 10:54:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36F8619E8247
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 10:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 530582DEA73;
-	Thu,  9 Oct 2025 10:54:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C365F2DFA46;
+	Thu,  9 Oct 2025 10:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PsqcApRe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VAsm0dUS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F11825A659;
-	Thu,  9 Oct 2025 10:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50642DE200;
+	Thu,  9 Oct 2025 10:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760007241; cv=none; b=l7vUgkI7G8HDVC9pTBRHALkDeWnsxvuAMJZVOrZ/gaOCDz4Nrb5Njrk3txAhVqfp2Fobz+1O5aaHw+F1lzQeZxD7PaOmCW5wJWpw/nTWcFeD/Ck8flf9ocCOZdmG8CAl4I4iP4WJY+Hs7TalCjjDJdr2MmoT2RlMuHNgB9o8enQ=
+	t=1760007261; cv=none; b=KuAVrQsZzZaudqN2SEW8wfY8VSusCjqejDLX0rDvCdc6YlY1T+pjW34ZW2asiQCfWNFDNwDQNBtrHVjdZ5RmzPWGOLXP6Vl9m2E8wJRtayljWdYGET0u4wT6HqWPC/qZYlxCi3VUZ5NBYG0PSWrjTs+x460k3R6hL+6oEJTkCPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760007241; c=relaxed/simple;
-	bh=2v+JE+xbeHNPLFa3r0+1K7l2Z7+8mycs6Aki6f4L3Qo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lGT8DbjlfKOJctOdlg5esi5PAYnuKCPaSJEqAFxcVf+aICE86rY9ZIoNMVuOjU6zHeamSOzABffFBQhW040cDnxBuHbahGXg9wNBsgwpyDkfD05Mace0c+0GVbJUyS0T7GO0vvjecvEKt+XOY2r7R1ZL8kU/Gpfj66SpmpFSWvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PsqcApRe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AA69C4CEE7;
-	Thu,  9 Oct 2025 10:53:55 +0000 (UTC)
+	s=arc-20240116; t=1760007261; c=relaxed/simple;
+	bh=AH1YWT1PmOpsxR4ljF1m4JmyHPJPRdfWYF5LAjqppjw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=EKkPnNNTCxW5OiJKnme71yWfv6SkWX/Zm2u7eEXrK6ZuVniK+M7O6vNexkpUhu+zXtFIt4D4t3kWtydVvXDPEyrZdO1l165X0KxyCZq+heyfinBirNqjUiWg+NO6bvb0dZJFRsJi05xiQD6h0YJfx3wVfo3mVj+tILQuDhfs5aY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VAsm0dUS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 814D8C4CEE7;
+	Thu,  9 Oct 2025 10:54:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760007241;
-	bh=2v+JE+xbeHNPLFa3r0+1K7l2Z7+8mycs6Aki6f4L3Qo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PsqcApReyrRZZ0XZerAujMuAiMXZC6yNvWD/wk9XQys3KvkpZ4qGZUeebZAjI7u7m
-	 MfRX2R0Icmyi5J2RdUyjOkOh1ckyjAeyQ/kacIr5sr2NhbxkQ2kQdtopO2PAEcFS3w
-	 hJWgfZ2Ed/T8PIE8/sB4HS0lGCSTTQUcYqkrTgS9c1KLFSuWUqpXFg5xwALLPrawkZ
-	 chsucr5YkzUdfkryMfqJ1gpp1sc8xR0X6ylaDsMOv9lkqXwTnimWbGWYHwpCxfyYcm
-	 o2Wpm3tUkVwuQg4JRlyORuFGqAkmOGPT8g4VJ9YckyPEsq0Li/zaKehzcc1A1+ZMr/
-	 sTpKuXIUEYwDw==
-Message-ID: <b2f06313-124f-41ef-bd53-2484140ca0b1@kernel.org>
-Date: Thu, 9 Oct 2025 19:53:53 +0900
+	s=k20201202; t=1760007260;
+	bh=AH1YWT1PmOpsxR4ljF1m4JmyHPJPRdfWYF5LAjqppjw=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=VAsm0dUSNHW40Z/IpV8gBFAUZiPhVDvQdry5/iL2Oqcij++VpcnbL8hMjX2Hoh54r
+	 T/oNTHWzERv3bHNiUNtie7g2JHBHv+HjJ7BHjUB213QvJ4ZIW+4JMQj0LnDvYwQxyf
+	 QDzeYvRUwE1QF5drm+g8MC0LZe0ezKQeLDNtUXRG6w5jEUPOpAs35RMMUZgZrQonip
+	 NvXKng0CyvgbUH4OeresLk71/wPEXQ+pqETrpVuDbSgcP/Z9ZulPM9Tk5goMt3pEvM
+	 iR7VqO8Vfi1BZ2COOzRWFdUZgKsYCVyPYYexz2p8h6VdMzPhcUAaIwNvBthl4k4NrI
+	 Un7GJuUX+coEQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F76FCCD183;
+	Thu,  9 Oct 2025 10:54:20 +0000 (UTC)
+From: Maud Spierings via B4 Relay <devnull+maudspierings.gocontroll.com@kernel.org>
+Subject: [PATCH 0/5] arm64: dts: freescale: add support for the GOcontroll
+ Moduline IV/Mini
+Date: Thu, 09 Oct 2025 12:54:16 +0200
+Message-Id: <20251009-mini_iv-v1-0-f3889c492457@gocontroll.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: mailbox: qcom: Add CPUCP mailbox controller
- bindings for Kaanapali
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
- Sibi Sankar <quic_sibis@quicinc.com>, Jassi Brar <jassisinghbrar@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
- tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
- yijie.yang@oss.qualcomm.com
-References: <20250924-knp-cpufreq-v1-1-1bda16702bb1@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250924-knp-cpufreq-v1-1-1bda16702bb1@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFiU52gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDAwNL3dzMvMz4zDLdRAPTVNNko2RDIyNjJaDqgqLUtMwKsEnRsbW1AA1
+ gqCRZAAAA
+X-Change-ID: 20251009-mini_iv-a05e5c2c1223
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ Maud Spierings <maudspierings@gocontroll.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760007259; l=1210;
+ i=maudspierings@gocontroll.com; s=20250214; h=from:subject:message-id;
+ bh=AH1YWT1PmOpsxR4ljF1m4JmyHPJPRdfWYF5LAjqppjw=;
+ b=cBmGj7Wqbc/xkjDIXBHq1BeswMYmO+gRfkT82CTX4YzTxUswkiR/3SzGkj0EaLLjOEdiluSQS
+ oIPsQDCYFNfAcq4xre8PD+0SBdcfQDubafa3oXaTWbr6FRGhUXT026R
+X-Developer-Key: i=maudspierings@gocontroll.com; a=ed25519;
+ pk=7chUb8XpaTQDvWhzTdHC0YPMkTDloELEC7q94tOUyPg=
+X-Endpoint-Received: by B4 Relay for maudspierings@gocontroll.com/20250214
+ with auth_id=341
+X-Original-From: Maud Spierings <maudspierings@gocontroll.com>
+Reply-To: maudspierings@gocontroll.com
 
-On 25/09/2025 08:23, Jingyi Wang wrote:
-> Document CPUSS Control Processor (CPUCP) mailbox controller for Qualcomm
-> Kaanapali, which is compatible with X1E80100, use fallback to indicate
-> this.
-> 
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> ---
->  Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml b/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
-> index f7342d04beec..6f72f78e4b72 100644
-> --- a/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
-> +++ b/Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
-> @@ -15,8 +15,13 @@ description:
->  
->  properties:
->    compatible:
-> -    items:
-> -      - const: qcom,x1e80100-cpucp-mbox
-> +    oneOf:
+Add initial support for the Moduline IV and Moduline Mini embedded
+controllers.
 
-No, you send conflicting work with Glymur. Just send ONE PATCH.
+These systems are powered by the Ka-Ro Electronics tx8m-1610 COM, which
+features an imx8mm SoC.
+
+Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+---
+Maud Spierings (5):
+      dt-bindings: arm: fsl: Add GOcontroll Moduline IV/Mini
+      arm64: dts: imx8mm: Add pinctrl config definitions
+      arm64: dts: freescale: add Ka-Ro Electronics tx8m-1610 COM
+      arm64: dts: freescale: Add the GOcontroll Moduline IV
+      arm64: dts: freescale: Add the GOcontroll Moduline Mini
+
+ Documentation/devicetree/bindings/arm/fsl.yaml     |   2 +
+ arch/arm64/boot/dts/freescale/Makefile             |   3 +
+ arch/arm64/boot/dts/freescale/imx8mm-pinfunc.h     |  33 +
+ .../imx8mm-tx8m-1610-moduline-iv-306-d.dts         | 801 +++++++++++++++++++++
+ .../imx8mm-tx8m-1610-moduline-mini-111.dts         | 691 ++++++++++++++++++
+ .../arm64/boot/dts/freescale/imx8mm-tx8m-1610.dtsi | 562 +++++++++++++++
+ 6 files changed, 2092 insertions(+)
+---
+base-commit: 7c3ba4249a3604477ea9c077e10089ba7ddcaa03
+change-id: 20251009-mini_iv-a05e5c2c1223
 
 Best regards,
-Krzysztof
+-- 
+Maud Spierings <maudspierings@gocontroll.com>
+
+
 
