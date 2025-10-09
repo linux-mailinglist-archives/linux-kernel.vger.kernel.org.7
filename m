@@ -1,135 +1,137 @@
-Return-Path: <linux-kernel+bounces-846273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF249BC7726
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 07:38:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B1ADBC7732
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 07:39:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 72FB84F1A0C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 05:38:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9256E4F32C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 05:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614A72609EE;
-	Thu,  9 Oct 2025 05:38:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11EB262FC1;
+	Thu,  9 Oct 2025 05:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dkzeH1cY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GgwPnMC/"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0321DF75D
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 05:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EEA82609E3
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 05:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759988302; cv=none; b=uP6j+xS1XreqZUgxS4RFJRGTGgt6uSSzRfs7xiMTtmTt1kxWS+iHQ7npHHCU6FUAtivDmmw3YJhGuqDUqAV85Ruv/S3EPJs/6CPdMbhpNQU2Xi59fF/AASwCg4PwgBumDXFVI/NR+DMNoB4/4a1MXA/Rd5dtffgt5vDFVRafU00=
+	t=1759988329; cv=none; b=WDG5L9ZNqm3nCVsxStCI78Bgf+rhED3F8Enp0c649Mw5CpjzteXz303MzYIKzLxYzq6isZ2CmRlRF6vJcifezPvghwxqJRya785bmTbNJvj0aZKtf5s2xc1vcylQz6EsHfKCQt/YPfEROyybYQ/OSVacKwXpQDVLJQU9Dfdzdtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759988302; c=relaxed/simple;
-	bh=xJjynxUyu/EH6gdZjZpUbNxIfveXGxgSA+7Tcn6hZNc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=trMS/aps6zX0nAnbEBaCd8iBPleTxuC69xbSC7Kqr3sBklBnfOdI3lHZYF3j4QbvBaVQwtfk1IuUwKR2EXyDSkAM3xNUUUdb9GsxtyRBWM51sEtR+yvYIsdLsuifYXGQU/9LrrM5SMnmlDzjQNA8eK5I90j560Gr+zLbEPO9KdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dkzeH1cY; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759988300;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eWTa/TuKH4Av9RX0s6HhLEo/QEtIUV4RKh28VuFqaMs=;
-	b=dkzeH1cYreKx7TbEWR7h3PwSJeskKkclpJDx7B1Obvv7mPKDOdYOI25NGjAsVYGxdqHHuR
-	jebkOHbVj4YLHOu55sRkLnzJRHhia6yuVc090rIcN5+Ml1Lwv2bN9RhRmhAHIkaqlwssMK
-	qF6MfWyL9MLhvUzEmW/NjeAbS9Ywd2Q=
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com
- [209.85.215.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-509-R3gy54J8OOSuIImWQX-KpA-1; Thu, 09 Oct 2025 01:38:18 -0400
-X-MC-Unique: R3gy54J8OOSuIImWQX-KpA-1
-X-Mimecast-MFC-AGG-ID: R3gy54J8OOSuIImWQX-KpA_1759988298
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b57c2371182so906000a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 22:38:18 -0700 (PDT)
+	s=arc-20240116; t=1759988329; c=relaxed/simple;
+	bh=npR5+hdrCx438MidrYA4MYFDxbFLQwa9+iFgs/BnSQY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=krgLCAnuqusZj24lSb+h7+dBWq+vzMlVtUoq7USlE1Ms+kTxsEiwQJXOHCZn3wCQaTWV5AgBHaC2ztuoVvaN5HVZVexAE2b3Su5wY3Prbw1g8GoldGBc3VnuLnt2SsPQ+7Egajw0MmlTeS9lCcYMXdhSzvgJN3Q73rD8oEJUijY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GgwPnMC/; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-78125ed4052so670179b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 22:38:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759988327; x=1760593127; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aKbCLdA0D3ZyyrFcf4HmlfoknTM5HGR4JdTF6XUV7wY=;
+        b=GgwPnMC/5b7I4MiftvL4t9BJjpH5GOyIo74rEteiiesxPSVrFENSx1m83eXCLspkM7
+         w7p/dXj55rMPH8icSGq1nUZS4W6wWsEGGS+j9X69BMDOE/HvZbNlDDiPX3wJgbXBU1pg
+         3mz1E6auBbLHqkmvbMz8WEOcTeDtYK4zJN524dONEf18ZNprdbFrucgaf5GZ7YBRT+1e
+         LATpWP3xvoWk5MI+QaeQvKhdhjuFQMhzd08g+o/AUrXPviPyH8Cas/eShcKXxNEAB8vW
+         GHvtk3rNFJFR5xdzL9UX5dfhJaHPjaYFQF6fAM+1h55M5q8tsMsLMHRnfvXFfw13/z0f
+         8ZZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759988297; x=1760593097;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eWTa/TuKH4Av9RX0s6HhLEo/QEtIUV4RKh28VuFqaMs=;
-        b=DZsQga1r0/41GdFxI5LRMdOVapTXP2meJfD8v6m+c7dwu4HZx42+a5wxrXzk3vsHeP
-         OMdC8o3qG67u0qQQsDNKOGzDn4QzLiJJPgJqxe0lXMDjkBzU7s/CXbqN+JUECNx738Mk
-         HdchJDjGGfdTqJYEKGiXKFM3iUbE/t0DSqCWtecuuXd4D7L+RdkqyvWXxONTjMeimTp/
-         RpUCNIv33K6zwNHDU9GcBMX93Ro4Rlhj92KBwe8h9RXvuiemJUqM4q4q9DTt3pGGX+wx
-         8jZ7jl6iBr3G47hnZKV5btZC1kXdVrEjU6v1WDTgaPBYe3CHEK7jdDSrGRPeyJZ37zep
-         HxtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXOWbvAKJp2+LA1gRYebn5d9S2EtDAHciPYS2SbXz+PY4PWGHK2N1nmQ0l68bLsqXSiSHe+5EreKtVFtf0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywc/bcoPmNsr4U5jbIKle62hCjvzhCNGchWPZgyRJEQ/sgKW/0q
-	xrJtljFk9KtzETH+rBnRRs26gHkiL6t5EgNfb+wDKroI7Dolis6dFFGPRPkURtCnBz5czJxBSeP
-	zh8MXu48hStQxTR2Yn6nLmvMA8InSn4qOQGFSy208nukJ01QSz0hU4lK/CXBFdiYqIACXwLMjMi
-	DEyqrdHE4WVfVlqjBKQGEVgJjzkeeoetn8N25vqNlv
-X-Gm-Gg: ASbGncsDbMfkQpJXtYHS7KrBA5AV0stJdDyButYqcJNsvPrsgp29iAN1F4KzHQ1NUs9
-	Z2gMAjbgb5MIPwLaetY0qmFxz7jAlJkhW+DlfbK7Kl7K6pXPHoqW/AwS93MgaCvE7jSBH+rkFKP
-	mAdlUkuepO0dFxX06DEIduXlusib4=
-X-Received: by 2002:a05:6a21:e081:b0:2d3:8d14:7fad with SMTP id adf61e73a8af0-32da814fd31mr7953244637.27.1759988297621;
-        Wed, 08 Oct 2025 22:38:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF/+jT86H6pFu5z2IW0huX/mcSDC4LtmUAbOMb6joX2RFToDjfDTugADgLQsNq+Cc9wybU4k9PQ7wRVrcDmTQU=
-X-Received: by 2002:a05:6a21:e081:b0:2d3:8d14:7fad with SMTP id
- adf61e73a8af0-32da814fd31mr7953208637.27.1759988297157; Wed, 08 Oct 2025
- 22:38:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759988327; x=1760593127;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aKbCLdA0D3ZyyrFcf4HmlfoknTM5HGR4JdTF6XUV7wY=;
+        b=ZrOE2CYs38LKXVdZcD6idUqhZZcfUyo1wYAzXCadwXm5Fbbqp3oMyoZk2t2fJWb1Su
+         G6TxMvNsZSRkgK0OE9gNtzp/2k3dkBexhOmQgkOQKwIkkAypPqMGNZ2FfqcZfP7gp8/D
+         D0k8D+K5VlZ7iSD8sdyMv76772OURDXaoux35tKTzHmXkIYLMlH8Va48fAHovBhCEOC8
+         vY1g+MqrxQHqRStkKO+NhmlDd4/0ozH38fxSHM8OX/ahTNZjecYM8rLAc2Ou6OGF55j3
+         SNIIAx19o5d3amPsiP28T1xLNmyXrzgy5ngk8DKvXEdCPWxpDEY+9ouI4anZQKb95B4V
+         D9mw==
+X-Forwarded-Encrypted: i=1; AJvYcCXXyU8aqvXdmRIh2nDnNkdfQOzlCT7OOtGUxmEGuKTj+TX99E7l/yThoMuspIj23p3qiLt30p8t7magkLA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywsuj1ZyNEHj5QamUFuzQBqD6F+1Jfe3d/Isez3xzrZN1GcPBBa
+	6WbvUQvh28DNSJVSoBfb3HA+pyiOGzqXqXqW6AXCizjlH/2onPsYXZaN
+X-Gm-Gg: ASbGncu2/o+20E5exIfFEnbU8m44Z/ZGpQu5mUwkXe8dgoOFVrXe3y2a1gENhL2Cjyr
+	ZcZ1jgbgBXoMUwSg4rsX/Hjf5ZwLkll+V1MWfaFXoenJf4GBruNLdeMhIZhjcBAlUMfNymJlwy5
+	plNSdKm7hrJc1ZwAPqtdjJgvswbE16KbsJ7j2JDQt6fwiRoEX6VCwNri67vAZ9zTZmQG2Q2VYaK
+	pWRA3ocgwtFcblxhByqaUGn34DYI0g3FZvMn3kgEuhEmBezEj8B4Vj7jwSSThELF5BxFhtYkIGp
+	Q35fWrh7E/T5qVucNFF3KLH24HsQjsYP0vkI3ivW/ToYUaTlwp/wuzkNBYV/aq3n2kajmH0bfo8
+	dezWKkTIo6YXsA0EjxGCtf0YZZDtsUbK8hKcPyef+z6YlgOHjgxyuHcZeALipBM3IaYM=
+X-Google-Smtp-Source: AGHT+IHZ44y6ZFCxVyEDZOYJddPo2NG2UBmtyjURIoIIViVofpipLRjydPLmmlTTcL3OK6IoivH0yg==
+X-Received: by 2002:a05:6a21:33a8:b0:32b:70a3:afea with SMTP id adf61e73a8af0-32da80da519mr8783258637.3.1759988326785;
+        Wed, 08 Oct 2025 22:38:46 -0700 (PDT)
+Received: from [10.0.2.15] ([14.98.178.155])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b51113776sm5508816a91.14.2025.10.08.22.38.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Oct 2025 22:38:46 -0700 (PDT)
+Message-ID: <5fe7d13e-e608-48a7-8205-514c461a145d@gmail.com>
+Date: Thu, 9 Oct 2025 11:08:40 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251005181232.3320977-1-alok.a.tiwari@oracle.com>
-In-Reply-To: <20251005181232.3320977-1-alok.a.tiwari@oracle.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Thu, 9 Oct 2025 13:38:05 +0800
-X-Gm-Features: AS18NWC3EQFtQ3ql8i-tEQy41dxRQwOdJk9C0vzba7wnIt93KviO7yYi2ydIbX0
-Message-ID: <CACGkMEux7-Xe3PrGpneJ3ynowEjYnEjxB5f+OV9RWvS-aRfy0w@mail.gmail.com>
-Subject: Re: [PATCH v2] virtio_vdpa: fix misleading return in void function
-To: Alok Tiwari <alok.a.tiwari@oracle.com>
-Cc: eperezma@redhat.com, mst@redhat.com, xuanzhuo@linux.alibaba.com, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net: usb: lan78xx: Fix lost EEPROM write timeout
+ error(-ETIMEDOUT) in lan78xx_write_raw_eeprom
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Thangaraj Samynathan <Thangaraj.S@microchip.com>,
+ Rengarajan Sundararajan <Rengarajan.S@microchip.com>,
+ UNGLinuxDriver@microchip.com, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Oleksij Rempel <o.rempel@pengutronix.de>,
+ khalid@kernel.org, linux-kernel-mentees@lists.linuxfoundation.org,
+ skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
+ netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251004040722.82882-1-bhanuseshukumar@gmail.com>
+ <2025100407-devalue-overarch-afe0@gregkh>
+Content-Language: en-US
+From: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+In-Reply-To: <2025100407-devalue-overarch-afe0@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 6, 2025 at 2:12=E2=80=AFAM Alok Tiwari <alok.a.tiwari@oracle.co=
-m> wrote:
->
-> virtio_vdpa_set_status() is declared as returning void, but it used
-> "return vdpa_set_status()" Since vdpa_set_status() also returns
-> void, the return statement is unnecessary and misleading.
-> Remove it.
->
-> Fixes: c043b4a8cf3b ("virtio: introduce a vDPA based transport")
-> Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
-> ---
-> v1 -> v2
-> added fixes tag
-> ---
->  drivers/virtio/virtio_vdpa.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/virtio/virtio_vdpa.c b/drivers/virtio/virtio_vdpa.c
-> index 657b07a60788..1abecaf76465 100644
-> --- a/drivers/virtio/virtio_vdpa.c
-> +++ b/drivers/virtio/virtio_vdpa.c
-> @@ -80,7 +80,7 @@ static void virtio_vdpa_set_status(struct virtio_device=
- *vdev, u8 status)
->  {
->         struct vdpa_device *vdpa =3D vd_get_vdpa(vdev);
->
-> -       return vdpa_set_status(vdpa, status);
-> +       vdpa_set_status(vdpa, status);
->  }
->
->  static void virtio_vdpa_reset(struct virtio_device *vdev)
-> --
-> 2.50.1
->
+On 04/10/25 11:21, Greg KH wrote:
+> Hi,
+> 
+> This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+> a patch that has triggered this response.  He used to manually respond
+> to these common problems, but in order to save his sanity (he kept
+> writing the same thing over and over, yet to different people), I was
+> created.  Hopefully you will not take offence and will fix the problem
+> in your patch and resubmit it so that it can be accepted into the Linux
+> kernel tree.
+> 
+> You are receiving this message because of the following common error(s)
+> as indicated below:
+> 
+> - You have marked a patch with a "Fixes:" tag for a commit that is in an
+>   older released kernel, yet you do not have a cc: stable line in the
+>   signed-off-by area at all, which means that the patch will not be
+>   applied to any older kernel releases.  To properly fix this, please
+>   follow the documented rules in the
+>   Documentation/process/stable-kernel-rules.rst file for how to resolve
+>   this.
+> 
 
-Acked-by: Jason Wang <jasowang@redhat.com>
+Hi,
 
-Thanks
+Sent a v2 with cc: stable tag.
+v2 Link https://lore.kernel.org/all/20251009053009.5427-1-bhanuseshukumar@gmail.com/
+
+Regards,
+Bhanu Seshu Kumar Valluri
+
 
 
