@@ -1,256 +1,180 @@
-Return-Path: <linux-kernel+bounces-846673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37039BC8B1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:06:38 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E71FEBC8B26
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:06:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8C1C235301C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:06:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F33D74F184E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AEF12DFF33;
-	Thu,  9 Oct 2025 11:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E58E2E0920;
+	Thu,  9 Oct 2025 11:06:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EImXM8gj"
-Received: from mail-pj1-f68.google.com (mail-pj1-f68.google.com [209.85.216.68])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MbSv1zCz"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0E31E503D
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 11:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8AB72DEA72
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 11:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760007990; cv=none; b=e4qPP5FHUsADS6qkXzaRJZce68PPUnAo1NnJB+jKs9nIdn6wtnCv+Ce3GwDzb70/Jq6hWJctPZFGNaFPDMql8gp7pR9um/WF7pMOwZh/Srxi6gQ/7VGR8B5OY0R2Oe/nEGVh1BXFWb1skzOcSL7+gzBRnzRtG593bIAiUoyjlmw=
+	t=1760007991; cv=none; b=fCbqx9oPfYApREgF6++Grrqnm4R7UJRkmzYHnTE+Z5KQ9rH/KY8oIkhzzJo4/CJnGK77/fhNtvzmQV5jXWT6xcvUVziCikXnB+0g2n3X2iIT7lXoxRV1VFvp4l6cRK+mYs+W/AfEd7UwlvkU9NsENjRue7bPWlfNSCe1tuiKEjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760007990; c=relaxed/simple;
-	bh=4019sHdt1ppywB7KuVCM4qPsAA8CYsCpMl8vDwO/dqQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T+mXIFyp4qB85dFUO8I8miolAYOb3NSo3cMfYYrZvx0NK4RSkRbO3SeQFIJgPRLLSCeVtu8OsGUUTGDqEt/4uMhoBHtt7paI1r2xLKPMlQX+Os4JMSh+X5oKImDrRnsS3JBVkc2Ec9JJjbQoMLEONk3KAXfIbjedtcimcbqPc+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EImXM8gj; arc=none smtp.client-ip=209.85.216.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f68.google.com with SMTP id 98e67ed59e1d1-32ecc50f573so186214a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 04:06:28 -0700 (PDT)
+	s=arc-20240116; t=1760007991; c=relaxed/simple;
+	bh=e+J/tiye5mRAK/FZkIReamJjbpURV3VmdmtPDcVSuXg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M/AlnUZ05fzdgePsnHkfU2qKI/k5zTxuWeqzV4bNYznKWU+esyF9bGej7QD/NyL6c2l8qBFt1Je9KO48VfL1KzXzYqWE3/9cG16F6O59fl52NK0iHQQREnTGkm9Ro2RroTcZbi1VamQFzE4B4gYafOk8BQmzK43yEehSKjcmmp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MbSv1zCz; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-46e2c3b6d4cso5706965e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 04:06:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760007988; x=1760612788; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z7WvQ1lRZvaAgyHD3mjKbF3FMdanug0QiqVEdNsY/yo=;
-        b=EImXM8gjbz2A33y1K5LM4l11rsBrWub3tl+yfwWC5bXHNSc+tZXHc0V/cbiqRc4R+W
-         4XF//dBoize0EtCBVb2VZ/c+fDkMcpC8QS0Gkqap0RfofJHdRYg5Fhm951JhXQ0wq6kg
-         3ywNQUIdTxwlJ/BuPF0ztZ+5jyxeHXJqru/ahxYAH7/Uw7ITHBDZlHD/Dq99ooA+Q8C0
-         Z26KoeuNXwyScCougo3LLNkrHyjFGpvOBAN8ruIMkyU2IibcNgWnKo1U+aU082/SU6mS
-         POPAi9Chx61rWDDEApur7M86HcvN4l6QH4MUjH8eNRKwS6ba/9Dbb8SHgtMaBKAVN30H
-         VsSQ==
+        d=linaro.org; s=google; t=1760007988; x=1760612788; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QTLqI8rxOdYS+w1Ui92U5vAm+VjLT7vBGUB8kjwj7vI=;
+        b=MbSv1zCz3Ozmfi0LhPthtBhKt97y5ZdtChOjh5fBKYYytDP+R7YeQOT+weksMIaYTw
+         N130IVFLTpfTWalrbjrqxq3eEdyjewG+pZQA88Yc10QJNCWFGAIFuGvQOTcbRXEpQwI3
+         Lihr2dXTMdHfGkET7UmKPsrIwOgmWlIf2OD9JzNeyd546SvqOYPIG5uvgY+KWu2Yef2a
+         lPB9/3AQqe+juwgu68Td+KwjdrULhOH9pZTTlcCfHM2hyK4LCcJyJ72WzZQBC5OQbE/W
+         j731H8u4PEEEzVOaiim6dTdIFwfYsOh6pjqmoaZRgfTQqodBq0VxAJJ5OsLfa2lnuVJq
+         qqJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1760007988; x=1760612788;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Z7WvQ1lRZvaAgyHD3mjKbF3FMdanug0QiqVEdNsY/yo=;
-        b=xNxHrGof5vywspIu7A0IVK6VAWTrvaAfmP53ByiXruPVgCqrcWAtIxdcnCu2fXgCT0
-         dmcAqGvkmsaQOjDzJ0NDSmoAG5SWzrS2+EH4Lnymc8zeRL8c8Lsw4Qa1b3xbqSER2erM
-         ogrstTVyq95OhaepuExorARA6VHgsw1MxpsS6UKvafqNgS1uGJYYw4J8aPjRO9l92nNo
-         OtPrW11XUPworWEWbsDfGFGNXcvDHCHKSpV9ZujTh1bkizjvVUwIiKhrYcJaBNR5bY2I
-         62TENcLMaLMt61MCazhIcLocHO8o4vvL6kiiGGX50Fczmt0PBLwFMRLh8W3TLFxg3BBE
-         PccA==
-X-Forwarded-Encrypted: i=1; AJvYcCWzmJzjrbUYIx8mbDEabILV9GRPXmTRuJOC8DtS91U7uMjy6C03qv88Rf2p49CXfgb58Kg4C5mHI75f988=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5eMjPePxyUmGVNn3CLJeh8i6j1KMtvwaLhstOvf4Y2kPWqUrZ
-	mP58PLe1WEhRfR8joOYGOIu418oXNa+yM3HufXXENHgDHU8Ldl9GeW9+
-X-Gm-Gg: ASbGncv06VRXfAzlTDjba03Jd26m48WAdo+TzQgvr/wGNjRmeyLoxb8NdD7yvDPivBh
-	rp/9cSjd9lPQTog71aD/CRNR6iw72Pd/TWHXcpzNb2uekc9iKWxvpK4EMl+oFP9YpwF23QUTrc8
-	KxZX7Lo3KxQF2i09hYmuzZzzd5svVqKiEZR2ZvpSsd3j0K3p1Yr5Slw0sZN3toJSu7zwjwLhVFk
-	poX+95YBtz/HxEmndg3tXrCx5sY8zHTcPQeE3lSCu+tbXOpby/VIiz5Oc5xYF5zz0t8V4+gBeH2
-	Vb/bdLPVp+1PgGfhHRD2+W19f/QeblOFGBOu98KNzTS70ax+HL4dr9H7CAMe2on5HKKUm7saQDY
-	p9d0dWAvCfaz/UbPAvBZyPTLWvdTvGl3Lh7OKZkSJdHx9odM=
-X-Google-Smtp-Source: AGHT+IGSwQwv+DWm4fZTGnL1m8RsvGOG+CnnXuES1p83dQ0sn1NZ9Z72M1jNOXsaIKJ7wWyoYpo9dA==
-X-Received: by 2002:a17:90b:1b42:b0:32e:64ca:e849 with SMTP id 98e67ed59e1d1-33b513990d5mr4618313a91.8.1760007988258;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QTLqI8rxOdYS+w1Ui92U5vAm+VjLT7vBGUB8kjwj7vI=;
+        b=qs+cb4MzgTHqiGGoAms3E2oismCluHGEJSrQnd+QJLmldqFiOOJ6BztwEdxZ89Gh7W
+         Cv6tG3cKnIxqrO/+r8ADJ3Ryq8jApqyZ6GqcH7AD5ImSxst5X0/7k0qgYexhrlP68yGp
+         0GgMzVzelUOPD9iueIlHO0j4ooYOiIYef5r4n27f1jeEHjBiAYc2XRcH5mhsoESlCe92
+         /1wGBDJnW9aehA2eVm3VnWZuL74ghGOdz4Qe4NHaghyBAVSxFAAk4kkY7M7WJvqCU3vl
+         mmVOoUbHewlRrY+pRt1yaerU0TMEpwOrnZBXWIRoKG6NkhzsRSsyV5jYs1pHEoFQe88o
+         xVJw==
+X-Forwarded-Encrypted: i=1; AJvYcCW15geae6iATr4b0A378dPupMCGkwjSpT0QifR6OX4uCWw7TEOvDnwJ+Wdt0U1sJk/++5g1zvorf95XQAk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5uLliORgbnQ1GZJ189CAW0tGrx8aPbuhIhWRfwk2U5lNm2l0W
+	BoS4cSY5PVKrfvZMsM5eMCfpR9utx4pFpUuOUWi5LICCNZcjAeCOfZpuMVMX8sIdwXo=
+X-Gm-Gg: ASbGncsaWYBWFwFEKj9Wxi5/vMZjhOvh5q3+cOnZF5JC4UxLj1KUswnzrW3cpUOEst2
+	I1vX5DHtUUFbhEs9qT57s67NZDvNnylWQ3XNho091Eshbu1tnaj0vTIDG0owlGoh+S63hIjhYET
+	q6YB+0lgVWBdDcTwrJo8xrQ5AZLnzzBJjynAADNdD1qAdgn1DTpl0ZIHLO9zVr8axDig26bLIY1
+	j8d6UCJzrG9hAqg4sBhDqdkFPb5SzXCCO2wRYMfI+1VDWCjM3sWDK5eIpbJt4V5knjucK8fbE6Y
+	DjA2oGCiLqr+QWxlN1QDg5+OqwQResik7551Ru4QZs90fJ05S4pUM9I8aLF6MEysMsDoGLozG8n
+	PiaEa88pWqAe62nbOasRVOG127Xt/3tlfMzM1orYmQ8rBJfLEfsf5nevbnPxANXPpovQ3PIoUE2
+	uZJV1Te+NlVjyS0csE
+X-Google-Smtp-Source: AGHT+IFYJmAYAugMFGROqR67bT/ub4cesGuFD0FYj+fBxCLxvJVqCchCUIgmAvmeFF5WvX92ukK23A==
+X-Received: by 2002:a05:600c:4ed4:b0:45d:d505:a1c3 with SMTP id 5b1f17b1804b1-46fa9b13b04mr41874535e9.37.1760007988060;
         Thu, 09 Oct 2025 04:06:28 -0700 (PDT)
-Received: from gm-arco.lan ([111.201.7.16])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b513926fesm6732041a91.21.2025.10.09.04.06.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+Received: from [192.168.0.13] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fab500706sm35212915e9.3.2025.10.09.04.06.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
         Thu, 09 Oct 2025 04:06:27 -0700 (PDT)
-From: "guangming.zhao" <giveme.gulu@gmail.com>
-To: miklos@szeredi.hu
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
-Date: Thu,  9 Oct 2025 19:06:23 +0800
-Message-ID: <20251009110623.3115511-1-giveme.gulu@gmail.com>
-X-Mailer: git-send-email 2.51.0
+Message-ID: <28baa5ce-c161-426a-b5df-1cd784489bb5@linaro.org>
+Date: Thu, 9 Oct 2025 12:06:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/5] Introduce "non-pixel" sub node within iris video
+ node
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>, Bryan O'Donoghue
+ <bod@kernel.org>, Charan Teja Kalla <charan.kalla@oss.qualcomm.com>,
+ Bryan O'Donoghue <bod.linux@nxsw.ie>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <7b6db4fa-2f73-376d-4eb3-64c1c7e6cda3@quicinc.com>
+ <1516f21e-aee3-42cf-b75e-61142dc9578d@oss.qualcomm.com>
+ <9bae595a-597e-46e6-8eb2-44424fe21db6@linaro.org>
+ <MMSKAu89Ew7StAeFBV442KfKNzmqbTSQ-maFG35Jr9d8PkUV2L4sx44R2DRevXA8mC45vkA398l2mvVzarZwew==@protonmail.internalid>
+ <bcfbf35b-69ed-4f39-8312-6a53123cd898@kernel.org>
+ <d46c0335-99d6-469f-a61f-aca4c851f745@kernel.org>
+ <GyrcG3qBN7c5C7ajCs3EV81hWvuaVbg64CpzQ-X3d_p6EauoiKxSoG2aOKE21-j12SWFjNDjV-kVSwYYqVm_lQ==@protonmail.internalid>
+ <a0dc93ec-e35c-409b-8dfb-1642c92a9f0c@kernel.org>
+ <98e6acf8-80d7-4894-b4ce-ce74660722ef@kernel.org>
+ <soFAWqHDNosrZui972Ip7EvMCfB6tepD-HxHkc17RKmilPJpQZjMzni9LmMOpvKumHqFEibe5FdNkkJG8DKlcw==@protonmail.internalid>
+ <5085c857-f6e8-4faf-b61a-a9ee562ccf06@kernel.org>
+ <7ba3953a-166f-4c67-8f54-666b0c488b12@kernel.org>
+ <e15f156c-cb38-4566-b275-ba156a7b598d@kernel.org>
+ <4fac8b52-180d-7b79-f0d9-52c0f94186da@quicinc.com>
+ <e8dfad82-ab07-40e9-9296-859168142611@kernel.org>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <e8dfad82-ab07-40e9-9296-859168142611@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The race occurs as follows:
-1. A write operation locks a page, fills it with new data, marks it
-   Uptodate, and then immediately unlocks it within fuse_fill_write_pages().
-2. This opens a window before the new data is sent to the userspace daemon.
-3. A concurrent read operation for the same page may decide to re-validate
-   its cache from the daemon. The fuse_wait_on_page_writeback()
-   mechanism does not protect this synchronous writethrough path.
-4. The read request can be processed by the multi-threaded daemon *before*
-   the write request, causing it to reply with stale data from its backend.
-5. The read syscall returns this stale data to userspace, causing data
-   verification to fail.
+On 09/10/2025 11:45, Krzysztof Kozlowski wrote:
+> On 09/10/2025 19:40, Vikash Garodia wrote:
+>>
+>> On 10/9/2025 2:41 PM, Krzysztof Kozlowski wrote:
+>>> On 09/10/2025 17:38, Bryan O'Donoghue wrote:
+>>>> On 09/10/2025 02:04, Krzysztof Kozlowski wrote:
+>>>>>> The iommu description for this platform basically lacks the data that
+>>>>>> _should_ be there -> FUNCTION_ID.
+>>>>> No. The index tells that already.
+>>>>
+>>>> Hmm.
+>>>>>> The rule is that the DT should really describe the hardware right ?
+>>>>> It already does. Same as I wrote on IRC, DT already has all the
+>>>>> information. Entry 0 has function ID-foo. Entry 1 has function ID-bar.
+>>>>> Entry 2 has function ID-bar or whatever.
+>>>>
+>>>> That's the part I don't believe is true its a 1:Many relationship
+>>>> between FUNCTION_ID:SIDs
+>>>>
+>>>> Let me check the docs...
+>>>>
+>>>> Here's the example I gave on IRC for lore
+>>>>
+>>>> SID 0x1940 maps to AC_VM_HLOS (Linux)
+>>>> SID 0x1941 maps to AC_VM_CP_BITSTREAM - protected bitstream
+>>>> SID 0x1945 maps to AC_WM_CP_BITSTREAM
+>>>>
+>>>
+>>> I responded to this on IRC... Nothing proves here that 1:many cannot be
+>>> done.
+>>
+>> Kaanapali already has 1:Many relationship for FUNCTION_ID:SIDs.
+> 
+> Sun is a star. How is that related? I am not going to duplicate
+> arguments from IRC, especially to that pointless argument. Read again
+> discussion on IRC.
+> 
+> Best regards,
+> Krzysztof
 
-This can be reliably reproduced on a mainline kernel (e.g., 6.1.x)
-using iogen and a standard multi-threaded libfuse passthrough filesystem.
+But Krzysztof is it not the case DT should be a representation of the 
+real hardware and that this takes priority over established schema.
 
-Steps to Reproduce:
-1. Mount a libfuse passthrough filesystem (must be multi-threaded):
-   $ ./passthrough /path/to/mount_point
+There seems to be no other reason to keep SID in the DT and FUNCTION_ID 
+in driver meta-data except the schema already says X.
 
-2. Run the iogen/doio test from LTP (Linux Test Project) with mixed
-   read/write operations (example):
-   $ /path/to/ltp/iogen -N iogen01 -i 120s -s read,write 500k:/path/to/mount_point/file1 | \
-     /path/to/ltp/doio -N iogen01 -a -v -n 2 -k
+There are as I count it, 189 TCU SID mappings for Hamoa.
 
-3. A data comparison error similar to the following will be reported:
-   *** DATA COMPARISON ERROR ***
-   check_file(/path/to/mount_point/file1, ...) failed
-   expected bytes:  X:3091346:gm-arco:doio*X:3091346
-   actual bytes:    91346:gm-arco:doio*C:3091346:gm-
+So in the extreme case that means we have an iommu = <> for each of 
+those but then need a corresponding entry in a driver to map each SID to 
+its relevant FUNCTION_ID.
 
-The fix is to delay unlocking the page until after the data has been
-successfully sent to the daemon. This is achieved by moving the unlock
-logic from fuse_fill_write_pages() to the completion path of
-fuse_send_write_pages(), ensuring the page lock is held for the entire
-critical section and serializing the operations correctly.
+And do that over and over again for each new SoC.
 
-[Note for maintainers]
-This patch is created and tested against the 5.15 kernel. I have observed
-that recent kernels have migrated to using folios, and I am not confident
-in porting this fix to the new folio-based code myself.
+OTOH if we extend the iommu to include FUNCTION_ID then only the DT 
+changes - with the iommu setup code changing once to accommodate it.
 
-I am submitting this patch to clearly document the race condition and a
-proven fix on an older kernel, in the hope that a developer more
-familiar with the folio conversion can adapt it for the mainline tree.
-
-Signed-off-by: guangming.zhao <giveme.gulu@gmail.com>
 ---
-[root@gm-arco example]# uname -a
-Linux gm-arco 6.16.8-arch3-1 #1 SMP PREEMPT_DYNAMIC Mon, 22 Sep 2025 22:08:35 +0000 x86_64 GNU/Linux
-[root@gm-arco example]# ./passthrough /tmp/test/
-[root@gm-arco example]# mkdir /tmp/test/yy
-[root@gm-arco example]# /home/gm/code/ltp/testcases/kernel/fs/doio/iogen -N iogen01 -i 120s -s read,write 500b:/tmp/test/yy/kk1 1000b:/tmp/test/yy/kk2 | /home/gm/code/ltp/testcases/kernel/fs/doio/doio -N iogen01 -a -v -n 2 -k
-
-iogen(iogen01) starting up with the following:
-
-Out-pipe:              stdout
-Iterations:            120 seconds
-Seed:                  3091343
-Offset-Mode:           sequential
-Overlap Flag:          off
-Mintrans:              1           (1 blocks)
-Maxtrans:              131072      (256 blocks)
-O_RAW/O_SSD Multiple:  (Determined by device)
-Syscalls:              read write
-Aio completion types:  none
-Flags:                 buffered sync
-
-Test Files:
-
-Path                                          Length    iou   raw iou file
-                                              (bytes) (bytes) (bytes) type
------------------------------------------------------------------------------
-/tmp/test/yy/kk1                               256000       1     512 regular
-/tmp/test/yy/kk2                               512000       1     512 regular
-
-doio(iogen01) (3091346) 17:43:50
----------------------
-*** DATA COMPARISON ERROR ***
-check_file(/tmp/test/yy/kk2, 116844, 106653, X:3091346:gm-arco:doio*, 23, 0) failed
-
-Comparison fd is 3, with open flags 0
-Corrupt regions follow - unprintable chars are represented as '.'
------------------------------------------------------------------
-corrupt bytes starting at file offset 116844
-    1st 32 expected bytes:  X:3091346:gm-arco:doio*X:3091346
-    1st 32 actual bytes:    91346:gm-arco:doio*C:3091346:gm-
-Request number 13873
-syscall:  write(4, 02540107176414100, 106653)
-          fd 4 is file /tmp/test/yy/kk2 - open flags are 04010001
-          write done at file offset 116844 - pattern is X:3091346:gm-arco:doio*
-
-doio(iogen01) (3091344) 17:43:50
----------------------
-(parent) pid 3091346 exited because of data compare errors
-
- fs/fuse/file.c | 36 ++++++++++--------------------------
- 1 file changed, 10 insertions(+), 26 deletions(-)
-
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 5c5ed58d9..a832c3122 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -1098,7 +1098,6 @@ static ssize_t fuse_send_write_pages(struct fuse_io_args *ia,
- 	struct fuse_file *ff = file->private_data;
- 	struct fuse_mount *fm = ff->fm;
- 	unsigned int offset, i;
--	bool short_write;
- 	int err;
- 
- 	for (i = 0; i < ap->num_pages; i++)
-@@ -1113,26 +1112,21 @@ static ssize_t fuse_send_write_pages(struct fuse_io_args *ia,
- 	if (!err && ia->write.out.size > count)
- 		err = -EIO;
- 
--	short_write = ia->write.out.size < count;
- 	offset = ap->descs[0].offset;
- 	count = ia->write.out.size;
- 	for (i = 0; i < ap->num_pages; i++) {
- 		struct page *page = ap->pages[i];
- 
--		if (err) {
--			ClearPageUptodate(page);
--		} else {
--			if (count >= PAGE_SIZE - offset)
--				count -= PAGE_SIZE - offset;
--			else {
--				if (short_write)
--					ClearPageUptodate(page);
--				count = 0;
--			}
--			offset = 0;
--		}
--		if (ia->write.page_locked && (i == ap->num_pages - 1))
--			unlock_page(page);
-+        if (!err && !offset && count >= PAGE_SIZE)
-+            SetPageUptodate(page);
-+
-+        if (count > PAGE_SIZE - offset)
-+            count -= PAGE_SIZE - offset;
-+        else
-+            count = 0;
-+        offset = 0;
-+
-+        unlock_page(page);
- 		put_page(page);
- 	}
- 
-@@ -1195,16 +1189,6 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
- 		if (offset == PAGE_SIZE)
- 			offset = 0;
- 
--		/* If we copied full page, mark it uptodate */
--		if (tmp == PAGE_SIZE)
--			SetPageUptodate(page);
--
--		if (PageUptodate(page)) {
--			unlock_page(page);
--		} else {
--			ia->write.page_locked = true;
--			break;
--		}
- 		if (!fc->big_writes)
- 			break;
- 	} while (iov_iter_count(ii) && count < fc->max_write &&
--- 
-2.51.0
-
+bod
 
