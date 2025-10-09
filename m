@@ -1,128 +1,120 @@
-Return-Path: <linux-kernel+bounces-846587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF523BC86D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 12:13:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B696BC8720
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 12:20:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5D35189F7BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 10:13:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57A243C7801
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 10:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0282D9482;
-	Thu,  9 Oct 2025 10:13:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tnnv3eU4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB1931CCEE0;
+	Thu,  9 Oct 2025 10:19:52 +0000 (UTC)
+Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4FA5211A09;
-	Thu,  9 Oct 2025 10:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3829157487
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 10:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760004804; cv=none; b=LjDZ55VmV6QIcJzzhhKKwG+uOlDeISbtxOiOyXT1Elr14P15dfJWK6eS9tJWgrgvQddTmNSNqjyFGMUTmB4EjyMTrK4e8b7aZltkCFGIXRcqSozTuVlhxfeQhKVopyOudyLfYORxEYZOGvFmp8nYBPVpCyDyWmCnyGEFQ0kapZM=
+	t=1760005192; cv=none; b=CxQsCzzshPEJ2AbFzAhv+s4FvFz3Veu7ZL+EqQYFT3SFjOVcFGLFn/Nrd4WFKN0e2XuDSzFGmXYlrECtJrlLHvhXyLjQdsK8RbQ3M39eOEqiHOJAOHggvbgJE+8uP64Hoj+jHJovJANgWols9BL+JhFT5IXc/AyvnLQ9+n5ZXTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760004804; c=relaxed/simple;
-	bh=A21j6BI0oshVWixafoxwDpeBkRBj2xvnQviHZfLid2Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qNVmmUY6TaDkntL9zncSgwFm9nNzf1LSz258SLQj1FTSu7oyqPXX7mAKlvKBHyZDCBEcy9CdnTfGOYjkYVJqgVybRN9hDMEn71+r5Z/2CNQQj+SRDl11X4H8/I3LQT0voXa2tsw9JB0gjeW4EVgxZXH0OVpLvPX8DIlmkgvlT98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tnnv3eU4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62B4AC4CEE7;
-	Thu,  9 Oct 2025 10:13:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760004804;
-	bh=A21j6BI0oshVWixafoxwDpeBkRBj2xvnQviHZfLid2Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Tnnv3eU4N9kLuB1OI0d/dMZQLKXKdkuuETJEKZK2ix6CYAhWKKofU7oA0/iEy9jc9
-	 icwoiTjkylQWDMuqTRY7A4r7WTWfBsUtazTugWyXoKKTlPIRHat16u7O9Vjb6qcXB5
-	 MT0pVHtl5wua/qv15nAEMBxNt3YSjU/CQncYq6o/Bk8M0bfe5/tiyrhLPSp2Nr2jcj
-	 jolEu/88inxoWUqLAzFcrSnxykdV79BaOIXpXPga7z7sYvxNqMVTCty/Ymmyue1ag7
-	 USgYBQsPhJwb5oLu4cwdJzT1JQpCZy+GkfMsJRDpNWGRLUO/cD/xiAyfV/klHsuTtY
-	 /TDXFBsWrZ9vQ==
-Message-ID: <4a03bec1-34e2-444e-acb8-cae72dcbe6c2@kernel.org>
-Date: Thu, 9 Oct 2025 19:13:14 +0900
+	s=arc-20240116; t=1760005192; c=relaxed/simple;
+	bh=ohtR0oYn448oPLiSFOjbSqDaVglh/DTDY7LpHa0tRdE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XTZaNsJaPyojxpq8tTCj4iHltSfY60Ax9l2cHfW9f88oq830iRthZj5ujlVzSkk/wsoXqloXdMBnwiC1+HqgWlwrKjbUmnSQwIV6mCFrCS/qktxs5uy6U5929YX/BhQmU/xJDFyfPkY9M3VpWrgpIpkNN66peL17E48nzeg2LB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
+Received: from mail.andestech.com (ATCPCS34.andestech.com [10.0.1.134])
+	by Atcsqr.andestech.com with ESMTPS id 599AFpSq031528
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK);
+	Thu, 9 Oct 2025 18:15:51 +0800 (+08)
+	(envelope-from ben717@andestech.com)
+Received: from atctrx.andestech.com (10.0.15.173) by ATCPCS34.andestech.com
+ (10.0.1.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 9 Oct
+ 2025 18:15:51 +0800
+Date: Thu, 9 Oct 2025 18:15:51 +0800
+From: Ben Zong-You Xie <ben717@andestech.com>
+To: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>
+CC: <anup@brainfault.org>, <atish.patra@linux.dev>, <pjw@kernel.org>,
+        <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>, <alex@ghiti.fr>,
+        <liujingqi@lanxincomputing.com>, <kvm@vger.kernel.org>,
+        <kvm-riscv@lists.infradead.org>, <linux-riscv@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <tim609@andestech.com>,
+        Hui Min Mina Chou
+	<minachou@andestech.com>,
+        linux-riscv
+	<linux-riscv-bounces@lists.infradead.org>
+Subject: Re: [PATCH] RISC-V: KVM: flush VS-stage TLB after VCPU migration to
+ prevent stale entries
+Message-ID: <aOeLVwXW/sF4NBUJ@atctrx.andestech.com>
+References: <20251002033402.610651-1-ben717@andestech.com>
+ <DDDKX1VNCCVS.2KVYNU4WBEOVI@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH 1/2] dt-bindings: i2c: exynos5: add
- exynosautov920-hsi2c compatible
-To: Faraz Ata <faraz.ata@samsung.com>, andi.shyti@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- alim.akhtar@samsung.com
-Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org, rosa.pila@samsung.com, dev.tailor@samsung.com
-References: <CGME20251009101023epcas5p2de61d08e2d4a180bbcf2f2708d267336@epcas5p2.samsung.com>
- <20251009101911.2802433-1-faraz.ata@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251009101911.2802433-1-faraz.ata@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <DDDKX1VNCCVS.2KVYNU4WBEOVI@ventanamicro.com>
+User-Agent: Mutt/2.1.4 (2021-12-11)
+X-ClientProxiedBy: ATCPCS33.andestech.com (10.0.1.100) To
+ ATCPCS34.andestech.com (10.0.1.134)
+X-DKIM-Results: atcpcs34.andestech.com; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:Atcsqr.andestech.com 599AFpSq031528
 
-On 09/10/2025 19:19, Faraz Ata wrote:
-> Add "samsung,exynosautov920-hsi2c" dedicated compatible for
-> HSI2C found in ExynosAutov920 SoC.
+Hi Radim,
+
+Thanks for the review and the detailed comments.
+
+> What RISC-V implementation are you using?  (And does the implementation
+> have the same memory access performance in V=0 and V=1 modes, even
+> though the latter has two levels of TLBs?)
 > 
-> Signed-off-by: Faraz Ata <faraz.ata@samsung.com>
-> ---
-> Note: This patch was previously sent separately. Resending now as part of a
-> two-patch series to avoid dt-binding check error. No functional changes from the earlier submission[1]
 
-It's not necessary. You only need to provide lore link to bindings in
-patch changelog. Read carefully report you received.
+The issue is found when validating our new AndesCore AX66.
+The address translation performance is the same for U and VU-mode when the uTLB is hit.
 
-Also, do not resend non-fix patches during merge window. It's just noise.
+> > To fix this, kvm_riscv_gstage_vmid_sanitize() is extended to flush both
+> > G-stage and VS-stage TLBs whenever a VCPU migrates to a different Host CPU.
+> > This ensures that no stale VS-stage mappings remain after VCPU migration.
+> >
+> > Fixes: b79bf2025dbc ("RISC-V: KVM: Rename and move kvm_riscv_local_tlb_sanitize()")
+> 
+> b79bf2025dbc does not change behavior.
+> The bug must have been introduced earlier.
+> 
 
+Will fix the incorrect Fixes tag in the next version.
+Thanks for pointing that out, we'll change to the following:
+
+    Fixes: 92e450507d56 ("RISC-V: KVM: Cleanup stale TLB entries when host CPU changes")
+
+> > Signed-off-by: Hui Min Mina Chou <minachou@andestech.com>
+> > Signed-off-by: Ben Zong-You Xie <ben717@andestech.com>
+> > ---
+> > diff --git a/arch/riscv/kvm/vmid.c b/arch/riscv/kvm/vmid.c
+> > @@ -146,4 +146,10 @@ void kvm_riscv_gstage_vmid_sanitize(struct kvm_vcpu *vcpu)
+> 
+> The function is now doing more that sanitizing gstage.
+> Maybe we can again call it kvm_riscv_local_tlb_sanitize()?
+> 
+
+As for the naming, your suggestion makes sense.
+We’re also considering whether it should be moved back from vmid.c to tlb.c,
+and we’d like to hear other maintainers’ opinions before doing so.
+
+Thanks again for your feedback.
 
 Best regards,
-Krzysztof
+Ben
 
