@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-846175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC2F9BC7323
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 04:25:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63568BC732F
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 04:31:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6AF304E8B37
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 02:25:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7CEC1898B73
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 02:31:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F1E1A0B15;
-	Thu,  9 Oct 2025 02:25:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523A019D8BC;
+	Thu,  9 Oct 2025 02:31:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kUoRsDNy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I1rvve7h"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81441C2EA
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 02:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99AC34BA3C;
+	Thu,  9 Oct 2025 02:31:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759976728; cv=none; b=XjPFc73NvhyU6p8r1zeyzNSM/3h0bdC9cEo3dH2he09kOehvUIvIJgn26m7zXjJl2v9sA11h3Zyb7eCmEJQoQeMUzrkcf2BgHZ3i75Q657OB1reSig05VZNOJTc9HPfikGU9Xhz4sK4wkm8FZoLEmOFRcXnq+vh37jv0Bo1zeEE=
+	t=1759977078; cv=none; b=pqpWiki8+9UtnGJG+88/+qqdghUiF6kF3NyY0LCZT1r0ZuESD2QldVpwaBqdkXFadr4+ejUgJ7XK7t00wLhGrJMAtG0EGczeG5lzlwSpub2qrfe61r6FVWw3WFIGzeoEtkdeNhRf6q5EA4DQIhAU3fowNRRJXY6dK8POktQ2TlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759976728; c=relaxed/simple;
-	bh=vTHUzqFcW/mNj3h30ZYRTuoryqWPNMypz+oxpm5+J2Q=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=UnZFVOPrW1q1tr4Zh7Upl3x087XFgW50XObMMElfpRyLyKqnHDSHrCd8h1CfiQ5EB+dIH0Jk+Mtpf3QUCAPl265rMZSL0gDbfuR30wkHVI8s+OoNGl1FXjGRWwJPbnHnw+J/bBzYj2WudOENIuVV5yEGM/Y6u7OW9Lf6JowL/c0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kUoRsDNy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86F00C4CEE7;
-	Thu,  9 Oct 2025 02:25:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759976727;
-	bh=vTHUzqFcW/mNj3h30ZYRTuoryqWPNMypz+oxpm5+J2Q=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=kUoRsDNyMTjv+cj67esksGIfpPFtp8srOdqrWxjZ5l6L7YaZXT+id9VcnpoLtemfD
-	 FApDJAT7tfoGXMhZV0A3zqqorfAOwR00zWkWOhpZ6n9DMRH8eCmmivOQbhu/cjAMpi
-	 5rE2Q5d03+rBQe2uieLD6OvzINzZuLxArJlIn1xYosiWHXSLp5qpBdG5NHd06lSADr
-	 yGYeAn53AGJYq/EEs+FUMCU48OuINKPnthnBzhiVNC5DTsiKgi8SjWq0MDbAOgKux3
-	 XULbTH8cMV/s6F37Gfp6FvpUABdTR0gNY5EU3AeZT7iSVaCpxb46uXPZKNvNmfifd4
-	 bpBRWYdyEc/XA==
-Message-ID: <849959ea-b86e-400c-a33f-d1d6b1745267@kernel.org>
-Date: Thu, 9 Oct 2025 10:25:27 +0800
+	s=arc-20240116; t=1759977078; c=relaxed/simple;
+	bh=+7s9Br6cECwXBhfFA8GmgPo2i86Xbi2C0hgsN/FI2gk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kWBnQGXn6vH/waichiq+MwYI+eDrsPL0gf4/SQeKbqitQb+IyRPOCPGhKCSEQh6kYOTuum4SVgR7YW8v0xE4CgPs0i8sIcyflrqW52YAR7lkBFVWq46uiba9o6fEYg7Mlx/A882ZifwFXTeGlicI9oHOIcj0tqfuC24Dkt6amPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I1rvve7h; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759977077; x=1791513077;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=+7s9Br6cECwXBhfFA8GmgPo2i86Xbi2C0hgsN/FI2gk=;
+  b=I1rvve7hh+Oyqbtn0oYTrmYcg895zt+J8U94a3dGo8fdzEZKuPKhZaSg
+   3t67UlOpVaGPkSZCPZ0D1vFFii36IsDnpi+YXKeshHpsiywGHPAcnorhG
+   L23qeENaPk73Z8vLmTw/ESRlbXhg7dd08DMxRx6oxBd18bubsqS8PZ2yA
+   Ekce8X9G9fR3ogQDEzTyd0uGY8ZLpaddsP4Ob7Yu/vryqayQuuY2j4ABC
+   yGzveZZFFRgvxAzuRrH0+6yD6A4p7HpmoBTOTALdttRch67zazwl9Gmto
+   A/WUeMGVpOgaIwe0/K+UQMP/rSRHlT6Mx8jAdfQCZpVerqWS6RFdN8i/O
+   A==;
+X-CSE-ConnectionGUID: UH3dqJhGSrikMbnN8WyMew==
+X-CSE-MsgGUID: JiM3ZekKQF2GcUjfTA0eOA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11576"; a="72792615"
+X-IronPort-AV: E=Sophos;i="6.19,215,1754982000"; 
+   d="scan'208";a="72792615"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2025 19:31:15 -0700
+X-CSE-ConnectionGUID: 3dsMEZceTeOzWYOdq2p59g==
+X-CSE-MsgGUID: x52x1ZdHTACOTyW4G9aN4w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,215,1754982000"; 
+   d="scan'208";a="179847110"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.232.209]) ([10.124.232.209])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2025 19:31:11 -0700
+Message-ID: <fd91b8b2-7e6e-42b6-812d-3cf3ead882d3@linux.intel.com>
+Date: Thu, 9 Oct 2025 10:31:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,143 +66,162 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, tuan.zhang@amlogic.com, jianxin.pan@amlogic.com
-Subject: Re: [PATCH] f2fs: Use mapping->gfp_mask to get file cache for writing
-To: Jiucheng Xu <jiucheng.xu@amlogic.com>, Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20250918-origin-dev-v1-1-8d9877df9e77@amlogic.com>
- <d6609f12-78c2-4a42-b4fd-689b310ec615@kernel.org>
- <f64a9a4c-a90f-4d30-bca2-9d9bc7724121@amlogic.com>
+Subject: Re: [RESEND][PATCH v2 0/2] perf record: ratio-to-prev event term for
+ auto counter reload
+To: "Falcon, Thomas" <thomas.falcon@intel.com>,
+ "alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>,
+ "peterz@infradead.org" <peterz@infradead.org>,
+ "acme@kernel.org" <acme@kernel.org>, "mingo@redhat.com" <mingo@redhat.com>,
+ "Hunter, Adrian" <adrian.hunter@intel.com>,
+ "namhyung@kernel.org" <namhyung@kernel.org>,
+ "jolsa@kernel.org" <jolsa@kernel.org>,
+ "kan.liang@linux.intel.com" <kan.liang@linux.intel.com>,
+ "irogers@google.com" <irogers@google.com>,
+ "mark.rutland@arm.com" <mark.rutland@arm.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+ "ak@linux.intel.com" <ak@linux.intel.com>
+References: <20250902164047.64261-1-thomas.falcon@intel.com>
+ <ed463cd8-495e-4769-b392-372413ca7db6@linux.intel.com>
+ <cf7ae59b735f004b5c6dd53b82e3d3e2acfad973.camel@intel.com>
 Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <f64a9a4c-a90f-4d30-bca2-9d9bc7724121@amlogic.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <cf7ae59b735f004b5c6dd53b82e3d3e2acfad973.camel@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 9/30/2025 11:17 AM, Jiucheng Xu wrote:
-> 
-> 
-> On 9/24/2025 10:25 AM, Chao Yu wrote:
->> [ EXTERNAL EMAIL ]
->>
->> On 9/18/25 11:32, Jiucheng Xu via B4 Relay wrote:
->>> From: Jiucheng Xu <jiucheng.xu@amlogic.com>
+
+On 10/2/2025 11:38 PM, Falcon, Thomas wrote:
+> On Tue, 2025-09-30 at 15:28 +0800, Mi, Dapeng wrote:
+>> On 9/3/2025 12:40 AM, Thomas Falcon wrote:
+>>> The Auto Counter Reload (ACR)[1] feature is used to track the
+>>> relative rates of two or more perf events, only sampling
+>>> when a given threshold is exceeded. This helps reduce overhead
+>>> and unnecessary samples. However, enabling this feature
+>>> currently requires setting two parameters:
 >>>
->>> On 32-bit architectures, when GFP_NOFS is used, the file cache for write
->>> operations cannot be allocated from the highmem and CMA.
->>
->> Hi,
->>
->> Have you suffered any problem w/o this patch? Can you please describe more
->> details about it?
->>
-> Hi Chao,
-> 
-> Thanks for your comments.
-> 
-> Our a platform uses a 1.5G DRAM, and the kernel is aarch32.
-> We have a critical scenario where system need to record multimedia data
-> while replaying the previously recorded multimedia files. However,
-> stuttering often occurs during playback. The problem does not arise on
-> aarch64 platforms with the same memory size.
-> 
-> We have analyzed the root cause as follows:
-> Data written using GFP_NOFS is only allocated from normal memory. Since
-> the normal memory is only 768MB, it easily triggers the kswapd to
-> reclaim memory, which in turn reclaims and clears the file cache of the
-> recorded data. As a result, during playback, the system fails to hit the
-> file cache and thus has to re-read data directly from the storage. Given
-> that our storage has relatively poor performance, concurrent read
-> (playback) and write (recording) operations lead to significant IO
-> latency. High read latency then causes stuttering during playback.
-
-Hi Jiucheng,
-
-Thanks for the explanation.
-
+>>>  -- Event sampling period ("period")
+>>>  -- acr_mask, which determines which events get reloaded
+>>>     when the sample period is reached.
 >>>
->>> Since mapping->gfp_mask is set to GFP_HIGHUSER_MOVABLE during inode
->>
->> GFP_HIGHUSER_MOVABLE includes __GFP_FS, we should avoid using __GFP_FS here.
->> f2fs_write_begin() uses GFP_NOFS like the most of other filesystem to avoid
->> potential deadlock, as __filemap_get_folio(, .. |__GFP_FS | ..) may run into
->> memory reclaim to call ->writeback in where we may suffer deadlock potentially.
->>
-> Since our platform only support 5.15 kernel, I have checked
-> EXT4/FAT/ntfs3 and find they all use mapping_gfp_mask(mapping)) as GFP
-
-Yes, but also we can see iomap gets rid of using __GFP_FS by default:
-
-struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos, size_t len)
-{
-	fgf_t fgp = FGP_WRITEBEGIN | FGP_NOFS;
-
-	if (iter->flags & IOMAP_NOWAIT)
-		fgp |= FGP_NOWAIT;
-	if (iter->flags & IOMAP_DONTCACHE)
-		fgp |= FGP_DONTCACHE;
-	fgp |= fgf_set_order(len);
-
-	return __filemap_get_folio(iter->inode->i_mapping, pos >> PAGE_SHIFT,
-			fgp, mapping_gfp_mask(iter->inode->i_mapping));
-}
-
-> flag to get page cache on kernel 5.15:
-> 
-> 6100cca:
-> ___GFP_HIGHMEM |___GFP_MOVABLE | ___GFP_IO | ___GFP_FS
-> |___GFP_DIRECT_RECLAIM |___GFP_KSWAPD_RECLAIM |___GFP_HARDWALL
-> |___GFP_SKIP_KASAN_UNPOISON | ___GFP_SKIP_KASAN_POISON
-> 
-> therefor that's why I recommend this flag.
-> 
-> I'm not sure if the above flags has some problems on f2fs, so I submit
-> it and would be very eager to learn about the views of your experts.
-
-IIRC, f2fs uses GFP_NOFS in ->write_begin for long time w/o any problem, in order
-to avoid any potential issue by using ___GFP_FS, and also to consider allowing
-memory allocation w/ ___GFP_HIGHMEM & ___GFP_MOVABLE, what about changing as below:
-
-folio = __filemap_get_folio(mapping, index,
-			FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_NOFS,
-			mapping_gfp_mask(mapping));
-
-Thanks,
-
-> 
-> Thanks and Best Regards,
-> Jiucheng
-> 
->> Thanks,
->>
->>> allocation, using mapping_gfp_mask(mapping) as the GFP flag of getting file
->>> cache for writing is more efficient for 32-bit architectures.
->>>> Signed-off-by: Jiucheng Xu <jiucheng.xu@amlogic.com>
->>> ---
->>>    fs/f2fs/data.c | 3 ++-
->>>    1 file changed, 2 insertions(+), 1 deletion(-)
+>>> For example, in the following command:
 >>>
->>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>> index 7961e0ddfca3aaa332b7dbd4985ae7766551834f..9fbc41f9accb2626da22754f1a424da4805ca823 100644
->>> --- a/fs/f2fs/data.c
->>> +++ b/fs/f2fs/data.c
->>> @@ -3587,7 +3587,8 @@ static int f2fs_write_begin(const struct kiocb *iocb,
->>>          * Will wait that below with our IO control.
->>>          */
->>>         folio = __filemap_get_folio(mapping, index,
->>> -                             FGP_LOCK | FGP_WRITE | FGP_CREAT, GFP_NOFS);
->>> +                             FGP_LOCK | FGP_WRITE | FGP_CREAT,
->>> +                             mapping_gfp_mask(mapping));
->>>         if (IS_ERR(folio)) {
->>>                 err = PTR_ERR(folio);
->>>                 goto fail;
+>>> perf record -e "{cpu_atom/branch-misses,period=200000,\
+>>> acr_mask=0x2/ppu,cpu_atom/branch-instructions,period=1000000,\
+>>> acr_mask=0x3/u}" -- ./mispredict
 >>>
->>> ---
->>> base-commit: c872b6279cd26762339ff02513e2a3f16149a6f1
->>> change-id: 20250910-origin-dev-8a5ff6bee1f2
+>>> The goal is to limit event sampling to cases when the
+>>> branch miss rate exceeds 20%. If the branch instructions
+>>> sample period is exceeded first, both events are reloaded.
+>>> If branch misses exceed their threshold first, only the
+>>> second counter is reloaded, and a sample is taken.
 >>>
->>> Best regards,
+>>> To simplify this, provide a new “ratio-to-prev” event term
+>>> that works alongside the period event option or -c option.
+>>> This would allow users to specify the desired relative rate
+>>> between events as a ratio, making configuration more intuitive.
+>>>
+>>> With this enhancement, the equivalent command would be:
+>>>
+>>> perf record -e "{cpu_atom/branch-misses/ppu,\
+>>> cpu_atom/branch-instructions,period=1000000,ratio_to_prev=5/u}" \
+>>> -- ./mispredict
+>> Hi Tom,
 >>
-> 
+>> Does this "ratio-to-prev" option support 3 and more events in ACR
+>> group?
+>>
+> Hi Dapeng,
+>
+> The 'ratio-to-prev' option only supports groups with two events at this
+> time. For larger event groups, the "acr_mask" term is available.
+>
+>> If not, should we consider to support the cases there are 3 and more
+>> events
+>> in the ACR group? (If I remember correct, the PMU driver should
+>> support it).
+>>
+> Correct.
+>
+>> e.g.,
+>>
+>> perf record -e
+>> "{cpu_atom/branch-
+>> misses,period=200000,acr_mask=0x6/p,cpu_atom/branches,period=1000000,
+>> acr_mask=0x7/,cpu_atom/branches,period=1000000,acr_mask=0x7/}"
+>> -- sleep 1
+>>
+>> Of course, this is just an example that indicates the cases are
+>> supported,
+>> it doesn't mean the command is meaningful. But we can't exclude that
+>> users
+>> have such real requirements.
+>>
+>> If we want to support 3 and more events in ACR group (if not
+>> already), we'd
+>> better rename the "ratio-to-prev" option to "ratio-to-head" and only
+>> allow
+>> the group leader can be set the sampling period explicitly with
+>> "period"
+>> option and the sampling period of all other group members can only be
+>> calculated base on the sampling period of group leader and
+>> the "ratio-to-head", maybe like this.
+>>
+>> perf record -e
+>> "{cpu_atom/branch-misses,period=200000/p,cpu_atom/branches,ratio-to-
+>> head=5/,cpu_atom/branches,ratio-to-head=5/}"
+>> -- sleep 1
+>>
+>> Thanks.
+>>
+>>
+> Thanks, those are good suggestions, but the goal of the feature was to
+> provide users a way to utilize ACR to make simple comparisons without
+> needing to use the "acr_mask" field. For tests comparing larger event
+> groups, the acr_mask field may be used instead.
 
+Yeah, I understand the intent is to get a new simple option for using the
+ACR feature. But we already support 2 events for the ACR group, why not we
+make it more generic and can support more events? 
+
+
+>
+> Thanks,
+> Tom
+>
+>>> or
+>>>
+>>> perf record -e "{cpu_atom/branch-misses/ppu,\
+>>> cpu_atom/branch-instructions,ratio-to-prev=5/u}" -c 1000000 \
+>>> -- ./mispredict
+>>>
+>>> [1]
+>>> https://lore.kernel.org/lkml/20250327195217.2683619-1-kan.liang@linux.intel.com/
+>>>
+>>> Changes in v2 (mostly suggested by Ian Rogers):
+>>>
+>>> -- Add documentation explaining acr_mask bitmask used by ACR
+>>> -- Move ACR specific implementation to arch/x86/
+>>> -- Provide test cases for event parsing and perf record tests
+>>>
+>>> Thomas Falcon (2):
+>>>   perf record: Add ratio-to-prev term
+>>>   perf record: add auto counter reload parse and regression tests
+>>>
+>>>  tools/perf/Documentation/intel-acr.txt | 53 ++++++++++++++++++
+>>>  tools/perf/Documentation/perf-list.txt |  2 +
+>>>  tools/perf/arch/x86/util/evsel.c       | 53 ++++++++++++++++++
+>>>  tools/perf/tests/parse-events.c        | 54 ++++++++++++++++++
+>>>  tools/perf/tests/shell/record.sh       | 40 ++++++++++++++
+>>>  tools/perf/util/evsel.c                | 76
+>>> ++++++++++++++++++++++++++
+>>>  tools/perf/util/evsel.h                |  1 +
+>>>  tools/perf/util/evsel_config.h         |  1 +
+>>>  tools/perf/util/parse-events.c         | 22 ++++++++
+>>>  tools/perf/util/parse-events.h         |  3 +-
+>>>  tools/perf/util/parse-events.l         |  1 +
+>>>  tools/perf/util/pmu.c                  |  3 +-
+>>>  12 files changed, 307 insertions(+), 2 deletions(-)
+>>>  create mode 100644 tools/perf/Documentation/intel-acr.txt
+>>>
 
