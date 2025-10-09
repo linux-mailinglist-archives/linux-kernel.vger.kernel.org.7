@@ -1,99 +1,134 @@
-Return-Path: <linux-kernel+bounces-847235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9067FBCA540
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:06:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFC37BCA53A
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:06:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 047FD3B39E7
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:05:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AA87C4E990D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FFEE23F439;
-	Thu,  9 Oct 2025 17:05:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DCE0237A4F;
+	Thu,  9 Oct 2025 17:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="K5lAT7o+"
-Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
+	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="XlwYGDv0"
+Received: from ksmg01.maxima.ru (ksmg01.maxima.ru [81.200.124.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2440323D2AB;
-	Thu,  9 Oct 2025 17:05:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0402615E90;
+	Thu,  9 Oct 2025 17:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760029542; cv=none; b=sMAV4B/e9LdUz3HxL8/QLaWR2cpB/rlZquVbDp2+GPIlYaM5Wy4QNqErSwGpDpWl572n1hosQdwo+tIhUI9pO/CjD0tpaLntpIcqsbauRnAg9ofeFCb9UdK/gULgNHEVwovS0U+hKTLxg/1zRXjjm/AjZ54gZKRtHYkHIXEFmj0=
+	t=1760029577; cv=none; b=ApUzMyb2y9Aahlis/jg8BLxZuGLJ0MdtngzpN7evyYEsxfJO5BwB/ZvOHucL/PGZLfnkAjUIeKAtrubWPUkSfe7L1q6Ih1WarwXn4O5N8tCKiN1oN6LWXLCpj9SCZFzR0slK1wvrfDdFjnTPdi4/A7mclhgiFyFCC5lrZLLhlxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760029542; c=relaxed/simple;
-	bh=0ZE/jGvm6aL4wVZv112il9NPd7AW4QAQ9v7SEMKi9Sk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n/93pemR7g4XAjv+yyDSBzUDa2lYIlCdFxmQ7C3Y9Dp9WaRjR2SPlPJ/UNX24CWwrIRNk8416kjbt9H6HLS8xpJlMa5wsrs/SovRCQ8bPvNkrsM18DYNc2WMFzXxQXByrjlo0HH8J+9/WBE9FxJHppG1i00URdlo/tM9u5tIi3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=K5lAT7o+; arc=none smtp.client-ip=199.89.3.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 004.mia.mailroute.net (Postfix) with ESMTP id 4cjGTw1C60zm0ytn;
-	Thu,  9 Oct 2025 17:05:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1760029538; x=1762621539; bh=ASbHD4hHgKK4/wqMUDMSHNZq
-	gmJoYXs6WYurcxNLSO8=; b=K5lAT7o+zrUYz2s5JXVTFJd2+KRR6up+NnKogSK7
-	cxwXJPWI9TiOpWyfXjFUHSgPBSMDN5h3Hd6+t6hlCcz0zPYrP9/O5v95MyGDj4Ob
-	S4Ktt4dfXSmh/k8HvxRiB3TVWxazsrHQ1bcDXimCXrQdN0ynq5udfY/inlp3YOT2
-	+T3GPF4SYe7bXCz41O17nB7ze6+QDPzKUSR2BHTZc/ypSnc7PDT6TFjWDRZ0hTb9
-	uqT2CDYYawAI4C/wHcf0XSLFzl6Y9Ja6gk8R3L5LB8PkZV+qDNSi80etkMbFsyND
-	/RREh8UPSZrO/i5iLmu7/yLKzzbtZkaW6yWdj+JGTFMGhA==
-X-Virus-Scanned: by MailRoute
-Received: from 004.mia.mailroute.net ([127.0.0.1])
- by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 7Q1p1ARXfwZu; Thu,  9 Oct 2025 17:05:38 +0000 (UTC)
-Received: from [100.119.48.131] (unknown [104.135.180.219])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4cjGTj2hK6zm0ytk;
-	Thu,  9 Oct 2025 17:05:28 +0000 (UTC)
-Message-ID: <49647ccf-5d19-4ede-87b4-0f7ff8e9f5ea@acm.org>
-Date: Thu, 9 Oct 2025 10:05:27 -0700
+	s=arc-20240116; t=1760029577; c=relaxed/simple;
+	bh=hwWKuQQt63jq6BhwlgzSw3pF4h8LHNwl+jIV4Hd4vEw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F0dPSUUNudpLXeDuf45bTEN94nJBbf8lUtelIRPMHsS/CQ41zjwZZWqWJ8JtxgfSql8E3WK1GTVDHziR6ZordULXIhr6cql3NqexWwglHB/8Vb+gfVpLCnqaitF5vOQCduIcXnWyzpLXv114uZEC2W3dDcvRHknkeDMO68VwP/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=XlwYGDv0; arc=none smtp.client-ip=81.200.124.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
+Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
+	by ksmg01.maxima.ru (Postfix) with ESMTP id 0954AC0003;
+	Thu,  9 Oct 2025 20:06:11 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru 0954AC0003
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
+	s=sl; t=1760029571; bh=KMdQaChPFuH9o4VWi3mlJ40Whtlsb7iPE17jb8cpd7s=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=XlwYGDv0LLqZmbFZVnjJ389MZkUyRu66zB7+7WGltZCM9BD8N7WgdrsRW55UW8kbK
+	 VuFyc4uzj2LdzFMfrLBwe172ysaaksXcaqgTIxZ+cIhfmXrfXOVq/YAS0qq99KyLLP
+	 AGlH4EIdYzRZMdfKqk2Y+kCVTQhwVRBzaCprQAU9IT8rdkM568kSOoH77xPeUTv+Z2
+	 rAVeiJdQduSgW4Y4Cn1umA27FxXehr9aDKgUHMS6r0vBm6zdtlmO4NEevgp7dNYzzd
+	 x2iIq//h2KmkWjXdDAkTD5FMT1jXheO/Gsd6M7XUE2CiV9Pe0WQfgEkffaxQe1vaCW
+	 Zp/d7U/Pzi7kw==
+Received: from ksmg01.maxima.ru (mail.maxima.ru [81.200.124.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client did not present a certificate)
+	by ksmg01.maxima.ru (Postfix) with ESMTPS;
+	Thu,  9 Oct 2025 20:06:10 +0300 (MSK)
+Received: from db126-1-abramov-14-d-mosos.mti-lab.com (172.25.20.118) by
+ mmail-p-exch01.mt.ru (81.200.124.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 9 Oct 2025 20:06:09 +0300
+From: Ivan Abramov <i.abramov@mt-integration.ru>
+To: Sebastian Reichel <sre@kernel.org>
+CC: Ivan Abramov <i.abramov@mt-integration.ru>, Lee Jones <lee@kernel.org>,
+	Felipe Balbi <felipe.balbi@linux.intel.com>, Charles Keepax
+	<ckeepax@opensource.wolfsonmicro.com>, Baolin Wang
+	<baolin.wang@linux.alibaba.com>, <patches@opensource.cirrus.com>,
+	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH 1/1] power: supply: wm831x: Check wm831x_set_bits() return value
+Date: Thu, 9 Oct 2025 20:05:52 +0300
+Message-ID: <20251009170553.566561-1-i.abramov@mt-integration.ru>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [patch v2 3/7] blk-mq: add a new queue sysfs attribute
- async_depth
-To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, ming.lei@redhat.com,
- nilay@linux.ibm.com, jmoyer@redhat.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com
-References: <20251009074634.527661-1-yukuai1@huaweicloud.com>
- <20251009074634.527661-4-yukuai1@huaweicloud.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20251009074634.527661-4-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: mmail-p-exch02.mt.ru (81.200.124.62) To
+ mmail-p-exch01.mt.ru (81.200.124.61)
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
+X-KSMG-AntiSpam-Envelope-From: i.abramov@mt-integration.ru
+X-KSMG-AntiSpam-Info: LuaCore: 71 0.3.71 ee78c3da48e828d2b9b16d6d0b31328b8b240a3c, {rep_avail}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;81.200.124.61:7.1.2;127.0.0.199:7.1.2;ksmg01.maxima.ru:7.1.1;mt-integration.ru:7.1.1, FromAlignment: s, ApMailHostAddress: 81.200.124.61
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiSpam-Lua-Profiles: 196967 [Oct 09 2025]
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Version: 6.1.1.11
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/10/09 15:41:00 #27896937
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 7
 
-On 10/9/25 12:46 AM, Yu Kuai wrote:
-> +static ssize_t queue_async_depth_show(struct gendisk *disk, char *page)
-> +{
-> +	ssize_t ret;
-> +
-> +	mutex_lock(&disk->queue->elevator_lock);
-> +	ret = queue_var_show(disk->queue->async_depth, page);
-> +	mutex_unlock(&disk->queue->elevator_lock);
-> +	return ret;
-> +}
+Since wm831x_set_bits() may return error, log failure and exit from
+wm831x_usb_limit_change() in such case.
 
-Functions like the above can be simplified by using guard(mutex)(...) or
-scoped_guard(mutex, ...).
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-Thanks,
+Fixes: 626b6cd5f52e ("power: wm831x_power: Support USB charger current limit management")
+Signed-off-by: Ivan Abramov <i.abramov@mt-integration.ru>
+---
+ drivers/power/supply/wm831x_power.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-Bart.
+diff --git a/drivers/power/supply/wm831x_power.c b/drivers/power/supply/wm831x_power.c
+index 6acdba7885ca..78fa0573ef25 100644
+--- a/drivers/power/supply/wm831x_power.c
++++ b/drivers/power/supply/wm831x_power.c
+@@ -144,6 +144,7 @@ static int wm831x_usb_limit_change(struct notifier_block *nb,
+ 							 struct wm831x_power,
+ 							 usb_notify);
+ 	unsigned int i, best;
++	int ret;
+ 
+ 	/* Find the highest supported limit */
+ 	best = 0;
+@@ -156,8 +157,13 @@ static int wm831x_usb_limit_change(struct notifier_block *nb,
+ 	dev_dbg(wm831x_power->wm831x->dev,
+ 		"Limiting USB current to %umA", wm831x_usb_limits[best]);
+ 
+-	wm831x_set_bits(wm831x_power->wm831x, WM831X_POWER_STATE,
+-		        WM831X_USB_ILIM_MASK, best);
++	ret = wm831x_set_bits(wm831x_power->wm831x, WM831X_POWER_STATE,
++			      WM831X_USB_ILIM_MASK, best);
++	if (ret < 0) {
++		dev_err(wm831x_power->wm831x->dev,
++			"Failed to set USB current limit: %d\n", ret);
++		return ret;
++	}
+ 
+ 	return 0;
+ }
+-- 
+2.39.5
+
 
