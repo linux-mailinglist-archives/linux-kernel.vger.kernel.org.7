@@ -1,245 +1,161 @@
-Return-Path: <linux-kernel+bounces-846943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD201BC97BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:22:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99AB5BC96FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:09:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB5CB4219B4
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:21:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 775E319E7BCA
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:09:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926C52EBB9D;
-	Thu,  9 Oct 2025 14:21:00 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0CA2EA49F;
-	Thu,  9 Oct 2025 14:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EAA72EA173;
+	Thu,  9 Oct 2025 14:09:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nSML8mP5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF4D23F422;
+	Thu,  9 Oct 2025 14:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760019659; cv=none; b=am/bQQT4QMeB0l6QuXJzvR0BEvaUojg2zhGpz8Lz6YWPv2wX8dlT5EGrib2hs7M7LJ33NQv7eUanGXcJqABrHxuiYAz4yOGHjWgGXPKe9+1KoKw6XoNilZh+FjSp4AMudyiWPDy4rIhfxmljxLq7+FQ3dLKLnW4lDrLWyngrjqE=
+	t=1760018940; cv=none; b=LwAIMRLiDcwHfJlLL9XrYUTtbAta2hVP65zDSVnULhG8GjztxBADNrxHPZ4ZBugkZw9O1SkJH54Z6VluTEPK4cx+TTbNmYHD9LRSWhGGLyP4bx65YBjhnZpxXiLIwacgfsc5U85FGS+0eLnqu2LcE+Zz7jZ19AiEZtG/2gWiWVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760019659; c=relaxed/simple;
-	bh=YNjQrz0QXX2a3O+39Q8xHX5SyRlvSmRFP5sE8zgg+N4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jJFfvnbyARvNwGytMZWP5wfRz3xXHZjkBvDlxoZUGC1gsNrrvK8iu/zBtXj3j7J7IBDWAf+5oRVQmwYAlXnifhV0avsOXqHUVH2OfEGkkXv+uQhxuylG8dqpUR4qowl+mtQhr0K3616z6mmeUTwWiMpwHPASBSSWIe+rdgstxTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cjBYt4pblz9sVS;
-	Thu,  9 Oct 2025 16:08:50 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 7ADpqTBaSwlR; Thu,  9 Oct 2025 16:08:50 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cjBYd4WL4z9sVW;
-	Thu,  9 Oct 2025 16:08:37 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 880008B774;
-	Thu,  9 Oct 2025 16:08:37 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id NG8yT-cNEd_j; Thu,  9 Oct 2025 16:08:37 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id DF97B8B76D;
-	Thu,  9 Oct 2025 16:08:36 +0200 (CEST)
-Message-ID: <93737f68-4714-40ba-8920-48a996534126@csgroup.eu>
-Date: Thu, 9 Oct 2025 16:08:36 +0200
+	s=arc-20240116; t=1760018940; c=relaxed/simple;
+	bh=CGfn1E5Ey1zdUTDGPj9sA6UZ/1URpccJTu0xcaDFBjo=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k3kPgOEYgHnZ9N5CQdAgaJv5ZWPTPgsS65hhh+EldnYDaKaQ4craH6ruuijU2/Qe496YszbMg+nNsSOauyMFx+OQEPO7yaO9/r72ZpnYIIVmwluQstbYrykjkZW7J9fFabwmZZVaJqbUir5Ed18ilUpjAnZS2V3hZD2Y2GV/FSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nSML8mP5; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760018938; x=1791554938;
+  h=date:from:to:subject:message-id:references:mime-version:
+   in-reply-to;
+  bh=CGfn1E5Ey1zdUTDGPj9sA6UZ/1URpccJTu0xcaDFBjo=;
+  b=nSML8mP5Kfd9AumYGg/IWyrB1b23CtAHSTm3b+ROlHJ5IEIpoHzJTI6x
+   g+5dNo7ZxsRjRl3sJbSPWgZNHsZZcxJRytYxCTBkqTzSHcYIAhOzRjydQ
+   a7EkRHCy5NDppkZsIoB05viwlNdZCfsk5TnerXX/sdf9DHqeSznUaIakn
+   u9dbIdA2z1has3Y2wyJZnyadOQAE/W1ekrQmeSmE9oAqXWUyDUmCJKLdR
+   9E+0RyU0fj+e3+GMyL9Gf4m+VQiG4MpiADJ4KyOGRQWRrNn4KOZfGzOPD
+   JzJJyHXXJXfAQPeACYZLxFpXnECE9ACDqvr/aio84lsouf+/fFffp8WEJ
+   g==;
+X-CSE-ConnectionGUID: G/xWbL8SQB6yF0hZQEpBpw==
+X-CSE-MsgGUID: 9BfApQ9iTiif12o6Ce4f4w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="62271655"
+X-IronPort-AV: E=Sophos;i="6.19,216,1754982000"; 
+   d="scan'208";a="62271655"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 07:08:57 -0700
+X-CSE-ConnectionGUID: dSUAPNMQTUe598wjzeCUZw==
+X-CSE-MsgGUID: 3B5vpNqvTvmpIkQsD+yQrg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,216,1754982000"; 
+   d="scan'208";a="180667723"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO kuha.fi.intel.com) ([10.124.221.27])
+  by fmviesa006.fm.intel.com with SMTP; 09 Oct 2025 07:08:54 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 09 Oct 2025 17:08:53 +0300
+Date: Thu, 9 Oct 2025 17:08:53 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: "Chia-Lin Kao (AceLan)" <acelan.kao@canonical.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Andrei Kuchynski <akuchynski@chromium.org>,
+	=?utf-8?Q?=C5=81ukasz?= Bartosik <ukaszb@chromium.org>,
+	Venkat Jayaraman <venkat.jayaraman@intel.com>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: ucsi: Fix workqueue destruction race during
+ connector cleanup
+Message-ID: <aOfB9bdEzlxPFzhg@kuha.fi.intel.com>
+References: <20251002013026.4095030-1-acelan.kao@canonical.com>
+ <aOY-OyN90DScHr85@kuha.fi.intel.com>
+ <dr5dderec7diwlsiu7n5vziotw4lnnkletyy7hb55miosrdiy7@oy3nqplgcv6s>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] powerpc: 83xx: Rename wdt@ nodes to watchdog@
-To: j.ne@posteo.net, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>
-Cc: devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
-References: <20250418-watchdog-v1-0-987ff2046272@posteo.net>
- <20250418-watchdog-v1-2-987ff2046272@posteo.net>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <20250418-watchdog-v1-2-987ff2046272@posteo.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dr5dderec7diwlsiu7n5vziotw4lnnkletyy7hb55miosrdiy7@oy3nqplgcv6s>
 
-
-
-Le 18/04/2025 à 21:28, J. Neuschäfer via B4 Relay a écrit :
-> From: "J. Neuschäfer" <j.ne@posteo.net>
+On Thu, Oct 09, 2025 at 09:58:22AM +0800, Chia-Lin Kao (AceLan) wrote:
+> On Wed, Oct 08, 2025 at 01:34:35PM +0300, Heikki Krogerus wrote:
+> > On Thu, Oct 02, 2025 at 09:30:26AM +0800, Chia-Lin Kao (AceLan) wrote:
+> > > During UCSI initialization and operation, there is a race condition where
+> > > delayed work items can be scheduled but attempt to queue work after the
+> > > workqueue has been destroyed. This occurs in multiple code paths.
+> > > 
+> > > The race occurs when:
+> > > 1. ucsi_partner_task() or ucsi_poll_worker() schedule delayed work
+> > > 2. Connector cleanup paths call destroy_workqueue()
+> > > 3. Previously scheduled delayed work timers fire after destruction
+> > > 4. This triggers warnings and crashes in __queue_work()
+> > 
+> > What warnings?
+> Here is what I got.
 > 
-> The watchdog.yaml schema prescribes a node name of "timer" or "watchdog"
-> rather than the abbreviation "wdt".
-> 
-> Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
+> Sep 24 13:24:22 ubuntu kernel: sysfs: cannot create duplicate filename '/devices/platform/USBC000:00/typec/port0/port0.0/partner'
+> Sep 24 13:24:22 ubuntu kernel: CPU: 1 UID: 0 PID: 132 Comm: kworker/u64:1 Tainted: G           O       6.14.0-1012-oem #12-Ubuntu
+> Sep 24 13:24:22 ubuntu kernel: Tainted: [O]=OOT_MODULE
+> Sep 24 13:24:22 ubuntu kernel: Hardware name: Dell Inc. Dell /, BIOS XXXX XX/XX/2025
+> Sep 24 13:24:22 ubuntu kernel: Workqueue: USBC000:00-con1 ucsi_poll_worker [typec_ucsi]
+> Sep 24 13:24:22 ubuntu kernel: Call Trace:
+> Sep 24 13:24:22 ubuntu kernel:  <TASK>
+> Sep 24 13:24:22 ubuntu kernel:  dump_stack_lvl+0x76/0xa0
+> Sep 24 13:24:22 ubuntu kernel:  dump_stack+0x10/0x20
+> Sep 24 13:24:22 ubuntu kernel:  sysfs_warn_dup+0x8a/0xb0
+> Sep 24 13:24:22 ubuntu kernel:  sysfs_do_create_link_sd+0xf1/0x100
+> Sep 24 13:24:22 ubuntu kernel:  sysfs_create_link+0x21/0x50
+> Sep 24 13:24:22 ubuntu kernel:  typec_probe+0x7e/0x100 [typec]
+> Sep 24 13:24:22 ubuntu kernel:  ? driver_sysfs_add+0x66/0xd0
+> Sep 24 13:24:22 ubuntu kernel:  really_probe+0xee/0x3c0
+> Sep 24 13:24:22 ubuntu kernel:  __driver_probe_device+0x8c/0x180
+> Sep 24 13:24:22 ubuntu kernel:  driver_probe_device+0x24/0xd0
+> Sep 24 13:24:22 ubuntu kernel:  __device_attach_driver+0xcd/0x170
+> Sep 24 13:24:22 ubuntu kernel:  ? _pfx__device_attach_driver+0x10/0x10
+> Sep 24 13:24:22 ubuntu kernel:  bus_for_each_drv+0x94/0xf0
+> Sep 24 13:24:22 ubuntu kernel:  __device_attach+0xb6/0x1d0
+> Sep 24 13:24:22 ubuntu kernel:  device_initial_probe+0x13/0x20
+> Sep 24 13:24:22 ubuntu kernel:  bus_probe_device+0x9f/0xb0
+> Sep 24 13:24:22 ubuntu kernel:  device_add+0x513/0x710
+> Sep 24 13:24:22 ubuntu kernel:  device_register+0x1a/0x30
+> Sep 24 13:24:22 ubuntu kernel:  typec_register_altmode+0x253/0x3a0 [typec]
+> Sep 24 13:24:22 ubuntu kernel:  typec_partner_register_altmode+0xe/0x20 [typec]
+> Sep 24 13:24:22 ubuntu kernel:  ucsi_register_altmode.constprop.0+0x30e/0x390 [typec_ucsi]
+> Sep 24 13:24:22 ubuntu kernel:  ucsi_register_altmodes+0x162/0x250 [typec_ucsi]
+> Sep 24 13:24:22 ubuntu kernel:  ucsi_check_altmodes+0x19/0xb0 [typec_ucsi]
+> Sep 24 13:24:22 ubuntu kernel:  ucsi_poll_worker+0x3d/0xf0 [typec_ucsi]
+> Sep 24 13:24:22 ubuntu kernel:  process_one_work+0x178/0x3d0
+> Sep 24 13:24:22 ubuntu kernel:  worker_thread+0x2de/0x410
+> Sep 24 13:24:22 ubuntu kernel:  ? __pfx_worker_thread+0x10/0x10
+> Sep 24 13:24:22 ubuntu kernel:  kthread+0xfb/0x230
+> Sep 24 13:24:22 ubuntu kernel:  ? __pfx_kthread+0x10/0x10
+> Sep 24 13:24:22 ubuntu kernel:  ret_from_fork+0x44/0x70
+> Sep 24 13:24:22 ubuntu kernel:  ? __pfx_kthread+0x10/0x10
+> Sep 24 13:24:22 ubuntu kernel:  ret_from_fork_asm+0x1a/0x30
+> Sep 24 13:24:22 ubuntu kernel:  </TASK>
+> Sep 24 13:24:22 ubuntu kernel: typec-thunderbolt port0-partner.1: failed to create symlinks
+> Sep 24 13:24:22 ubuntu kernel: typec-thunderbolt port0-partner.1: probe with driver typec-thunderbolt failed with error -17
 
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+That does not look like anything you described in the commit message?
 
-> ---
->   arch/powerpc/boot/dts/asp834x-redboot.dts | 2 +-
->   arch/powerpc/boot/dts/mpc8313erdb.dts     | 2 +-
->   arch/powerpc/boot/dts/mpc8315erdb.dts     | 2 +-
->   arch/powerpc/boot/dts/mpc832x_rdb.dts     | 2 +-
->   arch/powerpc/boot/dts/mpc8349emitx.dts    | 2 +-
->   arch/powerpc/boot/dts/mpc8349emitxgp.dts  | 2 +-
->   arch/powerpc/boot/dts/mpc836x_rdk.dts     | 2 +-
->   arch/powerpc/boot/dts/mpc8377_rdb.dts     | 2 +-
->   arch/powerpc/boot/dts/mpc8377_wlan.dts    | 2 +-
->   arch/powerpc/boot/dts/mpc8378_rdb.dts     | 2 +-
->   arch/powerpc/boot/dts/mpc8379_rdb.dts     | 2 +-
->   11 files changed, 11 insertions(+), 11 deletions(-)
-> 
-> diff --git a/arch/powerpc/boot/dts/asp834x-redboot.dts b/arch/powerpc/boot/dts/asp834x-redboot.dts
-> index 52a84561c4f076ac0c4fc7af3db12f2fda06521c..33ddb17d18760df24ac8f068dce38ac60c353f32 100644
-> --- a/arch/powerpc/boot/dts/asp834x-redboot.dts
-> +++ b/arch/powerpc/boot/dts/asp834x-redboot.dts
-> @@ -72,7 +72,7 @@ soc8349@ff000000 {
->   		reg = <0xff000000 0x00000200>;
->   		bus-frequency = <0>;
->   
-> -		wdt@200 {
-> +		watchdog@200 {
->   			device_type = "watchdog";
->   			compatible = "mpc83xx_wdt";
->   			reg = <0x200 0x100>;
-> diff --git a/arch/powerpc/boot/dts/mpc8313erdb.dts b/arch/powerpc/boot/dts/mpc8313erdb.dts
-> index a8315795b2c951c5914953be0b4a5162dd471505..09508b4c8c73095bf4699e383e7841100d6d7c8f 100644
-> --- a/arch/powerpc/boot/dts/mpc8313erdb.dts
-> +++ b/arch/powerpc/boot/dts/mpc8313erdb.dts
-> @@ -99,7 +99,7 @@ soc8313@e0000000 {
->   		reg = <0xe0000000 0x00000200>;
->   		bus-frequency = <0>;
->   
-> -		wdt@200 {
-> +		watchdog@200 {
->   			device_type = "watchdog";
->   			compatible = "mpc83xx_wdt";
->   			reg = <0x200 0x100>;
-> diff --git a/arch/powerpc/boot/dts/mpc8315erdb.dts b/arch/powerpc/boot/dts/mpc8315erdb.dts
-> index e09b37d7489d01bfd16a26e9786868f630fa0262..56cf6d12c730de52d85623dc34c5987bee635f0f 100644
-> --- a/arch/powerpc/boot/dts/mpc8315erdb.dts
-> +++ b/arch/powerpc/boot/dts/mpc8315erdb.dts
-> @@ -99,7 +99,7 @@ immr@e0000000 {
->   		reg = <0xe0000000 0x00000200>;
->   		bus-frequency = <0>;
->   
-> -		wdt@200 {
-> +		watchdog@200 {
->   			device_type = "watchdog";
->   			compatible = "mpc83xx_wdt";
->   			reg = <0x200 0x100>;
-> diff --git a/arch/powerpc/boot/dts/mpc832x_rdb.dts b/arch/powerpc/boot/dts/mpc832x_rdb.dts
-> index ecebc27a289871a896121fbaf6bc878422d25101..ba7caaf98fd58f9a2b56c0aa566673c70eff2013 100644
-> --- a/arch/powerpc/boot/dts/mpc832x_rdb.dts
-> +++ b/arch/powerpc/boot/dts/mpc832x_rdb.dts
-> @@ -52,7 +52,7 @@ soc8323@e0000000 {
->   		reg = <0xe0000000 0x00000200>;
->   		bus-frequency = <0>;
->   
-> -		wdt@200 {
-> +		watchdog@200 {
->   			device_type = "watchdog";
->   			compatible = "mpc83xx_wdt";
->   			reg = <0x200 0x100>;
-> diff --git a/arch/powerpc/boot/dts/mpc8349emitx.dts b/arch/powerpc/boot/dts/mpc8349emitx.dts
-> index d4ebbb93de0b325a3bb0f5d17464f516a0e12133..13f17232ba83d50498f19e6758063cf905fbc326 100644
-> --- a/arch/powerpc/boot/dts/mpc8349emitx.dts
-> +++ b/arch/powerpc/boot/dts/mpc8349emitx.dts
-> @@ -53,7 +53,7 @@ soc8349@e0000000 {
->   		reg = <0xe0000000 0x00000200>;
->   		bus-frequency = <0>;                    // from bootloader
->   
-> -		wdt@200 {
-> +		watchdog@200 {
->   			device_type = "watchdog";
->   			compatible = "mpc83xx_wdt";
->   			reg = <0x200 0x100>;
-> diff --git a/arch/powerpc/boot/dts/mpc8349emitxgp.dts b/arch/powerpc/boot/dts/mpc8349emitxgp.dts
-> index bcf68a0a7b557e49b48563f586b1fe8441ab3c6d..eae0afd5abbc39852b8e34b2247223168ab863ca 100644
-> --- a/arch/powerpc/boot/dts/mpc8349emitxgp.dts
-> +++ b/arch/powerpc/boot/dts/mpc8349emitxgp.dts
-> @@ -51,7 +51,7 @@ soc8349@e0000000 {
->   		reg = <0xe0000000 0x00000200>;
->   		bus-frequency = <0>;                    // from bootloader
->   
-> -		wdt@200 {
-> +		watchdog@200 {
->   			device_type = "watchdog";
->   			compatible = "mpc83xx_wdt";
->   			reg = <0x200 0x100>;
-> diff --git a/arch/powerpc/boot/dts/mpc836x_rdk.dts b/arch/powerpc/boot/dts/mpc836x_rdk.dts
-> index a0cc1953484d70410f9592bdb84ffaf779ee08b4..4ff38e1a2185f85618b603e703e54c973cb97cc0 100644
-> --- a/arch/powerpc/boot/dts/mpc836x_rdk.dts
-> +++ b/arch/powerpc/boot/dts/mpc836x_rdk.dts
-> @@ -62,7 +62,7 @@ soc@e0000000 {
->   		/* filled by u-boot */
->   		bus-frequency = <0>;
->   
-> -		wdt@200 {
-> +		watchdog@200 {
->   			compatible = "mpc83xx_wdt";
->   			reg = <0x200 0x100>;
->   		};
-> diff --git a/arch/powerpc/boot/dts/mpc8377_rdb.dts b/arch/powerpc/boot/dts/mpc8377_rdb.dts
-> index 7df452efa9579a649195d2266d42bbc4b6b8de1c..f137ccb8cfdedfed98a3cf6899f5508f069834dc 100644
-> --- a/arch/powerpc/boot/dts/mpc8377_rdb.dts
-> +++ b/arch/powerpc/boot/dts/mpc8377_rdb.dts
-> @@ -99,7 +99,7 @@ immr@e0000000 {
->   		reg = <0xe0000000 0x00000200>;
->   		bus-frequency = <0>;
->   
-> -		wdt@200 {
-> +		watchdog@200 {
->   			device_type = "watchdog";
->   			compatible = "mpc83xx_wdt";
->   			reg = <0x200 0x100>;
-> diff --git a/arch/powerpc/boot/dts/mpc8377_wlan.dts b/arch/powerpc/boot/dts/mpc8377_wlan.dts
-> index d8e7d40aeae449e33ea1640a53ee4dfec7d746a4..ce254dd74dd06b19bc8e15e13f2fa9e959dd25f2 100644
-> --- a/arch/powerpc/boot/dts/mpc8377_wlan.dts
-> +++ b/arch/powerpc/boot/dts/mpc8377_wlan.dts
-> @@ -89,7 +89,7 @@ immr@e0000000 {
->   		reg = <0xe0000000 0x00000200>;
->   		bus-frequency = <0>;
->   
-> -		wdt@200 {
-> +		watchdog@200 {
->   			device_type = "watchdog";
->   			compatible = "mpc83xx_wdt";
->   			reg = <0x200 0x100>;
-> diff --git a/arch/powerpc/boot/dts/mpc8378_rdb.dts b/arch/powerpc/boot/dts/mpc8378_rdb.dts
-> index bdcfe83a561e121ed82972406e0302d84d8d0ef6..19e5473d4161b5d6be6ab84ae0ba78875fc377f8 100644
-> --- a/arch/powerpc/boot/dts/mpc8378_rdb.dts
-> +++ b/arch/powerpc/boot/dts/mpc8378_rdb.dts
-> @@ -99,7 +99,7 @@ immr@e0000000 {
->   		reg = <0xe0000000 0x00000200>;
->   		bus-frequency = <0>;
->   
-> -		wdt@200 {
-> +		watchdog@200 {
->   			device_type = "watchdog";
->   			compatible = "mpc83xx_wdt";
->   			reg = <0x200 0x100>;
-> diff --git a/arch/powerpc/boot/dts/mpc8379_rdb.dts b/arch/powerpc/boot/dts/mpc8379_rdb.dts
-> index a5f702304a353c61d6ab804765b817ec34a9582e..61519acca2280427d7237d8d9bbb8485f0c65369 100644
-> --- a/arch/powerpc/boot/dts/mpc8379_rdb.dts
-> +++ b/arch/powerpc/boot/dts/mpc8379_rdb.dts
-> @@ -97,7 +97,7 @@ immr@e0000000 {
->   		reg = <0xe0000000 0x00000200>;
->   		bus-frequency = <0>;
->   
-> -		wdt@200 {
-> +		watchdog@200 {
->   			device_type = "watchdog";
->   			compatible = "mpc83xx_wdt";
->   			reg = <0x200 0x100>;
-> 
+You have there an attempt to register the same alternate mode twice,
+but the workqueue seems to be very much alive when that happens.
 
+Based on the above this looks like either a race where the driver
+really ends up registering the alternate modes multiple times or, and
+more likely, the firmware is reporting the same alternate mode
+multiple times.
+
+Or am I missing something?
+
+thanks,
+
+-- 
+heikki
 
