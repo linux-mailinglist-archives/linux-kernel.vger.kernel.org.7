@@ -1,266 +1,257 @@
-Return-Path: <linux-kernel+bounces-847072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9917BC9CE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 17:32:11 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16AFBBC9CD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 17:31:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 104833AB10C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 15:30:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3F3484FA8DC
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 15:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 775D01F63FF;
-	Thu,  9 Oct 2025 15:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25D171F03DE;
+	Thu,  9 Oct 2025 15:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xb5Z2aEK"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kAhsoOsL";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KOHDwic+"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C98C1DE3DC
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 15:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FCF91DF73C;
+	Thu,  9 Oct 2025 15:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760023823; cv=none; b=pPCTxc57kYazu26BYNe76qui42oaYmcGtVSyFVQGVDWgC+r1z1Fi+38HOBvOIRbBmNBwUMuq/TqPkbKRauYFyuetq9rtvL7gY+4y+GB2Fw7EpYvj2uXF4qfk7qR0czrMHpyJS3odbbrmb1EueJ0hJ1znm2+JT2fiqGKnCCKg00E=
+	t=1760023855; cv=none; b=u3L7jwILS7qHkFopOrXSa+gTo4jrNReSUIqeO8F9wsuShHgz9MX4eItVNc9V/pCewoZIL0ltace1ueC+ZE6HD5L0VkJRlS8ZptnRSL2fiUEMkPcb57cnujBYE244NYkTtZcUNpWV3XiNU2pA9fNuOmgK9U+C1IPCG8qwjTOKadA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760023823; c=relaxed/simple;
-	bh=thfHYurlbthid+DZICCyxI6F4AVTKLfU3gbgDUaAuE4=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=L+LcTmWqdKysw6xxfw2+jgsKWCddH9npHutrdedf1MGbCZegDvvH9cyq0xY8jaUW6Qebofv0h53filg5/TxOoW8e3mNNP1Vb0jIPnq4GP/TxPQZoqWYYqPU5gXCxg3uCOB8abgs5MX/QF5/PEIGx5aQiNSYt2FVm7bKrYJUQfN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xb5Z2aEK; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3ee13baf2e1so944635f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 08:30:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760023820; x=1760628620; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JaR01KCIJ6ZP9VbmR0WJ2PYnA5mouv06D/TKethyhUs=;
-        b=Xb5Z2aEKjlXsmdsR58qfnERrIlUFXOJN7uFfsCa102xCRmjkoMKe9/93S9zATibQcP
-         KD+HMllAOQfPHb8v0iZ7i4JpqxM4XfoOpkoFBJ+KhB9+pEfIwabjGSz8SfqI+yQPPZrr
-         eMjEhlZ73GH79EovoqmwiqADvgy0u46Vo0YNXmONSPoiieWv0jms5dcxIdMuPKqvWUvG
-         j5jzic543or4d9zsVfoUp2R73s2MLFUxcfF5wQ/y1laQKpIhVlOCmC9gU1AeMLdq6TPn
-         Fwg5hF1B60dgjJah23WguqIsupr3qq/iSRdKGgKmswLCqcPbd5aGkMY1TP5bXL5kspKh
-         qyWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760023820; x=1760628620;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=JaR01KCIJ6ZP9VbmR0WJ2PYnA5mouv06D/TKethyhUs=;
-        b=JN6EPAjvc2BuZ1XNigif4hKFj8GD3UBRBkRoDUSs52ocbzruRY9xwGBguhjnPARFgP
-         ZiBV9gDwaMMUAyji/ClWkysGAutzGVUQAhq8us762ithzF/+TZIljOUVdRey/w9niOI1
-         wstlZP3ho8xAtwCL7fmY1th09QL9XxDuOp8jx54FhUlF9niJXjodMJnnGXIFgzNw9Txk
-         rPnQBZE1ZqMs7nWO+x9Jxle4hflzk1Y8q4RbF4mOTh4Hs1iUF4MOyj5dz5QY6ai/TVLY
-         NeNTLPEtEJke9iiZ81aCgmNhRY4Rr5s9ahXEU357i+89UicRtySNZd1sHp31BzfDlkzl
-         7zlA==
-X-Forwarded-Encrypted: i=1; AJvYcCVUVRZQhw3UjLfCOcFD/hM/K+8g353NB6K9Tb65tFnBPxihZ+Xo+zmHa3OMd9VeeLF4rGngqiCw5bFHL+U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZfd6by1XRkHQ01R3UBWYtQEhLKBptVJQbeXRbrYQMgvIBhKU5
-	snNbPv76WxKs4w75xraavwsR3AngojdzXA9Evej3YbOsIQaZbl+ZrRIUpHRgoUSvfm4=
-X-Gm-Gg: ASbGncuc7Kk45/suRGodgaZtyTywNO0hG7XVz6qwsbzLRw31z+k4IuO3da5hgmJXSYS
-	GYdFN6cNUwlbG9RLv0LbMjJFdMSF5Iy03jWIX3g4fUMD5eidmAGoVHCGS2BMbZd/cNiSLctL5B9
-	Z4AMNLuSNsrGnm+eq8wsK93BQrnueSuly4RGyKAp7mOsRivCR8nPWzyq8Tm8D6E4MbjPZ9Dj20o
-	viYtMeW2czeJS8htunHoWWOZVejah+sEtPaKRI7GGx+Ddzron5wJazK78gwPczlwlJ/6blyIXix
-	0qNWXTh2TkOR7/YT+kfhFGRSVrzvgO2XNY6BB3nBWeaWo79Q8GQ3ix3nVmdbOSpx6Rn613ve74O
-	Vcpxm1IYQNMA0kfYQZegONrpsSwzIIBXUNuCMuP+aG32wcyScolrUSnE5LQUmVaoGobVsHKBoMN
-	bsHzj83FIAizUfz8TDaSHf28wwn+0=
-X-Google-Smtp-Source: AGHT+IHpP6w5GzvbXXFlvKAAQxHUSfL37e1hWvT3bz8kbu7/7Pa0mGOtryXuWMnczjfJlf1h6yPGeg==
-X-Received: by 2002:a05:6000:40dc:b0:3ce:f0a5:d594 with SMTP id ffacd0b85a97d-42666ab297amr5168972f8f.13.1760023819556;
-        Thu, 09 Oct 2025 08:30:19 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:7a0c:da2f:6591:67ee? ([2a01:e0a:3d9:2080:7a0c:da2f:6591:67ee])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8e9762sm35723226f8f.38.2025.10.09.08.30.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Oct 2025 08:30:19 -0700 (PDT)
-Message-ID: <4c5dc916-ea7a-4d73-b509-49f82ff36666@linaro.org>
-Date: Thu, 9 Oct 2025 17:30:18 +0200
+	s=arc-20240116; t=1760023855; c=relaxed/simple;
+	bh=YHvg+UnwH7eiIfj58JCP2jWxiBZSzrITGQpq930Xtkg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Cp8kW+5rmfUH115LriIH2rTmTDgidMp0YXoPU4CaFb7djctkrc+eKFekFndi5tSx/XOfngR1QABr1kO+c/6hVAnowRmr49DPAWKfo+hbTdMk6xwgYLrLzZIOjbsI3n/yD7Ep5ZiHam+QxJfL0kj3G1feMm1plVATsE8UXvQWOck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kAhsoOsL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KOHDwic+; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 9 Oct 2025 17:30:49 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1760023850;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=k/Atcw8FJK8QC24QJ8kPRtEJc6zGI4BdlyJuf9DRrH0=;
+	b=kAhsoOsLPKItWTcHgXzBytQuDBua99s/rwyB3Q7Ka3/QpykIay4aqLkRV88enlMbV/gE7g
+	tM3aB8avWUtV6YZ2Pwtrk7xiOI5gnLztsGSbAaPERYHQJQyK0rjMqGao+y0+yRoNKwO1pH
+	iIUyVJ9JbVRwZuJKy3sevsejWayk59XSK5OiT/MmSTC6XrFDiyV4d8AdxrS+hLIbYo2imD
+	U+eGZZwQ781uRcb6kSDV10uSYJJ6f9laX+C2xy+ZmynEWpwtgMbVIiyVHJZO+bgzAvfXF2
+	919jojCZkx3g9i5XLR8pNHpRwZFFuxLv0yzM0UtcWbecQB+kqLv4Hov1cACd8g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1760023850;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=k/Atcw8FJK8QC24QJ8kPRtEJc6zGI4BdlyJuf9DRrH0=;
+	b=KOHDwic+oKTt90Nx/Hce3E5KdlfR48+Fz7I47ctNZCq3UJCgr9fiZFUctVIx6wgYOwyZCJ
+	am7dFk8k7t8Ey2BA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Thomas Gleixner <tglx@linutronix.de>, linux-rt-devel@lists.linux.dev
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-rt-users@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>
+Subject: [ANNOUNCE] v6.17.1-rt5
+Message-ID: <20251009153049.OC9WFY8_@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH RFC v2 2/6] ASoC: dt-bindings: qcom,sm8250: Add clocks
- properties for I2S
-To: Srinivas Kandagatla <srini@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20251008-topic-sm8x50-next-hdk-i2s-v2-0-6b7d38d4ad5e@linaro.org>
- <20251008-topic-sm8x50-next-hdk-i2s-v2-2-6b7d38d4ad5e@linaro.org>
- <44606de8-3446-472f-aa6b-25ff8b76e0ec@kernel.org>
- <3620feb6-12bf-48c1-b47a-ccb486e5b5de@linaro.org>
- <c0b71974-65df-47ad-902b-45c2dbe66be0@kernel.org>
- <f27cad88-b1fd-41a3-bdb1-b07de3dea8a2@linaro.org>
- <b614913e-7ebf-4abe-9eb5-f41b81d91ad3@kernel.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <b614913e-7ebf-4abe-9eb5-f41b81d91ad3@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-On 10/9/25 16:29, Srinivas Kandagatla wrote:
-> 
-> 
-> On 10/9/25 3:25 PM, Neil Armstrong wrote:
->> On 10/9/25 16:06, Srinivas Kandagatla wrote:
->>>
->>>
->>> On 10/9/25 3:03 PM, Neil Armstrong wrote:
->>>> On 10/9/25 15:36, Srinivas Kandagatla wrote:
->>>>>
->>>>>
->>>>> On 10/8/25 7:56 PM, Neil Armstrong wrote:
->>>>>> In order to describe the block and master clock of each I2S bus, add
->>>>>> the first 5 I2S busses clock entries.
->>>>>>
->>>>>> The names (primary, secondary, tertiarty, quaternary, quinary, senary)
->>>>>> uses the LPASS clock naming which were used for a long time on
->>>>>> Qualcomm
->>>>>> LPASS firmware interfaces.
->>>>>>
->>>>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->>>>>> ---
->>>>>>     .../devicetree/bindings/sound/qcom,sm8250.yaml      | 21 ++++++++++
->>>>>> +++++++++++
->>>>>>     1 file changed, 21 insertions(+)
->>>>>>
->>>>>> diff --git a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
->>>>>> b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
->>>>>> index
->>>>>> 8ac91625dce5ccba5c5f31748c36296b12fac1a6..d1420d138b7ed8152aa53769c4d495e1674275e6 100644
->>>>>> --- a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
->>>>>> +++ b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
->>>>>> @@ -64,6 +64,27 @@ properties:
->>>>>>         $ref: /schemas/types.yaml#/definitions/string
->>>>>>         description: User visible long sound card name
->>>>>>     +  clocks:
->>>>>> +    minItems: 2
->>>>>> +    maxItems: 12
->>>>>> +
->>>>>> +  clock-names:
->>>>>> +    minItems: 2
->>>>>> +    items:
->>>>>> +      # mclk is the I2S Master Clock, mi2s the I2S Bit Clock
->>>>>> +      - const: primary-mi2s
->>>>>> +      - const: primary-mclk
->>>>>> +      - const: secondary-mi2s
->>>>>> +      - const: secondary-mclk
->>>>>> +      - const: tertiary-mi2s
->>>>>> +      - const: tertiary-mclk
->>>>>> +      - const: quaternary-mi2s
->>>>>> +      - const: quaternary-mclk
->>>>>> +      - const: quinary-mi2s
->>>>>> +      - const: quinary-mclk
->>>>>> +      - const: senary-mi2s
->>>>>> +      - const: senary-mclk
->>>>>> +
->>>>>
->>>>> I don't this is correct way to handling bitclk and mclks for I2S, these
->>>>> are normally handled as part of snd_soc_dai_set_sysclk() transparently
->>>>> without need of any device tree description.
->>>>>
->>>>> Also doing this way is an issue as this is going to break existing
->>>>> Elite
->>>>> based platforms, and the device description should not change across
->>>>> these both audio firmwares.
->>>>
->>>> This is only for AudioReach platforms, on those platforms the
->>>> clocks are registered in DT and are not accessible by the card.
->>>>
->>> Clocks will be acessable via snd_soc_dai_set_sysclk ->
->>> q6prm_set_lpass_clock once set_sysclk support is added to q6apm-lpass
->>> i2s dai ops.
->>>
->>>
->>>> Device description is obviously different for the AudioReach platforms.
->>>
->>> Why should it be different, its same device.
->>> We have platforms that use both Elite and Audioreach.
->>
->> I'm perfectly aware of that, it's the case for sc7280/qcm6490. And I agree
->> the card bindings is the same, but it doesn't mean the DSP elements are the
->> same and uses in the same manner.
->>
->> So let's forget the bindings and forget those clocks entries, and imagine
->> I'll implement those _sys_sysclk calls like for the Elite platforms.
->> This means I'll bypass the clock framework by directly setting the PRM
->> clocks, this is clearly a layer violation.
-> 
-> You can claim clocks in the dsp layer (q6apm-lpass-dais) instead of
-> claiming it in machine layer, it does not necessarily have to bypass the
-> clk framework.
+Dear RT folks!
 
-The current q6afe implementation totally bypasses the clock framework:
+I'm pleased to announce the v6.17.1-rt5 patch set. 
 
-static int q6afe_set_lpass_clock_v2(struct q6afe_port *port,
-				 struct afe_clk_set *cfg)
-{
-	return q6afe_port_set_param(port, cfg, AFE_PARAM_ID_CLOCK_SET,
-				    AFE_MODULE_CLOCK_SET, sizeof(*cfg));
-}
+Changes since v6.17.1-rt4:
 
-I have no time right now to implement all that for q6apm & q6prm in the
-way you propose, so I'll probably not send a new version.
+  - Update the workqueue patch for BH-worker to the version which
+    merged.
 
-Neil
+  - Backport two patches for nft_set_pipapo from upstream which were
+    marked for stable nd clash somehow with already made backport of
+    nft_set_pipapo in order to drop the BH-lock.
 
-> 
-> --srini
->>
->> Neil
->>
->>>
->>> --srini
->>>>
->>>> Neil
->>>>
->>>>>
->>>>> thanks,
->>>>> Srini
->>>>>
->>>>>>     patternProperties:
->>>>>>       ".*-dai-link$":
->>>>>>         description:
->>>>>>
->>>>>
->>>>
->>>
->>
-> 
+  - syzbot report a failure in networking with GRO offloading caused by
+    the removal of the BH-lock.
 
+Known issues
+    - Yoann Congal reported a bit spinlock in dm_exception_table_lock().
+        https://lore.kernel.org/all/Z8GTjqgDe_5EkE3t@P-ASN-ECS-830T8C3.local
+
+The delta patch against v6.17.1-rt4 is appended below and can be found here:
+ 
+     https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.17/incr/patch-6.17.1-rt4-rt5.patch.xz
+
+You can get this release via the git tree at:
+
+    https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v6.17.1-rt5
+
+The RT patch against v6.17.1 can be found here:
+
+    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.17/older/patch-6.17.1-rt5.patch.xz
+
+The split quilt queue is available at:
+
+    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.17/older/patches-6.17.1-rt5.tar.xz
+
+Sebastian
+
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index 94e226f637992..d6c94ee8edfc5 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -4258,11 +4258,10 @@ static bool __flush_work(struct work_struct *work, bool from_cancel)
+ 				if (IS_ENABLED(CONFIG_PREEMPT_RT)) {
+ 					struct worker_pool *pool;
+ 
+-					mutex_lock(&wq_pool_mutex);
++					guard(rcu)();
+ 					pool = get_work_pool(work);
+ 					if (pool)
+ 						workqueue_callback_cancel_wait_running(pool);
+-					mutex_unlock(&wq_pool_mutex);
+ 				} else {
+ 					cpu_relax();
+ 				}
+diff --git a/localversion-rt b/localversion-rt
+index ad3da1bcab7e8..0efe7ba1930e1 100644
+--- a/localversion-rt
++++ b/localversion-rt
+@@ -1 +1 @@
+--rt4
++-rt5
+diff --git a/net/core/gro_cells.c b/net/core/gro_cells.c
+index ff8e5b64bf6b7..b43911562f4d1 100644
+--- a/net/core/gro_cells.c
++++ b/net/core/gro_cells.c
+@@ -8,11 +8,13 @@
+ struct gro_cell {
+ 	struct sk_buff_head	napi_skbs;
+ 	struct napi_struct	napi;
++	local_lock_t		bh_lock;
+ };
+ 
+ int gro_cells_receive(struct gro_cells *gcells, struct sk_buff *skb)
+ {
+ 	struct net_device *dev = skb->dev;
++	bool have_bh_lock = false;
+ 	struct gro_cell *cell;
+ 	int res;
+ 
+@@ -25,6 +27,8 @@ int gro_cells_receive(struct gro_cells *gcells, struct sk_buff *skb)
+ 		goto unlock;
+ 	}
+ 
++	local_lock_nested_bh(&gcells->cells->bh_lock);
++	have_bh_lock = true;
+ 	cell = this_cpu_ptr(gcells->cells);
+ 
+ 	if (skb_queue_len(&cell->napi_skbs) > READ_ONCE(net_hotdata.max_backlog)) {
+@@ -39,6 +43,9 @@ int gro_cells_receive(struct gro_cells *gcells, struct sk_buff *skb)
+ 	if (skb_queue_len(&cell->napi_skbs) == 1)
+ 		napi_schedule(&cell->napi);
+ 
++	if (have_bh_lock)
++		local_unlock_nested_bh(&gcells->cells->bh_lock);
++
+ 	res = NET_RX_SUCCESS;
+ 
+ unlock:
+@@ -54,6 +61,7 @@ static int gro_cell_poll(struct napi_struct *napi, int budget)
+ 	struct sk_buff *skb;
+ 	int work_done = 0;
+ 
++	__local_lock_nested_bh(&cell->bh_lock);
+ 	while (work_done < budget) {
+ 		skb = __skb_dequeue(&cell->napi_skbs);
+ 		if (!skb)
+@@ -64,6 +72,7 @@ static int gro_cell_poll(struct napi_struct *napi, int budget)
+ 
+ 	if (work_done < budget)
+ 		napi_complete_done(napi, work_done);
++	__local_unlock_nested_bh(&cell->bh_lock);
+ 	return work_done;
+ }
+ 
+@@ -79,6 +88,7 @@ int gro_cells_init(struct gro_cells *gcells, struct net_device *dev)
+ 		struct gro_cell *cell = per_cpu_ptr(gcells->cells, i);
+ 
+ 		__skb_queue_head_init(&cell->napi_skbs);
++		local_lock_init(&cell->bh_lock);
+ 
+ 		set_bit(NAPI_STATE_NO_BUSY_POLL, &cell->napi.state);
+ 
+diff --git a/net/netfilter/nft_set_pipapo.c b/net/netfilter/nft_set_pipapo.c
+index 96aefa504f57a..337daa777c353 100644
+--- a/net/netfilter/nft_set_pipapo.c
++++ b/net/netfilter/nft_set_pipapo.c
+@@ -550,8 +550,7 @@ static struct nft_pipapo_elem *pipapo_get(const struct nft_pipapo_match *m,
+  *
+  * This function is called from the data path.  It will search for
+  * an element matching the given key in the current active copy.
+- * Unlike other set types, this uses NFT_GENMASK_ANY instead of
+- * nft_genmask_cur().
++ * Unlike other set types, this uses 0 instead of nft_genmask_cur().
+  *
+  * This is because new (future) elements are not reachable from
+  * priv->match, they get added to priv->clone instead.
+@@ -561,8 +560,8 @@ static struct nft_pipapo_elem *pipapo_get(const struct nft_pipapo_match *m,
+  * inconsistent state: matching old entries get skipped but thew
+  * newly matching entries are unreachable.
+  *
+- * GENMASK will still find the 'now old' entries which ensures consistent
+- * priv->match view.
++ * GENMASK_ANY doesn't work for the same reason: old-gen entries get
++ * skipped, new-gen entries are only reachable from priv->clone.
+  *
+  * nft_pipapo_commit swaps ->clone and ->match shortly after the
+  * genbit flip.  As ->clone doesn't contain the old entries in the first
+@@ -579,7 +578,7 @@ nft_pipapo_lookup(const struct net *net, const struct nft_set *set,
+ 	const struct nft_pipapo_elem *e;
+ 
+ 	m = rcu_dereference(priv->match);
+-	e = pipapo_get_slow(m, (const u8 *)key, NFT_GENMASK_ANY, get_jiffies_64());
++	e = pipapo_get_slow(m, (const u8 *)key, 0, get_jiffies_64());
+ 
+ 	return e ? &e->ext : NULL;
+ }
+diff --git a/net/netfilter/nft_set_pipapo_avx2.c b/net/netfilter/nft_set_pipapo_avx2.c
+index 3e584dc4ad20e..9235efb10dd52 100644
+--- a/net/netfilter/nft_set_pipapo_avx2.c
++++ b/net/netfilter/nft_set_pipapo_avx2.c
+@@ -1179,7 +1179,6 @@ struct nft_pipapo_elem *pipapo_get_avx2(const struct nft_pipapo_match *m,
+ 
+ 	nft_pipapo_avx2_prepare();
+ 
+-next_match:
+ 	nft_pipapo_for_each_field(f, i, m) {
+ 		bool last = i == m->field_count - 1, first = !i;
+ 		int ret = 0;
+@@ -1226,6 +1225,7 @@ struct nft_pipapo_elem *pipapo_get_avx2(const struct nft_pipapo_match *m,
+ 
+ #undef NFT_SET_PIPAPO_AVX2_LOOKUP
+ 
++next_match:
+ 		if (ret < 0) {
+ 			scratch->map_index = map_index;
+ 			kernel_fpu_end();
+@@ -1238,8 +1238,11 @@ struct nft_pipapo_elem *pipapo_get_avx2(const struct nft_pipapo_match *m,
+ 
+ 			e = f->mt[ret].e;
+ 			if (unlikely(__nft_set_elem_expired(&e->ext, tstamp) ||
+-				     !nft_set_elem_active(&e->ext, genmask)))
++				     !nft_set_elem_active(&e->ext, genmask))) {
++				ret = pipapo_refill(res, f->bsize, f->rules,
++						    fill, f->mt, last);
+ 				goto next_match;
++			}
+ 
+ 			scratch->map_index = map_index;
+ 			kernel_fpu_end();
 
