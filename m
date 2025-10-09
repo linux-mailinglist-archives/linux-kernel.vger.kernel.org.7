@@ -1,143 +1,110 @@
-Return-Path: <linux-kernel+bounces-847571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14134BCB373
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 01:40:16 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90FBFBCB379
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 01:40:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 797B64274C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 23:40:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E45774E68FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 23:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C3F1A01C6;
-	Thu,  9 Oct 2025 23:39:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 568D7289E2D;
+	Thu,  9 Oct 2025 23:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CTYTovnU"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="dSAyVX7V"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0063B289E0B
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 23:39:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C53728850F;
+	Thu,  9 Oct 2025 23:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760053192; cv=none; b=ipUo5PlS2XD2QZrH5sbnsRXVPTOmuzbiUiOBSutSZYm20WxdME9tYtiP6wtmCl3KHg30AhGpSiiUm+PBuiwjlElrU03ef0JXBqfgowuM+q3Fi59ust+kFbANJcI6k0EGeY/9p5byAgGSuhCVx8qLi0M4ajWrcyO5RK2Sh8oF+VY=
+	t=1760053228; cv=none; b=eQYVylonX4EE4s7EJapBCo8MhhgfKzx2NYIHXhwVygSu1kOhUCmey/+xtXINSvRVx7qeerX3KZuXqsOmoojitdTNzhogwWEgBdu+ZTGPw/OB1AWgsApEUbvDVeBeaDpmy4Wd02dgGAzVIavjc4LjZNnbCB4zWv1I7IgizkorNnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760053192; c=relaxed/simple;
-	bh=36pVCnZWN4SZ80UBOIQS1tVOes82LSVnGiM35BqW6ZI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PLOV4Lc+2UZShPXvl3PcUE9b9yyo+627yVezQkdOKkx9iRDontrR1fE4mKdxAzo1WsgOoKWqRp5SWaUtd/3YXtI4paMeFw70yo14E4rpEAVGm66d9RaiIGJ4DWtl0ZEpuPbPtpttmx+gPPfb1bOgjyO6ASyzaBmscGrYxqL+xRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CTYTovnU; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e6c8bc46eso8792095e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 16:39:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760053189; x=1760657989; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OpLyNX9fRh+6ZSUeqgLPaV8NCrY8WnY93VlPM/N7oK8=;
-        b=CTYTovnU3OEOx+++fGVBRFUtRG4wlzd4Pc1Xu9RrCaN9S9XJHantMglflyQWP4DESH
-         dFAyZDHto7jx1Yu8i1YCUbSHkDPw1ULR2lLnhVOHPjghtGGZ+3C8dinAxDv2CqFwJG+s
-         boX0de9f6QHcf0d7NWwz02Z3qKMIuYO92JFtq8s8Wr8pEegIGc93ueTnH4qTXNtAKaOJ
-         2bRSjr4DdfNCrvbtw9Tm4IviKnN38zHnq4l02KUmxvjdAOCFltOU5kd+bnHjkMzMP8o0
-         YrlQIvsq7jt4qpwYKfLHq+L6PpvOZBhzt+HQXVk8T/9uvsABXASycyL4q9iaL+GaPJ/j
-         24Hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760053189; x=1760657989;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OpLyNX9fRh+6ZSUeqgLPaV8NCrY8WnY93VlPM/N7oK8=;
-        b=BkPArVbN52jdT3dn0MQ+wIub8LPUPWevLogDyN7Tn5qhfTaBNdIbNxN3G0A9oSRBea
-         /vHwjCzRXyafCoupuw4aj9XFxI8AxlwgQQ7De03RuzYYxInpQ0CZaeh34904R9PyifzF
-         bWuq7gicpRyK4iiS7Yib8PPKv4r+sa+Ex9SnWoUS28A07pTVyH0RNcfxo0AxuP4WNhlb
-         s0PHLiYokLjeTTXVqVkrjCpNslESsnYkG+JLhQIUa1zUCSB4rDOt3P8hj0remGnKB9zY
-         NPMJJ5Xn2zJYqZ2sdkw3H+COvCnsJS34PUITsYQzZk2ONXNd+YFgleJ3U/Kaop5L6XLB
-         VX1Q==
-X-Gm-Message-State: AOJu0YzB9bPuQA1wEJ6e0zazXRlM38BheXQW6wKKX5LcG0CyhpwUghGZ
-	GEfI/z9qbqz6QChRwR4+ztHcFUs8T8M2ugJCrfGOTGMlWf41/cM+9ib+V8OtMw==
-X-Gm-Gg: ASbGncs2iI65+nVsm/gxkIHaTP1viIe2/Qznv6vK4FF/Oe7QD+BhonZaJFnskwPhSt7
-	meuYC6UTxl7LXCpF9QIVgq9vRD4bTQxmYqm4JmtRdryd3ZWiePt8ij7rV9bzOs8keE9LfYlBPhL
-	21SnxpVNn83ns7ckww1qIq832zog62mtWr/EuEeSl8/nB9Tg1EejvUebYzIwxsGLA+PTnOxcfjg
-	YFmE6zVC5y7FrSqc/ZE6+9qDCn5EK7YBkbaKtevHTRbSrj7BdCLj3SnRGA2pIH8ySMNtSp8D1S9
-	13UHvRD4eVD92+CfaqKuN73mGVfPoTceZcIrkzTMTZnxDGu8W4PJMgdX1QWAyuvrERMw3W1cpOP
-	FfCAEFlRLQssJGgAhVFiKoiSLeli0kZqAbCxQ3TwwiqyYJk4BM0g/
-X-Google-Smtp-Source: AGHT+IGJYw11rDLltJwLvCnQW4izSML6BKxvrZuXRvJXZRf+jWWFVqJr/ShHNVK1a4VjhZ4lvPbVMg==
-X-Received: by 2002:a05:600c:1395:b0:46e:27fb:17f0 with SMTP id 5b1f17b1804b1-46fa9aa204cmr65438775e9.9.1760053188697;
-        Thu, 09 Oct 2025 16:39:48 -0700 (PDT)
-Received: from fedora ([41.45.27.42])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fab3e3206sm46066075e9.4.2025.10.09.16.39.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 16:39:48 -0700 (PDT)
-From: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org,
-	Mary Guillemard <mary@mary.zone>,
-	Faith Ekstrand <faith.ekstrand@collabora.com>,
-	Lyude Paul <lyude@redhat.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	nouveau@lists.freedesktop.org,
-	Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
-Subject: [PATCH 5/5] drm/nouveau/drm: Bump the driver version to 1.4.1 to report new features
-Date: Fri, 10 Oct 2025 02:38:37 +0300
-Message-ID: <20251009233837.10283-6-mohamedahmedegypt2001@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251009233837.10283-1-mohamedahmedegypt2001@gmail.com>
-References: <20251009233837.10283-1-mohamedahmedegypt2001@gmail.com>
+	s=arc-20240116; t=1760053228; c=relaxed/simple;
+	bh=jbXf+oYCbVfnN9hCBEoXYickNFcUbhVgCGfXK6UgfYs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EliBa+lSXMIBYiVLpzcILH+CTdPJ++oOuuEj069A/FVFgqVKJXqZkqxxnOWblFonQ9dQpZ+shyTFKtZYz1244vPfba+RyI9t50J4JS0UGqSHf29meGMZEcdIgS+ckdaDI4KHFuxB0BMmHKHFKeHqIWuG7gjiEKiyO4zZgs5ySXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=dSAyVX7V; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cjRFP75nDzltKFn;
+	Thu,  9 Oct 2025 23:40:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1760053224; x=1762645225; bh=yTHDZEo4xkKcumLOfsHylHgL
+	/jrJwym+SE4lLdqXNgY=; b=dSAyVX7VZCVHuOzIqDyd7VcdjRatL6Aozqzh9sIp
+	sJtazL044OBVOflbfKOzza/CVOClB/cbBYwhWMyTy4zEwNUtpB1r6Z8yxx9nb7gP
+	D+Af2eLm+l2orUmsjxGoPyZPNtdVmTE9AgbewybZcwOEs32iyhvNiQM0gOyxktwe
+	P3ixyOdiT/gOjCtpDce3Ja1MZRKTE0DDkNJEpOR1QFtgSSOVxkrYsnKR7fm1aP1M
+	7F3+Pu2FK5CKuNnNIojW0AJblLqESFonsd4jRX5IOneXycDskWoefcykcU5gjCUB
+	yUIRaZtKzlETwT/xwWP8TkXwabotz7nIUHj1WbKJFr0EyA==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id IxN8B9_CWxTr; Thu,  9 Oct 2025 23:40:24 +0000 (UTC)
+Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cjRFH0Lsdzlgqyn;
+	Thu,  9 Oct 2025 23:40:18 +0000 (UTC)
+Message-ID: <8406f13d-d8be-4957-b1ec-6996f19d32e9@acm.org>
+Date: Thu, 9 Oct 2025 16:40:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] block/mq-deadline: adjust the timeout period of the
+ per_prio->dispatch
+To: Damien Le Moal <dlemoal@kernel.org>, chengkaitao <pilgrimtao@gmail.com>,
+ axboe@kernel.dk
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Chengkaitao <chengkaitao@kylinos.cn>
+References: <20251009155253.14611-1-pilgrimtao@gmail.com>
+ <db87a85d-e433-4daf-97c7-d5156849db0f@acm.org>
+ <bb362d12-b942-48f3-8414-e859cebb8862@kernel.org>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <bb362d12-b942-48f3-8414-e859cebb8862@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The HW can only do compression on large and huge pages, and enabling it on
-4K pages leads to a MMU fault. Compression also needs kernel support for
-handling the compressed kinds and managing the compression tags.
 
-This increments the nouveau version number which allows NVK to enable it
-only when the kernel actually supports both features and avoid breaking
-the system if a newer mesa version is paired with an older kernel version.
+On 10/9/25 1:21 PM, Damien Le Moal wrote:
+> There is still something bothering me with this: the request is added to the
+> dispatch list, and *NOT* to the fifo/sort list. So this should be considered as
+> a scheduling decision in itself, and __dd_dispatch_request() reflects that as
+> the first thing it does is pick the requests that are in the dispatch list
+> already. However, __dd_dispatch_request() also has the check:
+> 
+> 		if (started_after(dd, rq, latest_start))
+>                          return NULL;
+> 
+> for requests that are already in the dispatch list. That is what does not make
+> sense to me. Why ? There is no comment describing this. And I do not understand
+> why we should bother with any time for requests that are in the dispatch list
+> already. These should be sent to the drive first, always.
+> 
+> This patch seems to be fixing a problem that is introduced by the above check.
+> But why this check ? What am I missing here ?
 
-For the associated userspace MR, please see !36450:
-https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/36450
+Is my conclusion from the above correct that there is agreement that the 
+I/O priority should be ignored for AT HEAD requests and that AT HEAD
+requests should always be dispatched first? If so, how about merging the
+three per I/O priority dispatch lists into a single dispatch list and
+not to call started_after() at all for the dispatch list?
 
-Signed-off-by: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
----
- drivers/gpu/drm/nouveau/nouveau_drv.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Thanks,
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_drv.h b/drivers/gpu/drm/nouveau/nouveau_drv.h
-index 55abc510067b..e5de4367e2cc 100644
---- a/drivers/gpu/drm/nouveau/nouveau_drv.h
-+++ b/drivers/gpu/drm/nouveau/nouveau_drv.h
-@@ -10,7 +10,7 @@
- 
- #define DRIVER_MAJOR		1
- #define DRIVER_MINOR		4
--#define DRIVER_PATCHLEVEL	0
-+#define DRIVER_PATCHLEVEL	1
- 
- /*
-  * 1.1.1:
-@@ -35,6 +35,8 @@
-  *        programs that get directly linked with NVKM.
-  * 1.3.1:
-  *      - implemented limited ABI16/NVIF interop
-+ * 1.4.1:
-+ *      - add variable page sizes and compression for Turing+
-  */
- 
- #include <linux/notifier.h>
--- 
-2.51.0
-
+Bart.
 
