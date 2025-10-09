@@ -1,90 +1,93 @@
-Return-Path: <linux-kernel+bounces-846248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04730BC760C
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 06:35:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B802BC760F
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 06:37:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D436189D958
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 04:36:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8416019E0E22
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 04:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED39259CB2;
-	Thu,  9 Oct 2025 04:35:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="CUsThzE3"
-Received: from mail-24426.protonmail.ch (mail-24426.protonmail.ch [109.224.244.26])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF62F259CBB;
+	Thu,  9 Oct 2025 04:37:04 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E011E492A
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 04:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 019931E492A
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 04:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759984552; cv=none; b=uJh0Qz+3rHCvIwV7AU7EQdIyIOV59DMAGdQb6CB0E7ykVH2NEJYGG2ttfhtOH6jglhZUkHPxVjAXl/APFkL9PVivFM1Bu+hTjnxbZloJpHpwyIidV7AFkwNtqPqtcL7kiuipnL0wBwhXGGRURiLd+dkzAIiCcQAfjbMdJVuszdc=
+	t=1759984624; cv=none; b=E+KtjDpSejE68uKUirS7scR9k1vC8bEYYIDrDDrKG0C0yqJsPA7t5oAILUKhKlkWZPQvDYCKFI47r2uJ7XiyfBK1RsdT7IM/SfnXRz/Y4vAp/rPG+GqIl0aTW87yve3X0ZtJTHuwVmvexDKHnqzCesyWnwkxPXDpHEgfo4ul6V4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759984552; c=relaxed/simple;
-	bh=h2tIPvXtIjUkWW8Si/LxYhExw6Ya/TkaTmizQ7XGhoc=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=qxOGrKe21jZUjmyTZ0PF2ijiustFyhvYB/JSTizs76FUJgCLI+puG5RCPHXZ60gOcWvEM0FhTQ0OnYK47nXjGPQm/Phx2rjH2GGM0irRnXdhg/PDXlXxMaBKQHHMN9EkrH/hpNilFzroHYZax6kDbwkzRY87LRS1UKV43hbzmdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=CUsThzE3; arc=none smtp.client-ip=109.224.244.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1759984542; x=1760243742;
-	bh=LGSEpgA+aW6Ym+pdPVcBCxcRwaJErMHlI/EoFe4xgOk=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=CUsThzE3FT7+fLrxaRK1E2bhkm5g4zmNEuSYeooPeO0YvixfGT6QBp2x4zi7cvWGr
-	 jrjFTZ8nytr++P6oWo9aUvuGvewp+WJ16Hdp4HT0dAmUlrZVVhKOr8EFMx3MJbe/Zo
-	 nvwxAA4i47A6+wj4A+SjUnT6io401I+IQv6w31Xwk3A51rIOC3wkB1sANBx+SFccUT
-	 WZvWpx+DNeKi4ZPmJz/otvxXjNAfKu5aT0/4ilDt7jHhoYsomEbT3dMBKcGPphgfLC
-	 cR9z3+hwEDdUsQ14689L/DhmUBruIGf9e5oKqY/2vra0fGV5gZRqqrYw6r/mN9nsbX
-	 sQSYyBDueJO+Q==
-Date: Thu, 09 Oct 2025 04:35:36 +0000
-To: Ard Biesheuvel <ardb+git@google.com>
-From: Jari Ruusu <jariruusu@protonmail.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, "ebiggers@kernel.org" <ebiggers@kernel.org>, Ard Biesheuvel <ardb@kernel.org>
-Subject: Re: [PATCH v3 20/21] arm64/fpu: Enforce task-context only for generic kernel mode FPU
-Message-ID: <lEQKYlJspHGzmd8DyuKKcpZege3zgX8WlhnHUM044EmEhtaElIqZrX-cZ5ApNx9ylcn8fS1JjzCPcmEP72WXnn4H0JrsFYge3Jba-YngKrs=@protonmail.com>
-Feedback-ID: 22639318:user:proton
-X-Pm-Message-ID: d081bbc03fb51d4975836091df950ebb6c33e6f2
+	s=arc-20240116; t=1759984624; c=relaxed/simple;
+	bh=x3+J3puH18iBtu0p4Ngzz5BBjq/bEkLSu2XcZeKJnbM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=DV3pN4pxZU/FnqKrbQyieX5H88UC6lMVtUeA2xEFRy7Q5sX1JBiH30WDAaZoio6Eud1mkxOy3lruQ0zD+ZEt7zfW24hpQR3IijM1clgsuFznuJ7UOzoCwUwf9KZY7YD5ewrKdWv8iRXano9mhTYVbRH5ioJFZlM3p7aC9xrpXSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-911c5f72370so106971639f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 21:37:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759984622; x=1760589422;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=43Zf1ZyH9cln2BnLQLjK/Ww8CSXVGpBmlcxa8YPOnfI=;
+        b=miIJblbC24vQDR0gM3qBX0vhcIODtil0t/h+fyxhv3gnQetmgz5tv+azuNMFkUlBgq
+         P52LVrozGER9M0cBNRwjs5a+QZZb1Y5UvM95SwLv1kAoNT8Bus1YJikVRGhCJLS2FeJ8
+         HXqCGnTh720cVzMGGmiEH4Ak+BBKT5EgEdd4bITvX1BA9NSbgIUNJGNOfmrUYoTRHJGX
+         InBfdmcdrKI4UHO2XWO6yyUchlljWHXxqo+HJRTq8kkezRBa3/AJekjlMO1/2SRhIm37
+         uAJhz1lUDQbz8fECWKBG0xFvREKNqEehhHDCNmjf/7+gh2kcdEopZJkQ+VA5eW644O/W
+         VRDw==
+X-Forwarded-Encrypted: i=1; AJvYcCVLciEWxUsL8exPNFyNhdhdp5z9dWJV071HOlyjEq20xvvj45/aW3NbQ7Nh4ITpr2DRz6Ks9SdlU4hV9mM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1wBffyl40lymJpOdm42HsmX/7xhGRNj0UJF7RcCZQSRbLTxIB
+	HzRMnuphhB57tQYdZc1Knvs0AxsgJDWmWBKKvu4ZnRXvLw1XY3ey9diO629oj2X4ImudLQQ5XvR
+	w2YdfqGh36naqkaWDVyLPX774z5w8W1Ys6QIy2AVCtC2lxMB/035k4DTG/OE=
+X-Google-Smtp-Source: AGHT+IGt6q+midDEfUZFIkUDMKnVssOlfxgCVejmzPI3mMpG3CFD5Wb1tQ9IL6hr2PME+yiTyEVwanNvqOaiwsze9RPLHH0X9L7J
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6602:6d8e:b0:93b:c4b2:2b46 with SMTP id
+ ca18e2360f4ac-93bd19b966cmr639084839f.14.1759984622155; Wed, 08 Oct 2025
+ 21:37:02 -0700 (PDT)
+Date: Wed, 08 Oct 2025 21:37:02 -0700
+In-Reply-To: <6897b156.050a0220.51d73.0082.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68e73bee.050a0220.256323.0174.GAE@google.com>
+Subject: Re: [syzbot] [mm?] WARNING in try_to_migrate_one (3)
+From: syzbot <syzbot+63859a31071a369082b1@syzkaller.appspotmail.com>
+To: Liam.Howlett@oracle.com, akpm@linux-foundation.org, david@redhat.com, 
+	dev.jain@arm.com, harry.yoo@oracle.com, hdanton@sina.com, 
+	liam.howlett@oracle.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	lorenzo.stoakes@oracle.com, riel@surriel.com, syzkaller-bugs@googlegroups.com, 
+	vbabka@suse.cz, ziy@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
 
-Ard Biesheuvel wrote:
-> So enforce that kernel_fpu_begin() can only be called from task context,
-> and [redundantly] disable preemption. This removes the need for users of
-> this API to provide a kernel mode FP/SIMD state after a future patch
-> that makes that compulsory for preemptible task context.
-[snip]
-> --- a/arch/arm64/include/asm/fpu.h
-> +++ b/arch/arm64/include/asm/fpu.h
-[snip]
-> +static inline void kernel_fpu_begin(void)
-> +{
-> +     BUG_ON(!in_task());
-> +     preempt_disable();
-                ^^^^^^^------this looks okay
-> +     kernel_neon_begin();
-> +}
-> +
-> +static inline void kernel_fpu_end(void)
-> +{
-> +     kernel_neon_end();
-> +     preempt_disable();
-                ^^^^^^^------this looks wrong
-> +}
-=20
-Maybe that second one should be preempt_enable()
+syzbot suspects this issue was fixed by commit:
 
---
-Jari Ruusu=C2=A0 4096R/8132F189 12D6 4C3A DCDA 0AA4 27BD=C2=A0 ACDF F073 3C=
-80 8132 F189
+commit cf1b80dc31a1137b8b4568c138b453bf7453204a
+Author: Dev Jain <dev.jain@arm.com>
+Date:   Wed Aug 6 14:56:11 2025 +0000
 
+    mm: pass page directly instead of using folio_page
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11f121e2580000
+start commit:   0227b49b5027 Merge tag 'gpio-updates-for-v6.17-rc1-part2' ..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2ae1da3a7f4a6ba4
+dashboard link: https://syzkaller.appspot.com/bug?extid=63859a31071a369082b1
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=117c72f0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17ab7ea2580000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: mm: pass page directly instead of using folio_page
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
