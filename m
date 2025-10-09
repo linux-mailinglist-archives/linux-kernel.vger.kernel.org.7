@@ -1,129 +1,205 @@
-Return-Path: <linux-kernel+bounces-847127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFF30BC9F87
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 18:07:56 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8158FBCA01A
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 18:10:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21E19188B9BB
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 16:02:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5E78B4FD671
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 16:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E082A2F6193;
-	Thu,  9 Oct 2025 15:55:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD3C2EDD63;
+	Thu,  9 Oct 2025 15:59:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Bj+YV2mv"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E/xFlAvx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87DF523B607;
-	Thu,  9 Oct 2025 15:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2418229B18;
+	Thu,  9 Oct 2025 15:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760025354; cv=none; b=DWF4HOmruFUBo1YpbvWHYw9N0VnHpxtG1Xa6dxKNY5gRbssk9nDKgxGhXx9f48ybGVbYkrGcWVm08T7P7LYSy3+v2m2S2ZwjK5zTP8vMizAXRTKjduidz9RxiCQ0ucwG3I05qEvpGW7HPtqwBLg7p+eLB0vpobMlS5qHAXR91Nc=
+	t=1760025556; cv=none; b=ZpeUZQ5q3fsTOQ3ZUkmIgmuU9C/kOZwJPJwHLdb0owTRiX1I9ByniykLQeAhZ2WhbmeEjDDFzDuT+AghQYD/wrEGiaHmoZ28qyhuk+ilp4XL5oCMaVYewX7Xkfk/I0Dd6hbJGzx8ppC8BIL5A5FCgpGfGh4DsUweLsETnC7bPd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760025354; c=relaxed/simple;
-	bh=gEsdwK0m2kA3C6dQH8WJCbm+g8019XTzo1jqoCAXjPE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=an0gIP/Hk5om9RSIyMQVT8gcna6ILNC1anADI6YKilXzo5BdjV6S0gGMUUETrlwXt87J7lWXRsjAmYS9usT9crnJz0xbdInPEv74FRAVUlq1enNgF4lqrjnZR4+IE4lplpuLX53w3dPqxTrOH7CvyFUH4ZF8jLHdGVpy7zM4NjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Bj+YV2mv; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1760025351; x=1791561351;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=gEsdwK0m2kA3C6dQH8WJCbm+g8019XTzo1jqoCAXjPE=;
-  b=Bj+YV2mvQG9jaHrOPYrWJzoA8V5m6YoDSOS/StuvxW//y+l7A+KPZnYI
-   /NaWrS/sxT3pryzljehKZTjrxb/67JSd2451MlconCi3+oNEV4/41QxV1
-   FzhpZoNTUqlEZRnJFFdgKUng/DaVKWmZqCQsk24p8VLaFvq4fWKcLO42e
-   4u8qUTejIoQEMF66pwbN5faDucszwZnHGzMq3g7cvkdvzrweloJC3pTMU
-   Tj5xi/klb2jsTwB65qJ8yqfJud8rj2e2S2DAHExyo5vyRBHySzINR3Vtb
-   0U3yv50QaRHNnc2oZ9Gfnzl2aq4AJXtMXSzK2/Q868hsRANomKT80oDVJ
-   g==;
-X-CSE-ConnectionGUID: BY5Dt4iOTF6lw0TCi1Tv9Q==
-X-CSE-MsgGUID: o2p5G75YS8ucjPccvfHITQ==
-X-IronPort-AV: E=Sophos;i="6.19,216,1754982000"; 
-   d="scan'208";a="48057950"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Oct 2025 08:55:50 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Thu, 9 Oct 2025 08:55:39 -0700
-Received: from che-lt-i64410lx.microchip.com (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Thu, 9 Oct 2025 08:55:31 -0700
-From: Balamanikandan Gunasundar <balamanikandan.gunasundar@microchip.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: Eugen Hristev <eugen.hristev@linaro.org>, Chas Williams
-	<3chas3@gmail.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, "Alexandre
- Belloni" <alexandre.belloni@bootlin.com>, Claudiu Beznea
-	<claudiu.beznea@tuxon.dev>, Balakrishnan Sambath
-	<balakrishnan.s@microchip.com>, Hans Verkuil <hverkuil@kernel.org>, "Ricardo
- Ribalda" <ribalda@chromium.org>, Laurent Pinchart
-	<laurent.pinchart+renesas@ideasonboard.com>, Jacopo Mondi
-	<jacopo.mondi@ideasonboard.com>, Daniel Scally
-	<dan.scally+renesas@ideasonboard.com>, Tomi Valkeinen
-	<tomi.valkeinen@ideasonboard.com>, <linux-kernel@vger.kernel.org>,
-	<linux-media@vger.kernel.org>, <linux-atm-general@lists.sourceforge.net>,
-	<netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	Balamanikandan Gunasundar <balamanikandan.gunasundar@microchip.com>
-Subject: [PATCH 17/18] media: videodev2.h, v4l2-ioctl: Add microchip statistics format
-Date: Thu, 9 Oct 2025 21:22:50 +0530
-Message-ID: <20251009155251.102472-18-balamanikandan.gunasundar@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251009155251.102472-1-balamanikandan.gunasundar@microchip.com>
-References: <20251009155251.102472-1-balamanikandan.gunasundar@microchip.com>
+	s=arc-20240116; t=1760025556; c=relaxed/simple;
+	bh=lNQnHAsxUtANRW3ozb1ZTyH7qL2Wmh9+WYA8WvvuQto=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=F0AZx/mBf9XlinWxTU7gc+d9q2xqnCUX6jbFOlv2czV/uVa3gAedETfzmzEOXbdXmNOW4mdbegaRu5caiMZ1NdU0FOrDUT9M6eBa2CXoQeldqoKzKhZB/x7wuA5VVAMEj2E/Ir7Hfg9qZZh1Citk1/S68LPfWcfB5SObyw5YaDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E/xFlAvx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B74F3C4CEF8;
+	Thu,  9 Oct 2025 15:59:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760025556;
+	bh=lNQnHAsxUtANRW3ozb1ZTyH7qL2Wmh9+WYA8WvvuQto=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=E/xFlAvxv2rs71Kcn1NvRM79NveaPjIFaf0OOpk0QD+hj7Zi22tV3di55P26QPxM4
+	 70HCZtlD4bxCdWLkcj4aJjtW3Ggq0aKxFUTHTjXY9sAfQrS8CAADWYVH6sAFcGV/YC
+	 YmJuSUa9I64Dxr4YcwydpQP+U44oLNXhO7tvG5lBen/Ie4P1slX4wZk3bElG7qDSnH
+	 GY/XDCdYhmDXvEclA/GnwVO0/lgWtrlmgCMhWFXO8MTI6OvBk+emauO9iKYMwYCQBh
+	 gs2EoQx5P2an42NdmCtUBzX4BmAj/mV+YpEho3GezxZWryzOFVcXnOIS7WqLf3XToH
+	 IG4enfqzBk8RQ==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mhiramat@kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.17-5.4] uprobe: Do not emulate/sstep original instruction when ip is changed
+Date: Thu,  9 Oct 2025 11:55:11 -0400
+Message-ID: <20251009155752.773732-45-sashal@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251009155752.773732-1-sashal@kernel.org>
+References: <20251009155752.773732-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.17.1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-Add microchip ISC specific statistics meta data format. This data consists
-of raw histogram statistics that is exported to userspace for further
-processing. This fixes the kernel warning "Unknown pixelformat"
+From: Jiri Olsa <jolsa@kernel.org>
 
-Signed-off-by: Balamanikandan Gunasundar <balamanikandan.gunasundar@microchip.com>
+[ Upstream commit 4363264111e1297fa37aa39b0598faa19298ecca ]
+
+If uprobe handler changes instruction pointer we still execute single
+step) or emulate the original instruction and increment the (new) ip
+with its length.
+
+This makes the new instruction pointer bogus and application will
+likely crash on illegal instruction execution.
+
+If user decided to take execution elsewhere, it makes little sense
+to execute the original instruction, so let's skip it.
+
+Acked-by: Oleg Nesterov <oleg@redhat.com>
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Link: https://lore.kernel.org/r/20250916215301.664963-3-jolsa@kernel.org
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/v4l2-core/v4l2-ioctl.c | 1 +
- include/uapi/linux/videodev2.h       | 3 +++
- 2 files changed, 4 insertions(+)
 
-diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-index 01cf52c3ea33..a03e8f3ab610 100644
---- a/drivers/media/v4l2-core/v4l2-ioctl.c
-+++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -1467,6 +1467,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
- 	case V4L2_META_FMT_RK_ISP1_PARAMS:	descr = "Rockchip ISP1 3A Parameters"; break;
- 	case V4L2_META_FMT_RK_ISP1_STAT_3A:	descr = "Rockchip ISP1 3A Statistics"; break;
- 	case V4L2_META_FMT_RK_ISP1_EXT_PARAMS:	descr = "Rockchip ISP1 Ext 3A Params"; break;
-+	case V4L2_META_FMT_ISC_STAT_3A: descr = "Microchip ISP statistics"; break;
- 	case V4L2_META_FMT_C3ISP_PARAMS:	descr = "Amlogic C3 ISP Parameters"; break;
- 	case V4L2_META_FMT_C3ISP_STATS:		descr = "Amlogic C3 ISP Statistics"; break;
- 	case V4L2_PIX_FMT_NV12_8L128:	descr = "NV12 (8x128 Linear)"; break;
-diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-index becd08fdbddb..ba628f9bb89f 100644
---- a/include/uapi/linux/videodev2.h
-+++ b/include/uapi/linux/videodev2.h
-@@ -875,6 +875,9 @@ struct v4l2_pix_format {
- #define V4L2_META_FMT_RK_ISP1_STAT_3A	v4l2_fourcc('R', 'K', '1', 'S') /* Rockchip ISP1 3A Statistics */
- #define V4L2_META_FMT_RK_ISP1_EXT_PARAMS	v4l2_fourcc('R', 'K', '1', 'E') /* Rockchip ISP1 3a Extensible Parameters */
+LLM Generated explanations, may be completely bogus:
+
+YES
+
+Summary
+- This is a small, well-scoped bug fix in the generic uprobes core that
+  prevents executing or emulating the original instruction when a uprobe
+  consumer handler has redirected the instruction pointer (IP). The
+  previous behavior could corrupt the new IP and crash the traced
+  application. The change is minimal (7 lines), does not add features,
+  and aligns with expected semantics. It is suitable for stable
+  backport.
+
+What changed
+- In `handle_swbp()`, after running consumer handlers, the patch adds an
+  early exit if the handler changed IP away from the breakpoint address:
+  - New check added: `kernel/events/uprobes.c:2772`
+  - Surrounding context:
+    - Handler invocation: `kernel/events/uprobes.c:2769`
+    - Emulation/single-step path: `kernel/events/uprobes.c:2778` (arch
+      emulation) and `kernel/events/uprobes.c:2781` (XOL single-step
+      prep).
+- The key addition is:
+  - `kernel/events/uprobes.c:2772`: `if (instruction_pointer(regs) !=
+    bp_vaddr) goto out;`
+
+Why the bug happens
+- Before this change, `handle_swbp()` always proceeded to emulate
+  (`arch_uprobe_skip_sstep`) or to prepare out-of-line single-step
+  (`pre_ssout`) of the original instruction even if the handler altered
+  IP. On x86 and other arches, instruction emulation/step advances IP by
+  the probed instruction’s length; doing that after a handler-set new IP
+  advances the wrong address, making the IP bogus and often leading to
+  SIGILL.
+  - Where emulation executes: `kernel/events/uprobes.c:2778`
+  - Where XOL single-step is prepared: `kernel/events/uprobes.c:2781`
+- The patch fixes this by skipping the emulate/sstep path if IP was
+  changed by the handler, which is the correct intent when a handler
+  redirects control flow.
+
+Evidence in current/mainline and in stable
+- This exact fix is present in mainline commit 4363264111e12 (“uprobe:
+  Do not emulate/sstep original instruction when ip is changed”) and
+  adds only the early-out check in `handle_swbp()` (see
+  `kernel/events/uprobes.c:2769`–`2785` in the current tree).
+- Affected stable trees (e.g., 6.1/6.6/6.10/6.17) lack this check and
+  will incorrectly emulate/step even after IP changes. In your 6.17
+  workspace, `handle_swbp()` calls `handler_chain()` and then proceeds
+  directly to emulation/step without guarding against an IP change:
+  - Handler call: `kernel/events/uprobes.c:2742`
+  - Emulation call: `kernel/events/uprobes.c:2744`
+  - Single-step prep: `kernel/events/uprobes.c:2747`
+
+Risk and side effects
+- Scope: Single function (`handle_swbp()`), 7 insertions, no API or
+  architectural change.
+- Behavior change: Only when a handler changes IP; in that case, we skip
+  executing the original instruction. This matches handler intent and
+  prevents crashes.
+- Concurrency/locking: The check reads `instruction_pointer(regs)` and
+  compares to `bp_vaddr` under the same conditions as the rest of the
+  function; no new locking or ordering requirements.
+- Cross-arch impact: Safe and correct. All arches’
+  `arch_uprobe_skip_sstep()` implementations emulate or adjust IP
+  assuming execution should continue at the original site; skipping this
+  when IP was redirected avoids incorrect behavior.
+- No dependency on unrelated features (e.g., the
+  `arch_uprobe_optimize()` call that exists in some newer trees is not
+  part of this change and isn’t required for correctness).
+
+Stable tree criteria
+- Fixes a user-visible crash-causing bug in uprobes
+  (tracing/instrumentation).
+- Minimal, contained change with clear intent and low regression risk.
+- No new features or ABI changes.
+- Acked by maintainers and merged into mainline.
+
+Conclusion
+- This is a clear, low-risk bug fix preventing incorrect
+  emulation/single-step after handlers redirect IP. It should be
+  backported to stable kernels.
+
+ kernel/events/uprobes.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 7ca1940607bd8..2b32c32bcb776 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -2741,6 +2741,13 @@ static void handle_swbp(struct pt_regs *regs)
  
-+/* Vendor specific - used for Microchip camera sub-system */
-+#define V4L2_META_FMT_ISC_STAT_3A      v4l2_fourcc('I', 'S', 'C', 'S')
+ 	handler_chain(uprobe, regs);
+ 
++	/*
++	 * If user decided to take execution elsewhere, it makes little sense
++	 * to execute the original instruction, so let's skip it.
++	 */
++	if (instruction_pointer(regs) != bp_vaddr)
++		goto out;
 +
- /* Vendor specific - used for C3_ISP */
- #define V4L2_META_FMT_C3ISP_PARAMS	v4l2_fourcc('C', '3', 'P', 'M') /* Amlogic C3 ISP Parameters */
- #define V4L2_META_FMT_C3ISP_STATS	v4l2_fourcc('C', '3', 'S', 'T') /* Amlogic C3 ISP Statistics */
+ 	if (arch_uprobe_skip_sstep(&uprobe->arch, regs))
+ 		goto out;
+ 
 -- 
-2.34.1
+2.51.0
 
 
