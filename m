@@ -1,227 +1,117 @@
-Return-Path: <linux-kernel+bounces-846521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A40BBC83D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 11:15:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B156ABC83D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 11:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C8C2D352D9B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 09:15:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7967A19E807A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 09:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB332D4816;
-	Thu,  9 Oct 2025 09:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8C32D73A9;
+	Thu,  9 Oct 2025 09:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ibZuG9av";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vVxAFBh3";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ibZuG9av";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vVxAFBh3"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="oB0EAaNy"
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F401F2D47F2
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 09:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D67261B70
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 09:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760001295; cv=none; b=a7ZlIXlgC5npNKGJD7ayMdARuitzVzpK78lFO0vl+0rBfl7j1SLeVhCxRcu5lUPmnOboPOYwXP8LXUIqepMC8mXNo6sBxhlsifgX5JFL+25BKklyyNE2SyqwE1nKwB2bpuWaXttBjy6hnTLZA/8SYJHcOwH6MWq1LkK8ZPBXWew=
+	t=1760001309; cv=none; b=eS9Cs3By85rw9mP36JWgFLtO5DMB3YzTsRf03ZZ+8L0wVNiTzZCuFmnJEMLxLXiR+ZNEeaRbN+3v8SLcn1mfSuQcn7xw9lvSr82wZ13HhSOlPTz4REGSNXexBgXdWI8Q9Z+Y5+w7sVZA+jAaDvmegTdaP58qKaZHN76IwTgOaLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760001295; c=relaxed/simple;
-	bh=lwze01EGQqh0w8i67xHjUAt3irzTPZKcurk8S+nlUrk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WUoe44aAkx6UQnshiqYwXlxvSi0VBcg1WTPb+f2oLcer8xrKjF7lCstcb/AHwjlBLyNhoubcIUf7CBn9XiRFI5PYiYmGn/TiXDIYOjnDoJ55yqHCMY8kwBo7mHvz36Hpi5zPKXtjVk68zpZ2l4ZCGFbVH0f0q2HOpNCGUuNwh+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ibZuG9av; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vVxAFBh3; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ibZuG9av; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vVxAFBh3; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 1A0C0222EA;
-	Thu,  9 Oct 2025 09:14:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760001292; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wMIyd836qP5Ki2ZUFL7X/NOxQSeVjKDqqMfBkHBMGOY=;
-	b=ibZuG9avywFKe4uXHdQDX0cfHeuY88FFtUv86QwatJ4okkrHdq5e9WT2m3vEbmnF2YZx51
-	RKgNlgVO0OylMMfjMdfWKlUz2tiN+XiW64Cjc2MpIiTRqvUkhVnpfEWRN3/SxcOwtTe+6j
-	KvNlqwdyQass6YfDERluqErvyE3H46c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760001292;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wMIyd836qP5Ki2ZUFL7X/NOxQSeVjKDqqMfBkHBMGOY=;
-	b=vVxAFBh3kvEnvny1uC4aWErvWilCgXNqYyLHrJUqigDziGnjVL0NsVDe1co7x19Lh45vig
-	T+fcih5YOP9j8RCw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ibZuG9av;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=vVxAFBh3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1760001292; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wMIyd836qP5Ki2ZUFL7X/NOxQSeVjKDqqMfBkHBMGOY=;
-	b=ibZuG9avywFKe4uXHdQDX0cfHeuY88FFtUv86QwatJ4okkrHdq5e9WT2m3vEbmnF2YZx51
-	RKgNlgVO0OylMMfjMdfWKlUz2tiN+XiW64Cjc2MpIiTRqvUkhVnpfEWRN3/SxcOwtTe+6j
-	KvNlqwdyQass6YfDERluqErvyE3H46c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1760001292;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wMIyd836qP5Ki2ZUFL7X/NOxQSeVjKDqqMfBkHBMGOY=;
-	b=vVxAFBh3kvEnvny1uC4aWErvWilCgXNqYyLHrJUqigDziGnjVL0NsVDe1co7x19Lh45vig
-	T+fcih5YOP9j8RCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1087B13A61;
-	Thu,  9 Oct 2025 09:14:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id J872Awx952isJgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 09 Oct 2025 09:14:52 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A0C5BA0A71; Thu,  9 Oct 2025 11:14:51 +0200 (CEST)
-Date: Thu, 9 Oct 2025 11:14:51 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu, 
-	adilger.kernel@dilger.ca, yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com, 
-	yangerkun@huawei.com
-Subject: Re: [PATCH v2 11/13] ext4: switch to using the new extent movement
- method
-Message-ID: <5g66nxbf3ay2bryv4legk46pudqonsbrdkxr5ljegbxaydkctk@2dyyoxguxyxu>
-References: <20250925092610.1936929-1-yi.zhang@huaweicloud.com>
- <20250925092610.1936929-12-yi.zhang@huaweicloud.com>
- <wdluk2p7bmgkh3n3xzep3tf3qb7mv3x2o6ltemjcahgorgmhwb@hfu7t7ar2vol>
- <fcf30c3c-25c3-4b1a-8b34-a5dcd98b7ebd@huaweicloud.com>
+	s=arc-20240116; t=1760001309; c=relaxed/simple;
+	bh=7SGUzqyUJZHvFwZ16mc+1zyoNOQpMYmkPY6TjKFtEbc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=meF3LF4epaEk/+/GlOp1vdrCNkuqw+mVDbVOsqdXQbjmJB3cSXt57HtRkzNIfEaLKbP53P5XEJF4NPJ66lDm/j+GM0eitmegiPEZiMSxnZrB6EWBSsetSdX8smLrI7t4decXvPFqkW/zrwrFbB0aBXKoolDvmNiRLBPZylHJwBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=oB0EAaNy; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1760001301; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=wHZZUx1woEi/c4dZM/+PmkYrh/pa772nCixw7ltkYBA=;
+	b=oB0EAaNyp0xh4r6wM8ko0nsXDFTl7pEW0dmQlb/IYEffk/VQP/yc+0jt2D1zpHKaHkbnxcNWe4yvYuWasCtY0jbMOKCn0gw2GhqklGGuUpua2B+UPY175fcG2opuzoOie2Dm8/+kN/qeRaL6DYN875c9x6qYTrf1vk/bgPBqU9A=
+Received: from 30.221.128.150(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0Wpl.JdO_1760001298 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 09 Oct 2025 17:14:59 +0800
+Message-ID: <7901a72a-0ba3-4093-a2f3-692e642e970f@linux.alibaba.com>
+Date: Thu, 9 Oct 2025 17:14:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fcf30c3c-25c3-4b1a-8b34-a5dcd98b7ebd@huaweicloud.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 1A0C0222EA
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Score: -4.01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ocfs2: fix stale extent map cache during COW operations
+To: Deepanshu Kartikey <kartikey406@gmail.com>, mark@fasheh.com,
+ jlbec@evilplan.org
+Cc: ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
+ syzbot+6fdd8fa3380730a4b22c@syzkaller.appspotmail.com
+References: <20251008042325.468846-1-kartikey406@gmail.com>
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <20251008042325.468846-1-kartikey406@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu 09-10-25 15:20:59, Zhang Yi wrote:
-> On 10/8/2025 8:49 PM, Jan Kara wrote:
-> > On Thu 25-09-25 17:26:07, Zhang Yi wrote:
-> >> +			if (ret == -EBUSY &&
-> >> +			    sbi->s_journal && retries++ < 4 &&
-> >> +			    jbd2_journal_force_commit_nested(sbi->s_journal))
-> >> +				continue;
-> >> +			if (ret)
-> >>  				goto out;
-> >> -		} else { /* in_range(o_start, o_blk, o_len) */
-> >> -			cur_len += cur_blk - o_start;
-> >> +
-> >> +			*moved_len += m_len;
-> >> +			retries = 0;
-> >>  		}
-> >> -		unwritten = ext4_ext_is_unwritten(ex);
-> >> -		if (o_end - o_start < cur_len)
-> >> -			cur_len = o_end - o_start;
-> >> -
-> >> -		orig_page_index = o_start >> (PAGE_SHIFT -
-> >> -					       orig_inode->i_blkbits);
-> >> -		donor_page_index = d_start >> (PAGE_SHIFT -
-> >> -					       donor_inode->i_blkbits);
-> >> -		offset_in_page = o_start % blocks_per_page;
-> >> -		if (cur_len > blocks_per_page - offset_in_page)
-> >> -			cur_len = blocks_per_page - offset_in_page;
-> >> -		/*
-> >> -		 * Up semaphore to avoid following problems:
-> >> -		 * a. transaction deadlock among ext4_journal_start,
-> >> -		 *    ->write_begin via pagefault, and jbd2_journal_commit
-> >> -		 * b. racing with ->read_folio, ->write_begin, and
-> >> -		 *    ext4_get_block in move_extent_per_page
-> >> -		 */
-> >> -		ext4_double_up_write_data_sem(orig_inode, donor_inode);
-> >> -		/* Swap original branches with new branches */
-> >> -		*moved_len += move_extent_per_page(o_filp, donor_inode,
-> >> -				     orig_page_index, donor_page_index,
-> >> -				     offset_in_page, cur_len,
-> >> -				     unwritten, &ret);
-> >> -		ext4_double_down_write_data_sem(orig_inode, donor_inode);
-> >> -		if (ret < 0)
-> >> -			break;
-> >> -		o_start += cur_len;
-> >> -		d_start += cur_len;
-> >> +		orig_blk += mext.orig_map.m_len;
-> >> +		donor_blk += mext.orig_map.m_len;
-> >> +		len -= mext.orig_map.m_len;
-> > 
-> > In case we've called mext_move_extent() we should update everything only by
-> > m_len, shouldn't we? Although I have somewhat hard time coming up with a
-> > realistic scenario where m_len != mext.orig_map.m_len for the parameters we
-> > call ext4_swap_extents() with... So maybe I'm missing something.
+Hi,
+
+On 2025/10/8 12:23, Deepanshu Kartikey wrote:
+> The extent map cache can become stale during COW operations, causing
+> ocfs2_refcount_cal_cow_clusters() to see an outdated extent state.
 > 
-> In the case of MEXT_SKIP_EXTENT, the target move range of the donor file
-> is a hole. In this case, the m_len is return zero after calling
-> mext_move_extent(), not equal to mext.orig_map.m_len, and we need to move
-> forward and skip this range in the next iteration in ext4_move_extents().
-> Otherwise, it will lead to an infinite loop.
+> The problem occurs when:
+> 1. ocfs2_get_clusters() reads and caches an extent with OCFS2_EXT_REFCOUNTED
+> 2. ocfs2_refcount_cow_hunk() performs COW, clearing the REFCOUNTED flag
+> 3. The extent map cache still contains the stale REFCOUNTED flag
+> 4. Subsequent access on the same extent via the cache gets incorrect flags,
+>    triggering BUG_ON(!(rec->e_flags & OCFS2_EXT_REFCOUNTED))
+> 
 
-Right, that would be a problem. I thought this shouldn't happen because we
-call mext_move_extent() only if we have mapped or unwritten extent but if
-donor inode has a hole in the same place, MEXT_SKIP_EXTENT can still
-happen.
+At the end of ocfs2_refcount_cow_hunk(), it has:
 
-> In the other two cases, MEXT_MOVE_EXTENT and MEXT_COPY_DATA, m_len should
-> be equal to mext.orig_map.m_len after calling mext_move_extent().
+	/*
+	 * truncate the extent map here since no matter whether we meet with
+	 * any error during the action, we shouldn't trust cached extent map
+	 * any more.
+	 */
+	ocfs2_extent_map_trunc(inode, cow_start);
 
-So this is the bit which isn't 100% clear to me. Because what looks fishy
-to me is that ext4_swap_extents() can fail after swapping part of the
-passed range (e.g. due to extent split failure). In that case we'll return
-number smaller than mext.orig_map.m_len. Now that I'm looking again, we'll
-set *erp in all those cases (there are cases where ext4_swap_extents()
-returns smaller number even without setting *erp but I don't think those
-can happen given the locks we hold and what we've already verified - still
-it would be good to add an assert for this in mext_move_extent()) so the
-problem would rather be that we don't advance by m_len in case of error
-returned from mext_move_extent()?
+It seems the cached extent record has already been forgotten. So how
+does the above step 3 happen?
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+Joseph
+
+
+> Fix by clearing the extent map cache at the start of COW operations.
+> This ensures that ocfs2_get_clusters() always reads fresh extent data
+> from disk during COW instead of using stale cached data.
+> 
+> Reported-by: syzbot+6fdd8fa3380730a4b22c@syzkaller.appspotmail.com
+> Tested-by: syzbot+6fdd8fa3380730a4b22c@syzkaller.appspotmail.com
+> Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+> ---
+>  fs/ocfs2/refcounttree.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/ocfs2/refcounttree.c b/fs/ocfs2/refcounttree.c
+> index 267b50e8e42e..e8c8fcdc3dd9 100644
+> --- a/fs/ocfs2/refcounttree.c
+> +++ b/fs/ocfs2/refcounttree.c
+> @@ -3451,7 +3451,8 @@ int ocfs2_refcount_cow(struct inode *inode,
+>  	int ret = 0;
+>  	u32 p_cluster, num_clusters;
+>  	unsigned int ext_flags;
+> -
+> +	/* Clear extent map cache before COW operations to avoid stale data */
+> +	ocfs2_extent_map_trunc(inode, 0);
+>  	while (write_len) {
+>  		ret = ocfs2_get_clusters(inode, cpos, &p_cluster,
+>  					 &num_clusters, &ext_flags);
+
 
