@@ -1,189 +1,141 @@
-Return-Path: <linux-kernel+bounces-846194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1805BC740D
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 04:56:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06FD9BC7419
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 04:58:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 812E63AB170
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 02:56:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AA49F4F06BD
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 02:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A401DA60D;
-	Thu,  9 Oct 2025 02:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990851E6DC5;
+	Thu,  9 Oct 2025 02:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UMugnjF9"
-Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nIQZcjHl"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B99E1C3027;
-	Thu,  9 Oct 2025 02:56:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E77B849C
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 02:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759978598; cv=none; b=AbIRU+W3eACTfXJgagrC9dRNJWykfRGIEnYrk9j6xTq6I6PNbAP3uumaMKOTfz2hA829vxkBJibXsJiqTZ5levId3ghoy79tMOnm1l6cgBUc9KCMp4hGIzOP8KJcLbuxgrXF3NARCVxEH23T+0CqL1bv8du/jclPzj1Iq8TkzDQ=
+	t=1759978677; cv=none; b=a9I0yFfMhJOKhLGutrXchaseNQ2JxJK8v//xmBtKlvSmL0DqlOBxYjI/RM8btccf4Hw//2eDHKLauoNp44o8aTEsL+RE0ynY3G/R0mUjQ65Nlc8HaLy0q6RyqXea2A/O0Fx7OmhuKga/2RNabWe/Cp6xzXF0nnNZ3Y8lerLfjT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759978598; c=relaxed/simple;
-	bh=vQOfMX/6QF2frKlgI4zbsMZqKYzIvryKIPH3yqqBjlE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=l2H+cQNVyugmxETS0CBFUbBSGhtyk2ab51E7NTYyfz35ayXgUFb0KwBqDuTRp/+Ze8UWE+mCfHrrKVWGYN4e74Nw2z3yXkoxg9lqF4zzjbinqC20q73F/6uM8QnheOnVtnfifsjfcYkqWXAMmFcR/KXdgQrHxmCZ+bczh0Q9PRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=UMugnjF9; arc=none smtp.client-ip=202.12.124.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id C59A07A0055;
-	Wed,  8 Oct 2025 22:56:33 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Wed, 08 Oct 2025 22:56:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1759978593; x=1760064993; bh=uL1Z46mIMlWDqH+R1NLQjW+DW0aqB/vjTR7
-	Nvu5o2aM=; b=UMugnjF9bu7n2sl+cwKXR1JuyODQ4J9royl8Vmt8htBspEjb/K8
-	3GThAi/OyKvUjC6TA1lNcLNT+MStYcOFa/EhVHOCfJPi2bZ3WH/CYpCjiMd3ylSp
-	yshI7HkTa1W5pk551PpoeaUFDxcqMl6IvLElTTGuYEELG9u94+3c3cUg10jsBzSq
-	oCaKUDWaW1he1jove+3hPNOM1cCOZ6ocAwEHB7NQ0TV9lV4Dx6CXJyxfbtCxiSk0
-	QyQyUqaxXFNRuWD+1u0XvbhUP5AHYjKfzYkbPrJZO43gHmLzHeofgRXZSZ3h/Mb6
-	BX7aBvbtL7UOxIam5hlAyMLzdzFRDpWgZAw==
-X-ME-Sender: <xms:YCTnaIQgTpu88XeFOudQm1s8Mvwn9xUlf9lBt386_YtwmzENmA1qaQ>
-    <xme:YCTnaB6fzBs00EbWXLDGUohKl6Z1Ev2fKT6SRPL0SmR2R3K_TBapYAoUaThxb0jje
-    yyZ6A31xcv4edCFaJSaN-dh5Qs5RHSKIuVeBNH0ZxgrV6d1RfilIKg>
-X-ME-Received: <xmr:YCTnaBoAB4kEA85ynV8CCRlJyOqOoZH60jZMXS94IR0Wlcm-Jfwknqvh2egzuxACMB6TLQUiEg0K9qpjDHTK5rXE-o948fB4W5I>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddutdehtdegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevufgjkfhfgggtsehmtderredttdejnecuhfhrohhmpefhihhnnhcuvfhh
-    rghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtth
-    gvrhhnpeelfeeklefggfetkedukeevfffgvdeuheetffekledtfeejteelieejteehgeel
-    ieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehfth
-    hhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopedvhedpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtoheprghlvgigvghirdhsthgrrhhovhhoihhtoh
-    hvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggu
-    rdhorhhgpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    grshhtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhesihhoghgvrghr
-    sghogidrnhgvthdprhgtphhtthhopegrnhgurhhiiheskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphht
-    thhopegsohhquhhnrdhfvghnghesghhmrghilhdrtghomhdprhgtphhtthhopegtohhrsg
-    gvtheslhifnhdrnhgvth
-X-ME-Proxy: <xmx:YCTnaFUCZ9mbgctsCLbcsLNmMGb1mT-M1I_hBDo7nakitsT95jlwcA>
-    <xmx:YCTnaBoNT_YxL6gQ2kLiKXTBz5pwXVtKMpLptTcjRTdoQo8l8d4X9g>
-    <xmx:YCTnaMvl1N7XGHQ_G7jg7zlyGI-phTxv3lfe9xG0MoqHnoLwvwyQBA>
-    <xmx:YCTnaHSWqgw3FZEAMa5JuYFUjdCRwmOgwdxA0Q12-9XxKZWoXCJ4AA>
-    <xmx:YSTnaAw-_18wT2EamGw4uVXrGz7ejqXMMQC5arZ31uvydq_9YG0wh346>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 8 Oct 2025 22:56:29 -0400 (EDT)
-Date: Thu, 9 Oct 2025 13:56:19 +1100 (AEDT)
-From: Finn Thain <fthain@linux-m68k.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-cc: Peter Zijlstra <peterz@infradead.org>, Will Deacon <will@kernel.org>, 
-    Alexei Starovoitov <ast@kernel.org>, 
-    Daniel Borkmann <daniel@iogearbox.net>, 
-    Andrii Nakryiko <andrii@kernel.org>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-    Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>, 
-    LKML <linux-kernel@vger.kernel.org>, 
-    linux-arch <linux-arch@vger.kernel.org>, 
-    Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k@vger.kernel.org, 
-    Martin KaFai Lau <martin.lau@linux.dev>, 
-    Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-    Yonghong Song <yonghong.song@linux.dev>, 
-    John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-    Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-    Jiri Olsa <jolsa@kernel.org>, bpf <bpf@vger.kernel.org>
-Subject: Re: [RFC v3 2/5] bpf: Explicitly align bpf_res_spin_lock
-In-Reply-To: <CAADnVQLOQq5m3yN4hqqrx4n1hagY73rV03d7g5Wm9OwVwR_0fA@mail.gmail.com>
-Message-ID: <fdda632e-bac9-e830-8840-2fcd6b2292b6@linux-m68k.org>
-References: <cover.1759875560.git.fthain@linux-m68k.org> <807cfee43bbcb34cdc6452b083ccdc754344d624.1759875560.git.fthain@linux-m68k.org> <CAADnVQLOQq5m3yN4hqqrx4n1hagY73rV03d7g5Wm9OwVwR_0fA@mail.gmail.com>
+	s=arc-20240116; t=1759978677; c=relaxed/simple;
+	bh=lF7BW2ohCLI1X07kVAARu7zfDJnU4/XAq0NhBy9tApk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tKJZ/3/rmg9pdp9GCrtnsaiTYoeCjfWVfR/vzoZSBPwGzxvtcHeNuKlxhWQOlELxRcJ6TC4KlnYv1KWb38bE++UwXHAgz+1pEIClJ2h+5ZDc8WkySvmbHLU7TH3Jv6zj0cE6yQeGeDTZgAjbavKaM9mId4JB7dAZ6O2uNWcnmvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nIQZcjHl; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-854585036e8so48273785a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 19:57:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759978674; x=1760583474; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vlG0GD1lh6iJAvDPmOa/rB/T6NwWaH3uKxr67w639yc=;
+        b=nIQZcjHlZ1PwaSL0fXgX6ELsoBgDdMETdRevkwI2OSzwZnLZlXisundfX/dPuetQn3
+         pBvAlhEY61HYn+1u0UqJEsuPGpxXIG/GBAK9TMYqE4CBaA2ouZaz/OeCQsA6h2PmnIBt
+         B2auZ1/N4Pgr5DPkFT2Ok0mjRgjAkitDEEcR3FUNz6238hzrePAKzT6KlyI1Bx0WMMmm
+         p0KziYOgQslSg9PfKqz4/0++6Qf1s3SkUJivyQlBFZJSNm0ruk0UmGZG6RRIIWvEUqvr
+         tpKjRAyuVxbMRDEnMOgMOA5TxTgJb/fxvDZp9p/NnBXnoZLuouqPWGT/6pjA4sWZ9tJv
+         a9pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759978674; x=1760583474;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vlG0GD1lh6iJAvDPmOa/rB/T6NwWaH3uKxr67w639yc=;
+        b=a0Gqf+EKk9Tvh1ZCvfHSQAgvSKQ614RbzweY/8YnsUPXbavVafkgIbdLx0Bdaic983
+         eW7MJnLwgMuH5anrwIQ0k5kSVrT78k5iaHQnzpC5WsLj6A1eRBrT7KL+xfiQmwLSQ7fZ
+         m4iHfiXwySlIABYf34bifP+fWHBR348rcF3tgwuBqVTiXPzAkzW6S8hvRf/xFc7XZlGe
+         vyq9qYylQYs2Q6g1TE36aZuUnPPo7+w0xXKAjrxi5QNJiWZbScUhkNauOYI5SpUEL8Rc
+         XUT/poQqno1BVgKwyfULHm0nxOgzP3DYqComZDA106kGf/+vDOIptVSgnaITbd8VLs4q
+         mRVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWMb6805clEobALh/pial/YqwmsnKnfeKVo6vWpy//JY8++k/mhrJ35KWy4BpgA4WYAZbTHqxNbOADM6OY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTxvnR+HXhoVi39N5afKnB+OtdzhxvzVundJRmM9gqpoMPT7Pi
+	yFruMCSfMQCnjUmSqkq1vnncZAosV7JZPzllSiz7h1kbA1G0c4/1IA8a
+X-Gm-Gg: ASbGnctVt0/ljtRyY4kTvYxXy+rRdBVptrVssu6j0iMV+reDQvNLLDkBQ2YgOjQ5pfB
+	A7uQRSSELSu5Iu6RMI51olyiULfS9/NVB33GN1KleEO8HqqtocruQvUTq+PE6bTkUj+ZgTAJmpZ
+	iwo0CayVQB5DwuK5D+FoZNTtyVh/zhw0dWPeytnQwUdN/1/QjGcu+dWUVB0fIBv+8w+vmSnkyEw
+	tqgEfYzyRA7zub4AXdWilsWi/J09SwecH5jPY3UdmdYRq9QfSZ1fE0amwKoL+YaZxxrddEP/gO/
+	KzYY2oqZ/Ostu0rypO/rjmZ8/mSTXON9exYZEOy+PeEn84HG8rZPaVdP0dPdX/rVb+3Jeyj56I1
+	vQ6DwwnWQrk5j8jkXOclgu/yEdkmHpoMXClMsqqueOsFtxOLNM/mlHTC3N6wxjXbjvcEwJGSjAR
+	1EpKXNbqQwGsE2LouOXiBt3GBddW78FkY=
+X-Google-Smtp-Source: AGHT+IFeXJCxTk34Ai1JrFRrwRib866Y526WpeJO+H78PvcAR+LJHG+ZBY6j7Bj7ixRivCbirG2znQ==
+X-Received: by 2002:a05:620a:25cf:b0:845:8f50:9d29 with SMTP id af79cd13be357-8834d1aa700mr867293485a.0.1759978674217;
+        Wed, 08 Oct 2025 19:57:54 -0700 (PDT)
+Received: from mango-teamkim.. ([129.170.197.108])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-884a2369a0dsm114261085a.48.2025.10.08.19.57.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 19:57:53 -0700 (PDT)
+From: pip-izony <eeodqql09@gmail.com>
+To: Marcel Holtmann <marcel@holtmann.org>
+Cc: Seungjin Bae <eeodqql09@gmail.com>,
+	Kyungtae Kim <Kyungtae.Kim@dartmouth.edu>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-bluetooth@vger.kernel.org
+Subject: [PATCH v3] Bluetooth: bfusb: Fix buffer over-read in rx processing loop
+Date: Wed,  8 Oct 2025 22:57:01 -0400
+Message-ID: <20251009025701.3756598-2-eeodqql09@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <77bde79f-2080-4e40-a013-52b480c0928c@molgen.mpg.de>
+References: <77bde79f-2080-4e40-a013-52b480c0928c@molgen.mpg.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary=-14638117742092801439175997857935
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Seungjin Bae <eeodqql09@gmail.com>
 
----14638117742092801439175997857935
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+The bfusb_rx_complete() function parses incoming URB data in a while loop.
+The logic does not sufficiently validate the remaining buffer size(count)
+across loop iterations, which can lead to a buffer over-read.
 
+For example, with 4-bytes remaining buffer, if the first iteration takes
+the `hdr & 0x4000` branch, 2-bytes are consumed. On the next iteration,
+only 2-bytes remain, but the else branch is trying to access the third
+byte(buf[2]). This causes an out-of-bounds read and a potential kernel
+panic.
 
-On Wed, 8 Oct 2025, Alexei Starovoitov wrote:
+This patch fixes the vulnerability by adding checks to ensure enough
+data remains in the buffer before it is accessed.
 
-> On Tue, Oct 7, 2025 at 4:50=E2=80=AFPM Finn Thain <fthain@linux-m68k.org>=
- wrote:
-> >
-> > Align bpf_res_spin_lock to avoid a BUILD_BUG_ON() when the alignment
-> > changes, as it will do on m68k when, in a subsequent patch, the minimum
-> > alignment of the atomic_t member of struct rqspinlock gets increased.
-> > Drop the BUILD_BUG_ON() as it is now redundant.
-> >
-> > Cc: Martin KaFai Lau <martin.lau@linux.dev>
-> > Cc: Eduard Zingerman <eddyz87@gmail.com>
-> > Cc: Song Liu <song@kernel.org>
-> > Cc: Yonghong Song <yonghong.song@linux.dev>
-> > Cc: John Fastabend <john.fastabend@gmail.com>
-> > Cc: KP Singh <kpsingh@kernel.org>
-> > Cc: Stanislav Fomichev <sdf@fomichev.me>
-> > Cc: Hao Luo <haoluo@google.com>
-> > Cc: Jiri Olsa <jolsa@kernel.org>
-> > ---
-> >  include/asm-generic/rqspinlock.h | 2 +-
-> >  kernel/bpf/rqspinlock.c          | 1 -
-> >  2 files changed, 1 insertion(+), 2 deletions(-)
-> >
-> > diff --git a/include/asm-generic/rqspinlock.h b/include/asm-generic/rqs=
-pinlock.h
-> > index 6d4244d643df..eac2dcd31b83 100644
-> > --- a/include/asm-generic/rqspinlock.h
-> > +++ b/include/asm-generic/rqspinlock.h
-> > @@ -28,7 +28,7 @@ struct rqspinlock {
-> >   */
-> >  struct bpf_res_spin_lock {
-> >         u32 val;
-> > -};
-> > +} __aligned(__alignof__(struct rqspinlock));
->=20
-> I don't follow.
-> In the next patch you do:
->=20
-> typedef struct {
-> - int counter;
-> + int __aligned(sizeof(int)) counter;
-> } atomic_t;
->=20
-> so it was 4 and still 4 ?
-> Are you saying 'int' on m68k is not 4 byte aligned by default,
-> so you have to force 4 byte align?
->=20
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Seungjin Bae <eeodqql09@gmail.com>
+---
+ v1 -> v2: Fixing the error function name
+ v2 -> v3: Addressing feedback from Paul Menzel
 
-Right. __alignof(int) =3D=3D 2 on m68k.
+ drivers/bluetooth/bfusb.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> >  struct qspinlock;
-> >  #ifdef CONFIG_QUEUED_SPINLOCKS
-> > diff --git a/kernel/bpf/rqspinlock.c b/kernel/bpf/rqspinlock.c
-> > index 338305c8852c..a88a0e9749d7 100644
-> > --- a/kernel/bpf/rqspinlock.c
-> > +++ b/kernel/bpf/rqspinlock.c
-> > @@ -671,7 +671,6 @@ __bpf_kfunc int bpf_res_spin_lock(struct bpf_res_sp=
-in_lock *lock)
-> >         int ret;
-> >
-> >         BUILD_BUG_ON(sizeof(rqspinlock_t) !=3D sizeof(struct bpf_res_sp=
-in_lock));
-> > -       BUILD_BUG_ON(__alignof__(rqspinlock_t) !=3D __alignof__(struct =
-bpf_res_spin_lock));
->=20
-> Why delete it? Didn't you make them equal in the above hunk?
->=20
+diff --git a/drivers/bluetooth/bfusb.c b/drivers/bluetooth/bfusb.c
+index 8df310983bf6..90ca5ab2acc3 100644
+--- a/drivers/bluetooth/bfusb.c
++++ b/drivers/bluetooth/bfusb.c
+@@ -360,6 +360,12 @@ static void bfusb_rx_complete(struct urb *urb)
+ 			count -= 2;
+ 			buf   += 2;
+ 		} else {
++			if (count < 3) {
++				bt_dev_err(data->hdev,
++				       "block header is too short (count=%d, expected=3)",
++				       count);
++				break;
++			}
+ 			len = (buf[2] == 0) ? 256 : buf[2];
+ 			count -= 3;
+ 			buf   += 3;
+-- 
+2.43.0
 
-I deleted it because it's tautological. I think "do not repeat yourself"=20
-applies here.
----14638117742092801439175997857935--
 
