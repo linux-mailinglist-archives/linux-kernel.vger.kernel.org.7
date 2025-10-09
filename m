@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-846091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9728BC7034
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 02:38:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18CEFBC703D
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 02:40:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABD82189EC3D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 00:39:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD19B3B8B9A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 00:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0EF9198E91;
-	Thu,  9 Oct 2025 00:38:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D874C195B1A;
+	Thu,  9 Oct 2025 00:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dae4ilUD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OgwCZfbZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208D8173;
-	Thu,  9 Oct 2025 00:38:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4D5173;
+	Thu,  9 Oct 2025 00:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759970329; cv=none; b=Am6vU5f/upkETJwSKrKjKo/JHKG5E9RpsuelEzpvBUSqSB6F+9cCCbrE2IJ6UqyQOiAM89sm/3DxHBAkqj/BZyLkOO+m0mOrAsAgjHGwKTZONhOkNxVEyddHBix4f8B+3vH4iWVfjinvxnr6jD1MhurxCfp0ROcvC9olN/AVGv4=
+	t=1759970415; cv=none; b=LPpS01jUCduiEl3MAFlT4ROkqpd/zfPyri1qbMn7z4gthBXVqLzvf2HqGiv5DOlfJ8U29tsh/b2W8JMZWlEVn46RdxVj8woJtZ2qp+nqxSyQ/aTNUCsIq2obqQG7vMiIImeKNJbtTWjgqYFbsFJKIVtkMQpYAf0d8schPjjKVv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759970329; c=relaxed/simple;
-	bh=4af9T1lxJU3LloEhBWzPPrD9fOssMZnCjaQvopWfElI=;
+	s=arc-20240116; t=1759970415; c=relaxed/simple;
+	bh=BUieWR7YgWCZmo+OcFRsBFoahIeCm6Rg3uaCyVd5vOU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jN6Fns2umXQTz/f7eQFhZYrOSgC0pKijH4Rjk07pTqzUBeIhIo+BIDLiWekQUQ1ia6x1UqFDS1iLLaFIx1ILed6lqh1MSsdGCSO+1doCX1u5YeqxJoFIgkx1CFyKFdbmxTjVOrvmooE2ZRLX4iYeX3BKGvsKC361RyNBt4WsqJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dae4ilUD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2917FC4CEE7;
-	Thu,  9 Oct 2025 00:38:42 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=tPuV+LdV0b8fxJPeamTOHiPRX8AW/Pmh7CCs3NzvA0JQG7SHieW5L1pKixKgmMKG+H7xcMe8NZGIVZhpVTk9hLwCuH2Xfp6yXC9FOFxLZWIUdjhzXRESn3jnr9MOFifWRxZEpG6cOOiYBZCTZh8TN7RGh39/xoTQveSCzlNfv5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OgwCZfbZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62CB7C4CEE7;
+	Thu,  9 Oct 2025 00:40:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759970329;
-	bh=4af9T1lxJU3LloEhBWzPPrD9fOssMZnCjaQvopWfElI=;
+	s=k20201202; t=1759970414;
+	bh=BUieWR7YgWCZmo+OcFRsBFoahIeCm6Rg3uaCyVd5vOU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dae4ilUDxwTwUa9BjMT611VROHEMb7QjADBE7hJV6/qfet4qNZVGk6XYt9s1B7+kf
-	 aGrKNZQ9ye8/Dwm3vKv0kHy+r+4IjkqwcqKqsKiumopdZBk5YOpi34IZ5PAE89INyV
-	 vVX1vUrDkXeT5ImWfMjJdftGmgsxqyOeTCKAyIRlfw8wusKPtXXtuab2fhFLVfcY0a
-	 K4ya51fxFL2J9/4gp1ud0Uq1UnIWn4hNfJB/dh3OeFlCK7MmdHndxr8ap3WxKIiWX2
-	 ujPJIIneLrCqbAthGBw7QeSCp429WtTXuM1H0jnKY1CCcktprXn1fHQXdCD58dcLtj
-	 T2B3T4aA0OXhw==
-Message-ID: <ffe1eeb8-cf20-4011-8ed7-a677f6aacbdc@kernel.org>
-Date: Thu, 9 Oct 2025 09:38:39 +0900
+	b=OgwCZfbZnSmIrDwMb8nX7Z4bZ5UVgNrKdHKGCF0qgbJnuoHNfvkUgRv/4PK8WEPKC
+	 0DM97v2ZbcmvEqqw9pD/dAJfN56X7SvNxmq6AofaEvoJXpLwZ/YI6rSXYtYwmf3qSU
+	 c6LRJ91DY4LrHuKpFDXZP+N2xlE6tHhTbbjVoG0Fgmx+65GI8YFYaJRuoHYEg45WP3
+	 h//xPcElu63lJW1dCodylAMcY1FN/fQRMU/z/RRoiKRcSge3GvRSboRNkDlsTvXMFm
+	 DOIprJI9tjXhTzV5Mi3m5GJzgMKa64OlNZ//KkD3APOE0kJ0zhkBDN0DkubyzbNHaK
+	 +PHJK9PVpXMUw==
+Message-ID: <248d0898-2eca-4ba8-9669-cd3d1cd8ad1b@kernel.org>
+Date: Thu, 9 Oct 2025 09:40:06 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: msm8939-asus-z00t: add initial
- device tree
-To: Erikas Bitovtas <xerikasxx@gmail.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-References: <20251008182106.217340-1-xerikasxx@gmail.com>
- <20251008182106.217340-3-xerikasxx@gmail.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: hwlock: Adding brcmstb-hwspinlock
+ support
+To: Florian Fainelli <florian.fainelli@broadcom.com>,
+ Rob Herring <robh@kernel.org>, Kamal Dasu <kamal.dasu@broadcom.com>
+Cc: peng.fan@oss.nxp.com, andersson@kernel.org,
+ baolin.wang@linux.alibaba.com, krzk+dt@kernel.org, conor+dt@kernel.org,
+ bcm-kernel-feedback-list@broadcom.com, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20251001181641.1561472-1-kamal.dasu@broadcom.com>
+ <20251001181641.1561472-2-kamal.dasu@broadcom.com>
+ <20251008155639.GA3512742-robh@kernel.org>
+ <7d96e604-e485-47c8-a0fe-64201f30eaa1@broadcom.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,38 +107,85 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251008182106.217340-3-xerikasxx@gmail.com>
+In-Reply-To: <7d96e604-e485-47c8-a0fe-64201f30eaa1@broadcom.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 09/10/2025 03:20, Erikas Bitovtas wrote:
-> Add an initial device tree for Asus ZenFone 2 Laser/Selfie. This
-> includes support for:
-> - UART
-> - USB
-> - Internal storage
-> - MicroSD
-> - Volume keys
+On 09/10/2025 01:39, Florian Fainelli wrote:
+> 
+> 
+> On 10/8/2025 8:56 AM, Rob Herring wrote:
+>> On Wed, Oct 01, 2025 at 02:16:39PM -0400, Kamal Dasu wrote:
+>>> Adding brcmstb-hwspinlock bindings.
+>>
+>> That's obvious from the diff. Tell us something about the h/w and
+>> convince me we don't need per SoC compatible which is standard practice.
+>>
+>>>
+>>> Signed-off-by: Kamal Dasu <kamal.dasu@broadcom.com>
+>>> ---
+>>>   .../hwlock/brcm,brcmstb-hwspinlock.yaml       | 36 +++++++++++++++++++
+>>>   1 file changed, 36 insertions(+)
+>>>   create mode 100644 Documentation/devicetree/bindings/hwlock/brcm,brcmstb-hwspinlock.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/hwlock/brcm,brcmstb-hwspinlock.yaml b/Documentation/devicetree/bindings/hwlock/brcm,brcmstb-hwspinlock.yaml
+>>> new file mode 100644
+>>> index 000000000000..f45399b4fe0b
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/hwlock/brcm,brcmstb-hwspinlock.yaml
+>>> @@ -0,0 +1,36 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/hwlock/brcm,brcmstb-hwspinlock.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Broadcom settop Hardware Spinlock
+>>> +
+>>> +maintainers:
+>>> +  - Kamal Dasu <kamal.dasu@broadcom.com>
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    const: brcm,brcmstb-hwspinlock
+>>
+>> hwspinlock is the name of the h/w block? Use the name of the h/w, not
+>> linux subsystem names.
+>>
+>>> +
+>>> +  "#hwlock-cells":
+>>> +    const: 1
+>>> +
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +  - reg
+>>> +  - "#hwlock-cells"
+>>> +
+>>> +additionalProperties: false
+>>> +
+>>> +examples:
+>>> +  - |
+>>> +    hwlock@8404038 {
+>>> +        compatible = "brcm,brcmstb-hwspinlock";
+>>> +        reg = <0x8404038 0x40>;
+>>
+>> h/w blocks rarely start at an offset like that. Is this part of some
+>> other h/w block? If so, then just add '#hwlock-cells' to *that* node.
+> 
+> We've answered that in the previous review:
+> 
+> The block is part of a "sundry" IP which has lots of controls that did 
+> not belong anywhere else, for better or for worse (pin/mux controls, SoC 
+> identification, drive strength, reset controls, and other misc bits).
 
-<form letter>
-This is a friendly reminder during the review process.
 
-It looks like you received a tag and forgot to add it.
+And every time above explanation will not reach description or commit
+msg we will ask the same.
 
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
-of patchset, under or above your Signed-off-by tag, unless patch changed
-significantly (e.g. new properties added to the DT bindings). Tag is
-"received", when provided in a message replied to you on the mailing
-list. Tools like b4 can help here. However, there's no need to repost
-patches *only* to add the tags. The upstream maintainer will do that for
-tags received on the version they apply.
 
-Please read:
-https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
-
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
 
 Best regards,
 Krzysztof
