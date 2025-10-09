@@ -1,59 +1,111 @@
-Return-Path: <linux-kernel+bounces-846893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1235EBC95A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:44:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A35ECBC95B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:45:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01CD419E1C98
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:45:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C6F23B2949
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4BB2E8E0F;
-	Thu,  9 Oct 2025 13:44:39 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12972C21E7;
+	Thu,  9 Oct 2025 13:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Be4OGBvR"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A6362E8E1F;
-	Thu,  9 Oct 2025 13:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7B034BA48
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760017479; cv=none; b=Da+3OCcKUBAcCPLO8ucJhJ010U+oJR1BdJ77mottWjqkgrYtJUi4yMNI7PpSeunQi7FiHq91f589/orz5OqfLhN2Sgm0bBmGZcxEtMrV0ZWCzewpKIxSZ1ujir70A+utC2qumGNToCommLSvtzVqMP47qaSNusF81HNg2F2EnGs=
+	t=1760017538; cv=none; b=YXiqSIriRZP9lUE4Rj5YUhv1bfjePeQpNgrQnysXrUpBjxp0L48wQkhXMAGNc8qv1HVsDNTfXHl807CZPnGskGX6obyknT8oH/YYvyJuiTqczPF6hvwyYntiKzIxiy+xHo8bM2uGc1e6d1t57wz7dBSfAUpVTRuiy21BDCr10uU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760017479; c=relaxed/simple;
-	bh=xpyO27wStAAmGxSSMjaSNXERYYHjXfNJ7MohxZUHNU0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eY3Oi7OUj7wv9AVYU3BlvIBZPeonEF66URSXWMMX3GqUyfSuWYEHqDKGJMFjld4UQtYlASagFCCKaKutGi8uN9CjJb28E6GXmVX3ooFT9ukfO87Z1JAtXQkCGIZvrZFx6ML56OYTZl9LtGHX+njzUQMnRO4Xvasb9yySD5ilkzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn; spf=pass smtp.mailfrom=isrc.iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=isrc.iscas.ac.cn
-Received: from Mobilestation.localdomain (unknown [183.6.60.79])
-	by APP-01 (Coremail) with SMTP id qwCowACX76EEvOdoFFc_DQ--.1956S6;
-	Thu, 09 Oct 2025 21:44:23 +0800 (CST)
-From: Yao Zihong <zihong.plct@isrc.iscas.ac.cn>
-To: linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: ajones@ventanamicro.com,
-	alexghiti@rivosinc.com,
-	shuah@kernel.org,
-	samuel.holland@sifive.com,
-	evan@rivosinc.com,
+	s=arc-20240116; t=1760017538; c=relaxed/simple;
+	bh=ONz0iwdpEXBR9QXBr7fBiVKfbUdVWUHg5O8jRMu2rvI=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=B9HVkjXdlTcp2VPAT1+BZyBCMM/5rUpnDPaw8vqHsgtTjQse6kDF+tEVQjuotqepnSsuieTkSQDJYfnQJLKZSTVQL5DLfdJ1jXQWdBwuboiWZYXeR9uW63Bq/UH5/khSwXVvLVkKU17jqpAwYPE0cT5asElv+iWWOMS6Wf79joU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Be4OGBvR; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-27d69771e3eso6135755ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 06:45:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1760017535; x=1760622335; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/Avy7qeTTmfq4DZivkTM47xk9+61lo2fuJS8O1YcKX0=;
+        b=Be4OGBvRFPj7xiWJDYLuPSgypkqfjG1Q2f+BauDuh6BQYWl8bwkiyZq7f9MvmyGOB/
+         wBvT3Z5AHGtrvdqL+peC+rkEQwD4wLIVnMGwFfdgOy1JN13uOrGcVfqf+aKTEYyrQFzE
+         WUhEbI9hXvh/TtpIQhxmAWgKoXwxL5ON3fzkS/f3xdaTgp4McjAis72eqAUZ48F5nJyU
+         ywQ775eXS62EUsj1yFSMkoMmuL/iaVIpa94sNTj3ILn6CpqwIG9eXyAPPFvJHORodID/
+         x9Jta8pfDoXMzm4i+tvmHl0Cd6GpL8D9Fadp+GFmhsGw7VUvjyfWhqFvN7jsWl1A2wXD
+         fktQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760017535; x=1760622335;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/Avy7qeTTmfq4DZivkTM47xk9+61lo2fuJS8O1YcKX0=;
+        b=tiLywP6jtrCXuPrwrCI0sazIA1RTik8WKRoP+kiVJ40Lgci6IZTaIANP/u80blOI6f
+         ln8xXxuvPvr9/ERLLobhr0eO3HKndvfBLoD7bV5XfpzAeRS6TGY4R0Q/X7MgANGM7kYw
+         CddKQeonViy/M8GfIMsHiF/N4OkeOS2oryBewOj2ADtEozqOeVucBz/NyAHcS6rqQFSU
+         m3nfew4Lp5QCQftWfYZp94TaAeXKhml/y40qCP94OoY+qFCN3eaWm8q+rHQsMtaNneFQ
+         i/H+HWUf68iSD6mTuLzpa/kpB7cCD48NTYxkw6d5HITfYLPVq8Inoe1xhrZucVRBDNFX
+         1e9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWknDNf8zep6YgHR0K6AMqzEfwST2UnZ4eh+996vCYjTzKZPIOynRQsEVj3/b8fKFjDjbcWy7aUNx/Zpgs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxI0IPiSjgUnUg7ZvvrxTA0ofWjZv1t88ZgJB8KnrMdffi6TI93
+	ScYAFCHmJJuAD1Y5wARk7c0hQjxb8kQv1S1FuaVfJ2bHgLGh/RrGWTNxxGWzWtglFVc=
+X-Gm-Gg: ASbGncurYgEc6J9nidJM6IL0+gmofd6q6SKgKdgX3RbfArWCXTrVa5UtVrRfTwK5xU/
+	VUuekhbZfsjqF3cVSH0uPtwc/KBzFze7zSq1pFWPjPv4Ccz9gBEK1H4p2huViHZJw0HZfg28jh5
+	TyazzhqYTGLZP8P8/+RvSV8j+aXMOVotb+sa3AwVaxzSF79pAKQVE0JBpifNCW9zB4sK3VwXIIS
+	8kRccLnBoSTzMzq57MybLBvi1gdrHztZdun0j1mWV9DOEapkPiuETchYeUZeOQeRSUn+uj+aI8V
+	not6v2lbjF4PbIUHQXxvs/ShhIKmY5Kr5C8psBGrkd5ZyieCwHOi1QVqMSxGzxtbxBSvWvCID0n
+	L65Y0678kCu4Bx2Gp5gFBaXCX76n8QnM8Oyg9VORhZXT1LJyTG7cKqm7T2b3+J3aB72c8SilMtJ
+	wzLukCvvC0Ovt5+lkcpi5qpw==
+X-Google-Smtp-Source: AGHT+IFuQphml+3tSf/kNUKzOSrQUbkNN4IQAlQeDGBfiV9Ri5g+RslgrcOdjzz4EiXYtcwTC8PEKw==
+X-Received: by 2002:a17:903:244b:b0:272:c95c:866 with SMTP id d9443c01a7336-2902723c20cmr98032745ad.20.1760017535202;
+        Thu, 09 Oct 2025 06:45:35 -0700 (PDT)
+Received: from L6YN4KR4K9.bytedance.net ([139.177.225.226])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f95ecbsm28718335ad.130.2025.10.09.06.45.25
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Thu, 09 Oct 2025 06:45:34 -0700 (PDT)
+From: Yunhui Cui <cuiyunhui@bytedance.com>
+To: paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mark.rutland@arm.com,
+	peterz@infradead.org,
+	jpoimboe@kernel.org,
+	jbaron@akamai.com,
+	ardb@kernel.org,
+	willy@infradead.org,
+	guoren@kernel.org,
+	ziy@nvidia.com,
+	akpm@linux-foundation.org,
+	bjorn@rivosinc.com,
+	cuiyunhui@bytedance.com,
+	ajones@ventanamicro.com,
+	parri.andrea@gmail.com,
 	cleger@rivosinc.com,
-	zihong.plct@isrc.iscas.ac.cn,
-	zihongyao@outlook.com,
-	zhangyin2018@iscas.ac.cn,
-	Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
-Subject: [PATCH v2 4/4] selftests/riscv: Add Zicbop prefetch test
-Date: Thu,  9 Oct 2025 21:41:54 +0800
-Message-ID: <20251009134318.23040-5-zihong.plct@isrc.iscas.ac.cn>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20251009134318.23040-1-zihong.plct@isrc.iscas.ac.cn>
-References: <20251009134318.23040-1-zihong.plct@isrc.iscas.ac.cn>
+	yongxuan.wang@sifive.com,
+	inochiama@gmail.com,
+	samuel.holland@sifive.com,
+	charlie@rivosinc.com,
+	conor.dooley@microchip.com,
+	yikming2222@gmail.com,
+	andybnac@gmail.com,
+	yury.norov@gmail.com,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH RFC] riscv: add support for Ziccid
+Date: Thu,  9 Oct 2025 21:45:14 +0800
+Message-Id: <20251009134514.8549-1-cuiyunhui@bytedance.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,307 +113,195 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowACX76EEvOdoFFc_DQ--.1956S6
-X-Coremail-Antispam: 1UD129KBjvJXoW3JFWkGw43AF48uw17CFyDWrg_yoW3WFyfpa
-	95ur4YqF48AF47KayxJF4DGFsYgr1vq3yUArWru3s8Z347Xas3JF97Ka9rAFWkGry8Zry5
-	uF13tFWruFW7JaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUQq14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr
-	1UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r4U
-	JwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCY1x0264kExVAvwVAq07x20xyl42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6x
-	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUUMKZtUUUUU==
-X-CM-SenderInfo: p2lk00vjoszunw6l223fol2u1dvotugofq/
 
-Add a new selftest under hwprobe/ to verify Zicbop extension behavior.
+The Ziccid extension provides hardware synchronization between
+Dcache and Icache. With this hardware support, there's no longer
+a need to trigger remote hart execution of fence.i via IPI.
 
-The test checks:
-- That hwprobe correctly reports Zicbop presence and block size.
-- That prefetch instructions execute without exception on valid and NULL
-  addresses when Zicbop is present.
-- That prefetch.{i,r,w} do not trigger SIGILL even when Zicbop is absent,
-  since Zicbop instructions are defined as hints.
-
-The test is based on cbo.c but adapted for Zicbop prefetch instructions.
-
-Signed-off-by: Yao Zihong <zihong.plct@isrc.iscas.ac.cn>
+Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
 ---
- .../testing/selftests/riscv/hwprobe/Makefile  |   5 +-
- .../selftests/riscv/hwprobe/prefetch.c        | 236 ++++++++++++++++++
- 2 files changed, 240 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/riscv/hwprobe/prefetch.c
+ arch/riscv/include/asm/cacheflush.h |  4 ++--
+ arch/riscv/include/asm/hwcap.h      |  1 +
+ arch/riscv/include/asm/switch_to.h  | 10 ++++++++++
+ arch/riscv/kernel/cpufeature.c      |  1 +
+ arch/riscv/kernel/ftrace.c          |  2 +-
+ arch/riscv/kernel/hibernate.c       |  2 +-
+ arch/riscv/kernel/jump_label.c      |  2 +-
+ arch/riscv/mm/cacheflush.c          | 16 ++++++++++++++--
+ 8 files changed, 31 insertions(+), 7 deletions(-)
 
-diff --git a/tools/testing/selftests/riscv/hwprobe/Makefile b/tools/testing/selftests/riscv/hwprobe/Makefile
-index cec81610a5f2..3c8b8ba7629c 100644
---- a/tools/testing/selftests/riscv/hwprobe/Makefile
-+++ b/tools/testing/selftests/riscv/hwprobe/Makefile
-@@ -4,7 +4,7 @@
+diff --git a/arch/riscv/include/asm/cacheflush.h b/arch/riscv/include/asm/cacheflush.h
+index 0092513c3376c..3a8cdf30bb4b1 100644
+--- a/arch/riscv/include/asm/cacheflush.h
++++ b/arch/riscv/include/asm/cacheflush.h
+@@ -68,7 +68,7 @@ static inline void flush_cache_vmap(unsigned long start, unsigned long end)
  
- CFLAGS += -I$(top_srcdir)/tools/include
+ #else /* CONFIG_SMP */
  
--TEST_GEN_PROGS := hwprobe cbo which-cpus
-+TEST_GEN_PROGS := hwprobe cbo which-cpus prefetch
+-void flush_icache_all(void);
++void flush_icache_all(bool force);
+ void flush_icache_mm(struct mm_struct *mm, bool local);
  
- include ../../lib.mk
+ #endif /* CONFIG_SMP */
+@@ -80,7 +80,7 @@ void flush_icache_mm(struct mm_struct *mm, bool local);
+ #define flush_icache_range flush_icache_range
+ static inline void flush_icache_range(unsigned long start, unsigned long end)
+ {
+-	flush_icache_all();
++	flush_icache_all(false);
+ }
  
-@@ -16,3 +16,6 @@ $(OUTPUT)/cbo: cbo.c sys_hwprobe.S
+ extern unsigned int riscv_cbom_block_size;
+diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
+index affd63e11b0a3..ad97d8955b501 100644
+--- a/arch/riscv/include/asm/hwcap.h
++++ b/arch/riscv/include/asm/hwcap.h
+@@ -106,6 +106,7 @@
+ #define RISCV_ISA_EXT_ZAAMO		97
+ #define RISCV_ISA_EXT_ZALRSC		98
+ #define RISCV_ISA_EXT_ZICBOP		99
++#define RISCV_ISA_EXT_ZICCID		100
  
- $(OUTPUT)/which-cpus: which-cpus.c sys_hwprobe.S
- 	$(CC) -static -o$@ $(CFLAGS) $(LDFLAGS) $^
+ #define RISCV_ISA_EXT_XLINUXENVCFG	127
+ 
+diff --git a/arch/riscv/include/asm/switch_to.h b/arch/riscv/include/asm/switch_to.h
+index 0e71eb82f920c..b8a9e455efe9e 100644
+--- a/arch/riscv/include/asm/switch_to.h
++++ b/arch/riscv/include/asm/switch_to.h
+@@ -98,7 +98,17 @@ static inline bool switch_to_should_flush_icache(struct task_struct *task)
+ 	bool stale_thread = task->thread.force_icache_flush;
+ 	bool thread_migrated = smp_processor_id() != task->thread.prev_cpu;
+ 
++	asm goto(ALTERNATIVE("nop", "j %l[ziccid]", 0, RISCV_ISA_EXT_ZICCID, 1)
++		 : : : : ziccid);
 +
-+$(OUTPUT)/prefetch: prefetch.c sys_hwprobe.S
-+	$(CC) -static -o$@ $(CFLAGS) $(LDFLAGS) $^
-diff --git a/tools/testing/selftests/riscv/hwprobe/prefetch.c b/tools/testing/selftests/riscv/hwprobe/prefetch.c
-new file mode 100644
-index 000000000000..d9ea048325fb
---- /dev/null
-+++ b/tools/testing/selftests/riscv/hwprobe/prefetch.c
-@@ -0,0 +1,236 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2023 Ventana Micro Systems Inc.
-+ * Copyright (c) 2025 PLCT Lab, ISCAS
-+ *
-+ * Based on tools/testing/selftests/riscv/hwprobe/cbo.c with modifications
-+ * for Zicbop prefetch testing.
-+ *
-+ * Run with 'taskset -c <cpu-list> prefetch' to only execute hwprobe on a
-+ * subset of cpus, as well as only executing the tests on those cpus.
-+ */
-+#define _GNU_SOURCE
-+#include <stdbool.h>
-+#include <stdint.h>
-+#include <string.h>
-+#include <sched.h>
-+#include <signal.h>
-+#include <assert.h>
-+#include <linux/compiler.h>
-+#include <linux/kernel.h>
-+#include <asm/ucontext.h>
+ 	return thread_migrated && (stale_mm || stale_thread);
 +
-+#include "hwprobe.h"
-+#include "../../kselftest.h"
++ziccid:
++	/*
++	 * Process switching writes to SATP, which flushes the pipeline,
++	 * so only the thread scenario is considered.
++	 */
++	return thread_migrated && stale_thread;
+ #else
+ 	return false;
+ #endif
+diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+index 67b59699357da..2da82aa2dbf0a 100644
+--- a/arch/riscv/kernel/cpufeature.c
++++ b/arch/riscv/kernel/cpufeature.c
+@@ -540,6 +540,7 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
+ 	__RISCV_ISA_EXT_DATA(svnapot, RISCV_ISA_EXT_SVNAPOT),
+ 	__RISCV_ISA_EXT_DATA(svpbmt, RISCV_ISA_EXT_SVPBMT),
+ 	__RISCV_ISA_EXT_DATA(svvptc, RISCV_ISA_EXT_SVVPTC),
++	__RISCV_ISA_EXT_DATA(ziccid, RISCV_ISA_EXT_ZICCID),
+ };
+ 
+ const size_t riscv_isa_ext_count = ARRAY_SIZE(riscv_isa_ext);
+diff --git a/arch/riscv/kernel/ftrace.c b/arch/riscv/kernel/ftrace.c
+index 8d18d6727f0fc..431448e818363 100644
+--- a/arch/riscv/kernel/ftrace.c
++++ b/arch/riscv/kernel/ftrace.c
+@@ -43,7 +43,7 @@ void arch_ftrace_update_code(int command)
+ {
+ 	command |= FTRACE_MAY_SLEEP;
+ 	ftrace_modify_all_code(command);
+-	flush_icache_all();
++	flush_icache_all(false);
+ }
+ 
+ static int __ftrace_modify_call(unsigned long source, unsigned long target, bool validate)
+diff --git a/arch/riscv/kernel/hibernate.c b/arch/riscv/kernel/hibernate.c
+index 671b686c01587..388f10e187bae 100644
+--- a/arch/riscv/kernel/hibernate.c
++++ b/arch/riscv/kernel/hibernate.c
+@@ -153,7 +153,7 @@ int swsusp_arch_suspend(void)
+ 	} else {
+ 		suspend_restore_csrs(hibernate_cpu_context);
+ 		flush_tlb_all();
+-		flush_icache_all();
++		flush_icache_all(true);
+ 
+ 		/*
+ 		 * Tell the hibernation core that we've just restored the memory.
+diff --git a/arch/riscv/kernel/jump_label.c b/arch/riscv/kernel/jump_label.c
+index b4c1a6a3fbd28..680b29f4c09c4 100644
+--- a/arch/riscv/kernel/jump_label.c
++++ b/arch/riscv/kernel/jump_label.c
+@@ -51,5 +51,5 @@ bool arch_jump_label_transform_queue(struct jump_entry *entry,
+ 
+ void arch_jump_label_transform_apply(void)
+ {
+-	flush_icache_all();
++	flush_icache_all(false);
+ }
+diff --git a/arch/riscv/mm/cacheflush.c b/arch/riscv/mm/cacheflush.c
+index d83a612464f6c..01f9f7a45e8d2 100644
+--- a/arch/riscv/mm/cacheflush.c
++++ b/arch/riscv/mm/cacheflush.c
+@@ -12,19 +12,24 @@
+ #ifdef CONFIG_SMP
+ 
+ #include <asm/sbi.h>
++#include <asm/alternative-macros.h>
+ 
+ static void ipi_remote_fence_i(void *info)
+ {
+ 	return local_flush_icache_all();
+ }
+ 
+-void flush_icache_all(void)
++void flush_icache_all(bool force)
+ {
+ 	local_flush_icache_all();
+ 
+ 	if (num_online_cpus() < 2)
+ 		return;
+ 
++	if (!force)
++		asm goto(ALTERNATIVE("nop", "j %l[ziccid]", 0,
++			RISCV_ISA_EXT_ZICCID, 1)
++			: : : : ziccid);
+ 	/*
+ 	 * Make sure all previous writes to the D$ are ordered before making
+ 	 * the IPI. The RISC-V spec states that a hart must execute a data fence
+@@ -41,6 +46,7 @@ void flush_icache_all(void)
+ 		sbi_remote_fence_i(NULL);
+ 	else
+ 		on_each_cpu(ipi_remote_fence_i, NULL, 1);
++ziccid:;
+ }
+ EXPORT_SYMBOL(flush_icache_all);
+ 
+@@ -61,13 +67,17 @@ void flush_icache_mm(struct mm_struct *mm, bool local)
+ 
+ 	preempt_disable();
+ 
++	local_flush_icache_all();
 +
-+#define MK_PREFETCH(fn) \
-+	le32_bswap(0 << 25 | (uint32_t)(fn) << 20 | 10 << 15 | 6 << 12 | 0 << 7 | 19)
++	asm goto(ALTERNATIVE("nop", "j %l[ziccid]", 0, RISCV_ISA_EXT_ZICCID, 1)
++		 : : : : ziccid);
 +
-+static char mem[4096] __aligned(4096) = { [0 ... 4095] = 0xa5 };
+ 	/* Mark every hart's icache as needing a flush for this MM. */
+ 	mask = &mm->context.icache_stale_mask;
+ 	cpumask_setall(mask);
+ 	/* Flush this hart's I$ now, and mark it as flushed. */
+ 	cpu = smp_processor_id();
+ 	cpumask_clear_cpu(cpu, mask);
+-	local_flush_icache_all();
+ 
+ 	/*
+ 	 * Flush the I$ of other harts concurrently executing, and mark them as
+@@ -91,6 +101,8 @@ void flush_icache_mm(struct mm_struct *mm, bool local)
+ 		on_each_cpu_mask(&others, ipi_remote_fence_i, NULL, 1);
+ 	}
+ 
++ziccid:;
 +
-+static bool illegal;
-+
-+static void sigill_handler(int sig, siginfo_t *info, void *context)
-+{
-+	unsigned long *regs = (unsigned long *)&((ucontext_t *)context)->uc_mcontext;
-+	uint32_t insn = *(uint32_t *)regs[0];
-+
-+	assert(insn == MK_PREFETCH(regs[11]));
-+
-+	illegal = true;
-+	regs[0] += 4;
-+}
-+
-+#define prefetch_insn(base, fn)							\
-+({										\
-+	asm volatile(								\
-+	"mv	a0, %0\n"							\
-+	"li	a1, %1\n"							\
-+	".4byte	%2\n"								\
-+	: : "r" (base), "i" (fn), "i" (MK_PREFETCH(fn)) : "a0", "a1", "memory");\
-+})
-+
-+static void prefetch_i(char *base) { prefetch_insn(base, 0); }
-+
-+static void prefetch_r(char *base) { prefetch_insn(base, 1); }
-+
-+static void prefetch_w(char *base) { prefetch_insn(base, 3); }
-+
-+static bool is_power_of_2(__u64 n)
-+{
-+	return n != 0 && (n & (n - 1)) == 0;
-+}
-+
-+static void test_no_zicbop(void *arg)
-+{
-+	// Zicbop prefetch.* are HINT instructions.
-+	ksft_print_msg("Testing Zicbop instructions\n");
-+
-+	illegal = false;
-+	prefetch_i(&mem[0]);
-+	ksft_test_result(!illegal, "No prefetch.i\n");
-+
-+	illegal = false;
-+	prefetch_r(&mem[0]);
-+	ksft_test_result(!illegal, "No prefetch.r\n");
-+
-+	illegal = false;
-+	prefetch_w(&mem[0]);
-+	ksft_test_result(!illegal, "No prefetch.w\n");
-+}
-+
-+static void test_zicbop(void *arg)
-+{
-+	struct riscv_hwprobe pair = {
-+		.key = RISCV_HWPROBE_KEY_ZICBOP_BLOCK_SIZE,
-+	};
-+	cpu_set_t *cpus = (cpu_set_t *)arg;
-+	__u64 block_size;
-+	long rc;
-+
-+	rc = riscv_hwprobe(&pair, 1, sizeof(cpu_set_t), (unsigned long *)cpus, 0);
-+	block_size = pair.value;
-+	ksft_test_result(rc == 0 && pair.key == RISCV_HWPROBE_KEY_ZICBOP_BLOCK_SIZE &&
-+			 is_power_of_2(block_size), "Zicbop block size\n");
-+	ksft_print_msg("Zicbop block size: %llu\n", block_size);
-+
-+	illegal = false;
-+	prefetch_i(&mem[0]);
-+	prefetch_r(&mem[0]);
-+	prefetch_w(&mem[0]);
-+	ksft_test_result(!illegal, "Zicbop prefetch.* on valid address\n");
-+
-+	illegal = false;
-+	prefetch_i(NULL);
-+	prefetch_r(NULL);
-+	prefetch_w(NULL);
-+	ksft_test_result(!illegal, "Zicbop prefetch.* on NULL\n");
-+}
-+
-+static void check_no_zicbop_cpus(cpu_set_t *cpus)
-+{
-+	struct riscv_hwprobe pair = {
-+		.key = RISCV_HWPROBE_KEY_IMA_EXT_0,
-+	};
-+	cpu_set_t one_cpu;
-+	int i = 0, c = 0;
-+	long rc;
-+
-+	while (i++ < CPU_COUNT(cpus)) {
-+		while (!CPU_ISSET(c, cpus))
-+			++c;
-+
-+		CPU_ZERO(&one_cpu);
-+		CPU_SET(c, &one_cpu);
-+
-+		rc = riscv_hwprobe(&pair, 1, sizeof(cpu_set_t), (unsigned long *)&one_cpu, 0);
-+		assert(rc == 0 && pair.key == RISCV_HWPROBE_KEY_IMA_EXT_0);
-+
-+		if (pair.value & RISCV_HWPROBE_EXT_ZICBOP)
-+			ksft_exit_fail_msg("zicbop is only present on a subset of harts.\n"
-+					   "Use taskset to select a set of harts where zicbop\n"
-+					   "presence (present or not) is consistent for each hart\n");
-+		++c;
-+	}
-+}
-+
-+enum {
-+	TEST_ZICBOP,
-+	TEST_NO_ZICBOP,
-+};
-+
-+enum {
-+	HANDLER_SIGILL,
-+	HANDLER_SIGSEGV,
-+	HANDLER_SIGBUS,
-+};
-+
-+static struct test_info {
-+	bool enabled;
-+	unsigned int nr_tests;
-+	void (*test_fn)(void *arg);
-+} tests[] = {
-+	[TEST_ZICBOP]		= { .nr_tests = 3, test_zicbop },
-+	[TEST_NO_ZICBOP]	= { .nr_tests = 3, test_no_zicbop },
-+};
-+
-+static struct sighandler_info {
-+	const char *flag;
-+	int sig;
-+} handlers[] = {
-+	[HANDLER_SIGILL] = { .flag = "--sigill", .sig = SIGILL },
-+	[HANDLER_SIGSEGV] = { .flag = "--sigsegv", .sig = SIGSEGV },
-+	[HANDLER_SIGBUS] = { .flag = "--sigbus", .sig = SIGBUS },
-+};
-+
-+static bool search_flag(int argc, char **argv, const char *flag)
-+{
-+	int i;
-+
-+	for (i = 1; i < argc; i++) {
-+		if (!strcmp(argv[i], flag))
-+			return true;
-+	}
-+	return false;
-+}
-+
-+static void install_sigaction(int argc, char **argv)
-+{
-+	int i, rc;
-+	struct sigaction act = {
-+		.sa_sigaction = &sigill_handler,
-+		.sa_flags = SA_SIGINFO,
-+	};
-+
-+	for (i = 0; i < ARRAY_SIZE(handlers); ++i) {
-+		if (search_flag(argc, argv, handlers[i].flag)) {
-+			rc = sigaction(handlers[i].sig, &act, NULL);
-+			assert(rc == 0);
-+		}
-+	}
-+
-+	if (search_flag(argc, argv, handlers[HANDLER_SIGILL].flag))
-+		tests[TEST_NO_ZICBOP].enabled = true;
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	struct riscv_hwprobe pair;
-+	unsigned int plan = 0;
-+	cpu_set_t cpus;
-+	long rc;
-+	int i;
-+
-+	install_sigaction(argc, argv);
-+
-+	rc = sched_getaffinity(0, sizeof(cpu_set_t), &cpus);
-+	assert(rc == 0);
-+
-+	ksft_print_header();
-+
-+	pair.key = RISCV_HWPROBE_KEY_IMA_EXT_0;
-+	rc = riscv_hwprobe(&pair, 1, sizeof(cpu_set_t), (unsigned long *)&cpus, 0);
-+	if (rc < 0)
-+		ksft_exit_fail_msg("hwprobe() failed with %ld\n", rc);
-+	assert(rc == 0 && pair.key == RISCV_HWPROBE_KEY_IMA_EXT_0);
-+
-+	if (pair.value & RISCV_HWPROBE_EXT_ZICBOP)
-+		tests[TEST_ZICBOP].enabled = true;
-+	else
-+		check_no_zicbop_cpus(&cpus);
-+
-+	for (i = 0; i < ARRAY_SIZE(tests); ++i)
-+		plan += tests[i].enabled ? tests[i].nr_tests : 0;
-+
-+	if (plan == 0)
-+		ksft_print_msg("No tests enabled.\n");
-+	else
-+		ksft_set_plan(plan);
-+
-+	for (i = 0; i < ARRAY_SIZE(tests); ++i) {
-+		if (tests[i].enabled)
-+			tests[i].test_fn(&cpus);
-+	}
-+
-+	ksft_finished();
-+}
+ 	preempt_enable();
+ }
+ 
 -- 
-2.47.2
+2.39.5
 
 
