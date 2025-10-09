@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-847428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6117EBCACE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 22:29:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A177BCACED
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 22:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0DD4D35403B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 20:29:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 690CB483589
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 20:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9452727F3;
-	Thu,  9 Oct 2025 20:29:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AAA927056B;
+	Thu,  9 Oct 2025 20:29:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=email-od.com header.i=@email-od.com header.b="c9BViWpu"
+	dkim=pass (1024-bit key) header.d=email-od.com header.i=@email-od.com header.b="UPhAAN5n"
 Received: from s1-ba86.socketlabs.email-od.com (s1-ba86.socketlabs.email-od.com [142.0.186.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D02270EA5
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 20:29:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E47272E72
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 20:29:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=142.0.186.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760041751; cv=none; b=iUFurERWgdAJYU+CjYEcNkFEQyFwUr/N77Wh06lj9/k+9eW6KJOH1HTM5tHKNZW5vwM0nUSQoCK7/VBZl45ACdMGrGlMuiESrQOiD37pQf6Jd+FPPJrmGVnAnac1VKYGTd+BCL+jQG0k+L0X+1T+iHAMQB1ZuDR47Qodij8L9Q4=
+	t=1760041754; cv=none; b=hgYnt80eAxT/inOa1URybGE8/yrkWiie/LuaDkRlvq2SLpgDt2OX1nqbjkAYpZVz83ySyniVaOivMshTB6ha/wTdCJDzKOKLJ3qDwyPbLU2SHyV2JlQbGyz3MIklIuRM8nF9A17B11IeUOejrxA0en+Tug16URnWmahS18wbR1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760041751; c=relaxed/simple;
-	bh=jxHNPvtonKIh6HD+twGlbhC/21NmPGMHzw7NpLnXoas=;
+	s=arc-20240116; t=1760041754; c=relaxed/simple;
+	bh=RX1K5KPSFGA72/LrpHxaAbZJRQpoejZVuU8GJ1Oylko=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tPIZYjQqmCMjnRU4jRF9m6DurgD/wjgUU+8v0Ybj4xJ+sfaHlYLhmvLgRJIl0auPxwjy6+YJ770HF5zmZ8MpRwIaF81dZP5WOKf48QYNFRV8WBt73EZPn3Y6maF40TAseWlUpONsFLSs+bHvgjnqX5AqhERaVbJ1rfRCo9mRhvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nalramli.com; spf=pass smtp.mailfrom=email-od.com; dkim=pass (1024-bit key) header.d=email-od.com header.i=@email-od.com header.b=c9BViWpu; arc=none smtp.client-ip=142.0.186.134
+	 MIME-Version; b=p7alukCAeZXs3dngX8wj2E1+/7lvTMBzY7t3MwHHKp1nsT/Vk2YP9Argweippytq5b0WiAM8SXtaJGAqYYC/ulTMurys35rn2S9P+HYkMKpOfshLVHqAEjh3tlOeRvmtFr1CDhT1fqDrvvKBYr0eD861k5MIgRwE/RuD6dyoR9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nalramli.com; spf=pass smtp.mailfrom=email-od.com; dkim=pass (1024-bit key) header.d=email-od.com header.i=@email-od.com header.b=UPhAAN5n; arc=none smtp.client-ip=142.0.186.134
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nalramli.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=email-od.com
 DKIM-Signature: v=1; a=rsa-sha256; d=email-od.com;i=@email-od.com;s=dkim;
-	c=relaxed/relaxed; q=dns/txt; t=1760041750; x=1762633750;
+	c=relaxed/relaxed; q=dns/txt; t=1760041754; x=1762633754;
 	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:subject:cc:to:from:x-thread-info:subject:to:from:cc:reply-to;
-	bh=K09yGhuPuz5y5DBtOYrDuFkQOt0DZmwIm4f7CMtsXxA=;
-	b=c9BViWpuF8EoF4fnZ/mA59/OaW2SGavgPAGzMFXgO0ctWhZVo4TgIFQTGPmoeSE9tVMZGPw8E3sOTFEKkTp4xwN9AdcbuwV9L+WWyuv/XSvLdgk0eZfdNjz2p2SGaXMiScPGa4MOR432sPRO+/uzguINZ7nQGTFKFErcGrK14TE=
-X-Thread-Info: NDUwNC4xMi42YjZmMTAwMDBiMDgxNzIubGludXgta2VybmVsPXZnZXIua2VybmVsLm9yZw==
+	bh=ofx1rW2+30KvORCW7saFUEf3E1N+8nsWWjpSDi6TtgA=;
+	b=UPhAAN5niKmPkfQG4AaL/fcvthLN0a96KoFKCZ3YSXEZFjKf4P1v2EIEaps6qb4LmItHTM7BnRcYXwf8H2jiI9HPxWX42/ShzXTanjOLyqeQBH36UC6w6g1xyUxxd0qddtOoKdUT3hk5gtCCQeC1+JNTkBjeaZDVv225/pPCGtY=
+X-Thread-Info: NDUwNC4xMi43MGEyMTAwMDBiMDc0NjgubGludXgta2VybmVsPXZnZXIua2VybmVsLm9yZw==
 x-xsSpam: eyJTY29yZSI6MCwiRGV0YWlscyI6bnVsbH0=
 Received: from nalramli-fst-tp.. (d4-50-191-215.clv.wideopenwest.com [50.4.215.191])
-	by nalramli.com (Postfix) with ESMTPSA id 0F1382CE01B3;
+	by nalramli.com (Postfix) with ESMTPSA id 2AA012CE05A3;
 	Thu,  9 Oct 2025 15:28:41 -0400 (EDT)
 From: "Nabil S. Alramli" <dev@nalramli.com>
 To: anthony.l.nguyen@intel.com,
@@ -62,9 +62,9 @@ Cc: andrew+netdev@lunn.ch,
 	khubert@fastly.com,
 	nalramli@fastly.com,
 	dev@nalramli.com
-Subject: [RFC ixgbe 1/2] ixgbe: Implement support for ndo_xdp_xmit in skb mode
-Date: Thu,  9 Oct 2025 15:28:30 -0400
-Message-ID: <20251009192831.3333763-2-dev@nalramli.com>
+Subject: [RFC ixgbe 2/2] ixgbe: Fix CPU to ring assignment
+Date: Thu,  9 Oct 2025 15:28:31 -0400
+Message-ID: <20251009192831.3333763-3-dev@nalramli.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251009192831.3333763-1-dev@nalramli.com>
 References: <20251009192831.3333763-1-dev@nalramli.com>
@@ -76,119 +76,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-This commit adds support for `ndo_xdp_xmit` in skb mode in the ixgbe
-ethernet driver, by allowing the call to continue to transmit the packets
-using `dev_direct_xmit`.
-
-Previously, the driver did not support the operation in skb mode. The
-handler `ixgbe_xdp_xmit` had the following condition:
-
-```
-	ring =3D adapter->xdp_prog ? ixgbe_determine_xdp_ring(adapter) : NULL;
-	if (unlikely(!ring))
-		return -ENXIO;
-```
-
-That only works in native mode. In skb mode, `adapter->xdp_prog =3D=3D NU=
-LL` so
-the call returned an error, which prevented the ability to send packets
-using `bpf_prog_test_run_opts` with the `BPF_F_TEST_XDP_LIVE_FRAMES` flag=
-.
+The ixgbe driver uses ixgbe_determine_*_ring to determine the CPU mapping
+of transmit rings. Those helper functions have a hard-coded number of
+rings equal to IXGBE_MAX_XDP_QS, which is set to 64. However, this does
+not take into account the number of actual rings configured, which could
+be lower. This results in NULL being returned, if the modulus operation
+falls into a ring that is not configured. Instead, use the actual number
+of configured rings.
 
 Signed-off-by: Nabil S. Alramli <dev@nalramli.com>
+Fixes: 4fe815850bdc ("ixgbe: let the xdpdrv work with more than 64 cpus")
 ---
- drivers/net/ethernet/intel/ixgbe/ixgbe.h      |  8 ++++
- drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 43 +++++++++++++++++--
- 2 files changed, 47 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/intel/ixgbe/ixgbe.h | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe.h b/drivers/net/ether=
 net/intel/ixgbe/ixgbe.h
-index e6a380d4929b..26c378853755 100644
+index 26c378853755..e2c09545bad1 100644
 --- a/drivers/net/ethernet/intel/ixgbe/ixgbe.h
 +++ b/drivers/net/ethernet/intel/ixgbe/ixgbe.h
-@@ -846,6 +846,14 @@ struct ixgbe_ring *ixgbe_determine_xdp_ring(struct i=
-xgbe_adapter *adapter)
+@@ -830,18 +830,10 @@ struct ixgbe_adapter {
+ 	spinlock_t vfs_lock;
+ };
+=20
+-static inline int ixgbe_determine_xdp_q_idx(int cpu)
+-{
+-	if (static_key_enabled(&ixgbe_xdp_locking_key))
+-		return cpu % IXGBE_MAX_XDP_QS;
+-	else
+-		return cpu;
+-}
+-
+ static inline
+ struct ixgbe_ring *ixgbe_determine_xdp_ring(struct ixgbe_adapter *adapte=
+r)
+ {
+-	int index =3D ixgbe_determine_xdp_q_idx(smp_processor_id());
++	int index =3D smp_processor_id() % adapter->num_xdp_queues;
+=20
  	return adapter->xdp_ring[index];
  }
-=20
-+static inline
-+struct ixgbe_ring *ixgbe_determine_tx_ring(struct ixgbe_adapter *adapter=
+@@ -849,7 +841,7 @@ struct ixgbe_ring *ixgbe_determine_xdp_ring(struct ix=
+gbe_adapter *adapter)
+ static inline
+ struct ixgbe_ring *ixgbe_determine_tx_ring(struct ixgbe_adapter *adapter=
 )
-+{
-+	int index =3D ixgbe_determine_xdp_q_idx(smp_processor_id());
-+
-+	return adapter->tx_ring[index];
-+}
-+
- static inline u8 ixgbe_max_rss_indices(struct ixgbe_adapter *adapter)
  {
- 	switch (adapter->hw.mac.type) {
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/=
-ethernet/intel/ixgbe/ixgbe_main.c
-index 467f81239e12..fed70cbdb1b2 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-@@ -10748,7 +10748,8 @@ static int ixgbe_xdp_xmit(struct net_device *dev,=
- int n,
- 	/* During program transitions its possible adapter->xdp_prog is assigne=
-d
- 	 * but ring has not been configured yet. In this case simply abort xmit=
-.
- 	 */
--	ring =3D adapter->xdp_prog ? ixgbe_determine_xdp_ring(adapter) : NULL;
-+	ring =3D adapter->xdp_prog ? ixgbe_determine_xdp_ring(adapter) :
-+		ixgbe_determine_tx_ring(adapter);
- 	if (unlikely(!ring))
- 		return -ENXIO;
+-	int index =3D ixgbe_determine_xdp_q_idx(smp_processor_id());
++	int index =3D smp_processor_id() % adapter->num_tx_queues;
 =20
-@@ -10762,9 +10763,43 @@ static int ixgbe_xdp_xmit(struct net_device *dev=
-, int n,
- 		struct xdp_frame *xdpf =3D frames[i];
- 		int err;
-=20
--		err =3D ixgbe_xmit_xdp_ring(ring, xdpf);
--		if (err !=3D IXGBE_XDP_TX)
--			break;
-+		if (adapter->xdp_prog) {
-+			err =3D ixgbe_xmit_xdp_ring(ring, xdpf);
-+			if (err !=3D IXGBE_XDP_TX)
-+				break;
-+		} else {
-+			struct xdp_buff xdp =3D {0};
-+			unsigned int metasize =3D 0;
-+			unsigned int size =3D 0;
-+			unsigned int truesize =3D 0;
-+			struct sk_buff *skb =3D NULL;
-+
-+			xdp_convert_frame_to_buff(xdpf, &xdp);
-+			size =3D xdp.data_end - xdp.data;
-+			metasize =3D xdp.data - xdp.data_meta;
-+			truesize =3D SKB_DATA_ALIGN(xdp.data_end - xdp.data_hard_start) +
-+				   SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
-+
-+			skb =3D napi_alloc_skb(&ring->q_vector->napi, truesize);
-+			if (likely(skb)) {
-+				skb_reserve(skb, xdp.data - xdp.data_hard_start);
-+				skb_put_data(skb, xdp.data, size);
-+				build_skb_around(skb, skb->data, truesize);
-+				if (metasize)
-+					skb_metadata_set(skb, metasize);
-+				skb->dev =3D dev;
-+				skb->queue_mapping =3D ring->queue_index;
-+
-+				err =3D dev_direct_xmit(skb, ring->queue_index);
-+				if (!dev_xmit_complete(err))
-+					break;
-+			} else {
-+				break;
-+			}
-+
-+			xdp_return_frame_rx_napi(xdpf);
-+		}
-+
- 		nxmit++;
- 	}
-=20
+ 	return adapter->tx_ring[index];
+ }
 --=20
 2.43.0
 
