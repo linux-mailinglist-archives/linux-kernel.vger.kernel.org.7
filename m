@@ -1,114 +1,165 @@
-Return-Path: <linux-kernel+bounces-846937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF37DBC9791
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:20:44 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97EC8BC9715
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:09:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3F623B7EF7
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:20:40 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DC270352268
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:09:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13FFA2EA480;
-	Thu,  9 Oct 2025 14:20:37 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF90E3595C;
-	Thu,  9 Oct 2025 14:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF322EA173;
+	Thu,  9 Oct 2025 14:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nAXgoFtI"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD9E2459F3;
+	Thu,  9 Oct 2025 14:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760019636; cv=none; b=ZVQMlua+xuASM6Fcsk018fLRcutHtnv4uqsazUrnYiFREXmPNwn7M+jRA77j5A/sVmVJisHwYJXaMdP2fIEVAmVpgGacVxZTWUDbyog5wr8On7WatVBSqyPBVJjniBJt9I1+nGBwQ4K0G2J2Hc0jM2GsmgpUNjJ8P8JDxiBX7XA=
+	t=1760018989; cv=none; b=U0uRqSshhajsHXDSlKB3n6PMTYMb1TXUD7F4l/OZ08ASpotuNeze7ux23GnYtoHxcrC0dqRXijBcYIJKytIHm+ZT4V7cl4eKFHXkbZ0BF98Yv5g0EP1NfnfdtQcnBzeYf5IEei+tN0Nqg5osZZTBwd1zcLsHRV042JK4Nrc0UHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760019636; c=relaxed/simple;
-	bh=xbPON+0N/Se3Usn4/MaFwqhgI0t5azbgrfThIj69hiQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZmQcMyUfcrfRS3BemgF07KulA04kkLrqjH9rKPrC6zNUZbwBBHsThoTRDWYO6gRbqqkSkcMZ+5FQJXV2Y0lsxMEvPZaI1d3TmLpQ67YCpin2369sBVimAGp1dvpvSFOhxc9LKdHne39D7NiA36ck4aAogjkV2KMuSqrhpZR3svo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cjBZr0N1Cz9sVP;
-	Thu,  9 Oct 2025 16:09:40 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id PxhQ5bNCSMfs; Thu,  9 Oct 2025 16:09:39 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cjBZY3J3Rz9sVc;
-	Thu,  9 Oct 2025 16:09:25 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5D9C78B774;
-	Thu,  9 Oct 2025 16:09:25 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id dbdXZBCVk2oF; Thu,  9 Oct 2025 16:09:25 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id D24D08B76D;
-	Thu,  9 Oct 2025 16:09:24 +0200 (CEST)
-Message-ID: <149c6b9a-5fdb-4783-b4a3-4afc368a05dd@csgroup.eu>
-Date: Thu, 9 Oct 2025 16:09:24 +0200
+	s=arc-20240116; t=1760018989; c=relaxed/simple;
+	bh=tDJS4NRxkFnQkEwxcMTkDM1sNOfGQ40YA+cT0EfHN1A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ChZNtNWaLWot4OpX66Q0h0JpQJquQI1MeHPIhnf6Tx6bX10xFOqH/cAs3f1WWyURwvszUU2EgK8NNZ8grcro8UDMeKXhKiv1M4fL9HtPYv9RAXEibFPTiWoBHco42f4q7yNO5Cys+ewxC/bcQo4cF0IE8YEmFGl0JRgvIWF7yqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nAXgoFtI; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ieBvCbBheNPFtBxoISVqmiEkRKqIWXh/v+HP5ZowhjI=; b=nAXgoFtIs28drwEauJTWwJGMeN
+	R0382zPEDZu8KViUA23YGsIcqITo7rULbxEHggZb8TyUIJlbdiEuFkfBrBCdqb9kr9cC0tnmoisYt
+	tlJpmN+kuzbwUrs3AhlYo0yAUF1RAuEC1/Mo4tbe06lTGX3puqiIglGdZOAQU/EVATkJzyyqfGs6W
+	J1Nun6SJdCTW9mEqQpiIb7wEpdiDMCJ0Uus1ASFS3lg5jEAswzuAVbc/5mNbqQIeWKUPKFhiN94GG
+	UhaxTi6qdVfzD0Yf9YL8tJoC0ZzLrNF5mhYcQel1+gwpwTy0sKAOCoYMaPri4zW1cbdP5jlxeu2Yq
+	jk741fVA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v6rKg-00000001Ubm-3AbJ;
+	Thu, 09 Oct 2025 14:09:27 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id B1BDB300399; Thu, 09 Oct 2025 16:09:25 +0200 (CEST)
+Date: Thu, 9 Oct 2025 16:09:25 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: tj@kernel.org, linux-kernel@vger.kernel.org, mingo@kernel.org,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
+	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
+	changwoo@igalia.com, cgroups@vger.kernel.org,
+	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de
+Subject: Re: [PATCH 03/12] sched: Fold
+ sched_class::switch{ing,ed}_{to,from}() into the change pattern
+Message-ID: <20251009140925.GD4068168@noisy.programming.kicks-ass.net>
+References: <20251006104402.946760805@infradead.org>
+ <20251006104526.861755244@infradead.org>
+ <02452879-8998-47e0-9679-d2ff00503901@arm.com>
+ <20251009135408.GD4067720@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] powerpc: p2020: Rename wdt@ nodes to watchdog@
-To: j.ne@posteo.net, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>
-Cc: devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
-References: <20250418-watchdog-v1-0-987ff2046272@posteo.net>
- <20250418-watchdog-v1-4-987ff2046272@posteo.net>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <20250418-watchdog-v1-4-987ff2046272@posteo.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251009135408.GD4067720@noisy.programming.kicks-ass.net>
 
-
-
-Le 18/04/2025 à 21:28, J. Neuschäfer via B4 Relay a écrit :
-> From: "J. Neuschäfer" <j.ne@posteo.net>
+On Thu, Oct 09, 2025 at 03:54:08PM +0200, Peter Zijlstra wrote:
+> On Thu, Oct 09, 2025 at 03:30:02PM +0200, Dietmar Eggemann wrote:
+> > On 06.10.25 12:44, Peter Zijlstra wrote:
+> > > Add {DE,EN}QUEUE_CLASS and fold the sched_class::switch* methods into
+> > > the change pattern. This completes and makes the pattern more
+> > > symmetric.
+> > > 
+> > > This changes the order of callbacks slightly:
+> > > 
+> > > 				|
+> > > 				|  switching_from()
+> > >   dequeue_task();		|  dequeue_task()
+> > >   put_prev_task();		|  put_prev_task()
+> > > 				|  switched_from()
+> > > 				|
+> > >   ... change task ...		|  ... change task ...
+> > > 				|
+> > >   switching_to();		|  switching_to()
+> > >   enqueue_task();		|  enqueue_task()
+> > >   set_next_task();		|  set_next_task()
+> > >   prev_class->switched_from()	|
+> > >   switched_to()			|  switched_to()
+> > > 				|
+> > > 
+> > > Notably, it moves the switched_from() callback right after the
+> > > dequeue/put. Existing implementations don't appear to be affected by
+> > > this change in location -- specifically the task isn't enqueued on the
+> > > class in question in either location.
+> > > 
+> > > Make (CLASS)^(SAVE|MOVE), because there is nothing to save-restore
+> > > when changing scheduling classes.
+> > 
+> > This one causes a DL bw related warning when I run a simple 1 DL task
+> > rt-app workload:
 > 
-> The watchdog.yaml schema prescribes a node name of "timer" or "watchdog"
-> rather than the abbreviation "wdt".
+> > Not sure yet how this is related to switched_from_dl() being now called earlier?
 > 
-> Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
-
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-
-> ---
->   arch/powerpc/boot/dts/fsl/ge_imp3a.dts | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+> Ooh, I might see a problem. task_non_contending() uses dl_task(), which
+> uses p->prio. The move above means it is now called using the 'old'
+> prio, whereas it used to run with the 'new' prio.
 > 
-> diff --git a/arch/powerpc/boot/dts/fsl/ge_imp3a.dts b/arch/powerpc/boot/dts/fsl/ge_imp3a.dts
-> index da3de8e2b7d2c55cf735f3cfdef8729655979a06..9e5c01cfac2f8ad93dfa3b33d05b3ad3331b2c76 100644
-> --- a/arch/powerpc/boot/dts/fsl/ge_imp3a.dts
-> +++ b/arch/powerpc/boot/dts/fsl/ge_imp3a.dts
-> @@ -94,7 +94,7 @@ gef_gpio: gpio@4,400 {
->   			gpio-controller;
->   		};
->   
-> -		wdt@4,800 {
-> +		watchdog@4,800 {
->   			compatible = "ge,imp3a-fpga-wdt", "gef,fpga-wdt-1.00",
->   				"gef,fpga-wdt";
->   			reg = <0x4 0x800 0x8>;
-> @@ -103,7 +103,7 @@ wdt@4,800 {
->   		};
->   
->   		/* Second watchdog available, driver currently supports one.
-> -		wdt@4,808 {
-> +		watchdog@4,808 {
->   			compatible = "gef,imp3a-fpga-wdt", "gef,fpga-wdt-1.00",
->   				"gef,fpga-wdt";
->   			reg = <0x4 0x808 0x8>;
-> 
+> Let me see if I can figure out something for this.
 
+Does this help? /me goes find rt-app.
+
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index 615411a0a881..fe2272c812b2 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -405,7 +405,7 @@ static void __dl_clear_params(struct sched_dl_entity *dl_se);
+  * up, and checks if the task is still in the "ACTIVE non contending"
+  * state or not (in the second case, it updates running_bw).
+  */
+-static void task_non_contending(struct sched_dl_entity *dl_se)
++static void task_non_contending(struct sched_dl_entity *dl_se, bool dl_task)
+ {
+ 	struct hrtimer *timer = &dl_se->inactive_timer;
+ 	struct rq *rq = rq_of_dl_se(dl_se);
+@@ -444,10 +444,10 @@ static void task_non_contending(struct sched_dl_entity *dl_se)
+ 		} else {
+ 			struct task_struct *p = dl_task_of(dl_se);
+ 
+-			if (dl_task(p))
++			if (dl_task)
+ 				sub_running_bw(dl_se, dl_rq);
+ 
+-			if (!dl_task(p) || READ_ONCE(p->__state) == TASK_DEAD) {
++			if (!dl_task || READ_ONCE(p->__state) == TASK_DEAD) {
+ 				struct dl_bw *dl_b = dl_bw_of(task_cpu(p));
+ 
+ 				if (READ_ONCE(p->__state) == TASK_DEAD)
+@@ -2045,7 +2045,7 @@ static void dequeue_dl_entity(struct sched_dl_entity *dl_se, int flags)
+ 	 * or "inactive")
+ 	 */
+ 	if (flags & DEQUEUE_SLEEP)
+-		task_non_contending(dl_se);
++		task_non_contending(dl_se, true);
+ }
+ 
+ static void enqueue_task_dl(struct rq *rq, struct task_struct *p, int flags)
+@@ -2970,7 +2970,7 @@ static void switched_from_dl(struct rq *rq, struct task_struct *p)
+ 	 * will reset the task parameters.
+ 	 */
+ 	if (task_on_rq_queued(p) && p->dl.dl_runtime)
+-		task_non_contending(&p->dl);
++		task_non_contending(&p->dl, false);
+ 
+ 	/*
+ 	 * In case a task is setscheduled out from SCHED_DEADLINE we need to
 
