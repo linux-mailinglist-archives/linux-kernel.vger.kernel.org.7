@@ -1,263 +1,144 @@
-Return-Path: <linux-kernel+bounces-846364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BB6EBC7B36
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:28:05 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 866B7BC7B7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:29:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8491219E3ACB
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:28:28 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 017F134E33D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:29:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF302D0C88;
-	Thu,  9 Oct 2025 07:28:00 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159D72BE7AF;
-	Thu,  9 Oct 2025 07:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B54B12D0C78;
+	Thu,  9 Oct 2025 07:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b="a4cS2opG"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27EBC25FA2D
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 07:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759994880; cv=none; b=e9kw3zw8AaxOTW9B6tXoLSbXIf38eTKXNUkOZzsYMRel3XYAl7NAtR6ixGF+oXjzuPl120BdLWD7UF6Dlsi7uKnbNbOIdgRZWzCK3dH6eo6gI9BMbx+qEQDC8NNJ1I1lRRYkZ14ptN+mK0bV/3v+ky+x5uFzm9U0Oh6lc+JGA14=
+	t=1759994991; cv=none; b=k9AZx+T23vyqtQoP/zJiR3o76FwGn0jXLmz3j5rDd9ENjOEDMZkn6p0a4qoxs1Nr5SMvLYYG3ELHtkbx56VGCZ4qWw0I3FqMRglkAjIxQGfRj/dCV90fZh82eCv8z1x3QzYk0UnO9l6Z6hL2oTbeZte78u3Kl7Q73tXKdnsCjA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759994880; c=relaxed/simple;
-	bh=XfqDBfd6iAezjZ4Zyx6Aa3kJN4a1sI8LfvLWt/i2PWw=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=psr+lKC+ufIEETyV9UGwdXkFy7MboC7QOqG4DOBAZRv058GGrvvO6GsqHL7VKRqNqkMoVXemcLs0LncbRfdW4DfJ5Khhl2Ef4XP19/CVdoyiG1YrwPDanF0ycwOvg4EwYbmpvPCoBKuDxxZmjpr42DQO1Ug16MTUioQC0l78gaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8Cx77_1Y+doGzAUAA--.41427S3;
-	Thu, 09 Oct 2025 15:27:49 +0800 (CST)
-Received: from [10.130.10.66] (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowJCxocLrY+doN1fWAA--.11175S3;
-	Thu, 09 Oct 2025 15:27:39 +0800 (CST)
-Subject: Re: [PATCH v2] efistub: Only link libstub to final vmlinux
-To: Ard Biesheuvel <ardb@kernel.org>, Huacai Chen <chenhuacai@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, loongarch@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org,
- linux-efi@vger.kernel.org, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250928085506.4471-1-yangtiezhu@loongson.cn>
- <CAMj1kXG8Wi+THa2SeLxiDT=+t_TKx0AL4H-azZO4DNJvyyv96g@mail.gmail.com>
- <CAAhV-H7xOf8DEwOrNh+GQGHktOT4Ljp+7SqutGvvDZp6GLXJrA@mail.gmail.com>
- <CAMj1kXG=EFkRAMkvKMSjPixoGqU-tZXVoRkJJ6Wcnzs3x52X6Q@mail.gmail.com>
- <CAMj1kXHWe2uGY3S1NJ6mckqD4n116rPmaOzw3_Qbvxyjh7ECMw@mail.gmail.com>
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <fec0c03d-9d8c-89a3-886a-1adc22e59b66@loongson.cn>
-Date: Thu, 9 Oct 2025 15:27:39 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1759994991; c=relaxed/simple;
+	bh=AvU5y2EZwNEOasH3Rw3u9jt+KYU0oGFHC5NITljnt4s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Rg8MD8c3KGXiSnKKMAww2avFP/7rv2wVNcStrWdkwimcvU72WgpRKN8ltwZbmXer/4oRTpfGlc2kK6Gh3mhPII0opGHXyeifOJEgV7CJ0Ww8gwOugT921LOH67MGQ0oRSJXQKOYLDcvG2pWEJO1NNfwnFlSkombBc4eef2m4Stc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool; spf=pass smtp.mailfrom=packett.cool; dkim=pass (2048-bit key) header.d=packett.cool header.i=@packett.cool header.b=a4cS2opG; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=packett.cool
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=packett.cool
+Message-ID: <2faffdc3-f956-4071-a6a4-de9b5889096d@packett.cool>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=packett.cool;
+	s=key1; t=1759994985;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XctEP1PmvlonKK+tqQioF2QyhiyRxsTAlDxZqSe8HUM=;
+	b=a4cS2opGDZ5zCgy75R1mQZX4fvqlmaFN2tnDuK/nca6axt/TP2u0V5EdwMlZZ03x9FG5DT
+	zztAynu4oPCdy5aMr6AJlm2JnWnrEaS/Cg3Ciwz2qxlqs+HTdCp1Wsjw3dUPbIPccgTwoM
+	GN/VSF9m13bvbmRe87lnBZFAJ3Y3PAaxpSVgEZyAkJU0g7bLXHLuSE/J5ap+NlWAWL28hk
+	m2SUPnmDoYG77BNW37xH6tny1XjH4E/7PXO4JLwOwSqsAyMDGtDKra3ns4pgVC3G2k7hq9
+	lHffFnw7SVmq3+51x6rhMcTkoPUUV/pg1FX0tCc/5K0loGoD5NHKM04QOrvvqg==
+Date: Thu, 9 Oct 2025 04:29:34 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAMj1kXHWe2uGY3S1NJ6mckqD4n116rPmaOzw3_Qbvxyjh7ECMw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Subject: Re: [PATCH 1/2] PCI: Setup bridge resources earlier
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Lucas De Marchi <lucas.demarchi@intel.com>
+References: <20250924134228.1663-1-ilpo.jarvinen@linux.intel.com>
+ <20250924134228.1663-2-ilpo.jarvinen@linux.intel.com>
+ <017ff8df-511c-4da8-b3cf-edf2cb7f1a67@packett.cool>
+ <f5eb0360-55bd-723c-eca2-b0f7d8971848@linux.intel.com>
+ <cd8a1d3c-1386-476b-a93d-1259b81c04e9@packett.cool>
+ <8f9c9950-1612-6e2d-388a-ce69cf3aae1a@linux.intel.com>
 Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Val Packett <val@packett.cool>
+In-Reply-To: <8f9c9950-1612-6e2d-388a-ce69cf3aae1a@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJCxocLrY+doN1fWAA--.11175S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxuFyDZr45uF48uFyxuF4DAwc_yoWxWw1kpa
-	yjkFWjyr4kJr4kXas7t3yY9r1YqanIqrWaga4DuryrZa1qqr40vrWUZr4DuF9rXw4DC3WI
-	qF1fJr9Ik3WUJ3gCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
-	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17
-	McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
-	I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCF
-	x2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUXVWUAwC20s026c02F40E14v26r
-	1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij
-	64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
-	0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF
-	0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07j7189UUUUU=
+X-Migadu-Flow: FLOW_OUT
 
-On 2025/9/28 下午10:41, Ard Biesheuvel wrote:
-> On Sun, 28 Sept 2025 at 16:39, Ard Biesheuvel <ardb@kernel.org> wrote:
+On 10/7/25 12:43 PM, Ilpo Järvinen wrote:
+
+> On Mon, 6 Oct 2025, Val Packett wrote:
+>> [..]
 >>
->> On Sun, 28 Sept 2025 at 15:52, Huacai Chen <chenhuacai@kernel.org> wrote:
->>>
->>> Hi, Ard,
->>>
->>> On Sun, Sep 28, 2025 at 9:42 PM Ard Biesheuvel <ardb@kernel.org> wrote:
->>>>
->>>> On Sun, 28 Sept 2025 at 10:55, Tiezhu Yang <yangtiezhu@loongson.cn> wrote:
->>>>>
->>>>> When compiling with LLVM and CONFIG_LTO_CLANG is set, there exists
->>>>> the following objtool warning on LoongArch:
->>>>>
->>>>>    vmlinux.o: warning: objtool: __efistub_efi_boot_kernel()
->>>>>    falls through to next function __efistub_exit_boot_func()
->>>>>
->>>>> This is because efi_boot_kernel() doesn't end with a return instruction
->>>>> or an unconditional jump, then objtool has determined that the function
->>>>> can fall through into the next function.
->>>>>
->>>>> At the beginning, try to do something to make efi_boot_kernel() ends with
->>>>> an unconditional jump instruction, but this modification seems not proper.
->>>>>
->>>>> Since the efistub functions are useless for stack unwinder, they can be
->>>>> ignored by objtool. After many discussions, no need to link libstub to
->>>>> the vmlinux.o, only link libstub to the final vmlinux.
->>>>>
->>>>
->>>> Please try keeping these changes confined to arch/loongarch. This
->>>> problem does not exist on other architectures, and changing the way
->>>> vmlinux is constructed might create other issues down the road.
-
-This was discussed and tested in the v3 patch, it only touches the code
-of LoongArch and works well like this:
-
-diff --git a/arch/loongarch/Makefile b/arch/loongarch/Makefile
-index dc5bd3f1b8d2..f34b416f5ca2 100644
---- a/arch/loongarch/Makefile
-+++ b/arch/loongarch/Makefile
-@@ -169,7 +169,6 @@ CHECKFLAGS += $(shell $(CC) $(KBUILD_CPPFLAGS) 
-$(KBUILD_CFLAGS) -dM -E -x c /dev
-  endif
-
-  libs-y += arch/loongarch/lib/
--libs-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
-
-  drivers-y              += arch/loongarch/crypto/
-
-diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
-index 433849ff7529..ed94871c3606 100755
---- a/scripts/link-vmlinux.sh
-+++ b/scripts/link-vmlinux.sh
-@@ -69,6 +69,12 @@ vmlinux_link()
-                 libs="${KBUILD_VMLINUX_LIBS}"
-         fi
-
-+       if [ "${SRCARCH}" = "loongarch" ]; then
-+               if is_enabled CONFIG_EFI_STUB; then
-+                       libs="${libs} drivers/firmware/efi/libstub/lib.a"
-+               fi
-+       fi
-+
-         if is_enabled CONFIG_GENERIC_BUILTIN_DTB; then
-                 objs="${objs} .builtin-dtbs.o"
-         fi
-
-https://lore.kernel.org/loongarch/pq4h7jgndnt6p45lj4kgubxjd5gidfetugcuf5rcxzxxanzetd@6rrlpjnjsmuy/
-
->>> ARM, RISC-V and LoongArch do things exactly in the same way. Now
->>> LoongArch is the first of the three to enable objtool, so we meet the
->>> problem first.
->>>
->>> But yes, I also don't want to change the way of constructing vmlinux.
->>> So I prefer the earliest way to fix this problem.
->>> https://lore.kernel.org/loongarch/CAAhV-H7fRHGFVKV8HitRgmuoDPt5ODt--iSuV0EmeeUb9d5FNw@mail.gmail.com/T/#meef7411abd14f4c28c85e686614aa9211fccdca0
->>>
+>> I think it's that early check in pci_read_bridge_bases that avoids the setup
+>> here:
 >>
->> Can we just drop the __noreturn annotation from kernel_entry_t, and
->> return EFI_SUCCESS from efi_boot_kernel()?
+>>      if (pci_is_root_bus(child)) /* It's a host bus, nothing to read */
+>>          return;
+> If there's a PCI device as is the case in pci_read_bridge_windows()
+> which inputs non-NULL pci_dev, the config space of that device can be read
+> normally (or should be readable normally, AFAIK). The case where bus->self
+> is NULL is different, we can't read from a non-existing PCI device, but
+> it doesn't apply to pci_read_bridge_windows().
+>
+> I don't think reading the window is the real issue here but how the
+> resource fitting algorithm corners itself by reserving space for bridge
+> windows before it knows their sizes, so basically these lines from the
+> earlier email:
+>
+> pci 0004:00:00.0: bridge window [mem 0x7c300000-0x7c3fffff]: assigned
+> pci 0004:00:00.0: bridge window [mem 0x7c400000-0x7c4fffff 64bit pref]: assigned
+> pci 0004:00:00.0: BAR 0 [mem 0x7c500000-0x7c500fff]: assigned
+>
+> ...which seem to occur before the child buses have been scanned so that
+> space reserved is either hotplug reservation or due to "old_size" lower
+> bounding. That non-prefetchable bridge window is too small to fit the
+> child resources.
+>
+> Could you try passing pci=hpmemsize=0M to kernel command line if that
+> helps?
+>
+> The other case is the "old_size" in calculate_memsize() which too can
+> cause the same effect preventing sizing bridge window truly to zero when
+> it's not needed (== disable it == not assign it at all at that point).
+> Forcing it to zero would perhaps be worth a test (or removing the max()
+> related to old_size)
+>
+> I've no idea why the old_size should decide anything, I hate that black
+> magic but I've just not dared to remove it (it's hard to know why some
+> things were made in the past, there could have been some HW issue worked
+> around by such odd feature but it's so old code that there isn't any real
+> information about whys anymore to find).
+Well, you did dare to mess with resource assignment sequence, and it got 
+very quickly and quietly merged into linux-next causing a big regression 
+on hardware that's not made by your company.. so maybe it's better not 
+to touch anything there at all (:
+> pci=realloc on command line might help too, but I'm not sure. There seems
+> to be some extra space within the root bus resource so it might work.
+>
+> I'm not sure what call chain is causing the assignment of those 3 bridge
+> windows. One easy way to find out where it comes from would be to put
+> WARN_ON(res->start == 0x7c400000); into pci_assign_resource() next to the
+> line which prints "...: assigned".
 
-This was done in the early RFC patch, it works well like this:
+OK, I've uploaded the full big chungus logs (all with the WARN_ON):
 
-diff --git a/drivers/firmware/efi/libstub/loongarch.c 
-b/drivers/firmware/efi/libstub/loongarch.c
-index 3782d0a187d1..e309fd78fca7 100644
---- a/drivers/firmware/efi/libstub/loongarch.c
-+++ b/drivers/firmware/efi/libstub/loongarch.c
-@@ -10,7 +10,7 @@
-  #include "efistub.h"
-  #include "loongarch-stub.h"
+https://owo.packett.cool/lin/pcifail.reverted.dmesg
+https://owo.packett.cool/lin/pcifail.noarg.dmesg
+https://owo.packett.cool/lin/pcifail.hpmeme.dmesg (hpmemsize didn't help)
+https://owo.packett.cool/lin/pcifail.realloc.dmesg (realloc didn't help 
+either)
 
--typedef void __noreturn (*kernel_entry_t)(bool efi, unsigned long cmdline,
-+typedef void (*kernel_entry_t)(bool efi, unsigned long cmdline,
-  					  unsigned long systab);
+So without your change, the assignment first comes from pci_rescan_bus → 
+pci_assign_unassigned_bus_resources *via IRQ*, and then in the probe of 
+the wifi driver.
 
-  efi_status_t check_platform_features(void)
-@@ -81,4 +81,7 @@ efi_status_t efi_boot_kernel(void *handle, 
-efi_loaded_image_t *image,
-
-  	real_kernel_entry(true, (unsigned long)cmdline_ptr,
-  			  (unsigned long)efi_system_table);
-+
-+	/* We should never get here */
-+	while (1);
-  }
-
-https://lore.kernel.org/loongarch/20250826064631.9617-2-yangtiezhu@loongson.cn/
-
-> ... or add efi_boot_kernel() to ./tools/objtool/noreturns.h?
-
-It can not fix the objtool warning.
-
-Are you OK with the following changes?
-
-(1) libstub doesn't link to vmlinux.o, only link libstub with vmlinux.o 
-during the final vmlinux link, keep the changes confined to LoongArch, 
-no need to be something more generic.
-
-diff --git a/arch/loongarch/Makefile b/arch/loongarch/Makefile
-index dc5bd3f1b8d2..f34b416f5ca2 100644
---- a/arch/loongarch/Makefile
-+++ b/arch/loongarch/Makefile
-@@ -169,7 +169,6 @@ CHECKFLAGS += $(shell $(CC) $(KBUILD_CPPFLAGS) 
-$(KBUILD_CFLAGS) -dM -E -x c /dev
-  endif
-
-  libs-y += arch/loongarch/lib/
--libs-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
-
-  drivers-y              += arch/loongarch/crypto/
-
-diff --git a/scripts/link-vmlinux.sh b/scripts/link-vmlinux.sh
-index 433849ff7529..ed94871c3606 100755
---- a/scripts/link-vmlinux.sh
-+++ b/scripts/link-vmlinux.sh
-@@ -69,6 +69,12 @@ vmlinux_link()
-                 libs="${KBUILD_VMLINUX_LIBS}"
-         fi
-
-+       if [ "${SRCARCH}" = "loongarch" ]; then
-+               if is_enabled CONFIG_EFI_STUB; then
-+                       libs="${libs} drivers/firmware/efi/libstub/lib.a"
-+               fi
-+       fi
-+
-         if is_enabled CONFIG_GENERIC_BUILTIN_DTB; then
-                 objs="${objs} .builtin-dtbs.o"
-         fi
-
-(2) remove the attribute __noreturn for real_kernel_entry() and add
-"while (1);" at the end of efi_boot_kernel().
-
-diff --git a/drivers/firmware/efi/libstub/loongarch.c 
-b/drivers/firmware/efi/libstub/loongarch.c
-index 3782d0a187d1..e309fd78fca7 100644
---- a/drivers/firmware/efi/libstub/loongarch.c
-+++ b/drivers/firmware/efi/libstub/loongarch.c
-@@ -10,7 +10,7 @@
-  #include "efistub.h"
-  #include "loongarch-stub.h"
-
--typedef void __noreturn (*kernel_entry_t)(bool efi, unsigned long cmdline,
-+typedef void (*kernel_entry_t)(bool efi, unsigned long cmdline,
-  					  unsigned long systab);
-
-  efi_status_t check_platform_features(void)
-@@ -81,4 +81,7 @@ efi_status_t efi_boot_kernel(void *handle, 
-efi_loaded_image_t *image,
-
-  	real_kernel_entry(true, (unsigned long)cmdline_ptr,
-  			  (unsigned long)efi_system_table);
-+
-+	/* We should never get here */
-+	while (1);
-  }
-
-Taking all of the considerations in balance, what should to do?
-
-Thanks,
-Tiezhu
+~val
 
 
