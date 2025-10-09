@@ -1,161 +1,197 @@
-Return-Path: <linux-kernel+bounces-846326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE752BC7948
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 08:49:51 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B8A0BC7954
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 08:51:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6EFF94F4F22
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 06:49:41 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1439D352096
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 06:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C74211290;
-	Thu,  9 Oct 2025 06:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314852D0602;
+	Thu,  9 Oct 2025 06:50:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HIlmvhS3"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vl3GJE+w"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D952C2340
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 06:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B3531EA7D2
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 06:50:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759992532; cv=none; b=Ne5dSBxjWpVQ2yaUQAtKGfEgZ2Dj1iaNTKjkElvdJjkwAVhtkradYxl5mjclG4iToY1tatrtUOttpYbYPnqG4Z1VXYrUpraXO9lRKPCLooWB641AhuruewAioQy5QNTH2EqG+4KcfKxYrQeZJ4O9g6AGewphkYKY4gayTkH/5/0=
+	t=1759992655; cv=none; b=CxCQwwOV6G+0izPMkEHLFgl3bFtR53PM8uWgUBws+e2SGDy1FHPxGG5O9ULHq2pkv8+EqXs2UqPrEFN4+wLGNeVqcIpnMj12HnzbgAd1aLUrcUoOIOK9oC4WkcrB6IfY3fekQc/98lN6RQojiLyfK92KD/idWVO0jn44uwVsjb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759992532; c=relaxed/simple;
-	bh=ic9Vss68dPabO721ajneWZTeeiSQLVPNFuFb7lBW75s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BhKlMkiP2k/PEA1tgbbHb8hUMK/JF8GkofHF3KYg8/Og875KEp8MxAjmqUWeavfl79K4UvH3fAHPzh+gXlKpzSS/U39flI2cKe8gLARG/+0VqGxWqykkS01SDjSDUfJkXJAqbYbiwbFZWOxffjXWjpnuKGmzBWGmcPggkHh/L6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HIlmvhS3; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5996EGrT012249
-	for <linux-kernel@vger.kernel.org>; Thu, 9 Oct 2025 06:48:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	O/X5Uvfbr+U+5LWnL/Jb57ftS3SWraOPoE3A5ZWOA9g=; b=HIlmvhS3G9ASO9yM
-	N332g2WzSLEnbtLyo5rAE52mRB+Fznl8t25+LOdG9nOB47ZOKfrnpXdEzX7U5aXT
-	SwXEucqkblsE/56rdz0a/RavSvqUvQB1UO3o/oqL+AoJuP3PzvEfElI1qaOI6XHG
-	Oktmyq6Hfk8LQabbaF1Z2sYgzl4C4BjTmGcntFlDPt39asRiCask6hOJp39kCLP6
-	HuB8eWUE0L6+fYYReLtmMyCiMcgNjWE4XtzbZY7MQOD+QSv+rCFkkyOCANtuqwSq
-	xJLbCCRWsSYiMYsrLyqOZsGR2dNe07j1+lazAlBHD97OIE3tkVi/jTCaFpabMQ1l
-	6IPulw==
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv4khsm8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 06:48:49 +0000 (GMT)
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-7810e5a22f3so2142456b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 23:48:49 -0700 (PDT)
+	s=arc-20240116; t=1759992655; c=relaxed/simple;
+	bh=5iaDRjaHStX8bpORHYa3ggYGC4GJYP2AVm30MmJstLU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ld4Yds9jB+L7DmzhtjjNbA1b4hm/JuD9jSMWhlePi76AB6jIb2OwmuHiyEnOhDTwhAF2poVJF89/NMvC3GwXveeV4/sKfTkARUXrxRbyQvbqLykjiIStLd4lrxpoFXHvKqCES9JSS5G6NX7nZIozHVKCKkcmqxaTgaS2iqTsivw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vl3GJE+w; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b5526b7c54eso346423a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 23:50:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759992653; x=1760597453; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=msPzO2LdAQxGndJ6DjHr10aS1oMz0X5JmsGbgMgwTiU=;
+        b=Vl3GJE+wDZX+vJoZQYqZ5ZU3Z0SQctrtVtmm/0vba35ymk6QBlLv+eCnG2JuOuB0Qy
+         nvmqEhWoNBGjFTV36YcAGEbBHJeEHSrSjX9cCf2LNDJQ4ieCDR+B6glXBPUYIMGy6AR+
+         OfxsapHPWChffiaxokBM9qbV0QPjTG+DEA1vUY+ItLTMttD0Yx2T6QT3p84j93DeAxZ6
+         8+OMHQIjOyi3A4McPZ8x5x9vQCzlGXm0dRA75T8l9Dyzq70gUzI8qS18aIG1i1xajKhx
+         Gv36ILfSWTD764v/y4u6fXTjAzrRyKHw1aFAa2aDdRDF2z6aUnUNzBfcwx9anjCU71in
+         TWBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759992529; x=1760597329;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1759992653; x=1760597453;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O/X5Uvfbr+U+5LWnL/Jb57ftS3SWraOPoE3A5ZWOA9g=;
-        b=ZAScZOEUXuixuLoNfd/tsEYfFtSUUCfZK6UbPXy1gz3HG4HUI+wIS41gnTofuDp2ig
-         9sUAeYMf4y8vLNQlk/0X3nN5idEyEHhbqYDEPnRPt9x4CXl2AqyphiSzZlxDNNzszZoJ
-         +vymHwEloDmjN+2Nz7Xne4GRQoGTKlYD7iqALYaa6e96Gt0aeXK2VhJ36P+mWJMc+6a9
-         ed401aQNYUOT6nLDpT20QXeTkY4AoSe5UarVs14gh1XtDkYCXKDJfDntO2TNv6U47i8P
-         kL5cHsjlXx6NAQNnl5ZH90mJEjX/WSTxDX/vVCPQtNr/GzLtlJC/F1zTZCiQ1vwLLxmZ
-         kvvw==
-X-Forwarded-Encrypted: i=1; AJvYcCX/UuRlMAYCBO9eeyKibkisOfoSwFGHJGUrcit+BqqsOQz5PXaOMGxvmS/UiuoVBUKaeZc4wjz7Fwg3pVE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymutpIHTLGzTR7XQX9X10ObeF0sp77e7rvFqAbEc5nleb7lua/
-	SpT05PnsnBoBFyGExTfRoTq3IGs5eGao+pNh6QOh4Oe2s1heGeEUGkYPweDBuS1b6f2vxYZ9MGw
-	KvJ4k6g2i26Tz17AmozckRviDu/qXO3uG9wx8qczR66rhTsQfiFXzxPCkJXlBX7x9izk=
-X-Gm-Gg: ASbGncv+hm+m4MC/tkK48JHCDY7GV74kzhpY6uO5qcYaYsBhX75E85MMzvgdjjt4ZFo
-	vdKBAmW+ujqPPVaA0LmxgkBAYB3KXOVBKjUQDFdWXL1reo9FxoreUWaPIm8fb14yq6RXg+KgVMt
-	WcTawqcueFO1tNQbsInDZyxnUDjpNTxuWeuzPzTSgD1jfDdmjffZjto8/EFyxfa6Fvp+OXbvIs+
-	baYyDZ816objn0C0r1P3gHyR15UJLYYhcSoe56Vj8HZDo9YCwc8B5SH475ZYaseBH74oHTFMPKz
-	6YEnvF7vX7M3RyFKMpSB0IKUrf6jsKp0wYxwE09EsftLA7SkpmC4r+kRE7luF5pfLpmHIuh6nPs
-	VDbvBqMW5i0dbgTzbiKYtquZtweLku+Bhd70VZmI=
-X-Received: by 2002:a05:6a00:23d4:b0:77f:3ceb:92bb with SMTP id d2e1a72fcca58-793858fb3b6mr7616193b3a.8.1759992528728;
-        Wed, 08 Oct 2025 23:48:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGj8Rv9uj1kQjcjGsQYqLP1M7EZTs7RFClhYrctbezz0OUijiztZ7vcfVQque68PbIFbDQhdg==
-X-Received: by 2002:a05:6a00:23d4:b0:77f:3ceb:92bb with SMTP id d2e1a72fcca58-793858fb3b6mr7616185b3a.8.1759992528318;
-        Wed, 08 Oct 2025 23:48:48 -0700 (PDT)
-Received: from [10.133.33.62] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-794e22ab4ffsm1796190b3a.70.2025.10.08.23.48.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Oct 2025 23:48:47 -0700 (PDT)
-Message-ID: <fdca746b-e1b0-4610-ada1-6d9fd156c7c7@oss.qualcomm.com>
-Date: Thu, 9 Oct 2025 14:48:44 +0800
+        bh=msPzO2LdAQxGndJ6DjHr10aS1oMz0X5JmsGbgMgwTiU=;
+        b=CbI2va9UpmESrDb9EDipzMqkkFuUVnP9yspTH51tXTKES/9rae0gJLJkOqTOxssssc
+         nhSTHyg18kPUFxjBwc9fTyNz3aJ0FtHVgLb/5oLOmgWMKZRllh97AN30dzEfFhP4u9KQ
+         JbearHTZJwRqIoXdjjQoC9TCFKeJr/BGb+TP6IyfqOHdXSE+JzHq6fojSs6U6h97PAON
+         GDyAh0Cf7eRnmBfFV9drY/Tq6P4e2CEMCzxz9wCrp7x0MD4AAxvmBB897lEbEjvzUWzA
+         mv/0vRFsKe9ar+9yile/FOzuF+mVRWvauWoplJjCHx7KYkiV5PbE9ghjv6MwtScSdSTp
+         2fyg==
+X-Forwarded-Encrypted: i=1; AJvYcCXE/XDFmUeEvAbnIj2bDzmPLqcqu5tbq3MKu3Vec7XRIWk9yuF6X4GClKB3vR7HtZTVgRJbKYgQyorpahU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbCrB56beF93nxhkhQkXdrjAXcaFUG0ozCAbp34Yft3dRm3wRz
+	mP8PMtJ7UNt9Y4EFMXA00Alr12ym88Dxaja6jJKLC3hjzwLOR/NjhMyB
+X-Gm-Gg: ASbGncsL4zDV9oGwl+WQapaJStNtf5lNNYv5Kmz8yFa9Q1n1o1BK8JsVleyMo9Jrp7s
+	zCXRaa4gKl4XXrwTB9mGoeNJmg4BIi1l9zw0aK9MhC+Y+X150UIKV051ceOp4+waIgk7S3NqNbn
+	AJ/UOkcE1G6LiBTgwJAuO0w/+fUXZcAXt/FV24+5vnPBH/ZPbnIaIMXsCMrJALNnTGfEYXRgSfQ
+	+3HDWeSdwVxQjpISgq/Of8DhEGNPHHTrdM6KlCoP2NbC0poZUvKYrWFR0cqa2byzddvNL/mP1ue
+	4fR8ZpVUZLG5NwqoYXN6uDnNhIhyDS7rKE5kiWw0N0Yi20FZaNXshCE+PQx0hVNVjGmrN59aQhB
+	UDgFPHMCBLFt+Eoumlma98MNlEKz+I3WumVVGEPYyeu97UTEwmC+t2Cp9DzuI42QQ6MfJze+H
+X-Google-Smtp-Source: AGHT+IFMMMzSXgtEWLK41QXTNZ3lVQJZHbdPqEPiYgjhZ+ACp4v2JbI3obgmT4HZPDkdNTRW4JUzPw==
+X-Received: by 2002:a17:903:1b30:b0:276:d3e:6844 with SMTP id d9443c01a7336-290272c0450mr82694985ad.33.1759992653189;
+        Wed, 08 Oct 2025 23:50:53 -0700 (PDT)
+Received: from localhost ([45.142.167.196])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034de56desm18189935ad.19.2025.10.08.23.50.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 23:50:52 -0700 (PDT)
+Date: Thu, 9 Oct 2025 14:50:44 +0800
+From: Jinchao Wang <wangjinchao600@gmail.com>
+To: Ian Rogers <irogers@google.com>
+Cc: Doug Anderson <dianders@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Will Deacon <will@kernel.org>, Yunhui Cui <cuiyunhui@bytedance.com>,
+	akpm@linux-foundation.org, catalin.marinas@arm.com,
+	maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
+	christophe.leroy@csgroup.eu, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+	acme@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	adrian.hunter@intel.com, kan.liang@linux.intel.com, kees@kernel.org,
+	masahiroy@kernel.org, aliceryhl@google.com, ojeda@kernel.org,
+	thomas.weissschuh@linutronix.de, xur@google.com,
+	ruanjinjie@huawei.com, gshan@redhat.com, maz@kernel.org,
+	suzuki.poulose@arm.com, zhanjie9@hisilicon.com,
+	yangyicong@hisilicon.com, gautam@linux.ibm.com, arnd@arndb.de,
+	zhao.xichao@vivo.com, rppt@kernel.org, lihuafei1@huawei.com,
+	coxu@redhat.com, jpoimboe@kernel.org, yaozhenguo1@gmail.com,
+	luogengkun@huaweicloud.com, max.kellermann@ionos.com, tj@kernel.org,
+	yury.norov@gmail.com, thorsten.blum@linux.dev, x86@kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, linux-perf-users@vger.kernel.org
+Subject: Re: [RFC PATCH V1] watchdog: Add boot-time selection for hard lockup
+ detector
+Message-ID: <aOdbRI3BaMCbyvtv@mdev>
+References: <aMpRqlDXXOR5qYFd@mdev>
+ <CAP-5=fV05++2Qvcxs=+tqhTdpGK8L9e5HzVu=y+xHxy9AqLMmg@mail.gmail.com>
+ <CAD=FV=VNmjTVxcxgTQqjE7CTkK2NVGbRxFJSwv=yOHU8gj-urQ@mail.gmail.com>
+ <CAP-5=fW64xHEW+4dKU_voNv7E67nUOFm27FFBuhtFii52NiQUQ@mail.gmail.com>
+ <CAD=FV=U3ic707dLuUc+NfxtWF6-ZyRdE0OY2VA6TgvgWKCHUzg@mail.gmail.com>
+ <CAP-5=fVkw6TLjVuR3UCNs+X1cwVmYk7UFABio4oDOwfshqoP_g@mail.gmail.com>
+ <CAD=FV=UWkZx8xQD=jBkOO6h2f5tw_KCoqhHciw5hkEOYU=GM8A@mail.gmail.com>
+ <CAP-5=fXTFHcCE8pf5qgEf1AVODs2+r+_nDUOiWgdQeEgUBHzfA@mail.gmail.com>
+ <CAD=FV=VuDYiu5nL5ZeZcY2b+YXOzZtSu2E4qBBHz9fWTW8gPhg@mail.gmail.com>
+ <CAP-5=fX4=fV70N3GCdXgV6o-YoJynnSppxJp0MwdRrtsyDrs0w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: mailbox: qcom-ipcc: Add bindings for
- physical client ids
-To: Rob Herring <robh@kernel.org>
-Cc: Manivannan Sadhasivam <mani@kernel.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250922-ipcc-header-v1-1-f0b12715e118@oss.qualcomm.com>
- <20251002003432.GA2714683-robh@kernel.org>
-Content-Language: en-US
-From: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-In-Reply-To: <20251002003432.GA2714683-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=dojWylg4 c=1 sm=1 tr=0 ts=68e75ad1 cx=c_pps
- a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=lwdf39Mp2klsYuJi8zAA:9 a=QEXdDO2ut3YA:10 a=2VI0MkxyNR6bbpdq8BZq:22
-X-Proofpoint-GUID: YiAolp_fa6MxCG4ZyRZFgRKsZN1-HWNU
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX+p+BB9GlTFv9
- KD8ClwBw1Zl+zDekvtAwO9g1kgp/HkhsdTXENhBnxcquPuie9mu8EFntoFAgjJpPhPxZLtkpd2y
- SGWV88AaBwAYoNXhYsg+CjnRbXdKcwPvckY6dQQdOChBfSWJX+uJI++QbSFliBMIu01pY+n7OIe
- ouEaoRns0tENsgs+HPqdZ7tiEvvEtkRsujOQmBzir7OGngwSOp8Hxtn7jydWhOBveaRKtl+aHxM
- ISLS96liae23VJFtwcp11rzXu3zJPFGnLP3BvsHhimmwyxY8inLMsCh1W4Z+ZJ04uy5rwDqM3Wx
- cjQG4ALvbkYY34OHVL+GgeO7e3HAna7bLXzm5vuQ1R9+yCxuNc0jopSUsTG0AuIll9dcW1G3Z0q
- ho3PFDUMSR5RnMniE3slOTzTVUOcsg==
-X-Proofpoint-ORIG-GUID: YiAolp_fa6MxCG4ZyRZFgRKsZN1-HWNU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-09_02,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 impostorscore=0 suspectscore=0 lowpriorityscore=0 adultscore=0
- bulkscore=0 spamscore=0 priorityscore=1501 phishscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fX4=fV70N3GCdXgV6o-YoJynnSppxJp0MwdRrtsyDrs0w@mail.gmail.com>
 
-
-
-On 10/2/2025 8:34 AM, Rob Herring wrote:
-> On Mon, Sep 22, 2025 at 08:34:20PM -0700, Jingyi Wang wrote:
->> Physical client IDs instead of virtual client IDs are used for qcom new
->> platforms in the Inter Process Communication Controller (IPCC) driver
->> as virtual physical mapping logic is removed in HW. Add the bindings.
->>
->> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
->> ---
->>  include/dt-bindings/mailbox/qcom-ipcc.h | 48 +++++++++++++++++++++++++++++++++
->>  1 file changed, 48 insertions(+)
+On Tue, Oct 07, 2025 at 05:11:52PM -0700, Ian Rogers wrote:
+> On Tue, Oct 7, 2025 at 3:58 PM Doug Anderson <dianders@chromium.org> wrote:
+> >
+> > Hi,
+> >
+> > On Tue, Oct 7, 2025 at 3:45 PM Ian Rogers <irogers@google.com> wrote:
+> > >
+> > > On Tue, Oct 7, 2025 at 2:43 PM Doug Anderson <dianders@chromium.org> wrote:
+> > > ...
+> > > > The buddy watchdog was pretty much following the conventions that were
+> > > > already in the code: that the hardlockup detector (whether backed by
+> > > > perf or not) was essentially called the "nmi watchdog". There were a
+> > > > number of people that were involved in reviews and I don't believe
+> > > > suggesting creating a whole different mechanism for enabling /
+> > > > disabling the buddy watchdog was never suggested.
+> > >
+> > > I suspect they lacked the context that 1 in the nmi_watchdog is taken
+> > > to mean there's a perf event in use by the kernel with implications on
+> > > how group events behave. This behavior has been user
+> > > visible/advertised for 9 years. I don't doubt that there were good
+> > > intentions by PowerPC's watchdog and in the buddy watchdog patches in
+> > > using the file, that use will lead to spurious warnings and behaviors
+> > > by perf.
+> > >
+> > > My points remain:
+> > > 1) using multiple files regresses perf's performance;
+> > > 2) the file name by its meaning is wrong;
+> > > 3) old perf tools on new kernels won't behave as expected wrt warnings
+> > > and metrics because the meaning of the file has changed.
+> > > Using a separate file for each watchdog resolves this. It seems that
+> > > there wasn't enough critical mass for getting this right to have
+> > > mattered before, but that doesn't mean we shouldn't get it right now.
+> >
+> > Presumably your next steps then are to find someone to submit a patch
+> > and try to convince others on the list that this is a good idea. The
+> > issue with perf has been known for a while now and I haven't seen any
+> > patches. As I've said, I won't stand in the way if everyone else
+> > agrees, but given that I'm still not convinced I'm not going to author
+> > any patches for this myself.
 > 
-> This looks incomplete. Where's the binding additions for the new h/w 
-> that uses these ids. This series looks more complete:
-> 
-> https://lore.kernel.org/all/20250924183726.509202-3-sibi.sankar@oss.qualcomm.com
-> 
-> Can QCom please coordinate your work so we're not getting the same thing 
-> a day apart.
-> 
-> Rob
+> Writing >1 of:
+> ```
+> static struct ctl_table watchdog_hardlockup_sysctl[] = {
+> {
+> .procname       = "nmi_watchdog",
+> .data = &watchdog_hardlockup_user_enabled,
+> .maxlen = sizeof(int),
+> .mode = 0444,
+> .proc_handler   = proc_nmi_watchdog,
+> .extra1 = SYSCTL_ZERO,
+> .extra2 = SYSCTL_ONE,
+> },
+> };
+> ```
+> is an exercise of copy-and-paste, if you need me to do the copy and
+> pasting then it is okay.
+Can we get whether a perf event is already in use directly from the
+perf subsystem? There may be (or will be) other kernel users of
+perf_event besides the NMI watchdog. Exposing that state from the perf
+side would avoid coupling unrelated users through nmi_watchdog and
+similar features.
 
-Hi Rob,
+> 
+> Thanks,
+> Ian
+> 
+> 
+> > -Doug
+> >
 
-Sorry we thought all the platform use the same phy id at first, as different platform
-has different IDs, maybe it is better to maintain it in different header files
-like qcom-ipcc-kaanapali.h? Please let me know if you have disagreement for this.
-
-Thanks,
-Jingyi
+-- 
+Jinchao
 
