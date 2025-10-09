@@ -1,298 +1,188 @@
-Return-Path: <linux-kernel+bounces-846379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE0BABC7C9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:52:11 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B08D1BC7CBD
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 732D13E4FB8
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:52:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 734CC4F3B0E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 327692D0C68;
-	Thu,  9 Oct 2025 07:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XCvzlzXY"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04932D12E2;
+	Thu,  9 Oct 2025 07:52:30 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A3E260565
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 07:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF552BE7A7;
+	Thu,  9 Oct 2025 07:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759996324; cv=none; b=lOz89ptK4W2zA4AfiXgtAsI6sF2WoBy5+YYbuLLEMXrEWZElqr2yfEVffKTW5wEnHcnBh88gc4nUuic++Z9Jf1BTneHUMSkGTb4caENfCfbB5sByYhu2HyT3LEZNMIjc1Oi3nVwy0T32WFb8m3OvQ+B/0E6LzECqmgSpBCjLnG4=
+	t=1759996350; cv=none; b=F+JrDYYNrRuTVnFHNdiCqRukEZYzCNNNfJaRkOnrY0bKonxY2BIbm2ixOFTSnhtAh5vMTd0yG6/B7Hlrnre+1cxabTa2Dn2led1tD6EMkg9oxqEuaoe4ZFQKqfnX9JRPv6B3TYRXfEYtzpFvdfRbldPALV6ups6TOIu4hU/ewYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759996324; c=relaxed/simple;
-	bh=i9Z80guMca+sPD/TMXl+vTjZYLstDVRXzHS+lM+wG3Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TyHx/RNnZFt7DaxsJbATAvL5C+DOSS7LaPFs+Bt/oiZZUfKhzO0cmO/chGzUg6uMGsgUpDO5VQRK47S7+WkaCuX7UDl9p+ANarLmLxNBlNAb2ZyKuL9hj2WLCP7QXuV2uYFurmSPCYQgp7JpyZb8si8iSiPoo3Mwh4xP3bm26J4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XCvzlzXY; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3f0ae439b56so465149f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 00:52:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759996320; x=1760601120; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dq0wjjBNXf0WK9D3ya79rVciEE/qzZqTtznAwxjgERM=;
-        b=XCvzlzXYu3nnP3q+TaySbt2kkcQXRZufaYSmLok5gn6i0ehXKj+uGZ3ToQIfq3vJUo
-         VfF8pGLcAYIDHd8qqyGG4yz6VzP1Yqgne/YghKSYPlUjkLLXjuF6ybEa9UgYfOWPVSDF
-         eIGq/L72XudQ8/Xv2qyiZX2hnzNGoMOl70IS8fBsHDKsoi6OW8FTLkjsrvAYQ8njkNsO
-         QAM6PwPqAh+ATp38/RUTt+ZHCASJZiZtPuN8fyyamtdX7xTs215bgPXRHoBcO+4XRoHM
-         oCYlEhf0xMBrDFlzHxIo8ERjITGJ2jJfCE1RvfWBRsQFkGu1LzG1/mNriGNPbNOJyRgd
-         Tddw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759996320; x=1760601120;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dq0wjjBNXf0WK9D3ya79rVciEE/qzZqTtznAwxjgERM=;
-        b=HcSt9v6fXRRJLH3k+8HNqa3nkfWpM389auhVAQ0nwKm5AsYHp7HENlaL/4kJ4E4foz
-         EJm89Ir4UydI0TlbulBTdpzEliIajjnntZxtT1K5c3Cs+0QCaLUyh3CvKBR0aFi8V6R0
-         ODe4IMVrqN1nUQrx6LOCJ+zzmVI/ZHOO2nnXvHorKX9l/FgXTSyP+aLXP92vuDZc520O
-         BWiV/vOe+7obWKYDXH8Oz5hxaIaDOqyHs3fM3yAOnL5K3nYA6hmue8kzzGJy7XjfKlqy
-         lNAnWMbxlglYWQnsdRBKLzAg6e11fw3Uf3VBRGQ0Z402+c+T0G3k3Uli2pvqmslbIVh/
-         +mxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU5IcdyM2X8/JHDZynUf4QTTr07Felx9s3Io/UkWYmTh/2VLvZlYFedL1quwwfpXgI9OrvV0DC1u2CfKdE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCFS0ckGL8N4qSoSdHnf0FupQi0d9pv7WQmubz2Ark7B7Kfqxk
-	ac0F25UHx1Oj2ysIzusNLNl3uMrK77LsP5EipL1ik5mh0QP7AEHQbLY7
-X-Gm-Gg: ASbGncsofAWy8AHzhnw7VPj7knrirYTKdAwBY/evRt+A4i5hkKTuK/SBHsfKgZD1hzX
-	EcXwcJziCU32avK2ieDjcsj6l0HAYz35QyWks3NHb40iU7iN+77aR4621icT0QXGX8CEx8XQ00u
-	fAuwKgrI+T6yQi9/smbeZzOcufMjBIW8iJhps4mou69eQrMMZ4A5A7dq5kqi4t+DfLbbgn3Vdx8
-	BKvbsLY8X4sNrmlvoOCDqfK2Ne6fU3rFFWroEmOLl67az4HLNaPM+zYnDOg+OUM9L4ZQDS4P13a
-	TZYFI9BqMbnUTSiq2NheVZ2ISN/alIfvRe9ECAz4tONvu3/xhyeT33TNy1JAPpwT7l0W6yzHnfO
-	vz8yaIEY/jqM5xfsnCN8kOCoYNiuKzbGPHEL6ITrzWJy1PBu8fPW1Pg==
-X-Google-Smtp-Source: AGHT+IEF2QgSVmoekGeeDdR+attcsPoP4ux+ZobTKCXEPtqIEA2gTGTVY1Xfifkg2IiD0GzYxV+OEw==
-X-Received: by 2002:a5d:5f82:0:b0:3fd:eb15:772 with SMTP id ffacd0b85a97d-42666ac39d7mr3287299f8f.9.1759996320291;
-        Thu, 09 Oct 2025 00:52:00 -0700 (PDT)
-Received: from localhost ([212.73.77.104])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4255d8a6bbesm33252549f8f.12.2025.10.09.00.51.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Oct 2025 00:51:59 -0700 (PDT)
-From: Askar Safin <safinaskar@gmail.com>
-To: linux-kbuild@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	regressions@lists.linux.dev
-Cc: nathan@kernel.org,
-	linux-kernel@vger.kernel.org,
-	miguel.ojeda.sandonis@gmail.com,
-	nsc@kernel.org,
-	ojeda@kernel.org,
-	sam@gentoo.org,
-	thomas.weissschuh@linutronix.de,
-	Daniel Xu <dxu@dxuuu.xyz>
-Subject: [REGRESSION][BISECTED] kbuild: CFLAGS=-w no longer works
-Date: Thu,  9 Oct 2025 10:51:49 +0300
-Message-ID: <20251009075149.1083040-1-safinaskar@gmail.com>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1759996350; c=relaxed/simple;
+	bh=8kwwddGg4oMEWNPflqm4C7Fd2mOvwuYEWTUuJXSTDEE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=nk2gYar3ETiOzMHqhWoogWsGUjHFaFKfgWROhW0OFMIo6DOVg1T06WK/2rdPeCCyM8t77TXhSKjOtTAHTDrNAnu0Fyt2OrII49JHbeR+jL0Y71m2JF/FMg8yljnYIaDmGm70vQkSX9qbq6ER1MTLUD9ZnukRtewYtOjPjyI87sY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cj2Bz0bDmzKHLvG;
+	Thu,  9 Oct 2025 15:51:55 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 98CDA1A13FE;
+	Thu,  9 Oct 2025 15:52:23 +0800 (CST)
+Received: from [10.67.110.36] (unknown [10.67.110.36])
+	by APP2 (Coremail) with SMTP id Syh0CgCX4RW2aedo1u4pCQ--.63468S2;
+	Thu, 09 Oct 2025 15:52:23 +0800 (CST)
+Message-ID: <02ac6916-7bfa-4b6b-8bae-64fe02580731@huaweicloud.com>
+Date: Thu, 9 Oct 2025 15:52:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] perf bpf_counter: Fix opening of "any"(-1) CPU events
+To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251008162347.4005288-1-irogers@google.com>
+Content-Language: en-US
+From: Tengda Wu <wutengda@huaweicloud.com>
+In-Reply-To: <20251008162347.4005288-1-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgCX4RW2aedo1u4pCQ--.63468S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAF1xCFyUur13Xry3JFWrZrb_yoWrXFWUpr
+	4vkr13KryrXr90y3W3tF42ga4kCws5ZryYgwn8trWUGFsxX3sIqa17Ja45KryUWr1v9a4Y
+	q34qgr4Uuay8JaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
 
-#regzbot introduced: d1d0963121769d8d16150b913fe886e48efefa51
 
-As well as I understand, if you want to disable warnings, you
-should pass "CFLAGS=3D-w" to "make". Starting with d1d096312176,
-this no longer works.
 
-Steps to reproduce:
+On 2025/10/9 0:23, Ian Rogers wrote:
+> The bperf BPF counter code doesn't handle "any"(-1) CPU events, always
+> wanting to aggregate a count against a CPU, which avoids the need for
+> atomics so let's not change that. Force evsels used for BPF counters
+> to require a CPU when not in system-wide mode so that the "any"(-1)
+> value isn't used during map propagation and evsel's CPU map matches
+> that of the PMU.
+> 
+> Fixes: b91917c0c6fa ("perf bpf_counter: Fix handling of cpumap fixing hybrid")
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/builtin-stat.c     | 13 +++++++++++++
+>  tools/perf/util/bpf_counter.c |  1 +
+>  2 files changed, 14 insertions(+)
+> 
+> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+> index 7006f848f87a..0fc6884c1bf1 100644
+> --- a/tools/perf/builtin-stat.c
+> +++ b/tools/perf/builtin-stat.c
+> @@ -2540,6 +2540,7 @@ int cmd_stat(int argc, const char **argv)
+>  	unsigned int interval, timeout;
+>  	const char * const stat_subcommands[] = { "record", "report" };
+>  	char errbuf[BUFSIZ];
+> +	struct evsel *counter;
+>  
+>  	setlocale(LC_ALL, "");
+>  
+> @@ -2797,6 +2798,18 @@ int cmd_stat(int argc, const char **argv)
+>  
+>  	evlist__warn_user_requested_cpus(evsel_list, target.cpu_list);
+>  
+> +	evlist__for_each_entry(evsel_list, counter) {
+> +		/*
+> +		 * Setup BPF counters to require CPUs as any(-1) isn't
+> +		 * supported. evlist__create_maps below will propagate this
+> +		 * information to the evsels. Note, evsel__is_bperf isn't yet
+> +		 * set up, and this change must happen early, so directly use
+> +		 * the bpf_counter variable.
+> +		 */
+> +		if (counter->bpf_counter)
+> +			counter->core.requires_cpu = true;
+> +	}
+> +
+>  	if (evlist__create_maps(evsel_list, &target) < 0) {
+>  		if (target__has_task(&target)) {
+>  			pr_err("Problems finding threads of monitor\n");
+> diff --git a/tools/perf/util/bpf_counter.c b/tools/perf/util/bpf_counter.c
+> index ca5d01b9017d..d3e5933b171b 100644
+> --- a/tools/perf/util/bpf_counter.c
+> +++ b/tools/perf/util/bpf_counter.c
+> @@ -495,6 +495,7 @@ static int bperf_reload_leader_program(struct evsel *evsel, int attr_map_fd,
+>  	 * following evsel__open_per_cpu call
+>  	 */
+>  	evsel->leader_skel = skel;
+> +	assert(!perf_cpu_map__has_any_cpu_or_is_empty(evsel->core.cpus));
+>  	evsel__open(evsel, evsel->core.cpus, evsel->core.threads);
+>  
+>  out:
 
-$ cd linux
-$ git clean -f -q -d -x  # To clean everything not controlled by git
-$ echo 'CONFIG_64BIT=3Dy' > /tmp/minimini
-$ make allnoconfig KCONFIG_ALLCONFIG=3D/tmp/minimini
-$ make -j32 CFLAGS=3D-w
 
-My system info:
+I must point out that `requires_cpu + evsel__open(evsel, evsel->core.cpus, evsel->core.threads)` 
+is not equivalent to the original `evsel__open_per_cpu(evsel, all_cpu_map, -1)`. The former
+specifies a pid, while the latter does not. This will lead to inaccurate final event counting.
 
-d-user@comp:~$ gcc -v
-Using built-in specs.
-COLLECT_GCC=3Dgcc
-COLLECT_LTO_WRAPPER=3D/usr/libexec/gcc/x86_64-linux-gnu/14/lto-wrapper
-OFFLOAD_TARGET_NAMES=3Dnvptx-none:amdgcn-amdhsa
-OFFLOAD_TARGET_DEFAULT=3D1
-Target: x86_64-linux-gnu
-Configured with: ../src/configure -v --with-pkgversion=3D'Debian 14.2.0-19'=
- --with-bugurl=3Dfile:///usr/share/doc/gcc-14/README.Bugs --enable-language=
-s=3Dc,ada,c++,go,d,fortran,objc,obj-c++,m2,rust --prefix=3D/usr --with-gcc-=
-major-version-only --program-suffix=3D-14 --program-prefix=3Dx86_64-linux-g=
-nu- --enable-shared --enable-linker-build-id --libexecdir=3D/usr/libexec --=
-without-included-gettext --enable-threads=3Dposix --libdir=3D/usr/lib --ena=
-ble-nls --enable-bootstrap --enable-clocale=3Dgnu --enable-libstdcxx-debug =
---enable-libstdcxx-time=3Dyes --with-default-libstdcxx-abi=3Dnew --enable-l=
-ibstdcxx-backtrace --enable-gnu-unique-object --disable-vtable-verify --ena=
-ble-plugin --enable-default-pie --with-system-zlib --enable-libphobos-check=
-ing=3Drelease --with-target-system-zlib=3Dauto --enable-objc-gc=3Dauto --en=
-able-multiarch --disable-werror --enable-cet --with-arch-32=3Di686 --with-a=
-bi=3Dm64 --with-multilib-list=3Dm32,m64,mx32 --enable-multilib --with-tune=
-=3Dgeneric --enable-offload-targets=3Dnvptx-none=3D/build/reproducible-path=
-/gcc-14-14.2.0/debian/tmp-nvptx/usr,amdgcn-amdhsa=3D/build/reproducible-pat=
-h/gcc-14-14.2.0/debian/tmp-gcn/usr --enable-offload-defaulted --without-cud=
-a-driver --enable-checking=3Drelease --build=3Dx86_64-linux-gnu --host=3Dx8=
-6_64-linux-gnu --target=3Dx86_64-linux-gnu --with-build-config=3Dbootstrap-=
-lto-lean --enable-link-serialization=3D3
-Thread model: posix
-Supported LTO compression algorithms: zlib zstd
-gcc version 14.2.0 (Debian 14.2.0-19)=20
-d-user@comp:~$ cat /etc/os-release=20
-PRETTY_NAME=3D"Debian GNU/Linux 13 (trixie)"
-NAME=3D"Debian GNU/Linux"
-VERSION_ID=3D"13"
-VERSION=3D"13 (trixie)"
-VERSION_CODENAME=3Dtrixie
-DEBIAN_VERSION_FULL=3D13.1
-ID=3Ddebian
-HOME_URL=3D"https://www.debian.org/"
-SUPPORT_URL=3D"https://www.debian.org/support"
-BUG_REPORT_URL=3D"https://bugs.debian.org/"
 
-Culpit commit (d1d096312176) produces this output:
+For `evsel__open_per_cpu(evsel, all_cpu_map, -1)`:
 
-d-user@comp:/rbt$ cd linux
-d-user@comp:/rbt/linux$ git clean -f -q -d -x
-d-user@comp:/rbt/linux$ echo 'CONFIG_64BIT=3Dy' > /tmp/minimini
-d-user@comp:/rbt/linux$ make allnoconfig KCONFIG_ALLCONFIG=3D/tmp/minimini
-  HOSTCC  scripts/basic/fixdep
-  HOSTCC  scripts/kconfig/conf.o
-  HOSTCC  scripts/kconfig/confdata.o
-  HOSTCC  scripts/kconfig/expr.o
-  LEX     scripts/kconfig/lexer.lex.c
-  YACC    scripts/kconfig/parser.tab.[ch]
-  HOSTCC  scripts/kconfig/lexer.lex.o
-  HOSTCC  scripts/kconfig/menu.o
-  HOSTCC  scripts/kconfig/parser.tab.o
-  HOSTCC  scripts/kconfig/preprocess.o
-  HOSTCC  scripts/kconfig/symbol.o
-  HOSTCC  scripts/kconfig/util.o
-  HOSTLD  scripts/kconfig/conf
-#
-# configuration written to .config
-#
-d-user@comp:/rbt/linux$ make -j32 CFLAGS=3D-w
-  GEN     arch/x86/include/generated/asm/orc_hash.h
-  WRAP    arch/x86/include/generated/uapi/asm/bpf_perf_event.h
-  WRAP    arch/x86/include/generated/uapi/asm/errno.h
-  WRAP    arch/x86/include/generated/uapi/asm/fcntl.h
-  UPD     include/generated/uapi/linux/version.h
-  SYSHDR  arch/x86/include/generated/uapi/asm/unistd_32.h
-  WRAP    arch/x86/include/generated/uapi/asm/ioctl.h
-  SYSHDR  arch/x86/include/generated/uapi/asm/unistd_64.h
-  WRAP    arch/x86/include/generated/uapi/asm/ioctls.h
-  WRAP    arch/x86/include/generated/uapi/asm/ipcbuf.h
-  SYSHDR  arch/x86/include/generated/uapi/asm/unistd_x32.h
-  SYSTBL  arch/x86/include/generated/asm/syscalls_32.h
-  WRAP    arch/x86/include/generated/uapi/asm/param.h
-  SYSHDR  arch/x86/include/generated/asm/unistd_32_ia32.h
-  WRAP    arch/x86/include/generated/uapi/asm/poll.h
-  WRAP    arch/x86/include/generated/uapi/asm/resource.h
-  SYSHDR  arch/x86/include/generated/asm/unistd_64_x32.h
-  WRAP    arch/x86/include/generated/uapi/asm/socket.h
-  SYSTBL  arch/x86/include/generated/asm/syscalls_64.h
-  WRAP    arch/x86/include/generated/uapi/asm/sockios.h
-  WRAP    arch/x86/include/generated/uapi/asm/termbits.h
-  WRAP    arch/x86/include/generated/uapi/asm/termios.h
-  WRAP    arch/x86/include/generated/uapi/asm/types.h
-  HOSTCC  arch/x86/tools/relocs_32.o
-  HOSTCC  arch/x86/tools/relocs_64.o
-  HOSTCC  arch/x86/tools/relocs_common.o
-  UPD     include/generated/compile.h
-  WRAP    arch/x86/include/generated/asm/early_ioremap.h
-  WRAP    arch/x86/include/generated/asm/fprobe.h
-  HOSTCC  scripts/kallsyms
-  WRAP    arch/x86/include/generated/asm/mcs_spinlock.h
-  WRAP    arch/x86/include/generated/asm/mmzone.h
-  HOSTCC  scripts/sorttable
-  WRAP    arch/x86/include/generated/asm/irq_regs.h
-  WRAP    arch/x86/include/generated/asm/kmap_size.h
-  WRAP    arch/x86/include/generated/asm/local64.h
-  WRAP    arch/x86/include/generated/asm/mmiowb.h
-  WRAP    arch/x86/include/generated/asm/module.lds.h
-  UPD     include/config/kernel.release
-  WRAP    arch/x86/include/generated/asm/rwonce.h
-  DESCEND objtool
-  UPD     include/generated/utsrelease.h
-  INSTALL /rbt/linux/tools/objtool/libsubcmd/include/subcmd/exec-cmd.h
-  INSTALL /rbt/linux/tools/objtool/libsubcmd/include/subcmd/help.h
-  INSTALL /rbt/linux/tools/objtool/libsubcmd/include/subcmd/pager.h
-  INSTALL /rbt/linux/tools/objtool/libsubcmd/include/subcmd/parse-options.h
-  INSTALL /rbt/linux/tools/objtool/libsubcmd/include/subcmd/run-command.h
-  INSTALL libsubcmd_headers
-  HOSTLD  arch/x86/tools/relocs
-  CC      scripts/mod/empty.o
-  HOSTCC  scripts/mod/mk_elfconfig
-  CC      scripts/mod/devicetable-offsets.s
-  CC      /rbt/linux/tools/objtool/libsubcmd/exec-cmd.o
-  CC      /rbt/linux/tools/objtool/libsubcmd/help.o
-  CC      /rbt/linux/tools/objtool/libsubcmd/pager.o
-  CC      /rbt/linux/tools/objtool/libsubcmd/parse-options.o
-  CC      /rbt/linux/tools/objtool/libsubcmd/run-command.o
-  CC      /rbt/linux/tools/objtool/libsubcmd/sigchain.o
-  CC      /rbt/linux/tools/objtool/libsubcmd/subcmd-config.o
-exec-cmd.c:2:10: fatal error: linux/compiler.h: No such file or directory
-    2 | #include <linux/compiler.h>
-      |          ^~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[5]: *** [/rbt/linux/tools/build/Makefile.build:86: /rbt/linux/tools/ob=
-jtool/libsubcmd/exec-cmd.o] Error 1
-make[5]: *** Waiting for unfinished jobs....
-parse-options.c:2:10: fatal error: linux/compiler.h: No such file or direct=
-ory
-    2 | #include <linux/compiler.h>
-      |          ^~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[5]: *** [/rbt/linux/tools/build/Makefile.build:86: /rbt/linux/tools/ob=
-jtool/libsubcmd/parse-options.o] Error 1
-In file included from sigchain.c:3:
-subcmd-util.h:8:10: fatal error: linux/compiler.h: No such file or directory
-    8 | #include <linux/compiler.h>
-      |          ^~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[5]: *** [/rbt/linux/tools/build/Makefile.build:86: /rbt/linux/tools/ob=
-jtool/libsubcmd/sigchain.o] Error 1
-  MKELF   scripts/mod/elfconfig.h
-In file included from help.c:12:
-subcmd-util.h:8:10: fatal error: linux/compiler.h: No such file or directory
-    8 | #include <linux/compiler.h>
-      |          ^~~~~~~~~~~~~~~~~~
-compilation terminated.
-  HOSTCC  scripts/mod/modpost.o
-make[5]: *** [/rbt/linux/tools/build/Makefile.build:85: /rbt/linux/tools/ob=
-jtool/libsubcmd/help.o] Error 1
-  HOSTCC  scripts/mod/sumversion.o
-In file included from run-command.c:11:
-subcmd-util.h:8:10: fatal error: linux/compiler.h: No such file or directory
-    8 | #include <linux/compiler.h>
-      |          ^~~~~~~~~~~~~~~~~~
-compilation terminated.
-  HOSTCC  scripts/mod/symsearch.o
-make[5]: *** [/rbt/linux/tools/build/Makefile.build:85: /rbt/linux/tools/ob=
-jtool/libsubcmd/run-command.o] Error 1
-  UPD     scripts/mod/devicetable-offsets.h
-  HOSTCC  scripts/mod/file2alias.o
-make[4]: *** [Makefile:78: /rbt/linux/tools/objtool/libsubcmd/libsubcmd-in.=
-o] Error 2
-make[3]: *** [Makefile:83: /rbt/linux/tools/objtool/libsubcmd/libsubcmd.a] =
-Error 2
-make[2]: *** [Makefile:73: objtool] Error 2
-make[1]: *** [/rbt/linux/Makefile:1430: tools/objtool] Error 2
-make[1]: *** Waiting for unfinished jobs....
-  HOSTLD  scripts/mod/modpost
-  CC      kernel/bounds.s
-  CHKSHA1 include/linux/atomic/atomic-arch-fallback.h
-  CHKSHA1 include/linux/atomic/atomic-instrumented.h
-  CHKSHA1 include/linux/atomic/atomic-long.h
-  UPD     include/generated/timeconst.h
-  UPD     include/generated/bounds.h
-  CC      arch/x86/kernel/asm-offsets.s
-  UPD     include/generated/asm-offsets.h
-  CALL    scripts/checksyscalls.sh
-make: *** [Makefile:251: __sub-make] Error 2
+$ ./perf stat -vv --bpf-counters -e task-clock ./perf test -w sqrtloop
+sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 = 13
+sys_perf_event_open: pid -1  cpu 1  group_fd -1  flags 0x8 = 14
+sys_perf_event_open: pid -1  cpu 2  group_fd -1  flags 0x8 = 15
+[...]
+ Performance counter stats for './perf test -w sqrtloop':
 
---=20
-Askar Safin
+     1,016,156,671      task-clock                       #    1.000 CPUs utilized             
+
+       1.016294745 seconds time elapsed
+
+       1.005710000 seconds user
+       0.010637000 seconds sys
+
+
+For `requires_cpu + evsel__open(evsel, evsel->core.cpus, evsel->core.threads)`:
+
+$ ./perf stat -vv --bpf-counters -e task-clock ./perf test -w sqrtloop
+sys_perf_event_open: pid 75099  cpu 0  group_fd -1  flags 0x8 = 13
+sys_perf_event_open: pid 75099  cpu 1  group_fd -1  flags 0x8 = 14
+sys_perf_event_open: pid 75099  cpu 2  group_fd -1  flags 0x8 = 15
+[...]
+ Performance counter stats for './perf test -w sqrtloop':
+
+        16,184,507      task-clock                       #    0.016 CPUs utilized             
+
+       1.018540734 seconds time elapsed
+
+       1.009143000 seconds user
+       0.009497000 seconds sys
+
+
+As you can see, after specifying a pid, the task-clock count has significantly decreased.
+So to correct the counting, we may also need to keep the pid as -1 without specifying it.
+
+Thanks,
+Tengda
+
 
