@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-846638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50385BC89CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 12:55:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D603DBC89C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 12:54:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5F743A80FD
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 10:55:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A0203E64A7
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 10:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909A12E1C6F;
-	Thu,  9 Oct 2025 10:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E122E0419;
+	Thu,  9 Oct 2025 10:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DApKCTft"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SW79acas"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515872E03EC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3E42DEA90;
 	Thu,  9 Oct 2025 10:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760007262; cv=none; b=inXhZe1hS0Tm0Pft/P+loXG82AUKeIgJsmdb+/H6bM/pNeT7kWHFK6fcTQG377SYZ0Fb70kxNWDZWZF3alWVEuz3NBbGdbJOZiB7948yecDN75K0hCXK+EPEITanddOPzpa7TbxpapS/2G4vIHuyVBmM8hAFGFVQhJkz2L0W5eQ=
+	t=1760007261; cv=none; b=ssImfkSGQGst5i62KLRscmCJXUBy8ES0cEw0XTD1gWE10WdpKXwdnsBbU5ZDIDFrIuR7QYj4heZZRjEV7H0G6KnCB6snTvUnWUVOanD80v0nET3jv+RacbOQajEBNQZ0oYiVSBjAnZliJvqy+lW3JNac0r9JywHWGK3SWh/m7I4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760007262; c=relaxed/simple;
-	bh=RH4pytCfW/G7DNxtvDO3IsfxqAWpbehze4EdnTANrOY=;
+	s=arc-20240116; t=1760007261; c=relaxed/simple;
+	bh=nh1ejGOfuqaT+eLJXEa9vHO8TIzX116OdQSkSxqqyD8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=a3tyC3OM2Y1eSI6KqpQLSAscuUhqMzRpt4MKC5i6ej++SUWnA30xERlf2R17SCmfdzAuD+VObUIb8mba3CJWGtTC9B8cozUOyZfFdkMSUHAgGwfzYvHJy9uAw6dOiVy+J7h93AvdWYFHYl84yEj4oS1YmozKP8h5zFEcetgN+DI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DApKCTft; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CEC4FC116B1;
+	 In-Reply-To:To:Cc; b=fXtXRxSVA+QFBEWk4dnZMyTPmCE9jGyF0STJZns8jQ0pwbpkwOjse68CoAiy4EnUU9p3fMHgsJ+/t41E6+r37m/7LRLUlnkcqXrIKi6yVjnt+2jWXoW0Xw7RerJm0Yn4j4a7H6hTswZIdRnE387v/YwOVzqXzM5DEYMafpkZjrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SW79acas; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E7256C113D0;
 	Thu,  9 Oct 2025 10:54:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760007260;
-	bh=RH4pytCfW/G7DNxtvDO3IsfxqAWpbehze4EdnTANrOY=;
+	s=k20201202; t=1760007261;
+	bh=nh1ejGOfuqaT+eLJXEa9vHO8TIzX116OdQSkSxqqyD8=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=DApKCTftLYX4nqcEhKW71T5GCMC/QDMa54Lp1svvdLhr1VQHOVcKboFBmu50JwHx7
-	 Ta9G1BZr5+O3egrenFyCqBZ77MVRoTV+Czyyt1b69kS7Fs8UJAR58mDXt4HYVx5Mev
-	 q6fQ2S7kHh3CUTfenDMocKw7oE/3YNCk0M9LOa4YUeAF8Y5vos9qTRJ2zg0FqrKjGH
-	 l8j/fYmb7yHB66YE80tLFU/QtlZkimVUvBZjOEHd/8yrTLB+r7mzE2L8sAZHUXXqCo
-	 pT9y/ZVuTztXOD0bpeccLW2EhJO+CLgli9gN/nSLqrfcdB4QrZ5wTEnjvuW2vBTfPZ
-	 kKtEmrJ8jGy/g==
+	b=SW79acasj70O4A3TY8+75SNlmeqXY0B8ZQ9URs5hJcjyW2EJQhlLDA6yXx/H4KQNd
+	 D8HBKwbIx7nYkDU9sIoIQoPCNbmkHaP5VsGmG91SuYQA0FmDCQeJfOiE+rWyMMeE0h
+	 7Sjpzf+HTRW8kli+jvkStE3H6GjWkR40BtiPoiXX3uNrcben1BvtmAs+kssNd82OUm
+	 OLK7KmrqgC+qebJ1pSFGvadpGuZMYB0vIHMyH01De6T/SD7mc9LeFNzxPht0NASn2r
+	 xVUPHA7qBZYsJzxWXjqLV3vRsZJCg4l8ppUiQ9FlKZ+5hC+C56fD8Omgt+aGSdMv9P
+	 rDFmzTw84M5VA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C13E1CCD18D;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9D42CCD187;
 	Thu,  9 Oct 2025 10:54:20 +0000 (UTC)
 From: Maud Spierings via B4 Relay <devnull+maudspierings.gocontroll.com@kernel.org>
-Date: Thu, 09 Oct 2025 12:54:20 +0200
-Subject: [PATCH 4/5] arm64: dts: freescale: Add the GOcontroll Moduline IV
+Date: Thu, 09 Oct 2025 12:54:21 +0200
+Subject: [PATCH 5/5] arm64: dts: freescale: Add the GOcontroll Moduline
+ Mini
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251009-mini_iv-v1-4-f3889c492457@gocontroll.com>
+Message-Id: <20251009-mini_iv-v1-5-f3889c492457@gocontroll.com>
 References: <20251009-mini_iv-v1-0-f3889c492457@gocontroll.com>
 In-Reply-To: <20251009-mini_iv-v1-0-f3889c492457@gocontroll.com>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -66,11 +67,11 @@ Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
  Maud Spierings <maudspierings@gocontroll.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760007259; l=21257;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760007259; l=18111;
  i=maudspierings@gocontroll.com; s=20250214; h=from:subject:message-id;
- bh=0yXzKEUYfT4keMFDN+Hrwke4qT9WvutaureIG0Gfc/U=;
- b=oFCQpwrU9szlsPKGpH9vG8lSbG3RP+on2YMpq9qzCr8bMwrxuTsOAsiLWDQhh/Q+qoORHpUM7
- PZZFtNlWIgiDKNru2Sgg2u167JSWmD35UcFuO+ASBgGI5teGjr4gBtZ
+ bh=J647DtXUTxsNjsDze9wWBSEDDuxvPBUjd4pLpGoUQyo=;
+ b=Gg2hKW2ohesxe3eBFG3qKEvyyM4ex/761Mw+Yu8/ToUPCr8JG8QWWLC+YHXO6vJ/JhHLUd5yb
+ 3SFhmuWVAP3CxbvYWfniBkEcnSPYvfVir6Sw171p8uY2PPxazoFnkFp
 X-Developer-Key: i=maudspierings@gocontroll.com; a=ed25519;
  pk=7chUb8XpaTQDvWhzTdHC0YPMkTDloELEC7q94tOUyPg=
 X-Endpoint-Received: by B4 Relay for maudspierings@gocontroll.com/20250214
@@ -80,44 +81,43 @@ Reply-To: maudspierings@gocontroll.com
 
 From: Maud Spierings <maudspierings@gocontroll.com>
 
-The Moduline IV is a part of the wider GOcontroll Moduline ecosystem. These
+The Moduline Mini is a part of the wider GOcontroll Moduline ecosystem. These
 are embedded controllers that focus on modularity with their swappable IO
 modules.
 
 Features:
-- up to 8 Moduline IO modules
-- 4 CAN busses
-- 1 LIN bus
+- up to 4 Moduline IO modules
+- 2 CAN busses
 - 1 Ethernet
 - 4 RGB leds
+- 1 3D accelerometer
 - optional Wi-Fi/Bluetooth
 - optional 4G/GPS
 
 Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
 ---
- arch/arm64/boot/dts/freescale/Makefile             |   2 +
- .../imx8mm-tx8m-1610-moduline-iv-306-d.dts         | 801 +++++++++++++++++++++
- 2 files changed, 803 insertions(+)
+ arch/arm64/boot/dts/freescale/Makefile             |   1 +
+ .../imx8mm-tx8m-1610-moduline-mini-111.dts         | 691 +++++++++++++++++++++
+ 2 files changed, 692 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index 525ef180481d3..b2fef44e0a370 100644
+index b2fef44e0a370..0a84c7dc89e39 100644
 --- a/arch/arm64/boot/dts/freescale/Makefile
 +++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -124,6 +124,8 @@ imx8mm-evk-pcie-ep-dtbs += imx8mm-evk.dtb imx-pcie0-ep.dtbo
- imx8mm-evkb-pcie-ep-dtbs += imx8mm-evkb.dtb imx-pcie0-ep.dtbo
+@@ -125,6 +125,7 @@ imx8mm-evkb-pcie-ep-dtbs += imx8mm-evkb.dtb imx-pcie0-ep.dtbo
  dtb-$(CONFIG_ARCH_MXC) += imx8mm-evk-pcie-ep.dtb imx8mm-evkb-pcie-ep.dtb
  
-+dtb-$(CONFIG_ARCH_MXC) += imx8mm-tx8m-1610-moduline-iv-306-d.dtb
-+
+ dtb-$(CONFIG_ARCH_MXC) += imx8mm-tx8m-1610-moduline-iv-306-d.dtb
++dtb-$(CONFIG_ARCH_MXC) += imx8mm-tx8m-1610-moduline-mini-111.dtb
+ 
  dtb-$(CONFIG_ARCH_MXC) += imx8mm-icore-mx8mm-ctouch2.dtb
  dtb-$(CONFIG_ARCH_MXC) += imx8mm-icore-mx8mm-edimm2.2.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mm-iot-gateway.dtb
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm-tx8m-1610-moduline-iv-306-d.dts b/arch/arm64/boot/dts/freescale/imx8mm-tx8m-1610-moduline-iv-306-d.dts
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm-tx8m-1610-moduline-mini-111.dts b/arch/arm64/boot/dts/freescale/imx8mm-tx8m-1610-moduline-mini-111.dts
 new file mode 100644
-index 0000000000000..52a8caf4e078e
+index 0000000000000..651524781a7ba
 --- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8mm-tx8m-1610-moduline-iv-306-d.dts
-@@ -0,0 +1,801 @@
++++ b/arch/arm64/boot/dts/freescale/imx8mm-tx8m-1610-moduline-mini-111.dts
+@@ -0,0 +1,691 @@
 +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
 +/*
 + * Copyright (C) 2025 Maud Spierings <maudspierings@gocontroll.com>
@@ -130,9 +130,9 @@ index 0000000000000..52a8caf4e078e
 +
 +/ {
 +	chassis-type = "embedded";
-+	compatible = "gocontroll,moduline-iv", "fsl,imx8mm";
-+	hardware = "Moduline IV V3.06-D";
-+	model = "GOcontroll Moduline IV";
++	compatible = "gocontroll,moduline-mini", "fsl,imx8mm";
++	hardware = "Moduline Mini V1.11";
++	model = "GOcontroll Moduline Mini";
 +
 +	aliases {
 +		usb-host = &usbotg2;
@@ -152,16 +152,18 @@ index 0000000000000..52a8caf4e078e
 +		clock-frequency = <20000000>;
 +	};
 +
-+	reg_3v3_m2: regulator-3v3-m2 {
++	reg_3v3_comm: regulator-3v3-communication {
 +		compatible = "regulator-fixed";
 +		enable-active-high;
-+		gpio = <&gpio4 8 GPIO_ACTIVE_HIGH>;
-+		pinctrl-0 = <&pinctrl_reg_m2>;
++		gpio = <&gpio1 11 GPIO_ACTIVE_HIGH>;
++		pinctrl-0 = <&pinctrl_reg_comm>;
 +		pinctrl-names = "default";
 +		power-supply = <&reg_6v4>;
++		/* also powers the cellular modem which can't vote on the regulator */
++		regulator-always-on;
 +		regulator-max-microvolt = <3300000>;
 +		regulator-min-microvolt = <3300000>;
-+		regulator-name = "3v3-m.2";
++		regulator-name = "3v3_comm";
 +	};
 +
 +	reg_5v0: regulator-5v0 {
@@ -183,7 +185,7 @@ index 0000000000000..52a8caf4e078e
 +
 +	reg_can1_stby: regulator-can1-stby {
 +		compatible = "regulator-fixed";
-+		gpio = <&gpio3 16 GPIO_ACTIVE_LOW>;
++		gpio = <&gpio2 12 GPIO_ACTIVE_LOW>;
 +		pinctrl-0 = <&pinctrl_can1_reg>;
 +		pinctrl-names = "default";
 +		regulator-max-microvolt = <3300000>;
@@ -193,32 +195,12 @@ index 0000000000000..52a8caf4e078e
 +
 +	reg_can2_stby: regulator-can2-stby {
 +		compatible = "regulator-fixed";
-+		gpio = <&gpio3 17 GPIO_ACTIVE_LOW>;
++		gpio = <&gpio3 15 GPIO_ACTIVE_LOW>;
 +		pinctrl-0 = <&pinctrl_can2_reg>;
 +		pinctrl-names = "default";
 +		regulator-max-microvolt = <3300000>;
 +		regulator-min-microvolt = <3300000>;
 +		regulator-name = "can2-stby";
-+	};
-+
-+	reg_can3_stby: regulator-can3-stby {
-+		compatible = "regulator-fixed";
-+		gpio = <&gpio1 11 GPIO_ACTIVE_LOW>;
-+		pinctrl-0 = <&pinctrl_can3_reg>;
-+		pinctrl-names = "default";
-+		regulator-max-microvolt = <3300000>;
-+		regulator-min-microvolt = <3300000>;
-+		regulator-name = "can3-stby";
-+	};
-+
-+	reg_can4_stby: regulator-can4-stby {
-+		compatible = "regulator-fixed";
-+		gpio = <&gpio3 8 GPIO_ACTIVE_LOW>;
-+		pinctrl-0 = <&pinctrl_can4_reg>;
-+		pinctrl-names = "default";
-+		regulator-max-microvolt = <3300000>;
-+		regulator-min-microvolt = <3300000>;
-+		regulator-name = "can4-stby";
 +	};
 +
 +	wifi_pwrseq: wifi-pwrseq {
@@ -227,19 +209,16 @@ index 0000000000000..52a8caf4e078e
 +		pinctrl-names = "default";
 +		post-power-on-delay-ms = <100>;
 +		power-off-delay-us = <500000>;
-+		reset-gpios = <&gpio3 3 GPIO_ACTIVE_LOW>;
++		reset-gpios = <&gpio5 28 GPIO_ACTIVE_LOW>;
 +	};
 +};
 +
-+/* SPI 2 */
 +&ecspi1 {
 +	pinctrl-0 = <&pinctrl_ecspi1>;
 +	pinctrl-names = "default";
 +	cs-gpios = <
-+		&gpio1 9 GPIO_ACTIVE_LOW
-+		&gpio1 0 GPIO_ACTIVE_LOW
-+		&gpio5 2 GPIO_ACTIVE_LOW
 +		&gpio4 27 GPIO_ACTIVE_LOW
++		&gpio3 23 GPIO_ACTIVE_LOW
 +		&gpio3 1 GPIO_ACTIVE_LOW
 +	>;
 +	status = "okay";
@@ -248,9 +227,9 @@ index 0000000000000..52a8caf4e078e
 +		compatible = "gocontroll,moduline-module-slot";
 +		reg = <0>;
 +		i2c-bus = <&i2c2>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <7 IRQ_TYPE_EDGE_FALLING>;
-+		reset-gpios = <&gpio1 5 GPIO_ACTIVE_LOW>;
++		interrupt-parent = <&gpio4>;
++		interrupts = <26 IRQ_TYPE_EDGE_FALLING>;
++		reset-gpios = <&gpio4 28 GPIO_ACTIVE_LOW>;
 +		slot-number = <3>;
 +		spi-max-frequency = <54000000>;
 +		sync-gpios = <&gpio3 7 GPIO_ACTIVE_HIGH>;
@@ -263,9 +242,9 @@ index 0000000000000..52a8caf4e078e
 +		compatible = "gocontroll,moduline-module-slot";
 +		reg = <1>;
 +		i2c-bus = <&i2c2>;
-+		interrupt-parent = <&gpio5>;
-+		interrupts = <21 IRQ_TYPE_EDGE_FALLING>;
-+		reset-gpios = <&gpio3 15 GPIO_ACTIVE_LOW>;
++		interrupt-parent = <&gpio3>;
++		interrupts = <19 IRQ_TYPE_EDGE_FALLING>;
++		reset-gpios = <&gpio3 21 GPIO_ACTIVE_LOW>;
 +		slot-number = <4>;
 +		spi-max-frequency = <54000000>;
 +		sync-gpios = <&gpio3 7 GPIO_ACTIVE_HIGH>;
@@ -274,39 +253,9 @@ index 0000000000000..52a8caf4e078e
 +		vdd-supply = <&reg_vdd_3v3>;
 +	};
 +
-+	connector@2 {
-+		compatible = "gocontroll,moduline-module-slot";
-+		reg = <2>;
-+		i2c-bus = <&i2c2>;
-+		interrupt-parent = <&gpio5>;
-+		interrupts = <1 IRQ_TYPE_EDGE_FALLING>;
-+		reset-gpios = <&gpio4 25 GPIO_ACTIVE_LOW>;
-+		slot-number = <5>;
-+		spi-max-frequency = <54000000>;
-+		sync-gpios = <&gpio3 7 GPIO_ACTIVE_HIGH>;
-+		vddhpp-supply = <&reg_6v4>;
-+		vddp-supply = <&reg_5v0>;
-+		vdd-supply = <&reg_vdd_3v3>;
-+	};
-+
-+	connector@3 {
-+		compatible = "gocontroll,moduline-module-slot";
-+		reg = <3>;
-+		i2c-bus = <&i2c2>;
-+		interrupt-parent = <&gpio4>;
-+		interrupts = <26 IRQ_TYPE_EDGE_FALLING>;
-+		reset-gpios = <&gpio4 28 GPIO_ACTIVE_LOW>;
-+		slot-number = <6>;
-+		spi-max-frequency = <54000000>;
-+		sync-gpios = <&gpio3 7 GPIO_ACTIVE_HIGH>;
-+		vddhpp-supply = <&reg_6v4>;
-+		vddp-supply = <&reg_5v0>;
-+		vdd-supply = <&reg_vdd_3v3>;
-+	};
-+
-+	adc@4 {
++	adc@2 {
 +		compatible = "microchip,mcp3004";
-+		reg = <4>;
++		reg = <2>;
 +		spi-max-frequency = <2300000>;
 +		vref-supply = <&reg_vdd_3v3>;
 +	};
@@ -316,61 +265,29 @@ index 0000000000000..52a8caf4e078e
 +	pinctrl-0 = <&pinctrl_ecspi2>;
 +	pinctrl-names = "default";
 +	cs-gpios = <
-+		&gpio3 23  GPIO_ACTIVE_LOW
-+		&gpio5 9  GPIO_ACTIVE_LOW
-+		&gpio3 2  GPIO_ACTIVE_LOW
-+		&gpio5 25  GPIO_ACTIVE_LOW
++		&gpio3 24  GPIO_ACTIVE_LOW
++		&gpio3 9  GPIO_ACTIVE_LOW
 +	>;
 +	status = "okay";
 +
-+	connector@0 {
-+		compatible = "gocontroll,moduline-module-slot";
-+		reg = <0>;
-+		i2c-bus = <&i2c2>;
-+		interrupt-parent = <&gpio3>;
-+		interrupts = <19 IRQ_TYPE_EDGE_FALLING>;
-+		reset-gpios = <&gpio3 24 GPIO_ACTIVE_LOW>;
-+		slot-number = <7>;
-+		spi-max-frequency = <54000000>;
-+		sync-gpios = <&gpio3 7 GPIO_ACTIVE_HIGH>;
-+		vddhpp-supply = <&reg_6v4>;
-+		vddp-supply = <&reg_5v0>;
-+		vdd-supply = <&reg_vdd_3v3>;
-+	};
-+
-+	connector@1 {
-+		compatible = "gocontroll,moduline-module-slot";
-+		reg = <1>;
-+		i2c-bus = <&i2c2>;
-+		interrupt-parent = <&gpio3>;
-+		interrupts = <22 IRQ_TYPE_EDGE_FALLING>;
-+		reset-gpios = <&gpio3 21 GPIO_ACTIVE_LOW>;
-+		slot-number = <8>;
-+		spi-max-frequency = <54000000>;
-+		sync-gpios = <&gpio3 7 GPIO_ACTIVE_HIGH>;
-+		vddhpp-supply = <&reg_6v4>;
-+		vddp-supply = <&reg_5v0>;
-+		vdd-supply = <&reg_vdd_3v3>;
-+	};
-+
-+	can@2 { // reg vdd?
++	can@0 {
 +		compatible = "microchip,mcp25625";
-+		reg = <2>;
++		reg = <0>;
 +		clocks = <&mcp_clock>;
 +		interrupt-parent = <&gpio3>;
-+		interrupts = <4 IRQ_TYPE_LEVEL_LOW>;
++		interrupts = <22 IRQ_TYPE_LEVEL_LOW>;
 +		pinctrl-0 = <&pinctrl_can1>;
 +		pinctrl-names = "default";
 +		spi-max-frequency = <10000000>;
 +		xceiver-supply = <&reg_can1_stby>;
 +	};
 +
-+	can@3 {
++	can@1 {
 +		compatible = "microchip,mcp25625";
-+		reg = <3>;
++		reg = <1>;
 +		clocks = <&mcp_clock>;
 +		interrupt-parent = <&gpio3>;
-+		interrupts = <13 IRQ_TYPE_LEVEL_LOW>;
++		interrupts = <6 IRQ_TYPE_LEVEL_LOW>;
 +		pinctrl-0 = <&pinctrl_can2>;
 +		pinctrl-names = "default";
 +		spi-max-frequency = <10000000>;
@@ -382,10 +299,8 @@ index 0000000000000..52a8caf4e078e
 +	pinctrl-0 = <&pinctrl_ecspi3>;
 +	pinctrl-names = "default";
 +	cs-gpios = <
-+		&gpio1 4 GPIO_ACTIVE_LOW
-+		&gpio1 10 GPIO_ACTIVE_LOW
-+		&gpio5 5 GPIO_ACTIVE_LOW
-+		&gpio5 4 GPIO_ACTIVE_LOW
++		&gpio1 9 GPIO_ACTIVE_LOW
++		&gpio1 2 GPIO_ACTIVE_LOW
 +	>;
 +	status = "okay";
 +
@@ -394,8 +309,8 @@ index 0000000000000..52a8caf4e078e
 +		reg = <0>;
 +		i2c-bus = <&i2c2>;
 +		interrupt-parent = <&gpio1>;
-+		interrupts = <6 IRQ_TYPE_EDGE_FALLING>;
-+		reset-gpios = <&gpio1 8 GPIO_ACTIVE_LOW>;
++		interrupts = <10 IRQ_TYPE_EDGE_FALLING>;
++		reset-gpios = <&gpio1 7 GPIO_ACTIVE_LOW>;
 +		slot-number = <1>;
 +		spi-max-frequency = <54000000>;
 +		sync-gpios = <&gpio3 7 GPIO_ACTIVE_HIGH>;
@@ -408,39 +323,15 @@ index 0000000000000..52a8caf4e078e
 +		compatible = "gocontroll,moduline-module-slot";
 +		reg = <1>;
 +		i2c-bus = <&i2c2>;
-+		interrupt-parent = <&gpio5>;
-+		interrupts = <20 IRQ_TYPE_EDGE_FALLING>;
-+		reset-gpios = <&gpio3 11 GPIO_ACTIVE_LOW>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
++		reset-gpios = <&gpio5 21 GPIO_ACTIVE_LOW>;
 +		slot-number = <2>;
 +		spi-max-frequency = <54000000>;
 +		sync-gpios = <&gpio3 7 GPIO_ACTIVE_HIGH>;
 +		vddhpp-supply = <&reg_6v4>;
 +		vddp-supply = <&reg_5v0>;
 +		vdd-supply = <&reg_vdd_3v3>;
-+	};
-+
-+	can@2 {
-+		compatible = "microchip,mcp25625";
-+		reg = <2>;
-+		clocks = <&mcp_clock>;
-+		interrupt-parent = <&gpio3>;
-+		interrupts = <12 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-0 = <&pinctrl_can3>;
-+		pinctrl-names = "default";
-+		spi-max-frequency = <10000000>;
-+		xceiver-supply = <&reg_can3_stby>;
-+	};
-+
-+	can@3 {
-+		compatible = "microchip,mcp25625";
-+		reg = <3>;
-+		clocks = <&mcp_clock>;
-+		interrupt-parent = <&gpio3>;
-+		interrupts = <18 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-0 = <&pinctrl_can4>;
-+		pinctrl-names = "default";
-+		spi-max-frequency = <10000000>;
-+		xceiver-supply = <&reg_can4_stby>;
 +	};
 +};
 +
@@ -454,9 +345,9 @@ index 0000000000000..52a8caf4e078e
 +
 +&i2c2 {
 +	clock-frequency = <400000>;
-+	pinctrl-names = "default", "gpio";
 +	pinctrl-0 = <&pinctrl_i2c2>;
 +	pinctrl-1 = <&pinctrl_i2c2_gpio>;
++	pinctrl-names = "default", "gpio";
 +	scl-gpios = <&gpio5 16 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
 +	sda-gpios = <&gpio5 17 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
 +	status = "okay";
@@ -485,18 +376,18 @@ index 0000000000000..52a8caf4e078e
 +			label = "case-led1";
 +
 +			led@0 {
-+				color = <LED_COLOR_ID_RED>;
 +				reg = <0>;
++				color = <LED_COLOR_ID_RED>;
 +			};
 +
 +			led@1 {
-+				color = <LED_COLOR_ID_GREEN>;
 +				reg = <1>;
++				color = <LED_COLOR_ID_GREEN>;
 +			};
 +
 +			led@2 {
-+				color = <LED_COLOR_ID_BLUE>;
 +				reg = <2>;
++				color = <LED_COLOR_ID_BLUE>;
 +			};
 +		};
 +
@@ -508,18 +399,18 @@ index 0000000000000..52a8caf4e078e
 +			label = "case-led2";
 +
 +			led@0 {
-+				color = <LED_COLOR_ID_RED>;
 +				reg = <0>;
++				color = <LED_COLOR_ID_RED>;
 +			};
 +
 +			led@1 {
-+				color = <LED_COLOR_ID_GREEN>;
 +				reg = <1>;
++				color = <LED_COLOR_ID_GREEN>;
 +			};
 +
 +			led@2 {
-+				color = <LED_COLOR_ID_BLUE>;
 +				reg = <2>;
++				color = <LED_COLOR_ID_BLUE>;
 +			};
 +		};
 +
@@ -531,18 +422,18 @@ index 0000000000000..52a8caf4e078e
 +			label = "case-led3";
 +
 +			led@0 {
-+				color = <LED_COLOR_ID_RED>;
 +				reg = <0>;
++				color = <LED_COLOR_ID_RED>;
 +			};
 +
 +			led@1 {
-+				color = <LED_COLOR_ID_GREEN>;
 +				reg = <1>;
++				color = <LED_COLOR_ID_GREEN>;
 +			};
 +
 +			led@2 {
-+				color = <LED_COLOR_ID_BLUE>;
 +				reg = <2>;
++				color = <LED_COLOR_ID_BLUE>;
 +			};
 +		};
 +
@@ -554,20 +445,41 @@ index 0000000000000..52a8caf4e078e
 +			label = "case-led4";
 +
 +			led@0 {
-+				color = <LED_COLOR_ID_RED>;
 +				reg = <0>;
++				color = <LED_COLOR_ID_RED>;
 +			};
 +
 +			led@1 {
-+				color = <LED_COLOR_ID_GREEN>;
 +				reg = <1>;
++				color = <LED_COLOR_ID_GREEN>;
 +			};
 +
 +			led@2 {
-+				color = <LED_COLOR_ID_BLUE>;
 +				reg = <2>;
++				color = <LED_COLOR_ID_BLUE>;
 +			};
 +		};
++	};
++
++	accelerometer@18 {
++		compatible = "st,lis2dw12";
++		reg = <0x18>;
++		interrupt-parent = <&gpio5>;
++		interrupts = <3 IRQ_TYPE_EDGE_RISING>, <5 IRQ_TYPE_EDGE_RISING>;
++		pinctrl-0 = <&pinctrl_lis_int>;
++		pinctrl-names = "default";
++		vddio-supply = <&reg_vdd_3v3>;
++		vdd-supply = <&reg_vdd_3v3>;
++	};
++
++	humidity-sensor@5f {
++		compatible = "st,hts221";
++		reg = <0x5f>;
++		interrupt-parent = <&gpio3>;
++		interrupts = <10 IRQ_TYPE_EDGE_RISING>;
++		pinctrl-0 = <&pinctrl_hts_int>;
++		pinctrl-names = "default";
++		vdd-supply = <&reg_vdd_3v3>;
 +	};
 +};
 +
@@ -585,64 +497,32 @@ index 0000000000000..52a8caf4e078e
 +
 +	pinctrl_can1: can1grp {
 +		fsl,pins = <
-+			MX8MM_IOMUXC_NAND_ALE_GPIO3_IO0
++			MX8MM_IOMUXC_SAI2_TXC_GPIO4_IO25
 +				(MX8MM_PULL_UP | MX8MM_PULL_ENABLE)
-+			MX8MM_IOMUXC_NAND_CE3_B_GPIO3_IO4
++			MX8MM_IOMUXC_SAI5_RXD1_GPIO3_IO22
 +				(MX8MM_PULL_UP | MX8MM_PULL_ENABLE | MX8MM_HYS_SCHMITT)
 +		>;
 +	};
 +
 +	pinctrl_can1_reg: can1reggrp {
 +		fsl,pins = <
-+			MX8MM_IOMUXC_NAND_READY_B_GPIO3_IO16
++			MX8MM_IOMUXC_SD2_CD_B_GPIO2_IO12
 +				(MX8MM_DSE_X2 | MX8MM_FSEL_FAST | MX8MM_PULL_UP | MX8MM_PULL_ENABLE)
 +		>;
 +	};
 +
 +	pinctrl_can2: can2grp {
 +		fsl,pins = <
-+			MX8MM_IOMUXC_SD2_CD_B_GPIO2_IO12
++			MX8MM_IOMUXC_NAND_CLE_GPIO3_IO5
 +				(MX8MM_PULL_UP | MX8MM_PULL_ENABLE)
-+			MX8MM_IOMUXC_NAND_DATA07_GPIO3_IO13
++			MX8MM_IOMUXC_NAND_DATA00_GPIO3_IO6
 +				(MX8MM_PULL_UP | MX8MM_PULL_ENABLE | MX8MM_HYS_SCHMITT)
 +		>;
 +	};
 +
 +	pinctrl_can2_reg: can2reggrp {
 +		fsl,pins = <
-+			MX8MM_IOMUXC_NAND_WE_B_GPIO3_IO17
-+				(MX8MM_DSE_X2 | MX8MM_FSEL_FAST | MX8MM_PULL_UP | MX8MM_PULL_ENABLE)
-+		>;
-+	};
-+
-+	pinctrl_can3: can3grp {
-+		fsl,pins = <
-+			MX8MM_IOMUXC_SPDIF_TX_GPIO5_IO3
-+				(MX8MM_PULL_UP | MX8MM_PULL_ENABLE)
-+			MX8MM_IOMUXC_NAND_DATA06_GPIO3_IO12
-+				(MX8MM_PULL_UP | MX8MM_PULL_ENABLE | MX8MM_HYS_SCHMITT)
-+		>;
-+	};
-+
-+	pinctrl_can3_reg: can3reggrp {
-+		fsl,pins = <
-+			MX8MM_IOMUXC_GPIO1_IO11_GPIO1_IO11
-+				(MX8MM_DSE_X2 | MX8MM_FSEL_FAST | MX8MM_PULL_UP | MX8MM_PULL_ENABLE)
-+		>;
-+	};
-+
-+	pinctrl_can4: can4grp {
-+		fsl,pins = <
-+			MX8MM_IOMUXC_NAND_DQS_GPIO3_IO14
-+				(MX8MM_PULL_UP | MX8MM_PULL_ENABLE)
-+			MX8MM_IOMUXC_NAND_WP_B_GPIO3_IO18
-+				(MX8MM_PULL_UP | MX8MM_PULL_ENABLE | MX8MM_HYS_SCHMITT)
-+		>;
-+	};
-+
-+	pinctrl_can4_reg: can4reggrp {
-+		fsl,pins = <
-+			MX8MM_IOMUXC_NAND_DATA02_GPIO3_IO8
++			MX8MM_IOMUXC_NAND_RE_B_GPIO3_IO15
 +				(MX8MM_DSE_X2 | MX8MM_FSEL_FAST | MX8MM_PULL_UP | MX8MM_PULL_ENABLE)
 +		>;
 +	};
@@ -655,13 +535,9 @@ index 0000000000000..52a8caf4e078e
 +				(MX8MM_DSE_X4 | MX8MM_HYS_SCHMITT)
 +			MX8MM_IOMUXC_ECSPI1_SCLK_ECSPI1_SCLK
 +				MX8MM_DSE_X4
-+			MX8MM_IOMUXC_GPIO1_IO09_GPIO1_IO9
-+				MX8MM_DSE_X1
-+			MX8MM_IOMUXC_GPIO1_IO00_GPIO1_IO0
-+				MX8MM_DSE_X1
-+			MX8MM_IOMUXC_SAI3_MCLK_GPIO5_IO2
-+				MX8MM_DSE_X1
 +			MX8MM_IOMUXC_SAI2_MCLK_GPIO4_IO27
++				MX8MM_DSE_X1
++			MX8MM_IOMUXC_SAI5_RXD2_GPIO3_IO23
 +				MX8MM_DSE_X1
 +			MX8MM_IOMUXC_NAND_CE0_B_GPIO3_IO1
 +				MX8MM_DSE_X1
@@ -676,13 +552,9 @@ index 0000000000000..52a8caf4e078e
 +				(MX8MM_DSE_X4 | MX8MM_HYS_SCHMITT)
 +			MX8MM_IOMUXC_ECSPI2_SCLK_ECSPI2_SCLK
 +				MX8MM_DSE_X4
-+			MX8MM_IOMUXC_SAI5_RXD2_GPIO3_IO23
++			MX8MM_IOMUXC_SAI5_RXD3_GPIO3_IO24
 +				MX8MM_DSE_X1
-+			MX8MM_IOMUXC_ECSPI1_SS0_GPIO5_IO9
-+				MX8MM_DSE_X1
-+			MX8MM_IOMUXC_NAND_CE1_B_GPIO3_IO2
-+				MX8MM_DSE_X1
-+			MX8MM_IOMUXC_UART2_TXD_GPIO5_IO25
++			MX8MM_IOMUXC_NAND_DATA03_GPIO3_IO9
 +				MX8MM_DSE_X1
 +		>;
 +	};
@@ -695,14 +567,17 @@ index 0000000000000..52a8caf4e078e
 +				(MX8MM_DSE_X4 | MX8MM_HYS_SCHMITT)
 +			MX8MM_IOMUXC_UART1_RXD_ECSPI3_SCLK
 +				MX8MM_DSE_X4
-+			MX8MM_IOMUXC_GPIO1_IO04_GPIO1_IO4
++			MX8MM_IOMUXC_GPIO1_IO09_GPIO1_IO9
 +				MX8MM_DSE_X1
-+			MX8MM_IOMUXC_GPIO1_IO10_GPIO1_IO10
++			MX8MM_IOMUXC_GPIO1_IO02_GPIO1_IO2
 +				MX8MM_DSE_X1
-+			MX8MM_IOMUXC_SPDIF_EXT_CLK_GPIO5_IO5
-+				MX8MM_DSE_X1
-+			MX8MM_IOMUXC_SPDIF_RX_GPIO5_IO4
-+				MX8MM_DSE_X1
++		>;
++	};
++
++	pinctrl_hts_int: htsintgrp {
++		fsl,pins = <
++			MX8MM_IOMUXC_NAND_DATA04_GPIO3_IO10
++				(MX8MM_PULL_ENABLE | MX8MM_HYS_SCHMITT)
 +		>;
 +	};
 +
@@ -742,9 +617,39 @@ index 0000000000000..52a8caf4e078e
 +		>;
 +	};
 +
-+	pinctrl_reg_m2: reg-m2grp {
++	pinctrl_lis_int: lisintgrp {
 +		fsl,pins = <
-+			MX8MM_IOMUXC_SAI1_RXD6_GPIO4_IO8
++			MX8MM_IOMUXC_SPDIF_TX_GPIO5_IO3
++				(MX8MM_PULL_ENABLE | MX8MM_HYS_SCHMITT)
++			MX8MM_IOMUXC_SPDIF_EXT_CLK_GPIO5_IO5
++				(MX8MM_PULL_ENABLE | MX8MM_HYS_SCHMITT)
++		>;
++	};
++
++	pinctrl_reg_comm: reg_commgrp {
++		fsl,pins = <
++			MX8MM_IOMUXC_GPIO1_IO11_GPIO1_IO11
++				MX8MM_DSE_X1
++		>;
++	};
++
++	pinctrl_sysfs_gpios: sysfsgpiogrp {
++		fsl,pins = <
++			MX8MM_IOMUXC_GPIO1_IO07_GPIO1_IO7
++				MX8MM_DSE_X1
++			MX8MM_IOMUXC_I2C4_SDA_GPIO5_IO21
++				MX8MM_DSE_X1
++			MX8MM_IOMUXC_SAI3_RXFS_GPIO4_IO28
++				MX8MM_DSE_X1
++			MX8MM_IOMUXC_SAI5_RXD0_GPIO3_IO21
++				MX8MM_DSE_X1
++			MX8MM_IOMUXC_SD2_WP_GPIO2_IO20
++				MX8MM_DSE_X1
++			MX8MM_IOMUXC_GPIO1_IO00_GPIO1_IO0
++				MX8MM_DSE_X1
++			MX8MM_IOMUXC_GPIO1_IO04_GPIO1_IO4
++				MX8MM_DSE_X1
++			MX8MM_IOMUXC_GPIO1_IO06_GPIO1_IO6
 +				MX8MM_DSE_X1
 +		>;
 +	};
@@ -784,15 +689,6 @@ index 0000000000000..52a8caf4e078e
 +		>;
 +	};
 +
-+	pinctrl_uart4: uart4grp {
-+		fsl,pins = <
-+			MX8MM_IOMUXC_UART4_RXD_UART4_DCE_RX
-+				(MX8MM_PULL_UP | MX8MM_PULL_ENABLE)
-+			MX8MM_IOMUXC_UART4_TXD_UART4_DCE_TX
-+				(MX8MM_PULL_UP | MX8MM_PULL_ENABLE)
-+		>;
-+	};
-+
 +	pinctrl_usdhc2: pinctrlusdhc2grp {
 +		fsl,pins = <
 +			MX8MM_IOMUXC_SD2_CLK_USDHC2_CLK
@@ -819,7 +715,7 @@ index 0000000000000..52a8caf4e078e
 +
 +	pinctrl_wl_reg: wlreggrp {
 +		fsl,pins = <
-+			MX8MM_IOMUXC_NAND_CE2_B_GPIO3_IO3
++			MX8MM_IOMUXC_UART4_RXD_GPIO5_IO28
 +				MX8MM_DSE_X1
 +		>;
 +	};
@@ -841,8 +737,8 @@ index 0000000000000..52a8caf4e078e
 +		pinctrl-0 = <&pinctrl_bt>;
 +		pinctrl-names = "default";
 +		shutdown-gpios = <&gpio1 1 GPIO_ACTIVE_HIGH>;
-+		vbat-supply = <&reg_3v3_m2>;
-+		vddio-supply = <&reg_3v3_m2>;
++		vbat-supply = <&reg_3v3_comm>;
++		vddio-supply = <&reg_3v3_comm>;
 +	};
 +};
 +
@@ -855,12 +751,6 @@ index 0000000000000..52a8caf4e078e
 +
 +&uart3 {
 +	pinctrl-0 = <&pinctrl_uart3>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&uart4 {
-+	pinctrl-0 = <&pinctrl_uart4>;
 +	pinctrl-names = "default";
 +	status = "okay";
 +};
@@ -889,7 +779,7 @@ index 0000000000000..52a8caf4e078e
 +	pinctrl-0 = <&pinctrl_usdhc2>;
 +	pinctrl-names = "default";
 +	sd-uhs-sdr25;
-+	vmmc-supply = <&reg_3v3_m2>;
++	vmmc-supply = <&reg_3v3_comm>;
 +	status = "okay";
 +
 +	wifi@1 {
