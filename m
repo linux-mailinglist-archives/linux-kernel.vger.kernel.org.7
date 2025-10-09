@@ -1,94 +1,140 @@
-Return-Path: <linux-kernel+bounces-847565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51AA7BCB337
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 01:33:22 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7722BCB346
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 01:39:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D35444EE232
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 23:33:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 054834E73FC
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 23:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9CE288C34;
-	Thu,  9 Oct 2025 23:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 679B5289E08;
+	Thu,  9 Oct 2025 23:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VE2eqbNl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aRFHzbRR"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C32686331
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 23:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CFB1A01C6
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 23:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760052796; cv=none; b=ACV5liEDGmC2Eh08pTgpnT+ZCrCDcUkAayhSZj6Xgrl+fkiEW++Xx6tc9hASkGRcZpi66k8sAmK1UcNA+bWD+qbuGaoeltM/GXbj8vGJ8YM4vF6qSHInNbRmrgKy533gfO1EtyRQ/0nvrHZ+YY+cqnfCU8TbZS7/WJaHLkmuJFI=
+	t=1760053160; cv=none; b=nTO8H+Qy+GJfzlLbJza8XJMAkJ3ZjJyJsael4Q/+9ZAS/M9PwB3uQvQYapBXdJFYS4UZEnS/y/F9GSFe/7EcFRm0TdsCEwa4q1qZ12hQB7A3cMReq16FHz7IAucBfwdAZ3RUOHXPYMma4bjhDyScbZ8c9DesjprUVEs1BCEuJKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760052796; c=relaxed/simple;
-	bh=pnPG2TG9PTYq3RQMqhtbs/di2ZVkxvmkOAoJj5TwnbI=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Gt6m1opfEn/o5NGwGZzcT6dtocnb9SyZdwd8NiwZdlFzI2bou9YV8SPO8XgL9YIOueD9AzIkYZSp5XxquRsmRkF9Q1xwYk4Gxgvtj42QiLmc6vsYH5WXqRX65bhrAChT+2jKVheoy/p5xPsh+zQWfKt+8pPgR+uN3CFi0qXIyf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VE2eqbNl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E31DC4CEE7;
-	Thu,  9 Oct 2025 23:33:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760052795;
-	bh=pnPG2TG9PTYq3RQMqhtbs/di2ZVkxvmkOAoJj5TwnbI=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=VE2eqbNlv8RrqSiVqCSRoOkpzX4n5+VwPosz1GP5I60VojE7MkbOI/Ux2Y9yrCE/0
-	 odDR06RhlMN8SXdAc16X22QxSHahTt3r1XwMzbsUi9XrRPaxZlzEAa9kQjNTEdcB/Y
-	 fwZ3gtsBVXMJtzFeS/+qoK4rUYxOZVo/0Poqy8DtZT5i/L2e4ph1I9W+T0bglimnqV
-	 PYWv0t+iE4GqKCnRa5gHAnmJbe9sH+zRB4DyIrQEj5X4Odw4Tvpp2GNRqKCOXTKCIV
-	 9VPDpOeqfuDYBvwZStSXSWaQmJ3+cvmGrPMg/wv/9SeZaAX0p4COfIzNqsPOQLIlAD
-	 woWZEZ2bzIVIQ==
-Date: Thu, 9 Oct 2025 17:33:11 -0600 (MDT)
-From: Paul Walmsley <pjw@kernel.org>
-To: Vivian Wang <wangruikang@iscas.ac.cn>
-cc: Paul Walmsley <pjw@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-    Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-    "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, 
-    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-    duchangbin <changbin.du@huawei.com>, Alexandre Ghiti <alex@ghiti.fr>, 
-    andybnac@gmail.com
-Subject: Re: [PATCH] riscv: Prevent early kernel panic in instrumented
- apply_early_boot_alternatives
-In-Reply-To: <4de90ac7-f05d-4c16-a5c5-8101f5d2fe91@iscas.ac.cn>
-Message-ID: <58b5a08f-b10c-668b-fbb7-cf44ef2ac940@kernel.org>
-References: <20250624113042.2123140-1-changbin.du@huawei.com> <a89f5970-5ea9-4d92-8952-6c26a22ac153@ghiti.fr> <d41d9c7a103f4600a4fc5beea77e0f4e@huawei.com> <2396743a-480e-2ab3-f7fe-569d8f2adfcf@kernel.org> <4de90ac7-f05d-4c16-a5c5-8101f5d2fe91@iscas.ac.cn>
+	s=arc-20240116; t=1760053160; c=relaxed/simple;
+	bh=yQRfp2+aEYtI4J7ggklJ4Q5590vFVND/mS7Yi47bqVM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Kl8K7KGE/0jvxFEhk9lN5lXJOlQXOTVQJs5iK7K9V8CvszkB7vCN7A4NfEzWPYhIHMu05exq94eeHd2gFIL/KVnWhteWt/21FC/sszQX9jTc5ylCW79C6etDoTI+GJnNoCrk4v8aEMhcieZdkhM13jA8b+2S8usOvU5cnVLrkmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aRFHzbRR; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-46e61ebddd6so15286875e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 16:39:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760053157; x=1760657957; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yJFaIMUPoYmzAjPmdOJ59lzNVZeNVTShHGh4jV4ztic=;
+        b=aRFHzbRRVIkUKby1rrDbfqYPs8NeaElhTllbpD6Kd2nr6n6x1wMcz4+NSkUg/81PhZ
+         kU85D/s90PvJFtGvlnJZyAoSQt21A0ahxBBFiUEc5X3G4s0aVlxth+9h/ADs2Omv0BOJ
+         Mpk+IMPrayNSqLkBnoMYCARm97h0LGn8Q8YV0yDJwRrL6cw/Jei0XzhJb3R/aTSWOdMi
+         noSBB8NgeuwaoRLhw+5BKuqBsKNfQzY/ZcRfRMmMfnrhYQxZYCePmXIxdA6xbuAb5b+I
+         p7S2u1kQLfP1Xyfrb8B6jDyLS8ijxTo7ve4wNyoscfzTxK7lcXBwp6JU9LUGmEUOFNTO
+         zHKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760053157; x=1760657957;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yJFaIMUPoYmzAjPmdOJ59lzNVZeNVTShHGh4jV4ztic=;
+        b=APwXyTHzspW8bqbbpUzfbgX7fZiMjmaWZ88S8pqnbCyIzoVvWRHokaEQc7tqDLP1Mq
+         KymLd7gO8uOSQa14y6ypfWTpq5UhNmK3J7TCl9/yWU3+XfN16hQzchFZI93I0uHeKcgk
+         ot6KPYG7+5q3WmEmX9lwHSnZ+A6CYHF6vsItzoUATNutpDzfP8iJukgcIupMNWsLxkjS
+         /5iumgM6MTPC37XDM01BUdP4MiPxwX37etgyHGlphrdsCbIm4Etb8Q4jCZ8b/JdQmxr0
+         ZkelnyfN6X2xK6365R98XtAQLNt58d7rnMkq8x1M+406tgkA9rKYwlJU1FRp1uIdsDx1
+         9Mdw==
+X-Gm-Message-State: AOJu0YyNi2JavKL+7AI5i5DhAyXG95bh5/3nBT6LOTuFl+sK/4hKKiLN
+	RHMnyZdTDP9Qx1MuA0EOeyOCfpxQDP36kWpxbTiKPD8wdgFSUAgxaPIjy5AeNw==
+X-Gm-Gg: ASbGncvn36yHX5tc5a+JsESNHO4l3uKS7nSWNCkeMn7QgroZyvbzmzP7y2tPaPewcUe
+	WCALS+r2fDZ1EnysoWhoTPJ8WUz6sWb5kVotwEzRssn3MEaIm9ts+zjh7lDYrI3i76UaMxW9vQP
+	Tm/D4oJatIognMfKZ5sJ7Dsd48DXYhsfxva2m1Zpgq4QoCAwR0k0CPbQ7PkIEuNK0yCe0/nJGbY
+	RUb3fKWznYM/JKucwLKhC6zjIBscPkLWQq+jTeO1OH3bdb4m1x1daIoCVswW22RCNK5/fsZE6KH
+	DJae1HKu860uLYQJFro1SihjYjUTR3u/lF2oQrOgK4SrSrpPHn410HgdGWmbUFOWjqv124R0Itd
+	lo8uTQ7P1/UsJKbz4J7D3KWw+OBNHUTci84Eb02LHXu7eIRMtgjus
+X-Google-Smtp-Source: AGHT+IEWq4VpnqfU8FFLrzl/DHl5jygZ2q4d7dLrByZ4bLt3b/dzlYCAmwAed5vYoO1IY1J7qpOOUg==
+X-Received: by 2002:a05:600c:a08b:b0:45f:2bc5:41c3 with SMTP id 5b1f17b1804b1-46fa9a8f261mr65000185e9.8.1760053156830;
+        Thu, 09 Oct 2025 16:39:16 -0700 (PDT)
+Received: from fedora ([41.45.27.42])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fab3e3206sm46066075e9.4.2025.10.09.16.39.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 16:39:15 -0700 (PDT)
+From: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+	Mary Guillemard <mary@mary.zone>,
+	Faith Ekstrand <faith.ekstrand@collabora.com>,
+	Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	nouveau@lists.freedesktop.org,
+	Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
+Subject: [PATCH 0/5 v2] drm/nouveau: Enable variable page sizes and compression
+Date: Fri, 10 Oct 2025 02:38:32 +0300
+Message-ID: <20251009233837.10283-1-mohamedahmedegypt2001@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-560156192-1760052795=:1991624"
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+The new VM_BIND interface only supported 4K pages. This was problematic as
+it left performance on the table because GPUs don't have sophisticated TLB
+and page walker hardware. 
 
---8323329-560156192-1760052795=:1991624
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Additionally, the HW can only do compression on large (64K) and huge (2M)
+pages, which is a major performance booster (>50% in some cases).
 
-Hi Vivian,
+This patchset sets out to add support for larger page sizes and also
+enable compression and set the compression tags when userspace binds with
+the corresponding PTE kinds and alignment. It also increments the nouveau
+version number which allows userspace to use compression only when the
+kernel actually supports both features and avoid breaking the system if a
+newer mesa version is paired with an older kernel version.
 
-On Thu, 9 Oct 2025, Vivian Wang wrote:
-> On 10/9/25 10:01, Paul Walmsley wrote:
-> > On Wed, 25 Jun 2025, duchangbin wrote:
-> >
-> > [...]
-> >
-> > Working on cleaning out Patchwork.  Was there any further conclusion 
-> > reached on this patch, or more broadly, static ftrace ?
-> 
-> Static ftrace for riscv is no longer supported in 6.17. config RISCV is now:
-> 
->     select DYNAMIC_FTRACE if FUNCTION_TRACER
-> 
-> Since commit 5874ca4c6280 ("riscv: Stop supporting static ftrace"). This
-> patch should be obsolete.
+For the associated userspace MR, please see !36450:
+https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/36450
 
-Thanks for the followup.
+- v2: Implement review comments.
+- v1: Initial implementation.
 
-- Paul
---8323329-560156192-1760052795=:1991624--
+Ben Skeggs (2):
+  drm/nouveau/mmu/gp100: Remove unused/broken support for compression
+  drm/nouveau/mmu/tu102: Add support for compressed kinds
+
+Mary Guillemard (2):
+  drm/nouveau/uvmm: Prepare for larger pages
+  drm/nouveau/uvmm: Allow larger pages
+
+Mohamed Ahmed (1):
+  drm/nouveau/drm: Bump the driver version to 1.4.1 to report new
+    features
+
+ drivers/gpu/drm/nouveau/nouveau_drv.h         |  4 +-
+ drivers/gpu/drm/nouveau/nouveau_uvmm.c        | 71 ++++++++++++++-----
+ drivers/gpu/drm/nouveau/nouveau_uvmm.h        |  1 +
+ .../drm/nouveau/nvkm/subdev/mmu/vmmgp100.c    | 69 ++++++++++--------
+ .../drm/nouveau/nvkm/subdev/mmu/vmmgp10b.c    |  4 +-
+ 5 files changed, 100 insertions(+), 49 deletions(-)
+
+-- 
+2.51.0
+
 
