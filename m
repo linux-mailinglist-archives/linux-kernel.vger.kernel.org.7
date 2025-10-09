@@ -1,182 +1,123 @@
-Return-Path: <linux-kernel+bounces-846874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D99E3BC94D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:30:16 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DB6FBC94E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:31:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C3A8F4E91FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:30:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 19A854E7F6A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E5C17BEBF;
-	Thu,  9 Oct 2025 13:30:11 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7C5282EB;
-	Thu,  9 Oct 2025 13:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C2D146A66;
+	Thu,  9 Oct 2025 13:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dk5Ibfxv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E345B22339;
+	Thu,  9 Oct 2025 13:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760016611; cv=none; b=OkmbcPzg54uiybGq80gKCr3dPs0DTZqZ4fKUKhP2WBK38GkNtMdlNXuWtMLGFRVRStM78CUUubhFBeK7pzBjCuU3g7GOZmOSy9O4KmROeL7y2WpJpeSIJe3RHiNagmJFg78zgNaLVe8Fv6oDSjj42u8/x+m6qpl2F+Js6SHBx3w=
+	t=1760016681; cv=none; b=X8fUWDzwGuMpX2vsKX9PDO9AIrk8LAPwS1kqnE6FiqpP38O0TmBsAM5hkApZJYw6jCjbTOrbmmKQK3rXPf8G1fPg8EZK95h9/9HAXuLYLojwpC6MBAG0AmElnSEeQ18FCQodr1yMyGh6HlfitWM363jKBrwWkfyVcjvY4Mpbinw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760016611; c=relaxed/simple;
-	bh=N7HoqQExRcLPi/a/OT37UWSWJ51fMskEpk6eCLaiU/o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R7MRPYQZPzqQ5sVPbcwolbJYIMTvsFV1LmwYQabpIwNy4rxhFifzXnbe61M/X7goskd1PRIVzHM+5+o9t6tfmmtaXI7lDcurKZRHSJUQboSJkjzAT2JHCXW3hel0LBip3fEph2HZsW9uKO3yMh8OpNjGQlDUDKqYfnc2553XWdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 197C0176A;
-	Thu,  9 Oct 2025 06:30:00 -0700 (PDT)
-Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 91F893F59E;
-	Thu,  9 Oct 2025 06:30:04 -0700 (PDT)
-Message-ID: <02452879-8998-47e0-9679-d2ff00503901@arm.com>
-Date: Thu, 9 Oct 2025 15:30:02 +0200
+	s=arc-20240116; t=1760016681; c=relaxed/simple;
+	bh=0IFvkQnMAy8Uc538u+cckdX0F9rDkpNjw/fh01Zt8cQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wd0WwX4KN0ob8qy3SGs7wykif8RsD3vZGx5xc10Mr8IdNsfnJ9a1LhGXkldHARTUxf9aDfWd46fCMo0W9jtC6QZJolYYfNeJzUz/b+P87FhFmwJxY7qtFBc0ATOXTkaWqevhePEFIONNVHnC48JHM6ceBuxTqVmnEJ2wb07/BcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dk5Ibfxv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD2BFC4CEF8;
+	Thu,  9 Oct 2025 13:31:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1760016680;
+	bh=0IFvkQnMAy8Uc538u+cckdX0F9rDkpNjw/fh01Zt8cQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dk5IbfxvMT7GhrRDbmHiSxM69xDcMSZxr5UkSf42vP3DoEHjiBN/eKM9RXAY1+ecg
+	 FaV8VlAeUUiWUkhAcG7zMcIN3Vf/PGNALp/UapmU/jZgkcYMKod4dWaqoO9OneAVnL
+	 X+NZdIvMFf/RjrN5k/+f4SikQ11rbcAx9ySt6Aio=
+Date: Thu, 9 Oct 2025 15:31:17 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Vivian Wang <wangruikang@iscas.ac.cn>
+Cc: Albert Ou <aou@eecs.berkeley.edu>, Inochi Amaoto <inochiama@gmail.com>,
+	Han Gao <rabenda.cn@gmail.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Meng Zhuo <mengzhuo@iscas.ac.cn>, Yangyu Chen <cyy@cyyself.name>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Guo Ren <guoren@kernel.org>, Paul Walmsley <pjw@kernel.org>,
+	linux-riscv@lists.infradead.org, Yao Zi <ziyao@disroot.org>
+Subject: Re: [PATCH 6.6.y 0/2] riscv: mm: Backport of mmap hint address fixes
+Message-ID: <2025100931-carefully-exerciser-5d26@gregkh>
+References: <20251008-riscv-mmap-addr-space-6-6-v1-0-9f47574a520f@iscas.ac.cn>
+ <2025100812-raven-goes-4fd8@gregkh>
+ <187fe5a3-99b9-49b6-be49-3d4f6f1fb16b@iscas.ac.cn>
+ <2025100920-riverbank-congress-c7ee@gregkh>
+ <87d603ce-578d-46a7-87b1-54befccc6fad@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/12] sched: Fold sched_class::switch{ing,ed}_{to,from}()
- into the change pattern
-To: Peter Zijlstra <peterz@infradead.org>, tj@kernel.org
-Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, juri.lelli@redhat.com,
- vincent.guittot@linaro.org, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, vschneid@redhat.com, longman@redhat.com,
- hannes@cmpxchg.org, mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
- changwoo@igalia.com, cgroups@vger.kernel.org, sched-ext@lists.linux.dev,
- liuwenfang@honor.com, tglx@linutronix.de
-References: <20251006104402.946760805@infradead.org>
- <20251006104526.861755244@infradead.org>
-Content-Language: en-GB
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-In-Reply-To: <20251006104526.861755244@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87d603ce-578d-46a7-87b1-54befccc6fad@iscas.ac.cn>
 
-On 06.10.25 12:44, Peter Zijlstra wrote:
-> Add {DE,EN}QUEUE_CLASS and fold the sched_class::switch* methods into
-> the change pattern. This completes and makes the pattern more
-> symmetric.
+On Thu, Oct 09, 2025 at 01:50:11PM +0800, Vivian Wang wrote:
 > 
-> This changes the order of callbacks slightly:
+> On 10/9/25 13:00, Greg KH wrote:
+> > On Thu, Oct 09, 2025 at 12:19:46PM +0800, Vivian Wang wrote:
+> >> [...]
+> > Ok, that makes a bit more sense, but again, why is this just showing up
+> > now?  What changed to cause this to be noticed at and needed to be fixed
+> > at this moment in time and not before?
 > 
-> 				|
-> 				|  switching_from()
->   dequeue_task();		|  dequeue_task()
->   put_prev_task();		|  put_prev_task()
-> 				|  switched_from()
-> 				|
->   ... change task ...		|  ... change task ...
-> 				|
->   switching_to();		|  switching_to()
->   enqueue_task();		|  enqueue_task()
->   set_next_task();		|  set_next_task()
->   prev_class->switched_from()	|
->   switched_to()			|  switched_to()
-> 				|
+> As of why this came quite late in the lifetime of the 6.6.y branch, I
+> believe it's a combination of two factors.
 > 
-> Notably, it moves the switched_from() callback right after the
-> dequeue/put. Existing implementations don't appear to be affected by
-> this change in location -- specifically the task isn't enqueued on the
-> class in question in either location.
+> Firstly, actual Sv48-capable RISC-V hardware came fairly late. Milk-V
+> Megrez (with Eswin EIC7700X), on which the Go TSAN thing ran, was
+> shipped only early this year. The DC ROMA II laptop (EIC7702X) and
+> Framework mainboard with the same SoC has not even shipped yet, or maybe
+> only shipped to developers - I'm not so certain. Most other RISC-V
+> machines only have Sv39.
 > 
-> Make (CLASS)^(SAVE|MOVE), because there is nothing to save-restore
-> when changing scheduling classes.
+> Secondly, there is interest among some Chinese software vendors to ship
+> Linux distros based on a 6.6.y LTS kernel. The "RISC-V Common Kernel"
+> (RVCK) project [1], with support from openEuler and various HW vendors,
+> maintains backports on top of a 6.6.y kernel. "RockOS" [2] is a distro
+> maintained by PLCT Lab, ISCAS, for EIC770{0,2}X-based boards, and it has
+> a 6.6.y kernel branch. Both have cherry-picked the mmap patches for now.
+> 
+> We operate with the understanding that the official stable kernel will
+> not be accepting new major features and drivers, but fixes do belong in
+> stable, and at least from the perspective of PLCT Lab we generally try
+> to send patches instead of hoarding them. Hence, the earlier backport
+> request and this backport series.
+> 
+> I hope this explanation is acceptable.
 
-This one causes a DL bw related warning when I run a simple 1 DL task
-rt-app workload:
+Thanks for the detailed explaination.  I've queued these up now.
 
-# rt-app ./rt-app/dl10.json 
+But wow, shipping new products on a 2 year old kernel feels very risky
+to me, but hey, what do I know?  :)
 
-[rt-app] <notice> thread_data_set_unique_name 0 thread0-0
-[rt-app] <notice> [0] starting thread ...
+> PS: This 6.6 kernel thing isn't just a RISC-V thing, by the way. KylinOS
+> V11 has shipped in August with a 6.6 kernel. Deepin and UOS will be
+> shipping with 6.6, with UOS "25" shipping maybe late this year or early
+> 2026.
 
-[rt-app] <notice> [0] Starting with SCHED_DEADLINE policy with priority 0
-[   16.390272] sched: DL replenish lagged too much
-[   16.390327] ------------[ cut here ]------------
-[   16.390329] WARNING: CPU: 2 PID: 591 at kernel/sched/deadline.c:239 sub_running_bw.isra.0+0xf4/0x150
-[   16.391849] Modules linked in:
-[   16.392107] CPU: 2 UID: 0 PID: 591 Comm: thread0-0 Not tainted 6.17.0-rc4-00020-ga6b63e5ce187 #46 PREEMPT 
-[   16.392885] Hardware name: linux,dummy-virt (DT)
-[   16.393265] pstate: 014000c5 (nzcv daIF +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
-[   16.393783] pc : sub_running_bw.isra.0+0xf4/0x150
-[   16.394153] lr : sub_running_bw.isra.0+0x118/0x150
-[   16.394636] sp : ffff80008137bb10
-[   16.394864] x29: ffff80008137bb10 x28: ffff0000ff7b39c0 x27: ffff0000ce73dd60
-[   16.395333] x26: 0000000000000000 x25: ffffa1134d945000 x24: ffff0000ff7b42c8
-[   16.395805] x23: ffffa1134d944000 x22: ffffa1134d944000 x21: 000000000000cccc
-[   16.396267] x20: 0000000000060000 x19: ffff0000ff7b42c8 x18: fffffffffffe6f58
-[   16.396742] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000001
-[   16.397202] x14: fffffffffffc6f57 x13: 0a6863756d206f6f x12: ffffa1134e743f60
-[   16.397674] x11: 00000000000000c0 x10: 0000000000000001 x9 : 0000000000000000
-[   16.398130] x8 : ffff0000c001e490 x7 : 0000000000000008 x6 : ffff0000c0029968
-[   16.398883] x5 : 00000000ffffffff x4 : 0000000000000064 x3 : ffff0000c0029fa8
-[   16.399432] x2 : ffff5eedb1f6e000 x1 : 000000000000cccc x0 : fffffffffffacccc
-[   16.399962] Call trace:
-[   16.400147]  sub_running_bw.isra.0+0xf4/0x150 (P)
-[   16.400510]  task_non_contending+0x248/0x2ac
-[   16.400831]  dequeue_task_dl+0x178/0x2d4
-[   16.401122]  __schedule+0x6ac/0x1038
-[   16.401401]  schedule+0x4c/0x164
-[   16.401627]  do_nanosleep+0x6c/0x190
-[   16.401862]  hrtimer_nanosleep+0xbc/0x200
-[   16.402156]  common_nsleep_timens+0x50/0x90
-[   16.402522]  __arm64_sys_clock_nanosleep+0xd0/0x150
-[   16.402813]  invoke_syscall+0x48/0x104
-[   16.403043]  el0_svc_common.constprop.0+0x40/0xe0
-[   16.403327]  do_el0_svc+0x1c/0x28
-[   16.403520]  el0_svc+0x4c/0x160
-[   16.403711]  el0t_64_sync_handler+0xa0/0xf0
-[   16.403950]  el0t_64_sync+0x198/0x19c
-[   16.404226] irq event stamp: 196
-[   16.404451] hardirqs last  enabled at (195): [<ffffa1134c8021d8>] _raw_spin_unlock_irqrestore+0x6c/0x74
-[   16.405086] hardirqs last disabled at (196): [<ffffa1134c7f7850>] __schedule+0x4e8/0x1038
-[   16.405629] softirqs last  enabled at (154): [<ffffa1134b4e157c>] handle_softirqs+0x44c/0x498
-[   16.406218] softirqs last disabled at (145): [<ffffa1134b410774>] __do_softirq+0x14/0x20
+That too is crazy.  They should know better.
 
-with extra logging and removing underflow WARN_ON_ONCE:
+Just to give a bit of context for this, for the latest 6.6.y release,
+6.6.110, there are currently over 300 documented unfixed CVE items in
+that branch.  Feels rough to be doing a new release based on that...
 
-# rt-app ./rt-app/dl10.json 
+good luck!
 
-[rt-app] <notice> thread_data_set_unique_name 0 thread0-0
-[rt-app] <notice> [0] starting thread ...
-
-[rt-app] <notice> [0] Starting with SCHED_DEADLINE policy with priority 0
-[   18.494469] sched: DL replenish lagged too much
-[   18.494483] cpu=3 p->comm=thread0-0 p->pid=592
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-[   18.494486] __sub_running_bw() cpu=3 dl_rq->running_bw=18446744073709210828 dl_bw=393216 old=52428
-                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-                                        dl_rq->running_bw underflow in task_non_contending()
-
-[   18.494492] CPU: 3 UID: 0 PID: 592 Comm: thread0-0 Not tainted 6.17.0-rc4-00020-ga6b63e5ce187-dirty #44 PREEMPT 
-[   18.494495] Hardware name: linux,dummy-virt (DT)
-[   18.494497] Call trace:
-[   18.494498]  show_stack+0x18/0x24 (C)
-[   18.494510]  dump_stack_lvl+0x70/0x98
-[   18.494514]  dump_stack+0x18/0x24
-[   18.494516]  sub_running_bw.isra.0+0x164/0x180
-[   18.494539]  task_non_contending+0x298/0x2e8
-[   18.494541]  dequeue_task_dl+0x188/0x31c
-[   18.494544]  __schedule+0x6ac/0x1038
-[   18.494574]  schedule+0x4c/0x164
-[   18.494578]  do_nanosleep+0x6c/0x190
-[   18.494580]  hrtimer_nanosleep+0xbc/0x200
-[   18.494594]  common_nsleep_timens+0x50/0x90
-[   18.494599]  __arm64_sys_clock_nanosleep+0xd0/0x150
-[   18.494602]  invoke_syscall+0x48/0x104
-[   18.494610]  el0_svc_common.constprop.0+0x40/0xe0
-[   18.494612]  do_el0_svc+0x1c/0x28
-[   18.494615]  el0_svc+0x4c/0x160
-[   18.494617]  el0t_64_sync_handler+0xa0/0xf0
-[   18.494620]  el0t_64_sync+0x198/0x19c
-
-Not sure yet how this is related to switched_from_dl() being now called earlier?
-
-[...]
+greg k-h
 
