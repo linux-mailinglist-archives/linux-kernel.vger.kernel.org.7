@@ -1,201 +1,134 @@
-Return-Path: <linux-kernel+bounces-846284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A447BC7783
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 07:56:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79B9FBC7780
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 07:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3AE2D4E0554
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 05:56:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 441113E6107
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 05:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 513FA26159E;
-	Thu,  9 Oct 2025 05:56:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939ED23D7EB;
+	Thu,  9 Oct 2025 05:56:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iMvYdYU5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WCLSU75p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36757AD4B
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 05:56:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FC9238175;
+	Thu,  9 Oct 2025 05:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759989371; cv=none; b=dG4Y+lizZonoqS3FE16HRcTZldzV5C+9YHKy5ZzH1e+jJZoEcwpv11PsfgCmcvc4QTIh4OclfWmZtxqmGYvW/h6/buJIunPgk1iPwk0bwZMlcpk7Ewh4qUA7dG+mXYd7ymWLO5N4upJ/E3a0duXQ7fLU7t26P4WdcMVka9RxvEA=
+	t=1759989364; cv=none; b=ulOWDZGkcOF7dH6t9hCf7WFjPqoMDV10oV9P/IiACmnLW3uadFLGyybk4ZRyOrJEE8cKInaOBhF2p8M8+Wr7yimxLfZI5eeztInGZqMMeGqotSgUFoagR3OrfwdQ0thZGkFwM6TKUXHFLLoVX9uzu9hf1dVbB+55Y3eeo/63K/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759989371; c=relaxed/simple;
-	bh=B7rrwZA3P87YDou+AIO5jYQa3aCNJFxAB6yvUqB2E9k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Cl4oroUwNdy63NmUnwiyxJvzZW9LQYo+kil1i9JUYBGbrng/twLJnWx3Dr8o9UdivgzsdZ2wskLSho/gtHZYok6QzI1JTTHoQYqeXQvYepS/bsesGDmlxDyn94dHYUNxDrwbkaAUuHciku+bcOH5yqC4TqxYTj49rl9RKKNZJag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iMvYdYU5; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759989366;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fkgKUr7nW5eH/tRqRYLI/of3JXuQQWQkB8Qwck9RD7k=;
-	b=iMvYdYU5C4rJsrpBQ1xjI4o7UtKR3meUyJ1RdnU9gZwXAWvqIkXcFmD/OsKsdRMjg39tjV
-	ryr+v9v/amGWLXQLh1MqDBbeRnYIANbm/3O7hyhlDY2N9R6ZABT27U0QQC6pvM2LuvJbHy
-	FY5WY7SdT4CGcqLzt6r2a8ZNdo6C12M=
-Received: from mail-vs1-f72.google.com (mail-vs1-f72.google.com
- [209.85.217.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-449-ZPoiO5UcOGeTQKpFFiCZgw-1; Thu, 09 Oct 2025 01:56:05 -0400
-X-MC-Unique: ZPoiO5UcOGeTQKpFFiCZgw-1
-X-Mimecast-MFC-AGG-ID: ZPoiO5UcOGeTQKpFFiCZgw_1759989365
-Received: by mail-vs1-f72.google.com with SMTP id ada2fe7eead31-5a631c279fbso326552137.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 22:56:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759989365; x=1760594165;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fkgKUr7nW5eH/tRqRYLI/of3JXuQQWQkB8Qwck9RD7k=;
-        b=LMuK8y+gMlp6eqh4wJUA5Yg/MT3WLlRHhi6opmZvzCUhLSefvjkAcS+5h68zzy/sPc
-         rFC3jVKK7ofT7u7JmiyV+ts4DdfOrdWavuikMS4htXWEtCRdhxj8nC2YONJT6kcJtRHO
-         762q4SQRSQR7RA/wVloyCcTIqexvKLPBCZj0R4lQ0jhrpkhC6hBGf6aSNd45znP174j3
-         /rvIN3clT+W6ICkBfFBsCqzlR5Wjb52yJpuDRiqQSo2qy34Jpx5bH5VxxuvEBv4KBEXq
-         d7NyARKBzuEKXJJPRdYmwKBvDZoEfOgF8aIPK9wOztHqJQ50B04AVcDYNiBb7iFiyrxL
-         Z82g==
-X-Forwarded-Encrypted: i=1; AJvYcCVcHuKkFf4lOKZlnc9ixTiKcvtgSCfyWl+/j2DqrED3Y8U2CttLAzq1pBzIsMcdYLh2FWcuBDOf76lj1X0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6W0Z6UEDMy2E4s2nKwOgRi86kQ9JvRPnT58W8eEBFtH8+enti
-	CKdflldIXvaPs8qvYhdw3xbdFiLcJK84mhU1dqCI6g2ubrpyYiks3/fKcd7BEP/gCnu18M7BLim
-	K2sDYno1Z4i0jrdrRWZ65SWB5brz1ByFsf7rCAa50wEYURwIZXZ8bheKFR9fRm9sd+2XUNF48uy
-	wde7GUmqo+x57All+MEP8hv6GaM3JYMDs5NisrHVaJ
-X-Gm-Gg: ASbGncs/z5olaOqd9UTMtfPq7va+NlopKpQcQFsxQAkvWKLJV/AdasaoZtNoglXZISv
-	hKppCQmISrEXhW3tvPwi3jDLsbfmoXL47Ie4pqskogPZgWCQyYIWb+XPKY/2euoYT0h/X1RQVOA
-	yP9PDm2774hQbUke7sgDyWAwY=
-X-Received: by 2002:a05:6102:8382:20b0:5d3:fed4:ac2b with SMTP id ada2fe7eead31-5d5e22169bfmr2099143137.1.1759989364945;
-        Wed, 08 Oct 2025 22:56:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHEwVhF+06KroYaF8WqxvvYiwVN1v9gL+gRbbNz0RnMP4XrCEdzlCCNjmi+LUJwToQCK8zW8nDJYljKZxmqAsA=
-X-Received: by 2002:a05:6102:8382:20b0:5d3:fed4:ac2b with SMTP id
- ada2fe7eead31-5d5e22169bfmr2099142137.1.1759989364581; Wed, 08 Oct 2025
- 22:56:04 -0700 (PDT)
+	s=arc-20240116; t=1759989364; c=relaxed/simple;
+	bh=4Q58jztL4eaTDstPcFnxmFuXsHFst5YdtTLFjj8sN/s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kZwF07KpcZxHCVRePnh4IB8GnE8M7CHWfLfbLpSFbx2PcUPZGuBiS0yNilKITqaxds1AkxcFRmnq/9g/KhfY22g9XoQuVBB8aILz9Qg3slPvWAMpUI0baExqdttesKTI58lOLU9XMmDUrsktf1u0w5cdlUxGsEVbInA4HHhZbug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WCLSU75p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 345F9C4CEE7;
+	Thu,  9 Oct 2025 05:56:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759989363;
+	bh=4Q58jztL4eaTDstPcFnxmFuXsHFst5YdtTLFjj8sN/s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WCLSU75pcKH4FEV87JlsZujdbvocP81unq/d5sf6m0nvLSmIqAZhXS3Li6+9yINxZ
+	 ImML9ALdS5728st9TPqyovdnvi3J7EfL3W1Aj4tqQthrghCNs3oiWYz727pP/RPH7G
+	 l7sXm0CQVUv93/07zL+H/ndRoBDfmWMUHcS7W2XrkdIJ8rVqkb+a7Z8vTx6rVljARH
+	 qB+n4LlmRAPEUDYtuC0NT+Sd9QPq3u/ouF2HUA+2zpIIy4TMeaKoOE2VoNAPuPL7iY
+	 b+7Fk1MVmj5dOW/p4kRbM0nihbiAVPtr9HkBMkiI9cpnqF7cp7RtHzurXaktB1PJ9b
+	 h5UXs2V84og2Q==
+Date: Thu, 9 Oct 2025 07:55:57 +0200
+From: Greg Kroah-Hartman <gregkh@kernel.org>
+To: Shung-Hsi Yu <shung-hsi.yu@suse.com>
+Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
+	linux-cve-announce@vger.kernel.org,
+	=?iso-8859-1?Q?Jo=E3o_P=F3voas?= <joao.povoas@suse.com>
+Subject: Re: CVE-2022-50450: libbpf: Use elf_getshdrnum() instead of e_shnum
+Message-ID: <2025100912-ambiguity-emblem-1f96@gregkh>
+References: <2025100116-CVE-2022-50450-7ef7@gregkh>
+ <ptkuwiorj7dby6ofq4thv6mxtu7kf2zgb4grpyng3ygjv6oyi2@3dsumpqpjrst>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250925103708.44589-1-jasowang@redhat.com> <20250925103708.44589-13-jasowang@redhat.com>
- <20250928192719.7ea3a825@pumpkin> <20250929041808-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20250929041808-mutt-send-email-mst@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Date: Thu, 9 Oct 2025 13:55:51 +0800
-X-Gm-Features: AS18NWDSHW-Jk2HDDnAxuppRxg2y4I86CInrH0RysfQYUeKuWAXTaaP2DlRkFrQ
-Message-ID: <CACGkMEuSSGNFMiwcD5UBvpQcUxtLmA-2PiT3AD_Sf3YSzndjMQ@mail.gmail.com>
-Subject: Re: [PATCH V7 12/19] virtio_ring: use u16 for last_used_idx in virtqueue_poll_split()
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: David Laight <david.laight.linux@gmail.com>, xuanzhuo@linux.alibaba.com, 
-	eperezma@redhat.com, virtualization@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ptkuwiorj7dby6ofq4thv6mxtu7kf2zgb4grpyng3ygjv6oyi2@3dsumpqpjrst>
 
-On Mon, Sep 29, 2025 at 4:22=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com>=
- wrote:
->
-> On Sun, Sep 28, 2025 at 07:27:19PM +0100, David Laight wrote:
-> > On Thu, 25 Sep 2025 18:37:01 +0800
-> > Jason Wang <jasowang@redhat.com> wrote:
-> >
-> > > Use u16 for last_used_idx in virtqueue_poll_split() to align with the
-> > > spec.
-> >
-> > If you care about performance you should pretty much never use 'u16' fo=
-r
-> > function parameters, return values or any arithmetic.
-> > Just because the domain of the variable is [0..65535] doesn't mean that
-> > 'unsigned int' isn't the correct type.
-> >
-> > >
-> > > Acked-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
-> > > Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-> > > Signed-off-by: Jason Wang <jasowang@redhat.com>
->
->
->
-> I don't like this because it is inconsistent with virtqueue_poll.
->
->
-> If you are going to change this, change virtqueue_enable_cb_prepare_split
-> too.
->
->
-> But really there's no point.
->
->
-> > > ---
-> > >  drivers/virtio/virtio_ring.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_rin=
-g.c
-> > > index 58c03a8aab85..4679a027dc53 100644
-> > > --- a/drivers/virtio/virtio_ring.c
-> > > +++ b/drivers/virtio/virtio_ring.c
-> > > @@ -806,7 +806,7 @@ static void detach_buf_split(struct vring_virtque=
-ue *vq, unsigned int head,
-> > >  }
-> > >
-> > >  static bool virtqueue_poll_split(const struct vring_virtqueue *vq,
-> > > -                            unsigned int last_used_idx)
-> > > +                            u16 last_used_idx)
-> > >  {
-> > >     return (u16)last_used_idx !=3D virtio16_to_cpu(vq->vq.vdev,
-> >
-> > You can't want that (u16) cast now, I doubt it was ever needed.
-> > Note that the compiler promotes the value to 'signed int',
-> > so the LHS of the comparison is actually (int)(u16)last_used_idx.
-> >
-> >       David
->
-> It is not needed because the value is from
-> virtqueue_enable_cb_prepare_split:
->
-> static unsigned int virtqueue_enable_cb_prepare_split(struct virtqueue *_=
-vq)
-> {
->         struct vring_virtqueue *vq =3D to_vvq(_vq);
->         u16 last_used_idx;
->
->         START_USE(vq);
->
->         /* We optimistically turn back on interrupts, then check if there=
- was
->          * more to do. */
->         /* Depending on the VIRTIO_RING_F_EVENT_IDX feature, we need to
->          * either clear the flags bit or point the event index at the nex=
-t
->          * entry. Always do both to keep code simple. */
->         if (vq->split.avail_flags_shadow & VRING_AVAIL_F_NO_INTERRUPT) {
->                 vq->split.avail_flags_shadow &=3D ~VRING_AVAIL_F_NO_INTER=
-RUPT;
->                 if (!vq->event)
->                         vq->split.vring.avail->flags =3D
->                                 cpu_to_virtio16(_vq->vdev,
->                                                 vq->split.avail_flags_sha=
-dow);
->         }
->         vring_used_event(&vq->split.vring) =3D cpu_to_virtio16(_vq->vdev,
->                         last_used_idx =3D vq->last_used_idx);
->         END_USE(vq);
->         return last_used_idx;
-> }
->
->
->
->
->
->
-> > >                     vq->split.vring.used->idx);
->
+On Thu, Oct 09, 2025 at 01:31:32PM +0800, Shung-Hsi Yu wrote:
+> On Wed, Oct 01, 2025 at 01:45:20PM +0200, Greg Kroah-Hartman wrote:
+> > From: Greg Kroah-Hartman <gregkh@kernel.org>
+> > 
+> > Description
+> > ===========
+> > 
+> > In the Linux kernel, the following vulnerability has been resolved:
+> > 
+> > libbpf: Use elf_getshdrnum() instead of e_shnum
+> > 
+> > This commit replace e_shnum with the elf_getshdrnum() helper to fix two
+> > oss-fuzz-reported heap-buffer overflow in __bpf_object__open. Both
+> > reports are incorrectly marked as fixed and while still being
+> > reproducible in the latest libbpf.
+> > 
+> >   # clusterfuzz-testcase-minimized-bpf-object-fuzzer-5747922482888704
+> >   libbpf: loading object 'fuzz-object' from buffer
+> >   libbpf: sec_cnt is 0
+> >   libbpf: elf: section(1) .data, size 0, link 538976288, flags 2020202020202020, type=2
+> >   libbpf: elf: section(2) .data, size 32, link 538976288, flags 202020202020ff20, type=1
+> >   =================================================================
+> >   ==13==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x6020000000c0 at pc 0x0000005a7b46 bp 0x7ffd12214af0 sp 0x7ffd12214ae8
+> >   WRITE of size 4 at 0x6020000000c0 thread T0
+> >   SCARINESS: 46 (4-byte-write-heap-buffer-overflow-far-from-bounds)
+> >       #0 0x5a7b45 in bpf_object__elf_collect /src/libbpf/src/libbpf.c:3414:24
+> >       #1 0x5733c0 in bpf_object_open /src/libbpf/src/libbpf.c:7223:16
+> >       #2 0x5739fd in bpf_object__open_mem /src/libbpf/src/libbpf.c:7263:20
+> >       ...
+> > 
+> > The issue lie in libbpf's direct use of e_shnum field in ELF header as
+> > the section header count. Where as libelf implemented an extra logic
+> > that, when e_shnum == 0 && e_shoff != 0, will use sh_size member of the
+> > initial section header as the real section header count (part of ELF
+> > spec to accommodate situation where section header counter is larger
+> > than SHN_LORESERVE).
+> > 
+> > The above inconsistency lead to libbpf writing into a zero-entry calloc
+> > area. So intead of using e_shnum directly, use the elf_getshdrnum()
+> > helper provided by libelf to retrieve the section header counter into
+> > sec_cnt.
+> > 
+> > The Linux kernel CVE team has assigned CVE-2022-50450 to this issue.
+> 
+> Hi Greg,
+> 
+> I'd like to dispute this CVE. The libbpf maintainer previously suggested
+> such issue are viewed as normal bug fix, and not be considered for CVE
+> assignment[1,2].
+> 
+> Quoting Andrii from previous discussion in "CVE-2023-52592: libbpf: Fix
+> NULL pointer dereference in bpf_object__collect_prog_relos"[1] below:
+> 
+> > Libbpf isn't meant to be fed untrusted ELF files, as it's normally
+> > used under root to perform BPF operations. So we generally treat these
+> > issues of malformed ELF crashing libbpf as just normal bugs, not as a
+> > security vulnerability. We even had issues where libelf crashed before
+> > libbpf could do anything at all. But this happens only for
+> > fuzzer-generated artificial test cases. In practice compilers produce
+> > valid ELFs and that's what real world applications are ever going to
+> > use.
+> > 
+> > ...
+> > 
+> > tl;dr: I wouldn't assign CVE for such issues, thanks.
 
-I will drop this in the next version.
+Very good point, sorry about that.  I should have caught this in the
+re-review of these, my fault.  Will go reject this now, thanks for the
+review!
 
-Thanks
-
+greg k-h
 
