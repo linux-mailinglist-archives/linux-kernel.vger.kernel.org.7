@@ -1,148 +1,259 @@
-Return-Path: <linux-kernel+bounces-846123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7499BBC7195
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 03:21:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93D6DBC71B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 03:28:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10FB51891175
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 01:21:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7575C4EBFE1
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 01:28:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A9D78F39;
-	Thu,  9 Oct 2025 01:21:16 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7AE34BA2C;
-	Thu,  9 Oct 2025 01:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7560E1714B7;
+	Thu,  9 Oct 2025 01:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="xXF7khc0"
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4837C1531C1;
+	Thu,  9 Oct 2025 01:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759972876; cv=none; b=duc2KoPLSNbFrRoG1M71AH8kbWedhyaRKas1W7hMPGUFGYTlHkuVv0qJyif7Fgd1pH9UYnrRjOwP6lDpaeyox4kFU18EAS0ocUpPt/opUXOI9JNa+oNbNOhauQ58AwUFxHF2bSMPnS5b6tgRs7x+XY1ho6Q0gWBSfOGox71j3Lo=
+	t=1759973317; cv=none; b=JrrKI1EGul4lqVG3ZfZKpB3EXYQvtKr1UfUdKTX/5dKPnr3TPK7FEz7SG36kCSnhQ91RO2fcThmmu/ckDRcPiDTly1BgGkjOztR6Q00yjgINPnqmn+BOs5hpnV5uTc99U1ciRlqbmO7TjyYi9iPpEhwtg82xmXkwx8aN2LKMq6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759972876; c=relaxed/simple;
-	bh=3h6ol3ZzDH1E1qxmL3ot9UELxZkAEjrYptDva8tkH2A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=im3frTJON4FDszmpqDn8ydnnvLrQ2FEVrLoQsIJhFw3GHZ/KKtc5ag2iJ2lAHtcMVdtyMObWvJePQPgGaiGLmXZ0T4b4Vn/jAi2CYgG2SXisY55yRJiZ8od/bMI+3/KJwFYhishkjPlNCOZXWT+HrNzZw+pD8UXfwAm02xeCqSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.68.198])
-	by gateway (Coremail) with SMTP id _____8Cx6tEBDudoiRcUAA--.43127S3;
-	Thu, 09 Oct 2025 09:21:05 +0800 (CST)
-Received: from [10.161.0.102] (unknown [223.64.68.198])
-	by front1 (Coremail) with SMTP id qMiowJBx38P9DedoUuTVAA--.63724S2;
-	Thu, 09 Oct 2025 09:21:02 +0800 (CST)
-Message-ID: <b97cc38f-c00b-469f-97e4-decbb2ba96c7@loongson.cn>
-Date: Thu, 9 Oct 2025 09:21:01 +0800
+	s=arc-20240116; t=1759973317; c=relaxed/simple;
+	bh=mbNXEMA7DxaZhOsKJ8CsmzDkFCh9j2UH0J/u4rkRqwM=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=YR7BI4o/fyivjPRpRg9dhK8oo/0u5LGmMKc1poJ1KOWfq/7hzfeIXwkz1k0D/CdCkZb0XwuYwQufx+E7CGekCy+Zw8eosBjkMvlDeddF6HghhXv/5Bacry/9/IFGfauh0QdeeTOZ/WFFiQwXUF9aT1of0obk5vYaedFzI1yebiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=xXF7khc0; arc=none smtp.client-ip=43.163.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1759973004;
+	bh=h6RvhS+2x51/jw6Bwg/IXbtI0q6iQSD8vrZWzbYnJ8E=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=xXF7khc0luYPR8sZacIWTyvZUHh7vQOvNul8qRzyn/fA6CflWzJ2YbLgR3dBz8Pvg
+	 /nY0uFwebRK+RDPFiyHhERaeI3f8SWTD4xGJklVYECObHvshKQAwDBYqBT/XqaVH7B
+	 Hnk9w5uAppcnfxfNC9i+0HSo3nr5UOBojOd3ViPs=
+Received: from NUC10 ([39.156.73.10])
+	by newxmesmtplogicsvrszb42-0.qq.com (NewEsmtp) with SMTP
+	id 5D53B82C; Thu, 09 Oct 2025 09:23:21 +0800
+X-QQ-mid: xmsmtpt1759973001tkd124fjg
+Message-ID: <tencent_B01165355D42A8B8BF5E8D0A21EE1A88090A@qq.com>
+X-QQ-XMAILINFO: MEaKDlY90mahtpnTATHSoV8uYKejRLcvkkiWK/PxSPfrhG8BXAUgtQKEWfyyJi
+	 xeX18xwy+ZyjgfZd4CrJvfzaVWaddQXsDue//EdXrw8xAfzNZ1fQW1WitiPBCxFOEtrkBJXem5T1
+	 wZBITALVcQrpW0Gs5iJqZWZOcGmK7YTmSwqIPOkWu3Q/yjYU8iFsVIsUhMcV2FI2WU7H1m8P8NqX
+	 jGaP3Z/PvDji/mIvkjDphagrxC3N+R8jTOHH8eJrmXzhU9pSX/zuv61YJDlZuoEmzG7DYqcdDG6W
+	 CQGacNVP6VS+1nY1W35DDW0fZZcfxWWf6aN3V/HaFCo4vz3mlj3TTA7wMwWJmgocqeihNDyzCbiu
+	 gBCbwORUP6HBZlb7VFJ0usAT0YCAtrOv57N5lXvLplRSSP/q8uYtKV+qU383iH4m8saFXA9E+yH2
+	 +Y/R5sRQtzErjEvdCB2O0MRZuIzap8i0DNzfjPzKcoeNkSpVU6A//yK255Eg1VyLEtIScu9Q7N9S
+	 qEBnROVdNnvEcr+YFQ9HcTJfAzT2EMIegUlDCX1KC6IQMa3hf71+NjkMYfPBjJkrQyx2dTymb+CS
+	 ZmMiy+UX2yBvEs2hVNn9qFokpo/008v5nvdZKxBSjuDaQce/8QHXhBrVCArspxk8nHVoOmGvLIhp
+	 fV7W1GtegXE2emGTb5G+tAu4OdNeWMvHNPwF8KuuRjlo47eJs8njdoX0Q31UZOFaG9ccft+AeeDy
+	 0gM1tjVnyYAfdcGTcJeHVJdPQvvkfpew5DJDS+HzmvGCNdy+nbevQlQV7rpKwgmXnH6Bpq45S52C
+	 PQoNmh1RFXmTBj45b7nJu85TSQkSeF+SvCEfG6z6Q4fFZiVcTjK2FrzkLi8enOLOhyYy2uXXa5S4
+	 tAD7Arc+NmOVl+7HcXsdHWnMDFC+VkjtN/5+c06KvipZEkGeiwJ3dTW1vqyDtYpaFlppT2fVE1aA
+	 8LAAmJJ1LPRVP1YZhuWaqMXeO/31uKjMuPxlT9AhKkaYhDn5vCTgW9q7nPkbdS1oUqreuE09YxKV
+	 VhH9C1Ke39N9OgvODKQ6q9HDV/V58YpSV91Oiwd3GAGcuNtIEk3gpB1RrPgivVlI7plRj9pA==
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+From: Rong Tao <rtoax@foxmail.com>
+To: vmalik@redhat.com,
+	ast@kernel.org,
+	eddyz87@gmail.com
+Cc: rtoax@foxmail.com,
+	rongtao@cestc.cn,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	bpf@vger.kernel.org (open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)),
+	linux-kernel@vger.kernel.org (open list),
+	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
+Subject: [PATCH bpf-next v4 1/2] bpf: add bpf_strcasestr,bpf_strncasestr kfuncs
+Date: Thu,  9 Oct 2025 09:22:25 +0800
+X-OQ-MSGID: <6ae9146cf1e0e9be9be4253dd033cf0062d08b20.1759972627.git.rongtao@cestc.cn>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <cover.1759972627.git.rongtao@cestc.cn>
+References: <cover.1759972627.git.rongtao@cestc.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mmc: pxamci: Fix passing NULL to PTR_ERR() in
- pxamci_probe()
-To: Rakuram Eswaran <rakuram.e96@gmail.com>, ulf.hansson@linaro.org
-Cc: u.kleine-koenig@baylibre.com, chenhuacai@kernel.org,
- david.hunter.linux@gmail.com, skhan@linuxfoundation.org, khalid@kernel.org,
- linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kernel-mentees@lists.linux.dev, kernel test robot <lkp@intel.com>,
- Dan Carpenter <dan.carpenter@linaro.org>
-References: <20251007161948.12442-1-rakuram.e96@gmail.com>
-From: Binbin Zhou <zhoubinbin@loongson.cn>
-In-Reply-To: <20251007161948.12442-1-rakuram.e96@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:qMiowJBx38P9DedoUuTVAA--.63724S2
-X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/1tbiAQEKCGjl-SoR1AAAsd
-X-Coremail-Antispam: 1Uk129KBj93XoW7Ar15uF1ftryxXF4xAryfZrc_yoW5JFy8pa
-	95JFWqka4UtF4xK39rGw47J3W5Xry3tay2gryrX3s3ua4jkF4kWr93uayFqF4UAFWFqr1F
-	qF1UXF1UCFyDX3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU3529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUU9Eb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6F4UJVW0owAaw2AFwI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
-	Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_
-	Jw1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrw
-	CY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8
-	JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14
-	v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY
-	67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2
-	IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_
-	Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8Dl1DUUUUU==
+Content-Transfer-Encoding: 8bit
 
+From: Rong Tao <rongtao@cestc.cn>
 
-On 2025/10/8 00:17, Rakuram Eswaran wrote:
-> Smatch reported:
-> drivers/mmc/host/pxamci.c:709 pxamci_probe() warn: passing zero to 'PTR_ERR'
->
-> Case 1:
-> When dma_request_chan() fails, host->dma_chan_rx is an ERR_PTR(),
-> but it is reset to NULL before using PTR_ERR(), resulting in PTR_ERR(0).
-> This mistakenly returns 0 instead of the real error code.
->
-> Case 2:
-> When devm_clk_get() fails, host->clk is an ERR_PTR() resulting in the similar
-> issue like case 1.
->
-> Store the error code before nullifying the pointers in both the cases.
->
-> Reported-by: kernel test robot <lkp@intel.com>
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/r/202510041841.pRlunIfl-lkp@intel.com/
-> Fixes: 58c40f3faf742c ("mmc: pxamci: Use devm_mmc_alloc_host() helper")
-> Signed-off-by: Rakuram Eswaran <rakuram.e96@gmail.com>
-LGTM.
+bpf_strcasestr() and bpf_strncasestr() functions perform same like
+bpf_strstr() and bpf_strnstr() except ignoring the case of the
+characters.
 
-Reviewed-by: Binbin Zhou <zhoubinbin@loongson.cn>
+Signed-off-by: Rong Tao <rongtao@cestc.cn>
+---
+ kernel/bpf/helpers.c | 98 ++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 77 insertions(+), 21 deletions(-)
 
-> ---
->
-> Build and Analysis:
-> This patch was compiled against the configuration file reported by
-> 0day CI in the above link (config: s390-randconfig-r071-20251004) using
-> `s390x-linux-gnu-gcc (Ubuntu 14.2.0-19ubuntu2) 14.2.0`.
->
-> Static analysis was performed with Smatch to ensure the reported warning
-> no longer reproduces after applying this fix.
->
-> Command used for verification:
->    ARCH=s390 CROSS_COMPILE=s390x-linux-gnu- \
->    ~/project/smatch/smatch_scripts/kchecker ./drivers/mmc/host/pxamci.c
->
->   drivers/mmc/host/pxamci.c | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/mmc/host/pxamci.c b/drivers/mmc/host/pxamci.c
-> index 26d03352af63..4fab693d3b32 100644
-> --- a/drivers/mmc/host/pxamci.c
-> +++ b/drivers/mmc/host/pxamci.c
-> @@ -653,8 +653,9 @@ static int pxamci_probe(struct platform_device *pdev)
->   
->   	host->clk = devm_clk_get(dev, NULL);
->   	if (IS_ERR(host->clk)) {
-> +		ret = PTR_ERR(host->clk);
->   		host->clk = NULL;
-> -		return PTR_ERR(host->clk);
-> +		return ret;
->   	}
->   
->   	host->clkrate = clk_get_rate(host->clk);
-> @@ -705,8 +706,9 @@ static int pxamci_probe(struct platform_device *pdev)
->   
->   	host->dma_chan_rx = dma_request_chan(dev, "rx");
->   	if (IS_ERR(host->dma_chan_rx)) {
-> +		ret = PTR_ERR(host->dma_chan_rx);
->   		host->dma_chan_rx = NULL;
-> -		return dev_err_probe(dev, PTR_ERR(host->dma_chan_rx),
-> +		return dev_err_probe(dev, ret,
->   				     "unable to request rx dma channel\n");
->   	}
->   
-Thanks.
-Binbin
+diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
+index c9fab9a356df..485f65fbd97f 100644
+--- a/kernel/bpf/helpers.c
++++ b/kernel/bpf/helpers.c
+@@ -3675,34 +3675,21 @@ __bpf_kfunc int bpf_strcspn(const char *s__ign, const char *reject__ign)
+ 	return -EFAULT;
+ }
+ 
+-/**
+- * bpf_strnstr - Find the first substring in a length-limited string
+- * @s1__ign: The string to be searched
+- * @s2__ign: The string to search for
+- * @len: the maximum number of characters to search
+- *
+- * Return:
+- * * >=0      - Index of the first character of the first occurrence of @s2__ign
+- *              within the first @len characters of @s1__ign
+- * * %-ENOENT - @s2__ign not found in the first @len characters of @s1__ign
+- * * %-EFAULT - Cannot read one of the strings
+- * * %-E2BIG  - One of the strings is too large
+- * * %-ERANGE - One of the strings is outside of kernel address space
+- */
+-__bpf_kfunc int bpf_strnstr(const char *s1__ign, const char *s2__ign, size_t len)
++static int __bpf_strnstr(const char *s1, const char *s2, size_t len,
++			 bool ignore_case)
+ {
+ 	char c1, c2;
+ 	int i, j;
+ 
+-	if (!copy_from_kernel_nofault_allowed(s1__ign, 1) ||
+-	    !copy_from_kernel_nofault_allowed(s2__ign, 1)) {
++	if (!copy_from_kernel_nofault_allowed(s1, 1) ||
++	    !copy_from_kernel_nofault_allowed(s2, 1)) {
+ 		return -ERANGE;
+ 	}
+ 
+ 	guard(pagefault)();
+ 	for (i = 0; i < XATTR_SIZE_MAX; i++) {
+ 		for (j = 0; i + j <= len && j < XATTR_SIZE_MAX; j++) {
+-			__get_kernel_nofault(&c2, s2__ign + j, char, err_out);
++			__get_kernel_nofault(&c2, s2 + j, char, err_out);
+ 			if (c2 == '\0')
+ 				return i;
+ 			/*
+@@ -3712,7 +3699,13 @@ __bpf_kfunc int bpf_strnstr(const char *s1__ign, const char *s2__ign, size_t len
+ 			 */
+ 			if (i + j == len)
+ 				break;
+-			__get_kernel_nofault(&c1, s1__ign + j, char, err_out);
++			__get_kernel_nofault(&c1, s1 + j, char, err_out);
++
++			if (ignore_case) {
++				c1 = tolower(c1);
++				c2 = tolower(c2);
++			}
++
+ 			if (c1 == '\0')
+ 				return -ENOENT;
+ 			if (c1 != c2)
+@@ -3722,7 +3715,7 @@ __bpf_kfunc int bpf_strnstr(const char *s1__ign, const char *s2__ign, size_t len
+ 			return -E2BIG;
+ 		if (i + j == len)
+ 			return -ENOENT;
+-		s1__ign++;
++		s1++;
+ 	}
+ 	return -E2BIG;
+ err_out:
+@@ -3744,8 +3737,69 @@ __bpf_kfunc int bpf_strnstr(const char *s1__ign, const char *s2__ign, size_t len
+  */
+ __bpf_kfunc int bpf_strstr(const char *s1__ign, const char *s2__ign)
+ {
+-	return bpf_strnstr(s1__ign, s2__ign, XATTR_SIZE_MAX);
++	return __bpf_strnstr(s1__ign, s2__ign, XATTR_SIZE_MAX, false);
++}
++
++/**
++ * bpf_strcasestr - Find the first substring in a string, ignoring the case of
++ *                  the characters
++ * @s1__ign: The string to be searched
++ * @s2__ign: The string to search for
++ *
++ * Return:
++ * * >=0      - Index of the first character of the first occurrence of @s2__ign
++ *              within @s1__ign
++ * * %-ENOENT - @s2__ign is not a substring of @s1__ign
++ * * %-EFAULT - Cannot read one of the strings
++ * * %-E2BIG  - One of the strings is too large
++ * * %-ERANGE - One of the strings is outside of kernel address space
++ */
++__bpf_kfunc int bpf_strcasestr(const char *s1__ign, const char *s2__ign)
++{
++	return __bpf_strnstr(s1__ign, s2__ign, XATTR_SIZE_MAX, true);
+ }
++
++/**
++ * bpf_strnstr - Find the first substring in a length-limited string
++ * @s1__ign: The string to be searched
++ * @s2__ign: The string to search for
++ * @len: the maximum number of characters to search
++ *
++ * Return:
++ * * >=0      - Index of the first character of the first occurrence of @s2__ign
++ *              within the first @len characters of @s1__ign
++ * * %-ENOENT - @s2__ign not found in the first @len characters of @s1__ign
++ * * %-EFAULT - Cannot read one of the strings
++ * * %-E2BIG  - One of the strings is too large
++ * * %-ERANGE - One of the strings is outside of kernel address space
++ */
++__bpf_kfunc int bpf_strnstr(const char *s1__ign, const char *s2__ign,
++			    size_t len)
++{
++	return __bpf_strnstr(s1__ign, s2__ign, len, false);
++}
++
++/**
++ * bpf_strncasestr - Find the first substring in a length-limited string,
++ *                   ignoring the case of the characters
++ * @s1__ign: The string to be searched
++ * @s2__ign: The string to search for
++ * @len: the maximum number of characters to search
++ *
++ * Return:
++ * * >=0      - Index of the first character of the first occurrence of @s2__ign
++ *              within the first @len characters of @s1__ign
++ * * %-ENOENT - @s2__ign not found in the first @len characters of @s1__ign
++ * * %-EFAULT - Cannot read one of the strings
++ * * %-E2BIG  - One of the strings is too large
++ * * %-ERANGE - One of the strings is outside of kernel address space
++ */
++__bpf_kfunc int bpf_strncasestr(const char *s1__ign, const char *s2__ign,
++				size_t len)
++{
++	return __bpf_strnstr(s1__ign, s2__ign, len, true);
++}
++
+ #ifdef CONFIG_KEYS
+ /**
+  * bpf_lookup_user_key - lookup a key by its serial
+@@ -4367,7 +4421,9 @@ BTF_ID_FLAGS(func, bpf_strnlen);
+ BTF_ID_FLAGS(func, bpf_strspn);
+ BTF_ID_FLAGS(func, bpf_strcspn);
+ BTF_ID_FLAGS(func, bpf_strstr);
++BTF_ID_FLAGS(func, bpf_strcasestr);
+ BTF_ID_FLAGS(func, bpf_strnstr);
++BTF_ID_FLAGS(func, bpf_strncasestr);
+ #if defined(CONFIG_BPF_LSM) && defined(CONFIG_CGROUPS)
+ BTF_ID_FLAGS(func, bpf_cgroup_read_xattr, KF_RCU)
+ #endif
+-- 
+2.51.0
+
 
 
