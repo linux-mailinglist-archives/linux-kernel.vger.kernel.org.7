@@ -1,169 +1,237 @@
-Return-Path: <linux-kernel+bounces-846911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05BE1BC9676
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:00:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBAD5BC9697
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:03:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C16B19E6BF0
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:01:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8124E3B6502
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:03:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 475D82E9ED2;
-	Thu,  9 Oct 2025 14:00:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B84551E47A3;
+	Thu,  9 Oct 2025 14:03:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="umwYGJCh"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hx1cpHeP"
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B452E9EDF;
-	Thu,  9 Oct 2025 14:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2859D2E8E08
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 14:03:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760018447; cv=none; b=nGPM9mkEhO8SbZBUiAPqsp6mRaZTDbBDbzWHLvEC0ix546yZ7FNM8a0hpsWyKAHIfMEWYdYSPx3ElVj0qW5qrKiRe/sq44zaTh69jFGZh+9/3XZG/e5cWUndrtTxyGLdZJf/TS8YPxh13B09jBcgEc8/sGY06dqNxksn7U6uxGA=
+	t=1760018584; cv=none; b=pyjwAR2mTaWrDkWZioefbyUrgTYfRXFn5yn72MNzFGbIS0VYVzlYUEpa1xvxoAg6lZ7FPcUTz7pTD0W+ZOF+u9+RIMXj8pdp0fRIDZQP3x1rnWvCmgc/+TuCXeD/pfy7LAfJ3j4EzHfPVaXxlHXJgx+69vrSDsdScifBWNpNyUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760018447; c=relaxed/simple;
-	bh=pIudzvlZY6ugQMvDKUVUNK7SdC5TbTZtRKbzOeLqGxU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A2hWY7HcImoN9rqd63mi3jp8yTtBFz8XSOTaMg5xL7lOFrECd2G9lRMbEZa4W2PnJEVbKJ/4C8Hld46TWGAaCTivUTm8iZKTSed5m4H5uxfgYJRm7SgtDszqTQJbhSoqR2BcJKpDGyHRyzC/zUheknO3oR7IhnPxOlkInwNrsRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=umwYGJCh; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1760018441; x=1760623241; i=markus.elfring@web.de;
-	bh=pIudzvlZY6ugQMvDKUVUNK7SdC5TbTZtRKbzOeLqGxU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=umwYGJChpg2JHC4Of+10QZKUyBn2WrLDfnwgSKutjWUX85S1JDR9IMplwqn2K2zL
-	 n+9wBwyFSsHBLb10sE+KqK1ioqPe+Ra9nmRNdnNr9bokdEcUyEcPwzvNza2u/2Ciq
-	 delqrFKAucUG8/imDQu0vi7I0TPRRSb8b9vMtlG+dTGVaGDnFv+j5Of+2XzXKHSE1
-	 x3ImB1UspjSgsRDiEfZ8HQMtdT5oJ3XuQKUaow4KkuxR+HGIW44RFpjr6rnALNLE7
-	 dVj+pQn0DGSh+KHPb7Iq5x5qTvyI6mXBOjY2e4ZbtWcRyy35MvSZ6qdmGy97NLdBi
-	 4uHP8913oafRS3/RyA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.255]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N01Zk-1uId1r213e-014knV; Thu, 09
- Oct 2025 16:00:41 +0200
-Message-ID: <5c09026e-3176-4dd3-abd8-e5ef3b2bf5c4@web.de>
-Date: Thu, 9 Oct 2025 16:00:40 +0200
+	s=arc-20240116; t=1760018584; c=relaxed/simple;
+	bh=sY/gtgf7NBozOjwc2EeRJ+KgsNPbK5kep4ypL81cuJQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p2Q9QSBh+8rKDzj4BjhwrkHjuDrLa69Iz8yvTwvhSBFvDZuM+WAMbUZamINeZcW+BdN9N1ewq1ZCPrU+/mkf3TExN6w0uJQ6+y7zRq2b25Ss0+EesKCr6KJzJVMGQktAw1zersYOK0QSj3MOlW8Udx1jpbAO4w3yHxCD7DJZCqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hx1cpHeP; arc=none smtp.client-ip=209.85.166.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-937b40137b4so88777039f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 07:03:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760018580; x=1760623380; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lfk2bfyqFX2yPC1pilpdm6kUPU4T4/Dvd4LObp2un+E=;
+        b=hx1cpHeP97IWTfCT66W1ey8BmgdueE/D7jc6vp7ykfiYizvyc/GsfcLOSLM6TXLhgj
+         iWW0DwTWqTMlJQbjl0jgrp7SDTEQGQDXDURN1N6/+i/cZ5sXdwvJJkXzGVXOcfaOI2D7
+         36u8V4bRl1U6piKJ9JqjusCQcJlCOk32W3ITClBZCzYmr1q+2ZscngIlBzpnnLao2Qxr
+         vPwpCbLtuvfHpmE4G8DJOCiWi0vsOCKe8awit8HDZj9PoQVtjeB4SGuW7WoVVN8nJpl8
+         XRJQoC/m7LDM1puM9HBFRMuSMcRaRftNpF60Pmdoui9AVYvyztxWlOEBXpT6MTImiZmc
+         y8OQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760018580; x=1760623380;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lfk2bfyqFX2yPC1pilpdm6kUPU4T4/Dvd4LObp2un+E=;
+        b=hzQ1NlBIfUKjsO9I7PyG9GjlMOAMkB9vamGLZmn2po216zIITgB9IOf9rR8liqrdVi
+         qsNKDkTjG7sANHVbCoCOrTEpecaHQ1xYDtn+xilhUrGYkGC1CxoaH8BwIc0YSares9je
+         fQLsqsqpfCSqaUMqly0Kn9O3CJWp5G6g1V9zt5gVA22IK/cn82bwVWkDflNOKkNj1e7f
+         rWdpwnY7E7QbFwPA2rYWWiFxCq94YvIoQOLdPrE1ZpTB2bNJs2k/7MjmB7aDbMIZfSwM
+         EJXtFM+Vqz3zsXze0/xHvcFQxNVLxLLf7s7RhWcDJppuMU/7LZqCOY5juupnPRcsURWI
+         KDrw==
+X-Forwarded-Encrypted: i=1; AJvYcCVcu7KtsAB97Y10N2cy/rT0s3mzeB9aIuHdk7sYgD2a8XUU7tk4cmDM2R8EnmF6hh8IGH52UhFwqLCSl94=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdtZzM4seBJiaOZ1J/2qT4Ce10MCVkqTcIfteeLgllulnMgFLH
+	On7h1AwZfsij01OcVXrg0iCMJ4+ifw5wt0NoBMEgmeboQpGzxHWhHANOHjj9z2aFo2ORfk1TBCv
+	QTWX/sacTB84TcSSLgE2/OYxOtSs5VXg=
+X-Gm-Gg: ASbGncvVsvQJtb0asYzV62wTcrSzUl+EPbHv/4XPYXQ2yOr45Z1DiDIqrgogH0gEc8d
+	uvSTLs6CK8n9hGHvRfx4yLbmAYASfWN9miXBfWFy06whY2ROOCqMdDzZrCU0nP/Zg90HkAtrJDD
+	r8UUHTtrnWFJ+kzjAI7pH/zmOYHO6xVNrbVCyI0aUtsDVoxgQP0ekEiNQiLWnyMi8IfSH7E5gyD
+	I35S3LAyhi15n5wuBoE2ShPmIk3rik=
+X-Google-Smtp-Source: AGHT+IGFUh+yxdaAwOY01QTdDPRzmkqga8JwC7gVQ8hdE1VZLzwP/yHjfQX0w+P+lGz62g/ohriduN1YX1Cx7jhB7TA=
+X-Received: by 2002:a05:6e02:4405:20b0:42f:9888:48f1 with SMTP id
+ e9e14a558f8ab-42f98884980mr2655225ab.1.1760018579842; Thu, 09 Oct 2025
+ 07:02:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: smb: client: Simplify a return statement in
- get_smb2_acl_by_path()
-To: Steve French <smfrench@gmail.com>, linux-cifs@vger.kernel.org,
- Bharath SM <bharathsm@microsoft.com>, Paulo Alcantara <pc@manguebit.org>,
- Ronnie Sahlberg <ronniesahlberg@gmail.com>,
- Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>
-Cc: Steve French <sfrench@samba.org>, LKML <linux-kernel@vger.kernel.org>
-References: <5b95806a-e72e-4d05-9db8-104be645e6e5@web.de>
- <CAH2r5mtpoLscs9sodXcRMO3-dqMDBSTR+ncExdqy4dQR=4uE8A@mail.gmail.com>
- <bc8f02de-0cd5-475d-bb19-e44e202f7a58@web.de>
- <CAH2r5mtY8--9ccnm5aYfOYJ=kEBr7=y-Z_eROKDp7A6DGnxwcA@mail.gmail.com>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <CAH2r5mtY8--9ccnm5aYfOYJ=kEBr7=y-Z_eROKDp7A6DGnxwcA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:7Y105H4OyhJPcbtz22LwHlmMFPhh6M2CLnE5t1G8xOer/iEsUpp
- JhZ5/mae1YMpeYH/PAHeEXE1bIpp3wOp8N+bjIlUDgZ9fNUfGQzCIkqHEWhpgM3T3VLbrRo
- rjzJbPFO1JhRNMlIKuEdoZ2bYzo7H75jIXJCHjCrKDuElw8P27Cg94Q1QscoDzwTEIdsAxj
- MIUZRRYTUADV8gHq6vYhw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:/5IVGVxAtnc=;dbHGZSEEhp5IxzPXS6DS+Fw3N16
- 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
- ttj/zQMcAbmgWw==
+References: <20251008165659.4141318-1-aleksander.lobakin@intel.com>
+In-Reply-To: <20251008165659.4141318-1-aleksander.lobakin@intel.com>
+From: Jason Xing <kerneljasonxing@gmail.com>
+Date: Thu, 9 Oct 2025 22:02:23 +0800
+X-Gm-Features: AS18NWAnZSobSr21rzMet2NXYBsUZ-tOijH1hdSEoiMgzrgWiOgQX5AxwPD-zdc
+Message-ID: <CAL+tcoAWf4sNkQzCBTE8S7VgH12NPyqwiYDiig+jv0KGYAhFTA@mail.gmail.com>
+Subject: Re: [PATCH bpf] xsk: harden userspace-supplied &xdp_desc validation
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: Magnus Karlsson <magnus.karlsson@intel.com>, 
+	Maciej Fijalkowski <maciej.fijalkowski@intel.com>, Stanislav Fomichev <sdf@fomichev.me>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Kees Cook <kees@kernel.org>, nxne.cnse.osdt.itp.upstreaming@intel.com, 
+	bpf@vger.kernel.org, netdev@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> Three of the four you just sent today, grow the code slightly,
+On Thu, Oct 9, 2025 at 12:59=E2=80=AFAM Alexander Lobakin
+<aleksander.lobakin@intel.com> wrote:
+>
+> Turned out certain clearly invalid values passed in &xdp_desc from
+> userspace can pass xp_{,un}aligned_validate_desc() and then lead
+> to UBs or just invalid frames to be queued for xmit.
+>
+> desc->len close to ``U32_MAX`` with a non-zero pool->tx_metadata_len
+> can cause positive integer overflow and wraparound, the same way low
+> enough desc->addr with a non-zero pool->tx_metadata_len can cause
+> negative integer overflow. Both scenarios can then pass the
+> validation successfully.
+> This doesn't happen with valid XSk applications, but can be used
+> to perform attacks.
+>
+> Always promote desc->len to ``u64`` first to exclude positive
+> overflows of it. Use explicit check_{add,sub}_overflow() when
+> validating desc->addr (which is ``u64`` already).
+>
+> bloat-o-meter reports a little growth of the code size:
+>
+> add/remove: 0/0 grow/shrink: 2/1 up/down: 60/-16 (44)
+> Function                                     old     new   delta
+> xskq_cons_peek_desc                          299     330     +31
+> xsk_tx_peek_release_desc_batch               973    1002     +29
+> xsk_generic_xmit                            3148    3132     -16
+>
+> but hopefully this doesn't hurt the performance much.
 
-How much will this observation matter?
+I don't see an evident point that might affect the performance. Since
+you said that, I tested by running './xdpsock -i eth1 -t -S -s 64' and
+didn't spot any degradation.
 
+>
+> Fixes: 341ac980eab9 ("xsk: Support tx_metadata_len")
+> Cc: stable@vger.kernel.org # 6.8+
+> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
 
-> and don't fix anything,
+Thanks for the fix!
 
-Do these change suggestions indicate possible improvements according to specific design aspects?
+Reviewed-by: Jason Xing <kerneljasonxing@gmail.com>
 
+> ---
+>  net/xdp/xsk_queue.h | 45 +++++++++++++++++++++++++++++++++++----------
+>  1 file changed, 35 insertions(+), 10 deletions(-)
+>
+> diff --git a/net/xdp/xsk_queue.h b/net/xdp/xsk_queue.h
+> index f16f390370dc..1eb8d9f8b104 100644
+> --- a/net/xdp/xsk_queue.h
+> +++ b/net/xdp/xsk_queue.h
+> @@ -143,14 +143,24 @@ static inline bool xp_unused_options_set(u32 option=
+s)
+>  static inline bool xp_aligned_validate_desc(struct xsk_buff_pool *pool,
+>                                             struct xdp_desc *desc)
+>  {
+> -       u64 addr =3D desc->addr - pool->tx_metadata_len;
+> -       u64 len =3D desc->len + pool->tx_metadata_len;
+> -       u64 offset =3D addr & (pool->chunk_size - 1);
+> +       u64 len =3D desc->len;
+> +       u64 addr, offset;
+>
+> -       if (!desc->len)
+> +       if (!len)
+>                 return false;
+>
+> -       if (offset + len > pool->chunk_size)
+> +       /* Can overflow if desc->addr < pool->tx_metadata_len */
+> +       if (check_sub_overflow(desc->addr, pool->tx_metadata_len, &addr))
+> +               return false;
+> +
+> +       offset =3D addr & (pool->chunk_size - 1);
+> +
+> +       /*
+> +        * Can't overflow: @offset is guaranteed to be < ``U32_MAX``
+> +        * (pool->chunk_size is ``u32``), @len is guaranteed
+> +        * to be <=3D ``U32_MAX``.
+> +        */
+> +       if (offset + len + pool->tx_metadata_len > pool->chunk_size)
+>                 return false;
+>
+>         if (addr >=3D pool->addrs_cnt)
+> @@ -158,27 +168,42 @@ static inline bool xp_aligned_validate_desc(struct =
+xsk_buff_pool *pool,
+>
+>         if (xp_unused_options_set(desc->options))
+>                 return false;
+> +
 
-> the remaining one could be considered
+nit?
 
-I am curious how the patch reviews will be evolving further.
-
-Regards,
-Markus
+>         return true;
+>  }
+>
+>  static inline bool xp_unaligned_validate_desc(struct xsk_buff_pool *pool=
+,
+>                                               struct xdp_desc *desc)
+>  {
+> -       u64 addr =3D xp_unaligned_add_offset_to_addr(desc->addr) - pool->=
+tx_metadata_len;
+> -       u64 len =3D desc->len + pool->tx_metadata_len;
+> +       u64 len =3D desc->len;
+> +       u64 addr, end;
+>
+> -       if (!desc->len)
+> +       if (!len)
+>                 return false;
+>
+> +       /* Can't overflow: @len is guaranteed to be <=3D ``U32_MAX`` */
+> +       len +=3D pool->tx_metadata_len;
+>         if (len > pool->chunk_size)
+>                 return false;
+>
+> -       if (addr >=3D pool->addrs_cnt || addr + len > pool->addrs_cnt ||
+> -           xp_desc_crosses_non_contig_pg(pool, addr, len))
+> +       /* Can overflow if desc->addr is close to 0 */
+> +       if (check_sub_overflow(xp_unaligned_add_offset_to_addr(desc->addr=
+),
+> +                              pool->tx_metadata_len, &addr))
+> +               return false;
+> +
+> +       if (addr >=3D pool->addrs_cnt)
+> +               return false;
+> +
+> +       /* Can overflow if pool->addrs_cnt is high enough */
+> +       if (check_add_overflow(addr, len, &end) || end > pool->addrs_cnt)
+> +               return false;
+> +
+> +       if (xp_desc_crosses_non_contig_pg(pool, addr, len))
+>                 return false;
+>
+>         if (xp_unused_options_set(desc->options))
+>                 return false;
+> +
+>         return true;
+>  }
+>
+> --
+> 2.51.0
+>
+>
 
