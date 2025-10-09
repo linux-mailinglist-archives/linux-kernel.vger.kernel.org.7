@@ -1,87 +1,44 @@
-Return-Path: <linux-kernel+bounces-846360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7554BC7AFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:23:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F19F2BC7B07
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:23:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A5EF14F46B4
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:22:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 086D9188BC64
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:24:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169BD2D2381;
-	Thu,  9 Oct 2025 07:22:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fcjEUCxZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B87B42D0C7F;
+	Thu,  9 Oct 2025 07:23:43 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195402D0C75
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 07:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A937C298CA4;
+	Thu,  9 Oct 2025 07:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759994547; cv=none; b=ipOXiSw88FeupmcUhGxKwNIoP3P+/TzQmBnnGSAB1e/JcPyKNsRBJPoOTXffsyiZSaKA9H0/5u/yi5U8+Qoru2InmK71bEy9T2oOakTzJvywJtenObjSHLOExdWf/5xeq5Pf/lLTmHi0YGyUVj+IBot3keIeAkAyi7WheYY9RFQ=
+	t=1759994623; cv=none; b=Y7Me7tpxGnv0OzuZtHywTM+eCTUnBI77Y+XSTUkHJdoTlHMHLWu3mhKwtfhqaHPpw5GBmX3IavtmoSxvkPo8bWBCs3GQGXfkfyUJhVeFwNformlEe01x93zzTLg5d/+UKHYGIWWTZ35vciJgaf+j1PXFfCv6ro6yJ5F7VSGFpmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759994547; c=relaxed/simple;
-	bh=NoSsNhFoqKTD2GND/uojUC1d3tf5roBQEmoiq+BTOBY=;
+	s=arc-20240116; t=1759994623; c=relaxed/simple;
+	bh=LINDnW4s9/f8fq1vV5tLl5zmw9/+Ay+oZDsgSpWg0Rw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dtwU4WbASZG1DxFUyPFTyIKrdeK3LsoaRrJJWQdnb5ydv9v7daEp0f2R7ZmAck7AA+jGsEYnhFhmcklg5TqSiXLSwZaVdX44Y5rxJ1D7LmQPENP3kXaXj1DPKMaZBzyr/9gzCjmq4x/6JYVRuc7hDseG0ketC3VIl7gMxq8+6kM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fcjEUCxZ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759994543;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=NR0GPPrQth8s1EL9fLV4+qP3WUCAWdzIUfVSZ9j+y5w=;
-	b=fcjEUCxZ7cy2E9VIZbQC4f/PlIPi5iBDfiRqsyCRNMduZp6FMvcxmSE7I8kyDBJgj6yLHt
-	QCsB9mEqcTz1FC5sxQ7mGW9xOiLvBYo0Jt/+0qXTt1/+MRU4sqiThLy5sVFtTCS7NN2BaL
-	gzcghKqCz7QmkqjXQVqNi3f6EfGzEeo=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-368-1S0r_oXSPGaW84TTzjMaLA-1; Thu, 09 Oct 2025 03:22:22 -0400
-X-MC-Unique: 1S0r_oXSPGaW84TTzjMaLA-1
-X-Mimecast-MFC-AGG-ID: 1S0r_oXSPGaW84TTzjMaLA_1759994541
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-4256fae4b46so443775f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 00:22:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759994541; x=1760599341;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NR0GPPrQth8s1EL9fLV4+qP3WUCAWdzIUfVSZ9j+y5w=;
-        b=nXGtuaMdt/Gzv2qBMilGRwCOUZtgmWSJRmKVUPC3Ei0zoZTUN434pOwCKfq7vxsGhY
-         LhDOCJMuhkC3+vOQKQB7xL37hPEx4SIfcRX39fQfk2cRx8JPmRaBrrTIifnUCs2daB87
-         GpNxalmZJ/0Y7+DoRU0gqHb5hWK3Rcb2Lt6R2eLp3moIrWCw7RNk7mimmkNgc51xqwyo
-         moaznZuPmlK8hjBjAaWBG7pILuh/44QhfHH3K1rJNpgZ5yAXBT+JZ89bApyE8uqyPpjt
-         HboPHnKZD3i+q+GP8AMq2lDG/lsM884K6OJmzGj+SJVitFW4Raera6RRO1SGyr6GgZ7C
-         RSmg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEZiZRnjyBPLq88N9rIdcdgCVCeCHK7eRdSUHT3d7QrkcHoc5VATf5RLsaLXt0d3VRSlqLI1aE+Jq+9cg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKFZG0a8IH4vONOcZeHpefIjAu4lwFxm60i1Psg08BsKERP/4f
-	EK8GML5wx3iOXiFvWyEotk2b2eCURMvjqJ2hVCqGNnnBKpXj4xfnBbclK9wptX5puXyRCn0pWmu
-	6Mg2j/kW7+lz7RXXGXvhjgyoa2LqilT/ycCOm5FEs62YlKvej6weSSCHbbFn58OlKng==
-X-Gm-Gg: ASbGnctHFEdrI0QIkHgMLg+yQQGYh3I7NFtEXb1yN1C1H3c7OfCqmaK0ooIxRsLGUWU
-	Ii+UPV/iZ2zokI76jylqsk91Z7xKsEebRB7Ro/Av0Ljjs9MDSKsm9hxYycRukL3xMqGDCMmdGe3
-	rddgLA9OstBMvlCaMm2L5JLizaSFMQoeBBK7E85n3e0yaIeC/dp6a86qq0atJLpl/hjkqWdrqD7
-	m9UItAuESP2YJIlSw9iTTAFrVT9lviepDG/sMu0+ivp9w4/9C5PPCnX82CjRxQaqpF4zLxsyzA0
-	CnG+8FzLdHLy/OyQx5tPNUE9EdPqiJMRzX6X+uCcPCp2UZ+zHiEcK+ciuroiyJvqqZ1t1y2pvTC
-	5DapDcaCL
-X-Received: by 2002:a5d:5f84:0:b0:3ee:1578:3181 with SMTP id ffacd0b85a97d-4266e8de444mr4275613f8f.49.1759994540822;
-        Thu, 09 Oct 2025 00:22:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE3pZJrfQfix+9KKt4WdXWXcZ6zm7mHa+Vng4C8E+STUwzM8VHEo7EV1uD0vgxW+NxE9Pp9bw==
-X-Received: by 2002:a5d:5f84:0:b0:3ee:1578:3181 with SMTP id ffacd0b85a97d-4266e8de444mr4275568f8f.49.1759994540323;
-        Thu, 09 Oct 2025 00:22:20 -0700 (PDT)
-Received: from [192.168.3.141] (tmo-083-189.customers.d1-online.com. [80.187.83.189])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fa9d62890sm68237045e9.14.2025.10.09.00.22.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Oct 2025 00:22:19 -0700 (PDT)
-Message-ID: <d3fc12d4-0b59-4b1f-bb5c-13189a01e13d@redhat.com>
-Date: Thu, 9 Oct 2025 09:22:14 +0200
+	 In-Reply-To:Content-Type; b=dYbqs4J2Gid9GfspgmMsjQpCBq4s4mx+r8agVCSb1QM8Ev63Fy/u+6mCU3iGCR5UE6Siesr0PQLNtvwanROXdQpCnozOw/9MOqVNtvrKXBbjFXyhiHOoUKNZKWZdBIu8A/kU41znsdBoPOUZAgLlk3zrUIabGNFQkVrM3G8c10E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cj1Yk0QrPzYQv2T;
+	Thu,  9 Oct 2025 15:23:06 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 547521A0F1A;
+	Thu,  9 Oct 2025 15:23:38 +0800 (CST)
+Received: from [10.174.178.152] (unknown [10.174.178.152])
+	by APP4 (Coremail) with SMTP id gCh0CgDX6GD5YudoO_s4CQ--.16977S3;
+	Thu, 09 Oct 2025 15:23:38 +0800 (CST)
+Message-ID: <eec9bf55-3e16-446e-8f80-2556a7ec4172@huaweicloud.com>
+Date: Thu, 9 Oct 2025 15:23:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,151 +46,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: (bisected) [PATCH v2 08/37] mm/hugetlb: check for unreasonable
- folio sizes when registering hstate
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
- linux-kernel@vger.kernel.org
-Cc: Zi Yan <ziy@nvidia.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Alexander Potapenko <glider@google.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
- Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
- dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- iommu@lists.linux.dev, io-uring@vger.kernel.org,
- Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
- Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
- kasan-dev@googlegroups.com, kvm@vger.kernel.org,
- Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
- linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
- linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-scsi@vger.kernel.org, Marco Elver <elver@google.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Muchun Song <muchun.song@linux.dev>,
- netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
- Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
- virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
- wireguard@lists.zx2c4.com, x86@kernel.org,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-References: <20250901150359.867252-1-david@redhat.com>
- <20250901150359.867252-9-david@redhat.com>
- <3e043453-3f27-48ad-b987-cc39f523060a@csgroup.eu>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v2 12/13] ext4: add large folios support for moving
+ extents
+To: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com,
+ yangerkun@huawei.com
+References: <20250925092610.1936929-1-yi.zhang@huaweicloud.com>
+ <20250925092610.1936929-13-yi.zhang@huaweicloud.com>
+ <axefpw7kkvnto72cde4cmn7ns6elbh6xrmfqh523dgjfveej5w@nmh5nsos4xoz>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <3e043453-3f27-48ad-b987-cc39f523060a@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <axefpw7kkvnto72cde4cmn7ns6elbh6xrmfqh523dgjfveej5w@nmh5nsos4xoz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgDX6GD5YudoO_s4CQ--.16977S3
+X-Coremail-Antispam: 1UD129KBjvJXoWrtw4DZF18Zr4fGr18CFWrGrg_yoW8Jr48pF
+	WIgan7ArWkG347u3yUKF9FvryUGFWDWr18GrW3W3ya9FyUXr9agrsrCa1jvry5XryrAFy0
+	vF4S9rnrGwn0y3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUb
+	mii3UUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On 09.10.25 09:14, Christophe Leroy wrote:
-> Hi David,
+On 10/8/2025 8:53 PM, Jan Kara wrote:
+> On Thu 25-09-25 17:26:08, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> Pass the moving extent length into mext_folio_double_lock() so that it
+>> can acquire a higher-order folio if the length exceeds PAGE_SIZE. This
+>> can speed up extent moving when the extent is larger than one page.
+>> Additionally, remove the unnecessary comments from
+>> mext_folio_double_lock().
+>>
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 > 
-> Le 01/09/2025 à 17:03, David Hildenbrand a écrit :
->> Let's check that no hstate that corresponds to an unreasonable folio size
->> is registered by an architecture. If we were to succeed registering, we
->> could later try allocating an unsupported gigantic folio size.
->>
->> Further, let's add a BUILD_BUG_ON() for checking that HUGETLB_PAGE_ORDER
->> is sane at build time. As HUGETLB_PAGE_ORDER is dynamic on powerpc, we have
->> to use a BUILD_BUG_ON_INVALID() to make it compile.
->>
->> No existing kernel configuration should be able to trigger this check:
->> either SPARSEMEM without SPARSEMEM_VMEMMAP cannot be configured or
->> gigantic folios will not exceed a memory section (the case on sparse).
->>
->> Reviewed-by: Zi Yan <ziy@nvidia.com>
->> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->> Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
+> One nit below, otherwise feel free to add:
 > 
-> I get following warning on powerpc with linus tree, bisected to commit
-> 7b4f21f5e038 ("mm/hugetlb: check for unreasonable folio sizes when
-> registering hstate")
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> 
+>> @@ -214,7 +206,8 @@ static int mext_move_begin(struct mext_data *mext, struct folio *folio[2],
+>>  	orig_pos = ((loff_t)mext->orig_map.m_lblk) << blkbits;
+>>  	donor_pos = ((loff_t)mext->donor_lblk) << blkbits;
+>>  	ret = mext_folio_double_lock(orig_inode, donor_inode,
+>> -			orig_pos >> PAGE_SHIFT, donor_pos >> PAGE_SHIFT, folio);
+>> +			orig_pos >> PAGE_SHIFT, donor_pos >> PAGE_SHIFT,
+>> +			mext->orig_map.m_len << blkbits, folio);
+> 			^^^ This is just cosmetical but we should cast to
+>   size_t before the shift...
+> 
+> 								Honza
 
-Do you have the kernel config around? Is it 32bit?
+Ha, right! I missed this, thank you for pointing it out, will fix in
+next iteration.
 
-That would be helpful.
-
-[...]
-
->> ---
->>    mm/hugetlb.c | 2 ++
->>    1 file changed, 2 insertions(+)
->>
->> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
->> index 1e777cc51ad04..d3542e92a712e 100644
->> --- a/mm/hugetlb.c
->> +++ b/mm/hugetlb.c
->> @@ -4657,6 +4657,7 @@ static int __init hugetlb_init(void)
->>    
->>    	BUILD_BUG_ON(sizeof_field(struct page, private) * BITS_PER_BYTE <
->>    			__NR_HPAGEFLAGS);
->> +	BUILD_BUG_ON_INVALID(HUGETLB_PAGE_ORDER > MAX_FOLIO_ORDER);
->>    
->>    	if (!hugepages_supported()) {
->>    		if (hugetlb_max_hstate || default_hstate_max_huge_pages)
->> @@ -4740,6 +4741,7 @@ void __init hugetlb_add_hstate(unsigned int order)
->>    	}
->>    	BUG_ON(hugetlb_max_hstate >= HUGE_MAX_HSTATE);
->>    	BUG_ON(order < order_base_2(__NR_USED_SUBPAGE));
->> +	WARN_ON(order > MAX_FOLIO_ORDER);
->>    	h = &hstates[hugetlb_max_hstate++];
->>    	__mutex_init(&h->resize_lock, "resize mutex", &h->resize_key);
->>    	h->order = order;
-
-We end up registering hugetlb folios that are bigger than 
-MAX_FOLIO_ORDER. So we have to figure out how a config can trigger that 
-(and if we have to support that).
-
--- 
-Cheers
-
-David / dhildenb
+Best Regards,
+Yi.
 
 
