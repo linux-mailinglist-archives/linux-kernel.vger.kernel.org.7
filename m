@@ -1,281 +1,380 @@
-Return-Path: <linux-kernel+bounces-846270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1138BC7702
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 07:35:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 644DEBC7714
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 07:35:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 43FFE4F1968
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 05:35:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DF3844F2253
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 05:35:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64CBB2609D0;
-	Thu,  9 Oct 2025 05:35:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA6D261B98;
+	Thu,  9 Oct 2025 05:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TsQ0CByb"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cpCU7CrJ"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AE654279;
-	Thu,  9 Oct 2025 05:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759988111; cv=fail; b=mEeAsZYF5yVRZS+wMk4UkxZjodkjOI1I8Brf/eapppQmVpA2HE2m6QCIOyA02hrvkzUH+pK4aqLLrmOXKgmlz5HMAiI8RKRw5Tvk6d6WUioaavE9BSF6G+8b0JUuYXNufQ5jijZgdPaBwQ4PvsARkBYA96O9pgotlyb/q30ZWSw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759988111; c=relaxed/simple;
-	bh=rtq7gJ+5KmlcAc/bTSdERF5POcFfMVsNdQHDL95pLqs=;
-	h=Message-ID:Date:Subject:To:References:CC:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=c/j1YEB8KrgDYWPoFYXit/HMZU7vbHl+2p3xrz1CNc0OE7ii/vvHMI+aUSYmtoLzR/IrvOQEZslFWdei+6JwH21zETFqrlbYdPw0gYD+m8Wysn5PRoP3U11M2sAD4YMkgloRgK7BOIlcK1qFmd4CES0ALxu4itvOBet4L8Pucro=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TsQ0CByb; arc=fail smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759988110; x=1791524110;
-  h=message-id:date:subject:to:references:cc:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=rtq7gJ+5KmlcAc/bTSdERF5POcFfMVsNdQHDL95pLqs=;
-  b=TsQ0CBybB1TqANfGAKmcGliPOHLVDRHCvSzaF84lbYdlCYYerXW/EHPF
-   40ndf+PIZWz6IE7UtkK4qz1rtcbs78Y2fgyCCxnMGyi/p3GaJnDL3iJ0U
-   g4zXPfFOvnHp3TEoQMH75SNewC0ipxiItNT0LSH+wReDMfFToskoGTm+l
-   7dpGaIwaZi/0SfXp8U14AXYDTHPbnXzofctPbhGvHmY3Z4BrU1s8mDw0P
-   OpRfzsPRY+475GnWUnaGlnZVyECPwKztMrNfYw8dlobNbF+vLWGbBon8p
-   Im3OjbQq28EmDAWJ340vOaWne1eAPCKMcHGvw36pOYry6tjGgwD/Err2w
-   Q==;
-X-CSE-ConnectionGUID: Q5BEpmpOQO2aBNqf8hRerg==
-X-CSE-MsgGUID: 3kUpX/L0Smu/bdLEO462uA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11576"; a="61398268"
-X-IronPort-AV: E=Sophos;i="6.19,215,1754982000"; 
-   d="scan'208";a="61398268"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2025 22:35:09 -0700
-X-CSE-ConnectionGUID: 0Z22hnkpStKKWSoGQ88SkA==
-X-CSE-MsgGUID: iIf/AZ3UQXCieQzDAkJrGA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,215,1754982000"; 
-   d="scan'208";a="179733748"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2025 22:35:09 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Wed, 8 Oct 2025 22:35:07 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Wed, 8 Oct 2025 22:35:07 -0700
-Received: from MW6PR02CU001.outbound.protection.outlook.com (52.101.48.39) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Wed, 8 Oct 2025 22:35:07 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qez8Vaj4QbJfqiDgq8qlLuAJ9IimS6sWleHm2pIGi6dogXLw0NfkmYvXU2B9ad85QBa7Qx49u17z70+1prXx5B1uIB0twpV390mEYG/ZJvQV0tXv5u6tQZc/ddd6UY64DieRBH/VISP85xmd0b16SwvlA28rVzCtSx6lVrBLoHDCEZC9wvX3toHlJ7/NQ7yXMXNJxfQE7LYtOxNmQzELbNUMhfLUWsIXN3CT29/GgZjMTRF+rB4yeYJhUy5hDkCyJPK6cAPqF2QrO6aLxpnw1bifcHJYu20k4rbRPx4id59CIospk6Uyke8GQyhQtJ1LfB1aY98BKhCSxxsWQJImYA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VeSAq3BqQKKnGCaoFTH4JMC9v59bNlJSOn0+wLJPEqM=;
- b=SyxfmoxQ3hV2npLyFcKSl02ua3yr1sh6p9+EId+eYxtWtdHf/Uf5N8O/UpKjTJnXXVwfAlS6EdRogSNrweo23oQwM0NKq8Lw8r7H65cRYzJGYSLOXfY818xMhBrFG/J7HrkqxPm3CaeNpt4X67YZHA+lZFIw21It/TqQHHCf6kgMiS6tCVfbHsySama/r+xWhSgRJbl2QC2oMhMCscV+4HDj/WHPGDeDndagcmXF2iW/WvWaNzlUReAlbJucx8eFF5KpxtLBJFzc5DduE8EnEu8lnBjJ1udVOmlgZAHRi99xpDQeB02MHCoc98gHBhZa+nClqMwrajY47WFIYLy7fg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MW4PR11MB8289.namprd11.prod.outlook.com (2603:10b6:303:1e8::9)
- by PH3PPF801A91A7D.namprd11.prod.outlook.com (2603:10b6:518:1::d34) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.16; Thu, 9 Oct
- 2025 05:35:05 +0000
-Received: from MW4PR11MB8289.namprd11.prod.outlook.com
- ([fe80::d626:a4f8:c029:5022]) by MW4PR11MB8289.namprd11.prod.outlook.com
- ([fe80::d626:a4f8:c029:5022%6]) with mapi id 15.20.9203.009; Thu, 9 Oct 2025
- 05:35:05 +0000
-Message-ID: <ef9b8d69-76b4-4efc-8a89-47f58423b5b1@intel.com>
-Date: Thu, 9 Oct 2025 13:34:54 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] perf tools c2c: Add annotation support to perf c2c
- report
-To: Ravi Bangoria <ravi.bangoria@amd.com>
-References: <aNo-U0KquRbcJam9@google.com>
- <20250930123900.1445017-1-tianyou.li@intel.com> <aN9ZiPYyYtr332h_@google.com>
- <2f981591-4159-411c-b530-e884262d1a80@amd.com>
-Content-Language: en-US
-CC: Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, "Ian
- Rogers" <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, "Kan
- Liang" <kan.liang@linux.intel.com>, <wangyang.guo@intel.com>,
-	<pan.deng@intel.com>, <zhiguo.zhou@intel.com>, <jiebin.sun@intel.com>,
-	<thomas.falcon@intel.com>, <dapeng1.mi@intel.com>,
-	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From: "Li, Tianyou" <tianyou.li@intel.com>
-In-Reply-To: <2f981591-4159-411c-b530-e884262d1a80@amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: KL1P15301CA0028.APCP153.PROD.OUTLOOK.COM
- (2603:1096:820:6::16) To MW4PR11MB8289.namprd11.prod.outlook.com
- (2603:10b6:303:1e8::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09BC154279
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 05:35:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759988138; cv=none; b=rLIbEI6iOr3WLvEirA9w0zoG07I7isbLCRx3sVVTiDmiZwwNklaMUHknb9XbLVtYdHnknrPGqflNTZbY9zxaE4nvDcgyMcOyatieWs1J6PnRd1x0RlcyjSCwDQwtwVEaP+8inxBS1LHCcw9MhWIzJU9/byciz0CxZf4vU5FlOxo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759988138; c=relaxed/simple;
+	bh=BTgTHwCRBA2rpvydRjKgExKMcfvUeqSUe1HHihN2Z4g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T5YsteC4Ibmt0Uz3ZzndqmnGDyyIB14QLAY/InlrfaH/4UhB/rjZqF82sPRcCBeZdw0J0s45gPruPuS6PYh5tZAMCEhSncX1cFZt73qn1sMPAdk1sKKwZP4eB1UZgujTInGPdwGbhxFc77enAsPTWLzHBNpvogqinkqz+68yJH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cpCU7CrJ; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-421851bcb25so251066f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 22:35:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759988134; x=1760592934; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wojdy8oISaReFb3V/aujCr+dYfQppmzTEbdq6Sq+uyc=;
+        b=cpCU7CrJ7ZCcqy9vu7RSEA/EpVmHnNGwO6NIeZCA8ztS+5lbdoH4JA7bFKb+0oApst
+         ZCtXvd5fJSDdLB6SEfhvxzC/NbKNyEfUNCJoJ2Iz4C/xmF9fvTfZcZvZ5kkFdZ7Y240k
+         5TNrE4EmjSTu+C4FuqTnM1vOeb/bzLjORBXK1gaAlYg438cYaxwcNGRCoTo3hl+YWeEn
+         zssYQh7Lf3mfbVwx9ydOrWwqtN+waicwF1cPc5R25akkudcHxIutk1d9uBVyeAzV/Ktc
+         2H9sYaeK05mRMg00zrqm86840MjZRMarvk5q8XSyrHfsLN8ZxODio1RGzPGEbvCCfyOz
+         u8eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759988134; x=1760592934;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wojdy8oISaReFb3V/aujCr+dYfQppmzTEbdq6Sq+uyc=;
+        b=dE/B8SV+ZLcvSH3RZ4TAsSrzVj8RCb2XkAdOqTY8ELqVkp1XGXk2JP7DQJF3a/n1OG
+         TR5rKvQMPVDPRJ/0aV1Tty8OX/+aCx9Xyi7Dm63UOY5fpthk3J0ZGhWry4FR43CU2Dcy
+         etWwZPERf1Ao8TWFeF2+eXflBWbqXY4reNWPFClkRAjLwyPaBURvrY1SC89TB41rb2Fa
+         3RlPCo8ziPPUz3arMHV3Tzra/ZEoyThHrjVC7pD1Rbemwpa0KL3ZoAxcQBlJbDQmrFbz
+         BXQ9NcUzMfgy5kyAtz4SFTpo+U1ojqxDCCL0ZSwLh8vDUWqzEHhd+d8EVKiBu2sDYAYC
+         Vgrw==
+X-Forwarded-Encrypted: i=1; AJvYcCUPhKQKrnhh6wAsijumK7SnhVoJmKO1npkU3r1QDf5ag+ewMtxfQujFAMiw4WJzzwNESAem6rz/kYGJ2rs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybxrPmk/GHO0ClUqG6LRy80WiWmM0A7CgPrRW7AUe/tCawmCa6
+	k1iILMHC2dzvBYDci1O1UEdrJaQ0LwtoyGqdgPQWtecwv89ej2dyyQhUUGjxliOKPIRL3zQDvQT
+	IAkYaXWF/00hqT3/AUKt4h2MV3s6SSVM=
+X-Gm-Gg: ASbGncuS1LoNbo0rXXQobcpe3iGEuvOx8oqvA8liB8w3Jup7q7WuuU2vg0PEXCtkWf7
+	d6B9CTq7FiBHBtHgUfiF84CXqr0gXPAp6O4KMtyvQXkUJ2fEkE1yfkIGrbspTlOmqcypkZJLSPW
+	GNXXqLt552dQi+ED2WxRdy5dY0SZVRRdisz8y5bnTBaRsrdGQExO/OK3xmJNt76Oir2iNv2roXg
+	vZO6azxzPQgKXi+bde/TCHV35PMQ38DBq1LDdK80FQ=
+X-Google-Smtp-Source: AGHT+IGSKa0WWY8sQb7NirdhuUY9zlBVWAF8olfr4D2aOoKgmjKIIKXTBxs4oAP40QHdR3v89s2ItSY5dd09ZKpNd5w=
+X-Received: by 2002:a05:6000:186c:b0:3ed:e1d8:bd68 with SMTP id
+ ffacd0b85a97d-42666ac6107mr3102943f8f.7.1759988134193; Wed, 08 Oct 2025
+ 22:35:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR11MB8289:EE_|PH3PPF801A91A7D:EE_
-X-MS-Office365-Filtering-Correlation-Id: b69d186f-af87-4ccd-1879-08de06f59944
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?Mjg3bWJ0SmdEc3JIZ2daS3ZaQi9NQ1QrU29rTytrNW5WWlVvRUhVMnd1MzlL?=
- =?utf-8?B?T1hVU2NUdTJuOGVFQTBxMjZjY05ZRWZQWEZEM1psZGJmNkswZ2ZQS3JzTTBp?=
- =?utf-8?B?NmdhYkdVWm1kNzJQWjFLRlZXbUZPQklvOThyRkxQZVhFaThYTExVSXYxbzVK?=
- =?utf-8?B?VkdabWFJSDdiR0lLampuU3k2d0pZcERoaytTRGdFaXJ6SDc0dkdJTW5DWEF0?=
- =?utf-8?B?TU5vZ3pZYkg3aEUybmpDcmE2SmJ3MEZ1T0ZzSGlId1R1akpoTnVMN3BiL0ZQ?=
- =?utf-8?B?djNFRGFMOWNFelBSalV0czlZZ0tqdi9rSmhPd2M5QnA1bXFyTlVHVU5EVlVL?=
- =?utf-8?B?azBrbGY0Y2dMODlXODFQbzgrUkJGQmRkN0w0WnZpNFRrdmxlNWpsSXhNS3h4?=
- =?utf-8?B?OTkwVUNRM25nZUNBNmhPMWx2UjdDcWZBbTg5a0N0SmhuNW9veldwWGNCb1BQ?=
- =?utf-8?B?NmFROEpHWGdJa1JPV2NqblJaR3g4T3hEYU5yVHdKeHdncndQQ29iYmJNNmZm?=
- =?utf-8?B?dEZOa3AxQTM0T0tBLzcvOS9sQWEra2Q1RWVnVG9IR3pUWHlEN1BYSzNZSGEy?=
- =?utf-8?B?aWlRT3BSMUExNittMWFTTTFaa0g2TW9WUkN0bHpwanUwWXNMTEV1WjdJN05z?=
- =?utf-8?B?elZLblZPWGlvbmo0UEsxeTFSN1BialFaS05Wa0RrczhYb1E4QlZ4eng3eXRz?=
- =?utf-8?B?a0xKL0dHL052MTJJTkJ1MFVrVU5XM3Jkc3VvN0l3emd6SmF1d0xyak12TUl4?=
- =?utf-8?B?dGtFRC9IYms1MUZidHc2L2Jvd2lZOERDSVVOeExJWXhyQjRoRTZjUUg5ais4?=
- =?utf-8?B?czF5azJyckVBK1pnaVZQMmQ5QjQrTzNhWjgreXFHeGZCdGhRUXI4Nzc0SlRM?=
- =?utf-8?B?VmZTaFQxUi93bUVOaG1mZnFNM3VzNlN2WTd6THpHbXlNdUFJRmhxMkhXMnNI?=
- =?utf-8?B?Y0NJTHpZSDRkNERUZEFlblFFMVhJdXZ4VGdLOEVUOTN3VUJpSmRWejV5N2tZ?=
- =?utf-8?B?WlhqS1FFTzBQcENObUFOZmxCRjNBbnBlSTROc0cyWlVaekxhbzJRNE80VkVp?=
- =?utf-8?B?NDErMTl2SThvWVBid1d2VlU0YmZmM1RhckJqUWtMdGI3S1RkdlY5MlhoWXox?=
- =?utf-8?B?b3B5a25uSzZXdjhnYlpwanVXWlBocnJEMThJS2o2THM0b1J3dVlSWTRnbkJO?=
- =?utf-8?B?di9XVGlUYStxOVRjT2tSMnlPWjVwbTBXWXNZOWd5aFMyZ0pRdU1oWWNCQnJo?=
- =?utf-8?B?SDFsVWcxUHhEUHN5c1M4RUxXa2l1THROREJjM2xWajNNaEJjVEpLSFlYUkxl?=
- =?utf-8?B?N3Zyell1TzNIL29oNklEVlZWT3VJOGJxaXM2a2tSeGc3bUZyemFOeGN6RUFH?=
- =?utf-8?B?dkNGQjl5MG9VQkdiY0RwUXJ4MDlGWUVBemVOekxPS3N2Q1JWK0lCRW80RWFT?=
- =?utf-8?B?SHZuc1JEQ0UyYzNEdmFCK200UWoreDdqaVN5dk5jQ3NNTzJJSUg0dThkNlBU?=
- =?utf-8?B?TnZlQUd4cVVSWlptb3RCOStiTzhlQWxUZU5aUE5oQ2t1aFJPY1V2VVhVeXE1?=
- =?utf-8?B?aENCMnVyWUJXcmNDRDJlUHMvZkM4ektMOHJ0L1VuK0RKWkZqZFVLVWtLaGNS?=
- =?utf-8?B?bnM1Mlg4dXloWThNRFM0Q2lPaEJXVjN1RmJqckJma0xPemZ6QXZ0YnMwWVIr?=
- =?utf-8?B?TjFYdEZEeC9hcWJvd1dCbG9UN2ZoY09VZXEvT1VHN1BGY0FnMGY1azc3Y25S?=
- =?utf-8?B?bWVLRHRjMWRwbllRVVpad3Y1WWcxbmJpT1BjMWNGVlpQODhPclltK3UzcTEz?=
- =?utf-8?B?WXJtVFlnUmhmTU13QWV1djAySSt3NkpzWFZzUkUzMFdDWE9uZmZOR0R0QVZm?=
- =?utf-8?B?Q296MXBnV0czVVh0QWV6YXQraW9aOFBTajJ2ZXZMdUErbExxYmJnNGpaTENI?=
- =?utf-8?Q?6CgwBD/IPrb0ZApEDiloeN7TmLY/DV4c?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR11MB8289.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZXVHaVVibzhaYWtpT2NwSURCSFU3RTNMdjhKSzU4VmVWRU10MTlDVEQ4ZXFr?=
- =?utf-8?B?bFNsbUdnTEcrSTBZSVFSOUNEdk5wdC9hQkZ1aktXZFBEUFZjb2hjTDMydUtI?=
- =?utf-8?B?N1J4cDlBbUZHNG1wRFBCaGJEdXBHNXpaaTVBMU9WcVYrYTljSmZxeDB5dmh3?=
- =?utf-8?B?Ly9RV0duQm9vaHUwTzFlL205eUdhK1JoeTkxdlhYWC92cWw2TGJ6SEYwSXE3?=
- =?utf-8?B?dk1OVmZWbWNlUi8rYjNxcklCMURGN005eU9CMytSNVVQRWpwbHNTWFY0YTBN?=
- =?utf-8?B?MER6azZpaWgrZzNXYlF5eFVicUdGWTNuOHA4akdDMkFuSU1JVWZpaWVRRVZx?=
- =?utf-8?B?TVY4QzZvOEs0QjVMS3JQRTBIOW1qNjYvZUVJRXpRNFB5OURkTkxOR2MrUFJZ?=
- =?utf-8?B?Wk82Q1Btc05QSXZSMUZqaUlWemhsY2IvdFNxbkx5SHdodytRTktwZVFHbGNS?=
- =?utf-8?B?QU1ydlFBOFNTb0JpUzd5b1pzOTgrc1NLNXlsZnE3a3hnT3VqRGVGeWZZU0Zn?=
- =?utf-8?B?NkZrY3RQdGUzTEI0MUdyeDFVODdTSDNMTUVhSzlTQXdRVVNGbmx0T0o1OHY1?=
- =?utf-8?B?VktFc2lJZ0JGenFsT1FLdHcxRXhoVUIzajc5MjZwbGIyOWxmZ0dMSjVFTTAz?=
- =?utf-8?B?THNtUGtCNkFuS0QwazdjYzlGK25WaGlpNlQ2Z1FWMkxKcmdicmVPa0Z5aG5V?=
- =?utf-8?B?L2YrWEdIcU9aVEFrNnlOZk90RkZ0OGZqc2dtcGViNXJIRFJwSkYwSDY2dmVw?=
- =?utf-8?B?R2FxenNDaHNBZS9MM1FwMWl6TGdVRUErNHdFMmJqays0aUEvRFozVHErOWlT?=
- =?utf-8?B?NVpjY2hjQ0R1YzBqbGM1YUpKYzh4elBqQnIxajRycG00ZDFaVGhBZFVIQ0Rp?=
- =?utf-8?B?bnZpSTRzMy9EQUprV0hXOEhySnpMd3lhV0FWeHVGOTdvZ0FpanBobjFTc0hN?=
- =?utf-8?B?a2t4b0V1WFEwS2sraTliSE5sZ0RmV1ZPZWVqSS9EOEI3alVRaVBHaWM1VUo5?=
- =?utf-8?B?ZlMxNm9Gb1dBMm9PbldIYUlESkl3aHltdGJZSWdFMlh2eVB3aUdkTmF2SHNJ?=
- =?utf-8?B?TUdKRDVKelRiRk5RZ2lLZzY1cVBFVkp6ZzhTZGh3S2svRUNEcjdoY0ZuWW54?=
- =?utf-8?B?SFVRdzd3NkEzRDJQcFJYRWZuTVFzTzFhZW40OWFnYkVLU1R2Q2xTZ0xpZU03?=
- =?utf-8?B?czA4bHJWM0NXeGJmWTJQRU5YMkM4QzhMWHVLWFA3eVljc1Zib0ljellTZVZa?=
- =?utf-8?B?aVpyK0hudnhrNEMwem9VbzlQRE9MZzBuSVFxbzRVVzI5SG1RbFpvcXhLcXFH?=
- =?utf-8?B?b0ZzbjUvbjkxZU9QaFlJUkdUSHRxNU9mU1RZL29mVVdET2F1ZWVGc0NTRFZZ?=
- =?utf-8?B?NTgrR21rOVYvYSttbGUrWlRhZmZpcVYvNjZPY3NuL3NPU2NUcy9CbENhK0lF?=
- =?utf-8?B?cTRGS2M3a1pxTDg4TEdQM0lVOWJubTJ4Zmhkd0F3UXBlcGh3SVRXa1pTVjcv?=
- =?utf-8?B?U3FSUncrUWRkdnQ5K3hLY1ZrdDVzRXFGaDBDL1h2SFQ1K1U4ckxwQkNndkhn?=
- =?utf-8?B?czd0S0pGRTJranBMYVRIT2p6TXhqdllJZEQvSEFMbktaMVpDU3Y1WTZQVFB1?=
- =?utf-8?B?dXJjQyt4Ny9JNVRBWVpvVnJwQ1d5dWdLUW45bzlEWDBmdnRpK0VUdG9rZ3FE?=
- =?utf-8?B?aGRtL0RQSnd3WGR6YWJBU0VWbkk2YUUyTXJnM0gvMm1uMVhBN21ubVlGVEFv?=
- =?utf-8?B?SEo4ZG5LM2dZWlJISXEzQVR5R3FWVFRnbng2Rk1NQ1QrWFlaM0grNmNmZkFy?=
- =?utf-8?B?SEp0TkszM0FXRDBlMk9tckw3UG01U3p1UUdUaGdVQXpwM21VZzVPcDdDSHk0?=
- =?utf-8?B?Y2lURVZWWnZSeC9ZcTNLeU9KTk9hV2tJbmRmeStHVUhGc0FvMXBVV1A2UUta?=
- =?utf-8?B?NEdEOHBUdWo0ZVJvQXhIYzdvZGRnQWV4eHpFYlpDUkxDZzZwVmcveUtFOUZR?=
- =?utf-8?B?am1GNFRia0l5RnMwZVZqVjhoOXREVEpWT1lwRS9GbFhnQUljUW5yTmJzZSsy?=
- =?utf-8?B?S1FuSzg1bmtmWFpmYkRZTXdMNzc2KzRoc3B5YlRPNmxpMCt1WXEweUx4WXg1?=
- =?utf-8?Q?jm1vzg/5RAf8QkAse6529DRza?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: b69d186f-af87-4ccd-1879-08de06f59944
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR11MB8289.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2025 05:35:04.9702
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rsKHRFlFyszB3YoKf4q4SkW7+S3bKz1nxulu2Z7pE8EOFAzmC+89dFUAzgC4bRl2LjW3O3GUQA3TWvSdKce4dQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH3PPF801A91A7D
-X-OriginatorOrg: intel.com
+References: <20251008073046.23231-1-clamor95@gmail.com> <20251008073046.23231-23-clamor95@gmail.com>
+ <20251008-canopener-marsupial-a92355b656ef@spud> <20251008-broaden-antennae-02de66094ad3@spud>
+In-Reply-To: <20251008-broaden-antennae-02de66094ad3@spud>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Thu, 9 Oct 2025 08:35:22 +0300
+X-Gm-Features: AS18NWAoEWc39K5OD4GIBOR3Awt1LVDq6NQUxGEQwh6PoTXJKtyEajbgSJmBgBo
+Message-ID: <CAPVz0n1NYL+t-KC1FwHYXuQ0C483ay3g8zP4SmBKVC2rh=x4Bg@mail.gmail.com>
+Subject: Re: [PATCH v4 22/24] dt-bindings: display: tegra: document Tegra20
+ and Tegra30 CSI
+To: Conor Dooley <conor@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Sowjanya Komatineni <skomatineni@nvidia.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
+	Dmitry Osipenko <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>, 
+	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, Aaron Kling <webgeek1234@gmail.com>, 
+	Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-staging@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ravi,
-
-
-Very appreciated for your testing. Could I add you to the 'Tested-by' 
-for my next revision?
-
-
-I am working on the annotate changes. Hope I can get your attention 
-again in the next revision. Thanks.
-
-
-Regards,
-
-Tianyou
-
-
-On 10/6/2025 6:54 PM, Ravi Bangoria wrote:
-> Hi Tianyou,
+=D1=87=D1=82, 9 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 00:22=
+ Conor Dooley <conor@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
 >
-> I tested this on an AMD machine and it's working fine. Few minor issues
-> I would suggest to address.
+> On Wed, Oct 08, 2025 at 10:21:06PM +0100, Conor Dooley wrote:
+> > On Wed, Oct 08, 2025 at 10:30:44AM +0300, Svyatoslav Ryhel wrote:
+> > > Document CSI HW block found in Tegra20 and Tegra30 SoC.
+> > >
+> > > The #nvidia,mipi-calibrate-cells is not an introduction of property, =
+such
+> > > property already exists in nvidia,tegra114-mipi.yaml and is used in
+> > > multiple device trees. In case of Tegra30 and Tegra20 CSI block combi=
+nes
+> > > mipi calibration function and CSI function, in Tegra114+ mipi calibra=
+tion
+> > > got a dedicated hardware block which is already supported. This prope=
+rty
+> > > here is used to align with mipi-calibration logic used by Tegra114+.
+> > >
+> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > ---
+> > >  .../display/tegra/nvidia,tegra20-csi.yaml     | 135 ++++++++++++++++=
+++
+> > >  1 file changed, 135 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/display/tegra/n=
+vidia,tegra20-csi.yaml
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,t=
+egra20-csi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,te=
+gra20-csi.yaml
+> > > new file mode 100644
+> > > index 000000000000..817b3097846b
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-=
+csi.yaml
+> > > @@ -0,0 +1,135 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-csi.=
+yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: NVIDIA Tegra20 CSI controller
+> > > +
+> > > +maintainers:
+> > > +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    enum:
+> > > +      - nvidia,tegra20-csi
+> > > +      - nvidia,tegra30-csi
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +  clocks: true
+> > > +  clock-names: true
+> > > +
+> > > +  avdd-dsi-csi-supply:
+> > > +    description: DSI/CSI power supply. Must supply 1.2 V.
+> > > +
+> > > +  power-domains:
+> > > +    maxItems: 1
+> > > +
+> > > +  "#nvidia,mipi-calibrate-cells":
+> > > +    description:
+> > > +      The number of cells in a MIPI calibration specifier. Should be=
+ 1.
+> > > +      The single cell specifies an id of the pad that need to be
+> > > +      calibrated for a given device. Valid pad ids for receiver woul=
+d be
+> > > +      0 for CSI-A; 1 for CSI-B; 2 for DSI-A and 3 for DSI-B.
+> > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > +    const: 1
+> > > +
+> > > +  "#address-cells":
+> > > +    const: 1
+> > > +
+> > > +  "#size-cells":
+> > > +    const: 0
+> > > +
+> > > +patternProperties:
+> > > +  "^channel@[0-1]$":
+> > > +    type: object
+> > > +    description: channel 0 represents CSI-A and 1 represents CSI-B
+> > > +    additionalProperties: false
+> > > +
+> > > +    properties:
+> > > +      reg:
+> > > +        maximum: 1
+> > > +
+> > > +      nvidia,mipi-calibrate:
+> > > +        description: Should contain a phandle and a specifier specif=
+ying
+> > > +          which pad is used by this CSI channel and needs to be cali=
+brated.
+> > > +        $ref: /schemas/types.yaml#/definitions/phandle-array
+> > > +
+> > > +      "#address-cells":
+> > > +        const: 1
+> > > +
+> > > +      "#size-cells":
+> > > +        const: 0
+> > > +
+> > > +      port@0:
+> > > +        $ref: /schemas/graph.yaml#/$defs/port-base
+> > > +        unevaluatedProperties: false
+> > > +        description: port receiving the video stream from the sensor
+> > > +
+> > > +        properties:
+> > > +          endpoint:
+> > > +            $ref: /schemas/media/video-interfaces.yaml#
+> > > +            unevaluatedProperties: false
+> > > +
+> > > +            required:
+> > > +              - data-lanes
+> > > +
+> > > +      port@1:
+> > > +        $ref: /schemas/graph.yaml#/properties/port
+> > > +        description: port sending the video stream to the VI
+> > > +
+> > > +    required:
+> > > +      - reg
+> > > +      - "#address-cells"
+> > > +      - "#size-cells"
+> > > +      - port@0
+> > > +      - port@1
+> > > +
+> > > +allOf:
+> > > +  - if:
+> > > +      properties:
+> > > +        compatible:
+> > > +          contains:
+> > > +            enum:
+> > > +              - nvidia,tegra20-csi
+> > > +    then:
+> > > +      properties:
+> > > +        clocks:
+> > > +          items:
+> > > +            - description: module clock
+> > > +
+> > > +        clock-names: false
+> > > +
+> > > +  - if:
+> > > +      properties:
+> > > +        compatible:
+> > > +          contains:
+> > > +            enum:
+> > > +              - nvidia,tegra30-csi
+> > > +    then:
+> > > +      properties:
+> > > +        clocks:
+> > > +          items:
+> > > +            - description: module clock
+> > > +            - description: PAD A clock
+> > > +            - description: PAD B clock
+> > > +
+> > > +        clock-names:
+> > > +          items:
+> > > +            - const: csi
+> > > +            - const: csia-pad
+> > > +            - const: csib-pad
+> >
+> > This clocks section seems like it could get simpler. Since the clock
+> > descriptions are shared, and tegra20 has no clock-names, you could just
+> > move the detail of the properties out to where you have the ": true"
+> > stuff (we prefer that properties are defined outside of if/then/else
+> > blocks) and just restrict them here. For tegra20 that'd be
+> >
+> > if:
+> >   properties:
+> >     compatible:
+> >       contains:
+> >         enum:
+> >           - nvidia,tegra20-csi
+> > then:
+> >   properties:
+> >     clocks:
+> >       maxItems: 1
+> >
+> >     clock-names: false
+> >
+> > (although it could easily be maxItems: 1 ?)
+> > and for tegra30
+> >
+> > if:
+> >   properties:
+> >     compatible:
+> >       contains:
+> >         enum:
+> >           - nvidia,tegra30-csi
+> > then:
+> >   properties:
+> >     clocks:
+> >       minItems: 3
+> >
+> >     clock-names:
+> >       maxItems: 3
+> >
+> > Of course you'd then have to add minItems: 1 and maxItems: 3 to the
+> > extracted definitions.
+
+What do you mean by your last statement? Add minItems: 1 and maxItems:
+3 like this?
+
+This does to common properties
+  clocks:
+    minItems: 1
+    maxItems: 3
+    items:
+      - description: module clock
+      - description: PAD A clock
+      - description: PAD B clock
+
+  clock-names:
+    minItems: 1
+    maxItems: 3
+    items:
+      - const: csi
+      - const: csia-pad
+      - const: csib-pad
+
+This goes to conditional
+ if:
+   properties:
+     compatible:
+       contains:
+         enum:
+           - nvidia,tegra20-csi
+ then:
+   properties:
+     clocks:
+       maxItems: 1
+
+     clock-names: false
+
+ if:
+   properties:
+     compatible:
+       contains:
+         enum:
+           - nvidia,tegra30-csi
+ then:
+   properties:
+     clocks:
+       minItems: 3
+
+     clock-names:
+       maxItems: 3
+
 >
->>> Perf c2c report currently specified the code address and source:line
->>> information in the cacheline browser, while it is lack of annotation
->>> support like perf report to directly show the disassembly code for
->>> the particular symbol shared that same cacheline. This patches add
->>> a key 'a' binding to the cacheline browser which reuse the annotation
->>> browser to show the disassembly view for easier analysis of cacheline
->>> contentions. By default, the 'TAB' key navigate to the code address
->>> where the contentions detected.
-> 1. Annotate browser title always shows "Samples: 0", which is misleading:
+> Oh, also: if you want clock-names to ever actually be usable, you have
+> to require it. Otherwise a driver must be written to handle it not being
+> there.
 >
->     Samples: 0  of event 'ibs_op//', 100000 Hz, Event count (approx.): 0
->              ^                                                         ^
->               `--- this                                                 `--- and this
+
+Yes, driver takes this into account and handles it.
+
+> > > +additionalProperties: false
+> > > +
+> > > +required:
+> > > +  - compatible
+> > > +  - reg
+> > > +  - clocks
+> > > +  - power-domains
+> > > +  - "#address-cells"
+> > > +  - "#size-cells"
+> > > +
+> > > +# see nvidia,tegra20-vi.yaml for an example
+> > > --
+> > > 2.48.1
+> > >
 >
-> 2. Comment from v3:
->
->     > In the annotation browser, we did not need to show the overhead of
->     > particular event type, or switch among events. The only selection
->     > was set to the ip addr where the hist entry indicated in the
->     > cacheline browser. The hist_entry was correctly initialized with
->     > .ms field by addr_location when the mem_info can be successfully
->     > resolved through addr_location.
->
->     It's ideal if we can show sample count/overhead along with the
->     instruction (because that's what users are used to seeing with
->     perf-report->annotate output). I haven't checked the code but is
->     it possible to highlight the instruction by default (Annotate+TAB
->     OR Set the font color to red etc.)? Waiting for user to press the
->     TAB seems counterintuitive esp when instructions are not tagged
->     with overhead.
->
->          |1340: > callq   0x10f0 <_init+0xf0>
->          |1345: v jmp     0x1376 <thread+0x12d>
->          |1347:   cmpl    $0x1, -0xb0(%rbp)
->          |134e: v jne     0x1364 <thread+0x11b>
->          |1350:   movq    0x2d29(%rip), %rax  # 0x4080 <data>   <=====  Highlight it by default
->          |1357:   addq    $0x1, %rax
->          |135b:   movq    %rax, 0x2d1e(%rip)  # 0x4080 <data>
->          |1362: v jmp     0x1376 <thread+0x12d>
->
-> These are not blockers if Namhyung / Arnaldo are okay with current design.
->
-> Thanks,
-> Ravi
 >
 
