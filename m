@@ -1,168 +1,229 @@
-Return-Path: <linux-kernel+bounces-847411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81472BCAC32
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 22:11:38 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5269BCAC4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 22:12:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B7F09352E22
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 20:11:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 75F544E3BA1
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 20:12:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F84266560;
-	Thu,  9 Oct 2025 20:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B82266565;
+	Thu,  9 Oct 2025 20:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CEgg8MOR"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NJat5KvI"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651EF263F34
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 20:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAEDD2641C3
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 20:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760040683; cv=none; b=bgdeaoPkpW5JM7TYZXzKyUUxD7/IKqLukrQ+41IowXbBFUYIMqW/gVUfCnhG/c3zo0/3+2gRjDxXzsm5Bu3jyoLx0FP1E8NVRsw5egeuRxOMr0oPohMwIjp/lxxCze8qLWY6ImEn+wDGzxzrMWMmgGVNyuZfPAVj0BWrGF1arrc=
+	t=1760040726; cv=none; b=CSynSyCggcSYWAFxuxMSJVyvCwLXGJRYI8fWIfbD1molr5v1aG6iSMZvQJ/AxhyXrKPw+c2sLWyAK4UUITocHj/VbxIEy8ihacB/ecjYGNXD0aG19m4clwTZnZVD/Zdw1LXgk7Y1hHWDGNdsd6mpW1OYH+SHdhJr6Et4NxBFe3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760040683; c=relaxed/simple;
-	bh=GH/isMXZuyY6n7CPnG1haS9m5ZS6KNNrdO16o7tR+Wk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DmQ8/AV07JNDPAA5hVa4nLa/Wq81PT+E7dcf2Bfhn8dgfDs/Dp/GAr1M0AM6TLVPHN8HqHTry7EqafLXFZx3uyP5RCzHdfrvpRpFb5l0eXGZ6/LM69mqKrU1SdrdPAg/iHFPHOxxkzUWN5J0Qb5Z2NwRbIwOWZJ01D4/Ptfp2iE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CEgg8MOR; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3fc36b99e92so1804156f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 13:11:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760040680; x=1760645480; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=I0bxSC9qVdAO+PHu6prllXc1vwxGvmh0YPQ8osQBxSA=;
-        b=CEgg8MORPxtBHBJgfMMPwJj5XYaeA53FuO8l3JSVqJYfYtQCDTdAo67Px9GPCmOwzF
-         EAyAD34u2CA3ZPwIrh2ohClDQOWR9SMfKGK/72ZcOH5A46fVeXb3PqCzAmeEDHAhg6Ys
-         iKmaxtIQAirkEmQtHoEEarFvoGBaJDE6XwAo9ZnU3f1iDuiFXF2F2D//7x/BsizZWE7a
-         WhBZB6aH+HfjcgKwUw4f0DNTSgc6i9z5ijsRUyzA+9/DzgOIhtdmsgqkaWHWRn6HI062
-         YlyiK5ZrG9MKduy//tau/CTEclMBo5PxhoI+WmABjxl5EdOX9RHuLlil2I+frZMMaRdn
-         67XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760040680; x=1760645480;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I0bxSC9qVdAO+PHu6prllXc1vwxGvmh0YPQ8osQBxSA=;
-        b=JPY34+96IQGolnvFxyugNLCKOY6/TT8kv0DUlrZlFdc3+ELfM2eGPj8ipQTHINFf5u
-         q7qjZhJFoNhDRtsFZzgsKd+fHuUYSPb1MPcCCfPDZtOZpdAMxw1NEimTaaUa7WWVSYkN
-         jpSzBDF2POrjPTEBB8xxE+pclS4IA0yXwFCRcY4/ASfg1b+O7CCVYXqhXK8vYo9CGqpL
-         WC617pJtpfgjz51rMuVPjMuLkfUsSUB4yGN1a6fCU31Jo4DQtJxPgvFHH2cVYjatk2Py
-         Nnx2vw/p+aHlvPPZqfvOCf+7HZM+4tAuTWTK2VDTwWBl19Eoz6sy6t0LMtyQlHrwwHZt
-         qE7w==
-X-Forwarded-Encrypted: i=1; AJvYcCWQ54DH4KBTi+GIpZE/6xiZbV1/XyplGDpYME/D3Z/xJC3YyoxYi8/IU38IS75NHNmtzGSHW0dvJWJqX0o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzVG0MAT2bmZceq1u0VQAKNwMSyvke+sQols3zTw+C6qJOZH45
-	6KcO1FKSXpxU/wbs/BAYgPq/aRdM8Q6JkSPBPAzVjTNuhGVsBGF8KkQDt/RTs6qusQY=
-X-Gm-Gg: ASbGnctnp7mO4kuoFY6RTCjzdvwMxTpJVtcHm2bA07nWmOd30yaRynOkJls/wIf94Qk
-	UXnxRyxtvUrtSGRx7pBCLzpUECir52TBN82/32kMwexlCZb36n5mmUIj/fIyj6azFaacZWBcGZM
-	DvEmVfzGU/zFPmMk0KDd3tskALFAgVGfuloB1ys3i2PehfJCxTLKyeDJy+IJbo3Gt6XNpyPURc6
-	T0yfZrBxAUmWkMKtHmRf/nG1q16ND3urT49rgwI4HKWYTzi52PkndMBXuvjTboIWOaaRWVRjg5p
-	3bD0NbmEyZ2PKdQNe5SnMudwhOTpO/ww+mQ8QPKDGUMa0HovbjOVsmhXIBH/Zte/E2SOaEwpi7U
-	r9B4v3qnowWIBf4nEzde71wo/6qnppFbPpIgmh7qdUasL21ATgZBqOBZhxA==
-X-Google-Smtp-Source: AGHT+IFuLsi4wmsunBeslCI8cKWeFy4ZUEWU/gsK5+phruyOaGgG2/phEeGUm4ke9yIArdmP/BdHLA==
-X-Received: by 2002:a5d:5f96:0:b0:3ec:42f9:952b with SMTP id ffacd0b85a97d-42666a9e191mr6428067f8f.4.1760040679687;
-        Thu, 09 Oct 2025 13:11:19 -0700 (PDT)
-Received: from [192.168.0.36] ([82.76.24.202])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5cf70fsm563238f8f.27.2025.10.09.13.11.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Oct 2025 13:11:19 -0700 (PDT)
-Message-ID: <7b861236-8317-4435-8582-bd97f545e322@linaro.org>
-Date: Thu, 9 Oct 2025 23:11:17 +0300
+	s=arc-20240116; t=1760040726; c=relaxed/simple;
+	bh=Tgw82CNadGPaNJb4U9QYiktpx4H52WOFMV9ejQ1aAjE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hlXjVeA3VbBU8pcbFjOcsLcL8j4CqffU9H63hX4coFCsibvwYpnMeKLWUrMrt30KFl8MFlCRrwn0eyS01YPJaNQlU2x2HfD7maVfJt3/dbbYvhLe9U3dB904GDnFJlc2cVf5cXyejwmEviupVzRXq8xoGVSZbQ+2k1imuvprKf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NJat5KvI; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=V4wDjvksUZ2zt23EOleQ5HrawKAqhTA4Dw4SqCmab1k=; b=NJat5KvIME1UocoBNY+7bKE1yv
+	zU0sclKZh98SXb1Qoy+6ziwTSJN17ztXxsenCjaVebWcdaBJFeWOPrEFDak9lQSHefoBB0XoFinYN
+	FHR+y3rHEwArcGlbYbPKt3VpXjs5lrGI9BR90v8jmg1xiJmZba7xknl5AyDQDqePeCnRRhKHpprmC
+	1bnQNNKNZZE4TiXt+NTh7j+821hZmwgF+8k11CUT8hsg4i0OKg6pN59GlenNHoznS1y8PadC+6cr7
+	iV3qCLKeIhuQMpclWnA5gSh3DK3okPTd0bDS2zXjPXf0jThP2BEyK2bl4n7F9peNnkocFfqUVSpYA
+	1otY/aZw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v6wzS-0000000ENQB-47Zy;
+	Thu, 09 Oct 2025 20:11:56 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id E1014300399; Thu, 09 Oct 2025 22:11:54 +0200 (CEST)
+Date: Thu, 9 Oct 2025 22:11:54 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	David Howells <dhowells@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+	Li RongQing <lirongqing@baidu.com>,
+	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] seqlock: introduce scoped_seqlock_read() and
+ scoped_seqlock_read_irqsave()
+Message-ID: <20251009201154.GL1386988@noisy.programming.kicks-ass.net>
+References: <20251008123014.GA20413@redhat.com>
+ <20251008123045.GA20440@redhat.com>
+ <CAHk-=wjozC9_JCdEW9K_uruJqzTLzhtcVpgDk1OuqErNRUS7Mg@mail.gmail.com>
+ <CAHk-=wjuoFm9yZur_T4VOnX2iyDYD6T_gDRXE5ms9538W6Q35g@mail.gmail.com>
+ <CAHk-=wiHbN+_LCmSj2sHswDRJ0yG3kkjptMvCXcMwk7jWK1F=Q@mail.gmail.com>
+ <20251009143748.GA2704@redhat.com>
+ <20251009195024.GL3289052@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/18] media: microchip-isc: Color correction and
- histogram stats
-To: Balamanikandan Gunasundar <balamanikandan.gunasundar@microchip.com>
-Cc: Chas Williams <3chas3@gmail.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Balakrishnan Sambath <balakrishnan.s@microchip.com>,
- Hans Verkuil <hverkuil@kernel.org>, Ricardo Ribalda <ribalda@chromium.org>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Daniel Scally <dan.scally+renesas@ideasonboard.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-References: <20251009155251.102472-1-balamanikandan.gunasundar@microchip.com>
-From: Eugen Hristev <eugen.hristev@linaro.org>
-Content-Language: en-US
-In-Reply-To: <20251009155251.102472-1-balamanikandan.gunasundar@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251009195024.GL3289052@noisy.programming.kicks-ass.net>
 
-Hi Bala,
+On Thu, Oct 09, 2025 at 09:50:24PM +0200, Peter Zijlstra wrote:
+> On Thu, Oct 09, 2025 at 04:37:49PM +0200, Oleg Nesterov wrote:
+> 
+> > Let me think a bit more before I send V3...
+> 
+> How do we feel about something a little like so?
 
-On 10/9/25 18:52, Balamanikandan Gunasundar wrote:
-> Hi,
-> 
-> This patch series has a set of enhancements to the Microchip Image Sensor
-> Controller driver. The objective is to expand its image processing
-> capabilities and to improve the colors.
-> 
-> This series also introduces a new stats driver that exposes the histogram
-> data to userspace via v4l2 controls. This allows applications such as
-> libcamera to access real time image statistics for advanced image
-> processing like automatic exposure, white balance adjustments etc.
-> 
-> Balakrishnan Sambath (11):
->   media: microchip-isc: Enable GDC and CBC module flags for RGB formats
->   media: microchip-isc: Improve histogram calculation with outlier
->     rejection
->   media: microchip-isc: Use channel averages for Grey World AWB
->   media: microchip-isc: Add range based black level correction
->   media: platform: microchip: Extend gamma table and control range
->   media: platform: microchip: Add new histogram submodule
->   media: microchip-isc: Register and unregister statistics device
->   media: microchip-isc: Always enable histogram for all RAW formats
->   media: microchip-isc: fix histogram state initialization order
->   media: microchip-isc: decouple histogram cycling from AWB mode
->   media: microchip-isc: enable userspace histogram statistics export
-> 
-> Balamanikandan Gunasundar (7):
->   media: platform: microchip: set maximum resolution for sam9x7
->   media: platform: microchip: Include DPC modules flags in pipeline
->   media: microchip-isc: expose hue and saturation as v4l2 controls
->   media: microchip-isc: Rename CBC to CBHS
->   media: microchip-isc: Store histogram data of all channels
->   media: videodev2.h, v4l2-ioctl: Add microchip statistics format
->   media: microchip-isc: expose color correction registers as v4l2
->     controls
-> 
->  drivers/media/platform/microchip/Kconfig      |   2 +
->  drivers/media/platform/microchip/Makefile     |   2 +-
->  .../platform/microchip/microchip-isc-base.c   | 373 ++++++++++--
->  .../platform/microchip/microchip-isc-regs.h   |   3 +
->  .../platform/microchip/microchip-isc-stats.c  | 549 ++++++++++++++++++
->  .../media/platform/microchip/microchip-isc.h  |  44 +-
->  .../microchip/microchip-sama5d2-isc.c         |   2 +-
->  .../microchip/microchip-sama7g5-isc.c         |  73 ++-
->  drivers/media/v4l2-core/v4l2-ioctl.c          |   1 +
->  include/linux/atmel-isc-media.h               |  13 +
->  include/uapi/linux/videodev2.h                |   3 +
->  11 files changed, 1001 insertions(+), 64 deletions(-)
->  create mode 100644 drivers/media/platform/microchip/microchip-isc-stats.c
-> 
+Slightly nicer version that's actually compiled :-)
 
-This looks interesting.
-I would like to see the compliance tool output for more platforms
-(sama7g5, sama5d2, and the new sam9x7), also the media-ctl -p , to see
-the topology with your new driver.
-
-Thanks,
-Eugen
+---
+diff --git a/include/linux/seqlock.h b/include/linux/seqlock.h
+index 5ce48eab7a2a..7273fddc19a2 100644
+--- a/include/linux/seqlock.h
++++ b/include/linux/seqlock.h
+@@ -1209,4 +1209,87 @@ done_seqretry_irqrestore(seqlock_t *lock, int seq, unsigned long flags)
+ 	if (seq & 1)
+ 		read_sequnlock_excl_irqrestore(lock, flags);
+ }
++
++enum ss_state {
++	ss_done = 0,
++	ss_lock,
++	ss_lock_irqsave,
++	ss_lockless,
++};
++
++struct ss_tmp {
++	enum ss_state	state;
++	int		seq;
++	unsigned long	flags;
++	spinlock_t	*lock;
++};
++
++static inline void __scoped_seqlock_cleanup(struct ss_tmp *sst)
++{
++	if (!sst->lock)
++		return;
++
++	if (sst->state == ss_lock_irqsave) {
++		spin_unlock_irqrestore(sst->lock, sst->flags);
++		return;
++	}
++
++	spin_unlock(sst->lock);
++}
++
++extern void __scoped_seqlock_fail(void);
++
++static inline void
++__scoped_seqlock_next(struct ss_tmp *sst, seqlock_t *lock, enum ss_state target)
++{
++	switch (sst->state) {
++	case ss_lockless:
++		if (!read_seqretry(lock, sst->seq)) {
++			sst->state = ss_done;
++			return;
++		}
++
++		switch (target) {
++		case ss_done:
++			__scoped_seqlock_fail();
++			return;
++
++		case ss_lock:
++			sst->lock = &lock->lock;
++			spin_lock(sst->lock);
++			sst->state = ss_lock;
++			return;
++
++		case ss_lock_irqsave:
++			sst->lock = &lock->lock;
++			spin_lock_irqsave(sst->lock, sst->flags);
++				sst->state = ss_lock_irqsave;
++			return;
++
++		case ss_lockless:
++			sst->seq = read_seqbegin(lock);
++			return;
++		}
++		BUG();
++
++	case ss_lock:
++	case ss_lock_irqsave:
++		sst->state = ss_done;
++		return;
++
++	case ss_done:
++		BUG();
++	}
++}
++
++#define __scoped_seqlock_read(_seqlock, _target, _s)			\
++	for (struct ss_tmp _s __cleanup(__scoped_seqlock_cleanup) = {	\
++		.state = ss_lockless, .seq = read_seqbegin(_seqlock),	\
++		.lock = NULL };						\
++	     _s.state != ss_done;					\
++	     __scoped_seqlock_next(&_s, _seqlock, _target))
++
++#define scoped_seqlock_read(_seqlock, _target)				\
++	__scoped_seqlock_read(_seqlock, _target, __UNIQUE_ID(seqlock))
++
+ #endif /* __LINUX_SEQLOCK_H */
+diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
+index 7097de2c8cda..d2b3f987c888 100644
+--- a/kernel/sched/cputime.c
++++ b/kernel/sched/cputime.c
+@@ -313,10 +313,8 @@ static u64 read_sum_exec_runtime(struct task_struct *t)
+ void thread_group_cputime(struct task_struct *tsk, struct task_cputime *times)
+ {
+ 	struct signal_struct *sig = tsk->signal;
+-	u64 utime, stime;
+ 	struct task_struct *t;
+-	unsigned int seq, nextseq;
+-	unsigned long flags;
++	u64 utime, stime;
+ 
+ 	/*
+ 	 * Update current task runtime to account pending time since last
+@@ -329,27 +327,19 @@ void thread_group_cputime(struct task_struct *tsk, struct task_cputime *times)
+ 	if (same_thread_group(current, tsk))
+ 		(void) task_sched_runtime(current);
+ 
+-	rcu_read_lock();
+-	/* Attempt a lockless read on the first round. */
+-	nextseq = 0;
+-	do {
+-		seq = nextseq;
+-		flags = read_seqbegin_or_lock_irqsave(&sig->stats_lock, &seq);
++	guard(rcu)();
++	scoped_seqlock_read(&sig->stats_lock, ss_lock_irqsave) {
+ 		times->utime = sig->utime;
+ 		times->stime = sig->stime;
+ 		times->sum_exec_runtime = sig->sum_sched_runtime;
+ 
+-		for_each_thread(tsk, t) {
++		__for_each_thread(sig, t) {
+ 			task_cputime(t, &utime, &stime);
+ 			times->utime += utime;
+ 			times->stime += stime;
+ 			times->sum_exec_runtime += read_sum_exec_runtime(t);
+ 		}
+-		/* If lockless access failed, take the lock. */
+-		nextseq = 1;
+-	} while (need_seqretry(&sig->stats_lock, seq));
+-	done_seqretry_irqrestore(&sig->stats_lock, seq, flags);
+-	rcu_read_unlock();
++	}
+ }
+ 
+ #ifdef CONFIG_IRQ_TIME_ACCOUNTING
 
