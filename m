@@ -1,169 +1,168 @@
-Return-Path: <linux-kernel+bounces-847412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBA2ABCAC3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 22:11:56 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81472BCAC32
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 22:11:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D71DE1A6387D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 20:12:19 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B7F09352E22
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 20:11:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC997265CC2;
-	Thu,  9 Oct 2025 20:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F84266560;
+	Thu,  9 Oct 2025 20:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DU7T643a"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CEgg8MOR"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B26C26159E;
-	Thu,  9 Oct 2025 20:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651EF263F34
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 20:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760040698; cv=none; b=nSn+AXDAN1UIn9JGsGcSeADjDHTFJRdhzUvBJfr7cSy52iE73KE1ZtzIw6I8LKgilP4ctuKcaHiuSWvy9VKY5K8JSchtiwA6GLMBXGg10B564BkyWr47Ffn6Nss8mPqujx7DpDou2w6i1XGmz+B6exb7z7glfmSqIl9LVkcTLjQ=
+	t=1760040683; cv=none; b=bgdeaoPkpW5JM7TYZXzKyUUxD7/IKqLukrQ+41IowXbBFUYIMqW/gVUfCnhG/c3zo0/3+2gRjDxXzsm5Bu3jyoLx0FP1E8NVRsw5egeuRxOMr0oPohMwIjp/lxxCze8qLWY6ImEn+wDGzxzrMWMmgGVNyuZfPAVj0BWrGF1arrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760040698; c=relaxed/simple;
-	bh=hpM/ogVqdHozQMjR5/y/Jhr+AaojI4C95c9N+Z7I41s=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pL7it9C+boRu7rJsulXKUstk6DeasGy1CShiHsiiJVZEmD3Pybx7OlHhCpVHpKODyGIsBpOzb66ZhNVTMzotKA2Ehn8NR2akD8CQp3u8jjc0lvet7hHHTopGQD0UI6aMDq91KNwKlrJwJE4eSXBzKUxgf6U2tCs0qrLc03/Xu4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DU7T643a; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 599ELcF4012475;
-	Thu, 9 Oct 2025 20:11:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=YnTfQeXJbp7KmtxXRP1QEF8y
-	LUMvyRpjuX1yUd2RGEk=; b=DU7T643a4/C4NaOyZDp6ivw8RgpOP3a1sgjRlyIG
-	cYmm40hkvGbcKr4ef8ZecurG8giLNT3N8K5HRGDZrDEB4rh6LtSb4v5xwhJjYVSp
-	mk4Kq6vmv1aXrhmbverdiv/bB0+jmdaUtNcN9TkvOOzVRx0jQB0h3ibXIioEKus3
-	+M7gbYqrwhaUDiU//J9DE5H9iu1Fv9MHY6p257HHM7VyHkxUrGybddMB02UkI9vz
-	mMWqIEfwA+HhtuGp9zj1FOECC0A6dYUjB9S6upDioqrH6S88sBs81r2JQ9DTvovI
-	Oyr0a9qdBVQnmUefTQHaumd2R/5UFngyrEVs60Kn87fPyA==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv4km711-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 09 Oct 2025 20:11:19 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 599KBJl8003070
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 9 Oct 2025 20:11:19 GMT
-Received: from stor-berry.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.24; Thu, 9 Oct 2025 13:11:18 -0700
-From: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>
-To: <quic_cang@quicinc.com>, <quic_nitirawa@quicinc.com>, <bvanassche@acm.org>,
-        <avri.altman@wdc.com>, <peter.wang@mediatek.com>,
-        <adrian.hunter@intel.com>, <martin.petersen@oracle.com>
-CC: <linux-scsi@vger.kernel.org>, "Bao D. Nguyen" <quic_nguyenb@quicinc.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        "James E.J. Bottomley"
-	<James.Bottomley@HansenPartnership.com>,
-        Bean Huo <beanhuo@micron.com>,
-        "Neil
- Armstrong" <neil.armstrong@linaro.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 2/2] scsi: ufs: core: Replace hard coded vcc-off delay with a variable
-Date: Thu, 9 Oct 2025 13:10:59 -0700
-Message-ID: <7df97c5bf49d7e53435725062bcff2ccd77a6959.1760039554.git.quic_nguyenb@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1760039554.git.quic_nguyenb@quicinc.com>
-References: <cover.1760039554.git.quic_nguyenb@quicinc.com>
+	s=arc-20240116; t=1760040683; c=relaxed/simple;
+	bh=GH/isMXZuyY6n7CPnG1haS9m5ZS6KNNrdO16o7tR+Wk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DmQ8/AV07JNDPAA5hVa4nLa/Wq81PT+E7dcf2Bfhn8dgfDs/Dp/GAr1M0AM6TLVPHN8HqHTry7EqafLXFZx3uyP5RCzHdfrvpRpFb5l0eXGZ6/LM69mqKrU1SdrdPAg/iHFPHOxxkzUWN5J0Qb5Z2NwRbIwOWZJ01D4/Ptfp2iE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CEgg8MOR; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3fc36b99e92so1804156f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 13:11:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760040680; x=1760645480; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=I0bxSC9qVdAO+PHu6prllXc1vwxGvmh0YPQ8osQBxSA=;
+        b=CEgg8MORPxtBHBJgfMMPwJj5XYaeA53FuO8l3JSVqJYfYtQCDTdAo67Px9GPCmOwzF
+         EAyAD34u2CA3ZPwIrh2ohClDQOWR9SMfKGK/72ZcOH5A46fVeXb3PqCzAmeEDHAhg6Ys
+         iKmaxtIQAirkEmQtHoEEarFvoGBaJDE6XwAo9ZnU3f1iDuiFXF2F2D//7x/BsizZWE7a
+         WhBZB6aH+HfjcgKwUw4f0DNTSgc6i9z5ijsRUyzA+9/DzgOIhtdmsgqkaWHWRn6HI062
+         YlyiK5ZrG9MKduy//tau/CTEclMBo5PxhoI+WmABjxl5EdOX9RHuLlil2I+frZMMaRdn
+         67XQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760040680; x=1760645480;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I0bxSC9qVdAO+PHu6prllXc1vwxGvmh0YPQ8osQBxSA=;
+        b=JPY34+96IQGolnvFxyugNLCKOY6/TT8kv0DUlrZlFdc3+ELfM2eGPj8ipQTHINFf5u
+         q7qjZhJFoNhDRtsFZzgsKd+fHuUYSPb1MPcCCfPDZtOZpdAMxw1NEimTaaUa7WWVSYkN
+         jpSzBDF2POrjPTEBB8xxE+pclS4IA0yXwFCRcY4/ASfg1b+O7CCVYXqhXK8vYo9CGqpL
+         WC617pJtpfgjz51rMuVPjMuLkfUsSUB4yGN1a6fCU31Jo4DQtJxPgvFHH2cVYjatk2Py
+         Nnx2vw/p+aHlvPPZqfvOCf+7HZM+4tAuTWTK2VDTwWBl19Eoz6sy6t0LMtyQlHrwwHZt
+         qE7w==
+X-Forwarded-Encrypted: i=1; AJvYcCWQ54DH4KBTi+GIpZE/6xiZbV1/XyplGDpYME/D3Z/xJC3YyoxYi8/IU38IS75NHNmtzGSHW0dvJWJqX0o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzVG0MAT2bmZceq1u0VQAKNwMSyvke+sQols3zTw+C6qJOZH45
+	6KcO1FKSXpxU/wbs/BAYgPq/aRdM8Q6JkSPBPAzVjTNuhGVsBGF8KkQDt/RTs6qusQY=
+X-Gm-Gg: ASbGnctnp7mO4kuoFY6RTCjzdvwMxTpJVtcHm2bA07nWmOd30yaRynOkJls/wIf94Qk
+	UXnxRyxtvUrtSGRx7pBCLzpUECir52TBN82/32kMwexlCZb36n5mmUIj/fIyj6azFaacZWBcGZM
+	DvEmVfzGU/zFPmMk0KDd3tskALFAgVGfuloB1ys3i2PehfJCxTLKyeDJy+IJbo3Gt6XNpyPURc6
+	T0yfZrBxAUmWkMKtHmRf/nG1q16ND3urT49rgwI4HKWYTzi52PkndMBXuvjTboIWOaaRWVRjg5p
+	3bD0NbmEyZ2PKdQNe5SnMudwhOTpO/ww+mQ8QPKDGUMa0HovbjOVsmhXIBH/Zte/E2SOaEwpi7U
+	r9B4v3qnowWIBf4nEzde71wo/6qnppFbPpIgmh7qdUasL21ATgZBqOBZhxA==
+X-Google-Smtp-Source: AGHT+IFuLsi4wmsunBeslCI8cKWeFy4ZUEWU/gsK5+phruyOaGgG2/phEeGUm4ke9yIArdmP/BdHLA==
+X-Received: by 2002:a5d:5f96:0:b0:3ec:42f9:952b with SMTP id ffacd0b85a97d-42666a9e191mr6428067f8f.4.1760040679687;
+        Thu, 09 Oct 2025 13:11:19 -0700 (PDT)
+Received: from [192.168.0.36] ([82.76.24.202])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5cf70fsm563238f8f.27.2025.10.09.13.11.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Oct 2025 13:11:19 -0700 (PDT)
+Message-ID: <7b861236-8317-4435-8582-bd97f545e322@linaro.org>
+Date: Thu, 9 Oct 2025 23:11:17 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=dojWylg4 c=1 sm=1 tr=0 ts=68e816e7 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=x6icFKpwvdMA:10 a=COk6AnOGAAAA:8 a=BYDoPV6jByX-8JW-AE8A:9
- a=TjNXssC_j7lpFel5tvFf:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: s7GE2pDgRNKfdBajkgZdRUCQfjtwFNQR
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX/7O4oVBqqp/Y
- C21+nQcJ4V3G8IeqyJujZuQ8+42zsd+OaAFWAqfY01eIUSNiTEvYTkGMfgAW3RKlvYerCK1gcU5
- JwSx5CvTc28uxSlucRljD0Hx8+pq6s8Txk4bAPJ9UBNzUYgZ4T+zMnGoJ0e/5YgY9AGPR9re/vV
- jYTjVa16WNSPLI2jk+q1cFhiaATy/k8xIewPeXLMkPrdXclQm6+TbZkAqAY+LUWISi5GidtRVak
- fmYNt7KlBEsluPRzqLWxjGMsBdROFT8ck/DLtDmOobGjUpjtjaKjqhDiPmSu7OiGVG39voqHv8i
- Y8IMf4tJh+OY1QQPz4kvGcwChdh2TvpJpxUdsXqT8AXh6EMDuabcsBfAF+CGyf9/Gpx0S+gf1Mp
- e+jXqXBeVA5I17EF2b5PuzvLeeH8Jg==
-X-Proofpoint-ORIG-GUID: s7GE2pDgRNKfdBajkgZdRUCQfjtwFNQR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-09_07,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 impostorscore=0 suspectscore=0 lowpriorityscore=0 adultscore=0
- bulkscore=0 spamscore=0 priorityscore=1501 phishscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/18] media: microchip-isc: Color correction and
+ histogram stats
+To: Balamanikandan Gunasundar <balamanikandan.gunasundar@microchip.com>
+Cc: Chas Williams <3chas3@gmail.com>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Balakrishnan Sambath <balakrishnan.s@microchip.com>,
+ Hans Verkuil <hverkuil@kernel.org>, Ricardo Ribalda <ribalda@chromium.org>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+ Daniel Scally <dan.scally+renesas@ideasonboard.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-atm-general@lists.sourceforge.net, netdev@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+References: <20251009155251.102472-1-balamanikandan.gunasundar@microchip.com>
+From: Eugen Hristev <eugen.hristev@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20251009155251.102472-1-balamanikandan.gunasundar@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-After the ufs device vcc is powered off, all the ufs device
-manufacturers require a minimum of 1ms of power-off time before
-vcc can be powered on again. This requirement has been verified
-with all the ufs device manufacturer's datasheets.
+Hi Bala,
 
-Replace the hard coded 5ms delay with a variable using a default
-setting of 5ms. This allows the platform drivers to override this
-setting to improve the system resume latency by reducing the sleep
-time as needed.
+On 10/9/25 18:52, Balamanikandan Gunasundar wrote:
+> Hi,
+> 
+> This patch series has a set of enhancements to the Microchip Image Sensor
+> Controller driver. The objective is to expand its image processing
+> capabilities and to improve the colors.
+> 
+> This series also introduces a new stats driver that exposes the histogram
+> data to userspace via v4l2 controls. This allows applications such as
+> libcamera to access real time image statistics for advanced image
+> processing like automatic exposure, white balance adjustments etc.
+> 
+> Balakrishnan Sambath (11):
+>   media: microchip-isc: Enable GDC and CBC module flags for RGB formats
+>   media: microchip-isc: Improve histogram calculation with outlier
+>     rejection
+>   media: microchip-isc: Use channel averages for Grey World AWB
+>   media: microchip-isc: Add range based black level correction
+>   media: platform: microchip: Extend gamma table and control range
+>   media: platform: microchip: Add new histogram submodule
+>   media: microchip-isc: Register and unregister statistics device
+>   media: microchip-isc: Always enable histogram for all RAW formats
+>   media: microchip-isc: fix histogram state initialization order
+>   media: microchip-isc: decouple histogram cycling from AWB mode
+>   media: microchip-isc: enable userspace histogram statistics export
+> 
+> Balamanikandan Gunasundar (7):
+>   media: platform: microchip: set maximum resolution for sam9x7
+>   media: platform: microchip: Include DPC modules flags in pipeline
+>   media: microchip-isc: expose hue and saturation as v4l2 controls
+>   media: microchip-isc: Rename CBC to CBHS
+>   media: microchip-isc: Store histogram data of all channels
+>   media: videodev2.h, v4l2-ioctl: Add microchip statistics format
+>   media: microchip-isc: expose color correction registers as v4l2
+>     controls
+> 
+>  drivers/media/platform/microchip/Kconfig      |   2 +
+>  drivers/media/platform/microchip/Makefile     |   2 +-
+>  .../platform/microchip/microchip-isc-base.c   | 373 ++++++++++--
+>  .../platform/microchip/microchip-isc-regs.h   |   3 +
+>  .../platform/microchip/microchip-isc-stats.c  | 549 ++++++++++++++++++
+>  .../media/platform/microchip/microchip-isc.h  |  44 +-
+>  .../microchip/microchip-sama5d2-isc.c         |   2 +-
+>  .../microchip/microchip-sama7g5-isc.c         |  73 ++-
+>  drivers/media/v4l2-core/v4l2-ioctl.c          |   1 +
+>  include/linux/atmel-isc-media.h               |  13 +
+>  include/uapi/linux/videodev2.h                |   3 +
+>  11 files changed, 1001 insertions(+), 64 deletions(-)
+>  create mode 100644 drivers/media/platform/microchip/microchip-isc-stats.c
+> 
 
-Signed-off-by: Bao D. Nguyen <quic_nguyenb@quicinc.com>
----
- drivers/ufs/core/ufshcd.c | 10 +++++++++-
- include/ufs/ufshcd.h      |  2 ++
- 2 files changed, 11 insertions(+), 1 deletion(-)
+This looks interesting.
+I would like to see the compliance tool output for more platforms
+(sama7g5, sama5d2, and the new sam9x7), also the media-ctl -p , to see
+the topology with your new driver.
 
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index e8842dc..593c9d0 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -9741,7 +9741,8 @@ static void ufshcd_vreg_set_lpm(struct ufs_hba *hba)
- 	 * All UFS devices require delay after VCC power rail is turned-off.
- 	 */
- 	if (vcc_off && hba->vreg_info.vcc && !hba->vreg_info.vcc->always_on)
--		usleep_range(5000, 5100);
-+		usleep_range(hba->sleep_post_vcc_off,
-+			     hba->sleep_post_vcc_off + 100);
- }
- 
- #ifdef CONFIG_PM
-@@ -10665,6 +10666,13 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
- 						UFS_SLEEP_PWR_MODE,
- 						UIC_LINK_HIBERN8_STATE);
- 
-+	/*
-+	 * Most ufs devices require 1ms delay after vcc is powered off before
-+	 * it can be powered on again. Set the default to 5ms. The platform
-+	 * drivers can override this setting as needed.
-+	 */
-+	hba->sleep_post_vcc_off = 5000;
-+
- 	init_completion(&hba->dev_cmd.complete);
- 
- 	err = ufshcd_hba_init(hba);
-diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
-index 1d39437..ad49979 100644
---- a/include/ufs/ufshcd.h
-+++ b/include/ufs/ufshcd.h
-@@ -1140,6 +1140,8 @@ struct ufs_hba {
- 	int critical_health_count;
- 	atomic_t dev_lvl_exception_count;
- 	u64 dev_lvl_exception_id;
-+
-+	u32 sleep_post_vcc_off;
- };
- 
- /**
--- 
-2.7.4
-
+Thanks,
+Eugen
 
