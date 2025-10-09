@@ -1,65 +1,63 @@
-Return-Path: <linux-kernel+bounces-847539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB1DEBCB229
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 00:45:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43942BCB25C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 00:51:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A63E94E4232
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 22:45:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 845653C15C8
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 22:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671FB2868B5;
-	Thu,  9 Oct 2025 22:45:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073872882D6;
+	Thu,  9 Oct 2025 22:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="cChzzp6W"
-Received: from r3-19.sinamail.sina.com.cn (r3-19.sinamail.sina.com.cn [202.108.3.19])
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="wz37Bk7F"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62113285CBB
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 22:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F992874F1;
+	Thu,  9 Oct 2025 22:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760049911; cv=none; b=UvAj1YALwIIKAKIQ6ewYXO3SPr9gaMiIH0wcu7oFJz8/xnEH/XeAB+sr0Wp/DdL8ndmzgop9eYX/1r1Tc/uqK37qPIQr1b7ZmLE3VE5kSLDDjjLhTIvk1iVz5np7nEyy2J0DGtZy742n/6biEMtGGxfquSGxvbE6zWv2m9Tluzw=
+	t=1760050275; cv=none; b=GlQBavbnPD+Rl7ETc92rlt7BG2IVPQBlhD3rV4VNW9Iz7jwfLpp50GnhvSI8ce2qHE8j05RjnRQlZEffgK8gWLK9GhtqewpXRG9xaeszADaLtJMzR6TRCmQ1JBMe72H6da6ob6wsZrXDRFK8F49KlPLGrU8IUbrHs76Jv5s4958=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760049911; c=relaxed/simple;
-	bh=Aq2Xs7YGwBGgcKF/ErcY2LtIolVR5udULocRBat5XrM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MF+b016WLy3+x6U4NqBp6PGheoPmTfiOYc2XYtpWuCDNWi4svMv6XtGXJH3kn8PlzBazlIBHUo3yIAAWnIlVYbIecy4msZUdd60Z5NREHfwTLEulHzb/gqdkediqz1Iwh4bTsax2OJlfK0dX6LGo+X7CYVy2l5XeT8iZSX8+hlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=cChzzp6W; arc=none smtp.client-ip=202.108.3.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1760049907;
-	bh=Mk2YX9Ld0xv4v2koq/Tok6dKf+NvpZKL+/k0QCxNny8=;
-	h=From:Subject:Date:Message-ID;
-	b=cChzzp6WxkOWyj+kOjJBfkkTPkaYUupTGa3nx/+HXxQMSy9w5ZhMma7vCIjR8Av4i
-	 ltCATuFtg6FOabqwT03FkpKLuK3IfNnH4/fG9iCpZpAClUXEHbvUqGOp78LdaZRbYm
-	 fXxqsFKITW3jLeST6MTJSKf9Z+/mYtZSdWxNK1t8=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.32) with ESMTP
-	id 68E83AE700000E31; Thu, 10 Oct 2025 06:44:57 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 2389004456659
-X-SMAIL-UIID: 314E8BD2736C4394B68195D848352F2C-20251010-064457-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+665739f456b28f32b23d@syzkaller.appspotmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
+	s=arc-20240116; t=1760050275; c=relaxed/simple;
+	bh=jYG/OB9bAIYVEcC3QqWgQ1aF5LcSMw1lQuBwbpZdunE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tT0NrdXjRkuXceeuehES10Rlw543VWgNmA3fkOSKQjMUlnz6jTOX3OIM+jHdHOHIFCm1KlNFGWnowhW/NJvQYkSblUtZ4kRENWNimzIU1jKhyrHZ/nMiLiIMWgXVRMkjUOz2qQCKeps7Nbad3FrIovdypC/lsIMLOrzdWCdW8lU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=wz37Bk7F; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Reply-To:Content-Type:In-Reply-To:References;
+	bh=MPeuMUNYVwG3ymlRhXbc+slsUvOfDXixxwoUlCxd4mg=; b=wz37Bk7FuSpN/XDnoWtOT57Lov
+	Yn5QcLwJn80x8mOdAmWIM0Pl+8uH6XQ6a83YjLkvqcGCtri1s4NiExwYib2fv+pUhb/ia+IAhgFyK
+	4TWMBrDvY0sI4/R/UqpIKAr68mGMlfemXy22uNIvY45s/cldp+mgrqn/imBFW7E59H+xoK3G5a4ww
+	PvqNmaFjjsAqUoP4Fk2/0XjqekvAbePe13g0c5F0HensA1wnhDLvi1LywweT+7Dja3QQ8kOHZPLFH
+	m6THVT3pEZSTfhXmjyUqdQy+qiSDY5NtMAq9oVJuqDbZMV51xkL5lhZKt0G9pY9ysJrcj2XpHJ10f
+	4d/PJHIg==;
+Received: from i53875bdd.versanet.de ([83.135.91.221] helo=localhost.localdomain)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1v6zTS-0007iZ-4f; Fri, 10 Oct 2025 00:51:02 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: heiko@sntech.de
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	quentin.schulz@cherry.de,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	virtualization@lists.linux.dev
-Subject: Re: [syzbot] [net?] [virt?] BUG: sleeping function called from invalid context in __set_page_owner
-Date: Fri, 10 Oct 2025 06:44:46 +0800
-Message-ID: <20251009224447.8479-1-hdanton@sina.com>
-In-Reply-To: <68e7e6e3.050a0220.1186a4.0001.GAE@google.com>
-References: 
+	damon.ding@rock-chips.com
+Subject: [PATCH v4 0/2] Add RK3588 Tiger DisplayPort carrier
+Date: Fri, 10 Oct 2025 00:50:48 +0200
+Message-ID: <20251009225050.88192-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,108 +66,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-> Date: Thu, 09 Oct 2025 09:46:27 -0700	[thread overview]
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    ec714e371f22 Merge tag 'perf-tools-for-v6.18-1-2025-10-08'..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=174a4b34580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=db9c80a8900dca57
-> dashboard link: https://syzkaller.appspot.com/bug?extid=665739f456b28f32b23d
-> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=140e0dcd980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1581452f980000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/6d5cce2bcf5d/disk-ec714e37.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/60dff1e3a58f/vmlinux-ec714e37.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/6a1823720b55/bzImage-ec714e37.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+665739f456b28f32b23d@syzkaller.appspotmail.com
-> 
-> BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
-> in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 6069, name: syz.0.17
-> preempt_count: 1, expected: 0
-> RCU nest depth: 2, expected: 2
-> 5 locks held by syz.0.17/6069:
->  #0: ffff888035808350 (sk_lock-AF_VSOCK){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1679 [inline]
->  #0: ffff888035808350 (sk_lock-AF_VSOCK){+.+.}-{0:0}, at: vsock_connect+0x152/0xe20 net/vmw_vsock/af_vsock.c:1546
->  #1: ffffffff8d7aa500 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
->  #1: ffffffff8d7aa500 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:867 [inline]
->  #1: ffffffff8d7aa500 (rcu_read_lock){....}-{1:3}, at: __bpf_trace_run kernel/trace/bpf_trace.c:2074 [inline]
->  #1: ffffffff8d7aa500 (rcu_read_lock){....}-{1:3}, at: bpf_trace_run9+0x1ec/0x500 kernel/trace/bpf_trace.c:2123
->  #2: ffff8880b8832c88 ((stream_local_lock)){+.+.}-{3:3}, at: bpf_stream_page_local_lock kernel/bpf/stream.c:46 [inline]
->  #2: ffff8880b8832c88 ((stream_local_lock)){+.+.}-{3:3}, at: bpf_stream_elem_alloc kernel/bpf/stream.c:175 [inline]
->  #2: ffff8880b8832c88 ((stream_local_lock)){+.+.}-{3:3}, at: __bpf_stream_push_str+0x211/0xbe0 kernel/bpf/stream.c:190
->  #3: ffffffff8d7aa500 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
->  #3: ffffffff8d7aa500 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:867 [inline]
->  #3: ffffffff8d7aa500 (rcu_read_lock){....}-{1:3}, at: __rt_spin_trylock kernel/locking/spinlock_rt.c:110 [inline]
->  #3: ffffffff8d7aa500 (rcu_read_lock){....}-{1:3}, at: rt_spin_trylock+0x10d/0x2b0 kernel/locking/spinlock_rt.c:118
->  #4: ffff8880b883f6e8 (&s->lock_key#5){+.+.}-{3:3}, at: spin_lock include/linux/spinlock_rt.h:44 [inline]
->  #4: ffff8880b883f6e8 (&s->lock_key#5){+.+.}-{3:3}, at: ___slab_alloc+0x12f/0x1470 mm/slub.c:4492
-> Preemption disabled at:
-> [<0000000000000000>] 0x0
-> CPU: 0 UID: 0 PID: 6069 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-> Call Trace:
->  <TASK>
->  dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
->  __might_resched+0x44b/0x5d0 kernel/sched/core.c:8925
->  __rt_spin_lock kernel/locking/spinlock_rt.c:48 [inline]
->  rt_spin_lock+0xc7/0x3e0 kernel/locking/spinlock_rt.c:57
->  spin_lock include/linux/spinlock_rt.h:44 [inline]
+A board that allows easy testing of the Analogix eDP controller on the
+RK3588. Requires Damon's recent work on allowing bridges in the
+Rockchip variant of the controller driver [0].
 
-Given atomic context enforced by bpf [1], this is another case that bpf makes
-trouble.
+Concerning displays, my current setup is
 
-[1] cant_sleep() in __bpf_trace_run()
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/trace/bpf_trace.c#n2065
+  DP-carrier -> DP-port -> DP-to-eDP converter from Aliexpress -> eDP panel
 
->  ___slab_alloc+0x12f/0x1470 mm/slub.c:4492
->  __slab_alloc+0xc6/0x1f0 mm/slub.c:4746
->  __slab_alloc_node mm/slub.c:4822 [inline]
->  slab_alloc_node mm/slub.c:5233 [inline]
->  __kmalloc_cache_noprof+0xec/0x6c0 mm/slub.c:5719
->  kmalloc_noprof include/linux/slab.h:957 [inline]
->  add_stack_record_to_list mm/page_owner.c:172 [inline]
->  inc_stack_record_count mm/page_owner.c:214 [inline]
->  __set_page_owner+0x25c/0x490 mm/page_owner.c:333
->  set_page_owner include/linux/page_owner.h:32 [inline]
->  post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1850
->  prep_new_page mm/page_alloc.c:1858 [inline]
->  get_page_from_freelist+0x28c0/0x2960 mm/page_alloc.c:3884
->  alloc_frozen_pages_nolock_noprof+0xbc/0x150 mm/page_alloc.c:7595
->  alloc_pages_nolock_noprof+0xa/0x30 mm/page_alloc.c:7628
->  bpf_stream_page_replace+0x19/0x1e0 kernel/bpf/stream.c:86
->  bpf_stream_page_reserve_elem kernel/bpf/stream.c:142 [inline]
->  bpf_stream_elem_alloc kernel/bpf/stream.c:177 [inline]
->  __bpf_stream_push_str+0x35c/0xbe0 kernel/bpf/stream.c:190
->  bpf_stream_stage_printk+0x14e/0x1c0 kernel/bpf/stream.c:448
->  bpf_prog_report_may_goto_violation+0xc4/0x190 kernel/bpf/core.c:3181
->  bpf_check_timed_may_goto+0xaa/0xb0 kernel/bpf/core.c:3199
->  arch_bpf_timed_may_goto+0x21/0x40 arch/x86/net/bpf_timed_may_goto.S:40
->  bpf_prog_6fd842a53d323cc5+0x53/0x5f
->  bpf_dispatcher_nop_func include/linux/bpf.h:1350 [inline]
->  __bpf_prog_run include/linux/filter.h:721 [inline]
->  bpf_prog_run include/linux/filter.h:728 [inline]
->  __bpf_trace_run kernel/trace/bpf_trace.c:2075 [inline]
->  bpf_trace_run9+0x2db/0x500 kernel/trace/bpf_trace.c:2123
->  __bpf_trace_virtio_transport_alloc_pkt+0x2d7/0x340 include/trace/events/vsock_virtio_transport_common.h:39
->  __do_trace_virtio_transport_alloc_pkt include/trace/events/vsock_virtio_transport_common.h:39 [inline]
->  trace_virtio_transport_alloc_pkt include/trace/events/vsock_virtio_transport_common.h:39 [inline]
->  virtio_transport_alloc_skb+0x10cc/0x1130 net/vmw_vsock/virtio_transport_common.c:311
->  virtio_transport_send_pkt_info+0x6be/0x1100 net/vmw_vsock/virtio_transport_common.c:390
->  virtio_transport_connect+0xa7/0x100 net/vmw_vsock/virtio_transport_common.c:1072
->  vsock_connect+0xb8b/0xe20 net/vmw_vsock/af_vsock.c:1611
->  __sys_connect_file net/socket.c:2102 [inline]
->  __sys_connect+0x323/0x450 net/socket.c:2121
->  __do_sys_connect net/socket.c:2127 [inline]
->  __se_sys_connect net/socket.c:2124 [inline]
->  __x64_sys_connect+0x7a/0x90 net/socket.c:2124
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+which produces a nice 1080p image, but it seems Quentin's experience was
+not as nice, as he reported in v2 [1] that his two test monitors produced
+dfferent tints, but not real output with:
+
+green tint on a Iiyama ProLite XU2294HSU and purple tint on a Dell P2319H
+
+changes in v4:
+- move hpd-gpio down the the analogix-dp node
+  As stated in commit cb640b2ca546 ("drm/bridge: display-connector: don't
+  set OP_DETECT for DisplayPorts") the dp-connector can't just read the
+  hpd-gpio and mark that as monitor detected, instead 
+
+changes in v3:
+- rebase on top of 6.17-rc1
+- still should wait on the analogix bridge support
+
+changes in v2:
+- collect Ack/Review for binding
+- address Quentin's comments
+  - sorting in Makefile and dp-connector properties
+  - ethernet alias
+  - drop data-lanes comment
+
+[0] https://lore.kernel.org/dri-devel/20250709070139.3130635-1-damon.ding@rock-chips.com/
+[1] https://lore.kernel.org/linux-rockchip/0582b7bc-e5b2-4b5e-821e-8d2c4301579f@cherry.de
+
+Heiko Stuebner (2):
+  dt-bindings: arm: rockchip: add RK3588 DP carrier from Theobroma
+    Systems
+  arm64: dts: rockchip: add RK3588 DP carrier from Theobroma Systems
+
+ .../devicetree/bindings/arm/rockchip.yaml     |   6 +-
+ arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+ .../rk3588-tiger-displayport-carrier.dts      | 119 ++++++++++++++++++
+ 3 files changed, 124 insertions(+), 2 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3588-tiger-displayport-carrier.dts
+
+-- 
+2.47.2
+
 
