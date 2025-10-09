@@ -1,47 +1,54 @@
-Return-Path: <linux-kernel+bounces-846447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A03BBC80A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:25:39 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A47ECBC80A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:26:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C41B1A60991
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:26:02 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2BB56348B42
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:26:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11EC32D12EB;
-	Thu,  9 Oct 2025 08:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2DC42D0C9A;
+	Thu,  9 Oct 2025 08:26:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gB1mwVfB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="dxxWF89a"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5272134BA3F;
-	Thu,  9 Oct 2025 08:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D82A34BA3F;
+	Thu,  9 Oct 2025 08:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759998329; cv=none; b=JNJvi1DvQEAhM/Y/8/r+cV75TsPAvspu9lmVhNeaOCVi8vLSgcBNpTJr5v/DDj1lZ03DC/QfaBK5fd3OPWwA70DgWTQf6IgakTW7i9x3vJcRbBPoadqmfbXkt7HyPzG0iFnjtQU4nMsFtWhLkAFrjB3d5qHQ3lArQ+G8+aqw95U=
+	t=1759998369; cv=none; b=CXvfRUF2IBOX2y2a+l3qWIZJNkDewu0ksjq+PlW4cJVfkL2wHB/THZxRyp4vEALtHaplCCWR8oHFg9JVAT3Vc0JcIB4VmsWipzSZDIqQ29MaGKIirb/0GIx6gYdwBmH8fOyne+jVU+94SR4xsz6FHYBGiXz+yHe5AXRnQrGrrn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759998329; c=relaxed/simple;
-	bh=soqg7I4Gr87KwVlOFYSH4q+RyCVTKqMIIm5A8SF+aZE=;
+	s=arc-20240116; t=1759998369; c=relaxed/simple;
+	bh=wSWyJi0/TAO8GU/SWsIP6i2YbWjUCFhoiqvW6k3QEso=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YAf0dXeXezl9APw7pxhOtfknGmeokU140+AQxnw0aGKkM1T8BvCoG/Ha/M7YohRE5+xdiY2fNfnvwIxST+yQMP4kK8yQO74U7hl8BJprrIXJnpwR0Vmxe/QPMw91A1TBd/IwACtLNH8mi+jbvv0Rv5I2n8r8XnYAL1LCO+FFdqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gB1mwVfB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34C12C4CEE7;
-	Thu,  9 Oct 2025 08:25:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759998329;
-	bh=soqg7I4Gr87KwVlOFYSH4q+RyCVTKqMIIm5A8SF+aZE=;
+	 In-Reply-To:Content-Type; b=PB1HXZmsEtlfkIUYnG5iMrKorveug3P2ea9xas3nyvXM6w9kvwYiCcUIXSioxZlKpwfvVt6zruD4+TbJ079h0c9UHZnjdTYiFBl8H21h/5aClhoU77MIUhzwH6JHTitApRFdn9CQo0aeE+GvirtzkYOmEmZ+YFXRc4u/mzXb1Mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=dxxWF89a; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1759998364;
+	bh=wSWyJi0/TAO8GU/SWsIP6i2YbWjUCFhoiqvW6k3QEso=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gB1mwVfBqxgBXtu22kneERzIYTGoD2lepslWMIHb6OQQgC+W/iQdBJAJH4ffS/Ogw
-	 1PFI23kbFokkQTn0aiMBwJ+E+ND6JpRkjAPCP7oFhNF7pRiIxS/uNw8pEjADLs9/Hf
-	 ggvjEEoDPDB8A2/C7aGyk0uJt/NY7mmRhbZ9TtmFw3pPSs7PiN4w2KKvNP0Ejtuml6
-	 Fu2XiN7XTN0phVLrPV2U1kY1n5XkrH2gLSd9ZgjB5M5cTCDwZ3US5sj67mvjFMK8LU
-	 nWxcdtkO9K5LxKn9LToIDuvMjbNY6sHGVKH3GgB95jTnYQPki7tEgjDqhJXCCWLujJ
-	 gAF5tksouL7YQ==
-Message-ID: <cc99701e-03f2-4326-bab0-2178e17a24d6@kernel.org>
-Date: Thu, 9 Oct 2025 17:25:20 +0900
+	b=dxxWF89a8zWRFH2gqgMnQGPculxLXFfzfHKak7sxhi81EWQh1toN1aJFOVF4g49MD
+	 ktYlB5mOK10wkFBcTFE4XmBdPIVT4TQbZzK/L83/d2dGEpUdkmJOA0nBvc8FsnSgqo
+	 rGnTc5nk2bb3U3q7GyqnmA9bGhSK2dmkdqAizPVzBTGa/zv3fMpub7ulV684L2AClp
+	 BozDZ8XSoxEyiFY6ZSQhBeR5ST7lAn6syDT4C5asgfzDPBwP50fq7TemyfRKEN4ZNe
+	 9rIxvTJLQVivzOQps6YOZHt3RhkacMQ0uERdFYtkmcUicuDHH30wsXSCoYYQ6pubBs
+	 iRPjr1FwSfdHQ==
+Received: from [10.40.0.100] (185-67-175-126.lampert.tv [185.67.175.126])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: mriesch)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 152ED17E12DA;
+	Thu,  9 Oct 2025 10:26:03 +0200 (CEST)
+Message-ID: <c8cf6ce8-87e9-41ef-875f-e1f8f103ac78@collabora.com>
+Date: Thu, 9 Oct 2025 10:26:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,82 +56,247 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] dts: qcom: qcs615-ride: Enable ice ufs and emmc
-To: Abhinaba Rakshit <abhinaba.rakshit@oss.qualcomm.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- "David S. Miller" <davem@davemloft.net>
-Cc: linux-arm-msm@vger.kernel.org, linux-mmc@vger.kernel.org,
+Subject: Re: [PATCH v11 10/17] media: rockchip: rkcif: add support for px30
+ vip dvp capture
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Mehdi Djait <mehdi.djait@linux.intel.com>,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>,
+ =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Gerald Loacker <gerald.loacker@wolfvision.net>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Markus Elfring <Markus.Elfring@web.de>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
+ <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Kever Yang <kever.yang@rock-chips.com>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Collabora Kernel Team <kernel@collabora.com>,
+ Paul Kocialkowski <paulk@sys-base.io>,
+ Alexander Shiyan <eagle.alexander923@gmail.com>,
+ Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-crypto@vger.kernel.org
-References: <20251009-add-separate-ice-ufs-and-emmc-device-nodes-for-qcs615-platform-v1-0-2a34d8d03c72@oss.qualcomm.com>
- <20251009-add-separate-ice-ufs-and-emmc-device-nodes-for-qcs615-platform-v1-5-2a34d8d03c72@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+References: <20240220-rk3568-vicap-v11-0-af0eada54e5d@collabora.com>
+ <20240220-rk3568-vicap-v11-10-af0eada54e5d@collabora.com>
+ <aOV0SrQWlVUTx1-R@kekkonen.localdomain>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251009-add-separate-ice-ufs-and-emmc-device-nodes-for-qcs615-platform-v1-5-2a34d8d03c72@oss.qualcomm.com>
+From: Michael Riesch <michael.riesch@collabora.com>
+In-Reply-To: <aOV0SrQWlVUTx1-R@kekkonen.localdomain>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 09/10/2025 15:18, Abhinaba Rakshit wrote:
-> Enable ICE UFS and eMMC for QCS615-ride platform.
+Hi Sakari,
+
+Thanks for the review.
+
+On 10/7/25 22:12, Sakari Ailus wrote:
+> [...]
+>>  
+>>  static const char *const rk3568_vicap_clks[] = {
+>> @@ -62,11 +64,21 @@ MODULE_DEVICE_TABLE(of, rkcif_plat_of_match);
+>>  
+>>  static int rkcif_register(struct rkcif_device *rkcif)
+>>  {
+>> +	int ret;
+>> +
+>> +	ret = rkcif_dvp_register(rkcif);
+>> +	if (ret && ret != -ENODEV)
+>> +		goto err;
 > 
-> Signed-off-by: Abhinaba Rakshit <abhinaba.rakshit@oss.qualcomm.com>
+> 	return ret == -ENODEV ? 0 : ret;
 
+This is written in that way so that the patch 12/17 does not need to
+modify recently added lines and simply needs to add new lines. OK with that?
 
-Use consistent subject prefixes.
+> 
+>> +
+>>  	return 0;
+>> +
+>> +err:
+>> +	return ret;
+>>  }
+>>  
+>>  static void rkcif_unregister(struct rkcif_device *rkcif)
+>>  {
+>> +	rkcif_dvp_unregister(rkcif);
+>>  }
+>>  
+>>  static int rkcif_notifier_bound(struct v4l2_async_notifier *notifier,
+>> @@ -111,6 +123,9 @@ static irqreturn_t rkcif_isr(int irq, void *ctx)
+>>  {
+>>  	irqreturn_t ret = IRQ_NONE;
+>>  
+>> +	if (rkcif_dvp_isr(irq, ctx) == IRQ_HANDLED)
+>> +		ret = IRQ_HANDLED;
+>> +
+>>  	return ret;
+>>  }
+>>  
+>> diff --git a/drivers/media/platform/rockchip/rkcif/rkcif-regs.h b/drivers/media/platform/rockchip/rkcif/rkcif-regs.h
+>> new file mode 100644
+>> index 000000000000..d50b6e14b5af
+>> --- /dev/null
+>> +++ b/drivers/media/platform/rockchip/rkcif/rkcif-regs.h
+>> @@ -0,0 +1,131 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Rockchip Camera Interface (CIF) Driver
+>> + *
+>> + * Copyright (C) 2018 Rockchip Electronics Co., Ltd.
+>> + * Copyright (C) 2023 Mehdi Djait <mehdi.djait@bootlin.com>
+>> + * Copyright (C) 2025 Michael Riesch <michael.riesch@wolfvision.net>
+>> + */
+>> +
+>> +#ifndef _RKCIF_REGS_H
+>> +#define _RKCIF_REGS_H
+>> +
+>> +#define RKCIF_REGISTER_NOTSUPPORTED	      0x420000
+>> +#define RKCIF_FETCH_Y(VAL)		      ((VAL) & 0x1fff)
+>> +#define RKCIF_XY_COORD(x, y)		       (((y) << 16) | (x))
+> 
+> Why the use of spaces for alignment to a column not divisible by 8? For a
+> new header that doesn't seem to make sense.
 
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+Hm. I use clang-format to format my code and apparently it looks for the
+longest define name (RKCIF_FORMAT_BT1120_CLOCK_DOUBLE_EDGES ex aequo
+with others) and adds a space there. The other defines are aligned to
+that one. I don't think this behavior of clang-format can be adjusted
+(only option would be not to align anything, i.e.,
+
+#define RKCIF_REGISTER_NOTSUPPORTED 0x420000
+#define RKCIF_FETCH_Y(VAL) ((VAL) & 0x1fff)
+#define RKCIF_XY_COORD(x, y) (((y) << 16) | (x))
+...
+
+If you don't find what clang-format produces appropriate, I'll change it
+manually. Is there any strict rule? What should it look like in the end?
+Align with tabs only to something divisible by 8?
 
 Best regards,
-Krzysztof
+Michael
+
+> 
+>> +
+>> +/* DVP register contents */
+>> +#define RKCIF_CTRL_ENABLE_CAPTURE	       BIT(0)
+>> +#define RKCIF_CTRL_MODE_PINGPONG	       BIT(1)
+>> +#define RKCIF_CTRL_MODE_LINELOOP	       BIT(2)
+>> +#define RKCIF_CTRL_AXI_BURST_16		       (0xf << 12)
+>> +
+>> +#define RKCIF_INTEN_FRAME_END_EN	       BIT(0)
+>> +#define RKCIF_INTEN_LINE_ERR_EN		       BIT(2)
+>> +#define RKCIF_INTEN_BUS_ERR_EN		       BIT(6)
+>> +#define RKCIF_INTEN_SCL_ERR_EN		       BIT(7)
+>> +#define RKCIF_INTEN_PST_INF_FRAME_END_EN       BIT(9)
+>> +
+>> +#define RKCIF_INTSTAT_CLS		       0x3ff
+>> +#define RKCIF_INTSTAT_FRAME_END		       BIT(0)
+>> +#define RKCIF_INTSTAT_LINE_END		       BIT(1)
+>> +#define RKCIF_INTSTAT_LINE_ERR		       BIT(2)
+>> +#define RKCIF_INTSTAT_PIX_ERR		       BIT(3)
+>> +#define RKCIF_INTSTAT_DFIFO_OF		       BIT(5)
+>> +#define RKCIF_INTSTAT_BUS_ERR		       BIT(6)
+>> +#define RKCIF_INTSTAT_PRE_INF_FRAME_END	       BIT(8)
+>> +#define RKCIF_INTSTAT_PST_INF_FRAME_END	       BIT(9)
+>> +#define RKCIF_INTSTAT_FRAME_END_CLR	       BIT(0)
+>> +#define RKCIF_INTSTAT_LINE_END_CLR	       BIT(1)
+>> +#define RKCIF_INTSTAT_LINE_ERR_CLR	       BIT(2)
+>> +#define RKCIF_INTSTAT_PST_INF_FRAME_END_CLR    BIT(9)
+>> +#define RKCIF_INTSTAT_ERR		       0xfc
+>> +
+>> +#define RKCIF_FRAME_STAT_CLS		       0x00
+>> +#define RKCIF_FRAME_FRM0_STAT_CLS	       0x20
+>> +
+>> +#define RKCIF_FORMAT_VSY_HIGH_ACTIVE	       BIT(0)
+>> +#define RKCIF_FORMAT_HSY_LOW_ACTIVE	       BIT(1)
+>> +
+>> +#define RKCIF_FORMAT_INPUT_MODE_YUV	       (0x00 << 2)
+>> +#define RKCIF_FORMAT_INPUT_MODE_PAL	       (0x02 << 2)
+>> +#define RKCIF_FORMAT_INPUT_MODE_NTSC	       (0x03 << 2)
+>> +#define RKCIF_FORMAT_INPUT_MODE_BT1120	       (0x07 << 2)
+>> +#define RKCIF_FORMAT_INPUT_MODE_RAW	       (0x04 << 2)
+>> +#define RKCIF_FORMAT_INPUT_MODE_JPEG	       (0x05 << 2)
+>> +#define RKCIF_FORMAT_INPUT_MODE_MIPI	       (0x06 << 2)
+>> +
+>> +#define RKCIF_FORMAT_YUV_INPUT_ORDER_UYVY      (0x00 << 5)
+>> +#define RKCIF_FORMAT_YUV_INPUT_ORDER_YVYU      (0x01 << 5)
+>> +#define RKCIF_FORMAT_YUV_INPUT_ORDER_VYUY      (0x02 << 5)
+>> +#define RKCIF_FORMAT_YUV_INPUT_ORDER_YUYV      (0x03 << 5)
+>> +#define RKCIF_FORMAT_YUV_INPUT_422	       (0x00 << 7)
+>> +#define RKCIF_FORMAT_YUV_INPUT_420	       BIT(7)
+>> +
+>> +#define RKCIF_FORMAT_INPUT_420_ORDER_ODD       BIT(8)
+>> +
+>> +#define RKCIF_FORMAT_CCIR_INPUT_ORDER_EVEN     BIT(9)
+>> +
+>> +#define RKCIF_FORMAT_RAW_DATA_WIDTH_8	       (0x00 << 11)
+>> +#define RKCIF_FORMAT_RAW_DATA_WIDTH_10	       (0x01 << 11)
+>> +#define RKCIF_FORMAT_RAW_DATA_WIDTH_12	       (0x02 << 11)
+>> +
+>> +#define RKCIF_FORMAT_YUV_OUTPUT_422	       (0x00 << 16)
+>> +#define RKCIF_FORMAT_YUV_OUTPUT_420	       BIT(16)
+>> +
+>> +#define RKCIF_FORMAT_OUTPUT_420_ORDER_EVEN     (0x00 << 17)
+>> +#define RKCIF_FORMAT_OUTPUT_420_ORDER_ODD      BIT(17)
+>> +
+>> +#define RKCIF_FORMAT_RAWD_DATA_LITTLE_ENDIAN   (0x00 << 18)
+>> +#define RKCIF_FORMAT_RAWD_DATA_BIG_ENDIAN      BIT(18)
+>> +
+>> +#define RKCIF_FORMAT_UV_STORAGE_ORDER_UVUV     (0x00 << 19)
+>> +#define RKCIF_FORMAT_UV_STORAGE_ORDER_VUVU     BIT(19)
+>> +
+>> +#define RKCIF_FORMAT_BT1120_CLOCK_SINGLE_EDGES (0x00 << 24)
+>> +#define RKCIF_FORMAT_BT1120_CLOCK_DOUBLE_EDGES BIT(24)
+>> +#define RKCIF_FORMAT_BT1120_TRANSMIT_INTERFACE (0x00 << 25)
+>> +#define RKCIF_FORMAT_BT1120_TRANSMIT_PROGRESS  BIT(25)
+>> +#define RKCIF_FORMAT_BT1120_YC_SWAP	       BIT(26)
+>> +
+>> +#define RKCIF_SCL_CTRL_ENABLE_SCL_DOWN	       BIT(0)
+>> +#define RKCIF_SCL_CTRL_ENABLE_SCL_UP	       BIT(1)
+>> +#define RKCIF_SCL_CTRL_ENABLE_YUV_16BIT_BYPASS BIT(4)
+>> +#define RKCIF_SCL_CTRL_ENABLE_RAW_16BIT_BYPASS BIT(5)
+>> +#define RKCIF_SCL_CTRL_ENABLE_32BIT_BYPASS     BIT(6)
+>> +#define RKCIF_SCL_CTRL_DISABLE_32BIT_BYPASS    (0x00 << 6)
+>> +
+>> +#define RKCIF_INTSTAT_F0_READY		       BIT(0)
+>> +#define RKCIF_INTSTAT_F1_READY		       BIT(1)
+>> +
+>> +/* GRF register offsets and contents */
+>> +#define RK3568_GRF_VI_CON0		       0x340
+>> +#define RK3568_GRF_VI_CON1		       0x344
+>> +#define RK3568_GRF_VI_STATUS0		       0x348
+>> +
+>> +#define RK3568_GRF_VI_CON1_CIF_DATAPATH	       BIT(9)
+>> +#define RK3568_GRF_VI_CON1_CIF_CLK_DELAYNUM    GENMASK(6, 0)
+>> +
+>> +#define RK3568_GRF_WRITE_ENABLE(x)	       ((x) << 16)
+>> +
+>> +enum rkcif_dvp_register_index {
+>> +	RKCIF_DVP_CTRL,
+>> +	RKCIF_DVP_INTEN,
+>> +	RKCIF_DVP_INTSTAT,
+>> +	RKCIF_DVP_FOR,
+>> +	RKCIF_DVP_LINE_NUM_ADDR,
+>> +	RKCIF_DVP_FRM0_ADDR_Y,
+>> +	RKCIF_DVP_FRM0_ADDR_UV,
+>> +	RKCIF_DVP_FRM1_ADDR_Y,
+>> +	RKCIF_DVP_FRM1_ADDR_UV,
+>> +	RKCIF_DVP_VIR_LINE_WIDTH,
+>> +	RKCIF_DVP_SET_SIZE,
+>> +	RKCIF_DVP_SCL_CTRL,
+>> +	RKCIF_DVP_CROP,
+>> +	RKCIF_DVP_FRAME_STATUS,
+>> +	RKCIF_DVP_LAST_LINE,
+>> +	RKCIF_DVP_LAST_PIX,
+>> +	RKCIF_DVP_REGISTER_MAX
+>> +};
+>> +
+>> +#endif
+>>
+> 
+
 
