@@ -1,117 +1,149 @@
-Return-Path: <linux-kernel+bounces-846168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21F77BC72E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 04:11:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F443BC72F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 04:12:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 444443E315B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 02:11:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1CD3189CCC3
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 02:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749EB1A0BD0;
-	Thu,  9 Oct 2025 02:11:21 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D3319FA93;
+	Thu,  9 Oct 2025 02:12:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="g5GkFcdb"
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC211991CA;
-	Thu,  9 Oct 2025 02:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F421F92E
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 02:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759975881; cv=none; b=p4r1PKbM40or5H4H4Q800KJSGMIvATBBDAuWjFWjNMgpu11M7T1Nd6SaMVtBHoD+/hfnZURPVZzg1e8brTrc9MjkTeSODKXXZs3p39rcR5Q3DS0CuK+RowiWTZz7sPHMmSRR1SpnNZ7ZFF4EVTJ6r4E27RF8Rmiuas+C4bryXtU=
+	t=1759975952; cv=none; b=I5OKEJyRcdIMuri2c0SgGrCh+1WVvhQR7RQn4ZQLMvXAM8zuhZiA3sqDXqqkGra8VlGhAGpoPxJYClI18Y75XSUihnTYpQBb12ZjTnz/Jfdfwkzgbtz1R0Ab3/uh4V0bTFxkCzrhPlphgsO1eZdg9HqHg84hhJC0y5gZ7CX7b8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759975881; c=relaxed/simple;
-	bh=kgME5ptW1dqdCof7hUAc4atSggk3hpL5EXsqgxkuxE8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XSg1BMkzExbTLwzlUE1swpZxgPr8fyQaByXHT7WVcwms3bofIh1wve9PzZ4Csq6QWOUg6vu43b5OAePJE+fRIIs4HacFHTgV9fx0YlP6OW1/P4NmUvRw0whg7gea/0mPMIa8pR42qF+SHfkCXvhuwYJXno+Ld6q1kRSAUcJrVxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf15.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay06.hostedemail.com (Postfix) with ESMTP id 6A72511B05F;
-	Thu,  9 Oct 2025 02:11:10 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf15.hostedemail.com (Postfix) with ESMTPA id 3329317;
-	Thu,  9 Oct 2025 02:11:08 +0000 (UTC)
-Date: Wed, 8 Oct 2025 22:11:09 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- david.hunter.linux@gmail.com, skhan@linuxfoundation.org,
- linux-kernel-mentees@lists.linuxfoundation.org, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- syzbot+ddc001b92c083dbf2b97@syzkaller.appspotmail.com
-Subject: Re: [PATCH v2] ring buffer: Propagate __rb_map_vma return value to
- caller
-Message-ID: <20251008221109.13a76717@batman.local.home>
-In-Reply-To: <20251008172516.20697-1-ankitkhushwaha.linux@gmail.com>
-References: <20251008172516.20697-1-ankitkhushwaha.linux@gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1759975952; c=relaxed/simple;
+	bh=BEO1C3ONk2myhERm288+5DEceZMfRXpENxcU22KYBbk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h0FdwG2a3fokpwxo8mw1qpYXIacnbGRe5GCdN3kW655HOe7nIDeNhhA78xSvR9vFKN85h3pnsf5rO3sLkTnRSaoYkib2bFOgSjF0HhlpEu1SNNQPHr//mFO3tr2hPhSL01uQnrmjSfB3JOf7wXk5vRMXXPmYdOV/gPjH8Ps623I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=g5GkFcdb; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-9399ddb3ffeso42440739f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 19:12:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1759975950; x=1760580750; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AbPu2XGEyV84O7ceajb+hSEcv9NBBUMvNPxDk1syPXo=;
+        b=g5GkFcdbhS1utOplQhrrRvivMI+Hefwgp07EI0zMAkc8Vis8rP0K749ENEf4KPJRO4
+         RgNUfbIMnh8oMlDJiIdCR6E09aqWTzAa6oN6r2juZG/JkgAfPNFngPUeP++4dZszgfB2
+         WFbhN2qZmBSrcu0/FTrx1se+VB39vXh3LPQb+C8pxVs7wLlMu61HLp7qha4ewa7Z/V8b
+         rnhTECbDvccIwQ5rQbww9pmN43Ts9r4jHeLVSnVnOmUwKYiJFo7gR4N765utdFVLUkVY
+         IKq+Fvfxe2WcEJr73WDFZHbre8FH4+WXNaNTqL1NFO7a3ebY+zhtHXd0NM2J7YaNbnfZ
+         K5Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759975950; x=1760580750;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AbPu2XGEyV84O7ceajb+hSEcv9NBBUMvNPxDk1syPXo=;
+        b=DbD/44vsfmBamglGchLll6rlcNFdtvoe2YAIllQbVAJWC3gs5GiHjBaGSpejMOM/AL
+         kbyapmW1vBGXcX17Cuhn+rtEYb2bwepMt9S0V1TYV/xOGUtFTKaPPwA3yfou7wZ3JGfp
+         4rC13rid9/pLGU42GAm4dT2Fdeb69eLqARKmifj78CzgsUHjee1KsmlwpBDr+wGlC7sb
+         1ZyZopzpWhoOLKzUVs6JKZ2JRVqjW6iemELQAzJTPDsJvbCKlbNOtMZRkYo2M7uJo8Oz
+         mWpU9+GY2hzoJrj+MGroEJiYcGIxHtM4FFU9iYALmgHfQBGmr7fDTFPeAD8uwUIp/t7G
+         4Aug==
+X-Forwarded-Encrypted: i=1; AJvYcCV3pp3bzY7MicvuK+AaeIyz1DpOrMzPl1u8ZECs08WtfjQU6Zi3ImSToAGyHBGuCiuonYDs8v4nFivzCEs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvrpXleCgCotyZBc2nSnU0+13qRS6f48WT0qGgFn+zaCFEwKTF
+	Dfd2fisRZCrKcm0tKruYFuBvksHJA0AyRYhJG7eZpNqsOeSE0Z6BSZfTVI+ej3PSO+Q=
+X-Gm-Gg: ASbGncteoObrMkkmsRqNh6vYODyEMSP+zsnSzyqKCI+Y8GtE95eA71jSNftFDZp7KWj
+	2f2JG28y1S+fWuW3qYTif+n2fXL2hq1bF4+ACoGDRJm46Xo96MPnF3OamI1hwqU2qrwF74FisrV
+	BJriqmcWAWUzx0lVNpYehih7jWFSxdc2SRBUssn8WfsFe68b1wd1Eaz9aHwn0b79Cu/mWuu4YKq
+	+4luZxap6WAsJY2/yTNL/w3a2hhdgE7/UEKM48gB2xyaxJxEmGTurEA6Ft5xom7M0jHaIUelW2h
+	V6Ure5I6hZIjeN08w4H3QbmAhovBdLZXRK0poMV3rsd4RvEmxLcqGFVS9B4KRPD39aIwCwqTvY2
+	nlNzf5uPWGd9dtAsWApSP/lNn0U1vC6K0NdDd2OI1jyQZZA5N/gh0NfxrW3MIKAA=
+X-Google-Smtp-Source: AGHT+IFf3P0fMqgtIRBVPv2XsviE3jCqS0vhAVEZFCbPRNoZDag8qSCTZQOfXsXtGUnTxbVxbZkh8Q==
+X-Received: by 2002:a05:6e02:18c7:b0:427:de6d:b6f3 with SMTP id e9e14a558f8ab-42f873590a0mr52309535ab.8.1759975950061;
+        Wed, 08 Oct 2025 19:12:30 -0700 (PDT)
+Received: from [100.64.0.1] ([170.85.6.207])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-42f9036cee5sm5594385ab.32.2025.10.08.19.12.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Oct 2025 19:12:29 -0700 (PDT)
+Message-ID: <e155e1f8-0b54-432e-a155-eec5ca41c341@sifive.com>
+Date: Wed, 8 Oct 2025 21:12:28 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 3329317
-X-Stat-Signature: xdxfbmni5s9m7wmz3r6r6ykqnwrdfn6n
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+wjdxel8B/+3U+KgtzPA4RWU9GRqZrXQw=
-X-HE-Tag: 1759975868-468936
-X-HE-Meta: U2FsdGVkX1+0PJKh53Jx2MaGLnolId+sXJMvyZb+FL+QQA0rIWT4L7RlFdXxqmNUOYpNCnw09sdvDlJnLe7bcskrmdGyzwn7uaxR34qZjxbpyGssszRO7im41awd3O2M2YST6lPgcuVv5qhfDhicCjCir7xI0Fic+vD/y6E1fyuC6O3kciGEEgU1CbxtbLjT0GZWFC1gIkgm9nktSb5vJtxzVNI+WMMkotfr3kxrYikrP5jpApdOLU9r2gRaitELDBaie833I8rR2cfYZcy8P4053/OAlQbtX6F5XwLN7kX1MffsuNMSvCvxD8dbzdaDzrHCbc1vO0mft1GsBmTM+AOtRHTxhOt4BY3G8IDbQyT8elvfSPtI7z64W1LzpuXsR65xDA2B3Yok2h/NR4AGtw4JgqK/gAAVv2BZJmu8OQLpmi+oKkjvpsJUv0Vpu5HyUExWH3j/SohmBuJzKyW/+XfrwCcVu2TXePXxo6rBs24=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/11] riscv: mm: Fix up memory types when writing page
+ tables
+To: Alexandre Ghiti <alex@ghiti.fr>, Palmer Dabbelt <palmer@dabbelt.com>,
+ linux-riscv@lists.infradead.org, Conor Dooley <conor@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Alexandre Ghiti <alexghiti@rivosinc.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Emil Renner Berthing <kernel@esmil.dk>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+References: <20241102000843.1301099-1-samuel.holland@sifive.com>
+ <20241102000843.1301099-7-samuel.holland@sifive.com>
+ <4123bd5d-33b8-4248-a03a-de784c433040@ghiti.fr>
+From: Samuel Holland <samuel.holland@sifive.com>
+Content-Language: en-US
+In-Reply-To: <4123bd5d-33b8-4248-a03a-de784c433040@ghiti.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed,  8 Oct 2025 22:55:16 +0530
-Ankit Khushwaha <ankitkhushwaha.linux@gmail.com> wrote:
+Hi Alex,
 
-> The return value from `__rb_map_vma()`, which rejects writable or
-> executable mappings (VM_WRITE, VM_EXEC, or !VM_MAYSHARE), was being
-> ignored. As a result the caller of `__rb_map_vma` always returned 0 
-> even when the mapping had actually failed, allowing it to proceed
-> with an invalid VMA.
+On 2024-11-05 5:03 AM, Alexandre Ghiti wrote:
+> On 02/11/2024 01:08, Samuel Holland wrote:
+>> Currently, Linux on RISC-V has three ways to specify the cacheability
+>> and ordering PMAs of a page:
+>>   1) Do nothing; assume the system is entirely cache-coherent and rely on
+>>      the hardware for any ordering requirements
+>>   2) Use the page table bits specified by Svpbmt
+>>   3) Use the page table bits specified by XTheadMae
+>>
+>> To support all three methods, the kernel dynamically determines the
+>> definitions of the _PAGE_NOCACHE and _PAGE_IO fields. However, this
+>> alone is not sufficient, as XTheadMae uses a nonzero memory type value
+>> for normal memory pages. So the kernel has an additional alternative
+>> sequence (ALT_THEAD_PMA) to insert the correct memory type when writing
+>> page table entries.
 > 
-> Reported-by: syzbot+ddc001b92c083dbf2b97@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?id=194151be8eaebd826005329b2e123aecae714bdb
-> Signed-off-by: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
 > 
-
-Thanks for the update.
-
-> Changes in v2:
-> * applied minor cleanup suggested by Steve in v1
-
-Note, the "changes" should be below the "---" as that prevents it from
-being added to the git change log. And it's always good to include a
-link to the previous version.
-
-For example:
-
+> I have just taken a look, and it's not exactly when the page table is written
+> but rather when the page table entry is being created.
 > 
-> ---
-
-Changes in v2: https://lore.kernel.org/linux-trace-kernel/20251007171256.20884-1-ankitkhushwaha.linux@gmail.com/
-* applied minor cleanup suggested by Steve in v1
-
--- Steve
-
-
->  kernel/trace/ring_buffer.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> And I have to admit that I find it weird, moving that to the set_pXd() functions
+> seems way more robust. Indeed those functions must be used to write a page table
+> entry but a page table entry can be created by other means than with the
+> pfn_pXd() functions.
 > 
-> diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-> index 43460949ad3f..1244d2c5c384 100644
-> --- a/kernel/trace/ring_buffer.c
-> +++ b/kernel/trace/ring_buffer.c
-> @@ -7273,7 +7273,7 @@ int ring_buffer_map(struct trace_buffer *buffer, int cpu,
->  		atomic_dec(&cpu_buffer->resize_disabled);
->  	}
->  
-> -	return 0;
-> +	return err;
->  }
->  
->  int ring_buffer_unmap(struct trace_buffer *buffer, int cpu)
+> This is what I did for NAPOT to hide the size of the mapping contained in the
+> pfn from the generic kernel here https://lore.kernel.org/linux-
+> riscv/20240802151430.99114-1-alexghiti@rivosinc.com/
+
+I've just sent out a v2 which follows your suggestion[1]. It turns out that the
+pXXp_get()/set_pXX() functions aren't 100% robust either, with some examples
+shown in patch 5 of the new series[2]. And there's some ongoing discussion about
+if it's appropriate to put nontrivial code in those helper functions[3]. So I
+don't know what's really the best strategy here.
+
+Regards,
+Samuel
+
+[1]:
+https://lore.kernel.org/linux-riscv/20251009015839.3460231-1-samuel.holland@sifive.com/
+[2]:
+https://lore.kernel.org/linux-riscv/20251009015839.3460231-6-samuel.holland@sifive.com/
+[3]:
+https://lore.kernel.org/all/20251006082238.GQ3245006@noisy.programming.kicks-ass.net/
 
 
