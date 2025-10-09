@@ -1,47 +1,80 @@
-Return-Path: <linux-kernel+bounces-846076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D1F2BC6F97
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 02:10:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE717BC6F9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 02:10:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12F2619E222B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 00:10:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5C6219E232D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 00:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF36F1A275;
-	Thu,  9 Oct 2025 00:09:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C9A1E868;
+	Thu,  9 Oct 2025 00:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jrnAP8e5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oyS3McjQ"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318184C81;
-	Thu,  9 Oct 2025 00:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB496DDC5
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 00:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759968593; cv=none; b=pX0+kj9uNWY+A4rbLd5yHhzrHCfp+k/vQgAmZXn4arudgW2d8rojSFmmfnhFi74J0CZn+IevjCsds7J7V/E20ocvDMtH7MYQIC5EU/kIi2xFbao+QxFo/hyAVsI4vAgnqlOZtYdiniw6L0MpKxb70TwX0DZPZvAJwZkUDJzx6rs=
+	t=1759968652; cv=none; b=Mhw1zGHYmReBjOGyey36naOWhUT8FSuaWhoWIq9K1fGoKOMs5wR7IR2YOytpUA89z5vFT5+iFWKFTqcadBKfsmXa2ux1Y+E7B0D2HriRGV8EnQ/LpL0lkQvZW20i7nhmv1Ol9wgErg+VfCAUclS6cNZTpua3SuzlDuejxjeWnWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759968593; c=relaxed/simple;
-	bh=NBpI0P+cB8aSlVfqo5kTLUDgzKJkSKJ6dI+OAFbpW3Q=;
+	s=arc-20240116; t=1759968652; c=relaxed/simple;
+	bh=+NpJNfi5TLX6c2dQPOrHEKvQBRW5JoX0643mzmit8a0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UGdpw3xUzif2MvP8aCInyjAEah7t/KdyA+23BkC8spIFS7U6iXl4uBxKRRKgbaqFt9XJWuvHjv+KLEUX/1iyjQzofLGRsEaq0PVDJdVS8J5Bm1BHbvUlDXZGwRaDsKlkJSuZEZ1LcnDQQmV/0Q1NEvBgMUela9EUYL8HFQmaYO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jrnAP8e5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21109C4CEE7;
-	Thu,  9 Oct 2025 00:09:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759968592;
-	bh=NBpI0P+cB8aSlVfqo5kTLUDgzKJkSKJ6dI+OAFbpW3Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jrnAP8e5Q42pbeysN/KsyPikuzdHkNkKAQVw1nbVnwrojf9WKpWPkyONiv1iqWipd
-	 a/nwuOBoNs7Fs5b7Jb+pMI/DHIbmEAsWPRrguz48/SQjtW5G1O/09SRqQ6jbxNzR3O
-	 RiitiRKY1IEaCU67rG8IeIRskmKx6O4HKn9dyqUCERocS7TULZgaWLPhHKdsF4+X74
-	 9WGEiOsVCGz5xOftZsD2bYSiJuQ3D3dYY7pWCK2H3Zh7wyvaikTU83DWRxrkDboOmt
-	 FPQHwKFoLGdcCwbVtjee+BLzfEGDzTqjJ55GNDvgTEoLlVSTBaJPNIaKFOgkasqyhl
-	 ENOk8xBfD6rcA==
-Message-ID: <b0b9a78e-d54e-4f4f-b99c-b5e5fe071ced@kernel.org>
-Date: Thu, 9 Oct 2025 09:09:43 +0900
+	 In-Reply-To:Content-Type; b=cUlud4afM3DdaLiUPk0uVGyRzHUSOag1LvcXp78mgh4+slbAfKVtdmceBGDxzgTSF5BY3BanLVLSQ193POy2Sk9EJPtPb3bGnS3EJMWCp/dnIHOlrGWK0egtBArbyXgHmIGalBmFu7zZvfrla4Q7GPS4yZfgO82rObrTEu6IFZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oyS3McjQ; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-637e74e9104so494269a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 17:10:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759968649; x=1760573449; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nqeVt9CA6ZZE5iXwL1K4ytAUwC5/DAyBd/WUJk984Wc=;
+        b=oyS3McjQu0OGkm38rp9J+GgPCaRyWcqk/4fjpF5idtkcHi6aTPgp7/8sF+BxmbmZl5
+         1jDZLg8dChkqB3LhUMc5m72Cl59cCj92Uq5ibC0fjdhsrc24KcLBeWkEEKMeYENLA3dM
+         4pJJCwldYTGvng8+nPvsSj4C5cN1qn/xfUQeKGWGpttp7nPoNi6XOzgh1v/fB2oDX5GA
+         eb9J4Go83yirZUa/xtBjqQk56wTtpl6ti+723IeuwhsOuWvYsXNP77CDF3RvHxefUpSz
+         PMe0GYFlK4oCago5ApP7nUfd67Lgq5hQ4llhdnL4mU3nA7OPTYT5Y77vFeZbQqdEeIAr
+         sBiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759968649; x=1760573449;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nqeVt9CA6ZZE5iXwL1K4ytAUwC5/DAyBd/WUJk984Wc=;
+        b=WFshqxk4HGiWf0hALpkCIG+rHlIlkZvfwNCxYfImwsi/Y2VmWi1B88wwf8eng7cEpu
+         /zIdM7Zu/Oa2WOQUOEJNJn7gUmDQNSGVpwgeMO1r4G/xRfUOEU/KOergr4GE7lmRtZWW
+         DxHUjV9LrVUV9ZpCAiGIvKsxS0EUazGATQ43Y4kmYHANHheAqPZqYDjgArBXeEcPqIGk
+         ojrEcmEWhH56tg/YToC/SAoMZzSgAXUxwrC6NLNrVo5Bw0lVEGKfFKlWZ815VnFpjvUD
+         U36FJ1UrZzVvKoEEQ434jmGzwlDtoA0NKq8suWrmDT4iNtWaWNOx9WWoJcM40UKYaigy
+         r4pg==
+X-Forwarded-Encrypted: i=1; AJvYcCVRMUbfV/ZhRgNlQiv7N5jabq9DlLi8DZfkSrXk+1l4NQxRUh/1wRvXA97qLL/2ogDxy2sGOdAtbBfTLdU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSNzv96tNOGx7aUEQNYFkPbu6iPfr3Pnk52+5bgfUCrK/r6YWH
+	SeMiRnARQDHedksmrzShiSueYlM4FKQUyKc9C/IQxUd2PIy5xSrCkpz8gWe0sZ+jtUU=
+X-Gm-Gg: ASbGncs9CypCkSi+20KONHZa9MVoK54xHkm0rCmVySHuWI66Tyjlgn2j203FDNifRKs
+	Bm/wInwTpvSjhvEL9Q/UODRgh0dpqSsrc7flDGBeNFr2T+GwsidWuqsa3G6X+vxqz2ii9zk+340
+	S8zapc3lsPJYJx64549dWSaDMv4kvDSxiCkAPIdiGeslbHUdKeqUzhQNxaKLpWzK2yRbzpMLyqG
+	zkYmB4ELkBPTFfeixGzioRLfizQn62up/nzhbNywM60je9J/44VtrjZfPN4b5eWQ9mmkF9RNrl/
+	q/cnvGcmlQuXqAg741UITyqsEW/Qjb/Jvvt1aPJr84aFjSakX/VJaNb4/o9SXiorWNlfj8dczbc
+	97XXelQGEsLeUfmImloaKUBLNnrsbDyELrDHgvWnNz17Wr+in1ZkvWORSzvHUVGwZfiCK9fC4pI
+	bGNjYg7zqC0hnt//4E
+X-Google-Smtp-Source: AGHT+IEcPQu/d3ZxrGPE3fTVd6s5KBDE/uPgAxO+8YlkcXC3pZrWzpe9zN32/G2VY+n+7l9susSC/w==
+X-Received: by 2002:a05:6402:90c:b0:634:cb54:810e with SMTP id 4fb4d7f45d1cf-639d5c57aa7mr4407819a12.31.1759968649066;
+        Wed, 08 Oct 2025 17:10:49 -0700 (PDT)
+Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-639f30d9963sm1119645a12.15.2025.10.08.17.10.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Oct 2025 17:10:48 -0700 (PDT)
+Message-ID: <9bae595a-597e-46e6-8eb2-44424fe21db6@linaro.org>
+Date: Thu, 9 Oct 2025 01:10:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,131 +82,126 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/10] dt-bindings: soc: samsung: exynos-pmu: allow power
- domains as child on g101
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20251006-gs101-pd-v1-0-f0cb0c01ea7b@linaro.org>
- <20251006-gs101-pd-v1-2-f0cb0c01ea7b@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3 0/5] Introduce "non-pixel" sub node within iris video
+ node
+To: Charan Teja Kalla <charan.kalla@oss.qualcomm.com>,
+ Bryan O'Donoghue <bod@kernel.org>, Bryan O'Donoghue <bod.linux@nxsw.ie>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <7b6db4fa-2f73-376d-4eb3-64c1c7e6cda3@quicinc.com>
+ <4f38058d-a2f1-4ac5-b234-228cfb2e85ff@kernel.org>
+ <1ad2ca1e-1d57-4ad8-a057-ab0d804f1d49@oss.qualcomm.com>
+ <7da769b4-88e9-401f-bb21-0ff123818b9c@kernel.org>
+ <6840d462-8269-4359-a6e5-d154842b62db@oss.qualcomm.com>
+ <af0da28c-3ca0-41dc-aaa4-572723ea74bf@linaro.org>
+ <klhvgzizub33f46buqsog54wqksqp24a5tijwyv355l2ao2imo@wdkojfebc6s2>
+ <e1a6e75a-2a5d-44a2-8bbc-140eb86d1806@linaro.org>
+ <2hh3zkdwgqbdurpr4tibr3gjat6arwl3dd3gxakdaagafwjdrm@aj5em4tbsjen>
+ <Ujyoj3HGLVFhS2b0XzcYAMjSiCAuO-lSJ8PMEQLOaaX83tk_0D5zjrL0VDyZAmD3i4zLB3ElKSZBltISb5jJHA==@protonmail.internalid>
+ <4a32bbec-2baf-4210-a7c1-1ddcd45d30c8@oss.qualcomm.com>
+ <SuwJuCIcLVJwN3YeN1il6tB9wO9OH6bYcnbRpxpuI9Dl7piYLN-hVdnyv0Mal6N-W5pi2aCZI8MxHZDEkoE63A==@protonmail.internalid>
+ <4d87d1ca-55b2-426e-aa73-e3fd8c6fe7bd@kernel.org>
+ <10a8ccda-4e27-4b06-9a0e-608d6ade5354@nxsw.ie>
+ <4cb4a92d-2f20-47c7-881e-aadcc6f83aa0@kernel.org>
+ <1516f21e-aee3-42cf-b75e-61142dc9578d@oss.qualcomm.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251006-gs101-pd-v1-2-f0cb0c01ea7b@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1516f21e-aee3-42cf-b75e-61142dc9578d@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 07/10/2025 01:43, André Draszik wrote:
-> The power domains are a property of / implemented in the PMU. As such,
-> they should be modelled as child nodes of the PMU.
+On 08/10/2025 19:03, Charan Teja Kalla wrote:
+>>>> Couldn't we list the entire set of iommus - then detach - subsequently
+>>>> re-attaching in our platform code with FUNCTION_IDs we keep listed in
+>>>> our drivers ?
+>>>>
+> TMK, there is no api exist to detach a device once it is attached to
+> smmu. We used to have one but removed[1], not sure how well it will be
+> received to introduce it again.
 > 
-> Update the example while at it.
+> There is other problem exist attaching the entire set of iommus in the
+> first place: Usually writes to SMR registers are protected through
+> emulation by hyp. Thus adding the sids of protected/non-protected
+> usecases in the same iommu set will not allowed by the
+> hypervisors(eg:gunyah), as all will end up in using the same context
+> bank, thus there can be failure to attach to smmu in the first place.
 > 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
 > 
-> ---
-> Note: Ideally, the newly added properties (ranges, etc.) should only be
-> 'required' if "^power-domain@[0-9a-f]+$" exists as a patternProperty,
-> as they're needed only in that case. As-is, this patch now causes
-> warnings for existing DTs as they don't specify the new properties (and
-> they shouldn't need to). Only if DTs are updated to include
-> power-domains, such an update should also add the new properties.
+> [1]
+> https://lore.kernel.org/all/20230110025408.667767-1- 
+> baolu.lu@linux.intel.com/
 > 
-> I've not been able to come up with the correct schema syntax to achieve
-> that. dependencies, dependentRequired, and dependentSchemas don't seem
-> to support patterns. Similarly,
->   - if:
->       required:
->         - ...
->     then:
->       required:
->         - ...
-> 
-> doesn't allow patterns in the 'if' block (or I didn't get the syntax
-> right).
-> ---
->  .../bindings/soc/samsung/exynos-pmu.yaml           | 53 +++++++++++++++++++++-
->  1 file changed, 52 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
-> index f0fb24156da9b8980dcfd5339ae75f12a71cf6d6..c2db1cbb969a9a6fea5208dc2990f2144fa480e6 100644
-> --- a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
-> +++ b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
-> @@ -93,6 +93,14 @@ properties:
->      minItems: 1
->      maxItems: 32
->  
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 1
-> +
-> +  ranges: true
-> +
->    dp-phy:
->      $ref: /schemas/phy/samsung,dp-video-phy.yaml
->      unevaluatedProperties: false
-> @@ -138,7 +146,7 @@ required:
->    - compatible
->    - reg
->  
-> -additionalProperties: false
-> +unevaluatedProperties: false
+>>>> That way the DT is complete and correct, we have a compliant upstream DT
+>>>> but we also find a way to make the FUNCTION_ID specific setup we need.
+>>> i.e. you can keep the FUNCTION_ID "metadata" in the driver and
+>>> associate specific iommu indexes with the FUNCTION_ID you want in there.
+>>>
+>>> That way you could have multiple FUNCTION_ID smmu entries in the DT
+>>> and just associate the DT indexes locally in drivers/platform/qcom/
+>>> iris_metadata_goes_here.c
+>>>
+>>> ---
+>>> bod
+>> Actually why can't we specify FUNCTION_ID in the iommus = <entries>
+>>
+>> Surely we could do
+>>
+>>      #iommu-cells = <4>;
+>>      iommus = <&apps_smmu 0x420 0x2 FUNCTION_ID>;
+>>
+>> and encode the real data we need directly in the iommus list...
+>>
+> Since it is the smmu device property , this suggestion expects all the
+> devices, not just video, to define additional argument. Does this look
+> valid?
 
-No. Properties must be defined in top level, as explained in writing
-schema. If this is getting to complex, GS101 can be moved to its own
-binding.
+If it is legitimate meta-data for the SMMU setup then why _shouldn't_ it 
+go into the DT ?
 
-Best regards,
-Krzysztof
+We've basically identified that the smmu entries - for qcom platforms 
+should encode the FUNCTION_ID. Rather than shy away from fixing the DT 
+we should work back from the principle "DT should represent the 
+hardware" and then if necessary update the upstream descriptions to capture.
+
+Surely then we can teach the mapping routines to consume the 
+FUNCTION_ID. Rob suggested an implied FUNCTION_ID based on index.
+
+I think we need to have something like:
+
+#1
+iommus = <&apps_smmu 0x420 0x2 FUNCTION_ID0>,
+          <&apps_smmu 0x424 0x2 FUNCTION_ID0>,
+          <&apps_smmu 0x428 0x2 FUNCTION_ID1>;
+
+or with implied indexes..
+
+#2
+/* implied FUNCTION_ID0 */
+iommus = <&apps_smmu 0x420 0x2>,
+          <&apps_smmu 0x424 0x2>;
+
+/* implied FUNCTION_ID1 */
+iommus =  <&apps_smmu 0x428 0x2>;
+
+Either way the DT should not contain fake devices or fake sub-nodes and 
+IMO should contain either explicitly with another field or implicitly 
+with an index the FUNCTION_IDs in the DT itself - the FUNCTION_ID.
+
+For devices that don't currently require the FUNCTION_ID parameter the 
+FUNCTION_ID is the APPS so you could infer that by the absence of 
+FUNCTION_ID for older platforms and require FUNCTION_ID for new 
+platforms #1 or again infer it via an implied index if you have multiple 
+iommus = <> per #2.
+
+---
+bod
 
