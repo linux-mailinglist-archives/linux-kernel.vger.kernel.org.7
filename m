@@ -1,128 +1,196 @@
-Return-Path: <linux-kernel+bounces-846458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCD83BC80F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:33:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94E8EBC80F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:35:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3D5A235156E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:33:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BD971A6091B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6073729BDB8;
-	Thu,  9 Oct 2025 08:33:23 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF0629992B;
+	Thu,  9 Oct 2025 08:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vk0NKy7f"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82BD927B327
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 08:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C62F94A01;
+	Thu,  9 Oct 2025 08:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759998803; cv=none; b=P9bmDVLhmPh/KiGU/PuHPW3cB8laN39rol+FjwIM0PEJlRPtg4Iuofd5s5Pd9Q1on4jg30+gVRcHKWh3s1tnnFMX3sN2Vo5SwPqw+EKL5Amcr7nC0K8OsJuTzdZRv19yx75v5eoaMyAmnScSifTTNAfVRcr9FIflW/tu545eCEY=
+	t=1759998922; cv=none; b=TUFBZ70xihrJjig6hE2JYolGbyM4qWndMwQZdNSW2csfkaAgyN/gosmk7hi9h8K+bdK1mxUGz4y7nEex2LvddP/yUpF+25QFWWQPQwyuK6/+AmfMFzWGPW7TI/2u0OhZH5Zh2PHZ5gANy6vKNA9P7cRs0NsFNj/vZGJgppAkieE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759998803; c=relaxed/simple;
-	bh=FkgfL5hEZw22IBlQNg8l9AFLwLElrRRwuB0p9DnsprY=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cQdtJPBXLHyfouepS/cW1e/hVR7Hh0EI7dtG01Gcs76p/RN6BvcRrh87PMCy3SRoQP2GB+ZkhIis+73gI1lFPQPZODrLVRz55Q3Jh/iiaarOUWdB+sSJuVY0Cm4GCWQEOY9OfjbVs91XO5vld/mEjXEgPwxEpTltaJc9KRA0Hso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1v6m5O-0003Sm-O3; Thu, 09 Oct 2025 10:33:18 +0200
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1v6m5N-002hdG-0f;
-	Thu, 09 Oct 2025 10:33:17 +0200
-Received: from pza by lupine with local (Exim 4.98.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1v6m5N-000000002X0-0b2j;
-	Thu, 09 Oct 2025 10:33:17 +0200
-Message-ID: <4a3266af045b81ab4ae7826db890d5f7333227f4.camel@pengutronix.de>
-Subject: Re: [RFC PATCH] sound: airoha: add support for AN7581 PCM driver
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Christian Marangi <ansuelsmth@gmail.com>, Jaroslav Kysela
- <perex@perex.cz>,  Takashi Iwai <tiwai@suse.com>,
- linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
- upstream@airoha.com
-Date: Thu, 09 Oct 2025 10:33:17 +0200
-In-Reply-To: <20251003015521.2244-1-ansuelsmth@gmail.com>
-References: <20251003015521.2244-1-ansuelsmth@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1759998922; c=relaxed/simple;
+	bh=cxIbOqNUR76AnDJ8XYf468KSYN5jwnxzGtZjYBXTQM4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZhwwtU6t/q7a8Tqp6hlWC8Df8FzyZJbXMTl10jOhbSPSu0EkW14BoqjNOTWMdJFEo5nCjbf/qpsDoGQqsLNt/qg3SWFIWxUuD+SLLgFORYd835jVM7p8qwgx8egVcXhLzMQDqMq7Fn6PyDb7ECLfBC8zPYXBG1G4D4uLvkETeX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vk0NKy7f; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759998921; x=1791534921;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=cxIbOqNUR76AnDJ8XYf468KSYN5jwnxzGtZjYBXTQM4=;
+  b=Vk0NKy7fKxlQKFGRk4Ykugl9w/pxtiyz3qABXiS46sENW4MI4x7r/r+8
+   5kWUC+4KxOaH93a1vkwyuEYIYHOv7859SCxagE/pgdj7JpgzIrcP4hpaW
+   dwmD8JQe4ruoUTzocOMV14whAqoQLD6WQC/1dy8Kz9sIvdlLC7QV10IgK
+   yU81+A327IXWXMEqOoGo7SYKSa0nXGDEjcMN0DPpaekfkE5NCVo9z2TI7
+   mddulp9L6iSzsCZeoSFeeJ/f630QMt++jxasKs6zBGV8Tn9HYLaFvvOLw
+   jwTS0CV0JGm9ROM0o3yd+UF9nMk9PHlt/+mzS8F4lKSxBUquTAC0UObMR
+   A==;
+X-CSE-ConnectionGUID: GJ1aI5XjQhSLWYWMj9dR6w==
+X-CSE-MsgGUID: vzPerdInTnCCGtqwxnHK5g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11576"; a="72462630"
+X-IronPort-AV: E=Sophos;i="6.19,215,1754982000"; 
+   d="scan'208";a="72462630"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 01:35:21 -0700
+X-CSE-ConnectionGUID: cXIzzForQoaKN8tGXHcSPg==
+X-CSE-MsgGUID: vQA6LQBqS1qo3f2NMRZ3hA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,215,1754982000"; 
+   d="scan'208";a="181065729"
+Received: from unknown (HELO [10.238.2.75]) ([10.238.2.75])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 01:35:17 -0700
+Message-ID: <cef60d5a-a975-4b4e-b553-9aaaaf6da558@linux.intel.com>
+Date: Thu, 9 Oct 2025 16:35:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v7 00/12] arch-PEBS enabling for Intel platforms
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
+ Eranian Stephane <eranian@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Dapeng Mi <dapeng1.mi@intel.com>
+References: <20250828013435.1528459-1-dapeng1.mi@linux.intel.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20250828013435.1528459-1-dapeng1.mi@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Christian,
 
-On Fr, 2025-10-03 at 03:54 +0200, Christian Marangi wrote:
-> The Airoha AN7581 SoC have alternative Sound Card that expose PCM OPs
-> dedicated for VoIP application.
->=20
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
->  sound/Kconfig             |   2 +
->  sound/Makefile            |   2 +-
->  sound/airoha/Kconfig      |   9 +
->  sound/airoha/Makefile     |   3 +
->  sound/airoha/an7581-pcm.c | 637 ++++++++++++++++++++++++++++++++++++++
->  5 files changed, 652 insertions(+), 1 deletion(-)
->  create mode 100644 sound/airoha/Kconfig
->  create mode 100644 sound/airoha/Makefile
->  create mode 100644 sound/airoha/an7581-pcm.c
->=20
-[...]
-> diff --git a/sound/airoha/an7581-pcm.c b/sound/airoha/an7581-pcm.c
-> new file mode 100644
-> index 000000000000..bf1fc447aed4
-> --- /dev/null
-> +++ b/sound/airoha/an7581-pcm.c
-> @@ -0,0 +1,637 @@
-[...]
-> +static int an7581_pcm_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev =3D &pdev->dev;
-> +	struct an7581_pcm_priv *priv;
-> +	struct snd_card *card;
-> +	struct snd_pcm *pcm;
-> +	int irq;
-> +	int ret;
-> +
-> +	ret =3D snd_devm_card_new(dev, 1, "AN7581 PCM SOUND",
-> +				THIS_MODULE, 0, &card);
-> +	if (ret)
-> +		return ret;
-> +
-> +	priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	priv->map =3D device_node_to_regmap(dev->of_node);
-> +	if (!IS_ERR(priv->map))
-> +		return PTR_ERR(priv->map);
-> +
-> +	priv->reset =3D devm_reset_control_get_exclusive(dev, "pcm1");
+On 8/28/2025 9:34 AM, Dapeng Mi wrote:
+> Changes:
+> v6 -> v7:
+>   * Rebase code to last tip perf/core tree.
+>   * Opportunistically remove the redundant is_x86_event() prototype.
+>     (Patch 01/12)
+>   * Fix PEBS handler NULL event access and record loss issue.
+>     (Patch 02/12)
+>   * Reset MSR_IA32_PEBS_INDEX at the head of_drain_arch_pebs() instead
+>     of end. It avoids the processed PEBS records are processed again in
+>     some corner cases like event throttling. (Patch 08/12)
 
-Is there more than one reset input per PCM module?
-Lookup by name is only needed if there are multiple resets.
+Hi Peter,
 
-This question should be answered by a device tree binding document for
-airoha,an7581-pcm.
+Do you have more comments on this arch-PEBS enabling patch-set? Thanks.
 
-regards
-Philipp
+(The warning raised by kernel test robot about patch 02/12 would be fixed
+in next version.)
+
+
+>
+> v5 -> v6:
+>   * Rebase code to last tip perf/core tree + "x86 perf bug fixes and
+>     optimization" patchset
+>  
+> v4 -> v5:
+>   * Rebase code to 6.16-rc3
+>   * Allocate/free arch-PEBS buffer in callbacks *prepare_cpu/*dead_cpu
+>     (patch 07/10, Peter)
+>   * Code and comments refine (patch 09/10, Peter)
+>
+>
+> This patchset introduces architectural PEBS support for Intel platforms
+> like Clearwater Forest (CWF) and Panther Lake (PTL). The detailed
+> information about arch-PEBS can be found in chapter 11
+> "architectural PEBS" of "Intel Architecture Instruction Set Extensions
+> and Future Features".
+>
+> This patch set doesn't include the SSP and SIMD regs (OPMASK/YMM/ZMM)
+> sampling support for arch-PEBS to avoid the dependency for the basic
+> SIMD regs sampling support patch series[1]. Once the basic SIMD regs
+> sampling is supported, the arch-PEBS based SSP and SIMD regs
+> (OPMASK/YMM/ZMM) sampling would be supported in a later patch set.
+>
+> Tests:
+>   Run below tests on Clearwater Forest and Pantherlake, no issue is
+>   found.
+>
+>   1. Basic perf counting case.
+>     perf stat -e '{branches,branches,branches,branches,branches,branches,branches,branches,cycles,instructions,ref-cycles}' sleep 1
+>
+>   2. Basic PMI based perf sampling case.
+>     perf record -e '{branches,branches,branches,branches,branches,branches,branches,branches,cycles,instructions,ref-cycles}' sleep 1
+>
+>   3. Basic PEBS based perf sampling case.
+>     perf record -e '{branches,branches,branches,branches,branches,branches,branches,branches,cycles,instructions,ref-cycles}:p' sleep 1
+>
+>   4. PEBS sampling case with basic, GPRs, vector-registers and LBR groups
+>     perf record -e branches:p -Iax,bx,ip,xmm0 -b -c 10000 sleep 1
+>
+>   5. User space PEBS sampling case with basic, GPRs and LBR groups
+>     perf record -e branches:p --user-regs=ax,bx,ip -b -c 10000 sleep 1
+>
+>   6. PEBS sampling case with auxiliary (memory info) group
+>     perf mem record sleep 1
+>
+>   7. PEBS sampling case with counter group
+>     perf record -e '{branches:p,branches,cycles}:S' -c 10000 sleep 1
+>
+>   8. Perf stat and record test
+>     perf test 100; perf test 131
+>
+>
+> History:
+>   v6: https://lore.kernel.org/all/20250821035805.159494-1-dapeng1.mi@linux.intel.com/ 
+>   v5: https://lore.kernel.org/all/20250623223546.112465-1-dapeng1.mi@linux.intel.com/
+>   v4: https://lore.kernel.org/all/20250620103909.1586595-1-dapeng1.mi@linux.intel.com/
+>   v3: https://lore.kernel.org/all/20250415114428.341182-1-dapeng1.mi@linux.intel.com/
+>   v2: https://lore.kernel.org/all/20250218152818.158614-1-dapeng1.mi@linux.intel.com/
+>   v1: https://lore.kernel.org/all/20250123140721.2496639-1-dapeng1.mi@linux.intel.com/
+>
+> Ref:
+>   [1]: https://lore.kernel.org/all/20250815213435.1702022-1-kan.liang@linux.intel.com/
+>
+> Dapeng Mi (12):
+>   perf/x86: Remove redundant is_x86_event() prototype
+>   perf/x86/intel: Fix NULL event access and potential PEBS record loss
+>   perf/x86/intel: Replace x86_pmu.drain_pebs calling with static call
+>   perf/x86/intel: Correct large PEBS flag check
+>   perf/x86/intel: Initialize architectural PEBS
+>   perf/x86/intel/ds: Factor out PEBS record processing code to functions
+>   perf/x86/intel/ds: Factor out PEBS group processing code to functions
+>   perf/x86/intel: Process arch-PEBS records or record fragments
+>   perf/x86/intel: Allocate arch-PEBS buffer and initialize PEBS_BASE MSR
+>   perf/x86/intel: Update dyn_constranit base on PEBS event precise level
+>   perf/x86/intel: Setup PEBS data configuration and enable legacy groups
+>   perf/x86/intel: Add counter group support for arch-PEBS
+>
+>  arch/x86/events/core.c            |  21 +-
+>  arch/x86/events/intel/core.c      | 268 ++++++++++++-
+>  arch/x86/events/intel/ds.c        | 621 +++++++++++++++++++++++++-----
+>  arch/x86/events/perf_event.h      |  41 +-
+>  arch/x86/include/asm/intel_ds.h   |  10 +-
+>  arch/x86/include/asm/msr-index.h  |  20 +
+>  arch/x86/include/asm/perf_event.h | 116 +++++-
+>  7 files changed, 955 insertions(+), 142 deletions(-)
+>
+>
+> base-commit: f49e1be19542487921e82b29004908966cb99d7c
 
