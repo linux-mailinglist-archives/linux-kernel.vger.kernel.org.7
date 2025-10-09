@@ -1,44 +1,87 @@
-Return-Path: <linux-kernel+bounces-846359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFEBABC7AC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:21:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7554BC7AFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:23:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E201D3E6A56
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:21:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A5EF14F46B4
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:22:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B4C2D0C8F;
-	Thu,  9 Oct 2025 07:21:07 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169BD2D2381;
+	Thu,  9 Oct 2025 07:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fcjEUCxZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42C0298CA4;
-	Thu,  9 Oct 2025 07:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195402D0C75
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 07:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759994466; cv=none; b=N99+dRggTlxpfqEl7/OOO8FaRNSHnpIP/bUqO0qPkU6F4llJ2Bur+Kep/7cCRTlgqvGSDKFm0UPlsk4ezYCwy87GF/YqBAxkWSlWQn00QE2NH+mtd7L17KNB9UUJiyEIBQ4slbkNlrmESlTHHqThiMzPgjdL0b2F2nqusdLdc8U=
+	t=1759994547; cv=none; b=ipOXiSw88FeupmcUhGxKwNIoP3P+/TzQmBnnGSAB1e/JcPyKNsRBJPoOTXffsyiZSaKA9H0/5u/yi5U8+Qoru2InmK71bEy9T2oOakTzJvywJtenObjSHLOExdWf/5xeq5Pf/lLTmHi0YGyUVj+IBot3keIeAkAyi7WheYY9RFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759994466; c=relaxed/simple;
-	bh=mq2ZPLW0aGP6i2qiG5Ep8MFC8jCceNRZNu66ObNVVJY=;
+	s=arc-20240116; t=1759994547; c=relaxed/simple;
+	bh=NoSsNhFoqKTD2GND/uojUC1d3tf5roBQEmoiq+BTOBY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eCHN9f8M5HAV5s61AxYr0mhv6n303JY+rr0icQ89KbCfdfMj4CTwvDXVtFkYPbFEB4u+6cxUJKxqFSz++gEQrWr85np2+e0M/1co+Qw4EB+7X9sj12lP5AkUgAV+hbnyHMchiNZrHp5lLStNFkuvte1fGwN0bgi0G1PoHytwRoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cj1Vm5ycBzKHMgD;
-	Thu,  9 Oct 2025 15:20:32 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 54C631A0D11;
-	Thu,  9 Oct 2025 15:21:01 +0800 (CST)
-Received: from [10.174.178.152] (unknown [10.174.178.152])
-	by APP4 (Coremail) with SMTP id gCh0CgBnK2NbYudokcU4CQ--.38902S3;
-	Thu, 09 Oct 2025 15:21:01 +0800 (CST)
-Message-ID: <fcf30c3c-25c3-4b1a-8b34-a5dcd98b7ebd@huaweicloud.com>
-Date: Thu, 9 Oct 2025 15:20:59 +0800
+	 In-Reply-To:Content-Type; b=dtwU4WbASZG1DxFUyPFTyIKrdeK3LsoaRrJJWQdnb5ydv9v7daEp0f2R7ZmAck7AA+jGsEYnhFhmcklg5TqSiXLSwZaVdX44Y5rxJ1D7LmQPENP3kXaXj1DPKMaZBzyr/9gzCjmq4x/6JYVRuc7hDseG0ketC3VIl7gMxq8+6kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fcjEUCxZ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759994543;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=NR0GPPrQth8s1EL9fLV4+qP3WUCAWdzIUfVSZ9j+y5w=;
+	b=fcjEUCxZ7cy2E9VIZbQC4f/PlIPi5iBDfiRqsyCRNMduZp6FMvcxmSE7I8kyDBJgj6yLHt
+	QCsB9mEqcTz1FC5sxQ7mGW9xOiLvBYo0Jt/+0qXTt1/+MRU4sqiThLy5sVFtTCS7NN2BaL
+	gzcghKqCz7QmkqjXQVqNi3f6EfGzEeo=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-368-1S0r_oXSPGaW84TTzjMaLA-1; Thu, 09 Oct 2025 03:22:22 -0400
+X-MC-Unique: 1S0r_oXSPGaW84TTzjMaLA-1
+X-Mimecast-MFC-AGG-ID: 1S0r_oXSPGaW84TTzjMaLA_1759994541
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-4256fae4b46so443775f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 00:22:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759994541; x=1760599341;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NR0GPPrQth8s1EL9fLV4+qP3WUCAWdzIUfVSZ9j+y5w=;
+        b=nXGtuaMdt/Gzv2qBMilGRwCOUZtgmWSJRmKVUPC3Ei0zoZTUN434pOwCKfq7vxsGhY
+         LhDOCJMuhkC3+vOQKQB7xL37hPEx4SIfcRX39fQfk2cRx8JPmRaBrrTIifnUCs2daB87
+         GpNxalmZJ/0Y7+DoRU0gqHb5hWK3Rcb2Lt6R2eLp3moIrWCw7RNk7mimmkNgc51xqwyo
+         moaznZuPmlK8hjBjAaWBG7pILuh/44QhfHH3K1rJNpgZ5yAXBT+JZ89bApyE8uqyPpjt
+         HboPHnKZD3i+q+GP8AMq2lDG/lsM884K6OJmzGj+SJVitFW4Raera6RRO1SGyr6GgZ7C
+         RSmg==
+X-Forwarded-Encrypted: i=1; AJvYcCUEZiZRnjyBPLq88N9rIdcdgCVCeCHK7eRdSUHT3d7QrkcHoc5VATf5RLsaLXt0d3VRSlqLI1aE+Jq+9cg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKFZG0a8IH4vONOcZeHpefIjAu4lwFxm60i1Psg08BsKERP/4f
+	EK8GML5wx3iOXiFvWyEotk2b2eCURMvjqJ2hVCqGNnnBKpXj4xfnBbclK9wptX5puXyRCn0pWmu
+	6Mg2j/kW7+lz7RXXGXvhjgyoa2LqilT/ycCOm5FEs62YlKvej6weSSCHbbFn58OlKng==
+X-Gm-Gg: ASbGnctHFEdrI0QIkHgMLg+yQQGYh3I7NFtEXb1yN1C1H3c7OfCqmaK0ooIxRsLGUWU
+	Ii+UPV/iZ2zokI76jylqsk91Z7xKsEebRB7Ro/Av0Ljjs9MDSKsm9hxYycRukL3xMqGDCMmdGe3
+	rddgLA9OstBMvlCaMm2L5JLizaSFMQoeBBK7E85n3e0yaIeC/dp6a86qq0atJLpl/hjkqWdrqD7
+	m9UItAuESP2YJIlSw9iTTAFrVT9lviepDG/sMu0+ivp9w4/9C5PPCnX82CjRxQaqpF4zLxsyzA0
+	CnG+8FzLdHLy/OyQx5tPNUE9EdPqiJMRzX6X+uCcPCp2UZ+zHiEcK+ciuroiyJvqqZ1t1y2pvTC
+	5DapDcaCL
+X-Received: by 2002:a5d:5f84:0:b0:3ee:1578:3181 with SMTP id ffacd0b85a97d-4266e8de444mr4275613f8f.49.1759994540822;
+        Thu, 09 Oct 2025 00:22:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE3pZJrfQfix+9KKt4WdXWXcZ6zm7mHa+Vng4C8E+STUwzM8VHEo7EV1uD0vgxW+NxE9Pp9bw==
+X-Received: by 2002:a5d:5f84:0:b0:3ee:1578:3181 with SMTP id ffacd0b85a97d-4266e8de444mr4275568f8f.49.1759994540323;
+        Thu, 09 Oct 2025 00:22:20 -0700 (PDT)
+Received: from [192.168.3.141] (tmo-083-189.customers.d1-online.com. [80.187.83.189])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fa9d62890sm68237045e9.14.2025.10.09.00.22.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Oct 2025 00:22:19 -0700 (PDT)
+Message-ID: <d3fc12d4-0b59-4b1f-bb5c-13189a01e13d@redhat.com>
+Date: Thu, 9 Oct 2025 09:22:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,220 +89,151 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 11/13] ext4: switch to using the new extent movement
- method
-To: Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com,
- yangerkun@huawei.com
-References: <20250925092610.1936929-1-yi.zhang@huaweicloud.com>
- <20250925092610.1936929-12-yi.zhang@huaweicloud.com>
- <wdluk2p7bmgkh3n3xzep3tf3qb7mv3x2o6ltemjcahgorgmhwb@hfu7t7ar2vol>
+Subject: Re: (bisected) [PATCH v2 08/37] mm/hugetlb: check for unreasonable
+ folio sizes when registering hstate
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+ linux-kernel@vger.kernel.org
+Cc: Zi Yan <ziy@nvidia.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Alexander Potapenko <glider@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
+ Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ iommu@lists.linux.dev, io-uring@vger.kernel.org,
+ Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
+ Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
+ kasan-dev@googlegroups.com, kvm@vger.kernel.org,
+ Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
+ linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+ linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-scsi@vger.kernel.org, Marco Elver <elver@google.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Muchun Song <muchun.song@linux.dev>,
+ netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
+ Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
+ virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
+ wireguard@lists.zx2c4.com, x86@kernel.org,
+ "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+References: <20250901150359.867252-1-david@redhat.com>
+ <20250901150359.867252-9-david@redhat.com>
+ <3e043453-3f27-48ad-b987-cc39f523060a@csgroup.eu>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <wdluk2p7bmgkh3n3xzep3tf3qb7mv3x2o6ltemjcahgorgmhwb@hfu7t7ar2vol>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgBnK2NbYudokcU4CQ--.38902S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxtr1ruw47uw15Jw18Xr43Jrb_yoWxXw1DpF
-	WxAr15G398Xa4Fgr1ktw4DXryFgw1UKr47ArWfGF1fWF9xArySg3Z8Aa1av34akrZ7JryF
-	vF4jyr9rWa13tFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
-	7KsUUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <3e043453-3f27-48ad-b987-cc39f523060a@csgroup.eu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 10/8/2025 8:49 PM, Jan Kara wrote:
-> On Thu 25-09-25 17:26:07, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
+On 09.10.25 09:14, Christophe Leroy wrote:
+> Hi David,
+> 
+> Le 01/09/2025 à 17:03, David Hildenbrand a écrit :
+>> Let's check that no hstate that corresponds to an unreasonable folio size
+>> is registered by an architecture. If we were to succeed registering, we
+>> could later try allocating an unsupported gigantic folio size.
 >>
->> Now that we have mext_move_extent(), we can switch to this new interface
->> and deprecate move_extent_per_page(). First, after acquiring the
->> i_rwsem, we can directly use ext4_map_blocks() to obtain a contiguous
->> extent from the original inode as the extent to be moved. It can and
->> it's safe to get mapping information from the extent status tree without
->> needing to access the ondisk extent tree, because ext4_move_extent()
->> will check the sequence cookie under the folio lock. Then, after
->> populating the mext_data structure, we call ext4_move_extent() to move
->> the extent. Finally, the length of the extent will be adjusted in
->> mext.orig_map.m_len and the actual length moved is returned through
->> m_len.
+>> Further, let's add a BUILD_BUG_ON() for checking that HUGETLB_PAGE_ORDER
+>> is sane at build time. As HUGETLB_PAGE_ORDER is dynamic on powerpc, we have
+>> to use a BUILD_BUG_ON_INVALID() to make it compile.
 >>
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>> No existing kernel configuration should be able to trigger this check:
+>> either SPARSEMEM without SPARSEMEM_VMEMMAP cannot be configured or
+>> gigantic folios will not exceed a memory section (the case on sparse).
+>>
+>> Reviewed-by: Zi Yan <ziy@nvidia.com>
+>> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>> Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
 > 
-> Two small comments below:
-> 
->> +int ext4_move_extents(struct file *o_filp, struct file *d_filp, __u64 orig_blk,
->> +		      __u64 donor_blk, __u64 len, __u64 *moved_len)
->>  {
->>  	struct inode *orig_inode = file_inode(o_filp);
->>  	struct inode *donor_inode = file_inode(d_filp);
->> -	struct ext4_ext_path *path = NULL;
->> -	int blocks_per_page = PAGE_SIZE >> orig_inode->i_blkbits;
->> -	ext4_lblk_t o_end, o_start = orig_blk;
->> -	ext4_lblk_t d_start = donor_blk;
->> +	struct mext_data mext;
->> +	struct super_block *sb = orig_inode->i_sb;
->> +	struct ext4_sb_info *sbi = EXT4_SB(sb);
->> +	int retries = 0;
->> +	u64 m_len;
->>  	int ret;
->>  
->> +	*moved_len = 0;
->> +
->>  	/* Protect orig and donor inodes against a truncate */
->>  	lock_two_nondirectories(orig_inode, donor_inode);
->>  
->>  	ret = mext_check_validity(orig_inode, donor_inode);
->>  	if (ret)
->> -		goto unlock;
->> +		goto out;
->>  
->>  	/* Wait for all existing dio workers */
->>  	inode_dio_wait(orig_inode);
->>  	inode_dio_wait(donor_inode);
->>  
->> -	/* Protect extent tree against block allocations via delalloc */
->> -	ext4_double_down_write_data_sem(orig_inode, donor_inode);
->>  	/* Check and adjust the specified move_extent range. */
->>  	ret = mext_check_adjust_range(orig_inode, donor_inode, orig_blk,
->>  				      donor_blk, &len);
->>  	if (ret)
->>  		goto out;
->> -	o_end = o_start + len;
->>  
->> -	*moved_len = 0;
->> -	while (o_start < o_end) {
->> -		struct ext4_extent *ex;
->> -		ext4_lblk_t cur_blk, next_blk;
->> -		pgoff_t orig_page_index, donor_page_index;
->> -		int offset_in_page;
->> -		int unwritten, cur_len;
->> -
->> -		path = get_ext_path(orig_inode, o_start, path);
->> -		if (IS_ERR(path)) {
->> -			ret = PTR_ERR(path);
->> +	mext.orig_inode = orig_inode;
->> +	mext.donor_inode = donor_inode;
->> +	while (len) {
->> +		mext.orig_map.m_lblk = orig_blk;
->> +		mext.orig_map.m_len = len;
->> +		mext.orig_map.m_flags = 0;
->> +		mext.donor_lblk = donor_blk;
->> +
->> +		ret = ext4_map_blocks(NULL, orig_inode, &mext.orig_map, 0);
->> +		if (ret < 0)
->>  			goto out;
->> -		}
->> -		ex = path[path->p_depth].p_ext;
->> -		cur_blk = le32_to_cpu(ex->ee_block);
->> -		cur_len = ext4_ext_get_actual_len(ex);
->> -		/* Check hole before the start pos */
->> -		if (cur_blk + cur_len - 1 < o_start) {
->> -			next_blk = ext4_ext_next_allocated_block(path);
->> -			if (next_blk == EXT_MAX_BLOCKS) {
->> -				ret = -ENODATA;
->> -				goto out;
->> -			}
->> -			d_start += next_blk - o_start;
->> -			o_start = next_blk;
->> -			continue;
->> -		/* Check hole after the start pos */
->> -		} else if (cur_blk > o_start) {
->> -			/* Skip hole */
->> -			d_start += cur_blk - o_start;
->> -			o_start = cur_blk;
->> -			/* Extent inside requested range ?*/
->> -			if (cur_blk >= o_end)
->> +
->> +		/* Skip moving if it is a hole or a delalloc extent. */
->> +		if (mext.orig_map.m_flags &
->> +		    (EXT4_MAP_MAPPED | EXT4_MAP_UNWRITTEN)) {
->> +			ret = mext_move_extent(&mext, &m_len);
->> +			if (ret == -ESTALE)
->> +				continue;
->> +			if (ret == -ENOSPC &&
->> +			    ext4_should_retry_alloc(sb, &retries))
->> +				continue;
-> 
-> ENOSPC here could come only from extent tree manipulations right? I was
-> wondering for a while why do we check it here :).
+> I get following warning on powerpc with linus tree, bisected to commit
+> 7b4f21f5e038 ("mm/hugetlb: check for unreasonable folio sizes when
+> registering hstate")
 
-Yes, I think so as well.
+Do you have the kernel config around? Is it 32bit?
 
-> 
->> +			if (ret == -EBUSY &&
->> +			    sbi->s_journal && retries++ < 4 &&
->> +			    jbd2_journal_force_commit_nested(sbi->s_journal))
->> +				continue;
->> +			if (ret)
->>  				goto out;
->> -		} else { /* in_range(o_start, o_blk, o_len) */
->> -			cur_len += cur_blk - o_start;
->> +
->> +			*moved_len += m_len;
->> +			retries = 0;
->>  		}
->> -		unwritten = ext4_ext_is_unwritten(ex);
->> -		if (o_end - o_start < cur_len)
->> -			cur_len = o_end - o_start;
->> -
->> -		orig_page_index = o_start >> (PAGE_SHIFT -
->> -					       orig_inode->i_blkbits);
->> -		donor_page_index = d_start >> (PAGE_SHIFT -
->> -					       donor_inode->i_blkbits);
->> -		offset_in_page = o_start % blocks_per_page;
->> -		if (cur_len > blocks_per_page - offset_in_page)
->> -			cur_len = blocks_per_page - offset_in_page;
->> -		/*
->> -		 * Up semaphore to avoid following problems:
->> -		 * a. transaction deadlock among ext4_journal_start,
->> -		 *    ->write_begin via pagefault, and jbd2_journal_commit
->> -		 * b. racing with ->read_folio, ->write_begin, and
->> -		 *    ext4_get_block in move_extent_per_page
->> -		 */
->> -		ext4_double_up_write_data_sem(orig_inode, donor_inode);
->> -		/* Swap original branches with new branches */
->> -		*moved_len += move_extent_per_page(o_filp, donor_inode,
->> -				     orig_page_index, donor_page_index,
->> -				     offset_in_page, cur_len,
->> -				     unwritten, &ret);
->> -		ext4_double_down_write_data_sem(orig_inode, donor_inode);
->> -		if (ret < 0)
->> -			break;
->> -		o_start += cur_len;
->> -		d_start += cur_len;
->> +		orig_blk += mext.orig_map.m_len;
->> +		donor_blk += mext.orig_map.m_len;
->> +		len -= mext.orig_map.m_len;
-> 
-> In case we've called mext_move_extent() we should update everything only by
-> m_len, shouldn't we? Although I have somewhat hard time coming up with a
-> realistic scenario where m_len != mext.orig_map.m_len for the parameters we
-> call ext4_swap_extents() with... So maybe I'm missing something.
-> 
+That would be helpful.
 
-In the case of MEXT_SKIP_EXTENT, the target move range of the donor file
-is a hole. In this case, the m_len is return zero after calling
-mext_move_extent(), not equal to mext.orig_map.m_len, and we need to move
-forward and skip this range in the next iteration in ext4_move_extents().
-Otherwise, it will lead to an infinite loop.
+[...]
 
-In the other two cases, MEXT_MOVE_EXTENT and MEXT_COPY_DATA, m_len should
-be equal to mext.orig_map.m_len after calling mext_move_extent().
+>> ---
+>>    mm/hugetlb.c | 2 ++
+>>    1 file changed, 2 insertions(+)
+>>
+>> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+>> index 1e777cc51ad04..d3542e92a712e 100644
+>> --- a/mm/hugetlb.c
+>> +++ b/mm/hugetlb.c
+>> @@ -4657,6 +4657,7 @@ static int __init hugetlb_init(void)
+>>    
+>>    	BUILD_BUG_ON(sizeof_field(struct page, private) * BITS_PER_BYTE <
+>>    			__NR_HPAGEFLAGS);
+>> +	BUILD_BUG_ON_INVALID(HUGETLB_PAGE_ORDER > MAX_FOLIO_ORDER);
+>>    
+>>    	if (!hugepages_supported()) {
+>>    		if (hugetlb_max_hstate || default_hstate_max_huge_pages)
+>> @@ -4740,6 +4741,7 @@ void __init hugetlb_add_hstate(unsigned int order)
+>>    	}
+>>    	BUG_ON(hugetlb_max_hstate >= HUGE_MAX_HSTATE);
+>>    	BUG_ON(order < order_base_2(__NR_USED_SUBPAGE));
+>> +	WARN_ON(order > MAX_FOLIO_ORDER);
+>>    	h = &hstates[hugetlb_max_hstate++];
+>>    	__mutex_init(&h->resize_lock, "resize mutex", &h->resize_key);
+>>    	h->order = order;
 
-Thanks,
-Yi.
+We end up registering hugetlb folios that are bigger than 
+MAX_FOLIO_ORDER. So we have to figure out how a config can trigger that 
+(and if we have to support that).
+
+-- 
+Cheers
+
+David / dhildenb
 
 
