@@ -1,183 +1,104 @@
-Return-Path: <linux-kernel+bounces-847022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAB12BC9AD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 17:02:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8659BC9ADC
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 17:03:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B613B353774
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 15:02:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D7F9B4F654E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 15:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFEB2EC09E;
-	Thu,  9 Oct 2025 15:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72B12EC098;
+	Thu,  9 Oct 2025 15:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CBau8YwA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gAH4+PGM"
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D332EBDC2;
-	Thu,  9 Oct 2025 15:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A670C2E8DF0
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 15:03:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760022149; cv=none; b=BL85v9LSyjq3uChzC0n53N9r8c+VPK+6x1RKVcCTyf6Azu542kwMcf9PIsYs1echgEYghg95D3gBn+JfUVVG39vzdz3+kbbdoGNqsnG+83VlfHNPzElQqbU8mpulznrkZWzyV06nLHC54MIoV/T3ggfnWQV2hV/bzNTEFRciO7M=
+	t=1760022192; cv=none; b=Pn86fh0q7TdB/3kE2d0UGPw2ev/S7Ftfokh8uusHtvmvhHEtuUSpftCydu+GDfeZBTiXfbc+n2XD2e4tC2vMhOMtyz2q4OgEmvGWe9PicY3gZVTnR01ELGQjr0ckD7GdLh9Nuyizmx8bmrXjzPZCkolcLEicmGkn+xB/6wGT2g8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760022149; c=relaxed/simple;
-	bh=JkRJI/zla1OF5Sp6NH/3oLjN4FkNpNy9o9joGPayRkc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Kahr+4GamuC58ztH4WFkBeD0jKIOfSzf2PsnaudMR5m/XLZTHzRRpG4hWr+xQKH5HAvQ3r7s+psdTIYDdljuTKooU8rnhin6ly2wfJ2V+h0/v82b7dDveWgj/767qPhkPnx9Z7w8m9rdlHR/9vTVWrzmA6t+5/WK9gHiBSYaBdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CBau8YwA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id ADFA5C4CEE7;
-	Thu,  9 Oct 2025 15:02:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760022148;
-	bh=JkRJI/zla1OF5Sp6NH/3oLjN4FkNpNy9o9joGPayRkc=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=CBau8YwA6i9YRs6x9Yz14TRQo0+5rnGvEldECDcsTD8HYQbGMCKw9GMCqbGM8Negu
-	 Z1TauATLNFGziVZiWkDiJ2fIoWrO5WiACXrioslKo5URJsLobF6dlZkmO4XK8nFbfd
-	 5XBI1zmZaNxdgZ04AzP7/9e/4pLXRTA23VeQ1kJ5Cm+6A6szjTj8jcVA2GNxC+sRsX
-	 gRKjll1ZPUMgsYk+XwKAe4b0OdV82cx5Z9mUbe5JYgjiNkTqaPllxqTcn43vD8JN1e
-	 FS6imEim597F9VUfiwkoKE7eK//p8k6yYX9sLbs/22OngfBsq76s2WGjs43tap07GW
-	 QztFCEKZEU5yw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 994F8CCD183;
-	Thu,  9 Oct 2025 15:02:28 +0000 (UTC)
-From: Dmitry Safonov via B4 Relay <devnull+dima.arista.com@kernel.org>
-Date: Thu, 09 Oct 2025 16:02:19 +0100
-Subject: [PATCH v2] net/ip6_tunnel: Prevent perpetual tunnel growth
+	s=arc-20240116; t=1760022192; c=relaxed/simple;
+	bh=4BYiBUJA2xuVMrn0owdsZSPlnr1Hd4TIlmp7Db9dIiY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EF0LfZbERhgJV5kgliZd91eYg+J83PWRBzvaYnJ2s6okxuHA17eF3M0WIKyvieurzwo+PSkBpjHsECnqYyWIL7nuQbDjdBu3Y+6MNZZVKrOZ2NMMpSP1bJatyPnRjYOqCMAcQO6OPxLB9Km/gumCnrC9MUa4Bb+Bzrs1VugTIuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gAH4+PGM; arc=none smtp.client-ip=209.85.167.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-43f88d33872so534342b6e.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 08:03:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760022190; x=1760626990; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4BYiBUJA2xuVMrn0owdsZSPlnr1Hd4TIlmp7Db9dIiY=;
+        b=gAH4+PGMXGHwPF8DW+4WJFvtMtAZG+jIB4M4B2XGl5BjLtPtNJm9J6E7kqk7CbVhI7
+         NbOvmYiq04evywZOkG2aJNvG69+01NVlkljxMSQ6QDK6eprrv8GQEqRB2uHTLZOgWVl6
+         Z2lrNLiu7EBsn/KpWGD/BciGooYBrCG6CyqoK1d/p5n6jE4XtdnmU6Nt6J/vwezMCtHT
+         dpVrBhJQH2jBERwXM7gjkOpfVSbiChLwn3sjqG05MWrpAPYSQURC96fgZLeTDLNjtqg6
+         tA/TcRU90cxB7ppBMA3xvtSxsov2mB00YfpBPCig1JVHtgqFba/WCK2sN9tY6LEyvrjI
+         UlQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760022190; x=1760626990;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4BYiBUJA2xuVMrn0owdsZSPlnr1Hd4TIlmp7Db9dIiY=;
+        b=AkH6rWhMkzhZKHyhgJZULdzvgfezWGnqSXk9U6J412z5sZO3CD8jSOZPTWKIcWVxol
+         0OmOgk+URiGeIlGJ+oZs/Wi8dOonBgwZj+jEEY8tM0t4u7PCnL7Lw7l7bYUiPJadWJGn
+         Lc7NbBPd42eQkhc1TFfCZF+hmm0KHzn9eFCC9zMLsHTR5pm/bR7oMwh7NO0Lsc//xnQg
+         17lKY3ovSsatRMEKtwOnhV1WA5zX2vV3glf5Y3Kt70k855AYTQvBs+QkU2mTiK3qGWSp
+         gKpN8XAs0hpw+Vx52NFJoQGK4215SLHnVMAuLs27yMhm2lOh5z2OAZCb0guV7U7HcJ8/
+         abrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWMrCxHQWmdvP3Uaej7nH8Z5TORSwYm6KOdLO/ldYMxqsSFD+9CheOIcBXEGOQH3TxxYay1DXDERltO1xI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0ujAY/3SCWHsSmbvgvOeyGwqXyDSGHRIKBYFmkKOg1YUtsUpc
+	pCU04LE8MQBQMjHk28l2Flf4G4wBvS5bbOdCd9a3LrendAqtnbpFD/EKjTRs8pzQNHLu7bFl8rY
+	UmEGoZMB2T8s45rpctznhU/QPCa1KG+8=
+X-Gm-Gg: ASbGncvIZQC5r4tN/iMa1vsKP36/1wzXcikSuM0xMoVMZ7bU/XOyFkUFHDclqJLp8bT
+	N59FrbrkO62M/HCFMkEvxjcS6jkQVxsuZVJ4mJRvaATu/zwZ1pIEx17F7YpJqJmhV2FRCmDfU1m
+	T6mFjHa8gdL2uDsWG2q1mnNbfjB+V9gGXqYyJxjMrbTcWG0ykABFfteYuLtO14Cy9uQaZjQ+HDJ
+	tKVAKuQucInL34zddsXYYjep1GW0KFwpy2sDoCodg==
+X-Google-Smtp-Source: AGHT+IFE+53ZwFZzygjApNRRk5IEXCWznQkiRJ3RFYsMZB+Snff4Qd2QBaS8PE2SAmylXqZYXSTkseD3wSbRcGsymC8=
+X-Received: by 2002:a05:6808:1a08:b0:43f:57cb:7fa0 with SMTP id
+ 5614622812f47-4417b3e74dbmr3269515b6e.46.1760022189283; Thu, 09 Oct 2025
+ 08:03:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251009-ip6_tunnel-headroom-v2-1-8e4dbd8f7e35@arista.com>
-X-B4-Tracking: v=1; b=H4sIAHrO52gC/32OTQ7CIBBGr9KwFi3035X3MI2Z0lFICjRDJZqmd
- 5f2AC7fJO99s7KAZDCwa7YywmiC8S6BPGVMaXAv5GZMzGQuK5HnDTdz/VjezuHENcJI3ls+QFe
- 3IKErC2DJnAmf5nNU733iAQLygcApvbcWTxGmMVwshAVpN7QJ6fo93ohi9/4vRsEFV0K2TdkWU
- HXyBpQScFbesn7bth9CxeHO2QAAAA==
-X-Change-ID: 20251007-ip6_tunnel-headroom-ba968a2a943a
-To: "David S. Miller" <davem@davemloft.net>, 
- David Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>, Tom Herbert <tom@herbertland.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Dmitry Safonov <0x7f454c46@gmail.com>, Florian Westphal <fw@strlen.de>, 
- Francesco Ruggeri <fruggeri05@gmail.com>, Dmitry Safonov <dima@arista.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760022147; l=3753;
- i=dima@arista.com; s=20250521; h=from:subject:message-id;
- bh=QP0aw6XFbqBaKIxubuBQan+TnP0JhZPSMwD0ZXJHoWo=;
- b=0crxKtxxohvisEkl0rV59JpOcc/F2hdWJB8uSwEG9Z4igHS+nkyOlefV/5yUVqin7dbIzh1x7
- urEgRaoO7PvD1MUrRxcfd3DuhVFsf8qAXrJ8xhFDOG+Qx/UVqgzWV++
-X-Developer-Key: i=dima@arista.com; a=ed25519;
- pk=/z94x2T59rICwjRqYvDsBe0MkpbkkdYrSW2J1G2gIcU=
-X-Endpoint-Received: by B4 Relay for dima@arista.com/20250521 with
- auth_id=405
-X-Original-From: Dmitry Safonov <dima@arista.com>
-Reply-To: dima@arista.com
+References: <20251008205207.1781-1-briansune@gmail.com> <aOd9yUj9H4L4fbtc@opensource.cirrus.com>
+In-Reply-To: <aOd9yUj9H4L4fbtc@opensource.cirrus.com>
+From: Sune Brian <briansune@gmail.com>
+Date: Thu, 9 Oct 2025 23:02:57 +0800
+X-Gm-Features: AS18NWDmwyXy1cfw3926lFmS_Pq4UdpsOBDp743TG8q62eoh-RX9vdnszMNCTZc
+Message-ID: <CAN7C2SBd8tDXG8OkjRt0sDw1OmtrLgtuStEfr=f=JHZMRvjq9w@mail.gmail.com>
+Subject: Re: [PATCH v6] ASoC: wm8978: add missing BCLK divider setup
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Dmitry Safonov <dima@arista.com>
+Charles Keepax <ckeepax@opensource.cirrus.com> =E6=96=BC 2025=E5=B9=B410=E6=
+=9C=889=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=885:18=E5=AF=AB=E9=81=
+=93=EF=BC=9A
 
-Similarly to ipv4 tunnel, ipv6 version updates dev->needed_headroom, too.
-While ipv4 tunnel headroom adjustment growth was limited in
-commit 5ae1e9922bbd ("net: ip_tunnel: prevent perpetual headroom growth"),
-ipv6 tunnel yet increases the headroom without any ceiling.
+> Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+>
+> Thanks,
+> Charles
 
-Reflect ipv4 tunnel headroom adjustment limit on ipv6 version.
+Any documentations are required?
+i.e. .rst file or similar?
 
-Credits to Francesco Ruggeri, who was originally debugging this issue
-and wrote local Arista-specific patch and a reproducer.
-
-Fixes: 8eb30be0352d ("ipv6: Create ip6_tnl_xmit")
-Cc: Florian Westphal <fw@strlen.de>
-Cc: Francesco Ruggeri <fruggeri05@gmail.com>
-Signed-off-by: Dmitry Safonov <dima@arista.com>
----
-Changes in v2:
-- Drop 'static' for local variable max_allowed (Jakub's nit)
-- Link to v1: https://lore.kernel.org/r/20251007-ip6_tunnel-headroom-v1-1-c1287483a592@arista.com
----
- include/net/ip_tunnels.h | 15 +++++++++++++++
- net/ipv4/ip_tunnel.c     | 14 --------------
- net/ipv6/ip6_tunnel.c    |  3 +--
- 3 files changed, 16 insertions(+), 16 deletions(-)
-
-diff --git a/include/net/ip_tunnels.h b/include/net/ip_tunnels.h
-index 4314a97702eae094f2defc65d914390864c21006..ecae35512b9b449fa061d96e66eb4533d1816bef 100644
---- a/include/net/ip_tunnels.h
-+++ b/include/net/ip_tunnels.h
-@@ -611,6 +611,21 @@ struct metadata_dst *iptunnel_metadata_reply(struct metadata_dst *md,
- int skb_tunnel_check_pmtu(struct sk_buff *skb, struct dst_entry *encap_dst,
- 			  int headroom, bool reply);
- 
-+static inline void ip_tunnel_adj_headroom(struct net_device *dev,
-+					  unsigned int headroom)
-+{
-+	/* we must cap headroom to some upperlimit, else pskb_expand_head
-+	 * will overflow header offsets in skb_headers_offset_update().
-+	 */
-+	const unsigned int max_allowed = 512;
-+
-+	if (headroom > max_allowed)
-+		headroom = max_allowed;
-+
-+	if (headroom > READ_ONCE(dev->needed_headroom))
-+		WRITE_ONCE(dev->needed_headroom, headroom);
-+}
-+
- int iptunnel_handle_offloads(struct sk_buff *skb, int gso_type_mask);
- 
- static inline int iptunnel_pull_offloads(struct sk_buff *skb)
-diff --git a/net/ipv4/ip_tunnel.c b/net/ipv4/ip_tunnel.c
-index aaeb5d16f0c9a46d90564dc2b6d7fd0a5b33d037..158a30ae7c5f2f1fa39eea7c3d64e36fb5f7551a 100644
---- a/net/ipv4/ip_tunnel.c
-+++ b/net/ipv4/ip_tunnel.c
-@@ -568,20 +568,6 @@ static int tnl_update_pmtu(struct net_device *dev, struct sk_buff *skb,
- 	return 0;
- }
- 
--static void ip_tunnel_adj_headroom(struct net_device *dev, unsigned int headroom)
--{
--	/* we must cap headroom to some upperlimit, else pskb_expand_head
--	 * will overflow header offsets in skb_headers_offset_update().
--	 */
--	static const unsigned int max_allowed = 512;
--
--	if (headroom > max_allowed)
--		headroom = max_allowed;
--
--	if (headroom > READ_ONCE(dev->needed_headroom))
--		WRITE_ONCE(dev->needed_headroom, headroom);
--}
--
- void ip_md_tunnel_xmit(struct sk_buff *skb, struct net_device *dev,
- 		       u8 proto, int tunnel_hlen)
- {
-diff --git a/net/ipv6/ip6_tunnel.c b/net/ipv6/ip6_tunnel.c
-index 3262e81223dfc859a06b55087d5dac20f43e6c11..6405072050e0ef7521ca1fdddc4a0252e2159d2a 100644
---- a/net/ipv6/ip6_tunnel.c
-+++ b/net/ipv6/ip6_tunnel.c
-@@ -1257,8 +1257,7 @@ int ip6_tnl_xmit(struct sk_buff *skb, struct net_device *dev, __u8 dsfield,
- 	 */
- 	max_headroom = LL_RESERVED_SPACE(tdev) + sizeof(struct ipv6hdr)
- 			+ dst->header_len + t->hlen;
--	if (max_headroom > READ_ONCE(dev->needed_headroom))
--		WRITE_ONCE(dev->needed_headroom, max_headroom);
-+	ip_tunnel_adj_headroom(dev, max_headroom);
- 
- 	err = ip6_tnl_encap(skb, t, &proto, fl6);
- 	if (err)
-
----
-base-commit: ec714e371f22f716a04e6ecb2a24988c92b26911
-change-id: 20251007-ip6_tunnel-headroom-ba968a2a943a
-
-Best regards,
--- 
-Dmitry Safonov <dima@arista.com>
-
-
+Brian
 
