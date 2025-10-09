@@ -1,446 +1,142 @@
-Return-Path: <linux-kernel+bounces-847278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02594BCA6D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:49:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96DE4BCA6DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:50:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C15D14FB0AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:49:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4324B4E7CB0
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9759A244675;
-	Thu,  9 Oct 2025 17:49:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7811E2614;
+	Thu,  9 Oct 2025 17:50:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="Uf4R3KtE"
-Received: from forward501b.mail.yandex.net (forward501b.mail.yandex.net [178.154.239.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b="SvPir9XI"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9532459EA;
-	Thu,  9 Oct 2025 17:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C18B223DD4
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 17:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760032176; cv=none; b=AlFU1xb20nGI5fyInF7z4lreW0+tC8vMfM5DRkWWwB2Q+m4osaK/+ViAwsRmzM00WNS702xO0g8RTIB75eQJeUKUklw0bk5oY9ZQWzqcQWRARohs9Qdr/GcX8W0i1PL3RLM3DoMAYHkZj/ZN9z/UU6P5Eg+bEiT/S6D5ilTe5GU=
+	t=1760032228; cv=none; b=pD07aq1v5N2MCR30xEo7xarVcqK1ORXsA/xIhw1SXwBQyLQGTafjvIa7jSgtBZBxa1xrbF0UARDOz2lSQ8fhq0XwvHpuf7w45vb86MdZKOMkhP0+iN0aJkYs7x5xP7BlRAlyK0z3Kss0eHPIKTBRcF0XH/kzTEsL8VZAXZlUj/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760032176; c=relaxed/simple;
-	bh=1tVP7fqS3d0YLLYFnZY+Zt1ySicBfn/Rj3MGNBUG7Kw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hrUkEpOcEvE3uBGytLXonMxKOFlrAGnWsKR0+DrubI66BmZFLxlwS2drwdGHyz6TCDqQyrbzuzz3d2jMfAIZscy9jndA8JNuOiXLaKIrLEvQvoHeE60vhmEyUjh6BkyKSAeHLax/h2NMv0g1i1T//mNEtlwPQredfSOf3Mg5JLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=Uf4R3KtE; arc=none smtp.client-ip=178.154.239.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
-Received: from mail-nwsmtp-smtp-production-main-55.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-55.sas.yp-c.yandex.net [IPv6:2a02:6b8:c16:17a0:0:640:d1e1:0])
-	by forward501b.mail.yandex.net (Yandex) with ESMTPS id 33F948157D;
-	Thu, 09 Oct 2025 20:49:30 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-55.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id OnOfjafLGmI0-EVlkIl1X;
-	Thu, 09 Oct 2025 20:49:29 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
-	s=mail; t=1760032169;
-	bh=1ePdLe5+6Vb1NUHqOJlhEoiSEGcWctHcEHtE4+Qo3Ls=;
-	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
-	b=Uf4R3KtE/GpMmMLWQMskXHQflQfltbzPMlGifuwUpgC5r8kdpUhWlgHGPmeEMwybJ
-	 K5eaxOZXHOuAHR04ySWTo7WeT4pPY9EsmwZfzy01vU2yDM3cOB0DI+ZU0mri6Nzk1n
-	 uwXvN7XvDb0f5a3v6IRlREvhpukBmnj/gf3beyII=
-Authentication-Results: mail-nwsmtp-smtp-production-main-55.sas.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
-Date: Thu, 9 Oct 2025 20:49:22 +0300
-From: Onur =?UTF-8?B?w5Z6a2Fu?= <work@onurozkan.dev>
-To: Markus Probst <markus.probst@posteo.de>
-Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Lee Jones <lee@kernel.org>, Pavel
- Machek <pavel@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, Boqun Feng
- <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- bjorn3_gh@protonmail.com, Benno Lossin <lossin@kernel.org>, Andreas
- Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
- Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
-Subject: Re: [PATCH 2/2] rust: leds: add basic led classdev abstractions
-Message-ID: <20251009204922.084da00b@nimda.home>
-In-Reply-To: <20251009170739.235221-3-markus.probst@posteo.de>
-References: <20251009170739.235221-1-markus.probst@posteo.de>
-	<20251009170739.235221-3-markus.probst@posteo.de>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-unknown-linux-gnu)
+	s=arc-20240116; t=1760032228; c=relaxed/simple;
+	bh=81OCvozsxVuLtWUQCNblLzzY2eOGkAvorDqJmgZ1C8o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uHZ29RDw4aGwdroMMi+LLS1/hpsWvDVSolbBeRteH2acM4BXzntRUJ3ywJHYkvpCXx9K5gZRvvIYCq8YTRxE3AECYklmJPoOz/rLie80KAViMwVRlE07YFK2IqA4p6a+Hk7Man7QrwbnJrnAMyCYuBrpR9mRfq0FrjynKKpYGy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com; spf=none smtp.mailfrom=readmodwrite.com; dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b=SvPir9XI; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=readmodwrite.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-46e34052bb7so15181775e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 10:50:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=readmodwrite-com.20230601.gappssmtp.com; s=20230601; t=1760032225; x=1760637025; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/ks/MTKg0YoCjDlnUh+3C5Magvqx36EuPX64Sc6wPGg=;
+        b=SvPir9XI+1PqBLao4m+AHEUCbOksJnQSgh6Z5vtv2sZ335k+Gb8LFpoGZ+4ZA2XsNr
+         ebvR9GKed0htrNr++5gOEixkod2KjEzPSZnOd2Ci20vKQUVA4Gw9uY7Uom5c8kGyStlE
+         olsbsYICTWXk8pPI0S8WkNmPuk4xWVJsBaTzyV5EGHUjAignbgnhy/0s0C0dw/5ZOqut
+         ypvrWlERUDLmG7YN6O40iliD3UtS9a455qCLE0Fbus2Ano80Mxkw0tb4pqh23QJDDP3i
+         4oEoyOIOjQU/ra5WyMwd5hK+sSKywLsyBQHUKkjYSpKOITV9ggs+8ILRKxm/wuJegenV
+         cmuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760032225; x=1760637025;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/ks/MTKg0YoCjDlnUh+3C5Magvqx36EuPX64Sc6wPGg=;
+        b=C2npP4s9kpS6ts3Ms394zp7MrstfrigdKa7H2nur17gBHS0Y6h5S866sChqV8UA44X
+         s59xUSCcOsz7FIjpNLgq5hvDQEsdyxhKcMC+mdfXSZz6jsYLW6a0qOVP+qLOhZXC9wui
+         3Xe6MLga82EeTUghub6zWCrw1qjqsoUOOpiiybZS3UUcZOH0x48Aoq8kdR8WM29WIgcM
+         9hE37vC29KAMN0C4e9STbQGPrGiiQysX/z1NJTHcbvvW9t5ATRZ2Jr9BAClMWyojZq8Y
+         3PkpTbLNfUk7a+lzwD8pZfxlrf746v+CCk/XE+AX0KurPYozQfYbMt28/NadD4E49X7G
+         4q9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVFMIhceB+m7gl06dTTA1IOuk8kasi6BCu2FL1ZEIt15VgoqlAvIZ1keP9hAxBbN7wr/0xVAZK2m+Ov8sg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy23WXBbX3J7gKLpj46zZNTOgugu/hrDXMZd0lLpf4vWY7cheU/
+	eKMpwjzVlvzDRG6NI7ihDzdIdhnMO+6JqUhANsynthcaNNr1b4aR3lzFwIFieFL/+mw=
+X-Gm-Gg: ASbGncsDh/Y4ZwLap22Mor9R/YtkucJ6DpHLpR2bDD+A3azLtJPn3KODrCHpdtWaDfE
+	qzBql6ivO/FzNBx0pINXzNbBjl96akLfwRrwKK5piuOD5mebgKSQIlIOD3hr8CrheDeo8QVBwUR
+	okqsGp05s3ych6jTu+JRdTjzOo0Gmrp0sZMPSQhiiMAqofqvKFlviEGcNyHpI43gbwH0NO4+z46
+	fHt9wpe7TeNjpc8aggvfw+DkkHx3Ta1rvMeKMGgqINdCU9nQzxeFQ5hFAyaqT8Q2Bgxu80WClRm
+	Dsg3rUXq6UzBG9kE7Puwf9UTSOghVXzSkxqcgFXYDW9g1q/XIH6WBWa3Gbwbo2OAEu2AzHYzkvz
+	hVRz9UOCFoI7299qGdB9wP9QDpGNruRU=
+X-Google-Smtp-Source: AGHT+IF1difQVKEJP2TbXWm1fao8I+fxiVlJ9Mz29m9hxZ4zGhUTJBidvU775n983cRscyRjCViJ8w==
+X-Received: by 2002:a05:6000:604:b0:408:9c48:e26c with SMTP id ffacd0b85a97d-4266e8e0b99mr5235827f8f.62.1760032224674;
+        Thu, 09 Oct 2025 10:50:24 -0700 (PDT)
+Received: from localhost ([2a09:bac1:2880:f0::3d8:48])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-426ce5e0efasm105756f8f.41.2025.10.09.10.50.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 10:50:24 -0700 (PDT)
+Date: Thu, 9 Oct 2025 18:50:23 +0100
+From: Matt Fleming <matt@readmodwrite.com>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-team@cloudflare.com, linux-fsdevel@vger.kernel.org,
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: ext4 writeback performance issue in 6.12
+Message-ID: <20251009175023.ftbnizjmabbe3x2l@matt-Precision-5490>
+References: <20251006115615.2289526-1-matt@readmodwrite.com>
+ <aOesS6Feov9mrbJh@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aOesS6Feov9mrbJh@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
 
-On Thu, 09 Oct 2025 17:07:57 +0000
-Markus Probst <markus.probst@posteo.de> wrote:
-
-> Implement the core abstractions needed for led class devices,
-> including:
+On Thu, Oct 09, 2025 at 06:06:27PM +0530, Ojaswin Mujoo wrote:
 > 
-> * `led::Handler` - the trait for handling leds, including
->   `brightness_set`
+> Hi Matt,
 > 
-> * `led::InitData` - data set for the led class device
+> Thanks for the details, we have had issues in past where the allocator
+> gets stuck in a loop trying too hard to find blocks that are aligned to
+> the stripe size [1] but this particular issue was patched in an pre 6.12
+> kernel.
+ 
+Yeah, we (Cloudflare) hit this exact issue last year.
+
+> Coming to the above details, ext4_mb_find_good_group_avg_frag_list()
+> exits early if there are no groups of the needed so if we do have many
+> order 9+ allocations we shouldn't have been spending more time there.
+> The issue I think are the order 9 allocations, which allocator thinks it
+> can satisfy but it ends up not being able to find the space easily.
+> If ext4_mb_find_group_avg_frag_list() is indeed a bottleneck, there
+> are 2 places where it could be getting called from:
 > 
-> * `led::Device` - a safe wrapper arround `led_classdev`
+> - ext4_mb_choose_next_group_goal_fast (criteria =
+> 	EXT4_MB_CR_GOAL_LEN_FAST)
+> - ext4_mb_choose_next_group_best_avail (criteria =
+> 	EXT4_MB_CR_BEST_AVAIL_LEN)
 > 
+> Will it be possible for you to use bpf to try to figure out which one of
+> the callers is actually the one bottlenecking (mihgt be tricky since
+> they will mostly get inlined) and a sample of values for ac_g_ex->fe_len
+> and ac_b_ex->fe_len if possible.
+ 
+Mostly we go through ext4_mb_choose_next_group_goal_fast() but we also
+go through ext4_mb_choose_next_group_best_avail().
 
-"arround" -> "around"
-
-> Signed-off-by: Markus Probst <markus.probst@posteo.de>
-> ---
->  rust/kernel/led.rs | 296
-> +++++++++++++++++++++++++++++++++++++++++++++ rust/kernel/lib.rs |
-> 1 + 2 files changed, 297 insertions(+)
->  create mode 100644 rust/kernel/led.rs
+> Also, can you share the ext4 mb stats by enabling it via:
 > 
-> diff --git a/rust/kernel/led.rs b/rust/kernel/led.rs
-> new file mode 100644
-> index 000000000000..2fddc6088e09
-> --- /dev/null
-> +++ b/rust/kernel/led.rs
-> @@ -0,0 +1,296 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Abstractions for the leds driver model.
-> +//!
-> +//! C header: [`include/linux/leds.h`](srctree/include/linux/leds.h)
-> +
-> +use core::pin::Pin;
-> +
-> +use pin_init::{pin_data, pinned_drop, PinInit};
-> +
-> +use crate::{
-> +    alloc::KBox,
-> +    container_of,
-> +    device::{self, property::FwNode},
-> +    error::{code::EINVAL, from_result, to_result, Error, Result},
-> +    prelude::GFP_KERNEL,
-> +    str::CStr,
-> +    try_pin_init,
-> +    types::Opaque,
-> +};
-> +
-> +/// The led class device representation.
-> +///
-> +/// This structure represents the Rust abstraction for a C `struct
-> led_classdev`. +#[pin_data(PinnedDrop)]
-> +pub struct Device {
-> +    handler: KBox<dyn HandlerImpl>,
-> +    #[pin]
-> +    classdev: Opaque<bindings::led_classdev>,
-> +}
-> +
-> +/// The led init data representation.
-> +///
-> +/// This structure represents the Rust abstraction for a C `struct
-> led_init_data`. +#[derive(Default)]
-> +pub struct InitData<'a> {
-> +    fwnode: Option<&'a FwNode>,
-> +    default_label: Option<&'a CStr>,
-> +    devicename: Option<&'a CStr>,
-> +    devname_mandatory: bool,
-> +}
-> +
-> +impl InitData<'static> {
-> +    /// Creates a new [`LedInitData`]
+>  echo 1 > /sys/fs/ext4/vda2/mb_stats
+> 
+> And then once you are able to replicate it for a few mins: 
+> 
+>   cat /proc/fs/ext4/vda2/mb_stats
+> 
+> This will also give some idea on where the allocator is spending more
+> time.
+> 
+> Also, as Ted suggested, switching stripe off might also help here.
 
-I think you meant InitData here.
-
-> +    pub fn new() -> Self {
-> +        Self::default()
-> +    }
-> +}
-> +
-> +impl<'a> InitData<'a> {
-> +    /// Sets the firmware node
-> +    pub fn fwnode<'b, 'c>(self, fwnode: &'b FwNode) -> InitData<'c>
-> +    where
-> +        'a: 'c,
-> +        'b: 'c,
-> +    {
-> +        InitData {
-> +            fwnode: Some(fwnode),
-> +            ..self
-> +        }
-> +    }
-> +
-> +    /// Sets a default label
-> +    pub fn default_label<'b, 'c>(self, label: &'b CStr) ->
-> InitData<'c>
-> +    where
-> +        'a: 'c,
-> +        'b: 'c,
-> +    {
-> +        InitData {
-> +            default_label: Some(label),
-> +            ..self
-> +        }
-> +    }
-> +
-> +    /// Sets the device name
-> +    pub fn devicename<'b, 'c>(self, devicename: &'b CStr) ->
-> InitData<'c>
-> +    where
-> +        'a: 'c,
-> +        'b: 'c,
-> +    {
-> +        InitData {
-> +            devicename: Some(devicename),
-> +            ..self
-> +        }
-> +    }
-> +
-> +    /// Sets if a device name is mandatory
-> +    pub fn devicename_mandatory(self, mandatory: bool) -> Self {
-> +        Self {
-> +            devname_mandatory: mandatory,
-> +
-> +            ..self
-> +        }
-> +    }
-> +}
-> +
-> +/// The led handler trait.
-> +///
-> +/// # Examples
-> +///
-> +///```
-> +/// # use kernel::{c_str, led, alloc::KBox, error::{Result,
-> code::ENOSYS}}; +/// # use core::pin::Pin;
-> +///
-> +/// struct MyHandler;
-> +///
-> +///
-> +/// impl led::Handler for MyHandler {
-> +///     const BLOCKING = false;
-> +///     const MAX_BRIGHTNESS = 255;
-> +///
-> +///     fn brightness_set(&self, _brightness: u32) -> Result<()> {
-> +///         // Set the brightness for the led here
-> +///         Ok(())
-> +///     }
-> +/// }
-> +///
-> +/// fn register_my_led() -> Result<Pin<KBox<led::Device>>> {
-> +///     let handler = MyHandler;
-> +///     KBox::pin_init(led::Device::new(
-> +///         None,
-> +///         None,
-> +///         led::InitData::new()
-> +///             .default_label(c_str!("my_led")),
-> +///         handler,
-> +///     ))
-> +/// }
-> +///```
-> +/// Led drivers must implement this trait in order to register and
-> handle a [`Device`]. +pub trait Handler {
-> +    /// If set true, [`Handler::brightness_set`] and
-> [`Handler::blink_set`] must not sleep
-> +    /// and perform the operation immediately.
-> +    const BLOCKING: bool;
-> +    /// Set this to true, if [`Handler::blink_set`] is implemented.
-> +    const BLINK: bool = false;
-> +    /// The max brightness level
-> +    const MAX_BRIGHTNESS: u32;
-> +
-> +    /// Sets the brightness level
-> +    ///
-> +    /// See also [`Handler::BLOCKING`]
-> +    fn brightness_set(&self, brightness: u32) -> Result<()>;
-> +
-> +    /// Activates hardware accelerated blinking.
-> +    ///
-> +    /// delays are in milliseconds. If both are zero, a sensible
-> default should be chosen.
-> +    /// The caller should adjust the timings in that case and if it
-> can't match the values
-> +    /// specified exactly. Setting the brightness to 0 will disable
-> the hardware accelerated
-> +    /// blinking.
-> +    ///
-> +    /// See also [`Handler::BLOCKING`]
-> +    fn blink_set(&self, _delay_on: &mut usize, _delay_off: &mut
-> usize) -> Result<()> {
-> +        Err(EINVAL)
-> +    }
-> +}
-> +
-> +trait HandlerImpl {
-> +    fn brightness_set(&self, brightness: u32) -> Result<()>;
-> +    fn blink_set(&self, delay_on: &mut usize, delay_off: &mut usize)
-> -> Result<()>; +}
-> +
-> +impl<T: Handler> HandlerImpl for T {
-> +    fn brightness_set(&self, brightness: u32) -> Result<()> {
-> +        T::brightness_set(self, brightness)
-> +    }
-> +
-> +    fn blink_set(&self, delay_on: &mut usize, delay_off: &mut usize)
-> -> Result<()> {
-> +        T::blink_set(self, delay_on, delay_off)
-> +    }
-> +}
-> +
-> +// SAFETY: A `led::Device` can be unregistered from any thread.
-> +unsafe impl Send for Device {}
-> +
-> +// SAFETY: `led::Device` can be shared among threads because all
-> methods of `led::Device` +// are thread safe.
-> +unsafe impl Sync for Device {}
-> +
-> +impl Device {
-> +    /// Registers a new led classdev.
-> +    ///
-> +    /// The [`Device`] will be unregistered and drop.
-> +    pub fn new<'a, T: Handler + 'static>(
-> +        parent: Option<&'a device::Device>,
-> +        init_data: InitData<'a>,
-> +        handler: T,
-> +    ) -> impl PinInit<Self, Error> + use<'a, T> {
-> +        try_pin_init!(Self {
-> +            handler <- {
-> +                let handler: KBox<dyn HandlerImpl> =
-> KBox::<T>::new(handler, GFP_KERNEL)?;
-> +                Ok::<_, Error>(handler)
-> +            },
-> +            classdev <- Opaque::try_ffi_init(|ptr: *mut
-> bindings::led_classdev| {
-> +                // SAFETY: `try_ffi_init` guarantees that `ptr` is
-> valid for write.
-> +                unsafe { ptr.write(bindings::led_classdev {
-> +                    max_brightness: T::MAX_BRIGHTNESS,
-> +                    brightness_set: T::BLOCKING.then_some(
-> +                        brightness_set as unsafe extern "C" fn(*mut
-> bindings::led_classdev, u32)
-> +                    ),
-> +                    brightness_set_blocking:
-> (!T::BLOCKING).then_some(
-> +                        brightness_set_blocking
-> +                            as unsafe extern "C" fn(*mut
-> bindings::led_classdev,u32) -> i32
-> +                    ),
-> +                    blink_set: T::BLINK.then_some(
-> +                        blink_set
-> +                            as unsafe extern "C" fn(*mut
-> bindings::led_classdev, *mut usize,
-> +                                                    *mut usize) ->
-> i32
-> +                    ),
-> +                    .. bindings::led_classdev::default()
-> +                }) };
-> +
-> +                let mut init_data = bindings::led_init_data {
-> +                    fwnode:
-> init_data.fwnode.map_or(core::ptr::null_mut(), FwNode::as_raw),
-> +                    default_label: init_data.default_label
-> +
-> .map_or(core::ptr::null(), CStr::as_char_ptr),
-> +                    devicename:
-> init_data.devicename.map_or(core::ptr::null(), CStr::as_char_ptr),
-> +                    devname_mandatory: init_data.devname_mandatory,
-> +                };
-> +
-> +                let parent = parent
-> +                    .map_or(core::ptr::null_mut(),
-> device::Device::as_raw); +
-> +                // SAFETY:
-> +                // - `parent` is guaranteed to be a pointer to a
-> valid `device`
-> +                //    or a null pointer.
-> +                // - `ptr` is guaranteed to be a pointer to an
-> initialized `led_classdev`.
-> +                to_result(unsafe {
-> +                    bindings::led_classdev_register_ext(parent, ptr,
-> &mut init_data)
-> +                })
-> +            }),
-> +        })
-> +    }
-> +}
-> +
-> +extern "C" fn brightness_set(led_cdev: *mut bindings::led_classdev,
-> brightness: u32) {
-> +    // SAFETY: `led_cdev` is a valid pointer to a `led_classdev`
-> stored inside a `Device`.
-> +    let classdev = unsafe {
-> +        &*container_of!(
-> +            led_cdev.cast::<Opaque<bindings::led_classdev>>(),
-> +            Device,
-> +            classdev
-> +        )
-> +    };
-> +    let _ = classdev.handler.brightness_set(brightness);
-> +}
-> +
-> +extern "C" fn brightness_set_blocking(
-> +    led_cdev: *mut bindings::led_classdev,
-> +    brightness: u32,
-> +) -> i32 {
-> +    // SAFETY: `led_cdev` is a valid pointer to a `led_classdev`
-> stored inside a `Device`.
-> +    let classdev = unsafe {
-> +        &*container_of!(
-> +            led_cdev.cast::<Opaque<bindings::led_classdev>>(),
-> +            Device,
-> +            classdev
-> +        )
-> +    };
-> +    from_result(|| {
-> +        classdev.handler.brightness_set(brightness)?;
-> +        Ok(0)
-> +    })
-> +}
-> +
-> +extern "C" fn blink_set(
-> +    led_cdev: *mut bindings::led_classdev,
-> +    delay_on: *mut usize,
-> +    delay_off: *mut usize,
-> +) -> i32 {
-> +    // SAFETY: `led_cdev` is a valid pointer to a `led_classdev`
-> stored inside a `Device`.
-> +    let classdev = unsafe {
-> +        &*container_of!(
-> +            led_cdev.cast::<Opaque<bindings::led_classdev>>(),
-> +            Device,
-> +            classdev
-> +        )
-> +    };
-> +    from_result(|| {
-> +        classdev.handler.blink_set(
-> +            // SAFETY: `delay_on` is guaranteed to be a valid
-> pointer to usize
-> +            unsafe { &mut *delay_on },
-> +            // SAFETY: `delay_on` is guaranteed to be a valid
-> pointer to usize
-> +            unsafe { &mut *delay_off },
-> +        )?;
-> +        Ok(0)
-> +    })
-> +}
-> +
-> +#[pinned_drop]
-> +impl PinnedDrop for Device {
-> +    fn drop(self: Pin<&mut Self>) {
-> +        // SAFETY: The existence of `self` guarantees that
-> `self.classdev` has previously been
-> +        // successfully registered with `led_classdev_register_ext`
-> +        unsafe {
-> bindings::led_classdev_unregister(self.classdev.get()) };
-> +    }
-> +}
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index e5247f584ad2..f42c60da21ae 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -97,6 +97,7 @@
->  pub mod jump_label;
->  #[cfg(CONFIG_KUNIT)]
->  pub mod kunit;
-> +pub mod led;
->  pub mod list;
->  pub mod miscdevice;
->  pub mod mm;
-
+Preliminary results look very promising with stripe disabled.
 
