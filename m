@@ -1,165 +1,128 @@
-Return-Path: <linux-kernel+bounces-847230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8C73BCA501
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:03:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53206BCA505
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:04:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 96C3E4E6CC9
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:03:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A9E53B4FA6
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA0F23B61A;
-	Thu,  9 Oct 2025 17:03:43 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34C621C9E5;
-	Thu,  9 Oct 2025 17:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09812239E7F;
+	Thu,  9 Oct 2025 17:04:00 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE55822B584;
+	Thu,  9 Oct 2025 17:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760029422; cv=none; b=GZxIb6f5wiI+5mGgpEYqQZ6hHYJ1du+SVTHS4CzH7ZWE0uo5F0c4PVzc2Wv2p9et75kNuoiiT5/ib/6pFLhbptTr7f2F/0o/t93raf+D4cxOmesPOr2QlRciJOEGw0BLXK8cRm+s8DuefptTF791YYMKiCRlVo7Tqz7Gh7u87BA=
+	t=1760029439; cv=none; b=hc37KkTuQr/Db3Z4VvIBNQOTEGaEBTLcHnaj02b1vi135TvnTvSye/5rUdoEv1FAXak9nVFgKg0BwdSYXqG0IJk3zOu3orE0q2qhdVj7BhSxGPESTxyhnngQtTyhpSipMu08Ej4Gdf/nIGtdDa+NlteLBh/4Rrxnt7xcsBe35Q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760029422; c=relaxed/simple;
-	bh=dvZuHKC+jRuZ29hsRElrVWZQ0CVV3aVULPajs+QQGIQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UUaGiPPX3EQViPKPb78k5LBRz5yAAmtpHIZgizYC1pmgxWDtX46x8HwxpaOqL2uo2Pr4h4nPfZiOBzTj6Tf7fOVKPoAhkIj18E2TUf7jda09fo6Ae59ga7FV3Nr+x2Lciq3MWNKV4kbyGnP2jg2Q1wSyyOx9tCHCWXAY4N/aTjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 42A761762;
-	Thu,  9 Oct 2025 10:03:32 -0700 (PDT)
-Received: from [10.57.3.102] (unknown [10.57.3.102])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 75D333F66E;
-	Thu,  9 Oct 2025 10:03:35 -0700 (PDT)
-Message-ID: <9d3eeb9f-b8ea-48e5-a1d9-0865f63ef991@arm.com>
-Date: Thu, 9 Oct 2025 18:03:29 +0100
+	s=arc-20240116; t=1760029439; c=relaxed/simple;
+	bh=yMqD7LmueVOI1G4KF/wczSdi+WjbyGueTtyV+hDePzU=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Hx7FbC9lpktuUAusXMagdRGwd/SUpigyTazyv5XNepxKZyu4ct3wguAj8O4FkHGqaa/4V2TWieE2lrPLZIWfzDG2wG15Vjvey88rM5pBf3Cn0XJWOY7X6P5mqePxnuK3u6U7OmHARg65jXQUP+OyDdW9SJhQRTSkGwyhfloy0Pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cjGR31Pj7z67KQK;
+	Fri, 10 Oct 2025 01:03:11 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 530081402E9;
+	Fri, 10 Oct 2025 01:03:54 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 9 Oct
+ 2025 18:03:53 +0100
+Date: Thu, 9 Oct 2025 18:03:51 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Marc Zyngier <maz@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-acpi@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, "Mark
+ Rutland" <mark.rutland@arm.com>, Will Deacon <will@kernel.org>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, "Saravana
+ Kannan" <saravanak@google.com>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Sven Peter <sven@kernel.org>, Janne Grunau
+	<j@jannau.net>, Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark
+	<james.clark@linaro.org>
+Subject: Re: [PATCH v3 04/26] platform: Add firmware-agnostic irq and
+ affinity retrieval interface
+Message-ID: <20251009180351.00000d3d@huawei.com>
+In-Reply-To: <20250922082833.2038905-5-maz@kernel.org>
+References: <20250922082833.2038905-1-maz@kernel.org>
+	<20250922082833.2038905-5-maz@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/3] Introduce iommu-map-masked for platform devices
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Charan Teja Kalla <charan.kalla@oss.qualcomm.com>, joro@8bytes.org,
- will@kernel.org, saravanak@google.com, conor+dt@kernel.org, robh@kernel.org,
- mchehab@kernel.org, bod@kernel.org, krzk+dt@kernel.org,
- abhinav.kumar@linux.dev, vikash.garodia@oss.qualcomm.com,
- dikshita.agarwal@oss.qualcomm.com,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- bjorn.andersson@oss.qualcomm.com, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-References: <20250928171718.436440-1-charan.kalla@oss.qualcomm.com>
- <aec0f40a-8346-4194-8b18-1022fe3366bb@arm.com>
- <0d0560cc-9757-4c7b-8de4-170148d99481@oss.qualcomm.com>
- <ead7cf8b-fbc4-4242-a9da-b313dded1abc@arm.com>
- <nzqte4glwtpjs5bhkxz43yhdufelxvqvzmg5tepudxwetimir3@bvlw5csjizsh>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <nzqte4glwtpjs5bhkxz43yhdufelxvqvzmg5tepudxwetimir3@bvlw5csjizsh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500010.china.huawei.com (7.191.174.240) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-On 2025-10-09 2:19 pm, Dmitry Baryshkov wrote:
-> On Thu, Oct 09, 2025 at 11:46:55AM +0100, Robin Murphy wrote:
->> On 2025-10-08 8:10 pm, Charan Teja Kalla wrote:
->>>
->>> On 9/29/2025 3:50 PM, Robin Murphy wrote:
->>>>> USECASE [1]:
->>>>> -----------
->>>>> Video IP, 32bit, have 2 hardware sub blocks(or can be called as
->>>>> functions) called as pixel and nonpixel blocks, that does decode and
->>>>> encode of the video stream. These sub blocks are __configured__ to
->>>>> generate different stream IDs.
->>>>
->>>> So please clarify why you can't:
->>>>
->>>> a) Describe the sub-blocks as individual child nodes each with their own
->>>> distinct "iommus" property
->>>>
->>>
->>> Thanks Robin for your time. Sorry for late reply as I really didn't have
->>> concrete answer for this question.
->>>
->>> First let me clarify the word "sub blocks" -- This is just the logical
->>> separation with no separate address space to really able to define them
->>> as sub devices. Think of it like a single video IP with 2 dma
->>> engines(used for pixel and non-pixel purpose).
->>>
->>> I should agree that the child-nodes in the device tree is the easy one
->>> and infact, it is how being used in downstream.
->>>
->>> For upstream -- Since there is no real address space to interact with
->>> these sub-blocks(or logical blocks), does it really qualify to define as
->>> child nodes in the device tree? I see there is some push back[1].
->>
->> Who says you need an address space? Child nodes without "reg" properties,
->> referenced by name, compatible or phandle, exist all over the place for all
->> manner of reasons. If there are distinct logical functions with their own
->> distinct hardware properties, then I would say having child nodes to
->> describe and associate those properties with their respective functions is
->> entirely natural and appropriate. The first example that comes to mind of
->> where this is a well-established practice is PMICs - to pick one at random:
->> Documentation/devicetree/bindings/regulator/qcom,rpmh-regulator.yaml
+On Mon, 22 Sep 2025 09:28:11 +0100
+Marc Zyngier <maz@kernel.org> wrote:
+
+> Expand platform_get_irq_optional() to also return an affinity if
+> available, renaming it to platform_get_irq_affinity() in the
+> process.
 > 
-> Logical function, that's correct. And also note, for PMICs that practice
-> has bitten us back. For PM8008 we switched back to a non-subdevice
-> representation.
+> platform_get_irq_optional() is preserved with its current semantics
+> by calling into the new helper with a NULL affinity pointer.
 > 
->> For bonus irony, you can't take the other approaches without inherently
->> *introducing* a notional address space in the form of your logical function
->> IDs anyway.
->>
->>>     > or:
->>>>
->>>> b) Use standard "iommu-map" which already supports mapping a masked
->>>> input ID to an arbitrary IOMMU specifier
->>>>
->>>
->>> I think clients is also required to program non-zero smr mask, where as
->>> iommu-map just maps the id to an IOMMU specifier(sid). Please LMK if I
->>> am unable to catch your thought here.
->> An IOMMU specifier is whatever the target IOMMU node's #iommu-cells says it
->> is. The fact that Linux's parsing code only works properly for #iommu-cells
->> = 1 is not really a DT binding problem (other than it stemming from a loose
->> assumption stated in the PCI binding's use of the property).
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+
+Maybe a breadcrumb of a comment for those of us who can't be bothered
+to figure out why this needs the ifndef CONFIG_SPARC?
+
+Otherwise a question on whether it's worth spinning a fwnode.h handler
+to hide away the fwnode type in get_irq_affinity.
+I think not given the complexity already there for the platform device
+irq stuff, but thought I'd mention it.
+
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+
+> ---
+>  drivers/base/platform.c         | 60 +++++++++++++++++++++++++++------
+>  include/linux/platform_device.h |  2 ++
+>  2 files changed, 52 insertions(+), 10 deletions(-)
 > 
-> I really don't like the idea of extending the #iommu-cells. The ARM SMMU
-> has only one cell, which is correct even for our platforms. The fact
-> that we need to identify different IOMMU SIDs (and handle them in a
-> differnt ways) is internal to the video device (and several other
-> devices). There is nothing to be handled on the ARM SMMU side.
+> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+> index 09450349cf323..3a058f63ef0d3 100644
+> --- a/drivers/base/platform.c
+> +++ b/drivers/base/platform.c
+> @@ -150,25 +150,37 @@ devm_platform_ioremap_resource_byname(struct platform_device *pdev,
+>  EXPORT_SYMBOL_GPL(devm_platform_ioremap_resource_byname);
+>  #endif /* CONFIG_HAS_IOMEM */
+>  
+> +static const struct cpumask *get_irq_affinity(struct platform_device *dev,
+> +					      unsigned int num)
+> +{
+> +	const struct cpumask *mask = NULL;
+> +#ifndef CONFIG_SPARC
+> +	struct fwnode_handle *fwnode = dev_fwnode(&dev->dev);
+> +
+> +	if (is_of_node(fwnode))
+> +		mask = of_irq_get_affinity(to_of_node(fwnode), num);
+> +	else if (is_acpi_device_node(fwnode))
+> +		mask = acpi_irq_get_affinity(ACPI_HANDLE_FWNODE(fwnode), num);
 
-Huh? So if you prefer not to change anything, are you suggesting this 
-series doesn't need to exist at all? Now I'm thoroughly confused...
+Not sure how useful it will be more generally, but maybe use fwnode.h and
+appropriate callback rather than opencoding here?
 
-If you want to use SMR masks, then you absolutely need #iommu-cells = 2, 
-because that is the SMMU binding for using SMR masks. It would 
-definitely not be OK to have some magic property trying to smuggle 
-IOMMU-driver-specific data contrary to what the IOMMU node itself says. 
-As for iommu-map, I don't see what would be objectionable about 
-improving the parsing to respect a real #iommu-cells value rather than 
-hard-coding an assumption. Yes, we'd probably need to forbid entries 
-with length > 1 targeting IOMMUs with #iommu-cells > 1, since the notion 
-of a linear relationship between the input ID and the output specifier 
-falls apart when the specifier is complex, but that seems simple enough 
-to implement and document (even if it's too fiddly to describe in the 
-schema itself), and still certainly no worse than having another 
-property that *is* just iommu-map with implicit length = 1.
+Mind you the extra handling in existing platform_get_irq_optional()
+for corner cases doesn't really fit with that model.
 
-And if you want individual StreamIDs for logical functions to be 
-attachable to distinct contexts then those functions absolutely must be 
-visible to the IOMMU layer and the SMMU driver as independent devices 
-with their own unique properties, which means either they come that way 
-from the DT as of_platform devices in the first place, or you implement 
-a full bus_type abstraction which will have to be hooked up to the IOMMU 
-layer. You cannot make IOMMU configuration "internal" to the actual 
-client driver which is only allowed to bind *after* said IOMMU 
-configuration has already been made.
+> +#endif
+> +
+> +	return mask ?: cpu_possible_mask;
+> +}
 
-Thanks,
-Robin.
 
