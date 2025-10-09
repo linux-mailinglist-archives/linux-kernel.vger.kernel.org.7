@@ -1,133 +1,126 @@
-Return-Path: <linux-kernel+bounces-846372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58787BC7BD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:40:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E30D9BC7BC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:37:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0465A352125
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:40:32 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8E56B3517C8
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:37:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D1DA21638D;
-	Thu,  9 Oct 2025 07:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9A61E1E12;
+	Thu,  9 Oct 2025 07:37:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="d2JEtOgs"
-Received: from out199-15.us.a.mail.aliyun.com (out199-15.us.a.mail.aliyun.com [47.90.199.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mDe9u+UK"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2437F4FA
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 07:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.199.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E41018DB35
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 07:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759995624; cv=none; b=Pw+neRMjJKbSOcP7Q44oatF0gwg4CI1Xz9tIgmokz5Ff3sy+EHgfzkWwTA4RhT8k3JSL+c0g6tgVk1hYxS8yx0qycJe7NlTSrhaVGLIX6qIq17BFB+sRS7ciYP0BxwRFoe2DZD3EPvWusYdRDisNqntYkLzyR11RYO2fbJdkPf0=
+	t=1759995466; cv=none; b=TxPFHnjyhr0xnN8wryJCsWJfrG8v6OOwX4X7vATpXOLL4thu1LuonxtP6uVC/oOQTWc4D5SDYkGXvsapXmGt32HxZmw3hszFmqwzbmHh66Oe4hs6cCxhIfSRrn1i7wMlwJQXAzHWoxtdLqQXn2iPQ7h9FpeXCctTdOMqM/EGZ/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759995624; c=relaxed/simple;
-	bh=lJVMrN8b566rKCI8xVGraN1cNXO76QI0vxrQLWZt8OI=;
-	h=From:To:Cc:References:In-Reply-To:Subject:Date:Message-ID:
-	 MIME-Version:Content-Type; b=SCBAgMWAzD2q590SHoVMxR+mDRZM+W7SvcVynt9hS3GUAYNx+x9wwBdrkbB4UdjFnp2bMh78rTr4KWbbgJu9E+o2j95A2JM3MpEM+8iuAa37CsfNITiNsIxEs5HA/8Th5OJfeHUfTvZzelkro+U2+JAXtbqosWWkulIh/xc+bPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=d2JEtOgs; arc=none smtp.client-ip=47.90.199.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1759995610; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	bh=fmkkQQ3u5wzLEz28oroV4vlMCTJQvx36W8GzggAdlhg=;
-	b=d2JEtOgsmc9rvdiUzC90Tuc67iB034+WsPT7rQpTbdM77oMYfpZN2eItE4g7TQBVxr2DqfB80Hw8KiVGCJeDIyrOwPaDmP8bEep8SQboUDKFKosz7iQOgb5hV7o/x/g5hECgNYOopptCtiywOw0lQVDewaaCPT4hsRIkPSkMeIY=
-Received: from LG41624401116(mailfrom:yadong.qi@linux.alibaba.com fp:SMTPD_---0WpkCT8Y_1759995291 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 09 Oct 2025 15:34:51 +0800
-From: <yadong.qi@linux.alibaba.com>
-To: "'Andrew Morton'" <akpm@linux-foundation.org>,
-	"'Huang, Ying'" <ying.huang@linux.alibaba.com>
-Cc: <urezki@gmail.com>,
-	<linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20251009061410.820-1-yadong.qi@linux.alibaba.com>	<87zfa0tw9o.fsf@DESKTOP-5N7EMDA> <20251009000356.8e18395dd9979045e0c66de2@linux-foundation.org>
-In-Reply-To: <20251009000356.8e18395dd9979045e0c66de2@linux-foundation.org>
-Subject: RE: [PATCH v2] mm: vmalloc: WARN_ON if mapping size is not PAGE_SIZE aligned
-Date: Thu, 9 Oct 2025 15:34:51 +0800
-Message-ID: <001201dc38ef$33162220$99426660$@linux.alibaba.com>
+	s=arc-20240116; t=1759995466; c=relaxed/simple;
+	bh=dGju8AeWqVChK/btSkkXXitucm6kni2Hg7FXCU+eGHI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nt0DvISEnozaA4EMvyBff/pwxuEGKS9JezHnuy8rHWDxqlj2of/te4qDDLk8L4KsQX/JgW/VUY23t5z+yFruvgjqjC5X++AKROVIm3h2D/Ayw48VEZvHMYUZaFYi6nra1cTwwyouhz0UGa+wn7xDQ5XHnLgWloZo3ep0t73qnDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mDe9u+UK; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-62fc28843ecso869302a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 00:37:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759995463; x=1760600263; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QkBo4+o98aA49wUvu+G1xef2+IziwVoenRLYEe5BuKY=;
+        b=mDe9u+UK4Mwu6M18fO0TRloIRr1AIoR0KlO4CS6yjeyJsGvfj1CWv7qlTBQZWKEnHK
+         jM0FUy8uKYEeZIOIpavbq3oPWGMmXz9t+rDeqnvDaTyqSf0Fywgm8ykKtbSt4oG5Emf8
+         T9XTTjyinFnO4Br/iwGz1PSwwz+ICZ7yRT1leZzyjYGEzsidBkeKCCZx69MxVBfi2T0V
+         HJNvVfoLLJlz8H6ZC8wC1OByp6x8D0k98kL8le2fDn+ipcg7MqFU7tKspJs2HvMm4WDz
+         OjWO+BtwfQJCSChuXNn9N+uc+MPhV0z6KgLYeNTRA+VLbOPwtE25RoJQCc+6es4VcNKH
+         u5tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759995463; x=1760600263;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QkBo4+o98aA49wUvu+G1xef2+IziwVoenRLYEe5BuKY=;
+        b=nQHYQ5uwBvo6bVv12sTMai+5YDBr3HgroqMR1pSa+5mc3PKRYhRJWylpjHmjRkTvME
+         om7E+OxvdsurQ/SnxpabdNY+nHIpgy3ahrdQO9KfBFAjL/37VuTUwlq+XG/Myexq7si1
+         SRi9XuO2N7bZU5rWc56hPrSPVFzIe8avRA2XH8fy5WzWEE70eoo6b3nNWTaeX8Jfd33n
+         g6Z4qE0lmmj9F39FbadIUBK2jzU02KVpz0q3TxRJmPVGDm/I3miYUoMdPmCXDs1REQPA
+         iMSShjovvqTY/xOd9lt/KDhuE3LYWgrfhivqrFodp796ee7r+jskN7SHgp/LYGUN/dQC
+         9oVA==
+X-Forwarded-Encrypted: i=1; AJvYcCUWTA1Bpf70uGESyC2oi7Sgf7vNL6U/2Z80N0km5QZO42bn9lljynX0/xYRt149h1xJuOr34DMB3qEAu3M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0Rcz+z8iwVj+1quQUlWXZYku7o+VXBwu26YSiCwh0dEYEBd3I
+	nKyupeOp3gV9+/xezjJUH0zRA/zTia+vnrkdiYigWqnpdqiWCF2zUuFzh8M2nP7T0DKQVL6n2vc
+	xQWiQ
+X-Gm-Gg: ASbGncuofrK5wLUwMrd5pbBZA5EZkF0n5QbqV5CvnfJARoFZZ+x9H9u99U8GCvUJLdm
+	4dEt4EsX4PbFfiG0LSw5C1EMdRIvUOQhFgGkDj6Kn3VMqaPMzRZ1V8bDTtJB1OHKILRcojre8os
+	ZpoGJGkGs0BPUKWTHnnsAQC8AlkWEjresLNLfiSDZqXLnrUQeKZ4z/sJbeXd6dmBlGFifYrpFJZ
+	y3zhPKrltGyPK99xXNk9boazTcwVkd87TsW4kMU+8dAplSLxokS+Kyg4mwAsa4GpFI/PqMXsBoQ
+	OG41tqPc6BVzv0NojDGzoAvhZAIHD0SKg4r+6h03Brax9FfbDrFdZ5HAFGo5Z6UECelRSr6un3q
+	z3dUYYauBlpWGifhbFiGVgiv/k9djkp3VBmfH181QbuVWN9DTG7fhEmpJguEMOV2Oms8=
+X-Google-Smtp-Source: AGHT+IFHi/yZs/pGR4qTm0LoEk0mx1AMmvxnoL+zqu9ZIvbq6rDqz2obSOnUoPzAuZGAuoj0ELKvaQ==
+X-Received: by 2002:a05:6402:2708:b0:639:c56d:2407 with SMTP id 4fb4d7f45d1cf-639d5c3f43fmr6045687a12.22.1759995462468;
+        Thu, 09 Oct 2025 00:37:42 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-639f30d9963sm1766971a12.15.2025.10.09.00.37.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 00:37:41 -0700 (PDT)
+Date: Thu, 9 Oct 2025 10:37:38 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Mattijs Korpershoek <mkorpershoek@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>,
+	Khairul Anuar Romli <khairul.anuar.romli@altera.com>,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] spi: cadence-quadspi: Fix pm_runtime unbalance on dma
+ EPROBE_DEFER
+Message-ID: <aOdmQhGW27I6rGTB@stanley.mountain>
+References: <20251009-cadence-quadspi-fix-pm-runtime-v2-1-8bdfefc43902@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="gb2312"
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQDNMrr7Fq5t9NtUPwBpedxNSvimKQKJivZeASdK0me2ue+C4A==
-Content-Language: zh-cn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251009-cadence-quadspi-fix-pm-runtime-v2-1-8bdfefc43902@kernel.org>
 
-> -----Original Message-----
-> From: Andrew Morton <akpm@linux-foundation.org>
-> Sent: 2025=C4=EA10=D4=C29=C8=D5 15:04
-> To: Huang, Ying <ying.huang@linux.alibaba.com>
-> Cc: Yadong Qi <yadong.qi@linux.alibaba.com>; urezki@gmail.com;
-> linux-mm@kvack.org; linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH v2] mm: vmalloc: WARN_ON if mapping size is not =
-PAGE_SIZE
-> aligned
->=20
-> On Thu, 09 Oct 2025 14:38:27 +0800 "Huang, Ying"
-> <ying.huang@linux.alibaba.com> wrote:
->=20
-> > Yadong Qi <yadong.qi@linux.alibaba.com> writes:
-> >
-> > > In mm/vmalloc.c, the function vmap_pte_range() assumes that the
-> > > mapping size is aligned to PAGE_SIZE. If this assumption is
-> > > violated, the loop will become infinite because the termination
-> > > condition (`addr !=3D end`) will never be met. This can lead to
-> > > overwriting other VA ranges and/or random pages physically follow
-> > > the page table.
-> > >
-> > > It's the caller's responsibility to ensure that the mapping size
-> > > is aligned to PAGE_SIZE. However, the memory corruption is hard
-> > > to root cause. To identify the programming error in the caller
-> > > easier, check whether the mapping size is PAGE_SIZE aligned with
-> > > WARN_ON().
-> > >
-> > > Signed-off-by: Yadong Qi <yadong.qi@linux.alibaba.com>
-> > > Reviewed-by: Huang Ying <ying.huang@linux.alibaba.com>
-> > > ---
-> > > v1 -> v2:
-> > >   * Use WARN_ON instead of BUG_ON
-> > > ---
-> > >  mm/vmalloc.c | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> > >
-> > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > > index 5edd536ba9d2..2cad593e4677 100644
-> > > --- a/mm/vmalloc.c
-> > > +++ b/mm/vmalloc.c
-> > > @@ -100,6 +100,9 @@ static int vmap_pte_range(pmd_t *pmd, unsigned =
-long
-> addr, unsigned long end,
-> > >  	struct page *page;
-> > >  	unsigned long size =3D PAGE_SIZE;
-> > >
-> > > +	if (WARN_ON(!PAGE_ALIGNED(end - addr)))
-> > > +		return -ENOMEM;
-> > > +
-> >
-> > EINVAL?
-> >
->=20
-> If this errno gets returned to userspace somehow, programmer is going
-> to wonder what was invalid about the arguments which the program =
-passed
-> to the kernel.
->=20
-> But either way, the callers of vmap_pte_range() should be audited, to
-> verify that they take appropriate action when this happens.
+On Thu, Oct 09, 2025 at 09:10:38AM +0200, Mattijs Korpershoek wrote:
+> In csqspi_probe(), when cqspi_request_mmap_dma() returns -EPROBE_DEFER,
+> we handle the error by jumping to probe_setup_failed.
+> In that label, we call pm_runtime_disable(), even if we never called
+> pm_runtime_enable() before.
+> 
+> Because of this, the driver cannot probe:
+> 
+> [    2.690018] cadence-qspi 47040000.spi: No Rx DMA available
+> [    2.699735] spi-nor spi0.0: resume failed with -13
+> [    2.699741] spi-nor: probe of spi0.0 failed with error -13
+> 
+> Only call pm_runtime_disable() if it was enabled by adding a new
+> label to handle cqspi_request_mmap_dma() failures.
+> 
+> Fixes: b07f349d1864 ("spi: spi-cadence-quadspi: Fix pm runtime unbalance")
+> Signed-off-by: Mattijs Korpershoek <mkorpershoek@kernel.org>
+> ---
+> This has been tested on a AM69 SK board.
+> ---
+> Changes in v2:
+> - Updated message to use correct Fixes tag (Dan)
+> - Link to v1: https://lore.kernel.org/r/20251008-cadence-quadspi-fix-pm-runtime-v1-1-33bcb4b83a2e@kernel.org
 
-I believe we should modify vmap_pmd_range(), vmap_pud_range(), and
-vmap_p4d_range()
-to accept an error code from the callee instead of simply returning =
--ENOMEM.
-If there are no other suggestions, I will create a new patch.
+Thanks!
+
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+
+regards,
+dan carpenter
 
 
