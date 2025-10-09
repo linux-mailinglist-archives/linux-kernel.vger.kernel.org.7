@@ -1,171 +1,101 @@
-Return-Path: <linux-kernel+bounces-846749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 734A3BC8E9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:54:58 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 617EBBC8EAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:56:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECCA0420393
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:54:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 629674EC083
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2294E2E0939;
-	Thu,  9 Oct 2025 11:54:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C5A2DE200;
+	Thu,  9 Oct 2025 11:56:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="bu192Bjv"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nqBTzWtI"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0862E1F13
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 11:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42BA32E0909;
+	Thu,  9 Oct 2025 11:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760010882; cv=none; b=t8jrhA4fdtjpu5NwWX8NoeI2gc/lyUyy6UvumpM347VK7MAqPx2KyULhG0Ehopvv6xpQQd76SmkyBQGCp0Zo168e0AK/wR3zC/iGrQTR5mIP+PqH4gePvp9pljLFps9fcZqUH3GGdrN8a0ssUKJDrL0njwwX0Ecvi/F/6RQhCzs=
+	t=1760010989; cv=none; b=Su43xdLcXPOz72QNh3ZC2mGGQ7vMccu6CfSU7yrHWs6JJx2ul1azgPvz2UsShTXrYVshbtmvGVyNo0CMnKAI2C4QJM/CIPntxTcqo0COMmyjk6ATQuU2dnLHv7S1hBQPJWfn0jrBLLyU7lsoEmc0uplEVZ2z650EfQUMDp8QPDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760010882; c=relaxed/simple;
-	bh=JC9jgIxIHsC0rpTcUOBqkaqzNLHG5l/luB/jXou2SH8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=f6cG12BH7C9PJvuj/MawNg4iToRqvGouUAscbzS6gbnO3qPyIX4tu0CcvGXiSLarEzmgNJa3WDlVGEq9OvcXFJC0xNZ/kSVh0dKCK/5gahAL2H5r7poHXv1tGG3bKVGliBpg8T7Dbi9pdHf6XyCG+gwM14xQaDUM7+Ejap7qIHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=bu192Bjv; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251009115436euoutp01cbe75eb3fdb658498eabdaca36828ad7~s0JFSX55L0788007880euoutp01W
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 11:54:36 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251009115436euoutp01cbe75eb3fdb658498eabdaca36828ad7~s0JFSX55L0788007880euoutp01W
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1760010877;
-	bh=89YoilszcVgtY2WH9xkUBX5haHu7VfKEfNvtGBAHGdM=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=bu192Bjv4DCyMt7YU61OG1pYaDl8eyq6hJkNiecFAvJUn73QTZW1fP9YjBIisqt5f
-	 f/wiDSTUCbW6KbHBroFQzToTC/AGg4bO4n6ljDpOTc1+soTZpDNaY+TX7K4lWRGUui
-	 9wTa90wgFU9JWr5y2taU+ASF65/nFgLB++a56bOA=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20251009115436eucas1p23974f9afcd730fa3fdf66a7d6919d47f~s0JFAHA-N1574615746eucas1p2s;
-	Thu,  9 Oct 2025 11:54:36 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20251009115435eusmtip1e8fd4f06ffd3e6a355d1458090c4b984~s0JEHJ53D1953819538eusmtip1j;
-	Thu,  9 Oct 2025 11:54:35 +0000 (GMT)
-Message-ID: <0d3eb8e5-5588-4718-b01c-ef32b7dcb4a1@samsung.com>
-Date: Thu, 9 Oct 2025 13:54:35 +0200
+	s=arc-20240116; t=1760010989; c=relaxed/simple;
+	bh=6gUz+9JoOYVGPpIwvEyu26OypnA//W1aFpeDtPUjxaQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kPrma68RzKW6xspG6TUk1p7d4LBLuWasobb6dC/CcmKgfJV+44j2J+HyAECTtTCmO9X0RkOSkYK3WCppiSh4lrM+y0RUxsd0mP67FCqCNsJNObyRp7etODFfwVgbVebkdoSQuqnxcaPgwOZLHuU7Rh9yWKfTJU0HZfOrm1+yi3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nqBTzWtI; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760010985;
+	bh=6gUz+9JoOYVGPpIwvEyu26OypnA//W1aFpeDtPUjxaQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nqBTzWtIwjw7fCRFp/gWpyyfyqCXm/UzYttMnMyC/r1TKf7qGYKGgn5yqtrInqUHl
+	 Jid+rfe2P65rn6jVjolgn1z4JPa4Iofyy3x4l2K3zZBEfCwIxJIo826gYYL/OJin01
+	 mH0fV0lG135kAvX+eScECWBYLLZyS22U5sPhorLN/DPseuEWedVJTLYA3LunjwBp8q
+	 D45/YX7uTqKi+Jb/tJsQsI7pnjqpt7qc+lhKEKmnHUtFoYmPgZQmhecXl2oeedGZvB
+	 MU3RPYN33wgluOO2P9LeoepkZ2WfYOxBtpEDxnoQ0OrwjqPjoiktUY8wIIfmRBg0f5
+	 JfX8GTG6naTxQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 70DDE17E0125;
+	Thu,  9 Oct 2025 13:56:24 +0200 (CEST)
+Message-ID: <9abaae2b-8e66-4e28-99c3-14cf3de13c8c@collabora.com>
+Date: Thu, 9 Oct 2025 13:56:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [bisected][mainline]Kernel warnings at
- kernel/sched/cpudeadline.c:219
-To: Peter Zijlstra <peterz@infradead.org>, Shrikanth Hegde
-	<sshegde@linux.ibm.com>
-Cc: Venkat Rao Bagalkote <venkat88@linux.ibm.com>, LKML
-	<linux-kernel@vger.kernel.org>, linuxppc-dev
-	<linuxppc-dev@lists.ozlabs.org>, Madhavan Srinivasan <maddy@linux.ibm.com>,
-	jstultz@google.com, stultz@google.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 16/20] soc: mediatek: mtk-cmdq: Remove shift_pa
+ parameter from cmdq_pkt_jump()
+To: Jason-JH Lin <jason-jh.lin@mediatek.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+ Nicolas Dufresne <nicolas@ndufresne.ca>, Nancy Lin <nancy.lin@mediatek.com>,
+ Singo Chang <singo.chang@mediatek.com>,
+ Paul-PL Chen <paul-pl.chen@mediatek.com>, Moudy Ho <moudy.ho@mediatek.com>,
+ Xiandong Wang <xiandong.wang@mediatek.com>,
+ Sirius Wang <sirius.wang@mediatek.com>, Fei Shao <fshao@chromium.org>,
+ Chen-yu Tsai <wenst@chromium.org>,
+ Project_Global_Chrome_Upstream_Group@mediatek.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+References: <20250827114006.3310175-1-jason-jh.lin@mediatek.com>
+ <20250827114006.3310175-17-jason-jh.lin@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20251009080007.GH3245006@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250827114006.3310175-17-jason-jh.lin@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20251009115436eucas1p23974f9afcd730fa3fdf66a7d6919d47f
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20251009115436eucas1p23974f9afcd730fa3fdf66a7d6919d47f
-X-EPHeader: CA
-X-CMS-RootMailID: 20251009115436eucas1p23974f9afcd730fa3fdf66a7d6919d47f
-References: <8218e149-7718-4432-9312-f97297c352b9@linux.ibm.com>
-	<20251008095039.GG3245006@noisy.programming.kicks-ass.net>
-	<5a248390-ddaa-4127-a58a-794d0d70461a@linux.ibm.com>
-	<20251008111314.GI3289052@noisy.programming.kicks-ass.net>
-	<86fbf707-9ecf-4941-ae70-3332c360533d@linux.ibm.com>
-	<20251009080007.GH3245006@noisy.programming.kicks-ass.net>
-	<CGME20251009115436eucas1p23974f9afcd730fa3fdf66a7d6919d47f@eucas1p2.samsung.com>
 
-On 09.10.2025 10:00, Peter Zijlstra wrote:
-> On Wed, Oct 08, 2025 at 11:39:11PM +0530, Shrikanth Hegde wrote:
->> *It pointed to this*
->>
->> NIP [c0000000001fd798] dl_server_start+0x50/0xd8
->> LR [c0000000001d9534] enqueue_task_fair+0x228/0x8ec
->> Call Trace:
->> [c000006684a579c0] [0000000000000001] 0x1 (unreliable)
->> [c000006684a579f0] [c0000000001d9534] enqueue_task_fair+0x228/0x8ec
->> [c000006684a57a60] [c0000000001bb344] enqueue_task+0x5c/0x1c8
->> [c000006684a57aa0] [c0000000001c5fc0] ttwu_do_activate+0x98/0x2fc
->> [c000006684a57af0] [c0000000001c671c] try_to_wake_up+0x2e0/0xa60
->> [c000006684a57b80] [c00000000019fb48] kthread_park+0x7c/0xf0
->> [c000006684a57bb0] [c00000000015fefc] takedown_cpu+0x60/0x194
->> [c000006684a57c00] [c000000000161924] cpuhp_invoke_callback+0x1f4/0x9a4
->> [c000006684a57c90] [c0000000001621a4] __cpuhp_invoke_callback_range+0xd0/0x188
->> [c000006684a57d30] [c000000000165aec] _cpu_down+0x19c/0x560
->> [c000006684a57df0] [c0000000001637c0] __cpu_down_maps_locked+0x2c/0x3c
->> [c000006684a57e10] [c00000000018a100] work_for_cpu_fn+0x38/0x54
->> [c000006684a57e40] [c00000000019075c] process_one_work+0x1d8/0x554
->> [c000006684a57ef0] [c00000000019165c] worker_thread+0x308/0x46c
->> [c000006684a57f90] [c00000000019e474] kthread+0x16c/0x19c
->> [c000006684a57fe0] [c00000000000dd58] start_kernel_thread+0x14/0x18
->>
->> It is takedown_cpu called from CPU0(boot CPU) and it wakes up kthread
->> which is CPU Bound I guess.  Since happens after rq was marked
->> offline, it ends up starting the deadline server again.
->>
->> So i think it is sensible idea to stop the deadline server if the cpu
->> is going down.  Once we stop the server we will return
->> HRTIMER_NORESTART.
-> D'0h.. that stop was far too early.
->
-> How about moving that dl_server_stop() into sched_cpu_dying() like so.
->
-> This seems to survive a few hotplugs for me.
->
-> ---
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 198d2dd45f59..f1ebf67b48e2 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -8571,10 +8571,12 @@ int sched_cpu_dying(unsigned int cpu)
->   	sched_tick_stop(cpu);
->   
->   	rq_lock_irqsave(rq, &rf);
-> +	update_rq_clock(rq);
->   	if (rq->nr_running != 1 || rq_has_pinned_tasks(rq)) {
->   		WARN(true, "Dying CPU not properly vacated!");
->   		dump_rq_tasks(rq, KERN_WARNING);
->   	}
-> +	dl_server_stop(&rq->fair_server);
->   	rq_unlock_irqrestore(rq, &rf);
->   
->   	calc_load_migrate(rq);
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index 615411a0a881..7b7671060bf9 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -1582,6 +1582,9 @@ void dl_server_start(struct sched_dl_entity *dl_se)
->   	if (!dl_server(dl_se) || dl_se->dl_server_active)
->   		return;
->   
-> +	if (WARN_ON_ONCE(!cpu_online(cpu_of(rq))))
-> +		return;
-> +
->   	dl_se->dl_server_active = 1;
->   	enqueue_dl_entity(dl_se, ENQUEUE_WAKEUP);
->   	if (!dl_task(dl_se->rq->curr) || dl_entity_preempt(dl_se, &rq->curr->dl))
+Il 27/08/25 13:37, Jason-JH Lin ha scritto:
+> Since shift_pa will be stored in the cmdq_mbox_priv structure within
+> cmdq_pkt, all shift_pa parameters in CMDQ helper APIs can be removed.
+> 
+> Remove the shift_pa parameters from cmdq_pkt_jump(), cmdq_pkt_jump_abs(),
+> and cmdq_pkt_jump_rel().
+> 
+> Fixes: ade176534112 ("soc: mediatek: cmdq: Add parameter shift_pa to cmdq_pkt_jump()")
 
-This fixes a similar issue observed on Samsung Exynos SoC based boards 
-(ARM 32bit and 64bit) that I've reported in the following thread:
+Drop those fixes tags, they're not pointing to any upstream commit, and then, those
+are not fixes per-se, as you are performing migration, not fixing anything.
 
-https://lore.kernel.org/all/e56310b5-f7a9-4fad-b79a-dcbcdd3d3883@samsung.com/
+Cheers,
+Angelo
 
-Thanks for the fix! Feel free to add:
-
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
 
 
