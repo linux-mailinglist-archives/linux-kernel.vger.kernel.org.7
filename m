@@ -1,175 +1,363 @@
-Return-Path: <linux-kernel+bounces-846987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ABD7BC9983
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:45:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0218BC995F
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:44:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 80D0D4FB7E4
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:43:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B91C51A610DF
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:44:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DDDC2EB5B3;
-	Thu,  9 Oct 2025 14:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B202EB5AB;
+	Thu,  9 Oct 2025 14:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dFl+dQt7"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="SqW4U91+"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4B82EA490
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 14:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0CAB16EB42;
+	Thu,  9 Oct 2025 14:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760021027; cv=none; b=K7dQaIcChQsizkAkIiETyH43c80U/BrgVkNM7KrEPFfGzrtoTk3k6mo17UuIaxJ61q0IE0EF5FkueWtRmj4z84cIMGvueE7OiQhEOSWp5Z2ibiVt8X4A3M0rVA7P7UjElHe40PYxVDSjrfUbKv0J1gGxzhqyRtIdf2gXDro1OV4=
+	t=1760021051; cv=none; b=pdA6Pbca+qsUQ8ut8/LBaqoKSAkvouBnOpjF/bp2RFwIyLgQx3j/+npZuwXI2Nj/uJsd+6LfV24oFHsfDxa43pb1Bcko7O8qz6Xov/7vsQvcEfL6K82v1v7OcWR/ycuZEyMAX0m0+lRLNa23S0ABJcMm8NR8WxQLPgDRi5fmMN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760021027; c=relaxed/simple;
-	bh=YPRTmJAiC9PVnBhnzgVMwPCuYI3/xLbW6iu/nD0qQM4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L/B/zjs937GE0zsvNk+sDxLir+k7DXZtwD2zm5LE9YW9OFPprgI/R3JjqRTHVGKxNQz4d4D/Gb3Hmwd4FRbnVb24wDsixn7lXv7Y3RVa5tMsX2OkF3YBZVHy89WvCJMxpXZSMowQLHV/cTP8IBAQD04u1Rvu90d2LwppgEX5bCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dFl+dQt7; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 599EQBtp029887
-	for <linux-kernel@vger.kernel.org>; Thu, 9 Oct 2025 14:43:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=RAZH4VC4YYHQ6vhW18teDI4p
-	FX/oOp/YSqgiS6ax0y4=; b=dFl+dQt7KQmjjst4Rj1u/l1+XUsbjL6mzSC7XGCy
-	qH5Lt7HCf3kKnGoq/cpjA9m/7/ZxMFClL4iQ19w01YNYVjdc5Om1p9nWRa8wq3O1
-	vZEmPOyKVze4NDs0L+Ej1KcsUdzW5Nj8T5yvdKXhE1fgCc2tbgtu6HA3PyUyyLfw
-	nxHBUmGQmqwIy8wtKmzhXQDE/ot8IOLHZ+VR4n23Wot5ofcjBUwRg1yolNS+Kbsn
-	Ntk+eUrTIlvTHNNpV8bD1fqpeSwkDKwnOWq0YTxVt1eLqbF2UZQ1XlRQiYfMbnml
-	iBBYkSqgtW97vjU23EHKW9wEqNjccxy7w44pwbRVLi4SsQ==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv4nb86a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 14:43:45 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-78f2b1bacfcso29503736d6.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 07:43:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760021024; x=1760625824;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RAZH4VC4YYHQ6vhW18teDI4pFX/oOp/YSqgiS6ax0y4=;
-        b=JDGZvXA9td591+wnpLBvuO8Y3SQv7/fwMaoxdks2j0J3Mj9QSpKaHQkt2/mpupU02q
-         PI+nel7ZToUvBC5voP/FfTxDAbjpChc41sjhsntd8mdTqMyB5DBh06tt0Uh/sODoY8M/
-         xgzd4ql589O8wHU8E0qgC7PLU2xsNEQehL8vXN+zP4f10aiREgr5oF8QksdWO8WdMKDl
-         9Tz3JWDnydwCHACSunaZ2wHc+gmfoi6wViusEUiY6jlj7VMsVb5q8NRxCBQfs5mX1Rv1
-         idATo3JB2BdwtbmM45qPdacTkMGnmkQ6f6j/pgd3n222S/HzcllLrci2J0so98+uSG2g
-         Pq2g==
-X-Forwarded-Encrypted: i=1; AJvYcCVnmR8nO/s+rLGbWDwYJBi6HS60soAMt/vbeNdpmtJDOrCCscZqF7lHCww+wx2EpUzIDH5OF3xcScaIics=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+zLzHKCSXXRATCcAWnkwtAX6sgJdXsH0paaH2iN+HNmR9VFOy
-	hLVtvwA7iQe22Z9+/xTYiwsKAMHs5cljMvxprlDUk+31rGQZZqxbYMd0wi5q6n7We5fS4fKL40r
-	6+kGkZLYvFxtZegvbCgp2wiWNW1DHIjR6/J7cOCcuQF7sdgfkHBTQZEbXGi2nmS3cBoAj8X9x1b
-	k=
-X-Gm-Gg: ASbGncvWt6pU3njSVCCPKwHj6MwWEx9kygTH/f56yTrD6i8mXaKh4YMSJ6GRdp/fEca
-	t4hcime99fy91FCl24rem0wuoIcAyYCx7Misa+RIL9COKJF9wfnEzFYtpQu8JW1+oF1UunUO/EY
-	UcgyQqJiKHTJ0Q3JRsaJ7VOJx2YaZc0iHI2JOqSgK+N3Iay0bQyyfXjiD2MB4BNwnfyH38GsBv8
-	7YVcQnPLJ1l2qHEgehk4I4TgwCIhn5d/W+HAyRuCVWP5rK1qr7OhjTBOu+w2piPiUI+xu+q6LaW
-	eA2d1VXROYhX7YRR7VSxfLP0ingHgSmCg78kKSQJRtRMad3Pmswcmy40t8tYQADrlwcjlAYiK3N
-	IWUqL/Dgnp7fvazQEeB3Z+R+W8VSRfm8vkTVEvCC4hsfDllUjN9gExKFMJA==
-X-Received: by 2002:ac8:7f89:0:b0:4b5:fa2e:380f with SMTP id d75a77b69052e-4e6eacf39bamr101335481cf.27.1760021023738;
-        Thu, 09 Oct 2025 07:43:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF4VQzRJazCe5lQEKqHSB+Ox+znELuwpSDAoZB258VOx5j06Ir/+zHOtX7IKN48V2PCiISpAQ==
-X-Received: by 2002:ac8:7f89:0:b0:4b5:fa2e:380f with SMTP id d75a77b69052e-4e6eacf39bamr101333161cf.27.1760021019850;
-        Thu, 09 Oct 2025 07:43:39 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5907ac00be6sm1099313e87.23.2025.10.09.07.43.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 07:43:39 -0700 (PDT)
-Date: Thu, 9 Oct 2025 17:43:37 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Casey Connolly <casey.connolly@linaro.org>,
-        Alexander Martinz <amartinz@shiftphones.com>,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v2 6/6] arm64: dts: qcom: qcm6490-shift-otter: Enable
- venus node
-Message-ID: <si5h3szt3msd7mcbrfdotbs7wxi4bh5cfgp3icoxuqprsz5tqr@tk42ox6okse4>
-References: <20251009-otter-further-bringup-v2-0-5bb2f4a02cea@fairphone.com>
- <20251009-otter-further-bringup-v2-6-5bb2f4a02cea@fairphone.com>
+	s=arc-20240116; t=1760021051; c=relaxed/simple;
+	bh=vOUpPB5u5i02tf+Vp6YLQLkyLztgJp+bJtZ4O6POdI8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nqi6htUUYBuqaImEVa8k+DSubDmwLzztCb2M0pV40tip49MMZ66fRi+AZDxdlMGE1su9TsdlQrj3XIK//1BiRoQMA+4sX7ltN1IAQ0NCkWJjNYHq3sASpy5IDdRc6UQIfMy2pQ4sG/ZbOXG4x8Yze0r9H/aJfJn9NOWDskMWpEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=SqW4U91+; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=ud9pM9KG0Mb/TVq8w99+LW7M4Nntxs3k8VF1KybKcP4=; t=1760021049;
+	x=1760453049; b=SqW4U91+CrN1HzGQg+1IjcNcIyWngiFwCuylI+mXdXyp+p0myjTyHuW7o5eF4
+	3hoULLbbUxKvLgWe7kaKrxd1hr2PzephhmrdvL3OlPVx5tkilo5UV+Hl1VJjyzeGlImB5KS9w8vj9
+	Mmuhry83rCgDyoIT5HlVqOItY/IK7LYRl9oP1nBO5F8qbfHJ88CeRQ7GejEMbE1FqjM7PMTLFSquA
+	hDImxJjBki78E1pWp3kXZLelyp8GYsdpsA6qmIF1chNgyHv6wa3rMqP45QcSGOHQpHajeVvCqtGzt
+	zi3+1ODwht8VapbJhA5qRM/uM61QdwlcOOCf/ZOXwU/6V5AGVQ==;
+Received: from [2a02:8108:8984:1d00:a0cf:1912:4be:477f]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
+	id 1v6rs7-004Iy2-1B;
+	Thu, 09 Oct 2025 16:43:59 +0200
+Message-ID: <2b377001-7ee8-449c-b107-1c0164fa54f0@leemhuis.info>
+Date: Thu, 9 Oct 2025 16:43:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251009-otter-further-bringup-v2-6-5bb2f4a02cea@fairphone.com>
-X-Authority-Analysis: v=2.4 cv=ZJzaWH7b c=1 sm=1 tr=0 ts=68e7ca21 cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=7Ovdx5uLAAAA:8 a=EUspDBNiAAAA:8 a=6H0WHjuAAAAA:8
- a=5-T4x24SdKi4UNUJpXUA:9 a=CjuIK1q_8ugA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
- a=TQZWkJv5rNK5-PaLMsrg:22 a=Soq9LBFxuPC4vsCAQt-j:22
-X-Proofpoint-ORIG-GUID: 7n9A1Y23peQrpO5EKhySCmHHfqqTWTZb
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX4ZmOAUQ24DjA
- JwBhFtXH9PeUhuOxF4FW43koL2meua4ZLSp+zw6G2UkmsqOWq+z2gO1PaPndCwKApX+Xf146OKn
- pZu/m8Yi+386TWNSHOKW2ACfqALLHbcX0YLxcqx4NWIKysi7vV7uDeO6OZlVVuaHJ20CBXcOnD7
- bcpQih8HAB/f1gVgUitVeqybN57Nu+8sSS89jiki4jeKG9higZlXMW3t4WdwqjLNFdWRMy1KRuo
- 5/1qmwExnjrmWOru4xSlyLSsXxtovkgewuHOi9i36YLM3n/v6Q4zAx1FlYDJhWwyrTSkhYb4xvl
- Mq/xCjET5G87YaEkqdj+YLH9yH+tw4eN1T18bOKDqWr7qoWtgNevf5GPdgOlI5eu3iuDNB9mwQk
- 9j2Jf/NZ7q/m/MUkFBnqlqPJR2ChBw==
-X-Proofpoint-GUID: 7n9A1Y23peQrpO5EKhySCmHHfqqTWTZb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-09_05,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 adultscore=0 clxscore=1015 malwarescore=0 lowpriorityscore=0
- phishscore=0 priorityscore=1501 impostorscore=0 suspectscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 04/11] HID: haptic: introduce hid_haptic_device
+To: Jonathan Denose <jdenose@google.com>, Jiri Kosina <jikos@kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jonathan Corbet
+ <corbet@lwn.net>, Henrik Rydberg <rydberg@bitmath.org>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, Angela Czubak <aczubak@google.com>,
+ Sean O'Brien <seobrien@google.com>
+References: <20250818-support-forcepads-v3-0-e4f9ab0add84@google.com>
+ <20250818-support-forcepads-v3-4-e4f9ab0add84@google.com>
+From: Thorsten Leemhuis <linux@leemhuis.info>
+Content-Language: de-DE, en-US
+Autocrypt: addr=linux@leemhuis.info; keydata=
+ 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 MEK4
+In-Reply-To: <20250818-support-forcepads-v3-4-e4f9ab0add84@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1760021049;1b64e586;
+X-HE-SMSGID: 1v6rs7-004Iy2-1B
 
-On Thu, Oct 09, 2025 at 11:06:36AM +0200, Luca Weiss wrote:
-> From: Alexander Martinz <amartinz@shiftphones.com>
+On 8/19/25 01:08, Jonathan Denose wrote:
+> From: Angela Czubak <aczubak@google.com>
 > 
-> Enable the venus node so that the video encoder/decoder will start
-> working.
-> 
-> Signed-off-by: Alexander Martinz <amartinz@shiftphones.com>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
->  arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts b/arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts
-> index af6f7b41201d..a3e6b6a96530 100644
-> --- a/arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts
-> +++ b/arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts
-> @@ -981,6 +981,12 @@ &usb_dp_qmpphy_out {
->  	remote-endpoint = <&pmic_glink_ss_in>;
->  };
->  
-> +&venus {
-> +	firmware-name = "qcom/qcm6490/SHIFT/otter/venus.mbn";
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-
-
+> Define a new structure that contains simple haptic device configuration
+> as well as current state.
+> Add functions that recognize auto trigger and manual trigger reports
+> as well as save their addresses.
+> Verify that the pressure unit is either grams or newtons.
+> Mark the input device as a haptic touchpad if the unit is correct and
+> the reports are found.
+>  [...]
+> +config HID_HAPTIC
+> +	tristate "Haptic touchpad support"
+> +	default n
+> +	help
+> +	Support for touchpads with force sensors and haptic actuators instead of a
+> +	traditional button.
+> +	Adds extra parsing and FF device for the hid multitouch driver.
+> +	It can be used for Elan 2703 haptic touchpad.
 > +
-> +	status = "okay";
+> +	If unsure, say N.
+> +
+>  menu "Special HID drivers"
+
+I suspect this change is related to a build error I ran into today:
+
+  MODPOST Module.symvers
+ERROR: modpost: "hid_haptic_init" [drivers/hid/hid-multitouch.ko] undefined!
+ERROR: modpost: "hid_haptic_pressure_increase" [drivers/hid/hid-multitouch.ko] undefined!
+ERROR: modpost: "hid_haptic_check_pressure_unit" [drivers/hid/hid-multitouch.ko] undefined!
+ERROR: modpost: "hid_haptic_input_configured" [drivers/hid/hid-multitouch.ko] undefined!
+ERROR: modpost: "hid_haptic_input_mapping" [drivers/hid/hid-multitouch.ko] undefined!
+ERROR: modpost: "hid_haptic_feature_mapping" [drivers/hid/hid-multitouch.ko] undefined!
+ERROR: modpost: "hid_haptic_pressure_reset" [drivers/hid/hid-multitouch.ko] undefined!
+make[3]: *** [/home/thl/var/linux.dev/scripts/Makefile.modpost:147: Module.symvers] Error 1
+
+The config where this occurred had this:
+
+CONFIG_HID=y
+CONFIG_HID_MULTITOUCH=m
+CONFIG_HID_HAPTIC=m
+
+Changing the latter to "CONFIG_HID_HAPTIC=y" fixed the problem for me.
+
+Ciao, Thorsten  
+>  config HID_A4TECH
+> diff --git a/drivers/hid/Makefile b/drivers/hid/Makefile
+> index 10ae5dedbd84708d988ea1f594d409ccebd85ebb..361a7daedeb85454114def8afb5f58caeab58a00 100644
+> --- a/drivers/hid/Makefile
+> +++ b/drivers/hid/Makefile
+> @@ -4,6 +4,7 @@
+>  #
+>  hid-y			:= hid-core.o hid-input.o hid-quirks.o
+>  hid-$(CONFIG_DEBUG_FS)		+= hid-debug.o
+> +hid-$(CONFIG_HID_HAPTIC)	+= hid-haptic.o
+>  
+>  obj-$(CONFIG_HID_BPF)		+= bpf/
+>  
+> diff --git a/drivers/hid/hid-haptic.c b/drivers/hid/hid-haptic.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..d659a430c1a6b06ded31d49efe4bded909671cb6
+> --- /dev/null
+> +++ b/drivers/hid/hid-haptic.c
+> @@ -0,0 +1,72 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + *  HID Haptic support for Linux
+> + *
+> + *  Copyright (c) 2021 Angela Czubak <acz@semihalf.com>
+> + */
+> +
+> +#include "hid-haptic.h"
+> +
+> +void hid_haptic_feature_mapping(struct hid_device *hdev,
+> +				struct hid_haptic_device *haptic,
+> +				struct hid_field *field, struct hid_usage *usage)
+> +{
+> +	if (usage->hid == HID_HP_AUTOTRIGGER) {
+> +		if (usage->usage_index >= field->report_count) {
+> +			dev_err(&hdev->dev,
+> +				"HID_HP_AUTOTRIGGER out of range\n");
+> +			return;
+> +		}
+> +
+> +		hid_device_io_start(hdev);
+> +		hid_hw_request(hdev, field->report, HID_REQ_GET_REPORT);
+> +		hid_hw_wait(hdev);
+> +		hid_device_io_stop(hdev);
+> +		haptic->default_auto_trigger =
+> +			field->value[usage->usage_index];
+> +		haptic->auto_trigger_report = field->report;
+> +	}
+> +}
+> +EXPORT_SYMBOL_GPL(hid_haptic_feature_mapping);
+> +
+> +bool hid_haptic_check_pressure_unit(struct hid_haptic_device *haptic,
+> +				    struct hid_input *hi, struct hid_field *field)
+> +{
+> +	if (field->unit == HID_UNIT_GRAM || field->unit == HID_UNIT_NEWTON)
+> +		return true;
+> +	return false;
+> +}
+> +EXPORT_SYMBOL_GPL(hid_haptic_check_pressure_unit);
+> +
+> +int hid_haptic_input_mapping(struct hid_device *hdev,
+> +			     struct hid_haptic_device *haptic,
+> +			     struct hid_input *hi,
+> +			     struct hid_field *field, struct hid_usage *usage,
+> +			     unsigned long **bit, int *max)
+> +{
+> +	if (usage->hid == HID_HP_MANUALTRIGGER) {
+> +		haptic->manual_trigger_report = field->report;
+> +		/* we don't really want to map these fields */
+> +		return -1;
+> +	}
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(hid_haptic_input_mapping);
+> +
+> +int hid_haptic_input_configured(struct hid_device *hdev,
+> +				struct hid_haptic_device *haptic,
+> +				struct hid_input *hi)
+> +{
+> +
+> +	if (hi->application == HID_DG_TOUCHPAD) {
+> +		if (haptic->auto_trigger_report &&
+> +		    haptic->manual_trigger_report) {
+> +			__set_bit(INPUT_PROP_HAPTIC_TOUCHPAD, hi->input->propbit);
+> +			return 1;
+> +		}
+> +		return 0;
+> +	}
+> +	return -1;
+> +}
+> +EXPORT_SYMBOL_GPL(hid_haptic_input_configured);
+> diff --git a/drivers/hid/hid-haptic.h b/drivers/hid/hid-haptic.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..2e89addf5ec280d5b9a59d06088cc08bd4f445c1
+> --- /dev/null
+> +++ b/drivers/hid/hid-haptic.h
+> @@ -0,0 +1,101 @@
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> +/*
+> + *  HID Haptic support for Linux
+> + *
+> + *  Copyright (c) 2021 Angela Czubak <acz@semihalf.com>
+> + */
+> +
+> +#include <linux/hid.h>
+> +
+> +#define HID_HAPTIC_ORDINAL_WAVEFORMNONE 1
+> +#define HID_HAPTIC_ORDINAL_WAVEFORMSTOP 2
+> +
+> +#define HID_HAPTIC_MODE_DEVICE 0
+> +#define HID_HAPTIC_MODE_HOST 1
+> +
+> +struct hid_haptic_effect {
+> +	u8 *report_buf;
+> +	struct input_dev *input_dev;
+> +	struct work_struct work;
+> +	struct list_head control;
+> +	struct mutex control_mutex;
 > +};
 > +
->  &wifi {
->  	qcom,calibration-variant = "SHIFTphone_8";
->  
-> 
-> -- 
-> 2.51.0
+> +struct hid_haptic_effect_node {
+> +	struct list_head node;
+> +	struct file *file;
+> +};
+> +
+> +struct hid_haptic_device {
+> +	struct input_dev *input_dev;
+> +	struct hid_device *hdev;
+> +	struct hid_report *auto_trigger_report;
+> +	struct mutex auto_trigger_mutex;
+> +	struct workqueue_struct *wq;
+> +	struct hid_report *manual_trigger_report;
+> +	struct mutex manual_trigger_mutex;
+> +	size_t manual_trigger_report_len;
+> +	int pressed_state;
+> +	s32 pressure_sum;
+> +	s32 force_logical_minimum;
+> +	s32 force_physical_minimum;
+> +	s32 force_resolution;
+> +	u32 mode;
+> +	u32 default_auto_trigger;
+> +	u32 vendor_page;
+> +	u32 vendor_id;
+> +	u32 max_waveform_id;
+> +	u32 max_duration_id;
+> +	u16 *hid_usage_map;
+> +	u32 *duration_map;
+> +	u16 press_ordinal;
+> +	u16 release_ordinal;
+> +	struct hid_haptic_effect *effect;
+> +	struct hid_haptic_effect stop_effect;
+> +};
+> +
+> +#if IS_ENABLED(CONFIG_HID_HAPTIC)
+> +void hid_haptic_feature_mapping(struct hid_device *hdev,
+> +				struct hid_haptic_device *haptic,
+> +				struct hid_field *field, struct hid_usage
+> +				*usage);
+> +bool hid_haptic_check_pressure_unit(struct hid_haptic_device *haptic,
+> +				    struct hid_input *hi, struct hid_field *field);
+> +int hid_haptic_input_mapping(struct hid_device *hdev,
+> +			     struct hid_haptic_device *haptic,
+> +			     struct hid_input *hi,
+> +			     struct hid_field *field, struct hid_usage *usage,
+> +			     unsigned long **bit, int *max);
+> +int hid_haptic_input_configured(struct hid_device *hdev,
+> +				struct hid_haptic_device *haptic,
+> +				struct hid_input *hi);
+> +#else
+> +static inline
+> +void hid_haptic_feature_mapping(struct hid_device *hdev,
+> +				struct hid_haptic_device *haptic,
+> +				struct hid_field *field, struct hid_usage
+> +				*usage)
+> +{}
+> +static inline
+> +bool hid_haptic_check_pressure_unit(struct hid_haptic_device *haptic,
+> +				    struct hid_input *hi, struct hid_field *field)
+> +{
+> +	return false;
+> +}
+> +static inline
+> +int hid_haptic_input_mapping(struct hid_device *hdev,
+> +			     struct hid_haptic_device *haptic,
+> +			     struct hid_input *hi,
+> +			     struct hid_field *field, struct hid_usage *usage,
+> +			     unsigned long **bit, int *max)
+> +{
+> +	return 0;
+> +}
+> +static inline
+> +int hid_haptic_input_configured(struct hid_device *hdev,
+> +				struct hid_haptic_device *haptic,
+> +				struct hid_input *hi)
+> +{
+> +	return 0;
+> +}
+> +#endif
 > 
 
--- 
-With best wishes
-Dmitry
 
