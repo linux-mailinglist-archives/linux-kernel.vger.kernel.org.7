@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-846783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F41EBC9075
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:31:49 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B100BC907E
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D08074FB97A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:30:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 412374FBE6C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:30:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE0625A642;
-	Thu,  9 Oct 2025 12:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C0B2E6114;
+	Thu,  9 Oct 2025 12:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I8AtabTW"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CihcOl6U"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32932E2850
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 12:30:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87362E7167
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 12:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760013030; cv=none; b=GaazLFnmLjeWxzyRPOG6dAvVEPUWwEvD2XRuF3SiO43yPTXP1NOUA7m+MimJMdQuddPbWVC2Zuk6wYAmCVLu+t2DPO7ocvtieHpUrFPUxPtnvcJvFI3K7KqxM0uz8c/CBWq+xBP3xv8HQYYh2ItUPcp/NNvIR1miyaxHU46D35M=
+	t=1760013035; cv=none; b=us6+H50FszUZeCfUPJX6fpSEDVmffQN/+zVV0OFQOwWX6HZPbIF2nDgdJmJMPxwBR53i8/m+SN0AS0Ds9WIDmg+nI1lvAvZ742FbxWNGBvvuMxCqLEVVnoXfidb5ZxA4KldST2ypv8B8/5CLLAydlF86HtTEFPNdBTJ0iwFQ+ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760013030; c=relaxed/simple;
-	bh=43F5c+zaUZG6YJN+thQRVnYCUYyJL65rXk0RmVSUeQM=;
+	s=arc-20240116; t=1760013035; c=relaxed/simple;
+	bh=gUEahKKYOUH2kVxO/lDajkAlCzV30k4qOuQ5Yr4X7sc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ao1B4CvoQsCMqyAH/DsukIDLulEcBMYpDCUoRPYYlfqYGSZdoNJxgYl0gWJYJ70gd8RYYB4gsy6dQKX7X4yTXDJUZQfwkdzfGpoFJLloWty5Nf2TG9mp7DMXuDjkmDKOhwau8AvIqI/j7keeqx9q/+XRDqSJOgmnDa0FGPf0p9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I8AtabTW; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=UFtkT15o2gSKhqYZTPNa3rDx2sZgOTNH8V9ESPVlKbQc3v6l2nc48sYgwHaPRrGAe7NHzX5OzUR5QvPKp290mLYk3xhwXhdTrYaWhm6OivOuNdfY0OaoGfCf0btx5C9iukfj++xSBXdUBS1VExzinsHrGPuTThSVntXFNMJ8zlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CihcOl6U; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760013027;
+	s=mimecast20190719; t=1760013032;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+jU6y3U31OtGeGVZmCu0gO04BJwFhkS/aeWCbYDaXik=;
-	b=I8AtabTWNJmP4yrts2PH06zERAcbrNMPFBqwP1az6/DWSSYbbYZOiFw5HYazCnvRKx95QO
-	DPhRBCC1PdtdIaS7pKLqodyvsN/fFySd54jYF/vKO9fAK0aejAlkpBCpDRHkPtH4bFTvK2
-	uyBGFdT8lWGN/I0D/fYYh8bK8/pGr+k=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+	bh=aSDCPJnmMxBRqtQR+6ffqI3zTDae1cNcYyEpjejHE4g=;
+	b=CihcOl6U9BqrMWtl/3AEzvwbB9Ps+uXqgeO4kF3W1zlolAO7NyfhtSbJyKdk83ME+h+5tQ
+	MYeCTVkHO1NoYFYNkmxaCCRb+BFmPH5dDRVfi4jjPJQ12Ro4XuKNoXDNNjo09MsMdoLdEZ
+	YAePKA2ZcXMeHDnZhdwGZZQajBIEj0k=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-185-q1Xljwk-N8-wwzTwoFRdAg-1; Thu,
- 09 Oct 2025 08:30:23 -0400
-X-MC-Unique: q1Xljwk-N8-wwzTwoFRdAg-1
-X-Mimecast-MFC-AGG-ID: q1Xljwk-N8-wwzTwoFRdAg_1760013022
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-47-_mRjGOe-N1COQ5vjhdKE7A-1; Thu,
+ 09 Oct 2025 08:30:27 -0400
+X-MC-Unique: _mRjGOe-N1COQ5vjhdKE7A-1
+X-Mimecast-MFC-AGG-ID: _mRjGOe-N1COQ5vjhdKE7A_1760013026
 Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 357A6180048E;
-	Thu,  9 Oct 2025 12:30:22 +0000 (UTC)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2AF7519560BB;
+	Thu,  9 Oct 2025 12:30:26 +0000 (UTC)
 Received: from hydra.redhat.com (unknown [10.45.225.212])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BD2E318004D8;
-	Thu,  9 Oct 2025 12:30:18 +0000 (UTC)
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B92191800982;
+	Thu,  9 Oct 2025 12:30:22 +0000 (UTC)
 From: Jocelyn Falempe <jfalempe@redhat.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
@@ -67,9 +67,9 @@ To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	linux-kernel@vger.kernel.org,
 	dri-devel@lists.freedesktop.org
 Cc: stable@vger.kernel.org
-Subject: [PATCH 2/6] drm/panic: Fix overlap between qr code and logo
-Date: Thu,  9 Oct 2025 14:24:49 +0200
-Message-ID: <20251009122955.562888-3-jfalempe@redhat.com>
+Subject: [PATCH 3/6] drm/panic: Fix qr_code, ensure vmargin is positive
+Date: Thu,  9 Oct 2025 14:24:50 +0200
+Message-ID: <20251009122955.562888-4-jfalempe@redhat.com>
 In-Reply-To: <20251009122955.562888-1-jfalempe@redhat.com>
 References: <20251009122955.562888-1-jfalempe@redhat.com>
 Precedence: bulk
@@ -81,27 +81,34 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-The borders of the qr code was not taken into account to check if it
-overlap with the logo, leading to the logo being partially covered.
+Depending on qr_code size and screen size, the vertical margin can
+be negative, that means there is not enough room to draw the qr_code.
 
+So abort early, to avoid a segfault by trying to draw at negative
+coordinates.
+
+Fixes: cb5164ac43d0f ("drm/panic: Add a QR code panic screen")
 Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
 ---
- drivers/gpu/drm/drm_panic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/drm_panic.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
-index 23ba791c6131..179cbf21f22d 100644
+index 179cbf21f22d..281bb2dabf81 100644
 --- a/drivers/gpu/drm/drm_panic.c
 +++ b/drivers/gpu/drm/drm_panic.c
-@@ -749,7 +749,7 @@ static int _draw_panic_static_qr_code(struct drm_scanout_buffer *sb)
- 	/* Fill with the background color, and draw text on top */
- 	drm_panic_fill(sb, &r_screen, bg_color);
+@@ -736,7 +736,10 @@ static int _draw_panic_static_qr_code(struct drm_scanout_buffer *sb)
+ 	pr_debug("QR width %d and scale %d\n", qr_width, scale);
+ 	r_qr_canvas = DRM_RECT_INIT(0, 0, qr_canvas_width * scale, qr_canvas_width * scale);
  
--	if (!drm_rect_overlap(&r_logo, &r_msg) && !drm_rect_overlap(&r_logo, &r_qr))
-+	if (!drm_rect_overlap(&r_logo, &r_msg) && !drm_rect_overlap(&r_logo, &r_qr_canvas))
- 		drm_panic_logo_draw(sb, &r_logo, font, fg_color);
+-	v_margin = (sb->height - drm_rect_height(&r_qr_canvas) - drm_rect_height(&r_msg)) / 5;
++	v_margin = sb->height - drm_rect_height(&r_qr_canvas) - drm_rect_height(&r_msg);
++	if (v_margin < 0)
++		return -ENOSPC;
++	v_margin /= 5;
  
- 	draw_txt_rectangle(sb, font, panic_msg, panic_msg_lines, true, &r_msg, fg_color);
+ 	drm_rect_translate(&r_qr_canvas, (sb->width - r_qr_canvas.x2) / 2, 2 * v_margin);
+ 	r_qr = DRM_RECT_INIT(r_qr_canvas.x1 + QR_MARGIN * scale, r_qr_canvas.y1 + QR_MARGIN * scale,
 -- 
 2.51.0
 
