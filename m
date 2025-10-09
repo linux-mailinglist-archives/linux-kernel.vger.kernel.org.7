@@ -1,58 +1,56 @@
-Return-Path: <linux-kernel+bounces-847132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE0EEBC9ED7
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 18:04:32 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id F268CBC9EDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 18:04:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C598A4E9613
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 16:03:34 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9F7393541A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 16:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4384E223DEC;
-	Thu,  9 Oct 2025 15:57:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDDEB2ED159;
+	Thu,  9 Oct 2025 15:58:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="acT4FOka"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XOPbP10k"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60FD219E967;
-	Thu,  9 Oct 2025 15:57:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1AB205E25;
+	Thu,  9 Oct 2025 15:58:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760025476; cv=none; b=f992wvNh6KDqXsY2xTz3AMYxYRZHcbJe6COxK83FAadQiXLnV/25OgPXXoAwkTC1vUpO5IBUQWXo4AkuFrHvYBP8CCL15SGdrf6b+bp22VOLpsJ7AZ0NUcaVG5CUp8Nz6imBid3RmXpocYyBjMpiAlqul9tPdtNE+JMBknPwTtw=
+	t=1760025496; cv=none; b=WgRawk5LUOaltIrSnC035J9S4qGKmMshtEqkARFCIWqEfze45ygIUthJpyp0gd/bO/3OGHIGg6NZOCkh3bpPhafRuNnr5SvruapX3cruBArXjJnXfhmam6G5DU2YEa046p613wyrzLAWNSgEUvp5oyIfKX+jIWDXYksBpO2BRyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760025476; c=relaxed/simple;
-	bh=O0EX2Pumapvmik9XwpyC1sDrus6j3n7Q3+G7u4UaG8o=;
+	s=arc-20240116; t=1760025496; c=relaxed/simple;
+	bh=VD+sWsMuMn62f0HpwunRDsLeC6U8QhG72Z4lydKbBNc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dtRlv0bvCt91uInl5YV7AWM7fWkevfXc1CI3z1hmEIIVKD1CpPwiwKfPD7ku4cOaugFbZoWy1uxmSXiOjOGZ4VUedLeYTjr//Mdg9Ecs5Au1YJLL4cZPnYurkgLVZQdiWOuE75yf9HfkckgS3S7be2kFX/zwiWM6Tfg8Oo9h6iM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=acT4FOka; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04494C4CEF8;
-	Thu,  9 Oct 2025 15:57:54 +0000 (UTC)
+	 MIME-Version:Content-Type; b=ZDqzzT0RznncUi3pB3qkMEqFg0jXCfmK7Pwrzd/7I1n8xgapcWVcAJauAHOyd/LHD1V9AVkFjH1/PR4VImKcTDgV1fy7Q45Bu6wpEmcyQRCHU2e6KIFELsUQhJwFeqVhauc5ovllFj2hxB5ASeNntZChiRzp/Lztg5RD+YiPNZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XOPbP10k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48B40C4CEE7;
+	Thu,  9 Oct 2025 15:58:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760025476;
-	bh=O0EX2Pumapvmik9XwpyC1sDrus6j3n7Q3+G7u4UaG8o=;
+	s=k20201202; t=1760025496;
+	bh=VD+sWsMuMn62f0HpwunRDsLeC6U8QhG72Z4lydKbBNc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=acT4FOka67ozuQuu8rVEjFtQXeXqhppaqTZE7t1OxoQAmGMGw80s1M7AfkIIA5k0C
-	 aOrkyxlMD05o2ttn7pGHQjn9sBFAybsExhJ1erfhyjEu7qDH6h11ZoTK/dR5l3YDuc
-	 1oeUdX0R7q9m6wxYc2xIl8J9o+cm1touqSkKJJG19zlkgU32++PU3/mpnmwbwzxShj
-	 Z4neeXEsyBmmnmde0zKPiBeMnMrdwX1YpzqHHD75fEevAvQKoaRaM8aLAwcId1Echf
-	 qWa91OXGPLUth3OxY+blJlV0MSNMkGr2r+aVkEL+SPe+uHQzlR2ObPB39blP4EMgMa
-	 K8xOApAPT1vMQ==
+	b=XOPbP10kQH+8QtCycIPXPNTmww63F9Bhd5RCvcyxDtixTCQZPwFeJMKon4EAWGuzn
+	 77jX4AZfQ1mELkLV4DhGac2JaFDc5VO3Q4sFadcbUV3mwBaOL9/Bwfx0Hi94jHWws8
+	 cPwWI4sDWaZhKSHT1YuKQxRyIlxM0RTZHkDPlpXMYJbzfoQKQtz9zXHS6fUJo4B7PK
+	 kjuBoylbDD/TI4PIC3imG8bSVZ9Dplin2KnioO/7J03L8E463/FUXjzlO5OePq77mX
+	 gAuqCjPNIb3aqeiAClCPXDWsa6cAQ49Z6JYnpQMnqgHxXFE/n/bAsSQPGVaKjceLdf
+	 xmAkFyNA7uhsw==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Markus Stockhausen <markus.stockhausen@gmx.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Stephen Howell <howels@allthatwemight.be>,
-	=?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
+Cc: Bryan Brattlof <bb@ti.com>,
+	Nishanth Menon <nm@ti.com>,
 	Sasha Levin <sashal@kernel.org>,
-	tglx@linutronix.de,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.17-6.12] clocksource/drivers/timer-rtl-otto: Work around dying timers
-Date: Thu,  9 Oct 2025 11:54:28 -0400
-Message-ID: <20251009155752.773732-2-sashal@kernel.org>
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 6.17-6.16] soc: ti: k3-socinfo: Add information for AM62L SR1.1
+Date: Thu,  9 Oct 2025 11:54:42 -0400
+Message-ID: <20251009155752.773732-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251009155752.773732-1-sashal@kernel.org>
 References: <20251009155752.773732-1-sashal@kernel.org>
@@ -62,191 +60,85 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.17.1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Markus Stockhausen <markus.stockhausen@gmx.de>
+From: Bryan Brattlof <bb@ti.com>
 
-[ Upstream commit e7a25106335041aeca4fdf50a84804c90142c886 ]
+[ Upstream commit 037e496038f6e4cfb3642a0ffc2db19838d564dd ]
 
-The OpenWrt distribution has switched from kernel longterm 6.6 to
-6.12. Reports show that devices with the Realtek Otto switch platform
-die during operation and are rebooted by the watchdog. Sorting out
-other possible reasons the Otto timer is to blame. The platform
-currently consists of 4 targets with different hardware revisions.
-It is not 100% clear which devices and revisions are affected.
+The second silicon revision for the AM62L was mainly a ROM revision
+and therefore this silicon revision is labeled SR1.1
 
-Analysis shows:
+Add a new decode array to properly identify this revision as SR1.1
 
-A more aggressive sched/deadline handling leads to more timer starts
-with small intervals. This increases the bug chances. See
-https://marc.info/?l=linux-kernel&m=175276556023276&w=2
-
-Focusing on the real issue a hardware limitation on some devices was
-found. There is a minimal chance that a timer ends without firing an
-interrupt if it is reprogrammed within the 5us before its expiration
-time. Work around this issue by introducing a bounce() function. It
-restarts the timer directly before the normal restart functions as
-follows:
-
-- Stop timer
-- Restart timer with a slow frequency.
-- Target time will be >5us
-- The subsequent normal restart is outside the critical window
-
-Downstream has already tested and confirmed a patch. See
-https://github.com/openwrt/openwrt/pull/19468
-https://forum.openwrt.org/t/support-for-rtl838x-based-managed-switches/57875/3788
-
-Signed-off-by: Markus Stockhausen <markus.stockhausen@gmx.de>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Tested-by: Stephen Howell <howels@allthatwemight.be>
-Tested-by: Bjørn Mork <bjorn@mork.no>
-Link: https://lore.kernel.org/r/20250804080328.2609287-2-markus.stockhausen@gmx.de
+Signed-off-by: Bryan Brattlof <bb@ti.com>
+Link: https://patch.msgid.link/20250908-62l-chipid-v1-1-9c7194148140@ti.com
+Signed-off-by: Nishanth Menon <nm@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
 YES
+- The patch teaches `k3_chipinfo_variant_to_sr()` how to decode AM62Lx
+  silicon variant 0/1 into the correct revision strings by adding
+  `am62lx_rev_string_map[] = {"1.0","1.1"}` and a dedicated `case
+  JTAG_ID_PARTNO_AM62LX` (drivers/soc/ti/k3-socinfo.c:65,
+  drivers/soc/ti/k3-socinfo.c:92). Without it, the existing default
+  branch (drivers/soc/ti/k3-socinfo.c:98) blindly prints `SR<x>.0`, so
+  the new SR1.1 silicon shows up as “SR2.0”—a clear mis-identification
+  bug.
+- That revision string is what gets registered in
+  `/sys/devices/soc0/revision` and is what subsystem code keys on via
+  `soc_device_match()`. We already rely on that mechanism for other K3
+  parts (e.g. the AM62Px SR1.1 quirk in
+  drivers/mmc/host/sdhci_am654.c:896), so shipping incorrect data
+  prevents present and future AM62Lx-specific fixes or workarounds from
+  triggering and can mislead userspace diagnostics.
+- The change is tightly scoped to string decoding, has no architectural
+  side effects, and mirrors the precedent set for J721E SR2.0 support
+  (drivers/soc/ti/k3-socinfo.c:65-103 history). Risk is minimal while
+  correcting real user-visible behaviour for existing hardware.
+- Ensure the earlier ID-enabling commit (`soc: ti: k3-socinfo: Add JTAG
+  ID for AM62LX`, c62bc66d53de) is in the target stable branch; with
+  that prerequisite met, this bug-fix-style decode update is safe to
+  pick up.
 
-- Fixes a real user-visible bug: The commit addresses a hardware timing
-  erratum on some Realtek Otto SoCs where reprogramming a running timer
-  within ~5 µs of its expiration can cause the next interrupt to be
-  lost, leading to hangs and watchdog resets. This is confirmed by field
-  reports (OpenWrt) and multiple Tested-by tags in the commit message.
-  It is an important reliability fix, not a feature.
+ drivers/soc/ti/k3-socinfo.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-- Small, contained change in one driver: The patch is limited to
-  `drivers/clocksource/timer-rtl-otto.c`. It introduces a minimal helper
-  and three call sites; no API or architectural changes.
-
-- Core idea and code changes:
-  - Adds `RTTM_MAX_DIVISOR` to select the slowest prescaler for a brief
-    “bounce” restart to safely move the timer away from the <5 µs danger
-    window (define added near the other timer constants).
-  - Introduces `rttm_bounce_timer()` which disables and immediately re-
-    enables the timer with the slowest divisor, preserving the current
-    period so the immediate follow-up reprogramming happens well outside
-    the critical window:
-    - New helper is placed after the IRQ handler and before the
-      stop/start helpers.
-  - Wires the bounce into all clockevent reprogram paths by calling it
-    just before the existing stop/program/start sequence:
-    - `rttm_next_event()` adds the bounce before `rttm_stop_timer()`
-      (see current function start at drivers/clocksource/timer-rtl-
-      otto.c:127).
-    - `rttm_state_oneshot()` adds the bounce before `rttm_stop_timer()`
-      (drivers/clocksource/timer-rtl-otto.c:139).
-    - `rttm_state_periodic()` adds the bounce before `rttm_stop_timer()`
-      (drivers/clocksource/timer-rtl-otto.c:151).
-  - The clocksource path remains untouched (e.g.,
-    `rttm_enable_clocksource()` at drivers/clocksource/timer-rtl-
-    otto.c:204), which is appropriate since the bug is triggered by
-    frequent reprogramming of the clockevent timers, not the continuous
-    clocksource.
-
-- Rationale for safety and effectiveness:
-  - The bounce sequence is purely local to the Otto timer MMIO block and
-    uses existing primitives (`rttm_disable_timer()`,
-    `rttm_enable_timer()`), preserving established semantics while
-    creating a safe temporal margin before the normal reprogramming.
-  - Using `RTTM_MAX_DIVISOR` ensures the effective tick frequency drops
-    to ~kHz, making the “time to end marker” well beyond 5 µs even with
-    the minimal period (`>= RTTM_MIN_DELTA`, 8 ticks), eliminating the
-    observed race window.
-  - The stop/ack/program/start logic remains identical aside from the
-    pre-amble bounce; ack of pending IRQs is still done in
-    `rttm_stop_timer()`, as before, so the change does not introduce new
-    interrupt handling semantics.
-
-- Scope and regression risk:
-  - Limited to Realtek Otto timer driver; no impact on other platforms
-    or subsystems.
-  - No ABI/DT/Kconfig changes; no scheduling or generic timekeeping
-    changes.
-  - Minimal runtime overhead (a couple of MMIO writes per reprogram) is
-    acceptable versus preventing system hangs.
-
-- Stable backport suitability:
-  - The driver is present in stable trees starting with v6.11 (verified:
-    file exists in v6.11 and v6.12; drivers/clocksource/timer-rtl-
-    otto.c). The bug has real-world impact with OpenWrt on 6.12; hence
-    backporting to 6.11.y, 6.12.y, and newer stable series that include
-    this driver is appropriate.
-  - The patch is self-contained and does not depend on recent framework
-    changes.
-
-Conclusion: This is a targeted, low-risk workaround for a serious
-hardware erratum affecting deployed systems. It cleanly fits stable
-criteria and should be backported to all stable series that contain
-`drivers/clocksource/timer-rtl-otto.c`.
-
- drivers/clocksource/timer-rtl-otto.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-diff --git a/drivers/clocksource/timer-rtl-otto.c b/drivers/clocksource/timer-rtl-otto.c
-index 8a3068b36e752..8be45a11fb8b6 100644
---- a/drivers/clocksource/timer-rtl-otto.c
-+++ b/drivers/clocksource/timer-rtl-otto.c
-@@ -38,6 +38,7 @@
- #define RTTM_BIT_COUNT		28
- #define RTTM_MIN_DELTA		8
- #define RTTM_MAX_DELTA		CLOCKSOURCE_MASK(28)
-+#define RTTM_MAX_DIVISOR	GENMASK(15, 0)
+diff --git a/drivers/soc/ti/k3-socinfo.c b/drivers/soc/ti/k3-socinfo.c
+index d716be113c84f..50c170a995f90 100644
+--- a/drivers/soc/ti/k3-socinfo.c
++++ b/drivers/soc/ti/k3-socinfo.c
+@@ -66,6 +66,10 @@ static const char * const j721e_rev_string_map[] = {
+ 	"1.0", "1.1", "2.0",
+ };
  
- /*
-  * Timers are derived from the LXB clock frequency. Usually this is a fixed
-@@ -112,6 +113,22 @@ static irqreturn_t rttm_timer_interrupt(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
-+static void rttm_bounce_timer(void __iomem *base, u32 mode)
-+{
-+	/*
-+	 * When a running timer has less than ~5us left, a stop/start sequence
-+	 * might fail. While the details are unknown the most evident effect is
-+	 * that the subsequent interrupt will not be fired.
-+	 *
-+	 * As a workaround issue an intermediate restart with a very slow
-+	 * frequency of ~3kHz keeping the target counter (>=8). So the follow
-+	 * up restart will always be issued outside the critical window.
-+	 */
++static const char * const am62lx_rev_string_map[] = {
++	"1.0", "1.1",
++};
 +
-+	rttm_disable_timer(base);
-+	rttm_enable_timer(base, mode, RTTM_MAX_DIVISOR);
-+}
-+
- static void rttm_stop_timer(void __iomem *base)
- {
- 	rttm_disable_timer(base);
-@@ -129,6 +146,7 @@ static int rttm_next_event(unsigned long delta, struct clock_event_device *clkev
- 	struct timer_of *to = to_timer_of(clkevt);
- 
- 	RTTM_DEBUG(to->of_base.base);
-+	rttm_bounce_timer(to->of_base.base, RTTM_CTRL_COUNTER);
- 	rttm_stop_timer(to->of_base.base);
- 	rttm_set_period(to->of_base.base, delta);
- 	rttm_start_timer(to, RTTM_CTRL_COUNTER);
-@@ -141,6 +159,7 @@ static int rttm_state_oneshot(struct clock_event_device *clkevt)
- 	struct timer_of *to = to_timer_of(clkevt);
- 
- 	RTTM_DEBUG(to->of_base.base);
-+	rttm_bounce_timer(to->of_base.base, RTTM_CTRL_COUNTER);
- 	rttm_stop_timer(to->of_base.base);
- 	rttm_set_period(to->of_base.base, RTTM_TICKS_PER_SEC / HZ);
- 	rttm_start_timer(to, RTTM_CTRL_COUNTER);
-@@ -153,6 +172,7 @@ static int rttm_state_periodic(struct clock_event_device *clkevt)
- 	struct timer_of *to = to_timer_of(clkevt);
- 
- 	RTTM_DEBUG(to->of_base.base);
-+	rttm_bounce_timer(to->of_base.base, RTTM_CTRL_TIMER);
- 	rttm_stop_timer(to->of_base.base);
- 	rttm_set_period(to->of_base.base, RTTM_TICKS_PER_SEC / HZ);
- 	rttm_start_timer(to, RTTM_CTRL_TIMER);
+ static int
+ k3_chipinfo_partno_to_names(unsigned int partno,
+ 			    struct soc_device_attribute *soc_dev_attr)
+@@ -92,6 +96,12 @@ k3_chipinfo_variant_to_sr(unsigned int partno, unsigned int variant,
+ 		soc_dev_attr->revision = kasprintf(GFP_KERNEL, "SR%s",
+ 						   j721e_rev_string_map[variant]);
+ 		break;
++	case JTAG_ID_PARTNO_AM62LX:
++		if (variant >= ARRAY_SIZE(am62lx_rev_string_map))
++			goto err_unknown_variant;
++		soc_dev_attr->revision = kasprintf(GFP_KERNEL, "SR%s",
++						   am62lx_rev_string_map[variant]);
++		break;
+ 	default:
+ 		variant++;
+ 		soc_dev_attr->revision = kasprintf(GFP_KERNEL, "SR%x.0",
 -- 
 2.51.0
 
