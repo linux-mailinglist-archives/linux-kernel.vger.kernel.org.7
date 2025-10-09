@@ -1,140 +1,246 @@
-Return-Path: <linux-kernel+bounces-846611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F06BBC8882
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 12:37:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8674BBC8886
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 12:39:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D5911884FF9
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 10:37:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57FA3189385E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 10:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79CE2DC332;
-	Thu,  9 Oct 2025 10:37:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55742C15B0;
+	Thu,  9 Oct 2025 10:39:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U9ITglQg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HQ/8/MG1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kQbllLXV"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04C8D2C15A0;
-	Thu,  9 Oct 2025 10:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6738D1EB5FD
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 10:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760006221; cv=none; b=JCoAryNdgb/GjYfhywTUULN9xZCBSDMf0wFx3xIiCdsbkVnATeJBAtC3OkJ9MD62mlUIvdkc5kstU7t2405mvSqDEk5Pa8tBuRaH8sKRj1bMntHcNkpA7LlLaz3rOtezqrpicXvKocJJqhlPPB/QSnXmYzWzzt48V7/znhRwijg=
+	t=1760006346; cv=none; b=ofbX+zuMO/QgpFwUHm6ecHMMiR9OBoyhzOo8wuHfOrMee2UyzUOI4v0VvPI0pj9kCLFrKKb0dHrb0juFrz8q34LGVHCFIwDjgV4Mv+VxNcX5PxBzX3TwU8E3pogJQpECx1pY1M5Xf/r1qhQyZUA0dXHDGKUiduBd8mJDox0dSOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760006221; c=relaxed/simple;
-	bh=3WyAaoY3uboWOMvlGqpNAI/qNAG+WwtC49AhCd/akkI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NjGenPl8fRgXn2PCz+wnAy0ZixIrHQulx3jl2NIgScGwNhdqXHTjARxHktrqHUR7XMS9WitqMSq/6z2uooImRvWG+1Ewn7/bHNyicCzx8UbSFa4jlXc6ikgHFdYBTqDsGjiKHWGE5unSsyTuH86n/+JWVXqVmvvXDOaBAGcjNPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U9ITglQg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B674C4CEF5;
-	Thu,  9 Oct 2025 10:36:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760006220;
-	bh=3WyAaoY3uboWOMvlGqpNAI/qNAG+WwtC49AhCd/akkI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=U9ITglQgVswMP9NzW2XNl045eyd1DW/DdVfjJwxYG9U3Zlj76DPz0Inu1yAmkohTT
-	 v5YcgzspOxm4RI0J8P6eexkRlnjLmuirANd4HhqNc9gfM8mvEqyFgWhvstMxIAwc6c
-	 SSVmmU/GkyQfWv+MWs79fe41YZIUVNe5rXA6s0nzCYKJab43m8pq8idm1aaeEPOyJv
-	 3tgG2I4hsPqoK6TiY2ETo3ymm59ml9CMukAPKYhK7sfbwXmgN484ON7CC82ucJCYZ7
-	 npsRkrmq7VfCOMVtCsdynLL7ESjr2+2BQZ0nRZJMa1YuYVzL5bfJvXCEDEq9NQ48cL
-	 lM7E+itSJfPKg==
-Message-ID: <764c93c2-535f-450e-b395-4a0090cc3ab8@kernel.org>
-Date: Thu, 9 Oct 2025 19:36:54 +0900
+	s=arc-20240116; t=1760006346; c=relaxed/simple;
+	bh=4xDv7N+CYbwm99C9G/8SF6Q0gcHMxRfLUr1Je0meFiE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=fQUlXUkq51d+R8jv8HrXm8zntmfFrz+5EhLMP5fzLqApa4ujQNZIG1+GRtYncP7YJnV2RadwTDir0cKdjxX0NKkWzUrwyJVT4UPlYY+L3zkVnXphzxXtekawYF6VUCjnJ5swcIbyvHeNKjRvutxnEa/wYNhOmOQCX6H1hJTfTTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HQ/8/MG1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kQbllLXV; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 9 Oct 2025 12:39:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1760006342;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=iKn+7wyUeKezSPce2OBY20sWcPd+oUaE40PB5KQBzy0=;
+	b=HQ/8/MG1hfi8Je6ueqe44S1o8JHUkEi45lsqO2fjPu07daSZEYUkQ5KlgvydI/HM38r/8I
+	+MlQnczNCewVxEzGDvT5UMRZAu+M2FJlgoc4jIaKJ6KucFZYfTcxzNiwEuAejQ4/iBykUV
+	/aOvkVvCyPpfTZoO0nONNNl+gAEjhgU7tJiJIF8JPVWBEVnCJT3X9Z6yMn7lMTCI8IWo5b
+	bAmhIrm1aGU3SDbo6BMBzRKMXY/ixb7LjmC2xabgkREc9L91g+GlHd3JpIuXZAoQTZwgCM
+	DuwjVhmMAKDxqaAtpo11rjLLYRSWpvm8nCsXfhKcJLDptmbkuUitqmFMpH7+eA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1760006342;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=iKn+7wyUeKezSPce2OBY20sWcPd+oUaE40PB5KQBzy0=;
+	b=kQbllLXVwOwsftp5vatyykKf1MG0yLo0iPPYn3rUYgXUuPCuyxYJKC3kb+1/14WpDz355g
+	Yz2DvSovIcs6j/Cw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: linux-kernel@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+	Vincent Mailhol <mailhol@kernel.org>,
+	Vlastimil Babka <vbabka@suse.cz>
+Subject: [PATCH v3] locking/local_lock: s/l/__l/ and s/tl/__tl/ to reduce
+ risk of shadowing
+Message-ID: <20251009103900.2Fk8stnM@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: remoteproc: qcom,pas: Document SoCCP PAS for
- Glymur
-To: Bjorn Andersson <andersson@kernel.org>,
- Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- jingyi.wang@oss.qualcomm.com, mathieu.poirier@linaro.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20250925002034.856692-1-sibi.sankar@oss.qualcomm.com>
- <ydfiugeifs5c6v7dzms5tlkkmhf26q42pav2ugfuxjytugr5nc@ppxoiize27ug>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <ydfiugeifs5c6v7dzms5tlkkmhf26q42pav2ugfuxjytugr5nc@ppxoiize27ug>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 26/09/2025 02:22, Bjorn Andersson wrote:
-> On Thu, Sep 25, 2025 at 05:50:34AM +0530, Sibi Sankar wrote:
->> Document compatible for Qualcomm Glymur SoC SoCCP (SoC Control Processor)
->> PAS which is fully compatible with Kaanapali.
->>
->> Signed-off-by: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
->> ---
->>
->> Dependencies:
->> [1] Add initial remoteproc support for Kaanapali SoC
->> https://lore.kernel.org/linux-arm-msm/20250924-knp-remoteproc-v1-0-611bf7be8329@oss.qualcomm.com/T/#t
-> 
-> Please don't send out patches that depend on other patches sent out the
-> same day. This just assumes that the maintainer will keep track of
-> dependencies and figure out when a future version of that dependency
-> meets the needs of this version.
-> 
-> Work with Jingyi to handle dependencies on your side.
-@Bjorn, it is getting better.
+=46rom: Vincent Mailhol <mailhol@kernel.org>
 
-This part of Glymur depends on Kaanapali patches. But there are
-Kaanapali patches depending on Glymur!
+The Linux kernel coding style advises to avoid common variable
+names in function-like macros to reduce the risk of collisions.
 
-There is absolutely zero coordination between these two and total mess
-of multiplying patches instead of sending ONE thing. Submitting Glymur
-and Kaanapali was really screwed.
+Throughout local_lock_internal.h, several macros use the rather common
+variable names 'l' and 'tl'. This already resulted in an actual
+collision: the __local_lock_acquire() function like macro is currently
+shadowing the parameter 'l' of the:
 
-Best regards,
-Krzysztof
+  class_##_name##_t class_##_name##_constructor(_type *l)
+
+function factory from linux/cleanup.h.
+
+Rename the variable 'l' to '__l' and the variable 'tl' to '__tl'
+throughout the file to fix the current name collision and to prevent
+future ones.
+
+[ bigeasy: Rebase, update all l and tl instances in macros ]
+
+Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+
+Looks harmless enough to make everyone happy.
+
+v2=E2=80=A6v3:=20
+  - Rebase
+
+v1=E2=80=A6v2: https://lore.kernel.org/all/20250925-local_lock_internal_fix=
+_shadow-v2-1-d3b85ee775a4@kernel.org/
+
+  - __lock conflicted with an existing definition in lockdep.c. Use
+    instead __l (and also, to keep things consistent, use __tl instead
+    of tl for the trylock).
+
+  - Apply the renaming to the entire file and not just to
+    __local_lock_acquire().
+
+  - Rewrite the patch description accordingly.
+
+v1: https://lore.kernel.org/r/20250923-local_lock_internal_fix_shadow-v1-1-=
+14e313c88a46@kernel.org
+
+ include/linux/local_lock_internal.h | 62 ++++++++++++++---------------
+ 1 file changed, 31 insertions(+), 31 deletions(-)
+
+diff --git a/include/linux/local_lock_internal.h b/include/linux/local_lock=
+_internal.h
+index a4dc479157b5c..8f82b4eb542f2 100644
+--- a/include/linux/local_lock_internal.h
++++ b/include/linux/local_lock_internal.h
+@@ -99,18 +99,18 @@ do {								\
+=20
+ #define __local_lock_acquire(lock)					\
+ 	do {								\
+-		local_trylock_t *tl;					\
+-		local_lock_t *l;					\
++		local_trylock_t *__tl;					\
++		local_lock_t *__l;					\
+ 									\
+-		l =3D (local_lock_t *)(lock);				\
+-		tl =3D (local_trylock_t *)l;				\
++		__l =3D (local_lock_t *)(lock);				\
++		__tl =3D (local_trylock_t *)__l;				\
+ 		_Generic((lock),					\
+ 			local_trylock_t *: ({				\
+-				lockdep_assert(tl->acquired =3D=3D 0);	\
+-				WRITE_ONCE(tl->acquired, 1);		\
++				lockdep_assert(__tl->acquired =3D=3D 0);	\
++				WRITE_ONCE(__tl->acquired, 1);		\
+ 			}),						\
+ 			local_lock_t *: (void)0);			\
+-		local_lock_acquire(l);					\
++		local_lock_acquire(__l);				\
+ 	} while (0)
+=20
+ #define __local_lock(lock)					\
+@@ -133,36 +133,36 @@ do {								\
+=20
+ #define __local_trylock(lock)					\
+ 	({							\
+-		local_trylock_t *tl;				\
++		local_trylock_t *__tl;				\
+ 								\
+ 		preempt_disable();				\
+-		tl =3D (lock);					\
+-		if (READ_ONCE(tl->acquired)) {			\
++		__tl =3D (lock);					\
++		if (READ_ONCE(__tl->acquired)) {		\
+ 			preempt_enable();			\
+-			tl =3D NULL;				\
++			__tl =3D NULL;				\
+ 		} else {					\
+-			WRITE_ONCE(tl->acquired, 1);		\
++			WRITE_ONCE(__tl->acquired, 1);		\
+ 			local_trylock_acquire(			\
+-				(local_lock_t *)tl);		\
++				(local_lock_t *)__tl);		\
+ 		}						\
+-		!!tl;						\
++		!!__tl;						\
+ 	})
+=20
+ #define __local_trylock_irqsave(lock, flags)			\
+ 	({							\
+-		local_trylock_t *tl;				\
++		local_trylock_t *__tl;				\
+ 								\
+ 		local_irq_save(flags);				\
+-		tl =3D (lock);					\
+-		if (READ_ONCE(tl->acquired)) {			\
++		__tl =3D (lock);					\
++		if (READ_ONCE(__tl->acquired)) {		\
+ 			local_irq_restore(flags);		\
+-			tl =3D NULL;				\
++			__tl =3D NULL;				\
+ 		} else {					\
+-			WRITE_ONCE(tl->acquired, 1);		\
++			WRITE_ONCE(__tl->acquired, 1);		\
+ 			local_trylock_acquire(			\
+-				(local_lock_t *)tl);		\
++				(local_lock_t *)__tl);		\
+ 		}						\
+-		!!tl;						\
++		!!__tl;						\
+ 	})
+=20
+ /* preemption or migration must be disabled before calling __local_lock_is=
+_locked */
+@@ -170,16 +170,16 @@ do {								\
+=20
+ #define __local_lock_release(lock)					\
+ 	do {								\
+-		local_trylock_t *tl;					\
+-		local_lock_t *l;					\
++		local_trylock_t *__tl;					\
++		local_lock_t *__l;					\
+ 									\
+-		l =3D (local_lock_t *)(lock);				\
+-		tl =3D (local_trylock_t *)l;				\
+-		local_lock_release(l);					\
++		__l =3D (local_lock_t *)(lock);				\
++		__tl =3D (local_trylock_t *)__l;				\
++		local_lock_release(__l);				\
+ 		_Generic((lock),					\
+ 			local_trylock_t *: ({				\
+-				lockdep_assert(tl->acquired =3D=3D 1);	\
+-				WRITE_ONCE(tl->acquired, 0);		\
++				lockdep_assert(__tl->acquired =3D=3D 1);	\
++				WRITE_ONCE(__tl->acquired, 0);		\
+ 			}),						\
+ 			local_lock_t *: (void)0);			\
+ 	} while (0)
+@@ -223,12 +223,12 @@ typedef spinlock_t local_trylock_t;
+ #define INIT_LOCAL_LOCK(lockname) __LOCAL_SPIN_LOCK_UNLOCKED((lockname))
+ #define INIT_LOCAL_TRYLOCK(lockname) __LOCAL_SPIN_LOCK_UNLOCKED((lockname))
+=20
+-#define __local_lock_init(l)					\
++#define __local_lock_init(__l)					\
+ 	do {							\
+-		local_spin_lock_init((l));			\
++		local_spin_lock_init((__l));			\
+ 	} while (0)
+=20
+-#define __local_trylock_init(l)			__local_lock_init(l)
++#define __local_trylock_init(__l)			__local_lock_init(__l)
+=20
+ #define __local_lock(__lock)					\
+ 	do {							\
+--=20
+2.51.0
+
 
