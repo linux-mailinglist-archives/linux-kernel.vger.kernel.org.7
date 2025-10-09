@@ -1,108 +1,125 @@
-Return-Path: <linux-kernel+bounces-846627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05F5BBC8960
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 12:51:15 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15D4FBC8969
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 12:51:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2471188B68D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 10:51:37 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B75A735178F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 10:51:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 308842DE200;
-	Thu,  9 Oct 2025 10:51:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE2A2DE6FC;
+	Thu,  9 Oct 2025 10:51:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="gYVeLXP7"
-Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oT69uBvP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB8313E41A;
-	Thu,  9 Oct 2025 10:50:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF392DC790;
+	Thu,  9 Oct 2025 10:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760007064; cv=none; b=ZGvPCifcWkYjqtw70dpG/kBm7t3gl2AQHtxJ/Kh32KLJmJ78Q15pQWv2psvPlPNMPofjCiqSM3H3BVEvifC/fMIJWVwV0p7oDAl6BU/VqUf/pcOn3loeASnd10ylSo3RYNl0+pDwXggwxl+FZfeJxUQrcsEFSkB64mniTTqW4J8=
+	t=1760007080; cv=none; b=MI5laj6RsmczcAzbSvyUBXl7nKHB6Zg+IgLHvaTecSdnftrvVkNpS4WoHExqxCSP8S8NWamfAsn4Lmx9jJJDtcd/u2mbFU/vcBn43xrTQeatweibDDqGWw3CJDZlo+uKh2zYjuHXcGzpJOLrCIfyi3uqA75QlP6NQV1iQZCyMBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760007064; c=relaxed/simple;
-	bh=dES5xU44DVZYAsDNXMMecotfKT0H5p3bn+Jl+pDUyZY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NXgPoJPLMCvjM+tygfy7PP22VBNDwx+wSDjMSY2rHad046TDWqgM8LRA8KNHg5aeBHfOsRLv2slLJypc+A2b19YWpGx1+sXd6YTuc07J5r376S5THcXoMIx+f1Fs9ln744lkJNlJCgoEkMxexNxniiNhfIoT8jpO7Tt51UO7hPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=gYVeLXP7; arc=none smtp.client-ip=95.143.211.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
-From: Denis Arefev <arefev@swemel.ru>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
-	t=1760007050;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=vsiZ5gBlQopTSGe0JyyYKO7fN0J0UxYzPlRuHKTUIfs=;
-	b=gYVeLXP7MhHyuFhiol5SOAGMkE8kuMSQIR/1n2agnPeCPMbU3TXcNHP6crx3iYP++QlxIL
-	bucnV9YV72jArNUKA4W0Npfs6D2xwuD8XJN/hPlvX3HwQCQ9zsPZS6zgB+u4UO8ffXGVhr
-	kJo2+appnpfoVBhBDjAm5e7Sh68QZd8=
-To: David Rhodes <david.rhodes@cirrus.com>
-Cc: Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
-	patches@opensource.cirrus.com,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	stable@vger.kernel.org
-Subject: [PATCH v2] ALSA: hda: Fix missing pointer check in hda_component_manager_init function
-Date: Thu,  9 Oct 2025 13:50:47 +0300
-Message-ID: <20251009105050.20806-1-arefev@swemel.ru>
+	s=arc-20240116; t=1760007080; c=relaxed/simple;
+	bh=pe31QoGMIMHDF28fWNg7uO2BYB0/OCshPn6zdRfU8vg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ddcIRl0HwBPE1Rpf1KUjQxb485aXSH8UwALv+SC7sm/f3xMw2B2eNhY+8ioPHcF6xBzDxtgqGoOo1plyarEGqOWiqnHvvu6l9ThI3z4RY6RJ8ZTNUSmBRdU+LyG8bAqpSTQUiubc0q2DT+/QLtWIVvUuOVpeLsQq9LSTTkF9ZhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oT69uBvP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36F77C4CEE7;
+	Thu,  9 Oct 2025 10:51:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760007079;
+	bh=pe31QoGMIMHDF28fWNg7uO2BYB0/OCshPn6zdRfU8vg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oT69uBvPgCNbBahI9DwEiAPyJQ7DTFR9FwDVuLB54wBrHeA94F08AO+4fjTK6H++b
+	 bjMbR4gzidhQDiICVCqh4P5WfVkzPXfWGDiQ+3Z8jF04RJDkSzUooMRtX8ZTlxmpBy
+	 C2LEkWnjupvIONQj60dvSXAEjuG9ai978UaE1ch3n0vH6xo3xsWflxpm6RTkYJoFWd
+	 Pak0OoxqxyHn1tHsCsV5sF1bYl2qyDegNOCn1wXbvmweGpBraayR5gtWqQ5jpSDewu
+	 EzcYXAhWgXGJ9l4a+WMqF49AhfMUM71bNL+A383E8eUG7q61WYldbruM1Cvz5L7iP4
+	 X9Zc9hsiI7GLA==
+Message-ID: <afaa143e-55de-4880-8215-330dc640a1fd@kernel.org>
+Date: Thu, 9 Oct 2025 19:51:09 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: mmc: sdhci-msm: Add Kaanapali compatible
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
+ tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+ yijie.yang@oss.qualcomm.com, Manish Pandey <manish.pandey@oss.qualcomm.com>
+References: <20250924-knp-sdcard-v1-1-fc54940066f1@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250924-knp-sdcard-v1-1-fc54940066f1@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The __component_match_add function may assign the 'matchptr' pointer
-the value ERR_PTR(-ENOMEM), which will subsequently be dereferenced.
+On 25/09/2025 08:34, Jingyi Wang wrote:
+> From: Manish Pandey <manish.pandey@oss.qualcomm.com>
+> 
+> Document the compatible string for the SDHCI controller on the
+> Kaanapali platform.
+> 
+> Signed-off-by: Manish Pandey <manish.pandey@oss.qualcomm.com>
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
 
-The call stack leading to the error looks like this:
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-hda_component_manager_init
-|-> component_match_add
-    |-> component_match_add_release
-        |-> __component_match_add ( ... ,**matchptr, ... )
-            |-> *matchptr = ERR_PTR(-ENOMEM);       // assign
-|-> component_master_add_with_match( ...  match)
-    |-> component_match_realloc(match, match->num); // dereference
-
-Add IS_ERR() check to prevent the crash.
-
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Fixes: ae7abe36e352 ("ALSA: hda/realtek: Add CS35L41 support for Thinkpad laptops")
-Cc: stable@vger.kernel.org
-Signed-off-by: Denis Arefev <arefev@swemel.ru>
----
-V1 -> V2:
-Changed tag Fixes
-Add print to log an error it as Stefan Binding <sbinding@opensource.cirrus.com> suggested
-
- sound/hda/codecs/side-codecs/hda_component.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/sound/hda/codecs/side-codecs/hda_component.c b/sound/hda/codecs/side-codecs/hda_component.c
-index bcf47a301697..603a9b8ca481 100644
---- a/sound/hda/codecs/side-codecs/hda_component.c
-+++ b/sound/hda/codecs/side-codecs/hda_component.c
-@@ -174,6 +174,10 @@ int hda_component_manager_init(struct hda_codec *cdc,
- 		sm->match_str = match_str;
- 		sm->index = i;
- 		component_match_add(dev, &match, hda_comp_match_dev_name, sm);
-+		if (IS_ERR(match)) {
-+			codec_err(cdc, "Fail to add component %ld\n", PTR_ERR(match));
-+			return PTR_ERR(match);
-+		}
- 	}
- 
- 	ret = component_master_add_with_match(dev, ops, match);
--- 
-2.43.0
-
+Best regards,
+Krzysztof
 
