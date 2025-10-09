@@ -1,151 +1,180 @@
-Return-Path: <linux-kernel+bounces-846980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4316FBC9950
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:43:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F28A0BC992C
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:42:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4C22C4FBD52
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:42:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 251B71A60B58
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:42:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B5E23F422;
-	Thu,  9 Oct 2025 14:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ep6+HlCS"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9452EB5DA;
+	Thu,  9 Oct 2025 14:41:58 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F413B2EB848
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 14:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 859472EA72A;
+	Thu,  9 Oct 2025 14:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760020905; cv=none; b=MbagnayZuXEDBaAfCwvowvx8newkOnNgyIiOLU0n5cHjCgn7+8Ihvu0BY9ia6JTDN60nbqpahPcaMFQ41pNQrmjq8wXR1SzLFs6OAnvuiSJQq1oOeG29QO4WQqVach3NFPzsQUQKEqkIJ0MX5GJayi4HfYeqWWqVWADsHwyDLv0=
+	t=1760020918; cv=none; b=Lw9SNqn27T7eM6KqkdvdBzcazGtsO3ANB5IGJucUY+2k7j6Fzs8infrnsMOeVMaVBKyXDDyqu4eoA8wGqt1MQU5NsrhKfhLsDgMA8WraS+tRph6xPI5dCsVV07eqf6seTTey7aZ3/c9pVA3Sp87/Bq29ltocGEMw3DdhTW2YDX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760020905; c=relaxed/simple;
-	bh=HclYgnPF4LRbdDLD/Q8caHudhorVDWjtXDMuv4Ilhzo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ScdkmEoG5mZvp4ikP9TVUnHp+2xMFXCeqmIElaPxZhzSH21CI0MJSfatIFfL8iJxDJm8h/knSkDH/uTqh3rK4rJ7ghoTY+B6hCONMuoX7GRpRSwBmLPLw1h2JkwJEzpVFEywCZs8t7OFhaq8dLUoQm6J6SttWT7aYdNRrnTJNN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ep6+HlCS; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5996EhE9029129
-	for <linux-kernel@vger.kernel.org>; Thu, 9 Oct 2025 14:41:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=qZxbfmQyGMX+bvx3enASN+Ih
-	rNAG5CFfSD/AXrL+wew=; b=ep6+HlCSyQOJYq9gMKv7Lf5Yl4AvI8mXKlrQ9mtn
-	3hF9uNIa6GCVtHHdvjY3B6y5oZQMwgNIgVgyu2nHqdCELr2MAJPaZe5o8zG0xmGw
-	u8HSoS//g8O1z8Mcf6xxBwDGRbcunC1WVr7XI52fb9YR/GymuZpRltTVHt35XeaC
-	VBmS1I/uKOi8WteNS+q6K/qEVAvbKQgJg+FV0aij+gkvAI+Sijy+LDSNcr05PVmK
-	guTCqdFz4PwY3z12gCIxN5nJ+dDAEsBAExvH1Ao1SPtpvAWLRjP1dlFFF55/1YVL
-	CHo7LaODkouibxY5AUaNgZZ+pFnkX/vsgFxNbr39bbDm5A==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv4ku776-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 14:41:42 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4df60ea7a1bso35256931cf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 07:41:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760020901; x=1760625701;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qZxbfmQyGMX+bvx3enASN+IhrNAG5CFfSD/AXrL+wew=;
-        b=JB0Iw602dRGm0faiadZ71DjXjDTLSE4gc9mm6+LLdOOY6Fg8i6Rf4+KmHXLlgAeAT8
-         7jwDxGuaCrOEpCtT5LeiY59JaUqR8EGcPKInqlbicsyclwbGEc51o0ZiiKlhA+ghUPQV
-         RDUaTn2RSkTi97tZlqza5258Wi32ZI/HChtj93OpCdDYCIzaTprQmtKn2i2lThSbbaJ+
-         Se78kcQWCbr2QyiJKYslQWgHf/ef5VgOt+456xVybHLkfPjzzan8X49KfseqiPp6KZlW
-         8QvktWE8OdH7qCrLT08HLSuyD4/celENqfcTwXBWE8nijo02+ng/mvmYzEYZzf5MjY1x
-         QjFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXUtEm25iCG/7US51Nmhd2G2qivn1+Xa2ao5FTakhIFqxahGyIrEp/Wf7BcZKltdImqaSq2pVDdjKVRRHI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBf8LJzwmUj5bf2OzoAvohQ/uLSB8hNT7LCrj6bD4s/RlpoHFI
-	QDQDuoP21/C1arHvnw3OUQALd1nvUA0JEXIIsHntZ3w/rXLKYpStS0bWPA5Z2aR8bkGEKvCZIl4
-	HHrv7DJgt2mKrpghKi0GHAzyzM0WCNeT1q945ZnIJYGmWZuO+ZbJg2FEpd09KXELJRCk=
-X-Gm-Gg: ASbGncvX47Y27P1d0+8lOyQyDadOg9KJEVxzSl23cJAUiAhXVAU6eu0KOxZqHWH7jXs
-	sFOA0TaoSXPvY37HGREYlYq0aLDTQK2U3H4g3inxUq7FGlsxnutxlY009LBvRDZLZBDHM2fZQbx
-	gGloRIo/laPszDiTQqu3onA2J3lCPvux6XrmcLNEHQDOCwDYUI6wrLGYXa0BrsHqo+/cGaCgwys
-	mVXyvVU8QAADdx6EZu4JJ8figHzuTT6m7R8P0omYDcXpz+eub3YcpuefsdPjK45wIPOdJ5VaQQG
-	Z4/U8+387iqWEGbb1+jvEEyeIvgfbY4HlGkRsZR7Q0YKTsduSzKACEyT49NGsy/89fSpeGzDSk2
-	EJWvOhsyhn3kibfHYkpDR+qnR1O6RnYAbOomLoJPLXgOmEUhqkGUl1XZaNQ==
-X-Received: by 2002:a05:622a:507:b0:4e5:8180:d4fa with SMTP id d75a77b69052e-4e6ead4a78cmr98196821cf.39.1760020900957;
-        Thu, 09 Oct 2025 07:41:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGv0mdo3za5+5FAlM5CJ7wLkbh7iaSVKM8BbIGVMwJLYVlsYxxhzIKo+VojFEtceXLiOMhU7A==
-X-Received: by 2002:a05:622a:507:b0:4e5:8180:d4fa with SMTP id d75a77b69052e-4e6ead4a78cmr98196221cf.39.1760020900338;
-        Thu, 09 Oct 2025 07:41:40 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5907ac1f095sm1108654e87.37.2025.10.09.07.41.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 07:41:39 -0700 (PDT)
-Date: Thu, 9 Oct 2025 17:41:37 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Casey Connolly <casey.connolly@linaro.org>,
-        Alexander Martinz <amartinz@shiftphones.com>,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v2 4/6] arm64: dts: qcom: qcm6490-shift-otter: Enable
- flash LED
-Message-ID: <b24tiwwhie34narc4u3ez4le3cne3whjtxaccm4xtit3wldumb@ipgsccain72f>
-References: <20251009-otter-further-bringup-v2-0-5bb2f4a02cea@fairphone.com>
- <20251009-otter-further-bringup-v2-4-5bb2f4a02cea@fairphone.com>
+	s=arc-20240116; t=1760020918; c=relaxed/simple;
+	bh=sC/XZAqpJzpobFxBHDZsCZmS63EZEGChI+Ey0HYlrno=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J0sQMbfxM3DoNt//MsqpNsMmW0jQCbUNb/Vwqt041MyW5V6VG06R5HNDptjNRgNeJ1G2Vt3oTPT4uJoDg9xAstXJekN7A7aeIcyGBNzSAp2Zfbn3gbC2L19w22r9Vod5LRWnco12W44whTH3rxzA7po1IZ/N3MkyRbE6KYSXFFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cjCHB2hVFz67Cxd;
+	Thu,  9 Oct 2025 22:41:10 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 32C5A1400CA;
+	Thu,  9 Oct 2025 22:41:53 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 9 Oct
+ 2025 15:41:52 +0100
+Date: Thu, 9 Oct 2025 15:41:50 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Evangelos Petrongonas <epetron@amazon.de>
+CC: Bjorn Helgaas <bhelgaas@google.com>, Alex Williamson
+	<alex.williamson@redhat.com>, "Rafael J . Wysocki" <rafael@kernel.org>, Len
+ Brown <lenb@kernel.org>, Pasha Tatashin <pasha.tatashin@soleen.com>, David
+ Matlack <dmatlack@google.com>, Vipin Sharma <vipinsh@google.com>, Chris Li
+	<chrisl@kernel.org>, Jason Miu <jasonmiu@google.com>, "Pratyush Yadav"
+	<pratyush@kernel.org>, Stanislav Spassov <stanspas@amazon.de>,
+	<linux-pci@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <nh-open-source@amazon.com>
+Subject: Re: [RFC PATCH 05/13] pci: pcsc: control the cache via sysfs and
+ kernel params
+Message-ID: <20251009154150.00001d8c@huawei.com>
+In-Reply-To: <2a0e6b85b06fef2d77ddd6879dea4335aeb3021f.1759312886.git.epetron@amazon.de>
+References: <cover.1759312886.git.epetron@amazon.de>
+	<2a0e6b85b06fef2d77ddd6879dea4335aeb3021f.1759312886.git.epetron@amazon.de>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251009-otter-further-bringup-v2-4-5bb2f4a02cea@fairphone.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX4c5zFabwL+O2
- rkG4bY8JOWogdmk/KJ/zQVHn7LnHmEnZAuhclwraZ3FgNbRYoeX8Kcme5VeK0rEMRW+1iXixBAV
- sEf4QOiJE92GZMRFpzaaPIJwDH/+BHa2GTGPQ7IxeP+jOhKLQ/yx5NYcEBY8hPOVco71HWgtgCU
- aSuGKyh+4Ypb0cJ14HPWkseifF/DWbFBOI3Kzne1pLWvnzTdtm+UGbvMVzeaizB259hV0x020B8
- iFtf13mDzzL7JIXYC+sQ6S1JiT3ws7G+d1L42+7fp5LhOuFcoYkQkVsNA/WAYjtkhwf+asaoKLb
- 1rbGoiY50GytY53+YsEOHGT51oM4Sod0bX2jtC/0WUzHyTWdukz8U8wMJB2tTbPga2XVkVrgxy2
- XttkeTAeJcSPRZHgewPmGIXUXEushQ==
-X-Proofpoint-GUID: GDltkBy6SdaMf1sKKIhzmUz9oQuJlepL
-X-Proofpoint-ORIG-GUID: GDltkBy6SdaMf1sKKIhzmUz9oQuJlepL
-X-Authority-Analysis: v=2.4 cv=SJxPlevH c=1 sm=1 tr=0 ts=68e7c9a6 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=6H0WHjuAAAAA:8
- a=kDRJMEyxNqLK-ifJ8_YA:9 a=CjuIK1q_8ugA:10 a=a_PwQJl-kcHnX1M80qC6:22
- a=cvBusfyB2V15izCimMoJ:22 a=Soq9LBFxuPC4vsCAQt-j:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-09_05,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 impostorscore=0 spamscore=0 phishscore=0
- clxscore=1015 bulkscore=0 lowpriorityscore=0 priorityscore=1501 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Thu, Oct 09, 2025 at 11:06:34AM +0200, Luca Weiss wrote:
-> From: Casey Connolly <casey.connolly@linaro.org>
+On Fri, 3 Oct 2025 09:00:41 +0000
+Evangelos Petrongonas <epetron@amazon.de> wrote:
+
+> Add kernel parameters and runtime control mechanisms for the PCSC
 > 
-> Describe the flash LED on this phone.
+> A new kernel parameter 'pcsc_enabled' allows enabling or disabling
+> the cache at boot time. The parameter defaults to disabled.
 > 
-> Signed-off-by: Casey Connolly <casey.connolly@linaro.org>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> A sysfs interface at /sys/bus/pci/pcsc/enabled provides:
+> - Read access to query current cache status (1=enabled, 0=disabled)
+> - Write access to dynamically enable/disable the cache at runtime
+> 
+> Signed-off-by: Evangelos Petrongonas <epetron@amazon.de>
 > ---
->  arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
+>  Documentation/ABI/testing/sysfs-bus-pci-pcsc  | 20 ++++
+>  .../admin-guide/kernel-parameters.txt         |  3 +
+>  drivers/pci/pcsc.c                            | 93 ++++++++++++++++++-
+>  3 files changed, 114 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/ABI/testing/sysfs-bus-pci-pcsc
 > 
+> diff --git a/Documentation/ABI/testing/sysfs-bus-pci-pcsc b/Documentation/ABI/testing/sysfs-bus-pci-pcsc
+> new file mode 100644
+> index 000000000000..ee92bf087816
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-bus-pci-pcsc
+> @@ -0,0 +1,20 @@
+> +PCI Configuration Space Cache (PCSC)
+> +-------------------------------------
+> +
+> +The PCI Configuration Space Cache (PCSC) is a transparent caching layer
+> +that intercepts configuration space operations to reduce hardware access
+> +overhead. This subsystem addresses performance bottlenecks in PCI
+> +configuration space accesses, particularly in virtualization
+> +environments with high-density SR-IOV deployments where repeated
+> +enumeration of Virtual Functions creates substantial delays.
+> +
+> +What:			/sys/bus/pci/pcsc/enabled
+> +Date:			September 2025
+> +Contact:		Linux PCI developers <linux-pci@vger.kernel.org>
+> +Description:
+> +				PCI Configuration Space Cache (PCSC) is a subsystem that
+> +				caches accesses to the PCI configuration space of PCI
+> +				functions. When this file contains the "1", the kernel
+> +				is utilizing the cache, while when on "0" the
+> +				system bypasses it. This setting can also be controlled
+> +parameter.
+indent issue on this last line.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Excellent to see someone remembering the ABI docs for once in an RFC!
 
 
--- 
-With best wishes
-Dmitry
+> diff --git a/drivers/pci/pcsc.c b/drivers/pci/pcsc.c
+> index 343f8b03831a..44d842733230 100644
+> --- a/drivers/pci/pcsc.c
+> +++ b/drivers/pci/pcsc.c
+> +static struct kobj_attribute pcsc_enabled_attribute =
+> +	__ATTR(enabled, 0644, pcsc_enabled_show, pcsc_enabled_store);
+> +
+> +static struct attribute *pcsc_attrs[] = {
+> +	&pcsc_enabled_attribute.attr,
+> +	NULL,
+Trivial but no need for that trailing comma after the NULL terminator.
+We don't want it to be easy to accidentally add something after that.
+
+> +};
+> +
+> +static struct attribute_group pcsc_attr_group = {
+> +	.attrs = pcsc_attrs,
+> +};
+> +
+> +static struct kobject *pcsc_kobj;
+> +
+> +static void pcsc_create_sysfs(void)
+> +{
+> +	struct kset *pci_bus_kset;
+> +	int ret;
+> +
+> +	if (pcsc_kobj)
+> +		return; /* Already created */
+
+Why do we need the kobject? Can't we make this a group on the
+pci_bus_kset->kobj with a group name of pcsc?
+
+(I see you have a comment on this next bit later in here)
+Event better if we can arrange for not to be added after that is
+created but just be a group on it in the first place.
+That is make it a group in bus_groups of the pci_bus_type alongside
+the one with bus_attr_rescan.attr in it.
+
+That should mean you don't need the two tried to set it up that
+you have currently.
+
+> +
+> +	pci_bus_kset = bus_get_kset(&pci_bus_type);
+> +	if (!pci_bus_kset) {
+> +		/* PCI bus kset not ready yet, will be retried later */
+> +		return;
+> +	}
+> +
+
+> +
+> +/*
+> + * The PCI subsystem is initialised later, therefore we need to add
+> + * our sysfs entries later. This is done to avoid modifying the sysfs
+> + * creation of the core pci driver.
+Vs complexity and races, I think I'd rather you did modify that.
+
+> + */
+> +late_initcall(pcsc_sysfs_init);
+
 
