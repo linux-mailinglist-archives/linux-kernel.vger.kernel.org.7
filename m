@@ -1,32 +1,33 @@
-Return-Path: <linux-kernel+bounces-846536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52F43BC847C
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 11:22:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3305EBC847F
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 11:22:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C38419E754A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 09:22:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4F8B94F86DE
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 09:22:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3832C0F68;
-	Thu,  9 Oct 2025 09:22:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB6E2D6E58;
+	Thu,  9 Oct 2025 09:22:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="TbEVzy4L"
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="LpXpAC4H"
 Received: from mx-relay02-hz2.antispameurope.com (mx-relay02-hz2.antispameurope.com [83.246.65.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA862D5C9E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9812D5A0C
 	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 09:22:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=83.246.65.88
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760001727; cv=pass; b=K43Z7uZpHLIUTSNAVx54/imltZUzmHcJFtlfmHauPa4VNBVwl8YcEhOLSzsyKILNWwR6ENafBcTfV9DOSBPrBYHNCy5msAv0G/uiJaLRtKgkRDjJckEfFNgM9blAjRa9JlFYXqhiFSV/X4L4CLdd1fdVPSvl7rmvYgS4nW05VFo=
+	t=1760001728; cv=pass; b=fYTCE3RDPgXLuOsILlXazciHpoL94pLomBgK5+TgI2vAshnruiEf/nvNYNGrOurnSXTk5pkDqYYzBqPa2o/IASMdmrRFAyKQoVFXy9whN/YwCCfMLZ6uTfRSkpL6doIrysdksspBBtPoh9M41p+b99o64qC3YlyFF4s/S8iHfss=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760001727; c=relaxed/simple;
-	bh=XGkyybDNY1mb6KrENDxDb39fxVtd/EDG+xqpLeoMNxs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pfqN0rUGpXXweSP5O0Bne9RolGfHMSgsptTzZoka2oFOqe+vq2/b1eBOIxZenSMgWOjBXgoXG4OZUnuJu/8kRDJbQ0scPc2Fr2Ixe97qpjI68h3zfGIv460NyoQ93AVURuLITQUfuPhB/ccEkrbyUTTBsOrj6sjkYaknsky5MaU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=TbEVzy4L; arc=pass smtp.client-ip=83.246.65.88
+	s=arc-20240116; t=1760001728; c=relaxed/simple;
+	bh=vfVoUbsJPxjF9vK6+vSGFd9S12aVkH4YrhnG7Hat7Tw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aHy8/6d6wWjud4uAK9brzIAkCy8MQ6h8YfWAOip2jZFxhpoG5pakiyrFTJ8c/dPJAUgvRU4IjQqg66hb4SxKnn/EBuO0aMpUBgXxLwsDg6uwcv0SqPiqEsyd/lHZZAZPud/zNVaYurd3ylt1EC6C6bqvEw+aXpKnthDYuDgeHSk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=LpXpAC4H; arc=pass smtp.client-ip=83.246.65.88
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 ARC-Authentication-Results: i=1; mx-gate02-hz2.hornetsecurity.com 1; spf=pass
@@ -35,27 +36,27 @@ ARC-Authentication-Results: i=1; mx-gate02-hz2.hornetsecurity.com 1; spf=pass
  smtp.helo=hmail-p-smtp01-out04-hz1.hornetsecurity.com; dmarc=pass
  header.from=ew.tq-group.com orig.disposition=pass
 ARC-Message-Signature: a=rsa-sha256;
- bh=V1zco+aUJaXBAcg9GM1X/IscW6w2wuvsTjlRMqGC/NI=; c=relaxed/relaxed;
+ bh=j2KTnFVX0/Ht3bAv3F0U0EBuYjoq5BsfMsWeElo5MCQ=; c=relaxed/relaxed;
  d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
  t=1760001652;
- b=LKEWEB7vRTPErrmSpaLAypJc7r7NheGi1X0j/o2ed5PoJIAKyrGODJRoXdxZq40U0quRALWA
- j9qEolU1zJkGZocsQLFD29Od7ffU2yu/qwJBNaap9hgvTP3qkKlYn5QvG+BSUaJ94axY13PWKXv
- EClVUIm+oj3zFAqksHJkMpxCqWFaX50sBEnK9p6DeeNHNgUI/URSFGereaXVcc52AwezC3yxc/g
- gA3BM+Lkps5UF/u8jmamly+V0WhkrRQxXqfdWWBXiCdmUz8628DAw7UqmWyzc0YJhDPwrdJ2mYg
- DeB8y0ZRtVQgoRUyFsr/VqDdlmvQWHIk1uA06BfwqSYtw==
+ b=WOcTYoHz92mWEjCBmZsap9AmhoisxcpFXYnVvxZZvJT3BZNLHHQFrZANdVJwiu1bMhqVhNYA
+ fdFnrEkt7GKe0ayuj6Z9AZCBmQVIodQavD3flrCHHmxa8O7quoO5Vlz7ma+ImwBIkRgswhCExau
+ 5Dgc6dHu450CxxouenWfdXLFp0Tep2gdT+gPSohwamyj45UX20utYKn3/bv4c6K2I96CPLeKBug
+ ei+YoUOFttoh7Hfu/l95yWfgR1+PTVTKFkutAAoS1y8JdX41yetfAJCD05X+R+KnTJOsN/pfLjv
+ lpLvzfDCW4QSt8AefgxZLcz57InR386M5fpR8tdGn0LmA==
 ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
  t=1760001652;
- b=RaKgZWJJ2+j/Klj/xRuSlh5Zm/neLx6AlGtuMFMRgu08Qaia39UDAu4eQHtwBOYdYqhXTlP1
- SScLDn8N6/0bEZdV9ZxxZcEoiS9GV4Ux8GcmXkc4v0BFMsbm5+m0pf87ubnAvVo0o6UjG4F9E8g
- hoyVffPPr39JUdOqtgIekg5dYFSV0Q/n/Q69188EJR5WDleyq23tEM+fF6qTof9DiVyDmXJStLz
- VZECdkjKhUBnNv0Fz4PrOn+fJXj43BMn0KfDAJQj5T4rsvgqn6y5HSIaVPXXj0r8AQ7BFI34yJW
- 3RSlo6QNDqnO0P1gwSBfSZGneko+TbXBYQB2jza+XFISw==
+ b=UcuTJuhLTC5x3YsdjKiQ9b3l6N3/42yFg1t0Yq6fbj7zCRB/vuCkcga4gpk5o7lFwhD3UlLp
+ wJqoeDz9TSZLLh10DGmAgi8Oe7K4jFB0VHvFLD7Ustc2fPKEyPcx4PIUJapzkuxDSaqSTNSkuKw
+ sjmGYwVJKuCzCqQLm+7DVmsdRBzeYZK7oi86ebHe4hFPksMLb55TrFmq8NZIV9/sgMObGadOff6
+ FmGIu9XrOUWRpw1sHwTtR84IDLxwX364kiNerXZAUpQRM6jV7FtsWfS56KJYWA2PT6wOqNHEvSh
+ O2aL0A1z6HmJRI8GsDJvLIeB0LJD/bL9IOKiadYceVHpw==
 Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay02-hz2.antispameurope.com;
  Thu, 09 Oct 2025 11:20:52 +0200
 Received: from schifferm-ubuntu.tq-net.de (host-82-135-125-110.customer.m-online.net [82.135.125.110])
 	(Authenticated sender: matthias.schiffer@ew.tq-group.com)
-	by hmail-p-smtp01-out04-hz1.hornetsecurity.com (Postfix) with ESMTPSA id B3F5C220CF8;
-	Thu,  9 Oct 2025 11:20:39 +0200 (CEST)
+	by hmail-p-smtp01-out04-hz1.hornetsecurity.com (Postfix) with ESMTPSA id 1D4642203F0;
+	Thu,  9 Oct 2025 11:20:40 +0200 (CEST)
 From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
 To: Peter Korsgaard <peter@korsgaard.com>,
 	Andrew Lunn <andrew@lunn.ch>,
@@ -64,10 +65,12 @@ Cc: linux-i2c@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux@ew.tq-group.com,
 	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Subject: [PATCH v2 1/2] i2c: ocores: increase poll timeout to total transfer timeout
-Date: Thu,  9 Oct 2025 11:19:49 +0200
-Message-ID: <51a72ceca0154d7be85c3cc67722e7dd0b364a2e.1760000254.git.matthias.schiffer@ew.tq-group.com>
+Subject: [PATCH v2 2/2] i2c: ocores: respect adapter timeout in IRQ mode
+Date: Thu,  9 Oct 2025 11:19:50 +0200
+Message-ID: <96e4ef171bc710abde215c50dd5dd4fffa98a2b2.1760000254.git.matthias.schiffer@ew.tq-group.com>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <51a72ceca0154d7be85c3cc67722e7dd0b364a2e.1760000254.git.matthias.schiffer@ew.tq-group.com>
+References: <51a72ceca0154d7be85c3cc67722e7dd0b364a2e.1760000254.git.matthias.schiffer@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,142 +85,49 @@ X-cloud-security-crypt: load encryption module
 X-cloud-security-Mailarchiv: E-Mail archived for: matthias.schiffer@ew.tq-group.com
 X-cloud-security-Mailarchivtype:outbound
 X-cloud-security-Virusscan:CLEAN
-X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay02-hz2.antispameurope.com with 4cj49N1cGlz2gY5Z
+X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay02-hz2.antispameurope.com with 4cj49N4YBhz2gY89
 X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
-X-cloud-security-Digest:3b51b6f303a4b4124ce7a9c384325c99
-X-cloud-security:scantime:2.538
+X-cloud-security-Digest:54112139bb7784269948007813f8417d
+X-cloud-security:scantime:2.393
 DKIM-Signature: a=rsa-sha256;
- bh=V1zco+aUJaXBAcg9GM1X/IscW6w2wuvsTjlRMqGC/NI=; c=relaxed/relaxed;
+ bh=j2KTnFVX0/Ht3bAv3F0U0EBuYjoq5BsfMsWeElo5MCQ=; c=relaxed/relaxed;
  d=ew.tq-group.com;
  h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
- t=1760001651; v=1;
- b=TbEVzy4LjzYrulcuZ3+h03tfS0yophLaT5CNV9heDiydaokdl+wYpvAUdrbhUTpW6JJTfxzn
- uxLWeKk6RrkApsbDVm2eEWwxlqZihfdjLfYCUkearSjXLdEQW6h2sv6Zp3+Z7SHAaCIRg3TqDX3
- JLjiDZm3FZGBEJF4iiMNILqRhFQYuhO4GNEm+RW6OxM8Sg4MUkWsR1v33jFdgErEE/tQ8nLVum9
- Z7VFVHKMgGsqCesu0/v3tFf5HLL+i3InuRjuYrcwXHhGhiBhnD29FF8QRpnBefG1Jnak2D5mckr
- e452n37qvoRGSHIaLmQ9RpGj+tN8DdQwzfofqNo6y2YSw==
+ t=1760001652; v=1;
+ b=LpXpAC4H+hehqgaUkECDhiOlW77td0QO0gdJqiXmcoHykxvNBx9Gh6f2sKCkvynNgDr5nhvX
+ JFOKu7XU4T1ahVw0ymOrClSczuzmzS9fLrj5IibT7SErm6vk4/QiOob8X4LQX+wvp334M3IafkG
+ sDVdykRUDl10PlBswabeRWMnDbpeG0nBal3XWY4i3esXkFbbPt00E8d6uP7WrXnsaOX4Z1V07Rq
+ wEzoQVpn46a0tOT4Crkwx6CGxHBaQzm3LYQ/I0sJp4ENVxD84102No1uGI9N5QoEEH+7quUi0kS
+ WuMheI1RC/RAUvUrNumDv8+lQd5pNCDheb5R7lYrbFhMw==
 
-When a target makes use of clock stretching, a timeout of 1ms may not be
-enough. One extreme example is the NXP PTN3460 eDP to LVDS bridge, which
-takes ~320ms to send its ACK after a flash command has been
-submitted.
-
-The behavior in the regular case is unchanged, spinning for up to 1ms,
-but the open-coded poll loop is replaced with read_poll_timeout_atomic()
-as suggested by Andrew Lunn. In cases where 1ms is not sufficient,
-read_poll_timeout() is used, allowing a total transfer time up to the
-timeout set in struct i2c_adapter (defaulting to 1s, configurable through
-the I2C_TIMEOUT ioctl).
+While the timeout field of the i2c_adapter defaults to 1s, it can be
+changed, for example using the I2C_TIMEOUT ioctl. Change the ocores
+driver to use this timeout instead of hardcoding 1s, also making it
+consistent with polling mode.
 
 Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Acked-by: Peter Korsgaard <peter@korsgaard.com>
 ---
 
-v2: avoid spinning for a whole second, switch to
-read_poll_timeout[_atomic]()
+v2: collect acked-by
 
- drivers/i2c/busses/i2c-ocores.c | 44 ++++++++++++++++-----------------
- 1 file changed, 22 insertions(+), 22 deletions(-)
+ drivers/i2c/busses/i2c-ocores.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/i2c/busses/i2c-ocores.c b/drivers/i2c/busses/i2c-ocores.c
-index 482b37c8a1297..c4587194d46be 100644
+index c4587194d46be..4a8ce167a3d9f 100644
 --- a/drivers/i2c/busses/i2c-ocores.c
 +++ b/drivers/i2c/busses/i2c-ocores.c
-@@ -18,6 +18,7 @@
- #include <linux/platform_device.h>
- #include <linux/i2c.h>
- #include <linux/interrupt.h>
-+#include <linux/iopoll.h>
- #include <linux/wait.h>
- #include <linux/platform_data/i2c-ocores.h>
- #include <linux/slab.h>
-@@ -258,7 +259,7 @@ static void ocores_process_timeout(struct ocores_i2c *i2c)
-  * @reg: register to query
-  * @mask: bitmask to apply on register value
-  * @val: expected result
-- * @timeout: timeout in jiffies
-+ * @timeout: absolute timeout in jiffies
-  *
-  * Timeout is necessary to avoid to stay here forever when the chip
-  * does not answer correctly.
-@@ -269,30 +270,32 @@ static int ocores_wait(struct ocores_i2c *i2c,
- 		       int reg, u8 mask, u8 val,
- 		       const unsigned long timeout)
- {
--	unsigned long j;
--
--	j = jiffies + timeout;
--	while (1) {
--		u8 status = oc_getreg(i2c, reg);
-+	unsigned long max_wait;
-+	u8 status;
-+	int ret;
- 
--		if ((status & mask) == val)
--			break;
-+	/* In most cases the wait is short, so we spin for up to 1ms. */
-+	ret = read_poll_timeout_atomic(oc_getreg, status,
-+				       (status & mask) == val,
-+					0, 1000, false, i2c, reg);
-+	if (ret != -ETIMEDOUT)
-+		return ret;
- 
--		if (time_after(jiffies, j))
--			return -ETIMEDOUT;
--	}
--	return 0;
-+	max_wait = jiffies_to_usecs(max(0L, timeout - jiffies)) + 1;
-+	return read_poll_timeout(oc_getreg, status, (status & mask) == val,
-+				 10000, max_wait, false, i2c, reg);
- }
- 
- /**
-  * ocores_poll_wait() - Wait until is possible to process some data
-  * @i2c: ocores I2C device instance
-+ * @timeout: absolute timeout in jiffies
-  *
-  * Used when the device is in polling mode (interrupts disabled).
-  *
-  * Return: 0 on success, -ETIMEDOUT on timeout
-  */
--static int ocores_poll_wait(struct ocores_i2c *i2c)
-+static int ocores_poll_wait(struct ocores_i2c *i2c, unsigned long timeout)
- {
- 	u8 mask;
- 	int err;
-@@ -310,15 +313,11 @@ static int ocores_poll_wait(struct ocores_i2c *i2c)
- 		udelay((8 * 1000) / i2c->bus_clock_khz);
+@@ -383,7 +383,8 @@ static int ocores_xfer_core(struct ocores_i2c *i2c,
+ 	} else {
+ 		if (wait_event_timeout(i2c->wait,
+ 				       (i2c->state == STATE_ERROR) ||
+-				       (i2c->state == STATE_DONE), HZ) == 0)
++				       (i2c->state == STATE_DONE),
++				       i2c->adap.timeout) == 0)
+ 			ret = -ETIMEDOUT;
  	}
- 
--	/*
--	 * once we are here we expect to get the expected result immediately
--	 * so if after 1ms we timeout then something is broken.
--	 */
--	err = ocores_wait(i2c, OCI2C_STATUS, mask, 0, msecs_to_jiffies(1));
-+	err = ocores_wait(i2c, OCI2C_STATUS, mask, 0, timeout);
- 	if (err)
--		dev_warn(i2c->adap.dev.parent,
--			 "%s: STATUS timeout, bit 0x%x did not clear in 1ms\n",
--			 __func__, mask);
-+		dev_dbg(i2c->adap.dev.parent,
-+			"%s: STATUS timeout, bit 0x%x did not clear\n",
-+			__func__, mask);
- 	return err;
- }
- 
-@@ -336,11 +335,12 @@ static int ocores_poll_wait(struct ocores_i2c *i2c)
-  */
- static int ocores_process_polling(struct ocores_i2c *i2c)
- {
-+	unsigned long timeout = jiffies + i2c->adap.timeout;
- 	irqreturn_t ret;
- 	int err = 0;
- 
- 	while (1) {
--		err = ocores_poll_wait(i2c);
-+		err = ocores_poll_wait(i2c, timeout);
- 		if (err)
- 			break; /* timeout */
- 
+ 	if (ret) {
 -- 
 TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
 Amtsgericht München, HRB 105018
