@@ -1,105 +1,178 @@
-Return-Path: <linux-kernel+bounces-846945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12EC2BC97D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:23:45 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93AF8BC97D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:24:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38AFD1891C37
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:24:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B95004ED75C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:24:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3FE2EA728;
-	Thu,  9 Oct 2025 14:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="ad+sySV3"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3AF2EA732;
+	Thu,  9 Oct 2025 14:24:25 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598672EA474;
-	Thu,  9 Oct 2025 14:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 982482EA482;
+	Thu,  9 Oct 2025 14:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760019819; cv=none; b=opaWMqZwFOTiotGIdobjis3mV/JEu5Yh5+U9QcD/2R5bBQCnwGMnpj/ZNYzA7XYwMtoM7YxB1mft1VFkHZN0teyvC837WkH7TEml3tFX/7HezHkvxADTeJNRE++1O1Ea+01xxS3AgQq/W+OvTIxNDj0eX2IiywTP5a8uS36m1JQ=
+	t=1760019865; cv=none; b=ciMRZGYvI6nI6sziffK8aVxYNvKF44zts5BjCIIDuz6Ilqvff0bBQ/7PeUnIZuIvwz3T/XRHTuW32Pmbn4QQor6IgJdtFMVdo2t/Qs3qVvqCV6kL0ztnkTN8chE4pQ3/zmTwpB4VnEPEOCSKfZ054m2C/2jjnDbv1PKIeQtIPSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760019819; c=relaxed/simple;
-	bh=tKsf4rNNLhAUy8cx/s+Zj+MAaKVikS0yGc2U8lMqRPo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g6BjFKnFe0q3bSRUcoktDNCdOiF4VEE7t4pR/8GoaTY8PKpMtgXXM1tmUqm6U+1ZSBt4iHsHBkfPuL6JSJFk0pENyGQJ7poki1A2t69PaIltf1eQacjGtM1nsK6wdybbBCpZF0PmDqYhT9wTcfT00w1aU1C9lfOHnoY865e+rVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=ad+sySV3; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A8AAA101DB814;
-	Thu,  9 Oct 2025 16:23:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1760019813; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=0A5K/PIrYFfczp2p7aBd8MOP+eifTgY270bvBsYk9ws=;
-	b=ad+sySV3WNJRwtSW7u2Zn0uLB+SSMg4Zh+KL6VJ8fPKYLhm0CABTN3K/dOTG4k+ZHrB4F7
-	ZBJYeoZRyh1LBFnneelIJHWrbpsP/p8jdgoavwEn4ux1OTx8CLsrCgSTQgiNH8mf8C8cGH
-	Tz3tACg8aSPInLyXJD8GI24dPLdsVtTksQ4/MFhZS9f7AapfVASxVJXJJrPcYYmD3p/FFU
-	htoV/P1+/uJleBe8Ue88S+c8NicjxUT6luGlugkX/Rg933olcImIRi1b+8LiaPddYSHW/U
-	vl0nS3L/Nfw14Ptt9CqyDFdj2mZtFwUmRAr++F3+m7Em5agceOu6jqcjrPCBPw==
-Date: Thu, 9 Oct 2025 16:23:28 +0200
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-Subject: Re: [PATCH 6.12 00/10] 6.12.51-rc1 review
-Message-ID: <aOfFYDUuTPkgEqQp@duo.ucw.cz>
-References: <20251003160338.463688162@linuxfoundation.org>
+	s=arc-20240116; t=1760019865; c=relaxed/simple;
+	bh=wzThbFBUUideRSzeEE49g3wu4P5JNp2dfbBPjavJKbc=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KajZd6CGfS6iJoVfpGCM9TLcwvDkb4T3vwPlDd1+ltQtc02BE9Jcpnmzf0nmW5fVutzIvaig8BZRKIg9MFS5Up1PWGnvNJXQyZuU05ADOwtyrO4TS6ugZhOr8I8xdPG/Dt8dpo9YPPPROy33YNFFhCpAnBX/kKAFmOfXdfry3fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cjBtv67VHz6L55G;
+	Thu,  9 Oct 2025 22:23:35 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9EC5A14025A;
+	Thu,  9 Oct 2025 22:24:18 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 9 Oct
+ 2025 15:24:17 +0100
+Date: Thu, 9 Oct 2025 15:24:15 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Evangelos Petrongonas <epetron@amazon.de>
+CC: Bjorn Helgaas <bhelgaas@google.com>, Alex Williamson
+	<alex.williamson@redhat.com>, "Rafael J . Wysocki" <rafael@kernel.org>, Len
+ Brown <lenb@kernel.org>, Pasha Tatashin <pasha.tatashin@soleen.com>, David
+ Matlack <dmatlack@google.com>, Vipin Sharma <vipinsh@google.com>, Chris Li
+	<chrisl@kernel.org>, Jason Miu <jasonmiu@google.com>, "Pratyush Yadav"
+	<pratyush@kernel.org>, Stanislav Spassov <stanspas@amazon.de>,
+	<linux-pci@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <nh-open-source@amazon.com>
+Subject: Re: [RFC PATCH 04/13] pci: pcsc: infer PCIe extended capabilities
+Message-ID: <20251009152415.00000b07@huawei.com>
+In-Reply-To: <026b1d3e3fcb2a554511de3f23d6a7640b5377b6.1759312886.git.epetron@amazon.de>
+References: <cover.1759312886.git.epetron@amazon.de>
+	<026b1d3e3fcb2a554511de3f23d6a7640b5377b6.1759312886.git.epetron@amazon.de>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="8dWd9aYyb2y9MZlB"
-Content-Disposition: inline
-In-Reply-To: <20251003160338.463688162@linuxfoundation.org>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
+On Fri, 3 Oct 2025 09:00:40 +0000
+Evangelos Petrongonas <epetron@amazon.de> wrote:
 
---8dWd9aYyb2y9MZlB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Extend PCSC to support cacheability inference for PCIe extended
+> capabilities located in the 4KB extended configuration space.
+> 
+> Similar to the capabilities, PCIe extended capabilities require
+> traversal of the capability list to determine cacheability. The
+> implementation identifies cacheable registers for capabilities used
+> by the generic PCIe driver:
+> 
+> - Advanced Error Reporting (AER)
+> - Access Control Services (ACS)
+> - Alternative Routing-ID (ARI)
+> - SR-IOV
+> - Address Translation Services (ATS)
+> - Page Request Interface (PRI)
+> - Process Address Space ID (PASID)
+> - Downstream Port Containment (DPC)
+> - Precision Time Measurement (PTM)
+> 
+> The extended capability header (4 bytes) is always cached to enable
+> efficient capability list traversal.
+> 
+> All the extended capabilities apart from the DPC are static. Regarding
+> DPC, the DPC capabilities is read and based on its value the
+> cacheability of RP* registers is inferred.
+> 
+> Signed-off-by: Evangelos Petrongonas <epetron@amazon.de>
+> Signed-off-by: Stanislav Spassov <stanspas@amazon.de>
+A few comments below.
 
-Hi!
+> ---
+>  drivers/pci/pcsc.c | 203 +++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 203 insertions(+)
+> 
+> diff --git a/drivers/pci/pcsc.c b/drivers/pci/pcsc.c
+> index 29945eac4190..343f8b03831a 100644
+> --- a/drivers/pci/pcsc.c
+> +++ b/drivers/pci/pcsc.c
 
-> This is the start of the stable review cycle for the 6.12.51 release.
-> There are 10 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> +static void infer_extended_capabilities_pointers(struct pci_dev *dev)
+> +{
+> +	int pos = 0x100;
+> +	u32 header;
+> +	int cap_ver, cap_id;
+> +	int i;
+> +
+	if (!IS_ENABLED(CONFIG_PCIE_PCSC))
+		return;
 
-CIP testing did not find any problems here:
+is probably enough to allow the compiler to get rid of everything without
+the ifdef magic.
 
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.12.y
+> +	while (pos) {
+> +		if (pos > 0xFFC || pos < 0x100)
+> +			break;
+> +
+> +		pos &= ~0x3;
+> +
+> +		if (pcsc_hw_config_read(dev->bus, dev->devfn, pos, 4,
+> +					&header) != PCIBIOS_SUCCESSFUL)
+> +			break;
+> +
+> +		if (!header)
+> +			break;
+> +
+> +		bitmap_set(dev->pcsc->cachable_bitmask, pos, 4);
+> +		for (i = 0; i < 4; i++)
+> +			pcsc_update_byte(dev, pos + i,
+> +					 (header >> (i * 8)) & 0xFF);
+> +
+> +		cap_id = PCI_EXT_CAP_ID(header);
+> +		cap_ver = PCI_EXT_CAP_VER(header);
+> +
+> +		pci_dbg(dev,
+> +			"Extended capability ID %#x (ver %d) found at %#x, next cap at %#x\n",
+> +			cap_id, cap_ver, pos, PCI_EXT_CAP_NEXT(header));
+> +
+> +		/* Check if this is a supported extended capability and infer cacheability */
+> +		for (i = 0; i < ARRAY_SIZE(PCSCS_SUPPORTED_EXT_CAPABILITIES);
+> +		     i++) {
+> +			if (cap_id == PCSCS_SUPPORTED_EXT_CAPABILITIES[i]) {
+> +				infer_extended_capability_cacheability(dev, pos,
+> +								       cap_id);
+> +				break;
+> +			}
+> +		}
+> +
+> +		pos = PCI_EXT_CAP_NEXT(header);
+> +	}
+> +}
+> +#endif
+> +
+>  static void infer_cacheability(struct pci_dev *dev)
+>  {
+>  	if (WARN_ON(!dev || !dev->pcsc || !dev->pcsc->cfg_space))
+> @@ -432,6 +631,10 @@ static void infer_cacheability(struct pci_dev *dev)
+>  		}
+>  
+>  		infer_capabilities_pointers(dev);
+> +#ifdef CONFIG_PCIE_PCSC
+> +		if (pci_is_pcie(dev))
+> +			infer_extended_capabilities_pointers(dev);
+> +#endif
+>  	}
+>  }
+>  
 
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
---=20
-In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
-Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---8dWd9aYyb2y9MZlB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaOfFYAAKCRAw5/Bqldv6
-8pCxAJ42fMNsmC9JjCmiJtNjG84lVoY2sgCgnH0MwALItQyJ3oYlt+cMtue1vjw=
-=hvkj
------END PGP SIGNATURE-----
-
---8dWd9aYyb2y9MZlB--
 
