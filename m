@@ -1,89 +1,58 @@
-Return-Path: <linux-kernel+bounces-846376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C60A2BC7C07
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:44:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB274BC7CDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B549D4F07C5
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:44:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 752B63A7C85
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825AB2D0601;
-	Thu,  9 Oct 2025 07:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ftfLRdiU"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C922D193B;
+	Thu,  9 Oct 2025 07:53:20 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E30925F78F
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 07:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9756260565;
+	Thu,  9 Oct 2025 07:53:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759995889; cv=none; b=SDzD7lPhXLoaCt3VmM6lAtzJXKmbkwQVdjBcMU/M39NMrJCa15m1w/d8h0mw8/nqJLAB/QpMq3b9BHdGiPdybHO1PnjPgcF5kaNlrcjO5pw15OvHyrWN77VOMIZzwxlPT+IkRiYnSXqzDUG1mExx1tfDs2CkBtGzdX8a6i68yyE=
+	t=1759996399; cv=none; b=ipvzg/IoJeSPDJYBNUyOGDNo5UzBjv58dJO6HFmVNhsJdvptOsDlrKm/cxc12GyYz8+aFmpVrtubx7mBlsauFzeBumCvFt2NzCIBHuPjE839Xs7sueZn9ZuCch1FsF0NZYbq3qTNXD8S5qQ89qpscvmo1VtxsVOR5U7ZBfW/B9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759995889; c=relaxed/simple;
-	bh=PFyF/2e1e/+3oQ3K/wXalt52DxrFeCjnhpvxqP9pXw4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ahe1V8b1ocYvLyJ9Ef+Avf+Iu1fww4VLL5yqXF53oDZtdV9RAsoA4IKaVM5/V4GdvmcP/dSOw2X3X/YLDe8XUVj0RYoA2+zqihD72+I4g7Hcq9Rk4fyrzbwIqwFkE/oAJlX4Svx5Gz/2cVkLuEja9rde/MVVhjeoQD2jNP9gucI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ftfLRdiU; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-57d8ff3944dso740398e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 00:44:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759995886; x=1760600686; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8Hq4tEYWxUzEgWsz0C9QYX3J9y7beXbVdVC71BzaPfc=;
-        b=ftfLRdiUfMhFnZCCHfQ2PiivvNMs5dhrhT8b3YaCVbYFt1qZN/TVaoI0un1i93Dgtd
-         vvS5Z1W+a1bc6aiMEXSvIqwlXOHuTT1ZafRpwPbmXyDhdzXBeJESi1crdAlv8mjkUxA/
-         9JQxntD2cZYb9YesahqvyjBUcFAeMYm1ZRSk1fihit2ouTlFwqCRvz/d4glw644DWAJo
-         tsSvcdXAyuUV4CexI7o8itUNGuhYnGeZPqzm1l3KFfdT3C+nyyStSKt8suqMEH3dKTOd
-         26oOBIj6Mhw12gYjoQTfFS47OlFCVze2nvgqb1ex08chxfwMKpAPOHej/yQBUst5+Ylh
-         IUDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759995886; x=1760600686;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8Hq4tEYWxUzEgWsz0C9QYX3J9y7beXbVdVC71BzaPfc=;
-        b=up3I3F8nTYXKRs07hg0JOxCgXPiElKWrykHByEGXr5nx491TQeHt5X2GlRhEEFqbNL
-         yjN/81TCDDHGOZ7wBXcSd68GPxTOcQBxKInEuhlcQCjWFlkvwdoS9UWd7szT0LjFvPMv
-         hlKKwlKzCpGIjtjXiOtEqW/vpA3IMACWYECRqgb0GXnfBWl38EC8THoTC4MgiM9BqOEm
-         VNIdPFUfCGHvBgxX3cQE8cVIkMXSlQezSOMgB1jDlo+mGnU2UOuVavIVsw4eM0sOs2es
-         5poFWmKleBpI46P67Vifa7h1xyX99OGchoiGBZNOYKjpsIVg/FedTCfNdZQqMFqwpYv4
-         ghRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUbum/NBU57Rurl0Y2AEc6GTqFR69OokTPDwKvVUwSMaGR/E09oYcJZoVw2NjZwyCSBL4W6acf2dJoQ2Cs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7fKS/wdC0HQdb5Jf56P+QRbGUjlnhbPzILWUPnciqm/L6zqk0
-	tNTjwrizcC6P4pjfmGP+x947ReODDeAVUexIueGpNUSU/eCT++Oja70DPs19pA==
-X-Gm-Gg: ASbGncuy0LVd7VP+Osgk0H+pdFOA2doyu+oQuEymu8p9GxiBrpIZUdY0OGeRnEwfRzd
-	A9wkmDsvOLCz4IH773WNmEbIeIoyPJHpyLig/9uFl1fxchdH74SLeIkj9hBIA2xXTqAp8qgZLcE
-	N5V1mK9DQ2GwhbhQxgHuXoaC+Q2y1RYrF+zye4+P66hJrdhK4bd51AbgWZtCH5dVx3ZdpEO/fwZ
-	4VSGod3RycWgTxYGewADrVr7BQre/N1pgWdJ9I3+R0dZsY5UTvsGY8d3O+xXgcNv/N2caRrSt0e
-	DoEhsMuGsx3WCgTz4bUTVSHLPzdIJi3W4ymMAhksbh2CL9CWH8F4dNtU9kNKg3KscrXBYSX/PM9
-	TU0CBTHfKj2XY4Vcp7ypHF1807rlAp1PkQ2JHbeCZIhsx/hbpOrPhmhrbKw6++EPa
-X-Google-Smtp-Source: AGHT+IEOgmWk7Fz4wvqBz+J+hHoNo/nYr91P4S3VAxGN2zP6aFWkQWDO2taB+0ag/Oi+tsqvBTldoQ==
-X-Received: by 2002:a05:6512:3ca8:b0:57d:92ec:67de with SMTP id 2adb3069b0e04-5906daeb7b6mr1973935e87.57.1759995885949;
-        Thu, 09 Oct 2025 00:44:45 -0700 (PDT)
-Received: from NB-6746.corp.yadro.com ([188.243.183.84])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5907ac00b40sm809797e87.6.2025.10.09.00.44.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 00:44:45 -0700 (PDT)
-From: Artem Shimko <a.shimko.dev@gmail.com>
-To: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>
-Cc: a.shimko.dev@gmail.com,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] i2c: designware-platdrv: handle reset control deassert error
-Date: Thu,  9 Oct 2025 10:44:43 +0300
-Message-ID: <20251009074443.2010699-1-a.shimko.dev@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1759996399; c=relaxed/simple;
+	bh=QUX5rA5OMoh5rzqVatDsfKqyFigx0L1oPdOhsFcXrEE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=duw/PjAvDyh6sf58n25iDZTwOHke1LLAWvew5d9PsQCOFAOcoSrAr3+IVrMeJYLLeZ4DZ6T4ngE9Sc4qhb2q5oxIapNXkiqfvQguR6qSQ/wN2WugANq2sGz4FsKhqLQLAnn35B+7aLwbIui6/74B5WZ3nwhy1qf6soCt1u7JrsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cj2Cz2VtYzKHMdD;
+	Thu,  9 Oct 2025 15:52:47 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id DBFF31A12F1;
+	Thu,  9 Oct 2025 15:53:15 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.50.159.234])
+	by APP4 (Coremail) with SMTP id gCh0CgA3+mHqaedo7Fo7CQ--.38248S4;
+	Thu, 09 Oct 2025 15:53:15 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: axboe@kernel.dk,
+	bvanassche@acm.org,
+	ming.lei@redhat.com,
+	nilay@linux.ibm.com,
+	jmoyer@redhat.com
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: [patch v2 0/7] blk-mq: introduce new queue attribute async_depth
+Date: Thu,  9 Oct 2025 15:46:27 +0800
+Message-Id: <20251009074634.527661-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,60 +60,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgA3+mHqaedo7Fo7CQ--.38248S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7tw1kKr13uw1rXF1kXryrZwb_yoW8Crykp3
+	93tF1Skr17Kr47WryfJw13Xr1fAwn3Cr43Jr13KryxJry5ArsFvFnYqF1rXr97ZryrAanF
+	gr1qya95Kry2vFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Handle the error returned by reset_control_deassert() in the probe
-function to prevent continuing probe when reset deassertion fails.
+From: Yu Kuai <yukuai3@huawei.com>
 
-Previously, reset_control_deassert() was called without checking its
-return value, which could lead to probe continuing even when the
-device reset wasn't properly deasserted.
+Changes in v2:
+ - keep limit_depth() method for kyber and mq-deadline in patch 3;
+ - add description about sysfs api change for kyber and mq-deadline;
+ - improve documentation in patch 7;
+ - add review tag for patch 1;
 
-The fix checks the return value and returns an error with dev_err_probe()
-if reset deassertion fails, providing better error handling and
-diagnostics.
+Background and motivation:
 
-Signed-off-by: Artem Shimko <a.shimko.dev@gmail.com>
----
-Hello maintainers and reviewers,
+At first, we test a performance regression from 5.10 to 6.6 in
+downstream kernel(described in patch 5), the regression is related to
+async_depth in mq-dealine.
 
-This patch adds proper error handling for reset_control_deassert() in the 
-DesignWare I2C platform driver probe function.
+While trying to fix this regression, Bart suggests add a new attribute
+to request_queue, and I think this is a good idea because all elevators
+have similar logical, however only mq-deadline allow user to configure
+async_depth.
 
-Currently, if reset deassertion fails, the driver continues probing which
-could lead to operating a device that is still held in reset. This patch
-ensures we properly check the return value and fail the probe with a
-meaningful error message if reset deassertion fails.
+patch 1-3 add new queue attribute async_depth;
+patch 4 convert kyber to use request_queue->async_depth;
+patch 5 covnert mq-dedaline to use request_queue->async_depth, also the
+performance regression will be fixed;
+patch 6 convert bfq to use request_queue->async_depth;
 
-The change is safe because:
-1. reset_control_deassert() handles NULL pointers (for optional resets) 
-   by returning 0 (success)
-2. For non-NULL reset controls, we now properly validate the operation
-3. dev_err_probe() provides appropriate error context for diagnostics
+Yu Kuai (7):
+  block: convert nr_requests to unsigned int
+  blk-mq-sched: unify elevators checking for async requests
+  blk-mq: add a new queue sysfs attribute async_depth
+  kyber: covert to use request_queue->async_depth
+  mq-deadline: covert to use request_queue->async_depth
+  block, bfq: convert to use request_queue->async_depth
+  blk-mq: add documentation for new queue attribute async_dpeth
 
-Thank you for your consideration.
+ Documentation/ABI/stable/sysfs-block | 34 +++++++++++++++
+ block/bfq-iosched.c                  | 45 ++++++++-----------
+ block/blk-core.c                     |  1 +
+ block/blk-mq-sched.h                 |  5 +++
+ block/blk-mq.c                       | 64 +++++++++++++++++-----------
+ block/blk-sysfs.c                    | 47 ++++++++++++++++++++
+ block/elevator.c                     |  1 +
+ block/kyber-iosched.c                | 33 +++-----------
+ block/mq-deadline.c                  | 39 +++--------------
+ include/linux/blkdev.h               |  3 +-
+ 10 files changed, 157 insertions(+), 115 deletions(-)
 
-Best regards,
-Artem Shimko
-
- drivers/i2c/busses/i2c-designware-platdrv.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
-index a35e4c64a1d4..4c57c79d4ce5 100644
---- a/drivers/i2c/busses/i2c-designware-platdrv.c
-+++ b/drivers/i2c/busses/i2c-designware-platdrv.c
-@@ -240,7 +240,9 @@ static int dw_i2c_plat_probe(struct platform_device *pdev)
- 	if (IS_ERR(dev->rst))
- 		return PTR_ERR(dev->rst);
- 
--	reset_control_deassert(dev->rst);
-+	ret = reset_control_deassert(dev->rst);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret, "Failed to deassert reset\n");
- 
- 	ret = i2c_dw_fw_parse_and_configure(dev);
- 	if (ret)
 -- 
-2.43.0
+2.39.2
 
 
