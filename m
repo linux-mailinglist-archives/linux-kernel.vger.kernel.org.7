@@ -1,135 +1,156 @@
-Return-Path: <linux-kernel+bounces-846848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32420BC9392
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:15:17 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF44DBC9395
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EB313E5CB9
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:15:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 66DE94EA055
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041EC2E7F02;
-	Thu,  9 Oct 2025 13:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C6292494D8;
+	Thu,  9 Oct 2025 13:15:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="wqUZCOdC"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UO3RCLU2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB15A2494D8;
-	Thu,  9 Oct 2025 13:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1DF1F94A
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760015704; cv=none; b=XrU58O1p3YApQdw4TmUW9TmC+vmdiJ6nNSO4IBJBKTbBYI6kXK2RyusFx0HQgM6hgcGim6YuPATsHTwcmWtBx0ndla5jDvvOs3PmOSS8EWM+3P6Dhw9lzcvgUY8Qqe0CBe3thJYAsFA/7ltlYxw4mqieNK5AzzRbRKuwUskdOAA=
+	t=1760015732; cv=none; b=Dm1s86DgQFls23jRdTgX36KkcYMTImZdHhgiGUFOgefjPiEZdZ+YU/6IZTAzp/Tx1zH7pyErvcMK81a6C5ODDybWj/fhe6CSnLTeq9yBfwy1knsN9Yn4yDvAYGD0IcA17qRSOetwdBbJ0ANfNvtFbMJJPON0qZYCXjkGxSjmt/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760015704; c=relaxed/simple;
-	bh=j0l9ua/U78CufSLNpx34v7XViGw39ySUB1aw/O0i6TA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UorfLFCeNHYS3WYjZviuhPD5AYQGjJqag8ByNabePyOmNxQetubV6n/fdRBJ5ZKJNNtejFbb9L6qFNgHQkErjz5huo8Lb5+hu3vNDJ5qAYrVSvwcWT8+1ARULe+eN9yAej7daYg51Jdy9dCLCJ48EsyfMITriyypkZJ7oL7u9Cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=wqUZCOdC; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=kK41qbPw1q3UMz4pwunY5z+aeQyJVyFxmh5g1nvkj0c=; b=wqUZCOdC1v8OPCKVMTg4GIzsbf
-	Vnk4mJs8ipdjSXaq4zvP67kMxSm5Ifcq19yYYlJqn1ojevJk3jA1Fcg22Fzf8aNo4/MjMMCf0B9PG
-	qvXeUYq7oJvAUOqwN5my82VqbZ/BQkIWxQ/1nvWTcYiXB09rDVOsZ8mgp5chxFcoq3OE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1v6qTn-00AWyE-Eh; Thu, 09 Oct 2025 15:14:47 +0200
-Date: Thu, 9 Oct 2025 15:14:47 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Liangbin Lian <jjm2473@gmail.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	heiko@sntech.de, quentin.schulz@cherry.de,
-	kever.yang@rock-chips.com, naoki@radxa.com, honyuenkwun@gmail.com,
-	inindev@gmail.com, ivan8215145640@gmail.com,
-	neil.armstrong@linaro.org, mani@kernel.org, dsimic@manjaro.org,
-	pbrobinson@gmail.com, alchark@gmail.com, didi.debian@cknow.org,
-	jbx6244@gmail.com, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 3/3] arm64: dts: rockchip: add LinkEase EasePi R1
-Message-ID: <ceb6ab82-95a7-4f65-854f-9b04dfa1ff34@lunn.ch>
-References: <20251009084416.45542-1-jjm2473@gmail.com>
- <20251009084416.45542-4-jjm2473@gmail.com>
+	s=arc-20240116; t=1760015732; c=relaxed/simple;
+	bh=u7e8U8bfwzk2g/rSNczZEhwvR7EzjDwzSxMrwFVikZo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nEAYeqGPIFC4VoWj7y92BsLqKZzVH0iqxAOXlpU5ZjkZimc9m7lAlU7zuU8SDMeBM3uqsN2u9GMBzu+VuR7otWPWrkkYeUIbk7LbXOM6bPrug/9JVvHYIXqKN4r+WNmOgW9HEPydQu4vsm0OyDSFlaf+tHP741XqUS7NQwWIxCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UO3RCLU2; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760015730;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=yk4L7A+tHTQDrzMyPRzKi0T3odLwJzw1nVZecEOu8BY=;
+	b=UO3RCLU2lQLfCqaW+IwbDSI5PpLrGnD5lq3bJjH2WxpJR4vF83vzMc/0AIMTDNoRQjV6rq
+	kJzzeTAZ4DPl9UwmvVDoTKftY+OW7JVDomL6AzOZ2oNLd8vYpiur9bAJNjv87oD8N3t4Zw
+	8x2HYoRD9xkcLaYoaD0j+n3wViHrYZA=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-682-xzYE8NOQOOmHK4q00nG3qQ-1; Thu,
+ 09 Oct 2025 09:15:28 -0400
+X-MC-Unique: xzYE8NOQOOmHK4q00nG3qQ-1
+X-Mimecast-MFC-AGG-ID: xzYE8NOQOOmHK4q00nG3qQ_1760015727
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 800E5195608E;
+	Thu,  9 Oct 2025 13:15:27 +0000 (UTC)
+Received: from [10.45.242.31] (unknown [10.45.242.31])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E719619560BB;
+	Thu,  9 Oct 2025 13:15:09 +0000 (UTC)
+Message-ID: <2a7f72cd-4418-4a15-bf68-caa157875d64@redhat.com>
+Date: Thu, 9 Oct 2025 15:14:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251009084416.45542-4-jjm2473@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 2/2] vduse: lift restriction about net devices with CVQ
+To: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, mst@redhat.com
+Cc: Yongji Xie <xieyongji@bytedance.com>, virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Maxime Coquelin <mcoqueli@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ Dragos Tatulea DE <dtatulea@nvidia.com>, jasowang@redhat.com
+References: <20251007130622.144762-1-eperezma@redhat.com>
+ <20251007130622.144762-3-eperezma@redhat.com>
+Content-Language: en-US
+From: Maxime Coquelin <maxime.coquelin@redhat.com>
+Autocrypt: addr=maxime.coquelin@redhat.com; keydata=
+ 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
+ Mwqu3GQ=
+In-Reply-To: <20251007130622.144762-3-eperezma@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-> +&gmac0 {
-> +	phy-mode = "rgmii-id";
-> +	clock_in_out = "input";
-> +
-> +	assigned-clocks = <&cru SCLK_GMAC0_RX_TX>, <&cru SCLK_GMAC0>;
-> +	assigned-clock-parents = <&cru SCLK_GMAC0_RGMII_SPEED>;
-> +	assigned-clock-rates = <0>, <125000000>;
-> +	phy-handle = <&rgmii_phy0>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&gmac0_miim
-> +		     &gmac0_tx_bus2
-> +		     &gmac0_rx_bus2
-> +		     &gmac0_rgmii_clk
-> +		     &gmac0_rgmii_bus>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&gmac1 {
-> +	phy-mode = "rgmii-id";
-> +	clock_in_out = "input";
-> +
-> +	assigned-clocks = <&cru SCLK_GMAC1_RX_TX>, <&cru SCLK_GMAC1>;
-> +	assigned-clock-parents = <&cru SCLK_GMAC1_RGMII_SPEED>;
-> +	assigned-clock-rates = <0>, <125000000>;
-> +	phy-handle = <&rgmii_phy1>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&gmac1m1_miim
-> +		     &gmac1m1_tx_bus2
-> +		     &gmac1m1_rx_bus2
-> +		     &gmac1m1_rgmii_clk
-> +		     &gmac1m1_rgmii_bus>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&mdio0 {
-> +	rgmii_phy0: ethernet-phy@1 {
-> +		compatible = "ethernet-phy-ieee802.3-c22";
-> +		reg = <0x1>;
-> +		pinctrl-0 = <&eth_phy0_reset_pin>;
-> +		pinctrl-names = "default";
-> +		reset-assert-us = <20000>;
-> +		reset-deassert-us = <100000>;
-> +		reset-gpios = <&gpio2 RK_PD3 GPIO_ACTIVE_LOW>;
-> +	};
-> +};
-> +
-> +&mdio1 {
-> +	rgmii_phy1: ethernet-phy@1 {
-> +		compatible = "ethernet-phy-ieee802.3-c22";
-> +		reg = <0x1>;
-> +		pinctrl-0 = <&eth_phy1_reset_pin>;
-> +		pinctrl-names = "default";
-> +		reset-assert-us = <20000>;
-> +		reset-deassert-us = <100000>;
-> +		reset-gpios = <&gpio2 RK_PD1 GPIO_ACTIVE_LOW>;
-> +	};
-> +};
 
-For these nodes only:
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+On 10/7/25 3:06 PM, Eugenio Pérez wrote:
+> Now that the virtio_net driver is able to recover from a stall
+> virtqueue, let's lift the restriction.
+> 
+> Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
+> ---
+>   drivers/vdpa/vdpa_user/vduse_dev.c | 3 ---
+>   1 file changed, 3 deletions(-)
+> 
+> diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
+> index e7bced0b5542..95d2b898171d 100644
+> --- a/drivers/vdpa/vdpa_user/vduse_dev.c
+> +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
+> @@ -1726,9 +1726,6 @@ static bool features_is_valid(struct vduse_dev_config *config)
+>   	if ((config->device_id == VIRTIO_ID_BLOCK) &&
+>   			(config->features & BIT_ULL(VIRTIO_BLK_F_CONFIG_WCE)))
+>   		return false;
+> -	else if ((config->device_id == VIRTIO_ID_NET) &&
+> -			(config->features & BIT_ULL(VIRTIO_NET_F_CTRL_VQ)))
+> -		return false;
+>   
+>   	if ((config->device_id == VIRTIO_ID_NET) &&
+>   			!(config->features & BIT_ULL(VIRTIO_F_VERSION_1)))
 
-    Andrew
+I wonder whether the API version should be increased, otherwise I don't
+see how the app creating the VDUSE device knows whether it can safely
+advertises the CVQ support (except without doing trial and error).
+
 
