@@ -1,80 +1,102 @@
-Return-Path: <linux-kernel+bounces-846968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E871BBC98CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:39:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6533BC98C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:38:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A11CD3A574C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:39:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B22F3A5796
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A9B2D374F;
-	Thu,  9 Oct 2025 14:39:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C95C32EA168;
+	Thu,  9 Oct 2025 14:38:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UnHm3NGW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="h55SnEXO"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6CC1E47A3
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 14:39:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B692BE04B
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 14:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760020762; cv=none; b=coSyIS5zV75/WD1ZBDH+7LpXsuMLMyt6NXgOc8ATFdP4SpacGjoeggkaaw2+6gVTlI4IUCe1zz4Rp3wnf1orMY27SCfUwN17Pm97sqG+SV/GY31Is9G88CzzVY6YlbPy3M5EG8RojSoudNUru4P0Hqm+gFLL55QbairjEzqFqK0=
+	t=1760020719; cv=none; b=u3/ZrOf14SsLI30chhtiIUtPyUjq2UDU4WYRcH40cIi/v60+JNodDGNqPcxNIp/p7+sQTMxf4yZt2hcRbuzLqQSa2e+0cs/47I0sseYz1NnjtCXN7DUk3utSyRoJMWXrOuQtIaZP44TLKbmSNIqrJZiz1EWyr/siZHv7ItIxWeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760020762; c=relaxed/simple;
-	bh=j93VkEC5y+j4DrXUTnVPQHWqW1fdd5T1XGijsRlHJEM=;
+	s=arc-20240116; t=1760020719; c=relaxed/simple;
+	bh=vp7VjUXj+As7oOKkaiuaBC5XXitotERlBrJ3mgdUli8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eXNa0KTF/zh7nn/MzAt9uIy9SvyKaRHKN05RPc8qBIoUeeuSyFk8YaHSwWmSvr1PB3agL/Y6zeyv4dDU/h8x7AMOLdDjwLuB2KG/AHQCuWPcr4zM88jtnxNyR/n6cCIaxD2bQbYoV+TRsMTyt7owBP7UjYG5q+u5Frp4pRqD6Ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UnHm3NGW; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760020760;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=knbG7CN/zSrmeXUiLurkTiRiRI7XemaD20mgY1wNrHI=;
-	b=UnHm3NGW0FMb44ZkNxFUmIV5h5GpJ15bZb43D9923KUz7A5hqfECyDE3L4j2dQAckvhiFl
-	fg8x5liVz+uN83CdA7KJZKHC6LdsPrUv7Eo7IX1Kcbu41gHHaPoQNTSdYHJxA0jLeU8U8f
-	/GyH38F2tWmzbGyibzRvKJDDSSwSLUM=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-391-egfYjIPEMbK6ZxbLKno0wg-1; Thu,
- 09 Oct 2025 10:39:17 -0400
-X-MC-Unique: egfYjIPEMbK6ZxbLKno0wg-1
-X-Mimecast-MFC-AGG-ID: egfYjIPEMbK6ZxbLKno0wg_1760020755
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 442D519560AF;
-	Thu,  9 Oct 2025 14:39:15 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.227.6])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 2C10330001B7;
-	Thu,  9 Oct 2025 14:39:10 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Thu,  9 Oct 2025 16:37:54 +0200 (CEST)
-Date: Thu, 9 Oct 2025 16:37:49 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	David Howells <dhowells@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-	Li RongQing <lirongqing@baidu.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] seqlock: introduce scoped_seqlock_read() and
- scoped_seqlock_read_irqsave()
-Message-ID: <20251009143748.GA2704@redhat.com>
-References: <20251008123014.GA20413@redhat.com>
- <20251008123045.GA20440@redhat.com>
- <CAHk-=wjozC9_JCdEW9K_uruJqzTLzhtcVpgDk1OuqErNRUS7Mg@mail.gmail.com>
- <CAHk-=wjuoFm9yZur_T4VOnX2iyDYD6T_gDRXE5ms9538W6Q35g@mail.gmail.com>
- <CAHk-=wiHbN+_LCmSj2sHswDRJ0yG3kkjptMvCXcMwk7jWK1F=Q@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cGyIZ1bLDWp0q4LWXPEmjnT+hralek/seI5iGzYHwBZlLgiRPzd5ajIZCpmcvliuhPQMGQuxpi4w6vsiqtpwXmwLpfDF/WOBrsTz2uL5pzMMBemAu7HgcNWdbpHjqC99rBrjcrocOZID3yITJk8FMI4R6UDM0bJNM7qFuqycmWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=h55SnEXO; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 599EKNdH023267
+	for <linux-kernel@vger.kernel.org>; Thu, 9 Oct 2025 14:38:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=4vBhPHQU3f3k1y9DS67UjAgU
+	bNDRpJ4AofTiTYruk3A=; b=h55SnEXOobNRQlQCOCWUy9CbVe6LDj6avqwfogwk
+	qIkxNU4IRyy6eFxbcmOe/xohO9vcljTJ8FDB2qB4MS+HLhrFo95dKIAIO5rbiU2R
+	B3BXtXj/Tbxdd8ACGmjcyoUAjx+YjOvqc4pI/O4rFJbVMwl8jVEsKNuq8jhCEHKZ
+	RJNbuImxdcZbegeiXSstzfYNBfcmhYdf31VPRtwWL1V0tA8Ks2CejTNeOgTb2+bT
+	tH7WfWKsU+t64ggVEhG6anr2TIAMnvo4TUm6XZiAjPW5tc0n1VwhkvejB01nokUB
+	TdndrodXgO1CPpOg/6GkLJwt55aBE0vYUmGbU5QFNKJ7KQ==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv4m37qd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 14:38:36 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4d905ce4749so30722271cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 07:38:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760020715; x=1760625515;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4vBhPHQU3f3k1y9DS67UjAgUbNDRpJ4AofTiTYruk3A=;
+        b=X8rqripWdwxkoK0pJf5MtNDooP0+CCKxLWLWLXPctfStJVzjheMesa8Tr2lFXtufvw
+         f7AUkYPKUmzU7p6dHN+WabNNxUW5FGNXH/bGodYSJa4vGl1+8JDKrnprNdeR+rXLcxQI
+         AtVSCi14lgmV0WcA4WFgeHwDvrphon0PVBhIwevjQsfNoHqaBxJ17h6OtN5lnG3I1H8b
+         uLeoz9FX6kdW1mLKGBvReTa52ty7ufhHDOblS2c+nc5J8ogq8pXZ70e1YSEWzdiyHxjd
+         KiH9sa5ygspXUeotYLlrHQL23XJ03L5T45F6qZ0OSRiEL0hwalW+AKfpy6vxbRfzoD2e
+         rO+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWn7QBXNduuKSwlFEp1MnGyOH6c+EbWQjm6plRxlIPeMGN32jcEpcWDw8f4AtdcRwkmJ7DopyODqYvSQUM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZANUx8J+1MFns3D+8sCpnasZaXVvGf26nkTceI6iegoPDLPyG
+	KCLwQVkO0pJjjBmyiwrJ1nOG3D2kqeDchBfod48zO69y4ot76XZ6DazP1vC9NF9ktDRgZCrRi2h
+	N6lNY1pDbG7UUNPrFEM2e9Is1CwkSTiUPWhY8650jBrkEj2CgxTBPceYALz/QZESYP7I=
+X-Gm-Gg: ASbGnctzLF8BMUEJ8LNJcHuyg5PwgO0cb876uRNQpbCFFC5bn0It2ioIjqdSW1L+stZ
+	fGifLGYdCsEdB/6mPo+JjTfOmmmF/zC5/+seQlqdfTv86E9ZMJPu6l17EinnevPbLK/ztgLSENw
+	H22fQfgyGC9372ztJ5psOoHTe/c0mAN0E2eXhPACCYGzerjq+5cVtMimoymb737BCg7RsmULMuc
+	Mrvk5J+wEljXHrNCOrmMDuew5UUieOQvFLcOiJkICO7DZ3TGCq4IJiTVsyFBV8SowEn/dgXn242
+	qRJsQWmMa4THI0ocfJiCxH8UGG3Nqt04ze8737kdMnbJyfqtjmIK9a680TKP/kF2SoMQ/89bapE
+	obMc8GZ3D0yPPk179ILANN1zClJBXHajejlXCcI+NZjQTvHxrrhWSaeaswg==
+X-Received: by 2002:a05:622a:4812:b0:4d7:bf73:7641 with SMTP id d75a77b69052e-4e6eacb362emr101465761cf.17.1760020715182;
+        Thu, 09 Oct 2025 07:38:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHJWR/L5QvAdufneVpdCNLbrPazn1qmhQTRqnRIiTH9ugDxuMkMX/Hp2rQmkitaj4be/K7DKQ==
+X-Received: by 2002:a05:622a:4812:b0:4d7:bf73:7641 with SMTP id d75a77b69052e-4e6eacb362emr101465171cf.17.1760020714634;
+        Thu, 09 Oct 2025 07:38:34 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-375f39d509bsm29456381fa.12.2025.10.09.07.38.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 07:38:33 -0700 (PDT)
+Date: Thu, 9 Oct 2025 17:38:32 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: usb: ti,hd3ss3220: Add support for
+ VBUS based on ID state
+Message-ID: <cbpne2d7yr2vpxmrrveqajlp3irzsglxroxyyjmviuci2ewted@6ewwp6yyybk5>
+References: <20251008175750.1770454-1-krishna.kurapati@oss.qualcomm.com>
+ <20251008175750.1770454-2-krishna.kurapati@oss.qualcomm.com>
+ <odikli6rfdyid5oqavurtqytgnwgh5hpmka2jt5tprpdw7cd72@icpnjnkfowt7>
+ <20251009131543.GA379737-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,39 +105,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wiHbN+_LCmSj2sHswDRJ0yG3kkjptMvCXcMwk7jWK1F=Q@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+In-Reply-To: <20251009131543.GA379737-robh@kernel.org>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfXxOfcnn7W92am
+ lN01H9eSmjW3wH2iFitjRzw4rWEfYsVIpGVzh+CqGvzCbqwUE6NGU/JiKo821Mr0YRql7CyNR2m
+ 3U2Drxer0bxsMY14sypzy+SxsQlkiMLuZ2D0ycckcuYotwv3UbySjwjt7KHphiw5/zc5RstlRfc
+ F2S7tfxp2o4rAq1g7wxET0sWFIHIH3m9WSKXjX1IGlfDIBX/p3Iu4KWUpZyYdwBnBjVNuiDZa3Y
+ eB/GP3ZXHzDf0wr5okAMgInBGIvAFLWbDILwSLQgEcw0dJo4IvkkJoL1e1HDayQwdx3xTxAc1ae
+ NmrCyXe3UROmti9+f+9qIJ+NNgmGik9zKPiObzqD7Zqcnw62Xq8ZmoUbSbq9p1cQ7cCAutkeAg6
+ FxmhyTKZw9wX7U51MoY3njBzBPy5Pg==
+X-Authority-Analysis: v=2.4 cv=B6G0EetM c=1 sm=1 tr=0 ts=68e7c8ec cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=wJJNMdjIKgIFmJVF0V4A:9 a=CjuIK1q_8ugA:10
+ a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-GUID: UMKmtV9xjJ1fcMp7o1UywLFItJBP9LsH
+X-Proofpoint-ORIG-GUID: UMKmtV9xjJ1fcMp7o1UywLFItJBP9LsH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-09_05,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 lowpriorityscore=0 bulkscore=0 clxscore=1015 suspectscore=0
+ malwarescore=0 adultscore=0 priorityscore=1501 phishscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
 
-On 10/09, Linus Torvalds wrote:
->
-> I'm batting zero. I still think it's true that this logic should be
-> handled by the for-loop, but the *seq=1" hackery did actually do
-> something.
+On Thu, Oct 09, 2025 at 08:15:43AM -0500, Rob Herring wrote:
+> On Wed, Oct 08, 2025 at 09:31:59PM +0300, Dmitry Baryshkov wrote:
+> > On Wed, Oct 08, 2025 at 11:27:49PM +0530, Krishna Kurapati wrote:
+> > > Update the bindings to support reading ID state and VBUS, as per the
+> > > HD3SS3220 data sheet. The ID pin is kept high if VBUS is not at VSafe0V and
+> > > asserted low once VBUS is at VSafe0V, enforcing the Type-C requirement that
+> > > VBUS must be at VSafe0V before re-enabling VBUS.
+> > > 
+> > > Add id-gpios property to describe the input gpio for USB ID pin and vbus-
+> > > supply property to describe the regulator for USB VBUS.
+> > > 
+> > > Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+> > > ---
+> > >  .../devicetree/bindings/usb/ti,hd3ss3220.yaml       | 13 +++++++++++++
+> > >  1 file changed, 13 insertions(+)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml
+> > > index bec1c8047bc0..c869eece39a7 100644
+> > > --- a/Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml
+> > > +++ b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml
+> > > @@ -25,6 +25,19 @@ properties:
+> > >    interrupts:
+> > >      maxItems: 1
+> > >  
+> > > +  id-gpios:
+> > > +    description:
+> > > +      An input gpio for USB ID pin. Upon detecting a UFP device, HD3SS3220
+> > > +      will keep ID pin high if VBUS is not at VSafe0V. Once VBUS is at VSafe0V,
+> > > +      the HD3SS3220 will assert ID pin low. This is done to enforce Type-C
+> > > +      requirement that VBUS must be at VSafe0V before re-enabling VBUS.
+> > > +
+> > 
+> > Stray empty line?
+> > 
+> > > +    maxItems: 1
+> > > +
+> > > +  vbus-supply:
+> > > +    description: A phandle to the regulator for USB VBUS if needed when host
+> > > +      mode or dual role mode is supported.
+> > 
+> > Why are we adding the property here while we can use the vbus-supply of
+> > the usb-c-connector?
+> 
+> Normally, that's my question on both of these, too. However, it does 
+> look like both are connected to the chip. There's VBUS_DET which is 
+> connected to Vbus (thru a 900k resistor). So having these here does look 
+> like accurate representation of the h/w. The commit message should make 
+> this more clear. Honestly, that's really the only part I care about. 
+> How it works is not so important. 
 
-Yes...
+The VBUS_DET pin is used by the controller to detect the VBUS provided
+by the USB-C partner and to identify when it's safe to turn on the
+device's VBUS supply. I think this still fits into the description of
+the connector's vbus-supply.
 
-> But I think it means that "lockless" would have to be a "phase", and go 0/1/2.
-
-OK, I like your version more than mine. In particular, the fact that it
-puts seq/flags into the unsigned long data "union", somehow I didn't think
-about this option. Plus, yes, it removes the "make/check seq is odd". Nice.
-
-But do we really want to unroll the loop? This code should be optimized
-for the likely case when the lockless pass succeeds.
-
-Let me think a bit more before I send V3...
-
-
-> #define __scoped_seqlock_read(lock, s, cond) \
-> 	unrolled_full for (struct { unsigned long phase, data; } s = { 0 }; \
-> 		s.phase < 3 && cond(lock, s.phase, &s.data); s.phase++)
-
-I guess in your version "struct" doesn't buy too much, just saves one
-__UNIQUE_ID(). But this is a matter of taste.
-
-Thanks!
-
-Oleg.
-
+-- 
+With best wishes
+Dmitry
 
