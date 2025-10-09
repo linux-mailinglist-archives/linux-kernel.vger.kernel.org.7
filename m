@@ -1,121 +1,165 @@
-Return-Path: <linux-kernel+bounces-846812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67104BC91A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:45:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8D72BC91B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:46:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E9B81A6276A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:45:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FB053A6F18
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5DB2E6114;
-	Thu,  9 Oct 2025 12:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XVjMyp9y"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB4D2E11AB
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 12:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8A22E2EFC;
+	Thu,  9 Oct 2025 12:45:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A4722E11AB
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 12:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760013927; cv=none; b=d4MO4tf/MiyBuVFykLEPZiKK5mrbweYNA2nKqQWXSjnkRtSS8u/xFXPeNFJ+T6CxGzPdYT/Fac+6E4W+9Nyx229guBhkuW1hpOQDWEY0oRHuaiLOEfl0dZSXKM57j0kFcC0zwsm3LPpUUL9iBKR0GxePKLI2hz3ADzHteuc+8QQ=
+	t=1760013954; cv=none; b=Cg7/ET0Wu6H0U6jHRzIPnzWf5Pj7/srPUDCiTygNTtnwzvfUUHI8mkrLAvxLuCvgeAEkLnn8t5Yy4nJhpBD2qaAh8gsdrsC7hJOcywywJ3ydakN6JtnknHeSeZN8IToIglAOY1Ikccvyb8iqM8nPTgUrDccKeefST2h3REmNCwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760013927; c=relaxed/simple;
-	bh=+qIn+RPmmwPv3OjgMXBX77cROFYyBV3LwSb/xEzaOA0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=I5jBYMe3ouel2mfIH2GlOUsXu78XrcZKg4uqCzenKdcYDzwCJ/DyznCJVXPBKMvnaVKKpV7LWd70I9zPHsniBpU0PcvTitgcYxQPjYtN5l/SiMaIJduYcYeVJNQdLAP2trZKsnULAYL9pYXGgJjUMcU9OQO8eQG4C03QMH4dfIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XVjMyp9y; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-62f24b7be4fso1604984a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 05:45:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760013923; x=1760618723; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=+qIn+RPmmwPv3OjgMXBX77cROFYyBV3LwSb/xEzaOA0=;
-        b=XVjMyp9ybbgsoaIoC6phHf0gwxtiqkvDTBltEZRWMXSk6fiOglqgNCBGLdih1aeLXi
-         wXwSmbwg+ykKhcO7s2ekQZiqcb6+L6GbxwAyGMJrF4w9/Du7pbucRWUN8zDwRam5Ui+z
-         I5fKc7qcG3dSzvD2cG4TzOCc61dyPqqBIKKtSMYmAPOgGYSrimg8vOIhlUZY3ClIbQWd
-         0kIbhYFBP9RCKAg3ZKqthtPQPcMOSL6vSG0TvkRh0XsXDjrjKTKGTqcSfb52Xp4A+qX6
-         4XHPyTEZ4uokAguOhB8yFBvn0wb8AIVgtofX57M5I1jVzH5WJWAqr1fR5A9XD/XihoSl
-         4RZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760013923; x=1760618723;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+qIn+RPmmwPv3OjgMXBX77cROFYyBV3LwSb/xEzaOA0=;
-        b=gj1SF5CzaxEVNjx+W+Jm2P6pGJCoxao7UPYjDvSJDPR43O5Q0cuOHNFifGKWj2x+w9
-         HJ6xr0wUToUIVJhSoQZH2wVvS8v5TIEfvkwb44uthDvATmMDcF4UlbFooZyz5s7WY9D3
-         rM+pWM1v06Z6LuDTIvQ2edxoWrmLI3Fq/r0WyLRbf+XxUb56kp+ZUz/eD5TRb6yt0wp6
-         iWoG4zFxQJfF44TmwD3pTPFqQvNham4/dLuqysK2wLoH5kwhUB0Iuk/2UTgh4lL8B31E
-         HfXYdSyTRtctAOCf7qacYURTx9dd0WFuoP+yx0fL42K4BVoE089WNqM5uhnvfxVUDX3p
-         3Mkw==
-X-Forwarded-Encrypted: i=1; AJvYcCWLjdvGSalOddxqw8lkFKCaQWnVvnH2Nt2aH9OPksAmw5cWT7ns9f4BP6GIY8ujqlW6+/67CnUyH0mK62Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXisMbaeIlq9+3jOFA66jEzdp/S+xl+MmPW9tz47viwm8+ePmt
-	HeUb4RlblGAYzBUHHykvO/jY1G1VfUJuhnIKxamKILGQgS/DBb6DQUFtg5cISQTir5Y=
-X-Gm-Gg: ASbGncsrVnvQ74D9Xg7vajH4LoVv8xigplFNytyfmW1LhM5a/24GUZBdDkYUSfjhr7H
-	RLnrr21tzOqlWutoybl9hUyt6c6wofP6o7jV5XKA9EYOJEfEi7Y0gAkqhxDZvmpasyz0TEqWp89
-	IWKYdMWGnmOLXzs9DEN9+BLOzBomyhUzTbx3hydZOFGQl0qYdEBUWLsOVMm+LvgMGVXRkcHyM/2
-	0VWBb2SHd/QhZwpYBjNtOECqoah0P+1hXYy26tDnIQFCKFuor1jpORblGunZZP+crL8QssBMDaB
-	c8Nj/BpD0FhdEGOvahDZObK8Ut0T0DeB51Fq7SWMSpk/6/r2hPi9UVZqjd2+p7xVSvBqiVVckJi
-	mQaVgQggdhyPLxPiiMIglYicJwLzD2ccx5aR61BVFwryFaNNd1vxwbA==
-X-Google-Smtp-Source: AGHT+IF1kryN6ovbJfIQc/Fy4MJIAskuq3zQgUsbduVZ1K8QdtBLyuZQWhuT43c/0DSCHjf+2b58hA==
-X-Received: by 2002:a17:907:3daa:b0:b45:60ad:daf9 with SMTP id a640c23a62f3a-b50a9a6cb4fmr894498966b.3.1760013923400;
-        Thu, 09 Oct 2025 05:45:23 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b4865f7420asm1880196166b.43.2025.10.09.05.45.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 05:45:23 -0700 (PDT)
-Message-ID: <8e95e30e0ca9a85ee40f93e01c23edbfb4e1b3ff.camel@linaro.org>
-Subject: Re: [PATCH] dt-bindings: soc: samsung: exynos-sysreg: add
- power-domains
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski
-	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Alim Akhtar
-	 <alim.akhtar@samsung.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus
-	 <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, 
-	kernel-team@android.com, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Thu, 09 Oct 2025 13:45:21 +0100
-In-Reply-To: <13426fe2-d4cc-4d87-bc4a-4a6dca955456@kernel.org>
-References: 
-	<20251008-power-domains-dt-bindings-soc-samsung-exynos-sysreg-v1-1-ab41c517dec6@linaro.org>
-	 <13426fe2-d4cc-4d87-bc4a-4a6dca955456@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-2 
+	s=arc-20240116; t=1760013954; c=relaxed/simple;
+	bh=HbNovGCEeUKtNbjcTLv4eSL94xDsy5k2YBrciaio6zM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WQNnH0y9ljQJtXLHB65pff4QKtJm0qIW7E2rpo0kRlXIMRgevapKPZtzlZtp7HUYO56zBN/FIYksS1LQ+WPVFvXX60geXCiSuY8D8eAnSaXepNlBt1DuP5Buu2cT0gKdOM2hwY1UiOMoWuUMvYYvYrT8R1di87vmTyuCkuq0Hj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F3232176A;
+	Thu,  9 Oct 2025 05:45:42 -0700 (PDT)
+Received: from [10.1.34.29] (e122027.cambridge.arm.com [10.1.34.29])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1AE323F66E;
+	Thu,  9 Oct 2025 05:45:48 -0700 (PDT)
+Message-ID: <4400c6b4-d2ad-429a-b84c-60a2f593cff1@arm.com>
+Date: Thu, 9 Oct 2025 13:45:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/panfrost: Name scheduler queues after their job
+ slots
+To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
+ linux-kernel@vger.kernel.org
+Cc: healych@amazon.com, Boris Brezillon <boris.brezillon@collabora.com>,
+ Rob Herring <robh@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ dri-devel@lists.freedesktop.org
+References: <20251009114313.1374948-1-adrian.larumbe@collabora.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20251009114313.1374948-1-adrian.larumbe@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2025-10-09 at 08:42 +0900, Krzysztof Kozlowski wrote:
-> On 08/10/2025 23:17, Andr=C3=A9 Draszik wrote:
-> > Sysreg can be part of a power domain, so we need to allow the relevant
-> > property 'power-domains'.
-> >=20
-> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> > ---
-> > =C2=A0.../devicetree/bindings/soc/samsung/samsung,exynos-sysreg.yaml=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 3 +++
->=20
-> It is not part of power domain for any existing SoCs, at least nothing
-> indicates that so this should be restricted as in example-schema to GS
-> sysregs only.
+On 09/10/2025 12:43, Adrián Larumbe wrote:
+> Drawing from commit d2624d90a0b7 ("drm/panthor: assign unique names to
+> queues"), give scheduler queues proper names that reflect the function
+> of their JM slot, so that this will be shown when gathering DRM
+> scheduler tracepoints.
+> 
+> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
 
-Thanks Krzysztof, will do.
+Reviewed-by: Steven Price <steven.price@arm.com>
 
-Cheers,
-Andre'
+> ---
+>  drivers/gpu/drm/panfrost/panfrost_drv.c | 16 ++++++----------
+>  drivers/gpu/drm/panfrost/panfrost_job.c |  8 +++++++-
+>  drivers/gpu/drm/panfrost/panfrost_job.h |  2 ++
+>  3 files changed, 15 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> index 22350ce8a08f..607a5b8448d0 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> @@ -668,23 +668,19 @@ static void panfrost_gpu_show_fdinfo(struct panfrost_device *pfdev,
+>  	 *   job spent on the GPU.
+>  	 */
+>  
+> -	static const char * const engine_names[] = {
+> -		"fragment", "vertex-tiler", "compute-only"
+> -	};
+> -
+> -	BUILD_BUG_ON(ARRAY_SIZE(engine_names) != NUM_JOB_SLOTS);
+> -
+>  	for (i = 0; i < NUM_JOB_SLOTS - 1; i++) {
+>  		if (pfdev->profile_mode) {
+>  			drm_printf(p, "drm-engine-%s:\t%llu ns\n",
+> -				   engine_names[i], panfrost_priv->engine_usage.elapsed_ns[i]);
+> +				   panfrost_engine_names[i],
+> +				   panfrost_priv->engine_usage.elapsed_ns[i]);
+>  			drm_printf(p, "drm-cycles-%s:\t%llu\n",
+> -				   engine_names[i], panfrost_priv->engine_usage.cycles[i]);
+> +				   panfrost_engine_names[i],
+> +				   panfrost_priv->engine_usage.cycles[i]);
+>  		}
+>  		drm_printf(p, "drm-maxfreq-%s:\t%lu Hz\n",
+> -			   engine_names[i], pfdev->pfdevfreq.fast_rate);
+> +			   panfrost_engine_names[i], pfdev->pfdevfreq.fast_rate);
+>  		drm_printf(p, "drm-curfreq-%s:\t%lu Hz\n",
+> -			   engine_names[i], pfdev->pfdevfreq.current_frequency);
+> +			   panfrost_engine_names[i], pfdev->pfdevfreq.current_frequency);
+>  	}
+>  }
+>  
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c b/drivers/gpu/drm/panfrost/panfrost_job.c
+> index c47d14eabbae..0cc80da12562 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_job.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_job.c
+> @@ -28,6 +28,10 @@
+>  #define job_write(dev, reg, data) writel(data, dev->iomem + (reg))
+>  #define job_read(dev, reg) readl(dev->iomem + (reg))
+>  
+> +const char * const panfrost_engine_names[] = {
+> +	"fragment", "vertex-tiler", "compute-only"
+> +};
+> +
+>  struct panfrost_queue_state {
+>  	struct drm_gpu_scheduler sched;
+>  	u64 fence_context;
+> @@ -846,12 +850,13 @@ int panfrost_job_init(struct panfrost_device *pfdev)
+>  		.num_rqs = DRM_SCHED_PRIORITY_COUNT,
+>  		.credit_limit = 2,
+>  		.timeout = msecs_to_jiffies(JOB_TIMEOUT_MS),
+> -		.name = "pan_js",
+>  		.dev = pfdev->dev,
+>  	};
+>  	struct panfrost_job_slot *js;
+>  	int ret, j;
+>  
+> +	BUILD_BUG_ON(ARRAY_SIZE(panfrost_engine_names) != NUM_JOB_SLOTS);
+> +
+>  	/* All GPUs have two entries per queue, but without jobchain
+>  	 * disambiguation stopping the right job in the close path is tricky,
+>  	 * so let's just advertise one entry in that case.
+> @@ -887,6 +892,7 @@ int panfrost_job_init(struct panfrost_device *pfdev)
+>  
+>  	for (j = 0; j < NUM_JOB_SLOTS; j++) {
+>  		js->queue[j].fence_context = dma_fence_context_alloc(1);
+> +		args.name = panfrost_engine_names[j];
+>  
+>  		ret = drm_sched_init(&js->queue[j].sched, &args);
+>  		if (ret) {
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_job.h b/drivers/gpu/drm/panfrost/panfrost_job.h
+> index 5a30ff1503c6..458666bf684b 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_job.h
+> +++ b/drivers/gpu/drm/panfrost/panfrost_job.h
+> @@ -53,6 +53,8 @@ struct panfrost_jm_ctx {
+>  	struct drm_sched_entity slot_entity[NUM_JOB_SLOTS];
+>  };
+>  
+> +extern const char * const panfrost_engine_names[];
+> +
+>  int panfrost_jm_ctx_create(struct drm_file *file,
+>  			   struct drm_panfrost_jm_ctx_create *args);
+>  int panfrost_jm_ctx_destroy(struct drm_file *file, u32 handle);
+> 
+> base-commit: 30531e9ca7cd4f8c5740babd35cdb465edf73a2d
+
 
