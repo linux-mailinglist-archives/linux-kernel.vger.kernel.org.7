@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-846400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C468BC7E9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:05:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7BCBBC7E90
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:05:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CCA244FA4C5
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:03:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CC2718957BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418A82E1EF4;
-	Thu,  9 Oct 2025 08:00:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090342D0C7D;
+	Thu,  9 Oct 2025 08:00:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uf6GuUdU"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LF9Acp4Z"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBF42D9EDD
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 07:59:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232B9275844
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 08:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759996800; cv=none; b=qnW7iqMpVh1rOb3o/lQK5L39NU9t8jV1BskQ1PPi52CWLvBDcjBw2yetrtssaoLEFdR8EUJjgzAb6tEWBQxSnFWCv+UjEVMQh3yTus5guWijEsOGCmcFaeb8QRorMSgdiJ7JacgnKCZC9wz8EWEMMol7FtZY6zRbpRiD8hNYO8s=
+	t=1759996806; cv=none; b=syx8RB2Sq9WvMCLAboUkMjBD25Vx5VFnfrB1RHtktDg3TT2rVisdEo15u0b0/ogXle0IaE5JHZR5EgBp2LZZnqHmzjJN3xynHbZb3bXAFOp6fX5mzkbw0ypFoAQSasDLIQZYV6ZyCB05doRUt/7lKCjF4YSEzRABBN1RBRXYO60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759996800; c=relaxed/simple;
-	bh=QVMfbOgdcHUC8MA0FXNAvsLx1wDWQy6WIvHpfH+dzno=;
+	s=arc-20240116; t=1759996806; c=relaxed/simple;
+	bh=2QbAfN1sDtH46T0pCil6VIq2aE98LlEN+X//kMc9EFo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MfI1phqYLVki4t79cTSAkD1JLfk4qJms3agOZmbDcoAJr9iezbdZ4kqsVH8TOiFaBNN02FNmpQ+BrOzMnENrVhUnI/2rVw7XjL25JbQ/szE/Kqnwtns2GrXfiFSmGalG/Z1jCuLIWWp3h3aTGAwiEMb3Ae3D3DFCCRTXX3trmZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uf6GuUdU; arc=none smtp.client-ip=209.85.218.49
+	 MIME-Version; b=nashJyBhtTSED97OgYFNlFGQkh4U24ZFMc4vVEv1cMiW06qoitOIYX46fsDTj45v1fbwnw7txBzIbRhsUHcJPTDrC5qPGdiE5HpWM1NBlU8kP+2WU+nySsFWRfZnmZg7kujTsaCtmSup+QlY6yj+Sfa2HKwZ7DMppwiLVk8q/x8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LF9Acp4Z; arc=none smtp.client-ip=209.85.218.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b4539dddd99so127360766b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 00:59:56 -0700 (PDT)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b3e7cc84b82so124972866b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 01:00:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759996795; x=1760601595; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759996801; x=1760601601; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bIPlImYUmrVBYfxz+HlFQqCPCvc3ID3O+4ctjIKepMc=;
-        b=Uf6GuUdU5qGcyXY/QE0xsvc54ppyyNy+WjunZiiid9wZoBoElQZtYJhTqfkdGsZ/Dw
-         UOPCKCzEjlofEbYCIUeVQ7UGhPL5ZOTIKVqK8IEywi9Qw2A6b7E2zU76IaRm/F+2jYz9
-         ISQRvZARuGcwOvQOCvRAxj8EBFu52MKxUw9K2fkR9Bvm0Ryt/dc7WWgqEiGemOvCbCQV
-         Vpr9uf6Rx78KsW953fmxOg95jKHx3sEvASdCnIFwVw0HesGxeTSCrQrESsvm1FyGJDu1
-         8xSEeEEUTtfg6bKph0Kq3YSkzGdNGmpXa/Gxp89Mf6xlMss0vBudN7iH1xiGByi+FtcT
-         gpUg==
+        bh=WcQp0Bvlo76VjH/2Gk47KW1XiQMa/UaY/lp0sfvKhm8=;
+        b=LF9Acp4Z0v/otroXtjSTqW3xlQnBsb7MuvlVLBETK5o+7XrUh5w5r5nGGSYpX1j0Bb
+         7i053xdG/e+wuOcCAvQwYddSFkwGnz25Wg8cHVeNdeoN0oNfEnAdWYWt+YmT58C+xzn6
+         CMq4s6GDjq71u5pQm/lSm+6kEXiOAoQ6RT6PyMX2bvbEifNZNEIhyse+aX4BdyD+okaa
+         JEpzU+w0Ix2tp4ovi0zcNCQH8hLAvddj6vBhcTYVUwbFmb6gIwjoUogoICD+fou9CdLi
+         mnNN5fyvNu5h2Kr7l8jB9SZJwUadhkVqj6p303P7nlH+j0ilcxwRQJaVtVVArL5gXomV
+         Tq+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759996795; x=1760601595;
+        d=1e100.net; s=20230601; t=1759996801; x=1760601601;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bIPlImYUmrVBYfxz+HlFQqCPCvc3ID3O+4ctjIKepMc=;
-        b=S3InsFPoZaLbVR6TNrxZQcvfZpweT/iEsvvQJmb6pVNVIFDYkSpPlEZju1X9g/YheK
-         T4EX1MxVXaeWxyowAVn7TZ+HMVtdh5NDdJKYRuOonj8/alIqzKGoJKhppP/5o9drJV34
-         fXp+AW7Iz8WM3P1MtCJ/p5SKXawuYLjHvvMrt9qzqHmP6xAdndxCpVkzGgCQ9FIkUE07
-         n9M+lx97RoDi16n0p+cdvISmk3Kxq+H2B/ds08r0IR9NtLYd2U0NFDOFkuYGI37hjwHu
-         nsIlVDEY8g/hLGLmdQVE6AqQzhHrK47Bxs5z6ffWi5C3ARYbZ7ppgL6qU2dGhAPWbTzJ
-         k7YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvCU03A3PLf+BTodtHxl7lwGUPqg3OjkFEwq1BuPcDTNAm9puuoj9XcxBNIdbAVlmemWsGNMKuXvsv3iQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJFniGi1gxrlVYIiKZS7oTYlLNEtQReOTGcIRvKU4nsa+u2bkT
-	Izalk9DGBdBuvXWIye+0kt8pXoqfqmIw4jEegbp/KGPrJTOuL3KRAPhWAx4UtA==
-X-Gm-Gg: ASbGncs2xEmAVn56TShGcX4sK+Or63/85iq4ni4DWUOE0Fld4u9HwW2L4iYKeL5l+Y5
-	fFoUEsSdJbbM02JoFgPmDO9eKpqHcA5uyg1QlVkHcB56jJwjMo5vYvCL2mmxCzT2q/sauAvY9ry
-	fMzRE+pa+BUBhggiJcuzs700i473VpcfwzaAmPCWNILwh9D5p0sxwdXvVK22RuaocwxhUL/z1GV
-	cQK/G7M/feA3cOqzEY7E7l0TKt5QQqnPt//9cG/xOD+sTgH6jTDPynKP2q23xkUvbrF7siw1un5
-	qemkPPaGCGYlnsMXSmetCYKp9UnZ6g/aOd7DJ9WAB4u3cOMZboQrdSnSaPmJR5j26NRUtLaQwk7
-	MEicdu8p3F8+VkyS0Xe+wl8bFOZfQ0gw4vuQgNrpl5iQRmJjm8QQbaF9Ipnrz4Y3nLeezakFclK
-	yMfJenc9GdVG6q3YEmm6BqiA==
-X-Google-Smtp-Source: AGHT+IFNrrAwL3X54wIwGninQDRe5HCAzI3hX5RakrOFeGNwzcDRNVEDhJxmZSvdgNTCtAirMAoMEA==
-X-Received: by 2002:a17:907:5c8:b0:b40:b6a9:f70f with SMTP id a640c23a62f3a-b50a9c5b352mr706189766b.4.1759996794568;
-        Thu, 09 Oct 2025 00:59:54 -0700 (PDT)
+        bh=WcQp0Bvlo76VjH/2Gk47KW1XiQMa/UaY/lp0sfvKhm8=;
+        b=A/O4RlVNYfIGBdSgOsIwstiCUROWAiFryTQvdgmqr28oHwxOvNW8+NZDZ0MEGV5cs4
+         gUntF3kDhabvd93gc8dGrm1iFGdfQ38IDNSa/X5ZAkSNWh01aOxZJj4sdpoWkDmko7zd
+         Izg8G9cglQkq0+M/u0econPdfmiOgFT5EJg87DfOFbDvEo2JE/ML+4vqG1gKY5UUts/a
+         BY14LfOcPGwpZhhlyW/YOGqzQGCpQfvg1EYwuMDAmGbcXZ+Q3yLhag5al3NTXuGNKUg8
+         nNyDe1wRASmaFwu59/bpCJdpfw2iCMU7Q2ggrOnBFS40an9yqgOZ/4YLPBeiMoN6HpNk
+         sx+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVT1vcpA+mi9iaKrrvV8sllX9an6tdIBUDwXNQAeK+hCFEwmO8yRa9JacYv56IkSxgSWmNoTGRyW8nMK5E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzclvK6Soc20a46qO2gW9GeLOZaBRXO7Q0EEQX78RhXrvi3KNJI
+	8fF4d9yXjn8vHYroikaR4xRcKrzsYGWwk0KdUxcpdAbCPWUlXk02la+/
+X-Gm-Gg: ASbGncs4McDxANSSdm0l6068ENpOdIg9IWkAidGEsFZAlEhk6tPeK8qdvQF2o8++IdP
+	khBLJOX9Yle1MBkdWXmJoJCa6Vt2GUScpO4wLo6+eykaz5RPc7p5dZYSisXu67PELKRrIG13pMt
+	DngvWLeAegGkWvC/Ck18cpBbpCq82+L2IiPofzywXIY8YXbC9FYG1RaDboOKtu8QnVpliHXfPP1
+	0CycMosgxoD2qTo3Ov76hUSGb/4O6arqU5gunLcdjinsIL6uSVG6IEjHJC/nSpB34P7dJAhUBdj
+	Zl27jQASm2PoTaU+lf/3ebZHWaZNs5M9n8W97ULQ1H/9hQMhAzv5CdbMAoaJbBk9MinXpS3p4rY
+	wgPz42qNwersUjrjXR3WOBnrnZvGWgVyZdHaXn9Hh1kBkcVhkru5MAVfFG14qJnm0D+Wc+ZOIa2
+	UcK0Ci+1MwSxH4ekLOZof+xA==
+X-Google-Smtp-Source: AGHT+IHI7X0nz7MjsrUKXypB4cmDE9TvfyLdOuNT3vqztpfqSus7Fl9xUq6dWkzlfRFPUljWQHHtvA==
+X-Received: by 2002:a17:907:9447:b0:b04:3302:d7a8 with SMTP id a640c23a62f3a-b50aca012f2mr709847066b.58.1759996801156;
+        Thu, 09 Oct 2025 01:00:01 -0700 (PDT)
 Received: from f.. (cst-prg-66-155.cust.vodafone.cz. [46.135.66.155])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5007639379sm553509366b.48.2025.10.09.00.59.53
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b5007639379sm553509366b.48.2025.10.09.00.59.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 00:59:54 -0700 (PDT)
+        Thu, 09 Oct 2025 01:00:00 -0700 (PDT)
 From: Mateusz Guzik <mjguzik@gmail.com>
 To: brauner@kernel.org
 Cc: viro@zeniv.linux.org.uk,
@@ -88,9 +88,9 @@ Cc: viro@zeniv.linux.org.uk,
 	ceph-devel@vger.kernel.org,
 	linux-unionfs@vger.kernel.org,
 	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v7 09/14] f2fs: use the new ->i_state accessors
-Date: Thu,  9 Oct 2025 09:59:23 +0200
-Message-ID: <20251009075929.1203950-10-mjguzik@gmail.com>
+Subject: [PATCH v7 12/14] nilfs2: use the new ->i_state accessors
+Date: Thu,  9 Oct 2025 09:59:26 +0200
+Message-ID: <20251009075929.1203950-13-mjguzik@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251009075929.1203950-1-mjguzik@gmail.com>
 References: <20251009075929.1203950-1-mjguzik@gmail.com>
@@ -123,73 +123,114 @@ inode->i_state |= (I_A | I_B)   => inode_state_set_raw(inode, I_A | I_B)
 inode->i_state &= ~(I_A | I_B)  => inode_state_clear_raw(inode, I_A | I_B)
 inode->i_state = I_A | I_B      => inode_state_assign_raw(inode, I_A | I_B)
 
- fs/f2fs/data.c  | 2 +-
- fs/f2fs/inode.c | 2 +-
- fs/f2fs/namei.c | 4 ++--
- fs/f2fs/super.c | 2 +-
- 4 files changed, 5 insertions(+), 5 deletions(-)
+ fs/nilfs2/cpfile.c |  2 +-
+ fs/nilfs2/dat.c    |  2 +-
+ fs/nilfs2/ifile.c  |  2 +-
+ fs/nilfs2/inode.c  | 10 +++++-----
+ fs/nilfs2/sufile.c |  2 +-
+ 5 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index ef38e62cda8f..c5319864e4ff 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -4222,7 +4222,7 @@ static int f2fs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+diff --git a/fs/nilfs2/cpfile.c b/fs/nilfs2/cpfile.c
+index bcc7d76269ac..4bbdc832d7f2 100644
+--- a/fs/nilfs2/cpfile.c
++++ b/fs/nilfs2/cpfile.c
+@@ -1148,7 +1148,7 @@ int nilfs_cpfile_read(struct super_block *sb, size_t cpsize,
+ 	cpfile = nilfs_iget_locked(sb, NULL, NILFS_CPFILE_INO);
+ 	if (unlikely(!cpfile))
+ 		return -ENOMEM;
+-	if (!(cpfile->i_state & I_NEW))
++	if (!(inode_state_read_once(cpfile) & I_NEW))
+ 		goto out;
  
- 	if (map.m_flags & F2FS_MAP_NEW)
- 		iomap->flags |= IOMAP_F_NEW;
--	if ((inode->i_state & I_DIRTY_DATASYNC) ||
-+	if ((inode_state_read_once(inode) & I_DIRTY_DATASYNC) ||
- 	    offset + length > i_size_read(inode))
- 		iomap->flags |= IOMAP_F_DIRTY;
+ 	err = nilfs_mdt_init(cpfile, NILFS_MDT_GFP, 0);
+diff --git a/fs/nilfs2/dat.c b/fs/nilfs2/dat.c
+index c664daba56ae..674380837ab9 100644
+--- a/fs/nilfs2/dat.c
++++ b/fs/nilfs2/dat.c
+@@ -506,7 +506,7 @@ int nilfs_dat_read(struct super_block *sb, size_t entry_size,
+ 	dat = nilfs_iget_locked(sb, NULL, NILFS_DAT_INO);
+ 	if (unlikely(!dat))
+ 		return -ENOMEM;
+-	if (!(dat->i_state & I_NEW))
++	if (!(inode_state_read_once(dat) & I_NEW))
+ 		goto out;
  
-diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-index 8c4eafe9ffac..f1cda1900658 100644
---- a/fs/f2fs/inode.c
-+++ b/fs/f2fs/inode.c
-@@ -569,7 +569,7 @@ struct inode *f2fs_iget(struct super_block *sb, unsigned long ino)
- 	if (!inode)
+ 	err = nilfs_mdt_init(dat, NILFS_MDT_GFP, sizeof(*di));
+diff --git a/fs/nilfs2/ifile.c b/fs/nilfs2/ifile.c
+index c4cd4a4dedd0..99eb8a59009e 100644
+--- a/fs/nilfs2/ifile.c
++++ b/fs/nilfs2/ifile.c
+@@ -188,7 +188,7 @@ int nilfs_ifile_read(struct super_block *sb, struct nilfs_root *root,
+ 	ifile = nilfs_iget_locked(sb, root, NILFS_IFILE_INO);
+ 	if (unlikely(!ifile))
+ 		return -ENOMEM;
+-	if (!(ifile->i_state & I_NEW))
++	if (!(inode_state_read_once(ifile) & I_NEW))
+ 		goto out;
+ 
+ 	err = nilfs_mdt_init(ifile, NILFS_MDT_GFP,
+diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
+index 87ddde159f0c..51bde45d5865 100644
+--- a/fs/nilfs2/inode.c
++++ b/fs/nilfs2/inode.c
+@@ -365,7 +365,7 @@ struct inode *nilfs_new_inode(struct inode *dir, umode_t mode)
+ 
+  failed_after_creation:
+ 	clear_nlink(inode);
+-	if (inode->i_state & I_NEW)
++	if (inode_state_read_once(inode) & I_NEW)
+ 		unlock_new_inode(inode);
+ 	iput(inode);  /*
+ 		       * raw_inode will be deleted through
+@@ -562,7 +562,7 @@ struct inode *nilfs_iget(struct super_block *sb, struct nilfs_root *root,
+ 	if (unlikely(!inode))
  		return ERR_PTR(-ENOMEM);
  
 -	if (!(inode->i_state & I_NEW)) {
 +	if (!(inode_state_read_once(inode) & I_NEW)) {
- 		if (is_meta_ino(sbi, ino)) {
- 			f2fs_err(sbi, "inaccessible inode: %lu, run fsck to repair", ino);
- 			set_sbi_flag(sbi, SBI_NEED_FSCK);
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index b882771e4699..af40282a6948 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -844,7 +844,7 @@ static int __f2fs_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
- 		f2fs_i_links_write(inode, false);
+ 		if (!inode->i_nlink) {
+ 			iput(inode);
+ 			return ERR_PTR(-ESTALE);
+@@ -591,7 +591,7 @@ struct inode *nilfs_iget_for_gc(struct super_block *sb, unsigned long ino,
+ 	inode = iget5_locked(sb, ino, nilfs_iget_test, nilfs_iget_set, &args);
+ 	if (unlikely(!inode))
+ 		return ERR_PTR(-ENOMEM);
+-	if (!(inode->i_state & I_NEW))
++	if (!(inode_state_read_once(inode) & I_NEW))
+ 		return inode;
  
- 		spin_lock(&inode->i_lock);
--		inode->i_state |= I_LINKABLE;
-+		inode_state_set(inode, I_LINKABLE);
- 		spin_unlock(&inode->i_lock);
- 	} else {
- 		if (file)
-@@ -1057,7 +1057,7 @@ static int f2fs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
- 			goto put_out_dir;
+ 	err = nilfs_init_gcinode(inode);
+@@ -631,7 +631,7 @@ int nilfs_attach_btree_node_cache(struct inode *inode)
+ 				  nilfs_iget_set, &args);
+ 	if (unlikely(!btnc_inode))
+ 		return -ENOMEM;
+-	if (btnc_inode->i_state & I_NEW) {
++	if (inode_state_read_once(btnc_inode) & I_NEW) {
+ 		nilfs_init_btnc_inode(btnc_inode);
+ 		unlock_new_inode(btnc_inode);
+ 	}
+@@ -686,7 +686,7 @@ struct inode *nilfs_iget_for_shadow(struct inode *inode)
+ 			       nilfs_iget_set, &args);
+ 	if (unlikely(!s_inode))
+ 		return ERR_PTR(-ENOMEM);
+-	if (!(s_inode->i_state & I_NEW))
++	if (!(inode_state_read_once(s_inode) & I_NEW))
+ 		return inode;
  
- 		spin_lock(&whiteout->i_lock);
--		whiteout->i_state &= ~I_LINKABLE;
-+		inode_state_clear(whiteout, I_LINKABLE);
- 		spin_unlock(&whiteout->i_lock);
+ 	NILFS_I(s_inode)->i_flags = 0;
+diff --git a/fs/nilfs2/sufile.c b/fs/nilfs2/sufile.c
+index 330f269abedf..83f93337c01b 100644
+--- a/fs/nilfs2/sufile.c
++++ b/fs/nilfs2/sufile.c
+@@ -1226,7 +1226,7 @@ int nilfs_sufile_read(struct super_block *sb, size_t susize,
+ 	sufile = nilfs_iget_locked(sb, NULL, NILFS_SUFILE_INO);
+ 	if (unlikely(!sufile))
+ 		return -ENOMEM;
+-	if (!(sufile->i_state & I_NEW))
++	if (!(inode_state_read_once(sufile) & I_NEW))
+ 		goto out;
  
- 		iput(whiteout);
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index fd8e7b0b2166..8806a1f221cf 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1798,7 +1798,7 @@ static int f2fs_drop_inode(struct inode *inode)
- 	 *    - f2fs_gc -> iput -> evict
- 	 *       - inode_wait_for_writeback(inode)
- 	 */
--	if ((!inode_unhashed(inode) && inode->i_state & I_SYNC)) {
-+	if ((!inode_unhashed(inode) && inode_state_read(inode) & I_SYNC)) {
- 		if (!inode->i_nlink && !is_bad_inode(inode)) {
- 			/* to avoid evict_inode call simultaneously */
- 			__iget(inode);
+ 	err = nilfs_mdt_init(sufile, NILFS_MDT_GFP, sizeof(*sui));
 -- 
 2.34.1
 
