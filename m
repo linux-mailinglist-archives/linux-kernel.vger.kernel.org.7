@@ -1,233 +1,139 @@
-Return-Path: <linux-kernel+bounces-846374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9D0ABC7BF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:44:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57D14BC7C96
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:51:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 26F82351FFC
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:44:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 10C824F587F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC505298CA4;
-	Thu,  9 Oct 2025 07:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ZPEhhh1Y"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9AD82512DE
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 07:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC7882D238C;
+	Thu,  9 Oct 2025 07:50:37 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4C22DF68;
+	Thu,  9 Oct 2025 07:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759995864; cv=none; b=nxO+7DqlXA8AKbg3TzgUI+m8NNs9dLP1HT2Y7leadL0QlkptwEewg+JZAWBn68AeU8nRcDC8Eg/tNdVSOe75ZxNsLRbNld8MXJmCtxZbCAcLkjM172slpsknYiBto56U3cVnlpTqI1yX1RuSK+dtNJzKBPSHQiYKkSNswQtxipA=
+	t=1759996237; cv=none; b=gx63CIBjARugO2VYGHrYQQZvNjEHg0JOXg3TgmKZ5rVxO+dkr3rITN3yJvZJPB49zYUxVF3cGrn5Waqq82MdSWTdqOOivjhIBVJ7NU6Cw1HhQhBR03ew2VeekhSE4y+GJqJ3pU0wQhmSGdPK4ygpu1gjCFqNWD9Dm9bY+CijA04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759995864; c=relaxed/simple;
-	bh=iCQQf2uoJXeyZbpOaPp2ooQjyhOwe9helnVbfiNK5qM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=H4rJjXZ/5T3bIe5lE9LSuQ76SP8VTaoRVZSJEITPaNKnkTcyxs6acXkA58bdu8jog6nyQpbal8f4dhZeiIyqhWOgMBfP0Lo6I6zbzrl4nXx9JXw+g3t0XmrWINabWLRf8nHf4P4tVEgT7bBsHO83/tKUiSCKron6/fk5cfwDxc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ZPEhhh1Y; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-46e491a5b96so3172485e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 00:44:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1759995859; x=1760600659; darn=vger.kernel.org;
-        h=mime-version:user-agent:organization:references:in-reply-to:date:cc
-         :to:from:subject:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iCQQf2uoJXeyZbpOaPp2ooQjyhOwe9helnVbfiNK5qM=;
-        b=ZPEhhh1YlYSM0n+Bt1eQALDrvH5+He1hEKYCiPiEgmSI5MlpO2SQ5bM542bhRFseSH
-         CtrJa/MvNrSWWSqbPG7IKN+dyyzi07rzN0TNRGh8H+Gp9kY//t11t4081vFRE1fDL+GB
-         u+rhMx9CvSK0rTVDgO1YR2Wze5dID2yrT0PhSWeZzUqA//kAeV1wy2JqY6uF/Z7o2siD
-         h6ZILhC3hJ1CxOFkl1hvJiI9Zec8QJjUkokb5hJhhoYcAcNbpnlUrglIiEa8wSZiBlWS
-         o5jqUbuS8YnrGp5Ot64LJoHdn6L8cyPoiEAOzzDac5ZBkgEZvxRlkuXt0EJ0lYC8nbm7
-         xd5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759995859; x=1760600659;
-        h=mime-version:user-agent:organization:references:in-reply-to:date:cc
-         :to:from:subject:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=iCQQf2uoJXeyZbpOaPp2ooQjyhOwe9helnVbfiNK5qM=;
-        b=aVByXw9NLW6zP4z7KtNL1aOiEYcx4axL73bLqVAva++Y7v6f3Pjmw6KNuRbqtrfOcF
-         8k6tZsJEF1JNDc+SYier/aehslw74PVT/kC5tRhG304T9Uy7EssA3g1kSzoGbKAscPjJ
-         xW3tlPA9YMWuAf11Iu4liMUsxfeayQredi/StT1mka4qtfbvKnnDjCSMVDN0chy1ptqD
-         qXQcFcA6Ii47AUwQ0YsYM0jMgSzwHCa0/J4cViYJyMK2dE85okVp/+KDh/uX1ReXSoDx
-         F1i5wgkE8+UB7fsDZwSRuoNW1FlkTtXI/xoA3sC4clTVtCqcSwYVRziCM/Y/VPUeuD7L
-         OeNw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/Q56hi4SMtkcGWOYiiKJTE0ANdADHtWfjcpY8qZ7UTwHd/vKaJrvrV5KgapEnjjAC1p9uFc3sTzxcxPc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlFwrhd7UJ2TfcnUicl7PE47Dtx36GYGGHT4kYLZt81G0LwjbK
-	q4t53oDsA5AaIpQqJ8hDGwtsCTPdqcfLPVGt4lUHVqSfa87IzKMaky4/A8KcvsdhFDI=
-X-Gm-Gg: ASbGnct3S9jbT0dcBzxvsH07guVuC853Ht2tFkALFXUgis+mnYN0hiynq1c2wbDY2ZV
-	fJT6Teg3aoW4BR1auOPa70+jQl2N926j07+g7+hfXgo8DCLQXEelU0/3XfcReFhH6ebemiQdXWK
-	VqTH4d4aV//GfdPgRGMmF7uYG+2vB4tysAHgDecyh4nWTPoDMvzGYxucMVC0mI0LGwhCkQem1Mz
-	pub5uMIrUOjFJCAQdG8re0xvyWph+mP6mznFSbupOVOe3LuN0YczWUlaCW3a38U1GT+mIvauxmz
-	fJwgeAGmx17c8Y4IGCsVPbPI2P4BA83GEjYRLfqPkd+wQ2zuDokmxTx3LZ4wUoT6j9A6Fi4qhf+
-	bM3de1NXyBSKZzB/H1Vo+1FZ4llT5PtITUJTnq+mWBg==
-X-Google-Smtp-Source: AGHT+IFa3cZOVZtADvYdkDcmbhu1ikrOjFJn1uxG6wiO7vtbWkKr1hQX/8fH4Mn3m7l1iei0BuiNeg==
-X-Received: by 2002:a05:600c:1986:b0:456:1a69:94fa with SMTP id 5b1f17b1804b1-46fa9aa1cb9mr43404525e9.13.1759995858939;
-        Thu, 09 Oct 2025 00:44:18 -0700 (PDT)
-Received: from [10.203.83.190] ([151.35.169.189])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fa9d62890sm69037225e9.14.2025.10.09.00.44.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 00:44:18 -0700 (PDT)
-Message-ID: <02a02848044c32e78cfc806a3b95c1cb0d93d7fc.camel@baylibre.com>
-Subject: Re: [PATCH] gpio: pca953x: enable latch only on edge-triggered
- inputs
-From: Francesco Lavra <flavra@baylibre.com>
-To: Martyn Welch <martyn.welch@collabora.com>, Linus Walleij
- <linus.walleij@linaro.org>, Hugo Villeneuve <hvilleneuve@dimonoff.com>, 
- Maria Garcia <mariagarcia7293@gmail.com>, Sascha Hauer
- <s.hauer@pengutronix.de>, Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
- Potin Lai <potin.lai.pt@gmail.com>, Mark Tomlinson
- <mark.tomlinson@alliedtelesis.co.nz>, Fabio Estevam <festevam@denx.de>, Ian
- Ray <ian.ray@gehealthcare.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Thu, 09 Oct 2025 09:44:07 +0200
-In-Reply-To: <c75a89f8-9eb7-4300-979e-e11159dc6888@collabora.com>
-References: <20251008104309.794273-1-flavra@baylibre.com>
-	 <CACRpkdYDMRZMb+bDUgK5yiKU1Toy=S_ebo2_4WRasHxCqv+4xw@mail.gmail.com>
-	 <c75a89f8-9eb7-4300-979e-e11159dc6888@collabora.com>
-Organization: BayLibre
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-87eCoRChGe7NyYF48ceM"
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1759996237; c=relaxed/simple;
+	bh=hSDqszayzc1URyLW0uaDx+454Q64tykY5sefroniNHg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V9LRw9WhHTQmz0MEMWmP71RVBP0QjzGhomMoTencmXvH00+R64ikqeZfJMH5mqEIGQQ+p6G5Ru9caJzrzZfF6wruvtZxQtqfB994OzTGp7PD+NB6h2+VBQzs4MBencSSMiu3V9pPwPrdTzDMi+Tdco3htJr8+1e+MW8eFyt4GB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cj22T4GVLz9sSy;
+	Thu,  9 Oct 2025 09:44:33 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id e-hrpkSiMM5A; Thu,  9 Oct 2025 09:44:33 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cj22T2bCVz9sSq;
+	Thu,  9 Oct 2025 09:44:33 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3E1858B768;
+	Thu,  9 Oct 2025 09:44:33 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id iEsvyTlwygx4; Thu,  9 Oct 2025 09:44:33 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 4940A8B767;
+	Thu,  9 Oct 2025 09:44:31 +0200 (CEST)
+Message-ID: <1fb2259f-65e1-4cd0-ae70-b355843970e4@csgroup.eu>
+Date: Thu, 9 Oct 2025 09:44:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: (bisected) [PATCH v2 08/37] mm/hugetlb: check for unreasonable
+ folio sizes when registering hstate
+To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
+Cc: Zi Yan <ziy@nvidia.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Alexander Potapenko <glider@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
+ Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ iommu@lists.linux.dev, io-uring@vger.kernel.org,
+ Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
+ Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
+ kasan-dev@googlegroups.com, kvm@vger.kernel.org,
+ Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
+ linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+ linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-scsi@vger.kernel.org, Marco Elver <elver@google.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Muchun Song <muchun.song@linux.dev>,
+ netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
+ Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
+ virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
+ wireguard@lists.zx2c4.com, x86@kernel.org,
+ "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+References: <20250901150359.867252-1-david@redhat.com>
+ <20250901150359.867252-9-david@redhat.com>
+ <3e043453-3f27-48ad-b987-cc39f523060a@csgroup.eu>
+ <d3fc12d4-0b59-4b1f-bb5c-13189a01e13d@redhat.com>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <d3fc12d4-0b59-4b1f-bb5c-13189a01e13d@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
---=-87eCoRChGe7NyYF48ceM
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2025-10-09 at 08:17 +0100, Martyn Welch wrote:
-> On 09/10/2025 07:03, Linus Walleij wrote:
-> > Hi Francesco,
-> >=20
-> > thanks for your patch!
-> >=20
-> > On Wed, Oct 8, 2025 at 12:43=E2=80=AFPM Francesco Lavra <flavra@baylibr=
-e.com>
-> > wrote:
-> >=20
-> >=20
-> > > The latched input feature of the pca953x GPIO controller is useful
-> > > when an input is configured to trigger interrupts on rising or
-> > > falling edges, because it allows retrieving which edge type caused
-> > > a given interrupt even if the pin state changes again before the
-> > > interrupt handler has a chance to run. But for level-triggered
-> > > interrupts, reading the latched input state can cause an active
-> > > interrupt condition to be missed, e.g. if an active-low signal (for
-> > > which an IRQ_TYPE_LEVEL_LOW interrupt has been configured) triggers
-> > > an interrupt when switching to the inactive state, but then becomes
-> > > active again before the interrupt handler has a chance to run: in
-> > > this case, if the interrupt handler reads the latched input state,
-> > > it will wrongly assume that the interrupt is not pending.
-> > > Fix the above issue by enabling the latch only on edge-triggered
-> > > inputs, instead of all interrupt-enabled inputs.
-> > >=20
-> > > Signed-off-by: Francesco Lavra <flavra@baylibre.com>
-> > > ---
-> > > =C2=A0 drivers/gpio/gpio-pca953x.c | 7 +++++--
-> > > =C2=A0 1 file changed, 5 insertions(+), 2 deletions(-)
-> > >=20
-> > > diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-
-> > > pca953x.c
-> > > index e80a96f39788..e87ef2c3ff82 100644
-> > > --- a/drivers/gpio/gpio-pca953x.c
-> > > +++ b/drivers/gpio/gpio-pca953x.c
-> > > @@ -761,10 +761,13 @@ static void pca953x_irq_bus_sync_unlock(struct
-> > > irq_data *d)
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int level;
-> > >=20
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (chip->driver_dat=
-a & PCA_PCAL) {
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 DECLARE_BITMAP(latched_inputs, MAX_LINE);
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 guard(mutex)(&chip->i2c_lock);
-> > >=20
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 /* Enable latch on interrupt-enabled inputs */
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 pca953x_write_regs(chip, PCAL953X_IN_LATCH, chip-
-> > > >irq_mask);
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 /* Enable latch on edge-triggered interrupt-enabled
-> > > inputs */
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 bitmap_or(latched_inputs, chip->irq_trig_fall, chip-
-> > > >irq_trig_raise, gc->ngpio);
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 bitmap_and(latched_inputs, latched_inputs, chip-
-> > > >irq_mask, gc->ngpio);
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 pca953x_write_regs(chip, PCAL953X_IN_LATCH,
-> > > latched_inputs);
-> >=20
-> > This driver is used by a *lot* of systems and people.
-> >=20
-> > It is maybe the most used GPIO driver in the kernel.
-> >=20
-> > So I added a lot of affected developers to the To: line of
-> > the mail so we can get a wider review and testing.
-> >=20
->=20
-> I don't have access to the relevant hardware to test this anymore and=20
-> it's been a while since I thought much about edge vs. level triggered=20
-> interrupts. But if the state of the interrupt is unilaterally returning=
-=20
-> to an inactive state, it sounds like that should be configured as an=20
-> edge triggered interrupt, not a level triggered one...
+Le 09/10/2025 à 09:22, David Hildenbrand a écrit :
+> On 09.10.25 09:14, Christophe Leroy wrote:
+>> Hi David,
+>>
+>> Le 01/09/2025 à 17:03, David Hildenbrand a écrit :
+>>> Let's check that no hstate that corresponds to an unreasonable folio 
+>>> size
+>>> is registered by an architecture. If we were to succeed registering, we
+>>> could later try allocating an unsupported gigantic folio size.
+>>>
+>>> Further, let's add a BUILD_BUG_ON() for checking that HUGETLB_PAGE_ORDER
+>>> is sane at build time. As HUGETLB_PAGE_ORDER is dynamic on powerpc, 
+>>> we have
+>>> to use a BUILD_BUG_ON_INVALID() to make it compile.
+>>>
+>>> No existing kernel configuration should be able to trigger this check:
+>>> either SPARSEMEM without SPARSEMEM_VMEMMAP cannot be configured or
+>>> gigantic folios will not exceed a memory section (the case on sparse).
+>>>
+>>> Reviewed-by: Zi Yan <ziy@nvidia.com>
+>>> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>>> Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+>>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>>
+>> I get following warning on powerpc with linus tree, bisected to commit
+>> 7b4f21f5e038 ("mm/hugetlb: check for unreasonable folio sizes when
+>> registering hstate")
+> 
+> Do you have the kernel config around? Is it 32bit?
+> 
+> That would be helpful.
 
-I will try to better describe the problematic scenario:
-- a device has an IRQ line that becomes active when the device needs to be
-serviced, and becomes inactive when the device has been serviced (e.g. by
-reading a status register); this is the classic use case for level-
-triggered interrupts
-- the IRQ line of this device is connected to a pca953x input, and this
-input is configured as a level-triggered interrupt
-- the device IRQ line becomes active, this triggers an interrupt in the
-pca953x, the pca953x interrupt handler is invoked, it reads the input
-state, then calls the nested interrupt handler
-- the nested interrupt handler services the device, which causes the IRQ
-line to become inactive: this triggers a second interrupt in the pca953x
-- before the pca953x interrupt handler is invoked for the second time, the
-device IRQ line becomes active again
-- the pca953x interrupt handler is invoked, it reads the input state, which
-shows the line as inactive (because that is the state that triggered the
-second interrupt), and as a result the nested interrupt handler is not
-invoked, and the device will stay forever with the interrupt line asserted
+That's corenet64_smp_defconfig
 
-With my proposed change, in the last step above the pca953x interrupt
-handler will read the current input state instead of the state that caused
-the second interrupt, and thus will correctly invoke the nested interrupt
-handler for the second time.
+Boot on QEMU with:
 
---=-87eCoRChGe7NyYF48ceM
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+	qemu-system-ppc64 -smp 2 -nographic -M ppce500 -cpu e5500 -m 1G
 
------BEGIN PGP SIGNATURE-----
 
-iQGzBAABCgAdFiEEhleFT5U73KMewxTm7fE7c86UNl8FAmjnZ8cACgkQ7fE7c86U
-Nl8q+Av9Fz36mu0mVyCvX6iTdMZgYCVCSKJWYlXhVgH/spICVB7pTVKX/9SUAc22
-gNsR0ONj5o+3G2Mk42oTO7z7SNQutS5s4gXCRofq1y1pSnnRv2NXIQSrsTsJ7ZPn
-S8obTCuy4rY990MutgZZyQOO+pPv/N+Po2Tlrv4/XOKZnkRLi+6wzbIulc3zoZMi
-aMNdFZG7QXVqB5vVhycwSwH1qu864wIKa9mhKbD7uU3aECooNvkjYXep9qaVSO69
-2m6TNwpUoqUvD9xgiJQ5OILdaQwff+mPaN26Mrh7KP/zUqLvqkJFlQ+r92z9IWt9
-kgmiVVHu3Vq50W7ZL5hWChcD3LCKjPzqTgFxdiZnPJfJSFio7dHqkPooqfWvzVGn
-1WauoPjhWdqAci0swx6W/EiRlHGgELtFtH49DP/uhwUSffNl00jVqHQffc9WGAKv
-su9MGNQVh5zYAglmNRqEBD9i2dsVD4QQBeGXG6poOH5fw/E3xOi4+w+xF30lVYA3
-YZj/HT1G
-=yN0R
------END PGP SIGNATURE-----
 
---=-87eCoRChGe7NyYF48ceM--
+Christophe
 
