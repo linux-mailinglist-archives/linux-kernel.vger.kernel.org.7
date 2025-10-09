@@ -1,75 +1,78 @@
-Return-Path: <linux-kernel+bounces-846469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC346BC8184
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:44:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52E97BC819C
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:44:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 909D51A60D53
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:44:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF1144220B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:44:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAFDA2D238B;
-	Thu,  9 Oct 2025 08:43:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392A02D1913;
+	Thu,  9 Oct 2025 08:44:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FDbdvHsg"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DVIzCVpS"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6412D193B
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 08:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F5612D23A5
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 08:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759999437; cv=none; b=ZktFb2nPJC/FrRt+D55ixysxhgVpL9pWZPnhCp+d3dYoZ+xg9Cg5G1nHKaEmscxRn3tVLy7/RQG67Q0IsRy8OjkJUqpXmZbPcCpav38GybEVnp0WcJ5KS2X2zEnKmDrJcuYxP5P+K81Kkxg7DCvd2YLilHH1KDmfi6FBedcQTy8=
+	t=1759999442; cv=none; b=rUjmXh6YLw9v196YuwVluJUUuZAAU/SiwDvd/xNuIa1hcXw6/pfWU5bBMwvPOvEMnld6aj0p6wR4UP1YT256s8XyYJ2pK20C4YWyCtEdvHlrAouf8KKC32fEA04IrQYU/26vycuhnlZD/dlocjpTE/P1XDJfmgR33dK1V+fdTlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759999437; c=relaxed/simple;
-	bh=0ugMMjfI/+LivnVFtUyr2SwvDxotTdT8f2cKQk/OVKo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uDA/hBRiLLs7ffCuOJhxhJ6omZq+Hn02JUtrjLeZC4fLP0vZaUt56kA2AYQqr93dAelcvtzPxSGf9EnGdO9117cBAnzkxGXuh2fxnz53soUYypqgZbUtb0Axy7AsxUPX0YKOgjGYA8NnPfvC+X00uXToZtyaxAZ0soZOvTTpZgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FDbdvHsg; arc=none smtp.client-ip=209.85.210.176
+	s=arc-20240116; t=1759999442; c=relaxed/simple;
+	bh=Gkb/A0RJIQzAnZn7S1frkdjg/udo1diN9JpAXJjfQow=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qTQXJJnjFayhDA/sz6ALucEbYy3dWk/+7nbDgdks4wsF6f6yuTukrqBy/s9Bf3/bG36Q2aBgU8WNcOlSTDynKLUjSv5jdfMEG/sS/tCzuWoBZcCGMu0YgGhshDagCWYs5l5bJOueu2jURAx/ukFA/qLCClqUJj5VLYNz+BXzUQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DVIzCVpS; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-78f3bfe3f69so653765b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 01:43:55 -0700 (PDT)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so692462b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 01:43:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759999435; x=1760604235; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3i36L5j3x3wPwz8JiEX5nJAFeIyNrwsuXsxb7RGgJII=;
-        b=FDbdvHsgPwrD2lu3sY2BvIO06hkMwTQIXhJC0WPNZ8canzXtSk7ptG/qJhUltCSZrJ
-         aQaYyrYZzPwB/uYKx0gp9mlLtXTKsUgQn8rqY01x5NO5NuVeeI4RyiWGT+XK52dpaUrq
-         JRLCqnzgI9XBKK/Hcp422Kk/IXUCQPJqDTIVB+xqu+SsBtC2TLuG8riOxUsgLzbq2ORT
-         O2VBqCZLOiTwZupB97jmR9eL76jtMotvaTPR3uLkh5cyI+mHE/4XItuGTkNDpMyUzUvS
-         Kwcz7+jEOA4ruhpaOZ8v4NYLDjIb8UZ9/4sDZAB+rEC1Fy28LcLSPXTTxfzBWQ4y+wR2
-         1bDg==
+        d=gmail.com; s=20230601; t=1759999439; x=1760604239; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Si5rnCD2PQuC/I678NvnQ9shnaktodeRJo3+LLVgXtY=;
+        b=DVIzCVpSsamXS+2SCQys9HWJV4+UNaOxql8tgkIcmi577MygSq3upADzw99zYKYvkU
+         Xgz3/v731xgSmrgGH2R1fOjYXGYTxnIBcddDeE/lYsYEiJPJi7AmPQLN9aUCiHIvMBGK
+         D01DF7IWCNirpUUU12MXdLn4uamMMQt3OtGRwfqkHtmsonNe+vJjMC1ONlpQceFmGy6K
+         l7GDBwupF4LDk3zv/JsnHZNQhifVsSewK4lmeo4US3dPcxwrZ3+Haeaae25qZdfwQJL9
+         szTqrEWVED76szp5FlNEYYa4rmTEQVFbdRHE9sVc/YLsGtfzKeowAvz5YSwXvKcOkKtT
+         dOoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759999435; x=1760604235;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3i36L5j3x3wPwz8JiEX5nJAFeIyNrwsuXsxb7RGgJII=;
-        b=cNzZ/m5LJES8uehIU/e0OlppjtedrdIwW/v/1/XYlz0zb+d71QUHJSoccOXBHby0Xy
-         aDFbx2GeTNQBM1mmfXiEbhvMFTxeJ2DnCeEbuUPOoCwabQHKnPFe6I1zzqAfFkZ9LFCX
-         Jzwq+GDcwS6wevwdmYDsmuL4o5U8/fjxKmQJ4eYhdgeWUbLwejC9g8JJeiKnz7oaPeuc
-         gR9KUZ+lajutkG0GHafOtIRGfWMKtI6TVS0pjx1PVC1buai2WT4iQsXJbKPCGp/NNabr
-         TfZKohQkUtChi5dVeRMV4QV+gXKa+DCz18NKJV2NY/8R72jEq32kA20fNeAj2n5MOdud
-         DOLw==
-X-Forwarded-Encrypted: i=1; AJvYcCWwUF6FClxorpwgyb7fFZfGNGEyf9QVjCZ8xJXWP1GqKGcBRPDcftt/1WfwEtPq+5dqcMxFXSCL3pd3x0Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRcCZ0oOKfs6cbQ7RcC/7WEMixSGM98qLMcoox89TrgphlaehA
-	pM+3XRm0AYPcbpRJ9Y6cSOAMVASK62NG0Esc0oKCLeNfI/8zK6Nt4z7w
-X-Gm-Gg: ASbGncu6bJU4s53itcnV+EKxTkeOdrDRJrCW93wYUo6K3x1ieFNIL1hjdtk8J2PG0JA
-	qNYeW24xg2JI+6qhwqOW7iEE/jmgnCU7EoHgTNFDMKXHJN0UA4ShduvIip63fcy5nonplzYOQ75
-	nZMXBmeY5LbQY+4/d4tyxH4KInx6N7vHLZTylX0qzm8x0j6UXZQRk5APruWrdntp81WaKWyix4q
-	gmWlhRV7PJHT3yiTnTiQOFo5G+9jK8RWx2eVyX/U6OYT79N6WfL1suumJ5qW1SOAQTb3EdKrIjC
-	FWjeaHdwgnJqAqFwIqIPZmnVIeQbivPNKl2JvvBPChmOiqLEI02ALBVp+Q4n+5Usga697fnKABR
-	jZaf/0OExJo2xJfVQG+GgvTDAkSoSthbkfquGhiyW8g/ZbCRFuC0zkr9ZZD2B/IOD5VwB
-X-Google-Smtp-Source: AGHT+IF5TiyIr2aaNmSRql6RJTtNc+xazE2oQEw4QZV5VF1mhyxhvUAY0z7KxOOXYAhwzsa4MRD/kA==
-X-Received: by 2002:a05:6a00:2d8f:b0:781:2538:bfb4 with SMTP id d2e1a72fcca58-79385ce2724mr7059335b3a.10.1759999434882;
-        Thu, 09 Oct 2025 01:43:54 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759999439; x=1760604239;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Si5rnCD2PQuC/I678NvnQ9shnaktodeRJo3+LLVgXtY=;
+        b=eywNbUswD7rfcoNYBOuUkJVL1enHHXnOgWfjMN5ernjKoMB2fgps6ct/LBVQUFFTUI
+         phu4N/wRGwR9n3u864XybB4SQ+RlktBsEsKcGqKOcO0mFE5Y3RMmKWrHCM5zoUsKOwcX
+         Theppsxck/0W8r1RLZ2C4ZkXqCb244plxO8HQr4AOtSjfy1fG+9/M7s7IttpsO+uUU/d
+         Ccg5/lUL8PXiLBKUHEgUGzym+uBYfHzvIojAKNfUkdXIiOJaXZ6Zd9N1+HuokKjGc7WG
+         gOMDqNYNEYQcqMrcu659JBFt89TcJGrtZV2KCgBBfuINJIyZdLBzV1IcQ/LR9eSsk0Li
+         pG8w==
+X-Forwarded-Encrypted: i=1; AJvYcCWcRju65caPtRjBcTazn6IU4xjYX8BkFR8I/a6Fn6Qr2ZVCMw3bFRT0hQ5CVbHcPgKi8btYhdcemVqDYQI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqUQPD2KdQGOxOCVxWxXaYecIofJxwefNL1k8UYUh94a/liKRk
+	BotuWu0DkCWy8BWTAMB6ghyh1hSlXUbcG6cGcHWYgB2FC1HlvLZwMSRS
+X-Gm-Gg: ASbGncu2lmxVGZELoV+EvKH+ts8GlENJB6VqiKkPq+Y9S4o0n8rrIFWGJbT6t4QalOZ
+	BghH1Vvtvw68B6rB3ix3osMr6+yJujwhTIf8uJG2wz3Hc+9lXGV55WCYLUIysSJ2DOy22YOUcJn
+	Lf08tFITbDzQldruzxj5ypv/zu3MAKJQwjHMghWemXJ3HqAjtB7ZeQVN9oAYy0w3WvIhQSFSXhZ
+	Emtw6OVXzrSFnp0KcJuPU8uCvQX5wThzE19nc0bs+zyQ1PFz2eyzxAV+OpyUoN/AGKb0eg+vM6M
+	Kcx7KI9IRkwr/3CL2iXeyIhWQ6C7zvISGzKJIyS/vzG0MV3p+DSyX5bqFWRJp41fjkcLREVT2zN
+	/PjgMH0IRJqfg0EUNnDHIDRrldipIAFTY9CEK1BSKF6Yo0YYkOD5eTsSCUEM/LxFQnJvwxAJlhY
+	0nXXc=
+X-Google-Smtp-Source: AGHT+IHTfodQ6thakogJCCtUqijG6o9ExaTwcmf9H8CuOIFFERYxT+vMs2mdlyqLdFHkyrmrKA03TA==
+X-Received: by 2002:a05:6a00:806:b0:78a:f6be:74f2 with SMTP id d2e1a72fcca58-7939753d3cdmr7774516b3a.5.1759999439379;
+        Thu, 09 Oct 2025 01:43:59 -0700 (PDT)
 Received: from MRSPARKLE.localdomain ([206.83.103.239])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-794e06fb374sm2141633b3a.56.2025.10.09.01.43.50
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-794e06fb374sm2141633b3a.56.2025.10.09.01.43.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 01:43:54 -0700 (PDT)
+        Thu, 09 Oct 2025 01:43:59 -0700 (PDT)
 From: Jonathan Brophy <professorjonny98@gmail.com>
 To: lee Jones <lee@kernel.org>,
 	Pavel Machek <pavel@kernel.org>,
@@ -81,521 +84,132 @@ To: lee Jones <lee@kernel.org>,
 Cc: devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-leds@vger.kernel.org
-Subject: [PATCH 1/4] leds: Add Virtual Color LED Group driver
-Date: Thu,  9 Oct 2025 21:43:36 +1300
-Message-ID: <20251009084339.1586319-1-professorjonny98@gmail.com>
+Subject: [PATCH 2/4] dt-bindings: leds: Add YAML bindings for Virtual Color
+ LED Group driver
+Date: Thu,  9 Oct 2025 21:43:37 +1300
+Message-ID: <20251009084339.1586319-2-professorjonny98@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251009084339.1586319-1-professorjonny98@gmail.com>
+References: <20251009084339.1586319-1-professorjonny98@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 
-From: Jonathan Brophy <professor_jonny@hotmail.com>
+From: Jonathan Brophy <professor_jonny@hotmail.com>=0D
 
-This commit introduces a new driver that implements virtual LED groups
-by aggregating multiple monochromatic LEDs. The driver provides
-priority-based control to manage concurrent LED activation requests,
-ensuring that only the highest-priority LED group's state is active at
-any given time.
-
-This driver is useful for systems that require coordinated control over
-multiple LEDs, such as RGB indicators or status LEDs that reflect
-complex system states.
-
-Co-developed-by: Radoslav Tsvetkov <rtsvetkov@gradotech.eu>
-Signed-off-by: Jonathan Brophy <professor_jonny@hotmail.com>
----
- drivers/leds/rgb/Kconfig                   |  17 +
- drivers/leds/rgb/Makefile                  |   1 +
- drivers/leds/rgb/leds-group-virtualcolor.c | 440 +++++++++++++++++++++
- 3 files changed, 458 insertions(+)
- create mode 100644 drivers/leds/rgb/leds-group-virtualcolor.c
-
-diff --git a/drivers/leds/rgb/Kconfig b/drivers/leds/rgb/Kconfig
-index 222d943d826a..70a80fd46b9c 100644
---- a/drivers/leds/rgb/Kconfig
-+++ b/drivers/leds/rgb/Kconfig
-@@ -75,4 +75,21 @@ config LEDS_MT6370_RGB
- 	  This driver can also be built as a module. If so, the module
- 	  will be called "leds-mt6370-rgb".
- 
-+config LEDS_GROUP_VIRTUALCOLOR
-+	tristate "Virtual LED Group Driver with Priority Control"
-+	depends on OF || COMPILE_TEST
-+	help
-+	  This option enables support for virtual LED groups that aggregate
-+	  multiple monochromatic LEDs with priority-based control. It allows
-+	  managing concurrent LED activation requests by ensuring only the
-+	  highest-priority LED state is active at any given time.
-+
-+	  Multiple LEDs can be grouped together and controlled as a single
-+	  virtual LED with priority levels and blinking support. This is
-+	  useful for systems that need to manage multiple LED indicators
-+	  with different priority levels.
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called leds-group-virtualcolor.
-+
- endif # LEDS_CLASS_MULTICOLOR
-diff --git a/drivers/leds/rgb/Makefile b/drivers/leds/rgb/Makefile
-index a501fd27f179..693fd300b849 100644
---- a/drivers/leds/rgb/Makefile
-+++ b/drivers/leds/rgb/Makefile
-@@ -6,3 +6,4 @@ obj-$(CONFIG_LEDS_NCP5623)		+= leds-ncp5623.o
- obj-$(CONFIG_LEDS_PWM_MULTICOLOR)	+= leds-pwm-multicolor.o
- obj-$(CONFIG_LEDS_QCOM_LPG)		+= leds-qcom-lpg.o
- obj-$(CONFIG_LEDS_MT6370_RGB)		+= leds-mt6370-rgb.o
-+obj-$(CONFIG_LEDS_GROUP_VIRTUALCOLOR)	+= leds-group-virtualcolor.o
-diff --git a/drivers/leds/rgb/leds-group-virtualcolor.c b/drivers/leds/rgb/leds-group-virtualcolor.c
-new file mode 100644
-index 000000000000..f9e13fe255dd
---- /dev/null
-+++ b/drivers/leds/rgb/leds-group-virtualcolor.c
-@@ -0,0 +1,440 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Virtual LED Group Driver with Priority Control
-+ *
-+ * This driver implements virtual LED groups by aggregating multiple
-+ * monochromatic LEDs. It provides priority-based control for managing
-+ * concurrent LED activation requests, ensuring only the highest-priority
-+ * LED state is active at any given time.
-+ *
-+ * Code create by Radoslav Tsvetkov <rtsvetkov@gradotech.eu>
-+ * Copyright (C) 2024 Jonathan Brophy <professor_jonny@hotmail.com>
-+ *
-+ */
-+
-+#include <linux/gpio/consumer.h>
-+#include <linux/leds.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+
-+struct virtual_led {
-+	struct led_classdev cdev;
-+	struct led_classdev **monochromatics;
-+	struct leds_virtualcolor *vc_data;
-+	int num_monochromatics;
-+	int priority;
-+	unsigned long blink_delay_on;
-+	unsigned long blink_delay_off;
-+	struct list_head list;
-+};
-+
-+struct leds_virtualcolor {
-+	struct virtual_led *vleds;
-+	int num_vleds;
-+	struct list_head active_leds;
-+	struct mutex lock; // Protects access to active LEDs
-+};
-+
-+static void virtual_set_monochromatic_brightness(struct virtual_led *vled,
-+						 enum led_brightness brightness)
-+{
-+	int i;
-+
-+	if (vled->blink_delay_on || vled->blink_delay_off) {
-+		unsigned long blink_mask = (BIT(LED_BLINK_SW) | BIT(LED_BLINK_ONESHOT) |
-+					    BIT(LED_SET_BLINK));
-+
-+		/*
-+		 * Make sure the LED is not already blinking.
-+		 * We don't want to call led_blink_set multiple times.
-+		 */
-+		if (!(vled->cdev.work_flags & blink_mask))
-+			led_blink_set(&vled->cdev, &vled->blink_delay_on, &vled->blink_delay_off);
-+
-+		/* Update the blink delays if they have changed */
-+		if (vled->blink_delay_on != vled->cdev.blink_delay_on ||
-+		    vled->blink_delay_off != vled->cdev.blink_delay_off) {
-+			vled->cdev.blink_delay_on = vled->blink_delay_on;
-+			vled->cdev.blink_delay_off = vled->blink_delay_off;
-+		}
-+	}
-+
-+	for (i = 0; i < vled->num_monochromatics; i++)
-+		led_set_brightness(vled->monochromatics[i], brightness);
-+}
-+
-+static ssize_t priority_show(struct device *dev, struct device_attribute *attr, char *buf)
-+{
-+	struct virtual_led *vled = dev_get_drvdata(dev);
-+
-+	return sprintf(buf, "%d\n", vled->priority);
-+}
-+
-+static ssize_t priority_store(struct device *dev, struct device_attribute *attr, const char *buf,
-+			      size_t count)
-+{
-+	struct virtual_led *vled = dev_get_drvdata(dev);
-+	int new_priority;
-+	int ret;
-+
-+	ret = kstrtoint(buf, 10, &new_priority);
-+	if (ret < 0)
-+		return ret;
-+
-+	vled->priority = new_priority;
-+	return count;
-+}
-+
-+static DEVICE_ATTR_RW(priority);
-+
-+static ssize_t blink_delay_on_show(struct device *dev, struct device_attribute *attr, char *buf)
-+{
-+	struct virtual_led *vled = dev_get_drvdata(dev);
-+
-+	return sprintf(buf, "%lu\n", vled->blink_delay_on);
-+}
-+
-+static ssize_t blink_delay_on_store(struct device *dev, struct device_attribute *attr,
-+				    const char *buf, size_t count)
-+{
-+	struct virtual_led *vled = dev_get_drvdata(dev);
-+	unsigned long new_delay;
-+	int ret;
-+
-+	ret = kstrtoul(buf, 10, &new_delay);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Apply new delay immediately */
-+	vled->blink_delay_on = new_delay;
-+	virtual_set_monochromatic_brightness(vled, vled->cdev.brightness);
-+
-+	return count;
-+}
-+
-+static ssize_t blink_delay_off_show(struct device *dev, struct device_attribute *attr, char *buf)
-+{
-+	struct virtual_led *vled = dev_get_drvdata(dev);
-+
-+	return sprintf(buf, "%lu\n", vled->blink_delay_off);
-+}
-+
-+static ssize_t blink_delay_off_store(struct device *dev, struct device_attribute *attr,
-+				     const char *buf, size_t count)
-+{
-+	struct virtual_led *vled = dev_get_drvdata(dev);
-+	unsigned long new_delay;
-+	int ret;
-+
-+	ret = kstrtoul(buf, 10, &new_delay);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Apply new delay immediately */
-+	vled->blink_delay_off = new_delay;
-+	virtual_set_monochromatic_brightness(vled, vled->cdev.brightness);
-+
-+	return count;
-+}
-+
-+static DEVICE_ATTR_RW(blink_delay_on);
-+static DEVICE_ATTR_RW(blink_delay_off);
-+
-+static void restore_sysfs_write_access(void *data)
-+{
-+	struct led_classdev *led_cdev = data;
-+
-+	mutex_lock(&led_cdev->led_access);
-+	led_sysfs_enable(led_cdev);
-+	mutex_unlock(&led_cdev->led_access);
-+}
-+
-+static bool virtual_led_is_active(struct list_head *head, struct virtual_led *vled)
-+{
-+	struct virtual_led *entry;
-+
-+	list_for_each_entry(entry, head, list) {
-+		if (entry == vled)
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
-+static int virtual_led_brightness_set(struct led_classdev *cdev, enum led_brightness brightness)
-+{
-+	struct virtual_led *vled = container_of(cdev, struct virtual_led, cdev);
-+	struct leds_virtualcolor *vc_data = vled->vc_data;
-+	struct virtual_led *active;
-+
-+	mutex_lock(&vc_data->lock);
-+
-+	active = list_first_entry_or_null(&vc_data->active_leds, struct virtual_led, list);
-+	if (active) {
-+		/*
-+		 * If the currently active LED has a higher priority,
-+		 * ignore the new request.
-+		 */
-+		if (active->priority > vled->priority)
-+			goto out_unlock;
-+
-+		/*
-+		 * The currently active LED is going to be replaced,
-+		 * turn off it's monochromatic LEDs.
-+		 */
-+		virtual_set_monochromatic_brightness(active, LED_OFF);
-+	}
-+
-+	if (brightness == LED_OFF) {
-+		/*
-+		 * If the LED is already active, remove it from the active list
-+		 * and update the brightness of the next highest priority LED.
-+		 */
-+		if (virtual_led_is_active(&vc_data->active_leds, vled))
-+			list_del(&vled->list);
-+
-+		active = list_first_entry_or_null(&vc_data->active_leds, struct virtual_led, list);
-+		if (active)
-+			virtual_set_monochromatic_brightness(active, active->cdev.brightness);
-+	} else {
-+		/* Add the LED to the active list and update the brightness */
-+		if (!virtual_led_is_active(&vc_data->active_leds, vled))
-+			list_add(&vled->list, &vc_data->active_leds);
-+
-+		active = list_first_entry_or_null(&vc_data->active_leds, struct virtual_led, list);
-+		if (active)
-+			virtual_set_monochromatic_brightness(active, brightness);
-+	}
-+
-+out_unlock:
-+	mutex_unlock(&vc_data->lock);
-+
-+	return 0;
-+}
-+
-+static int leds_virtualcolor_init_vled(struct device *dev, struct device_node *child,
-+				       struct virtual_led *vled, struct leds_virtualcolor *vc_data)
-+{
-+	struct fwnode_handle *child_fwnode = of_fwnode_handle(child);
-+	struct led_init_data init_data = {};
-+	u32 blink_interval;
-+	u32 phandle_count;
-+	u32 max_brightness;
-+	int ret, i;
-+
-+	ret = of_property_read_u32(child, "priority", &vled->priority);
-+	if (ret)
-+		vled->priority = 0;
-+
-+	ret = of_property_read_u32(child, "blink", &blink_interval);
-+	if (!ret) {
-+		vled->blink_delay_on = blink_interval;
-+		vled->blink_delay_off = blink_interval;
-+	}
-+
-+	phandle_count = fwnode_property_count_u32(child_fwnode, "leds");
-+	if (phandle_count <= 0) {
-+		dev_err(dev, "No monochromatic LEDs specified for virtual LED %s\n",
-+			vled->cdev.name);
-+		return -EINVAL;
-+	}
-+
-+	vled->num_monochromatics = phandle_count;
-+	vled->monochromatics = devm_kcalloc(dev, vled->num_monochromatics,
-+					    sizeof(*vled->monochromatics), GFP_KERNEL);
-+	if (!vled->monochromatics)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < vled->num_monochromatics; i++) {
-+		struct led_classdev *led_cdev;
-+
-+		led_cdev = devm_of_led_get_optional(dev, i);
-+		if (IS_ERR(led_cdev)) {
-+			/*
-+			 * If the LED is not available yet, defer the probe.
-+			 * The probe will be retried when it becomes available.
-+			 */
-+			if (PTR_ERR(led_cdev) == -EPROBE_DEFER)
-+				return -EPROBE_DEFER;
-+
-+			ret = PTR_ERR(led_cdev);
-+			dev_err(dev, "Failed to get monochromatic LED for %s, error %d\n",
-+				vled->cdev.name, ret);
-+			return ret;
-+		}
-+
-+		vled->monochromatics[i] = led_cdev;
-+	}
-+
-+	ret = of_property_read_u32(child, "max-brightness", &max_brightness);
-+	if (ret)
-+		vled->cdev.max_brightness = LED_FULL;
-+	else
-+		vled->cdev.max_brightness = max_brightness;
-+
-+	vled->cdev.brightness_set_blocking = virtual_led_brightness_set;
-+	vled->cdev.max_brightness = LED_FULL;
-+	vled->cdev.flags = LED_CORE_SUSPENDRESUME;
-+
-+	init_data.fwnode = child_fwnode;
-+	ret = devm_led_classdev_register_ext(dev, &vled->cdev, &init_data);
-+	if (ret) {
-+		dev_err(dev, "Failed to register virtual LED %s\n", vled->cdev.name);
-+		return ret;
-+	}
-+
-+	ret = device_create_file(vled->cdev.dev, &dev_attr_priority);
-+	if (ret) {
-+		dev_err(dev, "Failed to create sysfs attribute for priority\n");
-+		return ret;
-+	}
-+
-+	ret = device_create_file(vled->cdev.dev, &dev_attr_blink_delay_on);
-+	if (ret) {
-+		dev_err(dev, "Failed to create sysfs attribute for blink_delay_on\n");
-+		return ret;
-+	}
-+
-+	ret = device_create_file(vled->cdev.dev, &dev_attr_blink_delay_off);
-+	if (ret) {
-+		dev_err(dev, "Failed to create sysfs attribute for blink_delay_off\n");
-+		return ret;
-+	}
-+
-+	vled->vc_data = vc_data;
-+
-+	return 0;
-+}
-+
-+static int leds_virtualcolor_disable_sysfs_access(struct device *dev, struct virtual_led *vled)
-+{
-+	int i;
-+
-+	for (i = 0; i < vled->num_monochromatics; i++) {
-+		struct led_classdev *led_cdev = vled->monochromatics[i];
-+
-+		mutex_lock(&led_cdev->led_access);
-+		led_sysfs_disable(led_cdev);
-+		mutex_unlock(&led_cdev->led_access);
-+
-+		devm_add_action_or_reset(dev, restore_sysfs_write_access, led_cdev);
-+	}
-+
-+	return 0;
-+}
-+
-+static int leds_virtualcolor_probe(struct platform_device *pdev)
-+{
-+	struct leds_virtualcolor *vc_data;
-+	struct device *dev = &pdev->dev;
-+	struct device_node *child;
-+	int count = 0;
-+	int ret;
-+
-+	vc_data = devm_kzalloc(dev, sizeof(*vc_data), GFP_KERNEL);
-+	if (!vc_data)
-+		return -ENOMEM;
-+
-+	mutex_init(&vc_data->lock);
-+	INIT_LIST_HEAD(&vc_data->active_leds);
-+
-+	vc_data->num_vleds = of_get_child_count(dev->of_node);
-+	if (vc_data->num_vleds == 0) {
-+		dev_err(dev, "No virtual LEDs defined in device tree\n");
-+		ret = -EINVAL;
-+		goto err_mutex_destroy;
-+	}
-+
-+	vc_data->vleds = devm_kcalloc(dev, vc_data->num_vleds, sizeof(*vc_data->vleds), GFP_KERNEL);
-+	if (!vc_data->vleds) {
-+		ret = -ENOMEM;
-+		goto err_mutex_destroy;
-+	}
-+
-+	for_each_child_of_node(dev->of_node, child) {
-+		struct virtual_led *vled = &vc_data->vleds[count];
-+
-+		ret = leds_virtualcolor_init_vled(dev, child, vled, vc_data);
-+		if (ret) {
-+			if (ret != -EPROBE_DEFER)
-+				dev_err(dev, "Failed to initialize virtual LED %d\n", count);
-+
-+			of_node_put(child);
-+			goto err_node_put;
-+		}
-+
-+		count++;
-+	}
-+
-+	platform_set_drvdata(pdev, vc_data);
-+
-+	if (of_property_read_bool(dev->of_node, "monochromatics-ro")) {
-+		int i;
-+
-+		for (i = 0; i < count; i++) {
-+			struct virtual_led *vled = &vc_data->vleds[i];
-+
-+			ret = leds_virtualcolor_disable_sysfs_access(dev, vled);
-+			if (ret)
-+				goto err_node_put;
-+		}
-+	}
-+
-+	return 0;
-+
-+err_node_put:
-+	of_node_put(child);
-+err_mutex_destroy:
-+	mutex_destroy(&vc_data->lock);
-+
-+	return ret;
-+}
-+
-+static void leds_virtualcolor_remove(struct platform_device *pdev)
-+{
-+	struct leds_virtualcolor *vc_data = platform_get_drvdata(pdev);
-+	int i;
-+
-+	for (i = 0; i < vc_data->num_vleds; i++) {
-+		struct virtual_led *vled = &vc_data->vleds[i];
-+		int j;
-+
-+		device_remove_file(vled->cdev.dev, &dev_attr_priority);
-+		device_remove_file(vled->cdev.dev, &dev_attr_blink_delay_on);
-+		device_remove_file(vled->cdev.dev, &dev_attr_blink_delay_off);
-+
-+		for (j = 0; j < vled->num_monochromatics; j++) {
-+			if (vled->monochromatics[j]) {
-+				led_put(vled->monochromatics[j]);
-+				vled->monochromatics[j] = NULL;
-+			}
-+		}
-+	}
-+
-+	mutex_destroy(&vc_data->lock);
-+}
-+
-+static const struct of_device_id leds_virtualcolor_of_match[] = {
-+	{ .compatible = "leds-group-virtualcolor" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, leds_virtualcolor_of_match);
-+
-+static struct platform_driver leds_virtualcolor_driver = {
-+	.probe  = leds_virtualcolor_probe,
-+	.remove = leds_virtualcolor_remove,
-+	.driver = {
-+		.name           = "leds_virtualcolor",
-+		.of_match_table = leds_virtualcolor_of_match,
-+	},
-+};
-+
-+module_platform_driver(leds_virtualcolor_driver);
-+
-+MODULE_AUTHOR("Radoslav Tsvetkov <rtsvetkov@gradotech.eu>");
-+MODULE_DESCRIPTION("LEDs Virtual Color Driver with Priority Handling");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:leds-group-virtualcolor");
--- 
-2.43.0
-
+Document Virtual Color device tree bindings.=0D
+=0D
+Co Signed-off-by: Radoslav Tsvetkov <rtsvetkov@gradotech.eu>=0D
+Signed-off-by: Jonathan Brophy <professor_jonny@hotmail.com>=0D
+---=0D
+ .../leds/leds-group-virtualcolor.yaml         | 88 +++++++++++++++++++=0D
+ 1 file changed, 88 insertions(+)=0D
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-group-virtu=
+alcolor.yaml=0D
+=0D
+diff --git a/Documentation/devicetree/bindings/leds/leds-group-virtualcolor=
+.yaml b/Documentation/devicetree/bindings/leds/leds-group-virtualcolor.yaml=
+=0D
+new file mode 100644=0D
+index 000000000..945058415=0D
+--- /dev/null=0D
++++ b/Documentation/devicetree/bindings/leds/leds-group-virtualcolor.yaml=0D
+@@ -0,0 +1,88 @@=0D
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)=0D
++=0D
++%YAML 1.2=0D
++---=0D
++$id: http://devicetree.org/schemas/leds/leds-group-virtualcolor.yaml#=0D
++$schema: http://devicetree.org/meta-schemas/core.yaml#=0D
++title: Virtual LED Group with Priority Control=0D
++=0D
++maintainers:=0D
++  - Radoslav Tsvetkov <rtsvetkov@gradotech.eu>=0D
++=0D
++description: |=0D
++  Virtual LED group driver that combines multiple monochromatic LEDs into=
+=0D
++  logical groups with priority-based control. The driver ensures only the=
+=0D
++  highest-priority LED state is active at any given time.=0D
++=0D
++allOf:=0D
++  - $ref: common.yaml#=0D
++=0D
++properties:=0D
++  compatible:=0D
++    const: leds-group-virtualcolor=0D
++=0D
++  '#address-cells':=0D
++    const: 1=0D
++=0D
++  '#size-cells':=0D
++    const: 0=0D
++=0D
++required:=0D
++  - compatible=0D
++=0D
++patternProperties:=0D
++  '^led@[0-9a-f]$':=0D
++    type: object=0D
++    $ref: common.yaml#=0D
++    properties:=0D
++      reg:=0D
++        maxItems: 1=0D
++        description: Virtual LED number=0D
++=0D
++      monochromatic-leds:=0D
++        $ref: /schemas/types.yaml#/definitions/phandle=0D
++        description: List of phandles to the monochromatic LEDs to group=0D
++=0D
++      priority:=0D
++        $ref: /schemas/types.yaml#/definitions/uint32=0D
++        description: Priority level for LED activation=0D
++                     (higher value means higher priority)=0D
++=0D
++      blink-delay-on:=0D
++        $ref: /schemas/types.yaml#/definitions/uint32=0D
++        description: Time in milliseconds the LED is on during blink=0D
++=0D
++      blink-delay-off:=0D
++        $ref: /schemas/types.yaml#/definitions/uint32=0D
++        description: Time in milliseconds the LED is off during blink=0D
++=0D
++    required:=0D
++      - reg=0D
++      - monochromatic-leds=0D
++=0D
++additionalProperties: false=0D
++=0D
++examples:=0D
++  - |=0D
++    led-controller {=0D
++        compatible =3D "leds-group-virtualcolor";=0D
++        #address-cells =3D <1>;=0D
++        #size-cells =3D <0>;=0D
++=0D
++        led@0 {=0D
++            reg =3D <0>;=0D
++            label =3D "status:red";=0D
++            monochromatic-leds =3D <&led_red>;=0D
++            priority =3D <2>;=0D
++            blink-delay-on =3D <500>;=0D
++            blink-delay-off =3D <500>;=0D
++        };=0D
++=0D
++        led@1 {=0D
++            reg =3D <1>;=0D
++            label =3D "status:green";=0D
++            monochromatic-leds =3D <&led_green>;=0D
++            priority =3D <1>;=0D
++        };=0D
++    };=0D
++=0D
+\ No newline at end of file=0D
+--=0D
+2.43.0=0D
 
