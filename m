@@ -1,222 +1,157 @@
-Return-Path: <linux-kernel+bounces-847328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35EA2BCA8AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 20:11:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 984A8BCA8AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 20:12:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B5A724E365B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 18:11:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A78C818952C9
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 18:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E04246BDE;
-	Thu,  9 Oct 2025 18:11:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6595824A043;
+	Thu,  9 Oct 2025 18:12:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P7rsMnYQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="fN/rZ5Ba"
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF7A86331;
-	Thu,  9 Oct 2025 18:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4985586331
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 18:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760033485; cv=none; b=uLsQvEx1pXfwu23HNizGIUmNAZJ0EIBCvnuuO8VJaHpUsFhMm/Nbsyv87XL1zX/Ehs5jTKaMcUQ13m9Iax++l1TXDWH8LkoQ7T9/5CoK4eBd9/v6558qQyV+zaP9KnIOUHq7YEzrCXRAekNaiYtP+XZlMK4ADRWf4WMcqSefZ4U=
+	t=1760033566; cv=none; b=Rw6fbg93jIa+pjztb+NErFtXNu5uqS2mIK89wrLRo8Rk7+Fz+AsRXsShfKaP1qDeZ4+7ORsZye+dkkuFxZOCg56uBWIC+Qfgpgn4ZE3mUK4q9MFBFqWqG1THCUvZQZsXd4XX5F/idIP1vjtrIqyVBtpXW12M7LWURGdoxn1HK/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760033485; c=relaxed/simple;
-	bh=hlUxCD4J4wKrqMfCK2tZHP+94pKQeHhn01rtwfEVA+0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mCx0/xTTxJz8qT/LzM+3IOQ066CeWmHkO/jCm48VGwCQTE/8B1ssC+la7XiBgEE8Lhgp2rHUwqjwW3omwZf/LxLsxeTUnXSQIX2MK4fdpTm1epe00k7002X87TEY7rU8C39AknVlV1i3hoWEkGBYsJ4tIVfqFhrCIVBWzgRp78A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P7rsMnYQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AC76C4CEE7;
-	Thu,  9 Oct 2025 18:11:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760033483;
-	bh=hlUxCD4J4wKrqMfCK2tZHP+94pKQeHhn01rtwfEVA+0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=P7rsMnYQIe2oxKy9AoZCEcsQJz+QcTE39ckDM9EGf6ocvyQDR/Us96ky4Zy3AuVq3
-	 bGf3s2TAnLmoIrzvgjIEEtb8L01oTAngNSpBhZ/Lhy4WXxx7q64NOZxAFYTZS6jVoB
-	 vWil0zY8SiZo/FBxDM620JzGHVPMOplVLV0hVZdhNafUz0YaeJsDvSTfGWiTeLnFy8
-	 nreQgyJtYUFRF/DnzxRyiUl/NLuR3ZaaOrVFkLcNdInJdFhyGs4A77WIC8/Ti+lBD5
-	 RmWJlJ0UVSQttoQHBlvsGN+IZXR1CUk/eUNkSFE1nACKjZN+pM77ClPD3DEEDfySSw
-	 sBxRZWkE0+M+A==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1v6v6n-0000000CibQ-0EaZ;
-	Thu, 09 Oct 2025 18:11:21 +0000
-Date: Thu, 09 Oct 2025 19:11:20 +0100
-Message-ID: <86ms60x7w7.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: IRQ thread timeouts and affinity
-In-Reply-To: <86o6qgxayt.wl-maz@kernel.org>
-References: <j7ikmaazu6hjzsagqqk4o4nnxl5wupsmpcaruoyytsn2ogolyx@mtmhqrkm4gbv>
-	<86qzvcxi3j.wl-maz@kernel.org>
-	<loeliplxuvek4nh4plt4hup3ibqorpiv4eljiiwltgmyqa4nki@xpzymugslcvf>
-	<86o6qgxayt.wl-maz@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1760033566; c=relaxed/simple;
+	bh=fgeK4opmCKlBAPy6sRUe54YvmCfIf21KVKHebdewAOY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=q3npNgzmJ09kWa4U44PVwsy1lCHJkKmH0K571bv0wM9uClH9qB1Vq9kNXlhPUOczjOy5nobhBtqodTFjC//QJDrYVpE056jhVI2s/w24t15RMjwUo0SR/TPF1pq/Pjw3OMEuoN5qSpsc4cfmA+wnMdOr5k11wlaT61lWgpeiQeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=fN/rZ5Ba; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id 5542B240029
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 20:12:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
+	t=1760033557; bh=BwPkZELU5O8AP9BxBBNxXxk1X8rL+vbT7rHOfPTZPm8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Autocrypt:OpenPGP:From;
+	b=fN/rZ5Ba7nIQVVu0DNrO6p62+zgB2NNUK9SkbNRYa/EyUsynlGXd92GlWA5TIHQtc
+	 V8cWiJofrAGoaQmmdTSuFqmJ2tSqQlI5Gq3nks0Tp3kLwcAENquf6AGqYJp1K0pt2r
+	 9grph4LREmC+Oxp5DFAyBmDpd/C0N9IxKDksjyPg8/Zq4zkSeJciUj+IslHWVbTcmL
+	 xxBSNEyodQVnsY6skzqQ+2d9rdxohol/QBudmBap2f8LTwqt9oqRJRCC1Tsgs8Sc95
+	 GTGYOFO0PlRpmt1IDMYdRhIYcoYjnEH+iIiExVABof+aUcjp5CKz6JoABQYR7aj8Ep
+	 D/APiNXaRTC7g==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4cjHz26y17z9rxW;
+	Thu,  9 Oct 2025 20:12:30 +0200 (CEST)
+From: Markus Probst <markus.probst@posteo.de>
+To: Danilo Krummrich <dakr@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	bjorn3_gh@protonmail.com,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Markus Probst <markus.probst@posteo.de>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org
+Subject: [PATCH v2 0/2] rust: leds: add led classdev abstractions
+Date: Thu, 09 Oct 2025 18:12:32 +0000
+Message-ID: <20251009181203.248471-1-markus.probst@posteo.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: thierry.reding@gmail.com, tglx@linutronix.de, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
+  keydata=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
+  aBeNN4ijKZchBXHPgVx+YtWRHfcm4l8=
+OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
 
-On Thu, 09 Oct 2025 18:04:58 +0100,
-Marc Zyngier <maz@kernel.org> wrote:
-> 
-> On Thu, 09 Oct 2025 17:05:15 +0100,
-> Thierry Reding <thierry.reding@gmail.com> wrote:
-> > 
-> > [1  <text/plain; us-ascii (quoted-printable)>]
-> > On Thu, Oct 09, 2025 at 03:30:56PM +0100, Marc Zyngier wrote:
-> > > Hi Thierry,
-> > > 
-> > > On Thu, 09 Oct 2025 12:38:55 +0100,
-> > > Thierry Reding <thierry.reding@gmail.com> wrote:
-> > > > 
-> > > > Which brings me to the actual question: what is the right way to solve
-> > > > this? I had, maybe naively, assumed that the default CPU affinity, which
-> > > > includes all available CPUs, would be sufficient to have interrupts
-> > > > balanced across all of those CPUs, but that doesn't appear to be the
-> > > > case. At least not with the GIC (v3) driver which selects one CPU (CPU 0
-> > > > in this particular case) from the affinity mask to set the "effective
-> > > > affinity", which then dictates where IRQs are handled and where the
-> > > > corresponding IRQ thread function is run.
-> > > 
-> > > There's a (GIC-specific) answer to that, and that's the "1 of N"
-> > > distribution model. The problem is that it is a massive headache (it
-> > > completely breaks with per-CPU context).
-> > 
-> > Heh, that started out as a very promising first paragraph but turned
-> > ugly very quickly... =)
-> > 
-> > > We could try and hack this in somehow, but defining a reasonable API
-> > > is complicated. The set of CPUs receiving 1:N interrupts is a *global*
-> > > set, which means you cannot have one interrupt targeting CPUs 0-1, and
-> > > another targeting CPUs 2-3. You can only have a single set for all 1:N
-> > > interrupts. How would you define such a set in a platform agnostic
-> > > manner so that a random driver could use this? I definitely don't want
-> > > to have a GIC-specific API.
-> > 
-> > I see. I've been thinking that maybe the only way to solve this is using
-> > some sort of policy. A very simple policy might be: use CPU 0 as the
-> > "default" interrupt (much like it is now) because like you said there
-> > might be assumptions built-in that break when the interrupt is scheduled
-> > elsewhere. But then let individual drivers opt into the 1:N set, which
-> > would perhaps span all available CPUs but the first one. From an API PoV
-> > this would just be a flag that's passed to request_irq() (or one of its
-> > derivatives).
-> 
-> The $10k question is how do you pick the victim CPUs? I can't see how
-> to do it in a reasonable way unless we decide that interrupts that
-> have an affinity matching cpu_possible_mask are 1:N. And then we're
-> left with wondering what to do about CPU hotplug.
+This patch series has previously been contained in
+https://lore.kernel.org/rust-for-linux/20251008181027.662616-1-markus.probst@posteo.de/T/#t
+which added a rust written led driver for a microcontroller via i2c.
 
-For fun and giggles, here's the result of a 5 minute hack. It enables
-1:N distribution on SPIs that have an "all cpus" affinity. It works on
-one machine, doesn't on another -- no idea why yet. YMMV.
+As the reading and writing to the i2c client via the register!
+macro has not been implemented yet [1], the patch series will only
+contain the additional abstractions required.
 
-This is of course conditioned on your favourite HW supporting the 1:N
-feature, and it is likely that things will catch fire quickly. It will
-probably make your overall interrupt latency *worse*, but maybe less
-variable. Let me know.
+[1] https://lore.kernel.org/rust-for-linux/DDDS2V0V2NVJ.16ZKXCKUA1HUV@kernel.org/
 
-	M.
+The following changes were made:
+* add basic Pin<Vec<T, A>> abstractions, that allow to initialize PinInit items with
+  the guarantee that these will never be moved.
 
-diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-index dbeb85677b08c..ab32339b32719 100644
---- a/drivers/irqchip/irq-gic-v3.c
-+++ b/drivers/irqchip/irq-gic-v3.c
-@@ -67,6 +67,7 @@ struct gic_chip_data {
- 	u32			nr_redist_regions;
- 	u64			flags;
- 	bool			has_rss;
-+	bool			has_oon;
- 	unsigned int		ppi_nr;
- 	struct partition_desc	**ppi_descs;
- };
-@@ -1173,9 +1174,10 @@ static void gic_update_rdist_properties(void)
- 	gic_iterate_rdists(__gic_update_rdist_properties);
- 	if (WARN_ON(gic_data.ppi_nr == UINT_MAX))
- 		gic_data.ppi_nr = 0;
--	pr_info("GICv3 features: %d PPIs%s%s\n",
-+	pr_info("GICv3 features: %d PPIs%s%s%s\n",
- 		gic_data.ppi_nr,
- 		gic_data.has_rss ? ", RSS" : "",
-+		gic_data.has_oon ? ", 1:N" : "",
- 		gic_data.rdists.has_direct_lpi ? ", DirectLPI" : "");
- 
- 	if (gic_data.rdists.has_vlpis)
-@@ -1481,6 +1483,7 @@ static int gic_set_affinity(struct irq_data *d, const struct cpumask *mask_val,
- 	u32 offset, index;
- 	void __iomem *reg;
- 	int enabled;
-+	bool oon;
- 	u64 val;
- 
- 	if (force)
-@@ -1488,6 +1491,8 @@ static int gic_set_affinity(struct irq_data *d, const struct cpumask *mask_val,
- 	else
- 		cpu = cpumask_any_and(mask_val, cpu_online_mask);
- 
-+	oon = gic_data.has_oon && cpumask_equal(mask_val, cpu_possible_mask);
-+
- 	if (cpu >= nr_cpu_ids)
- 		return -EINVAL;
- 
-@@ -1501,7 +1506,7 @@ static int gic_set_affinity(struct irq_data *d, const struct cpumask *mask_val,
- 
- 	offset = convert_offset_index(d, GICD_IROUTER, &index);
- 	reg = gic_dist_base(d) + offset + (index * 8);
--	val = gic_cpu_to_affinity(cpu);
-+	val = oon ? GICD_IROUTER_SPI_MODE_ANY : gic_cpu_to_affinity(cpu);
- 
- 	gic_write_irouter(val, reg);
- 
-@@ -1512,7 +1517,7 @@ static int gic_set_affinity(struct irq_data *d, const struct cpumask *mask_val,
- 	if (enabled)
- 		gic_unmask_irq(d);
- 
--	irq_data_update_effective_affinity(d, cpumask_of(cpu));
-+	irq_data_update_effective_affinity(d, oon ? cpu_possible_mask : cpumask_of(cpu));
- 
- 	return IRQ_SET_MASK_OK_DONE;
- }
-@@ -2114,6 +2119,7 @@ static int __init gic_init_bases(phys_addr_t dist_phys_base,
- 	irq_domain_update_bus_token(gic_data.domain, DOMAIN_BUS_WIRED);
- 
- 	gic_data.has_rss = !!(typer & GICD_TYPER_RSS);
-+	gic_data.has_oon = !(typer & GICD_TYPER_No1N);
- 
- 	if (typer & GICD_TYPER_MBIS) {
- 		err = mbi_init(handle, gic_data.domain);
-diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
-index 70c0948f978eb..ffbfc1c8d1934 100644
---- a/include/linux/irqchip/arm-gic-v3.h
-+++ b/include/linux/irqchip/arm-gic-v3.h
-@@ -80,6 +80,7 @@
- #define GICD_CTLR_ENABLE_SS_G0		(1U << 0)
- 
- #define GICD_TYPER_RSS			(1U << 26)
-+#define GICD_TYPER_No1N			(1U << 25)
- #define GICD_TYPER_LPIS			(1U << 17)
- #define GICD_TYPER_MBIS			(1U << 16)
- #define GICD_TYPER_ESPI			(1U << 8)
+* add basic led classdev abstractions to register and unregister leds
+
+Changes since v1:
+* fixed typos noticed by Onur Özkan
+
+Markus Probst (2):
+  rust: add basic Pin<Vec<T, A>> abstractions
+  rust: leds: add basic led classdev abstractions
+
+ rust/kernel/alloc.rs      |   1 +
+ rust/kernel/alloc/kvec.rs |  86 +++++++++++
+ rust/kernel/led.rs        | 296 ++++++++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs        |   1 +
+ rust/kernel/prelude.rs    |   2 +-
+ 5 files changed, 385 insertions(+), 1 deletion(-)
+ create mode 100644 rust/kernel/led.rs
 
 -- 
-Without deviation from the norm, progress is not possible.
+2.49.1
+
 
