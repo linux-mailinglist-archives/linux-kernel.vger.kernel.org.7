@@ -1,260 +1,138 @@
-Return-Path: <linux-kernel+bounces-846356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7100BC7A8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:19:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6BE5BC7A92
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:19:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54DBE3E7F0A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:18:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBBEE19E6F81
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02FF725FA2C;
-	Thu,  9 Oct 2025 07:18:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3CDF296BC5;
+	Thu,  9 Oct 2025 07:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Bt3CzPH4"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011018.outbound.protection.outlook.com [52.101.52.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jkomd7Qa"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A33024E01D
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 07:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759994328; cv=fail; b=Y6GKxp6MDx77GJTP+oTxNRnVIfOinBnEtso4lcBQQmoeVUN4ADIrkh+NZEV4FDAJWcu1iLSEegaLCtSSaxwfG8Rz8HgPfANCAMrlXhq+D5r2O1j13anbnXwoGjtU5bTGMD6LL6hjRB99Dfl90ktG3PesxzS5MK6h4tHg9hqRJvs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759994328; c=relaxed/simple;
-	bh=RUPo5Y6b5SYBCW5N3aStxsbb34yP8oU0zRiwxjQASZ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rkMZcgIE3rXcRrWIZVsVE+Ba/hRJ2587xhw8xLl+xIAvyrkGGrqQqfYiQ/vBeHRURY265fGbvwuBOgNH8DV80MJY+Miz/VCGAru+bRFbPS2ZX4ZIs80Y+hPHrrFV6Vc0TP71gezjzgWIyd/G+gpU/kE3qFHoO+VBPWW0np/yfVg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Bt3CzPH4; arc=fail smtp.client-ip=52.101.52.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j9a7f2hEP323VPblbRYgUu8s6JViUP6uuUezMQeawcYkIQHZF1SCam2dXWnVmvo3h5BSMpju0ep7YEYRdKRRrZF/0eGq7BtFg1CeJgBAu/gbWm8uits8aeSe/KpWDwqUaN9acntlaOGo8vJNZOGmjRvBS4COQjnsWbqrn6R0XtN7ghghADNz2RxVvro67eMaR0lkQtP8aLlnFmI+Wrq/FvfaAAEkk8eoXiHyOFsN4GjJEYKYgnIgP6SDz3P5hQO4wCzwVbw/xW9mObA7dPam1tL+slAD322gA0QVe3OVhKqm/peZQvvQNOuzui7BTJTik05SeZ9TMpBhpprhfTQP3w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oC6RvycqsvUO2M8TBa7VosAeAS+9YFc8Z30Rpc7Mstg=;
- b=Ppf/uezZmO1fXL6GPpgU+diGOsNFU5glwMNnETFcrE6Jl3ac2v2TsJ/Uu5eWcVBMfg3bQxBvuP+MPb9U0fELbyCa+AZ7v9V/EivJfUzVQ+a/6DaeY75p+LUbo3dNWEgqmBDxAhGJPNL9q59eRcP2t/NyiVp5ROFeYOdGH6UpvtEd9Gn1+YzWi7wc8I9vo5z2lGJQf87GV8HXk6OiFJBBuiDnxuzBOO3HRHbBIa2AgYBMZ1BinAEv5DLi9dz9poL59PdaTwY14VstSxa6xQS682tEV+R6A8WlcjIkTrlG2W0Y6e7s7jEVpjOVEXnCn+i400JFQm7Yg7U8twuvks8G2w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=nvidia.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oC6RvycqsvUO2M8TBa7VosAeAS+9YFc8Z30Rpc7Mstg=;
- b=Bt3CzPH4tNYJF8/Sp8pfpt9t4bpVYeYKsH5Z1uCTSpGdT/sC5siQhyl3KED/GeBG/P1mdIfK1X2k9TRETbt91jxmYMRUGlSbgWXTpYFJMHunVIo20HBnc26vO3lVXD7EkM5al95r5Nef6TDRzb2eQZUl1kVjRuWdxB6z59D8cgE=
-Received: from BN0PR04CA0098.namprd04.prod.outlook.com (2603:10b6:408:ec::13)
- by CY5PR12MB6180.namprd12.prod.outlook.com (2603:10b6:930:23::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.9; Thu, 9 Oct
- 2025 07:18:36 +0000
-Received: from BL02EPF00021F6F.namprd02.prod.outlook.com
- (2603:10b6:408:ec:cafe::bd) by BN0PR04CA0098.outlook.office365.com
- (2603:10b6:408:ec::13) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9182.20 via Frontend Transport; Thu,
- 9 Oct 2025 07:18:36 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- BL02EPF00021F6F.mail.protection.outlook.com (10.167.249.11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9203.9 via Frontend Transport; Thu, 9 Oct 2025 07:18:36 +0000
-Received: from [172.31.35.81] (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 9 Oct
- 2025 00:18:30 -0700
-Message-ID: <32d2a380-ec66-4087-83f6-339f22745889@amd.com>
-Date: Thu, 9 Oct 2025 12:48:27 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC4D1D5147
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 07:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759994383; cv=none; b=RQZdqxVN4Uoc5JJ34H25J/YwVj1mlVkFoWfwGv3uRgWeeXr6HE/71HuXgkWEEDqOcMw5GiNjPgad4fC31N8qEcl8uAhgYt0yX9oZQPra470FryrcifSBQyjxs7TtQbyNONRZpOadDys5ds2QNYaHtPsdNWH1iN8M+64/BpD7YN0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759994383; c=relaxed/simple;
+	bh=oSwSu7UxNbNkaNtKrVySKYicTsoE7H2TkVuZcXvnVcg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ujkoR1TJoikvYGA6FiwsQFQycJt34J/bp+i00KkZORoLiqVpUD8n2II7K317S2UwF7D7O7s+YT+YMiC6AvFmjHXIz3QiZVfKXg3MCvYNnkvXXnTS73nUBwvKj1wgU5svwzmxqExTDYGihmVP+EJaqoixBYfO8OQCNnXwyT0nEB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jkomd7Qa; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-578ecc56235so574351e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 00:19:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1759994378; x=1760599178; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5c5+mJ/UHP/9LbfelQ205BO5Ehj3e8KPSEEqoMsr+r0=;
+        b=jkomd7QanJfQL+taGy8affio/Zf0CCSAeUZfKoNGNVLi9zNehO29/+8U9CHcC0x/2J
+         NOzgoEf72XHoZVZ+PIFKq8IlW6Cz744RqexnvLtkWdxZXDjPCW3HRhEwBtiUxU6dZJYL
+         Sol9Qedoun0z+zp3eegSOGa2Ybx1BnM47rRVw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759994378; x=1760599178;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5c5+mJ/UHP/9LbfelQ205BO5Ehj3e8KPSEEqoMsr+r0=;
+        b=O8IQMXMg44xbNHcOPxCQ/Rc6ZcDqUHr2wUl3WY5NtE4KshTTb3NIe84Q0aPYBJTnc1
+         K5Zby0NDui1zKjWDCq7XZ+auxkNe+v7w3G7zibJVp7Dfhhk30qwCcZp6d6QINYBM3a2N
+         HcMlbDc9CeACL1aq6fJw+DTWNxItILPpDdL/Y9TbqvgBYVNDaMVBZnMDY+Bg5x/hDshY
+         Yt0sdJfo2JnAJnab6YJz/kKj39SH09ymu95N0RfzEhUVRrc+bhGry2dniUw4R+qHa+vv
+         80JDwGKxvuIVqF07V8fgPyQN2CuO78GCBfPZ9mhgClT1W1nZSR0eHJ01Wy2gb1qQ6S4W
+         Vrzw==
+X-Forwarded-Encrypted: i=1; AJvYcCXN7jnwP5B6nc4zz/MBAsHukDla9reFLvm7NZi+XUq7xqjD0DLwBfKURB/2PTC7yz3+qgi/HZ7fMzzQ9tI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOb7pBAqM8DREU5bF2zwnmr+nMHCVJVT9kzovaGUQ60eyglyXl
+	faAzPe8kEXdwRkzfl92i2AiIBUcjNAGo1mN1rPpYs3OlRofy0H31WUquG9+Dm8t73x6eh9C37jz
+	Dp2wkFz0TkudD9zMPZXkRjyoyanCQBxy9PcwEq3j9
+X-Gm-Gg: ASbGncvuO0R/WO9Rver10XDf9weoscDtsgkM8LDj/mlvIshw2E3miZUcj+eapWGkTiV
+	j5SgqEyuOzHcGHi1hPdqzuYWlcl4iBwTkkOyTpT35LnusmbDJxs85UXnHGSuOgp6aYxTSJyJfSO
+	7fpO1TF7DqvS6j0/bov2aZHQbxKIcWblkNgp4n2u7RYIxNbQE2Rp4jH5WkJIYdpZa+BWhjnXXsj
+	a2wQ1aA+2a5ZKJHKi2E+1DRb0VsqnwXhZ1kidzgJO2WsT9DXQw0xYP8YDesLA==
+X-Google-Smtp-Source: AGHT+IHSaW0g4YpO769xUwsa4iNj202mqOPzRJ46LGO1j2gm27+8xePTXEdB7gctFN8wB6vE1Rr8nunFbpgl3JoXAJg=
+X-Received: by 2002:a05:6512:a90:b0:55f:6759:a792 with SMTP id
+ 2adb3069b0e04-5906d8ed836mr1731541e87.34.1759994378341; Thu, 09 Oct 2025
+ 00:19:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 11/12] iommu/amd: Add support for nested domain
- attach/detach
-Content-Language: en-US
-To: Jason Gunthorpe <jgg@nvidia.com>, "Suthikulpanit, Suravee"
-	<suravee.suthikulpanit@amd.com>
-CC: <nicolinc@nvidia.com>, <linux-kernel@vger.kernel.org>,
-	<robin.murphy@arm.com>, <will@kernel.org>, <joro@8bytes.org>,
-	<kevin.tian@intel.com>, <jsnitsel@redhat.com>, <vasant.hegde@amd.com>,
-	<iommu@lists.linux.dev>, <santosh.shukla@amd.com>,
-	<sairaj.arunkodilkar@amd.com>, <jon.grimm@amd.com>,
-	<prashanthpra@google.com>, <wvw@google.com>, <wnliu@google.com>,
-	<gptran@google.com>, <kpsingh@google.com>, <joao.m.martins@oracle.com>,
-	<alejandro.j.jimenez@oracle.com>
-References: <20251001060954.5030-1-suravee.suthikulpanit@amd.com>
- <20251001060954.5030-12-suravee.suthikulpanit@amd.com>
- <20251006145900.GT3360665@nvidia.com>
- <3e27de73-61a1-4977-b0a1-629ffaa81032@amd.com>
- <20251007234313.GE3474167@nvidia.com>
-From: Sairaj Kodilkar <sarunkod@amd.com>
-In-Reply-To: <20251007234313.GE3474167@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF00021F6F:EE_|CY5PR12MB6180:EE_
-X-MS-Office365-Filtering-Correlation-Id: edc37460-d4fa-44b8-c251-08de07040fff
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|7416014|376014|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RnpTbVBTbVp3djhBNGJQT0JuSWNJcjl1MFprYTVCcnlYMGI5Zk02SWp0aWpB?=
- =?utf-8?B?SmljQzh3dnB6L2xDbXJRYzFwSFVXdWZDcGttRkd0MWxIamx6S2JHbUZNM01o?=
- =?utf-8?B?M0NwZ0JZeXRncnlGK0d6Yis5QnVnY0t6bkhLKzIxKzJMZ0ZTTzBTejVQTlpF?=
- =?utf-8?B?bFlMZkhyWlpuNEc4NUQrQ2RZRXRadElKcDErbzV2eVBSdUpuUWVSMzkzSzgz?=
- =?utf-8?B?U1RFNDlNMjFnNDBFVDloYWp1VUhXbzJoNENkTlVxcEwwSkdzYmkzelNrSm5n?=
- =?utf-8?B?WXM0WStEM0l3SThqTmh1SDRSVUJkaEMvdjlnVDBkczEydHh5SFFWSUFUaWY0?=
- =?utf-8?B?d3V4YjFqNWZYblJqakJTNzNjbUJObGp0bitpdTA2Z2d5eGsxMnJSMEZ5VmQ3?=
- =?utf-8?B?S2wwaVk2ZnhzRm51dGRxVnpVNmZsUUd2bHNFcGswbWhTSTVHTGxsSFJHZWkz?=
- =?utf-8?B?SEhJNXZ2WWtGdjZZT3ovWm93R1dZNjQ2dWU4NzFZaUEzVXNiVnQ0OVVxNi9j?=
- =?utf-8?B?cERVUVZUVG1IMWNSVHF0RUNHL1lGMVY2NDFqSElDL0dNRzdlTDEzYmdHZFdq?=
- =?utf-8?B?b0hCU3pNUVlHQ1BOZXhsaU5rTmo4eUdCamlnbGVxZ1ZkSjlvRnNEU2pzdEdO?=
- =?utf-8?B?dTkxNi9rVWtWYnNVUDFCV25XVWpjRTlnUTRBRU85Vm9QZ0NKVDhxL1B0d1Zw?=
- =?utf-8?B?NzZ6ZUtDZXN4eHdIT2RQbHlhR3hEaHlPMUxZblBLdDlCWFBhakM1Z3MxU0Yw?=
- =?utf-8?B?UytJTGROeXBkTGtiL2gvbVR0eG9HVHQrbFhnNEx1Nm9yYVhoM3NsNENSa2w3?=
- =?utf-8?B?N1JkNFNIL1orOFd4UWlhN29RK3hHT1ZVRUxyeUppQmFVL3pScGRFNzd4MTJU?=
- =?utf-8?B?T2p6a3RHWThpeThJaUFpWDhNUDI2eVdWNkU2SE5hUWJ0bENwakZ2N2NSYWxD?=
- =?utf-8?B?MGR4MEtZL1pETkpuVnZYSjBSZEVlekxIZnFXUWREMENhMG9aOTQ1bEs0Vk9C?=
- =?utf-8?B?cTB3VkxLTFZ2MVlzcHlzNVNqSldLU3ZuTU9OelFKQ2F5YU96ZUNxZVlpQXQx?=
- =?utf-8?B?M1dPSDMzdDdrclluTHNnTHd0L3p3NHdZcUhvbXQ4NGhocHBIOGRCM0RteGsz?=
- =?utf-8?B?T3RMZmJtUVBXOFo5Tyt2KzB1MVM5QVEycU5IcVNxdmsyTWUzTTV3ZlNSYU5H?=
- =?utf-8?B?SjhjckdnY0N5MVBHYU0vWUFwZGV4ZXhDb2REYTFqYURKMFNZRFdPcU45aHZv?=
- =?utf-8?B?dm5XSC9KeVMzQ3ZIaXhmTmljakx4RytiK21iTGQ4VWVuem1GZkFBT3I5cjdo?=
- =?utf-8?B?NElYRmtYRlljUkw1eklBR0lNOTJaZDdQUmpYYVNOLy9qOENlMmhXUGZhT0cz?=
- =?utf-8?B?a05KUTlBY1NmeWoyT1NlTlFUVS9yVkNUSVBzSlRNWmZvbndpVUVmZnVvZndK?=
- =?utf-8?B?V1ViNTBDTG9FdFI1UHo4TVVvMkMxc1BNcm1YZUlYUHkvMFdHYUVsNldPZTVZ?=
- =?utf-8?B?Z0ZyUWE3L2JxWEpmMGJKc3NWRFNXbHFmYnR4akVoYWxKUFcxZXd3b25VK1I2?=
- =?utf-8?B?M2dLZWVLTjIvcFhLelRFOS9zdktKL1QwbUFrVEVjMm9TSTJ2OVdFbHBxL0pH?=
- =?utf-8?B?RFcwYWxiV2FCV1BRenZndll0SlFFTTBkSGMwcFpsR3RqcjVUNFNpTEhpMEpl?=
- =?utf-8?B?ZWorcGhNT1pmSEVMbUNWeGEwNnFWOXV3SFNWOEJ5KzQ3VEFSU1h5RjMrbk85?=
- =?utf-8?B?M1YrMEUyRW9NamovNlF2YlRHcUd3bG1vaUw1cTYxRU90dHVnUnA4MUVmbGl4?=
- =?utf-8?B?cWFkbkZwV09qQy9aaWJ6RTgrVU5SZ1M0QndWOXJ6eEE1RVhxelUzWWJ0MFB3?=
- =?utf-8?B?bWNNVDk4SkIxOVExR3JKb1ZrNjBrRjU4dWpHRy9GME84UElLd2tNTUdtQnEy?=
- =?utf-8?B?UHBGZlFXVFNQMVJEa3NHTmNaajllWTZGOVplTzVBcmNKbUdMakRVdm0rU3g0?=
- =?utf-8?B?bFREUkRTN1llb0hLUTVibjAzb0IweXduRDU4RGhoaEwvSEVJSnQ2cFFUVUJw?=
- =?utf-8?B?MnU5TjZ3aDUvblozeHpPYWZkREkxa0I2SnVvRFJWN3Z4RnhhYys4TkxDaEFn?=
- =?utf-8?Q?aDq4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2025 07:18:36.2438
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: edc37460-d4fa-44b8-c251-08de07040fff
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF00021F6F.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6180
+References: <20251008-mtk-pll-rpm-v2-0-170ed0698560@collabora.com> <20251008-mtk-pll-rpm-v2-2-170ed0698560@collabora.com>
+In-Reply-To: <20251008-mtk-pll-rpm-v2-2-170ed0698560@collabora.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Thu, 9 Oct 2025 15:19:27 +0800
+X-Gm-Features: AS18NWDNV8mYg3wiP9Z1G6zwejV94_0pr6WyN1XzhbiCP9cR62AhpDcipKqCy2M
+Message-ID: <CAGXv+5GGSKVwvQihGVJNch6qxv88t03BcBhN9tgB=K-5VvN+Cg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] clk: mediatek: Refactor pll registration to pass device
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Dong Aisheng <aisheng.dong@nxp.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	Yassine Oudjana <y.oudjana@protonmail.com>, Laura Nao <laura.nao@collabora.com>, 
+	=?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>, 
+	Chia-I Wu <olvaffe@gmail.com>, kernel@collabora.com, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, Stephen Boyd <sboyd@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 10/8/2025 5:13 AM, Jason Gunthorpe wrote:
-> On Tue, Oct 07, 2025 at 02:22:30PM -0500, Suthikulpanit, Suravee wrote:
->>
->> On 10/6/2025 9:59 AM, Jason Gunthorpe wrote:
->>> On Wed, Oct 01, 2025 at 06:09:53AM +0000, Suravee Suthikulpanit wrote:
->>>> ....
->>>> +	if (WARN_ON(!ndom || !pdom || (pdom->iop.mode == PAGE_MODE_NONE)))
->>>> +		return;
->>>> +
->>>> +	amd_iommu_make_clear_dte(dev_data, &new);
->>>> +
->>>> +	new.data[0] |= iommu_virt_to_phys(pdom->iop.root);
->>>> +	new.data[0] |= FIELD_PREP(DTE_MODE_MASK, pdom->iop.mode);
->>>> +	new.data[0] |= DTE_FLAG_IR | DTE_FLAG_IW | DTE_FLAG_TV;
->>>> +	new.data[0] |= (DTE_FLAG_PPR & gdte->data[0]);
->>>> +	if (pdom->dirty_tracking)
->>>> +		new.data[0] |= DTE_FLAG_HAD;
->>>> +
->>>> +	if (dev_data->ats_enabled)
->>>> +		new.data[1] |= DTE_FLAG_IOTLB;
->>> This sequence should be in some set_dte_gcr3() ??
->> Not sure what you mean. This logic was in set_dte_entry(), and duplicated
->> here in the set_dte_nested() since we no longer calling set_dte_entry() from
->> the nested path. Also, it's not really related to GCR3 table.
-> Sorry some make_ste_v1()
+On Thu, Oct 9, 2025 at 12:06=E2=80=AFAM Nicolas Frattaroli
+<nicolas.frattaroli@collabora.com> wrote:
 >
-> This logic should be the same for any v1 page table.
->>>> +	/*
->>>> +	 * Restore cached persistent DTE bits, which can be set by information
->>>> +	 * in IVRS table. See set_dev_entry_from_acpi().
->>>> +	 */
->>>> +	initial_dte = amd_iommu_get_ivhd_dte_flags(iommu->pci_seg->id, dev_data->devid);
->>>> +	if (initial_dte) {
->>>> +		new.data128[0] |= initial_dte->data128[0];
->>>> +		new.data128[1] |= initial_dte->data128[1];
->>>> +	}
->>> This should go into amd_iommu_make_clear_dte() I think, and refactor
->>> it out of iommu_update_dte256() ?
->>> Every created DTE needs these bits set, right?
->> Currently, the amd_iommu_make_clear_dte() clears all the DTE bits and set
->> the DTE[V] (valid) bit. This is used when preparing the DTE for programming,
->> detaching domain, and when setting the blocking domain. Putting this logic
->> in the function would change the behavior.
-> Yes, but it seems like that is the right behavior?
+> As it stands, mtk_clk_register_plls takes a struct device_node pointer
+> as its first argument. This is a tragic happenstance, as it's trivial to
+> get the device_node from a struct device, but the opposite not so much.
+> The struct device is a much more useful thing to have passed down.
 >
->> These bits affect Interrupt remapping (Lint0/Lint1/NMI/INIT/ExtInt interrupt
->> pass-through) and System management message behavior.
-> Because these bits shouldn't be cleared on a blocking domain!
-> Interrupts are still expected to work.
+> Refactor mtk_clk_register_plls to take a struct device pointer instead
+> of a struct device_node pointer, and fix up all users of this function.
+>
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> ---
+
+Actually,
+
+> diff --git a/drivers/clk/mediatek/clk-pll.h b/drivers/clk/mediatek/clk-pl=
+l.h
+> index d71c150ce83e4bb2fe78290c2d5570a90084246d..0e2b94b9cd4b56adceee3b04e=
+9ab24c2526471da 100644
+> --- a/drivers/clk/mediatek/clk-pll.h
+> +++ b/drivers/clk/mediatek/clk-pll.h
+> @@ -78,9 +78,9 @@ struct mtk_clk_pll {
+>         const struct mtk_pll_data *data;
+>  };
+
+Please replace the |struct device_node| forward declaration at the top
+of this file with one for |struct device|.
+
+> -int mtk_clk_register_plls(struct device_node *node,
+> -                         const struct mtk_pll_data *plls, int num_plls,
+> -                         struct clk_hw_onecell_data *clk_data);
+> +int mtk_clk_register_plls(struct device *dev, const struct mtk_pll_data =
+*plls,
+> +                         int num_plls, struct clk_hw_onecell_data *clk_d=
+ata);
+> +
+>  void mtk_clk_unregister_plls(const struct mtk_pll_data *plls, int num_pl=
+ls,
+>                              struct clk_hw_onecell_data *clk_data);
 >
 >
->>>> +
->>>> +	/* Guest translation stuff */
->>>> +	new.data[0] |= (gdte->data[0] &
->>>> +		       (DTE_GLX | DTE_FLAG_GV | DTE_FLAG_GIOV));
->>>> +
->>>> +	/* GCR3 table */
->>>> +	new.data[0] |= (gdte->data[0] & DTE_GCR3_14_12);
->>>> +	new.data[1] |= (gdte->data[1] & (DTE_GCR3_30_15 | DTE_GCR3_51_31));
->>>> +
->>>> +	/* Guest paging mode */
->>>> +	new.data[2] |= (gdte->data[2] & DTE_GPT_LEVEL_MASK);
->>> I didn't see anything validating gdte has only permitted set bits in
->>> the prior patch?
->> Not sure which on are you referring to.
-> You have to validate gdte has only valid bits.
+> --
+> 2.51.0
 >
->>> If this is goint to decode array item by item then why not use struct
->>> iommu_hwpt_amd_guest in the nested_domain ?
->> The struct dev_table_entry *gdte is basically the same information as in the
->> struct iommu_hwpt_amd_guest.dte that we copied from the userspace into the
->> more appropriate in-kernel data structure type, which is used within the
->> driver.
-> The appropriate type is the userspace type if you don't actually ever
-> use anything unique to the kernel type. You can avoid the special
-> assert/etc since this way of accessing it is not sensitive to layout.
->
->> Here, we just select only what we needed for configuring guest page table
->> specifically to be programmed onto the host DTE.
-> Everything you don't pick up should be checked to be 0. VMM needs to
-> filter out unsuopported things or generate a bad DTE error.
-An alternative can be to introduce a struct which only contains relevant 
-fields.
-Something similar to -->
-
-struct iommu_hwpt_amd_guest {
-    void *gcr3;
-    unsigned char guest_paging_mode;
-}
-
-VMM can take care of writing to these fields.
-
-Thanks
-Sairaj
 
