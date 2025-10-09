@@ -1,128 +1,124 @@
-Return-Path: <linux-kernel+bounces-846134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93C77BC71F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 03:38:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0B9DBC71FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 03:39:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A757619E4734
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 01:39:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5C2119E4A1B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 01:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECF2185B67;
-	Thu,  9 Oct 2025 01:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9AE41917ED;
+	Thu,  9 Oct 2025 01:39:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NRUBcHKv"
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="K48ecD6u"
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA12BEEC3
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 01:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3CDC154BE2;
+	Thu,  9 Oct 2025 01:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759973927; cv=none; b=TBZS9LrJ8nuNtp4BTIxQPUke3uOg1q0+OJB2cv9BmefeQFRKqxgKgLaaXi3Sw/2ELhPe6eEobjQA98tPv5GivQd67o1j14FnXaIyVzf9+MwztMEPAZI/fz6HwHXcZQRWUynlgDS/3cHi+iPuC9vLDOc6Z5mDCcRW4bCW8SEURtc=
+	t=1759973943; cv=none; b=jKeZd4PxKGSh/1u8N996vm8wGuf7MtldTG7oZVnBuiBu4MQVo3GGWVsey8zvOafxPu7Bjkjg2zRsLeQLsgdr75DDntlLDYYaM4KBusaQ77wPmw4nk0fzZpYtMv6EPO1XKnJhTVkHp7KXpRPlvWpvuFaY90z3bL6aRzGmFuUY0e4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759973927; c=relaxed/simple;
-	bh=6nrMOtELpBLmErAHhpvH82Oyr1lIyTdGtpID2+/TO4E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g+FAnkRcDdYsJEQ3ol6ETlZYkmJQ2dScOTA5MpWkQzW15ne3Yi1TgtgTP0HihrtS0wxjCPuTpau9xUA44nchU95wclja9nm2ORXGekdSmiv+eEb42HKjabhxpFo2R7vmq1gCv//OkJUuYyM03UYlMZExzAgquzRgR0wmyuDj7C8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NRUBcHKv; arc=none smtp.client-ip=209.85.167.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-43f5ec02724so122516b6e.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 18:38:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759973925; x=1760578725; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x4OU+6d4XHNyYe2vaJ5HulojqcfOOX6yJg+zBKOwOLk=;
-        b=NRUBcHKvdojRU9zvreLo6dbEvydIgO2z0lHNqHPTWnyxP5/+HnM6apXvHfnSRii//l
-         J9edXS8ilHtd5VAs9nXqbSUgDnV025uucHgu66ovcBX9RHaA5v7ShhqqAsqBidrprFGV
-         902LCc3SOK0Zxn0QS9yHBDnvDhwqcDqsdWfcXfuFARwkyD06ZlsBiqUURX4h2H8tG+vO
-         pvc2zQA+T+mSPQA0Tv4dnBBkGHX0jmB8bFPaG+T++4DrAgwaUIHhoNE8uvu445Tcs4ts
-         De8aij/HmF3M9S2f+rt3gP1lfzchSY+HJ/dtTvkPm/7UwfyNGK/6dMJT6M4mEVIM16be
-         dqBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759973925; x=1760578725;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x4OU+6d4XHNyYe2vaJ5HulojqcfOOX6yJg+zBKOwOLk=;
-        b=qoFJum/15ifiE6LRkhKYi2nLmROlZs6+GfJkhRdD/ov5c/hVTzbbliD9ieZgl2MN9k
-         NZwh0ReJ49a71thlRYkW0T0hw9Br/ZFqAel5uZISv4VI0Z1P0kgDUBXzEezXdmtiwrZH
-         v5/6lD+6HBiZ1wXIj7Arz8d+FB10OVyP69x6zk+vQYbodOE7XXT455aGVKinxtHHY/GF
-         Oh1QbQSav5FGC2Zf6NGKh7PP6VuAw4KzYCZXRYsDwIDGLoiqiLziAiaztD/twTKooc3n
-         TiQryXveZqaaJZSzYPW1zmGaoagR8w7I026L925naN2AlKWugccfFevPFfkzqTjlPXs/
-         CF1g==
-X-Forwarded-Encrypted: i=1; AJvYcCVxLuVHwHviEs3qoppQp1/mTqvKsZnrmKUPmd0zdErqsqYQdve7EeU8ah+1UnTXqS9ovYQwsg9Xr+/kn4M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqgVRaNVf3d/5dMJFvtHXekjPkc0skArASTUb7HOrdEPsL8FyI
-	VopZxqUCJkaA/snwBASH2dYgc5rvskcRD0zvTH8pJXcwRdxJEhV/nVmQwK7S0uinatC5v4r28eg
-	wWGL6E4xstCPn7HM7jTcp7H6PEI++D8M=
-X-Gm-Gg: ASbGncuQKaOe8wRmB5DNadtBaKkdzxd8QdalqhJZV8ngBV4ytQ82kLs79Hty8ylkopl
-	B2YGtvVc5+L6S8Oqj3KYT/RUOwCe/3ZBokrqg0PIkVSemLgYk7pH0iwJMQvS8T5kR19W84PJjp/
-	ppaUNUp6dcZ2VmUBJKO41c4wpMLMFH+CJfPs9OigXsbXNcFvM5wPr2UvA/bNmGJox5UA4sxmjD2
-	MhjnI7jR8F+qvn/KeiUbFmoXaYdzIU=
-X-Google-Smtp-Source: AGHT+IEoA4Bvx1E4ZcP6qArxORWElQD4CExZH+e7IkeOBTHua4YCh9pjvgZBR17pP7bTL1f6rCYOx0ouIUFlq8ENpj4=
-X-Received: by 2002:a05:6808:1909:b0:441:8f74:e81 with SMTP id
- 5614622812f47-4418f741a75mr130795b6e.59.1759973924521; Wed, 08 Oct 2025
- 18:38:44 -0700 (PDT)
+	s=arc-20240116; t=1759973943; c=relaxed/simple;
+	bh=apOQAZW6AWoaMslvlgsDKl/iISVpw2hHZmBdcUhzQsI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HaIZe5DqN1ysG8CtLfFwHF+ZONTUzKl4+Yi28b6i9K44SZxx4Sa0/Mejr6l+JDS7LA819GoRPGhbNMOK1vXPAJUxPBJvZ9VL3KUamn/Ra2SXDb2AwqP7BVU2D+iuVcNVf9APQ2Ag/jOCHyqlThNMBX8VVLuzq4jRqJx2kZkPJFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=K48ecD6u; arc=none smtp.client-ip=43.163.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1759973931;
+	bh=tjd5N9A70oCjhg5VLw+85IbzLuTB3dBZOhfwR1b228Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=K48ecD6uLVMldpdkxPx2fqQelrOA1q333YT00i1oQXbsRletydUXFCHlhZx+oSdTn
+	 teKkX08s4bl3Jo+ty+GzVnFkbG2B+diXQSkIIRV5QBFnKdBcG9hz5axJCL3Cnb2loh
+	 2hBLz7AwZEqZ2fuT/LYG+8QX2wr/0OwaqqsSQd0o=
+Received: from [10.56.52.9] ([39.156.73.10])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id 9B0016B4; Thu, 09 Oct 2025 09:38:48 +0800
+X-QQ-mid: xmsmtpt1759973928tgk1z43m2
+Message-ID: <tencent_339E2EE755D05F67478310C70DD6843AB209@qq.com>
+X-QQ-XMAILINFO: No7DFzN00JnRbjY0trYmAOGRc/Y1F6YVrc2aqn/UnjYvdTuaEA+Beo5vlbPBCg
+	 S94YFJ8tT2hdcmZWF+PF8CJLnVEgUaEy9xO7MN/0zGsWJ2AKzEJyB2yIppeCfY3XItCtlhJnv3oF
+	 jJnGPDSy6WlJkHx2Cb9TFRI1HhpaxlXWMs6B828RqQlC+TCsgeEowCraE3SvPM/xsZ4hpWldhr70
+	 uKHCwY5Wjbks2YZk8FzM7u83ITbWydy2jUF14zZlOqfRq2+gXnRguCDkIQqGNZyn3lE8NXifZF6x
+	 LPZ99QqQShaFAMUPRFYZ89ykJpxeFH7CrdLUuLBDuaE3fhwMHmcGDqgCqCOchYvLsQdbV6jGwTYR
+	 xSrDF+3hz03inf50G/tYuOzwGBSA39CP9M5W//o7cGueAIKFsUKwAdb4bfbphCuLKXyzfNChqeE7
+	 v5WWgOP1BBWrsqBrQM3B9q0oQSkkGxLtImKpMDLJxPsEYFS/BG6ki6rawsuG5u9LhHrFVRok7GEW
+	 YLbXB2wIVBjmY499mNAkwWYVfep02CT43U1FCCvV+svomxQanwqnAUuVBy2uDqJIHCQjBFbhx+jv
+	 DzhRF7qJnCUziNeaTD16HJMeHOJDXX/ix0x39HhXAuJe4jGuzlyCgjRqOzajekgToyHuK2sdnFAV
+	 PMKqdcrW6k4QRHiNeuB8hu5ymZhdRGBOl/GjVI5tMQZteggFaueLk+EnJdKKtSYrp4lYI0h9hYZU
+	 6mOQmbuSygHAzCvba5ZiU6XJDQD/8C/t6uFrY9qFxX84vL9JgW60wJC6vhH0swaYMhoQfIhqGf5l
+	 RwEpBIFDECcSStJ7MxCW+OmnbIHZnxv9siPaJlY3uQoQrYnk01BTRgv0rsTYvQpqVpV9xW4QYVBA
+	 NPBUJNfSL5GTnFIaY+hAy/7V6q2uhzCqkN0plZDnuSqmMRbmleQ5RXan5sU7grzMMsdrFZFUt0E7
+	 Prl8a2YMR0eNRSbyaCOjsfjmfDnT7qJJeqHCDv+/vkJdLD/Sq3h5cyvWbaimLIRz65IhwmfmssKF
+	 3cTzYDpw==
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+X-OQ-MSGID: <88fc6ea7-157f-4bb8-b725-739b2be0409c@foxmail.com>
+Date: Thu, 9 Oct 2025 09:38:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251008162719.1829-1-briansune@gmail.com> <aOacZAiWxG9XfWLS@opensource.cirrus.com>
-In-Reply-To: <aOacZAiWxG9XfWLS@opensource.cirrus.com>
-From: Sune Brian <briansune@gmail.com>
-Date: Thu, 9 Oct 2025 09:38:33 +0800
-X-Gm-Features: AS18NWAU7au0dqPFWIf36aNFX-XQyhsxQx8vzY3DKLyxxYLexG4DEIy-dDxCkNQ
-Message-ID: <CAN7C2SDa2WXKVw6XdR+2K0nAjkjy3JH6e+h7d0i9wDNyoXEyBA@mail.gmail.com>
-Subject: Re: [PATCH v5] ASoC: wm8978: add missing BCLK divider setup
-To: Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linux-sound@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v3 1/2] bpf: add bpf_strcasestr,bpf_strncasestr
+ kfuncs
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Viktor Malik <vmalik@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
+ Eduard <eddyz87@gmail.com>, Rong Tao <rongtao@cestc.cn>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ "open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)"
+ <bpf@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+ "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
+References: <cover.1759804822.git.rongtao@cestc.cn>
+ <tencent_6E59062E4249590597452A06AFCDA3098808@qq.com>
+ <CAADnVQJFBR5ecewWdDhTqyXTMWH_QVEPCm2PXxV_3j1wa+tWMQ@mail.gmail.com>
+Content-Language: en-US
+From: Rong Tao <rtoax@foxmail.com>
+In-Reply-To: <CAADnVQJFBR5ecewWdDhTqyXTMWH_QVEPCm2PXxV_3j1wa+tWMQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Charles Keepax <ckeepax@opensource.cirrus.com> =E6=96=BC 2025=E5=B9=B410=E6=
-=9C=889=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8A=E5=8D=881:16=E5=AF=AB=E9=81=
-=93=EF=BC=9A
 
-> [1] https://www.nxp.com/docs/en/user-manual/UM11732.pdf
+On 10/7/25 12:08, Alexei Starovoitov wrote:
+> On Mon, Oct 6, 2025 at 8:00 PM Rong Tao <rtoax@foxmail.com> wrote:
+>> +/**
+>> + * bpf_strnstr - Find the first substring in a length-limited string, ignoring
+>> + *               the case of the characters
+>> + * @s1__ign: The string to be searched
+>> + * @s2__ign: The string to search for
+>> + * @len: the maximum number of characters to search
+>> + *
+>> + * Return:
+>> + * * >=0      - Index of the first character of the first occurrence of @s2__ign
+>> + *              within the first @len characters of @s1__ign
+>> + * * %-ENOENT - @s2__ign not found in the first @len characters of @s1__ign
+>> + * * %-EFAULT - Cannot read one of the strings
+>> + * * %-E2BIG  - One of the strings is too large
+>> + * * %-ERANGE - One of the strings is outside of kernel address space
+>> + */
+>> +__bpf_kfunc int bpf_strncasestr(const char *s1__ign, const char *s2__ign,
+>> +                                                               size_t len)
+> See AI review for the above part.
 
-At the end of the day. After refreshing myself a bit,
-I want to cleanup what this document trying to proposed.
-From beginning I am very clear on what I am understood.
-Along the discussions I am been mislead  by this parties
-as well.
-What the standard about extra bit is ignore is not because
 
-1: BCLK clock rate allow faster
-2: BCLK is not relayed by MCLK and LRCLK
+I just submit the v4, please review, thanks :)
 
-Explains
+Rong Tao
 
-What IIS inherent design.
-1: in order to form a 24 bit counter 6 flops is required.
-As such then counting 32 / channel hence 64 bit.
 
-2:To divide BCLK to form LRCLK then this 64 ticks are
-ran. As such when a 24  bit data format is used, extra
-8 bit is ignored as such division can form proper bounded S.R.
+>
+> pw-bot: cr
 
-3: With this ignore bit method less die size power on VLSI.
-Simplified 8,12,16,24,32 data format while LRCLK vs BCLK is
-bounded.
-
-4: As such, this is no the concept of overclocking
-BCLK to fit all those how argue about BCLK is faster to etc.
-
-So agree to disagree. I never accept the concept of
-overclock on IIS. And this is not what bit is ignored intended!
-
-Brian
 
