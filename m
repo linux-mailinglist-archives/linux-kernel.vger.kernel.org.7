@@ -1,149 +1,230 @@
-Return-Path: <linux-kernel+bounces-847162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3B4DBCA231
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 18:21:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ECECBCA234
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 18:21:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 117031A66D5A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 16:15:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 656441A66F13
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 16:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FB622156B;
-	Thu,  9 Oct 2025 16:12:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E7A61E520A;
+	Thu,  9 Oct 2025 16:15:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J9qbG4Vz"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="P4J0IxF2"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4C821CC4B
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 16:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76DC163CB
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 16:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760026352; cv=none; b=VyyBiddty4Lk+IbDUZxJMlSiAFi85qBhKOPCDlOYWoVufPFv+HH8WVm/I/X3ueIAv5M2mJ6oIi916NeCZrZlvdZ/i7XMVUvhsKdJ9YJdxoFR82Fh7SqGaoFH/uaLr6f8kgPZQsUXPFTnvVf4ILL6tdGi6+wVSBWGUefSgNb/n5Q=
+	t=1760026524; cv=none; b=DvNuy+hC9hEEJq2I2VEAs/09DU6HHkBQ+Ycm+BxZhVP8LDOjCRJ+wyb+8FO4Zu0LXXc4ObE1XZBdb1ppkC8yDBBWgXlsig270oOIHEaLsslp5WzYemY/YBAngKcrlrkobFhVOM4yRmgpHkDPkRo8/gycaR/ifwyF9ES7Id39eYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760026352; c=relaxed/simple;
-	bh=vt4Xr6majFlHqQzO6UU/LJul2QasGvXgAd+DJc28JMo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RtjuF6WsGMmaXhJo4/WO/DVgKQIyG2ZBm+o6T8U4CtD8Z9JULGGZceMQYh0mQvYiLvByWh/y6R9x1wMltqHJ6VDrZ5GZiTqzpA8avQpPPfgtxqqj8iOSVwRt5hA3s8thckUTEumlcOLxzCOk5+25VZmtOiRIfqS1cgX89El/vxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J9qbG4Vz; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45b4d89217aso6992105e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 09:12:30 -0700 (PDT)
+	s=arc-20240116; t=1760026524; c=relaxed/simple;
+	bh=oGk2QLydZ4vPVtGl33YOjNXkPTH69PgzTxez7YUnJ7s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AU3l5k6PGuC4jJjGBJCcs2YX/xLnXiGKg4X1F3HaOt6CC4vHj1f6Y6hVSxhuo8g7sggXfAE1L5+5dozy+hD84K9GTjrapW8TBKBXJLP2wmbGmcr1ESwGY3C3g7DIOuzI8DxJGUAYBlBxLAq57CrvPgO/qgLR5YkYuMxf0Hd2k2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=P4J0IxF2; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-856222505eeso116050385a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 09:15:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760026348; x=1760631148; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vt4Xr6majFlHqQzO6UU/LJul2QasGvXgAd+DJc28JMo=;
-        b=J9qbG4Vz6uAkx2+Unz5KNMI4Ycv/n9Gv+EX8ZVjOP945xoEv5nJt1zCGp+nyvBgs/P
-         4YXNXPgTTbofdtaf6B457UaYZie7+bcRA3uREZZ1XdHQVtiFtBshjVJVzerbqtvfz3Q3
-         rJEzOIvhNqK0qZXNtTy3zbTmBcUumNLM3gSyCKlLswjm770TMXte2GkTXBOfTJO+CObk
-         Cd29ODmlLyma7Hs2Psby/9htyOFJxsn5U6YE/kuTMzvmYAcNXAtHpUSetDNpAYMCsApi
-         P58q5NBhNnOhJC6emL/ifjr37PvIVIRH3tADHqaaqD6nWHxsxiIGpgj4xB4bbw+dQW7/
-         bF1w==
+        d=gourry.net; s=google; t=1760026521; x=1760631321; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1+5SvdqRqDaLVpZovzo/tjgIBi731xvYHaxEt2u52vI=;
+        b=P4J0IxF2obcqdX+Dmnm2EWX0PfZ8lQ28UyD2+CZ8+luaV2KLubQToFCdv1gKyVi3qs
+         mZI+H3mN0tQ6L14W70deg4y5/0J4Ar28cWWikj52zjly3/Ehraez/gOhAikkjkeg/71U
+         OWoqWiplnioHzxrow8msLW9GsVW1Iu0hb/WA9k28/WfOlQMZTfwVCL/xYiLdnkrqu+4G
+         RVajzcf++Ibf3i36uPyioXJMP3B0yS86/DRbi+baIm4Y5YQwK+rbO0C90At9fMEDTppc
+         GJq5zRRGIdGLRZS3YNr5vE+D3KnzEelZGAqlJcMtb46pRpzAwCmMqLpIrml7qHCS3eCp
+         BGGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760026348; x=1760631148;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vt4Xr6majFlHqQzO6UU/LJul2QasGvXgAd+DJc28JMo=;
-        b=Wj5bJZ/IAlSJc96FiZdddkMbE9d7VywBmfQzghmBfyXaLLNNeQjhcxDXFEgjjsoYpu
-         yBSSP6QJKSF4W/bQtKLxQ83oYrIOS6TN0sacSUbPCRipj+C6Lp5TezXN7UqD63RVoQvK
-         t7MUjtx2eKn5vEHCM0qH/8FTOktkWH2CiggIFii6AVjyK2z236qHfRDxUwYYrL0d4nDI
-         rSQ7v+iUYAwyOhNW5HE68kln68qnPieCdEvJ3uRiIoMJ34g8Oi6/NMfrx9b5gtvgoWnJ
-         uc4VmtzCaGKf3sUN8UvOtd8ziS2jDHdHQPit6yz5l3k8eqk++R+2rJUCtYRekmj0aBGl
-         j49w==
-X-Forwarded-Encrypted: i=1; AJvYcCVQlrhhhXQzIW/QCH2YeK8QeGIZ0KFin89gGABFONaYhKBjyPHkytO2ZahR8EGJwR3ofyZYJrjEQPJRguU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWG6/2arn1xOWPti3sAmdgEzraqIBYXKlEqxcIaL4AXHNo5bnW
-	sZIl/4Uur4P2nmn0hP1UdMPc+ogzXWXzgo/RnLNdHxH2tF2ogn6yWuBA62xGUDIN9O7dspdmzpL
-	z5mQXpJ28/jtDKSt0ZTPy+zZ9mwKdoUs=
-X-Gm-Gg: ASbGnctgFOwaFq+aXITrwpA9eOwd8TKTrAmqJd6lLvrImitRrUmGlqvL/Q8cXBN3jVr
-	aEKkeMQ9dEplfs7zODkWeT5Vh2IO6rl+hVL4j+hTMvM1gfO2kXIbZJJSzpMyElNWjRTeDp2Gpcc
-	CUYr4LxIADNL18JwthgiPBqChhiHrjt15TOG7tcyVrmpLVuq2RVYCQUcqe7Gj/FYuE+SnJSD/YU
-	/ohMuKEw6co52zOWROhS8nVyEBi3GhGzbccj7dEweZb/k9WxHVVaIdZthGmdvS8
-X-Google-Smtp-Source: AGHT+IFI12A7o4l5UIWszOSSqVwW7+IdmNEVBD602Qs920M96fLWTNMVF9DKFjQfLowasrstk8O4FuoK3byvRdyjw34=
-X-Received: by 2002:a05:600c:19c6:b0:46e:3d17:b614 with SMTP id
- 5b1f17b1804b1-46fa9a9440emr67530035e9.6.1760026348350; Thu, 09 Oct 2025
- 09:12:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760026521; x=1760631321;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1+5SvdqRqDaLVpZovzo/tjgIBi731xvYHaxEt2u52vI=;
+        b=kOg3PZa6ddJ81pY1nxVOkv4n0LQQBaQm/tpMhcLvhL4Go252A3BaJ7X6MEqpgplV1R
+         BLDLw9chOQRT+V5nijcFP9WSBKw7H2jwxSl0+gq8P2/o1jz9or4f1xxT0xqAVk8NE2ox
+         mm0eijLcWLx2cIDAd5dfhmrDatcGd/54H4oCpg1mTlLyNvqGR4vSlIVmAHuLDfnDsoyo
+         H5etBRacyZu7v9FCluKeHs2Mo1VmfrNlwDU1PuP4kjMcx0aLAhYpN03MTbNzGiIv6vbY
+         fVggO72KSRgNDoHOh4cYtTgOgVh4UiGmqbdIYzwf9KWHfIUMrdw3couD2uqo6hqOwkY3
+         wnuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVItgJPGAwuObl7nrh5gyerT1jqSLJ9JjeLTgzuehJRfGDFOn2rutEz9EK8VPbYWzoLZ3Mq1KXWYPMznuE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfiuQe7daWbUnRbmqNt9aJ6IbwEoC8MLaLqHjnfIKXCQOKzLEO
+	00+vRCaarcHNKOa6yMMnFKOVRnsgpE/Q6HlGbas5e1qdgr+177Xc6tGO8x0E4WFmd4M=
+X-Gm-Gg: ASbGncsw7Y1pUD50m9eD5aFRg4Sc8Cn7i+d7rhVgd2K2YGepZ0m3WyF5YOcB9aRNxs/
+	xAqdIYDp8a0qItS09jKGKmGM3+A9zz5A1iMvyIcPOH6zCSdi+eOOCwfbT9t65Fg/tuhPH6UrE8X
+	KAuc045Sr06j/IdxCMgClEGolWBZ+7vRhVfIPipGmT/UEOR470y2/c01sTCeEF69aytvZFjboB9
+	bWKl6X6Zsqr+nQHhkDhGbBl01UAjU4zHcg1I+Q/uYWRDEZCrnXJD8/qdaLSIpyh9Q1Z/1tpqQTN
+	b8fyH9Jp61eSAM6GJ6ev7VKeB6B9eg0hqpZt2UrXfihudphpotmn/8+Is2id6y0j92JQmEgkWBp
+	XUdMhOe+ZzqN0v2Vp4WQ5X4ehiHKeGPRe9K82RXH/CyLiT9edqG/Cl+oKZlhkU2flaYsoncUpCG
+	aFIi9M7Q154GMtpssGZjvrPMukZ012FatbEDUWrMjoHlSg7w==
+X-Google-Smtp-Source: AGHT+IEj2zy9apxWY9vObYs3hv/JmdQttOhxDDHvUjAsMStwiARm4lbIvINlMgC2GhXAwwntSoBprQ==
+X-Received: by 2002:a05:620a:bd5:b0:870:90ff:90d with SMTP id af79cd13be357-883533693admr1130340185a.8.1760026520890;
+        Thu, 09 Oct 2025 09:15:20 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F.lan (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8849f2e2098sm224285685a.13.2025.10.09.09.15.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 09:15:20 -0700 (PDT)
+From: Gregory Price <gourry@gourry.net>
+To: linux-mm@kvack.org
+Cc: corbet@lwn.net,
+	muchun.song@linux.dev,
+	osalvador@suse.de,
+	david@redhat.com,
+	akpm@linux-foundation.org,
+	hannes@cmpxchg.org,
+	laoar.shao@gmail.com,
+	gourry@gourry.net,
+	mclapinski@google.com,
+	joel.granados@kernel.org,
+	jack@suse.cz,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mel Gorman <mgorman@suse.de>,
+	Michal Hocko <mhocko@suse.com>,
+	Alexandru Moise <00moses.alexander00@gmail.com>,
+	David Rientjes <rientjes@google.com>
+Subject: [RFC PATCH] mm, hugetlb: implement movable_gigantic_pages sysctl
+Date: Thu,  9 Oct 2025 12:15:15 -0400
+Message-ID: <20251009161515.422292-1-gourry@gourry.net>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1759875560.git.fthain@linux-m68k.org> <807cfee43bbcb34cdc6452b083ccdc754344d624.1759875560.git.fthain@linux-m68k.org>
- <CAADnVQLOQq5m3yN4hqqrx4n1hagY73rV03d7g5Wm9OwVwR_0fA@mail.gmail.com>
- <20251009070206.GA4067720@noisy.programming.kicks-ass.net>
- <CAADnVQK1GqQKxdoM9e1Z92QK68GEjqgMnC36ooVgS1uUNiP6eg@mail.gmail.com> <b9ab4c28-52c8-4fa7-85cb-109ef4c0d7f4@app.fastmail.com>
-In-Reply-To: <b9ab4c28-52c8-4fa7-85cb-109ef4c0d7f4@app.fastmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 9 Oct 2025 09:12:17 -0700
-X-Gm-Features: AS18NWAh8o7ul2E7KaW4Pi6pgz_IUWTKFALZRPApDvY8RHlwRKBhNejOgDh2MHw
-Message-ID: <CAADnVQL9PRCVEJBJ++TCRBWqshQLn7dz0SiJ6KWDYPeWLSK22w@mail.gmail.com>
-Subject: Re: [RFC v3 2/5] bpf: Explicitly align bpf_res_spin_lock
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Peter Zijlstra <peterz@infradead.org>, Finn Thain <fthain@linux-m68k.org>, 
-	Will Deacon <will@kernel.org>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Mark Rutland <mark.rutland@arm.com>, LKML <linux-kernel@vger.kernel.org>, 
-	Linux-Arch <linux-arch@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	linux-m68k@vger.kernel.org, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 9, 2025 at 9:02=E2=80=AFAM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Thu, Oct 9, 2025, at 17:17, Alexei Starovoitov wrote:
-> > On Thu, Oct 9, 2025 at 12:02=E2=80=AFAM Peter Zijlstra <peterz@infradea=
-d.org> wrote:
-> >>
-> >> On Wed, Oct 08, 2025 at 07:10:13PM -0700, Alexei Starovoitov wrote:
-> >>
-> >> > Are you saying 'int' on m68k is not 4 byte aligned by default,
-> >> > so you have to force 4 byte align?
-> >>
-> >> This; m68k has u16 alignment, just to keep life interesting I suppose
-> >> :-)
-> >
-> > It's not "interesting". It adds burden to the rest of the kernel
-> > for this architectural quirk.
-> > Linus put the foot down for big-endian on arm64 and riscv.
-> > We should do the same here.
-> > x86 uses -mcmodel=3Dkernel for 64-bit and -mregparm=3D3 for 32-bit.
-> > m68k can do the same.
-> > They can adjust the compiler to make 'int' 4 byte aligned under some
-> > compiler flag. The kernel is built standalone, so it doesn't have
-> > to conform to native calling convention or anything else.
->
-> I agree that building the kernel with -malign-int makes a lot
-> of sense here, there is even a project to rebuild the entire
-> user space with the same flag.
->
-> However, changing either the kernel or userspace to build with
-> -malign-int also has its cost, since for ABI compatibility
-> reasons any include/uapi/*/*.h header that defines a structure
-> with a misaligned word needs a custom annotation in order to
-> still define the layout to be the same as before, and the
-> annotations do complicate the common headers.
->
-> See
-> https://lore.kernel.org/all/534e8ff8-70cb-4b78-b0b4-f88645bd180a@app.fast=
-mail.com/
-> for a list of structures that likely need to be annotated,
-> and the thread around it for more of the nasty details that
-> make this nontrivial.
+This reintroduces a concept removed by
+commit d6cb41cc44c6 ("mm, hugetlb: remove hugepages_treat_as_movable sysctl")
 
-I see. So this is a lesser evil.
+This sysctl provides some flexibility between multiple requirements which
+are difficult to square without adding significantly more complexity.
 
-Acked-by: Alexei Starovoitov <ast@kernel.org>
+1) onlining memory in ZONE_MOVABLE to maintain hotplug compatibility
+2) onlining memory in ZONE_MOVABLE to increase reliability of hugepage
+   allocation.
 
-for the patch then.
+When the user's intent for ZONE_MOVABLE is to allow more reliable huge
+page allocation (as opposed to enabling hotplugability), disallowing 1GB
+hugepages in this region this region is pointless.  So if hotplug is not
+a requirement, we can loosen the restrictions to allow 1GB gigantic pages
+in ZONE_MOVABLE.
+
+Since 1GB can be difficult to migrate / has impacts on compaction /
+defragmentation, we don't enable this by default.  However, since there
+are scenarios where gigantic pages are migratable (hugetlb available in
+multiple places), we should allow use of these on zone movable regions.
+
+Note: Boot-time CMA is not possible for driver-managed hotplug memory,
+as CMA requires the memory to be registered as SystemRAM at boot time.
+
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Mel Gorman <mgorman@suse.de>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Alexandru Moise <00moses.alexander00@gmail.com>
+Suggested-by: David Rientjes <rientjes@google.com>
+Signed-off-by: Gregory Price <gourry@gourry.net>
+Link: https://lore.kernel.org/all/20180201193132.Hk7vI_xaU%25akpm@linux-foundation.org/
+---
+ Documentation/admin-guide/sysctl/vm.rst | 17 +++++++++++++++++
+ include/linux/hugetlb.h                 |  3 ++-
+ mm/hugetlb.c                            | 11 +++++++++++
+ 3 files changed, 30 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
+index 4d71211fdad8..89dcee3c3239 100644
+--- a/Documentation/admin-guide/sysctl/vm.rst
++++ b/Documentation/admin-guide/sysctl/vm.rst
+@@ -54,6 +54,7 @@ Currently, these files are in /proc/sys/vm:
+ - mmap_min_addr
+ - mmap_rnd_bits
+ - mmap_rnd_compat_bits
++- movable_gigantic_pages
+ - nr_hugepages
+ - nr_hugepages_mempolicy
+ - nr_overcommit_hugepages
+@@ -624,6 +625,22 @@ This value can be changed after boot using the
+ /proc/sys/vm/mmap_rnd_compat_bits tunable
+ 
+ 
++movable_gigantic_pages
++======================
++
++This parameter controls whether gigantic pages may be allocated from
++ZONE_MOVABLE. If set to non-zero, gigantic hugepages can be allocated
++from ZONE_MOVABLE. ZONE_MOVABLE memory may be created via the kernel
++boot parameter `kernelcore` or via memory hotplug as discussed in
++Documentation/admin-guide/mm/memory-hotplug.rst.
++
++Support may depend on specific architecture.
++
++Note that using ZONE_MOVABLE gigantic pages may make features like
++memory hotremove more unreliable, as migrating gigantic pages is more
++difficult due to needing larger amounts of phyiscally contiguous memory.
++
++
+ nr_hugepages
+ ============
+ 
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index 526d27e88b3b..38870d21724a 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -172,6 +172,7 @@ bool hugetlbfs_pagecache_present(struct hstate *h,
+ 
+ struct address_space *hugetlb_folio_mapping_lock_write(struct folio *folio);
+ 
++extern int movable_gigantic_pages __read_mostly;
+ extern int sysctl_hugetlb_shm_group;
+ extern struct list_head huge_boot_pages[MAX_NUMNODES];
+ 
+@@ -916,7 +917,7 @@ static inline bool hugepage_movable_supported(struct hstate *h)
+ 	if (!hugepage_migration_supported(h))
+ 		return false;
+ 
+-	if (hstate_is_gigantic(h))
++	if (hstate_is_gigantic(h) && !movable_gigantic_pages)
+ 		return false;
+ 	return true;
+ }
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 753f99b4c718..24dbd30d1b69 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -55,6 +55,8 @@
+ #include "hugetlb_cma.h"
+ #include <linux/page-isolation.h>
+ 
++int movable_gigantic_pages;
++
+ int hugetlb_max_hstate __read_mostly;
+ unsigned int default_hstate_idx;
+ struct hstate hstates[HUGE_MAX_HSTATE];
+@@ -5195,6 +5197,15 @@ static const struct ctl_table hugetlb_table[] = {
+ 		.mode		= 0644,
+ 		.proc_handler	= hugetlb_overcommit_handler,
+ 	},
++#ifdef CONFIG_ARCH_ENABLE_HUGEPAGE_MIGRATION
++	{
++		.procname	= "movable_gigantic_pages",
++		.data		= &movable_gigantic_pages,
++		.maxlen		= sizeof(int),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec,
++	},
++#endif
+ };
+ 
+ static void __init hugetlb_sysctl_init(void)
+-- 
+2.51.0
+
 
