@@ -1,128 +1,260 @@
-Return-Path: <linux-kernel+bounces-846267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6E50BC76EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 07:32:17 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B0A0BC76F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 07:33:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05B1319E5145
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 05:32:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F18D84F0730
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 05:33:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238441DF75D;
-	Thu,  9 Oct 2025 05:32:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53172261B6C;
+	Thu,  9 Oct 2025 05:33:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FjI6+Zv3"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uNoFgRIG"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494BE25C6E2
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 05:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A1A1DF75D
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 05:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759987933; cv=none; b=rUjhFFZ1mwQrmJZuXgdOoGn6qjoFuw5Kqdhwg7/23VQ6ygWF1Pxi1Lzn6AwUD5Ru10AovFSadOkiSX7hgjx3JIWh3Qaqqf/kqcjEQDCBWaYwA2Rv2QrM0Ioq5VzbZC1rJhO1YzGnRtCCQHBRs5Y3zqHlwmDjHmfGJLGN3dmslZw=
+	t=1759987979; cv=none; b=MS/C9PJmYVzkEwGVsv9a5yte5nJeuaQT+jL/85rIi1i0Xl8R8Vn+6hFcjRe4bm/kdFZc0PGHrg5PZpcVDNe0X6wHU56fPjAcHcHpxYz0pXfMvm2tLcL7D8PS5R6pBYQWrxZzEA7hdzh0KESW/r4Zbv6o+BuJD43nO2GMZQW49NI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759987933; c=relaxed/simple;
-	bh=p0WDAtk/m2ooYYDQvo1mfLf3Y8e8XUasvdbpgjXqJIc=;
+	s=arc-20240116; t=1759987979; c=relaxed/simple;
+	bh=cqBmOKczfhH/UO9yjP31b2YRqZKcTi0NIaQ37SLfQZk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rB7ZT8DRJXtqy+0aX3GG1/t6daRxJzpV8aEjYaoEc3y96JGCNfuxolYPjC0+gK7t+SUpJO9YS+SGL/cH27RUqca07PO7TFVt/3l9HeNAqpW1cpl/3CtR40mobkCWaxbmX4Ux/lFeWfnRh8DhKWeVh8ohTaHGfQ78Dr11SxpLvKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=FjI6+Zv3; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6318855a83fso1111148a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 22:32:07 -0700 (PDT)
+	 To:Cc:Content-Type; b=ROA/gKWOcIjARf+zpkCBn9KZkC/nzUk3Yx9lZC0vQ2xVQK0UWZL9OVoxdwPsXhdaS3Whu8KfWKdWJKVFCfgS2XKBrKlEOKovfrCBmgXQIYxDZ9E3q0acWwItFWtBRrC2RTvD5f44FVmPL4sMR4pfan1B03+TN2qkREdinYFqK3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uNoFgRIG; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b62e7221351so461153a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 22:32:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1759987926; x=1760592726; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5iUIuF0PvXlOQIXyN7mabhFThgTHnFDsNn0DAFrYiaY=;
-        b=FjI6+Zv3i4QaQgWAn3w6bumcsxAVtKsObP+Nh+PaQVKt/EVTy282Qzt0m8cNIb5IbP
-         QkMMaKpeeQiNP8M/Ll7FpLzejRXK9ExlYJI1qPhEZvxFGYsq5Rdfs1V4QtzU0CKUPXLV
-         VMuhU/unBoKve+UMdzairoiGUN22P8QazeBKg=
+        d=google.com; s=20230601; t=1759987976; x=1760592776; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ktzba1DKI99kYPMwl1srTlE2mog9+B/vdYobPJ4WgxM=;
+        b=uNoFgRIG8IK/xhzCq27udrWNf0epxYkeAYdhcIS+8jgZzYWvCWtB7wki1WSq8wBOkp
+         VYwfjZ/+1Z4RhIgV1GjXjbfC1F6KhlssYWbwq4e0c0MCYikYyu8o5YWD84/ul4eNZy0V
+         SQCWo6ubtK6w90aDIlG0u+3NmFgFaWIbKOictKNAF6Fcl/d7vWspMZltXzajkqhdv+gp
+         5OAGQgTzhQ8KYwCQHcSCobaAAGdl7rjOPBmmeekuR2lc5Yf3N06Tps21oh3XrN3eLT4a
+         FJR358EuR3/kE2jFGn3qg1AtJ1qyFBofybcIznHGXG7hQweQjFFXDOsnQ+XQS5/qcFWa
+         dNEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759987926; x=1760592726;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5iUIuF0PvXlOQIXyN7mabhFThgTHnFDsNn0DAFrYiaY=;
-        b=IviHooEIJwEDmQ8RgOR+F3H7rKDVIfsqBtK4mluGQ9rry8E+VTjifYBfaRSsHh4hPI
-         zuD8jfD2mC9RCr9OzXRDGVYwTHGj5tGqkdBZZIMpg2jnX25Lz2zMZdwpJrF1kFgnce4p
-         v1QT0XgBnPhmFUws4l4aQRw23jhy4iKWpRPKuWqixPUhkagyOIGiMWtVEmoR/stdeZZZ
-         uig/lN8t+sYlJ2M9XTMp5tMmXdlQF4kewhLlViG6fo80U90TKYjhDo1RLHsvothUWRAJ
-         lwTYDk7bgxQSyDgFM2Md9h+GzNqvNi+2cFFjRUroYJ2lw060JA/sjn52U8N/f8BfNhOq
-         iFaA==
-X-Forwarded-Encrypted: i=1; AJvYcCXeYRamPI2WBAXQTRFy6+khVF3Zpp+EwURNvG3lQJTW3c2Al0MV0eN6MoL49m49BsWxrTVkBkMXe+37dDg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfQS1Vtv8y7RGp5pkUxwx90RNuH4y6gA9b/46cdFeSOGjWHwTb
-	Wy2DF+IZniNhae0XggarF3j91GBD6CGg8Kvc6ANrWG3StyaqGAE+YViOioiZfgj/nI6tNUXNyAB
-	V4QhkaFxb3Q==
-X-Gm-Gg: ASbGncsqhTfME46UrsqyrtSMtn8/Toqyl6xmAneEH8nFmrALAUaotVkHWnjNqjoysRK
-	esiyC6EWjGq1jSBdIVhg5pIfNkpkA/rhH/IGxb+pO2JSYlyyX+B+wxeM/CfwhqnKYEAV/w8imcq
-	D5G4UDOaPik7VOKPX0tSvlQ0e8acFsLsef7TmQud7bwZGIHR6OwYRgQLbehgTddEOlhKUqnwgXa
-	g5kC4Uy2OwNs98lPx9jIZfNWDomzD8lAuhTqx/ocMAntIHNYS3FqyoKjUpJoA5vFd/qeBspdZFQ
-	jSe/OXA2/Dd/ILtUDPuJcHiU7MTPrqR0luGNonMHDI8P8RSIetIXmP5onsyMJzKfnhSKwmgU5qo
-	WntZAivFY/kgQaMht5ZdspitRVzMpgxzz6UjFb2T3h28DGARqUTCymn5vAnFJeOLRZgNwQqL/m/
-	C8f1yGtu3CEFegbaHdVzwd
-X-Google-Smtp-Source: AGHT+IErGFv9MHHGjxrzXtYc0To0imJRi7mxlVPj8J3YCSUHZmDut6M/3cWByruuoGFbBHSJhbE34A==
-X-Received: by 2002:a17:906:f5a5:b0:b29:c2ae:78f8 with SMTP id a640c23a62f3a-b50ac5d08bamr703623766b.46.1759987926327;
-        Wed, 08 Oct 2025 22:32:06 -0700 (PDT)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b4865e7c47fsm1829475966b.37.2025.10.08.22.32.05
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Oct 2025 22:32:05 -0700 (PDT)
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-639e1e8c8c8so1045248a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 22:32:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVGQQS3M+3nyChkA3j3HhywykG2UfexwuaX69epKiFqDFfSyF9xj/eu3QKbIXH8OAWfbypkX43yUMqV+rI=@vger.kernel.org
-X-Received: by 2002:a05:6402:5193:b0:634:c1a5:3106 with SMTP id
- 4fb4d7f45d1cf-639d5c5a3dfmr5439388a12.31.1759987924767; Wed, 08 Oct 2025
- 22:32:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759987976; x=1760592776;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ktzba1DKI99kYPMwl1srTlE2mog9+B/vdYobPJ4WgxM=;
+        b=gGk9jk5b3A/R66GkNfaC76pPTUyqjKorFnRTHe6XtXe3p3hVJrIyXXvISS7qpIYWzO
+         /+Ldi5K1XHo3fZrYiY9SyCUn2kO5JfHXPsKc5GgqrvghJvizlDPUZ+RFgD8n6dTyxpEX
+         Tp+7BwdPkEDgCIbF9oKWG+px6NuMr9engxIowlfuxFd0xBeTmDWqlnm1Ocfn4gSumiLF
+         jlcV6vkNtYewc+vR1CAy2Ht1wGnESYkVvTqbMnwZk5l/b/33x6jJjubJ+IyJ1VEvexhc
+         nYjnuF04ivavO5fjNQxUjabIdW1qZWZc1bSqERszyRPfbBM8kYSfg0+UizyW2Gmyg7Vq
+         vLrw==
+X-Forwarded-Encrypted: i=1; AJvYcCXxFSOpNlwh2gIs9btOvlpzqIZGDnFE7LQ79FjjLgLRzA/81C3QpLQLarsbZ7tZcF0fA6lta3U8laVvMhk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8Lo0xI2tcx0GMJoaGQQidfGCjNdYWsjTyVfFXfBLSM05uN3lr
+	cwjVTfUJ9rH0io1zKMHbHXx7HlfFISVanVkxIaCwJ3L47HmgtLrC4DI1rl5XWKwwLlZ9qOZbi23
+	Alp/mYwm5UW7fV9O76NuKCk3uLnCdr7Zkb+mJWjjd
+X-Gm-Gg: ASbGncvO7T4Hv8GNI/Pu+cDnRMeHThcq4gKh8EfT8lgwU06a9nLYwRKzh9gJ+96e/NO
+	qB3Sd1cVjXPMEmyR5xyf2sL17Zn6HLQVN7LtZdF4Xh/VcUvZX9vKa6V8csymnG+Bx0lUz9YIbzg
+	jhA264YUk6J86RHg6LsHUHDidraM6mcj/azC0Hpl44fJI03k0C47QHnqN9EW6N7UcBlNB3hbvxd
+	RR+OwDoPaDQ/Qe8slEPsvikKNNPyUgnGe7BfDdaBSQqPcrH/uDuICvs8VTqJyA/W/O6+v2k4URg
+	ztVRfw==
+X-Google-Smtp-Source: AGHT+IESVUNCkk4qmxVAx9LJph/+dlWojTCH2hUrbcfDKEG7HjEaHHrdoMtO6Rsw83EBp0EQAopUJwb8ZBCKUnW4eIk=
+X-Received: by 2002:a17:903:3c30:b0:270:ea84:324a with SMTP id
+ d9443c01a7336-290272c1898mr84726695ad.38.1759987975870; Wed, 08 Oct 2025
+ 22:32:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251008123014.GA20413@redhat.com> <20251008123045.GA20440@redhat.com>
- <CAHk-=wjozC9_JCdEW9K_uruJqzTLzhtcVpgDk1OuqErNRUS7Mg@mail.gmail.com>
-In-Reply-To: <CAHk-=wjozC9_JCdEW9K_uruJqzTLzhtcVpgDk1OuqErNRUS7Mg@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 8 Oct 2025 22:31:48 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjuoFm9yZur_T4VOnX2iyDYD6T_gDRXE5ms9538W6Q35g@mail.gmail.com>
-X-Gm-Features: AS18NWA_8Cfdb68OVnzoIohElsdBiWblfIoQ8JOzZXJX8xy2nSMX8RubDlSjGTw
-Message-ID: <CAHk-=wjuoFm9yZur_T4VOnX2iyDYD6T_gDRXE5ms9538W6Q35g@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] seqlock: introduce scoped_seqlock_read() and scoped_seqlock_read_irqsave()
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Boqun Feng <boqun.feng@gmail.com>, 
-	David Howells <dhowells@redhat.com>, Ingo Molnar <mingo@redhat.com>, 
-	Li RongQing <lirongqing@baidu.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org
+References: <20251008060000.3136021-1-royluo@google.com> <20251008060000.3136021-4-royluo@google.com>
+ <fa743412-d9f1-43fd-95e8-3b2a58cd6c25@kernel.org>
+In-Reply-To: <fa743412-d9f1-43fd-95e8-3b2a58cd6c25@kernel.org>
+From: Roy Luo <royluo@google.com>
+Date: Wed, 8 Oct 2025 22:32:19 -0700
+X-Gm-Features: AS18NWBygRM42KHUCeYjOx9jxiQbWPiyFalWSXt9KQT6EVktBFe8TaXkrSn7-PI
+Message-ID: <CA+zupgyjkyr-zfnecvL5i572q-S2BPSz9w-ue+OmyGoj7EtW_A@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] dt-bindings: phy: google: Add Google Tensor G5 USB PHY
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Peter Griffin <peter.griffin@linaro.org>, 
+	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Joy Chakraborty <joychakr@google.com>, 
+	Naveen Kumar <mnkumar@google.com>, Badhri Jagan Sridharan <badhri@google.com>, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 8 Oct 2025 at 09:05, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Wed, Oct 8, 2025 at 4:58=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
 >
-> I think that you should make that helper function be a macro - so that
-> it can take the unnamed union type as its argument - and then make it
-> do something like this instead:
+> On 08/10/2025 14:59, Roy Luo wrote:
+> > Document the device tree bindings for the USB PHY interfaces integrated
+> > with the DWC3 controller on Google Tensor SoCs, starting with G5
+> > generation.
+> >
+> > Due to a complete architectural overhaul in the Google Tensor G5, the
+> > existing Samsung/Exynos USB PHY driver and binding for older generation=
+s
+> > of Google silicons such as gs101 are no longer compatible.
+> >
+> > The USB PHY on Tensor G5 includes two integrated Synopsys PHY IPs: the
+> > eUSB 2.0 PHY IP and the USB 3.2/DisplayPort combo PHY IP. Currently onl=
+y
+> > USB high-speed is described and supported.
+> >
+> > Signed-off-by: Roy Luo <royluo@google.com>
+> > ---
+> >  .../bindings/phy/google,gs-usb-phy.yaml       | 96 +++++++++++++++++++
+> >  1 file changed, 96 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/phy/google,gs-usb=
+-phy.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/phy/google,gs-usb-phy.ya=
+ml b/Documentation/devicetree/bindings/phy/google,gs-usb-phy.yaml
+> > new file mode 100644
+> > index 000000000000..22961e2da6ef
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/phy/google,gs-usb-phy.yaml
+> > @@ -0,0 +1,96 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +# Copyright (C) 2025, Google LLC
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/phy/google,gs-usb-phy.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Google Tensor Series (G5+) USB PHY
+> > +
+> > +maintainers:
+> > +  - Roy Luo <royluo@google.com>
+> > +
+> > +description: |
+> > +  Describes the USB PHY interfaces integrated with the DWC3 USB contro=
+ller on
+> > +  Google Tensor SoCs, starting with the G5 generation.
+> > +  Two specific PHY IPs from Synopsys are integrated, including eUSB 2.=
+0 PHY IP
+> > +  and USB 3.2/DisplayPort combo PHY IP.
+> > +  The first phandle argument within the PHY specifier is used to ident=
+ify the
+> > +  desired PHY. The currently supported value is::
 >
->   #define __scoped_seqlock_read_retry(s) ({ s.lockless ?       \
->         (s.lockless = false) || read_seqretry(lock, s.seq) ?   \
->                 ({ read_seqlock_excl(lock); true }) : false :  \
->         ({ read_sequnlock_excl(lock); false }) })
+> Currently supported as hardware will change? You describe here hardware
+> ONLY.
 
-Actually, it shouldn't do that "s.lockless = false" thing at all -
-because that's done by the for() loop.
+I wanted to explain the PHY specifier as I saw other bindings are also doin=
+g it,
+e.g. "Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml".
+Theoretically the hardware supports 3 PHY interfaces: high-speed, super-spe=
+ed
+and DP, however, the corresponding driver only supports high-speed at the
+moment.
+I can still document all the 3 PHY interfaces and assign them with
+a theoretical specifier value here as that's what the hardware is capable o=
+f,
+and then make it clear that only high-speed is currently supported on the d=
+river
+side. Does this make sense to you?
 
-So that was just a thinko from trying to translate the whole "*seq =
-1" hackery from the old model.
+>
+> > +    0 - USB high-speed.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    items:
+> > +      - enum:
+> > +          - google,gs5-usb-phy
+> > +
+> > +  reg:
+> > +    minItems: 3
+> > +    maxItems: 3
+> > +
+> > +  reg-names:
+> > +    items:
+> > +      - const: usb2_cfg_csr
+> > +      - const: dp_top_csr
+> > +      - const: usb_top_cfg_csr
+>
+> Drop csr
+>
 
-But that hackery shouldn't even exist since it's all handled naturally
-and much more cleanly by the surrounding for-loop.
+Ack, will fix it in the next patch.
 
-The only thing that the macro needs to worry about is whether it
-should retry after the lockless case (and take the lock if so), or
-whether it should just unlock after the locked case.
+> > +
+> > +  "#phy-cells":
+> > +    const: 1
+> > +
+> > +  clocks:
+> > +    maxItems: 1
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: usb2_phy_clk
+>
+> Drop names, pointless for one entry.
+>
 
-             Linus
+Ack, will fix it in the next patch.
+
+> > +
+> > +  resets:
+> > +    maxItems: 1
+> > +
+> > +  reset-names:
+> > +    items:
+> > +      - const: usb2_phy_reset
+>
+> Drop names, pointless for one entry.
+>
+
+Ack, will fix it in the next patch.
+
+> > +
+> > +  power-domains:
+> > +    maxItems: 1
+> > +
+> > +  orientation-switch:
+> > +    type: boolean
+> > +    description:
+> > +      Indicates the PHY as a handler of USB Type-C orientation changes
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - reg-names
+> > +  - "#phy-cells"
+> > +  - clocks
+> > +  - clock-names
+> > +  - resets
+> > +  - reset-names
+> > +
+> > +unevaluatedProperties: false
+> > +
+>
+>
+> additionalProps instead. Read writing schema or example schema.
+>
+
+Ack, will fix this in the next patch.
+Appreciate the review!
+
+Thanks,
+Roy Luo
+
+>
+> Best regards,
+> Krzysztof
 
