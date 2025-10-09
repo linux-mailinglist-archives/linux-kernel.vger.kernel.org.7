@@ -1,66 +1,66 @@
-Return-Path: <linux-kernel+bounces-846230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F286ABC7525
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 05:49:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 767F7BC752B
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 05:49:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2F8619E1F6B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 03:49:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E03819E0E6E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 03:49:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF00E2459DC;
-	Thu,  9 Oct 2025 03:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A7123D7C0;
+	Thu,  9 Oct 2025 03:49:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="IVuqQ92S"
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013024.outbound.protection.outlook.com [52.101.72.24])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="O5Kl7/Rm"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010036.outbound.protection.outlook.com [52.101.84.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC7F241679;
-	Thu,  9 Oct 2025 03:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA4586323;
+	Thu,  9 Oct 2025 03:48:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.36
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759981730; cv=fail; b=WU+mK4NuWDeMPhb9Yd/MqpG/YcPsp2Qq6BT5HGowlr61NEDLWBYowHrZzyptI1AqD/y9yH1qDvusm6xbkOmSVF9Cfuwa5bh4JliAK+mhw8Ouic1WjS2ZiIk9uyz8hrON8snI7XGFMdrTnqkB2ezmWbYQ9ZpSbqpNjNQ4FZpvz7Q=
+	t=1759981740; cv=fail; b=BVqagV+iiaEgKlsxvQZxzl9A8AdygAwLD4PWe8BtI8+N3X0o0i7DPVkjxfYXH4MWXsakRHorkMRC43xf39FDSPIMCmHMcKngMxv7XI6G3quGEedJo4EPmfuMV9IrB3fmRdBmAKM9hOvxSLFXnsO4yXDudLUMvs2pSWel9CPAmd4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759981730; c=relaxed/simple;
-	bh=PeRl5P3IHKJMf909jjQ/u7GR9jCDfliupm8kEswxFCg=;
+	s=arc-20240116; t=1759981740; c=relaxed/simple;
+	bh=AsqkTNTp73C1/4WrJFAiebOwtUCnyb2WWJQjvFHhlRM=;
 	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=HnKfNK5uClv/+E5evAY4Rq7+FJJ4kKKCVDWLCUdPgfeSUQgcUTBQdyjaRNVURwDUfYhV4NSGiIaTusUCicAG5DB2Z+L31BDyQN0bVwFIHe3uU8kJ+W6SlImTGvk64KFdCOPtcamsKcm8FiIJwEGwXB2Mt0Q+XDe55E3aeweF/NU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=IVuqQ92S; arc=fail smtp.client-ip=52.101.72.24
+	 To:Cc:MIME-Version; b=TMyLUlFENTxN6Wk4Q3NzmOpC21mT+u2PtElxrfXpLy7g+zyA/k3hh0deDBfQZlQn+SJ6bWIBUAsPORKcJifAZ5WGigP3dr0P0eVmDKX8CYBMUDCIAjYFFwZeCKLfeBMBlKxFxxe7byaDDi8NsZpfPgfpSkNO4+kgmeqtPDv+CBc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=O5Kl7/Rm; arc=fail smtp.client-ip=52.101.84.36
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PkZcx2MqQH312ug7pUTUj5vzY7DNuVo1AlSH5SBmIm75lIbVtRG4rgkS7hDEPI5/HV2d7uToP7MvjIZMtmsoqgzx4usm1fiBZhZteLByh55uzwKYD9QFPf0sofOjLHTfSR8gJFx+rskeA+kL/F3j7TWIEWArCTm1sZEulXf9PkYlFELBjezdeNd3K2E+yfv5Fw+zcMGKQQuTN5IT7plOhAINKPrZrwiXMPEJsohriC1gYxCZbpq0IB2v58skbH86NjUHIzwd8gn/xj0FIW0KPOL4QEs9TBbTUD0OBgvXZcSx/ECt5VGBNaD+IV+G2HuQ70j9orCYkoH59uSAvagMPQ==
+ b=EClWr9A8A2JYdkq6uonFMpAWlpv52rfbLFoXzbOpaXGqZLlWnfBWiQxegg+Ok0h/EAI2U3ahVMK2yVQsALBC2fmU/6IVxkGrBVWFh5WJE5+XD8ch+UOiFWqtdMNmBSTBvEOmaK3BXpSNtdj1PTwCY++KO+SpapTmdbXWGE6Kb1ONp9e9cCbqf8qU8J9xjMwBkCqEAlayK8IndXTR+XlyL8BfHfdtVbisCDRS88+Yf0DMQaFz/WtWCsYz8JXYdfjm9xR1sdNRqWOa47QrdQnOP75x14wBj9FtiWOuygtnJR2Dnt13JJHoBy2CPLvfHgL3vrcfgmu05NI5ZAfv8lYIcQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7RxnQJJTFP/qar4FBocvrDx36TKm9SbCky48kLKdZUQ=;
- b=J5Z2ogIP2GVzoYy/AnS/jjDk4lURAbdnjSk0AHLpWz3OMiYCWu1pOr2mQXngBbQclQCYbzfomW6k6ZUa0YEOrhgXkMnt0KkWvkP6TlT8KZsKXh3iwy9t3gnBJW5t2+yvkq4F8Pwd/aDxOkQ5hdKyaW9+JkgEskWQDY+ZHBC8wj1E6p6X6roLQSOntqZRcg42I3nEjGOeIhLvlpMCXMYxiwUx/SEE6ZlE9eLmYWuXuhXUwwHK0hvSQYA7X5efbpentiDlFWHlT7RfWfnL/G8AdrhsRVb6C5bIPfMvH5fpHBDcB51vXRXmZvru8x8e62G6blqX1+9HNa9p6tyO5wE61w==
+ bh=loyQpg5t2Iqq1GHdLoQgHW7TKPsExAYriN5txzChjY4=;
+ b=r1j42mtZR5lEh8XJtZoZlWF/1E06/aNJ9WoGxM3Cuq2zzmRSHcvqNhR/SpgXy9RoTlgUkCzfqbFpe6hA74b0/inAkwsdLMdmf9dEzABcG+dBRAKECsolGww8nGm7S+fON2WE5zNwLpk+F58vJIztmGDXr+hXajdV6ecuR5U9t3JGJJl26ZVLsypF8N6pJjbiAQEVKKt2i87jPVhtLSBZklqECrfD1GtDiJ/A/H0e4CuPDnuGvK9Kd7aVpexfcQOS7ympCPnodiZevO5tS9ruvhHJDNx6DOgtRhZY/uzBsedEvr47SUOlaFqbobl1lFIjK1imXPqdRo4yo0XyNTl3Cg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7RxnQJJTFP/qar4FBocvrDx36TKm9SbCky48kLKdZUQ=;
- b=IVuqQ92SSjKnjkj1VjPA62lvh7MCwmCeSHcEmyLJNlAtqxeMrcLF1OkTKfLr5G9RhYLPMAwz5k5VPVFsRAlcbwN4mnJUoUydlW+6xiuy5ASRlXNUpc3viynVaQ9QDfrEF96Xcaj2oy9KwIV5dtn1YvD94NddE9ZWqzINcD0oXK+8Ad/7MpQb1G9F6GIMx9VQUcHyqVQe2fM3jFXlWqPSEu4D+Y6gZWGFDb3Z/Xm5odNQsLzfnt6RuIifqmCnw7JCz/RTW4PlVu+7nfyzNIhKsOvoNMAH1v1g7HCgHU4B4zDuCqNa/K5c5F/mBmxI10H7QUiTQ5B//W4YCTVc0yonHw==
+ bh=loyQpg5t2Iqq1GHdLoQgHW7TKPsExAYriN5txzChjY4=;
+ b=O5Kl7/RmomLf8pPqG9QCkL/mTLoVooJ92rgH/E8EDYkVLK0ED6QMCg6AXQSb94XhKAOSo2d/oy3slLy8rDI+QyvCGbDf3OxuA11QDWrVI4rjpn8L7n6FejVbMqHOSvGbkZbR1qUifEEOFODhvqtHZZ8DEU5R/bGh0KSnGL9WHuCKplbrKQmx0BFKCv3WxZlLLjb02CBuDCiqXJswvwbXQ9UCl1z3S1pq5OcB/7y6Onf82CcwpalaFd5YgmK1+0DLPjQrHo81/MtNKmeLentcsfRQqrHdZlrjVp0Y5ZiK9fLen8NwfU+mCz/RJN+1BK1yzeJhQs1Cp+y2hU0U18PEWw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
  by VI2PR04MB10217.eurprd04.prod.outlook.com (2603:10a6:800:228::20) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.9; Thu, 9 Oct
- 2025 03:48:45 +0000
+ 2025 03:48:50 +0000
 Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
  ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
  ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9203.007; Thu, 9 Oct 2025
- 03:48:45 +0000
+ 03:48:50 +0000
 From: Peng Fan <peng.fan@nxp.com>
-Date: Thu, 09 Oct 2025 11:48:16 +0800
-Subject: [PATCH v5 3/6] clk: conf: Support assigned-clock-sscs
+Date: Thu, 09 Oct 2025 11:48:17 +0800
+Subject: [PATCH v5 4/6] clk: Add KUnit tests for assigned-clock-sscs
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251009-clk-ssc-v5-1-v5-3-d6447d76171e@nxp.com>
+Message-Id: <20251009-clk-ssc-v5-1-v5-4-d6447d76171e@nxp.com>
 References: <20251009-clk-ssc-v5-1-v5-0-d6447d76171e@nxp.com>
 In-Reply-To: <20251009-clk-ssc-v5-1-v5-0-d6447d76171e@nxp.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -75,11 +75,11 @@ Cc: Dan Carpenter <dan.carpenter@linaro.org>,
  arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  Peng Fan <peng.fan@nxp.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759981702; l=2996;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759981702; l=22518;
  i=peng.fan@nxp.com; s=20230812; h=from:subject:message-id;
- bh=PeRl5P3IHKJMf909jjQ/u7GR9jCDfliupm8kEswxFCg=;
- b=hFQkr7l/i5hkgATvycq868+z8YTvw4HH0Pkbqp71Q/a4m50V+MAfImxG9H0vcpPINaMb+8J5z
- 83WNxiGkgoiAJDrAFJcmGVw6+dx6PpBNC5pCtHPkO2q8//P6zuYSz73
+ bh=AsqkTNTp73C1/4WrJFAiebOwtUCnyb2WWJQjvFHhlRM=;
+ b=njXh3Hm7uesGrXF0z6ojALY1zn7vfdyqq5hhd6lXHZOFDYC5DAHb9r5QgZP6n8V9DrqC72Ogw
+ mcUOuwi0r1fCG8U8lHOaaLBw0Ro3Lonah9JW/fX4j2UqAhnc6wN5l34
 X-Developer-Key: i=peng.fan@nxp.com; a=ed25519;
  pk=I4sJg7atIT1g63H7bb5lDRGR2gJW14RKDD0wFL8TT1g=
 X-ClientProxiedBy: SI2PR01CA0031.apcprd01.prod.exchangelabs.com
@@ -93,199 +93,664 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|VI2PR04MB10217:EE_
-X-MS-Office365-Filtering-Correlation-Id: e98757b4-1f3a-4a4f-b8a1-08de06e6bf60
+X-MS-Office365-Filtering-Correlation-Id: f85b0b6c-38d2-4140-8389-08de06e6c243
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|366016|1800799024|19092799006|52116014|7416014|376014|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VzJEcStqTlBrVTlVRU42eFg2dzVObENXcDArL2J6QzlsaHpONE5DSm0xZ1Uv?=
- =?utf-8?B?WitXNGRQeURHZ2VHV0d4eENzKzY3T0dIVzYvc3krNnFEdHBjUXZCQ2hpckRV?=
- =?utf-8?B?dEFjcmFkRUo4MHI1dFJ1YlFkRW45UnYzNWtlZGZhZ2JaaWpJVndWVHlVSjVX?=
- =?utf-8?B?VFlLUWNUWWFiYy9QaFFWay80NTJsMEgwYnlpT0pqN21qTHA5cWdZbWpOd2tz?=
- =?utf-8?B?NDRMOFMwbDhmRHUvbDZadEhmSjgvZm11alY2QmlHYXljMHpIdEN3U1dRQzdJ?=
- =?utf-8?B?ekhaL0M0cHhhazN3WUZjL3A1ZW1Dd0VIZlpRTHFBT0hUekhBTFZYNEpXTjRh?=
- =?utf-8?B?dkpUeklmbHBCUU9rVkFSSUlXZUh1czNwY0QzVnp4MW5PV3cwYU5vYVdSeHBr?=
- =?utf-8?B?dHh0NjRTN3VoSklQUHRQUTRUV1NGQTdmTnFGODZiaFk3cUExRUY4OFFtSldU?=
- =?utf-8?B?ZHpuajBHK2M4eHRuWlR0cVRoenNxelNqQTdLYXo1MlFIcjZsZE84aDNKS2Uw?=
- =?utf-8?B?N0FsOEZaVTlidy82WlEyRDFDb1dpcXE2L0lvM1lqSWk3ZVQ1cFBHQXFxZ0Qv?=
- =?utf-8?B?UUtuTGNYL0ViTGFkajgrRFZ0N0ZsOHl1aFhjZkptbXRxUXJSbEJrNzZqRjFS?=
- =?utf-8?B?V1N0cDdaeHpuQjNOYkNabjN5NUpQMkw0dTdRTXp3anZVZVh4a01DQjlpY2to?=
- =?utf-8?B?K0xVSnVNUDBKcUJBbGh5bGFSUUxpRVZRcTBQTU9IRlZCY0N1SU0xTEtIKzNw?=
- =?utf-8?B?eVU1NkMyeVp1SnB5YmU4RzlmRmg4N0dBcDMrQ0daTDBzcTVWRW1sdnJrbXQz?=
- =?utf-8?B?RWpwbU5nblFDL2NwdUJMY296clhPSThHVVkzVERmSkdzck9SSGtwNjI0MGtl?=
- =?utf-8?B?QWFyQWU4Q0RDeDZwcjViK3prcDdlR0JZcDZwdTBzc0FFVnB1QzNKMWxEa3Q0?=
- =?utf-8?B?RDg0S1l2K1VYR01lZnZlOGo5NWUrZ1pEWDQ2TVBFa3h6YUdRT3JaWmUzQWR2?=
- =?utf-8?B?eVVUUXZENzh6d0J3emhPRHhTMjgxRzRrZGNxcE1OQ2xKcHBKWWpkOCt3N0Mw?=
- =?utf-8?B?VXpJRGhNWHBQemI5ZEErZFpDWFV6enpTVmR6d29sZGkvVjNGSzlxZ29CQkVz?=
- =?utf-8?B?RS82YkR1ZmVrcmQrZnA0VXIrdjQxL3gwYjBrdHhRTGg4RURmN0orcUlpbGZP?=
- =?utf-8?B?WTdKcWNtL2JzU29QZmxUYitMUEo4ZTdaMlZLS3BPbm1qTGRqTGpBNTJtR2t4?=
- =?utf-8?B?MXlsaUswbTFvRlBPMWNmSkdZcmc0RVE1Rnlld2lMZXY0djEyc1lRbUwyRzdS?=
- =?utf-8?B?aWtuQ2ppbzVGTW9EbFFoempFdkRiVFRySDYzM2NheXk2NE9PZWtwRDM1cEFS?=
- =?utf-8?B?dmR6M0t3cXgwRFRUL0tBcEdhMlFxM3ljUXZGdThnNDFLVmNYUWdtcUxiM0dp?=
- =?utf-8?B?OHhjQkdYTEVXVFc4WHRETk1qQ2VuNU1xN0ZjT3duakNnSVhBK2tncHdGUGJw?=
- =?utf-8?B?MTNuSWpCTjc4blhrV0pzaTF4dTJudWViN2p0aXVsenF0d0JBRm1YNGt4WTc2?=
- =?utf-8?B?dUNtU05CUWxYV3hYNUd5Y01GRXNmRTB0cUtHZDQrV3hxSEpjemgrcnJ2QTF0?=
- =?utf-8?B?YU5qdHFSbEQvcEZVOVRCd3huS0ltTVRaVjE0NTkvZXVCUFFKYUJFN2lFNVNG?=
- =?utf-8?B?cDllaHBrTUZVUW8xWUNta2xrcUJEemJRWlc2aUZxeDNaWVMyYjdzSVNBTkNB?=
- =?utf-8?B?R0x0bHlDRlJrVUF2Rm91WHVUc2lLRzQ5ZXY3OE45ZDdTbXJrUmlYbzJGbDdF?=
- =?utf-8?B?WlF1UFM4ZTVXRzF0U2taSkJlRmQrYWpEME5kdmJhYWduL2pHZmtNdFNLaG9Y?=
- =?utf-8?B?YllWR0dLMnJlNUEzY0UrL2pPTW43bHEvcWlUVXc5SjI5RENGTFFjc3VUZlZP?=
- =?utf-8?B?ZFRrUzlWSGcyZFQvcHVCb2FlTUJuSHN0dXpZZ3VNak5Pb3VxVVVoVmNLcDN6?=
- =?utf-8?B?cTBlTzkwN0VoUEU5SmdqenR0cVBxbTZUSkdSOTJUU1JKa0k2VW1ZQ3ZqOU1i?=
- =?utf-8?Q?6ynGUS?=
+	=?utf-8?B?V3pIOVBqbHJqMFF2NnpNT0VKZ2dxRTZZeXRpTXU2YlRhTEdLVmdROFUyYlJu?=
+ =?utf-8?B?SW14NExJUWpiNVNJSXMzbVBYejhoemt5UFQ1U1FObVppUkV2TWJ4UHJuUnZo?=
+ =?utf-8?B?bnRURnNKOHRlQUVqdW1nWVFYcFlLZDc1TVJmVllEdWU4cVZSanlFK2FKenBj?=
+ =?utf-8?B?ZExaeWtNcVpRTkxvc3N2ZGtNS21uTmVFdjk3TE9Zdk5mdVJmdTZnTDdXVnNU?=
+ =?utf-8?B?bEQ4RS96UkxKYXRHdG82MlpBUExmTzB3Wk91dHdBdTBScVBsRS8xbnpRVGEz?=
+ =?utf-8?B?ZDYyalN0SzQ0Y3E4MXcxWFIvSFltWTE2WVNiYUhGRytXSDgwYTYyV0hUWFdF?=
+ =?utf-8?B?Mnhuc3VmYmphQ05FRXJISUhmK2FIeSs1bkVQYWJpaG1VblVaZGZuWE5XMEg3?=
+ =?utf-8?B?UmRaL0JtZUhzU0dib1ZadjNPM0o3eFkxbUZjeE9XY051TmhXdnZnc0ZSbEY0?=
+ =?utf-8?B?LzRBbGVFWkpzcjA2QnNwVGo4T1lwSDk4WWhsU1AxYXFCYTIybjErZDVycnhM?=
+ =?utf-8?B?SWRSQzVVajJyY1lVVHRONjN5SmcvVTRBcDNYeWZGNmJPeFNIa3NHQ1FuOE9H?=
+ =?utf-8?B?WFYwMGp4UEk0ekhDcjRRVmF2WkF1WjFKY2ZXTlN0MUNlVXRFVEZPVEY4Qmk1?=
+ =?utf-8?B?TVkrTkNmdmh3OXB3NUZ1aFJEb1lacHlSbUo0cDRUTkozUkxuM051RGZhTUlh?=
+ =?utf-8?B?R2YyODlpRXZ1djFtanVhNHVNdnhPNmFZTDlieUpRUHlmUmVlR1pBdzlPWmxM?=
+ =?utf-8?B?eGtpbDBWVVpIV25mRUd3ME44Sk14UFNzT2ZDekxaYk95cWVFRmNmdHl1L0xr?=
+ =?utf-8?B?SnBEeEpDKzZwUmV2Sm1ZamxMOWtqOWtOUWZyVjd5VmRxS1dTTi9obWtMT2Mv?=
+ =?utf-8?B?d3lUU1RpanZUM2lERVRtblVlaDY5OWRFeUJYT0FDTDhPQVZvZDBZMUxFTTFU?=
+ =?utf-8?B?SXhHbExTdnRpZGI4Z2doNkRxeUxBSU4xVW42Mm9ZNzRNTXA4cXV6S3YzbFZE?=
+ =?utf-8?B?QWdoUTRlZDh5aTFjeXZvK09saTdnOHArQlNSaE9rNkVFQXp1TlIzNHQ3d3lE?=
+ =?utf-8?B?WWVSNVd3N2JQcEhEb3BmL2JFaFhUaXYxQXlDZzN5cW5weVJITFZJTnlKTXNp?=
+ =?utf-8?B?OUh6NzRuejRuYWo2Q251eWs3T2xDdkNrcjJyNlozRXQ0cE1GQkx0NTRhWHpD?=
+ =?utf-8?B?Q1pYYzhwTWQyN2JuT245bnEycFUxYTRYRFU1c1VsRWM2alpqZGxHL3VkMmhs?=
+ =?utf-8?B?aWZ1R01JSXBoUW9VQzFreTZjcTFNUEprdzdZZnlBUzlFMFdHVTl5Y0pRUXM1?=
+ =?utf-8?B?MVZRRHZpcVhuRkpOOTNZRmFjdEpNN1g1bHJGNnZHZ0dMeHd2aTVLNGF2dWRP?=
+ =?utf-8?B?NkEzbFBzc3FKQUs1dkNOUXhUNnB1UURndVR6V3IwNmxoQzRDa3RsSk1QSzRn?=
+ =?utf-8?B?Q2ovdlFMRm8vTC8za1d0a05ReUh5MzlUdkVXTDNSTzljWnNyY21xSUJkMmdn?=
+ =?utf-8?B?QUFrUnU3QUpUWE9NaG0yR0QvMUM4ZjN1R1FScllZWHVPMVA0KzBuWklxbEdn?=
+ =?utf-8?B?R3EyY0NyZm95ek96ZW5wVjdnOVRTYVVZbk04Q29rZGFlY0pHZVZkSmErQ0Rr?=
+ =?utf-8?B?anIybkJxUmVJaXhGVFdFOWxEeWF4Vlgzc2U0VTlBZUpiY08vOE1td3kwMGpP?=
+ =?utf-8?B?RG1UQTRSUDJ2dDZpK2dvRGVJK1Q4dklETEVkNi9qeEs2TkpPK3RsbG1qbVhR?=
+ =?utf-8?B?SkdCOWtIWjhkcTU4OFAwRkRoelhJME9GQWtKWGJJS0xNRWo3aHpqU0FUUXB1?=
+ =?utf-8?B?ckVaWFRDV0x3L3pESWE2M3ZtSG9Pam9pQTh6dUxOOFcyeUhBeU45Y01GS3BE?=
+ =?utf-8?B?Nlo1MENFdXBCWWJlTGNpVUIza2JkQ25ndm5ZSUttVzVHM3pZb01rbzdqNUpT?=
+ =?utf-8?B?Qm1VME1FczNLRG9CNktNR3pqVXpDOUl6QS8xcFBqT2ovaHFJUHhNRS82Tzhy?=
+ =?utf-8?B?UHlHOThXMllQRTFuSTFCOHlrM1ZHbllGc0laNmUwWTRXRk0zNDAwRWI2V1lU?=
+ =?utf-8?Q?ZuPQX4?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(52116014)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WnFYREhUTTJiY2F4b25ZaGswM1JTTGtBWU9CV050Ry9sQnJYN0YyK2NlNWJp?=
- =?utf-8?B?MDEyMFc0YXpnaHdZM3dZdlBTRlZjZ2J3ZThRRmpCd0doQmt5TC8ySVM4cVUr?=
- =?utf-8?B?YytpNklCTWtqNnczR2tqRkRqNnRWZHF6Q3JnRmVrZmZGVzcxaERmcEN4aXVG?=
- =?utf-8?B?OTJMZis3V3J0dVdPYWVNTjBxNVIvb1hMc2JrempNOVExWVJISysySk1taFAw?=
- =?utf-8?B?azhSRkx2TmFXOVZBQWQ1WlFCVHd1WkwrL2dPNWlMSTN2dlJPTUpaQmF0VU9i?=
- =?utf-8?B?dXZ2a1l4Yi9FWEFXZ0pWY0NUYktXUkdjQ3dUMFFDb05KMnBQMkVUME05cTVR?=
- =?utf-8?B?V09PRkNlaGprU29LdGtkNTM3QmVZTDJiUkNFL3hFYUdSWG1oMExKMVpyY1ZO?=
- =?utf-8?B?d1VMR0VITk05NDcrd3VYd2Q2RU5ybVhMY1VRZXdQNDc2ODN1RHhBQnBkOHVS?=
- =?utf-8?B?SVRDbHZpL24yakpvcUIxeDZRN2lSenk1UWxwaTd1S2tkYlI5bWxlZGEvOVFU?=
- =?utf-8?B?QTRmbVpPUUxwQkhIQlVKNSt4cUNWUTgwSHZmSUpWSGR1WTV5VFE5MDRLRDZP?=
- =?utf-8?B?NU9LelZaWWRLdjZxZG5SYTRoL1FEWWdUbUNFZ0RoZDl1Q0R6ZjdtNC9SS0Va?=
- =?utf-8?B?eFZQQWdZV1A2RWVtQ0dCaWpMRnZWVFIrV2NqaG9LSVc2M1Y5NHdBWmRiY2xo?=
- =?utf-8?B?V2lKRFJsL1RuOSsxY3BsTnFGTVJLOW9BSlpmUGVBWXJZenVaRW9NRFRFT1Z0?=
- =?utf-8?B?UGdhZER1R3pwTTd6WnZzbFdsZmlndFlPTXgxQVFzeXNnZ2I2ZHU4S2JaQjhE?=
- =?utf-8?B?SGFVN1BwVG8raHl5SFkyVE9ZRndWUlB2RTBNZHVSbEppY05RbzJsVEVsZUlY?=
- =?utf-8?B?WjV5TUJ0UUdTYzdkRkVUVDhRREVxbXFrY2lVMmkva1d2bjRLNmNWTjZkMTBC?=
- =?utf-8?B?UjJSZjBkOG1seEtYbFRWQ3lSWnVpUXR6czRBZVhDRVIrTkdSZUJ4Z2lQZDBN?=
- =?utf-8?B?OUU0clBHN05uT1NMWUJBSFJ6dzdMTHBmREpUOWxQTE5GRE5mMHphek1SdEV6?=
- =?utf-8?B?Smg3ZGFPZ045RER3Um1UNGU4NzRUU2VRTTdzRVRDVHQydWNkTmZpTUwrbC9R?=
- =?utf-8?B?SUovMlM1NVNHN1lRdG4wa1lLTytPQTNKUDkwQ29qam1RMWJROGR4blZzU3Zk?=
- =?utf-8?B?UGFkNzZjZVQ5UHdrVUVybTI0RUZGaWN1Z1Vrb0pxdG1HbzZvS20yWE1OdXlU?=
- =?utf-8?B?bVZrK1pYNFh5MmZKSFVnZlVKRUNXb05XSXF6V3MyMUxESkN1NXZueFU5UG5m?=
- =?utf-8?B?dGc2UXBlU0VQZnZRTlQ3blFERXU3ZXJiTUQrL3Q5Z1AyWXd5Q0o5eTdoS3Rk?=
- =?utf-8?B?eDJab0VtRzV5L3NaMnB5Vk9wcVVPdUxUSUJXY2ZKVkxGMmxUMlAybHExeXp5?=
- =?utf-8?B?UWVMNUNqbVEyTndvVlFoWUxLd3UxcWhlYXg0ZHdRdmdkaFRsL3RIM3ZqRVls?=
- =?utf-8?B?RmkrdjMyVmlmNWlnVWtQbXFKU1VJZ1BoWjlIemt1UkI5c1lVcG5GSVdMWUZ3?=
- =?utf-8?B?VXJUQStFM21VemtOT3pZTnJURXZxLysvM3R2ZHczLzFsR05mMmtXemlwcmtq?=
- =?utf-8?B?WlFycmU4ck1jcXpqdUVLM2w4R0EyRlRSZ3BOOXlxN2ZmOUlEQVJ6d2s0VkJj?=
- =?utf-8?B?cXRORWVUeGVrN2ZuTnFQZnR1R2xTSm5Gd3g3SWlQWHZVbG9oMVdudEY3V2F2?=
- =?utf-8?B?WEtrUGFaQXk5S1dQZmZCbk1tZTVobVR0UWJGeDk0WU5xSFBSSTBTWklhL3U0?=
- =?utf-8?B?T3ZGQTIyb2dJTGtMU3FMbFhmU1hLWGFuek54RHFZdnkyNjJJaFNkMks3ZlFv?=
- =?utf-8?B?L0VvdkFWMXpmaS9leUZIRmh2WTBTaTNlNGhLSkNhSGlLTllJRTVBL3M0WnR2?=
- =?utf-8?B?bG5xMWNHUWhQaVlPOUlEdGpNN3NmaVFqRmladlhBQ3d6dVAwUm9xSldwVU8v?=
- =?utf-8?B?VDFRSjdBcCt6eDhCRTJoamRrcURJZzNkaE5PWnlIOG5KYUErVzgyTUs5R0tG?=
- =?utf-8?B?Ym9wVWhKa3pWQXM2b1VLK3oxdEh4ZXNHdEx4YnN6dVlSeTFRZkdpK3N6L001?=
- =?utf-8?Q?JX6qBxj00gt2rlp5+XqMs8chR?=
+	=?utf-8?B?N3Q2S0tZNUhjWHRaZGJYWFZEYkEzS095ekRna1VrYTJjVENCakszTmNUZ0Nx?=
+ =?utf-8?B?K2U4dVQyMjQzQ29LOGdlK2Y5OXEvdC9jeHlKWWYxQWZSaXEwNUZOeDlFdnNL?=
+ =?utf-8?B?Q3RTR2ZtZVU3dHFQU2pTWjhLMXhDdHlFN2VCb1lCMEZqSkFVWmJNUnVUZlRz?=
+ =?utf-8?B?VXkvVFhKbW02Y2p3ZzA4WW1XYmIyVHV4R2xFUFVMV2xnSzg1aW5MalZzOGFx?=
+ =?utf-8?B?M1JaRDhZcWpxaVA1UGhITkYyQ0VZeGhQN2hxM3VIZW92MEMvcVVCcC9VTXBY?=
+ =?utf-8?B?OHliL1VySUR3NlRKYjZjby9KWlNMVGkrQ1ljbDBSbVR0QllaMUFxTWo0UHhS?=
+ =?utf-8?B?WFlDSkZMcU1KWlpaQU9CdmI3a1Rkc05SZndLUDd6RXF0RlM4U3JZbU9RWGFJ?=
+ =?utf-8?B?c0dMUUdqZXlJMHhobExnajRRbmtXNWlOd2grVWt2VXNuaHV6c1dNNlY2RFN0?=
+ =?utf-8?B?dDVueTNJQ3BtZE82NUlEYXVrVU44b2J5Slg2cmhWM051VjNQUkMvdkZnaHVO?=
+ =?utf-8?B?ZGl6bVhocktOdThBd3h6a01yL24zVXpZVFNUeE55Y2M1bGxEWXhjL1liczkx?=
+ =?utf-8?B?c3NkQUNXZW9zKzAvS3FsZ2M4c2ZkQmViNkdKYVhaTy9MTndxcGZsY0xieVAy?=
+ =?utf-8?B?d1VrMHpPanpyMEFrL2dMRXgzQ3FjbkRlekI1SEdZWFF4T3I0cGdsdWFmVnlq?=
+ =?utf-8?B?RklGa3lUWkVBMjRJd2YySkJ1REI2c1Q0aXZMQmxjK2tkU0E0R3pzSjFUWDVW?=
+ =?utf-8?B?elZBd1BOU3BjbE5YRGs2RjlTbGdlcDdKZVI1Wk83YkR0bC9CNzlpd3FPQVZ2?=
+ =?utf-8?B?bmVudG5vcW0vN1d1MzFvR0NiTHdMaHlTR0t4cytuUE50YnhGSnpaZTZreGRm?=
+ =?utf-8?B?MHJWdStPT01BRHpWWjZzNWtpU0lGUWNYUG5rbGZ4RExGbGFYMU1peThOVG4x?=
+ =?utf-8?B?MktDVERwVy9oUHc2dWtLSVIzTVA0Zk9JazhyZEFjeXhtbVE3WEFXTkRKWlo4?=
+ =?utf-8?B?VEFlZDVGY245WTNabnNKRGNmQ28xUFQ0WEdhWjZPSUw4TmlKRjZ1TktQVGk3?=
+ =?utf-8?B?a0hhbFFaQW10dlpZemxwOHd2REtFUVJKZ25VQjRKZEV6VHJQQVE5bG91Yi93?=
+ =?utf-8?B?c0ZuZW1KQWlSUjBOaVRoVFVIbVgwSjNxSG81UlhabVNCenQ5MWtXTFE0YTZ0?=
+ =?utf-8?B?UndHMDdFcEpMbFpGVEEvRnlZM2ZxVHZjNWVJTkUzYlFYaXAySEE1TXJEM0hn?=
+ =?utf-8?B?Q3h4MFptWEJ3QW44R20yQklkSUE4UUYzeHA3UjF5MWhpRm0vbjA1V2hKNmlw?=
+ =?utf-8?B?cjNGOG44dVNRbzdqWG1xOW5zQ01aRUxFbXJKQVB3aTc2UVpmNEEyOElQSUdF?=
+ =?utf-8?B?SU9zekkrN0ZCV0J5ZzBiNkQ4Y3owMzB6ZTZLb2doMi9mQ3ZIUzdHM0kwQXlG?=
+ =?utf-8?B?VVVYUEZRR01CaUdoK1N0bTlqS2c5TSswQ0lWR1dRa0ZFOXhIckJJVEl2c3kx?=
+ =?utf-8?B?QnVTVDlJVmNjV1ZSUHdodmFhb0RyK0JVWXduZjd4Z1dCVVlCU29pZzFXd1BB?=
+ =?utf-8?B?VXZBbWViT0luUFFabTlUaU5ZNVowa2JNVEo3bjl1Nklhd1FaZUVjZUR4RWJD?=
+ =?utf-8?B?YnMzZ2MrOVh2Q3VpK2laTzZZTjgxMVdVc1UybXJmNlNtY2ZRTmJhaUEzWGQ3?=
+ =?utf-8?B?eXpMRXJ0d1d2QTRzU0tURHFjVGRjRHZ3ZHRCYlMrL3FGM21rM1RKU1NrZ0ZS?=
+ =?utf-8?B?SnoxSnppZ083Um9rZnZNczhZRkZ2eS9WNE5JS1UraGZJQ1ZDZVlWTXJaQ2c2?=
+ =?utf-8?B?MmQyQVFWOWh3K1F5d1M2bU9Kd3FtOHk5SHpQd1pzeVQzdTJhY1p1VWxvRmd3?=
+ =?utf-8?B?YUxGbXo5R3JBVEtIRDBhNmZKS1VDRW1WSElLRjVDMy9BQ2hjdFY1TkJwVnpR?=
+ =?utf-8?B?Qyt3Sk5YZHQrQVpndDFBVDFNV1dLaWljR2VPVjMwS3I4TUJwbDRnMUNUa01o?=
+ =?utf-8?B?T2tlejVPaW11T3hBK3FsUGRNOGU4dmhLbk5sNU9wUVBVaUUreGJmL2VIb1Zs?=
+ =?utf-8?B?THJWZHhVMUMwbzZ5UWxZSmNMWi8vL0xqMFVNQUVOWkN6QklBV2NLcERZSkhQ?=
+ =?utf-8?Q?aMBnr8hfqPoZJliM9aNWueqcb?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e98757b4-1f3a-4a4f-b8a1-08de06e6bf60
+X-MS-Exchange-CrossTenant-Network-Message-Id: f85b0b6c-38d2-4140-8389-08de06e6c243
 X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2025 03:48:45.7454
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2025 03:48:50.6597
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dUCp8I4n4MSdNBhRL6POkxCZySdBHSAUtMC8i3l5S2M6b7OCIEiTkafyNc4tazfR9efeAVQwe+OBYYK0sp7E1w==
+X-MS-Exchange-CrossTenant-UserPrincipalName: GokBsE0wBsztZ1hJLuunpYp6mdY48UEET5VfLmszUlpWvJn6frWcOd0SUkCxPb3MK9R8C1X9g0RvK53Op4ZOvw==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10217
 
-Parse the Spread Spectrum Configuration(SSC) from device tree and configure
-them before using the clock.
+Spread spectrum configuration is part of clock frequency settings,
+and its behavior can be validated similarly to assigned clock rates.
 
-Each SSC is three u32 elements which means '<modfreq spreaddepth
-modmethod>', so assigned-clock-sscs is an array of multiple three u32
-elements.
+Extend the existing KUnit tests for assigned-clock-rates to cover
+assigned-clock-sscs by reusing the test framework. Add new test
+device trees:
+  - kunit_clk_assigned_sscs_null.dtso
+  - kunit_clk_assigned_sscs_null_consumer.dtso
+  - kunit_clk_assigned_sscs_without.dtso
+  - kunit_clk_assigned_sscs_without_consumer.dtso
+  - kunit_clk_assigned_sscs_zero.dtso
+  - kunit_clk_assigned_sscs_zero_consumer.dtso
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+These tests cover various invalid configurations of assigned-clock-sscs,
+ensuring robustness and consistent error handling, similar to the coverage
+provided for assigned-clock-rates.
+
+Co-developed-by: Brian Masney <bmasney@redhat.com>
+Signed-off-by: Brian Masney <bmasney@redhat.com>
 Signed-off-by: Peng Fan <peng.fan@nxp.com>
 ---
- drivers/clk/clk-conf.c | 69 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 69 insertions(+)
+ drivers/clk/Makefile                               |   6 +
+ drivers/clk/clk_test.c                             | 121 ++++++++++++++++++++-
+ drivers/clk/kunit_clk_assigned_rates.h             |  10 ++
+ drivers/clk/kunit_clk_assigned_rates_multiple.dtso |   6 +
+ ...kunit_clk_assigned_rates_multiple_consumer.dtso |   6 +
+ drivers/clk/kunit_clk_assigned_rates_one.dtso      |   3 +
+ .../clk/kunit_clk_assigned_rates_one_consumer.dtso |   3 +
+ .../clk/kunit_clk_assigned_rates_u64_multiple.dtso |   6 +
+ ...t_clk_assigned_rates_u64_multiple_consumer.dtso |   6 +
+ drivers/clk/kunit_clk_assigned_rates_u64_one.dtso  |   3 +
+ .../kunit_clk_assigned_rates_u64_one_consumer.dtso |   3 +
+ drivers/clk/kunit_clk_assigned_sscs_null.dtso      |  16 +++
+ .../clk/kunit_clk_assigned_sscs_null_consumer.dtso |  20 ++++
+ drivers/clk/kunit_clk_assigned_sscs_without.dtso   |  15 +++
+ .../kunit_clk_assigned_sscs_without_consumer.dtso  |  19 ++++
+ drivers/clk/kunit_clk_assigned_sscs_zero.dtso      |  12 ++
+ .../clk/kunit_clk_assigned_sscs_zero_consumer.dtso |  16 +++
+ 17 files changed, 268 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/clk-conf.c b/drivers/clk/clk-conf.c
-index 303a0bb26e54a95655ce094a35b989c97ebc6fd8..dd6083597db3f8f27d86abf5640dfc3fb39a9b88 100644
---- a/drivers/clk/clk-conf.c
-+++ b/drivers/clk/clk-conf.c
-@@ -155,6 +155,71 @@ static int __set_clk_rates(struct device_node *node, bool clk_supplier)
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index b74a1767ca2787a978db36b0055ea34cb909310e..9e8c989b24be0f7cfdf2325c9b19d05e9d2a8eb9 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -18,6 +18,12 @@ clk-test-y			:= clk_test.o \
+ 				   kunit_clk_assigned_rates_without_consumer.dtbo.o \
+ 				   kunit_clk_assigned_rates_zero.dtbo.o \
+ 				   kunit_clk_assigned_rates_zero_consumer.dtbo.o \
++				   kunit_clk_assigned_sscs_null.dtbo.o \
++				   kunit_clk_assigned_sscs_null_consumer.dtbo.o \
++				   kunit_clk_assigned_sscs_without.dtbo.o \
++				   kunit_clk_assigned_sscs_without_consumer.dtbo.o \
++				   kunit_clk_assigned_sscs_zero.dtbo.o \
++				   kunit_clk_assigned_sscs_zero_consumer.dtbo.o \
+ 				   kunit_clk_hw_get_dev_of_node.dtbo.o \
+ 				   kunit_clk_parent_data_test.dtbo.o
+ obj-$(CONFIG_COMMON_CLK)	+= clk-divider.o
+diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+index a268d7b5d4cb28ec1f029f828c31107f8e130556..eb28f0a61ef0057bcc9c1d75653357a442bff81d 100644
+--- a/drivers/clk/clk_test.c
++++ b/drivers/clk/clk_test.c
+@@ -28,6 +28,7 @@ static const struct clk_ops empty_clk_ops = { };
+ struct clk_dummy_context {
+ 	struct clk_hw hw;
+ 	unsigned long rate;
++	struct clk_spread_spectrum sscs;
+ };
+ 
+ static unsigned long clk_dummy_recalc_rate(struct clk_hw *hw,
+@@ -83,6 +84,17 @@ static int clk_dummy_set_rate(struct clk_hw *hw,
  	return 0;
  }
  
-+static int __set_clk_spread_spectrum(struct device_node *node, bool clk_supplier)
++static int clk_dummy_set_spread_spectrum(struct clk_hw *hw,
++					 struct clk_spread_spectrum *conf)
 +{
-+	struct clk_spread_spectrum *sscs __free(kfree) = NULL;
-+	u32 elem_size = sizeof(struct clk_spread_spectrum);
-+	struct of_phandle_args clkspec;
-+	int rc, count, index;
-+	struct clk *clk;
++	struct clk_dummy_context *ctx =
++		container_of(hw, struct clk_dummy_context, hw);
 +
-+	/* modfreq, spreadPercent, modmethod */
-+	count = of_property_count_elems_of_size(node, "assigned-clock-sscs", elem_size);
-+	if (count <= 0)
-+		return 0;
-+
-+	sscs = kcalloc(count, elem_size, GFP_KERNEL);
-+	if (!sscs)
-+		return -ENOMEM;
-+
-+	rc = of_property_read_u32_array(node, "assigned-clock-sscs", (u32 *)sscs,
-+					count * 3);
-+	if (rc)
-+		return rc;
-+
-+	for (index = 0; index < count; index++) {
-+		struct clk_spread_spectrum *conf = &sscs[index];
-+		struct clk_hw *hw;
-+
-+		if (!conf->modfreq_hz && !conf->spread_bp && !conf->method)
-+			continue;
-+
-+		rc = of_parse_phandle_with_args(node, "assigned-clocks", "#clock-cells",
-+						index, &clkspec);
-+		if (rc < 0) {
-+			/* skip empty (null) phandles */
-+			if (rc == -ENOENT)
-+				continue;
-+			else
-+				return rc;
-+		}
-+
-+		if (clkspec.np == node && !clk_supplier) {
-+			of_node_put(clkspec.np);
-+			return 0;
-+		}
-+
-+		clk = of_clk_get_from_provider(&clkspec);
-+		of_node_put(clkspec.np);
-+		if (IS_ERR(clk)) {
-+			if (PTR_ERR(clk) != -EPROBE_DEFER)
-+				pr_warn("clk: couldn't get clock %d for %pOF\n",
-+					index, node);
-+			return PTR_ERR(clk);
-+		}
-+
-+		hw = __clk_get_hw(clk);
-+		rc = clk_hw_set_spread_spectrum(hw, conf);
-+		if (rc < 0)
-+			pr_err("clk: couldn't set %s clk spread spectrum %u %u %u: %d\n",
-+			       __clk_get_name(clk), conf->modfreq_hz, conf->spread_bp,
-+			       conf->method, rc);
-+		clk_put(clk);
-+	}
++	ctx->sscs = *conf;
 +
 +	return 0;
 +}
 +
- /**
-  * of_clk_set_defaults() - parse and set assigned clocks configuration
-  * @node: device node to apply clock settings for
-@@ -174,6 +239,10 @@ int of_clk_set_defaults(struct device_node *node, bool clk_supplier)
- 	if (!node)
- 		return 0;
+ static int clk_dummy_single_set_parent(struct clk_hw *hw, u8 index)
+ {
+ 	if (index >= clk_hw_get_num_parents(hw))
+@@ -100,18 +112,21 @@ static const struct clk_ops clk_dummy_rate_ops = {
+ 	.recalc_rate = clk_dummy_recalc_rate,
+ 	.determine_rate = clk_dummy_determine_rate,
+ 	.set_rate = clk_dummy_set_rate,
++	.set_spread_spectrum = clk_dummy_set_spread_spectrum,
+ };
  
-+	rc = __set_clk_spread_spectrum(node, clk_supplier);
-+	if (rc < 0)
-+		return rc;
+ static const struct clk_ops clk_dummy_maximize_rate_ops = {
+ 	.recalc_rate = clk_dummy_recalc_rate,
+ 	.determine_rate = clk_dummy_maximize_rate,
+ 	.set_rate = clk_dummy_set_rate,
++	.set_spread_spectrum = clk_dummy_set_spread_spectrum,
+ };
+ 
+ static const struct clk_ops clk_dummy_minimize_rate_ops = {
+ 	.recalc_rate = clk_dummy_recalc_rate,
+ 	.determine_rate = clk_dummy_minimize_rate,
+ 	.set_rate = clk_dummy_set_rate,
++	.set_spread_spectrum = clk_dummy_set_spread_spectrum,
+ };
+ 
+ static const struct clk_ops clk_dummy_single_parent_ops = {
+@@ -3097,6 +3112,7 @@ struct clk_assigned_rates_context {
+  * @overlay_end: Pointer to end of DT overlay to apply for test
+  * @rate0: Initial rate of first clk
+  * @rate1: Initial rate of second clk
++ * @sscs: Initial spread spectrum settings
+  * @consumer_test: true if a consumer is being tested
+  */
+ struct clk_assigned_rates_test_param {
+@@ -3105,6 +3121,7 @@ struct clk_assigned_rates_test_param {
+ 	u8 *overlay_end;
+ 	unsigned long rate0;
+ 	unsigned long rate1;
++	struct clk_spread_spectrum sscs;
+ 	bool consumer_test;
+ };
+ 
+@@ -3116,7 +3133,7 @@ static void
+ clk_assigned_rates_register_clk(struct kunit *test,
+ 				struct clk_dummy_context *ctx,
+ 				struct device_node *np, const char *name,
+-				unsigned long rate)
++				unsigned long rate, const struct clk_spread_spectrum *sscs)
+ {
+ 	struct clk_init_data init = { };
+ 
+@@ -3124,6 +3141,7 @@ clk_assigned_rates_register_clk(struct kunit *test,
+ 	init.ops = &clk_dummy_rate_ops;
+ 	ctx->hw.init = &init;
+ 	ctx->rate = rate;
++	ctx->sscs = *sscs;
+ 
+ 	KUNIT_ASSERT_EQ(test, 0, of_clk_hw_register_kunit(test, np, &ctx->hw));
+ 	KUNIT_ASSERT_EQ(test, ctx->rate, rate);
+@@ -3167,14 +3185,16 @@ static int clk_assigned_rates_test_init(struct kunit *test)
+ 	KUNIT_ASSERT_LT(test, clk_cells, 2);
+ 
+ 	clk_assigned_rates_register_clk(test, &ctx->clk0, np,
+-					"test_assigned_rate0", test_param->rate0);
++					"test_assigned_rate0", test_param->rate0,
++					&test_param->sscs);
+ 	if (clk_cells == 0) {
+ 		KUNIT_ASSERT_EQ(test, 0,
+ 				of_clk_add_hw_provider_kunit(test, np, of_clk_hw_simple_get,
+ 							     &ctx->clk0.hw));
+ 	} else if (clk_cells == 1) {
+ 		clk_assigned_rates_register_clk(test, &ctx->clk1, np,
+-						"test_assigned_rate1", test_param->rate1);
++						"test_assigned_rate1", test_param->rate1,
++						&test_param->sscs);
+ 
+ 		KUNIT_ASSERT_NOT_ERR_OR_NULL(test,
+ 			data = kunit_kzalloc(test, struct_size(data, hws, 2), GFP_KERNEL));
+@@ -3203,6 +3223,9 @@ static void clk_assigned_rates_assigns_one(struct kunit *test)
+ 	struct clk_assigned_rates_context *ctx = test->priv;
+ 
+ 	KUNIT_EXPECT_EQ(test, ctx->clk0.rate, ASSIGNED_RATES_0_RATE);
++	KUNIT_EXPECT_EQ(test, ctx->clk0.sscs.modfreq_hz, ASSIGNED_SSCS_0_MODFREQ);
++	KUNIT_EXPECT_EQ(test, ctx->clk0.sscs.spread_bp, ASSIGNED_SSCS_0_SPREAD);
++	KUNIT_EXPECT_EQ(test, ctx->clk0.sscs.method, ASSIGNED_SSCS_0_METHOD);
+ }
+ 
+ static void clk_assigned_rates_assigns_multiple(struct kunit *test)
+@@ -3210,7 +3233,13 @@ static void clk_assigned_rates_assigns_multiple(struct kunit *test)
+ 	struct clk_assigned_rates_context *ctx = test->priv;
+ 
+ 	KUNIT_EXPECT_EQ(test, ctx->clk0.rate, ASSIGNED_RATES_0_RATE);
++	KUNIT_EXPECT_EQ(test, ctx->clk0.sscs.modfreq_hz, ASSIGNED_SSCS_0_MODFREQ);
++	KUNIT_EXPECT_EQ(test, ctx->clk0.sscs.spread_bp, ASSIGNED_SSCS_0_SPREAD);
++	KUNIT_EXPECT_EQ(test, ctx->clk0.sscs.method, ASSIGNED_SSCS_0_METHOD);
+ 	KUNIT_EXPECT_EQ(test, ctx->clk1.rate, ASSIGNED_RATES_1_RATE);
++	KUNIT_EXPECT_EQ(test, ctx->clk1.sscs.modfreq_hz, ASSIGNED_SSCS_1_MODFREQ);
++	KUNIT_EXPECT_EQ(test, ctx->clk1.sscs.spread_bp, ASSIGNED_SSCS_1_SPREAD);
++	KUNIT_EXPECT_EQ(test, ctx->clk1.sscs.method, ASSIGNED_SSCS_1_METHOD);
+ }
+ 
+ static void clk_assigned_rates_skips(struct kunit *test)
+@@ -3222,6 +3251,19 @@ static void clk_assigned_rates_skips(struct kunit *test)
+ 	KUNIT_EXPECT_EQ(test, ctx->clk0.rate, test_param->rate0);
+ }
+ 
++static void clk_assigned_sscs_skips(struct kunit *test)
++{
++	struct clk_assigned_rates_context *ctx = test->priv;
++	const struct clk_assigned_rates_test_param *test_param = test->param_value;
 +
- 	rc = __set_clk_parents(node, clk_supplier);
- 	if (rc < 0)
- 		return rc;
++	KUNIT_EXPECT_NE(test, ctx->clk0.sscs.modfreq_hz, ASSIGNED_SSCS_0_MODFREQ);
++	KUNIT_EXPECT_NE(test, ctx->clk0.sscs.spread_bp, ASSIGNED_SSCS_0_SPREAD);
++	KUNIT_EXPECT_NE(test, ctx->clk0.sscs.method, ASSIGNED_SSCS_0_METHOD);
++	KUNIT_EXPECT_EQ(test, ctx->clk0.sscs.modfreq_hz, test_param->sscs.modfreq_hz);
++	KUNIT_EXPECT_EQ(test, ctx->clk0.sscs.spread_bp, test_param->sscs.spread_bp);
++	KUNIT_EXPECT_EQ(test, ctx->clk0.sscs.method, test_param->sscs.method);
++}
++
+ OF_OVERLAY_DECLARE(kunit_clk_assigned_rates_one);
+ OF_OVERLAY_DECLARE(kunit_clk_assigned_rates_one_consumer);
+ OF_OVERLAY_DECLARE(kunit_clk_assigned_rates_u64_one);
+@@ -3384,6 +3426,77 @@ KUNIT_ARRAY_PARAM_DESC(clk_assigned_rates_skips,
+ 		       clk_assigned_rates_skips_test_params,
+ 		       desc)
+ 
++OF_OVERLAY_DECLARE(kunit_clk_assigned_sscs_without);
++OF_OVERLAY_DECLARE(kunit_clk_assigned_sscs_without_consumer);
++OF_OVERLAY_DECLARE(kunit_clk_assigned_sscs_zero);
++OF_OVERLAY_DECLARE(kunit_clk_assigned_sscs_zero_consumer);
++OF_OVERLAY_DECLARE(kunit_clk_assigned_sscs_null);
++OF_OVERLAY_DECLARE(kunit_clk_assigned_sscs_null_consumer);
++
++/* Test cases that skip changing the sscs due to malformed DT */
++static const struct clk_assigned_rates_test_param clk_assigned_sscs_skips_test_params[] = {
++	{
++		/*
++		 * Test that an assigned-clock-sscs property without an assigned-clocks
++		 * property fails when the property is in the provider.
++		 */
++		.desc = "provider missing assigned-clocks",
++		TEST_PARAM_OVERLAY(kunit_clk_assigned_sscs_without),
++		.sscs = {50000, 60000, 3},
++	},
++	{
++		/*
++		 * Test that an assigned-clock-rates property without an assigned-clocks
++		 * property fails when the property is in the consumer.
++		 */
++		.desc = "consumer missing assigned-clocks",
++		TEST_PARAM_OVERLAY(kunit_clk_assigned_sscs_without_consumer),
++		.sscs = {50000, 60000, 3},
++		.consumer_test = true,
++	},
++	{
++		/*
++		 * Test that an assigned-clock-rates property of zero doesn't
++		 * set a rate when the property is in the provider.
++		 */
++		.desc = "provider assigned-clock-sscs of zero",
++		TEST_PARAM_OVERLAY(kunit_clk_assigned_sscs_zero),
++		.sscs = {50000, 60000, 3},
++	},
++	{
++		/*
++		 * Test that an assigned-clock-rates property of zero doesn't
++		 * set a rate when the property is in the consumer.
++		 */
++		.desc = "consumer assigned-clock-sscs of zero",
++		TEST_PARAM_OVERLAY(kunit_clk_assigned_sscs_zero_consumer),
++		.sscs = {50000, 60000, 3},
++		.consumer_test = true,
++	},
++	{
++		/*
++		 * Test that an assigned-clocks property with a null phandle
++		 * doesn't set a rate when the property is in the provider.
++		 */
++		.desc = "provider assigned-clocks null phandle",
++		TEST_PARAM_OVERLAY(kunit_clk_assigned_sscs_null),
++		.sscs = {50000, 60000, 3},
++	},
++	{
++		/*
++		 * Test that an assigned-clocks property with a null phandle
++		 * doesn't set a rate when the property is in the consumer.
++		 */
++		.desc = "provider assigned-clocks null phandle",
++		TEST_PARAM_OVERLAY(kunit_clk_assigned_sscs_null_consumer),
++		.sscs = {50000, 60000, 3},
++		.consumer_test = true,
++	},
++};
++KUNIT_ARRAY_PARAM_DESC(clk_assigned_sscs_skips,
++		       clk_assigned_sscs_skips_test_params,
++		       desc)
++
+ static struct kunit_case clk_assigned_rates_test_cases[] = {
+ 	KUNIT_CASE_PARAM(clk_assigned_rates_assigns_one,
+ 			 clk_assigned_rates_assigns_one_gen_params),
+@@ -3391,6 +3504,8 @@ static struct kunit_case clk_assigned_rates_test_cases[] = {
+ 			 clk_assigned_rates_assigns_multiple_gen_params),
+ 	KUNIT_CASE_PARAM(clk_assigned_rates_skips,
+ 			 clk_assigned_rates_skips_gen_params),
++	KUNIT_CASE_PARAM(clk_assigned_sscs_skips,
++			 clk_assigned_sscs_skips_gen_params),
+ 	{}
+ };
+ 
+diff --git a/drivers/clk/kunit_clk_assigned_rates.h b/drivers/clk/kunit_clk_assigned_rates.h
+index df2d84dcaa93511694b6da842debdc3cfd3a6c19..d7ae5ec2d25bed79b8438e8ce580872131ce4286 100644
+--- a/drivers/clk/kunit_clk_assigned_rates.h
++++ b/drivers/clk/kunit_clk_assigned_rates.h
+@@ -1,8 +1,18 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
++
++#include <dt-bindings/clock/clock.h>
++
+ #ifndef _KUNIT_CLK_ASSIGNED_RATES_H
+ #define _KUNIT_CLK_ASSIGNED_RATES_H
+ 
+ #define ASSIGNED_RATES_0_RATE		1600000
+ #define ASSIGNED_RATES_1_RATE		9700000
+ 
++#define ASSIGNED_SSCS_0_MODFREQ		10000
++#define ASSIGNED_SSCS_0_SPREAD		30000
++#define ASSIGNED_SSCS_0_METHOD		CLK_SSC_CENTER_SPREAD
++#define ASSIGNED_SSCS_1_MODFREQ		20000
++#define ASSIGNED_SSCS_1_SPREAD		40000
++#define ASSIGNED_SSCS_1_METHOD		CLK_SSC_UP_SPREAD
++
+ #endif
+diff --git a/drivers/clk/kunit_clk_assigned_rates_multiple.dtso b/drivers/clk/kunit_clk_assigned_rates_multiple.dtso
+index e600736e70f5041ddeb1bfb0d6074746a064e08a..6c54d65444d5d779c9fa4bb2a79c4742dd88f6d0 100644
+--- a/drivers/clk/kunit_clk_assigned_rates_multiple.dtso
++++ b/drivers/clk/kunit_clk_assigned_rates_multiple.dtso
+@@ -12,5 +12,11 @@ clk: kunit-clock {
+ 				  <&clk 1>;
+ 		assigned-clock-rates = <ASSIGNED_RATES_0_RATE>,
+ 				       <ASSIGNED_RATES_1_RATE>;
++		assigned-clock-sscs = <ASSIGNED_SSCS_0_MODFREQ
++				       ASSIGNED_SSCS_0_SPREAD
++				       ASSIGNED_SSCS_0_METHOD>,
++				      <ASSIGNED_SSCS_1_MODFREQ
++				       ASSIGNED_SSCS_1_SPREAD
++				       ASSIGNED_SSCS_1_METHOD>;
+ 	};
+ };
+diff --git a/drivers/clk/kunit_clk_assigned_rates_multiple_consumer.dtso b/drivers/clk/kunit_clk_assigned_rates_multiple_consumer.dtso
+index 260aba458daf2bc57fde46b5442453e7de10faac..b1fee396c4b1e51341a411168569d8351bb23b12 100644
+--- a/drivers/clk/kunit_clk_assigned_rates_multiple_consumer.dtso
++++ b/drivers/clk/kunit_clk_assigned_rates_multiple_consumer.dtso
+@@ -16,5 +16,11 @@ kunit-clock-consumer {
+ 				  <&clk 1>;
+ 		assigned-clock-rates = <ASSIGNED_RATES_0_RATE>,
+ 				       <ASSIGNED_RATES_1_RATE>;
++		assigned-clock-sscs = <ASSIGNED_SSCS_0_MODFREQ
++				       ASSIGNED_SSCS_0_SPREAD
++				       ASSIGNED_SSCS_0_METHOD>,
++				      <ASSIGNED_SSCS_1_MODFREQ
++				       ASSIGNED_SSCS_1_SPREAD
++				       ASSIGNED_SSCS_1_METHOD>;
+ 	};
+ };
+diff --git a/drivers/clk/kunit_clk_assigned_rates_one.dtso b/drivers/clk/kunit_clk_assigned_rates_one.dtso
+index dd95ec9b1cf977883f71564a94602ae518937132..da6e91b9e6bda0ef2c8f601a08aef1f10fda4baa 100644
+--- a/drivers/clk/kunit_clk_assigned_rates_one.dtso
++++ b/drivers/clk/kunit_clk_assigned_rates_one.dtso
+@@ -10,5 +10,8 @@ clk: kunit-clock {
+ 		#clock-cells = <0>;
+ 		assigned-clocks = <&clk>;
+ 		assigned-clock-rates = <ASSIGNED_RATES_0_RATE>;
++		assigned-clock-sscs = <ASSIGNED_SSCS_0_MODFREQ
++				       ASSIGNED_SSCS_0_SPREAD
++				       ASSIGNED_SSCS_0_METHOD>;
+ 	};
+ };
+diff --git a/drivers/clk/kunit_clk_assigned_rates_one_consumer.dtso b/drivers/clk/kunit_clk_assigned_rates_one_consumer.dtso
+index a41dca806318b031187c1b8739fcf71eb088a480..4b6e06048f863d014aed8222652d6d9d38e9238b 100644
+--- a/drivers/clk/kunit_clk_assigned_rates_one_consumer.dtso
++++ b/drivers/clk/kunit_clk_assigned_rates_one_consumer.dtso
+@@ -14,5 +14,8 @@ kunit-clock-consumer {
+ 		compatible = "test,clk-consumer";
+ 		assigned-clocks = <&clk>;
+ 		assigned-clock-rates = <ASSIGNED_RATES_0_RATE>;
++		assigned-clock-sscs = <ASSIGNED_SSCS_0_MODFREQ
++				       ASSIGNED_SSCS_0_SPREAD
++				       ASSIGNED_SSCS_0_METHOD>;
+ 	};
+ };
+diff --git a/drivers/clk/kunit_clk_assigned_rates_u64_multiple.dtso b/drivers/clk/kunit_clk_assigned_rates_u64_multiple.dtso
+index 389b4e2eb7f74f1770ff5f5c4be5b45dd344dc9c..3a717dab2d00b7fdaff580e30ed2cc520683ef95 100644
+--- a/drivers/clk/kunit_clk_assigned_rates_u64_multiple.dtso
++++ b/drivers/clk/kunit_clk_assigned_rates_u64_multiple.dtso
+@@ -12,5 +12,11 @@ clk: kunit-clock {
+ 				  <&clk 1>;
+ 		assigned-clock-rates-u64 = /bits/ 64 <ASSIGNED_RATES_0_RATE>,
+ 					   /bits/ 64 <ASSIGNED_RATES_1_RATE>;
++		assigned-clock-sscs = <ASSIGNED_SSCS_0_MODFREQ
++				       ASSIGNED_SSCS_0_SPREAD
++				       ASSIGNED_SSCS_0_METHOD>,
++				      <ASSIGNED_SSCS_1_MODFREQ
++				       ASSIGNED_SSCS_1_SPREAD
++				       ASSIGNED_SSCS_1_METHOD>;
+ 	};
+ };
+diff --git a/drivers/clk/kunit_clk_assigned_rates_u64_multiple_consumer.dtso b/drivers/clk/kunit_clk_assigned_rates_u64_multiple_consumer.dtso
+index 3e117fd59b7da19cd8a603af77eff29175ce6900..cbee7cbad068f3336f0c8997a5b3e9af4db565c9 100644
+--- a/drivers/clk/kunit_clk_assigned_rates_u64_multiple_consumer.dtso
++++ b/drivers/clk/kunit_clk_assigned_rates_u64_multiple_consumer.dtso
+@@ -16,5 +16,11 @@ kunit-clock-consumer {
+ 				  <&clk 1>;
+ 		assigned-clock-rates-u64 = /bits/ 64 <ASSIGNED_RATES_0_RATE>,
+ 					   /bits/ 64 <ASSIGNED_RATES_1_RATE>;
++		assigned-clock-sscs = <ASSIGNED_SSCS_0_MODFREQ
++				       ASSIGNED_SSCS_0_SPREAD
++				       ASSIGNED_SSCS_0_METHOD>,
++				      <ASSIGNED_SSCS_1_MODFREQ
++				       ASSIGNED_SSCS_1_SPREAD
++				       ASSIGNED_SSCS_1_METHOD>;
+ 	};
+ };
+diff --git a/drivers/clk/kunit_clk_assigned_rates_u64_one.dtso b/drivers/clk/kunit_clk_assigned_rates_u64_one.dtso
+index 87041264e8f544dafddf2e905efc89dc1f917c54..9b04d6927f0830a5621af1cbea503a427b46bee0 100644
+--- a/drivers/clk/kunit_clk_assigned_rates_u64_one.dtso
++++ b/drivers/clk/kunit_clk_assigned_rates_u64_one.dtso
+@@ -10,5 +10,8 @@ clk: kunit-clock {
+ 		#clock-cells = <0>;
+ 		assigned-clocks = <&clk>;
+ 		assigned-clock-rates-u64 = /bits/ 64 <ASSIGNED_RATES_0_RATE>;
++		assigned-clock-sscs = <ASSIGNED_SSCS_0_MODFREQ
++				       ASSIGNED_SSCS_0_SPREAD
++				       ASSIGNED_SSCS_0_METHOD>;
+ 	};
+ };
+diff --git a/drivers/clk/kunit_clk_assigned_rates_u64_one_consumer.dtso b/drivers/clk/kunit_clk_assigned_rates_u64_one_consumer.dtso
+index 3259c003aec0be3269ab60a4a3a95df69f8de1f8..4784d40520f4193e4f08c8981386f0772a063452 100644
+--- a/drivers/clk/kunit_clk_assigned_rates_u64_one_consumer.dtso
++++ b/drivers/clk/kunit_clk_assigned_rates_u64_one_consumer.dtso
+@@ -14,5 +14,8 @@ kunit-clock-consumer {
+ 		compatible = "test,clk-consumer";
+ 		assigned-clocks = <&clk>;
+ 		assigned-clock-rates-u64 = /bits/ 64 <ASSIGNED_RATES_0_RATE>;
++		assigned-clock-sscs = <ASSIGNED_SSCS_0_MODFREQ
++				       ASSIGNED_SSCS_0_SPREAD
++				       ASSIGNED_SSCS_0_METHOD>;
+ 	};
+ };
+diff --git a/drivers/clk/kunit_clk_assigned_sscs_null.dtso b/drivers/clk/kunit_clk_assigned_sscs_null.dtso
+new file mode 100644
+index 0000000000000000000000000000000000000000..43b2068c845dea53ea1328bb63a2f58a4b8ef339
+--- /dev/null
++++ b/drivers/clk/kunit_clk_assigned_sscs_null.dtso
+@@ -0,0 +1,16 @@
++// SPDX-License-Identifier: GPL-2.0
++/dts-v1/;
++/plugin/;
++
++#include "kunit_clk_assigned_rates.h"
++
++&{/} {
++	clk: kunit-clock {
++		compatible = "test,clk-assigned-rates";
++		#clock-cells = <0>;
++		assigned-clocks = <0>;
++		assigned-clock-sscs = <ASSIGNED_SSCS_0_MODFREQ
++				       ASSIGNED_SSCS_0_SPREAD
++				       ASSIGNED_SSCS_0_METHOD>;
++	};
++};
+diff --git a/drivers/clk/kunit_clk_assigned_sscs_null_consumer.dtso b/drivers/clk/kunit_clk_assigned_sscs_null_consumer.dtso
+new file mode 100644
+index 0000000000000000000000000000000000000000..bda008f5aaa35e53af97863e4f2e6d8a168cc053
+--- /dev/null
++++ b/drivers/clk/kunit_clk_assigned_sscs_null_consumer.dtso
+@@ -0,0 +1,20 @@
++// SPDX-License-Identifier: GPL-2.0
++/dts-v1/;
++/plugin/;
++
++#include "kunit_clk_assigned_rates.h"
++
++&{/} {
++	clk: kunit-clock {
++		compatible = "test,clk-assigned-rates";
++		#clock-cells = <0>;
++	};
++
++	kunit-clock-consumer {
++		compatible = "test,clk-consumer";
++		assigned-clocks = <0>;
++		assigned-clock-sscs = <ASSIGNED_SSCS_0_MODFREQ
++				       ASSIGNED_SSCS_0_SPREAD
++				       ASSIGNED_SSCS_0_METHOD>;
++	};
++};
+diff --git a/drivers/clk/kunit_clk_assigned_sscs_without.dtso b/drivers/clk/kunit_clk_assigned_sscs_without.dtso
+new file mode 100644
+index 0000000000000000000000000000000000000000..08660846b55c12122bfb211c01c377a3a45223c9
+--- /dev/null
++++ b/drivers/clk/kunit_clk_assigned_sscs_without.dtso
+@@ -0,0 +1,15 @@
++// SPDX-License-Identifier: GPL-2.0
++/dts-v1/;
++/plugin/;
++
++#include "kunit_clk_assigned_rates.h"
++
++&{/} {
++	clk: kunit-clock {
++		compatible = "test,clk-assigned-rates";
++		#clock-cells = <0>;
++		assigned-clock-sscs = <ASSIGNED_SSCS_0_MODFREQ
++				       ASSIGNED_SSCS_0_SPREAD
++				       ASSIGNED_SSCS_0_METHOD>;
++	};
++};
+diff --git a/drivers/clk/kunit_clk_assigned_sscs_without_consumer.dtso b/drivers/clk/kunit_clk_assigned_sscs_without_consumer.dtso
+new file mode 100644
+index 0000000000000000000000000000000000000000..e1c089c6f0c0223f16f7ac9a396e7ac7b821c967
+--- /dev/null
++++ b/drivers/clk/kunit_clk_assigned_sscs_without_consumer.dtso
+@@ -0,0 +1,19 @@
++// SPDX-License-Identifier: GPL-2.0
++/dts-v1/;
++/plugin/;
++
++#include "kunit_clk_assigned_rates.h"
++
++&{/} {
++	clk: kunit-clock {
++		compatible = "test,clk-assigned-rates";
++		#clock-cells = <0>;
++	};
++
++	kunit-clock-consumer {
++		compatible = "test,clk-consumer";
++		assigned-clock-sscs = <ASSIGNED_SSCS_0_MODFREQ
++				       ASSIGNED_SSCS_0_SPREAD
++				       ASSIGNED_SSCS_0_METHOD>;
++	};
++};
+diff --git a/drivers/clk/kunit_clk_assigned_sscs_zero.dtso b/drivers/clk/kunit_clk_assigned_sscs_zero.dtso
+new file mode 100644
+index 0000000000000000000000000000000000000000..f39f4e754e532c9c1b1fdf034700e5af1f3f0779
+--- /dev/null
++++ b/drivers/clk/kunit_clk_assigned_sscs_zero.dtso
+@@ -0,0 +1,12 @@
++// SPDX-License-Identifier: GPL-2.0
++/dts-v1/;
++/plugin/;
++
++&{/} {
++	clk: kunit-clock {
++		compatible = "test,clk-assigned-rates";
++		#clock-cells = <0>;
++		assigned-clocks = <&clk>;
++		assigned-clock-sscs = <0 0 0>;
++	};
++};
+diff --git a/drivers/clk/kunit_clk_assigned_sscs_zero_consumer.dtso b/drivers/clk/kunit_clk_assigned_sscs_zero_consumer.dtso
+new file mode 100644
+index 0000000000000000000000000000000000000000..d6bd7dfada7e2f455cb23e483b9bd6ce24839e3a
+--- /dev/null
++++ b/drivers/clk/kunit_clk_assigned_sscs_zero_consumer.dtso
+@@ -0,0 +1,16 @@
++// SPDX-License-Identifier: GPL-2.0
++/dts-v1/;
++/plugin/;
++
++&{/} {
++	clk: kunit-clock {
++		compatible = "test,clk-assigned-rates";
++		#clock-cells = <0>;
++	};
++
++	kunit-clock-consumer {
++		compatible = "test,clk-consumer";
++		assigned-clocks = <&clk>;
++		assigned-clock-sscs = <0 0 0>;
++	};
++};
 
 -- 
 2.37.1
