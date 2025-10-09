@@ -1,199 +1,167 @@
-Return-Path: <linux-kernel+bounces-846873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2C9BBC94CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:29:53 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44CCABC94C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:28:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91E1819E82E6
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:30:16 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D53DE35230C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:28:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC132E8B7A;
-	Thu,  9 Oct 2025 13:29:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D8B2E8B93;
+	Thu,  9 Oct 2025 13:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hbrsIOey"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T3uiTcGJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9D32D0625
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02672E88A7;
+	Thu,  9 Oct 2025 13:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760016586; cv=none; b=XufjkzUm4fQPq2TzPJpyL99GPp/qmUf0g4PVLOu3GkA41ulhCawBQSTENeE1xeWdJuNzBwW2/54Zsuad5ruexIWYFCxh0Nvi4CzeFnm31QtbrXda6IIXrMhwlJsVN4z0R93GDUazqeZo9XR5xk1q233vxS8IPWQDonFIJ7dqpQE=
+	t=1760016518; cv=none; b=IWHAxgjH9Ne1jPbzsr0G9BpkzWkzBPKhKJBc7kbQZfzH3IbE1mOSHcVQblKNb0I/PRC2g2JtHdL2nJvyPPEBvch6PTOqvHYNq1G7i41+GLE4+Rb68dwumBbvm3Q9z5J9Rj7htn4hmgxW6KaAfRpVvCwnGeKz7kovmkzL8v0IQRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760016586; c=relaxed/simple;
-	bh=E1h2IymeZxzN8DEA2ATr3BDwi+1E2Uj1VWWEwU62eVI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NL1+10soSQq8eanb7XTN1iXVu+GhMsaEYXL8N8GsIUcfYc2xVHkR6hGjiEA1B5rI/XC17AMdZ9wWnpxb1pyyi41VcL3Tr0L5I2yC9Xy53fRhKixA8REeM8q+/cnjKI8YcB+6komaJ57Goa5cAI9qVMn4v0IdIkggzzyx2tIhpm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hbrsIOey; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-57bf912cbf6so1025329e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 06:29:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760016582; x=1760621382; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QoD3OyvkVVLE8lgWVUBgOO0PRXTO7rnUz/rDybwGWOw=;
-        b=hbrsIOeyE7lstuSc4qq2WI8N3OXwfrDdCDfz660iAd69eGF4Yw/NTBl2RmFXXt3JUA
-         K5NI9xZhIxaOgh4sc/jkC4a3xElxpSCa5/jLHWO6DfOtQ+saYhzjSXakH50R/yRh7kZm
-         /iFqPt6BfDKc3FflhS/yPzAL3oZ5TC3xQ+3bx59jP40jiwwHrXYns1lbDyBentOhkLyw
-         incDVtmXw8dOQ4gaZYLC6kNuRb0p5LAjEpz1j/xOxvd+VnNKBd6aLAKbroYvfwCnvCR4
-         P0UptJ5G8fmvvsZIN+n51DYlVQuboTnZq1D/EKjbG9vqT0eCGW7pA43+reXSx1H2j375
-         vknw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760016582; x=1760621382;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QoD3OyvkVVLE8lgWVUBgOO0PRXTO7rnUz/rDybwGWOw=;
-        b=jv/HZGdMaBZE/9Q95r4fvBaLAbtSMJJ0sVlrr+GSqVHmjvd+Aodjuu519z07sUjr2E
-         1I+H6iQUcS3btYDuKM8y4FiX981Tucn3G94f2Moa20uGn9xp1KWrT0xEcDfZnyhf42mu
-         NlggO3UxjErjrQNDq8vW/WXwVDaX1QVChOL67y99CnLbS+pHKwGpqZyn/3ZDAveP7For
-         x2y4IHGSzz1tSbY/bw2V85b/Rc4Z+p4NwO+XfZwWvRbBG3bap3ZgvNObc475tTv7lvsL
-         WWGZDryHlR9JW4kyMpZ2zAiW+qzYVpjjDsml4OtoJ8VueA4E6V5eDlmx6vMGMkuMOXX2
-         vygw==
-X-Forwarded-Encrypted: i=1; AJvYcCV216ZgHwrJqvtTpch61N1qJ524zwULkvbKiBERVoTi4QNb88BcZqzqY7I/ef+ftXJgxMXua0JLgV2McDI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDalipa7Lx+lrlQwM9aO5iYqvhlFShkg49T/kSJd6EEXFIK9bn
-	DsCZad/2hZSIF+snXtO4nxWLW7G9sBdnnDgcNPFELeFPVVMtA1uFb54pm4kxJ8W/
-X-Gm-Gg: ASbGnctBPmSc/xJQ7lh8NgdGxeighZ0NEedLUUNgD5npIN/LcE5mVv3R6aALY3mVPeW
-	RhDqNELLY0xki3PxSrt+XQIpSbHPUNjE2gRTdbuvSieMJNxgIof6D1D1trA4dUmP0e09V9LaPSC
-	+72Qp8hFiVQ7JF9MVfg5XuWowkXNRJV+rI5TH89pavaP1lkO1Z1SYBe0Lj+apvfxpEkREggWBPq
-	vwdLdHNDB0QSRETmzFsmt6jqqlyIKCN4oy8hhRcF/ummg5ZGAELti4lHUZyyO1S/PHp3kNTCCEF
-	zLgfg15LL8tNZ/HA+ghRme+9H/wJiUysMCoejoOHQrQwkflM4di/afU7NHD+T1u62WC+0HV2mnB
-	V1uf6i/u2Ka2wR7eNkKpdD7jHxsEdZkdY9kWZ/VcGFYUPI2jFztWco1btjVRZIXq1KbgkTH6rpg
-	==
-X-Google-Smtp-Source: AGHT+IH1VIKsG88C3aAeaqwYTWYVqCA6XHMJZDpaPDWK1Emc97Vc5AG1FPkm5MMZ+Hs0OjrfL5bbFw==
-X-Received: by 2002:a05:6512:12d1:b0:58b:2b8:f8d0 with SMTP id 2adb3069b0e04-5906de90442mr1868002e87.55.1760016581986;
-        Thu, 09 Oct 2025 06:29:41 -0700 (PDT)
-Received: from wpc.lan (host-95-152-52-178.dsl.sura.ru. [95.152.52.178])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5907adb28a9sm1042587e87.98.2025.10.09.06.29.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 06:29:41 -0700 (PDT)
-From: bigunclemax@gmail.com
-To: 
-Cc: bigunclemax@gmail.com,
-	Mike Looijmans <mike.looijmans@topic.nl>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] pinctrl: mcp23s08: delete regmap reg_defaults to avoid cache sync issues
-Date: Thu,  9 Oct 2025 16:26:47 +0300
-Message-ID: <20251009132651.649099-2-bigunclemax@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1760016518; c=relaxed/simple;
+	bh=o4bOSB/+LmL3jiEYvJGq1i0H1UJYSLiq5TkwNmGyVWk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A8tdXLOkg2CO/2hUc7cKD7owZGHIjnmxFcXYe5+vgT1GOJAEqe5RJMpaDa27OuA3ei4C7wSZtAHdOQ2RrRxadyk7cSxRmUhZaR7KHW3y8ldNsC52LA5gTA9/JTePHJSPKHk5mZ8iC2Wjjz10K3PLe55W2I7vZHEfZTD1FQT0o/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T3uiTcGJ; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760016517; x=1791552517;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=o4bOSB/+LmL3jiEYvJGq1i0H1UJYSLiq5TkwNmGyVWk=;
+  b=T3uiTcGJcAaQOliBVSRV5JNnlrYfm72Q3bZ5QGWef/lI6l46n6K2CRS+
+   OocezQQzSchi4joHUK1vU34gCZy5QTa9EzNXgVrcm46YY2nxhGopaHyWA
+   PpLFtvl1yavNlP22CMrWmNVtQlQ0AsCCnoxlFXiNf+TJsJYir+SXqIivU
+   Oc+u4VfD5tFFOf5oy572Ei2fb/Ac6+J7O4f0yfMEVtf/+gePJPdMdh4KT
+   dsX5ste2FDgzWErdpNy5XGi35G3Kk6IWKrCAHNG8QguivTTLe4hG6bwHk
+   Ls+7ntjGfmT530jH7IBldkDbpzTirY2R/v6O/wpi5Zs4/m/sBmef5zMB7
+   A==;
+X-CSE-ConnectionGUID: 7EdPjh9vRNeHsYxYglXTyA==
+X-CSE-MsgGUID: TaminGw6T5+7cvKWzNXXtg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="73569318"
+X-IronPort-AV: E=Sophos;i="6.19,216,1754982000"; 
+   d="scan'208";a="73569318"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 06:28:36 -0700
+X-CSE-ConnectionGUID: 9ig6yzJtTZayI+GRcxyPHw==
+X-CSE-MsgGUID: MuHFL17ySmGqK2g9YhC6AA==
+X-ExtLoop1: 1
+Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 09 Oct 2025 06:28:32 -0700
+Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v6qh4-0000kF-0e;
+	Thu, 09 Oct 2025 13:28:30 +0000
+Date: Thu, 9 Oct 2025 21:28:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: Shrikant Raskar <raskar.shree97@gmail.com>, jic23@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, dlechner@baylibre.com,
+	nuno.sa@analog.com, andy@kernel.org, matt@ranostay.sg,
+	skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
+	Shrikant Raskar <raskar.shree97@gmail.com>
+Subject: Re: [PATCH 2/2] iio: health: max30100: Add pulse-width configuration
+ via DT
+Message-ID: <202510092124.rc01eF4I-lkp@intel.com>
+References: <20251004015623.7019-3-raskar.shree97@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251004015623.7019-3-raskar.shree97@gmail.com>
 
-From: Maksim Kiselev <bigunclemax@gmail.com>
+Hi Shrikant,
 
-The probe function does not guarantee that chip registers are in their
-default state. Thus using reg_defaults for regmap is incorrect.
+kernel test robot noticed the following build warnings:
 
-For example, the chip may have already been configured by the bootloader
-before the Linux driver loads, or the mcp might not have a reset at all
-and not reset a state between reboots.
+[auto build test WARNING on jic23-iio/togreg]
+[also build test WARNING on robh/for-next linus/master v6.17 next-20251008]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-In such cases, using reg_defaults leads to the cache values diverging
-from the actual registers values in the chip.
+url:    https://github.com/intel-lab-lkp/linux/commits/Shrikant-Raskar/dt-bindings-iio-max30100-Add-pulse-width-property/20251004-095849
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20251004015623.7019-3-raskar.shree97%40gmail.com
+patch subject: [PATCH 2/2] iio: health: max30100: Add pulse-width configuration via DT
+config: arm-randconfig-r073-20251004 (https://download.01.org/0day-ci/archive/20251009/202510092124.rc01eF4I-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 8.5.0
 
-Previous attempts to fix consequences of this issue were made in
-'commit 3ede3f8b4b4b ("pinctrl: mcp23s08: Reset all pins to input at
-probe")', but this is insufficient. The OLAT register reset is also
-required. And there's still potential for new issues arising due to cache
-desynchronization of other registers.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510092124.rc01eF4I-lkp@intel.com/
 
-Therefore, remove reg_defaults entirely to eliminate the root cause
-of these problems.
+smatch warnings:
+drivers/iio/health/max30100.c:346 max30100_chip_init() warn: unsigned 'pulse_width' is never less than zero.
+drivers/iio/health/max30100.c:346 max30100_chip_init() warn: error code type promoted to positive: 'pulse_width'
 
-Also remove the force reset all pins to input at probe as it is no longer
-required.
+vim +/pulse_width +346 drivers/iio/health/max30100.c
 
-Link: https://lore.kernel.org/all/20251006074934.27180-1-bigunclemax@gmail.com/
-Suggested-by: Mike Looijmans <mike.looijmans@topic.nl>
-Signed-off-by: Maksim Kiselev <bigunclemax@gmail.com>
----
- drivers/pinctrl/pinctrl-mcp23s08.c | 34 ------------------------------
- 1 file changed, 34 deletions(-)
+   326	
+   327	static int max30100_chip_init(struct max30100_data *data)
+   328	{
+   329		int ret;
+   330		unsigned int pulse_us;
+   331		unsigned int pulse_width;
+   332		struct device *dev = &data->client->dev;
+   333	
+   334		/* setup LED current settings */
+   335		ret = max30100_led_init(data);
+   336		if (ret)
+   337			return ret;
+   338	
+   339		/* Get pulse width from DT, default = 1600us */
+   340		ret = device_property_read_u32(dev, "maxim,pulse-width", &pulse_us);
+   341		if (ret) {
+   342			dev_warn(dev, "no pulse-width defined, defaulting to 1600us\n");
+   343			pulse_width = MAX30100_REG_SPO2_CONFIG_1600US;
+   344		} else {
+   345			pulse_width = max30100_get_pulse_width(pulse_us);
+ > 346			if (pulse_width < 0) {
+   347				dev_err(dev, "invalid pulse-width %u\n", pulse_us);
+   348				return pulse_width;
+   349			}
+   350		}
+   351	
+   352		/* enable hi-res SPO2 readings at 100Hz */
+   353		ret = regmap_write(data->regmap, MAX30100_REG_SPO2_CONFIG,
+   354					 MAX30100_REG_SPO2_CONFIG_HI_RES_EN |
+   355					 MAX30100_REG_SPO2_CONFIG_100HZ |
+   356					 pulse_width);
+   357		if (ret)
+   358			return ret;
+   359	
+   360		/* enable SPO2 mode */
+   361		ret = regmap_update_bits(data->regmap, MAX30100_REG_MODE_CONFIG,
+   362					 MAX30100_REG_MODE_CONFIG_MODE_MASK,
+   363					 MAX30100_REG_MODE_CONFIG_MODE_HR_EN |
+   364					 MAX30100_REG_MODE_CONFIG_MODE_SPO2_EN);
+   365		if (ret)
+   366			return ret;
+   367	
+   368		/* enable FIFO interrupt */
+   369		return regmap_update_bits(data->regmap, MAX30100_REG_INT_ENABLE,
+   370					 MAX30100_REG_INT_ENABLE_MASK,
+   371					 MAX30100_REG_INT_ENABLE_FIFO_EN
+   372					 << MAX30100_REG_INT_ENABLE_MASK_SHIFT);
+   373	}
+   374	
 
-diff --git a/drivers/pinctrl/pinctrl-mcp23s08.c b/drivers/pinctrl/pinctrl-mcp23s08.c
-index 78ff7930649d2..0b329661b5978 100644
---- a/drivers/pinctrl/pinctrl-mcp23s08.c
-+++ b/drivers/pinctrl/pinctrl-mcp23s08.c
-@@ -44,17 +44,6 @@
- #define MCP_GPIO	0x09
- #define MCP_OLAT	0x0a
- 
--static const struct reg_default mcp23x08_defaults[] = {
--	{.reg = MCP_IODIR,		.def = 0xff},
--	{.reg = MCP_IPOL,		.def = 0x00},
--	{.reg = MCP_GPINTEN,		.def = 0x00},
--	{.reg = MCP_DEFVAL,		.def = 0x00},
--	{.reg = MCP_INTCON,		.def = 0x00},
--	{.reg = MCP_IOCON,		.def = 0x00},
--	{.reg = MCP_GPPU,		.def = 0x00},
--	{.reg = MCP_OLAT,		.def = 0x00},
--};
--
- static const struct regmap_range mcp23x08_volatile_range = {
- 	.range_min = MCP_INTF,
- 	.range_max = MCP_GPIO,
-@@ -82,25 +71,12 @@ const struct regmap_config mcp23x08_regmap = {
- 	.reg_stride = 1,
- 	.volatile_table = &mcp23x08_volatile_table,
- 	.precious_table = &mcp23x08_precious_table,
--	.reg_defaults = mcp23x08_defaults,
--	.num_reg_defaults = ARRAY_SIZE(mcp23x08_defaults),
- 	.cache_type = REGCACHE_FLAT,
- 	.max_register = MCP_OLAT,
- 	.disable_locking = true, /* mcp->lock protects the regmap */
- };
- EXPORT_SYMBOL_GPL(mcp23x08_regmap);
- 
--static const struct reg_default mcp23x17_defaults[] = {
--	{.reg = MCP_IODIR << 1,		.def = 0xffff},
--	{.reg = MCP_IPOL << 1,		.def = 0x0000},
--	{.reg = MCP_GPINTEN << 1,	.def = 0x0000},
--	{.reg = MCP_DEFVAL << 1,	.def = 0x0000},
--	{.reg = MCP_INTCON << 1,	.def = 0x0000},
--	{.reg = MCP_IOCON << 1,		.def = 0x0000},
--	{.reg = MCP_GPPU << 1,		.def = 0x0000},
--	{.reg = MCP_OLAT << 1,		.def = 0x0000},
--};
--
- static const struct regmap_range mcp23x17_volatile_range = {
- 	.range_min = MCP_INTF << 1,
- 	.range_max = MCP_GPIO << 1,
-@@ -129,8 +105,6 @@ const struct regmap_config mcp23x17_regmap = {
- 	.max_register = MCP_OLAT << 1,
- 	.volatile_table = &mcp23x17_volatile_table,
- 	.precious_table = &mcp23x17_precious_table,
--	.reg_defaults = mcp23x17_defaults,
--	.num_reg_defaults = ARRAY_SIZE(mcp23x17_defaults),
- 	.cache_type = REGCACHE_FLAT,
- 	.val_format_endian = REGMAP_ENDIAN_LITTLE,
- 	.disable_locking = true, /* mcp->lock protects the regmap */
-@@ -614,14 +588,6 @@ int mcp23s08_probe_one(struct mcp23s08 *mcp, struct device *dev,
- 
- 	mcp->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
- 
--	/*
--	 * Reset the chip - we don't really know what state it's in, so reset
--	 * all pins to input first to prevent surprises.
--	 */
--	ret = mcp_write(mcp, MCP_IODIR, mcp->chip.ngpio == 16 ? 0xFFFF : 0xFF);
--	if (ret < 0)
--		return ret;
--
- 	/* verify MCP_IOCON.SEQOP = 0, so sequential reads work,
- 	 * and MCP_IOCON.HAEN = 1, so we work with all chips.
- 	 */
 -- 
-2.48.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
