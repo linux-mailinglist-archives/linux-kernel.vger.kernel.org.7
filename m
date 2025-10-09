@@ -1,151 +1,157 @@
-Return-Path: <linux-kernel+bounces-846415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF4ADBC7F4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:13:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93A58BC7EF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:09:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 948164FE4E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:08:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BF1F3AAF59
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD4A2BEC31;
-	Thu,  9 Oct 2025 08:07:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE9E25D202;
+	Thu,  9 Oct 2025 08:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lT3BcE/3";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uhJSxLdk";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lT3BcE/3";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uhJSxLdk"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="LRD+5gZ3"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 332771B4F1F
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 08:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CAD91FBCA1;
+	Thu,  9 Oct 2025 08:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759997271; cv=none; b=gKoWelYN0a734zE4C+RU3edHv/3IOP2V5JE7pL0E6U/bdnSVA5p/bDe0VVXX7kQ7CZbeixdHZ4/fLT9Bv71coG8dy2k1uAE0o5fefONBOT0K4ryfofZRtPN11Ei5JxoNhHpeJqZttDDcn1MahKqkV/C4e/4tfbScx7QT7N3HgrE=
+	t=1759997380; cv=none; b=PW8ySWnT8z3+mh680zIzZg1kMA1cbRXFN03UjpQKvbiGwWQfCdkQh1vSwYI/ia5PidizVsey18eUEHgXo5LYt3jMUT2VsmGEooHEAOAQmmzRvh9a6Lf/xSH6oWVK19DVxqKYTvVXTLMtzkGkslTcPnucgzfWHLxmyFcTjPN4+LI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759997271; c=relaxed/simple;
-	bh=4W3fMl5l3jcHrj0ggcJQMaLz1dS2cx4Ut1OZNPYE8IE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C5MWWtndd2oz3eRKJh+84MuKKT62lvb3Ym1EjiET0mzdU+TGXGMIUgzfPg9JDN2tNwHjxvKmlXWbr3B6oX6yL38ClbTU1CQVBAgxcksRFUkBSNiM6yN71S2WnNzWzH0s4nlCgf+0TFJyDJB4XQMLi5oKxhNJZxe0TO5ZIZHyWhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lT3BcE/3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uhJSxLdk; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lT3BcE/3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uhJSxLdk; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	s=arc-20240116; t=1759997380; c=relaxed/simple;
+	bh=KyklGAMNtWChaurBpHK/F2+DI+34oXWWStcbMlx5O1E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=egBmkHDzGF6QAVRDrVfyhumIUxlCShxHZpeUIK5CviJ8Cy2e+17xYcNmzgaKMsNS9lI2PBp+VzJm+DEX2f1M/h175D3nXAVAXVGh6ChAiQHkfFP0RvnjVdYIJp+ISXm+8o6VUU9c5jqNGUBCxuB8lg4d7qUzZAaK1XPdkdMl+eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=LRD+5gZ3; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1759997376;
+	bh=KyklGAMNtWChaurBpHK/F2+DI+34oXWWStcbMlx5O1E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LRD+5gZ34GwE1TSoRgv6iHn3KzXA7akJeAMubD6bh35xsyTqRczdE/Pp2ZX8AIGc/
+	 kkgExMbedADvQpbyt1HZ3tFIr24wVHWL0tpq6zx1WoryuydCi1Tabn7a6fF8anTL62
+	 Q/fs4RLUsgjFP5fkbOnkzHn9sx86LqUYnPfDVQhzRuu/dh8H2aEvFH55HIGv4tb51l
+	 0RkT7dPm9F2upYo1nPxrX7gnCxdeaZv7UvPRnuWIMVXA+2eB6WW56uSU5+TIFmTemx
+	 8Uk0KeQnXK8FS/6aUWzAingmikgnOp+XBVP55SxRNxi7bfhBEdrjNnv+ibm12vcmug
+	 HFmpw8vgavdTA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 59C20224C6;
-	Thu,  9 Oct 2025 08:07:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1759997267; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=840BVvk4h/vQ3iIDPplNBop5pm8dJACDtuDls2QAuzo=;
-	b=lT3BcE/3xLnQc9f2v2Q3k1PaokeHfbIitmRaSGJFjpMBc+Gi3AhKPqgCIh+KbCM/k5CDgD
-	0g+hXMyScNWMF5W2sKtxiI++tsS+wb4Bmj9LPmoBF4ZsGG9RWUZimUEuo1zkK8iJm1rRbU
-	Vtvs2hNofBorIJpm1pODkmLFify2KVQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1759997267;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=840BVvk4h/vQ3iIDPplNBop5pm8dJACDtuDls2QAuzo=;
-	b=uhJSxLdkywP8EgjhSzopzlfXz6YCM8o/5fj57d7Jj60gAoL5kZVIg22rAKAZkeP+Vu2mxV
-	Xubi1K3Ydm1QnmAw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1759997267; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=840BVvk4h/vQ3iIDPplNBop5pm8dJACDtuDls2QAuzo=;
-	b=lT3BcE/3xLnQc9f2v2Q3k1PaokeHfbIitmRaSGJFjpMBc+Gi3AhKPqgCIh+KbCM/k5CDgD
-	0g+hXMyScNWMF5W2sKtxiI++tsS+wb4Bmj9LPmoBF4ZsGG9RWUZimUEuo1zkK8iJm1rRbU
-	Vtvs2hNofBorIJpm1pODkmLFify2KVQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1759997267;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=840BVvk4h/vQ3iIDPplNBop5pm8dJACDtuDls2QAuzo=;
-	b=uhJSxLdkywP8EgjhSzopzlfXz6YCM8o/5fj57d7Jj60gAoL5kZVIg22rAKAZkeP+Vu2mxV
-	Xubi1K3Ydm1QnmAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B723013AAC;
-	Thu,  9 Oct 2025 08:07:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id AavsKVJt52gYEAAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Thu, 09 Oct 2025 08:07:46 +0000
-Date: Thu, 9 Oct 2025 10:07:45 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Mauricio Faria de Oliveira <mfo@igalia.com>
-Cc: Michal Hocko <mhocko@suse.com>, Vlastimil Babka <vbabka@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Brendan Jackman <jackmanb@google.com>,
-	Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	kernel-dev@igalia.com
-Subject: Re: [PATCH v2 2/5] mm/page_owner: add struct stack_print_ctx.flags
-Message-ID: <aOdtUZbMhV77q3Hk@localhost.localdomain>
-References: <20251001175611.575861-1-mfo@igalia.com>
- <20251001175611.575861-3-mfo@igalia.com>
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id D69D717E04DA;
+	Thu,  9 Oct 2025 10:09:35 +0200 (CEST)
+Message-ID: <2477df4e-c89e-408f-bb2a-d5af51f78ef8@collabora.com>
+Date: Thu, 9 Oct 2025 10:09:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251001175611.575861-3-mfo@igalia.com>
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	URIBL_BLOCKED(0.00)[localhost.localdomain:mid,imap1.dmz-prg2.suse.org:helo,igalia.com:email,suse.de:email];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo,localhost.localdomain:mid,igalia.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -4.30
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/5] clk: mediatek: Refactor pll registration to pass
+ device
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Dong Aisheng <aisheng.dong@nxp.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ Yassine Oudjana <y.oudjana@protonmail.com>,
+ Laura Nao <laura.nao@collabora.com>,
+ =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ Chia-I Wu <olvaffe@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>
+Cc: kernel@collabora.com, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, Stephen Boyd <sboyd@codeaurora.org>
+References: <20251008-mtk-pll-rpm-v2-0-170ed0698560@collabora.com>
+ <20251008-mtk-pll-rpm-v2-2-170ed0698560@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20251008-mtk-pll-rpm-v2-2-170ed0698560@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 01, 2025 at 02:56:08PM -0300, Mauricio Faria de Oliveira wrote:
-> Add the flags field to stack_print_ctx, and define two flags for current
-> behavior (printing stack traces and their number of base pages).
+Il 08/10/25 18:05, Nicolas Frattaroli ha scritto:
+> As it stands, mtk_clk_register_plls takes a struct device_node pointer
+> as its first argument. This is a tragic happenstance, as it's trivial to
+> get the device_node from a struct device, but the opposite not so much.
+> The struct device is a much more useful thing to have passed down.
 > 
-> The plumbing of flags is debugfs_create_file(data) -> inode.i_private ->
-> page_owner_stack_open() -> stack_print_ctx.flags -> stack_print().
+> Refactor mtk_clk_register_plls to take a struct device pointer instead
+> of a struct device_node pointer, and fix up all users of this function.
 > 
-> No behavior change intended.
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> ---
+>   drivers/clk/mediatek/clk-mt2701.c            | 2 +-
+>   drivers/clk/mediatek/clk-mt2712-apmixedsys.c | 2 +-
+>   drivers/clk/mediatek/clk-mt6735-apmixedsys.c | 4 ++--
+>   drivers/clk/mediatek/clk-mt6765.c            | 2 +-
+>   drivers/clk/mediatek/clk-mt6779.c            | 2 +-
+>   drivers/clk/mediatek/clk-mt6797.c            | 2 +-
+>   drivers/clk/mediatek/clk-mt7622-apmixedsys.c | 2 +-
+>   drivers/clk/mediatek/clk-mt7629.c            | 2 +-
+>   drivers/clk/mediatek/clk-mt7981-apmixed.c    | 2 +-
+>   drivers/clk/mediatek/clk-mt7986-apmixed.c    | 2 +-
+>   drivers/clk/mediatek/clk-mt7988-apmixed.c    | 2 +-
+>   drivers/clk/mediatek/clk-mt8135-apmixedsys.c | 3 ++-
+>   drivers/clk/mediatek/clk-mt8167-apmixedsys.c | 2 +-
+>   drivers/clk/mediatek/clk-mt8183-apmixedsys.c | 2 +-
+>   drivers/clk/mediatek/clk-mt8188-apmixedsys.c | 2 +-
+>   drivers/clk/mediatek/clk-mt8195-apusys_pll.c | 3 ++-
+>   drivers/clk/mediatek/clk-mt8196-apmixedsys.c | 3 ++-
+>   drivers/clk/mediatek/clk-mt8196-mcu.c        | 2 +-
+>   drivers/clk/mediatek/clk-mt8196-mfg.c        | 2 +-
+>   drivers/clk/mediatek/clk-mt8196-vlpckgen.c   | 2 +-
+>   drivers/clk/mediatek/clk-mt8365-apmixedsys.c | 2 +-
+>   drivers/clk/mediatek/clk-mt8516-apmixedsys.c | 2 +-
+>   drivers/clk/mediatek/clk-pll.c               | 7 ++++---
+>   drivers/clk/mediatek/clk-pll.h               | 6 +++---
+>   24 files changed, 33 insertions(+), 29 deletions(-)
 > 
-> Signed-off-by: Mauricio Faria de Oliveira <mfo@igalia.com>
 
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
+..snip..
 
- 
+> diff --git a/drivers/clk/mediatek/clk-pll.h b/drivers/clk/mediatek/clk-pll.h
+> index d71c150ce83e4bb2fe78290c2d5570a90084246d..0e2b94b9cd4b56adceee3b04e9ab24c2526471da 100644
+> --- a/drivers/clk/mediatek/clk-pll.h
+> +++ b/drivers/clk/mediatek/clk-pll.h
+> @@ -78,9 +78,9 @@ struct mtk_clk_pll {
+>   	const struct mtk_pll_data *data;
+>   };
+>   
 
--- 
-Oscar Salvador
-SUSE Labs
+There's a forward declaration of struct device_node in this header: with this
+change, that becomes unused.
+
+Please change that to a forward declaration of struct device instead.
+
+While at it, I'd appreciate if you could either:
+  A. Remove the forward declaration for `struct clk_hw_onecell_data` and for
+     `struct clk_ops` (as both come from clk-provider.h - which this already
+      includes);
+    ...or...
+  B. Remove the inclusion of clk-provider.h and keep the forward declarations.
+
+After which:
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+> -int mtk_clk_register_plls(struct device_node *node,
+> -			  const struct mtk_pll_data *plls, int num_plls,
+> -			  struct clk_hw_onecell_data *clk_data);
+> +int mtk_clk_register_plls(struct device *dev, const struct mtk_pll_data *plls,
+> +			  int num_plls, struct clk_hw_onecell_data *clk_data);
+> +
+>   void mtk_clk_unregister_plls(const struct mtk_pll_data *plls, int num_plls,
+>   			     struct clk_hw_onecell_data *clk_data);
+>   
+> 
+
+
 
