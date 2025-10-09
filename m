@@ -1,302 +1,175 @@
-Return-Path: <linux-kernel+bounces-846887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 497AEBC9579
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:40:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 045CEBC9585
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:42:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03D513B3360
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:40:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10E42189963A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D85C2E8DF0;
-	Thu,  9 Oct 2025 13:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 542E22E7F0B;
+	Thu,  9 Oct 2025 13:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FRVb4KH3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="h/FKHxxY"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8159D2D9EDF;
-	Thu,  9 Oct 2025 13:40:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCCB29405;
+	Thu,  9 Oct 2025 13:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760017208; cv=none; b=Ytf6Zq09EPvvE9StU6xDCAXfEVpVlv70Z4uWye9peE/OwG5MAcTgd8otxFKhshxMFc78nuV+/6h/cMt7XyF2rKQmIL9x56/4uvpQNhyXB199Uy4k/ozXGf5i6Xunh9KYnMe48xAqXb7Z2Gs3Gwo4rrgHgASvad3UyM1EzPShlxs=
+	t=1760017314; cv=none; b=WGyas4E5g+X2WLyvK2XLo+m8Fx8FcsI6X3rDsjn77CXU05hD1fj2BoaENRSm4vflks3TTxt5HpfZLsMUMuKZoyWko0EK86QybUEuDFnXCfLNW+k/WVTUMaTgpj6KprelNWcisidzl3fJpuB0W6zXmQpJAnV7FI7zf/eW1qfFy3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760017208; c=relaxed/simple;
-	bh=VdC27hcOKbdtLbSsb9cJummxioaXko1mxh4mEQYafBk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WQMjjSvXznfzyXujiQCl+Q/40GjBRGkJ8E/h0Q++iw5Y83Ju/eTyh/MmzcFtfclW0KRKHaI4fkNkeL5820IIJlBvUEPit+Jhj6xMUIc20h1bggH0VI9PNBSdiozKvFcVa6UqdSypU9T28t8z+vfwiG2JHwOnIwKdzBOkdsaxAeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FRVb4KH3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 055E6C4CEE7;
-	Thu,  9 Oct 2025 13:40:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760017207;
-	bh=VdC27hcOKbdtLbSsb9cJummxioaXko1mxh4mEQYafBk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FRVb4KH3hfrnISJC494JzKrQMJAuJhT5pnqtdf/RycXc93hEhAt9UTgMjXJuT55yn
-	 XjyCGBgt9bdVNLoRTOQmUiWvbC1XLP+i4fOZFI6wLwi00t8b3V34uc2/TwK19AJHqy
-	 6hxRJXVeylUrFKOO/vG8tXTYXpCmquBtNprR2+Z1LNaO67UtkXhOVBqAAczulY7SBl
-	 Rr53GfNoThhTecicbEDIFfi4m/U+zIqro9gsLi6uQqaVmmBBVrp2hizVYaHlxEtOi3
-	 8FjUTU/+WrZZyyHh8z6bb3cLs+avlWvuxL/1ibXoAYZqIcX+tQZulPDwUQKCleve0W
-	 76MVuRSZ7hanA==
-Message-ID: <5aa30c94-33f1-4f40-9013-dfbac249ce91@kernel.org>
-Date: Thu, 9 Oct 2025 14:40:05 +0100
+	s=arc-20240116; t=1760017314; c=relaxed/simple;
+	bh=LRYISGwz2vUgw6k8AJXgIt6PtG7IrGhrW6OoAOHaZOY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sF3Lq7mb6Dodu8c+JqR3MMxGWvt9cPNEnxR+og/9gB0hj35pqRT/Xug4QTCNAj62pAcKtNbDJN2k8aXVfMYLU1y191w+a0FYY7oc0URULovp+SlUfYopHvfExlA1tcPJOh4URmJGit3t3RBoQiykh11rvAFUAFrxyWG5eLFPGdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=h/FKHxxY; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760017310;
+	bh=LRYISGwz2vUgw6k8AJXgIt6PtG7IrGhrW6OoAOHaZOY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=h/FKHxxYYapkgJ2usEyWgF3lVSecgUtFYljZkL4+ySoS4mSlLdxdnR5HEbyHvfGyc
+	 Epo7I1jKxL3sJNgeuwCsNHJY8lLWmtBT+/xWIXDHDox+HajCHcoVR4VVBuNawMXkii
+	 Osf0/9deR71s1k2pLP00k+cpjaMFz8joNHcXfO2bO9Ot95A6XtHgimS+X/SXLljF+Y
+	 duZuzq1VqXk7xbe131Ev9dk0GV0IyLqDcm0Wk889SdseUURdke3vtSI99oeA/qpoeA
+	 Pa7S0C7MgJzG98WRIPZLeHk0cFc00CVYKe53LyU7FTVqrZHtjoii9jK0GUfizVfMj1
+	 t3ppwqE2VjN3w==
+Received: from pan.localdomain (unknown [IPv6:2a00:23c6:c338:be00:61ad:9488:9583:2010])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: martyn)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8004B17E0CF8;
+	Thu,  9 Oct 2025 15:41:50 +0200 (CEST)
+From: Martyn Welch <martyn.welch@collabora.com>
+To: Hans de Goede <hansg@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: kernel@collabora.com,
+	Martyn Welch <martyn.welch@collabora.com>,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] input: goodix: Remove setting of RST pin to input
+Date: Thu,  9 Oct 2025 14:41:32 +0100
+Message-ID: <20251009134138.686215-1-martyn.welch@collabora.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 3/6] ASoC: soc: qcom: sc8280xp: add support for I2S
- clocks
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20251008-topic-sm8x50-next-hdk-i2s-v2-0-6b7d38d4ad5e@linaro.org>
- <20251008-topic-sm8x50-next-hdk-i2s-v2-3-6b7d38d4ad5e@linaro.org>
-Content-Language: en-US
-From: Srinivas Kandagatla <srini@kernel.org>
-In-Reply-To: <20251008-topic-sm8x50-next-hdk-i2s-v2-3-6b7d38d4ad5e@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+The reset line is being set to input on non-ACPI devices apparently to
+save power. This isn't being done on ACPI devices as it's been found
+that some ACPI devices don't have a pull-up resistor fitted. This can
+also be the case for non-ACPI devices, resulting in:
 
+[  941.672207] Goodix-TS 1-0014: Error reading 10 bytes from 0x814e: -110
+[  942.696168] Goodix-TS 1-0014: Error reading 10 bytes from 0x814e: -110
+[  945.832208] Goodix-TS 1-0014: Error reading 10 bytes from 0x814e: -110
 
-On 10/8/25 7:56 PM, Neil Armstrong wrote:
-> Add support for getting the I2S clocks used for the MI2S
-> interfaces, and enable/disable the clocks on the PCM
-> startup and shutdown card callbacks.
-> 
-> The rate can be easily calculated since the card forces 48Hz,
-> 2 channels at 16bit slot size.
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  sound/soc/qcom/sc8280xp.c | 132 +++++++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 131 insertions(+), 1 deletion(-)
-> 
-> diff --git a/sound/soc/qcom/sc8280xp.c b/sound/soc/qcom/sc8280xp.c
-> index 78e327bc2f07767b1032f09af7f45b947e7eb67a..82b173c2dabbd1478df49ba9f0cc53e82bf2f8d2 100644
-> --- a/sound/soc/qcom/sc8280xp.c
-> +++ b/sound/soc/qcom/sc8280xp.c
-> @@ -4,6 +4,8 @@
->  #include <dt-bindings/sound/qcom,q6afe.h>
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
-> +#include <linux/clk.h>
-> +#include <linux/of_clk.h>
->  #include <sound/soc.h>
->  #include <sound/soc-dapm.h>
->  #include <sound/pcm.h>
-> @@ -15,15 +17,47 @@
->  #include "common.h"
->  #include "sdw.h"
->  
-> +#define I2S_MAX_CLKS	5
-> +
-> +#define I2S_MCLKFS	256
-> +#define I2S_SLOTSIZE	16
-> +#define I2S_MCLK_RATE(rate, channels) \
-> +		((rate) * (channels) * I2S_MCLKFS)
-> +#define I2S_BIT_RATE(rate, channels) \
-> +		((rate) * (channels) * I2S_SLOTSIZE)
-> +
-> +#define I2S_DEFAULT_RATE	48000
-> +#define I2S_DEFAULT_CHANNELS	2
-> +
+This behaviour appears to have been initialing introduced in
+ec6e1b4082d9. This doesn't seem to be based on information in either the
+GT911 or GT9271 datasheets cited as sources of information for this
+change. Thus it seems likely that it is based on functionality in the
+Android driver which it also lists. This behaviour may be viable in very
+specific instances where the hardware is well known, but seems unwise in
+the upstream kernel where such hardware requirements can't be
+guaranteed.
 
-Sorry for not providing this feedback on v1, we should use
-snd_soc_dai_set_sysclk to do this whole clk handling.
+Remove this over optimisation to improve reliability on non-ACPI
+devices.
 
-and implment this set_sysclk in q6i2s_ops of q6apm-lpass-dais.c  like
-q6afe-lpass-dais.c
+Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
 
+---
 
---srini
+Changes since v1:
+ - Dropping gpiod_rst_flags and directly passing GPIOD_ASIS when
+   requesting the reset pin.
 
->  struct sc8280xp_snd_data {
->  	bool stream_prepared[AFE_PORT_MAX];
->  	struct snd_soc_card *card;
->  	struct sdw_stream_runtime *sruntime[AFE_PORT_MAX];
->  	struct snd_soc_jack jack;
->  	struct snd_soc_jack dp_jack[8];
-> +	struct clk *i2s_clk[I2S_MAX_CLKS];
-> +	struct clk *i2s_mclk[I2S_MAX_CLKS];
->  	bool jack_setup;
->  };
->  
-> +static int sc8280xp_snd_i2s_index(struct snd_soc_dai *dai)
-> +{
-> +	switch (dai->id) {
-> +	case PRIMARY_MI2S_RX...PRIMARY_MI2S_TX:
-> +		return 0;
-> +	case  SECONDARY_MI2S_RX...SECONDARY_MI2S_TX:
-> +		return 1;
-> +	case TERTIARY_MI2S_RX...TERTIARY_MI2S_TX:
-> +		return 2;
-> +	case QUATERNARY_MI2S_RX...QUATERNARY_MI2S_TX:
-> +		return 3;
-> +	case QUINARY_MI2S_RX...QUINARY_MI2S_TX:
-> +		return 4;
-> +	default:
-> +		return -1;
-> +	}
-> +}
-> +
->  static int sc8280xp_snd_init(struct snd_soc_pcm_runtime *rtd)
->  {
->  	struct sc8280xp_snd_data *data = snd_soc_card_get_drvdata(rtd->card);
-> @@ -31,10 +65,22 @@ static int sc8280xp_snd_init(struct snd_soc_pcm_runtime *rtd)
->  	struct snd_soc_card *card = rtd->card;
->  	struct snd_soc_jack *dp_jack  = NULL;
->  	int dp_pcm_id = 0;
-> +	int index, ret;
->  
->  	switch (cpu_dai->id) {
->  	case PRIMARY_MI2S_RX...QUATERNARY_MI2S_TX:
->  	case QUINARY_MI2S_RX...QUINARY_MI2S_TX:
-> +		index = sc8280xp_snd_i2s_index(cpu_dai);
-> +		ret = clk_set_rate(data->i2s_mclk[index],
-> +				   I2S_MCLK_RATE(I2S_DEFAULT_RATE,
-> +						 I2S_DEFAULT_CHANNELS));
-> +		if (ret)
-> +			dev_err(data->card->dev, "Unable to set mclk rate\n");
-> +		ret = clk_set_rate(data->i2s_clk[index],
-> +				   I2S_BIT_RATE(I2S_DEFAULT_RATE,
-> +						I2S_DEFAULT_CHANNELS));
-> +		if (ret)
-> +			dev_err(data->card->dev, "Unable to set bit rate\n");
->  		snd_soc_dai_set_fmt(cpu_dai, SND_SOC_DAIFMT_BP_FP);
->  		break;
->  	case WSA_CODEC_DMA_RX_0:
-> @@ -68,12 +114,54 @@ static int sc8280xp_snd_init(struct snd_soc_pcm_runtime *rtd)
->  	return qcom_snd_wcd_jack_setup(rtd, &data->jack, &data->jack_setup);
->  }
->  
-> +static int sc8280xp_snd_startup(struct snd_pcm_substream *substream)
-> +{
-> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-> +	struct sc8280xp_snd_data *pdata = snd_soc_card_get_drvdata(rtd->card);
-> +	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
-> +	struct snd_soc_dai *codec_dai = snd_soc_rtd_to_codec(rtd, 0);
-> +	unsigned int codec_dai_fmt = SND_SOC_DAIFMT_BC_FC |
-> +				     SND_SOC_DAIFMT_NB_NF |
-> +				     SND_SOC_DAIFMT_I2S;
-> +	int index, ret;
-> +
-> +	switch (cpu_dai->id) {
-> +	case PRIMARY_MI2S_RX...QUATERNARY_MI2S_TX:
-> +	case QUINARY_MI2S_RX...QUINARY_MI2S_TX:
-> +		index = sc8280xp_snd_i2s_index(cpu_dai);
-> +		ret = clk_prepare_enable(pdata->i2s_mclk[index]);
-> +		if (ret)
-> +			dev_err(pdata->card->dev, "Unable to enable bit clock\n");
-> +		ret = clk_prepare_enable(pdata->i2s_clk[index]);
-> +		if (ret)
-> +			dev_err(pdata->card->dev, "Unable to enable master clock\n");
-> +		snd_soc_dai_set_fmt(codec_dai, codec_dai_fmt);
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +
-> +	return qcom_snd_sdw_startup(substream);
-> +}
-> +
->  static void sc8280xp_snd_shutdown(struct snd_pcm_substream *substream)
->  {
->  	struct snd_soc_pcm_runtime *rtd = snd_soc_substream_to_rtd(substream);
->  	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
->  	struct sc8280xp_snd_data *pdata = snd_soc_card_get_drvdata(rtd->card);
->  	struct sdw_stream_runtime *sruntime = pdata->sruntime[cpu_dai->id];
-> +	int index;
-> +
-> +	switch (cpu_dai->id) {
-> +	case PRIMARY_MI2S_RX...TERTIARY_MI2S_RX:
-> +	case QUINARY_MI2S_RX...QUINARY_MI2S_TX:
-> +		index = sc8280xp_snd_i2s_index(cpu_dai);
-> +		clk_disable_unprepare(pdata->i2s_clk[index]);
-> +		clk_disable_unprepare(pdata->i2s_mclk[index]);
-> +		break;
-> +	default:
-> +		break;
-> +	}
->  
->  	pdata->sruntime[cpu_dai->id] = NULL;
->  	sdw_release_stream(sruntime);
-> @@ -141,7 +229,7 @@ static int sc8280xp_snd_hw_free(struct snd_pcm_substream *substream)
->  }
->  
->  static const struct snd_soc_ops sc8280xp_be_ops = {
-> -	.startup = qcom_snd_sdw_startup,
-> +	.startup = sc8280xp_snd_startup,
->  	.shutdown = sc8280xp_snd_shutdown,
->  	.hw_params = sc8280xp_snd_hw_params,
->  	.hw_free = sc8280xp_snd_hw_free,
-> @@ -162,6 +250,44 @@ static void sc8280xp_add_be_ops(struct snd_soc_card *card)
->  	}
->  }
->  
-> +static const char * const i2s_bus_names[I2S_MAX_CLKS] = {
-> +	"primary",
-> +	"secondary",
-> +	"tertiary",
-> +	"quaternary",
-> +	"quinary",
-> +};
-> +
-> +static int sc8280xp_get_i2s_clocks(struct platform_device *pdev,
-> +				   struct sc8280xp_snd_data *data)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	int i;
-> +
-> +	if (!device_property_present(dev, "clocks"))
-> +		return 0;
-> +
-> +	for (i = 0; i < I2S_MAX_CLKS; ++i) {
-> +		char name[32];
-> +
-> +		snprintf(name, 32, "%s-mi2s", i2s_bus_names[i]);
-> +		data->i2s_clk[i] = devm_clk_get_optional(dev, name);
-> +		if (IS_ERR(data->i2s_clk[i]))
-> +			return dev_err_probe(dev, PTR_ERR(data->i2s_clk[i]),
-> +					     "unable to get %s clock\n",
-> +					     name);
-> +
-> +		snprintf(name, 32, "%s-mclk", i2s_bus_names[i]);
-> +		data->i2s_mclk[i] = devm_clk_get_optional(dev, name);
-> +		if (IS_ERR(data->i2s_mclk[i]))
-> +			return dev_err_probe(dev, PTR_ERR(data->i2s_mclk[i]),
-> +					     "unable to get %s clock\n",
-> +					     name);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int sc8280xp_platform_probe(struct platform_device *pdev)
->  {
->  	struct snd_soc_card *card;
-> @@ -185,6 +311,10 @@ static int sc8280xp_platform_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
->  
-> +	ret = sc8280xp_get_i2s_clocks(pdev, data);
-> +	if (ret)
-> +		return ret;
-> +
->  	card->driver_name = of_device_get_match_data(dev);
->  	sc8280xp_add_be_ops(card);
->  	return devm_snd_soc_register_card(dev, card);
-> 
+ drivers/input/touchscreen/goodix.c | 27 +--------------------------
+ drivers/input/touchscreen/goodix.h |  1 -
+ 2 files changed, 1 insertion(+), 27 deletions(-)
+
+diff --git a/drivers/input/touchscreen/goodix.c b/drivers/input/touchscreen/goodix.c
+index 252dcae039f8..f838f92100c2 100644
+--- a/drivers/input/touchscreen/goodix.c
++++ b/drivers/input/touchscreen/goodix.c
+@@ -796,17 +796,6 @@ int goodix_reset_no_int_sync(struct goodix_ts_data *ts)
+ 
+ 	usleep_range(6000, 10000);		/* T4: > 5ms */
+ 
+-	/*
+-	 * Put the reset pin back in to input / high-impedance mode to save
+-	 * power. Only do this in the non ACPI case since some ACPI boards
+-	 * don't have a pull-up, so there the reset pin must stay active-high.
+-	 */
+-	if (ts->irq_pin_access_method == IRQ_PIN_ACCESS_GPIO) {
+-		error = gpiod_direction_input(ts->gpiod_rst);
+-		if (error)
+-			goto error;
+-	}
+-
+ 	return 0;
+ 
+ error:
+@@ -957,14 +946,6 @@ static int goodix_add_acpi_gpio_mappings(struct goodix_ts_data *ts)
+ 		return -EINVAL;
+ 	}
+ 
+-	/*
+-	 * Normally we put the reset pin in input / high-impedance mode to save
+-	 * power. But some x86/ACPI boards don't have a pull-up, so for the ACPI
+-	 * case, leave the pin as is. This results in the pin not being touched
+-	 * at all on x86/ACPI boards, except when needed for error-recover.
+-	 */
+-	ts->gpiod_rst_flags = GPIOD_ASIS;
+-
+ 	return devm_acpi_dev_add_driver_gpios(dev, gpio_mapping);
+ }
+ #else
+@@ -989,12 +970,6 @@ static int goodix_get_gpio_config(struct goodix_ts_data *ts)
+ 		return -EINVAL;
+ 	dev = &ts->client->dev;
+ 
+-	/*
+-	 * By default we request the reset pin as input, leaving it in
+-	 * high-impedance when not resetting the controller to save power.
+-	 */
+-	ts->gpiod_rst_flags = GPIOD_IN;
+-
+ 	ts->avdd28 = devm_regulator_get(dev, "AVDD28");
+ 	if (IS_ERR(ts->avdd28))
+ 		return dev_err_probe(dev, PTR_ERR(ts->avdd28), "Failed to get AVDD28 regulator\n");
+@@ -1019,7 +994,7 @@ static int goodix_get_gpio_config(struct goodix_ts_data *ts)
+ 	ts->gpiod_int = gpiod;
+ 
+ 	/* Get the reset line GPIO pin number */
+-	gpiod = devm_gpiod_get_optional(dev, GOODIX_GPIO_RST_NAME, ts->gpiod_rst_flags);
++	gpiod = devm_gpiod_get_optional(dev, GOODIX_GPIO_RST_NAME, GPIOD_ASIS);
+ 	if (IS_ERR(gpiod))
+ 		return dev_err_probe(dev, PTR_ERR(gpiod), "Failed to get %s GPIO\n",
+ 				     GOODIX_GPIO_RST_NAME);
+diff --git a/drivers/input/touchscreen/goodix.h b/drivers/input/touchscreen/goodix.h
+index 87797cc88b32..0d1e8a8d2cba 100644
+--- a/drivers/input/touchscreen/goodix.h
++++ b/drivers/input/touchscreen/goodix.h
+@@ -88,7 +88,6 @@ struct goodix_ts_data {
+ 	struct gpio_desc *gpiod_rst;
+ 	int gpio_count;
+ 	int gpio_int_idx;
+-	enum gpiod_flags gpiod_rst_flags;
+ 	char id[GOODIX_ID_MAX_LEN + 1];
+ 	char cfg_name[64];
+ 	u16 version;
+-- 
+2.39.5
 
 
