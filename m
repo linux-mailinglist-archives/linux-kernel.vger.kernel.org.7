@@ -1,307 +1,179 @@
-Return-Path: <linux-kernel+bounces-846894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A35ECBC95B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:45:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DEB4BC95C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:47:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C6F23B2949
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:45:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 492F23B54B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:47:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12972C21E7;
-	Thu,  9 Oct 2025 13:45:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C572E8B9B;
+	Thu,  9 Oct 2025 13:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Be4OGBvR"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FBvLT4AJ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7B034BA48
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B6E3D76
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760017538; cv=none; b=YXiqSIriRZP9lUE4Rj5YUhv1bfjePeQpNgrQnysXrUpBjxp0L48wQkhXMAGNc8qv1HVsDNTfXHl807CZPnGskGX6obyknT8oH/YYvyJuiTqczPF6hvwyYntiKzIxiy+xHo8bM2uGc1e6d1t57wz7dBSfAUpVTRuiy21BDCr10uU=
+	t=1760017666; cv=none; b=pYKPfzUsoH0BSrAtNPYLiCFuK4A9Umo3ecs/ttbTVlNf27pw5ZaTIlo+8Z3kuPURIS/Aj1wJN5QyjJWAGyv2GicHYmHObLy/akbVaCyE0YVVRfBimLxQWCK/zK9ViUJnk3ANmVcm66sufTehjgwATC53y6lF2mj1EIwrbXS/RVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760017538; c=relaxed/simple;
-	bh=ONz0iwdpEXBR9QXBr7fBiVKfbUdVWUHg5O8jRMu2rvI=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=B9HVkjXdlTcp2VPAT1+BZyBCMM/5rUpnDPaw8vqHsgtTjQse6kDF+tEVQjuotqepnSsuieTkSQDJYfnQJLKZSTVQL5DLfdJ1jXQWdBwuboiWZYXeR9uW63Bq/UH5/khSwXVvLVkKU17jqpAwYPE0cT5asElv+iWWOMS6Wf79joU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Be4OGBvR; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-27d69771e3eso6135755ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 06:45:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1760017535; x=1760622335; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/Avy7qeTTmfq4DZivkTM47xk9+61lo2fuJS8O1YcKX0=;
-        b=Be4OGBvRFPj7xiWJDYLuPSgypkqfjG1Q2f+BauDuh6BQYWl8bwkiyZq7f9MvmyGOB/
-         wBvT3Z5AHGtrvdqL+peC+rkEQwD4wLIVnMGwFfdgOy1JN13uOrGcVfqf+aKTEYyrQFzE
-         WUhEbI9hXvh/TtpIQhxmAWgKoXwxL5ON3fzkS/f3xdaTgp4McjAis72eqAUZ48F5nJyU
-         ywQ775eXS62EUsj1yFSMkoMmuL/iaVIpa94sNTj3ILn6CpqwIG9eXyAPPFvJHORodID/
-         x9Jta8pfDoXMzm4i+tvmHl0Cd6GpL8D9Fadp+GFmhsGw7VUvjyfWhqFvN7jsWl1A2wXD
-         fktQ==
+	s=arc-20240116; t=1760017666; c=relaxed/simple;
+	bh=RlhAm2Bg9pvi1ogK5q06pE8r0EcxlDXKABHary4XLh0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L+IRve3KZFd9sii/k8UqsTjcrAuV2ifqPjDam2ztpT3Cau1M+aDa/kJr2XE4+UG1TA8VmDEu5buAGEWNAr63qWpTYbY2tY+w08IC0fZwn+M8ThbyR3I1IsRcp+5PoZoeIvOgRrKl4NgEScOthR3N3BclqvQyFDn2apk5Jln1K8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FBvLT4AJ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5996EOr2010864
+	for <linux-kernel@vger.kernel.org>; Thu, 9 Oct 2025 13:47:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	QbuhKzYyNn4b/GhuLY4ieUg767B4emhq3As5C0P9FLg=; b=FBvLT4AJolC+mYxz
+	clqU1bEJriRfxtkKFOydY9wRkTGhGBrSMw0yoEp5U0+wGBBH2ZPX8mtIKKanvike
+	Y9Y9fHlnwrzg7t7EiJEUVRY2PpNyQfC0o20iu8oeQpHHc8Y8w6de60DfFZuFYTB8
+	Nkj6y+TzEhklUmW+vkIbdtHU18szRYZ4kwFt2C0lgSGJR6qo2NUUaeFgBVNaZM4Z
+	JY2dVnG0GkO8tJbuT26ME+SFwcSG4SvPvzFMLLHvWYiyvi/3vY9jYfzpAMhCpLOn
+	v7pNaeVA+xO8lKyTnu8elJ0TpP/IIbPLTHXP6aMIqXjDnUuESGPEscxrqAhYSy70
+	XVudew==
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv9ab0fd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 13:47:42 +0000 (GMT)
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-78108268ea3so2718709b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 06:47:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760017535; x=1760622335;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/Avy7qeTTmfq4DZivkTM47xk9+61lo2fuJS8O1YcKX0=;
-        b=tiLywP6jtrCXuPrwrCI0sazIA1RTik8WKRoP+kiVJ40Lgci6IZTaIANP/u80blOI6f
-         ln8xXxuvPvr9/ERLLobhr0eO3HKndvfBLoD7bV5XfpzAeRS6TGY4R0Q/X7MgANGM7kYw
-         CddKQeonViy/M8GfIMsHiF/N4OkeOS2oryBewOj2ADtEozqOeVucBz/NyAHcS6rqQFSU
-         m3nfew4Lp5QCQftWfYZp94TaAeXKhml/y40qCP94OoY+qFCN3eaWm8q+rHQsMtaNneFQ
-         i/H+HWUf68iSD6mTuLzpa/kpB7cCD48NTYxkw6d5HITfYLPVq8Inoe1xhrZucVRBDNFX
-         1e9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWknDNf8zep6YgHR0K6AMqzEfwST2UnZ4eh+996vCYjTzKZPIOynRQsEVj3/b8fKFjDjbcWy7aUNx/Zpgs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxI0IPiSjgUnUg7ZvvrxTA0ofWjZv1t88ZgJB8KnrMdffi6TI93
-	ScYAFCHmJJuAD1Y5wARk7c0hQjxb8kQv1S1FuaVfJ2bHgLGh/RrGWTNxxGWzWtglFVc=
-X-Gm-Gg: ASbGncurYgEc6J9nidJM6IL0+gmofd6q6SKgKdgX3RbfArWCXTrVa5UtVrRfTwK5xU/
-	VUuekhbZfsjqF3cVSH0uPtwc/KBzFze7zSq1pFWPjPv4Ccz9gBEK1H4p2huViHZJw0HZfg28jh5
-	TyazzhqYTGLZP8P8/+RvSV8j+aXMOVotb+sa3AwVaxzSF79pAKQVE0JBpifNCW9zB4sK3VwXIIS
-	8kRccLnBoSTzMzq57MybLBvi1gdrHztZdun0j1mWV9DOEapkPiuETchYeUZeOQeRSUn+uj+aI8V
-	not6v2lbjF4PbIUHQXxvs/ShhIKmY5Kr5C8psBGrkd5ZyieCwHOi1QVqMSxGzxtbxBSvWvCID0n
-	L65Y0678kCu4Bx2Gp5gFBaXCX76n8QnM8Oyg9VORhZXT1LJyTG7cKqm7T2b3+J3aB72c8SilMtJ
-	wzLukCvvC0Ovt5+lkcpi5qpw==
-X-Google-Smtp-Source: AGHT+IFuQphml+3tSf/kNUKzOSrQUbkNN4IQAlQeDGBfiV9Ri5g+RslgrcOdjzz4EiXYtcwTC8PEKw==
-X-Received: by 2002:a17:903:244b:b0:272:c95c:866 with SMTP id d9443c01a7336-2902723c20cmr98032745ad.20.1760017535202;
-        Thu, 09 Oct 2025 06:45:35 -0700 (PDT)
-Received: from L6YN4KR4K9.bytedance.net ([139.177.225.226])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034f95ecbsm28718335ad.130.2025.10.09.06.45.25
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 09 Oct 2025 06:45:34 -0700 (PDT)
-From: Yunhui Cui <cuiyunhui@bytedance.com>
-To: paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mark.rutland@arm.com,
-	peterz@infradead.org,
-	jpoimboe@kernel.org,
-	jbaron@akamai.com,
-	ardb@kernel.org,
-	willy@infradead.org,
-	guoren@kernel.org,
-	ziy@nvidia.com,
-	akpm@linux-foundation.org,
-	bjorn@rivosinc.com,
-	cuiyunhui@bytedance.com,
-	ajones@ventanamicro.com,
-	parri.andrea@gmail.com,
-	cleger@rivosinc.com,
-	yongxuan.wang@sifive.com,
-	inochiama@gmail.com,
-	samuel.holland@sifive.com,
-	charlie@rivosinc.com,
-	conor.dooley@microchip.com,
-	yikming2222@gmail.com,
-	andybnac@gmail.com,
-	yury.norov@gmail.com,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH RFC] riscv: add support for Ziccid
-Date: Thu,  9 Oct 2025 21:45:14 +0800
-Message-Id: <20251009134514.8549-1-cuiyunhui@bytedance.com>
-X-Mailer: git-send-email 2.39.2 (Apple Git-143)
+        d=1e100.net; s=20230601; t=1760017662; x=1760622462;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QbuhKzYyNn4b/GhuLY4ieUg767B4emhq3As5C0P9FLg=;
+        b=wzIUWzo9GXzHbcYRkFSgwsfUlnggldHlZD5DB1gm0IfMf/LNKsZBT33iZ/gDqZ2hH7
+         wWZKgqWXvaUn/zKKkfLEWcBqaR1oBempW3M+0jQkfSUmZDFYvVC8KbnXMf6Cz3B8iz/x
+         mdI6fBwHr/d5Qgy+rs/XBbD+Bnl7p98lDr5FzWkK+AinlswunzM/fppQ9MUfrFYF9kHC
+         rvUVYnxNKLRRRL+SAcrDrnHXVRL92pcpj5i8CJuCR+ADnVXyWxDm/dWnkY/zmAD4kQMI
+         9lfk3paiZ/XiyWT7sYkg8HrCTFPP8nQdc0KGq1qR0paIn0xRJVmQCEP4v+oqQoPh3D36
+         KqLw==
+X-Forwarded-Encrypted: i=1; AJvYcCXbBqYZ2sWWsiOr+D4+S5cWr8k6pyuFlaXs+3LjCQFY3GcvCNxgoQvyT3duC+kHmJ8qRXrDvAT+2M14mLo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxasvPZGgLgj/Y/zlXewo5W1Ao4s+R4+5tSPV0vbU4FbfrFx0T7
+	Mm40tqoYP4rgtP/21K0aI+RDSkJL/dHqNAWDhT1KtYVlV/ZcgPzjQozS+brN/MBG8FnU7KJigYw
+	RIKxZODATRXPxwhIJons+9N4baoeXwZ6dcr3ofEJHaP5QhbodmLutg6aj4YnBFDwnuMY=
+X-Gm-Gg: ASbGncvLfcBXg8EyQrXOLqvoSxzK1dJrG7kfne9nKqw1fsDoO15K3nbllOk7+OVRZls
+	X1ArxJVbsTp589rG7VPohP8wOLO+8wrMxLTlSBamgDCyYT0jSPfQE+u/XbbqDaztpC+O2IcH97u
+	LESciEElCzRlFlGyBYZHS/8/OvMyRGYazp6uKL+Hj+T3mpuknDPGpV3/Z0VgWMI4c94KY8kw2rz
+	84h2nLid/AJ8A6aXd1+mdvPaIxR2eHvjAhAGt04+voLjyqbXurMu7lFjbUACFQLjXzkb0R26j1Q
+	1XbjbXhC8TURTOp6cEZZUjBCFChlG6vF0lA1M3ESuGHBf8nLv7xJWgRrMfETj81Ia+ogqwy6FL+
+	I1w==
+X-Received: by 2002:a05:6a20:3d8e:b0:32a:745f:beed with SMTP id adf61e73a8af0-32da901260amr9717520637.26.1760017661545;
+        Thu, 09 Oct 2025 06:47:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHSAsehxtpQrazP6VTfIez0ySTkYxB2HS9LUqidFtssn3qRxOFg6kh9acrWvGUQNz8wkh9Ohw==
+X-Received: by 2002:a05:6a20:3d8e:b0:32a:745f:beed with SMTP id adf61e73a8af0-32da901260amr9717473637.26.1760017661062;
+        Thu, 09 Oct 2025 06:47:41 -0700 (PDT)
+Received: from [10.217.217.28] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-794d4b3d611sm2989224b3a.6.2025.10.09.06.47.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Oct 2025 06:47:39 -0700 (PDT)
+Message-ID: <db8855a0-d596-4142-9db5-20ac5f262078@oss.qualcomm.com>
+Date: Thu, 9 Oct 2025 19:17:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/20] arm64: dts: qcom: Add PMH0101 pmic dtsi
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
+        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+        yijie.yang@oss.qualcomm.com,
+        Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+References: <20250924-knp-dts-v1-0-3fdbc4b9e1b1@oss.qualcomm.com>
+ <20250924-knp-dts-v1-9-3fdbc4b9e1b1@oss.qualcomm.com>
+ <85ba017c-3ed5-4fb3-ab6e-a64135a15a85@oss.qualcomm.com>
+Content-Language: en-US
+From: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+In-Reply-To: <85ba017c-3ed5-4fb3-ab6e-a64135a15a85@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMiBTYWx0ZWRfX5UcYcqnXP8sv
+ YIJlE0UIqUEWdfxB3fTDuXGTgDs4NH1Fx2pg6zGpf2R2cR6YiwrD80lSg5qEgQUjzmChSrbYJmv
+ dG+LUD94O7cdv20hVWmeDD5g3aXxoNZOdESg8AAi9UbqsMXjHGEsrtbDD3V7Hdo9nTaXWqu+JHX
+ 1sU7IWx+3tRVEwPY9HMOWyFooV5ce6NTSycSn0JBrkBxoJZXZMmjSodJ32xloEhyiHxiWOfdd1u
+ VvcCLI1jgZmbbH8OD5dbtbGCcnFDRCdoFeTnGoZcdGkuR0wLoRQP4hMpTxsmPXpQRtnKxazaS/q
+ fT6LfF1vw3fVAFW/goe1QZb7RJ77KhQcOtVzTcmy4EjPNWL3A9D0G2sksdn/A0WtSrUOhuSWI80
+ tviPN5LKt/NQfTsbI6owFRBSEEdKDQ==
+X-Proofpoint-GUID: 15X1Emeq_JjKZ_3xx9bmAS3GIEQV6a_p
+X-Proofpoint-ORIG-GUID: 15X1Emeq_JjKZ_3xx9bmAS3GIEQV6a_p
+X-Authority-Analysis: v=2.4 cv=JPk2csKb c=1 sm=1 tr=0 ts=68e7bcfe cx=c_pps
+ a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=J1y9QmG_dN3EwAzi9v0A:9
+ a=QEXdDO2ut3YA:10 a=IoOABgeZipijB_acs4fv:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-09_04,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 spamscore=0 clxscore=1015 impostorscore=0
+ phishscore=0 suspectscore=0 lowpriorityscore=0 adultscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080122
 
-The Ziccid extension provides hardware synchronization between
-Dcache and Icache. With this hardware support, there's no longer
-a need to trigger remote hart execution of fence.i via IPI.
+Hi Konrad,
 
-Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
----
- arch/riscv/include/asm/cacheflush.h |  4 ++--
- arch/riscv/include/asm/hwcap.h      |  1 +
- arch/riscv/include/asm/switch_to.h  | 10 ++++++++++
- arch/riscv/kernel/cpufeature.c      |  1 +
- arch/riscv/kernel/ftrace.c          |  2 +-
- arch/riscv/kernel/hibernate.c       |  2 +-
- arch/riscv/kernel/jump_label.c      |  2 +-
- arch/riscv/mm/cacheflush.c          | 16 ++++++++++++++--
- 8 files changed, 31 insertions(+), 7 deletions(-)
+On 9/25/2025 5:50 PM, Konrad Dybcio wrote:
+> On 9/25/25 2:17 AM, Jingyi Wang wrote:
+>> From: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+>>
+>> Add base DTS file for PMH0101 including temp-alarm, GPIO,
+>> PWM and flash nodes.
+>>
+>> Signed-off-by: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+>> Signed-off-by: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+>> ---
+>>  arch/arm64/boot/dts/qcom/pmh0101.dtsi | 45 +++++++++++++++++++++++++++++++++++
+>>  1 file changed, 45 insertions(+)
+>>
 
-diff --git a/arch/riscv/include/asm/cacheflush.h b/arch/riscv/include/asm/cacheflush.h
-index 0092513c3376c..3a8cdf30bb4b1 100644
---- a/arch/riscv/include/asm/cacheflush.h
-+++ b/arch/riscv/include/asm/cacheflush.h
-@@ -68,7 +68,7 @@ static inline void flush_cache_vmap(unsigned long start, unsigned long end)
- 
- #else /* CONFIG_SMP */
- 
--void flush_icache_all(void);
-+void flush_icache_all(bool force);
- void flush_icache_mm(struct mm_struct *mm, bool local);
- 
- #endif /* CONFIG_SMP */
-@@ -80,7 +80,7 @@ void flush_icache_mm(struct mm_struct *mm, bool local);
- #define flush_icache_range flush_icache_range
- static inline void flush_icache_range(unsigned long start, unsigned long end)
- {
--	flush_icache_all();
-+	flush_icache_all(false);
- }
- 
- extern unsigned int riscv_cbom_block_size;
-diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
-index affd63e11b0a3..ad97d8955b501 100644
---- a/arch/riscv/include/asm/hwcap.h
-+++ b/arch/riscv/include/asm/hwcap.h
-@@ -106,6 +106,7 @@
- #define RISCV_ISA_EXT_ZAAMO		97
- #define RISCV_ISA_EXT_ZALRSC		98
- #define RISCV_ISA_EXT_ZICBOP		99
-+#define RISCV_ISA_EXT_ZICCID		100
- 
- #define RISCV_ISA_EXT_XLINUXENVCFG	127
- 
-diff --git a/arch/riscv/include/asm/switch_to.h b/arch/riscv/include/asm/switch_to.h
-index 0e71eb82f920c..b8a9e455efe9e 100644
---- a/arch/riscv/include/asm/switch_to.h
-+++ b/arch/riscv/include/asm/switch_to.h
-@@ -98,7 +98,17 @@ static inline bool switch_to_should_flush_icache(struct task_struct *task)
- 	bool stale_thread = task->thread.force_icache_flush;
- 	bool thread_migrated = smp_processor_id() != task->thread.prev_cpu;
- 
-+	asm goto(ALTERNATIVE("nop", "j %l[ziccid]", 0, RISCV_ISA_EXT_ZICCID, 1)
-+		 : : : : ziccid);
-+
- 	return thread_migrated && (stale_mm || stale_thread);
-+
-+ziccid:
-+	/*
-+	 * Process switching writes to SATP, which flushes the pipeline,
-+	 * so only the thread scenario is considered.
-+	 */
-+	return thread_migrated && stale_thread;
- #else
- 	return false;
- #endif
-diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
-index 67b59699357da..2da82aa2dbf0a 100644
---- a/arch/riscv/kernel/cpufeature.c
-+++ b/arch/riscv/kernel/cpufeature.c
-@@ -540,6 +540,7 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
- 	__RISCV_ISA_EXT_DATA(svnapot, RISCV_ISA_EXT_SVNAPOT),
- 	__RISCV_ISA_EXT_DATA(svpbmt, RISCV_ISA_EXT_SVPBMT),
- 	__RISCV_ISA_EXT_DATA(svvptc, RISCV_ISA_EXT_SVVPTC),
-+	__RISCV_ISA_EXT_DATA(ziccid, RISCV_ISA_EXT_ZICCID),
- };
- 
- const size_t riscv_isa_ext_count = ARRAY_SIZE(riscv_isa_ext);
-diff --git a/arch/riscv/kernel/ftrace.c b/arch/riscv/kernel/ftrace.c
-index 8d18d6727f0fc..431448e818363 100644
---- a/arch/riscv/kernel/ftrace.c
-+++ b/arch/riscv/kernel/ftrace.c
-@@ -43,7 +43,7 @@ void arch_ftrace_update_code(int command)
- {
- 	command |= FTRACE_MAY_SLEEP;
- 	ftrace_modify_all_code(command);
--	flush_icache_all();
-+	flush_icache_all(false);
- }
- 
- static int __ftrace_modify_call(unsigned long source, unsigned long target, bool validate)
-diff --git a/arch/riscv/kernel/hibernate.c b/arch/riscv/kernel/hibernate.c
-index 671b686c01587..388f10e187bae 100644
---- a/arch/riscv/kernel/hibernate.c
-+++ b/arch/riscv/kernel/hibernate.c
-@@ -153,7 +153,7 @@ int swsusp_arch_suspend(void)
- 	} else {
- 		suspend_restore_csrs(hibernate_cpu_context);
- 		flush_tlb_all();
--		flush_icache_all();
-+		flush_icache_all(true);
- 
- 		/*
- 		 * Tell the hibernation core that we've just restored the memory.
-diff --git a/arch/riscv/kernel/jump_label.c b/arch/riscv/kernel/jump_label.c
-index b4c1a6a3fbd28..680b29f4c09c4 100644
---- a/arch/riscv/kernel/jump_label.c
-+++ b/arch/riscv/kernel/jump_label.c
-@@ -51,5 +51,5 @@ bool arch_jump_label_transform_queue(struct jump_entry *entry,
- 
- void arch_jump_label_transform_apply(void)
- {
--	flush_icache_all();
-+	flush_icache_all(false);
- }
-diff --git a/arch/riscv/mm/cacheflush.c b/arch/riscv/mm/cacheflush.c
-index d83a612464f6c..01f9f7a45e8d2 100644
---- a/arch/riscv/mm/cacheflush.c
-+++ b/arch/riscv/mm/cacheflush.c
-@@ -12,19 +12,24 @@
- #ifdef CONFIG_SMP
- 
- #include <asm/sbi.h>
-+#include <asm/alternative-macros.h>
- 
- static void ipi_remote_fence_i(void *info)
- {
- 	return local_flush_icache_all();
- }
- 
--void flush_icache_all(void)
-+void flush_icache_all(bool force)
- {
- 	local_flush_icache_all();
- 
- 	if (num_online_cpus() < 2)
- 		return;
- 
-+	if (!force)
-+		asm goto(ALTERNATIVE("nop", "j %l[ziccid]", 0,
-+			RISCV_ISA_EXT_ZICCID, 1)
-+			: : : : ziccid);
- 	/*
- 	 * Make sure all previous writes to the D$ are ordered before making
- 	 * the IPI. The RISC-V spec states that a hart must execute a data fence
-@@ -41,6 +46,7 @@ void flush_icache_all(void)
- 		sbi_remote_fence_i(NULL);
- 	else
- 		on_each_cpu(ipi_remote_fence_i, NULL, 1);
-+ziccid:;
- }
- EXPORT_SYMBOL(flush_icache_all);
- 
-@@ -61,13 +67,17 @@ void flush_icache_mm(struct mm_struct *mm, bool local)
- 
- 	preempt_disable();
- 
-+	local_flush_icache_all();
-+
-+	asm goto(ALTERNATIVE("nop", "j %l[ziccid]", 0, RISCV_ISA_EXT_ZICCID, 1)
-+		 : : : : ziccid);
-+
- 	/* Mark every hart's icache as needing a flush for this MM. */
- 	mask = &mm->context.icache_stale_mask;
- 	cpumask_setall(mask);
- 	/* Flush this hart's I$ now, and mark it as flushed. */
- 	cpu = smp_processor_id();
- 	cpumask_clear_cpu(cpu, mask);
--	local_flush_icache_all();
- 
- 	/*
- 	 * Flush the I$ of other harts concurrently executing, and mark them as
-@@ -91,6 +101,8 @@ void flush_icache_mm(struct mm_struct *mm, bool local)
- 		on_each_cpu_mask(&others, ipi_remote_fence_i, NULL, 1);
- 	}
- 
-+ziccid:;
-+
- 	preempt_enable();
- }
- 
--- 
-2.39.5
+...
+
+>> +
+>> +		pmh0101_flash: led-controller@ee00 {
+>> +			compatible = "qcom,pmh0101-flash-led", "qcom,spmi-flash-led";
+>> +			reg = <0xee00>;
+>> +			status = "disabled";
+>> +		};
+>> +
+>> +		pmh0101_pwm: pwm {
+>> +			compatible = "qcom,pmh0101-pwm", "qcom,pm8350c-pwm";
+>> +			#pwm-cells = <2>;
+>> +			status = "disabled";
+>> +		};
+> 
+> Any reason for these to be disabled?
+
+PMH0101 is used on both Kaanapali and Glymur, but the flash and PWM
+peripherals are used on Kaanapali alone and not Glymur, so we
+kept them disabled by default and enabled them in the Kaanapali
+board files where they would be used.
+
+Thanks,
+Jishnu
+
+> 
+> Konrad
 
 
