@@ -1,133 +1,134 @@
-Return-Path: <linux-kernel+bounces-847403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0F9ABCAB80
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 21:40:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E126BBCAB9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 21:50:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D31F61A65491
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 19:41:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EA6D4271CD
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 19:50:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE102258ED1;
-	Thu,  9 Oct 2025 19:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF57E23956A;
+	Thu,  9 Oct 2025 19:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oKeExOQ+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Co8DfyaD"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53CCF1B423B
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 19:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7DA34BA59
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 19:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760038838; cv=none; b=M6EuG4dIn+KXv7j0nUF532x9/YIKCuTA+GqiNCJEFsg6JdD1O6fviIH+ummsTRU/+7Q4EnUWUsAJowPkzyAF2omXkknAWM/TxW6fUeo6LBIKUSKuG8iR6w15IpxvW3fFinmPl0rZxhzGFzskO+HG6umhOK3tkiCrWWcZw+A7dGo=
+	t=1760039412; cv=none; b=spgV9RRWjVs8Bs1JLbtRvv6UpJingG7yL4WhhMJt1giQz43T6leYaFj9/JQxLO0rg26nUqO2vdm6EvP0Aa7/j2m5Qt91j6FRJzfXJE4HfGl7Zz0tSJE5Y1obOMixyByU5w6UEjqTuXkdE0PG/mf46TUsawgEvzWhU6dSkBkPbXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760038838; c=relaxed/simple;
-	bh=s9+Yrni+QqOzxGduaFuMdR1jUz13vxS1Vd6ubw1Ixhw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UlpIOIujffV2P7DoQeM2zr/nXBQpJcklL0S/FxgT82d8vHpTY0TI7YQJSXhpgFWH/4zRWgtwbP9wSIW6jeAPXMwmM0QkqKBhZCMZqN+C3aRBrINBSxgjV5EarM4+3DCxP/dYCHe696FKZgzU8nvC4qhiZ4ydHSF3hSm4FOUBWCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oKeExOQ+; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760038836; x=1791574836;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=s9+Yrni+QqOzxGduaFuMdR1jUz13vxS1Vd6ubw1Ixhw=;
-  b=oKeExOQ+L37BYzSJcZLt6fHBPyiPzv1g8TG2SNeTD9WfsljswLTPq9kU
-   0f1McRU3en3u5izCp1hIGwpHC+D+ahtuEpBETvtxjqZGVE9t1BqPSslUy
-   9s4wJxepIHh0oLdlzG5i2h+JTVefx3XKP2yjKzWfAUjVBpYF2KOauXk/O
-   Zc4myaNbWMi6b30zMB9IiUEU4qLK4eGvgRIJu8i8wClKvABcCuY9fbcbw
-   cOHhuZW9xAKJHJEHeaxysmt7gaGQ64CjsosojKy4ctPK7Td34dvqbVZR3
-   qQzewQ2MHFrb7J6DMHy+AW9rzSselFfR0GuWW7tzd9dFNOElBbxeYUV3I
-   w==;
-X-CSE-ConnectionGUID: 7UJFmf7OT8W16KJJ/P96tw==
-X-CSE-MsgGUID: q1ojgbM1TxGqH3RFypB+SA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="66114409"
-X-IronPort-AV: E=Sophos;i="6.19,217,1754982000"; 
-   d="scan'208";a="66114409"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 12:40:36 -0700
-X-CSE-ConnectionGUID: g7n3pGkOTR+meJ82k4WEUg==
-X-CSE-MsgGUID: Ehccs8cHReuk5eO1PxwHAQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,217,1754982000"; 
-   d="scan'208";a="185179416"
-Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 09 Oct 2025 12:40:33 -0700
-Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v6wV5-0001KF-29;
-	Thu, 09 Oct 2025 19:40:31 +0000
-Date: Fri, 10 Oct 2025 03:40:28 +0800
-From: kernel test robot <lkp@intel.com>
-To: Aaron Tomlin <atomlin@atomlin.com>, gregkh@linuxfoundation.org,
-	rafael@kernel.org, dakr@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, riel@surriel.com,
-	frederic@kernel.org, atomlin@atomlin.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tick/nohz: avoid showing '(null)' if nohz_full= not set
-Message-ID: <202510100304.IpfE7EKh-lkp@intel.com>
-References: <20251006005824.76187-1-atomlin@atomlin.com>
+	s=arc-20240116; t=1760039412; c=relaxed/simple;
+	bh=9BfCnm4a+moAebm+lAc7x02KcpgIFNkL3C9Pe8qEqvU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=YW879mbESgneCA/TPV84VRN0LM2kUu+RXZPTD5TIUulL8Hl6ux7c8XcvPpXufc83Um8xcyOzRpcvH1v6vSuEDg0P711oFuH0OYlUlv7b2JpvsdXFWO8qduwvi+nt5gcuy4sJ63IZdHLRvz/O4/BTFfubqLBzTbLNAatQnDcMcOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Co8DfyaD; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-781010ff051so981622b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 12:50:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760039410; x=1760644210; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oV/72t5JsF8vgtfOY56WybM/wZVx/NKpczva6kumf/Q=;
+        b=Co8DfyaDH8fJ6gMvAV1c5iozn7/SEQLfNcV5hw9Z2gmk3d22YcuHzzJI2CUpp+SZXg
+         AJvbRNMl1jzVV2FjJQjh7L1CrLJzRzUw6NF/PsvbPJoiP3RdHE/RAHeyuk5Rt9BJSD8t
+         DZT7BUl+fzPu4xneBUse0meprmvBErQmVa0LsRPHfWAamznPZbv3lS49CvythHgzIaHf
+         KZbHMBiTqekkZ+dmcWnqf0vu5Aq+NZGRBzuiQp2UGD5zd3TBpAVpqvZj2OyyITTC23Wr
+         uCwYMHXDRE6Pju+kGttk0lzoIuVNDDLl8JAviH3Cznl/KYIm6MrvPmqLzk9nERWmMgEI
+         /HVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760039410; x=1760644210;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oV/72t5JsF8vgtfOY56WybM/wZVx/NKpczva6kumf/Q=;
+        b=aeMkieAoQ6CLCLRPQSfaHeNZNACurbSO0GXk8JbUbTAqS3eJGRB9AUsdNWxEDgMKXd
+         YKQIgvo1dlO3VvWrMOV1uYwQJVVpF35By/GUOHKrZpjz+vj2JC+lofhUhQAy573XjW9I
+         9doqCRM+27Q2Xl+1+JbT8YlbguBLUlAn0XoZ/CiGUxJM5CbwDU4jtUj1H1fE8LMqKam4
+         t5XH9ea/UiwOjCZvHSnvMXMDW3qg3vzWwfV/zGYUG2wZi3RdcVy7JCqJiR94Oic8KcBM
+         8yQgO+Slvusis70YcfmuHsoR6Hqu3YfvxcayzVOAdMp2S72XPCDJb0mWcpB1HqntYMNN
+         KTZg==
+X-Gm-Message-State: AOJu0Ywb7Yyeb4AF9Dy4fjGb8NOVW2ojBKHMptcM47sw9gwMMHEyY+LR
+	AvSIxsGhztq5eFX09gJwC2GWlLtEG/hh6FyHVMvPzErVusRv9E4PLXt/
+X-Gm-Gg: ASbGncvbEIA2hLMGgzjuWlOJao0kS3q5Z2kTXKtYLNncJrsACqeZ6JrS34Wi22whkSi
+	/3z0hKCpyhuPVdYjADkGkxAntNnmQcRjDCQixddCRWxlfktgxAov94Dy2c+CVZnOY21QCAgiKZ/
+	l9O+V5kNr7hYszwOcCJaZqO7TwsrWJOT3sv3KXGUr5nwbwTySNLXidXidwl59Eplu0hkTy0Q37V
+	tsXHBkut19km9R5YvsGXrcaWIxQZlAMenGgDWCtxFRjGyjIOh9flUgqut3iFwaiwk+t2jKmhlXF
+	fJWfynwV8wO6imNu/hUSdvAO9/dUdb3Rj8Cm4yyjhJnwwyn0uA4h5E8Bqx9Fz52IbfNzMV5cGW/
+	Nh6eCuLy4NBLrq6LTPwe+YbLsgCiDKQoObwM1s6nfBotIyZl/wAOiBaStsThMBBlQaR/ZSfG1pp
+	QxfEBDLzoRbauzyFUXGE8Em8TxGvLIKzqIqz3Ki0CBhrFOSdHQoA==
+X-Google-Smtp-Source: AGHT+IHYP8yFcv3/aAFZRBWO1rioFqkTqMO6uY+GyEZq93qSUwsRGOyGVCMjOaxaIHSa/BDjQu+nfg==
+X-Received: by 2002:a05:6a00:179b:b0:782:2b62:8188 with SMTP id d2e1a72fcca58-79387242eeemr11556232b3a.15.1760039409826;
+        Thu, 09 Oct 2025 12:50:09 -0700 (PDT)
+Received: from crl-3.node2.local ([125.63.65.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992b065ac2sm562212b3a.16.2025.10.09.12.50.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 12:50:09 -0700 (PDT)
+From: Kriish Sharma <kriish.sharma2006@gmail.com>
+To: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>
+Cc: linux-kernel@vger.kernel.org,
+	david.hunter.linux@gmail.com,
+	skhan@linuxfoundation.org,
+	Kriish Sharma <kriish.sharma2006@gmail.com>
+Subject: [PATCH] sched: remove unused cpumask variable in mm_cid_get()
+Date: Thu,  9 Oct 2025 19:48:18 +0000
+Message-Id: <20251009194818.1587650-1-kriish.sharma2006@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251006005824.76187-1-atomlin@atomlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Aaron,
+The variable 'cpumask' in mm_cid_get() was assigned but never used,
+causing the following build error with -Werror:
 
-kernel test robot noticed the following build warnings:
+kernel/sched/sched.h: In function ‘mm_cid_get’:
+kernel/sched/sched.h:3743:25: error: variable ‘cpumask’ set but not used [-Werror=unused-but-set-variable]
+ 3743 |         struct cpumask *cpumask;
+      |                         ^~~~~~~
 
-[auto build test WARNING on driver-core/driver-core-testing]
-[also build test WARNING on driver-core/driver-core-next driver-core/driver-core-linus linus/master v6.17 next-20251009]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Removing the unused variable allows the kernel to compile without errors.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Aaron-Tomlin/tick-nohz-avoid-showing-null-if-nohz_full-not-set/20251009-142404
-base:   driver-core/driver-core-testing
-patch link:    https://lore.kernel.org/r/20251006005824.76187-1-atomlin%40atomlin.com
-patch subject: [PATCH] tick/nohz: avoid showing '(null)' if nohz_full= not set
-config: x86_64-randconfig-078-20251009 (https://download.01.org/0day-ci/archive/20251010/202510100304.IpfE7EKh-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251010/202510100304.IpfE7EKh-lkp@intel.com/reproduce)
+Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
+---
+ kernel/sched/sched.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510100304.IpfE7EKh-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/base/cpu.c:307:10: warning: address of array 'tick_nohz_full_mask' will always evaluate to 'true' [-Wpointer-bool-conversion]
-     307 |         return !tick_nohz_full_mask ?
-         |                ~^~~~~~~~~~~~~~~~~~~
-   1 warning generated.
-
-
-vim +307 drivers/base/cpu.c
-
-   302	
-   303	#ifdef CONFIG_NO_HZ_FULL
-   304	static ssize_t print_cpus_nohz_full(struct device *dev,
-   305					    struct device_attribute *attr, char *buf)
-   306	{
- > 307		return !tick_nohz_full_mask ?
-   308			sysfs_emit(buf, "\n") :
-   309			sysfs_emit(buf, "%*pbl\n", cpumask_pr_args(tick_nohz_full_mask));
-   310	}
-   311	static DEVICE_ATTR(nohz_full, 0444, print_cpus_nohz_full, NULL);
-   312	#endif
-   313	
-
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 1f5d07067f60..361f9101cef9 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -3740,11 +3740,9 @@ static inline int mm_cid_get(struct rq *rq, struct task_struct *t,
+ 			     struct mm_struct *mm)
+ {
+ 	struct mm_cid __percpu *pcpu_cid = mm->pcpu_cid;
+-	struct cpumask *cpumask;
+ 	int cid;
+ 
+ 	lockdep_assert_rq_held(rq);
+-	cpumask = mm_cidmask(mm);
+ 	cid = __this_cpu_read(pcpu_cid->cid);
+ 	if (mm_cid_is_valid(cid)) {
+ 		mm_cid_snapshot_time(rq, mm);
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
