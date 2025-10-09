@@ -1,458 +1,149 @@
-Return-Path: <linux-kernel+bounces-847240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD33CBCA558
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:08:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD2FCBCA562
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:08:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 03F3F4F90A9
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:08:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 591604F16CD
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB3A5241665;
-	Thu,  9 Oct 2025 17:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D6C23A9BE;
+	Thu,  9 Oct 2025 17:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="FLuQZGt3"
-Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="CJCe8OXt"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9E9239E9E
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 17:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 170F91632DD
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 17:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760029681; cv=none; b=iyRlG/m+pt0Nql44KAL9VGv5zRDv2f5z9t3ZCc6JmdVqnkLyauiEcHwo9GgvFGT0swVL+Q6NwIpPNz3n7yVKbUOa1tJHK5sxsSTyb7+yXHHwhqZW3kxN7jmK4lemwzMUmzeyyI/09uKqX8gNSFS/vh76nNRLL4cq5d/Wzr6ymaQ=
+	t=1760029726; cv=none; b=mIVmNe6MnW58EUtRp+VIJXZGDXe39s0aQk91HeGQ8YktbXqiXTMO1hWtR/98FSq++zqwiuBH/cek402o989Es0Syz44/bwHC7wq0MrjAdPZyYfyLSTRXCMeDPZqbdK2yLIh7AulIJE+13m5g5+QExY07WO1dGt0ldMic1iJrL6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760029681; c=relaxed/simple;
-	bh=HsJlFXmTtn+6F53p9248bYCRpbQn4cG6ElphdF2A5I0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pyPJ4Ht8EI919+3KuURrBC+DUdUZapMekGFJp/1gJPBHL9ksaZdLaINi9kzTrFHgHIymYM32h0hY309yoY5jqYTWEvkImvo2ZuDeG5Lrj1/92icjRn5MoSkgW8QcvefjUm0m0YclOFg5/uKtPFb8PwDYhQU68L3ZuqzcGEXIFJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=FLuQZGt3; arc=none smtp.client-ip=185.67.36.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout01.posteo.de (Postfix) with ESMTPS id 2120A24002B
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 19:07:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
-	t=1760029678; bh=GoMIaR/jMyBEUfeUogX618tSLBnZpki3PRU9UIDR6aE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:
-	 Content-Transfer-Encoding:Autocrypt:OpenPGP:From;
-	b=FLuQZGt3B/IdS2FLZa/wyoZdg/Vp9X9SAbLytkCxxvVdNkkVwHXop9VG+zsNCv4En
-	 m/l86IDon9oz9wo+ieZFIeeiRgKC8dXgtapYySBKDQ2gv+shgg81/xvm0PRMJCDRJG
-	 k8U7rKBbBQReUJiNjoJrV5g0zUdyHRLwHmD8TbK5Ixfd413f6TQsTvyCYOMwrcJlpv
-	 oXimcsgcK7Jg92f6S0HbReBrwHZBtGeBsw7Pb5XggyKHFxFzobBW082yzE4DcES0kY
-	 9IpQbm88R0TEyAuo+QQU0bhsdpu8KprZkghxxoZg8CzrbfzgcaVFV/gOBytdbunuS4
-	 QZfxaCUf0EtuQ==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4cjGXX1x0Vz9rwn;
-	Thu,  9 Oct 2025 19:07:56 +0200 (CEST)
-From: Markus Probst <markus.probst@posteo.de>
-To: Danilo Krummrich <dakr@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	bjorn3_gh@protonmail.com,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Markus Probst <markus.probst@posteo.de>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org
-Subject: [PATCH 2/2] rust: leds: add basic led classdev abstractions
-Date: Thu, 09 Oct 2025 17:07:57 +0000
-Message-ID: <20251009170739.235221-3-markus.probst@posteo.de>
-In-Reply-To: <20251009170739.235221-1-markus.probst@posteo.de>
-References: <20251009170739.235221-1-markus.probst@posteo.de>
+	s=arc-20240116; t=1760029726; c=relaxed/simple;
+	bh=M+RAuLfo/tBmntdVxoq32ugbitGYK7EIaTl/YNjZJIY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XRht33J++3qKX9CSgu0Vp8P9XcW+2x/nvsz/0umMU9m25sGPsply52m1ya1P8yfCntOsbv8K/16BYft9ZCJSNOWEnRb9ifsZZwFyjYMwNpg3cTY378nKSAxNGThLWTr2xopY24dUwC/Sv5Z3u+jdHLW5ofK2T1tbkEbB3Ll66nE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=CJCe8OXt; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-930cfdfabb3so101887639f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 10:08:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1760029724; x=1760634524; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jmQS8Iz7W21RMhGArp3InWF9uo5uNulwnzG/3ZoVxUQ=;
+        b=CJCe8OXt+k+Rg6LoybIbHMs3oA8PfaabnxcrhvL+fsnK0m3tOJ60N4zjljnjNaLA7m
+         z8rUQL870Ch/9PEogSL4cdRv5EKgp0m/9gudFCJ+GkwCXlAYLYoNi2Dkfcg+STDQrmjF
+         ag4FKpM59HOSnOQCWvEBPRWQtXpXci+FTuxks2DFY2t0RQCUhNFz9wwLGL3zKnvF80KU
+         TtwSq/CFbxUrI+kFQSEEeUUrZx3zQsnsQXOFkyvbmeNG96K+VNPvGpizl8p2fBG3otdc
+         eQkxti8s4PLmwuXS2/vY2ZxbuEPSS0KEQuueymAwS42JtAAVfW8SGETd2WUr7qaEkC+7
+         K5Xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760029724; x=1760634524;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jmQS8Iz7W21RMhGArp3InWF9uo5uNulwnzG/3ZoVxUQ=;
+        b=raH+tXGxj2Nweico1AhF9nmR65aDuSlnF5MXwIXDC9UQiKzo9LdBJxSYCPPYAxElSo
+         XvECed4oSlnd/h4gMmxocfHLoT2lcNuRQLlEju5IUEZGcr0yGreqVjPCacsMQ3TorUGX
+         oM0O1Nf1Acb2Mi3TeOJHL2IhAiUqqUGZBm+R0+sAZwahAN0ComOo69Q0FtoKCMH5PUaO
+         oYVNK/p/knS6EDPdB+EEinY3gOhAhN3EFxiiixdemoDNJ8XZTIdPm11lnO4vSS/sit65
+         L0IGMBByhFtXrF0dnVZAsgkAPKsaaR1i3Z1qWU79CxXZPyQJNfhO7bYgQCTdakl/b39w
+         wh3g==
+X-Forwarded-Encrypted: i=1; AJvYcCWIienQsJiFYrxwLUpcYIO16gmhw/y+UKsl7bwGGJ0hTzoKtctOr/wQtBHIx5Bjo8ZToW497cDZCsIn9nE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUPyqFnd7ign1eLrWvASUzSXcYdVQcBNcNtmMDfbPStkr/DyRE
+	PqPnpbV6vLYN3Odl+cmu9y25oUqZlqghT5sSzfUOkfXQxduec6I5PhwgRI7wYjy7udM=
+X-Gm-Gg: ASbGncuIfnokafRPHsuiHc5rJ6lS5mFjo5R+y688YQ/lTqu1J/0M7cBdrntHAY0gM4q
+	ljrHrUzE7kaBfxtVOqqteVCY83iMRdTj22TWUe8fpEXSYnf6fFwZ3kiiJcx6jT953iPtAa3OsG8
+	gYN7RJaHqTIjsBOOeOu1PeHM8ZY39I35qjQl85caAnVsTzrVLcnmPbqBEZVat6RfZ2qk/Yzie9L
+	R9akKypIdSwtKsbvmjQt0cpVRijT+FvFMeBdBb65QvDV/nDk+iHLYa7MOH/7Pl5loEwtTJ6PLwG
+	F4EFEgCNwIrWsTTh0HllnBRuwsK1C0AvtBxDBIVcyVBGFwOqdJJomJrQlxTh3O5cnbuvhEVtCNa
+	V81xLfoVZDucooSqcXwHQuU/V6DnsYe9yKlUHVP2oN7rsOdLr
+X-Google-Smtp-Source: AGHT+IE9RiX0BHPrkOFXb9sFvQpft+J/Jdlyf2+rREXxjwowAkoIYFM2VcvYkhOtjlgnBzw8lgQmzg==
+X-Received: by 2002:a05:6e02:164f:b0:425:94f5:5e3 with SMTP id e9e14a558f8ab-42f87472b21mr80940885ab.10.1760029724047;
+        Thu, 09 Oct 2025 10:08:44 -0700 (PDT)
+Received: from localhost ([140.82.166.162])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-42f90278721sm11974895ab.9.2025.10.09.10.08.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 10:08:43 -0700 (PDT)
+Date: Thu, 9 Oct 2025 12:08:42 -0500
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Yao Zihong <zihong.plct@isrc.iscas.ac.cn>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	alexghiti@rivosinc.com, shuah@kernel.org, samuel.holland@sifive.com, evan@rivosinc.com, 
+	cleger@rivosinc.com, zihongyao@outlook.com, zhangyin2018@iscas.ac.cn, 
+	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+	Charlie Jenkins <charlie@rivosinc.com>, Cyan Yang <cyan.yang@sifive.com>, 
+	Yunhui Cui <cuiyunhui@bytedance.com>, Aleksa Paunovic <aleksa.paunovic@htecgroup.com>, 
+	Jesse Taube <jesse@rivosinc.com>, Inochi Amaoto <inochiama@gmail.com>
+Subject: Re: [PATCH v2 1/4] uapi: riscv: hwprobe: Add Zicbop extension bit
+ and block-size key
+Message-ID: <20251009-368359384e19820a18cea601@orel>
+References: <20251009134318.23040-1-zihong.plct@isrc.iscas.ac.cn>
+ <20251009134318.23040-2-zihong.plct@isrc.iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
-  keydata=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
-  aBeNN4ijKZchBXHPgVx+YtWRHfcm4l8=
-OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251009134318.23040-2-zihong.plct@isrc.iscas.ac.cn>
 
-Implement the core abstractions needed for led class devices, including:
+On Thu, Oct 09, 2025 at 09:41:51PM +0800, Yao Zihong wrote:
+> Introduce RISCV_HWPROBE_EXT_ZICBOP to report presence of the Zicbop
+> extension through hwprobe, and add RISCV_HWPROBE_KEY_ZICBOP_BLOCK_SIZE
+> to expose the block size (in bytes) when Zicbop is supported.
+> 
+> Signed-off-by: Yao Zihong <zihong.plct@isrc.iscas.ac.cn>
+> ---
+>  arch/riscv/include/asm/hwprobe.h      | 2 +-
+>  arch/riscv/include/uapi/asm/hwprobe.h | 2 ++
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/riscv/include/asm/hwprobe.h b/arch/riscv/include/asm/hwprobe.h
+> index 948d2b34e94e..2f278c395af9 100644
+> --- a/arch/riscv/include/asm/hwprobe.h
+> +++ b/arch/riscv/include/asm/hwprobe.h
+> @@ -8,7 +8,7 @@
+>  
+>  #include <uapi/asm/hwprobe.h>
+>  
+> -#define RISCV_HWPROBE_MAX_KEY 14
+> +#define RISCV_HWPROBE_MAX_KEY 15
+>  
+>  static inline bool riscv_hwprobe_key_is_valid(__s64 key)
+>  {
+> diff --git a/arch/riscv/include/uapi/asm/hwprobe.h b/arch/riscv/include/uapi/asm/hwprobe.h
+> index 5d30a4fae37a..9cc508be54c5 100644
+> --- a/arch/riscv/include/uapi/asm/hwprobe.h
+> +++ b/arch/riscv/include/uapi/asm/hwprobe.h
+> @@ -82,6 +82,7 @@ struct riscv_hwprobe {
+>  #define		RISCV_HWPROBE_EXT_ZAAMO		(1ULL << 56)
+>  #define		RISCV_HWPROBE_EXT_ZALRSC	(1ULL << 57)
+>  #define		RISCV_HWPROBE_EXT_ZABHA		(1ULL << 58)
+> +#define		RISCV_HWPROBE_EXT_ZICBOP	(1ULL << 59)
+>  #define RISCV_HWPROBE_KEY_CPUPERF_0	5
+>  #define		RISCV_HWPROBE_MISALIGNED_UNKNOWN	(0 << 0)
+>  #define		RISCV_HWPROBE_MISALIGNED_EMULATED	(1 << 0)
+> @@ -107,6 +108,7 @@ struct riscv_hwprobe {
+>  #define RISCV_HWPROBE_KEY_ZICBOM_BLOCK_SIZE	12
+>  #define RISCV_HWPROBE_KEY_VENDOR_EXT_SIFIVE_0	13
+>  #define RISCV_HWPROBE_KEY_VENDOR_EXT_MIPS_0	14
+> +#define RISCV_HWPROBE_KEY_ZICBOP_BLOCK_SIZE	15
+>  /* Increase RISCV_HWPROBE_MAX_KEY when adding items. */
+>  
+>  /* Flags */
+> -- 
+> 2.47.2
+>
 
-* `led::Handler` - the trait for handling leds, including
-  `brightness_set`
-
-* `led::InitData` - data set for the led class device
-
-* `led::Device` - a safe wrapper arround `led_classdev`
-
-Signed-off-by: Markus Probst <markus.probst@posteo.de>
----
- rust/kernel/led.rs | 296 +++++++++++++++++++++++++++++++++++++++++++++
- rust/kernel/lib.rs |   1 +
- 2 files changed, 297 insertions(+)
- create mode 100644 rust/kernel/led.rs
-
-diff --git a/rust/kernel/led.rs b/rust/kernel/led.rs
-new file mode 100644
-index 000000000000..2fddc6088e09
---- /dev/null
-+++ b/rust/kernel/led.rs
-@@ -0,0 +1,296 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Abstractions for the leds driver model.
-+//!
-+//! C header: [`include/linux/leds.h`](srctree/include/linux/leds.h)
-+
-+use core::pin::Pin;
-+
-+use pin_init::{pin_data, pinned_drop, PinInit};
-+
-+use crate::{
-+    alloc::KBox,
-+    container_of,
-+    device::{self, property::FwNode},
-+    error::{code::EINVAL, from_result, to_result, Error, Result},
-+    prelude::GFP_KERNEL,
-+    str::CStr,
-+    try_pin_init,
-+    types::Opaque,
-+};
-+
-+/// The led class device representation.
-+///
-+/// This structure represents the Rust abstraction for a C `struct led_classdev`.
-+#[pin_data(PinnedDrop)]
-+pub struct Device {
-+    handler: KBox<dyn HandlerImpl>,
-+    #[pin]
-+    classdev: Opaque<bindings::led_classdev>,
-+}
-+
-+/// The led init data representation.
-+///
-+/// This structure represents the Rust abstraction for a C `struct led_init_data`.
-+#[derive(Default)]
-+pub struct InitData<'a> {
-+    fwnode: Option<&'a FwNode>,
-+    default_label: Option<&'a CStr>,
-+    devicename: Option<&'a CStr>,
-+    devname_mandatory: bool,
-+}
-+
-+impl InitData<'static> {
-+    /// Creates a new [`LedInitData`]
-+    pub fn new() -> Self {
-+        Self::default()
-+    }
-+}
-+
-+impl<'a> InitData<'a> {
-+    /// Sets the firmware node
-+    pub fn fwnode<'b, 'c>(self, fwnode: &'b FwNode) -> InitData<'c>
-+    where
-+        'a: 'c,
-+        'b: 'c,
-+    {
-+        InitData {
-+            fwnode: Some(fwnode),
-+            ..self
-+        }
-+    }
-+
-+    /// Sets a default label
-+    pub fn default_label<'b, 'c>(self, label: &'b CStr) -> InitData<'c>
-+    where
-+        'a: 'c,
-+        'b: 'c,
-+    {
-+        InitData {
-+            default_label: Some(label),
-+            ..self
-+        }
-+    }
-+
-+    /// Sets the device name
-+    pub fn devicename<'b, 'c>(self, devicename: &'b CStr) -> InitData<'c>
-+    where
-+        'a: 'c,
-+        'b: 'c,
-+    {
-+        InitData {
-+            devicename: Some(devicename),
-+            ..self
-+        }
-+    }
-+
-+    /// Sets if a device name is mandatory
-+    pub fn devicename_mandatory(self, mandatory: bool) -> Self {
-+        Self {
-+            devname_mandatory: mandatory,
-+
-+            ..self
-+        }
-+    }
-+}
-+
-+/// The led handler trait.
-+///
-+/// # Examples
-+///
-+///```
-+/// # use kernel::{c_str, led, alloc::KBox, error::{Result, code::ENOSYS}};
-+/// # use core::pin::Pin;
-+///
-+/// struct MyHandler;
-+///
-+///
-+/// impl led::Handler for MyHandler {
-+///     const BLOCKING = false;
-+///     const MAX_BRIGHTNESS = 255;
-+///
-+///     fn brightness_set(&self, _brightness: u32) -> Result<()> {
-+///         // Set the brightness for the led here
-+///         Ok(())
-+///     }
-+/// }
-+///
-+/// fn register_my_led() -> Result<Pin<KBox<led::Device>>> {
-+///     let handler = MyHandler;
-+///     KBox::pin_init(led::Device::new(
-+///         None,
-+///         None,
-+///         led::InitData::new()
-+///             .default_label(c_str!("my_led")),
-+///         handler,
-+///     ))
-+/// }
-+///```
-+/// Led drivers must implement this trait in order to register and handle a [`Device`].
-+pub trait Handler {
-+    /// If set true, [`Handler::brightness_set`] and [`Handler::blink_set`] must not sleep
-+    /// and perform the operation immediately.
-+    const BLOCKING: bool;
-+    /// Set this to true, if [`Handler::blink_set`] is implemented.
-+    const BLINK: bool = false;
-+    /// The max brightness level
-+    const MAX_BRIGHTNESS: u32;
-+
-+    /// Sets the brightness level
-+    ///
-+    /// See also [`Handler::BLOCKING`]
-+    fn brightness_set(&self, brightness: u32) -> Result<()>;
-+
-+    /// Activates hardware accelerated blinking.
-+    ///
-+    /// delays are in milliseconds. If both are zero, a sensible default should be chosen.
-+    /// The caller should adjust the timings in that case and if it can't match the values
-+    /// specified exactly. Setting the brightness to 0 will disable the hardware accelerated
-+    /// blinking.
-+    ///
-+    /// See also [`Handler::BLOCKING`]
-+    fn blink_set(&self, _delay_on: &mut usize, _delay_off: &mut usize) -> Result<()> {
-+        Err(EINVAL)
-+    }
-+}
-+
-+trait HandlerImpl {
-+    fn brightness_set(&self, brightness: u32) -> Result<()>;
-+    fn blink_set(&self, delay_on: &mut usize, delay_off: &mut usize) -> Result<()>;
-+}
-+
-+impl<T: Handler> HandlerImpl for T {
-+    fn brightness_set(&self, brightness: u32) -> Result<()> {
-+        T::brightness_set(self, brightness)
-+    }
-+
-+    fn blink_set(&self, delay_on: &mut usize, delay_off: &mut usize) -> Result<()> {
-+        T::blink_set(self, delay_on, delay_off)
-+    }
-+}
-+
-+// SAFETY: A `led::Device` can be unregistered from any thread.
-+unsafe impl Send for Device {}
-+
-+// SAFETY: `led::Device` can be shared among threads because all methods of `led::Device`
-+// are thread safe.
-+unsafe impl Sync for Device {}
-+
-+impl Device {
-+    /// Registers a new led classdev.
-+    ///
-+    /// The [`Device`] will be unregistered and drop.
-+    pub fn new<'a, T: Handler + 'static>(
-+        parent: Option<&'a device::Device>,
-+        init_data: InitData<'a>,
-+        handler: T,
-+    ) -> impl PinInit<Self, Error> + use<'a, T> {
-+        try_pin_init!(Self {
-+            handler <- {
-+                let handler: KBox<dyn HandlerImpl> = KBox::<T>::new(handler, GFP_KERNEL)?;
-+                Ok::<_, Error>(handler)
-+            },
-+            classdev <- Opaque::try_ffi_init(|ptr: *mut bindings::led_classdev| {
-+                // SAFETY: `try_ffi_init` guarantees that `ptr` is valid for write.
-+                unsafe { ptr.write(bindings::led_classdev {
-+                    max_brightness: T::MAX_BRIGHTNESS,
-+                    brightness_set: T::BLOCKING.then_some(
-+                        brightness_set as unsafe extern "C" fn(*mut bindings::led_classdev, u32)
-+                    ),
-+                    brightness_set_blocking: (!T::BLOCKING).then_some(
-+                        brightness_set_blocking
-+                            as unsafe extern "C" fn(*mut bindings::led_classdev,u32) -> i32
-+                    ),
-+                    blink_set: T::BLINK.then_some(
-+                        blink_set
-+                            as unsafe extern "C" fn(*mut bindings::led_classdev, *mut usize,
-+                                                    *mut usize) -> i32
-+                    ),
-+                    .. bindings::led_classdev::default()
-+                }) };
-+
-+                let mut init_data = bindings::led_init_data {
-+                    fwnode: init_data.fwnode.map_or(core::ptr::null_mut(), FwNode::as_raw),
-+                    default_label: init_data.default_label
-+                                            .map_or(core::ptr::null(), CStr::as_char_ptr),
-+                    devicename: init_data.devicename.map_or(core::ptr::null(), CStr::as_char_ptr),
-+                    devname_mandatory: init_data.devname_mandatory,
-+                };
-+
-+                let parent = parent
-+                    .map_or(core::ptr::null_mut(), device::Device::as_raw);
-+
-+                // SAFETY:
-+                // - `parent` is guaranteed to be a pointer to a valid `device`
-+                //    or a null pointer.
-+                // - `ptr` is guaranteed to be a pointer to an initialized `led_classdev`.
-+                to_result(unsafe {
-+                    bindings::led_classdev_register_ext(parent, ptr, &mut init_data)
-+                })
-+            }),
-+        })
-+    }
-+}
-+
-+extern "C" fn brightness_set(led_cdev: *mut bindings::led_classdev, brightness: u32) {
-+    // SAFETY: `led_cdev` is a valid pointer to a `led_classdev` stored inside a `Device`.
-+    let classdev = unsafe {
-+        &*container_of!(
-+            led_cdev.cast::<Opaque<bindings::led_classdev>>(),
-+            Device,
-+            classdev
-+        )
-+    };
-+    let _ = classdev.handler.brightness_set(brightness);
-+}
-+
-+extern "C" fn brightness_set_blocking(
-+    led_cdev: *mut bindings::led_classdev,
-+    brightness: u32,
-+) -> i32 {
-+    // SAFETY: `led_cdev` is a valid pointer to a `led_classdev` stored inside a `Device`.
-+    let classdev = unsafe {
-+        &*container_of!(
-+            led_cdev.cast::<Opaque<bindings::led_classdev>>(),
-+            Device,
-+            classdev
-+        )
-+    };
-+    from_result(|| {
-+        classdev.handler.brightness_set(brightness)?;
-+        Ok(0)
-+    })
-+}
-+
-+extern "C" fn blink_set(
-+    led_cdev: *mut bindings::led_classdev,
-+    delay_on: *mut usize,
-+    delay_off: *mut usize,
-+) -> i32 {
-+    // SAFETY: `led_cdev` is a valid pointer to a `led_classdev` stored inside a `Device`.
-+    let classdev = unsafe {
-+        &*container_of!(
-+            led_cdev.cast::<Opaque<bindings::led_classdev>>(),
-+            Device,
-+            classdev
-+        )
-+    };
-+    from_result(|| {
-+        classdev.handler.blink_set(
-+            // SAFETY: `delay_on` is guaranteed to be a valid pointer to usize
-+            unsafe { &mut *delay_on },
-+            // SAFETY: `delay_on` is guaranteed to be a valid pointer to usize
-+            unsafe { &mut *delay_off },
-+        )?;
-+        Ok(0)
-+    })
-+}
-+
-+#[pinned_drop]
-+impl PinnedDrop for Device {
-+    fn drop(self: Pin<&mut Self>) {
-+        // SAFETY: The existence of `self` guarantees that `self.classdev` has previously been
-+        // successfully registered with `led_classdev_register_ext`
-+        unsafe { bindings::led_classdev_unregister(self.classdev.get()) };
-+    }
-+}
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index e5247f584ad2..f42c60da21ae 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -97,6 +97,7 @@
- pub mod jump_label;
- #[cfg(CONFIG_KUNIT)]
- pub mod kunit;
-+pub mod led;
- pub mod list;
- pub mod miscdevice;
- pub mod mm;
--- 
-2.49.1
-
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
