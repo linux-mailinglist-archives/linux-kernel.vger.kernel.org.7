@@ -1,89 +1,104 @@
-Return-Path: <linux-kernel+bounces-847563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B89B0BCB322
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 01:29:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FF7CBCB334
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 01:30:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B2C204E03D4
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 23:29:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 738EB19E7720
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 23:31:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BFB1288C2A;
-	Thu,  9 Oct 2025 23:29:06 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CFEB17A30A;
+	Thu,  9 Oct 2025 23:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QdDBoi3Q"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C5D2882C5
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 23:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8842786331
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 23:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760052545; cv=none; b=WilFfM4zw8/L/A6yJ36BzNJ2f0F0tLIXiNzn9R0Elo1m0KmiQtDvHJX0uDbgKA/qvCrgc6hL7CyAhwNJwb+FwWkB6HPKytCrUrFv5KmFTgIhpA1kuJt/hZTAcmWX/epg0QDZM0T0FzUX1+c7xEI6jUeDs4IbiOPAnMvIj3GP0pY=
+	t=1760052644; cv=none; b=r1yejuDSlaua+5ICfyhaSkjc9UOi+ZXmCwzmsa0qNmPzhdio6jbD8ecEgew48OqqITxRNfO4lcrazTd4UBIht5fVkiCTIwnH7rNiJP4ZDw9n/kr/6+7lXQG2q/vjR/9TELez0wqSAjpItoerIblnXhhXD4SdcpfZNkSQ/JpF6NY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760052545; c=relaxed/simple;
-	bh=MR3mDLO8psciWX7aEFIWGIcpwIll6YdhBIvr6LmW3fk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=RV9HJwxqP+83y+McEwv3vU/TJRcdR8d7CcI8NK1y6d9QPsi1UqNn2hepz/948I0+neGWF82nQoYi/iM+DNEG5HL4XfqdkJDDZ2QJHhjk3Fnck82sb6Vp5d6/4dJrFE1nNRRrX+zAY+Zv/fusbugvfXMQI/gJuDGLyx7LMevE7k0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-930db3a16c1so637109239f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 16:29:03 -0700 (PDT)
+	s=arc-20240116; t=1760052644; c=relaxed/simple;
+	bh=ivnI95/4wH2sE/60lYNix0grZ+S99Kw1ZPGOz1sP24k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g5Wj2N6N0/N2QqY9ifYtoNN327Oy6H3dqMPsEzGMT/gQ2NSZ46OQC/LY5VDbM9NcvoI8U52nAev1LvJkWzswwloT/TfRLDW1TRDZZJi0ln8Mb2wZUOx0xryUTVYk0XGSNnuQ5WsegXFlADue+fcQu504CSpvzRiIhggFyUVrdes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QdDBoi3Q; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-62faa04afd9so2680a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 16:30:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760052640; x=1760657440; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ivnI95/4wH2sE/60lYNix0grZ+S99Kw1ZPGOz1sP24k=;
+        b=QdDBoi3QsyiVc4X4yt1Fo4RAionuYP3ST1YBUwKAIJi3s7zCdZFZ9yV/oxoABBWZEy
+         WQRN3wmZfgex/tpKAXiPrTBoGzIbdYTAK+BKKxiQBAXSvDOwtod3TOIA34XipddUIuR6
+         iRzyFWWujWW6tibq2Pd6A8tuAF/VjlZ0WdWZgCz2V2n5NiNPMpdU0pvdr7or9DW0ZT7j
+         tBDfwD7JcSDNAL0LE9Hbl2ePOxNJjU2ImxITUiD0H9lafoHnRmjSiMFMCXLL+6G6iTk7
+         eW2frtiAaBv4ZGbY3q4VWuREOEYr4Tt0MgLM09550pAchfXrJR+wyH2zrVaGAZFIKfzD
+         vf2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760052542; x=1760657342;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hS+rszJgaizocP5WWuliZ9dJ4ZavwuTgx73YaLzfsos=;
-        b=fMxrwQ06AthdKluMLvVnG+gCh8POJVDhSdYB/YpV4GULMkFNvP3fU3nAP/aaJBgzJY
-         EA7vLYyvMfmOYWxwE0Y+rL2KHm0bpGi3kFKWwX8tfoIif6aB99Yzyzt8IJZkEiC3mQkJ
-         dlzOqSQezXaFvVV2mDc6m1pIwOJOho/o315Uuq18GUvSirDyAM1VoOl+G+3GP8WGs2fH
-         LUWP2ls9oxW3gmNR5nIRnrqklsK52fy96AE0ADefxVcVfeYfWwCrXD2LWJdgErkP0anK
-         Q1GKNZPkvxVkb/bxSCydI44H73oBbHfQb5J3vJjXX5QvOvhtSJr8bP/NbgfLpEWipFnf
-         B8pw==
-X-Forwarded-Encrypted: i=1; AJvYcCVPoh06EG3gVOPiQFn7OkpG6Yo55EBjcK8ZRXg6NMSEgWDDngZDZaTaVdsZlU9X74Iswl8XC1O3YpLcLpU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVOh0/TeHZaYm94va6E5cNGnXvu8XK7iTzrGm6BpfBU2Xv/kNX
-	j3sALPk3Wka/AYGmGi3BKUREMTyEOAmg1zkONhkAXPryDRjy8v++Y55lzHipBzA+y/3mM1AKavX
-	piJG6/TjLfO8//bUJ6RF9zUHCJ40K8LxTZaggWLGd/alWBY02+Nz4fbhdfiI=
-X-Google-Smtp-Source: AGHT+IEQ+Vn2+E2g5j5qm1lu78xJUMAaWaxx4GoM0B+s9KwrDea9URSH2Lq8DiunLGRzb3uPqilmwyJygHxa4YEPRpLf0ZbtCDZY
+        d=1e100.net; s=20230601; t=1760052640; x=1760657440;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ivnI95/4wH2sE/60lYNix0grZ+S99Kw1ZPGOz1sP24k=;
+        b=fGLTTywAU5Q9ZS9uhitw57POM7+aPIeInGtbeBlebM/sI0kgE94qV5oMNvWLsJJX5O
+         43HN7esspVJCFz56XoS4pj2mYeL5ndBmi/X3Vaql9zc+jfY9SkkhEM4EycyFT7jgWUHV
+         zxDR5IsyTK1nbhZgh1v5FxrtxTZjNzIzASwFtpIq+rL88mUPJdSLsby8RjbZY9Piylu5
+         lxS7k00rFzWNyaER4+cDRzLzlY7mBtC3Fa4oJrpPk0dEE2vBGEACORgrpoDB3HrUP2bU
+         w3Lmj8AGa0QoabsEl6lhWDIi+QGcD7cbpVncUuu6gXM1Q1raqxLM0Ptj+OOgkrrrBmHY
+         nfVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVXbjalN5MTP3+Pu6QxkDQmP37/LVqwoggoB+kMLreuN7oBs5ECseqPRNnJeMA535zaLr4hqRx06M5dd/4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZa8/TjFVSxAASeQKq89tVAVUeA/KwDqE3GCYoD2to8gT+a5RX
+	alFfkLU3gCYvFrw4qm2Le+isaAMPeHOo3hJ+vNsNxbWYabzYNusMmYCLcOwx2wJ6/3VzEn2CN01
+	Ru9okPs6TjCJo1acY3AGNFVLdhqfpMe+7m4xzZS48
+X-Gm-Gg: ASbGnct0U56VDh+6a+id9KCICFlY5JUakiwjzNUbnkPUdvMNS48i6Yc6OTDye03d7I4
+	ujjtup0205jf3g4lvGAUMfOlVb9UAko5PlXnc2Wj1JAF0Z/vP/I5cu74xRJ9ppraoYuNvF9el+G
+	oYEdVaq0PT7vOI3FfZJgrqBslnqCGMyXoGUtMXg33ory6heAlArePKQHmprEjibdxTNobN5BKyd
+	HYoqYaXXGa2xURqVjSrVWQ/BJW1SK5gs9CPipo0BeqeJs7K
+X-Google-Smtp-Source: AGHT+IEOTBj54UYI9jTz3gxGnclJ1kayNjmHI406lzTf1JgANvppGkPbXbIA+gJ6Kl3ZFbRXnOZW0vEKxs1YBObXV70=
+X-Received: by 2002:aa7:c354:0:b0:62f:9d69:9364 with SMTP id
+ 4fb4d7f45d1cf-639d52c2a3cmr318785a12.5.1760052639765; Thu, 09 Oct 2025
+ 16:30:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6406:b0:93e:259b:9412 with SMTP id
- ca18e2360f4ac-93e259b9561mr246304039f.19.1760052542595; Thu, 09 Oct 2025
- 16:29:02 -0700 (PDT)
-Date: Thu, 09 Oct 2025 16:29:02 -0700
-In-Reply-To: <20251009222836.1433789-1-listout@listout.xyz>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68e8453e.050a0220.91a22.000f.GAE@google.com>
-Subject: Re: [syzbot] [bpf?] [net?] BUG: sleeping function called from invalid
- context in sock_map_delete_elem
-From: syzbot <syzbot+1f1fbecb9413cdbfbef8@syzkaller.appspotmail.com>
-To: ast@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	listout@listout.xyz, netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	yonghong.song@linux.dev
+References: <20251001145816.1414855-1-yosry.ahmed@linux.dev> <20251001145816.1414855-8-yosry.ahmed@linux.dev>
+In-Reply-To: <20251001145816.1414855-8-yosry.ahmed@linux.dev>
+From: Jim Mattson <jmattson@google.com>
+Date: Thu, 9 Oct 2025 16:30:26 -0700
+X-Gm-Features: AS18NWAx8ShaL3lmvgtqy19Ov8ozeGmr75Qa4-GnxpsoU7OynbrKVwVC3OfQ5OQ
+Message-ID: <CALMp9eShyXSx685qTqY_ADEk9O8Mk3btLPPE4-WYPxwghHbQPg@mail.gmail.com>
+Subject: Re: [PATCH 07/12] KVM: selftests: Pass the root HVA directly to
+ nested mapping functions
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Yosry Ahmed <yosryahmed@google.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, Oct 1, 2025 at 8:05=E2=80=AFAM Yosry Ahmed <yosry.ahmed@linux.dev> =
+wrote:
+>
+> From: Yosry Ahmed <yosryahmed@google.com>
+>
+> The nested mapping functions used to create EPT mappings currently
+> accept a struct vmx_pages argument, only to get the EPT root from it
+> later. In preparation for generalizing these functions to work for NPTs,
+> pass the EPT root HVA directly instead.
+>
+> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-
-Reported-by: syzbot+1f1fbecb9413cdbfbef8@syzkaller.appspotmail.com
-Tested-by: syzbot+1f1fbecb9413cdbfbef8@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         5472d60c Merge tag 'trace-v6.18-2' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=159b91e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2b842a78bbee09b1
-dashboard link: https://syzkaller.appspot.com/bug?extid=1f1fbecb9413cdbfbef8
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11f50dcd980000
-
-Note: testing is done by a robot and is best-effort only.
+Reviewed-by: Jim Mattson <jmattson@google.com>
 
