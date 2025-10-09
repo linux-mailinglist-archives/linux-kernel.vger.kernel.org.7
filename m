@@ -1,100 +1,108 @@
-Return-Path: <linux-kernel+bounces-846751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63CD8BC8EBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:56:59 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC61BBC8ED6
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:59:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 270504F5B24
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:56:56 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4F472352849
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:59:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 683232E265A;
-	Thu,  9 Oct 2025 11:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D458D2E2DC4;
+	Thu,  9 Oct 2025 11:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="CmhDm10o"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="j7SVYHV8"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C3242DE200;
-	Thu,  9 Oct 2025 11:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B7A15CD74;
+	Thu,  9 Oct 2025 11:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760011005; cv=none; b=CXNJSTwkpnIaownwYVbk8y1P90RxKfVpB00vyn1PVG3utzNzWSV4Xs2XJRBgbliXmkohoraHDmF5zczQ0GSd/N+BRY0pPnkrjhHLGZL9ZhJNj9AB6O77dLmZazGhlLjCjtj28YDYAcRSC54jFh86oHp1rLelegS8wqaqiuCnAKE=
+	t=1760011177; cv=none; b=W/t2Bxpg4gQTYDkHocV9CUICul7aUdSf4t3JHwKZm5Z6c/hCOALp91e9HrXXu4ssRPi9w/hSeS1tb9RxPQ+RIwn2CY0GY2Eldu8alrEZcAzAAYPH/n3wdKe9liFMlhFqCmiLFyi3qtklz5riCY2H4LCoY4baW1fdcuc4J0FtsoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760011005; c=relaxed/simple;
-	bh=GCdo2WRMgThuwdhdaxtmNPngX0ETlYCYQ7iuLMzkZt0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sOTG/xTEjbV/jsC2aPYHDxFgag3wVk6ByNpbGYdI6vp3SmFbPRBX/cWfosyX8LQSB8A2K4uz+nQzj3U/To50kZBODMGm8B21W6dmjbNUWq1tdPiPRH3pXY2NpyhHZgYnLY5YDVCQBFv0yk2x1yUV8vX1qGXLfMoZg9uJZ3lDoFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=CmhDm10o; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1760011002;
-	bh=GCdo2WRMgThuwdhdaxtmNPngX0ETlYCYQ7iuLMzkZt0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CmhDm10oocxKkaF5tmsjNvE52BrCVUfY7m30lN8iDm/aVW6yLyk8S1fhLyy9JJ//o
-	 lG0OcN2d0Z2SWsBUAI3OhbZXzKXhfR1yZcmyvHpZzUL6pTFpJfFuIh4XnSaab5jd8B
-	 o0N9PVKK0WHJAcGZ/8dxQ3XfceDixM5FEzlZW05IATAEtz1pQT5b1UI9+OdKH3d35n
-	 PnWEquwvVQmvNo7qyjKcaJ/9B+VTxIAVwzLTtq7/Qsbl4/WQnklBP9buv+0imB3nYw
-	 JI9zcHMU6Gzh7EVV/ISC+9s/fRIs50+wXg36F+NQ3IxHGdjohcrHAP+Gsb4lt7x8Lb
-	 Ejw8718SW052g==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6940117E0125;
-	Thu,  9 Oct 2025 13:56:41 +0200 (CEST)
-Message-ID: <dc04ae37-7707-4d32-8b01-f4804cd0cd90@collabora.com>
-Date: Thu, 9 Oct 2025 13:56:41 +0200
+	s=arc-20240116; t=1760011177; c=relaxed/simple;
+	bh=k7jEyGwrGZBJ+mBJ/addAS2ZF+jWobMOL2iLQMc1dD4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UUvcDm2Xsktf4rU8bqWp3FU719CnKb4gs4b1rgjANwj4QyvuEa9z0KGzdi3qdwLShOZ8+m4QugRb63KK0bX+NekENSJ/HaV1We1R/pnTXrxczUrZuPCel2KGxuVh56S9ShxfqTGc15s+lFgW6tk5M2QZSmyNaUhKMW4xi3Tmkps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=j7SVYHV8; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760011169;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KiABDmn04KyLpYGFg9hQuEssOiu7vxmwKbRQ+ewHZs4=;
+	b=j7SVYHV8WGDv+dztjVrBDZrNawnGioai3qQkP4sAD5n6cKiAocoFFKIve1hIwPVwwwCVK3
+	/2xo52IU+nRW4pYGJCejCtX6T+ScyfEPXdoFj9HMLX1+njr8csepS3jsqIMBsz0kcPuCmC
+	Zdv47rRqqzrVxfLKnOYZKE0O2I1UPpY=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] KEYS: encrypted: Use designated initializers for match_table_t structs
+Date: Thu,  9 Oct 2025 13:58:17 +0200
+Message-ID: <20251009115817.368170-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 11/20] soc: mediatek: mtk-cmdq: Add mminfra_offset
- adjustment for DRAM addresses
-To: Jason-JH Lin <jason-jh.lin@mediatek.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
- Nicolas Dufresne <nicolas@ndufresne.ca>, Nancy Lin <nancy.lin@mediatek.com>,
- Singo Chang <singo.chang@mediatek.com>,
- Paul-PL Chen <paul-pl.chen@mediatek.com>, Moudy Ho <moudy.ho@mediatek.com>,
- Xiandong Wang <xiandong.wang@mediatek.com>,
- Sirius Wang <sirius.wang@mediatek.com>, Fei Shao <fshao@chromium.org>,
- Chen-yu Tsai <wenst@chromium.org>,
- Project_Global_Chrome_Upstream_Group@mediatek.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
-References: <20250827114006.3310175-1-jason-jh.lin@mediatek.com>
- <20250827114006.3310175-12-jason-jh.lin@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250827114006.3310175-12-jason-jh.lin@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Il 27/08/25 13:37, Jason-JH Lin ha scritto:
-> Since GCE has been moved to MMINFRA in MT8196, all transactions from
-> MMINFRA to DRAM will have their addresses adjusted by subtracting a
-> mminfra_offset.
-> 
-> Therefore, the CMDQ helper driver needs to get the mminfra_offset value
-> of the SoC from cmdq_mbox_priv of cmdq_pkt and then add it to the DRAM
-> address when generating instructions to ensure GCE accesses the correct
-> DRAM address. CMDQ users can then call CMDQ helper APIs as usual.
-> 
-> Signed-off-by: Jason-JH Lin <jason-jh.lin@mediatek.com>
+Use designated initializers for 'key_format_tokens' and 'key_tokens' to
+allow struct fields to be reordered more easily and to improve
+readability.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ security/keys/encrypted-keys/encrypted.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
+diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
+index aef438d18da8..76a6dab2f4d2 100644
+--- a/security/keys/encrypted-keys/encrypted.c
++++ b/security/keys/encrypted-keys/encrypted.c
+@@ -62,17 +62,17 @@ enum {
+ };
+ 
+ static const match_table_t key_format_tokens = {
+-	{Opt_default, "default"},
+-	{Opt_ecryptfs, "ecryptfs"},
+-	{Opt_enc32, "enc32"},
+-	{Opt_error, NULL}
++	{ .token = Opt_default, .pattern = "default"},
++	{ .token = Opt_ecryptfs, .pattern = "ecryptfs"},
++	{ .token = Opt_enc32, .pattern = "enc32"},
++	{ .token = Opt_error, .pattern = NULL}
+ };
+ 
+ static const match_table_t key_tokens = {
+-	{Opt_new, "new"},
+-	{Opt_load, "load"},
+-	{Opt_update, "update"},
+-	{Opt_err, NULL}
++	{ .token = Opt_new, .pattern = "new"},
++	{ .token = Opt_load, .pattern = "load"},
++	{ .token = Opt_update, .pattern = "update"},
++	{ .token = Opt_err, .pattern = NULL}
+ };
+ 
+ static bool user_decrypted_data = IS_ENABLED(CONFIG_USER_DECRYPTED_DATA);
+-- 
+2.51.0
 
 
