@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-846072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2000BC6F69
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 01:58:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D729BC6F7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 02:05:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A22894EF955
-	for <lists+linux-kernel@lfdr.de>; Wed,  8 Oct 2025 23:58:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3DD73E08B6
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 00:05:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 471EF2D0629;
-	Wed,  8 Oct 2025 23:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5E6F4F1;
+	Thu,  9 Oct 2025 00:05:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JM97szmq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hHCP5kO6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750D22C3745;
-	Wed,  8 Oct 2025 23:58:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E521E38D;
+	Thu,  9 Oct 2025 00:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759967916; cv=none; b=Y26ynfQIaDb7LXhYi5uPwCs/GeMR9UqB+aTzfrnfQvyHdZekceppt2ezr87pCNWOSH4PqNFPuIONMDGatlo15gE+RQ0JwonKs41G+GAVDCRTKh4NYy9O+75n/+lhHUa1MLyMV1TwoHG54GcfnwfFhMjGluRlFh8L5wDm1xLkiQk=
+	t=1759968344; cv=none; b=tz+ZMNq1oY5yEWaUP/8SkBxeO05FABrHoL9zvTpW0377LW/K7eqbk+th4KSjF8kktXk2QSW5c3u1WXbDMBWqplx+VQJ6GhVwwy19VbwDQM2wiPfJkfoVOmaMpSFGJ4fZN7f+rgX1TgN5LFVFMAahaU9ZJya4mg/zIVYm6+50QJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759967916; c=relaxed/simple;
-	bh=yOETAJ8eUiVZRfemtfdBWg3YPDkDwGKicuMdNzZFk3o=;
+	s=arc-20240116; t=1759968344; c=relaxed/simple;
+	bh=a5eC/mc+Ab1G1LQjVNYBq9MbchkkbcCS6aNwYhqeir0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qgVlX9p6/cHHQHjfY69Hqiz8qqAUwhpeUBqHzSIhoqFAOHAvPntcjPJzslgsqAAhAbO2uC43YPr14yLDa0enQp3YB8+yI6HxFsb5p0E5HU5sgM3NJJnoczbl9Qq62GAlZ0n60jW1spzAzC6OWOr1WWMjYWr/ji1Ah+moXhLdRt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JM97szmq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4393C4CEF5;
-	Wed,  8 Oct 2025 23:58:27 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=T9uu4x871zx6FLz2EcwwJniItv+ak1jBJFXa4Sx+9QTWCBM9o6LZ6ZlbpiumXjZjWAvxeDgz2d8o03vUQJfMSHCyU/BCuYwACHt9RoPhoOlystH6UdAE6ghHOzBlLJi1RlWRC+Wz7eWSiS45EdvNFyFUYkXSqVHnSG+GiibuvDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hHCP5kO6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E867AC4CEE7;
+	Thu,  9 Oct 2025 00:05:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759967916;
-	bh=yOETAJ8eUiVZRfemtfdBWg3YPDkDwGKicuMdNzZFk3o=;
+	s=k20201202; t=1759968343;
+	bh=a5eC/mc+Ab1G1LQjVNYBq9MbchkkbcCS6aNwYhqeir0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JM97szmqUfVhrnUyTFjgJfh1DPUIAa4clCKPXsmOjY5/pIkGqIiIquGdtmh3q4JRR
-	 GHsghCXyqDTrT2TV1ieAU9+/m1IIMpojrrCGaOGayZprHS9unp4D2HoPqCNpnhbYBw
-	 PW0spLDk1A2vHjOG+ri1+oRxDJPBPBXyzH5X+SYzQCDmVPvIc05kLMwk7OB69LBaEn
-	 OJSkLLHXhxJpR9JRmIVxoPvjuueKldWVH0e6Gu07EgEynDOob4fdMRNrUton7QRV0S
-	 2CzLq5c4ZVzsgQB0UmM2t4QEq5npbZhhTKl44fLCvocJxEcul9vgJxY2YxVOeDPvNi
-	 B/qHWy6iVhHXQ==
-Message-ID: <fa743412-d9f1-43fd-95e8-3b2a58cd6c25@kernel.org>
-Date: Thu, 9 Oct 2025 08:58:24 +0900
+	b=hHCP5kO6224ynyPwXhK6hxpjphEvD1CijUgKVfdInAvo4ZhjJzAeTapEZZfsgKPFV
+	 hEMgN2pe1zb/xCUzxhDw7ySaX/KDCE8SuiyDt96EmvNZ64jKnFAx0V1QWheQQnUHlw
+	 6+fPIskxoMLhw/vb/l9AN4h46rEVrYGAEJ5xobL2mYZcU+z7u93qjZWOyCPjDNxxc4
+	 +waqh2xEnkKqSEAUG2M8PrQeiD+5IxI4d9N8R8pkA45hGH3aLeZCx3541MqP1OX1Nz
+	 nNJT0nKlQ7Z9hIeD4f0TlxHbDq92s6kNPn1lrSKtVjaegJYKrcod3wZBWiH9/BFVcp
+	 oFNOAciKbTD5A==
+Message-ID: <5d7491b1-8f9a-4040-b854-ff0b94bfd24e@kernel.org>
+Date: Thu, 9 Oct 2025 09:05:34 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,24 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] dt-bindings: phy: google: Add Google Tensor G5 USB
- PHY
-To: Roy Luo <royluo@google.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>,
- Badhri Jagan Sridharan <badhri@google.com>, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20251008060000.3136021-1-royluo@google.com>
- <20251008060000.3136021-4-royluo@google.com>
+Subject: Re: [PATCH v2 0/8] Support dynamic EMC frequency scaling on
+ Tegra186/Tegra194
+To: webgeek1234@gmail.com, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Thierry Reding
+ <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20250909-tegra186-icc-v2-0-09413724e781@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -112,126 +105,19 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251008060000.3136021-4-royluo@google.com>
+In-Reply-To: <20250909-tegra186-icc-v2-0-09413724e781@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 08/10/2025 14:59, Roy Luo wrote:
-> Document the device tree bindings for the USB PHY interfaces integrated
-> with the DWC3 controller on Google Tensor SoCs, starting with G5
-> generation.
+On 09/09/2025 15:21, Aaron Kling via B4 Relay wrote:
+> This series borrows the concept used on Tegra234 to scale EMC based on
+> CPU frequency and applies it to Tegra186 and Tegra194. Except that the
+> bpmp on those archs does not support bandwidth manager, so the scaling
+> iteself is handled similar to how Tegra124 currently works.
 > 
-> Due to a complete architectural overhaul in the Google Tensor G5, the
-> existing Samsung/Exynos USB PHY driver and binding for older generations
-> of Google silicons such as gs101 are no longer compatible.
-> 
-> The USB PHY on Tensor G5 includes two integrated Synopsys PHY IPs: the
-> eUSB 2.0 PHY IP and the USB 3.2/DisplayPort combo PHY IP. Currently only
-> USB high-speed is described and supported.
-> 
-> Signed-off-by: Roy Luo <royluo@google.com>
-> ---
->  .../bindings/phy/google,gs-usb-phy.yaml       | 96 +++++++++++++++++++
->  1 file changed, 96 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/google,gs-usb-phy.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/google,gs-usb-phy.yaml b/Documentation/devicetree/bindings/phy/google,gs-usb-phy.yaml
-> new file mode 100644
-> index 000000000000..22961e2da6ef
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/google,gs-usb-phy.yaml
-> @@ -0,0 +1,96 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +# Copyright (C) 2025, Google LLC
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/phy/google,gs-usb-phy.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Google Tensor Series (G5+) USB PHY
-> +
-> +maintainers:
-> +  - Roy Luo <royluo@google.com>
-> +
-> +description: |
-> +  Describes the USB PHY interfaces integrated with the DWC3 USB controller on
-> +  Google Tensor SoCs, starting with the G5 generation.
-> +  Two specific PHY IPs from Synopsys are integrated, including eUSB 2.0 PHY IP
-> +  and USB 3.2/DisplayPort combo PHY IP.
-> +  The first phandle argument within the PHY specifier is used to identify the
-> +  desired PHY. The currently supported value is::
 
-Currently supported as hardware will change? You describe here hardware
-ONLY.
-
-> +    0 - USB high-speed.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - google,gs5-usb-phy
-> +
-> +  reg:
-> +    minItems: 3
-> +    maxItems: 3
-> +
-> +  reg-names:
-> +    items:
-> +      - const: usb2_cfg_csr
-> +      - const: dp_top_csr
-> +      - const: usb_top_cfg_csr
-
-Drop csr
-
-> +
-> +  "#phy-cells":
-> +    const: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    items:
-> +      - const: usb2_phy_clk
-
-Drop names, pointless for one entry.
-
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  reset-names:
-> +    items:
-> +      - const: usb2_phy_reset
-
-Drop names, pointless for one entry.
-
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  orientation-switch:
-> +    type: boolean
-> +    description:
-> +      Indicates the PHY as a handler of USB Type-C orientation changes
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reg-names
-> +  - "#phy-cells"
-> +  - clocks
-> +  - clock-names
-> +  - resets
-> +  - reset-names
-> +
-> +unevaluatedProperties: false
-> +
-
-
-additionalProps instead. Read writing schema or example schema.
-
+Nothing improved:
+https://lore.kernel.org/all/20250902-glittering-toucan-of-feminism-95fd9f@kuoka/
 
 Best regards,
 Krzysztof
