@@ -1,155 +1,148 @@
-Return-Path: <linux-kernel+bounces-846352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A980BC7A71
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:17:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D45DDBC7A86
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:18:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A19F74E3A6B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:17:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1C3A19E6F88
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:18:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 097C32BE048;
-	Thu,  9 Oct 2025 07:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341792C027C;
+	Thu,  9 Oct 2025 07:18:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qxabBT8/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b="CHnmCLh3"
+Received: from sender4-op-o10.zoho.com (sender4-op-o10.zoho.com [136.143.188.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53CD81D5147;
-	Thu,  9 Oct 2025 07:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759994243; cv=none; b=uoE/U5fCKjukOMIl6jcFAJ44K79vXd5CwLGcA4HR4JHPlPI/wgbOjdf2Dz78JEyvtxSBqbSBCmNK37zJ6N8DiTwGq2SO3WkIUuXq84L/3kghBMex/MH0oOKf6kxRvxmjxg4sy/S7/bvpKAbaRvjCz0bcFUAM0K1dWo/O9fXPDpw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759994243; c=relaxed/simple;
-	bh=qpw+6J2ytukjMwUmxCZyRh0+7i8HVvt1dA1nhFhJDmU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BNC/oceX+tU1YGuoKylkuACpQ/f/PVh+ztmpYCG+vj0CNV+yTP3JbRlrKeeewH8y/OKpKH9uPRGD6KQpTFtByPKLOVzio4fmUFaPGrsyr6X2zXJIXSPJKA+ugPJTY8OaxyX+ibM9lwxQUfFzWp4PBjdoLVyuaR596FNKQuGT+W0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qxabBT8/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 071D0C4CEE7;
-	Thu,  9 Oct 2025 07:17:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759994242;
-	bh=qpw+6J2ytukjMwUmxCZyRh0+7i8HVvt1dA1nhFhJDmU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=qxabBT8/OBr9oWRsRZC1T4SCz/d/UL9LHnDRBeT7LDEoOnY+JcC5Ohyn1VkvPB+TZ
-	 vSgOdO85UFh3UoszH9719MuF7wO7/Pskv+1/Ng2ROmVD4wyEZzJByKOKYSzPrDgHdb
-	 5c/DfzhDI9lL4N11239fttCX6M3z66/aZ84n4HgVDBIMwkGweyFNzW6dDYhckhE3iL
-	 Go5yre6HVBnDlrQJkT85vwQF03rQgOymEEf4UpDKpf7d52/HfC85wUVCSEC0Zu4fR1
-	 UZ9BqOKHsYBT2Q2vrMJV5xHTRfiQz8gFYwXjbM/wUvO97hAfsYzJERUJ5aJLr6sCNj
-	 1zcsL+43/ZMFw==
-X-Mailer: emacs 30.2 (via feedmail 11-beta-1 I)
-From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-To: dan.j.williams@intel.com, Jason Gunthorpe <jgg@ziepe.ca>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, linux-coco@lists.linux.dev,
-	kvmarm@lists.linux.dev, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, aik@amd.com, lukas@wunner.de,
-	Samuel Ortiz <sameo@rivosinc.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>, gregkh@linuxfounation.org
-Subject: Re: [RFC PATCH v1 11/38] KVM: arm64: CCA: register host tsm
- platform device
-In-Reply-To: <688d61b1c4c8c_55f09100f4@dwillia2-xfh.jf.intel.com.notmuch>
-References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
- <20250728135216.48084-12-aneesh.kumar@kernel.org>
- <20250729181045.0000100b@huawei.com> <20250729231948.GJ26511@ziepe.ca>
- <yq5aqzxy9ij1.fsf@kernel.org> <20250730113827.000032b8@huawei.com>
- <20250731121133.GP26511@ziepe.ca>
- <688d61b1c4c8c_55f09100f4@dwillia2-xfh.jf.intel.com.notmuch>
-Date: Thu, 09 Oct 2025 12:47:14 +0530
-Message-ID: <yq5aikgoa6it.fsf@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1A6222586;
+	Thu,  9 Oct 2025 07:18:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759994297; cv=pass; b=gmdRTJM6IbcDDXRqo06uiN/Y25pEC/6m1K7fUGy9If7eMELabJaGHQh82/YdJ52FNJhvoR6yqQ9I0CEyud/W0kuW78drLaQ7hasHBhFwd9Iac7feiEJxGj/5Opu80OQJ9xV25wPNRoEOuZHBu/u+ijXRjJk+xfdC/NJXvCw4B2s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759994297; c=relaxed/simple;
+	bh=hwLPych/iGUpdYRMjrp4rrUo6rVr+73kaFmM05jqCoo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X/9SPxGcYUSJWByQdJneUtFtPEzZDGm87oBUukg3DvXeN2I2LNK/JmSYgr+q0HzXmjGdmOurxlXlzOcq9XNZ+ktxCPKRRGY0XONO5BnFfKd/lx72QuTPHrSBLah0TfSWC8dt9PtA1Q11v+FOdKts0D+FsW0EqmHpEy+HCkjU1E0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b=CHnmCLh3; arc=pass smtp.client-ip=136.143.188.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1759994260; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=E06nJFLnNFlF/ZVrED88NFtu7RX1jLjU8oMD7JNEBNBI7T4Yf5+MbEdntEjk23ekMXM51QWuQiAxWGz6otGOiHqtnb9ddHujbb7EwpH9mzZBDmDHXArlEJKcpo7w9vNNvPPlaVEKzGgSEm7VYK5oQ0fOojGBzs/EgRs3Kks/iIw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1759994260; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=eH4QJ/Q8hmT3jI69GgU7WpNcS21+ZzGe/t5+TjS91O8=; 
+	b=h3abPsnwGxMk+fjcal1ODuBXToi6YhKersyjxw7A+bRnbbI79xfy9vhzWgFAkVyrfJ1IFJwHTZY7inlKP4XLdBVFYXWRzDfNth8DfSpsxz7o2ZGefyjETDIvwhv/2QsW9C2Fx69uiFpERWB7JLke4lG1P5H7uU1SqvD9ltlkn0k=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=martyn.welch@collabora.com;
+	dmarc=pass header.from=<martyn.welch@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759994260;
+	s=zohomail; d=collabora.com; i=martyn.welch@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=eH4QJ/Q8hmT3jI69GgU7WpNcS21+ZzGe/t5+TjS91O8=;
+	b=CHnmCLh3hrNLDdv/xk9FWeRm1NMNFMcY1rcgrbiv+UDmgl8eUNH0SpjP+pWNriFj
+	UikD41GM3y0oCJmT2aYzBjzZNpOcyCkt+fjL37swz3agkXrrhTNNubyg/a6EXigyeep
+	2ZFe0kDrHtoLlYRRFHrRDvQE9bLcjH/lt1+8O2pI=
+Received: by mx.zohomail.com with SMTPS id 1759994258322828.159065982056;
+	Thu, 9 Oct 2025 00:17:38 -0700 (PDT)
+Message-ID: <c75a89f8-9eb7-4300-979e-e11159dc6888@collabora.com>
+Date: Thu, 9 Oct 2025 08:17:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] gpio: pca953x: enable latch only on edge-triggered inputs
+To: Linus Walleij <linus.walleij@linaro.org>,
+ Francesco Lavra <flavra@baylibre.com>,
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+ Maria Garcia <mariagarcia7293@gmail.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+ Potin Lai <potin.lai.pt@gmail.com>,
+ Mark Tomlinson <mark.tomlinson@alliedtelesis.co.nz>,
+ Fabio Estevam <festevam@denx.de>, Ian Ray <ian.ray@gehealthcare.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251008104309.794273-1-flavra@baylibre.com>
+ <CACRpkdYDMRZMb+bDUgK5yiKU1Toy=S_ebo2_4WRasHxCqv+4xw@mail.gmail.com>
+Content-Language: en-US
+From: Martyn Welch <martyn.welch@collabora.com>
+In-Reply-To: <CACRpkdYDMRZMb+bDUgK5yiKU1Toy=S_ebo2_4WRasHxCqv+4xw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-<dan.j.williams@intel.com> writes:
+On 09/10/2025 07:03, Linus Walleij wrote:
+> Hi Francesco,
+> 
+> thanks for your patch!
+> 
+> On Wed, Oct 8, 2025 at 12:43 PM Francesco Lavra <flavra@baylibre.com> wrote:
+> 
+> 
+>> The latched input feature of the pca953x GPIO controller is useful
+>> when an input is configured to trigger interrupts on rising or
+>> falling edges, because it allows retrieving which edge type caused
+>> a given interrupt even if the pin state changes again before the
+>> interrupt handler has a chance to run. But for level-triggered
+>> interrupts, reading the latched input state can cause an active
+>> interrupt condition to be missed, e.g. if an active-low signal (for
+>> which an IRQ_TYPE_LEVEL_LOW interrupt has been configured) triggers
+>> an interrupt when switching to the inactive state, but then becomes
+>> active again before the interrupt handler has a chance to run: in
+>> this case, if the interrupt handler reads the latched input state,
+>> it will wrongly assume that the interrupt is not pending.
+>> Fix the above issue by enabling the latch only on edge-triggered
+>> inputs, instead of all interrupt-enabled inputs.
+>>
+>> Signed-off-by: Francesco Lavra <flavra@baylibre.com>
+>> ---
+>>   drivers/gpio/gpio-pca953x.c | 7 +++++--
+>>   1 file changed, 5 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+>> index e80a96f39788..e87ef2c3ff82 100644
+>> --- a/drivers/gpio/gpio-pca953x.c
+>> +++ b/drivers/gpio/gpio-pca953x.c
+>> @@ -761,10 +761,13 @@ static void pca953x_irq_bus_sync_unlock(struct irq_data *d)
+>>          int level;
+>>
+>>          if (chip->driver_data & PCA_PCAL) {
+>> +               DECLARE_BITMAP(latched_inputs, MAX_LINE);
+>>                  guard(mutex)(&chip->i2c_lock);
+>>
+>> -               /* Enable latch on interrupt-enabled inputs */
+>> -               pca953x_write_regs(chip, PCAL953X_IN_LATCH, chip->irq_mask);
+>> +               /* Enable latch on edge-triggered interrupt-enabled inputs */
+>> +               bitmap_or(latched_inputs, chip->irq_trig_fall, chip->irq_trig_raise, gc->ngpio);
+>> +               bitmap_and(latched_inputs, latched_inputs, chip->irq_mask, gc->ngpio);
+>> +               pca953x_write_regs(chip, PCAL953X_IN_LATCH, latched_inputs);
+> 
+> This driver is used by a *lot* of systems and people.
+> 
+> It is maybe the most used GPIO driver in the kernel.
+> 
+> So I added a lot of affected developers to the To: line of
+> the mail so we can get a wider review and testing.
+> 
 
-> Jason Gunthorpe wrote:
->> On Wed, Jul 30, 2025 at 11:38:27AM +0100, Jonathan Cameron wrote:
->> > On Wed, 30 Jul 2025 14:12:26 +0530
->> > "Aneesh Kumar K.V" <aneesh.kumar@kernel.org> wrote:
->> >=20
->> > > Jason Gunthorpe <jgg@ziepe.ca> writes:
->> > >=20
->> > > > On Tue, Jul 29, 2025 at 06:10:45PM +0100, Jonathan Cameron wrote:
->> > > >=20=20
->> > > >> > +static struct platform_device cca_host_dev =3D {=20=20
->> > > >> Hmm. Greg is getting increasingly (and correctly in my view) grum=
-py with
->> > > >> platform devices being registered with no underlying resources et=
-c as glue
->> > > >> layers.  Maybe some of that will come later.=20=20
->> > > >
->> > > > Is faux_device a better choice? I admit to not knowing entirely wh=
-at
->> > > > it is for..
->> >=20
->> > I'll go with a cautious yes to faux_device. This case of a glue device
->> > with no resources and no reason to be on a particular bus was definite=
-ly
->> > the intent but I'm not 100% sure without trying it that we don't run
->> > into any problems.
->> >=20
->> > Not that many examples yet, but cpuidle-psci.c looks like a vaguely si=
-milar
->> > case to this one.=20=20
->> >=20
->> > All it really does is move the location of the device and
->> > smash together the device registration with probe/remove.
->> > That means the device disappears if probe() fails, which is cleaner
->> > in many ways than leaving a pointless stub behind.
->> >=20
->> > Maybe it isn't appropriate it if is actually useful to rmmod/modprobe =
-the
->> > driver.=20
->>=20
->> Yeah, exactly. Can a TSM driver even be modular? If it has to be built
->> in then there is no reason to do this:
->
-> For example, CRYPTO_DEV_CCP_DD, the AMD PCI device driver that will call
-> tsm_register(), is already modular.
->
->> > > The goal is to have tsm class device to be parented by the platform
->> > > device.
->>=20
->> IMHO the only real point of that is to trigger module autoloading.
->
-> Right. For TDX, and I expect CCA as well, the arch code that knows that
-> PCI/TSM functionality is available and can register a device, may be
-> running too early to attach a driver to that device.
->
-> I.e. I would like to just use faux_device, but without the ability to do
-> EPROBE_DEFER, for example to await the plaform IOMMU driver. It needs to
-> move to its own bus so the attach event can be handled at a better time.
->
+I don't have access to the relevant hardware to test this anymore and 
+it's been a while since I thought much about edge vs. level triggered 
+interrupts. But if the state of the interrupt is unilaterally returning 
+to an inactive state, it sounds like that should be configured as an 
+edge triggered interrupt, not a level triggered one...
 
-One of the issues I=E2=80=99ve run into after switching to the faux_device =
-model
-is determining how to automatically load the guest and host TSM drivers
-based on the availability of the device assignment feature.
+Martyn
 
-The platform device previously provided a clean abstraction for this
-behavior, which made autoloading straightforward
+> Yours,
+> Linus Walleij
 
->
->> Otherwise the tsm core should accept NULL as the parent pointer during
->> registration, it probably already does..
->
-> Yes, NULL @parent "just works" with tsm_register().
->
-> However, I expect all tsm_register() callers to be from modular drivers.
-
--aneesh
 
