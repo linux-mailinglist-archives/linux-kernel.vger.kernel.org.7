@@ -1,140 +1,165 @@
-Return-Path: <linux-kernel+bounces-846615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C5BABC88A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 12:41:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC2EDBC8BAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:18:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1F593E53CA
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 10:41:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1457C3B0025
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4AA72DC76A;
-	Thu,  9 Oct 2025 10:41:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DBB2DF133;
+	Thu,  9 Oct 2025 11:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E1GMGYtq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="zDl5oCYi"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32DFB2D8390;
-	Thu,  9 Oct 2025 10:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760DA17A30A;
+	Thu,  9 Oct 2025 11:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760006474; cv=none; b=gLqZwOkEudCkvEc2AEfCNXKXH9mCjC4fonQq5EovWzwtuenKNLr9vzaBJshM0f0bGGPAZww7PogNpUKwtXbXe8xoGad7BmonS+GZUnZ/DzrdOh15cHSx6MUkHcAS05gXxm/4FvXKobCqAmC5uD8Iu+k8x5lnBpp4Ibz/Y8Jugr4=
+	t=1760008688; cv=none; b=fh/PgtZtgkJTV3jNxvE4wQ/kmvqweUTC7eMhoCeGy3xF43xldPWemCge7pEFbij8z7yzctwWTqitw4RUpNfru3rs0UMfh3f+S52rOAR8sHeQcIaIgqfNfw7nSiddsEDawhQitn6TNexPlsH7p2J2w9pk8v71ghXHn5K0PqFtMdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760006474; c=relaxed/simple;
-	bh=vhncvQKVVrDMPWCZVzK3kw+FgCosnOje4qr32w+rqAU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TteMoJi9fc7yFBtcwAVBw1iuTd3CDR2kJsYOn1HWS7N/RxtC3uSVcebv+BnFUJHsJWUZo8aLRX9o348vG4616FjwVcdUiIM9h1kPJXRjwVoo6SvtRasTvB1rMszb/IPmlIWbhHmx7GsrLcGPsUdxz3NR0i258CL1eaTm9V031n8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E1GMGYtq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07144C4CEE7;
-	Thu,  9 Oct 2025 10:41:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760006473;
-	bh=vhncvQKVVrDMPWCZVzK3kw+FgCosnOje4qr32w+rqAU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=E1GMGYtqonXrPGynSwcYry2uBoyQ+1gplLZPsBv0TywmAVcjDJ5WE0iFvbQmy6a5G
-	 TTMyiITA9UoHjMh7eH0EY4XgiKFcbWQ1PA1/uacp3FNcsfYS+faRwCRTWCsOeCMjk5
-	 NHIyVDYNORU8EveI3AhEkR3ATfwzzERomh+tmGR30MaPKQn2CQOVvF7yyZoPEiv+9h
-	 +WuRG8Bg/AuHz3RXIQZIlXMjdZN+6OVsttimRDd1sE58t7Wq2hrazJTse3xH5O75xh
-	 OImES7qM0I2A2FvzmQD/beiIki0+eJvT/n4yPTzmnXFGHlsG1psja6nI7AiJ1a4TVV
-	 prDq/CesTJvmw==
-Message-ID: <b1613920-1196-46d5-9607-4845176f690f@kernel.org>
-Date: Thu, 9 Oct 2025 19:41:06 +0900
+	s=arc-20240116; t=1760008688; c=relaxed/simple;
+	bh=K10PuyDL8qe2bkRLb295YfEVmmyHwaqN3wEbhgxCq/8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AYD/0Z262ZOl3cVrSUyuCqfodIikWIz8GFCUN7P0Ko6W9yXaQNIjvMwdSng21NRAypvFke/GZux6JpfRJmZFLljcfGx+bxG+GjTG9W/8F595rraJA9n7nMvczYd3m9uo3WTfns4/bcMxWbNDO/qhyqBgCEq4bonmsAOmznu2fsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=zDl5oCYi; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 599BHwsk448273;
+	Thu, 9 Oct 2025 06:17:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1760008678;
+	bh=E2nEpYoT8dgxO+lu+nWT8MuFHZnRrKdn5DytFJxiRN0=;
+	h=From:To:CC:Subject:Date;
+	b=zDl5oCYig57BDXjXrObm3iva9ApkM9+YJiySsnjZZhNiM3EOgX9O51L8P/3AxR42O
+	 0fccDueCs6dzsZLPN5RmXX75qlEv7GWFDbPT1iZRlNJKTo+OkuHg63YuQZoCPwu74e
+	 vE75WIDgjgD+GcT2t+VKaEXIQeQd9C8gSjLY3ZF4=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 599BHwmN1391767
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 9 Oct 2025 06:17:58 -0500
+Received: from DLEE205.ent.ti.com (157.170.170.85) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 9
+ Oct 2025 06:17:57 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE205.ent.ti.com
+ (157.170.170.85) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Thu, 9 Oct 2025 06:17:57 -0500
+Received: from pratham-Workstation-PC (pratham-workstation-pc.dhcp.ti.com [10.24.69.191])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 599BHtZd4130103;
+	Thu, 9 Oct 2025 06:17:56 -0500
+From: T Pratham <t-pratham@ti.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller"
+	<davem@davemloft.net>
+CC: T Pratham <t-pratham@ti.com>, <linux-crypto@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Manorit Chawdhry <m-chawdhry@ti.com>,
+        Kamlesh
+ Gurudasani <kamlesh@ti.com>,
+        Shiva Tripathi <s-tripathi1@ti.com>,
+        Kavitha
+ Malarvizhi <k-malarvizhi@ti.com>,
+        Vishal Mahaveer <vishalm@ti.com>, Praneeth
+ Bajjuri <praneeth@ti.com>
+Subject: [PATCH v4 0/4] Add support for more AES modes in TI DTHEv2
+Date: Thu, 9 Oct 2025 16:11:30 +0530
+Message-ID: <20251009111727.911738-1-t-pratham@ti.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] ASoC: qcom: sc8280xp: Add support for Kaanapali
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
- Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Rao Mandadapu <quic_srivasam@quicinc.com>
-Cc: aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
- trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
- linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
-References: <20250924-knp-audio-v1-0-5afa926b567c@oss.qualcomm.com>
- <20250924-knp-audio-v1-3-5afa926b567c@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250924-knp-audio-v1-3-5afa926b567c@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 25/09/2025 09:01, Jingyi Wang wrote:
-> From: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
-> 
-> Add compatible for sound card on Qualcomm Kaanapali boards.
-> 
-> Signed-off-by: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> ---
->  sound/soc/qcom/sc8280xp.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/sound/soc/qcom/sc8280xp.c b/sound/soc/qcom/sc8280xp.c
-> index 288ccd7f8866..e231112175d9 100644
-> --- a/sound/soc/qcom/sc8280xp.c
-> +++ b/sound/soc/qcom/sc8280xp.c
-> @@ -198,6 +198,7 @@ static const struct of_device_id snd_sc8280xp_dt_match[] = {
->  	{.compatible = "qcom,sm8550-sndcard", "sm8550"},
->  	{.compatible = "qcom,sm8650-sndcard", "sm8650"},
->  	{.compatible = "qcom,sm8750-sndcard", "sm8750"},
-> +	{.compatible = "qcom,kaanapali-sndcard", "kaanapali"},
+DTHEv2 is a new cryptography engine introduced in TI AM62L SoC. The
+features of DTHEv2 and details of AES modes supported were detailed in
+[1]. Additional hardware details available in SoC TRM [2].
 
-Keep alphabetical order.
+This patch series adds support for the following AES modes:
+ - AES-XTS
+ - AES-CTR
+ - AES-GCM
+ - AES-CCM
 
-Best regards,
-Krzysztof
+The driver is tested using full kernel crypto selftests
+(CRYPTO_SELFTESTS_FULL) which all pass successfully [3].
+
+PS: The patches 3/4 and 4/4 in this series (AES-GCM and AES-CCM) depend
+on the following fix:
+https://lore.kernel.org/all/20251008100117.808195-1-t-pratham@ti.com/
+
+Signed-off-by: T Pratham <t-pratham@ti.com>
+---
+[1]: [PATCH v7 0/2] Add support for Texas Instruments DTHEv2 Crypto Engine
+Link: https://lore.kernel.org/all/20250820092710.3510788-1-t-pratham@ti.com/
+
+[2]: Section 14.6.3 (DMA Control Registers -> DMASS_DTHE)
+Link: https://www.ti.com/lit/ug/sprujb4/sprujb4.pdf
+
+[3]: DTHEv2 AES Engine kernel self-tests logs
+Link: https://gist.github.com/Pratham-T/aaa499cf50d20310cb27266a645bfd60
+
+Change log:
+v4:
+ - Return -EINVAL in AES-XTS when cryptlen = 0
+ - Added software fallback for AES-XTS when ciphertext stealing is
+   required (cryptlen is not multiple of AES_BLOCK_SIZE)
+ - Changed DTHE_MAX_KEYSIZE definition to use AES_MAX_KEY_SIZE instead
+   of AES_KEYSIZE_256
+ - In AES-CTR, also pad dst scatterlist when padding src scatterlist
+ - Changed polling for TAG ready to use readl_relaxed_poll_timeout()
+ - Used crypto API functions to access struct members instead of
+   directly accessing them (crypto_aead_tfm and aead_request_flags)
+ - Allocated padding buffers in AEAD algos on the stack.
+ - Changed helper functions dthe_aead_prep_* to return ERR_PTR on error
+ - Changed some error labels in dthe_aead_run to improve clarity
+ - Moved iv_in[] declaration from middle of the function to the top
+ - Corrected setting CCM M value in the hardware register
+ - Added checks for CCM L value input in the algorithm from IV.
+ - Added more fallback cases for CCM where hardware has limitations
+v3:
+ - Added header files to remove implicit declaration error.
+ - Corrected assignment of src_nents and dst_nents in dthe_aead_run
+ (Ran the lkp kernel test bot script locally to ensure no more such
+ errors are present)
+v2:
+ - Corrected assignment of variable unpadded_cryptlen in dthe_aead_run.
+ - Removed some if conditions which are always false, and documented the
+   cases in comments.
+ - Moved polling of TAG ready register to a separate function and
+   returning -ETIMEDOUT on poll timeout.
+ - Corrected comments to adhere to kernel coding guidelines.
+
+Link to previous version:
+
+v3: https://lore.kernel.org/all/20250910100742.3747614-1-t-pratham@ti.com/
+v2: https://lore.kernel.org/all/20250908140928.2801062-1-t-pratham@ti.com/
+v1: https://lore.kernel.org/all/20250905133504.2348972-4-t-pratham@ti.com/
+---
+
+T Pratham (4):
+  crypto: ti - Add support for AES-XTS in DTHEv2 driver
+  crypto: ti - Add support for AES-CTR in DTHEv2 driver
+  crypto: ti - Add support for AES-GCM in DTHEv2 driver
+  crypto: ti - Add support for AES-CCM in DTHEv2 driver
+
+ drivers/crypto/ti/Kconfig         |   5 +
+ drivers/crypto/ti/dthev2-aes.c    | 929 +++++++++++++++++++++++++++++-
+ drivers/crypto/ti/dthev2-common.c |  19 +
+ drivers/crypto/ti/dthev2-common.h |  39 +-
+ 4 files changed, 975 insertions(+), 17 deletions(-)
+
+-- 
+2.43.0
+
 
