@@ -1,411 +1,245 @@
-Return-Path: <linux-kernel+bounces-846426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 794B2BC7F62
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:14:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90E18BC7F8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:14:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 747CE19E7744
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:14:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3ED8719E83AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68DE92641CA;
-	Thu,  9 Oct 2025 08:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF89272E6A;
+	Thu,  9 Oct 2025 08:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Pe9W6XaR"
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013035.outbound.protection.outlook.com [52.101.83.35])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SeDXrVcz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5472729D292;
-	Thu,  9 Oct 2025 08:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.35
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759997636; cv=fail; b=M3j+/sq8KOI1wGYGSUyEw/IUZ7Yg+jJUT6MGsOlG7Amefn2PD3pCRjmG3Abe6d8CHB+EYVbfP4YA2eVrTXWqoLKCdMLCncnLUovvXckoKdlRCD2cXBddaG9RKkwDhOKyNectdw1pIVIRyI2HEUjCTj+rKfNaErwk6Y+MlB+u7X8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759997636; c=relaxed/simple;
-	bh=pTtw+9j8r6w3YA9+mBR5AKHTAIAg1Kdn5mGN0rmiOc0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Tsy4wbpm5qaDeAJVFDtjdKHxRyKztlQYxgCPmnBnu89AEBUYYweE/LmbTs3GmMeuNkdQtf33kl3a7aWGfZEQJCgu9uh1ms3Cq69L98SXUyjWrsr0ElFy7VOTpVgRCs2LH0JbRuA80KR3knoQkdZwQEB+yUp6i/2AsVhiwN8cVWU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Pe9W6XaR; arc=fail smtp.client-ip=52.101.83.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mNFM3KEurfGRSbEKE5BKZ2HR08TmikKVg3HRjsQN5SG5TdlL4++qjckXGr4c2Om2GbkJE9/CyMAR9pSDO7mOfuwcCG/NT6pUK0wbgEQsECaKut0P2JGC9/YwJH+DIVFXO9BrWQ42Q+650m/pDaZwq+CP8x2o0bTKDtRWFHti8sD5d5Fg9FMK1SoNXjUgXpfh+Sn9Q7CeA2dkk8H6Z0/xZ5NYtc32eV2MUNjkDG6c73o6jDAf8n7Tmj3BnXlbFhyX0RyXk/bifuGGc4VhBeFW4Xp27FtQ46yYWMOfmbQXu3Pp9RsWiBXWfPuvwgMvpBYUPUf95Ij5yrh+R8hWSwITqQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kfbzS2X1nw+QhpnLzEbGhXB7TmZKD0Gh4bW25b0Rlp0=;
- b=rY6ew29WMcmLHkB+ci65rBo7QDzQCUmndEAp647IoOEJBAT+N3tCOsQXM+6gD+lz/0EkrSKZu6FdZBQwh0a06e17rnNAen4mRMdxFzaTSZSM9w+X/WU74F06o1OKtcOdFJfmfpQukgu/DFJEFf1Mwd+NEiVyzcnOvemo4R0a3RTbBUxbOWgmQHIXQHSgav7XpJtvvKlMWjoG3zuxB+ajnUSA3LqOp8anZKc5CaNLjFS1OEIRApYClnFxTkKaKuV+x5hAZbKie+rFqqVpmTtU8cxI6euwtxzW9qU+aX4ZGdlETkDTJljzXjA33P20AQy0uZmbKVqxbDXj7Ixl0f3s5w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kfbzS2X1nw+QhpnLzEbGhXB7TmZKD0Gh4bW25b0Rlp0=;
- b=Pe9W6XaRfmoWIL/kW6kwmwo8qxyyI3f2HhHjN/kfXwwXgS9Qr84Oqn1w+4AviJBwoWtPjEIlPTmyt7t8tCoMeQoXX5r100DtJ44DJlOJF9SBqh7il+aUL6uFwkYWfz2gcsECID6Lr3qRJRSjC1G94ZH9a8tINVnvA06SAZdtRjWHxfiQlS2z6DjDh3JsWzCYuXh+Xz0T0xgF23bkPxuex1BQwaUg3LXRJQQQil3kCv75Hl8yztWS4ARL6AwyDJui7UZDkgSKa7P02XtLriu+FUa/WynVTHWKUfunvnqAKHiXpFONaU3PjrS5IQdyoabIF6AMd++1cR+ntxihZDilxQ==
-Received: from AS4PR04MB9362.eurprd04.prod.outlook.com (2603:10a6:20b:4e7::9)
- by AS8PR04MB8660.eurprd04.prod.outlook.com (2603:10a6:20b:42b::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Thu, 9 Oct
- 2025 08:13:49 +0000
-Received: from AS4PR04MB9362.eurprd04.prod.outlook.com
- ([fe80::e196:11a8:211:feaa]) by AS4PR04MB9362.eurprd04.prod.outlook.com
- ([fe80::e196:11a8:211:feaa%4]) with mapi id 15.20.9203.007; Thu, 9 Oct 2025
- 08:13:49 +0000
-From: Lakshay Piplani <lakshay.piplani@nxp.com>
-To: Conor Dooley <conor@kernel.org>
-CC: "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-	"linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pankit Garg
-	<pankit.garg@nxp.com>, Vikash Bansal <vikash.bansal@nxp.com>, Priyanka Jain
-	<priyanka.jain@nxp.com>, Shashank Rebbapragada
-	<shashank.rebbapragada@nxp.com>
-Subject: RE: [EXT] Re: [PATCH v4 1/2] dt-bindings: rtc: Add pcf85053 support
-Thread-Topic: [EXT] Re: [PATCH v4 1/2] dt-bindings: rtc: Add pcf85053 support
-Thread-Index: AQHcLH4RzEHMxRHWdEG2vrVmdCJ3xrShHtsAgBhv9oA=
-Date: Thu, 9 Oct 2025 08:13:49 +0000
-Message-ID:
- <AS4PR04MB93620F7CAD21F745B95FAF1CFBEEA@AS4PR04MB9362.eurprd04.prod.outlook.com>
-References: <20250923113441.555284-1-lakshay.piplani@nxp.com>
- <20250923-capitol-easter-d0154d967522@spud>
-In-Reply-To: <20250923-capitol-easter-d0154d967522@spud>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS4PR04MB9362:EE_|AS8PR04MB8660:EE_
-x-ms-office365-filtering-correlation-id: c217e932-2ad1-4da9-5464-08de070bc6e5
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|19092799006|1800799024|366016|38070700021;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?s81LW6t1x1zZmlRhcTbKvQewUIlDi/BcRn9M13iaMkl/p7bwkxfI0LEKCM?=
- =?iso-8859-1?Q?ongEELD5r8eQto4TlVFOZB7EvWUm4jAxz229ZGgOTX+I2tYJj7u/bXM/wk?=
- =?iso-8859-1?Q?M1umZsw/BAZO90rIl0/Swn0ARk0SdOgjxG/K+Le/8SpGaV7oHRib467IE0?=
- =?iso-8859-1?Q?QT/0hKQUMQSpT5IHfgRvwE/yUv7HVUSTC2o6so6cro6dg9Ogaebj1CKT4W?=
- =?iso-8859-1?Q?HVI8zTLv/hHaMEdMKjiEJ/PFV71xvEBnYu2guT3Jm53iwOUCI5QMDV13c5?=
- =?iso-8859-1?Q?AhqZbwYaUtNBCesxg5xi/UhgGxw+Deybu+dt7Yp8qrPlZ1CNZ0ciQL55Qh?=
- =?iso-8859-1?Q?RiP4IhurcKMkCOcCWEkK2rvA3+EbSflIrru3+HG2dCJwYOOlxXvmzhwkli?=
- =?iso-8859-1?Q?b3sWgdmK0dwikVWQZ4d9s1C4bRxffZZw7iQqcRmcF3u6ZYksxFjSC67T/0?=
- =?iso-8859-1?Q?EgfXMJooeVjE0xxsRP6REPs9mvKu5ShFNRXLZ5gIpZf/SKTIF4r41DGbJz?=
- =?iso-8859-1?Q?QudxmQ38qcMsgAzjnyXzqD6dDKtMK28XwE9LR+HrJfkdMxERGpKQNx/fY5?=
- =?iso-8859-1?Q?ehu1p6rNQu8n6dZhe94aBH1BqWbgLTDuQTzgVzfRyoMcy7SGk7q3nlgo7C?=
- =?iso-8859-1?Q?C/Sgz1KLA4YCSJNSls6D6D3HoL0bVJ/iQay8icRHFiLWQnJDyU0hIPcSNG?=
- =?iso-8859-1?Q?n75pv7Pf7Z0pTK6+zPjoQqxf3LYf1DRMj2hjepRJzh1bVeyHLY2amqdrsZ?=
- =?iso-8859-1?Q?YNeLah6L3V0ihQmRMHdxo1jd0VI47oIOHqAoNTBwa1TVPV6P2+3aPltUkX?=
- =?iso-8859-1?Q?OmHTnvt9U47es5k6O8vC52GnrwTzF7zCS2A7ADMt2P8nBAImec4CnfGU/i?=
- =?iso-8859-1?Q?cmDiclJe6ZR0Xiyl4ThYf2qtHulFnArCpGkPgTiyqL7gsAOEsFNeXWQDfl?=
- =?iso-8859-1?Q?oAwWCd9BEJyioJLc/dCNbC8CeJjKCwLCdinIOE/U31H19c7iEki7Xp34ev?=
- =?iso-8859-1?Q?+fcdvoewmpNypyvD7qtwpZnYHQUxi9At3ptv0ua8uaJCVgvw0JMJePm/Em?=
- =?iso-8859-1?Q?jrvtVfXd9xLbOYfz38tCmVJvpIloHmnEZ9q+Pgg79sfjL/CaFFOf/DzUvm?=
- =?iso-8859-1?Q?hq/V0lbhANLqOMkrpUTfwNNAV/fqbc1HDE2rh1aiXuf6S3oLoYDnU4KtGD?=
- =?iso-8859-1?Q?FBOPQQMuptweuUOJjlzZmwE1JNHf9TDj+52rtJ+zBIg1dVNFWbVxv/KrmH?=
- =?iso-8859-1?Q?OGL9P0B3uJdKYf3s9vBrInc93QKVcvFq11HbVCxq/D+7cORTGXYaexWtXl?=
- =?iso-8859-1?Q?4zogBi4L1ZmeEKEcQs1og61vhxvI5L6MJ9H0tJcmPRnXe4u4JKNN1wSU/M?=
- =?iso-8859-1?Q?oHcF94neS73DI/JiJG029PfRbELxZmQCWySCnXT8YFaXjPT0z67rjbeEmu?=
- =?iso-8859-1?Q?VveHXMS2d2nR7aUwLJk2yc5/2nx0/6jNaGMSQzn03yvybc8IO64xK6vKjL?=
- =?iso-8859-1?Q?1UPATdioII3aYYZe9Eu0k68FvAAsbf9r6BeO7LqD6UpA=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9362.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(19092799006)(1800799024)(366016)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?YbyvLpT2r7EgL8pamqts1FGJJMgIrH1U8+oZtuoZNeCwRMhL70HU+aMtJg?=
- =?iso-8859-1?Q?CrJ4ShTUMKXjRbkr6gqBlr9IcffB7yduSQz7jXRWgfV7nC53dfWqBajyfM?=
- =?iso-8859-1?Q?VIdbtBLaoFnGz62b9UJay10XzsGcyG5qnSAfP3Tv3Sjvb7VKnM2wVCpWDh?=
- =?iso-8859-1?Q?9CV8Ldd/4A4JbWuX99RIWlNdC+ekOhiZy+293XvnDmw32hY2Yx7kSNq3Xg?=
- =?iso-8859-1?Q?feMI4nuHEm5BODptLKaejp/IJmf7juhHE2I+elQgBZig60SQe3fnpi/AwM?=
- =?iso-8859-1?Q?46cCwiV7zUDUuQpteZwanwed2NKAiHUwpYaJ923xvE5wT+cxXLP1NvCF8y?=
- =?iso-8859-1?Q?av3VUmVEl3e7dzpAOhMkpxO+X3o/ZJND40SPNt0JvdxcXOyXbqzFfaYskB?=
- =?iso-8859-1?Q?th3q/RkZBorqIFmYuW2jhZk0QdZPG1G7PDGFI/apQwQNwq531bTI9sMzxW?=
- =?iso-8859-1?Q?QlWsMjewmU2KK8t39Q/BijhYWJNfViluL8s7W9WpM5dbUjR9TnTiT5nrne?=
- =?iso-8859-1?Q?OIvpbefM19gI2XiuvBeE+3Iy+hNvppD57Ard58WzbwWnaZnzkjo6hWq1ZQ?=
- =?iso-8859-1?Q?DNgozSJzghuMaOMoAEq7S2vOae+EnlzvRx4h6iF5ZPPFNvcXg/uXROlRc8?=
- =?iso-8859-1?Q?5b9jK6vkhTF8He2yjy59RJyrg4bjAlC44wKZ0UG0Eg0blLq5knjTMELsok?=
- =?iso-8859-1?Q?81VOhhJa16RbIXjKXJPhYrvgj0LKPpBrxqEUMAhLnuOvvkEaou/2EngfEh?=
- =?iso-8859-1?Q?tTG7ewgK75/dbJMRTa/7CR18HlbnOeY2pgkEM+UzsOJle+EUCfSUCkT7IP?=
- =?iso-8859-1?Q?GeKhz7crgp93Bqp/N6OrD0nVmvEjZRFNWrGWwfvnO8YPcSg2gsjZjPTLxO?=
- =?iso-8859-1?Q?JblkgktesWbB5Z4kLgdAhQP+beJDj5xXXDEfCUzSBtAlv0/HdW6JWaHp3w?=
- =?iso-8859-1?Q?87btVisC3VpwhDaGlbq7KwnW9DL21x5/IrouMwsP9/X3GcflrSX+htU8Wa?=
- =?iso-8859-1?Q?Rvraf5VpTjjPkC0PqTrAmj0rbhV0o4kRgs7ANjvrfM2+rUQS7cBX5r0aMB?=
- =?iso-8859-1?Q?G40OEmg34yLeGxFZe457Uwg5LcrFjbYRx3VhG4FkgAGDnBdW8NHoY1Q0BG?=
- =?iso-8859-1?Q?R9j8VgvHW6F8siflgTw6J5fGAMVz/lNnV+sIYw3MTPuffpu1UvnTOE/XH7?=
- =?iso-8859-1?Q?UxyKhjLcZGaNdKO6xRFnz/d9wsShy8OBz6uCs1LRsM8gU/vdTwxWwnSfIr?=
- =?iso-8859-1?Q?F/hBgrSrWpiCsPbXQoPU8SyD283739e0fxtNcQwifs+HeF/vWDfZp9kAUM?=
- =?iso-8859-1?Q?nOYK7jOlEWMAIAVHRQ0SzRCmNdQjR/nCS1oK+Q3zCXt2f86SE8gr1CYSSz?=
- =?iso-8859-1?Q?cyFbPmUj4dFzT/U9+UmMhRvZ774tiYwkZJnKEgB0WWzGu65G/BMWSrlTE5?=
- =?iso-8859-1?Q?yHvNzbsYmv6vqU5dd65XU16k92xI5YxrM43mij2OltpgWuNgFNXbt7F/I5?=
- =?iso-8859-1?Q?MewB97cnMotyPKBOb7+giYmosGJ9II5IHaMF+OblVOA9q1O5S3//l/m8Nw?=
- =?iso-8859-1?Q?uqSvdeogV6vtT7P9efcjKVFRqy6Z6noNPFR0kjUpFsjE3QnOuvJD7P1lvJ?=
- =?iso-8859-1?Q?A2l4VWtLNaQMuyXB2n5l50R95fmXOD5jTR?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 410A12750FB
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 08:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759997655; cv=none; b=EHiKNZRTBqh/oFM7O9aqkzwwWDXielRf+CZ1DYxGy/6jKI8x4njqrKEzE9p94Qil9YaYmXc8Hv/2bIT8ZfSbEkGSTNG5/4SJEb3Z5x1/1LfB3zfwP4T7wAV6LRTX8gBvNIWP/1iv8sMzsKEXbD3nTFQCu4zwm/W4Y7T2SSnw8zg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759997655; c=relaxed/simple;
+	bh=V+JAWiJg2U6kE1ohoWIw0uVFkG7IaGFYvp2AU1nrZ3A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gfT84tnBKyMPEqtmKD3ccQ7wKo/96Hdrzj91cruqDWLGLG2YJzN04F/XZpDng+MaIAlgrkY0nrP6tPxagnOBO91YuEt4LiOvZCQoEI9aqM10VBdvTLzxUgOnf80ykmWXCTs134jWbry4bkQJgx3XhoB2DA7B5dmh/lyqG2MuNE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SeDXrVcz; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759997651;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=z/B31lhY4bVYeZNnk+dMlfOVrRbTYtHHzwgcdMMaTVE=;
+	b=SeDXrVcz4weTcWna3ui4lsWu55ONqO6CjYOGEXRC33tI8pdYAmE857GAbJyi87ipf5xfeF
+	qnBwJ+cQYz78BS8FWTB98aYGunhiPFPKE140PuQpzzKW41U8QwjwuQ+j8tNLO1NYMuKFOh
+	4J0QKDJQHU7hMPb3F7LHz9y5tl0U1uA=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-204-r3Xzv2PFN2y4KSyQ63bnNA-1; Thu, 09 Oct 2025 04:14:09 -0400
+X-MC-Unique: r3Xzv2PFN2y4KSyQ63bnNA-1
+X-Mimecast-MFC-AGG-ID: r3Xzv2PFN2y4KSyQ63bnNA_1759997648
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-46e4335fa87so3775305e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 01:14:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759997648; x=1760602448;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=z/B31lhY4bVYeZNnk+dMlfOVrRbTYtHHzwgcdMMaTVE=;
+        b=bhovfXr2htVZW1J+ZbFt/NwRKWStuCwYkzUW9L0xu+aVwbtifSC/n4Ids8KdKNDCGK
+         hjKcAF7sSRbl+8lZk1Np679cpM8RKHTk8chESllWng2nSpdL1g9Hx/xSyR+uVVZAheNv
+         3ORK12Sn8dh76F0ZO4DKADViVgTGq1hYaMbgq9ZYJ2E2n7IFpX/rB6MD0Y8v00z6w8CO
+         +kF2OrkenJuONseamVEJHWxGk8AvdHWjoJmR2E/qkeqNASLqfUa1qaJqoOBwwueXmes/
+         yyebuR+v/88HMqZiQQn1TduJACuYPJSpQkSjEd5MGa42NZuUBeuIflkAuFWnZ+gezYJY
+         VR2g==
+X-Forwarded-Encrypted: i=1; AJvYcCUDbIqgq3PQDWmtGKvY+TN9AWULqUvh3qoSJPINby06zZPHHeizfUCeAss6upgfXbyb6H/dUUH/7leD2NU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3H3bD1eU1Kbb6nxf0r5+av4qkVVONhIakIaM6nuDLGV8ENshf
+	3HZZYnQWWozfK+Huq4fR1L2EBgPFzL55aewceTJIERPNmo2WvdLVR78TV5j9JT7Icj7Y8Jc2D/M
+	xMVEqmzIeZuLHGYNa6ZBbPNVscRJ6KdByxS0lUtgGMJYJcib+y1c/XHglJNBY4yRGrg==
+X-Gm-Gg: ASbGnctCaa5fLXN/vsjCq9EcJPJBLRwd/Z2oI39jOt757Fpr3akVZIXy8a8gETx149o
+	ZhfLpadL24JitLHhAQFNelN7+iv7bU4hUCiK/xTVggeoEN1hOO9n5/VeQdn69MuEvXcwLHo8z6a
+	JkJ8EP7tt4llrUFUgiuF0OSUaDl19oW6nx76K91U15qyJtPZ3ZzZl1fUdCkeeRAGgNI8UjJ41mn
+	kYz3JRvPSW+58YQuXACyyKgBEgdCmJrfiytxCJkoGnh6CxYWIavOxpIiTssmYtvlhwx8g/zzCWH
+	s9oDo+2C2gmsSitTaC4c8JSp4cLN3qEfLJyARGWF8DWRBcM5sM/dmACo3F9158HSn5Cir1t6f5d
+	fX2H+FgkM
+X-Received: by 2002:a05:600c:4750:b0:45f:28d2:bd38 with SMTP id 5b1f17b1804b1-46fa9af3095mr47092935e9.18.1759997648105;
+        Thu, 09 Oct 2025 01:14:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGo93r/upxlN0XWroa/gVbVuSE1HI9H4cBHGhOGnkYv+FuHkp7MlpzQ4ByJt+h+2JF6rzGBiQ==
+X-Received: by 2002:a05:600c:4750:b0:45f:28d2:bd38 with SMTP id 5b1f17b1804b1-46fa9af3095mr47092215e9.18.1759997647608;
+        Thu, 09 Oct 2025 01:14:07 -0700 (PDT)
+Received: from [192.168.3.141] (tmo-083-189.customers.d1-online.com. [80.187.83.189])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fa9d6fb41sm71628175e9.17.2025.10.09.01.14.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Oct 2025 01:14:07 -0700 (PDT)
+Message-ID: <9361c75a-ab37-4d7f-8680-9833430d93d4@redhat.com>
+Date: Thu, 9 Oct 2025 10:14:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9362.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c217e932-2ad1-4da9-5464-08de070bc6e5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Oct 2025 08:13:49.5685
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: r8NO01zahcqpW443zFnyn/CaRwK2PCZv3/kygKixtseXGI+gn16CjCZAnklQ4FEybwYEYnt1hU5/lS/OZfHaSA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8660
+User-Agent: Mozilla Thunderbird
+Subject: Re: (bisected) [PATCH v2 08/37] mm/hugetlb: check for unreasonable
+ folio sizes when registering hstate
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+ linux-kernel@vger.kernel.org
+Cc: Zi Yan <ziy@nvidia.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Alexander Potapenko <glider@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
+ Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ iommu@lists.linux.dev, io-uring@vger.kernel.org,
+ Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
+ Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
+ kasan-dev@googlegroups.com, kvm@vger.kernel.org,
+ Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
+ linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+ linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-scsi@vger.kernel.org, Marco Elver <elver@google.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Muchun Song <muchun.song@linux.dev>,
+ netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
+ Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
+ virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
+ wireguard@lists.zx2c4.com, x86@kernel.org,
+ "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+References: <20250901150359.867252-1-david@redhat.com>
+ <20250901150359.867252-9-david@redhat.com>
+ <3e043453-3f27-48ad-b987-cc39f523060a@csgroup.eu>
+ <d3fc12d4-0b59-4b1f-bb5c-13189a01e13d@redhat.com>
+ <faf62f20-8844-42a0-a7a7-846d8ead0622@csgroup.eu>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <faf62f20-8844-42a0-a7a7-846d8ead0622@csgroup.eu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+On 09.10.25 10:04, Christophe Leroy wrote:
+> 
+> 
+> Le 09/10/2025 à 09:22, David Hildenbrand a écrit :
+>> On 09.10.25 09:14, Christophe Leroy wrote:
+>>> Hi David,
+>>>
+>>> Le 01/09/2025 à 17:03, David Hildenbrand a écrit :
+>>>> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+>>>> index 1e777cc51ad04..d3542e92a712e 100644
+>>>> --- a/mm/hugetlb.c
+>>>> +++ b/mm/hugetlb.c
+>>>> @@ -4657,6 +4657,7 @@ static int __init hugetlb_init(void)
+>>>>         BUILD_BUG_ON(sizeof_field(struct page, private) * BITS_PER_BYTE <
+>>>>                 __NR_HPAGEFLAGS);
+>>>> +    BUILD_BUG_ON_INVALID(HUGETLB_PAGE_ORDER > MAX_FOLIO_ORDER);
+>>>>         if (!hugepages_supported()) {
+>>>>             if (hugetlb_max_hstate || default_hstate_max_huge_pages)
+>>>> @@ -4740,6 +4741,7 @@ void __init hugetlb_add_hstate(unsigned int order)
+>>>>         }
+>>>>         BUG_ON(hugetlb_max_hstate >= HUGE_MAX_HSTATE);
+>>>>         BUG_ON(order < order_base_2(__NR_USED_SUBPAGE));
+>>>> +    WARN_ON(order > MAX_FOLIO_ORDER);
+>>>>         h = &hstates[hugetlb_max_hstate++];
+>>>>         __mutex_init(&h->resize_lock, "resize mutex", &h->resize_key);
+>>>>         h->order = order;
+>>
+>> We end up registering hugetlb folios that are bigger than
+>> MAX_FOLIO_ORDER. So we have to figure out how a config can trigger that
+>> (and if we have to support that).
+>>
+> 
+> MAX_FOLIO_ORDER is defined as:
+> 
+> #ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE
+> #define MAX_FOLIO_ORDER		PUD_ORDER
+> #else
+> #define MAX_FOLIO_ORDER		MAX_PAGE_ORDER
+> #endif
+> 
+> MAX_PAGE_ORDER is the limit for dynamic creation of hugepages via
+> /sys/kernel/mm/hugepages/ but bigger pages can be created at boottime
+> with kernel boot parameters without CONFIG_ARCH_HAS_GIGANTIC_PAGE:
+> 
+>     hugepagesz=64m hugepages=1 hugepagesz=256m hugepages=1
+> 
+> Gives:
+> 
+> HugeTLB: registered 1.00 GiB page size, pre-allocated 0 pages
+> HugeTLB: 0 KiB vmemmap can be freed for a 1.00 GiB page
+> HugeTLB: registered 64.0 MiB page size, pre-allocated 1 pages
+> HugeTLB: 0 KiB vmemmap can be freed for a 64.0 MiB page
+> HugeTLB: registered 256 MiB page size, pre-allocated 1 pages
+> HugeTLB: 0 KiB vmemmap can be freed for a 256 MiB page
+> HugeTLB: registered 4.00 MiB page size, pre-allocated 0 pages
+> HugeTLB: 0 KiB vmemmap can be freed for a 4.00 MiB page
+> HugeTLB: registered 16.0 MiB page size, pre-allocated 0 pages
+> HugeTLB: 0 KiB vmemmap can be freed for a 16.0 MiB page
 
-> -----Original Message-----
-> From: Conor Dooley <conor@kernel.org>
-> Sent: Wednesday, September 24, 2025 12:28 AM
-> To: Lakshay Piplani <lakshay.piplani@nxp.com>
-> Cc: alexandre.belloni@bootlin.com; linux-rtc@vger.kernel.org; linux-
-> kernel@vger.kernel.org; robh@kernel.org; krzk+dt@kernel.org;
-> conor+dt@kernel.org; devicetree@vger.kernel.org; Pankit Garg
-> <pankit.garg@nxp.com>; Vikash Bansal <vikash.bansal@nxp.com>; Priyanka
-> Jain <priyanka.jain@nxp.com>; Shashank Rebbapragada
-> <shashank.rebbapragada@nxp.com>
-> Subject: [EXT] Re: [PATCH v4 1/2] dt-bindings: rtc: Add pcf85053 support
->=20
-> On Tue, Sep 23, 2025 at 05:04:40PM +0530, Lakshay Piplani wrote:
-> > Add device tree bindings for NXP PCF85053 RTC chip.
-> >
-> > Signed-off-by: Pankit Garg <pankit.garg@nxp.com>
-> > Signed-off-by: Lakshay Piplani <lakshay.piplani@nxp.com>
-> > ---
-> > V3 -> V4: Add dedicated nxp,pcf85053.yaml.
-> >           Remove entry from trivial-rtc.yaml.
-> > V2 -> V3: Moved MAINTAINERS file changes to the driver patch
-> > V1 -> V2: Handled dt-bindings by trivial-rtc.yaml
-> >
-> >  .../devicetree/bindings/rtc/nxp,pcf85053.yaml | 128
-> > ++++++++++++++++++
-> >  1 file changed, 128 insertions(+)
-> >  create mode 100644
-> > Documentation/devicetree/bindings/rtc/nxp,pcf85053.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/rtc/nxp,pcf85053.yaml
-> > b/Documentation/devicetree/bindings/rtc/nxp,pcf85053.yaml
-> > new file mode 100644
-> > index 000000000000..6b1c97358486
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/rtc/nxp,pcf85053.yaml
-> > @@ -0,0 +1,128 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) # Copyright
-> > +2025 NXP %YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/rtc/nxp,pcf85053.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: NXP PCF85053 Real Time Clock
-> > +
-> > +maintainers:
-> > +  - Pankit Garg <pankit.garg@nxp.com>
-> > +  - Lakshay Piplani <lakshay.piplani@nxp.com>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - nxp,pcf85053
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +
-> > +  nxp,interface:
-> > +    $ref: /schemas/types.yaml#/definitions/string
-> > +    enum: [ primary, secondary ]
-> > +    description: |
-> > +      Identifies this host's logical role in a multi-host topology for=
- the
-> > +      PCF85053 RTC. The device exposes a "TWO" ownership bit in the CT=
-RL
-> > +      register that gates which host may write time/alarm registers.
-> > +        - "primary": Designated host that *may* claim write ownership =
-(set
-> > +          CTRL.TWO=3D1) **if** write-access is explicitly requested.
-> > +        - "secondary": Peer host that writes only when CTRL.TWO=3D0 (d=
-efault).
-> > +
-> > +  nxp,write-access:
-> > +    type: boolean
-> > +    description: |
-> > +      Request the driver to claim write ownership at probe time by set=
-ting
-> > +      CTRL.TWO=3D1. This property is only valid when nxp,interface=3D"=
-primary".
-> > +      The driver will not modify any other CTRL bits (HF/DM/etc.) and =
-will
-> not
-> > +      clear any status/interrupt flags at probe.
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - nxp,interface
-> > +
-> > +additionalProperties: false
-> > +
-> > +# Schema constraints matching driver:
-> > +# 1) If nxp,write-access is present, nxp,interface must be "primary".
-> > +#    Rationale: only the primary may claim ownership; driver will set
-> TWO=3D1.
-> > +# 2) If nxp,interface is "secondary", nxp,write-access must not be pre=
-sent.
-> > +#    Rationale: secondary never claims ownership and cannot write
-> CTRL/ST/alarm.
-> > +#
-> > +# Practical effect:
-> > +# - Primary without 'nxp,write-access'; primary is read only; secondar=
-y
-> may
-> > +#   write time registers.
-> > +# - Primary with 'nxp,write-access'; primary owns writes, secondary is=
- read
-> only.
-> > +allOf:
-> > +  - $ref: rtc.yaml#
-> > +  - oneOf:
-> > +      # Case 1: primary with write-access
-> > +      - required: [ "nxp,write-access" ]
-> > +        properties:
-> > +          nxp,interface:
-> > +            const: primary
-> > +
-> > +      # Case 2: primary without write-access
-> > +      - properties:
-> > +          nxp,interface:
-> > +            const: primary
-> > +        not:
-> > +          required: [ "nxp,write-access" ]
->=20
-> Aren't case 1 and case 2 here redundant? All you need to do is block inte=
-rface
-> =3D=3D secondary when nxp,write-access is present, which your case
-> 3 should be able to be modified to do via
->=20
-> if:
->   properties:
->     nxp,interface:
->       const: secondary
-> then:
->   properties:
->    nxp,write-access: false
->=20
-> I think your description for nxp,write-access gets the point across about=
- when
-> it can be used, and the additional commentary is not really helpful.
->=20
-Thanks for reviewing the patch.
+I think it's a violation of CONFIG_ARCH_HAS_GIGANTIC_PAGE. The existing 
+folio_dump() code would not handle it correctly as well.
 
-We kept both cases: primary with write-access and primary without write-acc=
-ess, because the hardware=20
-supports three different ways it can be used, and we want to show that clea=
-rly in the bindings:
-=20
-Primary with nxp,write-access: primary host can write to the device.
-Primary without nxp,write-access - primary host is read-only, and the secon=
-dary host can write.
-Secondary - default role, with write access; when no primary host is claimi=
-ng it.
-=20
-Even though both case 1 and 2 use nxp,interface =3D "primary", they behave =
-differently.
-Keeping both cases separate makes it easier to understand whether Primary h=
-ost can write or not.
+See how snapshot_page() uses MAX_FOLIO_NR_PAGES.
 
-> > +
-> > +      # Case 3: secondary (must not have write-access)
-> > +      - properties:
-> > +          nxp,interface:
-> > +            const: secondary
-> > +        not:
-> > +          required: [ "nxp,write-access" ]
-> > +
-> > +examples:
-> > +  # Single host example.
-> > +  - |
-> > +    #include <dt-bindings/interrupt-controller/irq.h>
-> > +    i2c {
-> > +      #address-cells =3D <1>;
-> > +      #size-cells =3D <0>;
-> > +
-> > +      rtc@6f {
-> > +        compatible =3D "nxp,pcf85053";
-> > +        reg =3D <0x6f>;
-> > +        nxp,interface =3D "primary";
-> > +        nxp,write-access;
-> > +        interrupt-parent =3D <&gpio2>;
-> > +        interrupts =3D <3 IRQ_TYPE_EDGE_FALLING>;
-> > +      };
-> > +    };
-> > +
-> > +  # Dual-host example: one primary that claims writes; one secondary t=
-hat
-> never claims writes.
-> > +  - |
-> > +    #include <dt-bindings/interrupt-controller/irq.h>
-> > +    i2c0 {
-> > +      #address-cells =3D <1>;
-> > +      #size-cells =3D <0>;
-> > +
-> > +      rtc@6f {
-> > +        compatible =3D "nxp,pcf85053";
-> > +        reg =3D <0x6f>;
-> > +        nxp,interface =3D "primary";
-> > +        nxp,write-access;
-> > +        interrupt-parent =3D <&gpio2>;
-> > +        interrupts =3D <3 IRQ_TYPE_EDGE_FALLING>;
-> > +      };
-> > +    };
-> > +
-> > +    i2c1 {
-> > +      #address-cells =3D <1>;
-> > +      #size-cells =3D <0>;
-> > +
-> > +      rtc@6f {
-> > +        compatible =3D "nxp,pcf85053";
-> > +        reg =3D <0x6f>;
-> > +        nxp,interface =3D "secondary";
->=20
-> Maybe a silly question, but if you have a system that wants to have two p=
-airs
-> of RTCs, how would you determine which primary a secondary belongs to? I
-> notice you have no link between these devices in dt so I am curious. Woul=
-d it
-> be better to eschew nxp,interface and have a phandle from the secondary t=
-o
-> the primary?
->=20
-> I don't know anything about your use case or features, so maybe knowing t=
-he
-> relationship just is not relevant at all, or it can be determined at runt=
-ime.
->=20
-> Cheers,
-> Conor.
+-- 
+Cheers
 
-This device can connect to two independent hosts via separate I=B2C buses.=
-=20
-Each host sees the same hardware instance through its own I=B2C address. Th=
-e nxp,interface
-property simply declares the host's role, so the driver knows whether to at=
-tempt write
-access or not.
+David / dhildenb
 
-Thanks
-Lakshay
 
