@@ -1,64 +1,61 @@
-Return-Path: <linux-kernel+bounces-847135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8158FBCA01A
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 18:10:25 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0AE8BCA050
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 18:11:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5E78B4FD671
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 16:06:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 45B8B4FF43B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 16:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD3C2EDD63;
-	Thu,  9 Oct 2025 15:59:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1712FABFF;
+	Thu,  9 Oct 2025 15:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E/xFlAvx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aswWDgk+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2418229B18;
-	Thu,  9 Oct 2025 15:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EDA3226CF7;
+	Thu,  9 Oct 2025 15:59:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760025556; cv=none; b=ZpeUZQ5q3fsTOQ3ZUkmIgmuU9C/kOZwJPJwHLdb0owTRiX1I9ByniykLQeAhZ2WhbmeEjDDFzDuT+AghQYD/wrEGiaHmoZ28qyhuk+ilp4XL5oCMaVYewX7Xkfk/I0Dd6hbJGzx8ppC8BIL5A5FCgpGfGh4DsUweLsETnC7bPd8=
+	t=1760025573; cv=none; b=QTiBVmfps5gpLf40gWkj2M+eMNw3Ve/uo2tDk2b1NUQtpZsqmXgchKA3826pQnfBtr0Pcbrud6+wK9e13Up9AgyGDsRlAovgR4O9+e6H/lfaCHhPneSVVSGyOBEkNhds0RmjrHu+JIN9Wx3I1BLGX4LOQ2tgdd2Ih9FqLvo/nZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760025556; c=relaxed/simple;
-	bh=lNQnHAsxUtANRW3ozb1ZTyH7qL2Wmh9+WYA8WvvuQto=;
+	s=arc-20240116; t=1760025573; c=relaxed/simple;
+	bh=V8rolBw0oQaz2sAdlVgAzCyo+rSvP44j/wQMeNC0iLM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F0AZx/mBf9XlinWxTU7gc+d9q2xqnCUX6jbFOlv2czV/uVa3gAedETfzmzEOXbdXmNOW4mdbegaRu5caiMZ1NdU0FOrDUT9M6eBa2CXoQeldqoKzKhZB/x7wuA5VVAMEj2E/Ir7Hfg9qZZh1Citk1/S68LPfWcfB5SObyw5YaDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E/xFlAvx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B74F3C4CEF8;
-	Thu,  9 Oct 2025 15:59:14 +0000 (UTC)
+	 MIME-Version:Content-Type; b=iocFy4S5TJmeFrhP6NptE+jd2aJSy2izNJLH2hed6iY52n4omDbfJa5KqpSo7SZC0TUA70CT0YMVhFDuXFoxqw6FP87SkMk+0tvO6A8loIBnpeEN6AQU8LhUqtYqYH36GQ6UVJbxiGTM420q72aA5hcgJPZYRjKSXq7plv87RPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aswWDgk+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37FA6C4CEE7;
+	Thu,  9 Oct 2025 15:59:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760025556;
-	bh=lNQnHAsxUtANRW3ozb1ZTyH7qL2Wmh9+WYA8WvvuQto=;
+	s=k20201202; t=1760025573;
+	bh=V8rolBw0oQaz2sAdlVgAzCyo+rSvP44j/wQMeNC0iLM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=E/xFlAvxv2rs71Kcn1NvRM79NveaPjIFaf0OOpk0QD+hj7Zi22tV3di55P26QPxM4
-	 70HCZtlD4bxCdWLkcj4aJjtW3Ggq0aKxFUTHTjXY9sAfQrS8CAADWYVH6sAFcGV/YC
-	 YmJuSUa9I64Dxr4YcwydpQP+U44oLNXhO7tvG5lBen/Ie4P1slX4wZk3bElG7qDSnH
-	 GY/XDCdYhmDXvEclA/GnwVO0/lgWtrlmgCMhWFXO8MTI6OvBk+emauO9iKYMwYCQBh
-	 gs2EoQx5P2an42NdmCtUBzX4BmAj/mV+YpEho3GezxZWryzOFVcXnOIS7WqLf3XToH
-	 IG4enfqzBk8RQ==
+	b=aswWDgk+nhsEA/lezNNhWy0Km+hZLsa+ETAGomK70KElKU5crm+egpLawgdNcaQMv
+	 AH+plrYd0NUfagqbB63Dc03J+wxyifDWk18kT8t6criwU5tmvHOtUs1SFfz9rQEJxr
+	 b9man+mn9GWGq9Yg18oCJ658SP/abFAoEJh+ZKb4QD0jZIkXEMt1KdYgcHqJvCu1Ru
+	 JPG1sLeonn0Y6LRuBAkA0Sc1oHK16n+i9oifjgSIgGllP8XWRji39MWqT+IpjAbw4j
+	 8gk+NiDlsfIL57Gt4szreJ1CzZY1FSSXNT39c4IFFSTpcQedLu2FtFsoHQcHHXefiu
+	 wGsrDYy98nCrw==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
+Cc: Dennis Beier <nanovim@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
 	Sasha Levin <sashal@kernel.org>,
-	peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mhiramat@kernel.org,
-	linux-perf-users@vger.kernel.org,
+	rafael@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	linux-pm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.17-5.4] uprobe: Do not emulate/sstep original instruction when ip is changed
-Date: Thu,  9 Oct 2025 11:55:11 -0400
-Message-ID: <20251009155752.773732-45-sashal@kernel.org>
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH AUTOSEL 6.17-5.4] cpufreq/longhaul: handle NULL policy in longhaul_exit
+Date: Thu,  9 Oct 2025 11:55:20 -0400
+Message-ID: <20251009155752.773732-54-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251009155752.773732-1-sashal@kernel.org>
 References: <20251009155752.773732-1-sashal@kernel.org>
@@ -74,131 +71,180 @@ X-stable-base: Linux 6.17.1
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Dennis Beier <nanovim@gmail.com>
 
-[ Upstream commit 4363264111e1297fa37aa39b0598faa19298ecca ]
+[ Upstream commit 592532a77b736b5153e0c2e4c74aa50af0a352ab ]
 
-If uprobe handler changes instruction pointer we still execute single
-step) or emulate the original instruction and increment the (new) ip
-with its length.
+longhaul_exit() was calling cpufreq_cpu_get(0) without checking
+for a NULL policy pointer. On some systems, this could lead to a
+NULL dereference and a kernel warning or panic.
 
-This makes the new instruction pointer bogus and application will
-likely crash on illegal instruction execution.
+This patch adds a check using unlikely() and returns early if the
+policy is NULL.
 
-If user decided to take execution elsewhere, it makes little sense
-to execute the original instruction, so let's skip it.
+Bugzilla: #219962
 
-Acked-by: Oleg Nesterov <oleg@redhat.com>
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Link: https://lore.kernel.org/r/20250916215301.664963-3-jolsa@kernel.org
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Dennis Beier <nanovim@gmail.com>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-YES
+**Backport Status: YES**
 
-Summary
-- This is a small, well-scoped bug fix in the generic uprobes core that
-  prevents executing or emulating the original instruction when a uprobe
-  consumer handler has redirected the instruction pointer (IP). The
-  previous behavior could corrupt the new IP and crash the traced
-  application. The change is minimal (7 lines), does not add features,
-  and aligns with expected semantics. It is suitable for stable
-  backport.
+## Comprehensive Analysis
 
-What changed
-- In `handle_swbp()`, after running consumer handlers, the patch adds an
-  early exit if the handler changed IP away from the breakpoint address:
-  - New check added: `kernel/events/uprobes.c:2772`
-  - Surrounding context:
-    - Handler invocation: `kernel/events/uprobes.c:2769`
-    - Emulation/single-step path: `kernel/events/uprobes.c:2778` (arch
-      emulation) and `kernel/events/uprobes.c:2781` (XOL single-step
-      prep).
-- The key addition is:
-  - `kernel/events/uprobes.c:2772`: `if (instruction_pointer(regs) !=
-    bp_vaddr) goto out;`
+### Executive Summary
+This commit fixes a **critical NULL pointer dereference bug** in the
+longhaul cpufreq driver that has existed since 2014. The fix is a
+minimal defensive check that prevents kernel crashes when unloading the
+module. This is an **excellent candidate for stable backporting**.
 
-Why the bug happens
-- Before this change, `handle_swbp()` always proceeded to emulate
-  (`arch_uprobe_skip_sstep`) or to prepare out-of-line single-step
-  (`pre_ssout`) of the original instruction even if the handler altered
-  IP. On x86 and other arches, instruction emulation/step advances IP by
-  the probed instruction’s length; doing that after a handler-set new IP
-  advances the wrong address, making the IP bogus and often leading to
-  SIGILL.
-  - Where emulation executes: `kernel/events/uprobes.c:2778`
-  - Where XOL single-step is prepared: `kernel/events/uprobes.c:2781`
-- The patch fixes this by skipping the emulate/sstep path if IP was
-  changed by the handler, which is the correct intent when a handler
-  redirects control flow.
+### Bug Analysis
 
-Evidence in current/mainline and in stable
-- This exact fix is present in mainline commit 4363264111e12 (“uprobe:
-  Do not emulate/sstep original instruction when ip is changed”) and
-  adds only the early-out check in `handle_swbp()` (see
-  `kernel/events/uprobes.c:2769`–`2785` in the current tree).
-- Affected stable trees (e.g., 6.1/6.6/6.10/6.17) lack this check and
-  will incorrectly emulate/step even after IP changes. In your 6.17
-  workspace, `handle_swbp()` calls `handler_chain()` and then proceeds
-  directly to emulation/step without guarding against an IP change:
-  - Handler call: `kernel/events/uprobes.c:2742`
-  - Emulation call: `kernel/events/uprobes.c:2744`
-  - Single-step prep: `kernel/events/uprobes.c:2747`
+#### Root Cause
+The bug was introduced in **commit 7aa0557fae5ce (2014)** when Srivatsa
+S. Bhat added code to `longhaul_exit()` that directly dereferences the
+policy pointer at **line 960**:
 
-Risk and side effects
-- Scope: Single function (`handle_swbp()`), 7 insertions, no API or
-  architectural change.
-- Behavior change: Only when a handler changes IP; in that case, we skip
-  executing the original instruction. This matches handler intent and
-  prevents crashes.
-- Concurrency/locking: The check reads `instruction_pointer(regs)` and
-  compares to `bp_vaddr` under the same conditions as the rest of the
-  function; no new locking or ordering requirements.
-- Cross-arch impact: Safe and correct. All arches’
-  `arch_uprobe_skip_sstep()` implementations emulate or adjust IP
-  assuming execution should continue at the original site; skipping this
-  when IP was redirected avoids incorrect behavior.
-- No dependency on unrelated features (e.g., the
-  `arch_uprobe_optimize()` call that exists in some newer trees is not
-  part of this change and isn’t required for correctness).
+```c
+freqs.old = policy->cur;  // NULL dereference if policy is NULL!
+```
 
-Stable tree criteria
-- Fixes a user-visible crash-causing bug in uprobes
-  (tracing/instrumentation).
-- Minimal, contained change with clear intent and low regression risk.
-- No new features or ABI changes.
-- Acked by maintainers and merged into mainline.
+This code assumes `cpufreq_cpu_get(0)` always returns a valid pointer,
+but that's not guaranteed.
 
-Conclusion
-- This is a clear, low-risk bug fix preventing incorrect
-  emulation/single-step after handlers redirect IP. It should be
-  backported to stable kernels.
+#### When NULL Can Be Returned
+Based on my analysis of `cpufreq_cpu_get()` in
+**drivers/cpufreq/cpufreq.c:226-242**:
 
- kernel/events/uprobes.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+1. **No cpufreq driver registered** (`cpufreq_driver` is NULL)
+2. **No policy exists for CPU 0** (`cpufreq_cpu_get_raw()` returns NULL)
+3. **Invalid CPU number** (though unlikely for CPU 0)
 
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 7ca1940607bd8..2b32c32bcb776 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -2741,6 +2741,13 @@ static void handle_swbp(struct pt_regs *regs)
- 
- 	handler_chain(uprobe, regs);
- 
-+	/*
-+	 * If user decided to take execution elsewhere, it makes little sense
-+	 * to execute the original instruction, so let's skip it.
-+	 */
-+	if (instruction_pointer(regs) != bp_vaddr)
-+		goto out;
+In the module exit path, this can occur if:
+- The driver registration partially failed
+- The cpufreq core removed the policy due to runtime errors
+- Race conditions during module unload
+
+#### Impact
+Without this fix, calling `policy->cur` at line 960 causes:
+- **NULL pointer dereference** → immediate kernel crash
+- **Kernel warning or panic** as documented in the commit message
+- Additionally, `cpufreq_cpu_put(policy)` at line 971 would also crash
+  since it calls `kobject_put(&policy->kobj)` without NULL checking
+
+### Code Changes Analysis
+
+The fix adds exactly **3 lines** at drivers/cpufreq/longhaul.c:956-958:
+
+```c
++       if (unlikely(!policy))
++               return;
 +
- 	if (arch_uprobe_skip_sstep(&uprobe->arch, regs))
- 		goto out;
+```
+
+**Analysis of the fix:**
+1. **Minimal and surgical** - Only adds a defensive NULL check
+2. **Uses `unlikely()`** - Correctly hints to compiler this is an error
+   path
+3. **Early return pattern** - Clean exit without side effects
+4. **No functional change** when policy is valid - Zero impact on normal
+   operation
+
+### Pattern Consistency
+
+My research found that **many other cpufreq drivers already implement
+this exact pattern**:
+
+- **drivers/cpufreq/tegra186-cpufreq.c:113**: `if (!policy)`
+- **drivers/cpufreq/amd-pstate-ut.c:126**: `if (!policy)`
+- **drivers/cpufreq/s5pv210-cpufreq.c:561**: `if (!policy)`
+- **drivers/cpufreq/mediatek-cpufreq-hw.c:64**: `if (!policy)`
+- **drivers/cpufreq/powernv-cpufreq.c:900,933**: `if (!cpu_policy)` /
+  `if (!policy)`
+- **drivers/cpufreq/apple-soc-cpufreq.c:143**: `if (unlikely(!policy))`
+- **drivers/cpufreq/scmi-cpufreq.c:46**: `if (unlikely(!policy))`
+
+The longhaul driver was an **outlier** - it should have had this check
+all along.
+
+### Historical Context
+
+The vulnerable code path was created across two commits:
+- **2013 (b43a7ffbf33be7)**: Viresh Kumar added `cpufreq_cpu_get(0)`
+  without NULL check
+- **2014 (7aa0557fae5ce2)**: Srivatsa S. Bhat added `policy->cur`
+  dereference, making the bug exploitable
+
+The bug has existed for **~11 years** across **33 commits** to this
+file. The longhaul driver targets legacy VIA processors, which explains
+why this wasn't caught earlier - limited hardware deployment.
+
+### Backport Suitability Assessment
+
+**Criteria Analysis:**
+
+1. ✅ **Fixes a bug affecting users** - YES: Prevents kernel crashes
+2. ✅ **Small and contained** - YES: Only 3 lines added
+3. ✅ **Clear side effects** - NO unwanted side effects; purely defensive
+4. ✅ **No architectural changes** - NO: Simple NULL check only
+5. ✅ **Not touching critical subsystems** - Only affects longhaul driver
+6. ⚠️ **Explicit stable mention** - NO Cc: stable tag, but should have
+   one
+7. ✅ **Follows stable rules** - YES: Important bugfix, minimal risk
+
+**Risk Assessment:**
+- **Regression risk**: **VERY LOW** - The check only triggers on error
+  paths
+- **Testing impact**: Minimal - Only affects VIA C5/C6 processors
+- **Code complexity**: Trivial - Standard NULL pointer check
+- **Dependency risk**: None - Self-contained change
+
+### Recommendations
+
+1. **BACKPORT to all stable trees** where commit 7aa0557fae5ce2 exists
+   (v3.15+)
+2. **Priority**: MEDIUM-HIGH (fixes crashes, but affects legacy
+   hardware)
+3. **Add Fixes tag**: Should reference `Fixes: 7aa0557fae5ce ("cpufreq:
+   longhaul: Fix double invocation...")`
+4. **Add Cc: stable** tag in backport
+
+### Conclusion
+
+This is a **textbook example** of a good stable backport candidate:
+- Fixes a real crash bug
+- Minimal code change with zero regression risk
+- Follows established kernel patterns
+- No architectural or functional changes
+- Self-contained to a single driver
+
+The only reason this hasn't caused more reports is the limited
+deployment of VIA C5/C6 processors. However, for users with this
+hardware, this bug can cause **immediate kernel crashes** on module
+unload, making it a significant reliability issue.
+
+**STRONGLY RECOMMEND: YES for stable backport**
+
+ drivers/cpufreq/longhaul.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/cpufreq/longhaul.c b/drivers/cpufreq/longhaul.c
+index ba0e08c8486a6..49e76b44468aa 100644
+--- a/drivers/cpufreq/longhaul.c
++++ b/drivers/cpufreq/longhaul.c
+@@ -953,6 +953,9 @@ static void __exit longhaul_exit(void)
+ 	struct cpufreq_policy *policy = cpufreq_cpu_get(0);
+ 	int i;
  
++	if (unlikely(!policy))
++		return;
++
+ 	for (i = 0; i < numscales; i++) {
+ 		if (mults[i] == maxmult) {
+ 			struct cpufreq_freqs freqs;
 -- 
 2.51.0
 
