@@ -1,157 +1,106 @@
-Return-Path: <linux-kernel+bounces-846872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BE0BBC94C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:29:28 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E1EFBC94DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:30:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ABA114E5BB5
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:29:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 483A14E8EAF
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A8B2E8B7F;
-	Thu,  9 Oct 2025 13:29:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40B2472625;
+	Thu,  9 Oct 2025 13:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ged5pxMR"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LgQorJjI"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8267F2E2280
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:29:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F722E62C5;
+	Thu,  9 Oct 2025 13:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760016561; cv=none; b=CoX1tMzPsJtYvw6beeeOv1o+dEN0IUQPqt1L5irPXPI4S6URc/H1xQ2QpHKXPhYFf33tMiuqA/pht+896fGygiiridCTvf9oLEDBjhTODd73xmw55T+qQ+CWAOxqeCgXNIsc0rNwEaIO3QNSCwFuT0lpJ5P5ke3z5z5rsOk7Oko=
+	t=1760016618; cv=none; b=JQPGBk8erZgsmDXAG2G3ld3iMwwlGysVDLCkOonUr73fng6WEuIHBQlny7MkbiRlQBQC3Js9fmaOryO+lnCDGMa4qKUeMTFkjufKW6xkrgVIybF509hsI/2B+A7+zr7ni5sa2K5ttam/BCRo8/7EyjJPYiIWIONx3uZH9Ssekac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760016561; c=relaxed/simple;
-	bh=F04HxWzDm/pjovjMWYNweIL92Azt+kQc7Q1+4Lm96So=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=mUYjmWu48HFds3wTjzzGokmp1P/e+wyR3Lu3y75rdeI05OY6uxfmD1EHnhMyLS79D0Buh8I+DpFWGpXGZV574svPwqkbyPDXYvI4RFZTDATSc9gvmNIMy2fNq3GDdFR0t6LEna4LhxedRJ+xYN8fzaNIWv3FSAAnwrttrwjdCyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ged5pxMR; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-780fdbbdd20so1340633b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 06:29:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760016559; x=1760621359; darn=vger.kernel.org;
-        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=czSuGa3Xrx5+Hnp2HdUeEuGq/5HbxJTVy8tEzAMc4TI=;
-        b=ged5pxMRO9fixIY5x+mf6Ld+SjRbMXamm05Wwh07KmSfj00xmrPAUmEJpI64CrX8EG
-         GCw9c6wPmK7SUNoXbN2xnwYdHg93Akx+McnzvS9k4gz8gFcNuXjUfuf1mm50yaSR13av
-         ZenYf5nYotYq7m093O8dM4k6h20XRf967DQtxTlVuYSU8VTo+hpHx7tRJnpq8lu6gmPs
-         wyigNjxAoHfMON6XE++2PQUkl0wL1I09CKsmOwOJVp1w+/Z/iK7wzdXHorJNU3s2CrW8
-         4wn6B9/vo+sFnqYJ2BzvhEN2ZCVKdZDSrzZ0iRGZtpIwgWYFUX6y707tSlt/rFW4RMrT
-         e/PA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760016559; x=1760621359;
-        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=czSuGa3Xrx5+Hnp2HdUeEuGq/5HbxJTVy8tEzAMc4TI=;
-        b=DHUiR06uTsTL/Zlv4SwKO3ma/UuBorTTPjp1Xg8WeLd9QE/QCAqGkFRqhRTe+yq7DR
-         2NsSMEL3Vr83IbmjP89B7DWcab4FS12iMSE2/qKWbzebPQy2lIqfRzbQEUVxv1HV0//K
-         auM5oR2PlgapupWhofCvjI1JGsL4+Wbz5hudybZRbVVwsJVWzeJnBUZL9+KtrcjgOqNW
-         VegTCM1xe9a1puoG/hFgHXM95WwxwPYNR97weVM4HLbHji5UKdHS1Np2ttgvUrFVYmlv
-         M/Pbo1klAcPUhRyYllgUY+hvzZwa4AwBx6W33oeKvGSaif9myF/d507qCO474kVwn+8c
-         kcvg==
-X-Forwarded-Encrypted: i=1; AJvYcCUp3tKv7yQN3eekxR1DWyvziOwHO4tgoDVeN9ueBhLWDctCOUzX/uEGD3dQgTazC9+32SS/8XbLvcXmdl8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKs7bUi2zgtQ5eRuxgXDHC/O6OAyOkl8OS7jHnsH8xQBfArVLD
-	+XDvbVO1SMYcccaOCtCM6bCJWtdMqrCDfRh66/7f2LZTPwB4VZgS+43DFERGsUAsnlVbGD0qM+D
-	pkzyu95BFRQ==
-X-Google-Smtp-Source: AGHT+IHfxqv166X4AUPtM/17tlCxKQ3yjpMASPUTxGYK8qeTy43As53cuJcW6JVnrubxiY9FmqCIlEi281mW
-X-Received: from pjblt3.prod.google.com ([2002:a17:90b:3543:b0:33b:51fe:1a7e])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:6a0b:b0:2ee:e2ea:7a23
- with SMTP id adf61e73a8af0-32da85103f1mr10724900637.46.1760016558758; Thu, 09
- Oct 2025 06:29:18 -0700 (PDT)
-Date: Thu,  9 Oct 2025 06:29:11 -0700
+	s=arc-20240116; t=1760016618; c=relaxed/simple;
+	bh=hlfDrzZ4vQCNg2o/4wFzb/lT3BMxHUYVrByGrDbetes=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=N+ci6X/8y9CeeFWpN3U+4mS5golesGdZppNtVruKogNHEVdTtz0DCSwOhFuCMBNUAR/xNI1Ub1b62BpmNSXut54zXoqiGsoscO1++4ED3H30wjUcmHuWwk2VIfM2sTMh9PqsEIDRnwArOtFzjQAXaC+WRBfy4ImIiRbkAaqGwak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LgQorJjI; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1760016604;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tDbZw4EkKYByMngi5LsLiYm57ZTPBi4akhsxsRB/1tg=;
+	b=LgQorJjId+FUsLqkSr3f4CIiuB+kBhFpT4Ebdxf0RCiNMd+UfkpPO0vRAnBAq5u7L24Lvy
+	S7E5pszTaHZ94b3igvWNd37B2TMuFc/T12pxGyiLwVQd8Yl16L5xdJyO6W4ty+FhnYzvR7
+	VRS4gMxUxW+Yp5ZmCS3jHYPoRwE2vq0=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.710.ga91ca5db03-goog
-Message-ID: <20251009132912.141116-1-irogers@google.com>
-Subject: [PATCH v3] perf bpf_counter: Fix opening of "any"(-1) CPU events
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Tengda Wu <wutengda@huaweicloud.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH] KEYS: encrypted: Use designated initializers for
+ match_table_t structs
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <9e7488652ab73d7c5c2f93ea3c68253a9f08cd82.camel@HansenPartnership.com>
+Date: Thu, 9 Oct 2025 15:30:00 +0200
+Cc: Mimi Zohar <zohar@linux.ibm.com>,
+ David Howells <dhowells@redhat.com>,
+ Jarkko Sakkinen <jarkko@kernel.org>,
+ Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>,
+ linux-integrity@vger.kernel.org,
+ keyrings@vger.kernel.org,
+ linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <93D80E9A-7CBC-40D1-BC21-7BC2BB465AC4@linux.dev>
+References: <20251009115817.368170-2-thorsten.blum@linux.dev>
+ <9e7488652ab73d7c5c2f93ea3c68253a9f08cd82.camel@HansenPartnership.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>
+X-Migadu-Flow: FLOW_OUT
 
-The bperf BPF counter code doesn't handle "any"(-1) CPU events, always
-wanting to aggregate a count against a CPU, which avoids the need for
-atomics so let's not change that. Force evsels used for BPF counters
-to require a CPU when not in system-wide mode so that the "any"(-1)
-value isn't used during map propagation and evsel's CPU map matches
-that of the PMU.
+On 9. Oct 2025, at 14:44, James Bottomley wrote:
+> On Thu, 2025-10-09 at 13:58 +0200, Thorsten Blum wrote:
+>> Use designated initializers for 'key_format_tokens' and 'key_tokens'
+>> to allow struct fields to be reordered more easily
+> 
+> How does it improve that?  The key,value pairs are surrounded by braces
+> so we just cut and paste the lot anyway.
 
-Fixes: b91917c0c6fa ("perf bpf_counter: Fix handling of cpumap fixing hybrid")
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/builtin-stat.c     | 13 +++++++++++++
- tools/perf/util/bpf_counter.c |  7 ++++++-
- 2 files changed, 19 insertions(+), 1 deletion(-)
+Using designated initializers (especially for global structs) allows the
+fields of struct match_token from linux/parser.h to be reordered or
+extended more easily, improving overall maintainability.
 
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 7006f848f87a..f1c9d6c94fc5 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -2540,6 +2540,7 @@ int cmd_stat(int argc, const char **argv)
- 	unsigned int interval, timeout;
- 	const char * const stat_subcommands[] = { "record", "report" };
- 	char errbuf[BUFSIZ];
-+	struct evsel *counter;
- 
- 	setlocale(LC_ALL, "");
- 
-@@ -2797,6 +2798,18 @@ int cmd_stat(int argc, const char **argv)
- 
- 	evlist__warn_user_requested_cpus(evsel_list, target.cpu_list);
- 
-+	evlist__for_each_entry(evsel_list, counter) {
-+		/*
-+		 * Setup BPF counters to require CPUs as any(-1) isn't
-+		 * supported. evlist__create_maps below will propagate this
-+		 * information to the evsels. Note, evsel__is_bperf isn't yet
-+		 * set up, and this change must happen early, so directly use
-+		 * the bpf_counter variable and target information.
-+		 */
-+		if ((counter->bpf_counter || target.use_bpf) && !target__has_cpu(&target))
-+			counter->core.requires_cpu = true;
-+	}
-+
- 	if (evlist__create_maps(evsel_list, &target) < 0) {
- 		if (target__has_task(&target)) {
- 			pr_err("Problems finding threads of monitor\n");
-diff --git a/tools/perf/util/bpf_counter.c b/tools/perf/util/bpf_counter.c
-index ca5d01b9017d..a5882b582205 100644
---- a/tools/perf/util/bpf_counter.c
-+++ b/tools/perf/util/bpf_counter.c
-@@ -460,6 +460,7 @@ static int bperf_reload_leader_program(struct evsel *evsel, int attr_map_fd,
- 	struct bperf_leader_bpf *skel = bperf_leader_bpf__open();
- 	int link_fd, diff_map_fd, err;
- 	struct bpf_link *link = NULL;
-+	struct perf_thread_map *threads;
- 
- 	if (!skel) {
- 		pr_err("Failed to open leader skeleton\n");
-@@ -495,7 +496,11 @@ static int bperf_reload_leader_program(struct evsel *evsel, int attr_map_fd,
- 	 * following evsel__open_per_cpu call
- 	 */
- 	evsel->leader_skel = skel;
--	evsel__open(evsel, evsel->core.cpus, evsel->core.threads);
-+	assert(!perf_cpu_map__has_any_cpu_or_is_empty(evsel->core.cpus));
-+	/* Always open system wide. */
-+	threads = thread_map__new_by_tid(-1);
-+	evsel__open(evsel, evsel->core.cpus, threads);
-+	perf_thread_map__put(threads);
- 
- out:
- 	bperf_leader_bpf__destroy(skel);
--- 
-2.51.0.710.ga91ca5db03-goog
+>> and to improve readability.
+> 
+> I don't think I agree with this when looking through the code,
+> especially because this is the way it's done for *every* option in the
+> entire key subsystem.  So firstly I really don't think it's helpful for
+> only encrypted keys to be different from everything else and secondly
+> when I read the code (as I often do to figure out what the options
+> mean), the additional .token and .pattern just get in the way of what
+> I'm looking for.
+
+I just stumbled upon this and didn't check any other files.
+
+I do think it helps with readability, especially for people unfamiliar
+with the code. With designated initializers, it's clear what each value
+represents without having to look up the definition of 'match_token' in
+linux/parser.h.
+
+Thanks,
+Thorsten
 
 
