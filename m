@@ -1,190 +1,126 @@
-Return-Path: <linux-kernel+bounces-846319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71B75BC78E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 08:42:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EBB1BC78F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 08:47:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1ABDE4F2568
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 06:42:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47E753E6177
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 06:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC822BE648;
-	Thu,  9 Oct 2025 06:42:09 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 565532C3277;
+	Thu,  9 Oct 2025 06:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="IpcilbrT"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5997B2AD16;
-	Thu,  9 Oct 2025 06:42:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E782848A0
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 06:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759992128; cv=none; b=T3nCeXvov/C7Dvu2QM2v/KRZwhrXyCAKyDEovFM4dft6YqBQrqXx/zRVuxycnC8s6j1bgCcbYxvLBJQEzWvcmmMIEJt5D44Q2nuA+a9tK5SOQHRwh10SM+5CWDAzAc9pGA/Y+fI/kb+zDXnCjP35ZiU24IgX+RnNL0ejU6dZKlA=
+	t=1759992451; cv=none; b=XlAoGrHtBiRrXriYEBH4WKh3rPhczV5BLVEDfiZ50x7cyjMmB6+ya58vVJVJC7bCOuWBSEFBorqLzqaJlzgQxkCAf2mrjRC/alErQo8StRiOVYuyOWBHvxZzKPkE9bp2DmDYpnoCWBo89dx/tOqYD+J4qSMNwnCwL8I+ObfGH0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759992128; c=relaxed/simple;
-	bh=s+a/xCuOVLTKCHopUjAF0LLm7jKEXv9Xm59IVrJKNg8=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=TB3/RWFkD15oPNSQwYlZEFnjOF92AFnXBB2Riu6/Cc310DL+pWr3oABVzf6a0FjKaBoBjauLxXR484ty3gkIs9XX4OLzsLH3aYif926eFOVYc3g/RPPM+sIz4je9+vlyD+uutCrWkhsRVjyyHunekYbE7ntt0vwEJwLkA4YWiCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cj0dp02xszKHMLd;
-	Thu,  9 Oct 2025 14:41:34 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 739201A156D;
-	Thu,  9 Oct 2025 14:42:02 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgAn6mE4Wedoxqc1CQ--.40502S3;
-	Thu, 09 Oct 2025 14:42:02 +0800 (CST)
-Subject: Re: [PATCH 3/7] blk-mq: add a new queue sysfs attribute async_depth
-To: Yu Kuai <yukuai1@huaweicloud.com>, Yu Kuai <hailan@yukuai.org.cn>,
- Nilay Shroff <nilay@linux.ibm.com>, axboe@kernel.dk, bvanassche@acm.org,
- ming.lei@redhat.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250930071111.1218494-1-yukuai1@huaweicloud.com>
- <20250930071111.1218494-4-yukuai1@huaweicloud.com>
- <91799590-15cd-437d-900f-8bc372f7298b@linux.ibm.com>
- <f7fd8fa3-6368-48c1-93b2-942d9d0f75c7@yukuai.org.cn>
- <1b55e01b-64bc-94d9-c0cc-9850b9ee6582@huaweicloud.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <cfefdf5c-984f-1505-be15-0cc9e79df31b@huaweicloud.com>
-Date: Thu, 9 Oct 2025 14:42:00 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1759992451; c=relaxed/simple;
+	bh=mfZ9IwMPosLthjEdYwEjtzA3SfovaP/AyucpLKx9p3I=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=c6L37KmnrNBks1hgC7OCZMoPiwZP1O1/egh8eRZmaT5Qi+TWpYk4ubXkZX/tDoyg3rydzluSu4gwR8svHWUPLIKI3exBBgEN3RjnLic85fH0U+5fhCUgF4slxFDmQlpCDDHhlJnV2hIQZAsbe5zvmCNxkzfyLPrCs4WPizPMulE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=IpcilbrT; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-46e33cec8edso375245e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 23:47:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1759992448; x=1760597248; darn=vger.kernel.org;
+        h=in-reply-to:references:to:cc:subject:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4kX/2DcwJULxUzQnKC5hadF3mFu3a5RnnRgumV8iiFk=;
+        b=IpcilbrTGVgAzt2x9SaoibJai8ig5MzpI9+rZgGlpDWBP92DINa42KRmtn93BhiitN
+         RSqq1ER2PEYZdt0Le5snXHcoMKbJQA5VZ9WhZU0L+67r0zWOJGBEQJ+zaAPvboK7KCGU
+         OgQqxoL46qxGRNHpn+41hXnCTQ8//2Z42rWEymJeKld3KjTMnuM6/uBH4AwzCm/3WP7l
+         BfpFwBAs1jUgiJvotf99PfYD8gGUc/TJJI2V7GwYravvQ45ZHKOy4ai5KrOBXUwRqsNJ
+         hLXIUBryPe/aWmy8DcmUDPuVa5+87YIStQKQmS5c+4r6HyMVslC+llvBQRv6t5OV4aQS
+         gLvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759992448; x=1760597248;
+        h=in-reply-to:references:to:cc:subject:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=4kX/2DcwJULxUzQnKC5hadF3mFu3a5RnnRgumV8iiFk=;
+        b=np8ndZtNRLV9v17Btc7MUM0iWstNXwDshcd3+H5KMyXc5HGG1uMw1MsGkZuEJTRbdd
+         WJEikOIT4+r9+tWO2lxKM6A0OSwRYUKrs9uWgDEDk6pE6r5fjTxvY5S/eU7n5P255wUb
+         HS1lGMDLcWlbhu93YvIGkVIAbeU+tn59nK6JpcQ5N5oFMP5A3Sk7RHmaYBtixyLrt0eJ
+         SfMmK+z4v0si+tx4J+litia1IDh/V76IrHze+CyilTH1Ocgv/MLDvSZMHYhsm0ENhASq
+         WQOtu3kl1aX7jWOrf3CJqnJsP8jtp9EkFiCGvTRgl6LPFInD1P2mPE9toWgbwDZ6Fynp
+         EfHw==
+X-Forwarded-Encrypted: i=1; AJvYcCX9QzZB2ND8XB+g0SRDlnbtd9O2YM0TM4RRvtMPO0PWpemxVFFLxLiygD0JYCVHPvbM2VMkhDdKIjn/CsA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBeZa6SP17i/glFSrWYGkF0mYekmuEfBYenrxfqLwroUMsuETf
+	CcLIn0ckhZn3Kx0yZKb4zaARjVpMotgvmE3W8V353mgbK6CWy6hrFkA35A4ZKYr9Ayc=
+X-Gm-Gg: ASbGncssS6KLoiW+njHixcwzsFnGc3AjT89tD6trkhl3/2DWHD1VofD0OJsXP52lcTw
+	/0XLb0WI2qGwNH7hSrFkz2xywz0zsDGHslGXQh9Ud8KDkygnfTzj7qlSFSnbYf7rOD0L/pIKGeo
+	TRcWZXV8o7GvWHATgffFhOMf2s2JrEe6POFRYHC2Jx2F2KbNxdMLf+dXxM0IcTKErtcXf8O1/ct
+	GZKeiE6Am70x2w/LWAUdHynagNtb/RiHBN+8n55X5K+Xcqml/6CaxgbE9Ut3NVkW3crxl8+pTo3
+	lP7m6TmM0/1YZJlc5mS+UqJV+X3B6eRKMb//BW72itoLDDScsURyYqRDzOVu/L5KqSv/0TEwlji
+	5HIgjTWl9KmBJ799eC6vvKDbRStyyqBEK9lJ7PyCHYZj0nLvE
+X-Google-Smtp-Source: AGHT+IERhG2czUcI/1bkhsjABOhRhpIpLRnFW9gDFTFnSV/gvPy8JtCf/9GIOjxDAvwaj+T5F6mmJw==
+X-Received: by 2002:a05:600c:4707:b0:46e:4292:769b with SMTP id 5b1f17b1804b1-46fa9af990bmr23672735e9.4.1759992448349;
+        Wed, 08 Oct 2025 23:47:28 -0700 (PDT)
+Received: from localhost ([193.86.240.59])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4255d8e97f0sm32843535f8f.27.2025.10.08.23.47.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 23:47:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <1b55e01b-64bc-94d9-c0cc-9850b9ee6582@huaweicloud.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAn6mE4Wedoxqc1CQ--.40502S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxZr1kCFy8Wr1DXF1UKF17ZFb_yoW5tF1fpw
-	4kJFWYkrWUWr1Igr1Sqw1UZryrtr4xKw17JF13JF13JryDKr12gF1rXr1jgr97Zr48AF4U
-	Jrn8X3sxuF1DtrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 09 Oct 2025 08:47:27 +0200
+Message-Id: <DDDL94HT7HYF.3VU2WQYU4WZY5@ventanamicro.com>
+From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
+Subject: Re: [PATCH v4 3/3] RISC-V: Add support for srmcfg CSR from Ssqosid
+ ext
+Cc: "Paul Walmsley" <paul.walmsley@sifive.com>, "Palmer Dabbelt"
+ <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, "Alexandre
+ Ghiti" <alex@ghiti.fr>, "Conor Dooley" <conor@kernel.org>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, =?utf-8?q?Kornel_Dul=C4=99ba?=
+ <mindal@semihalf.com>, "Adrien Ricciardi" <aricciardi@baylibre.com>, "James
+ Morse" <james.morse@arm.com>, "Atish Kumar Patra" <atishp@rivosinc.com>,
+ "Atish Patra" <atish.patra@linux.dev>, "Vasudevan Srinivasan"
+ <vasu@rivosinc.com>, "Conor Dooley" <conor.dooley@microchip.com>,
+ <guo.wenjia23@zte.com.cn>, <liu.qingtao2@zte.com.cn>,
+ <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, "linux-riscv"
+ <linux-riscv-bounces@lists.infradead.org>
+To: "Drew Fustini" <fustini@kernel.org>
+References: <20251007-ssqosid-v4-0-e8b57e59d812@kernel.org>
+ <20251007-ssqosid-v4-3-e8b57e59d812@kernel.org>
+In-Reply-To: <20251007-ssqosid-v4-3-e8b57e59d812@kernel.org>
 
-Hi,
+2025-10-07T23:21:12-07:00, Drew Fustini <fustini@kernel.org>:
+> diff --git a/arch/riscv/include/asm/qos.h b/arch/riscv/include/asm/qos.h
+> +static inline void __switch_to_srmcfg(struct task_struct *next)
+> +{
+> +	u32 *cpu_srmcfg_ptr =3D this_cpu_ptr(&cpu_srmcfg);
+> +	u32 thread_srmcfg;
+> +
+> +	thread_srmcfg =3D READ_ONCE(next->thread.srmcfg);
+> +
+> +	if (thread_srmcfg !=3D *cpu_srmcfg_ptr) {
 
-在 2025/10/09 8:48, Yu Kuai 写道:
-> Hi,
-> 
-> 在 2025/10/06 9:57, Yu Kuai 写道:
->> Hi,
->>
->> 在 2025/10/2 23:10, Nilay Shroff 写道:
->>>
->>> On 9/30/25 12:41 PM, Yu Kuai wrote:
->>>> From: Yu Kuai <yukuai3@huawei.com>
->>>>
->>>> Add a new field async_depth to request_queue and related APIs, this is
->>>> currently not used, following patches will convert elevators to use
->>>> this instead of internal async_depth.
->>>>
->>>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
->>>> ---
->>>>   block/blk-core.c       |  1 +
->>>>   block/blk-mq.c         |  4 ++++
->>>>   block/blk-sysfs.c      | 47 
->>>> ++++++++++++++++++++++++++++++++++++++++++
->>>>   block/elevator.c       |  1 +
->>>>   include/linux/blkdev.h |  1 +
->>>>   5 files changed, 54 insertions(+)
->>>>
->>>> diff --git a/block/blk-core.c b/block/blk-core.c
->>>> index dd39ff651095..76df70cfc103 100644
->>>> --- a/block/blk-core.c
->>>> +++ b/block/blk-core.c
->>>> @@ -463,6 +463,7 @@ struct request_queue *blk_alloc_queue(struct 
->>>> queue_limits *lim, int node_id)
->>>>       fs_reclaim_release(GFP_KERNEL);
->>>>       q->nr_requests = BLKDEV_DEFAULT_RQ;
->>>> +    q->async_depth = BLKDEV_DEFAULT_RQ;
->>>>       return q;
->>>> diff --git a/block/blk-mq.c b/block/blk-mq.c
->>>> index 09f579414161..260e54fa48f0 100644
->>>> --- a/block/blk-mq.c
->>>> +++ b/block/blk-mq.c
->>>> @@ -529,6 +529,8 @@ static struct request 
->>>> *__blk_mq_alloc_requests(struct blk_mq_alloc_data *data)
->>>>               data->rq_flags |= RQF_USE_SCHED;
->>>>               if (ops->limit_depth)
->>>>                   ops->limit_depth(data->cmd_flags, data);
->>>> +            else if (!blk_mq_sched_sync_request(data->cmd_flags))
->>>> +                data->shallow_depth = q->async_depth;
->>>>           }
->>> In the subsequent patches, I saw that ->limit_depth is still used for 
->>> the
->>> BFQ scheduler. Given that, it seems more consistent to also retain 
->>> ->limit_depth
->>> for the mq-deadline and Kyber schedulers, and set data->shallow_depth 
->>> within their
->>> respective ->limit_depth methods. If we take this approach, the 
->>> additional
->>> blk_mq_sched_sync_request() check above becomes unnecessary.
->>>
->>> So IMO:
->>> - Keep ->limit_depth for all schedulers (bfq, mq-deadline, kyber).
->>> - Remove the extra blk_mq_sched_sync_request() check from the core code.
->>
->> I was thinking to save a function call for deadline and kyber, 
->> however, I don't
->> have preference here and I can do this in the next version.
-> 
-> How abount following, I feel this is better while cooking the new
-> version. Consider only bfq have specail handling for async request.
-> 
-> static void blk_mq_sched_limit_async_depth(struct blk_mq_alloc_data *data)
-> {
->      if (blk_mq_sched_sync_request(data->cmd_flags))
->          return;
-> 
->      data->shallow_depth = q->async_depth;
->      if (ops->limit_async_depth)
->          ops->limit_async_depth(data);
-> }
-> 
+Wouldn't prev->thread.srmcfg have the value of CSR_SRMCFG when executing
+switch_to?
 
-Just realize I forgot that bfq can limit sync requests as well due to
-bfq cgroup policy, so this is not good.
+Thanks.
 
-Please ignore this :)
-
-Thanks,
-Kuai
-
-> Thanks,
-> Kuai
-> 
->>
->> Thanks,
->> Kuai
->>
->>> Thanks,
->>> --Nilay
->>>
->> .
->>
-> 
-> .
-> 
-
+> +		*cpu_srmcfg_ptr =3D thread_srmcfg;
+> +		csr_write(CSR_SRMCFG, thread_srmcfg);
+> +	}
+> +}
 
