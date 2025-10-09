@@ -1,121 +1,91 @@
-Return-Path: <linux-kernel+bounces-846332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66169BC7998
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:01:50 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FE8BBC79A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:02:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C4003B8DC6
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:01:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 373E94F51CE
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:02:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D0362BE7AF;
-	Thu,  9 Oct 2025 07:01:41 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CBA2C0F6E;
+	Thu,  9 Oct 2025 07:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WBaT4VqF"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44441B423B;
-	Thu,  9 Oct 2025 07:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803581F151C;
+	Thu,  9 Oct 2025 07:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759993301; cv=none; b=IBLYUSJ3H0ROCuPMICcs2HmicRsoGCEapfJXxjzI9c9MTK9kVKXRCbsj9gJSqU3FCpMBSLSFmx5TW3zo9k3aCCNNse2KXyrv3tgL3pZBecTOdGsu4+Wf7KMXOs6ExhhOnljvSIRU0zCwiiVLIsiYV8Zg+NZVgUprQfTF8tw65zM=
+	t=1759993341; cv=none; b=Q8io+y6kMXTXmE6Yl5eEdgT4rTiBxESyhVai0/pS8HPBSwYU7uhO4FezmeFr6yEaJfaV8Uzp2q3rbQqxEg9a8AAPywlyEphe8wnjY7SM+bo4bH/INuASv0y5O1GmjlcnujufipjJ/blbzgh+Oo0PiIc8beBfL15lwebFH2aDYyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759993301; c=relaxed/simple;
-	bh=wyXto7zF5l8jpzborrAqVA8LX2KMVMDyUHOgy1rr0Kg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gXM22a3srWRGuYo+llSMtTIL36HijYHyHrFc3+jEVndkVICsn53AKAB78JMQDWTmbO8BqPRKufc7EhQ1MgbwbjeMaEq+TYMr7zKyBmuBqoDnC4b0/SvuB8bFqnI2Rj0szXfw05v4+2T2rVWyWFJe0QvAa5+1xlFddIhpYypEBdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.5] (ip5f5af0f4.dynamic.kabel-deutschland.de [95.90.240.244])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id F3D5D6028F350;
-	Thu, 09 Oct 2025 09:01:18 +0200 (CEST)
-Message-ID: <572c2a33-18dd-4bf0-8c41-e051d75f481b@molgen.mpg.de>
-Date: Thu, 9 Oct 2025 09:01:18 +0200
+	s=arc-20240116; t=1759993341; c=relaxed/simple;
+	bh=tvYLvDIBb3D303eQ6KXixRkOCxS6SBhi1y+E7dgsZjU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a/jPxCKm9nYWaWGGvVWgEl/W+DFFzI2ye4rkMtQAtf2ZH83FgLtV3ju1IWdqUtDf7kmd/sKN0uAHyMYJumAsKvWrEtxuMJwbwsGciBdjPtXWHm+KcrOjwUQtDxXTPXXGmVGcIXSmLj9qmoUaWZyAcIOffMsKW4ufEJmW1gqmvZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WBaT4VqF; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=tvYLvDIBb3D303eQ6KXixRkOCxS6SBhi1y+E7dgsZjU=; b=WBaT4VqF0KMSU3YMU58QP5Bn3z
+	xQ6JqzyO427EMlxrPHeLN/qRgrc/vKL7a87trCT4g+wIEHDF63CKcdFqUfzqXbp6VWXeQrwvRVrNE
+	DnvMtI6VKv0wJcxOa6ZCEH7O5xooDmgLJELxgAqtW+Ho2DQMxDGvp2agPelh47rpjCObmTizjwgfe
+	2nQSt0M3tEl/IHn23qcJ+TJ0ZsJECPM812nZp6VxdNlL0Dj/YrIFCImqWqw+gEUaSo9Jy1uhZAw7y
+	IitWIVIzrbz35f0V6hzS7NWZeFru5L9ZJ0DyUFWi0p1PC0oDzMr1+6H/q726fWBse42Oto5j3pHyL
+	grv+IQXA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v6kf8-00000002ykY-0j1O;
+	Thu, 09 Oct 2025 07:02:07 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 612A3300400; Thu, 09 Oct 2025 09:02:06 +0200 (CEST)
+Date: Thu, 9 Oct 2025 09:02:06 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Finn Thain <fthain@linux-m68k.org>, Will Deacon <will@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+	Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-arch <linux-arch@vger.kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-m68k@vger.kernel.org, Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	bpf <bpf@vger.kernel.org>
+Subject: Re: [RFC v3 2/5] bpf: Explicitly align bpf_res_spin_lock
+Message-ID: <20251009070206.GA4067720@noisy.programming.kicks-ass.net>
+References: <cover.1759875560.git.fthain@linux-m68k.org>
+ <807cfee43bbcb34cdc6452b083ccdc754344d624.1759875560.git.fthain@linux-m68k.org>
+ <CAADnVQLOQq5m3yN4hqqrx4n1hagY73rV03d7g5Wm9OwVwR_0fA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] Bluetooth: bfusb: Fix buffer over-read in rx
- processing loop
-To: Seungjin Bae <eeodqql09@gmail.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
- Kyungtae Kim <Kyungtae.Kim@dartmouth.edu>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>, linux-kernel@vger.kernel.org,
- linux-bluetooth@vger.kernel.org
-References: <77bde79f-2080-4e40-a013-52b480c0928c@molgen.mpg.de>
- <20251009025701.3756598-2-eeodqql09@gmail.com>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20251009025701.3756598-2-eeodqql09@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAADnVQLOQq5m3yN4hqqrx4n1hagY73rV03d7g5Wm9OwVwR_0fA@mail.gmail.com>
 
-Dear Seungjin,
+On Wed, Oct 08, 2025 at 07:10:13PM -0700, Alexei Starovoitov wrote:
 
+> Are you saying 'int' on m68k is not 4 byte aligned by default,
+> so you have to force 4 byte align?
 
-Thank you for the patch.
-
-Am 09.10.25 um 04:57 schrieb pip-izony:
-> From: Seungjin Bae <eeodqql09@gmail.com>
-> 
-> The bfusb_rx_complete() function parses incoming URB data in a while loop.
-> The logic does not sufficiently validate the remaining buffer size(count)
-> across loop iterations, which can lead to a buffer over-read.
-> 
-> For example, with 4-bytes remaining buffer, if the first iteration takes
-> the `hdr & 0x4000` branch, 2-bytes are consumed. On the next iteration,
-> only 2-bytes remain, but the else branch is trying to access the third
-> byte(buf[2]). This causes an out-of-bounds read and a potential kernel
-> panic.
-> 
-> This patch fixes the vulnerability by adding checks to ensure enough
-> data remains in the buffer before it is accessed.
-> 
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Signed-off-by: Seungjin Bae <eeodqql09@gmail.com>
-> ---
->   v1 -> v2: Fixing the error function name
->   v2 -> v3: Addressing feedback from Paul Menzel
-> 
->   drivers/bluetooth/bfusb.c | 6 ++++++
->   1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/bluetooth/bfusb.c b/drivers/bluetooth/bfusb.c
-> index 8df310983bf6..90ca5ab2acc3 100644
-> --- a/drivers/bluetooth/bfusb.c
-> +++ b/drivers/bluetooth/bfusb.c
-> @@ -360,6 +360,12 @@ static void bfusb_rx_complete(struct urb *urb)
->   			count -= 2;
->   			buf   += 2;
->   		} else {
-> +			if (count < 3) {
-> +				bt_dev_err(data->hdev,
-> +				       "block header is too short (count=%d, expected=3)",
-
-Why not: block header count %d < 3 (too short)
-
-> +				       count);
-> +				break;
-> +			}
->   			len = (buf[2] == 0) ? 256 : buf[2];
->   			count -= 3;
->   			buf   += 3;
-
-Either way:
-
-Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
-
-
-Kind regards,
-
-Paul
+This; m68k has u16 alignment, just to keep life interesting I suppose
+:-)
 
