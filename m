@@ -1,122 +1,152 @@
-Return-Path: <linux-kernel+bounces-847359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBCD5BCA9D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 20:53:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 250A7BCA9DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 20:53:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E54221A63F2E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 18:54:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 705934EC3EA
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 18:53:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A0E2512C8;
-	Thu,  9 Oct 2025 18:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D80702512FC;
+	Thu,  9 Oct 2025 18:53:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QdN63dL5"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B935624DFF3
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 18:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="tKCjmXIf"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABAEB21FF38;
+	Thu,  9 Oct 2025 18:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760036017; cv=none; b=ZbBsaPB/yp1R+0euHsodkXqhrRnMbms1WzTeQyLjNy7X2O0l9ufOrlMD7Tg5LJWwUlXpRO83711RsqEa7HiSlgiNQphS527Q9JNZ7ftN66NQP793xuhnV89pAjbM850vqZ3YzyJq6AFKf/+6dXR5UEpHTnWWyKjuO/d9MZmjztA=
+	t=1760036023; cv=none; b=D/QNq4Dz0pNkY67EIS7npu2qO25Jc0cmHu8mU85WqC2gCOS1UiYygqw0wYTGxQJxVg/jYR7JVyu8X5Q6vhdBtFz9XuXtNb9g46aQNKnpZymD2oMoUULpcroJxd/xstdNjFBG6+5ze9MvIVGY0ISy5kfo5+0BFM5km9rXuPcve0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760036017; c=relaxed/simple;
-	bh=1ac/fLFPsYRuSpEkij40k5Zmt1ThI8YAweN99K6QAss=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RCyV0x6VR9ECrWxMaRnL+EXBfhMjQDpjjgLzRQGvSJrPaUuCD3KkQ6OiZJq/m/7xNxKI5FxD7FbWOULJSXENvkoapJciaTd7hYGIB/Q1VHKPj1DnqsFUA/udpE9BBeYcFF9Na9M/qKPrqvxI2GWLDjmRz8GjRsT6PrZYhgGDhlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QdN63dL5; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-32ed19ce5a3so1256600a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 11:53:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760036015; x=1760640815; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B1Uzp5iLkP5Bv1fIK+1rV8CxjLbvYcFDDKRV4JvrlmM=;
-        b=QdN63dL5wPR0n/taPwv6oeKB/ueChxEfKvcz40tSBsgCljMJM0rR+/jxWX7mN0Ygbp
-         Y/FPUkFD0K1zBzk94PAG6RderRkAi7iQ3Tcb/11j4m6tP+hkzIBFEdibDKEmJy61C/Fm
-         xdatRxXMp79ahOMDpc9syoqlFYRR3UHLXsSTl7DTbiYLUFWdAobkOj1zz7Qd8l68LZET
-         4eoyqi9Zxz56lKVoHe9NLpYhtqjCcjfMGJ22buKmK/ZbIN5OsFhYjQmSrLzFzte4d02Y
-         ibgRvuVhS9ZKOtJldFa6jICte/nE8EUk2EKCrjuiRExC5iC0rzaQxda5gkdfoMjQxkwa
-         goZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760036015; x=1760640815;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B1Uzp5iLkP5Bv1fIK+1rV8CxjLbvYcFDDKRV4JvrlmM=;
-        b=ppG37FjqJBb/Nm2+gRsb7TCJsetVdgnsUhspCcYAW04jzO7kv7wO/NC3vI/3y0Z8Bu
-         sy76iQMSzeCypXEybNVPpt7jgcdTij3Ad6JFV0Pu/wKNXfPrZpm/qlCigYYIF/79iJUL
-         yVV32cdBQTS/GlVEQvz9ky5Ay/prACAgEfWh2C5JNJs+XQKYcgWDotAims+vEr+eWIWw
-         0Ezd6ZlCmpMNyiULyN9lyaB0horUBdcxZa4iLbYYkDdYV6HPfO8Flmi144R0RvA0OWNV
-         ShHleKUj1WGT9BsJsjmRyrN/uyzHtpuDQSM90HHwHf4wAAez+uacUGxCFszsGX4gd8xR
-         oU0w==
-X-Forwarded-Encrypted: i=1; AJvYcCVS+TMo8xgMYDc/qTUJM0znHnbCVSQuPqHsiebZiH6SgTRrCafT3+mgQIn/XK8ZNRl2YAnesBH2foIT5JQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRROVq7w0j6T+2uvNcGhUKt9uRiPdSopWv9Ysw4APwZPh+F/ug
-	qur2HT1J7todoKkDjQyZMieE1XZgBGZoNol1JCauUr5tPAlAJNLaXqAWgersuwWX0+VzeMA7QCz
-	vM9Nb0Kvzv7bhKWQD0WtLO3iBU9k5sTVfBw==
-X-Gm-Gg: ASbGncu43lH2igEwWQQa0GcbmrpsUIN+eNW/FYCiCkVbeJBf0J3DXOlPxkQHpur3ePZ
-	CmktXHIFU9AgM3g3VOHoWVgr7ucPwb1WS0HOVyK57HZydnAII9F1eeN4/8JtR07BFrtshuC237L
-	noYvipI/w00/9Pp+Dxrz5d1pOpwihkLc2v/XPW1OenR4ncfIdBKAQlWMSLzJC+OTCfTggzH7z9y
-	3o3B7qGxqowxssCSe7KfJh5hFoV+r0=
-X-Google-Smtp-Source: AGHT+IEr6xYml/4oPWWPBOYMdsJawHFJTDIUl5AA78sk0QeeIlMy3jRJkuZ6KGVkF1uxh5CG/9S2tm6wzcvo7HYhJS4=
-X-Received: by 2002:a17:90b:1648:b0:32d:f352:f764 with SMTP id
- 98e67ed59e1d1-33b51105d58mr10655063a91.2.1760036015068; Thu, 09 Oct 2025
- 11:53:35 -0700 (PDT)
+	s=arc-20240116; t=1760036023; c=relaxed/simple;
+	bh=ahKsEBsebIAvxVEpnkpdGbJQSre6pnqocFTciVXlNVY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=OqPF0iO7RJ3lX7BpMJCYp7FeGnWfgor9yGwjZD5Fo95FuGnPho3qDIDH/QPT9TFv1Pd/2aWgaqr543f2XLKi1TuWTdWn5xJwN6RtBIeeXBekkn9jmGgIXVbJYsWmyRPhpyHGMbM4sTL8JtVMNt7sg7efHhNLoP36nhIjRrSpVNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=tKCjmXIf; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.64.193.78] (unknown [52.148.171.5])
+	by linux.microsoft.com (Postfix) with ESMTPSA id B3B672038B77;
+	Thu,  9 Oct 2025 11:53:40 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B3B672038B77
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1760036020;
+	bh=VmxKPO+i5KTsorZ+pMnJ55Bwhxr8Xq+S/RT8s6iZC3Y=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=tKCjmXIfvIIljj0G5qLBAQXiawr5IkJ/VrgzdjM4W0PjAGiAmqj3+pND4DVUBmzpv
+	 mVuGhSD+lgnJej3DV7Q948H+zzs+AkfS/UviVn9aAGsv4mHKljdub9XMJr29b12cWd
+	 0wS0ZHh0gV60zQz0LjFCITzG/UvvDLmEQzpF1i7s=
+Message-ID: <2768abf3-6974-49e6-9ea2-5e5e04f533a7@linux.microsoft.com>
+Date: Thu, 9 Oct 2025 11:53:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251001215643.31465-1-casey@schaufler-ca.com> <20251001215643.31465-3-casey@schaufler-ca.com>
-In-Reply-To: <20251001215643.31465-3-casey@schaufler-ca.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Thu, 9 Oct 2025 14:53:24 -0400
-X-Gm-Features: AS18NWD9a_Fk68Lh5JrlS0gUk6gyIQxpz3GgsrNopdIM_qVpZUajo16zBkCmCyY
-Message-ID: <CAEjxPJ48PiZ5ZOZbZjka5YeiBxaWFsCufoGcY_jEztM+wtEUCA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] LSM: Allow reservation of netlabel
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: paul@paul-moore.com, linux-security-module@vger.kernel.org, 
-	jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, 
-	john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, 
-	linux-kernel@vger.kernel.org, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] Drivers: hv: Use better errno matches for HV_STATUS
+ values
+To: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>,
+ "K. Y. Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>,
+ Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
+ "open list:Hyper-V/Azure CORE AND DRIVERS" <linux-hyperv@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20251006230821.275642-1-easwar.hariharan@linux.microsoft.com>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <20251006230821.275642-1-easwar.hariharan@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 1, 2025 at 5:56=E2=80=AFPM Casey Schaufler <casey@schaufler-ca.=
-com> wrote:
->
-> Allow LSMs to request exclusive access to the netlabel facility.
-> Provide mechanism for LSMs to determine if they have access to
-> netlabel. Update the current users of netlabel, SELinux and Smack,
-> to use and respect the exclusive use of netlabel.
->
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+On 10/6/2025 4:08 PM, Easwar Hariharan wrote:
+> Use a better mapping of hypervisor status codes to errno values and
+> disambiguate the catch-all -EIO value. While here, remove the duplicate
+> INVALID_LP_INDEX and INVALID_REGISTER_VALUES hypervisor status entries.
+> 
+
+To be honest, in retrospect the idea of 'translating' the hypercall error
+codes is a bit pointless. hv_result_to_errno() allows the hypercall helper
+functions to be a bit cleaner, but that's about it. When debugging you
+almost always want to know the actual hypercall error code. Translating
+it imperfectly is often useless, and at worst creates a red
+herring/obfuscates the true source of the error.
+
+With that in mind, updating the errno mappings to be more accurate feels
+like unnecessary churn. It might even be better to remove the errno mappings
+altogether and just translate HV_STATUS_SUCCESS to 0 and any other error
+to -EIO or some other 'signal' error code to make it more obvious that
+a *hypercall* error occurred and not some other Linux error. We'd still
+want to keep the table in some form because it's also used for the error
+strings.
+
+The cleanup removing the duplicates in the table is welcome.
+
+Nuno
+
+> Fixes: 3817854ba89201 ("hyperv: Log hypercall status codes as strings")
+> Signed-off-by: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>
 > ---
+> Changes in v2: Change more values, delete duplicated entries
+> v1: https://lore.kernel.org/all/20251002221347.402320-1-easwar.hariharan@linux.microsoft.com/
+> ---
+>  drivers/hv/hv_common.c | 22 ++++++++++------------
+>  1 file changed, 10 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
+> index 49898d10fafff..bb32471a53d68 100644
+> --- a/drivers/hv/hv_common.c
+> +++ b/drivers/hv/hv_common.c
+> @@ -758,32 +758,30 @@ static const struct hv_status_info hv_status_infos[] = {
+>  	_STATUS_INFO(HV_STATUS_SUCCESS,				0),
+>  	_STATUS_INFO(HV_STATUS_INVALID_HYPERCALL_CODE,		-EINVAL),
+>  	_STATUS_INFO(HV_STATUS_INVALID_HYPERCALL_INPUT,		-EINVAL),
+> -	_STATUS_INFO(HV_STATUS_INVALID_ALIGNMENT,		-EIO),
+> +	_STATUS_INFO(HV_STATUS_INVALID_ALIGNMENT,		-EINVAL),
+>  	_STATUS_INFO(HV_STATUS_INVALID_PARAMETER,		-EINVAL),
+> -	_STATUS_INFO(HV_STATUS_ACCESS_DENIED,			-EIO),
+> -	_STATUS_INFO(HV_STATUS_INVALID_PARTITION_STATE,		-EIO),
+> -	_STATUS_INFO(HV_STATUS_OPERATION_DENIED,		-EIO),
+> +	_STATUS_INFO(HV_STATUS_ACCESS_DENIED,			-EACCES),
+> +	_STATUS_INFO(HV_STATUS_INVALID_PARTITION_STATE,		-EINVAL),
+> +	_STATUS_INFO(HV_STATUS_OPERATION_DENIED,		-EACCES),
+>  	_STATUS_INFO(HV_STATUS_UNKNOWN_PROPERTY,		-EIO),
+> -	_STATUS_INFO(HV_STATUS_PROPERTY_VALUE_OUT_OF_RANGE,	-EIO),
+> +	_STATUS_INFO(HV_STATUS_PROPERTY_VALUE_OUT_OF_RANGE,	-ERANGE),
+>  	_STATUS_INFO(HV_STATUS_INSUFFICIENT_MEMORY,		-ENOMEM),
+>  	_STATUS_INFO(HV_STATUS_INVALID_PARTITION_ID,		-EINVAL),
+>  	_STATUS_INFO(HV_STATUS_INVALID_VP_INDEX,		-EINVAL),
+>  	_STATUS_INFO(HV_STATUS_NOT_FOUND,			-EIO),
+>  	_STATUS_INFO(HV_STATUS_INVALID_PORT_ID,			-EINVAL),
+>  	_STATUS_INFO(HV_STATUS_INVALID_CONNECTION_ID,		-EINVAL),
+> -	_STATUS_INFO(HV_STATUS_INSUFFICIENT_BUFFERS,		-EIO),
+> -	_STATUS_INFO(HV_STATUS_NOT_ACKNOWLEDGED,		-EIO),
+> -	_STATUS_INFO(HV_STATUS_INVALID_VP_STATE,		-EIO),
+> +	_STATUS_INFO(HV_STATUS_INSUFFICIENT_BUFFERS,		-ENOBUFS),
+> +	_STATUS_INFO(HV_STATUS_NOT_ACKNOWLEDGED,		-EBUSY),
+> +	_STATUS_INFO(HV_STATUS_INVALID_VP_STATE,		-EINVAL),
+>  	_STATUS_INFO(HV_STATUS_NO_RESOURCES,			-EIO),
+>  	_STATUS_INFO(HV_STATUS_PROCESSOR_FEATURE_NOT_SUPPORTED,	-EIO),
+>  	_STATUS_INFO(HV_STATUS_INVALID_LP_INDEX,		-EINVAL),
+>  	_STATUS_INFO(HV_STATUS_INVALID_REGISTER_VALUE,		-EINVAL),
+> -	_STATUS_INFO(HV_STATUS_INVALID_LP_INDEX,		-EIO),
+> -	_STATUS_INFO(HV_STATUS_INVALID_REGISTER_VALUE,		-EIO),
+>  	_STATUS_INFO(HV_STATUS_OPERATION_FAILED,		-EIO),
+> -	_STATUS_INFO(HV_STATUS_TIME_OUT,			-EIO),
+> +	_STATUS_INFO(HV_STATUS_TIME_OUT,			-ETIMEDOUT),
+>  	_STATUS_INFO(HV_STATUS_CALL_PENDING,			-EIO),
+> -	_STATUS_INFO(HV_STATUS_VTL_ALREADY_ENABLED,		-EIO),
+> +	_STATUS_INFO(HV_STATUS_VTL_ALREADY_ENABLED,		-EBUSY),
+>  #undef _STATUS_INFO
+>  };
+>  
 
-> diff --git a/security/security.c b/security/security.c
-> index e59e3d403de6..9eca10844b56 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -289,6 +289,12 @@ static void __init lsm_set_blob_sizes(struct lsm_blo=
-b_sizes *needed)
->                 else
->                         blob_sizes.lbs_secmark =3D true;
->         }
-> +       if (needed->lbs_netlabel) {
-> +               if (blob_sizes.lbs_netlabel)
-> +                       needed->lbs_netlabel =3D false;
-> +               else
-> +                       blob_sizes.lbs_netlabel =3D true;
-> +
 
-Same principle here - if a LSM wants to use netlabel, it may want to
-guarantee that it truly has exclusive access to it no matter what the
-LSM order is.
+
+
 
