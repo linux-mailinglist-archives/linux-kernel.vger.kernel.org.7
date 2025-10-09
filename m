@@ -1,108 +1,124 @@
-Return-Path: <linux-kernel+bounces-846753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC61BBC8ED6
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:59:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D12ABC8ECF
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:59:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4F472352849
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:59:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D56931A6248F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:00:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D458D2E2DC4;
-	Thu,  9 Oct 2025 11:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28CE62E1EF8;
+	Thu,  9 Oct 2025 11:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="j7SVYHV8"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KssFZgDs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B7A15CD74;
-	Thu,  9 Oct 2025 11:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0331E1E12;
+	Thu,  9 Oct 2025 11:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760011177; cv=none; b=W/t2Bxpg4gQTYDkHocV9CUICul7aUdSf4t3JHwKZm5Z6c/hCOALp91e9HrXXu4ssRPi9w/hSeS1tb9RxPQ+RIwn2CY0GY2Eldu8alrEZcAzAAYPH/n3wdKe9liFMlhFqCmiLFyi3qtklz5riCY2H4LCoY4baW1fdcuc4J0FtsoY=
+	t=1760011175; cv=none; b=HKrW6jkhkzjrR2knfSJXCtUDbdWzfKSKrCT6xNLN0GvrCe2WdBr1//l8xV5HDj7VFtd4C2q69jzhvkCanUt0fhLandqYUPPdn75px9OfgkjRX9+Jx+SBhaWCMeGbAAG14uXelkhyyOjOnUf5roRbtSovsoiayZBgIZ7edioVHZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760011177; c=relaxed/simple;
-	bh=k7jEyGwrGZBJ+mBJ/addAS2ZF+jWobMOL2iLQMc1dD4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UUvcDm2Xsktf4rU8bqWp3FU719CnKb4gs4b1rgjANwj4QyvuEa9z0KGzdi3qdwLShOZ8+m4QugRb63KK0bX+NekENSJ/HaV1We1R/pnTXrxczUrZuPCel2KGxuVh56S9ShxfqTGc15s+lFgW6tk5M2QZSmyNaUhKMW4xi3Tmkps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=j7SVYHV8; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760011169;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=KiABDmn04KyLpYGFg9hQuEssOiu7vxmwKbRQ+ewHZs4=;
-	b=j7SVYHV8WGDv+dztjVrBDZrNawnGioai3qQkP4sAD5n6cKiAocoFFKIve1hIwPVwwwCVK3
-	/2xo52IU+nRW4pYGJCejCtX6T+ScyfEPXdoFj9HMLX1+njr8csepS3jsqIMBsz0kcPuCmC
-	Zdv47rRqqzrVxfLKnOYZKE0O2I1UPpY=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
+	s=arc-20240116; t=1760011175; c=relaxed/simple;
+	bh=5Mvef/DdaBxamtyhas+4duS0BHXlqranUz6aaOC1nzM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bXDVVP2ASFOtFRALz2p6gQ9bjxrk++4B6gNRZn0OoqeF34faOgUECc5LiU/0Ary6vK7phowBLD+GyU8a49ERilvk7AxKBAGP35jQmdGxK0nvl2y/No4Av5aiGMEX4R9gIbPz31fxXgpLBbbylqvWF8QHB5XQ5MKrgONVNyrn2AQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KssFZgDs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46499C4CEF5;
+	Thu,  9 Oct 2025 11:59:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760011175;
+	bh=5Mvef/DdaBxamtyhas+4duS0BHXlqranUz6aaOC1nzM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KssFZgDsZCV2Ys1nIDByjcOd1F8DyiOkN6PMwceer++FQGrBYnwZaixHTYwiDhXFT
+	 Gng5Udq34G1unrCfrPHzEeIFhSr92ZzzJMrUirXmRLltZcJ4CBbzOf67UIPoxgRDR3
+	 vOJevgyjdwJr1DLXwpLnnLinhIbVqCraNR2pim7a379PdXDSOUB0M1nDnvphwe3hJx
+	 XczveJE93gGcc+f8931mrKkuO4cKeQHf3/wxvTck6bQlgafVXATnSTgpA2dvL74qPX
+	 omw4SesB7DX+BygNpOvZOKvNrUJwX6cX1L8U8h4Qsa/VDwxph8QsPCEuM43Kltmbs8
+	 EPoshdGzEZ9Ig==
+Date: Thu, 9 Oct 2025 13:59:30 +0200
+From: Niklas Cassel <cassel@kernel.org>
+To: Markus Probst <markus.probst@posteo.de>
+Cc: Damien Le Moal <dlemoal@kernel.org>,
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] KEYS: encrypted: Use designated initializers for match_table_t structs
-Date: Thu,  9 Oct 2025 13:58:17 +0200
-Message-ID: <20251009115817.368170-2-thorsten.blum@linux.dev>
+Subject: Re: [PATCH v2 2/2] ata: Use ACPI methods to power on ata ports
+Message-ID: <aOejov5d_TlVkueH@ryzen>
+References: <8c3cb28c57462f9665b08fdaa022e6abc57fcd9e.camel@posteo.de>
+ <20251009112433.108643-1-markus.probst@posteo.de>
+ <20251009112433.108643-3-markus.probst@posteo.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251009112433.108643-3-markus.probst@posteo.de>
 
-Use designated initializers for 'key_format_tokens' and 'key_tokens' to
-allow struct fields to be reordered more easily and to improve
-readability.
+On Thu, Oct 09, 2025 at 11:24:49AM +0000, Markus Probst wrote:
+> Some embedded devices, including many Synology NAS devices, have the
+> ability to control whether a ATA port has power or not.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- security/keys/encrypted-keys/encrypted.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+In V1, you mentioned that it was to control the SATA power supply,
+now you mention the ATA port. I am confused.
 
-diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
-index aef438d18da8..76a6dab2f4d2 100644
---- a/security/keys/encrypted-keys/encrypted.c
-+++ b/security/keys/encrypted-keys/encrypted.c
-@@ -62,17 +62,17 @@ enum {
- };
- 
- static const match_table_t key_format_tokens = {
--	{Opt_default, "default"},
--	{Opt_ecryptfs, "ecryptfs"},
--	{Opt_enc32, "enc32"},
--	{Opt_error, NULL}
-+	{ .token = Opt_default, .pattern = "default"},
-+	{ .token = Opt_ecryptfs, .pattern = "ecryptfs"},
-+	{ .token = Opt_enc32, .pattern = "enc32"},
-+	{ .token = Opt_error, .pattern = NULL}
- };
- 
- static const match_table_t key_tokens = {
--	{Opt_new, "new"},
--	{Opt_load, "load"},
--	{Opt_update, "update"},
--	{Opt_err, NULL}
-+	{ .token = Opt_new, .pattern = "new"},
-+	{ .token = Opt_load, .pattern = "load"},
-+	{ .token = Opt_update, .pattern = "update"},
-+	{ .token = Opt_err, .pattern = NULL}
- };
- 
- static bool user_decrypted_data = IS_ENABLED(CONFIG_USER_DECRYPTED_DATA);
--- 
-2.51.0
+If it is for the ATA port, then SATA already has support for this,
+using PxSCTL.
 
+How does this ACPI way to control power interact with the regular
+way to control power for a port using PxSCTL?
+
+
+> 
+> Add a new function, ata_acpi_dev_manage_restart(), that will be used to
+> determine if a disk should be stopped before restarting the system. If a
+> usable ACPI power resource has been found, it is assumed that the disk
+> will lose power after a restart and should be stopped to avoid a power
+> failure. Also add a new function, ata_acpi_port_set_power_state(), that
+> will be used to power on an ata port if usable ACPI power resources are
+> found. It will be called right before probing the port, therefore the port
+> will be powered on just in time.
+> 
+> Signed-off-by: Markus Probst <markus.probst@posteo.de>
+> ---
+>  drivers/ata/libata-acpi.c | 70 +++++++++++++++++++++++++++++++++++++++
+>  drivers/ata/libata-core.c |  2 ++
+>  drivers/ata/libata-scsi.c |  1 +
+>  drivers/ata/libata.h      |  4 +++
+>  4 files changed, 77 insertions(+)
+> 
+> diff --git a/drivers/ata/libata-acpi.c b/drivers/ata/libata-acpi.c
+> index f2140fc06ba0..bba5ef49f055 100644
+> --- a/drivers/ata/libata-acpi.c
+> +++ b/drivers/ata/libata-acpi.c
+> @@ -245,6 +245,76 @@ void ata_acpi_bind_dev(struct ata_device *dev)
+>  				   ata_acpi_dev_uevent);
+>  }
+>  
+> +/**
+> + * ata_acpi_dev_manage_restart - if the disk should be stopped (spin down) on
+> + * system restart.
+> + * @dev: target ATA device
+> + *
+> + * RETURNS:
+> + * true if the disk should be stopped, otherwise false
+> + */
+> +bool ata_acpi_dev_manage_restart(struct ata_device *dev)
+> +{
+> +	// If the device is power manageable and we assume the disk loses power
+> +	// on reboot.
+
+Like Damien mentioned earlier, please no C++ style comments.
+
+
+Kind regards,
+Niklas
 
