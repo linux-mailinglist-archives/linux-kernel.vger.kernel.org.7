@@ -1,114 +1,113 @@
-Return-Path: <linux-kernel+bounces-846899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01955BC95ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:49:30 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20E6EBC95F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:50:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 56DEF4EEF56
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:49:23 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9DA163516E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:50:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B73F2AD0D;
-	Thu,  9 Oct 2025 13:49:18 +0000 (UTC)
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81AD2E92D0;
+	Thu,  9 Oct 2025 13:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=newwheatzjz@zohomail.com header.b="dfEf2bOt"
+Received: from sender3-pp-o95.zoho.com (sender3-pp-o95.zoho.com [136.143.184.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22892E8B6C
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760017758; cv=none; b=rybOgbr98ZGkQ1KjW8+nXCNyH2NWz1uWmca2osXXK3JxEYzpkA0RwGTLh88kxK8txtQut7faNlFonuahi3l03UAFZO3GKSUZjyVAh43CMAvkeOqc3y/43CW+TfPUsyeKxsE/2UDP8NTDXexHrdYBdpVLZT9Z134qzLGJ+AkZCvo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760017758; c=relaxed/simple;
-	bh=yimaDht2VPmckuijnK7RHpnVJdwPGNmnTY4r/gDwrBM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pQ2q6KWi02oa8w07UvFDkPMIXAcrkDwbDSVCRIp0FtnpRntANcYLNBRRFrGas8t8YVEbGCtCIEEgt8D97eDkxT6QWujylpxAOSQWbZSZnXRqDklbjLEx5Bg3y6Hn7TSjAZ780dnoB2zyUSzAyj/vTP5lnCBGcQyL1YVZoHbTqEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-54bbc2a8586so292300e0c.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 06:49:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760017755; x=1760622555;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rG+VBn74V/FeJGvzOBH4i7MNFu3atTCKtUYOgAi8OVI=;
-        b=DVn7O1oznSbccqPACEfbnV16xqC13rCx5FACZQas6g+aefEOjDh/TxhtXZuuWj1RBs
-         EgR7HVL7u17/FMEM23hfO3YirR8zTPSchMQ1DGVomKWcBYA08GelPedvgTL9bmnbi/N0
-         ajaggkWOqIXqgNpy6HvuobyJlu7fv6fFalkFG++68kHTYOATEKw51IYll0gpLqrrI6bC
-         E8Oi6MsUX88gpzDUwwz4qsVXKT6TeHHWAmNEn5hRxuGYGG3DKpMlmHZalU+wP/B7w/sV
-         yI6/BblGe+g/0/DHFheaCIFKOBH5UQ9GBtGK183iI1cOXYs9unfRmib8X23sETa6eZrN
-         LDyw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/lJJzJNyFvvtuuPne+coqfo5tKv+PgNE5Wz4aMu3DgAybo5EBt8M8IyAsqqTRytHDAnNOAluZYt+IzSw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIRs2jykxFw5lv/Nsc/K/VVk36oJB0QaFYxltrDlcH+Tjj8H7w
-	WpVQjMdr9R32Hl2ZU6o1chUwxntlVOe0QO4H3GBCEFWaGVULnMMhrEkiBoYfCrcN
-X-Gm-Gg: ASbGncsDq+aZz7wepLj6nDILC2oAluY2tmu09zc98MokdX18w4GzUq45zdsOFh6tLg4
-	Akd4DP9l2T0Zat/HqIKyoQBVQQU08Yr738tGIeBjWpSkG/ckzJbYnvQSNxMdRAT10ZwM5UiMJV3
-	2WUKu0IGxokgN5wXAgBJ7ys79oaT4M+yuZX71VkRcmuFzT7ukXPeVPBXTdgdsaYRojGABAKSTAS
-	/oCNWFLHwHKbYF4UtsFP8EKrIgROHojJRmtKAbnoRjVWlhRvKlRDEMa1gACLMFebt06bZP83o/m
-	kON/CvKw/apj2yR1lGY7wozKX1zpgMP3yVuf9ull5GQGYUOONUiXZQ5+A4pws7CnPkzxoTimWpF
-	i5aIbuwffqVCzhfhkTybMsjblRfmPfNvfC9ihU6I/TOSpJB891g4xQElb4x0op1vHDbUoLpTvLb
-	vi180TZeGdN5trewP8plc=
-X-Google-Smtp-Source: AGHT+IFwQ6YQcksFx4qktCaEqqz9AZwij1PYUtGoxMEFUC5Ek14nLPDGedI6pgBPC6pTQgdc2qrymw==
-X-Received: by 2002:a05:6122:251d:b0:54a:92f1:f9e4 with SMTP id 71dfb90a1353d-554b8b9132amr2912249e0c.9.1760017755360;
-        Thu, 09 Oct 2025 06:49:15 -0700 (PDT)
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-554d17c4c1fsm222799e0c.3.2025.10.09.06.49.14
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Oct 2025 06:49:14 -0700 (PDT)
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-5ccccc1f7caso478874137.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 06:49:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUcoG15ehEyAktBKjanK/zmjgiMeGLKbE5rYB6s50aAavRQWtckHnyS1/axlOmJA47cSMoUs68+FaU9fSg=@vger.kernel.org
-X-Received: by 2002:a05:6102:b0f:b0:520:a44f:3ddf with SMTP id
- ada2fe7eead31-5d5e224f3f9mr2430732137.10.1760017754092; Thu, 09 Oct 2025
- 06:49:14 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783753D76;
+	Thu,  9 Oct 2025 13:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.95
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760017797; cv=pass; b=VglZsEmv29NaTbhQSkAzvWOm6mAtDIVttDUPoC2FMWd/JWF4j+n73t5Xl8q+N0vmkowy6fK6dn1/VbOQBStfXvDHotIs66duchV2IOahc+O124b6z+PU61CTtSJiJ4TBvZbY0CeXCuRwId6xnzWK5jLH8v0FGPHLfNEhXpDW/58=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760017797; c=relaxed/simple;
+	bh=K/SrHatdpdvr0imPXa38AmzHHhk6udhFQfpRhaGjMT4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EeuleM73D8DHxRy3cdxGo8d3onUF4z4zzeKvDCNLkYB8pCxyH6DlvrnfNBMk2daZix7X0gby1n62ildOVrK4FceH+411b9gGNUhkB8dpoay/9mR3tHYMKP1VyF7OcLVHrvHr8kLezDyHEV66onmoX4nkVlhm6lmo76FXxBggDRM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=newwheatzjz@zohomail.com header.b=dfEf2bOt; arc=pass smtp.client-ip=136.143.184.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1760017787; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=CPuBcNBSp2d3uw2hxueeUG1aAIcH0OZH45dFBUWkc3/9ACQm7gZiTWYOL15jTelBhQchagL5MbgOlihqPih9CEcMVyEpOcRTMJYpZxkNoWH/hL1c/1MozxMH227xGAiwFFGkPML+eO3Dwq3kv9dgU9pKbXTTGisKRACSOprPTvg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1760017787; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=LsLNtMoXCJzHmr2rcFqKpgKPyQBXHMlpxJ3f2vaAJMI=; 
+	b=WcITxFhcA9Unf5bNqSBoXF3LYwbUhPCYltvzRmV+f+neWBGcuXTpI3AEKQX9VsHgMNHsqZQm0JQnSptPI6JpFwBOiAkbkv47vBmdc8eaKkO8A0X5FAaqiOumC93Y4usHdfCbYvf6qaNVOUZONSV9LA9rEwilvsKAibP+jlyreQc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=newwheatzjz@zohomail.com;
+	dmarc=pass header.from=<newwheatzjz@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760017787;
+	s=zm2022; d=zohomail.com; i=newwheatzjz@zohomail.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Feedback-ID:Message-Id:Reply-To;
+	bh=LsLNtMoXCJzHmr2rcFqKpgKPyQBXHMlpxJ3f2vaAJMI=;
+	b=dfEf2bOtbwal10hYeCpzmEzxl8rO4ZD0sU8eFQjukbxtHLWuSMPtAlfmwmBXiduO
+	s3PbPCmpXOlOeAhf+B5roGIauPzzwuXXQMfRystccS8XIgrBpfC+88VWMAjnePgGPmb
+	s63hrW9jA5detcEZkYPSxFYpUckzMbZznzIwo3Rg=
+Received: by mx.zohomail.com with SMTPS id 1760017785121400.7847926888377;
+	Thu, 9 Oct 2025 06:49:45 -0700 (PDT)
+From: Jingzhou Zhu <newwheatzjz@zohomail.com>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH v6 2/2] arm64: dts: qcom: Add support for Huawei MateBook E 2019
+Date: Thu, 09 Oct 2025 21:49:40 +0800
+Message-ID: <6199698.lOV4Wx5bFT@debian-vmware>
+In-Reply-To: <6ede6425-6b99-4505-a231-de819bab9ada@oss.qualcomm.com>
+References:
+ <20251008130052.11427-1-newwheatzjz@zohomail.com>
+ <20251008130052.11427-3-newwheatzjz@zohomail.com>
+ <6ede6425-6b99-4505-a231-de819bab9ada@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251001212709.579080-1-tommaso.merciai.xr@bp.renesas.com> <20251001212709.579080-10-tommaso.merciai.xr@bp.renesas.com>
-In-Reply-To: <20251001212709.579080-10-tommaso.merciai.xr@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 9 Oct 2025 15:49:02 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV0k0k4EQhQ9C_oPUPno7BsgN3tW3ydLrvzD783SgULyw@mail.gmail.com>
-X-Gm-Features: AS18NWBiuLuEjgmzyDSlSzZ5zrYLpzbrdlxBs-yvgfRSKSU9hkobcBub0EljavI
-Message-ID: <CAMuHMdV0k0k4EQhQ9C_oPUPno7BsgN3tW3ydLrvzD783SgULyw@mail.gmail.com>
-Subject: Re: [PATCH 09/18] clk: renesas: r9a09g047: Add clock and reset
- entries for USB2
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
-	biju.das.jz@bp.renesas.com, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
-	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
+Feedback-ID: rr08011227f6d877a33ac25c642fb119be00005d61e3e978284a0855443ea8fd09f6d25bae9d680cc8053b76:zu080112271d4cee7ee2a137f3cbb7f21400002b527bdc77d8591c64fc4d89981a46d45c4a43cb6a95e43c1e:rf0801122698e9057350a62460dcc3f71c0000b0bcd3005fbf5e6162c333e5c3b4da055407d5e9b70b6fd4:ZohoMail
+X-ZohoMailClient: External
 
-On Wed, 1 Oct 2025 at 23:28, Tommaso Merciai
-<tommaso.merciai.xr@bp.renesas.com> wrote:
-> Add clock and reset entries for USB2.
->
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+On Thursday, 9 October 2025 20:41:19 CST, Konrad Dybcio wrote:
+> On 10/8/25 3:00 PM, Jingzhou Zhu wrote:
+> > Add device tree for Huawei MateBook E 2019, which is a 2-in-1 tablet based
+> > on Qualcomm's sdm850 platform.
+> > 
+> > Supported features:
+> >  - ADSP, CDSP and SLPI
+> >  - Volume Key
+> >  - Power Key
+> >  - Tablet Mode Switching
+> >  - Display
+> >  - Touchscreen
+> >  - Stylus
+> >  - WiFi [1]
+> >  - Bluetooth [2]
+> >  - GPU
+> >  - USB
+> >  - Keyboard
+> >  - Touchpad
+> >  - UFS
+> >  - SD Card
+> >  - Audio (right internal mic and headphone mic not working)
+> >  - Mobile Network
+> 
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> Konrad
+> 
 
-I couldn't verify all details, due to the lack of the Additional Manual,
-but the rest LGTM, so
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.19.
+Thanks! will add Reviewed-by tag in v7.
 
-Gr{oetje,eeting}s,
+Jingzhou Zhu
 
-                        Geert
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
