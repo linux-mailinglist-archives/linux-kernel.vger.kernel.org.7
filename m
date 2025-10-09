@@ -1,47 +1,40 @@
-Return-Path: <linux-kernel+bounces-846205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24188BC746A
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 05:15:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A02FBC7476
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 05:15:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9E3BB34E2C6
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 03:15:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E2AE3A3ED3
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 03:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 247C0221FBF;
-	Thu,  9 Oct 2025 03:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB8A22E004;
+	Thu,  9 Oct 2025 03:15:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hM9mxkoW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="iQs0T/oM"
+Received: from mail-m1973194.qiye.163.com (mail-m1973194.qiye.163.com [220.197.31.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83248221F11
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 03:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A50222A7E0;
+	Thu,  9 Oct 2025 03:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.94
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759979697; cv=none; b=eWwROqJBTG5tLnHOlPuu2F74wX0PRCnJ/XUORWI2zaNIqvcoKjnU5Bn95g+4CQ618o71sw5Uf/VJgmTfRayuVhDw2NXbJXoVq1G4WWwoiFib3tK4piGotg4ATSxoWztWWo6HhLuInyiGxBIywcXK/wvSYCz7lg24UnAVHMbHBTw=
+	t=1759979721; cv=none; b=CJwaIu7Frtzb8m2B5MHD/BqE4GW8L2nSo9zCqXJMgFJMstimkfF3ajNIZzD0Xuqa4i5pDxkl88/luR4Q3Xk7yJWRnQOfG5rzzOMDUvM3uCeh3d8wn2SmTzZVQAt2fAa/BjjvWV5bJXkCTshrkErvOfQU37XilgllmhCfghdOZno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759979697; c=relaxed/simple;
-	bh=VxdVFeEekQvwsHI+Hcvm/2sBm05P6xZAXuTaVx/1N0c=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=nymPFFYUpVs1EDos8i/HTvLBbVkQ6oyduCtg8SfoBg11pCU4TgvJ0OHC1VCMN5inR7dUJAwG2Fr9Ehp3ap6EUSgUi5pshJPOEplDo3waSVC2q1fInkxAdBQRzzni1Vmv2TW/mkOQNNormpq6lczdKjdC1Rd/Nl1mrLmbiisLmqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hM9mxkoW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05E37C4CEE7;
-	Thu,  9 Oct 2025 03:14:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759979697;
-	bh=VxdVFeEekQvwsHI+Hcvm/2sBm05P6xZAXuTaVx/1N0c=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=hM9mxkoW975flQisRAZlmkqpBgOWjTZwdSF+4zz4OIMEstzFrlaFWmXQ6uTS6uYvP
-	 ZppVAAv5UATPQXu8VO8a27W3vrQtdIFk5o9JpkGD8hjX5Oqz2fqV4HD4O8J2yTnhny
-	 JMVhy2YHAio7SeCWsKMUlD4InTI/cwwJOxGU03nGMjG2NVKzPPwgKkFz7Da2TT9GV6
-	 7cGwYOBSAwB/DSfN3/nfZsOMKiRUHKpL+H3+r6UfuZligAs4varKMLwSQS1ygMZtb0
-	 VRAvBrHKy0zo2N4P35pxp6uwvBgHzb4Q5Toz58CK8tf9LzD+G7tQyv9LD8k7hUtPPm
-	 uC5nkXUrUnTnQ==
-Message-ID: <5f08d6e5-f7f2-4109-89b1-03485516e54e@kernel.org>
-Date: Thu, 9 Oct 2025 11:14:54 +0800
+	s=arc-20240116; t=1759979721; c=relaxed/simple;
+	bh=rd/lbmT2upkHWzOJOfdBnwlgLrDr7wZmyHVjlFZei44=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V0ReknH0GxeZHBI48A3WRCxMuKlTKnR38FTTEYakhK16K6iy9VUbXXDnttSMharAxzqnDcqcWI1XuJn/Hoj0r/loivVimmX9gG45V0+o9tZtVxz8MevJu9fSoYsMI6nUSfuI08xkCzNVn5SI58n/BVMfjjiIDxlyQ8xnTpZR/a8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=iQs0T/oM; arc=none smtp.client-ip=220.197.31.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.26] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 2540f1755;
+	Thu, 9 Oct 2025 11:15:12 +0800 (GMT+08:00)
+Message-ID: <600da5e2-da28-429b-ba7a-6ddabeeb044d@rock-chips.com>
+Date: Thu, 9 Oct 2025 11:15:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,29 +42,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, Daeho Jeong <daehojeong@google.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: maintain one time GC mode is enabled
- during whole zoned GC cycle
-To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
-References: <20251003224308.1948874-1-daeho43@gmail.com>
+Subject: Re: [PATCH v6 11/18] drm/display: bridge_connector: Ensure last
+ bridge determines EDID/modes detection capabilities
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+ festevam@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
+ kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+ jingoohan1@gmail.com, p.zabel@pengutronix.de, hjc@rock-chips.com,
+ heiko@sntech.de, andy.yan@rock-chips.com, dianders@chromium.org,
+ m.szyprowski@samsung.com, luca.ceresoli@bootlin.com, jani.nikula@intel.com,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+References: <20250930090920.131094-1-damon.ding@rock-chips.com>
+ <20250930090920.131094-12-damon.ding@rock-chips.com>
+ <4r25h5uaamfkprrmvrtdqfjlcgcnkfyca2o5q53hteta7rlrbq@xqlrjxhi7z2u>
 Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20251003224308.1948874-1-daeho43@gmail.com>
+From: Damon Ding <damon.ding@rock-chips.com>
+In-Reply-To: <4r25h5uaamfkprrmvrtdqfjlcgcnkfyca2o5q53hteta7rlrbq@xqlrjxhi7z2u>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-HM-Tid: 0a99c6f72dc603a3kunmfe4252c4a5c7bd
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGhgfT1ZMGkxMTE1KSUtCTB5WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
+	1VSktLVUpCWQY+
+DKIM-Signature: a=rsa-sha256;
+	b=iQs0T/oMZ2uhdZcdybDbf32wCENpnpEDgP3/4nIpyZchoiqx101XIqUFLuYnQ8IcKx4Znl6ZyzkvOgsZ4UWhvqaSNB33nuRn9W/w1YboaMZpZdr5IObRzog7tr1A8nYt2b/3iKtdXeVXmfBjPuu7pX24s1jtIDZnRMVvEGAEOEc=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=iABHohkXXscty3ygSSBQiwpr5DtvMO/CY8j782HEq18=;
+	h=date:mime-version:subject:message-id:from;
 
-On 10/4/2025 6:43 AM, Daeho Jeong wrote:
-> From: Daeho Jeong <daehojeong@google.com>
+Hi Dmitry,
+
+On 10/1/2025 4:21 AM, Dmitry Baryshkov wrote:
+> On Tue, Sep 30, 2025 at 05:09:13PM +0800, Damon Ding wrote:
+>> When multiple bridges are present, EDID detection capability
+>> (DRM_BRIDGE_OP_EDID) takes precedence over modes detection
+>> (DRM_BRIDGE_OP_MODES). To ensure the above two capabilities are
+>> determined by the last bridge in the chain, we handle three cases:
+>>
+>> Case 1: The later bridge declares only DRM_BRIDGE_OP_MODES
+>>   - If the previous bridge declares DRM_BRIDGE_OP_EDID, set
+>>     &drm_bridge_connector.bridge_edid to NULL and set
+>>     &drm_bridge_connector.bridge_modes to the later bridge.
+>>   - Ensure modes detection capability of the later bridge will not
+>>     be ignored.
+>>
+>> Case 2: The later bridge declares only DRM_BRIDGE_OP_EDID
+>>   - If the previous bridge declares DRM_BRIDGE_OP_MODES, set
+>>     &drm_bridge_connector.bridge_modes to NULL and set
+>>     &drm_bridge_connector.bridge_edid to the later bridge.
+>>   - Although EDID detection capability has higher priority, this
+>>     operation is for balance and makes sense.
+>>
+>> Case 3: the later bridge declares both of them
+>>   - Assign later bridge as &drm_bridge_connector.bridge_edid and
+>>     and &drm_bridge_connector.bridge_modes to this bridge.
+>>   - Just leave transfer of these two capabilities as before.
+>>
+>> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+>> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+>> ---
+>>   .../gpu/drm/display/drm_bridge_connector.c    | 42 +++++++++++++++++++
+>>   1 file changed, 42 insertions(+)
+>>
 > 
-> The current version missed setting one time GC for normal zoned GC
-> cycle. So, valid threshold control is not working. Need to fix it to
-> prevent excessive GC for zoned devices.
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 > 
-> Fixes: e791d00bd06c ("f2fs: add valid block ratio not to do excessive GC for one time GC")
-> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+> But I'd suggest pulling this to a top of the series to let others also
+> take a look at it.
+> 
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+Will do in v7.
 
-Thanks,
+Best regards,
+Damon
+
 
