@@ -1,64 +1,47 @@
-Return-Path: <linux-kernel+bounces-846459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94E8EBC80F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:35:28 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE30EBC80FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:35:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BD971A6091B
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:35:51 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 28704352CF2
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF0629992B;
-	Thu,  9 Oct 2025 08:35:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430E6298991;
+	Thu,  9 Oct 2025 08:35:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vk0NKy7f"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XK3IL3G2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C62F94A01;
-	Thu,  9 Oct 2025 08:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569944A01;
+	Thu,  9 Oct 2025 08:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759998922; cv=none; b=TUFBZ70xihrJjig6hE2JYolGbyM4qWndMwQZdNSW2csfkaAgyN/gosmk7hi9h8K+bdK1mxUGz4y7nEex2LvddP/yUpF+25QFWWQPQwyuK6/+AmfMFzWGPW7TI/2u0OhZH5Zh2PHZ5gANy6vKNA9P7cRs0NsFNj/vZGJgppAkieE=
+	t=1759998934; cv=none; b=V550O8PKzlyUdm3ev1dyBDCO9Ab0VVI/tnx72gIzEsmkqCmbveZN9TtMi8l/RZCrLw5nQJ5Nlj3zxJBmtwUrpI1YUzzkU25IT80rUxyvvQQiIpWWkd+Rr6LSKV1saDroPLtNUt9w6ymVTCXjb6+6PeeWx+IQpa/jCmVWfqJsAUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759998922; c=relaxed/simple;
-	bh=cxIbOqNUR76AnDJ8XYf468KSYN5jwnxzGtZjYBXTQM4=;
+	s=arc-20240116; t=1759998934; c=relaxed/simple;
+	bh=iJ2gAtfZfSkAmmta5myZcy2q+0UiwW4oR9qXus1t1Qo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZhwwtU6t/q7a8Tqp6hlWC8Df8FzyZJbXMTl10jOhbSPSu0EkW14BoqjNOTWMdJFEo5nCjbf/qpsDoGQqsLNt/qg3SWFIWxUuD+SLLgFORYd835jVM7p8qwgx8egVcXhLzMQDqMq7Fn6PyDb7ECLfBC8zPYXBG1G4D4uLvkETeX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vk0NKy7f; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759998921; x=1791534921;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=cxIbOqNUR76AnDJ8XYf468KSYN5jwnxzGtZjYBXTQM4=;
-  b=Vk0NKy7fKxlQKFGRk4Ykugl9w/pxtiyz3qABXiS46sENW4MI4x7r/r+8
-   5kWUC+4KxOaH93a1vkwyuEYIYHOv7859SCxagE/pgdj7JpgzIrcP4hpaW
-   dwmD8JQe4ruoUTzocOMV14whAqoQLD6WQC/1dy8Kz9sIvdlLC7QV10IgK
-   yU81+A327IXWXMEqOoGo7SYKSa0nXGDEjcMN0DPpaekfkE5NCVo9z2TI7
-   mddulp9L6iSzsCZeoSFeeJ/f630QMt++jxasKs6zBGV8Tn9HYLaFvvOLw
-   jwTS0CV0JGm9ROM0o3yd+UF9nMk9PHlt/+mzS8F4lKSxBUquTAC0UObMR
-   A==;
-X-CSE-ConnectionGUID: GJ1aI5XjQhSLWYWMj9dR6w==
-X-CSE-MsgGUID: vzPerdInTnCCGtqwxnHK5g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11576"; a="72462630"
-X-IronPort-AV: E=Sophos;i="6.19,215,1754982000"; 
-   d="scan'208";a="72462630"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 01:35:21 -0700
-X-CSE-ConnectionGUID: cXIzzForQoaKN8tGXHcSPg==
-X-CSE-MsgGUID: vQA6LQBqS1qo3f2NMRZ3hA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,215,1754982000"; 
-   d="scan'208";a="181065729"
-Received: from unknown (HELO [10.238.2.75]) ([10.238.2.75])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 01:35:17 -0700
-Message-ID: <cef60d5a-a975-4b4e-b553-9aaaaf6da558@linux.intel.com>
-Date: Thu, 9 Oct 2025 16:35:15 +0800
+	 In-Reply-To:Content-Type; b=K1kdL5D6ZHr4wnZ0w6c/kcJJiQLMFRWTgSPTsyyVmWRa9xhXaF3+vqo2026Zt7rAbWHR4HFZy9c2hmn124fDR5GBGMDsPkN40asJNnH7UP15ioS3YmvXSF2RM4iA/ccmVE71HxjenV0fPWpLcyqJl+nHKnpXB9/qOVoRLhFQl5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XK3IL3G2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5825C4CEE7;
+	Thu,  9 Oct 2025 08:35:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759998933;
+	bh=iJ2gAtfZfSkAmmta5myZcy2q+0UiwW4oR9qXus1t1Qo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XK3IL3G2i/C5MvcOk/aViHDqOWlGhoELkqpohpehP7KriLonf025Kj9t0cCD4uFLp
+	 sU+F8tGqejn/0au5vEihmh/BPHCH3h/Ej0RPLTeW7vPFkbOPKANTczGtwLBCy5vTap
+	 fHlN82F5MEpgoQ40l+kSuSuRpKOQOMVO15HKHFlarv4tJRPROIFNoNILNaQt0D9xf0
+	 8VjCydbivuUjZlrfFacJ/CP6bo4PDichsELzZhKomRqwHpK9tfSMp0cgkzx9/swV4B
+	 7jx/Tqy1OhEuZjWLctvTqOXX7+trBRWyGJp1MYhLvwCyvWKAeKGxt5B9qKBbfrhwfa
+	 MXj4WOc5+2tOg==
+Message-ID: <66b75fc5-1d3c-4d43-b1c7-9be689e131e6@kernel.org>
+Date: Thu, 9 Oct 2025 17:35:28 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,131 +49,204 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v7 00/12] arch-PEBS enabling for Intel platforms
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
- Eranian Stephane <eranian@google.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Dapeng Mi <dapeng1.mi@intel.com>
-References: <20250828013435.1528459-1-dapeng1.mi@linux.intel.com>
+Subject: Re: [tip: sched/urgent] sched/deadline: Fix dl_server getting stuck
+To: Marek Szyprowski <m.szyprowski@samsung.com>,
+ Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+ John Stultz <jstultz@google.com>, x86@kernel.org,
+ 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>
+References: <20250916110155.GH3245006@noisy.programming.kicks-ass.net>
+ <175817861820.709179.10538516755307778527.tip-bot2@tip-bot2>
+ <CGME20250922215704eucas1p1f53a65a5cd1eafd3e0db006653231efd@eucas1p1.samsung.com>
+ <e56310b5-f7a9-4fad-b79a-dcbcdd3d3883@samsung.com>
+ <20250923220215.GH3419281@noisy.programming.kicks-ass.net>
+ <eae77bd0-d874-4ddf-88d7-c1ab75358f91@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <20250828013435.1528459-1-dapeng1.mi@linux.intel.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <eae77bd0-d874-4ddf-88d7-c1ab75358f91@samsung.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+
+On 30/09/2025 00:19, Marek Szyprowski wrote:
+> On 24.09.2025 00:02, Peter Zijlstra wrote:
+>> On Mon, Sep 22, 2025 at 11:57:02PM +0200, Marek Szyprowski wrote:
+>>> On 18.09.2025 08:56, tip-bot2 for Peter Zijlstra wrote:
+>>>> The following commit has been merged into the sched/urgent branch of tip:
+>>>>
+>>>> Commit-ID:     077e1e2e0015e5ba6538d1c5299fb299a3a92d60
+>>>> Gitweb:https://git.kernel.org/tip/077e1e2e0015e5ba6538d1c5299fb299a3a92d60
+>>>> Author:        Peter Zijlstra<peterz@infradead.org>
+>>>> AuthorDate:    Tue, 16 Sep 2025 23:02:41 +02:00
+>>>> Committer:     Peter Zijlstra<peterz@infradead.org>
+>>>> CommitterDate: Thu, 18 Sep 2025 08:50:05 +02:00
+>>>>
+>>>> sched/deadline: Fix dl_server getting stuck
+>>>>
+>>>> John found it was easy to hit lockup warnings when running locktorture
+>>>> on a 2 CPU VM, which he bisected down to: commit cccb45d7c429
+>>>> ("sched/deadline: Less agressive dl_server handling").
+>>>>
+>>>> While debugging it seems there is a chance where we end up with the
+>>>> dl_server dequeued, with dl_se->dl_server_active. This causes
+>>>> dl_server_start() to return without enqueueing the dl_server, thus it
+>>>> fails to run when RT tasks starve the cpu.
+>>>>
+>>>> When this happens, dl_server_timer() catches the
+>>>> '!dl_se->server_has_tasks(dl_se)' case, which then calls
+>>>> replenish_dl_entity() and dl_server_stopped() and finally return
+>>>> HRTIMER_NO_RESTART.
+>>>>
+>>>> This ends in no new timer and also no enqueue, leaving the dl_server
+>>>> 'dead', allowing starvation.
+>>>>
+>>>> What should have happened is for the bandwidth timer to start the
+>>>> zero-laxity timer, which in turn would enqueue the dl_server and cause
+>>>> dl_se->server_pick_task() to be called -- which will stop the
+>>>> dl_server if no fair tasks are observed for a whole period.
+>>>>
+>>>> IOW, it is totally irrelevant if there are fair tasks at the moment of
+>>>> bandwidth refresh.
+>>>>
+>>>> This removes all dl_se->server_has_tasks() users, so remove the whole
+>>>> thing.
+>>>>
+>>>> Fixes: cccb45d7c4295 ("sched/deadline: Less agressive dl_server handling")
+>>>> Reported-by: John Stultz<jstultz@google.com>
+>>>> Signed-off-by: Peter Zijlstra (Intel)<peterz@infradead.org>
+>>>> Tested-by: John Stultz<jstultz@google.com>
+>>>> ---
+>>> This patch landed in today's linux-next as commit 077e1e2e0015
+>>> ("sched/deadline: Fix dl_server getting stuck"). In my tests I found
+>>> that it breaks CPU hotplug on some of my systems. On 64bit
+>>> Exynos5433-based TM2e board I've captured the following lock dep warning
+>>> (which unfortunately doesn't look like really related to CPU hotplug):
+>> Right -- I've looked at this patch a few times over the day, and the
+>> only thing I can think of is that we keep the dl_server timer running.
+>> But I already gave you a patch that *should've* stopped it.
+>>
+>> There were a few issues with it -- notably if you've booted with
+>> something like isolcpus / nohz_full it might not have worked because the
+>> site I put the dl_server_stop() would only get ran if there was a root
+>> domain attached to the CPU.
+>>
+>> Put it in a different spot, just to make sure.
+>>
+>> There is also the fact that dl_server_stop() uses
+>> hrtimer_try_to_cancel(), which can 'fail' when the timer is actively
+>> running. But if that is the case, it must be spin-waiting on rq->lock
+>> -- since the caller of dl_server_stop() will be holding that. Once
+>> dl_server_stop() completes and the rq->lock is released, the timer will
+>> see !dl_se->dl_throttled and immediately stop without restarting.
+>>
+>> So that *should* not be a problem.
+>>
+>> Anyway, clutching at staws here etc.
+>>
+>>> # for i in /sys/devices/system/cpu/cpu[1-9]; do echo 0 >$i/online; done
+>>> Detected VIPT I-cache on CPU7
+>>> CPU7: Booted secondary processor 0x0000000101 [0x410fd031]
+>>> ------------[ cut here ]------------
+>>> WARNING: CPU: 7 PID: 0 at kernel/rcu/tree.c:4329
+>>> rcutree_report_cpu_starting+0x1e8/0x348
+>> This is really weird; this does indeed look like CPU7 decides to boot
+>> again. AFAICT it is not hotplug failing and bringing the CPU back again,
+>> but it is really starting again.
+>>
+>> I'm not well versed enough in ARM64 foo to know what would cause a CPU
+>> to boot -- but on x86_64 this isn't something that would easily happen
+>> by accident.
+>>
+>> Not stopping a timer would certainly not be sufficient -- notably
+>> hrtimers_cpu_dying() would have migrated the thing.
+>>
+>>> (system is frozen at this point).
+>> The whole lockdep and freezing thing is typically printk choking on
+>> itself.
+>>
+>> My personal way around this are these here patches:
+>>
+>>    git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git debug/experimental
+>>
+>> They don't apply cleanly anymore, but the conflict isn't hard, so I've
+>> not taken the bother to rebase them yet. It relies on the platform
+>> having earlyprintk configured, then add force_early_printk to your
+>> kernel cmdline to have earlyprintk completely take over.
+>>
+>> Typical early serial drivers are lock-free and don't suffer from
+>> lockups.
+>>
+>> If you get it to work, you might get more data out of it.
+> 
+> Thanks for some hints, but unfortunately ARM64 doesn't support 
+> earlyprintk, so I was not able to use this method.
+> 
+> However I've played a bit with this code and found that this strange 
+> wake-up of the CPU7 seems to be caused by the timer. If I restore
+> 
+>    if (!dl_se->server_has_tasks(dl_se))
+>            return HRTIMER_NORESTART;
+> 
+> part in the dl_server_timer, the everything works again as before this 
+> patch.
+> 
+> This issue is however not Exynos5433 ARM 64bit specific. Similar lockup 
+> happens on Exynos5422 ARM 32bit boards, although there is no message in 
+> that case. Does it mean that handling of the hrtimers on Exynos boards 
+> is a bit broken in the context of CPU hotplug? I've never analyzed that 
+> part of Exynos SoC support. Krzysztof, any chance You remember how it works?
 
 
-On 8/28/2025 9:34 AM, Dapeng Mi wrote:
-> Changes:
-> v6 -> v7:
->   * Rebase code to last tip perf/core tree.
->   * Opportunistically remove the redundant is_x86_event() prototype.
->     (Patch 01/12)
->   * Fix PEBS handler NULL event access and record loss issue.
->     (Patch 02/12)
->   * Reset MSR_IA32_PEBS_INDEX at the head of_drain_arch_pebs() instead
->     of end. It avoids the processed PEBS records are processed again in
->     some corner cases like event throttling. (Patch 08/12)
+I don't recall anything around this, but I also don't remember that much
+of details anymore.
 
-Hi Peter,
+I believe long time ago - around 2014-2015 - were testing Exynos MCT
+against hotplug as well, so I think it was working. Many things could
+happen in between...
 
-Do you have more comments on this arch-PEBS enabling patch-set? Thanks.
-
-(The warning raised by kernel test robot about patch 02/12 would be fixed
-in next version.)
-
-
->
-> v5 -> v6:
->   * Rebase code to last tip perf/core tree + "x86 perf bug fixes and
->     optimization" patchset
->  
-> v4 -> v5:
->   * Rebase code to 6.16-rc3
->   * Allocate/free arch-PEBS buffer in callbacks *prepare_cpu/*dead_cpu
->     (patch 07/10, Peter)
->   * Code and comments refine (patch 09/10, Peter)
->
->
-> This patchset introduces architectural PEBS support for Intel platforms
-> like Clearwater Forest (CWF) and Panther Lake (PTL). The detailed
-> information about arch-PEBS can be found in chapter 11
-> "architectural PEBS" of "Intel Architecture Instruction Set Extensions
-> and Future Features".
->
-> This patch set doesn't include the SSP and SIMD regs (OPMASK/YMM/ZMM)
-> sampling support for arch-PEBS to avoid the dependency for the basic
-> SIMD regs sampling support patch series[1]. Once the basic SIMD regs
-> sampling is supported, the arch-PEBS based SSP and SIMD regs
-> (OPMASK/YMM/ZMM) sampling would be supported in a later patch set.
->
-> Tests:
->   Run below tests on Clearwater Forest and Pantherlake, no issue is
->   found.
->
->   1. Basic perf counting case.
->     perf stat -e '{branches,branches,branches,branches,branches,branches,branches,branches,cycles,instructions,ref-cycles}' sleep 1
->
->   2. Basic PMI based perf sampling case.
->     perf record -e '{branches,branches,branches,branches,branches,branches,branches,branches,cycles,instructions,ref-cycles}' sleep 1
->
->   3. Basic PEBS based perf sampling case.
->     perf record -e '{branches,branches,branches,branches,branches,branches,branches,branches,cycles,instructions,ref-cycles}:p' sleep 1
->
->   4. PEBS sampling case with basic, GPRs, vector-registers and LBR groups
->     perf record -e branches:p -Iax,bx,ip,xmm0 -b -c 10000 sleep 1
->
->   5. User space PEBS sampling case with basic, GPRs and LBR groups
->     perf record -e branches:p --user-regs=ax,bx,ip -b -c 10000 sleep 1
->
->   6. PEBS sampling case with auxiliary (memory info) group
->     perf mem record sleep 1
->
->   7. PEBS sampling case with counter group
->     perf record -e '{branches:p,branches,cycles}:S' -c 10000 sleep 1
->
->   8. Perf stat and record test
->     perf test 100; perf test 131
->
->
-> History:
->   v6: https://lore.kernel.org/all/20250821035805.159494-1-dapeng1.mi@linux.intel.com/ 
->   v5: https://lore.kernel.org/all/20250623223546.112465-1-dapeng1.mi@linux.intel.com/
->   v4: https://lore.kernel.org/all/20250620103909.1586595-1-dapeng1.mi@linux.intel.com/
->   v3: https://lore.kernel.org/all/20250415114428.341182-1-dapeng1.mi@linux.intel.com/
->   v2: https://lore.kernel.org/all/20250218152818.158614-1-dapeng1.mi@linux.intel.com/
->   v1: https://lore.kernel.org/all/20250123140721.2496639-1-dapeng1.mi@linux.intel.com/
->
-> Ref:
->   [1]: https://lore.kernel.org/all/20250815213435.1702022-1-kan.liang@linux.intel.com/
->
-> Dapeng Mi (12):
->   perf/x86: Remove redundant is_x86_event() prototype
->   perf/x86/intel: Fix NULL event access and potential PEBS record loss
->   perf/x86/intel: Replace x86_pmu.drain_pebs calling with static call
->   perf/x86/intel: Correct large PEBS flag check
->   perf/x86/intel: Initialize architectural PEBS
->   perf/x86/intel/ds: Factor out PEBS record processing code to functions
->   perf/x86/intel/ds: Factor out PEBS group processing code to functions
->   perf/x86/intel: Process arch-PEBS records or record fragments
->   perf/x86/intel: Allocate arch-PEBS buffer and initialize PEBS_BASE MSR
->   perf/x86/intel: Update dyn_constranit base on PEBS event precise level
->   perf/x86/intel: Setup PEBS data configuration and enable legacy groups
->   perf/x86/intel: Add counter group support for arch-PEBS
->
->  arch/x86/events/core.c            |  21 +-
->  arch/x86/events/intel/core.c      | 268 ++++++++++++-
->  arch/x86/events/intel/ds.c        | 621 +++++++++++++++++++++++++-----
->  arch/x86/events/perf_event.h      |  41 +-
->  arch/x86/include/asm/intel_ds.h   |  10 +-
->  arch/x86/include/asm/msr-index.h  |  20 +
->  arch/x86/include/asm/perf_event.h | 116 +++++-
->  7 files changed, 955 insertions(+), 142 deletions(-)
->
->
-> base-commit: f49e1be19542487921e82b29004908966cb99d7c
+Best regards,
+Krzysztof
 
