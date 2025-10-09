@@ -1,144 +1,125 @@
-Return-Path: <linux-kernel+bounces-846277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B64F0BC7750
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 07:46:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFA91BC7795
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 07:57:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A57054EA3AC
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 05:46:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A756F19E5DEE
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 05:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940B61AF4D5;
-	Thu,  9 Oct 2025 05:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WS1YxHD0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D86526159E;
+	Thu,  9 Oct 2025 05:57:38 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621C334BA49
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 05:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61831DF75D;
+	Thu,  9 Oct 2025 05:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759988754; cv=none; b=MEBAKKS8VMXgumeu8ApeZOG+zofvVIAKuNzXVJ2ijc0ODUZCX7wXB8ENltS/MITT6NEq0BZUTzHSSc9W/2bLbM69VKR60OFzjpLb8PicQaTn0AsB5vnUeYlHjNDzg26C0QiztxK3rGY3O2vpzZkOa++rqT7e9GOwYb+DpN0nizs=
+	t=1759989457; cv=none; b=jEcDX0kpmNI/y3EIb9LXyREt95X6y2N9wUkbhr/lx0gun3p+HmUSBn/zZXzCCEamSy8uFFhyrtipYjrGXAckWjefPCBR7d6Xv/kU+aSLu6eOiEoR0l6egwKswGqTVPH3ThHQm4blFXMlxgMhH2pa948P7XaV7N7A3hsEFpxV6fE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759988754; c=relaxed/simple;
-	bh=Cgs5/82pfRdFOfycNZ7ouFWHQSrCRVqg6S+KdryAJEE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oNnCLw82uWK05qH8zhG7+T75eBaaCwSM3+F8zzFo1/1FyPrso/Yr1jMXGO+uYySdoRMDYfarBiH9Ni1bYmnC1XWoqk+gGlJplPd+iYF2obKcIvecCNzv/TJZuw0UVnsZWU6Ob8FIherT8uhjAKL/2egtYDR7FOSbHIx1TzkzQ0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WS1YxHD0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759988751;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=orcYfgdpG/ZGGYwoentBQb80+LYoN5XSkiV8KV8rfJo=;
-	b=WS1YxHD0RLWCBG54jRqyoxXC705I15M0csjQjiPBRQAnbzBiH5uPE4qIW3+fZ9/Y4Mi3jS
-	6T/YUQvl9XEjvlSbmH2giaFO1BiJxR77oirVnjThAL6kaaDbXARNO2HLXUa6wBnRHGRGto
-	TNAGg3mKYuJUHBlpVKNjrrWNflrWM2w=
-Received: from mail-vs1-f71.google.com (mail-vs1-f71.google.com
- [209.85.217.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-28-Dt6B4LkqPZG8syP1WgBwfg-1; Thu, 09 Oct 2025 01:45:49 -0400
-X-MC-Unique: Dt6B4LkqPZG8syP1WgBwfg-1
-X-Mimecast-MFC-AGG-ID: Dt6B4LkqPZG8syP1WgBwfg_1759988748
-Received: by mail-vs1-f71.google.com with SMTP id ada2fe7eead31-5cf363edd82so1558610137.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 22:45:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759988748; x=1760593548;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=orcYfgdpG/ZGGYwoentBQb80+LYoN5XSkiV8KV8rfJo=;
-        b=I3J3S+8W9RzuLn5gXiHbbHo0zEhYV0bz7lVeMqO8Elz/gRH89L7M3tQ5PYTQ6xq4DM
-         scZlh0BpDNeYyl7Ui0BjS39tl4Nrx0jD3ygbOqm1mZzv3U0Gt23Ak7fs8GmxADrwsDZ0
-         cuvCAWnpOUbfLO4N2gDsGVDkW54gUmC/qZHS+EzSr3fJQx69zBIYEFp8ve2guRKD9HHa
-         j20G1WyRGg8S53vpsGIAUqHfD2db6pmS+ni/0nveQOHiIr6hTlt6Xdf2EPogl0FPMcRj
-         8fCSBkjcif59b6W5RB9K/y2SV2p7jYNw9eCfO0jLm7egdoSyXvXSC7hqDK8jZ2ynEH8B
-         tl2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUwYc8LK6mRT4YpyMvhWwa0UfDc/eK8FUoKxaZvKbEWJ/aeA0C0JWd+mLnOnfZnkQ7Z3cbqNy1WgyW61Ek=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/OdpAJrrAoceZZHO+AF+HSgIz5PgWkndmrss8w0KkXHgfLNWP
-	rLMOydbHIUZX2+1vV0zBRdZIZKXWWT61EG5nG8rEkJgsFe12bR5zEEGAy14jti/ex/iUuYLdoin
-	mYfWatnlquya15tK0KkC937I33r/hWTfnnZLVtcdFN9cza/eOrE3pHYBe6YLHV6KAcwI16FqqoY
-	aVPDMGQlw+fJFseuulwmwKDtyRXC9/H+0XXe0BoczS
-X-Gm-Gg: ASbGncvLTLEeU4GSUUiSFXt6oppHBeMuUIxlWc3k/dlcYZf1a2F6oHKe/wF6yDrH2Mb
-	ivGzW8Wq9LsZYMA8X8Ns1PtQuySvlePFFm1jAdIo23E25WAaH400X/m0bzRZs7/FC7VcCWZFh03
-	POIhWFrk8P75S400/e544/Sib3xL8=
-X-Received: by 2002:a05:6102:1a06:10b0:584:7aa3:a329 with SMTP id ada2fe7eead31-5d5d4c81309mr3856075137.4.1759988748529;
-        Wed, 08 Oct 2025 22:45:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG3G8kAFYaXC6ufiRYos6wQXP8+qHlI6XHMSGOom3zuceYwL+hPPQed85kXtqvFgON80O528fdCfB3/9TPXj90=
-X-Received: by 2002:a05:6102:1a06:10b0:584:7aa3:a329 with SMTP id
- ada2fe7eead31-5d5d4c81309mr3856068137.4.1759988748195; Wed, 08 Oct 2025
- 22:45:48 -0700 (PDT)
+	s=arc-20240116; t=1759989457; c=relaxed/simple;
+	bh=pZQaNYzeBHaJH4Vz/t2FVsiKHeWBwnG/yHlpr0D1EB0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QOevdCLNT/lVJcXKzyYA56X0jdPmlO/U25BcOsu9pjsZkpEYs92orkeiz9Jb5eXJLDREOEdpmHXZzWHxXuwPeD3gK255rIpCoXeswzTTI5Ec5I6donykoPInsLRVlHFHfS68H1vAs8dCNp3qE+/kOfHvRnod7uuEyGaIvALTVYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [192.168.0.108] (unknown [114.241.81.247])
+	by APP-03 (Coremail) with SMTP id rQCowACn73kTTedoBU42DQ--.27093S2;
+	Thu, 09 Oct 2025 13:50:11 +0800 (CST)
+Message-ID: <87d603ce-578d-46a7-87b1-54befccc6fad@iscas.ac.cn>
+Date: Thu, 9 Oct 2025 13:50:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929134258.80956-1-alok.a.tiwari@oracle.com>
-In-Reply-To: <20250929134258.80956-1-alok.a.tiwari@oracle.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Thu, 9 Oct 2025 13:45:36 +0800
-X-Gm-Features: AS18NWAJIasEWYyFtU2lfrqbz_3g5EECFeIzi1irlKeHZRF9-ZPVkvavqWabGu4
-Message-ID: <CACGkMEvyh9CBHjQs6bYv8v-DVYGizjOrVMuFVsnnrJeN6kTrfQ@mail.gmail.com>
-Subject: Re: [PATCH] vdpa/mlx5: Fix incorrect error code reporting in query_virtqueues
-To: Alok Tiwari <alok.a.tiwari@oracle.com>
-Cc: dtatulea@nvidia.com, mst@redhat.com, xuanzhuo@linux.alibaba.com, 
-	eperezma@redhat.com, tariqt@nvidia.com, moshe@nvidia.com, kshk@linux.ibm.com, 
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6.y 0/2] riscv: mm: Backport of mmap hint address fixes
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Albert Ou <aou@eecs.berkeley.edu>, Inochi Amaoto <inochiama@gmail.com>,
+ Han Gao <rabenda.cn@gmail.com>, Charlie Jenkins <charlie@rivosinc.com>,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ Meng Zhuo <mengzhuo@iscas.ac.cn>, Yangyu Chen <cyy@cyyself.name>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Palmer Dabbelt <palmer@rivosinc.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Guo Ren <guoren@kernel.org>,
+ Paul Walmsley <pjw@kernel.org>, linux-riscv@lists.infradead.org,
+ Yao Zi <ziyao@disroot.org>
+References: <20251008-riscv-mmap-addr-space-6-6-v1-0-9f47574a520f@iscas.ac.cn>
+ <2025100812-raven-goes-4fd8@gregkh>
+ <187fe5a3-99b9-49b6-be49-3d4f6f1fb16b@iscas.ac.cn>
+ <2025100920-riverbank-congress-c7ee@gregkh>
+Content-Language: en-US
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+In-Reply-To: <2025100920-riverbank-congress-c7ee@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:rQCowACn73kTTedoBU42DQ--.27093S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ar4kXw45GFW8tF1fCF1kAFb_yoW8CFy7pF
+	W2qr1jyw42yryIyw1q9rsYgFZ5Ww4ktay5JFZ5CFWvvrn8Zr92grn2gFWq9Fyjvr1kW34Y
+	qay5WryrZaykZ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvmb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I
+	8E87Iv6xkF7I0E14v26F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7
+	MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
+	4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
+	67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
+	x0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
+	z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnU
+	UI43ZEXa7IU56yI5UUUUU==
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-On Mon, Sep 29, 2025 at 9:43=E2=80=AFPM Alok Tiwari <alok.a.tiwari@oracle.c=
-om> wrote:
->
-> When query_virtqueues() fails, the error log prints the variable err
-> instead of cmd->err. Since err may still be zero at this point, the
-> log message can misleadingly report a success value 0 even though the
-> command actually failed.
->
-> Even worse, once err is set to the first failure, subsequent logs
-> print that same stale value. This makes the error reporting appear
-> one step behind the actual failing queue index, which is confusing
-> and misleading.
->
-> Fix the log to report cmd->err, which reflects the real failure code
-> returned by the firmware.
->
-> Fixes: 1fcdf43ea69e ("vdpa/mlx5: Use async API for vq query command")
-> Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
-> ---
->  drivers/vdpa/mlx5/net/mlx5_vnet.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/ml=
-x5_vnet.c
-> index 0ed2fc28e1ce..b2ebf56b2ea2 100644
-> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> @@ -1258,7 +1258,7 @@ static int query_virtqueues(struct mlx5_vdpa_net *n=
-dev,
->                 int vq_idx =3D start_vq + i;
->
->                 if (cmd->err) {
-> -                       mlx5_vdpa_err(mvdev, "query vq %d failed, err: %d=
-\n", vq_idx, err);
-> +                       mlx5_vdpa_err(mvdev, "query vq %d failed, err: %d=
-\n", vq_idx, cmd->err);
->                         if (!err)
->                                 err =3D cmd->err;
->                         continue;
-> --
-> 2.50.1
->
 
-Acked-by: Jason Wang <jasowang@redhat.com>
+On 10/9/25 13:00, Greg KH wrote:
+> On Thu, Oct 09, 2025 at 12:19:46PM +0800, Vivian Wang wrote:
+>> [...]
+> Ok, that makes a bit more sense, but again, why is this just showing up
+> now?  What changed to cause this to be noticed at and needed to be fixed
+> at this moment in time and not before?
 
-Thanks
+As of why this came quite late in the lifetime of the 6.6.y branch, I
+believe it's a combination of two factors.
+
+Firstly, actual Sv48-capable RISC-V hardware came fairly late. Milk-V
+Megrez (with Eswin EIC7700X), on which the Go TSAN thing ran, was
+shipped only early this year. The DC ROMA II laptop (EIC7702X) and
+Framework mainboard with the same SoC has not even shipped yet, or maybe
+only shipped to developers - I'm not so certain. Most other RISC-V
+machines only have Sv39.
+
+Secondly, there is interest among some Chinese software vendors to ship
+Linux distros based on a 6.6.y LTS kernel. The "RISC-V Common Kernel"
+(RVCK) project [1], with support from openEuler and various HW vendors,
+maintains backports on top of a 6.6.y kernel. "RockOS" [2] is a distro
+maintained by PLCT Lab, ISCAS, for EIC770{0,2}X-based boards, and it has
+a 6.6.y kernel branch. Both have cherry-picked the mmap patches for now.
+
+We operate with the understanding that the official stable kernel will
+not be accepting new major features and drivers, but fixes do belong in
+stable, and at least from the perspective of PLCT Lab we generally try
+to send patches instead of hoarding them. Hence, the earlier backport
+request and this backport series.
+
+I hope this explanation is acceptable.
+
+Thanks,
+Vivian "dramforever" Wang
+
+PS: This 6.6 kernel thing isn't just a RISC-V thing, by the way. KylinOS
+V11 has shipped in August with a 6.6 kernel. Deepin and UOS will be
+shipping with 6.6, with UOS "25" shipping maybe late this year or early
+2026.
+
+[1]: https://github.com/RVCK-Project/rvck
+[2]: https://docs.rockos.dev/
 
 
