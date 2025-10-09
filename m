@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-846475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80233BC81C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:46:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F0B9BC81D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:46:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C217C4E35D1
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:46:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA1F53A76D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:46:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C430F2D24B4;
-	Thu,  9 Oct 2025 08:45:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E281A2D320E;
+	Thu,  9 Oct 2025 08:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c/i+9ZTf"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GChLELLm"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1AC2D29D6
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 08:45:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1CC02494D8
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 08:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759999553; cv=none; b=ErHR6jY5tj0gRdjOYQjUwc4kEzqBnz9Jd5KJ8c0O0cQ9tDrKugWZ0bZtC2fVTf73DAMMbAsC6qtSTPqfe63SFf5/qLHxfJEFsgCXjyXNO6yHle2nVWSaBgptNgU5i+IJMwTtNjzW5Ty/Ne1TSStjl2Q63k+/fkI2tYxPkIhnMqM=
+	t=1759999558; cv=none; b=cwKvIHFiCwaKTeSXenH3sT2rSsHAWHLxphuujxswooVxW7HDSms5e4Lg2m9tKLhxMJ5SR4URKiJ356mgKydUI5fW8XkzMzyZOaZOYHmi7Lj5Maymhgke88uBfhWsRRETXjv9EVVky9Mt7ral1hO2/oVhbPiy0hfNspNJfn+0JNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759999553; c=relaxed/simple;
-	bh=i8ILy3efLeOoD5Qf+e/n7DFmvbPzfKevH825MWgSvZA=;
+	s=arc-20240116; t=1759999558; c=relaxed/simple;
+	bh=fxxAVmPJGca8589Kqpk9mJo76fAFnptROiZXxjqZbz0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sU1bkZxSx3OTu8ffMjXgyPa3f2CSFxAqw4rNCE/V3MrPdZesU9X7QfKJOx3AyI9PYRPCeAqSxdT0Ku4eEpDbiiIkqHWZ0Yh702dKmszVhml1FMXmSXSAn0RXmw27uo6MaJUAxOGcGNE8HQzCsDTTYG/TUQPidWYa2qSwm3nSVnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c/i+9ZTf; arc=none smtp.client-ip=209.85.210.179
+	 MIME-Version; b=KOl6ZQeWpme2Apw4phbGDlQWN1kLolPYldXrgeBidCNAtr/RU+nMyMfEKPQSJ4ThqctO5vvFRB7WyEthr7zcr4vP/7XpB7OJT4cbInxmMd+sWHGeRDGt1yhY3EjPX3pqmXcHZT77XjOCf5edPfmq7YFBrRpTSqhYPDKN1IM54mY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GChLELLm; arc=none smtp.client-ip=209.85.210.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-78af3fe5b17so545198b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 01:45:51 -0700 (PDT)
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-78115430134so495413b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 01:45:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759999551; x=1760604351; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759999556; x=1760604356; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=r8OhPkz1QMasSzFJcM2SsPKD0i5kQ3GIw9/NmjM3cWc=;
-        b=c/i+9ZTfkO6eFrNmVI1vPuMFIy2blOAwtm7fGMZoN6vc8cq0sHweMdvhA+amIrB7kR
-         BF1qtLEZlXfwHkaOca9/VcTrNMS11jZZZ1pboioQ2uTS2PtfGUNLYdEMmNRTt5bGpZxI
-         ahTpnCH7I9NYlHpULwdzeNQc+jOmQQhmBbvf7zefc4j8LYK/Fifx7QitV27Ik+JJiv4F
-         uvxGyNaEGPqlU0xj1PEC9AfiPtf6bUZ/uh2uQ2XBVzWcnSDxb7pkCdDT+nK9VGzkaAYo
-         CNNsVcPKqqbSyFm5OvBcHSXHQGKMQB7fJe12ZI0H69V6wDdcoyE0q5pX9uM5F66nn+Tv
-         b2DQ==
+        bh=iWDW22d1KEEhzhYCQi/m5g5KGiHWCtagl6QTEa0SdVU=;
+        b=GChLELLmENV/QSJq1EFrLgQdy5y5oJss/HMsPyb1dC7GHzHoG4VX/MCGWbzJwtQNHn
+         ij11h1S481g7c0LDuIVaIygapiatrY8GcqC1r3yAFOGG3qSEFJI8Lz6l84T2WpfX6xZ7
+         GCm8oC3WMNDKRDOYGy3kQ8SJ7eiAgdQMc7LwF0GkYxCk8MSOtPUYikxKhA4Gjull0s2F
+         lmZ9wY8Gnn9XjhcmuFE1S90Ej/itvZOCZsHVQ1pIauRCFMZIRt5KyevNzluSqg7+xXSj
+         fD+7uFpm441ot6vQHgFT2H/d+PcHn/q6VUeuMiw/x+J2xXdMtTSgE1pqFZw33GIO6DV+
+         IgtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759999551; x=1760604351;
+        d=1e100.net; s=20230601; t=1759999556; x=1760604356;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=r8OhPkz1QMasSzFJcM2SsPKD0i5kQ3GIw9/NmjM3cWc=;
-        b=FcilDoSlxfCqmFIM/UCZC1FFMbFHlUeA9oWakwyglAyx9UZhLL4bHjcjfTdQ1kQ0CX
-         6u/1upCIHlpJLxfZuObvYgqv1TwbqF1UXqgOHmU8vmPV9Uilmo7XY27Eh5aB2PNm3iqb
-         jPylcb0azhLA+pWA6zRDzPzt9FEBl9+oigm4nCYGb6Q8l4zp+auY6zXbW2KsymDwIPFq
-         hXL8XgznCza4Q1QlJu73YDypYC1fJ63ge0JoJAYRBQM2WdCBPMjxYCZnNmS9rbWDqrvj
-         924or9uLOfJYqJd+W4caDjHKVvOqx+Uc4RmktR/G00yFLjeC6KIgqn+usTOxn22OlNwL
-         CWyw==
-X-Forwarded-Encrypted: i=1; AJvYcCX6j1EhTI5iOT+jCN7S1/odufMnu2Sff604mTCAa0tW42l+BxITziTXamCWgmfgu4xxmMGgdHqcYMB/hnk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwArddvhbOy1lLDl7X881PfBixwGPeEyyQKF6ERvVsopo5rFQz4
-	CMbvrbfm67Yy1NMITTCexPwBwnPOPEWhpmkpY7FllQxrKE+UZIOaE0Zv
-X-Gm-Gg: ASbGncueERgJUxXBhgdyHjTIVGjKzdBKOvz0o0YHIw5BFuO8YxcGF64DSQizZ6PceCv
-	vUihtG07fhnj6CgHG8ygrUeUuSLCTMh4oedQYzMZnVBpNeGoBfqHQXdDtaoueiAJbma3ZQl7smN
-	r0Gopu19v4Q6yApb5yiy9aTgAL+KDoawWb0hiwjiWwYVs+IGq4rJsUv7j1X8SMR24JakDhFLnll
-	rAEa12/+vIb92ZOce+40QJOxYaE12P4WKYXlkdAP4oWtojksTYDOah+zUCbO+wI8gn9vb6l5HqU
-	dlfH6MfOpqYZrWTKxNFnfTPPEea+CMGmPlPTrEbER1Y2zBF3Zkm8vVIOk8DKtvuKRie1ACQGN7E
-	LsP9x4FcHb/gvtl7h4F2SFfCtBtb7ULHb4tS/3YNUdOjNlOQcDNF05IRchy6rtHFyUWwvgGYMny
-	hx
-X-Google-Smtp-Source: AGHT+IFsUYI+Uzlw6afQAv8v8QE4Z1XIw1leKiEaEKz3k8e65BDwjgKJwZ8Au7x32eU9NmkOPg5Kxg==
-X-Received: by 2002:a05:6a00:3cce:b0:782:ec0f:d279 with SMTP id d2e1a72fcca58-79385ed579dmr7200904b3a.10.1759999551109;
-        Thu, 09 Oct 2025 01:45:51 -0700 (PDT)
+        bh=iWDW22d1KEEhzhYCQi/m5g5KGiHWCtagl6QTEa0SdVU=;
+        b=RC9jG7ZqZ7EYU78qkQPPX5c3WHatGDzVEsFi6/o97mbHy4OcFUbdO2RorvK+OYxYWG
+         5bE8FoO9ynh6q7inhWTbYFPVFj72ODjnVd4AJCuMQOLs2C5DAo9dx2huBNjx/6IKY5kP
+         w1msN1R0pDgcVyu8Y1cxKkyoxamczZYxnyKhhxB2b2uYb9EiSf9guIJGRaYgzZakXaPH
+         7dYDU1d3b40j1k0sC2qUotK4v7NQXuXxfWTMxcUgBUY3nADc2Q/mo4moxUeSCXqigYoI
+         fn3OHeFhNk6kEE3iel881qWmYLlUmP2mf/w4V6v7RIdqdjtfkX1EV2niTKT90Hvzs+e5
+         GRuA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8pm1JqEp1YvD6OLmz7xDqgsCnn/PwH7UJ8Mjnc0YWT/2I3j0V+OTvmm2nkeSvE+OHqSOteHBJVeecqIM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxf7ogRgh1Xvfolswy/joXpD6l4sJbr2Qho863IsRYvyzEO/dJy
+	SOU/FhJ36RWyGyY2olNgFyRFPtuTTO7BAUzQcZdkQXylxnpNU3pk+zh6
+X-Gm-Gg: ASbGnctBw9jqUheN5Kapt2ndjCmRKbcxvIkt1sKxkAWBFhoGckJm7zMQ+cN6a5VtCva
+	2+o4wBqt/r2jJN39NSfTTuNiVEUnK5aKTFadphZYUQTkzDJ6zPdm8UHQyeir10fZO4BJXUdhVEF
+	ObrXI8178iYY0EbQsBqU6/YRNmSG6oun6z3yyJGw6nsmSzAN/or4esfYKZ7KuCKQ+wK/r4fH26C
+	2QuqwVd84bXcuSCY13KAA/lM9hAPZmE9eA2tExJT6k1vv7IYwbGjVF8gR8BaktYk1DTCoGzDVfX
+	q+Nj4UI4jCTOIbxFQoo3pQf3i/Nk7RGvsUwFtdaozFzy8Z+XtBKfzxk902jEcVV+HduPNwUndEV
+	oNEcy33R8gE8E3v+5Aww6D9BiGX/QNAUrI0osIqxYmBHbFqJoLMa1LnkXTdSQSMyzSV0tuwabwq
+	O+
+X-Google-Smtp-Source: AGHT+IF7aFFcCzQTmIoHc4LXKvok/D+zEwjkzlIMaULpCLdJ/TR+jbfCMOyMxdkX7CTceRanUDdmDg==
+X-Received: by 2002:a05:6a20:a123:b0:243:d1bd:fbc9 with SMTP id adf61e73a8af0-32da8462b41mr9009265637.56.1759999556317;
+        Thu, 09 Oct 2025 01:45:56 -0700 (PDT)
 Received: from localhost.localdomain ([223.74.108.47])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-794e1bf7604sm2130924b3a.55.2025.10.09.01.45.46
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-794e1bf7604sm2130924b3a.55.2025.10.09.01.45.51
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 09 Oct 2025 01:45:50 -0700 (PDT)
+        Thu, 09 Oct 2025 01:45:56 -0700 (PDT)
 From: Liangbin Lian <jjm2473@gmail.com>
 To: robh@kernel.org,
 	krzk+dt@kernel.org,
@@ -98,9 +98,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v5 1/3] dt-bindings: vendor-prefixes: Document LinkEase
-Date: Thu,  9 Oct 2025 16:44:14 +0800
-Message-ID: <20251009084416.45542-2-jjm2473@gmail.com>
+Subject: [PATCH v5 2/3] dt-bindings: arm: rockchip: Add LinkEase EasePi R1
+Date: Thu,  9 Oct 2025 16:44:15 +0800
+Message-ID: <20251009084416.45542-3-jjm2473@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251009084416.45542-1-jjm2473@gmail.com>
 References: <20251009084416.45542-1-jjm2473@gmail.com>
@@ -112,30 +112,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-LinkEase is a company focusing on the research and development of
-network equipment and related software and hardware from Shenzhen.
-
-Add vendor prefix for it.
+LinkEase EasePi R1 is a high-performance mini router based on RK3568.
 
 Acked-by: Conor Dooley <conor.dooley@microchip.com>
 Signed-off-by: Liangbin Lian <jjm2473@gmail.com>
 ---
- Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index 9ec8947dfcad..db496416b250 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -873,6 +873,8 @@ patternProperties:
-     description: Lincoln Technology Solutions
-   "^lineartechnology,.*":
-     description: Linear Technology
-+  "^linkease,.*":
-+    description: Shenzhen LinkEase Network Technology Co., Ltd.
-   "^linksprite,.*":
-     description: LinkSprite Technologies, Inc.
-   "^linksys,.*":
+diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
+index 28db6bd6aa5b..ec2271cfb7e1 100644
+--- a/Documentation/devicetree/bindings/arm/rockchip.yaml
++++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+@@ -726,6 +726,11 @@ properties:
+           - const: lckfb,tspi-rk3566
+           - const: rockchip,rk3566
+ 
++      - description: LinkEase EasePi R1
++        items:
++          - const: linkease,easepi-r1
++          - const: rockchip,rk3568
++
+       - description: Luckfox Core3576 Module based boards
+         items:
+           - enum:
 -- 
 2.51.0
 
