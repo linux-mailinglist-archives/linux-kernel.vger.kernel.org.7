@@ -1,239 +1,233 @@
-Return-Path: <linux-kernel+bounces-846373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E167BC7BE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:43:25 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9D0ABC7BF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:44:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 419114EF96E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:43:24 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 26F82351FFC
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225A0298CA4;
-	Thu,  9 Oct 2025 07:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC505298CA4;
+	Thu,  9 Oct 2025 07:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i2zakA3e"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ZPEhhh1Y"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C328619047A
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 07:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9AD82512DE
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 07:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759995797; cv=none; b=pB9ATCui4knaNjIE0a9stC5P4S3Xc6P8Aa3Zk7bhRFQl6vZWzHJPNhYydz6PduDw4DeeAV5jtTtMk8AO5Fc3/jcAEfgJCLCCQWlgfPxUK8XHomDYbqY72JET5cgUNMV8tZ7QMZVyribbRjw5nSBZzZwMp8QjufIpj/BaVFrO5I0=
+	t=1759995864; cv=none; b=nxO+7DqlXA8AKbg3TzgUI+m8NNs9dLP1HT2Y7leadL0QlkptwEewg+JZAWBn68AeU8nRcDC8Eg/tNdVSOe75ZxNsLRbNld8MXJmCtxZbCAcLkjM172slpsknYiBto56U3cVnlpTqI1yX1RuSK+dtNJzKBPSHQiYKkSNswQtxipA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759995797; c=relaxed/simple;
-	bh=zVKRcKBKy5UMg8zeg6DuVbbztfNrMDkWudL549E9dKE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R43KUZd+3qeJ/sspfvw3hCxBaQ5CMxKea3S/ODzT/Bk/kqy0wXo6VZhFtCoKGhgM5zf+iKtVE734Hs9fwuBVJiKRg85ncKECa7fDtYPwo9UB4H32Dcn0QhJ0ItLHlW/6ExWJcN6i1ZYHjSQOXnt1g8zKhxfehoTPslOXtei51Is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i2zakA3e; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759995794;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lqVlQjsLtQiDAss75C4CqbUYx6+KaJ0FeS0J3CR27eU=;
-	b=i2zakA3ejJbfSsYVzus+fYA+km033HY8KDlxs2sVtQDISLL9QkkqXPhKaZJAw9DgAc01F8
-	ooSXhaOZ0woN6kYf2xI7zAT7qx0MgKKLAjdlRv2niQ0eeCEh6m1lu364s/EJp/UpCqFX1i
-	cw0No3Z747J8lxuMRQp+mQtZ5NxuTuI=
-Received: from mail-ua1-f71.google.com (mail-ua1-f71.google.com
- [209.85.222.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-511-5sMhyZOgO9aPeL1ehh6k5g-1; Thu, 09 Oct 2025 03:43:13 -0400
-X-MC-Unique: 5sMhyZOgO9aPeL1ehh6k5g-1
-X-Mimecast-MFC-AGG-ID: 5sMhyZOgO9aPeL1ehh6k5g_1759995792
-Received: by mail-ua1-f71.google.com with SMTP id a1e0cc1a2514c-89018ea59e0so1536788241.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 00:43:13 -0700 (PDT)
+	s=arc-20240116; t=1759995864; c=relaxed/simple;
+	bh=iCQQf2uoJXeyZbpOaPp2ooQjyhOwe9helnVbfiNK5qM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=H4rJjXZ/5T3bIe5lE9LSuQ76SP8VTaoRVZSJEITPaNKnkTcyxs6acXkA58bdu8jog6nyQpbal8f4dhZeiIyqhWOgMBfP0Lo6I6zbzrl4nXx9JXw+g3t0XmrWINabWLRf8nHf4P4tVEgT7bBsHO83/tKUiSCKron6/fk5cfwDxc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ZPEhhh1Y; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-46e491a5b96so3172485e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 00:44:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1759995859; x=1760600659; darn=vger.kernel.org;
+        h=mime-version:user-agent:organization:references:in-reply-to:date:cc
+         :to:from:subject:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iCQQf2uoJXeyZbpOaPp2ooQjyhOwe9helnVbfiNK5qM=;
+        b=ZPEhhh1YlYSM0n+Bt1eQALDrvH5+He1hEKYCiPiEgmSI5MlpO2SQ5bM542bhRFseSH
+         CtrJa/MvNrSWWSqbPG7IKN+dyyzi07rzN0TNRGh8H+Gp9kY//t11t4081vFRE1fDL+GB
+         u+rhMx9CvSK0rTVDgO1YR2Wze5dID2yrT0PhSWeZzUqA//kAeV1wy2JqY6uF/Z7o2siD
+         h6ZILhC3hJ1CxOFkl1hvJiI9Zec8QJjUkokb5hJhhoYcAcNbpnlUrglIiEa8wSZiBlWS
+         o5jqUbuS8YnrGp5Ot64LJoHdn6L8cyPoiEAOzzDac5ZBkgEZvxRlkuXt0EJ0lYC8nbm7
+         xd5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759995792; x=1760600592;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lqVlQjsLtQiDAss75C4CqbUYx6+KaJ0FeS0J3CR27eU=;
-        b=DySEbJ3bfzMRzERBsAFBETuC8LWVrYgNEeDbfd+ku+56O3WqCHXqyFjje535ZhpHEm
-         FjcCya5WQjvgjWf0irY+Zf6rM9sLbQqQpKwPZ+WU1B+f3fbVVD3AxzemTD73t7l78jHE
-         79atNObWNGaWgbhT13MhNYnT8/DyZU+46OjQuZ+Zn84OSAhUKxIs+feX9zuhyHfPZMHG
-         pJI/G4NyVMbZH6oCs7sTWnQhD+v8Vpu0svzn19M2olYlQuc8Cm97Rn8ezhgGG/RjPnr2
-         K/ZwABJ4/XP8u6Tj9Ql5J2NACqSXYuqWq9CH6Is+4vHiQZn0Gd5CtT9TiJTgmpsUwBqW
-         rDig==
-X-Forwarded-Encrypted: i=1; AJvYcCWVcnsdWmjTTH1LADMESEB9audYIGRBgRH16NTzEQxrNmUUg55LUebfz3ZuprTG8zkLo1Smzkw9bEB9et8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDHIVVq83kNPuLl7mKA4VUc2pqd7Yh8can+uAuF7h+0tbfArQz
-	vTZyyGOSRsd1gwPz6redgW/i837UYZn66w2w+snUMtNWl5lyPLiTvTuM3EgwHwIL7J88pJRm+pc
-	EeqM7+8/QwJTVRThjpw+PDyC/KXf9LHmnubRv+akjawcPFcrOs9v8Izrk+vvE/WhvKJT4mFgEID
-	8+3slINDvn3z6+bN5jIh0CyIgh45K8MmAoJDMkaFmz
-X-Gm-Gg: ASbGncuKeOAgqVElOuBTnZOOsChjGnmQQsp3Yub3I+aiJFab3MPUFQTG4E4N7eIyGk4
-	jqcltsKCAgCTfFTF2AvMnjHwzawuTjz/V5hisGNfczLNG9bHWda6fHtI2MzAY8oWpFrlo6/BlVb
-	tw2WL2ZgrLuIYHDCttJLg6nwQ=
-X-Received: by 2002:a05:6102:512b:b0:5d3:ff01:363d with SMTP id ada2fe7eead31-5d5e2323bc3mr2727499137.21.1759995792618;
-        Thu, 09 Oct 2025 00:43:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFuW1O6aYG322N90mSfPqM1yVoDXYbVpe62RkG9vN89i8vdM+utFjOpbEoXeVs+CeLXPaqVm14uwn8vmxLCF8o=
-X-Received: by 2002:a05:6102:512b:b0:5d3:ff01:363d with SMTP id
- ada2fe7eead31-5d5e2323bc3mr2727489137.21.1759995792135; Thu, 09 Oct 2025
- 00:43:12 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759995859; x=1760600659;
+        h=mime-version:user-agent:organization:references:in-reply-to:date:cc
+         :to:from:subject:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=iCQQf2uoJXeyZbpOaPp2ooQjyhOwe9helnVbfiNK5qM=;
+        b=aVByXw9NLW6zP4z7KtNL1aOiEYcx4axL73bLqVAva++Y7v6f3Pjmw6KNuRbqtrfOcF
+         8k6tZsJEF1JNDc+SYier/aehslw74PVT/kC5tRhG304T9Uy7EssA3g1kSzoGbKAscPjJ
+         xW3tlPA9YMWuAf11Iu4liMUsxfeayQredi/StT1mka4qtfbvKnnDjCSMVDN0chy1ptqD
+         qXQcFcA6Ii47AUwQ0YsYM0jMgSzwHCa0/J4cViYJyMK2dE85okVp/+KDh/uX1ReXSoDx
+         F1i5wgkE8+UB7fsDZwSRuoNW1FlkTtXI/xoA3sC4clTVtCqcSwYVRziCM/Y/VPUeuD7L
+         OeNw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/Q56hi4SMtkcGWOYiiKJTE0ANdADHtWfjcpY8qZ7UTwHd/vKaJrvrV5KgapEnjjAC1p9uFc3sTzxcxPc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlFwrhd7UJ2TfcnUicl7PE47Dtx36GYGGHT4kYLZt81G0LwjbK
+	q4t53oDsA5AaIpQqJ8hDGwtsCTPdqcfLPVGt4lUHVqSfa87IzKMaky4/A8KcvsdhFDI=
+X-Gm-Gg: ASbGnct3S9jbT0dcBzxvsH07guVuC853Ht2tFkALFXUgis+mnYN0hiynq1c2wbDY2ZV
+	fJT6Teg3aoW4BR1auOPa70+jQl2N926j07+g7+hfXgo8DCLQXEelU0/3XfcReFhH6ebemiQdXWK
+	VqTH4d4aV//GfdPgRGMmF7uYG+2vB4tysAHgDecyh4nWTPoDMvzGYxucMVC0mI0LGwhCkQem1Mz
+	pub5uMIrUOjFJCAQdG8re0xvyWph+mP6mznFSbupOVOe3LuN0YczWUlaCW3a38U1GT+mIvauxmz
+	fJwgeAGmx17c8Y4IGCsVPbPI2P4BA83GEjYRLfqPkd+wQ2zuDokmxTx3LZ4wUoT6j9A6Fi4qhf+
+	bM3de1NXyBSKZzB/H1Vo+1FZ4llT5PtITUJTnq+mWBg==
+X-Google-Smtp-Source: AGHT+IFa3cZOVZtADvYdkDcmbhu1ikrOjFJn1uxG6wiO7vtbWkKr1hQX/8fH4Mn3m7l1iei0BuiNeg==
+X-Received: by 2002:a05:600c:1986:b0:456:1a69:94fa with SMTP id 5b1f17b1804b1-46fa9aa1cb9mr43404525e9.13.1759995858939;
+        Thu, 09 Oct 2025 00:44:18 -0700 (PDT)
+Received: from [10.203.83.190] ([151.35.169.189])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fa9d62890sm69037225e9.14.2025.10.09.00.44.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 00:44:18 -0700 (PDT)
+Message-ID: <02a02848044c32e78cfc806a3b95c1cb0d93d7fc.camel@baylibre.com>
+Subject: Re: [PATCH] gpio: pca953x: enable latch only on edge-triggered
+ inputs
+From: Francesco Lavra <flavra@baylibre.com>
+To: Martyn Welch <martyn.welch@collabora.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Hugo Villeneuve <hvilleneuve@dimonoff.com>, 
+ Maria Garcia <mariagarcia7293@gmail.com>, Sascha Hauer
+ <s.hauer@pengutronix.de>, Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+ Potin Lai <potin.lai.pt@gmail.com>, Mark Tomlinson
+ <mark.tomlinson@alliedtelesis.co.nz>, Fabio Estevam <festevam@denx.de>, Ian
+ Ray <ian.ray@gehealthcare.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Thu, 09 Oct 2025 09:44:07 +0200
+In-Reply-To: <c75a89f8-9eb7-4300-979e-e11159dc6888@collabora.com>
+References: <20251008104309.794273-1-flavra@baylibre.com>
+	 <CACRpkdYDMRZMb+bDUgK5yiKU1Toy=S_ebo2_4WRasHxCqv+4xw@mail.gmail.com>
+	 <c75a89f8-9eb7-4300-979e-e11159dc6888@collabora.com>
+Organization: BayLibre
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-87eCoRChGe7NyYF48ceM"
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929165213.2896034-1-eperezma@redhat.com> <20250929165213.2896034-7-eperezma@redhat.com>
-In-Reply-To: <20250929165213.2896034-7-eperezma@redhat.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Thu, 9 Oct 2025 15:42:59 +0800
-X-Gm-Features: AS18NWDNgO7BZAhdFYci_qhyrfWWjVvbQhFDVOL7yd0tvH6HgRQf74zWCfAymoU
-Message-ID: <CACGkMEuRMXrt3zyQtrW8QvHJSVPqh5XGXtxBtir3UxGzjSmXOQ@mail.gmail.com>
-Subject: Re: [PATCH v6 6/7] vduse: add vq group asid support
-To: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Laurent Vivier <lvivier@redhat.com>, 
-	Yongji Xie <xieyongji@bytedance.com>, Stefano Garzarella <sgarzare@redhat.com>, 
-	Cindy Lu <lulu@redhat.com>, Maxime Coquelin <mcoqueli@redhat.com>, virtualization@lists.linux.dev
+
+
+--=-87eCoRChGe7NyYF48ceM
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 30, 2025 at 12:52=E2=80=AFAM Eugenio P=C3=A9rez <eperezma@redha=
-t.com> wrote:
->
-> Add support for assigning Address Space Identifiers (ASIDs) to each VQ
-> group.  This enables mapping each group into a distinct memory space.
->
-> Now that the driver can change ASID in the middle of operation, the
-> domain that each vq address point is also protected by domain_lock.
->
-> Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
-> ---
-> v6:
-> * Make vdpa_dev_add use gotos for error handling (MST).
-> * s/(dev->api_version < 1) ?/(dev->api_version < VDUSE_API_VERSION_1) ?/
->   (MST).
-> * Fix struct name not matching in the doc.
->
-> v5:
-> * Properly return errno if copy_to_user returns >0 in VDUSE_IOTLB_GET_FD
->   ioctl (Jason).
-> * Properly set domain bounce size to divide equally between nas (Jason).
-> * Exclude "padding" member from the only >V1 members in
->   vduse_dev_request.
->
-> v4:
-> * Divide each domain bounce size between the device bounce size (Jason).
-> * revert unneeded addr =3D NULL assignment (Jason)
-> * Change if (x && (y || z)) return to if (x) { if (y) return; if (z)
->   return; } (Jason)
-> * Change a bad multiline comment, using @ caracter instead of * (Jason).
-> * Consider config->nas =3D=3D 0 as a fail (Jason).
->
-> v3:
-> * Get the vduse domain through the vduse_as in the map functions
->   (Jason).
-> * Squash with the patch creating the vduse_as struct (Jason).
-> * Create VDUSE_DEV_MAX_AS instead of comparing agains a magic number
->   (Jason)
->
-> v2:
-> * Convert the use of mutex to rwlock.
->
-> RFC v3:
-> * Increase VDUSE_MAX_VQ_GROUPS to 0xffff (Jason). It was set to a lower
->   value to reduce memory consumption, but vqs are already limited to
->   that value and userspace VDUSE is able to allocate that many vqs.
-> * Remove TODO about merging VDUSE_IOTLB_GET_FD ioctl with
->   VDUSE_IOTLB_GET_INFO.
-> * Use of array_index_nospec in VDUSE device ioctls.
-> * Embed vduse_iotlb_entry into vduse_iotlb_entry_v2.
-> * Move the umem mutex to asid struct so there is no contention between
->   ASIDs.
->
-> RFC v2:
-> * Make iotlb entry the last one of vduse_iotlb_entry_v2 so the first
->   part of the struct is the same.
-> ---
->  drivers/vdpa/vdpa_user/vduse_dev.c | 347 ++++++++++++++++++++---------
->  include/uapi/linux/vduse.h         |  53 ++++-
->  2 files changed, 290 insertions(+), 110 deletions(-)
->
+On Thu, 2025-10-09 at 08:17 +0100, Martyn Welch wrote:
+> On 09/10/2025 07:03, Linus Walleij wrote:
+> > Hi Francesco,
+> >=20
+> > thanks for your patch!
+> >=20
+> > On Wed, Oct 8, 2025 at 12:43=E2=80=AFPM Francesco Lavra <flavra@baylibr=
+e.com>
+> > wrote:
+> >=20
+> >=20
+> > > The latched input feature of the pca953x GPIO controller is useful
+> > > when an input is configured to trigger interrupts on rising or
+> > > falling edges, because it allows retrieving which edge type caused
+> > > a given interrupt even if the pin state changes again before the
+> > > interrupt handler has a chance to run. But for level-triggered
+> > > interrupts, reading the latched input state can cause an active
+> > > interrupt condition to be missed, e.g. if an active-low signal (for
+> > > which an IRQ_TYPE_LEVEL_LOW interrupt has been configured) triggers
+> > > an interrupt when switching to the inactive state, but then becomes
+> > > active again before the interrupt handler has a chance to run: in
+> > > this case, if the interrupt handler reads the latched input state,
+> > > it will wrongly assume that the interrupt is not pending.
+> > > Fix the above issue by enabling the latch only on edge-triggered
+> > > inputs, instead of all interrupt-enabled inputs.
+> > >=20
+> > > Signed-off-by: Francesco Lavra <flavra@baylibre.com>
+> > > ---
+> > > =C2=A0 drivers/gpio/gpio-pca953x.c | 7 +++++--
+> > > =C2=A0 1 file changed, 5 insertions(+), 2 deletions(-)
+> > >=20
+> > > diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-
+> > > pca953x.c
+> > > index e80a96f39788..e87ef2c3ff82 100644
+> > > --- a/drivers/gpio/gpio-pca953x.c
+> > > +++ b/drivers/gpio/gpio-pca953x.c
+> > > @@ -761,10 +761,13 @@ static void pca953x_irq_bus_sync_unlock(struct
+> > > irq_data *d)
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int level;
+> > >=20
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (chip->driver_dat=
+a & PCA_PCAL) {
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 DECLARE_BITMAP(latched_inputs, MAX_LINE);
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 guard(mutex)(&chip->i2c_lock);
+> > >=20
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 /* Enable latch on interrupt-enabled inputs */
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 pca953x_write_regs(chip, PCAL953X_IN_LATCH, chip-
+> > > >irq_mask);
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 /* Enable latch on edge-triggered interrupt-enabled
+> > > inputs */
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 bitmap_or(latched_inputs, chip->irq_trig_fall, chip-
+> > > >irq_trig_raise, gc->ngpio);
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 bitmap_and(latched_inputs, latched_inputs, chip-
+> > > >irq_mask, gc->ngpio);
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 pca953x_write_regs(chip, PCAL953X_IN_LATCH,
+> > > latched_inputs);
+> >=20
+> > This driver is used by a *lot* of systems and people.
+> >=20
+> > It is maybe the most used GPIO driver in the kernel.
+> >=20
+> > So I added a lot of affected developers to the To: line of
+> > the mail so we can get a wider review and testing.
+> >=20
+>=20
+> I don't have access to the relevant hardware to test this anymore and=20
+> it's been a while since I thought much about edge vs. level triggered=20
+> interrupts. But if the state of the interrupt is unilaterally returning=
+=20
+> to an inactive state, it sounds like that should be configured as an=20
+> edge triggered interrupt, not a level triggered one...
 
-[...]
+I will try to better describe the problematic scenario:
+- a device has an IRQ line that becomes active when the device needs to be
+serviced, and becomes inactive when the device has been serviced (e.g. by
+reading a status register); this is the classic use case for level-
+triggered interrupts
+- the IRQ line of this device is connected to a pca953x input, and this
+input is configured as a level-triggered interrupt
+- the device IRQ line becomes active, this triggers an interrupt in the
+pca953x, the pca953x interrupt handler is invoked, it reads the input
+state, then calls the nested interrupt handler
+- the nested interrupt handler services the device, which causes the IRQ
+line to become inactive: this triggers a second interrupt in the pca953x
+- before the pca953x interrupt handler is invoked for the second time, the
+device IRQ line becomes active again
+- the pca953x interrupt handler is invoked, it reads the input state, which
+shows the line as inactive (because that is the state that triggered the
+second interrupt), and as a result the nested interrupt handler is not
+invoked, and the device will stay forever with the interrupt line asserted
 
-> @@ -2154,7 +2280,8 @@ static int vdpa_dev_add(struct vdpa_mgmt_dev *mdev,=
- const char *name,
->                         const struct vdpa_dev_set_config *config)
->  {
->         struct vduse_dev *dev;
-> -       int ret;
-> +       size_t domain_bounce_size;
-> +       int ret, i;
->
->         mutex_lock(&vduse_lock);
->         dev =3D vduse_find_dev(name);
-> @@ -2168,29 +2295,35 @@ static int vdpa_dev_add(struct vdpa_mgmt_dev *mde=
-v, const char *name,
->                 return ret;
->
->         write_lock(&dev->domain_lock);
-> -       if (!dev->domain)
-> -               dev->domain =3D vduse_domain_create(VDUSE_IOVA_SIZE - 1,
-> -                                                 dev->bounce_size);
-> -       write_unlock(&dev->domain_lock);
-> -       if (!dev->domain) {
-> -               ret =3D -ENOMEM;
-> -               goto domain_err;
-> +       ret =3D 0;
-> +
-> +       domain_bounce_size =3D dev->bounce_size / dev->nas;
+With my proposed change, in the last step above the pca953x interrupt
+handler will read the current input state instead of the state that caused
+the second interrupt, and thus will correctly invoke the nested interrupt
+handler for the second time.
 
-Could dev->nas be zero here?
+--=-87eCoRChGe7NyYF48ceM
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
-It looks like we only have the check like this:
+-----BEGIN PGP SIGNATURE-----
 
-        dev->nas =3D (dev->api_version < VDUSE_API_VERSION_1) ? 1 : config-=
->nas;
+iQGzBAABCgAdFiEEhleFT5U73KMewxTm7fE7c86UNl8FAmjnZ8cACgkQ7fE7c86U
+Nl8q+Av9Fz36mu0mVyCvX6iTdMZgYCVCSKJWYlXhVgH/spICVB7pTVKX/9SUAc22
+gNsR0ONj5o+3G2Mk42oTO7z7SNQutS5s4gXCRofq1y1pSnnRv2NXIQSrsTsJ7ZPn
+S8obTCuy4rY990MutgZZyQOO+pPv/N+Po2Tlrv4/XOKZnkRLi+6wzbIulc3zoZMi
+aMNdFZG7QXVqB5vVhycwSwH1qu864wIKa9mhKbD7uU3aECooNvkjYXep9qaVSO69
+2m6TNwpUoqUvD9xgiJQ5OILdaQwff+mPaN26Mrh7KP/zUqLvqkJFlQ+r92z9IWt9
+kgmiVVHu3Vq50W7ZL5hWChcD3LCKjPzqTgFxdiZnPJfJSFio7dHqkPooqfWvzVGn
+1WauoPjhWdqAci0swx6W/EiRlHGgELtFtH49DP/uhwUSffNl00jVqHQffc9WGAKv
+su9MGNQVh5zYAglmNRqEBD9i2dsVD4QQBeGXG6poOH5fw/E3xOi4+w+xF30lVYA3
+YZj/HT1G
+=yN0R
+-----END PGP SIGNATURE-----
 
-When API version >=3D 1, userspace could fill zero here.
-
-> +       for (i =3D 0; i < dev->nas; ++i) {
-> +               dev->as[i].domain =3D vduse_domain_create(VDUSE_IOVA_SIZE=
- - 1,
-> +                                                       domain_bounce_siz=
-e);
-> +               if (!dev->as[i].domain) {
-> +                       ret =3D -ENOMEM;
-> +                       goto err;
-> +               }
->         }
->
-> +       write_unlock(&dev->domain_lock);
-> +
->         ret =3D _vdpa_register_device(&dev->vdev->vdpa, dev->vq_num);
-> -       if (ret) {
-> -               goto register_err;
-> -       }
-> +       if (ret)
-> +               goto err;
-
-We don't hold domain_lock here but err tries to unlock it.
-
->
->         return 0;
->
-> -register_err:
-> -       write_lock(&dev->domain_lock);
-> -       vduse_domain_destroy(dev->domain);
-> -       dev->domain =3D NULL;
-> +err:
-> +       for (int j =3D 0; j < i; j++) {
-> +               if (dev->as[j].domain) {
-> +                       vduse_domain_destroy(dev->as[j].domain);
-> +                       dev->as[j].domain =3D NULL;
-> +               }
-> +       }
->         write_unlock(&dev->domain_lock);
->
-
-Thanks
-
+--=-87eCoRChGe7NyYF48ceM--
 
