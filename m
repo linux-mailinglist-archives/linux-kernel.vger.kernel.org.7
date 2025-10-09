@@ -1,113 +1,108 @@
-Return-Path: <linux-kernel+bounces-846938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59363BC9798
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:21:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C32B1BC96CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:06:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A9C93C6E45
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:20:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B6B71896FE9
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CFC62EA472;
-	Thu,  9 Oct 2025 14:20:41 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4343595C
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 14:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069052E975A;
+	Thu,  9 Oct 2025 14:06:12 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBEB21E47A3;
+	Thu,  9 Oct 2025 14:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760019641; cv=none; b=FWuFN91yo44E3mLt3yd+rvElmilHA5FOHopTEa2IMoOcZcIp1lGhvmKVTABtnNF5i9a4mYSlOhf2RhmrPZKBuW2YYHL3ObRXfmRpDlGMwm9ETdE8nGqnSSg49izP1lMziWmA/AraCKyFg7pOoCvKjJcOOsGFjDEvGANFTvIEYmE=
+	t=1760018771; cv=none; b=Vc+vlR7JJzwaFtKK9D3DIq4wInKyHW0dP3dG9IDr745m3UWhiRasSCgxc3pmbSTdoxDVD0NU7jsSny70xw7fivs7ENOWXev6f36FKrf0MABmr19iaEPU/YNbsMPbrnENd1b+te0OeS4Wc5mI1bIBGNoZY+VVXVWYIgvPODbnZi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760019641; c=relaxed/simple;
-	bh=yzjlkoF7YmBsFOPi3aeOV+QA2m6gDUBAYjG5WxFDl80=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=OVDeT2waE0sdBvZyYCOVx/ffqXjgAy9HFn/VVT3/d4P26vDQG7/6MsY+jyWTILZCawmkdwXgWcpWKZLngvJu6Bu01uQMnqLZmVHw7iCnqQRIm8MjabQ6WTvYOjZpklZedGAm3lnhrjG8pIjTzE1aO8ep11akAAUX3VnaHkb6dTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cjBBM5Gldz9sSj;
-	Thu,  9 Oct 2025 15:51:55 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id cibJcHzYGNup; Thu,  9 Oct 2025 15:51:55 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cjBBL4XM5z9sSY;
-	Thu,  9 Oct 2025 15:51:54 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 880138B76D;
-	Thu,  9 Oct 2025 15:51:54 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id b-ev3yzMf1dF; Thu,  9 Oct 2025 15:51:54 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3D3E58B768;
-	Thu,  9 Oct 2025 15:51:54 +0200 (CEST)
-Message-ID: <60593288-c747-42c5-b05d-27a81ab46021@csgroup.eu>
-Date: Thu, 9 Oct 2025 15:51:54 +0200
+	s=arc-20240116; t=1760018771; c=relaxed/simple;
+	bh=wpi1WDWENZNucIqzTCYS/kpzZuHNHMw9EDbF6qY427Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Z80siXNDXnVG4EtcZtYEMkdureR3AYdSqy0I6Zidu4c5fXk5wW8Mdgw4Ia25biFTvJTPZZ/ulXiPvuCqHvp0pKX5v4+A0jfYS6xX67D2vjwOTGtVWgZpOeHuQfnA6D0GZyePme1JnoJG23h3F4s2R+89eGlsv97Iz0jtNRNYEWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf18.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay03.hostedemail.com (Postfix) with ESMTP id 28C79BBCAB;
+	Thu,  9 Oct 2025 13:57:47 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf18.hostedemail.com (Postfix) with ESMTPA id 123242F;
+	Thu,  9 Oct 2025 13:57:44 +0000 (UTC)
+Date: Thu, 9 Oct 2025 09:57:44 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ david.hunter.linux@gmail.com, skhan@linuxfoundation.org,
+ linux-kernel-mentees@lists.linuxfoundation.org, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ syzbot+ddc001b92c083dbf2b97@syzkaller.appspotmail.com
+Subject: Re: [PATCH v3] ring buffer: Propagate __rb_map_vma return value to
+ caller
+Message-ID: <20251009095744.443db14b@gandalf.local.home>
+In-Reply-To: <20251009045345.8954-1-ankitkhushwaha.linux@gmail.com>
+References: <20251009045345.8954-1-ankitkhushwaha.linux@gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] powerpc/addnote: Fix overflow on 32-bit builds
-To: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>
-References: <2025042122-mustard-wrasse-694572@boujee-and-buff>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <2025042122-mustard-wrasse-694572@boujee-and-buff>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: u7ee89ea1wegxtoyhbphbqe3qeqipj3o
+X-Rspamd-Server: rspamout07
+X-Rspamd-Queue-Id: 123242F
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19ssnBb5s9lqxsepWuLpsIvqanHttfzsvU=
+X-HE-Tag: 1760018264-251375
+X-HE-Meta: U2FsdGVkX18Iw/henf7Qo2umn/CAr5c/XzkBiySzpEon0NEVoVIG5vW+tIUP2E4naPJaGrdpDZZZc+QEK607BVrPoWnJ1tsizgiBrol4D9iKFjxm+KhnJckJjKbKg3huYYOFjHyYJi1dJNhDcV2859S/N0yXYHMESZ/yU+0a9e+fP7G1Eynz/+9ALZJJBdsnS0eXx9Ig5AyV5BqEqaICqfMx+mBakqj6EDorJcrD61Fr2V8EvdMQd+HtyjG+JMrxzsWRX+sqnSiYJZuMyA3DdMrdR56WwY1WlcpEMh2WMuFUNU86xP0PJodahadKnrz9iL+izF1n5H5sEQN0FmwCEbEBEF/WfSffW/OdoihDCZ5bCecxE/EZjbZN+y30jI83mVAhTRVPREaeSIGtCKZjpBU9E13ywhu6VsGC85m3Zt0hlRc21XMjvpppPBr4q6eG6AVeyx4dEWv93wqWGkJK/JymgKP6nRIqOSBaEqLKs9o=
 
+On Thu,  9 Oct 2025 10:23:45 +0530
+Ankit Khushwaha <ankitkhushwaha.linux@gmail.com> wrote:
 
-
-Le 22/04/2025 à 04:31, Ben Collins a écrit :
-> The PUT_64[LB]E() macros need to cast the value to unsigned long long
-> like the GET_64[LB]E() macros. Caused lots of warnings when compiled
-> on 32-bit, and clobbered addresses (36-bit P4080).
+> The return value from __rb_map_vma(), which rejects writable or
+> executable mappings (VM_WRITE, VM_EXEC, or !VM_MAYSHARE), was being
+> ignored.  As a result the caller of `__rb_map_vma` always returned 0 even when the
+> mapping had actually failed, allowing it to proceed with an invalid VMA.
 > 
-> Signed-off-by: Ben Collins <bcollins@kernel.org>
-> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: linuxppc-dev@lists.ozlabs.org
+> Reported-by: syzbot+ddc001b92c083dbf2b97@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?id=194151be8eaebd826005329b2e123aecae714bdb
+> Signed-off-by: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
+> ---
+> 
+> Changes in v3: https://lore.kernel.org/linux-trace-kernel/20251008172516.20697-1-ankitkhushwaha.linux@gmail.com/
+> * Same as v2:)
+> 
+> Changes in v2: https://lore.kernel.org/linux-trace-kernel/20251007171256.20884-1-ankitkhushwaha.linux@gmail.com/
+> * applied minor cleanup suggested by Steve in v1
+> 
 
-Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+This is good practice, but I already pulled in v2.
+
+-- Steve
 
 > ---
->   arch/powerpc/boot/addnote.c | 7 ++++---
->   1 file changed, 4 insertions(+), 3 deletions(-)
+>  kernel/trace/ring_buffer.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/arch/powerpc/boot/addnote.c b/arch/powerpc/boot/addnote.c
-> index 53b3b2621457d..78704927453aa 100644
-> --- a/arch/powerpc/boot/addnote.c
-> +++ b/arch/powerpc/boot/addnote.c
-> @@ -68,8 +68,8 @@ static int e_class = ELFCLASS32;
->   #define PUT_16BE(off, v)(buf[off] = ((v) >> 8) & 0xff, \
->   			 buf[(off) + 1] = (v) & 0xff)
->   #define PUT_32BE(off, v)(PUT_16BE((off), (v) >> 16L), PUT_16BE((off) + 2, (v)))
-> -#define PUT_64BE(off, v)((PUT_32BE((off), (v) >> 32L), \
-> -			  PUT_32BE((off) + 4, (v))))
-> +#define PUT_64BE(off, v)((PUT_32BE((off), (unsigned long long)(v) >> 32L), \
-> +			  PUT_32BE((off) + 4, (unsigned long long)(v))))
->   
->   #define GET_16LE(off)	((buf[off]) + (buf[(off)+1] << 8))
->   #define GET_32LE(off)	(GET_16LE(off) + (GET_16LE((off)+2U) << 16U))
-> @@ -78,7 +78,8 @@ static int e_class = ELFCLASS32;
->   #define PUT_16LE(off, v) (buf[off] = (v) & 0xff, \
->   			  buf[(off) + 1] = ((v) >> 8) & 0xff)
->   #define PUT_32LE(off, v) (PUT_16LE((off), (v)), PUT_16LE((off) + 2, (v) >> 16L))
-> -#define PUT_64LE(off, v) (PUT_32LE((off), (v)), PUT_32LE((off) + 4, (v) >> 32L))
-> +#define PUT_64LE(off, v) (PUT_32LE((off), (unsigned long long)(v)), \
-> +			  PUT_32LE((off) + 4, (unsigned long long)(v) >> 32L))
->   
->   #define GET_16(off)	(e_data == ELFDATA2MSB ? GET_16BE(off) : GET_16LE(off))
->   #define GET_32(off)	(e_data == ELFDATA2MSB ? GET_32BE(off) : GET_32LE(off))
+> diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+> index 43460949ad3f..1244d2c5c384 100644
+> --- a/kernel/trace/ring_buffer.c
+> +++ b/kernel/trace/ring_buffer.c
+> @@ -7273,7 +7273,7 @@ int ring_buffer_map(struct trace_buffer *buffer, int cpu,
+>  		atomic_dec(&cpu_buffer->resize_disabled);
+>  	}
+>  
+> -	return 0;
+> +	return err;
+>  }
+>  
+>  int ring_buffer_unmap(struct trace_buffer *buffer, int cpu)
 
 
