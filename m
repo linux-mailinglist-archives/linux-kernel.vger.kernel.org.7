@@ -1,105 +1,80 @@
-Return-Path: <linux-kernel+bounces-846788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03A78BC9072
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:31:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 432E8BC90A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:34:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 143FF188CB26
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:32:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 352743AE90D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2890E2E2DD0;
-	Thu,  9 Oct 2025 12:31:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979762DF3F9;
+	Thu,  9 Oct 2025 12:32:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="nDxOT2aX"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Adxxw5cS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390AF33D8;
-	Thu,  9 Oct 2025 12:31:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0639523A;
+	Thu,  9 Oct 2025 12:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760013082; cv=none; b=DqTN++vnfwiYTCiyRn8dmUl1Y8yKKPdA7Otnu9TGyIXisCK6/rtx7pqFTY1H6RSTq1+kUuHQlkWRIzA+7Vt05hacfGYdG5C30Z88wI6PQnKDXoGlZx4Z9L1NBfrR4TA77Tawc/HGHSO7zGKhccmO3EAVHWpTJo6spdZnxlVtJI0=
+	t=1760013160; cv=none; b=nsCAx62ZSPCvpsQA+2c71gtNu95RRA44l/SZWhJYJD9n6hdbWLKXAbWZb/u63Ah8KEHSdMyzAScAQ8QZq41ItgX5Ax8hRJA+fLrman1MxMitQ8vJjCKYwSmNbfjUG6jlN6Py7JfVFay9M2k0cYC01DM+hz5rMZqZBi1ngg2K2bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760013082; c=relaxed/simple;
-	bh=XPmYz1+S+KmqCCD+ZvfFDpmo5B52l9HJF9/qsIYDbzo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hjuRN+CS6fe9FMytNaR635/KxZ7Hdtojddp1DNPtdjs+GoOjXPjplu4wG2uoCOUGcYAyOKiR23rVH4VrgaRyMTSbJl7jp5mYcne0Kz88fZXVAKYZe50uTNhhTXEF/dh3onHl2+vfVqWXFce65Nwrdlx0bemDaCQBxuYENedO2yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=nDxOT2aX; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=eEnoEiQ7x1UW7OqzKfZDiRlKLyvfXySawEDXrSsRNZM=; b=nDxOT2aXHKfgtvt73Y53cNnEOJ
-	dqFm8I9mcp7+6v1i/XBbEByG4WEStfNHUweOq55ppwh4fUCdj0BsWknE1fTtZvFwzUxOpPOh4c9Wh
-	LIRI5ZVc+DsDaHVFmL18Rp+jsmMyb9iQ/mlvMmkN7ZZqCvrFSaeQNy9Srs0CmVEGtqtQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1v6pnU-00AWj0-SY; Thu, 09 Oct 2025 14:31:04 +0200
-Date: Thu, 9 Oct 2025 14:31:04 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Paolo Abeni <pabeni@redhat.com>, Jason Wang <jasowang@redhat.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Jonathan Corbet <corbet@lwn.net>, kvm@vger.kernel.org,
-	virtualization@lists.linux.dev, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 1/3] virtio: dwords->qwords
-Message-ID: <26d7d26e-dd45-47bb-885b-45c6d44900bb@lunn.ch>
-References: <cover.1760008797.git.mst@redhat.com>
- <350d0abfaa2dcdb44678098f9119ba41166f375f.1760008798.git.mst@redhat.com>
+	s=arc-20240116; t=1760013160; c=relaxed/simple;
+	bh=kOQ62hzNRfxXQio1GfpBiqLQK3jn8IRfmjGxk4hY4VU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=OCUPJn9vzAiQHzogiSvTpD5Vt1AJbYWFuWSWF9XeyMTKH910Rq6UUX8S5E2uAocP+JxQhzT1N2VHi449w3Mu4uIBs59DLEk4KTX2j4RcfqlQSwh8A7P2O2VISYzcuD/g76y36sNZsPfUBS1dU0iiU0Kc2JbDdE+4eMt5dg0IOMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Adxxw5cS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B90D3C4CEE7;
+	Thu,  9 Oct 2025 12:32:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760013159;
+	bh=kOQ62hzNRfxXQio1GfpBiqLQK3jn8IRfmjGxk4hY4VU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=Adxxw5cSBif8CKRrf2tDtkWHUksHyiNwPs25vLmsA2O67zdSIaPgbIjPRROzhwlXB
+	 HudRfOjim/m4gPdZ3dEfaAaG7knDiyExo7u4L4FgwjP7cAbfjpim2Mq8KeHU4iWS2X
+	 EDRMNBcJvCwoP6eCJ9LEGdXLnKp4NjDZS7OX0s2TemOBOB0FlpQ+Z2a5RxZQ7qbr83
+	 tYWz+gsmJLncRLlk5e6SvCL0QnAZEZg/iPyUktIH6SLc2Devy3g1lte5yKGQ4sWU6t
+	 +XVJkkOZSB6wad9wyPExg2mVET3HN7LOH1SYVdQG6lAlBa1ZT6e87PERTGIEStOROG
+	 qkjR2fzRJ0XBQ==
+From: Lee Jones <lee@kernel.org>
+To: Lee Jones <lee@kernel.org>, Johan Hovold <johan@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+In-Reply-To: <20250925150219.24361-1-johan@kernel.org>
+References: <20250925150219.24361-1-johan@kernel.org>
+Subject: Re: (subset) [PATCH] mfd: altera-sysmgr: fix device leak on sysmgr
+ regmap lookup
+Message-Id: <176001315848.2814183.5153117784242287470.b4-ty@kernel.org>
+Date: Thu, 09 Oct 2025 13:32:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <350d0abfaa2dcdb44678098f9119ba41166f375f.1760008798.git.mst@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-b87af
 
-On Thu, Oct 09, 2025 at 07:24:08AM -0400, Michael S. Tsirkin wrote:
-> A "word" is 16 bit. 64 bit integers like virtio uses are not dwords,
-> they are actually qwords.
+On Thu, 25 Sep 2025 17:02:19 +0200, Johan Hovold wrote:
+> Make sure to drop the reference taken to the sysmgr platform device when
+> retrieving its driver data.
+> 
+> Note that holding a reference to a device does not prevent its driver
+> data from going away.
+> 
+> 
+> [...]
 
-I'm having trouble with this....
+Applied, thanks!
 
-This bit makes sense. 4x 16bits = 64 bits.
+[1/1] mfd: altera-sysmgr: fix device leak on sysmgr regmap lookup
+      commit: e6ce75fac4a299805939e33f9f104829ba9ffdcc
 
-> -static const u64 vhost_net_features[VIRTIO_FEATURES_DWORDS] = {
-> +static const u64 vhost_net_features[VIRTIO_FEATURES_QWORDS] = {
+--
+Lee Jones [李琼斯]
 
-If this was u16, and VIRTIO_FEATURES_QWORDS was 4, which the Q would
-imply, than i would agree with what you are saying. But this is a u64
-type.  It is already a QWORD, and this is an array of two of them.
-
-I think the real issue here is not D vs Q, but WORD. We have a default
-meaning of a u16 for a word, especially in C. But that is not the
-actual definition of a word a computer scientist would use. Wikipedia
-has:
-
-  In computing, a word is any processor design's natural unit of
-  data. A word is a fixed-sized datum handled as a unit by the
-  instruction set or the hardware of the processor.
-
-A word can be any size. In this context, virtio is not referring to
-the instruction set, but a protocol. Are all fields in this protocol
-u64? Hence word is u64? And this is an array of two words? That would
-make DWORD correct, it is two words.
-
-If you want to change anything here, i would actually change WORD to
-something else, maybe FIELD?
-
-And i could be wrong here, i've not looked at the actual protocol, so
-i've no idea if all fields in the protocol are u64. There are
-protocols like this, IPv6 uses u32, not octets, and the length field
-in the headers refer to the number of u32s in the header.
-
-	Andrew
 
