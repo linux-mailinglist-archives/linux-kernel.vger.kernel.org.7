@@ -1,205 +1,171 @@
-Return-Path: <linux-kernel+bounces-846779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FEC3BC9039
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:30:01 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF4C1BC9060
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:30:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1A706352A05
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:30:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A10134FA18B
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF4B2E1F05;
-	Thu,  9 Oct 2025 12:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6AE2E2DFA;
+	Thu,  9 Oct 2025 12:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fZN0ltVN"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="o49R6AlN"
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B7E2E091C
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 12:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCEE32E1EE7
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 12:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760012991; cv=none; b=LgBc6eXgPfyhZmUDrNYWAHh7aFsaUL/pZ9PgYZEgOZ6No5MRKMX2Fgx6LV3NYxgJnXJitPwT6TBrAOzmf2QE/aBtSGQGXvWUi04j9UuK3flLye4CE9nUb1gSieZlrKNCalU7ZXkiGbun8ZgBEWhMcKBchwJ+8VnYpxzB9WmtyOo=
+	t=1760013021; cv=none; b=Ghhrql/FXf3cHjEJykKECmKq1Iyr+GMQaR0dLRV0oySiHtr/xZYolRqEKiRot93y3Uvqf2pMPV06TkRJ/LF7qDfExIfUqd3S0pzLlDjCdFbz35hxR43d7oy2Bs3akqpxMFcDr8w+UM0z7BQlDH6AZg9XSLpzldOk1wilSFSIwb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760012991; c=relaxed/simple;
-	bh=nIFboafrNi0BUG3ws1UQuEY6t196iFtUs5CJ/6Z3qdg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Me9uDD4syqZHuVxtjE7s6htD8TngFkAfwjQJUWZ8Z+ql3zyJmwXBxAHZKtFvu+6MC61V4eM4iO4JsBrZPmrbvAO92kRXpokuWOKGce2XuCRB7db6xv7f2TsxNMltXbjzySXnzp9bHT+BbvIxF2g0nfyFVLTd4QG0pNLKXbLlORA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fZN0ltVN; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3ee12a63af1so565877f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 05:29:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1760012986; x=1760617786; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cu6ugJTTIypDI4SOSb2R8Mjsv30lTM9CYkItNRo7M18=;
-        b=fZN0ltVNBZLzDuGmnhfxKaSLry1tBTskH40GPkHJ6g6k15o9lg17w9NBU5nckbRo0y
-         AvlQOAro60dGS9FdNvbKaVOTlMPhnGAONtyp6pZ9etygtBPYHt8+NnfCL1Ar14ceEkQr
-         ahyzExSZLnhTSYcJxfmk5NgvubNs5S6+fHjdbMqor3wDodSS7CSNUmw6HJR7s1NfxMCL
-         o7nu1nxDzA0LodCMTOrBAqYHW3AnmcQL3QSIyI42Pa0JlEn83m3tgp60CdppVp7yPHqk
-         E3zlEl8MyzWIgn/S6ZE4cT5sjeWDc2psrUoYgkQtICWV/U917Sh4aDWFVc87Gsnlm5z2
-         ShdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760012986; x=1760617786;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cu6ugJTTIypDI4SOSb2R8Mjsv30lTM9CYkItNRo7M18=;
-        b=soKfXZj6gQZG6vXTsN7sW+ifk3QhkEq4JwGm2340kayUtkQmCdzEshGcOJiB3i00PT
-         o3Bm7hkTI4YnS7I6WIb/6HYWQSbKJQYSUxgjUniaE0ouC5LG9vwlTgmKIsd4AxDXVTDU
-         ijE2FVbpLALb+ToVnUdyf+HdPNkO/McUG0xqMXo+iGBNmUm0CwMte9tg7LH0FVmAmwft
-         UB0fu3SFpgdRy5ZJ1MhXuqm+rsKurJ19atMGLj4Ln5HYN7myh4aAIK6nThDpEAUI+JCl
-         AnPFRDRf029tjtc7agMEu7aEuorc/mWBy3FW9yN+FAFGNhEdmZW20fqx99GwFbrs/P+r
-         A9WQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW1ukDvaUnBSAgOBo11s4J3//NKSwD3KMpj0RxzG0RqWDH2BcMKnRwOsQht1P7Riq7E2NiD4eTIzhtM4wI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyypDIrJWxkP4ALfsYKrKAlpHJeQw+dMDnDubIXOUiAkW/IMc/M
-	HYVSXg+7A7tOODs1cTcIvjRVsNbDI+wjQcKiriHVIdWV+N3f35vk3JO2ftR0F454Pg0=
-X-Gm-Gg: ASbGncs+msjQXcT97PTMVWYlYFztARrAEvhhQ5QUp1rSO+Zxvs44LiXbWNXzeMH1y4n
-	ZZqyy73A5dB0K6ZcbxPOQxE8igSs/Vszij5+70W7ARTXSc36qglTSwRd3iza5t2t+fnoaQILYIk
-	k6teYz/WGFWZDd9zXu5xHC0zq2Xqtdt9Djtta93raqYih7VrJ5NXhNqxF9Cvm1wQc+D+lIL0sCP
-	cBb0uRGuNy8Lz4+2lyQ9qsfdyS01/8t57AvthJxRuFgd6a6LrRnTrqpXPO/8g5WQl9IIrDJFmQA
-	nojZ9Qq+PHS0EB6sY/rNC2NDMSibCPaCi6hIj/2eIcatuA4PUsHS5V0wSuEXXXeoZqOjJMVlamI
-	Z7aT3Vh7g1Ze33oUzJ3iUSyL+qvYVYyoau7zdsS7bZQxfiJ30Zw==
-X-Google-Smtp-Source: AGHT+IG2Tl/tPro1CfvQuSpKAz35uSnQDYXoHXriXJMjWBawh/THIKmCxLzrEGjeTY0zfp/rdITohQ==
-X-Received: by 2002:a05:6000:200c:b0:3c8:7fbf:2d6d with SMTP id ffacd0b85a97d-4266e8ddfecmr4564181f8f.50.1760012986407;
-        Thu, 09 Oct 2025 05:29:46 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f0170sm35660941f8f.49.2025.10.09.05.29.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 05:29:45 -0700 (PDT)
-Date: Thu, 9 Oct 2025 14:29:43 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	Miroslav Benes <mbenes@suse.cz>,
-	Joe Lawrence <joe.lawrence@redhat.com>,
-	live-patching@vger.kernel.org, Song Liu <song@kernel.org>,
-	laokz <laokz@foxmail.com>, Jiri Kosina <jikos@kernel.org>,
-	Marcos Paulo de Souza <mpdesouza@suse.com>,
-	Weinan Liu <wnliu@google.com>,
-	Fazla Mehrab <a.mehrab@bytedance.com>,
-	Chen Zhongjin <chenzhongjin@huawei.com>,
-	Puranjay Mohan <puranjay@kernel.org>,
-	Dylan Hatch <dylanbhatch@google.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v4 51/63] objtool/klp: Introduce klp diff subcommand for
- diffing object files
-Message-ID: <aOeqt32wQhB5jAD-@pathway.suse.cz>
-References: <cover.1758067942.git.jpoimboe@kernel.org>
- <702078edac02ecf79f869575f06c5b2dba8cd768.1758067943.git.jpoimboe@kernel.org>
- <aOZuzj0vhKPF1bcW@pathway.suse.cz>
- <bnipx2pvsyxcd27uhxw5rr5yugm7iuint6rg3lzt3hdm7vkeue@g3wzb7kyr5da>
+	s=arc-20240116; t=1760013021; c=relaxed/simple;
+	bh=LlE4cpJ9c3fYreTfvWCB2uidMxLuL2MaWecdKS7o3Aw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=jCrSapve8hn3UAXioLn8DLFfEZpGYqckMScRNkmJzv/G6xyJJXqD+kMmgOhltxxqOphx65nD0CC5Nw8EnkJo4SQo/61mvDfQJkMbHecosOolU6PX3nLzjroPlqEigtillCejKz30NAlpZhSw8rUiiHdcb+ACb2Kz13yjx8+QDM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=o49R6AlN; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id 1C5C0240029
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 14:30:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
+	t=1760013018; bh=LlE4cpJ9c3fYreTfvWCB2uidMxLuL2MaWecdKS7o3Aw=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:
+	 Content-Transfer-Encoding:MIME-Version:Autocrypt:OpenPGP:From;
+	b=o49R6AlN3PhwI9mHF0CoRR/3KwoiMmOp7miLVroV7PH2QA7Ae1FBqDLPRh+idhAd8
+	 AMU3BIL02WeJrNOsgdaJNee0aGISDA4h6u3dednH1mESQ8IV4vuehGDgkpD+yTWm3V
+	 vpDMIPJG9HEI+KSGvaUULjqTtPQ6fYQwZw5Tr00r8bg3tfNM0GMgknKz9RVVsgrPwf
+	 5makBnukTUt97Vu7k7LiiS34U0alNOXsrYmV3FHYIAxk0XUkivkGZS6P0MliMOIbhS
+	 vHb8dI+IGs+XaEIT0vpQBYUm5p0OYao0WNXp3TGR+MwYxrXIbmTn048STi65PScK6H
+	 9bg38B7pWbhuw==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4cj8N73ywSz9rxD;
+	Thu,  9 Oct 2025 14:30:15 +0200 (CEST)
+Message-ID: <53fd34386cefd4a789c56a6e6d7c5618c06c531b.camel@posteo.de>
+Subject: Re: [PATCH 4/4] leds: add driver for synology atmega1608 controlled
+ LEDs
+From: Markus Probst <markus.probst@posteo.de>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Miguel
+ Ojeda	 <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Igor
+ Korotin	 <igor.korotin.linux@gmail.com>, Lorenzo Stoakes
+ <lorenzo.stoakes@oracle.com>,  Vlastimil Babka	 <vbabka@suse.cz>, "Liam R.
+ Howlett" <Liam.Howlett@oracle.com>, Uladzislau Rezki	 <urezki@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	bjorn3_gh@protonmail.com, Benno Lossin <lossin@kernel.org>, Andreas
+ Hindborg	 <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross	 <tmgross@umich.edu>, Daniel Almeida
+ <daniel.almeida@collabora.com>, 	linux-leds@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, 	linux-kernel@vger.kernel.org
+Date: Thu, 09 Oct 2025 12:30:17 +0000
+In-Reply-To: <DDDSCBNFRLG9.26UA3ZEOA9LJH@kernel.org>
+References: <20251008181027.662616-1-markus.probst@posteo.de>
+	 <20251008181027.662616-2-markus.probst@posteo.de>
+	 <20251008181027.662616-3-markus.probst@posteo.de>
+	 <20251008181027.662616-4-markus.probst@posteo.de>
+	 <20251008181027.662616-5-markus.probst@posteo.de>
+	 <DDDSCBNFRLG9.26UA3ZEOA9LJH@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bnipx2pvsyxcd27uhxw5rr5yugm7iuint6rg3lzt3hdm7vkeue@g3wzb7kyr5da>
+Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
+  keydata=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
+  aBeNN4ijKZchBXHPgVx+YtWRHfcm4l8=
+OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
 
-On Wed 2025-10-08 08:27:45, Josh Poimboeuf wrote:
-> On Wed, Oct 08, 2025 at 04:01:50PM +0200, Petr Mladek wrote:
-> > On Wed 2025-09-17 09:03:59, Josh Poimboeuf wrote:
-> > > +static int read_exports(void)
-> > > +{
-> > > +	const char *symvers = "Module.symvers";
-> > > +	char line[1024], *path = NULL;
-> > > +	unsigned int line_num = 1;
-> > > +	FILE *file;
-> > > +
-> > > +	file = fopen(symvers, "r");
-> > > +	if (!file) {
-> > > +		path = top_level_dir(symvers);
-> > > +		if (!path) {
-> > > +			ERROR("can't open '%s', \"objtool diff\" should be run from the kernel tree", symvers);
-> > > +			return -1;
-> > > +		}
-> > > +
-> > > +		file = fopen(path, "r");
-> > > +		if (!file) {
-> > > +			ERROR_GLIBC("fopen");
-> > > +			return -1;
-> > > +		}
-> > > +	}
-> > > +
-> > > +	while (fgets(line, 1024, file)) {
-> > 
-> > Nit: It might be more safe to replace 1024 with sizeof(line).
-> >      It might be fixed later in a separate patch.
-> 
-> Indeed.
-> 
-> > > +/*
-> > > + * Klp relocations aren't allowed for __jump_table and .static_call_sites if
-> > > + * the referenced symbol lives in a kernel module, because such klp relocs may
-> > > + * be applied after static branch/call init, resulting in code corruption.
-> > > + *
-> > > + * Validate a special section entry to avoid that.  Note that an inert
-> > > + * tracepoint is harmless enough, in that case just skip the entry and print a
-> > > + * warning.  Otherwise, return an error.
-> > > + *
-> > > + * This is only a temporary limitation which will be fixed when livepatch adds
-> > > + * support for submodules: fully self-contained modules which are embedded in
-> > > + * the top-level livepatch module's data and which can be loaded on demand when
-> > > + * their corresponding to-be-patched module gets loaded.  Then klp relocs can
-> > > + * be retired.
-> > 
-> > I wonder how temporary this is ;-) The comment looks optimistic. I am
-> > just curious. Do you have any plans to implement the support for
-> > the submodules... ?
-> 
-> I actually already have a working POC for that, but didn't want to make
-> the patch set even longer ;-)
+T24gVGh1LCAyMDI1LTEwLTA5IGF0IDE0OjIwICswMjAwLCBEYW5pbG8gS3J1bW1yaWNoIHdyb3Rl
+Ogo+IChOb3QgYSBmdWxsIHJldmlldyAobGV0J3Mgd29yayBvdXQgdGhlIGRlcGVuZGVuY2llcyBm
+aXJzdCksIGJ1dAo+IHRoZXJlJ3Mgb25lCj4gdGhpbmcgdGhhdCBzdG9vZCBvdXQgdG8gbWUuKQo+
+IAo+IE9uIFdlZCBPY3QgOCwgMjAyNSBhdCA4OjEwIFBNIENFU1QsIE1hcmt1cyBQcm9ic3Qgd3Jv
+dGU6Cj4gPiArc3RydWN0IEF0bWVnYTE2MDhMZWQgewo+ID4gK8KgwqDCoCBhZGRyOiBBdG1lZ2Ex
+NjA4TGVkQWRkcmVzcywKPiA+ICvCoMKgwqAgaWQ6IEF0bWVnYTE2MDhMZWRJZCwKPiA+ICsKPiA+
+ICvCoMKgwqAgY2xpZW50OiBBUmVmPEkyY0NsaWVudD4sCj4gPiArCj4gPiArwqDCoMKgIG1vZGVf
+bG9jazogQXJjPE11dGV4PCgpPj4sCj4gCj4gTXV0ZXg8KCk+IHJhaXNlcyBhbiBleWVicm93LCBz
+aW5jZSBhIG11dGV4IHRoYXQgZG9lc24ndCBwcm90ZWN0Cj4gYW55dGhpbmcgaXMKPiBwb2ludGxl
+c3MuIFNvLCBJIGFzc3VtZSBpdCBpcyBwcm90ZWN0aW5nIHNvbWUgZGF0YSwgYnV0IGluIGFuIHVu
+c291bmQKPiB3YXkuCj4gCj4gPiAraW1wbCBBdG1lZ2ExNjA4TGVkIHsKPiA+ICvCoMKgwqAgZm4g
+dXBkYXRlX21vZGUoJnNlbGYsIG1vZGU6IEF0bWVnYTE2MDhMZWRNb2RlKSAtPgo+ID4gUmVzdWx0
+PEF0bWVnYTE2MDhMZWRNb2RlPiB7Cj4gPiArwqDCoMKgwqDCoMKgwqAgbGV0IF9ndWFyZCA9IHNl
+bGYubW9kZV9sb2NrLmxvY2soKTsKPiAKPiBXaGF0IGV4YWN0bHkgZG9lcyB0aGUgbXV0ZXggcHJv
+dGVjdCBpbiB0aGUgY29kZSBiZWxvdz8KT3RoZXJ3aXNlIHRoZXJlIHdvdWxkIGJlIGEgcmFjZSBj
+b25kaXRpb24uIEVhY2ggcmVnaXN0ZXIgaGFzIDggYml0cywKZWFjaCBsZWQgaGFzIDIgYml0cy4g
+SWYgdGhlIGxlZCBtb2RlIGlzIHVwZGF0ZWQgYXQgdGhlIHNhbWUgdGltZSB3aXRoCmFub3RoZXIg
+b25lIGluIHRoZSBzYW1lIHJlZ2lzdGVyLCBpdCBjb3VsZCBsZWFkIHRvIHRoZSBmaXJzdCBhY3Rp
+b24KYmVpbmcgb3ZlcndyaXR0ZW4gYnkgdGhlIHNlY29uZC4KTWVhbmluZyBpZiB0d28gYWN0aW9u
+cyBydW4gYXQgdGhlIHNhbWUgdGltZToKLSBsZWQwIHJlYWRzIGZyb20gdGhlIHJlZ2lzdGVyCi0g
+bGVkMSByZWFkcyBmcm9tIHRoZSByZWdpc3RlcgotIGxlZDAgd3JpdGVzIHRvIHRoZSByZWdpc3Rl
+cgotIGxlZDEgd3JpdGVzIHRvIHRoZSByZWdpc3RlciAodGhlIGNoYW5nZXMgZm9yIGxlZDAgaGF2
+ZSBiZWVuCm92ZXJ3cml0dGVuIGhlcmUsIGFzIGl0IGRpZCByZWFkIHRoZSByZWdpc3RlciBiZWZv
+cmUgbGVkMCBoYXMgd3JpdHRlbgp0byBpdCkKCj4gCj4gPiArCj4gPiArwqDCoMKgwqDCoMKgwqAg
+bGV0IG11dCBjdXJyZW50ID0gc2VsZgo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgLmNsaWVu
+dAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgLnJlYWRfYnl0ZV9kYXRhKHNlbGYuYWRkciBh
+cyB1OCkKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIC5pbnNwZWN0X2Vycih8ZXJyfCB7Cj4g
+PiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGRldl9lcnIhKAo+ID4gK8KgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHNlbGYuY2xpZW50LmFzX3JlZigpLAo+ID4g
+K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICJmYWlsZWQgdG8gcmVhZCB7
+OiMyeH06IHtlcnI6P31cbiIsCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgc2VsZi5hZGRyIGFzIHU4Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+ICk7Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB9KT87Cj4gPiArCj4gPiArwqDCoMKgwqDC
+oMKgwqAgY3VycmVudCA9Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAoY3VycmVudCAmICFz
+ZWxmLmlkLm1hc2soKSkgfCAoKChtb2RlIGFzIHU4KSA8PAo+ID4gc2VsZi5pZC5zaGlmdCgpKSAm
+IHNlbGYuaWQubWFzaygpKTsKPiA+ICsKPiA+ICvCoMKgwqDCoMKgwqDCoCBzZWxmLmNsaWVudAo+
+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgLndyaXRlX2J5dGVfZGF0YShzZWxmLmFkZHIgYXMg
+dTgsIGN1cnJlbnQpCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAuaW5zcGVjdF9lcnIofGVy
+cnwgewo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBkZXZfZXJyISgKPiA+ICvC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBzZWxmLmNsaWVudC5hc19yZWYo
+KSwKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAiZmFpbGVkIHRv
+IHdyaXRlIHs6IzJ4fToge2Vycjo/fSIsCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqAgc2VsZi5hZGRyIGFzIHU4Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgICk7Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB9KT87Cj4gPiArCj4gPiArwqDC
+oMKgwqDCoMKgwqAgT2sobW9kZSkKPiA+ICvCoMKgwqAgfQo+ID4gK30KClRoYW5rcwotIE1hcmt1
+cyBQcm9ic3QK
 
-Sure.
-
-> It was surprisingly easy and straightforward to implement.
-
-I am curious ;-)
-
-> > PS: To make some expectations. I am not doing a deep review.
-> >     I am just looking at the patchset to see how far and mature
-> >     it is. And I just comment what catches my eye.
-> > 
-> >     My first impression is that it is already in a pretty good state.
-> >     And I do not see any big problem there. Well, some documentation
-> >     would be fine ;-)
-> > 
-> >     What are your plans, please?
-> 
-> >From my perspective, it's testing well and in a good enough state for
-> merging soon (after the merge window?), if there aren't any objections
-> to that.
-> 
-> There will be more patches to come, like the submodules and other arch
-> support.  And of course there will be bugs discovered by broader
-> testing.  But I think this is a good foundation to begin with.
-> 
-> And the sooner we can get people using this, the sooner we can start
-> deprecating kpatch-build, which would be really nice.
-
-Sounds reasonable and I am fine with it. I have one more question
-before I give my ack ;-)
-
-I wonder about the patchset which better integrate callbacks with shadow
-variables and state API, see
-https://lore.kernel.org/r/20250115082431.5550-1-pmladek@suse.com
-
-I think that it should not be that big problem to update it on top
-of this patchset. It would require:
-
-   + moving declarations from livepatch.h to livepatch_external.h
-   + updating the macros in livepatch_helpers.h
-   + update callback-related code in create_klp_sections()
-
-Or do you expect bigger problems, please?
-
-Best Regards,
-Petr
 
