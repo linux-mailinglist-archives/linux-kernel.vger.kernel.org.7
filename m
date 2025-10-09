@@ -1,140 +1,212 @@
-Return-Path: <linux-kernel+bounces-847549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C831ABCB2B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 01:07:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D590BCB2B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 01:08:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 894C14E23C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 23:07:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 713D44E9524
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 23:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD464281356;
-	Thu,  9 Oct 2025 23:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B4328726C;
+	Thu,  9 Oct 2025 23:08:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iotmq0jN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u1LrsfmA"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B1020487E
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 23:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F51E20487E
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 23:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760051240; cv=none; b=OR880ZmEHlBxlxRyTwzExAr3oFHkAy+BbB1nqEO7kzHjRpYX0aw3vkxQu/qbmG+wkXOzupAraFoyzEqm71uAlScovxh1Pkczpc04gr9EzIC1o1k5Sr5VCx58fLjYSCQvs8MX7wOZbplQeF4lTmZ5CC8F+gU0flLiXXi9k0pPeIA=
+	t=1760051328; cv=none; b=KEUv57VtyHPb2/xP/iCuED2cLMcLf9IOcEeiotNWn7NJu3LQlPnzrn17jiriK1efAMdOwRzu4lQoudQwBqrw4uT3+4+fAC2mRARWYocBIols+N/YlNnLZNQiFqRmPGwPrcgL9i8Bym9kDmMsrorx793RcI7UVZSI3qFlQ98sOQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760051240; c=relaxed/simple;
-	bh=VuZi1lEE9TEqbZTVyJT1+D0UPh7TxkTdE3a65WkY4qU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Rrm78iqvBymr2uDrzFavLNANSGvABpJlQ8esMQ4gOkFs7+z8U6A/nxnYkNL9saD4HodJ7x+xHOBhGbX2wcQwIChqJ87dqitGR40LdHKzYoHIF/eivbcMfEM7f51tVzXkxymPhc2dhAcm//+HMwxhI+QTnF6VAk8k+QBrwkLD/xU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iotmq0jN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23F28C4CEE7;
-	Thu,  9 Oct 2025 23:07:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760051239;
-	bh=VuZi1lEE9TEqbZTVyJT1+D0UPh7TxkTdE3a65WkY4qU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=iotmq0jN10ENuY21u2jPC9E8n40czyk/FV/Fzc3Sc4zjSXdrbPb/Qmb1XRsG4HKKh
-	 UJXbIziCKVcp3I3y41dERPSmgOtkQtgoeJsYcxc7YniX68WuVCyKRkXtnI28tXyXSU
-	 /uFrcKWDPz15Ahlf5/RX5HpThGEdk3hRHXkXh8tl7kVTpmZ4fpoEqcz+ZhnSMcSjc9
-	 qo+u2bQJfBU6OnlW6bZIedci4GHs5Qk4qvLTYm2Tibq+8IXIDq+1yHF1jW8OjnoTMZ
-	 VmDJp+X2vCPueaRYsGSXtI888D/+5M/yqL6NxwTwN3GbU6f5Ua6Cq9UUBv82fJjO/N
-	 U0mCTBiQKGUtA==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Pratyush Yadav <pratyush@kernel.org>,  Tudor Ambarus
- <tudor.ambarus@linaro.org>,  Michael Walle <mwalle@kernel.org>,
-  linux-mtd@lists.infradead.org,  Richard Weinberger <richard@nod.at>,
-  linux-kernel@vger.kernel.org,  Miquel Raynal <miquel.raynal@bootlin.com>,
-  Vignesh Raghavendra <vigneshr@ti.com>
-Subject: Re: [PATCH] mtd: spi-nor: Enable locking for n25q00a
-In-Reply-To: <26a795ac-e6ff-4363-a8b9-38793a9be794@linux.dev> (Sean Anderson's
-	message of "Thu, 9 Oct 2025 18:27:35 -0400")
-References: <20251006223409.3475001-1-sean.anderson@linux.dev>
-	<mafs0ecreontu.fsf@kernel.org>
-	<4888cefa-e8be-4f0d-9d4a-c82f9ff6cda0@linux.dev>
-	<mafs05xcpo9sz.fsf@kernel.org>
-	<26a795ac-e6ff-4363-a8b9-38793a9be794@linux.dev>
-Date: Fri, 10 Oct 2025 01:07:17 +0200
-Message-ID: <mafs0ikgnn07u.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1760051328; c=relaxed/simple;
+	bh=mO3BfBl7Y/2I52TbjPHtPsUEdKOX2+l8+hnFuUeuyKo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=GnbBzDXSYlw0KTjjgiYpIh1MFelKZA33byiZh5kpNBQu+arDYM8BFqq8hL6efox6fQbYM8XFMmxQTuUqwQR2rc96M/bM+aocTqh5NrcMHys0/DymOWA7XB7i8LauVDQRboYFJ6jw+glNWV2ZQ0hPdmmTOuOXVQC03ZbqyypasSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u1LrsfmA; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-334b0876195so3632620a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 16:08:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760051326; x=1760656126; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rDpIaffmoR6Qy88AeMwNPxO5iOtC8dDi++B0iTvo01A=;
+        b=u1LrsfmA3WrZtKf5hktbo5bfAjsWJWtD2zwrucbY+opy798sJyLX0i8LHuWmhQNcsG
+         ytI2MS0Q6+9x/btCzlaYdDTNxnjKOp4Uz0eywr8T5RBwryyjAfjWTnwrpQY141FEEtgc
+         Rlji/CClZrjvB96qrFqjDKApp8YDDpge4JxeY401x+ci1yRlHMsMx+RAKRhM8fxFHbJS
+         kyAORDGwsaBbhOwESzlfDD+c+o545SiltxCGBpAL/2KBGY4gmz5FuAFDE5PQ70Zfa0n0
+         1eMX6fcWWim3YlZHpyXDHEzEf1JB+8lmMQ3eYYdCl31I4BHNGwAoZQSFqVuX4iPcS9ya
+         LvTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760051326; x=1760656126;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rDpIaffmoR6Qy88AeMwNPxO5iOtC8dDi++B0iTvo01A=;
+        b=FQFBkbTYZdQ2AQthUnFsCqhP4MwyZLAdgtRkREbqpcWAAV//hxg1L64KMK571zjUEx
+         sZwqACk87EAqHfUglHQ6qc3tYgeI2lnvbhA03bOfIpsNL0p8jvOigts+E1bcBfLLH7zp
+         icW0CqVrzqwyVy6ylxsDlD61wZ9duVa1fNFutCyPCaPHMyX9iVdUHeVF2PXkrsljLUtj
+         3DlkqZo+YdpwjD5Y9gZ19NG+Lkq127EQj7XK27XM+Ws+IvDLBYdf3hKuoHvF3YuatDRh
+         1Frl7fWZjwapAigNXKFT5RwR8Wj+cqwzZ7vyZO4AZ7VHs7+YjbgKFGgrb9TH1pM8LAhs
+         FRsg==
+X-Forwarded-Encrypted: i=1; AJvYcCVTLIJJ7Vwbb5OKGiZsKvBcqw0dl1njfRhZpLBVgNVBH4Yyf3DxQS9eOufmFU9X6JcDD7utCm/lD/5p++M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzZKC/GjLNtIhJVfrKeSEQ8O4YL/rpCc7UXWg8NvyPB9+sOQAL
+	1WnzXarRt/Pej5ng+dve8TfX8A9/sgplr0MPVT33EWQeAc2lt6ANarqaYPvX3UlKpZVLgGuW+ti
+	VNLEXzgiBpZyz8Z524g5lE6KEDQ==
+X-Google-Smtp-Source: AGHT+IEKbmOpgQyGpF8iZG/gJeSzfxpKObXTtqbwqaHzaJgPnDoFIt/+KkqyzPgCgGNzWKTNkqyAjVnIwO8aJ2WY7Q==
+X-Received: from pjca12.prod.google.com ([2002:a17:90b:5b8c:b0:32b:35fb:187f])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:4d8b:b0:329:e703:d00b with SMTP id 98e67ed59e1d1-33b51386449mr12422922a91.19.1760051326203;
+ Thu, 09 Oct 2025 16:08:46 -0700 (PDT)
+Date: Thu, 09 Oct 2025 16:08:44 -0700
+In-Reply-To: <20251007221420.344669-12-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+References: <20251007221420.344669-1-seanjc@google.com> <20251007221420.344669-12-seanjc@google.com>
+Message-ID: <diqzcy6vhdvn.fsf@google.com>
+Subject: Re: [PATCH v12 11/12] KVM: selftests: Add guest_memfd tests for mmap
+ and NUMA policy support
+From: Ackerley Tng <ackerleytng@google.com>
+To: Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>, Shivank Garg <shivankg@amd.com>, 
+	Ashish Kalra <ashish.kalra@amd.com>, Vlastimil Babka <vbabka@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 09 2025, Sean Anderson wrote:
+Sean Christopherson <seanjc@google.com> writes:
 
-> On 10/8/25 08:30, Pratyush Yadav wrote:
->> On Tue, Oct 07 2025, Sean Anderson wrote:
->> 
->>> On 10/7/25 09:15, Pratyush Yadav wrote:
->>>> On Mon, Oct 06 2025, Sean Anderson wrote:
->>>> 
->>>>> The datasheet for n25q00a shows that the status register has the same
->>>>> layout as for n25q00, so use the same flags to enable locking support.
->>>>> These flags should have been added back in commit 150ccc181588 ("mtd:
->>>>> spi-nor: Enable locking for n25q128a11"), but they were removed by the
->>>>> maintainer...
->>>> 
->>>> This makes it sound like the maintainer did something wrong, which is
->>>> not true. Tudor had a good reason for removing them.
->>>
->>> I disagree. The maintainer used his position of authority to make the
->>> submitter second-guess their correct patch.
->> 
->> Sean, you are being very combative over such a small issue. You must
->> test your changes. This is one of the most basic principles in software
->> engineering. It was perfectly reasonable from Tudor to push back on
->> untested changes.
->> 
->> There is no abuse of "position of authority" here. When things break, we
->> get to do the work of putting the pieces back together. So of course, we
->> are reluctant to take things that increase this burden for us. Having
->> contributors test their changes is the simplest of things we ask for to
->> keep the quality bar.
->> 
->> Beyond that, I'd say that a little politeness goes a long way in life.
->> Especially towards the people maintaining the software for free that you
->> (or your employer) use. We are both wasting our energy on this debate.
->> Please stop. Take a step back and think from the other side's
->> perspective. And try to work _with_ people, not against them.
->> 
->>>
->>> These flashes have capacity of greater than the 8 MiB that can be
->>> protected using 3 BP bits. Micron (and ST before them?) addressed this
->>> by adding a fourth BP bit. This is consistent across every flash in this
->>> series, and is clearly documented in every datasheet. Defaulting to 3
->>> bits is buggy behavior: we should assume flashes behave per their
->>> datasheets until proven otherwise, especially for less-popular features
->> 
->> If I had a euro every time I found a bug in a datasheet, well, I would
->> have enough money to at least buy a nice dinner. My point is, datasheets
->> are not perfect. Only running on real hardware gets you the true
->> picture.
+> From: Shivank Garg <shivankg@amd.com>
 >
-> Well, it's even *more* buggy to pretend that the datasheet doesn't exist
-> and just do whatever you please. Might as well reverse-engineer every
-> chip that comes across your desk from first principles with that
-> attitude.
-
-... or, you know, read the data sheet, write the driver, and _test_ if
-it actually works?
-
+> Add tests for NUMA memory policy binding and NUMA aware allocation in
+> guest_memfd. This extends the existing selftests by adding proper
+> validation for:
+>   - KVM GMEM set_policy and get_policy() vm_ops functionality using
+>     mbind() and get_mempolicy()
+>   - NUMA policy application before and after memory allocation
 >
-> The locking doesn't work on any of these flashes without these flags. If
-> you don't believe me you can try it yourself. The people who submitted
-> the original patches certainly didn't test it.
+> Run the NUMA mbind() test with and without INIT_SHARED, as KVM should allow
+> doing mbind(), madvise(), etc. on guest-private memory, e.g. so that
+> userspace can set NUMA policy for CoCo VMs.
+>
+> Run the NUMA allocation test only for INIT_SHARED, i.e. if the host can't
+> fault-in memory (via direct access, madvise(), etc.) as move_pages()
+> returns -ENOENT if the page hasn't been faulted in (walks the host page
+> tables to find the associated folio)
+>
+> Signed-off-by: Shivank Garg <shivankg@amd.com>
+> Tested-by: Ashish Kalra <ashish.kalra@amd.com>
+> [sean: don't skip entire test when running on non-NUMA system, test mbind()
+>        with private memory, provide more info in assert messages]
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  .../testing/selftests/kvm/guest_memfd_test.c  | 98 +++++++++++++++++++
+>  1 file changed, 98 insertions(+)
+>
+> 
+> [...snip...]
+> 
+> +static void test_numa_allocation(int fd, size_t total_size)
+> +{
+> +	unsigned long node0_mask = 1;  /* Node 0 */
+> +	unsigned long node1_mask = 2;  /* Node 1 */
+> +	unsigned long maxnode = 8;
+> +	void *pages[4];
+> +	int status[4];
+> +	char *mem;
+> +	int i;
+> +
+> +	if (!is_multi_numa_node_system())
+> +		return;
+> +
+> +	mem = kvm_mmap(total_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd);
+> +
+> +	for (i = 0; i < 4; i++)
+> +		pages[i] = (char *)mem + page_size * i;
+> +
+> +	/* Set NUMA policy after allocation */
+> +	memset(mem, 0xaa, page_size);
+> +	kvm_mbind(pages[0], page_size, MPOL_BIND, &node0_mask, maxnode, 0);
+> +	kvm_fallocate(fd, FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE, 0, page_size);
+> +
+> +	/* Set NUMA policy before allocation */
+> +	kvm_mbind(pages[0], page_size * 2, MPOL_BIND, &node1_mask, maxnode, 0);
+> +	kvm_mbind(pages[2], page_size * 2, MPOL_BIND, &node0_mask, maxnode, 0);
+> +	memset(mem, 0xaa, total_size);
+> +
+> +	/* Validate if pages are allocated on specified NUMA nodes */
+> +	kvm_move_pages(0, 4, pages, NULL, status, 0);
+> +	TEST_ASSERT(status[0] == 1, "Expected page 0 on node 1, got it on node %d", status[0]);
+> +	TEST_ASSERT(status[1] == 1, "Expected page 1 on node 1, got it on node %d", status[1]);
+> +	TEST_ASSERT(status[2] == 0, "Expected page 2 on node 0, got it on node %d", status[2]);
+> +	TEST_ASSERT(status[3] == 0, "Expected page 3 on node 0, got it on node %d", status[3]);
+> +
+> +	/* Punch hole for all pages */
+> +	kvm_fallocate(fd, FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE, 0, total_size);
+> +
+> +	/* Change NUMA policy nodes and reallocate */
+> +	kvm_mbind(pages[0], page_size * 2, MPOL_BIND, &node0_mask, maxnode, 0);
+> +	kvm_mbind(pages[2], page_size * 2, MPOL_BIND, &node1_mask, maxnode, 0);
+> +	memset(mem, 0xaa, total_size);
+> +
+> +	kvm_move_pages(0, 4, pages, NULL, status, 0);
+> +	TEST_ASSERT(status[0] == 0, "Expected page 0 on node 0, got it on node %d", status[0]);
+> +	TEST_ASSERT(status[1] == 0, "Expected page 1 on node 0, got it on node %d", status[1]);
+> +	TEST_ASSERT(status[2] == 1, "Expected page 2 on node 1, got it on node %d", status[2]);
+> +	TEST_ASSERT(status[3] == 1, "Expected page 3 on node 1, got it on node %d", status[3]);
+> +
 
-Right. So can you send the patches you _did_ test on the hardware you do
-have? So this time we are sure we got it right. And reply to the other
-review comments? Without that, I don't think this patch can make
-progress.
+Related to my comment on patch 5: might a test for guest_memfd with
+regard to the memory spread page cache feature provided by the cpuset
+subsystem be missing?
 
--- 
-Regards,
-Pratyush Yadav
+Perhaps we need tests for
+
+1. Test that the allocation matches current's mempolicy, with no
+   mempolicy defined for specific indices.
+2. Test that during allocation, current's mempolicy can be overridden with
+   a mempolicy defined for specific indices.
+3. Test that during allocation, current's mempolicy and the effect of
+   cpuset config can be overridden with a mempolicy defined for specific
+   indices.
+4. Test that during allocation, without defining a mempolicy for given
+   index, current's mempolicy is overridden by the effect of cpuset
+   config
+
+I believe test 4, before patch 5, will show that guest_memfd respects
+cpuset config, but after patch 5, will show that guest_memfd no longer
+allows cpuset config to override current's mempolicy.
+
+> +	kvm_munmap(mem, total_size);
+> +}
+> +
+>  static void test_fault_sigbus(int fd, size_t accessible_size, size_t map_size)
+>  {
+>  	const char val = 0xaa;
+> @@ -273,11 +369,13 @@ static void __test_guest_memfd(struct kvm_vm *vm, uint64_t flags)
+>  		if (flags & GUEST_MEMFD_FLAG_INIT_SHARED) {
+>  			gmem_test(mmap_supported, vm, flags);
+>  			gmem_test(fault_overflow, vm, flags);
+> +			gmem_test(numa_allocation, vm, flags);
+>  		} else {
+>  			gmem_test(fault_private, vm, flags);
+>  		}
+>  
+>  		gmem_test(mmap_cow, vm, flags);
+> +		gmem_test(mbind, vm, flags);
+>  	} else {
+>  		gmem_test(mmap_not_supported, vm, flags);
+>  	}
+> -- 
+> 2.51.0.710.ga91ca5db03-goog
 
