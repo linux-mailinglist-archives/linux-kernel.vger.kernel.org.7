@@ -1,70 +1,102 @@
-Return-Path: <linux-kernel+bounces-846416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7261BC7EF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:09:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF4ADBC7F4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 553061A60D88
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:09:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 948164FE4E2
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A883F2D192B;
-	Thu,  9 Oct 2025 08:07:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD4A2BEC31;
+	Thu,  9 Oct 2025 08:07:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="WiaOkJNj"
-Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.77.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lT3BcE/3";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uhJSxLdk";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lT3BcE/3";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uhJSxLdk"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D86729D292;
-	Thu,  9 Oct 2025 08:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.77.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 332771B4F1F
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 08:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759997279; cv=none; b=ePUWKmoC/QeG92DyU/Oi2AX8khYLv3m45BiAufIR75php//AFAvmZOvnM0QRkqLBoOsZC3H6Y+nmoUx0Q54LImFFwNO9aqOSN3bts4cZ0qkmkoI98Ad/6tMM/OCHwaRGkEioHdA2la7jSQ8KVcXWNO/Z8Y1/8uCK5XmOtNzIQxM=
+	t=1759997271; cv=none; b=gKoWelYN0a734zE4C+RU3edHv/3IOP2V5JE7pL0E6U/bdnSVA5p/bDe0VVXX7kQ7CZbeixdHZ4/fLT9Bv71coG8dy2k1uAE0o5fefONBOT0K4ryfofZRtPN11Ei5JxoNhHpeJqZttDDcn1MahKqkV/C4e/4tfbScx7QT7N3HgrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759997279; c=relaxed/simple;
-	bh=DKsNxhZuvjGgb7iyN4foc8ZS/xGsFnmU8aui+Jb/OlE=;
+	s=arc-20240116; t=1759997271; c=relaxed/simple;
+	bh=4W3fMl5l3jcHrj0ggcJQMaLz1dS2cx4Ut1OZNPYE8IE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EbE5LepU0RfrYIP58Hw0Xh5UuJnbrR9WoeuaBKiON3Xe3BVxm3V4sSfd4OAP1vi/zpCCeH3Iqiek27felr5CoAyBpVC4pOoTTRSVkDOYmdRvmQLGEq8BQoyTWbcVEQfrzIAATsYkORwhM0WvP12QuI1TIhzOojInIh6LTbJEp80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=WiaOkJNj; arc=none smtp.client-ip=114.132.77.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1759997231;
-	bh=QomI1gNvaUojwqQoknXFY7m4GYm6zxoKTgnI/BnC6LY=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=WiaOkJNjAfaOxrrDPIS7pnBdL6f1nW9gDe0qY/RG0qlJd/MbAJ27jdS+34kgOUmRl
-	 gLVV9BZ4jBbW5badASFhVDHnU+USXqRKFu6uWqYBeENV2WNIY+urgKjT5maAFk8SS4
-	 iRy9cmlmZ+J6TV6nHE6bjlgrhoE/uTu+lpJ8a6U4=
-X-QQ-mid: zesmtpsz8t1759997228t014935b9
-X-QQ-Originating-IP: 3K5W0OLDLhEJGiGik9gi2j2qEwUpKM2FSNoCg+xeMgg=
-Received: from = ( [61.145.255.150])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 09 Oct 2025 16:07:06 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 2621622551196741310
-EX-QQ-RecipientCnt: 16
-Date: Thu, 9 Oct 2025 16:07:06 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Conor Dooley <conor@kernel.org>, Yixun Lan <dlan@gentoo.org>
-Cc: Troy Mitchell <troy.mitchell@linux.dev>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Yangyu Chen <cyy@cyyself.name>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: riscv: spacemit: Add MusePi Pro board
-Message-ID: <A5845378AE731404+aOdtKmFPaYfc2n7n@kernel.org>
-References: <20250928-k1-musepi-pro-dts-v1-0-64d0659dfdbc@linux.spacemit.com>
- <20250928-k1-musepi-pro-dts-v1-1-5efcca0ce3ae@linux.spacemit.com>
- <20250928074914-GYA1344940@gentoo.org>
- <20250929-challenge-molecular-947bb1f5962b@spud>
+	 Content-Type:Content-Disposition:In-Reply-To; b=C5MWWtndd2oz3eRKJh+84MuKKT62lvb3Ym1EjiET0mzdU+TGXGMIUgzfPg9JDN2tNwHjxvKmlXWbr3B6oX6yL38ClbTU1CQVBAgxcksRFUkBSNiM6yN71S2WnNzWzH0s4nlCgf+0TFJyDJB4XQMLi5oKxhNJZxe0TO5ZIZHyWhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lT3BcE/3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uhJSxLdk; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lT3BcE/3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uhJSxLdk; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 59C20224C6;
+	Thu,  9 Oct 2025 08:07:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759997267; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=840BVvk4h/vQ3iIDPplNBop5pm8dJACDtuDls2QAuzo=;
+	b=lT3BcE/3xLnQc9f2v2Q3k1PaokeHfbIitmRaSGJFjpMBc+Gi3AhKPqgCIh+KbCM/k5CDgD
+	0g+hXMyScNWMF5W2sKtxiI++tsS+wb4Bmj9LPmoBF4ZsGG9RWUZimUEuo1zkK8iJm1rRbU
+	Vtvs2hNofBorIJpm1pODkmLFify2KVQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759997267;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=840BVvk4h/vQ3iIDPplNBop5pm8dJACDtuDls2QAuzo=;
+	b=uhJSxLdkywP8EgjhSzopzlfXz6YCM8o/5fj57d7Jj60gAoL5kZVIg22rAKAZkeP+Vu2mxV
+	Xubi1K3Ydm1QnmAw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759997267; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=840BVvk4h/vQ3iIDPplNBop5pm8dJACDtuDls2QAuzo=;
+	b=lT3BcE/3xLnQc9f2v2Q3k1PaokeHfbIitmRaSGJFjpMBc+Gi3AhKPqgCIh+KbCM/k5CDgD
+	0g+hXMyScNWMF5W2sKtxiI++tsS+wb4Bmj9LPmoBF4ZsGG9RWUZimUEuo1zkK8iJm1rRbU
+	Vtvs2hNofBorIJpm1pODkmLFify2KVQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759997267;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=840BVvk4h/vQ3iIDPplNBop5pm8dJACDtuDls2QAuzo=;
+	b=uhJSxLdkywP8EgjhSzopzlfXz6YCM8o/5fj57d7Jj60gAoL5kZVIg22rAKAZkeP+Vu2mxV
+	Xubi1K3Ydm1QnmAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B723013AAC;
+	Thu,  9 Oct 2025 08:07:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id AavsKVJt52gYEAAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Thu, 09 Oct 2025 08:07:46 +0000
+Date: Thu, 9 Oct 2025 10:07:45 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: Mauricio Faria de Oliveira <mfo@igalia.com>
+Cc: Michal Hocko <mhocko@suse.com>, Vlastimil Babka <vbabka@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Brendan Jackman <jackmanb@google.com>,
+	Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	kernel-dev@igalia.com
+Subject: Re: [PATCH v2 2/5] mm/page_owner: add struct stack_print_ctx.flags
+Message-ID: <aOdtUZbMhV77q3Hk@localhost.localdomain>
+References: <20251001175611.575861-1-mfo@igalia.com>
+ <20251001175611.575861-3-mfo@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,53 +105,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250929-challenge-molecular-947bb1f5962b@spud>
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: Mp6z4bZjgTSTBwMUNg8zA9wVxazGdIn93I9Zu21FdJDVa3RXuD+vQjXh
-	HHdxaylN9cjOmrQ/WgbLFNFtWLqcn08nuxMpo9RxJR3NopPzZUNsZdRr/08pXyUJ6GMpky9
-	IfLW2D13rw7HxB9e1LGPf987k/TreNIwYE6R7en00JWSp1rnbXxeUYfGiKV9gUJz38tjZAK
-	kVCx8+/y3vXwr5EsoI+L5M1qqyHVsUAehlvLVThtrWFem6sXUgwFTgWoJOS8yEwcRrRm2Eu
-	5xnNR+EMSuhVE1/IqJmEEGv4JPi34oniOGdlInUE4dDUEQCzdin0EBpmNFZyFJ+2pcoMDlr
-	ztDKM87TqqndgJzwD6zP7ZKNH46XcumRbtTdSm8AlV45iuUgL48zPpn0mARgzhacWDrRZLs
-	WcmSolLIF95e7Y02al/G6q0S9RClEdsnTOG1UhYvkCLECMNWWhYNLq543+Zd1jmz6Ygu1nB
-	2w7hZrJiaDUVsahIr6ufnvr4xLZEYwsDLDEFblCHCLxXloVHLQaHib3ZaLY9khPiHZ+zVux
-	VGchYJ3bpMPzBEXafYNgnGcipSA55Y8qrSGaMp2s0EJjoJSG8TEPWnDi3FWUcGII63HViBm
-	RaURwpJHmXGDZIxfqUwU/Yoeq2QYpSoBGXt1sE/a2rfltAY3uUYLJFXznjdHQOY67PtdM64
-	tJY2dzS7czbY12eZIOeXaN6HUBXkwoVHX4NELTic2Qqmln3vReQECz1qydVkfRQolZMeNOR
-	j3CsR/RUVbDxYQ3zhjEY8dhhh7coqluyK7qO0O4WL0vXznJuq8PCMFctXHKSOwVUhD+1g6V
-	YPo55Mz7KO5VtZuomMD7cGFsuSqTeApa+C91VJfkFaXpDzVAM5oL4qGOvuhCuWB8beKvZFs
-	qpd0dWanYd0adsyTgO17UvE0/1KZNcf7cPyA9jIEu1l4wtvKT4L76Al6Jbsx7jYeAvKfQ7M
-	Adf7CFBMRBTvACRg6C8nqJUI+UZWpncN7H1SpEVkV8U6md+q7tlv1zfs7tiSX68Wv4eXiWl
-	ngPxh/xy4WfGQd19YCwznKLnCAdZo1KP37zgtBPmUZ1iB1GXuz7v245KXLKSEts0gVK5x3J
-	6N4GfVqoVZvcjNrGeRi7iY=
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-X-QQ-RECHKSPAM: 0
+In-Reply-To: <20251001175611.575861-3-mfo@igalia.com>
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	URIBL_BLOCKED(0.00)[localhost.localdomain:mid,imap1.dmz-prg2.suse.org:helo,igalia.com:email,suse.de:email];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo,localhost.localdomain:mid,igalia.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -4.30
 
-On Mon, Sep 29, 2025 at 06:48:22PM +0100, Conor Dooley wrote:
-> On Sun, Sep 28, 2025 at 03:49:14PM +0800, Yixun Lan wrote:
-> > Hi Troy,
-> > 
-> > On 12:16 Sun 28 Sep     , Troy Mitchell wrote:
-> > > From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> > > 
-> > > Document the compatible string for the MusePi Pro [1].
-> > > It is a 1.8-inch single board computer based on the
-> > > SpacemiT K1/M1 RISC-V SoC [2].
-> > you could wrap at slightly more characters, I remember 72 chars
-> > (haven't spent time to find a formal document link..)
-> > 
-> > > 
-> > > Link:
-> > > https://developer.spacemit.com/documentation?token=YJtdwnvvViPVcmkoPDpcvwfVnrh&type=pdf
-> > I'd suggest to list core features of this board, while using this link as a complement,
-> > base on previous experience, vendor may change the link address, thus the link vanish
+On Wed, Oct 01, 2025 at 02:56:08PM -0300, Mauricio Faria de Oliveira wrote:
+> Add the flags field to stack_print_ctx, and define two flags for current
+> behavior (printing stack traces and their number of base pages).
 > 
-> The link doesn't even work for me.
-Could you double check if it really doesn't work now?
+> The plumbing of flags is debugfs_create_file(data) -> inode.i_private ->
+> page_owner_stack_open() -> stack_print_ctx.flags -> stack_print().
+> 
+> No behavior change intended.
+> 
+> Signed-off-by: Mauricio Faria de Oliveira <mfo@igalia.com>
 
-> Is this board actually made by spacemit as a developer platform?
-Yes.
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
 
-                    - Troy
+ 
+
+-- 
+Oscar Salvador
+SUSE Labs
 
