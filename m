@@ -1,142 +1,129 @@
-Return-Path: <linux-kernel+bounces-846528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9100BC840A
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 11:17:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65ACABC82A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 11:03:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CEC6B4F9AE4
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 09:16:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 868E119E71F9
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 09:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128F329AB13;
-	Thu,  9 Oct 2025 09:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 536B72D29AC;
+	Thu,  9 Oct 2025 09:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vAmjNd4p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V3RRB8iX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6174527B342;
-	Thu,  9 Oct 2025 09:16:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF85610F1
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 09:03:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760001398; cv=none; b=jw1v8vsAUCr4A4qg+k3v0F1BhM6sc9T1y8gmxdp7Fv+a46WJ1pk+9xbJBYLEV1kcQrIRyhgPvbQd3Re+VsNpaWYteTnftGO2yCq5gz2LVbBQhmcoM767aCKxsthMLvOSqRlQ+vMqxdQwj2lu1ThmlQcSfPUWX5PmpgaNYat37ns=
+	t=1760000616; cv=none; b=tHYkzv4LdJfi+KNEvNqzNs0L7kNpj0yUTnTGwboWdadLoVaUECRaYaEYNpBgecTuWM3jPALad4JaD/K6Yh5L9AGe6inC/o7sYBQAS4ZJsyzCcWl8G2DjG0p8yWpJRzgQeyhAQtJzpp0D0nM93A8eEiliV3G4zOCSDAnq9C/TvR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760001398; c=relaxed/simple;
-	bh=3bbSTaA6jx0Vh3WaS6Gw5mXl4+WFYO4/FoQ/kCiHfkU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GIPQwi7NOIKTFRzYt2Aq8CO05uVacB9J6yCamz3pqkxZze8m6kv2Q6VRat1zudLXMbf37zAnL7vmRGSIICHX4MFjpqe8ybyRZebipbU/P4jfTaZzgT0rEjfy7HAsizUCc1sLUT+b51sCyAbOL2JGxUZz2aRrcwnmEoUjgFPSemM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vAmjNd4p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DBC6C4CEE7;
-	Thu,  9 Oct 2025 09:16:37 +0000 (UTC)
+	s=arc-20240116; t=1760000616; c=relaxed/simple;
+	bh=FoTZEXQcIgIMtFxDJPHe8cDks+/3aiPKFcdTwoxQrKA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uqRzk+Yn+G0t5LPIQAvT5QDjcODFVRMlSXRKaIND3PcF8+0yQ4ekcsu1T7CJRsS/YWqToO6ecEoZwzonoW5Di/suE5ugl+wv8uOIYqjYxtNkn0Eizjj+sKbiRBaqSu9YB99RRa7I15JjdEnqaBYpg7hkiduJNiRiU3CXOrJiQeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V3RRB8iX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3DA50C4CEE7;
+	Thu,  9 Oct 2025 09:03:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760001397;
-	bh=3bbSTaA6jx0Vh3WaS6Gw5mXl4+WFYO4/FoQ/kCiHfkU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vAmjNd4pnf+M+PxkFm/3dI0CFKy++he7RbM6M/bkI5JvZwwoEquy9sbhWEUUZ490r
-	 hglyjsstvFfM7lBf+KFAZU9uwuLR4Q+5KPuEHHhtUl8cXybzmsok8CNifGMqTUhn3J
-	 YlMYd9Q9+YUfXU3Hbc5kewJjY2KgKgDrDB5WlEOhVJCO1zjQVNLwA0jFzZGgBDOsIT
-	 kYuIjj5J3DpKNsqPrXmNLS3OBzfYfvB3bXvQaGnQIX4VCq3i11Aqy19aRV0EUxrbDe
-	 IiPphsnP36xlnmudvTL+yQGDwaImhU3zSu/kv3367B3IvJGTYA2HSvzGMlCX2QApsW
-	 ZCSWN01UT9/TA==
-Date: Thu, 9 Oct 2025 11:02:59 +0200
-From: Nicolas Schier <nsc@kernel.org>
-To: HONG Yifan <elsk@google.com>
-Cc: Nathan Chancellor <nathan@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>, kernel-team@android.com,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kbuild: use $(obj)/ instead of $(src)/ for COPY
-Message-ID: <aOd6QzKQKcYoxMf0@levanger>
-References: <20251006193839.1350626-1-elsk@google.com>
+	s=k20201202; t=1760000616;
+	bh=FoTZEXQcIgIMtFxDJPHe8cDks+/3aiPKFcdTwoxQrKA=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=V3RRB8iXUAhFRA+KvS3burxRNW//s6acwSLZIQ04Lz9n3UWAty7WhtNh5OAVqViey
+	 7EwHRjWnIwByFqrZ+MjcKwNeP7xXWmdtIcIJce7PZC/2NW1vlRFm2gVeK0mlQYM5Dg
+	 d9lSKkfGbMjJ01hY3+eOz1WU5frF0QiJo/KVtSJTAE2Uu+BNKkC3T282hy+wqo8Pqq
+	 +P0lVNSiO5+Rc//A+eCE5Xa2kH974vBsIPU1zeHSh7Ke+lWZi3QqhECZw96VxrAad5
+	 x1VCL704uVFAlkKhogj/dqwHvlk/qzUvolNLL3YM5Rp1Co9c31nZGmvnfTMa0Sb35B
+	 hiY/P88rkCEKw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A327CCD187;
+	Thu,  9 Oct 2025 09:03:36 +0000 (UTC)
+From: Cryolitia PukNgae via B4 Relay <devnull+cryolitia.uniontech.com@kernel.org>
+Date: Thu, 09 Oct 2025 17:03:31 +0800
+Subject: [PATCH RESEND] checkpatch: Suppress warnings when Reported-by: is
+ followed by Link:
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251006193839.1350626-1-elsk@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251009-checkpatch-v1-1-baf0e614b96a@uniontech.com>
+X-B4-Tracking: v=1; b=H4sIAGJ652gC/22OsQ7CIBiEX6X5ZzGFRgEnB7s66Gg6UPojpLFtA
+ Imm6btLmB3vLvfdrRDQOwxwqlbwmFxw85QF3VWgrZqeSNyQNbCaHWpJJdEW9bioqC2pGT9ywbE
+ 3PUIuLB6N+xTYA27tvb1eoMu+dSHO/ls2Ei3pP1yihJJBCCl5Ixtm1Pk95TcRtd3r+QXdtm0/n
+ G1MG7AAAAA=
+X-Change-ID: 20250919-checkpatch-0276787ebfbe
+To: Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>, 
+ Dwaipayan Ray <dwaipayanray1@gmail.com>, 
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Cc: linux-kernel@vger.kernel.org, niecheng1@uniontech.com, 
+ zhanjun@uniontech.com, Cryolitia PukNgae <cryolitia@uniontech.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760000615; l=1986;
+ i=cryolitia@uniontech.com; s=20250730; h=from:subject:message-id;
+ bh=GglgwOO4sGxm/0cSmViQByo3JCllbsUslkPqrpN9emg=;
+ b=Zh6nWoXotL3I2+RstXgrvRLgEvdeD5diRbxWeBBiU8VsOpFXfPRXdeWD1Py/cm2GTgeuVZ16J
+ 1BM/EAVNjALCUzPYURiB8Tcokbu+EeFMujIByKIKGrOQDnmdnteKVq6
+X-Developer-Key: i=cryolitia@uniontech.com; a=ed25519;
+ pk=tZ+U+kQkT45GRGewbMSB4VPmvpD+KkHC/Wv3rMOn/PU=
+X-Endpoint-Received: by B4 Relay for cryolitia@uniontech.com/20250730 with
+ auth_id=474
+X-Original-From: Cryolitia PukNgae <cryolitia@uniontech.com>
+Reply-To: cryolitia@uniontech.com
 
-On Mon, Oct 06, 2025 at 07:38:38PM +0000, HONG Yifan wrote:
-> Similar to
-> commit 9a0ebe5011f4 ("kbuild: use $(obj)/ instead of $(src)/ for common pattern rules")
-> 
-> This change updates the COPY rule to use $(obj) instead of $(src). This
-> makes Kbuild rules like
-> 
->     always-y += libfoo/.foo.o.cmd
+From: Cryolitia PukNgae <cryolitia@uniontech.com>
 
-This is a strange example.  Why should we ship any prebuilt .*.o.cmd file?
+> The tag should be followed by a Closes: tag pointing to the report,
+> unless the report is not available on the web. The Link: tag can be
+> used instead of Closes: if the patch fixes a part of the issue(s)
+> being reported.
 
-> 
-> work when the user provides libfoo/.foo.o.cmd_shipped, even when obj and
-> src is different and src is an absolute path. This is useful when foo.o
-> and .foo.o.cmd are checked-in as prebuilts.
-> 
-> (Admittedly, `always-y += libfoo/.foo.o.cmd` is not recommended in
-> kbuild/modules.rst, "Several Subdirectories".)
-> 
-> For example, if
-> 
->     obj=.
->     src=/some/path
-> 
-> then the original rule
-> 
->     $(obj)/%: $(src)/%_shipped
-> 
-> expands to
-> 
->     ./%: /some/path/%_shipped
-> 
-> And when matching against the above example, the stem is just `bar.o`
-> [^1] so the following is looked up:
-> 
->     libfoo/.foo.o.cmd: libfoo//some/path/.foo.o.cmd_shipped
-> 
-> ... and it cannot be matched.
-> 
-> With this change, the rule expands to
-> 
->     ./%: ./%_shipped
-> 
-> ... and it should work, at least for files that does not have a more
-> specific pattern rule.
-> 
-> NOTE: that after this change, code like
-> 
->     bar-y += libfoo/foo.o
-> 
-> ... with libfoo/foo.o_shipped provided still DOES NOT work, because
-> the pattern rule $(obj)/%.o takes priority. For .o_shipped files,
-> the user still needs an explicit `$(obj)/%.o: $(obj)/%.o_shipped` rule
-> in its own Kbuild file.
-> 
-> [^1]: https://www.gnu.org/software/make/manual/html_node/Pattern-Match.html
-> 
-> Signed-off-by: HONG Yifan <elsk@google.com>
-> ---
->  scripts/Makefile.lib | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-> index 1d581ba5df66..e066b7b00bcc 100644
-> --- a/scripts/Makefile.lib
-> +++ b/scripts/Makefile.lib
-> @@ -272,7 +272,7 @@ endef
->  quiet_cmd_copy = COPY    $@
->        cmd_copy = cat $< > $@
->  
-> -$(obj)/%: $(src)/%_shipped
-> +$(obj)/%: $(obj)/%_shipped
->  	$(call cmd,copy)
+Accroding to Documentation/process/submitting-patches.rst , Link: is
+also acceptable to followed a Reported-by:
 
-No, I don't see a reason to support *_shipped files from the build tree.
-The purpose of *_shipped is to deliver prebuilt files with the source
-tree to allow or simplify building the corresponding output files.
+Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
+---
+Changes in v2:
+- EDITME: describe what is new in this series revision.
+- EDITME: use bulletpoints and terse descriptions.
+- Link to v1: https://lore.kernel.org/r/20250919-checkpatch-v1-1-d889973932fa@uniontech.com
+---
+ scripts/checkpatch.pl | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Kind regards,
-Nicolas
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 92669904eecc7a8d2afd3f2625528e02b6d17cd6..01c4e70b19a0992c2f2d56347be9ae73005be025 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -3205,10 +3205,10 @@ sub process {
+ 			if ($sign_off =~ /^reported(?:|-and-tested)-by:$/i) {
+ 				if (!defined $lines[$linenr]) {
+ 					WARN("BAD_REPORTED_BY_LINK",
+-					     "Reported-by: should be immediately followed by Closes: with a URL to the report\n" . $herecurr . "\n");
+-				} elsif ($rawlines[$linenr] !~ /^closes:\s*/i) {
++					     "Reported-by: should be immediately followed by Closes: or Link: with a URL to the report\n" . $herecurr . "\n");
++				} elsif ($rawlines[$linenr] !~ /^(closes|link):\s*/i) {
+ 					WARN("BAD_REPORTED_BY_LINK",
+-					     "Reported-by: should be immediately followed by Closes: with a URL to the report\n" . $herecurr . $rawlines[$linenr] . "\n");
++					     "Reported-by: should be immediately followed by Closes: or Link: with a URL to the report\n" . $herecurr . $rawlines[$linenr] . "\n");
+ 				}
+ 			}
+ 		}
+
+---
+base-commit: ec714e371f22f716a04e6ecb2a24988c92b26911
+change-id: 20250919-checkpatch-0276787ebfbe
+
+Best regards,
+-- 
+Cryolitia PukNgae <cryolitia@uniontech.com>
+
+
 
