@@ -1,40 +1,53 @@
-Return-Path: <linux-kernel+bounces-846667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60FEFBC8AF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:04:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02102BC8753
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 12:21:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B0C03A4FA2
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:02:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5FF23B8CB0
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 10:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6E52E090C;
-	Thu,  9 Oct 2025 11:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="CRpZqVpX"
-Received: from mail-m3298.qiye.163.com (mail-m3298.qiye.163.com [220.197.32.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E7E82DF71E;
-	Thu,  9 Oct 2025 11:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7F8C2DCBE3;
+	Thu,  9 Oct 2025 10:20:38 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33DC3275844;
+	Thu,  9 Oct 2025 10:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760007622; cv=none; b=ZEpDznQIf3n0B4jc3LAA5/y2ISjmz1sBen/up9Sfq+IVbcextnl53TP2d7hYHa8SL3OrZSgJXOC7i83TYH7e5HnrzUa7u1PoBRYnm/sFn/u0XBenj1qJyVVAqX4G1x2rEfe6dUlBupBG4QwiJwqywCbMHafrZpW98wts0t5jvps=
+	t=1760005237; cv=none; b=WIvcQ2t4cCQeAjdmm06rO8P8/i52z7+xLaegywcqXizPePR+pTGm41zfNVGBkOJULoFddUYzha9TveyLIsdlMS9LiYi+DgmhJwzrUp2kehcshQbURqm8C4InVNOvZrwVKlMFncX0EtdyJ8Wn6ykwMvGm5PjwAsHFdT4+lkpmn+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760007622; c=relaxed/simple;
-	bh=y7OlmIAK8vLkfU3+JxQ1Pkm7zAIwUPOpZpXABe/3DLs=;
+	s=arc-20240116; t=1760005237; c=relaxed/simple;
+	bh=lUs8p2fW3v1l2sBrZO8lIJGpAyvrMi+W3vfGsTEx0nY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lGxWitYCG2vmLxOmhocm8Rir8+wUpAbhUcKPcODJsyl0cPkDYtVx9SyKaSYqSqoEZwoh+HG7kiDeXio1qQ1n+HBp19KRi36Q4aB9EdNt99vfNLjggtv5AaTGL+49J4DWXPYUm4nCrejlnsvMueCT9gslE4BIKzxdY22SFtNkIBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=CRpZqVpX; arc=none smtp.client-ip=220.197.32.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.26] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 2543142d9;
-	Thu, 9 Oct 2025 12:10:40 +0800 (GMT+08:00)
-Message-ID: <a42ebdca-1cbc-498c-b859-336557823f26@rock-chips.com>
-Date: Thu, 9 Oct 2025 12:10:42 +0800
+	 In-Reply-To:Content-Type; b=Gxvq81XBV4Yr5tyBP12Aekpq8rPAHuBo9JLuJk724Hf4lg6IAm1mUvBeA5qGaK9mnnrFs9nQY0XzbjdzjO6TDB2zYdBSTJsMEt0L3F+XDy5tzkwLNnHuI8zaq7Wly7ItkU7YdLwDu/0bjP0Nv2oi/C/KthYTDtuBvnX/m2fTBh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cj548110xz9sSL;
+	Thu,  9 Oct 2025 12:01:12 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id qOLNCcqM6pFr; Thu,  9 Oct 2025 12:01:12 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cj5476tjqz9sSC;
+	Thu,  9 Oct 2025 12:01:11 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id D06108B76C;
+	Thu,  9 Oct 2025 12:01:11 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id MfDghYtIuYkA; Thu,  9 Oct 2025 12:01:11 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 776CE8B767;
+	Thu,  9 Oct 2025 12:01:09 +0200 (CEST)
+Message-ID: <0c730c52-97ee-43ea-9697-ac11d2880ab7@csgroup.eu>
+Date: Thu, 9 Oct 2025 12:01:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -42,205 +55,182 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 11/18] drm/display: bridge_connector: Ensure last
- bridge determines EDID/modes detection capabilities
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
- festevam@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
- kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
- jingoohan1@gmail.com, p.zabel@pengutronix.de, hjc@rock-chips.com,
- heiko@sntech.de, andy.yan@rock-chips.com, dianders@chromium.org,
- m.szyprowski@samsung.com, jani.nikula@intel.com,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
-References: <20250930090920.131094-1-damon.ding@rock-chips.com>
- <20250930090920.131094-12-damon.ding@rock-chips.com>
- <20251001180922.6bbe42ac@booty>
-Content-Language: en-US
-From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <20251001180922.6bbe42ac@booty>
+Subject: Re: (bisected) [PATCH v2 08/37] mm/hugetlb: check for unreasonable
+ folio sizes when registering hstate
+To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
+Cc: Zi Yan <ziy@nvidia.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Alexander Potapenko <glider@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
+ Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ iommu@lists.linux.dev, io-uring@vger.kernel.org,
+ Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
+ Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
+ kasan-dev@googlegroups.com, kvm@vger.kernel.org,
+ Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
+ linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+ linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-scsi@vger.kernel.org, Marco Elver <elver@google.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Muchun Song <muchun.song@linux.dev>,
+ netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
+ Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
+ virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
+ wireguard@lists.zx2c4.com, x86@kernel.org,
+ "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+References: <20250901150359.867252-1-david@redhat.com>
+ <20250901150359.867252-9-david@redhat.com>
+ <3e043453-3f27-48ad-b987-cc39f523060a@csgroup.eu>
+ <d3fc12d4-0b59-4b1f-bb5c-13189a01e13d@redhat.com>
+ <faf62f20-8844-42a0-a7a7-846d8ead0622@csgroup.eu>
+ <9361c75a-ab37-4d7f-8680-9833430d93d4@redhat.com>
+ <03671aa8-4276-4707-9c75-83c96968cbb2@csgroup.eu>
+ <1db15a30-72d6-4045-8aa1-68bd8411b0ba@redhat.com>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <1db15a30-72d6-4045-8aa1-68bd8411b0ba@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Tid: 0a99c729f83903a3kunm16370414a6fa98
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGRhISlZKSRgYQkhITx4fSEtWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
-	1VSktLVUpCWQY+
-DKIM-Signature: a=rsa-sha256;
-	b=CRpZqVpXED0SBtQWsNn3unDFg6hHUsSbzj0hQuFlxkwW+RHOgdqWJ+gRlo060O6EvTD8QiK/bJkRJC7jl8p3TKWpa+RYxJFZxheUO49caZ0+LEO/SzLEqHTLZz4OpdNo5ABc75WLQf70YZcuBwLuXIDCpICPiK4KZ7G+gX4C7Gg=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=qQ2zeMeYDfoWTQYJ4xG+nhpK+0ZJUttKUUEWrzWjUSw=;
-	h=date:mime-version:subject:message-id:from;
+Content-Transfer-Encoding: 8bit
 
-Hi Luca,
 
-On 10/2/2025 12:09 AM, Luca Ceresoli wrote:
-> Hello Damon,
-> 
-> On Tue, 30 Sep 2025 17:09:13 +0800
-> Damon Ding <damon.ding@rock-chips.com> wrote:
-> 
->> When multiple bridges are present, EDID detection capability
->> (DRM_BRIDGE_OP_EDID) takes precedence over modes detection
->> (DRM_BRIDGE_OP_MODES). To ensure the above two capabilities are
->> determined by the last bridge in the chain, we handle three cases:
+
+Le 09/10/2025 à 11:20, David Hildenbrand a écrit :
+> On 09.10.25 11:16, Christophe Leroy wrote:
 >>
->> Case 1: The later bridge declares only DRM_BRIDGE_OP_MODES
->>   - If the previous bridge declares DRM_BRIDGE_OP_EDID, set
->>     &drm_bridge_connector.bridge_edid to NULL and set
->>     &drm_bridge_connector.bridge_modes to the later bridge.
->>   - Ensure modes detection capability of the later bridge will not
->>     be ignored.
 >>
->> Case 2: The later bridge declares only DRM_BRIDGE_OP_EDID
->>   - If the previous bridge declares DRM_BRIDGE_OP_MODES, set
->>     &drm_bridge_connector.bridge_modes to NULL and set
->>     &drm_bridge_connector.bridge_edid to the later bridge.
->>   - Although EDID detection capability has higher priority, this
->>     operation is for balance and makes sense.
+>> Le 09/10/2025 à 10:14, David Hildenbrand a écrit :
+>>> On 09.10.25 10:04, Christophe Leroy wrote:
+>>>>
+>>>>
+>>>> Le 09/10/2025 à 09:22, David Hildenbrand a écrit :
+>>>>> On 09.10.25 09:14, Christophe Leroy wrote:
+>>>>>> Hi David,
+>>>>>>
+>>>>>> Le 01/09/2025 à 17:03, David Hildenbrand a écrit :
+>>>>>>> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+>>>>>>> index 1e777cc51ad04..d3542e92a712e 100644
+>>>>>>> --- a/mm/hugetlb.c
+>>>>>>> +++ b/mm/hugetlb.c
+>>>>>>> @@ -4657,6 +4657,7 @@ static int __init hugetlb_init(void)
+>>>>>>>          BUILD_BUG_ON(sizeof_field(struct page, private) *
+>>>>>>> BITS_PER_BYTE <
+>>>>>>>                  __NR_HPAGEFLAGS);
+>>>>>>> +    BUILD_BUG_ON_INVALID(HUGETLB_PAGE_ORDER > MAX_FOLIO_ORDER);
+>>>>>>>          if (!hugepages_supported()) {
+>>>>>>>              if (hugetlb_max_hstate || 
+>>>>>>> default_hstate_max_huge_pages)
+>>>>>>> @@ -4740,6 +4741,7 @@ void __init hugetlb_add_hstate(unsigned int
+>>>>>>> order)
+>>>>>>>          }
+>>>>>>>          BUG_ON(hugetlb_max_hstate >= HUGE_MAX_HSTATE);
+>>>>>>>          BUG_ON(order < order_base_2(__NR_USED_SUBPAGE));
+>>>>>>> +    WARN_ON(order > MAX_FOLIO_ORDER);
+>>>>>>>          h = &hstates[hugetlb_max_hstate++];
+>>>>>>>          __mutex_init(&h->resize_lock, "resize mutex", &h- 
+>>>>>>> >resize_key);
+>>>>>>>          h->order = order;
+>>>>>
+>>>>> We end up registering hugetlb folios that are bigger than
+>>>>> MAX_FOLIO_ORDER. So we have to figure out how a config can trigger 
+>>>>> that
+>>>>> (and if we have to support that).
+>>>>>
+>>>>
+>>>> MAX_FOLIO_ORDER is defined as:
+>>>>
+>>>> #ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE
+>>>> #define MAX_FOLIO_ORDER        PUD_ORDER
+>>>> #else
+>>>> #define MAX_FOLIO_ORDER        MAX_PAGE_ORDER
+>>>> #endif
+>>>>
+>>>> MAX_PAGE_ORDER is the limit for dynamic creation of hugepages via
+>>>> /sys/kernel/mm/hugepages/ but bigger pages can be created at boottime
+>>>> with kernel boot parameters without CONFIG_ARCH_HAS_GIGANTIC_PAGE:
+>>>>
+>>>>      hugepagesz=64m hugepages=1 hugepagesz=256m hugepages=1
+>>>>
+>>>> Gives:
+>>>>
+>>>> HugeTLB: registered 1.00 GiB page size, pre-allocated 0 pages
+>>>> HugeTLB: 0 KiB vmemmap can be freed for a 1.00 GiB page
+>>>> HugeTLB: registered 64.0 MiB page size, pre-allocated 1 pages
+>>>> HugeTLB: 0 KiB vmemmap can be freed for a 64.0 MiB page
+>>>> HugeTLB: registered 256 MiB page size, pre-allocated 1 pages
+>>>> HugeTLB: 0 KiB vmemmap can be freed for a 256 MiB page
+>>>> HugeTLB: registered 4.00 MiB page size, pre-allocated 0 pages
+>>>> HugeTLB: 0 KiB vmemmap can be freed for a 4.00 MiB page
+>>>> HugeTLB: registered 16.0 MiB page size, pre-allocated 0 pages
+>>>> HugeTLB: 0 KiB vmemmap can be freed for a 16.0 MiB page
+>>>
+>>> I think it's a violation of CONFIG_ARCH_HAS_GIGANTIC_PAGE. The existing
+>>> folio_dump() code would not handle it correctly as well.
 >>
->> Case 3: the later bridge declares both of them
->>   - Assign later bridge as &drm_bridge_connector.bridge_edid and
->>     and &drm_bridge_connector.bridge_modes to this bridge.
->>   - Just leave transfer of these two capabilities as before.
+>> I'm trying to dig into history and when looking at commit 4eb0716e868e
+>> ("hugetlb: allow to free gigantic pages regardless of the
+>> configuration") I understand that CONFIG_ARCH_HAS_GIGANTIC_PAGE is
+>> needed to be able to allocate gigantic pages at runtime. It is not
+>> needed to reserve gigantic pages at boottime.
+>>
+>> What am I missing ?
 > 
-> I think the whole explanation can be more concisely rewritten as:
+> That CONFIG_ARCH_HAS_GIGANTIC_PAGE has nothing runtime-specific in its 
+> name.
+
+In its name for sure, but the commit I mention says:
+
+     On systems without CONTIG_ALLOC activated but that support gigantic 
+pages,
+     boottime reserved gigantic pages can not be freed at all.  This patch
+     simply enables the possibility to hand back those pages to memory
+     allocator.
+
+And one of the hunks is:
+
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 7f7fbd8bd9d5b..7a1aa53d188d3 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -19,7 +19,7 @@ config ARM64
+         select ARCH_HAS_FAST_MULTIPLIER
+         select ARCH_HAS_FORTIFY_SOURCE
+         select ARCH_HAS_GCOV_PROFILE_ALL
+-       select ARCH_HAS_GIGANTIC_PAGE if CONTIG_ALLOC
++       select ARCH_HAS_GIGANTIC_PAGE
+         select ARCH_HAS_KCOV
+         select ARCH_HAS_KEEPINITRD
+         select ARCH_HAS_MEMBARRIER_SYNC_CORE
+
+So I understand from the commit message that it was possible at that 
+time to have gigantic pages without ARCH_HAS_GIGANTIC_PAGE as long as 
+you didn't have to be able to free them during runtime.
+
 > 
-> If the later bridge declares OP_EDID, OP_MODES or both, then both
-> .bridge_modes and .bridge_edid should be set to NULL (if any was set
-> from a previous bridge), and then .bridge_modes and/or .bridge_edid be
-> set to the later bridge as is done already.
-> 
-> Does this look correct (i.e. does it convey the same meaning)?
-> 
->> --- a/drivers/gpu/drm/display/drm_bridge_connector.c
->> +++ b/drivers/gpu/drm/display/drm_bridge_connector.c
->> @@ -640,6 +640,7 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
->>   	struct drm_connector *connector;
->>   	struct i2c_adapter *ddc = NULL;
->>   	struct drm_bridge *bridge, *panel_bridge = NULL;
->> +	struct drm_bridge *pre_bridge_edid, *pre_bridge_modes;
->>   	unsigned int supported_formats = BIT(HDMI_COLORSPACE_RGB);
->>   	unsigned int max_bpc = 8;
->>   	bool support_hdcp = false;
->> @@ -668,6 +669,9 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
->>   	 */
->>   	connector_type = DRM_MODE_CONNECTOR_Unknown;
->>   	drm_for_each_bridge_in_chain(encoder, bridge) {
->> +		pre_bridge_edid = bridge_connector->bridge_edid;
->> +		pre_bridge_modes = bridge_connector->bridge_modes;
->> +
->>   		if (!bridge->interlace_allowed)
->>   			connector->interlace_allowed = false;
->>   		if (!bridge->ycbcr_420_allowed)
->> @@ -681,6 +685,44 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
->>   			bridge_connector->bridge_detect = bridge;
->>   		if (bridge->ops & DRM_BRIDGE_OP_MODES)
->>   			bridge_connector->bridge_modes = bridge;
->> +
->> +		/*
->> +		 * When multiple bridges are present, EDID detection capability
->> +		 * (DRM_BRIDGE_OP_EDID) takes precedence over modes detection
->> +		 * (DRM_BRIDGE_OP_MODES). To ensure the above two capabilities
->> +		 * are determined by the last bridge in the chain, we handle
->> +		 * three cases:
->> +		 *
->> +		 * Case 1: The later bridge declares only DRM_BRIDGE_OP_MODES
->> +		 *  - If the previous bridge declares DRM_BRIDGE_OP_EDID, set
->> +		 *    &drm_bridge_connector.bridge_edid to NULL and set
->> +		 *    &drm_bridge_connector.bridge_modes to the later bridge.
->> +		 *  - Ensure modes detection capability of the later bridge
->> +		 *    will not be ignored.
->> +		 *
->> +		 * Case 2: The later bridge declares only DRM_BRIDGE_OP_EDID
->> +		 *  - If the previous bridge declares DRM_BRIDGE_OP_MODES, set
->> +		 *    &drm_bridge_connector.bridge_modes to NULL and set
->> +		 *    &drm_bridge_connector.bridge_edid to the later bridge.
->> +		 *  - Although EDID detection capability has higher priority,
->> +		 *    this operation is for balance and makes sense.
->> +		 *
->> +		 * Case 3: the later bridge declares both of them
->> +		 *  - Assign later bridge as &drm_bridge_connector.bridge_edid
->> +		 *    and &drm_bridge_connector.bridge_modes to this bridge.
->> +		 *  - Just leave transfer of these two capabilities as before.
->> +		 */
->> +		if (bridge->ops & DRM_BRIDGE_OP_EDID &&
->> +		    !(bridge->ops & DRM_BRIDGE_OP_MODES)) {
->> +			if (pre_bridge_modes)
->> +				bridge_connector->bridge_modes = NULL;
->> +		}
->> +		if (bridge->ops & DRM_BRIDGE_OP_MODES &&
->> +		    !(bridge->ops & DRM_BRIDGE_OP_EDID)) {
->> +			if (pre_bridge_edid)
->> +				bridge_connector->bridge_edid = NULL;
->> +		}
->> +
-> 
-> If the above rewrite is correct, then I think this patch can be
-> rewritten in a simple way (build tested only):
-> 
-> diff --git a/drivers/gpu/drm/display/drm_bridge_connector.c b/drivers/gpu/drm/display/drm_bridge_connector.c
-> index a5bdd6c10643..bd5dbafe88bc 100644
-> --- a/drivers/gpu/drm/display/drm_bridge_connector.c
-> +++ b/drivers/gpu/drm/display/drm_bridge_connector.c
-> @@ -672,14 +672,18 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
->                  if (!bridge->ycbcr_420_allowed)
->                          connector->ycbcr_420_allowed = false;
->   
-> -               if (bridge->ops & DRM_BRIDGE_OP_EDID)
-> -                       bridge_connector->bridge_edid = bridge;
-> +               if (bridge->ops & DRM_BRIDGE_OP_EDID || bridge->ops & DRM_BRIDGE_OP_MODES) {
-> +                       bridge_connector->bridge_edid = NULL;
-> +                       bridge_connector->bridge_modes = NULL;
-> +                       if (bridge->ops & DRM_BRIDGE_OP_EDID)
-> +                               bridge_connector->bridge_edid = bridge;
-> +                       if (bridge->ops & DRM_BRIDGE_OP_MODES)
-> +                               bridge_connector->bridge_modes = bridge;
-> +               }
->                  if (bridge->ops & DRM_BRIDGE_OP_HPD)
->                          bridge_connector->bridge_hpd = bridge;
->                  if (bridge->ops & DRM_BRIDGE_OP_DETECT)
->                          bridge_connector->bridge_detect = bridge;
-> -               if (bridge->ops & DRM_BRIDGE_OP_MODES)
-> -                       bridge_connector->bridge_modes = bridge;
->                  if (bridge->ops & DRM_BRIDGE_OP_HDMI) {
->                          if (bridge_connector->bridge_hdmi)
->                                  return ERR_PTR(-EBUSY);
+> Can't we just select CONFIG_ARCH_HAS_GIGANTIC_PAGE for the relevant 
+> hugetlb config that allows for *gigantic pages*.
 > 
 
-Yes, this is correct and maintains functional equivalence with the 
-previous implementation.
+We probably can, but I'd really like to understand history and how we 
+ended up in the situation we are now.
+Because blind fixes often lead to more problems.
 
-I previously attempted to implement this feature by modifying the logic 
-in this section. However, that approach would obscure the explicit 
-propagation semantics of the bridge chain flags 
-(OP_EDID/OP_HPD/OP_DETECT/OP_MODES). Therefore, I finally decided to 
-implemented it as a specific check after this code block.
+If I follow things correctly I see a helper gigantic_page_supported() 
+added by commit 944d9fec8d7a ("hugetlb: add support for gigantic page 
+allocation at runtime").
 
-Dmitry, what's your take on this?
+And then commit 461a7184320a ("mm/hugetlb: introduce 
+ARCH_HAS_GIGANTIC_PAGE") is added to wrap gigantic_page_supported()
 
-> Another thing to note is that this patch conflicts with [0], which I
-> plan to apply in the next few days. The two patches are orthogonal but
-> they insist on the same lines (those assigning
-> bridge_connector->bridge_* = bridge). Not a big deal, whichever patch
-> comes later will be easily adapted. Just wanted to ensure you are aware.
-> 
-> [0] https://lore.kernel.org/all/20250926-drm-bridge-alloc-getput-bridge-connector-v2-1-138b4bb70576@bootlin.com/
-> 
+Then commit 4eb0716e868e ("hugetlb: allow to free gigantic pages 
+regardless of the configuration") changed gigantic_page_supported() to 
+gigantic_page_runtime_supported()
 
-This is indeed a clever approach to the managing bridge resource cleanup 
-in drm_bridge_connector. Thanks a lot for the heads-up! I'll resolve 
-this conflict and rebase the patch series.
+So where are we now ?
 
-Apologies for the delayed reply as I was on vacation. ;-)
-
-Best regards,
-Damon
-
+Christophe
 
