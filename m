@@ -1,141 +1,113 @@
-Return-Path: <linux-kernel+bounces-847229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99C01BCA4FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:03:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 733B7BCA5C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:20:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 682B21A62742
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:03:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 945713C043D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:20:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0C823CEF9;
-	Thu,  9 Oct 2025 17:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gmhMLwPW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD4315E90;
-	Thu,  9 Oct 2025 17:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ADB723C4ED;
+	Thu,  9 Oct 2025 17:20:37 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C341397;
+	Thu,  9 Oct 2025 17:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760029379; cv=none; b=m0bvMzMJSbY47XGCtjR6bfW9jtIwcfCZAU3vgVoFidGDH7X1wRHO0hJlx+KB07F9w7i1YeB35LGRuNnCGEezFD0T9U7S/Al66TJd/RXWuwmVFY0c+McIptvKWqvRjtZrDxdmKjqVM03a5gxyMNUJx5ISexKMFE5OaCnFU15MgZ4=
+	t=1760030437; cv=none; b=J+q3ddRtkiJSq3/ItESNIsLw3uQrbGaVvFGare9oOO84OFbqSoc+hgDj/XxmyRPENRBm2oi6ULpPs9CEDP6fksll+B252vsf3pTLRFFyaTXVPqIFupVhXnP0pGuk/+SGoFgNnt61hWmg9YUL/sBao5zo8fNE6kNtbSq4FhJ4IQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760029379; c=relaxed/simple;
-	bh=CuPJwPQaNVIp3hY6I0ilMYciVhwSPCyur8NOlazcDsE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jJZo5O3Ni+oslnD4tWOfdYaTMnuecX9YKhNSmiuVA0ax9sxDiFo5dxQLjP3R7Xn9IqEmnylahYlVXPGgD704nD2UHaNWP6487CfQsrWvUNLyzIfC4ccmLGHbIkCRiG/1cauh7R1q1KNDFJze1mSG9pcM3HV91J4u5SImmgSGdI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gmhMLwPW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98A7DC4CEE7;
-	Thu,  9 Oct 2025 17:02:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760029378;
-	bh=CuPJwPQaNVIp3hY6I0ilMYciVhwSPCyur8NOlazcDsE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gmhMLwPWUgZNhmXKJHZbPHhNG7RPCnqifoKOQeiolKjtiJSUuZiBCpDUWHHH/YZ4g
-	 f9U+fGjqSrDWxVLOBatg3qI67patjZf+MXsbirkV3VMTJVRXgylrUDxqQwLlSTZQiJ
-	 nqxetvkQYaMcc2tbuGiuqUzLWM90TNbG0z00yz2XbvSmXhL1xfPSx7MTzNDz5y8eC0
-	 yw4As8939N37U7HtitFC2C1Mf7a+Dbpj/xuj8veR5/Ez8SaSokPhboNwrW4SJh5uYD
-	 lPkcV4OnOBmp1X4sS5zxKW88sEasIN4KJpAGBf+S5ifI0QRKQEGqh/ZZ0hIyfcfoMv
-	 9KtH2Iplk5qFg==
-Date: Thu, 9 Oct 2025 18:02:50 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Sowjanya Komatineni <skomatineni@nvidia.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Prashant Gaikwad <pgaikwad@nvidia.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jonas =?iso-8859-1?Q?Schw=F6bel?= <jonasschwoebel@yahoo.de>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Charan Pedumuru <charan.pedumuru@gmail.com>,
-	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
-	Aaron Kling <webgeek1234@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: Re: [PATCH v4 22/24] dt-bindings: display: tegra: document Tegra20
- and Tegra30 CSI
-Message-ID: <20251009-steerable-babied-7b5f7a2c58da@spud>
-References: <20251008073046.23231-1-clamor95@gmail.com>
- <20251008073046.23231-23-clamor95@gmail.com>
- <20251008-canopener-marsupial-a92355b656ef@spud>
- <20251008-broaden-antennae-02de66094ad3@spud>
- <CAPVz0n1NYL+t-KC1FwHYXuQ0C483ay3g8zP4SmBKVC2rh=x4Bg@mail.gmail.com>
+	s=arc-20240116; t=1760030437; c=relaxed/simple;
+	bh=h6mBn1YnACsX7CDnRFvzoiOd0OKOEjGYnLm4xgraf4Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nLGvnLzf48BQWX0c4NpzzT5r/LCifCQvX3SpKbRQxjlVFKkeBlBcWQvhRCE6McMfaPgKxazPP8md2AGESKWil/HZurjf1IXpMnA9Kj5JcFq4NhOPTnu3ZoKf27RkJVLyZa/J4XemqKR2RdtSvXMxhA0NVsK9PrHtZFxoiNUCF60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cjGRF331Qz9sSY;
+	Thu,  9 Oct 2025 19:03:21 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id NF51hGVtVs4V; Thu,  9 Oct 2025 19:03:21 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cjGRF2Gmsz9sSX;
+	Thu,  9 Oct 2025 19:03:21 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 3D92B8B776;
+	Thu,  9 Oct 2025 19:03:21 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id fzt8czwtvfVI; Thu,  9 Oct 2025 19:03:21 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id BD9F08B774;
+	Thu,  9 Oct 2025 19:03:20 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Herve Codina <herve.codina@bootlin.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: codecs: Fix gain setting ranges for Renesas IDT821034 codec
+Date: Thu,  9 Oct 2025 19:03:13 +0200
+Message-ID: <2bd547194f3398e6182f770d7d6be711c702b4b2.1760029099.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="HSF292molu88Asuo"
-Content-Disposition: inline
-In-Reply-To: <CAPVz0n1NYL+t-KC1FwHYXuQ0C483ay3g8zP4SmBKVC2rh=x4Bg@mail.gmail.com>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760029394; l=2116; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=h6mBn1YnACsX7CDnRFvzoiOd0OKOEjGYnLm4xgraf4Y=; b=3zaVO3ilKwr/HpISlTX08kgChzyn0om6eB6WGsGlRurPoIiQ2NdveTwiCfbEl++3B1IH1Axzl Vbm0WVI90HyCfScIGXTBD64ZBKCdlDgPHhgvMO5Rm/SX2CYVzyyKLCJ
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
+The gain ranges specified in Renesas IDT821034 codec documentation
+are [-3dB;+13dB] in the transmit path (ADC) and [-13dB;+3dB] in the
+receive path (DAC). Allthough the registers allow programming values
+outside those ranges, the signal S/N and distorsion are only
+guaranteed in the specified ranges.
 
---HSF292molu88Asuo
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Set ranges to the specified ones.
 
-On Thu, Oct 09, 2025 at 08:35:22AM +0300, Svyatoslav Ryhel wrote:
-> =D1=87=D1=82, 9 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 00:=
-22 Conor Dooley <conor@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> >
-> > On Wed, Oct 08, 2025 at 10:21:06PM +0100, Conor Dooley wrote:
-> > > On Wed, Oct 08, 2025 at 10:30:44AM +0300, Svyatoslav Ryhel wrote:
-> > > Of course you'd then have to add minItems: 1 and maxItems: 3 to the
-> > > extracted definitions.
->=20
-> What do you mean by your last statement? Add minItems: 1 and maxItems:
-> 3 like this?
->=20
-> This does to common properties
->   clocks:
->     minItems: 1
->     maxItems: 3
->     items:
->       - description: module clock
->       - description: PAD A clock
->       - description: PAD B clock
->=20
->   clock-names:
->     minItems: 1
->     maxItems: 3
->     items:
->       - const: csi
->       - const: csia-pad
->       - const: csib-pad
+Fixes: e51166990e81 ("ASoC: codecs: Add support for the Renesas IDT821034 codec")
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+ sound/soc/codecs/idt821034.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Yes, that is what I meant.
+diff --git a/sound/soc/codecs/idt821034.c b/sound/soc/codecs/idt821034.c
+index a03d4e5e7d144..cab2f2eecdfba 100644
+--- a/sound/soc/codecs/idt821034.c
++++ b/sound/soc/codecs/idt821034.c
+@@ -548,14 +548,14 @@ static int idt821034_kctrl_mute_put(struct snd_kcontrol *kcontrol,
+ 	return ret;
+ }
+ 
+-static const DECLARE_TLV_DB_LINEAR(idt821034_gain_in, -6520, 1306);
+-#define IDT821034_GAIN_IN_MIN_RAW	1 /* -65.20 dB -> 10^(-65.2/20.0) * 1820 = 1 */
+-#define IDT821034_GAIN_IN_MAX_RAW	8191 /* 13.06 dB -> 10^(13.06/20.0) * 1820 = 8191 */
++static const DECLARE_TLV_DB_LINEAR(idt821034_gain_in, -300, 1300);
++#define IDT821034_GAIN_IN_MIN_RAW	1288 /* -3.0 dB -> 10^(-3.0/20.0) * 1820 = 1288 */
++#define IDT821034_GAIN_IN_MAX_RAW	8130 /* 13.0 dB -> 10^(13.0/20.0) * 1820 = 8130 */
+ #define IDT821034_GAIN_IN_INIT_RAW	1820 /* 0dB -> 10^(0/20) * 1820 = 1820 */
+ 
+-static const DECLARE_TLV_DB_LINEAR(idt821034_gain_out, -6798, 1029);
+-#define IDT821034_GAIN_OUT_MIN_RAW	1 /* -67.98 dB -> 10^(-67.98/20.0) * 2506 = 1*/
+-#define IDT821034_GAIN_OUT_MAX_RAW	8191 /* 10.29 dB -> 10^(10.29/20.0) * 2506 = 8191 */
++static const DECLARE_TLV_DB_LINEAR(idt821034_gain_out, -1300, 300);
++#define IDT821034_GAIN_OUT_MIN_RAW	561 /* -13.0 dB -> 10^(-13.0/20.0) * 2506 = 561 */
++#define IDT821034_GAIN_OUT_MAX_RAW	3540 /* 3.0 dB -> 10^(3.0/20.0) * 2506 = 3540 */
+ #define IDT821034_GAIN_OUT_INIT_RAW	2506 /* 0dB -> 10^(0/20) * 2506 = 2506 */
+ 
+ static const struct snd_kcontrol_new idt821034_controls[] = {
+-- 
+2.49.0
 
---HSF292molu88Asuo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaOfqugAKCRB4tDGHoIJi
-0hG0AP9Mkkygk9Q2BjWzrDg0CFZgtvVwKgrrBLgJV/EnbFfz5AEA1V+4UBvnLGFD
-xZ7p4fN/kJGOCld/pw6BT+OMgI/sUAk=
-=94WG
------END PGP SIGNATURE-----
-
---HSF292molu88Asuo--
 
