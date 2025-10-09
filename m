@@ -1,79 +1,39 @@
-Return-Path: <linux-kernel+bounces-846932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88C80BC9763
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:16:40 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36FE9BC9B88
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 17:17:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 320F33BA63A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:16:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D648C3473D5
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 15:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 619212E9EC0;
-	Thu,  9 Oct 2025 14:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j0fWTGvI"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228893595C
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 14:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAA2018859B;
+	Thu,  9 Oct 2025 15:17:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4878015D1
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 15:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760019395; cv=none; b=ulQTV8w+KqtuOc9nlczCU2LtSNgz99pUe4mnhYkIpEzO0vXxbEHNdIXDuyqSaygHotXjxtjqUCVJ/HlvPSjxY5GIIz3zcOcdWxzpnEEw14k4JjR3Mt1z/RDUeMj0Rm7HTnGwof8HDreGdfpWUlKoS/NOK0VyVUPh0+SH+bb5G84=
+	t=1760023050; cv=none; b=jljcXII0wZCCoEHtbHctXuoUpGYUD+XVxwyNDlWGK4JxRIRec539l/SQX+zn3E1pAKYOtLXS5KcC1kPv0Y7YB61FuMQM3RO23fGqITuGCCMagxtvaoM75WKl05oOmsBM0hrhFuGpv4zXK/kSZh5Y4oRp3GuI87zwULBDyncOG2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760019395; c=relaxed/simple;
-	bh=INg2l1L3qVlchF8lbtAersWzkgZD/yRLdxvFc3cUXeE=;
+	s=arc-20240116; t=1760023050; c=relaxed/simple;
+	bh=yMT4j40UU3AQhF/ldrc+EL/aD0wn0bT353e6lwBQSxs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sieQSR+R7+lkO43S/+Ij2QVY61/8w2y1pnlhaEXj8FVcdgXyUbnic726BcK8JfZ5hfma7iGGwTO4hdV5ATrLoUu15jqfZ1r/JsoAt/U3UhmRtn2ZAi1QLguTM+O97U8355BggWIP1qZRt6pLRwUtGWbXMMKt+sGI8Ydag5yJ9lI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j0fWTGvI; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-46e3e16d7fbso1604105e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 07:16:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760019392; x=1760624192; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KSrrO4mmiUzY5qFigdCsu5TCXkFT2TeakHQbJDtrsro=;
-        b=j0fWTGvIFdiK5f0EoXBMVUYzcsX9OHO/lkAIaVK9ts151PuqE9MtCYJ22hUk1PVZhV
-         0czUETb1Jz7Fw36nA2q90pImHgeKIFT1Mox8gLqi6V+sj/ZjerzOxqQbeojxPJsLkTS/
-         q1B/oHSpsO5hfhQD3OGXp6HSuy2UjUFcXvIoqgk/CISYOpD7FMX8/LZTYqolvByBFYHD
-         HZVKK8QppCajI5086q+KRP0vvigHslHIAtNX4InHPnmsOQZHzCADEw5CMJ0xKDCCFqnn
-         ZWCY6m/1TFZw59YCvsidCxweXsrP1C2qsS7TqjhC/MEEgEPYH7z7S3wQdiK4i7C/4Hnl
-         l/Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760019392; x=1760624192;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KSrrO4mmiUzY5qFigdCsu5TCXkFT2TeakHQbJDtrsro=;
-        b=Opl5/rsoOqkGVcnuw2OWpwdhozihBK+IXjmbXC/z5yR2pxE4hwgfzq4H3r3ff5gTca
-         GP33OhegE9qjpgysXn/c/wlghO+E5qh/i51sZya3zZpHkw2VaUKnNZL4QbceAasr7VO9
-         U16DTsDxYw9gQqXTXJvnQOg5HfekMUH5H71fius7TEHendo75AfRnBm0eMArq+bs9rkM
-         14w6oSz/gJHZ9mYyIwxsrPF9QRWq5govAyjez75AmJuEuIs5A+eN2+7D9bAh/aXrmVEL
-         82qMhwSE6YSMaSArzYEgUSas/fJwxhjc+T1H4Z1Qh4fV2Fcd5Zp2insAUCVhBs1FqL8o
-         n32A==
-X-Gm-Message-State: AOJu0Yxgm+uVtssPet+iNy9N1UaYDf6rJYp9gtDZpecz0GT2cKHtI9dU
-	QLwmRSVXg2WyCZm7KRRJxcrzIHOXKA3Ivj/9PwRZMlyQpJg20mJEV3K3
-X-Gm-Gg: ASbGnctCP4ggZQ59sPtFu1Zg+q+ncBsvPisLP7johotbui/6Bv8k2PRIPx/eD0TCuGz
-	Fd0SBpJJZPQSreKJrfgK6gQDrLH5dXbYVHfSbXAMaLdxQt8nborMaKI+pzSdyp0DnfImw6umGu+
-	fub8YCKH/3O8a8AlEJalWekF7kmPBDhQ9vApovbMYOwAjsRg8NvZ3WRU7l/fRslLwetm1HZx/SA
-	6JlPxFjpPRidbXYDMUHKa3jEqVH1EGEauWen6w8VV4hlZM9vX+2/hShIl9cTjkWM600IQ/13O6y
-	Rxjd0K8SRCsJt+3z/Y8ujHyi9xWxKOppkxsc6HZ5B+/ArlFvcvw/EbANPAn1gXI9Hdpkouh56Uq
-	8mdKfiGfJe1fSWKOsWvbkSpiRRNqOSep+D5s9lZbcMRIIC9F0GNDZdcvJs8jjjaUwA6Mc8edNer
-	+NPJjh
-X-Google-Smtp-Source: AGHT+IG9tRKBlq86RJLVpcZ2NOyilhHrsunhrFrqoHub96Rq1cpuS2RUwseJcNN4aM0Y2mlO6+vqOA==
-X-Received: by 2002:a05:6000:1846:b0:425:5d25:ffc7 with SMTP id ffacd0b85a97d-4266e7d4864mr2905327f8f.6.1760019392134;
-        Thu, 09 Oct 2025 07:16:32 -0700 (PDT)
-Received: from [192.168.1.105] ([165.50.46.108])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f4ab0sm35103359f8f.52.2025.10.09.07.16.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Oct 2025 07:16:31 -0700 (PDT)
-Message-ID: <84bf5902-b3e5-4d58-a2a7-f01e15cfe143@gmail.com>
-Date: Thu, 9 Oct 2025 16:16:27 +0100
+	 In-Reply-To:Content-Type; b=PMzzOycP/hoOwSPCHDShT2BSz39JCX7bGXl2jesYlTYImRSw04ZyfOSBJphNW5xODGRgqWQGhMds+l9QFb2ipMSXNLXUHGt0bh40nkb3AAr59Wp7LwlMwKXzXw2aLHWB0bbi4FJE6mbrW4rs6kzimdhDGSiLJdCooKkauQbyGwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 89CBA1688;
+	Thu,  9 Oct 2025 08:17:19 -0700 (PDT)
+Received: from [10.1.34.29] (e122027.cambridge.arm.com [10.1.34.29])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EBF6F3F59E;
+	Thu,  9 Oct 2025 08:17:23 -0700 (PDT)
+Message-ID: <936703a3-15b6-4ade-b9e5-5554dffc4430@arm.com>
+Date: Thu, 9 Oct 2025 16:17:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,54 +41,110 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] lib: cpu_rmap.c Refactor allocation size calculation in
- kzalloc()
-To: Shuah Khan <skhan@linuxfoundation.org>, akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org, david.hunter.linux@gmail.com,
- linux-kernel-mentees@lists.linuxfoundation.org, khalid@kernel.org
-References: <20250930092327.27848-1-mehdi.benhadjkhelifa@gmail.com>
- <10082c41-4302-4cb3-a2bf-788e59bad0c8@linuxfoundation.org>
-Content-Language: en-US
-From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-In-Reply-To: <10082c41-4302-4cb3-a2bf-788e59bad0c8@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v5 03/12] drm/panfrost: Handle job HW submit errors
+To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
+ linux-kernel@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+ Boris Brezillon <boris.brezillon@collabora.com>, kernel@collabora.com,
+ Rob Herring <robh@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+References: <20251007150216.254250-1-adrian.larumbe@collabora.com>
+ <20251007150216.254250-4-adrian.larumbe@collabora.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20251007150216.254250-4-adrian.larumbe@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 10/7/25 11:23 PM, Shuah Khan wrote:
-
+On 07/10/2025 16:01, Adrián Larumbe wrote:
+> Avoid waiting for the DRM scheduler job timedout handler, and instead, let
+> the DRM scheduler core signal the error fence immediately when HW job
+> submission fails.
 > 
-> How did you find this problem and how did you test this change?
-For the first part of your question,After simply referring to deprecated 
-documentation[1] which states the following:
-'For other calculations, please compose the use of the size_mul(), 
-size_add(), and size_sub() helpers'
-Which is about dynamic calculations made inside of kzalloc() and 
-kmalloc(). Specifically, the quoted part is talking about calculations 
-which can't be simply divided into two parameters referring to the 
-number of elements and size per element and in cases where we can't use 
-struct_size() too.After that it was a matter of finding code where that 
-could be the problem which is the case of the changed code.
-
-For the second part, As per any patch,I make a copy of all dmesg 
-warnings errors critical messages,then I compile install and boot the 
-new kernel then check if there is any change or regression in dmesg.
-For this particular change, since it doesn't have any selftests because 
-it's in utility library which in my case cpu_rmap is used in the 
-networking subsystem, I did some fault injection with a custom module to 
-test if in case of overflow it fails safely reporting the issue in dmesg 
-which is catched by the __alloc_frozen_pages_noprof() function in 
-mm/page_alloc.c and also return a NULL for rmap instead of wrapping to a 
-smaller size.
-
-If any further testing or work to be done or even suggestions on 
-improvements to my testing methodology, I would gladly hear any advice.
-Thank you for you time.
-
+> That means we must also decrement the runtime-PM refcnt for the device,
+> because the job will never be enqueued or inflight.
 > 
-> thanks,
-> -- Shuah
+> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
 
-Best Regards,
-Mehdi Ben Hadj Khelifa
+Reviewed-by: Steven Price <steven.price@arm.com>
+
+> ---
+>  drivers/gpu/drm/panfrost/panfrost_job.c | 24 ++++++++++++++++++------
+>  1 file changed, 18 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c b/drivers/gpu/drm/panfrost/panfrost_job.c
+> index a0123d0a1b7d..ea3f2878fd15 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_job.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_job.c
+> @@ -196,7 +196,7 @@ panfrost_enqueue_job(struct panfrost_device *pfdev, int slot,
+>  	return 1;
+>  }
+>  
+> -static void panfrost_job_hw_submit(struct panfrost_job *job, int js)
+> +static int panfrost_job_hw_submit(struct panfrost_job *job, int js)
+>  {
+>  	struct panfrost_device *pfdev = job->pfdev;
+>  	unsigned int subslot;
+> @@ -204,18 +204,19 @@ static void panfrost_job_hw_submit(struct panfrost_job *job, int js)
+>  	u64 jc_head = job->jc;
+>  	int ret;
+>  
+> -	panfrost_devfreq_record_busy(&pfdev->pfdevfreq);
+> -
+>  	ret = pm_runtime_get_sync(pfdev->base.dev);
+>  	if (ret < 0)
+> -		return;
+> +		goto err_hwsubmit;
+>  
+>  	if (WARN_ON(job_read(pfdev, JS_COMMAND_NEXT(js)))) {
+> -		return;
+> +		ret = -EINVAL;
+> +		goto err_hwsubmit;
+>  	}
+>  
+>  	cfg = panfrost_mmu_as_get(pfdev, job->mmu);
+>  
+> +	panfrost_devfreq_record_busy(&pfdev->pfdevfreq);
+> +
+>  	job_write(pfdev, JS_HEAD_NEXT_LO(js), lower_32_bits(jc_head));
+>  	job_write(pfdev, JS_HEAD_NEXT_HI(js), upper_32_bits(jc_head));
+>  
+> @@ -262,6 +263,12 @@ static void panfrost_job_hw_submit(struct panfrost_job *job, int js)
+>  			job, js, subslot, jc_head, cfg & 0xf);
+>  	}
+>  	spin_unlock(&pfdev->js->job_lock);
+> +
+> +	return 0;
+> +
+> +err_hwsubmit:
+> +	pm_runtime_put_autosuspend(pfdev->base.dev);
+> +	return ret;
+>  }
+>  
+>  static int panfrost_acquire_object_fences(struct drm_gem_object **bos,
+> @@ -384,6 +391,7 @@ static struct dma_fence *panfrost_job_run(struct drm_sched_job *sched_job)
+>  	struct panfrost_device *pfdev = job->pfdev;
+>  	int slot = panfrost_job_get_slot(job);
+>  	struct dma_fence *fence = NULL;
+> +	int ret;
+>  
+>  	if (job->ctx->destroyed)
+>  		return ERR_PTR(-ECANCELED);
+> @@ -405,7 +413,11 @@ static struct dma_fence *panfrost_job_run(struct drm_sched_job *sched_job)
+>  		dma_fence_put(job->done_fence);
+>  	job->done_fence = dma_fence_get(fence);
+>  
+> -	panfrost_job_hw_submit(job, slot);
+> +	ret = panfrost_job_hw_submit(job, slot);
+> +	if (ret) {
+> +		dma_fence_put(fence);
+> +		return ERR_PTR(ret);
+> +	}
+>  
+>  	return fence;
+>  }
 
 
