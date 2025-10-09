@@ -1,199 +1,152 @@
-Return-Path: <linux-kernel+bounces-846977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C31CBC993B
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:42:52 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F3BEBC9935
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:42:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E1F33A6D55
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:41:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C747C4FC516
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BCC2EC0BA;
-	Thu,  9 Oct 2025 14:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C80D2EACE1;
+	Thu,  9 Oct 2025 14:41:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YffHYIU8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YkoKfHHz"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D940A2EBDC7;
-	Thu,  9 Oct 2025 14:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048792EA753
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 14:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760020830; cv=none; b=u05+hK8ZM5KPGz+zlufK04yUwyk1+sDNmzEsQR7YFz62G5aE24xQNynG2CSH9Xm9H+p0HF4otNtq1+c49tnHjfpR2vOfZ36lvCTtjlbwrzBDyxz7ZPidHd6/+Sr/J8h8CozPoz4NAuvC91S62nibXAJZyHGRuanoCsGfjD5+xLw=
+	t=1760020867; cv=none; b=TXDjzjyM3CLSr3pUaB+LsqjzDsHrRbmY9FxtHzaPIEAVO4FxovztHEKiQQn/iHyeCuvtyfSoxFprNT8FK1TtJBtO7P20zDy1UzpNzbFJYasAdVmPUVrgd+IuzpTdc9jb970nl1qTT8A19XmO7jAKSNuFq0EpSH02rDdO1IHiRBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760020830; c=relaxed/simple;
-	bh=Q5d3qq8CBu0CFDJAvr0CttImsV3wUOAnXASWJH919jg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YuimJfK2voZBfbyUGiX9+xd4ntvWhe0LRqKhVSWFObqp6+dfs667CyGeAgOk06xDbwsRZ9G/+lXERBLLt6CuT8Fg5WEWUetmc/tdoHJ+SOMFMTuue2DW8sTEYeL4x7tAWbSIWR5c1gB595q3prSYR2V3frBQq3EWp6UjVuoZvIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YffHYIU8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E9EFC4CEE7;
-	Thu,  9 Oct 2025 14:40:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760020828;
-	bh=Q5d3qq8CBu0CFDJAvr0CttImsV3wUOAnXASWJH919jg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=YffHYIU8YTkZ8mhxH1QAlUKOXIOd/BLmVAAZnXKphxDqO+YxuR7Ji8nlX3/eCrjOr
-	 WHh5PKm/nAWsLI4hKSJHAMAs6SmgUq3oY/tAV46KoN0bnT0zTrvBO0PoXAWpfa71+v
-	 d+KQETK5PB7nMu+sACmykEgaa/jnquIY0dcr0qWuty4kA7kdhLmIaq4MKe7qC2Xkt/
-	 7oS88t+IADooyNhuGklZrfjrD57SY1TmGPPlv5pkRFzGXWbh/JxXToSuvbElrdsdgw
-	 Cnoj5VYoFFrTQu6MKnWU1VTgwha2W6Imr4GpOXUqd2OaTkIxJpKZFiguzSSglHbKEw
-	 plln46j6tsLew==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Thu, 09 Oct 2025 10:40:11 -0400
-Subject: [PATCH v3 2/2] sunrpc: add a slot to rqstp->rq_bvec for TCP record
- marker
+	s=arc-20240116; t=1760020867; c=relaxed/simple;
+	bh=gJD4F/VUtyf9cPnOh0/z6nqdkyZqGE2442d7pVCtk5Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L+YsRqa05Fd9p6naRLvezyV83nKLRcqbAiwPmFTzUnSvRrlXYug0WQz08Qi6MC+EdrOp4DgMBk6ONZsY9JPnJ7kzklRjs4BnpjNvNCE4B4ZMS5tSnx0YnA8Qf4er2pUlNsLwFpKnE8x+ast3EDaGHNuBS/Ie+fLE81YMX6pMjVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YkoKfHHz; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5996EXo0011045
+	for <linux-kernel@vger.kernel.org>; Thu, 9 Oct 2025 14:41:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=cE4ZbHCvUDpmT8UVULSVyNyY
+	hgMn1RLMHyhsCsq4I2o=; b=YkoKfHHzQPmes5X5Lu7uBUVqJ539HybUmEdJTtNs
+	mYRfymI5GNrRBZovHKlnalSNkYlMHKSjqwnoTeJO/1qKHtL27T5x9HHrJZmgiI5e
+	M22xHnZS7z3NNq4D8F2wzNqTi5Z5QK0k4ggwg+4tC+j5+2wUtU2OthJvqKUjbNXa
+	pFzTLQSFqTahf0gRoxPQgpHQalzx5K5clJ26++Arwh1Lo4yaS/t5/7FBdDE0BWFU
+	atFEI2TtmTaL5plnap4dtdza/xhMR1m5MvItzmyoVeOy5pQiEGfvDob11DS4/8oq
+	VB89Mc4Th3E2JqlfR96ntjKNXtiE+9qX3UyVwEBipgB0Jg==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv9ab72v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 14:41:03 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4e574e01ed8so33467581cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 07:41:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760020863; x=1760625663;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cE4ZbHCvUDpmT8UVULSVyNyYhgMn1RLMHyhsCsq4I2o=;
+        b=JIbDd2yqaDROpUgloZ4Oce/m/Omn8Td2uz2z9lA4COnxfK3BxlM3HTIA1Z5sTpN2xJ
+         M7UUmFkavBbRxSnE6d+zqFeYlJ5lme1/Pw8bf3TyLkwymPezE8SwKLljlZjj80KPW67X
+         zgQvqpHBXqnIF5JVd8VRTNStvXoYyhvpCkT5LTmEowbDl98/4m9AJdogpT9kfSrso4C/
+         dWUPkXkAkaf8B5l+SAZ9ZvFB/FlYND0el6ZLq+OkdQGJh5Lb43FCxbaL94+sqnwWUGOb
+         /uMmNsb2l9fbh9sTrTYCAa2wZThDSF+N2zFOFgPVzwTu16nKETRya96f3ZGGIlk59DWo
+         4n8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXD86ouJ1rnA9Csl7fvRj3nyrvWMpiJk+8a0tYMA6WkYHnFVLGjcCU8LTniHZZWDV4OjiSc53GG+9sd0QU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMa+hz6Wf0/ZnG4B9tvBp02v+XIGDzsxQByNz4Ers56vUuKjWK
+	KQi+ktWU/kALc9XQrgRiLdejWSSXS39QMyt4faAPc4WnfXo0tBEuPghYPu9dcEDIJLh9i96fsKZ
+	KUPpFuflQGOcNcya/qY4Bkoz4Ds13D//OQd5AHEoaii7pNMjQhxISSlxeUr7moFFWmTY=
+X-Gm-Gg: ASbGncvd1OCUIsgSfbUCK35DSSw0RLAMBnpLexQhBz67zW2nxrQGVY0gF8chn1wt3nD
+	IGBGyCkxOaD/EN+Y801UL1cFV4auUE7dDNbvLKhNAnFkZZmVSLVLeQR5l9RSC5WuczG377y8hCV
+	gMsF+nvtkdQm1rB1J3Kdzd9PRX1M3ngyRy6GKYSxlTftM5eqoGEq1qHSsaGr+rBcq2kzJF4dNmq
+	lKEeT5RcfcUuz/5W36NNqRs0wj2nAy01N1Ad2rlT1KK4E/3MnwGbWFZNP237Xw+Du+medqyUB/m
+	e8uETTmktpO/YNhp0WjRGYYsfDn765jdV/VW9xx9KEjicvje809Z1mBbm0s946AT+dkD1G2rHtc
+	ta+OUcnuLCi8A/BgRx1zCiavlQb5usMMYvB5Z0Zc/+itvqSifzcL0eKyTpg==
+X-Received: by 2002:a05:622a:4d0f:b0:4df:45b1:1547 with SMTP id d75a77b69052e-4e6ead64873mr98220451cf.69.1760020863083;
+        Thu, 09 Oct 2025 07:41:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEm/vMZ4n1+Cr8Xoyx5rH/NZmEs2uEEJqGMiK56k8l9LCNH4tFsaMchJrEpi+ttYXYEnglWzQ==
+X-Received: by 2002:a05:622a:4d0f:b0:4df:45b1:1547 with SMTP id d75a77b69052e-4e6ead64873mr98219731cf.69.1760020862443;
+        Thu, 09 Oct 2025 07:41:02 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5907adb2607sm1093116e87.97.2025.10.09.07.41.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 07:41:01 -0700 (PDT)
+Date: Thu, 9 Oct 2025 17:40:59 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Casey Connolly <casey.connolly@linaro.org>,
+        Alexander Martinz <amartinz@shiftphones.com>,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v2 1/6] arm64: dts: qcom: qcm6490-shift-otter: Fix
+ sorting and indentation
+Message-ID: <4zflplcqdjbkplu2pb3oy7pc24svrlo6id5kxr6g4ivvyrxh23@j3bfneurfaza>
+References: <20251009-otter-further-bringup-v2-0-5bb2f4a02cea@fairphone.com>
+ <20251009-otter-further-bringup-v2-1-5bb2f4a02cea@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251009-rq_bvec-v3-2-57181360b9cb@kernel.org>
-References: <20251009-rq_bvec-v3-0-57181360b9cb@kernel.org>
-In-Reply-To: <20251009-rq_bvec-v3-0-57181360b9cb@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
- Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, 
- Anna Schumaker <anna@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- David Howells <dhowells@redhat.com>
-Cc: Brandon Adams <brandona@meta.com>, linux-nfs@vger.kernel.org, 
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4629; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=Q5d3qq8CBu0CFDJAvr0CttImsV3wUOAnXASWJH919jg=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBo58lVtzZDNIWPHun+Aq9RuSa1HmnFxegY64W1n
- kYaVRf0qtqJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaOfJVQAKCRAADmhBGVaC
- FbmND/9bw1uE4pdATCZMvrFyEnaZ5pkYHHfqAhWZVxSbJHKV9Y1gZtz5XtLgLUpuly/rgU/GZCk
- vCj4wqsp9OJX4mn5RDuOYzGIgOcnxuROfJOFeIpvqja5dt8HsuV57lsCLr3xMr1RkS8glV0O7Fh
- 0bfZhMTDuufNWWM4eKDBEhHGcNSJp/JTScUxo+EnrsNCxAyFQwPprxL6sNrQFc6Cgz/x1gXTP2h
- Y7Q2MgXo7uIZEiRGQ2QYmK5p3NFlAfs5mdXZ7zb0CLpqsoNEtudsY+N3ZhAWgZfWnfr4NssmKE7
- lSGLLmJ3Pi8nW5Bhk9ErenKQ0DYrrV5Nx7qpZuCR8l7VY4Zh5tXNBQ/sD4mnmh9BgyGgtbIMHQI
- Bpjm8vM3QcU1BQr3dQcsXWaSehU3nEe96hh6uJtz9dMzu2yPUFlie/uM3fBluFryb/MQZcKROH0
- tYTaWTJAx6K6S8ZIJ1QxUlZ5rjfhpqwTemv8s2FjIoRn1i7diWbJlk30lOhKB32a1C3GEFbU1/l
- potB6Tp1Fc7vREUeXc1q8xNhGoP72bVEZEODGRuumazIuO3G+fE+pxOJwitulr6Kv/H7PxkeSe/
- iHcZMV8AjXAdBY7FOBL5x/iukB6A1Gc7gxLr0i1gJplowqp7/bg7F3xEd9I0QtU/da65YaTOsVA
- Hrhbpw+IWdv2UuQ==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251009-otter-further-bringup-v2-1-5bb2f4a02cea@fairphone.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMiBTYWx0ZWRfX6yp9cCzfR00N
+ 8BvUfgyet5S0KGHj3Lx/IsV/4GvTVtLMjJxxaDCFCQ2sjYRskzmz2r6XYRDsnHV5gsno3dQDoHr
+ xdBFcm4FsUuCnw1+hYJsgYSYab1lemSgPvtbAR+mYJZS2INAj66jWmu63P3CYYxgv/51g+LV29u
+ igU6ywVR6QdCqRubxoBzMU7z1I4xJkkOghGyMVnB4xU5JRWi+R4aOs6PAPiHnLDIm6Uknuvojx4
+ gYEyiuqwss4fXQxBAlDIUpLHQxzGne/zMrSVyqlcldWK8dt4kFlhK8MO5QM/NdkgCa/M6ftii6e
+ /NSaQfTNXT1PP4pCUlj+I6+Ff6o91J/N04tpHEJE1Q9pu7v1wFNWsmRQ3sJnl50yc0/3mwWlq4A
+ DqP4HwIgOt8ZHVDq7KNHnrSG5tbgbQ==
+X-Proofpoint-GUID: b4d8vE9Lc3Ttr0ltsHRlungMHpdKISi8
+X-Proofpoint-ORIG-GUID: b4d8vE9Lc3Ttr0ltsHRlungMHpdKISi8
+X-Authority-Analysis: v=2.4 cv=JPk2csKb c=1 sm=1 tr=0 ts=68e7c97f cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=7Ovdx5uLAAAA:8 a=EUspDBNiAAAA:8 a=6H0WHjuAAAAA:8
+ a=0jPwT5uaXyJb8NjaZ-0A:9 a=CjuIK1q_8ugA:10 a=a_PwQJl-kcHnX1M80qC6:22
+ a=TQZWkJv5rNK5-PaLMsrg:22 a=Soq9LBFxuPC4vsCAQt-j:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-09_05,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 spamscore=0 clxscore=1015 impostorscore=0
+ phishscore=0 suspectscore=0 lowpriorityscore=0 adultscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080122
 
-We've seen some occurrences of messages like this in dmesg on some knfsd
-servers:
+On Thu, Oct 09, 2025 at 11:06:31AM +0200, Luca Weiss wrote:
+> From: Alexander Martinz <amartinz@shiftphones.com>
+> 
+> Make sure the nodes are sorted correctly, and the indentation is
+> correct.
+> 
+> Signed-off-by: Alexander Martinz <amartinz@shiftphones.com>
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+> 
 
-    xdr_buf_to_bvec: bio_vec array overflow
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-Usually followed by messages like this that indicate a short send (note
-that this message is from an older kernel and the amount that it reports
-attempting to send is short by 4 bytes):
-
-    rpc-srv/tcp: nfsd: sent 1048155 when sending 1048152 bytes - shutting down socket
-
-svc_tcp_sendmsg() steals a slot in the rq_bvec array for the TCP record
-marker. If the send is an unaligned READ call though, then there may not
-be enough slots in the rq_bvec array in some cases.
-
-Add a rqstp->rq_bvec_len field and use that to keep track of the length
-of rq_bvec. Use that in place of rq_maxpages where it's iterating over
-the bvec.
-
-Fixes: e18e157bb5c8 ("SUNRPC: Send RPC message on TCP with a single sock_sendmsg() call")
-Tested-by: Brandon Adams <brandona@meta.com>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/nfsd/vfs.c              | 6 +++---
- include/linux/sunrpc/svc.h | 1 +
- net/sunrpc/svc.c           | 4 +++-
- net/sunrpc/svcsock.c       | 4 ++--
- 4 files changed, 9 insertions(+), 6 deletions(-)
-
-diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-index 77f6879c2e063fa79865100bbc2d1e64eb332f42..6c7224570d2dadae21876e0069e0b2e0551af0fa 100644
---- a/fs/nfsd/vfs.c
-+++ b/fs/nfsd/vfs.c
-@@ -1111,7 +1111,7 @@ nfsd_direct_read(struct svc_rqst *rqstp, struct svc_fh *fhp,
- 
- 	v = 0;
- 	total = dio_end - dio_start;
--	while (total && v < rqstp->rq_maxpages &&
-+	while (total && v < rqstp->rq_bvec_len &&
- 	       rqstp->rq_next_page < rqstp->rq_page_end) {
- 		len = min_t(size_t, total, PAGE_SIZE);
- 		bvec_set_page(&rqstp->rq_bvec[v], *rqstp->rq_next_page,
-@@ -1200,7 +1200,7 @@ __be32 nfsd_iter_read(struct svc_rqst *rqstp, struct svc_fh *fhp,
- 
- 	v = 0;
- 	total = *count;
--	while (total && v < rqstp->rq_maxpages &&
-+	while (total && v < rqstp->rq_bvec_len &&
- 	       rqstp->rq_next_page < rqstp->rq_page_end) {
- 		len = min_t(size_t, total, PAGE_SIZE - base);
- 		bvec_set_page(&rqstp->rq_bvec[v], *rqstp->rq_next_page,
-@@ -1318,7 +1318,7 @@ nfsd_vfs_write(struct svc_rqst *rqstp, struct svc_fh *fhp,
- 	if (stable && !fhp->fh_use_wgather)
- 		kiocb.ki_flags |= IOCB_DSYNC;
- 
--	nvecs = xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages, payload);
-+	nvecs = xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_bvec_len, payload);
- 	iov_iter_bvec(&iter, ITER_SOURCE, rqstp->rq_bvec, nvecs, *cnt);
- 	since = READ_ONCE(file->f_wb_err);
- 	if (verf)
-diff --git a/include/linux/sunrpc/svc.h b/include/linux/sunrpc/svc.h
-index 5506d20857c318774cd223272d4b0022cc19ffb8..0ee1f411860e55d5e0131c29766540f673193d5f 100644
---- a/include/linux/sunrpc/svc.h
-+++ b/include/linux/sunrpc/svc.h
-@@ -206,6 +206,7 @@ struct svc_rqst {
- 
- 	struct folio_batch	rq_fbatch;
- 	struct bio_vec		*rq_bvec;
-+	u32			rq_bvec_len;
- 
- 	__be32			rq_xid;		/* transmission id */
- 	u32			rq_prog;	/* program number */
-diff --git a/net/sunrpc/svc.c b/net/sunrpc/svc.c
-index 4704dce7284eccc9e2bc64cf22947666facfa86a..a6bdd83fba77b13f973da66a1bac00050ae922fe 100644
---- a/net/sunrpc/svc.c
-+++ b/net/sunrpc/svc.c
-@@ -706,7 +706,9 @@ svc_prepare_thread(struct svc_serv *serv, struct svc_pool *pool, int node)
- 	if (!svc_init_buffer(rqstp, serv, node))
- 		goto out_enomem;
- 
--	rqstp->rq_bvec = kcalloc_node(rqstp->rq_maxpages,
-+	/* +1 for the TCP record marker */
-+	rqstp->rq_bvec_len = rqstp->rq_maxpages + 1;
-+	rqstp->rq_bvec = kcalloc_node(rqstp->rq_bvec_len,
- 				      sizeof(struct bio_vec),
- 				      GFP_KERNEL, node);
- 	if (!rqstp->rq_bvec)
-diff --git a/net/sunrpc/svcsock.c b/net/sunrpc/svcsock.c
-index 377fcaaaa061463fc5c85fc09c7a8eab5e06af77..2075ddec250b3fdb36becca4a53f1c0536f8634a 100644
---- a/net/sunrpc/svcsock.c
-+++ b/net/sunrpc/svcsock.c
-@@ -740,7 +740,7 @@ static int svc_udp_sendto(struct svc_rqst *rqstp)
- 	if (svc_xprt_is_dead(xprt))
- 		goto out_notconn;
- 
--	count = xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_maxpages, xdr);
-+	count = xdr_buf_to_bvec(rqstp->rq_bvec, rqstp->rq_bvec_len, xdr);
- 
- 	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, rqstp->rq_bvec,
- 		      count, rqstp->rq_res.len);
-@@ -1244,7 +1244,7 @@ static int svc_tcp_sendmsg(struct svc_sock *svsk, struct svc_rqst *rqstp,
- 	memcpy(buf, &marker, sizeof(marker));
- 	bvec_set_virt(rqstp->rq_bvec, buf, sizeof(marker));
- 
--	count = xdr_buf_to_bvec(rqstp->rq_bvec + 1, rqstp->rq_maxpages - 1,
-+	count = xdr_buf_to_bvec(rqstp->rq_bvec + 1, rqstp->rq_bvec_len - 1,
- 				&rqstp->rq_res);
- 
- 	iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, rqstp->rq_bvec,
 
 -- 
-2.51.0
-
+With best wishes
+Dmitry
 
