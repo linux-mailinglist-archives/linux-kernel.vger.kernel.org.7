@@ -1,109 +1,115 @@
-Return-Path: <linux-kernel+bounces-846817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C331BC91EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:51:26 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E40CEBC9227
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:54:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E93313C6877
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:51:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 084DB4F9B51
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:54:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8688A2E339B;
-	Thu,  9 Oct 2025 12:51:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5172E6114;
+	Thu,  9 Oct 2025 12:54:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wdc9hLUu"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZHOtDTn5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E85D2E1F06
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 12:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A295F2D321A;
+	Thu,  9 Oct 2025 12:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760014280; cv=none; b=MFILOsCnZzzNfVJmcR3kGyXjnS2RIukNug2xWXmtBVLSaHMK301pZYAK/qYFQd4trB9uq+qGeIETEjf/QOZXxRHI0EehScTJpLt2sv7uqPDs/qm+qjCVqlw+okcF9oAfea+d1PAxJXLyp50QSbpqlHQRLztyVvsGDHvIS5QFOe0=
+	t=1760014456; cv=none; b=F7HMpHROvPwD37p9lGTIdU0p5lH0NvpSzGsrXvzSy7CnByYarBl5nF7KZDoWr1MyuDSKostxKX1P3hM2lqoWsnXnGyRh/d9FpDDhreBzJ9JnWOl3mpYmdDnt23Oi9ZGZz6jJMoEl/yrAzAH9A+yemz4pWQYUeX2SDaUYa0a0zx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760014280; c=relaxed/simple;
-	bh=MDMFuxtj7DOoK9vdG1w2+Ih86u05O/nr3t6ARiKVfns=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JoNtTb3YmNbDNNlpwSiXKQh2KG9AbBDwIWnFD7m/l3JdUV0qwp31JqkGB13A5Q6fncqNUNE7qbSs8HzdnaoXNzQrkqZmbJhzWGgz1S97bFVd0MiX6msuOo/Gc0izQ60hhNSpVmsKS6eqUYRMLoBVIAPLhUf/xD+uPGqUTTVZIi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wdc9hLUu; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b551350adfaso750953a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 05:51:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760014277; x=1760619077; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MDMFuxtj7DOoK9vdG1w2+Ih86u05O/nr3t6ARiKVfns=;
-        b=Wdc9hLUuJucwAMpLB2DINPGvByOuHXuXrfmBzAtrLNoR+o3hAxW+HL/WrrOQsQB+2t
-         PObv5vNwkaEdjOhHTLFk4R0xJnX3Oj4HSGl4+KIx935kx2ihxNgFlJpqcrCOAPFKkoCL
-         JXGyAvIUAmCPtoNRWI+XZm4MX1bfYSyf+cM3Uh1/znpWiPJo14gfwggNT/hSXBsxgB/Z
-         x7W2+O2zBs66+YBefmdZxe9ZlB+Xypjv0sui4gyQyQ0gfbWjtQcPYX4PjxoTqUsU0vJx
-         ODZXqh/NKl1nXaIq2mtm6DAORXAVZcZszCl6SsvcDe8+L74J8NZVvTaC2G44U415fzG8
-         k/dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760014277; x=1760619077;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MDMFuxtj7DOoK9vdG1w2+Ih86u05O/nr3t6ARiKVfns=;
-        b=m86q9uDP7xLwqPKOCN3UXcId4Timvq0UdY3T869QWYTH8yaWO4t9rurcAmov7z+GML
-         apcTEOR3gBaNSCHPnXbT6DZTxCkJ4Q6U/RDVLrGbdAtehQ+0mYRBLS5HZEZEx7EE5Cq3
-         yOFKbrxEI4KolNzL3YZK/tMKrR0WKk9DFn2maBUxYgKVOm1aFU2cn3yOQy8IGqaHc9SA
-         MC64kOy/RssfFr+QohQCV+3WkZtJ9l6GPWVFTnhKkYql2NQFUpAJdIw7HPzEt/w4k8Mp
-         0Q7DHJvFrmRsV2GiPwhgmlE/GTcVPGscE0CwDjYyBEXv2mqGPjEospLjmnUrL1f9m0q0
-         ZeaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKhsgZQdrpcKoUgSZDcplwAis4YDFbNLGG6ETZ6AfTbtJKSCsUrzuhYZA+o/zOgmeb9HiI6tI3/7MP6sM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/mdfmQjs/IsVRlBQwEsQpm9u/HCCWCQzdcyQfTZhnK7AArOT2
-	vjIEr6SdKIG0wnsuckt5Dv7YBG74C1B1LW5FrKBz9gP5hZEkR5/t3SNjCqsA02/uqI3LvLprJaf
-	ViTkOkayxqAPyw4pMSQZY4unDERZrdvQ=
-X-Gm-Gg: ASbGncuJtx2VIa8UYfaimU7Vp1wnBSAt8Xjyy7ivVhwDBjzUMAMAf8VhCJ3DvdGSWrK
-	Du0s5HkUCauPa6lbvFQuSNcrNXQx9fMKFXgZ34DLVK0d3WIT5C1bgP6oryGf7wb4yuM+3yGxLY5
-	wVmu06zVQ9B5uWmvpO3UzRwmD2eJDbA3Moll6SIBOZbYjLiWrDXH3yBXlfU9cM9yuh96Oft5K7J
-	vLlRx+fe3JKeDYb0PjPN/iz7daGHJLL674fakaus5a8vA1q2k3v0Zoqbp1y
-X-Google-Smtp-Source: AGHT+IEhAV1wqwmuEfqj9eDPRuTr5xhy6QzH+Fe4j6lHSFhQoyHt9bJp9C/EYN1+uc18PLR1t+1Bf7rHPlE1k2VNj6E=
-X-Received: by 2002:a17:902:f608:b0:263:b8f:77dd with SMTP id
- d9443c01a7336-2902741d0a7mr98644915ad.57.1760014276668; Thu, 09 Oct 2025
- 05:51:16 -0700 (PDT)
+	s=arc-20240116; t=1760014456; c=relaxed/simple;
+	bh=R1TORzTxYknOCobqa5N2Ym/eV3oIkS/TL69ydYBPELo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=du6tMM+iD1HkC7wnDozUezIDlc0FnLRN5AQVz2eOGJe5zZ2bXrWKJMBGJb0ctJLjDGrKnl4nvbWBOGFMzFPqmooiRDhpr1ooUIY3r+Tf6MTuydnBEmcW44JTVHEhBX/sDKPgeds5nMNXPO2yVaVJj99NPH6ClrCW10asfxVf4VA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZHOtDTn5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4AF2C4CEE7;
+	Thu,  9 Oct 2025 12:54:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760014456;
+	bh=R1TORzTxYknOCobqa5N2Ym/eV3oIkS/TL69ydYBPELo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZHOtDTn5E5ki97MoLFbg/hqT6PHek9RAtK++CrFn/XyiyBMbFi4k1QwsKrqf6cJKG
+	 4NQyQB7rM4j5LUn3I7Ys3/kuTjEPoWBu9aTR/zvv9riMPS3x2YvltdyvnRqojfieOK
+	 w6Kd53MaLy02LrSMe/3oprCkG0+IX+Q6aGG8DWk+loOmJOi8ohYdfRorqkbx0BRAlc
+	 NxskVlGcPMtrsq1gKH6OV7Nu4UCO2YYDRSG/SPJ2VZJvOr3qSttg6EqXMSJ0OLAXCa
+	 V7Kw4G3OmpyPjie7YjAsSnCTxT9lQ7jK8k4ro7YPK2UIU4IuSQ3I1CTkdWLzScVUNX
+	 hKULQMpCJMzGA==
+Message-ID: <807fe91b-acc6-4faf-834c-ced0dead2605@kernel.org>
+Date: Thu, 9 Oct 2025 14:54:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250923053001.2678596-1-shengjiu.wang@nxp.com>
-In-Reply-To: <20250923053001.2678596-1-shengjiu.wang@nxp.com>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Thu, 9 Oct 2025 15:53:34 +0300
-X-Gm-Features: AS18NWAD-sPW--RGZUkk020BQr_wBUAqvEISI-DaoXi4Qt_J4rUCZMsA_rvkqkw
-Message-ID: <CAEnQRZCFk=07=tDgEPJeXx_xDp_6LGXi+2o9GAADoP86mWYZ2A@mail.gmail.com>
-Subject: Re: [PATCH v7 0/7] drm/bridge: imx: Add HDMI PAI driver on i.MX8MP
-To: Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, lumag@kernel.org, dianders@chromium.org, 
-	cristian.ciocaltea@collabora.com, luca.ceresoli@bootlin.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	victor.liu@nxp.com, shawnguo@kernel.org, s.hauer@pengutronix.de, 
-	kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, p.zabel@pengutronix.de, devicetree@vger.kernel.org, 
-	l.stach@pengutronix.de, shengjiu.wang@gmail.com, perex@perex.cz, 
-	tiwai@suse.com, linux-sound@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/5] rust: Move register and bitfield macros out of
+ Nova
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Dirk Behme <dirk.behme@de.bosch.com>,
+ Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
+ Yury Norov <yury.norov@gmail.com>,
+ Daniel Almeida <daniel.almeida@collabora.com>,
+ Andrea Righi <arighi@nvidia.com>, nouveau@lists.freedesktop.org
+References: <20251003154748.1687160-1-joelagnelf@nvidia.com>
+ <20251003154748.1687160-5-joelagnelf@nvidia.com>
+ <5a5bd549-f5b7-41ec-b493-bda427d1218f@de.bosch.com>
+ <DDDQZ8LM2OGP.VSEG03ZE0K04@kernel.org>
+ <DDDR8DIW6K4L.21F81P26KM64W@nvidia.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <DDDR8DIW6K4L.21F81P26KM64W@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 23, 2025 at 8:30=E2=80=AFAM Shengjiu Wang <shengjiu.wang@nxp.co=
-m> wrote:
->
-> The HDMI TX Parallel Audio Interface (HTX_PAI) is a digital module that
-> acts as the bridge between the Audio Subsystem to the HDMI TX Controller.
->
-> Add HDMI PAI driver on i.MX8MP to make HDMI audio function fully work.
+On 10/9/25 1:28 PM, Alexandre Courbot wrote:
+> On Thu Oct 9, 2025 at 8:16 PM JST, Danilo Krummrich wrote:
+>> On Thu Oct 9, 2025 at 8:59 AM CEST, Dirk Behme wrote:
+>>> Assuming that register.rs is supposed to become the "generic" way to 
+>>> access hardware registers I started to have a look to it. Some weeks 
+>>> back testing interrupts I used some quite simple timer with 4 registers 
+>>> [1]. Now, thinking about converting it to register!() I have three 
+>>> understanding / usage questions:
+>>>
+>>> * At the moment register!() is for 32-bit registers, only? So it can't 
+>>> be used for my example having 8-bit and 16-bit registers as well?
+>>
+>> Yes, currently the register!() macro always generates a 32-bit register type
+>> (mainly because nova-core did not need anything else). However, this will of
+>> course be generalized (which should be pretty straight forward).
+>>
+>> Having a brief look at the TMU datasheet it looks like you should be able to
+>> treat TSTR and TCR as 32-bit registers without any issues for testing the
+>> register!() macro today. I.e. you can just define it as:
+>>
+>> 	register!(TSTR @ 0x04, "Timer Start Register" {
+>> 	    2:2    str2 as bool, "Specifies whether TCNT2 is operated or stopped.";
+>> 	    1:1    str1 as bool, "Specifies whether TCNT1 is operated or stopped.";
+>> 	    0:0    str0 as bool, "Specifies whether TCNT0 is operated or stopped.";
+>> 	});
+>>
+>> Same for TCR.
+> 
+> Patch 2 of this series actually adds support for 16 and 8 bit register
+> storage.
 
-Tested-by: Daniel Baluta <daniel.baluta@nxp.com>
+Heh! I knew I saw a patch for this already somewhere, seems like I missed the
+forest for the trees. :)
 
