@@ -1,153 +1,144 @@
-Return-Path: <linux-kernel+bounces-846276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D9E4BC7747
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 07:45:06 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B64F0BC7750
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 07:46:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E78A189BC13
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 05:45:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A57054EA3AC
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 05:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B1A26159E;
-	Thu,  9 Oct 2025 05:44:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940B61AF4D5;
+	Thu,  9 Oct 2025 05:45:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hacktheplanet.fi header.i=@hacktheplanet.fi header.b="cj4ndAVw";
-	dkim=pass (2048-bit key) header.d=hacktheplanet.fi header.i=@hacktheplanet.fi header.b="0cpc9th4"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WS1YxHD0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991B234BA49
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 05:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621C334BA49
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 05:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759988697; cv=none; b=eiY4MVvBZR2GpSypkM2oFPc0PoMET44V9iu5b3Lwv1pQWGxomKyGNWKXmPwvqAMpdQMUJBSqNgQvbNFjGTV+U+vBo6VAdstvTbI13Vhj3Qvum6ReEgqbbaVcdldVfQ/C0PsdhHi46J4sHs4QtsSo5TuIYu9yX9lSdWwaiaeAnbg=
+	t=1759988754; cv=none; b=MEBAKKS8VMXgumeu8ApeZOG+zofvVIAKuNzXVJ2ijc0ODUZCX7wXB8ENltS/MITT6NEq0BZUTzHSSc9W/2bLbM69VKR60OFzjpLb8PicQaTn0AsB5vnUeYlHjNDzg26C0QiztxK3rGY3O2vpzZkOa++rqT7e9GOwYb+DpN0nizs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759988697; c=relaxed/simple;
-	bh=ymF5QvivyGZZ24+symOa+qrVVLxLMLwd6zlIx3cFF64=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=kfM+feLAEE3ciSe2OwBVgd7WIflCqB+C82l+gitHO44DeYAHO2tXfvZrGiuVWfh13ltWFxCwaIwWjzUnJr2ZYsGyGa+TWxyKk4LTkX9kTzDfDURmPSTlyLdl69UVWTCaeJHM5Bg2bunRiEsj3Bdd45w0hXrziGu/F0aw1BNyxEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hacktheplanet.fi; spf=pass smtp.mailfrom=hacktheplanet.fi; dkim=pass (2048-bit key) header.d=hacktheplanet.fi header.i=@hacktheplanet.fi header.b=cj4ndAVw; dkim=pass (2048-bit key) header.d=hacktheplanet.fi header.i=@hacktheplanet.fi header.b=0cpc9th4; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hacktheplanet.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hacktheplanet.fi
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; s=gibson; bh=ymF5QvivyGZZ2
-	4+symOa+qrVVLxLMLwd6zlIx3cFF64=; h=subject:to:from:date;
-	d=hacktheplanet.fi; b=cj4ndAVwTGTvLnzIlAO1BUW+SnutLIZV3u1yCKL0uiLKxc6B
-	ZIq0s0S8PI4LaTZABmWBsv9ceaknEai+abhJD6TBOVhMHh5PNHLDjMMgguwLhr4fsOdXS9
-	zrBYg31MEcI9Vjbohp3F/hHJtvhqDSc5zLYKKhKHi3Wcdab1/0aPttuqeplDO2IR07kLVl
-	Bqj4AuupJ6cD8WHB0uA5gZ8LPmZMm+n70Rg5Cmo1GVcceoR+boPVI9eBiJnpLsT7u4gQr0
-	PykoLzmFi7o7V3TCMqz5qq26V6n5UCL1+9taaOAC/gVqhoA8hLrgSxkq1IMjrPXt47D8eE
-	pNLJ/7c3CNrbjg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hacktheplanet.fi;
-	s=key1; t=1759988690;
+	s=arc-20240116; t=1759988754; c=relaxed/simple;
+	bh=Cgs5/82pfRdFOfycNZ7ouFWHQSrCRVqg6S+KdryAJEE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oNnCLw82uWK05qH8zhG7+T75eBaaCwSM3+F8zzFo1/1FyPrso/Yr1jMXGO+uYySdoRMDYfarBiH9Ni1bYmnC1XWoqk+gGlJplPd+iYF2obKcIvecCNzv/TJZuw0UVnsZWU6Ob8FIherT8uhjAKL/2egtYDR7FOSbHIx1TzkzQ0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WS1YxHD0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759988751;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type;
-	bh=HvlgvPfxoRbZPRh2YvgVqdSzcaywXXuT0m7BukFOAgo=;
-	b=0cpc9th4kKmLjrJd33us2SNKsXpRMe+XRVhiEEzJSY+DYEp81dhNCzjjMgQxKqS+dqM/VU
-	y6vDZ1dGgke1Osf7zZijiplTL8KJonP0YDfuI4L0+CusnvYNCRcbon0pwuslC7WBmvR4VT
-	kRTAsubgKP5y4ccI1i8q3BHPJKjNomY4WBhqu4Vuix6kV7X+UHZqOV2LNGuQ+0FjFzYpIj
-	1P2d48+LEMveK42HbR1Gf0ncQ2lN+GctpV6udWEp+WX1GlREfpqOPDbJtZlEbacVi5HK4m
-	e59xFzJRstGRiV/3xcxj8nIZPLdQXF2P4DNQ4dfwgnxnybm2dalcvGqj0PzdyQ==
-Date: Thu, 9 Oct 2025 14:44:36 +0900
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lauri Tirkkonen <lauri@hacktheplanet.fi>
-To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] HID: i2c-hid: patch Lenovo Yoga Slim 7x Keyboard rdesc
-Message-ID: <aOdLxAEYQpV2zp77@mail.hacktheplanet.fi>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=orcYfgdpG/ZGGYwoentBQb80+LYoN5XSkiV8KV8rfJo=;
+	b=WS1YxHD0RLWCBG54jRqyoxXC705I15M0csjQjiPBRQAnbzBiH5uPE4qIW3+fZ9/Y4Mi3jS
+	6T/YUQvl9XEjvlSbmH2giaFO1BiJxR77oirVnjThAL6kaaDbXARNO2HLXUa6wBnRHGRGto
+	TNAGg3mKYuJUHBlpVKNjrrWNflrWM2w=
+Received: from mail-vs1-f71.google.com (mail-vs1-f71.google.com
+ [209.85.217.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-28-Dt6B4LkqPZG8syP1WgBwfg-1; Thu, 09 Oct 2025 01:45:49 -0400
+X-MC-Unique: Dt6B4LkqPZG8syP1WgBwfg-1
+X-Mimecast-MFC-AGG-ID: Dt6B4LkqPZG8syP1WgBwfg_1759988748
+Received: by mail-vs1-f71.google.com with SMTP id ada2fe7eead31-5cf363edd82so1558610137.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 22:45:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759988748; x=1760593548;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=orcYfgdpG/ZGGYwoentBQb80+LYoN5XSkiV8KV8rfJo=;
+        b=I3J3S+8W9RzuLn5gXiHbbHo0zEhYV0bz7lVeMqO8Elz/gRH89L7M3tQ5PYTQ6xq4DM
+         scZlh0BpDNeYyl7Ui0BjS39tl4Nrx0jD3ygbOqm1mZzv3U0Gt23Ak7fs8GmxADrwsDZ0
+         cuvCAWnpOUbfLO4N2gDsGVDkW54gUmC/qZHS+EzSr3fJQx69zBIYEFp8ve2guRKD9HHa
+         j20G1WyRGg8S53vpsGIAUqHfD2db6pmS+ni/0nveQOHiIr6hTlt6Xdf2EPogl0FPMcRj
+         8fCSBkjcif59b6W5RB9K/y2SV2p7jYNw9eCfO0jLm7egdoSyXvXSC7hqDK8jZ2ynEH8B
+         tl2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUwYc8LK6mRT4YpyMvhWwa0UfDc/eK8FUoKxaZvKbEWJ/aeA0C0JWd+mLnOnfZnkQ7Z3cbqNy1WgyW61Ek=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/OdpAJrrAoceZZHO+AF+HSgIz5PgWkndmrss8w0KkXHgfLNWP
+	rLMOydbHIUZX2+1vV0zBRdZIZKXWWT61EG5nG8rEkJgsFe12bR5zEEGAy14jti/ex/iUuYLdoin
+	mYfWatnlquya15tK0KkC937I33r/hWTfnnZLVtcdFN9cza/eOrE3pHYBe6YLHV6KAcwI16FqqoY
+	aVPDMGQlw+fJFseuulwmwKDtyRXC9/H+0XXe0BoczS
+X-Gm-Gg: ASbGncvLTLEeU4GSUUiSFXt6oppHBeMuUIxlWc3k/dlcYZf1a2F6oHKe/wF6yDrH2Mb
+	ivGzW8Wq9LsZYMA8X8Ns1PtQuySvlePFFm1jAdIo23E25WAaH400X/m0bzRZs7/FC7VcCWZFh03
+	POIhWFrk8P75S400/e544/Sib3xL8=
+X-Received: by 2002:a05:6102:1a06:10b0:584:7aa3:a329 with SMTP id ada2fe7eead31-5d5d4c81309mr3856075137.4.1759988748529;
+        Wed, 08 Oct 2025 22:45:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG3G8kAFYaXC6ufiRYos6wQXP8+qHlI6XHMSGOom3zuceYwL+hPPQed85kXtqvFgON80O528fdCfB3/9TPXj90=
+X-Received: by 2002:a05:6102:1a06:10b0:584:7aa3:a329 with SMTP id
+ ada2fe7eead31-5d5d4c81309mr3856068137.4.1759988748195; Wed, 08 Oct 2025
+ 22:45:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+References: <20250929134258.80956-1-alok.a.tiwari@oracle.com>
+In-Reply-To: <20250929134258.80956-1-alok.a.tiwari@oracle.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Thu, 9 Oct 2025 13:45:36 +0800
+X-Gm-Features: AS18NWAJIasEWYyFtU2lfrqbz_3g5EECFeIzi1irlKeHZRF9-ZPVkvavqWabGu4
+Message-ID: <CACGkMEvyh9CBHjQs6bYv8v-DVYGizjOrVMuFVsnnrJeN6kTrfQ@mail.gmail.com>
+Subject: Re: [PATCH] vdpa/mlx5: Fix incorrect error code reporting in query_virtqueues
+To: Alok Tiwari <alok.a.tiwari@oracle.com>
+Cc: dtatulea@nvidia.com, mst@redhat.com, xuanzhuo@linux.alibaba.com, 
+	eperezma@redhat.com, tariqt@nvidia.com, moshe@nvidia.com, kshk@linux.ibm.com, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The keyboard of this device has the following in its report description
-for Usage (Keyboard) in Collection (Application):
+On Mon, Sep 29, 2025 at 9:43=E2=80=AFPM Alok Tiwari <alok.a.tiwari@oracle.c=
+om> wrote:
+>
+> When query_virtqueues() fails, the error log prints the variable err
+> instead of cmd->err. Since err may still be zero at this point, the
+> log message can misleadingly report a success value 0 even though the
+> command actually failed.
+>
+> Even worse, once err is set to the first failure, subsequent logs
+> print that same stale value. This makes the error reporting appear
+> one step behind the actual failing queue index, which is confusing
+> and misleading.
+>
+> Fix the log to report cmd->err, which reflects the real failure code
+> returned by the firmware.
+>
+> Fixes: 1fcdf43ea69e ("vdpa/mlx5: Use async API for vq query command")
+> Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+> ---
+>  drivers/vdpa/mlx5/net/mlx5_vnet.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/ml=
+x5_vnet.c
+> index 0ed2fc28e1ce..b2ebf56b2ea2 100644
+> --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> @@ -1258,7 +1258,7 @@ static int query_virtqueues(struct mlx5_vdpa_net *n=
+dev,
+>                 int vq_idx =3D start_vq + i;
+>
+>                 if (cmd->err) {
+> -                       mlx5_vdpa_err(mvdev, "query vq %d failed, err: %d=
+\n", vq_idx, err);
+> +                       mlx5_vdpa_err(mvdev, "query vq %d failed, err: %d=
+\n", vq_idx, cmd->err);
+>                         if (!err)
+>                                 err =3D cmd->err;
+>                         continue;
+> --
+> 2.50.1
+>
 
-	# 0x15, 0x00,                    //  Logical Minimum (0)                52
-	# 0x25, 0x65,                    //  Logical Maximum (101)              54
-	# 0x05, 0x07,                    //  Usage Page (Keyboard)              56
-	# 0x19, 0x00,                    //  Usage Minimum (0)                  58
-	# 0x29, 0xdd,                    //  Usage Maximum (221)                60
-	# 0x81, 0x00,                    //  Input (Data,Arr,Abs)               62
+Acked-by: Jason Wang <jasowang@redhat.com>
 
-Since the Usage Min/Max range exceeds the Logical Min/Max range,
-keypresses outside the Logical range are not recognized. This includes,
-for example, the Japanese language keyboard variant's keys for |, _ and
-\.
+Thanks
 
-Patch the report description to make the Logical range match the Usage
-range, fixing the interpretation of keypresses above 101 on this device.
-
-Signed-off-by: Lauri Tirkkonen <lauri@hacktheplanet.fi>
----
- drivers/hid/hid-ids.h              |  1 +
- drivers/hid/i2c-hid/i2c-hid-core.c | 25 +++++++++++++++++++++++++
- 2 files changed, 26 insertions(+)
-
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 5721b8414bbd..bbb932145d2c 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -715,6 +715,7 @@
- #define USB_DEVICE_ID_ITE_LENOVO_YOGA2  0x8350
- #define I2C_DEVICE_ID_ITE_LENOVO_LEGION_Y720	0x837a
- #define USB_DEVICE_ID_ITE_LENOVO_YOGA900	0x8396
-+#define I2C_DEVICE_ID_ITE_LENOVO_YOGA_SLIM_7X	0x8987
- #define USB_DEVICE_ID_ITE8595		0x8595
- #define USB_DEVICE_ID_ITE_MEDION_E1239T	0xce50
- 
-diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
-index 63f46a2e5788..d78bd97ec24e 100644
---- a/drivers/hid/i2c-hid/i2c-hid-core.c
-+++ b/drivers/hid/i2c-hid/i2c-hid-core.c
-@@ -740,6 +740,26 @@ static int i2c_hid_raw_request(struct hid_device *hid, unsigned char reportnum,
- 	}
- }
- 
-+static void patch_lenovo_yoga_slim7x_keyboard_rdesc(struct i2c_hid *ihid,
-+						    char *rdesc,
-+						    unsigned int rsize)
-+{
-+	if (!(rsize == 0xb0 &&
-+	      rdesc[0x34] == 0x15 && rdesc[0x35] == 0x00 && // Logical Minimum (0)
-+	      rdesc[0x36] == 0x25 && rdesc[0x37] == 0x65 && // Logical Maximum (101)
-+	      rdesc[0x38] == 0x05 && rdesc[0x39] == 0x07 && // Usage Page (Keyboard)
-+	      rdesc[0x3a] == 0x19 && rdesc[0x3b] == 0x00 && // Usage Minimum (0)
-+	      rdesc[0x3c] == 0x29 && rdesc[0x3d] == 0xdd))  // Usage Maximum (221)
-+		return;
-+
-+	u8 logical_max = rdesc[0x37];
-+	u8 usage_max = rdesc[0x3d];
-+
-+	rdesc[0x37] = usage_max;
-+	i2c_hid_dbg(ihid, "%s: patched logical max from %u to %u\n", __func__,
-+			logical_max, usage_max);
-+}
-+
- static int i2c_hid_parse(struct hid_device *hid)
- {
- 	struct i2c_client *client = hid->driver_data;
-@@ -793,6 +813,11 @@ static int i2c_hid_parse(struct hid_device *hid)
- 		}
- 	}
- 
-+	if (ihid->hid->vendor == USB_VENDOR_ID_ITE &&
-+	    ihid->hid->product == I2C_DEVICE_ID_ITE_LENOVO_YOGA_SLIM_7X) {
-+		patch_lenovo_yoga_slim7x_keyboard_rdesc(ihid, rdesc, rsize);
-+	}
-+
- 	i2c_hid_dbg(ihid, "Report Descriptor: %*ph\n", rsize, rdesc);
- 
- 	ret = hid_parse_report(hid, rdesc, rsize);
--- 
-2.51.0
-
--- 
-Lauri Tirkkonen | lotheac @ IRCnet
 
