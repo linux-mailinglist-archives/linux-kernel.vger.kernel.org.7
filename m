@@ -1,205 +1,126 @@
-Return-Path: <linux-kernel+bounces-846187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CA7BBC73BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 04:47:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC233BC73D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 04:47:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DCFD19E581C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 02:47:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B316019E5859
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 02:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D614A1662E7;
-	Thu,  9 Oct 2025 02:47:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3295C1CEAB2;
+	Thu,  9 Oct 2025 02:47:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AxglofC/"
-Received: from mail-pg1-f193.google.com (mail-pg1-f193.google.com [209.85.215.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i9Ferfif"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E044C6C
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 02:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B98523AD;
+	Thu,  9 Oct 2025 02:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759978027; cv=none; b=VstxyhGP1laFmCHNlPo44UhgzGxduIIcSlp/RSczu1vIsjIvYVZGnyR4x4yaV3VCif+w8DYLJLndnkztf+jXbad3zYAOrLjU697s43LcujY6ojR93s1qxr4TD1w6HlbZiMqeU182UUR6Kc6VZuKgAb+btInZUtMF+6sRy2yrxis=
+	t=1759978058; cv=none; b=gVj1NAZtGXKz10kBuz7sqtYH4ZrsTSGRNOoZVXTAqegLNDcfJNYNkGL7eGt4hKc60D3lSifNPmiPwg7Z4gkJawQwp7OK9Rs9hNJjCJ4ZaKUppSHwvzg7THK/a2kLVFG7aCFsZVBIMS6nXetcWFFPlbxXZJR7LoJINSAUZsqkVQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759978027; c=relaxed/simple;
-	bh=j1H8rr3ZCKuau3eSV0aCOIemmLP/Ndrxe09nU4fQzcI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V5D8CrP53dvEdFju3vxGki2dADnv5h7xRCiMPw8QPxxtnQG8z0pcqUQKpUNcOTVgGEhqSgCvby5ffCOvBQARms69EThC2kZJR4cvwNry/QI6Fovr5NI55CiHI9mEhyjrGvVCwWKGshgKfb9q4IH6vPZ+bxAcu/mlCr6i1SUhScw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AxglofC/; arc=none smtp.client-ip=209.85.215.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f193.google.com with SMTP id 41be03b00d2f7-b6271ea3a6fso288356a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 19:47:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759978025; x=1760582825; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+GiA4iuz6lIjQr1cqP5VsrnXl9FUk3KwAqlmR8Sc5as=;
-        b=AxglofC/vxv7OmV86lH/1wyYUWD9QhadO3/nVfCAhZMqZHP7DGCx0bpuGyJ4P8+BgK
-         Dy5qY2fEhgObg4Iucc06mlNjl0ddgNZ4pF3EvQ2BWKvh7LkVyPxvoIsBHj9okAPF1iic
-         kDzx66BJDJ0A+zjOSswg50yWo+X7OvUm7Z91vdxzEWxR97sAz9GVPUmcfvWQpGZw2kX3
-         K+7XSKc9n4SkZTLznFOGhPwubOpjBS65D9SLcx5fMfU/O5BSZHdH3NtTvAxFkFQg82OG
-         jYe9YbLm2Me8u6TnEzK768YcjosgsmYpK/f/GSqssQYoYEplvJkRf1LpjbN+rCGfEw3z
-         6weg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759978025; x=1760582825;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+GiA4iuz6lIjQr1cqP5VsrnXl9FUk3KwAqlmR8Sc5as=;
-        b=cE16RszHQoc1MnHu8slerRG66hmmrUQs5qjNOsR2t4ZsSH5EtSb6DfG0Owvu1A0daZ
-         NuLVM8/aQiEFK8gwMadhLxj4mVEEc4aTNAMWIcSDTptCEydt+/Ukq9DvLq4rqQ2AKApo
-         6CbvUafLb9+e0IlgZEjj7Ca5eX/L6i+A/gYljFPoiIG2sfaskeHJRbElWhfiOgBw+nGk
-         vlDhEph++DrW//yF9fk6ekuUd0B7j8jTnknhV7y72t6P0W95ZzWKy4bwWKalMZdUmf3S
-         8j8xk3Lo3k6IgcpL5WD1WtojYk7cyufKLv5FA5LxxB7hzBeHj+ITX36MjC3MNUJSJJ1j
-         DGpA==
-X-Gm-Message-State: AOJu0YwoC14mw4s4jVHLVeumIb1LBSQO4T8e4cVMj/AIO0/5wPI5ATO2
-	748h3yK4OGxF9O9mO0z6LasS+9+wcSqZE/uDgy+jzJ7WuDn4zQtIPAXIvM8SO/aN
-X-Gm-Gg: ASbGncuoa6AokucPt/P0/VQw4ojgozswkyt5LJTbKxRhkKBzCD7iOvqem7riT76IuyM
-	mKWzhyfNO2zt0xqKwx+WcXE0FxvQ3HjtMB78W1XaLDjzAywXjzD0D+u51gS3498FtEVgiVaM5iB
-	QYFL3wO4MMR2/rGcQCbWUl6fXreyqaKSYI/Y5rk00S8N0NSAxILGK3zjcnodLABk8rhHrDL2444
-	XqzYdBG7WHnmbXzIxE4S3Y52uZMxPvSdBbD8ce5qFUAMncH16lkouJ4qNOfJT0b0b0RJCFiAgRu
-	gcxfwteqcpuzGzYpkz+VlwXpL2viRyDDjMibsajLs8MZzME0/mZUwOg2+2oTNRbbmnSTPuFeLrz
-	emEYmoGGOfWJKJcIyyQXSJs78F3YBvgv2oAHuK7ZvBhtt0mEqO+BgOVLZHTvonPxx
-X-Google-Smtp-Source: AGHT+IHFOkfD55JzBdmrtB7rRkB8x8PQKvLZVhVzaNqrmyfFwltFeiwS/jvh4biiqwQmWhRIAW4UlA==
-X-Received: by 2002:a17:903:1b4b:b0:26d:353c:75cd with SMTP id d9443c01a7336-290272409c7mr77633275ad.21.1759978024481;
-        Wed, 08 Oct 2025 19:47:04 -0700 (PDT)
-Received: from E07P150077.ecarx.com.cn ([103.52.189.24])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034de6fd3sm11900395ad.25.2025.10.08.19.47.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 19:47:04 -0700 (PDT)
-From: Jianyun Gao <jianyungao89@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: "jianyun.gao" <jianyungao89@gmail.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>
-Subject: [PATCH v3] sched: Fix some spelling mistakes in the scheduler module
-Date: Thu,  9 Oct 2025 10:46:56 +0800
-Message-Id: <20251009024657.151767-1-jianyungao89@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1759978058; c=relaxed/simple;
+	bh=ufdrUIxuVa5RwJU4jYQXvDwUVBpIrNRiGonEjXY/10Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rGPVvRMouiIG1khYu+VM2Zw15wn6JODUcsOVyOMda3+8FeI+8H61X63c4S/BVY5JdLlLmbDU6LQ5NbthPQt8ugHhAgDo+SZXkxyuL9AHuvnsrEdSdOOeVmkYtwzhQkKWsx3FZ79EnjMA0WM4FRcCv04z3dw4PHQsW2NFQnbB+xA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i9Ferfif; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33109C4CEE7;
+	Thu,  9 Oct 2025 02:47:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759978058;
+	bh=ufdrUIxuVa5RwJU4jYQXvDwUVBpIrNRiGonEjXY/10Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=i9FerfifaC6Sb1UiyetZ4d355PNi2QFxhioum0YdiZhRgAqGmpMdbLuvqH5Y8avLu
+	 e6ghEsIQaNc21IZXQ/Hs3WpYsrGTB5ebfqUwrIPeKpzmqKLufEj7rxoVRM6XIhykL6
+	 q5RKWLWB0Q37OgplcPMkKw56p3xKO1On5AJ3Gh3C4k7HGUg0551Kk5VYKsqGM/H4s/
+	 4KO3mm1XSQWuhIYuLafX7lx8frsSz+yZ1sVSR4ekc2mW3XpNTAg+CBGKveoQsKPpHu
+	 vY+TZeeVes/d0aKABFJdkBWXezh+lhs6oW6yiB8QaFa6/XduMRA0m6gTgMPBC/WVIu
+	 +xT3vkfOk/h6A==
+Message-ID: <c469ad4b-9dc0-4ded-9736-1856e44d21e3@kernel.org>
+Date: Thu, 9 Oct 2025 11:47:28 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] ASoC: dt-bindings: qcom,sm8250: Add QCS615 sound
+ card
+To: leqi <le.qi@oss.qualcomm.com>, Srinivas Kandagatla <srini@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>
+Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel@oss.qualcomm.com
+References: <20251009023341.27277-1-le.qi@oss.qualcomm.com>
+ <20251009023341.27277-2-le.qi@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251009023341.27277-2-le.qi@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: "jianyun.gao" <jianyungao89@gmail.com>
+On 09/10/2025 11:33, leqi wrote:
+> Add bindings for QCS615 sound card, which looks fully
+> compatible with existing SM8250.
+> 
+> Signed-off-by: leqi <le.qi@oss.qualcomm.com>
 
-The following are some spelling mistakes existing in the scheduler
-module. Just fix it!
 
-  slection -> selection
-  achitectures -> architectures
-  excempt -> exempt
-  incorectly -> incorrectly
-  litle -> little
-  faireness -> fairness
-  condtion -> condition
+Just clarifying: is "leqi" your full legal name in latin
+transliteration? It just looks a bit like login name, but of course that
+might be just my western assumptions talking.
 
-Signed-off-by: jianyun.gao <jianyungao89@gmail.com>
----
-v3:
-Change "except" to "exempt" in v2.
-The previous version is here:
-
-https://lore.kernel.org/lkml/20250929061213.1659258-1-jianyungao89@gmail.com/
-
- kernel/sched/core.c     | 2 +-
- kernel/sched/cputime.c  | 2 +-
- kernel/sched/fair.c     | 8 ++++----
- kernel/sched/wait_bit.c | 2 +-
- 4 files changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 7f1e5cb94c53..af5076e40567 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -6858,7 +6858,7 @@ static void __sched notrace __schedule(int sched_mode)
- 		/*
- 		 * We pass task_is_blocked() as the should_block arg
- 		 * in order to keep mutex-blocked tasks on the runqueue
--		 * for slection with proxy-exec (without proxy-exec
-+		 * for selection with proxy-exec (without proxy-exec
- 		 * task_is_blocked() will always be false).
- 		 */
- 		try_to_block_task(rq, prev, &prev_state,
-diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
-index 7097de2c8cda..2429be5a5e40 100644
---- a/kernel/sched/cputime.c
-+++ b/kernel/sched/cputime.c
-@@ -585,7 +585,7 @@ void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
- 	stime = mul_u64_u64_div_u64(stime, rtime, stime + utime);
- 	/*
- 	 * Because mul_u64_u64_div_u64() can approximate on some
--	 * achitectures; enforce the constraint that: a*b/(b+c) <= a.
-+	 * architectures; enforce the constraint that: a*b/(b+c) <= a.
- 	 */
- 	if (unlikely(stime > rtime))
- 		stime = rtime;
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 18a30ae35441..b1c335719f49 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5381,7 +5381,7 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- 		bool delay = sleep;
- 		/*
- 		 * DELAY_DEQUEUE relies on spurious wakeups, special task
--		 * states must not suffer spurious wakeups, excempt them.
-+		 * states must not suffer spurious wakeups, exempt them.
- 		 */
- 		if (flags & (DEQUEUE_SPECIAL | DEQUEUE_THROTTLE))
- 			delay = false;
-@@ -5842,7 +5842,7 @@ static bool enqueue_throttled_task(struct task_struct *p)
- 	 * target cfs_rq's limbo list.
- 	 *
- 	 * Do not do that when @p is current because the following race can
--	 * cause @p's group_node to be incorectly re-insterted in its rq's
-+	 * cause @p's group_node to be incorrectly re-insterted in its rq's
- 	 * cfs_tasks list, despite being throttled:
- 	 *
- 	 *     cpuX                       cpuY
-@@ -12161,7 +12161,7 @@ static inline bool update_newidle_cost(struct sched_domain *sd, u64 cost)
- 		 * sched_balance_newidle() bumps the cost whenever newidle
- 		 * balance fails, and we don't want things to grow out of
- 		 * control.  Use the sysctl_sched_migration_cost as the upper
--		 * limit, plus a litle extra to avoid off by ones.
-+		 * limit, plus a little extra to avoid off by ones.
- 		 */
- 		sd->max_newidle_lb_cost =
- 			min(cost, sysctl_sched_migration_cost + 200);
-@@ -13176,7 +13176,7 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
- 	 * If a task gets attached to this cfs_rq and before being queued,
- 	 * it gets migrated to another CPU due to reasons like affinity
- 	 * change, make sure this cfs_rq stays on leaf cfs_rq list to have
--	 * that removed load decayed or it can cause faireness problem.
-+	 * that removed load decayed or it can cause fairness problem.
- 	 */
- 	if (!cfs_rq_pelt_clock_throttled(cfs_rq))
- 		list_add_leaf_cfs_rq(cfs_rq);
-diff --git a/kernel/sched/wait_bit.c b/kernel/sched/wait_bit.c
-index 1088d3b7012c..47ab3bcd2ebc 100644
---- a/kernel/sched/wait_bit.c
-+++ b/kernel/sched/wait_bit.c
-@@ -207,7 +207,7 @@ EXPORT_SYMBOL(init_wait_var_entry);
-  * given variable to change.  wait_var_event() can be waiting for an
-  * arbitrary condition to be true and associates that condition with an
-  * address.  Calling wake_up_var() suggests that the condition has been
-- * made true, but does not strictly require the condtion to use the
-+ * made true, but does not strictly require the condition to use the
-  * address given.
-  *
-  * The wake-up is sent to tasks in a waitqueue selected by hash from a
--- 
-2.34.1
-
+Best regards,
+Krzysztof
 
