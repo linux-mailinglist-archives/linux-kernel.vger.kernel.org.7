@@ -1,380 +1,278 @@
-Return-Path: <linux-kernel+bounces-846271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 644DEBC7714
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 07:35:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D3ABC7720
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 07:37:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DF3844F2253
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 05:35:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4D8044F2481
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 05:37:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA6D261B98;
-	Thu,  9 Oct 2025 05:35:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A49261B7F;
+	Thu,  9 Oct 2025 05:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cpCU7CrJ"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e2LwdlQP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09BC154279
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 05:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759988138; cv=none; b=rLIbEI6iOr3WLvEirA9w0zoG07I7isbLCRx3sVVTiDmiZwwNklaMUHknb9XbLVtYdHnknrPGqflNTZbY9zxaE4nvDcgyMcOyatieWs1J6PnRd1x0RlcyjSCwDQwtwVEaP+8inxBS1LHCcw9MhWIzJU9/byciz0CxZf4vU5FlOxo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759988138; c=relaxed/simple;
-	bh=BTgTHwCRBA2rpvydRjKgExKMcfvUeqSUe1HHihN2Z4g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T5YsteC4Ibmt0Uz3ZzndqmnGDyyIB14QLAY/InlrfaH/4UhB/rjZqF82sPRcCBeZdw0J0s45gPruPuS6PYh5tZAMCEhSncX1cFZt73qn1sMPAdk1sKKwZP4eB1UZgujTInGPdwGbhxFc77enAsPTWLzHBNpvogqinkqz+68yJH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cpCU7CrJ; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-421851bcb25so251066f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 22:35:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759988134; x=1760592934; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wojdy8oISaReFb3V/aujCr+dYfQppmzTEbdq6Sq+uyc=;
-        b=cpCU7CrJ7ZCcqy9vu7RSEA/EpVmHnNGwO6NIeZCA8ztS+5lbdoH4JA7bFKb+0oApst
-         ZCtXvd5fJSDdLB6SEfhvxzC/NbKNyEfUNCJoJ2Iz4C/xmF9fvTfZcZvZ5kkFdZ7Y240k
-         5TNrE4EmjSTu+C4FuqTnM1vOeb/bzLjORBXK1gaAlYg438cYaxwcNGRCoTo3hl+YWeEn
-         zssYQh7Lf3mfbVwx9ydOrWwqtN+waicwF1cPc5R25akkudcHxIutk1d9uBVyeAzV/Ktc
-         2H9sYaeK05mRMg00zrqm86840MjZRMarvk5q8XSyrHfsLN8ZxODio1RGzPGEbvCCfyOz
-         u8eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759988134; x=1760592934;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wojdy8oISaReFb3V/aujCr+dYfQppmzTEbdq6Sq+uyc=;
-        b=dE/B8SV+ZLcvSH3RZ4TAsSrzVj8RCb2XkAdOqTY8ELqVkp1XGXk2JP7DQJF3a/n1OG
-         TR5rKvQMPVDPRJ/0aV1Tty8OX/+aCx9Xyi7Dm63UOY5fpthk3J0ZGhWry4FR43CU2Dcy
-         etWwZPERf1Ao8TWFeF2+eXflBWbqXY4reNWPFClkRAjLwyPaBURvrY1SC89TB41rb2Fa
-         3RlPCo8ziPPUz3arMHV3Tzra/ZEoyThHrjVC7pD1Rbemwpa0KL3ZoAxcQBlJbDQmrFbz
-         BXQ9NcUzMfgy5kyAtz4SFTpo+U1ojqxDCCL0ZSwLh8vDUWqzEHhd+d8EVKiBu2sDYAYC
-         Vgrw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPhKQKrnhh6wAsijumK7SnhVoJmKO1npkU3r1QDf5ag+ewMtxfQujFAMiw4WJzzwNESAem6rz/kYGJ2rs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybxrPmk/GHO0ClUqG6LRy80WiWmM0A7CgPrRW7AUe/tCawmCa6
-	k1iILMHC2dzvBYDci1O1UEdrJaQ0LwtoyGqdgPQWtecwv89ej2dyyQhUUGjxliOKPIRL3zQDvQT
-	IAkYaXWF/00hqT3/AUKt4h2MV3s6SSVM=
-X-Gm-Gg: ASbGncuS1LoNbo0rXXQobcpe3iGEuvOx8oqvA8liB8w3Jup7q7WuuU2vg0PEXCtkWf7
-	d6B9CTq7FiBHBtHgUfiF84CXqr0gXPAp6O4KMtyvQXkUJ2fEkE1yfkIGrbspTlOmqcypkZJLSPW
-	GNXXqLt552dQi+ED2WxRdy5dY0SZVRRdisz8y5bnTBaRsrdGQExO/OK3xmJNt76Oir2iNv2roXg
-	vZO6azxzPQgKXi+bde/TCHV35PMQ38DBq1LDdK80FQ=
-X-Google-Smtp-Source: AGHT+IGSKa0WWY8sQb7NirdhuUY9zlBVWAF8olfr4D2aOoKgmjKIIKXTBxs4oAP40QHdR3v89s2ItSY5dd09ZKpNd5w=
-X-Received: by 2002:a05:6000:186c:b0:3ed:e1d8:bd68 with SMTP id
- ffacd0b85a97d-42666ac6107mr3102943f8f.7.1759988134193; Wed, 08 Oct 2025
- 22:35:34 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496F754279;
+	Thu,  9 Oct 2025 05:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759988219; cv=fail; b=PYVa29wLe37iJm/m9Sn6HmSQfAcZm2lnA4DJNkj+T8jLRLU/0OyzuHHEGDo+OVNyTzuYpba/7YnEgVvEfRoos2BujsZP/s7608NA4T34Xoit4kfFaJ/17NPsXcKKxEsr4q6mfs/ysS8+FCedR+2h6+rHz333HIJibjC54fZ5AT4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759988219; c=relaxed/simple;
+	bh=ZrD+vOuv8dbaqJHYt2AwJ9k1RxgvkuUs1fJX5OY0IuE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=PU2BXC/bqAzzGkNDpY8EXV/gcmkdQd1Q79nRXuYQFqM0f5S5SQNjs+ogkMZj22NDgT42jw6ZKJPWKq4ndfZuZ9MQ4lJM/i8qSd04RHWC/2S4tqZo2c5QBArOOuIrJh+uDFAWNufeXRenbfKH7nSuZX7e6xN/368yVgKFS7KN2c8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e2LwdlQP; arc=fail smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759988217; x=1791524217;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=ZrD+vOuv8dbaqJHYt2AwJ9k1RxgvkuUs1fJX5OY0IuE=;
+  b=e2LwdlQPzjVf6nAYXPU8QASSURZx39SCLZN5peQUDw7jMMNLLQI2+YDW
+   u4aQ3pIPPl4sHDbD4gjR0UGxjMjZ+RNWRKGBI1HleBgmXnFoiLiGZSgoj
+   PkXU9uTuMObgZqCXKL22hn7lURk8lMYijTt6BRCa5l8a/1IIgQdrUFvOS
+   es0bCzNxuE8re0iRo5JpCn6Yfc+JkaosB1H8CWg1plvJDOiY1pOGAhxWJ
+   oWqy/P3yJK/c24byaOqH9fwmLfBrLDwXp0j7h1R0RCGJfBtOTAbhyJstd
+   FggXlu2u9HlnL+1yhi3yU6aWjh3MhsHCnxK645Sa8E3x2hvJpynRrujGv
+   A==;
+X-CSE-ConnectionGUID: uP5wCe4eRnq56AVsuz1CSg==
+X-CSE-MsgGUID: b0Db6ud/RkePzMmxDTHgoQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11576"; a="64811192"
+X-IronPort-AV: E=Sophos;i="6.19,215,1754982000"; 
+   d="scan'208";a="64811192"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2025 22:36:57 -0700
+X-CSE-ConnectionGUID: 1THorIt4TNGfIeZr5/8aug==
+X-CSE-MsgGUID: l/m8R0OrSD+wUoXXsGFtXg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,215,1754982000"; 
+   d="scan'208";a="181047892"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2025 22:36:56 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 8 Oct 2025 22:36:56 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Wed, 8 Oct 2025 22:36:56 -0700
+Received: from MW6PR02CU001.outbound.protection.outlook.com (52.101.48.1) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 8 Oct 2025 22:36:55 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oZvB42KFWoRMsVot/tkyym5kAgCKzo9fkSJzSuCVrrUYMKV6k9o4QKu3WgywSbPwGmjDNoPTtny26ej00L7ZAa+4+Fle/hM5QBH0GMOezszJwIljk99ucYiPcC0H9/+6Tk4umgzepXJlWZZ5rfMMnf/Q11UGAInnRiuebr7SIZj6H1AS/9bpotykWzPd5nyCxh/ytDuAjG2T7DYtiyPXGXxpfq68sjZFTEztfZTaKaoqR8XOcsK9tZGJ6Hy/Nc0QHR+a0f+xq0R+p6x+MsIuNWS+Wi8GZnVUkZdVeQ2Tb5ejffajy4jROtLUmt608HKFn6Sb553nDGrMfHT9WVzlVg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0z6IwfqiHfl5Q5i2YfYAFZgpmYwWQEXfc8GBL/874Y0=;
+ b=fCRbJJ8ulzf93Rd3V1lgKNTxolqzn1B0UB2pIaGi20S6SinS6wCgzhUWHxWHYpByFCbND3Pz+4OLMyd8ZPwkTXkZ7/hPKZb3+mz/jpAwBK/vYL/OTgnga2EaVQP9AQ/Kvy0UPAhgqzbo3U8zKex9FtgCDSrb4pMicJh12nfWkV7yrdh3xc3s3T9OZlAxnCCLqPo/3YkO3XoqPgqWqpssP8DOCkBqNk5tNwkxPuBY6XUZiwYHZc367cUu7o/VFiurPUmgr9Ja6CZBzPAIsWcFNI9yiCSLpcgV4IiHrmbGgIkZMkOr9TphLAUbsAEtZfkR48R9k2ta+mNEYX2fxriPWg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+ by MW3PR11MB4652.namprd11.prod.outlook.com (2603:10b6:303:5a::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Thu, 9 Oct
+ 2025 05:36:53 +0000
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::fdc2:40ba:101d:40bf]) by CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::fdc2:40ba:101d:40bf%7]) with mapi id 15.20.9182.017; Thu, 9 Oct 2025
+ 05:36:53 +0000
+Date: Thu, 9 Oct 2025 13:36:44 +0800
+From: Chao Gao <chao.gao@intel.com>
+To: Sean Christopherson <seanjc@google.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] KVM: VMX: Flush shadow VMCS on emergency reboot
+Message-ID: <aOdJ7JZWsfanX0JV@intel.com>
+References: <20250324140849.2099723-1-chao.gao@intel.com>
+ <Z_g-UQoZ8fQhVD_2@google.com>
+ <aObtM-7S0UfIRreU@google.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <aObtM-7S0UfIRreU@google.com>
+X-ClientProxiedBy: KU0P306CA0073.MYSP306.PROD.OUTLOOK.COM
+ (2603:1096:d10:2b::18) To CH3PR11MB8660.namprd11.prod.outlook.com
+ (2603:10b6:610:1ce::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251008073046.23231-1-clamor95@gmail.com> <20251008073046.23231-23-clamor95@gmail.com>
- <20251008-canopener-marsupial-a92355b656ef@spud> <20251008-broaden-antennae-02de66094ad3@spud>
-In-Reply-To: <20251008-broaden-antennae-02de66094ad3@spud>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Thu, 9 Oct 2025 08:35:22 +0300
-X-Gm-Features: AS18NWAoEWc39K5OD4GIBOR3Awt1LVDq6NQUxGEQwh6PoTXJKtyEajbgSJmBgBo
-Message-ID: <CAPVz0n1NYL+t-KC1FwHYXuQ0C483ay3g8zP4SmBKVC2rh=x4Bg@mail.gmail.com>
-Subject: Re: [PATCH v4 22/24] dt-bindings: display: tegra: document Tegra20
- and Tegra30 CSI
-To: Conor Dooley <conor@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Sowjanya Komatineni <skomatineni@nvidia.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Mikko Perttunen <mperttunen@nvidia.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
-	Dmitry Osipenko <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>, 
-	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, Aaron Kling <webgeek1234@gmail.com>, 
-	Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-staging@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|MW3PR11MB4652:EE_
+X-MS-Office365-Filtering-Correlation-Id: a5240ef8-c723-43e4-03aa-08de06f5da22
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Ys6CXz8N+QGnzUVHpvIVX+rGHtF2GxENg57mzSgpd2RkCGRGYcuM/Hfn55pH?=
+ =?us-ascii?Q?y2NN+gEwBCTkaR0OxvGb8h6/Xn2yPnyu/ziFeBmf0XrbQXuBJMqEcKUw2n17?=
+ =?us-ascii?Q?WynzdUFP/5msHmGk2aVE/WComSqRb1ouN3wB73xsliS7hEemAr+0iHCIhw6O?=
+ =?us-ascii?Q?VlpRBVecSXxR58XDC8DPH+6yQx54R9Ai08D5kSHff99VHqQrAMrrx/nLxZdc?=
+ =?us-ascii?Q?reLA0EW3aTegWOhiz26IzXA1oP0tOvDsiBtRpfBfiUzOcb7cOHgssxhDyjRX?=
+ =?us-ascii?Q?HM6FGOWhptx1Dyd7p8zr4fAFbfMtolBXqairgK3r9T7UDSUruNZ8KYAeNjiZ?=
+ =?us-ascii?Q?7QBHzNRqe66Amk41VCEpShxBfzd3LRkLNnPfxiBBnAXq7fRuqQqMv88Cp47y?=
+ =?us-ascii?Q?uOBr34x/YNW5b86Vn6KN+mlt1xhzVeFuDyJ7USLvveV5JcHa0O2BzDikNzu4?=
+ =?us-ascii?Q?j08mLnsY7jBjNxjPMahS8uZWZ9yNLAGqp953Xba1cMbFk3h32r3x5e1XEDNx?=
+ =?us-ascii?Q?wgaKf6z6V1Cl+j8wTgVgXAOuoWzsfzV/P8XUraP08YueYK1qD9o16xNCcj7m?=
+ =?us-ascii?Q?Z8Wl4jPB5gVDZJIkPb5huzbFTbCeyaFaOTCZ/QwcEQweZQd9lNXmNY8LxKWX?=
+ =?us-ascii?Q?BaZok80LZZvc61jbiM5DGy7ksaeFpYzgKaBu7GUV9LuqO5IWOjJ6nh4pyZ+x?=
+ =?us-ascii?Q?dfB9XYKFMivnBacfsFylbxGIXSDnLCWbuT6IXzKkrCVeuAbl9kWQ90Igi+jq?=
+ =?us-ascii?Q?8pteUlmnT9+YBf32TSRuKqLpRwbcbCh+hmZdKxvOMrJ1ZMyztX9THSUj0e5t?=
+ =?us-ascii?Q?5GHicLTjv38LXuwV9QficFK1MS99Oz5WPQGGH26Jv6+SyJEg8aG6BIadICIQ?=
+ =?us-ascii?Q?C6hpmvQ7E4FwWW1j7kF/nK1JnXnMcW37iKmF+xHwmXCyuDdARxbuo9HpMdU9?=
+ =?us-ascii?Q?V+hiO1jIxzQeZBNAsRaZV1Zc+8aYeWidZyOizNldmNfmfDQXMkS5/PR1v988?=
+ =?us-ascii?Q?jb2vbKDBXS6rLNV8UusHEl4wEkH9W0Sjj19W0xPy0qFhJAdlY0LMwgFoQVMg?=
+ =?us-ascii?Q?zsCpjSLBqaz2jC/WoRPqf5IGzvR4oAAExEALaf+acARYaeo6yM1+LzvWLx2L?=
+ =?us-ascii?Q?rcqwPqzn2oKNH2WG5VjKIsLExw/jKPtYyk9oL2jaMcF/MTeXgm+diHdyS1bw?=
+ =?us-ascii?Q?xv7owFd6uA2RWOb01BtLPi5lCLHRvRDVO21btUAe92eqUoOYWu+eZYfQNFYK?=
+ =?us-ascii?Q?0/D4RJl7lZkTgkT7T58Z3wpkhTzkcw8lSyN/ZUmtIb+zE5U7r8re/yKSskd0?=
+ =?us-ascii?Q?OTp0Y6Yuu8Y7pI6kA37Pq0/0vD+8e+szNPdMNd+9zh9Gws6yycIH2b0lz2c0?=
+ =?us-ascii?Q?7pwEuEjBBu4wyjEFFiZ/XwMCH33Aa8SHgk4gZ/y7tT0dHFxmBGZBSWsYRqqQ?=
+ =?us-ascii?Q?2tOUOBxmlHzpaTizFXZpPbWzKKUvAbey?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?iItIx1b6uCMy45rzxsjRuq5gDOIv8R5pn3dhl/L66Is+CszOp9mPXdI7n5VF?=
+ =?us-ascii?Q?xlJhXtTpbqdcg91slLtbVog6t/FJMzPiZx2Arsb41BegLSSwCWRL4B85+S6v?=
+ =?us-ascii?Q?DvM877h2z/+Pjk++vZqaf6V7NawlnEjCN11eEa531OBgCuHKcndCMi46tL/k?=
+ =?us-ascii?Q?aYiw3rkgpeKraZnK63U0YmOU6Q1oxEzBkGFJEM7g9GMLCNGQAIvSx3ksSX7o?=
+ =?us-ascii?Q?dTfiUrBNrpaJVtib6su0oQCBFIS1e1N+J3nDCSC/EsFJrZZBIBSN0mP49uet?=
+ =?us-ascii?Q?X4APvFEdFww+wGIf0AAF22NztzMHI36WAlYGzVsm6eC/vY6t0wrD1GKs8N0T?=
+ =?us-ascii?Q?tRjhCdW9cgMSMQ+wZqx8Hfl6oZXgei8OMjYEBSr69T06zrL+9n0y2WE7nG0p?=
+ =?us-ascii?Q?wD71M8p1/xx5ah0g/TPcjmMrZlwySUpvk0g3cSpcHiCF910zlabCPYltpPmr?=
+ =?us-ascii?Q?cVEti6K7Z+FH0Y6YBCmktfrST0//VRhSRdjv1cYCU8t4+Makanm7ChLlSnTE?=
+ =?us-ascii?Q?Cs2Xna+Y60VbgkybRrHg50rRxJcRC/CuHz6v3XBvQcgSF4xgvsW273MKyuyK?=
+ =?us-ascii?Q?8/WIMiJD2+qkDiLC+Bl9KddQd0F5tAILIAFRyPzKhsxLtZtXKEa/ZWtHyMS8?=
+ =?us-ascii?Q?8kvSQ/bPjrWsuQNJPymazqSsD/Drh1j0yCAGG+7RbEiB++SQvpWMLR2LKZ5o?=
+ =?us-ascii?Q?+feijrOEp82j6EG8IjUmaI8UEyJtnnmu/N81RfqfYYkLye4Yzn763v77BIG/?=
+ =?us-ascii?Q?PaO8BvN1zA3TPtGkluNpopiH5IDiHS7IquIxJ4rXXaEjddwT6QJZ4wVgVGM8?=
+ =?us-ascii?Q?npMEGRPcCDdL27lRU4Nhgal6M3j1HgMXUl1ggxo/z7gyXT2DGFmYDdV3cBN7?=
+ =?us-ascii?Q?5VjYS/WBOL8QfW8FMHrxcwq5hS79IeQNg5C2alPFum93A7xaHOH4bNrt/mM9?=
+ =?us-ascii?Q?fcd9P/IfDGkl2q3/elKDkPEaRTrI5oyLjE/XNt1Sz0Nllvw5rJWUg/0LOSdE?=
+ =?us-ascii?Q?uRHzQe0jPgdYVv3i6u1h5iSCwj195QKcO95mDTb6sVDkMT5A82kBPqI/9CUg?=
+ =?us-ascii?Q?e1AqAf36BO+aYFLnbpeV99cAUEQ1dmdfVT87AGrBVGwpan3qA4JEgXM7hEYC?=
+ =?us-ascii?Q?AnO3PUysKlnFg3oefsSK57S3fVYGg6+Z859vqIHpFwx3aFiotE+yCAgCLLyN?=
+ =?us-ascii?Q?aKWAJjY4mWdfxsqICFqPiM/O8waVGEIm/lgFSlWw86viHQqlCojImrhvb8Hj?=
+ =?us-ascii?Q?y7TbC/lbuYECXC6Aegz42RIItFbyQTHQXNl0HjYYQ5Cy29l6ZBBWt+nmEskx?=
+ =?us-ascii?Q?vHeKxuAeVwXZn9XnS16ivxIYg3GleJB0bvlDnvQGSxhP7DajPRuYOMtdr/xF?=
+ =?us-ascii?Q?DCUx6GCE3+ocpTV7jYwrmjMyHlr7EmRgITIpcVtYnEk105CmBzFy9B8sUoQU?=
+ =?us-ascii?Q?2grbDMcw4g8hECTs1YH7mPrx5+wBI3yPWde15/wrOWkpS22ksP4/h1HXCpID?=
+ =?us-ascii?Q?qLWZ2xUK+RI3+OwTCAmkULf1hza05JC+xMM9FrXdE56MAnFRNvzR32Xlii4J?=
+ =?us-ascii?Q?wwa2WlRseWzGpLrORcO7LAPgkz1eomS4twtrvocY?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: a5240ef8-c723-43e4-03aa-08de06f5da22
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2025 05:36:53.2123
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vK0Aj7GfREgXlm9sTGPEXQ/w0q6mZ/P9xIc1GaqI12+wVcQv4JWh6f1pMstmAXCOqCRcdKTWSW9a6LxnwQa+0w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR11MB4652
+X-OriginatorOrg: intel.com
 
-=D1=87=D1=82, 9 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 00:22=
- Conor Dooley <conor@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+On Wed, Oct 08, 2025 at 04:01:07PM -0700, Sean Christopherson wrote:
+>Trimmed Cc: to lists, as this is basically off-topic, but I thought you might
+>be amused :-)
 >
-> On Wed, Oct 08, 2025 at 10:21:06PM +0100, Conor Dooley wrote:
-> > On Wed, Oct 08, 2025 at 10:30:44AM +0300, Svyatoslav Ryhel wrote:
-> > > Document CSI HW block found in Tegra20 and Tegra30 SoC.
-> > >
-> > > The #nvidia,mipi-calibrate-cells is not an introduction of property, =
-such
-> > > property already exists in nvidia,tegra114-mipi.yaml and is used in
-> > > multiple device trees. In case of Tegra30 and Tegra20 CSI block combi=
-nes
-> > > mipi calibration function and CSI function, in Tegra114+ mipi calibra=
-tion
-> > > got a dedicated hardware block which is already supported. This prope=
-rty
-> > > here is used to align with mipi-calibration logic used by Tegra114+.
-> > >
-> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > ---
-> > >  .../display/tegra/nvidia,tegra20-csi.yaml     | 135 ++++++++++++++++=
-++
-> > >  1 file changed, 135 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/display/tegra/n=
-vidia,tegra20-csi.yaml
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,t=
-egra20-csi.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,te=
-gra20-csi.yaml
-> > > new file mode 100644
-> > > index 000000000000..817b3097846b
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-=
-csi.yaml
-> > > @@ -0,0 +1,135 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-csi.=
-yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: NVIDIA Tegra20 CSI controller
-> > > +
-> > > +maintainers:
-> > > +  - Svyatoslav Ryhel <clamor95@gmail.com>
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    enum:
-> > > +      - nvidia,tegra20-csi
-> > > +      - nvidia,tegra30-csi
-> > > +
-> > > +  reg:
-> > > +    maxItems: 1
-> > > +
-> > > +  clocks: true
-> > > +  clock-names: true
-> > > +
-> > > +  avdd-dsi-csi-supply:
-> > > +    description: DSI/CSI power supply. Must supply 1.2 V.
-> > > +
-> > > +  power-domains:
-> > > +    maxItems: 1
-> > > +
-> > > +  "#nvidia,mipi-calibrate-cells":
-> > > +    description:
-> > > +      The number of cells in a MIPI calibration specifier. Should be=
- 1.
-> > > +      The single cell specifies an id of the pad that need to be
-> > > +      calibrated for a given device. Valid pad ids for receiver woul=
-d be
-> > > +      0 for CSI-A; 1 for CSI-B; 2 for DSI-A and 3 for DSI-B.
-> > > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > > +    const: 1
-> > > +
-> > > +  "#address-cells":
-> > > +    const: 1
-> > > +
-> > > +  "#size-cells":
-> > > +    const: 0
-> > > +
-> > > +patternProperties:
-> > > +  "^channel@[0-1]$":
-> > > +    type: object
-> > > +    description: channel 0 represents CSI-A and 1 represents CSI-B
-> > > +    additionalProperties: false
-> > > +
-> > > +    properties:
-> > > +      reg:
-> > > +        maximum: 1
-> > > +
-> > > +      nvidia,mipi-calibrate:
-> > > +        description: Should contain a phandle and a specifier specif=
-ying
-> > > +          which pad is used by this CSI channel and needs to be cali=
-brated.
-> > > +        $ref: /schemas/types.yaml#/definitions/phandle-array
-> > > +
-> > > +      "#address-cells":
-> > > +        const: 1
-> > > +
-> > > +      "#size-cells":
-> > > +        const: 0
-> > > +
-> > > +      port@0:
-> > > +        $ref: /schemas/graph.yaml#/$defs/port-base
-> > > +        unevaluatedProperties: false
-> > > +        description: port receiving the video stream from the sensor
-> > > +
-> > > +        properties:
-> > > +          endpoint:
-> > > +            $ref: /schemas/media/video-interfaces.yaml#
-> > > +            unevaluatedProperties: false
-> > > +
-> > > +            required:
-> > > +              - data-lanes
-> > > +
-> > > +      port@1:
-> > > +        $ref: /schemas/graph.yaml#/properties/port
-> > > +        description: port sending the video stream to the VI
-> > > +
-> > > +    required:
-> > > +      - reg
-> > > +      - "#address-cells"
-> > > +      - "#size-cells"
-> > > +      - port@0
-> > > +      - port@1
-> > > +
-> > > +allOf:
-> > > +  - if:
-> > > +      properties:
-> > > +        compatible:
-> > > +          contains:
-> > > +            enum:
-> > > +              - nvidia,tegra20-csi
-> > > +    then:
-> > > +      properties:
-> > > +        clocks:
-> > > +          items:
-> > > +            - description: module clock
-> > > +
-> > > +        clock-names: false
-> > > +
-> > > +  - if:
-> > > +      properties:
-> > > +        compatible:
-> > > +          contains:
-> > > +            enum:
-> > > +              - nvidia,tegra30-csi
-> > > +    then:
-> > > +      properties:
-> > > +        clocks:
-> > > +          items:
-> > > +            - description: module clock
-> > > +            - description: PAD A clock
-> > > +            - description: PAD B clock
-> > > +
-> > > +        clock-names:
-> > > +          items:
-> > > +            - const: csi
-> > > +            - const: csia-pad
-> > > +            - const: csib-pad
-> >
-> > This clocks section seems like it could get simpler. Since the clock
-> > descriptions are shared, and tegra20 has no clock-names, you could just
-> > move the detail of the properties out to where you have the ": true"
-> > stuff (we prefer that properties are defined outside of if/then/else
-> > blocks) and just restrict them here. For tegra20 that'd be
-> >
-> > if:
-> >   properties:
-> >     compatible:
-> >       contains:
-> >         enum:
-> >           - nvidia,tegra20-csi
-> > then:
-> >   properties:
-> >     clocks:
-> >       maxItems: 1
-> >
-> >     clock-names: false
-> >
-> > (although it could easily be maxItems: 1 ?)
-> > and for tegra30
-> >
-> > if:
-> >   properties:
-> >     compatible:
-> >       contains:
-> >         enum:
-> >           - nvidia,tegra30-csi
-> > then:
-> >   properties:
-> >     clocks:
-> >       minItems: 3
-> >
-> >     clock-names:
-> >       maxItems: 3
-> >
-> > Of course you'd then have to add minItems: 1 and maxItems: 3 to the
-> > extracted definitions.
+>On Thu, Apr 10, 2025, Sean Christopherson wrote:
+>> On Mon, Mar 24, 2025, Chao Gao wrote:
+>> > Ensure the shadow VMCS cache is evicted during an emergency reboot to
+>> > prevent potential memory corruption if the cache is evicted after reboot.
+>> 
+>> I don't suppose Intel would want to go on record and state what CPUs would actually
+>> be affected by this bug.  My understanding is that Intel has never shipped a CPU
+>> that caches shadow VMCS state.
 
-What do you mean by your last statement? Add minItems: 1 and maxItems:
-3 like this?
+Yes. Shadow VMCSs are never cached. But this is an implementation detail.
+Per SDM, software is required to VMCLEAR a shadow VMCS that was made active
+to be forward compatible.
 
-This does to common properties
-  clocks:
-    minItems: 1
-    maxItems: 3
-    items:
-      - description: module clock
-      - description: PAD A clock
-      - description: PAD B clock
+>> 
+>> On a very related topic, doesn't SPR+ now flush the VMCS caches on VMXOFF?  If
+>> that's going to be the architectural behavior going forward, will that behavior
+>> be enumerated to software?  Regardless of whether there's software enumeration,
+>> I would like to have the emergency disable path depend on that behavior.  In part
+>> to gain confidence that SEAM VMCSes won't screw over kdump, but also in light of
+>> this bug.
 
-  clock-names:
-    minItems: 1
-    maxItems: 3
-    items:
-      - const: csi
-      - const: csia-pad
-      - const: csib-pad
-
-This goes to conditional
- if:
-   properties:
-     compatible:
-       contains:
-         enum:
-           - nvidia,tegra20-csi
- then:
-   properties:
-     clocks:
-       maxItems: 1
-
-     clock-names: false
-
- if:
-   properties:
-     compatible:
-       contains:
-         enum:
-           - nvidia,tegra30-csi
- then:
-   properties:
-     clocks:
-       minItems: 3
-
-     clock-names:
-       maxItems: 3
+Yes. The current implementation is that CPUs with SEAM support flush _all_
+VMCS caches on VMXOFF. But the architectural behavior is trending toward
+CPUs that enumerate IA32_VMX_PROCBASED_CTRLS3[5] as 1 flushing _SEAM_ VMCS
+caches on VMXOFF.
 
 >
-> Oh, also: if you want clock-names to ever actually be usable, you have
-> to require it. Otherwise a driver must be written to handle it not being
-> there.
+>Apparently I completely purged it from my memory, but while poking through an
+>internal branch related to moving VMXON out of KVM, I came across this:
 >
-
-Yes, driver takes this into account and handles it.
-
-> > > +additionalProperties: false
-> > > +
-> > > +required:
-> > > +  - compatible
-> > > +  - reg
-> > > +  - clocks
-> > > +  - power-domains
-> > > +  - "#address-cells"
-> > > +  - "#size-cells"
-> > > +
-> > > +# see nvidia,tegra20-vi.yaml for an example
-> > > --
-> > > 2.48.1
-> > >
+>--
+>Author:     Sean Christopherson <seanjc@google.com>
+>AuthorDate: Wed Jan 17 16:19:28 2024 -0800
+>Commit:     Sean Christopherson <seanjc@google.com>
+>CommitDate: Fri Jan 26 13:16:31 2024 -0800
 >
+>    KVM: VMX: VMCLEAR loaded shadow VMCSes on kexec()
+>    
+>    Add a helper to VMCLEAR _all_ loaded VMCSes in a loaded_vmcs pair, and use
+>    it when doing VMCLEAR before kexec() after a crash to fix a (likely benign)
+>    bug where KVM neglects to VMCLEAR loaded shadow VMCSes.  The bug is likely
+>    benign as existing Intel CPUs don't insert shadow VMCSes into the VMCS
+>    cache, i.e. shadow VMCSes can't be evicted since they're never cached, and
+>    thus won't clobber memory in the new kernel.
 >
+>--
+>
+>At least my reaction was more or less the same both times?
+>
+>> If all past CPUs never cache shadow VMCS state, and all future CPUs flush the
+>> caches on VMXOFF, then this is a glorified NOP, and thus probably shouldn't be
+>> tagged for stable.
+>> 
+>> > This issue was identified through code inspection, as __loaded_vmcs_clear()
+>> > flushes both the normal VMCS and the shadow VMCS.
+>> > 
+>> > Avoid checking the "launched" state during an emergency reboot, unlike the
+>> > behavior in __loaded_vmcs_clear(). This is important because reboot NMIs
+>> > can interfere with operations like copy_shadow_to_vmcs12(), where shadow
+>> > VMCSes are loaded directly using VMPTRLD. In such cases, if NMIs occur
+>> > right after the VMCS load, the shadow VMCSes will be active but the
+>> > "launched" state may not be set.
+>> > 
+>> > Signed-off-by: Chao Gao <chao.gao@intel.com>
+>> > ---
+>> >  arch/x86/kvm/vmx/vmx.c | 5 ++++-
+>> >  1 file changed, 4 insertions(+), 1 deletion(-)
+>> > 
+>> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+>> > index b70ed72c1783..dccd1c9939b8 100644
+>> > --- a/arch/x86/kvm/vmx/vmx.c
+>> > +++ b/arch/x86/kvm/vmx/vmx.c
+>> > @@ -769,8 +769,11 @@ void vmx_emergency_disable_virtualization_cpu(void)
+>> >  		return;
+>> >  
+>> >  	list_for_each_entry(v, &per_cpu(loaded_vmcss_on_cpu, cpu),
+>> > -			    loaded_vmcss_on_cpu_link)
+>> > +			    loaded_vmcss_on_cpu_link) {
+>> >  		vmcs_clear(v->vmcs);
+>> > +		if (v->shadow_vmcs)
+>> > +			vmcs_clear(v->shadow_vmcs);
+>> > +	}
+>> >  
+>> >  	kvm_cpu_vmxoff();
+>> >  }
+>> > -- 
+>> > 2.46.1
+>> > 
 
