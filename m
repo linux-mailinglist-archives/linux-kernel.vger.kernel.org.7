@@ -1,155 +1,281 @@
-Return-Path: <linux-kernel+bounces-846328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAA66BC7959
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 08:52:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42C19BC7980
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 08:54:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A1864349618
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 06:52:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27B1419E5746
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 06:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00352D061D;
-	Thu,  9 Oct 2025 06:52:45 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C664C2D0267;
+	Thu,  9 Oct 2025 06:54:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RRl6DxCo"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB6320B22;
-	Thu,  9 Oct 2025 06:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B8520B22
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 06:54:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759992765; cv=none; b=hfjcVFNVXhMSc/MhOi0oDgJimK35Qj2X2cpH8qOqimnurwSPFdYAQQthtx99LxAZH2+0TnEFXG5RfIGTkwJzvGe896Bts71Rj3CS0yk9vmFQdAFqcwU0n0oMs10WaaonuqDGC1DlU4kSalR1f05j0mBTRIEyvkjpSVtt1KyeHjU=
+	t=1759992875; cv=none; b=SzwsqQyNam+2RG/08En+XieaFTtpM8XMkS9n/G8Uvmqo809wb0QbX8Nknsj7vceCwKWnax0u+ObJHulUCOSNPQYMGZPpQWjJg6dpkNAzo2NYjEPex6ctVUT51vjJfMTpT/igDWPD2ZD7PRtNuHuUBWMsbCzAxbzlRsru398tbpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759992765; c=relaxed/simple;
-	bh=UVEbtt6q2MF+xJdEdmcooUFqNwXEarbr+BPKjODbBJk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o/PUnJHoHqrPHPXEkEE/IvkOSH9VmGQLVeEbu8VDs+Zf6kbNKCf4VLAJFbMU1PY1Z3DmumPgWABGPKdJPkEi2JTyfypwNv2kApdUbik70UpQjcUBwhX0ytPSJfbdV7vpicVSmxlQvmPssNVEN58VmS46VVO6td/HaS7TOCjrzKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cj0sy12sYzYQtwc;
-	Thu,  9 Oct 2025 14:52:06 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 62AFD1A0DC6;
-	Thu,  9 Oct 2025 14:52:38 +0800 (CST)
-Received: from [10.174.178.152] (unknown [10.174.178.152])
-	by APP4 (Coremail) with SMTP id gCh0CgAXKWG0W+do14A2CQ--.14766S3;
-	Thu, 09 Oct 2025 14:52:38 +0800 (CST)
-Message-ID: <1daf2836-f497-4de7-ac8c-32d4d5e68f83@huaweicloud.com>
-Date: Thu, 9 Oct 2025 14:52:36 +0800
+	s=arc-20240116; t=1759992875; c=relaxed/simple;
+	bh=rzrfV6OtS/lt+i2VgHtH+N700eokZ91K/bMU5408Dww=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d3yUVEdGAIX7aDkaMPRQfKUqQ83GEO+kI7jSrEbl9yjVY8oER+n+kRRSWenjcfcFwWb9zOHHgTl87KvXw3bSG0j0mjrz6ZOYriqSxz69QH0gks7XU05YChmNmAHKv67yiznwdWkl4iJUluldlJQgQeeqeCQ1uhalVKn4znluTXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RRl6DxCo; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759992871;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bBVfRHmwTxTfWpJViC0vb0/pvUUmJPwzJ3swAkb7++M=;
+	b=RRl6DxCoZJAarMkRUxStkpMOjpHZiTTr9abiltevQ5obtowsLDGp+zsh3BqT4fUXuT7bVU
+	p0PKu+byhWZ4ghOxK9chZ/uE1N3j2yfQhb0VJohWlz14dO4jkiTjCHfKwDt0UEgADqne/z
+	iqRXAjckMdK5KfjJSHT9Fnh9BdpiqCg=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-375-EdUEy45-OG-OQASYPv0dzQ-1; Thu, 09 Oct 2025 02:54:30 -0400
+X-MC-Unique: EdUEy45-OG-OQASYPv0dzQ-1
+X-Mimecast-MFC-AGG-ID: EdUEy45-OG-OQASYPv0dzQ_1759992869
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-46eee58d405so2538905e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 23:54:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759992869; x=1760597669;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bBVfRHmwTxTfWpJViC0vb0/pvUUmJPwzJ3swAkb7++M=;
+        b=QYVEV5BI3RnJzcYBpcrbiqaihsFxwjkOgnXjzX5EAwoGLY8JIqKOiNSu1GO4GX2jkn
+         2n7GNHxyFO2j7wGAdHD8/a/eHbwdUkBmeCfD4sOaz6tJjHClDRqIpHkRjCYKtToscgD9
+         hL+DkH8FzLbdR7ntQxamQ9Oj6gpCWM+lJ87RLKhGwfGi6tMVEfCVjELw/6aKfEvWNH5w
+         n4e5RzGfKJ8P/IA8ScsvGHma0XSVVummwPDCU4YxYav2x1EJbjINe3a5o56sVMhc3WiK
+         HfIa3o8MrF3pgiS9SC2gtrOM9j0WH6Hc+AQ+zCOoB7gTceNxHn+JwjAJG28hKQierEPl
+         AKZA==
+X-Forwarded-Encrypted: i=1; AJvYcCVG2DHXfF5dwNXYdICtG3G6cS4O78YOIsydHRqe6T44aXHbf9rQIFIxSAA6rIUAUGbVQGLpCBphr27Jsmg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWSl/Ir+UErOWwTcuq8bQfqYPcxGvzYsi8+uwcksU7I4Hue5Uo
+	HGw+E8OxQ+TKTzM9g39P83aFmA9LXy9Mi+eaVydpK8EbKFaBEoCySIHVLnX7avUaxgpCLsN02g0
+	xtWeKNssKOgVd56LwUHkokEHdl3Orq591ejYFpzVKJ1+0EcNapjFnPvjy0JvIzN+Mgg==
+X-Gm-Gg: ASbGncsZt02FyiJ09+IlVxSs2PFx1kuodYR7vIRzn5FGApWVdRofYa3FCamPIqKxn5J
+	1TzR3K5Ts6YvZPJ7rqPA5U0FKTPCIFv1nd7qrAs3YCv4QHdEIUITN4XGhSB5C8usL2SszZ4XAZ1
+	0LxACS09KMVpazQNFNs17tyzvLWDNpFUuzelydv12JYYxe0x0wyhU24wDYoCW42xn9pnC7lCtY2
+	+3CpwF/BmL1MWbijx6fShqhXR+0M+qfiYxe2rrk+ZwVtu+N2Bu56x3fzvhfoRDHGNPs6NfDIbXQ
+	2ZVPMNrHo6BPatvrsIHEeb7/0tWrvz5uf/DRT/NineTEu0rnq0Su++mqqiSMx5C1HFIhKJ6KqZE
+	gXw==
+X-Received: by 2002:a05:600c:138f:b0:46e:19f8:88d8 with SMTP id 5b1f17b1804b1-46fa9b17d03mr38487175e9.34.1759992869326;
+        Wed, 08 Oct 2025 23:54:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGOD7+tXpigpCMwEkhGw+TORwzG1YRaCZxKpb8lRMKUCUP1JgzKC6GF4ksxSDMVA922AQCZ0g==
+X-Received: by 2002:a05:600c:138f:b0:46e:19f8:88d8 with SMTP id 5b1f17b1804b1-46fa9b17d03mr38486975e9.34.1759992868798;
+        Wed, 08 Oct 2025 23:54:28 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([176.206.13.103])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fa9c07a83sm76092635e9.6.2025.10.08.23.54.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 23:54:28 -0700 (PDT)
+Date: Thu, 9 Oct 2025 08:54:25 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Yuri Andriaccio <yurand2000@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Luca Abeni <luca.abeni@santannapisa.it>,
+	Yuri Andriaccio <yuri.andriaccio@santannapisa.it>
+Subject: Re: [RFC PATCH v3 12/24] sched/rt: Update task event callbacks for
+ HCBS scheduling
+Message-ID: <aOdcIbsqwhJTdGjL@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250929092221.10947-1-yurand2000@gmail.com>
+ <20250929092221.10947-13-yurand2000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/13] ext4: introduce seq counter for the extent
- status entry
-To: Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com,
- yangerkun@huawei.com
-References: <20250925092610.1936929-1-yi.zhang@huaweicloud.com>
- <20250925092610.1936929-4-yi.zhang@huaweicloud.com>
- <ympvfypw3222g2k4xzd5pba4zhkz5jihw4td67iixvrqhuu43y@wse63ntv4s6u>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <ympvfypw3222g2k4xzd5pba4zhkz5jihw4td67iixvrqhuu43y@wse63ntv4s6u>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgAXKWG0W+do14A2CQ--.14766S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxCr4rWF43WFyftrWfur18Grg_yoW5AF4fpF
-	ZIkws5Jrn5Xw1IkF97J3W8XryrWw4rJr47JF43Kw12yan8GFy09F17KayjvFyxWrs7tw1Y
-	vF4Fvr9ru3W7AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
-	7KsUUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250929092221.10947-13-yurand2000@gmail.com>
 
-On 10/8/2025 7:44 PM, Jan Kara wrote:
-> On Thu 25-09-25 17:25:59, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> In the iomap_write_iter(), the iomap buffered write frame does not hold
->> any locks between querying the inode extent mapping info and performing
->> page cache writes. As a result, the extent mapping can be changed due to
->> concurrent I/O in flight. Similarly, in the iomap_writepage_map(), the
->> write-back process faces a similar problem: concurrent changes can
->> invalidate the extent mapping before the I/O is submitted.
->>
->> Therefore, both of these processes must recheck the mapping info after
->> acquiring the folio lock. To address this, similar to XFS, we propose
->> introducing an extent sequence number to serve as a validity cookie for
->> the extent. After commit 24b7a2331fcd ("ext4: clairfy the rules for
->> modifying extents"), we can ensure the extent information should always
->> be processed through the extent status tree, and the extent status tree
->> is always uptodate under i_rwsem or invalidate_lock or folio lock, so
->> it's safe to introduce this sequence number. The sequence number will be
->> increased whenever the extent status tree changes, preparing for the
->> buffered write iomap conversion.
->>
->> Besides, this mechanism is also applicable for the moving extents case.
->> In move_extent_per_page(), it also needs to reacquire data_sem and check
->> the mapping info again under the folio lock.
->>
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> 
-> One idea for future optimization as I'm reading the series:
+Hello,
 
-Hi, Jan!
+On 29/09/25 11:22, Yuri Andriaccio wrote:
+> Update wakeup_preempt_rt, switched_{from/to}_rt and prio_changed_rt with
+> rt-cgroup's specific preemption rules.
+> Add checks whether a rt-task can be attached or not to a rt-cgroup.
+> Update task_is_throttled_rt for SCHED_CORE.
 
-Thank you very much for reviewing this series!
+A little dry. :) This is telling the what, can you please add also the
+why and how?
 
+> Co-developed-by: Alessio Balsini <a.balsini@sssup.it>
+> Signed-off-by: Alessio Balsini <a.balsini@sssup.it>
+> Co-developed-by: Andrea Parri <parri.andrea@gmail.com>
+> Signed-off-by: Andrea Parri <parri.andrea@gmail.com>
+> Co-developed-by: luca abeni <luca.abeni@santannapisa.it>
+> Signed-off-by: luca abeni <luca.abeni@santannapisa.it>
+> Signed-off-by: Yuri Andriaccio <yurand2000@gmail.com>
+> ---
+>  kernel/sched/core.c     |  2 +-
+>  kernel/sched/rt.c       | 88 ++++++++++++++++++++++++++++++++++++++---
+>  kernel/sched/syscalls.c | 13 ++++++
+>  3 files changed, 96 insertions(+), 7 deletions(-)
 > 
->> @@ -955,6 +961,7 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
->>  		}
->>  		pending = err3;
->>  	}
->> +	ext4_es_inc_seq(inode);
->>  error:
->>  	write_unlock(&EXT4_I(inode)->i_es_lock);
->>  	/*
-> 
-> ext4_es_insert_extent() doesn't always need to increment the sequence
-> counter. It is used in two situations:
-> 
-> 1) When we found the extent in the on-disk extent tree and want to cache it
-> in memory. No increment needed is in this case.
-> 
-> 2) When we allocated new blocks or changed their status. Increment needed
-> in this case.
-> 
-> Case 1) can be actually pretty frequent on large files and we would be
-> unnecessarily invalidating mapping information for operations happening in
-> other parts of the file although no allocation information changes are
-> actually happening.
-> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index e5b4facee24..2cfbe3b7b17 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -9346,7 +9346,7 @@ static int cpu_cgroup_can_attach(struct cgroup_taskset *tset)
+>  		goto scx_check;
+>  
+>  	cgroup_taskset_for_each(task, css, tset) {
+> -		if (!sched_rt_can_attach(css_tg(css), task))
+> +		if (rt_task(task) && !sched_rt_can_attach(css_tg(css), task))
+>  			return -EINVAL;
+>  	}
+>  scx_check:
+> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+> index d9442f64c6b..ce114823fe7 100644
+> --- a/kernel/sched/rt.c
+> +++ b/kernel/sched/rt.c
+> @@ -946,6 +946,50 @@ static void wakeup_preempt_rt(struct rq *rq, struct task_struct *p, int flags)
+>  {
+>  	struct task_struct *donor = rq->donor;
+>  
+> +	if (!rt_group_sched_enabled())
 
-Indeed, the sequence count increment in Case 1 can be omitted because it
-does not change any real extent. This increment can cause unnecessary
-invalidation, potentially incurring additional overhead in some concurrency
-scenarios.
+Should we actually be using rt_group_sched_enabled() (instead of
+ifdeffery) everywhere to check if group scheduling is enabled and
+differentiate behavior?
 
-Distinguishing between these two scenarios does not seem complicated. Since
-the iomap conversion has not yet been completed, currently only the
-defragmentation use this mechanism, I can add a TODO comment here now and
-then initiate a new series to optimize it.
+> +		goto no_group_sched;
+> +
+> +	/*
+> +	 * Preemption checks are different if the waking task and the current
+> +	 * task are running on the global runqueue or in a cgroup.
+> +	 * The following rules apply:
+> +	 *   - dl-tasks (and equally dl_servers) always preempt FIFO/RR tasks.
+
+We already touched upon this and maybe we can leave it for later, but
+the fact that dl_servers always preempt FIFO/RR is going to be a change
+of behavior wrt legacy RT group scheduling. Legacy users might have
+expectations that setting an high static priority means those tasks will
+always be scheduled first and this will break that. Maybe we want to
+convince them to change their assumptions, but we need to at least
+cleary document the new behavior (and why it is right/better - if it is
+indeed :). Not sure if we can also find a way to be "back-compatible"
+and if we want to do that.
+
+> +	 *     - if curr is inside a cgroup (i.e. run by a dl_server) and
+> +	 *       waking is not, do nothing.
+> +	 *     - if waking is inside a cgroup but not curr, always reschedule.
+> +	 *   - if they are both on the global runqueue, run the standard code.
+> +	 *   - if they are both in the same cgroup, check for tasks priorities.
+> +	 *   - if they are both in a cgroup, but not the same one, check whether
+> +	 *     the woken task's dl_server preempts the current's dl_server.
+> +	 */
+> +	if (is_dl_group(rt_rq_of_se(&p->rt)) &&
+> +	    is_dl_group(rt_rq_of_se(&rq->curr->rt))) {
+> +		struct sched_dl_entity *woken_dl_se, *curr_dl_se;
+> +
+> +		woken_dl_se = dl_group_of(rt_rq_of_se(&p->rt));
+> +		curr_dl_se = dl_group_of(rt_rq_of_se(&rq->curr->rt));
+> +
+> +		if (rt_rq_of_se(&p->rt)->tg == rt_rq_of_se(&rq->curr->rt)->tg) {
+
+What about checking if woken_dl_se and curr_dl_se are the same dl_se?
+
+> +			if (p->prio < rq->curr->prio)
+> +				resched_curr(rq);
+> +
+> +			return;
+> +		}
+> +
+> +		if (dl_entity_preempt(woken_dl_se, curr_dl_se))
+> +			resched_curr(rq);
+> +
+> +		return;
+> +
+> +	} else if (is_dl_group(rt_rq_of_se(&p->rt))) {
+> +		resched_curr(rq);
+> +		return;
+> +
+> +	} else if (is_dl_group(rt_rq_of_se(&rq->curr->rt))) {
+> +		return;
+> +	}
+> +
+> +no_group_sched:
+>  	if (p->prio < donor->prio) {
+>  		resched_curr(rq);
+>  		return;
+
+...
+
+> @@ -1750,8 +1797,17 @@ static void switched_to_rt(struct rq *rq, struct task_struct *p)
+>  	 * then see if we can move to another run queue.
+>  	 */
+>  	if (task_on_rq_queued(p)) {
+> +
+> +#ifndef CONFIG_RT_GROUP_SCHED
+>  		if (p->nr_cpus_allowed > 1 && rq->rt.overloaded)
+>  			rt_queue_push_tasks(rt_rq_of_se(&p->rt));
+> +#else
+> +		if (rt_rq_of_se(&p->rt)->overloaded) {
+
+Is this empty because intra-group migration is coming with some future
+change? Even if that's the case, I believe this wants a comment
+explaining why this branch is empty.
+
+> +		} else {
+> +			if (p->prio < rq->curr->prio)
+> +				resched_curr(rq);
+> +		}
+> +#endif
+>  		if (p->prio < rq->donor->prio && cpu_online(cpu_of(rq)))
+>  			resched_curr(rq);
+>  	}
+
+...
+
+> @@ -1876,7 +1943,16 @@ static unsigned int get_rr_interval_rt(struct rq *rq, struct task_struct *task)
+>  #ifdef CONFIG_SCHED_CORE
+>  static int task_is_throttled_rt(struct task_struct *p, int cpu)
+>  {
+> +#ifdef CONFIG_RT_GROUP_SCHED
+> +	struct rt_rq *rt_rq;
+> +
+> +	rt_rq = task_group(p)->rt_rq[cpu];
+> +	WARN_ON(!rt_group_sched_enabled() && rt_rq->tg != &root_task_group);
+> +
+> +	return dl_group_of(rt_rq)->dl_throttled;
+> +#else
+>  	return 0;
+> +#endif
+>  }
+>  #endif /* CONFIG_SCHED_CORE */
+>  
+> @@ -2131,7 +2207,7 @@ static int sched_rt_global_constraints(void)
+>  int sched_rt_can_attach(struct task_group *tg, struct task_struct *tsk)
+
+tsk argument is not going to be used anymore with this, please remove
+it. Also maybe rename to something closer to what the function actually
+checks for, e.g. [sched_]rt_group_has_runtime.
+
+>  {
+>  	/* Don't accept real-time tasks when there is no way for them to run */
+> -	if (rt_group_sched_enabled() && rt_task(tsk) && tg->rt_bandwidth.rt_runtime == 0)
+> +	if (rt_group_sched_enabled() && tg->dl_bandwidth.dl_runtime == 0)
+>  		return 0;
 
 Thanks,
-Yi.
+Juri
 
 
