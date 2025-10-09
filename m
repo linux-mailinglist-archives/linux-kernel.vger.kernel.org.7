@@ -1,140 +1,98 @@
-Return-Path: <linux-kernel+bounces-846830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BF0BBC926F
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:59:41 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C89D0BC9275
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B1173E6502
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:59:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 10B774F5210
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9232E6CA3;
-	Thu,  9 Oct 2025 12:59:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEDC72C159D;
+	Thu,  9 Oct 2025 13:00:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G94Rf8Tc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N3rEP6Fz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FEE072614;
-	Thu,  9 Oct 2025 12:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579D134BA3A
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:00:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760014774; cv=none; b=oL/N28Q4wBUnB2WO7OVAOq1CTgdX5NMSeyHChHXFxMnIvKeize9B5dUfM/2BW5chmLmP43Z82AZ4iCDlMvLbxVU2ssgmf4SIic1Xa7V6OFWzoNiXkXnw9p/kzosmHUFk6CF3uv7zcd0cEsscbNRWqnzA7ytiRzCJmYuNNBOLY4s=
+	t=1760014820; cv=none; b=n8jI07Q+Hzi416u6h5dlAV4io+AMNEn9FJxd9AFIl/kEx3WIAmKPVg7GDq7uceNw25kQKuUrVRkXzb+PcMMhuS5uJ5AmHiyyVTfzZJUBOe8Z7BAvWjFJVlcToz98fwg64V/2mWraA5FSNIbaPGT47x3IwSna44rGoeTMMg/ooUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760014774; c=relaxed/simple;
-	bh=e5JU+EEej+UYaag5RGaq8r1rnPbVxtcpHRPK8XuGuKI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=k/F3u0QPnhckUydB5ImFjbtCRQFL4zD7+WcskxFYoSieE3POCuz6QcekYytLBwwWcsqVbdeSiH6AvmUZ9lU7Sj/YpfjBePEkY2MpySTdEHnBr0gb7WmBl3jhZUEt+tG5dbuSuuLhIyb9wZPWUftDHFF8AGreIB9iJ5KTor/2RNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G94Rf8Tc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D83DC4CEE7;
-	Thu,  9 Oct 2025 12:59:29 +0000 (UTC)
+	s=arc-20240116; t=1760014820; c=relaxed/simple;
+	bh=RYuJ6aT2S9Kz/9NlGFnc04Gk8G7jOeT+9XyFBA7w33Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C9NpkYBaxCrDfx4CNUGejdSLCQLfAIX6hA5cYA4LtSlajz+9/41tjFI93lBv4cEk4TPA1cRSTjxTSxp4jP3gtO4jrfsGUt+9PjPO35K2jkJxKIrgAOCrFsnbz33vFvTbBilx1rSutwDYL1DY2NaQ9K8BalIkrDdMxwfYNs4SRKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N3rEP6Fz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46C2CC4CEE7;
+	Thu,  9 Oct 2025 13:00:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760014773;
-	bh=e5JU+EEej+UYaag5RGaq8r1rnPbVxtcpHRPK8XuGuKI=;
-	h=From:Date:Subject:To:Cc:From;
-	b=G94Rf8TcwEGdLlN3SnzjIRm3WYgCmLcChcN86VR4YcB/CEIvZlRouqiCiqUoh8U9U
-	 TWblrqVDA8ceVUwAomINkWWzvyf+ajyHNUexEZ51sxU/jRRx3crAC6Balab/25XgYG
-	 m3Uh+W4hyqBQY5pRHp6NrI7EE0zTIg4Gh7Ef4XCvK3oC33Vw2ktDIoNj/q6J7HpZXw
-	 3JhHTMK/4Rv648alUr1wLIigMbbKsRqMtGCMPXAR33zS1TzjVW3NTPL93egSO8Ch6z
-	 tC04gxaZaJj2YcY6SHhZ6KPW1TNSHZNEeQijZekRLiH3mpUJ7GpIWIj2D6pJDtRKVG
-	 qup9DRwoJkX6w==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Thu, 09 Oct 2025 14:59:18 +0200
-Subject: [PATCH] arm64: dts: qcom: x1e80100: Describe the full 'link'
- region of DP hosts
+	s=k20201202; t=1760014820;
+	bh=RYuJ6aT2S9Kz/9NlGFnc04Gk8G7jOeT+9XyFBA7w33Q=;
+	h=From:To:Cc:Subject:Date:From;
+	b=N3rEP6FzSfAMn4cxbh4kmoxpybZljYLmUfs6c4JGmsIEZx29Kfr3GVswnQHfSEwuz
+	 aR/wWZaw13+n0CdKmyiRNOijEtwfiS43YwE8ksL5ZW3sWPPZ0pN/RSHlNcWOM04DjN
+	 2f9us5pTYyP/fSo14xrZCzBu0C2sIwj3bvPsaW+fQGcSI7Bk1gkn7nYk5EPKo+QO60
+	 PlIvqwOlheO7EQNtWsCoYWpJpF6eFNwuCP7MkQLtnvfSxz9ctLS4msadLjdkV4TysV
+	 Z7imwc+jmOgw2lT3pRopjWUG6jrKY086FOPCbhjFDEZtTve8xircFe135Jf+7mj5Rg
+	 wOteb/OtmLo9w==
+From: Philipp Stanner <phasta@kernel.org>
+To: Matthew Brost <matthew.brost@intel.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Philipp Stanner <phasta@kernel.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/sched: Add warning for removing hack in drm_sched_fini()
+Date: Thu,  9 Oct 2025 14:59:29 +0200
+Message-ID: <20251009125928.250652-2-phasta@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251009-topic-hamoa_dp_reg-v1-1-4c70afa5f029@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAKWx52gC/x3MQQqAIBBA0avIrBNUkKirRIjpVLMoZYwIpLsnL
- d/i/woFmbDAKCow3lQonQ26ExB2f24oKTaDUcZqpQZ5pUxB7v5I3sXsGDdpow+9shaNXqCFmXG
- l559O8/t+GMMxcmQAAAA=
-X-Change-ID: 20251009-topic-hamoa_dp_reg-5dac7055e21b
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Sibi Sankar <sibi.sankar@oss.qualcomm.com>, 
- Rajendra Nayak <quic_rjendra@quicinc.com>, Abel Vesa <abel.vesa@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760014769; l=2184;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=BySGI5l3xmSxujvS1r//EHNI4zajTcwhIloUQLpdfQs=;
- b=nIISyw7OoP/4O5B/3DTMjarVufsW3iJyLcwGz7OWZb4NunAI06subptyt1ZX9xFv9xLRJkNwm
- 00Fq7AUFwHJBJQCOC77hcBAqBSPv/GQjH9ZzgPKiW4E2wxibuhhAJnh
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+Content-Transfer-Encoding: 8bit
 
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+The assembled developers agreed at the X.Org Developers Conference that
+the hack added for amdgpu in drm_sched_fini() shall be removed. It
+shouldn't be needed by amdgpu anymore.
 
-The regions are larger than currently described. Rather inconveniently,
-some control registers, including some related to USB4, are in that
-left-out chunk.
+As it's unclear whether all drivers really follow the life time rule of
+entities having to be torn down before their scheduler, it is reasonable
+to warn for a while before removing the hack.
 
-Extend it to cover the entire region, as per the hw specification.
+Add a warning in drm_sched_fini() that fires if an entity is still
+active.
 
-Fixes: 1940c25eaa63 ("arm64: dts: qcom: x1e80100: Add display nodes")
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Signed-off-by: Philipp Stanner <phasta@kernel.org>
 ---
- arch/arm64/boot/dts/qcom/x1e80100.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/scheduler/sched_main.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-index 51576d9c935d..ccd7f9975dac 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-@@ -5466,7 +5466,7 @@ mdss_dp0: displayport-controller@ae90000 {
- 				compatible = "qcom,x1e80100-dp";
- 				reg = <0 0x0ae90000 0 0x200>,
- 				      <0 0x0ae90200 0 0x200>,
--				      <0 0x0ae90400 0 0x600>,
-+				      <0 0x0ae90400 0 0xc00>,
- 				      <0 0x0ae91000 0 0x400>,
- 				      <0 0x0ae91400 0 0x400>;
- 
-@@ -5554,7 +5554,7 @@ mdss_dp1: displayport-controller@ae98000 {
- 				compatible = "qcom,x1e80100-dp";
- 				reg = <0 0x0ae98000 0 0x200>,
- 				      <0 0x0ae98200 0 0x200>,
--				      <0 0x0ae98400 0 0x600>,
-+				      <0 0x0ae98400 0 0xc00>,
- 				      <0 0x0ae99000 0 0x400>,
- 				      <0 0x0ae99400 0 0x400>;
- 
-@@ -5642,7 +5642,7 @@ mdss_dp2: displayport-controller@ae9a000 {
- 				compatible = "qcom,x1e80100-dp";
- 				reg = <0 0x0ae9a000 0 0x200>,
- 				      <0 0x0ae9a200 0 0x200>,
--				      <0 0x0ae9a400 0 0x600>,
-+				      <0 0x0ae9a400 0 0xc00>,
- 				      <0 0x0ae9b000 0 0x400>,
- 				      <0 0x0ae9b400 0 0x400>;
- 
-@@ -5729,7 +5729,7 @@ mdss_dp3: displayport-controller@aea0000 {
- 				compatible = "qcom,x1e80100-dp";
- 				reg = <0 0x0aea0000 0 0x200>,
- 				      <0 0x0aea0200 0 0x200>,
--				      <0 0x0aea0400 0 0x600>,
-+				      <0 0x0aea0400 0 0xc00>,
- 				      <0 0x0aea1000 0 0x400>,
- 				      <0 0x0aea1400 0 0x400>;
- 
-
----
-base-commit: 0b2f041c47acb45db82b4e847af6e17eb66cd32d
-change-id: 20251009-topic-hamoa_dp_reg-5dac7055e21b
-
-Best regards,
+diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
+index 46119aacb809..e69917120870 100644
+--- a/drivers/gpu/drm/scheduler/sched_main.c
++++ b/drivers/gpu/drm/scheduler/sched_main.c
+@@ -1441,6 +1441,8 @@ void drm_sched_fini(struct drm_gpu_scheduler *sched)
+ 			 * drivers that keep entities alive for longer than
+ 			 * the scheduler.
+ 			 */
++			if (!s_entity->stopped)
++				dev_warn(sched->dev, "Tearing down scheduler with active entities!\n");
+ 			s_entity->stopped = true;
+ 		spin_unlock(&rq->lock);
+ 		kfree(sched->sched_rq[i]);
 -- 
-Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+2.49.0
 
 
