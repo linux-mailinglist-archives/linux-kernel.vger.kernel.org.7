@@ -1,125 +1,146 @@
-Return-Path: <linux-kernel+bounces-846925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DFEEBC971B
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:10:33 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 288BDBC9727
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27E013AE6D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:10:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 18C234F2361
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD7F2EA16C;
-	Thu,  9 Oct 2025 14:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F572EA464;
+	Thu,  9 Oct 2025 14:10:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k27jODSf"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bf1IYdKX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03A72E6CC7
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 14:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32CD2E9759;
+	Thu,  9 Oct 2025 14:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760019027; cv=none; b=qSz87oRUvlE7IxKnpsb/dBrsI4nCiHJf0DlrBnoPzz1HtpdGa1ckOJ3NtyFqvzspjBRVeuKs+/hP8P5wtia4uQPfTrDLHwbjZdPR33gn1oL0b/t8kW+NG7F8uKze/KCPFVfLEnnAGKtM+2Gn99VoXilLPVbfKCBemGxQwOIBWL8=
+	t=1760019058; cv=none; b=OetK7DDJNw2Q24a6Pq0k4SXL/b41G0m4wthoqIDSk5Z0Za81OytJF8FteVo/bBJA7iK/h1tUSwzSelDI0d+oBkmbz6iT4gQwL7Ym8yV74IgGKub8FBM6593sozKpwraIo0mR5fX/d2AlsPizQLd9zW6AMlS+OWta9Pd6dCTIGRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760019027; c=relaxed/simple;
-	bh=P85/MLXEUe7QF+fN8WJZvrqUyH/HIWgCvcG6iXlJUpI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bg5/ZFdKEgjPaTj3SAT4HvzcDAqGoCdIxrS+Ys/lvQEHO6GxgK9PFFd/O17zTt5lasFFOe2Ay/fumiaWMYq2S6xZAMMVymVVm9TbEWIPTgRKrGk5dRoduWg9B+KBXrgGIVhTaHvdudI/LdRKu6jZ9tGhT9P94hl9FWc+X4/Me6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k27jODSf; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4db385e046dso9191521cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 07:10:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760019024; x=1760623824; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P85/MLXEUe7QF+fN8WJZvrqUyH/HIWgCvcG6iXlJUpI=;
-        b=k27jODSfR9j+LsK7N2YaUTKlTotHaXWuVLwJQaj3yHl52kEGC/FnkWlwEayXeXPYSU
-         73CqZMmAnU7cEp9T5MCUCx9v2jC6yzCOhQ0E3VWVXiZHi6NV+B5rimtj9ZPtovsrr2Uu
-         R//xfqLzuZIFTC/ZQVWD37bn7znte0YK4hMYwqF9RvuoZr6YPPNnFw2S7rmfr14RlC6i
-         sR//tCs8SeJLAiAEZjN89A1sBqsZR4TIbhL2SfEp99nLsz1/C1Bla0tttc+azAcC59TT
-         Jra63A238f5I4QhHSKnaZVoiMWSSWsO2hIEL+FHirqt0C9fuA1+MuyfJwl2MsqaeltG6
-         64kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760019024; x=1760623824;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P85/MLXEUe7QF+fN8WJZvrqUyH/HIWgCvcG6iXlJUpI=;
-        b=AOE7KS2ogiJmoK0M/31T89+ZQODmECvZpk04NDWipMpQCd/JuBRWPl1ckW31VxKlg3
-         Yl6rGiNmPFDsyNr0bzBg6jzZmDXAa+zPsbPdgMsuP9sO16MF8uB9lQ6ckBxHigj/xPGs
-         eTbrK99fmE9fmf85N+fNXqIVLTtBV9NHVQHOT3QOwyvYpuillIzPKJVsJmQZLME8T3Ya
-         BY+x4qmpGqRN3Z6Ds9qt0/SMKxJRa7zz6++8C/EcFY9fQqm9axyUYtWt4q1C2CvvEypR
-         GbjZsRn+BsvCtGU9+UQhM7Xbh0xs2q0mcaFuReyHQb+5rVOZepttY0DIUJZcp7usXTX3
-         w08g==
-X-Forwarded-Encrypted: i=1; AJvYcCWD+4/G2Km+KJOOhGR+Snllcz8nWE7juu0CMjoO30TRSXPuojBYj4442A50XevzJb2GdN98BF7rXSWGTkc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEfl5zl1F8+Bzy22FGpKsFlyKFuLp7km9tMoU9KpJaK3tJ1Uac
-	YLEn+XUPYWw4rXTBW81Bkx10CIxz9ScaA8UvmVMG55YSNdr+7xVAkM11WS5Owwu9+9kaaaCT+hU
-	LMrvVx4pHal8dd6KsvcLxRe3QKWzqOHc=
-X-Gm-Gg: ASbGnctHtU/L/Y4z0nf25Q3dCo+msZORohcawpt1AxgAb7o8rANEELGM7cJDce6orbF
-	9D+R477R+wMtwcOC/B98W7ANKr3IOgJD37zpw1H/y+c5wyCUlbSQNp38rjyfnVKLU0jj+x/ZpB7
-	LMX9bQ6hHWfWAcgEZ5aa4N3og/JMHwu4dEpOHQwb9bdjIPFHl2owfM8eWr7nycylFtlsZfndg5q
-	MOuE7vqPyZM6dwJ7rsWqNDna3PhMZeWvP09/SrzYr/Kv9EWO+DOlftXa+pAWVOSjElkbR2HO030
-	xCB+2xATwxTNfk5pjcbGp0SYoh1Py9PfrbspXjW2dDz2PtmCuirtdtdLqB6jiKRtQT+L9KWjJ6k
-	rQf0RB1XrQSTEmsp0fE2y6KTLse8SZs2ty1Sou8eMCX+V/u9BUiDJqaceE7yIOTQk6pI=
-X-Google-Smtp-Source: AGHT+IEq6CVbLtM0eoAJtvMfbqXt4HJ2BgMlkQY9gDys0e20heLVjsMO54GaAaTrR6eS4pO1ntG7gQ4e0F3PtUvAMWo=
-X-Received: by 2002:a05:622a:1815:b0:4e0:3cdb:d1dc with SMTP id
- d75a77b69052e-4e6ead4416dmr104621181cf.43.1760019023589; Thu, 09 Oct 2025
- 07:10:23 -0700 (PDT)
+	s=arc-20240116; t=1760019058; c=relaxed/simple;
+	bh=PoEG6fDXpXMai/sSIp6QQMuKBTRgdRjl+qPUXydwNpw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TNp9TKvzvLYbt0KxPM5PERQkSgkdmGx/Ki9aU2VTZWc6Be8MMeEvELL7gKrkin4i1EFwQ/VlK+X4CRdOwIJ6T0t5zshn11nOAowwuGSg46gZWE/I51ORUQMKOnMeb0blWqTV/LdOv9EK8Gqg9+TW/W0VzNuelNqsj6Tmdd+Heow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bf1IYdKX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B1EEC4CEE7;
+	Thu,  9 Oct 2025 14:10:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760019057;
+	bh=PoEG6fDXpXMai/sSIp6QQMuKBTRgdRjl+qPUXydwNpw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Bf1IYdKXmC8awfWh5+A7QBJAsxJ+E+Bf05nCys9w0sTb5mm+lSJ+FK4a/oac6gkNJ
+	 KXHj+HGfjFvupJMuF/wUIeCpDOh6Y+whjHf/YjOtib0BkUEfDT5AYlDtNmBxh0z6ib
+	 1kDPhwLzCW8F2JlS6PKcx3LCqsjOqchXPbEPoCzY6CFQB+K3fwGO/6OEzy9YDS8WVG
+	 0r75jsKihRRFBpBMKqdOo7D4oyOdyN9iB+a7+fA3jF54IIgs32H1xPPYm955M7BZoE
+	 OVv9Aqs6WG9CzhlLNfH27EZwY4TM0cWDi3CmngRjaqT33xB2LmH+MEwWN4hVgXx9V0
+	 Gdy9vxPYc6HXA==
+Message-ID: <c1f932ad-3c64-44ff-810d-f1c3e43ba8c6@kernel.org>
+Date: Thu, 9 Oct 2025 23:10:46 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <5b95806a-e72e-4d05-9db8-104be645e6e5@web.de> <CAH2r5mtpoLscs9sodXcRMO3-dqMDBSTR+ncExdqy4dQR=4uE8A@mail.gmail.com>
- <bc8f02de-0cd5-475d-bb19-e44e202f7a58@web.de> <CAH2r5mtY8--9ccnm5aYfOYJ=kEBr7=y-Z_eROKDp7A6DGnxwcA@mail.gmail.com>
- <5c09026e-3176-4dd3-abd8-e5ef3b2bf5c4@web.de>
-In-Reply-To: <5c09026e-3176-4dd3-abd8-e5ef3b2bf5c4@web.de>
-From: Steve French <smfrench@gmail.com>
-Date: Thu, 9 Oct 2025 09:10:11 -0500
-X-Gm-Features: AS18NWDXka1aXJboBSZTAkvYpbLFoOs9n359mdD7fdpj0FKFp6jbH8uCrZTjXDA
-Message-ID: <CAH2r5muYzimR+i2EBFwvJQ4MWWpzVdbaocg+8FdSniSZF7rXQw@mail.gmail.com>
-Subject: Re: smb: client: Simplify a return statement in get_smb2_acl_by_path()
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-cifs@vger.kernel.org, Bharath SM <bharathsm@microsoft.com>, 
-	Paulo Alcantara <pc@manguebit.org>, Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, Steve French <sfrench@samba.org>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] MAINTAINERS: Add entry for ITE IT61620 MIPI to
+ HDMI bridge driver
+To: Pet Weng <pet.weng@ite.com.tw>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Hermes Wu <hermes.Wu@ite.com.tw>,
+ Kenneth Hung <kenneth.Hung@ite.com.tw>, Pin-yen Lin <treapking@google.com>
+References: <20251009-it61620-0714-v3-0-5d682d028441@ite.com.tw>
+ <20251009-it61620-0714-v3-3-5d682d028441@ite.com.tw>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251009-it61620-0714-v3-3-5d682d028441@ite.com.tw>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 9, 2025 at 9:00=E2=80=AFAM Markus Elfring <Markus.Elfring@web.d=
-e> wrote:
->
-> > Three of the four you just sent today, grow the code slightly,
->
-> How much will this observation matter?
+On 09/10/2025 17:02, Pet Weng wrote:
+> Add a new entry for the ITE IT61620 MIPI to HDMI bridge driver to the
+> MAINTAINERS file, include the responsible maintainer, mailing list, and
+> file patterns.
+> 
+> Signed-off-by: Pet Weng <pet.weng@ite.com.tw>
+> ---
+>  MAINTAINERS | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 5257d52679d60d084b85e2f023730286aa79311d..6859c06dce3ad3d615a1e42f3542fb1da8da4fc2 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -13107,6 +13107,14 @@ T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
+>  F:	Documentation/devicetree/bindings/display/bridge/ite,it6263.yaml
+>  F:	drivers/gpu/drm/bridge/ite-it6263.c
+>  
+> +ITE IT61620 MIPI DSI TO HDMI BRIDGE DRIVER
+> +M:	Pet Weng <pet.weng@ite.com.tw>
+> +L:	dri-devel@lists.freedesktop.org
+> +S:	Maintained
+> +T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
 
-Remember the goals here, the priorities:
-1) Fixes for bugs
-2) Performance improvements
-3) Features that add support for missing Linux requirements (e.g.
-adding O_TMPFILE or "rename_exchange support)
-and then lower priority but still somewhat useful:
-4) cleanup patches that remove unneeded code (although has to be
-balanced against how it can hurt backports of important fixes),
-ie cleanup that makes code *smaller* and therefore slightly easier to
-read and maintain
-5) cleanup code that adds or updates comments clarifying confusing code
+If you do not have commit rights, above T: is pretty pointless.
+Subsystem entry defines it. People just copy paste this needlessly.
 
-Obviously "cleanup" patches that don't shrink code are often useless
-(as they potentially break backports of patches for no value).
-
-
-
-
---=20
-Thanks,
-
-Steve
+Best regards,
+Krzysztof
 
