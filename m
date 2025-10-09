@@ -1,53 +1,55 @@
-Return-Path: <linux-kernel+bounces-847092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 499B0BC9D7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 17:45:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55761BC9D80
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 17:45:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03B903E83A9
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 15:45:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B9F43E859C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 15:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B200217F31;
-	Thu,  9 Oct 2025 15:44:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133F821FF4D;
+	Thu,  9 Oct 2025 15:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="pJhhgz9a"
-Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="NoUSVkmF"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C7E219A81;
-	Thu,  9 Oct 2025 15:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8626F219A81;
+	Thu,  9 Oct 2025 15:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760024694; cv=none; b=S9EvaMGTLnHthmeE3TSn6MFKBTl7e9YNdnstf9cMcz9KV9nw5ec+dCbg34K7cfNINOWvbRQHY63v+tFta7pVMAP4IZRbusxiu7dHGtbOJMapZurCcbIgevCWsy3/6rLglv/RDVcIuBsDwvSEz9pOqGUz1G5K5INMZb6asIpxDcU=
+	t=1760024701; cv=none; b=ouv6VJFe3zs+pUZhj0cUS+i2PeVnsYTQbahfpzL31k1k/G0PkgLA2WVjRB7cw7OkwzBYzcYjvInqLTVcV8G2ppXsgEK7ljUjCd8dMk8T0Q+eU+d0NtKzYFaycbke/H0NBUdyYsFTvDTxeZEq/b2QHL1nDz2XwhpILz5kVUdCz2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760024694; c=relaxed/simple;
-	bh=lz2RoRq8dMXVVMF/BjB62HJ3nhm69wwuaZ/4FoZRm9U=;
+	s=arc-20240116; t=1760024701; c=relaxed/simple;
+	bh=L+1beT2sVZT8FwjX5hNzlFMiYqv6I9DZ/WvvRnrSpkM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jcs4kdJKoPe0QXzpQV3wn7kKadIbDkCoaQf5OWSKnA6XpjPYB42Ee4uRYl/L6NgP8cWfA4KZlDu7MjopIN0TYiZVNX71CID2HjhoOJB3TQMfy2cyzIsXWne1z9nvWIgsNZAy9Q6Cl70uVy9/WOVOImEeyzvI5ezxzkBpBit5/g0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=pJhhgz9a; arc=none smtp.client-ip=94.112.25.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
-Received: from [10.0.0.200] (unknown [10.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 1902353410C1;
-	Thu, 09 Oct 2025 17:44:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1760024687;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=VknUNOTw077T/hHFg/PJCZOVDrouyCYB8zJKFGPpu9c=;
-	b=pJhhgz9a7K2FmI6ulgkRYtbSgyvCoFFLQIWNTlWoC8HGHDZQgm/Ltt9Thf5N2V8Vt7NDfM
-	vMpWlmLbzShvR3VK9+utnkoFy+2ZIZftIGDanmVawvAZVvKbg70y2MSLNP0H3o82jY/FXm
-	HiZHg+Ykv1XWVVyOJsUWctW7MUGbv6k=
-Message-ID: <9018af52-1c81-4d2d-8717-44e5372dbffa@ixit.cz>
-Date: Thu, 9 Oct 2025 17:44:46 +0200
+	 In-Reply-To:Content-Type; b=BIDKXinILs8sAMow5wOibousy5wXSZyA0g7oI2jSzfQU/HmStDl6k75/XjcBa5mLD3bWxlGyQGXgQtf1aAHgl75I71q8OdKO0PMeGhvdNUgtEqlHcMOKtk0U5ZSq/Q7CwNgNckstsyCgVNlDfVeXzAqAdVvfSa1NVnZqO2FthyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=NoUSVkmF; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1760024696; x=1760629496; i=markus.elfring@web.de;
+	bh=uw6zp63KqgTpfwl7B+C7Y/hQXKRp9D8vBKFf/pUuzt0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=NoUSVkmFYq49Mj7C4FDDygsN5Eby61zB3SfSHIQVjDFZaR7Dgqt/hoMp7h9gVK7R
+	 dB4L36IjL6T8IlM4/pnpBNVFsNGbcvlZjr5lC4/Kw31u5cgnGazQM0i8Vv8jsi5YG
+	 J99/2b1PixoN3YxYoCJPpB4iPfgZHe1xhZ7LVlCI32u2F0nWaZAJVwJ2aVZ0t9Yqx
+	 e1zm9PoKTRE+Qa13a789w/b7bGVGM0lhNnckVMZsFkaeIY54yua7V5Dq9mOLjdJKD
+	 ayIdfGDpAsNUWOauhS+pKErH9S8N0VY8A7HzUX63ciF74TNwMzy6tUr3llJHZBHSa
+	 oJlDhi7F7Ov+B+8QTg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.255]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MCogs-1uy7Ng0qoq-0019hg; Thu, 09
+ Oct 2025 17:44:56 +0200
+Message-ID: <ccb38a9b-4192-4863-9b29-497b55d99a6a@web.de>
+Date: Thu, 9 Oct 2025 17:44:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,142 +57,127 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/7] dt-bindings: panel: Add Samsung S6E3FC2X01 DDIC
- with panel
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thierry Reding
- <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Casey Connolly <casey.connolly@linaro.org>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, phone-devel@vger.kernel.org
-References: <20251008-s6e3fc2x01-v2-0-21eca1d5c289@ixit.cz>
- <20251008-s6e3fc2x01-v2-1-21eca1d5c289@ixit.cz>
- <7askbazrkbny5jlw6cpxcpjyw5nyiozmksoyj5b5momcc7w5hn@r3x6kddatf3u>
- <74893f76-1b7d-4cfb-ba7a-9fd64427762b@oss.qualcomm.com>
- <bmsxmwfdwx7wlmngaqpvz7c2nudcoukspkxgq6zqh2mdlolfxg@fsdbafotp5q2>
- <75011ead-8bd8-4939-ae7b-1c127eba8aa8@ixit.cz>
- <3mbngf2r3rvbn5fr4vxbk64ouvm3voo5o2r63vg3clyswnceoh@64r6ujb5qr65>
-Content-Language: en-US
-From: David Heidelberg <david@ixit.cz>
-Autocrypt: addr=david@ixit.cz; keydata=
- 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
-In-Reply-To: <3mbngf2r3rvbn5fr4vxbk64ouvm3voo5o2r63vg3clyswnceoh@64r6ujb5qr65>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] smb: client: Simplify a return statement in
+ get_smb2_acl_by_path()
+To: Steve French <smfrench@gmail.com>, linux-cifs@vger.kernel.org,
+ samba-technical@lists.samba.org, Bharath SM <bharathsm@microsoft.com>,
+ Paulo Alcantara <pc@manguebit.org>,
+ Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+ Shyam Prasad N <sprasad@microsoft.com>, Steve French <sfrench@samba.org>,
+ Tom Talpey <tom@talpey.com>, llvm@lists.linux.dev,
+ oe-kbuild-all@lists.linux.dev
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <5b95806a-e72e-4d05-9db8-104be645e6e5@web.de>
+ <CAH2r5mvg=kqPyA2nYF=Nhjr3vkt4dT1R4p-Bk_MBQtddjx_EhA@mail.gmail.com>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <CAH2r5mvg=kqPyA2nYF=Nhjr3vkt4dT1R4p-Bk_MBQtddjx_EhA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Js6CDt2FYqGvH0BfsRaWoLLf4UsarHP1mdUGUYaF3fL4wXPf5sq
+ oLNSmMXsZFG07cyUF23qvOKGkFOtIj7iioqBJqt3E/vWKoTDSZTgM88ofXnhLaBgdXlmsGt
+ NTSOL1EEVwCJWTtJlMWKsuhgqSaFA+IhOa3sTmnmtWwdtCJRkmvxm7dPunZwj8Ku3oVRDCO
+ mMwq9xJWzXYuHWtqLUduA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Nr9f/KY866s=;OCBFr7cUYYnrKSclx1CMm4qCJzT
+ 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
 
-On 09/10/2025 16:26, Dmitry Baryshkov wrote:
-> On Thu, Oct 09, 2025 at 03:32:22PM +0200, David Heidelberg wrote:
+> As pointed out by the kernel test robot a few minutes ago, this patch
+> would introduce a regression (uninitialized rc variable in free_xid
+> macro), so will remove this patch from for-next.
+
+Will this (clang) compiler report be reconsidered once more under other ci=
+rcumstances?
+
+
+=E2=80=A6>> +++ b/fs/smb/client/smb2ops.c
+>> @@ -3216,9 +3216,8 @@ get_smb2_acl_by_path(struct cifs_sb_info *cifs_sb=
+,
 >>
+>>         utf16_path =3D cifs_convert_path_to_utf16(path, cifs_sb);
+>>         if (!utf16_path) {
+>> -               rc =3D -ENOMEM;
+>>                 free_xid(xid);
+>> -               return ERR_PTR(rc);
+>> +               return ERR_PTR(-ENOMEM);
+>>         }
 >>
->> On 09/10/2025 15:21, Dmitry Baryshkov wrote:
->>> On Thu, Oct 09, 2025 at 10:51:31AM +0200, Konrad Dybcio wrote:
->>>> On 10/8/25 8:57 PM, Dmitry Baryshkov wrote:
->>>>> On Wed, Oct 08, 2025 at 04:05:28PM +0200, David Heidelberg via B4 Relay wrote:
->>>>>> From: David Heidelberg <david@ixit.cz>
->>>>>>
->>>>>> Basic description for S6E3FC2X01 DDIC with attached panel AMS641RW.
->>>>>>
->>>>>> Samsung AMS641RW is 6.41 inch, 1080x2340 pixels, 19.5:9 ratio panel
->>>>>>
->>>>>> Signed-off-by: David Heidelberg <david@ixit.cz>
->>>>>> ---
->>>>>>    .../bindings/display/panel/samsung,s6e3fc2x01.yaml | 78 ++++++++++++++++++++++
->>>>>>    MAINTAINERS                                        |  5 ++
->>>>>>    2 files changed, 83 insertions(+)
->>>>>>
->>>>>
->>>>> Please also describe, why it's not enough to use defined compatible,
->>>>> samsung,s6e3fc2x01. Why do we need a separate schema and can't use the
->>>>> panel-simple-dsi.yaml
->>>>
->>>> panel-simple works for 'dumb' (perhaps a harsh word for 'made with
->>>> just the in-spec DCS commands in mind') panels, but Samsungs are
->>>> widely known to require a ton of vendor magic
->>>
->>> The question is about the _schema_. I think it's fine to have a driver
->>> for a panel covered by panel-simple-dsi.yaml.
->>
->> see display/panel/samsung,amoled-mipi-dsi.yaml
->> the OLED display don't fit well, but I wouldn't mind consolidating at some
->> point, but since we know very little (no datasheets), it's hard to do for
->> now. Maybe in the future when there will be more panels schemas, we can find
->> a way to consolidate into one big?
-> 
-> I'm looking for a simple answer ATM: it doesn't fit
-> panel-simple-dsi.yaml because it needs foo bar baz, which is not a part
-> of that schema.
+>>         oparms =3D (struct cifs_open_parms) {
+=E2=80=A6
 
-v3 will have:
+Can it be that the uninitialized rc variable would not really matter for
+the adjusted statements in such an if branch?
 
-     dt-bindings: panel: Add Samsung S6E3FC2X01 DDIC with panel
-
-     Basic description for S6E3FC2X01 DDIC with attached panel AMS641RW.
-
-     Samsung AMS641RW is 6.41 inch, 1080x2340 pixels, 19.5:9 ratio panel
-
-     panel-simple-dsi cannot be used because it's limited to one
-     power-supply, while we use three.
-
-> 
->>
->>>
->>>>
->>>> Perhaps the original change was made with an "oh it just works
->>>> surely there's no drawbacks possible" attitude, as the panel
->>>> was left initialized by the bootloader
-> 
-
--- 
-David Heidelberg
-
+Regards,
+Markus
 
