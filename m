@@ -1,120 +1,201 @@
-Return-Path: <linux-kernel+bounces-846595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EC7ABC8762
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 12:23:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4F03BC8768
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 12:25:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D9CD188BA02
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 10:23:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8BEC188AC77
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 10:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4FCB2DA76D;
-	Thu,  9 Oct 2025 10:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A7A2DA74A;
+	Thu,  9 Oct 2025 10:25:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b="U8II0m/C"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b="kqb/SNzh"
+Received: from sender4-op-o10.zoho.com (sender4-op-o10.zoho.com [136.143.188.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851B92D9496
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 10:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760005385; cv=none; b=q9wIfajr8Ub+oYrdYwgQTxpEyJXlAKFEdFistC1+1EDmQ71Kcdi7TuzR3dOTr8Vzoe13tGoh+Ac2+STtcNpUC9MKvQT+mq0lxZtSadwPYttH8eGsW9/bY3mGPeuttDyrXIjLnfVahToeIimz+70wk4vWQI+sVaaLhYR0jk+LvYo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760005385; c=relaxed/simple;
-	bh=l7QzGI7FmuzLiWBMITL6HLIWO89vnW9gY5iIdUxjrpQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type:Content-Disposition; b=bDuapq0uBCtt0aTE6+gRL5zPcVVzdLngkOP4b/SttBLEyNU0ytPmX7u8YjcCgrj7/iylQMMertHirSIZBfyGMad6dViMS5Jk/J1eIjnuajA9IoxWJNIrV+VDOUUlAZpgFSwVTxSn3hklPDcjAsWAO13MNXeMu4osJjgC53GEM+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com; spf=none smtp.mailfrom=readmodwrite.com; dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b=U8II0m/C; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=readmodwrite.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46b303f7469so4596745e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 03:23:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=readmodwrite-com.20230601.gappssmtp.com; s=20230601; t=1760005382; x=1760610182; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=h7QtmyaStV9Cg/SiLzcIFBH2QrCmrrCZZBI5xKAFZzk=;
-        b=U8II0m/Cj5yciEwOhl+9+q2n1zL0VJ8txNNESrxpElyWHbpGGnwHprG6I+gMXghbhz
-         GWFD+Sn4Fwwd/EzexRWS3+hwlBhwKpwkB7dOqzm+PeouxhNCYAwjjeUUAXsXc0YDeRqZ
-         57Xdkk/gqHHmztstOKP+Qx8ypu+0Rr0Gp5W8by86jueg43t9OWW8Xqw7E0ELFFffO/XW
-         af4hguikER5MQXTVRKziRjCADGg/ZIFtQd3i3e06rKm7NhumQgmozG96D8lWpKbDmMQw
-         v66AL9eg9xh59Ov0hsJExWjrdJ4a7yjES9RPZH0aKyvMu+hXdWsPrURGNh8vI53ayfn+
-         kHZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760005382; x=1760610182;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h7QtmyaStV9Cg/SiLzcIFBH2QrCmrrCZZBI5xKAFZzk=;
-        b=h6UfN9kJ/+TzEnVCJ9YvL1jgvF+/mS77RCtPumiua56qYuxpTfC2FAh6mHOWvJbFPE
-         xRegtCmCQbyxaIuK9WarRVZB2KOiaUR0hOqtk/Sn18NE/+6o4QeI90WAePYLCUbBMZP1
-         0MW7QddXr3QsMdWOBEFQwTj0g0eXysIAp9yIPbHSWSzVDVaJdU2CdXybVDclXiZ9Q2FV
-         SWcG3mx1DkvYhB8CrsznpbOJuj3vjSgnyGN2EZzFFIXcumC747KNCdSUP6fbI58QLrUO
-         hgKcyY+1bfFpus0rtajuAioxILPOxcM/om090eFsqJu0a4vg/YU79R3qYqlGgroqWrJL
-         g0+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUu2hLN9g1vg77OPx8DEiR5W8l0bxklBC7k5CRoasGkHhj9YDG1FP7Rs3s2rn1cO2A6UZvSwO5P35pKNSI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGPuya7LY39Vh7gXKqI202dgNeKLNdYfwBw8zRzFL3A0FML6El
-	j320ifUud+r7G/239FiMr/9YgTwDgPHt/T1XCB2Oiepf22K+E9m3w6DFHmquG8e7Izs=
-X-Gm-Gg: ASbGncs+g+/NUIacRnNJYppoDGBUmKw6c6NcFuRgrWvJMxjuCjam2NFBOx8DFy4Jkut
-	EmbpiVaCIZfUgtLVXFRqjuHPY0hnmA71R6od0VJMMcNno+Xu/ryOVwBHSGseCGaBTrRXHkfDKUp
-	5PmFu2Z9RN540Cnz8zOTrX2N8cYp1DMxEWkP54kAAhwdbKorBs4t/XzKgM+oU08hML421rvf4V5
-	1KRMa6Y7eUYzN1pWiShEhNJPpuvrDCZGUuJoYhjVTcM7+sy52VjDheH6DIjWETlAPeOgRbqTjiI
-	BKQTijU9vf5sczJv+14SgXSVKw8n8D+z3rBTW5yyGUNHcUw4KvAfKPqFhgRaG0i6wbmRqnHsYGF
-	mFJpcI5N4mex4127IK4K5Bpyi63lN02MME6CcGaxsWDyEH1ersk2GCgvMeA==
-X-Google-Smtp-Source: AGHT+IEStIkragv6qCXCo8V3gHP7SZNoyJGu9SkTjAiRd/XZfLMJTPJ93VfbPipyaCKgSacW7ychVQ==
-X-Received: by 2002:a05:600c:528b:b0:46e:6042:4667 with SMTP id 5b1f17b1804b1-46fa9b11b24mr49480295e9.33.1760005381887;
-        Thu, 09 Oct 2025 03:23:01 -0700 (PDT)
-Received: from matt-Precision-5490.. ([2a09:bac1:2880:f0::2e0:b5])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fab4e22d8sm33204695e9.5.2025.10.09.03.23.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 03:23:01 -0700 (PDT)
-From: Matt Fleming <matt@readmodwrite.com>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	kernel-team@cloudflare.com,
-	libaokun1@huawei.com,
-	linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	willy@infradead.org
-Subject: Re: ext4 writeback performance issue in 6.12
-Date: Thu,  9 Oct 2025 11:22:59 +0100
-Message-Id: <20251009102259.529708-1-matt@readmodwrite.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251008162655.GB502448@mit.edu>
-References: <20251006115615.2289526-1-matt@readmodwrite.com> <20251008150705.4090434-1-matt@readmodwrite.com> <20251008162655.GB502448@mit.edu>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340762D94A6;
+	Thu,  9 Oct 2025 10:25:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760005524; cv=pass; b=lFTJXmc96N58bTVfOtQQy5/BxbxMoGM0lF+HrowX7D5JdiQeGYLH6RvZHv5kfZbZl2QfSwupPD0gMpCxKjkRwquu/c7KOREIdpzWAV5vivKomt4Z0oOOVO/EIyu3xuKzgPx4cWNK0D4NOTlw/LtHB+dFX+1oSIAt3obQB1B6pfo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760005524; c=relaxed/simple;
+	bh=Of+FE8sc5eJlL+XnoINtWrbK7uhmK2bCHKODmG3fu6c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=snhrm4kEsiZbjWngiR4X3Xg1ohM+RIrmhEqdSGeCGCtUKpmU8jLH/ET5o6bXPucffSgvszgwSfan3kJbV1CyQx9gS/pF+fF2gAqlR3WWRyEMe50iGnqO/N8Rag9spcoJEx9Vsdv4FVKfqKpRwnmoxE2oZsG+dyaEY0gYcFOmNuE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b=kqb/SNzh; arc=pass smtp.client-ip=136.143.188.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1760005481; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=OeOxIB1NuAE+YRddXRZrc0wlgu2UOOE25xD3oH4wsYwkukfFBwSDAHkfLP60b/JMXglGpYRsf5B30422BQZ1vtUNuoUQoLGxvqJ/5wnMQSO2gZXUEUXd8cewuvS8xMwpZDZbX/e33pzErAjbDZc5c++3EROiNqcb1nBlcB7zi2M=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1760005481; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=BpIYlYHlHIGeo+yo32gJFi1Ltz6CTGf0iILOovCx0yg=; 
+	b=inQnw42/yE6icwpP8GAszyfb1EJyfyIx3nN1fBj4NLVEEIjilkzhnmvSE//V0jliE9o/SxKFCxQLz38FkeZ+WgBa6LPozHKkLI4h3wGX9T33QXSL1puytaKZtpNOe6pliGO+NSlW/hVafu+E0pXqz7brmYMwEdOnyCjLjTNfIU0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=martyn.welch@collabora.com;
+	dmarc=pass header.from=<martyn.welch@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760005481;
+	s=zohomail; d=collabora.com; i=martyn.welch@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=BpIYlYHlHIGeo+yo32gJFi1Ltz6CTGf0iILOovCx0yg=;
+	b=kqb/SNzhlpwi3v5r07PAbA5dwMpnC9BUIXkBzciHhahR2T8RR9HzwpgWgcj+iW9N
+	O/cLa8uTKtfd0V37GK5NVRTAwRQscnGmsR6eVjs5tUppyRTY1HCOxDciOGn0tv4Kwgw
+	vPkSWp49F94aPBpVTwnTpEy7KKerg4ptXvkjacH0=
+Received: by mx.zohomail.com with SMTPS id 1760005476896264.035669287107;
+	Thu, 9 Oct 2025 03:24:36 -0700 (PDT)
+Message-ID: <aca89e7d-421f-490f-8c3a-c2d9567dbc26@collabora.com>
+Date: Thu, 9 Oct 2025 11:24:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] gpio: pca953x: enable latch only on edge-triggered inputs
+To: Francesco Lavra <flavra@baylibre.com>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+ Maria Garcia <mariagarcia7293@gmail.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
+ Potin Lai <potin.lai.pt@gmail.com>,
+ Mark Tomlinson <mark.tomlinson@alliedtelesis.co.nz>,
+ Fabio Estevam <festevam@denx.de>, Ian Ray <ian.ray@gehealthcare.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251008104309.794273-1-flavra@baylibre.com>
+ <CACRpkdYDMRZMb+bDUgK5yiKU1Toy=S_ebo2_4WRasHxCqv+4xw@mail.gmail.com>
+ <c75a89f8-9eb7-4300-979e-e11159dc6888@collabora.com>
+ <02a02848044c32e78cfc806a3b95c1cb0d93d7fc.camel@baylibre.com>
+Content-Language: en-US
+From: Martyn Welch <martyn.welch@collabora.com>
+In-Reply-To: <02a02848044c32e78cfc806a3b95c1cb0d93d7fc.camel@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Wed, Oct 08, 2025 at 12:26:55PM -0400, Theodore Ts'o wrote:
-> On Wed, Oct 08, 2025 at 04:07:05PM +0100, Matt Fleming wrote:
-> > > 
-> > > These machines are striped and are using noatime:
-> > > 
-> > > $ grep ext4 /proc/mounts
-> > > /dev/md127 /state ext4 rw,noatime,stripe=1280 0 0
-> > > 
-> > > Is there some tunable or configuration option that I'm missing that
-> > > could help here to avoid wasting time in
-> > > ext4_mb_find_good_group_avg_frag_lists() when it's most likely going to
-> > > fail an order 9 allocation anyway?
+
+
+On 09/10/2025 08:44, Francesco Lavra wrote:
+> On Thu, 2025-10-09 at 08:17 +0100, Martyn Welch wrote:
+>> On 09/10/2025 07:03, Linus Walleij wrote:
+>>> Hi Francesco,
+>>>
+>>> thanks for your patch!
+>>>
+>>> On Wed, Oct 8, 2025 at 12:43 PM Francesco Lavra <flavra@baylibre.com>
+>>> wrote:
+>>>
+>>>
+>>>> The latched input feature of the pca953x GPIO controller is useful
+>>>> when an input is configured to trigger interrupts on rising or
+>>>> falling edges, because it allows retrieving which edge type caused
+>>>> a given interrupt even if the pin state changes again before the
+>>>> interrupt handler has a chance to run. But for level-triggered
+>>>> interrupts, reading the latched input state can cause an active
+>>>> interrupt condition to be missed, e.g. if an active-low signal (for
+>>>> which an IRQ_TYPE_LEVEL_LOW interrupt has been configured) triggers
+>>>> an interrupt when switching to the inactive state, but then becomes
+>>>> active again before the interrupt handler has a chance to run: in
+>>>> this case, if the interrupt handler reads the latched input state,
+>>>> it will wrongly assume that the interrupt is not pending.
+>>>> Fix the above issue by enabling the latch only on edge-triggered
+>>>> inputs, instead of all interrupt-enabled inputs.
+>>>>
+>>>> Signed-off-by: Francesco Lavra <flavra@baylibre.com>
+>>>> ---
+>>>>    drivers/gpio/gpio-pca953x.c | 7 +++++--
+>>>>    1 file changed, 5 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-
+>>>> pca953x.c
+>>>> index e80a96f39788..e87ef2c3ff82 100644
+>>>> --- a/drivers/gpio/gpio-pca953x.c
+>>>> +++ b/drivers/gpio/gpio-pca953x.c
+>>>> @@ -761,10 +761,13 @@ static void pca953x_irq_bus_sync_unlock(struct
+>>>> irq_data *d)
+>>>>           int level;
+>>>>
+>>>>           if (chip->driver_data & PCA_PCAL) {
+>>>> +               DECLARE_BITMAP(latched_inputs, MAX_LINE);
+>>>>                   guard(mutex)(&chip->i2c_lock);
+>>>>
+>>>> -               /* Enable latch on interrupt-enabled inputs */
+>>>> -               pca953x_write_regs(chip, PCAL953X_IN_LATCH, chip-
+>>>>> irq_mask);
+>>>> +               /* Enable latch on edge-triggered interrupt-enabled
+>>>> inputs */
+>>>> +               bitmap_or(latched_inputs, chip->irq_trig_fall, chip-
+>>>>> irq_trig_raise, gc->ngpio);
+>>>> +               bitmap_and(latched_inputs, latched_inputs, chip-
+>>>>> irq_mask, gc->ngpio);
+>>>> +               pca953x_write_regs(chip, PCAL953X_IN_LATCH,
+>>>> latched_inputs);
+>>>
+>>> This driver is used by a *lot* of systems and people.
+>>>
+>>> It is maybe the most used GPIO driver in the kernel.
+>>>
+>>> So I added a lot of affected developers to the To: line of
+>>> the mail so we can get a wider review and testing.
+>>>
+>>
+>> I don't have access to the relevant hardware to test this anymore and
+>> it's been a while since I thought much about edge vs. level triggered
+>> interrupts. But if the state of the interrupt is unilaterally returning
+>> to an inactive state, it sounds like that should be configured as an
+>> edge triggered interrupt, not a level triggered one...
 > 
-> Can you try disabling stripe parameter?  If you are willing to try the
-> latest mainline kernel, there are some changes that *might* make a
-> different, but RAID stripe alignment has been causing problems.
+> I will try to better describe the problematic scenario:
+> - a device has an IRQ line that becomes active when the device needs to be
+> serviced, and becomes inactive when the device has been serviced (e.g. by
+> reading a status register); this is the classic use case for level-
+> triggered interrupts
+> - the IRQ line of this device is connected to a pca953x input, and this
+> input is configured as a level-triggered interrupt
+> - the device IRQ line becomes active, this triggers an interrupt in the
+> pca953x, the pca953x interrupt handler is invoked, it reads the input
+> state, then calls the nested interrupt handler
+> - the nested interrupt handler services the device, which causes the IRQ
+> line to become inactive: this triggers a second interrupt in the pca953x
+> - before the pca953x interrupt handler is invoked for the second time, the
+> device IRQ line becomes active again
+> - the pca953x interrupt handler is invoked, it reads the input state, which
+> shows the line as inactive (because that is the state that triggered the
+> second interrupt), and as a result the nested interrupt handler is not
+> invoked, and the device will stay forever with the interrupt line asserted
+> 
+> With my proposed change, in the last step above the pca953x interrupt
+> handler will read the current input state instead of the state that caused
+> the second interrupt, and thus will correctly invoke the nested interrupt
+> handler for the second time.
 
-Thanks Ted. I'm going to try disabling the stripe parameter now. I'll report
-back shortly.
+Thanks for the detail Francesco.
+
+To me it seems that the latching is more or less required in the edge 
+triggered case because, as the hardware manual for the PCAL6408A at 
+least states:
+
+     When an input latch register bit is 0, the corresponding input pin
+     state is not latched...    ...If the input goes back to its initial
+     logic state before the Input port register is read, then the
+     interrupt is cleared.
+
+So the hardware doesn't retain which bits triggered the interrupt 
+without the latching.
+
+For level based interrupts I think you're right and it doesn't make 
+sense to latch the value.
+
+This change seems sensible to me.
+
+Reviewed-by: Martyn Welch <martyn.welch@collabora.com>
 
