@@ -1,105 +1,111 @@
-Return-Path: <linux-kernel+bounces-846802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD93BC9144
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1A3FBC9145
 	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:41:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A2D5D4FBD6C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:39:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FF0C3E8B1C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA0A2E5429;
-	Thu,  9 Oct 2025 12:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570992E2644;
+	Thu,  9 Oct 2025 12:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g8UQjOrD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="opc38xVr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4AAC2DC346;
-	Thu,  9 Oct 2025 12:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA7252E285B
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 12:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760013542; cv=none; b=fpGS+okPQEFks2Q13tzHH118s13I38MBMU9XWqfXKJjDBuLTglvYZcg28prm6B3QoEgDrgVpTog/S4MTctot3DewYB/SxmcSkG8gJfWa8CwqSFhy62uyRnhTosmlqnkqdpBWT7lKDeMCjeCuPPA79cOgjHGQHAgySwkUfiLeAQA=
+	t=1760013551; cv=none; b=L84N5oGvXWt7ArxJJCcWocxv5QL3hykdGNMKZPBK8ESxMPp1HuVDDNHLzOKZPyJTBsmlrz1m0PH0lCY22XFRRTOfnZQSRxuvgzvC5DzCGYCr6uhjXNvNdru4tsZI2owQZ3K9reLxUBu6qvJqYSdEA6u+b7NajxZXHPI3apmKxBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760013542; c=relaxed/simple;
-	bh=nCBWCQaxhZrktABfUp1S7UxjtEc626ybANk2Wgzh3PY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=bQ8TxkfzFHersz/qHEwTjwmAwT/BpJsq15ZwEFoWLA+w5pxrtRtU1ZxTXQCPRvEqLpEDVoncabksyzDefbyO1lZ2owv5bKNTaBoCW4VBGMSXVyu25MTqmWF9sy0yMl3D0Bf9x6HpsxJL/+6qpHmUHJxU5vI6CNGOfcVo/ALlaaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g8UQjOrD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C069CC4CEE7;
-	Thu,  9 Oct 2025 12:38:55 +0000 (UTC)
+	s=arc-20240116; t=1760013551; c=relaxed/simple;
+	bh=AEivT90f2/IEo8mbRFi9jNUJlKhBhMvbE8Q4gxMNaik=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LvXLuYF1cQXwh6+VJ5DI24hR/QQfcOfNf3PjdcVHR/AMM9YGAWn/j3fvagcTiTkXic32oLVriZxb9OLPb+zbDTqulpKcEZ6I1xihSyUF9VLHbyYluxWjC1D20vpLx+Plb3RlKestFdXq4+3vHwa4vBnmqx/oO4uD9Oy+I3WgnhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=opc38xVr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21D4DC4CEE7;
+	Thu,  9 Oct 2025 12:39:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760013542;
-	bh=nCBWCQaxhZrktABfUp1S7UxjtEc626ybANk2Wgzh3PY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=g8UQjOrDuh+uJpia5t3++o9Q9C+62GHBeFw1wpvEx4tssNFTmPz5hJHes/tlPQlZX
-	 THOJyFI51pi45GkxW7juDhfeOKoS96lr8V8dEYIOfOFnDT3zGnLG/sjqDgaSjWFOBb
-	 lfKK+bWYkeEyoh0MzEUGRYfCC8rYvBlj0ojxz09HSlxSTcGy4vVkFin/vzClbzpCYJ
-	 0vmbRNg5MTL8s5DQDuP4+tdm7sOSGW3NsR9fGiCMoTBhgzGSENNzbrlD+Yvb8LKiHj
-	 7GiKEsORGdPt9maGTV5y/c9l1/xXTVtUFTrjS1U1tTDrmfMixnc6xDqJ9K1sJ4+O7K
-	 lYj0AEas4cS9A==
-From: Lee Jones <lee@kernel.org>
-To: linux-acpi@vger.kernel.org, Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
- linux-leds@vger.kernel.org, linux-media@vger.kernel.org, 
- netdev@vger.kernel.org, linux-spi@vger.kernel.org, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Danilo Krummrich <dakr@kernel.org>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Daniel Scally <djrscally@gmail.com>, 
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
- Javier Carrasco <javier.carrasco@wolfvision.net>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Lee Jones <lee@kernel.org>, 
- Pavel Machek <pavel@kernel.org>, Matthias Fend <matthias.fend@emfend.at>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Paul Elder <paul.elder@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Horatiu Vultur <horatiu.vultur@microchip.com>, UNGLinuxDriver@microchip.com, 
- Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
- Ingo Molnar <mingo@kernel.org>, 
- Jonathan Cameron <Jonathan.Cameron@huawei.com>
-In-Reply-To: <20250924074602.266292-1-sakari.ailus@linux.intel.com>
-References: <20250924074602.266292-1-sakari.ailus@linux.intel.com>
-Subject: Re: (subset) [PATCH v2 00/16] Align availability checks on fwnode
- child node enumeration
-Message-Id: <176001353550.2818310.2373416266769760233.b4-ty@kernel.org>
-Date: Thu, 09 Oct 2025 13:38:55 +0100
+	s=k20201202; t=1760013550;
+	bh=AEivT90f2/IEo8mbRFi9jNUJlKhBhMvbE8Q4gxMNaik=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=opc38xVrlnpK3NQnQl/DqEh2jvrwUnL/VS0laYaMq0/HQddpR6wjdhI8zaZjiy7jJ
+	 AeY3mglmsNagmH6QTAoiavJTI36/JpT0d03fTJ5vVwXfuqBhTMlOhBpUoFW9eVgFEu
+	 l52uhJG+iLIB2HQPT2zHciqulWpm8P5SYo6KGqG9YFet0eL+uA6CkVEJ7F5KKm6n//
+	 Y29Uj3PrOm36Lgaw5GlJuDtuyYXQCZE6kOTnLpQKEFakYpjdCOVZLGBSjNd9RcUsYt
+	 RR24lIoswxOx75zheQPQp+JV+UR57XBZrjWkhm8kqFM6Vvu3mc9u1Ez1mQ9QUE3SOn
+	 zh5exA26lP59A==
+Message-ID: <86b3a4f4-18fd-40c6-9f96-825af52a0509@kernel.org>
+Date: Thu, 9 Oct 2025 21:39:07 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-b87af
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] locking/local_lock: s/l/__l/ and s/tl/__tl/ to reduce
+ risk of shadowing
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ linux-kernel@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+ Vlastimil Babka <vbabka@suse.cz>
+References: <20251009103900.2Fk8stnM@linutronix.de>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol@kernel.org>
+Autocrypt: addr=mailhol@kernel.org; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ JFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbEBrZXJuZWwub3JnPsKZBBMWCgBBFiEE7Y9wBXTm
+ fyDldOjiq1/riG27mcIFAmdfB/kCGwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcC
+ F4AACgkQq1/riG27mcKBHgEAygbvORJOfMHGlq5lQhZkDnaUXbpZhxirxkAHwTypHr4A/joI
+ 2wLjgTCm5I2Z3zB8hqJu+OeFPXZFWGTuk0e2wT4JzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrb
+ YZzu0JG5w8gxE6EtQe6LmxKMqP6EyR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDl
+ dOjiq1/riG27mcIFAmceMvMCGwwFCQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8V
+ zsZwr/S44HCzcz5+jkxnVVQ5LZ4BANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <20251009103900.2Fk8stnM@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 24 Sep 2025 10:45:46 +0300, Sakari Ailus wrote:
-> Historically the fwnode property API has enumerated only available device
-> nodes on OF whereas on ACPI, also nodes that haven't been present in the
-> system have been provided. Both OF and ACPI have similar concepts of node
-> availbility, on OF it's the "status" property present on device nodes and
-> on ACPI the _STA object evaluates to device present, enabled and
-> functional bits, of which the present and functional bits are currently
-> being used to determine whether to enumerate a device.
-> 
-> [...]
+Hi Sebastian,
 
-Applied, thanks!
+Thanks for the rebase and for this v3.
 
-[13/16] leds: Use fwnode_for_each_child_node() instead
-        commit: 34dbf5b458193b120a4a00777f2045f40c3db974
-[14/16] leds: Use fwnode_get_next_child_node() instead
-        commit: 93ecfb549059e3c77da16364c0f6fbddb42b147b
+On 09/10/2025 at 19:39, Sebastian Andrzej Siewior wrote:
 
---
-Lee Jones [李琼斯]
+(...)
 
+> @@ -223,12 +223,12 @@ typedef spinlock_t local_trylock_t;
+>  #define INIT_LOCAL_LOCK(lockname) __LOCAL_SPIN_LOCK_UNLOCKED((lockname))
+>  #define INIT_LOCAL_TRYLOCK(lockname) __LOCAL_SPIN_LOCK_UNLOCKED((lockname))
+>  
+> -#define __local_lock_init(l)					\
+> +#define __local_lock_init(__l)					\
+>  	do {							\
+> -		local_spin_lock_init((l));			\
+> +		local_spin_lock_init((__l));			\
+>  	} while (0)
+>  
+> -#define __local_trylock_init(l)			__local_lock_init(l)
+> +#define __local_trylock_init(__l)			__local_lock_init(__l)
+>  
+>  #define __local_lock(__lock)					\
+>  	do {							\
+
+The parameters of a function like macro can not shadow existing
+symbols because, when invoked, these parameters would be substituted
+during the macro expansion by the actual arguments. Only the local
+variables declared in the macro would survive after the preprocessor
+and thus only those may cause shadowing.
+
+So this last part of the patch is not needed.
+
+
+Yours sincerely,
+Vincent Mailhol
 
