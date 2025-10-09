@@ -1,194 +1,143 @@
-Return-Path: <linux-kernel+bounces-846949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EEC4BC97F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:27:01 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A76E6BC97FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 54A07351E64
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:27:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 932554E4538
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A609B2EA496;
-	Thu,  9 Oct 2025 14:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC302EAB66;
+	Thu,  9 Oct 2025 14:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YR8u+Gs/"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IQH5MGD0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502E12EA47E
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 14:26:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 463CA2EA728
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 14:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760020013; cv=none; b=NxZ5Ojf3VAWQfHrwHOYMVeOVy8v/s5LgtA9gRiQhp/K4EvCGooZRm3oYzgV1S+8yVnBqT3HUNC5rNEwP4JNhUa7QuzAPFEwgVq3s0MUIvscBL/yQGZDKU09te1hee23pbGMSNZwyX89ZM8jRtk2F2xB9m8nPbpmId5HENM8iTao=
+	t=1760020034; cv=none; b=trhls3yFj2ZfUaF99olTQvvZilLPvDFOHYeTEahP9QlfWDLy4y1Yl+51SYzUX9u8RSRzT1y12eOmmcU7cJiU7uBAv7X0WMWrx8sjOAWIyRFfqmO2HOYMlLKVk0hN4svwQMqobl0VFmjV09d35NBqXmEA9ZivP0WAZ4FO1Z7HfAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760020013; c=relaxed/simple;
-	bh=8hvdupc+LZK/iN+CW4zbSmj8G9FzomotMvequinYfSo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BGOeULd+Fu3jf63Cvo7P9J+T6HI+g8uglkqOv/e6PGPLnMuxdev+3pVf67UZTFWX96Qzefji2gaSSSIcGOnMBLRsMXngFwT25fu3cZnOL9jskKJxex3FHFEKWTSxnLQC7GmbCKlDqZJqGdgXPw/MN4LpgB8QKxWO0+ULi+8rXMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YR8u+Gs/; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5996ELtS019211
-	for <linux-kernel@vger.kernel.org>; Thu, 9 Oct 2025 14:26:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=G2KvXnwbuscjouOeX9M2xhbN
-	j+kin2y5TQrFozgduvU=; b=YR8u+Gs/wtwLU58ZURivOsxW92bTU+ngTcRJDdn6
-	ZT/eU6WoX5YaoxxHNjuTJDjBKUj+rqCxM6EdVLaLxxr4cCP984JzbUP0kiKJrEw9
-	9uzHclNOl6GuTNUt+7C/bFvMJH37oEAe1qbuDg7eLOuaKnv6h+kJyhgLmER9g8ja
-	5hJNLuV2OSVu8yVHQsxnV0W61H2fLrtR8lD+pFyfJZQQ48r419N7pX+Lm81VY3IV
-	wKC2GhXO6ORGFm5eoMYHQg31fOyiNwcpObEW8SfbzIJbV/gH2FcGVlTvMVjnm4Nz
-	HxI8mDhBhy+Z2hFnDceypl06uTyHHBRsZ/qZYmdtp2aTuQ==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv4nu4wr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 14:26:51 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-78e45d71f05so24941016d6.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 07:26:51 -0700 (PDT)
+	s=arc-20240116; t=1760020034; c=relaxed/simple;
+	bh=r/F02S07YxY/vR+W+qaExDIN6Da+5SzwX0AXZ3uJSi4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LMxpKuPYST/+q0nyXqIn0Msd80zWsncyBYWXfQ83lLfVa+J3y34TUCS6tx6Zchw51UxNYI4gfnpNBqynEN1tUJody46XHB47FkHRAAMI+MU4gf3KfSWkveORtqsg1q8azGwMjOoCLxBJVYJ0Tpacn5OPSJz3wiuypRxcj+imAV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IQH5MGD0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760020031;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=r/F02S07YxY/vR+W+qaExDIN6Da+5SzwX0AXZ3uJSi4=;
+	b=IQH5MGD0UDxq+A04zJcE0f80/9nfkfcKWTuAJH9W8DVD4X5ZPk+CR5HSTAASeB9GJfqzlY
+	q11bo++aUV06F6vsXQERpEddS1Egho8bx22l9n3z9PL1MrARk9XQurZ/pQN6yL0lTuws+i
+	FwgiqFNuAautaI5/Xy4g45miV0lC95E=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-626-tmvrIAHvMWOv_KWuZIMEcw-1; Thu, 09 Oct 2025 10:27:09 -0400
+X-MC-Unique: tmvrIAHvMWOv_KWuZIMEcw-1
+X-Mimecast-MFC-AGG-ID: tmvrIAHvMWOv_KWuZIMEcw_1760020029
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-b41c67edce5so203665266b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 07:27:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760020010; x=1760624810;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G2KvXnwbuscjouOeX9M2xhbNj+kin2y5TQrFozgduvU=;
-        b=DVCwm2HC3TEgLFOcjDU0wiEeY4VwQmouavHAbcDUAj9mtAn3as+x9zpK/9mWoJ2cu9
-         tNT14uhEntxS6Qw15XT9ba+4hBVWifNMLWL9JejWlfU540gxyqgeH59ZXAFmSiqD4YyZ
-         UvgvStRArtINWu5Q7Nx5MSOXKn+18vg3xm+I2kvKZrcQFLZiQz2ZvZbM4yYy8HOGUo85
-         6LomLBlMfN4W6LeJ0JEczYbh0WrM8QNuVI1JmAfHi616ZpyB+YbXtA6aOTtMYQaBzSJi
-         6GPSkAKeVBnLjXxcxuNyanToba6i7Ou8hMCQqltLoIfcrOtKL6+u/HpjAVHkmjF9gZTe
-         y4zw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/ptod/c5noNzHtS2dwdaE0fU8l1opklUvcZUufDueP1MKk7/1ImKGtailDXldedcPyImPnjsxqHS6TKw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+uQMlpsiPXP9tBDr4Qb79r6TS7KKJxYHnSvC2iEXfRlvF5o4t
-	F61XFteKM3QKfqhQTjrmSxnmsKiqki/PRYGazq3T+CJ7xYGmz/d3Wr/qU/VvXU57M3uOvhZTnhq
-	Fir1shfuElvme5GQvORl4BV7Xxn1MhxkcQ7o5bpiA4ix3XAdazrplIB5mg1diOxWxb04=
-X-Gm-Gg: ASbGncuxSAekLWoYcmG2ZlfC42hN8p8DaOvLLnsA5wuJzEMWRBZYL5CiEghdxtYGrMo
-	Y8IaBon4PbOBn1pyJbeQ1/7Op6PsFeXacc3WhDimGBB2iYkdUQ0gOijPmbeosaapaVDtjKcNYhp
-	bFh9R3+BRj5uk7SMVZvJUWCXQd5U3vZdxhFk4+LSxrl7m5wsLGB4VX+8aog48/cVTKDaY3Dho5b
-	QNtCx5JvJj/In2Jx4/7XaL5pZdC4ki24qyT2uOe7Q69mEfHMSKvTO/wpwXERHJa9DjoDt/lai8J
-	I/yt1BuaxMZJUrhn/WIYVNc7ZH7Yz1f16FgWWcBz/alJoRmYfps0NQawmEXfJBdGFR20yLjJf+M
-	u2/sgCBrz04/IhYSamkfxfeUxunyey4SMggL8abtIEUeJKU+ovLDWBOSz7g==
-X-Received: by 2002:a05:6214:2aac:b0:783:2157:5a34 with SMTP id 6a1803df08f44-87b2f02ba73mr98393866d6.65.1760020007674;
-        Thu, 09 Oct 2025 07:26:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGdTWGuZxMQcCYadLFdJmdthwUCJVxPbcp/MQRks6lOTZwcbWtf0yNa8g4UdjMUG53579SmMg==
-X-Received: by 2002:a05:6214:2aac:b0:783:2157:5a34 with SMTP id 6a1803df08f44-87b2f02ba73mr98390956d6.65.1760020003398;
-        Thu, 09 Oct 2025 07:26:43 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-375f3b63f1bsm28387511fa.31.2025.10.09.07.26.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 07:26:42 -0700 (PDT)
-Date: Thu, 9 Oct 2025 17:26:40 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: David Heidelberg <david@ixit.cz>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Casey Connolly <casey.connolly@linaro.org>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        phone-devel@vger.kernel.org
-Subject: Re: [PATCH v2 1/7] dt-bindings: panel: Add Samsung S6E3FC2X01 DDIC
- with panel
-Message-ID: <3mbngf2r3rvbn5fr4vxbk64ouvm3voo5o2r63vg3clyswnceoh@64r6ujb5qr65>
-References: <20251008-s6e3fc2x01-v2-0-21eca1d5c289@ixit.cz>
- <20251008-s6e3fc2x01-v2-1-21eca1d5c289@ixit.cz>
- <7askbazrkbny5jlw6cpxcpjyw5nyiozmksoyj5b5momcc7w5hn@r3x6kddatf3u>
- <74893f76-1b7d-4cfb-ba7a-9fd64427762b@oss.qualcomm.com>
- <bmsxmwfdwx7wlmngaqpvz7c2nudcoukspkxgq6zqh2mdlolfxg@fsdbafotp5q2>
- <75011ead-8bd8-4939-ae7b-1c127eba8aa8@ixit.cz>
+        d=1e100.net; s=20230601; t=1760020029; x=1760624829;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r/F02S07YxY/vR+W+qaExDIN6Da+5SzwX0AXZ3uJSi4=;
+        b=rT0MZjiYO98Hbfnv92Fh1hen1fJyFCQBNXlE32Hqz7l44Qqe7J7KT6fTc6WEmhCFtw
+         f3Jrmt4aK74Wu1ot0LNkg1FEn9XNawrSFVJ6Gm5VBM3OeKdJZ+8xBVa9Y1mxH58zWp1w
+         VqKQt0aL9IHk5s4Hz1NMgT/gRBePCta/QNcwPRPxuoGjE2TdD+kvBZaXGgfhkqdlgXK+
+         ebVQCDcy8TdLeOJt9dJQkzRWAIgknYjBoX3Lsn/fhzGGm4da58loB4PoNgtoJbQVsN/T
+         wFqnqrYQ4z0kDco02Z8rZ2q+066vj+HlZCG0JE3judEMg1QkK3j7mgk1OBn9G8bK8Yqz
+         N1bg==
+X-Forwarded-Encrypted: i=1; AJvYcCWvOWbokf7lFVxmR5v6x3ogMP+ZQtecSEFrOAPDiz7KQdvO+JD3mYQJIq+HvSwS2vNWbMbkJ719W2whuqQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywgx/BMrKgIJUTlWr5LDIrPKAfFemmU6fGn4SAyMU3miBE9nEol
+	nch3ncrsuRUrD+IaF2gKFd4H2NRuN0qoTzeJUxotjDLD2QvrQKKYZb5SLGRLFerP4PJcgOuds1k
+	Ieb/r+ckTudAf1PxskiANu/TX9zcviuDM/31HttIGK5OK+GnE6Gp7knRozOVOdtJOjN+chrxiGE
+	kphSrv7tsUa65kncjxZLWQIkgzsRzFtKXz+4/3UFI9
+X-Gm-Gg: ASbGncs4PfhapxtU6OH9P1Ij+yttC+2PkFKc2HSMsc8bBMvBW4eoS3a4+imSxJ2ZuoU
+	6qRvPTm/NxFnOUXLP6AfjDKdPzU61okKMJRYjXdeaYEVJaacXkR75ERkphNfw0ChNg8eGRrRejq
+	QJ/Bdy+ynVVSlszaDyTUnN0wB0WA==
+X-Received: by 2002:a17:907:94c8:b0:b47:de64:df1b with SMTP id a640c23a62f3a-b50abfd6d92mr811671166b.39.1760020028558;
+        Thu, 09 Oct 2025 07:27:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF9K4Ovcv1oyU3VJoFriYFnWdSwGIcpMlhvL4pFzCqlwbu14cCZhq1aVRyK7USxJfsD/yZfE8XNTnaHJkha3f4=
+X-Received: by 2002:a17:907:94c8:b0:b47:de64:df1b with SMTP id
+ a640c23a62f3a-b50abfd6d92mr811668266b.39.1760020028075; Thu, 09 Oct 2025
+ 07:27:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <75011ead-8bd8-4939-ae7b-1c127eba8aa8@ixit.cz>
-X-Proofpoint-ORIG-GUID: GtisBzKAECVC9kzIT5mfA25hacw7XAAv
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX4p2VwTk7jb7U
- BbI0HVV8sofhxZw6B8/lTgLlXeu7biEROeN+J9vjfUyTROcKd86I73h3Y0/txUEWNzVk5TlKMn9
- /ho0hrsW/Uqvu0QTJwCYbenTgQ20KbtT3AQtQM2O+P7sEwkSO1NmsZ+F3FY5DokHZPXOoPwKQ94
- hqjbq9TbB+sc0F/tVA2ip8n2CQBB2Etuv0NVVKM+QfrjOk+psInb1JfKhV2REZdOUTDDedjhuwU
- cH6MPrAQNA3YRPrbKKWdETexTLOou+cfCYOeGVCbXW5HoWw4iNBs6rmtaVKW54KFyg4yYPkH97d
- 7Os5LoWkwXQ3eeGlwg16iEeMsTCs0WTsZLJ1atjGDg7UIG1qAlbj1WtirYunRnRJYT+7AU6ESRn
- MKgBDKol8lam0/bKhwBLHikHSsQi4w==
-X-Proofpoint-GUID: GtisBzKAECVC9kzIT5mfA25hacw7XAAv
-X-Authority-Analysis: v=2.4 cv=b6a/I9Gx c=1 sm=1 tr=0 ts=68e7c62b cx=c_pps
- a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=df2SJZlNlAcoaDSKSIcA:9 a=CjuIK1q_8ugA:10
- a=1HOtulTD9v-eNWfpl4qZ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-09_04,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 suspectscore=0 lowpriorityscore=0 adultscore=0 phishscore=0
- clxscore=1015 spamscore=0 impostorscore=0 malwarescore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
+References: <CAP4=nvTjauRawBPTnGEztZpdDSNhGpgSJtjoTFuq+cCQHP5oEg@mail.gmail.com>
+ <20251008184522.13201-1-krishnagopi487@gmail.com>
+In-Reply-To: <20251008184522.13201-1-krishnagopi487@gmail.com>
+From: Tomas Glozar <tglozar@redhat.com>
+Date: Thu, 9 Oct 2025 16:26:56 +0200
+X-Gm-Features: AS18NWCYOpNrF7B48EqcyTUqbw_46aTsbs0KByL75_VH-zZNmvaxGmgx_22fbq8
+Message-ID: <CAP4=nvQT5xkOCvVK9J-aYMjwqPv=F8bJ6m1yj2W9OcUwwJw+7A@mail.gmail.com>
+Subject: Re: [PATCH v2] Documentation/rtla: rename common_xxx.rst files to common_xxx.txt
+To: Gopi Krishna Menon <krishnagopi487@gmail.com>
+Cc: rostedt@goodmis.org, corbet@lwn.net, linux-trace-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	skhan@linuxfoundation.org, david.hunter.linux@gmail.com, khalid@kernel.org, 
+	linux-kernel-mentees@lists.linux.dev, crwood@redhat.com, 
+	costa.shul@redhat.com, jkacur@redhat.com, 
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 09, 2025 at 03:32:22PM +0200, David Heidelberg wrote:
-> 
-> 
-> On 09/10/2025 15:21, Dmitry Baryshkov wrote:
-> > On Thu, Oct 09, 2025 at 10:51:31AM +0200, Konrad Dybcio wrote:
-> > > On 10/8/25 8:57 PM, Dmitry Baryshkov wrote:
-> > > > On Wed, Oct 08, 2025 at 04:05:28PM +0200, David Heidelberg via B4 Relay wrote:
-> > > > > From: David Heidelberg <david@ixit.cz>
-> > > > > 
-> > > > > Basic description for S6E3FC2X01 DDIC with attached panel AMS641RW.
-> > > > > 
-> > > > > Samsung AMS641RW is 6.41 inch, 1080x2340 pixels, 19.5:9 ratio panel
-> > > > > 
-> > > > > Signed-off-by: David Heidelberg <david@ixit.cz>
-> > > > > ---
-> > > > >   .../bindings/display/panel/samsung,s6e3fc2x01.yaml | 78 ++++++++++++++++++++++
-> > > > >   MAINTAINERS                                        |  5 ++
-> > > > >   2 files changed, 83 insertions(+)
-> > > > > 
-> > > > 
-> > > > Please also describe, why it's not enough to use defined compatible,
-> > > > samsung,s6e3fc2x01. Why do we need a separate schema and can't use the
-> > > > panel-simple-dsi.yaml
-> > > 
-> > > panel-simple works for 'dumb' (perhaps a harsh word for 'made with
-> > > just the in-spec DCS commands in mind') panels, but Samsungs are
-> > > widely known to require a ton of vendor magic
-> > 
-> > The question is about the _schema_. I think it's fine to have a driver
-> > for a panel covered by panel-simple-dsi.yaml.
-> 
-> see display/panel/samsung,amoled-mipi-dsi.yaml
-> the OLED display don't fit well, but I wouldn't mind consolidating at some
-> point, but since we know very little (no datasheets), it's hard to do for
-> now. Maybe in the future when there will be more panels schemas, we can find
-> a way to consolidate into one big?
+st 8. 10. 2025 v 20:45 odes=C3=ADlatel Gopi Krishna Menon
+<krishnagopi487@gmail.com> napsal:
+>
+> Running "make htmldocs" reports the following build errors for
+> common_options.rst:
+>
+> Documentation/tools/rtla/common_options.rst:58: ERROR: Undefined substitu=
+tion referenced: "threshold".
+> Documentation/tools/rtla/common_options.rst:88: ERROR: Undefined substitu=
+tion referenced: "tool".
+> Documentation/tools/rtla/common_options.rst:88: ERROR: Undefined substitu=
+tion referenced: "thresharg".
+> Documentation/tools/rtla/common_options.rst:88: ERROR: Undefined substitu=
+tion referenced: "tracer".
+> Documentation/tools/rtla/common_options.rst:92: ERROR: Undefined substitu=
+tion referenced: "tracer".
+> Documentation/tools/rtla/common_options.rst:98: ERROR: Undefined substitu=
+tion referenced: "actionsperf".
+> Documentation/tools/rtla/common_options.rst:113: ERROR: Undefined substit=
+ution referenced: "tool".
+>
+> common_*.rst files are intended to be included by other rtla documents
+> and are not meant to be built as a standalone document.
+> common_options.rst in particular contains substitutions that are only
+> resolved by other documents, so building it independently results in
+> 'undefined substitution referenced' errors.
+>
+> Rename all common_*.rst files to common_*.txt to prevent Sphinx from
+> building them as standalone documents and update all include references
+> accordingly.
+>
+> Suggested-by: Tomas Glozar <tglozar@redhat.com>
+> Suggested-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> Signed-off-by: Gopi Krishna Menon <krishnagopi487@gmail.com>
+> ---
 
-I'm looking for a simple answer ATM: it doesn't fit
-panel-simple-dsi.yaml because it needs foo bar baz, which is not a part
-of that schema.
+Looks good!
 
-> 
-> > 
-> > > 
-> > > Perhaps the original change was made with an "oh it just works
-> > > surely there's no drawbacks possible" attitude, as the panel
-> > > was left initialized by the bootloader
+Reviewed-by: Tomas Glozar <tglozar@redhat.com>
 
--- 
-With best wishes
-Dmitry
+Tomas
+
 
