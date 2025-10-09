@@ -1,90 +1,185 @@
-Return-Path: <linux-kernel+bounces-846718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83F49BC8D7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:36:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A38ABC8D6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:36:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78A6C189BE53
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:36:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A8073C70AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:36:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8102D8382;
-	Thu,  9 Oct 2025 11:36:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB9F2DEA89;
+	Thu,  9 Oct 2025 11:35:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lLWLBamo"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FqNEEpMA"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC9E246BA8
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 11:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56DB32A1CA;
+	Thu,  9 Oct 2025 11:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760009770; cv=none; b=quRx9ZR4emrrQr55+I64C/MMzWNjUt1jODVUu/LuOFYeGDK1+/0W7mdOPiXeKeRhn/PE5wpxE17Jx6MzAMmkq7+z4vhLQPLGgmOX5wAF5kz6zlJm5R8izXMFLVoNK6ckvqAqGE7gzjrehvxRsOIXKf3Si7uBIKD+SL7M11GMFdg=
+	t=1760009755; cv=none; b=JxwMldVzdPqB8jVn0xX0i0Vm3UGNpHLJ71P2hXZtxy9k5I2GKGKroxqPM1CT3IC8lT/a37OS88SXWHm5YemO4WlyseGIb4Pt1xi3Q8svGEmNfB67m3OwPlOCqQMPYGsbFm4lzjt7ISbUlvPeDZos0y+dT1o+DiRi6buxIKPJTcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760009770; c=relaxed/simple;
-	bh=V5FQj+qs6DmW6o9C6/UxAhR39wjcn7nWtLY34WIZgGw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MxZEPwBFRXsjYg4V1b2Chb3Ade4W9PB8aANUdnyqyvIPFbnNQYXaB+wRtmy6qi3rgNJK7xAesnWkNBRjgv6TJ6yMoEZ0wSrjeDWZy+07BZ90blv8g34BT/oY269qlsNUt4ICqwjrrHOuIeQ87s74WW5lbYKkzyz/gXkWQMQa4zU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lLWLBamo; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Forwarded-Encrypted: i=1; AJvYcCXsP/tCUF3vNQJv9snMzMsFUKGF8v6SdvstcaoMw4XJoKn6NloK5ge0PXGxcHFGsgZrm+kpxfaGLUpsDbI=@vger.kernel.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760009763;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V5FQj+qs6DmW6o9C6/UxAhR39wjcn7nWtLY34WIZgGw=;
-	b=lLWLBamoZ9Vze3bbffxc2NqDZEkTkmP5NueaLuRLtDk6TDt6G0WH/OCkcluwDVjtDzhbu9
-	EnucY5dxtbCFT9qoGLojckSegsaErZzsjCuDeonorqG51W6AIjVVoGGjxFgMmgrzuYD07l
-	rzomPzGOmXyhJTfOi/yfr74DarXFxD8=
-X-Gm-Message-State: AOJu0Yyc7QA4m50epTQOt+kM7eoIY0urNwzuIiuNuA/gsJkt5xcw9qBt
-	FYxOnif+a58w4E63sQwYl0JuFNhftqBVNhVU4fdYjRyMq5By1znXYl6Q8aZ8aiZwyX0rapIf21X
-	c3U1Cwqemws3v8jnLViKvwe+eKpRL+y8=
-X-Google-Smtp-Source: AGHT+IEn6DfUJzTF+qrN0U8A3hpm9iF5aoWwXO0T2nuUH9Z0DtFZJPr2qGDgZztcydKq4KsrmSpqANEY2EpX+r8m+YY=
-X-Received: by 2002:a0c:f701:0:b0:87b:b6ad:e647 with SMTP id
- 6a1803df08f44-87bb6ade751mr19703066d6.6.1760009759425; Thu, 09 Oct 2025
- 04:35:59 -0700 (PDT)
+	s=arc-20240116; t=1760009755; c=relaxed/simple;
+	bh=Z0E5Ui2XxRD/RtSI3wRkIkjJDJlHxUBHJsvJwXR2IHc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iGLzMGY+IcptlVM3e0Nk0OhHXkAx/3Ea0nfMkvaIepgq00uQfMId+NovfQeT/3jxYAKtvH2n1MwAm+ddidYiXGXhcON9Se4FFgLq6nXh40PE9WH5z7jfcM5IGDEvDkIMxMPo2e9ZF62PmX4wE4NbuXlTPKi3njmf81ZAh3lDg2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FqNEEpMA; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760009751;
+	bh=Z0E5Ui2XxRD/RtSI3wRkIkjJDJlHxUBHJsvJwXR2IHc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=FqNEEpMAGBk0Mc1/tb6CS85/YBxMY+XW72k7bSSh7lUpqvu2Fh3zIkzgg9LKe7Unj
+	 BXPXZAX6Kv8WfI5J6Qn7hw0pQHwHiGZHVODQxK2jmqh2vNoj2nY9HyhBMQNk54wsgL
+	 sRVV7EzEFq47OSde/2j/vhSyWyv8OJaFm6Sah9DzpXb2CPlA+JzES4SaXK1sXWU+Nq
+	 X2Qp+VnafoXkIRT/ZEYsZvGGASt0kljvMsgWjAKfTgAvyfi/JrFHOFJBaLTGX/Uee9
+	 88mwX+isXesAIfHJjalyi+7jsBW7zVgmTKJhh4snxm0TnkoPMLZZzQj4UR1PY1w/uZ
+	 IY0y0TMYh05iA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C891117E0125;
+	Thu,  9 Oct 2025 13:35:50 +0200 (CEST)
+Message-ID: <e18a0772-3031-4fff-a625-b1d4e1aab605@collabora.com>
+Date: Thu, 9 Oct 2025 13:35:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251007063100.2396936-1-anshuman.khandual@arm.com>
-In-Reply-To: <20251007063100.2396936-1-anshuman.khandual@arm.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-Date: Thu, 9 Oct 2025 19:35:22 +0800
-X-Gmail-Original-Message-ID: <CABzRoyZZKACWQ4jeOUmHS-0-7t8ELjD-GMZ-RpiYDGL=T6PZCg@mail.gmail.com>
-X-Gm-Features: AS18NWBdt3Xvr1mjG1xmHMEbEeTM17-hxQa2VvgahlWoWMB1DxgCulMHrUr3oNU
-Message-ID: <CABzRoyZZKACWQ4jeOUmHS-0-7t8ELjD-GMZ-RpiYDGL=T6PZCg@mail.gmail.com>
-Subject: Re: [PATCH] mm: Replace READ_ONCE() with standard page table accessors
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 09/20] soc: mediatek: mtk-cmdq: Add pa_base parsing for
+ hardware without subsys ID support
+To: Jason-JH Lin <jason-jh.lin@mediatek.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+ Nicolas Dufresne <nicolas@ndufresne.ca>, Nancy Lin <nancy.lin@mediatek.com>,
+ Singo Chang <singo.chang@mediatek.com>,
+ Paul-PL Chen <paul-pl.chen@mediatek.com>, Moudy Ho <moudy.ho@mediatek.com>,
+ Xiandong Wang <xiandong.wang@mediatek.com>,
+ Sirius Wang <sirius.wang@mediatek.com>, Fei Shao <fshao@chromium.org>,
+ Chen-yu Tsai <wenst@chromium.org>,
+ Project_Global_Chrome_Upstream_Group@mediatek.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+References: <20250827114006.3310175-1-jason-jh.lin@mediatek.com>
+ <20250827114006.3310175-10-jason-jh.lin@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250827114006.3310175-10-jason-jh.lin@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 7, 2025 at 2:31=E2=80=AFPM Anshuman Khandual
-<anshuman.khandual@arm.com> wrote:
->
-> Replace all READ_ONCE() with a standard page table accessors i.e pxdp_get=
-()
-> that defaults into READ_ONCE() in cases where platform does not override.
->
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: linux-mm@kvack.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Il 27/08/25 13:37, Jason-JH Lin ha scritto:
+> When GCE executes instructions, it typically locates the corresponding
+> hardware register using the subsys ID. For hardware that does not
+> support subsys ID, the subsys ID is set to an invalid value, and the
+> physical address must be used to generate GCE instructions.
+> 
+> The main advantage of using subsys ID is to reduce the number of
+> instructions. Without subsys ID, an additional `ASSIGN` instruction
+> is needed to assign the high bytes of the physical address, which can
+> impact performance if too many instructions are required. However, if
+> the hardware does not support subsys ID, using the physical address
+> is the only option to achieve the same functionality.
+> 
+> This commit adds a pa_base parsing flow to the cmdq_client_reg structure
+> to handle hardware without subsys ID support.
+> 
+> Signed-off-by: Jason-JH Lin <jason-jh.lin@mediatek.com>
 > ---
+>   drivers/soc/mediatek/mtk-cmdq-helper.c | 15 +++++++++++++--
+>   include/linux/soc/mediatek/mtk-cmdq.h  |  3 +++
+>   2 files changed, 16 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/soc/mediatek/mtk-cmdq-helper.c b/drivers/soc/mediatek/mtk-cmdq-helper.c
+> index 4b1591e5b1ae..41e1997cdd53 100644
+> --- a/drivers/soc/mediatek/mtk-cmdq-helper.c
+> +++ b/drivers/soc/mediatek/mtk-cmdq-helper.c
+> @@ -8,6 +8,7 @@
+>   #include <linux/module.h>
+>   #include <linux/mailbox_controller.h>
+>   #include <linux/of.h>
+> +#include <linux/of_address.h>
+>   #include <linux/soc/mediatek/mtk-cmdq.h>
+>   
+>   #define CMDQ_WRITE_ENABLE_MASK	BIT(0)
+> @@ -60,20 +61,30 @@ int cmdq_dev_get_client_reg(struct device *dev,
+>   			    struct cmdq_client_reg *client_reg, int idx)
+>   {
+>   	struct of_phandle_args spec;
+> +	struct resource res;
+>   	int err;
+>   
+>   	if (!client_reg)
+>   		return -ENOENT;
+>   
 
-LGTM. I still assume it is a no-op change :)
+	err = of_address_to_resource( ... )
+	if (err) {
+		dev_err(....)
+		return;
+	}
 
-Reviewed-by: Lance Yang <lance.yang@linux.dev>
+after which:
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+> +	if (of_address_to_resource(dev->of_node, 0, &res) != 0) {
+> +		dev_err(dev, "Missing reg in %s node\n", dev->of_node->full_name);
+> +		return -EINVAL;
+> +	}
+> +	client_reg->pa_base = res.start;
+> +
+>   	err = of_parse_phandle_with_fixed_args(dev->of_node,
+>   					       "mediatek,gce-client-reg",
+>   					       3, idx, &spec);
+>   	if (err < 0) {
+> -		dev_warn(dev,
+> +		dev_dbg(dev,
+>   			"error %d can't parse gce-client-reg property (%d)",
+>   			err, idx);
+>   
+> -		return err;
+> +		/* make subsys invalid */
+> +		client_reg->subsys = CMDQ_SUBSYS_INVALID;
+> +
+> +		return 0;
+>   	}
+>   
+>   	client_reg->subsys = (u8)spec.args[0];
+> diff --git a/include/linux/soc/mediatek/mtk-cmdq.h b/include/linux/soc/mediatek/mtk-cmdq.h
+> index 5e3a0e807980..3699229a7375 100644
+> --- a/include/linux/soc/mediatek/mtk-cmdq.h
+> +++ b/include/linux/soc/mediatek/mtk-cmdq.h
+> @@ -23,6 +23,8 @@
+>   #define CMDQ_THR_SPR_IDX2	(2)
+>   #define CMDQ_THR_SPR_IDX3	(3)
+>   
+> +#define CMDQ_SUBSYS_INVALID	(U8_MAX)
+> +
+>   struct cmdq_pkt;
+>   
+>   enum cmdq_logic_op {
+> @@ -52,6 +54,7 @@ struct cmdq_operand {
+>   
+>   struct cmdq_client_reg {
+>   	u8 subsys;
+> +	phys_addr_t pa_base;
+>   	u16 offset;
+>   	u16 size;
+>   };
+
 
