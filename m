@@ -1,122 +1,165 @@
-Return-Path: <linux-kernel+bounces-846653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72EBABC8A6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 12:59:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47D23BC8AEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:04:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1E8B33528A8
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 10:59:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94AC8423696
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:02:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 572B52DECB0;
-	Thu,  9 Oct 2025 10:57:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 854CD2EC0B0;
+	Thu,  9 Oct 2025 10:58:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="KfoK2xnt"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C+CqYBXr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3D02E8B86
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 10:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A212EBDFB;
+	Thu,  9 Oct 2025 10:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760007476; cv=none; b=NMgxCnnN5T3goKU+GzQ8FnHeni+mTRtBHymQfo5gxEIjXN8Jd4DSf7JIBuRqXrDf0mHhc/H23JGMlBbImQFHeTc6bdxi0QJnqZaXKmkijHOv4a1AVxHb5Qn72BUWbsUUKvK6orNe3IbH3xvj0f1Og4znE4BO6+G3egxiZ3F8/kA=
+	t=1760007520; cv=none; b=X95hR4nxqFCBhnG9gPjOxAmBWB5UPNbCSdeIHKqS0JcGcTpMLGKwKRSLvEphNv7r6qV4VbhUxacdn8Ey0ujO7SSBnAN+zd+lZW1KKfuHB/HJ9rfwYLivx2u9TsgXGcAm6FfV+/Ujofzcm76gqaquDzVZ2COGGpiNvjpy1kfedYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760007476; c=relaxed/simple;
-	bh=hyh+LCEuQE7GJamlSAFoXKnjp8PQejpEGYginwJsIxs=;
-	h=From:To:Cc:References:In-Reply-To:Subject:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XT32X8YYXJ9uztrxuCsixEOJ78HsYuTwNqPliGiFHv+/Jma2jgGt7mcG8xI8MWiLUP+7pM8pp96XpTEf5OQvJP8afnEpkmD5i5iz+twmXQ5jD4ehXRC3IKeK4C++PI61fj3c6/hrAGjF+qOBnCC1hoS/5fSubib3nghdZ6ioeMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=KfoK2xnt; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1760007469; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	bh=7r1quKn+BuTk3jaZkpXZ3gMtPbVEjL5mdTyR1kfEgUw=;
-	b=KfoK2xntLWcG1STa+j9KstT3PTnFSq9SfEiQGjunoAMFYaY6h5c8U7YjamK3R9zeLoN1gsDkcezZcjHLlkE9r69pQ/K/Ulu3g6CwWDhMB7b5gPMXJo/pwDHt2mEMXiQuMIoiImSdgpb1iiUxjwHe3JFFwM7sT0+EZq/UY/Plk0c=
-Received: from LG41624401116(mailfrom:yadong.qi@linux.alibaba.com fp:SMTPD_---0Wpmiumm_1760007468 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 09 Oct 2025 18:57:48 +0800
-From: <yadong.qi@linux.alibaba.com>
-To: "'Uladzislau Rezki'" <urezki@gmail.com>
-Cc: <akpm@linux-foundation.org>,
-	<linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>,
-	<ying.huang@linux.alibaba.com>
-References: <20251009093707.868-1-yadong.qi@linux.alibaba.com> <aOeEYHzXUVOpu174@milan>
-In-Reply-To: <aOeEYHzXUVOpu174@milan>
-Subject: RE: [PATCH v3] mm: vmalloc: WARN_ON if mapping size is not PAGE_SIZE aligned
-Date: Thu, 9 Oct 2025 18:57:48 +0800
-Message-ID: <001401dc390b$8d074680$a715d380$@linux.alibaba.com>
+	s=arc-20240116; t=1760007520; c=relaxed/simple;
+	bh=7Nur+XSIKNjaZ4TARG/0OtkaTqABK5qON+LE3aEY7Aw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=VEqsc0BPEb46kiUqkeB5UPb0jy8kL//FNLgYPcymNTCW9PSYBKQEFjJ0PL0E2J6S/qhXTwmkGeQEGBuMMTBVqVRr9jx2DE9sBsEeDaXFhOtQO5nObqrqw49aIk8RIJjoE3S9xVF9i+4+tFNVxXSJqgtUjL5jWOKu/+R32RmF2hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C+CqYBXr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 566A8C4CEE7;
+	Thu,  9 Oct 2025 10:58:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760007519;
+	bh=7Nur+XSIKNjaZ4TARG/0OtkaTqABK5qON+LE3aEY7Aw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=C+CqYBXrsPK4Hf77dWS8x2tr3n47VJ1gWIZgOIq2eKyhyo1+cmTV2J60K5aYhgHDw
+	 3CEeKuIGW8qjA4K3QhBrWjuQoCMP5w8o3T0QjK+eWq+UGDWtZHgRCIHoxuEGrNX+Bj
+	 pIlpM8NA+mb7eJTo8mf/Bdjf0HLnSrm9//Wt0xWRbT6Le7m6gzZdQW3NX53MK/u9sv
+	 S10U8ahIcGBuVvRGwnutN4BYzYg3r7AgVyWHlcPpwLme5rmkzmzbHl5bzEpdZQvZ2N
+	 XQNhDqGAJ3Mjyg0LPTV3FINr6FIiDNji1zltNhGX/uBPh8CxPtU2d4qxRFTeaHmIkF
+	 cN5qN9D2zj3Gw==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: "yanjun.zhu" <yanjun.zhu@linux.dev>
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>,  pratyush@kernel.org,
+  jasonmiu@google.com,  graf@amazon.com,  changyuanl@google.com,
+  rppt@kernel.org,  dmatlack@google.com,  rientjes@google.com,
+  corbet@lwn.net,  rdunlap@infradead.org,  ilpo.jarvinen@linux.intel.com,
+  kanie@linux.alibaba.com,  ojeda@kernel.org,  aliceryhl@google.com,
+  masahiroy@kernel.org,  akpm@linux-foundation.org,  tj@kernel.org,
+  yoann.congal@smile.fr,  mmaurer@google.com,  roman.gushchin@linux.dev,
+  chenridong@huawei.com,  axboe@kernel.dk,  mark.rutland@arm.com,
+  jannh@google.com,  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
+  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
+  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
+  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
+  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
+  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
+  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
+  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
+  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
+  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
+  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
+  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
+  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
+  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
+  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
+  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
+  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com
+Subject: Re: [PATCH v3 19/30] liveupdate: luo_sysfs: add sysfs state monitoring
+In-Reply-To: <a27f9f8f-dc03-441b-8aa7-7daeff6c82ae@linux.dev> (yanjun zhu's
+	message of "Wed, 8 Oct 2025 18:07:00 -0700")
+References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
+	<20250807014442.3829950-20-pasha.tatashin@soleen.com>
+	<a27f9f8f-dc03-441b-8aa7-7daeff6c82ae@linux.dev>
+Date: Thu, 09 Oct 2025 12:58:29 +0200
+Message-ID: <mafs0qzvcmje2.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="gb2312"
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQGd0BTLCsR2DZmbflymI0KNfeFshwG5mHeetSipVcA=
-Content-Language: zh-cn
+Content-Type: text/plain
 
-> -----Original Message-----
-> From: Uladzislau Rezki <urezki@gmail.com>
-> Sent: 2025=C4=EA10=D4=C29=C8=D5 17:46
-> To: Yadong Qi <yadong.qi@linux.alibaba.com>
-> Cc: akpm@linux-foundation.org; urezki@gmail.com; linux-mm@kvack.org;
-> linux-kernel@vger.kernel.org; ying.huang@linux.alibaba.com
-> Subject: Re: [PATCH v3] mm: vmalloc: WARN_ON if mapping size is not =
-PAGE_SIZE
-> aligned
->=20
-> On Thu, Oct 09, 2025 at 05:37:06PM +0800, Yadong Qi wrote:
-> > In mm/vmalloc.c, the function vmap_pte_range() assumes that the
-> > mapping size is aligned to PAGE_SIZE. If this assumption is
-> > violated, the loop will become infinite because the termination
-> > condition (`addr !=3D end`) will never be met. This can lead to
-> > overwriting other VA ranges and/or random pages physically follow
-> > the page table.
-> >
-> > It's the caller's responsibility to ensure that the mapping size
-> > is aligned to PAGE_SIZE. However, the memory corruption is hard
-> > to root cause. To identify the programming error in the caller
-> > easier, check whether the mapping size is PAGE_SIZE aligned with
-> > WARN_ON().
-> >
-> > Signed-off-by: Yadong Qi <yadong.qi@linux.alibaba.com>
-> > Reviewed-by: Huang Ying <ying.huang@linux.alibaba.com>
-> > ---
-> > v2 -> v3:
-> >   * change error code from ENOMEM to EINVAL
-> >   * modify callers of vmap_pte_range to handle return code
-> > v1 -> v2:
-> >   * Use WARN_ON instead of BUG_ON
-> > ---
-> >  mm/vmalloc.c | 29 ++++++++++++++++++-----------
-> >  1 file changed, 18 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > index 5edd536ba9d2..1fa52f203795 100644
-> > --- a/mm/vmalloc.c
-> > +++ b/mm/vmalloc.c
-> > @@ -100,6 +100,9 @@ static int vmap_pte_range(pmd_t *pmd, unsigned =
-long
-> addr, unsigned long end,
-> >  	struct page *page;
-> >  	unsigned long size =3D PAGE_SIZE;
-> >
-> > +	if (WARN_ON(!PAGE_ALIGNED(end - addr)))
-> >
-> And it might be worth to use WARN_ON_ONCE() otherwise there is a risk
-> that a kernel buffer would contain only such warnings.
->=20
+On Wed, Oct 08 2025, yanjun.zhu wrote:
 
-Sure, will change in next version.
+> On 8/6/25 6:44 PM, Pasha Tatashin wrote:
+>> Introduce a sysfs interface for the Live Update Orchestrator
+>> under /sys/kernel/liveupdate/. This interface provides a way for
+>> userspace tools and scripts to monitor the current state of the LUO
+>> state machine.
+>> The main feature is a read-only file, state, which displays the
+>> current LUO state as a string ("normal", "prepared", "frozen",
+>> "updated"). The interface uses sysfs_notify to allow userspace
+>> listeners (e.g., via poll) to be efficiently notified of state changes.
+>> ABI documentation for this new sysfs interface is added in
+>> Documentation/ABI/testing/sysfs-kernel-liveupdate.
+>> This read-only sysfs interface complements the main ioctl interface
+>> provided by /dev/liveupdate, which handles LUO control operations and
+>> resource management.
+>> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+[...]
+>> +#include <linux/kobject.h>
+>> +#include <linux/liveupdate.h>
+>> +#include <linux/sysfs.h>
+>> +#include "luo_internal.h"
+>> +
+>> +static bool luo_sysfs_initialized;
+>> +
+>> +#define LUO_DIR_NAME	"liveupdate"
+>> +
+>> +void luo_sysfs_notify(void)
+>> +{
+>> +	if (luo_sysfs_initialized)
+>> +		sysfs_notify(kernel_kobj, LUO_DIR_NAME, "state");
+>> +}
+>> +
+>> +/* Show the current live update state */
+>> +static ssize_t state_show(struct kobject *kobj, struct kobj_attribute *attr,
+>> +			  char *buf)
+>> +{
+>> +	return sysfs_emit(buf, "%s\n", luo_current_state_str());
+>
+> Because the window of kernel live update is short, it is difficult to statistics
+> how many times the kernel is live updated.
+>
+> Is it possible to add a variable to statistics the times that the kernel is live
+> updated?
 
-Best Regard
-Yadong
+The kernel doesn't do the live update on its own. The process is driven
+and sequenced by userspace. So if you want to keep statistics, you
+should do it from your userspace (luod maybe?). I don't see any need for
+this in the kernel.
 
+>
+> For example, define a global variable of type atomic_t or u64 in the core
+> module:
+>
+> #include <linux/atomic.h>
+>
+> static atomic_t klu_counter = ATOMIC_INIT(0);
+>
+>
+> Every time a live update completes successfully, increment the counter:
+>
+> atomic_inc(&klu_counter);
+>
+> Then exporting this value through /proc or /sys so that user space can check it:
+>
+> static ssize_t klu_counter_show(struct kobject *kobj, struct kobj_attribute
+> *attr, char *buf)
+> {
+>     return sprintf(buf, "%d\n", atomic_read(&klu_counter));
+> }
+>
+> Yanjun.Zhu
+[...]
+
+-- 
+Regards,
+Pratyush Yadav
 
