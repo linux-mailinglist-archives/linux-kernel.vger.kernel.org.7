@@ -1,165 +1,105 @@
-Return-Path: <linux-kernel+bounces-846813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8D72BC91B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:46:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D3E5BC91C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:48:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FB053A6F18
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:45:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D0011A61269
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8A22E2EFC;
-	Thu,  9 Oct 2025 12:45:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A4722E11AB
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 12:45:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCBC62E339B;
+	Thu,  9 Oct 2025 12:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="dwqhE/sO"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97505BA3F;
+	Thu,  9 Oct 2025 12:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760013954; cv=none; b=Cg7/ET0Wu6H0U6jHRzIPnzWf5Pj7/srPUDCiTygNTtnwzvfUUHI8mkrLAvxLuCvgeAEkLnn8t5Yy4nJhpBD2qaAh8gsdrsC7hJOcywywJ3ydakN6JtnknHeSeZN8IToIglAOY1Ikccvyb8iqM8nPTgUrDccKeefST2h3REmNCwI=
+	t=1760014081; cv=none; b=I0GKTdXi0CbKvEGwpS+HsrtBK42NaXrs3mscYrNLp17bFn2rimOO2LU64j6G2kxDaphEu1V/qW1+tZKIubWpBnYui7no8L8BL1UMzTl09f+prI5Ysnw+QZWmGBGlT+FCww//UODymT0grOin0XbSCS3YsDjvLYgvLBl725sWWnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760013954; c=relaxed/simple;
-	bh=HbNovGCEeUKtNbjcTLv4eSL94xDsy5k2YBrciaio6zM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WQNnH0y9ljQJtXLHB65pff4QKtJm0qIW7E2rpo0kRlXIMRgevapKPZtzlZtp7HUYO56zBN/FIYksS1LQ+WPVFvXX60geXCiSuY8D8eAnSaXepNlBt1DuP5Buu2cT0gKdOM2hwY1UiOMoWuUMvYYvYrT8R1di87vmTyuCkuq0Hj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F3232176A;
-	Thu,  9 Oct 2025 05:45:42 -0700 (PDT)
-Received: from [10.1.34.29] (e122027.cambridge.arm.com [10.1.34.29])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1AE323F66E;
-	Thu,  9 Oct 2025 05:45:48 -0700 (PDT)
-Message-ID: <4400c6b4-d2ad-429a-b84c-60a2f593cff1@arm.com>
-Date: Thu, 9 Oct 2025 13:45:47 +0100
+	s=arc-20240116; t=1760014081; c=relaxed/simple;
+	bh=k8sU+bq8157+OitLUWgTfChNmvNmCTWggeAmvYB82tM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CStjdiWbeIXqZ738s7x5K6kGyDkijMyYrBnQMh7fZja4rNcND6+jKPLd5ZJVcWUDKKEINqi43NMPpJNNRST/5qtEC9KBzB8ekXaH8sh6vhGRlmN+GYVXg0Az8qjtOp8GDH0UhsPmwBPkL2tsWKs7Iu3LbTfhbpeiN1AWxyiuH6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=dwqhE/sO; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=YUpyyd67HoUtnYCpJnUaGRmwxPERukwal2oCb7xHnok=; b=dwqhE/sOu2CR0t52IOWxlfY5hO
+	aSQsDujsiN6mqy2x9VjDDh6NR0dCySTEyHlfk3k0OHJKSJiH1vuDgPcZceFZ6LrrxQP8am2QBwurk
+	tdUZobfNJCcTMibhLmkTuahZEIEpJuPI+EJYF5yl9oiEMfSUUWFMjKRet3hdrOGrXlyk=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1v6q3l-00AWoZ-F0; Thu, 09 Oct 2025 14:47:53 +0200
+Date: Thu, 9 Oct 2025 14:47:53 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Paolo Abeni <pabeni@redhat.com>, Jason Wang <jasowang@redhat.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, kvm@vger.kernel.org,
+	virtualization@lists.linux.dev
+Subject: Re: [PATCH 3/3] vhost: use checked versions of VIRTIO_BIT
+Message-ID: <d4fcd2d8-ac84-4d9f-a47a-fecc50e18e20@lunn.ch>
+References: <cover.1760008797.git.mst@redhat.com>
+ <6629538adfd821c8626ab8b9def49c23781e6775.1760008798.git.mst@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/panfrost: Name scheduler queues after their job
- slots
-To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
- linux-kernel@vger.kernel.org
-Cc: healych@amazon.com, Boris Brezillon <boris.brezillon@collabora.com>,
- Rob Herring <robh@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org
-References: <20251009114313.1374948-1-adrian.larumbe@collabora.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20251009114313.1374948-1-adrian.larumbe@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6629538adfd821c8626ab8b9def49c23781e6775.1760008798.git.mst@redhat.com>
 
-On 09/10/2025 12:43, Adrián Larumbe wrote:
-> Drawing from commit d2624d90a0b7 ("drm/panthor: assign unique names to
-> queues"), give scheduler queues proper names that reflect the function
-> of their JM slot, so that this will be shown when gathering DRM
-> scheduler tracepoints.
+On Thu, Oct 09, 2025 at 07:24:16AM -0400, Michael S. Tsirkin wrote:
+> This adds compile-time checked versions of VIRTIO_BIT that set bits in
+> low and high qword, respectively.  Will prevent confusion when people
+> set bits in the wrong qword.
 > 
-> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
-
-Reviewed-by: Steven Price <steven.price@arm.com>
-
+> Cc: "Paolo Abeni" <pabeni@redhat.com>
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 > ---
->  drivers/gpu/drm/panfrost/panfrost_drv.c | 16 ++++++----------
->  drivers/gpu/drm/panfrost/panfrost_job.c |  8 +++++++-
->  drivers/gpu/drm/panfrost/panfrost_job.h |  2 ++
->  3 files changed, 15 insertions(+), 11 deletions(-)
+>  drivers/vhost/net.c             | 4 ++--
+>  include/linux/virtio_features.h | 9 +++++++++
+>  2 files changed, 11 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
-> index 22350ce8a08f..607a5b8448d0 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
-> @@ -668,23 +668,19 @@ static void panfrost_gpu_show_fdinfo(struct panfrost_device *pfdev,
->  	 *   job spent on the GPU.
->  	 */
->  
-> -	static const char * const engine_names[] = {
-> -		"fragment", "vertex-tiler", "compute-only"
-> -	};
-> -
-> -	BUILD_BUG_ON(ARRAY_SIZE(engine_names) != NUM_JOB_SLOTS);
-> -
->  	for (i = 0; i < NUM_JOB_SLOTS - 1; i++) {
->  		if (pfdev->profile_mode) {
->  			drm_printf(p, "drm-engine-%s:\t%llu ns\n",
-> -				   engine_names[i], panfrost_priv->engine_usage.elapsed_ns[i]);
-> +				   panfrost_engine_names[i],
-> +				   panfrost_priv->engine_usage.elapsed_ns[i]);
->  			drm_printf(p, "drm-cycles-%s:\t%llu\n",
-> -				   engine_names[i], panfrost_priv->engine_usage.cycles[i]);
-> +				   panfrost_engine_names[i],
-> +				   panfrost_priv->engine_usage.cycles[i]);
->  		}
->  		drm_printf(p, "drm-maxfreq-%s:\t%lu Hz\n",
-> -			   engine_names[i], pfdev->pfdevfreq.fast_rate);
-> +			   panfrost_engine_names[i], pfdev->pfdevfreq.fast_rate);
->  		drm_printf(p, "drm-curfreq-%s:\t%lu Hz\n",
-> -			   engine_names[i], pfdev->pfdevfreq.current_frequency);
-> +			   panfrost_engine_names[i], pfdev->pfdevfreq.current_frequency);
->  	}
->  }
->  
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c b/drivers/gpu/drm/panfrost/panfrost_job.c
-> index c47d14eabbae..0cc80da12562 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_job.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_job.c
-> @@ -28,6 +28,10 @@
->  #define job_write(dev, reg, data) writel(data, dev->iomem + (reg))
->  #define job_read(dev, reg) readl(dev->iomem + (reg))
->  
-> +const char * const panfrost_engine_names[] = {
-> +	"fragment", "vertex-tiler", "compute-only"
-> +};
-> +
->  struct panfrost_queue_state {
->  	struct drm_gpu_scheduler sched;
->  	u64 fence_context;
-> @@ -846,12 +850,13 @@ int panfrost_job_init(struct panfrost_device *pfdev)
->  		.num_rqs = DRM_SCHED_PRIORITY_COUNT,
->  		.credit_limit = 2,
->  		.timeout = msecs_to_jiffies(JOB_TIMEOUT_MS),
-> -		.name = "pan_js",
->  		.dev = pfdev->dev,
->  	};
->  	struct panfrost_job_slot *js;
->  	int ret, j;
->  
-> +	BUILD_BUG_ON(ARRAY_SIZE(panfrost_engine_names) != NUM_JOB_SLOTS);
-> +
->  	/* All GPUs have two entries per queue, but without jobchain
->  	 * disambiguation stopping the right job in the close path is tricky,
->  	 * so let's just advertise one entry in that case.
-> @@ -887,6 +892,7 @@ int panfrost_job_init(struct panfrost_device *pfdev)
->  
->  	for (j = 0; j < NUM_JOB_SLOTS; j++) {
->  		js->queue[j].fence_context = dma_fence_context_alloc(1);
-> +		args.name = panfrost_engine_names[j];
->  
->  		ret = drm_sched_init(&js->queue[j].sched, &args);
->  		if (ret) {
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_job.h b/drivers/gpu/drm/panfrost/panfrost_job.h
-> index 5a30ff1503c6..458666bf684b 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_job.h
-> +++ b/drivers/gpu/drm/panfrost/panfrost_job.h
-> @@ -53,6 +53,8 @@ struct panfrost_jm_ctx {
->  	struct drm_sched_entity slot_entity[NUM_JOB_SLOTS];
->  };
->  
-> +extern const char * const panfrost_engine_names[];
-> +
->  int panfrost_jm_ctx_create(struct drm_file *file,
->  			   struct drm_panfrost_jm_ctx_create *args);
->  int panfrost_jm_ctx_destroy(struct drm_file *file, u32 handle);
-> 
-> base-commit: 30531e9ca7cd4f8c5740babd35cdb465edf73a2d
+> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+> index 43d51fb1f8ea..8b98e1a8baaa 100644
+> --- a/drivers/vhost/net.c
+> +++ b/drivers/vhost/net.c
+> @@ -76,8 +76,8 @@ static const u64 vhost_net_features[VIRTIO_FEATURES_QWORDS] = {
+>  	(1ULL << VIRTIO_F_ACCESS_PLATFORM) |
+>  	(1ULL << VIRTIO_F_RING_RESET) |
+>  	(1ULL << VIRTIO_F_IN_ORDER),
+> -	VIRTIO_BIT(VIRTIO_NET_F_GUEST_UDP_TUNNEL_GSO) |
+> -	VIRTIO_BIT(VIRTIO_NET_F_HOST_UDP_TUNNEL_GSO),
+> +	VIRTIO_BIT_HI(VIRTIO_NET_F_GUEST_UDP_TUNNEL_GSO) |
+> +	VIRTIO_BIT_HI(VIRTIO_NET_F_HOST_UDP_TUNNEL_GSO),
 
+How any bits in vhost_net_features are currently in use? How likely is
+it to go from 2x 64bit words to 3x 64 bit words? Rather than _LO, _HI,
+would _1ST, _2ND be better leaving it open for _3RD?
+
+I would also be tempted to rename these macros to include _LO_ and
+_HI_ in them. VIRTIO_BIT_HI(VIRTIO_LO_F_IN_ORDER) is more likely to be
+spotted as wrong this way.
+
+An alternative would be to convert to a linux bitmap, which is
+arbitrary length so you just use bit number and leave the
+implementation to map that to the correct offset in the underlying
+data structure.
+
+	Andrew
 
