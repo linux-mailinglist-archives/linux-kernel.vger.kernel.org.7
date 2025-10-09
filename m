@@ -1,86 +1,87 @@
-Return-Path: <linux-kernel+bounces-846545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03E9DBC84E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 11:28:51 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6220FBC84F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 11:30:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 80DA84F900C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 09:28:34 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7CE0E3497F7
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 09:30:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8ACC2D6629;
-	Thu,  9 Oct 2025 09:28:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10082D2397;
+	Thu,  9 Oct 2025 09:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I/mejTVL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TR8wKMrg"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF362D3EF8
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 09:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C35E2D061A
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 09:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760002107; cv=none; b=YEQzNYl428IdIxN3OZu6+R21obXFogLyiW5Y763h6Ks1znsCtw3EvEJWXn4hKMj19tl6hLPSrTACauM1+N0G0Yt/ffU2L/WBIqPkglYkKQj4G6U0+uAeYwF0kJ1JSCMmK4HGHGcM6wWETeOD9lQEXpWKi8bB9se7T94gXl9uGUY=
+	t=1760002208; cv=none; b=lByz4qs4Mi6pbPEMe8stqBCNX4ABDEiXdugXNjYwcpTSn3aI+Fgu/s/sKA5h7JDgw0nCKNPTncyl5DeoN1/brdTnCKD3fAfgC+Jb2Q9Gq6Ud7SDjdHu77KbHTwkIbOH1fpXynw2ifoi1QrDJura0WTWooIghczpSzKuXq3g+vf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760002107; c=relaxed/simple;
-	bh=BQczyE5Zdk5A2N+2sEJ3+Qj9fhfLVuv1k6SDtzvhgwg=;
+	s=arc-20240116; t=1760002208; c=relaxed/simple;
+	bh=el0ASqmaTvmfPJXD4hKNf4F8hGWxKWMWrZAUEtGEOAA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kHWA/dwe8Lk5iHzJq4aqXleZSHArs4w+eCTfjBywzEVygtP3Bqkwu7UPD0kzRiYYy8cW9rnhCtRO5amRDpo9mu35z2pl2Hmeb2brF7YZ/BoEesdkydYjNSdvmMnandRYXQGo3u6mxugvylx1sybxbrzVY0C50idKmPIXB0ElJTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I/mejTVL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760002104;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BXHkdfv5tUm0CpyurnPpmySUCFcyGseszzZdpVNrQUA=;
-	b=I/mejTVLwyHu4siBdvmC3pX+l5zwJg1Juufmb/ysGHQEaXOFS894y3fqj8fM8IPkOZr1Vc
-	49PzrYZxrHPNzP1BlQvT00mGR03GYZbYXf8ekvdBIqu0+d3xa2STtiAvgLr1TC1XZs4BAO
-	Z0dh4fW7Ga5WNBeRvDCbqHqT+oPKDa4=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-381-wfsSi3BPORGF60dKR8N77A-1; Thu, 09 Oct 2025 05:28:22 -0400
-X-MC-Unique: wfsSi3BPORGF60dKR8N77A-1
-X-Mimecast-MFC-AGG-ID: wfsSi3BPORGF60dKR8N77A_1760002102
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-46e45899798so5984145e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 02:28:22 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=OoCJOT/KjO+/f0j4K7PlhDdv+uDp2iRZEXAruNbYGmjD2KoUVM8bFR3F4XUumiQtjSYOiHMz8POyOwC4g4JLtu08BTmGADSuwpez5VJpjRR2hpDUBO3bpt5p2HUu4BtLPojkX6AyTGpKUhvruPkLxWwOyHhJFmXECkPyMPcxVww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TR8wKMrg; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5996EHIO004912
+	for <linux-kernel@vger.kernel.org>; Thu, 9 Oct 2025 09:30:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+Q2RvLUP1TRoeCdEklVO8kA/8Vk/VvKeXscAp6CMzmk=; b=TR8wKMrg4tr+wdgQ
+	6VYKTMn3aFA064VFzGRZIE+jkvygmm9+Cfbvw5MvYzvVS3al5MoMT2JIDSSMPPTc
+	vHIWZhMZNLo2aPIl2HnPoYm7fRW+GVrAvs6qIm48a9ewfI8GSqI/Az7SDkqLmqoL
+	f4EgWIsAcBugFvRw3M4ei7Ip0xoRBtblDpIYAZxAPGJh9omh81Xs6Qj6zlFmMpv5
+	sSKXtNSe25a4jVdYvA4DUUY0nWPQ/oojXaCLKrcVAfieZt0c3h6r6ba3wsunmnIb
+	WGkosrqj9D3XQD5JMwxLyyAOjOQi48B2J/wYXYG0TNc2VRyJmmfUCWlJ9h0fJ2PI
+	HA9x9A==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv4u28cj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 09:30:06 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4ddf2a2d95fso2760961cf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 02:30:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760002102; x=1760606902;
+        d=1e100.net; s=20230601; t=1760002205; x=1760607005;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BXHkdfv5tUm0CpyurnPpmySUCFcyGseszzZdpVNrQUA=;
-        b=OnUNr8T5ymIdWk7qxJEpdTb7r519446bS8kGZ3ZcRpbw7A8OpzySOpT3x/8VT+SFF6
-         MSr5jH29AbDktavVNeXsbNNmzgUfJhNcnfESKHDdxA5f3u2x6vrCtY/w9Tk7uqOzUo8n
-         qG5SxFjV0q8Fb9J3KQ01sFrXVoY/SVyOztmoxomMkK5MwCDX2vBN8yNQnLfrJKaC7oVc
-         MRsxEMnACATM4t4iZBomUpTRnsmwHAdcgRASGI+jBYlehpO/ZES41F3D+rXeyAakOCcK
-         m7ckaDiMvU+vgjyAEDOK0+F4pizomSwp6dp//feLktN7SQi5nxWS9aGvwpqVCAqXmxtm
-         9V7w==
-X-Forwarded-Encrypted: i=1; AJvYcCVgsNCgvwI6JGSQGx4QaAUfP1/GlJnaMGfy2sZZwyaHBn2tZ16uKU0ISrniXQG0EHZPtXi2UOyV14iXWk8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeTALCzRZh+9gfNf68qMszjjvjf3xyxxAZ0csSQMv+SGIlDesN
-	BFF8OGokHpe+6rgCBaK88GcxvW6thVmq7zbGY78iX4os4B4FAHb5spFmxMu+YApK1MHXlerxSXG
-	m0080sy+TQbO014MxEeLtmaISrdQN/sXf8EAgauffZWJ/hL9buIO3yaueoCTPcv8Mag==
-X-Gm-Gg: ASbGncuFRx0DihYDvttrJJWBLZOAw6zea7LhrkB865/P3Qnp7iE/r7/O5rn7lubd6b4
-	XB3anhnGFiFUTrJUqe03jWA/VvQM56pGtblxFYYf9JlcMCoJh8iz6BcPz8KpAzJ8ZRb4dJ5QNaH
-	LQaWJA0XH5o4xPBRV/CGX2CSG8gSYYmXsrCPNIvVFjXG1MkocyD+taKTMkChYeMKF6tLSu31x9M
-	/ysONnKpOF2OIyYmHNF/jXHtoFRl4Q2Ir+l27zkDC1h5VrBZJ1+80ffCm3vaVliJOz4y+PACkQu
-	uIhu/9eClhkTm0cYFUsTICu+fjU4P6LT5BsnssGuhP9aWrxw88XQaT92l5trxY0zQp6z5+xgUFL
-	HWmyqNweJvkR28BmXYQ==
-X-Received: by 2002:a05:600c:4e01:b0:46e:6a6a:5cec with SMTP id 5b1f17b1804b1-46fa9a8e5e9mr45746265e9.2.1760002101713;
-        Thu, 09 Oct 2025 02:28:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEY3/Xon/8eow6YV6te1PVIUeQNsTPhTN4xL/Kc6c75ZTtzIKnnqNPMPgFzo3E/3FgK5+ApKg==
-X-Received: by 2002:a05:600c:4e01:b0:46e:6a6a:5cec with SMTP id 5b1f17b1804b1-46fa9a8e5e9mr45746105e9.2.1760002101274;
-        Thu, 09 Oct 2025 02:28:21 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fa9d7f91esm75339585e9.20.2025.10.09.02.28.19
+        bh=+Q2RvLUP1TRoeCdEklVO8kA/8Vk/VvKeXscAp6CMzmk=;
+        b=hcc+6zDroe4gVHCGbQ8XHv16DaA7WUCM3HTrDNTLnBrV+pCPAwvd8mArW8rQ+pSdGH
+         YkAa7faNpDrtjCi4I4nyXdlvBC61MSpc0b5ro6xL/0vB1PBj1+7+T1verXyjeY+qbZ7u
+         tBFByXHDnznn8htwYL1nZoYD/QzQdvcNo60NB2nd28gI2jLUx6ArzvE6L8FTTcok0djY
+         /2ncfUYONHCRwsiRAaIJ5tcLeqk4M44psA4G4C9vWU9Op/sUeb2nxiZijWhyiLaIc731
+         XryZKauCNiPyzNJDBwnBmgQhyTutWuaWT07YCOWFWdu/NRfggHAUJHZvigZRfZdcSvXW
+         Ekpw==
+X-Forwarded-Encrypted: i=1; AJvYcCVplQfqbughHXYn/5hFLk48Ek3yzpmpA+b4dk7u+5qPz8ln4cPQsKSN+bkgeP1f/B+EGy6dnlDamLJ9Kbg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxz/pioLGEcs2ntVMGl2uFZLvu06LPDAukjC9UjtDP6MZ9nQA2J
+	XrFduIRwRjgNgl4qZOwe9kl1JDfLspad+FLT+Pw4EQ4Ap1kfdisVS2zeTslYBMBVDGZMxejYqBv
+	R0slQNq3a3QVP+t1DkEn/RjsDG+1eBvVR6X0XqqV0NQOfn2ncgTVfhpcGwldqPwm/OU0=
+X-Gm-Gg: ASbGncsmY8AysJ4mwSmdogyimRduPHbO/5GHUGL2aPMY7mvycmfp9il3eUqESP7fPxt
+	bG4/BqJckV9zE8Xe5WtYHJ/vyGjWlAYn2w3ujbWY543YEPk19ifd02XcmfB0SCkyWVnfPGo7fpm
+	if4TpLDG5pMzI9JgE3w7gh3GI4YsLc3Ct+v1ihLnsmFzSqAG3uNof4d3GkeLwBfbHpSKcW5W0wi
+	EBVEY/zKUNMNLMuqNvLq6TDtrlY+OCbUfORLfcpyjLtBqigMMX7EH8LTmXJj9C4Y67nR4S5T76g
+	v6/qL1odo5WExsKuIEpJzzzy7aGKqmHwuEFzEuth6xs/fTRcjIz2GBExezRTsfRbIIHIOsI0uKw
+	RNcpCVJ6373dlwewv6nJi4wbqE8g=
+X-Received: by 2002:ac8:5847:0:b0:4d2:c24f:8495 with SMTP id d75a77b69052e-4e6ead5a000mr58399581cf.10.1760002204751;
+        Thu, 09 Oct 2025 02:30:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEFr0wEaBL2XbLULBN8fCQQoMulUdbLu/EIkIvWun7NFXx/+YOoZKhrRMhgISJJafb8hTw0mg==
+X-Received: by 2002:ac8:5847:0:b0:4d2:c24f:8495 with SMTP id d75a77b69052e-4e6ead5a000mr58399341cf.10.1760002204261;
+        Thu, 09 Oct 2025 02:30:04 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48652a9ffbsm1838680266b.10.2025.10.09.02.30.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Oct 2025 02:28:20 -0700 (PDT)
-Message-ID: <3184d938-5100-43f8-93e8-f88549ea4b72@redhat.com>
-Date: Thu, 9 Oct 2025 11:28:18 +0200
+        Thu, 09 Oct 2025 02:30:03 -0700 (PDT)
+Message-ID: <84d7ab07-4026-4313-8919-b5f9205132c6@oss.qualcomm.com>
+Date: Thu, 9 Oct 2025 11:30:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,66 +89,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/8] net: stmmac: qcom-ethqos: add support for SCMI
- power domains
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Richard Cochran <richardcochran@gmail.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Maxime Coquelin
- <mcoquelin.stm32@gmail.com>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Vinod Koul <vkoul@kernel.org>,
- Giuseppe Cavallaro <peppe.cavallaro@st.com>,
- Jose Abreu <joabreu@synopsys.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20251008-qcom-sa8255p-emac-v2-0-92bc29309fce@linaro.org>
+Subject: Re: [PATCH 4/4] ARM: dts: qcom: msm8974pro-htc-m8: add touchscreen
+To: Alexandre Messier <alex@me.ssier.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: Luca Weiss <luca@lucaweiss.eu>, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+        phone-devel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20251007-m8-dts-additions-v1-0-53d7ab3594e7@me.ssier.org>
+ <20251007-m8-dts-additions-v1-4-53d7ab3594e7@me.ssier.org>
+ <5a9a2ed9-9e95-4bb0-b5b9-e4e0edcfa8d8@oss.qualcomm.com>
+ <1d60b78e-136f-4051-8296-245d111ca49f@me.ssier.org>
 Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20251008-qcom-sa8255p-emac-v2-0-92bc29309fce@linaro.org>
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <1d60b78e-136f-4051-8296-245d111ca49f@me.ssier.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=Vrcuwu2n c=1 sm=1 tr=0 ts=68e7809e cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=8poMKPHdAAAA:8 a=nTsu3JDRWy1omu5sJsEA:9
+ a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22 a=fyZPtLC9JlAwSkJ5-iUD:22
+X-Proofpoint-GUID: 0_LHLyGQKJzjw6AfwGpmSirk68Xthprz
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX7FdTUSm6QAZ8
+ AN8Do1gZThgyAA1baIkyme0SVdeq5jxWYPYr5yniqzhRLAS1tTZ1XcGnkK4hns5DJyStSUr8Z/2
+ tR+lUG88n7qo8QSm7Z3rGzjFaSkMf3dAHvZ2+PACxrvFDsBMff1cf8qwuLGYJcJiMp4aWU/HWO0
+ QdXB+ncZVNBHH9A0W0kzgGmRllz4hFj6GbGEn45DEPz0Qs55kXeBBsplZDe4DZ0MyFcu+mEIOmu
+ osdnv6ESdd0weBLvkI415qtVCSblvAWvVI5hmdox/OKptsIF/T3vWBuzeo4psn7W819O1LzCmVL
+ mzqC7bw/QlfVugACULg7e1u7MNnno5Fuprnrb6aGXEGLSK1B8zCfVLQSdv4YKsgd5WX+GetEtVm
+ fFDyqrjqJr5kIdeAyb3NCZcST7Ld/w==
+X-Proofpoint-ORIG-GUID: 0_LHLyGQKJzjw6AfwGpmSirk68Xthprz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-09_03,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 phishscore=0 impostorscore=0 clxscore=1015 adultscore=0
+ bulkscore=0 spamscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
 
-On 10/8/25 10:17 AM, Bartosz Golaszewski wrote:
-> Add support for the firmware-managed variant of the DesignWare MAC on
-> the sa8255p platform. This series contains new DT bindings and driver
-> changes required to support the MAC in the STMMAC driver.
+On 10/9/25 7:50 AM, Alexandre Messier wrote:
+> On 2025-10-07 06:04, Konrad Dybcio wrote:
+>> On 10/7/25 7:55 AM, Alexandre Messier via B4 Relay wrote:
+>>> From: Alexandre Messier <alex@me.ssier.org>
+>>>
+>>> Add the touchscreen device node for the HTC One (M8).
+>>>
+>>> Signed-off-by: Alexandre Messier <alex@me.ssier.org>
+>>> ---
+>>>  arch/arm/boot/dts/qcom/qcom-msm8974pro-htc-m8.dts | 36 +++++++++++++++++++++++
+>>>  1 file changed, 36 insertions(+)
+>>>
+>>> diff --git a/arch/arm/boot/dts/qcom/qcom-msm8974pro-htc-m8.dts b/arch/arm/boot/dts/qcom/qcom-msm8974pro-htc-m8.dts
+>>> index 36eb42f0f3d9..040a256f9465 100644
+>>> --- a/arch/arm/boot/dts/qcom/qcom-msm8974pro-htc-m8.dts
+>>> +++ b/arch/arm/boot/dts/qcom/qcom-msm8974pro-htc-m8.dts
+>>> @@ -65,6 +65,35 @@ vreg_vph_pwr: vreg-vph-pwr {
+>>>  	};
+>>>  };
+>>>  
+>>> +&blsp1_i2c2 {
+>>> +	clock-frequency = <384000>;
+>>
+>> This is not a valid I2C frequency
+>>
+>> You're looking for 100/400/1000 kHz
 > 
-> It also reorganizes the ethqos code quite a bit to make the introduction
-> of power domains into the driver a bit easier on the eye.
+> Hello Konrad,
 > 
-> The DTS changes will go in separately.
+> This frequency value is used in the vendor kernel [1], hence why I used it.
 > 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
-> Changes in v2:
-> - Fix the power-domains property in DT bindings
-> - Rework the DT bindings example
-> - Drop the DTS patch, it will go upstream separately
-> - Link to v1: https://lore.kernel.org/r/20250910-qcom-sa8255p-emac-v1-0-32a79cf1e668@linaro.org
+> I did a test at 400 kHz, and the I2C devices (touchscreen here, and NFC in the
+> other patch) are still detected, with basic functions still working.
+> 
+> Let me know if I should still update to use 400 kHz. I would prefer to keep
+> the value from the vendor kernel (and in that case, I will update the commit
+> message to add that information).
 
-## Form letter - net-next-closed
+Hm, I grepped around in old vendor trees, and it seems like there was
+a period of horrid wild west wrt this..
 
-The merge window for v6.18 has begun and therefore net-next is closed
-for new drivers, features, code refactoring and optimizations. We are
-currently accepting bug fixes only.
+I see 355 kHz, 384 kHz, next to "normal" values of 100/400..
 
-Please repost when net-next reopens after October 12th.
+Let's just keep it as-is, but please note in the commit message that this
+is intended and that's what the downstream sets too
 
-RFC patches sent for review only are obviously welcome at any time.
----
-Also please specify the target tree in the subj prefix ('net-next') when
-re-posting and possibly additionally CC Russell King for awareness,
-since he is doing a lot of work on stmmac.
-
-Thanks,
-
-Paolo
-
+Konrad
 
