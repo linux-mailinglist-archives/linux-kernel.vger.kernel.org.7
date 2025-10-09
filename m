@@ -1,283 +1,253 @@
-Return-Path: <linux-kernel+bounces-847115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DA0FBC9E1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 17:57:17 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE0EEBC9ED7
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 18:04:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 015804F64A0
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 15:57:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C598A4E9613
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 16:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D6B62ECEA7;
-	Thu,  9 Oct 2025 15:54:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4384E223DEC;
+	Thu,  9 Oct 2025 15:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LvccXK/m"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="acT4FOka"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC172EC57D
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 15:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60FD219E967;
+	Thu,  9 Oct 2025 15:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760025263; cv=none; b=C9zeq99fjKoBCqZAJS2xBFm5PrVO995bVJcRsmPnd2tnQOOm/BKA4EKsiM40a5uo3inLg/klfKA1zjnui1r2rShf8nt9na7HZch4y7DnR2zOb+Nrmcs37w6Ap+aobPxtEasFe7vTll5V1L9LI3bFh1SKX3WXvm/lg/aw48KhcZY=
+	t=1760025476; cv=none; b=f992wvNh6KDqXsY2xTz3AMYxYRZHcbJe6COxK83FAadQiXLnV/25OgPXXoAwkTC1vUpO5IBUQWXo4AkuFrHvYBP8CCL15SGdrf6b+bp22VOLpsJ7AZ0NUcaVG5CUp8Nz6imBid3RmXpocYyBjMpiAlqul9tPdtNE+JMBknPwTtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760025263; c=relaxed/simple;
-	bh=AMqTQiS/X1x1b+tt2RsoytbW+b4db+Er5cv0AHpBPzA=;
+	s=arc-20240116; t=1760025476; c=relaxed/simple;
+	bh=O0EX2Pumapvmik9XwpyC1sDrus6j3n7Q3+G7u4UaG8o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dEe/AZ92cYROdfLJwhT43eAJI1I/i9CsZJvOYWq2gnc5wXKql6y+O0V7dTV0Kp+VgV+iVrKJ5utyxuGZqT7liZIgwpvTc2xeBK4t9UohCdw2rC7h5VBXQgNOWHwY69UAfTlne22NmRhvs6d+VM4rmgJXmnt9sfYOKueGPdq/orA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LvccXK/m; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-363cb0cd8a1so13800831fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 08:54:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760025260; x=1760630060; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h3jD6Srgk8c77Z/UJ+8ukqBQAN6er5a/zSDavY8QJGM=;
-        b=LvccXK/mjYo+yVxwoCKwCUFgR3Pi0r/vpz+q6ePCdMHgd7mwc48rh1Edj+Pf1oacSC
-         W/P7ZFVgaiiCSt5vHeECfDBLIbQclxUCvZ3LmHnvfDkodsh/L/77pqTqiX90isjMmQim
-         IGFdhxZK72+Kp1kIsdfWG0kxrE/B1wjy1OmdjjmezCq0H3q1X4ruzJaye7LaIrZsDi7e
-         10sJqu+5wnOgzOeMwaUvVFSEQ01A1x7Q0neFICh5KYe/sEg9gO25UP+1th1wF2PS1ggD
-         aiAA+LjSkYXu3aAfoZnH7d+8uBxdZ6PUhC0UbOYd737Yn+CGOZxdOd/As8JFp3PEdr7z
-         UYXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760025260; x=1760630060;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h3jD6Srgk8c77Z/UJ+8ukqBQAN6er5a/zSDavY8QJGM=;
-        b=V9pMXJo0QuNjRR4r4jjrskkPPOx4QrEd3vr7GX/f0ELLl9HkBmVUyyhh7tA1TYN+Ci
-         LGBEDx5E2D7YPFryDRx/ZOqrCcL19AaWFAyX0TZgLxq/gVDZPcUGcG1nieszn6OWEMnO
-         090SBXgJUjDlnVkZo/dFkUqlyUyEguAigv4++MsqGAGRz5/RQn7a8cXVN0HnbJawcNEr
-         lRtH1dVL6xjMh6By0dIyg2jPosMZDFvq+f0AkBqTTspAKDkA/HjKu0NJduVlx2PJI+rS
-         8nWIE0eP2U5vHNvvQWD72JLj7pmRfyzeQTeTBLWOJ4ZKQGGg1G2E5KEpNI86VuVQZABv
-         ah6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUUCz6nCHqkA6XNk8caFOPvNQOEnyWgM9/Rkz1d8PXbyInuIfvECwoLk/wxKh2mTkIjTjxEkKffXjlnu3w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0Wqam3jjV1QZCqSIPconaZ++fMlLy/H7SKJKn+NUiYCNPYCXY
-	o4YDVMrJN9AoKBOLRYgprXQ8f2p6RbUsoXmEjz8JQNbAoWrbFz2nxFjp
-X-Gm-Gg: ASbGnctHpFQU2edTgbWoB9Stb60B+kvxdF6ylTvAeD7n0efTrfCMjCImDrLBH7UTUGb
-	jtbBJJganWLTmXt8uV0AkOA8KBDubBaRwmMbm4yQZYY9SngwOB8buBoyQlSBqVpBqTwvUxcOyPW
-	2yqIw8RC+aF8q9qkqGtzkFTpUoRfVzBXic82tYT/8R17Ae4XVgjEAByYel4Pd1vAkqQWejraFfP
-	30L5XgOQwBbRs47NegTDv4OwUwJua5+n4GxOdVYb3RRLhFP3w5NIPexVJp3GgEei2RTcZ6rTJ6n
-	dUVrFVgnsF+57I+xMSrphY/HtwvoSw8QmorCjKextQoFcuqVpCCYrwXGwsOuw5H/DigNSfBrzmY
-	AZTW1TcTZ2iNObR/ikeuwYBiMl6C+lEy/DsHyznucPV4j+HsU18bQnnmYRK7Ji10D385tRxY6pg
-	==
-X-Google-Smtp-Source: AGHT+IEw+s+w6dsCMs+FyUWCNhIcM01oy6wj30FcD6bZDLMLaZbzcGhDGKpIi8Zl/WSuXa35QvXIUw==
-X-Received: by 2002:a05:651c:2210:b0:373:a537:6a19 with SMTP id 38308e7fff4ca-37609cf869emr22052341fa.2.1760025259655;
-        Thu, 09 Oct 2025 08:54:19 -0700 (PDT)
-Received: from fedora (178.90.89.143.dynamic.telecom.kz. [178.90.89.143])
-        by smtp.googlemail.com with ESMTPSA id 38308e7fff4ca-375f3bcd2a8sm29499831fa.55.2025.10.09.08.54.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 08:54:19 -0700 (PDT)
-From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-To: andreyknvl@gmail.com,
-	ryabinin.a.a@gmail.com,
-	glider@google.com,
-	dvyukov@google.com,
-	vincenzo.frascino@arm.com,
-	akpm@linux-foundation.org,
-	bhe@redhat.com
-Cc: christophe.leroy@csgroup.eu,
-	ritesh.list@gmail.com,
-	snovitoll@gmail.com,
-	kasan-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH 2/2] kasan: cleanup of kasan_enabled() checks
-Date: Thu,  9 Oct 2025 20:54:03 +0500
-Message-ID: <20251009155403.1379150-3-snovitoll@gmail.com>
+	 MIME-Version:Content-Type; b=dtRlv0bvCt91uInl5YV7AWM7fWkevfXc1CI3z1hmEIIVKD1CpPwiwKfPD7ku4cOaugFbZoWy1uxmSXiOjOGZ4VUedLeYTjr//Mdg9Ecs5Au1YJLL4cZPnYurkgLVZQdiWOuE75yf9HfkckgS3S7be2kFX/zwiWM6Tfg8Oo9h6iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=acT4FOka; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04494C4CEF8;
+	Thu,  9 Oct 2025 15:57:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760025476;
+	bh=O0EX2Pumapvmik9XwpyC1sDrus6j3n7Q3+G7u4UaG8o=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=acT4FOka67ozuQuu8rVEjFtQXeXqhppaqTZE7t1OxoQAmGMGw80s1M7AfkIIA5k0C
+	 aOrkyxlMD05o2ttn7pGHQjn9sBFAybsExhJ1erfhyjEu7qDH6h11ZoTK/dR5l3YDuc
+	 1oeUdX0R7q9m6wxYc2xIl8J9o+cm1touqSkKJJG19zlkgU32++PU3/mpnmwbwzxShj
+	 Z4neeXEsyBmmnmde0zKPiBeMnMrdwX1YpzqHHD75fEevAvQKoaRaM8aLAwcId1Echf
+	 qWa91OXGPLUth3OxY+blJlV0MSNMkGr2r+aVkEL+SPe+uHQzlR2ObPB39blP4EMgMa
+	 K8xOApAPT1vMQ==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Markus Stockhausen <markus.stockhausen@gmx.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Stephen Howell <howels@allthatwemight.be>,
+	=?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
+	Sasha Levin <sashal@kernel.org>,
+	tglx@linutronix.de,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.17-6.12] clocksource/drivers/timer-rtl-otto: Work around dying timers
+Date: Thu,  9 Oct 2025 11:54:28 -0400
+Message-ID: <20251009155752.773732-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251009155403.1379150-1-snovitoll@gmail.com>
-References: <20251009155403.1379150-1-snovitoll@gmail.com>
+In-Reply-To: <20251009155752.773732-1-sashal@kernel.org>
+References: <20251009155752.773732-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.17.1
 Content-Transfer-Encoding: 8bit
 
-Deduplication of kasan_enabled() checks which are already used by callers.
+From: Markus Stockhausen <markus.stockhausen@gmx.de>
 
-* Altered functions:
+[ Upstream commit e7a25106335041aeca4fdf50a84804c90142c886 ]
 
-check_page_allocation
-	Delete the check because callers have it already in __wrappers in
-	include/linux/kasan.h:
-		__kasan_kfree_large
-		__kasan_mempool_poison_pages
-		__kasan_mempool_poison_object
+The OpenWrt distribution has switched from kernel longterm 6.6 to
+6.12. Reports show that devices with the Realtek Otto switch platform
+die during operation and are rebooted by the watchdog. Sorting out
+other possible reasons the Otto timer is to blame. The platform
+currently consists of 4 targets with different hardware revisions.
+It is not 100% clear which devices and revisions are affected.
 
-kasan_populate_vmalloc, kasan_release_vmalloc
-	Add __wrappers in include/linux/kasan.h.
-	They are called externally in mm/vmalloc.c.
+Analysis shows:
 
-__kasan_unpoison_vmalloc, __kasan_poison_vmalloc
-	Delete checks because there're already kasan_enabled() checks
-	in respective __wrappers in include/linux/kasan.h.
+A more aggressive sched/deadline handling leads to more timer starts
+with small intervals. This increases the bug chances. See
+https://marc.info/?l=linux-kernel&m=175276556023276&w=2
 
-release_free_meta -- Delete the check because the higher caller path
-	has it already. See the stack trace:
+Focusing on the real issue a hardware limitation on some devices was
+found. There is a minimal chance that a timer ends without firing an
+interrupt if it is reprogrammed within the 5us before its expiration
+time. Work around this issue by introducing a bounce() function. It
+restarts the timer directly before the normal restart functions as
+follows:
 
-	__kasan_slab_free -- has the check already
-	__kasan_mempool_poison_object -- has the check already
-		poison_slab_object
-			kasan_save_free_info
-				release_free_meta
-					kasan_enabled() -- Delete here
+- Stop timer
+- Restart timer with a slow frequency.
+- Target time will be >5us
+- The subsequent normal restart is outside the critical window
 
-Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Downstream has already tested and confirmed a patch. See
+https://github.com/openwrt/openwrt/pull/19468
+https://forum.openwrt.org/t/support-for-rtl838x-based-managed-switches/57875/3788
+
+Signed-off-by: Markus Stockhausen <markus.stockhausen@gmx.de>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Tested-by: Stephen Howell <howels@allthatwemight.be>
+Tested-by: Bjørn Mork <bjorn@mork.no>
+Link: https://lore.kernel.org/r/20250804080328.2609287-2-markus.stockhausen@gmx.de
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/kasan.h | 20 ++++++++++++++++++--
- mm/kasan/common.c     |  3 ---
- mm/kasan/generic.c    |  3 ---
- mm/kasan/shadow.c     | 20 ++++----------------
- 4 files changed, 22 insertions(+), 24 deletions(-)
 
-diff --git a/include/linux/kasan.h b/include/linux/kasan.h
-index d12e1a5f5a9..f335c1d7b61 100644
---- a/include/linux/kasan.h
-+++ b/include/linux/kasan.h
-@@ -571,11 +571,27 @@ static inline void kasan_init_hw_tags(void) { }
- #if defined(CONFIG_KASAN_GENERIC) || defined(CONFIG_KASAN_SW_TAGS)
+LLM Generated explanations, may be completely bogus:
+
+YES
+
+- Fixes a real user-visible bug: The commit addresses a hardware timing
+  erratum on some Realtek Otto SoCs where reprogramming a running timer
+  within ~5 µs of its expiration can cause the next interrupt to be
+  lost, leading to hangs and watchdog resets. This is confirmed by field
+  reports (OpenWrt) and multiple Tested-by tags in the commit message.
+  It is an important reliability fix, not a feature.
+
+- Small, contained change in one driver: The patch is limited to
+  `drivers/clocksource/timer-rtl-otto.c`. It introduces a minimal helper
+  and three call sites; no API or architectural changes.
+
+- Core idea and code changes:
+  - Adds `RTTM_MAX_DIVISOR` to select the slowest prescaler for a brief
+    “bounce” restart to safely move the timer away from the <5 µs danger
+    window (define added near the other timer constants).
+  - Introduces `rttm_bounce_timer()` which disables and immediately re-
+    enables the timer with the slowest divisor, preserving the current
+    period so the immediate follow-up reprogramming happens well outside
+    the critical window:
+    - New helper is placed after the IRQ handler and before the
+      stop/start helpers.
+  - Wires the bounce into all clockevent reprogram paths by calling it
+    just before the existing stop/program/start sequence:
+    - `rttm_next_event()` adds the bounce before `rttm_stop_timer()`
+      (see current function start at drivers/clocksource/timer-rtl-
+      otto.c:127).
+    - `rttm_state_oneshot()` adds the bounce before `rttm_stop_timer()`
+      (drivers/clocksource/timer-rtl-otto.c:139).
+    - `rttm_state_periodic()` adds the bounce before `rttm_stop_timer()`
+      (drivers/clocksource/timer-rtl-otto.c:151).
+  - The clocksource path remains untouched (e.g.,
+    `rttm_enable_clocksource()` at drivers/clocksource/timer-rtl-
+    otto.c:204), which is appropriate since the bug is triggered by
+    frequent reprogramming of the clockevent timers, not the continuous
+    clocksource.
+
+- Rationale for safety and effectiveness:
+  - The bounce sequence is purely local to the Otto timer MMIO block and
+    uses existing primitives (`rttm_disable_timer()`,
+    `rttm_enable_timer()`), preserving established semantics while
+    creating a safe temporal margin before the normal reprogramming.
+  - Using `RTTM_MAX_DIVISOR` ensures the effective tick frequency drops
+    to ~kHz, making the “time to end marker” well beyond 5 µs even with
+    the minimal period (`>= RTTM_MIN_DELTA`, 8 ticks), eliminating the
+    observed race window.
+  - The stop/ack/program/start logic remains identical aside from the
+    pre-amble bounce; ack of pending IRQs is still done in
+    `rttm_stop_timer()`, as before, so the change does not introduce new
+    interrupt handling semantics.
+
+- Scope and regression risk:
+  - Limited to Realtek Otto timer driver; no impact on other platforms
+    or subsystems.
+  - No ABI/DT/Kconfig changes; no scheduling or generic timekeeping
+    changes.
+  - Minimal runtime overhead (a couple of MMIO writes per reprogram) is
+    acceptable versus preventing system hangs.
+
+- Stable backport suitability:
+  - The driver is present in stable trees starting with v6.11 (verified:
+    file exists in v6.11 and v6.12; drivers/clocksource/timer-rtl-
+    otto.c). The bug has real-world impact with OpenWrt on 6.12; hence
+    backporting to 6.11.y, 6.12.y, and newer stable series that include
+    this driver is appropriate.
+  - The patch is self-contained and does not depend on recent framework
+    changes.
+
+Conclusion: This is a targeted, low-risk workaround for a serious
+hardware erratum affecting deployed systems. It cleanly fits stable
+criteria and should be backported to all stable series that contain
+`drivers/clocksource/timer-rtl-otto.c`.
+
+ drivers/clocksource/timer-rtl-otto.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/drivers/clocksource/timer-rtl-otto.c b/drivers/clocksource/timer-rtl-otto.c
+index 8a3068b36e752..8be45a11fb8b6 100644
+--- a/drivers/clocksource/timer-rtl-otto.c
++++ b/drivers/clocksource/timer-rtl-otto.c
+@@ -38,6 +38,7 @@
+ #define RTTM_BIT_COUNT		28
+ #define RTTM_MIN_DELTA		8
+ #define RTTM_MAX_DELTA		CLOCKSOURCE_MASK(28)
++#define RTTM_MAX_DIVISOR	GENMASK(15, 0)
  
- void kasan_populate_early_vm_area_shadow(void *start, unsigned long size);
--int kasan_populate_vmalloc(unsigned long addr, unsigned long size, gfp_t gfp_mask);
--void kasan_release_vmalloc(unsigned long start, unsigned long end,
-+int __kasan_populate_vmalloc(unsigned long addr, unsigned long size, gfp_t gfp_mask);
-+static inline int kasan_populate_vmalloc(unsigned long addr,
-+					 unsigned long size, gfp_t gfp_mask)
-+{
-+	if (kasan_enabled())
-+		return __kasan_populate_vmalloc(addr, size, gfp_mask);
-+	return 0;
-+}
-+void __kasan_release_vmalloc(unsigned long start, unsigned long end,
- 			   unsigned long free_region_start,
- 			   unsigned long free_region_end,
- 			   unsigned long flags);
-+static inline void kasan_release_vmalloc(unsigned long start, unsigned long end,
-+			   unsigned long free_region_start,
-+			   unsigned long free_region_end,
-+			   unsigned long flags)
-+{
-+	if (kasan_enabled())
-+		return __kasan_release_vmalloc(start, end, free_region_start,
-+					 free_region_end, flags);
-+}
- 
- #else /* CONFIG_KASAN_GENERIC || CONFIG_KASAN_SW_TAGS */
- 
-diff --git a/mm/kasan/common.c b/mm/kasan/common.c
-index d4c14359fea..22e5d67ff06 100644
---- a/mm/kasan/common.c
-+++ b/mm/kasan/common.c
-@@ -305,9 +305,6 @@ bool __kasan_slab_free(struct kmem_cache *cache, void *object, bool init,
- 
- static inline bool check_page_allocation(void *ptr, unsigned long ip)
- {
--	if (!kasan_enabled())
--		return false;
--
- 	if (ptr != page_address(virt_to_head_page(ptr))) {
- 		kasan_report_invalid_free(ptr, ip, KASAN_REPORT_INVALID_FREE);
- 		return true;
-diff --git a/mm/kasan/generic.c b/mm/kasan/generic.c
-index 516b49accc4..2b8e73f5f6a 100644
---- a/mm/kasan/generic.c
-+++ b/mm/kasan/generic.c
-@@ -506,9 +506,6 @@ static void release_alloc_meta(struct kasan_alloc_meta *meta)
- 
- static void release_free_meta(const void *object, struct kasan_free_meta *meta)
- {
--	if (!kasan_enabled())
--		return;
--
- 	/* Check if free meta is valid. */
- 	if (*(u8 *)kasan_mem_to_shadow(object) != KASAN_SLAB_FREE_META)
- 		return;
-diff --git a/mm/kasan/shadow.c b/mm/kasan/shadow.c
-index 5d2a876035d..cf842b620a2 100644
---- a/mm/kasan/shadow.c
-+++ b/mm/kasan/shadow.c
-@@ -354,7 +354,7 @@ static int ___alloc_pages_bulk(struct page **pages, int nr_pages, gfp_t gfp_mask
- 	return 0;
+ /*
+  * Timers are derived from the LXB clock frequency. Usually this is a fixed
+@@ -112,6 +113,22 @@ static irqreturn_t rttm_timer_interrupt(int irq, void *dev_id)
+ 	return IRQ_HANDLED;
  }
  
--static int __kasan_populate_vmalloc(unsigned long start, unsigned long end, gfp_t gfp_mask)
-+static int __kasan_populate_vmalloc_do(unsigned long start, unsigned long end, gfp_t gfp_mask)
++static void rttm_bounce_timer(void __iomem *base, u32 mode)
++{
++	/*
++	 * When a running timer has less than ~5us left, a stop/start sequence
++	 * might fail. While the details are unknown the most evident effect is
++	 * that the subsequent interrupt will not be fired.
++	 *
++	 * As a workaround issue an intermediate restart with a very slow
++	 * frequency of ~3kHz keeping the target counter (>=8). So the follow
++	 * up restart will always be issued outside the critical window.
++	 */
++
++	rttm_disable_timer(base);
++	rttm_enable_timer(base, mode, RTTM_MAX_DIVISOR);
++}
++
+ static void rttm_stop_timer(void __iomem *base)
  {
- 	unsigned long nr_pages, nr_total = PFN_UP(end - start);
- 	struct vmalloc_populate_data data;
-@@ -403,14 +403,11 @@ static int __kasan_populate_vmalloc(unsigned long start, unsigned long end, gfp_
- 	return ret;
- }
+ 	rttm_disable_timer(base);
+@@ -129,6 +146,7 @@ static int rttm_next_event(unsigned long delta, struct clock_event_device *clkev
+ 	struct timer_of *to = to_timer_of(clkevt);
  
--int kasan_populate_vmalloc(unsigned long addr, unsigned long size, gfp_t gfp_mask)
-+int __kasan_populate_vmalloc(unsigned long addr, unsigned long size, gfp_t gfp_mask)
- {
- 	unsigned long shadow_start, shadow_end;
- 	int ret;
+ 	RTTM_DEBUG(to->of_base.base);
++	rttm_bounce_timer(to->of_base.base, RTTM_CTRL_COUNTER);
+ 	rttm_stop_timer(to->of_base.base);
+ 	rttm_set_period(to->of_base.base, delta);
+ 	rttm_start_timer(to, RTTM_CTRL_COUNTER);
+@@ -141,6 +159,7 @@ static int rttm_state_oneshot(struct clock_event_device *clkevt)
+ 	struct timer_of *to = to_timer_of(clkevt);
  
--	if (!kasan_enabled())
--		return 0;
--
- 	if (!is_vmalloc_or_module_addr((void *)addr))
- 		return 0;
+ 	RTTM_DEBUG(to->of_base.base);
++	rttm_bounce_timer(to->of_base.base, RTTM_CTRL_COUNTER);
+ 	rttm_stop_timer(to->of_base.base);
+ 	rttm_set_period(to->of_base.base, RTTM_TICKS_PER_SEC / HZ);
+ 	rttm_start_timer(to, RTTM_CTRL_COUNTER);
+@@ -153,6 +172,7 @@ static int rttm_state_periodic(struct clock_event_device *clkevt)
+ 	struct timer_of *to = to_timer_of(clkevt);
  
-@@ -432,7 +429,7 @@ int kasan_populate_vmalloc(unsigned long addr, unsigned long size, gfp_t gfp_mas
- 	shadow_start = PAGE_ALIGN_DOWN(shadow_start);
- 	shadow_end = PAGE_ALIGN(shadow_end);
- 
--	ret = __kasan_populate_vmalloc(shadow_start, shadow_end, gfp_mask);
-+	ret = __kasan_populate_vmalloc_do(shadow_start, shadow_end, gfp_mask);
- 	if (ret)
- 		return ret;
- 
-@@ -574,7 +571,7 @@ static int kasan_depopulate_vmalloc_pte(pte_t *ptep, unsigned long addr,
-  * pages entirely covered by the free region, we will not run in to any
-  * trouble - any simultaneous allocations will be for disjoint regions.
-  */
--void kasan_release_vmalloc(unsigned long start, unsigned long end,
-+void __kasan_release_vmalloc(unsigned long start, unsigned long end,
- 			   unsigned long free_region_start,
- 			   unsigned long free_region_end,
- 			   unsigned long flags)
-@@ -583,9 +580,6 @@ void kasan_release_vmalloc(unsigned long start, unsigned long end,
- 	unsigned long region_start, region_end;
- 	unsigned long size;
- 
--	if (!kasan_enabled())
--		return;
--
- 	region_start = ALIGN(start, KASAN_MEMORY_PER_SHADOW_PAGE);
- 	region_end = ALIGN_DOWN(end, KASAN_MEMORY_PER_SHADOW_PAGE);
- 
-@@ -634,9 +628,6 @@ void *__kasan_unpoison_vmalloc(const void *start, unsigned long size,
- 	 * with setting memory tags, so the KASAN_VMALLOC_INIT flag is ignored.
- 	 */
- 
--	if (!kasan_enabled())
--		return (void *)start;
--
- 	if (!is_vmalloc_or_module_addr(start))
- 		return (void *)start;
- 
-@@ -659,9 +650,6 @@ void *__kasan_unpoison_vmalloc(const void *start, unsigned long size,
-  */
- void __kasan_poison_vmalloc(const void *start, unsigned long size)
- {
--	if (!kasan_enabled())
--		return;
--
- 	if (!is_vmalloc_or_module_addr(start))
- 		return;
- 
+ 	RTTM_DEBUG(to->of_base.base);
++	rttm_bounce_timer(to->of_base.base, RTTM_CTRL_TIMER);
+ 	rttm_stop_timer(to->of_base.base);
+ 	rttm_set_period(to->of_base.base, RTTM_TICKS_PER_SEC / HZ);
+ 	rttm_start_timer(to, RTTM_CTRL_TIMER);
 -- 
-2.34.1
+2.51.0
 
 
