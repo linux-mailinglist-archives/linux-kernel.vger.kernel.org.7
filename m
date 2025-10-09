@@ -1,236 +1,130 @@
-Return-Path: <linux-kernel+bounces-846593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02102BC8753
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 12:21:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 389B5BC8675
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 12:07:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5FF23B8CB0
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 10:21:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F0353BBC14
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 10:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7F8C2DCBE3;
-	Thu,  9 Oct 2025 10:20:38 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33DC3275844;
-	Thu,  9 Oct 2025 10:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0FFA2D7DE5;
+	Thu,  9 Oct 2025 10:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="BSWel78a"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 412FE275844
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 10:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760005237; cv=none; b=WIvcQ2t4cCQeAjdmm06rO8P8/i52z7+xLaegywcqXizPePR+pTGm41zfNVGBkOJULoFddUYzha9TveyLIsdlMS9LiYi+DgmhJwzrUp2kehcshQbURqm8C4InVNOvZrwVKlMFncX0EtdyJ8Wn6ykwMvGm5PjwAsHFdT4+lkpmn+4=
+	t=1760004437; cv=none; b=hG2ZLOZlFcR38bKkFaSnMFi4w1JcFglq0OYLlK+MoSIsL+SduXw0N7p48hdPW0Ooy9UyKN3QbCpGQN6ALFhTeZaY0nLuTsOwGDNVKo2foQEUZgYhtlJtDRxjKto1dMV4FdyhUYdc6+eyu7/91LiX1/LvT+zZ5NnfRD1mn8LNmDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760005237; c=relaxed/simple;
-	bh=lUs8p2fW3v1l2sBrZO8lIJGpAyvrMi+W3vfGsTEx0nY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gxvq81XBV4Yr5tyBP12Aekpq8rPAHuBo9JLuJk724Hf4lg6IAm1mUvBeA5qGaK9mnnrFs9nQY0XzbjdzjO6TDB2zYdBSTJsMEt0L3F+XDy5tzkwLNnHuI8zaq7Wly7ItkU7YdLwDu/0bjP0Nv2oi/C/KthYTDtuBvnX/m2fTBh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cj548110xz9sSL;
-	Thu,  9 Oct 2025 12:01:12 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id qOLNCcqM6pFr; Thu,  9 Oct 2025 12:01:12 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cj5476tjqz9sSC;
-	Thu,  9 Oct 2025 12:01:11 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id D06108B76C;
-	Thu,  9 Oct 2025 12:01:11 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id MfDghYtIuYkA; Thu,  9 Oct 2025 12:01:11 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 776CE8B767;
-	Thu,  9 Oct 2025 12:01:09 +0200 (CEST)
-Message-ID: <0c730c52-97ee-43ea-9697-ac11d2880ab7@csgroup.eu>
-Date: Thu, 9 Oct 2025 12:01:08 +0200
+	s=arc-20240116; t=1760004437; c=relaxed/simple;
+	bh=Z6fCQhdk3dr0h5KNJ6z6nOfj/2NAXHn2Z28Tx2ssQSM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cm33g+SID/tTUMpvtym3KZifLhOi6oC4Vvyur8yU+p/PbxpNgLzgtoXhYvk8CY/MlXIrURlZBPDpLPqD/VUGMmY8+jhmMrqz6+5ZJV3ZpQM0yx9WNx+3G+xEayjCB+bq0oX/8wDwv1pH0EG7uNzfLBExpqFpzw61xHjkTFEyCHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=BSWel78a; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-57d5ccd73dfso831680e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 03:07:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1760004433; x=1760609233; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qTdm+WQN/IArP6uzK/anYh69/F3/JcJMhmnKnGbESXs=;
+        b=BSWel78aY2+7NF9UHBh+KZ2IHaDit0m57yLyD6pSgnOEwEcnESWe1u45jgVgDAmlj7
+         XJrhvA0M7+ELzQZwfYk6ZzC4Z1f2AAeAzevBCTXYxqT+/AYb0v4sCW1Yw+C9HndcHUGI
+         aNi1G2k9l82tG0sqrqhf5nhDmUUag3lLat4nMT41GknPfPdWIP2oBNTrCFtJzaknvsgD
+         pZHQHaeJpoe8qiGGaywiBZDInA210UoR/h60Oj/aIk4vjx04pjUrGJO+BjvC0rZsaR9L
+         tXWEerokmsrSbkiLd9b3uhlP/jeT1cDGQ5dskd+8QIa4DSRbLIsN5pRO+0vToiXNebtO
+         p8HQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760004433; x=1760609233;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qTdm+WQN/IArP6uzK/anYh69/F3/JcJMhmnKnGbESXs=;
+        b=sAYwc/wvDIiW+X7tGLcXryHKcc/3yfjM0ddqAEWSWq6RhEiiMeX4vEG5sbslqcUl1l
+         F9U+XmpNjHicIXqyNcubCJeESGgBNJMEgOx6weAWSrd5zeuuP3WFXNmQOi2g2DiQVPs5
+         couz1HZpAnOCirKtvf7/Cdt3qIqRrj8oHbK/VYvHWTvRC/zfjDm0H+6b4O9ks2yVqFCM
+         CeHclf2hNlunFbH/WyX7rovQezfhzI1mmuDFym4FcEbIeO35RRPeaZIUrDHr5NNQF7oh
+         DetgmxSLRaIT7kA1OqQ2P52jJFtzSBrXvYwcAIrhk+9ce6BDJPxoBkSOER/a3PvdTlSl
+         QWfA==
+X-Forwarded-Encrypted: i=1; AJvYcCV4UMZcCOI792e7/DL16Oqz6au/anCuX6/v9Wk0JRmfkMALJpnbuwmz+IUxbXzcq/N1akOaAxo+tEf2FnU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYbdYguUQKI4BD4rmCkqZQLfB42LsLeqscs4oesVFY4cGlY4LY
+	psP8MYXuPasol2FJvqNdgZ9Zc6NtrqFhvyV+Ebrx1vgl5A9KFkz90UaBMAYDzEUbPUzC/tsN/Yb
+	7wQoJwc+NaQjjIiHz225Pun9S37t7l0mCNDC355YazQ==
+X-Gm-Gg: ASbGncs2+Bu4YCE82DKQ5tweTWGPvOif/k7hetdDInSTZUGk+YOhYUH4HmG0R8tZDbF
+	ESOvoajwZ/R2haGI/AWZPaLkTmdr3wr9duOMLQsJliQ7+nB8zzDa90tWtF5A+04ltoB3KfRDKqo
+	lthiohrB1mNpxQguDfdd3nGVGIGVsyio7QctVZGbaSOlY7a6nfnZG0aNfaaXK7zg9AbvaFODcBr
+	CBTGLjAV9a34wbyx2XD3Yth5IRfcT4CGyfqUF9lFH+r8OOEfRGI/4MZUNa/yVb/EvnqGrYp
+X-Google-Smtp-Source: AGHT+IGDdNeze8LYJjC0w9X4/tmvn9bfTMHPkMojDzQaWsGrmkgUhXZlakYkQXFLaJe1+0eSO9i7NPOD2qru7Dz+8yg=
+X-Received: by 2002:a05:6512:3e03:b0:55f:6c08:a15a with SMTP id
+ 2adb3069b0e04-5906d8efa49mr2043976e87.32.1760004433205; Thu, 09 Oct 2025
+ 03:07:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: (bisected) [PATCH v2 08/37] mm/hugetlb: check for unreasonable
- folio sizes when registering hstate
-To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
-Cc: Zi Yan <ziy@nvidia.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Alexander Potapenko <glider@google.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
- Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
- dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- iommu@lists.linux.dev, io-uring@vger.kernel.org,
- Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
- Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
- kasan-dev@googlegroups.com, kvm@vger.kernel.org,
- Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
- linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
- linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-scsi@vger.kernel.org, Marco Elver <elver@google.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Muchun Song <muchun.song@linux.dev>,
- netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
- Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
- virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
- wireguard@lists.zx2c4.com, x86@kernel.org,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-References: <20250901150359.867252-1-david@redhat.com>
- <20250901150359.867252-9-david@redhat.com>
- <3e043453-3f27-48ad-b987-cc39f523060a@csgroup.eu>
- <d3fc12d4-0b59-4b1f-bb5c-13189a01e13d@redhat.com>
- <faf62f20-8844-42a0-a7a7-846d8ead0622@csgroup.eu>
- <9361c75a-ab37-4d7f-8680-9833430d93d4@redhat.com>
- <03671aa8-4276-4707-9c75-83c96968cbb2@csgroup.eu>
- <1db15a30-72d6-4045-8aa1-68bd8411b0ba@redhat.com>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <1db15a30-72d6-4045-8aa1-68bd8411b0ba@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250806091531.109861-1-stefano.manni@gmail.com>
+ <CAMRc=MdfjuSSsD=LWDpUroyf+fxC7jQrJDtZJtmj_YiQYQjAuw@mail.gmail.com> <JZ0U3T.53FSIQ97H39F1@gmail.com>
+In-Reply-To: <JZ0U3T.53FSIQ97H39F1@gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 9 Oct 2025 12:06:59 +0200
+X-Gm-Features: AS18NWDTzj0xfRlNNs2NBR-OnxUMd1ZPijaWjphbF82EwZLOrH-PY_ZJVlG7jvQ
+Message-ID: <CAMRc=Me6cRLPsz9-DLMyFXVn8AXExWRP4fwHaN3=8HuHR6+VGg@mail.gmail.com>
+Subject: Re: [PATCH v2] gpio: pisosr: read ngpios as U32
+To: Stefano Manni <stefano.manni@gmail.com>
+Cc: linus.walleij@linaro.org, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Oct 8, 2025 at 11:28=E2=80=AFPM Stefano Manni <stefano.manni@gmail.=
+com> wrote:
+>
+>
+>
+> On lun, ago 11 2025 at 09:56:51 +02:00:00, Bartosz Golaszewski
+> <brgl@bgdev.pl> wrote:
+> > On Wed, Aug 6, 2025 at 9:17=E2=80=AFAM Stefano Manni
+> > <stefano.manni@gmail.com> wrote:
+> >>
+> >>  If of_property_read_u16() is used instead the value read
+> >>  is always zero.
+> >>
+> >
+> > Please state more clearly what the problem is. This sentence is quite
+> > garbled,
+>
+>
+> the value returned by of_property_read_u16() is always zero, if
+> of_property_read_u32()
+> is used instead , then the returned value is the right one contained in
+> the dts.
+>
 
+So please put this into the commit message.
 
-Le 09/10/2025 à 11:20, David Hildenbrand a écrit :
-> On 09.10.25 11:16, Christophe Leroy wrote:
->>
->>
->> Le 09/10/2025 à 10:14, David Hildenbrand a écrit :
->>> On 09.10.25 10:04, Christophe Leroy wrote:
->>>>
->>>>
->>>> Le 09/10/2025 à 09:22, David Hildenbrand a écrit :
->>>>> On 09.10.25 09:14, Christophe Leroy wrote:
->>>>>> Hi David,
->>>>>>
->>>>>> Le 01/09/2025 à 17:03, David Hildenbrand a écrit :
->>>>>>> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
->>>>>>> index 1e777cc51ad04..d3542e92a712e 100644
->>>>>>> --- a/mm/hugetlb.c
->>>>>>> +++ b/mm/hugetlb.c
->>>>>>> @@ -4657,6 +4657,7 @@ static int __init hugetlb_init(void)
->>>>>>>          BUILD_BUG_ON(sizeof_field(struct page, private) *
->>>>>>> BITS_PER_BYTE <
->>>>>>>                  __NR_HPAGEFLAGS);
->>>>>>> +    BUILD_BUG_ON_INVALID(HUGETLB_PAGE_ORDER > MAX_FOLIO_ORDER);
->>>>>>>          if (!hugepages_supported()) {
->>>>>>>              if (hugetlb_max_hstate || 
->>>>>>> default_hstate_max_huge_pages)
->>>>>>> @@ -4740,6 +4741,7 @@ void __init hugetlb_add_hstate(unsigned int
->>>>>>> order)
->>>>>>>          }
->>>>>>>          BUG_ON(hugetlb_max_hstate >= HUGE_MAX_HSTATE);
->>>>>>>          BUG_ON(order < order_base_2(__NR_USED_SUBPAGE));
->>>>>>> +    WARN_ON(order > MAX_FOLIO_ORDER);
->>>>>>>          h = &hstates[hugetlb_max_hstate++];
->>>>>>>          __mutex_init(&h->resize_lock, "resize mutex", &h- 
->>>>>>> >resize_key);
->>>>>>>          h->order = order;
->>>>>
->>>>> We end up registering hugetlb folios that are bigger than
->>>>> MAX_FOLIO_ORDER. So we have to figure out how a config can trigger 
->>>>> that
->>>>> (and if we have to support that).
->>>>>
->>>>
->>>> MAX_FOLIO_ORDER is defined as:
->>>>
->>>> #ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE
->>>> #define MAX_FOLIO_ORDER        PUD_ORDER
->>>> #else
->>>> #define MAX_FOLIO_ORDER        MAX_PAGE_ORDER
->>>> #endif
->>>>
->>>> MAX_PAGE_ORDER is the limit for dynamic creation of hugepages via
->>>> /sys/kernel/mm/hugepages/ but bigger pages can be created at boottime
->>>> with kernel boot parameters without CONFIG_ARCH_HAS_GIGANTIC_PAGE:
->>>>
->>>>      hugepagesz=64m hugepages=1 hugepagesz=256m hugepages=1
->>>>
->>>> Gives:
->>>>
->>>> HugeTLB: registered 1.00 GiB page size, pre-allocated 0 pages
->>>> HugeTLB: 0 KiB vmemmap can be freed for a 1.00 GiB page
->>>> HugeTLB: registered 64.0 MiB page size, pre-allocated 1 pages
->>>> HugeTLB: 0 KiB vmemmap can be freed for a 64.0 MiB page
->>>> HugeTLB: registered 256 MiB page size, pre-allocated 1 pages
->>>> HugeTLB: 0 KiB vmemmap can be freed for a 256 MiB page
->>>> HugeTLB: registered 4.00 MiB page size, pre-allocated 0 pages
->>>> HugeTLB: 0 KiB vmemmap can be freed for a 4.00 MiB page
->>>> HugeTLB: registered 16.0 MiB page size, pre-allocated 0 pages
->>>> HugeTLB: 0 KiB vmemmap can be freed for a 16.0 MiB page
->>>
->>> I think it's a violation of CONFIG_ARCH_HAS_GIGANTIC_PAGE. The existing
->>> folio_dump() code would not handle it correctly as well.
->>
->> I'm trying to dig into history and when looking at commit 4eb0716e868e
->> ("hugetlb: allow to free gigantic pages regardless of the
->> configuration") I understand that CONFIG_ARCH_HAS_GIGANTIC_PAGE is
->> needed to be able to allocate gigantic pages at runtime. It is not
->> needed to reserve gigantic pages at boottime.
->>
->> What am I missing ?
-> 
-> That CONFIG_ARCH_HAS_GIGANTIC_PAGE has nothing runtime-specific in its 
-> name.
+> >
+> > If you're touching this, can you switch to using generic device
+> > properties instead?
+> >
+>
+> what do you mean with "generic device properties"?
+>
 
-In its name for sure, but the commit I mention says:
+Functions that allow to read properties through the fwnode associated
+with a device bound to a driver. In this case:
+device_property_read_u32().
 
-     On systems without CONTIG_ALLOC activated but that support gigantic 
-pages,
-     boottime reserved gigantic pages can not be freed at all.  This patch
-     simply enables the possibility to hand back those pages to memory
-     allocator.
-
-And one of the hunks is:
-
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 7f7fbd8bd9d5b..7a1aa53d188d3 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -19,7 +19,7 @@ config ARM64
-         select ARCH_HAS_FAST_MULTIPLIER
-         select ARCH_HAS_FORTIFY_SOURCE
-         select ARCH_HAS_GCOV_PROFILE_ALL
--       select ARCH_HAS_GIGANTIC_PAGE if CONTIG_ALLOC
-+       select ARCH_HAS_GIGANTIC_PAGE
-         select ARCH_HAS_KCOV
-         select ARCH_HAS_KEEPINITRD
-         select ARCH_HAS_MEMBARRIER_SYNC_CORE
-
-So I understand from the commit message that it was possible at that 
-time to have gigantic pages without ARCH_HAS_GIGANTIC_PAGE as long as 
-you didn't have to be able to free them during runtime.
-
-> 
-> Can't we just select CONFIG_ARCH_HAS_GIGANTIC_PAGE for the relevant 
-> hugetlb config that allows for *gigantic pages*.
-> 
-
-We probably can, but I'd really like to understand history and how we 
-ended up in the situation we are now.
-Because blind fixes often lead to more problems.
-
-If I follow things correctly I see a helper gigantic_page_supported() 
-added by commit 944d9fec8d7a ("hugetlb: add support for gigantic page 
-allocation at runtime").
-
-And then commit 461a7184320a ("mm/hugetlb: introduce 
-ARCH_HAS_GIGANTIC_PAGE") is added to wrap gigantic_page_supported()
-
-Then commit 4eb0716e868e ("hugetlb: allow to free gigantic pages 
-regardless of the configuration") changed gigantic_page_supported() to 
-gigantic_page_runtime_supported()
-
-So where are we now ?
-
-Christophe
+Bart
 
