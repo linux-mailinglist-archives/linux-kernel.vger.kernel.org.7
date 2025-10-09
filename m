@@ -1,120 +1,155 @@
-Return-Path: <linux-kernel+bounces-846479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A194EBC81E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:47:55 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CF6CBC81ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:49:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E11C188848D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:48:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2E2924EBEB9
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:49:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE8232D29A9;
-	Thu,  9 Oct 2025 08:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62672D24B4;
+	Thu,  9 Oct 2025 08:48:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tt5vpBA1"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e2/7XxzM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A116138D
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 08:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34196241CB7;
+	Thu,  9 Oct 2025 08:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759999668; cv=none; b=A7m9W71Aydk6gS+p04JxrgzMihQitcvQMKUx21YaiRO4n+fcKGz9Hx7blp9mDzLcosziyINPhGWA7EO6uBX8uE5pVHmK61zkgwDu5EyvU2RcyRTp5NUWfU2WHU3mKZMN4RLhCyZrft5DCeBIYnxN9bSoXBGR/kZvZymsxpuxWbA=
+	t=1759999739; cv=none; b=ZsDiRFJJ1CbVwUphlhMfN37ynbavjJqhvkmmF8WiFLokBtqjy/uo3WnExD54fOn5n/v0NAT6H8NhBEawDsWyDSMMd+PdVIjNDIZCTep7GaZxeyfWz4QXIdZsPQhU/KCM6ffHayqikz5Nz2lk9T5S6CQ07Hq9GoWZ6Bn8HH4n46k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759999668; c=relaxed/simple;
-	bh=Mr7mSsG7wrSbrzRKQ6dm6x5E3zPA4StyIGdQgpwTj7M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=meyrw3RW74wkDCCwDU1hTE2jXbsqQq9ebY77fBRIo7CJBSPfLxQ0N9xBcqwmJbRHlhVW8kbvAhlkCzTZ8A8SKksCL8SPmkDk/sad7kHyybKleVeqk6RoxTGtiZcXa10WROBnaNTgqYoiXOtrWKSegke9IdD5jnuKA+Kk7qMhJMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tt5vpBA1; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4dfb1f481ecso9433761cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 01:47:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759999665; x=1760604465; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q7z3HsSENHtLBs81iROjgJgytmIxb+jEUUPbgM1LeHQ=;
-        b=Tt5vpBA1u+Mdzw68fb8SiADN/kKPRfbpsyx+lqClGSgkUoXkUNthKIw9Ozw2bT+rrc
-         QdAVECPazp6DwUBHDYWy1cErbfwjlCAj128PjoxrAjx14+m9cfKVH2ykxTTan73fMg9F
-         WAN/fZVWKEkpWrp0iz711+u3bVenUeSU4qDbEdyV7sksWVgtcpMVfCYs5lt+aFPg8uAv
-         pBGeZo5Z+5fTwXHdrpGGUrjq+tSlI2EpQ4mNSX9cdy+oTMtp/K444iIiDLt2wzBFRCCu
-         iFw+8OcLHFQ9XdBEs2GTvgdk0gZ66HdGtcvBiYiFo12q5Dr5Njv3KoEffjY+8gBVnZSg
-         9esA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759999665; x=1760604465;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q7z3HsSENHtLBs81iROjgJgytmIxb+jEUUPbgM1LeHQ=;
-        b=oT4l+7JtFYuyIUWRPBbdE+7JMvQerhO8ijoROvrC8floMOZjC3ZlwDS2jD6/gDO/Y/
-         bt1kreQMWJzXRAk85HHbnTfqmOqNcp2a+DKrL3VsqLqaThpC6LQIL9uDbWgoTzeFBYzr
-         97EQTaqa3rwBGvuOX2Jz0+pjk65VUt4rV0AvJrf5OLh/I09oV1e91rWrY58obhQl2a/0
-         pAx0fEciFL+3f2qL9hFqkGHTuI7yhFR623Nzo7cf/vA24G5OW5JocA8unhpaY2k8XTBU
-         R5yPm2yvMrQ2OOOfFM+Qd9nKpbgtkOAHqoRrCO0L8mcyMHFlTZ1QtqgaeYyP8kLtKEwT
-         GoDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWKLOfOEMP83wwJ4ZmUGbcuK8E6mRSJIDpb/MJM9B7ar13vzXcLcp1HHWEyljDd/g4AO8z36jvdzXhl1yA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywk/6FtsCdMYjugpXiXkMzMH/xM4fFIy+zte6LUT1nvHm2+4WVe
-	4J9hMs7sSj/ADqX+b55PMZLAKHroxLe6dm53JyKRFYAv0X3C+BJ6sV7fp6Jkk8K6E9wiz2PRbk7
-	S4rhC+383+mw5sPPszUGOR5I/0kKsagQ=
-X-Gm-Gg: ASbGncuWEfZXPYG9lXplNVBywJaQGII6cUy8+5+UqTDkYXRI5flXEPD1WnsyUibuoA8
-	clFVryxXUcMnaxCcKsHDEVYuqleWRYo8xxSMlqLJP0SJK5mv1wnh4tq+XANRX2RB6PYpR5WV39u
-	ZooTrXwSH5Pdg1juZvdHsTug7/ZmQq6gvVxZRcopDv8cXXeM2ZiH624YlW0usSNUfcfoMrRHrfz
-	dm4zbnTLkEriKr9anHO4jK4JHLQ1zyrEzS0iu0sj8zoEfCyQQWWRKA8DF7EPdV9
-X-Google-Smtp-Source: AGHT+IHZCtZVjbJCuCzfkElGQPsDTCoF7VlhCNJzNSACyEYAtAeKcSTNYi1LVTtefd/CGrEn+damOcQNkjX8el2dbLs=
-X-Received: by 2002:a05:622a:315:b0:4e0:3cdb:d1df with SMTP id
- d75a77b69052e-4e6ead5c32bmr79013101cf.61.1759999665491; Thu, 09 Oct 2025
- 01:47:45 -0700 (PDT)
+	s=arc-20240116; t=1759999739; c=relaxed/simple;
+	bh=XcVzGEG7wl6bThfY5lOeGukSt2PGXHScZ9EbqkTi7js=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UJ1pVYi6ZupmW6+RlWn0ehP14rtLeFD+gKNoKmG9VqG0rGzAbz/gybmFb/tagGvN8QF0mPpnVD8xbk+Bk8qZ/qP87XcwcLUvsjPjlDhGiPSy0gn/QGTcodwACNeOcBO1x5BGtzUleNCP7w/CMv5nh5NGBtoKhId1sOIEmxyWiwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e2/7XxzM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41EAFC4CEE7;
+	Thu,  9 Oct 2025 08:48:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759999738;
+	bh=XcVzGEG7wl6bThfY5lOeGukSt2PGXHScZ9EbqkTi7js=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e2/7XxzM1HLb+pyFzIpz+xZ0yy4SzrCmR7PDLo6q1mnriFsw1HUFajJmocPwXS5ZZ
+	 ZwbNoMLUWfNRG6i76FGSUpdGIsEllwR3JB/la68MYg2F3B6TAoqbwu90oMDLgNwJvb
+	 n5CJpL4FIqyV27qYqN/QYDPDYIexuMVMjaZxSJ5k7QbOJykcjKT1NA5hklrmFTASwP
+	 5FIN6F0iWwPE9g7p+jffU+4BEKaoh+eEcFXGMpuwYMRE1rlIObNag63WaFsxK10IdX
+	 7sMkSAm5BVR4Z4+JiswasTUIe7DmJT4spXt8LRlO+Kgx3ZsFEMPVuFVQZiM6SzRlp9
+	 muaHoPZlQEiKA==
+Date: Thu, 9 Oct 2025 10:48:45 +0200
+From: Nicolas Schier <nsc@kernel.org>
+To: Askar Safin <safinaskar@gmail.com>
+Cc: linux-kbuild@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
+	regressions@lists.linux.dev, nathan@kernel.org,
+	linux-kernel@vger.kernel.org, miguel.ojeda.sandonis@gmail.com,
+	ojeda@kernel.org, sam@gentoo.org, thomas.weissschuh@linutronix.de,
+	Daniel Xu <dxu@dxuuu.xyz>
+Subject: Re: [REGRESSION][BISECTED] kbuild: CFLAGS=-w no longer works
+Message-ID: <aOd27ViaWbsdwNDR@levanger>
+References: <20251009075149.1083040-1-safinaskar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929065714.27741-1-jjm2473@gmail.com> <20250929065714.27741-4-jjm2473@gmail.com>
- <d8ad476c-d0c7-4e97-9e76-540a539ffb52@lunn.ch> <CAP_9mL4ofig-X-w9wx1A5D_eVXROo6AVFBSwp4mh=kj7webpPA@mail.gmail.com>
- <7e219aef-88a0-4184-9553-30dcbc8dbd79@lunn.ch> <CAP_9mL6utQjN_2EZ4vs3K8jzcxHxvKWNTNEXZ9fAx4HuA=DNXA@mail.gmail.com>
- <a0501abe-d86d-4f3a-9d55-c842bfafc190@lunn.ch>
-In-Reply-To: <a0501abe-d86d-4f3a-9d55-c842bfafc190@lunn.ch>
-From: Alexey Charkov <alchark@gmail.com>
-Date: Thu, 9 Oct 2025 12:47:36 +0400
-X-Gm-Features: AS18NWC2IGY_8LtLG8W701XYpA8RXhJynROI-cfRLT0k9gdCMgBYHBHaIfR9D_Y
-Message-ID: <CABjd4YyqL1YouMt97MA=CLWJmcFMMr+=xpOKOd6YtAC6jQAO=Q@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] arm64: dts: rockchip: add LinkEase EasePi R1
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: jjm2473 <jjm2473@gmail.com>, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, heiko@sntech.de, quentin.schulz@cherry.de, 
-	kever.yang@rock-chips.com, naoki@radxa.com, honyuenkwun@gmail.com, 
-	inindev@gmail.com, ivan8215145640@gmail.com, neil.armstrong@linaro.org, 
-	mani@kernel.org, dsimic@manjaro.org, pbrobinson@gmail.com, 
-	didi.debian@cknow.org, jbx6244@gmail.com, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251009075149.1083040-1-safinaskar@gmail.com>
 
-On Tue, Oct 7, 2025 at 10:32=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
->
-> > I also notice that you suggest use {tx|rx}-internal-delay-ps instead
-> > of  {tx|rx}_delay in
-> > https://lore.kernel.org/all/e4d3127b-c879-4931-9ea0-de7449bc508c@lunn.c=
-h/ ,
-> > but I think this depends on stmmac driver.
->
-> It depends on the driver implementing those standard properties. But
-> as pointed out elsewhere, tx|rx-delay are magic, nobody knows what
-> they do, so it is hard to implement the standard properties to replace
-> them.
+On Thu, Oct 09, 2025 at 10:51:49AM +0300, Askar Safin wrote:
+> #regzbot introduced: d1d0963121769d8d16150b913fe886e48efefa51
+> 
+> As well as I understand, if you want to disable warnings, you
+> should pass "CFLAGS=-w" to "make". Starting with d1d096312176,
+> this no longer works.
+> 
+> Steps to reproduce:
+> 
+> $ cd linux
+> $ git clean -f -q -d -x  # To clean everything not controlled by git
+> $ echo 'CONFIG_64BIT=y' > /tmp/minimini
+> $ make allnoconfig KCONFIG_ALLCONFIG=/tmp/minimini
+> $ make -j32 CFLAGS=-w
 
-FWIW, the TRM for Rockchip RK3576 specifies that the values in
-tx|rx-delay control the number of delay elements in the internal
-delayline on the transmit and receive clocks, respectively (up to 200
-each). There is no mention of the actual delay each delay element
-introduces, though, so that doesn't get us much closer.
+If you want to hand-over additional CFLAGS to kbuild you need to use
+KCFLAGS or other variations, see Documentation/kbuild/kbuild.rst.
+When I intentionally introduce a warning in e.g. init/main.c, I can
+suppress the compiler warning by calling
 
-Best regards,
-Alexey
+    make KCFLAGS=-w
+
+Your log output below does not contain any warning, so I assume that you
+actually want to point to something different.
+
+
+[...]
+>   CC      /rbt/linux/tools/objtool/libsubcmd/exec-cmd.o
+>   CC      /rbt/linux/tools/objtool/libsubcmd/help.o
+>   CC      /rbt/linux/tools/objtool/libsubcmd/pager.o
+>   CC      /rbt/linux/tools/objtool/libsubcmd/parse-options.o
+>   CC      /rbt/linux/tools/objtool/libsubcmd/run-command.o
+>   CC      /rbt/linux/tools/objtool/libsubcmd/sigchain.o
+>   CC      /rbt/linux/tools/objtool/libsubcmd/subcmd-config.o
+> exec-cmd.c:2:10: fatal error: linux/compiler.h: No such file or directory
+>     2 | #include <linux/compiler.h>
+>       |          ^~~~~~~~~~~~~~~~~~
+> compilation terminated.
+> make[5]: *** [/rbt/linux/tools/build/Makefile.build:86: /rbt/linux/tools/objtool/libsubcmd/exec-cmd.o] Error 1
+> make[5]: *** Waiting for unfinished jobs....
+> parse-options.c:2:10: fatal error: linux/compiler.h: No such file or directory
+>     2 | #include <linux/compiler.h>
+>       |          ^~~~~~~~~~~~~~~~~~
+> compilation terminated.
+> make[5]: *** [/rbt/linux/tools/build/Makefile.build:86: /rbt/linux/tools/objtool/libsubcmd/parse-options.o] Error 1
+> In file included from sigchain.c:3:
+> subcmd-util.h:8:10: fatal error: linux/compiler.h: No such file or directory
+>     8 | #include <linux/compiler.h>
+>       |          ^~~~~~~~~~~~~~~~~~
+> compilation terminated.
+> make[5]: *** [/rbt/linux/tools/build/Makefile.build:86: /rbt/linux/tools/objtool/libsubcmd/sigchain.o] Error 1
+>   MKELF   scripts/mod/elfconfig.h
+> In file included from help.c:12:
+> subcmd-util.h:8:10: fatal error: linux/compiler.h: No such file or directory
+>     8 | #include <linux/compiler.h>
+>       |          ^~~~~~~~~~~~~~~~~~
+> compilation terminated.
+>   HOSTCC  scripts/mod/modpost.o
+> make[5]: *** [/rbt/linux/tools/build/Makefile.build:85: /rbt/linux/tools/objtool/libsubcmd/help.o] Error 1
+>   HOSTCC  scripts/mod/sumversion.o
+> In file included from run-command.c:11:
+> subcmd-util.h:8:10: fatal error: linux/compiler.h: No such file or directory
+>     8 | #include <linux/compiler.h>
+>       |          ^~~~~~~~~~~~~~~~~~
+> compilation terminated.
+>   HOSTCC  scripts/mod/symsearch.o
+> make[5]: *** [/rbt/linux/tools/build/Makefile.build:85: /rbt/linux/tools/objtool/libsubcmd/run-command.o] Error 1
+>   UPD     scripts/mod/devicetable-offsets.h
+>   HOSTCC  scripts/mod/file2alias.o
+> make[4]: *** [Makefile:78: /rbt/linux/tools/objtool/libsubcmd/libsubcmd-in.o] Error 2
+> make[3]: *** [Makefile:83: /rbt/linux/tools/objtool/libsubcmd/libsubcmd.a] Error 2
+> make[2]: *** [Makefile:73: objtool] Error 2
+> make[1]: *** [/rbt/linux/Makefile:1430: tools/objtool] Error 2
+> make[1]: *** Waiting for unfinished jobs....
+
+This is reproducible on my machine:
+
+    make -C tools objtool CFLAGS=-w
+
+But is doesn't matter which CFLAGS you add here, as they overwrite
+objtool's include paths.
+
+According to tools/build/Documentation/Build.txt you should use
+different variables for everything below tools/, e.g.:
+
+    make -C tools objtool CFLAGS_objtool=-w
+
+Does this help for your specific issue?
+
+Kind regards,
+Nicolas
 
