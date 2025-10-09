@@ -1,175 +1,174 @@
-Return-Path: <linux-kernel+bounces-846140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18FB4BC7243
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 03:59:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BC68BC7231
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 03:58:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F4253E4C33
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 01:58:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 564F13BA79F
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 01:58:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D17F01C3F0C;
-	Thu,  9 Oct 2025 01:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4188819FA93;
+	Thu,  9 Oct 2025 01:58:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="jLAPxLFh"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OeaOoTks"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E8B1ADC83
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 01:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC591A0BE0
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 01:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759975125; cv=none; b=pH8de+XyiL+JcLvmidilegnOk9YKKEJdNhKnk10JmNVt2NQDHjw+nCDH4D8mboDF3/hkNgOc2H5RCrtj9b5sKETghTSIs0Mx5YBX+LpFQs1hCqpHcxurz0zBGpXcHVoDkYTnyJP24VK6uvyhlHL0GayKZ5QZVn6R2VQattJT0fE=
+	t=1759975118; cv=none; b=BGp9FHymETo17Cn2EmgJq3j9p4uvThAaJSO1O+r5+/z8Gp4cMab7kDV9YZWiGZyFmq2bhk3lCvWyCATTfNp4uP3BlBOlF1SLJFsSZP4S5XVCYCz8ViBpzO9fdHNqIjWxz2hrB1iWPOYEok7zEb7p/6+QemgH0jF9itPHKcKRLNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759975125; c=relaxed/simple;
-	bh=MU4gbTfLLIXkWCmWpKbS3JVTa0y9M3Q9BfcDXADHJXw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fg/okAKLLkiZB0TSW0gH+X0/hWLd2+epo2HD5lInQgFXEUBnPINd+LgYKG5jMjaKTjLQ3OIHFISUHCtu03zbe1ETm1wlHbp9OCLUGiAr8Qj/zvyk5t/hYc+eT3Kd5lv12sGrGxnEMWbJNw5OzFm3yI6epAMpzi0auvUqYAb4bbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=jLAPxLFh; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 135243F6CA
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 01:58:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1759975113;
-	bh=FUSIhn952fhTN3vmzJuLfSjHS7O8TS53RpYKH1XPQ1Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:In-Reply-To;
-	b=jLAPxLFhzEDCOatuKnDgOBkjMasCwoYbghMULlt5rUb/eVJMHkkw/A0fHurlp8pHB
-	 vTLJEK8XytagC1nF7t6/BI4WC4jC/vY02MwHgRAXpMzzDoS31XY9q+4vLhS5FcJZat
-	 CbZb/MziE/gMykJyDaQrbMPra18yuLzSjs2bIQO5zem4ahfMhMc4BcDr7zJCDBg43K
-	 BZDkeUJQvvpJKMUnUgMbkJJL2iDBH0NWBKQB/8uahlcc23mTr32lcCc5xkkerGFy3f
-	 IVvq5mTPOcOspsmcK3yDgvJFNlsv0lisZjG/UnB3hbis3jYPrRIVPdJclSyR0DrNhC
-	 8NjzsP0OvCnjVUshCsG2NllY3atysGyy6WFTJtrsg0JpBvIrrq9lzQEnk/3GRZVUhu
-	 ovPuWtq8JVOJRwbiBEN6x6kTPYUYjUQQBzUKeVMrfCE3Tuxs8wfyFb+8KFILWXceu1
-	 JXap4vsaBPDk8HW8Hsu9GV67DgaBpm7BTEiv7HX21OtdW/XvU9DW6eIa/IeiVko9t4
-	 HDH5dYq4wj1G4jH6DdMupjP5PxfTmd5Wak6nPQNy1MXM25QAsXwbL/Assp2y58cBkZ
-	 gdMqiuQE7M5Z9w5SaxbkgjEHsc1Hwq9XVOaZKRtGr2LHqD7DJ6nSHo3mJIGnPGhaRt
-	 OoB2BmzA22uH7nplv48lLu+A=
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-859df490f9dso75642585a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 18:58:33 -0700 (PDT)
+	s=arc-20240116; t=1759975118; c=relaxed/simple;
+	bh=cBbOyvyZ60m9YZe8t1WrE6nNLEs0DHt+yuPxFq4aEwY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jY8+JyEP3iT2ZlFs5/YXuIdWtLiT+b98UIy4ccmpjb5mivDrkFdviWN3dDW0h1rgn9lKMGsuQoLAwvUicSk8QvCEhanZ1u7T0dlP8MFmLnwTHG2LB5xl+y54QSnCTgCwLWLJZMWWIcSWuQEc5kuzAXOJGzsV+KzG7hWszAn9A5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OeaOoTks; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7811fa91774so383662b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 18:58:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759975114; x=1760579914; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=2aGfciQxVmbM+4l+bNDs3L4I0WH01Ha6lKiSJ74aDco=;
+        b=OeaOoTksmUgF99l4uyLBl/lvuXiKLe0VALVsZhTF3+CtKWeJi1XOnbOCdX6NE4Mv0z
+         eajM0qNNFgDr7cafrhMMOqnPygCCzuwGMbAyVC1O6n8HkFO4AYsbP/Ghnkdjge73Eu//
+         hF5LNRmEZEmpsZKSu/Kpw4Do2qvBpm4tC4xULLE1/+sbO+53EuPgPJC3SfuuUjIbQLbu
+         6hYw90ZFlvMgTB4n79tB8XQuhxPorUQLDsOL+WGqz1D3QoucUh1K+iLxCsjlFXjf1W0p
+         riRpXEVzOq8SxWf2JPB7KZXe8s8SSFvmcRx2ZL2rtJcVw5wnwa2LDUcxMbZiDAOcJqWD
+         UCjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759975112; x=1760579912;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FUSIhn952fhTN3vmzJuLfSjHS7O8TS53RpYKH1XPQ1Q=;
-        b=tvTZ6zBtRdlAXMvm7sf6FZJQONIuaYAMK40OBhvb8nA4a1l1KQxSJC6VC0EjwbrQFq
-         zOv5AgfDFzA8N1UdNUpuSZkyaRrJjPg8w83UuOGb64cx+OT+qmJuLxKn0OonyxIraPxp
-         2Szm5M8e552Wnx4jl8zNl3RyU8mKHHKULwoB1uLBISXVsn8R/dEwDISa+iQN9N3faafk
-         q1DxOHdG1KWfdvdzdcCY0szOyYKz00m6hniwqUOt8gTMPhpNwiIgSqZ/dKT6T4c9xk+0
-         WskCA1JlWw9qwlokUwfLn5cyoxPhgsOPxXqxrOBC8KbfAU/suwsqgYDu3fAliYJdy/dA
-         EEHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXCYM5Ste2bswx2Z5R5NHvTUzGOQ4FG2QDdaEQratJMLOESoiEuJ0k1MavoqnYqNFsTKYjgllZp85uvQH8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4W4IEf0R6R4SPjawLMiq2e6vdaXwAHddbJaH+J5sF9ucZC5GH
-	V1PzW9OSpXX6JPkYb21i/sl+XDFUEBQlhNPfQixYnIunkq09xzQ8yiY6fDaE+kZlYvRdg/QGhOR
-	CTM/Gu1caA7HHrFEn/pQcoyoGwGcaAjRMsAK3zxYDm8YB5g5DP2etGaenIMxEnjJ6PhJKBPeWc6
-	rxD9QvzQ==
-X-Gm-Gg: ASbGncvF7Vx9joD03mFPxLwvd3DMOVWUUehp5R3vGWWBxRLW9EmhFimTu5MKbF5ajE8
-	/iNipY51GllBTH2CuKzrn4jM7DOguzbYqKSyh6rQTzdmkz0xE6wqn2CDbH+msfoHfdhnJHBXSql
-	/lrJyayHvnwAYCC5z58FSwOBMrKW3Uss3MCr7m0rGk5qwFiv8fCaZJEqEeeWJIhjaKRdNCPVaB3
-	UcchjC93MoTLDMjP2jFTbKJhycktEZ96AApXnM6XknCRJIUSQ4IdT56XYN+4ZWPN3WiTZ0s70Ku
-	dnw2m7tAKTQFGbF9TxjrGpm9It4PoT+7kpH5MwtqdoCcMX3IhIciMw==
-X-Received: by 2002:a05:620a:40c8:b0:829:d46:78f5 with SMTP id af79cd13be357-883550968a1mr906845085a.37.1759975111834;
-        Wed, 08 Oct 2025 18:58:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFnPPJVNu3RN5ki3DKYl679MCXogvom6CHeBzt3SVlr1CEVHUrCc9R4VSP/nuulCXhy5KwzIA==
-X-Received: by 2002:a05:620a:40c8:b0:829:d46:78f5 with SMTP id af79cd13be357-883550968a1mr906842685a.37.1759975111277;
-        Wed, 08 Oct 2025 18:58:31 -0700 (PDT)
-Received: from acelan-precision5470 ([2001:67c:1562:8007::aac:4468])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e55a34b607sm175173841cf.4.2025.10.08.18.58.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 18:58:29 -0700 (PDT)
-Date: Thu, 9 Oct 2025 09:58:22 +0800
-From: "Chia-Lin Kao (AceLan)" <acelan.kao@canonical.com>
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Andrei Kuchynski <akuchynski@chromium.org>, 
-	=?utf-8?Q?=C5=81ukasz?= Bartosik <ukaszb@chromium.org>, Venkat Jayaraman <venkat.jayaraman@intel.com>, 
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: typec: ucsi: Fix workqueue destruction race during
- connector cleanup
-Message-ID: <dr5dderec7diwlsiu7n5vziotw4lnnkletyy7hb55miosrdiy7@oy3nqplgcv6s>
-Mail-Followup-To: "Chia-Lin Kao (AceLan)" <acelan.kao@canonical.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Andrei Kuchynski <akuchynski@chromium.org>, 
-	=?utf-8?Q?=C5=81ukasz?= Bartosik <ukaszb@chromium.org>, Venkat Jayaraman <venkat.jayaraman@intel.com>, 
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251002013026.4095030-1-acelan.kao@canonical.com>
- <aOY-OyN90DScHr85@kuha.fi.intel.com>
+        d=1e100.net; s=20230601; t=1759975114; x=1760579914;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2aGfciQxVmbM+4l+bNDs3L4I0WH01Ha6lKiSJ74aDco=;
+        b=fUsUcd2Z0epZT8/8gevo0vM5aen8jSwPfkzdNRBnae143xnwfCkqox26F9C1FFnZ+i
+         A8o41xs2eo9bMJ1tsEVvRezU225MQ8hQFSYO7qjC98QunLLFlyF12D8j5JYEiImt4mPD
+         WfcCwQJZFgEhLiqbeW2OM9s49HBC322glR4zskFTo8fLGi5mWJeueKLUN/EW6oOULV4i
+         nRK2lmc9mdmzlw40l97m6v7H4+tECkctq6m6fACOMuDWev80xT+kv1By0KXEa38L9Sqe
+         FqMcWMKOLCqBtlAHwaoFemjOhQiXq29S2c8vMrJV8GCSlrmA8uJh+oO7Srw9D9J6pd6e
+         otYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBDV3KAMCe/P36J1VN5C2CNcgiSdIffEjFNjyB5A3OMD4fNGa/lruCHOQwvkZsjc8/ipda/IXOAYgRzMo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvesfSwXI1s2gA2LTiRVEEA63SJg/bWk9cRWOvx2iQIOfulqgn
+	aV9pFJtGLMsxi11oLhHjBFM8FOYBf7q93h+1PZ5sd/7Z4TyQlwIYgOIz
+X-Gm-Gg: ASbGncuplEyDTXb/hrOis2zinluSDk84OnJhAmfLqgFruKJsCAl2goPlT8EkL/rLwzA
+	ledUe6UBNvEd+W3qz9oPutoA2xJrOVf8umDKqLakPMon+1OqUf+oEgq0qaQ4Ra7+D47nx3QVOxl
+	iS74TKXzYD+6OoSLQ7y4kQPEiNOJP4YVFYNPT8OqfieRz/5+zKBnYRDnzFADvlvJ7FZ33ELmPCn
+	qToudkKAOjvYHEk2YbgkpeY6s/IR/HXqBHXoPsPpkoyYNKG8r8zMJI2nICb0RfzUibKS9N2neBc
+	mC1NZrpi21wtXIetFYAZLqi3OvFsGQulDFDkYsHLFOdQmshw9NLaBuqtojWX2Trvmuep+q1ZYhd
+	fV40Lg9/G035P0cnpVPTMyDo7kF8ASZ/v6qJCEm7UyZmaKhzqbMCpKAwQd/TeoSSTNcX0SE7kMo
+	+lchKZjriSISx2ycqAUgXH/D0nQ3H7sw==
+X-Google-Smtp-Source: AGHT+IFRnXDNLeO6K/K3wthKcVdDZ0k79jHMKp0eRtg+qp5MtCtdWauMOoFNlF0VJLS/II4OcfTVwg==
+X-Received: by 2002:a05:6a20:3956:b0:303:8207:eb56 with SMTP id adf61e73a8af0-32da8190b86mr7638215637.5.1759975114450;
+        Wed, 08 Oct 2025 18:58:34 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b51102259sm4986725a91.7.2025.10.08.18.58.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Oct 2025 18:58:33 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <c7d01ff6-0e09-4ea1-8c5d-59be5e3fff16@roeck-us.net>
+Date: Wed, 8 Oct 2025 18:58:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aOY-OyN90DScHr85@kuha.fi.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 06/13] hwmon: Add Apple Silicon SMC hwmon driver
+To: James Calligeros <jcalligeros99@gmail.com>, Sven Peter <sven@kernel.org>,
+ Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+ Neal Gompa <neal@gompa.dev>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Jean Delvare <jdelvare@suse.com>, Dmitry Torokhov
+ <dmitry.torokhov@gmail.com>, Jonathan Corbet <corbet@lwn.net>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rtc@vger.kernel.org, linux-hwmon@vger.kernel.org,
+ linux-input@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20251007-macsmc-subdevs-v3-0-d7d3bfd7ae02@gmail.com>
+ <20251007-macsmc-subdevs-v3-6-d7d3bfd7ae02@gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20251007-macsmc-subdevs-v3-6-d7d3bfd7ae02@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 08, 2025 at 01:34:35PM +0300, Heikki Krogerus wrote:
-> On Thu, Oct 02, 2025 at 09:30:26AM +0800, Chia-Lin Kao (AceLan) wrote:
-> > During UCSI initialization and operation, there is a race condition where
-> > delayed work items can be scheduled but attempt to queue work after the
-> > workqueue has been destroyed. This occurs in multiple code paths.
-> > 
-> > The race occurs when:
-> > 1. ucsi_partner_task() or ucsi_poll_worker() schedule delayed work
-> > 2. Connector cleanup paths call destroy_workqueue()
-> > 3. Previously scheduled delayed work timers fire after destruction
-> > 4. This triggers warnings and crashes in __queue_work()
+On 10/7/25 04:16, James Calligeros wrote:
+> The System Management Controller on Apple Silicon devices is responsible
+> for integrating and exposing the data reported by the vast array of
+> hardware monitoring sensors present on these devices. It is also
+> responsible for fan control, and allows users to manually set fan
+> speeds if they so desire. Add a hwmon driver to expose current,
+> power, temperature, and voltage monitoring sensors, as well as
+> fan speed monitoring and control via the SMC on Apple Silicon devices.
 > 
-> What warnings?
-Here is what I got.
+> The SMC firmware has no consistency between devices, even when they
+> share an SoC. The FourCC keys used to access sensors are almost
+> random. An M1 Mac mini will have different FourCCs for its CPU core
+> temperature sensors to an M1 MacBook Pro, for example. For this
+> reason, the valid sensors for a given device are specified in a
+> child of the SMC Devicetree node. The driver uses this information
+> to determine which sensors to make available at runtime.
+> 
+> Reviewed-by: Neal Gompa <neal@gompa.dev>
+> Co-developed-by: Janne Grunau <j@jannau.net>
+> Signed-off-by: Janne Grunau <j@jannau.net>
+> Signed-off-by: James Calligeros <jcalligeros99@gmail.com>
 
-Sep 24 13:24:22 ubuntu kernel: sysfs: cannot create duplicate filename '/devices/platform/USBC000:00/typec/port0/port0.0/partner'
-Sep 24 13:24:22 ubuntu kernel: CPU: 1 UID: 0 PID: 132 Comm: kworker/u64:1 Tainted: G           O       6.14.0-1012-oem #12-Ubuntu
-Sep 24 13:24:22 ubuntu kernel: Tainted: [O]=OOT_MODULE
-Sep 24 13:24:22 ubuntu kernel: Hardware name: Dell Inc. Dell /, BIOS XXXX XX/XX/2025
-Sep 24 13:24:22 ubuntu kernel: Workqueue: USBC000:00-con1 ucsi_poll_worker [typec_ucsi]
-Sep 24 13:24:22 ubuntu kernel: Call Trace:
-Sep 24 13:24:22 ubuntu kernel:  <TASK>
-Sep 24 13:24:22 ubuntu kernel:  dump_stack_lvl+0x76/0xa0
-Sep 24 13:24:22 ubuntu kernel:  dump_stack+0x10/0x20
-Sep 24 13:24:22 ubuntu kernel:  sysfs_warn_dup+0x8a/0xb0
-Sep 24 13:24:22 ubuntu kernel:  sysfs_do_create_link_sd+0xf1/0x100
-Sep 24 13:24:22 ubuntu kernel:  sysfs_create_link+0x21/0x50
-Sep 24 13:24:22 ubuntu kernel:  typec_probe+0x7e/0x100 [typec]
-Sep 24 13:24:22 ubuntu kernel:  ? driver_sysfs_add+0x66/0xd0
-Sep 24 13:24:22 ubuntu kernel:  really_probe+0xee/0x3c0
-Sep 24 13:24:22 ubuntu kernel:  __driver_probe_device+0x8c/0x180
-Sep 24 13:24:22 ubuntu kernel:  driver_probe_device+0x24/0xd0
-Sep 24 13:24:22 ubuntu kernel:  __device_attach_driver+0xcd/0x170
-Sep 24 13:24:22 ubuntu kernel:  ? _pfx__device_attach_driver+0x10/0x10
-Sep 24 13:24:22 ubuntu kernel:  bus_for_each_drv+0x94/0xf0
-Sep 24 13:24:22 ubuntu kernel:  __device_attach+0xb6/0x1d0
-Sep 24 13:24:22 ubuntu kernel:  device_initial_probe+0x13/0x20
-Sep 24 13:24:22 ubuntu kernel:  bus_probe_device+0x9f/0xb0
-Sep 24 13:24:22 ubuntu kernel:  device_add+0x513/0x710
-Sep 24 13:24:22 ubuntu kernel:  device_register+0x1a/0x30
-Sep 24 13:24:22 ubuntu kernel:  typec_register_altmode+0x253/0x3a0 [typec]
-Sep 24 13:24:22 ubuntu kernel:  typec_partner_register_altmode+0xe/0x20 [typec]
-Sep 24 13:24:22 ubuntu kernel:  ucsi_register_altmode.constprop.0+0x30e/0x390 [typec_ucsi]
-Sep 24 13:24:22 ubuntu kernel:  ucsi_register_altmodes+0x162/0x250 [typec_ucsi]
-Sep 24 13:24:22 ubuntu kernel:  ucsi_check_altmodes+0x19/0xb0 [typec_ucsi]
-Sep 24 13:24:22 ubuntu kernel:  ucsi_poll_worker+0x3d/0xf0 [typec_ucsi]
-Sep 24 13:24:22 ubuntu kernel:  process_one_work+0x178/0x3d0
-Sep 24 13:24:22 ubuntu kernel:  worker_thread+0x2de/0x410
-Sep 24 13:24:22 ubuntu kernel:  ? __pfx_worker_thread+0x10/0x10
-Sep 24 13:24:22 ubuntu kernel:  kthread+0xfb/0x230
-Sep 24 13:24:22 ubuntu kernel:  ? __pfx_kthread+0x10/0x10
-Sep 24 13:24:22 ubuntu kernel:  ret_from_fork+0x44/0x70
-Sep 24 13:24:22 ubuntu kernel:  ? __pfx_kthread+0x10/0x10
-Sep 24 13:24:22 ubuntu kernel:  ret_from_fork_asm+0x1a/0x30
-Sep 24 13:24:22 ubuntu kernel:  </TASK>
-Sep 24 13:24:22 ubuntu kernel: typec-thunderbolt port0-partner.1: failed to create symlinks
-Sep 24 13:24:22 ubuntu kernel: typec-thunderbolt port0-partner.1: probe with driver typec-thunderbolt failed with error -17
-> 
-> -- 
-> heikki
+Acked-by: Guenter Roeck <linux@roeck-us.net>
 
