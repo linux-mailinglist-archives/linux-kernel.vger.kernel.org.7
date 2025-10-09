@@ -1,233 +1,249 @@
-Return-Path: <linux-kernel+bounces-846821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B609BC920F
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:53:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A91EBC9209
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:53:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 64B864FA78A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:53:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9E7F3E2922
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:53:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1177D2E6CD5;
-	Thu,  9 Oct 2025 12:53:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1502E11A6;
+	Thu,  9 Oct 2025 12:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ln7bmxsH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rtfwD2fi"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8FA23C505
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 12:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9812F2E092E
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 12:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760014383; cv=none; b=HAI3zISEPpHbgHX02u2Oit+OHytQBba9RjZMofdqJUDv+EBorN9vK6B76gg2DLhT8Z/Xq3K5F/19bWOBjQx5ASwPmRUoH2Vpi9cYAYONfCn2qU/JLIfpgXuRbWgaoLFZWKMQtUd+uzQQsssUw8Pc7x6ELXFMee1we2N31VRa9SQ=
+	t=1760014381; cv=none; b=e0MdlAhZdmWuFW0Z2ZXHO2zmSyeHhM/Gn2PwuOau5B212skARd7Wqwvi0TMC1wS+kQnqg2NM/pBxie9bqyLxhNSfxVrNBwVWJEkPvV+piIPmYkpc7p7UCtMg8RPw8Be/flkGdc+rypBRwjX8oedvwchji6eoT1yRnXY/0ggQfnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760014383; c=relaxed/simple;
-	bh=X8mJTyar/juDqkVpENiOV+AphX1e6sbRKy+cvFNi8Iw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=mgF3a0PD6XR7KZADGC+Ucm36ETEUa+zHRk8U6mhEIWNr3Iics+4Hd6Q0272k+HC8Y+0XRhh25dJBe0KBNhGwXIeIIUJAzgafalCnFxLp13bqMTOlITIO48lKUm8ZfYZn5b7et4Tn+xaDIilhjRjmrEIbNCANv53mNPIbPciSNQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ln7bmxsH; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760014380;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+waPU4EoP1XKdkvMFZASVqNI18Mpmp7i8qiR8k7lEjg=;
-	b=Ln7bmxsHrrmN9XxwIktjh2zDb3vI8jeh+OYY4HZ2u2VC1kolyPp+guUhKe3G7rOugnEMSL
-	r3y0+gBMrZDWbs2GN/QNOcGqzGrX8BIgtu7CeWVcnoAwYWnMsy1MSr2R6qw3naoca+Y3pU
-	ChSUoV9BeIiJJFpv5xwAXOCw+AYR7GI=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-632-GRqD5qcPN76oC51rjqbDvQ-1; Thu, 09 Oct 2025 08:52:59 -0400
-X-MC-Unique: GRqD5qcPN76oC51rjqbDvQ-1
-X-Mimecast-MFC-AGG-ID: GRqD5qcPN76oC51rjqbDvQ_1760014378
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3f93db57449so644372f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 05:52:58 -0700 (PDT)
+	s=arc-20240116; t=1760014381; c=relaxed/simple;
+	bh=oHmAYYmBYTRgLg0G9VZWm0tEmWvRwHCDyhkyoHqAr5s=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=kEnI+2mbmOy5EXglFaXw28KAxAoooel7nSaZUnZKR3f4MC3wZQgvbWzC5RgwQrSFM/+GfjmiVtNlQC45aMj/8gx0Fml57hJ58qv4XqfuvtVWmHZnHGdlcs71sh2t+auBxO+CrVoL3Mwm5kK0fQ5qaUfV7GQ3yI50Jq/DKSDCpUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rtfwD2fi; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-46e2e363118so8022915e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 05:52:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760014378; x=1760619178; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZRtylrFTnY/RG87DO6cfv9SyY42tBE2nSVvu8MAsJcY=;
+        b=rtfwD2fir4E5htRQ1iMTydGys7Dw1iA1UwnC1gdYsE0IpGRMHt7zdXqdAvng4T8bh/
+         S6Qqb19rsxe7/A5cAADl56rHLpBh51GjyTnCC2GCwW8/IxlzlwjO6vEWJIkKxGjCqFSp
+         lu5y0gFQXizLySgqel1BXkOPpkUFsckJ5GCj9xu9IUqod5oVDgjA6fsY45iHzE7LHWe9
+         8f7BZYS1kNK008neqLZZ4IbSSSKRgJJ/UVv1c7kSUrL/+sesTO9EMI3OjILtoQE9LcXt
+         Gtw1IEJf31HgiU2xGWAQrdRwj6qGtktCkv/guORzvpuIYEUKruuBE5zqAn8K13l59wIb
+         GLTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1760014378; x=1760619178;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+waPU4EoP1XKdkvMFZASVqNI18Mpmp7i8qiR8k7lEjg=;
-        b=lrYtD250m7Fvfk/5gAJdkxWV+5rlW2Rc9i0FnYVo8eLI2Pkg4o3Dw3pLuEjrbCw/wy
-         X5FMDRpNlk3zx4HZ6VSDtoWUVRLKUrtDENkB1U8OlY1HV19Q+jSZDqleUTxTXqORXFBN
-         OiGKe5OLOcrNXU3ZIloD5g+uVFGACvos+slSz/p0NqlD6RbDiZWgAdxAzFmIZC+qWOmI
-         sYNWD4QzPm4QmYmS0ir4BJnXmOmtq6UM0lrWGfKTUpbtGhE62ZFoxT1ia4VVGVeGKqRu
-         IDSM/7d1+0CM34s72C4PNPO1sTG6Fh/cjWIfUD9VUElXeh+ClI4lXepSkxi5TsWTHdkk
-         5r0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUcuJb+/b0wEH+MTLAtV9+jPMLQGt1uEurysYPGlMpSQ/frEV050rdXa0FnF5KbrQcD6vgKRUr17kxkdIs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9b8F7BFkUpHwP72XjXA1aL5pjGWOSdc3YTG7rt63FU6sIHrUI
-	cE6U49lrbk9MDyO4HUOv0GcCmUwxPeGyhkOOCf3zJyy55QTqKxHnpD4MG5+FNH2kxHIiE7hll7H
-	rDe/K7hUjUWk9eEuYMsl17xDLPwmT9MGhCAHaBPzZAcifMY9fyKKI8YhdWsozEpCNoQn+5CV+75
-	yay2aFdna013O0a+0MT0QusroO2VcVa5kBTXImQIElCL7UrUefQA==
-X-Gm-Gg: ASbGncsvPS51XqD1dRy9Mlh6SYg+LDLGXNPIIwlJEk3IJXiKss2Oh9LqLlvmBP/RdYb
-	NBnerRVxJ8SPSkSBBE88eMVIPoWgVmNwVQlPWu3SHpQWb1j15wwDi/Y24h5bXW8Sp6AOycpqDSI
-	LpFtsmpmnMzWW82W9cdi0hg1ysPuWtsMgOIBllVpPfOXItmd84mOHJsc/23tdc0Yc4/sX5fTsB7
-	Hx1w0PG9+F1Sly80wL8y+jRRseHdr/oTTEMcwP5XBytQSKYOF9QwX9QzJDznEn70LW+1Q/WikKc
-	X7zr/IyttqIPrbftMT3oowZDHdgAksvrSjL0s5h64Q==
-X-Received: by 2002:a05:6000:2c06:b0:40f:5eb7:f23e with SMTP id ffacd0b85a97d-42666ab2b15mr4101222f8f.1.1760014377943;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ZRtylrFTnY/RG87DO6cfv9SyY42tBE2nSVvu8MAsJcY=;
+        b=LhRE+FjoP1RROXPv4mS+f4yVgs79EwzOH4wpQT9v3THumy25vQeefvzTTEGX7k/YFc
+         l//UxK3tOtQ+QEIA1X5zT44GmW8zYM8X3RddgIQHIRcfV+4vJJTVC+DQzMr7aIla5vq6
+         kqPwp4K+WTkUJnlz3woslO7OlVN6/cwOIJoXoSMPcwEwFgCnb6l/BsMgr2R3Q3i2pydf
+         7N0irgOL/fiFptynFJvdTbub+EECtq+7eWzyK8yDJUbFmEcZ3zHHgeq3lNcOumdj95vy
+         QZWx4yI/4Dk8NgAvv+4Y+pbIAlMHd/9vsB8Z04t4fr8nX8U21HjD6gNT+ZE3o1e+hwB1
+         UHzg==
+X-Forwarded-Encrypted: i=1; AJvYcCUsCn54shkjoTWEUVx/Te061nGlW3+ofsNewY6ql8GtDKB/jqxoJnwXQQsf7w2FOJ6M1XUOtE+rwKBgRew=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywi9WoQO1AlKI6t5++DNtubJwIUTeZrV/67V/sNI+JUvpHy/rEb
+	VJcHi09Sb1Qch/pA/9KUZWNQLsw8BExa4rP1QX4SwuqD/Bo3k3hIt7PkA+5XVM5Csa0=
+X-Gm-Gg: ASbGncse3EE1uxj6cfe1cQ7kHOl7GcRD/FtMgbttNZ6OsN0MU8vwqxDnpi3/n0Tvq/l
+	A5MS49szalfHYpuUVdeBHjdJY53tTdZ5GjjFsdTzh1myaZ4k8RKQhLEXJhfmLqvVsd22jfgrcTI
+	dkFSEzLoqoucvUSRgitgLI8eJy5kQOesOQ5cps09G5s6fPe/wd1WYnnmD7Y6LDsZ580Wa6UsgrU
+	8dr1Gnbrh7tepkRNMLqYYP/OaGXi7XGVZQveK+ZARM1s5jjBu6taPhOzGeIBJuVt9MmOHo/phSz
+	QSq9xKnqUqGjPu42jYEnpUi1WT1Clb5g/UKdWSAL47cQJttzdcIT7dJIDjZ5y5nouAKJ+O0Sob+
+	u2ae+40aYQqnOTfMw4XzCmU6CYCnBEggLMWz1D9FfekFtJBJ7b8UneesOnBRDfGxeAIEr1JPjr6
+	wwAzqpALRqkcYZ7JzteGLIIFQCVtq/tHJWsHZlgA==
+X-Google-Smtp-Source: AGHT+IGRW0VgRpdPRqZKnwEt2a74cE0bxiKcQVyqAB6CmaLRieyQoIUZBI/ty0xAJli/ZygNnj4dqA==
+X-Received: by 2002:a05:6000:2504:b0:3eb:d906:e553 with SMTP id ffacd0b85a97d-4266e8e61dfmr4927007f8f.55.1760014377777;
         Thu, 09 Oct 2025 05:52:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG6sYUNnJKtLYymNGyZnaS/EKYVGpmsOe8naPHzyYPhk9811ZTFpkCfmibAqOb5QeKoOkS8AA==
-X-Received: by 2002:a05:6000:2c06:b0:40f:5eb7:f23e with SMTP id ffacd0b85a97d-42666ab2b15mr4101201f8f.1.1760014377497;
+Received: from ?IPV6:2a01:e0a:3d9:2080:7a0c:da2f:6591:67ee? ([2a01:e0a:3d9:2080:7a0c:da2f:6591:67ee])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8a6daasm34964676f8f.7.2025.10.09.05.52.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
         Thu, 09 Oct 2025 05:52:57 -0700 (PDT)
-Received: from fedora (g3.ign.cz. [91.219.240.17])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8e97f0sm34348382f8f.27.2025.10.09.05.52.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 05:52:57 -0700 (PDT)
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
-To: Jinpu Wang <jinpu.wang@ionos.com>, Sean Christopherson <seanjc@google.com>
-Cc: fanwenyi0529@gmail.com, kvm@vger.kernel.org, Paolo Bonzini
- <pbonzini@redhat.com>, Xiaoyao Li <xiaoyao.li@intel.com>,
- linux-kernel@vger.kernel.org
-Subject: Re: Hang on reboot in multi-core FreeBSD guest on Linux KVM host
- with Intel Sierra Forest CPU
-In-Reply-To: <CAMGffEmin4HAwoQUjkkoq+_z0sherZcCnkXgMu4PahnM8UmO+A@mail.gmail.com>
-References: <539FC243.2070906@redhat.com>
- <20140617060500.GA20764@minantech.com>
- <FFEF5F78-D9E6-4333-BC1A-78076C132CBF@jnielsen.net>
- <6850B127-F16B-465F-BDDB-BA3F99B9E446@jnielsen.net>
- <jpgioafjtxb.fsf@redhat.com>
- <74412BDB-EF6F-4C20-84C8-C6EF3A25885C@jnielsen.net>
- <558AD1B0.5060200@redhat.com>
- <FAFB2BA9-E924-4E70-A84A-E5F2D97BC2F0@jnielsen.net>
- <CACzj_yVTyescyWBRuA3MMCC0Ymg7TKF-+sCW1N+Xwfffvw_Wsg@mail.gmail.com>
- <CAMGffE=P5HJkJxh2mj3c_oh6busFKYb0TGuhAc36toc5_uD72w@mail.gmail.com>
- <aOaJbHPBXHwxlC1S@google.com>
- <CAMGffEn1i-qTVRD+9PWDfNUMvbBCp9dV2f=Cgu=VLtoHs-6JTA@mail.gmail.com>
- <CAMGffEmt2ZEL3uxRd+mWkKB=K8Q3seo9Kp-T06rZahxsX4Wm4Q@mail.gmail.com>
- <CAMGffEmin4HAwoQUjkkoq+_z0sherZcCnkXgMu4PahnM8UmO+A@mail.gmail.com>
-Date: Thu, 09 Oct 2025 14:52:56 +0200
-Message-ID: <87bjmg8cev.fsf@redhat.com>
+Message-ID: <d8e202fb-f494-4b5e-bfb9-c94c1fd3af4d@linaro.org>
+Date: Thu, 9 Oct 2025 14:52:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH RFC v2 4/6] arm64: dts: qcom: sm8450-hdk: Enable I2S for
+ HDMI
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20251008-topic-sm8x50-next-hdk-i2s-v2-0-6b7d38d4ad5e@linaro.org>
+ <20251008-topic-sm8x50-next-hdk-i2s-v2-4-6b7d38d4ad5e@linaro.org>
+ <488d9182-175e-47a9-9dc1-f43753d6fdbc@oss.qualcomm.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <488d9182-175e-47a9-9dc1-f43753d6fdbc@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Jinpu Wang <jinpu.wang@ionos.com> writes:
+On 10/9/25 14:37, Konrad Dybcio wrote:
+> On 10/8/25 8:56 PM, Neil Armstrong wrote:
+>> Add the necessary nodes to configure the right I2S interface
+>> to output audio via the DSI HDMI bridge.
+>>
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>> ---
+>>   arch/arm64/boot/dts/qcom/sm8450-hdk.dts | 26 +++++++++++++++++++++
+>>   arch/arm64/boot/dts/qcom/sm8450.dtsi    | 40 +++++++++++++++++++++++++++++++++
+>>   2 files changed, 66 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/sm8450-hdk.dts b/arch/arm64/boot/dts/qcom/sm8450-hdk.dts
+>> index 0c6aa7ddf43263f30595b3f0733ec3e126e38608..7b822086a57c600ae9b5668d6d7a375d0ec55fa7 100644
+>> --- a/arch/arm64/boot/dts/qcom/sm8450-hdk.dts
+>> +++ b/arch/arm64/boot/dts/qcom/sm8450-hdk.dts
+>> @@ -667,6 +667,8 @@ lt9611_codec: hdmi-bridge@2b {
+>>   		pinctrl-names = "default";
+>>   		pinctrl-0 = <&lt9611_irq_pin &lt9611_rst_pin>;
+>>   
+>> +		#sound-dai-cells = <1>;
+>> +
+>>   		ports {
+>>   			#address-cells = <1>;
+>>   			#size-cells = <0>;
+>> @@ -1016,6 +1018,14 @@ &sound {
+>>   			"TX SWR_INPUT0", "ADC3_OUTPUT",
+>>   			"TX SWR_INPUT1", "ADC4_OUTPUT";
+>>   
+>> +	pinctrl-0 = <&i2s0_default_state>, <&audio_mclk0_default_state>;
+>> +	pinctrl-names = "default";
+>> +
+>> +	clocks = <&q6prmcc LPASS_CLK_ID_PRI_MI2S_IBIT LPASS_CLK_ATTRIBUTE_COUPLE_NO>,
+>> +		 <&q6prmcc LPASS_CLK_ID_MCLK_1 LPASS_CLK_ATTRIBUTE_COUPLE_NO>;
+>> +	clock-names = "primart-mi2s",
+> 
+> "primary-mi2s"
+> 
+> [...]
 
-> On Thu, Oct 9, 2025 at 1:21=E2=80=AFPM Jinpu Wang <jinpu.wang@ionos.com> =
-wrote:
->>
->> On Thu, Oct 9, 2025 at 5:44=E2=80=AFAM Jinpu Wang <jinpu.wang@ionos.com>=
- wrote:
->> >
->> > Hi Sean,
->> >
->> > On Wed, Oct 8, 2025 at 5:55=E2=80=AFPM Sean Christopherson <seanjc@goo=
-gle.com> wrote:
->> > >
->> > > Trimmed Cc: to drop people from the original thread.  In the future,=
- just start
->> > > a new bug report.  Piggybacking a 10 year old bug just because the s=
-ymptoms are
->> > > similar does more harm than good.  Whatever the old thread was chasi=
-ng was already
->> > > fixed, _10 years_ ago; they were just trying to identy exactly what =
-commit fixed
->> > > the problem.  I.e. whatever they were chasing _can't_ be the same ro=
-ot cause,
->> > > because even if it's literally the same code bug, it would require a=
- code change
->> > > and thus a regression between v4.0 and v6.1.
->> > Thx for the reply,  it makes sense. I will remember this next time.
->> > >
->> > > On Wed, Oct 08, 2025, Jinpu Wang wrote:
->> > > > On Wed, Oct 8, 2025 at 2:44=E2=80=AFPM Jack Wang <jinpu.wang@ionos=
-.com> wrote:
->> > > > > Sorry for bump this old thread, we hit same issue on Intel Sierr=
-a Forest
->> > > > > machines with LTS kernel 6.1/6.12, maybe KVM comunity could help=
- fix it.
->> > >
->> > > Are there any host kernels that _do_ work?  E.g. have you tried a bl=
-eeding edge
->> > > host kernel?
->> > I will try linus/master today.
->> > >
->> > > > > ### **[BUG] Hang on FreeBSD Guest Reboot under KVM on Intel Sier=
-raForest (Xeon 6710E)**
->> > > > >
->> > > > > **Summary:**
->> > > > > Multi-cores FreeBSD guests hang during reboot under KVM on syste=
-ms with
->> > > > > Intel(R) Xeon(R) 6710E (SierraForest). The issue is fully reprod=
-ucible with
->> > > > > APICv enabled and disappears when disabling APICv (`enable_apicv=
-=3DN`). The
->> > > > > same configuration works correctly on Ice Lake (Xeon Gold 6338).
->> > >
->> > > Does Sierra Forest have IPI virtualization?  If so, you could try ru=
-nning with
->> > > APICv enabled, but enable_ipiv=3Dfalse to specifically disable IPI v=
-irtualization.
->> > Yes, it does:
->> > $  grep . /sys/module/kvm_intel/parameters/*
->> > /sys/module/kvm_intel/parameters/allow_smaller_maxphyaddr:N
->> > /sys/module/kvm_intel/parameters/dump_invalid_vmcs:N
->> > /sys/module/kvm_intel/parameters/emulate_invalid_guest_state:Y
->> > /sys/module/kvm_intel/parameters/enable_apicv:Y
->> > /sys/module/kvm_intel/parameters/enable_ipiv:Y
->> > /sys/module/kvm_intel/parameters/enable_shadow_vmcs:Y
->> > /sys/module/kvm_intel/parameters/ept:Y
->> > /sys/module/kvm_intel/parameters/eptad:Y
->> > /sys/module/kvm_intel/parameters/error_on_inconsistent_vmcs_config:Y
->> > /sys/module/kvm_intel/parameters/fasteoi:Y
->> > /sys/module/kvm_intel/parameters/flexpriority:Y
->> > /sys/module/kvm_intel/parameters/nested:Y
->> > /sys/module/kvm_intel/parameters/nested_early_check:N
->> > /sys/module/kvm_intel/parameters/ple_gap:128
->> > /sys/module/kvm_intel/parameters/ple_window:4096
->> > /sys/module/kvm_intel/parameters/ple_window_grow:2
->> > /sys/module/kvm_intel/parameters/ple_window_max:4294967295
->> > /sys/module/kvm_intel/parameters/ple_window_shrink:0
->> > /sys/module/kvm_intel/parameters/pml:Y
->> > /sys/module/kvm_intel/parameters/preemption_timer:Y
->> > /sys/module/kvm_intel/parameters/sgx:N
->> > /sys/module/kvm_intel/parameters/unrestricted_guest:Y
->> > /sys/module/kvm_intel/parameters/vmentry_l1d_flush:not required
->> > /sys/module/kvm_intel/parameters/vnmi:Y
->> > /sys/module/kvm_intel/parameters/vpid:Y
->> >
->> > I tried to disable ipiv, but it doesn't help. freebsd hang on reboot.
->> > sudo modprobe -r kvm_intel
->> > sudo modprobe  kvm_intel enable_ipiv=3DN
->> > /sys/module/kvm_intel/parameters/enable_ipiv:N
->> >
->> > Thx!
->> +cc Vitaly
->> Sorry, I missed one detail, we are use hyper-V enlightment features:
->> "+hv-relaxed,+hv-vapic,+hv-time,+hv-runtime,hv-spinlocks=3D0x1fff,+hv-vp=
-index,+hv-synic,+hv-stimer,+hv-tlbflush,hv-ipi."
->>
->> did a lot tests with different features, and looks the hang is related
->> to  +hv-synic,+hv-stimer.  hv-synic seems the key which causes boot
->> hang of Freebsd 14.
->>
->> But the problem seems fixed with FreeBSD 15?  I guess it's this fix:
-> https://reviews.freebsd.org/D43508
->
->>
->> Seems it's a bug from freebsd side, rather than on kvm side to me, but
->> I'm puzzled by disable apicv helps?
+Damn typo
 
-In theory, FreeBSD should work well even if KVM is misdetected as
-genuine Hyper-V. Apparently, our emulation is not 1:1 and there are
-subtle differences which cause the hang. I did not look at FreeBSD code
-at all but my wild guess is that SynIC/stimer are not disabled properly
-upon reboot and this causes the problem. If we somehow manage to find
-how genuine Hyper-V's behavior is different, it would make sense to
-update KVM/QEMU to match.
+> 
+>> +			audio_mclk0_default_state: audio-mclk0-default-state {
+>> +				pins = "gpio125";
+>> +				function = "pri_mi2s";
+>> +				drive-strength = <8>;
+>> +				bias-disable;
+>> +				output-high;
+>> +			};
+>> +
+>> +			i2s0_default_state: i2s0-default-state {
+>> +				sck-pins {
+>> +					pins = "gpio126";
+>> +					function = "mi2s0_sck";
+>> +					drive-strength = <8>;
+>> +					bias-disable;
+>> +					output-high;
+> 
+> I doubt output-high for a clock pin is what you want..
 
---=20
-Vitaly
+This was copied from downstream:
+
+================><============================
+		i2s0_sck_active: i2s0_sck_active {
+<snip>
+			config {
+				pins = "gpio126";
+				drive-strength = <8>;   /* 8 mA */
+				bias-disable;           /* NO PULL */
+				output-high;
+			};
+<snip>
+		i2s0_ws_active: i2s0_ws_active {
+<snip>
+			config {
+				pins = "gpio129";
+				drive-strength = <8>;   /* 8 mA */
+				bias-disable;           /* NO PULL */
+				output-high;
+			};
+================><============================
+
+And also set the same way arch/arm64/boot/dts/qcom/sm4250.dtsi
+
+And I guess this level would only set when the function is not active.
+
+Neil
+
+> 
+>> +				};
+>> +
+>> +				data0-pins {
+>> +					pins = "gpio127";
+>> +					function = "mi2s0_data0";
+>> +					drive-strength = <8>;
+>> +					bias-disable;
+>> +				};
+>> +
+>> +				data1-pins {
+>> +					pins = "gpio128";
+>> +					function = "mi2s0_data1";
+>> +					drive-strength = <8>;
+>> +					bias-disable;
+>> +				};
+>> +
+>> +				ws-pins {
+>> +					pins = "gpio129";
+>> +					function = "mi2s0_ws";
+>> +					drive-strength = <8>;
+>> +					bias-disable;
+>> +					output-high;
+> 
+> here too
+> 
+> Konrad
 
 
