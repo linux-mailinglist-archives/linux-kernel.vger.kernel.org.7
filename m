@@ -1,47 +1,39 @@
-Return-Path: <linux-kernel+bounces-846516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5C4BBC838B
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 11:11:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC926BC838E
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 11:12:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 51E5B35321A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 09:11:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B3FC54F7B51
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 09:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44FCA2D5C9E;
-	Thu,  9 Oct 2025 09:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gSzFs/fM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696232D4816;
-	Thu,  9 Oct 2025 09:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A242D73A4;
+	Thu,  9 Oct 2025 09:11:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B99F2D6E6E
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 09:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760001084; cv=none; b=nJHA11vQ6Ctcrpty/oXeg7m9dRZtHp/qgoQ4KetKGXdjSP2vNDTvHmoqfIpjEPASaa3mczhNs5ALX9guIxg2AMiDvMjS70zZ3DoFULarWh5+Ghyt5PUpErRLye80A5ilAMeWEtC512JT5eJdnMgtK41Y407QnApwkRa74Fz9k9Y=
+	t=1760001091; cv=none; b=kNkVd4krbinF0TBATj8hn+7F/6iXKCxDVKA3xbD3EUmHChPR+NcRWFJjku3tRssTOViuw2fInGCN2H+onRJno7t6+oOhUOT8xc2hwX8SJZj4sSEVDhyIF7aZJ/+2LxmkbvA5HYH38ZrQK/PJ1A5eSf7VbywBPCE5kXxR6K4JzPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760001084; c=relaxed/simple;
-	bh=Iot5EMmXTHoc/N/PLOuas5qaO8L0GuL9b3r5UvjGuKo=;
+	s=arc-20240116; t=1760001091; c=relaxed/simple;
+	bh=R7FBKucmsLUy4WgR7TX/CxLpQ4WQjfM3OvcvioBvWBE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z1D6bHsVhHm6jzmrkQ6Ebc30StPr1F0fdsG9r8D+ZMUVE0n4rmdfnYDEAOCXTkOqeuh0/GHl6h7D2eNVwlHIh6ZKK5T1s39gXAmlMBOJmLMD18q0JPn8cSNcbplNFDsMa3FHtKOE++DZnxRWQvKelCOqHZwj8rZFuJVM4QrSp7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gSzFs/fM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8197C4CEE7;
-	Thu,  9 Oct 2025 09:11:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760001084;
-	bh=Iot5EMmXTHoc/N/PLOuas5qaO8L0GuL9b3r5UvjGuKo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gSzFs/fMb4dy+YJevpZXQkV4tmzzTQcXahRIPCI4zeugaqdchr5tEjevYwqb+u5sx
-	 q1NnqtCNn0Y+RU2dX035hz1Hzl0rrzZG4+9mS/JXjo8Bt7DOJZf3DbK/clasTJOh4O
-	 CP4lSSOpzbj4sAFhgKau95EuYjEFCdEcQAdGEDR788OqZedOscHf+z9QIhAsPxSPFV
-	 ntD7lNXkEAxjJ/ELVvl/0ene5uoXpbiaoQ6HmWxCIRmbs59idAd8RAVGq7g2Vx149K
-	 fgjPvtPZn3qikFBd2bHLHgJzXudYKaaKxnDfcYNjp3qIbi7fNYXtY3dCU9no080mAi
-	 H/yoaahOD7myw==
-Message-ID: <e15f156c-cb38-4566-b275-ba156a7b598d@kernel.org>
-Date: Thu, 9 Oct 2025 18:11:13 +0900
+	 In-Reply-To:Content-Type; b=sCl2OHqiY3KZ1PJ4WL+9YO4dIMwsvxnMktfA25bCkBytNz3Alj4TM4xzBxb/Tdkbq9Kxczv3s7HQvhr9RI0vINaS7bl1r1KIq3No1Wau0sBaLo6V8V+Onuqqpx4GPxQxx/zPVh+9IkhwI4vxQd9th/wLAqz9xSC0JDeMFEs/RVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 000CA176A;
+	Thu,  9 Oct 2025 02:11:14 -0700 (PDT)
+Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 976E63F59E;
+	Thu,  9 Oct 2025 02:11:21 -0700 (PDT)
+Message-ID: <0b610239-6e90-464a-bf01-5332de62719f@arm.com>
+Date: Thu, 9 Oct 2025 10:11:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,113 +41,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/5] Introduce "non-pixel" sub node within iris video
- node
-To: Bryan O'Donoghue <bod@kernel.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Charan Teja Kalla <charan.kalla@oss.qualcomm.com>,
- Bryan O'Donoghue <bod.linux@nxsw.ie>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <7b6db4fa-2f73-376d-4eb3-64c1c7e6cda3@quicinc.com>
- <4d87d1ca-55b2-426e-aa73-e3fd8c6fe7bd@kernel.org>
- <10a8ccda-4e27-4b06-9a0e-608d6ade5354@nxsw.ie>
- <4cb4a92d-2f20-47c7-881e-aadcc6f83aa0@kernel.org>
- <1516f21e-aee3-42cf-b75e-61142dc9578d@oss.qualcomm.com>
- <9bae595a-597e-46e6-8eb2-44424fe21db6@linaro.org>
- <MMSKAu89Ew7StAeFBV442KfKNzmqbTSQ-maFG35Jr9d8PkUV2L4sx44R2DRevXA8mC45vkA398l2mvVzarZwew==@protonmail.internalid>
- <bcfbf35b-69ed-4f39-8312-6a53123cd898@kernel.org>
- <d46c0335-99d6-469f-a61f-aca4c851f745@kernel.org>
- <GyrcG3qBN7c5C7ajCs3EV81hWvuaVbg64CpzQ-X3d_p6EauoiKxSoG2aOKE21-j12SWFjNDjV-kVSwYYqVm_lQ==@protonmail.internalid>
- <a0dc93ec-e35c-409b-8dfb-1642c92a9f0c@kernel.org>
- <98e6acf8-80d7-4894-b4ce-ce74660722ef@kernel.org>
- <soFAWqHDNosrZui972Ip7EvMCfB6tepD-HxHkc17RKmilPJpQZjMzni9LmMOpvKumHqFEibe5FdNkkJG8DKlcw==@protonmail.internalid>
- <5085c857-f6e8-4faf-b61a-a9ee562ccf06@kernel.org>
- <7ba3953a-166f-4c67-8f54-666b0c488b12@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] KVM: arm64: Check cpu_has_spe() before initializing
+ PMSCR_EL1 in VHE
+To: Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>
+Cc: Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>, joey.gouly@arm.com,
+ yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org,
+ alexandru.elisei@arm.com, linux-arm-kernel@lists.infradead.org,
+ kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20251007182356.2813920-1-mukesh.ojha@oss.qualcomm.com>
+ <aOVckTSJET5ORY1n@linux.dev> <861pndzn4w.wl-maz@kernel.org>
+ <aOasxgCMG0yS4t43@linux.dev>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <7ba3953a-166f-4c67-8f54-666b0c488b12@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <aOasxgCMG0yS4t43@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 09/10/2025 17:38, Bryan O'Donoghue wrote:
-> On 09/10/2025 02:04, Krzysztof Kozlowski wrote:
->>> The iommu description for this platform basically lacks the data that
->>> _should_ be there -> FUNCTION_ID.
->> No. The index tells that already.
+On 08/10/2025 19:26, Oliver Upton wrote:
+> On Wed, Oct 08, 2025 at 11:46:55AM +0100, Marc Zyngier wrote:
+>> On Tue, 07 Oct 2025 19:31:45 +0100,
+>> Oliver Upton <oliver.upton@linux.dev> wrote:
+>>>
+>>> Hi Mukesh,
+>>>
+>>> I find it a bit odd to refer to cpu_has_spe() in the shortlog, which
+>>> doesn't exist prior to this patch.
+>>>
+>>> On Tue, Oct 07, 2025 at 11:53:56PM +0530, Mukesh Ojha wrote:
+>>>> commit efad60e46057 ("KVM: arm64: Initialize PMSCR_EL1 when in VHE")
+>>>> initializes PMSCR_EL1 to 0 which is making the boot up stuck when KVM
+>>>> runs in VHE mode and reverting the change is fixing the issue.
+>>>>
+>>>> [    2.967447] RPC: Registered tcp NFSv4.1 backchannel transport module.
+>>>> [    2.974061] PCI: CLS 0 bytes, default 64
+>>>> [    2.978171] Unpacking initramfs...
+>>>> [    2.982889] kvm [1]: nv: 568 coarse grained trap handlers
+>>>> [    2.988573] kvm [1]: IPA Size Limit: 40 bits
+>>>>
+>>>> Lets guard the change with cpu_has_spe() check so that it only affects
+>>>> the cpu which has SPE feature supported.
+>>>
+>>> This could benefit from being spelled out a bit more. In both cases we
+>>> check for the presence of FEAT_SPE, however I believe the issue you
+>>> observe is EL3 hasn't delegated ownership of the Profiling Buffer to
+>>> Non-secure nor does it reinject an UNDEF in response to the sysreg trap.
+>>>
+>>> I agree that the change is correct but the rationale needs to be clear.
+>>
+>> To me, this smells a lot more like some sort of papering over a
+>> firmware bug. Why isn't SPE available the first place?
 > 
-> Hmm.
->>> The rule is that the DT should really describe the hardware right ?
->> It already does. Same as I wrote on IRC, DT already has all the
->> information. Entry 0 has function ID-foo. Entry 1 has function ID-bar.
->> Entry 2 has function ID-bar or whatever.
-> 
-> That's the part I don't believe is true its a 1:Many relationship 
-> between FUNCTION_ID:SIDs
-> 
-> Let me check the docs...
-> 
-> Here's the example I gave on IRC for lore
-> 
-> SID 0x1940 maps to AC_VM_HLOS (Linux)
-> SID 0x1941 maps to AC_VM_CP_BITSTREAM - protected bitstream
-> SID 0x1945 maps to AC_WM_CP_BITSTREAM
-> 
+> While I agree this points the finger at a half-assed EL3, the
+> architecture explicitly allows this sort of crap and we cope with the
+> accessibility of SPE in almost every other case.
 
-I responded to this on IRC... Nothing proves here that 1:many cannot be
-done.
+One of the reasons behind this control is to work around errata, where
+the higher EL could prevent the OS from using a broken implementation.
+Also, for KVM could use the EL2 controls to disable SPE for Guest.
 
-Best regards,
-Krzysztof
+Suzuki
+
+> 
+> We should at least be consistent in how we handle an inaccessible SPE.
+> 
+> Thanks,
+> Oliver
+
 
