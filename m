@@ -1,141 +1,99 @@
-Return-Path: <linux-kernel+bounces-847424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC428BCACC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 22:25:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96C55BCACD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 22:26:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 952A54EA308
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 20:25:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B31471A64B16
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 20:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DD026F2BC;
-	Thu,  9 Oct 2025 20:25:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A49B26FDA6;
+	Thu,  9 Oct 2025 20:26:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Ew6LoB3y"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CgahMkn0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A0C26F292
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 20:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F949265623;
+	Thu,  9 Oct 2025 20:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760041514; cv=none; b=Rgx68IEGF+rtyKEjUXbifA03s5MZzhbrbV1kvqnbCsA8qR5pz44P0DBL9trSSkw6aVETDmBVJHk8Gb2q7e7hG8tmxoRJQ+os7nfx11Vi2kbbZfvPxW8asv9hYZ67ZOWB58qJ64PIrRDIo/YT83KiqC/DK/vz1JmzoFsOfmh0LDk=
+	t=1760041578; cv=none; b=VDR5BfNrLN/Ch0FywkB+aSlBscFwoWnK1mAdKaV3ZeXY3KiEf7J1KfBC5Ld6PFQfKJfYgi/4T/AKcBIH1SsMsQWBvYnWTKEEJ8v313BM1kVuBF1xirHHhDm1MS0y6n0wdlJppH7T320Xc5biaGlz87I6h9ihog/S9vI3M7t1lGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760041514; c=relaxed/simple;
-	bh=1yDg4kaYpHyfB8kgSxUzXZV/Gejz9FwLQbXpvXDSXmA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qTSQAwuA3XEXG/IZXWWbRDdlHYyhf7Z2+xu9piSJHk+ndGG4KH3XLI7WJGuf5RjCbw+4Z0TKBIqGI3kiqNagngfGicBzyEmX/5uSD4+714nq29dr2VnTP0VWru8me5ypH8TioURQt1G0s1v1n7Fh8hcrybcIRBtt3nCuITQj+iE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Ew6LoB3y; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-63994113841so2225122a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 13:25:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1760041510; x=1760646310; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GygpU2gHdBu+smba8fE9xPKFyfcrRBB7u113k/F8qow=;
-        b=Ew6LoB3yeXmrOWVd96rDVHORyVCwf+HQPobDEzujkGZzMau1v90v9sjiV3hlrVQZxx
-         IdRbRg0cADXGeom995rvqPHhTH+NoGIQV5jMQNBtUJnf5x0TzJGk650uXpYTvenP6viN
-         KCBr7vIsCkZ21KFO6zluVUBByaSPhIQ7LNCmM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760041510; x=1760646310;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GygpU2gHdBu+smba8fE9xPKFyfcrRBB7u113k/F8qow=;
-        b=DO3jlnWjyJjuLAMAMRe4GfOboEvNm4H4uDdx1MmKsBxgPe4qOPB6LsvX1aCKIF7btg
-         kydvb4KBSe46Pxll+J59a+MaPdrLIR778mIbiBhWsYAiE7YPApCZO+GSea05Z5ZbefEq
-         IVmEFq5Cv8hybbpH52fdibTGF29Pp3CtC7B7IWIbzBUPWKQ6PbyZ3SqKXEBod78FNcxG
-         GjbuCPEmR7N4ZY2Zqm778PkthgB7urPrM8xCDYqyFTEWWBEXXtvA+4/tt+rrYk2A9l37
-         Ecl4U+3AW9Ql+XKjKyO90ssj6aRfeiBPpT77hkexvIQWtnwB8Swk/wondMfb5SXkKM9M
-         IUkg==
-X-Forwarded-Encrypted: i=1; AJvYcCUm/nd5i9vInBPIneUJWvNt9T3KkPxRli7nPn5bxWhHHQZT5eIJ/P5CoWz6QlC6d4Tz5W32Ey0lOacbhFY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxnn2RZdBjWBjspQ9z4m/jwn9f0oq36cN7xVZgflqWJ1CvlTV/9
-	EXlVhtltLNhTkg5Yu32pN94BS+yeORNuZ5M+JGdQSNikiWX2tsftWSjsfav/gu7iklmVHaOrsgk
-	fQvE0ces=
-X-Gm-Gg: ASbGnctSz9U2WKdinZjJMCY357qiz96eCXu+13Q+zRHRBj/5xiP7MDwFIORVAmfzUlJ
-	QjM96jJs8itTYTJvfLPPfrN0RSp49y6eNNi8KJ4EjnkuD+6bC8wT7BiasfaVrRzqmRZVQXOENos
-	KnhvM1Muu60+2Aaj0f2WF57zatb/Zvaqd9iFoDW9AG35x+qWOxe8WWCCGsTpVX4d0Zzj8TdEc7N
-	00nE3p6LINqXGu+wiyBaUj2SmlVBCmXi2RHC/JAD5A5FqiRGeY0mVvO4q5vmaLScPmvv7Afq0L7
-	/tVU+ktTrXuj9x3HVtyiZeOSj+OiJ5wuKHbEmCqraXE+7587FjAj04wvBL6awA0zpezO/H4QwxQ
-	kOkDJzjVHDRpFoHLHHwOouoLP+21tHyNAwcBDVgo/c6qHFmztMKGWlKiUk/sIjtkieinxuQM5mG
-	daxQiF2EsQpObJKjUDQKI9RNk0hyNH/7A=
-X-Google-Smtp-Source: AGHT+IENKnWCYxym28kCX3SeVMvNzqxRgV95gSLZcB5CH9YFLwxbb1DoqN3513JBonFZMuv6oQYeyw==
-X-Received: by 2002:a17:907:3e22:b0:b3e:b226:5bad with SMTP id a640c23a62f3a-b50a9a6d8a3mr1019000566b.8.1760041509634;
-        Thu, 09 Oct 2025 13:25:09 -0700 (PDT)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d5cad8adsm53261166b.7.2025.10.09.13.25.08
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Oct 2025 13:25:08 -0700 (PDT)
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-62fb48315ddso2018829a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 13:25:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWw/s/zCofbZfobWf38+YTMYEylRC1Z9YPWpylrUoyjIqs1+25/8LLvFHTpppp5CHE44AOh5vLkZf3dl/E=@vger.kernel.org
-X-Received: by 2002:a05:6402:2707:b0:638:df2f:b8fb with SMTP id
- 4fb4d7f45d1cf-639d5c2dbaemr8258952a12.19.1760041507789; Thu, 09 Oct 2025
- 13:25:07 -0700 (PDT)
+	s=arc-20240116; t=1760041578; c=relaxed/simple;
+	bh=gaPC9IOcFFDMH77ioeI300u2Daq6lSY6TRXYvKtrd84=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uQZvg89f3hmPLl5F39beNy0/0EVgYlyfs7rCbbJTS9lZlBXXGgK57c3qmuQqIl7kWvnPNElr9SG2zWV7Mh8XCNuUCd+AL8h2zqIXvb4zSFBACPvSTkjygXVZComq6anK2AjoclspnCQfX+zK1qGtaI/8Aa1MkZx20B9w69SZwzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CgahMkn0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA45BC4CEE7;
+	Thu,  9 Oct 2025 20:26:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760041578;
+	bh=gaPC9IOcFFDMH77ioeI300u2Daq6lSY6TRXYvKtrd84=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CgahMkn0CslWjZDiZXIskbKvsNyM1l6xHBFflwmqM3OfgmSJOw6GXSdOpvYlMCnPh
+	 h3pyPpSyTzTPDjxPRAic24st2/pAYGoMrGjX1jK/laPCkHaDOc8H/iXpNZ9TsLy/2+
+	 o4KM56mp/Jm8VvzNkrXZZlwHFHDoWybk8dZfcKnSQHzCjmRsa8edB6Riap6wXnVh01
+	 psOns8dnHu/cEoyGQvSZNk+kCFMmPOoGF2I2vgUdBtr4+8ivqJFOYRQfBWnI360kde
+	 mxgqa81r/gkLiVgcOB/kZbXCCLdvAjzHVcWPM5CMqRbic4Xq89Ku/3DjVzbjM77HOo
+	 HqewFHDGZH62A==
+Date: Thu, 9 Oct 2025 15:26:16 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Xilin Wu <sophon@radxa.com>,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-phy@lists.infradead.org, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>
+Subject: Re: [PATCH v5 1/3] dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp-phy:
+ Document lanes mapping when not using in USB-C complex
+Message-ID: <176004157616.3295945.3989144090466748168.robh@kernel.org>
+References: <20251006-topic-x1e80100-hdmi-v5-0-c006311d59d7@linaro.org>
+ <20251006-topic-x1e80100-hdmi-v5-1-c006311d59d7@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251008123014.GA20413@redhat.com> <20251008123045.GA20440@redhat.com>
- <CAHk-=wjozC9_JCdEW9K_uruJqzTLzhtcVpgDk1OuqErNRUS7Mg@mail.gmail.com>
- <CAHk-=wjuoFm9yZur_T4VOnX2iyDYD6T_gDRXE5ms9538W6Q35g@mail.gmail.com>
- <CAHk-=wiHbN+_LCmSj2sHswDRJ0yG3kkjptMvCXcMwk7jWK1F=Q@mail.gmail.com>
- <20251009143748.GA2704@redhat.com> <20251009195024.GL3289052@noisy.programming.kicks-ass.net>
- <20251009201154.GL1386988@noisy.programming.kicks-ass.net>
-In-Reply-To: <20251009201154.GL1386988@noisy.programming.kicks-ass.net>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 9 Oct 2025 13:24:51 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wh3h5cV=UiTg+gvqB-T6+pStDNH0+6w4i34qMC1BQwmpg@mail.gmail.com>
-X-Gm-Features: AS18NWAWWI4oocfrbAQnW4PqJLbKisZR6Gr825Cs6DKHYWbEPIcdIkl-1uqFz0Y
-Message-ID: <CAHk-=wh3h5cV=UiTg+gvqB-T6+pStDNH0+6w4i34qMC1BQwmpg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] seqlock: introduce scoped_seqlock_read() and scoped_seqlock_read_irqsave()
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Boqun Feng <boqun.feng@gmail.com>, David Howells <dhowells@redhat.com>, 
-	Ingo Molnar <mingo@redhat.com>, Li RongQing <lirongqing@baidu.com>, 
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251006-topic-x1e80100-hdmi-v5-1-c006311d59d7@linaro.org>
 
-On Thu, 9 Oct 2025 at 13:12, Peter Zijlstra <peterz@infradead.org> wrote:
->
-> Slightly nicer version that's actually compiled :-)
 
-I assume that "target of ss_lockless" is an intentional extension to
-just make the loop never take a lock at all?
+On Mon, 06 Oct 2025 15:55:03 +0200, Neil Armstrong wrote:
+> The QMP USB3/DP Combo PHY hosts an USB3 phy and a DP PHY on top
+> of a combo glue to route either lanes to the 4 shared physical lanes.
+> 
+> The routing of the lanes can be:
+> - 2 DP + 2 USB3
+> - 4 DP
+> - 2 USB3
+> 
+> The layout of the lanes was designed to be mapped and swapped
+> related to the USB-C Power Delivery negociation, so it supports
+> a finite set of mappings inherited by the USB-C Altmode layouts.
+> 
+> Nevertheless those QMP Comby PHY can be used to drive a DisplayPort
+> connector, DP->HDMI bridge, USB3 A Connector, etc... without
+> an USB-C connector and no PD events.
+> 
+> Document the data-lanes on numbered port@0 out endpoints,
+> allowing us to document the lanes mapping to DisplayPort
+> and/or USB3 connectors/peripherals.
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  .../phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml         | 69 +++++++++++++++++++++-
+>  1 file changed, 68 insertions(+), 1 deletion(-)
+> 
 
-I do like it, but I think you'll find that having a separate 'seq' and
-'flags' like this:
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-> +struct ss_tmp {
-> +       enum ss_state   state;
-> +       int             seq;
-> +       unsigned long   flags;
-> +       spinlock_t      *lock;
-> +};
-
-makes it unnecessarily waste a register.
-
-You never need both seq and flags at the same time, since if you take
-the spinlock the sequence number is pointless.
-
-So please make that a union, and I think it will help avoid wasting a
-register in the loop.
-
-Other than that I like it. Except that "BUG()" really bugs me. It will
-generate horrendous code for no reason and we *really* shouldn't add
-BUG statements anyway.
-
-Either that inline function is fine, or it isn't. Don't make it
-generate stupid code for "I'm not fine" that will also be a huge pain
-to debug because if that code is buggy it will presumably trigger in
-context where the machine will be dead, dead, dead.
-
-             Linus
 
