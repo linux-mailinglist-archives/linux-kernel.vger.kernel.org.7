@@ -1,112 +1,196 @@
-Return-Path: <linux-kernel+bounces-847091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F01BBC9D71
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 17:44:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 499B0BC9D7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 17:45:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1AA36353979
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 15:44:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03B903E83A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 15:45:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A36D218580;
-	Thu,  9 Oct 2025 15:44:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B200217F31;
+	Thu,  9 Oct 2025 15:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lANZmlrP"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="pJhhgz9a"
+Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A92B211A14
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 15:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C7E219A81;
+	Thu,  9 Oct 2025 15:44:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760024689; cv=none; b=iNVgO39QUO8NgXE0TsIrK9QVNjf/jVhIhutZiN/KeeLy9mWDdNvZ8o3343t0RSDYK13dMrhtuLtsjcPzuJrlu5q7XJmVK/Wv8Y+pqmrZZpPD+qtgV462oQmocJmhVm60KTmgh1hU55jQuTd7sPs/d8gmsxZ3lNgCfJ1W80n01Aw=
+	t=1760024694; cv=none; b=S9EvaMGTLnHthmeE3TSn6MFKBTl7e9YNdnstf9cMcz9KV9nw5ec+dCbg34K7cfNINOWvbRQHY63v+tFta7pVMAP4IZRbusxiu7dHGtbOJMapZurCcbIgevCWsy3/6rLglv/RDVcIuBsDwvSEz9pOqGUz1G5K5INMZb6asIpxDcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760024689; c=relaxed/simple;
-	bh=ISyXxX1CgQPxYK0n5WBhvNUsiBcHP1WQpSdLc5FTdtI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L6nlBGGnR+LxduIkKGybaIwTsiwVCBHEFkLWGU1IPPeMqeYV3cfut8aSzMnGjExpvsQSjMKyrxOzTLR3i41s4ARDr5jCfZmVv65BSHGR5PBWOGg3Hoyii51CnYVZNRZpHNvYBle4Oc+19YPqwohGbt4zR+5SYIRPtPLZFkSBRTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lANZmlrP; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-269640c2d4bso1688735ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 08:44:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760024687; x=1760629487; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ISyXxX1CgQPxYK0n5WBhvNUsiBcHP1WQpSdLc5FTdtI=;
-        b=lANZmlrP22CV1nc12xluFSHiQtQHbxQuv5+d/u4hEj7qpY/6BAD2+D9f4g9cUEHiWl
-         XYBrhv+yQ8fkHSPS8KOiYmgO3MLRbXHzgFZyjhdePb1OrJld24pmFnGwCBNcpsWNbkhj
-         B/UGqMdTBVAhX9ASyXt4ekNWOFqMGlt6pMqWqERK4TF2pAmTFgByjBCDY5w0Dhl7jzbT
-         oKlghFvIjCaJOAqphdTH8HT1eZsaTj+QcTi9P5+i6CDLG8rWVQwFO4P6OzUs5JVRBXLM
-         8a66CAltQGzVE/GkwQUSLxAxEUsnwPa7XjiF1Z1b7kUQEge0j54lRvyhlX+18dThS0Sf
-         uCjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760024687; x=1760629487;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ISyXxX1CgQPxYK0n5WBhvNUsiBcHP1WQpSdLc5FTdtI=;
-        b=sJebxPf/Cw502E0XITO3YNAPFvihWxuDK9ghTVFv0TnbHO7m7H0lQPBxEZvzgc9V/A
-         4+q9xdq/pORkRAnf9f2FTAX5Spfxcq1Vc0WNrVURqoLbfUlwHqbfD9TMl5u3FSisRQmo
-         UeLkaR8st1pEjrhfwSBlkdkgdUUkYR/y0sJeUsnU3V/Jd2hRXHgVAD4rihnWEP9OdpMw
-         OFlhcdt1PqLdJqlX1D6W6mOQvjfflZ+q5LgcwNQ9pA+OjfGEVSlk67aPHIL4ma5EMEmZ
-         so9k1kwbM33HXWyXscYSvCnyqRHQjPtYUQG9W0dXEmLQ/5lt2JpcqxvYbihGocLCgkCe
-         iBMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX266D6wjo9mR4IGPxSpKumH/K6Yvv8FI2VeIuliLfrXhq2NX9BxKTRqt9O60GrAVxn41qMqZPGiD4vGjc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyih7Fk1sCr4fOkS7Tdp6zWgNuOmcZ5T1ATPVizQCW4h1hZQM9F
-	JCyacWv5pQNKR9pLPSf32IXvCv2whBy8n+O9E2V1AiSRXXcNPq+++aWuGLj3X7wHrN3qdaj35Rr
-	nk9srDUWfoFmEiYnnjsvrdw6vposNv2I=
-X-Gm-Gg: ASbGncuUjBc6+oiVtMDeS7MtxwxGlBujbzGgqEMGHKwBIIktTDWvFaIqtcyUbYuZVdq
-	+7SM+qvCkOp5CTviqGBcYByv1kYrBgEbM1Reti2Uiidc4yhAYVcGv18UGdcvzYiNh80qpkjUKpe
-	LpRR+auDNldE/EQpP8AaoiF/AwZMh4YSw034+AS9ejDEpL/T+gNMNqHULC5TWem1q/NipbP715e
-	LVQqqStxXuzPsFcZD937Asu4kfN+fJwGGxwRHP0SoxP2/MY9CeSxEBhAOADp0Nn8Xb2UiKJYmnT
-	sUQV+/wMUsAWRVs8r34u3p24sMMp/nB3UKLGma9/DdcSG7tuHQ==
-X-Google-Smtp-Source: AGHT+IHVY42dVY/s3HGPNLm0YmAHrBSIuu8RB49AOjXxJqjSxRVehbPuC5RwOIEYcZqeiz2UmeZxv5xyJOuu3t5xZwo=
-X-Received: by 2002:a17:902:ea08:b0:28d:1904:6e77 with SMTP id
- d9443c01a7336-2902726698dmr56840335ad.3.1760024687272; Thu, 09 Oct 2025
- 08:44:47 -0700 (PDT)
+	s=arc-20240116; t=1760024694; c=relaxed/simple;
+	bh=lz2RoRq8dMXVVMF/BjB62HJ3nhm69wwuaZ/4FoZRm9U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jcs4kdJKoPe0QXzpQV3wn7kKadIbDkCoaQf5OWSKnA6XpjPYB42Ee4uRYl/L6NgP8cWfA4KZlDu7MjopIN0TYiZVNX71CID2HjhoOJB3TQMfy2cyzIsXWne1z9nvWIgsNZAy9Q6Cl70uVy9/WOVOImEeyzvI5ezxzkBpBit5/g0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=pJhhgz9a; arc=none smtp.client-ip=94.112.25.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+Received: from [10.0.0.200] (unknown [10.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id 1902353410C1;
+	Thu, 09 Oct 2025 17:44:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1760024687;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VknUNOTw077T/hHFg/PJCZOVDrouyCYB8zJKFGPpu9c=;
+	b=pJhhgz9a7K2FmI6ulgkRYtbSgyvCoFFLQIWNTlWoC8HGHDZQgm/Ltt9Thf5N2V8Vt7NDfM
+	vMpWlmLbzShvR3VK9+utnkoFy+2ZIZftIGDanmVawvAZVvKbg70y2MSLNP0H3o82jY/FXm
+	HiZHg+Ykv1XWVVyOJsUWctW7MUGbv6k=
+Message-ID: <9018af52-1c81-4d2d-8717-44e5372dbffa@ixit.cz>
+Date: Thu, 9 Oct 2025 17:44:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251008000816.GA1856596@ax162>
-In-Reply-To: <20251008000816.GA1856596@ax162>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 9 Oct 2025 17:44:34 +0200
-X-Gm-Features: AS18NWDb2NjPVihD4F9J0jmsEojiUL0B8kovxxb4Y5UBQmW33TKAOCsYHpV-Q-0
-Message-ID: <CANiq72kgceVgcZnBzCTpJytb7GhjNWGVJR=4mexo1vtu3cAyXQ@mail.gmail.com>
-Subject: Re: Prebuilt LLVM 21.1.3 uploaded
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: llvm@lists.linux.dev, linux-kernel@vger.kernel.org, ojeda@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/7] dt-bindings: panel: Add Samsung S6E3FC2X01 DDIC
+ with panel
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Thierry Reding
+ <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Casey Connolly <casey.connolly@linaro.org>, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, phone-devel@vger.kernel.org
+References: <20251008-s6e3fc2x01-v2-0-21eca1d5c289@ixit.cz>
+ <20251008-s6e3fc2x01-v2-1-21eca1d5c289@ixit.cz>
+ <7askbazrkbny5jlw6cpxcpjyw5nyiozmksoyj5b5momcc7w5hn@r3x6kddatf3u>
+ <74893f76-1b7d-4cfb-ba7a-9fd64427762b@oss.qualcomm.com>
+ <bmsxmwfdwx7wlmngaqpvz7c2nudcoukspkxgq6zqh2mdlolfxg@fsdbafotp5q2>
+ <75011ead-8bd8-4939-ae7b-1c127eba8aa8@ixit.cz>
+ <3mbngf2r3rvbn5fr4vxbk64ouvm3voo5o2r63vg3clyswnceoh@64r6ujb5qr65>
+Content-Language: en-US
+From: David Heidelberg <david@ixit.cz>
+Autocrypt: addr=david@ixit.cz; keydata=
+ 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
+In-Reply-To: <3mbngf2r3rvbn5fr4vxbk64ouvm3voo5o2r63vg3clyswnceoh@64r6ujb5qr65>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 8, 2025 at 2:08=E2=80=AFAM Nathan Chancellor <nathan@kernel.org=
-> wrote:
->
-> I have built and uploaded LLVM 21.1.3 to
-> https://mirrors.edge.kernel.org/pub/tools/llvm/.
->
-> If there are any issues found, please let us know via email or
-> https://github.com/ClangBuiltLinux/linux/issues/new, so that we have an
-> opportunity to get them fixed in main and backported before the 21.x
-> series is no longer supported.
+On 09/10/2025 16:26, Dmitry Baryshkov wrote:
+> On Thu, Oct 09, 2025 at 03:32:22PM +0200, David Heidelberg wrote:
+>>
+>>
+>> On 09/10/2025 15:21, Dmitry Baryshkov wrote:
+>>> On Thu, Oct 09, 2025 at 10:51:31AM +0200, Konrad Dybcio wrote:
+>>>> On 10/8/25 8:57 PM, Dmitry Baryshkov wrote:
+>>>>> On Wed, Oct 08, 2025 at 04:05:28PM +0200, David Heidelberg via B4 Relay wrote:
+>>>>>> From: David Heidelberg <david@ixit.cz>
+>>>>>>
+>>>>>> Basic description for S6E3FC2X01 DDIC with attached panel AMS641RW.
+>>>>>>
+>>>>>> Samsung AMS641RW is 6.41 inch, 1080x2340 pixels, 19.5:9 ratio panel
+>>>>>>
+>>>>>> Signed-off-by: David Heidelberg <david@ixit.cz>
+>>>>>> ---
+>>>>>>    .../bindings/display/panel/samsung,s6e3fc2x01.yaml | 78 ++++++++++++++++++++++
+>>>>>>    MAINTAINERS                                        |  5 ++
+>>>>>>    2 files changed, 83 insertions(+)
+>>>>>>
+>>>>>
+>>>>> Please also describe, why it's not enough to use defined compatible,
+>>>>> samsung,s6e3fc2x01. Why do we need a separate schema and can't use the
+>>>>> panel-simple-dsi.yaml
+>>>>
+>>>> panel-simple works for 'dumb' (perhaps a harsh word for 'made with
+>>>> just the in-spec DCS commands in mind') panels, but Samsungs are
+>>>> widely known to require a ton of vendor magic
+>>>
+>>> The question is about the _schema_. I think it's fine to have a driver
+>>> for a panel covered by panel-simple-dsi.yaml.
+>>
+>> see display/panel/samsung,amoled-mipi-dsi.yaml
+>> the OLED display don't fit well, but I wouldn't mind consolidating at some
+>> point, but since we know very little (no datasheets), it's hard to do for
+>> now. Maybe in the future when there will be more panels schemas, we can find
+>> a way to consolidate into one big?
+> 
+> I'm looking for a simple answer ATM: it doesn't fit
+> panel-simple-dsi.yaml because it needs foo bar baz, which is not a part
+> of that schema.
 
-Thanks as usual!
+v3 will have:
 
-For a build with Rust enabled:
+     dt-bindings: panel: Add Samsung S6E3FC2X01 DDIC with panel
 
-Tested-by: Miguel Ojeda <ojeda@kernel.org>
+     Basic description for S6E3FC2X01 DDIC with attached panel AMS641RW.
 
-(I have tested previous ones as usual, e.g. 21.1.2, but I didn't get
-to send the tag)
+     Samsung AMS641RW is 6.41 inch, 1080x2340 pixels, 19.5:9 ratio panel
 
-Cheers,
-Miguel
+     panel-simple-dsi cannot be used because it's limited to one
+     power-supply, while we use three.
+
+> 
+>>
+>>>
+>>>>
+>>>> Perhaps the original change was made with an "oh it just works
+>>>> surely there's no drawbacks possible" attitude, as the panel
+>>>> was left initialized by the bootloader
+> 
+
+-- 
+David Heidelberg
+
 
