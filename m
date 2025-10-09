@@ -1,155 +1,441 @@
-Return-Path: <linux-kernel+bounces-846777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFA26BC902D
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:29:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09968BC9036
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:29:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF3A2188F46E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:29:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C8BA3AACA8
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC832DCF61;
-	Thu,  9 Oct 2025 12:29:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EADA42E6CA3;
+	Thu,  9 Oct 2025 12:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mAqYBPV4"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MCn92TbF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482912E2DDD
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 12:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760012962; cv=none; b=uv3+wWcezHhL9AKrdf7CY7rinbnJBWY5oQuDDYCIJCPAa/spH5jcaMTEPDPKrM3iHx0aSTQXItdGLaGIgoCBue0nnTwVMUm7nDz7P/Yswu/YD8EAv22tpvSKUsUFhMCgFFRI6howgzYVc5Vs0TX4/cJxLKMiiYnsPLfNVksCCnM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760012962; c=relaxed/simple;
-	bh=VzdC46ij9og/QMv5wDDGRQOuoWac6/8T3RkbIGb96os=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E3D8uqHZMs6BO74bKdPGHZbx364JAQ5Yqup9T6oAMlEyYvuYPXGNI91kWuuM0zNZnQ048LCyxnOJ64g1ayqCeLt3IU1sQ4thXNdY6dx3zZZsgds1WGNEw3hNUDYIRnLv+tXS++Jhg5Q4sll3kkXZ5MIfRrDuf5oqVByUaQEs/Ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mAqYBPV4; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-628f29d68ecso1869121a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 05:29:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760012958; x=1760617758; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QyW/MRHSFiY33jmW9b/P7thbCXCFOf6rw+BoiTwW0Y8=;
-        b=mAqYBPV4K+Vi0JlCaGrcNj07pW7Q5UXJvCzqVKqHBzag/tEGXxVK04Tsc+aN4UqC4Z
-         4rWVfJBmkkZWd0uBnHjPW3FVgeUcOEigl9GWyOrHRdS/TYOVX7SzC/KxwpjcUrXw7hTX
-         7/bROlBQHry0+vQk6ZbxZdaJHAuVJvjGdkw05ikiH3Pk/tSCAvQoqOKrtKgK6NkRSlMK
-         oLvlZs6Q0Fph1pS9NE7ci1j4Dyz4VPwywKmoF3IUr6Vay9FYqLvg1Il1PGWejyDKjbb1
-         5EBqi0hbfBFXH3gpOTY/AVbQoIIFXgyCwwaTiPxTw7w+MZZXuQ2uWfMOJlm6AyETKwVe
-         Uhcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760012958; x=1760617758;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QyW/MRHSFiY33jmW9b/P7thbCXCFOf6rw+BoiTwW0Y8=;
-        b=IBCQApcreb0OkILsRsEX0yzSMQa74XC5otSUEUHzneASpg4heLofNh0mqS+F0Jq3sF
-         YCWV3RSb19csZZPvSwaJEp2GCFSir3FzzN6c4A6LxV5AX7yflMTM2zD6pRwwH0RcEMw+
-         uo9bc6uig2Kj1DAy3NGw5Tb4ImtuWKgr+pqTZ0RoBS6mBXyEJf6YrhY+/GXK/JlDtxAA
-         fy5O7nY0kXOogJmrcxDZrywKgkXXjADhLGFbr/tIOfJI/ismrtQ7WUOOWevDCshrdHhn
-         KAAxUYgViUFx4YXWqdXx0fLrLg6ljajAP5xNYIHSOCRMuPpHo1ftI97kvpHHN0upWF37
-         LfXw==
-X-Forwarded-Encrypted: i=1; AJvYcCVHMVT1TumIkbTdpv2VGqhlaGn/LNxpGr22a5LCobXP6fpRcky4FreaHyx1wv3Upv96NGOFEbuh7DysgsA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTxLNK+ELhY6R8NuRKLhUeS6kJAz3UwfEHFhnNF9dWp8hm/z5y
-	OQpqDJnj1jvrcrSgL7F/Ivh8ScJGd9bklvCumWrl8EdKkJjKdBwNNUr1
-X-Gm-Gg: ASbGncuRe/dMVC0XPq7NjlIYeFHypj5od7F2/QFUaTQm3ruIjDH73ojOxXxLPtC+c5e
-	VhTDzADLSQU2OAvHSX2b8qNUkrhNrFdUA03SedmEWCGGKzrpFs3P4y6kL7ximvhwowj4sKJv8XG
-	FeRu33YiI0ZOSivP8TA6qjOkGUoBxtx0CDpzvjf79cuXZlbhP8v9Tx0VRK0dAtGwgQCg4qJdyk1
-	IJavv1qHZJqlRN5PivuBpFDjfxvviAlHRQ+8mkp0130vU8XW9k4qmkvunR2ZKl7fp1imtSKrzWN
-	xaqeEbMaGLtetrSa9x7Cs1gN70Tha88HWIGYqtFVMRVFsu5YqcaTGRipGoihCrHinHGWf+GAxbB
-	ajAQ6qsu2P4rpWIKZ7+kpDVEvNuudWOgGkWnGaZjuATMH+nexslL/V63y0wZdvGj2IFz08g==
-X-Google-Smtp-Source: AGHT+IEUFt2opNB1FkGPRiWGkz3n+VBsnJz1zaUezVI3q1ZBqp6vQVbi/Nvy0LOYCR/GmfXBoc7uag==
-X-Received: by 2002:a05:6402:51c9:b0:629:e50c:b058 with SMTP id 4fb4d7f45d1cf-639d5c52cdamr7113841a12.28.1760012956991;
-        Thu, 09 Oct 2025 05:29:16 -0700 (PDT)
-Received: from foxbook (bff184.neoplus.adsl.tpnet.pl. [83.28.43.184])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-639f30fb7dfsm2279630a12.19.2025.10.09.05.29.15
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Thu, 09 Oct 2025 05:29:16 -0700 (PDT)
-Date: Thu, 9 Oct 2025 14:29:11 +0200
-From: Michal Pecio <michal.pecio@gmail.com>
-To: Arisa Snowbell <arisa.snowbell@gmail.com>, Mathias Nyman
- <mathias.nyman@linux.intel.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, regressions@lists.linux.dev, Niklas Neronin
- <niklas.neronin@linux.intel.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: xhci-pci: Fix USB2-only root hub registration
-Message-ID: <20251009142911.6069c164.michal.pecio@gmail.com>
-In-Reply-To: <CABpa4MC-pij0Fczh-mH3zc+Ey2ALX70OfxX=cG4om7R6WMdRBg@mail.gmail.com>
-References: <CABpa4MA9unucCoKtSdzJyOLjHNVy+Cwgz5AnAxPkKw6vuox1Nw@mail.gmail.com>
-	<20251007231709.6c16802e.michal.pecio@gmail.com>
-	<CABpa4MCUnLUR_0Vzgd=rTr0+Hot=nxHirKrX6xtJWowDoLhWJw@mail.gmail.com>
-	<CABpa4MCg7yixe7O8Pp+YwvpxeC=1JPhMhAap12RjtV6pcxFYgQ@mail.gmail.com>
-	<20251008082055.5646dadc.michal.pecio@gmail.com>
-	<CABpa4MCm8hQXvtSYqUA+Dh3rCLVM5rTC1p+FsgmFemv+Vyz=RA@mail.gmail.com>
-	<20251008130532.49922d58.michal.pecio@gmail.com>
-	<CABpa4MAsvK68CyQ7bVdie1j2m2O2YAEuFJHq8D-65uFT3FzKzQ@mail.gmail.com>
-	<20251008223406.13f16f19.michal.pecio@gmail.com>
-	<CABpa4MBGW=OJi+j34TbL2g=zyTg7-rxqpHYfAW-1DXTPk=g5Fw@mail.gmail.com>
-	<CABpa4MBDvgJcgJf3_E7k1dBXs7v1tW-79dmc_sQDVM1bES5YDQ@mail.gmail.com>
-	<20251009131444.2c221922.michal.pecio@gmail.com>
-	<CABpa4MC-pij0Fczh-mH3zc+Ey2ALX70OfxX=cG4om7R6WMdRBg@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C44302E62C0;
+	Thu,  9 Oct 2025 12:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760012969; cv=fail; b=uHD8OUmTWevDSu6ecR88uc16wxW2JYDjhMamqxx5rpjY5O933bGauBQFFAntLP6N6Jk8qQ3pd96xy6pQUTzsGg2DyqAaM7ULo/rbONpzvcr6F3SuyLrQWGXD9txBBbADC2AHKNwqKJZF1LHCNlwoc1vS4a+SIMDuQQKrjlx0fh4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760012969; c=relaxed/simple;
+	bh=o5LzBlqWPkZ0WjFflKH2dHe3ea+WT6LKjIfdyF+enh0=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=o8qHHWnxuvM2pGUkwTXBhLitZIqi0UA2Umzh1rTNrPyuV3TyrGErBiMkus0IvgKdjvi+9MK5LMO6UK8s0ElP4M3Qx40wGUeizsINppTZjy+lfDtAeRD548VHhUb9EOIwHvrMsCUj2nhBz3Fz1/FA3XpPG6OmQzQZoN4JyeWEHiY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MCn92TbF; arc=fail smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760012968; x=1791548968;
+  h=message-id:date:subject:to:references:from:in-reply-to:
+   content-transfer-encoding:mime-version;
+  bh=o5LzBlqWPkZ0WjFflKH2dHe3ea+WT6LKjIfdyF+enh0=;
+  b=MCn92TbF6WjOUoyv9wCg5Gy0i6bDB8XGrzLvYKydE5S+7yeKbhRKTD9s
+   P+vPu2dPXrWMl11kBowwdOcDfLokNYdKTLgavIfnA/rokSry3mHbGLo5o
+   w3sdrgRahq+vnNqHl1M3L778hCD/1yfzbd/7zBtiT1dDoV7/FurPoxgSG
+   DNXRW1goZBzuGfkEw4P2qjrRzE7Va2ntfzanikWabmeZt+7twUK6Jsat4
+   KqLN/oG+M676KcVyQn3pkRxjb6w8Nj3TS7MXgKyhnjCuAO+uXtQOKNyqK
+   Gv4hXrZnt22vIR+tBNTbJ8yYddVXJaDB9KIT/8h+V6Sw6ktTiu4q81i/U
+   Q==;
+X-CSE-ConnectionGUID: BK55GDbuQDinozUE41rO7g==
+X-CSE-MsgGUID: Hf/PpsDcROe+FbE6p4Ve4A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="66047461"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="66047461"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 05:29:27 -0700
+X-CSE-ConnectionGUID: rcLWwltPS/yF+Or4Rr7G2Q==
+X-CSE-MsgGUID: fTbMxNmMRquX6mtikanoxA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,216,1754982000"; 
+   d="scan'208";a="180278295"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 05:29:27 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Thu, 9 Oct 2025 05:29:26 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Thu, 9 Oct 2025 05:29:26 -0700
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (40.93.195.66)
+ by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Thu, 9 Oct 2025 05:29:26 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RDsmiuoNJYYk4H7M7PGZ7mypwweD/CwJRJKSXigQjekN4pBP8YX50WqlVzkKvqZtdIqQZCVo32HrLYOl41wQovElJkeWunzqyFWgpK3jhjiS131n/EHkU/GmWevPtJDDKJWjCgIOmUzofcN7DNugpEA5EUj7f0d2gqfe9K3day8OVfu6FZfxvvUxUCq0xFeX58Ok9ofqf4wsPETfomvCDk5SGNUe7mp2PN0q710PNipxA/YYmtooVVe87l3FdbUnzgJtXnYeP1aFy8lnDT2moK/ecVP6IPS0I5uWFSeDm9BsClgXCJS6SK1V1vO25SoysDIaiy6K0PLMD1uF1K1g8A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HyafPyVxXhaDwqGz2wUl3jQbWLS2HcmMwmxmJENlALU=;
+ b=McLH+knyCOHDLtrFOd5TtZ+XHmk1uObYIPL+4N9MqhdQRQBHJ2u7EWqJUcIdOCTAww4AA0TfVH0Z/aTH8uVu1Xhe9UVaXQjQZVL4HoOFisIjSaGgz7ZvbQzu8HABUUStXgrsZlp/0CI1MbQ9hEU/zjTYqbLMbHPVSthU3czk7NitxUnYfZg9iDUnxwDyD34/UN6JSRNr4mSuDQ+5UiJXxCLOQpfHlSlBE3bBUIm58AicnTB8+M+f4Rpr58Zi+V78REKGcnKZ26Kk2S6EujTTd5187FIA0j5jPt1bMhFSwQkkbO/7SAHll/GBkXOSxLkFss0rtqcfYKwgXh7dQ6AzzQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from IA1PR11MB7198.namprd11.prod.outlook.com (2603:10b6:208:419::15)
+ by IA3PR11MB9157.namprd11.prod.outlook.com (2603:10b6:208:57b::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Thu, 9 Oct
+ 2025 12:29:25 +0000
+Received: from IA1PR11MB7198.namprd11.prod.outlook.com
+ ([fe80::2c4e:e92a:4fa:a456]) by IA1PR11MB7198.namprd11.prod.outlook.com
+ ([fe80::2c4e:e92a:4fa:a456%3]) with mapi id 15.20.9203.009; Thu, 9 Oct 2025
+ 12:29:24 +0000
+Message-ID: <f4363815-a5bc-4f5a-80a1-7d4a17ad539b@intel.com>
+Date: Thu, 9 Oct 2025 15:29:20 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mmc: sdhci-msm: Enable ICE support for non-cmdq eMMC
+ devices
+To: Md Sadre Alam <quic_mdalam@quicinc.com>, <quic_asutoshd@quicinc.com>,
+	<ulf.hansson@linaro.org>, <linux-mmc@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+	<quic_varada@quicinc.com>
+References: <20251008110758.718944-1-quic_mdalam@quicinc.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: c/o Alberga Business Park,
+ 6 krs, Bertel Jungin Aukio 5, 02600 Espoo, Business Identity Code: 0357606 -
+ 4, Domiciled in Helsinki
+In-Reply-To: <20251008110758.718944-1-quic_mdalam@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DU7P251CA0008.EURP251.PROD.OUTLOOK.COM
+ (2603:10a6:10:551::21) To IA1PR11MB7198.namprd11.prod.outlook.com
+ (2603:10b6:208:419::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR11MB7198:EE_|IA3PR11MB9157:EE_
+X-MS-Office365-Filtering-Correlation-Id: 17b1bf7b-8ed7-4328-3d99-08de072f7b31
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?aXhWbXRkcGtUS2dqRmxPUEl4YUVtcXJIRjdvRWJJWGFEMjRQZlFWNTBYVUYv?=
+ =?utf-8?B?WGh4Ynl4QVE0THVqKzRsaVVQdGdLYyszZ0pLaTYrLzBMeHlHVmZiRDM0dGhO?=
+ =?utf-8?B?d0xrVUFkMTB4N05DeGNQVzVlVkJwYnplckozblhzejJDQXcxVzhYUXkyZFZy?=
+ =?utf-8?B?SExsS293Z3l1enpWV3BJZ0RGa3N0ak9HWGUrcm83c3ZFRTVrazdKZzFOL0Fh?=
+ =?utf-8?B?WGR3YTF0MlVSU1ozbXg3TlJIOGJ5dSttMGtpR2thTWFOTjFUV21Rc2VKZ2VW?=
+ =?utf-8?B?Z0lBRy9JS2ZhcU1VWk5lR2tDbDZTRzAzV3QwckRXbEdRYU9OT2tSQ3Y0b2ps?=
+ =?utf-8?B?Vy9mTmRKcFNaZHhES1dlejVFdzRVbmpoNWFmYnRJUEVIcWd3TEliejlxdlRU?=
+ =?utf-8?B?NXhnNlRISjBiZHpicWlzS2YwSmJPWHlWZjhtRWZqa05FSk5DOVlUbEpYU2xI?=
+ =?utf-8?B?cDBpeitPMlZJam9GMEJ6VS9oc0lBQVRTUTZJVkFMMXlSRURCbmZqUUhUbWdi?=
+ =?utf-8?B?T3Q3cEYydE13V2NGVi8xVkN1eUQxSmt5Nk8rRjVoNnluV2ZSNnpCVnBZQ2dv?=
+ =?utf-8?B?Zlp1YzNYQVRIUVpzemdjN0xDZXdNT3dxMEUrNHc4YWlMVnRCQ3BQOXYzcG9V?=
+ =?utf-8?B?d2x0VkUwMSt6OE9vZVRBSnZuSnVyNzVMTU9zVFdlN2Z4TzFTQTFKTjN4RDRU?=
+ =?utf-8?B?NUcyMVRmdVVUN0NXUWJpdkw1aldQRFloSDkyRXJsNVhmVUxtYUU5a1pMTy9y?=
+ =?utf-8?B?Nk9Id21yY25TbzVSVjZ1UjJjaVQxVkJWYzRRVzc2VzduWnNZTWtQMG5wdk40?=
+ =?utf-8?B?c1RreFdGcVJkU1RHdG1vRU5USHJzN29ka3VmT2ZvZm11aXI3b283L1k2eDJI?=
+ =?utf-8?B?TzBuWkFaNFFldHZYcEkrai9uUkZNRUIwbW80R2hrWE15dis0VVBzdWlqV2JO?=
+ =?utf-8?B?bkZjekFPVzcyUGZGSVFDY2E2NG4yOFlKWmtleEFGbTM0Yk9jcWxNYm1oREFX?=
+ =?utf-8?B?UmlOWjF0UkVyeDcxL1UveEltQkNicnVmSUxvTDgzdTRZcm9uemxxeHZwUXJV?=
+ =?utf-8?B?TDgxM3Q0SDhlWHZ2T1dTSzhvcCtrMEc1cFJwZ3ZkWWxGQldSb29uS3V0ZU9I?=
+ =?utf-8?B?Y3ZkZzhPNEJoUStCNHVjQURmcmZ0U3hDV2xlYkJocnhvMk95OTRweGpQc1Ax?=
+ =?utf-8?B?NGhKbnhiUGhRT1FtVmQ1NkxqVU5rR3RTRDBaWnh4SC9hUDZEdmttdVZnNmNy?=
+ =?utf-8?B?VExQSnV5d2VrWEZGNGVMdXFSVGVsOElEek9DK3VISTBoMjQxRldxNUkxTFVu?=
+ =?utf-8?B?aUNueVNCUmdvTWlkSitzVW1YcTZzb1RFSkhtNVJncVA3TVRGRDZUY3EyU00y?=
+ =?utf-8?B?U1RGL2lWUXRNT2Y3cmpsak1OMzRaY1pOME1aYzY0UEFFQ1V6ZWRTNEQxd1Zw?=
+ =?utf-8?B?SHJHQm9zQ3Z0NFJRSlR0b0ZBZ3pZdmpObVVSMjQvTlhVM1hCTnZ0VFIxWTc2?=
+ =?utf-8?B?M0k3ZTFYTTMwMkZuM2M0V3NmT0RraUd5RXp3Z1FtakpEVENaTVVPV2VsT3U4?=
+ =?utf-8?B?Q0cxMktoeXhYMnB4WEd0aWpzUlNIWVJSa2s4K2xLRWJwTk9UY1B5WmhuN3ZN?=
+ =?utf-8?B?UStXQThlZm4yanQzUDFCWUZHOCtsYS96UnUwUUpJSHlPMzRRVVBVTmJUdTBP?=
+ =?utf-8?B?amhYKzBEWHBmbXJKN2xEY1JuZ1VzbE8xMWFqMFhXcTZwQ04vK1VTWGRpSW1Z?=
+ =?utf-8?B?UUhZOVA5UG9EQS90Y294QVgzRUFKeXFYYUQ3OHlWbXVBcGVrMnF4ZmRrUXll?=
+ =?utf-8?B?VkhLR001MUVqSXF1YTgzRXN1bVV2QjRTdHI3bUp1ZXdXTVdpVWJaS043b3BH?=
+ =?utf-8?B?OWhhUk1MMFZqNk83NCtUa0l3SVZqUm9XU2ppOWIva2NDbHdRZi8vSjNOcGpR?=
+ =?utf-8?Q?T+kq34DscWNJPlivoK94kzkejw5I9bWk?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR11MB7198.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?cWllZTNHdVpVcVkvRlB6L2Z6N3kzaDJENG1ic0tJQ1E4ZHZsUndzSm5Gekwy?=
+ =?utf-8?B?UlZGeTZua1diQk9ybUhUR291TmtvWDM3cVhpZFRsaU1CL2pPSFVERlpBdE0w?=
+ =?utf-8?B?WWYvSTA0OVpRcWYwQWxmeGdpbTdRdDMwYU9hczQ2L0xXWE95ZXJUV05ONFdi?=
+ =?utf-8?B?WjFmc1p6WjRZWUZKN09KUmpQeVBQZmU2Sk5VYTNvMXpINTZsZDhiZmI2T1dG?=
+ =?utf-8?B?enozV3pkUmE3d3hnQnc3YWJTWkhLLzJVTnhieG1DQW9YUnU4YnArVS9ZQm5R?=
+ =?utf-8?B?VnBPUDVqUmFSWFlIMSsrT0trbytzOFZFelJzMTNWL2NYekU5VjBEcWF4RGtm?=
+ =?utf-8?B?QkZSMnVkRnNTRmFINDhDZlVxTDlBdklCN2RUN014bGt4cW0wRnJNOE03Wmti?=
+ =?utf-8?B?SnhTVjcrTlBFaFI4VmpqTkVoUEovemJ6bUZWSlArYi84UHl4bVh4Y3dXaEpL?=
+ =?utf-8?B?c1lmRG9BSjNodTY2NTFQYTBHQ2FyZmoybi93THpIZWpHSkRBQ1JsempndUZv?=
+ =?utf-8?B?Y0Y1cmRpTW1MMDl6RFdVQ0RSWjJQWndwVjhjbmsvK3dpcXhFQXdDSzVFV1BB?=
+ =?utf-8?B?OXJ5R2RNN1VidGhUTlY5M3FGOUQ4MCtQbWxVcTRLUUkzNWcxeGxjMEpEWUdk?=
+ =?utf-8?B?RllvdS94Z2x1aHZKQXIvbyt5S1dqYXc2ai9UQldVdlJuOG9LcENrb044RHpz?=
+ =?utf-8?B?bW5hdTdqWWJyQWN6d2x3eGV0N055Y3RybnptTk94TWcxSE96Mm9ESC8wVUtP?=
+ =?utf-8?B?c3JMMkVNTkhjV2IrbmR5djlCdnJuY3JzZ1lTNVZPZWEvcFlXOXJEVUxKQnZ4?=
+ =?utf-8?B?eUNMWXRwMnJMbVA3V3RrRjMwdmZvc0dGY0xUaXhRNHIrQ0NST0p5djFhK0hl?=
+ =?utf-8?B?TFZxYlVDMlljY3lSWkdFSWthOUswRGRucEtJSVRSZzd0eXRBVSsxQmJJRHo2?=
+ =?utf-8?B?bGkxaC9JTzdwa2NlUDJiSGlEMmlXQUJnMWJ0Z0V6cFdaNENtYXlLNDJjOGo4?=
+ =?utf-8?B?blZsNG9qbTVLbGprY1k2M21HU2JEV3ZsVzh5MFpzL2IwK0xoMXJpdmFvRUp6?=
+ =?utf-8?B?VkxxdkJTazVqeWZvWmVXa0JoallyZWg1YVBDa0ZaTmx4UTlUTGh4S1daOS9a?=
+ =?utf-8?B?RHE2eE1RWEVpZi9tSTNGc0prejdRSzdkZXZJakJvSW1IM2UwUGVKaWtMRjZL?=
+ =?utf-8?B?ZXhCS09CQTVEU2Fkb0FKVFpiT3VScnNJSG5tVHhGV2ZyNjBNd2Z5bVlHT0Yv?=
+ =?utf-8?B?SlZPUzY3Y05TRG1jTmRhRUJ3S1BkUjdtSk5NdENqWWtEbGx2MUQrRk9NS2g1?=
+ =?utf-8?B?MjRPdlQreGVwdDhJZlVjaU5POXZZSVVrTGxyTHFkbkEyZlpOMnNrNHc2bEZU?=
+ =?utf-8?B?QS84OEhESnB4WW91TjRwOERWaWtMeE51NUNWQWQ2dzJYQk05T29ZcUcxSjA5?=
+ =?utf-8?B?dTd3a2dzWGI2akkxbHVMUlhuRjNVS1dXOGVjcFVjd2VWRjZUQlgvVkZ3c3RN?=
+ =?utf-8?B?cGxlWGwzQ21uMUlOdS9zY3ViVmI4ekc1MDhXcWtRQk41S0ZsSVJqc2dYb2JN?=
+ =?utf-8?B?Mlk4bkdzQ0psbmM0SGJITnJSL2swR20weGJBemNmcnlUZ3UxZ3VSR1UwbGMx?=
+ =?utf-8?B?V0MzM1NSYTVlTkFDUy9OdnkwWnd4eWI2bGNidG9lTmxNb0JOeHJtNFZGc1Nu?=
+ =?utf-8?B?b09VTXIrcHJFdTJXL21GVmtsRkJqSnQxdk1HYnN6akZrbW9vZjFoSzQrN1NV?=
+ =?utf-8?B?VlJ4L3lEMEdCVnZyU2pzUzlGT2ZzV3lSQmdDL0xVaTJYWTYvekZ5b0hLMHRs?=
+ =?utf-8?B?NjFmZllOQUkzdWh6TXNyMlVkb08rSktTWHhyRFNkbkdzMThWVlB6eFEvMWhl?=
+ =?utf-8?B?WUZkdHVOSXpidXpXcGRzajlYL0xSNFd1Yzd5Q3kzbEZkNnJCRUJzM1BkOEVs?=
+ =?utf-8?B?WjJHQlVIZFU2bVZtaWJoVnBXa0tSSFFQZzFLTVdTWFc2cFViWnJ2YStWM0lk?=
+ =?utf-8?B?emdKOXp2TGNKSDBWUmF3Q2s4Mkh4M3pwUU1TOGkxb0czbytlVHUxNURHM00w?=
+ =?utf-8?B?dHBnSEg0NENsaVBhaEx5T2lZNFJ4ck5WdFZ5Smt5Z0ZEM2lFTnBKbVV2Qy9Q?=
+ =?utf-8?B?ZkZIbmY0aWZFUi9PRTdLR08xVUhPSmtIdkVVaDRVcjBxU2o0Q01mdTg1S0tB?=
+ =?utf-8?B?cHc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 17b1bf7b-8ed7-4328-3d99-08de072f7b31
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR11MB7198.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2025 12:29:24.8499
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8Ot8WOenpbrRKkLc1MMjgNnLns+3Sh52cc4XPChG383MDwSEMDA4rfpecXrqDJjZFtCH0bJ3kKhBmKWfc+WUhQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR11MB9157
+X-OriginatorOrg: intel.com
 
-A recent change to hide USB3 root hubs of USB2-only controllers broke
-registration of USB2 root hubs - allow_single_roothub is set too late,
-and by this time xhci_run() has already deferred root hub registration
-until after the shared HCD is added, which will never happen.
+On 08/10/2025 14:07, Md Sadre Alam wrote:
+> Enable Inline Crypto Engine (ICE) support for eMMC devices that don't
+> use command queuing (CQE). This allows hardware-accelerated encryption
+> and decryption for standard eMMC operations without command queuing.
+> 
+> The changes include:
+> - Add non-cmdq crypto register definitions
+> - Implement crypto configuration callback for non-cmdq operations
+> - Initialize ICE hardware during host setup for non-cmdq devices
+> - Integrate crypto configuration into the main request path
+> 
+> This enables non-cmdq eMMC devices to benefit from hardware crypto
+> acceleration, improving performance for encrypted storage operations
+> while maintaining compatibility with existing cmdq crypto support.
+> 
+> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+> ---
+>  drivers/mmc/host/cqhci.h     |  4 ++
+>  drivers/mmc/host/sdhci-msm.c | 74 +++++++++++++++++++++++++++++++++++-
+>  drivers/mmc/host/sdhci.c     | 20 ++++++++++
+>  drivers/mmc/host/sdhci.h     |  2 +
+>  4 files changed, 99 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/cqhci.h b/drivers/mmc/host/cqhci.h
+> index ce189a1866b9..9bf236e27675 100644
+> --- a/drivers/mmc/host/cqhci.h
+> +++ b/drivers/mmc/host/cqhci.h
+> @@ -119,6 +119,10 @@
+>  /* command response argument */
+>  #define CQHCI_CRA			0x5C
+>  
+> +/* non command queue crypto enable register*/
+> +#define NONCQ_CRYPTO_PARM		0x70
+> +#define NONCQ_CRYPTO_DUN		0x74
 
-This makes such controllers unusable, but testers didn't notice since
-they were only bothered by warnings about empty USB3 root hubs. The bug
-caused problems to other people who actually use such HCs and I was
-able to confirm it on an ordinary HC by patching to ignore USB3 ports.
+Since cqhci is not using these, they might be better in sdhci-msm.c
 
-Setting allow_single_roothub during early setup fixes things.
+> +
+>  /* crypto capabilities */
+>  #define CQHCI_CCAP			0x100
+>  #define CQHCI_CRYPTOCAP			0x104
+> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+> index 4e5edbf2fc9b..2204c6abb3fe 100644
+> --- a/drivers/mmc/host/sdhci-msm.c
+> +++ b/drivers/mmc/host/sdhci-msm.c
+> @@ -157,6 +157,23 @@
+>  #define CQHCI_VENDOR_CFG1	0xA00
+>  #define CQHCI_VENDOR_DIS_RST_ON_CQ_EN	(0x3 << 13)
+>  
+> +#define DISABLE_CRYPTO			BIT(15)
+> +#define CRYPTO_GENERAL_ENABLE		BIT(1)
+> +#define HC_VENDOR_SPECIFIC_FUNC4	0x260
+> +#define ICE_HCI_SUPPORT			BIT(28)
+> +
+> +/* SDHCI MSM ICE CTRL Info register offset */
+> +enum {
+> +	OFFSET_SDHCI_MSM_ICE_HCI_PARAM_CCI	= 0,
+> +	OFFSET_SDHCI_MSM_ICE_HCI_PARAM_CE	= 8,
+> +};
+> +
+> +/* SDHCI MSM ICE CTRL Info register masks */
+> +enum {
+> +	MASK_SDHCI_MSM_ICE_HCI_PARAM_CE		= 0x1,
+> +	MASK_SDHCI_MSM_ICE_HCI_PARAM_CCI	= 0xff
+> +};
 
-Reported-by: Arisa Snowbell <arisa.snowbell@gmail.com>
-Closes: https://lore.kernel.org/linux-usb/CABpa4MA9unucCoKtSdzJyOLjHNVy+Cwgz5AnAxPkKw6vuox1Nw@mail.gmail.com/
-Fixes: 719de070f764 ("usb: xhci-pci: add support for hosts with zero USB3 ports")
-Suggested-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
----
+Preferably use GENMASK() and FIELD_PREP()
 
+> +
+>  struct sdhci_msm_offset {
+>  	u32 core_hc_mode;
+>  	u32 core_mci_data_cnt;
+> @@ -1882,9 +1899,47 @@ static void sdhci_msm_set_clock(struct sdhci_host *host, unsigned int clock)
+>   * Inline Crypto Engine (ICE) support                                        *
+>   *                                                                           *
+>  \*****************************************************************************/
+> -
 
-Arisa, does this version also work?
+Unnecessary to delete this line
 
+>  #ifdef CONFIG_MMC_CRYPTO
+>  
+> +static int sdhci_msm_ice_cfg(struct sdhci_host *host, struct mmc_request *mrq,
+> +			     u32 slot)
+> +{
+> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+> +	struct mmc_host *mmc = msm_host->mmc;
+> +	struct cqhci_host *cq_host = mmc->cqe_private;
+> +	unsigned int crypto_params = 0;
+> +	int key_index = 0;
+> +	bool bypass = true;
+> +	u64 dun = 0;
+> +
+> +	if (!mrq || !cq_host)
+> +		return -EINVAL;
 
- drivers/usb/host/xhci-pci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It should not be possible to get here if (!mrq || !cq_host)
 
-diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
-index 13454bef14d3..cb7f5dd34333 100644
---- a/drivers/usb/host/xhci-pci.c
-+++ b/drivers/usb/host/xhci-pci.c
-@@ -580,6 +580,7 @@ static int xhci_pci_setup(struct usb_hcd *hcd)
- 
- 	/* imod_interval is the interrupt moderation value in nanoseconds. */
- 	xhci->imod_interval = 40000;
-+	xhci->allow_single_roothub = 1;
- 
- 	retval = xhci_gen_setup(hcd, xhci_pci_quirks);
- 	if (retval)
-@@ -643,7 +644,6 @@ int xhci_pci_common_probe(struct pci_dev *dev, const struct pci_device_id *id)
- 	xhci = hcd_to_xhci(hcd);
- 	xhci->reset = reset;
- 
--	xhci->allow_single_roothub = 1;
- 	if (!xhci_has_one_roothub(xhci)) {
- 		xhci->shared_hcd = usb_create_shared_hcd(&xhci_pci_hc_driver, &dev->dev,
- 							 pci_name(dev), hcd);
--- 
-2.48.1
+> +
+> +	if (mrq->crypto_ctx) {
+> +		dun = mrq->crypto_ctx->bc_dun[0];
+> +		bypass = false;
+> +		key_index = mrq->crypto_key_slot;
+> +	}
+> +
+> +	/* Configure ICE bypass mode */
+> +	crypto_params |= ((!bypass) & MASK_SDHCI_MSM_ICE_HCI_PARAM_CE)
+> +			 << OFFSET_SDHCI_MSM_ICE_HCI_PARAM_CE;
+> +	/* Configure Crypto Configure Index (CCI) */
+> +	crypto_params |= (key_index & MASK_SDHCI_MSM_ICE_HCI_PARAM_CCI)
+> +			 << OFFSET_SDHCI_MSM_ICE_HCI_PARAM_CCI;
+> +
+> +	cqhci_writel(cq_host, crypto_params, NONCQ_CRYPTO_PARM);
+> +
+> +	if (mrq->crypto_ctx)
+> +		cqhci_writel(cq_host, lower_32_bits(dun), NONCQ_CRYPTO_DUN);
+> +
+> +	/* Ensure crypto configuration is written before proceeding */
+> +	wmb();
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct blk_crypto_ll_ops sdhci_msm_crypto_ops; /* forward decl */
+>  
+>  static int sdhci_msm_ice_init(struct sdhci_msm_host *msm_host,
+> @@ -2131,6 +2186,8 @@ static int sdhci_msm_cqe_add_host(struct sdhci_host *host,
+>  	struct cqhci_host *cq_host;
+>  	bool dma64;
+>  	u32 cqcfg;
+> +	u32 config;
+> +	u32 ice_cap;
+>  	int ret;
+>  
+>  	/*
+> @@ -2185,6 +2242,18 @@ static int sdhci_msm_cqe_add_host(struct sdhci_host *host,
+>  	if (ret)
+>  		goto cleanup;
+>  
+> +	/* Initialize ICE for non-CMDQ eMMC devices */
+> +	config = sdhci_readl(host, HC_VENDOR_SPECIFIC_FUNC4);
+> +	config &= ~DISABLE_CRYPTO;
+> +	sdhci_writel(host, config, HC_VENDOR_SPECIFIC_FUNC4);
+> +	ice_cap = cqhci_readl(cq_host, CQHCI_CAP);
+> +	if (ice_cap & ICE_HCI_SUPPORT) {
+> +		config = cqhci_readl(cq_host, CQHCI_CFG);
+> +		config |= CRYPTO_GENERAL_ENABLE;
+> +		cqhci_writel(cq_host, config, CQHCI_CFG);
+> +	}
+> +	sdhci_msm_ice_enable(msm_host);
+> +
+>  	dev_info(&pdev->dev, "%s: CQE init: success\n",
+>  			mmc_hostname(host->mmc));
+>  	return ret;
+> @@ -2450,6 +2519,9 @@ static const struct of_device_id sdhci_msm_dt_match[] = {
+>  MODULE_DEVICE_TABLE(of, sdhci_msm_dt_match);
+>  
+>  static const struct sdhci_ops sdhci_msm_ops = {
+> +#ifdef CONFIG_MMC_CRYPTO
+> +	.crypto_engine_cfg = sdhci_msm_ice_cfg,
+> +#endif
+>  	.reset = sdhci_and_cqhci_reset,
+>  	.set_clock = sdhci_msm_set_clock,
+>  	.get_min_clock = sdhci_msm_get_min_clock,
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index ac7e11f37af7..2d636a8ee452 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -2202,6 +2202,21 @@ void sdhci_set_power_and_bus_voltage(struct sdhci_host *host,
+>  }
+>  EXPORT_SYMBOL_GPL(sdhci_set_power_and_bus_voltage);
+>  
+> +static int sdhci_crypto_cfg(struct sdhci_host *host, struct mmc_request *mrq,
+> +			    u32 slot)
+> +{
+> +	int err = 0;
+> +
+> +	if (host->ops->crypto_engine_cfg) {
+> +		err = host->ops->crypto_engine_cfg(host, mrq, slot);
+> +		if (err)
+> +			pr_err("%s: failed to configure crypto: %d\n",
+> +			       mmc_hostname(host->mmc), err);
+> +	}
+> +
+> +	return err;
+> +}
+> +
+>  /*****************************************************************************\
+>   *                                                                           *
+>   * MMC callbacks                                                             *
+> @@ -2227,6 +2242,11 @@ void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+>  
+>  	cmd = sdhci_manual_cmd23(host, mrq) ? mrq->sbc : mrq->cmd;
+>  
+> +	if (mmc->caps2 & MMC_CAP2_CRYPTO) {
+> +		if (sdhci_crypto_cfg(host, mrq, 0))
+> +			goto out_finish;
+> +	}
+
+It would be preferable to hook the >request() callback e.g.
+
+	host->mmc_host_ops.request = sdhci_msm_request;
+
+void sdhci_msm_request(struct mmc_host *mmc, struct mmc_request *mrq)
+{
+	if (mmc->caps2 & MMC_CAP2_CRYPTO) {
+		etc
+	}
+
+	sdhci_request(mmc, mrq);
+}
+
+> +
+>  	if (!sdhci_send_command_retry(host, cmd, flags))
+>  		goto out_finish;
+>  
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index b6a571d866fa..9ac32a787270 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -709,6 +709,8 @@ struct sdhci_ops {
+>  	unsigned int    (*get_ro)(struct sdhci_host *host);
+>  	void		(*reset)(struct sdhci_host *host, u8 mask);
+>  	int	(*platform_execute_tuning)(struct sdhci_host *host, u32 opcode);
+> +	int	(*crypto_engine_cfg)(struct sdhci_host *host,
+> +				     struct mmc_request *mrq, u32 slot);
+>  	void	(*set_uhs_signaling)(struct sdhci_host *host, unsigned int uhs);
+>  	void	(*hw_reset)(struct sdhci_host *host);
+>  	void    (*adma_workaround)(struct sdhci_host *host, u32 intmask);
+
 
