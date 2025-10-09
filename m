@@ -1,54 +1,55 @@
-Return-Path: <linux-kernel+bounces-847512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB942BCB131
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 00:25:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 077B7BCB13D
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 00:26:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8456642664E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 22:25:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18DC13C4D6A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 22:26:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D5528641D;
-	Thu,  9 Oct 2025 22:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 764D3286417;
+	Thu,  9 Oct 2025 22:26:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X4yKBXaG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63CAF285CBC;
-	Thu,  9 Oct 2025 22:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="LgtJHO/L"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B690285CBC;
+	Thu,  9 Oct 2025 22:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760048718; cv=none; b=ag469UAjihmruVA8Z//syyUKZ2emUE2b0JpQDH6VT6m0Ea6KgDBEbJ52r3nZuVsMIamL4CvUJT4MlFmwOJfN0thrpqaVzF/OOD50dGZX2xPhhS+seBgWeE+YJzfoiGy97vylV8BLAzVMeNP2GNBRWqFRRveN1Bnv5YU+13isZJ0=
+	t=1760048779; cv=none; b=LOazrgPmSBrGsRGsWB3Dz87k3eTAnn6dDPwvm9RdtNiBk1phOy+/rJebHfEVbCWzQYg3YMw9tBOaqLdoJK6akgURDOZINMPwGnSi4t5pc3mpoJubPRrg6xFbRxLjlomapoNaXsp8IWFvmS8+XzmZpkP/e32lu1bjFd3E06+Ox7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760048718; c=relaxed/simple;
-	bh=83bdko5rwze4WW3bMGBsDUspQQmt7g8T21lnn+Xp8LI=;
+	s=arc-20240116; t=1760048779; c=relaxed/simple;
+	bh=qaf2qvbNG3xgkasgQKuyYK8PEMZ9f8tNNu7DLbm9w5o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XrGhVAcdEWKl2y4HOTr5IkanZqZGsUySQNgh6445x6XEjwFBjFPPjXjhRNUW8sP8mX4u/V6UH+LCk0o2aVMOuH9E+j1cX20Ad/P/XjHzpZTH32Ni3gR9KZIF6Nn/LqBYIgUOFrHh6eqr8Fvan6bHbfkAaHwLxseBxknx6XGH5LI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X4yKBXaG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E595C4CEE7;
-	Thu,  9 Oct 2025 22:25:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760048718;
-	bh=83bdko5rwze4WW3bMGBsDUspQQmt7g8T21lnn+Xp8LI=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ue7UZwgmNF7itd6KG26mpDZ1uHS+kYmz4cWXDF/xVIe97W1hEfzaIt5sByjyh+eQm/48p8szIqBAUrtKBjWpKfAQBG9ucci8PK9L4tFFpvkaksG/L6QVi3vvXN/gTxMRDIDWXvZ8qPCYne9XQCEuNLKF8UKufCKEQQQ/hVGE1t8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=LgtJHO/L; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from skinsburskii.localdomain (unknown [20.236.11.102])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 3C0B72038B73;
+	Thu,  9 Oct 2025 15:26:17 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3C0B72038B73
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1760048777;
+	bh=mazmiWb8e/xD90iLZlCJ3KQJqnRkHcjZOWD8ITBL4ZE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X4yKBXaGBjJhWLfIbbtpbYAgAl8hynK+4LNpuLNDWw0smEGhcp5IsgjHYWOd+x7DE
-	 +R1vi+X3L1N94EgkT8t7iqNB/736JQSyntjQF24UwrQfnvc1wSlRW6J7k7r8vpdunq
-	 SoqaEpDg6knL2OJRYL3DwxlUsoS72dmMr0pjO5mlXjVBXQSjQX/8QIlEhQVc0AWAo4
-	 sb36U7Uw5IKT6jS1Jk/sThuOsN6t40dVorZdXLpmIAujDD+GXD/riQbnSo7t5ITNV2
-	 FCeeTZ1wZVPi3+FMVsJ1TsaFzJwjqj9PDmcstIlWx4PXf0NabB3MA6JznZqJrC8BXc
-	 5iltp3MkUMtgQ==
-Date: Fri, 10 Oct 2025 00:25:13 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Cc: Peter Korsgaard <peter@korsgaard.com>, Andrew Lunn <andrew@lunn.ch>, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux@ew.tq-group.com
-Subject: Re: [PATCH 1/2] i2c: ocores: replace 1ms poll iteration timeout with
- total transfer timeout
-Message-ID: <445z46hybgl2mdmhsapiitqccxkkpafqstgksov45sfd5v2c2m@mmiye6kt6itb>
-References: <1eb320b6b7d3a12e62785893ea68c4d16aa2560d.1759838476.git.matthias.schiffer@ew.tq-group.com>
+	b=LgtJHO/LtI2EKwnPqU5ljp4KqzDz3fE0JbTaWAFRRVb0PkF58MZSWfWx/htITLjmv
+	 tsQvXhuPD1OXCql/KhEOjDNPMtVK1HvwHLekcU4/u7YCvBv6AYnqnJ/vevunsdD1qd
+	 Y6xz9+y6h7AwUMcWHO1P7mAeS2iOR79AaO+9UI54=
+Date: Thu, 9 Oct 2025 15:26:14 -0700
+From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+To: Praveen K Paladugu <prapal@linux.microsoft.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, tglx@linutronix.de, mingo@redhat.com,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, arnd@arndb.de, anbelski@linux.microsoft.com
+Subject: Re: [PATCH 0/2] Add support for clean shutdown with MSHV
+Message-ID: <aOg2hiWM4PZ8D1S5@skinsburskii.localdomain>
+References: <20251009160501.6356-1-prapal@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,79 +58,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1eb320b6b7d3a12e62785893ea68c4d16aa2560d.1759838476.git.matthias.schiffer@ew.tq-group.com>
+In-Reply-To: <20251009160501.6356-1-prapal@linux.microsoft.com>
 
-Hi Matthias,
-
-On Tue, Oct 07, 2025 at 02:09:24PM +0200, Matthias Schiffer wrote:
-> When a target makes use of clock stretching, a timeout of 1ms may not be
-> enough. One extreme example is the NXP PTN3460 eDP to LVDS bridge, which
-> takes ~320ms to send its ACK after a flash command has been
-> submitted.
-
-besides, the specification doesn't impose any maximum time.
-
-> Replace the per-iteration timeout of 1ms with limiting the total
-> transfer time to the timeout set in struct i2c_adapter (defaulting to
-> 1s, configurable through the I2C_TIMEOUT ioctl). While we're at it, also
-> add a cpu_relax() to the busy poll loop.
+On Thu, Oct 09, 2025 at 10:58:49AM -0500, Praveen K Paladugu wrote:
+> Add support for clean shutdown of the root partition when running on MSHV
+> hypervisor.
+> 
+> Praveen K Paladugu (2):
+>   hyperv: Add definitions for MSHV sleep state configuration
+>   hyperv: Enable clean shutdown for root partition with MSHV
 > 
 
-...
+There is no need to split this logic to two patches: the first one
+doesn't make sense without the second one, so it would be better to
+squash them.
 
-> @@ -269,17 +269,16 @@ static int ocores_wait(struct ocores_i2c *i2c,
->  		       int reg, u8 mask, u8 val,
->  		       const unsigned long timeout)
->  {
-> -	unsigned long j;
-> -
-> -	j = jiffies + timeout;
+Thanks,
+Stanislav
 
-Any reason we don't take "jiffies + i2c->adap.timeout" and avoud
-all the changes below? It also simplifies the parameters list.
-
->  	while (1) {
->  		u8 status = oc_getreg(i2c, reg);
->  
->  		if ((status & mask) == val)
->  			break;
->  
-> -		if (time_after(jiffies, j))
-> +		if (time_after(jiffies, timeout))
->  			return -ETIMEDOUT;
-> +
-> +		cpu_relax();
-
-Good.
-
->  	}
->  	return 0;
->  }
-
-...
-
-> -	/*
-> -	 * once we are here we expect to get the expected result immediately
-> -	 * so if after 1ms we timeout then something is broken.
-> -	 */
-
-Why have you deleted this comment completely?
-
-> -	err = ocores_wait(i2c, OCI2C_STATUS, mask, 0, msecs_to_jiffies(1));
-> +	err = ocores_wait(i2c, OCI2C_STATUS, mask, 0, timeout);
->  	if (err)
-> -		dev_warn(i2c->adap.dev.parent,
-> -			 "%s: STATUS timeout, bit 0x%x did not clear in 1ms\n",
-> -			 __func__, mask);
-> +		dev_dbg(i2c->adap.dev.parent,
-> +			"%s: STATUS timeout, bit 0x%x did not clear\n",
-> +			__func__, mask);
-
-Why are you changing from warn to dbg? This change is not
-mentioned in the commit log.
-
-Andi
-
->  	return err;
->  }
+>  arch/x86/hyperv/hv_init.c      |   7 ++
+>  drivers/hv/hv_common.c         | 118 +++++++++++++++++++++++++++++++++
+>  include/asm-generic/mshyperv.h |   1 +
+>  include/hyperv/hvgdk_mini.h    |   4 +-
+>  include/hyperv/hvhdk_mini.h    |  33 +++++++++
+>  5 files changed, 162 insertions(+), 1 deletion(-)
+> 
+> -- 
+> 2.51.0
+> 
 
