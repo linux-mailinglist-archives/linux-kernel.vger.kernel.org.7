@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-846083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CE9DBC6FE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 02:19:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB666BC6FF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 02:23:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0D4A3E101A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 00:19:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DDCA3E1ADC
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 00:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5DA17AE11;
-	Thu,  9 Oct 2025 00:19:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A65C617A31C;
+	Thu,  9 Oct 2025 00:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fkmt58iV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FPAjbPJf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C32A64A1A;
-	Thu,  9 Oct 2025 00:19:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0B433D8;
+	Thu,  9 Oct 2025 00:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759969159; cv=none; b=KyuGlGta/38pUSAmFY7iPoTqamon0obXBHLVjorlL8rK5HIKGROaeN1JfBrqVm5rSND8CiIysvQ/yOuRiFPseMrIvkz6OyLMGTYafCoBt/gu8d9QQGcFlNJSe1FYMQlbM1Gy2e1/IYmiFeE806ll2sBR1rr2AumkIbjC+SPHTVY=
+	t=1759969390; cv=none; b=kx/Ujr+20MYkx7sd6hwup/P3OEkRFG2yy8e6tsVR1i7sMrEOc1b4daowB54q/wvmmbJkSW4EmK6H1iECuk9ZC4gEDosnOkmJvSn0vVm2n9S6jnMpGqhdVSR4r8iG3U5H/Yb49oJyrXsnzyLn7JLOi4I5GlGG0FXwWYVTu7dflAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759969159; c=relaxed/simple;
-	bh=GwjdxUbfBUhHmftZSXBRRI8sEDlbtqj2/Z75wxjiN/s=;
+	s=arc-20240116; t=1759969390; c=relaxed/simple;
+	bh=B40+MzVLYb5eFajWyaSwMp17gzw9/gaR5sJ0YLm9LXM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hsJUB2s8Ke1hq378c1IbJZMsSe336kg8GRfb0W3ZLOTs4d+2tMsRUCeI8TSlPD7HOcGq40k1j2UFPRZiduFQ98WRn0VSni9mxcDEE46SlYmxGDz9lM0xO4Wb3K9QEkFKf5fiupHIYMhiI+bnrU+6bNMTWKlQEyXfNcCF2gZICc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fkmt58iV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8F53C4CEE7;
-	Thu,  9 Oct 2025 00:19:13 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=lwu55jiapLbDVDQIi2kzoQQcw1WWljM8GVHc/suaLVL2LlmGV18/VQ1OiXeBqtURgMAtlyOpZld6tdTH1TRK4C73SrwsWTSiHENmKp2WSGSQXcOCcF0OqDwUQZ2l3z+6d9aKO+Sd262MMid+J4p/Ty/O+Ov00/bN6Pj3QZK6vLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FPAjbPJf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2EA7C4CEE7;
+	Thu,  9 Oct 2025 00:23:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759969159;
-	bh=GwjdxUbfBUhHmftZSXBRRI8sEDlbtqj2/Z75wxjiN/s=;
+	s=k20201202; t=1759969387;
+	bh=B40+MzVLYb5eFajWyaSwMp17gzw9/gaR5sJ0YLm9LXM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Fkmt58iVDNHFG1lzVgabDfP6mRIPcdKs+UB7OEzDmk/s4eFqvHMY/QbOWt7XyJufn
-	 02xbgqRumsezdpAIzbqQLjc3QwdN4YDHBRLI6giFXfly5KJmtieV/T96WAJtqGRIap
-	 mbhu+8Psx38VowTtN++WpU+rjy6nAcpfFLHQM89mNeUeRU2p1uOIWy4BmIEj4TFP+w
-	 dj6q5/txcO3h9feof2SHDvTwyvZ46LKIFwgzl+S3kbhx9PKFZ/Yovc4XKo7txSnHRy
-	 5hg5mv8vvCQYEXpNvhawSASbRjxfRZis5bJHwl6V6OWPUXTMSe3A1Ij9XZ1DCDcwQc
-	 RrgTSTyuTUXkQ==
-Message-ID: <f9fa7101-1e92-42a9-8236-20c59df97976@kernel.org>
-Date: Thu, 9 Oct 2025 09:19:11 +0900
+	b=FPAjbPJfzyaspI/XDJsW1cw7YHGUKYH9GdZWgGCUSLMFPLFMqxvf9HDljbBSIZMFK
+	 coHhhZwjmSB3SjEhe2MSj35kvRECtIddRbl6rA2EG0L/IzTmVmyTHmAXnVQ5wkWJSe
+	 OQL+hmIqUHO2Ibf7Wcq4eSOpxWtoxcRq+WcPBxTY9JBc4sjme9NE9s3W2Atz6jEmEG
+	 EmLlhom2p/h0cPfbl/U5MIoIQSLkx/WVm9HJweFuwbWlYjWMv40ldYUGc2GPIIWTMI
+	 VPxtCPGCA9g3kaRHXnbXQKq6HDPWVq/qMuDAywuvuF14jA9lELK/4tYQn4fxbbSp5S
+	 9CT79b0c78TUQ==
+Message-ID: <2c69d31c-fd28-45d2-8db0-4939d4229cf1@kernel.org>
+Date: Thu, 9 Oct 2025 09:23:00 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,19 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/10] pmdomain: samsung: add support for google,gs101-pd
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <20251006-gs101-pd-v1-0-f0cb0c01ea7b@linaro.org>
- <20251006-gs101-pd-v1-10-f0cb0c01ea7b@linaro.org>
+Subject: Re: [PATCH v2 1/1] dt-bindings: i2c: hisilicon,hix5hd2-i2c convert to
+ DT schema
+To: Kael D'Alcamo <dev@kael-k.io>, Andi Shyti <andi.shyti@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Wei Yan <sledge.yanwei@huawei.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <c2e81faf-4d2c-40e7-bdf0-e0d41fc76d9c@kernel.org>
+ <20251008200535.17464-1-dev@kael-k.io> <20251008200535.17464-2-dev@kael-k.io>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -107,20 +104,38 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251006-gs101-pd-v1-10-f0cb0c01ea7b@linaro.org>
+In-Reply-To: <20251008200535.17464-2-dev@kael-k.io>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 07/10/2025 01:43, André Draszik wrote:
-> Compared to other previous designs supported by this driver, the status
-> is just one bit. There is nothing unusual here.
+On 09/10/2025 05:04, Kael D'Alcamo wrote:
+> Convert the Devicetree binding documentation for:
+> * hisilicon,hix5hd2-i2c
+> from plain text to DT binding schema.
 > 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> Signed-off-by: Kael D'Alcamo <dev@kael-k.io>
 > ---
->  drivers/pmdomain/samsung/exynos-pm-domains.c | 7 +++++++
 
-This should be squashed with patch #8. There is no point to handle
-syscon parent regmap outside of GS.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+<form letter>
+This is an automated instruction, just in case, because many review tags
+are being ignored. If you know the process, just skip it entirely
+(please do not feel offended by me posting it here - no bad intentions
+intended, no patronizing, I just want to avoid wasted efforts). If you
+do not know the process, here is a short explanation:
+
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
+of patchset, under or above your Signed-off-by tag, unless patch changed
+significantly (e.g. new properties added to the DT bindings). Tag is
+"received", when provided in a message replied to you on the mailing
+list. Tools like b4 can help here ('b4 trailers -u ...'). However,
+there's no need to repost patches *only* to add the tags. The upstream
+maintainer will do that for tags received on the version they apply.
+
+Full context and explanation:
+https://elixir.bootlin.com/linux/v6.15/source/Documentation/process/submitting-patches.rst#L591
+</form letter>
 
 Best regards,
 Krzysztof
