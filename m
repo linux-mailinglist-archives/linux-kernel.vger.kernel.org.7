@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-846628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15D4FBC8969
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 12:51:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45E2DBC897B
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 12:51:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B75A735178F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 10:51:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 685FD188F898
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 10:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE2A2DE6FC;
-	Thu,  9 Oct 2025 10:51:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5BF2DF3C6;
+	Thu,  9 Oct 2025 10:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oT69uBvP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qWwCcAR2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF392DC790;
-	Thu,  9 Oct 2025 10:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA5D52DCC05;
+	Thu,  9 Oct 2025 10:51:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760007080; cv=none; b=MI5laj6RsmczcAzbSvyUBXl7nKHB6Zg+IgLHvaTecSdnftrvVkNpS4WoHExqxCSP8S8NWamfAsn4Lmx9jJJDtcd/u2mbFU/vcBn43xrTQeatweibDDqGWw3CJDZlo+uKh2zYjuHXcGzpJOLrCIfyi3uqA75QlP6NQV1iQZCyMBs=
+	t=1760007089; cv=none; b=YtG9xgDGZlYVNsGUOPGDr0JGHFwBMsBl1r68xAYnpgO2ZgXExlws8Gk8f/3yGjbXhlL0ck7pxLv79KIvkQpNRoUvNuN8CpBB+EJ+L3EtHWTdXIq/NVaK6TzgDiDp1asEZNrDpbT62yaIg+f0goDuVrHx2spqBgt2/c4TX1TR2I4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760007080; c=relaxed/simple;
-	bh=pe31QoGMIMHDF28fWNg7uO2BYB0/OCshPn6zdRfU8vg=;
+	s=arc-20240116; t=1760007089; c=relaxed/simple;
+	bh=t8Unjk53qMCxbfkVUrOXszok33kPkGXwPY5zH2soo+o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ddcIRl0HwBPE1Rpf1KUjQxb485aXSH8UwALv+SC7sm/f3xMw2B2eNhY+8ioPHcF6xBzDxtgqGoOo1plyarEGqOWiqnHvvu6l9ThI3z4RY6RJ8ZTNUSmBRdU+LyG8bAqpSTQUiubc0q2DT+/QLtWIVvUuOVpeLsQq9LSTTkF9ZhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oT69uBvP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36F77C4CEE7;
-	Thu,  9 Oct 2025 10:51:12 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=j9cyGk9+iTBPdN1kGEyqdEkm2keJDuTHrb+iLyywox1lhYduLI++MpDjDGHkyy/EBgAW1sCM5g8y7JrzzZxJXhDugCD2iuu9KfxdhzLm0vtKvwvN69xA04qmx2tffsm1TFxFkJiVsdi2uJNAApf+WBxYaDvLq6IxqhcKlqsV36g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qWwCcAR2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2158C4CEF9;
+	Thu,  9 Oct 2025 10:51:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760007079;
-	bh=pe31QoGMIMHDF28fWNg7uO2BYB0/OCshPn6zdRfU8vg=;
+	s=k20201202; t=1760007089;
+	bh=t8Unjk53qMCxbfkVUrOXszok33kPkGXwPY5zH2soo+o=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oT69uBvPgCNbBahI9DwEiAPyJQ7DTFR9FwDVuLB54wBrHeA94F08AO+4fjTK6H++b
-	 bjMbR4gzidhQDiICVCqh4P5WfVkzPXfWGDiQ+3Z8jF04RJDkSzUooMRtX8ZTlxmpBy
-	 C2LEkWnjupvIONQj60dvSXAEjuG9ai978UaE1ch3n0vH6xo3xsWflxpm6RTkYJoFWd
-	 Pak0OoxqxyHn1tHsCsV5sF1bYl2qyDegNOCn1wXbvmweGpBraayR5gtWqQ5jpSDewu
-	 EzcYXAhWgXGJ9l4a+WMqF49AhfMUM71bNL+A383E8eUG7q61WYldbruM1Cvz5L7iP4
-	 X9Zc9hsiI7GLA==
-Message-ID: <afaa143e-55de-4880-8215-330dc640a1fd@kernel.org>
-Date: Thu, 9 Oct 2025 19:51:09 +0900
+	b=qWwCcAR2gVYFod8OQwR9bNZchJjoLoaayE8q0zTVkuIM5nyo2Hb1CrIVDaWITDsW+
+	 0+6wfUVNVYsTs3gxcvfDUX61CaxPeKymHHDCTfO0Fb4DB+r8W8VBd0gaRU3j1VlD7x
+	 CXEs6WljC1AZyUOQTJ+HokjVVnC736E9bPpXLAmmzobPlZXn9Hh4uTDG9m1QIB8Q+p
+	 77kmzxeSNryVrou3VZrDUge6XrT6L+2tf7wfM4iQamc4nb8LzT63dp4Sl5xHCFYFlL
+	 5SYgOnpO2KltMHT3StcBdk4Y+NsYIgtG2anhUARKiZKCJQ5olNPJly4YNrcCHRlvCs
+	 r8a8Q6+O3escA==
+Message-ID: <36759154-4e7b-4cc9-b50f-ffb51a0b8aaf@kernel.org>
+Date: Thu, 9 Oct 2025 19:51:22 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: mmc: sdhci-msm: Add Kaanapali compatible
+Subject: Re: [PATCH] dt-bindings: crypto: qcom,inline-crypto-engine: Document
+ the kaanapali ICE
 To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
- tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
- yijie.yang@oss.qualcomm.com, Manish Pandey <manish.pandey@oss.qualcomm.com>
-References: <20250924-knp-sdcard-v1-1-fc54940066f1@oss.qualcomm.com>
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-crypto@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+ trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
+ Gaurav Kashyap <gaurav.kashyap@oss.qualcomm.com>
+References: <20250924-knp-ice-v1-1-1adfc2d9e83c@oss.qualcomm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,17 +107,16 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250924-knp-sdcard-v1-1-fc54940066f1@oss.qualcomm.com>
+In-Reply-To: <20250924-knp-ice-v1-1-1adfc2d9e83c@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 25/09/2025 08:34, Jingyi Wang wrote:
-> From: Manish Pandey <manish.pandey@oss.qualcomm.com>
+On 25/09/2025 08:29, Jingyi Wang wrote:
+> From: Gaurav Kashyap <gaurav.kashyap@oss.qualcomm.com>
 > 
-> Document the compatible string for the SDHCI controller on the
-> Kaanapali platform.
+> Document the Inline Crypto Engine (ICE) on the kaanapali platform.
 > 
-> Signed-off-by: Manish Pandey <manish.pandey@oss.qualcomm.com>
+> Signed-off-by: Gaurav Kashyap <gaurav.kashyap@oss.qualcomm.com>
 > Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
 
 Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
