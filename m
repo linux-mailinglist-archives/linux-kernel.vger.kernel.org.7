@@ -1,275 +1,175 @@
-Return-Path: <linux-kernel+bounces-846878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D091ABC94FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:32:15 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56549BC9507
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:32:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C27611A618E9
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:32:38 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 37B01341379
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EBA31714B7;
-	Thu,  9 Oct 2025 13:32:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C8A8528E;
+	Thu,  9 Oct 2025 13:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WYXDwAUs"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="ONQ0BY3k"
+Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1F034BA2F
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7E434BA2F;
+	Thu,  9 Oct 2025 13:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760016728; cv=none; b=iPZsR05c6t2Z7TSTDf6A4mm9mYKEPsaoG4qM6mNGYtlopS3uetoLqjG43YejJtyMEYyKv/6xMwFrat5Ye0c/ThHgWfmiBj7prOTyD5MU6RcAvxH0xICXsrVr/aglLb/aC+LI4ScxblmbXCUW559DuNbagQM2o+5FBViZtfFhR+4=
+	t=1760016750; cv=none; b=t+G1XDrRiSpWbhkvJQCYgfFDSvrnuaIUTOYk5ukB/cg5hZdnaggl4QStku0hVhr3eKmFaUkk7cO9KEFG6hXyvGS1CX7PAji+YPjHNVGBLZwkeYcv3snBBbsfVRr1xBOUGSdybogxnJ6tkG8sUrQiS239oQPUnEKMwe/99XRukQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760016728; c=relaxed/simple;
-	bh=h3NuZ12K3/lElcibtGA+QG5w/yrJTAfAVGN7114N2I0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Af+dXgh/iZXM2xhUV4N0wD8uBZ5X+J7zTYBiiomFsTYvyt4mbCadvvaOxxCeLEvZNTpqHs3ZYWl9m/xHoti0Ken70omfac0KxPkWv9KqgxTMYzozwkPznfDhnRL7lu7uZYx25DQih1l6CwAwdkjHsAXJdHZ53DW8Aq1vQbd2nRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WYXDwAUs; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-27d67abd215so252585ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 06:32:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760016724; x=1760621524; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LKgrX9I9H1E8Rzi9UZJixQg4AVl3hxGPKMOGQpXFZKY=;
-        b=WYXDwAUslJVv9B33sTxrzUROyXOdUAJUw2I83Y+TRSakmd8R6qjzVononSGrBedWj4
-         PQFAohIt7qKAuSUL/MOIPMtG6Y998nhRKt+1FII330JKyO0opC0iz9QbfKmOHyTrIVuS
-         da3b5Rrl1Nt9t0q/Bao99IRJqrh6nqJpqCf1RSMwn84560wKYIfUFGCjp0vUuuNfyaPh
-         BW/y3pzQjc9d7zSjN8FKsy7p73Yvw4r7Fs4bq/np0cToxTGTbE/w74C/YT0iWwga6Pls
-         ZiEpTOT614sGGlriz+QAtxCKQq68N/Zos2sgJBQRBjQJBPVsohWl9ku3aUJznPncEnWC
-         8vGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760016724; x=1760621524;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LKgrX9I9H1E8Rzi9UZJixQg4AVl3hxGPKMOGQpXFZKY=;
-        b=QaBcUjZFYZ09RfqTlmnHC84CiwrWSrQ4/ub4X7sqvuRFko5kTsB4zCKSNbxcXAvXKK
-         1TB3Q6jbe9bnNcgoveDDqDcDhNFvhznR6z2ugKtooNZJ3sATxMfVqod0uSBy7+KfzXp0
-         kX7+1HKLgEmQGlhUcDfkyByKAyPY6v8iNDttIhdOO/a1bJ2PvjNDHZk4TNivs9WyERkm
-         bEVyJs3Ieduix2MtNBsCYpyeEJxBQePwsrfWz+5hYPIFHANEEJMCiHjI5G/+/4u8V2a+
-         /rEwcHruYSH80q0O6PDxMt+LF8hTdI7YEPFb+Jx7UJySv60NNH7uyNiCYXSNYKGdeBth
-         yUvA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJV1oEcBFULvOLba/BMNXEGLj5FRJEislZHIDeXdV1gvFaffYsxuJew6oLgpnEsF2wjIkpPD5ikxi/b8A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLxIaBt1u5a3Rzd1LcJnst8W4qJmQUGpODFbJVhCePeoEEGqG1
-	5O4OycGXrKIJIJblI8lMidIa1RXnzYxPfiiaBzKk9+7yOxUxIhLKPuyzn0CZGOv8oDtJOA/o3aO
-	PXb1feSKVo/O3+RuYWAVlwMbfBfTXQPiIWLOrwhtX
-X-Gm-Gg: ASbGncum9JOyTOxWtQmVvJHGiCyABhYvVCSP6FgJT1B//V4hM1sZvMB6+K+NU5ADMHB
-	Wotn1LTp6zHDvyAFNNJ21k6p0Cr4B48JV+zWM1d/XR8ztgSFukmTC/yIndy7GkkhL/i49SowP0R
-	hYiotLUlfyXwdCxv4GRVhuTQ0/oVKfnKp3uHzgU6Wa9GbAyOr5SJF0itOCHnna7wvOqDIdwCWpH
-	G2KZorxjTzYxGrrhdcevtp0vdsLp4F8rSWuve/V/6MKR27Xfw==
-X-Google-Smtp-Source: AGHT+IFZJq65ep3s4bVMk6jxRxVRnjn2WyK+ZNQwtHI4t4HXIP6rXT96ATbGdNG/wBUzAgqVESqMBEwAWlzsE5261Jc=
-X-Received: by 2002:a17:902:d548:b0:25b:ce96:7109 with SMTP id
- d9443c01a7336-290275de5a5mr9131235ad.3.1760016723556; Thu, 09 Oct 2025
- 06:32:03 -0700 (PDT)
+	s=arc-20240116; t=1760016750; c=relaxed/simple;
+	bh=0MnHaz2jRsiG4OST2/i1Xd92d3R7OcfJuRzdlOCS8pk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W5rUI9uqunElHmXPcDVXW1HaF+9l7/XsTD/p+quK5lOzeahxN2IJ3TrmP771EnirsDX7RaPg3dMVj+xttfDXwvbldaeolPJh3Av0ZUubpf/Pscp4dTavBJ3mYHXUUEUFBh5LXHlD585aAZ4qPUXS35aoF+K+TrLrQexxnPtW/zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=ONQ0BY3k; arc=none smtp.client-ip=94.112.25.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
+Received: from [10.59.7.204] (unknown [193.86.240.59])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ixit.cz (Postfix) with ESMTPSA id B1DEF5340E37;
+	Thu, 09 Oct 2025 15:32:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
+	t=1760016743;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ATlpDgDGus44HKVxZig/RhiWvD1mhFf+WkmRvNApL08=;
+	b=ONQ0BY3kzvaUb5sYWGg4E5xkhvvM+Y1M+CvkNEkwmb1gzBMXwHFEeWv/0Sq4IKobsrVdSR
+	ZQksu/gEr5zzwi67IJYqI6/LduEgo0imRysktnlVSp8PNOhknc/vyBGSoRvNs/hnTlut4D
+	1VIF8i0YeVRVxajfWVGNKE2DWok3VLY=
+Message-ID: <75011ead-8bd8-4939-ae7b-1c127eba8aa8@ixit.cz>
+Date: Thu, 9 Oct 2025 15:32:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251005181421.2787960-1-irogers@google.com> <aOYkRdU5pn_jTOq3@google.com>
- <CAP-5=fUqYeaE_P3ApXvq7j9SRuNXpLf+mK-4XBsvv2R=OTccbQ@mail.gmail.com> <aOdNWrIAQMkaVsqR@google.com>
-In-Reply-To: <aOdNWrIAQMkaVsqR@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 9 Oct 2025 06:31:51 -0700
-X-Gm-Features: AS18NWBVDbTPoqSC3Meaoii89yADm94rw5shK2Rf50XwIFJD_M3dwkPQDvt3OEs
-Message-ID: <CAP-5=fVERf8jf3MrwiEfQtChvC1KUe0EEASK1aVk-UKkk=Pb0w@mail.gmail.com>
-Subject: Re: [PATCH v1] perf stat: Additional verbose details for <not
- supported> events
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/7] dt-bindings: panel: Add Samsung S6E3FC2X01 DDIC
+ with panel
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Thierry Reding
+ <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Casey Connolly <casey.connolly@linaro.org>, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, phone-devel@vger.kernel.org
+References: <20251008-s6e3fc2x01-v2-0-21eca1d5c289@ixit.cz>
+ <20251008-s6e3fc2x01-v2-1-21eca1d5c289@ixit.cz>
+ <7askbazrkbny5jlw6cpxcpjyw5nyiozmksoyj5b5momcc7w5hn@r3x6kddatf3u>
+ <74893f76-1b7d-4cfb-ba7a-9fd64427762b@oss.qualcomm.com>
+ <bmsxmwfdwx7wlmngaqpvz7c2nudcoukspkxgq6zqh2mdlolfxg@fsdbafotp5q2>
+Content-Language: en-US
+From: David Heidelberg <david@ixit.cz>
+Autocrypt: addr=david@ixit.cz; keydata=
+ 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
+In-Reply-To: <bmsxmwfdwx7wlmngaqpvz7c2nudcoukspkxgq6zqh2mdlolfxg@fsdbafotp5q2>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 8, 2025 at 10:51=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> On Wed, Oct 08, 2025 at 09:31:53AM -0700, Ian Rogers wrote:
-> > On Wed, Oct 8, 2025 at 1:43=E2=80=AFAM Namhyung Kim <namhyung@kernel.or=
-g> wrote:
-> > >
-> > > On Sun, Oct 05, 2025 at 11:14:21AM -0700, Ian Rogers wrote:
-> > > > If an event shows as "<not supported>" in perf stat output, in verb=
-ose
-> > > > mode add the strerror output to help diagnose the issue.
-> > > >
-> > > > Consider:
-> > > > ```
-> > > > $ perf stat -e cycles,data_read,instructions true
-> > > >
-> > > >  Performance counter stats for 'true':
-> > > >
-> > > >            357,457      cycles:u
-> > > >    <not supported> MiB  data_read:u
-> > > >            156,182      instructions:u                   #    0.44 =
- insn per cycle
-> > > >
-> > > >        0.001250315 seconds time elapsed
-> > > >
-> > > >        0.001283000 seconds user
-> > > >        0.000000000 seconds sys
-> > > > ```
-> > > >
-> > > > To understand why the data_read uncore event failed, with this chan=
-ge:
-> > > > ```
-> > > > $ perf stat -v -e cycles,data_read,instructions true
-> > > > Using CPUID GenuineIntel-6-8D-1
-> > > > cycles -> cpu/cycles/
-> > > > data_read -> uncore_imc_free_running_0/data_read/
-> > > > data_read -> uncore_imc_free_running_1/data_read/
-> > > > instructions -> cpu/instructions/
-> > > > Control descriptor is not initialized
-> > > > Warning:
-> > > > kernel.perf_event_paranoid=3D2, trying to fall back to excluding ke=
-rnel and hypervisor  samples
-> > > > Warning:
-> > > > kernel.perf_event_paranoid=3D2, trying to fall back to excluding ke=
-rnel and hypervisor  samples
-> > > > Warning:
-> > > > kernel.perf_event_paranoid=3D2, trying to fall back to excluding ke=
-rnel and hypervisor  samples
-> > > > Warning:
-> > > > data_read:u event is not supported by the kernel.
-> > > > Invalid event (data_read:u) in per-thread mode, enable system wide =
-with '-a'.
-> > > > Warning:
-> > > > kernel.perf_event_paranoid=3D2, trying to fall back to excluding ke=
-rnel and hypervisor  samples
-> > > > Warning:
-> > > > data_read:u event is not supported by the kernel.
-> > > > Invalid event (data_read:u) in per-thread mode, enable system wide =
-with '-a'.
-> > > > cycles:u: 351621 362833 362833
-> > > > failed to read counter data_read:u
-> > > > failed to read counter data_read:u
-> > > > instructions:u: 156184 362833 362833
-> > > >
-> > > >  Performance counter stats for 'true':
-> > > >
-> > > >            351,621      cycles:u
-> > > >    <not supported> MiB  data_read:u
-> > > >            156,184      instructions:u                   #    0.44 =
- insn per cycle
-> > > >
-> > > >        0.001584472 seconds time elapsed
-> > > >
-> > > >        0.001811000 seconds user
-> > > >        0.000000000 seconds sys
-> > > > ```
-> > > > where without this change only "data_read:u event is not supported =
-by
-> > > > the kernel." is shown.
-> > >
-> > > I think what you say is:
-> > >
-> > > Before:
-> > >   data_read:u event is not supported by the kernel.
-> > >
-> > > After:
-> > >   data_read:u event is not supported by the kernel.
-> > >   Invalid event (data_read:u) in per-thread mode, enable system wide =
-with '-a'.
-> >
-> > I kept things verbose as unfortunately the
-> > "kernel.perf_event_paranoid=3D2" is important as is the use of
-> > per-thread mode. Different paranoia levels lead to different errors
-> > and unfortunately a lot of the time the error gets reported as "
-> > data_read:u event is not supported by the kernel." and I'm not sure
-> > all users will get that the key part there is the :u modifier.
->
-> Yep, I'm ok with the change.  But the changelog was a bit unclear what
-> is being added exactly.  IIUC we already have the paranoid message with
-> the verbose level 1.
 
-I thought the line:
-"""
-where without this change only "data_read:u event is not supported by
-the kernel." is shown.
-"""
-covered this?
 
-Thanks,
-Ian
+On 09/10/2025 15:21, Dmitry Baryshkov wrote:
+> On Thu, Oct 09, 2025 at 10:51:31AM +0200, Konrad Dybcio wrote:
+>> On 10/8/25 8:57 PM, Dmitry Baryshkov wrote:
+>>> On Wed, Oct 08, 2025 at 04:05:28PM +0200, David Heidelberg via B4 Relay wrote:
+>>>> From: David Heidelberg <david@ixit.cz>
+>>>>
+>>>> Basic description for S6E3FC2X01 DDIC with attached panel AMS641RW.
+>>>>
+>>>> Samsung AMS641RW is 6.41 inch, 1080x2340 pixels, 19.5:9 ratio panel
+>>>>
+>>>> Signed-off-by: David Heidelberg <david@ixit.cz>
+>>>> ---
+>>>>   .../bindings/display/panel/samsung,s6e3fc2x01.yaml | 78 ++++++++++++++++++++++
+>>>>   MAINTAINERS                                        |  5 ++
+>>>>   2 files changed, 83 insertions(+)
+>>>>
+>>>
+>>> Please also describe, why it's not enough to use defined compatible,
+>>> samsung,s6e3fc2x01. Why do we need a separate schema and can't use the
+>>> panel-simple-dsi.yaml
+>>
+>> panel-simple works for 'dumb' (perhaps a harsh word for 'made with
+>> just the in-spec DCS commands in mind') panels, but Samsungs are
+>> widely known to require a ton of vendor magic
+> 
+> The question is about the _schema_. I think it's fine to have a driver
+> for a panel covered by panel-simple-dsi.yaml.
 
-> > However, fixing  evsel__open_strerror wasn't in scope for this change.
->
-> Sure, we can handle that separately.
->
-> Thanks,
-> Namhyung
->
-> >
-> > > Off-topic, it'd be great if we reduce the number of the same warning
-> > > messages.  I think the data_read is from two uncore PMUs so the messa=
-ge
-> > > was repeated.  If we can connect the related evsels and show the
-> > > messages once, then the output is more readable.  Maybe we also want =
-to
-> > > show the fallback message just once (globally).
-> > >
-> > > Thanks,
-> > > Namhyung
-> > >
-> > > >
-> > > > Signed-off-by: Ian Rogers <irogers@google.com>
-> > > > ---
-> > > >  tools/perf/builtin-stat.c | 12 +++++++-----
-> > > >  1 file changed, 7 insertions(+), 5 deletions(-)
-> > > >
-> > > > diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-> > > > index 7006f848f87a..84e06ec09cc2 100644
-> > > > --- a/tools/perf/builtin-stat.c
-> > > > +++ b/tools/perf/builtin-stat.c
-> > > > @@ -624,8 +624,9 @@ static enum counter_recovery stat_handle_error(=
-struct evsel *counter, int err)
-> > > >        */
-> > > >       if (err =3D=3D EINVAL || err =3D=3D ENOSYS || err =3D=3D ENOE=
-NT || err =3D=3D ENXIO) {
-> > > >               if (verbose > 0) {
-> > > > -                     ui__warning("%s event is not supported by the=
- kernel.\n",
-> > > > -                                 evsel__name(counter));
-> > > > +                     evsel__open_strerror(counter, &target, err, m=
-sg, sizeof(msg));
-> > > > +                     ui__warning("%s event is not supported by the=
- kernel.\n%s\n",
-> > > > +                                 evsel__name(counter), msg);
-> > > >               }
-> > > >               return COUNTER_SKIP;
-> > > >       }
-> > > > @@ -649,10 +650,11 @@ static enum counter_recovery stat_handle_erro=
-r(struct evsel *counter, int err)
-> > > >               }
-> > > >       }
-> > > >       if (verbose > 0) {
-> > > > +             evsel__open_strerror(counter, &target, err, msg, size=
-of(msg));
-> > > >               ui__warning(err =3D=3D EOPNOTSUPP
-> > > > -                     ? "%s event is not supported by the kernel.\n=
-"
-> > > > -                     : "skipping event %s that kernel failed to op=
-en.\n",
-> > > > -                     evsel__name(counter));
-> > > > +                     ? "%s event is not supported by the kernel.\n=
-%s\n"
-> > > > +                     : "skipping event %s that kernel failed to op=
-en.\n%s\n",
-> > > > +                     evsel__name(counter), msg);
-> > > >       }
-> > > >       return COUNTER_SKIP;
-> > > >  }
-> > > > --
-> > > > 2.51.0.618.g983fd99d29-goog
-> > > >
+see display/panel/samsung,amoled-mipi-dsi.yaml
+the OLED display don't fit well, but I wouldn't mind consolidating at 
+some point, but since we know very little (no datasheets), it's hard to 
+do for now. Maybe in the future when there will be more panels schemas, 
+we can find a way to consolidate into one big?
+
+> 
+>>
+>> Perhaps the original change was made with an "oh it just works
+>> surely there's no drawbacks possible" attitude, as the panel
+>> was left initialized by the bootloader
+> 
+
+-- 
+David Heidelberg
+
 
