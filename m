@@ -1,161 +1,151 @@
-Return-Path: <linux-kernel+bounces-846166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7971BC72DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 04:10:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08DDABC72E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 04:11:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8AD754EDDAE
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 02:10:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 303033C6FEF
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 02:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469571A0BE0;
-	Thu,  9 Oct 2025 02:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UqlipTji"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05F21A0B15;
+	Thu,  9 Oct 2025 02:11:11 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6CBA1F92E
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 02:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BD261F92E;
+	Thu,  9 Oct 2025 02:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759975828; cv=none; b=jU/Qeb1bbe+gebS+vfoaXbVDP5be3xhL7esesvPmH3DkMEowrVLNkFxjoF+LI4JMNWmHYw8xRAzYdOW1pn5lhCWDBkk2WxjbNtGQQJvNBMTWsKAPvBuweRnkaIhJgKN8SXwmmfNTP+Sg55Is5FciYsWkpKnvt9kVeEght9IqxRA=
+	t=1759975871; cv=none; b=DHioYfT1EWJIdjeijC/7hp5Nzag33PW0Tn6ysyazO9wbOqXQHX4EAEU/GBcEatkluBBV4Gacs5Mqj6p7QgzD/H3zb7yml5tF6Ud7JD1JUzPLn3z/XWvZa/JCvLcQ7Pd1+SgU533ur5RqSYEcjQcdJcW7Yzh0ZhRZmj4PSXiviPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759975828; c=relaxed/simple;
-	bh=UsphcAlBr+S2PNdLor0CBPJpMS317Bf37KWc9NojufY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NcvW0rDqt/vsg0ohJwscxM10CKkCiA/UjOGb6ew82g3Gwya1rqTYkr4f6ivY1ED3TdxP0zdorT19P80HCuEmcxFKlAxIewdX7T+0YWYnLL/Wr7ndiP31j9BBmk2jOFX2icPcD7HW8UTHaanBfawnEdsjIwy0BSbFQRqU6C8GVso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UqlipTji; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3ee12332f3dso462681f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 19:10:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759975824; x=1760580624; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I8GzvFR6CGlZo09XYMPTCFUeNcSQI8ZtZkJiYSRu+iM=;
-        b=UqlipTjiLUj101xDX5T9dctIDy9tM48KPUK2833DoHMj7JN4CaT2sWv+hAHltlOC99
-         0i7tXNVcthX9GUDm3E8TLCh2bIY/W1Wsp/WkKOwLL4Dokz2qkSx9wAH2BUfASd5ZtiA4
-         3SFe1Y/rgwpVHvxHMP76BQUDtIVPzOo6/6wj37vpprfzizUfoZ0m5DT+vncBq3Hb+K1j
-         DglfMMyowLBZMW9rP7AS+2uQnH9wRQvPCwVbl6Sybrjdq5uDML826SqXgReeLSQcgJZ0
-         Qc6s2sB1bVFjkQ9QRj46KyGSsK/eMW1DoyFp7frOWPXWKnAbNG3jjEwI5ib/O957HIi/
-         VhbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759975824; x=1760580624;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I8GzvFR6CGlZo09XYMPTCFUeNcSQI8ZtZkJiYSRu+iM=;
-        b=iUCvaGCgeaumLPSd1AfIPewOLmPyFBFshph4uhxTePJrmHBiSgK8R6NPKErOHGe0Kw
-         Mk2wOEv6qbe/ffGfXpkd8N8KP+1zvwMCe0SDC4bJ+vD3Rh1m0J09nmAZwZNS2gRs2yDs
-         xc3T3qKTh8/vG14QQ2xfJsqcigz8no3e7K1KGiGLP2/tNwU+wI8LDCiFpuJdYlcQqo6p
-         Q4qICJC89FIOWEAOokoPn1PueVNS2khJPD4/tkWIsapQvyyctKs7dTijdTQ0qkEb66HS
-         ZwevJ/sYEmBMUxLH8p10r906d7nxoHAfNeTY3jhE3fbIQ3HNa9AFhpHYYCSkGYLA/OT6
-         FGqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXULgOZj1VEMODJtj0HKH2Yp5+GsgFCONP1wqcuFVTpBODYa4+pvGpCGFwgJYjGozWsXfQNNhm/koUIrZI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFOZaSMEms0n4/CfbsFWy+YSeiCMz91+WWZ9DNmvVI9iXvVsx3
-	0mdtt/RE+pBKrgmUfk4usNqwPOeRP2Dyi/A85ccfz713Y95bZ0yViAZz0KUvABitLE+lhG/Ml48
-	mutqyBdYKqS7//WNbYnEKmxySUHTekL4=
-X-Gm-Gg: ASbGncumezuA1jXXdc3zNQfMuhJyEaRNdxb2JHBS1SV6PQISx6WP478VcX+codibajI
-	IjgOyw4lcKZc4xiVDR+oYsnFQaGrUNwUhtBhRuB+72luixxIY6mUkiXxfLmCY3YEybIkiUBMAq1
-	X//LPuO/2YluTHy2u6l2OPCG04PVH4z0BfHYq8yutqHrzuVVSsWmIOA5m+FzaIXPzEWdPJFGm6P
-	5WD9qwKHGMp+V620XR+c44gVp/QLo8EVP+x/lKVdoMOFZG0xjSzhCllyKr8rbwx
-X-Google-Smtp-Source: AGHT+IHUyjygXotyw6ah99ayuf0MSKvceh9le+qsaRqcmfDUOI3HEIlsJDYmsBHuydizQMzuabarjvIlam8AoeAXSgw=
-X-Received: by 2002:a05:6000:18a6:b0:40f:5eb7:f234 with SMTP id
- ffacd0b85a97d-4266e7cea15mr3454730f8f.5.1759975824081; Wed, 08 Oct 2025
- 19:10:24 -0700 (PDT)
+	s=arc-20240116; t=1759975871; c=relaxed/simple;
+	bh=F2JPeRTrb+18FKIQe3AusKYskJOkhvJMDhq3VVgEGck=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KNb9Xp1CXB41DEx9N/wNmgEEleCnrvFxlEKNcBLUDT8KvGtk6PwhydGuchywFIPbI6dJdudi8Gc1WJ/bdhQixL+Vr+PCE8ijBDcgRnXK5MJKZ1FqcOpbW6Y4MAs9RRzndd/1hYbvgC2tL22TZ8JcfKlArXT/aoNOV72kmghXOao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4chtd63c8zzKHMQH;
+	Thu,  9 Oct 2025 10:10:34 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id ABA9D1A12FB;
+	Thu,  9 Oct 2025 10:11:02 +0800 (CST)
+Received: from [10.174.178.152] (unknown [10.174.178.152])
+	by APP4 (Coremail) with SMTP id gCh0CgDX6GC0GedozBwgCQ--.12174S3;
+	Thu, 09 Oct 2025 10:11:01 +0800 (CST)
+Message-ID: <4962e5a0-a03e-4e9a-8f8e-5db04504c30e@huaweicloud.com>
+Date: Thu, 9 Oct 2025 10:11:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1759875560.git.fthain@linux-m68k.org> <807cfee43bbcb34cdc6452b083ccdc754344d624.1759875560.git.fthain@linux-m68k.org>
-In-Reply-To: <807cfee43bbcb34cdc6452b083ccdc754344d624.1759875560.git.fthain@linux-m68k.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 8 Oct 2025 19:10:13 -0700
-X-Gm-Features: AS18NWDCubbh5qDnKeyx-bfbRiwy5wk-S7mU0B8RrK8RiyXWwNZsCaohYxj9EfE
-Message-ID: <CAADnVQLOQq5m3yN4hqqrx4n1hagY73rV03d7g5Wm9OwVwR_0fA@mail.gmail.com>
-Subject: Re: [RFC v3 2/5] bpf: Explicitly align bpf_res_spin_lock
-To: Finn Thain <fthain@linux-m68k.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Will Deacon <will@kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>, 
-	LKML <linux-kernel@vger.kernel.org>, linux-arch <linux-arch@vger.kernel.org>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, linux-m68k@vger.kernel.org, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] ext4: detect invalid INLINE_DATA + EXTENTS flag
+ combination
+To: Deepanshu Kartikey <kartikey406@gmail.com>
+Cc: tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com,
+ Zhang Yi <yi.zhang@huawei.com>
+References: <20250930112810.315095-1-kartikey406@gmail.com>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20250930112810.315095-1-kartikey406@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgDX6GC0GedozBwgCQ--.12174S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxJw45JrWkXw1kuw4rXF1kXwb_yoW5ArWDpF
+	ZxC3WDJ34DX34DGa97Kr17XF4jg3WrGr4UJrZIvw1UZas8KFyxKF4xtF13ZF1DGr48Z3Wj
+	vF1rKr1UCw1UArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Tue, Oct 7, 2025 at 4:50=E2=80=AFPM Finn Thain <fthain@linux-m68k.org> w=
-rote:
->
-> Align bpf_res_spin_lock to avoid a BUILD_BUG_ON() when the alignment
-> changes, as it will do on m68k when, in a subsequent patch, the minimum
-> alignment of the atomic_t member of struct rqspinlock gets increased.
-> Drop the BUILD_BUG_ON() as it is now redundant.
->
-> Cc: Martin KaFai Lau <martin.lau@linux.dev>
-> Cc: Eduard Zingerman <eddyz87@gmail.com>
-> Cc: Song Liu <song@kernel.org>
-> Cc: Yonghong Song <yonghong.song@linux.dev>
-> Cc: John Fastabend <john.fastabend@gmail.com>
-> Cc: KP Singh <kpsingh@kernel.org>
-> Cc: Stanislav Fomichev <sdf@fomichev.me>
-> Cc: Hao Luo <haoluo@google.com>
-> Cc: Jiri Olsa <jolsa@kernel.org>
+On 9/30/2025 7:28 PM, Deepanshu Kartikey wrote:
+> syzbot reported a BUG_ON in ext4_es_cache_extent() when opening a verity
+> file on a corrupted ext4 filesystem mounted without a journal.
+> 
+> The issue is that the filesystem has an inode with both the INLINE_DATA
+> and EXTENTS flags set:
+> 
+>     EXT4-fs error (device loop0): ext4_cache_extents:545: inode #15:
+>     comm syz.0.17: corrupted extent tree: lblk 0 < prev 66
+> 
+> Investigation revealed that the inode has both flags set:
+>     DEBUG: inode 15 - flag=1, i_inline_off=164, has_inline=1, extents_flag=1
+> 
+> This is an invalid combination since an inode should have either:
+> - INLINE_DATA: data stored directly in the inode
+> - EXTENTS: data stored in extent-mapped blocks
+> 
+> Having both flags causes ext4_has_inline_data() to return true, skipping
+> extent tree validation in __ext4_iget(). The unvalidated out-of-order
+> extents then trigger a BUG_ON in ext4_es_cache_extent() due to integer
+> underflow when calculating hole sizes.
+> 
+> Fix this by detecting this invalid flag combination early in ext4_iget()
+> and rejecting the corrupted inode.
+> 
+> Reported-and-tested-by: syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=038b7bf43423e132b308
+> Suggested-by: Zhang Yi <yi.zhang@huawei.com>
+> Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+
+Thanks for the fix, it looks good to me.
+
+Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+
+> 
 > ---
->  include/asm-generic/rqspinlock.h | 2 +-
->  kernel/bpf/rqspinlock.c          | 1 -
->  2 files changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/include/asm-generic/rqspinlock.h b/include/asm-generic/rqspi=
-nlock.h
-> index 6d4244d643df..eac2dcd31b83 100644
-> --- a/include/asm-generic/rqspinlock.h
-> +++ b/include/asm-generic/rqspinlock.h
-> @@ -28,7 +28,7 @@ struct rqspinlock {
->   */
->  struct bpf_res_spin_lock {
->         u32 val;
-> -};
-> +} __aligned(__alignof__(struct rqspinlock));
+> Changes in v4:
+> - Move check to right after ext4_set_inode_flags() as suggested by Zhang Yi,
+>   since we're checking flags directly (not ext4_has_inline_data() return value)
+> 
+> Changes in v3:
+> - Fix code alignment and use existing function/line variables per Zhang Yi
+> 
+> Changes in v2:
+> - Instead of adding validation in ext4_find_extent(), detect the invalid
+>   INLINE_DATA + EXTENTS flag combination in ext4_iget() as suggested by
+>   Zhang Yi to avoid redundant checks in the extent lookup path
+> ---
+>  fs/ext4/inode.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 5b7a15db4953..2fef378dbc97 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -5348,6 +5348,14 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
+>  	}
+>  	ei->i_flags = le32_to_cpu(raw_inode->i_flags);
+>  	ext4_set_inode_flags(inode, true);
+> +	/* Detect invalid flag combination - can't have both inline data and extents */
+> +	if (ext4_test_inode_flag(inode, EXT4_INODE_INLINE_DATA) &&
+> +	    ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)) {
+> +		ext4_error_inode(inode, function, line, 0,
+> +			"inode has both inline data and extents flags");
+> +		ret = -EFSCORRUPTED;
+> +		goto bad_inode;
+> +	}
+>  	inode->i_blocks = ext4_inode_blocks(raw_inode, ei);
+>  	ei->i_file_acl = le32_to_cpu(raw_inode->i_file_acl_lo);
+>  	if (ext4_has_feature_64bit(sb))
 
-I don't follow.
-In the next patch you do:
-
-typedef struct {
-- int counter;
-+ int __aligned(sizeof(int)) counter;
-} atomic_t;
-
-so it was 4 and still 4 ?
-Are you saying 'int' on m68k is not 4 byte aligned by default,
-so you have to force 4 byte align?
-
->  struct qspinlock;
->  #ifdef CONFIG_QUEUED_SPINLOCKS
-> diff --git a/kernel/bpf/rqspinlock.c b/kernel/bpf/rqspinlock.c
-> index 338305c8852c..a88a0e9749d7 100644
-> --- a/kernel/bpf/rqspinlock.c
-> +++ b/kernel/bpf/rqspinlock.c
-> @@ -671,7 +671,6 @@ __bpf_kfunc int bpf_res_spin_lock(struct bpf_res_spin=
-_lock *lock)
->         int ret;
->
->         BUILD_BUG_ON(sizeof(rqspinlock_t) !=3D sizeof(struct bpf_res_spin=
-_lock));
-> -       BUILD_BUG_ON(__alignof__(rqspinlock_t) !=3D __alignof__(struct bp=
-f_res_spin_lock));
-
-Why delete it? Didn't you make them equal in the above hunk?
 
