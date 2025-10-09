@@ -1,298 +1,205 @@
-Return-Path: <linux-kernel+bounces-846188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E80BC73C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 04:47:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CA7BBC73BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 04:47:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C407B3E0310
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 02:47:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DCFD19E581C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 02:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C550B23AD;
-	Thu,  9 Oct 2025 02:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="jSAxcjJi";
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="OD6K42UD"
-Received: from esa4.fujitsucc.c3s2.iphmx.com (esa4.fujitsucc.c3s2.iphmx.com [68.232.151.214])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F196F1684A4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D614A1662E7;
 	Thu,  9 Oct 2025 02:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.151.214
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759978030; cv=fail; b=kCNqpwQ8No+rv1nxIJFMAkQ9MQnYhaUCr1s6Resq63e8dfj50+9CIPGkh7bsDeT9DaXdTcW9vFnaacA8HgaCxtPHU8sS/UTzLlmHhg/QtIcF7DfUoEt7+dJ2WXYHZE+M4hIJfZcON9oOsXjBwaOkCF2sY60ON/huWXp9Qa3+XT4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759978030; c=relaxed/simple;
-	bh=rCWSpUmjeiRAlOgsSldJzZiVEVAWWG/R6gPOTY31HwQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=kFQ0Ld+9O5FGl8U/toTUlRAs2whe9KGprUTNCpMkfk2aC5yvTnG1R50UdUFt1cfvtv9il4h8EloW0HrAQjNwl4Ool44FsbFcEhh2qc06zoEtrsChcQFULaxVbpc4eP2+CW7jaKFSURqeWCf22tjcfRkuiTM/yBUDccl8JRsc3V4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=jSAxcjJi; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=OD6K42UD; arc=fail smtp.client-ip=68.232.151.214
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
-  t=1759978028; x=1791514028;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=rCWSpUmjeiRAlOgsSldJzZiVEVAWWG/R6gPOTY31HwQ=;
-  b=jSAxcjJisImZn4+E0nL3QCS3T0ZCCNYtf5GX1FB0yg3ADYsfFjnYhldg
-   96n0nBsxO00z5bpCMEby/uKAK/aroGJ0JUXyOPwLuqikLGSu537kWyfut
-   c7ZMH7VLg2h6GVjcUU3fIvX89PGbroqc070bGzkzg3qN5xpYbfV49NFCb
-   UzLpGnwHqkdexbzMgFY7ScOGbWXmw5TY9J2zh3kxQMLve8KLyjypUEd/h
-   zw58Xagm952ZgZEf5jVfidkxIF7/o1tPrkFc4+QL+S9Zk3Kao+LOeICPW
-   FCzqnnm2nPB86KaEqcobZXkF6v1mBiz8Vb0BKR5bUbAaiDtmBYtrimN9E
-   Q==;
-X-CSE-ConnectionGUID: hv1GVHkaSmWeX1LzNbyrsg==
-X-CSE-MsgGUID: fcSaSt5YSLSqeaEqulD2KA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11576"; a="83327715"
-X-IronPort-AV: E=Sophos;i="6.19,215,1754924400"; 
-   d="scan'208";a="83327715"
-Received: from mail-japaneastazon11010034.outbound.protection.outlook.com (HELO TY3P286CU002.outbound.protection.outlook.com) ([52.101.229.34])
-  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 11:45:54 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UcOWnQUzZpA5kmorP4ipF14aRXIW1w93cJEzK0R2LKGWILaWp8PA2wyu7c/j1RGis4RrB4hq/ZTG5Kgp8Gkx6DD7EVu0F3Q6iBuZ6cwenKm99Iqx0dOL5nl8C72PbQRggefYlW2nRnswNH5p3Lj36NhyvwD3X/PZPTKG9745pVDmgQRvJee4Pu2Vscw9yxIHX9moUm8rQAbetX9vJjUcsFIw7EcCzIT7TFrs4VuwEh0cZXSk2RzxWqDKmt1pWOM5ZSvFgy9TILu8lmd0zPSqcWbybC0pDud3SNr/H2Bez5dslCOabhezOv793z93Q20/UCsO3QLi+OY45BKz/oWklg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=a0XXlSnjlfyZ4pxC0rLArq+iMKYfApnSMMwvpBCqq9g=;
- b=JKXnAWMkeBzVgvm+2akb0N+hSmdnJgP4kr+gbadxD1RGU+cZ9/9lK1Ky/2qjw6Uo6tojZTB6ABir4YIzW5m85u35I+pxZa/U0CAXQUSSUb0AKiQWlEZfFG4zSURKxNGuQml5sF0GGMz4GpUce3g87DbvP5h9IdfsnGLIgp2+XqB/N2ORhqkw8VT9BKpVe3M/61RakYCX2KPkRfKadVWzlQeDssiNKtGYlWCGpH5D9sBBCMzerrU5Br1up0KkD6Eo+mTvBu24dLuKv81BQ4X0NMbFAfq6lyf1H1gPfu3wjKEjAQwrPaaveAGB9883OYMk3kc1VYSquUcMj/R9NCvxjQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
- dkim=pass header.d=fujitsu.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=a0XXlSnjlfyZ4pxC0rLArq+iMKYfApnSMMwvpBCqq9g=;
- b=OD6K42UDIvGlK4C0CevK6jFqYqVvXS3cuvG0aaRtG2F7TSZIQzZ8aZEl1PPrDbVwfe3QrVwPtbn5NO7S6PMei+2sIT0oLkGzvdqJl5dYKFMCa3wDKPrQVQPib93jF1q9ZcUlg15IL2CjEy5uO0zdPte3IHbK6L2PuJnQK+zDuCttGrSiXllUs6kdJxDsIZF/q1mjitlP/K4bZOvzzw4FMwkM/R28PRWbPda5nGwf+bFRohCzqJAE0BJCmHr+EB7MU5HOGyCcsMk1ej69EI59U3M9GvIkQW/t8eKAIQj0yEdCekV71yCS6J+QaVZ6Q7EmjsaL/P8lsQBKSg2G4zQEDQ==
-Received: from OSZPR01MB8798.jpnprd01.prod.outlook.com (2603:1096:604:15f::6)
- by TYRPR01MB12893.jpnprd01.prod.outlook.com (2603:1096:405:1b7::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Thu, 9 Oct
- 2025 02:45:47 +0000
-Received: from OSZPR01MB8798.jpnprd01.prod.outlook.com
- ([fe80::e366:d390:4474:8cfa]) by OSZPR01MB8798.jpnprd01.prod.outlook.com
- ([fe80::e366:d390:4474:8cfa%6]) with mapi id 15.20.9203.009; Thu, 9 Oct 2025
- 02:45:47 +0000
-From: "Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>
-To: 'Babu Moger' <babu.moger@amd.com>, "'james.morse@arm.com'"
-	<james.morse@arm.com>, "'dave.martin@arm.com'" <dave.martin@arm.com>
-CC: "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-	"'linux-kselftest@vger.kernel.org'" <linux-kselftest@vger.kernel.org>,
-	"'ilpo.jarvinen@linux.intel.com'" <ilpo.jarvinen@linux.intel.com>,
-	"'babu.moger@amd.com'" <babu.moger@amd.com>,
-	"'maciej.wieczor-retman@intel.com'" <maciej.wieczor-retman@intel.com>,
-	"'peternewman@google.com'" <peternewman@google.com>, "'eranian@google.com'"
-	<eranian@google.com>, "'fenghua.yu@intel.com'" <fenghua.yu@intel.com>,
-	"'reinette.chatre@intel.com'" <reinette.chatre@intel.com>,
-	"'shuah@kernel.org'" <shuah@kernel.org>
-Subject: RE: [PATCH v3 0/4] selftests/resctrl: Enable MBM and MBA tests on AMD
-Thread-Topic: [PATCH v3 0/4] selftests/resctrl: Enable MBM and MBA tests on
- AMD
-Thread-Index: AQHcOMMcHTMo7Zd2vkWleDxNKUE337S5Gf1g
-Date: Thu, 9 Oct 2025 02:45:47 +0000
-Message-ID:
- <OSZPR01MB8798A07599944A1790AD03B48BEEA@OSZPR01MB8798.jpnprd01.prod.outlook.com>
-References: <cover.1717626661.git.babu.moger@amd.com>
-In-Reply-To: <cover.1717626661.git.babu.moger@amd.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_ActionId=42cf9220-fd32-4561-b412-379c9c071d3d;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_ContentBits=0;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Enabled=true;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Method=Standard;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Name=FUJITSU-RESTRICTED?;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_SetDate=2025-10-09T02:38:12Z;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_SiteId=a19f121d-81e1-4858-a9d8-736e267fd4c7;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=fujitsu.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OSZPR01MB8798:EE_|TYRPR01MB12893:EE_
-x-ms-office365-filtering-correlation-id: 9580eef1-1d10-429e-e41c-08de06ddf347
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|376014|7416014|366016|7053199007|1580799027|38070700021;
-x-microsoft-antispam-message-info:
- =?iso-2022-jp?B?RjF1Nys5eFMwZUFNWCtMOGNEU3NZdmFWUUFzaCs0U0pvbEpmUWMwYzBs?=
- =?iso-2022-jp?B?RGcvTmJmVis1Nko5RXJYZkV4SG1ZdG1UNlh2ck50Z2dONDExMzNZS2pW?=
- =?iso-2022-jp?B?a3VOeWlUY3AyYVIwTEI1ZFRjeE5XaWx6NksydTFzbDVWOUNucmhtRmFG?=
- =?iso-2022-jp?B?YVJOS1FCcjdhempnbHRlMSthZEppZzJiRzJQeXBZL0dsa3RKTVNHRS8r?=
- =?iso-2022-jp?B?OU1oKzRpWG9QcVppKzhRZDB4bW92dlZMVlAvUTQ3STcwaThrVm1RcS9D?=
- =?iso-2022-jp?B?MTNzcndieFpuNE42by9MLzR0a2w4RnM2RDRvQzVHaGtKRXpQc2QwTkIx?=
- =?iso-2022-jp?B?cC92TWRUK0wvV092MDF5M0RkZ0NDMStQYk9rTzZGeTlvelZmdENqQXhC?=
- =?iso-2022-jp?B?TDE4dEwzRENPNnZwU25tK24zc25xdU5zVFFzcjNoUmE5V2lKaUdyZXIz?=
- =?iso-2022-jp?B?UTFKU0IvMktydXEzWGl3eEVHQlRibndiSHBDNHBPRTFkRmhseU93MXZq?=
- =?iso-2022-jp?B?ci9iL20xaUU2Z3RDRENwY3JhMDI3b1pmMDl5TWh5TnZWOE5HVUN5bUtF?=
- =?iso-2022-jp?B?MktHSm8xVk5iaEVlVEtWcjM1ZklCci9pSTlmT1ZacXhlUTJqWk05bmd2?=
- =?iso-2022-jp?B?QWpsd3ZxWUVZVjdrN2tZQ0x3UkJnbng4VzA1MDQwWk1IY3NVbWJmK2d1?=
- =?iso-2022-jp?B?cGl1WGxyNjBRN0FINkNrNjAwaTVwMytXMnJFUWgycWJ6UWkvYWJmNUhK?=
- =?iso-2022-jp?B?T1FBVXFZeWl5WUIxa0FtVEE0YkpycDVnOUUyOCt0dnBPY1IvWmd3YklB?=
- =?iso-2022-jp?B?RWtPSWsxTTVabkV5WEplQURHNkRFL1RhQUFtOWtzYmZKWjJycW5TeDI0?=
- =?iso-2022-jp?B?Y0dHTnNzTVZGTnF2NS9TeEsxeWRsQytpV3U0STNNUmRnalRsVGZIYVBQ?=
- =?iso-2022-jp?B?ZjNRNVQvS0JUYVg2VTY3YWM3MG5XMVVxWDZQdGpxYUVvWnUrUDR0a1NX?=
- =?iso-2022-jp?B?cnZxcnlwY0ROZFIySnljMGJBTHFwL3hvVHlOQ2l6NVlpQnhpS3FSN0FJ?=
- =?iso-2022-jp?B?RG1IL0dDazNWb1h0eVB0VjdPcHIwd3g3bW9aQ0Q0ZUJ5L1RsUG1JNWQv?=
- =?iso-2022-jp?B?aXRZVnRVa1E4a0FJUGxjUUU4MDhIdWpEWDVUOXJUVWRZKzdlL29EWm80?=
- =?iso-2022-jp?B?Y00rekpMdTcxUUpkOG1tVG0wSEI5MUpOREo2Y0NLY2NhcVppc2xPWkFp?=
- =?iso-2022-jp?B?alBEZm1tY3lraWtiRUZKMzFSK2xLQlhQdytxQTNhcmdKT0RsQ3hxS2Er?=
- =?iso-2022-jp?B?dlVXUlVkTU9SV1BYdVQyYTYzbng1M01UdmpOMFo0WXo5VktlMXgrTXhW?=
- =?iso-2022-jp?B?dU85VU1RYi8yQm5jb3pPQ0V6T0M4SVRiVXdRcDA3OUJlWU1pWU1GMGpw?=
- =?iso-2022-jp?B?Tmw2T1pSV3ZpYXVZNE0wbkg4czR3bHVKb2RvRTRJTi9GejNTdlp3T1Uv?=
- =?iso-2022-jp?B?L3p1b3Z0SlQ1YXVIUHY3Sm5zelRNQjlFWWx0WjN3M1pkS05MUkVXci83?=
- =?iso-2022-jp?B?Z0hYbnRub0lJdis1Tk9zVjZoMXlPcU9BYldNeVdiMjNnT0lTU29kaFhH?=
- =?iso-2022-jp?B?RDJyRzJtZ2ZML2JISE9QZGw2NE5jYmdwcmhFZTIzckhTbHptZEVZS3ZV?=
- =?iso-2022-jp?B?NHlRYXRDeGU0TWhTMzV4UE8wRlFUWWw1WkJscEt3YTZKNnNSVjB6MWdQ?=
- =?iso-2022-jp?B?dmhQV1o4RUFIUWg0UFJWd1U2NEZ3bk9oL1FYWEpKR1pjTTdMc3lGS1BQ?=
- =?iso-2022-jp?B?UTIvbDFwalFLbFZUNTFWbWdsVERsT1lRMTBER1A5dkpHWG9QTEZoVUVa?=
- =?iso-2022-jp?B?UkFWT1lQQlN4YU05Smw3YTIrektGbWp3VmJiVlQwU0cvTENhdEM4U2dC?=
- =?iso-2022-jp?B?ZWRxZmI1aUhyVjV0WTFDUlNvc2JJK1haWFI0ZHRsSWRGOEt4c1BuUFFX?=
- =?iso-2022-jp?B?STZ1NnVUdklONWpzRkp1c1ZnTUdwVHVBaURDSWY4ZnU2Yk0rVXdGYm8x?=
- =?iso-2022-jp?B?dVRzN3FtTmUvSXFqNE1sWVZmdUU1djlNMHVNZVVOY3lkY0FaczFTem5t?=
- =?iso-2022-jp?B?TWVSbktkQVAvRldYYjJUSlRUcTl6UXR3aEhuZGJzOHgwa1RlRlNKb2Nw?=
- =?iso-2022-jp?B?dGJpbGwxaTE2MjRIbHJaTTJCVVFQVWlw?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB8798.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(7053199007)(1580799027)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-2022-jp?B?THFwdUpqMEVlZExVVElUR2N4Y1BuYzZ5OXpORDIxVld2N1VQWWlwSmMx?=
- =?iso-2022-jp?B?dkxlTGZQWmtYVVl1ZTVmZ0Y0Q0VMQ0dwVk8wRGJnNUhpNktTZnJrejFo?=
- =?iso-2022-jp?B?NjBzczUxbTBoMkZ0ZmU1am03aExuSUI4MlZWYUVMeDl5bHhHT3RxOXBO?=
- =?iso-2022-jp?B?QnNRRGJmTk5kc3J4RTV3RlgwVGxXSHNXSHExRStNNjVHUDg2Q1dDNUZy?=
- =?iso-2022-jp?B?MnJ2SnBvV3MyZURpdDR5QzUrSGJNeVlCdmJ5NVJjR1VYbWhpcS9kR2Rk?=
- =?iso-2022-jp?B?dkF1ODQvdkVUTjhMRkt2cHpZVXhxU0J0M2Z1Q2greDh4czl2eERFOUps?=
- =?iso-2022-jp?B?ZWdzNXlhTlZJL3BCZ0t3a0FkTzh6SEtZcmNiS3U1THFCWGdaWWd0VXpz?=
- =?iso-2022-jp?B?V3JDQ3puWHZMUFlhZGxsU25uMmlVV2I3VTM5WGhMZ2ZIbDdITDBUS3F5?=
- =?iso-2022-jp?B?NEMycHgyVGJwZVRMMW1IeUVzdFQ3UUN1QlFPRDUzQXd5Ri9IbDE0U0U0?=
- =?iso-2022-jp?B?VE0wOThVR0NEU3BUWG02cHJPd1piOEZEWG5nS0dPQUoyUW5oQWRINTBs?=
- =?iso-2022-jp?B?T3QwWmtURmlzQ2hYRDJLRjcxVTd4NmcrbDd5N3JaWTVYeFBrVVI0RGxX?=
- =?iso-2022-jp?B?VGxhNGx5OFB0TmFPM1dXUml6Z0xvZDNsVHZqN0NHZlA5WStZbGVpTjNz?=
- =?iso-2022-jp?B?dEY0QWFtNWMxTkJuREVJQ0lhSUpLM0xONEhMbFppMzNOaldUY2NSbmhX?=
- =?iso-2022-jp?B?WHFGOUMxNElzUW1tTW5Zd1VLYUxnY29MM3RQSHE4UjZVQUo1WENNZlhi?=
- =?iso-2022-jp?B?YlZDVVJBQjVLVy95MnU4anZuaWh0dHBCcnVDZVFHS0o1VkcyMHB1UXdK?=
- =?iso-2022-jp?B?VFVaekZRNVNhOHlUdU03M1B2ME9oN1ptSEtsbGwyeG5vRjNrRTIvZTVY?=
- =?iso-2022-jp?B?WDZ6OVJFQzJ1M3IyRDlTV0FzcTNkQWVNclRzY1VUanNCckxhRG9uck8r?=
- =?iso-2022-jp?B?TG0yOElDSlFrM1NEekxkbFRzc2pZOTgyMmtJZjJWdzh6NnE5OUREaVVp?=
- =?iso-2022-jp?B?SGlXY1FwT0lRWnhnQSszc0NQUlkvUVljK2xjbzh2ZU1rNzc5SmlkR1Ny?=
- =?iso-2022-jp?B?YlBsNVNQOC9HN0IzL0NLZUxhMnBpT2FDS3R3ZndWOUMrZzg3MUJRN1d1?=
- =?iso-2022-jp?B?OTZaUjZhUjBsUHk5bVhTSkNBTkhkS3BpUXd2UTVZa0oraCsrdVZKZFpE?=
- =?iso-2022-jp?B?ZE9sVlJYUXJpZWFURS8wSG1XN3VpQjVua2V2ZE9tMTBMWXVTOEZXczI1?=
- =?iso-2022-jp?B?bzNwMnBvVENwYTJDRE54RGk5K2dlc3hHOGVsbUtxSjYyUWlRdGdxeUsr?=
- =?iso-2022-jp?B?d3A4UlJDakc5Ry9IYVhLMjlraVlBWGNMUzliSG9CSzhhQm9LY2dXYzdE?=
- =?iso-2022-jp?B?VnNUdysxMDIzNW91MFVkbU81cndmMVRFNjJHU0FoRzdsRFJqQzdrTktp?=
- =?iso-2022-jp?B?VDhhcHJ3bXZqZXMxTk9LaG5aM3IrTVNqQm9aUzIyeXdZcnFLQmtUK29n?=
- =?iso-2022-jp?B?aGNBRGdSSndmRVYxaG92Zjg5dHRXL21iblJYVkdFSUJXeWZxV3VDakEv?=
- =?iso-2022-jp?B?b1IxbmlmZEM5R2lnZDN5aE1XcTl5dDFiaFhYWjBScE4rd1FSN0hXbEtn?=
- =?iso-2022-jp?B?Zy9uRjgrL2pudk9VeWtuVzlWRTFpdXo2UzA5b0tldExDZnplbXdNRE1a?=
- =?iso-2022-jp?B?czU5OEhIa1d5Q3JNb1FNL1hRL3hCZTFmc1hkMmp0N3ljRHA4YlFSdDBk?=
- =?iso-2022-jp?B?d0tGMDZyaXZBMGZ5My8yc1EwMmJtYm1weWlpTTEvWVYrbmNNOVhnTXAx?=
- =?iso-2022-jp?B?NjRJaXl1WmxBcThHbXNQYk5mVDRYV2wrdWVpSlkrTTdnMVhvZ1Zidmow?=
- =?iso-2022-jp?B?dHR1LzAvSlNjaThBT1ppVC9pNEljVzBjS1pNRWU4anNydjBsV3psM3Rx?=
- =?iso-2022-jp?B?bEtiSmdoMWZCMjUvOHdtNlc5MW5QZHZVakw2YVVtZFRZZ0g1b2VQV3F6?=
- =?iso-2022-jp?B?NXlUSUs4Y25OWkxOT2tIMXJtY3FmZGhaR0oveTVmbGhmdWxROEc0ekZs?=
- =?iso-2022-jp?B?WGFra2RONnI4ZzhSdEhLWTMwWGNnM3VPOTgyRFBwN2YzSkluQjdwQXpl?=
- =?iso-2022-jp?B?T2l0NXBaNkJmL1BVRDJrQ0JiRi9hRUFqN1RUMitjQVQyZE8zQzYzak13?=
- =?iso-2022-jp?B?T002L3ZDZ2dSNFFaMzk3dEdFVGN4eG1sdnNPNm1ydFZYNU5tMHVIZWxt?=
- =?iso-2022-jp?B?SWlOWjE3S0V4OUlvTDAxZW1tT1pWZnM5Nnc9PQ==?=
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AxglofC/"
+Received: from mail-pg1-f193.google.com (mail-pg1-f193.google.com [209.85.215.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E044C6C
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 02:47:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.193
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759978027; cv=none; b=VstxyhGP1laFmCHNlPo44UhgzGxduIIcSlp/RSczu1vIsjIvYVZGnyR4x4yaV3VCif+w8DYLJLndnkztf+jXbad3zYAOrLjU697s43LcujY6ojR93s1qxr4TD1w6HlbZiMqeU182UUR6Kc6VZuKgAb+btInZUtMF+6sRy2yrxis=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759978027; c=relaxed/simple;
+	bh=j1H8rr3ZCKuau3eSV0aCOIemmLP/Ndrxe09nU4fQzcI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V5D8CrP53dvEdFju3vxGki2dADnv5h7xRCiMPw8QPxxtnQG8z0pcqUQKpUNcOTVgGEhqSgCvby5ffCOvBQARms69EThC2kZJR4cvwNry/QI6Fovr5NI55CiHI9mEhyjrGvVCwWKGshgKfb9q4IH6vPZ+bxAcu/mlCr6i1SUhScw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AxglofC/; arc=none smtp.client-ip=209.85.215.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f193.google.com with SMTP id 41be03b00d2f7-b6271ea3a6fso288356a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 19:47:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759978025; x=1760582825; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+GiA4iuz6lIjQr1cqP5VsrnXl9FUk3KwAqlmR8Sc5as=;
+        b=AxglofC/vxv7OmV86lH/1wyYUWD9QhadO3/nVfCAhZMqZHP7DGCx0bpuGyJ4P8+BgK
+         Dy5qY2fEhgObg4Iucc06mlNjl0ddgNZ4pF3EvQ2BWKvh7LkVyPxvoIsBHj9okAPF1iic
+         kDzx66BJDJ0A+zjOSswg50yWo+X7OvUm7Z91vdxzEWxR97sAz9GVPUmcfvWQpGZw2kX3
+         K+7XSKc9n4SkZTLznFOGhPwubOpjBS65D9SLcx5fMfU/O5BSZHdH3NtTvAxFkFQg82OG
+         jYe9YbLm2Me8u6TnEzK768YcjosgsmYpK/f/GSqssQYoYEplvJkRf1LpjbN+rCGfEw3z
+         6weg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759978025; x=1760582825;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+GiA4iuz6lIjQr1cqP5VsrnXl9FUk3KwAqlmR8Sc5as=;
+        b=cE16RszHQoc1MnHu8slerRG66hmmrUQs5qjNOsR2t4ZsSH5EtSb6DfG0Owvu1A0daZ
+         NuLVM8/aQiEFK8gwMadhLxj4mVEEc4aTNAMWIcSDTptCEydt+/Ukq9DvLq4rqQ2AKApo
+         6CbvUafLb9+e0IlgZEjj7Ca5eX/L6i+A/gYljFPoiIG2sfaskeHJRbElWhfiOgBw+nGk
+         vlDhEph++DrW//yF9fk6ekuUd0B7j8jTnknhV7y72t6P0W95ZzWKy4bwWKalMZdUmf3S
+         8j8xk3Lo3k6IgcpL5WD1WtojYk7cyufKLv5FA5LxxB7hzBeHj+ITX36MjC3MNUJSJJ1j
+         DGpA==
+X-Gm-Message-State: AOJu0YwoC14mw4s4jVHLVeumIb1LBSQO4T8e4cVMj/AIO0/5wPI5ATO2
+	748h3yK4OGxF9O9mO0z6LasS+9+wcSqZE/uDgy+jzJ7WuDn4zQtIPAXIvM8SO/aN
+X-Gm-Gg: ASbGncuoa6AokucPt/P0/VQw4ojgozswkyt5LJTbKxRhkKBzCD7iOvqem7riT76IuyM
+	mKWzhyfNO2zt0xqKwx+WcXE0FxvQ3HjtMB78W1XaLDjzAywXjzD0D+u51gS3498FtEVgiVaM5iB
+	QYFL3wO4MMR2/rGcQCbWUl6fXreyqaKSYI/Y5rk00S8N0NSAxILGK3zjcnodLABk8rhHrDL2444
+	XqzYdBG7WHnmbXzIxE4S3Y52uZMxPvSdBbD8ce5qFUAMncH16lkouJ4qNOfJT0b0b0RJCFiAgRu
+	gcxfwteqcpuzGzYpkz+VlwXpL2viRyDDjMibsajLs8MZzME0/mZUwOg2+2oTNRbbmnSTPuFeLrz
+	emEYmoGGOfWJKJcIyyQXSJs78F3YBvgv2oAHuK7ZvBhtt0mEqO+BgOVLZHTvonPxx
+X-Google-Smtp-Source: AGHT+IHFOkfD55JzBdmrtB7rRkB8x8PQKvLZVhVzaNqrmyfFwltFeiwS/jvh4biiqwQmWhRIAW4UlA==
+X-Received: by 2002:a17:903:1b4b:b0:26d:353c:75cd with SMTP id d9443c01a7336-290272409c7mr77633275ad.21.1759978024481;
+        Wed, 08 Oct 2025 19:47:04 -0700 (PDT)
+Received: from E07P150077.ecarx.com.cn ([103.52.189.24])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034de6fd3sm11900395ad.25.2025.10.08.19.47.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Oct 2025 19:47:04 -0700 (PDT)
+From: Jianyun Gao <jianyungao89@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: "jianyun.gao" <jianyungao89@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>
+Subject: [PATCH v3] sched: Fix some spelling mistakes in the scheduler module
+Date: Thu,  9 Oct 2025 10:46:56 +0800
+Message-Id: <20251009024657.151767-1-jianyungao89@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	qUFAfTcV1cEfGisVHhgkrwV2Ulu2jERBzgO6ZZWx3Nkx3OsWZj8qDIEPdSK/9gKuVzQG1rAS5K4PhtF4gS08wo49spBLMKXdpBcwLKk8BYXW+eazjUKWMdp/pTvcbFDaRuD8+0p35LoGdLPt4XU/Wdc0JjyqDa4M3sGqTv3n8EwUBlNfjB0D+0iVSFT7+hlv39JlxHU7LKrILIHFqn077D0fBaLeXgHMzj/YPL9fomgA5CYdQEDPH3vIVKk0p6NWoTaZL861DrKNPt/7Abm05VOPN3Si2X6Rcs7xxsOIl6FFMl7G0KtR9ZKib484CMEZPR0+uA1oe3dy+xP5UzaKKoBHbyI3ajHp7PelzjweZGc1B5NiYmviUw22F7h5yiaZQu5MruEP3fjna4sRyYys6OG7ClJQYyXa4PM7wwe+KjSu1bEsvMGMBPibIVBx+zLorVqyGU7JwVRrBfj7RbdXzO6BB8hODlbh7OIV/5y2XRffDfp/8/Jn0JtxRd6NlETU/7QHmpHCquDq749kFaqatinnDEcXt9GGesKvrhw//JV8H8ydu76H4qKTJv9GOKXYKtzcnyLLt6tDDHGb8DRq0s5eDuSo4+RDyuGm0VGm9x7tzVtEjw5Vf4srXYXI7NaT
-X-OriginatorOrg: fujitsu.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB8798.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9580eef1-1d10-429e-e41c-08de06ddf347
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Oct 2025 02:45:47.1945
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: XMoD6G9ztUUQp9skCoTaQ8fJfAwf8ZCUcOanRD5WX87+2DQEcQxxQ7O01G0SWuyS45lmJbfvr+OtG1acyHSMNU+7VVYsFWMXbuHAew07iYQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYRPR01MB12893
+Content-Transfer-Encoding: 8bit
 
-Hello Babu,
-=20
-I think you are still planning to upstream this patch series.
-Do you have a timeline for posting v4? And when do you anticipate it being =
-merged?
+From: "jianyun.gao" <jianyungao89@gmail.com>
 
-I'd like to enable MBM/MBA tests for ARM arch (MPAM driver),
-However, I foresee potential conflicts if this patch series is not merged.
-I apologize for the inconvenience, I kindly request your attention to this =
-matter.
+The following are some spelling mistakes existing in the scheduler
+module. Just fix it!
 
-Hello James, Dave,
+  slection -> selection
+  achitectures -> architectures
+  excempt -> exempt
+  incorectly -> incorrectly
+  litle -> little
+  faireness -> fairness
+  condtion -> condition
 
-Have you already considered or made any plans to enable the MBM/MBA tests f=
-or the MPAM driver?
+Signed-off-by: jianyun.gao <jianyungao89@gmail.com>
+---
+v3:
+Change "except" to "exempt" in v2.
+The previous version is here:
 
-Best regards,
-Shaopeng TAN
+https://lore.kernel.org/lkml/20250929061213.1659258-1-jianyungao89@gmail.com/
 
+ kernel/sched/core.c     | 2 +-
+ kernel/sched/cputime.c  | 2 +-
+ kernel/sched/fair.c     | 8 ++++----
+ kernel/sched/wait_bit.c | 2 +-
+ 4 files changed, 7 insertions(+), 7 deletions(-)
 
-> The MBM (Memory Bandwidth Monitoring) and MBA (Memory Bandwidth
-> Allocation) features are not enabled for AMD systems. The reason was lack=
- of
-> perf counters to compare the resctrl test results.
->=20
-> Starting with the commit
-> 25e56847821f ("perf/x86/amd/uncore: Add memory controller support"), AMD
-> now supports the UMC (Unified Memory Controller) perf events. These event=
-s
-> can be used to compare the test results.
->=20
-> This series adds the support to detect the UMC events and enable MBM/MBA
-> tests for AMD systems.
->=20
-> v3:
->     Note: Based the series on top of latest kselftests/master
->     1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0 (tag: v6.10-rc1).
->=20
->     Also applied the patches from the series
->=20
-> https://lore.kernel.org/lkml/20240531131142.1716-1-ilpo.jarvinen@linux.in=
-tel.
-> com/
->=20
->     Separated the fix patch.
->     Renamed the imc to just mc to make it generic.
->     Changed the search string "uncore_imc_" and "amd_umc_"
->     Changes related rebase to latest kselftest tree.
->=20
-> v2: Changes.
->     a. Rebased on top of tip/master (Apr 25, 2024)
->     b. Addressed Ilpo comments except the one about close call.
->        It seems more clear to keep READ and WRITE separate.
->=20
-> https://lore.kernel.org/lkml/8e4badb7-6cc5-61f1-e041-d902209a90d5@linux.
-> intel.com/
->     c. Used ksft_perror call when applicable.
->     d. Added vendor check for non contiguous CBM check.
->=20
-> v1: https://lore.kernel.org/lkml/cover.1708637563.git.babu.moger@amd.com/
->=20
->=20
-> Babu Moger (4):
->   selftests/resctrl: Rename variables and functions to generic names
->   selftests/resctrl: Pass sysfs controller name of the vendor
->   selftests/resctrl: Add support for MBM and MBA tests on AMD
->   selftests/resctrl: Enable MBA/MBA tests on AMD
->=20
->  tools/testing/selftests/resctrl/mba_test.c    |  25 +-
->  tools/testing/selftests/resctrl/mbm_test.c    |  23 +-
->  tools/testing/selftests/resctrl/resctrl.h     |   2 +-
->  tools/testing/selftests/resctrl/resctrl_val.c | 305 ++++++++++--------
->  tools/testing/selftests/resctrl/resctrlfs.c   |   2 +-
->  5 files changed, 191 insertions(+), 166 deletions(-)
->=20
-> --
-> 2.34.1
->=20
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 7f1e5cb94c53..af5076e40567 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -6858,7 +6858,7 @@ static void __sched notrace __schedule(int sched_mode)
+ 		/*
+ 		 * We pass task_is_blocked() as the should_block arg
+ 		 * in order to keep mutex-blocked tasks on the runqueue
+-		 * for slection with proxy-exec (without proxy-exec
++		 * for selection with proxy-exec (without proxy-exec
+ 		 * task_is_blocked() will always be false).
+ 		 */
+ 		try_to_block_task(rq, prev, &prev_state,
+diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
+index 7097de2c8cda..2429be5a5e40 100644
+--- a/kernel/sched/cputime.c
++++ b/kernel/sched/cputime.c
+@@ -585,7 +585,7 @@ void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
+ 	stime = mul_u64_u64_div_u64(stime, rtime, stime + utime);
+ 	/*
+ 	 * Because mul_u64_u64_div_u64() can approximate on some
+-	 * achitectures; enforce the constraint that: a*b/(b+c) <= a.
++	 * architectures; enforce the constraint that: a*b/(b+c) <= a.
+ 	 */
+ 	if (unlikely(stime > rtime))
+ 		stime = rtime;
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 18a30ae35441..b1c335719f49 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5381,7 +5381,7 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ 		bool delay = sleep;
+ 		/*
+ 		 * DELAY_DEQUEUE relies on spurious wakeups, special task
+-		 * states must not suffer spurious wakeups, excempt them.
++		 * states must not suffer spurious wakeups, exempt them.
+ 		 */
+ 		if (flags & (DEQUEUE_SPECIAL | DEQUEUE_THROTTLE))
+ 			delay = false;
+@@ -5842,7 +5842,7 @@ static bool enqueue_throttled_task(struct task_struct *p)
+ 	 * target cfs_rq's limbo list.
+ 	 *
+ 	 * Do not do that when @p is current because the following race can
+-	 * cause @p's group_node to be incorectly re-insterted in its rq's
++	 * cause @p's group_node to be incorrectly re-insterted in its rq's
+ 	 * cfs_tasks list, despite being throttled:
+ 	 *
+ 	 *     cpuX                       cpuY
+@@ -12161,7 +12161,7 @@ static inline bool update_newidle_cost(struct sched_domain *sd, u64 cost)
+ 		 * sched_balance_newidle() bumps the cost whenever newidle
+ 		 * balance fails, and we don't want things to grow out of
+ 		 * control.  Use the sysctl_sched_migration_cost as the upper
+-		 * limit, plus a litle extra to avoid off by ones.
++		 * limit, plus a little extra to avoid off by ones.
+ 		 */
+ 		sd->max_newidle_lb_cost =
+ 			min(cost, sysctl_sched_migration_cost + 200);
+@@ -13176,7 +13176,7 @@ static void propagate_entity_cfs_rq(struct sched_entity *se)
+ 	 * If a task gets attached to this cfs_rq and before being queued,
+ 	 * it gets migrated to another CPU due to reasons like affinity
+ 	 * change, make sure this cfs_rq stays on leaf cfs_rq list to have
+-	 * that removed load decayed or it can cause faireness problem.
++	 * that removed load decayed or it can cause fairness problem.
+ 	 */
+ 	if (!cfs_rq_pelt_clock_throttled(cfs_rq))
+ 		list_add_leaf_cfs_rq(cfs_rq);
+diff --git a/kernel/sched/wait_bit.c b/kernel/sched/wait_bit.c
+index 1088d3b7012c..47ab3bcd2ebc 100644
+--- a/kernel/sched/wait_bit.c
++++ b/kernel/sched/wait_bit.c
+@@ -207,7 +207,7 @@ EXPORT_SYMBOL(init_wait_var_entry);
+  * given variable to change.  wait_var_event() can be waiting for an
+  * arbitrary condition to be true and associates that condition with an
+  * address.  Calling wake_up_var() suggests that the condition has been
+- * made true, but does not strictly require the condtion to use the
++ * made true, but does not strictly require the condition to use the
+  * address given.
+  *
+  * The wake-up is sent to tasks in a waitqueue selected by hash from a
+-- 
+2.34.1
 
 
