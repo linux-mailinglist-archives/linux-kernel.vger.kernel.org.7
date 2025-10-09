@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-846927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 288BDBC9727
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:11:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37F9CBC9748
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:13:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 18C234F2361
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:11:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C34433BFF3D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F572EA464;
-	Thu,  9 Oct 2025 14:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5302EA464;
+	Thu,  9 Oct 2025 14:13:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bf1IYdKX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VDYFH281"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32CD2E9759;
-	Thu,  9 Oct 2025 14:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110352E7185;
+	Thu,  9 Oct 2025 14:13:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760019058; cv=none; b=OetK7DDJNw2Q24a6Pq0k4SXL/b41G0m4wthoqIDSk5Z0Za81OytJF8FteVo/bBJA7iK/h1tUSwzSelDI0d+oBkmbz6iT4gQwL7Ym8yV74IgGKub8FBM6593sozKpwraIo0mR5fX/d2AlsPizQLd9zW6AMlS+OWta9Pd6dCTIGRs=
+	t=1760019220; cv=none; b=H30gfWT4NT59oCYFGkNN8HlV1s2d58kgSY2CUcke/xp7DZcVg1fkdWohRKglbc3BsKslo9lRoKnqyZ7+98yntU3HswFpavQRHIQxkd2kLMVoZBtmTe1XHB17jGoX9fF56LdZjYoNkkEnhxPPqIt6PlzTGQ3QXJ8JDtYuJvwBa7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760019058; c=relaxed/simple;
-	bh=PoEG6fDXpXMai/sSIp6QQMuKBTRgdRjl+qPUXydwNpw=;
+	s=arc-20240116; t=1760019220; c=relaxed/simple;
+	bh=0QbKXOl53q1FcMIsqBYn7Bt94Tpp9EL4A6kX7LOYyB0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TNp9TKvzvLYbt0KxPM5PERQkSgkdmGx/Ki9aU2VTZWc6Be8MMeEvELL7gKrkin4i1EFwQ/VlK+X4CRdOwIJ6T0t5zshn11nOAowwuGSg46gZWE/I51ORUQMKOnMeb0blWqTV/LdOv9EK8Gqg9+TW/W0VzNuelNqsj6Tmdd+Heow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bf1IYdKX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B1EEC4CEE7;
-	Thu,  9 Oct 2025 14:10:49 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=ZiVbjtWtqogs0g78a80CxX5aXllY0ORPiJwlKIuccKZMn3l//Y02AmpsWwqDyxwdXHK3wxb48SH6GJO9KGrvlbWIQxrxg0U5BH3/AMusLG2kvtDB9Hv1+QkmXAllxYdO9YOwG2tvMQqWou5zouO5Cl87AkmR5i8LX+FWVkGIsH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VDYFH281; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1A09C4CEE7;
+	Thu,  9 Oct 2025 14:13:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760019057;
-	bh=PoEG6fDXpXMai/sSIp6QQMuKBTRgdRjl+qPUXydwNpw=;
+	s=k20201202; t=1760019219;
+	bh=0QbKXOl53q1FcMIsqBYn7Bt94Tpp9EL4A6kX7LOYyB0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Bf1IYdKXmC8awfWh5+A7QBJAsxJ+E+Bf05nCys9w0sTb5mm+lSJ+FK4a/oac6gkNJ
-	 KXHj+HGfjFvupJMuF/wUIeCpDOh6Y+whjHf/YjOtib0BkUEfDT5AYlDtNmBxh0z6ib
-	 1kDPhwLzCW8F2JlS6PKcx3LCqsjOqchXPbEPoCzY6CFQB+K3fwGO/6OEzy9YDS8WVG
-	 0r75jsKihRRFBpBMKqdOo7D4oyOdyN9iB+a7+fA3jF54IIgs32H1xPPYm955M7BZoE
-	 OVv9Aqs6WG9CzhlLNfH27EZwY4TM0cWDi3CmngRjaqT33xB2LmH+MEwWN4hVgXx9V0
-	 Gdy9vxPYc6HXA==
-Message-ID: <c1f932ad-3c64-44ff-810d-f1c3e43ba8c6@kernel.org>
-Date: Thu, 9 Oct 2025 23:10:46 +0900
+	b=VDYFH281TenRBuTm1KFqcBJh921PBH6JgJnc67DgGzhdiH53vm6W1c+8wPlxAkcyg
+	 QsjeDVRgpntcxb8MHEKzQw+ppishQSdS/O1IoIJPs2+tPLHdeZ7Qp4sxxs62AqmsEP
+	 f7hAro1Neve+pyiwuIEBE9D7yZSkCEat+ZB5t0JT6XZW7RKSyZr6LnS5Ft4TZ57Det
+	 csBd2aQtRkBgImf3QsNNugprjjw3yFo+9K0xkaIoV8ep+JD7M2eCxzvm6RBTlalal5
+	 1fV+NO6vpD3QCD4pwJses/dP6Zci4gthfZ2CqfWEOxsl/7OSIlbqsO43a3fuoLxNEB
+	 iNWTZrs9W9TFw==
+Message-ID: <fc4b2eff-5224-4c73-b21a-16716e833b8c@kernel.org>
+Date: Thu, 9 Oct 2025 23:13:29 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] MAINTAINERS: Add entry for ITE IT61620 MIPI to
- HDMI bridge driver
+Subject: Re: [PATCH v3 1/3] dt-binding: display: Add ITE IT61620 MIPI DSI to
+ HDMI bridge
 To: Pet Weng <pet.weng@ite.com.tw>, Andrzej Hajda <andrzej.hajda@intel.com>,
  Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
  Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
@@ -64,7 +64,7 @@ Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, Hermes Wu <hermes.Wu@ite.com.tw>,
  Kenneth Hung <kenneth.Hung@ite.com.tw>, Pin-yen Lin <treapking@google.com>
 References: <20251009-it61620-0714-v3-0-5d682d028441@ite.com.tw>
- <20251009-it61620-0714-v3-3-5d682d028441@ite.com.tw>
+ <20251009-it61620-0714-v3-1-5d682d028441@ite.com.tw>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -110,36 +110,129 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251009-it61620-0714-v3-3-5d682d028441@ite.com.tw>
+In-Reply-To: <20251009-it61620-0714-v3-1-5d682d028441@ite.com.tw>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 09/10/2025 17:02, Pet Weng wrote:
-> Add a new entry for the ITE IT61620 MIPI to HDMI bridge driver to the
-> MAINTAINERS file, include the responsible maintainer, mailing list, and
-> file patterns.
-> 
-> Signed-off-by: Pet Weng <pet.weng@ite.com.tw>
-> ---
->  MAINTAINERS | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 5257d52679d60d084b85e2f023730286aa79311d..6859c06dce3ad3d615a1e42f3542fb1da8da4fc2 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -13107,6 +13107,14 @@ T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
->  F:	Documentation/devicetree/bindings/display/bridge/ite,it6263.yaml
->  F:	drivers/gpu/drm/bridge/ite-it6263.c
->  
-> +ITE IT61620 MIPI DSI TO HDMI BRIDGE DRIVER
-> +M:	Pet Weng <pet.weng@ite.com.tw>
-> +L:	dri-devel@lists.freedesktop.org
-> +S:	Maintained
-> +T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
+> +  The HDMI transmitter side supports up to 4Kx2K@30Hz resolutions, and is
+> +  compliant with HDMI 1.4b and HDCP 1.4.
+> +
+> +  For audio, the IT61620 supports up to 8-channel LPCM via I2S (multi-line or
+> +  TDM mode), with optional S/PDIF or DSD (for SACD). It supports audio
+> +  sampling rates up to 192kHz.
+> +
+> +allOf:
+> +  - $ref: /schemas/sound/dai-common.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: ite,it61620
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +    description: interrupt specifier of INT pin
+> +
+> +  reset-gpios:
+> +    maxItems: 1
+> +    description: GPIO specifier of RESET pin
 
-If you do not have commit rights, above T: is pretty pointless.
-Subsystem entry defines it. People just copy paste this needlessly.
+
+If you are going to send new version: drop description, pretty
+redundant. Cannot be anything else.
+
+> +
+> +  ivdd-supply:
+> +    description: core voltage
+> +
+> +  ovdd-supply:
+> +    description: I/O voltage
+> +
+> +  ovdd1833-supply:
+> +    description: flexible I/O votage
+> +
+> +  pinctrl-names:
+> +    items:
+> +      - const: default
+> +
+> +  pinctrl-0:
+> +    maxItems: 1
+
+
+Both pinctrl properties are usually redundant here. Does your driver
+actually require them?
+
+> +
+> +  "#sound-dai-cells":
+> +    const: 0
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +
+> +    properties:
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description: Input port for MIPI DSI
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: /schemas/media/video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              data-lanes: true
+
+
+Drop properties, already part of video interfaces.
+
+> +
+> +            required:
+> +              - data-lanes
+> +
+> +      port@1:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description: Output port for HDMI output
+> +
+> +      port@2:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description: Audio input port (I2S)
+> +
+> +    required:
+> +      - port@0
+> +      - port@1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - reset-gpios
+> +  - ivdd-supply
+> +  - ovdd-supply
+> +  - ovdd1833-supply
+> +  - ports
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        bridge@58 {
+> +                compatible = "ite,it61620";
+
+Pretty messed indentation.
+
+Use 4 spaces for example indentation.
+
 
 Best regards,
 Krzysztof
