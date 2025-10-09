@@ -1,162 +1,128 @@
-Return-Path: <linux-kernel+bounces-846266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A194EBC76E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 07:31:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6E50BC76EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 07:32:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 75D0D4F0435
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 05:31:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05B1319E5145
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 05:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4172425DD1E;
-	Thu,  9 Oct 2025 05:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238441DF75D;
+	Thu,  9 Oct 2025 05:32:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="D28gY1Vh"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FjI6+Zv3"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA4D34BA49
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 05:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494BE25C6E2
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 05:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759987908; cv=none; b=VRsSNCw1C7ytYTPebDWtkiowP2cCWIhUxOozh6cpT+I58rYywlNVIrdBECzTudmgBdIKn84dyqXKsIrMcKZxstWVlOfjxrY3lAFNvltMIacvKjMnu+JcJdjezpQo7lPGU9I8QVmFYue2ZJHYaqb2CONNyncGBC+0snRsxsQkLtc=
+	t=1759987933; cv=none; b=rUjhFFZ1mwQrmJZuXgdOoGn6qjoFuw5Kqdhwg7/23VQ6ygWF1Pxi1Lzn6AwUD5Ru10AovFSadOkiSX7hgjx3JIWh3Qaqqf/kqcjEQDCBWaYwA2Rv2QrM0Ioq5VzbZC1rJhO1YzGnRtCCQHBRs5Y3zqHlwmDjHmfGJLGN3dmslZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759987908; c=relaxed/simple;
-	bh=DtYjP+vXLXgAZNxBX24Bk0iIqisASSxMWtQytwpIfX4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MX/pfsrzv3r8tbWTOllKJow7DmavtArZiIyrdRIjgZxMAdLo6e9W9coZQBrWybU106NF/a1FJegtELikTt2/KrJF1Tb01ItiKdLWVN27IE1LQye6gRyL+KXMWhr+RFSVUIdnubdwLOo5INA9Di72VdrDSX7ils4a5M+CEaTQ5qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=D28gY1Vh; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3f44000626bso422816f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 22:31:46 -0700 (PDT)
+	s=arc-20240116; t=1759987933; c=relaxed/simple;
+	bh=p0WDAtk/m2ooYYDQvo1mfLf3Y8e8XUasvdbpgjXqJIc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rB7ZT8DRJXtqy+0aX3GG1/t6daRxJzpV8aEjYaoEc3y96JGCNfuxolYPjC0+gK7t+SUpJO9YS+SGL/cH27RUqca07PO7TFVt/3l9HeNAqpW1cpl/3CtR40mobkCWaxbmX4Ux/lFeWfnRh8DhKWeVh8ohTaHGfQ78Dr11SxpLvKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=FjI6+Zv3; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6318855a83fso1111148a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 22:32:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1759987905; x=1760592705; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yHOn7kSJUuZzuRLr1EeBDE27yXsJobQdyRlQ5XfVZzQ=;
-        b=D28gY1VhafkJDLh2jGgXqCnXk+41QM8M7Nf78aO2mf4WGpnaWTK7RqHLhLtpcrW6VE
-         qxSW6bosaMq4YoB/xnt9dQ/pe+2yLCJMjgPKlvjtvgVzmzyKk6x0aSKaDvwRVJVY7rNL
-         ROR8up+bDoowKFxtOifbfxufU+RVzGVXtmxNvOoiahkc6u8TSaXW1B65Xh/1LBvqVymh
-         yF3z7lNAhB2+PMkoKvXYtoD8L/kYEfBK+YawfoEWIXUMVj597mobUFxfc0VGmQ7JOIct
-         AZXSTYUhEZHZunZiI2l2a13FJHdU5jujDEv8uJRO8hXShNhgDkP2PUvyQQ1sou6yP6LV
-         MG5w==
+        d=linux-foundation.org; s=google; t=1759987926; x=1760592726; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5iUIuF0PvXlOQIXyN7mabhFThgTHnFDsNn0DAFrYiaY=;
+        b=FjI6+Zv3i4QaQgWAn3w6bumcsxAVtKsObP+Nh+PaQVKt/EVTy282Qzt0m8cNIb5IbP
+         QkMMaKpeeQiNP8M/Ll7FpLzejRXK9ExlYJI1qPhEZvxFGYsq5Rdfs1V4QtzU0CKUPXLV
+         VMuhU/unBoKve+UMdzairoiGUN22P8QazeBKg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759987905; x=1760592705;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yHOn7kSJUuZzuRLr1EeBDE27yXsJobQdyRlQ5XfVZzQ=;
-        b=BxN2yEF5PvNj1x6B7ppDVj+ozai0A86XSAFu//e5DcJEjKNMr7GLM/hC7VL15+If1q
-         RJCOV76NlyQCSqm6s55TTvO/CyikdIf18cWyNEKLKTwRfDYo750oIsouyA82bix4JEx7
-         H7CMwrqPor/JYspzauHigJMpNP7YUi5lZfbhvXeJlV5VWKlKTX9yukAASUjbG2uLDnUg
-         p6ke2i+zqIKDUoSH9bDjhV+96RPu80daFg+x+c8Ehw8HPDBp75cbZiZT7eKGKujebbv1
-         BpuhIAGcjLOE/mn66Xy2/dOvpXLba1Ia2KKKWJExJ1hgX1Fh45V/9KMEWQLXODj1f5lf
-         paNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWbsqJQv7byoDzuVPUmK213n1t69qn45e5l5VazrsLiIboz0buOg0DlgtUMXz9gcdemduUSPepsRixBVtg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4VORidSKnQ/iq4IEuvdF+82Ds32tfR7Mq+hbMVaNFKVBBcvUd
-	I9UgAZE1DyYMWr7UF1LHRk+DIy/m8VFsRtWlqQSpvYcXrL7zvV6rUDig5vwW9xOiGJ0=
-X-Gm-Gg: ASbGnctiiVvNj0PTtbplVEoisn86yt6Wjgb7lrAMKxiNYkm63Snu9FKYu+JueQypEaA
-	qBgHCnAPMb0UzPa+m2wipR76zKM/qApv5ZjOdqIPnrKTflGzDYRlbp0aDEa97A+pLXgJR9icc/4
-	T3nLu8W1oiwIMHutGqDVqDdFpWYnZnFhMv+tXGLccO5bC1EFhv2U5EYmkRrzhd3KTmoXeRCBqj0
-	V0Evs/9IbOTt6hSF3AaCWbc9P/CJRJfyNRm7YYwximU7fGJ1LqbbqyYlCElr35qqmbUVfEW7BNd
-	Q7Z4vfKGHN+u7NBJXFlSeA6rGws6h+h/4BD3+rlYznK4IAuoh4svabu4ZNY1VGRtmdJR4b2HcuD
-	ket+Yejj52KCoCHIvkMgafuMLjSCMCd+LXxRZUsCvxzwkTG/qVjrXcTkpAQfj9Wl4illOvvvcWa
-	7vnto1
-X-Google-Smtp-Source: AGHT+IH0+WOm7wLSz7CqoEeSNxHJVjj0HcdHxJggm0dkGfXWhUMxvQNA/sy9WZaKNmunfer1xkN/gg==
-X-Received: by 2002:a05:6000:258a:b0:425:8bc2:9c4b with SMTP id ffacd0b85a97d-42666abb51amr3110198f8f.6.1759987904570;
-        Wed, 08 Oct 2025 22:31:44 -0700 (PDT)
-Received: from u94a (27-240-56-184.adsl.fetnet.net. [27.240.56.184])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8b0068sm32973811f8f.26.2025.10.08.22.31.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 22:31:44 -0700 (PDT)
-Date: Thu, 9 Oct 2025 13:31:32 +0800
-From: Shung-Hsi Yu <shung-hsi.yu@suse.com>
-To: cve@kernel.org, linux-kernel@vger.kernel.org
-Cc: linux-cve-announce@vger.kernel.org, 
-	Greg Kroah-Hartman <gregkh@kernel.org>, =?utf-8?B?Sm/Do28gUMOzdm9hcw==?= <joao.povoas@suse.com>
-Subject: Re: CVE-2022-50450: libbpf: Use elf_getshdrnum() instead of e_shnum
-Message-ID: <ptkuwiorj7dby6ofq4thv6mxtu7kf2zgb4grpyng3ygjv6oyi2@3dsumpqpjrst>
-References: <2025100116-CVE-2022-50450-7ef7@gregkh>
+        d=1e100.net; s=20230601; t=1759987926; x=1760592726;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5iUIuF0PvXlOQIXyN7mabhFThgTHnFDsNn0DAFrYiaY=;
+        b=IviHooEIJwEDmQ8RgOR+F3H7rKDVIfsqBtK4mluGQ9rry8E+VTjifYBfaRSsHh4hPI
+         zuD8jfD2mC9RCr9OzXRDGVYwTHGj5tGqkdBZZIMpg2jnX25Lz2zMZdwpJrF1kFgnce4p
+         v1QT0XgBnPhmFUws4l4aQRw23jhy4iKWpRPKuWqixPUhkagyOIGiMWtVEmoR/stdeZZZ
+         uig/lN8t+sYlJ2M9XTMp5tMmXdlQF4kewhLlViG6fo80U90TKYjhDo1RLHsvothUWRAJ
+         lwTYDk7bgxQSyDgFM2Md9h+GzNqvNi+2cFFjRUroYJ2lw060JA/sjn52U8N/f8BfNhOq
+         iFaA==
+X-Forwarded-Encrypted: i=1; AJvYcCXeYRamPI2WBAXQTRFy6+khVF3Zpp+EwURNvG3lQJTW3c2Al0MV0eN6MoL49m49BsWxrTVkBkMXe+37dDg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfQS1Vtv8y7RGp5pkUxwx90RNuH4y6gA9b/46cdFeSOGjWHwTb
+	Wy2DF+IZniNhae0XggarF3j91GBD6CGg8Kvc6ANrWG3StyaqGAE+YViOioiZfgj/nI6tNUXNyAB
+	V4QhkaFxb3Q==
+X-Gm-Gg: ASbGncsqhTfME46UrsqyrtSMtn8/Toqyl6xmAneEH8nFmrALAUaotVkHWnjNqjoysRK
+	esiyC6EWjGq1jSBdIVhg5pIfNkpkA/rhH/IGxb+pO2JSYlyyX+B+wxeM/CfwhqnKYEAV/w8imcq
+	D5G4UDOaPik7VOKPX0tSvlQ0e8acFsLsef7TmQud7bwZGIHR6OwYRgQLbehgTddEOlhKUqnwgXa
+	g5kC4Uy2OwNs98lPx9jIZfNWDomzD8lAuhTqx/ocMAntIHNYS3FqyoKjUpJoA5vFd/qeBspdZFQ
+	jSe/OXA2/Dd/ILtUDPuJcHiU7MTPrqR0luGNonMHDI8P8RSIetIXmP5onsyMJzKfnhSKwmgU5qo
+	WntZAivFY/kgQaMht5ZdspitRVzMpgxzz6UjFb2T3h28DGARqUTCymn5vAnFJeOLRZgNwQqL/m/
+	C8f1yGtu3CEFegbaHdVzwd
+X-Google-Smtp-Source: AGHT+IErGFv9MHHGjxrzXtYc0To0imJRi7mxlVPj8J3YCSUHZmDut6M/3cWByruuoGFbBHSJhbE34A==
+X-Received: by 2002:a17:906:f5a5:b0:b29:c2ae:78f8 with SMTP id a640c23a62f3a-b50ac5d08bamr703623766b.46.1759987926327;
+        Wed, 08 Oct 2025 22:32:06 -0700 (PDT)
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b4865e7c47fsm1829475966b.37.2025.10.08.22.32.05
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Oct 2025 22:32:05 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-639e1e8c8c8so1045248a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 22:32:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVGQQS3M+3nyChkA3j3HhywykG2UfexwuaX69epKiFqDFfSyF9xj/eu3QKbIXH8OAWfbypkX43yUMqV+rI=@vger.kernel.org
+X-Received: by 2002:a05:6402:5193:b0:634:c1a5:3106 with SMTP id
+ 4fb4d7f45d1cf-639d5c5a3dfmr5439388a12.31.1759987924767; Wed, 08 Oct 2025
+ 22:32:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025100116-CVE-2022-50450-7ef7@gregkh>
+References: <20251008123014.GA20413@redhat.com> <20251008123045.GA20440@redhat.com>
+ <CAHk-=wjozC9_JCdEW9K_uruJqzTLzhtcVpgDk1OuqErNRUS7Mg@mail.gmail.com>
+In-Reply-To: <CAHk-=wjozC9_JCdEW9K_uruJqzTLzhtcVpgDk1OuqErNRUS7Mg@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 8 Oct 2025 22:31:48 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjuoFm9yZur_T4VOnX2iyDYD6T_gDRXE5ms9538W6Q35g@mail.gmail.com>
+X-Gm-Features: AS18NWA_8Cfdb68OVnzoIohElsdBiWblfIoQ8JOzZXJX8xy2nSMX8RubDlSjGTw
+Message-ID: <CAHk-=wjuoFm9yZur_T4VOnX2iyDYD6T_gDRXE5ms9538W6Q35g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] seqlock: introduce scoped_seqlock_read() and scoped_seqlock_read_irqsave()
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Boqun Feng <boqun.feng@gmail.com>, 
+	David Howells <dhowells@redhat.com>, Ingo Molnar <mingo@redhat.com>, 
+	Li RongQing <lirongqing@baidu.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 01, 2025 at 01:45:20PM +0200, Greg Kroah-Hartman wrote:
-> From: Greg Kroah-Hartman <gregkh@kernel.org>
-> 
-> Description
-> ===========
-> 
-> In the Linux kernel, the following vulnerability has been resolved:
-> 
-> libbpf: Use elf_getshdrnum() instead of e_shnum
-> 
-> This commit replace e_shnum with the elf_getshdrnum() helper to fix two
-> oss-fuzz-reported heap-buffer overflow in __bpf_object__open. Both
-> reports are incorrectly marked as fixed and while still being
-> reproducible in the latest libbpf.
-> 
->   # clusterfuzz-testcase-minimized-bpf-object-fuzzer-5747922482888704
->   libbpf: loading object 'fuzz-object' from buffer
->   libbpf: sec_cnt is 0
->   libbpf: elf: section(1) .data, size 0, link 538976288, flags 2020202020202020, type=2
->   libbpf: elf: section(2) .data, size 32, link 538976288, flags 202020202020ff20, type=1
->   =================================================================
->   ==13==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x6020000000c0 at pc 0x0000005a7b46 bp 0x7ffd12214af0 sp 0x7ffd12214ae8
->   WRITE of size 4 at 0x6020000000c0 thread T0
->   SCARINESS: 46 (4-byte-write-heap-buffer-overflow-far-from-bounds)
->       #0 0x5a7b45 in bpf_object__elf_collect /src/libbpf/src/libbpf.c:3414:24
->       #1 0x5733c0 in bpf_object_open /src/libbpf/src/libbpf.c:7223:16
->       #2 0x5739fd in bpf_object__open_mem /src/libbpf/src/libbpf.c:7263:20
->       ...
-> 
-> The issue lie in libbpf's direct use of e_shnum field in ELF header as
-> the section header count. Where as libelf implemented an extra logic
-> that, when e_shnum == 0 && e_shoff != 0, will use sh_size member of the
-> initial section header as the real section header count (part of ELF
-> spec to accommodate situation where section header counter is larger
-> than SHN_LORESERVE).
-> 
-> The above inconsistency lead to libbpf writing into a zero-entry calloc
-> area. So intead of using e_shnum directly, use the elf_getshdrnum()
-> helper provided by libelf to retrieve the section header counter into
-> sec_cnt.
-> 
-> The Linux kernel CVE team has assigned CVE-2022-50450 to this issue.
+On Wed, 8 Oct 2025 at 09:05, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> I think that you should make that helper function be a macro - so that
+> it can take the unnamed union type as its argument - and then make it
+> do something like this instead:
+>
+>   #define __scoped_seqlock_read_retry(s) ({ s.lockless ?       \
+>         (s.lockless = false) || read_seqretry(lock, s.seq) ?   \
+>                 ({ read_seqlock_excl(lock); true }) : false :  \
+>         ({ read_sequnlock_excl(lock); false }) })
 
-Hi Greg,
+Actually, it shouldn't do that "s.lockless = false" thing at all -
+because that's done by the for() loop.
 
-I'd like to dispute this CVE. The libbpf maintainer previously suggested
-such issue are viewed as normal bug fix, and not be considered for CVE
-assignment[1,2].
+So that was just a thinko from trying to translate the whole "*seq =
+1" hackery from the old model.
 
-Quoting Andrii from previous discussion in "CVE-2023-52592: libbpf: Fix
-NULL pointer dereference in bpf_object__collect_prog_relos"[1] below:
+But that hackery shouldn't even exist since it's all handled naturally
+and much more cleanly by the surrounding for-loop.
 
-> Libbpf isn't meant to be fed untrusted ELF files, as it's normally
-> used under root to perform BPF operations. So we generally treat these
-> issues of malformed ELF crashing libbpf as just normal bugs, not as a
-> security vulnerability. We even had issues where libelf crashed before
-> libbpf could do anything at all. But this happens only for
-> fuzzer-generated artificial test cases. In practice compilers produce
-> valid ELFs and that's what real world applications are ever going to
-> use.
-> 
-> ...
-> 
-> tl;dr: I wouldn't assign CVE for such issues, thanks.
+The only thing that the macro needs to worry about is whether it
+should retry after the lockless case (and take the lock if so), or
+whether it should just unlock after the locked case.
 
-1: https://lore.kernel.org/all/CAEf4BzbvmwmAmZMvzo9gxyUwy9SQvC_2gFQ1wO-Zvw=9BT=J2g@mail.gmail.com/
-2: https://lore.kernel.org/all/CAEf4Bzb2S+1TonOp9UH86r0e6aGG2LEA4kwbQhJWr=9Xju=NEw@mail.gmail.com/
-
-[...]
+             Linus
 
