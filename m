@@ -1,817 +1,312 @@
-Return-Path: <linux-kernel+bounces-846636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D603DBC89C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 12:54:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8259DBC89E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 12:57:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A0203E64A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 10:54:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12C8D3A5CA9
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 10:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E122E0419;
-	Thu,  9 Oct 2025 10:54:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D0C2DEA8F;
+	Thu,  9 Oct 2025 10:57:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SW79acas"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b4oOtwJL"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3E42DEA90;
-	Thu,  9 Oct 2025 10:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD9BF25A659
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 10:57:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760007261; cv=none; b=ssImfkSGQGst5i62KLRscmCJXUBy8ES0cEw0XTD1gWE10WdpKXwdnsBbU5ZDIDFrIuR7QYj4heZZRjEV7H0G6KnCB6snTvUnWUVOanD80v0nET3jv+RacbOQajEBNQZ0oYiVSBjAnZliJvqy+lW3JNac0r9JywHWGK3SWh/m7I4=
+	t=1760007429; cv=none; b=MGFvVgKIonlNlPdq7cWKziUMnAuFyLD+HsY0mSYbONG1F4Y9SF/RiwoO+zIcq710EoUyt67kesEdm89il0fC1E6EcbFNNzDCA/gMrYAZIUghCaUH+CuIoPAUdSzWh0n1AftUqGzf88qq0H0VakZaXm2IqoZ9oAR5rNNI5++mXxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760007261; c=relaxed/simple;
-	bh=nh1ejGOfuqaT+eLJXEa9vHO8TIzX116OdQSkSxqqyD8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fXtXRxSVA+QFBEWk4dnZMyTPmCE9jGyF0STJZns8jQ0pwbpkwOjse68CoAiy4EnUU9p3fMHgsJ+/t41E6+r37m/7LRLUlnkcqXrIKi6yVjnt+2jWXoW0Xw7RerJm0Yn4j4a7H6hTswZIdRnE387v/YwOVzqXzM5DEYMafpkZjrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SW79acas; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E7256C113D0;
-	Thu,  9 Oct 2025 10:54:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760007261;
-	bh=nh1ejGOfuqaT+eLJXEa9vHO8TIzX116OdQSkSxqqyD8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=SW79acasj70O4A3TY8+75SNlmeqXY0B8ZQ9URs5hJcjyW2EJQhlLDA6yXx/H4KQNd
-	 D8HBKwbIx7nYkDU9sIoIQoPCNbmkHaP5VsGmG91SuYQA0FmDCQeJfOiE+rWyMMeE0h
-	 7Sjpzf+HTRW8kli+jvkStE3H6GjWkR40BtiPoiXX3uNrcben1BvtmAs+kssNd82OUm
-	 OLK7KmrqgC+qebJ1pSFGvadpGuZMYB0vIHMyH01De6T/SD7mc9LeFNzxPht0NASn2r
-	 xVUPHA7qBZYsJzxWXjqLV3vRsZJCg4l8ppUiQ9FlKZ+5hC+C56fD8Omgt+aGSdMv9P
-	 rDFmzTw84M5VA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9D42CCD187;
-	Thu,  9 Oct 2025 10:54:20 +0000 (UTC)
-From: Maud Spierings via B4 Relay <devnull+maudspierings.gocontroll.com@kernel.org>
-Date: Thu, 09 Oct 2025 12:54:21 +0200
-Subject: [PATCH 5/5] arm64: dts: freescale: Add the GOcontroll Moduline
- Mini
+	s=arc-20240116; t=1760007429; c=relaxed/simple;
+	bh=D/cb+JmAMPxI+tby9AeftLayL7EBPhafkToHtKd0f8k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GVAEvot9AjjO6i07oPyQXCc6b90BH32V6RFoANvPhcuVDHOn5qCH3vX9bqo7tZutmO/gNxpnHsozs5JRDrgn2gO67LXCXBQWK7Ogx3V1A4C/DAwM6h04WudS9mfKafQwaqZntmvz77k0oz47K1GRRm5TK4kJOMWVK6PdaSv6DqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b4oOtwJL; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-78af743c232so733040b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 03:57:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760007427; x=1760612227; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=r/KVNrCgkP/CpH67njDEKsgcguKTfOKueucBYEp6ELs=;
+        b=b4oOtwJLTUnsgzYr66fm5Iw+gqK2PSyF6Mgq87X68VDkYZMzbioEeFNoFsPshicWOK
+         TxwZvC3xfDsBf4D/9A021G7gZcsKpBpPT8k4hehtbDpFFSRgDeRRy7BrQOjkhSw+nyia
+         VW+ab40oUI5zg5AgsDVUj/HFV0gj8ya+zKxCwtDo1/yTVaNOWB3uXtWZETMLqfhbODpc
+         MKYxq45UaBGkjFkzeilV2JmRYlWFfd5E5mmOr6rTDeAe9VDyaKh0JLysX/cwVTpCNYxQ
+         GsA7K+EVPcw9sbr2tAs5jFoOt6Cs/NrDUu3OJVGirRvdg6R2yoNAVfnRt5v+Nc42hjEU
+         P4yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760007427; x=1760612227;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=r/KVNrCgkP/CpH67njDEKsgcguKTfOKueucBYEp6ELs=;
+        b=Qakecc+gkA/vFZDSzNmGpzJ0JtNmXPxb7/OGrSzD5+ATbYiwjBBY/KlYuqrOqe0xep
+         nTIcys4X7GAahodI7tC7sugHD08iNpGlvyagZDzbCbV9Zdp7nULCpXksIjfZuc0d/0CR
+         +yaAu5LkLoW4QNojz6ghwUdB7oLv85ENT2fHnH+qO5OTbWNKgqZ5HuQ5LsvaPyKbgZLS
+         PsJkOvtaePYxlxPiTBubIvImTM/ucDTx1fXe6nVLuSFu6O0OFZr1BfQGjHVcJwlC3CXE
+         R9ovZiIiwY38R5L2LSTne6BDddE07+PEn7GPlco24Nxa/PCw/I4wC8eDZeUOj+9wwESr
+         jpRA==
+X-Forwarded-Encrypted: i=1; AJvYcCVVbwE8zmx4cS3hbHTd/DYRTrJpklC46u8boPOEPACVuU62epqSNmjujIzHfu1PEITo+GdWCApOMQSRnXk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkrZ07mS4NuBRsUCcnlPFnY89HZ70YTqLjqHyXiETKNjYngPUr
+	L8Mrp0lNpz9J+wGuzHqKzjYhqWeHkNxAgLKhp2RP8OrYcIEqS2V4nlIB
+X-Gm-Gg: ASbGncsQ0S9NlwW+fLv95ZxVVa+92Eh20kGkusTI5hZFLUmkpYn6LK9GajtWmIsfA6T
+	QPrVJuLs2Hlfd24Z4zcS14BvqdYbCVnebFtecg33v2JxX6ploWSpiDdZ+chAfYPY343cXAb1aqV
+	8bvs6LbWL9gcLBNH1bQ/njk/Z5YL1BJ9/qCtktnkTs8M+KLrKmPzXNLeOegld2xBXCAnNPXGuwi
+	JxrVqyLOHA/xcBxlxWw7E+Jk12vmme9lQbSx+qSOBM0piPW6A8KXmkFY2+eBfsTPT3f4fhPtk59
+	riuDvk+8mxkWOqHkZgXAl3ECxdMfo7ytQV8Ucp9GwBxFTmSdNFxtDSTGbCHl3JCfz1G+EJ0z3re
+	2jqB2qPeTtHxMZOQXgqFU3aMrCbc/hZRNJ1M8Y0IxBchAQa/xxdEc3SQ084Qb
+X-Google-Smtp-Source: AGHT+IHegRF+cDkS8n8iN1wDSqYkCY6Z+zS+A83OBf5JKqfA2hExCY0UD9dxNTVbTqOQx/6S6nxYew==
+X-Received: by 2002:a05:6a20:914f:b0:2c4:c85a:7da5 with SMTP id adf61e73a8af0-32da81345e5mr10045407637.6.1760007426930;
+        Thu, 09 Oct 2025 03:57:06 -0700 (PDT)
+Received: from localhost ([45.142.165.62])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-794e34e6f17sm2514275b3a.82.2025.10.09.03.57.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 03:57:06 -0700 (PDT)
+From: Jinchao Wang <wangjinchao600@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Mike Rapoport <rppt@kernel.org>,
+	Alexander Potapenko <glider@google.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Marco Elver <elver@google.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Kees Cook <kees@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Rong Xu <xur@google.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	David Kaplan <david.kaplan@amd.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Jinjie Ruan <ruanjinjie@huawei.com>,
+	Nam Cao <namcao@linutronix.de>,
+	workflows@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-mm@kvack.org,
+	llvm@lists.linux.dev,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	kasan-dev@googlegroups.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-trace-kernel@vger.kernel.org
+Cc: Jinchao Wang <wangjinchao600@gmail.com>
+Subject: [PATCH v7 00/23] mm/ksw: Introduce real-time KStackWatch debugging tool
+Date: Thu,  9 Oct 2025 18:55:36 +0800
+Message-ID: <20251009105650.168917-1-wangjinchao600@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251009-mini_iv-v1-5-f3889c492457@gocontroll.com>
-References: <20251009-mini_iv-v1-0-f3889c492457@gocontroll.com>
-In-Reply-To: <20251009-mini_iv-v1-0-f3889c492457@gocontroll.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- Maud Spierings <maudspierings@gocontroll.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760007259; l=18111;
- i=maudspierings@gocontroll.com; s=20250214; h=from:subject:message-id;
- bh=J647DtXUTxsNjsDze9wWBSEDDuxvPBUjd4pLpGoUQyo=;
- b=Gg2hKW2ohesxe3eBFG3qKEvyyM4ex/761Mw+Yu8/ToUPCr8JG8QWWLC+YHXO6vJ/JhHLUd5yb
- 3SFhmuWVAP3CxbvYWfniBkEcnSPYvfVir6Sw171p8uY2PPxazoFnkFp
-X-Developer-Key: i=maudspierings@gocontroll.com; a=ed25519;
- pk=7chUb8XpaTQDvWhzTdHC0YPMkTDloELEC7q94tOUyPg=
-X-Endpoint-Received: by B4 Relay for maudspierings@gocontroll.com/20250214
- with auth_id=341
-X-Original-From: Maud Spierings <maudspierings@gocontroll.com>
-Reply-To: maudspierings@gocontroll.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Maud Spierings <maudspierings@gocontroll.com>
+This patch series introduces KStackWatch, a lightweight debugging tool to detect
+kernel stack corruption in real time. It installs a hardware breakpoint
+(watchpoint) at a function's specified offset using `kprobe.post_handler` and
+removes it in `fprobe.exit_handler`. This covers the full execution window and
+reports corruption immediately with time, location, and a call stack.
 
-The Moduline Mini is a part of the wider GOcontroll Moduline ecosystem. These
-are embedded controllers that focus on modularity with their swappable IO
-modules.
+The motivation comes from scenarios where corruption occurs silently in one
+function but manifests later in another, without a direct call trace linking
+the two. Such bugs are often extremely hard to debug with existing tools.
+These scenarios are demonstrated in test 3–5 (silent corruption test, patch 20).
 
-Features:
-- up to 4 Moduline IO modules
-- 2 CAN busses
-- 1 Ethernet
-- 4 RGB leds
-- 1 3D accelerometer
-- optional Wi-Fi/Bluetooth
-- optional 4G/GPS
+Key features include:
 
-Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+* Immediate and precise corruption detection
+* Support multiple watchpoints for concurrently called functions
+* Lockless design, usable in any context
+* Depth filter for recursive calls
+* Minimal impact on reproducibility
+* Flexible procfs configuration with key=val syntax
+
+To validate the approach, the patch includes a test module and a test script.
+
+There is a workflow example described in detail in the documentation (patch 22).
+Please read the document first if you want an overview.
+
 ---
- arch/arm64/boot/dts/freescale/Makefile             |   1 +
- .../imx8mm-tx8m-1610-moduline-mini-111.dts         | 691 +++++++++++++++++++++
- 2 files changed, 692 insertions(+)
+  Patches 1–3 of this series are also used in the wprobe work proposed by
+  Masami Hiramatsu, so there may be some overlap between our patches.
+  Patch 3 comes directly from Masami Hiramatsu (thanks).
+---
+Changelog
 
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index b2fef44e0a370..0a84c7dc89e39 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -125,6 +125,7 @@ imx8mm-evkb-pcie-ep-dtbs += imx8mm-evkb.dtb imx-pcie0-ep.dtbo
- dtb-$(CONFIG_ARCH_MXC) += imx8mm-evk-pcie-ep.dtb imx8mm-evkb-pcie-ep.dtb
- 
- dtb-$(CONFIG_ARCH_MXC) += imx8mm-tx8m-1610-moduline-iv-306-d.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx8mm-tx8m-1610-moduline-mini-111.dtb
- 
- dtb-$(CONFIG_ARCH_MXC) += imx8mm-icore-mx8mm-ctouch2.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mm-icore-mx8mm-edimm2.2.dtb
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm-tx8m-1610-moduline-mini-111.dts b/arch/arm64/boot/dts/freescale/imx8mm-tx8m-1610-moduline-mini-111.dts
-new file mode 100644
-index 0000000000000..651524781a7ba
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8mm-tx8m-1610-moduline-mini-111.dts
-@@ -0,0 +1,691 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright (C) 2025 Maud Spierings <maudspierings@gocontroll.com>
-+ */
-+
-+/dts-v1/;
-+
-+#include "imx8mm-tx8m-1610.dtsi"
-+#include <dt-bindings/leds/common.h>
-+
-+/ {
-+	chassis-type = "embedded";
-+	compatible = "gocontroll,moduline-mini", "fsl,imx8mm";
-+	hardware = "Moduline Mini V1.11";
-+	model = "GOcontroll Moduline Mini";
-+
-+	aliases {
-+		usb-host = &usbotg2;
-+		usbotg = &usbotg1;
-+		spi0 = &ecspi2; /* spidev number compatibility */
-+		spi1 = &ecspi3; /* spidev number compatibility */
-+		spi2 = &ecspi1; /* spidev number compatibility */
-+	};
-+
-+	chosen {
-+		stdout-path = "serial2:115200n8";
-+	};
-+
-+	mcp_clock: mcp-clock {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <20000000>;
-+	};
-+
-+	reg_3v3_comm: regulator-3v3-communication {
-+		compatible = "regulator-fixed";
-+		enable-active-high;
-+		gpio = <&gpio1 11 GPIO_ACTIVE_HIGH>;
-+		pinctrl-0 = <&pinctrl_reg_comm>;
-+		pinctrl-names = "default";
-+		power-supply = <&reg_6v4>;
-+		/* also powers the cellular modem which can't vote on the regulator */
-+		regulator-always-on;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-min-microvolt = <3300000>;
-+		regulator-name = "3v3_comm";
-+	};
-+
-+	reg_5v0: regulator-5v0 {
-+		compatible = "regulator-fixed";
-+		power-supply = <&reg_6v4>;
-+		regulator-always-on;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-min-microvolt = <5000000>;
-+		regulator-name = "5v0";
-+	};
-+
-+	reg_6v4: regulator-6v4 {
-+		compatible = "regulator-fixed";
-+		regulator-always-on;
-+		regulator-max-microvolt = <6400000>;
-+		regulator-min-microvolt = <6400000>;
-+		regulator-name = "6v4";
-+	};
-+
-+	reg_can1_stby: regulator-can1-stby {
-+		compatible = "regulator-fixed";
-+		gpio = <&gpio2 12 GPIO_ACTIVE_LOW>;
-+		pinctrl-0 = <&pinctrl_can1_reg>;
-+		pinctrl-names = "default";
-+		regulator-max-microvolt = <3300000>;
-+		regulator-min-microvolt = <3300000>;
-+		regulator-name = "can1-stby";
-+	};
-+
-+	reg_can2_stby: regulator-can2-stby {
-+		compatible = "regulator-fixed";
-+		gpio = <&gpio3 15 GPIO_ACTIVE_LOW>;
-+		pinctrl-0 = <&pinctrl_can2_reg>;
-+		pinctrl-names = "default";
-+		regulator-max-microvolt = <3300000>;
-+		regulator-min-microvolt = <3300000>;
-+		regulator-name = "can2-stby";
-+	};
-+
-+	wifi_pwrseq: wifi-pwrseq {
-+		compatible = "mmc-pwrseq-simple";
-+		pinctrl-0 = <&pinctrl_wl_reg>;
-+		pinctrl-names = "default";
-+		post-power-on-delay-ms = <100>;
-+		power-off-delay-us = <500000>;
-+		reset-gpios = <&gpio5 28 GPIO_ACTIVE_LOW>;
-+	};
-+};
-+
-+&ecspi1 {
-+	pinctrl-0 = <&pinctrl_ecspi1>;
-+	pinctrl-names = "default";
-+	cs-gpios = <
-+		&gpio4 27 GPIO_ACTIVE_LOW
-+		&gpio3 23 GPIO_ACTIVE_LOW
-+		&gpio3 1 GPIO_ACTIVE_LOW
-+	>;
-+	status = "okay";
-+
-+	connector@0 {
-+		compatible = "gocontroll,moduline-module-slot";
-+		reg = <0>;
-+		i2c-bus = <&i2c2>;
-+		interrupt-parent = <&gpio4>;
-+		interrupts = <26 IRQ_TYPE_EDGE_FALLING>;
-+		reset-gpios = <&gpio4 28 GPIO_ACTIVE_LOW>;
-+		slot-number = <3>;
-+		spi-max-frequency = <54000000>;
-+		sync-gpios = <&gpio3 7 GPIO_ACTIVE_HIGH>;
-+		vddhpp-supply = <&reg_6v4>;
-+		vddp-supply = <&reg_5v0>;
-+		vdd-supply = <&reg_vdd_3v3>;
-+	};
-+
-+	connector@1 {
-+		compatible = "gocontroll,moduline-module-slot";
-+		reg = <1>;
-+		i2c-bus = <&i2c2>;
-+		interrupt-parent = <&gpio3>;
-+		interrupts = <19 IRQ_TYPE_EDGE_FALLING>;
-+		reset-gpios = <&gpio3 21 GPIO_ACTIVE_LOW>;
-+		slot-number = <4>;
-+		spi-max-frequency = <54000000>;
-+		sync-gpios = <&gpio3 7 GPIO_ACTIVE_HIGH>;
-+		vddhpp-supply = <&reg_6v4>;
-+		vddp-supply = <&reg_5v0>;
-+		vdd-supply = <&reg_vdd_3v3>;
-+	};
-+
-+	adc@2 {
-+		compatible = "microchip,mcp3004";
-+		reg = <2>;
-+		spi-max-frequency = <2300000>;
-+		vref-supply = <&reg_vdd_3v3>;
-+	};
-+};
-+
-+&ecspi2 {
-+	pinctrl-0 = <&pinctrl_ecspi2>;
-+	pinctrl-names = "default";
-+	cs-gpios = <
-+		&gpio3 24  GPIO_ACTIVE_LOW
-+		&gpio3 9  GPIO_ACTIVE_LOW
-+	>;
-+	status = "okay";
-+
-+	can@0 {
-+		compatible = "microchip,mcp25625";
-+		reg = <0>;
-+		clocks = <&mcp_clock>;
-+		interrupt-parent = <&gpio3>;
-+		interrupts = <22 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-0 = <&pinctrl_can1>;
-+		pinctrl-names = "default";
-+		spi-max-frequency = <10000000>;
-+		xceiver-supply = <&reg_can1_stby>;
-+	};
-+
-+	can@1 {
-+		compatible = "microchip,mcp25625";
-+		reg = <1>;
-+		clocks = <&mcp_clock>;
-+		interrupt-parent = <&gpio3>;
-+		interrupts = <6 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-0 = <&pinctrl_can2>;
-+		pinctrl-names = "default";
-+		spi-max-frequency = <10000000>;
-+		xceiver-supply = <&reg_can2_stby>;
-+	};
-+};
-+
-+&ecspi3 {
-+	pinctrl-0 = <&pinctrl_ecspi3>;
-+	pinctrl-names = "default";
-+	cs-gpios = <
-+		&gpio1 9 GPIO_ACTIVE_LOW
-+		&gpio1 2 GPIO_ACTIVE_LOW
-+	>;
-+	status = "okay";
-+
-+	connector@0 {
-+		compatible = "gocontroll,moduline-module-slot";
-+		reg = <0>;
-+		i2c-bus = <&i2c2>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <10 IRQ_TYPE_EDGE_FALLING>;
-+		reset-gpios = <&gpio1 7 GPIO_ACTIVE_LOW>;
-+		slot-number = <1>;
-+		spi-max-frequency = <54000000>;
-+		sync-gpios = <&gpio3 7 GPIO_ACTIVE_HIGH>;
-+		vddhpp-supply = <&reg_6v4>;
-+		vddp-supply = <&reg_5v0>;
-+		vdd-supply = <&reg_vdd_3v3>;
-+	};
-+
-+	connector@1 {
-+		compatible = "gocontroll,moduline-module-slot";
-+		reg = <1>;
-+		i2c-bus = <&i2c2>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <5 IRQ_TYPE_EDGE_FALLING>;
-+		reset-gpios = <&gpio5 21 GPIO_ACTIVE_LOW>;
-+		slot-number = <2>;
-+		spi-max-frequency = <54000000>;
-+		sync-gpios = <&gpio3 7 GPIO_ACTIVE_HIGH>;
-+		vddhpp-supply = <&reg_6v4>;
-+		vddp-supply = <&reg_5v0>;
-+		vdd-supply = <&reg_vdd_3v3>;
-+	};
-+};
-+
-+&gpu_2d {
-+	status = "disabled";
-+};
-+
-+&gpu_3d {
-+	status = "disabled";
-+};
-+
-+&i2c2 {
-+	clock-frequency = <400000>;
-+	pinctrl-0 = <&pinctrl_i2c2>;
-+	pinctrl-1 = <&pinctrl_i2c2_gpio>;
-+	pinctrl-names = "default", "gpio";
-+	scl-gpios = <&gpio5 16 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+	sda-gpios = <&gpio5 17 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+	status = "okay";
-+};
-+
-+&i2c3 {
-+	clock-frequency = <400000>;
-+	pinctrl-0 = <&pinctrl_i2c3>;
-+	pinctrl-1 = <&pinctrl_i2c3_gpio>;
-+	pinctrl-names = "default", "gpio";
-+	scl-gpios = <&gpio5 18 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+	sda-gpios = <&gpio5 19 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+	status = "okay";
-+
-+	lp5012@14 {
-+		compatible = "ti,lp5012";
-+		reg = <0x14>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		multi-led@0 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0>;
-+			color = <LED_COLOR_ID_RGB>;
-+			label = "case-led1";
-+
-+			led@0 {
-+				reg = <0>;
-+				color = <LED_COLOR_ID_RED>;
-+			};
-+
-+			led@1 {
-+				reg = <1>;
-+				color = <LED_COLOR_ID_GREEN>;
-+			};
-+
-+			led@2 {
-+				reg = <2>;
-+				color = <LED_COLOR_ID_BLUE>;
-+			};
-+		};
-+
-+		multi-led@1 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <1>;
-+			color = <LED_COLOR_ID_RGB>;
-+			label = "case-led2";
-+
-+			led@0 {
-+				reg = <0>;
-+				color = <LED_COLOR_ID_RED>;
-+			};
-+
-+			led@1 {
-+				reg = <1>;
-+				color = <LED_COLOR_ID_GREEN>;
-+			};
-+
-+			led@2 {
-+				reg = <2>;
-+				color = <LED_COLOR_ID_BLUE>;
-+			};
-+		};
-+
-+		multi-led@2 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <2>;
-+			color = <LED_COLOR_ID_RGB>;
-+			label = "case-led3";
-+
-+			led@0 {
-+				reg = <0>;
-+				color = <LED_COLOR_ID_RED>;
-+			};
-+
-+			led@1 {
-+				reg = <1>;
-+				color = <LED_COLOR_ID_GREEN>;
-+			};
-+
-+			led@2 {
-+				reg = <2>;
-+				color = <LED_COLOR_ID_BLUE>;
-+			};
-+		};
-+
-+		multi-led@3 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <3>;
-+			color = <LED_COLOR_ID_RGB>;
-+			label = "case-led4";
-+
-+			led@0 {
-+				reg = <0>;
-+				color = <LED_COLOR_ID_RED>;
-+			};
-+
-+			led@1 {
-+				reg = <1>;
-+				color = <LED_COLOR_ID_GREEN>;
-+			};
-+
-+			led@2 {
-+				reg = <2>;
-+				color = <LED_COLOR_ID_BLUE>;
-+			};
-+		};
-+	};
-+
-+	accelerometer@18 {
-+		compatible = "st,lis2dw12";
-+		reg = <0x18>;
-+		interrupt-parent = <&gpio5>;
-+		interrupts = <3 IRQ_TYPE_EDGE_RISING>, <5 IRQ_TYPE_EDGE_RISING>;
-+		pinctrl-0 = <&pinctrl_lis_int>;
-+		pinctrl-names = "default";
-+		vddio-supply = <&reg_vdd_3v3>;
-+		vdd-supply = <&reg_vdd_3v3>;
-+	};
-+
-+	humidity-sensor@5f {
-+		compatible = "st,hts221";
-+		reg = <0x5f>;
-+		interrupt-parent = <&gpio3>;
-+		interrupts = <10 IRQ_TYPE_EDGE_RISING>;
-+		pinctrl-0 = <&pinctrl_hts_int>;
-+		pinctrl-names = "default";
-+		vdd-supply = <&reg_vdd_3v3>;
-+	};
-+};
-+
-+&iomuxc {
-+	pinctrl_bt: btgrp {
-+		fsl,pins = <
-+			MX8MM_IOMUXC_GPIO1_IO01_GPIO1_IO1
-+				MX8MM_DSE_X1
-+			MX8MM_IOMUXC_SAI5_MCLK_GPIO3_IO25
-+				(MX8MM_PULL_UP | MX8MM_PULL_ENABLE | MX8MM_HYS_SCHMITT)
-+			MX8MM_IOMUXC_ECSPI2_SS0_GPIO5_IO13
-+				MX8MM_DSE_X1
-+		>;
-+	};
-+
-+	pinctrl_can1: can1grp {
-+		fsl,pins = <
-+			MX8MM_IOMUXC_SAI2_TXC_GPIO4_IO25
-+				(MX8MM_PULL_UP | MX8MM_PULL_ENABLE)
-+			MX8MM_IOMUXC_SAI5_RXD1_GPIO3_IO22
-+				(MX8MM_PULL_UP | MX8MM_PULL_ENABLE | MX8MM_HYS_SCHMITT)
-+		>;
-+	};
-+
-+	pinctrl_can1_reg: can1reggrp {
-+		fsl,pins = <
-+			MX8MM_IOMUXC_SD2_CD_B_GPIO2_IO12
-+				(MX8MM_DSE_X2 | MX8MM_FSEL_FAST | MX8MM_PULL_UP | MX8MM_PULL_ENABLE)
-+		>;
-+	};
-+
-+	pinctrl_can2: can2grp {
-+		fsl,pins = <
-+			MX8MM_IOMUXC_NAND_CLE_GPIO3_IO5
-+				(MX8MM_PULL_UP | MX8MM_PULL_ENABLE)
-+			MX8MM_IOMUXC_NAND_DATA00_GPIO3_IO6
-+				(MX8MM_PULL_UP | MX8MM_PULL_ENABLE | MX8MM_HYS_SCHMITT)
-+		>;
-+	};
-+
-+	pinctrl_can2_reg: can2reggrp {
-+		fsl,pins = <
-+			MX8MM_IOMUXC_NAND_RE_B_GPIO3_IO15
-+				(MX8MM_DSE_X2 | MX8MM_FSEL_FAST | MX8MM_PULL_UP | MX8MM_PULL_ENABLE)
-+		>;
-+	};
-+
-+	pinctrl_ecspi1: ecspi1grp {
-+		fsl,pins = <
-+			MX8MM_IOMUXC_ECSPI1_MOSI_ECSPI1_MOSI
-+				MX8MM_DSE_X4
-+			MX8MM_IOMUXC_ECSPI1_MISO_ECSPI1_MISO
-+				(MX8MM_DSE_X4 | MX8MM_HYS_SCHMITT)
-+			MX8MM_IOMUXC_ECSPI1_SCLK_ECSPI1_SCLK
-+				MX8MM_DSE_X4
-+			MX8MM_IOMUXC_SAI2_MCLK_GPIO4_IO27
-+				MX8MM_DSE_X1
-+			MX8MM_IOMUXC_SAI5_RXD2_GPIO3_IO23
-+				MX8MM_DSE_X1
-+			MX8MM_IOMUXC_NAND_CE0_B_GPIO3_IO1
-+				MX8MM_DSE_X1
-+		>;
-+	};
-+
-+	pinctrl_ecspi2: ecspi2grp {
-+		fsl,pins = <
-+			MX8MM_IOMUXC_ECSPI2_MOSI_ECSPI2_MOSI
-+				MX8MM_DSE_X4
-+			MX8MM_IOMUXC_ECSPI2_MISO_ECSPI2_MISO
-+				(MX8MM_DSE_X4 | MX8MM_HYS_SCHMITT)
-+			MX8MM_IOMUXC_ECSPI2_SCLK_ECSPI2_SCLK
-+				MX8MM_DSE_X4
-+			MX8MM_IOMUXC_SAI5_RXD3_GPIO3_IO24
-+				MX8MM_DSE_X1
-+			MX8MM_IOMUXC_NAND_DATA03_GPIO3_IO9
-+				MX8MM_DSE_X1
-+		>;
-+	};
-+
-+	pinctrl_ecspi3: ecspi3grp {
-+		fsl,pins = <
-+			MX8MM_IOMUXC_UART1_TXD_ECSPI3_MOSI
-+				MX8MM_DSE_X4
-+			MX8MM_IOMUXC_UART2_RXD_ECSPI3_MISO
-+				(MX8MM_DSE_X4 | MX8MM_HYS_SCHMITT)
-+			MX8MM_IOMUXC_UART1_RXD_ECSPI3_SCLK
-+				MX8MM_DSE_X4
-+			MX8MM_IOMUXC_GPIO1_IO09_GPIO1_IO9
-+				MX8MM_DSE_X1
-+			MX8MM_IOMUXC_GPIO1_IO02_GPIO1_IO2
-+				MX8MM_DSE_X1
-+		>;
-+	};
-+
-+	pinctrl_hts_int: htsintgrp {
-+		fsl,pins = <
-+			MX8MM_IOMUXC_NAND_DATA04_GPIO3_IO10
-+				(MX8MM_PULL_ENABLE | MX8MM_HYS_SCHMITT)
-+		>;
-+	};
-+
-+	pinctrl_i2c2: i2c2grp {
-+		fsl,pins = <
-+			MX8MM_IOMUXC_I2C2_SCL_I2C2_SCL
-+				MX8MM_I2C_DEFAULT
-+			MX8MM_IOMUXC_I2C2_SDA_I2C2_SDA
-+				MX8MM_I2C_DEFAULT
-+		>;
-+	};
-+
-+	pinctrl_i2c2_gpio: i2c2-gpiogrp {
-+		fsl,pins = <
-+			MX8MM_IOMUXC_I2C2_SCL_GPIO5_IO16
-+				MX8MM_I2C_DEFAULT
-+			MX8MM_IOMUXC_I2C2_SDA_GPIO5_IO17
-+				MX8MM_I2C_DEFAULT
-+		>;
-+	};
-+
-+	pinctrl_i2c3: i2c3grp {
-+		fsl,pins = <
-+			MX8MM_IOMUXC_I2C3_SCL_I2C3_SCL
-+				MX8MM_I2C_DEFAULT
-+			MX8MM_IOMUXC_I2C3_SDA_I2C3_SDA
-+				MX8MM_I2C_DEFAULT
-+		>;
-+	};
-+
-+	pinctrl_i2c3_gpio: i2c3-gpiogrp {
-+		fsl,pins = <
-+			MX8MM_IOMUXC_I2C3_SCL_GPIO5_IO18
-+				MX8MM_I2C_DEFAULT
-+			MX8MM_IOMUXC_I2C3_SDA_GPIO5_IO19
-+				MX8MM_I2C_DEFAULT
-+		>;
-+	};
-+
-+	pinctrl_lis_int: lisintgrp {
-+		fsl,pins = <
-+			MX8MM_IOMUXC_SPDIF_TX_GPIO5_IO3
-+				(MX8MM_PULL_ENABLE | MX8MM_HYS_SCHMITT)
-+			MX8MM_IOMUXC_SPDIF_EXT_CLK_GPIO5_IO5
-+				(MX8MM_PULL_ENABLE | MX8MM_HYS_SCHMITT)
-+		>;
-+	};
-+
-+	pinctrl_reg_comm: reg_commgrp {
-+		fsl,pins = <
-+			MX8MM_IOMUXC_GPIO1_IO11_GPIO1_IO11
-+				MX8MM_DSE_X1
-+		>;
-+	};
-+
-+	pinctrl_sysfs_gpios: sysfsgpiogrp {
-+		fsl,pins = <
-+			MX8MM_IOMUXC_GPIO1_IO07_GPIO1_IO7
-+				MX8MM_DSE_X1
-+			MX8MM_IOMUXC_I2C4_SDA_GPIO5_IO21
-+				MX8MM_DSE_X1
-+			MX8MM_IOMUXC_SAI3_RXFS_GPIO4_IO28
-+				MX8MM_DSE_X1
-+			MX8MM_IOMUXC_SAI5_RXD0_GPIO3_IO21
-+				MX8MM_DSE_X1
-+			MX8MM_IOMUXC_SD2_WP_GPIO2_IO20
-+				MX8MM_DSE_X1
-+			MX8MM_IOMUXC_GPIO1_IO00_GPIO1_IO0
-+				MX8MM_DSE_X1
-+			MX8MM_IOMUXC_GPIO1_IO04_GPIO1_IO4
-+				MX8MM_DSE_X1
-+			MX8MM_IOMUXC_GPIO1_IO06_GPIO1_IO6
-+				MX8MM_DSE_X1
-+		>;
-+	};
-+
-+	pinctrl_uart1: uart1grp {
-+		fsl,pins = <
-+			MX8MM_IOMUXC_SAI2_RXC_UART1_DCE_RX
-+				(MX8MM_PULL_UP | MX8MM_PULL_ENABLE)
-+			MX8MM_IOMUXC_SAI2_RXFS_UART1_DCE_TX
-+				(MX8MM_PULL_UP | MX8MM_PULL_ENABLE)
-+			MX8MM_IOMUXC_SAI2_RXD0_UART1_DCE_RTS_B
-+				(MX8MM_PULL_UP | MX8MM_PULL_ENABLE)
-+			MX8MM_IOMUXC_SAI2_TXFS_UART1_DCE_CTS_B
-+				(MX8MM_PULL_UP | MX8MM_PULL_ENABLE)
-+		>;
-+	};
-+
-+	pinctrl_uart2: uart2grp {
-+		fsl,pins = <
-+			MX8MM_IOMUXC_SAI3_TXFS_UART2_DCE_RX
-+				(MX8MM_PULL_UP | MX8MM_PULL_ENABLE)
-+			MX8MM_IOMUXC_SAI3_TXC_UART2_DCE_TX
-+				(MX8MM_PULL_UP | MX8MM_PULL_ENABLE)
-+			MX8MM_IOMUXC_SAI3_RXD_UART2_DCE_RTS_B
-+				(MX8MM_PULL_UP | MX8MM_PULL_ENABLE)
-+			MX8MM_IOMUXC_SAI3_RXC_UART2_DCE_CTS_B
-+				(MX8MM_PULL_UP | MX8MM_PULL_ENABLE)
-+		>;
-+	};
-+
-+	pinctrl_uart3: uart3grp {
-+		fsl,pins = <
-+			MX8MM_IOMUXC_UART3_RXD_UART3_DCE_RX
-+				(MX8MM_PULL_UP | MX8MM_PULL_ENABLE)
-+			MX8MM_IOMUXC_UART3_TXD_UART3_DCE_TX
-+				(MX8MM_PULL_UP | MX8MM_PULL_ENABLE)
-+		>;
-+	};
-+
-+	pinctrl_usdhc2: pinctrlusdhc2grp {
-+		fsl,pins = <
-+			MX8MM_IOMUXC_SD2_CLK_USDHC2_CLK
-+				(MX8MM_DSE_X2 | MX8MM_FSEL_FAST | MX8MM_PULL_ENABLE)
-+			MX8MM_IOMUXC_SD2_CMD_USDHC2_CMD
-+				(MX8MM_DSE_X2 | MX8MM_USDHC_DATA_DEFAULT)
-+			MX8MM_IOMUXC_SD2_DATA0_USDHC2_DATA0
-+				(MX8MM_DSE_X2 | MX8MM_USDHC_DATA_DEFAULT)
-+			MX8MM_IOMUXC_SD2_DATA1_USDHC2_DATA1
-+				(MX8MM_DSE_X2 | MX8MM_USDHC_DATA_DEFAULT)
-+			MX8MM_IOMUXC_SD2_DATA2_USDHC2_DATA2
-+				(MX8MM_DSE_X2 | MX8MM_USDHC_DATA_DEFAULT)
-+			MX8MM_IOMUXC_SD2_DATA3_USDHC2_DATA3
-+				(MX8MM_DSE_X2 | MX8MM_USDHC_DATA_DEFAULT)
-+		>;
-+	};
-+
-+	pinctrl_wl_int: wlintgrp {
-+		fsl,pins = <
-+			MX8MM_IOMUXC_SAI5_RXC_GPIO3_IO20
-+				(MX8MM_PULL_UP | MX8MM_HYS_SCHMITT | MX8MM_PULL_ENABLE)
-+		>;
-+	};
-+
-+	pinctrl_wl_reg: wlreggrp {
-+		fsl,pins = <
-+			MX8MM_IOMUXC_UART4_RXD_GPIO5_IO28
-+				MX8MM_DSE_X1
-+		>;
-+	};
-+};
-+
-+&uart1 {
-+	pinctrl-0 = <&pinctrl_uart1>;
-+	pinctrl-names = "default";
-+	uart-has-rtscts;
-+	status = "okay";
-+
-+	bluetooth {
-+		compatible = "infineon,cyw43439-bt", "brcm,bcm4329-bt";
-+		device-wakeup-gpios = <&gpio5 13 GPIO_ACTIVE_HIGH>;
-+		interrupt-names = "host-wakeup";
-+		interrupt-parent = <&gpio3>;
-+		interrupts = <25 IRQ_TYPE_EDGE_FALLING>;
-+		max-speed = <921600>;
-+		pinctrl-0 = <&pinctrl_bt>;
-+		pinctrl-names = "default";
-+		shutdown-gpios = <&gpio1 1 GPIO_ACTIVE_HIGH>;
-+		vbat-supply = <&reg_3v3_comm>;
-+		vddio-supply = <&reg_3v3_comm>;
-+	};
-+};
-+
-+&uart2 {
-+	pinctrl-0 = <&pinctrl_uart2>;
-+	pinctrl-names = "default";
-+	uart-has-rtscts;
-+	status = "okay";
-+};
-+
-+&uart3 {
-+	pinctrl-0 = <&pinctrl_uart3>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&usbotg1 {
-+	disable-over-current;
-+	dr_mode = "peripheral";
-+	status = "okay";
-+};
-+
-+&usbotg2 {
-+	disable-over-current;
-+	dr_mode = "host";
-+	vbus-supply = <&reg_5v0>;
-+	status = "okay";
-+};
-+
-+&usdhc2 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	cap-power-off-card;
-+	keep-power-in-suspend;
-+	max-frequency = <50000000>;
-+	mmc-pwrseq = <&wifi_pwrseq>;
-+	non-removable;
-+	pinctrl-0 = <&pinctrl_usdhc2>;
-+	pinctrl-names = "default";
-+	sd-uhs-sdr25;
-+	vmmc-supply = <&reg_3v3_comm>;
-+	status = "okay";
-+
-+	wifi@1 {
-+		compatible = "infineon,cyw43439-fmac", "brcm,bcm4329-fmac";
-+		reg = <1>;
-+		pinctrl-0 = <&pinctrl_wl_int>;
-+		pinctrl-names = "default";
-+		interrupt-names = "host-wake";
-+		interrupt-parent = <&gpio3>;
-+		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
-+		brcm,board-type = "GOcontroll,moduline";
-+	};
-+};
-+
-+&vpu_blk_ctrl {
-+	status = "disabled";
-+};
-+
-+&vpu_g1 {
-+	status = "disabled";
-+};
-+
-+&vpu_g2 {
-+	status = "disabled";
-+};
-+
-+&wdog1 {
-+	status = "okay";
-+};
+V7:
+  * Fix maintainer entry to alphabetical position
+
+V6:
+  * Replace procfs with debugfs interface
+  * Fix typos
+
+V5:
+  * Support key=value input format
+  * Support multiple watchpoints
+  * Support watching instruction inside loop
+  * Support recursion depth tracking with generation
+  * Ignore triggers from fprobe trampoline
+  * Split watch_on into watch_get and watch_on to fail fast
+  * Handle ksw_stack_prepare_watch error
+  * Rewrite silent corruption test
+  * Add multiple watchpoints test
+  * Add an example in documentation
+
+V4:
+  https://lore.kernel.org/all/20250912101145.465708-1-wangjinchao600@gmail.com/
+  * Solve the lockdep issues with:
+    * per-task KStackWatch context to track depth
+    * atomic flag to protect watched_addr
+  * Use refactored version of arch_reinstall_hw_breakpoint
+
+V3:
+  https://lore.kernel.org/all/20250910052335.1151048-1-wangjinchao600@gmail.com/
+  * Use modify_wide_hw_breakpoint_local() (from Masami)
+  * Add atomic flag to restrict /proc/kstackwatch to a single opener
+  * Protect stack probe with an atomic PID flag
+  * Handle CPU hotplug for watchpoints
+  * Add preempt_disable/enable in ksw_watch_on_local_cpu()
+  * Introduce const struct ksw_config *ksw_get_config(void) and use it
+  * Switch to global watch_attr, remove struct watch_info
+  * Validate local_var_len in parser()
+  * Handle case when canary is not found
+  * Use dump_stack() instead of show_regs() to allow module build
+  * Reduce logging and comments
+  * Format logs with KBUILD_MODNAME
+  * Remove unused headers
+  * Add new document
+
+V2:
+  https://lore.kernel.org/all/20250904002126.1514566-1-wangjinchao600@gmail.com/
+  * Make hardware breakpoint and stack operations architecture-independent.
+
+V1:
+  https://lore.kernel.org/all/20250828073311.1116593-1-wangjinchao600@gmail.com/
+  * Replaced kretprobe with fprobe for function exit hooking, as suggested
+    by Masami Hiramatsu
+  * Introduced per-task depth logic to track recursion across scheduling
+  * Removed the use of workqueue for a more efficient corruption check
+  * Reordered patches for better logical flow
+  * Simplified and improved commit messages throughout the series
+  * Removed initial archcheck which should be improved later
+  * Replaced the multiple-thread test with silent corruption test
+  * Split self-tests into a separate patch to improve clarity.
+  * Added a new entry for KStackWatch to the MAINTAINERS file.
+
+RFC:
+  https://lore.kernel.org/lkml/20250818122720.434981-1-wangjinchao600@gmail.com/
+
+---
+
+The series is structured as follows:
+
+Jinchao Wang (22):
+  x86/hw_breakpoint: Unify breakpoint install/uninstall
+  x86/hw_breakpoint: Add arch_reinstall_hw_breakpoint
+  mm/ksw: add build system support
+  mm/ksw: add ksw_config struct and parser
+  mm/ksw: add singleton debugfs interface
+  mm/ksw: add HWBP pre-allocation
+  mm/ksw: Add atomic watchpoint management api
+  mm/ksw: ignore false positives from exit trampolines
+  mm/ksw: support CPU hotplug
+  sched: add per-task context
+  mm/ksw: add entry kprobe and exit fprobe management
+  mm/ksw: add per-task ctx tracking
+  mm/ksw: resolve stack watch addr and len
+  mm/ksw: manage probe and HWBP lifecycle via procfs
+  mm/ksw: add self-debug helpers
+  mm/ksw: add test module
+  mm/ksw: add stack overflow test
+  mm/ksw: add recursive depth test
+  mm/ksw: add multi-thread corruption test cases
+  tools/ksw: add test script
+  docs: add KStackWatch document
+  MAINTAINERS: add entry for KStackWatch
+
+Masami Hiramatsu (Google) (1):
+  HWBP: Add modify_wide_hw_breakpoint_local() API
+
+ Documentation/dev-tools/index.rst       |   1 +
+ Documentation/dev-tools/kstackwatch.rst | 314 ++++++++++++++++++++++
+ MAINTAINERS                             |   8 +
+ arch/Kconfig                            |  10 +
+ arch/x86/Kconfig                        |   1 +
+ arch/x86/include/asm/hw_breakpoint.h    |   8 +
+ arch/x86/kernel/hw_breakpoint.c         | 148 +++++-----
+ include/linux/hw_breakpoint.h           |   6 +
+ include/linux/kstackwatch_types.h       |  14 +
+ include/linux/sched.h                   |   5 +
+ kernel/events/hw_breakpoint.c           |  37 +++
+ mm/Kconfig.debug                        |  18 ++
+ mm/Makefile                             |   1 +
+ mm/kstackwatch/Makefile                 |   8 +
+ mm/kstackwatch/kernel.c                 | 292 ++++++++++++++++++++
+ mm/kstackwatch/kstackwatch.h            |  60 +++++
+ mm/kstackwatch/stack.c                  | 240 +++++++++++++++++
+ mm/kstackwatch/test.c                   | 343 ++++++++++++++++++++++++
+ mm/kstackwatch/watch.c                  | 305 +++++++++++++++++++++
+ tools/kstackwatch/kstackwatch_test.sh   |  52 ++++
+ 20 files changed, 1809 insertions(+), 62 deletions(-)
+ create mode 100644 Documentation/dev-tools/kstackwatch.rst
+ create mode 100644 include/linux/kstackwatch_types.h
+ create mode 100644 mm/kstackwatch/Makefile
+ create mode 100644 mm/kstackwatch/kernel.c
+ create mode 100644 mm/kstackwatch/kstackwatch.h
+ create mode 100644 mm/kstackwatch/stack.c
+ create mode 100644 mm/kstackwatch/test.c
+ create mode 100644 mm/kstackwatch/watch.c
+ create mode 100755 tools/kstackwatch/kstackwatch_test.sh
 
 -- 
-2.51.0
-
+2.43.0
 
 
