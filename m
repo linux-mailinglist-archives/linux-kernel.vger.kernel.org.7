@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-847528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B605DBCB1B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 00:35:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA420BCB1C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 00:36:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A2273A8202
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 22:35:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 107BE3C59C4
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 22:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD504286D63;
-	Thu,  9 Oct 2025 22:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A942874E1;
+	Thu,  9 Oct 2025 22:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hHXhxRKT"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HwHo41s4"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C92E285061
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A7C28688F
 	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 22:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760049322; cv=none; b=TWVy+zYnz7spZ/wBsTNpLnLdudLE7iIglGGm5dR2oRGbBgIBFdatK/A1WhIinIVf/WYNMyOElVhefF6707zcG1MdNO86JCYi91x1NLl9+N842EnpNPgXRSLroJh6gRQJHGdyP/FziBJdiLSqU7xxmYu5KeSPweS2P+OLk1y+dKU=
+	t=1760049322; cv=none; b=IMXazVuqDbkJVSq+jZ2Gw8GQklhjnzCL1e1nxt/gjhYN9BGj8Hkn34I40t9PR6mE5Xe3R+S0lDWYjRj7qPxxYxlOuFIQl7E6dtf0GLyoFW3hRyKfyW9YMJeb7JEc0aR2B16fOfT2BB8lBF7TspLaPK+Z/zwW7jt8Kygug2Yoo3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1760049322; c=relaxed/simple;
-	bh=Ma3WiNIHzHgVWvB75ihBb7ddRrXc9o4BCeyvWzcCt/U=;
+	bh=PiqFJX7DaQjelivbGJ1zkt3d8F0vNnikrdG+r1OY1/U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uvGE85hFIbRsfVwpSSVO5qT0JbAnEVAbxuU4+DiWDNGJ9AbxORrrUUaoZYYp9obMHs0jqq4LBr6y9o2l1SNICUkkTrYefj2W8cLTa0W1FSNMPM0BCI7hsyRDmFQFsVEZ+fubBK7vHoQ5Q6o8MluiO6I50MvAjx1Vl0HHuzAP+6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hHXhxRKT; arc=none smtp.client-ip=209.85.218.48
+	 MIME-Version; b=bRK/BJnmJQdLcnBGauzsLrs/+Oeo+F7ShYehi7AkkaD02R65m+C3lQ5SCdUFv0VFcCTUOIY+uWZQOyPiAgsLjsLcMVQ4WlBqq8cnU9bIO5gUegTtj6JMCZZkrMy6F3GBeZQza/Ic4BC8/398Dovvq3DGp2fL3Hl6EmA4bKrjwvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HwHo41s4; arc=none smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-afcb7ae6ed0so225613866b.3
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-61feb87fe26so2003143a12.1
         for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 15:35:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760049318; x=1760654118; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760049319; x=1760654119; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kAgNJ97KzVAc0b0XAVEvm+MpAppTMVkDqF2/2p9y7xI=;
-        b=hHXhxRKTzUT0t1eNOg6m7VkFqqKM9KhCtziRESisvbLJHD4I1NZskZHNJ7UUYoudQT
-         Y4Vs9piqylIVx+Jyv43k3iTKl9W5AmINug5yYMhf4avcYx86Vi5b0ZZtCHRfzUCmnUUa
-         SZ25X/LWHp/g3sy5x2SpoMTS0rMdNSch3FH9OkpEolrdUa63EfufLnaipzXFGzWiWiI1
-         2Adctqo0upEL8AvKvWQ0F07sLD8Yh8YNOWdQp3cnM1p49PxPn9nkIdAbRoZ8IZ8/NibQ
-         fO1Kj7jhI5UsVIFqbUjVH6E3LlYK2LQtjSobVsqLA9WVWanuUe0vyDzz3WzZ9kG+vAFn
-         zRgg==
+        bh=kOyZxlvZUezvZb4UBJSZAR11hnNz49iBIAa7TvCXQCI=;
+        b=HwHo41s4xilmqNXVQDwdBBsVN43WCmEZaW0QBBf9Mjq6lbPq2QnUixXnyXYSNvryMJ
+         gcCwsT82YI8uV+oELEbPIO74dRgpILXj9WMePX4pE5ad4h0cELG7me2w0ut6qloH+Vw/
+         MO1CeTZ6P1IAIUBROgkP+vE1ksf5FrWU57GUTzxJNIss9myWYTrgHcFfm5JPkqBrM91Z
+         STBvMDkDwJ6jpB77wwN1ZL3eT07uIzuj11Re7e80u0tTqLlEtUsqw83PiKtyWxxKRclx
+         Y8Lr/dPGDe0ZlS5SN/2EGBuvEKrbqAwdTA7yyNT9/QkkMUDfK3QXY4rrrbf8cb6R44X8
+         nDng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1760049319; x=1760654119;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kAgNJ97KzVAc0b0XAVEvm+MpAppTMVkDqF2/2p9y7xI=;
-        b=UkzUDnq/u7cCCrGYtpF0FCMOvVRekMK5J4DvGiB2TMmWbgd2k3mwfc2n6icyUAFZV5
-         HUE3MN4Cnat3Ohzmoi2NjPhr6E0iBXQMzBekTUHy1tflOS+xfeSmTj58pzapZIlK/NTN
-         kH0F5nPxzUuA+ua94V33+92FaeuvxjBrD/3DLa3CPtVtxmJGm8BDDn+8YPso49QRxlB/
-         CxyXEPmOawrhLXE+R7UZTD2OpA/inf9U0RBTjDE6seczG+Id6jXFYUX7StPrOR9nBEkB
-         spp/0UHZQhYMWPGKbrf+CufGi9KshEXSgElC17H+N5GrqJP7sBgozK4+PZo1+j5c1qJk
-         lr3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXSbJ3MvPTruRpXhM5l54kvi9yp5eSSaw3vzDt72RhSlJmucf9CfepvjodnxkxaShNXPBSMN7zRE+c1wkM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWodBknyHXAJkSFfzI16C4qzoJcNQae0B93DyZ2RopUIMcbW6G
-	OtLyGbOvuzxTQWvcyrAO0uJymPCfndbntAiYxUYHbzvCiXjs3DKrsiu/
-X-Gm-Gg: ASbGncsF+YwewB12xJeYCX5/hYFJdru4NGed72LcMc/lkXRJSX2rljkXcCBOHcd4d9k
-	4VSe8asKUCwVLk/Bp4G1CcJ2lMFNmL1F5234h5gh8w9BISqqmEtUULknTRKy97WByoAQC7BPbW5
-	kynjPMP2/xmyu/wGb3FfflmVRftKlkMAjkNrrOD+mjy8+jrVx72NldAKD3SB2R6JV5NbGVS00mH
-	roAr8HqtBku7JrAXGIauN3ZAjgWd7P2I3QRl4937CAHJGeo6fywUqXU8Ncp/2Fl2cscOxoCzTng
-	0CqlISTiVvCmFYp776Qy2qxcxRRZW4tu3ilWQT37mzqlKKk8Lh6LvISJz7h+WWHnTkkA2goEDng
-	qisKPgY/AU+q5Gq31LmZ1L16dsr8diBTibou2LhC2653ZWFz0qg==
-X-Google-Smtp-Source: AGHT+IHoJj/Q+zlkewAtr1USEimUUg4SieqlDfunBq89n6GPaMjS3S5NJYnL6Jp2xNHUqKpGw2WnLQ==
-X-Received: by 2002:a17:907:d1c:b0:b2d:d7ba:8e7b with SMTP id a640c23a62f3a-b50aaa9ea3dmr976779366b.23.1760049318401;
-        Thu, 09 Oct 2025 15:35:18 -0700 (PDT)
+        bh=kOyZxlvZUezvZb4UBJSZAR11hnNz49iBIAa7TvCXQCI=;
+        b=vOfgpz516qbsMKi8ivam22sGUFpucbBsZ7TdgXb+K5vsTrH2/FPS3glNo3B25TfNbO
+         CHbeQo6TU1Er7ltMcxOazuWHl/hIZJMxnS5nDnt2Q6ZbAR+EwX3G6EiG5ciQvbyNBUTK
+         5RE8MlOrqEiQ0RJTLq/own4uUipB9yTjNQK516mRooDUOjkra3h6YEIVeEI1RQ7PsZec
+         TuDRysH9rk1s8RCIZBFGqqCu0KzIntEKnmyjFQeIcEN/KZoJuo/MGOS9LTjfO4QFK051
+         1D8IBuRV50G6NZiWa6fsbU9jCgjJgbeYh5dX2VpVZLUNjq1kK/74DJDOaTOge0Dfjlid
+         OAHA==
+X-Forwarded-Encrypted: i=1; AJvYcCVLdHE8xN6/S6PpYwcahpIXwyL7GvO6mwO0mc7nUUqNcTNIJX3zncqQQ7dEGlQIETwb0LDYmJXqhWz4xNg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHDZVN9PsevkfqxscbTdY9n8h6JjFQZdsvhSx9u6iKdaGvG2J2
+	3p078iF+nlP5TUbbE9ggsU5gXwM72OOvezxNofpTWC/lbOnQ7XfjR4qN
+X-Gm-Gg: ASbGnctt72dr5a/rd9UqK5T6TvRgqswS5LV6NKEtC8NN/qKlMid5ccGcrofXtcf43xk
+	z50C6zuQ2I0rGCkHARKGH54FnynhBIfMGNmOadJTvbfqWFR7J90GFS+Li+VbbuzWzibNZ2A7PjB
+	ertJMt5TzIFjWYt4zCRlei9+244IxuL19/HmxthlfwZ+OkpyGIOns9Ral5tJz/WUCBSKa+lA9HN
+	tbtOeUoIl++G8DEFrIIOanGN6dHlJNF04Ds2kT2ja1cbGXFCnDhUcvue4DzAS/wqOcJxDXUN3LB
+	dgYG+F9HBT51V/0yk4pk8NptPMTmMFiLpKSFbMgJeINyA9X3hDkuR4EPRxqFs3vpYA+lZCbiPGy
+	fd1nQ+H9P1CAx6pVArmia/9yqpNF1SYcdwzBUPwiElVzgltGUPQ==
+X-Google-Smtp-Source: AGHT+IHpvdQ3Lze478kQb743ESJRaIFc+pf9zKNzzGA7lcUz5m44CBD9OWwEjiGXY+Gi37Oo35E6PQ==
+X-Received: by 2002:a17:907:26c8:b0:b3f:ccac:af38 with SMTP id a640c23a62f3a-b50ac1cc387mr1058532666b.30.1760049319056;
+        Thu, 09 Oct 2025 15:35:19 -0700 (PDT)
 Received: from builder.. ([2001:9e8:f121:c116:be24:11ff:fe30:5d85])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d5cad80bsm74383766b.16.2025.10.09.15.35.17
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d5cad80bsm74383766b.16.2025.10.09.15.35.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 09 Oct 2025 15:35:18 -0700 (PDT)
 From: Jonas Jelonek <jelonek.jonas@gmail.com>
@@ -82,9 +82,9 @@ Cc: linux-gpio@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Jonas Jelonek <jelonek.jonas@gmail.com>
-Subject: [RFC PATCH v1 1/2] dt-bindings: gpio: add gpio-split controller
-Date: Thu,  9 Oct 2025 22:35:00 +0000
-Message-ID: <20251009223501.570949-2-jelonek.jonas@gmail.com>
+Subject: [RFC PATCH v1 2/2] gpio: add gpio-split driver
+Date: Thu,  9 Oct 2025 22:35:01 +0000
+Message-ID: <20251009223501.570949-3-jelonek.jonas@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20251009223501.570949-1-jelonek.jonas@gmail.com>
 References: <20251009223501.570949-1-jelonek.jonas@gmail.com>
@@ -96,102 +96,303 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add dt-schema for a virtual gpio-split controller which exposes virtual
-GPIOs for a shared GPIO controlled by a multiplexer, e.g. a gpio-mux.
+Add a new driver which allows to split a physical GPIO into multiple
+virtual GPIOs by using a multiplexer.
 
-The gpio-split controller is a gpio-controller, thus has mostly the same
-semantics. However, it requires a mux-control to be specified upon which
-it will operate.
+For now, this doesn't support advanced features like IRQs, just normal
+IN and OUT functionality of GPIOs.
+
+This can help in various usecases. One practical case is the special
+hardware design of the Realtek-based XS1930-10 switch from Zyxel. It
+features two SFP+ ports/cages whose signals are wired to directly to the
+switch SoC. Although Realtek SoCs are short on GPIOs, there are usually
+enough the fit the SFP signals without any hacks.
+
+However, Zyxel did some weird design and connected RX_LOS, MOD_ABS and
+TX_FAULT of one SFP cage onto a single GPIO line controlled by a
+multiplexer (the same for the other SFP cage). The single multiplexer
+controls the lines for both SFP and depending on the state, the
+designated 'signal GPIO lines' are connected to one of the three SFP
+signals.
+
+Because the SFP core/driver doesn't support multiplexer but needs single
+GPIOs for each of the signals, this driver fills the gap between both.
+It registers a gpio_chip, provides multiple virtual GPIOs and sets the
+backing multiplexer accordingly.
 
 Signed-off-by: Jonas Jelonek <jelonek.jonas@gmail.com>
 ---
- .../devicetree/bindings/gpio/gpio-split.yaml  | 77 +++++++++++++++++++
- 1 file changed, 77 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gpio/gpio-split.yaml
+ MAINTAINERS               |   6 ++
+ drivers/gpio/Kconfig      |   8 ++
+ drivers/gpio/Makefile     |   1 +
+ drivers/gpio/gpio-split.c | 210 ++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 225 insertions(+)
+ create mode 100644 drivers/gpio/gpio-split.c
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-split.yaml b/Documentation/devicetree/bindings/gpio/gpio-split.yaml
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 681fbc825805..efb7e4a338e0 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10479,6 +10479,12 @@ F:	Documentation/dev-tools/gpio-sloppy-logic-analyzer.rst
+ F:	drivers/gpio/gpio-sloppy-logic-analyzer.c
+ F:	tools/gpio/gpio-sloppy-logic-analyzer.sh
+ 
++GPIO SPLIT
++M:	Jonas Jelonek <jelonek.jonas@gmail.com>
++S:	Maintained
++F:	Documentation/devicetree/bindings/gpio/gpio-split.yaml
++F:	drivers/gpio/gpio-split.c
++
+ GPIO SUBSYSTEM
+ M:	Linus Walleij <linus.walleij@linaro.org>
+ M:	Bartosz Golaszewski <brgl@bgdev.pl>
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 867d82b5ed63..9209bc78bd53 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -1988,6 +1988,14 @@ config GPIO_MOCKUP
+ 	  tools/testing/selftests/gpio/gpio-mockup.sh. Reference the usage in
+ 	  it.
+ 
++config GPIO_SPLIT
++	tristate "GPIO split driver"
++	depends on OF_GPIO
++	select MULTIPLEXER
++	help
++	  Say Y here to support splitting physical GPIOs into multiple virtual
++	  GPIOs using a multiplexer.
++
+ config GPIO_VIRTIO
+ 	tristate "VirtIO GPIO support"
+ 	depends on VIRTIO
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 000fa2e397c2..813eb676e5fb 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -167,6 +167,7 @@ obj-$(CONFIG_GPIO_SLOPPY_LOGIC_ANALYZER) += gpio-sloppy-logic-analyzer.o
+ obj-$(CONFIG_GPIO_SODAVILLE)		+= gpio-sodaville.o
+ obj-$(CONFIG_GPIO_SPACEMIT_K1)		+= gpio-spacemit-k1.o
+ obj-$(CONFIG_GPIO_SPEAR_SPICS)		+= gpio-spear-spics.o
++obj-$(CONFIG_GPIO_SPLIT)		+= gpio-split.o
+ obj-$(CONFIG_GPIO_SPRD)			+= gpio-sprd.o
+ obj-$(CONFIG_GPIO_STMPE)		+= gpio-stmpe.o
+ obj-$(CONFIG_GPIO_STP_XWAY)		+= gpio-stp-xway.o
+diff --git a/drivers/gpio/gpio-split.c b/drivers/gpio/gpio-split.c
 new file mode 100644
-index 000000000000..9a58c81da4fa
+index 000000000000..78da8bf91a0f
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/gpio/gpio-split.yaml
-@@ -0,0 +1,77 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/gpio/gpio-split.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/gpio/gpio-split.c
+@@ -0,0 +1,210 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * GPIO splitter acting as virtual gpiochip which "splits" a physical GPIO into
++ * multiple using a multiplexer (e.g. SFP signals RX_LOS, TX_FAULT, MOD_DEF0
++ * muxed on a single GPIO).
++ *
++ * Copyright (c) 2025 Jonas Jelonek <jelonek.jonas@gmail.com>
++ */
 +
-+title: GPIO split
++#include <linux/gpio/consumer.h>
++#include <linux/gpio/driver.h>
++#include <linux/mod_devicetable.h>
++#include <linux/mutex.h>
++#include <linux/mux/consumer.h>
++#include <linux/mux/driver.h>
++#include <linux/platform_device.h>
 +
-+maintainers:
-+  - Jonas Jelonek <jelonek.jonas@gmail.com>
 +
-+description:
-+  A virtual GPIO controller to provide virtual GPIOs backed by a single real
-+  GPIO and a multiplexer. This controller may be used in case a real GPIO is
-+  connected to multiple inputs/outputs and controlled by a multiplexer, and
-+  another subsystem/driver is not able to work with multiplexer subsystem.
++struct gpio_split_gpio {
++	unsigned int mux_state;
++};
 +
-+properties:
-+  compatible:
-+    const: gpio-split
++struct gpio_split {
++	struct gpio_chip gc;
++	struct mux_control *mux;
++	struct device *dev;
 +
-+  gpio-controller: true
++	struct mutex lock;
 +
-+  "#gpio-cells":
-+    const: 2
++	struct gpio_desc *shared_gpio;
++	/* dynamically sized, must be last */
++	struct gpio_split_gpio gpios[];
++};
 +
-+  gpio-line-names: true
++DEFINE_GUARD(gpio_split, struct gpio_split *, mutex_lock(&_T->lock), mutex_unlock(&_T->lock))
 +
-+  mux-controls:
-+    maxItems: 1
++static int gpio_split_gpio_get(struct gpio_chip *gc, unsigned int offset)
++{
++	struct gpio_split *gs = (struct gpio_split *)gpiochip_get_data(gc);
++	struct gpio_split_gpio *gs_gpio;
++	int ret;
 +
-+  ngpios: false
++	if (offset > gc->ngpio)
++		return -EINVAL;
 +
-+  shared-gpio:
-+    description:
-+      GPIO that is shared by the virtual GPIOs and controlled via the mux.
++	guard(gpio_split)(gs);
 +
-+required:
-+  - compatible
-+  - gpio-controller
-+  - mux-controls
-+  - shared-gpio
++	gs_gpio = &gs->gpios[offset];
++	ret = mux_control_select(gs->mux, gs_gpio->mux_state);
++	if (ret < 0)
++		return ret;
 +
-+additionalProperties: false
++	ret = gpiod_get_raw_value_cansleep(gs->shared_gpio);
++	mux_control_deselect(gs->mux);
++	return ret;
++}
 +
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    #include <dt-bindings/mux/mux.h>
++static void gpio_split_gpio_set(struct gpio_chip *gc, unsigned int offset,
++				int value)
++{
++	struct gpio_split *gs = (struct gpio_split *)gpiochip_get_data(gc);
++	struct gpio_split_gpio *gs_gpio;
++	int ret;
 +
-+    sfp_gpio_mux: gpio-mux {
-+        compatible = "gpio-mux";
-+        mux-gpios = <&gpio0 12 GPIO_ACTIVE_HIGH>,
-+                    <&gpio0 14 GPIO_ACTIVE_HIGH>;
-+        #mux-control-cells = <0>;
-+        idle-state = <MUX_IDLE_AS_IS>;
-+    };
++	if (offset > gc->ngpio)
++		return;
 +
-+    sfp1_gpio: sfp-gpio-1 {
-+        compatible = "gpio-split";
-+        gpio-controller;
-+        #gpio-cells = <2>;
++	guard(gpio_split)(gs);
 +
-+        mux-controls = <&sfp_gpio_mux>;
-+        shared-gpio = <&gpio0 19 GPIO_ACTIVE_HIGH>;
++	gs_gpio = &gs->gpios[offset];
++	ret = mux_control_select(gs->mux, gs_gpio->mux_state);
++	if (ret < 0)
++		return;
 +
-+        gpio-line-names = "SFP1_LOS", "SFP1_MOD_ABS", "SFP1_TX_FAULT";
-+        gpio-0 {
-+            mux-state = <0>;
-+        };
-+        gpio-1 {
-+            mux-state = <1>;
-+        };
-+        gpio-2 {
-+            mux-state = <3>;
-+        };
-+    };
++	gpiod_set_raw_value_cansleep(gs->shared_gpio, value);
++	mux_control_deselect(gs->mux);
++}
++
++static int gpio_split_gpio_get_direction(struct gpio_chip *gc,
++					 unsigned int offset)
++{
++	struct gpio_split *gs = (struct gpio_split *)gpiochip_get_data(gc);
++
++	if (offset > gc->ngpio)
++		return -EINVAL;
++
++	guard(gpio_split)(gs);
++
++	return gpiod_get_direction(gs->shared_gpio);
++}
++
++static int gpio_split_gpio_direction_input(struct gpio_chip *gc,
++					   unsigned int offset)
++{
++	struct gpio_split *gs = (struct gpio_split *)gpiochip_get_data(gc);
++
++	if (offset > gc->ngpio)
++		return -EINVAL;
++
++	guard(gpio_split)(gs);
++
++	return gpiod_direction_input(gs->shared_gpio);
++}
++
++static int gpio_split_gpio_direction_output(struct gpio_chip *gc,
++					    unsigned int offset, int value)
++{
++	struct gpio_split *gs = (struct gpio_split *)gpiochip_get_data(gc);
++
++	if (offset > gc->ngpio)
++		return -EINVAL;
++
++	guard(gpio_split)(gs);
++
++	return gpiod_direction_output_raw(gs->shared_gpio, value);
++}
++
++static const struct of_device_id gpio_split_of_match[] = {
++	{ .compatible = "gpio-split" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, gpio_split_of_match);
++
++static int gpio_split_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct gpio_split *gs;
++	struct fwnode_handle *child;
++	unsigned int ngpio, size, i;
++	int ret;
++
++	ngpio = device_get_child_node_count(dev);
++	size = sizeof(*gs) + (sizeof(struct gpio_split_gpio) * ngpio);
++
++	gs = devm_kzalloc(dev, size, GFP_KERNEL);
++	if (!gs)
++		return -ENOMEM;
++
++	mutex_init(&gs->lock);
++
++	gs->dev = dev;
++	gs->gc.base = -1;
++	gs->gc.can_sleep = true;
++	gs->gc.fwnode = dev_fwnode(dev);
++	gs->gc.label = "gpio-split";
++	gs->gc.ngpio = ngpio;
++	gs->gc.owner = THIS_MODULE;
++	gs->gc.parent = dev;
++
++	gs->gc.get = gpio_split_gpio_get;
++	gs->gc.set = gpio_split_gpio_set;
++	gs->gc.get_direction = gpio_split_gpio_get_direction;
++	gs->gc.direction_input = gpio_split_gpio_direction_input;
++	gs->gc.direction_output = gpio_split_gpio_direction_output;
++
++	gs->mux = devm_mux_control_get(dev, NULL);
++	if (IS_ERR(gs->mux)) {
++		if (PTR_ERR(gs->mux) == -EPROBE_DEFER) {
++			dev_err(dev, "mux-controller not ready, deferring probe\n");
++			return -EPROBE_DEFER;
++		}
++
++		dev_err(dev, "could not get mux-controller\n");
++		return PTR_ERR(gs->mux);
++	}
++
++	gs->shared_gpio = devm_gpiod_get(dev, "shared", GPIOD_ASIS);
++	if (IS_ERR(gs->shared_gpio)) {
++		dev_err(dev, "could not get shared-gpio\n");
++		return PTR_ERR(gs->shared_gpio);
++	}
++
++	i = 0;
++	device_for_each_child_node(dev, child) {
++		struct gpio_split_gpio *gpio = &gs->gpios[i];
++		u32 mux_state;
++
++		ret = fwnode_property_read_u32(child, "mux-state", &mux_state);
++		if (ret) {
++			dev_err(dev, "gpio %u: failed to read mux-state\n", i);
++			return ret;
++		}
++
++		gpio->mux_state = (unsigned int)mux_state;
++		i++;
++	}
++
++	ret = devm_gpiochip_add_data(dev, &gs->gc, gs);
++	if (ret) {
++		dev_err(dev, "failed to add gpiochip: %d\n", ret);
++		return ret;
++	}
++
++	dev_info(dev, "providing %u virtual GPIOs for real GPIO %u\n", i,
++		 desc_to_gpio(gs->shared_gpio));
++	return 0;
++}
++
++static struct platform_driver gpio_split_driver = {
++	.driver = {
++		.name = "gpio-split",
++		.of_match_table = gpio_split_of_match,
++	},
++	.probe = gpio_split_probe,
++};
++module_platform_driver(gpio_split_driver);
++
++MODULE_AUTHOR("Jonas Jelonek <jelonek.jonas@gmail.com>");
++MODULE_DESCRIPTION("GPIO split driver");
++MODULE_LICENSE("GPL");
 -- 
 2.48.1
 
