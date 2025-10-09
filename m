@@ -1,200 +1,129 @@
-Return-Path: <linux-kernel+bounces-846694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C614BC8C35
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:22:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C830BC8C3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 652923C2665
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:22:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA2DC3E1E4A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 795212E0419;
-	Thu,  9 Oct 2025 11:22:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0426C2DCC04;
+	Thu,  9 Oct 2025 11:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="G+C2wxQs"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GQ/Ve0eH"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C19C2DA762
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 11:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E582DA762;
+	Thu,  9 Oct 2025 11:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760008926; cv=none; b=HLrm1/gxPcVVeXJGkIf9The1CzEE5iVRW8BMCLfWXZYFsRN/WVsst15qIU6SO/Vt7GAb0yVzrE0jZHvJTl4B8aBFcPNd/yA92AlByQV06KqjmY+dCJ+jXhYxfECcUqqL4Vse7mLcbuUvd6pT6M7cv5gt5qV7yXD/0/VB5sODBvU=
+	t=1760008945; cv=none; b=rj99Yok0OUz7Q2a8ikFFN+KKWXQ/RBK2QiO/HNWLHbigJqWORhse21m+4l/MfHPKobl919/1Cc7O6xjNzV6NY5xMI06Qqoi9uJxpatmZ7VU7ezcoXCV7iFKApRcl5iy9zmuRH49xBdCdnBFzgoyRoGas9V9BsSGTYfCgopvX1ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760008926; c=relaxed/simple;
-	bh=ErU4lw654VyAZDi7wVcxdHxruO1loqWA67S3hT4noSM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j6ciN3LgaytqIo/neWnnjewkw5gUNnYVRbpsO1gATdy7BdQ7hNkoFnlwQkCSybIOSKooOo+LjKbbOWxfshVGqq3YLVkCsY7KUQyPkHb/Rg4nujXru5pb+6lc6K8Klo9lV2GVZUpVwzRpw/jeMYltQyteRep4XDzIkWWpfigg/r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=G+C2wxQs; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-61a54560c1fso190517a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 04:22:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1760008921; x=1760613721; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OfZE6iML9B9Ue3mbffKK3pISp/+/VS1P47NXc80zsa0=;
-        b=G+C2wxQsDfDyQRIX+GI+gf9G0chVo4LeMLDMbB6NL98hVcIQy6CWxvZlUEnLkLWjKS
-         JGZsTntp8yF5WT4vC/rlZBsV6iebyfKsXhgwC0g8u2JAO+eSIQhj5mfVhtFLRYwKUBzQ
-         3WEn7xeBpjnP97VdKpW0fE0kK1box5YPuJGx6oELoi19fQgaNujVydUThWpr8/YY4uaa
-         H4q4ps67cxD3Ym8BGQ6vHoq3yplLyLGyvqKMPjslP2pUkItgc5amg3Fcf86NZzYWjqfv
-         I639yZ+sXeRv8dJ9st/uF93euJ7aS9O5loBGEr0UnZqPqV2xZvs1gG3ihuA8Zl671D5/
-         AV9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760008921; x=1760613721;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OfZE6iML9B9Ue3mbffKK3pISp/+/VS1P47NXc80zsa0=;
-        b=egw3GuwimT58igVOsYMvIntefmar7FqZur4H/sV/kL4UtEx9uOASHaahLifbUoUtB5
-         5Hm41i+Sejvn+pso3zHWTm0ywyNY41Tq05IGqGs3IlIIZsnH8LiYLpEMN0EpabH/ddBt
-         tL3pCHLnMmv43wMo8fuPyPiryGTA6Fs4mzoKa7HdoEXYVMw1YXM0eSk0uSic6WZVIiZI
-         8rThTJVXdV8308/ekb/tW5PFR5WOPXEuXCQ2DwENe6a89Q0GNXDL/Id/fRDgTSJJjUO1
-         zenCuLy+4V8iDvrchSgBxfCuH++kiS87gCT1AzNGIhnjYpEOjvzCiqQf/Px2EGxqXr35
-         1q0g==
-X-Forwarded-Encrypted: i=1; AJvYcCXa5gVx39mnqQumQ1H70u9rK7lb/xxcKYvrmYaOhaxBzOVQOzqJY0rsGr+a6XM1OiAObHI7iKiJvmmAc10=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/Ejdbokb7gXrz0+BZSkhGo9MepZz82BP+wERI6jpn8hHnr53+
-	7FgdIcmsN5FnLsZvgESw7drYwBYDAy+Cy1EjxuTdUsIBtR8ado6rVMmiItC8tYuqOTj70jjS1TB
-	TWBBBSCTt/8s6aaYJW5dEZmac/Ab3UuDNLjg5IaLu1w==
-X-Gm-Gg: ASbGncuahJ4aON04BYpQQSUsODKeHQiarHaiOLwPk6YHVt5rDetXSbTkl40YVpcf+BY
-	9PrqkcpQpgDF9ZyIC8RpfOobIBbeKljuhHXIP7KFHo29VDtYkw07rl/gy2A2kQ9SnT4ZYUF2C+y
-	0buljOuVGbPwoBcdiDkTYEpMLbyCbyfKxI5rdpdw/ra+3XdCUVU2nA+fSh5TaZSpFixqlWFw0P6
-	BwRy4NANWqumtMlHFuS5j2KNeq6svaOZ25aq/ktBYU/iu9QXmzIUa8GcCexjMJ+
-X-Google-Smtp-Source: AGHT+IEWtg6iCIgXsSapKkzgukSJTm4yJYAvEW+SFKlLEkSV8dVJEuv+31I22UcncTcGrxnBi575UEtN45DwJxtGA14=
-X-Received: by 2002:a05:6402:2399:b0:639:dbe7:37e6 with SMTP id
- 4fb4d7f45d1cf-639dbe73bcbmr2270471a12.2.1760008921446; Thu, 09 Oct 2025
- 04:22:01 -0700 (PDT)
+	s=arc-20240116; t=1760008945; c=relaxed/simple;
+	bh=QqzQyQoVlUUDLH713bZE5/qJKJMNhqfDHKERxzr82W0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bA0+PWYqIqVtqpF4Ulv2AgLvQAMm+2COCcQ2FaqC5iRmNcYPelvf5PyRYKlWuEQ/TwGQqcy+4qaMK7JSUCCibDPqIaAjMWXeVTrA0Jeb01ggkIzf46QccjrgPSqikgYb07ubMRttYWiq7GysW+Z03l9qRbhQkoUr6DDvkm1B5+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GQ/Ve0eH; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5995wuZf002774;
+	Thu, 9 Oct 2025 11:22:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=ro7ErT
+	96akQOU1ctiBdqsseja7ItMM41r38WJIWc/7U=; b=GQ/Ve0eHEpXxCEIUcgZ5CC
+	2K+X1mO1QvnTzJ0lbE+elvxGuAGBJacc1QqZFxrP9BcB9ruFELe4kTQ6k9bcAvGc
+	fcZa4Ubf0zN0qbLz5iQybxAKUdrmFbSpEbglY04cgIWvxRNnSKt3i1Erod3Ne9Ue
+	RmmSO/y6uyYMoQ13PhNbqUR96VGRLV2r7P9saQeofqai7ww9pVst0BNmO0U2WKnk
+	9RM0C4A3FsEbqtebbakK5zRNcyzQPpmepnPEz0MvodFxQFHehYfH4rDPZEeEPV5L
+	5aO1s7iIZxq0h4bKt9KIxu3bxlD5mQ4LlHQRZWGKwrLBcdm0pqGcgcIElyt5aBZg
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49nv86vb3j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 09 Oct 2025 11:22:07 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5998GSq2021058;
+	Thu, 9 Oct 2025 11:22:06 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 49nv8sm7jv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 09 Oct 2025 11:22:06 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 599BM5SR21430948
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 9 Oct 2025 11:22:06 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D8B445805C;
+	Thu,  9 Oct 2025 11:22:05 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 309C15805F;
+	Thu,  9 Oct 2025 11:22:02 +0000 (GMT)
+Received: from [9.109.198.200] (unknown [9.109.198.200])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  9 Oct 2025 11:22:01 +0000 (GMT)
+Message-ID: <e3d333a0-e0d2-4e3f-bb7b-d64935f872b9@linux.ibm.com>
+Date: Thu, 9 Oct 2025 16:52:00 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <539FC243.2070906@redhat.com> <20140617060500.GA20764@minantech.com>
- <FFEF5F78-D9E6-4333-BC1A-78076C132CBF@jnielsen.net> <6850B127-F16B-465F-BDDB-BA3F99B9E446@jnielsen.net>
- <jpgioafjtxb.fsf@redhat.com> <74412BDB-EF6F-4C20-84C8-C6EF3A25885C@jnielsen.net>
- <558AD1B0.5060200@redhat.com> <FAFB2BA9-E924-4E70-A84A-E5F2D97BC2F0@jnielsen.net>
- <CACzj_yVTyescyWBRuA3MMCC0Ymg7TKF-+sCW1N+Xwfffvw_Wsg@mail.gmail.com>
- <CAMGffE=P5HJkJxh2mj3c_oh6busFKYb0TGuhAc36toc5_uD72w@mail.gmail.com>
- <aOaJbHPBXHwxlC1S@google.com> <CAMGffEn1i-qTVRD+9PWDfNUMvbBCp9dV2f=Cgu=VLtoHs-6JTA@mail.gmail.com>
-In-Reply-To: <CAMGffEn1i-qTVRD+9PWDfNUMvbBCp9dV2f=Cgu=VLtoHs-6JTA@mail.gmail.com>
-From: Jinpu Wang <jinpu.wang@ionos.com>
-Date: Thu, 9 Oct 2025 13:21:50 +0200
-X-Gm-Features: AS18NWARL_xe63diYACbpaNo_4POMqNwxhtIptV6jbjGnAzTswFEutdQTgn79zI
-Message-ID: <CAMGffEmt2ZEL3uxRd+mWkKB=K8Q3seo9Kp-T06rZahxsX4Wm4Q@mail.gmail.com>
-Subject: Re: Hang on reboot in multi-core FreeBSD guest on Linux KVM host with
- Intel Sierra Forest CPU
-To: Sean Christopherson <seanjc@google.com>
-Cc: fanwenyi0529@gmail.com, kvm@vger.kernel.org, 
-	Paolo Bonzini <pbonzini@redhat.com>, Xiaoyao Li <xiaoyao.li@intel.com>, linux-kernel@vger.kernel.org, 
-	vkuznets@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch v2 6/7] block, bfq: convert to use
+ request_queue->async_depth
+To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, bvanassche@acm.org,
+        ming.lei@redhat.com, jmoyer@redhat.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
+        johnny.chenyi@huawei.com
+References: <20251009074634.527661-1-yukuai1@huaweicloud.com>
+ <20251009074634.527661-7-yukuai1@huaweicloud.com>
+Content-Language: en-US
+From: Nilay Shroff <nilay@linux.ibm.com>
+In-Reply-To: <20251009074634.527661-7-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: kX0WZ0vjfbVGsOQFHnkBPhB-5hsD5unr
+X-Proofpoint-ORIG-GUID: kX0WZ0vjfbVGsOQFHnkBPhB-5hsD5unr
+X-Authority-Analysis: v=2.4 cv=MKNtWcZl c=1 sm=1 tr=0 ts=68e79adf cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=i0EeH86SAAAA:8 a=VnNF1IyMAAAA:8
+ a=dr6qpCbY_iyHjMTHIhQA:9 a=QEXdDO2ut3YA:10 a=Ba5x5ocL4jwA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX8cYCW4JSAsW1
+ 7E/17sOon8KU56oH4nFaKHKW51qwKQ8NzVaLmBOyuWSPqeIYtnIqip0NKV1fcul3tuL6grEbewT
+ SL37+ITRSxmzIGt4VGyieig8MGH2lt4stoBfsi6UsOvrVMdsvIOCfNUTYv0kttE2n1Seh2iCi78
+ aBFsFazmMmuIgqlnxdM6r9LHsQ7dbXhZz2VajhdwL5yo4ewR+h8KvBPY0L/Tp66cLJcIlFnbHap
+ sRZQJlGMKkzxUgHrmAGEi4CEeCtlXFlKlGIYdT7WthJBEJngHjhDJ3M/5BqiQDtdW4FtkJ3QDqz
+ cP0hbQWC8t1oslxZcLeKg4l96T87BWwwKc46mvIL7Oa876k7S1uxXc4VBSNYKBeKdH4UyoWESUs
+ 91RR9YJ6lTRm+SExkWOfA4m4M9ALhQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-09_03,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 phishscore=0 malwarescore=0 bulkscore=0 spamscore=0
+ priorityscore=1501 suspectscore=0 lowpriorityscore=0 clxscore=1015
+ impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
+ definitions=main-2510080121
 
-On Thu, Oct 9, 2025 at 5:44=E2=80=AFAM Jinpu Wang <jinpu.wang@ionos.com> wr=
-ote:
->
-> Hi Sean,
->
-> On Wed, Oct 8, 2025 at 5:55=E2=80=AFPM Sean Christopherson <seanjc@google=
-.com> wrote:
-> >
-> > Trimmed Cc: to drop people from the original thread.  In the future, ju=
-st start
-> > a new bug report.  Piggybacking a 10 year old bug just because the symp=
-toms are
-> > similar does more harm than good.  Whatever the old thread was chasing =
-was already
-> > fixed, _10 years_ ago; they were just trying to identy exactly what com=
-mit fixed
-> > the problem.  I.e. whatever they were chasing _can't_ be the same root =
-cause,
-> > because even if it's literally the same code bug, it would require a co=
-de change
-> > and thus a regression between v4.0 and v6.1.
-> Thx for the reply,  it makes sense. I will remember this next time.
-> >
-> > On Wed, Oct 08, 2025, Jinpu Wang wrote:
-> > > On Wed, Oct 8, 2025 at 2:44=E2=80=AFPM Jack Wang <jinpu.wang@ionos.co=
-m> wrote:
-> > > > Sorry for bump this old thread, we hit same issue on Intel Sierra F=
-orest
-> > > > machines with LTS kernel 6.1/6.12, maybe KVM comunity could help fi=
-x it.
-> >
-> > Are there any host kernels that _do_ work?  E.g. have you tried a bleed=
-ing edge
-> > host kernel?
-> I will try linus/master today.
-> >
-> > > > ### **[BUG] Hang on FreeBSD Guest Reboot under KVM on Intel SierraF=
-orest (Xeon 6710E)**
-> > > >
-> > > > **Summary:**
-> > > > Multi-cores FreeBSD guests hang during reboot under KVM on systems =
-with
-> > > > Intel(R) Xeon(R) 6710E (SierraForest). The issue is fully reproduci=
-ble with
-> > > > APICv enabled and disappears when disabling APICv (`enable_apicv=3D=
-N`). The
-> > > > same configuration works correctly on Ice Lake (Xeon Gold 6338).
-> >
-> > Does Sierra Forest have IPI virtualization?  If so, you could try runni=
-ng with
-> > APICv enabled, but enable_ipiv=3Dfalse to specifically disable IPI virt=
-ualization.
-> Yes, it does:
-> $  grep . /sys/module/kvm_intel/parameters/*
-> /sys/module/kvm_intel/parameters/allow_smaller_maxphyaddr:N
-> /sys/module/kvm_intel/parameters/dump_invalid_vmcs:N
-> /sys/module/kvm_intel/parameters/emulate_invalid_guest_state:Y
-> /sys/module/kvm_intel/parameters/enable_apicv:Y
-> /sys/module/kvm_intel/parameters/enable_ipiv:Y
-> /sys/module/kvm_intel/parameters/enable_shadow_vmcs:Y
-> /sys/module/kvm_intel/parameters/ept:Y
-> /sys/module/kvm_intel/parameters/eptad:Y
-> /sys/module/kvm_intel/parameters/error_on_inconsistent_vmcs_config:Y
-> /sys/module/kvm_intel/parameters/fasteoi:Y
-> /sys/module/kvm_intel/parameters/flexpriority:Y
-> /sys/module/kvm_intel/parameters/nested:Y
-> /sys/module/kvm_intel/parameters/nested_early_check:N
-> /sys/module/kvm_intel/parameters/ple_gap:128
-> /sys/module/kvm_intel/parameters/ple_window:4096
-> /sys/module/kvm_intel/parameters/ple_window_grow:2
-> /sys/module/kvm_intel/parameters/ple_window_max:4294967295
-> /sys/module/kvm_intel/parameters/ple_window_shrink:0
-> /sys/module/kvm_intel/parameters/pml:Y
-> /sys/module/kvm_intel/parameters/preemption_timer:Y
-> /sys/module/kvm_intel/parameters/sgx:N
-> /sys/module/kvm_intel/parameters/unrestricted_guest:Y
-> /sys/module/kvm_intel/parameters/vmentry_l1d_flush:not required
-> /sys/module/kvm_intel/parameters/vnmi:Y
-> /sys/module/kvm_intel/parameters/vpid:Y
->
-> I tried to disable ipiv, but it doesn't help. freebsd hang on reboot.
-> sudo modprobe -r kvm_intel
-> sudo modprobe  kvm_intel enable_ipiv=3DN
-> /sys/module/kvm_intel/parameters/enable_ipiv:N
->
-> Thx!
-+cc Vitaly
-Sorry, I missed one detail, we are use hyper-V enlightment features:
-"+hv-relaxed,+hv-vapic,+hv-time,+hv-runtime,hv-spinlocks=3D0x1fff,+hv-vpind=
-ex,+hv-synic,+hv-stimer,+hv-tlbflush,hv-ipi."
 
-did a lot tests with different features, and looks the hang is related
-to  +hv-synic,+hv-stimer.  hv-synic seems the key which causes boot
-hang of Freebsd 14.
 
-But the problem seems fixed with FreeBSD 15?  I guess it's this fix:
-https://github.com/systemd/systemd/issues/28001
+On 10/9/25 1:16 PM, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> The default limits is unchanged, and user can configure async_depth now.
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 
-Seems it's a bug from freebsd side, rather than on kvm side to me, but
-I'm puzzled by disable apicv helps?
-
-Thx!
+Looks good to me:
+Reviewed-by: Nilay Shroff <nilay@linux.ibm.com>
 
