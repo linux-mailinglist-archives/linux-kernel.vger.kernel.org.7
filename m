@@ -1,152 +1,188 @@
-Return-Path: <linux-kernel+bounces-847284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01D7FBCA703
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:57:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC64CBCA711
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:58:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 914C04E451D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:57:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 291C119E5508
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2BA246BDE;
-	Thu,  9 Oct 2025 17:56:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21DA92472A8;
+	Thu,  9 Oct 2025 17:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RG/PKOX+"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OLZvsHwy"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175FA223DD4;
-	Thu,  9 Oct 2025 17:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16BC246BDE
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 17:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760032615; cv=none; b=Yai0Gy9evGllgcbbFtnSNcOo0LlSvWqYaIqbFtq0QPhVee1FivhMOMLe4nMC/oxvonpvPNyYm+EGc4I4f+G2hWOQ2x/l9AZ4zcVoH0mff2bt8lBqEE8z/cJv+nPbeFOMiLfzZkpuQHeoNtchEXfU00VkGtCeti3rd7IUDqwFKCg=
+	t=1760032723; cv=none; b=VEljyeoxQXq217eriQJXxDntDU5xVLbbBg4KlxsdZyir/+bbF6Agp6SJqVbFcqzI880KwCexrnqu4oKf8O3fAkQK/sNWKkZX55kIg33ajQLIbh1CZR/66xCVEP847kKoLKCOH8lkaw8biStIaDufU0ovib87uM+VW8XYFuWoyWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760032615; c=relaxed/simple;
-	bh=Oc75qG4cTNZNs+023xxXOdGNA0OEKXltKZJtkf6SwuU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T/YaVoWGvyKCE6y+GpoSJOF7wfvHwWOIT25qGZV5IW9q9Ah6CQrF5SosznpkP4wiTmjTv5j/WwEPogBpOMaL4oHFHXd9s7v7CLjR9Kla4wBJCvmiqfrt/gpdvP3rwdJDp6ohuBsvR54yV565pUTGhOBuQLXXXnyVG+BB7MA2W24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RG/PKOX+; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <d09881f5-0e0b-4795-99bf-cd3711ee48ab@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760032609;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mQtDstGb3CyrZpeSWryCX/If0ajj/tB0us6K4GO5uRQ=;
-	b=RG/PKOX+b9dsfndKPbfywbTI44gZn77HEm5El0GYZFRJnXaZ96AlO6nHjLatm2rS78+wwF
-	QXtEotKWbkSVW8f8eb6U1mr+CVTjybidcHrAro4XlxeF0d1q2x5FUfS4hf/V00ZmvJzTPH
-	15lOKLt9DFUAB2FtRSdtZGn7XTbUs6Q=
-Date: Thu, 9 Oct 2025 10:56:33 -0700
+	s=arc-20240116; t=1760032723; c=relaxed/simple;
+	bh=Sbu96s5vZuGPRg4fRsVlZ86LV1YqQR4fhB6s0mJ/7Js=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=M8ilkpke4E8f02KBDdjX5vy0gBEK0TKtsWq6BWVgGp4UuVEbEJw2qAqHol7xgL0GWeVTVIvxQs48gQPBVryrqpnuav9A6Wlj9+V50VWysvThf8Dm4BsYpCDUT6F5+cHZDqGaevkRq6sRs+VEm2G7yE95LpZT3vuYnRb8dupZk4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OLZvsHwy; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-42486ed0706so7395585ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 10:58:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760032721; x=1760637521; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lGMv5lHdrhywBVTV/PqaJfnG7AITk86FOlf4SxNuZNA=;
+        b=OLZvsHwy9h+IawGxNFnoyV8OdMhMJcK1JME8GAeQM8z9OWGkN2KXUHjY2icawHgkr0
+         QilbRLxSYACM70+0Ko+HGN7XqnTFWBQ7mBQI1dBV3Kb5JKB6iOJvCmqjvMDYAFSM83IX
+         i6bi25damdxKj3vMsW+p/V/GKr2JjCBoGf1Yrz7N8cO0Uq+ajol4Ti8vKH8bc8fptSnE
+         /AGGpF63IN4apAfCgim6zjQYl1O/zDKNlJpVvdw7URoHLNOnN4eHrI6B7VVkQoA88Gjh
+         9YqvRWHrk+EyJl1a1I4+rtLh+AXvKS99InI+y9yRznseCX+z4efjdLkHhrXeUYI+9zbp
+         kscA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760032721; x=1760637521;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lGMv5lHdrhywBVTV/PqaJfnG7AITk86FOlf4SxNuZNA=;
+        b=OdyLX23VLhAUQTutLUcM1m2/qTAykXhAkANC/TizKOwETM+o/BLCVCZRKFRNV2YPrc
+         j8roDwYNiTwhMweykrQ4xVJk0j+md/LYR0dRQo1EfI8eysqF8tcZlBv8wk2BhwkzlR3U
+         DftOHs/F+eZ8f+lLeEl3rPMP0IABJZCpaoq7TnyU228clowLLSsOjaxmruvMtryvzplI
+         nk+TS0EPkMa1Q5g76YN+IHFhLJ0LDv2eZK0NcKjCutT03Q0Vd62bY8D+lL/Jkw1yzFI9
+         DFDkBOi3iv39FR3UQjVQRAjqZTCKGoLTS/VDGfE3LHOXI4d9fh668folQVrpv/lQMvvR
+         ykBA==
+X-Forwarded-Encrypted: i=1; AJvYcCXu0mI+G2OZ32YZcEsdzbjZBczKJoKWzTqYjfXKJe7RIOWJt1UtNled7xd7FohzLj+cMe6Qk0k4a/nVgMw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTv5KA/FXRl3U9HNS4V+WtaH9njgOBi12kaCzmaeLztssXSP0l
+	XYN3mQo29lq7Dq9mNiNH7AyM/if3VKaZxCXIV6ABwu/DloAIuYpQNfF2
+X-Gm-Gg: ASbGncudbuhbvwqeCRnQP/KlC2IWa5tBujfVH5y5huS0TV1V4mStfNw7EA9BC+UXj4E
+	o2Gy5dnjuiu9JfkMwK9dPyBQuSeYqzWIoeZrwQuFF0SwksaDV832JdD8Oe60u6PC1S+4+S1mqXn
+	xx6ieAWPnx8yEnpGC4MtqA8MG95Udv6QA63RjQL9RcmNPRh8f4cY3YJC2WMiHEROffzlXcdDg2l
+	6nfiHeXCCobS7ZN0qx0AFictBYPmXvKwCcyIvg9iYJxezhjQtu31Mz4dvDhUi+rRa9d6iPWG2K7
+	jrmqWzs3CvsWn+mUHTh+loF25eKQtS53qASYMJD9tWa/dxlOceV6vXlvXjM6wLkTOFZPuc2bxdx
+	9ItEDn5gzLGUHRy/fOA6gJgXQLJIBhHyDjF0k9176lPlDweoOljlMfGSawPqgz9s/WsH3C5lAzP
+	FdnjIPss2iLD1xKQal1WWsU0aHHjco2L4ZvKUuCKa2MOfAuWUP
+X-Google-Smtp-Source: AGHT+IH0kP4+vfxD+O9Wz2DP4UBxSThOXmUadGnkvBABGnXzdVOZ2Hbq3wUFuypfAQx9EkxOwcXsnQ==
+X-Received: by 2002:a05:6e02:3783:b0:42e:712e:52a0 with SMTP id e9e14a558f8ab-42f873540b2mr82406535ab.6.1760032720604;
+        Thu, 09 Oct 2025 10:58:40 -0700 (PDT)
+Received: from godzilla.raven-morpho.ts.net (c-98-38-17-99.hsd1.co.comcast.net. [98.38.17.99])
+        by smtp.googlemail.com with ESMTPSA id 8926c6da1cb9f-58f7200c4afsm30256173.35.2025.10.09.10.58.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 10:58:40 -0700 (PDT)
+From: Jim Cromie <jim.cromie@gmail.com>
+To: jbaron@akamai.com
+Cc: gregkh@linuxfoundation.org,
+	ukaszb@chromium.org,
+	louis.chauvet@bootlin.com,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	amd-gfx@lists.freedesktop.org,
+	intel-gvt-dev@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org,
+	daniel.vetter@ffwll.ch,
+	tvrtko.ursulin@linux.intel.com,
+	jani.nikula@intel.com,
+	ville.syrjala@linux.intel.com,
+	Jim Cromie <jim.cromie@gmail.com>,
+	andrewjballance@gmail.com
+Subject: [PATCH v5 00/30] Fix DYNAMIC_DEBUG classmaps for DRM
+Date: Thu,  9 Oct 2025 11:58:04 -0600
+Message-ID: <20251009175834.1024308-1-jim.cromie@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v3 19/30] liveupdate: luo_sysfs: add sysfs state
- monitoring
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>, jasonmiu@google.com,
- graf@amazon.com, changyuanl@google.com, rppt@kernel.org,
- dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
- rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
- kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
- masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
- yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
- chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
- jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
- dan.j.williams@intel.com, david@redhat.com, joel.granados@kernel.org,
- rostedt@goodmis.org, anna.schumaker@oracle.com, song@kernel.org,
- zhangguopeng@kylinos.cn, linux@weissschuh.net, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-mm@kvack.org, gregkh@linuxfoundation.org,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org,
- cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com,
- Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
- aleksander.lobakin@intel.com, ira.weiny@intel.com,
- andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
- bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
- stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org,
- linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com,
- ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com,
- leonro@nvidia.com, witu@nvidia.com
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
- <20250807014442.3829950-20-pasha.tatashin@soleen.com>
- <a27f9f8f-dc03-441b-8aa7-7daeff6c82ae@linux.dev>
- <mafs0qzvcmje2.fsf@kernel.org>
- <CA+CK2bCx=kTVORq9dRE2h3Z4QQ-ggxanY2tDPRy13_ARhc+TqA@mail.gmail.com>
- <dc71808c-c6a4-434a-aee9-b97601814c92@linux.dev>
- <CA+CK2bBz3NvDmwUjCPiyTPH9yL6YpZ+vX=o2TkC2C7aViXO-pQ@mail.gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Yanjun.Zhu" <yanjun.zhu@linux.dev>
-In-Reply-To: <CA+CK2bBz3NvDmwUjCPiyTPH9yL6YpZ+vX=o2TkC2C7aViXO-pQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
+DYNAMIC_DEBUG classmaps is BROKEN for its 1st user: DRM. Lets Fix it.
 
-On 10/9/25 10:04 AM, Pasha Tatashin wrote:
-> On Thu, Oct 9, 2025 at 11:35 AM Zhu Yanjun <yanjun.zhu@linux.dev> wrote:
->>
->> 在 2025/10/9 5:01, Pasha Tatashin 写道:
->>>>> Because the window of kernel live update is short, it is difficult to statistics
->>>>> how many times the kernel is live updated.
->>>>>
->>>>> Is it possible to add a variable to statistics the times that the kernel is live
->>>>> updated?
->>>> The kernel doesn't do the live update on its own. The process is driven
->>>> and sequenced by userspace. So if you want to keep statistics, you
->>>> should do it from your userspace (luod maybe?). I don't see any need for
->>>> this in the kernel.
->>>>
->>> One use case I can think of is including information in kdump or the
->>> backtrace warning/panic messages about how many times this machine has
->>> been live-updated. In the past, I've seen bugs (related to memory
->>> corruption) that occurred only after several kexecs, not on the first
->>> one. With live updates, especially while the code is being stabilized,
->>> I imagine we might have a similar situation. For that reason, it could
->>> be useful to have a count in the dmesg logs showing how many times
->>> this machine has been live-updated. While this information is also
->>> available in userspace, it would be simpler for kernel developers
->>> triaging these issues if everything were in one place.
->> I’m considering this issue from a system security perspective. After the
->> kernel is automatically updated, user-space applications are usually
->> unaware of the change. In one possible scenario, an attacker could
->> replace the kernel with a compromised version, while user-space
->> applications remain unaware of it — which poses a potential security risk.
->>
->> To mitigate this, it would be useful to expose the number of kernel
->> updates through a sysfs interface, so that we can detect whether the
->> kernel has been updated and then collect information about the new
->> kernel to check for possible security issues.
->>
->> Of course, there are other ways to detect kernel updates — for example,
->> by using ftrace to monitor functions involved in live kernel updates —
->> but such approaches tend to have a higher performance overhead. In
->> contrast, adding a simple update counter to track live kernel updates
->> would provide similar monitoring capability with minimal overhead.
-> Would a print during boot, i.e. when we print that this kernel is live
-> updating, we could include the number, work for you? Otherwise, we
-> could export this number in a debugfs.
-Since I received a notification that my previous message was not sent 
-successfully, I am resending it.
+The DECLARE_DYNDBG_CLASSMAP macro muddled the distinction between
+definition and reference; in use it failed K&R define once, refer many.
 
-IMO, it would be better to export this number via debugfs. This approach 
-reduces the overhead involved in detecting a kernel live update.
-If the number is printed in logs instead, the overhead would be higher 
-compared to using debugfs.
+Replace it with:
+. DYNAMIC_DEBUG_CLASSMAP_DEFINE		for drm.ko
+. DYNAMIC_DEBUG_CLASSMAP_USE		for drivers etc
 
-Thanks a lot.
+Enhance test-dynamic-debug{,-submod}.ko to recapitulate DRM's 2+ module
+boss-workers failure scenario, and to selftest against them.  This allows
+dropping the DRM patches, formerly included to prove functionality.
 
-Yanjun.Zhu
+The latest (unversioned) rev:
+. I inexplicably fiddled with the patch subject
+. dropped DRM as OT for lib/
+https://lore.kernel.org/lkml/20250911213823.374806-1-jim.cromie@gmail.com/
 
->
-> Pasha
+v1-4 saw significant review, thanks Louis Chauvet <louis.chauvet@bootlin.com>
+
+v4: https://lore.kernel.org/lkml/20250803035816.603405-1-jim.cromie@gmail.com/
+v3: https://lore.kernel.org/lkml/20250402174156.1246171-1-jim.cromie@gmail.com/#t
+v2: https://lore.kernel.org/lkml/20250320185238.447458-1-jim.cromie@gmail.com/
+v1: https://lore.kernel.org/lkml/20250125064619.8305-1-jim.cromie@gmail.com/
+v0: prehistoric versions are linked from v1,v2
+
+Jim Cromie (30):
+  docs/dyndbg: update examples \012 to \n
+  docs/dyndbg: explain flags parse 1st
+  test-dyndbg: fixup CLASSMAP usage error
+  dyndbg: reword "class unknown," to "class:_UNKNOWN_"
+  dyndbg: make ddebug_class_param union members same size
+  dyndbg: drop NUM_TYPE_ARRAY
+  dyndbg: tweak pr_fmt to avoid expansion conflicts
+  dyndbg: reduce verbose/debug clutter
+  dyndbg: refactor param_set_dyndbg_classes and below
+  dyndbg: tighten fn-sig of ddebug_apply_class_bitmap
+  dyndbg: replace classmap list with a vector
+  dyndbg: macrofy a 2-index for-loop pattern
+  dyndbg: DECLARE_DYNDBG_CLASSMAP needs stub defn
+  dyndbg,module: make proper substructs in _ddebug_info
+  dyndbg: hoist classmap-filter-by-modname up to ddebug_add_module
+  dyndbg: move mod_name from ddebug_table down to _ddebug_info
+  dyndbg-API: remove DD_CLASS_TYPE_(DISJOINT|LEVEL)_NAMES and code
+  selftests-dyndbg: add a dynamic_debug run_tests target
+  dyndbg: change __dynamic_func_call_cls* macros into expressions
+  dyndbg-API: replace DECLARE_DYNDBG_CLASSMAP
+  dyndbg: detect class_id reservation conflicts
+  dyndbg: check DYNAMIC_DEBUG_CLASSMAP_DEFINE args at compile-time
+  dyndbg-test: change do_prints testpoint to accept a loopct
+  dyndbg-API: promote DYNAMIC_DEBUG_CLASSMAP_PARAM to API
+  dyndbg: treat comma as a token separator
+  dyndbg: split multi-query strings with %
+  selftests-dyndbg: add test_mod_submod
+  dyndbg: resolve "protection" of class'd pr_debugs
+  dyndbg: add DYNAMIC_DEBUG_CLASSMAP_USE_(clname,_base)
+  docs/dyndbg: add classmap info to howto
+
+CC: Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: ukaszb@chromium.org
+cc: andrewjballance@gmail.com
+
+ .../admin-guide/dynamic-debug-howto.rst       | 179 ++++-
+ MAINTAINERS                                   |   3 +-
+ include/asm-generic/vmlinux.lds.h             |   5 +-
+ include/linux/dynamic_debug.h                 | 304 ++++++--
+ kernel/module/main.c                          |  15 +-
+ lib/Kconfig.debug                             |  24 +-
+ lib/Makefile                                  |   5 +
+ lib/dynamic_debug.c                           | 678 +++++++++++-------
+ lib/test_dynamic_debug.c                      | 198 +++--
+ lib/test_dynamic_debug_submod.c               |  21 +
+ tools/testing/selftests/Makefile              |   1 +
+ .../testing/selftests/dynamic_debug/Makefile  |   9 +
+ tools/testing/selftests/dynamic_debug/config  |   7 +
+ .../dynamic_debug/dyndbg_selftest.sh          | 373 ++++++++++
+ 14 files changed, 1393 insertions(+), 429 deletions(-)
+ create mode 100644 lib/test_dynamic_debug_submod.c
+ create mode 100644 tools/testing/selftests/dynamic_debug/Makefile
+ create mode 100644 tools/testing/selftests/dynamic_debug/config
+ create mode 100755 tools/testing/selftests/dynamic_debug/dyndbg_selftest.sh
+
+-- 
+2.51.0
+
 
