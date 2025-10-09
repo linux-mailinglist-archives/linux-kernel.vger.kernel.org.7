@@ -1,213 +1,347 @@
-Return-Path: <linux-kernel+bounces-846844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5022BC936B
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:12:55 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1DFEBC9375
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:13:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C9FC3E3BF2
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:12:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 698E34F2F76
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF3F22E7180;
-	Thu,  9 Oct 2025 13:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ZrCtuG8e"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB8D2E7BA2;
+	Thu,  9 Oct 2025 13:13:14 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B9702356A4;
-	Thu,  9 Oct 2025 13:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F6C2E6CDF;
+	Thu,  9 Oct 2025 13:13:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760015570; cv=none; b=prnFsjOdm1iFeLuLsDB/BEW2iaJTLZGKAoiIdmw56bPOVksMvfPt4+QdkvAyUCNbj9MyQa8pwe0tdBzYSH73aL+h5D6LLcQUtTnuXNFFokZbm2HMGjWPiS5kmntnqYakTtvgtvDJoHFCuR6vlmyRaxFrn6qlCHasPqzVXXGnECw=
+	t=1760015593; cv=none; b=Y2Jig4I3h/kn8UfArqOF/4xPT04zqOEnWfcVhc9eaAJZj1gwbyySuNVMmcoG6MOzeOLjLwzWkUgF17fGkgbYxneOjcidlTbLNMQ04/fvAIoMrp/QBObjVPGZlV1Cekptxp8/tWBme2uyvGQpU1oB3kpqf+h4z3+hze38nGKY+J0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760015570; c=relaxed/simple;
-	bh=45nNAoQGKtadmqf2Ak7vryY8e3EJQ9Aj+sUMt3/oGlM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=abC/ncTU8p4wP0K1sG2t6esBIUYcpjKlSjMzoTyknx/iW/1i5ytB8xEHj9P/p71tD1yYTy4FcvT6oKlvi8ZJjrISKsCt0A8PEpfBn7ncGKsvhZZV48aQCmVl9sX0+uR67Iefu1vPEPA85mhRvaYlSXwHNGhukORaUaf03h8AQuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ZrCtuG8e; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 599624Fv006940;
-	Thu, 9 Oct 2025 13:12:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:message-id:mime-version:subject:to; s=
-	pp1; bh=mthYkcBEuDs3m/Wi46Wttt4Onn/F2+zboQP8q2j4Vmk=; b=ZrCtuG8e
-	S+LvNDfE87mkW060Mc+Zpjldj1mZX5RexsYkkGFEKfBJ46CGtNjusywk+Mq0eVEe
-	/G5kiF4eudK30GlmFzXlkxkq5Uw+zbamD1x5lqlkLraYVYHoP3JkwYMg4lZbof44
-	3l/9UwHnFeZWNuxgQEvf+Wz0e18pHhm51IlDSEbY03pT2DyT7l/xn0va3wEfwJ7L
-	zM0si7ze6PbYtKMUSMN4uh3sv4X+9aNa/UNPLndcLnYBYqhJhEu6yqbxdc4K4XMe
-	wxNJX37Rgdl4iiVG8KqA1iru3+zDieZCNTGH11lUfbx273zZwsuC2yIN/h624oFQ
-	L/opcwmAAOHKsw==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49nv804xf0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 09 Oct 2025 13:12:46 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 599CQu68008390;
-	Thu, 9 Oct 2025 13:12:45 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49nvanvma5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 09 Oct 2025 13:12:45 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 599DCf3r30736764
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 9 Oct 2025 13:12:41 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9EA2520098;
-	Thu,  9 Oct 2025 13:12:41 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 858CC20097;
-	Thu,  9 Oct 2025 13:12:41 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu,  9 Oct 2025 13:12:41 +0000 (GMT)
-Date: Thu, 9 Oct 2025 15:12:40 +0200
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Vasily Gorbik <gor@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] more s390 updates for 6.18 merge window
-Message-ID: <20251009131240.3363697A73-agordeev@linux.ibm.com>
+	s=arc-20240116; t=1760015593; c=relaxed/simple;
+	bh=YmMkruOsvOrrXEBYVxe7Vw4brNWzYhyqCmO7lrXeEvw=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mYbK1jb8wUKdVRyx1af1PCpn67y5tkaf/jBAl9hrPTtisw5v/ebi4d5mNo/OnyIsAsuzRjg+7PZ7Wvp9QtuiGPWaPX5ofPFTdQdb7PmB0d4tz0hRcnfCxGGHE8EQJFQAhYnO6dayOXwCcnLjyHzt/wqL/w9jTzq6MD4KEs7OoNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cj9Jf4T7tz6L58t;
+	Thu,  9 Oct 2025 21:12:18 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3FBC21402F1;
+	Thu,  9 Oct 2025 21:13:01 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 9 Oct
+ 2025 14:13:00 +0100
+Date: Thu, 9 Oct 2025 14:12:58 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Evangelos Petrongonas <epetron@amazon.de>
+CC: Bjorn Helgaas <bhelgaas@google.com>, Alex Williamson
+	<alex.williamson@redhat.com>, "Rafael J . Wysocki" <rafael@kernel.org>, Len
+ Brown <lenb@kernel.org>, Pasha Tatashin <pasha.tatashin@soleen.com>, David
+ Matlack <dmatlack@google.com>, Vipin Sharma <vipinsh@google.com>, Chris Li
+	<chrisl@kernel.org>, Jason Miu <jasonmiu@google.com>, "Pratyush Yadav"
+	<pratyush@kernel.org>, Stanislav Spassov <stanspas@amazon.de>,
+	<linux-pci@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <nh-open-source@amazon.com>
+Subject: Re: [RFC PATCH 02/13] pci: pcsc: implement basic functionality
+Message-ID: <20251009141258.00006a69@huawei.com>
+In-Reply-To: <de485efebd203fc0f69aabccd45917b8360ce47a.1759312886.git.epetron@amazon.de>
+References: <cover.1759312886.git.epetron@amazon.de>
+	<de485efebd203fc0f69aabccd45917b8360ce47a.1759312886.git.epetron@amazon.de>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=NsDcssdJ c=1 sm=1 tr=0 ts=68e7b4ce cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=pThvB05L-iGNMOYvOaIA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-GUID: OxsjEDYFDGrcOc3KwBap-jR_XElGugoj
-X-Proofpoint-ORIG-GUID: OxsjEDYFDGrcOc3KwBap-jR_XElGugoj
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX03nNgTnNDbt9
- MbvSIZiq4zHohvasE3zUtoiASwP1ZBqJ/oWKlbgVlRfF6RS3zRLeZ90hoClMWZcSp9Rv8oT8JxD
- Ykc7JVFhHGw+Xc6Z5PT5UqEt+/EUnVuU40N11SCBhER2j0Lu5vJlRDmnOQKhj2VXeBLB0GWR1Tq
- ZGucFM14GevVcc/Y0+yZ4urVPolaHWj9mQzZXgmreP4l7Ob/AT6P9/jd6UHOOy2q9m5sxGeJCCG
- jgNhDg+piVHsAFY44MjdrK6ptC473s5Ckti3j33YLdRhOsTJ0Jmt7v/2mqKeC1pEEybcJT2nBGY
- PxVeJC8rsi0S7Q79rn1kE2wPX/sHqePvlJeX8PYyea9Sl02EbI0+goG5ESXM74l0vmWbdYFJAyY
- Ra7MvZtaRS0vk9tDRyBSA9UKChKeCg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-09_04,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 spamscore=0 impostorscore=0 adultscore=0 phishscore=0
- priorityscore=1501 malwarescore=0 clxscore=1015 bulkscore=0
- lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2510020000
- definitions=main-2510080121
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-Hi Linus,
+On Fri, 3 Oct 2025 09:00:38 +0000
+Evangelos Petrongonas <epetron@amazon.de> wrote:
 
-please pull more s390 updates and fixes for the 6.18 merge window.
+> Implement the core functionality of the PCI Configuration Space Cache
+> using per-device cache nodes attached to struct pci_dev.
+> 
+> Each cache node stores:
+> - A 256-byte array (4KB for PCIe) representing the configuration space
+> - A cacheable bitmask indicating which registers can be cached
+> - A cached bitmask tracking which bytes are currently cached
+> 
+> The implementation attaches cache nodes directly to pci_dev structures
+> during `pci_device_add()` and removes them during `pci_device_remove()`.
+> 
+> The cache implements a write-invalidate policy where writes are
+> propagated to the device while invalidating the cache. This design
+> choice improves robustness and increases the number of cacheable
+> registers, particularly for operations like BAR sizing which use
+> write-read sequences to detect read-only bits.
+> 
+> Currently, the cacheable bitmask is zero-initialized,
+> effectively disabling the cache. This will be changed in the next
+> commits.
+> 
+> This implementation only supports endpoint devices; bridges and
+> root complexes are not cached.
+> 
+> Signed-off-by: Evangelos Petrongonas <epetron@amazon.de>
+> ---
+>  drivers/pci/pci-driver.c |   5 +
+>  drivers/pci/pcsc.c       | 244 ++++++++++++++++++++++++++++++++++++++-
+>  drivers/pci/probe.c      |   9 ++
+>  include/linux/pci.h      |   5 +
+>  include/linux/pcsc.h     |  38 ++++++
+>  5 files changed, 299 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+> index 302d61783f6c..7c0cbbd50b32 100644
+> --- a/drivers/pci/pci-driver.c
+> +++ b/drivers/pci/pci-driver.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/acpi.h>
+>  #include <linux/dma-map-ops.h>
+>  #include <linux/iommu.h>
+> +#include <linux/pcsc.h>
+>  #include "pci.h"
+>  #include "pcie/portdrv.h"
+>  
+> @@ -497,7 +498,11 @@ static void pci_device_remove(struct device *dev)
+>  	 * horrible the crap we have to deal with is when we are awake...
+>  	 */
+>  
+> + #ifdef CONFIG_PCSC
 
-Thanks,
-Alexander
+if (IS_ENABLED()) or a stub.
 
-The following changes since commit 088bb10e37252034ec58a6152f20bfdc8a837f54:
+> +	pcsc_remove_device(pci_dev);
+> +#endif
+>  	pci_dev_put(pci_dev);
+> +
+Clean this out.
+>  }
+>  
+>  static void pci_device_shutdown(struct device *dev)
+> diff --git a/drivers/pci/pcsc.c b/drivers/pci/pcsc.c
+> index dec7c51b5cfd..7531217925e8 100644
+> --- a/drivers/pci/pcsc.c
+> +++ b/drivers/pci/pcsc.c
+>
+> +/**
+> + * pcsc_get_and_insert_multiple - Read multiple bytes from PCI cache or HW
+> + * @dev: PCI device to read from
+> + * @bus: PCI bus to read from
+> + * @devfn: device and function number
 
-  s390/mm: Add memory allocation profiling hooks (2025-09-25 14:28:58 +0200)
+Is this always the same as dev->devfn? 
 
-are available in the Git repository at:
+> + * @where: offset in config space
+> + * @word: pointer to store read value
+> + * @size: number of bytes to read (1, 2 or 4)
+> + *
+> + * Reads consecutive bytes from PCI cache or hardware. If values are not cached,
+> + * reads from hardware and inserts into cache.
+> + *
+> + * Return: 0 on success, negative error code on failure
+> + */
+> +static int pcsc_get_and_insert_multiple(struct pci_dev *dev,
+> +					struct pci_bus *bus, unsigned int devfn,
+> +					int where, u32 *word, int size)
+> +{
+> +	u32 word_cached = 0;
+> +	u8 byte_val;
+> +	int rc, i;
+> +
+> +	if (WARN_ON(!dev || !bus || !word))
+> +		return -EINVAL;
+> +
+> +	if (WARN_ON(size != 1 && size != 2 && size != 4))
+> +		return -EINVAL;
+> +
+> +	/* Check bounds */
+> +	if (where + size > PCSC_CFG_SPC_SIZE)
+> +		return -EINVAL;
+> +
+> +	if (pcsc_is_cached(dev, where, size)) {
+> +		/* Read bytes from cache and assemble them into word_cached
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.18-2
+Multiline comment syntax as below. Same for others.
 
-for you to fetch changes up to deabb34b66b96c941ac0b3d01a6a6804c3274a78:
+> +		 * in little-endian order (as per PCI spec)
+> +		 */
+> +		for (i = 0; i < size; i++) {
+> +			pcsc_get_byte(dev, where + i, &byte_val);
+> +			word_cached |= ((u32)byte_val << (i * 8));
+> +		}
+> +	} else {
+> +		rc = pcsc_hw_config_read(bus, devfn, where, size, &word_cached);
+> +		if (rc) {
+> +			pci_err(dev,
+> +				"%s: Failed to read CFG Space where=%d size=%d",
+> +				__func__, where, size);
+> +			return rc;
+> +		}
+> +
+> +		/* Extract bytes from word_cached in little-endian order
+> +		 * and store them in cache.
+> +		 */
+> +		for (i = 0; i < size; i++) {
+> +			byte_val = (word_cached >> (i * 8)) & 0xFF;
+> +			pcsc_update_byte(dev, where + i, byte_val);
+> +		}
+> +	}
+> +
+> +	*word = word_cached;
+> +	return 0;
+> +}
+> +
+>  int pcsc_cached_config_read(struct pci_bus *bus, unsigned int devfn, int where,
+>  			    int size, u32 *val)
+>  {
+> -	if (!pcsc_initialised)
+> +	int rc;
+> +	struct pci_dev *dev;
+> +
+> +	if (unlikely(!pcsc_is_initialised()))
 
-  s390/uv: Fix comment of uv_find_secret() function (2025-10-08 13:58:37 +0200)
+As below.  Just add a stub function to patch 1 for this.
 
-----------------------------------------------------------------
-more s390 updates for 6.18 merge window
+>  		goto read_from_dev;
+>  
+> +	if (WARN_ON(!bus || !val || (size != 1 && size != 2 && size != 4) ||
+> +		    where + size > PCSC_CFG_SPC_SIZE))
+> +		return -EINVAL;
+> +
+> +	dev = pci_get_slot(bus, devfn);
+> +
+> +	if (unlikely(!dev || !dev->pcsc))
 
-- Compile the decompressor with -Wno-pointer-sign flag to avoid
-  a clang warning
+I'm curious how much difference that unlikely is making.  Generally don't
+use them unless you have the perf numbers to back them up.
+Letting the branch predictors do their thing is usually a better plan.
 
-- Fix incomplete conversion to flag output macros in __xsch(),
-  to avoid always zero return value instead of the expected
-  condition code
+> +		goto read_from_dev;
+> +
+> +	if (dev->pcsc->cfg_space &&
+> +	    pcsc_is_access_cacheable(dev, where, size)) {
+> +		rc = pcsc_get_and_insert_multiple(dev, bus, devfn, where, val,
+> +						  size);
+> +		if (likely(!rc)) {
+> +			pci_dev_put(dev);
+> +			return 0;
+> +		}
+> +		/* if reading from the cache failed continue and try reading
 
-- Remove superfluous newlines from inline assemblies to improve
-  compiler inlining decisions
+Match multiline comment syntax for PCI.
+		/*
+		 * If reading...
 
-- Expose firmware provided UID Checking state in sysfs regardless
-  of the device presence or state
+> +		 * from the actual device
+> +		 */
+> +	}
+>  read_from_dev:
+> +	if (dev)
+> +		pci_dev_put(dev);
+>  	return pcsc_hw_config_read(bus, devfn, where, size, val);
+>  }
+>  EXPORT_SYMBOL_GPL(pcsc_cached_config_read);
+> @@ -117,10 +336,31 @@ EXPORT_SYMBOL_GPL(pcsc_cached_config_read);
+>  int pcsc_cached_config_write(struct pci_bus *bus, unsigned int devfn, int where,
+>  			     int size, u32 val)
+>  {
+> -	if (!pcsc_initialised)
+> +	int i;
+> +	struct pci_dev *dev;
+> +
+> +	if (unlikely(!pcsc_is_initialised()))
 
-- CIO does not unregister subchannels when the attached device is
-  invalid or unavailable. Update the purge function to remove I/O
-  subchannels if the device number is found on cio_ignore list
+Make it this from the start to reduce churn.
 
-- Consolidate PAI crypto allocation and cleanup paths
+>  		goto write_to_dev;
+>  
+> +	if (WARN_ON(!bus || (size != 1 && size != 2 && size != 4) ||
+> +		    where + size > PCSC_CFG_SPC_SIZE))
+> +		return -EINVAL;
+> +
+> +	dev = pci_get_slot(bus, devfn);
+> +
+> +	if (unlikely(!dev || !dev->pcsc || !dev->pcsc->cfg_space)) {
+> +		/* Do not add nodes on arbitrary writes  */
+> +		goto write_to_dev;
+> +	} else {
 
-- The uv_get_secret_metadata() function has been removed some few
-  months ago, remove also the function mention it in a comment
+Can drop the else given the goto above.
 
-----------------------------------------------------------------
-Heiko Carstens (3):
-      s390: Add -Wno-pointer-sign to KBUILD_CFLAGS_DECOMPRESSOR
-      s390/cio/ioasm: Fix __xsch() condition code handling
-      s390: Remove superfluous newlines from inline assemblies
+> +		/* Mark the cache as dirty */
+> +		if (pcsc_is_access_cacheable(dev, where, size)) {
+> +			for (i = 0; i < size; i++)
+> +				pcsc_set_cached(dev, where + i, false);
+> +		}
+> +	}
+>  write_to_dev:
+> +	if (dev)
+> +		pci_dev_put(dev);
+>  	return pcsc_hw_config_write(bus, devfn, where, size, val);
+>  }
+>  EXPORT_SYMBOL_GPL(pcsc_cached_config_write);
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index 33a186e4bf1e..c231e09e5a6e 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -23,6 +23,7 @@
+>  #include <linux/irqdomain.h>
+>  #include <linux/pm_runtime.h>
+>  #include <linux/bitfield.h>
+> +#include <linux/pcsc.h>
+>  #include "pci.h"
+>  
+>  #define CARDBUS_LATENCY_TIMER	176	/* secondary latency timer */
+> @@ -2801,6 +2802,14 @@ void pci_device_add(struct pci_dev *dev, struct pci_bus *bus)
+>  
+>  	dev->state_saved = false;
+>  
+> +#ifdef CONFIG_PCSC
 
-Ramesh Errabolu (1):
-      s390/pci: Expose firmware provided UID Checking state in sysfs
+Similar request for if (IS_ENABLED()) etc.
 
-Thomas Huth (1):
-      s390/uv: Fix comment of uv_find_secret() function
+> +	if (likely(pcsc_is_initialised()))
+> +		if (!dev->pcsc)
+> +			if (pcsc_add_device(dev))
 
-Thomas Richter (1):
-      s390/pai_crypto: Consolidate PAI crypto allocation and cleanup paths
+Maybe combine some of that if stack.
 
-Vineeth Vijayan (1):
-      s390/cio: Update purge function to unregister the unused subchannels
+> +				pci_warn(dev,
+> +					 "Failed to add PCI device to PCSC\n");
+> +#endif
+> +
+>  	pci_init_capabilities(dev);
+>  
+>  	/*
 
- arch/s390/Makefile                  |   1 +
- arch/s390/hypfs/hypfs_sprp.c        |   2 +-
- arch/s390/include/asm/ap.h          |  18 +++---
- arch/s390/include/asm/atomic_ops.h  |  28 +++++-----
- arch/s390/include/asm/barrier.h     |   8 +--
- arch/s390/include/asm/bitops.h      |   2 +-
- arch/s390/include/asm/checksum.h    |   2 +-
- arch/s390/include/asm/cmpxchg.h     |  12 ++--
- arch/s390/include/asm/cpacf.h       |  24 ++++----
- arch/s390/include/asm/ctlreg.h      |   8 +--
- arch/s390/include/asm/fpu-insn.h    |  36 ++++++------
- arch/s390/include/asm/kvm_para.h    |   2 +-
- arch/s390/include/asm/pci.h         |  10 ++++
- arch/s390/include/asm/percpu.h      |   8 +--
- arch/s390/include/asm/processor.h   |   2 +-
- arch/s390/include/asm/rwonce.h      |   2 +-
- arch/s390/include/asm/spinlock.h    |   2 +-
- arch/s390/include/asm/stacktrace.h  |   4 +-
- arch/s390/include/asm/string.h      |   2 +-
- arch/s390/include/asm/syscall.h     |   2 +-
- arch/s390/include/asm/timex.h       |   2 +-
- arch/s390/kernel/diag/diag310.c     |   2 +-
- arch/s390/kernel/diag/diag324.c     |   2 +-
- arch/s390/kernel/perf_pai_crypto.c  | 106 +++++++++++++++---------------------
- arch/s390/kernel/setup.c            |   2 +-
- arch/s390/kernel/skey.c             |   2 +-
- arch/s390/kernel/smp.c              |   2 +-
- arch/s390/kernel/uv.c               |   4 +-
- arch/s390/kvm/kvm-s390.c            |   6 +-
- arch/s390/lib/spinlock.c            |   6 +-
- arch/s390/lib/string.c              |   8 +--
- arch/s390/lib/test_unwind.c         |   4 +-
- arch/s390/lib/xor.c                 |   8 +--
- arch/s390/mm/maccess.c              |   2 +-
- arch/s390/mm/pgalloc.c              |   2 +-
- arch/s390/pci/pci.c                 |   4 ++
- arch/s390/pci/pci_insn.c            |   4 +-
- arch/s390/pci/pci_sysfs.c           |  25 +++++++++
- drivers/s390/char/sclp_early_core.c |   2 +-
- drivers/s390/cio/cmf.c              |   2 +-
- drivers/s390/cio/device.c           |  37 ++++++++-----
- drivers/s390/cio/ioasm.c            |   7 +--
- 42 files changed, 223 insertions(+), 191 deletions(-)
+>  static inline struct pci_dev *pci_physfn(struct pci_dev *dev)
+> diff --git a/include/linux/pcsc.h b/include/linux/pcsc.h
+> index 45816eb2b2c8..516d73931608 100644
+> --- a/include/linux/pcsc.h
+> +++ b/include/linux/pcsc.h
+
+> +/**
+> + * @brief Returns if the PCSC infrastructure is initialised
+> + *
+
+Run the kernel-doc script over these files it gets fussy about
+partial documentation etc. I'm fairly sure this will trip it up.
+
+> + */
+> +bool pcsc_is_initialised(void);
+> +
+>  #endif /* _LINUX_PCSC_H */
+
 
