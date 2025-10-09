@@ -1,101 +1,127 @@
-Return-Path: <linux-kernel+bounces-846116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BACAABC7148
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 03:09:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15CD8BC7170
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 03:10:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8502B4E15DF
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 01:09:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3F6D24F2C73
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 01:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2AFC1FE451;
-	Thu,  9 Oct 2025 01:07:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC7916EB42;
+	Thu,  9 Oct 2025 01:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h5N8+h+/"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RmoNemMU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF801F0E2E;
-	Thu,  9 Oct 2025 01:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29EFF1684A4
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 01:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759972043; cv=none; b=IEdaUD9EJzDi7pIoSgBG4SbVFY5TPDlRLsT5fzGr3GmqbEksCOUBSVwSOWet8tNg9tq6Ysgt13fb8t6TEweohlQTIyKAGWm1k9pXkeDmM32dpnAq40MrlsRET+CeYs73M/PVzVZit2vl09xieCk2p7pT+pnmlyzDl5zNJwwfXOE=
+	t=1759972066; cv=none; b=X7CEyXmnvs5ddS0fL9OPcFertR9veWH9TM6Ivzf/ceTSEyDQkR8sCGPcGgrTv0trM/n9biMqxHzlMN/3NxY08hGhnha+N/yro2iHpMW7mIppSOnUuXgU2dJ/q1iw64aAuXLJKSUSBXZErJJHLUkQ4AEV7v18CP4aOYM5owcNUPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759972043; c=relaxed/simple;
-	bh=8SQsDQoloTxTr71LaWPc56p2Al3DqRO/PNTgELW/Rqg=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=O/Xazw5FzstXePovjl4HY36kDx+VIi0U6j2tM681V38CKtGzFUYEJVy6Y/QmRY3TPbtmgiBfchpggIzsQ4pxEM0mwo8n0PFuA2rF0MCJlVtEJJnVzZDNQm/u18e8c1EKjSjMCjqtpOSTBsfPGfnfb1urmGQR/AKExuONwCDZQkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h5N8+h+/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89B32C4CEFE;
-	Thu,  9 Oct 2025 01:07:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759972042;
-	bh=8SQsDQoloTxTr71LaWPc56p2Al3DqRO/PNTgELW/Rqg=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=h5N8+h+/J1jXv++dgDIauQcFpu8xcohWpSqElhPUngssaN+blZLXv83TBTDJTGByB
-	 g7CPPClrkwY+JVC0iBk9rOOxYj84NzrZCifKBdPItESNFWSNwSB+DzF+LeX1k0dedr
-	 9lDqOe/SLCPLi5DhGQTPGuinUmeoaB7eMapsntqh3zKpF714QDX2b0uxUfpkHChyjf
-	 7aHz3/+xov5Bg/nYoRtH/OgSTlC1jrT1WlmHe2ynHJ9COHdLSsVfFxOdWH/OPVjFiS
-	 9wb2j/cIzqDsaTa1xmPgJZsjXHngKE4k6EEI10fcmkB4BCYRAovIkJ7ycYxsEmssWQ
-	 yNU3oH1T6Lu2w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33DDE3A41017;
-	Thu,  9 Oct 2025 01:07:12 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1759972066; c=relaxed/simple;
+	bh=wUrk6XKY/1u2QS7MA+SbXv3W7CyWgdmZhrUV2O13MM4=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=iy9bQsphIqwBIG5kktfBEq9uirmkvRx0WVolfNzewEUhyswch3wcQUhr4yMVq4AhKcccOpYVNAIAQ4Z7OirnTpREnCnJTIDkc727wM2/szhlrsHB14e1TwECDwA0q1TrtTkwn9+1m3ed9zoSsq9V0UjzZwp3MEupBThEEsJ4n4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=RmoNemMU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67AC7C4CEE7;
+	Thu,  9 Oct 2025 01:07:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1759972065;
+	bh=wUrk6XKY/1u2QS7MA+SbXv3W7CyWgdmZhrUV2O13MM4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RmoNemMUl1sw1JOPWhVSmESnBtwY1VrPO/I9sWWI9ZARdWfoHuKCcSDnVrOkHjazk
+	 z2i+CNKwtjiY+GMjqll+fCd7a2Iimzob44CQSFXocON4Qe2xHIP8L3AO0n7ZN+BP1x
+	 eIQnQNCUW88YNkR19rYBD6YtlIfmvSYo0Q+FOf1M=
+Date: Wed, 8 Oct 2025 18:07:44 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Lance Yang <lance.yang@linux.dev>
+Cc: david@redhat.com, lorenzo.stoakes@oracle.com, ziy@nvidia.com,
+ baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com, npache@redhat.com,
+ ryan.roberts@arm.com, dev.jain@arm.com, baohua@kernel.org,
+ ioworker0@gmail.com, richard.weiyang@gmail.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH mm-new v3 3/3] mm/khugepaged: merge PTE scanning logic
+ into a new helper
+Message-Id: <20251008180744.008424134fbc29e9616899ad@linux-foundation.org>
+In-Reply-To: <20251008043748.45554-4-lance.yang@linux.dev>
+References: <20251008043748.45554-1-lance.yang@linux.dev>
+	<20251008043748.45554-4-lance.yang@linux.dev>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v1 0/6] spi: Remove the use of dev_err_probe()
-From: patchwork-bot+linux-riscv@kernel.org
-Message-Id: 
- <175997203075.3661959.13983624116098440178.git-patchwork-notify@kernel.org>
-Date: Thu, 09 Oct 2025 01:07:10 +0000
-References: <20250819092044.549464-1-zhao.xichao@vivo.com>
-In-Reply-To: <20250819092044.549464-1-zhao.xichao@vivo.com>
-To: Xichao Zhao <zhao.xichao@vivo.com>
-Cc: linux-riscv@lists.infradead.org, Raju.Rangoju@amd.com, broonie@kernel.org,
- sunny.luo@amlogic.com, xianwei.zhao@amlogic.com, conor.dooley@microchip.com,
- daire.mcnamara@microchip.com, matthias.bgg@gmail.com,
- angelogioacchino.delregno@collabora.com, daniel@zonque.org,
- haojian.zhuang@gmail.com, robert.jarzmik@free.fr, andi.shyti@kernel.org,
- tudor.ambarus@linaro.org, krzk@kernel.org, alim.akhtar@samsung.com,
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello:
+On Wed,  8 Oct 2025 12:37:48 +0800 Lance Yang <lance.yang@linux.dev> wrote:
 
-This patch was applied to riscv/linux.git (for-next)
-by Mark Brown <broonie@kernel.org>:
+> +		if (!cc->is_khugepaged ||
+> +		    *unmapped <= khugepaged_max_ptes_swap) {
+> +			/*
+> +			 * Always be strict with uffd-wp enabled swap
+> +			 * entries. Please see comment below for
+> +			 * pte_uffd_wp().
+> +			 */
+> +			if (pte_swp_uffd_wp(pte)) {
+> +				*scan_result = SCAN_PTE_UFFD_WP;
+> +				return PTE_CHECK_FAIL;
+> +			}
+> +			return PTE_CHECK_CONTINUE;
+> +		} else {
+> +			*scan_result = SCAN_EXCEED_SWAP_PTE;
+> +			count_vm_event(THP_SCAN_EXCEED_SWAP_PTE);
+> +			return PTE_CHECK_FAIL;
+> +		}
 
-On Tue, 19 Aug 2025 17:20:37 +0800 you wrote:
-> The dev_err_probe() doesn't do anything when error is '-ENOMEM'. Therefore,
-> remove the useless call to dev_err_probe(), and just return the value instead.
-> 
-> Xichao Zhao (6):
->   spi: spi_amd: Remove the use of dev_err_probe()
->   spi: SPISG: Remove the use of dev_err_probe()
->   spi: Remove the use of dev_err_probe()
->   spi: mt65xx: Remove the use of dev_err_probe()
->   spi: pxa2xx: Remove the use of dev_err_probe()
->   spi: s3c64xx: Remove the use of dev_err_probe()
-> 
-> [...]
+I'm inclined to agree with checkpatch here.
 
-Here is the summary with links:
-  - [v1,3/6] spi: Remove the use of dev_err_probe()
-    https://git.kernel.org/riscv/c/2aade32d1ffc
+WARNING: else is not generally useful after a break or return
+#81: FILE: mm/khugepaged.c:574:
++			return PTE_CHECK_CONTINUE;
++		} else {
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+did you see this and disagree or did you forget to run checkpatch?
 
+--- a/mm/khugepaged.c~mm-khugepaged-merge-pte-scanning-logic-into-a-new-helper-checkpatch-fixes
++++ a/mm/khugepaged.c
+@@ -571,11 +571,10 @@ static inline int thp_collapse_check_pte
+ 		    (!cc->is_khugepaged ||
+ 		     *none_or_zero <= khugepaged_max_ptes_none)) {
+ 			return PTE_CHECK_CONTINUE;
+-		} else {
+-			*scan_result = SCAN_EXCEED_NONE_PTE;
+-			count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
+-			return PTE_CHECK_FAIL;
+ 		}
++		*scan_result = SCAN_EXCEED_NONE_PTE;
++		count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
++		return PTE_CHECK_FAIL;
+ 	} else if (!pte_present(pte)) {
+ 		if (!unmapped) {
+ 			*scan_result = SCAN_PTE_NON_PRESENT;
+@@ -600,11 +599,10 @@ static inline int thp_collapse_check_pte
+ 				return PTE_CHECK_FAIL;
+ 			}
+ 			return PTE_CHECK_CONTINUE;
+-		} else {
+-			*scan_result = SCAN_EXCEED_SWAP_PTE;
+-			count_vm_event(THP_SCAN_EXCEED_SWAP_PTE);
+-			return PTE_CHECK_FAIL;
+ 		}
++		*scan_result = SCAN_EXCEED_SWAP_PTE;
++		count_vm_event(THP_SCAN_EXCEED_SWAP_PTE);
++		return PTE_CHECK_FAIL;
+ 	} else if (pte_uffd_wp(pte)) {
+ 		/*
+ 		 * Don't collapse the page if any of the small PTEs are
+_
 
 
