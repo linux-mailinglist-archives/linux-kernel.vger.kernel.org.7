@@ -1,172 +1,110 @@
-Return-Path: <linux-kernel+bounces-846093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5A1CBC7043
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 02:41:37 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EB75BC7058
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 02:43:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 84A854E5734
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 00:41:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5FCC04E7283
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 00:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC33198E91;
-	Thu,  9 Oct 2025 00:41:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE9019DF4D;
+	Thu,  9 Oct 2025 00:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ilzzWjVG"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d/miDTD6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F00534BA2F;
-	Thu,  9 Oct 2025 00:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62E41DF6C;
+	Thu,  9 Oct 2025 00:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759970487; cv=none; b=WzTS+beZCQW0zrDyqexLuQPKOztdha99XlXLK2dxBsyTurjCV5DM4o9WMxwpNbuNfhS4OPyPbMLtFiv/7MPUpYHCbxGOv9Joi+Yzt2mog/OcpaV1iGkiyno+UOEZ1JxYyANMFbyd6EWh6GR0UksQ7Y35HWxYrv0NLejoSqVW5H4=
+	t=1759970623; cv=none; b=Yp8Sgv334qMGZwUjckOq94MWeSAzBeRaW6OJkiguvAU5mxW6ZBgBvKp4pYLTQCyn99boRfOyq0s/EvTN44fSQt0H2+Fz4nlJMZPjdSwMubQejaPrgsC/9uB3w1uUMA+TzBkcku93bPoSzNF5tY+tBhds6kMo+vmDqmVIHOnDrxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759970487; c=relaxed/simple;
-	bh=ImDcmRbMJW5k9N0PCKWCYENsFOdNDPl5737Zk155Cb0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gIWxVEpExTfpw6y5ApzyCmdn7qw0F5xnViA4KnjMCi8r4HHcmDegHV+7IHcbYlnhq1RdnY6o2GxcgqVYTK2QmR/yqaSocsCYGC7hBjjteZ0Ov7wPjK42eVIiqPeKqBxATeXv6hw8wZLHIcD2+4E/m133NQ22PwP+TO1Qs0I4QHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ilzzWjVG; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 598HIG4J014342;
-	Thu, 9 Oct 2025 00:41:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=X1uEAU
-	o9Wl+a6bB3iejTxXaXf2cfXqGB4eT/Jgnc1b0=; b=ilzzWjVG8shBBOmqPtOtde
-	ffbCTT+hU5za5QivClVwRTqv35cCALKeMJPel/8iZoddfT0vfkUkje6yfmKVbcQS
-	5C5uyRxyXd0h7bh/yDJPHrLmRZ+OjDqZ7UXtNO15Rsm2vJpZqLoLP/H+/I8MHc8S
-	ecilEond6nPMcOUYD8FEqTvo0Xo/Gvu2XavZ/4VRUx5C0eDuKBQm5eAjEInTVQ6p
-	4rd2BH11KG/9eupeW73mulkXYODjXtrWHWNRLA5EgpKkLM8XTTzPki615W8iBruy
-	jMPq55rx5fyO4ICdm6OEW0ySlzSyspRdV/BZ4Fu/9N2JAlnkGktiuf+UHPtgxMyw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49nv84hm0m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 09 Oct 2025 00:41:05 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5990d4cT005253;
-	Thu, 9 Oct 2025 00:41:05 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49nv84hm0j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 09 Oct 2025 00:41:05 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 598L0RDw020966;
-	Thu, 9 Oct 2025 00:41:04 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49nv9mskam-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 09 Oct 2025 00:41:04 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5990f3CQ24707826
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 9 Oct 2025 00:41:03 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F054158056;
-	Thu,  9 Oct 2025 00:41:02 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A808758052;
-	Thu,  9 Oct 2025 00:40:57 +0000 (GMT)
-Received: from jarvis.ozlabs.ibm.com (unknown [9.150.21.155])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  9 Oct 2025 00:40:57 +0000 (GMT)
-Message-ID: <19ffe9eeb8703656285cab6f0d819602860bb28b.camel@linux.ibm.com>
-Subject: Re: [PATCH] powerpc, ocxl: Fix extraction of struct xive_irq_data
-From: Andrew Donnellan <ajd@linux.ibm.com>
-To: Nam Cao <namcao@linutronix.de>, Madhavan Srinivasan
- <maddy@linux.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Michael
- Ellerman <mpe@ellerman.id.au>,
-        Christophe Leroy	
- <christophe.leroy@csgroup.eu>,
-        Frederic Barrat <fbarrat@linux.ibm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman	
- <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, linuxppc-dev@lists.ozlabs.org,
-        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Ritesh Harjani (IBM)"	
- <ritesh.list@gmail.com>
-Date: Thu, 09 Oct 2025 11:40:55 +1100
-In-Reply-To: <20251008081359.1382699-1-namcao@linutronix.de>
-References: <20251008081359.1382699-1-namcao@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1759970623; c=relaxed/simple;
+	bh=dX0f9NNc3ev8nYEkPBXLQP7xHQwnM4V0kjsg1TcaF4w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UPAC3Bc1srG70TvsS9mzw4+gqAWcWdyA3jCE3CSWg7Y7ZnnLuH6dyJarcaV4WaIoLRagpoedODmyiCuKGkt4G/ZxlzTbWoJx3STqubzn6qX3ZOc+xMIcj4UqkMznNRf6MFoXQrk9uOHdGOnbMCgiZp5Aaq7vhs2XQDxSPm4f0jU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d/miDTD6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFE24C4CEE7;
+	Thu,  9 Oct 2025 00:43:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759970623;
+	bh=dX0f9NNc3ev8nYEkPBXLQP7xHQwnM4V0kjsg1TcaF4w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d/miDTD6rOtxCuQvVhd0sT74JQnWl8xOws2qjCrK8PTGimCO/Cih2WPRfelX3vUrC
+	 dFpxSVeBkaCVvgpZUq4wW3XUNYyXwet85zHxnSqCrshdZa5/j+uLXmn1wIYQzOTXWt
+	 Sj6X8HpuLR91VXM7yzkuSrAW/xLiet20fPM2ncUH7EEZC1pwhNc/KXWgX8ta0rg5En
+	 Yt7VBXXwwivQ3Y/p+vHtjPtQAKinE4o7qERQVfdgxCShMcUfCoeEgAZie90AK5YOIM
+	 ycMOijxSoKMVwCNqp0jxYvtFOyodh2z1foXA/7GDpwPskLtQ1uoA4vHjIUQW/7Q+OE
+	 VUrpGpn+Hhreg==
+Date: Wed, 8 Oct 2025 19:43:41 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: James Calligeros <jcalligeros99@gmail.com>
+Cc: linux-input@vger.kernel.org,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-rtc@vger.kernel.org, asahi@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Janne Grunau <j@jannau.net>, Lee Jones <lee@kernel.org>,
+	Jean Delvare <jdelvare@suse.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Guenter Roeck <linux@roeck-us.net>, Neal Gompa <neal@gompa.dev>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Sven Peter <sven@kernel.org>
+Subject: Re: [PATCH v3 02/13] dt-bindings: hwmon: Add Apple System Management
+ Controller hwmon schema
+Message-ID: <175997061547.377977.15400204653916198003.robh@kernel.org>
+References: <20251007-macsmc-subdevs-v3-0-d7d3bfd7ae02@gmail.com>
+ <20251007-macsmc-subdevs-v3-2-d7d3bfd7ae02@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=HKPO14tv c=1 sm=1 tr=0 ts=68e704a1 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8
- a=pGLkceISAAAA:8 a=VnNF1IyMAAAA:8 a=ORaXvX-jSRnqCH-k56AA:9 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: qc41LZ5LRnou00jqr-qzsnTD1f3s1L5B
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX+AiqY55t6yVt
- WkA5/FNZiY0LVjd/uT6RSzioj0FQal/yJIwS9t+LRVcHY81T/QPAVkreq0692NRukSOtfS43Aly
- wtL+cyieojn+lukv3ur34R8wBiDE4ASh/0q0Ge2WrPXBwDi4EMTv5JkZEZOOT02FHjpDR38QDtt
- BAnzmg/Ne7ZrlETNWTBYKhvTxnUxOGue9f5UAIn8Rbp3J9gSsXurbeC8kvPHeGkdBAQvqQU5v9U
- aAcGwVoXm6MzhcuSIkvj8gRZQERCV6NXEsoPUIOfR/rlsFQ6UQtYhD0//ioC2UR2Z0doRjgeZPl
- CDhVPfGEJn4nKAIS2Kf1ltdeS/IJGJVGjjEdNzbeTZVkjemNTH0mjGFXsjz3w5oNVVPBgz4tbFt
- yW85omm8KpnYqxsekaNtEc98nEyy2Q==
-X-Proofpoint-ORIG-GUID: 5rcrvfIYB7kqsqOT9o5GxnxQPaRznZJu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-08_08,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 impostorscore=0 lowpriorityscore=0 bulkscore=0 spamscore=0
- adultscore=0 clxscore=1011 phishscore=0 priorityscore=1501 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251007-macsmc-subdevs-v3-2-d7d3bfd7ae02@gmail.com>
 
-On Wed, 2025-10-08 at 08:13 +0000, Nam Cao wrote:
-> Commit cc0cc23babc9 ("powerpc/xive: Untangle xive from child interrupt
-> controller drivers") changed xive_irq_data to be stashed to chip_data
-> instead of handler_data. However, multiple places are still attempting to
-> read xive_irq_data from handler_data and get a NULL pointer deference bug=
-.
->=20
-> Update them to read xive_irq_data from chip_data.
->=20
-> Non-XIVE files which touch xive_irq_data seem quite strange to me,
-> especially the ocxl driver. I think there ought to be an alternative
-> platform-independent solution, instead of touching XIVE's data directly.
-> Therefore, I think this whole thing should be cleaned up. But perhaps I
-> just misunderstand something. In any case, this cleanup would not be
-> trivial; for now, just get things working again.
 
-ocxl has always done quite a few weird things...
-
->=20
-> Fixes: cc0cc23babc9 ("powerpc/xive: Untangle xive from child interrupt
-> controller drivers")
-> Reported-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> Closes:
-> https://lore.kernel.org/linuxppc-dev/68e48df8.170a0220.4b4b0.217d@mx.goog=
-le.com/
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
-
-Acked-by: Andrew Donnellan <ajd@linux.ibm.com>  # ocxl
-
+On Tue, 07 Oct 2025 21:16:43 +1000, James Calligeros wrote:
+> Apple Silicon devices integrate a vast array of sensors, monitoring
+> current, power, temperature, and voltage across almost every part of
+> the system. The sensors themselves are all connected to the System
+> Management Controller (SMC). The SMC firmware exposes the data
+> reported by these sensors via its standard FourCC-based key-value
+> API. The SMC is also responsible for monitoring and controlling any
+> fans connected to the system, exposing them in the same way.
+> 
+> For reasons known only to Apple, each device exposes its sensors with
+> an almost totally unique set of keys. This is true even for devices
+> which share an SoC. An M1 Mac mini, for example, will report its core
+> temperatures on different keys to an M1 MacBook Pro. Worse still, the
+> SMC does not provide a way to enumerate the available keys at runtime,
+> nor do the keys follow any sort of reasonable or consistent naming
+> rules that could be used to deduce their purpose. We must therefore
+> know which keys are present on any given device, and which function
+> they serve, ahead of time.
+> 
+> Add a schema so that we can describe the available sensors for a given
+> Apple Silicon device in the Devicetree.
+> 
+> Reviewed-by: Neal Gompa <neal@gompa.dev>
+> Signed-off-by: James Calligeros <jcalligeros99@gmail.com>
 > ---
-> VAS and OCXL has not been tested. I noticed them while grepping.
+>  .../bindings/hwmon/apple,smc-hwmon.yaml  | 86 +++++++++++++++++++++++++
+>  .../bindings/mfd/apple,smc.yaml          | 36 +++++++++++
+>  MAINTAINERS                              |  1 +
+>  3 files changed, 123 insertions(+)
+> 
 
-Unfortunately I don't have convenient ocxl hardware on hand to test with an=
-y
-more (I'm sure the cards are floating around *somewhere* in the company...)=
-, but
-this looks like a straightforward change.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
---=20
-Andrew Donnellan    OzLabs, ADL Canberra
-ajd@linux.ibm.com   IBM Australia Limited
 
