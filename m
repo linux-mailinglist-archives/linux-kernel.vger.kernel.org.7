@@ -1,60 +1,69 @@
-Return-Path: <linux-kernel+bounces-846449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48453BC80B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:27:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05ED2BC80B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:28:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C99383A4EC8
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:27:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C3651A607EA
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:28:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938EA2C08C4;
-	Thu,  9 Oct 2025 08:27:15 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1BC32D0C6C;
+	Thu,  9 Oct 2025 08:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DdA+a5pI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE7A22737F3
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 08:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1014E253356;
+	Thu,  9 Oct 2025 08:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759998435; cv=none; b=TlthDIeVwrTZFIg2Yw+Dvw9VpOxmYAQdDqzNWmn7ZgUUHsbd7OYrAcMldQ03gXTzrdBDnGz8pR+uFyiPMlSdgqmE3fPjjsOU1wp17pY5c8RqJ9kZkLZmlfhLWmC8YeAUAkVptweNV1iml5DlsREBU6R41WjFUDWta/miMibKGV4=
+	t=1759998478; cv=none; b=iGUZOj4zv1llAD0xbKX58Jm6U5eSiyArfn4o19wsJeaTH95FmYX0vwvKlFaXzY3DccJlUMThceOAXztKot6IcpfLBHbytqiG8WWgDV8phDIEhhOMiwnyuq+WYhgv0uZsLDMi4Tc5BQamoppTKRDU495s99vhnOZ3J2/ebWcnAgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759998435; c=relaxed/simple;
-	bh=4v03PRyya9H13ISccbgwKK2b0f7Dk91ukxlna6sRciQ=;
+	s=arc-20240116; t=1759998478; c=relaxed/simple;
+	bh=rZSSjMlfyp1/DY/FUZFefqXE1tJXo2iaAfShYMGP5t8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jH9/ISbWdRsqntSumDGYCyolWqRXB5jETzK71bQPOkrgiCbT4MeskplGiZ6H7KWA4TfECyBIU+CCQQDKLg+I9goYX3r6fUXFidLG8ocvXTYjaL/Db2F9eQ4WIGtrh9YUXgCqieU754zS7Z+/VZ7ck/d+MAXj6r+PunODlw05Wzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1v6lzP-0002mW-0m; Thu, 09 Oct 2025 10:27:07 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1v6lzN-002hby-3B;
-	Thu, 09 Oct 2025 10:27:06 +0200
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id A5A59482712;
-	Thu, 09 Oct 2025 08:27:05 +0000 (UTC)
-Date: Thu, 9 Oct 2025 10:27:05 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
-	Vincent Mailhol <mailhol@kernel.org>, Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-kernel@vger.kernel.org, linux-can@vger.kernel.org, 
-	kernel@pengutronix.de
-Subject: Re: [PATCH] can: m_can: replace Dong Aisheng's old email address
-Message-ID: <20251009-beautiful-stallion-of-recreation-c94f09-mkl@pengutronix.de>
-References: <20251009-m_can-update-email-address-v1-1-30a268587f69@pengutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JrJeTmpHyeqJDfAzXGP53NtETLsncx27008gnGP2FCbPy+U2mfqC1NfM0+wjrPqMCEAjMLyuW/rQqaF55jrdGuS+gvDVSN6kQuEsW/gqLhP1pBBa/buQIvE4n8f4qryhTFENodI9gSZoYX7JJF0Pyn4ASAel+SzTVPnFCipx9tI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DdA+a5pI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6564FC4CEE7;
+	Thu,  9 Oct 2025 08:27:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759998477;
+	bh=rZSSjMlfyp1/DY/FUZFefqXE1tJXo2iaAfShYMGP5t8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DdA+a5pIqIR7UM7ITP9VqMbrQ/uGA1V12t1LNQDOuPyrLQEoJKE5WKh2NSlGCFcFH
+	 uGV+H0pwp2yawTthgjn/F2Z0S6P2suSREhU47mceABhSQ+lsz4NACjbsay/R1WY6xl
+	 63eVDxL1HjTFsgs/K4KbrMpb8/bYp4irws9z33gqhrlUwxHverez29c2Tz9ErOzkD4
+	 lI3+p6SBzsx9lFVrFr5mtC7WR+54NC05PADE4DaHpGWvtVsMpKmDKEi7ct0qWmaPC0
+	 Ke7yKxdzEgNBLhs2Eb1NQka8ViQMV9K4MiwFR6XhqnCVW6ZTKG2vr0HUAKxlQ2nSl/
+	 qu7Zcvd+NNQBA==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1v6m0B-000000001lE-3wvQ;
+	Thu, 09 Oct 2025 10:27:55 +0200
+Date: Thu, 9 Oct 2025 10:27:55 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, Sven Peter <sven@kernel.org>,
+	Janne Grunau <j@jannau.net>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Yong Wu <yong.wu@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chen-Yu Tsai <wens@csie.org>, Krishna Reddy <vdumpa@nvidia.com>,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
+	Miaoqian Lin <linmq006@gmail.com>
+Subject: Re: [PATCH v2 14/14] iommu/tegra: fix device leak on probe_device()
+Message-ID: <aOdyC1toHHIeE4i5@hovoldconsulting.com>
+References: <20251007094327.11734-1-johan@kernel.org>
+ <20251007094327.11734-15-johan@kernel.org>
+ <rp2yiradenf3twznebagx7tgsruwh66exiikal37c4fwo75t4t@4breto65stqt>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,53 +71,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6givv3sh7ore44x3"
+	protocol="application/pgp-signature"; boundary="KFWfMBBEp9y0HjZa"
 Content-Disposition: inline
-In-Reply-To: <20251009-m_can-update-email-address-v1-1-30a268587f69@pengutronix.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <rp2yiradenf3twznebagx7tgsruwh66exiikal37c4fwo75t4t@4breto65stqt>
 
 
---6givv3sh7ore44x3
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
+--KFWfMBBEp9y0HjZa
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] can: m_can: replace Dong Aisheng's old email address
-MIME-Version: 1.0
 
-On 09.10.2025 10:18:06, Marc Kleine-Budde wrote:
-> Dong Aisheng's old Freescale email is not valid anymore and bounces,
-> replace it by the new NXP one.
+On Thu, Oct 09, 2025 at 09:56:18AM +0200, Thierry Reding wrote:
+> On Tue, Oct 07, 2025 at 11:43:27AM +0200, Johan Hovold wrote:
+
+> > @@ -830,10 +830,9 @@ static struct tegra_smmu *tegra_smmu_find(struct d=
+evice_node *np)
+> >  		return NULL;
+> > =20
+> >  	mc =3D platform_get_drvdata(pdev);
+> > -	if (!mc) {
+> > -		put_device(&pdev->dev);
+> > +	put_device(&pdev->dev);
+> > +	if (!mc)
+> >  		return NULL;
+> > -	}
+> > =20
+> >  	return mc->smmu;
 >=20
-> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+> pdev->dev is what's backing mc, so if we use put_device() here, then the
+> MC could go away at any time, right?
 
-Added to linux-can.
+Holding a reference to a device does not prevent its driver data from
+going away so there is no point in keeping the reference.
 
-Thanks,
-Marc
+But from what I can tell, you don't need to worry about that anyway
+since it's the memory controller driver that registers the iommu (and
+the driver can't be unbound).
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+Johan
 
---6givv3sh7ore44x3
-Content-Type: application/pgp-signature; name="signature.asc"
+--KFWfMBBEp9y0HjZa
+Content-Type: application/pgp-signature; name=signature.asc
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjncdYACgkQDHRl3/mQ
-kZxqQwf/RH9vKamxKcmcom0mQFvdaahSjuhiJAM/l6rSzCxmW9HKn4GxjbJUjvGw
-/M303eR1ITxwAvOWGay49CZzMgi5UW5iHPCEvy0ejwTFhaqU7KkuMRbObZeIsFFg
-48QKtFRJWTqD0m7jQhkcY+5X/0pBplrPuNr/RRuvkjYOjOV10t/XXP4z29YNtIln
-OJs02dyMlST/BuEiAZcA5KD3bwL8NH2sE/62ypxM7TLBdMoNRdS/s+AqSOGDPu6d
-m3sSmnkzvw9jPSFT7Y8OWkY025bttm6oj8JkgStlzO+N9NZ68YclvfKG+Rr4hrAT
-idOPsUjzayYB9TGGAGjh9qMMKVZeXQ==
-=MjRP
+iHUEABYKAB0WIQQHbPq+cpGvN/peuzMLxc3C7H1lCAUCaOdyBwAKCRALxc3C7H1l
+CEs2AP0RtypMzHwKSdgb+1LkzszK9dEi+yrUUVVJnU4HXJHGcQD/W3QAlXRFlmAR
+1c8Lq3vdjCx4jKS7G127MmgisGSECgw=
+=inx4
 -----END PGP SIGNATURE-----
 
---6givv3sh7ore44x3--
+--KFWfMBBEp9y0HjZa--
 
