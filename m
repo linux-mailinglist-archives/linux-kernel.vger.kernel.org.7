@@ -1,347 +1,210 @@
-Return-Path: <linux-kernel+bounces-846845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1DFEBC9375
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:13:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDB72BC9383
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:14:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 698E34F2F76
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:13:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 416FD3E3C93
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:14:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB8D2E7BA2;
-	Thu,  9 Oct 2025 13:13:14 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946672E6CDA;
+	Thu,  9 Oct 2025 13:14:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Fb3Ey9bA"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F6C2E6CDF;
-	Thu,  9 Oct 2025 13:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 412BD78F59
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:14:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760015593; cv=none; b=Y2Jig4I3h/kn8UfArqOF/4xPT04zqOEnWfcVhc9eaAJZj1gwbyySuNVMmcoG6MOzeOLjLwzWkUgF17fGkgbYxneOjcidlTbLNMQ04/fvAIoMrp/QBObjVPGZlV1Cekptxp8/tWBme2uyvGQpU1oB3kpqf+h4z3+hze38nGKY+J0=
+	t=1760015656; cv=none; b=ahuIEgbIXAEaaX9M68GaOmXNn/1J71qrtGqTFZIryuFDl0uKcswXLuI5eVOYiWyq3ki7JB5x3f9yj5bAMdH2U5/M6q3F0Pc7tiW4edeTpx3yePymON7ySxXmaDUvqj2c2ZckVYSwEoia9emsR03jC6yYGDbU36t7NjzqR0/5vL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760015593; c=relaxed/simple;
-	bh=YmMkruOsvOrrXEBYVxe7Vw4brNWzYhyqCmO7lrXeEvw=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mYbK1jb8wUKdVRyx1af1PCpn67y5tkaf/jBAl9hrPTtisw5v/ebi4d5mNo/OnyIsAsuzRjg+7PZ7Wvp9QtuiGPWaPX5ofPFTdQdb7PmB0d4tz0hRcnfCxGGHE8EQJFQAhYnO6dayOXwCcnLjyHzt/wqL/w9jTzq6MD4KEs7OoNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cj9Jf4T7tz6L58t;
-	Thu,  9 Oct 2025 21:12:18 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3FBC21402F1;
-	Thu,  9 Oct 2025 21:13:01 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 9 Oct
- 2025 14:13:00 +0100
-Date: Thu, 9 Oct 2025 14:12:58 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Evangelos Petrongonas <epetron@amazon.de>
-CC: Bjorn Helgaas <bhelgaas@google.com>, Alex Williamson
-	<alex.williamson@redhat.com>, "Rafael J . Wysocki" <rafael@kernel.org>, Len
- Brown <lenb@kernel.org>, Pasha Tatashin <pasha.tatashin@soleen.com>, David
- Matlack <dmatlack@google.com>, Vipin Sharma <vipinsh@google.com>, Chris Li
-	<chrisl@kernel.org>, Jason Miu <jasonmiu@google.com>, "Pratyush Yadav"
-	<pratyush@kernel.org>, Stanislav Spassov <stanspas@amazon.de>,
-	<linux-pci@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <nh-open-source@amazon.com>
-Subject: Re: [RFC PATCH 02/13] pci: pcsc: implement basic functionality
-Message-ID: <20251009141258.00006a69@huawei.com>
-In-Reply-To: <de485efebd203fc0f69aabccd45917b8360ce47a.1759312886.git.epetron@amazon.de>
-References: <cover.1759312886.git.epetron@amazon.de>
-	<de485efebd203fc0f69aabccd45917b8360ce47a.1759312886.git.epetron@amazon.de>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1760015656; c=relaxed/simple;
+	bh=uXvSpjVF8BK7YFN0xoPwvysk7CDBGOxoFJjEr38/hn0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WvR+QlPkmeIVWCLXURzD/FlhDgOlZvY4z6oILMPlXokBXMEWZ2QBqfLRrIquiSHjLS+AaIBgj0mx4LtaIOL6XOqjMEt8/cFK1JculC1LaqVbQRrHnXF5ceKVwKTWjYyr8UtDHx+GogXv6Pcayj8Us0nD9BYWOM31qOgLzpkhUZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Fb3Ey9bA; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5996EP9P005152
+	for <linux-kernel@vger.kernel.org>; Thu, 9 Oct 2025 13:14:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	lo5MRavVGxHbSwlyHOLgkDpCLDtjLUpSjKDigiF2Nwc=; b=Fb3Ey9bAch2igCHD
+	rOvvjWjhsPymbUsAwVfk5vAVZZ8AbiKfkYkZPrDzYBZh5eFSmlJYYOBf12XoaUY9
+	QkF65lPdzd9KBenADpNVL8vXcILzE+ttTspZkCgo26I8OxHvA5dI0GtRJuEEgnBE
+	M5YEzHyO+ntM8XatSL24cMFO2jGgZRaqBpl/MS+XfRB7Bj6Ed1u7QI4KewI55frg
+	lxWDu4dnBm0XPs4iGJczScylUzGR6GyfTj4nceaJiE0F0M9BYCJ/ZUDygGFxsaYe
+	hiLIi5zZPmsHjNSvjLNpo7gnBqg6Yu3M2kDpxGrLJby2f4E1i2U45YJmt4UGkRev
+	aNN3KA==
+Received: from mail-vs1-f70.google.com (mail-vs1-f70.google.com [209.85.217.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv4u2we9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 13:14:13 +0000 (GMT)
+Received: by mail-vs1-f70.google.com with SMTP id ada2fe7eead31-588c87efb7dso2454458137.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 06:14:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760015653; x=1760620453;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lo5MRavVGxHbSwlyHOLgkDpCLDtjLUpSjKDigiF2Nwc=;
+        b=X9v1C+cn0IRP29Jbparl18U1faTfRw+RApFtFW5k+RVqxsXiGU4owyShjDhCDvuP6h
+         bifdgdRSiUEXVkP80KIXWSW+A4ZCcG44+TcB5CllHn/7Cl8jhE6Hi/MyIq9iODa6FOup
+         CUAGphKJcBY1bQVutZ3IoXxezCluIXNkz22Pbqz5nsun0hq7kWv1LsCzS60FzT5Z4HJU
+         zrGUuok6rxidi9V+qwQjea0p5b4AOuAyHodACH4rCibGvlJjcve8V/JA1RbQHBOTtYZw
+         DN1BPxRXvqOVgwrJP9zATnoGc2c1t4S3ZvGcFQJmCoy0+pVduXZMNitZEw2ZaM9bWkuo
+         O1dg==
+X-Forwarded-Encrypted: i=1; AJvYcCVnz4Dy8rw28L5XXOOCjiBdsHJwAnjJxbmX7aNMAtjv5Rk69r3WHzTO4qcCj2L/L4IEG355EjHmKb/iq0w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyH0q+kOJwSGEOAyIe2DAzUZiuS+CdpEErTE/ba1v2FNt0dks6v
+	6751KQ7vDXQCs3crs3/QEP6jVhF6mfeILK278m5cRXxTVYStg3BXUW7i9C86o8kD/1Zb8EGYY5E
+	TckE2Fb+r91MQJdJKtNt5b+XU3AxkyCjDeV+cww2WJPztYNPIPX8c78gkbcFIxtwDPLE=
+X-Gm-Gg: ASbGnct34POoGoFgyHRXG88Rac/aqpw1RT1rnOkVsBhYG9d8QkuSCBEMSYAxtXnk8WZ
+	IsUSeVSdmd34fKxl0Ye3/KvldgSGRQVBGppFTLAS0XeAJByT2IPp4HR+top552TyPAqHiV9eje8
+	QTZrLCVauLWtdVQRkkfIiHAxI3m1sRAWQdwsDk1VUhudpNoZ6KBFnZ5P9LpZd4gJn7Z/8c6wCU5
+	mg31fg+LEdMqQUzmia3VnIuTKKpmRmRJK/tVMguRbgbUAp/6ylOC8n9nZInS9HB9l5xZVKnWAsS
+	3+GYftWkMm+ADYDekXV6B8o6FLjRrMYE4FeaIEW97oLfk9fBIaZxz0Z7DNBdXCqulbs1pEyWkn6
+	NRTgCDdXPTzoriXtq4CUXrYs+1f/hp6W6K6/5hMw15/hvTcS2zbuzpzmtqQ==
+X-Received: by 2002:a05:6102:e10:b0:5d5:f6ae:38e9 with SMTP id ada2fe7eead31-5d5f6ae3d78mr557345137.42.1760015653057;
+        Thu, 09 Oct 2025 06:14:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IECks5cD3E8/Ce3Prr57QfCkGaf307hNA+1+lQir9ZyF994JSEye7UPdlYasS5n+CNSCMBGtQ==
+X-Received: by 2002:a05:6102:e10:b0:5d5:f6ae:38e9 with SMTP id ada2fe7eead31-5d5f6ae3d78mr557333137.42.1760015652601;
+        Thu, 09 Oct 2025 06:14:12 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59082802080sm327717e87.25.2025.10.09.06.14.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 06:14:10 -0700 (PDT)
+Date: Thu, 9 Oct 2025 16:14:08 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+        Charan Teja Kalla <charan.kalla@oss.qualcomm.com>, joro@8bytes.org,
+        will@kernel.org, robin.murphy@arm.com, saravanak@google.com,
+        conor+dt@kernel.org, mchehab@kernel.org, bod@kernel.org,
+        krzk+dt@kernel.org, abhinav.kumar@linux.dev,
+        vikash.garodia@oss.qualcomm.com, dikshita.agarwal@oss.qualcomm.com,
+        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux.dev
+Subject: Re: [RFC PATCH 0/3] Introduce iommu-map-masked for platform devices
+Message-ID: <q6ym54dfmwes3avn2mv22hukstwfrus2d233atjy7cttvgrhvl@ahcqalnz72vs>
+References: <20250928171718.436440-1-charan.kalla@oss.qualcomm.com>
+ <CAL_JsqK9waZK=i+ov0jV-PonWSfddwHvE94Q+pks4zAEtKc+yg@mail.gmail.com>
+ <1d36569c-55b9-4390-87d1-fd0c2f837014@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1d36569c-55b9-4390-87d1-fd0c2f837014@kernel.org>
+X-Authority-Analysis: v=2.4 cv=Vrcuwu2n c=1 sm=1 tr=0 ts=68e7b526 cx=c_pps
+ a=N1BjEkVkxJi3uNfLdpvX3g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=nh7g1Hw0eNnsH1J9AAMA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=crWF4MFLhNY0qMRaF8an:22
+X-Proofpoint-GUID: kBk7hmSBjQY94UAUvRWUntxqm-2tZG27
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX0pL+86SnEmz6
+ W3rZh4Iu1qhRJxSiQ6XoG1A4RUJ+W6yjiUOIN763sGrkw/Yb0YGQ2LGZV5k1HerL+Fcwh2QMx0A
+ +8DOYiM1RT5MHSPy1d7TdCX3NZkdoSQVKjyatyWjRSTCxDE+VZf4leSuB1tZn4ZwfUmVOmmFZTW
+ 5EufrRNKRmemYSdMc+qlEU+JhUq5JDp/qaOyspP3bt9dig6iCVK/PP5Q1xprx9IYh01JyV+9sLf
+ bpMSp6lJuFDgIyAS8uzciU0xr2j77DuZsfiQq1euYPMExFoZvCX0sWsNrz2ZJ0yQGATcykqeVYl
+ bV1OxDw98Fl6bueXjy343HNpkjQDszppNLaa9batERjC33d2ZdvHDkY5+Seas4ExNGshSo+7aZz
+ QqfQMnP4CMRIuVJdyGhEGhcGNs0QBA==
+X-Proofpoint-ORIG-GUID: kBk7hmSBjQY94UAUvRWUntxqm-2tZG27
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-09_04,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 phishscore=0 impostorscore=0 clxscore=1015 adultscore=0
+ bulkscore=0 spamscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
 
-On Fri, 3 Oct 2025 09:00:38 +0000
-Evangelos Petrongonas <epetron@amazon.de> wrote:
-
-> Implement the core functionality of the PCI Configuration Space Cache
-> using per-device cache nodes attached to struct pci_dev.
+On Thu, Oct 09, 2025 at 09:26:43AM +0900, Krzysztof Kozlowski wrote:
+> On 29/09/2025 05:23, Rob Herring wrote:
+> > On Sun, Sep 28, 2025 at 12:17 PM Charan Teja Kalla
+> > <charan.kalla@oss.qualcomm.com> wrote:
+> >>
+> >> This series introduces a new iommu property called iommu-map-masked(may
+> >> be there is a better name), which is used to represent the IOMMU
+> >> specifier pairs for each function of a __multi-functional platform
+> >> device__, where each function can emit unique master id(s) that can be
+> >> associated with individual translation context.
+> >>
+> >> Currently, the iommu configuration - at least for arm architecture-
+> >> requires all the functions of a platform device will be represented
+> >> under single dt node thus endup in using only a single translation
+> >> context.
+> >>
+> >> A simple solution to associate individual translation context for each
+> >> function of a device can be through creating per function child nodes in
+> >> the device tree, but dt is only to just represent the soc layout to
+> >> linux kernel.
+> >>
+> >> Supporting such cases requires a new iommu property called,
+> >> iommu-map-masked(taking cue from iommu-map for pci devices) and syntax
+> >> is:
+> >>    iommu-map-masked = <FUNCTION_ID1 &iommu ID1 MASK1>,
+> >>                       <FUNCTION_ID2 &iommu ID2 MASK2>;
+> >> NOTE: As an RFC, it is considered that this property always expects 4
+> >> cells.
+> >>
+> >> During the probe phase of the driver for a multi-functional device
+> >> behind an IOMMU, a child device is instantiated for each FUNCTION_ID.
+> >> The call to of_dma_configure_id() on each child sets up the IOMMU
+> >> configuration, ensuring that each function of the device is associated
+> >> with a distinct translation context.
+> >>
+> >> This property can also be used in association with 'iommus=' when dt
+> >> bindings requires the presence of 'iommus=', example[2]. For these
+> >> cases, representation will be(on arm64):
+> >>    iommus = <&iommu sid mask>; //for default function.
+> >>    iommu-map-masked = <FUNCTION_ID &iommu sid mask>;//additional
+> >> function.
+> > 
+> > Where does the FUNCTION_ID value come from?
+> > 
+> > Why can't you just have multiple "iommus" entries where the index
+> > defines the default and any FUNCTION_ID entries? What's in each index
+> > is specific to the device.
 > 
-> Each cache node stores:
-> - A 256-byte array (4KB for PCIe) representing the configuration space
-> - A cacheable bitmask indicating which registers can be cached
-> - A cached bitmask tracking which bytes are currently cached
 > 
-> The implementation attaches cache nodes directly to pci_dev structures
-> during `pci_device_add()` and removes them during `pci_device_remove()`.
-> 
-> The cache implements a write-invalidate policy where writes are
-> propagated to the device while invalidating the cache. This design
-> choice improves robustness and increases the number of cacheable
-> registers, particularly for operations like BAR sizing which use
-> write-read sequences to detect read-only bits.
-> 
-> Currently, the cacheable bitmask is zero-initialized,
-> effectively disabling the cache. This will be changed in the next
-> commits.
-> 
-> This implementation only supports endpoint devices; bridges and
-> root complexes are not cached.
-> 
-> Signed-off-by: Evangelos Petrongonas <epetron@amazon.de>
-> ---
->  drivers/pci/pci-driver.c |   5 +
->  drivers/pci/pcsc.c       | 244 ++++++++++++++++++++++++++++++++++++++-
->  drivers/pci/probe.c      |   9 ++
->  include/linux/pci.h      |   5 +
->  include/linux/pcsc.h     |  38 ++++++
->  5 files changed, 299 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-> index 302d61783f6c..7c0cbbd50b32 100644
-> --- a/drivers/pci/pci-driver.c
-> +++ b/drivers/pci/pci-driver.c
-> @@ -21,6 +21,7 @@
->  #include <linux/acpi.h>
->  #include <linux/dma-map-ops.h>
->  #include <linux/iommu.h>
-> +#include <linux/pcsc.h>
->  #include "pci.h"
->  #include "pcie/portdrv.h"
->  
-> @@ -497,7 +498,11 @@ static void pci_device_remove(struct device *dev)
->  	 * horrible the crap we have to deal with is when we are awake...
->  	 */
->  
-> + #ifdef CONFIG_PCSC
+> We discussed the problem earlier and that is what I asked them to do.
+> Apparently I was just ignored so now two maintainers say the same. We
+> can get ignored still and the third maintainer will have to tell this.
 
-if (IS_ENABLED()) or a stub.
+The main problem (which comes from IOMMU definition) is that currently
+the iommus property is not defined nor used as an ordered list or
+anything like that. Other devices depend on it being a set with no
+additional structure. We can change that, but it might potentially
+affect others.
 
-> +	pcsc_remove_device(pci_dev);
-> +#endif
->  	pci_dev_put(pci_dev);
-> +
-Clean this out.
->  }
->  
->  static void pci_device_shutdown(struct device *dev)
-> diff --git a/drivers/pci/pcsc.c b/drivers/pci/pcsc.c
-> index dec7c51b5cfd..7531217925e8 100644
-> --- a/drivers/pci/pcsc.c
-> +++ b/drivers/pci/pcsc.c
->
-> +/**
-> + * pcsc_get_and_insert_multiple - Read multiple bytes from PCI cache or HW
-> + * @dev: PCI device to read from
-> + * @bus: PCI bus to read from
-> + * @devfn: device and function number
+The iommu-maps is e.g. used by Tegra display device to map multiple
+contexts separately, but it doesn't fit all the needs because it doesn't
+allow us to specify the mask.
 
-Is this always the same as dev->devfn? 
+Also, the video-codec is not unique, we have other similar usecases, the
+display, camera and GPU, which also need to map some of the contexts
+manually.
 
-> + * @where: offset in config space
-> + * @word: pointer to store read value
-> + * @size: number of bytes to read (1, 2 or 4)
-> + *
-> + * Reads consecutive bytes from PCI cache or hardware. If values are not cached,
-> + * reads from hardware and inserts into cache.
-> + *
-> + * Return: 0 on success, negative error code on failure
-> + */
-> +static int pcsc_get_and_insert_multiple(struct pci_dev *dev,
-> +					struct pci_bus *bus, unsigned int devfn,
-> +					int where, u32 *word, int size)
-> +{
-> +	u32 word_cached = 0;
-> +	u8 byte_val;
-> +	int rc, i;
-> +
-> +	if (WARN_ON(!dev || !bus || !word))
-> +		return -EINVAL;
-> +
-> +	if (WARN_ON(size != 1 && size != 2 && size != 4))
-> +		return -EINVAL;
-> +
-> +	/* Check bounds */
-> +	if (where + size > PCSC_CFG_SPC_SIZE)
-> +		return -EINVAL;
-> +
-> +	if (pcsc_is_cached(dev, where, size)) {
-> +		/* Read bytes from cache and assemble them into word_cached
+Last, but not least, there are e.g. fastrpc devices which have
+subdevices just to declare the IOMMU entry for the context stream. I
+would very much prefer to be able to drop the subnodes in a longer term.
 
-Multiline comment syntax as below. Same for others.
+Speaking from the drivers point of view, we also don't have any control
+on how the IOMMUs are attached, while we need to control it for these
+kind of contexts.
 
-> +		 * in little-endian order (as per PCI spec)
-> +		 */
-> +		for (i = 0; i < size; i++) {
-> +			pcsc_get_byte(dev, where + i, &byte_val);
-> +			word_cached |= ((u32)byte_val << (i * 8));
-> +		}
-> +	} else {
-> +		rc = pcsc_hw_config_read(bus, devfn, where, size, &word_cached);
-> +		if (rc) {
-> +			pci_err(dev,
-> +				"%s: Failed to read CFG Space where=%d size=%d",
-> +				__func__, where, size);
-> +			return rc;
-> +		}
-> +
-> +		/* Extract bytes from word_cached in little-endian order
-> +		 * and store them in cache.
-> +		 */
-> +		for (i = 0; i < size; i++) {
-> +			byte_val = (word_cached >> (i * 8)) & 0xFF;
-> +			pcsc_update_byte(dev, where + i, byte_val);
-> +		}
-> +	}
-> +
-> +	*word = word_cached;
-> +	return 0;
-> +}
-> +
->  int pcsc_cached_config_read(struct pci_bus *bus, unsigned int devfn, int where,
->  			    int size, u32 *val)
->  {
-> -	if (!pcsc_initialised)
-> +	int rc;
-> +	struct pci_dev *dev;
-> +
-> +	if (unlikely(!pcsc_is_initialised()))
-
-As below.  Just add a stub function to patch 1 for this.
-
->  		goto read_from_dev;
->  
-> +	if (WARN_ON(!bus || !val || (size != 1 && size != 2 && size != 4) ||
-> +		    where + size > PCSC_CFG_SPC_SIZE))
-> +		return -EINVAL;
-> +
-> +	dev = pci_get_slot(bus, devfn);
-> +
-> +	if (unlikely(!dev || !dev->pcsc))
-
-I'm curious how much difference that unlikely is making.  Generally don't
-use them unless you have the perf numbers to back them up.
-Letting the branch predictors do their thing is usually a better plan.
-
-> +		goto read_from_dev;
-> +
-> +	if (dev->pcsc->cfg_space &&
-> +	    pcsc_is_access_cacheable(dev, where, size)) {
-> +		rc = pcsc_get_and_insert_multiple(dev, bus, devfn, where, val,
-> +						  size);
-> +		if (likely(!rc)) {
-> +			pci_dev_put(dev);
-> +			return 0;
-> +		}
-> +		/* if reading from the cache failed continue and try reading
-
-Match multiline comment syntax for PCI.
-		/*
-		 * If reading...
-
-> +		 * from the actual device
-> +		 */
-> +	}
->  read_from_dev:
-> +	if (dev)
-> +		pci_dev_put(dev);
->  	return pcsc_hw_config_read(bus, devfn, where, size, val);
->  }
->  EXPORT_SYMBOL_GPL(pcsc_cached_config_read);
-> @@ -117,10 +336,31 @@ EXPORT_SYMBOL_GPL(pcsc_cached_config_read);
->  int pcsc_cached_config_write(struct pci_bus *bus, unsigned int devfn, int where,
->  			     int size, u32 val)
->  {
-> -	if (!pcsc_initialised)
-> +	int i;
-> +	struct pci_dev *dev;
-> +
-> +	if (unlikely(!pcsc_is_initialised()))
-
-Make it this from the start to reduce churn.
-
->  		goto write_to_dev;
->  
-> +	if (WARN_ON(!bus || (size != 1 && size != 2 && size != 4) ||
-> +		    where + size > PCSC_CFG_SPC_SIZE))
-> +		return -EINVAL;
-> +
-> +	dev = pci_get_slot(bus, devfn);
-> +
-> +	if (unlikely(!dev || !dev->pcsc || !dev->pcsc->cfg_space)) {
-> +		/* Do not add nodes on arbitrary writes  */
-> +		goto write_to_dev;
-> +	} else {
-
-Can drop the else given the goto above.
-
-> +		/* Mark the cache as dirty */
-> +		if (pcsc_is_access_cacheable(dev, where, size)) {
-> +			for (i = 0; i < size; i++)
-> +				pcsc_set_cached(dev, where + i, false);
-> +		}
-> +	}
->  write_to_dev:
-> +	if (dev)
-> +		pci_dev_put(dev);
->  	return pcsc_hw_config_write(bus, devfn, where, size, val);
->  }
->  EXPORT_SYMBOL_GPL(pcsc_cached_config_write);
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index 33a186e4bf1e..c231e09e5a6e 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -23,6 +23,7 @@
->  #include <linux/irqdomain.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/bitfield.h>
-> +#include <linux/pcsc.h>
->  #include "pci.h"
->  
->  #define CARDBUS_LATENCY_TIMER	176	/* secondary latency timer */
-> @@ -2801,6 +2802,14 @@ void pci_device_add(struct pci_dev *dev, struct pci_bus *bus)
->  
->  	dev->state_saved = false;
->  
-> +#ifdef CONFIG_PCSC
-
-Similar request for if (IS_ENABLED()) etc.
-
-> +	if (likely(pcsc_is_initialised()))
-> +		if (!dev->pcsc)
-> +			if (pcsc_add_device(dev))
-
-Maybe combine some of that if stack.
-
-> +				pci_warn(dev,
-> +					 "Failed to add PCI device to PCSC\n");
-> +#endif
-> +
->  	pci_init_capabilities(dev);
->  
->  	/*
-
->  static inline struct pci_dev *pci_physfn(struct pci_dev *dev)
-> diff --git a/include/linux/pcsc.h b/include/linux/pcsc.h
-> index 45816eb2b2c8..516d73931608 100644
-> --- a/include/linux/pcsc.h
-> +++ b/include/linux/pcsc.h
-
-> +/**
-> + * @brief Returns if the PCSC infrastructure is initialised
-> + *
-
-Run the kernel-doc script over these files it gets fussy about
-partial documentation etc. I'm fairly sure this will trip it up.
-
-> + */
-> +bool pcsc_is_initialised(void);
-> +
->  #endif /* _LINUX_PCSC_H */
-
+-- 
+With best wishes
+Dmitry
 
