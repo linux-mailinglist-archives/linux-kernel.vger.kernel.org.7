@@ -1,296 +1,192 @@
-Return-Path: <linux-kernel+bounces-846880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 647BCBC9528
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:34:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 920A3BC952E
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:35:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17C913A5B4E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:34:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BBD23A6021
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36CCF2E093A;
-	Thu,  9 Oct 2025 13:34:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBCFD2E62C5;
+	Thu,  9 Oct 2025 13:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="nNQHAAbT"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="UDo0BlK1"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C40450F2
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5557B35966
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760016878; cv=none; b=k9fGLXSWniBK+D4hf6ojMv90eCVHTIcIgtDLNWcZHyiX8AlPtXxjjuAzbycd5j8FmXnvbiE7R2Sb/Zums/5MWFRLy4cFWtKcpEWfAtJfI8a3dYzmbyDG4oK+jP34umQU1ZJQoWDcY47/47XPX/aanqvZU7d9FuN+jEg0MqVks6w=
+	t=1760016904; cv=none; b=HJGnfhmetKoN32FGxLK7MV4EZx5Dos0Mu6wn5nSwH6+N9CTZc8dUS//6eSw3/gCCHyQU6ixLQWGi83MFOsUe+YYqVe2H1Y9iZLJ27WowdZXdxn4NkHdFpmSkD6N9L0cpYmb1gKseQ3C0EFHKr0eX8N2bF9tAN+gBEeI44ww2f1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760016878; c=relaxed/simple;
-	bh=lLCmM9foRlsu43SQNNjwJvzcXcQ42xByO22XUF+i63A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DOpopZN6DjgiX3M8/giJw1LylUoAS2hAJ50c3pozEydsmrDsQIaRnalxhxTBwit/mpnHFPalQVNileZMZ+CSmwVPF6swevGS/q2giwYgv3egHX25hbIpjs1g0SOCzNjjVeE+rS6AR6aftYjMWWNoWf2GuSC4l4y9GVAWqwipLKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=nNQHAAbT; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-373ac916b35so16348611fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 06:34:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1760016874; x=1760621674; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1dSErVy5gy3iTqfs+Fv+uBfQPNdt1PnHnP4LjyzMeiA=;
-        b=nNQHAAbTzcnDRdpgBFABbvUftF3azzU+g/NQDvWd2xwtfLIK/S9Orx5I6Y5TaS8sHz
-         b535J7ANx/wyEYdtu8liqVimuSf0Yr3QepNzDNW4Us29sspEf3bfnyP2t0OrVjR5IrYq
-         CMqVQfE6p+GvMqSyIi42DoHeAwt5Ou5FZlWpE4l8imv6IlHFgMEQfdFRUVOmQ4PEyNHO
-         i8yeahV7HRT5h6ubbCLxXKcktteAWiW9HcqJekcIhvuHTYUdLUETkUsjovlf5OEMAxFU
-         o4QvOaCKRmckIHN+nT4fFaVJdmpQRJeMaG/f2PzJMvcHWF/5k75/bPIVxHIH+VbKPGf+
-         7gBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760016874; x=1760621674;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1dSErVy5gy3iTqfs+Fv+uBfQPNdt1PnHnP4LjyzMeiA=;
-        b=Cj8kx35Ux5VfW3tTzxlvy2k3YtScRwTU48hGMEnar/4wWLHQcbyVYg6Xvq4+x++iBX
-         HmfK0KCMauwTi7veOlgry6rlE2VCjT4A7MW9zwSQpm1UOxKdw3OHJVUwO4k4RhauOcE3
-         76Qx3Qgu50d3qQ6wRHs3+E/sb8wzDUt30DooiYdiJGdGEqZEXYlVSRVaB5htu+JP2rAK
-         JoS+JifH5IF3jR2q/9UER543QvCegnSkYKzIMCqByfOXf3pk5Bh4yHXB3qWjbs3fJ81Y
-         dGtKABkAzeFzEh2PhFk0p+L2wneC7oBZ8gkOQ3YTBL5GPx7RRYOCs7Twvx7L9OYR7PCG
-         PBPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX0C6caYWC49Gr/G1XOKcxeut9yBqKZ797a+JVLg8R7Qilp7+2U55v7TCG2N4rVZLC2W1c0L5E2JkNfUMA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/45REo4aWsHosDFasb/dRMOaP2TOXhnRNokBaXrWELoCKJsnh
-	Wz+/tnGAPbwek6wds3orzHLXNkW0euBeBMsmCoZxOOuX5xtvAM4SdakcnTueOYSEu8ZPCwaLUXw
-	JFuL3g0N459XxU0f5t+lrX2oHaqSIEPdmQeaZhUy29Q==
-X-Gm-Gg: ASbGncuPeR1ZJeKA6THUeuHXNpct9YlnpQaL5xKBWSIbwb2QyXB3n1jXHG4AV3tFaga
-	fX4VvVB1QECxbhiOhltKoBTOampPfcQr+6e5fRV96MahJnOlXw1huHGnkl4UbW3LYrksT0sQwvO
-	A+beeDinv0c7bToYSa5GERh+ZQvHd+1aX2csBdeSuKoYGBZz/7I+YQQ5Dw7cG11PNrd7nN2cSjg
-	Ab+4VYzUxhZMgTATtK0shFZ2+TAllzG5Pt2ZI/k/w==
-X-Google-Smtp-Source: AGHT+IHWWJUMwgLO59lk5lakKRaZ+/wVoeJhFN8a16uOzpMmsGJAl1afZO0Y0UWvv4eDfAIFgKUZh54hbk7hVJVmV4E=
-X-Received: by 2002:a05:6512:23a8:b0:571:d258:5639 with SMTP id
- 2adb3069b0e04-5905e398890mr3351104e87.25.1760016874419; Thu, 09 Oct 2025
- 06:34:34 -0700 (PDT)
+	s=arc-20240116; t=1760016904; c=relaxed/simple;
+	bh=CAmBj03hKuHqdR7xKw0lp59hnQtMwoRdZApMK9PloWA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nHJxFmFZSLpFja/+ML3YY77RccyYDeRsrSH++JGx5sxQOkSjpgEVR7Jnkj6Fg3U9F+Ag5Vv+7BJltvhw3XvGqaRAD7N41fs5xEZx9yTr/Sbo4H6SoJaZVsMaQP+mT37Vo/5zuwCFdtWgwRC4wifqSEe9tyVIBv/5Mk/gzBOvLDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=UDo0BlK1; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760016897;
+	bh=CAmBj03hKuHqdR7xKw0lp59hnQtMwoRdZApMK9PloWA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UDo0BlK1bY2MLwNpd5YVH+CHWNw5G63UBvAVGj/BkG/VP4kuPByH2IWmbIEiGaicL
+	 QYUeAYV9ciGVt68LEtuQ7V+44rF85lTfkJAGtzFgqJJqsDgpUbUse2XAjZmUHRICk7
+	 Yd0BvPd06UqmwI9NKInUowqXAqUNRWRPUmyX5t7H3085PENTGfj9jYffvqUqLYOGG6
+	 xx5Y5rB2AWuwWBnf6rTuqxLz9hNXTobh6lxZGdW+KUMadhGK5ss/TLavIFHfD5pEF+
+	 ssvX3fcDHEGtNkHz/++xvX4h2iUEPo/TaqLlp0pmJifbaNhY/YaxQFSoqjYKj/DWcR
+	 aBf3A9Ea5bLlA==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id D6A8817E1060;
+	Thu,  9 Oct 2025 15:34:56 +0200 (CEST)
+Date: Thu, 9 Oct 2025 15:34:54 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Steven Price <steven.price@arm.com>
+Cc: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>,
+ linux-kernel@vger.kernel.org, healych@amazon.com, Rob Herring
+ <robh@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2] drm/panfrost: Name scheduler queues after their job
+ slots
+Message-ID: <20251009153454.5d04a85d@fedora>
+In-Reply-To: <4400c6b4-d2ad-429a-b84c-60a2f593cff1@arm.com>
+References: <20251009114313.1374948-1-adrian.larumbe@collabora.com>
+	<4400c6b4-d2ad-429a-b84c-60a2f593cff1@arm.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251002060732.100213-1-apatel@ventanamicro.com>
- <20251002060732.100213-2-apatel@ventanamicro.com> <20251002192506.GA236729-robh@kernel.org>
-In-Reply-To: <20251002192506.GA236729-robh@kernel.org>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Thu, 9 Oct 2025 19:04:22 +0530
-X-Gm-Features: AS18NWACKtl7ERcN8H5MlfK2QBMUHI9VMMe2RI6b1AOyUjn27L1IFJvaV0ijKkc
-Message-ID: <CAK9=C2WO5vNs0Y_w8Pk9WWMeYe8Kxhaow5b_QxQWfobL5mrZoQ@mail.gmail.com>
-Subject: Re: [PATCH 01/11] dt-bindings: Add RISC-V trace component bindings
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Greg KH <gregkh@linuxfoundation.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Ian Rogers <irogers@google.com>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Liang Kan <kan.liang@linux.intel.com>, 
-	Mayuresh Chitale <mchitale@gmail.com>, Anup Patel <anup@brainfault.org>, 
-	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
-	Sunil V L <sunilvl@ventanamicro.com>, linux-riscv@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi Rob,
+On Thu, 9 Oct 2025 13:45:47 +0100
+Steven Price <steven.price@arm.com> wrote:
 
-Apologies for the delayed response ...
+> On 09/10/2025 12:43, Adri=C3=A1n Larumbe wrote:
+> > Drawing from commit d2624d90a0b7 ("drm/panthor: assign unique names to
+> > queues"), give scheduler queues proper names that reflect the function
+> > of their JM slot, so that this will be shown when gathering DRM
+> > scheduler tracepoints.
+> >=20
+> > Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> =20
+>=20
+> Reviewed-by: Steven Price <steven.price@arm.com>
 
-On Fri, Oct 3, 2025 at 12:55=E2=80=AFAM Rob Herring <robh@kernel.org> wrote=
-:
->
-> On Thu, Oct 02, 2025 at 11:37:22AM +0530, Anup Patel wrote:
-> > Add device tree bindings for the memory mapped RISC-V trace components
-> > which support both the RISC-V efficient trace (E-trace) protocol and
-> > the RISC-V Nexus-based trace (N-trace) protocol.
-> >
-> > The RISC-V trace components are defined by the RISC-V trace control
-> > interface specification.
-> >
-> > Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+
+>=20
 > > ---
-> >  .../bindings/riscv/riscv,trace-component.yaml | 110 ++++++++++++++++++
-> >  1 file changed, 110 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/riscv/riscv,trace=
--component.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/riscv/riscv,trace-compon=
-ent.yaml b/Documentation/devicetree/bindings/riscv/riscv,trace-component.ya=
-ml
-> > new file mode 100644
-> > index 000000000000..78a70fe04dfe
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/riscv/riscv,trace-component.yam=
-l
-> > @@ -0,0 +1,110 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/riscv/riscv,trace-component.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >  drivers/gpu/drm/panfrost/panfrost_drv.c | 16 ++++++----------
+> >  drivers/gpu/drm/panfrost/panfrost_job.c |  8 +++++++-
+> >  drivers/gpu/drm/panfrost/panfrost_job.h |  2 ++
+> >  3 files changed, 15 insertions(+), 11 deletions(-)
+> >=20
+> > diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/=
+panfrost/panfrost_drv.c
+> > index 22350ce8a08f..607a5b8448d0 100644
+> > --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
+> > +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> > @@ -668,23 +668,19 @@ static void panfrost_gpu_show_fdinfo(struct panfr=
+ost_device *pfdev,
+> >  	 *   job spent on the GPU.
+> >  	 */
+> > =20
+> > -	static const char * const engine_names[] =3D {
+> > -		"fragment", "vertex-tiler", "compute-only"
+> > -	};
+> > -
+> > -	BUILD_BUG_ON(ARRAY_SIZE(engine_names) !=3D NUM_JOB_SLOTS);
+> > -
+> >  	for (i =3D 0; i < NUM_JOB_SLOTS - 1; i++) {
+> >  		if (pfdev->profile_mode) {
+> >  			drm_printf(p, "drm-engine-%s:\t%llu ns\n",
+> > -				   engine_names[i], panfrost_priv->engine_usage.elapsed_ns[i]);
+> > +				   panfrost_engine_names[i],
+> > +				   panfrost_priv->engine_usage.elapsed_ns[i]);
+> >  			drm_printf(p, "drm-cycles-%s:\t%llu\n",
+> > -				   engine_names[i], panfrost_priv->engine_usage.cycles[i]);
+> > +				   panfrost_engine_names[i],
+> > +				   panfrost_priv->engine_usage.cycles[i]);
+> >  		}
+> >  		drm_printf(p, "drm-maxfreq-%s:\t%lu Hz\n",
+> > -			   engine_names[i], pfdev->pfdevfreq.fast_rate);
+> > +			   panfrost_engine_names[i], pfdev->pfdevfreq.fast_rate);
+> >  		drm_printf(p, "drm-curfreq-%s:\t%lu Hz\n",
+> > -			   engine_names[i], pfdev->pfdevfreq.current_frequency);
+> > +			   panfrost_engine_names[i], pfdev->pfdevfreq.current_frequency);
+> >  	}
+> >  }
+> > =20
+> > diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c b/drivers/gpu/drm/=
+panfrost/panfrost_job.c
+> > index c47d14eabbae..0cc80da12562 100644
+> > --- a/drivers/gpu/drm/panfrost/panfrost_job.c
+> > +++ b/drivers/gpu/drm/panfrost/panfrost_job.c
+> > @@ -28,6 +28,10 @@
+> >  #define job_write(dev, reg, data) writel(data, dev->iomem + (reg))
+> >  #define job_read(dev, reg) readl(dev->iomem + (reg))
+> > =20
+> > +const char * const panfrost_engine_names[] =3D {
+> > +	"fragment", "vertex-tiler", "compute-only"
+> > +};
 > > +
-> > +title: RISC-V Trace Component
+> >  struct panfrost_queue_state {
+> >  	struct drm_gpu_scheduler sched;
+> >  	u64 fence_context;
+> > @@ -846,12 +850,13 @@ int panfrost_job_init(struct panfrost_device *pfd=
+ev)
+> >  		.num_rqs =3D DRM_SCHED_PRIORITY_COUNT,
+> >  		.credit_limit =3D 2,
+> >  		.timeout =3D msecs_to_jiffies(JOB_TIMEOUT_MS),
+> > -		.name =3D "pan_js",
+> >  		.dev =3D pfdev->dev,
+> >  	};
+> >  	struct panfrost_job_slot *js;
+> >  	int ret, j;
+> > =20
+> > +	BUILD_BUG_ON(ARRAY_SIZE(panfrost_engine_names) !=3D NUM_JOB_SLOTS);
 > > +
-> > +maintainers:
-> > +  - Anup Patel <anup@brainfault.org>
+> >  	/* All GPUs have two entries per queue, but without jobchain
+> >  	 * disambiguation stopping the right job in the close path is tricky,
+> >  	 * so let's just advertise one entry in that case.
+> > @@ -887,6 +892,7 @@ int panfrost_job_init(struct panfrost_device *pfdev)
+> > =20
+> >  	for (j =3D 0; j < NUM_JOB_SLOTS; j++) {
+> >  		js->queue[j].fence_context =3D dma_fence_context_alloc(1);
+> > +		args.name =3D panfrost_engine_names[j];
+> > =20
+> >  		ret =3D drm_sched_init(&js->queue[j].sched, &args);
+> >  		if (ret) {
+> > diff --git a/drivers/gpu/drm/panfrost/panfrost_job.h b/drivers/gpu/drm/=
+panfrost/panfrost_job.h
+> > index 5a30ff1503c6..458666bf684b 100644
+> > --- a/drivers/gpu/drm/panfrost/panfrost_job.h
+> > +++ b/drivers/gpu/drm/panfrost/panfrost_job.h
+> > @@ -53,6 +53,8 @@ struct panfrost_jm_ctx {
+> >  	struct drm_sched_entity slot_entity[NUM_JOB_SLOTS];
+> >  };
+> > =20
+> > +extern const char * const panfrost_engine_names[];
 > > +
-> > +description:
-> > +  The RISC-V trace control interface specification standard memory map=
-ped
-> > +  components (or devices) which support both the RISC-V efficient trac=
-e
-> > +  (E-trace) protocol and the RISC-V Nexus-based trace (N-trace) protoc=
-ol.
-> > +  The RISC-V trace components have implementation specific directed ac=
-yclic
-> > +  graph style interdependency where output of one component serves as =
-input
-> > +  to another component and certain components (such as funnel) can tak=
-e inputs
-> > +  from multiple components.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    items:
-> > +      - enum:
-> > +          - qemu,trace-component
-> > +      - const: riscv,trace-component
->
-> Given the generic-ness of these names, I'm assuming the exact type of
-> component is discoverable. I don't like to assume things in bindings, so
-> spell that out.
->
-> Is the implementer discoverable? If so, you could omit the 1st
-> compatible.
+> >  int panfrost_jm_ctx_create(struct drm_file *file,
+> >  			   struct drm_panfrost_jm_ctx_create *args);
+> >  int panfrost_jm_ctx_destroy(struct drm_file *file, u32 handle);
+> >=20
+> > base-commit: 30531e9ca7cd4f8c5740babd35cdb465edf73a2d =20
+>=20
 
-The component type and component version is discoverable through
-read-only MMIO registers but the implementer of the component
-needs to be inferred using implementation specific compatible string.
-I will add some text along these lines in the above description.
-
->
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  cpu:
->
-> 'cpus' is the more standard property.
-
-Okay, I will update.
-
->
-> > +    description:
-> > +      phandle to the cpu to which the RISC-V trace component is bound.
-> > +    $ref: /schemas/types.yaml#/definitions/phandle
->
-> which already has a type. So just 'maxItems: 1' here.
-
-Okay, I will update.
-
->
-> > +
-> > +  in-ports:
-> > +    $ref: /schemas/graph.yaml#/properties/ports
-> > +    patternProperties:
-> > +      '^port(@[0-7])?$':
-> > +        description: Input connections from RISC-V trace component
-> > +        $ref: /schemas/graph.yaml#/properties/port
->
-> If the N ports are N of the same data (like a mux), then fine. If each
-> port is different, then you need to define what each port is.
-
-Yes, the data (aka trace packets) is the same for all input trace ports
-even in-case of funnel (aka mux). Same thing also applies to the
-output ports.
-
->
-> > +
-> > +  out-ports:
-> > +    $ref: /schemas/graph.yaml#/properties/ports
-> > +    patternProperties:
-> > +      '^port(@[0-7])?$':
-> > +        description: Output connections from RISC-V trace component
-> > +        $ref: /schemas/graph.yaml#/properties/port
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +
-> > +unevaluatedProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    // Example 1 (Per-hart encoder and ramsink components):
-> > +
-> > +    encoder@c000000 {
->
-> Perhaps it is time to standardize the node names here. Perhaps 'trace'.
-
-It is better to not fix the node names because this allows users
-to infer type of component from node name hence more human
-readable.
-
->
-> > +      compatible =3D "qemu,trace-component", "riscv,trace-component";
-> > +      reg =3D <0xc000000 0x1000>;
-> > +      cpu =3D <&CPU0>;
-> > +      out-ports {
-> > +        port {
-> > +          CPU0_ENCODER_OUTPUT: endpoint {
-> > +            remote-endpoint =3D <&CPU0_RAMSINK_INPUT>;
-> > +          };
-> > +        };
-> > +      };
-> > +    };
-> > +
-> > +    ramsink@c001000 {
-> > +      compatible =3D "qemu,trace-component", "riscv,trace-component";
-> > +      reg =3D <0xc001000 0x1000>;
-> > +      cpu =3D <&CPU0>;
-> > +      in-ports {
-> > +        port {
-> > +          CPU0_RAMSINK_INPUT: endpoint {
-> > +          };
-> > +        };
-> > +      };
-> > +    };
-> > +
-> > +    encoder@c002000 {
-> > +      compatible =3D "qemu,trace-component", "riscv,trace-component";
-> > +      reg =3D <0xc002000 0x1000>;
-> > +      cpu =3D <&CPU1>;
-> > +      out-ports {
-> > +        port {
-> > +          CPU1_ENCODER_OUTPUT: endpoint {
-> > +            remote-endpoint =3D <&CPU1_RAMSINK_INPUT>;
-> > +          };
-> > +        };
-> > +      };
-> > +    };
-> > +
-> > +    ramsink@c003000 {
-> > +      compatible =3D "qemu,trace-component", "riscv,trace-component";
-> > +      reg =3D <0xc003000 0x1000>;
-> > +      cpu =3D <&CPU1>;
-> > +      in-ports {
-> > +        port {
-> > +          CPU1_RAMSINK_INPUT: endpoint {
-> > +          };
-> > +        };
-> > +      };
-> > +    };
-> > +
-> > +...
-> > --
-> > 2.43.0
-> >
-
-Regards,
-Anup
 
