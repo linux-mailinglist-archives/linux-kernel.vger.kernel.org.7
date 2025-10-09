@@ -1,117 +1,105 @@
-Return-Path: <linux-kernel+bounces-847251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FCA4BCA5B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:18:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8318BCA5BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:20:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 020FB427347
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:18:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7B011A63DDC
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B4D823B61A;
-	Thu,  9 Oct 2025 17:18:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2231623B63F;
+	Thu,  9 Oct 2025 17:19:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uNC7TuaN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b="VUqyU8aj"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F655635;
-	Thu,  9 Oct 2025 17:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760030318; cv=none; b=r5VL89eafJCb/2f2a+4z7W1SBDnJ/B73WmxbG7wka2w/EA78ZRPiae9PpEYIgNoHqv38T5Dat73HJGkHLWl+Tc2pZlrDK1f0oc5mhAH80v2Lo0j/X9RX21+IkEc7TZzEPPOgrOUs1F3GUt1e2S2gjMCNFtnK9uiyr86TfcnJKTA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760030318; c=relaxed/simple;
-	bh=kFsIMObArLcyoFFIMA4L5RDZSvrQbbMBoX1+KItsqQU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=sKjmxtvMiSAVEH88HRP7BvUehFwGEmN1RpRD3cFDoY6tIWY4R8IWb2XtoOh9PCWA9nDK8lIgpaD9RSUkKM5gYfOqgxaYoFtF51jcIPGZx8kjE7I8jcwE46g2x8KfY+GjOdw5U7b3dVJE+rKmGuyYWKYe2a1CPjsMpS7IX5aHf5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uNC7TuaN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFC0BC4CEE7;
-	Thu,  9 Oct 2025 17:18:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760030317;
-	bh=kFsIMObArLcyoFFIMA4L5RDZSvrQbbMBoX1+KItsqQU=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=uNC7TuaNBQ719jUSqL2ej2bN+y/WjYBNMvCjjaLce+TWEK2i7X7xetVsaFN0tggaQ
-	 /kHdfDbiFPi9VIL+/2DAvZ7X+4lPJe87kjLeoLFqTj28gjko1F3HqQ6Jh+E4PRicjT
-	 usCom3hlJ5aN2hHwmsMPsmFraTCddLbfEkJ9+M+jahqgMFdfAeSXOGqpBHomAUHlF9
-	 1rQ3EI69b/izWALKWqMneqA7y56ccCEe28uZBvvhLs9V/1hFxWWRAxD9Cy/UuT6d0d
-	 XrU2mJEWZmkvKyHd6mGkxDhM9vwlEf5055TosfKJjLXCdPmIreLB27+Qtgla5JEgtU
-	 0RgEaTJJ2DG9g==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D553635;
+	Thu,  9 Oct 2025 17:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760030395; cv=pass; b=VuhrCmcUxhql+Lnky6ouIHsiVjpoAXhXRL+BZRS8p0KcFTN+VDm/SXgKkpoyBltSmZq9TBQoW2Eqlc2Z6AIxjjojH5mcw2s7uzYhyB3fqHwtFVdp2kjhqjXGCd55PWGoZuuLZQnreute2MiYsHh2xrmgaPDBFwd3zUI/QoxtsKo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760030395; c=relaxed/simple;
+	bh=7FPDDD92oAuD6ndvDFa18xSOKAXQVvQ8VDmbSmdS1Dc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U1G/14HOFDsPJlDIRFaRtJZOGKPuT2y9n8QnUmIJf/eAmYVHLw12DDTI+eKx2UZduHUO2oJJMf9F6Vaf44ly07axoHEMJY/IXHZoTmUM9cb3AJCHmeWdNK+4pAhwoVMqgKMR0RZdtcymSyvyhvnKx3XO9NRCvWmFJyoxe3yi+x0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yukuai.org.cn; spf=pass smtp.mailfrom=yukuai.org.cn; dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b=VUqyU8aj; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yukuai.org.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yukuai.org.cn
+ARC-Seal: i=1; a=rsa-sha256; t=1760030367; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=QjcJkgK5C6xjkLu/L/U3nJk/pbB9hsi88U9EVXTOnJtQJN6Z80baezHjHeKE0gximB6aSAXuZbvv/wTdKiu5QZOf7Zklv0vjsXtCulaeR4aKniCm/9eqsRRIDpkBvekENqw0iUaa3clBwE3Wo1+8IotifFM5nBP61TXJbhbqCvI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1760030367; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=7FPDDD92oAuD6ndvDFa18xSOKAXQVvQ8VDmbSmdS1Dc=; 
+	b=QYk2zy5SwCQlv69bVInb8o8/SwwnXNLkb2u1Ga2Kyi/M4YgIN1TnBx2aVH6p0iR+R4OtPTLiSXzBVe0XD4DGiOhUwMZMmQhl4m7hcs0/JBTwllVY04jTX/a7rN121sFNuLYnS+XfU5OXC/vJli066ubf7DFw3A28WNJM6Hpt47M=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=yukuai.org.cn;
+	spf=pass  smtp.mailfrom=hailan@yukuai.org.cn;
+	dmarc=pass header.from=<hailan@yukuai.org.cn>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760030366;
+	s=zmail; d=yukuai.org.cn; i=hailan@yukuai.org.cn;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=7FPDDD92oAuD6ndvDFa18xSOKAXQVvQ8VDmbSmdS1Dc=;
+	b=VUqyU8ajYBwpBLSpGhFzDudmWeQyRZIOyLIjw+K5qbCDGTaoY2W728Kd4Wbm9bnU
+	BPiVNPSeftV0Mr7bhDXSM+lfjHr2c/qlZlWmLHFuh/gB/OZKA9TRV4wlDx2zr4C0jT+
+	HsthALQjTQxk6A3lf5hAUcnO1yIU2ljhDvPDJhvQ=
+Received: by mx.zohomail.com with SMTPS id 1760030361880859.4371394836448;
+	Thu, 9 Oct 2025 10:19:21 -0700 (PDT)
+Message-ID: <3efdee9c-6605-424c-953d-17242c3a5314@yukuai.org.cn>
+Date: Fri, 10 Oct 2025 01:19:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 09 Oct 2025 19:18:33 +0200
-Message-Id: <DDDYOBOZTF7Q.124VJDF4C76B6@kernel.org>
-Subject: Re: [PATCH RFC v2 3/3] gpu: nova-core: use BoundedInt
-Cc: "Alexandre Courbot" <acourbot@nvidia.com>, "Joel Fernandes"
- <joelagnelf@nvidia.com>, "Jesung Yang" <y.j3ms.n@gmail.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feong@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- <nouveau@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>
-To: "Yury Norov" <yury.norov@gmail.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20251009-bounded_ints-v2-0-ff3d7fee3ffd@nvidia.com>
- <20251009-bounded_ints-v2-3-ff3d7fee3ffd@nvidia.com>
- <aOflmmHe8O6Nx9Hp@yury>
-In-Reply-To: <aOflmmHe8O6Nx9Hp@yury>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch v2 3/7] blk-mq: add a new queue sysfs attribute
+ async_depth
+To: Bart Van Assche <bvanassche@acm.org>, Yu Kuai <yukuai1@huaweicloud.com>,
+ axboe@kernel.dk, ming.lei@redhat.com, nilay@linux.ibm.com, jmoyer@redhat.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
+ johnny.chenyi@huawei.com
+References: <20251009074634.527661-1-yukuai1@huaweicloud.com>
+ <20251009074634.527661-4-yukuai1@huaweicloud.com>
+ <49647ccf-5d19-4ede-87b4-0f7ff8e9f5ea@acm.org>
+From: Yu Kuai <hailan@yukuai.org.cn>
+In-Reply-To: <49647ccf-5d19-4ede-87b4-0f7ff8e9f5ea@acm.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Thu Oct 9, 2025 at 6:40 PM CEST, Yury Norov wrote:
-> On Thu, Oct 09, 2025 at 09:37:10PM +0900, Alexandre Courbot wrote:
->> Use BoundedInt with the register!() macro and adapt the nova-core code
->> accordingly. This makes it impossible to trim values when setting a
->> register field, because either the value of the field has been inferred
->> at compile-time to fit within the bounds of the field, or the user has
->> been forced to check at runtime that it does indeed fit.
+Hi,
+
+在 2025/10/10 1:05, Bart Van Assche 写道:
+> On 10/9/25 12:46 AM, Yu Kuai wrote:
+>> +static ssize_t queue_async_depth_show(struct gendisk *disk, char *page)
+>> +{
+>> +    ssize_t ret;
+>> +
+>> +    mutex_lock(&disk->queue->elevator_lock);
+>> +    ret = queue_var_show(disk->queue->async_depth, page);
+>> +    mutex_unlock(&disk->queue->elevator_lock);
+>> +    return ret;
+>> +}
 >
-> In C23 we've got _BitInt(), which works like:
+> Functions like the above can be simplified by using guard(mutex)(...) or
+> scoped_guard(mutex, ...).
+
+Yeah, sounds good. I'm still not used to this.
+
+Thanks,
+Kuai
+
 >
->         unsigned _BitInt(2) a =3D 5; // compile-time error
+> Thanks,
 >
-> Can you consider a similar name and syntax in rust?
-
-Rust is a different language and has its own syntax, I think we should not =
-try
-to use C syntax instead.
-
->>          regs::NV_PFALCON_FALCON_DMATRFBASE1::default()
->> -            .set_base((dma_start >> 40) as u16)
->> +            .try_set_base(dma_start >> 40)?
->>              .write(bar, &E::ID);
+> Bart.
 >
-> Does it mean that something like the following syntax is possible?
->
->         regs::NV_PFALCON_FALCON_DMATRFBASE1::default()
->             .try_set_base1(base1 >> 40)?        // fail here
-
-Note that try_set_base1() returns a Result [1], which is handled immediatel=
-y by
-the question mark operator [2]. I.e. if try_set_base1() returns an error it=
- is
-propagated to the caller right away without executing any of the code below=
-.
-
->             .try_set_base2(base2 >> 40)?        // skip
->             .write(bar, &E::ID) else { pr_err!(); return -EINVAL };
->
-> This is my main concern: Rust is advertised a as runtime-safe language
-> (at lease safer than C), but current design isn't safe against one of
-> the most common errors: type overflow.
-
-Where do you see a potential runtime overflows in the register!() code?
-
-[1] https://rust.docs.kernel.org/kernel/error/type.Result.html
-[2] https://doc.rust-lang.org/reference/expressions/operator-expr.html?high=
-light=3Dquestion%20mark#the-question-mark-operator
 
