@@ -1,176 +1,239 @@
-Return-Path: <linux-kernel+bounces-846371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18190BC7BCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:39:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E167BC7BE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:43:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AF5CE4E6856
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:39:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 419114EF96E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:43:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DEAE1F4606;
-	Thu,  9 Oct 2025 07:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225A0298CA4;
+	Thu,  9 Oct 2025 07:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="u7mRIsYE"
-Received: from canpmsgout10.his.huawei.com (canpmsgout10.his.huawei.com [113.46.200.225])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i2zakA3e"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D200F4FA
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 07:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C328619047A
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 07:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759995575; cv=none; b=iry3p6dh1YXSV7muKzk2O9K5DUn/R9IaaNYK+JKbKGYL0E9edPA8aFUUcjDdrAGg8Ec56g1IzHRG9pESHE989KrqsEPf2cpAJ1Zx8jL6YDslc2joa274IxxcHtDT6bIvqHzKBgx5D6g7BXCxftzVoRqX9t3zIsmx7pOHgfaeOno=
+	t=1759995797; cv=none; b=pB9ATCui4knaNjIE0a9stC5P4S3Xc6P8Aa3Zk7bhRFQl6vZWzHJPNhYydz6PduDw4DeeAV5jtTtMk8AO5Fc3/jcAEfgJCLCCQWlgfPxUK8XHomDYbqY72JET5cgUNMV8tZ7QMZVyribbRjw5nSBZzZwMp8QjufIpj/BaVFrO5I0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759995575; c=relaxed/simple;
-	bh=aorsUTPkFWqCFdlVfn+gmvwxsPqVoK0PMUOOoh3YSj4=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=DShLyam3PNLgDqkyxPdDr91XNrNsAMrWwA4NKKMEVhY+SGmrBH2z/A2c4NJwYK4SzOhTLD+haqVHW/k4eYlFJoSWI0UBLfGWvdDXfJ7pFp4iykBqvGA372GAjEU/utr+DACWpp3FmPKTo/i5C2YM9hcB5UFXNFGWIwuj5Xn2c3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=u7mRIsYE; arc=none smtp.client-ip=113.46.200.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=Ws1QWS1SxNWWPViN/1fQpFGlPzNSlgREQgIxN0gMQfM=;
-	b=u7mRIsYEMtXyJfvnau1s8DhoBjkD5LC60mpdYdgmtiPIiZU7U9EbFu0ZGBIJkHOBLVo8c2SqZ
-	/FMJkS7kLoi0gnal7SQjl5qzoicZ5iKX946fNxVXx+QU6Wpwj+i1ZdX/50hkSxDbjWN2B93cNKR
-	mP4kcNFk++iaJfT5HF/lfyE=
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by canpmsgout10.his.huawei.com (SkyGuard) with ESMTPS id 4cj1wH2Lppz1K98v;
-	Thu,  9 Oct 2025 15:39:11 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id 386AF1A016C;
-	Thu,  9 Oct 2025 15:39:27 +0800 (CST)
-Received: from kwepemq500010.china.huawei.com (7.202.194.235) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 9 Oct 2025 15:39:27 +0800
-Received: from [10.173.125.37] (10.173.125.37) by
- kwepemq500010.china.huawei.com (7.202.194.235) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 9 Oct 2025 15:39:26 +0800
-Subject: Re: [syzbot] [mm?] WARNING in memory_failure
-To: <jane.chu@oracle.com>, Zi Yan <ziy@nvidia.com>
-CC: syzbot <syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com>,
-	<syzkaller-bugs@googlegroups.com>, <akpm@linux-foundation.org>,
-	<david@redhat.com>, <kernel@pankajraghav.com>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, <mcgrof@kernel.org>,
-	<nao.horiguchi@gmail.com>
-References: <68dcb33a.a00a0220.102ee.0053.GAE@google.com>
- <2afee6bb-b2f0-4a86-ba8c-d33b0b477473@oracle.com>
- <637BC0B5-B911-4A79-8107-BD7CDB351660@nvidia.com>
- <A4321695-9F12-4C7C-ACC9-72FD84B6DB2C@nvidia.com>
- <57d9aa32-2fc8-48d2-b68b-3308c7d58125@oracle.com>
- <CD6D8EBD-F139-41BC-9A59-5033EF5A09BC@nvidia.com>
- <ae74c0b4-7115-4856-a3f0-c61945f64c7d@oracle.com>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <f5870e90-2c3d-7d65-fcc3-92ec5a1fe177@huawei.com>
-Date: Thu, 9 Oct 2025 15:39:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1759995797; c=relaxed/simple;
+	bh=zVKRcKBKy5UMg8zeg6DuVbbztfNrMDkWudL549E9dKE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R43KUZd+3qeJ/sspfvw3hCxBaQ5CMxKea3S/ODzT/Bk/kqy0wXo6VZhFtCoKGhgM5zf+iKtVE734Hs9fwuBVJiKRg85ncKECa7fDtYPwo9UB4H32Dcn0QhJ0ItLHlW/6ExWJcN6i1ZYHjSQOXnt1g8zKhxfehoTPslOXtei51Is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i2zakA3e; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759995794;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lqVlQjsLtQiDAss75C4CqbUYx6+KaJ0FeS0J3CR27eU=;
+	b=i2zakA3ejJbfSsYVzus+fYA+km033HY8KDlxs2sVtQDISLL9QkkqXPhKaZJAw9DgAc01F8
+	ooSXhaOZ0woN6kYf2xI7zAT7qx0MgKKLAjdlRv2niQ0eeCEh6m1lu364s/EJp/UpCqFX1i
+	cw0No3Z747J8lxuMRQp+mQtZ5NxuTuI=
+Received: from mail-ua1-f71.google.com (mail-ua1-f71.google.com
+ [209.85.222.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-511-5sMhyZOgO9aPeL1ehh6k5g-1; Thu, 09 Oct 2025 03:43:13 -0400
+X-MC-Unique: 5sMhyZOgO9aPeL1ehh6k5g-1
+X-Mimecast-MFC-AGG-ID: 5sMhyZOgO9aPeL1ehh6k5g_1759995792
+Received: by mail-ua1-f71.google.com with SMTP id a1e0cc1a2514c-89018ea59e0so1536788241.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 00:43:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759995792; x=1760600592;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lqVlQjsLtQiDAss75C4CqbUYx6+KaJ0FeS0J3CR27eU=;
+        b=DySEbJ3bfzMRzERBsAFBETuC8LWVrYgNEeDbfd+ku+56O3WqCHXqyFjje535ZhpHEm
+         FjcCya5WQjvgjWf0irY+Zf6rM9sLbQqQpKwPZ+WU1B+f3fbVVD3AxzemTD73t7l78jHE
+         79atNObWNGaWgbhT13MhNYnT8/DyZU+46OjQuZ+Zn84OSAhUKxIs+feX9zuhyHfPZMHG
+         pJI/G4NyVMbZH6oCs7sTWnQhD+v8Vpu0svzn19M2olYlQuc8Cm97Rn8ezhgGG/RjPnr2
+         K/ZwABJ4/XP8u6Tj9Ql5J2NACqSXYuqWq9CH6Is+4vHiQZn0Gd5CtT9TiJTgmpsUwBqW
+         rDig==
+X-Forwarded-Encrypted: i=1; AJvYcCWVcnsdWmjTTH1LADMESEB9audYIGRBgRH16NTzEQxrNmUUg55LUebfz3ZuprTG8zkLo1Smzkw9bEB9et8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDHIVVq83kNPuLl7mKA4VUc2pqd7Yh8can+uAuF7h+0tbfArQz
+	vTZyyGOSRsd1gwPz6redgW/i837UYZn66w2w+snUMtNWl5lyPLiTvTuM3EgwHwIL7J88pJRm+pc
+	EeqM7+8/QwJTVRThjpw+PDyC/KXf9LHmnubRv+akjawcPFcrOs9v8Izrk+vvE/WhvKJT4mFgEID
+	8+3slINDvn3z6+bN5jIh0CyIgh45K8MmAoJDMkaFmz
+X-Gm-Gg: ASbGncuKeOAgqVElOuBTnZOOsChjGnmQQsp3Yub3I+aiJFab3MPUFQTG4E4N7eIyGk4
+	jqcltsKCAgCTfFTF2AvMnjHwzawuTjz/V5hisGNfczLNG9bHWda6fHtI2MzAY8oWpFrlo6/BlVb
+	tw2WL2ZgrLuIYHDCttJLg6nwQ=
+X-Received: by 2002:a05:6102:512b:b0:5d3:ff01:363d with SMTP id ada2fe7eead31-5d5e2323bc3mr2727499137.21.1759995792618;
+        Thu, 09 Oct 2025 00:43:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFuW1O6aYG322N90mSfPqM1yVoDXYbVpe62RkG9vN89i8vdM+utFjOpbEoXeVs+CeLXPaqVm14uwn8vmxLCF8o=
+X-Received: by 2002:a05:6102:512b:b0:5d3:ff01:363d with SMTP id
+ ada2fe7eead31-5d5e2323bc3mr2727489137.21.1759995792135; Thu, 09 Oct 2025
+ 00:43:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ae74c0b4-7115-4856-a3f0-c61945f64c7d@oracle.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemq500010.china.huawei.com (7.202.194.235)
+References: <20250929165213.2896034-1-eperezma@redhat.com> <20250929165213.2896034-7-eperezma@redhat.com>
+In-Reply-To: <20250929165213.2896034-7-eperezma@redhat.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Thu, 9 Oct 2025 15:42:59 +0800
+X-Gm-Features: AS18NWDNgO7BZAhdFYci_qhyrfWWjVvbQhFDVOL7yd0tvH6HgRQf74zWCfAymoU
+Message-ID: <CACGkMEuRMXrt3zyQtrW8QvHJSVPqh5XGXtxBtir3UxGzjSmXOQ@mail.gmail.com>
+Subject: Re: [PATCH v6 6/7] vduse: add vq group asid support
+To: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Laurent Vivier <lvivier@redhat.com>, 
+	Yongji Xie <xieyongji@bytedance.com>, Stefano Garzarella <sgarzare@redhat.com>, 
+	Cindy Lu <lulu@redhat.com>, Maxime Coquelin <mcoqueli@redhat.com>, virtualization@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025/10/3 1:47, jane.chu@oracle.com wrote:
-> 
-> 
-> On 10/2/2025 6:54 AM, Zi Yan wrote:
->> On 2 Oct 2025, at 1:23, jane.chu@oracle.com wrote:
->>
->>> On 10/1/2025 7:04 PM, Zi Yan wrote:
->>>> On 1 Oct 2025, at 20:38, Zi Yan wrote:
->>>>
->>>>> On 1 Oct 2025, at 19:58, jane.chu@oracle.com wrote:
->>>>>
->>>>>> Hi, Zi Yan,
->>>>>>
->>>>>> On 9/30/2025 9:51 PM, syzbot wrote:
->>>>>>> Hello,
->>>>>>>
->>>>>>> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
->>>>>>> lost connection to test machine
->>>>>>>
->>>>>>>
->>>>>>>
->>>>>>> Tested on:
->>>>>>>
->>>>>>> commit:         d8795075 mm/huge_memory: do not change split_huge_page..
->>>>>>> git tree:       https://github.com/x-y-z/linux-dev.git fix_split_page_min_order-for-kernelci
->>>>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=17ce96e2580000
->>>>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=714d45b6135c308e
->>>>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=e6367ea2fdab6ed46056
->>>>>>> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
->>>>>>> userspace arch: arm64
->>>>>>>
->>>>>>> Note: no patches were applied.
->>>>>>>
->>>>>>
->>>>>
->>>>> Thank you for looking into this.
->>>>>
->>>>>> My hunch is that
->>>>>> https://github.com/x-y-z/linux-dev.git fix_split_page_min_order-for-kernelci
->>>>>> alone is not enough.  Perhaps on ARM64, the page cache pages of /dev/nullb0 in
->>>>> Yes, it only has the first patch, which fails a split if it cannot be
->>>>> split to the intended order (order-0 in this case).
->>>>>
->>>>>
->>>>>> the test case are probably with min_order > 0, therefore THP split fails, as the console message show:
->>>>>> [  200.378989][T18221] Memory failure: 0x124d30: recovery action for unsplit thp: Failed
->>>>>>
->>>>>> With lots of poisoned THP pages stuck in the page cache, OOM could trigger too soon.
->>>>>
->>>>> That is my understanding too. Thanks for the confirmation.
->>>>>
->>>>>>
->>>>>> I think it's worth to try add the additional changes I suggested earlier -
->>>>>> https://lore.kernel.org/lkml/7577871f-06be-492d-b6d7-8404d7a045e0@oracle.com/
->>>>>>
->>>>>> So that in the madvise HWPOISON cases, large huge pages are splitted to smaller huge pages, and most of them remain usable in the page cache.
->>>>>
->>>>> Yep, I am going to incorporate your suggestion as the second patch and make
->>>>> syzbot check it again.
->>>>
->>>>
->>>> #syz test: https://github.com/x-y-z/linux-dev.git fix_split_page_min_order_and_opt_memory_failure-for-kernelci
->>>>
->>>
->>> There is a bug here,
->>>
->>>         if (try_to_split_thp_page(p, new_order, false) || new_order) {
->>>             res = -EHWPOISON;
->>>             kill_procs_now(p, pfn, flags, folio);  <---
->>>
->>> If try_to_split_thp_page() succeeded on min_order, 'folio' should be retaken:  folio = page_folio(page) before moving on to kill_procs_now().
->>
->> Thank you for pointing it out. Let me fix it and let syzbot test it again.
->>
+On Tue, Sep 30, 2025 at 12:52=E2=80=AFAM Eugenio P=C3=A9rez <eperezma@redha=
+t.com> wrote:
+>
+> Add support for assigning Address Space Identifiers (ASIDs) to each VQ
+> group.  This enables mapping each group into a distinct memory space.
+>
+> Now that the driver can change ASID in the middle of operation, the
+> domain that each vq address point is also protected by domain_lock.
+>
+> Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+> ---
+> v6:
+> * Make vdpa_dev_add use gotos for error handling (MST).
+> * s/(dev->api_version < 1) ?/(dev->api_version < VDUSE_API_VERSION_1) ?/
+>   (MST).
+> * Fix struct name not matching in the doc.
+>
+> v5:
+> * Properly return errno if copy_to_user returns >0 in VDUSE_IOTLB_GET_FD
+>   ioctl (Jason).
+> * Properly set domain bounce size to divide equally between nas (Jason).
+> * Exclude "padding" member from the only >V1 members in
+>   vduse_dev_request.
+>
+> v4:
+> * Divide each domain bounce size between the device bounce size (Jason).
+> * revert unneeded addr =3D NULL assignment (Jason)
+> * Change if (x && (y || z)) return to if (x) { if (y) return; if (z)
+>   return; } (Jason)
+> * Change a bad multiline comment, using @ caracter instead of * (Jason).
+> * Consider config->nas =3D=3D 0 as a fail (Jason).
+>
+> v3:
+> * Get the vduse domain through the vduse_as in the map functions
+>   (Jason).
+> * Squash with the patch creating the vduse_as struct (Jason).
+> * Create VDUSE_DEV_MAX_AS instead of comparing agains a magic number
+>   (Jason)
+>
+> v2:
+> * Convert the use of mutex to rwlock.
+>
+> RFC v3:
+> * Increase VDUSE_MAX_VQ_GROUPS to 0xffff (Jason). It was set to a lower
+>   value to reduce memory consumption, but vqs are already limited to
+>   that value and userspace VDUSE is able to allocate that many vqs.
+> * Remove TODO about merging VDUSE_IOTLB_GET_FD ioctl with
+>   VDUSE_IOTLB_GET_INFO.
+> * Use of array_index_nospec in VDUSE device ioctls.
+> * Embed vduse_iotlb_entry into vduse_iotlb_entry_v2.
+> * Move the umem mutex to asid struct so there is no contention between
+>   ASIDs.
+>
+> RFC v2:
+> * Make iotlb entry the last one of vduse_iotlb_entry_v2 so the first
+>   part of the struct is the same.
+> ---
+>  drivers/vdpa/vdpa_user/vduse_dev.c | 347 ++++++++++++++++++++---------
+>  include/uapi/linux/vduse.h         |  53 ++++-
+>  2 files changed, 290 insertions(+), 110 deletions(-)
+>
 
-Sorry for late. I just got back from my vacation. :)
+[...]
 
->> BTW, do you mind explaining why soft offline case does not want to split?
->> Like memory failure case, splitting it would make other after-split folios
->> available.
-> 
-> That's exactly what I think.  Let's wait for Miaohe, not sure if he has other concern.
+> @@ -2154,7 +2280,8 @@ static int vdpa_dev_add(struct vdpa_mgmt_dev *mdev,=
+ const char *name,
+>                         const struct vdpa_dev_set_config *config)
+>  {
+>         struct vduse_dev *dev;
+> -       int ret;
+> +       size_t domain_bounce_size;
+> +       int ret, i;
+>
+>         mutex_lock(&vduse_lock);
+>         dev =3D vduse_find_dev(name);
+> @@ -2168,29 +2295,35 @@ static int vdpa_dev_add(struct vdpa_mgmt_dev *mde=
+v, const char *name,
+>                 return ret;
+>
+>         write_lock(&dev->domain_lock);
+> -       if (!dev->domain)
+> -               dev->domain =3D vduse_domain_create(VDUSE_IOVA_SIZE - 1,
+> -                                                 dev->bounce_size);
+> -       write_unlock(&dev->domain_lock);
+> -       if (!dev->domain) {
+> -               ret =3D -ENOMEM;
+> -               goto domain_err;
+> +       ret =3D 0;
+> +
+> +       domain_bounce_size =3D dev->bounce_size / dev->nas;
 
-It might be because even if split is skipped, the folio is still accessible (thus available)
-from user sapce and premature split might lead to potential performance loss. But it's fine
-to me to split folio first in soft offline case. No strong opinion.
+Could dev->nas be zero here?
 
+It looks like we only have the check like this:
 
-Thanks both.
-.
+        dev->nas =3D (dev->api_version < VDUSE_API_VERSION_1) ? 1 : config-=
+>nas;
+
+When API version >=3D 1, userspace could fill zero here.
+
+> +       for (i =3D 0; i < dev->nas; ++i) {
+> +               dev->as[i].domain =3D vduse_domain_create(VDUSE_IOVA_SIZE=
+ - 1,
+> +                                                       domain_bounce_siz=
+e);
+> +               if (!dev->as[i].domain) {
+> +                       ret =3D -ENOMEM;
+> +                       goto err;
+> +               }
+>         }
+>
+> +       write_unlock(&dev->domain_lock);
+> +
+>         ret =3D _vdpa_register_device(&dev->vdev->vdpa, dev->vq_num);
+> -       if (ret) {
+> -               goto register_err;
+> -       }
+> +       if (ret)
+> +               goto err;
+
+We don't hold domain_lock here but err tries to unlock it.
+
+>
+>         return 0;
+>
+> -register_err:
+> -       write_lock(&dev->domain_lock);
+> -       vduse_domain_destroy(dev->domain);
+> -       dev->domain =3D NULL;
+> +err:
+> +       for (int j =3D 0; j < i; j++) {
+> +               if (dev->as[j].domain) {
+> +                       vduse_domain_destroy(dev->as[j].domain);
+> +                       dev->as[j].domain =3D NULL;
+> +               }
+> +       }
+>         write_unlock(&dev->domain_lock);
+>
+
+Thanks
+
 
