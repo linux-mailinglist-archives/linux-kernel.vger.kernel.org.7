@@ -1,62 +1,55 @@
-Return-Path: <linux-kernel+bounces-846888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 045CEBC9585
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:42:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD92FBC959A
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:44:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10E42189963A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:42:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEB38481B0C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:44:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 542E22E7F0B;
-	Thu,  9 Oct 2025 13:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="h/FKHxxY"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC64D2E8E13;
+	Thu,  9 Oct 2025 13:44:18 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCCB29405;
-	Thu,  9 Oct 2025 13:41:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87031450F2
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760017314; cv=none; b=WGyas4E5g+X2WLyvK2XLo+m8Fx8FcsI6X3rDsjn77CXU05hD1fj2BoaENRSm4vflks3TTxt5HpfZLsMUMuKZoyWko0EK86QybUEuDFnXCfLNW+k/WVTUMaTgpj6KprelNWcisidzl3fJpuB0W6zXmQpJAnV7FI7zf/eW1qfFy3w=
+	t=1760017458; cv=none; b=rU9me/azSaJK9f62fBR3+sVsZ89n8eFcK6DiNWQw9pXKl3N/FLQmp2kWdJSqngJINvqfI4x3UWvjwXeGuA1VVcka03lre2MSZBRhgi9qBwI1ELcWyOFZkt5WirdvWAoSn4DMNGt2renlLVLr1FKEgXCF4OPxEjHXgtuj0JFDvK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760017314; c=relaxed/simple;
-	bh=LRYISGwz2vUgw6k8AJXgIt6PtG7IrGhrW6OoAOHaZOY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sF3Lq7mb6Dodu8c+JqR3MMxGWvt9cPNEnxR+og/9gB0hj35pqRT/Xug4QTCNAj62pAcKtNbDJN2k8aXVfMYLU1y191w+a0FYY7oc0URULovp+SlUfYopHvfExlA1tcPJOh4URmJGit3t3RBoQiykh11rvAFUAFrxyWG5eLFPGdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=h/FKHxxY; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1760017310;
-	bh=LRYISGwz2vUgw6k8AJXgIt6PtG7IrGhrW6OoAOHaZOY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=h/FKHxxYYapkgJ2usEyWgF3lVSecgUtFYljZkL4+ySoS4mSlLdxdnR5HEbyHvfGyc
-	 Epo7I1jKxL3sJNgeuwCsNHJY8lLWmtBT+/xWIXDHDox+HajCHcoVR4VVBuNawMXkii
-	 Osf0/9deR71s1k2pLP00k+cpjaMFz8joNHcXfO2bO9Ot95A6XtHgimS+X/SXLljF+Y
-	 duZuzq1VqXk7xbe131Ev9dk0GV0IyLqDcm0Wk889SdseUURdke3vtSI99oeA/qpoeA
-	 Pa7S0C7MgJzG98WRIPZLeHk0cFc00CVYKe53LyU7FTVqrZHtjoii9jK0GUfizVfMj1
-	 t3ppwqE2VjN3w==
-Received: from pan.localdomain (unknown [IPv6:2a00:23c6:c338:be00:61ad:9488:9583:2010])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: martyn)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8004B17E0CF8;
-	Thu,  9 Oct 2025 15:41:50 +0200 (CEST)
-From: Martyn Welch <martyn.welch@collabora.com>
-To: Hans de Goede <hansg@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: kernel@collabora.com,
-	Martyn Welch <martyn.welch@collabora.com>,
-	linux-input@vger.kernel.org,
+	s=arc-20240116; t=1760017458; c=relaxed/simple;
+	bh=ijld4K5VbHabQg9o5Ylkb+73Da7j6r7znzttgxXLPRQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kDliGq65uIQdtyqH9//yjeNFylnCjNBOlalox7c+Du2Vj6H6GWout5hHy5kd7f4F+d9qeUybMLi5sUGAzT7kp7hJoEdYgaLkoQnpoWWBBlw4ytyGYThpI9vW2wEKLS+V7ngqJep/gWgdctnvIERTqRd6pZzJ5tlHAGbclJjb3h4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn; spf=pass smtp.mailfrom=isrc.iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=isrc.iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=isrc.iscas.ac.cn
+Received: from Mobilestation.localdomain (unknown [183.6.60.79])
+	by APP-01 (Coremail) with SMTP id qwCowACX76EEvOdoFFc_DQ--.1956S2;
+	Thu, 09 Oct 2025 21:43:36 +0800 (CST)
+From: Yao Zihong <zihong.plct@isrc.iscas.ac.cn>
+To: linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] input: goodix: Remove setting of RST pin to input
-Date: Thu,  9 Oct 2025 14:41:32 +0100
-Message-ID: <20251009134138.686215-1-martyn.welch@collabora.com>
-X-Mailer: git-send-email 2.51.0
+Cc: ajones@ventanamicro.com,
+	alexghiti@rivosinc.com,
+	shuah@kernel.org,
+	samuel.holland@sifive.com,
+	evan@rivosinc.com,
+	cleger@rivosinc.com,
+	zihong.plct@isrc.iscas.ac.cn,
+	zihongyao@outlook.com,
+	zhangyin2018@iscas.ac.cn,
+	Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>
+Subject: [PATCH v2 0/4] riscv: hwprobe: Add Zicbop support
+Date: Thu,  9 Oct 2025 21:41:50 +0800
+Message-ID: <20251009134318.23040-1-zihong.plct@isrc.iscas.ac.cn>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,112 +57,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-
-The reset line is being set to input on non-ACPI devices apparently to
-save power. This isn't being done on ACPI devices as it's been found
-that some ACPI devices don't have a pull-up resistor fitted. This can
-also be the case for non-ACPI devices, resulting in:
-
-[  941.672207] Goodix-TS 1-0014: Error reading 10 bytes from 0x814e: -110
-[  942.696168] Goodix-TS 1-0014: Error reading 10 bytes from 0x814e: -110
-[  945.832208] Goodix-TS 1-0014: Error reading 10 bytes from 0x814e: -110
-
-This behaviour appears to have been initialing introduced in
-ec6e1b4082d9. This doesn't seem to be based on information in either the
-GT911 or GT9271 datasheets cited as sources of information for this
-change. Thus it seems likely that it is based on functionality in the
-Android driver which it also lists. This behaviour may be viable in very
-specific instances where the hardware is well known, but seems unwise in
-the upstream kernel where such hardware requirements can't be
-guaranteed.
-
-Remove this over optimisation to improve reliability on non-ACPI
-devices.
-
-Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
-
----
+X-CM-TRANSID:qwCowACX76EEvOdoFFc_DQ--.1956S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZryUCrW7tw47tr47Jr1DWrg_yoW8Jw4rpa
+	93Wrn3CF4kCw13CayxGr1UWr1rKwnYgw4UZFy8Xry8ZrWYyrWrAr9rKrZ7AFWUJF93tr98
+	ZF4fGrWYk3W7A37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
+	4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
+	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: p2lk00vjoszunw6l223fol2u1dvotugofq/
 
 Changes since v1:
- - Dropping gpiod_rst_flags and directly passing GPIOD_ASIS when
-   requesting the reset pin.
+------------------
+- Bump RISCV_HWPROBE_MAX_KEY (modified 1/4).
+- Add documentation for the Zicbop hwprobe bit/key (new 3/4).
+- Add a selftest(prefetch.c) for Zicbop (new 4/4).
 
- drivers/input/touchscreen/goodix.c | 27 +--------------------------
- drivers/input/touchscreen/goodix.h |  1 -
- 2 files changed, 1 insertion(+), 27 deletions(-)
+Add UAPI and kernel plumbing to expose the Zicbop extension presence
+and its block size through hwprobe. The interface mirrors
+Zicbom/Zicboz. This allows userspace to safely discover and optimize
+for Zicbop when available.
 
-diff --git a/drivers/input/touchscreen/goodix.c b/drivers/input/touchscreen/goodix.c
-index 252dcae039f8..f838f92100c2 100644
---- a/drivers/input/touchscreen/goodix.c
-+++ b/drivers/input/touchscreen/goodix.c
-@@ -796,17 +796,6 @@ int goodix_reset_no_int_sync(struct goodix_ts_data *ts)
- 
- 	usleep_range(6000, 10000);		/* T4: > 5ms */
- 
--	/*
--	 * Put the reset pin back in to input / high-impedance mode to save
--	 * power. Only do this in the non ACPI case since some ACPI boards
--	 * don't have a pull-up, so there the reset pin must stay active-high.
--	 */
--	if (ts->irq_pin_access_method == IRQ_PIN_ACCESS_GPIO) {
--		error = gpiod_direction_input(ts->gpiod_rst);
--		if (error)
--			goto error;
--	}
--
- 	return 0;
- 
- error:
-@@ -957,14 +946,6 @@ static int goodix_add_acpi_gpio_mappings(struct goodix_ts_data *ts)
- 		return -EINVAL;
- 	}
- 
--	/*
--	 * Normally we put the reset pin in input / high-impedance mode to save
--	 * power. But some x86/ACPI boards don't have a pull-up, so for the ACPI
--	 * case, leave the pin as is. This results in the pin not being touched
--	 * at all on x86/ACPI boards, except when needed for error-recover.
--	 */
--	ts->gpiod_rst_flags = GPIOD_ASIS;
--
- 	return devm_acpi_dev_add_driver_gpios(dev, gpio_mapping);
- }
- #else
-@@ -989,12 +970,6 @@ static int goodix_get_gpio_config(struct goodix_ts_data *ts)
- 		return -EINVAL;
- 	dev = &ts->client->dev;
- 
--	/*
--	 * By default we request the reset pin as input, leaving it in
--	 * high-impedance when not resetting the controller to save power.
--	 */
--	ts->gpiod_rst_flags = GPIOD_IN;
--
- 	ts->avdd28 = devm_regulator_get(dev, "AVDD28");
- 	if (IS_ERR(ts->avdd28))
- 		return dev_err_probe(dev, PTR_ERR(ts->avdd28), "Failed to get AVDD28 regulator\n");
-@@ -1019,7 +994,7 @@ static int goodix_get_gpio_config(struct goodix_ts_data *ts)
- 	ts->gpiod_int = gpiod;
- 
- 	/* Get the reset line GPIO pin number */
--	gpiod = devm_gpiod_get_optional(dev, GOODIX_GPIO_RST_NAME, ts->gpiod_rst_flags);
-+	gpiod = devm_gpiod_get_optional(dev, GOODIX_GPIO_RST_NAME, GPIOD_ASIS);
- 	if (IS_ERR(gpiod))
- 		return dev_err_probe(dev, PTR_ERR(gpiod), "Failed to get %s GPIO\n",
- 				     GOODIX_GPIO_RST_NAME);
-diff --git a/drivers/input/touchscreen/goodix.h b/drivers/input/touchscreen/goodix.h
-index 87797cc88b32..0d1e8a8d2cba 100644
---- a/drivers/input/touchscreen/goodix.h
-+++ b/drivers/input/touchscreen/goodix.h
-@@ -88,7 +88,6 @@ struct goodix_ts_data {
- 	struct gpio_desc *gpiod_rst;
- 	int gpio_count;
- 	int gpio_int_idx;
--	enum gpiod_flags gpiod_rst_flags;
- 	char id[GOODIX_ID_MAX_LEN + 1];
- 	char cfg_name[64];
- 	u16 version;
+Background: Zicbop is mandated by the RVA22U64 profile. Downstream may
+combine the presence bit with ZICBOP_BLOCK_SIZE to make profile-level
+policy decisions or enable Zicbop-specific optimizations.
+
+Yao Zihong (4):
+  uapi: riscv: hwprobe: Add Zicbop extension bit and block-size key
+  riscv: hwprobe: Report Zicbop presence and block size
+  docs: riscv: Document hwprobe for Zicbop
+  selftests/riscv: Add Zicbop prefetch test
+
+ Documentation/arch/riscv/hwprobe.rst          |   8 +-
+ arch/riscv/include/asm/hwprobe.h              |   2 +-
+ arch/riscv/include/uapi/asm/hwprobe.h         |   2 +
+ arch/riscv/kernel/sys_hwprobe.c               |   6 +
+ .../testing/selftests/riscv/hwprobe/Makefile  |   5 +-
+ .../selftests/riscv/hwprobe/prefetch.c        | 236 ++++++++++++++++++
+ 6 files changed, 256 insertions(+), 3 deletions(-)
+ create mode 100644 tools/testing/selftests/riscv/hwprobe/prefetch.c
+
 -- 
-2.39.5
+2.47.2
 
 
