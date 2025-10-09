@@ -1,87 +1,99 @@
-Return-Path: <linux-kernel+bounces-847094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5E40BC9D86
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 17:45:34 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2D54BC9D95
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 17:47:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D58911A62042
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 15:45:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CD11E4F5BAB
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 15:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 429FD21C9E5;
-	Thu,  9 Oct 2025 15:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6152721CC4B;
+	Thu,  9 Oct 2025 15:47:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D5P2R1uh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ILY2B3C7"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8918B204096;
-	Thu,  9 Oct 2025 15:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D0F21ABC1;
+	Thu,  9 Oct 2025 15:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760024729; cv=none; b=sIHOzxePG4z8rOf/zLvSHdT+AHIFKOQXKY82r33N6xRYHSEMwe7M2yAq24EaXqqy7l8vutlMQwJMyTsLENlxtp4jNrsKA1nSKs6tPAW/T+zPrvas3DNfwMJyAfHKZ4XAgHHzOwIjYYOgfBwNKrAft6e6kex151XuC15oxz2t2rM=
+	t=1760024869; cv=none; b=S+RhSZXIT8LPhIi0CEsJnZUXuQh9iCOcsSuJ5QxB6OX1/A6thrNYlsr1FXzs1qA0aWP+EMulLyuySrwibOReKF8A7JjEitSqqZ99o7Aj9finDWpv5O/PINpk2B8VETuoNdWq+H7SfxxEO9ODf9FjaQcu+06yQ3wqCJ6VlhOBIxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760024729; c=relaxed/simple;
-	bh=INih87lrkNUaRNY1givnDmLLrDi+lAHVDzrnGVSMCbE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cTYeda32RSHdvabGoifOI0Af1YleaHoXJxgoa7C+kAuShP6xRc5pGQunLZMdCOXxn7sjUg+IMKsWLJC0bsKewRLrPWmd1gNeLm53kqMO0uG3NCpz0MqVDN0st1i1jZGrbL6QE9d93cxiDJg//6BFVHrnxLpSQCbcoEmOKlksquo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D5P2R1uh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDE00C4CEE7;
-	Thu,  9 Oct 2025 15:45:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760024729;
-	bh=INih87lrkNUaRNY1givnDmLLrDi+lAHVDzrnGVSMCbE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=D5P2R1uhk85l4PfIvL8s1c4mpLI8It99bpfwp7Gm9dBgp2uWD3GtMm23QUmV2QPod
-	 d8zj/Q1Hl1WOeL/wJj9aPO0nFXoiNPgUXoM/C240G6xU8z8cFwYElqqCuGJme3sAWn
-	 mbqtX+atfVZb3v67p2EJEmCG7igyoNqs+lIOfNxsXtO+Bf8/ZTLkhdvJBHnhsUQKi8
-	 hGLP6o7wYTQv4e+/0JYi/FWt7pi5OcsYKfI45sHr3j2nMZa1B0vzMtZ9jusdIKkB+F
-	 kdXJSBa4lqIdih+lalT0m+e5O1S2oIdPAhgfRcIpv78HrnGmzhTDC0axOeA9NlkB65
-	 4JJ4knHIQYscQ==
-From: Borislav Petkov <bp@kernel.org>
-To: Fan Wu <wufan@kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>
-Subject: [PATCH] ipe: Drop a duplicated CONFIG_ prefix in the ifdeffery
-Date: Thu,  9 Oct 2025 17:45:25 +0200
-Message-ID: <20251009154525.31932-1-bp@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1760024869; c=relaxed/simple;
+	bh=oD2yGOAOIsWuOKYqIVdN60o8NIuQOmas2HY6/unTn0Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pKpW2lJ3hOotdab2xWznk2HZYtJ8G/VqIRyVarambxhsUoaVS9KM+ai/tU3U2zm8n+gbDP5gx1G1uNNoOOojKOuf0t+1ZfLeouWaXzhmjx8pPy5r5deDaDm47kzyQGO/oK4lhjfVYmIeftlhU/R6K6QO+XO2NVkwDCwnwmvWRxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ILY2B3C7; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
+	Content-Type; bh=PMxA8swDCe6T3oUEni2WosZmiK984oa3wqohv6h9KBM=;
+	b=ILY2B3C7SoA2MBvONGC++ptQVWNf0LK3V/wW0RILvBAn+qtTT9GMZWtaJ/6GCh
+	HRgC6pjymwy6U2UtfKwkmyF4XSX7n3R3GtqaGU5P/jKDAdmPRg0w1/9017En68cJ
+	y0TI8s9ydwVZ9QZSttnC0v5oySTWDdQ6zowOGE0nWuayY=
+Received: from [IPV6:240e:b8f:927e:1000:2cf9:d1b6:c3dd:cffe] (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id PigvCgB3dxb02Odo9CfDBg--.26554S2;
+	Thu, 09 Oct 2025 23:47:02 +0800 (CST)
+Message-ID: <c0d37604-edf7-4b9b-a3b2-9c5402ed579d@163.com>
+Date: Thu, 9 Oct 2025 23:47:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 6/6] PCI: cadence: Use cdns_pcie_find_*capability() to
+ avoid hardcoding offsets
+To: Sasha Levin <sashal@kernel.org>
+Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, bhelgaas@google.com,
+ helgaas@kernel.org, jingoohan1@gmail.com, mani@kernel.org, robh@kernel.org,
+ ilpo.jarvinen@linux.intel.com, schnelle@linux.ibm.com, gbayer@linux.ibm.com,
+ lukas@wunner.de, arnd@kernel.org, geert@linux-m68k.org,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250813144529.303548-1-18255117159@163.com>
+ <20250813144529.303548-7-18255117159@163.com> <aOfMk9BW8BH2P30V@laps>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <aOfMk9BW8BH2P30V@laps>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PigvCgB3dxb02Odo9CfDBg--.26554S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrXw4xZr1rZF13ZFyxJF4ktFb_yoWxWFgEq3
+	yIy397Cw4DXFs5Can8Ar13JayDA3yaqFsF9F4fAry3X3Z5Gr18AFW3C3Z7JF97GayFgF15
+	Wwn0kayYyas8tjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUU1SotUUUUU==
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiDw7ho2jny74X6gABsF
 
-From: "Borislav Petkov (AMD)" <bp@alien8.de>
 
-Looks like it got added by mistake, perhaps editor auto-completion
-artifact. Drop it.
 
-No functional changes.
+On 2025/10/9 22:54, Sasha Levin wrote:
+> On Wed, Aug 13, 2025 at 10:45:29PM +0800, Hans Zhang wrote:
+>> @@ -249,9 +252,10 @@ static int cdns_pcie_ep_get_msi(struct pci_epc 
+>> *epc, u8 fn, u8 vfn)
+>> {
+>>     struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
+>>     struct cdns_pcie *pcie = &ep->pcie;
+>> -    u32 cap = CDNS_PCIE_EP_FUNC_MSI_CAP_OFFSET;
+>>     u16 flags, mme;
+>> +    u8 cap;
+>>
+>> +    cap = cdns_pcie_find_capability(pcie, PCI_CAP_ID_MSIX);
+> 
+> We should be passing PCI_CAP_ID_MSI, not PCI_CAP_ID_MSIX here, right?
+> 
 
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
----
- security/ipe/hooks.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Sasha,
 
-diff --git a/security/ipe/hooks.c b/security/ipe/hooks.c
-index d0323b81cd8f..42857c2ea2a5 100644
---- a/security/ipe/hooks.c
-+++ b/security/ipe/hooks.c
-@@ -311,4 +311,4 @@ int ipe_inode_setintegrity(const struct inode *inode,
- 
- 	return -EINVAL;
- }
--#endif /* CONFIG_CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG */
-+#endif /* CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG */
--- 
-2.51.0
+Yes, thank you very much for pointing it out. Sorry, it's my fault. I 
+will submit a patch to fix it.
+
+Best regards,
+Hans
 
 
