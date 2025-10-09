@@ -1,93 +1,192 @@
-Return-Path: <linux-kernel+bounces-847451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB289BCADD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 22:57:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90E73BCADE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 22:58:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7CE51354E17
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 20:57:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E1191A64F3E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 20:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A062749C5;
-	Thu,  9 Oct 2025 20:57:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F151274668;
+	Thu,  9 Oct 2025 20:58:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MIveV+BN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G383v09Y"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC732277C94;
-	Thu,  9 Oct 2025 20:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B552741A0
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 20:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760043433; cv=none; b=DktfvEUJv5H+dZ1fgFmNFrs84vkIqrtQBnDuQ5i1MZP6sHuCFPAzRpM2GljqDv36bj54Zx70R5OrU6BqoNR3qE7O/KYQXhv6idRaM358y4j7WPFp3FwSU1DkEFcqqg7adQLxTLwiJ9qDmtt6HPdldcBz5/yBcQ0DSXUxLrik+q0=
+	t=1760043526; cv=none; b=DDRHXakMMjMBaCinz4hNUUBd1JuwsyDxFuCNF7gMQK76pGsI9zAOVoVj5CaFP2Ujb1DGG3aDcSGLkr7J2EQ7SKwwL+hhbWKNFjuIAHBG1LxI+sk1UlSHK728o0qvALkdu9AD9bg1C7pL1dZizrpoBi4INRiWMltFkywQOJyizUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760043433; c=relaxed/simple;
-	bh=lBI1eCHf+aO2ITFQm4OLOPGZVt4N95diGCPMOVo2W/A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D3E8O+CY28g0PLbMy59JcIKI8l63ccBGG/vPeEn1J5q2fZnwJJz7zgYqtX9SHc7FSWAa/z6mvL3mM9dc9AeC1Jm8KcNlyLXmhOv+lft1rQtddqtDI7HnNIlX2TbkMVbDUgGsXtneXthflt+FaAAGolKuNILNjAagOzc+sTC3T8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MIveV+BN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6ED3C4CEFE;
-	Thu,  9 Oct 2025 20:57:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760043433;
-	bh=lBI1eCHf+aO2ITFQm4OLOPGZVt4N95diGCPMOVo2W/A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MIveV+BNg17Ru92Km71oihk9DiiSLbwqT02UzgdvMxjmgHzaDS5b59dqnEQNdfLyU
-	 qSZWAHieuUqI6mJacQ3E5y0Rna5r678zB2CYAzh+pkDHugqwJt8Ebu+kS/GB1URCve
-	 cLwLftPz1LHHGgwq4S0oaoP/0uKZEUWbvIDh2MhHpkB5EQiVDpGXjofX0fRrBtlBeq
-	 oro20Dyn8JLwie1GXZRAf0Yl7kqTWW2Uoje4KaYxUXBuKlTHhlCWuW11+ZwbUA0G/4
-	 PZSkAaYOVl03rOE/abY3jwHSnFPxhcAOZDNVO4SQoke69CyCSFIpbyNhpAX6iWf48F
-	 oVTmPgfhc0hEg==
-Date: Thu, 9 Oct 2025 15:57:11 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Drew Fustini <fustini@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Anup Patel <anup@brainfault.org>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Joel Stanley <jms@oss.tenstorrent.com>,
-	linux-riscv@lists.infradead.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Michael Neuling <mikey@neuling.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>, Arnd Bergmann <arnd@arndb.de>,
-	devicetree@vger.kernel.org,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Anirudh Srinivasan <asrinivasan@tenstorrent.com>,
-	Drew Fustini <dfustini@oss.tenstorrent.com>,
-	Joel Stanley <joel@jms.id.au>, Andy Gross <agross@kernel.org>,
-	Alexandre Ghiti <alex@ghiti.fr>, linux-kernel@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Michael Ellerman <mpe@kernel.org>
-Subject: Re: [PATCH v2 5/8] dt-bindings: interrupt-controller: Add
- Tenstorrent Blackhole compatible
-Message-ID: <176004343108.3328456.14834767754119467373.robh@kernel.org>
-References: <20251006-tt-bh-dts-v2-0-ed90dc4b3e22@oss.tenstorrent.com>
- <20251006-tt-bh-dts-v2-5-ed90dc4b3e22@oss.tenstorrent.com>
+	s=arc-20240116; t=1760043526; c=relaxed/simple;
+	bh=BqbCwuAVAX3DK9Bwr4mndwxsIa7VrBg+LRl7NYKu6/o=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=IaWNlF8jANBm/ttCWCvdRLM26n7flR7zVwm4xSfiLSwrtMu6sJmjSQ3fwEtnEYydZYMDWqhU6CbA2HZI1nUn6IsO+iI31UcKBswF4QEnsV5/7FIvGnzBFfRNDO1rj5PvMwW8SAkFZVyo0sZJ9v8d93wYleIM5mROkhj3R6ebn5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G383v09Y; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b62ebb4e7c7so2148186a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 13:58:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760043520; x=1760648320; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6Svmg4fC9qEdNkkbW7Zw7TQK03ok0QyEpUIGM0MaKbU=;
+        b=G383v09YB3KaE+seKuAIY4h6vevadvRlhgtb9qgIrFKO0RzxSy0om2wwHptHxmsEG7
+         REhPUpSklb8fMXxLCcvfewBv3okjvukQgPsJ2azvYF/TnTVtLmqYaMxLBF6ibMJJSo7o
+         mAEW+ugxscexS2Wzoud5PUpGr1rJUv7+sMA3XLxNshwgQmpHJwgfskG7uOC9XPNcasDI
+         tLRZSTlco90Xdrs4YXYQt3mslgTXJY08vKPd90OYAAFqMvaMra4M6eGSPVHga/bBp2JQ
+         HiACqoXg3iBOVEzal2bvzFGwygbUx71axyS6H5yWUMNdOLsbKbiTgF3TbmX8i0Hml/jl
+         D81A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760043520; x=1760648320;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6Svmg4fC9qEdNkkbW7Zw7TQK03ok0QyEpUIGM0MaKbU=;
+        b=ErIwRE0877U0RjPnDGt4VZVQNYAjkqb/xPjpFmq6QkvOsyDmQTT1lUAmXvsz3Fnz5Y
+         JdtmVxqCTvtK13gsYuKGjvNHToYW683Q2QsG9Xr4dRj+0urPsWCvie4thZSxEXMDQivz
+         spC/XxEOjTW3TxQghNa5yDcNlnTAasfZmAf2iGZuT7M+z+GNupD9sydgoe7O6oIZXulI
+         EbnY4Gw+syUb2ymZNV6mJi2JLaqB/r0ZC/6LnWRbLsWUbNq1JiFWaUMVwxNEgmGI9hMw
+         lOcAg6rwNGqnXPeYCfhM+V6r2NF4UbWBGGMMnJuin9fsABPIymT4VKirEVb/jK09aUG6
+         WPEg==
+X-Forwarded-Encrypted: i=1; AJvYcCXuV4Apg1dKEhrgG/OHyA8DZxBV7Lp0fo69EhAR60Tfky1HhdgzzbIj29e54TtqmDF+BUl+GnIAhN75ySY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjXYwXuFP8kqX3hvcJPJwbxiky9ZOZAe7jCKRIwxHic9eHeq17
+	NIVyISsk/kXM1m+mFVG7+bMVmqV2+/138B2U938xHrSsz8nqeRsGKwkFUkRPDHGkcFYKfhwC16s
+	UJslvHiavc+aLL0muPf2HMa0AQg==
+X-Google-Smtp-Source: AGHT+IF2ixNEPysZXr3u0xayZWztnMtb0Ewpjd6TyH2GT7xRzPzkdMEBQLXdOtzl9AkJxD9WHYyAbFyQ74Srl6hOyQ==
+X-Received: from pjtv5.prod.google.com ([2002:a17:90a:c905:b0:332:7fae:e138])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:52cc:b0:30a:4874:5397 with SMTP id 98e67ed59e1d1-33b511185e2mr11670768a91.9.1760043520294;
+ Thu, 09 Oct 2025 13:58:40 -0700 (PDT)
+Date: Thu, 09 Oct 2025 13:58:24 -0700
+In-Reply-To: <20251007221420.344669-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251006-tt-bh-dts-v2-5-ed90dc4b3e22@oss.tenstorrent.com>
+Mime-Version: 1.0
+References: <20251007221420.344669-1-seanjc@google.com>
+Message-ID: <diqz5xcniyhb.fsf@google.com>
+Subject: Re: [PATCH v12 00/12] KVM: guest_memfd: Add NUMA mempolicy support
+From: Ackerley Tng <ackerleytng@google.com>
+To: Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>, Shivank Garg <shivankg@amd.com>, 
+	Ashish Kalra <ashish.kalra@amd.com>, Vlastimil Babka <vbabka@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 
+Sean Christopherson <seanjc@google.com> writes:
 
-On Mon, 06 Oct 2025 14:21:45 -0700, Drew Fustini wrote:
-> From: Drew Fustini <dfustini@oss.tenstorrent.com>
-> 
-> Document compatible for the PLIC in the Tenstorrent Blackhole SoC.
-> 
-> Signed-off-by: Drew Fustini <dfustini@oss.tenstorrent.com>
-> ---
->  .../devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml      | 1 +
->  1 file changed, 1 insertion(+)
-> 
+> Shivank's series to add support for NUMA-aware memory placement in
+> guest_memfd.  This is based on:
+>
+>   https://github.com/kvm-x86/linux.git gmem
+>
+> which is an unstable topic branch that contains the guest_memfd MMAP fixes
+> destined for 6.18 (to avoid conflicts), and three non-KVM changes related to
+> mempolicy that were in previous versions of this series
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+For future reference, these are the three specific patches:
 
+[1] https://lore.kernel.org/all/20250827175247.83322-4-shivankg@amd.com/
+[2] https://lore.kernel.org/all/20250827175247.83322-5-shivankg@amd.com/
+[3] https://lore.kernel.org/all/20250827175247.83322-6-shivankg@amd.com/
+
+Might have missed this, did we discuss how these 3 would get merged? I
+noticed this patch was withdrawn, not sure what that means: [4]
+
+[4] https://lore.kernel.org/all/20250625000155.62D08C4CEE3@smtp.kernel.org/
+
+> (I want to keep this
+> version KVM focused, and AFAICT there is nothing left to discuss in the prep
+> paches).
+>
+> Once 6.18-rc1 is cut I'll turn "gmem" into a proper topic branch, rebase it,
+> and freeze the hashes.
+>
+> v12:
+>  - Add missing functionality to KVM selftests' existing numaif.h instead of
+>    linking to libnuma (which appears to have caveats with -static).
+>  - Add KVM_SYSCALL_DEFINE() infrastructure to reduce the boilerplate needed
+>    to wrap syscalls and/or to assert that a syscall succeeds.
+>  - Rename kvm_gmem to gmem_file, and use gmem_inode for the inode structure.
+>  - Track flags in a gmem_inode field instead of using i_private.
+>  - Add comments to call out subtleties in the mempolicy code (e.g. that
+>    returning NULL for vm_operations_struct.get_policy() is important for ABI
+>    reasons).
+>  - Improve debugability of guest_memfd_test (I kept generating SIGBUS when
+>    tweaking the tests).
+>  - Test mbind() with private memory (sadly, verifying placement with
+>    move_pages() doesn't work due to the dependency on valid page tables).
+>
+> - V11: Rebase on kvm-next, remove RFC tag, use Ackerley's latest patch
+>        and fix a rcu race bug during kvm module unload.
+> - V10: Rebase on top of Fuad's V17. Use latest guest_memfd inode patch
+>        from Ackerley (with David's review comments). Use newer kmem_cache_create()
+>        API variant with arg parameter (Vlastimil)
+> - v9: Rebase on top of Fuad's V13 and incorporate review comments
+> - v8: Rebase on top of Fuad's V12: Host mmaping for guest_memfd memory.
+> - v7: Use inodes to store NUMA policy instead of file [0].
+> - v4-v6: Current approach using shared_policy support and vm_ops (based on
+>          suggestions from David [1] and guest_memfd bi-weekly upstream
+>          call discussion [2]).
+> - v3: Introduced fbind() syscall for VMM memory-placement configuration.
+> - v1,v2: Extended the KVM_CREATE_GUEST_MEMFD IOCTL to pass mempolicy.
+>
+> [0] https://lore.kernel.org/all/diqzbjumm167.fsf@ackerleytng-ctop.c.googlers.com
+> [1] https://lore.kernel.org/all/6fbef654-36e2-4be5-906e-2a648a845278@redhat.com
+> [2] https://lore.kernel.org/all/2b77e055-98ac-43a1-a7ad-9f9065d7f38f@amd.com
+>
+> Ackerley Tng (1):
+>   KVM: guest_memfd: Use guest mem inodes instead of anonymous inodes
+>
+> Sean Christopherson (7):
+>   KVM: guest_memfd: Rename "struct kvm_gmem" to "struct gmem_file"
+>   KVM: guest_memfd: Add macro to iterate over gmem_files for a
+>     mapping/inode
+>   KVM: selftests: Define wrappers for common syscalls to assert success
+>   KVM: selftests: Report stacktraces SIGBUS, SIGSEGV, SIGILL, and SIGFPE
+>     by default
+>   KVM: selftests: Add additional equivalents to libnuma APIs in KVM's
+>     numaif.h
+>   KVM: selftests: Use proper uAPI headers to pick up mempolicy.h
+>     definitions
+>   KVM: guest_memfd: Add gmem_inode.flags field instead of using
+>     i_private
+>
+> Shivank Garg (4):
+>   KVM: guest_memfd: Add slab-allocated inode cache
+>   KVM: guest_memfd: Enforce NUMA mempolicy using shared policy
+>   KVM: selftests: Add helpers to probe for NUMA support, and multi-node
+>     systems
+>   KVM: selftests: Add guest_memfd tests for mmap and NUMA policy support
+>
+>  include/uapi/linux/magic.h                    |   1 +
+>  tools/testing/selftests/kvm/arm64/vgic_irq.c  |   2 +-
+>  .../testing/selftests/kvm/guest_memfd_test.c  |  98 +++++
+>  .../selftests/kvm/include/kvm_syscalls.h      |  81 +++++
+>  .../testing/selftests/kvm/include/kvm_util.h  |  29 +-
+>  tools/testing/selftests/kvm/include/numaif.h  | 110 +++---
+>  .../selftests/kvm/kvm_binary_stats_test.c     |   4 +-
+>  tools/testing/selftests/kvm/lib/kvm_util.c    |  55 +--
+>  .../kvm/x86/private_mem_conversions_test.c    |   9 +-
+>  .../selftests/kvm/x86/xapic_ipi_test.c        |   5 +-
+>  virt/kvm/guest_memfd.c                        | 344 ++++++++++++++----
+>  virt/kvm/kvm_main.c                           |   7 +-
+>  virt/kvm/kvm_mm.h                             |   9 +-
+>  13 files changed, 576 insertions(+), 178 deletions(-)
+>  create mode 100644 tools/testing/selftests/kvm/include/kvm_syscalls.h
+>
+>
+> base-commit: 67033eaa5ea2cb67b6cdaa91d7f5c42bfafb36f7
+> -- 
+> 2.51.0.710.ga91ca5db03-goog
 
