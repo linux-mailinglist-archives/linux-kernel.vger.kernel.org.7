@@ -1,188 +1,122 @@
-Return-Path: <linux-kernel+bounces-846954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5468DBC9821
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:29:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DDBDBC982F
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:30:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CFA3335346D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:29:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4960E3C74E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C352EAB85;
-	Thu,  9 Oct 2025 14:29:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7163F2EAB72;
+	Thu,  9 Oct 2025 14:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MgMuZsUV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="Y0JGFPW6"
+Received: from ksmg01.maxima.ru (ksmg01.maxima.ru [81.200.124.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F71F2EA176;
-	Thu,  9 Oct 2025 14:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17E52EAB71;
+	Thu,  9 Oct 2025 14:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760020190; cv=none; b=aUeHMY1EonHmWwpgUteXH7SV9XMRkqaoHaDbuPzHncEirDK80xtcMKHIt87Rzk6WcW4DskONDi7TweFVtCn8b1GZedmd0nk6y1AlNAuNvS1jhlbo7/yzdgHVKSjDKQZzdkYdz5HQzPzy88hM42XqQvHQ+2tDkjqywwKX3l2yA4s=
+	t=1760020228; cv=none; b=EDqWizjYFqfd5y9/jkyRpML1tK7ondLRyPWaQ5JR15N9s1s9EBpHCHWkxIiPEkxxf1QVgDgmTcNkpWCfG+TkVdJXMWVGZ+uJvrmZ8a7hjfcpZoO4C/teJMtOHXjYBQwigsqP/NpaJc8dDem/Lm0W6HOKzMoS2F9J9kjdNWBbHww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760020190; c=relaxed/simple;
-	bh=JeNJ+MOb6MbW2Adwn40uh6TWEREB7v7gXN/c9Y0+u0M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MSbPP904Nm1v9DiZB1bYRKVfY7eILaAlLiKsOo1th7uYWoN9GAQhSu+uGRoLfJii0dV0XvqZFcCy1E6BEzeZWVFPXCdK+0KMZAitj+QGAFQE4EQqZ9a6Q1aczCSYRlpeWnILRs8/4m4SxJ0/YNJrLRaSCAAY0TSa73e3anib9X0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MgMuZsUV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD03BC4CEE7;
-	Thu,  9 Oct 2025 14:29:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760020188;
-	bh=JeNJ+MOb6MbW2Adwn40uh6TWEREB7v7gXN/c9Y0+u0M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MgMuZsUVxQHOeFFf6KNTzfqwMKZZMATdNU3Xr+gE26+27vAMjih/M2l02JtGbl93u
-	 MQR1sIR0iE+HX2RdohSj8VAq0Aad66+Bd9PAwMCLyr5x8wu6hKovMIKfVWXTKIFTRb
-	 pU8QXUj3QySjCK1YLk7vrG64AOBFF9DhCG4Vp41MFREgUUN+1hQzCRy/Aa6mA5k/ZA
-	 V9o+PWCf1npShSdn4KXCtpUFvI9N3/lHmbT8uvoO4DHMnNnGVNWtxj5ISoV2RzTY8R
-	 1yLCxG8jjb6C22Y3r3gDOPE2NgKyV5lLZjUlSScMR6wODpv+F8I/kvmAUiB2rDYODy
-	 TXcWiZ3XIZUvg==
-Message-ID: <b614913e-7ebf-4abe-9eb5-f41b81d91ad3@kernel.org>
-Date: Thu, 9 Oct 2025 15:29:47 +0100
+	s=arc-20240116; t=1760020228; c=relaxed/simple;
+	bh=8niqJEi9iLrsPyEIHxykdQfwFcTMumPwAVNtUtKeka0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PGFUPTEfw4FEJdo3b4ugIGLbeyrG7CYOuPGv8VAx/gRsuStjCbkg+7LsIey4K3TY9/ZE18X9pzCGzfRLhO+15AMIjctXZocao1Mxwqdj595IWewPuZh4S77XTS322h6FC3WrggvdPvWDLNlmPeXq6WbewUREutcdaXqx3Zgb0v4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=Y0JGFPW6; arc=none smtp.client-ip=81.200.124.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
+Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
+	by ksmg01.maxima.ru (Postfix) with ESMTP id EA9A5C0072;
+	Thu,  9 Oct 2025 17:30:14 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru EA9A5C0072
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
+	s=sl; t=1760020214; bh=Gm7VHxSgxI/lsjFlvEREIzbOzCwLlQpfJAZq8Z2IZPQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=Y0JGFPW6Jhel9qh03uEC0aoM2JWxxN7m7Tbwf/NlaO/jjGjIhfRWL3epfNv37Wi3R
+	 JAPYkj1yO4aQh3H99g1ROB7COTMoz11DnSzWFZJXSfxxUoBUfYW22ioheLYqrUZvKe
+	 hjYYEJ/lYK3hywuRFljAeUv5J7oB7S/bp+Ltljp0QkTfeEs7ODS2czIyNW8CZ+5ZjC
+	 XM03m90DmfQSYHTGzkR+Alx1oUqy5VpokewsIDr4AGOGtJKerS2ZwcywgpxTy4/7Co
+	 2l9MaPdIJFRXzut54V2tdnUTAUEpitddcrZPHgbC1QBsJ7RMVVGnClKN58rTbLI5Dw
+	 sl/kzQr9S09HQ==
+Received: from ksmg01.maxima.ru (autodiscover.maxima.ru [81.200.124.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(Client did not present a certificate)
+	by ksmg01.maxima.ru (Postfix) with ESMTPS;
+	Thu,  9 Oct 2025 17:30:14 +0300 (MSK)
+Received: from db126-1-abramov-14-d-mosos.mti-lab.com (172.25.20.118) by
+ mmail-p-exch01.mt.ru (81.200.124.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 9 Oct 2025 17:30:13 +0300
+From: Ivan Abramov <i.abramov@mt-integration.ru>
+To: Sebastian Reichel <sre@kernel.org>
+CC: Ivan Abramov <i.abramov@mt-integration.ru>, Mark Brown
+	<broonie@kernel.org>, Lee Jones <lee@kernel.org>, Felipe Balbi
+	<felipe.balbi@linux.intel.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH 1/1] power: supply: rt9467: Return error on failure in rt9467_set_value_from_ranges()
+Date: Thu, 9 Oct 2025 17:29:54 +0300
+Message-ID: <20251009142955.562032-1-i.abramov@mt-integration.ru>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 2/6] ASoC: dt-bindings: qcom,sm8250: Add clocks
- properties for I2S
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20251008-topic-sm8x50-next-hdk-i2s-v2-0-6b7d38d4ad5e@linaro.org>
- <20251008-topic-sm8x50-next-hdk-i2s-v2-2-6b7d38d4ad5e@linaro.org>
- <44606de8-3446-472f-aa6b-25ff8b76e0ec@kernel.org>
- <3620feb6-12bf-48c1-b47a-ccb486e5b5de@linaro.org>
- <c0b71974-65df-47ad-902b-45c2dbe66be0@kernel.org>
- <f27cad88-b1fd-41a3-bdb1-b07de3dea8a2@linaro.org>
-Content-Language: en-US
-From: Srinivas Kandagatla <srini@kernel.org>
-In-Reply-To: <f27cad88-b1fd-41a3-bdb1-b07de3dea8a2@linaro.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: mmail-p-exch02.mt.ru (81.200.124.62) To
+ mmail-p-exch01.mt.ru (81.200.124.61)
+X-KSMG-AntiPhishing: NotDetected
+X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
+X-KSMG-AntiSpam-Envelope-From: i.abramov@mt-integration.ru
+X-KSMG-AntiSpam-Info: LuaCore: 70 0.3.70 b6780c1b68d463c8db5ef264290dd79bdbaaf842, {rep_avail}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, mt-integration.ru:7.1.1;81.200.124.61:7.1.2;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;ksmg01.maxima.ru:7.1.1, FromAlignment: s, ApMailHostAddress: 81.200.124.61
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiSpam-Lua-Profiles: 196955 [Oct 09 2025]
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Version: 6.1.1.11
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/10/09 12:30:00 #27896373
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 7
 
+The return value of rt9467_set_value_from_ranges() when setting AICL VTH is
+not checked, even though it may fail.
 
+Log error and return from rt9467_run_aicl() on fail.
 
-On 10/9/25 3:25 PM, Neil Armstrong wrote:
-> On 10/9/25 16:06, Srinivas Kandagatla wrote:
->>
->>
->> On 10/9/25 3:03 PM, Neil Armstrong wrote:
->>> On 10/9/25 15:36, Srinivas Kandagatla wrote:
->>>>
->>>>
->>>> On 10/8/25 7:56 PM, Neil Armstrong wrote:
->>>>> In order to describe the block and master clock of each I2S bus, add
->>>>> the first 5 I2S busses clock entries.
->>>>>
->>>>> The names (primary, secondary, tertiarty, quaternary, quinary, senary)
->>>>> uses the LPASS clock naming which were used for a long time on
->>>>> Qualcomm
->>>>> LPASS firmware interfaces.
->>>>>
->>>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->>>>> ---
->>>>>    .../devicetree/bindings/sound/qcom,sm8250.yaml      | 21 ++++++++++
->>>>> +++++++++++
->>>>>    1 file changed, 21 insertions(+)
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
->>>>> b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
->>>>> index
->>>>> 8ac91625dce5ccba5c5f31748c36296b12fac1a6..d1420d138b7ed8152aa53769c4d495e1674275e6 100644
->>>>> --- a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
->>>>> +++ b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
->>>>> @@ -64,6 +64,27 @@ properties:
->>>>>        $ref: /schemas/types.yaml#/definitions/string
->>>>>        description: User visible long sound card name
->>>>>    +  clocks:
->>>>> +    minItems: 2
->>>>> +    maxItems: 12
->>>>> +
->>>>> +  clock-names:
->>>>> +    minItems: 2
->>>>> +    items:
->>>>> +      # mclk is the I2S Master Clock, mi2s the I2S Bit Clock
->>>>> +      - const: primary-mi2s
->>>>> +      - const: primary-mclk
->>>>> +      - const: secondary-mi2s
->>>>> +      - const: secondary-mclk
->>>>> +      - const: tertiary-mi2s
->>>>> +      - const: tertiary-mclk
->>>>> +      - const: quaternary-mi2s
->>>>> +      - const: quaternary-mclk
->>>>> +      - const: quinary-mi2s
->>>>> +      - const: quinary-mclk
->>>>> +      - const: senary-mi2s
->>>>> +      - const: senary-mclk
->>>>> +
->>>>
->>>> I don't this is correct way to handling bitclk and mclks for I2S, these
->>>> are normally handled as part of snd_soc_dai_set_sysclk() transparently
->>>> without need of any device tree description.
->>>>
->>>> Also doing this way is an issue as this is going to break existing
->>>> Elite
->>>> based platforms, and the device description should not change across
->>>> these both audio firmwares.
->>>
->>> This is only for AudioReach platforms, on those platforms the
->>> clocks are registered in DT and are not accessible by the card.
->>>
->> Clocks will be acessable via snd_soc_dai_set_sysclk ->
->> q6prm_set_lpass_clock once set_sysclk support is added to q6apm-lpass
->> i2s dai ops.
->>
->>
->>> Device description is obviously different for the AudioReach platforms.
->>
->> Why should it be different, its same device.
->> We have platforms that use both Elite and Audioreach.
-> 
-> I'm perfectly aware of that, it's the case for sc7280/qcm6490. And I agree
-> the card bindings is the same, but it doesn't mean the DSP elements are the
-> same and uses in the same manner.
-> 
-> So let's forget the bindings and forget those clocks entries, and imagine
-> I'll implement those _sys_sysclk calls like for the Elite platforms.
-> This means I'll bypass the clock framework by directly setting the PRM
-> clocks, this is clearly a layer violation.
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-You can claim clocks in the dsp layer (q6apm-lpass-dais) instead of
-claiming it in machine layer, it does not necessarily have to bypass the
-clk framework.
+Fixes: 626b6cd5f52e ("power: wm831x_power: Support USB charger current limit management")
+Signed-off-by: Ivan Abramov <i.abramov@mt-integration.ru>
+---
+ drivers/power/supply/rt9467-charger.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---srini
-> 
-> Neil
-> 
->>
->> --srini
->>>
->>> Neil
->>>
->>>>
->>>> thanks,
->>>> Srini
->>>>
->>>>>    patternProperties:
->>>>>      ".*-dai-link$":
->>>>>        description:
->>>>>
->>>>
->>>
->>
-> 
+diff --git a/drivers/power/supply/rt9467-charger.c b/drivers/power/supply/rt9467-charger.c
+index fe773dd8b404..b4917514bd70 100644
+--- a/drivers/power/supply/rt9467-charger.c
++++ b/drivers/power/supply/rt9467-charger.c
+@@ -588,6 +588,10 @@ static int rt9467_run_aicl(struct rt9467_chg_data *data)
+ 	aicl_vth = mivr_vth + RT9467_AICLVTH_GAP_uV;
+ 	ret = rt9467_set_value_from_ranges(data, F_AICL_VTH,
+ 					   RT9467_RANGE_AICL_VTH, aicl_vth);
++	if (ret) {
++		dev_err(data->dev, "Failed to set AICL VTH\n");
++		return ret;
++	}
+ 
+ 	/* Trigger AICL function */
+ 	ret = regmap_field_write(data->rm_field[F_AICL_MEAS], 1);
+-- 
+2.39.5
 
 
