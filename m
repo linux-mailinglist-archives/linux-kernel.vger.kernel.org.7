@@ -1,110 +1,127 @@
-Return-Path: <linux-kernel+bounces-846094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EB75BC7058
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 02:43:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98CDEBC7061
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 02:44:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5FCC04E7283
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 00:43:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53B153AEA53
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 00:44:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE9019DF4D;
-	Thu,  9 Oct 2025 00:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7148318B47D;
+	Thu,  9 Oct 2025 00:44:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d/miDTD6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BWX8yGNx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62E41DF6C;
-	Thu,  9 Oct 2025 00:43:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCDB41991D4;
+	Thu,  9 Oct 2025 00:44:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759970623; cv=none; b=Yp8Sgv334qMGZwUjckOq94MWeSAzBeRaW6OJkiguvAU5mxW6ZBgBvKp4pYLTQCyn99boRfOyq0s/EvTN44fSQt0H2+Fz4nlJMZPjdSwMubQejaPrgsC/9uB3w1uUMA+TzBkcku93bPoSzNF5tY+tBhds6kMo+vmDqmVIHOnDrxI=
+	t=1759970647; cv=none; b=XbVmq4fZef0/FoJL5lEhV/zTHkTOhTBmo9zXIDXJofEqrx0DyQpTe1Vr8QrFePpj1JxrHZhZaxkwrfbkBz+K483FUTn/j03R3iCNLCWsIZc2q6Pe7Qh6oZkLgRAPzLpga85SeXKAvAxXO6b3w7M7SyVXHsDY73OKU0YULPG6Ej4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759970623; c=relaxed/simple;
-	bh=dX0f9NNc3ev8nYEkPBXLQP7xHQwnM4V0kjsg1TcaF4w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UPAC3Bc1srG70TvsS9mzw4+gqAWcWdyA3jCE3CSWg7Y7ZnnLuH6dyJarcaV4WaIoLRagpoedODmyiCuKGkt4G/ZxlzTbWoJx3STqubzn6qX3ZOc+xMIcj4UqkMznNRf6MFoXQrk9uOHdGOnbMCgiZp5Aaq7vhs2XQDxSPm4f0jU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d/miDTD6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFE24C4CEE7;
-	Thu,  9 Oct 2025 00:43:42 +0000 (UTC)
+	s=arc-20240116; t=1759970647; c=relaxed/simple;
+	bh=DyOQYsEqbxD2W84UpTYywGgxao4ChbPyR11lNQhFhYY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t3GPZf3PZhK2nqimhLrnpQ2jcdsyN+dB+0HSUZPt0knQyxgQIeFqtgXCv5+pCo2X+KWRoJKar3ZynEq5O32yQr9ERt7jTxKtLAYIDge0+jDL37KnLU8gSy6uoX0CRDnkCk9xhUpFD7kIe0E+p9du6jdMgvc1Rz+CKtZhyqwlEak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BWX8yGNx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 568CBC4CEE7;
+	Thu,  9 Oct 2025 00:43:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759970623;
-	bh=dX0f9NNc3ev8nYEkPBXLQP7xHQwnM4V0kjsg1TcaF4w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d/miDTD6rOtxCuQvVhd0sT74JQnWl8xOws2qjCrK8PTGimCO/Cih2WPRfelX3vUrC
-	 dFpxSVeBkaCVvgpZUq4wW3XUNYyXwet85zHxnSqCrshdZa5/j+uLXmn1wIYQzOTXWt
-	 Sj6X8HpuLR91VXM7yzkuSrAW/xLiet20fPM2ncUH7EEZC1pwhNc/KXWgX8ta0rg5En
-	 Yt7VBXXwwivQ3Y/p+vHtjPtQAKinE4o7qERQVfdgxCShMcUfCoeEgAZie90AK5YOIM
-	 ycMOijxSoKMVwCNqp0jxYvtFOyodh2z1foXA/7GDpwPskLtQ1uoA4vHjIUQW/7Q+OE
-	 VUrpGpn+Hhreg==
-Date: Wed, 8 Oct 2025 19:43:41 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: James Calligeros <jcalligeros99@gmail.com>
-Cc: linux-input@vger.kernel.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-rtc@vger.kernel.org, asahi@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Janne Grunau <j@jannau.net>, Lee Jones <lee@kernel.org>,
-	Jean Delvare <jdelvare@suse.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>, Neal Gompa <neal@gompa.dev>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Sven Peter <sven@kernel.org>
-Subject: Re: [PATCH v3 02/13] dt-bindings: hwmon: Add Apple System Management
- Controller hwmon schema
-Message-ID: <175997061547.377977.15400204653916198003.robh@kernel.org>
-References: <20251007-macsmc-subdevs-v3-0-d7d3bfd7ae02@gmail.com>
- <20251007-macsmc-subdevs-v3-2-d7d3bfd7ae02@gmail.com>
+	s=k20201202; t=1759970643;
+	bh=DyOQYsEqbxD2W84UpTYywGgxao4ChbPyR11lNQhFhYY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BWX8yGNxmZQFO7G5+sG0RKNPIvfO74cyzkuVfSamNlMo1sNJRy20v45Q5Ekx9i1e7
+	 UW0TTzpN3rvvH7+myu1bl5FIzVuN9lzSP0cFTbAU35miJCd059Q7iR4/u4DH2b7sGe
+	 N3HiggarHal9UGHZfrLYa2IflvicKc8+vUXaC9riWWf/o+h9ZrelM0cpt20O3K5uHD
+	 JvfVc39efz5q1YmwbbXOsYCgY2gK/8UaUQBlJVvpde8FZNtFavy09iwzVgp2pWd/kU
+	 B8F1fm2Pn871GGV5mAbjkw0nTo/ezWpvcXrZU4yIfDSqqup3KuLiZKi4DliQOJli08
+	 gOynJiaRVzTGA==
+Message-ID: <d46c0335-99d6-469f-a61f-aca4c851f745@kernel.org>
+Date: Thu, 9 Oct 2025 01:43:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251007-macsmc-subdevs-v3-2-d7d3bfd7ae02@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/5] Introduce "non-pixel" sub node within iris video
+ node
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Charan Teja Kalla <charan.kalla@oss.qualcomm.com>,
+ Bryan O'Donoghue <bod.linux@nxsw.ie>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <7b6db4fa-2f73-376d-4eb3-64c1c7e6cda3@quicinc.com>
+ <af0da28c-3ca0-41dc-aaa4-572723ea74bf@linaro.org>
+ <klhvgzizub33f46buqsog54wqksqp24a5tijwyv355l2ao2imo@wdkojfebc6s2>
+ <e1a6e75a-2a5d-44a2-8bbc-140eb86d1806@linaro.org>
+ <2hh3zkdwgqbdurpr4tibr3gjat6arwl3dd3gxakdaagafwjdrm@aj5em4tbsjen>
+ <Ujyoj3HGLVFhS2b0XzcYAMjSiCAuO-lSJ8PMEQLOaaX83tk_0D5zjrL0VDyZAmD3i4zLB3ElKSZBltISb5jJHA==@protonmail.internalid>
+ <4a32bbec-2baf-4210-a7c1-1ddcd45d30c8@oss.qualcomm.com>
+ <SuwJuCIcLVJwN3YeN1il6tB9wO9OH6bYcnbRpxpuI9Dl7piYLN-hVdnyv0Mal6N-W5pi2aCZI8MxHZDEkoE63A==@protonmail.internalid>
+ <4d87d1ca-55b2-426e-aa73-e3fd8c6fe7bd@kernel.org>
+ <10a8ccda-4e27-4b06-9a0e-608d6ade5354@nxsw.ie>
+ <4cb4a92d-2f20-47c7-881e-aadcc6f83aa0@kernel.org>
+ <1516f21e-aee3-42cf-b75e-61142dc9578d@oss.qualcomm.com>
+ <9bae595a-597e-46e6-8eb2-44424fe21db6@linaro.org>
+ <MMSKAu89Ew7StAeFBV442KfKNzmqbTSQ-maFG35Jr9d8PkUV2L4sx44R2DRevXA8mC45vkA398l2mvVzarZwew==@protonmail.internalid>
+ <bcfbf35b-69ed-4f39-8312-6a53123cd898@kernel.org>
+From: Bryan O'Donoghue <bod@kernel.org>
+Content-Language: en-US
+In-Reply-To: <bcfbf35b-69ed-4f39-8312-6a53123cd898@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 09/10/2025 01:32, Krzysztof Kozlowski wrote:
+>>> Since it is the smmu device property , this suggestion expects all the
+>>> devices, not just video, to define additional argument. Does this look
+>>> valid?
+>> If it is legitimate meta-data for the SMMU setup then why_shouldn't_ it
+>> go into the DT ?
+>>
+> We talked about this two or three months ago. I don't understand why you
+> just ignored that entire part and come with new binding just to not
+> touch iommu code. List of entries in iommu must have strict order, just
+> like for every other list, and you should rely on that.
 
-On Tue, 07 Oct 2025 21:16:43 +1000, James Calligeros wrote:
-> Apple Silicon devices integrate a vast array of sensors, monitoring
-> current, power, temperature, and voltage across almost every part of
-> the system. The sensors themselves are all connected to the System
-> Management Controller (SMC). The SMC firmware exposes the data
-> reported by these sensors via its standard FourCC-based key-value
-> API. The SMC is also responsible for monitoring and controlling any
-> fans connected to the system, exposing them in the same way.
-> 
-> For reasons known only to Apple, each device exposes its sensors with
-> an almost totally unique set of keys. This is true even for devices
-> which share an SoC. An M1 Mac mini, for example, will report its core
-> temperatures on different keys to an M1 MacBook Pro. Worse still, the
-> SMC does not provide a way to enumerate the available keys at runtime,
-> nor do the keys follow any sort of reasonable or consistent naming
-> rules that could be used to deduce their purpose. We must therefore
-> know which keys are present on any given device, and which function
-> they serve, ahead of time.
-> 
-> Add a schema so that we can describe the available sensors for a given
-> Apple Silicon device in the Devicetree.
-> 
-> Reviewed-by: Neal Gompa <neal@gompa.dev>
-> Signed-off-by: James Calligeros <jcalligeros99@gmail.com>
-> ---
->  .../bindings/hwmon/apple,smc-hwmon.yaml  | 86 +++++++++++++++++++++++++
->  .../bindings/mfd/apple,smc.yaml          | 36 +++++++++++
->  MAINTAINERS                              |  1 +
->  3 files changed, 123 insertions(+)
-> 
+I don't know if you mean me here.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Just to clarify my point is; the FUNCTION_ID is just as legitimate as 
+the SID to specify in the DT.
 
+It shouldn't be in driver platform data. It perfectly valid to add 
+another field to the iommu and then modify the iommu code to parse that 
+additional field we have added.
+
+There has been some suggestion of an inferred index, I'm not sure how 
+that could really work.
+
+The right thing to do is:
+
+- Add FUNCTION_ID to the iommu entries
+- Modify the iommu code to consume that data.
+
+Maybe it would be possible to also use an inferred FUNCTION_ID somehow 
+though TBH I think that's a work-around.
+
+We need both SID and FUNCTION_ID one is as legitimate as the other when 
+setting up the entries because for example - a BSD based on this DT 
+would need exactly this same information.
+
+---
+bod
 
