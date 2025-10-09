@@ -1,55 +1,87 @@
-Return-Path: <linux-kernel+bounces-847579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBDFBBCB3B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 01:56:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BB14BCB3B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 01:58:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A5C264E999F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 23:56:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B98EC3B1892
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 23:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5F728B7DB;
-	Thu,  9 Oct 2025 23:56:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32B728C039;
+	Thu,  9 Oct 2025 23:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FXI8IJnL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="WQFxF7FT"
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010002.outbound.protection.outlook.com [52.101.193.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B9D28AAF9;
-	Thu,  9 Oct 2025 23:56:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760054185; cv=none; b=jAqcB3oJ/k+k/rodf1CjqIfqxtCzKPLRY2UxSBQNWibb9+VS9JoFnbStwdUJMWSKp/TWc8RDGb0N/S8Fbg6bKZxQO5/ctCDY3UJYwQRWEaqrD43BIEOoMvKab3JTf7LJJwznVoxR9QQ+xgjQ/sbSSeBT3gdAPwR1IXwMkDCsG08=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760054185; c=relaxed/simple;
-	bh=fpoEBaXfc7p9qNaa/8UsDw15nv+ev3tq7W/P+MBiaAA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C2ENyLuoHO6YtjOHLkk1lasJgLRoORwnLQ8WiSQPqYn3K5/FTUKPeEtRgDA6zqBqdpNipQ3es6vtT5M8eXopsQrsBHw0d0YlCloZ/kOePfi8d9qMiPqUiHb3dGxz3IFEFtKtT2pCrgWiiKjqRg5q0Y5M9fifZ8F7vlnXjQ/YhVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FXI8IJnL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1490C4CEE7;
-	Thu,  9 Oct 2025 23:56:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760054184;
-	bh=fpoEBaXfc7p9qNaa/8UsDw15nv+ev3tq7W/P+MBiaAA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=FXI8IJnLfTNwyYwLL0djeYmCvJ5jC9LahQOu2aBcilpuD0E5ZfFlzePv2u5tKIYsB
-	 m0/9rI84lsGDHySJ8NaCguHo0M3K1yuDHeK978Sskb+VV2kqi9gbqMnHEbV2EG6TCQ
-	 f+j6Dos05VKNHnv4gxG+O6iN9pe8qLOv8t7HW1dZtNRAxiKpvI/t+qozpRx+rlBmvu
-	 mQDk+Ti4PYGKLOIKt5AJBmUD+I79eSQtLrVJMu1tlxh/yw4VJZeQ4xNK/GwZrlFUtT
-	 XMDVappU87cPoKEUsOO1X4DpYu4roh8nCVvkksZ0rUR8v8rCUCRKANbZYr3O2Z4zAv
-	 PafNxcj2QXxVg==
-From: Tejun Heo <tj@kernel.org>
-To: David Vernet <void@manifault.com>,
-	Andrea Righi <arighi@nvidia.com>,
-	Changwoo Min <changwoo@igalia.com>
-Cc: linux-kernel@vger.kernel.org,
-	sched-ext@lists.linux.dev,
-	Tejun Heo <tj@kernel.org>
-Subject: [PATCH sched_ext/for-6.18-fixes] sched_ext: Sync error_irq_work before freeing scx_sched
-Date: Thu,  9 Oct 2025 13:56:23 -1000
-Message-ID: <20251009235623.4135746-1-tj@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F7B28C87D
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 23:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.2
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760054302; cv=fail; b=sDLpKzVOsiVePSBazdTY9FMmCQCf5BxJraWMdc1jrUeQ+sQXuTN0g0w/19SRpfXR6vBGxttiKfn8WUUr/xEL6NiOHzykcFMTytusc6NS/E7n6q54DNbAiYsF3306UfrNNJO+uBRAg1s3gSZFZBZO54Vu6pV+CtC9tKs/7i5BdoU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760054302; c=relaxed/simple;
+	bh=MV0XScqH/+4aeUChyIE6yEhsG26nrW17BBdCUQ/w/nY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nRh7uyrdoTbF/1UqMBN0cSbqvKWT5Js7II1AqUossE+RXQO4rURhoJ/tUpAT2tUCwihE8hw2CpAOLst68/tZFsNsHqEIieviCFJjeZqU6zTRXF09jcvR1sAk0Y11a1YRQAUlDMawnBR/nLvnU9tAC9enJnZ/ALzOb6XyfHe0YM8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=WQFxF7FT; arc=fail smtp.client-ip=52.101.193.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=M2UiXNYfz+0GU29sBBgHM15zrBoUKZTrv2RNG+VkUrkwD50bf6vaZQc0JmI9nuI4dHQook3irWRn25gPRf2lWizqT0kwxCro3XIonhLiEBoI+a34hJJmsITtxVpch9UN+ld8DGfbvWYa6aiWVsLH9ITxiaGTXrzt2/OTNDuDYQe8Ry6qV209bAdDePCRgLJStapfHtrS/9F42z79ZI7i6yHmviCO0Q+HaiPppEZ53xzscyJZkMO9XxspwDbosMx3yrzuqww74opvcc1WW4Jvrn1kiprX5hbbmq6e/liShOtsUeprqniGk0KNtpJ6hFTfqlTDo0cFr8BQ5NdlOcyBOw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OB7EliHrfObOaw2ElWQcwjyVZF+Oxl/iJLW7DOgr3ic=;
+ b=OvTlkI1DlvAH+OkHf7U3IPlypFBbVSAGZ8llH+UYRPWPs1Ogqn7yzaTWI5Vl38ffyVjonFbglFptiviMCmeECx8nSHzGpW4hjRrauz178C/hDvWnIdeEZGLWUt7U4CDL/LPCizCyxOTpbtdkQNkzbBS/VyZnZus2IzUCFIEBseR88e4N9pGLWjWioSRIzW/EU/ICdASsaYxVf6WF0tOcs3pXaSK3yGcrG7TZ15AvLPDtWjZPWv+eE6ibwFqqDeuRe6wB2Hp8Bt2GM6VSIEMvNNcP6k//LqfAF7pZpZmfAZdVT7H9yZ/XMicbzlVFf0kN2ZZvX0XJXi6S4S8z2Qx6kA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=nvidia.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OB7EliHrfObOaw2ElWQcwjyVZF+Oxl/iJLW7DOgr3ic=;
+ b=WQFxF7FTGsOfc/AwBEy46WEql35gxuoQN1UwVKwqy73Ndr+IHrMKjjKLRUU6F00L2gyAyZyACY6HGPSmYHYVSmye1ASs8G4m5NVYRNHaTbg0IkLThfkBltyXDaX6ZueJcYeB+OQiazfu1Sy8iUHuLVU+PvRz7u2K+iwrJdvRB4E=
+Received: from DM6PR03CA0045.namprd03.prod.outlook.com (2603:10b6:5:100::22)
+ by PH7PR12MB7306.namprd12.prod.outlook.com (2603:10b6:510:20a::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.9; Thu, 9 Oct
+ 2025 23:58:14 +0000
+Received: from DS3PEPF000099DF.namprd04.prod.outlook.com
+ (2603:10b6:5:100:cafe::69) by DM6PR03CA0045.outlook.office365.com
+ (2603:10b6:5:100::22) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.9 via Frontend Transport; Thu, 9
+ Oct 2025 23:58:14 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ DS3PEPF000099DF.mail.protection.outlook.com (10.167.17.202) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9203.9 via Frontend Transport; Thu, 9 Oct 2025 23:58:13 +0000
+Received: from purico-ed03host.amd.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 9 Oct
+ 2025 16:58:08 -0700
+From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+To: <jgg@nvidia.com>, <nicolinc@nvidia.com>
+CC: <linux-kernel@vger.kernel.org>, <robin.murphy@arm.com>, <will@kernel.org>,
+	<joro@8bytes.org>, <kevin.tian@intel.com>, <jsnitsel@redhat.com>,
+	<vasant.hegde@amd.com>, <iommu@lists.linux.dev>, <santosh.shukla@amd.com>,
+	<sairaj.arunkodilkar@amd.com>, <jon.grimm@amd.com>,
+	<prashanthpra@google.com>, <wvw@google.com>, <wnliu@google.com>,
+	<gptran@google.com>, <kpsingh@google.com>, <joao.m.martins@oracle.com>,
+	<alejandro.j.jimenez@oracle.com>, Suravee Suthikulpanit
+	<suravee.suthikulpanit@amd.com>
+Subject: [PATCH v3 00/15] iommu/amd: Introduce Nested Translation support
+Date: Thu, 9 Oct 2025 23:57:40 +0000
+Message-ID: <20251009235755.4497-1-suravee.suthikulpanit@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,31 +89,134 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF000099DF:EE_|PH7PR12MB7306:EE_
+X-MS-Office365-Filtering-Correlation-Id: c145763a-20b2-4e31-e984-08de078fb589
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|7416014|376014|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Yoq/Ek2Xr9N5zJxLYgQOY5CvrY886kj81oWvp+HsnSQfW/t+UoHPzIxXxODb?=
+ =?us-ascii?Q?x9aWuCYfGw5RlqNCwVIawKsBlPecb1H15cg/AW/RSk6wXqHHyF/oxVSvTCAb?=
+ =?us-ascii?Q?RAqEJnVAc5EnPCJWFckAuGA8zYc5NhnhiytACEPYkqiBC4Y42dHMwB+dzren?=
+ =?us-ascii?Q?25ufyb6Nbn0YQ+mayKm39G60dKmSX6sEY++AQz7BU9ldO5nRZb6uf7M6H/wN?=
+ =?us-ascii?Q?7nzK3moluoPQh4U8MvZS2KfBT0akE4NiaI56ifaSgQRcBOTA4Yedr2qi4szZ?=
+ =?us-ascii?Q?pUFHetOhfL6HYLeMAHZpJ1pSdD0BEIxRV1e2OoszEhCHJqWkHDvl9Y1QlACP?=
+ =?us-ascii?Q?ddxehbAzhyPP4exSqB3EozdeDDsnKWamtw50xTWgafufidO14365mnEMqAYU?=
+ =?us-ascii?Q?+aCro/c+XUJKQPCDd8KZrRxDZTsXkA5jgwpoGp/MZkq4Mkh2d3RH7U3CCXhx?=
+ =?us-ascii?Q?bvhOfKzy5MkFZAOkor9vCGno0AZi5lsqVPoWyoifVt0NXrp/djLp3EhVpgDL?=
+ =?us-ascii?Q?b7fLKjmex1YdfbltSiiKh2Lu4ln2+talWYR48up7feynkMHGe+B4RzotwNU1?=
+ =?us-ascii?Q?uOH53mxTHjIjdyKeJ1JaNWheoVfWKRfYfjDZS2GjSj00wQEoMBSBk4Plhv19?=
+ =?us-ascii?Q?JKU1FILIXJbOO54d1pJ+2rl8s+Dho2R46ZuXX1Q5BkcAKhjKzpVi3bznX9NK?=
+ =?us-ascii?Q?4GYdGHCbvQDb6QOp7OiUu/z2uZa63ULLtAsAYi2NVnfVZznXnB/AgIZi36Ml?=
+ =?us-ascii?Q?PFOcKYk+o8jF3llxajNudGM52MqqjaCVx6Lj+zI9EP8pgUiepmwAh9QWSbjH?=
+ =?us-ascii?Q?s/twCo+nvj4E/aYdxIRr7RgHDMQR8FuUIfMii+TFBMPO2X5KvxfpURN3iozZ?=
+ =?us-ascii?Q?gm20BCJYGdQhK8N7I17XUVPyqSF6VMcfRyapitsx8coAD9vPm4FCFcdfyx8z?=
+ =?us-ascii?Q?dzBlUmmx+A/MrkQTZVuEyAcUBnHE2VqhYIRXmuIGQ4twgYh4DCGLagjVdhB1?=
+ =?us-ascii?Q?e6Rv1t1uhbJV0K0egtZu5mg9ecXlQCOum+VFZ3bjD2Vt9JU3r1hqs9sDlSH0?=
+ =?us-ascii?Q?uAft3URK6JeBXMlIy+auKB0HdwW73vzPRRmaELXMO8yN2zZ70rIbi5lIouby?=
+ =?us-ascii?Q?yGnaNKns9rQe8CYBPUF4VOzLf1J0bCyxJ9pvWpeVqVrUiA57ja02qtW6DMxT?=
+ =?us-ascii?Q?pufV/CgzlVI6aCiqXRz86IfqcPbxKgPkTMhWcDcTS6YueGQHP2m9VJ7R+tqI?=
+ =?us-ascii?Q?LYqeGltE/6LnyDe6fzW2LIhHcYUNbIToM+wAI9x1DNYlVeB/YSmr907vF3gK?=
+ =?us-ascii?Q?A8Taml7IzR7MZPU5w9AEP12bDkXghgb+wpRDtDT4ZFrj0to/z4ZAutQKOGlx?=
+ =?us-ascii?Q?aHWr5DpaR6F7ob9cCH/eKpUthQlrjwbnkqu4gXEcXLTnebcvDWBO7qASY08e?=
+ =?us-ascii?Q?krMlCAo0J5rXVF16JCmvOvglOnX+5EE+9HdWRFVNRr5eavOSzsGuuExWSpNu?=
+ =?us-ascii?Q?fNez0Bkd16iiep97g6uJLDVRf7otilDVNH2OPRC5vb+aK6Dzs0abvXh0EiHi?=
+ =?us-ascii?Q?oKlPYPG9KthHPF8csjrUe9y4fs4nyaqEOt2C0KDj?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(7416014)(376014)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2025 23:58:13.9806
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c145763a-20b2-4e31-e984-08de078fb589
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS3PEPF000099DF.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7306
 
-By the time scx_sched_free_rcu_work() runs, the scx_sched is no longer
-reachable. However, a previously queued error_irq_work may still be pending or
-running. Ensure it completes before proceeding with teardown.
+This series introduces support for AMD IOMMU nested page table translation
+with the host (v1) and guest (v2) page tables.
 
-Fixes: bff3b5aec1b7 ("sched_ext: Move disable machinery into scx_sched")
-Signed-off-by: Tejun Heo <tj@kernel.org>
----
- kernel/sched/ext.c | 2 ++
- 1 file changed, 2 insertions(+)
+In this mode, the AMD IOMMU driver configures the Device Table Entry (DTE)
+with host page table root pointer, which is configured by allocating domain
+with page table type IOMMU_HWPT_ALLOC_NEST_PARENT.
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index XXXXXXXX..XXXXXXXX 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -3471,7 +3471,9 @@ static void scx_sched_free_rcu_work(struct rcu_work *rwork)
- 	struct scx_dispatch_q *dsq;
- 	int node;
+The guest page tables and Guest CR3 (GCR3) tables are managed by Guest OS,
+and stored in the guest DTE (gDTE) in guest memory. VMM is responsible for
+passing gDTE information to the host IOMMU driver using struct
+iommu_hwpt_amd_guest when allocating a domain type IOMMU_DOMAIN_NESTED.
+Then, the gDTE is parsed and program onto host DTE by the AMD IOMMU driver.
 
-+	irq_work_sync(&sch->error_irq_work);
- 	kthread_stop(sch->helper->task);
-+
- 	free_percpu(sch->pcpu);
+In addition, this series introduces base code for IOMMUFD vIOMMU for AMD
+IOMMU, and implements vIOMMU-based nested domain allocation interface.
+The struct nested_domain to store nested domain information, and
+set_dte_nested() helper function to handle DTE programing for the nested
+domain.
 
- 	for_each_node_state(node, N_POSSIBLE)
---
-2.48.0
+The series is separated into two parts:
+ * Patch 1-7 are preparatory patches.
+ * Patch 8-15 implement nest-parent and nested domains support
+   for IOMMUFD vIOMMU.
+
+Note: This series is rebased on top of:
+ * [PATCH v5] iommu/amd: Add support for hw_info for iommu capability query
+   https://lore.kernel.org/linux-iommu/20250926141901.511313-1-suravee.suthikulpanit@amd.com/T/#u 
+
+Changes from V2:
+(https://lore.kernel.org/linux-iommu/20251001060954.5030-1-suravee.suthikulpanit@amd.com)
+ * Patch 9 (new)
+ * Patch 10: Update logic per Nicolin
+ * Patch 11:
+    - Do not change struct iommu_dev_data (remove parent, ndom)
+    - Add comment on domain ID allocation
+    - Move nested_domain_free() here
+ * Patch 12, 13, 14 (new)
+ * Patch 15:
+    - Introduce struct amd_iommu_viommu to store struct iommufd_viommu,
+      which is used to retrieve the parent domaina
+    - Clean up the nested_attach_device() to use the new
+      amd_iommu_set_dte_v1() instead of duplicating the logic. 
+
+Thanks,
+Suravee
+
+Suravee Suthikulpanit (15):
+  iommu/amd: Rename DEV_DOMID_MASK to DTE_DOMID_MASK
+  iommu/amd: Make amd_iommu_pdom_id_alloc() non-static
+  iommu/amd: Make amd_iommu_pdom_id_free() non-static
+  iommu/amd: Make amd_iommu_device_flush_dte() non-static
+  iommu/amd: Make amd_iommu_update_dte256() non-static
+  iommu/amd: Make amd_iommu_make_clear_dte() non-static inline
+  iommu/amd: Make amd_iommu_completion_wait() non-static
+  iommufd: Introduce data struct for AMD nested domain allocation
+  iommu/amd: Always enable GCR3TRPMode when supported.
+  iommu/amd: Add support for nest parent domain allocation
+  iommu/amd: Add support for nested domain allocation
+  iommu/amd: Validate guest DTE for nested translation
+  iommu/amd: Refactor persistent DTE bits programming into
+    amd_iommu_make_clear_dte()
+  iommu/amd: Refactor logic to program the host page table in DTE
+  iommu/amd: Add support for nested domain attach/detach
+
+ drivers/iommu/amd/Makefile          |   2 +-
+ drivers/iommu/amd/amd_iommu.h       |  36 ++++++
+ drivers/iommu/amd/amd_iommu_types.h |  45 +++++--
+ drivers/iommu/amd/init.c            |   3 +
+ drivers/iommu/amd/iommu.c           | 165 ++++++++++++------------
+ drivers/iommu/amd/nested.c          | 191 ++++++++++++++++++++++++++++
+ include/uapi/linux/iommufd.h        |  11 ++
+ 7 files changed, 361 insertions(+), 92 deletions(-)
+ create mode 100644 drivers/iommu/amd/nested.c
+
+-- 
+2.34.1
+
 
