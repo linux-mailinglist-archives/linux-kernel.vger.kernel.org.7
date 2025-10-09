@@ -1,161 +1,126 @@
-Return-Path: <linux-kernel+bounces-846768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE7CFBC8FD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:23:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD4CDBC8FC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:21:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3084F3E8441
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:23:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4C3F04F97AC
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:21:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4AE2C327C;
-	Thu,  9 Oct 2025 12:22:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903F32DCF61;
+	Thu,  9 Oct 2025 12:20:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rTolYT8P"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TRwwgTm0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F1025A659
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 12:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64CC155C88;
+	Thu,  9 Oct 2025 12:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760012578; cv=none; b=Yy0XYSQOFJuNcAonsYqXx5LXhXfEkN9QRGsbmednccsN3IAMV+G9KGBcsR7AUjX8N4tU+UJ/5lBxDPwY9Qta82DcqaaC/r05SEzq2uipxWaBeYbtIsrcftD1xSHcV/eeh9QKVuk1zEA0IYQDiMcXGFGtt8vZGQEnBwqWt5QfMfM=
+	t=1760012452; cv=none; b=PHGXFhX3qeiQVjUFMMaVGMGzrl9O6H54OHKj4yUMN8SToflFe9p9oyNz4eyLlPPuVEM7r0WvCnz1gp7Bu3e5LrQ//GtW7YJA40EXlRlrgeMJvUuhvVymRWDXL/Yo56vbyQxdDslY7du0iJ92eVVJDbEILEU/DOxbajLvJrq8Ch4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760012578; c=relaxed/simple;
-	bh=WED1CaVoy7jTVdlX/Aw/IQWqtv/1nGQg+rNRCl+wjRg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QMHdnKsm9W2hUhHu2vGAJEx8q61cW6XnKcr51B0Zj9eSCANg3Iuo76kqEk5/dkkVn9o7N+LhR1dQidpTMJb7gFSx1g1Cn/SPQSB189tdxXbqM39vQLMeSDoil8tlsSWA1NWwh7RngBcDLSiCAovd+rlOms0zdmtzMUfzguzA7s8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rTolYT8P; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1760012563;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=+LD5r01PNN7zm04H6bSvacVHamUM/2IZoCmv2ssIeCg=;
-	b=rTolYT8PhikH16sOIRDoUQet6iGvoyf7ONa/qlIsqyhBepgupyHs0OdGPTCEDLAqueqrJz
-	6+3xmVrUMMBHkVB7ZIHngJD7EoM4lGdiF3zRhX0S6KDP/7l/Cv6v4Pt+r8fqkvIrDOoPft
-	iWj+O/j9E1UXsQuYv7v6OYDkc2qBs2k=
-From: Matthew Schwartz <matthew.schwartz@linux.dev>
-To: harry.wentland@amd.com,
-	christian.koenig@amd.com,
-	sunpeng.li@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	alexander.deucher@amd.com
-Cc: linux-kernel@vger.kernel.org,
-	mario.limonciello@amd.com,
-	amd-gfx@lists.freedesktop.org,
-	regressions@lists.linux.dev,
-	Matthew Schwartz <matthew.schwartz@linux.dev>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] Revert "drm/amd/display: Only restore backlight after amdgpu_dm_init or dm_resume"
-Date: Thu,  9 Oct 2025 14:19:00 +0200
-Message-ID: <20251009121900.12777-1-matthew.schwartz@linux.dev>
+	s=arc-20240116; t=1760012452; c=relaxed/simple;
+	bh=352bQYtSmF2wZFrnOjhn2+1NCdjiIvXYcTVAA+gJcoo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=Il6ZQwk1wEM+PZECQr4Thvq1xaJzMW/K1wGS7OKBQCqefxFQRodT1crHmRruuJCR7ADGba3DgfmMuSU/I/TBnm5QinEyI8w7QGWEUNceUA3qE0ps9rZIUapyNEWiB07R0eZZsmi6iQb6tEW2AA57aSN5CqlWsghMSCwQqLP+G9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TRwwgTm0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E24EC4CEE7;
+	Thu,  9 Oct 2025 12:20:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760012451;
+	bh=352bQYtSmF2wZFrnOjhn2+1NCdjiIvXYcTVAA+gJcoo=;
+	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
+	b=TRwwgTm0HhQDaLXtpcTc9zr6WjDsCZeuYUF1Vv2pmp5h4+N3GwZXp85qL8XhEjI7a
+	 u54noCl4LgF+q00ThZz3fooLbVj/cnr6f3xo4blMxqmm+PchmSJ3YDu1II6mPpb56u
+	 Rvm5MF3NEHDF7cANDHyLxvnOy8bXviRpzWaKCLrxTbeeqkyUAVNRWTR1gUsBXSEmQE
+	 tWKCL6yoWeV/TyqZmWVHC7/spY9fMNaLpUIPja8Iniku4OQwtg1FU6yc5dE57UKBNB
+	 MBV9PfKGYZJhPxa/E7zB/6izYmY89MuEAkw4dEXsK8PoBQq4GoWcNZqRJQNAyS+B4G
+	 RpjyuF8HQbfng==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 09 Oct 2025 14:20:45 +0200
+Message-Id: <DDDSCBNFRLG9.26UA3ZEOA9LJH@kernel.org>
+Cc: "Lee Jones" <lee@kernel.org>, "Pavel Machek" <pavel@kernel.org>, "Miguel
+ Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Igor
+ Korotin" <igor.korotin.linux@gmail.com>, "Lorenzo Stoakes"
+ <lorenzo.stoakes@oracle.com>, "Vlastimil Babka" <vbabka@suse.cz>, "Liam R.
+ Howlett" <Liam.Howlett@oracle.com>, "Uladzislau Rezki" <urezki@gmail.com>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Daniel Almeida"
+ <daniel.almeida@collabora.com>, <linux-leds@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+To: "Markus Probst" <markus.probst@posteo.de>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH 4/4] leds: add driver for synology atmega1608 controlled
+ LEDs
+References: <20251008181027.662616-1-markus.probst@posteo.de>
+ <20251008181027.662616-2-markus.probst@posteo.de>
+ <20251008181027.662616-3-markus.probst@posteo.de>
+ <20251008181027.662616-4-markus.probst@posteo.de>
+ <20251008181027.662616-5-markus.probst@posteo.de>
+In-Reply-To: <20251008181027.662616-5-markus.probst@posteo.de>
 
-This fix regressed the original issue that commit d83c747a1225
-("drm/amd/display: Fix brightness level not retained over reboot") solved,
-so revert it until a different approach to solve the regression that
-it caused with AMD_PRIVATE_COLOR is found.
+(Not a full review (let's work out the dependencies first), but there's one
+thing that stood out to me.)
 
-Fixes: a490c8d77d50 ("drm/amd/display: Only restore backlight after amdgpu_dm_init or dm_resume")
-Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/4620
-Cc: stable@vger.kernel.org
-Signed-off-by: Matthew Schwartz <matthew.schwartz@linux.dev>
----
-v1 -> v2:
-- Fix missing stable tag
----
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 12 ++++--------
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h |  7 -------
- 2 files changed, 4 insertions(+), 15 deletions(-)
+On Wed Oct 8, 2025 at 8:10 PM CEST, Markus Probst wrote:
+> +struct Atmega1608Led {
+> +    addr: Atmega1608LedAddress,
+> +    id: Atmega1608LedId,
+> +
+> +    client: ARef<I2cClient>,
+> +
+> +    mode_lock: Arc<Mutex<()>>,
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index 8e1622bf7a42..21281e684b84 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -2081,8 +2081,6 @@ static int amdgpu_dm_init(struct amdgpu_device *adev)
- 
- 	dc_hardware_init(adev->dm.dc);
- 
--	adev->dm.restore_backlight = true;
--
- 	adev->dm.hpd_rx_offload_wq = hpd_rx_irq_create_workqueue(adev);
- 	if (!adev->dm.hpd_rx_offload_wq) {
- 		drm_err(adev_to_drm(adev), "failed to create hpd rx offload workqueue.\n");
-@@ -3438,7 +3436,6 @@ static int dm_resume(struct amdgpu_ip_block *ip_block)
- 		dc_set_power_state(dm->dc, DC_ACPI_CM_POWER_STATE_D0);
- 
- 		dc_resume(dm->dc);
--		adev->dm.restore_backlight = true;
- 
- 		amdgpu_dm_irq_resume_early(adev);
- 
-@@ -9965,6 +9962,7 @@ static void amdgpu_dm_commit_streams(struct drm_atomic_state *state,
- 	bool mode_set_reset_required = false;
- 	u32 i;
- 	struct dc_commit_streams_params params = {dc_state->streams, dc_state->stream_count};
-+	bool set_backlight_level = false;
- 
- 	/* Disable writeback */
- 	for_each_old_connector_in_state(state, connector, old_con_state, i) {
-@@ -10084,6 +10082,7 @@ static void amdgpu_dm_commit_streams(struct drm_atomic_state *state,
- 			acrtc->hw_mode = new_crtc_state->mode;
- 			crtc->hwmode = new_crtc_state->mode;
- 			mode_set_reset_required = true;
-+			set_backlight_level = true;
- 		} else if (modereset_required(new_crtc_state)) {
- 			drm_dbg_atomic(dev,
- 				       "Atomic commit: RESET. crtc id %d:[%p]\n",
-@@ -10140,16 +10139,13 @@ static void amdgpu_dm_commit_streams(struct drm_atomic_state *state,
- 	 * to fix a flicker issue.
- 	 * It will cause the dm->actual_brightness is not the current panel brightness
- 	 * level. (the dm->brightness is the correct panel level)
--	 * So we set the backlight level with dm->brightness value after initial
--	 * set mode. Use restore_backlight flag to avoid setting backlight level
--	 * for every subsequent mode set.
-+	 * So we set the backlight level with dm->brightness value after set mode
- 	 */
--	if (dm->restore_backlight) {
-+	if (set_backlight_level) {
- 		for (i = 0; i < dm->num_of_edps; i++) {
- 			if (dm->backlight_dev[i])
- 				amdgpu_dm_backlight_set_level(dm, i, dm->brightness[i]);
- 		}
--		dm->restore_backlight = false;
- 	}
- }
- 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
-index 009f206226f0..db75e991ac7b 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
-@@ -630,13 +630,6 @@ struct amdgpu_display_manager {
- 	 */
- 	u32 actual_brightness[AMDGPU_DM_MAX_NUM_EDP];
- 
--	/**
--	 * @restore_backlight:
--	 *
--	 * Flag to indicate whether to restore backlight after modeset.
--	 */
--	bool restore_backlight;
--
- 	/**
- 	 * @aux_hpd_discon_quirk:
- 	 *
--- 
-2.51.0
+Mutex<()> raises an eyebrow, since a mutex that doesn't protect anything is
+pointless. So, I assume it is protecting some data, but in an unsound way.
 
+> +impl Atmega1608Led {
+> +    fn update_mode(&self, mode: Atmega1608LedMode) -> Result<Atmega1608L=
+edMode> {
+> +        let _guard =3D self.mode_lock.lock();
+
+What exactly does the mutex protect in the code below?
+
+> +
+> +        let mut current =3D self
+> +            .client
+> +            .read_byte_data(self.addr as u8)
+> +            .inspect_err(|err| {
+> +                dev_err!(
+> +                    self.client.as_ref(),
+> +                    "failed to read {:#2x}: {err:?}\n",
+> +                    self.addr as u8
+> +                );
+> +            })?;
+> +
+> +        current =3D
+> +            (current & !self.id.mask()) | (((mode as u8) << self.id.shif=
+t()) & self.id.mask());
+> +
+> +        self.client
+> +            .write_byte_data(self.addr as u8, current)
+> +            .inspect_err(|err| {
+> +                dev_err!(
+> +                    self.client.as_ref(),
+> +                    "failed to write {:#2x}: {err:?}",
+> +                    self.addr as u8
+> +                );
+> +            })?;
+> +
+> +        Ok(mode)
+> +    }
+> +}
 
