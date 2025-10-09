@@ -1,105 +1,130 @@
-Return-Path: <linux-kernel+bounces-847252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8318BCA5BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:20:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D5AABCA5CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:21:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7B011A63DDC
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:20:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8154842308D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2231623B63F;
-	Thu,  9 Oct 2025 17:19:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFFD9242D9D;
+	Thu,  9 Oct 2025 17:20:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b="VUqyU8aj"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="alKIHtB9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D553635;
-	Thu,  9 Oct 2025 17:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760030395; cv=pass; b=VuhrCmcUxhql+Lnky6ouIHsiVjpoAXhXRL+BZRS8p0KcFTN+VDm/SXgKkpoyBltSmZq9TBQoW2Eqlc2Z6AIxjjojH5mcw2s7uzYhyB3fqHwtFVdp2kjhqjXGCd55PWGoZuuLZQnreute2MiYsHh2xrmgaPDBFwd3zUI/QoxtsKo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760030395; c=relaxed/simple;
-	bh=7FPDDD92oAuD6ndvDFa18xSOKAXQVvQ8VDmbSmdS1Dc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U1G/14HOFDsPJlDIRFaRtJZOGKPuT2y9n8QnUmIJf/eAmYVHLw12DDTI+eKx2UZduHUO2oJJMf9F6Vaf44ly07axoHEMJY/IXHZoTmUM9cb3AJCHmeWdNK+4pAhwoVMqgKMR0RZdtcymSyvyhvnKx3XO9NRCvWmFJyoxe3yi+x0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yukuai.org.cn; spf=pass smtp.mailfrom=yukuai.org.cn; dkim=pass (1024-bit key) header.d=yukuai.org.cn header.i=hailan@yukuai.org.cn header.b=VUqyU8aj; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=yukuai.org.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yukuai.org.cn
-ARC-Seal: i=1; a=rsa-sha256; t=1760030367; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=QjcJkgK5C6xjkLu/L/U3nJk/pbB9hsi88U9EVXTOnJtQJN6Z80baezHjHeKE0gximB6aSAXuZbvv/wTdKiu5QZOf7Zklv0vjsXtCulaeR4aKniCm/9eqsRRIDpkBvekENqw0iUaa3clBwE3Wo1+8IotifFM5nBP61TXJbhbqCvI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1760030367; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=7FPDDD92oAuD6ndvDFa18xSOKAXQVvQ8VDmbSmdS1Dc=; 
-	b=QYk2zy5SwCQlv69bVInb8o8/SwwnXNLkb2u1Ga2Kyi/M4YgIN1TnBx2aVH6p0iR+R4OtPTLiSXzBVe0XD4DGiOhUwMZMmQhl4m7hcs0/JBTwllVY04jTX/a7rN121sFNuLYnS+XfU5OXC/vJli066ubf7DFw3A28WNJM6Hpt47M=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=yukuai.org.cn;
-	spf=pass  smtp.mailfrom=hailan@yukuai.org.cn;
-	dmarc=pass header.from=<hailan@yukuai.org.cn>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1760030366;
-	s=zmail; d=yukuai.org.cn; i=hailan@yukuai.org.cn;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=7FPDDD92oAuD6ndvDFa18xSOKAXQVvQ8VDmbSmdS1Dc=;
-	b=VUqyU8ajYBwpBLSpGhFzDudmWeQyRZIOyLIjw+K5qbCDGTaoY2W728Kd4Wbm9bnU
-	BPiVNPSeftV0Mr7bhDXSM+lfjHr2c/qlZlWmLHFuh/gB/OZKA9TRV4wlDx2zr4C0jT+
-	HsthALQjTQxk6A3lf5hAUcnO1yIU2ljhDvPDJhvQ=
-Received: by mx.zohomail.com with SMTPS id 1760030361880859.4371394836448;
-	Thu, 9 Oct 2025 10:19:21 -0700 (PDT)
-Message-ID: <3efdee9c-6605-424c-953d-17242c3a5314@yukuai.org.cn>
-Date: Fri, 10 Oct 2025 01:19:11 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086841397;
+	Thu,  9 Oct 2025 17:20:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760030443; cv=none; b=hFbNdhh9o0QmoT039U1PT+ngwQtb37abhGQA7eXY6AgKCL4NlJmXwXiqt+fl9QsPx3/dOUjnhXEKjUrHEXleQaU2BWu+gzt10yUGtL3h8VV/5iE4Tuqp1nbwLsxU/LUmR1s9jloBYFCPJhiVvm3QiY3xMkOIj2iDAoPPC/eQ3NA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760030443; c=relaxed/simple;
+	bh=LGpuHVtlJHOtOzyhHJiq0Xwe/InnzAHPK+F4MPKq0bY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I8Nr7fVaCkBb8eY/B0/KDqpDRlOSvQ+3bv9w1cl5HFfm/6OUsSyCRNXbW9PixbxBNAqfLyFXIP72vmS7dmQCr7f38BHMYQxk9FlWXBwIQHQROjfbf21GqDgC5eSlicM44fwq8upq37teH7OEOsnY2tr1wGWe6OHMkHOmYcP5xGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=alKIHtB9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7715AC4CEF8;
+	Thu,  9 Oct 2025 17:20:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760030442;
+	bh=LGpuHVtlJHOtOzyhHJiq0Xwe/InnzAHPK+F4MPKq0bY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=alKIHtB9futz0Wsw4qAadtGnBfvCh2AGA8AsUCWpiNxAjp9hjTdt0UX/JRBAol4OP
+	 DXpx/JH5EnHcfP1qe13xuCgFY4aT5RpyOFpP07ZzMCkZlTviztpF+FAlf4LmZK0mWg
+	 KGciAxsoLY4JLrweY2fbwIIJvW6Vbg53CnCknL/+WRmYmc153WXBkqULmGKuu0FWyE
+	 Ffs90pF63b84qERcEYrD1A5Ggx/yN9W0uD2ovNZ6AIg7OR5cWxWJ5X/TwEwM3KhnJZ
+	 48whl2PHToFhcf8nb4fuYnd/84h6v5PCRvXYT5lyQTFFuLJpiJV3QIdMwkt9e4yg4j
+	 eLhiDRNclujVw==
+Date: Thu, 9 Oct 2025 10:20:41 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	Jan Kara <jack@suse.cz>, Jiri Slaby <jirislaby@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Andrey Albershteyn <aalbersh@kernel.org>
+Subject: Re: [PATCH 2/2] fs: return EOPNOTSUPP from file_setattr/file_getattr
+ syscalls
+Message-ID: <20251009172041.GA6174@frogsfrogsfrogs>
+References: <20251008-eopnosupp-fix-v1-0-5990de009c9f@kernel.org>
+ <20251008-eopnosupp-fix-v1-2-5990de009c9f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [patch v2 3/7] blk-mq: add a new queue sysfs attribute
- async_depth
-To: Bart Van Assche <bvanassche@acm.org>, Yu Kuai <yukuai1@huaweicloud.com>,
- axboe@kernel.dk, ming.lei@redhat.com, nilay@linux.ibm.com, jmoyer@redhat.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com
-References: <20251009074634.527661-1-yukuai1@huaweicloud.com>
- <20251009074634.527661-4-yukuai1@huaweicloud.com>
- <49647ccf-5d19-4ede-87b4-0f7ff8e9f5ea@acm.org>
-From: Yu Kuai <hailan@yukuai.org.cn>
-In-Reply-To: <49647ccf-5d19-4ede-87b4-0f7ff8e9f5ea@acm.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251008-eopnosupp-fix-v1-2-5990de009c9f@kernel.org>
 
-Hi,
+On Wed, Oct 08, 2025 at 02:44:18PM +0200, Andrey Albershteyn wrote:
+> These syscalls call to vfs_fileattr_get/set functions which return
+> ENOIOCTLCMD if filesystem doesn't support setting file attribute on an
+> inode. For syscalls EOPNOTSUPP would be more appropriate return error.
+> 
+> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> ---
+>  fs/file_attr.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/fs/file_attr.c b/fs/file_attr.c
+> index 460b2dd21a85..5e3e2aba97b5 100644
+> --- a/fs/file_attr.c
+> +++ b/fs/file_attr.c
+> @@ -416,6 +416,8 @@ SYSCALL_DEFINE5(file_getattr, int, dfd, const char __user *, filename,
+>  	}
+>  
+>  	error = vfs_fileattr_get(filepath.dentry, &fa);
+> +	if (error == -ENOIOCTLCMD)
 
-在 2025/10/10 1:05, Bart Van Assche 写道:
-> On 10/9/25 12:46 AM, Yu Kuai wrote:
->> +static ssize_t queue_async_depth_show(struct gendisk *disk, char *page)
->> +{
->> +    ssize_t ret;
->> +
->> +    mutex_lock(&disk->queue->elevator_lock);
->> +    ret = queue_var_show(disk->queue->async_depth, page);
->> +    mutex_unlock(&disk->queue->elevator_lock);
->> +    return ret;
->> +}
->
-> Functions like the above can be simplified by using guard(mutex)(...) or
-> scoped_guard(mutex, ...).
+Hrm.  Back in 6.17, XFS would return ENOTTY if you called ->fileattr_get
+on a special file:
 
-Yeah, sounds good. I'm still not used to this.
+int
+xfs_fileattr_get(
+	struct dentry		*dentry,
+	struct file_kattr	*fa)
+{
+	struct xfs_inode	*ip = XFS_I(d_inode(dentry));
 
-Thanks,
-Kuai
+	if (d_is_special(dentry))
+		return -ENOTTY;
+	...
+}
 
->
-> Thanks,
->
-> Bart.
->
+Given that there are other fileattr_[gs]et implementations out there
+that might return ENOTTY (e.g. fuse servers and other externally
+maintained filesystems), I think both syscall functions need to check
+for that as well:
+
+	if (error == -ENOIOCTLCMD || error == -ENOTTY)
+		return -EOPNOTSUPP;
+
+--D
+
+> +		error = -EOPNOTSUPP;
+>  	if (error)
+>  		return error;
+>  
+> @@ -483,6 +485,8 @@ SYSCALL_DEFINE5(file_setattr, int, dfd, const char __user *, filename,
+>  	if (!error) {
+>  		error = vfs_fileattr_set(mnt_idmap(filepath.mnt),
+>  					 filepath.dentry, &fa);
+> +		if (error == -ENOIOCTLCMD)
+> +			error = -EOPNOTSUPP;
+>  		mnt_drop_write(filepath.mnt);
+>  	}
+>  
+> 
+> -- 
+> 2.51.0
+> 
+> 
 
