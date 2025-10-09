@@ -1,150 +1,141 @@
-Return-Path: <linux-kernel+bounces-847423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14373BCACB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 22:21:41 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC428BCACC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 22:25:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 363D648296A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 20:21:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 952A54EA308
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 20:25:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119EA26F2B8;
-	Thu,  9 Oct 2025 20:21:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DD026F2BC;
+	Thu,  9 Oct 2025 20:25:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LWlH9ArZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Ew6LoB3y"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E7826E710;
-	Thu,  9 Oct 2025 20:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A0C26F292
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 20:25:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760041293; cv=none; b=sR+Nj5ep42TE6MQgjwqsqUUb1Q2l8B/HGRG03ZpwZPNLcx57O4TvEVnEK/lYRopan8Ri0opyC7rvRgUMu8PkVubaRonsGJYnJKroDXXH/SR+uP3LSvNg0l7j6RTzbpFFRBF1zQvorhjfXGi/njdnE5ycch7+K0QrBwYB5RHQ6e8=
+	t=1760041514; cv=none; b=Rgx68IEGF+rtyKEjUXbifA03s5MZzhbrbV1kvqnbCsA8qR5pz44P0DBL9trSSkw6aVETDmBVJHk8Gb2q7e7hG8tmxoRJQ+os7nfx11Vi2kbbZfvPxW8asv9hYZ67ZOWB58qJ64PIrRDIo/YT83KiqC/DK/vz1JmzoFsOfmh0LDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760041293; c=relaxed/simple;
-	bh=VN/Ui4smGgyWuuJXBUqmus27UIibImS/ZHmC1ccNmD8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OXBen3K8TsKAf4IemOXUYZnnFxH83lhYY8OhhcBp4qR2ejzl2ie71bckONtFFM80mpMHWCZlY0/oBbs4xlyZk2kX/BJdMD/g8WUJvV4MKL8Hv1ApzLgBvFZQwR2UOQJm/WHlaSD8mg5WMLs/MdiP7QnrbmskeB4W1he5QGrhcm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LWlH9ArZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F39EAC113D0;
-	Thu,  9 Oct 2025 20:21:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760041292;
-	bh=VN/Ui4smGgyWuuJXBUqmus27UIibImS/ZHmC1ccNmD8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LWlH9ArZh5+H8Vx79p2l6eTxzlU/7fIvGE2xjMKuHIWWOttwaFxsJYP62KJhnZS1M
-	 1dBJXKctq0NMux7MNWGb8f318nBbtv6aevXd1Gj7NPXtKpGbs2axxV6i5C5Qj1HRMs
-	 e6ycqVCT3V7lVrlHek7PIZWxMg3Lt5ywvFA8hqyvJk/qGqQwwFc5dybTB1HqZL5jTS
-	 /3gTCuW5i4v8Tt13miJdZwWhV+32K1EnuMOMMoMFDPljJVrGcCSyb3pZgikM4BNE3H
-	 jSN0wTaWDCPqurCljxJGkJAu7puX/ezW27pNnHChQhD3njvaowr5RJHmPfKFTCttPR
-	 9CK3AQuGFsAiQ==
-Message-ID: <bb362d12-b942-48f3-8414-e859cebb8862@kernel.org>
-Date: Fri, 10 Oct 2025 05:21:30 +0900
+	s=arc-20240116; t=1760041514; c=relaxed/simple;
+	bh=1yDg4kaYpHyfB8kgSxUzXZV/Gejz9FwLQbXpvXDSXmA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qTSQAwuA3XEXG/IZXWWbRDdlHYyhf7Z2+xu9piSJHk+ndGG4KH3XLI7WJGuf5RjCbw+4Z0TKBIqGI3kiqNagngfGicBzyEmX/5uSD4+714nq29dr2VnTP0VWru8me5ypH8TioURQt1G0s1v1n7Fh8hcrybcIRBtt3nCuITQj+iE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Ew6LoB3y; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-63994113841so2225122a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 13:25:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1760041510; x=1760646310; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GygpU2gHdBu+smba8fE9xPKFyfcrRBB7u113k/F8qow=;
+        b=Ew6LoB3yeXmrOWVd96rDVHORyVCwf+HQPobDEzujkGZzMau1v90v9sjiV3hlrVQZxx
+         IdRbRg0cADXGeom995rvqPHhTH+NoGIQV5jMQNBtUJnf5x0TzJGk650uXpYTvenP6viN
+         KCBr7vIsCkZ21KFO6zluVUBByaSPhIQ7LNCmM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760041510; x=1760646310;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GygpU2gHdBu+smba8fE9xPKFyfcrRBB7u113k/F8qow=;
+        b=DO3jlnWjyJjuLAMAMRe4GfOboEvNm4H4uDdx1MmKsBxgPe4qOPB6LsvX1aCKIF7btg
+         kydvb4KBSe46Pxll+J59a+MaPdrLIR778mIbiBhWsYAiE7YPApCZO+GSea05Z5ZbefEq
+         IVmEFq5Cv8hybbpH52fdibTGF29Pp3CtC7B7IWIbzBUPWKQ6PbyZ3SqKXEBod78FNcxG
+         GjbuCPEmR7N4ZY2Zqm778PkthgB7urPrM8xCDYqyFTEWWBEXXtvA+4/tt+rrYk2A9l37
+         Ecl4U+3AW9Ql+XKjKyO90ssj6aRfeiBPpT77hkexvIQWtnwB8Swk/wondMfb5SXkKM9M
+         IUkg==
+X-Forwarded-Encrypted: i=1; AJvYcCUm/nd5i9vInBPIneUJWvNt9T3KkPxRli7nPn5bxWhHHQZT5eIJ/P5CoWz6QlC6d4Tz5W32Ey0lOacbhFY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxnn2RZdBjWBjspQ9z4m/jwn9f0oq36cN7xVZgflqWJ1CvlTV/9
+	EXlVhtltLNhTkg5Yu32pN94BS+yeORNuZ5M+JGdQSNikiWX2tsftWSjsfav/gu7iklmVHaOrsgk
+	fQvE0ces=
+X-Gm-Gg: ASbGnctSz9U2WKdinZjJMCY357qiz96eCXu+13Q+zRHRBj/5xiP7MDwFIORVAmfzUlJ
+	QjM96jJs8itTYTJvfLPPfrN0RSp49y6eNNi8KJ4EjnkuD+6bC8wT7BiasfaVrRzqmRZVQXOENos
+	KnhvM1Muu60+2Aaj0f2WF57zatb/Zvaqd9iFoDW9AG35x+qWOxe8WWCCGsTpVX4d0Zzj8TdEc7N
+	00nE3p6LINqXGu+wiyBaUj2SmlVBCmXi2RHC/JAD5A5FqiRGeY0mVvO4q5vmaLScPmvv7Afq0L7
+	/tVU+ktTrXuj9x3HVtyiZeOSj+OiJ5wuKHbEmCqraXE+7587FjAj04wvBL6awA0zpezO/H4QwxQ
+	kOkDJzjVHDRpFoHLHHwOouoLP+21tHyNAwcBDVgo/c6qHFmztMKGWlKiUk/sIjtkieinxuQM5mG
+	daxQiF2EsQpObJKjUDQKI9RNk0hyNH/7A=
+X-Google-Smtp-Source: AGHT+IENKnWCYxym28kCX3SeVMvNzqxRgV95gSLZcB5CH9YFLwxbb1DoqN3513JBonFZMuv6oQYeyw==
+X-Received: by 2002:a17:907:3e22:b0:b3e:b226:5bad with SMTP id a640c23a62f3a-b50a9a6d8a3mr1019000566b.8.1760041509634;
+        Thu, 09 Oct 2025 13:25:09 -0700 (PDT)
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b55d5cad8adsm53261166b.7.2025.10.09.13.25.08
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Oct 2025 13:25:08 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-62fb48315ddso2018829a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 13:25:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWw/s/zCofbZfobWf38+YTMYEylRC1Z9YPWpylrUoyjIqs1+25/8LLvFHTpppp5CHE44AOh5vLkZf3dl/E=@vger.kernel.org
+X-Received: by 2002:a05:6402:2707:b0:638:df2f:b8fb with SMTP id
+ 4fb4d7f45d1cf-639d5c2dbaemr8258952a12.19.1760041507789; Thu, 09 Oct 2025
+ 13:25:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] block/mq-deadline: adjust the timeout period of the
- per_prio->dispatch
-To: Bart Van Assche <bvanassche@acm.org>, chengkaitao <pilgrimtao@gmail.com>,
- axboe@kernel.dk
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- Chengkaitao <chengkaitao@kylinos.cn>
-References: <20251009155253.14611-1-pilgrimtao@gmail.com>
- <db87a85d-e433-4daf-97c7-d5156849db0f@acm.org>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <db87a85d-e433-4daf-97c7-d5156849db0f@acm.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251008123014.GA20413@redhat.com> <20251008123045.GA20440@redhat.com>
+ <CAHk-=wjozC9_JCdEW9K_uruJqzTLzhtcVpgDk1OuqErNRUS7Mg@mail.gmail.com>
+ <CAHk-=wjuoFm9yZur_T4VOnX2iyDYD6T_gDRXE5ms9538W6Q35g@mail.gmail.com>
+ <CAHk-=wiHbN+_LCmSj2sHswDRJ0yG3kkjptMvCXcMwk7jWK1F=Q@mail.gmail.com>
+ <20251009143748.GA2704@redhat.com> <20251009195024.GL3289052@noisy.programming.kicks-ass.net>
+ <20251009201154.GL1386988@noisy.programming.kicks-ass.net>
+In-Reply-To: <20251009201154.GL1386988@noisy.programming.kicks-ass.net>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 9 Oct 2025 13:24:51 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh3h5cV=UiTg+gvqB-T6+pStDNH0+6w4i34qMC1BQwmpg@mail.gmail.com>
+X-Gm-Features: AS18NWAWWI4oocfrbAQnW4PqJLbKisZR6Gr825Cs6DKHYWbEPIcdIkl-1uqFz0Y
+Message-ID: <CAHk-=wh3h5cV=UiTg+gvqB-T6+pStDNH0+6w4i34qMC1BQwmpg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] seqlock: introduce scoped_seqlock_read() and scoped_seqlock_read_irqsave()
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Boqun Feng <boqun.feng@gmail.com>, David Howells <dhowells@redhat.com>, 
+	Ingo Molnar <mingo@redhat.com>, Li RongQing <lirongqing@baidu.com>, 
+	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 2025/10/10 1:50, Bart Van Assche wrote:
-> On 10/9/25 8:52 AM, chengkaitao wrote:
->> On the other hand, the Commit (725f22a1477c) merges the effects of
->> fifo_expire and prio_aging_expire on the same code behavior, creating
->> redundant interactions. To address this, our new patch introduces
->> numerical compensation for {dd->fifo_expire[data_dir]} when adding
->> requests to dispatch lists. To maintain original logic as much as
->> possible while enhancing dispatch list priority, we additionally
->> subtract {dd->prio_aging_expire / 2} from the fifo_time, with default
->> values, {dd->prio_aging_expire / 2} equals {dd->fifo_expire[DD_WRITE]}.
-> 
-> No assumptions should be made about the relative values of
-> dd->prio_aging_expire and dd->fifo_expire[DD_WRITE] since these values
-> can be modified via sysfs.
-> 
->> diff --git a/block/mq-deadline.c b/block/mq-deadline.c
->> index 3e741d33142d..fedc66187150 100644
->> --- a/block/mq-deadline.c
->> +++ b/block/mq-deadline.c
->> @@ -659,7 +659,8 @@ static void dd_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
->>   
->>   	if (flags & BLK_MQ_INSERT_AT_HEAD) {
->>   		list_add(&rq->queuelist, &per_prio->dispatch);
->> -		rq->fifo_time = jiffies;
->> +		rq->fifo_time = jiffies + dd->fifo_expire[data_dir]
->> +				- dd->prio_aging_expire / 2;
->>   	} else {
->>   		deadline_add_rq_rb(per_prio, rq);
-> 
-> Thanks for having added a detailed patch description. Please remove
-> "/ 2" from the above patch to make sure that BLK_MQ_INSERT_AT_HEAD
-> requests are submitted to the block driver before other requests. This
-> is important if a request is requeued. Additionally, a comment should be
-> added above the modified line of code that explains the purpose of the
-> calculation. How about this untested patch?
-> 
-> diff --git a/block/mq-deadline.c b/block/mq-deadline.c
-> index 3e741d33142d..566646591ddd 100644
-> --- a/block/mq-deadline.c
-> +++ b/block/mq-deadline.c
-> @@ -659,7 +659,14 @@ static void dd_insert_request(struct blk_mq_hw_ctx 
-> *hctx, struct request *rq,
-> 
->   	if (flags & BLK_MQ_INSERT_AT_HEAD) {
->   		list_add(&rq->queuelist, &per_prio->dispatch);
-> -		rq->fifo_time = jiffies;
-> +		/*
-> +		 * started_after() subtracts dd->fifo_expire[data_dir] from
-> +		 * rq->fifo_time. Hence, add it here. Subtract
-> +		 * dd->prio_aging_expire to ensure that AT HEAD requests are
-> +		 * submitted before higher priority requests.
-> +		 */
-> +		rq->fifo_time = jiffies + dd->fifo_expire[data_dir] -
-> +				dd->prio_aging_expire;
+On Thu, 9 Oct 2025 at 13:12, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> Slightly nicer version that's actually compiled :-)
 
-There is still something bothering me with this: the request is added to the
-dispatch list, and *NOT* to the fifo/sort list. So this should be considered as
-a scheduling decision in itself, and __dd_dispatch_request() reflects that as
-the first thing it does is pick the requests that are in the dispatch list
-already. However, __dd_dispatch_request() also has the check:
+I assume that "target of ss_lockless" is an intentional extension to
+just make the loop never take a lock at all?
 
-		if (started_after(dd, rq, latest_start))
-                        return NULL;
+I do like it, but I think you'll find that having a separate 'seq' and
+'flags' like this:
 
-for requests that are already in the dispatch list. That is what does not make
-sense to me. Why ? There is no comment describing this. And I do not understand
-why we should bother with any time for requests that are in the dispatch list
-already. These should be sent to the drive first, always.
+> +struct ss_tmp {
+> +       enum ss_state   state;
+> +       int             seq;
+> +       unsigned long   flags;
+> +       spinlock_t      *lock;
+> +};
 
-This patch seems to be fixing a problem that is introduced by the above check.
-But why this check ? What am I missing here ?
+makes it unnecessarily waste a register.
 
->   	} else {
->   		deadline_add_rq_rb(per_prio, rq);
-> 
-> Thanks,
-> 
-> Bart.
+You never need both seq and flags at the same time, since if you take
+the spinlock the sequence number is pointless.
 
+So please make that a union, and I think it will help avoid wasting a
+register in the loop.
 
--- 
-Damien Le Moal
-Western Digital Research
+Other than that I like it. Except that "BUG()" really bugs me. It will
+generate horrendous code for no reason and we *really* shouldn't add
+BUG statements anyway.
+
+Either that inline function is fine, or it isn't. Don't make it
+generate stupid code for "I'm not fine" that will also be a huge pain
+to debug because if that code is buggy it will presumably trigger in
+context where the machine will be dead, dead, dead.
+
+             Linus
 
