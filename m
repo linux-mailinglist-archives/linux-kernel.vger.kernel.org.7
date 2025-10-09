@@ -1,144 +1,256 @@
-Return-Path: <linux-kernel+bounces-846672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0510BC8B10
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:06:20 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37039BC8B1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:06:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5095A3A636A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:03:51 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8C1C235301C
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80DFD221F24;
-	Thu,  9 Oct 2025 11:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AEF12DFF33;
+	Thu,  9 Oct 2025 11:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EKSN71/n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EImXM8gj"
+Received: from mail-pj1-f68.google.com (mail-pj1-f68.google.com [209.85.216.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B067E2DEA77;
-	Thu,  9 Oct 2025 11:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0E31E503D
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 11:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760007810; cv=none; b=jjdZAaV1x7Vkn9iMUM2MuqR3+NZMwJqMRIhFQs9x5ARgMNOJCU8Z3MIukxT9MVw1a2k3HQmXxxAKnDk6s5lraFx9FKraQPEhScNh6F94y/X2Ig9bYA5/R0g06j1gDHeqjOc5uuLeZawIc+5KRGhCr7QmI63gEbl5synT3/3go+0=
+	t=1760007990; cv=none; b=e4qPP5FHUsADS6qkXzaRJZce68PPUnAo1NnJB+jKs9nIdn6wtnCv+Ce3GwDzb70/Jq6hWJctPZFGNaFPDMql8gp7pR9um/WF7pMOwZh/Srxi6gQ/7VGR8B5OY0R2Oe/nEGVh1BXFWb1skzOcSL7+gzBRnzRtG593bIAiUoyjlmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760007810; c=relaxed/simple;
-	bh=OqPKmpVaD95RFEBGqXorSNxmID174z0lezPeM+2qtpY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VCB+x+m+S5pDEe/xrOEhVvpPfPybLnY9hHT6KaL3AnW6RKuon2+FuQenw4JfXyFkpCA/YeCgPo1B+BVZklddBPKBT2x8yQ0gsK7RETFGOe19GSaJXuWgRsH2FBu6tkg3JT65/rcVxiDJ2YB47pL5JuwKzEyRed5fxWF8iMQQpak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EKSN71/n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1ED0C4CEE7;
-	Thu,  9 Oct 2025 11:03:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760007810;
-	bh=OqPKmpVaD95RFEBGqXorSNxmID174z0lezPeM+2qtpY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EKSN71/ny+7lRcXJHl3VuaMvgkNqjDW7WuFiac6/JDS6ILUByVwpRY8O6bM8GY3QR
-	 RRNygzyW7lRLPMNob6ZpGfIHHusXHKvrEYLuE5tLEDo5ZLNMaw6PXWEee6kYJDjjUf
-	 jsFz3QW/7n0zT6ADLqg74wdWtzeZg497zDMtSGmg0ooaZqsDrNOSd74VZgYdxO/xyV
-	 0+2hRPbF46vAlZNA+ZdCQG5FFERTMpy+sA2V5/S7ZJ08umLVesIjL6I+sbGy2bbOSL
-	 YW1z68S2ijYkySqC5N1eNxVzxJT/XgTVNnTLIVODWS6Mc4O5o4rak2vRko1H8Ub1P4
-	 VilPpq5eEhwYg==
-Message-ID: <c15b7ee3-cae0-4cbf-8ea6-4d2b6ebee9de@kernel.org>
-Date: Thu, 9 Oct 2025 20:03:21 +0900
+	s=arc-20240116; t=1760007990; c=relaxed/simple;
+	bh=4019sHdt1ppywB7KuVCM4qPsAA8CYsCpMl8vDwO/dqQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T+mXIFyp4qB85dFUO8I8miolAYOb3NSo3cMfYYrZvx0NK4RSkRbO3SeQFIJgPRLLSCeVtu8OsGUUTGDqEt/4uMhoBHtt7paI1r2xLKPMlQX+Os4JMSh+X5oKImDrRnsS3JBVkc2Ec9JJjbQoMLEONk3KAXfIbjedtcimcbqPc+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EImXM8gj; arc=none smtp.client-ip=209.85.216.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f68.google.com with SMTP id 98e67ed59e1d1-32ecc50f573so186214a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 04:06:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760007988; x=1760612788; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z7WvQ1lRZvaAgyHD3mjKbF3FMdanug0QiqVEdNsY/yo=;
+        b=EImXM8gjbz2A33y1K5LM4l11rsBrWub3tl+yfwWC5bXHNSc+tZXHc0V/cbiqRc4R+W
+         4XF//dBoize0EtCBVb2VZ/c+fDkMcpC8QS0Gkqap0RfofJHdRYg5Fhm951JhXQ0wq6kg
+         3ywNQUIdTxwlJ/BuPF0ztZ+5jyxeHXJqru/ahxYAH7/Uw7ITHBDZlHD/Dq99ooA+Q8C0
+         Z26KoeuNXwyScCougo3LLNkrHyjFGpvOBAN8ruIMkyU2IibcNgWnKo1U+aU082/SU6mS
+         POPAi9Chx61rWDDEApur7M86HcvN4l6QH4MUjH8eNRKwS6ba/9Dbb8SHgtMaBKAVN30H
+         VsSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760007988; x=1760612788;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z7WvQ1lRZvaAgyHD3mjKbF3FMdanug0QiqVEdNsY/yo=;
+        b=xNxHrGof5vywspIu7A0IVK6VAWTrvaAfmP53ByiXruPVgCqrcWAtIxdcnCu2fXgCT0
+         dmcAqGvkmsaQOjDzJ0NDSmoAG5SWzrS2+EH4Lnymc8zeRL8c8Lsw4Qa1b3xbqSER2erM
+         ogrstTVyq95OhaepuExorARA6VHgsw1MxpsS6UKvafqNgS1uGJYYw4J8aPjRO9l92nNo
+         OtPrW11XUPworWEWbsDfGFGNXcvDHCHKSpV9ZujTh1bkizjvVUwIiKhrYcJaBNR5bY2I
+         62TENcLMaLMt61MCazhIcLocHO8o4vvL6kiiGGX50Fczmt0PBLwFMRLh8W3TLFxg3BBE
+         PccA==
+X-Forwarded-Encrypted: i=1; AJvYcCWzmJzjrbUYIx8mbDEabILV9GRPXmTRuJOC8DtS91U7uMjy6C03qv88Rf2p49CXfgb58Kg4C5mHI75f988=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5eMjPePxyUmGVNn3CLJeh8i6j1KMtvwaLhstOvf4Y2kPWqUrZ
+	mP58PLe1WEhRfR8joOYGOIu418oXNa+yM3HufXXENHgDHU8Ldl9GeW9+
+X-Gm-Gg: ASbGncv06VRXfAzlTDjba03Jd26m48WAdo+TzQgvr/wGNjRmeyLoxb8NdD7yvDPivBh
+	rp/9cSjd9lPQTog71aD/CRNR6iw72Pd/TWHXcpzNb2uekc9iKWxvpK4EMl+oFP9YpwF23QUTrc8
+	KxZX7Lo3KxQF2i09hYmuzZzzd5svVqKiEZR2ZvpSsd3j0K3p1Yr5Slw0sZN3toJSu7zwjwLhVFk
+	poX+95YBtz/HxEmndg3tXrCx5sY8zHTcPQeE3lSCu+tbXOpby/VIiz5Oc5xYF5zz0t8V4+gBeH2
+	Vb/bdLPVp+1PgGfhHRD2+W19f/QeblOFGBOu98KNzTS70ax+HL4dr9H7CAMe2on5HKKUm7saQDY
+	p9d0dWAvCfaz/UbPAvBZyPTLWvdTvGl3Lh7OKZkSJdHx9odM=
+X-Google-Smtp-Source: AGHT+IGSwQwv+DWm4fZTGnL1m8RsvGOG+CnnXuES1p83dQ0sn1NZ9Z72M1jNOXsaIKJ7wWyoYpo9dA==
+X-Received: by 2002:a17:90b:1b42:b0:32e:64ca:e849 with SMTP id 98e67ed59e1d1-33b513990d5mr4618313a91.8.1760007988258;
+        Thu, 09 Oct 2025 04:06:28 -0700 (PDT)
+Received: from gm-arco.lan ([111.201.7.16])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b513926fesm6732041a91.21.2025.10.09.04.06.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 04:06:27 -0700 (PDT)
+From: "guangming.zhao" <giveme.gulu@gmail.com>
+To: miklos@szeredi.hu
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 5.15] fuse: Fix race condition in writethrough path A race
+Date: Thu,  9 Oct 2025 19:06:23 +0800
+Message-ID: <20251009110623.3115511-1-giveme.gulu@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: thermal: qcom-tsens: document the Kaanapali
- Temperature Sensor
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
- Amit Kucheria <amitk@kernel.org>, Thara Gopinath <thara.gopinath@gmail.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
- trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
- Manaf Meethalavalappu Pallikunhi <manaf.pallikunhi@oss.qualcomm.com>
-References: <20250924-knp-tsens-v1-1-ad0cde4bd455@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250924-knp-tsens-v1-1-ad0cde4bd455@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 25/09/2025 08:37, Jingyi Wang wrote:
-> From: Manaf Meethalavalappu Pallikunhi <manaf.pallikunhi@oss.qualcomm.com>
-> 
-> Document the Temperature Sensor (TSENS) on the Kaanapali Platform.
-> 
-> Signed-off-by: Manaf Meethalavalappu Pallikunhi <manaf.pallikunhi@oss.qualcomm.com>
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> ---
+The race occurs as follows:
+1. A write operation locks a page, fills it with new data, marks it
+   Uptodate, and then immediately unlocks it within fuse_fill_write_pages().
+2. This opens a window before the new data is sent to the userspace daemon.
+3. A concurrent read operation for the same page may decide to re-validate
+   its cache from the daemon. The fuse_wait_on_page_writeback()
+   mechanism does not protect this synchronous writethrough path.
+4. The read request can be processed by the multi-threaded daemon *before*
+   the write request, causing it to reply with stale data from its backend.
+5. The read syscall returns this stale data to userspace, causing data
+   verification to fail.
 
-No, conflicting patch with Kaanapali, without any reason. Squash the
-patches.
+This can be reliably reproduced on a mainline kernel (e.g., 6.1.x)
+using iogen and a standard multi-threaded libfuse passthrough filesystem.
 
-This entire split is just huge churn, huge duplication of work and quite
-a lot of review put onto the community. You should have coordinated your
-work better.
+Steps to Reproduce:
+1. Mount a libfuse passthrough filesystem (must be multi-threaded):
+   $ ./passthrough /path/to/mount_point
 
-I am disappointed because you just don't think about the reviewing
-process, about what maintainers should do with that. You just send what
-was told you to send.
+2. Run the iogen/doio test from LTP (Linux Test Project) with mixed
+   read/write operations (example):
+   $ /path/to/ltp/iogen -N iogen01 -i 120s -s read,write 500k:/path/to/mount_point/file1 | \
+     /path/to/ltp/doio -N iogen01 -a -v -n 2 -k
 
-Explain to us - why do we want to have two 99% same patches sent the
-SAME DAY, from the same company, sent in completely separate patchsets
-so any simplified review will not be possible, and do same work - review
-and applying - twice, instead of having only one?
+3. A data comparison error similar to the following will be reported:
+   *** DATA COMPARISON ERROR ***
+   check_file(/path/to/mount_point/file1, ...) failed
+   expected bytes:  X:3091346:gm-arco:doio*X:3091346
+   actual bytes:    91346:gm-arco:doio*C:3091346:gm-
 
-Why maintainers should accept this?
+The fix is to delay unlocking the page until after the data has been
+successfully sent to the daemon. This is achieved by moving the unlock
+logic from fuse_fill_write_pages() to the completion path of
+fuse_send_write_pages(), ensuring the page lock is held for the entire
+critical section and serializing the operations correctly.
 
-Best regards,
-Krzysztof
+[Note for maintainers]
+This patch is created and tested against the 5.15 kernel. I have observed
+that recent kernels have migrated to using folios, and I am not confident
+in porting this fix to the new folio-based code myself.
+
+I am submitting this patch to clearly document the race condition and a
+proven fix on an older kernel, in the hope that a developer more
+familiar with the folio conversion can adapt it for the mainline tree.
+
+Signed-off-by: guangming.zhao <giveme.gulu@gmail.com>
+---
+[root@gm-arco example]# uname -a
+Linux gm-arco 6.16.8-arch3-1 #1 SMP PREEMPT_DYNAMIC Mon, 22 Sep 2025 22:08:35 +0000 x86_64 GNU/Linux
+[root@gm-arco example]# ./passthrough /tmp/test/
+[root@gm-arco example]# mkdir /tmp/test/yy
+[root@gm-arco example]# /home/gm/code/ltp/testcases/kernel/fs/doio/iogen -N iogen01 -i 120s -s read,write 500b:/tmp/test/yy/kk1 1000b:/tmp/test/yy/kk2 | /home/gm/code/ltp/testcases/kernel/fs/doio/doio -N iogen01 -a -v -n 2 -k
+
+iogen(iogen01) starting up with the following:
+
+Out-pipe:              stdout
+Iterations:            120 seconds
+Seed:                  3091343
+Offset-Mode:           sequential
+Overlap Flag:          off
+Mintrans:              1           (1 blocks)
+Maxtrans:              131072      (256 blocks)
+O_RAW/O_SSD Multiple:  (Determined by device)
+Syscalls:              read write
+Aio completion types:  none
+Flags:                 buffered sync
+
+Test Files:
+
+Path                                          Length    iou   raw iou file
+                                              (bytes) (bytes) (bytes) type
+-----------------------------------------------------------------------------
+/tmp/test/yy/kk1                               256000       1     512 regular
+/tmp/test/yy/kk2                               512000       1     512 regular
+
+doio(iogen01) (3091346) 17:43:50
+---------------------
+*** DATA COMPARISON ERROR ***
+check_file(/tmp/test/yy/kk2, 116844, 106653, X:3091346:gm-arco:doio*, 23, 0) failed
+
+Comparison fd is 3, with open flags 0
+Corrupt regions follow - unprintable chars are represented as '.'
+-----------------------------------------------------------------
+corrupt bytes starting at file offset 116844
+    1st 32 expected bytes:  X:3091346:gm-arco:doio*X:3091346
+    1st 32 actual bytes:    91346:gm-arco:doio*C:3091346:gm-
+Request number 13873
+syscall:  write(4, 02540107176414100, 106653)
+          fd 4 is file /tmp/test/yy/kk2 - open flags are 04010001
+          write done at file offset 116844 - pattern is X:3091346:gm-arco:doio*
+
+doio(iogen01) (3091344) 17:43:50
+---------------------
+(parent) pid 3091346 exited because of data compare errors
+
+ fs/fuse/file.c | 36 ++++++++++--------------------------
+ 1 file changed, 10 insertions(+), 26 deletions(-)
+
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 5c5ed58d9..a832c3122 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1098,7 +1098,6 @@ static ssize_t fuse_send_write_pages(struct fuse_io_args *ia,
+ 	struct fuse_file *ff = file->private_data;
+ 	struct fuse_mount *fm = ff->fm;
+ 	unsigned int offset, i;
+-	bool short_write;
+ 	int err;
+ 
+ 	for (i = 0; i < ap->num_pages; i++)
+@@ -1113,26 +1112,21 @@ static ssize_t fuse_send_write_pages(struct fuse_io_args *ia,
+ 	if (!err && ia->write.out.size > count)
+ 		err = -EIO;
+ 
+-	short_write = ia->write.out.size < count;
+ 	offset = ap->descs[0].offset;
+ 	count = ia->write.out.size;
+ 	for (i = 0; i < ap->num_pages; i++) {
+ 		struct page *page = ap->pages[i];
+ 
+-		if (err) {
+-			ClearPageUptodate(page);
+-		} else {
+-			if (count >= PAGE_SIZE - offset)
+-				count -= PAGE_SIZE - offset;
+-			else {
+-				if (short_write)
+-					ClearPageUptodate(page);
+-				count = 0;
+-			}
+-			offset = 0;
+-		}
+-		if (ia->write.page_locked && (i == ap->num_pages - 1))
+-			unlock_page(page);
++        if (!err && !offset && count >= PAGE_SIZE)
++            SetPageUptodate(page);
++
++        if (count > PAGE_SIZE - offset)
++            count -= PAGE_SIZE - offset;
++        else
++            count = 0;
++        offset = 0;
++
++        unlock_page(page);
+ 		put_page(page);
+ 	}
+ 
+@@ -1195,16 +1189,6 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
+ 		if (offset == PAGE_SIZE)
+ 			offset = 0;
+ 
+-		/* If we copied full page, mark it uptodate */
+-		if (tmp == PAGE_SIZE)
+-			SetPageUptodate(page);
+-
+-		if (PageUptodate(page)) {
+-			unlock_page(page);
+-		} else {
+-			ia->write.page_locked = true;
+-			break;
+-		}
+ 		if (!fc->big_writes)
+ 			break;
+ 	} while (iov_iter_count(ii) && count < fc->max_write &&
+-- 
+2.51.0
+
 
