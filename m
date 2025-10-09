@@ -1,141 +1,211 @@
-Return-Path: <linux-kernel+bounces-847207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 779ADBCA3FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 18:51:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C89A6BCA3C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 18:48:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E88AE423392
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 16:51:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 046943E3BCD
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 16:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9B522A7E0;
-	Thu,  9 Oct 2025 16:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA322227BB9;
+	Thu,  9 Oct 2025 16:48:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BRxZXibc"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ikK7YUwk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4062F220F2C
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 16:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F92D21CC79;
+	Thu,  9 Oct 2025 16:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760028676; cv=none; b=dGahPcmmpgi/qQS+8xx/bNaFNBO45tTr4PVFwBNZrAmuuR3KHF0iGOk7npHPZRpAO3Yz04+O+HZdYCplUkva7v13jLdJlBjF0IqUL+Ml0l7x7ur4KN7vuW3G/uOfN6BGeV8C7P1aKWgy+rx//X5MGYcgALFoecA6dU9VoepBnFw=
+	t=1760028525; cv=none; b=T+GEvwD7/UNa5ur9WWWHe3KCHMgyYAFY5Kh61r4HvxAoW2R8FHpBNcSIVQ9kEbgDagKiNohQakLK0IQruNlhasiM///JIS0Rgxpaqhl2cahmpQkY6VhVyUI4fk+HIsE1ZrBg9s1eZvdpL+NzfUoK6ZFfEOzwV1JsOXIS2SBvqf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760028676; c=relaxed/simple;
-	bh=bSULI9f+euykcipRhqd0laADfcpo8VaHK0Bofko8OAU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DAOB46KMG9KflCYSuifKTjf9HYX1ZO8quH0fNefAk/eSnqJDxY4MVB0GJYI9b5VRbLhr0wx8C+CiMcBllAsBySMY1RZGE3tUh3IXaXdZxdyl9JPpP/tRbEHifre9gtegp3qRo7Tbd+eFf3GZWQ0j+WBxg2UPw2qq5lASUmousiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BRxZXibc; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-795773ac2a2so10084146d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 09:51:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760028674; x=1760633474; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oxPWjMVHD3JpD/tJd3lWXNciFLmIC7SPnsETCC2Sg4E=;
-        b=BRxZXibcDRtWwnL8THZjG7UwR2Zgg4kE9ib2naVMeZts14zCuwhlOdAqQw7HNyuRTJ
-         YITFIBiZTcvg2P60wZiJBsi1QdeyMTQpPb8+gcCReRZ4ryZZz4T1cKNj3kkdN3SuswWI
-         cgZE+s8nl/3jx/eXQagZqUNQk1bs72N4xyjBDAGEdjmW58pFSmx5JPasJXLtPogFGXru
-         ulw8DdQumqNpGTDfeB0rnfy8Ok//hRoffI/8/myDCeI2t5xsr83OT1/gcs5EqJRMAAUp
-         cR7yCaj2I49SEKz6QTfeqnl5r4VgjLTxhd1epIh0evsXuIZ2sW9WyfQbD0jx16Q3iBn6
-         HsFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760028674; x=1760633474;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oxPWjMVHD3JpD/tJd3lWXNciFLmIC7SPnsETCC2Sg4E=;
-        b=fnjB4tiqLq8bJHJY5ft62rTIYz85bF5Hnfs0t4hDzSZ31hqfmwZF58UKlMUMgS0B7+
-         NEQYnGS3pWxS+19cPPAS4eshE5bVyW15OrWk45SpH3f+jzeKrmTLL6tzLVRn0QkL1U+M
-         shMCDvVeZTQAUdVKwSah6+vsWChbJF+prAUuAeATzqsVkQUHDVL5+dO3eOfT12U9PHcF
-         sqfbgPFkWeziWwbgf/OEu01qBLKPGFsPg8maNK+//ZB8VhJpuR2mZt97Zi85ZYV3SPMs
-         Mqw2Le0nzYB5DZigv+Zs2jZTuJ4mT+jIREWpGGkB74f1QUxFNSfE1V4bpcxgBoC2kx1f
-         4Jcg==
-X-Forwarded-Encrypted: i=1; AJvYcCXY2f545JBp81xkqnsrvwybrAVoszVQfg8TWwguSdD67p3j4rpzD+SVCLfpS9g6ESFyIiNB7JKC1K592mQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDRs7+dJ1zmOSbh6JXU/I7HfTSctJ7Yxwx8QfR7txC8rlmp/Yz
-	3K4f2o4f+NPzOUQ6XCpJewXCLLfb8KktMozsnQNl908lVH2HDC5wgUnk
-X-Gm-Gg: ASbGncvsm0T7eh5pOgXDi20FhocjUwhMKbCVfRdmcg8FxT1mZKNwAQDmX4EZWLe5p3O
-	NcokaR6rqVnBxcRFZd4Y6ZQ79zNiREC44IT/iNBHb/EZrE7YHyUnangm+bwvXUwhBbGvnm/6QrN
-	ZmYCr6BQg+AbvfNQHaBN7SExGXmBb321AchrHshEsrqls9tZN8ET9/uGJNAzbFzFml/J0aDvG7n
-	whAZu5+p5zWj1bmC3/L+FvgQXF/VVekwZd035KDpeOo/odCeX0m2TEw8UTYGaW0f00HGrFaiOrM
-	gsDAPH/K5mjxPh6PHo1sUoDpFQKmRuhqAgNQcOAetYvIvNV7dPl0dBPEQ/n6YZIoU6P5YPSAOkP
-	ZIQD2s4P6mE2ugc8gTJOWyoyOayYdW0PZNM8kiPE+6RNsZ7wIiPZ6nJUmaRnNZYcYg5oDymCs/j
-	4YzTK8fug4n7NXHW8OySn6v5dtk899PSlDob6Nd9LCIA==
-X-Google-Smtp-Source: AGHT+IEmFjLt2SYiuU5RDKLLiDCSk74xNuT+5x0tojzgJe36FuA1P9ps+/00iZzayGg6ph9RL0gTgA==
-X-Received: by 2002:a05:6214:9c7:b0:879:e666:c2bc with SMTP id 6a1803df08f44-87b2103c76dmr71921636d6.1.1760028673927;
-        Thu, 09 Oct 2025 09:51:13 -0700 (PDT)
-Received: from mango-teamkim.. ([129.170.197.108])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-878be61fb91sm182464266d6.60.2025.10.09.09.51.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 09:51:13 -0700 (PDT)
-From: pip-izony <eeodqql09@gmail.com>
-To: Marcel Holtmann <marcel@holtmann.org>
-Cc: Seungjin Bae <eeodqql09@gmail.com>,
-	Kyungtae Kim <Kyungtae.Kim@dartmouth.edu>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-bluetooth@vger.kernel.org
-Subject: [PATCH v4] Bluetooth: bfusb: Fix buffer over-read in rx processing loop
-Date: Thu,  9 Oct 2025 12:48:18 -0400
-Message-ID: <20251009164817.3762787-2-eeodqql09@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <572c2a33-18dd-4bf0-8c41-e051d75f481b@molgen.mpg.de>
-References: <572c2a33-18dd-4bf0-8c41-e051d75f481b@molgen.mpg.de>
+	s=arc-20240116; t=1760028525; c=relaxed/simple;
+	bh=1YqLlKixVNW6t8A6z6DdqayoYTseCKmtsXME3qIeraQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KD2cjasxeIgXedGps7vBRWJGpCt8gB+mdYZ/3FjrOp+PoSozhpsPokGPolwXxYkyAeZCHsPxNB9JCQclW1LHS32MuwBXp5SsZKshG/pNfLb2b1NPDK+Zbnzil6i/c2i/DKp21Rjucf2pxH14QEHD74hy/Bi4TJ9BVEn6kmj9aLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ikK7YUwk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBDE9C4CEE7;
+	Thu,  9 Oct 2025 16:48:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760028524;
+	bh=1YqLlKixVNW6t8A6z6DdqayoYTseCKmtsXME3qIeraQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ikK7YUwkH3NNRg1jDP8ti2XVZ25rmGCB6DQtqaNiQsOSyLc+4nax+SsLZA71pFxYu
+	 Ld2cy+qLlrEUYTEMPNINui/yGSZa+yPgHV/dBoaprD7g2vjQvX6PYE/ertYiTHg+Jz
+	 6E1GIuVbcqnoTGaG6KvnaBN+PZbfp2eh3SN07JePyhDw1VsuzQUeNYy1a5Thh00at5
+	 dCdV0AG9r01qw8a2S8OVTSFscFyQG/1Q+taDzQTN7Un2+J1gn2zWkRRszMOEt8SNSM
+	 DzP9Por67HVSToDyWz1xofE5VJndwWtyElzjICrawgwOLGGpyUzhO1rt6Nhzrwoszk
+	 /CB2tj4GEKX4g==
+Date: Thu, 9 Oct 2025 17:48:39 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Jianping.Shen@de.bosch.com
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, dima.fedrau@gmail.com,
+	marcelo.schmitt1@gmail.com, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Christian.Lorenz3@de.bosch.com, Ulrike.Frauendorf@de.bosch.com,
+	Kai.Dolde@de.bosch.com
+Subject: Re: [PATCH v5 1/2] dt-bindings: iio: imu: smi330: Add binding
+Message-ID: <20251009-squishy-poem-ddb0fdd9583d@spud>
+References: <20251009153149.5162-1-Jianping.Shen@de.bosch.com>
+ <20251009153149.5162-2-Jianping.Shen@de.bosch.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ifzSNsRgI1TNdLUQ"
+Content-Disposition: inline
+In-Reply-To: <20251009153149.5162-2-Jianping.Shen@de.bosch.com>
 
-From: Seungjin Bae <eeodqql09@gmail.com>
 
-The bfusb_rx_complete() function parses incoming URB data in a while loop.
-The logic does not sufficiently validate the remaining buffer size(count)
-across loop iterations, which can lead to a buffer over-read.
+--ifzSNsRgI1TNdLUQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-For example, with 4-bytes remaining buffer, if the first iteration takes
-the `hdr & 0x4000` branch, 2-bytes are consumed. On the next iteration,
-only 2-bytes remain, but the else branch is trying to access the third
-byte(buf[2]). This causes an out-of-bounds read and a potential kernel
-panic.
+On Thu, Oct 09, 2025 at 05:31:48PM +0200, Jianping.Shen@de.bosch.com wrote:
+> From: Jianping Shen <Jianping.Shen@de.bosch.com>
+>=20
+> Add devicetree binding for Bosch imu smi330.
+> The smi330 is a combined three axis angular rate and
+> three axis acceleration sensor module.
+>=20
+> Signed-off-by: Jianping Shen <Jianping.Shen@de.bosch.com>
 
-This patch fixes the vulnerability by adding checks to ensure enough
-data remains in the buffer before it is accessed.
+https://lore.kernel.org/all/20250916-henna-rinsing-32a18a4d30b9@spud/
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Seungjin Bae <eeodqql09@gmail.com>
----
-  v1 -> v2: Fixing the error function name
-  v2 -> v3: Addressing feedback from Paul Menzel
-  v3 -> v4: Improving the error message for the block header count
+Why did you ignore my ack?
+Didn't Jonathan already apply v4 of this two weeks ago, why is there
+even a v5 to begin with?
 
- drivers/bluetooth/bfusb.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Conor.
 
-diff --git a/drivers/bluetooth/bfusb.c b/drivers/bluetooth/bfusb.c
-index 8df310983bf6..02ba16775004 100644
---- a/drivers/bluetooth/bfusb.c
-+++ b/drivers/bluetooth/bfusb.c
-@@ -360,6 +360,11 @@ static void bfusb_rx_complete(struct urb *urb)
- 			count -= 2;
- 			buf   += 2;
- 		} else {
-+			if (count < 3) {
-+				bt_dev_err(data->hdev, "block header count %d < 3 (too short)",
-+					   count);
-+				break;
-+			}
- 			len = (buf[2] == 0) ? 256 : buf[2];
- 			count -= 3;
- 			buf   += 3;
--- 
-2.43.0
+> ---
+>  .../bindings/iio/imu/bosch,smi330.yaml        | 90 +++++++++++++++++++
+>  1 file changed, 90 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/imu/bosch,smi33=
+0.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/imu/bosch,smi330.yaml =
+b/Documentation/devicetree/bindings/iio/imu/bosch,smi330.yaml
+> new file mode 100644
+> index 00000000000..0270ca456d2
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/imu/bosch,smi330.yaml
+> @@ -0,0 +1,90 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/imu/bosch,smi330.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Bosch SMI330 6-Axis IMU
+> +
+> +maintainers:
+> +  - Stefan Gutmann <stefam.gutmann@de.bosch.com>
+> +
+> +description:
+> +  SMI330 is a 6-axis inertial measurement unit that supports acceleratio=
+n and
+> +  gyroscopic measurements with hardware fifo buffering. Sensor also prov=
+ides
+> +  events information such as motion, no-motion and tilt detection.
+> +
+> +properties:
+> +  compatible:
+> +    const: bosch,smi330
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  vdd-supply:
+> +    description: provide VDD power to the sensor.
+> +
+> +  vddio-supply:
+> +    description: provide VDD IO power to the sensor.
+> +
+> +  interrupts:
+> +    minItems: 1
+> +    maxItems: 2
+> +
+> +  interrupt-names:
+> +    minItems: 1
+> +    maxItems: 2
+> +    items:
+> +      enum:
+> +        - INT1
+> +        - INT2
+> +
+> +  drive-open-drain:
+> +    type: boolean
+> +    description:
+> +      set if the interrupt pin(s) should be configured as
+> +      open drain. If not set, defaults to push-pull.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +allOf:
+> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    // Example for I2C
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    i2c {
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <0>;
+> +
+> +        imu@68 {
+> +            compatible =3D "bosch,smi330";
+> +            reg =3D <0x68>;
+> +            vddio-supply =3D <&vddio>;
+> +            vdd-supply =3D <&vdd>;
+> +            interrupt-parent =3D <&gpio>;
+> +            interrupts =3D <26 IRQ_TYPE_EDGE_RISING>;
+> +            interrupt-names =3D "INT1";
+> +        };
+> +    };
+> +
+> +    // Example for SPI
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    spi {
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <0>;
+> +
+> +        imu@0 {
+> +            compatible =3D "bosch,smi330";
+> +            reg =3D <0>;
+> +            spi-max-frequency =3D <10000000>;
+> +            interrupt-parent =3D <&gpio>;
+> +            interrupts =3D <26 IRQ_TYPE_EDGE_RISING>;
+> +            interrupt-names =3D "INT1";
+> +        };
+> +    };
+> --=20
+> 2.34.1
+>=20
 
+--ifzSNsRgI1TNdLUQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaOfnZwAKCRB4tDGHoIJi
+0tQ7AQCndhP3ffMWKNUtK7fPczCtGHHnlJf0UP2mPQbOTQSUswD/b6rVZCLTcGTI
+mjEhuwQ8rg9geOuGSVi17hV/tmh0Zgg=
+=7oxX
+-----END PGP SIGNATURE-----
+
+--ifzSNsRgI1TNdLUQ--
 
