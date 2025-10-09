@@ -1,172 +1,108 @@
-Return-Path: <linux-kernel+bounces-846105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CF87BC70C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 03:05:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D33BEBC708E
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 02:55:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2C4F74EADEE
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 01:05:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A9383A70AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 00:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249AF178372;
-	Thu,  9 Oct 2025 01:04:44 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 428F41A267;
+	Thu,  9 Oct 2025 00:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CObzt0z8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C450316DEB1;
-	Thu,  9 Oct 2025 01:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955FA15C0;
+	Thu,  9 Oct 2025 00:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759971883; cv=none; b=XyfDdk92b4owUDDq2ukg5KLjl6kWvPdvmqRYPo08LsQZ5VViOO14raFjx8SoJU8v7OoFIlW4DcMIyC22gXTTOPUv/qrWGkaapuw+TFB7GDE8C9QfSt7x/u7vRATV25YubDKVMiM44qPNxEgil1TvEzeJts2AO/Ve5yEiifouN6Y=
+	t=1759971329; cv=none; b=DlPpqtuLnakqMCFNXz/0Y1t5W/gJP9rbAzOZt0980HetISX22TnzIu7FyRIbUx7wel8XAi+oX5WjdbLtdPsMIDG/oQu1eDRHbl0zD/Ux0uTlRSOGf1XhkKuNbjhW4uTIJbHoFUCZu7OC4m48PlgT/wpZqoojNCre1kd1g0zk4A4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759971883; c=relaxed/simple;
-	bh=hrLNHG+X2BW5USSrMsp/NX+xqNYQLiyVnsBa49AmAhw=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=UqCnGuNbDDl52RfoMZEAuJyCa0sYgXWSnUZ3qJxwkqztOkheIbLDChzMlys7NE81PibNY67bS8jwRke/OHFPD1afLTvvqZUAP8p4zqB22BBcTkuj/9tjZe/9YVdHEFAZkbpV+MAh4EfdqidYZPgrUVSY3kF19XiID7ZQQ97hYoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4chrp74VlxzKHMYM;
-	Thu,  9 Oct 2025 08:48:15 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id B716B1A0DE3;
-	Thu,  9 Oct 2025 08:48:43 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgCXW2NpBudoWY4ZCQ--.34345S3;
-	Thu, 09 Oct 2025 08:48:43 +0800 (CST)
-Subject: Re: [PATCH 3/7] blk-mq: add a new queue sysfs attribute async_depth
-To: Yu Kuai <hailan@yukuai.org.cn>, Nilay Shroff <nilay@linux.ibm.com>,
- Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, bvanassche@acm.org,
- ming.lei@redhat.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250930071111.1218494-1-yukuai1@huaweicloud.com>
- <20250930071111.1218494-4-yukuai1@huaweicloud.com>
- <91799590-15cd-437d-900f-8bc372f7298b@linux.ibm.com>
- <f7fd8fa3-6368-48c1-93b2-942d9d0f75c7@yukuai.org.cn>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <1b55e01b-64bc-94d9-c0cc-9850b9ee6582@huaweicloud.com>
-Date: Thu, 9 Oct 2025 08:48:41 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1759971329; c=relaxed/simple;
+	bh=xZBMTktst1tuqtj2pUL0aURR3U0aoYV/Tq9ePvSHt0I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m6fAHuatuU+dut4V5+H5p1SA9+36pwZya5fKZgAysWdrma09x7ksbx9CKxMj9vqj5C6vxmaf7ixFAmJh1jE7AXiaemDnK3761U+J7bUjb+hsrHcb2kFtgxcMrEHM9ErVIp8yruExWysCbSd1WfsxuO1iKoqjmDj776dfXxQlukw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CObzt0z8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74AA2C4CEE7;
+	Thu,  9 Oct 2025 00:55:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759971328;
+	bh=xZBMTktst1tuqtj2pUL0aURR3U0aoYV/Tq9ePvSHt0I=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CObzt0z8sGzV++fw2e2HkpWUET2VFCHdsQz+XZLpAbKqs3+Ihe3kYwsUhF7I7SrcU
+	 NvF1q2ugbfgPp7B/8xXJMIZCIH3DRs+Rty9DXBcn8gJYnb+nGqO3nKO/W4APFYGcKL
+	 std8sPZPWyW8LE1fcmA5K7E8bZEu3bYiawR3wFwFQNOvTntO7iK3Q0YLRx4oYU780y
+	 ISD/U7yrD1eztiWCVUwXY6UoVnCrLFUxeY9r6lpYjoMK6dXnNtb+EwQ3IWjzBCwJhx
+	 BJ7KNo9iweQ6T8brwB60z7ROqDvtcNbWSNf+Rq/+2vuQthp+n+5x2PYw867zXMrYQ7
+	 4e27Evh/3QAEw==
+Message-ID: <98e6acf8-80d7-4894-b4ce-ce74660722ef@kernel.org>
+Date: Thu, 9 Oct 2025 01:55:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <f7fd8fa3-6368-48c1-93b2-942d9d0f75c7@yukuai.org.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCXW2NpBudoWY4ZCQ--.34345S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxJw4rZF45CF45GF1kXw47Jwb_yoW5CF13pw
-	4kJFWYkryUWF1Igr1fJw13ZryrJw4xKw17JF13tF13JryDKr12gF1rXr1jgr97Zr48AF47
-	Jrn0vas8uF1DJFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/5] Introduce "non-pixel" sub node within iris video
+ node
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Charan Teja Kalla <charan.kalla@oss.qualcomm.com>,
+ Bryan O'Donoghue <bod.linux@nxsw.ie>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <7b6db4fa-2f73-376d-4eb3-64c1c7e6cda3@quicinc.com>
+ <Ujyoj3HGLVFhS2b0XzcYAMjSiCAuO-lSJ8PMEQLOaaX83tk_0D5zjrL0VDyZAmD3i4zLB3ElKSZBltISb5jJHA==@protonmail.internalid>
+ <4a32bbec-2baf-4210-a7c1-1ddcd45d30c8@oss.qualcomm.com>
+ <SuwJuCIcLVJwN3YeN1il6tB9wO9OH6bYcnbRpxpuI9Dl7piYLN-hVdnyv0Mal6N-W5pi2aCZI8MxHZDEkoE63A==@protonmail.internalid>
+ <4d87d1ca-55b2-426e-aa73-e3fd8c6fe7bd@kernel.org>
+ <10a8ccda-4e27-4b06-9a0e-608d6ade5354@nxsw.ie>
+ <4cb4a92d-2f20-47c7-881e-aadcc6f83aa0@kernel.org>
+ <1516f21e-aee3-42cf-b75e-61142dc9578d@oss.qualcomm.com>
+ <9bae595a-597e-46e6-8eb2-44424fe21db6@linaro.org>
+ <MMSKAu89Ew7StAeFBV442KfKNzmqbTSQ-maFG35Jr9d8PkUV2L4sx44R2DRevXA8mC45vkA398l2mvVzarZwew==@protonmail.internalid>
+ <bcfbf35b-69ed-4f39-8312-6a53123cd898@kernel.org>
+ <d46c0335-99d6-469f-a61f-aca4c851f745@kernel.org>
+ <GyrcG3qBN7c5C7ajCs3EV81hWvuaVbg64CpzQ-X3d_p6EauoiKxSoG2aOKE21-j12SWFjNDjV-kVSwYYqVm_lQ==@protonmail.internalid>
+ <a0dc93ec-e35c-409b-8dfb-1642c92a9f0c@kernel.org>
+From: Bryan O'Donoghue <bod@kernel.org>
+Content-Language: en-US
+In-Reply-To: <a0dc93ec-e35c-409b-8dfb-1642c92a9f0c@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 09/10/2025 01:47, Krzysztof Kozlowski wrote:
+>> Maybe it would be possible to also use an inferred FUNCTION_ID somehow
+>> though TBH I think that's a work-around.
+> Three months ago I gave you the answer for that - it is inferred by
+> index on the list.
 
-在 2025/10/06 9:57, Yu Kuai 写道:
-> Hi,
-> 
-> 在 2025/10/2 23:10, Nilay Shroff 写道:
->>
->> On 9/30/25 12:41 PM, Yu Kuai wrote:
->>> From: Yu Kuai <yukuai3@huawei.com>
->>>
->>> Add a new field async_depth to request_queue and related APIs, this is
->>> currently not used, following patches will convert elevators to use
->>> this instead of internal async_depth.
->>>
->>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
->>> ---
->>>   block/blk-core.c       |  1 +
->>>   block/blk-mq.c         |  4 ++++
->>>   block/blk-sysfs.c      | 47 ++++++++++++++++++++++++++++++++++++++++++
->>>   block/elevator.c       |  1 +
->>>   include/linux/blkdev.h |  1 +
->>>   5 files changed, 54 insertions(+)
->>>
->>> diff --git a/block/blk-core.c b/block/blk-core.c
->>> index dd39ff651095..76df70cfc103 100644
->>> --- a/block/blk-core.c
->>> +++ b/block/blk-core.c
->>> @@ -463,6 +463,7 @@ struct request_queue *blk_alloc_queue(struct 
->>> queue_limits *lim, int node_id)
->>>       fs_reclaim_release(GFP_KERNEL);
->>>       q->nr_requests = BLKDEV_DEFAULT_RQ;
->>> +    q->async_depth = BLKDEV_DEFAULT_RQ;
->>>       return q;
->>> diff --git a/block/blk-mq.c b/block/blk-mq.c
->>> index 09f579414161..260e54fa48f0 100644
->>> --- a/block/blk-mq.c
->>> +++ b/block/blk-mq.c
->>> @@ -529,6 +529,8 @@ static struct request 
->>> *__blk_mq_alloc_requests(struct blk_mq_alloc_data *data)
->>>               data->rq_flags |= RQF_USE_SCHED;
->>>               if (ops->limit_depth)
->>>                   ops->limit_depth(data->cmd_flags, data);
->>> +            else if (!blk_mq_sched_sync_request(data->cmd_flags))
->>> +                data->shallow_depth = q->async_depth;
->>>           }
->> In the subsequent patches, I saw that ->limit_depth is still used for the
->> BFQ scheduler. Given that, it seems more consistent to also retain 
->> ->limit_depth
->> for the mq-deadline and Kyber schedulers, and set data->shallow_depth 
->> within their
->> respective ->limit_depth methods. If we take this approach, the 
->> additional
->> blk_mq_sched_sync_request() check above becomes unnecessary.
->>
->> So IMO:
->> - Keep ->limit_depth for all schedulers (bfq, mq-deadline, kyber).
->> - Remove the extra blk_mq_sched_sync_request() check from the core code.
-> 
-> I was thinking to save a function call for deadline and kyber, however, 
-> I don't
-> have preference here and I can do this in the next version.
+But at least as I understand it, you can have multiple SID entries that 
+need to map to a FUNCTION_ID which means you need to encode that 
+inferred indexing in your driver.
 
-How abount following, I feel this is better while cooking the new
-version. Consider only bfq have specail handling for async request.
+So you can't have the iommu code just know what to do.. it has to be 
+driver specific.
 
-static void blk_mq_sched_limit_async_depth(struct blk_mq_alloc_data *data)
-{
-	if (blk_mq_sched_sync_request(data->cmd_flags))
-		return;
+The iommu description for this platform basically lacks the data that 
+_should_ be there -> FUNCTION_ID.
 
-	data->shallow_depth = q->async_depth;
-	if (ops->limit_async_depth)
-		ops->limit_async_depth(data);
-}
+The rule is that the DT should really describe the hardware right ?
 
-Thanks,
-Kuai
-
-> 
-> Thanks,
-> Kuai
-> 
->> Thanks,
->> --Nilay
->>
-> .
-> 
-
+---
+bod
 
