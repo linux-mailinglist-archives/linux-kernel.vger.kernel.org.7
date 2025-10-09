@@ -1,110 +1,113 @@
-Return-Path: <linux-kernel+bounces-846455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC2BABC80DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:32:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC1C0BC80E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:33:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EF2B3B673C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:32:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7919E3AE322
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:33:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2830299AAB;
-	Thu,  9 Oct 2025 08:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28786288C2B;
+	Thu,  9 Oct 2025 08:33:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UtVUjQvJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jhqv17dM"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173434A01;
-	Thu,  9 Oct 2025 08:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E98BA4A
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 08:32:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759998744; cv=none; b=COEuRLrKEcCrvIZHbSeSifF0uvk4fsqXYdyUBvfeWLgGdnCiA45nHpxgPDjxB6r3vIk5H/bl7KXIdxzFJ941cWyfdTgge1/fc57KfwkhJSJTjfvnOPlTBC4Xy3339+0n3DGbcxEesZo5HNM/oUwX3s3X17CQvQUnw1bym5fJFss=
+	t=1759998780; cv=none; b=Y0r8bEdSky/A4PF5VT9gcch2E8Wjec45jzXNkxsrwFUptl/6CCpvS3QOrPenAHycsXAh0roReHNaY6ocYpcpnnduNgiTEyeJVQ11r9bkbvDErTSA5sh4aIm3gb2ze+noOl+X+EGS665noV28qWQwUHdCsJDDqYku0/LJ5c3dPTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759998744; c=relaxed/simple;
-	bh=CpT047vseBAHkLMTuVR4Y4+NLn53QOvWFMPmqJrJSW8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cr8Ook4kqOX/eanrExThZwEk1KFK6ICYJOGKcruf73SZYXXvjzwVw/Vwcf/4kW6ZKCIKcbxldxKg5TIa1FJc2x4sPjfiScUpLGMcwJqhiXJbZj+gVza6BL/af4hgAAZSi+aEXXZfRE8s4ivN491tHlPWpY+W0SQVk6Mn0LyOS2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UtVUjQvJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ACB3C4CEF7;
-	Thu,  9 Oct 2025 08:32:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759998743;
-	bh=CpT047vseBAHkLMTuVR4Y4+NLn53QOvWFMPmqJrJSW8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UtVUjQvJ8VwBB4YjHG2j2Vhn4SwfSST9s7jMtACswUNDy6+QNYppj3Lk26sueiMmn
-	 1bzAQRWADFCEGtf4V8IvoiT8Ly6xSXkAj7lc00CM9/cfO1b+7B9qpq4Ep3caaD/E4q
-	 bX8uUItpgOE2Q0t5JqFugou4hlv1jR3WMWWzaE4o9rIXGMtWA3/0yTacq6YzL7NED6
-	 mKpCI3/qsqHi3s/9KgSrj7LX8O1FQdz6Q4yBX5Kz/rbsF4VlLLnO5Hps3ATvzcx19a
-	 HB108zq+cnuCTPRyT+ndX/+C0S4alfSSmCVSorC4t56hOnxxzW7vw2jJi6gaup9zAE
-	 ArPus5VBXh2yw==
-Date: Thu, 9 Oct 2025 09:32:17 +0100
-From: Simon Horman <horms@kernel.org>
-To: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
-Cc: Thangaraj Samynathan <Thangaraj.S@microchip.com>,
-	Rengarajan Sundararajan <Rengarajan.S@microchip.com>,
-	UNGLinuxDriver@microchip.com, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>, netdev@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	khalid@kernel.org, linux-kernel-mentees@lists.linuxfoundation.org,
-	skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] net: usb: lan78xx: Fix lost EEPROM write timeout
- error(-ETIMEDOUT) in lan78xx_write_raw_eeprom
-Message-ID: <20251009083217.GT3060232@horms.kernel.org>
-References: <20251009053009.5427-1-bhanuseshukumar@gmail.com>
+	s=arc-20240116; t=1759998780; c=relaxed/simple;
+	bh=zljMLJhTqmHi2q/FCnKIXWrWrFEkWPNiMAl0+Hq7D2o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f2DH0IPVLl/wgjtF/vsvWOMIQWHbs/sZnBQ8bW4yq52VfpW9YoYKRGs+bzu6oBeg56vPUAwqGnUlYkGPaMKj3f9h8DvmVY0qFTqsde8+LyaMki6jHvBMcSO5HC9j0uwc8f4nZok4vg4mKpjk2THSd4SXtKZfJL9D4ETGNA7E0y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jhqv17dM; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-373a1ab2081so5542971fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 01:32:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1759998777; x=1760603577; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zljMLJhTqmHi2q/FCnKIXWrWrFEkWPNiMAl0+Hq7D2o=;
+        b=jhqv17dM/YK2avzLOJ5fVM1xlJrPnS1J0gGa/+ec+ujLYF2djssLkyunOykHm8jWJH
+         x6N9qz2rkV/HSZ7Rtf+Szwjwpnu2Z2BTPlBLQs+etaZ5zrQKzIzFSMIkAFtli2iLjfeP
+         UWAdDBsXeKzyvO15FI/xGodADwontF/oFYM5c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759998777; x=1760603577;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zljMLJhTqmHi2q/FCnKIXWrWrFEkWPNiMAl0+Hq7D2o=;
+        b=oghj/kE2vvR49StQO87wcNVkKFPV4sDx/DGP2m5+HmLoFspi9rN3I6/3vVjTrbX18Z
+         cePRMnzqLKBs3f713rEMXzbQLe/G39DojZSTt9nX1/qPCHUKzjHGWU1/D6QIl+5tr9U4
+         0MxXt0gZw+ylNfKoGTdnWfdOnIoZHjqFZxp3LkKU4GY13HbakRlowx1a6hJylzBX02N4
+         muMrm3vu2QnICxGKU9unSBspImmwIyQiemyZ7rjgqVCIC4GNKWmUv5dug4Nk6enyD18R
+         aAsJUYS2/Y4tH4CcQgPV2EE2Tvykrr0APs5UZ0lLjKOqieAXZWuN86a3bVcV9jepEPZ4
+         xBEg==
+X-Forwarded-Encrypted: i=1; AJvYcCX4VjsBvmEwFR41oWof1eUq0+Y3QI09/uFifb0JnfOdGlJGebUFtH2/sbqtkRd3bNe0N9UyTQAvqWFU8Ak=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4GIUxHpH5l1d8HSLuM94PTUyhj76ZDIW14jcccrsoDCW0k4qI
+	sQxT2EnEE1au27LzCrPHOj8uS3Tf0CpQTx0foEigjEuBZN2iG6KIXMmlovKySHnhTWr0bW5nyh4
+	LifvR1yMEpOahQuOK4tCcj2gc0p9Jg2mo9N9JRf/t
+X-Gm-Gg: ASbGncvpDVlxqVtKVShXR67dMIITtc6bJFrF18gCeWGoPcN6p3mAsR4YRyBnMUmXiR7
+	EagdselttEOnujU/BPNrRsas/XsVTH5DxqO7yun3eSNmG0vvmnyHCCQ7sp4DPq7rYI+bXefQFkd
+	TRJv7P+0uD6K2x6c16f+CzLyFv72VEYN/sZ13JqHmBa0pcWvZxKfXhQM4NLFeSpXnxyMWS/Hybt
+	s+AOfbJFI0omfa22dauvlJYxXttwZuJqKVSjyelX+pcHg6kSFGmEL5dYnkfPg==
+X-Google-Smtp-Source: AGHT+IGNqC+T82k2UhLGhs5Z+RJRCLCjdXUj8T+fy/dwo+JYeZAn+ZeihTGmoYgDd/1wSNYOMWZ3ybZyqQU5hYgcf5M=
+X-Received: by 2002:a2e:a99e:0:b0:36e:93a3:979d with SMTP id
+ 38308e7fff4ca-37609d52442mr16172291fa.19.1759998776858; Thu, 09 Oct 2025
+ 01:32:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251009053009.5427-1-bhanuseshukumar@gmail.com>
+References: <20251008-mtk-pll-rpm-v2-0-170ed0698560@collabora.com> <20251008-mtk-pll-rpm-v2-3-170ed0698560@collabora.com>
+In-Reply-To: <20251008-mtk-pll-rpm-v2-3-170ed0698560@collabora.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Thu, 9 Oct 2025 16:32:45 +0800
+X-Gm-Features: AS18NWD6JVU3Hv0pwNvYA85CDPCr9XWrThP36lbmILYiActB6r-bT0qxLSR0NtI
+Message-ID: <CAGXv+5G8XMRGasd2=H_obsLJ-97M-cNPDo3BJCrwhx2+GHhYcA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] clk: mediatek: Pass device to clk_hw_register for PLLs
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Dong Aisheng <aisheng.dong@nxp.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	Yassine Oudjana <y.oudjana@protonmail.com>, Laura Nao <laura.nao@collabora.com>, 
+	=?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>, 
+	Chia-I Wu <olvaffe@gmail.com>, kernel@collabora.com, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, Stephen Boyd <sboyd@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 09, 2025 at 11:00:09AM +0530, Bhanu Seshu Kumar Valluri wrote:
-> The function lan78xx_write_raw_eeprom failed to properly propagate EEPROM
-> write timeout errors (-ETIMEDOUT). In the timeout  fallthrough path, it first
-> attempted to restore the pin configuration for LED outputs and then
-> returned only the status of that restore operation, discarding the
-> original timeout error saved in ret.
-> 
-> As a result, callers could mistakenly treat EEPROM write operation as
-> successful even though the EEPROM write had actually timed out with no
-> or partial data write.
-> 
-> To fix this, handle errors in restoring the LED pin configuration separately.
-> If the restore succeeds, return any prior EEPROM write timeout error saved
-> in ret to the caller.
-> 
-> Suggested-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> Fixes: 8b1b2ca83b20 ("net: usb: lan78xx: Improve error handling in EEPROM and OTP operations")
-> cc: stable@vger.kernel.org
-> Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
-> ---
->  Note:
->  The patch is compiled and tested using EVB-LAN7800LC.
->  The patch was suggested by Oleksij Rempel while reviewing a fix to a bug
->  found by syzbot earlier.
->  The review mail chain where this fix was suggested is given below.
->  https://lore.kernel.org/all/aNzojoXK-m1Tn6Lc@pengutronix.de/
-> 
->  ChangeLog:
->  v1->v2:
->   Added cc:stable tag as asked during v1 review.
->   V1 Link : https://lore.kernel.org/all/20251004040722.82882-1-bhanuseshukumar@gmail.com/
+On Thu, Oct 9, 2025 at 12:06=E2=80=AFAM Nicolas Frattaroli
+<nicolas.frattaroli@collabora.com> wrote:
+>
+> Passing the struct device pointer to clk_hw_register allows for runtime
+> power management to work for the registered clock controllers. However,
+> the mediatek PLL clocks do not do this.
+>
+> Change this by adding a struct device pointer argument to
+> mtk_clk_register_pll, and fix up the only other user of it. Also add a
+> new member to the struct mtk_clk_pll for the struct device pointer,
+> which is set by mtk_clk_register_pll and is used by
+> mtk_clk_register_pll_ops.
+>
+> If mtk_clk_register_pll is called with a NULL struct device pointer,
+> then everything still works as expected; the clock core will simply
+> treat them as previously, i.e. without runtime power management.
+>
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-Thanks,
-
-This patch seems consistent with the discussion at the link under Note.
-I believe it addresses the review of v1.
-And that the Fixes tag corresponds to the commit that introduced this problem.
-
-Reviewed-by: Simon Horman <horms@kernel.org>
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 
