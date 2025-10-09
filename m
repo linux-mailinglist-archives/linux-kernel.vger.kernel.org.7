@@ -1,229 +1,141 @@
-Return-Path: <linux-kernel+bounces-846896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5809BC95D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:48:22 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 580D2BC95DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:48:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4A63434E2FE
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:48:22 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 029D2350081
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B831B2DEA7B;
-	Thu,  9 Oct 2025 13:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7F62E6CA5;
+	Thu,  9 Oct 2025 13:48:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="Ko5GMo+M"
-Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VFhfxFsO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098D52C21E7
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8F923BCED
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760017696; cv=none; b=hD56TZjYzoLM6oakQCmxrqK+xv9rFcjtFF1X8pe7IYx0YUeY6K4bROVa2UxC8/LEGI2SlQLK879p6k6PwCZkCK1JOjs+w6yXntEMLfTUGsPhwOGs3wSh7Mvq/SBix11fyDNkm44I/cboUB/OxK5aktxs+btzVYvAThzWbG3QH0c=
+	t=1760017723; cv=none; b=rwsvwRieN0yLoNBMyBmJE6OGg7Dh/gSIHbDtYkmK8HBiGu1fYXmbBRvpgPImvPjxmFqsgqfNZ9WiG2mdKKfJ7MwtnNOTGbKVJ29w6x7rlI1kxO97qBMJq+EuUccRp4s+zFBa8RZ0x6Y4RXtXF2Mt1gtSQQXTkahF0ax3QEfBe9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760017696; c=relaxed/simple;
-	bh=uMTYl0l0bgRiFOYdD2SO3Mgit4uamyS2BKPDM62RoPw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Gh53ZZavfa86/A7a6K0QuAvbWMbQn7M6PosrPAG1RhdPdgdmuVMF39yNjNOINZSMbpPlKQLugHJ22z8XfsrLsjGnyJYBs8mHUd1WAA/FALirP81vZBlK0r/snIidGsPbEdA3aJMM7Ov8lK66MUdioYD1Tg1RYwqqIVD4SH3O6T8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=Ko5GMo+M; arc=none smtp.client-ip=185.67.36.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout01.posteo.de (Postfix) with ESMTPS id 20E5B240028
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 15:48:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
-	t=1760017692; bh=2DCj6qFoCxBp2NDx0KA/+MnCcq+JdNn8e5RmKU2/pbs=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:
-	 Content-Transfer-Encoding:MIME-Version:Autocrypt:OpenPGP:From;
-	b=Ko5GMo+Mk8iG/F965pPGt/5Q+/oe29ORbJ594XdvcVdEu0RhTLynHS+BYwElaKqDf
-	 glzCuIyj8GTWBoy7uFkV62225AiUC17JmDrK0yd0/kG7PKw9YOoncMXI2vpsU82gzP
-	 uKGP1zEuiWt5lgJ0bEmqCuPP81DUJAJ4/CLGjFkW/JUIoOJv/kraoVLPclzCYNPnhg
-	 dK3uR8fsRr0J8S4qTlDntt18dqrDHc0f6P5ONErLfTpB3I5FC98xdqI+2lxubCebnM
-	 kzYkP9SjLjA7QNyjBn0H4i8rdBPHhQUyeAoVqT2Yw3IV3eFKh6UC/Kjs/d2qHMlH8k
-	 cLPFSLKQd+75g==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4cjB631b7lz6twC;
-	Thu,  9 Oct 2025 15:48:11 +0200 (CEST)
-Message-ID: <5900cfcea7e5f8bc0f100be4afeced9e203c3e9f.camel@posteo.de>
-Subject: Re: [PATCH v2 2/2] ata: Use ACPI methods to power on ata ports
-From: Markus Probst <markus.probst@posteo.de>
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Damien Le Moal <dlemoal@kernel.org>, "James E . J . Bottomley"
-	 <James.Bottomley@hansenpartnership.com>, "Martin K . Petersen"
-	 <martin.petersen@oracle.com>, linux-ide@vger.kernel.org, 
-	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 09 Oct 2025 13:48:11 +0000
-In-Reply-To: <aOejov5d_TlVkueH@ryzen>
-References: <8c3cb28c57462f9665b08fdaa022e6abc57fcd9e.camel@posteo.de>
-	 <20251009112433.108643-1-markus.probst@posteo.de>
-	 <20251009112433.108643-3-markus.probst@posteo.de> <aOejov5d_TlVkueH@ryzen>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1760017723; c=relaxed/simple;
+	bh=yOPE8FhFDCKAnOAaZuxzb+46ozcT2L+rNhVYaTDtEeU=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FIVLZZepUuYwMl0GgTiy0GVpaKvlgOrL3chO/HR960mw/B7kmhADlDdbCRrVwWPV/kpr+ZI44EMbz3iTCQcWLyRK6ibbfH2/dT3VGG1vKwbNrXI4gqn4tX3Bxlf3fvNKwDDS/aOl1ovO0osNQLVeLCCb8lIJpvjaZ/+1uMIacAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VFhfxFsO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F1EFC4CEE7;
+	Thu,  9 Oct 2025 13:48:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760017723;
+	bh=yOPE8FhFDCKAnOAaZuxzb+46ozcT2L+rNhVYaTDtEeU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=VFhfxFsOcKAv6SuuT9uUV+W7DSKX5NHkXLEwuebXTq960Mh+d+BxtGNrg49a3GhYO
+	 nUO43NHbDniYGBAJcuxgW2VVDoWgd8VmLPIDhNmuB9KNoUe8QtnPn87MEtOOYBvRJw
+	 zZUZbd0T7oLmWSg2ITUD0JuWF5ZAWFwA+E48LEZLJt4Z1zkGggXKx91DXYqN6ppHbq
+	 /joUKuXXMHyFj/KBvSNAvTFu3p7Fw5xqHWAxsgQTpGTcWF0bImEe4DQprDD1hssyQa
+	 aHE+XCY8GjSpmxnBWvkOL/VNfc3SmM36mXerFaQtRHb+LYJ/N/6icGB/8rM5ZKfDAL
+	 adoGttQ4AJ1/g==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1v6r0a-0000000Ce22-2vNk;
+	Thu, 09 Oct 2025 13:48:40 +0000
+Date: Thu, 09 Oct 2025 14:48:40 +0100
+Message-ID: <86v7koxk1z.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: salil.mehta@opnsrc.net
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	salil.mehta@huawei.com,
+	jonathan.cameron@huawei.com,
+	will@kernel.org,
+	catalin.marinas@arm.com,
+	mark.rutland@arm.com,
+	james.morse@arm.com,
+	sudeep.holla@arm.com,
+	lpieralisi@kernel.org,
+	jean-philippe@linaro.org,
+	tglx@linutronix.de,
+	oliver.upton@linux.dev,
+	peter.maydell@linaro.org,
+	richard.henderson@linaro.org,
+	andrew.jones@linux.dev,
+	mst@redhat.com,
+	david@redhat.com,
+	philmd@linaro.org,
+	ardb@kernel.org,
+	borntraeger@linux.ibm.com,
+	alex.bennee@linaro.org,
+	gustavo.romero@linaro.org,
+	npiggin@gmail.com,
+	linux@armlinux.org.uk,
+	karl.heubaum@oracle.com,
+	miguel.luis@oracle.com,
+	darren@os.amperecomputing.com,
+	ilkka@os.amperecomputing.com,
+	vishnu@os.amperecomputing.com,
+	gankulkarni@os.amperecomputing.com,
+	wangyanan55@huawei.com,
+	wangzhou1@hisilicon.com,
+	linuxarm@huawei.com
+Subject: Re: [RFC PATCH] KVM: arm64: vgic-v3: Cache ICC_CTLR_EL1 and allow lockless read when ready
+In-Reply-To: <20251008201955.3919537-1-salil.mehta@opnsrc.net>
+References: <20251008201955.3919537-1-salil.mehta@opnsrc.net>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
-  keydata=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
-  aBeNN4ijKZchBXHPgVx+YtWRHfcm4l8=
-OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: salil.mehta@opnsrc.net, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, salil.mehta@huawei.com, jonathan.cameron@huawei.com, will@kernel.org, catalin.marinas@arm.com, mark.rutland@arm.com, james.morse@arm.com, sudeep.holla@arm.com, lpieralisi@kernel.org, jean-philippe@linaro.org, tglx@linutronix.de, oliver.upton@linux.dev, peter.maydell@linaro.org, richard.henderson@linaro.org, andrew.jones@linux.dev, mst@redhat.com, david@redhat.com, philmd@linaro.org, ardb@kernel.org, borntraeger@linux.ibm.com, alex.bennee@linaro.org, gustavo.romero@linaro.org, npiggin@gmail.com, linux@armlinux.org.uk, karl.heubaum@oracle.com, miguel.luis@oracle.com, darren@os.amperecomputing.com, ilkka@os.amperecomputing.com, vishnu@os.amperecomputing.com, gankulkarni@os.amperecomputing.com, wangyanan55@huawei.com, wangzhou1@hisilicon.com, linuxarm@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, 2025-10-09 at 13:59 +0200, Niklas Cassel wrote:
-> On Thu, Oct 09, 2025 at 11:24:49AM +0000, Markus Probst wrote:
-> > Some embedded devices, including many Synology NAS devices, have
-> > the
-> > ability to control whether a ATA port has power or not.
->=20
-> In V1, you mentioned that it was to control the SATA power supply,
-> now you mention the ATA port. I am confused.
-The power supply associated with the ata port (or to be more precise,
-it controls the power gate to the SATA Power connector for the specific
-disk, at least in the synology example). It sets the power state
-defined in ACPI on the ata port. I might need to update the wording
-used in the patches to make it more clear.
+On Wed, 08 Oct 2025 21:19:55 +0100,
+salil.mehta@opnsrc.net wrote:
+> 
+> From: Salil Mehta <salil.mehta@huawei.com>
+> 
+> [A rough illustration of the problem and the probable solution]
+> 
+> Userspace reads of ICC_CTLR_EL1 via KVM device attributes currently takes a slow
+> path that may acquire all vCPU locks. Under workloads that exercise userspace
+> PSCI CPU_ON flows or frequent vCPU resets, this can cause vCPU lock contention
+> in KVM and, in the worst cases, -EBUSY returns to userspace.
+> 
+> When PSCI CPU_ON and CPU_OFF calls are handled entirely in KVM, these operations
+> are executed under KVM vCPU locks in the host kernel (EL1) and appear atomic to
+> other vCPU threads. In this context, system register accesses are serialized
+> under KVM vCPU locks, ensuring atomicity with respect to other vCPUs. After
+> SMCCC filtering was introduced, PSCI CPU_ON and CPU_OFF calls can now exit to
+> userspace (QEMU). During the handling of PSCI CPU_ON call in userspace, a
+> cpu_reset() is exerted which reads ICC_CTLR_EL1 through KVM device attribute
+> IOCTLs. To avoid transient inconsistency and -EBUSY errors, QEMU is forced to
+> pause all vCPUs before issuing these IOCTLs.
 
->=20
-> If it is for the ATA port, then SATA already has support for this,
-> using PxSCTL.
->=20
-> How does this ACPI way to control power interact with the regular
-> way to control power for a port using PxSCTL?
->=20
->=20
-> >=20
-> > Add a new function, ata_acpi_dev_manage_restart(), that will be
-> > used to
-> > determine if a disk should be stopped before restarting the system.
-> > If a
-> > usable ACPI power resource has been found, it is assumed that the
-> > disk
-> > will lose power after a restart and should be stopped to avoid a
-> > power
-> > failure. Also add a new function, ata_acpi_port_set_power_state(),
-> > that
-> > will be used to power on an ata port if usable ACPI power resources
-> > are
-> > found. It will be called right before probing the port, therefore
-> > the port
-> > will be powered on just in time.
-> >=20
-> > Signed-off-by: Markus Probst <markus.probst@posteo.de>
-> > ---
-> > =C2=A0drivers/ata/libata-acpi.c | 70
-> > +++++++++++++++++++++++++++++++++++++++
-> > =C2=A0drivers/ata/libata-core.c |=C2=A0 2 ++
-> > =C2=A0drivers/ata/libata-scsi.c |=C2=A0 1 +
-> > =C2=A0drivers/ata/libata.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 4 +++
-> > =C2=A04 files changed, 77 insertions(+)
-> >=20
-> > diff --git a/drivers/ata/libata-acpi.c b/drivers/ata/libata-acpi.c
-> > index f2140fc06ba0..bba5ef49f055 100644
-> > --- a/drivers/ata/libata-acpi.c
-> > +++ b/drivers/ata/libata-acpi.c
-> > @@ -245,6 +245,76 @@ void ata_acpi_bind_dev(struct ata_device *dev)
-> > =C2=A0				=C2=A0=C2=A0 ata_acpi_dev_uevent);
-> > =C2=A0}
-> > =C2=A0
-> > +/**
-> > + * ata_acpi_dev_manage_restart - if the disk should be stopped
-> > (spin down) on
-> > + * system restart.
-> > + * @dev: target ATA device
-> > + *
-> > + * RETURNS:
-> > + * true if the disk should be stopped, otherwise false
-> > + */
-> > +bool ata_acpi_dev_manage_restart(struct ata_device *dev)
-> > +{
-> > +	// If the device is power manageable and we assume the
-> > disk loses power
-> > +	// on reboot.
->=20
-> Like Damien mentioned earlier, please no C++ style comments.
->=20
->=20
-> Kind regards,
-> Niklas
+I'm going to repeat in public what I already said in private.
 
-Also for the questions sent to the v1 patch:
+Why does QEMU need to know this? I don't see how this is related to
+PSCI, and outside of save/restore, there is no reason why QEMU should
+poke at this. If QEMU needs fixing, please fix QEMU.
 
-> Since this patch implements something similar to DevSleep, but
-> rather,
-> IIUC, for the SATA power itself?
+Honestly, I don't see why the kernel should even care about this, and
+I have no intention of adopting anything of the sort for something
+that has all the hallmarks of a userspace bug.
 
-Yes
+	M.
 
-
-> How is SATA power supplied tied to a port in ACPI? If you have a
-desktop
-> you have a PSU, and don't really know which supply is for which port.
-
-It is not for desktop computers, but for embedded devices.
-
-
-> So, considering how many ways we already have to disable/power off a
-port,
-> you might understand why I think it is extra important that you
-document
-> exactly how, and why we need yet another way to disable/power on/off
-a port.
-
-In this case,
-- According to ACPI spec, if a device has a power resource defined it
-has to be turned on before we are able send commands to the device
-- Because there is hardware out there, that is perfectly capable of
-running upstream linux, which doesn't use one of the methods you
-mentioned for controlling the power. Same did apply for the USB VBus
-power, despite there being "USB_PORT_FEAT_POWER" in the spec and it
-also got in the kernel, see commit
-f7ac7787ad361e31a7972e2854ed8dc2eedfac3b.
-
-I will try to add a short version of the reason written above in the
-commit message.
-
-
-Thanks,
-- Markus Probst
+-- 
+Without deviation from the norm, progress is not possible.
 
