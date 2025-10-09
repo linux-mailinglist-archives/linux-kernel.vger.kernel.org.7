@@ -1,107 +1,280 @@
-Return-Path: <linux-kernel+bounces-847536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FBD8BCB20B
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 00:41:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0A53BCB21A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 00:43:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABE27481EF0
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 22:41:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 625B23B2480
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 22:42:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B52283CB0;
-	Thu,  9 Oct 2025 22:41:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C047A286D7D;
+	Thu,  9 Oct 2025 22:42:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kWOqO9jd"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="NfvaH25e"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D0D286883
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 22:40:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3182868AC
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 22:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760049660; cv=none; b=W3vQXBUEgZHE9wWtxyvUT8QfU/WCKijy3UgyuDiqE3wm3NjgBZnmQiqd2db1w8BWxMjzkbBFFb7bPwkE1pCTE7n8LcORUuSr7H/wvGlTLtvy4J7TTumFn6TDXSMIwxKnxG4NalrAVLJBicwG5nx06ey/jsdympzGc9rUK1teKsM=
+	t=1760049769; cv=none; b=l45BoYosDReHq/UMmVC4EmhQYEWybkanZH2YNTfXWhp0qHpl8397HLtSbhetptRRSCpfANAc8+DZ45lL6iRL3EQBbLjo/sMf6NAtHTASf0mN7IaZSDqMe+/QYYg/yEALec9wNQIowjuMSIyXB9KyCdxWKhcs1BY/h95gQKmOi6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760049660; c=relaxed/simple;
-	bh=iHRkwjZFmsgbGZZzOocWcAK7uAsaUtkHpRJuDecbgAA=;
+	s=arc-20240116; t=1760049769; c=relaxed/simple;
+	bh=ekP0ZQ45qB1qjtzYO3U/Bk6+BdQ2224iAUiUCuv1zO8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B3vPtwsQgQm3NLKXpOME58wRT2wHJTNqLHvwe/eaI8P9Wkobn8gZZkiPElONrJEphYebKUs3FnrwHQXP9VETSX2UlzOpUev9joQsBGA7VZ2k7eY0fvQix00db/ImGb7dFhqSt9X19JAtc7XX71nBE3eEO4WWHMfi84sMaXV7+Ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kWOqO9jd; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-633c627d04eso3628a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 15:40:57 -0700 (PDT)
+	 To:Cc:Content-Type; b=i4BlasE4id+ZyfK2F8BM9zFpdDxJJvHQhJn79p56nwaUzPTKExTuqZihI4D7NgN7si465Vx47OEDPZOoU+RuOL9arQKTJKTLQ8DT2x4hZUy1uazo0ChkGGhGtqlZp5uM308Eg5WbUEuOv8WjQSDbP7rlizlb1ho6QTpDNtlBIcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=NfvaH25e; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4b109c6b9fcso14748461cf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 15:42:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1760049656; x=1760654456; darn=vger.kernel.org;
+        d=soleen.com; s=google; t=1760049767; x=1760654567; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Y+yH0NA0xcLeoUzm7kKblyD7A4cYDfGhXJpCuB241zQ=;
-        b=kWOqO9jdBNaDQWxdpD1Jzsrr6vL8xpF8EfnwiLBCNRr5NUct9D4YR+5l2HrbZqF3QR
-         tp4p9SDOsbtmSW1zylvYJrr4fxQSe2N13nRE13gifOYLKdyy4KwTw+7D2R9SnZN2VDFE
-         jsY5vVeDSrW1iWyXZQRNYeqIByU0EsqNi+8Km3AWjxvxF+0N4iJLNwL+siLoPWkkn95v
-         34wDQgkxEg0+4s4jPJVSdGoxs2zDojS6AImBKGF8aYlzSsHkCS0Xmmkl2G8s+SE/0LU2
-         ZzxagTJA5eMZuyVH5bBIu3Tn1lCPMfRZhZaZExiz19epP68XIqHnzBw+uN8cHPGoReV+
-         xS9w==
+        bh=0FbWfQ96AFEkEG50UixpYovK71meMygfaTOSv2fS0lo=;
+        b=NfvaH25ejd9yhUtOC1bZhYBeS5pBSOeNKHEDhv8F+UTxfjbJyKH2bkVpvSdZagpouN
+         +MY82sRj1dmrtPAl/JLpAXEYSe1Ra3GuT7E+nKyaKz6S+SGX/E4NfkpyURRLaMFyIXyU
+         RpylL/4wCHo6gbn8h2D7tKZgmZp+7uG5SunHfh+bBQJhLqllMie+q2syau3prfNb5vnb
+         MHDQFkl+95oX4H1omSHmfE4G3EttRC5ILBNjZ/DZ3ZTMGLiqGte1UHOpcgASGxiMlgFl
+         mYhxyinNnmuw3AVicq06zrlBNGgJ802MoBI9fxtjAMc9c1Sx9P6dVmyYm4cdSImpEjvm
+         43GQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760049656; x=1760654456;
+        d=1e100.net; s=20230601; t=1760049767; x=1760654567;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Y+yH0NA0xcLeoUzm7kKblyD7A4cYDfGhXJpCuB241zQ=;
-        b=KVH4rHCQINcz70HBkCKpLm5gje+U1sz7x3gSmRznm4VS3U75RzoytOquVD7AwWnLDW
-         aXpvXVUu1q13yAVe5V9rEFPWHzNySbxIeC4G6D1Fe/J0p2hzsRJdNaqz1dQRZE9oArX7
-         Ckw3HUfb/iAFGDbItHUCcv3e0Xixm3yDftkhDTeX+cuGjm2r8S8+ksU1ianqhezDwtPK
-         BLIgJsEwEUU4Z4D2FHRNw0eVcYBu8Rry+HzE6/uFri0cqhhxqnra9k97traXXmXYuG/G
-         Vn7Rtw4KWKbvAzlBPMwJkKY/kPBm45Oqw47tim0Je4352w3wXDg4fDbRdytHcwHFVAc8
-         RFCg==
-X-Forwarded-Encrypted: i=1; AJvYcCWSeVhAKihEynHnZH8bn6ruxFt+feG/nV9EvBb71VpjBPo0KWDzrgqLkeheEp0W6LAuDpX5Umv+WyhdtX8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywtu+8UTfTE1j4i9BRLhITaAYWnjbY9BH6v3wFGxUOzTLj4XxNH
-	FJoU4OSf+s3FNGTksgQXSjNkBdnS+VOXgvnvOwOYcfN9NAsO+82Ayf0GUapsJKiY90d9ae6j5xG
-	wY8lvW31cEktsiNBnO/yhueTLjhp8bEytFr1f+jhF
-X-Gm-Gg: ASbGnctJHKFRoOeVZz5VRHunpaZVFC+noi2JfCJXoBsSpbeYJ8guXZocYLJmW/uwmIk
-	zwA63KzJNve6+Gjd5B5Otk3cjSwC3JqZUJTZ/uWLJVpNazL7DsrYgS4TGQaF+M34oEAFbanEJqI
-	bjKlZNbyBHIWlbe+tZJy/MWpvFPETcDZa0/cUeplEN/Jf5wPjwKQcrn6Ra8tp7sqxkuRouL0NZX
-	GOz0Fl9uGWKje2bYLsZ7N3P7Cdo089dsDWF1ehhg9TiGRpr
-X-Google-Smtp-Source: AGHT+IFMM1arzendIaoMvMcuHn77hUD6Cz9k4obCkd7Pd1UFiRKLhkp+8wOJGZxP9+89FENelDIu1jZMTZAZS1MUY/U=
-X-Received: by 2002:aa7:c602:0:b0:634:ab12:83d4 with SMTP id
- 4fb4d7f45d1cf-639d52c4caemr298350a12.6.1760049656367; Thu, 09 Oct 2025
- 15:40:56 -0700 (PDT)
+        bh=0FbWfQ96AFEkEG50UixpYovK71meMygfaTOSv2fS0lo=;
+        b=FNxNIYxtKv/cJN8+DGQi+vl5AcAAWb/XCzf/PHDbu/H5x/Z+jp39oNLrTvwd0oxuyv
+         KLEysfHfvq+WqklBBPahRb45Ak0KUk6F+nJx9klVmlHvipM/E1lZ+ZxLI4rJk58BwdcL
+         ZZhXkGexXbvpx2oVEmb6mH4cw6CA1v1q8eWExX6Pc0cXGEd5s3QCcE9apU0H6ckSj9aI
+         4fnHA7edw+Q4dfK9ajvfHJmIjfUFBIQpYNjlLXbsp6XZZBIJoxoatJUDQmJNKyX4uGoj
+         uJhtAmQmL6EknluWYG/2pr0Gy7H3za4NawxH+tNkmtt9LUz/mKVrTWOeovaYAsYzETF4
+         7Qaw==
+X-Forwarded-Encrypted: i=1; AJvYcCUWoSZEmB7YvetNzu9W/oLEJtGbB8jMmMoOn4pOIVMvnHBQp3585cF6N31QFjXyhDgwezCMjT9dqRT3cu8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6O7hwWrVQ+nkt37sD+JDtDUhJQ2xp1koBCbYLNTDP09888jWH
+	EarxvmeGJrC9o8rBm8CExjSDPSDN1J7lwc10PlCqU9Ddx3kti11x6UrLlRgxp0vDgelDtewuSsN
+	G7eKPo/mbsGh3dV1dY6RisYkq9HMtYKv7vLXsY5FkrA==
+X-Gm-Gg: ASbGnct7k1ULQJTQXMOsAXEVG8qMOAYIr50ECV/XbXPGUUm2WPX658I7YAr5UG1DZwK
+	SCYxBigxH60WNG0kNyaCjE4fzsEXIhztLU80U7rgBurIUO7HC8TnvcZWtUgrYtL45/ctVKUnZfK
+	7T2jn/CNrzbt8abNNV8Rd6RY18xSWdZ/OcswgLi37kFMR245Md9FGiqYR+XowpT6LdKVMYrDiM4
+	LpnCit+aBcMYi3xNWdtL11uzFfq
+X-Google-Smtp-Source: AGHT+IHG5W702Zbf4mjn7MvE15WtY39zkt1MK6wHvNWeSpV5Z77scUuTO2nY2xRATETmTz79MrDYNcaEvgfPFiK7ygM=
+X-Received: by 2002:a05:622a:60d:b0:4b6:33c1:4d53 with SMTP id
+ d75a77b69052e-4e6eacccf23mr129760071cf.16.1760049766599; Thu, 09 Oct 2025
+ 15:42:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251001145816.1414855-1-yosry.ahmed@linux.dev> <20251001145816.1414855-3-yosry.ahmed@linux.dev>
-In-Reply-To: <20251001145816.1414855-3-yosry.ahmed@linux.dev>
-From: Jim Mattson <jmattson@google.com>
-Date: Thu, 9 Oct 2025 15:40:44 -0700
-X-Gm-Features: AS18NWC2e-ck6-uSYkTGFpZGqTrjbtjUd68e3ZwQCkjFl7PBxVXuoTR0B7cFVUc
-Message-ID: <CALMp9eQi15V1+5EqCevm9aWMv4OAGbUb14dazBcjhhL8mVGHww@mail.gmail.com>
-Subject: Re: [PATCH 02/12] KVM: selftests: Extend vmx_set_nested_state_test to
- cover SVM
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Yosry Ahmed <yosryahmed@google.com>
+References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
+ <CA+CK2bB+RdapsozPHe84MP4NVSPLo6vje5hji5MKSg8L6ViAbw@mail.gmail.com> <CAAywjhT_9vV-V+BBs1_=QqhCGQqHo89qWy7r5zW1ej51yHPGJA@mail.gmail.com>
+In-Reply-To: <CAAywjhT_9vV-V+BBs1_=QqhCGQqHo89qWy7r5zW1ej51yHPGJA@mail.gmail.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Thu, 9 Oct 2025 18:42:09 -0400
+X-Gm-Features: AS18NWD5B-wFlFzrsG8ABOC3Hmjw4CdpOCjhPtFpyfzvKOXdPCdlviqFJ5wfQM0
+Message-ID: <CA+CK2bAe3yk4NocURmihcuTNPUcb2-K0JCaQQ5GJ4B58YLEwEw@mail.gmail.com>
+Subject: Re: [PATCH v4 00/30] Live Update Orchestrator
+To: Samiullah Khawaja <skhawaja@google.com>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
+	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
+	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
+	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
+	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
+	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
+	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
+	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
+	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	saeedm@nvidia.com, ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, 
+	leonro@nvidia.com, witu@nvidia.com, hughd@google.com, chrisl@kernel.org, 
+	steven.sistare@oracle.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 1, 2025 at 8:03=E2=80=AFAM Yosry Ahmed <yosry.ahmed@linux.dev> =
-wrote:
+On Thu, Oct 9, 2025 at 5:58=E2=80=AFPM Samiullah Khawaja <skhawaja@google.c=
+om> wrote:
 >
-> From: Yosry Ahmed <yosryahmed@google.com>
+> On Tue, Oct 7, 2025 at 10:11=E2=80=AFAM Pasha Tatashin
+> <pasha.tatashin@soleen.com> wrote:
+> >
+> > On Sun, Sep 28, 2025 at 9:03=E2=80=AFPM Pasha Tatashin
+> > <pasha.tatashin@soleen.com> wrote:
+> > >
+> > > This series introduces the Live Update Orchestrator (LUO), a kernel
+> > > subsystem designed to facilitate live kernel updates. LUO enables
+> > > kexec-based reboots with minimal downtime, a critical capability for
+> > > cloud environments where hypervisors must be updated without disrupti=
+ng
+> > > running virtual machines. By preserving the state of selected resourc=
+es,
+> > > such as file descriptors and memory, LUO allows workloads to resume
+> > > seamlessly in the new kernel.
+> > >
+> > > The git branch for this series can be found at:
+> > > https://github.com/googleprodkernel/linux-liveupdate/tree/luo/v4
+> > >
+> > > The patch series applies against linux-next tag: next-20250926
+> > >
+> > > While this series is showed cased using memfd preservation. There are
+> > > works to preserve devices:
+> > > 1. IOMMU: https://lore.kernel.org/all/20250928190624.3735830-16-skhaw=
+aja@google.com
+> > > 2. PCI: https://lore.kernel.org/all/20250916-luo-pci-v2-0-c494053c3c0=
+8@kernel.org
+> > >
+> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > Changelog since v3:
+> > > (https://lore.kernel.org/all/20250807014442.3829950-1-pasha.tatashin@=
+soleen.com):
+> > >
+> > > - The main architectural change in this version is introduction of
+> > >   "sessions" to manage the lifecycle of preserved file descriptors.
+> > >   In v3, session management was left to a single userspace agent. Thi=
+s
+> > >   approach has been revised to improve robustness. Now, each session =
+is
+> > >   represented by a file descriptor (/dev/liveupdate). The lifecycle o=
+f
+> > >   all preserved resources within a session is tied to this FD, ensuri=
+ng
+> > >   automatic cleanup by the kernel if the controlling userspace agent
+> > >   crashes or exits unexpectedly.
+> > >
+> > > - The first three KHO fixes from the previous series have been merged
+> > >   into Linus' tree.
+> > >
+> > > - Various bug fixes and refactorings, including correcting memory
+> > >   unpreservation logic during a kho_abort() sequence.
+> > >
+> > > - Addressing all comments from reviewers.
+> > >
+> > > - Removing sysfs interface (/sys/kernel/liveupdate/state), the state
+> > >   can now be queried  only via ioctl() API.
+> > >
+> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+> > Hi all,
+> >
+> > Following up on yesterday's Hypervisor Live Update meeting, we
+> > discussed the requirements for the LUO to track dependencies,
+> > particularly for IOMMU preservation and other stateful file
+> > descriptors. This email summarizes the main design decisions and
+> > outcomes from that discussion.
+> >
+> > For context, the notes from the previous meeting can be found here:
+> > https://lore.kernel.org/all/365acb25-4b25-86a2-10b0-1df98703e287@google=
+.com
+> > The notes for yesterday's meeting are not yes available.
+> >
+> > The key outcomes are as follows:
+> >
+> > 1. User-Enforced Ordering
+> > -------------------------
+> > The responsibility for enforcing the correct order of operations will
+> > lie with the userspace agent. If fd_A is a dependency for fd_B,
+> > userspace must ensure that fd_A is preserved before fd_B. This same
+> > ordering must be honored during the restoration phase after the reboot
+> > (fd_A must be restored before fd_B). The kernel preserve the ordering.
+> >
+> > 2. Serialization in PRESERVE_FD
+> > -------------------------------
+> > To keep the global prepare() phase lightweight and predictable, the
+> > consensus was to shift the heavy serialization work into the
+> > PRESERVE_FD ioctl handler. This means that when userspace requests to
+> > preserve a file, the file handler should perform the bulk of the
+> > state-saving work immediately.
+> >
+> > The proposed sequence of operations reflects this shift:
+> >
+> > Shutdown Flow:
+> > fd_preserve() (heavy serialization) -> prepare() (lightweight final
+> > checks) -> Suspend VM -> reboot(KEXEC) -> freeze() (lightweight)
+> >
+> > Boot & Restore Flow:
+> > fd_restore() (lightweight object creation) -> Resume VM -> Heavy
+> > post-restore IOCTLs (e.g., hardware page table re-creation) ->
+> > finish() (lightweight cleanup)
+> >
+> > This decision primarily serves as a guideline for file handler
+> > implementations. For the LUO core, this implies minor API changes,
+> > such as renaming can_preserve() to a more active preserve() and adding
+> > a corresponding unpreserve() callback to be called during
+> > UNPRESERVE_FD.
+> >
+> > 3. FD Data Query API
+> > --------------------
+> > We identified the need for a kernel API to allow subsystems to query
+> > preserved FD data during the boot process, before userspace has
+> > initiated the restore.
+> >
+> > The proposed API would allow a file handler to retrieve a list of all
+> > its preserved FDs, including their session names, tokens, and the
+> > private data payload.
+> >
+> > Proposed Data Structure:
+> >
+> > struct liveupdate_fd {
+> >         char *session; /* session name */
+> >         u64 token; /* Preserved FD token */
+> >         u64 data; /* Private preserved data */
+> > };
+> >
+> > Proposed Function:
+> > liveupdate_fd_data_query(struct liveupdate_file_handler *h,
+> >                          struct liveupdate_fd *fds, long *count);
 >
-> Add test cases for the validation checks in svm_set_nested_state(), and
-> allow the test to run with SVM as well as VMX.
->
-> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-> ---
-> ...
-> +       /* If EFER.SVME is clear, GIF must be set and guest mode is disal=
-lowed */
+> Now that you are adding the "File-Lifecycle-Bound Global State", I was
+> wondering if this session data query mechanism is still necessary. It
+> seems that any preserved state a file handler needs to restore during
+> boot could be fetched using the Global data support instead. For
+> example, I don't think session information will be needed to restore
+> iommu domains during boot (iommu init), but even if some other file
+> handler needs it then it can keep this info in global data. I
+> discussed this briefly with Pasha today, but wanted to raise it here
+> as well.
 
-The GIF constraint is not architected. See
-https://lore.kernel.org/kvm/20251009223153.3344555-2-jmattson@google.com/.
+I agree, the query API is ugly and indeed not needed with the FLB
+Global State. The biggest problem with the query API is that the
+caller must somehow know how to interpret the preserved file-handler
+data before the struct file is reconstructed. This is problematic;
+there should only be one place that knows how to store and interpret
+the data, not multiple.
+
+It looks like the combination of an enforced ordering:
+Preservation: A->B->C->D
+Un-preservation: D->C->B->A
+Retrieval: A->B->C->D
+
+and the FLB Global State (where data is automatically created and
+destroyed when a particular file type participates in a live update)
+solves the need for this query mechanism. For example, the IOMMU
+driver/core can add its data only when an iommufd is preserved and add
+more data as more iommufds are added. The preserved data is also
+automatically removed once the live update is finished or canceled.
+
+Pasha
 
