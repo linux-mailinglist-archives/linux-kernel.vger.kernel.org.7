@@ -1,148 +1,117 @@
-Return-Path: <linux-kernel+bounces-847232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14E6BBCA519
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:05:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CF6FBCA525
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:05:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B5DF5353BF6
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:05:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE6BC1A61AEA
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492B8237A4F;
-	Thu,  9 Oct 2025 17:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B4B23A9BE;
+	Thu,  9 Oct 2025 17:05:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kEa/QA8O"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YSDSAwKi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA21225397;
-	Thu,  9 Oct 2025 17:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39E2235045;
+	Thu,  9 Oct 2025 17:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760029501; cv=none; b=ZShwPKWKzTjwejIUepog6gDBKbJXORJcoiFTgkxheEtYZ/fkI4RLYZJnZ6E6uNrgY6dQQreRMfoZjDW8XJqvR9P5To4EuoGQGuZZM7V9fL+VhTJYX6iEn7KE7gOROMQj8n08COjRRwCDKDnkp4763EP5k5uuMVve2uCFejE59JU=
+	t=1760029523; cv=none; b=gZTdeC1+pG8EVb9AUfwU1/VqQ/MDRFgy1vp/W4g6XyrQnizpdf5rapqskAc4p0Aj7Hd7ID80Jq5hItztD2vJYtUtMbDEqmzJQFRp5GZ0CRiDD+mmlEZX5XC1gZNqSszeWw/76YLTouQxlHQvDvGZdqonN2THMQeBF5+Qsh9lSME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760029501; c=relaxed/simple;
-	bh=XwfqM5QHQpVM8Kdpu0a6NtJ56tZ8bqhomvImo9fS3uk=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=k9ajj3yGrANAQKzkGhyvSZ06smVNVWX1frD4gd7Fsh2SESlL2UeRoYygT/l0u7gk1D52F22Kr1W89Dk7gyeTJ0LXnz8IOeURd+yxFZTMmsx3Uq1e4Q+9wRB274s8CgGoEpSDg3TlKDwx8/rcaJt7HQ0C+6rxBw0GHqIVuvAyRKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kEa/QA8O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FC1EC4CEE7;
-	Thu,  9 Oct 2025 17:05:01 +0000 (UTC)
+	s=arc-20240116; t=1760029523; c=relaxed/simple;
+	bh=K/920CR2Ytam1wn7N7JUroePPcHUf353y47OxV5zx1Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rpKwv3g0I2tNy8ClmF5gvkNOExP/Ay8pZQvZzZLAr1QLALvetzU0eVyxiAA6VXzEWqZxtIjMuAjLr63C9wYmKMxjPFZYWdt5jBTCq2aEw57r2BohuXPRjSbNp7UGhJqn0c3mmQE9i8Z0HXyz3w0UCodJTsudwkgetRp6cBJUqvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YSDSAwKi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E870BC4CEE7;
+	Thu,  9 Oct 2025 17:05:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760029501;
-	bh=XwfqM5QHQpVM8Kdpu0a6NtJ56tZ8bqhomvImo9fS3uk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kEa/QA8OAig3Qw7EDRe8tDHK9DTEyg9YRFanDbVu/TifAOZdR70nR5TSrWZb0yRMC
-	 YCfwq5nRbbVc7M+8RLJfoi+QYfucS2KZWhxB9qYSBrqKKiU+MMhjzSeyOSfy3P+/oD
-	 72zaq7VQXxsvKYtTmLbcxhDoq+zMKrqXe+3sAFmgbcnynw4CBbtm4XpekMTS4ihHcT
-	 y/XUz7p/FQ65RZ0sgla5djkU85Kd7xPiZpoTfLU34LAkowIUMCQdBur6o03hs/Vwzn
-	 63AjUiee3ZdYEPlz0NGC++Bf9VGPYmMSWbbrO0ISrGJxMkyib9GUjqrwIDf2aq6FRJ
-	 8rCzo7koEks7w==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1v6u4Z-0000000Chge-0GNv;
-	Thu, 09 Oct 2025 17:04:59 +0000
-Date: Thu, 09 Oct 2025 18:04:58 +0100
-Message-ID: <86o6qgxayt.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	linux-tegra@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: IRQ thread timeouts and affinity
-In-Reply-To: <loeliplxuvek4nh4plt4hup3ibqorpiv4eljiiwltgmyqa4nki@xpzymugslcvf>
-References: <j7ikmaazu6hjzsagqqk4o4nnxl5wupsmpcaruoyytsn2ogolyx@mtmhqrkm4gbv>
-	<86qzvcxi3j.wl-maz@kernel.org>
-	<loeliplxuvek4nh4plt4hup3ibqorpiv4eljiiwltgmyqa4nki@xpzymugslcvf>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1760029522;
+	bh=K/920CR2Ytam1wn7N7JUroePPcHUf353y47OxV5zx1Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YSDSAwKixJwAcuHpinVRh5i8UjuDftvpwmX8U+4+hsr3pjU0Kbr04cRyidWCCnkKM
+	 0Zjz/FeI+Ghya5Hv1eFFXoyr2eNZIcuCC1Rgs9j5NzmzqKQcRH0rNdrDwWL8L4FPlc
+	 12dmobDe6OngdQ5rB86UsySfUB3ZwpGiX9MhYMHlO2DlkXCuNys8WYxZbOrZU7DXq6
+	 2ORjBMXNo7aZziGRzAzMsbtE7rQNSvZXAcexQzPtX4GsFPF+oPa4dnSVExXvVg4EGk
+	 1YAqe20JovGVMdObbjqS2teB6rD0y/UbPgM7xVj0Q3ahKEZSDk64uxCety8RxbxE6n
+	 ipKVeFwUr/wpw==
+Date: Thu, 9 Oct 2025 19:05:20 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Elle Rhumsaa <elle@weathered-steel.dev>
+Cc: Michal Wilczynski <m.wilczynski@samsung.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Benno Lossin <lossin@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Drew Fustini <fustini@kernel.org>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v15 3/7] rust: pwm: Add complete abstraction layer
+Message-ID: <pxwzgjl4men4ia2jfky6i4pcpzmlxnuorzltfsurrosz27atbz@n2x7bt77nd5n>
+References: <20250930-rust-next-pwm-working-fan-for-sending-v15-0-5661c3090877@samsung.com>
+ <CGME20250930122733eucas1p1017471af8564a40f60be74c5ae50bbc4@eucas1p1.samsung.com>
+ <20250930-rust-next-pwm-working-fan-for-sending-v15-3-5661c3090877@samsung.com>
+ <aN2Vrf97-uCR41x9@archiso>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: thierry.reding@gmail.com, tglx@linutronix.de, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5mhwlegpqwr4uy3k"
+Content-Disposition: inline
+In-Reply-To: <aN2Vrf97-uCR41x9@archiso>
 
-On Thu, 09 Oct 2025 17:05:15 +0100,
-Thierry Reding <thierry.reding@gmail.com> wrote:
-> 
-> [1  <text/plain; us-ascii (quoted-printable)>]
-> On Thu, Oct 09, 2025 at 03:30:56PM +0100, Marc Zyngier wrote:
-> > Hi Thierry,
-> > 
-> > On Thu, 09 Oct 2025 12:38:55 +0100,
-> > Thierry Reding <thierry.reding@gmail.com> wrote:
-> > > 
-> > > Which brings me to the actual question: what is the right way to solve
-> > > this? I had, maybe naively, assumed that the default CPU affinity, which
-> > > includes all available CPUs, would be sufficient to have interrupts
-> > > balanced across all of those CPUs, but that doesn't appear to be the
-> > > case. At least not with the GIC (v3) driver which selects one CPU (CPU 0
-> > > in this particular case) from the affinity mask to set the "effective
-> > > affinity", which then dictates where IRQs are handled and where the
-> > > corresponding IRQ thread function is run.
-> > 
-> > There's a (GIC-specific) answer to that, and that's the "1 of N"
-> > distribution model. The problem is that it is a massive headache (it
-> > completely breaks with per-CPU context).
-> 
-> Heh, that started out as a very promising first paragraph but turned
-> ugly very quickly... =)
-> 
-> > We could try and hack this in somehow, but defining a reasonable API
-> > is complicated. The set of CPUs receiving 1:N interrupts is a *global*
-> > set, which means you cannot have one interrupt targeting CPUs 0-1, and
-> > another targeting CPUs 2-3. You can only have a single set for all 1:N
-> > interrupts. How would you define such a set in a platform agnostic
-> > manner so that a random driver could use this? I definitely don't want
-> > to have a GIC-specific API.
-> 
-> I see. I've been thinking that maybe the only way to solve this is using
-> some sort of policy. A very simple policy might be: use CPU 0 as the
-> "default" interrupt (much like it is now) because like you said there
-> might be assumptions built-in that break when the interrupt is scheduled
-> elsewhere. But then let individual drivers opt into the 1:N set, which
-> would perhaps span all available CPUs but the first one. From an API PoV
-> this would just be a flag that's passed to request_irq() (or one of its
-> derivatives).
 
-The $10k question is how do you pick the victim CPUs? I can't see how
-to do it in a reasonable way unless we decide that interrupts that
-have an affinity matching cpu_possible_mask are 1:N. And then we're
-left with wondering what to do about CPU hotplug.
+--5mhwlegpqwr4uy3k
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v15 3/7] rust: pwm: Add complete abstraction layer
+MIME-Version: 1.0
 
-> 
-> > Overall, there is quite a lot of work to be done in this space: the
-> > machine I'm typing this from doesn't have affinity control *at
-> > all*. Any interrupt can target any CPU,
-> 
-> Well, that actually sounds pretty nice for the use-case that we have...
-> 
-> >                                         and if Linux doesn't expect
-> > that, tough.
-> 
-> ... but yeah, it may also break things.
+Hello Elle,
 
-Yeah. With GICv3, only SPIs can be 1:N, but on this (fruity) box, even
-MSIs can be arbitrarily moved from one CPU to another. This is a
-ticking bomb.
+On Wed, Oct 01, 2025 at 08:57:17PM +0000, Elle Rhumsaa wrote:
+> On Tue, Sep 30, 2025 at 02:20:34PM +0200, Michal Wilczynski wrote:
+> > [... 700+ lines trimmed]
+>=20
+> Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
 
-I'll see if I can squeeze out some time to look into this -- no
-promises though.
+Can you please trim the quoted part when you reply to only contain the
+relevant part? Having to scroll several pages to see your one-line reply
+is not a good use of my time. Multiply that by the number of recipients
+of your mail.
 
-	M.
+Thanks
+Uwe
 
--- 
-Without deviation from the norm, progress is not possible.
+--5mhwlegpqwr4uy3k
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjn600ACgkQj4D7WH0S
+/k5XeAgAnu0TfZoOsdkntucLzQ0zg0HTTAqaoe7N7MdLgsQQHxRpQxck6cJb3Vw+
+1J8jo8DQzCi+lwytWM5iubVukxGFCxFV5h4Qp0bW7/eYCK/fTscZ7g7uuKO+GS0D
+7s0Lr6MOsfe1MjqHyqAMKZYHWQjwZresPWVJCpyuInAhCoV60f1SSEoWsrwkpdZX
+CFREtKf1Gn5yYj0cNQHl8ubNIZ3uW4tlbvj93wZjztMXQROG/8tvJ29vcUTdSqDR
+UbF+xPvIu1hVRAtLjGwm3PBioLnwB01cV0g427s3pDSwNRUrsEC4flnJAqKa9r1g
+PvYN7XNxSwfgteGrqDjFVby3Ap8cBw==
+=Y2eC
+-----END PGP SIGNATURE-----
+
+--5mhwlegpqwr4uy3k--
 
