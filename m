@@ -1,175 +1,296 @@
-Return-Path: <linux-kernel+bounces-846879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56549BC9507
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:32:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 647BCBC9528
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:34:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 37B01341379
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:32:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17C913A5B4E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C8A8528E;
-	Thu,  9 Oct 2025 13:32:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36CCF2E093A;
+	Thu,  9 Oct 2025 13:34:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="ONQ0BY3k"
-Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="nNQHAAbT"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7E434BA2F;
-	Thu,  9 Oct 2025 13:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C40450F2
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760016750; cv=none; b=t+G1XDrRiSpWbhkvJQCYgfFDSvrnuaIUTOYk5ukB/cg5hZdnaggl4QStku0hVhr3eKmFaUkk7cO9KEFG6hXyvGS1CX7PAji+YPjHNVGBLZwkeYcv3snBBbsfVRr1xBOUGSdybogxnJ6tkG8sUrQiS239oQPUnEKMwe/99XRukQg=
+	t=1760016878; cv=none; b=k9fGLXSWniBK+D4hf6ojMv90eCVHTIcIgtDLNWcZHyiX8AlPtXxjjuAzbycd5j8FmXnvbiE7R2Sb/Zums/5MWFRLy4cFWtKcpEWfAtJfI8a3dYzmbyDG4oK+jP34umQU1ZJQoWDcY47/47XPX/aanqvZU7d9FuN+jEg0MqVks6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760016750; c=relaxed/simple;
-	bh=0MnHaz2jRsiG4OST2/i1Xd92d3R7OcfJuRzdlOCS8pk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W5rUI9uqunElHmXPcDVXW1HaF+9l7/XsTD/p+quK5lOzeahxN2IJ3TrmP771EnirsDX7RaPg3dMVj+xttfDXwvbldaeolPJh3Av0ZUubpf/Pscp4dTavBJ3mYHXUUEUFBh5LXHlD585aAZ4qPUXS35aoF+K+TrLrQexxnPtW/zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=ONQ0BY3k; arc=none smtp.client-ip=94.112.25.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
-Received: from [10.59.7.204] (unknown [193.86.240.59])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id B1DEF5340E37;
-	Thu, 09 Oct 2025 15:32:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1760016743;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ATlpDgDGus44HKVxZig/RhiWvD1mhFf+WkmRvNApL08=;
-	b=ONQ0BY3kzvaUb5sYWGg4E5xkhvvM+Y1M+CvkNEkwmb1gzBMXwHFEeWv/0Sq4IKobsrVdSR
-	ZQksu/gEr5zzwi67IJYqI6/LduEgo0imRysktnlVSp8PNOhknc/vyBGSoRvNs/hnTlut4D
-	1VIF8i0YeVRVxajfWVGNKE2DWok3VLY=
-Message-ID: <75011ead-8bd8-4939-ae7b-1c127eba8aa8@ixit.cz>
-Date: Thu, 9 Oct 2025 15:32:22 +0200
+	s=arc-20240116; t=1760016878; c=relaxed/simple;
+	bh=lLCmM9foRlsu43SQNNjwJvzcXcQ42xByO22XUF+i63A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DOpopZN6DjgiX3M8/giJw1LylUoAS2hAJ50c3pozEydsmrDsQIaRnalxhxTBwit/mpnHFPalQVNileZMZ+CSmwVPF6swevGS/q2giwYgv3egHX25hbIpjs1g0SOCzNjjVeE+rS6AR6aftYjMWWNoWf2GuSC4l4y9GVAWqwipLKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=nNQHAAbT; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-373ac916b35so16348611fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 06:34:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1760016874; x=1760621674; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1dSErVy5gy3iTqfs+Fv+uBfQPNdt1PnHnP4LjyzMeiA=;
+        b=nNQHAAbTzcnDRdpgBFABbvUftF3azzU+g/NQDvWd2xwtfLIK/S9Orx5I6Y5TaS8sHz
+         b535J7ANx/wyEYdtu8liqVimuSf0Yr3QepNzDNW4Us29sspEf3bfnyP2t0OrVjR5IrYq
+         CMqVQfE6p+GvMqSyIi42DoHeAwt5Ou5FZlWpE4l8imv6IlHFgMEQfdFRUVOmQ4PEyNHO
+         i8yeahV7HRT5h6ubbCLxXKcktteAWiW9HcqJekcIhvuHTYUdLUETkUsjovlf5OEMAxFU
+         o4QvOaCKRmckIHN+nT4fFaVJdmpQRJeMaG/f2PzJMvcHWF/5k75/bPIVxHIH+VbKPGf+
+         7gBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760016874; x=1760621674;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1dSErVy5gy3iTqfs+Fv+uBfQPNdt1PnHnP4LjyzMeiA=;
+        b=Cj8kx35Ux5VfW3tTzxlvy2k3YtScRwTU48hGMEnar/4wWLHQcbyVYg6Xvq4+x++iBX
+         HmfK0KCMauwTi7veOlgry6rlE2VCjT4A7MW9zwSQpm1UOxKdw3OHJVUwO4k4RhauOcE3
+         76Qx3Qgu50d3qQ6wRHs3+E/sb8wzDUt30DooiYdiJGdGEqZEXYlVSRVaB5htu+JP2rAK
+         JoS+JifH5IF3jR2q/9UER543QvCegnSkYKzIMCqByfOXf3pk5Bh4yHXB3qWjbs3fJ81Y
+         dGtKABkAzeFzEh2PhFk0p+L2wneC7oBZ8gkOQ3YTBL5GPx7RRYOCs7Twvx7L9OYR7PCG
+         PBPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX0C6caYWC49Gr/G1XOKcxeut9yBqKZ797a+JVLg8R7Qilp7+2U55v7TCG2N4rVZLC2W1c0L5E2JkNfUMA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/45REo4aWsHosDFasb/dRMOaP2TOXhnRNokBaXrWELoCKJsnh
+	Wz+/tnGAPbwek6wds3orzHLXNkW0euBeBMsmCoZxOOuX5xtvAM4SdakcnTueOYSEu8ZPCwaLUXw
+	JFuL3g0N459XxU0f5t+lrX2oHaqSIEPdmQeaZhUy29Q==
+X-Gm-Gg: ASbGncuPeR1ZJeKA6THUeuHXNpct9YlnpQaL5xKBWSIbwb2QyXB3n1jXHG4AV3tFaga
+	fX4VvVB1QECxbhiOhltKoBTOampPfcQr+6e5fRV96MahJnOlXw1huHGnkl4UbW3LYrksT0sQwvO
+	A+beeDinv0c7bToYSa5GERh+ZQvHd+1aX2csBdeSuKoYGBZz/7I+YQQ5Dw7cG11PNrd7nN2cSjg
+	Ab+4VYzUxhZMgTATtK0shFZ2+TAllzG5Pt2ZI/k/w==
+X-Google-Smtp-Source: AGHT+IHWWJUMwgLO59lk5lakKRaZ+/wVoeJhFN8a16uOzpMmsGJAl1afZO0Y0UWvv4eDfAIFgKUZh54hbk7hVJVmV4E=
+X-Received: by 2002:a05:6512:23a8:b0:571:d258:5639 with SMTP id
+ 2adb3069b0e04-5905e398890mr3351104e87.25.1760016874419; Thu, 09 Oct 2025
+ 06:34:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/7] dt-bindings: panel: Add Samsung S6E3FC2X01 DDIC
- with panel
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thierry Reding
- <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Casey Connolly <casey.connolly@linaro.org>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, phone-devel@vger.kernel.org
-References: <20251008-s6e3fc2x01-v2-0-21eca1d5c289@ixit.cz>
- <20251008-s6e3fc2x01-v2-1-21eca1d5c289@ixit.cz>
- <7askbazrkbny5jlw6cpxcpjyw5nyiozmksoyj5b5momcc7w5hn@r3x6kddatf3u>
- <74893f76-1b7d-4cfb-ba7a-9fd64427762b@oss.qualcomm.com>
- <bmsxmwfdwx7wlmngaqpvz7c2nudcoukspkxgq6zqh2mdlolfxg@fsdbafotp5q2>
-Content-Language: en-US
-From: David Heidelberg <david@ixit.cz>
-Autocrypt: addr=david@ixit.cz; keydata=
- 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
-In-Reply-To: <bmsxmwfdwx7wlmngaqpvz7c2nudcoukspkxgq6zqh2mdlolfxg@fsdbafotp5q2>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251002060732.100213-1-apatel@ventanamicro.com>
+ <20251002060732.100213-2-apatel@ventanamicro.com> <20251002192506.GA236729-robh@kernel.org>
+In-Reply-To: <20251002192506.GA236729-robh@kernel.org>
+From: Anup Patel <apatel@ventanamicro.com>
+Date: Thu, 9 Oct 2025 19:04:22 +0530
+X-Gm-Features: AS18NWACKtl7ERcN8H5MlfK2QBMUHI9VMMe2RI6b1AOyUjn27L1IFJvaV0ijKkc
+Message-ID: <CAK9=C2WO5vNs0Y_w8Pk9WWMeYe8Kxhaow5b_QxQWfobL5mrZoQ@mail.gmail.com>
+Subject: Re: [PATCH 01/11] dt-bindings: Add RISC-V trace component bindings
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Greg KH <gregkh@linuxfoundation.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Ian Rogers <irogers@google.com>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Liang Kan <kan.liang@linux.intel.com>, 
+	Mayuresh Chitale <mchitale@gmail.com>, Anup Patel <anup@brainfault.org>, 
+	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
+	Sunil V L <sunilvl@ventanamicro.com>, linux-riscv@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Rob,
 
+Apologies for the delayed response ...
 
-On 09/10/2025 15:21, Dmitry Baryshkov wrote:
-> On Thu, Oct 09, 2025 at 10:51:31AM +0200, Konrad Dybcio wrote:
->> On 10/8/25 8:57 PM, Dmitry Baryshkov wrote:
->>> On Wed, Oct 08, 2025 at 04:05:28PM +0200, David Heidelberg via B4 Relay wrote:
->>>> From: David Heidelberg <david@ixit.cz>
->>>>
->>>> Basic description for S6E3FC2X01 DDIC with attached panel AMS641RW.
->>>>
->>>> Samsung AMS641RW is 6.41 inch, 1080x2340 pixels, 19.5:9 ratio panel
->>>>
->>>> Signed-off-by: David Heidelberg <david@ixit.cz>
->>>> ---
->>>>   .../bindings/display/panel/samsung,s6e3fc2x01.yaml | 78 ++++++++++++++++++++++
->>>>   MAINTAINERS                                        |  5 ++
->>>>   2 files changed, 83 insertions(+)
->>>>
->>>
->>> Please also describe, why it's not enough to use defined compatible,
->>> samsung,s6e3fc2x01. Why do we need a separate schema and can't use the
->>> panel-simple-dsi.yaml
->>
->> panel-simple works for 'dumb' (perhaps a harsh word for 'made with
->> just the in-spec DCS commands in mind') panels, but Samsungs are
->> widely known to require a ton of vendor magic
-> 
-> The question is about the _schema_. I think it's fine to have a driver
-> for a panel covered by panel-simple-dsi.yaml.
+On Fri, Oct 3, 2025 at 12:55=E2=80=AFAM Rob Herring <robh@kernel.org> wrote=
+:
+>
+> On Thu, Oct 02, 2025 at 11:37:22AM +0530, Anup Patel wrote:
+> > Add device tree bindings for the memory mapped RISC-V trace components
+> > which support both the RISC-V efficient trace (E-trace) protocol and
+> > the RISC-V Nexus-based trace (N-trace) protocol.
+> >
+> > The RISC-V trace components are defined by the RISC-V trace control
+> > interface specification.
+> >
+> > Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> > ---
+> >  .../bindings/riscv/riscv,trace-component.yaml | 110 ++++++++++++++++++
+> >  1 file changed, 110 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/riscv/riscv,trace=
+-component.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/riscv/riscv,trace-compon=
+ent.yaml b/Documentation/devicetree/bindings/riscv/riscv,trace-component.ya=
+ml
+> > new file mode 100644
+> > index 000000000000..78a70fe04dfe
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/riscv/riscv,trace-component.yam=
+l
+> > @@ -0,0 +1,110 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/riscv/riscv,trace-component.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: RISC-V Trace Component
+> > +
+> > +maintainers:
+> > +  - Anup Patel <anup@brainfault.org>
+> > +
+> > +description:
+> > +  The RISC-V trace control interface specification standard memory map=
+ped
+> > +  components (or devices) which support both the RISC-V efficient trac=
+e
+> > +  (E-trace) protocol and the RISC-V Nexus-based trace (N-trace) protoc=
+ol.
+> > +  The RISC-V trace components have implementation specific directed ac=
+yclic
+> > +  graph style interdependency where output of one component serves as =
+input
+> > +  to another component and certain components (such as funnel) can tak=
+e inputs
+> > +  from multiple components.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    items:
+> > +      - enum:
+> > +          - qemu,trace-component
+> > +      - const: riscv,trace-component
+>
+> Given the generic-ness of these names, I'm assuming the exact type of
+> component is discoverable. I don't like to assume things in bindings, so
+> spell that out.
+>
+> Is the implementer discoverable? If so, you could omit the 1st
+> compatible.
 
-see display/panel/samsung,amoled-mipi-dsi.yaml
-the OLED display don't fit well, but I wouldn't mind consolidating at 
-some point, but since we know very little (no datasheets), it's hard to 
-do for now. Maybe in the future when there will be more panels schemas, 
-we can find a way to consolidate into one big?
+The component type and component version is discoverable through
+read-only MMIO registers but the implementer of the component
+needs to be inferred using implementation specific compatible string.
+I will add some text along these lines in the above description.
 
-> 
->>
->> Perhaps the original change was made with an "oh it just works
->> surely there's no drawbacks possible" attitude, as the panel
->> was left initialized by the bootloader
-> 
+>
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  cpu:
+>
+> 'cpus' is the more standard property.
 
--- 
-David Heidelberg
+Okay, I will update.
 
+>
+> > +    description:
+> > +      phandle to the cpu to which the RISC-V trace component is bound.
+> > +    $ref: /schemas/types.yaml#/definitions/phandle
+>
+> which already has a type. So just 'maxItems: 1' here.
+
+Okay, I will update.
+
+>
+> > +
+> > +  in-ports:
+> > +    $ref: /schemas/graph.yaml#/properties/ports
+> > +    patternProperties:
+> > +      '^port(@[0-7])?$':
+> > +        description: Input connections from RISC-V trace component
+> > +        $ref: /schemas/graph.yaml#/properties/port
+>
+> If the N ports are N of the same data (like a mux), then fine. If each
+> port is different, then you need to define what each port is.
+
+Yes, the data (aka trace packets) is the same for all input trace ports
+even in-case of funnel (aka mux). Same thing also applies to the
+output ports.
+
+>
+> > +
+> > +  out-ports:
+> > +    $ref: /schemas/graph.yaml#/properties/ports
+> > +    patternProperties:
+> > +      '^port(@[0-7])?$':
+> > +        description: Output connections from RISC-V trace component
+> > +        $ref: /schemas/graph.yaml#/properties/port
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +
+> > +unevaluatedProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    // Example 1 (Per-hart encoder and ramsink components):
+> > +
+> > +    encoder@c000000 {
+>
+> Perhaps it is time to standardize the node names here. Perhaps 'trace'.
+
+It is better to not fix the node names because this allows users
+to infer type of component from node name hence more human
+readable.
+
+>
+> > +      compatible =3D "qemu,trace-component", "riscv,trace-component";
+> > +      reg =3D <0xc000000 0x1000>;
+> > +      cpu =3D <&CPU0>;
+> > +      out-ports {
+> > +        port {
+> > +          CPU0_ENCODER_OUTPUT: endpoint {
+> > +            remote-endpoint =3D <&CPU0_RAMSINK_INPUT>;
+> > +          };
+> > +        };
+> > +      };
+> > +    };
+> > +
+> > +    ramsink@c001000 {
+> > +      compatible =3D "qemu,trace-component", "riscv,trace-component";
+> > +      reg =3D <0xc001000 0x1000>;
+> > +      cpu =3D <&CPU0>;
+> > +      in-ports {
+> > +        port {
+> > +          CPU0_RAMSINK_INPUT: endpoint {
+> > +          };
+> > +        };
+> > +      };
+> > +    };
+> > +
+> > +    encoder@c002000 {
+> > +      compatible =3D "qemu,trace-component", "riscv,trace-component";
+> > +      reg =3D <0xc002000 0x1000>;
+> > +      cpu =3D <&CPU1>;
+> > +      out-ports {
+> > +        port {
+> > +          CPU1_ENCODER_OUTPUT: endpoint {
+> > +            remote-endpoint =3D <&CPU1_RAMSINK_INPUT>;
+> > +          };
+> > +        };
+> > +      };
+> > +    };
+> > +
+> > +    ramsink@c003000 {
+> > +      compatible =3D "qemu,trace-component", "riscv,trace-component";
+> > +      reg =3D <0xc003000 0x1000>;
+> > +      cpu =3D <&CPU1>;
+> > +      in-ports {
+> > +        port {
+> > +          CPU1_RAMSINK_INPUT: endpoint {
+> > +          };
+> > +        };
+> > +      };
+> > +    };
+> > +
+> > +...
+> > --
+> > 2.43.0
+> >
+
+Regards,
+Anup
 
