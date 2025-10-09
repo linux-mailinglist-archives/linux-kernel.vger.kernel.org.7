@@ -1,125 +1,140 @@
-Return-Path: <linux-kernel+bounces-846451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34168BC80BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:29:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3560BBC80C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:29:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D55BD352A24
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:29:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 566B91A609EB
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 788692D0C64;
-	Thu,  9 Oct 2025 08:29:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D8E2D0C6C;
+	Thu,  9 Oct 2025 08:29:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oznxPWpA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ABox86TD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF0852737F3;
-	Thu,  9 Oct 2025 08:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678ED2C0266;
+	Thu,  9 Oct 2025 08:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759998563; cv=none; b=RhzoVp/ER+MAihVsBD54eZBG3nReGbn1NxRiNuN49mo7z8I+uxrQCAZ9Y2tWc6u2bXCwasIxo6XejXAl88N7V3fXtzkwaQkeYNB0Q4hYeQ2WZeBtWc+tq5ebmEkIwi/mGN4hVW+612exBEDEsz2asXszKGfj6y3AwMWFMqLvWAs=
+	t=1759998578; cv=none; b=DE3Jez3AXuR3zZ5wBPzvnULEWt64x6wIhC0hzElS6LY6sOKPxZKUAfXZyGqWDSItzrXHwb67WqcQqeNqmOCv8hyTzPNTLHpzdmd5UGQ0g0wS2q2WN5N8My0xeQ8QI8P0YDp8p/34OtzRZx+eZKPF2Hm1/YSqE1FB40DcFE7fOyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759998563; c=relaxed/simple;
-	bh=dfbS6gclSay+GmZJEufMCj7CjXaUpPV+sEDoyM5WKWA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hHwL37f/nZ5KrzpWv/tOvDQC+mRcYmLce4ZFkAXb93OnFviJzY1guaW1SWlENo3x4LmS//PCCKneNLrlGMZCjB5keOoLPZR+D9bMFkvstk86m4b1piC8ER7hFj04qOptXS1rDWMkHUS1U/fFRC5LAkSOLxsApI6MDLAI+/k54Oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oznxPWpA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4697FC4CEE7;
-	Thu,  9 Oct 2025 08:29:22 +0000 (UTC)
+	s=arc-20240116; t=1759998578; c=relaxed/simple;
+	bh=URlIJX804vP1BA39jpUQ3rMWYv9zd5Mr8AdpedIgi8Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZhNVjTi4ByRHh/bUl9fTTiHPU2vlGvGNmzVkHOmM2oG33+NsqbgHB2kMcul1Urt9WIg2lLUy1IJnCqM26niYE4wavJ/lxMkJmBY4LoTl2+XdITccwRrE3IRGMLMyGF38/hDgts71TWkSncEjbb6xOrS6hPJNmgkcqPfQa7oUfrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ABox86TD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EEA1C4CEE7;
+	Thu,  9 Oct 2025 08:29:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759998563;
-	bh=dfbS6gclSay+GmZJEufMCj7CjXaUpPV+sEDoyM5WKWA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oznxPWpA8GfoeEWdHdsS71368aC0Ii/dOq/X1NUa3jbvIuJqM2wnpZiEhoQD6e8br
-	 Nsk2MaakEqGTj5smMVvAmSqxM/HQ8rq2VCoyOh6ubsSpuN7wC1rNrvayGzRChsGcc2
-	 dPLhtF/Wy/TmHkzVGXwQuLkAvoIIl1Lot3fTq5WEH4Wa8yKAVCg1BevEKT/x2CFnEU
-	 LqLSbqTO5RUXObECN+1YbqQ8B3lTXdUlxlo9BinqG/M1xa3LSA4+De2RMg321J5WMe
-	 IkRXZpA40z4bQnjKdzooh673TUD2B5ZAE1wgStg4kVWYP/1AtQJujPxOMCPmuZhsfX
-	 xkEzd6bNvT31w==
-Date: Thu, 9 Oct 2025 10:29:19 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Lauri Tirkkonen <lauri@hacktheplanet.fi>
-Cc: Jiri Kosina <jikos@kernel.org>, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] HID: i2c-hid: patch Lenovo Yoga Slim 7x Keyboard rdesc
-Message-ID: <56l5tnplzap4mcqcridsavbtvbevhqd235m4m3h4ititj3j5p2@z6oy6wimoodv>
-References: <aOdLxAEYQpV2zp77@mail.hacktheplanet.fi>
- <lxtbtu5frygbw7qzfaelc63vgientm7d6oo7dt6jeassl3ttbh@f22h223wehbm>
- <aOdsqHznz1SJdadC@mail.hacktheplanet.fi>
+	s=k20201202; t=1759998578;
+	bh=URlIJX804vP1BA39jpUQ3rMWYv9zd5Mr8AdpedIgi8Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ABox86TDXC7cbj+ZKqAx2guINVBQbPWPrU9hEnWEjZawqdPu20Kx/snSBJGZkonqA
+	 iEXferrp9X8B83bTCVJWRyh3+fXrumJo3hC6vfMEUR+NNSDz7dd0qge9ljfmPZ7/02
+	 GiHT0rp253dwzPD0WnD8YtX2HcNUtJ+yfjPj2jJ3JAtHIQ4+qE5sPzfZs9vpo8PniC
+	 gFM3G3rOUVToopBYuxYmSQIjaKqPlFZpY92/EMbVHqoZ9fLpfpM/WaRUkMw3cwaNZ6
+	 g0T9HTWX+o4bCTHiF/fqY5/JH37/K2GXxK37As6jCEFbIxHd3QSPTyEdiw7Jzx84YJ
+	 6KSpDuMnjvEpQ==
+Message-ID: <9ae53c6d-613b-4a25-b672-88ffabfef4fa@kernel.org>
+Date: Thu, 9 Oct 2025 17:29:28 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aOdsqHznz1SJdadC@mail.hacktheplanet.fi>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] dt-bindings: interrupt-controller: add UltraRISC
+ DP1000 PLIC
+To: Lucas Zampieri <lzampier@redhat.com>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Cc: linux-riscv@lists.infradead.org, Charles Mirabile <cmirabil@redhat.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Samuel Holland <samuel.holland@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>
+References: <20251009082013.1331361-1-lzampier@redhat.com>
+ <20251009082013.1331361-3-lzampier@redhat.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251009082013.1331361-3-lzampier@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Oct 09 2025, Lauri Tirkkonen wrote:
-> Hi Benjamin,
+On 09/10/2025 17:20, Lucas Zampieri wrote:
+> From: Charles Mirabile <cmirabil@redhat.com>
 > 
-> On Thu, Oct 09 2025 09:38:50 +0200, Benjamin Tissoires wrote:
-> > > diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
-> > > index 63f46a2e5788..d78bd97ec24e 100644
-> > > --- a/drivers/hid/i2c-hid/i2c-hid-core.c
-> > > +++ b/drivers/hid/i2c-hid/i2c-hid-core.c
-> > 
-> > Why patching i2c-hid-core when this is clearly a logical bug, not a
-> > transport (I2C) bug?
-> > 
-> > I would rather see this fixup in hid-lenovo.c along with the other
-> > lenovo fixes.
+> Add a new compatible string for UltraRISC DP1000 PLIC.
 > 
-> I'm not exactly familiar with HID; please bear with me :) If
-> i2c-hid-core is not the correct place for this kind of thing, I can move
-> it, but I'm going to need some guidance on where the correct place is.
+> Signed-off-by: Charles Mirabile <cmirabil@redhat.com>
+> ---
+>  .../bindings/interrupt-controller/sifive,plic-1.0.0.yaml        | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> This device uses hid-over-i2c, not hid-lenovo; I've got
-> CONFIG_HID_LENOVO=m but the module is not even loaded. I don't see how
-> putting the fixup in a module that does not attach to the device could
-> work. So where should it go?
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
+> index 5b827bc24301..a419de50f5a8 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
+> @@ -74,6 +74,8 @@ properties:
+>                - sophgo,sg2044-plic
+>                - thead,th1520-plic
+>            - const: thead,c900-plic
+> +      - items:
 
-Well, the transport layer is i2c-hid, but the logical implementation is
-in hid-generic which leverages the hid core default implementation.
 
-In your case, you need to tell hid-lenovo to handle the device so we
-stick to nice and tidy approach with each HID driver handling it's own
-business.
+Missing SoC specific front compatible, me thinks.
 
-Adding a line like the following will bind the keyboard part of the
-device to hid-lenovo in lenovo_devices[]:
-	{ HID_DEVICE(BUS_I2C, HID_GROUP_GENERIC,
-		     USB_VENDOR_ID_LENOVO, USB_DEVICE_ID_LENOVO_YOGA_SLIM_7X) },
 
-If you don't use hid-multitouch on the same device you need a
-HID_I2C_DEVICE() macro instead.
-
-Once this is in, hid-lenovo.ko will bind to the device, and then we can
-start fixing the report descriptor.
-
-> 
-> 	[  796.926931] input: hid-over-i2c 048D:8987 Keyboard as /devices/platform/soc@0/bc0000.geniqup/b80000.i2c/i2c-1/1-003a/0018:048D:8987.000F/input/input36
-> 
-> As a side note: apparently there is at least one other device in
-> existence with a similar error in the report descriptor, which works
-> fine on Windows:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=652f3d00de523a17b0cebe7b90debccf13aa8c31
-
-Well, Windows is known for horrible hacks in their own generic layer,
-but trying to mimmic them is sometimes harder than it looks :(
-Especially because we also handle non Windows devices, and we might
-break them while mimmicing Windows while our HID implementation is
-currently rather "clean".
-
-Cheers,
-Benjamin
-
-> 
-> -- 
-> Lauri Tirkkonen | lotheac @ IRCnet
+Best regards,
+Krzysztof
 
