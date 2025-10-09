@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-846660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74F64BC8AA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:01:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6266BBC8AAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:01:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 63E374F36CF
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:01:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45531188B896
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF3E2EACF3;
-	Thu,  9 Oct 2025 10:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F152EAB70;
+	Thu,  9 Oct 2025 10:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VdWYKoln"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LdyPi9xM"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6F82EA736
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 10:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 575D22EAD1B
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 10:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760007501; cv=none; b=F1+4Kn7Rn1A/3G3VelzqsVRZfcv33mpUwDkhx8L86/A55Vd/K4v8Yz7grH62c3HF32xPqq7pAvbvoLJCdVr8qdsBn8x5wy7/kAnBxKouNyr8ZIGbEZ37e0klOK48xQqRuJ63LsoHUx8G+JuwosHCJ21jE2htcFhLkI/ytBJTZ3E=
+	t=1760007506; cv=none; b=NUwG036jIEENp3F2qOoIZ8d4oBQvxlDSEzXnr37lFTmcUqIulm88C10ZnmsQ2tF6Y6mU9xRTIarDoqtgc1LufG3FmbHlj8arr6N7qzKTLNwj5lNytMyeC+f0UJUPxDTnSIKw4PanjHIBFuaN1HuFsq0wGB1SdxKumdv5pz5K+Mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760007501; c=relaxed/simple;
-	bh=4AK69KqpFrfryQfFlxiqdszD58BNzBtZp9+AZ2x2szQ=;
+	s=arc-20240116; t=1760007506; c=relaxed/simple;
+	bh=WUmvecag/bRJ9LbEABvkcHBuLoUzQ3sY4/EKuJYpRQE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Cf3p81tlpZ6qOhWibckA+e5C/QJ7xNTkyjEqRQBrdmogInUMx+hvJbIOJ+lkRmr3XkQJUVUdsrC7NkjFyXsw6ljfv8gqf3ybqwQBC+p5+Clpt/IMTaUy4XHtw303+o8E5edQGo4+veCx99aspdpA4NcXXiKYiq2wOoV1BxTv+GQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VdWYKoln; arc=none smtp.client-ip=209.85.216.42
+	 MIME-Version; b=RRgWUmzB92NiitULhgOGEMF+F65SFu4uZQtm5bS3tqT2I3LI/4Xcu2VEmzPxpYzBFeKATE6HyR+isapR11PQBeQ4+6/RoSOFI+Mu6DsPs13IX/+EfHkLwD/G9zI69NGS1eUb08nocuy/1IgJ5ySaGhlgx3Ftj5PiW9ZzIGDy5hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LdyPi9xM; arc=none smtp.client-ip=209.85.210.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-339d7c403b6so945241a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 03:58:19 -0700 (PDT)
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-77f1f29a551so1122050b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 03:58:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760007499; x=1760612299; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1760007502; x=1760612302; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OyJZmUduTn6h/ct8/Xe3ui1NubLI+U0SzVd7OlZC6q4=;
-        b=VdWYKolnA2VTOQLsUhqiI8EXk+CP1u6RrwI3eVOpekmX+3AvkvGi/86eZSDVMaiF6E
-         LhPVwN/o4orn1jYNogeBjD3GqYverSjNm/6GwKCAjAFtKy+axBlw4R8VGza1M6V49HI/
-         zZVYZVZ9BXGy6ddGsFVotUPWyO/97JSRcVVjUN2TwG2Ghp4+ltsA8AGvNhMeF+A1Qaqp
-         DMg730YWzmowZr1V7SO1jdL297D9nb8t5DJlyF5XgJKA67aH90J3nXRJHR97iCTtpD+R
-         d+3E5JOgdxaAkeMYF3uKHx+1P7o46tBoZWzJj6NvFaTIWLJVhby2v8nvgjWZnMrURikS
-         puXg==
+        bh=ANupiyfNlS++I01zMHP5Qbsc6Wgfn8wZLgNnwRsiWjA=;
+        b=LdyPi9xMf0sABMXQbkJkxOyOHY1pmx92/10n9G7R2kH8tbO5DWwG5Viwdzo+5YUEtp
+         npdE+fGvIdaHiTgyEA7wsK16gCtyIZHxj/qHN/nFIb69mbwr8vPV7VC4K0cLmLBFPKFf
+         slVJxE+cRafJLgXAU//jcRlxGvvmsEYlzto4Iup6JtkTb8WQ3s3TYSLpzDWXbVqnbyVm
+         mfILpsPXKyHGtD3C1OSqkzV7Fypd82SNCILp6RrJY/VjbrS0tc6VNj6qyewTRRr52wCw
+         Kh42cNJd37U9CpHK7+XnpwDKIy+ANb53c4EF2t9/B8BTakyTNOQNKWyRcY0zmf2xwD59
+         3qPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760007499; x=1760612299;
+        d=1e100.net; s=20230601; t=1760007502; x=1760612302;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OyJZmUduTn6h/ct8/Xe3ui1NubLI+U0SzVd7OlZC6q4=;
-        b=ld1itCnNWFsMNXES4G23EV8K58HTTzgZe+m2d/EbUDEjF96PcSGt62bugRna9Hm/x/
-         B4HKBGzORt5J3uubs/S1LmyBvnH4eYj4yJnrSBo6ixDox8rvqOXgoHbZ82+Pp4svxQq/
-         3aiVdeB3JM4ZNkOTNZGgDEiPeftZkNlLXqZJLv0IZNIX5uZ5rRN8Cajfd6CBIwyq/QGI
-         I0MkIQd2++NoLgR/zoWwV/IrJOIEbz7qruorXeyGVRxEPOQfjX/95HCM+yMfkkkbY2x/
-         kBORG5Xr7JrobJftr04F4SQfoAoEZI3pvRDbtPTto2PeWFAzXtHU9czfvJwwwgu7BbSC
-         CUIg==
-X-Forwarded-Encrypted: i=1; AJvYcCXfkWgpxoi6qOFfmq9eXgdjAnm4JS9VKLD98YUuArehEKbKAR/timsDKmiJKhsq5qFvSc2AItEX7NpUr/U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5za1LVFIeV0nQTmafgfWsCDiPhPYBCeFd8+czmpWKJoJZ1g9P
-	gYZkmtKEYhd51oNleBdqOMA7F8gGj8D0Bb5vrChuyl7D6ftjmAaLruE2
-X-Gm-Gg: ASbGncu7zonR6AxZjHQNg0hvM7rIa3Ce+zjNfKiVofghUMNhcGHCypuYH4F9YaWN+f/
-	ehVHgVMk/7HSMZdKG485wJTbjFlmvt+l2eIT407nkv9v9W8heofIS5JaLPxhIY8asYZ0QxzS7Y+
-	IQ1Ce2lfox5zgOfRozzx6rcr1wGzzsqq98YnCPCTylAR3q/A5Bd7t1jgbv8bevp7dB7Zme3CV6y
-	VeuxrXZflkzwTUOv8NAjxvCSBSP47ZzdukkNx2XCi4LqY2clRMUdZvQhIytxGb9UnXXiONWgcIN
-	mQszWCsnPq3fXAtyZSs77ZeauypZd5rAQ/Md3rBghiZ8rmA7k7vpAylzhAooTB8j0niVK03IPHj
-	ofemeUG2xLSNmq0z1UN518z95Ibj4nVYe6OCQHlFtYRkHNNdNFOjHDsB9e1oNiuJCh2c4dG0=
-X-Google-Smtp-Source: AGHT+IF7XK4PU8M1yAqeyUxzKM38g7FsehoBLZ3eJ3Xub26Q0OuA6NSoqSKwX8dJhtbar+wuz4p6HQ==
-X-Received: by 2002:a17:90b:17c3:b0:335:2b86:f319 with SMTP id 98e67ed59e1d1-33b513eb68fmr9866604a91.35.1760007498698;
-        Thu, 09 Oct 2025 03:58:18 -0700 (PDT)
+        bh=ANupiyfNlS++I01zMHP5Qbsc6Wgfn8wZLgNnwRsiWjA=;
+        b=NqfKusGDz6wKnP0ULqJ/ERycKpYDVIzXv3hRaqAlFnCqSQ1z0Z6E2+ez5LVJF2KdGK
+         OdqmK3J4IhxCcb9z9XtjZRtFFGU4y8AQDo7SROIrRlHnm1W3M2Z6qFTgxoLIfkwCRxWb
+         5vMlCXpQ4kUzJ2ERZFqNjCrUcyv2A6atyNN29AmA7awCKj2muqBp31mkcrY/qTowHj0n
+         XSUi97AFSCgYNjcqo8Xc1YYyO2ltmseB3SMqBD4vd4Wbt2Ss8muS2PxRz5w/a+zWpUjp
+         gV8UMgPwlGFnggGXYn0GxSMyEHVQc+cljXa3ZEPzZ6xvvGOv5VmAfvb8LQQnC3wPZim8
+         GiQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVmrCtOJl8cClpLuasI9izk5LbGqwXEF13RhxVKimyOrRhAcJCXNgmSNvsjkEp7Q+apBxGeEX8F/PGP7Dg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6GPKceXYt3bTwHh0FD0JuiN77jMpQtQCD0eCyFAmRGtjvQJl1
+	4TrOwLAFT7esqEk3YRIl1PjqYKFvNS1xSIJJ8E1eMAhAsgGYKUfHK/DQ
+X-Gm-Gg: ASbGncs6CQudg8KazlD2/w+c/Nacdp6aFoR4W+jtwG2WSHtpynKVwmPBtslIUU8tmX6
+	+zbEHxUFofkJHsxsE9LcejkTA/QQ8iXYGrDOjONEPvdzMdbrfKEkZfOnZO2s6T3X2Ffb1L/DhvA
+	3uYTgxm+SxxZGkKexeNxYw4420meGxvYebB3kWxucZWZuKJYqhHawML+pf19UH7daPOpJhH34Bg
+	346cfwCFSP3wlJuCmFOr+EGVGEeAGRt6jXxh9XppXQJTtLF24asEhmQc/9URKvQHH/kCJb/573O
+	xYLhxbr/JJ7sgskw9doKBAgTXa2GM+Jz2NLyR2RrjHp5AsLBdbws1dmUULJW/K70+snr7WAXeJT
+	gl1inaIEFAlLgXYIR5J0LSiO1v1KrL6JA4PFBmkE193AFgzcaBIYQYWH7NrcJBnDaDihiXJI=
+X-Google-Smtp-Source: AGHT+IGL1hfkw824Dhg5abUxp0YVqhv+dnuC2o95edaELXUy1UgmRHSa3+FhXmUlSur2PmpUVijsqA==
+X-Received: by 2002:a05:6a00:2d96:b0:77f:1d7a:b97f with SMTP id d2e1a72fcca58-7938782ac68mr8582957b3a.28.1760007502437;
+        Thu, 09 Oct 2025 03:58:22 -0700 (PDT)
 Received: from localhost ([45.142.165.62])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33b511135a3sm6725691a91.11.2025.10.09.03.58.17
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-794e33f0cb3sm2487606b3a.78.2025.10.09.03.58.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 03:58:18 -0700 (PDT)
+        Thu, 09 Oct 2025 03:58:21 -0700 (PDT)
 From: Jinchao Wang <wangjinchao600@gmail.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	Masami Hiramatsu <mhiramat@kernel.org>,
@@ -138,9 +138,9 @@ To: Andrew Morton <akpm@linux-foundation.org>,
 	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
 	linux-trace-kernel@vger.kernel.org
 Cc: Jinchao Wang <wangjinchao600@gmail.com>
-Subject: [PATCH v7 18/23] mm/ksw: add stack overflow test
-Date: Thu,  9 Oct 2025 18:55:54 +0800
-Message-ID: <20251009105650.168917-19-wangjinchao600@gmail.com>
+Subject: [PATCH v7 19/23] mm/ksw: add recursive depth test
+Date: Thu,  9 Oct 2025 18:55:55 +0800
+Message-ID: <20251009105650.168917-20-wangjinchao600@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251009105650.168917-1-wangjinchao600@gmail.com>
 References: <20251009105650.168917-1-wangjinchao600@gmail.com>
@@ -152,56 +152,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Extend the test module with a new test case (test1) that intentionally
-overflows a local u64 buffer to corrupt the stack canary.
+Introduce a test that performs stack writes in recursive calls to exercise
+stack watch at a specific recursion depth.
 
 Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
 ---
- mm/kstackwatch/test.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
+ mm/kstackwatch/test.c | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
 diff --git a/mm/kstackwatch/test.c b/mm/kstackwatch/test.c
-index 80fec9cf3243..012692c97a50 100644
+index 012692c97a50..203fff4bec92 100644
 --- a/mm/kstackwatch/test.c
 +++ b/mm/kstackwatch/test.c
-@@ -32,6 +32,20 @@ static void test_watch_fire(void)
+@@ -18,6 +18,7 @@
+ static struct dentry *test_file;
+ 
+ #define BUFFER_SIZE 32
++#define MAX_DEPTH 6
+ 
+ static void test_watch_fire(void)
+ {
+@@ -46,6 +47,21 @@ static void test_canary_overflow(void)
  	pr_info("exit of %s\n", __func__);
  }
  
-+static void test_canary_overflow(void)
++static void test_recursive_depth(int depth)
 +{
 +	u64 buffer[BUFFER_SIZE];
 +
-+	pr_info("entry of %s\n", __func__);
++	pr_info("entry of %s depth:%d\n", __func__, depth);
 +
-+	/* intentionally overflow */
-+	for (int i = BUFFER_SIZE; i < BUFFER_SIZE + 10; i++)
-+		buffer[i] = 0xdeadbeefdeadbeef;
++	if (depth < MAX_DEPTH)
++		test_recursive_depth(depth + 1);
++
++	buffer[0] = depth;
 +	barrier_data(buffer);
 +
-+	pr_info("exit of %s\n", __func__);
++	pr_info("exit of %s depth:%d\n", __func__, depth);
 +}
 +
  static ssize_t test_dbgfs_write(struct file *file, const char __user *buffer,
  				size_t count, loff_t *pos)
  {
-@@ -54,6 +68,9 @@ static ssize_t test_dbgfs_write(struct file *file, const char __user *buffer,
- 		case 0:
- 			test_watch_fire();
+@@ -71,6 +87,9 @@ static ssize_t test_dbgfs_write(struct file *file, const char __user *buffer,
+ 		case 1:
+ 			test_canary_overflow();
  			break;
-+		case 1:
-+			test_canary_overflow();
++		case 2:
++			test_recursive_depth(0);
 +			break;
  		default:
  			pr_err("Unknown test number %d\n", test_num);
  			return -EINVAL;
-@@ -74,7 +91,8 @@ static ssize_t test_dbgfs_read(struct file *file, char __user *buffer,
- 		"============ usage ===============\n"
+@@ -92,7 +111,8 @@ static ssize_t test_dbgfs_read(struct file *file, char __user *buffer,
  		"Usage:\n"
  		"echo test{i} > /sys/kernel/debug/kstackwatch/test\n"
--		" test0 - test watch fire\n";
-+		" test0 - test watch fire\n"
-+		" test1 - test canary overflow\n";
+ 		" test0 - test watch fire\n"
+-		" test1 - test canary overflow\n";
++		" test1 - test canary overflow\n"
++		" test2 - test recursive func\n";
  
  	return simple_read_from_buffer(buffer, count, ppos, usage,
  				       strlen(usage));
