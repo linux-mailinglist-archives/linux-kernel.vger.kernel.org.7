@@ -1,105 +1,156 @@
-Return-Path: <linux-kernel+bounces-846410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73BBFBC7ED2
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:08:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12E48BC8031
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E2AA189D241
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:07:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FA413C4248
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:20:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2749F2D979F;
-	Thu,  9 Oct 2025 08:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LA+JXcM2"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165F32D94B5
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 08:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F4E2D0C7A;
+	Thu,  9 Oct 2025 08:20:38 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3808626B97E;
+	Thu,  9 Oct 2025 08:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759996980; cv=none; b=t3RtOh2YGUH4PEZ3zP/A3/xhAF0LdRoC8LEcTgV2WAEZ+JFIwthNniSyMKhDwV/aoiLiUmgu0StO4eLC1BsoHJRLPMzhmmTOxOh8CoLqRtVT1rS5PtB99xATXuHpVBemoh0rDG77gZGiR5LRIrap0c4cDWuiT9Jjl8wPnoltvjA=
+	t=1759998038; cv=none; b=cWmqDwSIO66TD1ZBMCMVgwKNRiWvloggY2coS4at9fXePtT8MOw51LxiJ3XQhX92RBO2kvrWeULSy1z11gjjqEX91CtHVp9hyl4m1xDT1NTmCwNYMEusO/TBwx94MyoKt/W2QGQylRwQ9Se7lj6O6UvccDXgDB4BWi7iECcMy7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759996980; c=relaxed/simple;
-	bh=K8tOls+YuUMbAJn57FpEQBFXdO/h3ArpWBRwCguKFNQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=to2QZuOyaKxVYRkwnU8hQj3FVDHC3aOu1mrIKSNghQvHmWQBXavn44nRWAAxHsZABNMILWP5MbIhGfHFKBwdaj9oxrYwUYs5AspOSrqVnJYHeJWqVvILCMZ3wAQj7kvwOwtp7lNnrVkqz3YDzQHw4SbxmPaUgPLWCN/gS9oJCF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LA+JXcM2; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-4256866958bso381821f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 01:02:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759996977; x=1760601777; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nmgZ1stJzO0OXNGhzzc20pBZnkzJWTSFXL/OwU1NfN0=;
-        b=LA+JXcM2mnYBvjJQEJrG8uS3chyIqiTX1MTRFTFHaqiNMTJvdKu28M9xmaP5lwt5l/
-         +7ZktW0TZcINRV7ljlJkuMJcCvepFrvusrsnbaLX9u8ZJGLGpSZe5syKkovR/HA1scVp
-         jNVGQcOvO2exIYe7sNDzJpG1gumKUFs9RO9cHc1S/R+N5Syp73Dz6eXYcT0aGaF3i9lF
-         KBIZwN29vudkMFSFjSVKzEudy157ipCWnWun1fY90eF8mGlE9xCqwt7bYMnE3iQbVq57
-         Z6u+Vg9efOCBOLOt3R3N+c73X05l3hh0mDxsPzvsirlt5TYjme5WRAetj8mgicpHN5Eg
-         KvEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759996977; x=1760601777;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nmgZ1stJzO0OXNGhzzc20pBZnkzJWTSFXL/OwU1NfN0=;
-        b=bNEZb+WNJBCY1K/SYsPXj1EGKGq3I+bVS3tmhLDQXVRUdz75ppRp1OzSUvxgm4OMAZ
-         HgM3dszc8Jl2z2zgVBUepE8srFbETjvUE5SFPyLLw85/OT/+DSK2iHRCRWEEU6NP3YJL
-         gS3yL/IxKIVIBYNyvdfWOnzcG8Q3GgR99Qk8A/3BCPd8JWArWLV2vkoQwl7i0Kmd1Nrd
-         0RBgCULFJkH4CrH+2zxdhAJ9VEH1AqE/OC3BhAlvttqm9ffl8l+hdDW/5WwhX2PDShpX
-         xhlgipVZj/Eu4kMMhReGhNNrPT7cwqXBOPyi7SB2bVHvy+Pxzq1oagcvSWpJUwoSCc4g
-         USWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQZaJ63FxrVqc4cu9LQesAKXbXE+HirWSMi4RKb+YCt8wsBN6J3xMYCqNd+NEQG3gh4nZ+V3hMs6J6hqw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweM/gNJBCod4Y+/pNa8mWZG3Udhl1os6No5OXGK8rkjEpXgVeg
-	3yYAiY0fqAEUZaXWdfh06+ahFLTWlMbOYwO5gF3o5++Zq1V1uF+qTTwn
-X-Gm-Gg: ASbGncseIFRYXoje7tSXQ9f537Bi/8oPyrRMytgSel34YyOEkQWdRjJX+8IKrtMvDvr
-	gKbe6aJl6DGZbiu8OKDTYYuAERcVHpSJna16DvAy8oIrdJbTfXMrsPwRljDz6bjTdxFxHzHpoF+
-	mClD/HiNW4ii8wIvbGQS6TxPwAj4SCkrN9AWqbybLRbMqFYJ/FfWGvl1tFeZcPerXd4pwW0YJRS
-	bu+3Vfltu3AVDJboLB2jpGyKrrKy6qKle15Xm5L/TkzlqVcHyMP2AUUXKqmJQciidgOZrqaAkCT
-	y3qwhAs9BmVDAVoy3PBZQVJsTprZUqtZIMjGfuy5ztZX0Nhp35U8Po71VFAfmfdq/eyIRAVQw8Q
-	xVyGMmlUeZ+eWOSdTLML+bi9jYBIb2n8PH6ksRbC0p+A=
-X-Google-Smtp-Source: AGHT+IGzzMQT0+Q4KC5cr5OVvpL7nF2Kx6VgeouWeY1dugB8ebtVbkbcg1MO5oNHGLNrWpLIfhYvqw==
-X-Received: by 2002:a05:6000:430b:b0:3f0:4365:1d36 with SMTP id ffacd0b85a97d-42666ac9d80mr4139943f8f.16.1759996977400;
-        Thu, 09 Oct 2025 01:02:57 -0700 (PDT)
-Received: from localhost ([212.73.77.104])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4255d8e96e0sm33432337f8f.33.2025.10.09.01.02.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Oct 2025 01:02:57 -0700 (PDT)
-From: Askar Safin <safinaskar@gmail.com>
-To: linux-kbuild@vger.kernel.org,
-	regressions@lists.linux.dev
-Cc: dxu@dxuuu.xyz,
-	linux-kernel@vger.kernel.org,
-	masahiroy@kernel.org,
-	miguel.ojeda.sandonis@gmail.com,
-	nathan@kernel.org,
-	nsc@kernel.org,
-	ojeda@kernel.org,
-	sam@gentoo.org,
-	thomas.weissschuh@linutronix.de
-Subject: Re: [REGRESSION][BISECTED] kbuild: CFLAGS=-w no longer works
-Date: Thu,  9 Oct 2025 11:02:50 +0300
-Message-ID: <20251009080250.1089826-1-safinaskar@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251009075149.1083040-1-safinaskar@gmail.com>
-References: <20251009075149.1083040-1-safinaskar@gmail.com>
+	s=arc-20240116; t=1759998038; c=relaxed/simple;
+	bh=r4j7KL3ZDY2ItBlX7tAcF4DYZ7j4P2ykR08zNx+Sdac=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pUAvLRyzDeAVWYHKe7DJyGMf6wyYuSYTyZSEMDvDgsCP1+IwyuQ9+Ssk/26PD+pRfNG8XC8eUSzEFd1W0/YGDQEecLLr6zS8P8rnaictPJvLiO1Z56HTtRRundgDFDYU9IMVfjP+mDDcMRos/Py0Xz21XRAFFzIZ+Z+zWmqiIAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cj2Td0Mj6z9sSL;
+	Thu,  9 Oct 2025 10:04:37 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id qQ36Dhni13kk; Thu,  9 Oct 2025 10:04:36 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cj2Tc5kJ8z9sSC;
+	Thu,  9 Oct 2025 10:04:36 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id A8FDF8B770;
+	Thu,  9 Oct 2025 10:04:36 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id CnXkw3FAfnqR; Thu,  9 Oct 2025 10:04:36 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id AE04F8B76D;
+	Thu,  9 Oct 2025 10:04:34 +0200 (CEST)
+Message-ID: <faf62f20-8844-42a0-a7a7-846d8ead0622@csgroup.eu>
+Date: Thu, 9 Oct 2025 10:04:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: (bisected) [PATCH v2 08/37] mm/hugetlb: check for unreasonable
+ folio sizes when registering hstate
+To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
+Cc: Zi Yan <ziy@nvidia.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Alexander Potapenko <glider@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
+ Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ iommu@lists.linux.dev, io-uring@vger.kernel.org,
+ Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
+ Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
+ kasan-dev@googlegroups.com, kvm@vger.kernel.org,
+ Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
+ linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+ linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-scsi@vger.kernel.org, Marco Elver <elver@google.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Muchun Song <muchun.song@linux.dev>,
+ netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
+ Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
+ virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
+ wireguard@lists.zx2c4.com, x86@kernel.org,
+ "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+References: <20250901150359.867252-1-david@redhat.com>
+ <20250901150359.867252-9-david@redhat.com>
+ <3e043453-3f27-48ad-b987-cc39f523060a@csgroup.eu>
+ <d3fc12d4-0b59-4b1f-bb5c-13189a01e13d@redhat.com>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <d3fc12d4-0b59-4b1f-bb5c-13189a01e13d@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-The bug still reproducible with current kbuild-next (2ea77fca84f07849aa995271271340d262d0c2e9)
 
--- 
-Askar Safin
+
+Le 09/10/2025 à 09:22, David Hildenbrand a écrit :
+> On 09.10.25 09:14, Christophe Leroy wrote:
+>> Hi David,
+>>
+>> Le 01/09/2025 à 17:03, David Hildenbrand a écrit :
+>>> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+>>> index 1e777cc51ad04..d3542e92a712e 100644
+>>> --- a/mm/hugetlb.c
+>>> +++ b/mm/hugetlb.c
+>>> @@ -4657,6 +4657,7 @@ static int __init hugetlb_init(void)
+>>>        BUILD_BUG_ON(sizeof_field(struct page, private) * BITS_PER_BYTE <
+>>>                __NR_HPAGEFLAGS);
+>>> +    BUILD_BUG_ON_INVALID(HUGETLB_PAGE_ORDER > MAX_FOLIO_ORDER);
+>>>        if (!hugepages_supported()) {
+>>>            if (hugetlb_max_hstate || default_hstate_max_huge_pages)
+>>> @@ -4740,6 +4741,7 @@ void __init hugetlb_add_hstate(unsigned int order)
+>>>        }
+>>>        BUG_ON(hugetlb_max_hstate >= HUGE_MAX_HSTATE);
+>>>        BUG_ON(order < order_base_2(__NR_USED_SUBPAGE));
+>>> +    WARN_ON(order > MAX_FOLIO_ORDER);
+>>>        h = &hstates[hugetlb_max_hstate++];
+>>>        __mutex_init(&h->resize_lock, "resize mutex", &h->resize_key);
+>>>        h->order = order;
+> 
+> We end up registering hugetlb folios that are bigger than 
+> MAX_FOLIO_ORDER. So we have to figure out how a config can trigger that 
+> (and if we have to support that).
+> 
+
+MAX_FOLIO_ORDER is defined as:
+
+#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE
+#define MAX_FOLIO_ORDER		PUD_ORDER
+#else
+#define MAX_FOLIO_ORDER		MAX_PAGE_ORDER
+#endif
+
+MAX_PAGE_ORDER is the limit for dynamic creation of hugepages via 
+/sys/kernel/mm/hugepages/ but bigger pages can be created at boottime 
+with kernel boot parameters without CONFIG_ARCH_HAS_GIGANTIC_PAGE:
+
+   hugepagesz=64m hugepages=1 hugepagesz=256m hugepages=1
+
+Gives:
+
+HugeTLB: registered 1.00 GiB page size, pre-allocated 0 pages
+HugeTLB: 0 KiB vmemmap can be freed for a 1.00 GiB page
+HugeTLB: registered 64.0 MiB page size, pre-allocated 1 pages
+HugeTLB: 0 KiB vmemmap can be freed for a 64.0 MiB page
+HugeTLB: registered 256 MiB page size, pre-allocated 1 pages
+HugeTLB: 0 KiB vmemmap can be freed for a 256 MiB page
+HugeTLB: registered 4.00 MiB page size, pre-allocated 0 pages
+HugeTLB: 0 KiB vmemmap can be freed for a 4.00 MiB page
+HugeTLB: registered 16.0 MiB page size, pre-allocated 0 pages
+HugeTLB: 0 KiB vmemmap can be freed for a 16.0 MiB page
+
+
+Christophe
 
