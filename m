@@ -1,255 +1,213 @@
-Return-Path: <linux-kernel+bounces-846363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7453DBC7B2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:26:32 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15EBABC7BBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:37:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9711A19E4B8C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:26:54 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 64D3334D9C0
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D974E2D0C9C;
-	Thu,  9 Oct 2025 07:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF5D265CA8;
+	Thu,  9 Oct 2025 07:36:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="En7eMwMe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="am1NuR+2"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A7C7082D;
-	Thu,  9 Oct 2025 07:26:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E4B3FF1;
+	Thu,  9 Oct 2025 07:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759994782; cv=none; b=WtHeaWBFQcPmekW1hX5qz+wsfAHYOBHInviUg25y3+UJW2Hukg84vZlFfINCTXMafx28p7SiUJJLL0YLzEg1XTargp6i98nplan21lkfHqJfNNcl9yxTKty0rC5/iefRbMibXQuvzQH2AFbicB8LCAaqREIPelMsql7gjotHCy0=
+	t=1759995413; cv=none; b=EDzQ8Usq3o5YNv7NiZp94IO6SqY/k7qMhkoe05JgodP0itZYj25XnB434GT9vyErvHyrBvw5R7aLwfuRJGZEWtBAmLMpmwUn5ISOBv6+821xQxfDxJYGQY0yInfxYWZN/zXqer7TrJXjEfvecooCtVma3uNYlAe40G+sF/n8R4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759994782; c=relaxed/simple;
-	bh=aUZwCKZriS2mx9oDnUC1YNntsIyiN+ubGEGIPBl8MwA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=luKnM0udHhQnNYZ72lJHSkzw939dvM1ixNSCPPi/Axwyg4VYkfqaERV9o4RErS+B3wS1jy4CYYXzVFCqHPBQ87pNgQg8Vhtt6TGq/aFCi42ZtBIoM8//R9byTww6/nwaA2BdQhVPjyN5+6ne9mFqggGn3SH8fyydJpNaRotTeII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=En7eMwMe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F072C4CEE7;
-	Thu,  9 Oct 2025 07:26:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759994781;
-	bh=aUZwCKZriS2mx9oDnUC1YNntsIyiN+ubGEGIPBl8MwA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=En7eMwMeJGkepvaJ8q2srUeiz31pgUGFFzkOIzFoManANQwcx6mbKGZs+E2G7b58P
-	 uZJjFFiIWFCKTpHTzKGIGNNsYl8lBBzUWfpLKaoZOTvSywrOLh9EMAF+2P1msiWk1j
-	 f4qZavZzm/ghXKSO4E4w3GSDLjAhtXbjlpAQYV0xyZTFZwlDa1Zac09X2UkPkd9A3s
-	 w/3kITa3qYybgFGNJ3JBpHGYHjTwF8Sx7RUD+L2f0+MepcjlTfSkRtI46gBSUR3//A
-	 ht2Up9KKwspeIpZCwqN7VC0V9TpD4gEHaULy3BBKSSwOsJxFW3gyj4G+H+VUkpD/W9
-	 9u2X+9Q3z94Og==
-Message-ID: <9ee299c1-edf4-4738-8b5e-6a684f683fbd@kernel.org>
-Date: Thu, 9 Oct 2025 16:26:08 +0900
+	s=arc-20240116; t=1759995413; c=relaxed/simple;
+	bh=0/bWicUk/BVaia51IikBaZhokqlPL3FIkBIaSanm3jM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=taoMEZh+VFDBSx7kocyI2Q32Ly1/WyVdyZ7vsTK34c2x4rJE4QiMG6YBtnRAcqJnGxXgAc/vdGP7nnkBVSQOLhN+sFOVbSFXM2+jcjEl5g9qR3kMxUiS2dRMt3outj2PE0f7aZutPg5jW+6lPNIfGEs6rGdpoDNYsaHEurADzFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=am1NuR+2; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5996EWY4022397;
+	Thu, 9 Oct 2025 07:36:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=w1VyO5jtQ/h9Miug+6qUpSOcUSFktKY7E2S
+	shDdmG/Y=; b=am1NuR+2DkpT+P0EF3JvP5Pz9pvwvmpXSMwbRD5hTs8aKVOna7a
+	T6w64mmywqueHMS26wnbqsvI282XjDRvrDJgPuc7fVM7XDpY50rsTpn/+cmEHFz1
+	jecUamHmrjoxWHOZ7QfEJwCdj/wu3/IL0F+18QaZCEVnqQyYCeU/zr/HmbVAGLeI
+	6PeJmxKNipZtRiQUYvnYs5Z5DtvSJWhlvYYWuyIJTJPME/uWJmvhRz4se9+AJKPC
+	5XXS0sIZ5rxSJ5nls5tsi9Y7WRM4w5y/AJhK2iLIcUPSBb+5jSgV3E9Hickr+mUc
+	J5lhr9pdk9lWktIFPUtK81tK55WlBlS3/ag==
+Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv4shw93-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 09 Oct 2025 07:36:47 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 5997aiUg018181;
+	Thu, 9 Oct 2025 07:36:44 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 49jvnmxja2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 09 Oct 2025 07:36:44 +0000
+Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5997aiVF018176;
+	Thu, 9 Oct 2025 07:36:44 GMT
+Received: from cse-cd01-lnx.ap.qualcomm.com (cse-cd01-lnx.qualcomm.com [10.64.75.209])
+	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 5997ahMu018173
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 09 Oct 2025 07:36:44 +0000
+Received: by cse-cd01-lnx.ap.qualcomm.com (Postfix, from userid 4531182)
+	id 933DA21014; Thu,  9 Oct 2025 15:26:36 +0800 (CST)
+From: leqi <le.qi@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel@oss.qualcomm.com,
+        leqi <le.qi@oss.qualcomm.com>
+Subject: [PATCH v1] arm64: dts: qcom: hamoa-iot-evk: Fix 4-speaker playback support
+Date: Thu,  9 Oct 2025 15:26:30 +0800
+Message-Id: <20251009072630.460387-1-le.qi@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] dt-bindings: usb: dwc3: Add Google Tensor G5 DWC3
-To: Roy Luo <royluo@google.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>,
- Joy Chakraborty <joychakr@google.com>, Naveen Kumar <mnkumar@google.com>,
- Badhri Jagan Sridharan <badhri@google.com>, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20251008060000.3136021-1-royluo@google.com>
- <20251008060000.3136021-2-royluo@google.com>
- <8966b6a9-ff70-4833-a5c7-c6d6c13c6c8b@kernel.org>
- <CA+zupgwLu-y26X9eiENyC28i9ZxCkuhb0X8X9H6HBpqkqJ7O3w@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CA+zupgwLu-y26X9eiENyC28i9ZxCkuhb0X8X9H6HBpqkqJ7O3w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: SloV3XHDG07T1lqQMuTsMpdQ28QcJBng
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX//7pXtwxL9ey
+ TjylyU9LfqWLusl86jpCZRec3HXGITrG2yPnnMBhtSnBA3gEtYM690sTWSqLjHUfR9P/7TYEJPD
+ +wbfSxRFobQAPIWeQh3nHFJyNvyAXehC3bjN04GC6PQAdE+jZMYG0Vm2xjKjZu3ha9f3Zf9rXoW
+ KTvtxpmP3SzzgJzCZlvtH+WMrc46xUwsjbXkhwLB6VUg9LbIlaA7IlBxeLoXR53aKdTevhh0u7s
+ 4xE0uJ2vSFk8NC4f6TY/xytiGh82e/c1hyyDZiTHkPINnDGbr82GR6hKNm8Rgxx3QCgbVmvx77y
+ 36Fb10nWpqm0NKNatl4eCSEUY3xxLzrm3M4hn3bYYFvjnSAZdJWWjXA0AK5VbBEff5VAQPpi9zq
+ +3AYqCH6oU0j2GGsUxcnkeGbo5HQZQ==
+X-Authority-Analysis: v=2.4 cv=SfL6t/Ru c=1 sm=1 tr=0 ts=68e76610 cx=c_pps
+ a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=eOVVwEV3zLrTfS32KukA:9
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: SloV3XHDG07T1lqQMuTsMpdQ28QcJBng
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-09_02,2025-10-06_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 clxscore=1011 malwarescore=0 bulkscore=0 priorityscore=1501
+ suspectscore=0 impostorscore=0 lowpriorityscore=0 phishscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
 
-On 09/10/2025 14:12, Roy Luo wrote:
-> On Wed, Oct 8, 2025 at 4:56 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 08/10/2025 14:59, Roy Luo wrote:
->>> Document the device tree bindings for the DWC3 USB controller found in
->>> Google Tensor SoCs, starting with the G5 generation.
->>>
->>> The Tensor G5 silicon represents a complete architectural departure from
->>
->>
->> G5 does not have a model number like G1-G4?
-> 
-> There's no model number for G5, I'm sticking to the existing "gs" prefix
-> as they're still in the same SoC family.  Please let me know if you have any
-> concerns.
-> 
->>
->>> previous generations (like gs101), including entirely new clock/reset
->>> schemes, top-level wrapper and register interface. Consequently,
->>> existing Samsung/Exynos DWC3 USB bindings and drivers are incompatible,
->>
->> Do not reference drivers. Explain the hardware.
-> 
-> Ack, all mentions of "driver" will be removed in the next patch.
-> 
->>
->>> necessitating this new device tree binding.
->>>
->>> The USB controller on Tensor G5 is based on Synopsys DWC3 IP and features
->>> Dual-Role Device single port with hibernation support.
->>>
->>> Signed-off-by: Roy Luo <royluo@google.com>
->>> ---
->>>  .../bindings/usb/google,gs-dwc3.yaml          | 145 ++++++++++++++++++
->>>  1 file changed, 145 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/usb/google,gs-dwc3.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/usb/google,gs-dwc3.yaml b/Documentation/devicetree/bindings/usb/google,gs-dwc3.yaml
->>> new file mode 100644
->>> index 000000000000..9eb0bf726e8d
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/usb/google,gs-dwc3.yaml
->>> @@ -0,0 +1,145 @@
->>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->>> +# Copyright (c) 2025, Google LLC
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/usb/google,gs-dwc3.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Google Tensor Series (G5+) DWC3 USB SoC Controller
->>> +
->>> +maintainers:
->>> +  - Roy Luo <royluo@google.com>
->>> +
->>> +description: |
->>
->>
->> Do not need '|' unless you need to preserve formatting.
-> 
-> Ack, will fix this in the next patch.
-> 
->>
->>> +  Describes the DWC3 USB controller block implemented on Google Tensor SoCs,
->>> +  starting with the G5 generation. Based on Synopsys DWC3 IP, the controller
->>> +  features Dual-Role Device single port with hibernation add-on.
->>> +
->>> +properties:
->>> +  compatible:
->>> +    items:
->>> +      - enum:
->>> +          - google,gs5-dwc3
->>> +
->>> +  reg:
->>> +    minItems: 3
->>
->> Drop
->>
->>> +    maxItems: 3
->>> +
->>> +  reg-names:
->>> +    description: |
->>> +      The following memory regions must present:
->>> +        - dwc3_core: Core DWC3 IP registers.
->>> +        - host_cfg_csr: Hibernation control registers.
->>> +        - usbint_csr: Hibernation interrupt registers.
->>
->> Drop description or move it to items in reg. See other bindings.
-> 
-> Ack, will use an item list in reg instead.
-> 
->>
->>> +    items:
->>> +      - const: dwc3_core
->>> +      - const: host_cfg_csr
->>> +      - const: usbint_csr
->>> +
->>> +  interrupts:
->>> +    minItems: 3
->>
->> Drop
-> 
-> Ack, will use an item list instead.
-> 
->>
->>> +    maxItems: 3
->>> +
->>> +  interrupt-names:
->>> +    description: |
->>> +      The following interrupts must present:
->>> +        - dwc_usb3: Core DWC3 interrupt.
->>> +        - hs_pme_irq: High speed remote wakeup interrupt for hibernation.
->>> +        - ss_pme_irq: Super speed remote wakeup interrupt for hibernation.
->>
->> From where did you get this style? Don't write bindings with chat gpt or
->> whatever other tool. it is a waste of our time.
-> 
-> I referenced the style from a recent dt binding change [1] that adds
-> "Documentation/devicetree/bindings/usb/qcom,snps-dwc3.yaml".
-> I thought it would be a good reference because it's relatively new
-> and is also a binding for SNPS dwc3 glue logic. Perhaps that style
-> doesn't apply here because qcom,snps-dwc3.yaml supports
-> multiple compatible and here we have only one?
-> 
-> Just to clarify, I'm a Gemini user and this patch is 100% organic,
-> hand-crafted by a living human brain :)
-> 
-> [1] https://lore.kernel.org/all/20250414-dwc3-refactor-v7-2-f015b358722d@oss.qualcomm.com/
+On the HAMOA-IOT-EVK board only 2 out of 4 speakers were functional.
+Unlike the CRD, which shares a single GPIO reset line for WSA1/2,
+this board provides a dedicated GPIO reset for each WSA, resulting
+in 4 separate reset lines.
 
-Your code is not at all like above, you do not have any variants here,
-so you cannot use that syntax - is not correct here.
+Update the device tree accordingly so that all 4 speakers can
+playback audio as expected.
 
-Best regards,
-Krzysztof
+Signed-off-by: leqi <le.qi@oss.qualcomm.com>
+---
+ arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 30 +++++++++++++++++-----
+ 1 file changed, 23 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+index df8d6e5c1f45..de9af19be6e8 100644
+--- a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
++++ b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+@@ -743,7 +743,7 @@ retimer_ss1_con_sbu_out: endpoint {
+ };
+ 
+ &lpass_tlmm {
+-	spkr_01_sd_n_active: spkr-01-sd-n-active-state {
++	spkr0_sd_n_active: spkr0-sd-n-active-state {
+ 		pins = "gpio12";
+ 		function = "gpio";
+ 		drive-strength = <16>;
+@@ -751,13 +751,29 @@ spkr_01_sd_n_active: spkr-01-sd-n-active-state {
+ 		output-low;
+ 	};
+ 
+-	spkr_23_sd_n_active: spkr-23-sd-n-active-state {
++	spkr1_sd_n_active: spkr1-sd-n-active-state {
+ 		pins = "gpio13";
+ 		function = "gpio";
+ 		drive-strength = <16>;
+ 		bias-disable;
+ 		output-low;
+ 	};
++
++	spkr2_sd_n_active: spkr2-sd-n-active-state {
++		pins = "gpio17";
++		function = "gpio";
++		drive-strength = <16>;
++		bias-disable;
++		output-low;
++	};
++
++	spkr3_sd_n_active: spkr3-sd-n-active-state {
++		pins = "gpio18";
++		function = "gpio";
++		drive-strength = <16>;
++		bias-disable;
++		output-low;
++	};
+ };
+ 
+ &lpass_vamacro {
+@@ -908,7 +924,7 @@ &smb2360_2_eusb2_repeater {
+ &swr0 {
+ 	status = "okay";
+ 
+-	pinctrl-0 = <&wsa_swr_active>, <&spkr_01_sd_n_active>;
++	pinctrl-0 = <&wsa_swr_active>, <&spkr0_sd_n_active>, <&spkr1_sd_n_active>;
+ 	pinctrl-names = "default";
+ 
+ 	/* WSA8845, Left Woofer */
+@@ -927,7 +943,7 @@ left_woofer: speaker@0,0 {
+ 	left_tweeter: speaker@0,1 {
+ 		compatible = "sdw20217020400";
+ 		reg = <0 1>;
+-		reset-gpios = <&lpass_tlmm 12 GPIO_ACTIVE_LOW>;
++		reset-gpios = <&lpass_tlmm 13 GPIO_ACTIVE_LOW>;
+ 		#sound-dai-cells = <0>;
+ 		sound-name-prefix = "TweeterLeft";
+ 		vdd-1p8-supply = <&vreg_l15b_1p8>;
+@@ -961,14 +977,14 @@ wcd_tx: codec@0,3 {
+ &swr3 {
+ 	status = "okay";
+ 
+-	pinctrl-0 = <&wsa2_swr_active>, <&spkr_23_sd_n_active>;
++	pinctrl-0 = <&wsa2_swr_active>, <&spkr2_sd_n_active>, <&spkr3_sd_n_active>;
+ 	pinctrl-names = "default";
+ 
+ 	/* WSA8845, Right Woofer */
+ 	right_woofer: speaker@0,0 {
+ 		compatible = "sdw20217020400";
+ 		reg = <0 0>;
+-		reset-gpios = <&lpass_tlmm 13 GPIO_ACTIVE_LOW>;
++		reset-gpios = <&lpass_tlmm 17 GPIO_ACTIVE_LOW>;
+ 		#sound-dai-cells = <0>;
+ 		sound-name-prefix = "WooferRight";
+ 		vdd-1p8-supply = <&vreg_l15b_1p8>;
+@@ -980,7 +996,7 @@ right_woofer: speaker@0,0 {
+ 	right_tweeter: speaker@0,1 {
+ 		compatible = "sdw20217020400";
+ 		reg = <0 1>;
+-		reset-gpios = <&lpass_tlmm 13 GPIO_ACTIVE_LOW>;
++		reset-gpios = <&lpass_tlmm 18 GPIO_ACTIVE_LOW>;
+ 		#sound-dai-cells = <0>;
+ 		sound-name-prefix = "TweeterRight";
+ 		vdd-1p8-supply = <&vreg_l15b_1p8>;
+-- 
+2.34.1
+
 
