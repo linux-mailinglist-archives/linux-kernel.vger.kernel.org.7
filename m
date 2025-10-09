@@ -1,118 +1,148 @@
-Return-Path: <linux-kernel+bounces-846125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9AE9BC71B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 03:26:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7499BBC7195
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 03:21:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4A3384EB417
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 01:26:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10FB51891175
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 01:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC88B14F9FB;
-	Thu,  9 Oct 2025 01:26:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="r/2K6Deg"
-Received: from out203-205-221-190.mail.qq.com (out203-205-221-190.mail.qq.com [203.205.221.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A1634BA53;
-	Thu,  9 Oct 2025 01:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A9D78F39;
+	Thu,  9 Oct 2025 01:21:16 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7AE34BA2C;
+	Thu,  9 Oct 2025 01:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759973204; cv=none; b=c6nCQEvVgMWFnPTD0rr7+TkJNJg+ymlD0VOgiZfByrOsEyHY6iXlOG2NyUGJ48u9JLntFdcVIfDU6XEVuU47gDCdq1qSov8YwQzAkmAwuUTIKSSJcjAsshCJnciksvOVLANipYU323imP6d4sKK+cwR4diUrKEOE1az86JZV3iw=
+	t=1759972876; cv=none; b=duc2KoPLSNbFrRoG1M71AH8kbWedhyaRKas1W7hMPGUFGYTlHkuVv0qJyif7Fgd1pH9UYnrRjOwP6lDpaeyox4kFU18EAS0ocUpPt/opUXOI9JNa+oNbNOhauQ58AwUFxHF2bSMPnS5b6tgRs7x+XY1ho6Q0gWBSfOGox71j3Lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759973204; c=relaxed/simple;
-	bh=od+p2h+WPuyYD4bu+R5S21ymZaC9WIzwwMLvE87Ix7w=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=aJv4AJPMwRWLfDH+Lmn44Lo6ESlYs/mN2AtRQN3ckeEHku0PwBuk5+cTW29owIC/dU0ESpGjkHywCJ5l5Jqzj5+UvP3ei6ZLw6uXINqsWwBTV14iDINCkdn7v82kXP3ny/O0CAMldvqeM2j/W7JnrIJMozLu1Uki+r+HfCJg1sQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=r/2K6Deg; arc=none smtp.client-ip=203.205.221.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1759972890;
-	bh=E7k7rJ7e1uWJuLqvdpY6Hs4Luw7i8jwf/F7YvaxBUSM=;
-	h=From:To:Cc:Subject:Date;
-	b=r/2K6DegDVax8a30AudYpfcDM/JfKLAzrDYLCVIFVxjW40GRP+lr3pVCYK/p8R262
-	 bfyeR53lY2TX/E1h4XSHomeNCUxwndAe8wtX8i47jShQTYXPQLsCzPV3f2InYZsaQ4
-	 dWLxhumxfhAQdVtnt7AcrqdXsaU5HqS7Izez2pYQ=
-Received: from NUC10 ([39.156.73.10])
-	by newxmesmtplogicsvrszb42-0.qq.com (NewEsmtp) with SMTP
-	id 55A04824; Thu, 09 Oct 2025 09:21:26 +0800
-X-QQ-mid: xmsmtpt1759972886t48db2vn0
-Message-ID: <tencent_98ABC9680EA2A20198904316DAE5A84AD906@qq.com>
-X-QQ-XMAILINFO: OZsapEVPoiO6WXVltu3zxirWsnqkeZ5sZf9hnMWyZLUBSHh84hT0kw5rVGUASR
-	 o606A1tGv+x7RH8yBbc09PnKNX4bko6iZscCREMi8tvrk/ni6TdFP2f5WzSaZr2VrWQDSh8gHtZf
-	 gcCypgsd+Si7sRFIuZ8A+j8M66Biza0jyVxbznRR9EtvR5VrbqNOcJ3r9aaQOrS/DM1PtFgQLCO5
-	 1qV8oo7tbCLAZ+xZR5nT+uMtwfeegDCox4zl29ODc1t1FwBfAwTfT6AEGa+2y1+CH5tVaCs1d0fJ
-	 AOE6KddnYmbh65hUtbO3KdTyE97v3tR9mH//LwqfFtRXtVFajVCOfxkBRyO+FlOu3nSFYJdbsJqv
-	 Fc0btGqxhD7tz+3/34ZYLh4j+aEpj9aKpsx1MNRPBM3H24gG1t1yCVoB2TXKvcR01IgZipdhgZNw
-	 pIglgSkMHWfow4Sl0DdiTv6yGpQC52VHtnPkPvfX/SyaeL7owqHuGvCoD/GwIAi4NQYbpVy1qAo/
-	 cux3Ryde7DdN9pcznyeDxwKnZvyOwAWCzS3qrmmbkFlkcTxDgAudr/moW2JGg5nAJYNuxEGt7JlO
-	 5zrUFfvpuyph1Q4Zm7ELJLKFFzVXsS2TZik6TEX+mdJzURcIGd2S+tBc4/H8wioyu2P6pk94H+TS
-	 HDxmt7TKG3Hr9TdKo0JtFuyl/FaKDToRPT2lLfAxWjZhuhoAexQxJDV68AHdWe0W9JLpt5ZzOPTO
-	 25WWqxV5uFYmBVP6uRG48er/XOT/yzjfkVkRGFHQJ/6FXmThmnYGp2cFwYE7BkqUfHa+3DRMfLRV
-	 NFhhBOUsbS/Yt/QqqsXAD3PxspbKuXAxGDeHVEddeiFjA2t629NE6T1b8ThsSpxtdqhYIFIT8as8
-	 CirbMffI+uKaKjjItL1d6vlCU/r4zwXJz7+r0ctl+Z/GpRim97yZFouDs+ss0GXcX4gVu0q+p8+B
-	 rW7q4c7Y5eLFJmJ8i9YprfXwvGu3rrQPUk/UiIULKQbWKjHjrUrtPYEEvCC+Q3sX+oJ+2B/iBWrn
-	 R+OJ2+h/Iq4xmkyZFl08MYM02TYRbzNshC+qL7Y3Y8Iw0RpGFn
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From: Rong Tao <rtoax@foxmail.com>
-To: vmalik@redhat.com,
-	ast@kernel.org,
-	eddyz87@gmail.com
-Cc: rtoax@foxmail.com,
-	rongtao@cestc.cn,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	bpf@vger.kernel.org (open list:BPF [GENERAL] (Safe Dynamic Programs and Tools)),
-	linux-kernel@vger.kernel.org (open list),
-	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
-Subject: [PATCH bpf-next v4 0/2] Add kfuncs bpf_strcasestr and bpf_strncasestr
-Date: Thu,  9 Oct 2025 09:20:14 +0800
-X-OQ-MSGID: <cover.1759972627.git.rongtao@cestc.cn>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1759972876; c=relaxed/simple;
+	bh=3h6ol3ZzDH1E1qxmL3ot9UELxZkAEjrYptDva8tkH2A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=im3frTJON4FDszmpqDn8ydnnvLrQ2FEVrLoQsIJhFw3GHZ/KKtc5ag2iJ2lAHtcMVdtyMObWvJePQPgGaiGLmXZ0T4b4Vn/jAi2CYgG2SXisY55yRJiZ8od/bMI+3/KJwFYhishkjPlNCOZXWT+HrNzZw+pD8UXfwAm02xeCqSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [223.64.68.198])
+	by gateway (Coremail) with SMTP id _____8Cx6tEBDudoiRcUAA--.43127S3;
+	Thu, 09 Oct 2025 09:21:05 +0800 (CST)
+Received: from [10.161.0.102] (unknown [223.64.68.198])
+	by front1 (Coremail) with SMTP id qMiowJBx38P9DedoUuTVAA--.63724S2;
+	Thu, 09 Oct 2025 09:21:02 +0800 (CST)
+Message-ID: <b97cc38f-c00b-469f-97e4-decbb2ba96c7@loongson.cn>
+Date: Thu, 9 Oct 2025 09:21:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mmc: pxamci: Fix passing NULL to PTR_ERR() in
+ pxamci_probe()
+To: Rakuram Eswaran <rakuram.e96@gmail.com>, ulf.hansson@linaro.org
+Cc: u.kleine-koenig@baylibre.com, chenhuacai@kernel.org,
+ david.hunter.linux@gmail.com, skhan@linuxfoundation.org, khalid@kernel.org,
+ linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kernel-mentees@lists.linux.dev, kernel test robot <lkp@intel.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>
+References: <20251007161948.12442-1-rakuram.e96@gmail.com>
+From: Binbin Zhou <zhoubinbin@loongson.cn>
+In-Reply-To: <20251007161948.12442-1-rakuram.e96@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:qMiowJBx38P9DedoUuTVAA--.63724S2
+X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/1tbiAQEKCGjl-SoR1AAAsd
+X-Coremail-Antispam: 1Uk129KBj93XoW7Ar15uF1ftryxXF4xAryfZrc_yoW5JFy8pa
+	95JFWqka4UtF4xK39rGw47J3W5Xry3tay2gryrX3s3ua4jkF4kWr93uayFqF4UAFWFqr1F
+	qF1UXF1UCFyDX3gCm3ZEXasCq-sJn29KB7ZKAUJUUUU3529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUU9Eb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6F4UJVW0owAaw2AFwI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
+	Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_
+	Jw1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrw
+	CY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8
+	JwCFI7km07C267AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14
+	v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY
+	67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2
+	IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_
+	Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8Dl1DUUUUU==
 
-From: Rong Tao <rongtao@cestc.cn>
 
-Add kfuncs bpf_strcasestr and bpf_strncasestr, which are extensions of
-bpf_strstr and bpf_strnstr, suitable for more scenarios.
+On 2025/10/8 00:17, Rakuram Eswaran wrote:
+> Smatch reported:
+> drivers/mmc/host/pxamci.c:709 pxamci_probe() warn: passing zero to 'PTR_ERR'
+>
+> Case 1:
+> When dma_request_chan() fails, host->dma_chan_rx is an ERR_PTR(),
+> but it is reset to NULL before using PTR_ERR(), resulting in PTR_ERR(0).
+> This mistakenly returns 0 instead of the real error code.
+>
+> Case 2:
+> When devm_clk_get() fails, host->clk is an ERR_PTR() resulting in the similar
+> issue like case 1.
+>
+> Store the error code before nullifying the pointers in both the cases.
+>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/r/202510041841.pRlunIfl-lkp@intel.com/
+> Fixes: 58c40f3faf742c ("mmc: pxamci: Use devm_mmc_alloc_host() helper")
+> Signed-off-by: Rakuram Eswaran <rakuram.e96@gmail.com>
+LGTM.
 
-Rong Tao (2):
-  bpf: add bpf_strcasestr,bpf_strncasestr kfuncs
-  selftests/bpf: Test bpf_strcasestr,bpf_strncasestr kfuncs
+Reviewed-by: Binbin Zhou <zhoubinbin@loongson.cn>
 
- kernel/bpf/helpers.c                          | 98 +++++++++++++++----
- .../selftests/bpf/prog_tests/string_kfuncs.c  |  2 +
- .../bpf/progs/string_kfuncs_failure1.c        | 12 +++
- .../bpf/progs/string_kfuncs_failure2.c        |  2 +
- .../bpf/progs/string_kfuncs_success.c         | 10 ++
- 5 files changed, 103 insertions(+), 21 deletions(-)
-
----
-v4: Fix wrong comment.
-v3: keep __bpf_strnstr() static and compress some tests.
-    https://lore.kernel.org/lkml/tencent_6E59062E4249590597452A06AFCDA3098808@qq.com/
-v2: remove extra __bpf_kfunc and fix comment of bpf_strncasestr().
-    https://lore.kernel.org/all/tencent_6D228941AB904DD6E1E58C8ACDEBEC280C06@qq.com/
-v1: https://lore.kernel.org/all/tencent_8AF4D15B4475031E2185ACDE4B1495995707@qq.com/
--- 
-2.51.0
+> ---
+>
+> Build and Analysis:
+> This patch was compiled against the configuration file reported by
+> 0day CI in the above link (config: s390-randconfig-r071-20251004) using
+> `s390x-linux-gnu-gcc (Ubuntu 14.2.0-19ubuntu2) 14.2.0`.
+>
+> Static analysis was performed with Smatch to ensure the reported warning
+> no longer reproduces after applying this fix.
+>
+> Command used for verification:
+>    ARCH=s390 CROSS_COMPILE=s390x-linux-gnu- \
+>    ~/project/smatch/smatch_scripts/kchecker ./drivers/mmc/host/pxamci.c
+>
+>   drivers/mmc/host/pxamci.c | 6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/host/pxamci.c b/drivers/mmc/host/pxamci.c
+> index 26d03352af63..4fab693d3b32 100644
+> --- a/drivers/mmc/host/pxamci.c
+> +++ b/drivers/mmc/host/pxamci.c
+> @@ -653,8 +653,9 @@ static int pxamci_probe(struct platform_device *pdev)
+>   
+>   	host->clk = devm_clk_get(dev, NULL);
+>   	if (IS_ERR(host->clk)) {
+> +		ret = PTR_ERR(host->clk);
+>   		host->clk = NULL;
+> -		return PTR_ERR(host->clk);
+> +		return ret;
+>   	}
+>   
+>   	host->clkrate = clk_get_rate(host->clk);
+> @@ -705,8 +706,9 @@ static int pxamci_probe(struct platform_device *pdev)
+>   
+>   	host->dma_chan_rx = dma_request_chan(dev, "rx");
+>   	if (IS_ERR(host->dma_chan_rx)) {
+> +		ret = PTR_ERR(host->dma_chan_rx);
+>   		host->dma_chan_rx = NULL;
+> -		return dev_err_probe(dev, PTR_ERR(host->dma_chan_rx),
+> +		return dev_err_probe(dev, ret,
+>   				     "unable to request rx dma channel\n");
+>   	}
+>   
+Thanks.
+Binbin
 
 
