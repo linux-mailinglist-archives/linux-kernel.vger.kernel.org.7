@@ -1,105 +1,141 @@
-Return-Path: <linux-kernel+bounces-846814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D3E5BC91C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:48:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18EE4BC91D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:49:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D0011A61269
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:48:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A39D23A501E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:49:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCBC62E339B;
-	Thu,  9 Oct 2025 12:48:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29822E2DF3;
+	Thu,  9 Oct 2025 12:49:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="dwqhE/sO"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JopefJMY"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97505BA3F;
-	Thu,  9 Oct 2025 12:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52AFCBA3F;
+	Thu,  9 Oct 2025 12:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760014081; cv=none; b=I0GKTdXi0CbKvEGwpS+HsrtBK42NaXrs3mscYrNLp17bFn2rimOO2LU64j6G2kxDaphEu1V/qW1+tZKIubWpBnYui7no8L8BL1UMzTl09f+prI5Ysnw+QZWmGBGlT+FCww//UODymT0grOin0XbSCS3YsDjvLYgvLBl725sWWnY=
+	t=1760014145; cv=none; b=J9dEhNjUgJ1lo3XEWpcb5CwL6iPp5tmCXNNN9Vq2WId3u3GSV4h8O1VOZMnspbI6t0SFZz0ddWdR9/LDxItXv/8Msib2tppgB6EYRO5JdKaSkJn/N+83v/tVg0t+0Y2LaecLkRczCE349AHdghVkIXGnmvb6E02ec42BldgGVP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760014081; c=relaxed/simple;
-	bh=k8sU+bq8157+OitLUWgTfChNmvNmCTWggeAmvYB82tM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CStjdiWbeIXqZ738s7x5K6kGyDkijMyYrBnQMh7fZja4rNcND6+jKPLd5ZJVcWUDKKEINqi43NMPpJNNRST/5qtEC9KBzB8ekXaH8sh6vhGRlmN+GYVXg0Az8qjtOp8GDH0UhsPmwBPkL2tsWKs7Iu3LbTfhbpeiN1AWxyiuH6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=dwqhE/sO; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=YUpyyd67HoUtnYCpJnUaGRmwxPERukwal2oCb7xHnok=; b=dwqhE/sOu2CR0t52IOWxlfY5hO
-	aSQsDujsiN6mqy2x9VjDDh6NR0dCySTEyHlfk3k0OHJKSJiH1vuDgPcZceFZ6LrrxQP8am2QBwurk
-	tdUZobfNJCcTMibhLmkTuahZEIEpJuPI+EJYF5yl9oiEMfSUUWFMjKRet3hdrOGrXlyk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1v6q3l-00AWoZ-F0; Thu, 09 Oct 2025 14:47:53 +0200
-Date: Thu, 9 Oct 2025 14:47:53 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Paolo Abeni <pabeni@redhat.com>, Jason Wang <jasowang@redhat.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, kvm@vger.kernel.org,
-	virtualization@lists.linux.dev
-Subject: Re: [PATCH 3/3] vhost: use checked versions of VIRTIO_BIT
-Message-ID: <d4fcd2d8-ac84-4d9f-a47a-fecc50e18e20@lunn.ch>
-References: <cover.1760008797.git.mst@redhat.com>
- <6629538adfd821c8626ab8b9def49c23781e6775.1760008798.git.mst@redhat.com>
+	s=arc-20240116; t=1760014145; c=relaxed/simple;
+	bh=OSFdQafboDaUi8Wy4vbAAqnWvuafTu2QD+cLsjQEGus=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=mHHfRKS3sH0QE3ez4+hRR/uXzEXXyk+j+rIw/Fj5dgjdyd724NZYvNLJwfHgPyZHgzS2eoBO36FeifwnG9jUhkp9rIla6IWRT8Rk8/j7lsM4GO+rzuJN6DxFPz936+xA1ljuhsN2w18HpqxGVoj1ysUgdw+iRAdkYomTGe9OjNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JopefJMY; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760014144; x=1791550144;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=OSFdQafboDaUi8Wy4vbAAqnWvuafTu2QD+cLsjQEGus=;
+  b=JopefJMYDLlXf0LPIJwLVmpAAItYKKSzxe+/9eAx5BMk5kMZRHqRjdUB
+   Y7CyL4QThf23Zwj6YTI7DyS9QYPFo6gjuvHagGdkvnsQx9fnyvKiO0UvS
+   s7uNBZTq+LGbdjkRZFtSgUmFl/3V3xPAeKLphvtKnHWHiefwwxRfzsnGg
+   c++IidBnCoYJHmTH/+TZqm04O4QGrNldWyi+A6O2KI/L2d/nWMlZpZsMM
+   st3sa7fNIFLvrUb6RWzyKWg+iyH75GI9KZ2br63Bt3bGYkW1O63Kp9x8M
+   ZzwqpbfJGU6ZYaJUJJEaoy+c/kyqE3v6qSGRUCxhxMxIqO49fgEJeHyl/
+   A==;
+X-CSE-ConnectionGUID: G3WlB3/hSK6vmnvi63IyWA==
+X-CSE-MsgGUID: h5VK8ek9SDK7gBM07Ir5GA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="84842104"
+X-IronPort-AV: E=Sophos;i="6.19,216,1754982000"; 
+   d="scan'208";a="84842104"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 05:49:03 -0700
+X-CSE-ConnectionGUID: f0f9xGnmTki9Z4zY4Af96A==
+X-CSE-MsgGUID: qSApt77rQmKInxe4CHo9rg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,216,1754982000"; 
+   d="scan'208";a="180650592"
+Received: from ettammin-desk.ger.corp.intel.com (HELO localhost) ([10.245.246.113])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 05:48:56 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Pet Weng <pet.weng@ite.com.tw>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss
+ <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec
+ <jernej.skrabec@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Hermes Wu <hermes.Wu@ite.com.tw>, Kenneth
+ Hung <kenneth.Hung@ite.com.tw>, Pet Weng <pet.weng@ite.com.tw>, Pin-yen Lin
+ <treapking@google.com>
+Subject: Re: [PATCH v3 2/3] drm/bridge: Add ITE IT61620 MIPI DSI to HDMI
+ bridge driver
+In-Reply-To: <20251009-it61620-0714-v3-2-5d682d028441@ite.com.tw>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20251009-it61620-0714-v3-0-5d682d028441@ite.com.tw>
+ <20251009-it61620-0714-v3-2-5d682d028441@ite.com.tw>
+Date: Thu, 09 Oct 2025 15:48:54 +0300
+Message-ID: <088cbc524dbb05757f244a6c7f26f3228e554f61@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6629538adfd821c8626ab8b9def49c23781e6775.1760008798.git.mst@redhat.com>
+Content-Type: text/plain
 
-On Thu, Oct 09, 2025 at 07:24:16AM -0400, Michael S. Tsirkin wrote:
-> This adds compile-time checked versions of VIRTIO_BIT that set bits in
-> low and high qword, respectively.  Will prevent confusion when people
-> set bits in the wrong qword.
-> 
-> Cc: "Paolo Abeni" <pabeni@redhat.com>
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> ---
->  drivers/vhost/net.c             | 4 ++--
->  include/linux/virtio_features.h | 9 +++++++++
->  2 files changed, 11 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-> index 43d51fb1f8ea..8b98e1a8baaa 100644
-> --- a/drivers/vhost/net.c
-> +++ b/drivers/vhost/net.c
-> @@ -76,8 +76,8 @@ static const u64 vhost_net_features[VIRTIO_FEATURES_QWORDS] = {
->  	(1ULL << VIRTIO_F_ACCESS_PLATFORM) |
->  	(1ULL << VIRTIO_F_RING_RESET) |
->  	(1ULL << VIRTIO_F_IN_ORDER),
-> -	VIRTIO_BIT(VIRTIO_NET_F_GUEST_UDP_TUNNEL_GSO) |
-> -	VIRTIO_BIT(VIRTIO_NET_F_HOST_UDP_TUNNEL_GSO),
-> +	VIRTIO_BIT_HI(VIRTIO_NET_F_GUEST_UDP_TUNNEL_GSO) |
-> +	VIRTIO_BIT_HI(VIRTIO_NET_F_HOST_UDP_TUNNEL_GSO),
+On Thu, 09 Oct 2025, Pet Weng <pet.weng@ite.com.tw> wrote:
+> +static void it61620_set_capability_from_edid_parse(struct it61620 *it61620,
+> +						   const struct edid *edid)
+> +{
+> +	struct drm_device *drm = it61620->drm;
+> +
+> +	it61620->is_hdmi = drm_detect_hdmi_monitor(edid);
+> +	it61620->en_audio = drm_detect_monitor_audio(edid);
 
-How any bits in vhost_net_features are currently in use? How likely is
-it to go from 2x 64bit words to 3x 64 bit words? Rather than _LO, _HI,
-would _1ST, _2ND be better leaving it open for _3RD?
+Please don't add new users of drm_detect_monitor_audio() or
+drm_detect_hdmi_monitor(). They're basically deprecated.
 
-I would also be tempted to rename these macros to include _LO_ and
-_HI_ in them. VIRTIO_BIT_HI(VIRTIO_LO_F_IN_ORDER) is more likely to be
-spotted as wrong this way.
+Use drm_edid_connector_update() and you can get at the same info via
+connector->display_info.{is_hdmi,has_audio} members.
 
-An alternative would be to convert to a linux bitmap, which is
-arbitrary length so you just use bit number and leave the
-implementation to map that to the correct offset in the underlying
-data structure.
+> +
+> +	drm_dbg(drm, "%s mode, monitor %ssupport audio",
+> +		it61620->is_hdmi ? "HDMI" : "DVI",
+> +		it61620->en_audio ? "" : "not ");
+> +}
 
-	Andrew
+> +static const struct drm_edid *it61620_bridge_edid_read(struct drm_bridge *bridge,
+> +						       struct drm_connector *connector)
+> +{
+> +	struct it61620 *it61620 = bridge_to_it61620(bridge);
+> +	struct device *dev = it61620->dev;
+> +	const struct drm_edid *cached_edid;
+> +
+> +	cached_edid = drm_edid_read_custom(connector, it61620_get_edid_block,
+> +					   it61620);
+> +
+> +	if (!cached_edid) {
+> +		dev_dbg(dev, "failed to get edid!");
+> +		return NULL;
+> +	}
+> +
+> +	it61620_set_capability_from_edid_parse(it61620,
+> +					       drm_edid_raw(cached_edid));
+
+Please don't add new users of drm_edid_raw(). It's for transitioning
+from struct edid to struct drm_edid only, and you should not add new
+uses of struct edid either.
+
+BR,
+Jani.
+
+> +	return cached_edid;
+> +}
+
+-- 
+Jani Nikula, Intel
 
