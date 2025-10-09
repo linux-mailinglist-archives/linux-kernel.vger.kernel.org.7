@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-846146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D69EBC7267
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 03:59:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53897BC7292
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 04:01:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AF57F4F2AEE
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 01:59:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 764893E3DAB
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 01:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF701E9B1A;
-	Thu,  9 Oct 2025 01:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F6B1F130A;
+	Thu,  9 Oct 2025 01:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Nlm8f60g"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="dy8UtTad"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8131819C566
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 01:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06FCF19D07A
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 01:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759975136; cv=none; b=eUujaqq+iq4OF3Cm8qFfbDBuUFknK8SQTigGKoka9cd0i+Gj+18l9YRH3NI8p56N0jKFDQ5+zvwqCxsK7L0hLahKN7NA2XSvzzt3S43wTjQoHm3G5gjQ3NTRHnZSBz0urCefsgz6azNEhZYHjTLb8iDlY/tMbNDbYs6/rRPYe2U=
+	t=1759975138; cv=none; b=h7fjcuvPShvSPp3X5vIyhmoJFUSgUkcczE3t2zY7DUoxE2LuMAlgZjHpI4ICcqTOzQYMqQAXyCQhm2Utgyzyewnv/Wg+nKpyamt3p+93owyoeUfBOhPeIc1viMRW4YL+3dzNh7brTB2Q25GDZSzrFRRTbheVI8+sRRYeaL4my60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759975136; c=relaxed/simple;
-	bh=B+hlWYQ373hjO9SpfVlMPTai5uiOn1pNvN2tfFFSltQ=;
+	s=arc-20240116; t=1759975138; c=relaxed/simple;
+	bh=qz9bk1u6iDBGKd2foT2PRUb6ijZpGxNdXBiAeqzx1Zo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bdhPargPNbanydPuflSABxXnUkx2pn97vkyDW1A1TTtq9lRLORQnGnXXwMicWCgNf2/tUHnx+sM7EF/LjXagRvkRI88fl7mi4juFMavJxzElgUoIAsNUBGQ3SnmfGH+7LPIuam8fMbVdPJd+Qk31LwA24OMArOX6u+62FbAXH/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=Nlm8f60g; arc=none smtp.client-ip=209.85.210.175
+	 MIME-Version; b=uyhbtoYtC7BFPVSQS2xL+uL2Zs7eUNFk9qb1bbSHc0aWeb34ixa/88r8gxwrW/uU/Jvl6Sbkun0AiQq+C1QP5sWn13LLoyPE7JmyrXZ4AaTpu/AGlhwlAuBNk1LQW9Vlq9XIRBRXo2U6w6xFSFyukk1aPcWEdoNEnVeif1Fb6pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=dy8UtTad; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-78af9ebe337so324507b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 18:58:51 -0700 (PDT)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-273a0aeed57so19490345ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 18:58:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1759975131; x=1760579931; darn=vger.kernel.org;
+        d=sifive.com; s=google; t=1759975132; x=1760579932; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6MxHL3qUwy+t0aO6eARfxrO+qA5Rm8YXQr0n5njGXfs=;
-        b=Nlm8f60g8LL8fbLO95zt25t+WGp92eH3rU4f+UnVgZILIic/PZ5GOoBZfpStVHm5l0
-         UStlxdtJ7r11NqHxN7kk2Sj3LVpxUO7pBrpdEDXkiaem9lhi+cdUmga1y0RuDnOMSX13
-         HK19IuNpzeal6eTsFNJNvHYVt8d59Kph1tElz8m8zbkReDFeFjMu5mpD4lscM068aCPl
-         eQhkJwlWVju2WAQYHZdrkaNMZgpoC576m1gNKRZezJUGxSQNzibLmNkmPvp4QS/9PWEL
-         HSq5d3URS/choGNMABaDrcEvOVZY1UwuHVWDWtrzTewA8bxryuXflgiduM5xaWGal2yH
-         AzRA==
+        bh=RQzFW213rLwxUVwSIOmReg2LsoZscZFNSwvkZCWkhKs=;
+        b=dy8UtTadLbxKLPOkThV/2iI4OIwYV9uaEmmJYJ8JSZeA/aHQ5Ez9q5cFy3OWHH90fR
+         Ub/jzRHJtxtY/nenRydA8wGBL/rJj2ro2guu9bvyniLebceLGaTG3tegB82Aig4C+IEY
+         C/9ibKMpDLrE9sHRUKRWu9U/IVPlEMZqZ92Nfj8/lnnym6LhBhJr7AJrNkEdCV9w2zxy
+         GPUwpGGFj7pHYtL5vqgOJ/e0UvxhkN5cXVExvfH8Taqcp23DKPsfnFEjQM4qCl/krO4G
+         xKrs+SgNTaTmcm2Zdxk6qts6ofzsNb0w8/zsr/SqqyZuEGslU/gNWYxAFGfRQB5PjWNJ
+         tC1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759975131; x=1760579931;
+        d=1e100.net; s=20230601; t=1759975132; x=1760579932;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6MxHL3qUwy+t0aO6eARfxrO+qA5Rm8YXQr0n5njGXfs=;
-        b=IVxXQfcUNHaVSyHIKw3mh6GpvSa8pe4JKcsYdei0LFYpFkelWdvO51TrZ34e46C3lT
-         8bgXGuoAaa9ExvbUzkvVL2hl49gpc5I28x0zHqxAbPHnT+vqoGZNJmk8uEB2L+nIQyK7
-         oGNYYyTGlLbaKideXQghiudRdx9PR6Ndydh4XHLNQxNMEZuUI2Yl8U4av6UPicnvkQRK
-         U1N9mq3OnQWVoFijh7NjQ4mYDEUz5mALKvnMn7UtT8G14CGw8d9rlyPg+O4W/qgzkCyg
-         awrWFGIQBqsbQg/Dmx/8E5u9sKsc2TnhphB6rQMiAFRC3KDw4jig9+NHI3RYxOkd9G3e
-         v+dQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXGC3IxQRJV2BrEtoMsm+FWDksdr3zsIIMUH+c0MwAKgXI7kT0u2fPVoT8dGETuvD3Cy5ZYEiYMe9N27mk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAiMknYfT46LAnnRPt6Eg6IJ87Ib8pHhF+dQBKFcfDbn9s6WYh
-	CVy2b9A7eM+l6zqgbkA5ixqAnH1GQifMdaJAdGAKgN4FPWrx21pwhTZu+uRpbmrKChQ=
-X-Gm-Gg: ASbGncuS4OdxtUXw/bhZ+5qeqkiDPEv+3WKJ6BJ7H6+E9A5yH1uuSjowbhZGweQJLY+
-	hez01l6WkR6CAW2zZWyVh4eJVNnB9UKT8KEtt3C2w1uN7tJ/MbSBSz9R+wIQhE3YuYVuxYQvLSI
-	nVDolT9grsMc9mQad5WGEgpIbG5DZ3iy+JxaHNWfGbHu1c2IDjDXMQD+vutpfnyZi4yChYWuU9t
-	OijSC8ghmeCzxsyunuyA3FQkLiJH71UqAGxNSyXJu1lv4TzSU0mn4IYUk12MIlVBE89OtW1FHen
-	7vXnRDkWo9taUGmZzCAi6RCzWE64RmZb/n2SR1zwAAt9Gr6HPpXuylrED8wE8RhLhmAYJwuJQ9m
-	I/S+61J+dNkgtk3FU9C/sKXfvrHBLsyxOw9SQ+gs7V8e0tL/tPy89mbwozYHWvwdpWzeO
-X-Google-Smtp-Source: AGHT+IFWANPjuzJhuuxubYaVO2GJhHx+Uq0HfBlhgHOgbCi5OPe5NLGhSbpBSxbnLiNpsX7PUf8iug==
-X-Received: by 2002:a17:902:d592:b0:240:48f4:40f7 with SMTP id d9443c01a7336-290273edf23mr67433045ad.39.1759975130859;
-        Wed, 08 Oct 2025 18:58:50 -0700 (PDT)
+        bh=RQzFW213rLwxUVwSIOmReg2LsoZscZFNSwvkZCWkhKs=;
+        b=h9shtXwpfr2HMJd6kDLLXTIFqwJVay9Bsc0J9bnQrrllZuJJ1hN7Ipi4uBkcvuY0tE
+         3ypYKbU2hIZieV+XvmrNBtloziWFdxhA7JrUEMOOxKhQYdxAWCjmee5TecWx55alyJgr
+         MM/uk0BX+UsKb97Aa3NGMt0f/EV6C77XM4qlQJk/dugkwdgWrUkTgLPN9S88yrppLAgJ
+         3r3nCIZLIkorN/z8Z0Bznv8nT0BIZEhjBrlYAaapE688czNMCFMIU1xSdJruheSRKfGF
+         yNOL0uYFBnU+iuw1v+76GYWtf84KAGx6h2T8PB6edgvq6iqW750BniswJvCTISrFJkcK
+         QJcA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJK+MERaSU2j1hNfOdQUx8jVcF98c44K6xn9Ob2/ynJVIMc2LmGoSnMmoD6g0TIjy2+aZvTLT3otWF+g0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3R2Sl2hT2AV6xyh6BS5DHvNKQshlwXtcK9PlcIWEkQNBJCT3n
+	P8J/YC40A6aIgQoUHk/cnVQdIqRYf4LRu2f38uujRuveWcoRy7MDPrJXyJJ0sfwduUA=
+X-Gm-Gg: ASbGncvuJOrny5wEt3xlDWE/vOt4itvvz+TlBjH86cSg/lrmPpQTU1nnU+1cWQxBiK/
+	kMr6yiOMk7xDLZbIh98aqXzndwt/+GYh39+SeeLcpncwAijcx8Z9Coej7104FzFjJmYry5V54xj
+	psGX1oE0XrYraEmT8X68ZmwdHzVr7UGDS7CaZx49FMKV6UsJuXE3eRvaAKVDgEgDkMNsrK1N92g
+	2Did6+kF3nHCR/U4scyRq9sfmUWNOa9DEC/9n60GU1F4zTBjewSHTw08fVqqGEhq6912D7eQ/J6
+	3xiItOnJHN9lrOcSt6K0KwrjT5tKsZVNYBpRvI0I7HCa5QW9v48omh2Ef2RFtwXujCykREbVmpw
+	rt3jlgqdVKHyVBrGx9SgwAZYjyPcz3A6tUJ1UHMZLEsfPdX202vLJl4JQWXXSIQnxDtoU
+X-Google-Smtp-Source: AGHT+IFM9Uy17P2+rIA5+/u+UBcAfOioBDn47CFCZ3Wn+HT4qk9AYA0AUJYNGbTh1SkHtKAVK04UZA==
+X-Received: by 2002:a17:902:f788:b0:274:506d:7fcc with SMTP id d9443c01a7336-28ec9c0c7e1mr134257655ad.6.1759975132141;
+        Wed, 08 Oct 2025 18:58:52 -0700 (PDT)
 Received: from sw06.internal.sifive.com ([4.53.31.132])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034de53f9sm11033585ad.14.2025.10.08.18.58.50
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29034de53f9sm11033585ad.14.2025.10.08.18.58.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Oct 2025 18:58:50 -0700 (PDT)
+        Wed, 08 Oct 2025 18:58:51 -0700 (PDT)
 From: Samuel Holland <samuel.holland@sifive.com>
 To: Palmer Dabbelt <palmer@dabbelt.com>,
 	Paul Walmsley <pjw@kernel.org>,
@@ -85,10 +85,11 @@ Cc: devicetree@vger.kernel.org,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Rob Herring <robh+dt@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Samuel Holland <samuel.holland@sifive.com>
-Subject: [PATCH v2 08/18] riscv: mm: Simplify set_p4d() and set_pgd()
-Date: Wed,  8 Oct 2025 18:57:44 -0700
-Message-ID: <20251009015839.3460231-9-samuel.holland@sifive.com>
+	Samuel Holland <samuel.holland@sifive.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>
+Subject: [PATCH v2 09/18] riscv: mm: Deduplicate _PAGE_CHG_MASK definition
+Date: Wed,  8 Oct 2025 18:57:45 -0700
+Message-ID: <20251009015839.3460231-10-samuel.holland@sifive.com>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20251009015839.3460231-1-samuel.holland@sifive.com>
 References: <20251009015839.3460231-1-samuel.holland@sifive.com>
@@ -100,49 +101,78 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-RISC-V uses the same page table entry format and has the same atomicity
-requirements at all page table levels, so these setter functions use the
-same underlying implementation at all levels. Checking the translation
-mode to pick between two identical branches only serves to make these
-functions less efficient.
+The two existing definitions are equivalent because _PAGE_MTMASK is
+defined as 0 on riscv32.
 
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
 ---
 
-Changes in v2:
- - New patch for v2
+(no changes since v1)
 
- arch/riscv/include/asm/pgtable-64.h | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ arch/riscv/include/asm/pgtable-32.h | 5 -----
+ arch/riscv/include/asm/pgtable-64.h | 7 -------
+ arch/riscv/include/asm/pgtable.h    | 6 ++++++
+ 3 files changed, 6 insertions(+), 12 deletions(-)
 
+diff --git a/arch/riscv/include/asm/pgtable-32.h b/arch/riscv/include/asm/pgtable-32.h
+index 00f3369570a83..fa6c87015c480 100644
+--- a/arch/riscv/include/asm/pgtable-32.h
++++ b/arch/riscv/include/asm/pgtable-32.h
+@@ -28,11 +28,6 @@
+ #define _PAGE_IO		0
+ #define _PAGE_MTMASK		0
+ 
+-/* Set of bits to preserve across pte_modify() */
+-#define _PAGE_CHG_MASK  (~(unsigned long)(_PAGE_PRESENT | _PAGE_READ |	\
+-					  _PAGE_WRITE | _PAGE_EXEC |	\
+-					  _PAGE_USER | _PAGE_GLOBAL))
+-
+ static const __maybe_unused int pgtable_l4_enabled;
+ static const __maybe_unused int pgtable_l5_enabled;
+ 
 diff --git a/arch/riscv/include/asm/pgtable-64.h b/arch/riscv/include/asm/pgtable-64.h
-index 1018d22169013..7eb23c24310f9 100644
+index 7eb23c24310f9..d17382c0fbe59 100644
 --- a/arch/riscv/include/asm/pgtable-64.h
 +++ b/arch/riscv/include/asm/pgtable-64.h
-@@ -273,10 +273,7 @@ static inline unsigned long _pmd_pfn(pmd_t pmd)
+@@ -66,7 +66,6 @@ typedef struct {
  
- static inline void set_p4d(p4d_t *p4dp, p4d_t p4d)
+ #define pmd_val(x)      ((x).pmd)
+ #define __pmd(x)        ((pmd_t) { (x) })
+-
+ #define PTRS_PER_PMD    (PAGE_SIZE / sizeof(pmd_t))
+ 
+ /*
+@@ -166,12 +165,6 @@ static inline u64 riscv_page_io(void)
+ #define _PAGE_IO		riscv_page_io()
+ #define _PAGE_MTMASK		riscv_page_mtmask()
+ 
+-/* Set of bits to preserve across pte_modify() */
+-#define _PAGE_CHG_MASK  (~(unsigned long)(_PAGE_PRESENT | _PAGE_READ |	\
+-					  _PAGE_WRITE | _PAGE_EXEC |	\
+-					  _PAGE_USER | _PAGE_GLOBAL |	\
+-					  _PAGE_MTMASK))
+-
+ static inline int pud_present(pud_t pud)
  {
--	if (pgtable_l4_enabled)
--		WRITE_ONCE(*p4dp, p4d);
--	else
--		set_pud((pud_t *)p4dp, (pud_t){ p4d_val(p4d) });
-+	WRITE_ONCE(*p4dp, p4d);
- }
+ 	return (pud_val(pud) & _PAGE_PRESENT);
+diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
+index 2bc89e36406da..61de71a8ba978 100644
+--- a/arch/riscv/include/asm/pgtable.h
++++ b/arch/riscv/include/asm/pgtable.h
+@@ -206,6 +206,12 @@ extern struct pt_alloc_ops pt_ops __meminitdata;
+ #define _PAGE_IOREMAP	((_PAGE_KERNEL & ~_PAGE_MTMASK) | _PAGE_IO)
+ #define PAGE_KERNEL_IO		__pgprot(_PAGE_IOREMAP)
  
- static inline int p4d_none(p4d_t p4d)
-@@ -340,10 +337,7 @@ pud_t *pud_offset(p4d_t *p4d, unsigned long address);
- 
- static inline void set_pgd(pgd_t *pgdp, pgd_t pgd)
- {
--	if (pgtable_l5_enabled)
--		WRITE_ONCE(*pgdp, pgd);
--	else
--		set_p4d((p4d_t *)pgdp, (p4d_t){ pgd_val(pgd) });
-+	WRITE_ONCE(*pgdp, pgd);
- }
- 
- static inline int pgd_none(pgd_t pgd)
++/* Set of bits to preserve across pte_modify() */
++#define _PAGE_CHG_MASK  (~(unsigned long)(_PAGE_PRESENT | _PAGE_READ |	\
++					  _PAGE_WRITE | _PAGE_EXEC |	\
++					  _PAGE_USER | _PAGE_GLOBAL |	\
++					  _PAGE_MTMASK))
++
+ extern pgd_t swapper_pg_dir[];
+ extern pgd_t trampoline_pg_dir[];
+ extern pgd_t early_pg_dir[];
 -- 
 2.47.2
 
