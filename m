@@ -1,103 +1,157 @@
-Return-Path: <linux-kernel+bounces-846547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBF64BC8501
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 11:30:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA1F2BC8507
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 11:31:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 348194EDB50
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 09:30:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A435A3AA00E
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 09:31:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C3F2D5A07;
-	Thu,  9 Oct 2025 09:30:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A702D640A;
+	Thu,  9 Oct 2025 09:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LqkqlLwN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oIDG4Fop"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E95D1862A;
-	Thu,  9 Oct 2025 09:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701581D5ABA
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 09:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760002228; cv=none; b=CMN5XsY8Luyqj9gUFDWEuPvkT+zLIoX0Zsu9wPWmu1gJUp8lUvx/coinc9bnndVIqYB8PsOdXuu4XObI6qzBmubXDyxRb9iwUO6FzHpZek2Pn2ebun2edrUm3oVAmcxAdiw0mLWdaJws1JtRFxjelmvW5bBy+SylWXILRXHgrIM=
+	t=1760002292; cv=none; b=GeKMSalOjY2RrjigL1tdShClYlRKcauNDXK97NXHjKx0un4Ij42EfSpsWYns6z7dxUOJFRBVG1Cytkn+MKwAmNdkJowoDINaTV1vvFpnC1GH8BZcSj/k8P01K0aY/nquQS/nHymNmbY8rcIMIlLiLj85W5R3nUBhgSjUyU5fQAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760002228; c=relaxed/simple;
-	bh=o+H6H9hUXpqnVfpXB6sT7GgCLv8fKIk6uQPEP6nvCwk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ndLmVKDtBvTLtcnHW/TZowhSIgCrWQwKkHApCpa+/qu5jylCfDiNcBK/Oxls6IPzLGbNjj952UGkjkpcg549U06JKd3HX24Tj8V3pbJiXw7K00jHwmSL3Mp2RdQkvxaIFIj24K/iahU1L5pCxC5O0TFKB7V0oEaBdhFeGFYREXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LqkqlLwN; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760002226; x=1791538226;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=o+H6H9hUXpqnVfpXB6sT7GgCLv8fKIk6uQPEP6nvCwk=;
-  b=LqkqlLwNf3MXW8MDtUN5UIuryx07UKCvSGRcQ5kLhEPyZrUCwAmV3P5b
-   sPTN+9KDNBCj3ifrYieunzesz3Y07P0ETCKc9WyxJ6DAhzf+5MoJkd1Xi
-   N9U2j8WnAXrs5IVVqXoDPaYBPccUsKmlaYnGbjhW1qtfqcmuRR/qtOg3/
-   Zbh0MncvXHDw7nCFL2Ds3ZfCsGnPqya8hGMvbErMjqgFYKyKTHFQLVmNS
-   K1G+ejLxQ/I/T+i+NqMuow1apeVqO0YvhqxGo/hEIbJ0zhmRtiBQXSRDo
-   NbENLJgABHc3Y5nnAzyKPMBSp6PqRN/miSKzXG7ozkcMyOvbBy8DzRx4o
-   Q==;
-X-CSE-ConnectionGUID: nFb1+ns8S9qpq8GSJwLdEQ==
-X-CSE-MsgGUID: ibNqeQykTT6F9FrQX+uPjA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11576"; a="66060620"
-X-IronPort-AV: E=Sophos;i="6.19,215,1754982000"; 
-   d="scan'208";a="66060620"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 02:30:25 -0700
-X-CSE-ConnectionGUID: C6TONWeRQ7mppdyTUW+7gQ==
-X-CSE-MsgGUID: n9aWpSf7QGeb9l5JUVziRg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,215,1754982000"; 
-   d="scan'208";a="185789028"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa005.jf.intel.com with ESMTP; 09 Oct 2025 02:30:23 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1001)
-	id 78DB195; Thu, 09 Oct 2025 11:30:22 +0200 (CEST)
-Date: Thu, 9 Oct 2025 11:30:22 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Artem Shimko <a.shimko.dev@gmail.com>
-Cc: p.zabel@pengutronix.de, andi.shyti@kernel.org,
-	andriy.shevchenko@linux.intel.com, jarkko.nikula@linux.intel.com,
-	jsd@semihalf.com, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: designware-platdrv: handle reset control deassert
- error
-Message-ID: <20251009093022.GH2912318@black.igk.intel.com>
-References: <206e36398db6075bfb0bb0b98295ee7328c5f64f.camel@pengutronix.de>
- <20251009083703.2038187-1-a.shimko.dev@gmail.com>
+	s=arc-20240116; t=1760002292; c=relaxed/simple;
+	bh=NQ+MP9UQFifKSu2VgBLJEdIPCQK7TBnKXvvEwCt38zA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=lyaEchUQfVd/UG7YwKqyK0+9wq5iLRZnntAVD1o+9EXyhgH1h1VQUHbYTn4NPC+hxNtFh+OirAIDI4xLmGCcdefJ5CBBobZUaBxnqYY1SnCTcZZC5uq/a82NJLEQYxk1278SV5+FH2mXNfTC6UzaXwIYRiZQYjdX4bgtOuBnWrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oIDG4Fop; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b3b27b50090so130954466b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 02:31:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760002289; x=1760607089; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=D8Y2hQ4PF+BjFgeq/9cHEzG8SplUoZPxKltHoG6YiyA=;
+        b=oIDG4FopgDy4ZLRQWEQbN3zxezy+v0+ZOG/dnP+3Kn+CQjmx22HaT+jUfCotIW7QWp
+         Ezkt7bkg3Uyn5ZYLgqWLI/LSPPb85jHVkQM8vq57bdJytF09o1ScaF5zJ5qoQ4gVRSfj
+         SWIrOG2QD04UKo9SuV/1pdMmnHiaSTf0nwAg/eDPLXqms6TOKKv2RcVPDMvcdfy4Zd6E
+         Bl6nuXHR6ZTam+CJnWd6y2axftlmYfXKmQCYfteIob8C6+Qcwq+YW9BOaElLgj6CXROE
+         SfQWU0QI8zbrNUKqDGAzIsD+6fDqYrJnCuU5MmMasMVu7HrENNpCMFgmYsji2xBp7qpL
+         V2kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760002289; x=1760607089;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D8Y2hQ4PF+BjFgeq/9cHEzG8SplUoZPxKltHoG6YiyA=;
+        b=QSqwR4YpIMa9YSWWkX6mQa4Hw3+8uBzV9QvdOEJMFVwW2zD8SjFahnjgLu0Z/PggaL
+         O17GCRH5uw0r0tBMRa5B6EwpcLInS5/TmgSGzHlpfc6KZOVzmJS3jNFE0+/CVDUe23yD
+         s0o/vE86AhQa3hTKGyVQkuGZbI4Iuy1JSHoS8jbKafnbzsYfBRJsaazU4su2zKBFN+0U
+         /9rLGXJajRm/q7oZEyho1AD4YmgR1+1lk9e2v23G2Q586Ou5OI+28R6AJp5e4WzDiP0T
+         2TUobiBRra6x2UB03vQRAcfPhP7FmUigCYUDrT/Ub0mWAa8Z8Py00e3q2WUtcIS3WC2C
+         lILQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWuheJ/pJb947wQAYKHfWF8pgLXZTNECWrOzJQREPMvqdrWT+80lrPOFdVALKscDEIgNUDhrVDnK53je5o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpkZDi6lIziXfSZLWzaToJ6BkH+kOPzmxigy7AU6y9Hesa7lw8
+	0janXrVYBm3pj5gpgbGDJFpvyYkO222FTrjXcSidoak+jjomMsgSFklaOSZ0eo4IgKk=
+X-Gm-Gg: ASbGncs8bOAIRYaSXvtqpf5uNV6bUo5QRASAjnlMkeJApeEuPWQMH5npipxlhhKT/5m
+	QZ8Xsv8SMWAfWXmqRay3931Uqfb6LJ4q4gnG96tU6TDEuWo6Mw/1lMVImhyybIeyzwDhH1JlWc1
+	x7fpjyv5kwmcmnGooch6dtpq1qegownw3Xb6cy9kaFKQAaUbNPVzLjk2ySyt/zBbVO9gRjoEj9f
+	pRe1jqLh9Rtq6Ud6EHF4Mx7LkbbjpxcQU8PthcCiNLa2wEArPjFlwz1yWwUjxRxyjRVfP+vbrq5
+	P1AM2/x20MbjdiahwbJ99PGXAnnLosO1XR4L7YI1wDdw0umCOc/npk2vfwj7QsnBEHCX1L63cRK
+	xNqyrWwK5WNhYGwWVTo5YV19XwXUB32m1h77lU5vaUfx5Rsy6+r1Fe3wDwMNjhlf6IC9CLOEBqg
+	rT2rreTNKZCQqLXZYn0jmSl4X/w/J4tnF3Os0ROke7XdcTQWW1rjw=
+X-Google-Smtp-Source: AGHT+IGbdEUE3PNoZYCS6NfJhqFXaPk0SnM9PnNIqtON966v5IoYDwxlU8rH3tGA/l00b+ZA3818Uw==
+X-Received: by 2002:a17:906:6a14:b0:afe:764d:6b22 with SMTP id a640c23a62f3a-b50aa48c4cfmr690831366b.9.1760002288707;
+        Thu, 09 Oct 2025 02:31:28 -0700 (PDT)
+Received: from puffmais2.c.googlers.com (224.138.204.35.bc.googleusercontent.com. [35.204.138.224])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b486a173a41sm1855670766b.87.2025.10.09.02.31.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 02:31:28 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH v2 0/3] soc: samsung: exynos-pmu: gs101: avoid SError for
+ inaccessible registers
+Date: Thu, 09 Oct 2025 10:31:24 +0100
+Message-Id: <20251009-gs101-pmu-regmap-tables-v2-0-2d64f5261952@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251009083703.2038187-1-a.shimko.dev@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAOyA52gC/3WNwQqDMBBEf0X23C1JRKs99T+Kh2g3cUGNbKy0i
+ P/eVOixl4E3MG82iCRMEa7ZBkIrRw5TAnPKoOvt5An5kRiMMoVWSqOPOuU8PlHIj3bGxbYDRaw
+ uprRd7aoiJ0jrWcjx6zDfm8Q9xyXI+zha9bf9Oc1f56pRoXZ16VRtFLX5beDJSjgH8dDs+/4B4
+ FuICL8AAAA=
+X-Change-ID: 20251001-gs101-pmu-regmap-tables-8726ac9f853e
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Sam Protsenko <semen.protsenko@linaro.org>
+X-Mailer: b4 0.14.2
 
-Hi,
+Accessing non-existent PMU registers causes an SError, halting the
+system and rendering it unuseable.
 
-On Thu, Oct 09, 2025 at 11:37:03AM +0300, Artem Shimko wrote:
-> Handle the error returned by reset_control_deassert() in the probe
-> function to prevent continuing probe when reset deassertion fails.
-> 
-> Previously, reset_control_deassert() was called without checking its
-> return value, which could lead to probe continuing even when the
-> device reset wasn't properly deasserted.
-> 
-> The fix checks the return value and returns an error with dev_err_probe()
-> if reset deassertion fails, providing better error handling and
-> diagnostics.
-> 
-> Signed-off-by: Artem Shimko <a.shimko.dev@gmail.com>
+For gs101, we can avoid that by creating the underlying PMU regmap with
+the read- and writable register ranges in place, because on gs101 this
+driver controls creation of the regmap.
 
-Looks good to me,
+This series updates the Exynos PMU driver and gs101 in particular to do
+just that. For gs101 this is easy, as the exynos-pmu driver creates a
+regmap and we can update the regmap config to pass in the registers.
+For other SoCs it's not as straight forward, as syscon_node_to_regmap()
+is used which doesn't allow passing a custom regmap config - those SoCs
+are out of scope for this series.
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+With this in place, invalid registers (by drivers, or even plain
+debugfs), are now simply skipped by regmap, leaving the system useable
+in that case.
+
+Cheers,
+Andre'
+
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+Changes in v2:
+- Sam:
+  - add regmap_access_table forward declaration
+  - add kerneldoc for struct exynos_pmu_data
+  - update gs101-pmu.c header to C-style (Sam)
+  - ctx -> context
+- update commit messages as appropriate
+- collect tags
+- Link to v1: https://lore.kernel.org/r/20251002-gs101-pmu-regmap-tables-v1-0-1f96f0920eb3@linaro.org
+
+---
+André Draszik (3):
+      soc: samsung: exynos-pmu: allow specifying read & write access tables for secure regmap
+      soc: samsung: exynos-pmu: move some gs101 related code into new file
+      soc: samsung: gs101-pmu: implement access tables for read and write
+
+ MAINTAINERS                                 |   1 +
+ drivers/soc/samsung/Makefile                |   3 +-
+ drivers/soc/samsung/exynos-pmu.c            | 136 +--------
+ drivers/soc/samsung/exynos-pmu.h            |  37 +++
+ drivers/soc/samsung/gs101-pmu.c             | 446 ++++++++++++++++++++++++++++
+ include/linux/soc/samsung/exynos-regs-pmu.h | 343 ++++++++++++++++++++-
+ 6 files changed, 824 insertions(+), 142 deletions(-)
+---
+base-commit: 78578f59c6d2d7ece395fa438c7c82a25c9ed9e7
+change-id: 20251001-gs101-pmu-regmap-tables-8726ac9f853e
+
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
+
 
