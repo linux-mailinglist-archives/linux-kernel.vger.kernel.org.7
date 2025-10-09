@@ -1,63 +1,54 @@
-Return-Path: <linux-kernel+bounces-847209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5962DBCA40B
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 18:53:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1137ABCA40E
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 18:53:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5006E4EB250
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 16:53:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75A953E6365
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 16:53:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A546B22A4F1;
-	Thu,  9 Oct 2025 16:53:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB1A22A7E0;
+	Thu,  9 Oct 2025 16:53:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eoF+m5hs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="evtRoave"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061BE1E51EE;
-	Thu,  9 Oct 2025 16:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755102253B0;
+	Thu,  9 Oct 2025 16:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760028804; cv=none; b=liKDnvqzvKCkeP1XIosbGtTbKjZ5lEDLef7smBQBcqibzCknKmfYzvT229F3My9M8vbRyhHwFmZdX9lC7d6BiVM8V7UkmOOwicrFH0PWd5Q+fBcNR4SO/KO7HlZcX7L9YpMgVm8eMcwbaRUqNHaIsRIIvIO6/S7nf31JE7IalRY=
+	t=1760028824; cv=none; b=lKB3nSlT5CrGWkw+uwSnuw2joyffjIioj2xSdc5op3BAWbWg0mJ7yF9V2U+wt16dC+geCaDYLf+q42ZcMsvJZqIa0B2SOMt6g2FqmHo6X+HJ/dXH5f4IB2COJPkR4KCF9ab7oQRESI1tAIGsnyEtmUeX1b/dTOpD8z4oG90KzWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760028804; c=relaxed/simple;
-	bh=s3EeI5Z56afA2rXL7zIjK2ku2OOzEBiB/kUemFUGtIY=;
+	s=arc-20240116; t=1760028824; c=relaxed/simple;
+	bh=epjvvnuppmyRenwVzfDD+OEyJF5NAOaMIRlvp0bTwIU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RrTaVznqPlXlVf0iJxqzV9tvcerUpQDEfomTUL1+/L+PC/hdsp2Nhq8UmYEL2ICFBYV7O8cjpdV25VAeVvVLUQmsFwmlpb1WfoQDWxSw0w4Pbdzcs3g1YsT2Fg82r2ZMQIhxSK3llWtZamAYZxb8rpAt8aogvApdpR8cz/xIgEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eoF+m5hs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 246BDC4CEE7;
-	Thu,  9 Oct 2025 16:53:16 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ABuNU9JJmC+UiQ6Z1hCRC0SpzLunfYnCZoM9O00ZMsEb/eJcrXn3AaGglJsG7ZrsbGarLb0kIVzdmRrwVSFyGTEUTmKzEO4qjPTkR0GGNdYukGhIqaVz+EiIfyZ60N2qJQEjqNs9/dzZXCVzCyDp3ytDyfQ8TDaUzcrE9cFZOmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=evtRoave; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EED2C4CEE7;
+	Thu,  9 Oct 2025 16:53:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760028802;
-	bh=s3EeI5Z56afA2rXL7zIjK2ku2OOzEBiB/kUemFUGtIY=;
+	s=k20201202; t=1760028824;
+	bh=epjvvnuppmyRenwVzfDD+OEyJF5NAOaMIRlvp0bTwIU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eoF+m5hsCRlnJ3mziERlyxeSUZkpA+Uq3/wyy0nW6KS76Qfb+DLrB7hQ4iX52qBHG
-	 7tXtaxX24wHY/VwV9QKXc/FiB2EJAmz5u+VKW8IEu1dmCUNunglycXeDQVoaBd7VdY
-	 dJzXhEOr48fU7PwHGyMy45putihKE4EoaFAvtrOVJ7FYK/LOCIiXQ6QvJFljBV3dXC
-	 5lDb8tQRlWcItlQ+g9QOd+oI6bns4qp+WL2GQJP4+tUFU7s2GY/gsFpJdwkjJ4dKg3
-	 bRNiLY4RVfWd+P6Ud/EfIwhG4WBQO0oJk5VxwnQC113R7E1j57jp6id5eK7q0kVWcT
-	 FJMxRKP14E4TQ==
-Date: Thu, 9 Oct 2025 17:53:14 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Yunhui Cui <cuiyunhui@bytedance.com>
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	alex@ghiti.fr, rostedt@goodmis.org, mhiramat@kernel.org,
-	mark.rutland@arm.com, peterz@infradead.org, jpoimboe@kernel.org,
-	jbaron@akamai.com, ardb@kernel.org, willy@infradead.org,
-	guoren@kernel.org, ziy@nvidia.com, akpm@linux-foundation.org,
-	bjorn@rivosinc.com, ajones@ventanamicro.com, parri.andrea@gmail.com,
-	cleger@rivosinc.com, yongxuan.wang@sifive.com, inochiama@gmail.com,
-	samuel.holland@sifive.com, charlie@rivosinc.com,
-	conor.dooley@microchip.com, yikming2222@gmail.com,
-	andybnac@gmail.com, yury.norov@gmail.com,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] riscv: add support for Ziccid
-Message-ID: <20251009-secluded-writing-adefb1f71a72@spud>
-References: <20251009134514.8549-1-cuiyunhui@bytedance.com>
+	b=evtRoaveR542GD74OlaK0XZHSdKVsx9HnKDhcLetjfRAs2zCLjEuAd9BMCh2wLdYr
+	 I+4ufzeyF1KZnjq8O0lpiK+elr5CE1yiK1bojaQSLDI9sC50BJGSzeK6OMXXnxtW/6
+	 kFvfbB+pFi5ILdbxPdufT9IGTV2AxzeOc+bcIr/Cn1FOW7yFuBc6j8WuY0snJWU6+2
+	 sCT1Ne6sk/0aN+hHFSn5H5CQiBqSRN41+X38iHfPHzVxmX7QRorN/FOD1dMHVeYf+T
+	 pAXuXNSQMEPQK4cj2RSHUgx7CMG/a567qNrVSBbJ6yoN6dAKgu/AO6QwTIUBRiNqy9
+	 pILdlKH6J9JoQ==
+Date: Thu, 9 Oct 2025 18:53:41 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>
+Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jic23@kernel.org, marcelo.schmitt1@gmail.com, kernel test robot <lkp@intel.com>, 
+	Trevor Gamblin <tgamblin@baylibre.com>, Axel Haslam <ahaslam@baylibre.com>
+Subject: Re: [PATCH] pwm: Declare waveform stubs for when PWM is not reachable
+Message-ID: <6v4hny7hxjsdf6zvinhpagtbhluxbd6psq7wpx5ls6zdbnjtym@lnygnkav4ewk>
+References: <1ac0fc529e02744aacfcb9140ed597ff60886f39.1759873890.git.marcelo.schmitt@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,99 +56,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nor471u/BfNy6yoJ"
+	protocol="application/pgp-signature"; boundary="gtpjpznqgwf67kka"
 Content-Disposition: inline
-In-Reply-To: <20251009134514.8549-1-cuiyunhui@bytedance.com>
+In-Reply-To: <1ac0fc529e02744aacfcb9140ed597ff60886f39.1759873890.git.marcelo.schmitt@analog.com>
 
 
---nor471u/BfNy6yoJ
-Content-Type: text/plain; charset=us-ascii
+--gtpjpznqgwf67kka
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] pwm: Declare waveform stubs for when PWM is not reachable
+MIME-Version: 1.0
 
-On Thu, Oct 09, 2025 at 09:45:14PM +0800, Yunhui Cui wrote:
-> The Ziccid extension provides hardware synchronization between
-> Dcache and Icache. With this hardware support, there's no longer
-> a need to trigger remote hart execution of fence.i via IPI.
+Hello Marcelo,
+
+On Tue, Oct 07, 2025 at 07:19:38PM -0300, Marcelo Schmitt wrote:
+> Previously, the PWM waveform consumer API would not be declared if
+> CONFIG_PWM was not reachable. That caused kernel builds to fail if a
+> consumer driver was enabled but PWM disabled. Add stubs for PWM waveform
+> functions so client drivers that use, but don't depend on PWM, can build =
+if
+> PWM is disabled.
 >=20
-> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> Fixes: 6c5126c6406d ("pwm: Provide new consumer API functions for wavefor=
+ms")
 
-Actual correctness aside, in an RFC should you really state why this is
-an RFC and not just a v1 patch. You're missing a dt-binding change
-that's required for new extensions, that you'll need for v2.
+At the time 6c5126c6406d was applied, there was no user of the API that
+doesn't depend on CONFIG_PWM, so I object adding this Fixes line.
 
-> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeatur=
-e.c
-> index 67b59699357da..2da82aa2dbf0a 100644
-> --- a/arch/riscv/kernel/cpufeature.c
-> +++ b/arch/riscv/kernel/cpufeature.c
-> @@ -540,6 +540,7 @@ const struct riscv_isa_ext_data riscv_isa_ext[] =3D {
->  	__RISCV_ISA_EXT_DATA(svnapot, RISCV_ISA_EXT_SVNAPOT),
->  	__RISCV_ISA_EXT_DATA(svpbmt, RISCV_ISA_EXT_SVPBMT),
->  	__RISCV_ISA_EXT_DATA(svvptc, RISCV_ISA_EXT_SVVPTC),
-> +	__RISCV_ISA_EXT_DATA(ziccid, RISCV_ISA_EXT_ZICCID),
->  };
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202509272028.0zLNiR5w-lkp@i=
+ntel.com/
+> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> ---
+> Cc: Jonathan Cameron <jic23@kernel.org>
+> Hi Uwe,
+>=20
+> This is a fix based on a report from 0-day bot [1].
+> We need this for a sophisticated IIO device that makes direct use of a PWM
+> waveform (in addition to indirect use of PWM through SPI_OFFLOAD_TRIGGER_=
+PWM).=20
 
-The comment about this structure reads:
-/*
- * The canonical order of ISA extension names in the ISA string is defined =
-in
- * chapter 27 of the unprivileged specification.
- *
- * Ordinarily, for in-kernel data structures, this order is unimportant but
- * isa_ext_arr defines the order of the ISA string in /proc/cpuinfo.
- *
- * The specification uses vague wording, such as should, when it comes to
- * ordering, so for our purposes the following rules apply:
- *
- * 1. All multi-letter extensions must be separated from other extensions b=
-y an
- *    underscore.
- *
- * 2. Additional standard extensions (starting with 'Z') must be sorted aft=
-er
- *    single-letter extensions and before any higher-privileged extensions.
- *
- * 3. The first letter following the 'Z' conventionally indicates the most
- *    closely related alphabetical extension category, IMAFDQLCBKJTPVH.
- *    If multiple 'Z' extensions are named, they must be ordered first by
- *    category, then alphabetically within a category.
- *
- * 3. Standard supervisor-level extensions (starting with 'S') must be list=
-ed
- *    after standard unprivileged extensions.  If multiple supervisor-level
- *    extensions are listed, they must be ordered alphabetically.
- *
- * 4. Standard machine-level extensions (starting with 'Zxm') must be listed
- *    after any lower-privileged, standard extensions.  If multiple
- *    machine-level extensions are listed, they must be ordered
- *    alphabetically.
- *
- * 5. Non-standard extensions (starting with 'X') must be listed after all
- *    standard extensions. If multiple non-standard extensions are listed, =
-they
- *    must be ordered alphabetically.
- *
- * An example string following the order is:
- *    rv64imadc_zifoo_zigoo_zafoo_sbar_scar_zxmbaz_xqux_xrux
- *
- * New entries to this struct should follow the ordering rules described ab=
-ove.
- */
+Does the driver work in some configuration with the pwm stubs? If not,
+the right thing to do is to let it depend on PWM. (Note the inverse
+isn't necessarily a good idea.)
 
-Cheers,
-Conor.
+And I wonder how you could even compile your driver without PWM support
+given that it selects SPI_OFFLOAD_TRIGGER_PWM which depends on PWM.
 
---nor471u/BfNy6yoJ
+=2E.. some time later ...
+
+OK, I tried to reproduce the problem that the kernel build bot run into.
+There is a warning:
+
+	WARNING: unmet direct dependencies detected for SPI_OFFLOAD_TRIGGER_PWM
+	  Depends on [n]: SPI [=3Dy] && SPI_OFFLOAD [=3Dy] && PWM [=3Dn]
+	  Selected by [y]:
+	  - AD4030 [=3Dy] && IIO [=3Dy] && SPI [=3Dy] && GPIOLIB [=3Dy]
+
+This is the thing that needs fixing, i.e. don't select a symbol with
+dependencies that the selecting symbol doesn't assert to be fulfilled.
+
+Best regards
+Uwe
+
+--gtpjpznqgwf67kka
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaOfoegAKCRB4tDGHoIJi
-0hdSAP4mmjzLQiGeP2lXFFu31PWRRLqRQHE8ipZDJS96deFWTQD+PwyH70gg9y03
-slIpEN0aUuJ9z2FpvqNH5MXCJurtAgE=
-=tcgM
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjn6JMACgkQj4D7WH0S
+/k4UwAf/Xi58Gz3voetCP7AG978T24RE1BOCkdT8fyDxUQmlCkdCaw9awK0nQaqY
+nnvr28hOA03CwH7JsxTBj5GrJ7HLofBmE1/FQHIT25qg68x8M3nIm0rlFkocw0na
+XmApu0OfRURM8Nmlg4LZLelrYzAAHuXWkZ8+3IiubpZ0siMP2FGG5eOZWTE+qf1E
+wIMc2OcYAhW3GLyB9wicKcyg6aVWs8A5mktw5TRJJ6he1HTxC35oZwRHILnpy/Qn
+Q7DR/BCPJE8EkFjglVszUg6arresnHvlujg8p5U9O7Ogm7Gr8OFY229ghW3p8pF4
+nH8HzqJv4vXa3AGqJTU8Mcj87zVM0g==
+=33nq
 -----END PGP SIGNATURE-----
 
---nor471u/BfNy6yoJ--
+--gtpjpznqgwf67kka--
 
