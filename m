@@ -1,268 +1,292 @@
-Return-Path: <linux-kernel+bounces-847344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 979DFBCA931
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 20:29:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8047BCA934
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 20:29:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8BBDC4FC50A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 18:29:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A86471A630C5
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 18:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9271F24DCFD;
-	Thu,  9 Oct 2025 18:29:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD2CE24DCFD;
+	Thu,  9 Oct 2025 18:29:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pKY071aO"
-Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010021.outbound.protection.outlook.com [40.93.198.21])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="IrbHY63m"
+Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012009.outbound.protection.outlook.com [52.101.48.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4BAC224AEB;
-	Thu,  9 Oct 2025 18:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A466224AEB
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 18:29:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.9
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760034558; cv=fail; b=oqJGdgsnFBAF3KbPnrHutVlTSz3dA5mR4CWwyLIS0l5v9vnehRgEomMcIINbEx3CYKVoS7tt4tiyi8LXKnFGtv70FhvLxQdoF9jeJoOD6Lf3ZLFNGXauatB/o6o6fceVmgP2ymDLv7CXt6A0T+yYG6OjOgMKYOk6M0wdHJbyE24=
+	t=1760034572; cv=fail; b=I5Z97WIHS+fA6657XiSReJ4ocMVMfcmz3QZ2AxvrKbyZW21SB4DWqf4lG+4qoI0Bm9jmUX7GfGn8CzjU0FtG53y0mVWGzPbL6FWenlj/uCbQNo/g6UYd6eIC2dd47IhkrMC0zK2aDLkZaTUCK2hX7bf/H9lqBMSr73EZdPgdMzk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760034558; c=relaxed/simple;
-	bh=Nm7xIdXxyAkieSuc2p68VjJjn18aQDhvHZbndiqqOwI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=LBd8lKkyvwiL3qOo7h1b7amoMwJQ3AC2Oh42nPC0tsxgxSZvDlt2Gk4/sbYuxj5kSUw5aMrFiuLKQS/BZ8H9TiE0HmhQH51Zij4l+bquTG1zlSvvEMIa1gd8eI6BOlu/f78guzu2KDhSuBsqbLVyLPC8yKZ+2SykvSjidfGAuPY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pKY071aO; arc=fail smtp.client-ip=40.93.198.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1760034572; c=relaxed/simple;
+	bh=fE5+KAO4Z0iXA4PP0ovvhA3Lr+t3H4x+NXWHOYIfMDI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lBKHK4pcu2dKS3zlTFIU4XFRjE0Q2gu2fMaAmOXccCMQX830J/Pw41HIFDMD8tooQZpGiN6tPOty1w1h7uYVR/BuKF2SwRQkERbDmMqaKDusZmYBASzICQe9WZZ+NF91Jec1AFJ5gwdZkQYI895fAwv4mDVvXmQBd5qCBHGzGHw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=IrbHY63m; arc=fail smtp.client-ip=52.101.48.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=q5k5VlaxkfG0W4hPQP5cmRYlLHk6j0ERbMINEAIlGeAvMB4qzWc7BOFlFwd4FH0oaWMFxNcJDy4GsQk/fAskUeq35U0Q/+K2G6WKmM+bwbVyIPwH2mxJpxxI1wSbAFMGQdZ3CFiyz4KXaL1GcxebGvvQJnNjf+rqIy4A5K3+43cVWrgAhQo0UWoEaIJuQw+Q2NGqvWwdzvvKOprK1joSR3Mc8J4XMs6yQJvA/ZdhiNFOk6XgUPU82UR4DYjmJrSbjZhcUP+bwq93z/5fb52IW5ggmxGqjleZ0b34Jdi+nJKV80czWRwcev9PHoLxkzKD/mYzfDeMET24Jc4f3eOWMg==
+ b=IVFufae8XjKPCYaukOwlX60YzAICVD4Ea0WAT/NQ79++aLoyhsSW7uVfCbxf26fMtgQagcivo2XcadR2MNRV+sXMPunPcbFmAgU2aaiekK1ORlF3l4AomZXWvHOANiWIm2rEeQKK5hnNMg+td22dFJTscTVkbA1wDAUif7DYEvB2Fj+Aw36YBWIA8uJW7VO8JbP/JEpH6J9LbX5qYIBgIp/d29xcX6gsGJzlrnBjSKOewdvcyLtghQW0FjPWU38QqtoLZxSb8SRjjaLGW8qMAUCLnX47HcZ+50cY0OIyDLNSKhgSb7JYOGayCBIZ2vAgT+zZf9KVQK5nxhJABvdvxQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=d6qF0O8PLEW91WZov+DVsRBbyqj0JVm7G899RtAHV6A=;
- b=OsHGzTpNotkUNUWbaLukPO5cPjRMHf7d2s2X9SEZOqiWZG3zgLu6NgXc3K7lrXmvKGw3QIZeey3of4AesYoUKlzM+5+08OYrvgGnZuwhunEce9lotnpTLMl3oWiR+kkeDBsRFbQXYppKH1HfoPViJXnDmZjPG0Y+w6df6Ll7PUZhpNFn+oTShVq+3/Fc7r8QvPD7p5mjaWkqqacb76sVqmW2bg+c0/vlOncptceVRNZ7DYlzd+lPfdh3xJ6UNkAHGFUQyftzzEf2e8v8Qzdp5SPnTP0v1RjRaQHRnLHKhl/ymsEFVbOI8gmbKOuhbLqWeDeWPApSMzH6m4HEX3TtTA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ bh=NFYgRbC97sjETGF0HGh3BfCWa0gPdW4yqbgmq90DFH4=;
+ b=EkuDpIZhIhKpVvpCfhq432HFEgzlFPn+ULjA5JG2NV588+BkjG8UyEMDTo0NA/e69+SUNuMWm4rXHo2UjcYuOi0QMsAdx7Nu/JMxbhorJhSaKE10rRzXHc0OURpeYtEQd2p4gAYV+WlyP4AD9ttjO6/klmjnHhtFfE46QDrOP46Lrgq8rEJ2CW/hvZf6lUDTmgfxwFNSJtm9w3KR28b8ITJaoW6lnXfk2YfTY+Oryp5oDKVTGqoO1wVlvWGr30Cn4KLa/YoWlf9Lslxk8IWt1kOKndruvbuHoCbKozeAQnZq7uCiEtaGRCRkQvc+B5HVVGwQdxt9pX7uyt6MwieX0Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=d6qF0O8PLEW91WZov+DVsRBbyqj0JVm7G899RtAHV6A=;
- b=pKY071aOMhu2By0Xao89WcFV9EqswToPUmxq63EhpQis3xhCG/EAwYcyJ8Iix0E49Wf0JNooOiaLzLD/roAkVZuKlNUT/s55IDnef2a0mu3BrFSIcBoiP0JV66O5U01cMbmNCJDkMqQmOpLhY61vd0HFeXVYDiVa3GBWUxm/YJycgNe8ZNYh32CI2AXO17hqrkVXgHc43Ts/DvUps799ekZE4dpT6OrFW2ubnfCOZ/+lkEalw02CvOyauFihmFs+I7GK9mTrS+4fQPEJgpvAPH213aFtHs/GmdPJKRIy4PHcjp6TA+JFRynyaM0SpTTuWDbdyIxqTbhHr0wsgB4Vnw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by CH3PR12MB9148.namprd12.prod.outlook.com (2603:10b6:610:19d::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Thu, 9 Oct
- 2025 18:29:13 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9203.009; Thu, 9 Oct 2025
- 18:29:13 +0000
-Message-ID: <f83dc79d-d101-489f-acfb-07834494bc65@nvidia.com>
-Date: Thu, 9 Oct 2025 14:29:10 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 3/3] gpu: nova-core: use BoundedInt
-To: Yury Norov <yury.norov@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Jesung Yang <y.j3ms.n@gmail.com>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feong@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-References: <20251009-bounded_ints-v2-0-ff3d7fee3ffd@nvidia.com>
- <20251009-bounded_ints-v2-3-ff3d7fee3ffd@nvidia.com> <aOflmmHe8O6Nx9Hp@yury>
-Content-Language: en-US
-From: Joel Fernandes <joelagnelf@nvidia.com>
-In-Reply-To: <aOflmmHe8O6Nx9Hp@yury>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BN9P220CA0030.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:408:13e::35) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+ bh=NFYgRbC97sjETGF0HGh3BfCWa0gPdW4yqbgmq90DFH4=;
+ b=IrbHY63mOfq0eNrELwsv88zgCS4aE3D0FVYAZf8AUHvFitZEoT8lzy5R0ADda7PcHTAxq6y4wwBtBr1eSvMmM/wdszSmBG5THvp41GCAFzw99miUQwaU/A6hDjuJ5ZQf/RueCRSv5Suha6zNQofV7Zt6rdq7Y5O527YMDWHrR7k=
+Received: from CH2PR05CA0035.namprd05.prod.outlook.com (2603:10b6:610::48) by
+ DM4PR12MB7575.namprd12.prod.outlook.com (2603:10b6:8:10d::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9203.9; Thu, 9 Oct 2025 18:29:26 +0000
+Received: from DS2PEPF00003439.namprd02.prod.outlook.com
+ (2603:10b6:610:0:cafe::cf) by CH2PR05CA0035.outlook.office365.com
+ (2603:10b6:610::48) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.9 via Frontend Transport; Thu, 9
+ Oct 2025 18:29:25 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ DS2PEPF00003439.mail.protection.outlook.com (10.167.18.36) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9203.9 via Frontend Transport; Thu, 9 Oct 2025 18:29:25 +0000
+Received: from bmoger-ubuntu.amd.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 9 Oct
+ 2025 11:29:22 -0700
+From: Babu Moger <babu.moger@amd.com>
+To: <babu.moger@amd.com>, <tony.luck@intel.com>, <reinette.chatre@intel.com>,
+	<Dave.Martin@arm.com>, <james.morse@arm.com>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>
+CC: <x86@kernel.org>, <hpa@zytor.com>, <linux-kernel@vger.kernel.org>,
+	<peternewman@google.com>, <eranian@google.com>, <gautham.shenoy@amd.com>
+Subject: [PATCH v3] x86/resctrl: Fix miscount of bandwidth event when reactivating previously Unavailable RMID
+Date: Thu, 9 Oct 2025 13:29:17 -0500
+Message-ID: <8eace6e47bb7e124ffb6c10150d1b7d38c2f5494.1760034251.git.babu.moger@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|CH3PR12MB9148:EE_
-X-MS-Office365-Filtering-Correlation-Id: e4d7ac8c-1f1f-44f5-cad7-08de0761bee8
+X-MS-TrafficTypeDiagnostic: DS2PEPF00003439:EE_|DM4PR12MB7575:EE_
+X-MS-Office365-Filtering-Correlation-Id: d469993f-5f09-4e90-2acf-08de0761c68b
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|7416014|36860700013|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QzZYS1BUZmo5NlJWUUZIanNNRDV4cUwrSmxvMm01OTI0QytreVg3cGFIRVda?=
- =?utf-8?B?U2NYaDhvY2dVbGZnU3llVnRnMzltM3JLajZ2OW1SMytRUDVMV0Jsb0g0cHBP?=
- =?utf-8?B?WlJiVzJkeEJwVlQ5L09iWE53eGJxcklOVEZLMzZmR09kRWpUb0pvTWxJaGxO?=
- =?utf-8?B?MDVvL05iNkxmR1k0WU1aNHZhUTRlTWZ2M2Yzd3BEWlc5aTgrS0E3QkxuY3V1?=
- =?utf-8?B?cll6aWNzbEFmRWt3UjhJZWR6RHgyZDJwVmcwaVhCRDMweDRRMHM1TXhUSTZE?=
- =?utf-8?B?TUxIUXBFeXRhSklMZXdaMTRkc3JQSWtpSmxIdXV5S2dab21VVFlIOXhWOGtC?=
- =?utf-8?B?RW1PSmpvVWdyeXAvWTdrVm44RkVDWEdoTFFQNjRkMSs5L0tLRStOZm9FYkNY?=
- =?utf-8?B?Mk1BU3c4SUJIMFo2VGl5eTkwcVk2aDBXU3ErUXYwb0tkQ0pZaG1TNklaVU1U?=
- =?utf-8?B?NXM3QXNJWnpBOU5iRjNid2Q0RXZ0QXFJbGs1cUQ5dHF3QktvZC9GVkJ3WDNL?=
- =?utf-8?B?NFBMQUhNbzRtSFRMcW42c1VHZkxnNkJRdnY0a3pKVE5ZaUdGcGFaaGhwcTZM?=
- =?utf-8?B?OUZEZC9DRGVhVUt5NVF4R0hMTkRyOTVRWlVETzBtWkZ6VTVpU3ltT2JxNVVT?=
- =?utf-8?B?cXJUb0pMaDV0VVFod1NWcm5icGpvbThtbmhSUDlJZVNjdkQ5QjhiSHdsYUNt?=
- =?utf-8?B?c001eldJblNrWXVUcTJFVkEzN1JxVWMzd2NwNlFyc3l2K3BiK3JkYmJjT2Rs?=
- =?utf-8?B?MmI2d3JsdTdJOURDaHRkNG94ckl4UWtpQlRvc1pMU0tRQ1JYZzM1QXhlTEJl?=
- =?utf-8?B?UFdIODRkUEZMWXlaTzU0ODBjYWI5VStDOFVhNnZzZ3poUnhDb1BqalpsdkZX?=
- =?utf-8?B?TG8rNWR6aHFRTVo0L1k0b201aUVZaXdNQll0VG1EVko2Q2J1UVg2cmN1U2Ir?=
- =?utf-8?B?cmFPTmFBNlQ3TXZFRG5mOVRwalZ5bzVNMkIxZ1R4NW85VS9YMHNvUWNlSjlT?=
- =?utf-8?B?WlBtdnRlQzBvUFJET2RiZlFjSGp2R01lQ0RiNjIrWnNIQjdRN3k5MlloelJV?=
- =?utf-8?B?aGp4UElHTStnOVF4RGJJQ3FpM0RtSVVMMk9xcU45N2FGd1ppcHc3dVRCVU1E?=
- =?utf-8?B?T2VPeDJjbUlMOTFFSkFuV0VyMVNXekZGaHAyMTdiNkV5dWZLRC9SWWFNRDBr?=
- =?utf-8?B?ZE9VV24zSUplZUJiVjBJSWFubXNaWnNYeEk5NDNjUXR6UWp1TDdjdXZscita?=
- =?utf-8?B?ZEYrZUEzcjczVTlDbFdrbm55VnEzcjN2NkNpVldrMmR3SlBvK3UxeVhNQTVw?=
- =?utf-8?B?ZlZ4M0lpK1B0NkwwNVdiSFhVdE9XRUIxSllRR2hRekcrK3JGVDJHZlBERTJM?=
- =?utf-8?B?MXhuSkQ3cldORVRMN0FhVDVnRThEcUVyUDcwaUdxTk41T3lrQ0dFMWJBc1Zr?=
- =?utf-8?B?UVZMRzlNWTJVaERueGZ0d0NzWjZlM3NsU2plMHhwdDAvWGhIUGE2bk8vYzZ2?=
- =?utf-8?B?N0Uwbi95WkswbE1qREIwLzhTS2ZlTTcxSHFkcUJzNDM0cU4xdFpyY3NtU1lo?=
- =?utf-8?B?TjVuZUlFazZtSVdkeXJVRE5iSldqdW0rQlhyVGxReXNQdExwd3hTcGF6a01J?=
- =?utf-8?B?cWQ1RUphZUpHZkYwejRmQ2xQNk9ObEgxeDIvRERaS1FkUWU2OHg0UzZQMEF5?=
- =?utf-8?B?WXQzeUhSSk5KVHFIOXJlNmJleldKOGh1d1Bmam80alZ4U1lET3dNeDVzMGV4?=
- =?utf-8?B?RE40VEkzeVk0dVRGYnc3V1AzZ1hyRW1rYUVUNHBHcTJvQ2FxWjA3aHhVbXVQ?=
- =?utf-8?B?QnFYYm92NDJpUmVJckptUnJQR0RXaUY0WHIxb0dyS1ZXSHF2NnVvYktYOVhE?=
- =?utf-8?B?MFhwTDFETi93V3RESSs4cWN2bzYzdzg3TUtLZkNOMmNhMVpsbkxNSmR3Mnhm?=
- =?utf-8?B?MFlBSXczbTQrWkFtWEJEL20wamhZSFJhMTNnZmZFcTNpVDllU1F2NXVqWGJn?=
- =?utf-8?B?YjBZZ3V1ZUxnPT0=?=
+	=?us-ascii?Q?DBh4Y3sNGuHeBomkH4CSMcX/nCavKuU8MRDav4ZUnW3cVyhCwKHdH5rZYqs/?=
+ =?us-ascii?Q?H6UOEIfPj8SAiVJqxY0+qfS7ItlQrAPqxwouiM36C1duxdGUkPJnPSmNhH09?=
+ =?us-ascii?Q?FrAFMTKOVngYbqEF0Wks12qMuupu5HASus1sBskLSAn/dvLxU343Mi7wGtnF?=
+ =?us-ascii?Q?EqMXSYAeJu56wRQ958v5chG9It5u3RETLF7XOdMsMTkm0QeEGm4Hvm/PCHz6?=
+ =?us-ascii?Q?+833hxRGl2JvGv0CSmZjPucErtyNEpFbr3Dgf7MO1HDwXYsnhWEps0B87pF9?=
+ =?us-ascii?Q?gYK9GZV/qgXPS8p2HfdM2OM4oN1irpA77SsHYoPJxvydk/s2D8vG5DAoLoLi?=
+ =?us-ascii?Q?oATTET10LOEYDVcLtHtgX9lejqPdPvebJwZyfLYp+p0wm21faUyzABnKSc5t?=
+ =?us-ascii?Q?e9vaEXE2zpp0kAz4lvce9ANSGAQDATnjzIyGK2t7rA59ul27nJqECSl9zMAe?=
+ =?us-ascii?Q?w/bd9zzewlHyCktJyX/bIktKFC8cQktHLccoODhmn2dWXM4y+YA66XffEwq1?=
+ =?us-ascii?Q?XqbUAh6krfOWmSF6cNM0QCOsRVM68EkIJIwbxLc39MnbgDirIPvQ0ViYI9y9?=
+ =?us-ascii?Q?GGyGb5yciAetI/ffg6e0Z9CeQM1aox+90eD2myP0Lmt1JOeNkt1KbjY22lZ/?=
+ =?us-ascii?Q?DmonvIddPxYVAPqoQhhOtoeyupNqajO4LzuEB27XbHGuzXBq7q3mn84LnLsQ?=
+ =?us-ascii?Q?TtiZ+zkm+8fu89B1fmBxYJWV2WFoGHQ+umcZ1dQSDKFen/54TbTvbrUDCc5E?=
+ =?us-ascii?Q?0wdR5Yuvvw2GJlbXDQ+KaUV4ejIXuSlVLv8w17vSqS7LnxLtOH3Ng1y5q3x1?=
+ =?us-ascii?Q?XqUAoS81MV3LAmi3VDc3O7CPdYsruJTXvGKUmNDzkOnPwviRdK5BDIXHPRdY?=
+ =?us-ascii?Q?bn3v0Rk3jy0rnlFHqs4exSYr8zZL0r6M0i8CT9w+GcIczbNv29XnnYU8gZGR?=
+ =?us-ascii?Q?Om6gQfc6iYjEAnK6kTNWXwgtX//OXB+R5AVNl0jWiH21QQ1YLh9y3+JnOMlN?=
+ =?us-ascii?Q?VQuXZoGY9XjPzSJt0ZesxkvoTvMLXh+3SYWuZ5k3U5hgMvFUfAK+caWtuFke?=
+ =?us-ascii?Q?iPkK7J4EMeLfZk37rn28+AZcAIZOPGLAO2raZahkgcMXZX6Yki8UzlIydj65?=
+ =?us-ascii?Q?ghh8t4YHwCcantBY6rcJaO9l6lguXP4a9/sM5HUPQgMYJk9Ns/hxAa/1YN6f?=
+ =?us-ascii?Q?YnAevuP3gocFAm1aYR5j0Th/11LDC4Te2DSO6Nr6C6ndN7hUjpY1HUm6FRZA?=
+ =?us-ascii?Q?hYoj2cagmOIP63FxON0pPef/M/p6xkizWGuvKdjSzKmg3L2jWshjtztBINhi?=
+ =?us-ascii?Q?tK6plbhjcwaq3d7XRSFppAR9PhFgEzwY/dy17EHpFdopfpuw26Q1xSSdmOKm?=
+ =?us-ascii?Q?e7NmoRH4p19IWtRs7gnOkaXHDzQwPslokobA+FRfyjcACbhw0cHjv8iszGUR?=
+ =?us-ascii?Q?qDEQDRO932cppqmzTVCik+y3OX9YpY0VlfFphcwenGSYJ1GLF2xCZDI8We30?=
+ =?us-ascii?Q?aBzRf9BDVZlTSOCr2wdx8rNfuhJgIptlSWE6?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bDY4QXJ5ZzdlZmFLUFNmb2NscUwrREdXUVRJSzFZL3lrWDN3bTQwYjNWNU55?=
- =?utf-8?B?Z1ZTUTJPeTkrY0xnMWFKeXNMWFVrSVhJbmloVExSb0t0eDhhaFY3TkpWSFdG?=
- =?utf-8?B?Q05ibHFPWkEzU2dsMFFmVzFMRzJHY05QZ24yWjJyWHFxYTh3SllkZFJVTHBu?=
- =?utf-8?B?MnFqekxqTFhMbjE2bE9KWmlGYlNLZ3lET01pTGVYRkc2Mkp3RzdwamNIZ1dK?=
- =?utf-8?B?a3Jqc29NeXBYemN2T2ZpQTA1elNyWStZZEp2ZFB4ZWhPcTJ3K0FBWktvMkY0?=
- =?utf-8?B?WDdxSVBVU292OHJqNDZ0ZFVLdzBSUDJZNWMyc0YyL1JTanEyMDBpY01KaVBT?=
- =?utf-8?B?T010bnNDZ0VaU0pyMk42VHRNUmR5N3l2QjlJSzNYcmFram40alYxTzNYQk83?=
- =?utf-8?B?NEo1Yy9uSGpZZzhFcHc3djJ2N3pFNUNHL0xuT3Vjck1WMDRZdWcwWlhtb2ZH?=
- =?utf-8?B?OVJXY3M4bEJCaHF2NkYvZURlNVd3THFPQkhFQVlpZUphQXdOa2dNMytxaUxo?=
- =?utf-8?B?RmNzWlQ4ck1yRjQyWGZrSENGZlJlWVBrRkxVMUdWUG13SUplQ1NtckVQNmZU?=
- =?utf-8?B?U2pyUEQ2ZWJ5Zy80emFsajZhZFc3ak9DMzBrbzNZSitHNEdodnJoZnQzcFBE?=
- =?utf-8?B?dUhhT0M0clF1M3k2YTFNSEd3V3lvOTNPWCtZYVB0eE5xM0gyUWJaU2Z1dUNI?=
- =?utf-8?B?OEdPNmo5ZzVuOG1haXNGN2dIbS9Jakh4d3c3cndZa2VDV1BPRlpsRFJqYVh4?=
- =?utf-8?B?L0k2ZG1FcHdZSXdUd21sUEpEQ1N5YVlHazJ1L1ZJckR1aG53cXZuTDFYTWN0?=
- =?utf-8?B?cTRLYjRicFh5d0E5MnlHL2xaZ2hxKzI5SU5XMkVaaGFUL1o1STBEZ2czSlhO?=
- =?utf-8?B?d1BlNE5HUzhiVnZabTA0bkVuNG5hTnFGZ2RZUk1FNy8vUHdMSlRmeXJzSThC?=
- =?utf-8?B?ZjY2VTJUQzN1WWpXVGRKdkNyY1oxSzduUWkvR0JBM3lOVXB2TVgwWWZhTVhp?=
- =?utf-8?B?RHJjOU5tclNxZ0g0RWl2N0Fia2k0UTFaalJZcGk2RUQ5SFZqeXgwcGc5aFQy?=
- =?utf-8?B?c3VVVExkWGVHM2N0a1BBelpRZzJZZjIyVDE2TVNmb2duMVIxQzJ3aVZ3QS9C?=
- =?utf-8?B?c2Y3MGQ4UjFVWWozMjVtTDNsTm5ONDBSNmZKOCtVVWN2bjA1a0tIclZpZHN3?=
- =?utf-8?B?Y2UrbStFNUFHS2hNRWNIRlNRaW5xVVBCb09OM2g0ejZIbGNFK1JmYmR1Uk8x?=
- =?utf-8?B?WVd5OVdNcHc1YlZiRDZXVE4wNjJ3Q0tGb1NpR2c0U0MwUTRTeFg1TnVENjlE?=
- =?utf-8?B?cncwcmZJWFdXbzNYTXZzcUJ2Skd2WFk4d2dMNU1DYittRXBUMy9ncDBUTXhF?=
- =?utf-8?B?TUtSQittZWphUjRFMzY1RXBQcnNPaFBzQmlYb1NVVEl3amdMQ1hxWUJWY1lK?=
- =?utf-8?B?RkRrb1pCUDMwSm05UkY2a3ZKN1A2eUNvcFAvaHhlZnVlUHBoTjNsVGRQTGhy?=
- =?utf-8?B?T3hsS3E4RXl2QW5uUVVCdWhUL1U2R2sxdHQzenJWTDcvZWxBVEwva0tuZGpr?=
- =?utf-8?B?eFQ0TkxCSFV1TFc3ajRYV1NXM2hEb1M0WkNnVEFFMWNMY1A0UnB4ZWxKTHc5?=
- =?utf-8?B?aFBMVDN1aVFVRHFKK2pSSnFvNEd0akE0YTlkTnNyZFppamFyVUMzemNtUmlU?=
- =?utf-8?B?NUlvdUV4cHFxRUVRaisyL1duZnR4WEZKVjRYYzZOOVFHWVI1WkQ2TU1JWk9k?=
- =?utf-8?B?eFdTVFBCdkJ5dWljMjlnQzc1eGFFSXpTTUVkLzRPL1BLM1hIbTRjeDRMOWJm?=
- =?utf-8?B?YlNkZTNiZVhHT2xOZksyMWgvdUZ4QzVpNnd3RTZ2UVdHaU4rekd5Qm9RU0RJ?=
- =?utf-8?B?VG13MmozUHF3U25haTNWSUZPSHdQRllTQlJFTDVaOElyTitObVE4WkNzMHVq?=
- =?utf-8?B?dXlHbndrd0lHQndub2o5a0Y4VThnRVF3ejM2VmpNMXAycHliYmpsN0krSlZ5?=
- =?utf-8?B?b1FDYnZBTCtFb2hteVVPMHVmUk8vaDU3VzhsZGZtbjJ6MkovNkpTU1lSWnJt?=
- =?utf-8?B?SjFKVmkwd3B5QTRtalVMZTJjYzVyWWdaemV4aVowSkkwUG1LU1U5aU9reGsr?=
- =?utf-8?B?MG9EMU5yaFpIY0w4Mnk3cHJSbUFpYkZmZWx4NzBEeUZqZmVKWWxmZHAwN2ln?=
- =?utf-8?B?aHc9PQ==?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e4d7ac8c-1f1f-44f5-cad7-08de0761bee8
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2025 18:29:13.1049
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2025 18:29:25.6614
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 69Esgtb+LWsrUNKoJftgO3jmEWStrcVhCm7VbAOBrOJfo9zW2sZWceyLJS4muxx74/bz+zWOvANKEIB5U/be7w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9148
+X-MS-Exchange-CrossTenant-Network-Message-Id: d469993f-5f09-4e90-2acf-08de0761c68b
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS2PEPF00003439.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7575
+
+Users can create as many monitoring groups as the number of RMIDs supported
+by the hardware. However, on AMD systems, only a limited number of RMIDs
+are guaranteed to be actively tracked by the hardware. RMIDs that exceed
+this limit are placed in an "Unavailable" state. When a bandwidth counter
+is read for such an RMID, the hardware sets MSR_IA32_QM_CTR.Unavailable
+(bit 62). When such an RMID starts being tracked again the hardware counter
+is reset to zero. MSR_IA32_QM_CTR.Unavailable remains set on first read
+after tracking re-starts and is clear on all subsequent reads as long as
+the RMID is tracked.
+
+resctrl miscounts the bandwidth events after an RMID transitions from the
+"Unavailable" state back to being tracked. This happens because when the
+hardware starts counting again after resetting the counter to zero, resctrl
+in turn compares the new count against the counter value stored from the
+previous time the RMID was tracked. This results in resctrl computing an
+event value that is either undercounting (when new counter is more than
+stored counter)	or a mistaken overflow (when new counter is less than
+stored counter).
+
+Reset the stored value (arch_mbm_state::prev_msr) of MSR_IA32_QM_CTR to
+zero whenever the RMID is in the "Unavailable" state to ensure accurate
+counting after the RMID resets to zero when it starts to be tracked again.
+
+Example scenario that results in mistaken overflow
+==================================================
+1. The resctrl filesystem is mounted, and a task is assigned to a
+   monitoring group.
+
+   $mount -t resctrl resctrl /sys/fs/resctrl
+   $mkdir /sys/fs/resctrl/mon_groups/test1/
+   $echo 1234 > /sys/fs/resctrl/mon_groups/test1/tasks
+
+   $cat /sys/fs/resctrl/mon_groups/test1/mon_data/mon_L3_*/mbm_total_bytes
+   21323            <- Total bytes on domain 0
+   "Unavailable"    <- Total bytes on domain 1
+
+   Task is running on domain 0. Counter on domain 1 is "Unavailable".
+
+2. The task runs on domain 0 for a while and then moves to domain 1. The
+   counter starts incrementing on domain 1.
+
+   $cat /sys/fs/resctrl/mon_groups/test1/mon_data/mon_L3_*/mbm_total_bytes
+   7345357          <- Total bytes on domain 0
+   4545             <- Total bytes on domain 1
 
 
+3. At some point, the RMID in domain 0 transitions to the "Unavailable"
+   state because the task is no longer executing in that domain.
 
-On 10/9/2025 12:40 PM, Yury Norov wrote:
-[..]
->> The field setter/getters are also simplified. If a field has no target
->> type, then its setter expects any type that implements `Into` to the
->> field's bounded integer type. Due to the many `From` implementations for
->> primitive types, this means that most calls can be left unchanged. If
->> the caller passes a value that is potentially larger than the field's
->> capacity, it must use the `try_` variant of the setter, which returns an
->> error if the value cannot be converted at runtime.
->>
->> For fields that use `=>` to convert to another type, both setter and
->> getter are always infallible.
->>
->> For fields that use `?=>` to fallibly convert to another type, only the
->> getter needs to be fallible as the setter always provide valid values by
->> design.
-> 
-> Can you share a couple examples? Not sure I understand this part,
-> especially how setters may not be fallible, and getters may fail.
+   $cat /sys/fs/resctrl/mon_groups/test1/mon_data/mon_L3_*/mbm_total_bytes
+   "Unavailable"    <- Total bytes on domain 0
+   434341           <- Total bytes on domain 1
 
-Because a getter has to convert the raw bitfield value from memory into an enum,
-there is no guarantee that the memory in concern does not overflow the enum, say
-if register bit meanings change, or something. ?=> was before fallible in both
-directions hence the "?". Now with Alex's patch it is fallible only in one
-direction.
+4.  Since the task continues to migrate between domains, it may eventually
+    return to domain 0.
 
->> Outside of the register macro, the biggest changes occur in `falcon.rs`,
->> which defines many enums for fields - their conversion implementations
->> need to be changed from the original primitive type of the field to the
->> new corresponding bounded int type. Hopefully the TryFrom/Into derive
->> macros [1] can take care of implementing these, but it will need to be
->> adapted to support bounded integers... :/
->>
->> But overall, I am rather happy at how simple it was to convert the whole
->> of nova-core to this.
->>
->> Note: This RFC uses nova-core's register!() macro for practical
->> purposes, but the hope is to move this patch on top of the bitfield
->> macro after it is split out [2].
->>
->> [1] https://lore.kernel.org/rust-for-linux/cover.1755235180.git.y.j3ms.n@gmail.com/
->> [2] https://lore.kernel.org/rust-for-linux/20251003154748.1687160-1-joelagnelf@nvidia.com/
->>
->> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
->> ---
-> 
-> ...
-> 
->>          regs::NV_PFALCON_FALCON_DMATRFBASE1::default()
->> -            .set_base((dma_start >> 40) as u16)
->> +            .try_set_base(dma_start >> 40)?
->>              .write(bar, &E::ID);
-> 
-> Does it mean that something like the following syntax is possible?
-> 
->         regs::NV_PFALCON_FALCON_DMATRFBASE1::default()
->             .try_set_base1(base1 >> 40)?        // fail here
+    $cat /sys/fs/resctrl/mon_groups/test1/mon_data/mon_L3_*/mbm_total_bytes
+    17592178699059  <- Overflow on domain 0
+    3232332         <- Total bytes on domain 1
 
-Danilo already replied here, but this code is fine as we early return due to the
-try operator (?).
+In this case, the RMID on domain 0 transitions from "Unavailable" state to
+active state. The hardware sets MSR_IA32_QM_CTR.Unavailable (bit 62) when
+the counter is read and begins tracking the RMID counting from 0.
+Subsequent reads succeed but returns a value smaller than the previously
+saved MSR value (7345357). Consequently, the resctrl's overflow logic is
+triggered, it compares the previous value (7345357) with the new, smaller
+value and incorrectly interprets this as a counter overflow, adding a large
+delta. In reality, this is a false positive: the counter did not overflow
+but was simply reset when the RMID transitioned from "Unavailable" back to
+active state.
 
->             .try_set_base2(base2 >> 40)?        // skip
->             .write(bar, &E::ID) else { pr_err!(); return -EINVAL };
+Here is the text from APM [1] available from [2].
 
-Here I am guessing (based on your concern from an earlier thread) but is your
-concern was that -EINVAL will get written to the register accidentally? That
-wont happen, the above code is fine. Or do you mean something else?
+"In PQOS Version 2.0 or higher, the MBM hardware will set the U bit on the
+first QM_CTR read when it begins tracking an RMID that it was not
+previously tracking. The U bit will be zero for all subsequent reads from
+that RMID while it is still tracked by the hardware. Therefore, a QM_CTR
+read with the U bit set when that RMID is in use by a processor can be
+considered 0 when calculating the difference with a subsequent read."
 
-> 
-> This is my main concern: Rust is advertised a as runtime-safe language
-> (at lease safer than C), but current design isn't safe against one of
-> the most common errors: type overflow.
+[1] AMD64 Architecture Programmer's Manual Volume 2: System Programming
+    Publication # 24593 Revision 3.41 section 19.3.3 Monitoring L3 Memory
+    Bandwidth (MBM).
 
-I'd be a bit careful when using "isn't safe" in the context of Rust. Rust's
-notion of "safety" is about preventing undefined behavior (UB), not preventing
-every possible runtime mistake. In rust, integer overflows for example are not
-undefined so overflows are not "unsafe" (it might be a logical bug but that's
-not what unsafety is about). In fact an overflow might be exactly what some
-algorithm needs (wrap counters in RCU are example of harmless overflow). Another
-example is a deadlock is not undefined behavior in Rust, it is defined, even if
-bad :).
+Fixes: 4d05bf71f157d ("x86/resctrl: Introduce AMD QOS feature")
+Signed-off-by: Babu Moger <babu.moger@amd.com>
+Cc: stable@vger.kernel.org # needs adjustments for <= v6.17
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537 # [2]
+---
+v3: Rephrasing changelog considering undercounting problem.
+    Checked again for special charactors (grep -P '[^\t\n\x20-\x7E]').
+    Removed few of them now. Thanks Reinette.
 
-Thanks.
+v2: Fixed few systax issues.
+    Checked for special charachars.
+    Added Fixes tag.
+    Added CC to stable kernel.
+    Rephrased most of the changelog.
+
+v1:
+   Tested this on multiple AMD systems, but not on Intel systems.
+   Need help with that. If everything goes well, this patch needs to
+   go to all the stable kernels.
+
+v1: https://lore.kernel.org/lkml/515a38328989e48d403ef5a7d6dd321ba3343a61.1759791957.git.babu.moger@amd.com/
+v2: https://lore.kernel.org/lkml/2ead4ece804b0f61aab01f47385d9a125714991e.1759952394.git.babu.moger@amd.com/
+---
+ arch/x86/kernel/cpu/resctrl/monitor.c | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/resctrl/monitor.c b/arch/x86/kernel/cpu/resctrl/monitor.c
+index c8945610d455..a685370dd160 100644
+--- a/arch/x86/kernel/cpu/resctrl/monitor.c
++++ b/arch/x86/kernel/cpu/resctrl/monitor.c
+@@ -242,7 +242,9 @@ int resctrl_arch_rmid_read(struct rdt_resource *r, struct rdt_mon_domain *d,
+ 			   u32 unused, u32 rmid, enum resctrl_event_id eventid,
+ 			   u64 *val, void *ignored)
+ {
++	struct rdt_hw_mon_domain *hw_dom = resctrl_to_arch_mon_dom(d);
+ 	int cpu = cpumask_any(&d->hdr.cpu_mask);
++	struct arch_mbm_state *am;
+ 	u64 msr_val;
+ 	u32 prmid;
+ 	int ret;
+@@ -251,12 +253,21 @@ int resctrl_arch_rmid_read(struct rdt_resource *r, struct rdt_mon_domain *d,
+ 
+ 	prmid = logical_rmid_to_physical_rmid(cpu, rmid);
+ 	ret = __rmid_read_phys(prmid, eventid, &msr_val);
+-	if (ret)
+-		return ret;
+ 
+-	*val = get_corrected_val(r, d, rmid, eventid, msr_val);
++	switch (ret) {
++	case 0:
++		*val = get_corrected_val(r, d, rmid, eventid, msr_val);
++		break;
++	case -EINVAL:
++		am = get_arch_mbm_state(hw_dom, rmid, eventid);
++		if (am)
++			am->prev_msr = 0;
++		break;
++	default:
++		break;
++	}
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ static int __cntr_id_read(u32 cntr_id, u64 *val)
+-- 
+2.34.1
 
 
