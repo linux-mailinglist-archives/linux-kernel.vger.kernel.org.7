@@ -1,143 +1,118 @@
-Return-Path: <linux-kernel+bounces-846507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7482ABC8325
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 11:08:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96ED7BC833D
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 11:09:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 338AF3E4D1A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 09:08:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8EBF1A6159D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 09:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8A52DF719;
-	Thu,  9 Oct 2025 09:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A042D47F2;
+	Thu,  9 Oct 2025 09:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="qEVTNfY5"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D4JWBZHY"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A1602D7DE3
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 09:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 216A8212568
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 09:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760000815; cv=none; b=ndjdsWRVuX7bcGPf+vsZyNpl5RNivIrWKS1OwvwAOzGkKNzJlCWA4FUtMSEy9S3GdUmj+TNLXXI0opTMZRnGM/ZBPNwv3cZ7fcjdoPNjBUXUX/bf1xOie2A4uY8WhPH4O6KdQbAEUimzdyD2mXeC52dOslMSdwPEOOR8bb4CKGc=
+	t=1760000857; cv=none; b=V9xm8z4c8fXNL2tN9IfLjP8QoHMi/sbEAAV1KckKfTtDYvKJ/6l9UJ7VMWOCIM7AYXYa07I3d3AQroQ1RuR8O3fDdQ+cmVH9xH9DWBtaM2BpUYCodR7s0ZnXqr3nNOzGBHusR7udrIr5gnivnCrm5YEqQ2E1xjIq6F09FZdZTzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760000815; c=relaxed/simple;
-	bh=yLdE29W3q6fp6RFFvLxYUfrIrhtGR1wmDmW0Sr4YfZI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JfK5dX0K7s+ua9ULfS4i1YWUk2HF64fpVfATkZhB9cdrHAQXEL9eEsvTp3H1M0LQo2Yub8/e/mNDFkHCRkF4PSQQAhTyGzK7FzIdXRD2C6UnFIN/D8j9C5mWP5+VyQ/RjVwaB4Neskj8V35E6P6FIFS7g2vT83mAbEhHfJ4luMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=qEVTNfY5; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-637dbabdb32so1357050a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 02:06:52 -0700 (PDT)
+	s=arc-20240116; t=1760000857; c=relaxed/simple;
+	bh=l5mhbycfE08ir0RvnM0JhK5D+99iA9c0a12NXel/+9Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m3WuTR2w6zz8gcIeybaEvSeqnNbNii/o4b55LeNYrWHHn+yoIGKRTdHs5L024JW+SMqgNqCfREGDP49AmqY3gnhteGMj2kpGP7od+6L5wt8Fy02pGSiFd9HIfIuP/AIaxhXK8CFFb8YInXbldvt44nKb7LGJCu64u67p4SrSE1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D4JWBZHY; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3ee15b5435bso437629f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 02:07:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1760000810; x=1760605610; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=O4NjgC9RkbCwMcFDlcSxR+iB4R9yIvYJSpP6iT4sVxU=;
-        b=qEVTNfY5DM6LhBvMP0Bdl9LTz+/JavDr93pk0+ov8L74QYTW4RyfAch8CfL0AXIOn3
-         knPmLBrjSeYjTnXZefmi7r9mi96oKbu+LK49T+diBKCOhhNa7y6BfjuIOIVkEiyO5InC
-         U+ri5s7755fEnsRarkCNtXZ24VWL2Nha8c/bfKZy3FvYw4qCva3NAdgIZ1PSEyij8ZwC
-         ktX5DtIOlONTr+RO0NdlFYmvAqfTv/zbW/QUMrgsO+1WTRRK2z7qiMUdqYJgAxQtVbyP
-         GAqa6gxNAsvv+nC9bHen3qEPC9tRQnLruUgbSCtIWxlfyueP05JEghTEKXqEXE8qs/Wl
-         ymMQ==
+        d=gmail.com; s=20230601; t=1760000854; x=1760605654; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=o++CZcgphHqNF7K6IE3hm++2Mw0o+yR/xwaMs5XLwOQ=;
+        b=D4JWBZHYqdm2ziFSOORrkqglUVuHsHrCMFMNEF57QyL37+73OQIqpszZPw9vZmDAwF
+         6mVc24aUD0RhKZ88yvin5yJ7nUyfbakMjWnEflTtoJsgra0vddcMy8PEZLTUpEN/6RWK
+         g2LB+r0VqSZ4laKZrwCgEZ2Uy8BGsFCQS8m4wvqfbLpOq2Gi0OAx3JCb8oWi3IR/2mqS
+         BXaj3DMcKHGCd3/90byjSqmvk2knKSMfcDArZTgApYQjzPTKxCY2QLuWQK0IwtdvWgsR
+         u8AnRT4eqPJhOn5/Qm5eYSOpoCt3ZxR+wZ2N6q5CWl9e9M/5lIEI6QHazT5tQZa34/EE
+         SYWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760000810; x=1760605610;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=O4NjgC9RkbCwMcFDlcSxR+iB4R9yIvYJSpP6iT4sVxU=;
-        b=Dyc32bbNu08uc2P813SRM8lZebdKB9UVIijfQ8XliMUmACiLeBfcsTKVGwedzmDCWh
-         Je4AaYzU2+bDFWG2nZi3tLkIFnznBlRTZxwkVeK+5Wm/N24hwyOHwQQMwJfImVqPQuVP
-         9QNozGXkz1aUipJzaA7VnJwu1cs4CnO/rVbyR1eLKo01lEv3W5kltRFGvKKzzfrxvA7P
-         u4G/BKtDUeeZARFC0rN3vfLu+AeOnIys7lAD2wqUvejdfrgsMzkl6xzC4fD31yi4x67X
-         bKLJnAKlzPYwupvjgXSFMmj42MjlyBTGVN2oLZnOPjbdk6AV2sCquXTlKMQC8IOvXaVw
-         fZkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWYN0LjLlD+M4Uditd94xlj12V7mo53DKUjSL47lbCZah78ZgQJ2ZoRHsp8McYyg7otNp0Q88Igx7dwflw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywbt0/UPpO71Fm9RchyzB2PYIDCWGCKce2CjqANbX8Ny64Z+iXf
-	zbKCsYNDdt/OrDw4xSvVh0Aukde88cGTmpIgk3favQTb0dVWnXh98PV2p77ybLJ0OWM=
-X-Gm-Gg: ASbGncujAavNWjLB5AlJZVqv8aZKAKAlKbyKllErB9/RSuQjHbQyYtN3RQKMHPBh4pW
-	G7ryH/qEZRXmmm5/4UoGl62eHyUHJP602kZz3xDgrvyZKk8tiPx/owSa8FouZf+e7mFu3Ft4vCF
-	I1n9+ukRCA1E3Fg8MPW8zuqyzLHBZ9UuvoGU2/LMW4L6ngciiDjZTh9RHYzWuI9jbr+yBO6zxzu
-	3RBPqHpDvBuUxFAgtI30cFD35tuH9GVZuIbIR0ZLEL8Vf3oFIa1uCc2VHhSOieDbxepegcjqvlN
-	Z9Xp10NZlICPW76SvMwTLdCZIwrBT+Pysu9HepmboPUIF20vMDaL9qWZusyNh/IOWKuYdpiP4V+
-	IrXQQ+M6IDhS2sQYTYgtMY7LCzDcY9Xil6Rg5hqcokXgNtbsoIo6V7+xbxVcQPHLLJFIDCXL/io
-	O+KL/5SCSYKBzH4/8Ubs21XaTdAd36
-X-Google-Smtp-Source: AGHT+IEGHEsWgFTbqDlcjmaxGAtchnOTHZU+ZqbHIvrNZjcqWAofDGI4WU+100Z28ra1wVCmv9Se7w==
-X-Received: by 2002:a05:6402:51c9:b0:629:e50c:b058 with SMTP id 4fb4d7f45d1cf-639d5c52cdamr6533867a12.28.1760000810172;
-        Thu, 09 Oct 2025 02:06:50 -0700 (PDT)
-Received: from otso.local (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-639f4109046sm1905755a12.44.2025.10.09.02.06.49
+        d=1e100.net; s=20230601; t=1760000854; x=1760605654;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o++CZcgphHqNF7K6IE3hm++2Mw0o+yR/xwaMs5XLwOQ=;
+        b=jDexP4XzPDFpR3PhMfIx7Fu4gkUFl69t+V7w5CHtX9vaD4Q2iu2bCgPxGohOpFoG8z
+         Z1im1hxVwwJR08wjul0GDr26SNVZl1xqO81yJWq5xSWjYA1/0zQPjwF3+j2WRqvNG0jt
+         8Xs0zKNjtjpn7RREDoVh/U+iJi0hIvFdT0oBztf0RzadR+hdsNqZliwO5mXX1rg5+vvY
+         vVbSJQkm71AJQFXL+Ifrz3SnFVc5W6fRyVJZEosiu1nXUGatbu2QGaDQdds2EiYABx/Y
+         LA3dUFaJkYJFtmhfmcDqw6HgaxoLn5cgqVspH3ZxsQOTu4+qetVC4+5cZ0TkCBY9bIeT
+         mOdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVMph4jSwL4LONI8LXGGL7iuyYPa8lubi4KgsPHK8cbO7/bL6cF/YWZBb4dxUXa8SVC/i2LQkFEfJWAPFQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQDxz78b4QQBLHoBDO3qgR7Bgobiz1nhT6qrOLl9nTjG7zVfiU
+	NIgQAFxAGjbjuK+8b7Jpw+zAnPlCj2U7qWiArt16AZULtwpQZNYaL7zT
+X-Gm-Gg: ASbGnctWUDDot7J8Zq6t8M0n0tDhb8H8KRNbeq0/gIGYmXLDTHalhdXcOyoVWUUPC+4
+	1bw76BwdK+vWqkkvkm7Im7F0NLW0z2q8SQTr8H+5HP8IZJfXHEHJ+5D42hg5SHSCx9bZ43MplSC
+	6Jy4tejP5lGrUFaPVaXowpk9FT7ul9EjD6lsut5NHfzz0DNnGj13L9QoFa4gnOm78RQvBwFJRUD
+	YJ76Rh9iMk4VHjXUeZzNSaW2tHjKxbKEN4EOO/aM1YAk37wLv1VNRErTZKWRjoOIuj5Q0nOSW37
+	7IT0eGLwzaAafCySilhW+2+Hq994sC899zUHgPf65eJXw7lYVIq06qgQj4nXzfpIyWeCU69tQOV
+	TdjUY4Fz+7bzZipKfQe5BMKfES/T6j0A82qYOpSD7pYw0otyShrDZFv7C
+X-Google-Smtp-Source: AGHT+IGBpxxND25HGKh9Sv2Mhu71Rly/5HWjAPpRDKzQyqiB0LzVgVcpNLpNCoV5w5wRUa+5Id2Npg==
+X-Received: by 2002:a5d:5f83:0:b0:3f7:4637:f052 with SMTP id ffacd0b85a97d-4266e8dab04mr4638469f8f.44.1760000854292;
+        Thu, 09 Oct 2025 02:07:34 -0700 (PDT)
+Received: from T15.. ([46.175.113.10])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8a6b40sm33872761f8f.2.2025.10.09.02.07.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 02:06:49 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Thu, 09 Oct 2025 11:06:36 +0200
-Subject: [PATCH v2 6/6] arm64: dts: qcom: qcm6490-shift-otter: Enable venus
- node
+        Thu, 09 Oct 2025 02:07:33 -0700 (PDT)
+From: Wojciech Slenska <wojciech.slenska@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Wojciech Slenska <wojciech.slenska@gmail.com>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: qcom: qcm2290: Fix uart3 QUP interconnect
+Date: Thu,  9 Oct 2025 11:07:17 +0200
+Message-ID: <20251009090718.32503-1-wojciech.slenska@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251009-otter-further-bringup-v2-6-5bb2f4a02cea@fairphone.com>
-References: <20251009-otter-further-bringup-v2-0-5bb2f4a02cea@fairphone.com>
-In-Reply-To: <20251009-otter-further-bringup-v2-0-5bb2f4a02cea@fairphone.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Casey Connolly <casey.connolly@linaro.org>, 
- Alexander Martinz <amartinz@shiftphones.com>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760000803; l=892;
- i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
- bh=J//KKH4NjGVxe+yIfbxvzMAr1vNzhSAP+lT8QV/hXkI=;
- b=yla1QJRbGcCv57mtvOUoDOjq/Xyu95e70upu7Js7Qn/849RcV1TZ0roEh3wf7o45VP+LpkUSt
- lXFf/kO0FWQAk5WA+lK9U8lPfA8xHwlxzsO3zlswLBccWF97J7CUicJ
-X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
- pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
+Content-Transfer-Encoding: 8bit
 
-From: Alexander Martinz <amartinz@shiftphones.com>
+The config_noc interconnect should use SLAVE_QUP_0.
 
-Enable the venus node so that the video encoder/decoder will start
-working.
-
-Signed-off-by: Alexander Martinz <amartinz@shiftphones.com>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+Signed-off-by: Wojciech Slenska <wojciech.slenska@gmail.com>
 ---
- arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm64/boot/dts/qcom/qcm2290.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts b/arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts
-index af6f7b41201d..a3e6b6a96530 100644
---- a/arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts
-+++ b/arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts
-@@ -981,6 +981,12 @@ &usb_dp_qmpphy_out {
- 	remote-endpoint = <&pmic_glink_ss_in>;
- };
- 
-+&venus {
-+	firmware-name = "qcom/qcm6490/SHIFT/otter/venus.mbn";
-+
-+	status = "okay";
-+};
-+
- &wifi {
- 	qcom,calibration-variant = "SHIFTphone_8";
- 
-
+diff --git a/arch/arm64/boot/dts/qcom/qcm2290.dtsi b/arch/arm64/boot/dts/qcom/qcm2290.dtsi
+index 08141b41de24..746c49d6e0fd 100644
+--- a/arch/arm64/boot/dts/qcom/qcm2290.dtsi
++++ b/arch/arm64/boot/dts/qcom/qcm2290.dtsi
+@@ -1302,7 +1302,7 @@ uart3: serial@4a8c000 {
+ 				interconnects = <&qup_virt MASTER_QUP_CORE_0 RPM_ALWAYS_TAG
+ 						 &qup_virt SLAVE_QUP_CORE_0 RPM_ALWAYS_TAG>,
+ 						<&bimc MASTER_APPSS_PROC RPM_ALWAYS_TAG
+-						 &config_noc MASTER_APPSS_PROC RPM_ALWAYS_TAG>;
++						 &config_noc SLAVE_QUP_0 RPM_ALWAYS_TAG>;
+ 				interconnect-names = "qup-core",
+ 						     "qup-config";
+ 				status = "disabled";
 -- 
-2.51.0
+2.43.0
 
 
