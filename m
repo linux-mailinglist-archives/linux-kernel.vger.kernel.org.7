@@ -1,141 +1,193 @@
-Return-Path: <linux-kernel+bounces-846772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AC5DBC9003
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:24:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB4F5BC9009
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:24:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 04D1B4FA105
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:24:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48FDA3A91E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:24:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B95E2E7178;
-	Thu,  9 Oct 2025 12:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="dUSTjMGl"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABCB2E267D;
+	Thu,  9 Oct 2025 12:24:21 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A192C21FA
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 12:23:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A062C0F63;
+	Thu,  9 Oct 2025 12:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760012634; cv=none; b=MnxZvhV9aXVuP0mNMBftcLvRsB/v03b6PxHNNprVpprW99xZXbQXk+gsYHNS95amdKkKVDVKD4eeXXOdXXc2HgbtmqI+DqqntFXzfFS3yP0vWxitA9U56I8zf7ArvAECsXSU6ZE19V+yyUKjqoapprLpf3ozPt8k0K36ZDkNH0E=
+	t=1760012661; cv=none; b=PXiv+AoEX6qDfowWpRbllSfXFy1csCk8YcuzI+CvjbU94cwSfSNOYCLDqnYQUwXp6QFnWdwBHrPRsLrqoKWQQblHOgAhfA3AUYcQ7P1kLvlugjtsSmmcCd5J6fiumhBtZt2FPURT9ZnzVRxgNxrfoI/OlEtlb4JonUUcM9Fq7qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760012634; c=relaxed/simple;
-	bh=cBgHOpGf9VeFSGrcqiaxd/l3eYAbLUXjMw28l5Rsq+8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZdteJ/oa4hb/arwfKzuA2b+mVApXkH9wEYk9cz2UsHASu+A1aSj6/d5rQHvCvarHcWiw9xvcMTRDi4852rUZLL9IKBUM6T0Ob89hADuHFbDjtDg7qbYiakN/Q3Idjud4kp30wD77IxZO5sFILmQEVzUQsUeH/X2v5e2j9jzbblo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=dUSTjMGl; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-63a10267219so114537a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 05:23:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1760012631; x=1760617431; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Sad7OkmyYPIphD94MRcnSFfGS+bDx3BcROEylaCDt6Q=;
-        b=dUSTjMGlA99v6IHGKGjUX6am8FnPNjo+zE2lfGDDxdS2rtpbD8q02VMzVDpOHxE2C/
-         O1HTKucnJ7N/mcpfXRHig0qf/2SE0xMZkNFngo7shZb6ERnA5FzFUlTO+aI6JKVkO8yH
-         NUS3LGH2GXUomHOIzDlFDVmy7P7B52Oay7xrEhR0mEGmbiovkcHOm/H+4obnfgMWRAoS
-         +vbe3UXodbqZuop5QFpTYIMYVjMp20jmuYVIUMYr+j3qIkqiEW1cvy3YCqn9lpDfjy05
-         1KeC9VqhMOAOvL4Y7gdbX3mxbgd7BsnDACyAIgR9heEkI5JE+I123m8RFQwihvOxujS2
-         Mkdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760012631; x=1760617431;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Sad7OkmyYPIphD94MRcnSFfGS+bDx3BcROEylaCDt6Q=;
-        b=gqqdk8SnB7/ShFlgOj6qgBP/VgV8UksF9UDvgivi4UvLVWD4reBIrgwAfCYHnStdKN
-         MknLsOSai1uK8uiITByQYyAq1vXcy7Sh2Qca4hXrW2L4LeMXsmk22ApnhEd1ja9KVzAk
-         G6nfcJ16MwRI5Ye1A+jX3Nz1WFjxsp0iN9PKI1MnKjcTUtgdaTgYaqbFCYo2S5EG+IyL
-         xXnAY2qZ95+RIWiX7LOIlTLfMR1nFWEoDdQued9oNLKSu6w6jI2FEK5vmzSwjEWMOG88
-         EGHsY2qUti1wNPurXwP9TxQD49hijVHZtfuEMIdfvNYipi3B+UdK8UfJPNT9k2/M3WO+
-         3HzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXwkEqZ/x/S9/b+YsrFVcFab+Pwr3fr/YvpGG9OKa9Txdn50FMZHVKihZj3NJkbTiQUpSTfkSg5nA2TCfI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzunpXsS7XYSO6KOOARvQMnTTHCCgDhU8aTEnevthLoLS1MSQly
-	mliJDU6cpGz1uRe80sVx+Yqv/umFvWRblW4Fzo3WnOPlHXM1zC3QQVW4mdJtIwiYG5Q=
-X-Gm-Gg: ASbGnct+DmMJFCVimOoTqFWT97j+rzsgeBXHpcu6R+GY3vTF7fUtBRp/qvJRlmeT5vZ
-	Z4aU+5HaAEjpHh4BTFtuy9/YdlTd0hyw3Yj84toiR48qxTemkzEwj/Y4eSyG/mj7euyoYohGt8W
-	uEQk9pPofNXxcsHopxfw/V+iNhbYgTIf8oPn+iro4leldGDIzb6mYLbm9C1/z7hGhWE6rDgMOu8
-	fzsN5DcHB/63RD/eKBpfn1PPlbGV+LJ+WfrAqXijLPfBjHXFYt8uoZrW859YcTfpPRnIb8WNS17
-	q2RDaiAAzl2DZ7/pukz5kGEsEhtBnqiRPBa4mftJDrA0E3Dz8am7kiQwi8QdOJwXYfF3FHh2Jfv
-	cIgw0PbtYQgQNagnhM3rJyn4Z0DK4w6pDkD/Y6NyG3UipcRQmTVH5kqqzxe4FT6P+hkmgOL+3y/
-	J97zLUw5i3y8qssR+4N8CIt4CgOQ6oVunKnruAR+HstGBrrwZrTQ==
-X-Google-Smtp-Source: AGHT+IFJe8p13JNPmjTVR3QwN1lmenNWhe5q0tF9EJyolpyruIPtUd3zKzLtxYLzkaDB/+FNwepnkg==
-X-Received: by 2002:a05:6402:3481:b0:63a:50e:e83b with SMTP id 4fb4d7f45d1cf-63a050eef50mr1091638a12.12.1760012631258;
-        Thu, 09 Oct 2025 05:23:51 -0700 (PDT)
-Received: from [172.16.220.227] (144-178-202-139.static.ef-service.nl. [144.178.202.139])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-639f3d09b92sm2231273a12.30.2025.10.09.05.23.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 05:23:50 -0700 (PDT)
-From: Griffin Kroah-Hartman <griffin.kroah@fairphone.com>
-Date: Thu, 09 Oct 2025 14:23:40 +0200
-Subject: [PATCH RFC 3/3] arm64: dts: qcom: qcm6490-fairphone-fp5: Add cam
- actuator
+	s=arc-20240116; t=1760012661; c=relaxed/simple;
+	bh=DFW7U2QCk58NJ8XqDaLczOqyEVZA2we0Uvp7IqAZisE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uwirJj1Hy+moDngSZSKP32a3d/mwtlZTXDLQ5J8sjJaXt8GK3j7iawKQxHGJcoIHSCkSRaOVpeFH39+h9Ej+YqAxfy6uo14Cc7WVaoP1o9ZT1qH+Fo8hflUTGv6nWBix6nPPdizov/rCwUJHPSk76aefOTxzYdJZzMGNRKVOPvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cj8Dc10FqzKHMdD;
+	Thu,  9 Oct 2025 20:23:44 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id EA9841A0CAF;
+	Thu,  9 Oct 2025 20:24:12 +0800 (CST)
+Received: from [10.174.178.152] (unknown [10.174.178.152])
+	by APP4 (Coremail) with SMTP id gCh0CgDX6GBrqedo2AJRCQ--.21891S3;
+	Thu, 09 Oct 2025 20:24:12 +0800 (CST)
+Message-ID: <25b45870-c0a8-4f4e-bd3b-2d962b7a31a3@huaweicloud.com>
+Date: Thu, 9 Oct 2025 20:24:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 11/13] ext4: switch to using the new extent movement
+ method
+To: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com,
+ yangerkun@huawei.com
+References: <20250925092610.1936929-1-yi.zhang@huaweicloud.com>
+ <20250925092610.1936929-12-yi.zhang@huaweicloud.com>
+ <wdluk2p7bmgkh3n3xzep3tf3qb7mv3x2o6ltemjcahgorgmhwb@hfu7t7ar2vol>
+ <fcf30c3c-25c3-4b1a-8b34-a5dcd98b7ebd@huaweicloud.com>
+ <5g66nxbf3ay2bryv4legk46pudqonsbrdkxr5ljegbxaydkctk@2dyyoxguxyxu>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <5g66nxbf3ay2bryv4legk46pudqonsbrdkxr5ljegbxaydkctk@2dyyoxguxyxu>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251009-ak7377-driver-v1-3-29e4f6e16ed3@fairphone.com>
-References: <20251009-ak7377-driver-v1-0-29e4f6e16ed3@fairphone.com>
-In-Reply-To: <20251009-ak7377-driver-v1-0-29e4f6e16ed3@fairphone.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Tianshu Qiu <tian.shu.qiu@intel.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Luca Weiss <luca.weiss@fairphone.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
- Griffin Kroah-Hartman <griffin.kroah@fairphone.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1760012628; l=871;
- i=griffin.kroah@fairphone.com; s=20250804; h=from:subject:message-id;
- bh=cBgHOpGf9VeFSGrcqiaxd/l3eYAbLUXjMw28l5Rsq+8=;
- b=TJO0wmW+wAEm7Ke/LN2LnjwB5Fci3lFJ9b5B5+2BIO0R27v9ejoB8EfxUDPSp1kJI3l9ALkRp
- hWQ2lno1C9eAIwCBzD4IX6/37YWV8P+jDtXxtJVmvVamjY7yt1bm28R
-X-Developer-Key: i=griffin.kroah@fairphone.com; a=ed25519;
- pk=drSBvqKFiR+xucmLWONHSq/wGrW+YvcVtBXFYnYzn8U=
+X-CM-TRANSID:gCh0CgDX6GBrqedo2AJRCQ--.21891S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxCF48tryxtrykuw4fZF1kKrg_yoWrKr4kpr
+	WIkF15tr4DX34F9r1vvw12q34vqw1UKr4IqryrKa1fZF98Ar9agFy7Ja1Y9Fyrur4kCFyF
+	vF40k345Cay5Xa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	7KsUUUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Add a node for Asahi Kasei AK7377 actuator, used for focus of the main
-back camera sensor.
+On 10/9/2025 5:14 PM, Jan Kara wrote:
+> On Thu 09-10-25 15:20:59, Zhang Yi wrote:
+>> On 10/8/2025 8:49 PM, Jan Kara wrote:
+>>> On Thu 25-09-25 17:26:07, Zhang Yi wrote:
+>>>> +			if (ret == -EBUSY &&
+>>>> +			    sbi->s_journal && retries++ < 4 &&
+>>>> +			    jbd2_journal_force_commit_nested(sbi->s_journal))
+>>>> +				continue;
+>>>> +			if (ret)
+>>>>  				goto out;
+>>>> -		} else { /* in_range(o_start, o_blk, o_len) */
+>>>> -			cur_len += cur_blk - o_start;
+>>>> +
+>>>> +			*moved_len += m_len;
+>>>> +			retries = 0;
+>>>>  		}
+>>>> -		unwritten = ext4_ext_is_unwritten(ex);
+>>>> -		if (o_end - o_start < cur_len)
+>>>> -			cur_len = o_end - o_start;
+>>>> -
+>>>> -		orig_page_index = o_start >> (PAGE_SHIFT -
+>>>> -					       orig_inode->i_blkbits);
+>>>> -		donor_page_index = d_start >> (PAGE_SHIFT -
+>>>> -					       donor_inode->i_blkbits);
+>>>> -		offset_in_page = o_start % blocks_per_page;
+>>>> -		if (cur_len > blocks_per_page - offset_in_page)
+>>>> -			cur_len = blocks_per_page - offset_in_page;
+>>>> -		/*
+>>>> -		 * Up semaphore to avoid following problems:
+>>>> -		 * a. transaction deadlock among ext4_journal_start,
+>>>> -		 *    ->write_begin via pagefault, and jbd2_journal_commit
+>>>> -		 * b. racing with ->read_folio, ->write_begin, and
+>>>> -		 *    ext4_get_block in move_extent_per_page
+>>>> -		 */
+>>>> -		ext4_double_up_write_data_sem(orig_inode, donor_inode);
+>>>> -		/* Swap original branches with new branches */
+>>>> -		*moved_len += move_extent_per_page(o_filp, donor_inode,
+>>>> -				     orig_page_index, donor_page_index,
+>>>> -				     offset_in_page, cur_len,
+>>>> -				     unwritten, &ret);
+>>>> -		ext4_double_down_write_data_sem(orig_inode, donor_inode);
+>>>> -		if (ret < 0)
+>>>> -			break;
+>>>> -		o_start += cur_len;
+>>>> -		d_start += cur_len;
+>>>> +		orig_blk += mext.orig_map.m_len;
+>>>> +		donor_blk += mext.orig_map.m_len;
+>>>> +		len -= mext.orig_map.m_len;
+>>>
+>>> In case we've called mext_move_extent() we should update everything only by
+>>> m_len, shouldn't we? Although I have somewhat hard time coming up with a
+>>> realistic scenario where m_len != mext.orig_map.m_len for the parameters we
+>>> call ext4_swap_extents() with... So maybe I'm missing something.
+>>
+>> In the case of MEXT_SKIP_EXTENT, the target move range of the donor file
+>> is a hole. In this case, the m_len is return zero after calling
+>> mext_move_extent(), not equal to mext.orig_map.m_len, and we need to move
+>> forward and skip this range in the next iteration in ext4_move_extents().
+>> Otherwise, it will lead to an infinite loop.
+> 
+> Right, that would be a problem. I thought this shouldn't happen because we
+> call mext_move_extent() only if we have mapped or unwritten extent but if
+> donor inode has a hole in the same place, MEXT_SKIP_EXTENT can still
+> happen.
 
-Signed-off-by: Griffin Kroah-Hartman <griffin.kroah@fairphone.com>
----
- arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts | 7 +++++++
- 1 file changed, 7 insertions(+)
+Yes, we can choose to simultaneously check the extent status of both the
+origin inode and the donor inode before calling mext_move_extent(), and
+only call mext_move_extent() when both extents are either mapped or
+unwritten. However, the current iomap infrastructure (iomap_iter()) does
+not support getting extents for two inodes simultaneously. In order to
+facilitate a smoother conversion to iomap in the future (I've still
+thinking details about how to switch this to iomap), I have only checked
+the original inode in ext4_move_extents() and deferred the extent check
+for the donor inode. At least, I think it should not be a significant
+problem for now, as the presence of holes in the donor file is uncommon.
 
-diff --git a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-index e115b6a52b299ef663ccfb614785f8f89091f39d..49654f0f914fbe18080d2f55bb6877c8ab7baf0e 100644
---- a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-+++ b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-@@ -616,6 +616,13 @@ &cci0 {
- };
- 
- &cci0_i2c0 {
-+	camera_imx800_ak7377: actuator@c {
-+		compatible = "asahi-kasei,ak7377";
-+		reg = <0x0c>;
-+		vdd-supply = <&vreg_l7p>;
-+		vio-supply = <&vreg_l7p>;
-+	};
-+
- 	/* IMX800 @ 1a */
- 
- 	eeprom@50 {
+> 
+>> In the other two cases, MEXT_MOVE_EXTENT and MEXT_COPY_DATA, m_len should
+>> be equal to mext.orig_map.m_len after calling mext_move_extent().
+> 
+> So this is the bit which isn't 100% clear to me. Because what looks fishy
+> to me is that ext4_swap_extents() can fail after swapping part of the
+> passed range (e.g. due to extent split failure). In that case we'll return
+> number smaller than mext.orig_map.m_len. Now that I'm looking again, we'll
+> set *erp in all those cases (there are cases where ext4_swap_extents()
+> returns smaller number even without setting *erp but I don't think those
+> can happen given the locks we hold and what we've already verified - still
 
--- 
-2.43.0
+Yes, ext4_swap_extents() could shortly return if it encounters a hole.
+However, we have already verified this case under locks. So this can not
+happen.
+
+> it would be good to add an assert for this in mext_move_extent()) so the
+
+Sure.
+
+> problem would rather be that we don't advance by m_len in case of error
+> returned from mext_move_extent()?
+> 
+
+Yeah, you are right, this is a problem, I missed this case. As long as
+m_len is not zero, we still need to increase move_len in
+ext4_move_extents(), even if mext_move_extent() returns an error code.
+Thank you for such a detailed review! :-)
+
+Best Regards,
+Yi.
 
 
