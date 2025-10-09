@@ -1,237 +1,203 @@
-Return-Path: <linux-kernel+bounces-846913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBAD5BC9697
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:03:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE7A2BC96A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:03:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8124E3B6502
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:03:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B63AB19E74C4
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:04:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B84551E47A3;
-	Thu,  9 Oct 2025 14:03:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB5A2EA165;
+	Thu,  9 Oct 2025 14:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hx1cpHeP"
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GoMijZxC"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2859D2E8E08
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 14:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF0E2E9759
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 14:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760018584; cv=none; b=pyjwAR2mTaWrDkWZioefbyUrgTYfRXFn5yn72MNzFGbIS0VYVzlYUEpa1xvxoAg6lZ7FPcUTz7pTD0W+ZOF+u9+RIMXj8pdp0fRIDZQP3x1rnWvCmgc/+TuCXeD/pfy7LAfJ3j4EzHfPVaXxlHXJgx+69vrSDsdScifBWNpNyUg=
+	t=1760018612; cv=none; b=TroTRXIwCMdsb+qCnGkNlagGn9jV5nBhk0Md4sq603aFl/4KBEpgG/VMUPpxo24nH06knTku6KHQsLGfkCU72ivOb3HqYmcCDZ/ac2uRNUpT89djsKSNae+D1hltgE8BelSTraWgVjPTmW9Ke2ZYvITZhTAfPTOMVbm1WrTInyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760018584; c=relaxed/simple;
-	bh=sY/gtgf7NBozOjwc2EeRJ+KgsNPbK5kep4ypL81cuJQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p2Q9QSBh+8rKDzj4BjhwrkHjuDrLa69Iz8yvTwvhSBFvDZuM+WAMbUZamINeZcW+BdN9N1ewq1ZCPrU+/mkf3TExN6w0uJQ6+y7zRq2b25Ss0+EesKCr6KJzJVMGQktAw1zersYOK0QSj3MOlW8Udx1jpbAO4w3yHxCD7DJZCqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hx1cpHeP; arc=none smtp.client-ip=209.85.166.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-937b40137b4so88777039f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 07:03:00 -0700 (PDT)
+	s=arc-20240116; t=1760018612; c=relaxed/simple;
+	bh=jIACOyzuC8X0aT/3uWywgCTxnVramD7znqMR2Du233Y=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=bP+osvp/oJ/7dKK5dp3ThHGnvK4fAUwM66D4o76lu+9c4Y99GR+fiDiEKAgDLk/XIm033kLRtQRdplXAT9tt/W2GtSn+q2ee/FoucLw6U85w6JLuqNKoyLvNDCTMecKNGBdEEEVSmZ8QxH2S7H6bIQCo6zlujqPsAY+vCCmZpjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GoMijZxC; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-46e29d65728so6158225e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 07:03:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760018580; x=1760623380; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lfk2bfyqFX2yPC1pilpdm6kUPU4T4/Dvd4LObp2un+E=;
-        b=hx1cpHeP97IWTfCT66W1ey8BmgdueE/D7jc6vp7ykfiYizvyc/GsfcLOSLM6TXLhgj
-         iWW0DwTWqTMlJQbjl0jgrp7SDTEQGQDXDURN1N6/+i/cZ5sXdwvJJkXzGVXOcfaOI2D7
-         36u8V4bRl1U6piKJ9JqjusCQcJlCOk32W3ITClBZCzYmr1q+2ZscngIlBzpnnLao2Qxr
-         vPwpCbLtuvfHpmE4G8DJOCiWi0vsOCKe8awit8HDZj9PoQVtjeB4SGuW7WoVVN8nJpl8
-         XRJQoC/m7LDM1puM9HBFRMuSMcRaRftNpF60Pmdoui9AVYvyztxWlOEBXpT6MTImiZmc
-         y8OQ==
+        d=linaro.org; s=google; t=1760018609; x=1760623409; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6ick/ehpBisbwmGXZKKBR8+25U5AyvHRCstQa+Wcmc8=;
+        b=GoMijZxC7j3bC8XyvWYkQTadrxmlA24zoCfQBiPHgQwHbAQHh5Kjyw/u31apswsfNJ
+         Plwj3wO9nx69blVg81EAjI9q8BO2z0h6eJEnL+y9fyloREBsQ6P48OTS/vgZr+VWKrt8
+         NAUODrUSKKEjNAb1ACYAxJavdwk5I9knzNQZM8C+hvEa63VfmjXi42Qdh3pR3fDVU6S+
+         sNa6gCVFhnBCSuqo0ZcJRl22xRv/JZaw83nSrdmVWTQKeKAr6KWh82eeNC66B7m/a3Dd
+         iubDBTIrp2wCztkgk7SMwcmXjjyRnS99igbnIdTcMI2ai6BAxYKMcBNqDGwA1UFBRd6K
+         +R3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760018580; x=1760623380;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lfk2bfyqFX2yPC1pilpdm6kUPU4T4/Dvd4LObp2un+E=;
-        b=hzQ1NlBIfUKjsO9I7PyG9GjlMOAMkB9vamGLZmn2po216zIITgB9IOf9rR8liqrdVi
-         qsNKDkTjG7sANHVbCoCOrTEpecaHQ1xYDtn+xilhUrGYkGC1CxoaH8BwIc0YSares9je
-         fQLsqsqpfCSqaUMqly0Kn9O3CJWp5G6g1V9zt5gVA22IK/cn82bwVWkDflNOKkNj1e7f
-         rWdpwnY7E7QbFwPA2rYWWiFxCq94YvIoQOLdPrE1ZpTB2bNJs2k/7MjmB7aDbMIZfSwM
-         EJXtFM+Vqz3zsXze0/xHvcFQxNVLxLLf7s7RhWcDJppuMU/7LZqCOY5juupnPRcsURWI
-         KDrw==
-X-Forwarded-Encrypted: i=1; AJvYcCVcu7KtsAB97Y10N2cy/rT0s3mzeB9aIuHdk7sYgD2a8XUU7tk4cmDM2R8EnmF6hh8IGH52UhFwqLCSl94=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdtZzM4seBJiaOZ1J/2qT4Ce10MCVkqTcIfteeLgllulnMgFLH
-	On7h1AwZfsij01OcVXrg0iCMJ4+ifw5wt0NoBMEgmeboQpGzxHWhHANOHjj9z2aFo2ORfk1TBCv
-	QTWX/sacTB84TcSSLgE2/OYxOtSs5VXg=
-X-Gm-Gg: ASbGncvVsvQJtb0asYzV62wTcrSzUl+EPbHv/4XPYXQ2yOr45Z1DiDIqrgogH0gEc8d
-	uvSTLs6CK8n9hGHvRfx4yLbmAYASfWN9miXBfWFy06whY2ROOCqMdDzZrCU0nP/Zg90HkAtrJDD
-	r8UUHTtrnWFJ+kzjAI7pH/zmOYHO6xVNrbVCyI0aUtsDVoxgQP0ekEiNQiLWnyMi8IfSH7E5gyD
-	I35S3LAyhi15n5wuBoE2ShPmIk3rik=
-X-Google-Smtp-Source: AGHT+IGFUh+yxdaAwOY01QTdDPRzmkqga8JwC7gVQ8hdE1VZLzwP/yHjfQX0w+P+lGz62g/ohriduN1YX1Cx7jhB7TA=
-X-Received: by 2002:a05:6e02:4405:20b0:42f:9888:48f1 with SMTP id
- e9e14a558f8ab-42f98884980mr2655225ab.1.1760018579842; Thu, 09 Oct 2025
- 07:02:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760018609; x=1760623409;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6ick/ehpBisbwmGXZKKBR8+25U5AyvHRCstQa+Wcmc8=;
+        b=WoK9KKeSGn/e+oUnY7IPyGSZlpuZ7/gukdvQvw1lXIf2So7YQ+xNDuGXtfbmWLc2We
+         qCZ3Nw4Cd/RSMDHyOFTSwjOa2U5TSaFZAF77vXUaSA+WcpbjtB97youQn3sQRiE00aXX
+         NBfCVGZOEZc1BC9oi5jniQ5g6ARt+U49qLWiYL9/T7+uH3L1WhwNn52Ksow4UYrHUKQc
+         Wq+DDybiLYZfHV9gvG5V373ysK+4TdvRdjbwqp4Qgj5lI1ddrQGcqda50HeHzrm3Q+1U
+         d09BvVlolLrptOBMPThH2W+kGANdKlMvcCjj3494I9/KCsfnoaV9HfyfLVZRAhmq4CQD
+         sPFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVa6TX7vh3W4IHFZg0R59G8xs16Zt6M8em2qbcUWqLWY5CBN/YhF5K5tgyyywUbFegs6olC/eR1bQzVD0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIFeW1640PxrUKsZw0+X1obxFz724B/5Koc3TwDgZ3utfkpkkV
+	DHWrSHAIHSHwTLhVlTp9+SBo4v7rOkcy7thTg1gE99YpzSCcMVtSsCPbemMkBw21zpc=
+X-Gm-Gg: ASbGnctjTR7H0RTqiwCnsrFET1nJmSAiGr2EkGBjs9HT9Y6uziLHnhZVXdTtFrwTYLc
+	Ztb/n7HHfNemev/i2knFhigi0fS9Q04Lh0RaY6V62EjJALsJshlrGpBRQ72Z55aWKcPDMPQOq5b
+	aGeCrmYPIHt63EjXKtXNTvrstfHDhEY9KlSmD9bWsZ1dnRg8wsvPFizWIKqNscaYnhZVGKP+nYk
+	hq6DOW75sAdqXimZXhTuoYDSTN/agMsYiBimtq8xkKkGZB163spHiQG8GMfpJKleHewXEe1zkIU
+	QaClim6SLNkjDhOwY06ID+eE5WvjuYWY3XwfoWkMY+0TpuM95hbTYdn+hJ91sZIRuKmPO47d096
+	RB0RMlgZe1e2KDSutTdQtkUlxrpRuXbCAN2UKo/zbTvpFHMxh79F+CzwtRfBQD0LN8/CvO0DWK2
+	UmuQC+ZUHQ8K3rfKRec6k9Y4dRbDA=
+X-Google-Smtp-Source: AGHT+IGivr9oE8gO06kQl7Up/pCh869X25XIBSN9Z2sjlK7nHplkbmEOxZNSH3sQ2PDnuNDmndVZkw==
+X-Received: by 2002:a05:600c:46d1:b0:46e:36f8:1eb7 with SMTP id 5b1f17b1804b1-46fa9a98e73mr54759945e9.10.1760018608808;
+        Thu, 09 Oct 2025 07:03:28 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:7a0c:da2f:6591:67ee? ([2a01:e0a:3d9:2080:7a0c:da2f:6591:67ee])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fab36ed3bsm40963255e9.0.2025.10.09.07.03.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Oct 2025 07:03:28 -0700 (PDT)
+Message-ID: <3620feb6-12bf-48c1-b47a-ccb486e5b5de@linaro.org>
+Date: Thu, 9 Oct 2025 16:03:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251008165659.4141318-1-aleksander.lobakin@intel.com>
-In-Reply-To: <20251008165659.4141318-1-aleksander.lobakin@intel.com>
-From: Jason Xing <kerneljasonxing@gmail.com>
-Date: Thu, 9 Oct 2025 22:02:23 +0800
-X-Gm-Features: AS18NWAnZSobSr21rzMet2NXYBsUZ-tOijH1hdSEoiMgzrgWiOgQX5AxwPD-zdc
-Message-ID: <CAL+tcoAWf4sNkQzCBTE8S7VgH12NPyqwiYDiig+jv0KGYAhFTA@mail.gmail.com>
-Subject: Re: [PATCH bpf] xsk: harden userspace-supplied &xdp_desc validation
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: Magnus Karlsson <magnus.karlsson@intel.com>, 
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>, Stanislav Fomichev <sdf@fomichev.me>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Kees Cook <kees@kernel.org>, nxne.cnse.osdt.itp.upstreaming@intel.com, 
-	bpf@vger.kernel.org, netdev@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH RFC v2 2/6] ASoC: dt-bindings: qcom,sm8250: Add clocks
+ properties for I2S
+To: Srinivas Kandagatla <srini@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20251008-topic-sm8x50-next-hdk-i2s-v2-0-6b7d38d4ad5e@linaro.org>
+ <20251008-topic-sm8x50-next-hdk-i2s-v2-2-6b7d38d4ad5e@linaro.org>
+ <44606de8-3446-472f-aa6b-25ff8b76e0ec@kernel.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <44606de8-3446-472f-aa6b-25ff8b76e0ec@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 9, 2025 at 12:59=E2=80=AFAM Alexander Lobakin
-<aleksander.lobakin@intel.com> wrote:
->
-> Turned out certain clearly invalid values passed in &xdp_desc from
-> userspace can pass xp_{,un}aligned_validate_desc() and then lead
-> to UBs or just invalid frames to be queued for xmit.
->
-> desc->len close to ``U32_MAX`` with a non-zero pool->tx_metadata_len
-> can cause positive integer overflow and wraparound, the same way low
-> enough desc->addr with a non-zero pool->tx_metadata_len can cause
-> negative integer overflow. Both scenarios can then pass the
-> validation successfully.
-> This doesn't happen with valid XSk applications, but can be used
-> to perform attacks.
->
-> Always promote desc->len to ``u64`` first to exclude positive
-> overflows of it. Use explicit check_{add,sub}_overflow() when
-> validating desc->addr (which is ``u64`` already).
->
-> bloat-o-meter reports a little growth of the code size:
->
-> add/remove: 0/0 grow/shrink: 2/1 up/down: 60/-16 (44)
-> Function                                     old     new   delta
-> xskq_cons_peek_desc                          299     330     +31
-> xsk_tx_peek_release_desc_batch               973    1002     +29
-> xsk_generic_xmit                            3148    3132     -16
->
-> but hopefully this doesn't hurt the performance much.
+On 10/9/25 15:36, Srinivas Kandagatla wrote:
+> 
+> 
+> On 10/8/25 7:56 PM, Neil Armstrong wrote:
+>> In order to describe the block and master clock of each I2S bus, add
+>> the first 5 I2S busses clock entries.
+>>
+>> The names (primary, secondary, tertiarty, quaternary, quinary, senary)
+>> uses the LPASS clock naming which were used for a long time on Qualcomm
+>> LPASS firmware interfaces.
+>>
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>> ---
+>>   .../devicetree/bindings/sound/qcom,sm8250.yaml      | 21 +++++++++++++++++++++
+>>   1 file changed, 21 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
+>> index 8ac91625dce5ccba5c5f31748c36296b12fac1a6..d1420d138b7ed8152aa53769c4d495e1674275e6 100644
+>> --- a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
+>> +++ b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
+>> @@ -64,6 +64,27 @@ properties:
+>>       $ref: /schemas/types.yaml#/definitions/string
+>>       description: User visible long sound card name
+>>   
+>> +  clocks:
+>> +    minItems: 2
+>> +    maxItems: 12
+>> +
+>> +  clock-names:
+>> +    minItems: 2
+>> +    items:
+>> +      # mclk is the I2S Master Clock, mi2s the I2S Bit Clock
+>> +      - const: primary-mi2s
+>> +      - const: primary-mclk
+>> +      - const: secondary-mi2s
+>> +      - const: secondary-mclk
+>> +      - const: tertiary-mi2s
+>> +      - const: tertiary-mclk
+>> +      - const: quaternary-mi2s
+>> +      - const: quaternary-mclk
+>> +      - const: quinary-mi2s
+>> +      - const: quinary-mclk
+>> +      - const: senary-mi2s
+>> +      - const: senary-mclk
+>> +
+> 
+> I don't this is correct way to handling bitclk and mclks for I2S, these
+> are normally handled as part of snd_soc_dai_set_sysclk() transparently
+> without need of any device tree description.
+> 
+> Also doing this way is an issue as this is going to break existing Elite
+> based platforms, and the device description should not change across
+> these both audio firmwares.
 
-I don't see an evident point that might affect the performance. Since
-you said that, I tested by running './xdpsock -i eth1 -t -S -s 64' and
-didn't spot any degradation.
+This is only for AudioReach platforms, on those platforms the
+clocks are registered in DT and are not accessible by the card.
 
->
-> Fixes: 341ac980eab9 ("xsk: Support tx_metadata_len")
-> Cc: stable@vger.kernel.org # 6.8+
-> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+Device description is obviously different for the AudioReach platforms.
 
-Thanks for the fix!
+Neil
 
-Reviewed-by: Jason Xing <kerneljasonxing@gmail.com>
+> 
+> thanks,
+> Srini
+> 
+>>   patternProperties:
+>>     ".*-dai-link$":
+>>       description:
+>>
+> 
 
-> ---
->  net/xdp/xsk_queue.h | 45 +++++++++++++++++++++++++++++++++++----------
->  1 file changed, 35 insertions(+), 10 deletions(-)
->
-> diff --git a/net/xdp/xsk_queue.h b/net/xdp/xsk_queue.h
-> index f16f390370dc..1eb8d9f8b104 100644
-> --- a/net/xdp/xsk_queue.h
-> +++ b/net/xdp/xsk_queue.h
-> @@ -143,14 +143,24 @@ static inline bool xp_unused_options_set(u32 option=
-s)
->  static inline bool xp_aligned_validate_desc(struct xsk_buff_pool *pool,
->                                             struct xdp_desc *desc)
->  {
-> -       u64 addr =3D desc->addr - pool->tx_metadata_len;
-> -       u64 len =3D desc->len + pool->tx_metadata_len;
-> -       u64 offset =3D addr & (pool->chunk_size - 1);
-> +       u64 len =3D desc->len;
-> +       u64 addr, offset;
->
-> -       if (!desc->len)
-> +       if (!len)
->                 return false;
->
-> -       if (offset + len > pool->chunk_size)
-> +       /* Can overflow if desc->addr < pool->tx_metadata_len */
-> +       if (check_sub_overflow(desc->addr, pool->tx_metadata_len, &addr))
-> +               return false;
-> +
-> +       offset =3D addr & (pool->chunk_size - 1);
-> +
-> +       /*
-> +        * Can't overflow: @offset is guaranteed to be < ``U32_MAX``
-> +        * (pool->chunk_size is ``u32``), @len is guaranteed
-> +        * to be <=3D ``U32_MAX``.
-> +        */
-> +       if (offset + len + pool->tx_metadata_len > pool->chunk_size)
->                 return false;
->
->         if (addr >=3D pool->addrs_cnt)
-> @@ -158,27 +168,42 @@ static inline bool xp_aligned_validate_desc(struct =
-xsk_buff_pool *pool,
->
->         if (xp_unused_options_set(desc->options))
->                 return false;
-> +
-
-nit?
-
->         return true;
->  }
->
->  static inline bool xp_unaligned_validate_desc(struct xsk_buff_pool *pool=
-,
->                                               struct xdp_desc *desc)
->  {
-> -       u64 addr =3D xp_unaligned_add_offset_to_addr(desc->addr) - pool->=
-tx_metadata_len;
-> -       u64 len =3D desc->len + pool->tx_metadata_len;
-> +       u64 len =3D desc->len;
-> +       u64 addr, end;
->
-> -       if (!desc->len)
-> +       if (!len)
->                 return false;
->
-> +       /* Can't overflow: @len is guaranteed to be <=3D ``U32_MAX`` */
-> +       len +=3D pool->tx_metadata_len;
->         if (len > pool->chunk_size)
->                 return false;
->
-> -       if (addr >=3D pool->addrs_cnt || addr + len > pool->addrs_cnt ||
-> -           xp_desc_crosses_non_contig_pg(pool, addr, len))
-> +       /* Can overflow if desc->addr is close to 0 */
-> +       if (check_sub_overflow(xp_unaligned_add_offset_to_addr(desc->addr=
-),
-> +                              pool->tx_metadata_len, &addr))
-> +               return false;
-> +
-> +       if (addr >=3D pool->addrs_cnt)
-> +               return false;
-> +
-> +       /* Can overflow if pool->addrs_cnt is high enough */
-> +       if (check_add_overflow(addr, len, &end) || end > pool->addrs_cnt)
-> +               return false;
-> +
-> +       if (xp_desc_crosses_non_contig_pg(pool, addr, len))
->                 return false;
->
->         if (xp_unused_options_set(desc->options))
->                 return false;
-> +
->         return true;
->  }
->
-> --
-> 2.51.0
->
->
 
