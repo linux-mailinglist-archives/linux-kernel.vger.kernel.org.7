@@ -1,67 +1,108 @@
-Return-Path: <linux-kernel+bounces-846819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F7E5BC91FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:52:12 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B609BC920F
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8E653E2819
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:52:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 64B864FA78A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386C12E62C0;
-	Thu,  9 Oct 2025 12:52:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1177D2E6CD5;
+	Thu,  9 Oct 2025 12:53:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XBbbOCLu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ln7bmxsH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A5423C505;
-	Thu,  9 Oct 2025 12:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8FA23C505
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 12:53:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760014322; cv=none; b=FewtsYwEVf+lB22kCCIPsLXgnfKwsFFvSWvbMJYV+Lmviuv/8+SRL5p9+FH7OUz+7JSQWEHm/liVhFPjAvyX+ZbuzvcX/3DmNWZeT2yAEhAP+/Nz9I28+CHcMMH6guafwORczWi8WWlUmKd1KZ55t/1xJIRKtM8h240WKiS9bis=
+	t=1760014383; cv=none; b=HAI3zISEPpHbgHX02u2Oit+OHytQBba9RjZMofdqJUDv+EBorN9vK6B76gg2DLhT8Z/Xq3K5F/19bWOBjQx5ASwPmRUoH2Vpi9cYAYONfCn2qU/JLIfpgXuRbWgaoLFZWKMQtUd+uzQQsssUw8Pc7x6ELXFMee1we2N31VRa9SQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760014322; c=relaxed/simple;
-	bh=AVIp+jMYzxaeQL2X5j0m3um+EbwGIdcZQgDXBd6gbp4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XlBhdWgRTvHcOST7HOIo8ADiLHeUD2e5M11eDfgQ9TrITerjCfP2jCcKzKoHyA9eULXbZXMvnFKT+UqfFEFCypGOs8L/pPMUQUic7+x3VgQw7xJR/dwE5mhI7oxgyVBVyUkFAe0GJLW6zishwlpt2rijhF6SacSFaYhElWRLg5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XBbbOCLu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A780BC4CEE7;
-	Thu,  9 Oct 2025 12:51:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760014322;
-	bh=AVIp+jMYzxaeQL2X5j0m3um+EbwGIdcZQgDXBd6gbp4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XBbbOCLu3oW5xZbEYzEgu1/eoKRz0rV9BnC8X45E7wZOwC2bKbYf708BuxKK/CIJY
-	 eHXlQ3jC+erSYmS8wIIGVnsYhcx0BoS4oc245XXU6f67/sLgDODcix1xHCZip2WMEh
-	 UNsLGabGTJw9vVZEH6EojIII3RvMHBuwV4m6XTvbKOWrxMw+K43j3Jj/lrOcXg1rqH
-	 BqDbuV9PhoOunbbGVHZzDIgSowJkpDvYynk7dTCG8ixK4+wkj7xjO3Gckmjv6YXjkB
-	 bCZaXeFm9VRU6PPIcrhghm0z0v0jc0Vl2uigBWXQGo7oC0fO3H0c0v7sJY25me4vGr
-	 aQZ4+6bolRPCA==
-Date: Thu, 9 Oct 2025 13:51:55 +0100
-From: Lee Jones <lee@kernel.org>
-To: samuel.kayode@savoirfairelinux.com
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Sebastian Reichel <sre@kernel.org>, Frank Li <Frank.li@nxp.com>,
-	imx@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-pm@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>,
-	Abel Vesa <abelvesa@linux.com>, Robin Gong <b38343@freescale.com>,
-	Robin Gong <yibin.gong@nxp.com>,
-	Enric Balletbo i Serra <eballetbo@gmail.com>,
-	Sean Nyekjaer <sean@geanix.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: Re: [PATCH v12 0/6] add support for pf1550 PMIC MFD-based drivers
-Message-ID: <20251009125155.GE2796410@google.com>
-References: <20251001-pf1550-v12-0-a3302aa41687@savoirfairelinux.com>
+	s=arc-20240116; t=1760014383; c=relaxed/simple;
+	bh=X8mJTyar/juDqkVpENiOV+AphX1e6sbRKy+cvFNi8Iw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=mgF3a0PD6XR7KZADGC+Ucm36ETEUa+zHRk8U6mhEIWNr3Iics+4Hd6Q0272k+HC8Y+0XRhh25dJBe0KBNhGwXIeIIUJAzgafalCnFxLp13bqMTOlITIO48lKUm8ZfYZn5b7et4Tn+xaDIilhjRjmrEIbNCANv53mNPIbPciSNQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ln7bmxsH; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1760014380;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+waPU4EoP1XKdkvMFZASVqNI18Mpmp7i8qiR8k7lEjg=;
+	b=Ln7bmxsHrrmN9XxwIktjh2zDb3vI8jeh+OYY4HZ2u2VC1kolyPp+guUhKe3G7rOugnEMSL
+	r3y0+gBMrZDWbs2GN/QNOcGqzGrX8BIgtu7CeWVcnoAwYWnMsy1MSr2R6qw3naoca+Y3pU
+	ChSUoV9BeIiJJFpv5xwAXOCw+AYR7GI=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-632-GRqD5qcPN76oC51rjqbDvQ-1; Thu, 09 Oct 2025 08:52:59 -0400
+X-MC-Unique: GRqD5qcPN76oC51rjqbDvQ-1
+X-Mimecast-MFC-AGG-ID: GRqD5qcPN76oC51rjqbDvQ_1760014378
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3f93db57449so644372f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 05:52:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760014378; x=1760619178;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+waPU4EoP1XKdkvMFZASVqNI18Mpmp7i8qiR8k7lEjg=;
+        b=lrYtD250m7Fvfk/5gAJdkxWV+5rlW2Rc9i0FnYVo8eLI2Pkg4o3Dw3pLuEjrbCw/wy
+         X5FMDRpNlk3zx4HZ6VSDtoWUVRLKUrtDENkB1U8OlY1HV19Q+jSZDqleUTxTXqORXFBN
+         OiGKe5OLOcrNXU3ZIloD5g+uVFGACvos+slSz/p0NqlD6RbDiZWgAdxAzFmIZC+qWOmI
+         sYNWD4QzPm4QmYmS0ir4BJnXmOmtq6UM0lrWGfKTUpbtGhE62ZFoxT1ia4VVGVeGKqRu
+         IDSM/7d1+0CM34s72C4PNPO1sTG6Fh/cjWIfUD9VUElXeh+ClI4lXepSkxi5TsWTHdkk
+         5r0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUcuJb+/b0wEH+MTLAtV9+jPMLQGt1uEurysYPGlMpSQ/frEV050rdXa0FnF5KbrQcD6vgKRUr17kxkdIs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9b8F7BFkUpHwP72XjXA1aL5pjGWOSdc3YTG7rt63FU6sIHrUI
+	cE6U49lrbk9MDyO4HUOv0GcCmUwxPeGyhkOOCf3zJyy55QTqKxHnpD4MG5+FNH2kxHIiE7hll7H
+	rDe/K7hUjUWk9eEuYMsl17xDLPwmT9MGhCAHaBPzZAcifMY9fyKKI8YhdWsozEpCNoQn+5CV+75
+	yay2aFdna013O0a+0MT0QusroO2VcVa5kBTXImQIElCL7UrUefQA==
+X-Gm-Gg: ASbGncsvPS51XqD1dRy9Mlh6SYg+LDLGXNPIIwlJEk3IJXiKss2Oh9LqLlvmBP/RdYb
+	NBnerRVxJ8SPSkSBBE88eMVIPoWgVmNwVQlPWu3SHpQWb1j15wwDi/Y24h5bXW8Sp6AOycpqDSI
+	LpFtsmpmnMzWW82W9cdi0hg1ysPuWtsMgOIBllVpPfOXItmd84mOHJsc/23tdc0Yc4/sX5fTsB7
+	Hx1w0PG9+F1Sly80wL8y+jRRseHdr/oTTEMcwP5XBytQSKYOF9QwX9QzJDznEn70LW+1Q/WikKc
+	X7zr/IyttqIPrbftMT3oowZDHdgAksvrSjL0s5h64Q==
+X-Received: by 2002:a05:6000:2c06:b0:40f:5eb7:f23e with SMTP id ffacd0b85a97d-42666ab2b15mr4101222f8f.1.1760014377943;
+        Thu, 09 Oct 2025 05:52:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG6sYUNnJKtLYymNGyZnaS/EKYVGpmsOe8naPHzyYPhk9811ZTFpkCfmibAqOb5QeKoOkS8AA==
+X-Received: by 2002:a05:6000:2c06:b0:40f:5eb7:f23e with SMTP id ffacd0b85a97d-42666ab2b15mr4101201f8f.1.1760014377497;
+        Thu, 09 Oct 2025 05:52:57 -0700 (PDT)
+Received: from fedora (g3.ign.cz. [91.219.240.17])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8e97f0sm34348382f8f.27.2025.10.09.05.52.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 05:52:57 -0700 (PDT)
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: Jinpu Wang <jinpu.wang@ionos.com>, Sean Christopherson <seanjc@google.com>
+Cc: fanwenyi0529@gmail.com, kvm@vger.kernel.org, Paolo Bonzini
+ <pbonzini@redhat.com>, Xiaoyao Li <xiaoyao.li@intel.com>,
+ linux-kernel@vger.kernel.org
+Subject: Re: Hang on reboot in multi-core FreeBSD guest on Linux KVM host
+ with Intel Sierra Forest CPU
+In-Reply-To: <CAMGffEmin4HAwoQUjkkoq+_z0sherZcCnkXgMu4PahnM8UmO+A@mail.gmail.com>
+References: <539FC243.2070906@redhat.com>
+ <20140617060500.GA20764@minantech.com>
+ <FFEF5F78-D9E6-4333-BC1A-78076C132CBF@jnielsen.net>
+ <6850B127-F16B-465F-BDDB-BA3F99B9E446@jnielsen.net>
+ <jpgioafjtxb.fsf@redhat.com>
+ <74412BDB-EF6F-4C20-84C8-C6EF3A25885C@jnielsen.net>
+ <558AD1B0.5060200@redhat.com>
+ <FAFB2BA9-E924-4E70-A84A-E5F2D97BC2F0@jnielsen.net>
+ <CACzj_yVTyescyWBRuA3MMCC0Ymg7TKF-+sCW1N+Xwfffvw_Wsg@mail.gmail.com>
+ <CAMGffE=P5HJkJxh2mj3c_oh6busFKYb0TGuhAc36toc5_uD72w@mail.gmail.com>
+ <aOaJbHPBXHwxlC1S@google.com>
+ <CAMGffEn1i-qTVRD+9PWDfNUMvbBCp9dV2f=Cgu=VLtoHs-6JTA@mail.gmail.com>
+ <CAMGffEmt2ZEL3uxRd+mWkKB=K8Q3seo9Kp-T06rZahxsX4Wm4Q@mail.gmail.com>
+ <CAMGffEmin4HAwoQUjkkoq+_z0sherZcCnkXgMu4PahnM8UmO+A@mail.gmail.com>
+Date: Thu, 09 Oct 2025 14:52:56 +0200
+Message-ID: <87bjmg8cev.fsf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,17 +110,124 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251001-pf1550-v12-0-a3302aa41687@savoirfairelinux.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 01 Oct 2025, Samuel Kayode via B4 Relay wrote:
+Jinpu Wang <jinpu.wang@ionos.com> writes:
 
-> This series adds support for pf1550 PMIC. It provides the core driver and
-> sub-drivers for the regulator, power supply and input subsystems.
+> On Thu, Oct 9, 2025 at 1:21=E2=80=AFPM Jinpu Wang <jinpu.wang@ionos.com> =
+wrote:
+>>
+>> On Thu, Oct 9, 2025 at 5:44=E2=80=AFAM Jinpu Wang <jinpu.wang@ionos.com>=
+ wrote:
+>> >
+>> > Hi Sean,
+>> >
+>> > On Wed, Oct 8, 2025 at 5:55=E2=80=AFPM Sean Christopherson <seanjc@goo=
+gle.com> wrote:
+>> > >
+>> > > Trimmed Cc: to drop people from the original thread.  In the future,=
+ just start
+>> > > a new bug report.  Piggybacking a 10 year old bug just because the s=
+ymptoms are
+>> > > similar does more harm than good.  Whatever the old thread was chasi=
+ng was already
+>> > > fixed, _10 years_ ago; they were just trying to identy exactly what =
+commit fixed
+>> > > the problem.  I.e. whatever they were chasing _can't_ be the same ro=
+ot cause,
+>> > > because even if it's literally the same code bug, it would require a=
+ code change
+>> > > and thus a regression between v4.0 and v6.1.
+>> > Thx for the reply,  it makes sense. I will remember this next time.
+>> > >
+>> > > On Wed, Oct 08, 2025, Jinpu Wang wrote:
+>> > > > On Wed, Oct 8, 2025 at 2:44=E2=80=AFPM Jack Wang <jinpu.wang@ionos=
+.com> wrote:
+>> > > > > Sorry for bump this old thread, we hit same issue on Intel Sierr=
+a Forest
+>> > > > > machines with LTS kernel 6.1/6.12, maybe KVM comunity could help=
+ fix it.
+>> > >
+>> > > Are there any host kernels that _do_ work?  E.g. have you tried a bl=
+eeding edge
+>> > > host kernel?
+>> > I will try linus/master today.
+>> > >
+>> > > > > ### **[BUG] Hang on FreeBSD Guest Reboot under KVM on Intel Sier=
+raForest (Xeon 6710E)**
+>> > > > >
+>> > > > > **Summary:**
+>> > > > > Multi-cores FreeBSD guests hang during reboot under KVM on syste=
+ms with
+>> > > > > Intel(R) Xeon(R) 6710E (SierraForest). The issue is fully reprod=
+ucible with
+>> > > > > APICv enabled and disappears when disabling APICv (`enable_apicv=
+=3DN`). The
+>> > > > > same configuration works correctly on Ice Lake (Xeon Gold 6338).
+>> > >
+>> > > Does Sierra Forest have IPI virtualization?  If so, you could try ru=
+nning with
+>> > > APICv enabled, but enable_ipiv=3Dfalse to specifically disable IPI v=
+irtualization.
+>> > Yes, it does:
+>> > $  grep . /sys/module/kvm_intel/parameters/*
+>> > /sys/module/kvm_intel/parameters/allow_smaller_maxphyaddr:N
+>> > /sys/module/kvm_intel/parameters/dump_invalid_vmcs:N
+>> > /sys/module/kvm_intel/parameters/emulate_invalid_guest_state:Y
+>> > /sys/module/kvm_intel/parameters/enable_apicv:Y
+>> > /sys/module/kvm_intel/parameters/enable_ipiv:Y
+>> > /sys/module/kvm_intel/parameters/enable_shadow_vmcs:Y
+>> > /sys/module/kvm_intel/parameters/ept:Y
+>> > /sys/module/kvm_intel/parameters/eptad:Y
+>> > /sys/module/kvm_intel/parameters/error_on_inconsistent_vmcs_config:Y
+>> > /sys/module/kvm_intel/parameters/fasteoi:Y
+>> > /sys/module/kvm_intel/parameters/flexpriority:Y
+>> > /sys/module/kvm_intel/parameters/nested:Y
+>> > /sys/module/kvm_intel/parameters/nested_early_check:N
+>> > /sys/module/kvm_intel/parameters/ple_gap:128
+>> > /sys/module/kvm_intel/parameters/ple_window:4096
+>> > /sys/module/kvm_intel/parameters/ple_window_grow:2
+>> > /sys/module/kvm_intel/parameters/ple_window_max:4294967295
+>> > /sys/module/kvm_intel/parameters/ple_window_shrink:0
+>> > /sys/module/kvm_intel/parameters/pml:Y
+>> > /sys/module/kvm_intel/parameters/preemption_timer:Y
+>> > /sys/module/kvm_intel/parameters/sgx:N
+>> > /sys/module/kvm_intel/parameters/unrestricted_guest:Y
+>> > /sys/module/kvm_intel/parameters/vmentry_l1d_flush:not required
+>> > /sys/module/kvm_intel/parameters/vnmi:Y
+>> > /sys/module/kvm_intel/parameters/vpid:Y
+>> >
+>> > I tried to disable ipiv, but it doesn't help. freebsd hang on reboot.
+>> > sudo modprobe -r kvm_intel
+>> > sudo modprobe  kvm_intel enable_ipiv=3DN
+>> > /sys/module/kvm_intel/parameters/enable_ipiv:N
+>> >
+>> > Thx!
+>> +cc Vitaly
+>> Sorry, I missed one detail, we are use hyper-V enlightment features:
+>> "+hv-relaxed,+hv-vapic,+hv-time,+hv-runtime,hv-spinlocks=3D0x1fff,+hv-vp=
+index,+hv-synic,+hv-stimer,+hv-tlbflush,hv-ipi."
+>>
+>> did a lot tests with different features, and looks the hang is related
+>> to  +hv-synic,+hv-stimer.  hv-synic seems the key which causes boot
+>> hang of Freebsd 14.
+>>
+>> But the problem seems fixed with FreeBSD 15?  I guess it's this fix:
+> https://reviews.freebsd.org/D43508
+>
+>>
+>> Seems it's a bug from freebsd side, rather than on kvm side to me, but
+>> I'm puzzled by disable apicv helps?
 
-Note to self: Everything is in order.  Apply to an IB once -rc1 is out.
+In theory, FreeBSD should work well even if KVM is misdetected as
+genuine Hyper-V. Apparently, our emulation is not 1:1 and there are
+subtle differences which cause the hang. I did not look at FreeBSD code
+at all but my wild guess is that SynIC/stimer are not disabled properly
+upon reboot and this causes the problem. If we somehow manage to find
+how genuine Hyper-V's behavior is different, it would make sense to
+update KVM/QEMU to match.
 
--- 
-Lee Jones [李琼斯]
+--=20
+Vitaly
+
 
