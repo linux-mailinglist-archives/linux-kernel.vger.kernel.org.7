@@ -1,150 +1,148 @@
-Return-Path: <linux-kernel+bounces-846463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DBDFBC8118
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:37:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4472BC8112
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:37:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B61943B1B60
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:37:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E88C3AA8F7
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C2629992B;
-	Thu,  9 Oct 2025 08:37:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E792857F2;
+	Thu,  9 Oct 2025 08:37:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E5wDJZTS"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kL3ktFL5";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="FD6L3X29";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="taOkQvsj";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ISTxMOjt"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5096B288C2B
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 08:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D44134BA38
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 08:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759999057; cv=none; b=gJzgb+Bcf7uySgsCftYKy7T9DkB75IIcKjY+x1UESt5e0xHXl1x59PaNWVvgTNmsMt8yHUg+IHHvj1bHwokZjU+0GFkuHK58wbuTP/ACDlZ/1Oe71FTXwvCyBmC8slfRykDEqKI8zFpHYiPmm6Y5RF5yvREp2nB3EN97zWRUFyo=
+	t=1759999034; cv=none; b=dwF+fbsHj0vqTDRrQVXVJa2WEwLxAG/C3fhVO5G4RJndYQSYr+pz47LXU1vwLx9VGOkn1c0Wm/r0rvMXJfjhpuGe4Ov2GYWmm5dTZt9Z1axyyAzcDCILrBHOKrEF0/8oFrEKFOWda7/9UrwXAFGfrdfjGBT8GwV9x45GCGzp6Q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759999057; c=relaxed/simple;
-	bh=64cS0iEb6fG/98KLH6NyIi1RARZBBpfO7zVcMsRtMJc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jGGIgDWOrfONKK57A1XkSdTPxEL5mY7PBWkZEDjDHrwdNevpVA27ye2KVyuFj13OvtpMjg5ar81AUOCTJcD+75XA7ScWhuD4eNFB5aQ9wNb0FRtAHDff4s4g8oWX8fqtbO6Qmf2oLPYv64VgU+J0aoSSvyxzZ5D3OZKZYP0WfwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E5wDJZTS; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-36a6a39752bso6208251fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 01:37:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759999053; x=1760603853; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o4dMFnnL6gCSV/BGkdGLVDVI82ewLVkorW1rAtn7Qrg=;
-        b=E5wDJZTSf7kNq8k2FBbJc0CUMUY+3re+o1wad5lcHV/+k5ht0uj4UHRbEyJ3SSIOQR
-         S5j5HUu0LFQUvBxSaOdWMrfHQ5bO5uBy5MV2SlB1c/zT92kjKHlPBHVzAu4Wb8VPsF6h
-         7TqMI/b3J6Rq3zKkRcW+1A03xGMjwbTnMS4vwbCB4yBqYOjYymnWSx7JmFCBjpGQwnC/
-         iIqJHWJcnW8XD+HEPsEUayO98NAxEjCau4ym4K8Tciaish6D6TCOynr9t7aLQ6QSl2Aq
-         8xL6k3NMk0ZwIXkXJsYnO64sokfsDzBUdcVE7q5V8KDAnmDPNI8Kr69Se72S2nmSR+tO
-         QIQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759999053; x=1760603853;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o4dMFnnL6gCSV/BGkdGLVDVI82ewLVkorW1rAtn7Qrg=;
-        b=I0wryar2xauVoHC36N2YuEdEZ6QUP/zUdOxfkRYzFidoPAbglipY84MMgy8rjey8Sw
-         QqI2WcgGkfp6MOPZniZ9TK5iirFrEC19Zk6QB/PRLxfjgy2TgtCvMLI5S0bon2dCGisz
-         9rYmL1icEi87+WyIpMIsKe4l5WIoSsptnivYZqaGmR4ZT7GthNQ5jQ4qWT9fwLzq2jAp
-         BU3dSbqSK/AELhsVTNEBzPVXup3v5H+J0/gQUjYhTJkIKajshxlUQy+qB95WkoxdNDDl
-         f6Vi0Tup51+mbmLsWsFlXoG6Jpw29ymBPKp1owb+LFMWuTaG0RG4rn3Ct+hdya2YEhHL
-         ORwg==
-X-Forwarded-Encrypted: i=1; AJvYcCVrRY4XZK9zDpU5rmdfMegT1rvWysG/jNg943wGtjhPyObVU1Gt2l6AZ+8/ZDgAQ0IEomz9guf8kzDcHIg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9OOmKsZXoDQKtUkT0q0A5HEM0p+syXp9xCS9Tji1ii7PbX9G3
-	mo73xvRDnUftT+i2WyF+n34x2qPKTX6vn84Y3NUjzhD4BHekjFweofRtlzhgbw==
-X-Gm-Gg: ASbGncsGSt1N5opCuGvVdaut+pdFwaEtZ3/gePzZYMY5YKy4+FPxrX6VCU0ibcnQwEY
-	uQXZwhzPQSfv4gi8CpvjpcOSum0snXvto4JYhfaouqXgfp5U7p834cLSB86ziUV1WkyFaPQzl8O
-	VKxD86Dv9rMiXQbKKVJm5408jGEAz7UDRzvm5yXHx5/XhSjvBNWnrdR8ZPSVNmQNyq1sP78RdmL
-	5VmQsvI5iGlz9iGDRJW00UCh1CqWKMGFn+pe1ZJrvdbkgV0WApAqnmN6lpkpH3WWs7fGsjLG25h
-	AmePBTIm3HNLQ16ioUP/XXWSMNLorPO9j7fIktTyyLQQU2CjVzTdeX+xg7IWAH+0R3+JOU5EIFj
-	FLr79IJCKMVY3UuH+Kq1ldF0oLb7/UdsCOE11VvAe8dvHuZ9FQi21RWUiX1JT/VfU
-X-Google-Smtp-Source: AGHT+IF+KdeAZswgYlb7SDSnp1ZQxCQL2XQMEHKQQ7rRfzS4AETD16SRvGkKtRNvth3UTFIlZ4EmBw==
-X-Received: by 2002:a05:651c:b2a:b0:373:a465:294d with SMTP id 38308e7fff4ca-37609cc36d4mr17547791fa.8.1759999053179;
-        Thu, 09 Oct 2025 01:37:33 -0700 (PDT)
-Received: from NB-6746.corp.yadro.com ([188.243.183.84])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-375f3b81eb5sm26482701fa.50.2025.10.09.01.37.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 01:37:32 -0700 (PDT)
-From: Artem Shimko <a.shimko.dev@gmail.com>
-To: p.zabel@pengutronix.de
-Cc: a.shimko.dev@gmail.com,
-	andi.shyti@kernel.org,
-	andriy.shevchenko@linux.intel.com,
-	jarkko.nikula@linux.intel.com,
-	jsd@semihalf.com,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mika.westerberg@linux.intel.com
-Subject: [PATCH] i2c: designware-platdrv: handle reset control deassert error
-Date: Thu,  9 Oct 2025 11:37:03 +0300
-Message-ID: <20251009083703.2038187-1-a.shimko.dev@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <206e36398db6075bfb0bb0b98295ee7328c5f64f.camel@pengutronix.de>
-References: <206e36398db6075bfb0bb0b98295ee7328c5f64f.camel@pengutronix.de>
+	s=arc-20240116; t=1759999034; c=relaxed/simple;
+	bh=kHnHsSDN4lvamCyp10kKr6nZ74n4jqO3Ig2S+14bxDA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RKGVKFz1fJ3w8+wnuzdvVV8Wl1edIQsCs1ILa4OZLJUOxPMffdcgo2g4BOV2QK6lMcRuTYwIJWjTpX/p8wgfiS4t00qZBfb8Uy/nxR3Ex/49MkMsXsniZtDzkOZcAGVM4wbabRwehMFzGL34BfF2iUy47u0/PsCPghJyFVMSz48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kL3ktFL5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=FD6L3X29; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=taOkQvsj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ISTxMOjt; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 63EE51F849;
+	Thu,  9 Oct 2025 08:37:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759999030; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PLHJUMcs8cKGTkdNpbowpIOfVp7jR8lMa18VcOcGcw4=;
+	b=kL3ktFL5hdwhjBRZxX8bVvsngqhOPMdItNsNESeUQHBJAb37gPz//iFhlg5oCsURRqGBVG
+	tuVxNCxbPGtE2UKQ+Vbc93hWGOVRdofTIQbUt2QdhAOwp6Zbcj4XbEX6G2J+x8JR3KouLC
+	UDXgdzz6pBlRmSZC8GkeOebvCibv8+c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759999030;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PLHJUMcs8cKGTkdNpbowpIOfVp7jR8lMa18VcOcGcw4=;
+	b=FD6L3X29KJtnzCYzRQhYaWzmqyit5mavYQjURUl7+Woi0MZdjo75/LrpS33M2L3U7/b7f3
+	kPWhalWE60PhCDDA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759999029; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PLHJUMcs8cKGTkdNpbowpIOfVp7jR8lMa18VcOcGcw4=;
+	b=taOkQvsjGVo9HZOqqJ2gid452GUv4Orc56MeYjjPORpBERlPaspov1MtIH/k9tCW0igW80
+	+o5qCrspooCetfuRg9xp7+wN9KfEA/Yo+ffAE2U7efxjsdOAYIAjrcQkA0yo83jbomKhUb
+	SWEcS5Vo6yno/uPw+5+iqp5doo6aSqs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759999029;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PLHJUMcs8cKGTkdNpbowpIOfVp7jR8lMa18VcOcGcw4=;
+	b=ISTxMOjtEEOdFTgIVvxdSkW7De1IQ5tv4BqHh2g6R/sb4mTWPhaqxlX7NcBY7IlQdn49Jg
+	PP2HAfxF0qWUhcDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BF1E213AAC;
+	Thu,  9 Oct 2025 08:37:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id tIrmKzR052iDGgAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Thu, 09 Oct 2025 08:37:08 +0000
+Date: Thu, 9 Oct 2025 10:37:03 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: Mauricio Faria de Oliveira <mfo@igalia.com>
+Cc: Michal Hocko <mhocko@suse.com>, Vlastimil Babka <vbabka@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Brendan Jackman <jackmanb@google.com>,
+	Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	kernel-dev@igalia.com
+Subject: Re: [PATCH v2 3/5] mm/page_owner: add debugfs file 'show_handles'
+Message-ID: <aOd0L1asypia7HB9@localhost.localdomain>
+References: <20251001175611.575861-1-mfo@igalia.com>
+ <20251001175611.575861-4-mfo@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251001175611.575861-4-mfo@igalia.com>
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -4.30
 
-Handle the error returned by reset_control_deassert() in the probe
-function to prevent continuing probe when reset deassertion fails.
+On Wed, Oct 01, 2025 at 02:56:09PM -0300, Mauricio Faria de Oliveira wrote:
+> Add the flag STACK_PRINT_FLAG_HANDLE to print a stack's handle number
+> from stackdepot, and add the file 'show_handles' to show just handles
+> and their number of pages.
+> 
+> This is similar to 'show_stacks', with handles instead of stack traces.
+> 
+> Signed-off-by: Mauricio Faria de Oliveira <mfo@igalia.com>
 
-Previously, reset_control_deassert() was called without checking its
-return value, which could lead to probe continuing even when the
-device reset wasn't properly deasserted.
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
 
-The fix checks the return value and returns an error with dev_err_probe()
-if reset deassertion fails, providing better error handling and
-diagnostics.
-
-Signed-off-by: Artem Shimko <a.shimko.dev@gmail.com>
----
-Hi Philipp,
-
-Oh, sorry, sure.
-
-Could you please have a look at the v2.
-
-Thank you
-
-Best regards,
-Artem Shimko
-
-ChangeLog:
-  v1:
-    * https://lore.kernel.org/all/20251009074443.2010699-1-a.shimko.dev@gmail.com/
-  v2:
-    * change pdev->dev to local device dev
-
- drivers/i2c/busses/i2c-designware-platdrv.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
-index a35e4c64a1d4..c89af7cbdfac 100644
---- a/drivers/i2c/busses/i2c-designware-platdrv.c
-+++ b/drivers/i2c/busses/i2c-designware-platdrv.c
-@@ -240,7 +240,9 @@ static int dw_i2c_plat_probe(struct platform_device *pdev)
- 	if (IS_ERR(dev->rst))
- 		return PTR_ERR(dev->rst);
  
--	reset_control_deassert(dev->rst);
-+	ret = reset_control_deassert(dev->rst);
-+	if (ret)
-+		return dev_err_probe(device, ret, "Failed to deassert reset\n");
- 
- 	ret = i2c_dw_fw_parse_and_configure(dev);
- 	if (ret)
+
 -- 
-2.43.0
-
+Oscar Salvador
+SUSE Labs
 
