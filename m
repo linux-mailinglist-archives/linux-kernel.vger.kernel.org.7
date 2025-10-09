@@ -1,438 +1,182 @@
-Return-Path: <linux-kernel+bounces-847480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B413FBCAF22
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 23:34:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A628ABCAF2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 23:37:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6C901A64482
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 21:34:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F181548242D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 21:37:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436A5280325;
-	Thu,  9 Oct 2025 21:34:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E535228152D;
+	Thu,  9 Oct 2025 21:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ZYcxrQ+q"
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011002.outbound.protection.outlook.com [52.101.62.2])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SynoOySz"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BAB0212568;
-	Thu,  9 Oct 2025 21:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.2
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760045641; cv=fail; b=l4820n85z0M16jnf+NOnsnppKbUoXiytpZ6YT+RzdMaIob1HS0Pn79+mQ5b+mB0DFKogzs1sX0BTGn3xgDCANW88sZJJj4tzepWpN8vYXhUOk4ua6/sLymzqk1aZqCdzPa+xqXjK/AFGutBF5C14/V4EZRh+3iN6tWJz4oBoMXM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760045641; c=relaxed/simple;
-	bh=UAwziUvMeP5LUmCzyJFhfES+JFA7P24+6KR6ZPVYHos=;
-	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=XY+p+sv+2F/A2C61ui4THFwgE8t2jobZhOP54YO2rnsLDa3p8iyG/mz2B2iI+PYZK++eCAwngVeEsC4Jt+aCk+epqo4ZnCev6ZUrtw9oh+3t+TtA1hoqV7r1VYy1VWdIGhCsAxzEVOZb86/9kOsYkhFr320dGSeQF/FQxW9vXvA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ZYcxrQ+q; arc=fail smtp.client-ip=52.101.62.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QZGepG0qEva9wRdE9LKnMFNaejpVZj3eSBl3kxK2G3afrxuBu9ONFzRGS2+KQ/iIhDTEcrX3lgPaq5MFBK2bzgD1GfThrlLNFKWpzaxk060NrvVVz86zxxfkokwx6q4B5K/GmX+dNomUMq4u3ksdggj6jj0qy/j9cCEEHsty/Zn+w6EDIX6IlsRuHWCQ63LgTEdE5/vXn3PH12ULTyLnxdLvVFOkOVSn3VxNK/kewT2npCFlaHi3Q6IYFS+Z2kaLLFd6toAOnGyHk4kEY5y7Gt97Pow9r9DSZ0sbuK5Z9EatjFUtooCXaCKcriFL88PFuEZLQW9zntNrY1shdfAt1g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IAZEWHG2dQqIKX6RVJz66GDWGxcE2/e4EEdFgRji4zc=;
- b=dVbBJfwP4N8D+9gp3GnJIufbANzus84rnX5u/q99EPpRDKEXgHJlmTI4p8VnrCVBRK0BKhLLaVr2Uxy47GFmj+k70vkct73pEtX3iekIiiEFcL1Va18eZvoq9pqJJ3KRDsgTkddm8EfN1zD44KkT0QNFIke3MkLSXqs6LnyHnUsWF9IhiFJc4eoxUME3kiw9DmABNiK4fREAYZIGq05I9ZioQF2rf6VGgY0/Z8UqczHyBjp/6FS+fRMhSL55jlI2GSteFgxCCZkrI8FUB+O0Gs+rJYDKzHIDBgi10RngFujY1BRdd4BB865YA9dPxZGzQ2rXVlfRIv7ZACPgLi1d/g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IAZEWHG2dQqIKX6RVJz66GDWGxcE2/e4EEdFgRji4zc=;
- b=ZYcxrQ+q4LBtuooKUvyPjSlli5Wn1hMOOANqB9qm+FXdLL2zRTbwLITOQQ11gG7KBwDhlRz1AIMZP6NzCzi7QgT62N8lWCVQy2Vs0TKYkCvxqKmv0qlIFsih5yszI0uETKPpIHd2b6grz2PzMjJ4ugSalZotIaJmHYZWwvq2qGosdJguNKZiwV/3fCSi5X7G38jUN9ITY1mYqtG5/2zk+7Zx8NT6NDSixOcIqJbI+v7k4JS3VyN6kHdPuN+/ysDobBLB83QeBGjdY1VAHAx6EbZCgLBYGZZGOmFnyW7aq8cs1CZH+0bpPr83jD3lwByvJrvDVaPgbxCu/qoAgW8jHg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by DS2PR12MB9687.namprd12.prod.outlook.com (2603:10b6:8:27b::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.20; Thu, 9 Oct
- 2025 21:33:55 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9203.009; Thu, 9 Oct 2025
- 21:33:55 +0000
-Date: Thu, 9 Oct 2025 17:33:53 -0400
-From: Joel Fernandes <joelagnelf@nvidia.com>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Yury Norov <yury.norov@gmail.com>,
-	Jesung Yang <y.j3ms.n@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH RFC v2 2/3] rust: kernel: add bounded integer types
-Message-ID: <20251009213353.GA2326866@joelbox2>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251009-bounded_ints-v2-2-ff3d7fee3ffd@nvidia.com>
-X-ClientProxiedBy: BN0PR04CA0095.namprd04.prod.outlook.com
- (2603:10b6:408:ec::10) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0255272813;
+	Thu,  9 Oct 2025 21:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760045821; cv=none; b=GWdxlIa2CJos/i+dQjqb5PRWZBXKSDwbuFzfFSyj2V4ZVRT8gETyAxWvtl0TosvqvY4du+MrWypEqyeWasj1ya7JACjrrZygrGLj7rlnxoHY/PL7svngmvpfA5cYhIS/FEsP3v1fkf3BV5tqFOjGk8Bcou+MGekcu0pNqicGDqE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760045821; c=relaxed/simple;
+	bh=RgS44lxvbU6lDjItJfGDfhpBYiflSNB4fwxf9JnAi6Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JcOM3FXrVEPKDGxKRvJJ8fZXws1OSEuOqiQcxiS2XShT1VKW/kHABymVathj1Dxpq2OsXowaq6Ednk+XKXqZwUYQ17nMJid4RfYkKRX8IDPa5BBVrv3yvsJAK6Zee3ANHZXkY77/e+Na+JpNTqbEuh3/FnSjT6e+X61X15vI2VI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SynoOySz; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760045819; x=1791581819;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RgS44lxvbU6lDjItJfGDfhpBYiflSNB4fwxf9JnAi6Y=;
+  b=SynoOySzyGq2n02XXj2YqdG3iiLWCFE00uA4+rXwkmKzGuLJ1xhNRp/u
+   NdOfkvwXjTteYcQmOHQS2gfCihbHtnhP8MTTF+VPsECNmyTg8TGSv1pee
+   ndrcEA7p7m9+Ehs+06dWXNxdOn8DcRP+ES18clUG4C/2X+fupYtdH2xIj
+   6eGYw+t46NIVuEQ8C2LEoKxSdXyHn1exqG9kj7WTAJVvt9lK9Rbt8b1ZF
+   UX8HivzrZnv0or8V+/ofJV/K/R1lWldiHFQR6ddDv5eHLudGzy2p2EgUf
+   GwRKrc56m9rYvGFZ44V2lOh5baYKllEnOHFeMIJMly4oNylVcL5Rn17Bm
+   Q==;
+X-CSE-ConnectionGUID: UJUpEJtkSUiuWA1rHNahkw==
+X-CSE-MsgGUID: SiU+rDQ8Qt6NDI1Oey7kyw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="87726926"
+X-IronPort-AV: E=Sophos;i="6.19,217,1754982000"; 
+   d="scan'208";a="87726926"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 14:36:57 -0700
+X-CSE-ConnectionGUID: ue2VzTsYTIu45ra031tL6Q==
+X-CSE-MsgGUID: a2v1uV22T0GvaG+Bfk2Zkw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,217,1754982000"; 
+   d="scan'208";a="186082522"
+Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 09 Oct 2025 14:36:53 -0700
+Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v6yJe-0001VD-2D;
+	Thu, 09 Oct 2025 21:36:50 +0000
+Date: Fri, 10 Oct 2025 05:36:31 +0800
+From: kernel test robot <lkp@intel.com>
+To: Wilfred Mallawa <wilfred.opensource@gmail.com>,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Sabrina Dubroca <sd@queasysnail.net>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, Hannes Reinecke <hare@suse.de>,
+	Wilfred Mallawa <wilfred.mallawa@wdc.com>
+Subject: Re: [PATCH] nvme/tcp: handle tls partially sent records in
+ write_space()
+Message-ID: <202510100505.gzOzGPbI-lkp@intel.com>
+References: <20251007004634.38716-2-wilfred.opensource@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|DS2PR12MB9687:EE_
-X-MS-Office365-Filtering-Correlation-Id: 89c3ccf2-7fc4-4cc3-89e6-08de077b8c80
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?yOQy4t2fVL5fB9z+IWIjlwPtgMKQ9C4fnctQndLSBwyMYrSwOeY5GM1RYRy4?=
- =?us-ascii?Q?K16q8WEVvJ2Em7aKDG8pvqEP02pmnL5F4UCjS6yTx3Z5E/iteSpzkyFws4Ex?=
- =?us-ascii?Q?g4Q3d1kBXk6wKzeFCLsP82gp2eEkH4PPgKYxwYv/kfhNUTdioT1emL+Rndnp?=
- =?us-ascii?Q?dtY7B/VY0lw49dpmHVE/aCW2fldNSjrSfQiVXAEEmZfdiHyAiHvkQ+Tu6/0H?=
- =?us-ascii?Q?tVe/fPIFT8yDf1qvjB1qd6UA2gTMM2wSZB5tFBv1IiUp1ta3H9kCLDCK4+Xg?=
- =?us-ascii?Q?g1fKrtniFqirosxeSL9VJNXe+zoIPHsZkm1/b8KGzr3b9HffxkgDWtv1pc+r?=
- =?us-ascii?Q?rE/iuPw8llwvnvl+dNOnOn9yaOVdVdBgfecz7RpwzemKQmkSP10TOJhF2wDA?=
- =?us-ascii?Q?L1RP0fERvv4RBazyMt4k4mZy5nKfv8VN/zCY2qdwpGEcGGLJvnmHi7xbst7Y?=
- =?us-ascii?Q?EC3w4MZ3RfSslIFch+wb6rjWUJgYU8DdSqkKx8oighwA0j3/0buE5hxE9Lns?=
- =?us-ascii?Q?8VWKYSmpDQxUub+ijw15gcBaQLbKPibqqo5UgJ+eOZog26ZiOO8Vo106KF61?=
- =?us-ascii?Q?eFc31YJRBHHh+K+xEZYhhk7Chms50NYrYDFHI7uHdwWOEEIf7SaBR+ViWKQW?=
- =?us-ascii?Q?AbMeobiReIhAjJxJRTSear36zpGxzM/81/5gia8mvM2RNRu7ISGs+HWsNXl2?=
- =?us-ascii?Q?XSAIznLlNY1QuNkZMqhxEl+DG1DPB20k+bGW9ZSWnb/+M9DnYAHaigAGjO4y?=
- =?us-ascii?Q?5yjybqCCIjxPlBiu8TutlKrS7Bsz6x71XMCrQoBU24P51z+Aea0Y7T4h5g7V?=
- =?us-ascii?Q?lUyyKntqTq55GPd+quxSODfPmrE/qVfgLbuyNpANze4+N3SIHlH1h/Qolf8E?=
- =?us-ascii?Q?/WwAZ0PSSTQo6IeA3pCr+QiuxVUOJwSD+PeLgQ6H2FTkfUHgxtaC8Vnc1WcZ?=
- =?us-ascii?Q?JerPXlA+WLX7IfTrSiqQ0qBmMKyGKHmvvmDY1LRWpqH4UFh6PJD9Z6lGeQOU?=
- =?us-ascii?Q?lBm1/stoHOTElPD8VvlNW0Gj+UKGNrcsOzjzQgC9ZzhoY/y4IRaD6CZByuoM?=
- =?us-ascii?Q?RPuf9rQVC2m5NCsJljLBexCtrKkLgMM+XB36D/7SQLCMCbwPdlZTETKoLHGW?=
- =?us-ascii?Q?W/8m5VmQU+XbhpqkOG0MuKmOIwhYzKBAkmUStH1c+/izEVORHjfI44g6Vl/i?=
- =?us-ascii?Q?i7DCfSJP2EUm9K7khCqRjmVp2JqHrEyr6tGF1fPbSrynxz0XKhwuKFf8oy41?=
- =?us-ascii?Q?UoRz5ZFenwWmubjWtkOuS6C+7Mgn7z5pzE3jXDXXBdn0CdIsuDhzZD/Sb810?=
- =?us-ascii?Q?ToiAYL8s85ampGrzHSIiFbHI+7yHddfKz1Sg4E7khdp6FrMYmNytm60vNayi?=
- =?us-ascii?Q?f6VvJG5PDn03nLntIxfl7IbLtErmfXqIKgivNgJI7UwYhiPXRbMZAkEMmZv9?=
- =?us-ascii?Q?QhWyZ1EgHC88JjEsoeHAVa3sMsASnN5F?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?r76WTiqLxUlk/x9f61JvCoJiQZgQl7RL2pYOt4NdJIxiVOob55TdYSyfbRzK?=
- =?us-ascii?Q?sGrSKR8D0jhE84sjjRhS6yyrMnbbjITA62LsTMo/NB9PVunyLpw0FuZvBWqI?=
- =?us-ascii?Q?4179XaPNt0Mg5VWfwo3BX26T6/eNdFJSklwgKv7M3h43XnEhnMQffdxXe23g?=
- =?us-ascii?Q?oPBd8GbZOyN3LyuYjgX36+b9+ypss0KcihbUBmPk6e0pkJteyR3MKzmX7dkZ?=
- =?us-ascii?Q?3OAqhPn1+lZEggdJN3zyWLlcidJ8jgV+gjP+SWtrTXbxala5jX2aUuQoJqo2?=
- =?us-ascii?Q?fLDa/jUPb25V7IWMd8Oa9OQRb8RUXlhoHn7+L5Uj3DdYVp4GtwmVhZHpsdQF?=
- =?us-ascii?Q?UBUfdkhYGEmS88+b+z7RjbC85vi/eZ6qi3n2119mLRWAytoM/azrM7J3z5Cb?=
- =?us-ascii?Q?XwsxXXpGYUtAFroJIFweuAWMzSn93KpqSiLRPaVEx5oJkfo2+/zL9mucUIqf?=
- =?us-ascii?Q?4zRqy+atJyfDXC4CCQYz1hf5xzrsPpGIFFS7Qmu5S1Mb8aaU/dcIhEuAQTY9?=
- =?us-ascii?Q?lS5CmEF3Y2HEMDU+jNS/wE5om0IiIVtkX+AKLpuXQauyWWyH281Wut7uj1DX?=
- =?us-ascii?Q?nVHcaSf8gc/em8F7e4dxBWi56EoSZjvy8Ljfa3c5Rx7fby/Z+2DVrshW6v3s?=
- =?us-ascii?Q?Bns7yV4GdnH+7/UXvYyNeq0H6m2aKVpbPw8CrxmNCmTr45wGbwZExzSj6YYR?=
- =?us-ascii?Q?7+fQjNMVHd0MyW/pmc4lkvWtLOpEfTNHTwWsKxyEY2Z7W0WGIb98PHd/LFvJ?=
- =?us-ascii?Q?FAe7Ys+tMHux2sBYPAXbHDm8DUtQT+V+NzYHqMgOac3UuTIvpt5iojNQcW9Z?=
- =?us-ascii?Q?wsv382reY5gF9dWPXFD7bkut/n3BeyX+Cy3kxhSudsh51DUjBChVA88WuPfN?=
- =?us-ascii?Q?cfoKDRL8Efb0VyfND8C0q8YaDB9e9SmIjJd251RFotFO8IhIzAejS2MjxbeF?=
- =?us-ascii?Q?WA3WbT4mPwogfIgYYict0oi+e6WWD6LTl2iVwBh7lhGvx5cxJFApWsmZtQ9Y?=
- =?us-ascii?Q?Unn4/2gjEV1q9yWXuobb7vzj6VN6Tnd0yupFgF8fdnwVM+UoR+84BhcEYtKA?=
- =?us-ascii?Q?btHWiQBbh4DdBKTREEe07HDYc2lBudThZyvV4rmUa+AvkigeqXN+8c02E7ue?=
- =?us-ascii?Q?mi6woUWTJAf98rkG3DQHFlguCSHax0S6Zr9WhR8my86N6digYvMvmWAKAz/J?=
- =?us-ascii?Q?ZxaAHzB509KYJkEQWzwDb+PkWRM+e40fEhzbUMwlXzJdFWJR5gbvmfady/ss?=
- =?us-ascii?Q?3inAJ/WIaRHlPYki28d45OvS+aLuIerAPWSl0dEug7IKXpKEq0tZqd0MvQ/P?=
- =?us-ascii?Q?FlPWrvO3EaJlp0IKCeM0ptLgioetnjVnUQR/GrmI7RHuUNgwO3FtbKvLwjMP?=
- =?us-ascii?Q?JjljdyBjh8szBAoItgS3jadPfWJPQaUCmQ4xnxObQY5RFoQe3ZqyFfur7umH?=
- =?us-ascii?Q?fdJpLy36eyFKyS/8Px7DyLLfAXexRVzP0vn4T4jqikIpeXH6aa74MT4uSwKR?=
- =?us-ascii?Q?1aEqrSeQLCcFtUpEe3Ey+Ov0JxadKszcjCEFRIDmGvSTU4gVsmM3R/+EZpbX?=
- =?us-ascii?Q?ls8ofTpOd547i889u6nXlIyPOmO3RDg1g5lT5Tkf?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 89c3ccf2-7fc4-4cc3-89e6-08de077b8c80
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2025 21:33:55.4116
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3QD2demk9rl0kigUhpyoMGZJimu3KWy1B5zSiVO4naOTJrJduyrXhZnuQhLYeFgBbNwHaWq174QsqYjcIiyigw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS2PR12MB9687
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251007004634.38716-2-wilfred.opensource@gmail.com>
 
-Hi Alex,
+Hi Wilfred,
 
-Great effort, thanks. I replied with few comments below. Since the patch is
-large, it would be great if could be possibly split. Maybe the From
-primitives deserve a separate patch.
+kernel test robot noticed the following build warnings:
 
-On Thu, Oct 09, 2025 at 09:37:09PM +0900, Alexandre Courbot wrote:
-> Add the BoundedInt type, which restricts the number of bits allowed to
-> be used in a given integer value. This is useful to carry guarantees
-> when setting bitfields.
-> 
-> Alongside this type, many `From` and `TryFrom` implementations are
-> provided to reduce friction when using with regular integer types. Proxy
-> implementations of common integer traits are also provided.
-> 
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> ---
->  rust/kernel/lib.rs |   1 +
->  rust/kernel/num.rs | 499 +++++++++++++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 500 insertions(+)
-> 
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index fcffc3988a90..21c1f452ee6a 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -101,6 +101,7 @@
->  pub mod mm;
->  #[cfg(CONFIG_NET)]
->  pub mod net;
-> +pub mod num;
->  pub mod of;
->  #[cfg(CONFIG_PM_OPP)]
->  pub mod opp;
-> diff --git a/rust/kernel/num.rs b/rust/kernel/num.rs
-> new file mode 100644
-> index 000000000000..b2aad95ce51c
-> --- /dev/null
-> +++ b/rust/kernel/num.rs
-> @@ -0,0 +1,499 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Numerical types for the kernel.
-> +
-> +use kernel::prelude::*;
-> +
-> +/// Integer type for which only the bits `0..NUM_BITS` are valid.
-> +///
-> +/// # Invariants
-> +///
-> +/// Stored values are represented with at most `NUM_BITS` bits.
-> +#[repr(transparent)]
-> +#[derive(Clone, Copy, Debug, Default, Hash)]
-> +pub struct BoundedInt<T, const NUM_BITS: u32>(T);
-> +
-> +/// Returns `true` if `$value` can be represented with at most `$NUM_BITS` on `$type`.
-> +macro_rules! is_in_bounds {
-> +    ($value:expr, $type:ty, $num_bits:expr) => {{
-> +        let v = $value;
-> +        v & <$type as Boundable<NUM_BITS>>::MASK == v
-> +    }};
-> +}
-> +
-> +/// Trait for primitive integer types that can be used with `BoundedInt`.
-> +pub trait Boundable<const NUM_BITS: u32>
-> +where
-> +    Self: Sized + Copy + core::ops::BitAnd<Output = Self> + core::cmp::PartialEq,
-> +    Self: TryInto<u8> + TryInto<u16> + TryInto<u32> + TryInto<u64>,
-> +{
-> +    /// Mask of the valid bits for this type.
-> +    const MASK: Self;
-> +
-> +    /// Returns `true` if `value` can be represented with at most `NUM_BITS`.
-> +    ///
-> +    /// TODO: post-RFC: replace this with a left-shift followed by right-shift operation. This will
-> +    /// allow us to handle signed values as well.
-> +    fn is_in_bounds(value: Self) -> bool {
-> +        is_in_bounds!(value, Self, NUM_BITS)
-> +    }
-> +}
-> +
-> +impl<const NUM_BITS: u32> Boundable<NUM_BITS> for u8 {
-> +    const MASK: u8 = crate::bits::genmask_u8(0..=(NUM_BITS - 1));
-> +}
-> +
-> +impl<const NUM_BITS: u32> Boundable<NUM_BITS> for u16 {
-> +    const MASK: u16 = crate::bits::genmask_u16(0..=(NUM_BITS - 1));
-> +}
-> +
-> +impl<const NUM_BITS: u32> Boundable<NUM_BITS> for u32 {
-> +    const MASK: u32 = crate::bits::genmask_u32(0..=(NUM_BITS - 1));
-> +}
-> +
-> +impl<const NUM_BITS: u32> Boundable<NUM_BITS> for u64 {
-> +    const MASK: u64 = crate::bits::genmask_u64(0..=(NUM_BITS - 1));
-> +}
-> +
-> +impl<T, const NUM_BITS: u32> BoundedInt<T, NUM_BITS>
-> +where
-> +    T: Boundable<NUM_BITS>,
-> +{
-> +    /// Checks that `value` is valid for this type at compile-time and build a new value.
-> +    ///
-> +    /// This relies on [`build_assert!`] to perform validation at compile-time. If `value` cannot
-> +    /// be inferred to be in bounds at compile-time, use the fallible [`Self::try_new`] instead.
-> +    ///
-> +    /// When possible, use one of the `new_const` methods instead of this method as it statically
-> +    /// validates `value` instead of relying on the compiler's optimizations.
+[auto build test WARNING on net/main]
+[also build test WARNING on net-next/main linus/master linux-nvme/for-next v6.17 next-20251009]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-This sounds like, users might use the less-optimal API first with the same
-build_assert issues we had with the IO accessors, since new() sounds very obvious.
-How about the following naming?
+url:    https://github.com/intel-lab-lkp/linux/commits/Wilfred-Mallawa/nvme-tcp-handle-tls-partially-sent-records-in-write_space/20251009-193029
+base:   net/main
+patch link:    https://lore.kernel.org/r/20251007004634.38716-2-wilfred.opensource%40gmail.com
+patch subject: [PATCH] nvme/tcp: handle tls partially sent records in write_space()
+config: s390-randconfig-002-20251010 (https://download.01.org/0day-ci/archive/20251010/202510100505.gzOzGPbI-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 39f292ffa13d7ca0d1edff27ac8fd55024bb4d19)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251010/202510100505.gzOzGPbI-lkp@intel.com/reproduce)
 
-new::<VALUE>()        // Primary constructor for constants using const generics.
-try_new(value)        // Keep as-is for fallible runtime
-new_from_expr(value)  // For compile-time validated runtime values
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510100505.gzOzGPbI-lkp@intel.com/
 
-If new::<VALUE>() does not work for the user, the compiler will fail.
+All warnings (new ones prefixed by >>):
 
-Or, new_from_expr() could be from_value(), Ok with either naming or a better name.
+>> drivers/nvme/host/tcp.c:1316:22: warning: unused variable 'ctx' [-Wunused-variable]
+    1316 |         struct tls_context *ctx = tls_get_ctx(queue->sock->sk);
+         |                             ^~~
+   1 warning generated.
 
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// ```
-> +    /// use kernel::num::BoundedInt;
-> +    ///
-> +    /// # fn some_number() -> u32 { 0xffffffff }
-> +    ///
-> +    /// assert_eq!(BoundedInt::<u8, 1>::new(1).get(), 1);
-> +    /// assert_eq!(BoundedInt::<u16, 8>::new(0xff).get(), 0xff);
-> +    ///
-> +    /// // Triggers a build error as `0x1ff` doesn't fit into 8 bits.
-> +    /// // assert_eq!(BoundedInt::<u32, 8>::new(0x1ff).get(), 0x1ff);
-> +    ///
-> +    /// let v: u32 = some_number();
-> +    /// // Triggers a build error as `v` cannot be asserted to fit within 4 bits...
-> +    /// // let _ = BoundedInt::<u32, 4>::new(v);
-> +    /// // ... but this works as the compiler can assert the range from the mask.
-> +    /// let _ = BoundedInt::<u32, 4>::new(v & 0xf);
-> +    /// ```
-> +    pub fn new(value: T) -> Self {
-> +        crate::build_assert!(
-> +            T::is_in_bounds(value),
-> +            "Provided parameter is larger than maximal supported value"
-> +        );
-> +
-> +        Self(value)
-> +    }
-> +
-> +    /// Attempts to convert `value` into a value bounded by `NUM_BITS`.
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// ```
-> +    /// use kernel::num::BoundedInt;
-> +    ///
-> +    /// assert_eq!(BoundedInt::<u8, 1>::try_new(1).map(|v| v.get()), Ok(1));
-> +    /// assert_eq!(BoundedInt::<u16, 8>::try_new(0xff).map(|v| v.get()), Ok(0xff));
-> +    ///
-> +    /// // `0x1ff` doesn't fit into 8 bits.
-> +    /// assert_eq!(BoundedInt::<u32, 8>::try_new(0x1ff), Err(EOVERFLOW));
-> +    /// ```
-> +    pub fn try_new(value: T) -> Result<Self> {
-> +        if !T::is_in_bounds(value) {
-> +            Err(EOVERFLOW)
-> +        } else {
-> +            Ok(Self(value))
-> +        }
-> +    }
-> +
-> +    /// Returns the contained value as a primitive type.
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// ```
-> +    /// use kernel::num::BoundedInt;
-> +    ///
-> +    /// let v = BoundedInt::<u32, 4>::new_const::<7>();
-> +    /// assert_eq!(v.get(), 7u32);
-> +    /// ```
-> +    pub fn get(self) -> T {
-> +        if !T::is_in_bounds(self.0) {
-> +            // SAFETY: Per the invariants, `self.0` cannot have bits set outside of `MASK`, so
-> +            // this block will
-> +            // never be reached.
-> +            unsafe { core::hint::unreachable_unchecked() }
-> +        }
 
-Does this if block help the compiler generate better code? I wonder if code
-gen could be checked to confirm the rationale.
+vim +/ctx +1316 drivers/nvme/host/tcp.c
 
-> +        self.0
-> +    }
-> +
-> +    /// Increase the number of bits usable for `self`.
-> +    ///
-> +    /// This operation cannot fail.
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// ```
-> +    /// use kernel::num::BoundedInt;
-> +    ///
-> +    /// let v = BoundedInt::<u32, 4>::new_const::<7>();
-> +    /// let larger_v = v.enlarge::<12>();
-> +    /// // The contained values are equal even though `larger_v` has a bigger capacity.
-> +    /// assert_eq!(larger_v, v);
-> +    /// ```
-> +    pub const fn enlarge<const NEW_NUM_BITS: u32>(self) -> BoundedInt<T, NEW_NUM_BITS>
-> +    where
-> +        T: Boundable<NEW_NUM_BITS>,
-> +        T: Copy,
+  1312	
+  1313	static int nvme_tcp_try_send(struct nvme_tcp_queue *queue)
+  1314	{
+  1315		struct nvme_tcp_request *req;
+> 1316		struct tls_context *ctx = tls_get_ctx(queue->sock->sk);
+  1317		unsigned int noreclaim_flag;
+  1318		int ret = 1;
+  1319	
+  1320		if (!queue->request) {
+  1321			queue->request = nvme_tcp_fetch_request(queue);
+  1322			if (!queue->request)
+  1323				return 0;
+  1324		}
+  1325		req = queue->request;
+  1326	
+  1327		noreclaim_flag = memalloc_noreclaim_save();
+  1328		if (req->state == NVME_TCP_SEND_CMD_PDU) {
+  1329			ret = nvme_tcp_try_send_cmd_pdu(req);
+  1330			if (ret <= 0)
+  1331				goto done;
+  1332			if (!nvme_tcp_has_inline_data(req))
+  1333				goto out;
+  1334		}
+  1335	
+  1336		if (req->state == NVME_TCP_SEND_H2C_PDU) {
+  1337			ret = nvme_tcp_try_send_data_pdu(req);
+  1338			if (ret <= 0)
+  1339				goto done;
+  1340		}
+  1341	
+  1342		if (req->state == NVME_TCP_SEND_DATA) {
+  1343			ret = nvme_tcp_try_send_data(req);
+  1344			if (ret <= 0)
+  1345				goto done;
+  1346		}
+  1347	
+  1348		if (req->state == NVME_TCP_SEND_DDGST)
+  1349			ret = nvme_tcp_try_send_ddgst(req);
+  1350	done:
+  1351		if (ret == -EAGAIN) {
+  1352			ret = 0;
+  1353		} else if (ret < 0) {
+  1354			dev_err(queue->ctrl->ctrl.device,
+  1355				"failed to send request %d\n", ret);
+  1356			nvme_tcp_fail_request(queue->request);
+  1357			nvme_tcp_done_send_req(queue);
+  1358		}
+  1359	out:
+  1360		memalloc_noreclaim_restore(noreclaim_flag);
+  1361		return ret;
+  1362	}
+  1363	
 
-Boundable already implies copy so T: Copy is redundant.
-
-> +    {
-> +        build_assert!(NEW_NUM_BITS >= NUM_BITS);
-> +
-> +        // INVARIANT: the value did fit within `NUM_BITS`, so it will all the more fit within
-> +        // `NEW_NUM_BITS` which is larger.
-> +        BoundedInt(self.0)
-> +    }
-> +
-> +    /// Shrink the number of bits usable for `self`.
-> +    ///
-> +    /// Returns `EOVERFLOW` if the value of `self` cannot be represented within `NEW_NUM_BITS`.
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// ```
-> +    /// use kernel::num::BoundedInt;
-> +    ///
-> +    /// let v = BoundedInt::<u32, 12>::new_const::<7>();
-> +    /// let smaller_v = v.shrink::<4>()?;
-> +    /// // The contained values are equal even though `smaller_v` has a smaller capacity.
-> +    /// assert_eq!(smaller_v, v);
-> +    ///
-> +    /// # Ok::<(), Error>(())
-> +    /// ```
-> +    pub fn shrink<const NEW_NUM_BITS: u32>(self) -> Result<BoundedInt<T, NEW_NUM_BITS>>
-> +    where
-> +        T: Boundable<NEW_NUM_BITS>,
-> +        T: Copy,
-
-Here too.
-
-[...]
-> +impl_const_new!(u8 u16 u32 u64);
-> +
-> +/// Declares a new `$trait` and implements it for all bounded types represented using `$num_bits`.
-> +///
-> +/// This is used to declare properties as traits that we can use for later implementations.
-> +macro_rules! impl_size_rule {
-> +    ($trait:ident, $($num_bits:literal)*) => {
-> +        trait $trait {}
-> +
-> +        $(
-> +        impl<T> $trait for BoundedInt<T, $num_bits> where T: Boundable<$num_bits> {}
-> +        )*
-> +    };
-> +}
-> +
-> +// Bounds that are larger than a `u64`.
-> +impl_size_rule!(LargerThanU64, 64);
-> +
-> +// Bounds that are larger than a `u32`.
-> +impl_size_rule!(LargerThanU32,
-> +    32 33 34 35 36 37 38 39
-
-If num_bits == 32 (number of bits), how could BoundedInt<T, 32> a
-LargerThanU32? It should be AtleastU32 or something.
-
-Or the above list should start from 33. Only a >= 33-bit wide integer can be
-LargerThanU32.
-
-Thanks.
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
