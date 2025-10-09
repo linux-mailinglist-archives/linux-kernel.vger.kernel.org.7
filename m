@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-846452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3560BBC80C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:29:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7DCFBC80CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:30:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 566B91A609EB
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:30:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 037741A609CB
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:30:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D8E2D0C6C;
-	Thu,  9 Oct 2025 08:29:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44EBC277807;
+	Thu,  9 Oct 2025 08:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ABox86TD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AGb3genY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678ED2C0266;
-	Thu,  9 Oct 2025 08:29:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9855225EFBE;
+	Thu,  9 Oct 2025 08:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759998578; cv=none; b=DE3Jez3AXuR3zZ5wBPzvnULEWt64x6wIhC0hzElS6LY6sOKPxZKUAfXZyGqWDSItzrXHwb67WqcQqeNqmOCv8hyTzPNTLHpzdmd5UGQ0g0wS2q2WN5N8My0xeQ8QI8P0YDp8p/34OtzRZx+eZKPF2Hm1/YSqE1FB40DcFE7fOyA=
+	t=1759998619; cv=none; b=qy0ce40Mf1V4mCvVmRxaDxzFLHHIrMnzRsa8dP5XkKnlszl//12pC8ELIxLzYMnmE5IJdcNpsuYzI8I9zZPcnm3ZzUU1/XpAYzDTXIGepkiTiVNJdY6N/sKpO/F9menOmcDL/hKaIDIIzQzEpO6U0Y3x29MasCr7HitdWi0qlPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759998578; c=relaxed/simple;
-	bh=URlIJX804vP1BA39jpUQ3rMWYv9zd5Mr8AdpedIgi8Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZhNVjTi4ByRHh/bUl9fTTiHPU2vlGvGNmzVkHOmM2oG33+NsqbgHB2kMcul1Urt9WIg2lLUy1IJnCqM26niYE4wavJ/lxMkJmBY4LoTl2+XdITccwRrE3IRGMLMyGF38/hDgts71TWkSncEjbb6xOrS6hPJNmgkcqPfQa7oUfrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ABox86TD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EEA1C4CEE7;
-	Thu,  9 Oct 2025 08:29:31 +0000 (UTC)
+	s=arc-20240116; t=1759998619; c=relaxed/simple;
+	bh=qPvyIYJE0kLuUU8yi7/DvN6deG/jSLb2WS0FoyR7hcw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ttd5N8dDpOkreJsyfpeOGRNvq2lnzuytAnr7D+Rl8Y4RYDqqsSNnEOheey8nrQkU6YY1yDF6YqX99NnI+Zfonu8M4XiaANoZSv29iaSEOf5uWShKarasdVDYUtrGSOrgBw/JzXNeV6CkgXDIPZEkl9oMvTSn7fPNRPe2dgRXAsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AGb3genY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5176EC4CEE7;
+	Thu,  9 Oct 2025 08:30:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759998578;
-	bh=URlIJX804vP1BA39jpUQ3rMWYv9zd5Mr8AdpedIgi8Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ABox86TDXC7cbj+ZKqAx2guINVBQbPWPrU9hEnWEjZawqdPu20Kx/snSBJGZkonqA
-	 iEXferrp9X8B83bTCVJWRyh3+fXrumJo3hC6vfMEUR+NNSDz7dd0qge9ljfmPZ7/02
-	 GiHT0rp253dwzPD0WnD8YtX2HcNUtJ+yfjPj2jJ3JAtHIQ4+qE5sPzfZs9vpo8PniC
-	 gFM3G3rOUVToopBYuxYmSQIjaKqPlFZpY92/EMbVHqoZ9fLpfpM/WaRUkMw3cwaNZ6
-	 g0T9HTWX+o4bCTHiF/fqY5/JH37/K2GXxK37As6jCEFbIxHd3QSPTyEdiw7Jzx84YJ
-	 6KSpDuMnjvEpQ==
-Message-ID: <9ae53c6d-613b-4a25-b672-88ffabfef4fa@kernel.org>
-Date: Thu, 9 Oct 2025 17:29:28 +0900
+	s=k20201202; t=1759998619;
+	bh=qPvyIYJE0kLuUU8yi7/DvN6deG/jSLb2WS0FoyR7hcw=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=AGb3genYXiZcFMJYMUproONS/c0rFKp4FaYV/ETLbbhhQuZhMzWfup8YZ0c0XKOKv
+	 Ft7XV0jDWQQn/Ty7iicFa76wZmX3VmzsYi7Ik4dqh2o76zGAwK75/nJ0xexLLos5Zn
+	 liFOC7HWh3FOpd5Lh7WencpIYyjcPOOnhYIjCuE6hbHaekOf/vrKF1W4GZw7d9g1/Q
+	 rOT/T2b2Av82n1utRwuSRXJrjPrvhNklvVPvwX0XSQKBrQXlrje7fIxYKJg7Upp0gS
+	 6VUHrI9ReryBriRhvhr1pd6FiBd0NXqtxDey9mRfeG2Jjph/fjX2QcpzeTk+GaqmdF
+	 6DLuDJDAjrPHg==
+Message-ID: <4dbf1413-3874-449e-862a-bfe578dc75e7@kernel.org>
+Date: Thu, 9 Oct 2025 17:30:11 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,6 +51,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 2/3] dt-bindings: interrupt-controller: add UltraRISC
  DP1000 PLIC
+From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Lucas Zampieri <lzampier@redhat.com>, linux-kernel@vger.kernel.org,
  devicetree@vger.kernel.org
 Cc: linux-riscv@lists.infradead.org, Charles Mirabile <cmirabil@redhat.com>,
@@ -62,7 +63,7 @@ Cc: linux-riscv@lists.infradead.org, Charles Mirabile <cmirabil@redhat.com>,
  Alexandre Ghiti <alex@ghiti.fr>
 References: <20251009082013.1331361-1-lzampier@redhat.com>
  <20251009082013.1331361-3-lzampier@redhat.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <9ae53c6d-613b-4a25-b672-88ffabfef4fa@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -107,33 +108,20 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251009082013.1331361-3-lzampier@redhat.com>
+In-Reply-To: <9ae53c6d-613b-4a25-b672-88ffabfef4fa@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 09/10/2025 17:20, Lucas Zampieri wrote:
-> From: Charles Mirabile <cmirabil@redhat.com>
-> 
-> Add a new compatible string for UltraRISC DP1000 PLIC.
-> 
-> Signed-off-by: Charles Mirabile <cmirabil@redhat.com>
-> ---
->  .../bindings/interrupt-controller/sifive,plic-1.0.0.yaml        | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
-> index 5b827bc24301..a419de50f5a8 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/sifive,plic-1.0.0.yaml
-> @@ -74,6 +74,8 @@ properties:
->                - sophgo,sg2044-plic
->                - thead,th1520-plic
->            - const: thead,c900-plic
-> +      - items:
+On 09/10/2025 17:29, Krzysztof Kozlowski wrote:
+> On 09/10/2025 17:20, Lucas Zampieri wrote:
+>> From: Charles Mirabile <cmirabil@redhat.com>
+>>
+>> Add a new compatible string for UltraRISC DP1000 PLIC.
+>>
+>> Signed-off-by: Charles Mirabile <cmirabil@redhat.com>
 
 
-Missing SoC specific front compatible, me thinks.
-
+And incomplete SoB chain. See submitting patches and DCO.
 
 Best regards,
 Krzysztof
