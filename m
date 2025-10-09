@@ -1,243 +1,223 @@
-Return-Path: <linux-kernel+bounces-846358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23EBBBC7AC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:21:00 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA4A9BC7A6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 09:17:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A44EE3502F1
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:20:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9BBB54E3334
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 07:17:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B4A2D1936;
-	Thu,  9 Oct 2025 07:20:37 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685D6298CA4;
-	Thu,  9 Oct 2025 07:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31A828FFE7;
+	Thu,  9 Oct 2025 07:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Txsynlg+"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A2451D5147
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 07:17:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759994436; cv=none; b=ozYhkuaNZZIOikcvqrcgDeoXTxpRYWCZzu7bQ6kLZ51SCZbkblTXwsHczAoo5VM4utDOoeyY9ajZVVa4WwQYOcSIUpam/hcsP5uCp+DC5TePIj6xIIAeCP7A+uwi03JhZTRO0ZKDf87KyTK+/edBI2cWj+8wVDtjtGamU/g+uII=
+	t=1759994233; cv=none; b=OrnCTJ910zcbW2TbBp1puM/OAXSwTCVJSX4LWvsqESszQUlrDHGhSBCjdhlGN4bR3IedJdHqEe8zCYxxCPqybCSIHsRTIg0ezWkrUNuSKCdLM6/wxgwaJrwA9uvYAitZTBkBIevEcSkExcLmt0AFYRQKS4fkMCq8a84XN1dyEyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759994436; c=relaxed/simple;
-	bh=qiRw4QuoIHdxgOMBw5rOBwaXySx4YLDEZtVJzzfIsuA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z1iMZdIQ2LfY98Zq9sJDWmqOVQg3nEREc9g5XGqwJ+oyo6Bf/a4s+ziwP2nXVp5lKb2iAnO3cryLV/X91lomZF6sezxjUTlw9LgXwYdcPUeFcDySq2Bh2WY4wtA8Lu1gw0Y+GajJdjDO4RBUxunfgRyWOERuZ0+qZ359hv9oPVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cj1Mm20R5z9sSd;
-	Thu,  9 Oct 2025 09:14:28 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id IrXIuvb4y-IU; Thu,  9 Oct 2025 09:14:28 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cj1Mm0p1dz9sSb;
-	Thu,  9 Oct 2025 09:14:28 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id F24048B76C;
-	Thu,  9 Oct 2025 09:14:27 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id wHEaqnf6dd0R; Thu,  9 Oct 2025 09:14:27 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id D85288B768;
-	Thu,  9 Oct 2025 09:14:25 +0200 (CEST)
-Message-ID: <3e043453-3f27-48ad-b987-cc39f523060a@csgroup.eu>
-Date: Thu, 9 Oct 2025 09:14:24 +0200
+	s=arc-20240116; t=1759994233; c=relaxed/simple;
+	bh=pyoY7Vdb/vrxexDLvTLQr++x6nZEjYln58xGU51a3xo=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=mGoIIYRctuwHSgFV3QDReuuAteZ756p9pifw5YiRCqrwo/DY8nw1YqQSBhnhEpEbBhE2jkVb57nMkHTd4zdU6x9aqP2eRknvaPMCANfKu85XY06xjNsCjjeKhgad91pvYREYXv8doOIhUsRJjpnPB4NXPKgp61Dj9QzhzpE6tYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--robertpang.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Txsynlg+; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--robertpang.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-286a252bfbfso28107105ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 00:17:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759994231; x=1760599031; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=an5olBL0QCgABLe+u/QkmrVEliUFVAllfnPaZoexj58=;
+        b=Txsynlg+GTfmxQNtJnrE6eFbCN9Dd7wlGfXI7H1qpeSJEzsqQ0CAswFLNgXreCnB4/
+         SJsoeQVxgoQ6XhjGvhC95dZLObdrpjokl77I1BHVMRAn2OyV8FNi7UxCfQ63mDLm0uzt
+         Ty9L6lCKeUUE4TpO13arEmovYTmhCvA9C3aq1jMDXUKwuBeN7p97yuZwemytn2pIKOI6
+         d0DelUqBpHfkFbnaCvKz74xGCuFfPWySQcZz3tEnkCwuSNxeNRlk0H8P5dwNbK4QyXKb
+         6A3d19ZVYrAdsl+roMsv6MKnF3pDRt0hV8+Z+pyQ3cZ1Bj86tiR4trJItq4j1WGIbwXr
+         4r1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759994231; x=1760599031;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=an5olBL0QCgABLe+u/QkmrVEliUFVAllfnPaZoexj58=;
+        b=NQ5+6l21hIkJ3CXKkfuqzK+Z/yC5HPJ3B5j/PVyQTnT/Wlf3tH6RSNwZUtZ9AkEyuF
+         tSbVzTAaKS/S8Lsrnpe1VjohSpdYvChOHaKpVmRcsHVB9OrCSvkLpc/Nwc0Ci9zYqunq
+         B3/oKtiSCP8jL82Wv3b0jm+UhxpqYrir+jtznJ5zcEOH7uuV+v3SYdOJvaGggBjoJEF5
+         qYuW6rBhrmbyYVs+Tm4Z4gHQWEk36ht+yquewRaXjj0ITvz4IEoj/K3NMwvtFP1djL4p
+         EqrAsNw2iYvvuIOOxH4wYyzkG/Gn4h8E0qBRGxlRbuEtEDGaOIbffoRtSD1AGow6PMxF
+         baVw==
+X-Forwarded-Encrypted: i=1; AJvYcCV1Adtv43k+rVa7AeWgppYfNEAeN385Ku27GJu4oUlDxkIG1R5KBMtCUYAfPKH24zNp7FuSUVDAaw2WXes=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywvw+hZZuL4IMPOzSC4KqJIieS5l1zeOG5EcB8iCCP9r2KJcjRK
+	1HOye4sFVRMCe8Vq9zB8u32yLqpqfrCl7ulKExF74fEx9nGjaPr6wVbHU6keb8CdAohNjwhtFea
+	znsWs6OrF+CvmxP65A34F1A==
+X-Google-Smtp-Source: AGHT+IFb5kfHyM2soXec2fgkjexLNWkRXOtWPknbYmahZAmxEpU45pp0Y+kfn1jlX78K8pz3g5ZpNyDN46ZqMxY9
+X-Received: from plsk2.prod.google.com ([2002:a17:902:ba82:b0:268:1af:fcff])
+ (user=robertpang job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:903:3885:b0:256:9c51:d752 with SMTP id d9443c01a7336-290273069bbmr84639355ad.56.1759994230783;
+ Thu, 09 Oct 2025 00:17:10 -0700 (PDT)
+Date: Thu,  9 Oct 2025 00:15:13 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: (bisected) [PATCH v2 08/37] mm/hugetlb: check for unreasonable
- folio sizes when registering hstate
-To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
-Cc: Zi Yan <ziy@nvidia.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Alexander Potapenko <glider@google.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Brendan Jackman <jackmanb@google.com>, Christoph Lameter <cl@gentwo.org>,
- Dennis Zhou <dennis@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
- dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
- iommu@lists.linux.dev, io-uring@vger.kernel.org,
- Jason Gunthorpe <jgg@nvidia.com>, Jens Axboe <axboe@kernel.dk>,
- Johannes Weiner <hannes@cmpxchg.org>, John Hubbard <jhubbard@nvidia.com>,
- kasan-dev@googlegroups.com, kvm@vger.kernel.org,
- Linus Torvalds <torvalds@linux-foundation.org>, linux-arm-kernel@axis.com,
- linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
- linux-ide@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mmc@vger.kernel.org, linux-mm@kvack.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-scsi@vger.kernel.org, Marco Elver <elver@google.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Muchun Song <muchun.song@linux.dev>,
- netdev@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
- Peter Xu <peterx@redhat.com>, Robin Murphy <robin.murphy@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Tejun Heo <tj@kernel.org>,
- virtualization@lists.linux.dev, Vlastimil Babka <vbabka@suse.cz>,
- wireguard@lists.zx2c4.com, x86@kernel.org,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-References: <20250901150359.867252-1-david@redhat.com>
- <20250901150359.867252-9-david@redhat.com>
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <20250901150359.867252-9-david@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.710.ga91ca5db03-goog
+Message-ID: <20251009071512.3952240-2-robertpang@google.com>
+Subject: [PATCH v2] bcache: add "clock" cache replacement policy
+From: Robert Pang <robertpang@google.com>
+To: Coly Li <colyli@fnnas.com>, Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Robert Pang <robertpang@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi David,
+This new policy extends the FIFO policy to approximate the classic clock policy
+(O(n) time complexity) by considering bucket priority, similar to the LRU
+policy.
 
-Le 01/09/2025 à 17:03, David Hildenbrand a écrit :
-> Let's check that no hstate that corresponds to an unreasonable folio size
-> is registered by an architecture. If we were to succeed registering, we
-> could later try allocating an unsupported gigantic folio size.
-> 
-> Further, let's add a BUILD_BUG_ON() for checking that HUGETLB_PAGE_ORDER
-> is sane at build time. As HUGETLB_PAGE_ORDER is dynamic on powerpc, we have
-> to use a BUILD_BUG_ON_INVALID() to make it compile.
-> 
-> No existing kernel configuration should be able to trigger this check:
-> either SPARSEMEM without SPARSEMEM_VMEMMAP cannot be configured or
-> gigantic folios will not exceed a memory section (the case on sparse).
-> 
-> Reviewed-by: Zi Yan <ziy@nvidia.com>
-> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+This clock policy addresses the high IO latency (1-2 seconds) experienced on
+multi-terabyte cache devices when the free list is empty due to the default LRU
+policy. The LRU policy's O(n log n) complexity for sorting priorities for the
+entire bucket list causes this delay.
 
-I get following warning on powerpc with linus tree, bisected to commit 
-7b4f21f5e038 ("mm/hugetlb: check for unreasonable folio sizes when 
-registering hstate")
+Here are the average execution times (in microseconds) of the LRU and the clock
+replacement policies:
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 0 at mm/hugetlb.c:4744 hugetlb_add_hstate+0xc0/0x180
-Modules linked in:
-CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 
-6.17.0-rc4-00275-g7b4f21f5e038 #1683 NONE
-Hardware name: QEMU ppce500 e5500 0x80240020 QEMU e500
-NIP:  c000000001357408 LR: c000000001357c90 CTR: 0000000000000003
-REGS: c00000000152bad0 TRAP: 0700   Not tainted 
-(6.17.0-rc4-00275-g7b4f21f5e038)
-MSR:  0000000080021002 <CE,ME>  CR: 44000448  XER: 20000000
-IRQMASK: 1
-GPR00: c000000001357c90 c00000000152bd70 c000000001339000 0000000000000012
-GPR04: 000000000000000a 0000000000001000 000000000000001e 0000000000000000
-GPR08: 0000000000000000 0000000000000000 0000000000000001 000000000000000a
-GPR12: c000000001357b68 c000000001590000 0000000000000000 0000000000000000
-GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-GPR20: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-GPR24: c0000000011adb40 c00000000156b528 0000000000000000 c00000000156b4b0
-GPR28: c00000000156b528 0000000000000012 0000000040000000 0000000000000000
-NIP [c000000001357408] hugetlb_add_hstate+0xc0/0x180
-LR [c000000001357c90] hugepagesz_setup+0x128/0x150
-Call Trace:
-[c00000000152bd70] [c00000000152bda0] init_stack+0x3da0/0x4000 (unreliable)
-[c00000000152be10] [c000000001357c90] hugepagesz_setup+0x128/0x150
-[c00000000152be80] [c00000000135841c] hugetlb_bootmem_alloc+0x84/0x104
-[c00000000152bec0] [c00000000135143c] mm_core_init+0x30/0x174
-[c00000000152bf30] [c000000001332ed4] start_kernel+0x540/0x880
-[c00000000152bfe0] [c000000000000a50] start_here_common+0x1c/0x20
-Code: 2c09000f 39000001 38e00000 39400001 7d00401e 0b080000 281d0001 
-7d00505e 79080020 0b080000 281d000c 7d4a385e <0b0a0000> 1f5a00b8 
-38bf0020 3c82ffe8
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 0 at mm/hugetlb.c:4744 hugetlb_add_hstate+0xc0/0x180
-Modules linked in:
-CPU: 0 UID: 0 PID: 0 Comm: swapper Tainted: G        W 
-6.17.0-rc4-00275-g7b4f21f5e038 #1683 NONE
-Tainted: [W]=WARN
-Hardware name: QEMU ppce500 e5500 0x80240020 QEMU e500
-NIP:  c000000001357408 LR: c000000001357c90 CTR: 0000000000000005
-REGS: c00000000152bad0 TRAP: 0700   Tainted: G        W 
-(6.17.0-rc4-00275-g7b4f21f5e038)
-MSR:  0000000080021002 <CE,ME>  CR: 48000448  XER: 20000000
-IRQMASK: 1
-GPR00: c000000001357c90 c00000000152bd70 c000000001339000 000000000000000e
-GPR04: 000000000000000a 0000000000001000 0000000040000000 0000000000000000
-GPR08: 0000000000000000 0000000000000001 0000000000000001 0000000000000280
-GPR12: c000000001357b68 c000000001590000 0000000000000000 0000000000000000
-GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-GPR20: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-GPR24: c0000000011adb40 c00000000156b5e0 0000000000000001 c00000000156b4b0
-GPR28: c00000000156b528 000000000000000e 0000000004000000 00000000000000b8
-NIP [c000000001357408] hugetlb_add_hstate+0xc0/0x180
-LR [c000000001357c90] hugepagesz_setup+0x128/0x150
-Call Trace:
-[c00000000152bd70] [c000000000f27048] __func__.0+0x0/0x18 (unreliable)
-[c00000000152be10] [c000000001357c90] hugepagesz_setup+0x128/0x150
-[c00000000152be80] [c00000000135841c] hugetlb_bootmem_alloc+0x84/0x104
-[c00000000152bec0] [c00000000135143c] mm_core_init+0x30/0x174
-[c00000000152bf30] [c000000001332ed4] start_kernel+0x540/0x880
-[c00000000152bfe0] [c000000000000a50] start_here_common+0x1c/0x20
-Code: 2c09000f 39000001 38e00000 39400001 7d00401e 0b080000 281d0001 
-7d00505e 79080020 0b080000 281d000c 7d4a385e <0b0a0000> 1f5a00b8 
-38bf0020 3c82ffe8
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 0 at mm/hugetlb.c:4744 hugetlb_add_hstate+0xc0/0x180
-Modules linked in:
-CPU: 0 UID: 0 PID: 0 Comm: swapper Tainted: G        W 
-6.17.0-rc4-00275-g7b4f21f5e038 #1683 NONE
-Tainted: [W]=WARN
-Hardware name: QEMU ppce500 e5500 0x80240020 QEMU e500
-NIP:  c000000001357408 LR: c000000001357c90 CTR: 0000000000000004
-REGS: c00000000152bad0 TRAP: 0700   Tainted: G        W 
-(6.17.0-rc4-00275-g7b4f21f5e038)
-MSR:  0000000080021002 <CE,ME>  CR: 48000448  XER: 20000000
-IRQMASK: 1
-GPR00: c000000001357c90 c00000000152bd70 c000000001339000 0000000000000010
-GPR04: 000000000000000a 0000000000001000 0000000004000000 0000000000000000
-GPR08: 0000000000000000 0000000000000002 0000000000000001 0000000000000a00
-GPR12: c000000001357b68 c000000001590000 0000000000000000 0000000000000000
-GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-GPR20: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-GPR24: c0000000011adb40 c00000000156b698 0000000000000002 c00000000156b4b0
-GPR28: c00000000156b528 0000000000000010 0000000010000000 0000000000000170
-NIP [c000000001357408] hugetlb_add_hstate+0xc0/0x180
-LR [c000000001357c90] hugepagesz_setup+0x128/0x150
-Call Trace:
-[c00000000152bd70] [c000000000f27048] __func__.0+0x0/0x18 (unreliable)
-[c00000000152be10] [c000000001357c90] hugepagesz_setup+0x128/0x150
-[c00000000152be80] [c00000000135841c] hugetlb_bootmem_alloc+0x84/0x104
-[c00000000152bec0] [c00000000135143c] mm_core_init+0x30/0x174
-[c00000000152bf30] [c000000001332ed4] start_kernel+0x540/0x880
-[c00000000152bfe0] [c000000000000a50] start_here_common+0x1c/0x20
-Code: 2c09000f 39000001 38e00000 39400001 7d00401e 0b080000 281d0001 
-7d00505e 79080020 0b080000 281d000c 7d4a385e <0b0a0000> 1f5a00b8 
-38bf0020 3c82ffe8
----[ end trace 0000000000000000 ]---
+SSD Size  Bucket Count  LRU (us)  Clock (us)
+375 GB      1536000       58292        1163
+750 GB      3072000      121769        1729
+1.5 TB      6144000      244012        3862
+3 TB       12288000      496569        6428
+6 TB       24576000     1067628       14298
+9 TB       36864000     1564348       25763
 
+Signed-off-by: Robert Pang <robertpang@google.com>
+---
+ Documentation/admin-guide/bcache.rst |  2 +-
+ drivers/md/bcache/alloc.c            | 34 ++++++++++++++++++++++++----
+ drivers/md/bcache/bcache_ondisk.h    |  1 +
+ drivers/md/bcache/sysfs.c            |  1 +
+ 4 files changed, 33 insertions(+), 5 deletions(-)
 
-> ---
->   mm/hugetlb.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 1e777cc51ad04..d3542e92a712e 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -4657,6 +4657,7 @@ static int __init hugetlb_init(void)
->   
->   	BUILD_BUG_ON(sizeof_field(struct page, private) * BITS_PER_BYTE <
->   			__NR_HPAGEFLAGS);
-> +	BUILD_BUG_ON_INVALID(HUGETLB_PAGE_ORDER > MAX_FOLIO_ORDER);
->   
->   	if (!hugepages_supported()) {
->   		if (hugetlb_max_hstate || default_hstate_max_huge_pages)
-> @@ -4740,6 +4741,7 @@ void __init hugetlb_add_hstate(unsigned int order)
->   	}
->   	BUG_ON(hugetlb_max_hstate >= HUGE_MAX_HSTATE);
->   	BUG_ON(order < order_base_2(__NR_USED_SUBPAGE));
-> +	WARN_ON(order > MAX_FOLIO_ORDER);
->   	h = &hstates[hugetlb_max_hstate++];
->   	__mutex_init(&h->resize_lock, "resize mutex", &h->resize_key);
->   	h->order = order;
+diff --git a/Documentation/admin-guide/bcache.rst b/Documentation/admin-guide/bcache.rst
+index 6fdb495ac466..2be2999c7de4 100644
+--- a/Documentation/admin-guide/bcache.rst
++++ b/Documentation/admin-guide/bcache.rst
+@@ -616,7 +616,7 @@ bucket_size
+   Size of buckets
+ 
+ cache_replacement_policy
+-  One of either lru, fifo or random.
++  One of either lru, fifo, random or clock.
+ 
+ discard
+   Boolean; if on a discard/TRIM will be issued to each bucket before it is
+diff --git a/drivers/md/bcache/alloc.c b/drivers/md/bcache/alloc.c
+index 48ce750bf70a..c65c48eab169 100644
+--- a/drivers/md/bcache/alloc.c
++++ b/drivers/md/bcache/alloc.c
+@@ -69,7 +69,8 @@
+ #include <linux/random.h>
+ #include <trace/events/bcache.h>
+ 
+-#define MAX_OPEN_BUCKETS 128
++#define MAX_OPEN_BUCKETS	128
++#define CHECK_PRIO_SLICES	16
+ 
+ /* Bucket heap / gen */
+ 
+@@ -211,19 +212,41 @@ static void invalidate_buckets_lru(struct cache *ca)
+ 	}
+ }
+ 
+-static void invalidate_buckets_fifo(struct cache *ca)
++/*
++ * When check_prio is true, this FIFO policy examines the priority of the
++ * buckets and invalidates only the ones below a threshold in the priority
++ * ladder. As it goes, the threshold will be raised if not enough buckets are
++ * invalidated. Empty buckets are also invalidated. This evaulation resembles
++ * the LRU policy, and is used to approximate the classic clock-sweep cache
++ * replacement algorithm.
++ */
++static void invalidate_buckets_fifo(struct cache *ca, bool check_prio)
+ {
+ 	struct bucket *b;
+ 	size_t checked = 0;
++	size_t check_quota = 0;
++	uint16_t prio_threshold = ca->set->min_prio;
+ 
+ 	while (!fifo_full(&ca->free_inc)) {
+ 		if (ca->fifo_last_bucket <  ca->sb.first_bucket ||
+ 		    ca->fifo_last_bucket >= ca->sb.nbuckets)
+ 			ca->fifo_last_bucket = ca->sb.first_bucket;
+ 
++		if (check_prio && checked >= check_quota) {
++			BUG_ON(ca->set->min_prio > INITIAL_PRIO);
++			prio_threshold +=
++				DIV_ROUND_UP(INITIAL_PRIO - ca->set->min_prio,
++					     CHECK_PRIO_SLICES);
++			check_quota += DIV_ROUND_UP(ca->sb.nbuckets,
++						    CHECK_PRIO_SLICES);
++		}
++
+ 		b = ca->buckets + ca->fifo_last_bucket++;
+ 
+-		if (bch_can_invalidate_bucket(ca, b))
++		if (bch_can_invalidate_bucket(ca, b) &&
++		    (!check_prio ||
++		     b->prio <= prio_threshold ||
++		     !GC_SECTORS_USED(b)))
+ 			bch_invalidate_one_bucket(ca, b);
+ 
+ 		if (++checked >= ca->sb.nbuckets) {
+@@ -269,11 +292,14 @@ static void invalidate_buckets(struct cache *ca)
+ 		invalidate_buckets_lru(ca);
+ 		break;
+ 	case CACHE_REPLACEMENT_FIFO:
+-		invalidate_buckets_fifo(ca);
++		invalidate_buckets_fifo(ca, false);
+ 		break;
+ 	case CACHE_REPLACEMENT_RANDOM:
+ 		invalidate_buckets_random(ca);
+ 		break;
++	case CACHE_REPLACEMENT_CLOCK:
++		invalidate_buckets_fifo(ca, true);
++		break;
+ 	}
+ }
+ 
+diff --git a/drivers/md/bcache/bcache_ondisk.h b/drivers/md/bcache/bcache_ondisk.h
+index 6620a7f8fffc..d45794e01fe1 100644
+--- a/drivers/md/bcache/bcache_ondisk.h
++++ b/drivers/md/bcache/bcache_ondisk.h
+@@ -288,6 +288,7 @@ BITMASK(CACHE_REPLACEMENT,		struct cache_sb, flags, 2, 3);
+ #define CACHE_REPLACEMENT_LRU		0U
+ #define CACHE_REPLACEMENT_FIFO		1U
+ #define CACHE_REPLACEMENT_RANDOM	2U
++#define CACHE_REPLACEMENT_CLOCK		3U
+ 
+ BITMASK(BDEV_CACHE_MODE,		struct cache_sb, flags, 0, 4);
+ #define CACHE_MODE_WRITETHROUGH		0U
+diff --git a/drivers/md/bcache/sysfs.c b/drivers/md/bcache/sysfs.c
+index 826b14cae4e5..c8617bad0648 100644
+--- a/drivers/md/bcache/sysfs.c
++++ b/drivers/md/bcache/sysfs.c
+@@ -45,6 +45,7 @@ static const char * const cache_replacement_policies[] = {
+ 	"lru",
+ 	"fifo",
+ 	"random",
++	"clock",
+ 	NULL
+ };
+ 
+-- 
+2.51.0.710.ga91ca5db03-goog
 
 
