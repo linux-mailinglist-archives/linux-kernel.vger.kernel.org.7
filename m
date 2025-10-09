@@ -1,126 +1,105 @@
-Return-Path: <linux-kernel+bounces-846707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 354C3BC8CB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:27:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AEBABC8CBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:27:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E31513B1D3D
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:26:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A17BE19E64D0
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:27:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82AD2DFA3A;
-	Thu,  9 Oct 2025 11:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA38D2E093A;
+	Thu,  9 Oct 2025 11:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gMEeY56d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="kszlChMx"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1430B24418E;
-	Thu,  9 Oct 2025 11:26:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AC4B2D73A7;
+	Thu,  9 Oct 2025 11:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760009186; cv=none; b=V+Ch7mmsGkMFIRvOLLJ/MIqBU0j7HnwE277XNMkMfY77GhlkOTmXeuRIihoQ0YUrSEMMre1ebGTtikNMf2X7Yv5DJZgr7D8+ryaw5GyAqLiip2SOuKMKkNSuKPrqNOzCF9cO89V9mB2TuVk+P0zq+6dJesykMF8bmPqzLbIKjrU=
+	t=1760009237; cv=none; b=aQQ2TTCi+d8snkxNkEbrXkd/0eBjnvTUCVgTuP56rrG3jg6DTJQXh/VhTE59vMEaaG1GmMn6oh7CVBHtrz3l4Hkd5rUR5P/iDAPV6EwXaqQLcemOARiK2+FcY43mQfZg4f8F7uD/KHsL7+czx2CfrrA8rjttxBqrQQLPZ/ZhQGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760009186; c=relaxed/simple;
-	bh=zIKOZbd68lJ41wH30gEwKJuQE0RnMS2JMWAzhmI7j2Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CxSHBtdnoo+qWK1xYOLpx5ZUjAYpzmExkgRzoGv/4mp9XbuOVxUkDrwM0lTsuAnnzrmPIqRnLPRDJUwkEIcGDO7bnPuFSvYo+jJbWosboJX6xryr3tmsAw74s248znrJL5l/7auxER2+WtT94kvSxY6XPZva4aB9sZt5iJvFFP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gMEeY56d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 167D6C4CEE7;
-	Thu,  9 Oct 2025 11:26:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1760009185;
-	bh=zIKOZbd68lJ41wH30gEwKJuQE0RnMS2JMWAzhmI7j2Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gMEeY56dLi8IBy10c8k2ueHt/UWB5qI2ZOkzSyoZ/n0QKttfSku0wWA3OulvQkkRY
-	 IhLESDHx8+CUw8XT4j1KN83q7MNmLeUog0IJEYUUgyjWuYhClqEs0OpPsUp4LJPhqx
-	 /a9Em48neWPipuEFiMAtXYeOrv5yNkss90d77csI=
-Date: Thu, 9 Oct 2025 13:26:22 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>,
-	syzbot+d8f72178ab6783a7daea@syzkaller.appspotmail.com,
-	Clemens Ladisch <clemens@ladisch.de>,
-	Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6.12.y 6.6.y 6.1.y 5.15.y 5.10.y 5.4.y] ALSA: usb-audio:
- Kill timer properly at removal
-Message-ID: <2025100940-unrevised-passcode-6682@gregkh>
-References: <20251007155808.438441-1-aha310510@gmail.com>
- <2025100824-frolic-spout-d400@gregkh>
- <CAO9qdTEo46hCZ0UXKjjBQ4W2sLT2+5zw9DugQF98sqpHLyNzPg@mail.gmail.com>
+	s=arc-20240116; t=1760009237; c=relaxed/simple;
+	bh=IArN+RtuYOyMN6ifHcTZqjTU9T5GXTomdxvkjyTpvog=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o0N42Hd487pusvnKa4QjIhT5vyC+7nWGVB7VbBguD2tOtxw83rvKro6RTv0lBYEuNkshkOeGmFYmSBUm7QsKhvwEd7kNmA9QwzV/szPA9jsIbn3eHHgok9zI0JX9+KATj2fo/my6PDM/MtnAnE3qFYyNuH/LsMLpow5yF9O1wJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=kszlChMx; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1760009233;
+	bh=IArN+RtuYOyMN6ifHcTZqjTU9T5GXTomdxvkjyTpvog=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kszlChMxGCiSID1BGesFoQO5o1WuBuD0hz3VjE50XvSAyfFhRQA/CGlbeNy5kT/K+
+	 RFtHcv4v29QHI5tgz6rZLLlDBlYm0o9gXfXFgIP5rmcjK6iH9iJ2YIZMn+Dz8I1qfG
+	 VN1yJ+X/m/FE8MQxNJbhJjzZigYMZ1XKcuiFDo0TYhE1KnIybMG7ucfgiuj66F3g1X
+	 m1RrZ0qyxwuB02TWCt60RmfvNckDCiHqVbnhtq3u8u19gIkG2rzV8Qu8qnUFHJodZu
+	 62Z5BSDKJgef74B5rK+9oBx2Yo+m+44xk9WUhZqDP0WLploZa+xYYq9gB8hRo5tXZq
+	 jFyJoQsjtdklQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id E97CA17E01F5;
+	Thu,  9 Oct 2025 13:27:11 +0200 (CEST)
+Message-ID: <2834b895-d4e5-44f4-b8b3-c892f84ccffe@collabora.com>
+Date: Thu, 9 Oct 2025 13:27:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAO9qdTEo46hCZ0UXKjjBQ4W2sLT2+5zw9DugQF98sqpHLyNzPg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 08/20] mailbox: mtk-cmdq: Add driver data to support
+ for MT8196
+To: Jason-JH Lin <jason-jh.lin@mediatek.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+ Nicolas Dufresne <nicolas@ndufresne.ca>, Nancy Lin <nancy.lin@mediatek.com>,
+ Singo Chang <singo.chang@mediatek.com>,
+ Paul-PL Chen <paul-pl.chen@mediatek.com>, Moudy Ho <moudy.ho@mediatek.com>,
+ Xiandong Wang <xiandong.wang@mediatek.com>,
+ Sirius Wang <sirius.wang@mediatek.com>, Fei Shao <fshao@chromium.org>,
+ Chen-yu Tsai <wenst@chromium.org>,
+ Project_Global_Chrome_Upstream_Group@mediatek.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+ CK Hu <ck.hu@mediatek.com>
+References: <20250827114006.3310175-1-jason-jh.lin@mediatek.com>
+ <20250827114006.3310175-9-jason-jh.lin@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250827114006.3310175-9-jason-jh.lin@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 09, 2025 at 08:23:42PM +0900, Jeongjun Park wrote:
-> Hi Greg,
+Il 27/08/25 13:37, Jason-JH Lin ha scritto:
+> MT8196 has 2 new hardware configuration compared with the previous SoC,
+> which correspond to the 2 new driver data:
 > 
-> Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Wed, Oct 08, 2025 at 12:58:08AM +0900, Jeongjun Park wrote:
-> > > From: Takashi Iwai <tiwai@suse.de>
-> > >
-> > > [ Upstream commit 0718a78f6a9f04b88d0dc9616cc216b31c5f3cf1 ]
-> > >
-> > > The USB-audio MIDI code initializes the timer, but in a rare case, the
-> > > driver might be freed without the disconnect call.  This leaves the
-> > > timer in an active state while the assigned object is released via
-> > > snd_usbmidi_free(), which ends up with a kernel warning when the debug
-> > > configuration is enabled, as spotted by fuzzer.
-> > >
-> > > For avoiding the problem, put timer_shutdown_sync() at
-> > > snd_usbmidi_free(), so that the timer can be killed properly.
-> > > While we're at it, replace the existing timer_delete_sync() at the
-> > > disconnect callback with timer_shutdown_sync(), too.
-> > >
-> > > Reported-by: syzbot+d8f72178ab6783a7daea@syzkaller.appspotmail.com
-> > > Closes: https://lore.kernel.org/681c70d7.050a0220.a19a9.00c6.GAE@google.com
-> > > Cc: <stable@vger.kernel.org>
-> > > Link: https://patch.msgid.link/20250519212031.14436-1-tiwai@suse.de
-> > > Signed-off-by: Takashi Iwai <tiwai@suse.de>
-> > > [ del_timer vs timer_delete differences ]
-> > > Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> > > ---
-> > >  sound/usb/midi.c | 3 ++-
-> > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/sound/usb/midi.c b/sound/usb/midi.c
-> > > index a792ada18863..c3de2b137435 100644
-> > > --- a/sound/usb/midi.c
-> > > +++ b/sound/usb/midi.c
-> > > @@ -1530,6 +1530,7 @@ static void snd_usbmidi_free(struct snd_usb_midi *umidi)
-> > >                       snd_usbmidi_in_endpoint_delete(ep->in);
-> > >       }
-> > >       mutex_destroy(&umidi->mutex);
-> > > +     timer_shutdown_sync(&umidi->error_timer);
-> >
-> > This function is not in older kernel versions, you did not test this
-> > build :(
-> >
-> > I've applied this to 6.6.y and newer, but for 6.1.y and older, please
-> > use the proper function.
+> 1. mminfra_offset: For GCE data path control
+>     Since GCE has been moved into mminfra, GCE needs to append the
+>     mminfra offset to the DRAM address when accessing the DRAM.
 > 
-> Sorry, I didn't realize that the timer_shutdown_sync() implementation
-> commit wasn't backported to versions prior to 6.2.
+> 2. gce_vm: For GCE hardware virtualization control
+>     Currently, the first version of the mt8196 mailbox controller only
+>     requires setting the VM-related registers to enable the permissions
+>     of a host VM.
 > 
-> But why wasn't this feature backported to previous versions? I understand
-> that most drivers write separate patches for pre-6.2 versions that don't
-> implement timer_shutdown_sync() to address this type of bug.
+> Signed-off-by: Jason-JH Lin <jason-jh.lin@mediatek.com>
+> Reviewed-by: CK Hu <ck.hu@mediatek.com>
 
-Features are not backported to older kernels.  If you want this fix in
-an older kernel, then you need to either backport that feature, or fix
-up the driver to use whatever was used before that function existed.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-thanks,
 
-greg k-h
 
