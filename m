@@ -1,210 +1,426 @@
-Return-Path: <linux-kernel+bounces-846846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDB72BC9383
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:14:26 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDF38BC938C
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:14:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 416FD3E3C93
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:14:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 22AC34E4BBB
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946672E6CDA;
-	Thu,  9 Oct 2025 13:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0772E7180;
+	Thu,  9 Oct 2025 13:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Fb3Ey9bA"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="mvnvxwKO"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 412BD78F59
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A914B2E6CC4
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760015656; cv=none; b=ahuIEgbIXAEaaX9M68GaOmXNn/1J71qrtGqTFZIryuFDl0uKcswXLuI5eVOYiWyq3ki7JB5x3f9yj5bAMdH2U5/M6q3F0Pc7tiW4edeTpx3yePymON7ySxXmaDUvqj2c2ZckVYSwEoia9emsR03jC6yYGDbU36t7NjzqR0/5vL8=
+	t=1760015693; cv=none; b=qxh0azdj0zUWVuLeUzxv1N1Jt8orXDngoMuwoOz2GMxDUThWrRfJ2bMZPF/BO+JPIuvtMwSh9tgaeJNxUdgtjZsswCP42Tm/uNKTtuV2JMx+WtPAO0Y7wCbHClyfuKA56omM+TVcRqf/npxStpBzRedx11nPqma0v/VRCpi1tmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760015656; c=relaxed/simple;
-	bh=uXvSpjVF8BK7YFN0xoPwvysk7CDBGOxoFJjEr38/hn0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WvR+QlPkmeIVWCLXURzD/FlhDgOlZvY4z6oILMPlXokBXMEWZ2QBqfLRrIquiSHjLS+AaIBgj0mx4LtaIOL6XOqjMEt8/cFK1JculC1LaqVbQRrHnXF5ceKVwKTWjYyr8UtDHx+GogXv6Pcayj8Us0nD9BYWOM31qOgLzpkhUZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Fb3Ey9bA; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5996EP9P005152
-	for <linux-kernel@vger.kernel.org>; Thu, 9 Oct 2025 13:14:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	lo5MRavVGxHbSwlyHOLgkDpCLDtjLUpSjKDigiF2Nwc=; b=Fb3Ey9bAch2igCHD
-	rOvvjWjhsPymbUsAwVfk5vAVZZ8AbiKfkYkZPrDzYBZh5eFSmlJYYOBf12XoaUY9
-	QkF65lPdzd9KBenADpNVL8vXcILzE+ttTspZkCgo26I8OxHvA5dI0GtRJuEEgnBE
-	M5YEzHyO+ntM8XatSL24cMFO2jGgZRaqBpl/MS+XfRB7Bj6Ed1u7QI4KewI55frg
-	lxWDu4dnBm0XPs4iGJczScylUzGR6GyfTj4nceaJiE0F0M9BYCJ/ZUDygGFxsaYe
-	hiLIi5zZPmsHjNSvjLNpo7gnBqg6Yu3M2kDpxGrLJby2f4E1i2U45YJmt4UGkRev
-	aNN3KA==
-Received: from mail-vs1-f70.google.com (mail-vs1-f70.google.com [209.85.217.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv4u2we9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 13:14:13 +0000 (GMT)
-Received: by mail-vs1-f70.google.com with SMTP id ada2fe7eead31-588c87efb7dso2454458137.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 06:14:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760015653; x=1760620453;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lo5MRavVGxHbSwlyHOLgkDpCLDtjLUpSjKDigiF2Nwc=;
-        b=X9v1C+cn0IRP29Jbparl18U1faTfRw+RApFtFW5k+RVqxsXiGU4owyShjDhCDvuP6h
-         bifdgdRSiUEXVkP80KIXWSW+A4ZCcG44+TcB5CllHn/7Cl8jhE6Hi/MyIq9iODa6FOup
-         CUAGphKJcBY1bQVutZ3IoXxezCluIXNkz22Pbqz5nsun0hq7kWv1LsCzS60FzT5Z4HJU
-         zrGUuok6rxidi9V+qwQjea0p5b4AOuAyHodACH4rCibGvlJjcve8V/JA1RbQHBOTtYZw
-         DN1BPxRXvqOVgwrJP9zATnoGc2c1t4S3ZvGcFQJmCoy0+pVduXZMNitZEw2ZaM9bWkuo
-         O1dg==
-X-Forwarded-Encrypted: i=1; AJvYcCVnz4Dy8rw28L5XXOOCjiBdsHJwAnjJxbmX7aNMAtjv5Rk69r3WHzTO4qcCj2L/L4IEG355EjHmKb/iq0w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH0q+kOJwSGEOAyIe2DAzUZiuS+CdpEErTE/ba1v2FNt0dks6v
-	6751KQ7vDXQCs3crs3/QEP6jVhF6mfeILK278m5cRXxTVYStg3BXUW7i9C86o8kD/1Zb8EGYY5E
-	TckE2Fb+r91MQJdJKtNt5b+XU3AxkyCjDeV+cww2WJPztYNPIPX8c78gkbcFIxtwDPLE=
-X-Gm-Gg: ASbGnct34POoGoFgyHRXG88Rac/aqpw1RT1rnOkVsBhYG9d8QkuSCBEMSYAxtXnk8WZ
-	IsUSeVSdmd34fKxl0Ye3/KvldgSGRQVBGppFTLAS0XeAJByT2IPp4HR+top552TyPAqHiV9eje8
-	QTZrLCVauLWtdVQRkkfIiHAxI3m1sRAWQdwsDk1VUhudpNoZ6KBFnZ5P9LpZd4gJn7Z/8c6wCU5
-	mg31fg+LEdMqQUzmia3VnIuTKKpmRmRJK/tVMguRbgbUAp/6ylOC8n9nZInS9HB9l5xZVKnWAsS
-	3+GYftWkMm+ADYDekXV6B8o6FLjRrMYE4FeaIEW97oLfk9fBIaZxz0Z7DNBdXCqulbs1pEyWkn6
-	NRTgCDdXPTzoriXtq4CUXrYs+1f/hp6W6K6/5hMw15/hvTcS2zbuzpzmtqQ==
-X-Received: by 2002:a05:6102:e10:b0:5d5:f6ae:38e9 with SMTP id ada2fe7eead31-5d5f6ae3d78mr557345137.42.1760015653057;
-        Thu, 09 Oct 2025 06:14:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IECks5cD3E8/Ce3Prr57QfCkGaf307hNA+1+lQir9ZyF994JSEye7UPdlYasS5n+CNSCMBGtQ==
-X-Received: by 2002:a05:6102:e10:b0:5d5:f6ae:38e9 with SMTP id ada2fe7eead31-5d5f6ae3d78mr557333137.42.1760015652601;
-        Thu, 09 Oct 2025 06:14:12 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59082802080sm327717e87.25.2025.10.09.06.14.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 06:14:10 -0700 (PDT)
-Date: Thu, 9 Oct 2025 16:14:08 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>,
-        Charan Teja Kalla <charan.kalla@oss.qualcomm.com>, joro@8bytes.org,
-        will@kernel.org, robin.murphy@arm.com, saravanak@google.com,
-        conor+dt@kernel.org, mchehab@kernel.org, bod@kernel.org,
-        krzk+dt@kernel.org, abhinav.kumar@linux.dev,
-        vikash.garodia@oss.qualcomm.com, dikshita.agarwal@oss.qualcomm.com,
-        linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux.dev
-Subject: Re: [RFC PATCH 0/3] Introduce iommu-map-masked for platform devices
-Message-ID: <q6ym54dfmwes3avn2mv22hukstwfrus2d233atjy7cttvgrhvl@ahcqalnz72vs>
-References: <20250928171718.436440-1-charan.kalla@oss.qualcomm.com>
- <CAL_JsqK9waZK=i+ov0jV-PonWSfddwHvE94Q+pks4zAEtKc+yg@mail.gmail.com>
- <1d36569c-55b9-4390-87d1-fd0c2f837014@kernel.org>
+	s=arc-20240116; t=1760015693; c=relaxed/simple;
+	bh=LpoAcicMIijIIMTS19RWoneLTKimPNRejhDTTCw+t5Q=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hg3NsRUvoWfc9bAwwteRVhJvpeQuyCeYKC7j+0tDK/GoDuikb+go5yTLvDeXCk38obj1CN0js2/YpCsWAVdJw6uuwAV56fsvQ+uCYnKn9J1+1Wm+tsTY/sv0ejH47bH+3ttXlMZEDhjvsneHh319VI+DNG7QmZP7RskuTyQRJto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=mvnvxwKO; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cj9MP0lMDz9tK1;
+	Thu,  9 Oct 2025 15:14:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1760015681; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=45j2hCCNJERTX+AtfiQ4lNWVmGgKvH9FSNQG0Mbnv4I=;
+	b=mvnvxwKOgCYYe5zxGsRYUvQwSfOy47ipJL+K+c64Ue9MTsJ3tUpp7lM5JMh33QM/vwcDpy
+	VEi3A4LJ2rUlFGjvHxxC+3N90LJ6SaWdAZpvNZeAktj7qlgCogqcFCtk3v+9M7wWn+MnSV
+	E14AAN+gBTO7XFEjGiV5OFY3k1l31lEfBw8GbTxRj7nu/QFxqZpJvGXd1LKZKkfbqOcRvL
+	KoKUDjImxNOMS1SSwZk7O8Ibp5/d50Z5JUBros2ha6Sfp22RT0krLgg2R3N6npcwk3c1uq
+	VEO3Pv9NqVXaL38+Go9qPoSp1itOEE/AcFf6S3hg2mnV75Q3TmnR/OBQFfQQGg==
+Message-ID: <727d723857f68d256f1050088673cad66626f47f.camel@mailbox.org>
+Subject: Re: [PATCH v2] Revert "drm/nouveau: Remove waitque for sched
+ teardown"
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Matthew Brost <matthew.brost@intel.com>, phasta@kernel.org
+Cc: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, David
+ Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sumit Semwal
+	 <sumit.semwal@linaro.org>, Christian =?ISO-8859-1?Q?K=F6nig?=
+	 <christian.koenig@amd.com>, dri-devel@lists.freedesktop.org, 
+	nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Date: Thu, 09 Oct 2025 15:14:35 +0200
+In-Reply-To: <aOaSwJOEk1DVrQUS@lstrano-desk.jf.intel.com>
+References: <20250901083107.10206-2-phasta@kernel.org>
+	 <aOVKt1kQlBEYxctO@lstrano-desk.jf.intel.com>
+	 <6ecf62805e3d3bb6007d9bf645ed10006b599349.camel@mailbox.org>
+	 <aOaSwJOEk1DVrQUS@lstrano-desk.jf.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1d36569c-55b9-4390-87d1-fd0c2f837014@kernel.org>
-X-Authority-Analysis: v=2.4 cv=Vrcuwu2n c=1 sm=1 tr=0 ts=68e7b526 cx=c_pps
- a=N1BjEkVkxJi3uNfLdpvX3g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=nh7g1Hw0eNnsH1J9AAMA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=crWF4MFLhNY0qMRaF8an:22
-X-Proofpoint-GUID: kBk7hmSBjQY94UAUvRWUntxqm-2tZG27
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX0pL+86SnEmz6
- W3rZh4Iu1qhRJxSiQ6XoG1A4RUJ+W6yjiUOIN763sGrkw/Yb0YGQ2LGZV5k1HerL+Fcwh2QMx0A
- +8DOYiM1RT5MHSPy1d7TdCX3NZkdoSQVKjyatyWjRSTCxDE+VZf4leSuB1tZn4ZwfUmVOmmFZTW
- 5EufrRNKRmemYSdMc+qlEU+JhUq5JDp/qaOyspP3bt9dig6iCVK/PP5Q1xprx9IYh01JyV+9sLf
- bpMSp6lJuFDgIyAS8uzciU0xr2j77DuZsfiQq1euYPMExFoZvCX0sWsNrz2ZJ0yQGATcykqeVYl
- bV1OxDw98Fl6bueXjy343HNpkjQDszppNLaa9batERjC33d2ZdvHDkY5+Seas4ExNGshSo+7aZz
- QqfQMnP4CMRIuVJdyGhEGhcGNs0QBA==
-X-Proofpoint-ORIG-GUID: kBk7hmSBjQY94UAUvRWUntxqm-2tZG27
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-09_04,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 impostorscore=0 clxscore=1015 adultscore=0
- bulkscore=0 spamscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
+X-MBO-RS-ID: 14925b7bc5cda33a666
+X-MBO-RS-META: qku564hn7us9r8nbibgp3uij1mzmbxko
 
-On Thu, Oct 09, 2025 at 09:26:43AM +0900, Krzysztof Kozlowski wrote:
-> On 29/09/2025 05:23, Rob Herring wrote:
-> > On Sun, Sep 28, 2025 at 12:17 PM Charan Teja Kalla
-> > <charan.kalla@oss.qualcomm.com> wrote:
-> >>
-> >> This series introduces a new iommu property called iommu-map-masked(may
-> >> be there is a better name), which is used to represent the IOMMU
-> >> specifier pairs for each function of a __multi-functional platform
-> >> device__, where each function can emit unique master id(s) that can be
-> >> associated with individual translation context.
-> >>
-> >> Currently, the iommu configuration - at least for arm architecture-
-> >> requires all the functions of a platform device will be represented
-> >> under single dt node thus endup in using only a single translation
-> >> context.
-> >>
-> >> A simple solution to associate individual translation context for each
-> >> function of a device can be through creating per function child nodes in
-> >> the device tree, but dt is only to just represent the soc layout to
-> >> linux kernel.
-> >>
-> >> Supporting such cases requires a new iommu property called,
-> >> iommu-map-masked(taking cue from iommu-map for pci devices) and syntax
-> >> is:
-> >>    iommu-map-masked = <FUNCTION_ID1 &iommu ID1 MASK1>,
-> >>                       <FUNCTION_ID2 &iommu ID2 MASK2>;
-> >> NOTE: As an RFC, it is considered that this property always expects 4
-> >> cells.
-> >>
-> >> During the probe phase of the driver for a multi-functional device
-> >> behind an IOMMU, a child device is instantiated for each FUNCTION_ID.
-> >> The call to of_dma_configure_id() on each child sets up the IOMMU
-> >> configuration, ensuring that each function of the device is associated
-> >> with a distinct translation context.
-> >>
-> >> This property can also be used in association with 'iommus=' when dt
-> >> bindings requires the presence of 'iommus=', example[2]. For these
-> >> cases, representation will be(on arm64):
-> >>    iommus = <&iommu sid mask>; //for default function.
-> >>    iommu-map-masked = <FUNCTION_ID &iommu sid mask>;//additional
-> >> function.
-> > 
-> > Where does the FUNCTION_ID value come from?
-> > 
-> > Why can't you just have multiple "iommus" entries where the index
-> > defines the default and any FUNCTION_ID entries? What's in each index
-> > is specific to the device.
-> 
-> 
-> We discussed the problem earlier and that is what I asked them to do.
-> Apparently I was just ignored so now two maintainers say the same. We
-> can get ignored still and the third maintainer will have to tell this.
+On Wed, 2025-10-08 at 09:35 -0700, Matthew Brost wrote:
+> On Wed, Oct 08, 2025 at 09:34:22AM +0200, Philipp Stanner wrote:
+> > On Tue, 2025-10-07 at 10:15 -0700, Matthew Brost wrote:
+> > > On Mon, Sep 01, 2025 at 10:31:08AM +0200, Philipp Stanner wrote:
+> > > > This reverts:
+> > > >=20
+> > > > commit bead88002227 ("drm/nouveau: Remove waitque for sched teardow=
+n")
+> > > > commit 5f46f5c7af8c ("drm/nouveau: Add new callback for scheduler t=
+eardown")
+> > >=20
+> > > I've been scanning some recent DRM scheduler changes.
+> > >=20
+> > > I think we should likely revert:
+> > >=20
+> > > bf8bbaefaa6a drm/sched: Avoid memory leaks with cancel_job() callback
+> > >=20
+> > > 5f46f5c7af8c was the only user of cancel_job. I'm not sure why we'd
+> > > carry dead code in DRM scheduler unless you have plans to make use of
+> > > this function soon.
+> >=20
+> > That will be added back to Nouveau soon. The reason it was removed from
+> > Nouveau was not that cancel_job() is broken, but that removing the
+> > waitqueue is not possible for other reasons.
+> >=20
+>=20
+> Okay. In general, carrying dead code is less than ideal, but if this is
+> going to be merged soon...
 
-The main problem (which comes from IOMMU definition) is that currently
-the iommus property is not defined nor used as an ordered list or
-anything like that. Other devices depend on it being a set with no
-additional structure. We can change that, but it might potentially
-affect others.
+There is still the unit test testing the code, so it is not completely
+dead.
 
-The iommu-maps is e.g. used by Tegra display device to map multiple
-contexts separately, but it doesn't fit all the needs because it doesn't
-allow us to specify the mask.
+In any case, I'll see to it.
 
-Also, the video-codec is not unique, we have other similar usecases, the
-display, camera and GPU, which also need to map some of the contexts
-manually.
+And besides, I tend to think that this callback or an equivalent
+mechanism should have been there from the beginning. IIRC Danilo back
+then even asked on-list who will free pending jobs on sched teardown,
+and the question was basically ignored and the code merged.
 
-Last, but not least, there are e.g. fastrpc devices which have
-subdevices just to declare the IOMMU entry for the context stream. I
-would very much prefer to be able to drop the subnodes in a longer term.
+So if you want to help, you could implement cancel_job() for Xe :)
 
-Speaking from the drivers point of view, we also don't have any control
-on how the IOMMUs are attached, while we need to control it for these
-kind of contexts.
+>=20
+> > Implementing cancel_job() has the canonical way of handling the
+> > difficult life time issues and memory leaks associated with drm_sched
+> > has been discussed literally for about 8-9 months on the lists.
+> >=20
+>=20
+> Also, drm_sched_cancel_remaining_jobs appears to do something slightly
+> concerning.
+>=20
+> It signals DMA fences out of order by walking the pending list in
+> reverse, which is generally not advisable. This behavior should probably
+> be reviewed.
 
--- 
-With best wishes
-Dmitry
+I'm perfectly happy with reversing the iterator.
+
+>=20
+> Additionally, for jobs in the SPSC queue that are killed via
+> drm_sched_entity_kill_jobs_work, we don=E2=80=99t call cancel_job.
+
+All work items are stopped when cancel_job() gets invoked.
+
+>=20
+> That might be intentional, but based on the cancel_job documentation,
+> the job=E2=80=99s fence may not get signaled. Depending on the driver=E2=
+=80=99s fence
+> refcounting scheme (e.g., if it takes a reference to the job=E2=80=99s fe=
+nce at
+> arm), the scheduler-side reference may or may not be released too. We
+> might want to investigate whether cancel_job should be invoked in that
+> path as well.
+
+Well, let's ask differently: when entity_kill_jobs_work() runs, who
+does currently guarantee that the job's fence gets signaled? Because
+that's what cancel_job() is fundamentally about: signal all fences
+before freeing the associated jobs.
+
+
+P.
+
+>=20
+> Also is the entity is killed after the drm_sched_fini, the same problem
+> with fencing signaling out-order mentioned above could occur too.
+>=20
+> > If we can't get to a solution for a problem after 9 months of on-list
+> > discussions, then we are lost.
+> >=20
+>=20
+> Par for the course upstream. Apoligize for not paying more attention
+> here.
+>=20
+> Matt
+> =C2=A0
+> > P.
+> >=20
+> > >=20
+> > > Matt
+> > >=20
+> > > >=20
+> > > > from the drm/sched teardown leak fix series:
+> > > >=20
+> > > > https://lore.kernel.org/dri-devel/20250710125412.128476-2-phasta@ke=
+rnel.org/
+> > > >=20
+> > > > The aforementioned series removed a blocking waitqueue from
+> > > > nouveau_sched_fini(). It was mistakenly assumed that this waitqueue=
+ only
+> > > > prevents jobs from leaking, which the series fixed.
+> > > >=20
+> > > > The waitqueue, however, also guarantees that all VM_BIND related jo=
+bs
+> > > > are finished in order, cleaning up mappings in the GPU's MMU. These=
+ jobs
+> > > > must be executed sequentially. Without the waitqueue, this is no lo=
+nger
+> > > > guaranteed, because entity and scheduler teardown can race with eac=
+h
+> > > > other.
+> > > >=20
+> > > > Revert all patches related to the waitqueue removal.
+> > > >=20
+> > > > Fixes: bead88002227 ("drm/nouveau: Remove waitque for sched teardow=
+n")
+> > > > Suggested-by: Danilo Krummrich <dakr@kernel.org>
+> > > > Signed-off-by: Philipp Stanner <phasta@kernel.org>
+> > > > ---
+> > > > Changes in v2:
+> > > > =C2=A0 - Don't revert commit 89b2675198ab ("drm/nouveau: Make fence=
+ container helper usable driver-wide")
+> > > > =C2=A0 - Add Fixes-tag
+> > > > ---
+> > > > =C2=A0drivers/gpu/drm/nouveau/nouveau_fence.c | 15 -----------
+> > > > =C2=A0drivers/gpu/drm/nouveau/nouveau_fence.h |=C2=A0 1 -
+> > > > =C2=A0drivers/gpu/drm/nouveau/nouveau_sched.c | 35 ++++++++++------=
+---------
+> > > > =C2=A0drivers/gpu/drm/nouveau/nouveau_sched.h |=C2=A0 9 ++++---
+> > > > =C2=A0drivers/gpu/drm/nouveau/nouveau_uvmm.c=C2=A0 |=C2=A0 8 +++---
+> > > > =C2=A05 files changed, 24 insertions(+), 44 deletions(-)
+> > > >=20
+> > > > diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.c b/drivers/gpu/=
+drm/nouveau/nouveau_fence.c
+> > > > index 9f345a008717..869d4335c0f4 100644
+> > > > --- a/drivers/gpu/drm/nouveau/nouveau_fence.c
+> > > > +++ b/drivers/gpu/drm/nouveau/nouveau_fence.c
+> > > > @@ -240,21 +240,6 @@ nouveau_fence_emit(struct nouveau_fence *fence=
+)
+> > > > =C2=A0	return ret;
+> > > > =C2=A0}
+> > > > =C2=A0
+> > > > -void
+> > > > -nouveau_fence_cancel(struct nouveau_fence *fence)
+> > > > -{
+> > > > -	struct nouveau_fence_chan *fctx =3D nouveau_fctx(fence);
+> > > > -	unsigned long flags;
+> > > > -
+> > > > -	spin_lock_irqsave(&fctx->lock, flags);
+> > > > -	if (!dma_fence_is_signaled_locked(&fence->base)) {
+> > > > -		dma_fence_set_error(&fence->base, -ECANCELED);
+> > > > -		if (nouveau_fence_signal(fence))
+> > > > -			nvif_event_block(&fctx->event);
+> > > > -	}
+> > > > -	spin_unlock_irqrestore(&fctx->lock, flags);
+> > > > -}
+> > > > -
+> > > > =C2=A0bool
+> > > > =C2=A0nouveau_fence_done(struct nouveau_fence *fence)
+> > > > =C2=A0{
+> > > > diff --git a/drivers/gpu/drm/nouveau/nouveau_fence.h b/drivers/gpu/=
+drm/nouveau/nouveau_fence.h
+> > > > index 9957a919bd38..183dd43ecfff 100644
+> > > > --- a/drivers/gpu/drm/nouveau/nouveau_fence.h
+> > > > +++ b/drivers/gpu/drm/nouveau/nouveau_fence.h
+> > > > @@ -29,7 +29,6 @@ void nouveau_fence_unref(struct nouveau_fence **)=
+;
+> > > > =C2=A0
+> > > > =C2=A0int=C2=A0 nouveau_fence_emit(struct nouveau_fence *);
+> > > > =C2=A0bool nouveau_fence_done(struct nouveau_fence *);
+> > > > -void nouveau_fence_cancel(struct nouveau_fence *fence);
+> > > > =C2=A0int=C2=A0 nouveau_fence_wait(struct nouveau_fence *, bool laz=
+y, bool intr);
+> > > > =C2=A0int=C2=A0 nouveau_fence_sync(struct nouveau_bo *, struct nouv=
+eau_channel *, bool exclusive, bool intr);
+> > > > =C2=A0
+> > > > diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.c b/drivers/gpu/=
+drm/nouveau/nouveau_sched.c
+> > > > index 0cc0bc9f9952..e60f7892f5ce 100644
+> > > > --- a/drivers/gpu/drm/nouveau/nouveau_sched.c
+> > > > +++ b/drivers/gpu/drm/nouveau/nouveau_sched.c
+> > > > @@ -11,7 +11,6 @@
+> > > > =C2=A0#include "nouveau_exec.h"
+> > > > =C2=A0#include "nouveau_abi16.h"
+> > > > =C2=A0#include "nouveau_sched.h"
+> > > > -#include "nouveau_chan.h"
+> > > > =C2=A0
+> > > > =C2=A0#define NOUVEAU_SCHED_JOB_TIMEOUT_MS		10000
+> > > > =C2=A0
+> > > > @@ -122,9 +121,11 @@ nouveau_job_done(struct nouveau_job *job)
+> > > > =C2=A0{
+> > > > =C2=A0	struct nouveau_sched *sched =3D job->sched;
+> > > > =C2=A0
+> > > > -	spin_lock(&sched->job_list.lock);
+> > > > +	spin_lock(&sched->job.list.lock);
+> > > > =C2=A0	list_del(&job->entry);
+> > > > -	spin_unlock(&sched->job_list.lock);
+> > > > +	spin_unlock(&sched->job.list.lock);
+> > > > +
+> > > > +	wake_up(&sched->job.wq);
+> > > > =C2=A0}
+> > > > =C2=A0
+> > > > =C2=A0void
+> > > > @@ -305,9 +306,9 @@ nouveau_job_submit(struct nouveau_job *job)
+> > > > =C2=A0	}
+> > > > =C2=A0
+> > > > =C2=A0	/* Submit was successful; add the job to the schedulers job =
+list. */
+> > > > -	spin_lock(&sched->job_list.lock);
+> > > > -	list_add(&job->entry, &sched->job_list.head);
+> > > > -	spin_unlock(&sched->job_list.lock);
+> > > > +	spin_lock(&sched->job.list.lock);
+> > > > +	list_add(&job->entry, &sched->job.list.head);
+> > > > +	spin_unlock(&sched->job.list.lock);
+> > > > =C2=A0
+> > > > =C2=A0	drm_sched_job_arm(&job->base);
+> > > > =C2=A0	job->done_fence =3D dma_fence_get(&job->base.s_fence->finish=
+ed);
+> > > > @@ -392,23 +393,10 @@ nouveau_sched_free_job(struct drm_sched_job *=
+sched_job)
+> > > > =C2=A0	nouveau_job_fini(job);
+> > > > =C2=A0}
+> > > > =C2=A0
+> > > > -static void
+> > > > -nouveau_sched_cancel_job(struct drm_sched_job *sched_job)
+> > > > -{
+> > > > -	struct nouveau_fence *fence;
+> > > > -	struct nouveau_job *job;
+> > > > -
+> > > > -	job =3D to_nouveau_job(sched_job);
+> > > > -	fence =3D to_nouveau_fence(job->done_fence);
+> > > > -
+> > > > -	nouveau_fence_cancel(fence);
+> > > > -}
+> > > > -
+> > > > =C2=A0static const struct drm_sched_backend_ops nouveau_sched_ops =
+=3D {
+> > > > =C2=A0	.run_job =3D nouveau_sched_run_job,
+> > > > =C2=A0	.timedout_job =3D nouveau_sched_timedout_job,
+> > > > =C2=A0	.free_job =3D nouveau_sched_free_job,
+> > > > -	.cancel_job =3D nouveau_sched_cancel_job,
+> > > > =C2=A0};
+> > > > =C2=A0
+> > > > =C2=A0static int
+> > > > @@ -458,8 +446,9 @@ nouveau_sched_init(struct nouveau_sched *sched,=
+ struct nouveau_drm *drm,
+> > > > =C2=A0		goto fail_sched;
+> > > > =C2=A0
+> > > > =C2=A0	mutex_init(&sched->mutex);
+> > > > -	spin_lock_init(&sched->job_list.lock);
+> > > > -	INIT_LIST_HEAD(&sched->job_list.head);
+> > > > +	spin_lock_init(&sched->job.list.lock);
+> > > > +	INIT_LIST_HEAD(&sched->job.list.head);
+> > > > +	init_waitqueue_head(&sched->job.wq);
+> > > > =C2=A0
+> > > > =C2=A0	return 0;
+> > > > =C2=A0
+> > > > @@ -493,12 +482,16 @@ nouveau_sched_create(struct nouveau_sched **p=
+sched, struct nouveau_drm *drm,
+> > > > =C2=A0	return 0;
+> > > > =C2=A0}
+> > > > =C2=A0
+> > > > +
+> > > > =C2=A0static void
+> > > > =C2=A0nouveau_sched_fini(struct nouveau_sched *sched)
+> > > > =C2=A0{
+> > > > =C2=A0	struct drm_gpu_scheduler *drm_sched =3D &sched->base;
+> > > > =C2=A0	struct drm_sched_entity *entity =3D &sched->entity;
+> > > > =C2=A0
+> > > > +	rmb(); /* for list_empty to work without lock */
+> > > > +	wait_event(sched->job.wq, list_empty(&sched->job.list.head));
+> > > > +
+> > > > =C2=A0	drm_sched_entity_fini(entity);
+> > > > =C2=A0	drm_sched_fini(drm_sched);
+> > > > =C2=A0
+> > > > diff --git a/drivers/gpu/drm/nouveau/nouveau_sched.h b/drivers/gpu/=
+drm/nouveau/nouveau_sched.h
+> > > > index b98c3f0bef30..20cd1da8db73 100644
+> > > > --- a/drivers/gpu/drm/nouveau/nouveau_sched.h
+> > > > +++ b/drivers/gpu/drm/nouveau/nouveau_sched.h
+> > > > @@ -103,9 +103,12 @@ struct nouveau_sched {
+> > > > =C2=A0	struct mutex mutex;
+> > > > =C2=A0
+> > > > =C2=A0	struct {
+> > > > -		struct list_head head;
+> > > > -		spinlock_t lock;
+> > > > -	} job_list;
+> > > > +		struct {
+> > > > +			struct list_head head;
+> > > > +			spinlock_t lock;
+> > > > +		} list;
+> > > > +		struct wait_queue_head wq;
+> > > > +	} job;
+> > > > =C2=A0};
+> > > > =C2=A0
+> > > > =C2=A0int nouveau_sched_create(struct nouveau_sched **psched, struc=
+t nouveau_drm *drm,
+> > > > diff --git a/drivers/gpu/drm/nouveau/nouveau_uvmm.c b/drivers/gpu/d=
+rm/nouveau/nouveau_uvmm.c
+> > > > index d94a85509176..79eefdfd08a2 100644
+> > > > --- a/drivers/gpu/drm/nouveau/nouveau_uvmm.c
+> > > > +++ b/drivers/gpu/drm/nouveau/nouveau_uvmm.c
+> > > > @@ -1019,8 +1019,8 @@ bind_validate_map_sparse(struct nouveau_job *=
+job, u64 addr, u64 range)
+> > > > =C2=A0	u64 end =3D addr + range;
+> > > > =C2=A0
+> > > > =C2=A0again:
+> > > > -	spin_lock(&sched->job_list.lock);
+> > > > -	list_for_each_entry(__job, &sched->job_list.head, entry) {
+> > > > +	spin_lock(&sched->job.list.lock);
+> > > > +	list_for_each_entry(__job, &sched->job.list.head, entry) {
+> > > > =C2=A0		struct nouveau_uvmm_bind_job *bind_job =3D to_uvmm_bind_job=
+(__job);
+> > > > =C2=A0
+> > > > =C2=A0		list_for_each_op(op, &bind_job->ops) {
+> > > > @@ -1030,7 +1030,7 @@ bind_validate_map_sparse(struct nouveau_job *=
+job, u64 addr, u64 range)
+> > > > =C2=A0
+> > > > =C2=A0				if (!(end <=3D op_addr || addr >=3D op_end)) {
+> > > > =C2=A0					nouveau_uvmm_bind_job_get(bind_job);
+> > > > -					spin_unlock(&sched->job_list.lock);
+> > > > +					spin_unlock(&sched->job.list.lock);
+> > > > =C2=A0					wait_for_completion(&bind_job->complete);
+> > > > =C2=A0					nouveau_uvmm_bind_job_put(bind_job);
+> > > > =C2=A0					goto again;
+> > > > @@ -1038,7 +1038,7 @@ bind_validate_map_sparse(struct nouveau_job *=
+job, u64 addr, u64 range)
+> > > > =C2=A0			}
+> > > > =C2=A0		}
+> > > > =C2=A0	}
+> > > > -	spin_unlock(&sched->job_list.lock);
+> > > > +	spin_unlock(&sched->job.list.lock);
+> > > > =C2=A0}
+> > > > =C2=A0
+> > > > =C2=A0static int
+> > > > --=20
+> > > > 2.49.0
+> > > >=20
+> >=20
+
 
