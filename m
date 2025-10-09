@@ -1,143 +1,107 @@
-Return-Path: <linux-kernel+bounces-847388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8066BBCAB11
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 21:27:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C500BBCAB38
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 21:29:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D7B91A64FD3
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 19:28:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F3513B096A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 19:29:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970CE258ED4;
-	Thu,  9 Oct 2025 19:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3B3258EDE;
+	Thu,  9 Oct 2025 19:29:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fyvgJBpx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=email-od.com header.i=@email-od.com header.b="Qw5mGtVZ"
+Received: from s1-ba86.socketlabs.email-od.com (s1-ba86.socketlabs.email-od.com [142.0.186.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C6C257448;
-	Thu,  9 Oct 2025 19:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE30257458
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 19:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=142.0.186.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760038052; cv=none; b=qdZyZudVfv+WK2krSAmkt2FxwhoMdifXj4hVC0DLgy40GN7u1YXoXrTitNYTRtXC9YIh+GyaY4j9ZtLcXYqbHz4WLPS70B7PCFijHf3ePsJ1bCaBnc2QdNjG7ZxtBfhGvLlXZDI9ahpk+YhHK0TKsAyivV1EppvZ80fzeSHH2Ks=
+	t=1760038143; cv=none; b=I9IRRx1LVMBWDpD08HxHKC6SqEh3hzeSwmjwHT/BbFHAedTYcojFFSUhvMWhmCnE1Q0z7KA9n3LY4gOmH6CDqs3/sHGCxPG//8nFSqGwhcKzBU0VSOEnNgVYsSS+BGe+I6cv39QCICo/R5+xQyTTVJ+9Xvgj1wrQ+CYf+L+eSO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760038052; c=relaxed/simple;
-	bh=UTW2ZGiyy69eDiDpqlp14GE5qGdW3hytlY6efzzvicY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JA9sSKCW+ZxZ2pCcPVrHGjm51vwxEygKH4EdmEAEtVl/vbIMWl94yc5hi94GYRRcuMstqGSq/o8GOuYeS94/5qrCE/8y6PeYDsBgs1KI7tnUFPPdqwCcPj9aiKTG7nVWx4G7WNX+w+Xcw8cVyo/+uShkc9DKeZOXvaQ5XSNKeFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fyvgJBpx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F933C4CEF8;
-	Thu,  9 Oct 2025 19:27:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760038051;
-	bh=UTW2ZGiyy69eDiDpqlp14GE5qGdW3hytlY6efzzvicY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fyvgJBpxlel4K0G8hQSPenCYoEaIWjFSbfDsvJ7VOJUJPeUEjfjIE9KH0AFg8UpQX
-	 KYdWFIpvtSBqpAiKfz+hj5EU7JUbv381HsWV+3c3OUHNEV6tJBNk3aBIkgfgjDNdS0
-	 EMLmRuF2+ef4vpbpvU6w2SNUoGQwGLW5Wt+Or8G8pDb18HIW8ok+GGDBYP0DQWJ4dt
-	 H8tg2oDqzYd9t3pKCppREmF37H5xg6LT/4tC2cyKuhmfSnl40IRiQn0yxF6bwQumsv
-	 q/6CneJsie18i4SOvXwhPAu/J4atLgHsytTzL03mzc4b6UpLzxrzv2TANpM0B56VFL
-	 ZLKDidAyZ7GJA==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Linux ACPI <linux-acpi@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Mario Limonciello <mario.limonciello@amd.com>
-Subject:
- [PATCH v1 3/3] ACPI: PM: s2idle: Only retrieve constraints when needed
-Date: Thu, 09 Oct 2025 21:27:11 +0200
-Message-ID: <3027060.e9J7NaK4W3@rafael.j.wysocki>
-Organization: Linux Kernel Development
-In-Reply-To: <4699399.LvFx2qVVIh@rafael.j.wysocki>
-References: <4699399.LvFx2qVVIh@rafael.j.wysocki>
+	s=arc-20240116; t=1760038143; c=relaxed/simple;
+	bh=BqmL8qSCaK+MZ1CoMJtzzo3fv2sANfeQJJcqeOfYyUI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jGZRlei9+AwCYauGlPQKdq0ea5IVkYDxZQvGW31aoYEItV9YYXbzUUmfERpp4/zX5CmPe27cmJwZNDjQnyipwtOPBo3AU9bLikDae5mIbXQUpXVmaeMnXMvcHxH1h4K/ShoUgt7ESBURTaTrdzygYaBuoBE6vJetHb88ff3QnHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nalramli.com; spf=pass smtp.mailfrom=email-od.com; dkim=pass (1024-bit key) header.d=email-od.com header.i=@email-od.com header.b=Qw5mGtVZ; arc=none smtp.client-ip=142.0.186.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nalramli.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=email-od.com
+DKIM-Signature: v=1; a=rsa-sha256; d=email-od.com;i=@email-od.com;s=dkim;
+	c=relaxed/relaxed; q=dns/txt; t=1760038142; x=1762630142;
+	h=content-transfer-encoding:mime-version:message-id:date:subject:cc:to:from:x-thread-info:subject:to:from:cc:reply-to;
+	bh=fNeFEOfUOZVVJm8zrFxKc3lRrfCO7pVZbIyZXfxTnGs=;
+	b=Qw5mGtVZ0WcU/HtPl9DdputZxvu5k6zn6jbB1ZHqNFckEGN+N8tBS7iOsBov8BE1DI7PdeCB/Nt5gXrVpeB/Zc+mbaFlSUP3DjsIxxEtLyGrw+P0jJmxhI7wAwB+cF5ILCjgUxi3YzRa5OFCbAcNU2/YnPfrifrqJhnf6ekM7Ug=
+X-Thread-Info: NDUwNC4xMi5hNjBiZjAwMDBhZmJhZDEubGludXgta2VybmVsPXZnZXIua2VybmVsLm9yZw==
+x-xsSpam: eyJTY29yZSI6MCwiRGV0YWlscyI6bnVsbH0=
+Received: from nalramli-fst-tp.. (d4-50-191-215.clv.wideopenwest.com [50.4.215.191])
+	by nalramli.com (Postfix) with ESMTPSA id E79E42CE000D;
+	Thu,  9 Oct 2025 15:28:40 -0400 (EDT)
+From: "Nabil S. Alramli" <dev@nalramli.com>
+To: anthony.l.nguyen@intel.com,
+	przemyslaw.kitszel@intel.com
+Cc: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	hawk@kernel.org,
+	john.fastabend@gmail.com,
+	lishujin@kuaishou.com,
+	xingwanli@kuaishou.com,
+	intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	team-kernel@fastly.com,
+	khubert@fastly.com,
+	nalramli@fastly.com,
+	dev@nalramli.com
+Subject: [RFC ixgbe 0/2] ixgbe: Implement support for ndo_xdp_xmit in skb mode and fix CPU to ring assignment
+Date: Thu,  9 Oct 2025 15:28:29 -0400
+Message-ID: <20251009192831.3333763-1-dev@nalramli.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Hello Kyle,
 
-The evaluation of LPS0 _DSM Function 1 in lps0_device_attach() may be
-useless if pm_debug_messages_on is never set.
+Please take a look at this patch that I plan to submit upstream, let me
+know if you agree.
 
-For this reason, instead of evaluating it in lps0_device_attach(), do
-that in a new .begin() callback for s2idle, acpi_s2idle_begin_lps0(),
-only when pm_debug_messages_on is set at that point.
+Hello ixgbe maintainers,
 
-However, never attempt to evaluate LPS0 _DSM Function 1 more than once
-to avoid recurring failures.
+This patch is a RFC to add the ability to transmit packets using
+BPF_F_TEST_XDP_LIVE_FRAMES in skb mode to the ixgbe driver. Today this
+functionality does not exist because the ndo_xdp_xmit operation handler,
+ixgbe_xdp_xmit, expects a native XDP program in adapter->xdp_prog. This
+results in a no-op essentially. To add this support, I use the tx_ring
+instead of the xdp_ring and allocate a skb based on the xdpf, and then us=
+e
+dev_direct_xmit to queue the xdp for tansmission.
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/acpi/x86/s2idle.c |   29 +++++++++++++++++++++++------
- 1 file changed, 23 insertions(+), 6 deletions(-)
+May I get feedback on the idea and the approach in this patch?
 
---- a/drivers/acpi/x86/s2idle.c
-+++ b/drivers/acpi/x86/s2idle.c
-@@ -303,6 +303,9 @@ static void lpi_check_constraints(void)
- {
- 	struct lpi_constraints *entry;
- 
-+	if (IS_ERR_OR_NULL(lpi_constraints_table))
-+		return;
-+
- 	for_each_lpi_constraint(entry) {
- 		struct acpi_device *adev = acpi_fetch_acpi_dev(entry->handle);
- 
-@@ -484,11 +487,6 @@ static int lps0_device_attach(struct acp
- 
- 	lps0_device_handle = adev->handle;
- 
--	if (acpi_s2idle_vendor_amd())
--		lpi_device_get_constraints_amd();
--	else
--		lpi_device_get_constraints();
--
- 	/*
- 	 * Use suspend-to-idle by default if ACPI_FADT_LOW_POWER_S0 is set in
- 	 * the FADT and the default suspend mode was not set from the command
-@@ -515,6 +513,25 @@ static struct acpi_scan_handler lps0_han
- 	.attach = lps0_device_attach,
- };
- 
-+static int acpi_s2idle_begin_lps0(void)
-+{
-+	if (pm_debug_messages_on && !lpi_constraints_table) {
-+		if (acpi_s2idle_vendor_amd())
-+			lpi_device_get_constraints_amd();
-+		else
-+			lpi_device_get_constraints();
-+
-+		/*
-+		 * Try to retrieve the constraints only once because failures
-+		 * to do so usually are sticky.
-+		 */
-+		if (!lpi_constraints_table)
-+			lpi_constraints_table = ERR_PTR(-ENODATA);
-+	}
-+
-+	return acpi_s2idle_begin();
-+}
-+
- static int acpi_s2idle_prepare_late_lps0(void)
- {
- 	struct acpi_s2idle_dev_ops *handler;
-@@ -612,7 +629,7 @@ static void acpi_s2idle_restore_early_lp
- }
- 
- static const struct platform_s2idle_ops acpi_s2idle_ops_lps0 = {
--	.begin = acpi_s2idle_begin,
-+	.begin = acpi_s2idle_begin_lps0,
- 	.prepare = acpi_s2idle_prepare,
- 	.prepare_late = acpi_s2idle_prepare_late_lps0,
- 	.check = acpi_s2idle_check_lps0,
+Thank you.
 
+Nabil S. Alramli (2):
+  ixgbe: Implement support for ndo_xdp_xmit in skb mode
+  ixgbe: Fix CPU to ring assignment
 
+ drivers/net/ethernet/intel/ixgbe/ixgbe.h      | 16 +++----
+ drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 43 +++++++++++++++++--
+ 2 files changed, 47 insertions(+), 12 deletions(-)
+
+--=20
+2.43.0
 
 
