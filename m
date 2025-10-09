@@ -1,56 +1,58 @@
-Return-Path: <linux-kernel+bounces-847142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61179BCA137
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 18:15:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A6F3BCA14C
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 18:15:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 252911898F8F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 16:10:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E40A7189FD76
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 16:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D75123D7C2;
-	Thu,  9 Oct 2025 16:01:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F37F2F4A14;
+	Thu,  9 Oct 2025 16:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fzLQNVO5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fhgqtzrc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A06721C9E5;
-	Thu,  9 Oct 2025 16:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4888721C9E5;
+	Thu,  9 Oct 2025 16:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760025668; cv=none; b=pRKer0f8jNcL27qY90cpZJhwiXZq2FX9gtq2jJjwxF+mQRb4P7d0acjOEA8mz2UVzP8SeWujgz+otUwrudrIQDJEQmhYXU/bEPhoIONnbamEqCJ36tYV0yiThJ4cjCoBNJ/Fzo7eEPqeRwhyzfAzxbyAzqOWOz454VilmedOkEw=
+	t=1760025676; cv=none; b=qr9Anq8QfUHYMf3uGIWnSUjQOBavgdfvdk2E+e9dfB9gLBV4K2z5l/l0FijUaN5vHoCgbV7+A3XOVDoj/3T9V0qQUZnXCmPy074IwGbNIQZ007HPVyNw9SlzJVEw5qXIBn7uvuAtN1Nnr5fDzhVwPsrB2xAmdXdNQZEuzAMtDwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760025668; c=relaxed/simple;
-	bh=3z0/BcDLzsTC3Y1jtmjn9uELUtKN87UYlbxOkmODK98=;
+	s=arc-20240116; t=1760025676; c=relaxed/simple;
+	bh=fnycNGwfec3l+SsjOOItCXsCXGjvx0s17N4BpESMjrc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cSRKXltcdSdOZ29KZpIZ2m3kAmwnWQDxOtz3vUlyJGVsYK2mrlh8wRYea73E5LJfSxpjyyUeqPndMu6Sc3SqV0y5JiSFeHdNebfkqlWidK2+w0CFi1YSwJRs35FdhWf0YYg6bhJERnDIaQwnks+A1zj+rH2i1CxlHxuQKfdPMaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fzLQNVO5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACBE6C4CEF7;
-	Thu,  9 Oct 2025 16:01:07 +0000 (UTC)
+	 MIME-Version:Content-Type; b=drvfZ7urWj1tPFCHZ6F8WwEHGVQaVLp7Zs8UFPuHRAFT939LIyOWeEW7w/drUVwfF3xXJU3jZH3LXhu2jP5/b1FQYKG/dx5Sw+zcBVTVJRkNaCv+T3Yyk/4pI10Do7RxKMQ1s0pitEBloHoxO/XTNSBlEfA7wEnDkzAp+VslHMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fhgqtzrc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29F2AC4CEF7;
+	Thu,  9 Oct 2025 16:01:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760025668;
-	bh=3z0/BcDLzsTC3Y1jtmjn9uELUtKN87UYlbxOkmODK98=;
+	s=k20201202; t=1760025676;
+	bh=fnycNGwfec3l+SsjOOItCXsCXGjvx0s17N4BpESMjrc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fzLQNVO5+VeIEzqQmZ38KBUpLubuwnnokaGNc4ZmU7RGmoKpCEC3X6XsSQe/Wvov6
-	 FZzKEMtkdDnthSJRWvQYJ/67h7FMtcdgsPeu1KqAfM0fsAWsTlmbeM2qEj15rdwUvS
-	 XJhcwoGF2+JOYSIu8y0TrEzsrdfQ7teXfWf3i8iefyKqL9oRAhcBzyVdtu2Qw+Nuy2
-	 bM9xv41KpdYUTvKkFVSWZ+801zYGeGkM7OvnHhXNRRQY25QA80SchDYzBR41R8cHEK
-	 A39J5LUB2vo9Rcxy+lanAHqVROmJlviwP7ORYnv0r/uGlqY1aq4avMCWJ5b8gcX4BC
-	 2hUPIdDYqu7hw==
+	b=Fhgqtzrc4Gz10XKF8u866Wj9z+ZRpvHgOyL6MiSZG19WN/daY49uodHRDVzNhdHEb
+	 YBPdyFAFDdjjrrgxm+iUjdPkiRlc2hXaGCZtk4tIYw9M8Qh+lIvtepIxOG2e74xXmn
+	 +27tC4X9w3dHaXjALjUQimXZEOW0MqcMX4o9aFKoZb8aLzZfjpMRVqrPux+s/5Zlr4
+	 Hd2Xh+1uga3UzdWpx0vpEW3hufZODWbwu+wTAlO1dDtSluDSIsoPimbfDrKwG7gz74
+	 XDl0nFwn+sX4Eu2f29woJP3RT183cKcpIJEkzMIhtkPhCM2nVVnzSjDI4XtiVgxmnP
+	 VUBQfz/djNSBw==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
-	Nishanth Menon <nm@ti.com>,
+Cc: Markus Stockhausen <markus.stockhausen@gmx.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Stephen Howell <howels@allthatwemight.be>,
+	=?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
 	Sasha Levin <sashal@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.17-5.10] soc: ti: pruss: don't use %pK through printk
-Date: Thu,  9 Oct 2025 11:56:09 -0400
-Message-ID: <20251009155752.773732-103-sashal@kernel.org>
+	tglx@linutronix.de,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.17-6.12] clocksource/drivers/timer-rtl-otto: Do not interfere with interrupts
+Date: Thu,  9 Oct 2025 11:56:15 -0400
+Message-ID: <20251009155752.773732-109-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251009155752.773732-1-sashal@kernel.org>
 References: <20251009155752.773732-1-sashal@kernel.org>
@@ -66,145 +68,166 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.17.1
 Content-Transfer-Encoding: 8bit
 
-From: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+From: Markus Stockhausen <markus.stockhausen@gmx.de>
 
-[ Upstream commit a5039648f86424885aae37f03dc39bc9cb972ecb ]
+[ Upstream commit c445bffbf28f721e05d0ce06895045fc62aaff7c ]
 
-In the past %pK was preferable to %p as it would not leak raw pointer
-values into the kernel log.
-Since commit ad67b74d2469 ("printk: hash addresses printed with %p")
-the regular %p has been improved to avoid this issue.
-Furthermore, restricted pointers ("%pK") were never meant to be used
-through printk(). They can still unintentionally leak raw pointers or
-acquire sleeping locks in atomic contexts.
+During normal operation the timers are reprogrammed including an
+interrupt acknowledgement. This has no effect as the whole timer
+is setup from scratch afterwards. Especially in an interrupt this
+has already been done by rttm_timer_interrupt().
 
-Switch to the regular pointer formatting which is safer and
-easier to reason about.
+Change the behaviour as follows:
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-Link: https://lore.kernel.org/r/20250811-restricted-pointers-soc-v2-1-7af7ed993546@linutronix.de
-Signed-off-by: Nishanth Menon <nm@ti.com>
+- Use rttm_disable_timer() during reprogramming
+- Keep rttm_stop_timer() for all other use cases.
+
+Downstream has already tested and confirmed a patch. See
+https://github.com/openwrt/openwrt/pull/19468
+https://forum.openwrt.org/t/support-for-rtl838x-based-managed-switches/57875/3788
+
+Signed-off-by: Markus Stockhausen <markus.stockhausen@gmx.de>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Tested-by: Stephen Howell <howels@allthatwemight.be>
+Tested-by: Bjørn Mork <bjorn@mork.no>
+Link: https://lore.kernel.org/r/20250804080328.2609287-4-markus.stockhausen@gmx.de
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-Based on my comprehensive investigation, here is my analysis:
+YES
 
-## BACKPORT RECOMMENDATION: **YES**
+- What it fixes
+  - The driver was acknowledging the interrupt (“W1C” PENDING bit) as
+    part of routine timer reprogramming, not just in the interrupt
+    handler. That read-modify-write ack can race with new pending
+    interrupts and clear them, leading to occasional lost timer
+    interrupts. The change confines IRQ acknowledgement to the interrupt
+    handler and explicit stop/shutdown paths, preventing interference
+    with in-flight or newly arriving interrupts.
 
----
+- Exact code changes
+  - In the reprogramming paths, `rttm_stop_timer()` (which disables the
+    timer and acks the IRQ) is replaced with `rttm_disable_timer()`
+    (disable only), so the PENDING bit is no longer touched during
+    normal reprogramming:
+    - `drivers/clocksource/timer-rtl-otto.c:141-146` changes
+      reprogramming for oneshot next-event (now disable → set period →
+      start, without ack).
+    - `drivers/clocksource/timer-rtl-otto.c:153-159` changes
+      `rttm_state_oneshot()` similarly.
+    - `drivers/clocksource/timer-rtl-otto.c:166-172` changes
+      `rttm_state_periodic()` similarly.
+  - IRQ acknowledgement remains where it belongs:
+    - Interrupt handler acks before invoking the event handler:
+      `drivers/clocksource/timer-rtl-otto.c:97-106` and specifically the
+      ack helper at `drivers/clocksource/timer-rtl-otto.c:77-80`.
+    - Stop/shutdown/init paths still ack via `rttm_stop_timer()`:
+      - Shutdown: `drivers/clocksource/timer-rtl-otto.c:175-182`
+      - Setup: `drivers/clocksource/timer-rtl-otto.c:185-190`
+      - `rttm_stop_timer()` itself still does disable + ack:
+        `drivers/clocksource/timer-rtl-otto.c:125-129`.
 
-## Detailed Analysis
+- Why the original behavior is problematic
+  - The ack function is implemented as a read-modify-write to a W1C bit:
+    `ioread32(base + RTTM_INT) | RTTM_INT_PENDING` followed by a write
+    (`drivers/clocksource/timer-rtl-otto.c:77-80`). If a new interrupt
+    becomes pending between the read and the write, the write will still
+    set the PENDING bit in the value and clear it on write, effectively
+    dropping that freshly latched interrupt. Calling this sequence
+    outside the ISR (e.g., during reprogramming) can therefore interfere
+    with normal interrupt delivery.
 
-### Nature of the Change
+- Why this change is safe
+  - In-ISR reprogramming: The handler already acknowledges the interrupt
+    at entry (`drivers/clocksource/timer-rtl-otto.c:102`). Removing a
+    second ack during reprogramming eliminates a window where a new
+    pending interrupt could be inadvertently cleared.
+  - Non-ISR reprogramming: If a pending bit exists, not acking ensures
+    it will be properly handled by the ISR when it fires, rather than
+    being silently cleared by a stray reprogramming ack.
+  - Ack is still performed at shutdown/setup where it is appropriate to
+    clear stale state (`drivers/clocksource/timer-rtl-otto.c:175-190`),
+    so there is no accumulation of stale flags.
 
-This commit changes a single format specifier from `%pK` to `%p` in a
-`dev_dbg()` call at drivers/soc/ti/pruss.c:452. The line changes from:
-```c
-dev_dbg(dev, "memory %8s: pa %pa size 0x%zx va %pK\n", ...)
-```
-to:
-```c
-dev_dbg(dev, "memory %8s: pa %pa size 0x%zx va %p\n", ...)
-```
+- Context and related fixes
+  - This change is part of a small, focused series addressing timer
+    reliability on Realtek Otto platforms:
+    - “Work around dying timers” added `rttm_bounce_timer()` to avoid
+      reprogramming in a critical ~5us window before expiry (hardware
+      peculiarity) and is used directly before reprogramming in all the
+      altered paths (`drivers/clocksource/timer-rtl-otto.c:109-123` and
+      calls at 141, 154, 167).
+    - “Drop set_counter” cleaned up a no-op write to the current
+      counter.
+  - The series was tested downstream (OpenWrt) and carries multiple
+    Tested-by tags; the commit under review also notes downstream
+    confirmation.
 
-### This is a Correctness Fix, Not Just Cleanup
+- Backport considerations
+  - Scope: Single driver file; changes are three substitutions of
+    `rttm_stop_timer()` with `rttm_disable_timer()` in reprogramming
+    paths. No functional/ABI changes outside this driver.
+  - Dependencies: None strict. If a stable branch does not yet have
+    `rttm_bounce_timer()`, the underlying correctness argument for using
+    `rttm_disable_timer()` instead of `rttm_stop_timer()` during
+    reprogramming still holds. For branches already including the bounce
+    patch (as in newer stables), this applies cleanly.
+  - Risk: Low. Potential for an extra immediate interrupt if a PENDING
+    bit remained set is mitigated because the ISR acks and the
+    clockevents layer tolerates such re-entries; conversely, the change
+    removes a race that could drop interrupts, which is more severe.
 
-While it appears to be a simple cleanup, **this is actually a bug fix**
-that prevents sleeping-in-atomic-context issues:
+- Stable policy fit
+  - Fixes a real bug affecting users (lost or interfered interrupts on
+    rtl-otto platforms).
+  - Small, contained, and without architectural changes.
+  - Confined to `drivers/clocksource/timer-rtl-otto.c`.
+  - Already tested downstream and reviewed/merged upstream (commit
+    c445bffbf28f7).
+  - While there is no explicit “Cc: stable” in the commit message, the
+    change meets stable backport criteria and aligns with the prior
+    reliability fix series for this driver.
 
-1. **The %pK Implementation Problem** (lib/vsprintf.c:860-904):
-   - When `kptr_restrict=1`, `%pK` calls `current_cred()` and
-     `has_capability_noaudit()`
-   - These functions can acquire sleeping locks
-   - In IRQ context (hardirq, softirq, NMI), `%pK` simply returns "pK-
-     error" - a useless output
-   - The commit message explicitly states: "%pK can still
-     unintentionally leak raw pointers or acquire sleeping locks in
-     atomic contexts"
+Conclusion: Backporting this patch reduces the risk of lost timer
+interrupts by avoiding unnecessary and racy IRQ acknowledgements during
+reprogramming, with minimal regression risk and limited scope.
 
-2. **Why %p is Superior**:
-   - Since commit ad67b74d2469 (November 2017), `%p` hashes addresses by
-     default
-   - `%p` never sleeps, never acquires locks, always safe in any context
-   - Provides equivalent security without the correctness issues
+ drivers/clocksource/timer-rtl-otto.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-### Evidence Supporting Backporting
-
-1. **Part of Tree-Wide Cleanup**: This is one of 60+ similar commits by
-   Thomas Weißschuh addressing the same issue across the kernel
-
-2. **Similar Commits Already Backported**:
-   - BPF subsystem fix (2caa6b88e0ba → c2f48cb89b76f) - already
-     backported
-   - LoongArch unwinder fixes - backported to multiple stable trees
-   - Multiple driver subsystems receiving the same fix
-
-3. **Already Backported to This Tree**: Commit 126ca37f56175 shows this
-   exact fix has already been backported to the 6.17 stable tree
-   (visible in remotes/build/linus-next branch)
-
-4. **Recent Upstream Commit**: Authored August 11, 2025, targeting v6.18
-   kernel
-
-### Stable Kernel Criteria Assessment
-
-✅ **Fixes important bug**: Prevents potential sleeping-in-atomic-context
-bugs
-✅ **Small and contained**: Single character change in one debug
-statement
-✅ **Obvious and correct**: Clear technical rationale, well-documented
-issue
-✅ **No side effects**: Debug output will still show pointer (hashed),
-just safer
-✅ **No architectural changes**: Pure format specifier fix
-✅ **Minimal regression risk**: Cannot break functionality, only changes
-debug output format
-✅ **Non-critical subsystem**: TI PRUSS driver is SoC-specific, not core
-kernel
-
-### Why This Matters
-
-While `dev_dbg()` in the PRUSS driver setup path is unlikely to be
-called from atomic context in normal operation, this fix:
-
-1. **Prevents future bugs** if code paths change
-2. **Follows kernel hardening best practices**
-3. **Part of systematic kernel-wide improvement**
-4. **Eliminates a potential security issue** (raw pointer leaks when
-   CAP_SYSLOG present)
-5. **Zero cost** - no performance impact, no behavior change except
-   safer
-
-### Conclusion
-
-This is a **defensive correctness fix** with zero regression risk. It
-prevents a class of bugs (sleeping-in-atomic-context), improves security
-(consistent address hashing), and aligns with ongoing kernel hardening
-efforts. The fact that similar commits are actively being backported to
-stable trees, and this specific commit has already been backported to
-6.17, strongly supports backporting.
-
-**Backport Status: YES** - This commit should be backported to stable
-kernel trees.
-
- drivers/soc/ti/pruss.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/soc/ti/pruss.c b/drivers/soc/ti/pruss.c
-index d7634bf5413a3..038576805bfa0 100644
---- a/drivers/soc/ti/pruss.c
-+++ b/drivers/soc/ti/pruss.c
-@@ -449,7 +449,7 @@ static int pruss_of_setup_memories(struct device *dev, struct pruss *pruss)
- 		pruss->mem_regions[i].pa = res.start;
- 		pruss->mem_regions[i].size = resource_size(&res);
+diff --git a/drivers/clocksource/timer-rtl-otto.c b/drivers/clocksource/timer-rtl-otto.c
+index 8be45a11fb8b6..24c4aa6a30131 100644
+--- a/drivers/clocksource/timer-rtl-otto.c
++++ b/drivers/clocksource/timer-rtl-otto.c
+@@ -147,7 +147,7 @@ static int rttm_next_event(unsigned long delta, struct clock_event_device *clkev
  
--		dev_dbg(dev, "memory %8s: pa %pa size 0x%zx va %pK\n",
-+		dev_dbg(dev, "memory %8s: pa %pa size 0x%zx va %p\n",
- 			mem_names[i], &pruss->mem_regions[i].pa,
- 			pruss->mem_regions[i].size, pruss->mem_regions[i].va);
- 	}
+ 	RTTM_DEBUG(to->of_base.base);
+ 	rttm_bounce_timer(to->of_base.base, RTTM_CTRL_COUNTER);
+-	rttm_stop_timer(to->of_base.base);
++	rttm_disable_timer(to->of_base.base);
+ 	rttm_set_period(to->of_base.base, delta);
+ 	rttm_start_timer(to, RTTM_CTRL_COUNTER);
+ 
+@@ -160,7 +160,7 @@ static int rttm_state_oneshot(struct clock_event_device *clkevt)
+ 
+ 	RTTM_DEBUG(to->of_base.base);
+ 	rttm_bounce_timer(to->of_base.base, RTTM_CTRL_COUNTER);
+-	rttm_stop_timer(to->of_base.base);
++	rttm_disable_timer(to->of_base.base);
+ 	rttm_set_period(to->of_base.base, RTTM_TICKS_PER_SEC / HZ);
+ 	rttm_start_timer(to, RTTM_CTRL_COUNTER);
+ 
+@@ -173,7 +173,7 @@ static int rttm_state_periodic(struct clock_event_device *clkevt)
+ 
+ 	RTTM_DEBUG(to->of_base.base);
+ 	rttm_bounce_timer(to->of_base.base, RTTM_CTRL_TIMER);
+-	rttm_stop_timer(to->of_base.base);
++	rttm_disable_timer(to->of_base.base);
+ 	rttm_set_period(to->of_base.base, RTTM_TICKS_PER_SEC / HZ);
+ 	rttm_start_timer(to, RTTM_CTRL_TIMER);
+ 
 -- 
 2.51.0
 
