@@ -1,133 +1,100 @@
-Return-Path: <linux-kernel+bounces-847429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A177BCACED
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 22:29:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C5E0BCAD32
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 22:44:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 690CB483589
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 20:29:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AFCB74EC599
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 20:44:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AAA927056B;
-	Thu,  9 Oct 2025 20:29:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A6D2727F3;
+	Thu,  9 Oct 2025 20:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=email-od.com header.i=@email-od.com header.b="UPhAAN5n"
-Received: from s1-ba86.socketlabs.email-od.com (s1-ba86.socketlabs.email-od.com [142.0.186.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o8ZnwI4F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E47272E72
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 20:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=142.0.186.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69E51632DD;
+	Thu,  9 Oct 2025 20:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760041754; cv=none; b=hgYnt80eAxT/inOa1URybGE8/yrkWiie/LuaDkRlvq2SLpgDt2OX1nqbjkAYpZVz83ySyniVaOivMshTB6ha/wTdCJDzKOKLJ3qDwyPbLU2SHyV2JlQbGyz3MIklIuRM8nF9A17B11IeUOejrxA0en+Tug16URnWmahS18wbR1s=
+	t=1760042643; cv=none; b=hS3VfURmQo2YaNHLMaeO+UxHrzG3DQnYWkngTyrUYz041skvooqVku/GdRl1wmmXKXKJUYz2Jto6b1SfAkuBnhrVgeIywSso/b53+JtB9b+7YYvJwYAtNdQlqpQrp6WqssyqQ+3lnEDKqZPPlM3DjCZ6mzWVYKZhvkgNkOofjNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760041754; c=relaxed/simple;
-	bh=RX1K5KPSFGA72/LrpHxaAbZJRQpoejZVuU8GJ1Oylko=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p7alukCAeZXs3dngX8wj2E1+/7lvTMBzY7t3MwHHKp1nsT/Vk2YP9Argweippytq5b0WiAM8SXtaJGAqYYC/ulTMurys35rn2S9P+HYkMKpOfshLVHqAEjh3tlOeRvmtFr1CDhT1fqDrvvKBYr0eD861k5MIgRwE/RuD6dyoR9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nalramli.com; spf=pass smtp.mailfrom=email-od.com; dkim=pass (1024-bit key) header.d=email-od.com header.i=@email-od.com header.b=UPhAAN5n; arc=none smtp.client-ip=142.0.186.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nalramli.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=email-od.com
-DKIM-Signature: v=1; a=rsa-sha256; d=email-od.com;i=@email-od.com;s=dkim;
-	c=relaxed/relaxed; q=dns/txt; t=1760041754; x=1762633754;
-	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:subject:cc:to:from:x-thread-info:subject:to:from:cc:reply-to;
-	bh=ofx1rW2+30KvORCW7saFUEf3E1N+8nsWWjpSDi6TtgA=;
-	b=UPhAAN5niKmPkfQG4AaL/fcvthLN0a96KoFKCZ3YSXEZFjKf4P1v2EIEaps6qb4LmItHTM7BnRcYXwf8H2jiI9HPxWX42/ShzXTanjOLyqeQBH36UC6w6g1xyUxxd0qddtOoKdUT3hk5gtCCQeC1+JNTkBjeaZDVv225/pPCGtY=
-X-Thread-Info: NDUwNC4xMi43MGEyMTAwMDBiMDc0NjgubGludXgta2VybmVsPXZnZXIua2VybmVsLm9yZw==
-x-xsSpam: eyJTY29yZSI6MCwiRGV0YWlscyI6bnVsbH0=
-Received: from nalramli-fst-tp.. (d4-50-191-215.clv.wideopenwest.com [50.4.215.191])
-	by nalramli.com (Postfix) with ESMTPSA id 2AA012CE05A3;
-	Thu,  9 Oct 2025 15:28:41 -0400 (EDT)
-From: "Nabil S. Alramli" <dev@nalramli.com>
-To: anthony.l.nguyen@intel.com,
-	przemyslaw.kitszel@intel.com
-Cc: andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	hawk@kernel.org,
-	john.fastabend@gmail.com,
-	lishujin@kuaishou.com,
-	xingwanli@kuaishou.com,
-	intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	team-kernel@fastly.com,
-	khubert@fastly.com,
-	nalramli@fastly.com,
-	dev@nalramli.com
-Subject: [RFC ixgbe 2/2] ixgbe: Fix CPU to ring assignment
-Date: Thu,  9 Oct 2025 15:28:31 -0400
-Message-ID: <20251009192831.3333763-3-dev@nalramli.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251009192831.3333763-1-dev@nalramli.com>
-References: <20251009192831.3333763-1-dev@nalramli.com>
+	s=arc-20240116; t=1760042643; c=relaxed/simple;
+	bh=7/U1V566gKFb1vf2ntgi11mlitYm6aRNje2qf/ILaG8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oB/xWnmvlqOYvd6PZfhtKjjFwzuoF34G76yWaBnY9KTpnQs6s20+XIfw1GOkeJas/2N11lVqtvfiKTtcUy6WQLquWtWPx/JPIILVhkMZR2engqXM0O2glKW/Cno9QkFb/nKYMGk+TT0Ayg5ChXQOeg0nnwwSuAfltLd+QVAhpcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o8ZnwI4F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC9E5C4CEE7;
+	Thu,  9 Oct 2025 20:44:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760042643;
+	bh=7/U1V566gKFb1vf2ntgi11mlitYm6aRNje2qf/ILaG8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o8ZnwI4FcSI82oYE36no4cgXvY3zMYCJTz1pXXyMZmPwrpHFNn3WInBfZY2qRGAdj
+	 O/ZZm8OzBuDG4GN7dIUzk5Wc/fBr+2wiCLKv55znlbIOMKtnKZ+40FrUNd2zq7NvMl
+	 3lmL2pY+r+f5o4OTICmeKJ5IPsateFBSUxyh86WBPmKVDx4CJO2BhTXIYkEQG2MAv+
+	 xcaqGsNoZjWivGHGOJ09w3r93lDjh6HDNztXqoSvMBgoI/Y8ajrLOwDIQyf91AciX5
+	 vx+nDa78L67xtjJsS0lOxKco+yxTk6OUYM2v/U+wHTyqDwK8FI5undZtswitfNG0Ct
+	 HUsjXszmSQB+w==
+Date: Thu, 9 Oct 2025 21:44:26 +0200
+From: Nicolas Schier <nsc@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Alexey Gladkov <legion@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Linux Kernel Functional Testing <lkft@linaro.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org
+Subject: Re: [PATCH 0/3] kbuild: Fixes for fallout from recent
+ modules.builtin.modinfo series
+Message-ID: <aOgQmiPwkbkFTWZr@levanger>
+References: <20251008-kbuild-fix-modinfo-regressions-v1-0-9fc776c5887c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251008-kbuild-fix-modinfo-regressions-v1-0-9fc776c5887c@kernel.org>
 
-The ixgbe driver uses ixgbe_determine_*_ring to determine the CPU mapping
-of transmit rings. Those helper functions have a hard-coded number of
-rings equal to IXGBE_MAX_XDP_QS, which is set to 64. However, this does
-not take into account the number of actual rings configured, which could
-be lower. This results in NULL being returned, if the modulus operation
-falls into a ring that is not configured. Instead, use the actual number
-of configured rings.
+On Wed, Oct 08, 2025 at 03:46:43PM -0700, Nathan Chancellor wrote:
+> Hi all,
+> 
+> This is a series to address some problems that were exposed by the
+> recent modules.builtin.modinfo series that landed in commit c7d3dd9163e6
+> ("Merge patch series "Add generated modalias to
+> modules.builtin.modinfo"").
+> 
+> The third patch is not directly related to the aforementioned series, as
+> the warning it fixes happens prior to the series but commit 8d18ef04f940
+> ("s390: vmlinux.lds.S: Reorder sections") from the series creates
+> conflicts in this area, so I included it here.
+> 
+> I plan to send at least the first two patches to Linus by Saturday for
+> -rc1 but I will take the third with an Ack.
+> 
+> ---
+> Nathan Chancellor (3):
+>       kbuild: Restore pattern to avoid stripping .rela.dyn from vmlinux
+>       kbuild: Add '.rel.*' strip pattern for vmlinux
+>       s390/vmlinux.lds.S: Move .vmlinux.info to end of allocatable sections
+> 
+>  arch/s390/kernel/vmlinux.lds.S | 44 +++++++++++++++++++++---------------------
+>  scripts/Makefile.vmlinux       |  5 ++++-
+>  2 files changed, 26 insertions(+), 23 deletions(-)
 
-Signed-off-by: Nabil S. Alramli <dev@nalramli.com>
-Fixes: 4fe815850bdc ("ixgbe: let the xdpdrv work with more than 64 cpus")
----
- drivers/net/ethernet/intel/ixgbe/ixgbe.h | 12 ++----------
- 1 file changed, 2 insertions(+), 10 deletions(-)
+Thanks!
 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe.h b/drivers/net/ether=
-net/intel/ixgbe/ixgbe.h
-index 26c378853755..e2c09545bad1 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe.h
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe.h
-@@ -830,18 +830,10 @@ struct ixgbe_adapter {
- 	spinlock_t vfs_lock;
- };
-=20
--static inline int ixgbe_determine_xdp_q_idx(int cpu)
--{
--	if (static_key_enabled(&ixgbe_xdp_locking_key))
--		return cpu % IXGBE_MAX_XDP_QS;
--	else
--		return cpu;
--}
--
- static inline
- struct ixgbe_ring *ixgbe_determine_xdp_ring(struct ixgbe_adapter *adapte=
-r)
- {
--	int index =3D ixgbe_determine_xdp_q_idx(smp_processor_id());
-+	int index =3D smp_processor_id() % adapter->num_xdp_queues;
-=20
- 	return adapter->xdp_ring[index];
- }
-@@ -849,7 +841,7 @@ struct ixgbe_ring *ixgbe_determine_xdp_ring(struct ix=
-gbe_adapter *adapter)
- static inline
- struct ixgbe_ring *ixgbe_determine_tx_ring(struct ixgbe_adapter *adapter=
-)
- {
--	int index =3D ixgbe_determine_xdp_q_idx(smp_processor_id());
-+	int index =3D smp_processor_id() % adapter->num_tx_queues;
-=20
- 	return adapter->tx_ring[index];
- }
---=20
-2.43.0
-
+Acked-by: Nicolas Schier <nsc@kernel.org>
 
