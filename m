@@ -1,167 +1,157 @@
-Return-Path: <linux-kernel+bounces-846871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44CCABC94C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:28:47 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BE0BBC94C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:29:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D53DE35230C
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:28:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ABA114E5BB5
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D8B2E8B93;
-	Thu,  9 Oct 2025 13:28:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A8B2E8B7F;
+	Thu,  9 Oct 2025 13:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T3uiTcGJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ged5pxMR"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02672E88A7;
-	Thu,  9 Oct 2025 13:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8267F2E2280
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760016518; cv=none; b=IWHAxgjH9Ne1jPbzsr0G9BpkzWkzBPKhKJBc7kbQZfzH3IbE1mOSHcVQblKNb0I/PRC2g2JtHdL2nJvyPPEBvch6PTOqvHYNq1G7i41+GLE4+Rb68dwumBbvm3Q9z5J9Rj7htn4hmgxW6KaAfRpVvCwnGeKz7kovmkzL8v0IQRQ=
+	t=1760016561; cv=none; b=CoX1tMzPsJtYvw6beeeOv1o+dEN0IUQPqt1L5irPXPI4S6URc/H1xQ2QpHKXPhYFf33tMiuqA/pht+896fGygiiridCTvf9oLEDBjhTODd73xmw55T+qQ+CWAOxqeCgXNIsc0rNwEaIO3QNSCwFuT0lpJ5P5ke3z5z5rsOk7Oko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760016518; c=relaxed/simple;
-	bh=o4bOSB/+LmL3jiEYvJGq1i0H1UJYSLiq5TkwNmGyVWk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A8tdXLOkg2CO/2hUc7cKD7owZGHIjnmxFcXYe5+vgT1GOJAEqe5RJMpaDa27OuA3ei4C7wSZtAHdOQ2RrRxadyk7cSxRmUhZaR7KHW3y8ldNsC52LA5gTA9/JTePHJSPKHk5mZ8iC2Wjjz10K3PLe55W2I7vZHEfZTD1FQT0o/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T3uiTcGJ; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760016517; x=1791552517;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=o4bOSB/+LmL3jiEYvJGq1i0H1UJYSLiq5TkwNmGyVWk=;
-  b=T3uiTcGJcAaQOliBVSRV5JNnlrYfm72Q3bZ5QGWef/lI6l46n6K2CRS+
-   OocezQQzSchi4joHUK1vU34gCZy5QTa9EzNXgVrcm46YY2nxhGopaHyWA
-   PpLFtvl1yavNlP22CMrWmNVtQlQ0AsCCnoxlFXiNf+TJsJYir+SXqIivU
-   Oc+u4VfD5tFFOf5oy572Ei2fb/Ac6+J7O4f0yfMEVtf/+gePJPdMdh4KT
-   dsX5ste2FDgzWErdpNy5XGi35G3Kk6IWKrCAHNG8QguivTTLe4hG6bwHk
-   Ls+7ntjGfmT530jH7IBldkDbpzTirY2R/v6O/wpi5Zs4/m/sBmef5zMB7
-   A==;
-X-CSE-ConnectionGUID: 7EdPjh9vRNeHsYxYglXTyA==
-X-CSE-MsgGUID: TaminGw6T5+7cvKWzNXXtg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="73569318"
-X-IronPort-AV: E=Sophos;i="6.19,216,1754982000"; 
-   d="scan'208";a="73569318"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 06:28:36 -0700
-X-CSE-ConnectionGUID: 9ig6yzJtTZayI+GRcxyPHw==
-X-CSE-MsgGUID: MuHFL17ySmGqK2g9YhC6AA==
-X-ExtLoop1: 1
-Received: from lkp-server01.sh.intel.com (HELO 6a630e8620ab) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 09 Oct 2025 06:28:32 -0700
-Received: from kbuild by 6a630e8620ab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v6qh4-0000kF-0e;
-	Thu, 09 Oct 2025 13:28:30 +0000
-Date: Thu, 9 Oct 2025 21:28:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: Shrikant Raskar <raskar.shree97@gmail.com>, jic23@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, dlechner@baylibre.com,
-	nuno.sa@analog.com, andy@kernel.org, matt@ranostay.sg,
-	skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev,
-	Shrikant Raskar <raskar.shree97@gmail.com>
-Subject: Re: [PATCH 2/2] iio: health: max30100: Add pulse-width configuration
- via DT
-Message-ID: <202510092124.rc01eF4I-lkp@intel.com>
-References: <20251004015623.7019-3-raskar.shree97@gmail.com>
+	s=arc-20240116; t=1760016561; c=relaxed/simple;
+	bh=F04HxWzDm/pjovjMWYNweIL92Azt+kQc7Q1+4Lm96So=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=mUYjmWu48HFds3wTjzzGokmp1P/e+wyR3Lu3y75rdeI05OY6uxfmD1EHnhMyLS79D0Buh8I+DpFWGpXGZV574svPwqkbyPDXYvI4RFZTDATSc9gvmNIMy2fNq3GDdFR0t6LEna4LhxedRJ+xYN8fzaNIWv3FSAAnwrttrwjdCyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ged5pxMR; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-780fdbbdd20so1340633b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 06:29:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1760016559; x=1760621359; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=czSuGa3Xrx5+Hnp2HdUeEuGq/5HbxJTVy8tEzAMc4TI=;
+        b=ged5pxMRO9fixIY5x+mf6Ld+SjRbMXamm05Wwh07KmSfj00xmrPAUmEJpI64CrX8EG
+         GCw9c6wPmK7SUNoXbN2xnwYdHg93Akx+McnzvS9k4gz8gFcNuXjUfuf1mm50yaSR13av
+         ZenYf5nYotYq7m093O8dM4k6h20XRf967DQtxTlVuYSU8VTo+hpHx7tRJnpq8lu6gmPs
+         wyigNjxAoHfMON6XE++2PQUkl0wL1I09CKsmOwOJVp1w+/Z/iK7wzdXHorJNU3s2CrW8
+         4wn6B9/vo+sFnqYJ2BzvhEN2ZCVKdZDSrzZ0iRGZtpIwgWYFUX6y707tSlt/rFW4RMrT
+         e/PA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760016559; x=1760621359;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=czSuGa3Xrx5+Hnp2HdUeEuGq/5HbxJTVy8tEzAMc4TI=;
+        b=DHUiR06uTsTL/Zlv4SwKO3ma/UuBorTTPjp1Xg8WeLd9QE/QCAqGkFRqhRTe+yq7DR
+         2NsSMEL3Vr83IbmjP89B7DWcab4FS12iMSE2/qKWbzebPQy2lIqfRzbQEUVxv1HV0//K
+         auM5oR2PlgapupWhofCvjI1JGsL4+Wbz5hudybZRbVVwsJVWzeJnBUZL9+KtrcjgOqNW
+         VegTCM1xe9a1puoG/hFgHXM95WwxwPYNR97weVM4HLbHji5UKdHS1Np2ttgvUrFVYmlv
+         M/Pbo1klAcPUhRyYllgUY+hvzZwa4AwBx6W33oeKvGSaif9myF/d507qCO474kVwn+8c
+         kcvg==
+X-Forwarded-Encrypted: i=1; AJvYcCUp3tKv7yQN3eekxR1DWyvziOwHO4tgoDVeN9ueBhLWDctCOUzX/uEGD3dQgTazC9+32SS/8XbLvcXmdl8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKs7bUi2zgtQ5eRuxgXDHC/O6OAyOkl8OS7jHnsH8xQBfArVLD
+	+XDvbVO1SMYcccaOCtCM6bCJWtdMqrCDfRh66/7f2LZTPwB4VZgS+43DFERGsUAsnlVbGD0qM+D
+	pkzyu95BFRQ==
+X-Google-Smtp-Source: AGHT+IHfxqv166X4AUPtM/17tlCxKQ3yjpMASPUTxGYK8qeTy43As53cuJcW6JVnrubxiY9FmqCIlEi281mW
+X-Received: from pjblt3.prod.google.com ([2002:a17:90b:3543:b0:33b:51fe:1a7e])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:6a0b:b0:2ee:e2ea:7a23
+ with SMTP id adf61e73a8af0-32da85103f1mr10724900637.46.1760016558758; Thu, 09
+ Oct 2025 06:29:18 -0700 (PDT)
+Date: Thu,  9 Oct 2025 06:29:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251004015623.7019-3-raskar.shree97@gmail.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.710.ga91ca5db03-goog
+Message-ID: <20251009132912.141116-1-irogers@google.com>
+Subject: [PATCH v3] perf bpf_counter: Fix opening of "any"(-1) CPU events
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Tengda Wu <wutengda@huaweicloud.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Shrikant,
+The bperf BPF counter code doesn't handle "any"(-1) CPU events, always
+wanting to aggregate a count against a CPU, which avoids the need for
+atomics so let's not change that. Force evsels used for BPF counters
+to require a CPU when not in system-wide mode so that the "any"(-1)
+value isn't used during map propagation and evsel's CPU map matches
+that of the PMU.
 
-kernel test robot noticed the following build warnings:
+Fixes: b91917c0c6fa ("perf bpf_counter: Fix handling of cpumap fixing hybrid")
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/builtin-stat.c     | 13 +++++++++++++
+ tools/perf/util/bpf_counter.c |  7 ++++++-
+ 2 files changed, 19 insertions(+), 1 deletion(-)
 
-[auto build test WARNING on jic23-iio/togreg]
-[also build test WARNING on robh/for-next linus/master v6.17 next-20251008]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Shrikant-Raskar/dt-bindings-iio-max30100-Add-pulse-width-property/20251004-095849
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-patch link:    https://lore.kernel.org/r/20251004015623.7019-3-raskar.shree97%40gmail.com
-patch subject: [PATCH 2/2] iio: health: max30100: Add pulse-width configuration via DT
-config: arm-randconfig-r073-20251004 (https://download.01.org/0day-ci/archive/20251009/202510092124.rc01eF4I-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 8.5.0
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510092124.rc01eF4I-lkp@intel.com/
-
-smatch warnings:
-drivers/iio/health/max30100.c:346 max30100_chip_init() warn: unsigned 'pulse_width' is never less than zero.
-drivers/iio/health/max30100.c:346 max30100_chip_init() warn: error code type promoted to positive: 'pulse_width'
-
-vim +/pulse_width +346 drivers/iio/health/max30100.c
-
-   326	
-   327	static int max30100_chip_init(struct max30100_data *data)
-   328	{
-   329		int ret;
-   330		unsigned int pulse_us;
-   331		unsigned int pulse_width;
-   332		struct device *dev = &data->client->dev;
-   333	
-   334		/* setup LED current settings */
-   335		ret = max30100_led_init(data);
-   336		if (ret)
-   337			return ret;
-   338	
-   339		/* Get pulse width from DT, default = 1600us */
-   340		ret = device_property_read_u32(dev, "maxim,pulse-width", &pulse_us);
-   341		if (ret) {
-   342			dev_warn(dev, "no pulse-width defined, defaulting to 1600us\n");
-   343			pulse_width = MAX30100_REG_SPO2_CONFIG_1600US;
-   344		} else {
-   345			pulse_width = max30100_get_pulse_width(pulse_us);
- > 346			if (pulse_width < 0) {
-   347				dev_err(dev, "invalid pulse-width %u\n", pulse_us);
-   348				return pulse_width;
-   349			}
-   350		}
-   351	
-   352		/* enable hi-res SPO2 readings at 100Hz */
-   353		ret = regmap_write(data->regmap, MAX30100_REG_SPO2_CONFIG,
-   354					 MAX30100_REG_SPO2_CONFIG_HI_RES_EN |
-   355					 MAX30100_REG_SPO2_CONFIG_100HZ |
-   356					 pulse_width);
-   357		if (ret)
-   358			return ret;
-   359	
-   360		/* enable SPO2 mode */
-   361		ret = regmap_update_bits(data->regmap, MAX30100_REG_MODE_CONFIG,
-   362					 MAX30100_REG_MODE_CONFIG_MODE_MASK,
-   363					 MAX30100_REG_MODE_CONFIG_MODE_HR_EN |
-   364					 MAX30100_REG_MODE_CONFIG_MODE_SPO2_EN);
-   365		if (ret)
-   366			return ret;
-   367	
-   368		/* enable FIFO interrupt */
-   369		return regmap_update_bits(data->regmap, MAX30100_REG_INT_ENABLE,
-   370					 MAX30100_REG_INT_ENABLE_MASK,
-   371					 MAX30100_REG_INT_ENABLE_FIFO_EN
-   372					 << MAX30100_REG_INT_ENABLE_MASK_SHIFT);
-   373	}
-   374	
-
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index 7006f848f87a..f1c9d6c94fc5 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -2540,6 +2540,7 @@ int cmd_stat(int argc, const char **argv)
+ 	unsigned int interval, timeout;
+ 	const char * const stat_subcommands[] = { "record", "report" };
+ 	char errbuf[BUFSIZ];
++	struct evsel *counter;
+ 
+ 	setlocale(LC_ALL, "");
+ 
+@@ -2797,6 +2798,18 @@ int cmd_stat(int argc, const char **argv)
+ 
+ 	evlist__warn_user_requested_cpus(evsel_list, target.cpu_list);
+ 
++	evlist__for_each_entry(evsel_list, counter) {
++		/*
++		 * Setup BPF counters to require CPUs as any(-1) isn't
++		 * supported. evlist__create_maps below will propagate this
++		 * information to the evsels. Note, evsel__is_bperf isn't yet
++		 * set up, and this change must happen early, so directly use
++		 * the bpf_counter variable and target information.
++		 */
++		if ((counter->bpf_counter || target.use_bpf) && !target__has_cpu(&target))
++			counter->core.requires_cpu = true;
++	}
++
+ 	if (evlist__create_maps(evsel_list, &target) < 0) {
+ 		if (target__has_task(&target)) {
+ 			pr_err("Problems finding threads of monitor\n");
+diff --git a/tools/perf/util/bpf_counter.c b/tools/perf/util/bpf_counter.c
+index ca5d01b9017d..a5882b582205 100644
+--- a/tools/perf/util/bpf_counter.c
++++ b/tools/perf/util/bpf_counter.c
+@@ -460,6 +460,7 @@ static int bperf_reload_leader_program(struct evsel *evsel, int attr_map_fd,
+ 	struct bperf_leader_bpf *skel = bperf_leader_bpf__open();
+ 	int link_fd, diff_map_fd, err;
+ 	struct bpf_link *link = NULL;
++	struct perf_thread_map *threads;
+ 
+ 	if (!skel) {
+ 		pr_err("Failed to open leader skeleton\n");
+@@ -495,7 +496,11 @@ static int bperf_reload_leader_program(struct evsel *evsel, int attr_map_fd,
+ 	 * following evsel__open_per_cpu call
+ 	 */
+ 	evsel->leader_skel = skel;
+-	evsel__open(evsel, evsel->core.cpus, evsel->core.threads);
++	assert(!perf_cpu_map__has_any_cpu_or_is_empty(evsel->core.cpus));
++	/* Always open system wide. */
++	threads = thread_map__new_by_tid(-1);
++	evsel__open(evsel, evsel->core.cpus, threads);
++	perf_thread_map__put(threads);
+ 
+ out:
+ 	bperf_leader_bpf__destroy(skel);
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.51.0.710.ga91ca5db03-goog
+
 
