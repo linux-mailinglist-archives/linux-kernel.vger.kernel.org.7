@@ -1,182 +1,151 @@
-Return-Path: <linux-kernel+bounces-846190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 084A9BC73EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 04:53:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 477ABBC73F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 04:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E550A19E39C8
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 02:53:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 506EB19E362A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 02:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1101DA61B;
-	Thu,  9 Oct 2025 02:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192391C3306;
+	Thu,  9 Oct 2025 02:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SDxpMq/O"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F2YBtp+H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37A7147C9B;
-	Thu,  9 Oct 2025 02:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73DCF15D1
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 02:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759978387; cv=none; b=ttVkMGi4pERP17IOnQac+RoFCM4F3ZIc8I8THzOxCRclgvjM910tTRAZk8GPIidy6w9RsdTTA1jLYaj3mhT9vXeRC2Am+S3DRDOCkIfnaAxZWi01slRsi8AHVvSuud/k8JKV+O9S1myTqwIHkCr6uNJCfNq++lmRl+qWjINVsQM=
+	t=1759978480; cv=none; b=rZLsF23ZQyHv5SgKHFxLnKqY73JJb0QTLC65QJPc8bp31B9FOSRv6Y4vi2i7UfGvhbEylqRWMPMLNbEE9ewomA9nlBP/+7GxyEcvJhax3sItARm4+8hFQOAEaeGWVp28GaFbVBI7CUl/woQeai0MWd8jcdMk2wCFlzlt5DphKrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759978387; c=relaxed/simple;
-	bh=PZkP2iwejsibDir07G4hGghuPvQs2LumiFFkm7qI4Ao=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FY/A0JUWxTSn5cZLg+7n5t3eNLDXN08ZISe9zMpUpLQ1MrPk2CGWYuZiMsHVbwS7yRtCosaWCCsujWeS358aHbiCNOM1CrC+duY5nboIwl2TYtklQi1tDVcVH8FMT2vTBHuF0kPXPmHBqHYW1xlFndPReZhoFANpo3imQsVd7SE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SDxpMq/O; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 598I5G18004415;
-	Thu, 9 Oct 2025 02:52:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Gtfn0roKHYaEpWWdUwjuUbhlnlojITr0mf1GX/TDhOE=; b=SDxpMq/O23qlJwNc
-	yu2AlMGFaeTL+dgyTQcp6A3sC99jR4HhLzNqSesc0azLVS3yAVpEwQ/s1fuPGpP4
-	4jG4Wkn5W92NoxD4Pwz9V4TmtwMmqqA4i3ZUDFg0EuJ6vqV8IggqHCDjkjZCobp9
-	75Mz7gnuGWHtrA5iCpj+XI4hKLz7WD8U2IlyFPU0UhRqACBF0mZOFYdrcDqeutXo
-	ZrpeCGtTUKiKguxRi/NIBAZ18AirZiU86V27OvPVMVolNkfC9CFbWO4s+dBUwI/N
-	oOqlStUNGqn2LtuuiDnOx0/pb6xUkVog3G5U3iygmy+SLjuvJ7Ed5fU4HdDwWZ1d
-	TzHPDQ==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv4ks7p2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 09 Oct 2025 02:52:50 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5992qnQT024105
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 9 Oct 2025 02:52:49 GMT
-Received: from [10.216.44.193] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Wed, 8 Oct
- 2025 19:52:44 -0700
-Message-ID: <0c0b6491-1def-d055-b689-2bb99f4306df@quicinc.com>
-Date: Thu, 9 Oct 2025 08:22:41 +0530
+	s=arc-20240116; t=1759978480; c=relaxed/simple;
+	bh=kU5PxDxBp1d0PsDmsVzbq+Nz2rncNHm3ujLYt76sjLY=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=N+2Gx/VoYRiZASUx6zeLrII0GPxFHt7nHJpPMHPgctRlE2MlF0O8AQ9kZCDE7+g/V10R0vPu/o7Kw6ZSvRjihUAtUc8Wmd6Wr9m+SrDasWQAyxgQJVPNFCvO8OCTPZmogFABqyxZ/zQj842XYHTEd19gY033CXXtB8nDgqkE4/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F2YBtp+H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20C88C4CEE7;
+	Thu,  9 Oct 2025 02:54:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759978479;
+	bh=kU5PxDxBp1d0PsDmsVzbq+Nz2rncNHm3ujLYt76sjLY=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=F2YBtp+Hr7oeHB53LuWJDS2ZGtvsB+33yOPbkCZnPdlGUCr+7nl13LNGL7JLJrANq
+	 /HN03mDlHraJQe0zByt9dNNuT/AhAw3P9ekE+/bTkWCXcehaHinwvM8WrS9Ys1SfRy
+	 VAGQhlYRXyuSJ6xtbLxU8OYlpw56DWeIl8YR2hv8Qp5CAx6kCQih6Vm6jSUwJi+vLB
+	 9Tk5fF3JLFXzHNtf1CZI8YRguU/Giyl3RSvCRHBV8LOy372zE6ZP3vTLeIfxIasnHP
+	 6pXWuimXc/i41MG2V6mtvKiRlsLuj+A86EcxPoB33DDYFkOzeevSunBV3aOWIieW5t
+	 X6i8b6fMugG0g==
+Message-ID: <839306c1-5f7a-4e89-b2cf-7534d279a03c@kernel.org>
+Date: Thu, 9 Oct 2025 10:54:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v3 0/5] Introduce "non-pixel" sub node within iris video
- node
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+ david.hunter.linux@gmail.com,
+ linux-kernel-mentees@lists.linuxfoundation.org, khalid@kernel.org,
+ syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com
+Subject: Re: [PATCH] f2fs: Perform sanity check before unlinking directory
+ inode
+To: "Nikola Z. Ivanov" <zlatistiv@gmail.com>, jaegeuk@kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+References: <20251003134731.470392-1-zlatistiv@gmail.com>
 Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>, Bryan O'Donoghue <bod@kernel.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Charan Teja Kalla
-	<charan.kalla@oss.qualcomm.com>,
-        Bryan O'Donoghue <bod.linux@nxsw.ie>,
-        "Dmitry Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>
-CC: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Dikshita Agarwal
-	<quic_dikshita@quicinc.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        "Mauro
- Carvalho Chehab" <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-media@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <7b6db4fa-2f73-376d-4eb3-64c1c7e6cda3@quicinc.com>
- <4a32bbec-2baf-4210-a7c1-1ddcd45d30c8@oss.qualcomm.com>
- <SuwJuCIcLVJwN3YeN1il6tB9wO9OH6bYcnbRpxpuI9Dl7piYLN-hVdnyv0Mal6N-W5pi2aCZI8MxHZDEkoE63A==@protonmail.internalid>
- <4d87d1ca-55b2-426e-aa73-e3fd8c6fe7bd@kernel.org>
- <10a8ccda-4e27-4b06-9a0e-608d6ade5354@nxsw.ie>
- <4cb4a92d-2f20-47c7-881e-aadcc6f83aa0@kernel.org>
- <1516f21e-aee3-42cf-b75e-61142dc9578d@oss.qualcomm.com>
- <9bae595a-597e-46e6-8eb2-44424fe21db6@linaro.org>
- <MMSKAu89Ew7StAeFBV442KfKNzmqbTSQ-maFG35Jr9d8PkUV2L4sx44R2DRevXA8mC45vkA398l2mvVzarZwew==@protonmail.internalid>
- <bcfbf35b-69ed-4f39-8312-6a53123cd898@kernel.org>
- <d46c0335-99d6-469f-a61f-aca4c851f745@kernel.org>
- <GyrcG3qBN7c5C7ajCs3EV81hWvuaVbg64CpzQ-X3d_p6EauoiKxSoG2aOKE21-j12SWFjNDjV-kVSwYYqVm_lQ==@protonmail.internalid>
- <a0dc93ec-e35c-409b-8dfb-1642c92a9f0c@kernel.org>
- <98e6acf8-80d7-4894-b4ce-ce74660722ef@kernel.org>
- <5085c857-f6e8-4faf-b61a-a9ee562ccf06@kernel.org>
-From: Vikash Garodia <quic_vgarodia@quicinc.com>
-In-Reply-To: <5085c857-f6e8-4faf-b61a-a9ee562ccf06@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20251003134731.470392-1-zlatistiv@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfXxqvEwSha6c+s
- tVQH7Uaziht8KROR5d/2vOw0rF9FlLRD+10ENxz9ubmTVwEb3DztoJG27OAmYgXF5lywL4+aFSb
- sqE6U1PS2jnaoLeQkAXELZG0bAeMPVf14rFPYLzb4PbTO/V2uMI/+GuVh/fRhChJ1PPpsPGXyc7
- y1YLSAmA2WmdW19p3xnYEh6krv3QgwqXKGnSGFNghE6ksuz/PHsMWBj7lBgv1OVGPLt+I0nKHTT
- KEYuN/k4JzO9wm0HY6wmRrBnCxF8SpYWA0nx68ZnfbfwtBex8UwcBz1G80dKOYIvcF4lgPvrOI6
- L2LL3iYLnR95CStVPaHh5Ss1P4L02XdcygY48tBy2t0GDk3RnyDNNV1rm31I4s/FA4BNkoOFPxE
- hLy3YAPeob2UUbZSc5jfr6D4NK+tHA==
-X-Proofpoint-GUID: sOdZcMY9FRTU-0MvnQewv-pG5vYJFKR7
-X-Proofpoint-ORIG-GUID: sOdZcMY9FRTU-0MvnQewv-pG5vYJFKR7
-X-Authority-Analysis: v=2.4 cv=SJxPlevH c=1 sm=1 tr=0 ts=68e72382 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
- a=zS5Hj0bcTTPWjRSGFTUA:9 a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-09_01,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 impostorscore=0 spamscore=0 phishscore=0
- clxscore=1011 bulkscore=0 lowpriorityscore=0 priorityscore=1501 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
 
+On 10/3/2025 9:47 PM, Nikola Z. Ivanov wrote:
+> Current i_nlink corruption check does not take into account
+> directory inodes which have one additional i_nlink for their "." entry.
+> 
+> Add additional check and a common corruption path.
+> 
+> Reported-by: syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=c07d47c7bc68f47b9083
+> Fixes: 81edb983b3f5 ("f2fs: add check for deleted inode")
+> Signed-off-by: Nikola Z. Ivanov <zlatistiv@gmail.com>
+> ---
+>   fs/f2fs/namei.c | 28 ++++++++++++++++++++--------
+>   1 file changed, 20 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> index b882771e4699..68b33e8089b0 100644
+> --- a/fs/f2fs/namei.c
+> +++ b/fs/f2fs/namei.c
+> @@ -502,12 +502,14 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
+>   		goto out;
+>   	}
+>   
+> -	if (inode->i_nlink == 0) {
+> +	if (unlikely(inode->i_nlink == 0)) {
+>   		f2fs_warn(F2FS_I_SB(inode), "%s: inode (ino=%lx) has zero i_nlink",
+>   			  __func__, inode->i_ino);
+> -		err = -EFSCORRUPTED;
+> -		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
+> -		goto out_iput;
+> +		goto corrupted;
+> +	} else if (unlikely(S_ISDIR(inode->i_mode) && inode->i_nlink == 1)) {
+> +		f2fs_warn(F2FS_I_SB(inode), "%s: directory inode (ino=%lx) has a single i_nlink",
+> +			  __func__, inode->i_ino);
+> +		goto corrupted;
 
-On 10/9/2025 6:34 AM, Krzysztof Kozlowski wrote:
-> On 09/10/2025 09:55, Bryan O'Donoghue wrote:
->> On 09/10/2025 01:47, Krzysztof Kozlowski wrote:
->>>> Maybe it would be possible to also use an inferred FUNCTION_ID somehow
->>>> though TBH I think that's a work-around.
->>> Three months ago I gave you the answer for that - it is inferred by
->>> index on the list.
->>
->> But at least as I understand it, you can have multiple SID entries that 
->> need to map to a FUNCTION_ID which means you need to encode that 
->> inferred indexing in your driver.
-> 
-> Yes.
-> 
->>
->> So you can't have the iommu code just know what to do.. it has to be 
->> driver specific.
-> 
-> Yes.
-> 
->>
->> The iommu description for this platform basically lacks the data that 
->> _should_ be there -> FUNCTION_ID.
-> 
-> No. The index tells that already.
+Can we detect such corruption in sanity_check_inode() as well? So that if
+f2fs internal flow calls f2fs_iget() on corrupted inode, we can set SBI_NEED_FSCK
+flag and then triggering fsck repairment later.
 
-Hardware1 can have 2 iommus entries for FUNCTION_ID_1, while Hardware2 can have
-3 iommus entry. It would be good to keep this info in devicetree, as it is still
-hardware specific (function_id is the hardware identifier).
-Defaulting the index would imply, the common device driver would need to book
-keep the iommus and hardware id in driver for every SOC. Any mismatch in order
-in DT and driver table would result in error too.
+Thanks,
 
-More importantly, this need to be agreed by IOMMU maintainer to extend the
-iommus property.
+>   	}
+>   
+>   	if (IS_ENCRYPTED(dir) &&
+> @@ -533,6 +535,9 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
+>   	trace_f2fs_lookup_end(dir, !IS_ERR_OR_NULL(new) ? new : dentry,
+>   				ino, IS_ERR(new) ? PTR_ERR(new) : err);
+>   	return new;
+> +corrupted:
+> +	err = -EFSCORRUPTED;
+> +	set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
+>   out_iput:
+>   	iput(inode);
+>   out:
+> @@ -572,10 +577,11 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
+>   	if (unlikely(inode->i_nlink == 0)) {
+>   		f2fs_warn(F2FS_I_SB(inode), "%s: inode (ino=%lx) has zero i_nlink",
+>   			  __func__, inode->i_ino);
+> -		err = -EFSCORRUPTED;
+> -		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
+> -		f2fs_folio_put(folio, false);
+> -		goto fail;
+> +		goto corrupted;
+> +	} else if (unlikely(S_ISDIR(inode->i_mode) && inode->i_nlink == 1)) {
+> +		f2fs_warn(F2FS_I_SB(inode), "%s: directory inode (ino=%lx) has a single i_nlink",
+> +			  __func__, inode->i_ino);
+> +		goto corrupted;
+>   	}
+>   
+>   	f2fs_balance_fs(sbi, true);
+> @@ -601,6 +607,12 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
+>   
+>   	if (IS_DIRSYNC(dir))
+>   		f2fs_sync_fs(sbi->sb, 1);
+> +
+> +	goto fail;
+> +corrupted:
+> +	err = -EFSCORRUPTED;
+> +	set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
+> +	f2fs_folio_put(folio, false);
+>   fail:
+>   	trace_f2fs_unlink_exit(inode, err);
+>   	return err;
 
-Regards,
-Vikash
-> 
->>
->> The rule is that the DT should really describe the hardware right ?
-> 
-> It already does. Same as I wrote on IRC, DT already has all the
-> information. Entry 0 has function ID-foo. Entry 1 has function ID-bar.
-> Entry 2 has function ID-bar or whatever.
-> 
-> Best regards,
-> Krzysztof
 
