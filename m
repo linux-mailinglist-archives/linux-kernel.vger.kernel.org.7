@@ -1,167 +1,268 @@
-Return-Path: <linux-kernel+bounces-847343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFFEFBCA924
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 20:28:23 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 979DFBCA931
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 20:29:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C12951A6300F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 18:28:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8BBDC4FC50A
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 18:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155D924DCE9;
-	Thu,  9 Oct 2025 18:28:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9271F24DCFD;
+	Thu,  9 Oct 2025 18:29:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WaatG0VG"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pKY071aO"
+Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010021.outbound.protection.outlook.com [40.93.198.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33659231A21
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 18:28:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760034495; cv=none; b=GiOoc8WHz6q7e9ro+Q+3qFSwzWLCE1qQkV6XHAivl1xuAJyhZDIF8/8mtCK7UgvUd82B4/V95IK48IKpewNB3CGkEtMSRI+UbFPbnFPQZU7qclgKxAdPAXcM+j7Ry4sTglfjcqMPyxFH0wLwRZVgDQEw6moBVte4+qwWQtgRnnk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760034495; c=relaxed/simple;
-	bh=Jm+Pvp7IGU0rRjl/vbRGRN6axsBYqg1WFn7zJ0a9kaY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=huffWzO0XO3QP5QyzzNdjiLWi5HjQVBWKGGi5lRpokmffCpdsrMPlDP8wDK+gz1ZNqG2DleplMD5p/rdwfOQ5Uq1oY3KmHsV+pUOsbdemnJEXKw474x1DDPMva3bHbGIfSzaywHgMiRYCUgCCQFNMvN5HCdkzsklfgitliCwDqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WaatG0VG; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4da7a3d0402so18313101cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 11:28:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760034492; x=1760639292; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=m5CEm/k2cKSkdb8l0Unz1Qn9/RiaqPf8uIpBe3eDtIE=;
-        b=WaatG0VGIHMqVHvg0ZLjDjfZ1m7anQ8Owbt4T2K8cHTus/MYr2Uinj6ku3bMv6cb67
-         Q0okGFSMPLk84J+4RGGFGhRPCMRxpxZR1/w2vBPOPWuSW/dQs/WbDk3jJJLraSuV/mUI
-         4vAybVrvPA3sK0Z0jLjKpqi2VkTsbXqC6b70vbg5YubV5V87gRG1p7bkEMIb4zkVGJ40
-         SJvAkJJz5hArKvQZcnY92ZosSKgKgT57Nip9e73M+qDTPrZeH7CoeRh9LI1rtIUbhHL+
-         fb0hu3/5mymiFZApZB6gBBD9Hz6Ezcu5xMrSeC7kn5Dm0hurN4cnKGrrokHZgvQUzKP0
-         aHew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760034492; x=1760639292;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m5CEm/k2cKSkdb8l0Unz1Qn9/RiaqPf8uIpBe3eDtIE=;
-        b=dnU2W2fpDuIfBLnJjnENG+L/qVjpLTPnf/Y/HyD8JaNQfsiJ3/ZVLvA5J3FYfphOqa
-         rwYRYrrdVVKBIHNCuVk8nnVVTtSoDtm+poerARbmPXy1WO/RA7JIGBVefRyUq6uwqhre
-         ctVtdVx6llWpa5daBfXKfl8TeM9DkMPw4b3DM45tMQEymHR4FOBJbR1RZQ/cpWlaA/Mo
-         GUYPHVF11lcdaJSXnhgDCbVltf8w2HDaBQSEkufyGRcjSNHGfjeFXhAhNPlAYjWeIQq4
-         UCyzGKZmk/NG7IzPoQoXxBxzEThaWjQ9/5Kc0HvLKmEhilgJ8N8rVzOQGWnDAItxlOWe
-         kRrw==
-X-Forwarded-Encrypted: i=1; AJvYcCUikO/JamLCX/pX0iOHE7v6MtOTQHMIf0WqTaTY1RyHccfdB3ycpo8iRMMbqeEA0y5xDWEhmuXWd+E0e/c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1sgKkPrvXlx18WcVVNDPX5EM80DOa2wvdENNQPLnp3HlZRt4l
-	a37YAUUXlo5F6SwAUbiLKCgj8kbCtaJaNG1t4JO31TA+mEjqgFl8o2GoSLAmTA==
-X-Gm-Gg: ASbGncu0mQIHOJm7fjYgQKGxmY5mcaJ6zYu8Yj3lJS1VFS9HVCKXZYnGeJ7w3x8Krgn
-	c2ElXruhV8N4EZoB0kTyZ3YUSMyse9KgCUlAjNKA0VbYQP1s88gX1bRyv6cfgtJaEJPEkbH+a2b
-	vyCUPsonb3u2CKvrEQN/kTXSfYJvS5IKKxFp89vOKprWC741KHEEZRtuT1/+9nC13gisi7qeF8G
-	31RH03f9nLHlxCCH1Nd4sl/RfZQJGBT4vEwn7Os2gCv2UBhcjuDVvOi5M3lsFMYbqjbkddZHJiL
-	j55O8loLWPHr+vzfFC+GXXIsg6TLtnTQFb0WhJ3m3TpkeWZx7VdgnIR4TRTSNx8tyQywj8KPu4M
-	+4A1D/lqG0yjJ0joSu1p9jxs0K95cQ0ZMT9lqXz4P10aRexVGHDUm8A==
-X-Google-Smtp-Source: AGHT+IF00kjXS/Ks4W3W0yL60FVuYiaJ0yikXglyJUl4wFsoNXCdTMygWhDLSE1zqjZH94GRSgJ02Q==
-X-Received: by 2002:ac8:5d4d:0:b0:4d2:ba6f:28fa with SMTP id d75a77b69052e-4e6de8b5d39mr194435231cf.34.1760034491694;
-        Thu, 09 Oct 2025 11:28:11 -0700 (PDT)
-Received: from localhost ([12.22.141.131])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e706b96a97sm2841951cf.5.2025.10.09.11.28.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 11:28:11 -0700 (PDT)
-Date: Thu, 9 Oct 2025 14:28:09 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Alexandre Courbot <acourbot@nvidia.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Jesung Yang <y.j3ms.n@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feong@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4BAC224AEB;
+	Thu,  9 Oct 2025 18:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760034558; cv=fail; b=oqJGdgsnFBAF3KbPnrHutVlTSz3dA5mR4CWwyLIS0l5v9vnehRgEomMcIINbEx3CYKVoS7tt4tiyi8LXKnFGtv70FhvLxQdoF9jeJoOD6Lf3ZLFNGXauatB/o6o6fceVmgP2ymDLv7CXt6A0T+yYG6OjOgMKYOk6M0wdHJbyE24=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760034558; c=relaxed/simple;
+	bh=Nm7xIdXxyAkieSuc2p68VjJjn18aQDhvHZbndiqqOwI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=LBd8lKkyvwiL3qOo7h1b7amoMwJQ3AC2Oh42nPC0tsxgxSZvDlt2Gk4/sbYuxj5kSUw5aMrFiuLKQS/BZ8H9TiE0HmhQH51Zij4l+bquTG1zlSvvEMIa1gd8eI6BOlu/f78guzu2KDhSuBsqbLVyLPC8yKZ+2SykvSjidfGAuPY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pKY071aO; arc=fail smtp.client-ip=40.93.198.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=q5k5VlaxkfG0W4hPQP5cmRYlLHk6j0ERbMINEAIlGeAvMB4qzWc7BOFlFwd4FH0oaWMFxNcJDy4GsQk/fAskUeq35U0Q/+K2G6WKmM+bwbVyIPwH2mxJpxxI1wSbAFMGQdZ3CFiyz4KXaL1GcxebGvvQJnNjf+rqIy4A5K3+43cVWrgAhQo0UWoEaIJuQw+Q2NGqvWwdzvvKOprK1joSR3Mc8J4XMs6yQJvA/ZdhiNFOk6XgUPU82UR4DYjmJrSbjZhcUP+bwq93z/5fb52IW5ggmxGqjleZ0b34Jdi+nJKV80czWRwcev9PHoLxkzKD/mYzfDeMET24Jc4f3eOWMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=d6qF0O8PLEW91WZov+DVsRBbyqj0JVm7G899RtAHV6A=;
+ b=OsHGzTpNotkUNUWbaLukPO5cPjRMHf7d2s2X9SEZOqiWZG3zgLu6NgXc3K7lrXmvKGw3QIZeey3of4AesYoUKlzM+5+08OYrvgGnZuwhunEce9lotnpTLMl3oWiR+kkeDBsRFbQXYppKH1HfoPViJXnDmZjPG0Y+w6df6Ll7PUZhpNFn+oTShVq+3/Fc7r8QvPD7p5mjaWkqqacb76sVqmW2bg+c0/vlOncptceVRNZ7DYlzd+lPfdh3xJ6UNkAHGFUQyftzzEf2e8v8Qzdp5SPnTP0v1RjRaQHRnLHKhl/ymsEFVbOI8gmbKOuhbLqWeDeWPApSMzH6m4HEX3TtTA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=d6qF0O8PLEW91WZov+DVsRBbyqj0JVm7G899RtAHV6A=;
+ b=pKY071aOMhu2By0Xao89WcFV9EqswToPUmxq63EhpQis3xhCG/EAwYcyJ8Iix0E49Wf0JNooOiaLzLD/roAkVZuKlNUT/s55IDnef2a0mu3BrFSIcBoiP0JV66O5U01cMbmNCJDkMqQmOpLhY61vd0HFeXVYDiVa3GBWUxm/YJycgNe8ZNYh32CI2AXO17hqrkVXgHc43Ts/DvUps799ekZE4dpT6OrFW2ubnfCOZ/+lkEalw02CvOyauFihmFs+I7GK9mTrS+4fQPEJgpvAPH213aFtHs/GmdPJKRIy4PHcjp6TA+JFRynyaM0SpTTuWDbdyIxqTbhHr0wsgB4Vnw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by CH3PR12MB9148.namprd12.prod.outlook.com (2603:10b6:610:19d::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.10; Thu, 9 Oct
+ 2025 18:29:13 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9203.009; Thu, 9 Oct 2025
+ 18:29:13 +0000
+Message-ID: <f83dc79d-d101-489f-acfb-07834494bc65@nvidia.com>
+Date: Thu, 9 Oct 2025 14:29:10 -0400
+User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH RFC v2 3/3] gpu: nova-core: use BoundedInt
-Message-ID: <aOf-s-XuhbN7MUlx@yury>
+To: Yury Norov <yury.norov@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Jesung Yang <y.j3ms.n@gmail.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feong@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
 References: <20251009-bounded_ints-v2-0-ff3d7fee3ffd@nvidia.com>
- <20251009-bounded_ints-v2-3-ff3d7fee3ffd@nvidia.com>
- <aOflmmHe8O6Nx9Hp@yury>
- <DDDYOBOZTF7Q.124VJDF4C76B6@kernel.org>
+ <20251009-bounded_ints-v2-3-ff3d7fee3ffd@nvidia.com> <aOflmmHe8O6Nx9Hp@yury>
+Content-Language: en-US
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <aOflmmHe8O6Nx9Hp@yury>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BN9P220CA0030.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:408:13e::35) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DDDYOBOZTF7Q.124VJDF4C76B6@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|CH3PR12MB9148:EE_
+X-MS-Office365-Filtering-Correlation-Id: e4d7ac8c-1f1f-44f5-cad7-08de0761bee8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QzZYS1BUZmo5NlJWUUZIanNNRDV4cUwrSmxvMm01OTI0QytreVg3cGFIRVda?=
+ =?utf-8?B?U2NYaDhvY2dVbGZnU3llVnRnMzltM3JLajZ2OW1SMytRUDVMV0Jsb0g0cHBP?=
+ =?utf-8?B?WlJiVzJkeEJwVlQ5L09iWE53eGJxcklOVEZLMzZmR09kRWpUb0pvTWxJaGxO?=
+ =?utf-8?B?MDVvL05iNkxmR1k0WU1aNHZhUTRlTWZ2M2Yzd3BEWlc5aTgrS0E3QkxuY3V1?=
+ =?utf-8?B?cll6aWNzbEFmRWt3UjhJZWR6RHgyZDJwVmcwaVhCRDMweDRRMHM1TXhUSTZE?=
+ =?utf-8?B?TUxIUXBFeXRhSklMZXdaMTRkc3JQSWtpSmxIdXV5S2dab21VVFlIOXhWOGtC?=
+ =?utf-8?B?RW1PSmpvVWdyeXAvWTdrVm44RkVDWEdoTFFQNjRkMSs5L0tLRStOZm9FYkNY?=
+ =?utf-8?B?Mk1BU3c4SUJIMFo2VGl5eTkwcVk2aDBXU3ErUXYwb0tkQ0pZaG1TNklaVU1U?=
+ =?utf-8?B?NXM3QXNJWnpBOU5iRjNid2Q0RXZ0QXFJbGs1cUQ5dHF3QktvZC9GVkJ3WDNL?=
+ =?utf-8?B?NFBMQUhNbzRtSFRMcW42c1VHZkxnNkJRdnY0a3pKVE5ZaUdGcGFaaGhwcTZM?=
+ =?utf-8?B?OUZEZC9DRGVhVUt5NVF4R0hMTkRyOTVRWlVETzBtWkZ6VTVpU3ltT2JxNVVT?=
+ =?utf-8?B?cXJUb0pMaDV0VVFod1NWcm5icGpvbThtbmhSUDlJZVNjdkQ5QjhiSHdsYUNt?=
+ =?utf-8?B?c001eldJblNrWXVUcTJFVkEzN1JxVWMzd2NwNlFyc3l2K3BiK3JkYmJjT2Rs?=
+ =?utf-8?B?MmI2d3JsdTdJOURDaHRkNG94ckl4UWtpQlRvc1pMU0tRQ1JYZzM1QXhlTEJl?=
+ =?utf-8?B?UFdIODRkUEZMWXlaTzU0ODBjYWI5VStDOFVhNnZzZ3poUnhDb1BqalpsdkZX?=
+ =?utf-8?B?TG8rNWR6aHFRTVo0L1k0b201aUVZaXdNQll0VG1EVko2Q2J1UVg2cmN1U2Ir?=
+ =?utf-8?B?cmFPTmFBNlQ3TXZFRG5mOVRwalZ5bzVNMkIxZ1R4NW85VS9YMHNvUWNlSjlT?=
+ =?utf-8?B?WlBtdnRlQzBvUFJET2RiZlFjSGp2R01lQ0RiNjIrWnNIQjdRN3k5MlloelJV?=
+ =?utf-8?B?aGp4UElHTStnOVF4RGJJQ3FpM0RtSVVMMk9xcU45N2FGd1ppcHc3dVRCVU1E?=
+ =?utf-8?B?T2VPeDJjbUlMOTFFSkFuV0VyMVNXekZGaHAyMTdiNkV5dWZLRC9SWWFNRDBr?=
+ =?utf-8?B?ZE9VV24zSUplZUJiVjBJSWFubXNaWnNYeEk5NDNjUXR6UWp1TDdjdXZscita?=
+ =?utf-8?B?ZEYrZUEzcjczVTlDbFdrbm55VnEzcjN2NkNpVldrMmR3SlBvK3UxeVhNQTVw?=
+ =?utf-8?B?ZlZ4M0lpK1B0NkwwNVdiSFhVdE9XRUIxSllRR2hRekcrK3JGVDJHZlBERTJM?=
+ =?utf-8?B?MXhuSkQ3cldORVRMN0FhVDVnRThEcUVyUDcwaUdxTk41T3lrQ0dFMWJBc1Zr?=
+ =?utf-8?B?UVZMRzlNWTJVaERueGZ0d0NzWjZlM3NsU2plMHhwdDAvWGhIUGE2bk8vYzZ2?=
+ =?utf-8?B?N0Uwbi95WkswbE1qREIwLzhTS2ZlTTcxSHFkcUJzNDM0cU4xdFpyY3NtU1lo?=
+ =?utf-8?B?TjVuZUlFazZtSVdkeXJVRE5iSldqdW0rQlhyVGxReXNQdExwd3hTcGF6a01J?=
+ =?utf-8?B?cWQ1RUphZUpHZkYwejRmQ2xQNk9ObEgxeDIvRERaS1FkUWU2OHg0UzZQMEF5?=
+ =?utf-8?B?WXQzeUhSSk5KVHFIOXJlNmJleldKOGh1d1Bmam80alZ4U1lET3dNeDVzMGV4?=
+ =?utf-8?B?RE40VEkzeVk0dVRGYnc3V1AzZ1hyRW1rYUVUNHBHcTJvQ2FxWjA3aHhVbXVQ?=
+ =?utf-8?B?QnFYYm92NDJpUmVJckptUnJQR0RXaUY0WHIxb0dyS1ZXSHF2NnVvYktYOVhE?=
+ =?utf-8?B?MFhwTDFETi93V3RESSs4cWN2bzYzdzg3TUtLZkNOMmNhMVpsbkxNSmR3Mnhm?=
+ =?utf-8?B?MFlBSXczbTQrWkFtWEJEL20wamhZSFJhMTNnZmZFcTNpVDllU1F2NXVqWGJn?=
+ =?utf-8?B?YjBZZ3V1ZUxnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bDY4QXJ5ZzdlZmFLUFNmb2NscUwrREdXUVRJSzFZL3lrWDN3bTQwYjNWNU55?=
+ =?utf-8?B?Z1ZTUTJPeTkrY0xnMWFKeXNMWFVrSVhJbmloVExSb0t0eDhhaFY3TkpWSFdG?=
+ =?utf-8?B?Q05ibHFPWkEzU2dsMFFmVzFMRzJHY05QZ24yWjJyWHFxYTh3SllkZFJVTHBu?=
+ =?utf-8?B?MnFqekxqTFhMbjE2bE9KWmlGYlNLZ3lET01pTGVYRkc2Mkp3RzdwamNIZ1dK?=
+ =?utf-8?B?a3Jqc29NeXBYemN2T2ZpQTA1elNyWStZZEp2ZFB4ZWhPcTJ3K0FBWktvMkY0?=
+ =?utf-8?B?WDdxSVBVU292OHJqNDZ0ZFVLdzBSUDJZNWMyc0YyL1JTanEyMDBpY01KaVBT?=
+ =?utf-8?B?T010bnNDZ0VaU0pyMk42VHRNUmR5N3l2QjlJSzNYcmFram40alYxTzNYQk83?=
+ =?utf-8?B?NEo1Yy9uSGpZZzhFcHc3djJ2N3pFNUNHL0xuT3Vjck1WMDRZdWcwWlhtb2ZH?=
+ =?utf-8?B?OVJXY3M4bEJCaHF2NkYvZURlNVd3THFPQkhFQVlpZUphQXdOa2dNMytxaUxo?=
+ =?utf-8?B?RmNzWlQ4ck1yRjQyWGZrSENGZlJlWVBrRkxVMUdWUG13SUplQ1NtckVQNmZU?=
+ =?utf-8?B?U2pyUEQ2ZWJ5Zy80emFsajZhZFc3ak9DMzBrbzNZSitHNEdodnJoZnQzcFBE?=
+ =?utf-8?B?dUhhT0M0clF1M3k2YTFNSEd3V3lvOTNPWCtZYVB0eE5xM0gyUWJaU2Z1dUNI?=
+ =?utf-8?B?OEdPNmo5ZzVuOG1haXNGN2dIbS9Jakh4d3c3cndZa2VDV1BPRlpsRFJqYVh4?=
+ =?utf-8?B?L0k2ZG1FcHdZSXdUd21sUEpEQ1N5YVlHazJ1L1ZJckR1aG53cXZuTDFYTWN0?=
+ =?utf-8?B?cTRLYjRicFh5d0E5MnlHL2xaZ2hxKzI5SU5XMkVaaGFUL1o1STBEZ2czSlhO?=
+ =?utf-8?B?d1BlNE5HUzhiVnZabTA0bkVuNG5hTnFGZ2RZUk1FNy8vUHdMSlRmeXJzSThC?=
+ =?utf-8?B?ZjY2VTJUQzN1WWpXVGRKdkNyY1oxSzduUWkvR0JBM3lOVXB2TVgwWWZhTVhp?=
+ =?utf-8?B?RHJjOU5tclNxZ0g0RWl2N0Fia2k0UTFaalJZcGk2RUQ5SFZqeXgwcGc5aFQy?=
+ =?utf-8?B?c3VVVExkWGVHM2N0a1BBelpRZzJZZjIyVDE2TVNmb2duMVIxQzJ3aVZ3QS9C?=
+ =?utf-8?B?c2Y3MGQ4UjFVWWozMjVtTDNsTm5ONDBSNmZKOCtVVWN2bjA1a0tIclZpZHN3?=
+ =?utf-8?B?Y2UrbStFNUFHS2hNRWNIRlNRaW5xVVBCb09OM2g0ejZIbGNFK1JmYmR1Uk8x?=
+ =?utf-8?B?WVd5OVdNcHc1YlZiRDZXVE4wNjJ3Q0tGb1NpR2c0U0MwUTRTeFg1TnVENjlE?=
+ =?utf-8?B?cncwcmZJWFdXbzNYTXZzcUJ2Skd2WFk4d2dMNU1DYittRXBUMy9ncDBUTXhF?=
+ =?utf-8?B?TUtSQittZWphUjRFMzY1RXBQcnNPaFBzQmlYb1NVVEl3amdMQ1hxWUJWY1lK?=
+ =?utf-8?B?RkRrb1pCUDMwSm05UkY2a3ZKN1A2eUNvcFAvaHhlZnVlUHBoTjNsVGRQTGhy?=
+ =?utf-8?B?T3hsS3E4RXl2QW5uUVVCdWhUL1U2R2sxdHQzenJWTDcvZWxBVEwva0tuZGpr?=
+ =?utf-8?B?eFQ0TkxCSFV1TFc3ajRYV1NXM2hEb1M0WkNnVEFFMWNMY1A0UnB4ZWxKTHc5?=
+ =?utf-8?B?aFBMVDN1aVFVRHFKK2pSSnFvNEd0akE0YTlkTnNyZFppamFyVUMzemNtUmlU?=
+ =?utf-8?B?NUlvdUV4cHFxRUVRaisyL1duZnR4WEZKVjRYYzZOOVFHWVI1WkQ2TU1JWk9k?=
+ =?utf-8?B?eFdTVFBCdkJ5dWljMjlnQzc1eGFFSXpTTUVkLzRPL1BLM1hIbTRjeDRMOWJm?=
+ =?utf-8?B?YlNkZTNiZVhHT2xOZksyMWgvdUZ4QzVpNnd3RTZ2UVdHaU4rekd5Qm9RU0RJ?=
+ =?utf-8?B?VG13MmozUHF3U25haTNWSUZPSHdQRllTQlJFTDVaOElyTitObVE4WkNzMHVq?=
+ =?utf-8?B?dXlHbndrd0lHQndub2o5a0Y4VThnRVF3ejM2VmpNMXAycHliYmpsN0krSlZ5?=
+ =?utf-8?B?b1FDYnZBTCtFb2hteVVPMHVmUk8vaDU3VzhsZGZtbjJ6MkovNkpTU1lSWnJt?=
+ =?utf-8?B?SjFKVmkwd3B5QTRtalVMZTJjYzVyWWdaemV4aVowSkkwUG1LU1U5aU9reGsr?=
+ =?utf-8?B?MG9EMU5yaFpIY0w4Mnk3cHJSbUFpYkZmZWx4NzBEeUZqZmVKWWxmZHAwN2ln?=
+ =?utf-8?B?aHc9PQ==?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4d7ac8c-1f1f-44f5-cad7-08de0761bee8
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2025 18:29:13.1049
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 69Esgtb+LWsrUNKoJftgO3jmEWStrcVhCm7VbAOBrOJfo9zW2sZWceyLJS4muxx74/bz+zWOvANKEIB5U/be7w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9148
 
-On Thu, Oct 09, 2025 at 07:18:33PM +0200, Danilo Krummrich wrote:
-> On Thu Oct 9, 2025 at 6:40 PM CEST, Yury Norov wrote:
-> > On Thu, Oct 09, 2025 at 09:37:10PM +0900, Alexandre Courbot wrote:
-> >> Use BoundedInt with the register!() macro and adapt the nova-core code
-> >> accordingly. This makes it impossible to trim values when setting a
-> >> register field, because either the value of the field has been inferred
-> >> at compile-time to fit within the bounds of the field, or the user has
-> >> been forced to check at runtime that it does indeed fit.
-> >
-> > In C23 we've got _BitInt(), which works like:
-> >
-> >         unsigned _BitInt(2) a = 5; // compile-time error
-> >
-> > Can you consider a similar name and syntax in rust?
+
+
+On 10/9/2025 12:40 PM, Yury Norov wrote:
+[..]
+>> The field setter/getters are also simplified. If a field has no target
+>> type, then its setter expects any type that implements `Into` to the
+>> field's bounded integer type. Due to the many `From` implementations for
+>> primitive types, this means that most calls can be left unchanged. If
+>> the caller passes a value that is potentially larger than the field's
+>> capacity, it must use the `try_` variant of the setter, which returns an
+>> error if the value cannot be converted at runtime.
+>>
+>> For fields that use `=>` to convert to another type, both setter and
+>> getter are always infallible.
+>>
+>> For fields that use `?=>` to fallibly convert to another type, only the
+>> getter needs to be fallible as the setter always provide valid values by
+>> design.
 > 
-> Rust is a different language and has its own syntax, I think we should not try
-> to use C syntax instead.
+> Can you share a couple examples? Not sure I understand this part,
+> especially how setters may not be fallible, and getters may fail.
 
-Up to you guys. But having in mind that C is the only language that
-really works for system engineering, I would rather consider to stay
-in line with it on semantic level.
+Because a getter has to convert the raw bitfield value from memory into an enum,
+there is no guarantee that the memory in concern does not overflow the enum, say
+if register bit meanings change, or something. ?=> was before fallible in both
+directions hence the "?". Now with Alex's patch it is fallible only in one
+direction.
 
-If your goal is to make rust adopted by system engineers, you may
-want to make your language somewhat familiar to what people already
-know.
- 
-> >>          regs::NV_PFALCON_FALCON_DMATRFBASE1::default()
-> >> -            .set_base((dma_start >> 40) as u16)
-> >> +            .try_set_base(dma_start >> 40)?
-> >>              .write(bar, &E::ID);
-> >
-> > Does it mean that something like the following syntax is possible?
-> >
-> >         regs::NV_PFALCON_FALCON_DMATRFBASE1::default()
-> >             .try_set_base1(base1 >> 40)?        // fail here
+>> Outside of the register macro, the biggest changes occur in `falcon.rs`,
+>> which defines many enums for fields - their conversion implementations
+>> need to be changed from the original primitive type of the field to the
+>> new corresponding bounded int type. Hopefully the TryFrom/Into derive
+>> macros [1] can take care of implementing these, but it will need to be
+>> adapted to support bounded integers... :/
+>>
+>> But overall, I am rather happy at how simple it was to convert the whole
+>> of nova-core to this.
+>>
+>> Note: This RFC uses nova-core's register!() macro for practical
+>> purposes, but the hope is to move this patch on top of the bitfield
+>> macro after it is split out [2].
+>>
+>> [1] https://lore.kernel.org/rust-for-linux/cover.1755235180.git.y.j3ms.n@gmail.com/
+>> [2] https://lore.kernel.org/rust-for-linux/20251003154748.1687160-1-joelagnelf@nvidia.com/
+>>
+>> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+>> ---
 > 
-> Note that try_set_base1() returns a Result [1], which is handled immediately by
-> the question mark operator [2]. I.e. if try_set_base1() returns an error it is
-> propagated to the caller right away without executing any of the code below.
-
-Thanks for the links. I am definitely the very beginning on the
-learning curve for this.
- 
-> >             .try_set_base2(base2 >> 40)?        // skip
-> >             .write(bar, &E::ID) else { pr_err!(); return -EINVAL };
-> >
-> > This is my main concern: Rust is advertised a as runtime-safe language
-> > (at lease safer than C), but current design isn't safe against one of
-> > the most common errors: type overflow.
+> ...
 > 
-> Where do you see a potential runtime overflows in the register!() code?
+>>          regs::NV_PFALCON_FALCON_DMATRFBASE1::default()
+>> -            .set_base((dma_start >> 40) as u16)
+>> +            .try_set_base(dma_start >> 40)?
+>>              .write(bar, &E::ID);
+> 
+> Does it mean that something like the following syntax is possible?
+> 
+>         regs::NV_PFALCON_FALCON_DMATRFBASE1::default()
+>             .try_set_base1(base1 >> 40)?        // fail here
 
-Assuming base is 10-bit,
-        
-        let ret = some_c_wrapper()      // 0..1024 or -EINVAL
-        regs::NV_PFALCON_FALCON_DMATRFBASE1::default()
-             .try_set_base1(ret)
+Danilo already replied here, but this code is fine as we early return due to the
+try operator (?).
 
-Or maybe I misunderstood the question, because if there's no possibility
-to overflow a field, what for the .try_set_xxx() is needed at all?
+>             .try_set_base2(base2 >> 40)?        // skip
+>             .write(bar, &E::ID) else { pr_err!(); return -EINVAL };
 
-> [1] https://rust.docs.kernel.org/kernel/error/type.Result.html
-> [2] https://doc.rust-lang.org/reference/expressions/operator-expr.html?highlight=question%20mark#the-question-mark-operator
+Here I am guessing (based on your concern from an earlier thread) but is your
+concern was that -EINVAL will get written to the register accidentally? That
+wont happen, the above code is fine. Or do you mean something else?
+
+> 
+> This is my main concern: Rust is advertised a as runtime-safe language
+> (at lease safer than C), but current design isn't safe against one of
+> the most common errors: type overflow.
+
+I'd be a bit careful when using "isn't safe" in the context of Rust. Rust's
+notion of "safety" is about preventing undefined behavior (UB), not preventing
+every possible runtime mistake. In rust, integer overflows for example are not
+undefined so overflows are not "unsafe" (it might be a logical bug but that's
+not what unsafety is about). In fact an overflow might be exactly what some
+algorithm needs (wrap counters in RCU are example of harmless overflow). Another
+example is a deadlock is not undefined behavior in Rust, it is defined, even if
+bad :).
+
+Thanks.
+
 
