@@ -1,64 +1,79 @@
-Return-Path: <linux-kernel+bounces-847039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26F41BC9B72
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 17:15:16 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5203BC9B78
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 17:15:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 40BC84EA146
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 15:15:14 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CCF48344D42
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 15:15:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8F431F3BA2;
-	Thu,  9 Oct 2025 15:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D884C81;
+	Thu,  9 Oct 2025 15:15:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VMWKINTX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JySqrzpB"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51D21B81D3;
-	Thu,  9 Oct 2025 15:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB7415D1
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 15:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760022905; cv=none; b=Lq9FDf1wNAPaeqEj5sKXus9KOmFx6jr0pwScDV+z3l2Kzj+yvJq+LbegZ9WnajFWV892Udh0orAApNxfFQgMZMbJ4oF1DU46o9Hnjzol9HkPa52wZyaUYizkJSkpfK2cPR57XKl4+qvqTXsbOch++f2uQc3UTrxu4mi/LQEpcR8=
+	t=1760022948; cv=none; b=EzO5oIov8sCw4o8PpweZj7UHRQVRQwMZdGakH+IUxwOf092KDk+PmtYQJ4ihCcDOhmA9GfUoOxEp7OuDg+1M1b43ZfSutwELiQRDtIm5S4k3p36fMNJ6tlMi2Vjrwd3bzDA261V6l93nkEGp3crB0ytK3VBBfC/fCn9nsjPDUDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760022905; c=relaxed/simple;
-	bh=8j8r/z6+mSAv9jRtQG+nhZw4Ea8UNAt0HcGb1nWfsS8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pFIkgeu7G/4CgGWyHG8KVnunCRMnxm/+b3od+O/yCt5nt2+BYd0Y8t+/wsdBfKI1V7nrKSk2K4JMw+tBbe3lu4hDj+/7va/1cZk/slK3U/fv2KOMWV3YGJtChpKTJ34PMIvCWiYXbQGbz9XpDGCOtQq8dZkwE+y5ptls06T/n2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VMWKINTX; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1760022904; x=1791558904;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=8j8r/z6+mSAv9jRtQG+nhZw4Ea8UNAt0HcGb1nWfsS8=;
-  b=VMWKINTXjbfGVSnQ7JapKqjx/sJQ5EInlL07dFAbh+iJsmj/3VdOphdn
-   dDAVAFGQ8qU1Tl9GMwMEjn6+TYCLNdSNT/sWwSRTYGmfVbGcZLmrOdtCe
-   Zt+mHRj9FGpt+EhlAQ//9qNIIvBh6irpi32s1oWVHOBoGKCP4AFxN65QF
-   wrsFb1j5LB02wjrBgQZMyUf/Cqq4XNb/I0RPJWMzSqa/xofJh42Jp2UoZ
-   7IRE1R1942y1thhEcP9RiVaLpJ0ahq0isdB47KQBirHF/peNNAk3eqXTT
-   6JoPb/crfbD9d7oyPuikxL6TRlsL58BSudJCF2hRdZW7VbznNisUI3THy
-   A==;
-X-CSE-ConnectionGUID: r+bpg4Q+R1+h/o6ygK1O7A==
-X-CSE-MsgGUID: Z2sjY5z4RFGcx61FcW1pmQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="72915283"
-X-IronPort-AV: E=Sophos;i="6.19,216,1754982000"; 
-   d="scan'208";a="72915283"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 08:15:02 -0700
-X-CSE-ConnectionGUID: jzZtpRVYQyS7NJEG27gY3A==
-X-CSE-MsgGUID: vFc4sSeLRhWjzz5bwS2M3Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,216,1754982000"; 
-   d="scan'208";a="186004030"
-Received: from kcaccard-desk.amr.corp.intel.com (HELO [10.125.111.11]) ([10.125.111.11])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 08:15:01 -0700
-Message-ID: <486185f6-7da7-4fdc-9206-8f1eebd341cf@intel.com>
-Date: Thu, 9 Oct 2025 08:15:00 -0700
+	s=arc-20240116; t=1760022948; c=relaxed/simple;
+	bh=qshWedy9zOFfj4S/MRqOfZgJWqZsXgvtsuKhKKMr4zs=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=fGWreNAxlSpBLR3NrVLFnbEp7heGN8gyuSw7GXcv/XbMbIl61LFr6fc2g873grgsSkKr1tGrdgCiSGeW9Lg4eJTuGBSRz4WceiD5hXosA1Ikpi1whi8FYxjADAE+16umhhMOjGyiVgi3yZ34LaE3LeNfEqDKy5DAxEhrS4yEtH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JySqrzpB; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-78af743c232so983244b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 08:15:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760022947; x=1760627747; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=QW3441uRfgKwaWkCvF0+xgoQHEkKkpXbASbo2YsQ298=;
+        b=JySqrzpBKWSQvVdv4mP/Ji3WoJcaqqnP7i8wF1hAogeKz7ra+/+RSMJzFKDblZLoxm
+         kFjQsIeKsyV5envbsisrA4QatiWY+AaCTwSloE4YVAXGRGncre8Et2UZfNdS5YA90Xb4
+         GL7168efjd+JP9hduygeWil2mox4I9CMvQ2jYH5jf7T7FREgcXotIoSzJIrkWLFW/y/y
+         XIeOUsmEbm3IW8bMM6BEf+N16Wp91W4I+DAohQZE90vswMnoDHvYbahSCrDT1Hq7egwe
+         QU7ucfTRnyDMWwJSIswRY0rnimQPj5vOOS+CdtP6PSff2vHJR+YG36V0iDVUv042h4Zk
+         8GoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760022947; x=1760627747;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QW3441uRfgKwaWkCvF0+xgoQHEkKkpXbASbo2YsQ298=;
+        b=Zu/r4ZAQG2QfP/j/CqmzInAEdBFHbjxh5gLDXMaW7+m3SphmsPSmzBBoVuk59jTiAZ
+         XoRNiLhQFQlVOcPLLB1u8PC4ynti9A4D/1AImI48xnt5atQyYxmY4lJQTFbFykFEPyFF
+         wHXqbVj539RC8xRPtra1fbkX4x8M7QtsUixkHo+CKT1z0fCRgLME/eB6jo7YvhIxandO
+         cbFTHA2+x0oGTrRtE1+G6xjfhFZwtccHIdkoHO+4TUAQb1IeYOPyD5eKKBJL1wtuvo9A
+         A1u13c2k1d/0M8TcybSiKaWWSZwid26Tbqb0Z00fQ6KbhESgUrUkmFLYbI23QQJ8+3Ah
+         CSiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXKEK+QasoYp5Ia29DQQOlS9Yoef+/K5P8VvOGBvRk74ktWm4ibIVu+tESn3uELv/VUCsvdRZ/k31sbAzM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMYIGb+RKdJvQdQLWZoOALdoqdS/WQ7JW82Tir4VD/9hZZ76zm
+	TMN8GWYJE0jHX0jEevW1HYv33fvktdPPdCImnlgXZCtYSekqHdmC+8NN
+X-Gm-Gg: ASbGnctTARPATUj0LUMHoDPXM7s1aPMKVdATR3S0VOMiKO0ABWL90XypHGFyN5ZP71i
+	zZ6wXnQFXlSYvwmwsWckVKEbbZcERU/PGh8WPUfmSh7h61bzjPPeHofaYgk1QJptfDLUjm4znxl
+	CKlRUHQtQHAYtW+I6s/mlxkWenD/+/pCezAhiWxkl+F1xaNLiQnm5jew3N6VaTQLdLyijY29nNJ
+	m3Bh8uypodiaATjr1GUFOuxd4Jx8Pzi8fPaYt9C3yV7MA98RCV3lTMjzsoWkgoXqzxwwcaTvkEY
+	ihFTv+AzIV4sM5KRhFt/yeI0j+Jk7o0FA/EjMipDJRi6HGdWWF19QqJMzFOfn6aF/IGOvgkxJWC
+	HPX+W5gyfqayxOoMKxqJNGu5y7t1Iuj4TrpqGYCZvU1UC/ZQlmLFqZ+pFj2TDZ+emCEtTFA==
+X-Google-Smtp-Source: AGHT+IGzWj2f7GE9unACisTFXTIm/6m0yZrlPKrykcpQ5kEtz/hxMKqimFAb0PWKVC9eCmlcr6WDoA==
+X-Received: by 2002:a05:6a00:464f:b0:781:15b0:bed9 with SMTP id d2e1a72fcca58-79387052040mr11267934b3a.17.1760022946316;
+        Thu, 09 Oct 2025 08:15:46 -0700 (PDT)
+Received: from [172.20.10.4] ([117.20.154.54])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7992d09a87asm2637b3a.46.2025.10.09.08.15.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Oct 2025 08:15:45 -0700 (PDT)
+Message-ID: <6485d7de-2af6-48d6-b427-66d3697ec2b2@gmail.com>
+Date: Thu, 9 Oct 2025 23:15:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,99 +81,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iomap: move prefaulting out of hot write path
-To: "Darrick J. Wong" <djwong@kernel.org>, alexjlzheng@gmail.com,
- dave.hansen@linux.intel.com
-Cc: brauner@kernel.org, linux-xfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jinliang Zheng <alexjlzheng@tencent.com>
-References: <20251009090851.2811395-1-alexjlzheng@tencent.com>
- <20251009150125.GD6188@frogsfrogsfrogs>
-From: Dave Hansen <dave.hansen@intel.com>
+Subject: Re: bpf_errno. Was: [PATCH RFC bpf-next 1/3] bpf: report probe fault
+ to BPF stderr
+From: Leon Hwang <hffilwlqm@gmail.com>
+To: Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+ Eduard Zingerman <eddyz87@gmail.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Menglong Dong
+ <menglong.dong@linux.dev>, Menglong Dong <menglong8.dong@gmail.com>,
+ Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, jiang.biao@linux.dev
+References: <20250927061210.194502-1-menglong.dong@linux.dev>
+ <20250927061210.194502-2-menglong.dong@linux.dev>
+ <CAADnVQJAdAxEOWT6avzwq6ZrXhEdovhx3yibgA6T8wnMEnnAjg@mail.gmail.com>
+ <3571660.QJadu78ljV@7950hx> <7f28937c-121a-4ea8-b66a-9da3be8bccad@gmail.com>
+ <CAADnVQLxpUmjbsHeNizRMDkY1a4_gLD0VBFWS8QMYHzpYBs4EQ@mail.gmail.com>
+ <CAP01T75TegFO0DrZ=DvpNQBSnJqjn4HvM9OLsbJWFKJwzZeYXw@mail.gmail.com>
+ <0adc5d8a299483004f4796a418420fe1c69f24bc.camel@gmail.com>
+ <CAP01T77agpqQWY7zaPt9kb6+EmbUucGkgJ_wEwkPFpFNfxweBg@mail.gmail.com>
+ <5766a834-3b21-47b0-8793-2673c25ab6b0@gmail.com>
 Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20251009150125.GD6188@frogsfrogsfrogs>
+In-Reply-To: <5766a834-3b21-47b0-8793-2673c25ab6b0@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/9/25 08:01, Darrick J. Wong wrote:
-> On Thu, Oct 09, 2025 at 05:08:51PM +0800, alexjlzheng@gmail.com wrote:
->> From: Jinliang Zheng <alexjlzheng@tencent.com>
+
 >>
->> Prefaulting the write source buffer incurs an extra userspace access
->> in the common fast path. Make iomap_write_iter() consistent with
->> generic_perform_write(): only touch userspace an extra time when
->> copy_folio_from_iter_atomic() has failed to make progress.
->>
->> This patch is inspired by commit 665575cff098 ("filemap: move
->> prefaulting out of hot write path").
-> Seems fine to me, but I wonder if dhansen has any thoughts about this
-> patch ... which exactly mirrors one he sent eight months ago?
+>> Since we're piling on ideas, one of the other things that I think
+>> could be useful in general (and maybe should be done orthogonally to
+>> bpf_errno)
+>> is making some empty nop function and making it not traceable reliably
+>> across arches and invoke it in the bpf exception handler.
+> 
+> No new traceable function is needed, since ex_handler_bpf itself can
+> already be traced via fentry.
+> 
+> If users really want to detect whether a fault occurred, they could
+> attach a program to ex_handler_bpf and record fault events into a map.
+> However, this approach would be too heavyweight just to check for a
+> simple fault condition.
+> 
 
-I don't _really_ care all that much. But, yeah, I would have expected
-a little shout-out or something when someone copies the changelog and
-code verbatim from another patch:
+As ex_handler_bpf can already be traced using fentry, a potential
+approach without modifying the kernel would be:
 
-	https://lore.kernel.org/lkml/20250129181753.3927F212@davehans-spike.ostc.intel.com/
+1. In the fentry program:
 
-and then copies a comment from a second patch I did.
+int is_fault SEC(".percpu.fault");
 
-But I guess I was cc'd at least. Also, if my name isn't on this one,
-then I don't have to fix any of the bugs it causes. Right? ;)
+SEC("fentry/ex_handler_bpf")
+int BPF_PROG(f__ex, const struct exception_table_entry *x, struct
+pt_regs *regs)
+{
+    is_fault = 1;
+    return 0;
+}
 
-Just one warning: be on the lookout for bugs in the area. The
-prefaulting definitely does a good job of hiding bugs in other bits
-of the code. The generic_perform_write() gunk seems to have uncovered
-a bug or two.
+2. In the main program:
 
-Also, didn't Christoph ask you to make the comments wider the last
-time Alex posted this? I don't think that got changed.
+int is_fault SEC(".percpu.fault");
 
-	https://lore.kernel.org/lkml/aIt8BYa6Ti6SRh8C@infradead.org/
+is_fault = 0;
+/* probe read */
+if (is_fault)
+    /* handle fault */;
 
-Overall, the change still seems as valid to me as it did when I wrote the
-patch in the first place. Although it feels funny to ack my own
-patch.
+The main idea is that both programs share the same ".percpu.fault" map,
+so the variable 'is_fault' can be accessed from both sides.
+
+Here, ".percpu.fault" represents a percpu_array map section, which is
+expected to be supported in the future.
+In the meantime, it can simply be replaced with a regular percpu_array map.
+
+Finally, this approach is conceptually similar to the idea of using a
+global errno.
+
+Thanks,
+Leon
+
 
