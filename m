@@ -1,125 +1,125 @@
-Return-Path: <linux-kernel+bounces-846450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05ED2BC80B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:28:06 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34168BC80BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 10:29:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C3651A607EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:28:29 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D55BD352A24
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 08:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1BC32D0C6C;
-	Thu,  9 Oct 2025 08:27:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 788692D0C64;
+	Thu,  9 Oct 2025 08:29:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DdA+a5pI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oznxPWpA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1014E253356;
-	Thu,  9 Oct 2025 08:27:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF0852737F3;
+	Thu,  9 Oct 2025 08:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759998478; cv=none; b=iGUZOj4zv1llAD0xbKX58Jm6U5eSiyArfn4o19wsJeaTH95FmYX0vwvKlFaXzY3DccJlUMThceOAXztKot6IcpfLBHbytqiG8WWgDV8phDIEhhOMiwnyuq+WYhgv0uZsLDMi4Tc5BQamoppTKRDU495s99vhnOZ3J2/ebWcnAgM=
+	t=1759998563; cv=none; b=RhzoVp/ER+MAihVsBD54eZBG3nReGbn1NxRiNuN49mo7z8I+uxrQCAZ9Y2tWc6u2bXCwasIxo6XejXAl88N7V3fXtzkwaQkeYNB0Q4hYeQ2WZeBtWc+tq5ebmEkIwi/mGN4hVW+612exBEDEsz2asXszKGfj6y3AwMWFMqLvWAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759998478; c=relaxed/simple;
-	bh=rZSSjMlfyp1/DY/FUZFefqXE1tJXo2iaAfShYMGP5t8=;
+	s=arc-20240116; t=1759998563; c=relaxed/simple;
+	bh=dfbS6gclSay+GmZJEufMCj7CjXaUpPV+sEDoyM5WKWA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JrJeTmpHyeqJDfAzXGP53NtETLsncx27008gnGP2FCbPy+U2mfqC1NfM0+wjrPqMCEAjMLyuW/rQqaF55jrdGuS+gvDVSN6kQuEsW/gqLhP1pBBa/buQIvE4n8f4qryhTFENodI9gSZoYX7JJF0Pyn4ASAel+SzTVPnFCipx9tI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DdA+a5pI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6564FC4CEE7;
-	Thu,  9 Oct 2025 08:27:57 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=hHwL37f/nZ5KrzpWv/tOvDQC+mRcYmLce4ZFkAXb93OnFviJzY1guaW1SWlENo3x4LmS//PCCKneNLrlGMZCjB5keOoLPZR+D9bMFkvstk86m4b1piC8ER7hFj04qOptXS1rDWMkHUS1U/fFRC5LAkSOLxsApI6MDLAI+/k54Oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oznxPWpA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4697FC4CEE7;
+	Thu,  9 Oct 2025 08:29:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759998477;
-	bh=rZSSjMlfyp1/DY/FUZFefqXE1tJXo2iaAfShYMGP5t8=;
+	s=k20201202; t=1759998563;
+	bh=dfbS6gclSay+GmZJEufMCj7CjXaUpPV+sEDoyM5WKWA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DdA+a5pIqIR7UM7ITP9VqMbrQ/uGA1V12t1LNQDOuPyrLQEoJKE5WKh2NSlGCFcFH
-	 uGV+H0pwp2yawTthgjn/F2Z0S6P2suSREhU47mceABhSQ+lsz4NACjbsay/R1WY6xl
-	 63eVDxL1HjTFsgs/K4KbrMpb8/bYp4irws9z33gqhrlUwxHverez29c2Tz9ErOzkD4
-	 lI3+p6SBzsx9lFVrFr5mtC7WR+54NC05PADE4DaHpGWvtVsMpKmDKEi7ct0qWmaPC0
-	 Ke7yKxdzEgNBLhs2Eb1NQka8ViQMV9K4MiwFR6XhqnCVW6ZTKG2vr0HUAKxlQ2nSl/
-	 qu7Zcvd+NNQBA==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1v6m0B-000000001lE-3wvQ;
-	Thu, 09 Oct 2025 10:27:55 +0200
-Date: Thu, 9 Oct 2025 10:27:55 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, Sven Peter <sven@kernel.org>,
-	Janne Grunau <j@jannau.net>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Yong Wu <yong.wu@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Chen-Yu Tsai <wens@csie.org>, Krishna Reddy <vdumpa@nvidia.com>,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org, Thierry Reding <treding@nvidia.com>,
-	Miaoqian Lin <linmq006@gmail.com>
-Subject: Re: [PATCH v2 14/14] iommu/tegra: fix device leak on probe_device()
-Message-ID: <aOdyC1toHHIeE4i5@hovoldconsulting.com>
-References: <20251007094327.11734-1-johan@kernel.org>
- <20251007094327.11734-15-johan@kernel.org>
- <rp2yiradenf3twznebagx7tgsruwh66exiikal37c4fwo75t4t@4breto65stqt>
+	b=oznxPWpA8GfoeEWdHdsS71368aC0Ii/dOq/X1NUa3jbvIuJqM2wnpZiEhoQD6e8br
+	 Nsk2MaakEqGTj5smMVvAmSqxM/HQ8rq2VCoyOh6ubsSpuN7wC1rNrvayGzRChsGcc2
+	 dPLhtF/Wy/TmHkzVGXwQuLkAvoIIl1Lot3fTq5WEH4Wa8yKAVCg1BevEKT/x2CFnEU
+	 LqLSbqTO5RUXObECN+1YbqQ8B3lTXdUlxlo9BinqG/M1xa3LSA4+De2RMg321J5WMe
+	 IkRXZpA40z4bQnjKdzooh673TUD2B5ZAE1wgStg4kVWYP/1AtQJujPxOMCPmuZhsfX
+	 xkEzd6bNvT31w==
+Date: Thu, 9 Oct 2025 10:29:19 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Lauri Tirkkonen <lauri@hacktheplanet.fi>
+Cc: Jiri Kosina <jikos@kernel.org>, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] HID: i2c-hid: patch Lenovo Yoga Slim 7x Keyboard rdesc
+Message-ID: <56l5tnplzap4mcqcridsavbtvbevhqd235m4m3h4ititj3j5p2@z6oy6wimoodv>
+References: <aOdLxAEYQpV2zp77@mail.hacktheplanet.fi>
+ <lxtbtu5frygbw7qzfaelc63vgientm7d6oo7dt6jeassl3ttbh@f22h223wehbm>
+ <aOdsqHznz1SJdadC@mail.hacktheplanet.fi>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="KFWfMBBEp9y0HjZa"
-Content-Disposition: inline
-In-Reply-To: <rp2yiradenf3twznebagx7tgsruwh66exiikal37c4fwo75t4t@4breto65stqt>
-
-
---KFWfMBBEp9y0HjZa
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aOdsqHznz1SJdadC@mail.hacktheplanet.fi>
 
-On Thu, Oct 09, 2025 at 09:56:18AM +0200, Thierry Reding wrote:
-> On Tue, Oct 07, 2025 at 11:43:27AM +0200, Johan Hovold wrote:
+On Oct 09 2025, Lauri Tirkkonen wrote:
+> Hi Benjamin,
+> 
+> On Thu, Oct 09 2025 09:38:50 +0200, Benjamin Tissoires wrote:
+> > > diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
+> > > index 63f46a2e5788..d78bd97ec24e 100644
+> > > --- a/drivers/hid/i2c-hid/i2c-hid-core.c
+> > > +++ b/drivers/hid/i2c-hid/i2c-hid-core.c
+> > 
+> > Why patching i2c-hid-core when this is clearly a logical bug, not a
+> > transport (I2C) bug?
+> > 
+> > I would rather see this fixup in hid-lenovo.c along with the other
+> > lenovo fixes.
+> 
+> I'm not exactly familiar with HID; please bear with me :) If
+> i2c-hid-core is not the correct place for this kind of thing, I can move
+> it, but I'm going to need some guidance on where the correct place is.
+> 
+> This device uses hid-over-i2c, not hid-lenovo; I've got
+> CONFIG_HID_LENOVO=m but the module is not even loaded. I don't see how
+> putting the fixup in a module that does not attach to the device could
+> work. So where should it go?
 
-> > @@ -830,10 +830,9 @@ static struct tegra_smmu *tegra_smmu_find(struct d=
-evice_node *np)
-> >  		return NULL;
-> > =20
-> >  	mc =3D platform_get_drvdata(pdev);
-> > -	if (!mc) {
-> > -		put_device(&pdev->dev);
-> > +	put_device(&pdev->dev);
-> > +	if (!mc)
-> >  		return NULL;
-> > -	}
-> > =20
-> >  	return mc->smmu;
->=20
-> pdev->dev is what's backing mc, so if we use put_device() here, then the
-> MC could go away at any time, right?
+Well, the transport layer is i2c-hid, but the logical implementation is
+in hid-generic which leverages the hid core default implementation.
 
-Holding a reference to a device does not prevent its driver data from
-going away so there is no point in keeping the reference.
+In your case, you need to tell hid-lenovo to handle the device so we
+stick to nice and tidy approach with each HID driver handling it's own
+business.
 
-But from what I can tell, you don't need to worry about that anyway
-since it's the memory controller driver that registers the iommu (and
-the driver can't be unbound).
+Adding a line like the following will bind the keyboard part of the
+device to hid-lenovo in lenovo_devices[]:
+	{ HID_DEVICE(BUS_I2C, HID_GROUP_GENERIC,
+		     USB_VENDOR_ID_LENOVO, USB_DEVICE_ID_LENOVO_YOGA_SLIM_7X) },
 
-Johan
+If you don't use hid-multitouch on the same device you need a
+HID_I2C_DEVICE() macro instead.
 
---KFWfMBBEp9y0HjZa
-Content-Type: application/pgp-signature; name=signature.asc
+Once this is in, hid-lenovo.ko will bind to the device, and then we can
+start fixing the report descriptor.
 
------BEGIN PGP SIGNATURE-----
+> 
+> 	[  796.926931] input: hid-over-i2c 048D:8987 Keyboard as /devices/platform/soc@0/bc0000.geniqup/b80000.i2c/i2c-1/1-003a/0018:048D:8987.000F/input/input36
+> 
+> As a side note: apparently there is at least one other device in
+> existence with a similar error in the report descriptor, which works
+> fine on Windows:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=652f3d00de523a17b0cebe7b90debccf13aa8c31
 
-iHUEABYKAB0WIQQHbPq+cpGvN/peuzMLxc3C7H1lCAUCaOdyBwAKCRALxc3C7H1l
-CEs2AP0RtypMzHwKSdgb+1LkzszK9dEi+yrUUVVJnU4HXJHGcQD/W3QAlXRFlmAR
-1c8Lq3vdjCx4jKS7G127MmgisGSECgw=
-=inx4
------END PGP SIGNATURE-----
+Well, Windows is known for horrible hacks in their own generic layer,
+but trying to mimmic them is sometimes harder than it looks :(
+Especially because we also handle non Windows devices, and we might
+break them while mimmicing Windows while our HID implementation is
+currently rather "clean".
 
---KFWfMBBEp9y0HjZa--
+Cheers,
+Benjamin
+
+> 
+> -- 
+> Lauri Tirkkonen | lotheac @ IRCnet
 
