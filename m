@@ -1,98 +1,99 @@
-Return-Path: <linux-kernel+bounces-846831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C89D0BC9275
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:00:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8378FBC9287
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 10B774F5210
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:00:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D82A23E21CD
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:00:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEDC72C159D;
-	Thu,  9 Oct 2025 13:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N3rEP6Fz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579D134BA3A
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0CFB2E228D;
+	Thu,  9 Oct 2025 13:00:52 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC3834BA3A;
+	Thu,  9 Oct 2025 13:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760014820; cv=none; b=n8jI07Q+Hzi416u6h5dlAV4io+AMNEn9FJxd9AFIl/kEx3WIAmKPVg7GDq7uceNw25kQKuUrVRkXzb+PcMMhuS5uJ5AmHiyyVTfzZJUBOe8Z7BAvWjFJVlcToz98fwg64V/2mWraA5FSNIbaPGT47x3IwSna44rGoeTMMg/ooUc=
+	t=1760014852; cv=none; b=Viv58H9hW+5tsQ1jpJeiy7sPuw4oqrd2HgUuu2RoxOvM66c9RJiC45P2cVk4y4qwg/aLFlvgp46WLXeX6X2IW6o3WW0TvqaJ+Fqux3ObjhFvEYvM1EhACIAFBCAx/+BX4w/KF1Lmu8wVEXCd7BbWaGh8pwP32q/h+VbbnLIGjXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760014820; c=relaxed/simple;
-	bh=RYuJ6aT2S9Kz/9NlGFnc04Gk8G7jOeT+9XyFBA7w33Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C9NpkYBaxCrDfx4CNUGejdSLCQLfAIX6hA5cYA4LtSlajz+9/41tjFI93lBv4cEk4TPA1cRSTjxTSxp4jP3gtO4jrfsGUt+9PjPO35K2jkJxKIrgAOCrFsnbz33vFvTbBilx1rSutwDYL1DY2NaQ9K8BalIkrDdMxwfYNs4SRKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N3rEP6Fz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46C2CC4CEE7;
-	Thu,  9 Oct 2025 13:00:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760014820;
-	bh=RYuJ6aT2S9Kz/9NlGFnc04Gk8G7jOeT+9XyFBA7w33Q=;
-	h=From:To:Cc:Subject:Date:From;
-	b=N3rEP6FzSfAMn4cxbh4kmoxpybZljYLmUfs6c4JGmsIEZx29Kfr3GVswnQHfSEwuz
-	 aR/wWZaw13+n0CdKmyiRNOijEtwfiS43YwE8ksL5ZW3sWPPZ0pN/RSHlNcWOM04DjN
-	 2f9us5pTYyP/fSo14xrZCzBu0C2sIwj3bvPsaW+fQGcSI7Bk1gkn7nYk5EPKo+QO60
-	 PlIvqwOlheO7EQNtWsCoYWpJpF6eFNwuCP7MkQLtnvfSxz9ctLS4msadLjdkV4TysV
-	 Z7imwc+jmOgw2lT3pRopjWUG6jrKY086FOPCbhjFDEZtTve8xircFe135Jf+7mj5Rg
-	 wOteb/OtmLo9w==
-From: Philipp Stanner <phasta@kernel.org>
-To: Matthew Brost <matthew.brost@intel.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Philipp Stanner <phasta@kernel.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/sched: Add warning for removing hack in drm_sched_fini()
-Date: Thu,  9 Oct 2025 14:59:29 +0200
-Message-ID: <20251009125928.250652-2-phasta@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1760014852; c=relaxed/simple;
+	bh=2gf6pqNjzmoPeyJUzHKtZEz8WXFWsv+O++Fdle7Chcs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=epudcZIqNwXzD9yqcmaauXKKVPP88rxATQ7PGgTaqp4xm5Tk4GtVRUsv2ZJGvnXLJ9EoIZaAKJZ29am0TbyVL1BEg97cE88ruijeMSvydeOXITiHMXaaSFA111IzjwM4x4RnDW7xEQVowFl0bX9JItsrZFCbO3N7s+4kMDtHmiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7AB6F176A;
+	Thu,  9 Oct 2025 06:00:41 -0700 (PDT)
+Received: from [10.1.34.29] (e122027.cambridge.arm.com [10.1.34.29])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 23F373F59E;
+	Thu,  9 Oct 2025 06:00:44 -0700 (PDT)
+Message-ID: <7c3b219f-f504-4c4c-a13a-6a25a0eda277@arm.com>
+Date: Thu, 9 Oct 2025 14:00:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: gpu: mali-valhall: make mali-supply
+ optional
+To: Rain Yang <jiyu.yang@oss.nxp.com>, imx@lists.linux.dev,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: boris.brezillon@collabora.com, liviu.dudau@arm.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.co, simona@ffwll.ch, marek.vasut@mailbox.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, Rain Yang <jiyu.yang@nxp.com>
+References: <20250928090334.35389-1-jiyu.yang@oss.nxp.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250928090334.35389-1-jiyu.yang@oss.nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The assembled developers agreed at the X.Org Developers Conference that
-the hack added for amdgpu in drm_sched_fini() shall be removed. It
-shouldn't be needed by amdgpu anymore.
+Series applied to drm-misc-next.
 
-As it's unclear whether all drivers really follow the life time rule of
-entities having to be torn down before their scheduler, it is reasonable
-to warn for a while before removing the hack.
+Thanks,
+Steve
 
-Add a warning in drm_sched_fini() that fires if an entity is still
-active.
-
-Signed-off-by: Philipp Stanner <phasta@kernel.org>
----
- drivers/gpu/drm/scheduler/sched_main.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-index 46119aacb809..e69917120870 100644
---- a/drivers/gpu/drm/scheduler/sched_main.c
-+++ b/drivers/gpu/drm/scheduler/sched_main.c
-@@ -1441,6 +1441,8 @@ void drm_sched_fini(struct drm_gpu_scheduler *sched)
- 			 * drivers that keep entities alive for longer than
- 			 * the scheduler.
- 			 */
-+			if (!s_entity->stopped)
-+				dev_warn(sched->dev, "Tearing down scheduler with active entities!\n");
- 			s_entity->stopped = true;
- 		spin_unlock(&rq->lock);
- 		kfree(sched->sched_rq[i]);
--- 
-2.49.0
+On 28/09/2025 10:03, Rain Yang wrote:
+> From: Rain Yang <jiyu.yang@nxp.com>
+> 
+> Not all platforms require the mali-supply regulator. This change removes
+> it from the required list in the binding schema, and make mali-supply
+> required for rk3588 only.
+> 
+> Signed-off-by: Rain Yang <jiyu.yang@nxp.com>
+> ---
+>  .../devicetree/bindings/gpu/arm,mali-valhall-csf.yaml          | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml b/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml
+> index b220cbd5362f..ef9791d8ed95 100644
+> --- a/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml
+> +++ b/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml
+> @@ -92,7 +92,6 @@ required:
+>    - interrupts
+>    - interrupt-names
+>    - clocks
+> -  - mali-supply
+>  
+>  additionalProperties: false
+>  
+> @@ -109,6 +108,8 @@ allOf:
+>          power-domains:
+>            maxItems: 1
+>          power-domain-names: false
+> +      required:
+> +        - mali-supply
+>  
+>  examples:
+>    - |
 
 
