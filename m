@@ -1,60 +1,56 @@
-Return-Path: <linux-kernel+bounces-847140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B4D4BCA0F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 18:14:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B07B0BCA014
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 18:10:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81CC218846B2
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 16:09:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DAB24257B5
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 16:09:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4612FBDFB;
-	Thu,  9 Oct 2025 16:00:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7AE2FC00E;
+	Thu,  9 Oct 2025 16:00:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="agl/pjz3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LLaOyy1N"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED0A23717F;
-	Thu,  9 Oct 2025 16:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8857F2F532C;
+	Thu,  9 Oct 2025 16:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760025636; cv=none; b=KiAgNMkx/Eg47ZnGowI60U5wZVEuMfBpfogaWU6hEJ73zWe7Uhf2m6GKC0yJWJTLtIIxW6dr2eS8MnBCuP3d3JYNvkjlLAg5lNjWFiRtjxl1jV7H3PYCFC0VmjvYLgh0EWzEP2yiKECYpoSxYGEYseEnPA0S3KzUGY/QqymxrCY=
+	t=1760025640; cv=none; b=C9dtOPcH3oM8Htjl7Rl2D1QdvgEywsuThUToEkh05yyGEBg7zfaiulC+32BvZVuTixq9Ko7DqpOE3Cniw17l9ORVOkkaPKhIl71IiPDPnfmTl0aKuEeCJHeetUsLl2xvHxEXhlbvW6g/tdzcG0Pg0+9OOpLqrBkTiMOo8GZxlJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760025636; c=relaxed/simple;
-	bh=s9j4LifYD/TQ+CL5YBa0jTYXd6Ieek9svwSuQs0h9x4=;
+	s=arc-20240116; t=1760025640; c=relaxed/simple;
+	bh=H7pIu2nrF3o5LhSEUg5bYRN/KyD+62BDc7EyqLzyrv4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Xzn8otPHmPE8TidAsaOvRzOxDsC6QHPhJh1XKDxd2qSCi6eHT9Sg6NoBU86wER0C1li6ynmnx2T/mM6iR0ZgIs34mf5jl2EqbIXn5IALZ6/WTeOqBH+USdR4ePTOyGd8oZvPKKmstG9D9zKz4mPqaP5P9mqfX9G32nNppagjCM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=agl/pjz3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 302A1C4CEF8;
-	Thu,  9 Oct 2025 16:00:35 +0000 (UTC)
+	 MIME-Version:Content-Type; b=YmthXFiaD7nLOb+DOVH0DA2L+sy9UAHRulZqvRpSuYbsN8NOmaV0qVjJV6xOsqdYpydt6R9KYr2foP53T0aGaHTY1OUt7dBwSaFQnUGLty3Lg7koL8eNP6ZRUOJ+K5Zy9siaAFNY6n7nplQXmasV7lQwhXq6ep9PpslbwEMvq6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LLaOyy1N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E9E5C4CEFE;
+	Thu,  9 Oct 2025 16:00:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760025636;
-	bh=s9j4LifYD/TQ+CL5YBa0jTYXd6Ieek9svwSuQs0h9x4=;
+	s=k20201202; t=1760025640;
+	bh=H7pIu2nrF3o5LhSEUg5bYRN/KyD+62BDc7EyqLzyrv4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=agl/pjz3ZnvUe8/c3gt6UNAz59YCaclPAVMo7aXRJ1mb07RZ+80bPrUXGKDh7wE8/
-	 DAwErhqTYLiI7dG8/O4/tX78Sl6OlZQQi4nj8vQtS68DzXLflduZrwt0lDDOycC75r
-	 iT2Gtvzn3IX1p+1Z5efCKb42zIuZx8vqggxQyoWwhnDylzvtlmdfZ4ZJC7dCdDkDCS
-	 Qxy7wGsSTddJpyIZRm3r+DHSHEsVuy6EKWgU0P1GAuuy49ZiJaoHXCzmkrRpB0pJUG
-	 sScLAcs8eX5qpAqLlSlsZZyYzdL6Xa3j5eTDpTml6dV2BJLZIZQ9uZUz1gi61LuZqi
-	 SAXllTMNuw1nQ==
+	b=LLaOyy1NDZkO9IQpiphxxy1CRhcwO66nNv0ARdTZwb6yBqKxKxej5bs/6+sJnG2va
+	 SjuPqxfhB/qLkjXAkXJxxuVAWrxRVdR48KKGsXZR3CVOBV+nHReK8wsj/zADAjCP/m
+	 QNcWCpH+iKnxLU+vInuOGRY4fZSdAxierDcfq/BJAcJFhRL8af38nJVyEiOoK55Bnc
+	 0CzmkB53RaJqIVa6iaB67Ki7pPUr/Ou+tJqWBN2beBcxs4DKmIpaQIQ2gyFB69ZWjZ
+	 eAfg7898B2R1Cek9evQ7tRmPGYXubVyLl9ZXJGWZjHtOlHPdWUw4xkdWxUYffcma/W
+	 ckqJl+TJj8Now==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Inochi Amaoto <inochiama@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Nam Cao <namcao@linutronix.de>,
-	Chen Wang <unicorn_wang@outlook.com>,
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
 	Sasha Levin <sashal@kernel.org>,
-	pjw@kernel.org,
-	samuel.holland@sifive.com,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.17-6.1] irqchip/sifive-plic: Respect mask state when setting affinity
-Date: Thu,  9 Oct 2025 11:55:54 -0400
-Message-ID: <20251009155752.773732-88-sashal@kernel.org>
+	tglx@linutronix.de,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.17-5.4] clocksource/drivers/vf-pit: Replace raw_readl/writel to readl/writel
+Date: Thu,  9 Oct 2025 11:55:57 -0400
+Message-ID: <20251009155752.773732-91-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251009155752.773732-1-sashal@kernel.org>
 References: <20251009155752.773732-1-sashal@kernel.org>
@@ -70,192 +66,164 @@ X-stable-base: Linux 6.17.1
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Inochi Amaoto <inochiama@gmail.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-[ Upstream commit adecf78df945f4c7a1d29111b0002827f487df51 ]
+[ Upstream commit 0b781f527d6f99e68e5b3780ae03cd69a7cb5c0c ]
 
-plic_set_affinity() always calls plic_irq_enable(), which clears up the
-priority setting even the interrupt is only masked. This unmasks the
-interrupt unexpectly.
+The driver uses the raw_readl() and raw_writel() functions. Those are
+not for MMIO devices. Replace them with readl() and writel()
 
-Replace the plic_irq_enable/disable() with plic_irq_toggle() to avoid
-changing the priority setting.
+[ dlezcano: Fixed typo in the subject s/reald/readl/ ]
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Nam Cao <namcao@linutronix.de> # VisionFive 2
-Tested-by: Chen Wang <unicorn_wang@outlook.com> # Pioneerbox
-Reviewed-by: Nam Cao <namcao@linutronix.de>
-Reviewed-by: Chen Wang <unicorn_wang@outlook.com>
-Link: https://lore.kernel.org/all/20250811002633.55275-1-inochiama@gmail.com
-Link: https://lore.kernel.org/lkml/20250722224513.22125-1-inochiama@gmail.com/
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Link: https://lore.kernel.org/r/20250804152344.1109310-2-daniel.lezcano@linaro.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-Based on my comprehensive investigation, let me provide my analysis:
+YES
 
-## **Backport Status: YES**
+- What changed: The commit replaces all `__raw_readl/__raw_writel` uses
+  with `readl/writel` in the VF610 PIT timer driver, ensuring proper
+  MMIO semantics. Affected spots in `drivers/clocksource/timer-vf-pit.c`
+  include:
+  - `pit_timer_enable`: `__raw_writel(...)` → `writel(...)`
+    (drivers/clocksource/timer-vf-pit.c)
+  - `pit_timer_disable`: `__raw_writel(0, ...)` → `writel(0, ...)`
+    (drivers/clocksource/timer-vf-pit.c)
+  - `pit_irq_acknowledge`: `__raw_writel(PITTFLG_TIF, ...)` →
+    `writel(...)` (drivers/clocksource/timer-vf-pit.c)
+  - `pit_read_sched_clock`: `~__raw_readl(clksrc_base + PITCVAL)` →
+    `~readl(...)` (drivers/clocksource/timer-vf-pit.c)
+  - `pit_clocksource_init`: three writes to `PITTCTRL`/`PITLDVAL` switch
+    to `writel(...)` (drivers/clocksource/timer-vf-pit.c)
+  - `pit_set_next_event`: `__raw_writel(delta - 1, ...)` → `writel(...)`
+    (drivers/clocksource/timer-vf-pit.c)
+  - `pit_clockevent_init`: writes to `PITTCTRL`/`PITTFLG` switch to
+    `writel(...)` (drivers/clocksource/timer-vf-pit.c)
+  - `pit_timer_init`: module enable write `__raw_writel(~PITMCR_MDIS,
+    ...)` → `writel(...)` (drivers/clocksource/timer-vf-pit.c)
 
-### **Extensive Analysis:**
+- Why this is a bug fix: `__raw_readl/__raw_writel` are explicitly
+  documented as low-level accessors without ordering or byte-order
+  semantics and “not for MMIO registers.” Using them on MMIO can lead to
+  reordering/posting issues on weakly ordered architectures. This can
+  cause:
+  - Timer enable occurring before the new `LDVAL` write reaches hardware
+    in `pit_set_next_event`, producing incorrect next-event timing.
+  - IRQ acknowledge in `pit_timer_interrupt` not being ordered with
+    respect to subsequent code, potentially leading to spurious or
+    missed interrupts.
+  - Sched_clock reads using `__raw_readl` lacking ordering guarantees.
+  The correct `readl/writel` include the architecture-defined ordering
+required for MMIO and fix these subtle, real-world bugs. See
+documentation: `Documentation/driver-api/device-io.rst` (section
+describing `__raw_*` accessors).
 
-#### **1. Bug Context and Timeline**
+- Scope and risk: The change is small, mechanical, and confined to a
+  single driver file. It does not alter logic, APIs, or data structures.
+  It only corrects the MMIO accessor choice. While the timer/clocksource
+  subsystem is critical, this is the minimally invasive, intended API
+  usage and aligns with how other clocksource drivers operate.
 
-This commit fixes a regression in the SiFive PLIC (Platform-Level
-Interrupt Controller) interrupt affinity handling introduced in kernel
-v6.12-rc4.
+- Upstream context: This exact change is upstream as commit
+  0b781f527d6f9 (“clocksource/drivers/vf-pit: Replace raw_readl/writel
+  to readl/writel”), acknowledged by the timekeeping maintainer. The
+  driver later evolves/renames to `drivers/clocksource/timer-nxp-pit.c`,
+  which consistently uses `readl/writel`, reinforcing that this is the
+  intended, correct pattern.
 
-**Historical Context:**
-- **2022 (commit a1706a1c5062)**: The PLIC driver separated
-  enable/disable operations (controlling enable bits) from mask/unmask
-  operations (controlling priority registers)
-- **October 2024 (commit 6b1e0651e9ce8, v6.12-rc4)**:
-  `plic_irq_enable()` was modified to also call `plic_irq_unmask()` to
-  fix a different bug. This commit was **explicitly tagged for stable
-  backporting** (`Cc: stable@vger.kernel.org`)
-- **August 2024 (this commit)**: Fixes the affinity handling regression
-  introduced by the above change
+- Stable backport criteria:
+  - Fixes a real bug that can affect users (ordering on MMIO timer
+    registers).
+  - Minimal and contained patch; no feature additions or architectural
+    changes.
+  - Low regression risk; behavior becomes more robust per documented
+    MMIO rules.
+  - No explicit “Cc: stable”, but it corrects improper API usage present
+    since the driver’s introduction (initial support commit
+    c19672492d233), making it broadly applicable to stable trees that
+    still have `timer-vf-pit.c`.
 
-#### **2. Technical Analysis of the Bug**
+Given the above, this is a good candidate for stable backport.
 
-**The Problem (lines 182-187):**
-```c
-// OLD CODE - BROKEN
-plic_irq_disable(d);  // Only clears enable bit
-irq_data_update_effective_affinity(d, cpumask_of(cpu));
-if (!irqd_irq_disabled(d))
-    plic_irq_enable(d);  // Sets enable bit AND unmasks (sets
-priority=1)
-```
+ drivers/clocksource/timer-vf-pit.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-After commit 6b1e0651e9ce8, `plic_irq_enable()` does:
-```c
-plic_irq_toggle(..., 1);  // Set enable bit
-plic_irq_unmask(d);       // Set priority=1 (UNMASK)
-```
-
-**The Issue**: When changing interrupt affinity, even if an interrupt
-was **masked** (priority=0) but still **enabled**, calling
-`plic_set_affinity()` would unexpectedly **unmask** it by setting
-priority back to 1. This violates the principle that affinity changes
-should preserve the interrupt's mask state.
-
-**The Fix (lines 182-191):**
-```c
-// NEW CODE - CORRECT
-plic_irq_toggle(irq_data_get_effective_affinity_mask(d), d, 0);
-irq_data_update_effective_affinity(d, cpumask_of(cpu));
-if (!irqd_irq_disabled(d))
-    plic_irq_toggle(irq_data_get_effective_affinity_mask(d), d, 1);
-```
-
-The fix directly uses `plic_irq_toggle()` which **only manipulates
-enable bits** without touching the priority register, thus preserving
-the mask state.
-
-#### **3. User Impact Assessment**
-
-**Severity: HIGH**
-- **Platforms Affected**: All RISC-V systems using SiFive PLIC
-  (VisionFive 2, Pioneerbox, Allwinner D1, and other RISC-V platforms)
-- **Trigger Condition**: CPU affinity changes via
-  `/proc/irq/*/smp_affinity` or dynamic load balancing
-- **Consequences**:
-  - Masked interrupts unexpectedly becoming active
-  - Potential interrupt storms
-  - Race conditions in interrupt handling
-  - System instability or hangs
-  - Violation of interrupt masking contracts expected by device drivers
-
-**Evidence of Real-World Impact:**
-- Tested on actual hardware: VisionFive 2 and Pioneerbox platforms
-- Multiple Tested-by and Reviewed-by tags from the community
-- Suggested by Thomas Gleixner (maintainer), indicating severity
-
-#### **4. Code Quality and Risk Assessment**
-
-**Change Characteristics:**
-- **Size**: Very small - only 8 lines changed (2 removed, 6 added
-  including comments)
-- **Scope**: Confined to single function (`plic_set_affinity()`)
-- **Dependencies**: Uses existing infrastructure (`plic_irq_toggle()`,
-  `irqd_irq_disabled()`)
-- **Testing**: Explicitly tested on multiple platforms
-- **Review**: Multiple reviewed-by tags, suggested by a top maintainer
-
-**Risk**: **MINIMAL**
-- The change is surgical and well-understood
-- Uses existing, proven helper functions
-- Does not introduce new functionality
-- Has extensive testing and review
-
-#### **5. Stable Backporting Analysis**
-
-**Critical Point**: The bug-introducing commit (6b1e0651e9ce8) **has
-`Cc: stable@vger.kernel.org`**, meaning:
-- The problematic change is already in stable kernels v6.12.x
-- This fix MUST follow it to stable to avoid leaving the regression
-  unfixed
-
-**Affected Stable Kernels:**
-- v6.12.x series (confirmed: 6.12.1, 6.12.10, 6.12.11, 6.12.12, 6.12.13
-  contain the buggy commit)
-- Any future stable releases based on v6.12+
-
-#### **6. Comparison to Stable Tree Rules**
-
-✅ **Fixes important bug**: Unexpected interrupt unmasking is a
-correctness issue
-✅ **Affects users**: RISC-V platforms with PLIC (growing ecosystem)
-✅ **Minimal risk**: Small, surgical change
-✅ **Well-tested**: Multiple platforms and reviewers
-✅ **Self-contained**: No architectural changes
-✅ **Follows fix for stable-tagged commit**: Must accompany 6b1e0651e9ce8
-✅ **No new features**: Pure bugfix
-
-#### **7. Recommendation**
-
-**STRONGLY RECOMMEND BACKPORTING** to:
-- All v6.12.x stable kernels
-- Any stable kernel that received commit 6b1e0651e9ce8
-
-**Reasoning:**
-1. Fixes a real regression affecting RISC-V platforms
-2. The bug-introducing commit was tagged for stable
-3. Minimal risk, well-tested fix
-4. Violates interrupt masking semantics, which could cause subtle bugs
-5. Has community support and testing
-
-This is a textbook example of a commit that should be backported to
-stable: it fixes an important functional bug with minimal risk and high
-confidence.
-
- drivers/irqchip/irq-sifive-plic.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-index bf69a4802b71e..866e38612b948 100644
---- a/drivers/irqchip/irq-sifive-plic.c
-+++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -179,12 +179,14 @@ static int plic_set_affinity(struct irq_data *d,
- 	if (cpu >= nr_cpu_ids)
- 		return -EINVAL;
+diff --git a/drivers/clocksource/timer-vf-pit.c b/drivers/clocksource/timer-vf-pit.c
+index 911c92146eca6..8041a8f62d1fa 100644
+--- a/drivers/clocksource/timer-vf-pit.c
++++ b/drivers/clocksource/timer-vf-pit.c
+@@ -35,30 +35,30 @@ static unsigned long cycle_per_jiffy;
  
--	plic_irq_disable(d);
-+	/* Invalidate the original routing entry */
-+	plic_irq_toggle(irq_data_get_effective_affinity_mask(d), d, 0);
- 
- 	irq_data_update_effective_affinity(d, cpumask_of(cpu));
- 
-+	/* Setting the new routing entry if irq is enabled */
- 	if (!irqd_irq_disabled(d))
--		plic_irq_enable(d);
-+		plic_irq_toggle(irq_data_get_effective_affinity_mask(d), d, 1);
- 
- 	return IRQ_SET_MASK_OK_DONE;
+ static inline void pit_timer_enable(void)
+ {
+-	__raw_writel(PITTCTRL_TEN | PITTCTRL_TIE, clkevt_base + PITTCTRL);
++	writel(PITTCTRL_TEN | PITTCTRL_TIE, clkevt_base + PITTCTRL);
  }
+ 
+ static inline void pit_timer_disable(void)
+ {
+-	__raw_writel(0, clkevt_base + PITTCTRL);
++	writel(0, clkevt_base + PITTCTRL);
+ }
+ 
+ static inline void pit_irq_acknowledge(void)
+ {
+-	__raw_writel(PITTFLG_TIF, clkevt_base + PITTFLG);
++	writel(PITTFLG_TIF, clkevt_base + PITTFLG);
+ }
+ 
+ static u64 notrace pit_read_sched_clock(void)
+ {
+-	return ~__raw_readl(clksrc_base + PITCVAL);
++	return ~readl(clksrc_base + PITCVAL);
+ }
+ 
+ static int __init pit_clocksource_init(unsigned long rate)
+ {
+ 	/* set the max load value and start the clock source counter */
+-	__raw_writel(0, clksrc_base + PITTCTRL);
+-	__raw_writel(~0UL, clksrc_base + PITLDVAL);
+-	__raw_writel(PITTCTRL_TEN, clksrc_base + PITTCTRL);
++	writel(0, clksrc_base + PITTCTRL);
++	writel(~0UL, clksrc_base + PITLDVAL);
++	writel(PITTCTRL_TEN, clksrc_base + PITTCTRL);
+ 
+ 	sched_clock_register(pit_read_sched_clock, 32, rate);
+ 	return clocksource_mmio_init(clksrc_base + PITCVAL, "vf-pit", rate,
+@@ -76,7 +76,7 @@ static int pit_set_next_event(unsigned long delta,
+ 	 * hardware requirement.
+ 	 */
+ 	pit_timer_disable();
+-	__raw_writel(delta - 1, clkevt_base + PITLDVAL);
++	writel(delta - 1, clkevt_base + PITLDVAL);
+ 	pit_timer_enable();
+ 
+ 	return 0;
+@@ -125,8 +125,8 @@ static struct clock_event_device clockevent_pit = {
+ 
+ static int __init pit_clockevent_init(unsigned long rate, int irq)
+ {
+-	__raw_writel(0, clkevt_base + PITTCTRL);
+-	__raw_writel(PITTFLG_TIF, clkevt_base + PITTFLG);
++	writel(0, clkevt_base + PITTCTRL);
++	writel(PITTFLG_TIF, clkevt_base + PITTFLG);
+ 
+ 	BUG_ON(request_irq(irq, pit_timer_interrupt, IRQF_TIMER | IRQF_IRQPOLL,
+ 			   "VF pit timer", &clockevent_pit));
+@@ -183,7 +183,7 @@ static int __init pit_timer_init(struct device_node *np)
+ 	cycle_per_jiffy = clk_rate / (HZ);
+ 
+ 	/* enable the pit module */
+-	__raw_writel(~PITMCR_MDIS, timer_base + PITMCR);
++	writel(~PITMCR_MDIS, timer_base + PITMCR);
+ 
+ 	ret = pit_clocksource_init(clk_rate);
+ 	if (ret)
 -- 
 2.51.0
 
