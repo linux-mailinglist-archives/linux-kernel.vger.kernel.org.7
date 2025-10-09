@@ -1,180 +1,375 @@
-Return-Path: <linux-kernel+bounces-846674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E71FEBC8B26
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:06:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 382F6BC8B2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:07:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F33D74F184E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:06:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2913919E82F1
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E58E2E0920;
-	Thu,  9 Oct 2025 11:06:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E57232DFA3B;
+	Thu,  9 Oct 2025 11:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MbSv1zCz"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="eaymSdCx"
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8AB72DEA72
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 11:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF9D2DE715
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 11:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760007991; cv=none; b=fCbqx9oPfYApREgF6++Grrqnm4R7UJRkmzYHnTE+Z5KQ9rH/KY8oIkhzzJo4/CJnGK77/fhNtvzmQV5jXWT6xcvUVziCikXnB+0g2n3X2iIT7lXoxRV1VFvp4l6cRK+mYs+W/AfEd7UwlvkU9NsENjRue7bPWlfNSCe1tuiKEjg=
+	t=1760008026; cv=none; b=txSd8faYW5mxnMWXQ0iL9OhaqTsZcNflL9xcnpMyMOmsacgK45opGrHLneJoom0WSYYax3lM8TncLUzae2YUrJXcMrMsUo/41Y/205PUCqFHYUDY0Mk+qMj0dmk65QZaYFeoBd6u1tM80V3pvUrE92yY1tQuU2Qz/OumuGuz8WA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760007991; c=relaxed/simple;
-	bh=e+J/tiye5mRAK/FZkIReamJjbpURV3VmdmtPDcVSuXg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M/AlnUZ05fzdgePsnHkfU2qKI/k5zTxuWeqzV4bNYznKWU+esyF9bGej7QD/NyL6c2l8qBFt1Je9KO48VfL1KzXzYqWE3/9cG16F6O59fl52NK0iHQQREnTGkm9Ro2RroTcZbi1VamQFzE4B4gYafOk8BQmzK43yEehSKjcmmp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MbSv1zCz; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-46e2c3b6d4cso5706965e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 04:06:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1760007988; x=1760612788; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QTLqI8rxOdYS+w1Ui92U5vAm+VjLT7vBGUB8kjwj7vI=;
-        b=MbSv1zCz3Ozmfi0LhPthtBhKt97y5ZdtChOjh5fBKYYytDP+R7YeQOT+weksMIaYTw
-         N130IVFLTpfTWalrbjrqxq3eEdyjewG+pZQA88Yc10QJNCWFGAIFuGvQOTcbRXEpQwI3
-         Lihr2dXTMdHfGkET7UmKPsrIwOgmWlIf2OD9JzNeyd546SvqOYPIG5uvgY+KWu2Yef2a
-         lPB9/3AQqe+juwgu68Td+KwjdrULhOH9pZTTlcCfHM2hyK4LCcJyJ72WzZQBC5OQbE/W
-         j731H8u4PEEEzVOaiim6dTdIFwfYsOh6pjqmoaZRgfTQqodBq0VxAJJ5OsLfa2lnuVJq
-         qqJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760007988; x=1760612788;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QTLqI8rxOdYS+w1Ui92U5vAm+VjLT7vBGUB8kjwj7vI=;
-        b=qs+cb4MzgTHqiGGoAms3E2oismCluHGEJSrQnd+QJLmldqFiOOJ6BztwEdxZ89Gh7W
-         Cv6tG3cKnIxqrO/+r8ADJ3Ryq8jApqyZ6GqcH7AD5ImSxst5X0/7k0qgYexhrlP68yGp
-         0GgMzVzelUOPD9iueIlHO0j4ooYOiIYef5r4n27f1jeEHjBiAYc2XRcH5mhsoESlCe92
-         /1wGBDJnW9aehA2eVm3VnWZuL74ghGOdz4Qe4NHaghyBAVSxFAAk4kkY7M7WJvqCU3vl
-         mmVOoUbHewlRrY+pRt1yaerU0TMEpwOrnZBXWIRoKG6NkhzsRSsyV5jYs1pHEoFQe88o
-         xVJw==
-X-Forwarded-Encrypted: i=1; AJvYcCW15geae6iATr4b0A378dPupMCGkwjSpT0QifR6OX4uCWw7TEOvDnwJ+Wdt0U1sJk/++5g1zvorf95XQAk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5uLliORgbnQ1GZJ189CAW0tGrx8aPbuhIhWRfwk2U5lNm2l0W
-	BoS4cSY5PVKrfvZMsM5eMCfpR9utx4pFpUuOUWi5LICCNZcjAeCOfZpuMVMX8sIdwXo=
-X-Gm-Gg: ASbGncsaWYBWFwFEKj9Wxi5/vMZjhOvh5q3+cOnZF5JC4UxLj1KUswnzrW3cpUOEst2
-	I1vX5DHtUUFbhEs9qT57s67NZDvNnylWQ3XNho091Eshbu1tnaj0vTIDG0owlGoh+S63hIjhYET
-	q6YB+0lgVWBdDcTwrJo8xrQ5AZLnzzBJjynAADNdD1qAdgn1DTpl0ZIHLO9zVr8axDig26bLIY1
-	j8d6UCJzrG9hAqg4sBhDqdkFPb5SzXCCO2wRYMfI+1VDWCjM3sWDK5eIpbJt4V5knjucK8fbE6Y
-	DjA2oGCiLqr+QWxlN1QDg5+OqwQResik7551Ru4QZs90fJ05S4pUM9I8aLF6MEysMsDoGLozG8n
-	PiaEa88pWqAe62nbOasRVOG127Xt/3tlfMzM1orYmQ8rBJfLEfsf5nevbnPxANXPpovQ3PIoUE2
-	uZJV1Te+NlVjyS0csE
-X-Google-Smtp-Source: AGHT+IFYJmAYAugMFGROqR67bT/ub4cesGuFD0FYj+fBxCLxvJVqCchCUIgmAvmeFF5WvX92ukK23A==
-X-Received: by 2002:a05:600c:4ed4:b0:45d:d505:a1c3 with SMTP id 5b1f17b1804b1-46fa9b13b04mr41874535e9.37.1760007988060;
-        Thu, 09 Oct 2025 04:06:28 -0700 (PDT)
-Received: from [192.168.0.13] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fab500706sm35212915e9.3.2025.10.09.04.06.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Oct 2025 04:06:27 -0700 (PDT)
-Message-ID: <28baa5ce-c161-426a-b5df-1cd784489bb5@linaro.org>
-Date: Thu, 9 Oct 2025 12:06:26 +0100
+	s=arc-20240116; t=1760008026; c=relaxed/simple;
+	bh=bU93fiDaF53YDILN7nrgapLV3wtHSlS/AbXCHy35IZM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qD7rLoUxSRVDH14ut1iUqmi1AIUqZ7C7nrhN6qbBEIVk/j+Qyc2Xi2GbQeQMGMoyfqougqKyFNajLcPr4lQ+iPTYTftebJ9TICUL8WAou/laR2yVEUe3StmJH6SsyL+/B7EUbjwDgexg4ka9uY8iIs57XP0DiT76aziTOVe8DGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de; spf=pass smtp.mailfrom=posteo.de; dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b=eaymSdCx; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.de
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id CD0C2240027
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:07:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.de; s=2017;
+	t=1760008021; bh=jdodBx5Ch5acLH1mwoIFx9Y9llTCsxwJpsKX6tIr/bQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:
+	 Content-Transfer-Encoding:MIME-Version:Autocrypt:OpenPGP:From;
+	b=eaymSdCx3ktBFULxbRKWAutE4qhm7yc/5l25PwV+zTdcABX/As9s5g32+F+Y6sWDk
+	 64Fgpqh8hBmilUKrgTZJZWmGCiCFp52DbDH9W7ERwciWjFDD0t762Yb1CtVOcJcH17
+	 bRfqTf4RTffzCygxPrpebI/1hsrZh6UiDBHI7zoP4URizrXA9MyZbNMg3rt3rAXE58
+	 EAIuSQ7ug5MQFjY3eEuJ6HaCxKE2Gs1+zZ0lGjA1ldJIChSYOcUrJyOS42RnWl9mGk
+	 Q+CeAcLa4pUE/wO+IZrWM0n22pCRT0eBgPRdfLdm2vRbHYOaHob8q0pQdIUfEAC0ry
+	 i4lHUPZtLcQzw==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4cj6X43PvWz6v08;
+	Thu,  9 Oct 2025 13:07:00 +0200 (CEST)
+Message-ID: <d8b785ff14e4c0b12aa73a6ebb2be6466157cc1c.camel@posteo.de>
+Subject: Re: [PATCH 2/2] Power on ata ports defined in ACPI before probing
+ ports
+From: Markus Probst <markus.probst@posteo.de>
+To: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, "Martin K.
+ Petersen" <martin.petersen@oracle.com>
+Cc: linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Markus Probst <markus.probst@posteo.de>
+Date: Thu, 09 Oct 2025 11:07:01 +0000
+In-Reply-To: <7ab0ef5c-cce7-44d7-a416-4963e24e0b17@kernel.org>
+References: <8c3cb28c57462f9665b08fdaa022e6abc57fcd9e.camel@posteo.de>
+	 <20251005190559.1472308-1-markus.probst@posteo.de>
+	 <20251005190559.1472308-2-markus.probst@posteo.de>
+	 <7ab0ef5c-cce7-44d7-a416-4963e24e0b17@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/5] Introduce "non-pixel" sub node within iris video
- node
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Vikash Garodia <quic_vgarodia@quicinc.com>, Bryan O'Donoghue
- <bod@kernel.org>, Charan Teja Kalla <charan.kalla@oss.qualcomm.com>,
- Bryan O'Donoghue <bod.linux@nxsw.ie>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <7b6db4fa-2f73-376d-4eb3-64c1c7e6cda3@quicinc.com>
- <1516f21e-aee3-42cf-b75e-61142dc9578d@oss.qualcomm.com>
- <9bae595a-597e-46e6-8eb2-44424fe21db6@linaro.org>
- <MMSKAu89Ew7StAeFBV442KfKNzmqbTSQ-maFG35Jr9d8PkUV2L4sx44R2DRevXA8mC45vkA398l2mvVzarZwew==@protonmail.internalid>
- <bcfbf35b-69ed-4f39-8312-6a53123cd898@kernel.org>
- <d46c0335-99d6-469f-a61f-aca4c851f745@kernel.org>
- <GyrcG3qBN7c5C7ajCs3EV81hWvuaVbg64CpzQ-X3d_p6EauoiKxSoG2aOKE21-j12SWFjNDjV-kVSwYYqVm_lQ==@protonmail.internalid>
- <a0dc93ec-e35c-409b-8dfb-1642c92a9f0c@kernel.org>
- <98e6acf8-80d7-4894-b4ce-ce74660722ef@kernel.org>
- <soFAWqHDNosrZui972Ip7EvMCfB6tepD-HxHkc17RKmilPJpQZjMzni9LmMOpvKumHqFEibe5FdNkkJG8DKlcw==@protonmail.internalid>
- <5085c857-f6e8-4faf-b61a-a9ee562ccf06@kernel.org>
- <7ba3953a-166f-4c67-8f54-666b0c488b12@kernel.org>
- <e15f156c-cb38-4566-b275-ba156a7b598d@kernel.org>
- <4fac8b52-180d-7b79-f0d9-52c0f94186da@quicinc.com>
- <e8dfad82-ab07-40e9-9296-859168142611@kernel.org>
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Content-Language: en-US
-In-Reply-To: <e8dfad82-ab07-40e9-9296-859168142611@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Autocrypt: addr=markus.probst@posteo.de; prefer-encrypt=mutual;
+  keydata=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
+  aBeNN4ijKZchBXHPgVx+YtWRHfcm4l8=
+OpenPGP: url=https://posteo.de/keys/markus.probst@posteo.de.asc; preference=encrypt
 
-On 09/10/2025 11:45, Krzysztof Kozlowski wrote:
-> On 09/10/2025 19:40, Vikash Garodia wrote:
->>
->> On 10/9/2025 2:41 PM, Krzysztof Kozlowski wrote:
->>> On 09/10/2025 17:38, Bryan O'Donoghue wrote:
->>>> On 09/10/2025 02:04, Krzysztof Kozlowski wrote:
->>>>>> The iommu description for this platform basically lacks the data that
->>>>>> _should_ be there -> FUNCTION_ID.
->>>>> No. The index tells that already.
->>>>
->>>> Hmm.
->>>>>> The rule is that the DT should really describe the hardware right ?
->>>>> It already does. Same as I wrote on IRC, DT already has all the
->>>>> information. Entry 0 has function ID-foo. Entry 1 has function ID-bar.
->>>>> Entry 2 has function ID-bar or whatever.
->>>>
->>>> That's the part I don't believe is true its a 1:Many relationship
->>>> between FUNCTION_ID:SIDs
->>>>
->>>> Let me check the docs...
->>>>
->>>> Here's the example I gave on IRC for lore
->>>>
->>>> SID 0x1940 maps to AC_VM_HLOS (Linux)
->>>> SID 0x1941 maps to AC_VM_CP_BITSTREAM - protected bitstream
->>>> SID 0x1945 maps to AC_WM_CP_BITSTREAM
->>>>
->>>
->>> I responded to this on IRC... Nothing proves here that 1:many cannot be
->>> done.
->>
->> Kaanapali already has 1:Many relationship for FUNCTION_ID:SIDs.
-> 
-> Sun is a star. How is that related? I am not going to duplicate
-> arguments from IRC, especially to that pointless argument. Read again
-> discussion on IRC.
-> 
-> Best regards,
-> Krzysztof
+On Mon, 2025-10-06 at 10:09 +0900, Damien Le Moal wrote:
+> On 10/6/25 04:06, Markus Probst wrote:
+> > some devices (for example every synology nas with "deep sleep"
+> > support)
+> > have the ability to power on and off each ata port individually.
+> > This
+> > turns the specific port on, if power manageable in acpi, before
+> > probing
+> > it.
+>=20
+> Please add "ata: " prefix to the commit titel and capitalize the
+> first letter of
+> sentences.
+>=20
+> The commit message above should also be improved. E.g. The "This" in
+> "This turns
+> on..." is unclear (I am assuming you mean "this patch" ?).
+>=20
+> >=20
+> > This can later be extended to power down the ata ports (removing
+> > power
+> > from a disk) while the disk is spin down.
+> >=20
+> > Signed-off-by: Markus Probst <markus.probst@posteo.de>
+> > ---
+> > =C2=A0drivers/ata/libata-acpi.c | 68
+> > +++++++++++++++++++++++++++++++++++++++
+> > =C2=A0drivers/ata/libata-core.c | 21 ++++++++++++
+> > =C2=A0drivers/ata/libata-scsi.c |=C2=A0 1 +
+> > =C2=A0drivers/ata/libata.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 4 +++
+> > =C2=A0include/linux/libata.h=C2=A0=C2=A0=C2=A0 |=C2=A0 1 +
+> > =C2=A05 files changed, 95 insertions(+)
+> >=20
+> > diff --git a/drivers/ata/libata-acpi.c b/drivers/ata/libata-acpi.c
+> > index f2140fc06ba0..891b59bfe29f 100644
+> > --- a/drivers/ata/libata-acpi.c
+> > +++ b/drivers/ata/libata-acpi.c
+> > @@ -245,6 +245,74 @@ void ata_acpi_bind_dev(struct ata_device *dev)
+> > =C2=A0				=C2=A0=C2=A0 ata_acpi_dev_uevent);
+> > =C2=A0}
+> > =C2=A0
+> > +/**
+> > + * ata_acpi_dev_manage_restart - if the disk should be stopped
+> > (spin down) on system restart.
+>=20
+> Long line. Please split at 80 chars.
+>=20
+> > + * @dev: target ATA device
+> > + *
+> > + * RETURNS:
+> > + * true if the disk should be stopped, otherwise false
+> > + */
+> > +bool ata_acpi_dev_manage_restart(struct ata_device *dev)
+> > +{
+> > +	// If the device is power manageable and we assume the
+> > disk loses power on reboot.
+>=20
+> This is not C++. Please use C style comments and split the long line.
+>=20
+> > +	if (dev->link->ap->flags & ATA_FLAG_ACPI_SATA) {
+> > +		if (!is_acpi_device_node(dev->tdev.fwnode))
+> > +			return false;
+> > +		return acpi_bus_power_manageable(ACPI_HANDLE(&dev-
+> > >tdev));
+> > +	}
+> > +
+> > +	if (!is_acpi_device_node(dev->link->ap->tdev.fwnode))
+> > +		return false;
+> > +	return acpi_bus_power_manageable(ACPI_HANDLE(&dev->link-
+> > >ap->tdev));
+> > +}
+> > +
+> > +/**
+> > + * ata_acpi_port_set_power_state - set the power state of the ata
+> > port
+> > + * @ap: target ATA port
+> > + *
+> > + * This function is called at the begin of ata_port_probe.
+>=20
+> ...at the beginning of ata_port_probe().
+>=20
+> > + */
+> > +void ata_acpi_port_set_power_state(struct ata_port *ap, bool
+> > enable)
+> > +{
+> > +	acpi_handle handle;
+> > +	unsigned char state;
+> > +	int i;
+> > +
+> > +	if (libata_noacpi)
+> > +		return;
+> > +
+> > +	if (enable)
+> > +		state =3D ACPI_STATE_D0;
+> > +	else
+> > +		state =3D ACPI_STATE_D3_COLD;
+> > +
+> > +	if (ap->flags & ATA_FLAG_ACPI_SATA) {
+> > +		for (i =3D 0; i < ATA_MAX_DEVICES; i++) {
+> > +			if (!is_acpi_device_node(ap-
+> > >link.device[i].tdev.fwnode))
+> > +				continue;
+> > +			handle =3D ACPI_HANDLE(&ap-
+> > >link.device[i].tdev);
+> > +			if (!acpi_bus_power_manageable(handle))
+> > +				continue;
+> > +			if (!acpi_bus_set_power(handle, state))
+> > +				ata_dev_info(&ap->link.device[i],
+> > "acpi: power was set to %d\n",
+> > +					=C2=A0=C2=A0=C2=A0=C2=A0 enable);
+> > +			else
+> > +				ata_dev_info(&ap->link.device[i],
+> > "acpi: power failed to be set\n");
+> > +		}
+>=20
+> Add a return here to avoid the else.
+>=20
+> > +	} else {
+> > +		if (!is_acpi_device_node(ap->tdev.fwnode))
+> > +			return;
+> > +		handle =3D ACPI_HANDLE(&ap->tdev);
+> > +		if (!acpi_bus_power_manageable(handle))
+> > +			return;
+> > +
+> > +		if (!acpi_bus_set_power(handle, state))
+> > +			ata_port_info(ap, "acpi: power was set to
+> > %d\n", enable);
+>=20
+> ata_port_debug(ap, "acpi: power %sabled\n",
+> 	=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 enable ? "en" : "dis");
+>=20
+> > +		else
+> > +			ata_port_info(ap, "acpi: power failed to
+> > be set\n");
+>=20
+> ata_port_err(ap, "acpi: failed to set power state\n");
+>=20
+> Overall, this hunk is the same as what is done in the loop above. So
+> maybe
+> create a helper function instead of repeating the same procedure.
+I don't think this can be avoided while still having proper log
+messages.
+In the first hunk the power state will be set on a ata_device, on the
+second hunk on a ata_port.
 
-But Krzysztof is it not the case DT should be a representation of the 
-real hardware and that this takes priority over established schema.
+>=20
+> > +	}
+> > +}
+> > +
+> > =C2=A0/**
+> > =C2=A0 * ata_acpi_dissociate - dissociate ATA host from ACPI objects
+> > =C2=A0 * @host: target ATA host
+> > diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+> > index ff53f5f029b4..a52b916af14c 100644
+> > --- a/drivers/ata/libata-core.c
+> > +++ b/drivers/ata/libata-core.c
+> > @@ -5899,11 +5899,32 @@ void ata_host_init(struct ata_host *host,
+> > struct device *dev,
+> > =C2=A0}
+> > =C2=A0EXPORT_SYMBOL_GPL(ata_host_init);
+> > =C2=A0
+> > +static inline void ata_port_set_power_state(struct ata_port *ap,
+> > bool enable)
+> > +{
+> > +	ata_acpi_port_set_power_state(ap, enable);
+> > +	// Maybe add a way with device tree and regulators too?
+>=20
+> Drop this comment please.
+>=20
+> > +}
+> > +
+> > +/**
+> > + * ata_dev_manage_restart - if the disk should be stopped (spin
+> > down) on system restart.
+> > + * @dev: target ATA device
+> > + *
+> > + * RETURNS:
+> > + * true if the disk should be stopped, otherwise false
+> > + */
+> > +bool ata_dev_manage_restart(struct ata_device *dev)
+> > +{
+> > +	return ata_acpi_dev_manage_restart(dev);
+> > +}
+> > +EXPORT_SYMBOL_GPL(ata_dev_manage_restart);
+>=20
+> Why the export ? libata-core and libata-scsi are compiled together as
+> libata.ko.
+> The export should not be needed.
+>=20
+> > +
+> > =C2=A0void ata_port_probe(struct ata_port *ap)
+> > =C2=A0{
+> > =C2=A0	struct ata_eh_info *ehi =3D &ap->link.eh_info;
+> > =C2=A0	unsigned long flags;
+> > =C2=A0
+> > +	ata_port_set_power_state(ap, true);
+> > +
+> > =C2=A0	/* kick EH for boot probing */
+> > =C2=A0	spin_lock_irqsave(ap->lock, flags);
+> > =C2=A0
+> > diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+> > index 2ded5e476d6e..52297d9e3dc2 100644
+> > --- a/drivers/ata/libata-scsi.c
+> > +++ b/drivers/ata/libata-scsi.c
+> > @@ -1095,6 +1095,7 @@ int ata_scsi_dev_config(struct scsi_device
+> > *sdev, struct queue_limits *lim,
+> > =C2=A0		 */
+> > =C2=A0		sdev->manage_runtime_start_stop =3D 1;
+> > =C2=A0		sdev->manage_shutdown =3D 1;
+> > +		sdev->manage_restart =3D
+> > ata_dev_manage_restart(dev);
+> > =C2=A0		sdev->force_runtime_start_on_system_start =3D 1;
+> > =C2=A0	}
+> > =C2=A0
+> > diff --git a/drivers/ata/libata.h b/drivers/ata/libata.h
+> > index e5b977a8d3e1..28cb652d99bc 100644
+> > --- a/drivers/ata/libata.h
+> > +++ b/drivers/ata/libata.h
+> > @@ -130,6 +130,8 @@ extern void ata_acpi_on_disable(struct
+> > ata_device *dev);
+> > =C2=A0extern void ata_acpi_set_state(struct ata_port *ap, pm_message_t
+> > state);
+> > =C2=A0extern void ata_acpi_bind_port(struct ata_port *ap);
+> > =C2=A0extern void ata_acpi_bind_dev(struct ata_device *dev);
+> > +extern void ata_acpi_port_set_power_state(struct ata_port *ap,
+> > bool enable);
+> > +extern bool ata_acpi_dev_manage_restart(struct ata_device *dev);
+> > =C2=A0extern acpi_handle ata_dev_acpi_handle(struct ata_device *dev);
+> > =C2=A0#else
+> > =C2=A0static inline void ata_acpi_dissociate(struct ata_host *host) { }
+> > @@ -140,6 +142,8 @@ static inline void ata_acpi_set_state(struct
+> > ata_port *ap,
+> > =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pm_message_t state) { }
+> > =C2=A0static inline void ata_acpi_bind_port(struct ata_port *ap) {}
+> > =C2=A0static inline void ata_acpi_bind_dev(struct ata_device *dev) {}
+> > +static inline void ata_acpi_port_set_power_state(struct ata_port
+> > *ap, bool enable) {}
+> > +static inline bool ata_acpi_dev_manage_restart(struct ata_device
+> > *dev) { return false; }
+> > =C2=A0#endif
+> > =C2=A0
+> > =C2=A0/* libata-scsi.c */
+> > diff --git a/include/linux/libata.h b/include/linux/libata.h
+> > index 0620dd67369f..af5974e91e1d 100644
+> > --- a/include/linux/libata.h
+> > +++ b/include/linux/libata.h
+> > @@ -1302,6 +1302,7 @@ extern int sata_link_debounce(struct ata_link
+> > *link,
+> > =C2=A0extern int sata_link_scr_lpm(struct ata_link *link, enum
+> > ata_lpm_policy policy,
+> > =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0 bool spm_wakeup);
+> > =C2=A0extern int ata_slave_link_init(struct ata_port *ap);
+> > +extern bool ata_dev_manage_restart(struct ata_device *dev);
+> > =C2=A0extern void ata_port_probe(struct ata_port *ap);
+> > =C2=A0extern struct ata_port *ata_port_alloc(struct ata_host *host);
+> > =C2=A0extern void ata_port_free(struct ata_port *ap);
+>=20
 
-There seems to be no other reason to keep SID in the DT and FUNCTION_ID 
-in driver meta-data except the schema already says X.
-
-There are as I count it, 189 TCU SID mappings for Hamoa.
-
-So in the extreme case that means we have an iommu = <> for each of 
-those but then need a corresponding entry in a driver to map each SID to 
-its relevant FUNCTION_ID.
-
-And do that over and over again for each new SoC.
-
-OTOH if we extend the iommu to include FUNCTION_ID then only the DT 
-changes - with the iommu setup code changing once to accommodate it.
-
----
-bod
+Thanks
+- Markus Probst
 
