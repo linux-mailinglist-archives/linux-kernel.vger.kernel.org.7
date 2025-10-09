@@ -1,184 +1,236 @@
-Return-Path: <linux-kernel+bounces-846835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE641BC92BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:03:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67BCBBC92C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:04:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3D15C4F162E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:03:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EF1964E5FA2
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:04:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 916462D77FF;
-	Thu,  9 Oct 2025 13:03:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB5B2E2DFA;
+	Thu,  9 Oct 2025 13:04:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SXQYosKY"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bbMXzilR"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF952D592F
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D00F11713
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760015018; cv=none; b=XMxOp9P/VWxH6aCk4Vx0CSO34ZcUt8QBsycmuddpNXaJ0TAyLysc5L5V7eQkHNS5lnlqKPrNwt6YS3dwhzm/Eaa++8haFj8jprbCocQPzDo3lj9+jP7RTd0IqmVT/0UKUYzslh5CMrynqR2rhoRy0t/KbS2IO/RKu5JfCgaWEq8=
+	t=1760015050; cv=none; b=NaNHdRcaRhmRC43tij2Lxb2DYaDeTRXTcZul1Jgd730sfxRVLZmSKsbNW9suHGIHdslTf4cstI3UoTtagzSrhTXcMLGWDuPP6Jf4SD8297a+6Ar1LNHDMj/preuxYM5MA+22oT7LH77GTdRmY0Ec7xhCMbwjNQmINi4hV9bHjeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760015018; c=relaxed/simple;
-	bh=4bGkbKr/BNDRtyM3ktButr5lP4Fuyu+QNRcAebYeltA=;
+	s=arc-20240116; t=1760015050; c=relaxed/simple;
+	bh=LG4Z5WVNlgp3hIwMCXh9D2qWKpYs23znPnTeOZfOuSo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=no89JHzVQ8RVaY65IdmVirv9+lZckp6zT/NP/HeJjYOSqGZLMtCoUh3fSntlo+OBYvfl89KYcB8o/ZQtQLgJXNCvWNy6oA6achzU808X8Lwbx0r8H1h9/RNXdOSGWB44EMks5FNL3ZUB7mabmNw6NQ6EmNG5LKSG+6+1PiYeGe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SXQYosKY; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3ee12a63af1so588239f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 06:03:36 -0700 (PDT)
+	 To:Cc:Content-Type; b=t372hAbPhBU62y6trYUrn4g3znoOLS1qMyO+FvVrkcAjr4r6o6f3x6LV95HTbwBc/WU10uxAVohpMq5zLxl8ImNoI2ZeJ1Moup3Wd6etRikJIKH1wd1Nf63cKaJu36apDElojSNWuFJU1ZX6Nb/gUAcSLpdGtVyT2GL3hdVJ0tE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bbMXzilR; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2731ff54949so176795ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 06:04:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760015015; x=1760619815; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1760015047; x=1760619847; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Zla+EsFG4nzRnArXGImEQSCTyHGK3J4mv7lfg4FYjWQ=;
-        b=SXQYosKYU7Rih933lGVfSxkmWUdJhkFRZUGjdT9lLxhgsR7f96KI6JMXx0/vOaYWEi
-         xU7lS+DINxfSgmKirH7hrymeofS1pBKWvGaTCLlfzc41SJ3JZjJKT2E1bZ6iTGgZBfTi
-         4S/cDY8QN/dzJvCKbcz7Gy0a1Kp3+Cz7K+QVE33lqBIqfYYp6zd3459vcKQzovfKdu4w
-         mugYaXZdcCRIW+hncb5NOvIGRQKc3H4FNb1ApTTrnRyh0hLLgQML6y1Id7+jknWKgAPy
-         77O1hX99LUU6xi6cygYZH/GNeXYigF7lug/T1KgvWGx9XUVbRiZGheBRwN/h4o2ViEij
-         ZxBw==
+        bh=Fl/RSfrwlYvyA1qHmEIVwvLYIxXODeI2qbIcJFQoTrQ=;
+        b=bbMXzilRPY4Moh3u4Pdvs25FNhWtsHCs/UQ+mo8tM0C/eGGnW5NTVSVCBx2dlxoZov
+         6+XU9O7EOcICH958ZVsU8jdjvdHh2R4ObvS6ALe5G510gQMjIoN0Sv1DSnGBPrwWJ9OH
+         9hAdpz82Jgq5iupVvigG+9Xe8Wz6MRAVGJb1ddDDW6wZtEcHHGAf3ckLjNHkgF1xcqzM
+         KM5LfftpPszLQ3oqeHRd7UA14VKdUomEXgc/6R+mwzwQ6BN922q9VbIsh5LLrmMfqv81
+         SwvyMX4rrYu53QThbo8oIzokld2NTRE/LGHcxg2vWCAebMdpMhnbWZuoPFEkx/5hjZbz
+         KkVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760015015; x=1760619815;
+        d=1e100.net; s=20230601; t=1760015047; x=1760619847;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Zla+EsFG4nzRnArXGImEQSCTyHGK3J4mv7lfg4FYjWQ=;
-        b=cEcaKENyU8ts1jqtUQaJqoPrCdgVHxYIzz/qJgVPdBd0n/WF7beHa4pbD38eDwDFec
-         VDIrg8PxayKGaf6NbsSn/7fRYNqLCt5Z/XzNTR3e3jVjcT9DKSBZi3cI3wRr7N+aJoQf
-         v8wfR/o1e9AQmtPeknW9FTBeH7k0RpTKBN2MN8axQ87H7qHJGRjKKs59T4nRIEzFO1OF
-         TE5DV4u5OvldQFmCBrr9zvXp6yQOrfVIcenYGvw9rhw+YlBlB4TnhDHdEJCDGLu8d1n1
-         9hmac76bnXZDOJtZI0ETURJBx+32x/NMBuhToZ0YEimoCWezpJBie8WQCCQa58wSZn/9
-         D0rw==
-X-Forwarded-Encrypted: i=1; AJvYcCWin4TuF7U6mZs1NpwIIrxCDpec2Z4KduoofJnj45KjoGIno3Sb3LwleiIlSOf68tpJSbeAN5wGPSMObBo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKzLEhJWpUKuVj64fU0yaeWkJE8kxdgbdKV6INya/WgfAS9V7D
-	cFJF9Vk6FAXCAhsD4b7Zw/g0Iq/ALMk8cBYs3GPvwA7PxeCnM04FqQvlL9SJvoKAMqXb33Zc1cW
-	5PEyTJyDpYanrv9ZioDFXBndsZy0uajM=
-X-Gm-Gg: ASbGncuLEa0BCXsdbUAgyL6+viWYkHeTOxc5HynmUxpsrtRiL8X9FuSGw7ry9uhEqQr
-	RI1h78OlRTPTC2tTX32CwB9gLo+qEqegmCoUHmLwcKPg721rAIoDOWbtVQfRbeUq1g5A/YQABjU
-	+8xJTyjBw3N8IABtslEEOrNTeusThrPd32+wJeguWTDEZU125enpApl7HMvTNGh/VJH2WpC0EFH
-	qot82FyT/HX4dpnYssBE4tKtMGyvRll2UETCdurEbUvDH4+kMj3/RkiErE/tw2wgrcoeuaQ5Ew=
-X-Google-Smtp-Source: AGHT+IG/ELPHmCCIZvciJbhA0k36idMhkGgCEPRr06+VPS042eX0V2JX9JR4zJTZ7TPW7Buub8nsqgeW9JGjesjwXe0=
-X-Received: by 2002:a05:6000:2681:b0:413:473f:5515 with SMTP id
- ffacd0b85a97d-4266e8dd718mr4549664f8f.48.1760015014251; Thu, 09 Oct 2025
- 06:03:34 -0700 (PDT)
+        bh=Fl/RSfrwlYvyA1qHmEIVwvLYIxXODeI2qbIcJFQoTrQ=;
+        b=X/ERDRGXbdhKMUFvoVJJq6yWoBYZhsQeUd2ZIy/qO4TISOb5Kik3OFDDD7FQck3+y9
+         ZC0m+DgQa4xuQ6XtKhAZ9RIMg+4860rnTNqUci4xmDb7u1zrxT/UI1Uvm/xzZwBbumHB
+         cRkVQpIq+X+JN+q9c5RFCNKzFoX/NdDHKxKXAqMvDHSyCvR49wC68vBEIqAFlzksgiLk
+         LZQIoz93Uzu6npIklouOHNxTJruSypc2lJe5b7I6S+YEB31Uta9K6WYWOhxYK19YAklI
+         DrMGyEuMAlhB+g46th5m7iw8dBqq7HZaqsZ/LXmrEayjMI7AI2BjEMpJ7mdgesu3Fzg6
+         26UA==
+X-Forwarded-Encrypted: i=1; AJvYcCXL9HpsPi9ahJuotoO49KLGgm8skWHT5WLzuQD32YdFj+R9e0QcJWkmA4ybse3BDjN8EGjSLTPOVVSz9WA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1C3zeYVPMHpoWhb0qsJ+biBW4B0QpeUmfFzkEs6d2QseGYlBB
+	DjdD9dUu2jlAoPlK7bgMB7/pTQqQgaNaasTqe38wY9Es5PPviQAk/UxkOzoeO4mBGUEngYwx/pa
+	OdyQHd0oTdjykSv0EGPja76j8N7Stdg8DyCTaQ8qD
+X-Gm-Gg: ASbGncs/tMxUvUSKA9ziqFFrpqceOZRi5xiIqd1Ii6Ey+28NdiJAX+eYCNZZpzt8QqH
+	BJShEild1wCP2vc/Hwf62IR3/p2ADPPr/P/5t2j50Hw3Hl/Mua6KEN/nxy6lqaqf4T1JZc1iRYh
+	TZwmulhBZkH67iIDF7ioTNs1118qNa8ujGk9kCijcZs6MIrJ389dQXvz/Zw+aM3oi7Nhnn/+Lml
+	fHOyj0LM/8d3doRio07fSIjeZlpD0VQH9xh+c0=
+X-Google-Smtp-Source: AGHT+IHmGo/yOZgI4rXtBpU3aqsyiUBab973QHCIWTjzRzsVK57ncfjWXOU8KLSK0RcpNfhT0Re007HssfcMf8SFlvI=
+X-Received: by 2002:a17:902:f545:b0:27e:e96a:4c6 with SMTP id
+ d9443c01a7336-290275dda35mr12806125ad.2.1760015044872; Thu, 09 Oct 2025
+ 06:04:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251002161728.186024-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20251002161728.186024-7-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdUugFOOvHqjRyoPErh6rqpVuAS_Yr6mGqerKT0VQ-Y6KQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdUugFOOvHqjRyoPErh6rqpVuAS_Yr6mGqerKT0VQ-Y6KQ@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 9 Oct 2025 14:03:06 +0100
-X-Gm-Features: AS18NWB5J7UqnUnaUM9kOBg5egFn9pDXfiyyxgzQNRfPJ7AfsT8nEGf8oxH6wq0
-Message-ID: <CA+V-a8t7AQH5LpJaMgq9FUnA6qiUH=d5ngp0qr523BUWu88d+A@mail.gmail.com>
-Subject: Re: [PATCH v9 6/6] drm: renesas: rz-du: mipi_dsi: Add support for
- RZ/V2H(P) SoC
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20251008162347.4005288-1-irogers@google.com> <02ac6916-7bfa-4b6b-8bae-64fe02580731@huaweicloud.com>
+In-Reply-To: <02ac6916-7bfa-4b6b-8bae-64fe02580731@huaweicloud.com>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 9 Oct 2025 06:03:53 -0700
+X-Gm-Features: AS18NWBzhV5frQ3wC17J_JhLbuYI1J4mS1vSXlezOvijWUH7DT-G2L4MGan8hz0
+Message-ID: <CAP-5=fV7hhHYAgDp1kR=gjJb2jdrR7GfgKi1mvob4OavhcyHmg@mail.gmail.com>
+Subject: Re: [PATCH v2] perf bpf_counter: Fix opening of "any"(-1) CPU events
+To: Tengda Wu <wutengda@huaweicloud.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Geert,
-
-Thank you for the review.
-
-On Mon, Oct 6, 2025 at 1:49=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
-.org> wrote:
->
-> Hi Prabhakar,
->
-> On Thu, 2 Oct 2025 at 18:17, Prabhakar <prabhakar.csengg@gmail.com> wrote=
-:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Thu, Oct 9, 2025 at 12:52=E2=80=AFAM Tengda Wu <wutengda@huaweicloud.com=
+> wrote:
+> On 2025/10/9 0:23, Ian Rogers wrote:
+> > The bperf BPF counter code doesn't handle "any"(-1) CPU events, always
+> > wanting to aggregate a count against a CPU, which avoids the need for
+> > atomics so let's not change that. Force evsels used for BPF counters
+> > to require a CPU when not in system-wide mode so that the "any"(-1)
+> > value isn't used during map propagation and evsel's CPU map matches
+> > that of the PMU.
 > >
-> > Add MIPI DSI support for the Renesas RZ/V2H(P) SoC. Compared to the
-> > RZ/G2L family, the RZ/V2H(P) requires dedicated D-PHY PLL programming,
-> > different clock configuration, and additional timing parameter handling=
-.
-> > The driver introduces lookup tables and helpers for D-PHY timings
-> > (TCLK*, THS*, TLPX, and ULPS exit) as specified in the RZ/V2H(P) hardwa=
-re
-> > manual. ULPS exit timing depends on the LPCLK rate and is now handled
-> > explicitly.
-> >
-> > The implementation also adds support for 16 bpp RGB format, updates the
-> > clock setup path to use the RZ/V2H PLL divider limits, and provides new
-> > .dphy_init, .dphy_conf_clks, and .dphy_startup_late_init callbacks to
-> > match the RZ/V2H sequence.
-> >
-> > With these changes, the RZ/V2H(P) can operate the MIPI DSI interface in
-> > compliance with its hardware specification while retaining support for
-> > existing RZ/G2L platforms.
-> >
-> > Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > Reviewed-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> > Fixes: b91917c0c6fa ("perf bpf_counter: Fix handling of cpumap fixing h=
+ybrid")
+> > Signed-off-by: Ian Rogers <irogers@google.com>
 > > ---
-> > v8->v9:
-> > - Updated Kconfig to select CLK_RZV2H
-> > - Updated to use renesas.h
-> > - Added reviewed-by tag from Tomi
->
-> Thanks for the update!
->
-> > --- a/drivers/gpu/drm/renesas/rz-du/Kconfig
-> > +++ b/drivers/gpu/drm/renesas/rz-du/Kconfig
-> > @@ -19,6 +19,7 @@ config DRM_RZG2L_USE_MIPI_DSI
-> >         depends on DRM_BRIDGE && OF
-> >         depends on DRM_RZG2L_DU || COMPILE_TEST
-> >         default DRM_RZG2L_DU
-> > +       select CLK_RZV2H
->
-> As the kernel test robot has already told you, this is not a good idea.
-> RZ/V2H support is optional, just rely on (dummy) rzv2h_get_pll_*()
-> helpers returning false if CLK_RZV2H is not enabled.
->
-Agreed, I will add static inline helpers in renesas.h if !CLK_RZV2H.
-
-Cheers,
-Prabhakar
-
-> >         help
-> >           Enable support for the RZ/G2L Display Unit embedded MIPI DSI =
-encoders.
+> >  tools/perf/builtin-stat.c     | 13 +++++++++++++
+> >  tools/perf/util/bpf_counter.c |  1 +
+> >  2 files changed, 14 insertions(+)
 > >
+> > diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+> > index 7006f848f87a..0fc6884c1bf1 100644
+> > --- a/tools/perf/builtin-stat.c
+> > +++ b/tools/perf/builtin-stat.c
+> > @@ -2540,6 +2540,7 @@ int cmd_stat(int argc, const char **argv)
+> >       unsigned int interval, timeout;
+> >       const char * const stat_subcommands[] =3D { "record", "report" };
+> >       char errbuf[BUFSIZ];
+> > +     struct evsel *counter;
+> >
+> >       setlocale(LC_ALL, "");
+> >
+> > @@ -2797,6 +2798,18 @@ int cmd_stat(int argc, const char **argv)
+> >
+> >       evlist__warn_user_requested_cpus(evsel_list, target.cpu_list);
+> >
+> > +     evlist__for_each_entry(evsel_list, counter) {
+> > +             /*
+> > +              * Setup BPF counters to require CPUs as any(-1) isn't
+> > +              * supported. evlist__create_maps below will propagate th=
+is
+> > +              * information to the evsels. Note, evsel__is_bperf isn't=
+ yet
+> > +              * set up, and this change must happen early, so directly=
+ use
+> > +              * the bpf_counter variable.
+> > +              */
+> > +             if (counter->bpf_counter)
+> > +                     counter->core.requires_cpu =3D true;
+> > +     }
+> > +
+> >       if (evlist__create_maps(evsel_list, &target) < 0) {
+> >               if (target__has_task(&target)) {
+> >                       pr_err("Problems finding threads of monitor\n");
+> > diff --git a/tools/perf/util/bpf_counter.c b/tools/perf/util/bpf_counte=
+r.c
+> > index ca5d01b9017d..d3e5933b171b 100644
+> > --- a/tools/perf/util/bpf_counter.c
+> > +++ b/tools/perf/util/bpf_counter.c
+> > @@ -495,6 +495,7 @@ static int bperf_reload_leader_program(struct evsel=
+ *evsel, int attr_map_fd,
+> >        * following evsel__open_per_cpu call
+> >        */
+> >       evsel->leader_skel =3D skel;
+> > +     assert(!perf_cpu_map__has_any_cpu_or_is_empty(evsel->core.cpus));
+> >       evsel__open(evsel, evsel->core.cpus, evsel->core.threads);
+> >
+> >  out:
 >
-> Gr{oetje,eeting}s,
 >
->                         Geert
+> I must point out that `requires_cpu + evsel__open(evsel, evsel->core.cpus=
+, evsel->core.threads)`
+> is not equivalent to the original `evsel__open_per_cpu(evsel, all_cpu_map=
+, -1)`. The former
+> specifies a pid, while the latter does not. This will lead to inaccurate =
+final event counting.
 >
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
 >
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
+> For `evsel__open_per_cpu(evsel, all_cpu_map, -1)`:
+>
+> $ ./perf stat -vv --bpf-counters -e task-clock ./perf test -w sqrtloop
+> sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 =3D 13
+> sys_perf_event_open: pid -1  cpu 1  group_fd -1  flags 0x8 =3D 14
+> sys_perf_event_open: pid -1  cpu 2  group_fd -1  flags 0x8 =3D 15
+> [...]
+>  Performance counter stats for './perf test -w sqrtloop':
+>
+>      1,016,156,671      task-clock                       #    1.000 CPUs =
+utilized
+>
+>        1.016294745 seconds time elapsed
+>
+>        1.005710000 seconds user
+>        0.010637000 seconds sys
+>
+>
+> For `requires_cpu + evsel__open(evsel, evsel->core.cpus, evsel->core.thre=
+ads)`:
+>
+> $ ./perf stat -vv --bpf-counters -e task-clock ./perf test -w sqrtloop
+> sys_perf_event_open: pid 75099  cpu 0  group_fd -1  flags 0x8 =3D 13
+> sys_perf_event_open: pid 75099  cpu 1  group_fd -1  flags 0x8 =3D 14
+> sys_perf_event_open: pid 75099  cpu 2  group_fd -1  flags 0x8 =3D 15
+> [...]
+>  Performance counter stats for './perf test -w sqrtloop':
+>
+>         16,184,507      task-clock                       #    0.016 CPUs =
+utilized
+>
+>        1.018540734 seconds time elapsed
+>
+>        1.009143000 seconds user
+>        0.009497000 seconds sys
+>
+>
+> As you can see, after specifying a pid, the task-clock count has signific=
+antly decreased.
+> So to correct the counting, we may also need to keep the pid as -1 withou=
+t specifying it.
+
+Yeah, it look like the running time is off and so the count is being scaled=
+:
+```
+$ perf stat -e task-clock:b,task-clock /tmp/perf/perf test -w noploop
+
+ Performance counter stats for '/tmp/perf/perf test -w noploop':
+
+     3,776,663,297      task-clock:b                     #    3.701
+CPUs utilized               (26.96%)
+     1,017,400,438      task-clock                       #    0.997
+CPUs utilized
+
+       1.020467405 seconds time elapsed
+
+       1.008409000 seconds user
+       0.012004000 seconds sys
+```
+will fix in v3.
+
+Thanks,
+Ian
+
+> Thanks,
+> Tengda
 >
 
