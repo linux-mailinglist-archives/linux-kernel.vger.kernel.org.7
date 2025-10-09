@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-847241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD2FCBCA562
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:08:52 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57EF2BCA565
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 19:09:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 591604F16CD
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:08:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E99B24EF221
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 17:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D6C23A9BE;
-	Thu,  9 Oct 2025 17:08:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52DDE23B61A;
+	Thu,  9 Oct 2025 17:08:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="CJCe8OXt"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="iz1YTJdM"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 170F91632DD
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 17:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2000B239E9E
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 17:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760029726; cv=none; b=mIVmNe6MnW58EUtRp+VIJXZGDXe39s0aQk91HeGQ8YktbXqiXTMO1hWtR/98FSq++zqwiuBH/cek402o989Es0Syz44/bwHC7wq0MrjAdPZyYfyLSTRXCMeDPZqbdK2yLIh7AulIJE+13m5g5+QExY07WO1dGt0ldMic1iJrL6Q=
+	t=1760029736; cv=none; b=rlk+AmQ5xFPsvjFi84G5Xy+9yDS43vzwj2TgNnTp4PVcU6qBC/C41JJKIJ/xf2KLs4XOvCyipTQqsNGXlVRR1GTTbVLaaho427Z5ROl33emz7zZ0jy4XpF0zZgysOIVKJG00l6Wsph5qMo5+dCQYrMWTbGRzRf2DDTc6+GONqkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760029726; c=relaxed/simple;
-	bh=M+RAuLfo/tBmntdVxoq32ugbitGYK7EIaTl/YNjZJIY=;
+	s=arc-20240116; t=1760029736; c=relaxed/simple;
+	bh=q+hqAlfgw+P6KkDK8e6HUhvoioMAEA24rF4jv+uYsac=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XRht33J++3qKX9CSgu0Vp8P9XcW+2x/nvsz/0umMU9m25sGPsply52m1ya1P8yfCntOsbv8K/16BYft9ZCJSNOWEnRb9ifsZZwFyjYMwNpg3cTY378nKSAxNGThLWTr2xopY24dUwC/Sv5Z3u+jdHLW5ofK2T1tbkEbB3Ll66nE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=CJCe8OXt; arc=none smtp.client-ip=209.85.166.50
+	 Content-Type:Content-Disposition:In-Reply-To; b=UmcxnaVJN9ISgR/4rVe5WoEcy6xCOJyx5FJFe6+oklbPBZE/vs5+eVt2sIcR7w4G8W0f3o6JDts9uQGZs5ipNwkovTTlunhXH2lVrttzqJ77iMquyOEeaVZZNJN/xBCkZmhbSqgGtU1wnT1yBOtLM/wzwIBqdAASzinmsgfrr4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=iz1YTJdM; arc=none smtp.client-ip=209.85.166.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-930cfdfabb3so101887639f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 10:08:44 -0700 (PDT)
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-42d7ef9a402so8664145ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 10:08:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1760029724; x=1760634524; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1760029734; x=1760634534; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jmQS8Iz7W21RMhGArp3InWF9uo5uNulwnzG/3ZoVxUQ=;
-        b=CJCe8OXt+k+Rg6LoybIbHMs3oA8PfaabnxcrhvL+fsnK0m3tOJ60N4zjljnjNaLA7m
-         z8rUQL870Ch/9PEogSL4cdRv5EKgp0m/9gudFCJ+GkwCXlAYLYoNi2Dkfcg+STDQrmjF
-         ag4FKpM59HOSnOQCWvEBPRWQtXpXci+FTuxks2DFY2t0RQCUhNFz9wwLGL3zKnvF80KU
-         TtwSq/CFbxUrI+kFQSEEeUUrZx3zQsnsQXOFkyvbmeNG96K+VNPvGpizl8p2fBG3otdc
-         eQkxti8s4PLmwuXS2/vY2ZxbuEPSS0KEQuueymAwS42JtAAVfW8SGETd2WUr7qaEkC+7
-         K5Xg==
+        bh=91IhoUqkbJwn/5huJM++DC3XaWSuratiU2ex4V2AW8o=;
+        b=iz1YTJdMpGB2gX/1Xe44r+z4aJC7kLrMBtyr4Xf9K9DKGRaMU2R1gVWGRkGgDElLHe
+         PxTRGA2bkbBl62BACo4HquHFtMgn/aoIQub4GmgFnFkAN/aBcBbxKUaCDnaIQYM1kBTU
+         Eic2/OfD0psMmJOBl8TqrK0gQORICQ1PyPoXCDNmN8noOlCzoFK4JGYkg1rXKDUPnN9I
+         Je29dGrDZLBtwC2fo5SKDcBRCteHtqAhoU9znlgxr7G8nRdHE9hL/7Y0HiWmXzI37BIP
+         ZTxwvWLsia3Q2D0fZ07K6LGP1ePZPTFwlCb1EiTgRw4XrcSOq8lq/d7V1ksvhf6tl4Mt
+         YCVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760029724; x=1760634524;
+        d=1e100.net; s=20230601; t=1760029734; x=1760634534;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jmQS8Iz7W21RMhGArp3InWF9uo5uNulwnzG/3ZoVxUQ=;
-        b=raH+tXGxj2Nweico1AhF9nmR65aDuSlnF5MXwIXDC9UQiKzo9LdBJxSYCPPYAxElSo
-         XvECed4oSlnd/h4gMmxocfHLoT2lcNuRQLlEju5IUEZGcr0yGreqVjPCacsMQ3TorUGX
-         oM0O1Nf1Acb2Mi3TeOJHL2IhAiUqqUGZBm+R0+sAZwahAN0ComOo69Q0FtoKCMH5PUaO
-         oYVNK/p/knS6EDPdB+EEinY3gOhAhN3EFxiiixdemoDNJ8XZTIdPm11lnO4vSS/sit65
-         L0IGMBByhFtXrF0dnVZAsgkAPKsaaR1i3Z1qWU79CxXZPyQJNfhO7bYgQCTdakl/b39w
-         wh3g==
-X-Forwarded-Encrypted: i=1; AJvYcCWIienQsJiFYrxwLUpcYIO16gmhw/y+UKsl7bwGGJ0hTzoKtctOr/wQtBHIx5Bjo8ZToW497cDZCsIn9nE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUPyqFnd7ign1eLrWvASUzSXcYdVQcBNcNtmMDfbPStkr/DyRE
-	PqPnpbV6vLYN3Odl+cmu9y25oUqZlqghT5sSzfUOkfXQxduec6I5PhwgRI7wYjy7udM=
-X-Gm-Gg: ASbGncuIfnokafRPHsuiHc5rJ6lS5mFjo5R+y688YQ/lTqu1J/0M7cBdrntHAY0gM4q
-	ljrHrUzE7kaBfxtVOqqteVCY83iMRdTj22TWUe8fpEXSYnf6fFwZ3kiiJcx6jT953iPtAa3OsG8
-	gYN7RJaHqTIjsBOOeOu1PeHM8ZY39I35qjQl85caAnVsTzrVLcnmPbqBEZVat6RfZ2qk/Yzie9L
-	R9akKypIdSwtKsbvmjQt0cpVRijT+FvFMeBdBb65QvDV/nDk+iHLYa7MOH/7Pl5loEwtTJ6PLwG
-	F4EFEgCNwIrWsTTh0HllnBRuwsK1C0AvtBxDBIVcyVBGFwOqdJJomJrQlxTh3O5cnbuvhEVtCNa
-	V81xLfoVZDucooSqcXwHQuU/V6DnsYe9yKlUHVP2oN7rsOdLr
-X-Google-Smtp-Source: AGHT+IE9RiX0BHPrkOFXb9sFvQpft+J/Jdlyf2+rREXxjwowAkoIYFM2VcvYkhOtjlgnBzw8lgQmzg==
-X-Received: by 2002:a05:6e02:164f:b0:425:94f5:5e3 with SMTP id e9e14a558f8ab-42f87472b21mr80940885ab.10.1760029724047;
-        Thu, 09 Oct 2025 10:08:44 -0700 (PDT)
+        bh=91IhoUqkbJwn/5huJM++DC3XaWSuratiU2ex4V2AW8o=;
+        b=N13WFD7tWgUbZ6P0obtb47bZiopebcwmieqEpN7qYgLAvRoeoK3Heo2PpdvPj3b7nN
+         88V6ZD2oREHMDauwewzymZXGzIlWsaGV4NDR6AEjAnveUcsQj41lEZtk4IJn5qSOpUip
+         SSiM08xv5U+WVPXGfryvXIRZ3ujg6xurZw4zwC+87ZY/3GkQv9WvVrPNB6dafirt0iEc
+         dMSqTTCoOklhNyvf+L8igFLLHjUsQmZ7MrmQ0+TdHJsWnUk2EfeWjHInJcVRMHXVStva
+         njqnv2AAvp+OGjVvbLbt3Pi0Tt55UcAiq4tX/SO/K7QYY25nPsL60Mlt8EVCGHNxkuyI
+         xJrA==
+X-Forwarded-Encrypted: i=1; AJvYcCWOZWUp+Yo22oFf21I+asmCpJCAAd7i7XxXNJnDQtlT0UwJ4ngSOExI3k7OzYe5WPWIJouuVb8N27HqPG8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG/cwVIHnVtfrUev++AK/NH1qYacR6D4yR6ulAL8SzDj/T2Fqz
+	++oTj/HrsD1DCScWfYuqp3KraYqnefdahv93BSymfBaZmdCFvqmOVDFiOXd8Ryyutno=
+X-Gm-Gg: ASbGncu66JRTYH4EKnSRtXQ8fVjlFjtTZNrKh85eM1yz5W7ifJDtA0r1TCggQDwO9Go
+	YS7cPSoC+ACd5aUiQ2KxiACaGCd/z4p4YFmP+M2fFRNjkSNfZ4CJ/dEjShOeFFV0G0EnjnZnb21
+	AjgHS3iWqXsZUuXcA0fQCjvCh03HTAi7LCNstj16+YgX+S+KLeZvu2phG0+sSDM2dPVbXl4xhb/
+	rBkPNLMk0UEnSWsKNyVXHmFZNP+2OGpWq768gKN10LgKKxrofIE5cDhtv4gv4mErqzpz7LtGQjQ
+	UwSa4PnpPMlljCENObT9EP4CQsjASIFMHvd11LJC1cYJQdSq04zFBTSYb4t+BBSzXWs2AFe98GJ
+	farFn80StPu3A5ITwxwUh093YY9fzDTbz9NqCcWPJueyLwjgGYxHfeJBrjNI=
+X-Google-Smtp-Source: AGHT+IEDDXGHje61KhPvVD0wQh6hKseH7rH+kzb8GOXQ5/O7/SNQ9iRGs3Q+ht0YPg3yhdWyjh27jw==
+X-Received: by 2002:a05:6e02:12e4:b0:428:cd3c:6a3c with SMTP id e9e14a558f8ab-42f873dd4famr77561385ab.1.1760029734163;
+        Thu, 09 Oct 2025 10:08:54 -0700 (PDT)
 Received: from localhost ([140.82.166.162])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-42f90278721sm11974895ab.9.2025.10.09.10.08.43
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-42f90107a3fsm12115795ab.0.2025.10.09.10.08.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 10:08:43 -0700 (PDT)
-Date: Thu, 9 Oct 2025 12:08:42 -0500
+        Thu, 09 Oct 2025 10:08:53 -0700 (PDT)
+Date: Thu, 9 Oct 2025 12:08:52 -0500
 From: Andrew Jones <ajones@ventanamicro.com>
 To: Yao Zihong <zihong.plct@isrc.iscas.ac.cn>
 Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
@@ -79,14 +79,15 @@ Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
 	cleger@rivosinc.com, zihongyao@outlook.com, zhangyin2018@iscas.ac.cn, 
 	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
 	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Charlie Jenkins <charlie@rivosinc.com>, Cyan Yang <cyan.yang@sifive.com>, 
-	Yunhui Cui <cuiyunhui@bytedance.com>, Aleksa Paunovic <aleksa.paunovic@htecgroup.com>, 
-	Jesse Taube <jesse@rivosinc.com>, Inochi Amaoto <inochiama@gmail.com>
-Subject: Re: [PATCH v2 1/4] uapi: riscv: hwprobe: Add Zicbop extension bit
- and block-size key
-Message-ID: <20251009-368359384e19820a18cea601@orel>
+	Charlie Jenkins <charlie@rivosinc.com>, Jesse Taube <jesse@rivosinc.com>, 
+	Inochi Amaoto <inochiama@gmail.com>, Aleksa Paunovic <aleksa.paunovic@htecgroup.com>, 
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, Yunhui Cui <cuiyunhui@bytedance.com>, 
+	Nam Cao <namcao@linutronix.de>
+Subject: Re: [PATCH v2 2/4] riscv: hwprobe: Report Zicbop presence and block
+ size
+Message-ID: <20251009-643d7302be8ec611ea622aff@orel>
 References: <20251009134318.23040-1-zihong.plct@isrc.iscas.ac.cn>
- <20251009134318.23040-2-zihong.plct@isrc.iscas.ac.cn>
+ <20251009134318.23040-3-zihong.plct@isrc.iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,52 +96,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251009134318.23040-2-zihong.plct@isrc.iscas.ac.cn>
+In-Reply-To: <20251009134318.23040-3-zihong.plct@isrc.iscas.ac.cn>
 
-On Thu, Oct 09, 2025 at 09:41:51PM +0800, Yao Zihong wrote:
-> Introduce RISCV_HWPROBE_EXT_ZICBOP to report presence of the Zicbop
-> extension through hwprobe, and add RISCV_HWPROBE_KEY_ZICBOP_BLOCK_SIZE
-> to expose the block size (in bytes) when Zicbop is supported.
+On Thu, Oct 09, 2025 at 09:41:52PM +0800, Yao Zihong wrote:
+> Plumb Zicbop into hwprobe. Semantics mirror Zicbom/Zicboz to keep
+> userspace expectations aligned.
 > 
 > Signed-off-by: Yao Zihong <zihong.plct@isrc.iscas.ac.cn>
 > ---
->  arch/riscv/include/asm/hwprobe.h      | 2 +-
->  arch/riscv/include/uapi/asm/hwprobe.h | 2 ++
->  2 files changed, 3 insertions(+), 1 deletion(-)
+>  arch/riscv/kernel/sys_hwprobe.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> diff --git a/arch/riscv/include/asm/hwprobe.h b/arch/riscv/include/asm/hwprobe.h
-> index 948d2b34e94e..2f278c395af9 100644
-> --- a/arch/riscv/include/asm/hwprobe.h
-> +++ b/arch/riscv/include/asm/hwprobe.h
-> @@ -8,7 +8,7 @@
->  
->  #include <uapi/asm/hwprobe.h>
->  
-> -#define RISCV_HWPROBE_MAX_KEY 14
-> +#define RISCV_HWPROBE_MAX_KEY 15
->  
->  static inline bool riscv_hwprobe_key_is_valid(__s64 key)
->  {
-> diff --git a/arch/riscv/include/uapi/asm/hwprobe.h b/arch/riscv/include/uapi/asm/hwprobe.h
-> index 5d30a4fae37a..9cc508be54c5 100644
-> --- a/arch/riscv/include/uapi/asm/hwprobe.h
-> +++ b/arch/riscv/include/uapi/asm/hwprobe.h
-> @@ -82,6 +82,7 @@ struct riscv_hwprobe {
->  #define		RISCV_HWPROBE_EXT_ZAAMO		(1ULL << 56)
->  #define		RISCV_HWPROBE_EXT_ZALRSC	(1ULL << 57)
->  #define		RISCV_HWPROBE_EXT_ZABHA		(1ULL << 58)
-> +#define		RISCV_HWPROBE_EXT_ZICBOP	(1ULL << 59)
->  #define RISCV_HWPROBE_KEY_CPUPERF_0	5
->  #define		RISCV_HWPROBE_MISALIGNED_UNKNOWN	(0 << 0)
->  #define		RISCV_HWPROBE_MISALIGNED_EMULATED	(1 << 0)
-> @@ -107,6 +108,7 @@ struct riscv_hwprobe {
->  #define RISCV_HWPROBE_KEY_ZICBOM_BLOCK_SIZE	12
->  #define RISCV_HWPROBE_KEY_VENDOR_EXT_SIFIVE_0	13
->  #define RISCV_HWPROBE_KEY_VENDOR_EXT_MIPS_0	14
-> +#define RISCV_HWPROBE_KEY_ZICBOP_BLOCK_SIZE	15
->  /* Increase RISCV_HWPROBE_MAX_KEY when adding items. */
->  
->  /* Flags */
+> diff --git a/arch/riscv/kernel/sys_hwprobe.c b/arch/riscv/kernel/sys_hwprobe.c
+> index 000f4451a9d8..7a6ae1327504 100644
+> --- a/arch/riscv/kernel/sys_hwprobe.c
+> +++ b/arch/riscv/kernel/sys_hwprobe.c
+> @@ -113,6 +113,7 @@ static void hwprobe_isa_ext0(struct riscv_hwprobe *pair,
+>  		EXT_KEY(ZCB);
+>  		EXT_KEY(ZCMOP);
+>  		EXT_KEY(ZICBOM);
+> +		EXT_KEY(ZICBOP);
+>  		EXT_KEY(ZICBOZ);
+>  		EXT_KEY(ZICNTR);
+>  		EXT_KEY(ZICOND);
+> @@ -293,6 +294,11 @@ static void hwprobe_one_pair(struct riscv_hwprobe *pair,
+>  		if (hwprobe_ext0_has(cpus, RISCV_HWPROBE_EXT_ZICBOM))
+>  			pair->value = riscv_cbom_block_size;
+>  		break;
+> +	case RISCV_HWPROBE_KEY_ZICBOP_BLOCK_SIZE:
+> +		pair->value = 0;
+> +		if (hwprobe_ext0_has(cpus, RISCV_HWPROBE_EXT_ZICBOP))
+> +			pair->value = riscv_cbop_block_size;
+> +		break;
+>  	case RISCV_HWPROBE_KEY_HIGHEST_VIRT_ADDRESS:
+>  		pair->value = user_max_virt_addr();
+>  		break;
 > -- 
 > 2.47.2
 >
