@@ -1,51 +1,64 @@
-Return-Path: <linux-kernel+bounces-846173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DAA5BC7317
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 04:18:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09608BC731A
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 04:20:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DF7E3A3457
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 02:18:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B158C3A8863
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 02:20:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BDED1A5B8D;
-	Thu,  9 Oct 2025 02:18:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95EFEC2EA;
+	Thu,  9 Oct 2025 02:19:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W4GhgsyA"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jBBW05E1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69608615A;
-	Thu,  9 Oct 2025 02:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD288182D0;
+	Thu,  9 Oct 2025 02:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759976332; cv=none; b=DyLBILrrzVtHiyScm9eH88Yv3YpDwArb1ijbiP7wFSrt9P+XzAsieUF9mcKihvqd6iUfgSLxg/KZdOsNnFiVgJA+0TR7HSznDkT2yESM2moS38QAqqDNixiIlwAXdfH1KrYP2jWEfyQFqHRl8nhm8o2M6iXghffUDmet6TCs5CU=
+	t=1759976393; cv=none; b=HUgdT5lfUD2CAimjE2b9teHj8l++mJqN+PTfqkUiQ+9Uchp6TL9PY1kntITlMih9kFCQdbHfxIEGIKI9SQ/AXJfhMGj4qGZJuhDU5wPgCKI/Cc2c9VST5mZAiGlHaFc8WQ/2aW3ksqGqQBZMR659DjoAsJwGWh0NcNFNwY9owOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759976332; c=relaxed/simple;
-	bh=oBUzBCGdHcKBGvVSdjsLDIxDVH+8Cz1l/MCI7DjjKrI=;
+	s=arc-20240116; t=1759976393; c=relaxed/simple;
+	bh=MKwwAjIvNTVYzVSKLCj93oAfQ4vIbNdKNB8W0YNJ6Qg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sia155PXUeEL5QbacS1eeu8PIWTr7sKZpJB+BpxVQlNB9+z5DylS0AshVFCGF2xXHVNJM1gsXmoNd6qZfj891CTyvMu47L4bIDoqScP+/A4mraCfboP2aSs2/y/aljFv53oI3eTrIdqRJ7g+LPyrsrj477KWMZXk0s0BrXzd4E8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=W4GhgsyA; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=03eJIUjJueS97yN5grY/zqy0eGrSPsBwtVlizMh56y8=; b=W4GhgsyAGTqgPC7wUoYO6o63lF
-	vpLOJhCnsNX60F+dBytfdtBGWiPX4l3wdDCtZwW7pcwEy7znhhy07YWEZwSBSRed1ZMfAmluNz1dM
-	l+NoxFQKDb0BvQ2GsMDGj7LFGiuz7cfkZMu6XUoYZCUwdk+2QlCUh3a/FdS447uNWpk5gZ56qPGAi
-	mm6aT34/A2iGP7x5j8Fp4N+uVzHBf873z/R5hCpzzTJM3rTsfwT8mvdPK0xqZU5vqZ8h7kSnFVPIz
-	CXAStTlyb4cim5USOHB6P3H9waMSBtGm0gkMrsx06F6CxmS6B5TiDYtCDeLWE7xrYN24aWcSOSyPC
-	W/ZH25Fw==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v6gEz-000000052j4-34Xq;
-	Thu, 09 Oct 2025 02:18:49 +0000
-Message-ID: <6e29c0d3-f8a0-474c-8d75-74f222621049@infradead.org>
-Date: Wed, 8 Oct 2025 19:18:49 -0700
+	 In-Reply-To:Content-Type; b=FC/ETsMn5r5OPk8arapq3I8BSVwtdJrNrWepuMzs9PL/8v8oBL/HVYHyW3r/sjCQtS4vtgVEbA5pRbFdPV5acPMlzYvuQrmrTKhs5A3+xSGMC+cIypCt7zA/mjNSYoB+R55eP8B1bF+Syl2Sfbb0S9YuLlEzamAX5Ksw9uNOulA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jBBW05E1; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759976391; x=1791512391;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=MKwwAjIvNTVYzVSKLCj93oAfQ4vIbNdKNB8W0YNJ6Qg=;
+  b=jBBW05E1MUnYFZWaxdB/CrGNH0YhcZIm6QcYaCyKHBRYGwEypd7EPUQb
+   /+MQkOd1iQfrAVSs8CBM1Uj39Oq7VX+kh0DsfP/AUZAifJOMfUxKl5h0x
+   HvHW6em/ugZFcBsDESnaqQQ+juCXybb18nGjBRX2bDD67mqFulYS5F5c0
+   6pV0+TZNkxkrfdy6OplVUGptqP6tkM45HSHR0MEraGGWkCTDgKLpD8pPL
+   hIl2bMhCWf73SW/PISpd2ShsPlrI5wIu/mu5Yn7sGFNqOPWpGiitroA53
+   CPgcjDWK39+lCJ3JLwhBD5nV+U9nTrfAGmB5ne2KGVlHw0sX5ndmRhNmK
+   A==;
+X-CSE-ConnectionGUID: mdL1U0ecRGGUSFbzfG6UGQ==
+X-CSE-MsgGUID: PA2QuWEaR/eC9WBYagUvpA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="62097737"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="62097737"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2025 19:19:51 -0700
+X-CSE-ConnectionGUID: SjjAIAIGQgGwYyFr6uTBmQ==
+X-CSE-MsgGUID: dnnE1byERkONzbCEalT4rw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,215,1754982000"; 
+   d="scan'208";a="211538774"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.232.209]) ([10.124.232.209])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2025 19:19:44 -0700
+Message-ID: <0276af52-c697-46c3-9db8-9284adb6beee@linux.intel.com>
+Date: Thu, 9 Oct 2025 10:19:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,60 +66,165 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation: sysrq: Remove contradicting sentence on
- extra /proc/sysrq-trigger characters
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- Linux Serial <linux-serial@vger.kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Cengiz Can <cengiz@kernel.wtf>,
- Tomas Mudrunka <tomas.mudrunka@gmail.com>, Jiri Slaby
- <jirislaby@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- =?UTF-8?Q?Anselm_Sch=C3=BCler?= <mail@anselmschueler.com>
-References: <20251008112409.33622-1-bagasdotme@gmail.com>
+Subject: Re: [PATCH v5 32/44] KVM: x86/pmu: Disable interception of select PMU
+ MSRs for mediated vPMUs
+To: Sean Christopherson <seanjc@google.com>, Sandipan Das <sandidas@amd.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
+ Huacai Chen <chenhuacai@kernel.org>, Anup Patel <anup@brainfault.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Xin Li <xin@zytor.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
+ linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+ kvm@vger.kernel.org, loongarch@lists.linux.dev,
+ kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Kan Liang <kan.liang@linux.intel.com>, Yongwei Ma <yongwei.ma@intel.com>,
+ Mingwei Zhang <mizhang@google.com>,
+ Xiong Zhang <xiong.y.zhang@linux.intel.com>,
+ Sandipan Das <sandipan.das@amd.com>
+References: <20250806195706.1650976-1-seanjc@google.com>
+ <20250806195706.1650976-33-seanjc@google.com>
+ <f896966e-8925-4b4f-8f0d-f1ae8aa197f7@amd.com> <aN1vfykNs8Dmv_g0@google.com>
 Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251008112409.33622-1-bagasdotme@gmail.com>
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <aN1vfykNs8Dmv_g0@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
 
-
-On 10/8/25 4:24 AM, Bagas Sanjaya wrote:
-> /proc/sysrq-trigger documentation states that only first character is
-> processed and the rest is ignored, yet it is not recommended to write
-> any extra characters to it. The latter statement is contradictive as
-> these characters are also ignored as implied by preceding sentence.
-> 
-> Remove it.
-> 
-> Link: https://lore.kernel.org/lkml/7ca05672-dc20-413f-a923-f77ce0a9d307@anselmschueler.com/
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
-
-> ---
->  Documentation/admin-guide/sysrq.rst | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/sysrq.rst b/Documentation/admin-guide/sysrq.rst
-> index 9c7aa817adc72d..63ff415ce85d66 100644
-> --- a/Documentation/admin-guide/sysrq.rst
-> +++ b/Documentation/admin-guide/sysrq.rst
-> @@ -77,9 +77,7 @@ On other
->  On all
->  	Write a single character to /proc/sysrq-trigger.
->  	Only the first character is processed, the rest of the string is
-> -	ignored. However, it is not recommended to write any extra characters
-> -	as the behavior is undefined and might change in the future versions.
-> -	E.g.::
-> +	ignored. E.g.::
+On 10/2/2025 2:14 AM, Sean Christopherson wrote:
+> On Fri, Sep 26, 2025, Sandipan Das wrote:
+>> On 8/7/2025 1:26 AM, Sean Christopherson wrote:
+>>> From: Dapeng Mi <dapeng1.mi@linux.intel.com>
+>>>
+>>> For vCPUs with a mediated vPMU, disable interception of counter MSRs for
+>>> PMCs that are exposed to the guest, and for GLOBAL_CTRL and related MSRs
+>>> if they are fully supported according to the vCPU model, i.e. if the MSRs
+>>> and all bits supported by hardware exist from the guest's point of view.
+>>>
+>>> Do NOT passthrough event selector or fixed counter control MSRs, so that
+>>> KVM can enforce userspace-defined event filters, e.g. to prevent use of
+>>> AnyThread events (which is unfortunately a setting in the fixed counter
+>>> control MSR).
+>>>
+>>> Defer support for nested passthrough of mediated PMU MSRs to the future,
+>>> as the logic for nested MSR interception is unfortunately vendor specific.
+> ...
+>
+>>>  #define MSR_AMD64_LBR_SELECT			0xc000010e
+>>> diff --git a/arch/x86/kvm/pmu.c b/arch/x86/kvm/pmu.c
+>>> index 4246e1d2cfcc..817ef852bdf9 100644
+>>> --- a/arch/x86/kvm/pmu.c
+>>> +++ b/arch/x86/kvm/pmu.c
+>>> @@ -715,18 +715,14 @@ int kvm_pmu_rdpmc(struct kvm_vcpu *vcpu, unsigned idx, u64 *data)
+>>>  	return 0;
+>>>  }
+>>>  
+>>> -bool kvm_need_rdpmc_intercept(struct kvm_vcpu *vcpu)
+>>> +bool kvm_need_perf_global_ctrl_intercept(struct kvm_vcpu *vcpu)
+>>>  {
+>>>  	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
+>>>  
+>>>  	if (!kvm_vcpu_has_mediated_pmu(vcpu))
+>>>  		return true;
+>>>  
+>>> -	/*
+>>> -	 * VMware allows access to these Pseduo-PMCs even when read via RDPMC
+>>> -	 * in Ring3 when CR4.PCE=0.
+>>> -	 */
+>>> -	if (enable_vmware_backdoor)
+>>> +	if (!kvm_pmu_has_perf_global_ctrl(pmu))
+>>>  		return true;
+>>>  
+>>>  	/*
+>>> @@ -735,7 +731,22 @@ bool kvm_need_rdpmc_intercept(struct kvm_vcpu *vcpu)
+>>>  	 * capabilities themselves may be a subset of hardware capabilities.
+>>>  	 */
+>>>  	return pmu->nr_arch_gp_counters != kvm_host_pmu.num_counters_gp ||
+>>> -	       pmu->nr_arch_fixed_counters != kvm_host_pmu.num_counters_fixed ||
+>>> +	       pmu->nr_arch_fixed_counters != kvm_host_pmu.num_counters_fixed;
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(kvm_need_perf_global_ctrl_intercept);
+>>> +
+>>> +bool kvm_need_rdpmc_intercept(struct kvm_vcpu *vcpu)
+>>> +{
+>>> +	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
+>>> +
+>>> +	/*
+>>> +	 * VMware allows access to these Pseduo-PMCs even when read via RDPMC
+>>> +	 * in Ring3 when CR4.PCE=0.
+>>> +	 */
+>>> +	if (enable_vmware_backdoor)
+>>> +		return true;
+>>> +
+>>> +	return kvm_need_perf_global_ctrl_intercept(vcpu) ||
+>>>  	       pmu->counter_bitmask[KVM_PMC_GP] != (BIT_ULL(kvm_host_pmu.bit_width_gp) - 1) ||
+>>>  	       pmu->counter_bitmask[KVM_PMC_FIXED] != (BIT_ULL(kvm_host_pmu.bit_width_fixed) - 1);
+>>>  }
+>> There is a case for AMD processors where the global MSRs are absent in the guest
+>> but the guest still uses the same number of counters as what is advertised by the
+>> host capabilities. So RDPMC interception is not necessary for all cases where
+>> global control is unavailable.o
+> Hmm, I think Intel would be the same?  Ah, no, because the host will have fixed
+> counters, but the guest will not.  However, that's not directly related to
+> kvm_pmu_has_perf_global_ctrl(), so I think this would be correct?
+>
+> diff --git a/arch/x86/kvm/pmu.c b/arch/x86/kvm/pmu.c
+> index 4414d070c4f9..4c5b2712ee4c 100644
+> --- a/arch/x86/kvm/pmu.c
+> +++ b/arch/x86/kvm/pmu.c
+> @@ -744,16 +744,13 @@ int kvm_pmu_rdpmc(struct kvm_vcpu *vcpu, unsigned idx, u64 *data)
+>         return 0;
+>  }
 >  
->  		echo t > /proc/sysrq-trigger
->  
-> 
-> base-commit: c746c3b5169831d7fb032a1051d8b45592ae8d78
+> -bool kvm_need_perf_global_ctrl_intercept(struct kvm_vcpu *vcpu)
+> +static bool kvm_need_pmc_intercept(struct kvm_vcpu *vcpu)
 
+The function name kvm_need_pmc_intercept() seems a little bit misleading
+and make users think this function is used to check if a certain PMC is
+intercepted. Maybe we can rename the function to kvm_need_global_intercept().
+
+Others look good to me. Thanks.
+
+
+>  {
+>         struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
+>  
+>         if (!kvm_vcpu_has_mediated_pmu(vcpu))
+>                 return true;
+>  
+> -       if (!kvm_pmu_has_perf_global_ctrl(pmu))
+> -               return true;
+> -
+>         /*
+>          * Note!  Check *host* PMU capabilities, not KVM's PMU capabilities, as
+>          * KVM's capabilities are constrained based on KVM support, i.e. KVM's
+> @@ -762,6 +759,13 @@ bool kvm_need_perf_global_ctrl_intercept(struct kvm_vcpu *vcpu)
+>         return pmu->nr_arch_gp_counters != kvm_host_pmu.num_counters_gp ||
+>                pmu->nr_arch_fixed_counters != kvm_host_pmu.num_counters_fixed;
+>  }
+> +
+> +bool kvm_need_perf_global_ctrl_intercept(struct kvm_vcpu *vcpu)
+> +{
+> +
+> +       return kvm_need_pmc_intercept(vcpu) ||
+> +              !kvm_pmu_has_perf_global_ctrl(vcpu_to_pmu(vcpu));
+> +}
+>  EXPORT_SYMBOL_GPL(kvm_need_perf_global_ctrl_intercept);
+>  
+>  bool kvm_need_rdpmc_intercept(struct kvm_vcpu *vcpu)
+> @@ -775,7 +779,7 @@ bool kvm_need_rdpmc_intercept(struct kvm_vcpu *vcpu)
+>         if (enable_vmware_backdoor)
+>                 return true;
+>  
+> -       return kvm_need_perf_global_ctrl_intercept(vcpu) ||
+> +       return kvm_need_pmc_intercept(vcpu) ||
+>                pmu->counter_bitmask[KVM_PMC_GP] != (BIT_ULL(kvm_host_pmu.bit_width_gp) - 1) ||
+>                pmu->counter_bitmask[KVM_PMC_FIXED] != (BIT_ULL(kvm_host_pmu.bit_width_fixed) - 1);
+>  }
+>
 
