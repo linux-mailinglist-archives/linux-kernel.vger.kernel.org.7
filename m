@@ -1,101 +1,98 @@
-Return-Path: <linux-kernel+bounces-846816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0BB2BC91E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:50:01 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E8DFBC91F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:51:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 548B83AA8F1
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:49:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B2D7D4FA180
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7AA2E370C;
-	Thu,  9 Oct 2025 12:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QnjVCpRQ"
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2AA323C505
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 12:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA682E2DDD;
+	Thu,  9 Oct 2025 12:51:26 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE5ABA3F
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 12:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760014192; cv=none; b=u1EMVhjhkyt2WH2d+NivRTUsnEkrR5uYi/IODBriT+j7A9awwJaOLV0oV9KSiYGUjbtAzP9XaNqtkDfycQxdQrT4jh7WNlYIiBc7kRDtic8Hs0ixAEqLdETgRXuhRGjqgtLoiGi4QcphylAymBd+ngsfJ4zineEDcW3cWqQm2vQ=
+	t=1760014285; cv=none; b=KC9y+I+D95B6yhB5iFKRFGeSH4KgAbhzbGatHaFDUet1z7whiqie++/NH+zS9C7p23YhPGb0OO5euaJMJ9AmYvb3+ZXy2Du28U+FA+/Xzenpn+6KzhiehSziFvkQwQZsg4qLAaWbS/2IiF+m7p3frsA4FPdiM+vBrvCD80hFAbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760014192; c=relaxed/simple;
-	bh=VfKKewdOhmPX5s/YjhmEHDiOah7+h6ANqVNbRICAosI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ub2Vs5D1YjgQcsp4J68qoB9YdklSyl7p60I/Lbvkt2WaxnVqzusk67X7Dh0SJIV1r8QBPDp1ONuAbX/O6TYzzNeOzhYSWJ00AE+BmCfJxn3CxvC9iZnwmmrJGaglLNy+jxobbBbLfNNg1suafxcM0yQaL5pB4wsjtVYqKcZpYOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QnjVCpRQ; arc=none smtp.client-ip=209.85.222.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-930ae1b2627so448710241.2
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 05:49:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760014190; x=1760618990; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=VfKKewdOhmPX5s/YjhmEHDiOah7+h6ANqVNbRICAosI=;
-        b=QnjVCpRQwX2f2xWgmBvFs/nsWNx16k+Mhobfh0p19pxmCMG3yL05brpevjmF0i2DDQ
-         I+R0OXna2GT4zrDV1Fdha9CUW6QszQsWrFjKZW571D41/wu7Zq01U6te8nzjyezHBIye
-         MK7MU3HZY/B7I0va437dNid5ktq/IiG7qTswuwPyIo/pnlcJZ4gE1M+EdoeejxQVNCLO
-         RA/WDeJ1RkYaSMWtVArxnY4doQzKWU9s4eFuDDStVQP+X0fidXiHLQW7SI1Czfqmoirm
-         4wO47PLJGKkXQDLUr4QcMMZPM886htE/0xNMJHkNoLHWo4JLv4S4iJ6Iu8EXAq9qinIH
-         eWQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760014190; x=1760618990;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VfKKewdOhmPX5s/YjhmEHDiOah7+h6ANqVNbRICAosI=;
-        b=jZyPIhDp/PEJtBKtJXCOOMAoDboyWTYwktSK4TKjq3suIO+10SW3Q10KAfSCDhmDOS
-         tRGEbP+FyQTfO4wsPxAslrKfuuSmsJUYVPO9pdw3n9dZg6TOzgi5m+WkxzfDuyopqBbV
-         6wjvEdZuDyLatu7uj+BfNDNI6z+S09/4QplEbUeoeTS6xH87t5C6pVdgwBSjgvAjcVMa
-         FrlQg3xA3lTFyBlGnLy1w18XAsKEN/wugxL1vqNfURPBs0jIfnQcoAGZn/98yPZ9JDkZ
-         o9X+KM5nLvEJW5NlAj3MOCa61J/ZhhIjxfa6ciChr5wDbx3e44gqahh+r/sb0fWaepnM
-         OOiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWIGoyhTXGZWdr8p89m2cuO1YpfKqn9YCFZVe9Cos7To7GxKVd0riVKMo7SQUQhP2tHvWJUZNx3tsFuRxI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxg0AqH1/yWUwZMXY6sacs8idzXrCtbQ1ABqXwGf7aNx66bEvQW
-	FMLN//kBrk+KNyEUf05yfPsTK6iz5y+HZigq4OB+cSG/ICAr0jf0BxTz54pDtA3ICvv0n2s28ur
-	oXce2rkzvPYTNJJYQ0ykpZGyYx6SYuWQ=
-X-Gm-Gg: ASbGnctJBiM4AexdZdoXjC2NxC/njmGG46W2veyXcAtqPlc9ZnvaAwhHL5rBcIczPDQ
-	X+iCzydU/6fThCiqeZAawPd75I3Ft3IDp7CAax0Y8JGKW0CJ4tTqsk70w1V+61FT+EDJyHWUxFg
-	7n1stTrTAIMm4J3X7Hpm8sYnAgSr36XlJBxHh6Kzpw9NZZa8AKJj/VfrSkvT0sf6+DXKg8IEztE
-	2buyNRoXStbHz9+7MrboXmzWJyfJUI=
-X-Google-Smtp-Source: AGHT+IHtfbVNmua8MslhsQYc9gs8tcKd+k+54POc/Qilqx84xvVx6iDIRusKs9Xd1V+V5i4ALhTvYlM34De+UICHVGo=
-X-Received: by 2002:a05:6102:32c6:b0:5a4:69bc:a9e with SMTP id
- ada2fe7eead31-5d5e2347589mr3230736137.22.1760014189789; Thu, 09 Oct 2025
- 05:49:49 -0700 (PDT)
+	s=arc-20240116; t=1760014285; c=relaxed/simple;
+	bh=L2lYR67yrdmGoAFNwPBlzuhg9P5hTiQEPES1NfSMUVk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G4nMDuvzrtT+/4s73U6CRPjaRkmUmeUDQeLyEI/b8s23FQwJ607UYmyV/btUpc645rvpG6ZW9ddgH63DzyAkFPYqjEdjSc7ILoTHEkGu1NbsOMKZuCSYtRRHdNuMko16WI3/5RfgPaUPL7rudfv89QZhP/p0HRqB10s21TNNp58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F3C51176A;
+	Thu,  9 Oct 2025 05:51:14 -0700 (PDT)
+Received: from [10.1.34.29] (e122027.cambridge.arm.com [10.1.34.29])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E0CA93F66E;
+	Thu,  9 Oct 2025 05:51:20 -0700 (PDT)
+Message-ID: <f3b04a09-561f-4eb6-9730-7084e5b9697b@arm.com>
+Date: Thu, 9 Oct 2025 13:51:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABpa4MA9unucCoKtSdzJyOLjHNVy+Cwgz5AnAxPkKw6vuox1Nw@mail.gmail.com>
- <20251007231709.6c16802e.michal.pecio@gmail.com> <CABpa4MCUnLUR_0Vzgd=rTr0+Hot=nxHirKrX6xtJWowDoLhWJw@mail.gmail.com>
- <CABpa4MCg7yixe7O8Pp+YwvpxeC=1JPhMhAap12RjtV6pcxFYgQ@mail.gmail.com>
- <20251008082055.5646dadc.michal.pecio@gmail.com> <CABpa4MCm8hQXvtSYqUA+Dh3rCLVM5rTC1p+FsgmFemv+Vyz=RA@mail.gmail.com>
- <20251008130532.49922d58.michal.pecio@gmail.com> <CABpa4MAsvK68CyQ7bVdie1j2m2O2YAEuFJHq8D-65uFT3FzKzQ@mail.gmail.com>
- <20251008223406.13f16f19.michal.pecio@gmail.com> <CABpa4MBGW=OJi+j34TbL2g=zyTg7-rxqpHYfAW-1DXTPk=g5Fw@mail.gmail.com>
- <CABpa4MBDvgJcgJf3_E7k1dBXs7v1tW-79dmc_sQDVM1bES5YDQ@mail.gmail.com>
- <20251009131444.2c221922.michal.pecio@gmail.com> <CABpa4MC-pij0Fczh-mH3zc+Ey2ALX70OfxX=cG4om7R6WMdRBg@mail.gmail.com>
- <20251009142911.6069c164.michal.pecio@gmail.com>
-In-Reply-To: <20251009142911.6069c164.michal.pecio@gmail.com>
-From: Arisa Snowbell <arisa.snowbell@gmail.com>
-Date: Thu, 9 Oct 2025 14:49:37 +0200
-X-Gm-Features: AS18NWArSZlpThbhGI6Jq97ozGUANkdAjEtN9Tl8kpJdrzbn2E-s6HZq7QQcWtg
-Message-ID: <CABpa4MBAikj508aofG3fodycbriCMYHTZjJm8L5dcEV+JB15xg@mail.gmail.com>
-Subject: Re: [PATCH] usb: xhci-pci: Fix USB2-only root hub registration
-To: Michal Pecio <michal.pecio@gmail.com>
-Cc: Mathias Nyman <mathias.nyman@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, 
-	regressions@lists.linux.dev, Niklas Neronin <niklas.neronin@linux.intel.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/panthor: Ensure MCU is disabled on suspend
+To: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: Ketil Johnsen <ketil.johnsen@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20251008105112.4077015-1-ketil.johnsen@arm.com>
+ <d526aaed-b29d-4e19-aab4-aa735282055e@arm.com>
+ <20251009134544.4502df0d@fedora>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20251009134544.4502df0d@fedora>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This also works, thank you
+On 09/10/2025 12:45, Boris Brezillon wrote:
+> On Thu, 9 Oct 2025 11:29:14 +0100
+> Steven Price <steven.price@arm.com> wrote:
+> 
+>> On 08/10/2025 11:51, Ketil Johnsen wrote:
+>>> Currently the Panthor driver needs the GPU to be powered down
+>>> between suspend and resume. If this is not done, then the
+>>> MCU_CONTROL register will be preserved as AUTO, which again will
+>>> cause a premature FW boot on resume. The FW will go directly into
+>>> fatal state in this case.
+>>>
+>>> This case needs to be handled as there is no guarantee that the
+>>> GPU will be powered down after the suspend callback on all platforms.
+>>>
+>>> The fix is to call panthor_fw_stop() in "pre-reset" path to ensure
+>>> the MCU_CONTROL register is cleared (set DISABLE). This matches
+>>> well with the already existing call to panthor_fw_start() from the
+>>> "post-reset" path.
+>>>
+>>> Signed-off-by: Ketil Johnsen <ketil.johnsen@arm.com>  
+>>
+>> Reviewed-by: Steven Price <steven.price@arm.com>
+>>
+>> Do we need a Fixes tag? Or is this only actually an issue on newer GPUs?
+> 
+> I think it'd be good to have a Fixes tag, if it's known to be the right
+> thing to do after a HALT, even if it's not needed on the GPUs currently
+> supported by this driver.
 
-- Arisa
+Yeah, at the very least it won't do any harm. I'll add a:
+
+Fixes: 2718d91816ee ("drm/panthor: Add the FW logical block")
+
+And merge this to drm-misc-fixes.
+
+Thanks,
+Steve
+
 
