@@ -1,520 +1,172 @@
-Return-Path: <linux-kernel+bounces-846098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5178ABC7082
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 02:48:39 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CF87BC70C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 03:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46EFE19E333F
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 00:49:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2C4F74EADEE
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 01:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 877FEEAE7;
-	Thu,  9 Oct 2025 00:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="iVfgvoE3"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011046.outbound.protection.outlook.com [52.101.52.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249AF178372;
+	Thu,  9 Oct 2025 01:04:44 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4A251FC8;
-	Thu,  9 Oct 2025 00:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759970910; cv=fail; b=sBwWY4kdq+l42wmTRMeuQYTwugAzrsLsYn/s9EW5lV3pRj335433NYIwMUxvY4hVMo9svhM8CFuuI+nC5+VlBBzVuU4xHdpDUvniTpsyBo0d9tEOTAUOChi/1IihxiTL8aVvGayD7YVf347KJrfpACHApwT+fylwzxJkDUIvZ1o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759970910; c=relaxed/simple;
-	bh=7nG1z3qs6RqLshz00/VCFGErhczF84XBvAJZHS32/2M=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=s8w5JwUdB5uhSweYS/DOTx2fZR1n5cZ9qcdVDeUI03f7l/qUIWfRDPXZ7rpPe/vZdfZ0df5f9xaPT0HyOlk2eJK3wmscbLkhSXdh3liQJUuJfQQl8z4X2fA9WhaKBsTyTgMqJjkEUx4hiiVTesuqlkl7nIyTpDL0uSJiyTaFLYE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=iVfgvoE3; arc=fail smtp.client-ip=52.101.52.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wvaG4GLVDYLByh7hf4U1rp+5CULr3rLhnTC1wztUPVfzgCv6G7GnzlQZOaduZN7NkQZjQErO3lP4cbmndlhzxsJPD/zb73scuF/FT0p6DWgSyWG3qwlQUH51O89b2NE1TbvHPOfk9KttXNdNYcSmB8E5/EwmKK1XlYbfN8eIUZkawqBt84x5jbyeDPE/uvyLmCZPU/S0MTMqhsivcC14Pffzh6zX8QbBR494+wN7XuG2MWEDQArd8hycRHQK9keEifXcgytaP2vc0PluJYxYKYQxrj3ZVILKeowu+UouMOV+WaflvYi1tUpw+4e9pFBFbbEvP3j3dDqJ3ReeF8PQGA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=p2mjb430zEWyXJsjvEJdWGXtuEBZy+QH3btfLKjdbcg=;
- b=m9GwWeIvjpwYcfM6qQVjWITcmiAeLvTcB+E3tivFlRVeBUFROBiSsABdWYholXLpSBPGyydGAv6U4OqByvHGJhVUDNuPVap1BZqEemtEI5HoYPUxHo8MlgBoKyDAlCnpplO0pc97FIYaMF628aRdTi/kp2xRetbJZV15EV47d747Icdbw9ERNUmXWM3IOu687gWT3CRnRCNzG0eQNdo9Cj42JJ5x9eRIzwQOQyh4gX1JLcg3svhhaxwHWhGTJsmv6/MuHiCfs1QjIFawIqw8ZuC0fGSF70ZyHuzceuKGla0E2bND3UXepMN/QN58Bsy8vqTBXphp3NmWjdnNWta2aw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=p2mjb430zEWyXJsjvEJdWGXtuEBZy+QH3btfLKjdbcg=;
- b=iVfgvoE3a+fvGZSh24mbpqH00bappQEojQtpfL9VnebLbRUvm97sgZ3w3jhoDcKP4rKfNYO3WXNyj9qjKJzYkKo8p8xT4w9KTSbHfIvv832O/RfYT6onCK3Wxk9PYF5+LfAn2TOkOqRcZJqteNUTmUa0IuQU+5c3UCyKrpPlxuq4aXqXD+6UEoqNzVZnfE48/zGso3KtS0G95+AdpMXop5ZcxQUlxRe4hh11G+7DJU8E18JQOHslEPsRJ9oVpwCvG8G0qfxx378eKEObKhW1J6u9ZgWaIopE1KVk0HmS0+uBf0JEuno+YIeVyDHsnRzok04dW9eUH9iqQGgmwljPEA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by PH7PR12MB5927.namprd12.prod.outlook.com (2603:10b6:510:1da::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.9; Thu, 9 Oct
- 2025 00:48:21 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9182.017; Thu, 9 Oct 2025
- 00:48:20 +0000
-From: Joel Fernandes <joelagnelf@nvidia.com>
-To: linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	dakr@kernel.org,
-	acourbot@nvidia.com
-Cc: Alistair Popple <apopple@nvidia.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	bjorn3_gh@protonmail.com,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Timur Tabi <ttabi@nvidia.com>,
-	joel@joelfernandes.org,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	nouveau@lists.freedesktop.org
-Subject: [PATCH v2] nova-core: vbios: Rework BiosImage to be simpler
-Date: Wed,  8 Oct 2025 20:47:32 -0400
-Message-Id: <20251009004732.2287050-1-joelagnelf@nvidia.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BN8PR04CA0049.namprd04.prod.outlook.com
- (2603:10b6:408:d4::23) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C450316DEB1;
+	Thu,  9 Oct 2025 01:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759971883; cv=none; b=XyfDdk92b4owUDDq2ukg5KLjl6kWvPdvmqRYPo08LsQZ5VViOO14raFjx8SoJU8v7OoFIlW4DcMIyC22gXTTOPUv/qrWGkaapuw+TFB7GDE8C9QfSt7x/u7vRATV25YubDKVMiM44qPNxEgil1TvEzeJts2AO/Ve5yEiifouN6Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759971883; c=relaxed/simple;
+	bh=hrLNHG+X2BW5USSrMsp/NX+xqNYQLiyVnsBa49AmAhw=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=UqCnGuNbDDl52RfoMZEAuJyCa0sYgXWSnUZ3qJxwkqztOkheIbLDChzMlys7NE81PibNY67bS8jwRke/OHFPD1afLTvvqZUAP8p4zqB22BBcTkuj/9tjZe/9YVdHEFAZkbpV+MAh4EfdqidYZPgrUVSY3kF19XiID7ZQQ97hYoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4chrp74VlxzKHMYM;
+	Thu,  9 Oct 2025 08:48:15 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id B716B1A0DE3;
+	Thu,  9 Oct 2025 08:48:43 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgCXW2NpBudoWY4ZCQ--.34345S3;
+	Thu, 09 Oct 2025 08:48:43 +0800 (CST)
+Subject: Re: [PATCH 3/7] blk-mq: add a new queue sysfs attribute async_depth
+To: Yu Kuai <hailan@yukuai.org.cn>, Nilay Shroff <nilay@linux.ibm.com>,
+ Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, bvanassche@acm.org,
+ ming.lei@redhat.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250930071111.1218494-1-yukuai1@huaweicloud.com>
+ <20250930071111.1218494-4-yukuai1@huaweicloud.com>
+ <91799590-15cd-437d-900f-8bc372f7298b@linux.ibm.com>
+ <f7fd8fa3-6368-48c1-93b2-942d9d0f75c7@yukuai.org.cn>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <1b55e01b-64bc-94d9-c0cc-9850b9ee6582@huaweicloud.com>
+Date: Thu, 9 Oct 2025 08:48:41 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|PH7PR12MB5927:EE_
-X-MS-Office365-Filtering-Correlation-Id: 16853e06-e7b6-4bd2-597e-08de06cd86bb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?nZLWcpN0SZD/WO/orOSja+hNXShZspocwvJoR1UAC1mXHL2KW6pQteFuorh8?=
- =?us-ascii?Q?lyf1X8de6Pa/JiaFyvVT+ubqa9/mAqm9STKS+qUU3sewjE/KtE6shT/3PKWw?=
- =?us-ascii?Q?fjD33qPGabxL5CidFs2mu1BUxBUD17CLQTBWev849Zsg2amJ80ta8spRyVyM?=
- =?us-ascii?Q?pz0UKp9lRckfaYBeQHeyHyhY+wJpnG5y0nk2QW2hpBbw/AGGY8lUdd7Li3fF?=
- =?us-ascii?Q?GugQ0fdkYrStPs7sYdUzuzxX8ivkw0zykMMx7BWMrOrKSh4kyxN9fWgR6hz6?=
- =?us-ascii?Q?UG4mRMjyO9unyaWzinAyJ6OoNbMW7XGAyR9wYSUPYB/1OkhoY7Y7wC+0Klb2?=
- =?us-ascii?Q?7/XsmbXKe3W38W9JURrbEJuUvCntFvI6+bOmx/HUBxdnHkqnvcUMce3ZzQhc?=
- =?us-ascii?Q?a8OxtGP81PP9XT9U510TKmhWBpAv1bGK3UX9RiBmRQB8euemSACJ8nmLgBmb?=
- =?us-ascii?Q?J2YePIIO13BBDtIg5cDm4L3tMzh5C7xOpuwYEKjwSS86VcJmRWWFc5IQuOhK?=
- =?us-ascii?Q?3MtfV8xg/j3tM6H+7kKNpSXrR9GMZejBrpo9UAFRXweZIdFEs09FKjBQ2TR/?=
- =?us-ascii?Q?1Za24SlVXdkPSKtFB31mHTFi1Xej1LXLJMtBpM0PSHG1CCw9YwO8tfAYzmS7?=
- =?us-ascii?Q?NVYEm5OpNkuCoQrQo2YZ24J9bgS56twZDKJ9CCz2l83iamVGDNF1yyVyrHE0?=
- =?us-ascii?Q?IhJNvTiMLbtforNhsPY3KP1Jy8O7sWCgB19i49EPe9ajn7eu3iqmICUj7BgV?=
- =?us-ascii?Q?24+KEhF3OylkqHjOmg6gHk4t8HN6t7yFNXJ7bPISiKbFc/htznAO+01Lqf6r?=
- =?us-ascii?Q?Fz7u6+GNdu6xXCv28RRtYYQrD1Hp6UB6KGIuc7nK9jxqMZodQWjhv1uL8+af?=
- =?us-ascii?Q?eh07JyzEJca5T5fgR+r4z5iBStAAoMjAYIcv0zY622qrjR6m4g3TUUX3dw81?=
- =?us-ascii?Q?kiDr+nkhCTWZCDXFMJiZSuPw7pkfgBshQ1Y+aWe/tBqV8Qxah6//Fj560ldO?=
- =?us-ascii?Q?qcBUG1RcEsGos9rBjqcoeDEcjibYFMsR+mlkV43sdNdyeeVURoxVFdE3GecJ?=
- =?us-ascii?Q?5XGdN8Ggv6MfqeVBcqYi6kWymT3L1zx1BPl6kT8BD7jv7CR+WzrcVTUrDJ86?=
- =?us-ascii?Q?5mlvupTywDR+DMMEfjAWspSfYFz4+xUXN+TqP9ww+en920hTf0zFzcd/Rc57?=
- =?us-ascii?Q?/3IadfDSB5nH1Hplm97khbRXpzDA5XZaW5bIFfEOZsHNiaKt2mMz0xDQhQhE?=
- =?us-ascii?Q?k/NtWRMBOw6D1FzWldPm13vPwZir8PXbWYK5EMGLf+DhEML9KWHptW0H9Qzf?=
- =?us-ascii?Q?yTCnyNdbGg1LMwkUdGP/IrkM6KStQPDif3Zjj5FtNopTDtaAFCinfRAXUUhG?=
- =?us-ascii?Q?CZeDXrdZZskUAY0YgDseq5SuT/iyOE+EAFV7MsNLtA9wSZeqOWpNEz/7Gimu?=
- =?us-ascii?Q?ynLwQZQeMi2NAAr+6QRaBWTmJuwJl5dG?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?YjIC7tzm9LJ4OC/reJePNP5hV++kUaO3yWLTtoTgt042Ykdo08Tx5fbdoRSz?=
- =?us-ascii?Q?eAJg1hy9W7mocLCjyKY6h9Ktj/9lL2N3o51ahSiguV23mI5oWCvShjJTFnem?=
- =?us-ascii?Q?yhMm9VLRYHxlqa6EQfHRZamnD2czXZ3SD+xr5LHx6joGkgrkeavNUnS9LG44?=
- =?us-ascii?Q?f+HeFqDgxsCO4nJ4NVSw7nVeuR0kf83wSEdG7kmorM0I997IQTXZrE+EV4Rw?=
- =?us-ascii?Q?VdEeYclHyR6wo6HMN+FIoBlPFAUum0jF7rPB4+t2HbQdkoQLWjkQ4/NdGeL8?=
- =?us-ascii?Q?b3SpA8bnbJC+RHO8ijnNJdG6+Sq/r4SDc/8n3l0+l9koABK9r2pBDLwQ08Qq?=
- =?us-ascii?Q?qWe2Eb8siir+AI2FDLE7A+KUsFw11I33UcAepMnOsIGeOW4bA18FhtlUAehU?=
- =?us-ascii?Q?14LX+uxEpfxs4NTQwfbsRSs/UUzUFuli6MbpQQE8DOV1Dz3XIDZKeZRkHnVD?=
- =?us-ascii?Q?npCmGBubi69Dbi3jvtkaLTiq1Y2NOaWFHE9MnYiMDZAGeytYNvvx9z5pO0+g?=
- =?us-ascii?Q?7qZs3g5spHxOGEtaQLTSR/wjVoYg0rfZ7NntwBevPpKyQB77K0eSR4pEonXM?=
- =?us-ascii?Q?gJtHenM5Xz0OIpdLBphy89+qLJyMonh9d54fgtuVn1RUqCxH0vaofRRbtcdQ?=
- =?us-ascii?Q?Vvfke98B92PZpobRSp+GZAJ9UrFpGJM6Dj1ABwy8szlW9BiSKbUGtLPYG4XM?=
- =?us-ascii?Q?3oPeML4pq9yAwPOsHe1DwEWkluZJuiK+Fi3E2jakY2nmKHlvWXRW2+v+y81L?=
- =?us-ascii?Q?OkwSAR2yDWtMznu7MYylJt5DUMxjyrj64xlHhB+nhAWSIfPCN9NkEqw2PCm+?=
- =?us-ascii?Q?UxVtHv/a3TP+AUFQKJsyXADASK+cO0+CmKtNEy/YoYUZ7vnFmlePta8Oea2o?=
- =?us-ascii?Q?ynVmRKJs7opL81XsrTm7Ee7BG2GDtUWlM7tb3ovd/67GWDzxmB2QFFnbWNyV?=
- =?us-ascii?Q?qG8g9bbX94xceHKOoMWBWhlGY2qEK4CiI0W++ZFHQVtyUWl7PDiO/8XcDanS?=
- =?us-ascii?Q?FuQJIavJ0dNAPog9LtJHG84YZ2KTDzYvVmoA1qO22U0cw05U43A15ZKFzeZQ?=
- =?us-ascii?Q?AhrpHl6mjZ8TxVmP9lJgmyI5wPINH5BCN8BMgTRpbnNxM9TipP1o/kmj80gq?=
- =?us-ascii?Q?URK1eXTDD/H/TuDyjKTlas1S3egsR8ayWIoMcpnHFfRHzKjEbTqZS0dHlAss?=
- =?us-ascii?Q?zNfI6VyFtPeiwJhH1gIzmU1VDF0eFza8zpSsdxDXjjbr2CsZV1beSHPYCocm?=
- =?us-ascii?Q?PX7iWhkVIxC/gZ3Q+ktxU3HGSZ1lDPza8qT1fUVZ0Mk1cB6bZO6twK/Alh0i?=
- =?us-ascii?Q?n58jjEBJSqTZISkulcsg+FYskjWj5D1neWVP+6tQB9wrTJBEsSOBrJgS2m5n?=
- =?us-ascii?Q?tPjYgnuIoCJeJR9CoR7r7oML3WlBws4rgtHQTQL4ww3+V+9S72mqG0Ehawfr?=
- =?us-ascii?Q?FWtNy0NlpCat+3Rvgbuv6Ixa4v4itEHW9DJPgS27dGONWFXP/fpXa0OSy2KE?=
- =?us-ascii?Q?4YBSu12L9OxXSOxPscqAViCJCfI/BIlI2Ai3MR6HgjJk/3KpjgG9uqrV4miQ?=
- =?us-ascii?Q?YEXOrZ39+kaNL+sjap5frlUv7ONT6TQ23NQwXvsk7b9ERx0JlTHEvyge8mIO?=
- =?us-ascii?Q?kA=3D=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 16853e06-e7b6-4bd2-597e-08de06cd86bb
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Oct 2025 00:48:20.8964
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mXQr+zwgGsGqNUcNXgNQGAxcAttlyEF1BI8MVU+W799eaolKAW/S7mqN3MnD6b8UjrRUuPm2EKLdLWzpRCzdiw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5927
+In-Reply-To: <f7fd8fa3-6368-48c1-93b2-942d9d0f75c7@yukuai.org.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCXW2NpBudoWY4ZCQ--.34345S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxJw4rZF45CF45GF1kXw47Jwb_yoW5CF13pw
+	4kJFWYkryUWF1Igr1fJw13ZryrJw4xKw17JF13tF13JryDKr12gF1rXr1jgr97Zr48AF47
+	Jrn0vas8uF1DJFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Currently, the BiosImage type in vbios code is implemented as a
-type-wrapping enum with the sole purpose of implementing a type that is
-common to all specific image types. To make this work, macros were used
-to overcome limitations of using enums. Ugly match statements were also
-required to route methods from the enum type to the specific image type.
+Hi,
 
-Simplify the code by just creating the common BiosImage type in the
-iterator, and then converting it to specific image type after. This
-works well since all the methods common to different BiosImage are
-called only during the iteration and not later. Should we need to call
-these common methods later, we can use AsRef and traits, but for now not
-doing so gives us a nice ~50 negative line delta versus the existing code
-and is a lot simpler.
+在 2025/10/06 9:57, Yu Kuai 写道:
+> Hi,
+> 
+> 在 2025/10/2 23:10, Nilay Shroff 写道:
+>>
+>> On 9/30/25 12:41 PM, Yu Kuai wrote:
+>>> From: Yu Kuai <yukuai3@huawei.com>
+>>>
+>>> Add a new field async_depth to request_queue and related APIs, this is
+>>> currently not used, following patches will convert elevators to use
+>>> this instead of internal async_depth.
+>>>
+>>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+>>> ---
+>>>   block/blk-core.c       |  1 +
+>>>   block/blk-mq.c         |  4 ++++
+>>>   block/blk-sysfs.c      | 47 ++++++++++++++++++++++++++++++++++++++++++
+>>>   block/elevator.c       |  1 +
+>>>   include/linux/blkdev.h |  1 +
+>>>   5 files changed, 54 insertions(+)
+>>>
+>>> diff --git a/block/blk-core.c b/block/blk-core.c
+>>> index dd39ff651095..76df70cfc103 100644
+>>> --- a/block/blk-core.c
+>>> +++ b/block/blk-core.c
+>>> @@ -463,6 +463,7 @@ struct request_queue *blk_alloc_queue(struct 
+>>> queue_limits *lim, int node_id)
+>>>       fs_reclaim_release(GFP_KERNEL);
+>>>       q->nr_requests = BLKDEV_DEFAULT_RQ;
+>>> +    q->async_depth = BLKDEV_DEFAULT_RQ;
+>>>       return q;
+>>> diff --git a/block/blk-mq.c b/block/blk-mq.c
+>>> index 09f579414161..260e54fa48f0 100644
+>>> --- a/block/blk-mq.c
+>>> +++ b/block/blk-mq.c
+>>> @@ -529,6 +529,8 @@ static struct request 
+>>> *__blk_mq_alloc_requests(struct blk_mq_alloc_data *data)
+>>>               data->rq_flags |= RQF_USE_SCHED;
+>>>               if (ops->limit_depth)
+>>>                   ops->limit_depth(data->cmd_flags, data);
+>>> +            else if (!blk_mq_sched_sync_request(data->cmd_flags))
+>>> +                data->shallow_depth = q->async_depth;
+>>>           }
+>> In the subsequent patches, I saw that ->limit_depth is still used for the
+>> BFQ scheduler. Given that, it seems more consistent to also retain 
+>> ->limit_depth
+>> for the mq-deadline and Kyber schedulers, and set data->shallow_depth 
+>> within their
+>> respective ->limit_depth methods. If we take this approach, the 
+>> additional
+>> blk_mq_sched_sync_request() check above becomes unnecessary.
+>>
+>> So IMO:
+>> - Keep ->limit_depth for all schedulers (bfq, mq-deadline, kyber).
+>> - Remove the extra blk_mq_sched_sync_request() check from the core code.
+> 
+> I was thinking to save a function call for deadline and kyber, however, 
+> I don't
+> have preference here and I can do this in the next version.
 
-Also remove the now obsolete BiosImage enum type.
+How abount following, I feel this is better while cooking the new
+version. Consider only bfq have specail handling for async request.
 
-Cc: Benno Lossin <lossin@kernel.org>
-Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
----
-v1->v2: Removed deadcode (Alex).
+static void blk_mq_sched_limit_async_depth(struct blk_mq_alloc_data *data)
+{
+	if (blk_mq_sched_sync_request(data->cmd_flags))
+		return;
 
- drivers/gpu/nova-core/vbios.rs | 226 ++++++++++++++-------------------
- 1 file changed, 94 insertions(+), 132 deletions(-)
+	data->shallow_depth = q->async_depth;
+	if (ops->limit_async_depth)
+		ops->limit_async_depth(data);
+}
 
-diff --git a/drivers/gpu/nova-core/vbios.rs b/drivers/gpu/nova-core/vbios.rs
-index e6a060714205..696eedaab0c4 100644
---- a/drivers/gpu/nova-core/vbios.rs
-+++ b/drivers/gpu/nova-core/vbios.rs
-@@ -21,6 +21,34 @@
- /// indicates the last image. Bit 0-6 are reserved, bit 7 is last image bit.
- const LAST_IMAGE_BIT_MASK: u8 = 0x80;
- 
-+/// BIOS Image Type from PCI Data Structure code_type field.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+#[repr(u8)]
-+enum BiosImageType {
-+    /// PC-AT compatible BIOS image (x86 legacy)
-+    PciAt = 0x00,
-+    /// EFI (Extensible Firmware Interface) BIOS image
-+    Efi = 0x03,
-+    /// NBSI (Notebook System Information) BIOS image
-+    Nbsi = 0x70,
-+    /// FwSec (Firmware Security) BIOS image
-+    FwSec = 0xE0,
-+}
-+
-+impl TryFrom<u8> for BiosImageType {
-+    type Error = Error;
-+
-+    fn try_from(code: u8) -> Result<Self> {
-+        match code {
-+            0x00 => Ok(Self::PciAt),
-+            0x03 => Ok(Self::Efi),
-+            0x70 => Ok(Self::Nbsi),
-+            0xE0 => Ok(Self::FwSec),
-+            _ => Err(EINVAL),
-+        }
-+    }
-+}
-+
- // PMU lookup table entry types. Used to locate PMU table entries
- // in the Fwsec image, corresponding to falcon ucodes.
- #[expect(dead_code)]
-@@ -197,32 +225,37 @@ pub(crate) fn new(dev: &device::Device, bar0: &Bar0) -> Result<Vbios> {
- 
-         // Parse all VBIOS images in the ROM
-         for image_result in VbiosIterator::new(dev, bar0)? {
--            let full_image = image_result?;
-+            let image = image_result?;
- 
-             dev_dbg!(
-                 dev,
--                "Found BIOS image: size: {:#x}, type: {}, last: {}\n",
--                full_image.image_size_bytes(),
--                full_image.image_type_str(),
--                full_image.is_last()
-+                "Found BIOS image: size: {:#x}, type: {:?}, last: {}\n",
-+                image.image_size_bytes(),
-+                image.image_type(),
-+                image.is_last()
-             );
- 
--            // Get references to images we will need after the loop, in order to
--            // setup the falcon data offset.
--            match full_image {
--                BiosImage::PciAt(image) => {
--                    pci_at_image = Some(image);
-+            // Convert to a specific image type
-+            match BiosImageType::try_from(image.pcir.code_type) {
-+                Ok(BiosImageType::PciAt) => {
-+                    pci_at_image = Some(PciAtBiosImage::try_from(image)?);
-                 }
--                BiosImage::FwSec(image) => {
-+                Ok(BiosImageType::FwSec) => {
-+                    let fwsec = FwSecBiosBuilder {
-+                        base: image,
-+                        falcon_data_offset: None,
-+                        pmu_lookup_table: None,
-+                        falcon_ucode_offset: None,
-+                    };
-                     if first_fwsec_image.is_none() {
--                        first_fwsec_image = Some(image);
-+                        first_fwsec_image = Some(fwsec);
-                     } else {
--                        second_fwsec_image = Some(image);
-+                        second_fwsec_image = Some(fwsec);
-                     }
-                 }
--                // For now we don't need to handle these
--                BiosImage::Efi(_image) => {}
--                BiosImage::Nbsi(_image) => {}
-+                _ => {
-+                    // Ignore other image types or unknown types
-+                }
-             }
-         }
- 
-@@ -594,108 +627,29 @@ fn find_in_data(
-     }
- }
- 
--// Use a macro to implement BiosImage enum and methods. This avoids having to
--// repeat each enum type when implementing functions like base() in BiosImage.
--macro_rules! bios_image {
--    (
--        $($variant:ident: $class:ident),* $(,)?
--    ) => {
--        // BiosImage enum with variants for each image type
--        enum BiosImage {
--            $($variant($class)),*
--        }
--
--        impl BiosImage {
--            /// Get a reference to the common BIOS image data regardless of type
--            fn base(&self) -> &BiosImageBase {
--                match self {
--                    $(Self::$variant(img) => &img.base),*
--                }
--            }
--
--            /// Returns a string representing the type of BIOS image
--            fn image_type_str(&self) -> &'static str {
--                match self {
--                    $(Self::$variant(_) => stringify!($variant)),*
--                }
--            }
--        }
--    }
--}
--
--impl BiosImage {
--    /// Check if this is the last image.
--    fn is_last(&self) -> bool {
--        let base = self.base();
--
--        // For NBSI images (type == 0x70), return true as they're
--        // considered the last image
--        if matches!(self, Self::Nbsi(_)) {
--            return true;
--        }
--
--        // For other image types, check the NPDE first if available
--        if let Some(ref npde) = base.npde {
--            return npde.is_last();
--        }
--
--        // Otherwise, fall back to checking the PCIR last_image flag
--        base.pcir.is_last()
--    }
--
--    /// Get the image size in bytes.
--    fn image_size_bytes(&self) -> usize {
--        let base = self.base();
--
--        // Prefer NPDE image size if available
--        if let Some(ref npde) = base.npde {
--            return npde.image_size_bytes();
--        }
--
--        // Otherwise, fall back to the PCIR image size
--        base.pcir.image_size_bytes()
--    }
--
--    /// Create a [`BiosImageBase`] from a byte slice and convert it to a [`BiosImage`] which
--    /// triggers the constructor of the specific BiosImage enum variant.
--    fn new(dev: &device::Device, data: &[u8]) -> Result<Self> {
--        let base = BiosImageBase::new(dev, data)?;
--        let image = base.into_image().inspect_err(|e| {
--            dev_err!(dev, "Failed to create BiosImage: {:?}\n", e);
--        })?;
--
--        Ok(image)
--    }
--}
--
--bios_image! {
--    PciAt: PciAtBiosImage,   // PCI-AT compatible BIOS image
--    Efi: EfiBiosImage,       // EFI (Extensible Firmware Interface)
--    Nbsi: NbsiBiosImage,     // NBSI (Nvidia Bios System Interface)
--    FwSec: FwSecBiosBuilder, // FWSEC (Firmware Security)
--}
--
- /// The PciAt BIOS image is typically the first BIOS image type found in the BIOS image chain.
- ///
- /// It contains the BIT header and the BIT tokens.
- struct PciAtBiosImage {
--    base: BiosImageBase,
-+    base: BiosImage,
-     bit_header: BitHeader,
-     bit_offset: usize,
- }
- 
-+#[expect(dead_code)]
- struct EfiBiosImage {
--    base: BiosImageBase,
-+    base: BiosImage,
-     // EFI-specific fields can be added here in the future.
- }
- 
-+#[expect(dead_code)]
- struct NbsiBiosImage {
--    base: BiosImageBase,
-+    base: BiosImage,
-     // NBSI-specific fields can be added here in the future.
- }
- 
- struct FwSecBiosBuilder {
--    base: BiosImageBase,
-+    base: BiosImage,
-     /// These are temporary fields that are used during the construction of the
-     /// [`FwSecBiosBuilder`].
-     ///
-@@ -714,37 +668,16 @@ struct FwSecBiosBuilder {
- ///
- /// The PMU table contains voltage/frequency tables as well as a pointer to the Falcon Ucode.
- pub(crate) struct FwSecBiosImage {
--    base: BiosImageBase,
-+    base: BiosImage,
-     /// The offset of the Falcon ucode.
-     falcon_ucode_offset: usize,
- }
- 
--// Convert from BiosImageBase to BiosImage
--impl TryFrom<BiosImageBase> for BiosImage {
--    type Error = Error;
--
--    fn try_from(base: BiosImageBase) -> Result<Self> {
--        match base.pcir.code_type {
--            0x00 => Ok(BiosImage::PciAt(base.try_into()?)),
--            0x03 => Ok(BiosImage::Efi(EfiBiosImage { base })),
--            0x70 => Ok(BiosImage::Nbsi(NbsiBiosImage { base })),
--            0xE0 => Ok(BiosImage::FwSec(FwSecBiosBuilder {
--                base,
--                falcon_data_offset: None,
--                pmu_lookup_table: None,
--                falcon_ucode_offset: None,
--            })),
--            _ => Err(EINVAL),
--        }
--    }
--}
--
- /// BIOS Image structure containing various headers and reference fields to all BIOS images.
- ///
--/// Each BiosImage type has a BiosImageBase type along with other image-specific fields. Note that
--/// Rust favors composition of types over inheritance.
-+/// A BiosImage struct is embedded into all image types and implements common operations.
- #[expect(dead_code)]
--struct BiosImageBase {
-+struct BiosImage {
-     /// Used for logging.
-     dev: ARef<device::Device>,
-     /// PCI ROM Expansion Header
-@@ -757,12 +690,41 @@ struct BiosImageBase {
-     data: KVec<u8>,
- }
- 
--impl BiosImageBase {
--    fn into_image(self) -> Result<BiosImage> {
--        BiosImage::try_from(self)
-+impl BiosImage {
-+    /// Get the image size in bytes.
-+    fn image_size_bytes(&self) -> usize {
-+        // Prefer NPDE image size if available
-+        if let Some(ref npde) = self.npde {
-+            npde.image_size_bytes()
-+        } else {
-+            // Otherwise, fall back to the PCIR image size
-+            self.pcir.image_size_bytes()
-+        }
-+    }
-+
-+    /// Get the BIOS image type.
-+    fn image_type(&self) -> Result<BiosImageType> {
-+        BiosImageType::try_from(self.pcir.code_type)
-+    }
-+
-+    /// Check if this is the last image.
-+    fn is_last(&self) -> bool {
-+        // For NBSI images (type == 0x70), return true as they're
-+        // considered the last image
-+        if self.pcir.code_type == BiosImageType::Nbsi as u8 {
-+            return true;
-+        }
-+
-+        // For other image types, check the NPDE first if available
-+        if let Some(ref npde) = self.npde {
-+            return npde.is_last();
-+        }
-+
-+        // Otherwise, fall back to checking the PCIR last_image flag
-+        self.pcir.is_last()
-     }
- 
--    /// Creates a new BiosImageBase from raw byte data.
-+    /// Creates a new BiosImage from raw byte data.
-     fn new(dev: &device::Device, data: &[u8]) -> Result<Self> {
-         // Ensure we have enough data for the ROM header.
-         if data.len() < 26 {
-@@ -802,7 +764,7 @@ fn new(dev: &device::Device, data: &[u8]) -> Result<Self> {
-         let mut data_copy = KVec::new();
-         data_copy.extend_from_slice(data, GFP_KERNEL)?;
- 
--        Ok(BiosImageBase {
-+        Ok(BiosImage {
-             dev: dev.into(),
-             rom_header,
-             pcir,
-@@ -865,10 +827,10 @@ fn falcon_data_ptr(&self) -> Result<u32> {
-     }
- }
- 
--impl TryFrom<BiosImageBase> for PciAtBiosImage {
-+impl TryFrom<BiosImage> for PciAtBiosImage {
-     type Error = Error;
- 
--    fn try_from(base: BiosImageBase) -> Result<Self> {
-+    fn try_from(base: BiosImage) -> Result<Self> {
-         let data_slice = &base.data;
-         let (bit_header, bit_offset) = PciAtBiosImage::find_bit_header(data_slice)?;
- 
--- 
-2.34.1
+Thanks,
+Kuai
+
+> 
+> Thanks,
+> Kuai
+> 
+>> Thanks,
+>> --Nilay
+>>
+> .
+> 
 
 
