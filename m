@@ -1,137 +1,164 @@
-Return-Path: <linux-kernel+bounces-847457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4DDBBCAE62
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 23:17:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BCCDBCAE74
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 23:20:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 08BF64E93B5
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 21:17:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 129F11A625B7
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 21:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A2B281509;
-	Thu,  9 Oct 2025 21:17:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE13281369;
+	Thu,  9 Oct 2025 21:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hcEGfi8n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="C7IQ1hr1"
+Received: from mail-pg1-f226.google.com (mail-pg1-f226.google.com [209.85.215.226])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6759D257435;
-	Thu,  9 Oct 2025 21:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A41131E4AB
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 21:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760044661; cv=none; b=hDplpjQnpMBlNk41SI7TP9Bl52F+XdiJjc3Z7n5HPlmY69iJbxJTD4d46jC+CLJKPWf8HSAwxw/H+SDg8ju4sju4x+vbcFpi1M6XXkNyUE9P9XMnM0wggdv9oyUPwhrlTtEU0GCEV7ZpvEniQzjAnBIMvb5dZg3DcpVNtmpQmQA=
+	t=1760044830; cv=none; b=Dggpyd5AYSuUOiB794qRZFI+2HzECByF8afyyxsr2g+HsUYa2Xf4I7KzNgymAufOncTSEAP5DJj//PyMYFlOOhfH5CD+GWrYP61YkZt4BKJdm1k/LuPmcjyv3C8+JgEQu2U5ZJ3g1o9DxUAF+NzrJPTBvQ6QRjUJCpqWNE2KNFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760044661; c=relaxed/simple;
-	bh=BwfkkEiFr4e+h6S366Ayqap5n/PtIOVr+0J9Egmvctk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JYywR7CxL6ZN9h9IBBAHLBjLVVINUH4Xk1OFrLcNp0d9CnKv2bs/WeOB+oqC89Qtkx/q78aVz1+engKweb1Me5yPY7xiJKcdfwqadXk8iFV3gtTGwpCC04YGHhUZ49qZ7vNjmHvKU26jq6dL++aDU0FAq4kZ+JgPHDt33tMhcTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hcEGfi8n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0255FC4CEE7;
-	Thu,  9 Oct 2025 21:17:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760044660;
-	bh=BwfkkEiFr4e+h6S366Ayqap5n/PtIOVr+0J9Egmvctk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hcEGfi8nDHxY/uC+cgam4j6BFs/9ffPNVcn0PDCaI8jkxPIbncNb80PrwxYomeCxQ
-	 Jjl0VzGddVQhD+L4kN06AZBaljDQ/oK10TTx3ZfoVgWx1eyDZjh2+VsWf/IJWAbOx2
-	 4lsUPg0IkSv9bIzdx95Bt6eS2//1JRRrblLTvMTQOkXKfHmwXBPHnu2VME4AuqrgQk
-	 XgRG7oloaBgrW01tH7xoGCpETiIIXGhlWpMbeefKctGNy4MHbhewA6EZMiCiFdthpC
-	 hJXO8CUOGeptvYDPH7J+xkHVBSUfAvmoPAltf8JJ3y/0XbvWBZ5C4yRuxDugZlipry
-	 m9k0oIMQPqwBg==
-Date: Thu, 9 Oct 2025 14:17:38 -0700
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
-	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, quic_vbadigan@quicinc.com, 
-	quic_mrana@quicinc.com
-Subject: Re: [PATCH v3 2/3] arm64: dts: qcom: sm8750: Add PCIe PHY and
- controller node
-Message-ID: <iy7wdlhiavqm5bffyo53rqm636cxyy3xdg463sda6aomgsslkc@j4h6cqtpibkw>
-References: <20250826-pakala-v3-0-721627bd5bb0@oss.qualcomm.com>
- <20250826-pakala-v3-2-721627bd5bb0@oss.qualcomm.com>
- <aN22lamy86iesAJj@hu-bjorande-lv.qualcomm.com>
- <4d586f0f-c336-4bf6-81cb-c7c7b07fb3c5@oss.qualcomm.com>
- <73e72e48-bc8e-4f92-b486-43a5f1f4afb0@oss.qualcomm.com>
- <8f2e0631-6c59-4298-b36e-060708970ced@oss.qualcomm.com>
- <qref5ooh6pl2sznf7iifrbric7hsap63ffbytkizdyrzt6mtqz@q5r27ho2sbq3>
- <b5538a86-c166-4f20-9c3a-8170d3596660@oss.qualcomm.com>
- <53wepdhpn3fgvq5fum7u6n75su77dligfjtnxkfdh4r723a7yf@6u43pwkwt4yw>
+	s=arc-20240116; t=1760044830; c=relaxed/simple;
+	bh=ZhL87hWPCqJqUdWzKetD/aJArXJ8FhDY4s+4hHC081k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FGF095lElYjfoySfMvt51wD7ARo5aTo2EjXNKc3Tiozs9u3zMXT9kWwmT0+9HUIzsPFW8a7zKtV4kx795k+kUN/zpjoLv2vUM6YSk/RoaikEhFHfpVTidpI9E9b3unnpqM0A3goe/nmgiItXyGBI3D4QOD2oq/ZcMj7aXKSwVZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=C7IQ1hr1; arc=none smtp.client-ip=209.85.215.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pg1-f226.google.com with SMTP id 41be03b00d2f7-b4ee87cc81eso1229181a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 14:20:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760044828; x=1760649628;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:dkim-signature:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PQrmK4OLtZ+IgNtZ8671Owl8Y5KLotbw1U+tAsx0fP8=;
+        b=dQm+vj1O6/0U8aDuDr5h8KgY+UKgqKqh9TzOHUcR9wKqE+dNQb2w5YyvHPKVPCgAvf
+         QGEfx1ti35MdFMZkPm8u1GxlKAFXtBjXXJxkegt49XeBqPCCNvHQNQEWqO/khHsd8upT
+         8FJtVG0F67om0f4h5h/tU2kSVJnYGzf61IrQP9L3AwzIIJwWzaCQV+nm+BGrWkqovptk
+         ngjBlUb/+w748w/PxnI0AYYjTtRs10g23fCiwF6hdVyzjGcIILUG9B34JPV1QVZagZ+P
+         R214AxSmK8CvE+j0MLvb6nrAIqxxFXArOCatEQhGV+9MYD/DvarawY1gjMMqb7an7cIs
+         omEg==
+X-Forwarded-Encrypted: i=1; AJvYcCV2r/ap54KblkUQZTskG24qRzadR0Yc8wWVS22rbA9T25Rxnsttz545BX0Gv8aYiI/swm14QZ4Sh6Wct8Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxns1R+iWKa5brNwC5cZm0rCojOcuaUts2TXQNVma2c1UCTL6ho
+	9VdamVlbaViAmqP9Vv7CP2r4bUMmFqURvJ7xYb98UNcIgKRuW8QG6hH0nzVxW24ZLBc+T3bwQ7g
+	XfCs/idAXczQOdOMw6bEFiOySbbctse+x0LX9clLLKfFqzZ4ytaCfvf19ZM8nf6IHUrLKu6THmh
+	CVH2NEpfD5xcR9SUD8qtkTiY1OKmtkeB77tvizKZTsPj/8V5ZE4Ew6Z097SEiWtcdaTN33Z450s
+	eTCWEDOAgQ6aSZN
+X-Gm-Gg: ASbGncsBHk15x54XdJU8y1ElEz2KXq324zlLf0IlzSJmasKqtdJ+y8eaoN0MzQoC152
+	QZCSeYPG23uecsRNd62IoojEqhsf8vDrsIyk8P3O+ya5R76hEOYvTt9+XXaztoPFF9ednr7odyq
+	xDvLlVNPPxt/upVG/pKqEncfIl99VUAv6ehz+3Jl9x/rtNj7PEeJ5gSREYnRqudt16mbHk4yxhT
+	9gYaFMKLvugK4J500Zf2wZGpOMKzX7zNR1GTs6rwc3UFzdl3U6vlB27+nRbL8rr966lyDOcRP6J
+	P3Etl//ozpYMqMYPLT3QU2jfVvCFNVKG14RfWrf4QOndZLUyk6xwU7GV3irxj3c6zrM+BWA9fhm
+	vjV8kdjpIeXPW4O/qp8NnT0pA3mRDDyw42+wjZ8RxBy/WwVLVG3k6G5tuXfXMnGscTSEF8qho/2
+	+7ygYW
+X-Google-Smtp-Source: AGHT+IECrZjXq5nm4t6LFGX7cughWpTS1sNA3tDbfiTuzt3KQXkVETh3GegrQg3LsYkxffjBfLOOie5jaxEt
+X-Received: by 2002:a17:903:2c05:b0:24e:95bb:88b1 with SMTP id d9443c01a7336-290273ede89mr125372845ad.34.1760044827890;
+        Thu, 09 Oct 2025 14:20:27 -0700 (PDT)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-119.dlp.protect.broadcom.com. [144.49.247.119])
+        by smtp-relay.gmail.com with ESMTPS id d9443c01a7336-29034e02b83sm2995065ad.10.2025.10.09.14.20.27
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 09 Oct 2025 14:20:27 -0700 (PDT)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-854bec86266so703312085a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 14:20:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1760044827; x=1760649627; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PQrmK4OLtZ+IgNtZ8671Owl8Y5KLotbw1U+tAsx0fP8=;
+        b=C7IQ1hr16fabfBwl+LqkiTFxvCwn5fwb7V9rpS6CR7cw7+6fmS/9xO4IaxiuldEPS1
+         x2GpL/+adxI5X11U8/4TJqj3Kt24OVJd5IfSiVaaTful2UP+fPjTcK544B9JtNFkFSP3
+         DQwgwwe1pez5eCDm9uE6I8jKhw8+SwgoX8BbE=
+X-Forwarded-Encrypted: i=1; AJvYcCWsY9jZyUNdEcNfVutSUF1s0mcH/63/zND1FbbPR2YzuUYmOhBl+SO9yPuLCNx86ZD14hkHqj37ZRSQwd8=@vger.kernel.org
+X-Received: by 2002:a05:620a:4492:b0:865:cacf:e133 with SMTP id af79cd13be357-8835104c86bmr1139487085a.36.1760044826823;
+        Thu, 09 Oct 2025 14:20:26 -0700 (PDT)
+X-Received: by 2002:a05:620a:4492:b0:865:cacf:e133 with SMTP id af79cd13be357-8835104c86bmr1139483785a.36.1760044826325;
+        Thu, 09 Oct 2025 14:20:26 -0700 (PDT)
+Received: from mail.broadcom.net ([192.19.144.250])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8849f9ae428sm274832685a.16.2025.10.09.14.20.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 14:20:25 -0700 (PDT)
+From: Kamal Dasu <kamal.dasu@broadcom.com>
+To: peng.fan@oss.nxp.com,
+	andersson@kernel.org,
+	baolin.wang@linux.alibaba.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	florian.fainelli@broadcom.com
+Cc: bcm-kernel-feedback-list@broadcom.com,
+	linux-remoteproc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Kamal Dasu <kamal.dasu@broadcom.com>
+Subject: [PATCH v3 0/3] Adding brcmstb-hwspinlock support
+Date: Thu,  9 Oct 2025 17:20:00 -0400
+Message-Id: <20251009212003.2714447-1-kamal.dasu@broadcom.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <53wepdhpn3fgvq5fum7u6n75su77dligfjtnxkfdh4r723a7yf@6u43pwkwt4yw>
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-On Thu, Oct 09, 2025 at 07:42:37PM +0300, Dmitry Baryshkov wrote:
-> On Thu, Oct 09, 2025 at 10:35:52AM +0200, Konrad Dybcio wrote:
-> > On 10/8/25 9:08 PM, Dmitry Baryshkov wrote:
-> > > On Wed, Oct 08, 2025 at 11:11:43AM +0200, Konrad Dybcio wrote:
-> > >> On 10/8/25 10:00 AM, Konrad Dybcio wrote:
-> > >>> On 10/8/25 6:41 AM, Krishna Chaitanya Chundru wrote:
-> > >>>>
-> > >>>>
-> > >>>> On 10/2/2025 5:07 AM, Bjorn Andersson wrote:
-> > >>>>> On Tue, Aug 26, 2025 at 04:32:54PM +0530, Krishna Chaitanya Chundru wrote:
-> > >>>>>> Add PCIe controller and PHY nodes which supports data rates of 8GT/s
-> > >>>>>> and x2 lane.
-> > >>>>>>
-> > >>>>>
-> > >>>>> I tried to boot the upstream kernel (next-20250925 defconfig) on my
-> > >>>>> Pakala MTP with latest LA1.0 META and unless I disable &pcie0 the device
-> > >>>>> is crashing during boot as PCIe is being probed.
-> > >>>>>
-> > >>>>> Is this a known problem? Is there any workaround/changes in flight that
-> > >>>>> I'm missing?
-> > >>>>>
-> > >>>> Hi Bjorn,
-> > >>>>
-> > >>>> we need this fix for the PCIe to work properly. Please try it once.
-> > >>>> https://lore.kernel.org/all/20251008-sm8750-v1-1-daeadfcae980@oss.qualcomm.com/
-> > >>>
-> > >>> This surely shouldn't cause/fix any issues, no?
-> > >>
-> > >> Apparently this is a real fix, because sm8750.dtsi defines the PCIe
-> > >> PHY under a port node, while the MTP DT assigns perst-gpios to the RC
-> > >> node, which the legacy binding ("everything under the RC node") parsing
-> > >> code can't cope with (please mention that in the commit message, Krishna)
-> > >>
-> > >> And I couldn't come up with a way to describe "either both are required
-> > >> if any is present under the RC node or none are allowed" in yaml
-> > > 
-> > > What about:
-> > > 
-> > > oneOf:
-> > >   - required:
-> > >      - foo
-> > >      - bar
-> > >   - properties:
-> > >      foo: false
-> > >      bar: false
-> > 
-> > Oh yeah, this works.. would you mind submitting a patch like this, with a
-> 
-> I'd prefer it it comes from somebody who is actually working on PCIe so
-> that the explanations are not ridiculous. Mani?
-> 
+This is a standalone patch for the hardware semaphore feature for
+all brcmstb SoCs that have the same hardware semaphore registers
+hence platform driver compatible uses:
+	  '.compatible = "brcm,brcmstb-hwspinlock"'
 
-Will do.
+The patch has been tested to work as builtin as well as a module.
 
-- Mani
+v3 changes:
+Added detailed explantion in the all commit messages as per review
+comments
+ - Added  description of 'sundry' ip block that the hardware semaphore
+   belongs to
+ - Added reasoning for using '.compatible = "brcm,brcmstb-hwspinlock"
+
+v2 changes:
+Adressed following review comments:
+ - fixed ordering of obj brcmstb_hwspinlock.o in Makefile 
+ - fixed ordering of 'config HWSPINLOCK_BRCMSTB' block in Kconfig
+ - Renamed BRCMSTB_MAX_SEMAPHORES to BRCMSTB_NUM_SEMAPHORES
+ - Removed unnecessary platfrom_set_drvdata(pdev, bank);
+
+Also addressing duplicate PATCH 1/3 sent in error as part of v1 change.
+
+v1 changes:
+based on fixes made to Initial patch :
+url:    https://github.com/intel-lab-lkp/linux/commits/Kamal-Dasu/dt-bindings-brcmstb-hwspinlock-support-for-hwspinlock/20250712-034624
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250711154221.928164-4-kamal.dasu%40broadcom.com
+patch subject: [PATCH 2/4] hwspinlock: brcmstb hardware semaphore support
+
+All the review comments and build warning have been fixed.
+
+Kamal Dasu (3):
+  dt-bindings: hwlock:  Adding brcmstb-hwspinlock support
+  hwspinlock: brcmstb hardware semaphore support
+  MAINTAINERS: adding entry for BRCMSTB HWSPINLOCK driver
+
+ .../hwlock/brcm,brcmstb-hwspinlock.yaml       | 36 +++++++
+ MAINTAINERS                                   |  8 ++
+ drivers/hwspinlock/Kconfig                    | 11 ++-
+ drivers/hwspinlock/Makefile                   |  1 +
+ drivers/hwspinlock/brcmstb_hwspinlock.c       | 96 +++++++++++++++++++
+ 5 files changed, 151 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/hwlock/brcm,brcmstb-hwspinlock.yaml
+ create mode 100644 drivers/hwspinlock/brcmstb_hwspinlock.c
 
 -- 
-மணிவண்ணன் சதாசிவம்
+2.34.1
+
 
