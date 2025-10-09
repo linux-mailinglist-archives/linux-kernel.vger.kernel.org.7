@@ -1,302 +1,149 @@
-Return-Path: <linux-kernel+bounces-846869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ECC9BC94AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:26:24 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0965CBC94B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:27:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D8ED19E638A
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:26:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E0F344E2DE3
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:27:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8886C2E88BD;
-	Thu,  9 Oct 2025 13:26:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8536A2E88BD;
+	Thu,  9 Oct 2025 13:27:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Fuex2el4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="h8pjj+mJ"
+Received: from mx-relay47-hz3.antispameurope.com (mx-relay47-hz3.antispameurope.com [94.100.134.236])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4292D0625
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760016376; cv=none; b=TyFroOM/95Qob0bvBRkShGJAT0wkwt9wNvrlKbSCku6A8D2O2KwGyg128QZ22ke4GmhAXheQRWqJnoox+/djSprm7xFwo+Ugv7Itrz1mQZY8WyceOm6/dVCs+RtKEoyu/CPYWrHAnbRWFeHZRF5+mwGHlTPWumvlVMLvlP4ByGw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760016376; c=relaxed/simple;
-	bh=VPWcE0Xuu5GUODD7cWMvxX1PGvL/T98UvE8B+A6miSI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lEGLQC4ygbFbeEue4pFemuqtE0juhT3Y3m3mRwV/qZrBeM44zjEOLbxQkmAuz72u19IGgWNz2ta6twylu4HOGGA8lY9bOVg8Tya5WyTBrSju0nktO3jRMfkeSoBg3mzBNOU39rTmpsWGNuwLSuyl61eL6Z+UQMsAnif85viW02E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Fuex2el4; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760016373;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=hJtpfcp/G8o62hjdoIKw84mK7hW8TEY2gZji142cB8I=;
-	b=Fuex2el4AVhHUrgT58wZ81ABiRogWODI9N+glZftXXN0rcf+jVs8XJuUpJdAG5S1T4eS0O
-	CLXgqn2McLur4tUh/SxXUcT8mAg+ZLd3wGcjN9fuBlF8RjdqFzS6YVJ/mgQMGEqPqmn9pq
-	eHe4LFAgj8p2q+//RZMXyCEkGjJPLPU=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-288-upBHHFoZOaCaL7WXXJ6M2A-1; Thu,
- 09 Oct 2025 09:26:10 -0400
-X-MC-Unique: upBHHFoZOaCaL7WXXJ6M2A-1
-X-Mimecast-MFC-AGG-ID: upBHHFoZOaCaL7WXXJ6M2A_1760016369
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0584F19560B0;
-	Thu,  9 Oct 2025 13:26:09 +0000 (UTC)
-Received: from gerbillo.redhat.com (unknown [10.44.32.151])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D0EE419560B4;
-	Thu,  9 Oct 2025 13:26:06 +0000 (UTC)
-From: Paolo Abeni <pabeni@redhat.com>
-To: torvalds@linux-foundation.org
-Cc: kuba@kernel.org,
-	davem@davemloft.net,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Networking for v6.18-rc1
-Date: Thu,  9 Oct 2025 15:23:09 +0200
-Message-ID: <20251009132309.35872-1-pabeni@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8A32DD5EB
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=94.100.134.236
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760016428; cv=pass; b=bBBnHsJvOj5HfwJIXJMY/Qg2FdU/nczVyxedpvd/gfMlEsMGXdqpoWfeYRLU/rUNfU22eyhvPDF8q1ESiaAkCP5TWLsNF3+sfn0tmLkpc7GL5tOV/WjTo8jtWTz4UzCcUjWP7goqh22gwUOoIfheopFq6Zis+ZIuq7FSjjyiJFI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760016428; c=relaxed/simple;
+	bh=EIeuNxi3tMWtVhd9APaLWB4XRSDsxAjUbTJq3XQbabw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ijO7gxaLWtv7GIZAK2nF8PyN2VP4oGMym/hdKr5YuJkTk/2mrvgHt+rVGUNWTpigUOuwKcGiQMC+J8avcK8gvqDBTjyW++Ss5qj1Qkuaeh3gwAB4YCd0r0TrtXiSvu+MEVRx7VDtYfcjaTed+sumhNIZ21BbVAeWVX/fQbxy3CY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=h8pjj+mJ; arc=pass smtp.client-ip=94.100.134.236
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+ARC-Authentication-Results: i=1; mx-gate47-hz3.hornetsecurity.com 1; spf=pass
+ reason=mailfrom (ip=94.100.132.6, headerfrom=ew.tq-group.com)
+ smtp.mailfrom=ew.tq-group.com smtp.helo=smtp-out01-hz1.hornetsecurity.com;
+ dmarc=pass header.from=ew.tq-group.com orig.disposition=pass
+ARC-Message-Signature: a=rsa-sha256;
+ bh=lyApDgL3svuRvTgcJBmdXkxs0NmIcK3pBr470hQHp5s=; c=relaxed/relaxed;
+ d=hornetsecurity.com; h=from:to:date:subject:mime-version:; i=1; s=hse1;
+ t=1760016385;
+ b=XDqHJYoCDdveCBYZ9BPlCWymgP4626+qpHlYGxPoHTd9day/VlKp2wO69yexfVWy/eeZrEG4
+ rx+zcfykAwy3wPxEiEZ4hU+ZtTXgYoZWw2Q9BM+rZBtwBkm8A6E6lhewFultU20wuyyOo6hBG7+
+ VvMe9P6mghq/4S61QVIz8H4I7jy0slkJv4buu9vjynnCiTUAG/gQCv/+97dxnmjzT2U0G0SjUMK
+ jfwoSd+bPqXOo9upfKRGgzSFSRpmUnVcZTJpvmrOc4r+bHwfflk4P0QRBEEZrL02f+KtWHC6aM7
+ JmNikYT16o5WobqVXTeaJKlVOeDsFRdaXTCxhNJj9vpEw==
+ARC-Seal: a=rsa-sha256; cv=none; d=hornetsecurity.com; i=1; s=hse1;
+ t=1760016385;
+ b=O2i/Hq5aCtrIU5+YBi+yM/ltvVULg4ef43TNUPO5C9dcusbg87qee+8AepMG/QBAG6z4Knco
+ 4Jv34QDRr7C0kCDKfbtZqNfNPkAPbwJGyXUQeIXexe3QimG8+tpCM+saPaaCcfmvdHUSF1PXHRO
+ OkOmgarzfRGNRqxMWNS4e9PXCX/HKetNoGygXCyyNlWT9XOAcOsG+b3HkcOyw2Sk2kt2JnZb+yS
+ qtQO6F2k9/GO0yntM9F1zx2Kjhf6vdGqAqhxmltHufzr4XVJORPvvzthshGW/0PNlyIWb80AkBO
+ b2W2rY/P6Kw25iaem/pjNCHMg/iuDfnwVHxXbq/Ae4oqg==
+Received: from he-nlb01-hz1.hornetsecurity.com ([94.100.132.6]) by mx-relay47-hz3.antispameurope.com;
+ Thu, 09 Oct 2025 15:26:25 +0200
+Received: from [192.168.153.128] (host-82-135-125-110.customer.m-online.net [82.135.125.110])
+	(Authenticated sender: matthias.schiffer@ew.tq-group.com)
+	by smtp-out01-hz1.hornetsecurity.com (Postfix) with ESMTPSA id DCA48A41242;
+	Thu,  9 Oct 2025 15:26:12 +0200 (CEST)
+Message-ID: <a528cdb9c861b8fb97ab1a99901378908f2e0e89.camel@ew.tq-group.com>
+Subject: Re: [PATCH v2 1/2] i2c: ocores: increase poll timeout to total
+ transfer timeout
+From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Peter Korsgaard <peter@korsgaard.com>, Andi Shyti
+ <andi.shyti@kernel.org>,  linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux@ew.tq-group.com
+Date: Thu, 09 Oct 2025 15:26:12 +0200
+In-Reply-To: <60744be2-1a22-4056-bf05-22f64fb8b484@lunn.ch>
+References: 
+	<51a72ceca0154d7be85c3cc67722e7dd0b364a2e.1760000254.git.matthias.schiffer@ew.tq-group.com>
+	 <60744be2-1a22-4056-bf05-22f64fb8b484@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-cloud-security-sender:matthias.schiffer@ew.tq-group.com
+X-cloud-security-recipient:linux-kernel@vger.kernel.org
+X-cloud-security-crypt: load encryption module
+X-cloud-security-Mailarchiv: E-Mail archived for: matthias.schiffer@ew.tq-group.com
+X-cloud-security-Mailarchivtype:outbound
+X-cloud-security-Virusscan:CLEAN
+X-cloud-security-disclaimer: This E-Mail was scanned by E-Mailservice on mx-relay47-hz3.antispameurope.com with 4cj9cj3JZ1z4MZvs
+X-cloud-security-connect: he-nlb01-hz1.hornetsecurity.com[94.100.132.6], TLS=1, IP=94.100.132.6
+X-cloud-security-Digest:012c56644705e961c763b0351ba63189
+X-cloud-security:scantime:2.683
+DKIM-Signature: a=rsa-sha256;
+ bh=lyApDgL3svuRvTgcJBmdXkxs0NmIcK3pBr470hQHp5s=; c=relaxed/relaxed;
+ d=ew.tq-group.com;
+ h=content-type:mime-version:subject:from:to:message-id:date; s=hse1;
+ t=1760016385; v=1;
+ b=h8pjj+mJ81QGldRwNsTTLyM9DOcrTMi6vMG/53lOZ1Nsbv0+7js+jZjjoI51655YS40mUPK6
+ yiqjCRTXrdPtz56VhXB8je7YNYsXcXR9tFAG8TfwgY+ECI3pirtsRH2DfypKpB4EqcBxBZrrpUl
+ SaEN2zqcBqc99+8wGLR9BxBLiP7cO8Nvn9di4WMSNa6K7E6VqpJHlfl3Pzwvh/oNGuaLKC2K2nD
+ VFyRViOautjyDeigNlEvs1oOcM5o5YS5yJTB1lnSI+W6kykUpYWpoL4GBAAFjDATw+w1oMBxQ0R
+ Iz15v9weZYBllcR2ub5Zaz/9BzwDPXCAPs42kkpGm4j4w==
 
-Hi Linus!
+On Thu, 2025-10-09 at 15:20 +0200, Andrew Lunn wrote:
+> On Thu, Oct 09, 2025 at 11:19:49AM +0200, Matthias Schiffer wrote:
+> > When a target makes use of clock stretching, a timeout of 1ms may not b=
+e
+> > enough. One extreme example is the NXP PTN3460 eDP to LVDS bridge, whic=
+h
+> > takes ~320ms to send its ACK after a flash command has been
+> > submitted.
+> >=20
+> > The behavior in the regular case is unchanged, spinning for up to 1ms,
+> > but the open-coded poll loop is replaced with read_poll_timeout_atomic(=
+)
+> > as suggested by Andrew Lunn. In cases where 1ms is not sufficient,
+> > read_poll_timeout() is used, allowing a total transfer time up to the
+> > timeout set in struct i2c_adapter (defaulting to 1s, configurable throu=
+gh
+> > the I2C_TIMEOUT ioctl).
+>=20
+> Thanks
+>=20
+> Did you test with CONFIG_DEBUG_ATOMIC_SLEEP enabled? I don't think it
+> is an issue, but the old code could be used in atomic context because
+> it never slept.
 
-The following changes since commit 07fdad3a93756b872da7b53647715c48d0f4a2d0:
+I did not, but there is only one call chain ocores_xfer_core ->
+ocores_process_polling -> ocores_poll_wait -> ocores_wait, which is definit=
+ely
+not used in atomic context (in IRQ mode, ocores_xfer_core calls
+wait_event_timeout, which might_sleep()).
 
-  Merge tag 'net-next-6.18' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next (2025-10-02 15:17:01 -0700)
+Best,
+Matthias
 
-are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git net-6.18-rc1
 
-for you to fetch changes up to fea8cdf6738a8b25fccbb7b109b440795a0892cb:
+>=20
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+>=20
+>     Andrew
 
-  net: airoha: Fix loopback mode configuration for GDM2 port (2025-10-09 11:48:17 +0200)
-
-----------------------------------------------------------------
-Including fixes from netfilter.
-
-Current release - regressions:
-
-  - mlx5: fix pre-2.40 binutils assembler error
-
-Current release - new code bugs:
-
-  - net: psp: don't assume reply skbs will have a socket
-
-  - eth: fbnic: fix missing programming of the default descriptor
-
-Previous releases - regressions:
-
-  - page_pool: fix PP_MAGIC_MASK to avoid crashing on some 32-bit arches
-
-  - tcp:
-    - take care of zero tp->window_clamp in tcp_set_rcvlowat()
-    - don't call reqsk_fastopen_remove() in tcp_conn_request().
-
-  - eth: ice: release xa entry on adapter allocation failure
-
-  - eth: usb: asix: hold PM usage ref to avoid PM/MDIO + RTNL deadlock
-
-Previous releases - always broken:
-
-  - netfilter: validate objref and objrefmap expressions
-
-  - sctp: fix a null dereference in sctp_disposition sctp_sf_do_5_1D_ce()
-
-  - eth: mlx4: prevent potential use after free in mlx4_en_do_uc_filter()
-
-  - eth: mlx5: prevent tunnel mode conflicts between FDB and NIC IPsec tables
-
-  - eth: ocelot: fix use-after-free caused by cyclic delayed work
-
-Misc:
-
-  -  add support for MediaTek PCIe 5G HP DRMR-H01
-
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-
-----------------------------------------------------------------
-Alexandr Sapozhnikov (1):
-      net/sctp: fix a null dereference in sctp_disposition sctp_sf_do_5_1D_ce()
-
-Arnd Bergmann (1):
-      net/mlx5: fix pre-2.40 binutils assembler error
-
-Bhanu Seshu Kumar Valluri (2):
-      net: usb: lan78xx: Fix lost EEPROM read timeout error(-ETIMEDOUT) in lan78xx_read_raw_eeprom
-      net: doc: Fix typos in docs
-
-Carolina Jubran (2):
-      net/mlx5: Prevent tunnel mode conflicts between FDB and NIC IPsec tables
-      net/mlx5e: Prevent tunnel reformat when tunnel mode not allowed
-
-Cosmin Ratiu (1):
-      net/mlx5e: Do not fail PSP init on missing caps
-
-Dan Carpenter (1):
-      net/mlx4: prevent potential use after free in mlx4_en_do_uc_filter()
-
-Daniel Machon (1):
-      net: sparx5/lan969x: fix flooding configuration on bridge join/leave
-
-Duoming Zhou (1):
-      net: mscc: ocelot: Fix use-after-free caused by cyclic delayed work
-
-Eric Dumazet (1):
-      tcp: take care of zero tp->window_clamp in tcp_set_rcvlowat()
-
-Eric Woudstra (1):
-      bridge: br_vlan_fill_forward_path_pvid: use br_vlan_group_rcu()
-
-Erick Karanja (1):
-      net: fsl_pq_mdio: Fix device node reference leak in fsl_pq_mdio_probe
-
-Fernando Fernandez Mancera (1):
-      netfilter: nft_objref: validate objref and objrefmap expressions
-
-Florian Westphal (2):
-      selftests: netfilter: nft_fib.sh: fix spurious test failures
-      selftests: netfilter: query conntrack state to check for port clash resolution
-
-Haotian Zhang (1):
-      ice: ice_adapter: release xa entry on adapter allocation failure
-
-Jakub Kicinski (13):
-      net: psp: don't assume reply skbs will have a socket
-      selftests: net: sort configs
-      selftests: net: unify the Makefile formats
-      selftests: drv-net: make linters happy with our imports
-      eth: fbnic: fix missing programming of the default descriptor
-      eth: fbnic: fix accounting of XDP packets
-      eth: fbnic: fix saving stats from XDP_TX rings on close
-      selftests: drv-net: xdp: rename netnl to ethnl
-      selftests: drv-net: xdp: add test for interface level qstats
-      eth: fbnic: fix reporting of alloc_failed qstats
-      selftests: drv-net: fix linter warnings in pp_alloc_fail
-      selftests: drv-net: pp_alloc_fail: lower traffic expectations
-      selftests: drv-net: pp_alloc_fail: add necessary optoins to config
-
-Kuniyuki Iwashima (1):
-      tcp: Don't call reqsk_fastopen_remove() in tcp_conn_request().
-
-Lorenzo Bianconi (1):
-      net: airoha: Fix loopback mode configuration for GDM2 port
-
-Maxime Chevallier (1):
-      net: mdio: mdio-i2c: Hold the i2c bus lock during smbus transactions
-
-Oleksij Rempel (1):
-      net: usb: asix: hold PM usage ref to avoid PM/MDIO + RTNL deadlock
-
-Paolo Abeni (3):
-      Merge branch 'mlx5-misc-fixes-2025-10-05'
-      Merge tag 'nf-25-10-08' of https://git.kernel.org/pub/scm/linux/kernel/git/netfilter/nf
-      Merge branch 'eth-fbnic-fix-xdp_tx-and-xdp-vs-qstats'
-
-Sammy Hsu (1):
-      net: wwan: t7xx: add support for HP DRMR-H01
-
-Sidharth Seela (1):
-      selftest: net: ovpn: Fix uninit return values
-
-Thomas Wismer (1):
-      net: pse-pd: tps23881: Fix current measurement scaling
-
-Toke Høiland-Jørgensen (1):
-      page_pool: Fix PP_MAGIC_MASK to avoid crashing on some 32-bit arches
-
- drivers/net/ethernet/airoha/airoha_eth.c           |   4 +-
- drivers/net/ethernet/airoha/airoha_regs.h          |   3 +
- drivers/net/ethernet/freescale/fsl_pq_mdio.c       |   2 +
- drivers/net/ethernet/intel/ice/ice_adapter.c       |  10 +-
- drivers/net/ethernet/mellanox/mlx4/en_netdev.c     |   2 +-
- .../ethernet/mellanox/mlx5/core/en_accel/ipsec.c   |  38 ++-
- .../ethernet/mellanox/mlx5/core/en_accel/ipsec.h   |   2 +-
- .../mellanox/mlx5/core/en_accel/ipsec_fs.c         |  32 ++-
- .../net/ethernet/mellanox/mlx5/core/en_accel/psp.c |  10 +-
- drivers/net/ethernet/mellanox/mlx5/core/eswitch.h  |   5 +-
- .../ethernet/mellanox/mlx5/core/eswitch_offloads.c |  18 +-
- drivers/net/ethernet/mellanox/mlx5/core/wc.c       |   2 +-
- drivers/net/ethernet/meta/fbnic/fbnic_ethtool.c    |   6 +-
- drivers/net/ethernet/meta/fbnic/fbnic_mac.c        |   8 +
- drivers/net/ethernet/meta/fbnic/fbnic_netdev.c     |  23 +-
- drivers/net/ethernet/meta/fbnic/fbnic_netdev.h     |   1 +
- drivers/net/ethernet/meta/fbnic/fbnic_txrx.c       |  74 +++--
- drivers/net/ethernet/meta/fbnic/fbnic_txrx.h       |   7 +
- .../net/ethernet/microchip/sparx5/sparx5_main.c    |   5 +
- .../ethernet/microchip/sparx5/sparx5_switchdev.c   |  12 +
- .../net/ethernet/microchip/sparx5/sparx5_vlan.c    |  10 -
- drivers/net/ethernet/mscc/ocelot_stats.c           |   2 +-
- drivers/net/mdio/mdio-i2c.c                        |  39 ++-
- drivers/net/pse-pd/tps23881.c                      |   2 +-
- drivers/net/usb/asix_devices.c                     |  29 ++
- drivers/net/usb/lan78xx.c                          |  11 +-
- drivers/net/wwan/t7xx/t7xx_pci.c                   |   1 +
- include/linux/mm.h                                 |  22 +-
- include/linux/phy.h                                |   4 +-
- include/net/psp/functions.h                        |   4 +-
- net/bridge/br_vlan.c                               |   2 +-
- net/core/page_pool.c                               |  76 +++--
- net/ipv4/ip_output.c                               |   2 +-
- net/ipv4/tcp.c                                     |   5 +-
- net/ipv4/tcp_input.c                               |   1 -
- net/ipv6/tcp_ipv6.c                                |   2 +-
- net/netfilter/nft_objref.c                         |  39 +++
- net/psp/psp_sock.c                                 |   4 +-
- net/sctp/sm_statefuns.c                            |   3 +-
- net/tipc/crypto.c                                  |   2 +-
- net/tipc/topsrv.c                                  |   4 +-
- tools/testing/selftests/drivers/net/Makefile       |   4 +-
- .../testing/selftests/drivers/net/bonding/Makefile |  21 +-
- tools/testing/selftests/drivers/net/bonding/config |   8 +-
- tools/testing/selftests/drivers/net/config         |   2 +-
- tools/testing/selftests/drivers/net/dsa/Makefile   |  12 +-
- tools/testing/selftests/drivers/net/hds.py         |   3 +-
- tools/testing/selftests/drivers/net/hw/Makefile    |   8 +-
- tools/testing/selftests/drivers/net/hw/config      |   4 +
- .../selftests/drivers/net/hw/pp_alloc_fail.py      |  36 ++-
- .../selftests/drivers/net/lib/py/__init__.py       |  41 ++-
- .../selftests/drivers/net/netdevsim/Makefile       |   4 +-
- tools/testing/selftests/drivers/net/team/Makefile  |  11 +-
- .../selftests/drivers/net/virtio_net/Makefile      |  13 +-
- tools/testing/selftests/drivers/net/xdp.py         |  99 ++++++-
- tools/testing/selftests/net/Makefile               | 313 +++++++++++++--------
- tools/testing/selftests/net/af_unix/Makefile       |  10 +-
- tools/testing/selftests/net/af_unix/config         |   2 +-
- tools/testing/selftests/net/config                 | 140 ++++-----
- tools/testing/selftests/net/forwarding/Makefile    |  56 ++--
- tools/testing/selftests/net/forwarding/config      |  30 +-
- tools/testing/selftests/net/hsr/Makefile           |   6 +-
- tools/testing/selftests/net/hsr/config             |   4 +-
- tools/testing/selftests/net/lib/Makefile           |  14 +-
- tools/testing/selftests/net/mptcp/Makefile         |  32 ++-
- tools/testing/selftests/net/mptcp/config           |  44 +--
- tools/testing/selftests/net/netfilter/Makefile     |  89 +++---
- tools/testing/selftests/net/netfilter/config       |  52 ++--
- .../selftests/net/netfilter/nf_nat_edemux.sh       |  58 ++--
- tools/testing/selftests/net/netfilter/nft_fib.sh   |  13 +-
- tools/testing/selftests/net/ovpn/Makefile          |  12 +-
- tools/testing/selftests/net/ovpn/config            |  12 +-
- tools/testing/selftests/net/ovpn/ovpn-cli.c        |   2 +
- tools/testing/selftests/net/packetdrill/Makefile   |  10 +-
- tools/testing/selftests/net/packetdrill/config     |   4 +-
- tools/testing/selftests/net/rds/Makefile           |  10 +-
- tools/testing/selftests/net/tcp_ao/config          |   2 +-
- 77 files changed, 1113 insertions(+), 596 deletions(-)
-
+--=20
+TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
+any
+Amtsgericht M=C3=BCnchen, HRB 105018
+Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
+neider
+https://www.tq-group.com/
 
