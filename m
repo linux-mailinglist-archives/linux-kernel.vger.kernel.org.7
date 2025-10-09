@@ -1,119 +1,157 @@
-Return-Path: <linux-kernel+bounces-847397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E90BBCAB50
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 21:31:17 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3264ABCAB56
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 21:31:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 360623B718E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 19:31:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E58A04E9F2D
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 19:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5528925742C;
-	Thu,  9 Oct 2025 19:31:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0DC258CF2;
+	Thu,  9 Oct 2025 19:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Rrpy17nB"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lLIc5Num"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D0F1B423B;
-	Thu,  9 Oct 2025 19:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57D2244675
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 19:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760038270; cv=none; b=F40lfVPeZzFJsNtXwtx/ApG6EJA6iPjRBEzlHR+4+LgQ7vBe5GlHES01SR95m4+73IABL+XKChBeV8hRR2QT6O+7MMwRgYXqa+UjTMphYvP76l8aP4KcDfS6HUI0Ub9LRzASnxFK2G9fDH8UlAJplGYmclxUVpo6AwhESqdaiFI=
+	t=1760038292; cv=none; b=pwDhaKX5eZ5j5FbnpO0muXsEpKi/o0MZh32gt/CQY8p0w+qrUP+V9nrWwBNM62CpIUYRIya5q51D2BYt9G8JreTKaXT2raDQNM2fm9BBr9Ssy91KBrHAJdkR0i4gOWfKWoRMkzEwb0tebmoLorFu07SbCxM14dU/D5azbTA3Tis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760038270; c=relaxed/simple;
-	bh=BymKrN1KY0iUPYuubTEHc8AZ1vP3YNisJ6j8DS1jiuY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gzwfZEQE1w3v6jhnwStDUJloo9xka0gLudl/EllbdTQDxmT/vAsNN6Q2/q5CeHVC+8U5MI0tGAZLcxi25uQ1DjDAwnJhi/smvEsYOVIx1lO8WzTllDv17mzSBmBe+RkqHQrc9ZooyTmOrMEt89aZYWuii8ouQmJ0HBbm7MPuMjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Rrpy17nB; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
-	Subject:Cc:To:From:Reply-To:Content-Type:In-Reply-To:References;
-	bh=tw4U5ow5h6FPqPQ3p8BSDeHqWyCqOyJva3sSK1gq9wU=; b=Rrpy17nByDvTXKcuvVcCQjnAxY
-	f9ogDmNV3bsmRAENNWoDza9zFVKIH67/47SuVb5HpoNwc7vaANXPbKlE4nB3qdZGbF1smYFADF0qI
-	6r18qMIVLMEvXN2gYVo24ogGgEp4+L98xTY03FAY9WuYazvY/73mxctrf7jfsj8jG3eJvbEzuJl69
-	CkM9cd++SdDajDgT36qFIaSEi0+mS3ehzX/lc+4unZHys3//PsDXh2GdrF4LXovYFTJiu60ziXn98
-	KgEbfX+wh5FI6fUYcXKrR9KzJrOkcFyrwtsixT6f8GC05B4kQxd0p1wWMFYIsRxXuCnPXv0QH/lR3
-	dVCaodVw==;
-Received: from i53875bdd.versanet.de ([83.135.91.221] helo=localhost.localdomain)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1v6wLW-000644-3I; Thu, 09 Oct 2025 21:30:38 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: damon.ding@rock-chips.com,
-	dmitry.baryshkov@oss.qualcomm.com
-Cc: m.szyprowski@samsung.com,
-	andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org,
-	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH] drm/bridge: analogix_dp: Fix connector status detection for bridges
-Date: Thu,  9 Oct 2025 21:30:28 +0200
-Message-ID: <20251009193028.4952-1-heiko@sntech.de>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1760038292; c=relaxed/simple;
+	bh=lQaJx5mf2Mcb86lyOVhEpWWdXR0OG4rqbcrV0v1p+lk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Pq2vSJm9E+eB+KzSNn8Iggh3SUAGWClju8dMV8+nmviPVInWf1K6CW5ecUbV9jF/4I9Lj4Aid+RoUo6TGRsxC+/lkICfrmf2CbO44RTZC1KP7PYPN7JpY2Kg1a3PV3lv13fforq/EhTPMnSEMjyXwX+QC+azxjUPRCrAaidoSK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lLIc5Num; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1760038291; x=1791574291;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=lQaJx5mf2Mcb86lyOVhEpWWdXR0OG4rqbcrV0v1p+lk=;
+  b=lLIc5NumyuNDL58lCGimUBGIxKM3DzWDanO0T0iO196hdHcOMIHDF1mw
+   eI5xmy1e/554SxmW1e+JRb0Z+2jJJ2YiPvDVAFRe0JDkoKw7+WFUXvazn
+   28j4HVoMAaeizV1TVSzvQ10w8O/9Oqq0hnjPYneHGkQSntlr371Kdmudi
+   X1j/SzIChz8abTJtx1heaNoztIF0Hp/W7mkilsY1oPXfObTH8X1yGw5jH
+   VGc6kstqHJ0yoprCsgB2O9/D5Ipp24obj0MCuI9Ev0LWDMsgHPIzJoso7
+   w4dKfiPlxzR5/0WN+hiZPXxV+e/K09pkQhhfcl0MvV+h4R8ELmUqIFGJ8
+   Q==;
+X-CSE-ConnectionGUID: pNeDJPACRA2manuL2KNhAA==
+X-CSE-MsgGUID: wTLwC9MFQVaWVZFJ4w8JGw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11577"; a="62286510"
+X-IronPort-AV: E=Sophos;i="6.19,217,1754982000"; 
+   d="scan'208";a="62286510"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 12:31:30 -0700
+X-CSE-ConnectionGUID: KuJYPbv8RnaazmneQeRSDw==
+X-CSE-MsgGUID: 974nS1LmTwKbUepnyb6Zaw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,217,1754982000"; 
+   d="scan'208";a="180814987"
+Received: from unknown (HELO [10.24.81.144]) ([10.24.81.144])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2025 12:31:29 -0700
+Message-ID: <e4c0c578-50e9-4e65-8e7f-7a6d995b22e0@intel.com>
+Date: Thu, 9 Oct 2025 12:31:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/8] x86/mm: Use 'ptdesc' when freeing PMD pages
+To: David Hildenbrand <david@redhat.com>, Lu Baolu
+ <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Kevin Tian <kevin.tian@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
+ Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Alistair Popple <apopple@nvidia.com>,
+ Peter Zijlstra <peterz@infradead.org>, Uladzislau Rezki <urezki@gmail.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Andy Lutomirski <luto@kernel.org>, Yi Lai <yi1.lai@intel.com>
+Cc: iommu@lists.linux.dev, security@kernel.org, x86@kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Dave Hansen <dave.hansen@linux.intel.com>
+References: <20250919054007.472493-1-baolu.lu@linux.intel.com>
+ <20250919054007.472493-4-baolu.lu@linux.intel.com>
+ <9648e990-18e0-4aed-8110-b02f4b45aa47@redhat.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <9648e990-18e0-4aed-8110-b02f4b45aa47@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Right now if there is a next bridge attached to the analogix-dp controller
-the driver always assumes this bridge is connected to something, but this
-is of course not always true, as that bridge could also be a hotpluggable
-dp port for example.
+On 10/9/25 12:25, David Hildenbrand wrote:
+>>
+>> @@ -750,8 +750,8 @@ int pud_free_pmd_page(pud_t *pud, unsigned long addr)
+>>         for (i = 0; i < PTRS_PER_PMD; i++) {
+>>           if (!pmd_none(pmd_sv[i])) {
+>> -            pte = (pte_t *)pmd_page_vaddr(pmd_sv[i]);
+>> -            pte_free_kernel(&init_mm, pte);
+>> +            pt = page_ptdesc(pmd_page(pmd_sv[i]));
+>> +            pagetable_dtor_free(pt);
+> 
+> There is pmd_ptdesc() which does
+> 
+>     page_ptdesc(pmd_pgtable_page(pmd));
+> 
+> It's buried in a
+> 
+>     #if defined(CONFIG_SPLIT_PMD_PTLOCKS)
+> 
+> Can't we just make that always available so we can use it here?
 
-On the other hand, as stated in commit cb640b2ca546 ("drm/bridge: display-
-connector: don't set OP_DETECT for DisplayPorts"), "Detecting the monitor
-for DisplayPort targets is more complicated than just reading the HPD pin
-level" and we should be "letting the actual DP driver perform detection."
-
-So use drm_bridge_detect() to detect the next bridge's state but ignore
-that bridge if the analogix-dp is handling the hpd-gpio.
-
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
-As this patch stands, it would go on top of v6 of Damon's bridge-connector
-work, but could very well be also integrated into one of the changes there.
-
-I don't know yet if my ordering and/or reasoning is the correct one or if
-a better handling could be done, but with that change I do get a nice
-hotplug behaviour on my rk3588-tiger-dp-carrier board, where the
-Analogix-DP ends in a full size DP port.
-
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index c04b5829712b..cdc56e83b576 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -983,8 +983,12 @@ analogix_dp_bridge_detect(struct drm_bridge *bridge, struct drm_connector *conne
- 	struct analogix_dp_device *dp = to_dp(bridge);
- 	enum drm_connector_status status = connector_status_disconnected;
- 
--	if (dp->plat_data->next_bridge)
--		return connector_status_connected;
-+	/*
-+	 * An optional next bridge should be in charge of detection the
-+	 * connection status, except if we manage a actual hpd gpio.
-+	 */
-+	if (dp->plat_data->next_bridge && !dp->hpd_gpiod)
-+		return drm_bridge_detect(dp->plat_data->next_bridge, connector);
- 
- 	if (!analogix_dp_detect_hpd(dp))
- 		status = connector_status_connected;
--- 
-2.47.2
-
+Yes, that looks like a good idea. I never noticed pmd_ptdesc() when I
+was writing this for sure.
 
