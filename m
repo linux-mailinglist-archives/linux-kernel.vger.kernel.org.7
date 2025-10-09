@@ -1,143 +1,135 @@
-Return-Path: <linux-kernel+bounces-846281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5F67BC7774
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 07:54:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51C66BC777D
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 07:54:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 67E9B4E94AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 05:54:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA2223E5C15
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 05:54:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D28C25B1D2;
-	Thu,  9 Oct 2025 05:54:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AB3E25D216;
+	Thu,  9 Oct 2025 05:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aEbyj9tl"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f51rVZZi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04999AD4B
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 05:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE5F2AD4B;
+	Thu,  9 Oct 2025 05:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759989249; cv=none; b=gA8FqV/DuRA3lDLhZHBjeJN8Zzm+9qqD07dyxYRNOQJJeuMCmlxt0UY9hxAl4pSrIOBGfEWjWstR7paKVcAP6yylbkFQjhZkS4vKtKDjgqOIg6CCEWFDpbFJDlS1Ybcc7BDXdkfcM5qf5OVKG6K+AtW1kHrzi4pJqeeFnvR1aj0=
+	t=1759989278; cv=none; b=iEqP6GQkWColEp/XdH+jnvYH6r+msIcInJAsVvpBYk18bSkc1C0iivUaFHKnq/lCihh2FMOXepDgT6fm1GbofzUT1qNAc3/CHrVBJ0a+yiatEFFxeJfrZu3IXPQ+f/0X1MqMWe6ZkBUeW2Ri6+3YlqTZ7B2FglwQHb+0Hn2Ufh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759989249; c=relaxed/simple;
-	bh=5Nb8rf3yk+t4vTVfFxs4xcB1HqmeFe7n4StAAlkIHPM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TZhMT73EErRCptnepjFKe+732/TcUZGlaA84/cxTxjxWb13lOeNZes1KssssyjFfCNa5ttsd5BP0EitQSGM8oJnxrrssgDbj+xDmvs3wMCvhIaHSWJqCXS3JNnWp5Un/ZECmKIpDajQtUrKMQZON87b/+3bglv42XBN8tYqqLmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aEbyj9tl; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e4473d7f6so3154935e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 22:54:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759989246; x=1760594046; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SQwWvvs0ghZq8zc4r9h5lIan/PtlkEVYSWj9AFivA18=;
-        b=aEbyj9tlGbGlHcja9+xpG3g4dYKMTc8i86GTdY/zWcOh2+LcH3hJ6n9VHZi1PLroJs
-         V2aJZxnq63v/HkKcZIPnDZzyeY6lemGW7dJ2p4No1X9NDdERCCPsYaw64WsKlun+f0Zu
-         KO03qOKThA57kbxunulhK4a9AOMLS067APxysc9sR17fC83B3FD2+bCJ0ktbIxlJhgw8
-         i8IgR9kRK0YKbTjI6H6ls3HASPZAHoTKdCV7DrEmgd0VkSUyJPVmBxG3hxnrNHZcgHTK
-         i+zyEugZFs0MxzwHd/V9JS0BzPqyet55cx0Gnf/l5KsMl07RWDSyn0LdNErl0ozL64b8
-         yPgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759989246; x=1760594046;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SQwWvvs0ghZq8zc4r9h5lIan/PtlkEVYSWj9AFivA18=;
-        b=fqHzMmiKftvDlVkJG28Tmigj9oxZP7nektRKsHCDFek25I/eaAurQx+CSPxR2hSUP8
-         rZqOTa9whOZlMOBQgq15W9s4iBoFgZUlWmbZYxhOomCzdylGN52gSlqIoOo0VsCMV5JD
-         VixKGtojiL3Y7PuFXBPMxuQR1QhQoFCWREPc7lwnJeHTcg2+WoFOvKTDYHVFSjv/GH3H
-         74ugsRHOUSsHJxp/oO+qzRPQomCyzz+FTc+NahI9aMMb/jJ97B/+HMOrMDnpKkyTFFq3
-         K4CQGtdMAxsWAMWb9QyDM6hcFJJYlfG88maS2LnX3w+7E7nBpEotHQqa0imLFNQzo/aQ
-         gCkg==
-X-Gm-Message-State: AOJu0Yxl5cWoZDsHxNtV5a149q1j23iiqHnGi7CVUE+BadgCloAJceVR
-	Z/hUTrfsk/K9VIqOyWA3cj3YSNQonHn1GRg+oYCy65440LKrdmAvqd1j
-X-Gm-Gg: ASbGncsKfIdM4LFTW/WE2f7IFPBid0ZrFMNRMunPlK6hEK/ULUKHTjsbetdI6j0QTlf
-	BuyJdcH/+izuVjDs9s+7729fIwiQwEJGrP01wTOci2h0OXVw1qD/o4zVRDbNV0HOODCFu7dxju7
-	/LFhnvFORdEm9a5MG+L1ZfCjuijeB0WiEtnM98NBoGlNCnpBqi27yPUSwkO03T/vmkzo8d0c1Us
-	BtPl18TdD27T+tyZ1WL6SZXp402DDp2a+VyNyETJ1zuzo1ieh+sUprrg7kWbO1CXvlHAQeubsaL
-	70F1Ml6XlWFgNGsTYjPh7TokQ++dXJRNrdQ178SyIHqX8I27JjzaKI0dwriv1iZ/qIb34TGK57A
-	TXa9gAEBx/6kKuIT95CzfL/SIKteIyxeiKw9e4wIh2XYkqg==
-X-Google-Smtp-Source: AGHT+IFD0icIVhoTNWR3ZSoy0958G+47lHMZ4if/obpZ13INzMYnCQpoDVT+IeNh0q0RioLY0f7rhg==
-X-Received: by 2002:a05:600c:6212:b0:46e:27f7:80ce with SMTP id 5b1f17b1804b1-46fa9af8f39mr41575065e9.23.1759989246026;
-        Wed, 08 Oct 2025 22:54:06 -0700 (PDT)
-Received: from EBJ9932692.tcent.cn ([2a09:0:1:2::3086])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46fa9d629casm66416825e9.16.2025.10.08.22.54.04
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 08 Oct 2025 22:54:05 -0700 (PDT)
-From: Lance Yang <ioworker0@gmail.com>
-To: akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	urezki@gmail.com,
-	yadong.qi@linux.alibaba.com,
-	ying.huang@linux.alibaba.com
-Subject: Re: [PATCH] mm: vmalloc: BUG_ON if mapping size is not PAGE_SIZE aligned
-Date: Thu,  9 Oct 2025 13:54:01 +0800
-Message-ID: <20251009055401.94174-1-ioworker0@gmail.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20251008211714.5a8b9fbb57dbe454cd4a9c6d@linux-foundation.org>
-References: <20251008211714.5a8b9fbb57dbe454cd4a9c6d@linux-foundation.org>
+	s=arc-20240116; t=1759989278; c=relaxed/simple;
+	bh=1Q+wmBbFXWTt8KRzTS2M2aX+iDE4wfTG3mxiGIUeyRk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TM1VFcZvMWszsBHI7YGZe10pgxW+kWkhPHeReujYwwexJYjEPt5GlbIdbeUYUMdsGmLAq4Iv30RRO2osA5SctVaxFdLwAUjoRKdAXihpWyxEzadBLm6L2BpAAEFqZf4VLCzwttbYE43u0f2M9IU/qthDovRbT/msFPOA/vS8LLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f51rVZZi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71F0BC4CEE7;
+	Thu,  9 Oct 2025 05:54:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759989278;
+	bh=1Q+wmBbFXWTt8KRzTS2M2aX+iDE4wfTG3mxiGIUeyRk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=f51rVZZi6jPd1WhJjTdxAPFMKFq1voYst9ySH5AeJ6jkOJSM0bv3jn0ffRbLPEoDE
+	 lQGZ/t/emT/0tPPQtVc6FhZ1Qrs9zpXEXUvii818U64WRtbovXt08pEiFvezy7UBnm
+	 YhJfIteyIAkfYX72UAGSpA9Yi+saR6Bvfos1rpiPDWuQIUXDqoaRA2XjLJHIjU3tJO
+	 xBIEZWVtDYgXAdrX8fCkB8sLXjVIsEJj48F1IDWxrniB7G2RnZXoUtDSQbFxyxVEhc
+	 /sB3JZ8NJ0plFUgevI0pa/rsWk0Uo/IiIN/aQgc6lNt6CyMpR2GI0lclSoAk0MGUqk
+	 NmnCtNLz0X3Eg==
+Message-ID: <2d00ed57-3c74-492e-83ae-88ca1ce98311@kernel.org>
+Date: Thu, 9 Oct 2025 07:54:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PCI: pnv_php: Fix potential NULL dereference in slot
+ allocator
+To: Timothy Pearson <tpearson@raptorengineering.com>
+Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ linux-pci <linux-pci@vger.kernel.org>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>,
+ christophe leroy <christophe.leroy@csgroup.eu>,
+ Naveen N Rao <naveen@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+ Shawn Anastasio <sanastasio@raptorengineering.com>
+References: <1268570622.1359844.1752615109932.JavaMail.zimbra@raptorengineeringinc.com>
+ <2013845045.1359852.1752615367790.JavaMail.zimbra@raptorengineeringinc.com>
+ <bf390f9e-e06f-4743-a9dc-e0b995c2bab2@kernel.org>
+ <304758063.1694752.1757427687463.JavaMail.zimbra@raptorengineeringinc.com>
+ <97746540.1782404.1759973048120.JavaMail.zimbra@raptorengineeringinc.com>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <97746540.1782404.1759973048120.JavaMail.zimbra@raptorengineeringinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
->> In mm/vmalloc.c, the function vmap_pte_range() assumes that the
->> mapping size is aligned to PAGE_SIZE. If this assumption is
->> violated, the loop will become infinite because the termination
->> condition (`addr != end`) will never be met. This can lead to
->> overwriting other VA ranges and/or random pages physically follow
->> the page table.
->> 
->> It's the caller's responsibility to ensure that the mapping size
->> is aligned to PAGE_SIZE. However, the memory corruption is hard
->> to root cause. To identify the programming error in the caller
->> easier, check whether the mapping size is PAGE_SIZE aligned with
->> BUG_ON().
->> 
->> ..
->>
->> --- a/mm/vmalloc.c
->> +++ b/mm/vmalloc.c
->> @@ -100,6 +100,8 @@ static int vmap_pte_range(pmd_t *pmd, unsigned long addr, unsigned long end,
->>  	struct page *page;
->>  	unsigned long size = PAGE_SIZE;
->>  
->> +	BUG_ON(!PAGE_ALIGNED(end - addr));
->> +
->>  	pfn = phys_addr >> PAGE_SHIFT;
->>  	pte = pte_alloc_kernel_track(pmd, addr, mask);
->>  	if (!pte)
->
->We try to avoid adding BUG()s - deliberately crashing the kernel is
->pretty cruel to the user.  It's far better to WARN and to continue in
->some fashion so the user can at least gather logs, etc.
->
->How about
->
->	if (WARN_ON(!PAGE_ALIGNED(end - addr)))
->		return -ENOMEM;
->
->?
->
->(Or VM_WARN_ON)
+On 09. 10. 25, 3:24, Timothy Pearson wrote:
+> A highly unlikely NULL dereference in the allocation error handling path was
+> introduced in 466861909255.  Avoid dereferencing php_slot->bus by using
+> dev_warn() instead of SLOT_WARN() in the error path.
+> 
+> Fixes: 466861909255 ("PCI: pnv_php: Clean up allocated IRQs on unplug")
+> Signed-off-by: Timothy Pearson <tpearson@raptorengineering.com>
 
-I agree with Andrew. Using WARN_ON/VM_WARN_ON and returning an error is
-the way to go.
+LGTM, perhaps also a lnk to the report:
+Link: 
+https://lore.kernel.org/all/304758063.1694752.1757427687463.JavaMail.zimbra@raptorengineeringinc.com/
 
-AFAIK, we are moving away from BUG_ON() in MM whenever an error can be
-handled gracefully.
 
-Cheers,
-Lance
+Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
+
+thanks,
+-- 
+js
+suse labs
 
