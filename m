@@ -1,103 +1,179 @@
-Return-Path: <linux-kernel+bounces-846223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A59DEBC74FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 05:39:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A9A5BC7507
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 05:45:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DEF8400384
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 03:39:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DC954005D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 03:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D1C23C4FA;
-	Thu,  9 Oct 2025 03:39:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74FDB1B4247;
+	Thu,  9 Oct 2025 03:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="Wo7Y9eJb"
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="aXT9aOEX"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9550223BCE3;
-	Thu,  9 Oct 2025 03:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651591F1517
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 03:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759981156; cv=none; b=dq+xlZ9EtSY4UKfqEYdKU4uHeJikZ222yiQIIlPJJPF1ceBAk6izTPd371maHIxMeqMeYrrVoIRr1R6JeDjoW/UgEIHBleb2QJ1l0unCZKLK/U2I6dNeF1L6h06TelKKCovjBMfocKZXJ0ItcUBGe30lAfW4ov/FWUX7uHiw8Z8=
+	t=1759981505; cv=none; b=pI3kl2LqSB3uxwgR/SwR+Fbh1VQ8xbiO4Q0ApSefDk+vpZXkCrH+LDMRX7a5E/F1DYjjSUPWg889o3SZ2IpTxa5Ro/wrCdyjcQM0phlKXPxhtBxOnAa/k+PmhqtV6yJ2xPjvzGlAmx4a9ZcqUlZX6H1D1G2+d/gw7P6mipVjDY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759981156; c=relaxed/simple;
-	bh=MWRKebex4pXJKTpbvnjqGtV1RpwhmuiP8laC1Omwa2Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hyR4SdDrCD+C45+2dbtpx8TTlvTTpBebZLX9CYFzkcSdMpGtwZPyrWmSLQr8nAtrrNkr4w5bSpanwksek1wn4c6yoNNSWHA1qbrQYXG4ioE4vQ5knzm4wi1QOuhopoZhQE4M09jyeSqYCl8B9fs3pxxhDgK54POIHloYFQ6ttb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=Wo7Y9eJb; arc=none smtp.client-ip=54.92.39.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1759981068;
-	bh=NYV08VwWK+VCWK8zEMUDzI03igsAPzvucgAerlP6T2Q=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=Wo7Y9eJbYhAJRGSu/0iQXdk6tNTruo06GcROScR1vKqiaZ7V1BGvtrs9/Pps7MeGv
-	 YKhvAtgGEOaI/hmLQH8VbxfxVD1ujjXAPG7BDo9SeKsB3LQOVHFtFStx8tHwuRl8Oj
-	 7T8okYReD5OCoZ5jf7WowXtZpM8oqxsnan/zvNcg=
-X-QQ-mid: esmtpgz13t1759981061t0d23b669
-X-QQ-Originating-IP: X3ZKTjlO2Y/CL0fdpyofBlTObtZxrr4RfV1kqTHy5ZQ=
-Received: from = ( [61.145.255.150])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 09 Oct 2025 11:37:39 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 11439905582249369742
-EX-QQ-RecipientCnt: 9
-Date: Thu, 9 Oct 2025 11:37:39 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Yixun Lan <dlan@gentoo.org>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Cc: Andi Shyti <andi.shyti@kernel.org>, Alex Elder <elder@riscstar.com>,
-	Troy Mitchell <troymitchell988@gmail.com>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev
-Subject: Re: [PATCH v3] i2c: spacemit: introduce pio for k1
-Message-ID: <B45BBF07F015D568+aOcuA7CwpD-u393R@kernel.org>
-References: <20250929-k1-i2c-atomic-v3-1-f7e660c138b6@linux.spacemit.com>
- <20250930012702-GYA1357001@gentoo.org>
- <F7785DF1AA531CA1+aOcQwrTLmAvlQ3ik@kernel.org>
+	s=arc-20240116; t=1759981505; c=relaxed/simple;
+	bh=DpanDiMZhUUk3zEffcPES+lkCNzRVL2bCq0yL2Hxy4M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cIVDqNsEcmTA1E6TDc5LOCpgIQcHkkgKhG1fYUchxz1acmf4P8I+3YlVCm671HBANiutJ/jvGsbqqYQa1LJ8NE/JjuQOgxj3raojhNA1AnKQywZu31imuUDTkpyWbPx8OMWDVAhLb58zC4vjqMeOKaMzjF4DoneSZT0ExNvrqIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=aXT9aOEX; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b43a3b1ae1fso9994666b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 08 Oct 2025 20:45:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1759981502; x=1760586302; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cgazUsX6nXA6fvwy3J8doaRtuDTiOUHYXTvWKBELRWc=;
+        b=aXT9aOEXBfO4bWWcNK5rl2P7Tb92UI+eORgTmviGsX+h9XPQJad1Yq+A55Bu6vdlmy
+         qzMaP+Pz4Bh1BVSbLh7hDq8USClKHasKv8eEyV5P60LNDmLwEfu5OIm+OY+n4XE8WOZZ
+         dFhMw9NoHdhI0vI9HSJmqCN7ZZ3zBpjFzk9OZovhvA+eMRzTegrupHy58sEzA+XekuAD
+         ie6REIKtN+eLd51sIit7/2eKbZsgJSjxnWKbwsQMI5/S4sl5Dykm/WDN1bGNbmUcpaWO
+         UsPp0N6NcxKHVfmzArVkKjISvXLmoznfTabBn+JCg2rTOJO/NXEcP7UM72/S4Vs+o1T5
+         R8hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759981502; x=1760586302;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cgazUsX6nXA6fvwy3J8doaRtuDTiOUHYXTvWKBELRWc=;
+        b=aUaZLwknRou4jGRSbMGHjLr+VGl7WUrEhzoLlqb+bk1STZDBP+E7gvTgLJIgsZWnPU
+         3BfCE2Fh07bjnfB6pS/PWXUfJdWakB/5rYTOmouvRXO+cS1caqo2toKs2w67DUar4h2U
+         w2NGPOGUVQlXd7rTIYYWMNUgZafTv90AK9yT/4/X2+fLZZpzwSkbNNRFJaoTCKMIUWX2
+         hIA3ZkSnWlq3uDBPxYrptn6jCQL2QV2XuOVH03EDPEDiKMlEfjEsya+r7jdbtR1tDJe4
+         L1UGAgW26XhcZc/p4XqwklWEBqFycFW1/sDlMzzWDQ0xdXn1ueaxJbYDhz7UljvibdOz
+         5Nsw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTibNPd6ufDZqgO+POfDZK0OubFYQmRZ5vhYvXXXZCcRMfZuExRSkFnwv62+pseyBeWIR3KzhPTSmUA/0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzBOzukXIW4stTvsYgfTlQ85q7VMd+RaUZYi+2RJBwxSeNYhyK
+	iEMI355yqUVIeNUHFjitgq4xffkZYtEuLjcYGf/cONT4A5HSaVMjxu3PcH9xBnHXXS9l6k8J0RN
+	o1KQ14b7HUUqH1gCINX89cJ1HBgb0QBtlrzUu9unpmHybxQViZVBsn+o=
+X-Gm-Gg: ASbGncvijhO1wT1zyxtCEwr9x0Wyp3oAFooJdzsamuI7WZHZPGFDJBA8Zmwi8KFrFF5
+	gda1KAZgoN17tX4dRMC5DXiEwO/HIPqegxm1MpSfPy9eTKgAw5TZKXUeG+G0kXOOEFlqxKCivDJ
+	Xj8Zn2476+8w7L3poVxSAeQPkt+P3gCD2fYAXlaUYXipENQ2zXUh2D8abEXLwwNNoXCNaXxxw4j
+	+YYyKRojJ1zJTtMlxbm1aw/4O5b9MRPGgN2VaEbcaikS7N4DAsa0ofTrXFDskW5
+X-Google-Smtp-Source: AGHT+IEGMOeaML20pVvPWOqRJshHUFB5+UuoOYxfjuuPO1jO1YbLOUEBpmc8L6oAvnUEMyXSU/5qHk87oY7S0OQVRIE=
+X-Received: by 2002:a05:6402:40c1:b0:638:e8af:35c7 with SMTP id
+ 4fb4d7f45d1cf-639d5b576b3mr2679243a12.2.1759981501601; Wed, 08 Oct 2025
+ 20:45:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <F7785DF1AA531CA1+aOcQwrTLmAvlQ3ik@kernel.org>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:linux.spacemit.com:qybglogicsvrsz:qybglogicsvrsz3a-0
-X-QQ-XMAILINFO: M4lPCacZ9YleJLbPPknz8TcclJO70fmCUi6Z9jynNVdb57jDmRQIqLX8
-	YmlVRyKxllxo9ot0IyXDWXtFOn4bkguU7xAucdBwN/UJy0tIo58AgGZqPx6A5NYRpw74TPI
-	xKNqcx3mIgWmHVr0pdRc0VQZr+FAD1gV2QPKMGETizJ77diC51+POyA0crfw5LMWl/Q3GEm
-	cx3MWgKk16yUdTHOPeYO3kFpg4aPG4Xtdn1vSrJwkIwwpv5WTVdf+PZlMtR4HsmGOTGWkyJ
-	HqJ/rcC+ugGZFBUeDtQpjnRoiine7UohUMgH2fXy+j/KCN0CiAnVB+iQAvr71FAHfH0Me0Z
-	iGWSgNutVShb8vjiFuf0E+a7wQfS35eNo/t6G9AL6+WOrXjRURERxX3ZJhDsFZxJiT7tttQ
-	9luDhDW2X47V5ZuGjWiViBWfjPdTGvwIj98wZVT/YQMQj9UwaJnvC5szZZL50OL1YSmkw/7
-	24T260W+ECnq4aoMDfbF4QRuSL3/HEUteeCoojCNgDlX7Eq5dpjNhhHnCyE9d/hMnFhqDVP
-	xS9GZN0n1R4uA3ZC3AisM3k0um18RwnLp7tB1SG7de0PAo6qlEcyUjo0vvap4WlFyFzEilJ
-	J9xRdIPdAA4cyka0hgnzarDyhjBZtaGs/5Rs5n0HH47f59Sgm+1dN1QoUuXp19CyxN1D3I0
-	bvNo8ab1n+7IuzC3MDCNljpSPqe7x54sdb9KXlzIY02gp0DUE/KjW5UCQBOiXjyk7mKHRau
-	v/mzGF659lIWTIA0k2LNDI8c785SiiXqn5b1yOaPo55vvVFkAeKQxc7443yN+0ec0n3zWcW
-	MYDHkf3OIy9+4dj+R3QWDT0kxHvl7/NybXypB7lm7jWW+VOMyRmeHxS3uVoQzDK6RNexso0
-	PdGx2Re+7k7VppLBIFkqu3gEfOjY9N1UaQsnfCPz4T4eFWhf6yO6L5QFvt9JhhnrwmzcLAs
-	ZTXn40BSkTZuY003w4Otvf4PqC6FMfdR8XyM/IT0sukidubgnuBFmQX+9QVUnoIzuqJvBaK
-	QPj5DXpRqyt2L430dBsAs0W1tzVt2Jv0GVdKFKc+hKyyjzZ1edVDoJshVuWz8=
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-X-QQ-RECHKSPAM: 0
+References: <539FC243.2070906@redhat.com> <20140617060500.GA20764@minantech.com>
+ <FFEF5F78-D9E6-4333-BC1A-78076C132CBF@jnielsen.net> <6850B127-F16B-465F-BDDB-BA3F99B9E446@jnielsen.net>
+ <jpgioafjtxb.fsf@redhat.com> <74412BDB-EF6F-4C20-84C8-C6EF3A25885C@jnielsen.net>
+ <558AD1B0.5060200@redhat.com> <FAFB2BA9-E924-4E70-A84A-E5F2D97BC2F0@jnielsen.net>
+ <CACzj_yVTyescyWBRuA3MMCC0Ymg7TKF-+sCW1N+Xwfffvw_Wsg@mail.gmail.com>
+ <CAMGffE=P5HJkJxh2mj3c_oh6busFKYb0TGuhAc36toc5_uD72w@mail.gmail.com> <aOaJbHPBXHwxlC1S@google.com>
+In-Reply-To: <aOaJbHPBXHwxlC1S@google.com>
+From: Jinpu Wang <jinpu.wang@ionos.com>
+Date: Thu, 9 Oct 2025 05:44:50 +0200
+X-Gm-Features: AS18NWDgOTqs4ewR-JWQBp9ELSSjrqsvDevjk_4T65q0Brc2iTIh5tMVCXtHLFE
+Message-ID: <CAMGffEn1i-qTVRD+9PWDfNUMvbBCp9dV2f=Cgu=VLtoHs-6JTA@mail.gmail.com>
+Subject: Re: Hang on reboot in multi-core FreeBSD guest on Linux KVM host with
+ Intel Sierra Forest CPU
+To: Sean Christopherson <seanjc@google.com>
+Cc: fanwenyi0529@gmail.com, kvm@vger.kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, Xiaoyao Li <xiaoyao.li@intel.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 09, 2025 at 09:32:50AM +0800, Troy Mitchell wrote:
-> On Tue, Sep 30, 2025 at 09:27:02AM +0800, Yixun Lan wrote:
-> > > +	/* To avoid being affected by the state of the previous transfer */
-> > > +	spacemit_i2c_clear_int_status(i2c, SPACEMIT_I2C_INT_STATUS_MASK);
-> > > +
-> > I've not see my previous comment has been addressed!
-> Oops.. I forgot to delete it.
-> I'll remote it in the next version.
-       ^^^^^^ remove
+Hi Sean,
 
-              - Troy
+On Wed, Oct 8, 2025 at 5:55=E2=80=AFPM Sean Christopherson <seanjc@google.c=
+om> wrote:
+>
+> Trimmed Cc: to drop people from the original thread.  In the future, just=
+ start
+> a new bug report.  Piggybacking a 10 year old bug just because the sympto=
+ms are
+> similar does more harm than good.  Whatever the old thread was chasing wa=
+s already
+> fixed, _10 years_ ago; they were just trying to identy exactly what commi=
+t fixed
+> the problem.  I.e. whatever they were chasing _can't_ be the same root ca=
+use,
+> because even if it's literally the same code bug, it would require a code=
+ change
+> and thus a regression between v4.0 and v6.1.
+Thx for the reply,  it makes sense. I will remember this next time.
+>
+> On Wed, Oct 08, 2025, Jinpu Wang wrote:
+> > On Wed, Oct 8, 2025 at 2:44=E2=80=AFPM Jack Wang <jinpu.wang@ionos.com>=
+ wrote:
+> > > Sorry for bump this old thread, we hit same issue on Intel Sierra For=
+est
+> > > machines with LTS kernel 6.1/6.12, maybe KVM comunity could help fix =
+it.
+>
+> Are there any host kernels that _do_ work?  E.g. have you tried a bleedin=
+g edge
+> host kernel?
+I will try linus/master today.
+>
+> > > ### **[BUG] Hang on FreeBSD Guest Reboot under KVM on Intel SierraFor=
+est (Xeon 6710E)**
+> > >
+> > > **Summary:**
+> > > Multi-cores FreeBSD guests hang during reboot under KVM on systems wi=
+th
+> > > Intel(R) Xeon(R) 6710E (SierraForest). The issue is fully reproducibl=
+e with
+> > > APICv enabled and disappears when disabling APICv (`enable_apicv=3DN`=
+). The
+> > > same configuration works correctly on Ice Lake (Xeon Gold 6338).
+>
+> Does Sierra Forest have IPI virtualization?  If so, you could try running=
+ with
+> APICv enabled, but enable_ipiv=3Dfalse to specifically disable IPI virtua=
+lization.
+Yes, it does:
+$  grep . /sys/module/kvm_intel/parameters/*
+/sys/module/kvm_intel/parameters/allow_smaller_maxphyaddr:N
+/sys/module/kvm_intel/parameters/dump_invalid_vmcs:N
+/sys/module/kvm_intel/parameters/emulate_invalid_guest_state:Y
+/sys/module/kvm_intel/parameters/enable_apicv:Y
+/sys/module/kvm_intel/parameters/enable_ipiv:Y
+/sys/module/kvm_intel/parameters/enable_shadow_vmcs:Y
+/sys/module/kvm_intel/parameters/ept:Y
+/sys/module/kvm_intel/parameters/eptad:Y
+/sys/module/kvm_intel/parameters/error_on_inconsistent_vmcs_config:Y
+/sys/module/kvm_intel/parameters/fasteoi:Y
+/sys/module/kvm_intel/parameters/flexpriority:Y
+/sys/module/kvm_intel/parameters/nested:Y
+/sys/module/kvm_intel/parameters/nested_early_check:N
+/sys/module/kvm_intel/parameters/ple_gap:128
+/sys/module/kvm_intel/parameters/ple_window:4096
+/sys/module/kvm_intel/parameters/ple_window_grow:2
+/sys/module/kvm_intel/parameters/ple_window_max:4294967295
+/sys/module/kvm_intel/parameters/ple_window_shrink:0
+/sys/module/kvm_intel/parameters/pml:Y
+/sys/module/kvm_intel/parameters/preemption_timer:Y
+/sys/module/kvm_intel/parameters/sgx:N
+/sys/module/kvm_intel/parameters/unrestricted_guest:Y
+/sys/module/kvm_intel/parameters/vmentry_l1d_flush:not required
+/sys/module/kvm_intel/parameters/vnmi:Y
+/sys/module/kvm_intel/parameters/vpid:Y
+
+I tried to disable ipiv, but it doesn't help. freebsd hang on reboot.
+sudo modprobe -r kvm_intel
+sudo modprobe  kvm_intel enable_ipiv=3DN
+/sys/module/kvm_intel/parameters/enable_ipiv:N
+
+Thx!
 
