@@ -1,95 +1,88 @@
-Return-Path: <linux-kernel+bounces-846885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2A1ABC9558
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:37:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A0D4BC9549
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 15:37:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF09A3C1298
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:37:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 27ADB4E64AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 13:37:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8726B2E92C0;
-	Thu,  9 Oct 2025 13:37:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE4C2E7F0B;
+	Thu,  9 Oct 2025 13:37:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QXmhDU9I"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RngzzyuI"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0B62E8E0E
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF471F94A
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 13:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760017050; cv=none; b=PVuP6uQSaVhGOs3XGVLNsxrtpoVC1R36WaBqWlyhvrvjSusk0ViDVI0FnzBc2btMM8bK5T0oG3Tz6xCFOPUbFOtmkQPIcxeFUYWPiUF3A/8Y2IO/uDaPQhAEHlQ2t27S0Gs0Q9xJHB+HFBOt2FVlkLgfE3McHPyu4e7yF4n6W5I=
+	t=1760017046; cv=none; b=Ta+a6Y/a7z6HwQptRv5jzRoGez1z2j5VTrj/6PGFIDO5WmPG61UpbLTiaP7OsjCiFQ3ujNPfwHRmWP/0r1fuIkyRUqf1qUlo+K+fXeXOPsqoxWaU1YXnd2CrFTBzFi1VZ5bdeKMM0xTfD61h8l+CLo//rbQHANMnbIsIpYBqBp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760017050; c=relaxed/simple;
-	bh=7NdTvvUFK/WVGSYlLXsbwdrwKPNZwb8MV31/iuYNMko=;
+	s=arc-20240116; t=1760017046; c=relaxed/simple;
+	bh=mDYDlD+MEj5MwUVmU5NuaLpTKU8yZWPjWxvcEYawWcY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=atq2ixYj19gyGNjevcxz6l9yisxF2TiyRuRhXzB5zC9U6d4GlRHU1ZglQ34Fb62f9wcaYJyFDY3QlyjkLSvJPG3DV3Brb8p3Zd6GibJAkTwcchVhx626DzykMorMQIO6KUC8ujN/5Ba/SU9QMfPZt9bblEbbDfXSAlfQakJYVhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QXmhDU9I; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1760017048;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QSnlK9qf9+QtrbFfXzTXGo8du1cPFojIdvhyIWDFaG4=;
-	b=QXmhDU9Iet5vhAhr2qWm8ezr/UGEp076xcPaTJK3wRz9iGiO0tWUJuTZzA3rnr+Ci2TiEN
-	3BECBE4Z26fGVVO8d0TtGQRwztXDCPp7dCWtsLjtlbCkDAJDXrD3BO/HnSBs08Cx2xd2Ak
-	IQLUgEWGpwmOhkHUPnNXTbYdWcdkEP8=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-607-3h-DytUTMdW3GGyAY7lZTQ-1; Thu, 09 Oct 2025 09:37:27 -0400
-X-MC-Unique: 3h-DytUTMdW3GGyAY7lZTQ-1
-X-Mimecast-MFC-AGG-ID: 3h-DytUTMdW3GGyAY7lZTQ_1760017046
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4de801c1446so31409531cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 06:37:27 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=jb7oqrsLMK9V+oF/aUZ7PQ6KO7e+pParLUTB/MP9uaS/K3N646yMhp+m+AJIGrjaDqGJyGFAKe0d0UfMzAIjUuvTGsT+3RDYLnSkT9ioFIEKndjUK5XYNoW/OrUt8ZtuA0bS+75aDTFcmTpdGI26+5u/jGHnS/OuDGvLqBl0onk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RngzzyuI; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3ece1102998so594302f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 06:37:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760017043; x=1760621843; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dq7MfAZyGGxaYmEOpM20FMo+OmujRRkMe061xLULkak=;
+        b=RngzzyuIaoez2cuI/KJq8yraoP1kWdrKQ8s1q7g0UqLeag5G1Bh4Tfwve3niLLzRBY
+         0FlfjlertMydQFZo8KDNVnzrmcEM2KDLSYKKih56aTCRO2/kvm1eqDAlvbuxWb+m0PhM
+         uuHLqbnydb7bzjc6BU35We1YHgJYXijwnHco/Uxn2bH5KLfAUymBwFDa9+scmzJWXxDs
+         UKgWa89Sckdnfk8+ziixXFQrUn24megJ/6sZ954+ne32OybHd1b4LIaB1rooG3gmg7Z3
+         IZPXirkA3gTpSuJucp5pVBT+ILQRpxdfamhwKD/8qm2Eqa8q0e8BB64u33RKpFCzIjeh
+         P31w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760017046; x=1760621846;
+        d=1e100.net; s=20230601; t=1760017043; x=1760621843;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QSnlK9qf9+QtrbFfXzTXGo8du1cPFojIdvhyIWDFaG4=;
-        b=DkdX3LeHeNi4/B4wg/n3g/QKxzhCx+etn51ulRCcEEIJ2QHQ9i7pM98ly+6oO79g3u
-         3peiM4TBHnHhGfEo10M8kTJN7ouQtLnGADHarJYXaqKTi84Bxq12UW6UhMs5LJAehIv4
-         YChANALMphZkWTmq8k2ZTn+8WSXXWVddtnr0pgMUUq7OcToibY63JHMK2qJkP5QrYy7I
-         qePeUkDGf9ByfiQyc9XScAidNHsweRQ8rWmKizKBkTQ4txRzGWDGqJf4eitOiRlM1yon
-         J+hOwAC5/doWHt+Fkx+p3VJL12Cs2C2/9iFDhOY8gP0DNtA3mIpmE2uJkyye8IeapORo
-         Bqfw==
-X-Gm-Message-State: AOJu0YyDUXq3TyF5S0BUyWFDHYayXfpDF/cYMZXKUuTXTaw6HbnUl1Mn
-	NOEBDRGQ1rPv7VM5OBz0xnz9PIYjiftOtmIU8FOgy0bowzQci3e1q7ksMX9IXdyY54ezDpu0+8t
-	Gnam1hGk9o4SUyNst9HUy2/Nm4bF93Wbw/I7D6K7cFIdHB9oQzJlG3+n+6+8Ymmu2gQ==
-X-Gm-Gg: ASbGncvV30RSOWLqT4uDpnDvALC5RW4BKyKOqWIRYEVfi/AB+Wl/N+/WldT2fSWa8U8
-	AtMSQCcAEfV0HZkJzVmJFYpp0bFERfReTHtwdj4pi2YIsQwqAZyJIhv/5jG/qyTObMYXJegYjTN
-	MjWDP2s//kwg6UId32LITxFKqU0Z9BqLHVlYhPRexnBOzYJ6LQyUqCJQc4tPxLPqjK5jw8JBFD5
-	noKyAxUllsqbCkaQgEfXSX6x5XONQ/Q6tzFpO9B7ha1PY96JluoyfQWhdf0i7LRxSzsqKmpaj0E
-	Zr6k51jZBc70otuijP8hfAxutlQRIKGEQTM=
-X-Received: by 2002:a05:622a:552:b0:4d3:1b4f:dda1 with SMTP id d75a77b69052e-4e6ead5b74fmr99238151cf.61.1760017046382;
-        Thu, 09 Oct 2025 06:37:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGkkkln0wvJVfA+/SQdl7KyNaqeghASgRMRgQSZA/6yVrMeWhD/2djQvFf88sK4uQV3LAnLRw==
-X-Received: by 2002:a05:622a:552:b0:4d3:1b4f:dda1 with SMTP id d75a77b69052e-4e6ead5b74fmr99237541cf.61.1760017045789;
-        Thu, 09 Oct 2025 06:37:25 -0700 (PDT)
-Received: from redhat.com ([138.199.52.81])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-884a2369b3fsm191330185a.51.2025.10.09.06.37.23
+        bh=dq7MfAZyGGxaYmEOpM20FMo+OmujRRkMe061xLULkak=;
+        b=gbZY7xtEjeJp4Div9bPI4VuLsdm8Clf87cbAWRf9m0s14hXLQPTFmg9T+10Snwlozk
+         CpWcqJUlvCvAjl9tpfzXE5JUh/m6EzCb+kt4WWu01h2t3fqyVoJ5GFth5B8PsRxpH83U
+         eGOHbeISH/WUghrJgdAv5hbkauEy87Q9kPO5yOFRcsWNWsLjvefCBUE0+//xIzJkWZBW
+         MJtShxWfirCpclXqSwMeIUFrG88zy7XCKLggOT3qL/7SP+tXqlY8jI9dBwAwXooNEgkA
+         LhlXMKfMTWcos4wpp3oanJPRxB9At35VtNU+GyTFzCYyCWJfBanO7yyIvpjw1sSD58Ey
+         /5mg==
+X-Forwarded-Encrypted: i=1; AJvYcCUBI4V5JVE5aARKeYhTFkdh31EoC0RgRVQFmgfzpjmhu59495PJRZRhCuukkXuLIJIKadAKwi79Ab5TuI4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJYJzK7lPB3zYvuH+HJ0Z/RbrE9rV0fngZvvT9Xr1BLDOAg0UD
+	ppH40t0klXwi7LAYJxpUv99y94EyEzon4c9agm0/lswFyS/uliY5HJNbTunPlFOMCjk=
+X-Gm-Gg: ASbGncvFiREsDVmp8PkaE0C5H3YQ7b8lvhRHD046oQ/fdfpjci3+WE84V0ovDuW9rUm
+	6AcWTahuQqk4XczX2yUFPY0SkXG1p8UfUjeMdbqA4h22RiG1Y4MN2z2KNQ2NBWgWK/nM6ckgBpC
+	jQCNE36OeXtC5xqHhMq+CBK9FmVctKeGCFaJjQa068VVBG5sPHrQnHg9L8X8dsRG78gzy5LTzpS
+	sukwAaH/nh8ObqMu70pZ6JlAX2nEV5ibjveuITWEfIOcmwdH8Cc3zcx9OarpbeLfRQehkGAdUGH
+	7raIprzgF+b20xOn/BhrA8fGu8ZIKvFRhG6sGYdomT3r8oG0TnWu5uq2UXK/GEYswntlw/AB2Yx
+	bu+V0Desb4TrxViibxCdH71rlpoiLlLKi9upECKItMNmmKnc=
+X-Google-Smtp-Source: AGHT+IFYabcVFHaPLEaZdWVgfaLIPcYjQXcICeP9Ed2Hj3ZjwMcQN94p9RtEMitSp/6LIwax0gqTng==
+X-Received: by 2002:a05:6000:1a8e:b0:3ff:17ac:a34c with SMTP id ffacd0b85a97d-4266e8e46b1mr4959913f8f.59.1760017043056;
+        Thu, 09 Oct 2025 06:37:23 -0700 (PDT)
+Received: from linaro.org ([86.121.7.169])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f083asm35033794f8f.43.2025.10.09.06.37.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 06:37:25 -0700 (PDT)
-Date: Thu, 9 Oct 2025 09:37:20 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Paolo Abeni <pabeni@redhat.com>, Jason Wang <jasowang@redhat.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Jonathan Corbet <corbet@lwn.net>, kvm@vger.kernel.org,
-	virtualization@lists.linux.dev, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 1/3] virtio: dwords->qwords
-Message-ID: <20251009093127-mutt-send-email-mst@kernel.org>
-References: <cover.1760008797.git.mst@redhat.com>
- <350d0abfaa2dcdb44678098f9119ba41166f375f.1760008798.git.mst@redhat.com>
- <26d7d26e-dd45-47bb-885b-45c6d44900bb@lunn.ch>
+        Thu, 09 Oct 2025 06:37:22 -0700 (PDT)
+Date: Thu, 9 Oct 2025 16:37:20 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Sibi Sankar <sibi.sankar@oss.qualcomm.com>, Rajendra Nayak <quic_rjendra@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH] arm64: dts: qcom: x1e80100: Describe the full 'link'
+ region of DP hosts
+Message-ID: <yblmrllwwincbchnjcdmsoty53dogkzptmap4jcupnnoqzbqn3@7hc23mopnplm>
+References: <20251009-topic-hamoa_dp_reg-v1-1-4c70afa5f029@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,83 +91,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <26d7d26e-dd45-47bb-885b-45c6d44900bb@lunn.ch>
+In-Reply-To: <20251009-topic-hamoa_dp_reg-v1-1-4c70afa5f029@oss.qualcomm.com>
 
-On Thu, Oct 09, 2025 at 02:31:04PM +0200, Andrew Lunn wrote:
-> On Thu, Oct 09, 2025 at 07:24:08AM -0400, Michael S. Tsirkin wrote:
-> > A "word" is 16 bit. 64 bit integers like virtio uses are not dwords,
-> > they are actually qwords.
+On 25-10-09 14:59:18, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 > 
-> I'm having trouble with this....
+> The regions are larger than currently described. Rather inconveniently,
+> some control registers, including some related to USB4, are in that
+> left-out chunk.
 > 
-> This bit makes sense. 4x 16bits = 64 bits.
+> Extend it to cover the entire region, as per the hw specification.
 > 
-> > -static const u64 vhost_net_features[VIRTIO_FEATURES_DWORDS] = {
-> > +static const u64 vhost_net_features[VIRTIO_FEATURES_QWORDS] = {
-> 
-> If this was u16, and VIRTIO_FEATURES_QWORDS was 4, which the Q would
-> imply, than i would agree with what you are saying. But this is a u64
-> type.  It is already a QWORD, and this is an array of two of them.
+> Fixes: 1940c25eaa63 ("arm64: dts: qcom: x1e80100: Add display nodes")
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-I don't get what you are saying here.
-It's an array of qwords and VIRTIO_FEATURES_QWORDS tells you
-how many QWORDS are needed to fit all of them.
+LGTM.
 
-This is how C arrays are declared.
-
-
-> I think the real issue here is not D vs Q, but WORD. We have a default
-> meaning of a u16 for a word, especially in C. But that is not the
-> actual definition of a word a computer scientist would use. Wikipedia
-> has:
-> 
->   In computing, a word is any processor design's natural unit of
->   data. A word is a fixed-sized datum handled as a unit by the
->   instruction set or the hardware of the processor.
-> 
-> A word can be any size. In this context, virtio is not referring to
-> the instruction set, but a protocol. Are all fields in this protocol
-> u64? Hence word is u64? And this is an array of two words? That would
-> make DWORD correct, it is two words.
-> 
-> If you want to change anything here, i would actually change WORD to
-> something else, maybe FIELD?
-> 
-> And i could be wrong here, i've not looked at the actual protocol, so
-> i've no idea if all fields in the protocol are u64. There are
-> protocols like this, IPv6 uses u32, not octets, and the length field
-> in the headers refer to the number of u32s in the header.
-> 
-> 	Andrew
-
-
-Virtio uses "dword" to mean "32 bits" in several places:
-
-
-
-device-types/i2c/description.tex:The \field{padding} is used to pad to full dword.
-
-pads to 32 bit
-
-
-transport-pci.tex:        u8 padding[2];  /* Pad to full dword. */
-
-same
-
-
-
-
-Under pci, the meaning is also generally as I use it here.
-E.g.:
-
-Documentation/PCI/pci.rst:You can use `pci_(read|write)_config_(byte|word|dword)` to access the config
-
-
-
-
-
-
--- 
-MST
-
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
 
