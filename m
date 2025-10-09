@@ -1,165 +1,143 @@
-Return-Path: <linux-kernel+bounces-846665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47D23BC8AEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:04:04 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A410FBC8ADD
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 13:02:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94AC8423696
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:02:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 916AD4F4214
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 11:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 854CD2EC0B0;
-	Thu,  9 Oct 2025 10:58:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34C62E0914;
+	Thu,  9 Oct 2025 11:00:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C+CqYBXr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I0Gm2N9V"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A212EBDFB;
-	Thu,  9 Oct 2025 10:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69862DCC06;
+	Thu,  9 Oct 2025 11:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760007520; cv=none; b=X95hR4nxqFCBhnG9gPjOxAmBWB5UPNbCSdeIHKqS0JcGcTpMLGKwKRSLvEphNv7r6qV4VbhUxacdn8Ey0ujO7SSBnAN+zd+lZW1KKfuHB/HJ9rfwYLivx2u9TsgXGcAm6FfV+/Ujofzcm76gqaquDzVZ2COGGpiNvjpy1kfedYw=
+	t=1760007622; cv=none; b=Vw0kjQJA7G9VYg1x/ggRoNN5yzjfrZwiHBcqvP+/w5gpYhh99c3Qt2rmWo100bo9S5aibsPWnpNdGGvS7lDrRcWiP3bbao0vFWxkV2J9RbO0El8FHPwq5pbj2XM2WtNAQRAqZpiuXanrORVeWf34FEduqk96rbHxYBm45jnW70k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760007520; c=relaxed/simple;
-	bh=7Nur+XSIKNjaZ4TARG/0OtkaTqABK5qON+LE3aEY7Aw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=VEqsc0BPEb46kiUqkeB5UPb0jy8kL//FNLgYPcymNTCW9PSYBKQEFjJ0PL0E2J6S/qhXTwmkGeQEGBuMMTBVqVRr9jx2DE9sBsEeDaXFhOtQO5nObqrqw49aIk8RIJjoE3S9xVF9i+4+tFNVxXSJqgtUjL5jWOKu/+R32RmF2hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C+CqYBXr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 566A8C4CEE7;
-	Thu,  9 Oct 2025 10:58:30 +0000 (UTC)
+	s=arc-20240116; t=1760007622; c=relaxed/simple;
+	bh=zm2FFMShcCtjbHJ/RI7i7Pca3Wi8bOnZRjIJddLxJJ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fK0TiCt43GURHufkdX74NXVkQnZ0bBELZwUkrpK5v2N1ZkRCsGUDx1otvC06m67J9QnGUcUx6vl4S7QUBGCmJKxL3unBxqFlhlfEJ7OTOO2hIXonbmAO6nvsUnyF4q1LEmat7R84vFhtFQZ41yvsPALJb8HBAHQIXhkyly6EnRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I0Gm2N9V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6BFCC4CEF9;
+	Thu,  9 Oct 2025 11:00:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760007519;
-	bh=7Nur+XSIKNjaZ4TARG/0OtkaTqABK5qON+LE3aEY7Aw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=C+CqYBXrsPK4Hf77dWS8x2tr3n47VJ1gWIZgOIq2eKyhyo1+cmTV2J60K5aYhgHDw
-	 3CEeKuIGW8qjA4K3QhBrWjuQoCMP5w8o3T0QjK+eWq+UGDWtZHgRCIHoxuEGrNX+Bj
-	 pIlpM8NA+mb7eJTo8mf/Bdjf0HLnSrm9//Wt0xWRbT6Le7m6gzZdQW3NX53MK/u9sv
-	 S10U8ahIcGBuVvRGwnutN4BYzYg3r7AgVyWHlcPpwLme5rmkzmzbHl5bzEpdZQvZ2N
-	 XQNhDqGAJ3Mjyg0LPTV3FINr6FIiDNji1zltNhGX/uBPh8CxPtU2d4qxRFTeaHmIkF
-	 cN5qN9D2zj3Gw==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: "yanjun.zhu" <yanjun.zhu@linux.dev>
-Cc: Pasha Tatashin <pasha.tatashin@soleen.com>,  pratyush@kernel.org,
-  jasonmiu@google.com,  graf@amazon.com,  changyuanl@google.com,
-  rppt@kernel.org,  dmatlack@google.com,  rientjes@google.com,
-  corbet@lwn.net,  rdunlap@infradead.org,  ilpo.jarvinen@linux.intel.com,
-  kanie@linux.alibaba.com,  ojeda@kernel.org,  aliceryhl@google.com,
-  masahiroy@kernel.org,  akpm@linux-foundation.org,  tj@kernel.org,
-  yoann.congal@smile.fr,  mmaurer@google.com,  roman.gushchin@linux.dev,
-  chenridong@huawei.com,  axboe@kernel.dk,  mark.rutland@arm.com,
-  jannh@google.com,  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  rostedt@goodmis.org,  anna.schumaker@oracle.com,  song@kernel.org,
-  zhangguopeng@kylinos.cn,  linux@weissschuh.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  linux-mm@kvack.org,  gregkh@linuxfoundation.org,  tglx@linutronix.de,
-  mingo@redhat.com,  bp@alien8.de,  dave.hansen@linux.intel.com,
-  x86@kernel.org,  hpa@zytor.com,  rafael@kernel.org,  dakr@kernel.org,
-  bartosz.golaszewski@linaro.org,  cw00.choi@samsung.com,
-  myungjoo.ham@samsung.com,  yesanishhere@gmail.com,
-  Jonathan.Cameron@huawei.com,  quic_zijuhu@quicinc.com,
-  aleksander.lobakin@intel.com,  ira.weiny@intel.com,
-  andriy.shevchenko@linux.intel.com,  leon@kernel.org,  lukas@wunner.de,
-  bhelgaas@google.com,  wagi@kernel.org,  djeffery@redhat.com,
-  stuart.w.hayes@gmail.com,  lennart@poettering.net,  brauner@kernel.org,
-  linux-api@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  saeedm@nvidia.com,  ajayachandra@nvidia.com,  jgg@nvidia.com,
-  parav@nvidia.com,  leonro@nvidia.com,  witu@nvidia.com
-Subject: Re: [PATCH v3 19/30] liveupdate: luo_sysfs: add sysfs state monitoring
-In-Reply-To: <a27f9f8f-dc03-441b-8aa7-7daeff6c82ae@linux.dev> (yanjun zhu's
-	message of "Wed, 8 Oct 2025 18:07:00 -0700")
-References: <20250807014442.3829950-1-pasha.tatashin@soleen.com>
-	<20250807014442.3829950-20-pasha.tatashin@soleen.com>
-	<a27f9f8f-dc03-441b-8aa7-7daeff6c82ae@linux.dev>
-Date: Thu, 09 Oct 2025 12:58:29 +0200
-Message-ID: <mafs0qzvcmje2.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=k20201202; t=1760007621;
+	bh=zm2FFMShcCtjbHJ/RI7i7Pca3Wi8bOnZRjIJddLxJJ0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=I0Gm2N9VKnAia0R1rGUK3ADh/NbHgqyZdER7LDB+bMlniT1DGPvkEifa2Pud7qaDz
+	 2TqDtb6WyvQiWhQ0IEqT6lQWD/y+xySS928xm8CojuI4jvS6E3Swfp5BPU/bc4Oycn
+	 CFY49X9bErl+FM14r24LgxzVB1ieUnEH4V5cMTyX1V5TNPGwTrrOE+JBzsPSdoQ1FE
+	 ZGQEvCppJMAXRjWLxfkdt7vOgCqPdFu9PtH6+FIppJYySgqQD0CKnkC62z+1H8p6LV
+	 pUiOThOTayopCAsauEkqM+E+A8VIjESXDYbsEnnf1dFVToaRAF9BzWpnsZSQBlK8Q6
+	 DJ+BklARDV1uA==
+Message-ID: <e9f67f33-40d5-48b7-b779-47538d48d146@kernel.org>
+Date: Thu, 9 Oct 2025 20:00:13 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: thermal: qcom-tsens: Document the Glymur
+ temperature Sensor
+To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>, amitk@kernel.org,
+ thara.gopinath@gmail.com, rafael@kernel.org, daniel.lezcano@linaro.org,
+ rui.zhang@intel.com, lukasz.luba@arm.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250920123631.281153-1-pankaj.patil@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250920123631.281153-1-pankaj.patil@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 08 2025, yanjun.zhu wrote:
+On 20/09/2025 21:36, Pankaj Patil wrote:
+> From: Manaf Meethalavalappu Pallikunhi <quic_manafm@quicinc.com>
+> 
+> Document the Temperature Sensor (TSENS) on Glymur Platform.
+> 
+> Signed-off-by: Manaf Meethalavalappu Pallikunhi <quic_manafm@quicinc.com>
+> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+> ---
+> Changes in v2:
+> Fixed to sort entry in alphabetical order.
+> 
 
-> On 8/6/25 6:44 PM, Pasha Tatashin wrote:
->> Introduce a sysfs interface for the Live Update Orchestrator
->> under /sys/kernel/liveupdate/. This interface provides a way for
->> userspace tools and scripts to monitor the current state of the LUO
->> state machine.
->> The main feature is a read-only file, state, which displays the
->> current LUO state as a string ("normal", "prepared", "frozen",
->> "updated"). The interface uses sysfs_notify to allow userspace
->> listeners (e.g., via poll) to be efficiently notified of state changes.
->> ABI documentation for this new sysfs interface is added in
->> Documentation/ABI/testing/sysfs-kernel-liveupdate.
->> This read-only sysfs interface complements the main ioctl interface
->> provided by /dev/liveupdate, which handles LUO control operations and
->> resource management.
->> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-[...]
->> +#include <linux/kobject.h>
->> +#include <linux/liveupdate.h>
->> +#include <linux/sysfs.h>
->> +#include "luo_internal.h"
->> +
->> +static bool luo_sysfs_initialized;
->> +
->> +#define LUO_DIR_NAME	"liveupdate"
->> +
->> +void luo_sysfs_notify(void)
->> +{
->> +	if (luo_sysfs_initialized)
->> +		sysfs_notify(kernel_kobj, LUO_DIR_NAME, "state");
->> +}
->> +
->> +/* Show the current live update state */
->> +static ssize_t state_show(struct kobject *kobj, struct kobj_attribute *attr,
->> +			  char *buf)
->> +{
->> +	return sysfs_emit(buf, "%s\n", luo_current_state_str());
->
-> Because the window of kernel live update is short, it is difficult to statistics
-> how many times the kernel is live updated.
->
-> Is it possible to add a variable to statistics the times that the kernel is live
-> updated?
+No, conflicting patch with Kaanapali, without any reason. Squash the
+patches.
 
-The kernel doesn't do the live update on its own. The process is driven
-and sequenced by userspace. So if you want to keep statistics, you
-should do it from your userspace (luod maybe?). I don't see any need for
-this in the kernel.
+This entire split is just huge churn, huge duplication of work and quite
+a lot of review put onto the community. You should have coordinated your
+work better.
 
->
-> For example, define a global variable of type atomic_t or u64 in the core
-> module:
->
-> #include <linux/atomic.h>
->
-> static atomic_t klu_counter = ATOMIC_INIT(0);
->
->
-> Every time a live update completes successfully, increment the counter:
->
-> atomic_inc(&klu_counter);
->
-> Then exporting this value through /proc or /sys so that user space can check it:
->
-> static ssize_t klu_counter_show(struct kobject *kobj, struct kobj_attribute
-> *attr, char *buf)
-> {
->     return sprintf(buf, "%d\n", atomic_read(&klu_counter));
-> }
->
-> Yanjun.Zhu
-[...]
+I am disappointed because you just don't think about the reviewing
+process, about what maintainers should do with that. You just send what
+was told you to send.
 
--- 
-Regards,
-Pratyush Yadav
+Explain to us - why do we want to have two 99% same patches sent the
+SAME DAY, from the same company, sent in completely separate patchsets
+so any simplified review will not be possible, and do same work - review
+and applying - twice, instead of having only one?
+
+Why maintainers should accept this?
+
+
+Best regards,
+Krzysztof
 
