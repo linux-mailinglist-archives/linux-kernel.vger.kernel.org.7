@@ -1,148 +1,132 @@
-Return-Path: <linux-kernel+bounces-846983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46B80BC996B
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:44:51 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91080BC996E
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 16:44:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE0E63B301E
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:42:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 58C5D4FB493
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 14:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D899E2EB5CF;
-	Thu,  9 Oct 2025 14:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A75AC2EAB85;
+	Thu,  9 Oct 2025 14:43:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pSnJCb/8"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F+kt14Bi"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39E12EA72A
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 14:42:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F892EAB79
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 14:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760020932; cv=none; b=iOhnXjMiTN8+TQVUD3u5l2ez/xcbQ33UTwTGZ1LfH7F2tio386f0v5FQ6+zc8TFuiL02O6nGdVEp2jquLPC5MrGH/WLapxmJoVTPY9hu93J3heeXSs1dM58tdQg/CUq//Fr079lQ5RTKN0frs2py/XH+nLp7wuHc1wlyl5GxjJE=
+	t=1760020997; cv=none; b=jzm4RKZf8q7aloAk0GBkzm1Xp0Mhm5pI9KgWz3Nv+YfGaR5H8JSmAxC0NiPZcs0by0pbrq3JWLXdlKIUvM4u2jIWcVYBv4OB4i8b6isDiUx49JWBi2PqOQKlB0zKDaV16kaU9VdMahwGlToupWbtqfc0BFs7MDbCYCMY7r6ER78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760020932; c=relaxed/simple;
-	bh=QZx4nVpAC3vRxTaSdKPSim4kZsjFCKfjifLXoOWygnc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M3bJRxEBTxK3u97VO9rV0jFwCa7pViYoK4bHmU6zctCeq2OuWdrXoODSBOH8NUIvDw8FKzzzyQXzJL+veFKPIdNO6vPc4ZetA3hh4z2y1+9IC7iXaPyv9CxgJpSuBNhOHSn7TjOWW0WjI5YC0y02oYaLpTjXnIyxSmqUo7svFl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pSnJCb/8; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5996EO0e029759
-	for <linux-kernel@vger.kernel.org>; Thu, 9 Oct 2025 14:42:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=jJVTkHydqKBrCSgwLkXUZtm0
-	Z8WJjCWEqwuofJXX3rc=; b=pSnJCb/8DG/0imYlcFsnOQfpkVy0tPFrexiM27Es
-	VwcAVfuKZcsW28YbjfY3vQeTC+4jNhfUITg0FTmcYCSN2jPbp8EkUf/UpIsf/ccf
-	JaA30ZkS9Hajd8P9dDBfeuYv73sNe899yjgqxFijOnC+vcTVTdUv2MgD/6TFH5Qv
-	XcmEez6z88xhOlvKhsgbzDNb3FAZoXYiz0aiVrc3oZomrpWgSl64UbaCyck92DLn
-	O4PzzeBfDuXWu/Af+lU+FunV40heM5uZHW7lUM4t8aP0XD8yfuzo7/T4CjBwsXI2
-	i1kvBccJ9G9JpM+/n4z8dBywPjLlRUknlSEpi5iLG1+Veg==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49nv4nb814-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 14:42:10 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4e576157d54so39638011cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 07:42:10 -0700 (PDT)
+	s=arc-20240116; t=1760020997; c=relaxed/simple;
+	bh=xuePTw23nhDK1u3ZeQlWw0pTVGGtZTfAt7eVSo3gjbs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ibris4+fTU1lvk7Q4Swm741ceTc5HgcEbmirpLHBOgbea5n6fiXNP4lp6XHuuVDzFwcYRBQUhdmb6+bWP1xQxaH+Jg5/zqaZza/SnH++dm/KXLXPvi0R++dZSOyVcRKsvOqn1rbu5c4y6iXvyZRFsuTv9tjOcHI6Mx9o+hqi7vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F+kt14Bi; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-78118e163e5so1637075b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 07:43:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1760020993; x=1760625793; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=aBuYWmN845KzXqm8EouS+GqPS0z0pBmk0fzQy4dI/Ds=;
+        b=F+kt14BixztRxbBP9iG12pj4sHR+SbjUho4lWQANp7OpnhJwbXkdC08S8LboxzfyAM
+         EMmCmPCUM/WZEcQ92MIt3Ar+pAKQmtD+Def3dYTn8avFR6kfJ8UekiFNVSnyZzbX2V97
+         DieQczSlf8CZawu9AOg9blNu64VWO1coSstRWaytHegh/mPBRASkGQr6d3PeASb0dktg
+         8g80aUidy3QXIEAQgK/n6rvqj/t192kWljG23CN3eOI521qI8OeUVHAsua+/k38JC75S
+         oZ2YATJ9mXzFfHTbS73ZyelqvYmW5fwPE1he2Ncwhk+XsvwqZXJMd6nKF9BEAehIBYiE
+         oeJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760020929; x=1760625729;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jJVTkHydqKBrCSgwLkXUZtm0Z8WJjCWEqwuofJXX3rc=;
-        b=vtG/y4mjuQKRcw+39Et5pLAMN1Dk25B6k0poTw1BESAQfGXW5o6w/uRTbjXZQHfjJJ
-         wBP/CdHv86oH2tM4MYFUtU7F3P01yGMpKP2pqnRVjqcdli4lgQbtAFAe6BKyWDak6xCt
-         /Cg08D3ozoRaGabXZrP/vkTtdJgbst9GMe1K8pRgUKgNOJO3qMsAsbKArlEvX83rH5gB
-         U9s4fhqOADRA0Uqtsl3U3J8RYyJeRpjoikGX1hcBizAdSnF+tK+Sromx/b4SEMpvAu14
-         IPQ191gYHEilqhY+uFQ3RMFCMgAUJETD1leTGe9OS3Z+Xcfl2qap5VSH5vgQBCcQvm75
-         G93g==
-X-Forwarded-Encrypted: i=1; AJvYcCUlcKS/SM3P3oP1GzJi9qyXAnZyq5t4IpmbXEzjA0h1tfn4z682qbzmHC9X4wfJ5IpW7fs/OhiSR0rjmCs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdQZdLJdkZEj9/MJl+DE4ggB5yIpUbAseVb3R3ntS5nVkPJ+Xa
-	CgvM+nAudXGi30NkpYuzpReO0rsaJ3fuo4FB94+tkhBvEii9BbQE0uABIdk8WOPKb201M4feoyE
-	/v+4pHwSPbcS1Z12ZhydEXpVNQxCsYGWyk2aSPKoOQO+jphuYjVCFsGLrir9OJs1t1Qs=
-X-Gm-Gg: ASbGncuxITG1o2Mwjb2kwYb8ZRStxOJ0tBLWEOELP2xG5IWx37j4P2sP1nPYBujDyCX
-	lPUr6rM7wPi4Mcncb1lID09sKFwdNhRMFz/28DzjOXTY59fzddPOXgXBoigs87ziw2zQ/h34CHz
-	reSbL6IszrWoNs1tOhl5lih2JmVfyEvLi4T4vXRtOEFAgWJgzZfM9cqPq8qISnLOWvkec53k0yR
-	MhSIFqaHqB6PfzyZTwmTsq5+z6wfS4lZFfFivRBve89vtoVU8XOT98TPJjSgOc0z0t9lVeLK2CA
-	5UbxXJx0jtQHxePq2BquG2cwiQi8Qh/zdyB/EwcHsBkD8yrF3IV6TcjcZWBT14vv8PNiU3xBmYJ
-	PsU401PK6cmq69PsgmXXH8yFMTSjZdoX8ZbaNVaH+PdfzIKhCmJKG1dbZjw==
-X-Received: by 2002:ac8:5d53:0:b0:4db:347d:edb3 with SMTP id d75a77b69052e-4e6ead712c7mr91268461cf.80.1760020928672;
-        Thu, 09 Oct 2025 07:42:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFNa4QnjcuKYB3jwjG7GLdf7ymSiMVsjch3Pok5PTchB2g1Op9BuA64It2GGfI8BAkwpNNtAQ==
-X-Received: by 2002:ac8:5d53:0:b0:4db:347d:edb3 with SMTP id d75a77b69052e-4e6ead712c7mr91268131cf.80.1760020928280;
-        Thu, 09 Oct 2025 07:42:08 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5907ad9e55esm1097574e87.78.2025.10.09.07.42.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Oct 2025 07:42:07 -0700 (PDT)
-Date: Thu, 9 Oct 2025 17:42:05 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Casey Connolly <casey.connolly@linaro.org>,
-        Alexander Martinz <amartinz@shiftphones.com>,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Luca Weiss <luca@lucaweiss.eu>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v2 5/6] arm64: dts: qcom: qcm6490-shift-otter: Enable RGB
- LED
-Message-ID: <rnlkxpm6crulpvfleclkszio2fms7t3ulc3rpsdozteml2bak2@zvfuyc33ohez>
-References: <20251009-otter-further-bringup-v2-0-5bb2f4a02cea@fairphone.com>
- <20251009-otter-further-bringup-v2-5-5bb2f4a02cea@fairphone.com>
+        d=1e100.net; s=20230601; t=1760020993; x=1760625793;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aBuYWmN845KzXqm8EouS+GqPS0z0pBmk0fzQy4dI/Ds=;
+        b=fgjb/qLpJCivfNakuCcmX7h4M/e0iRDpR/Sxni0g+P2/127Enbg1VjRpecCaGB9ewc
+         NCmUEtlijJcjikY04RkG+ICP1kiBZyR4cbvPUv9FZU2g3My8MHSaFIC6hireM5HZOxM1
+         KZORzJVFrMHz7BFsbuR58e93mdzhlDbw6NX/kPhmT92H5I0kvvWS3feLunlLKtD2VPnY
+         LYwbFJQJpBPkdtvFU01vtO8lPsoPjxULL3RscyaHoxKIQSQoKL5TzxhX9yDRClBEWPLq
+         zXaQuLhoIq2pHQxMcME9EepCaFItT32yq7YY+xlx2Zrkpcj6VoYxdamqc8Dl1DoirYIV
+         6sbg==
+X-Forwarded-Encrypted: i=1; AJvYcCXuzGadbKf9U3sHGLDFWgh4mvCOAkD0ufgcm/hANapA6covzLM4zGm+WC1nLsUbYcazb9qrKpVoKGz+EeM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnTlV4tK73D5ySrnu9/UZnx+SL7bQ4kHPzN1HUr6s1zU20dl+r
+	psdGfW5eF1aUAqRA1RAYfHgGw3ewANiDVfBdfYsUAQLmu1/i8VcjpPZE9GAjNqhKb5kBfT7CaNy
+	jJBcQcSMc2fGmu15nHVlbE9dsoRj/0aK69wtrJ77qVg==
+X-Gm-Gg: ASbGncumsl9tskR6GBXGY9YXDD1qBArev2teAh/K7K3S3nLF5xSRAWzy4pGpzmS5ufT
+	TInsLcyOF0By7iLzoOSDoOIJj0UY0hCXrD7At7LgjWB5V/kUVYgbbeWVr4nA1nGNnIZO3bTBRqu
+	Pv5OMYQ986ZWFIy36VGfM7GysYxGt3vtHbUIyS+ela7TMd5UIASY1Me/UauVXSj6QFiI90rrRAn
+	Xfb7iU0vqHPYbH8KXuu9DHFULB7DM0hBmG0
+X-Google-Smtp-Source: AGHT+IEunQlJX63RRYRtSnbcqvA/nThaxmg3LM/Wg/qUN5XoyVXwmlx1x6HIDkeVcb27jelR7RW1NG5t3y+7VCGwa9A=
+X-Received: by 2002:a05:6a21:33a8:b0:327:957:f915 with SMTP id
+ adf61e73a8af0-32da8fcd0a3mr9718293637.24.1760020992691; Thu, 09 Oct 2025
+ 07:43:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251009-otter-further-bringup-v2-5-5bb2f4a02cea@fairphone.com>
-X-Authority-Analysis: v=2.4 cv=ZJzaWH7b c=1 sm=1 tr=0 ts=68e7c9c2 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=dlmhaOwlAAAA:8 a=EUspDBNiAAAA:8 a=6H0WHjuAAAAA:8
- a=_tRjzsPFGxlTNT5lhXYA:9 a=CjuIK1q_8ugA:10 a=uxP6HrT_eTzRwkO_Te1X:22
- a=y4cfut4LVr_MrANMpYTh:22 a=Soq9LBFxuPC4vsCAQt-j:22
-X-Proofpoint-ORIG-GUID: rg1jx2BzHyBpF1LhRsu1SzX65tsuj_sG
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDA4MDEyMSBTYWx0ZWRfX119o2HdwiKlf
- WnyRSPoq/t+f+EfICVgq4WWxID8EeMyhXozbIqubcFho6XZwO/qICRPWgoZlxmq/X9iUeQLIhBy
- ejEKYY0kcjTkxwiidSdnmXotNS8tqFt9OvZ2Jj9E8Z30fGi1fhu4EiZmgYOtBLYrxl8AAaf/VdU
- tQBvbs7Opdai6mC+De9nVzjZlHtx7Zw3zq1JtQKMkyWlPdMzAvjL/jn0vqjynznQ048p8xevcge
- gv1owhtUotjpAYSkfGiGa0c/A/nh9NA3+YyCx3t7WUUqOlsRDPCxanfq5+A0tyqfU3Ipzs4OP0p
- 33K9/28JmMCh3bZNivXqPq4IPS4q1JUJSoYgg6RtYPfbzl3FCw81odz8FrO64YIB/fH5esyZmzB
- wX9C54TAVgezAT3HbQyR7lpMGQqQAA==
-X-Proofpoint-GUID: rg1jx2BzHyBpF1LhRsu1SzX65tsuj_sG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-09_05,2025-10-06_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 adultscore=0 clxscore=1015 malwarescore=0 lowpriorityscore=0
- phishscore=0 priorityscore=1501 impostorscore=0 suspectscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510080121
+References: <20251002-james-cs-syncfreq-v3-0-fe5df2bf91d1@linaro.org> <20251002-james-cs-syncfreq-v3-1-fe5df2bf91d1@linaro.org>
+In-Reply-To: <20251002-james-cs-syncfreq-v3-1-fe5df2bf91d1@linaro.org>
+From: Mike Leach <mike.leach@linaro.org>
+Date: Thu, 9 Oct 2025 15:43:00 +0100
+X-Gm-Features: AS18NWCyJUsxXav1BCEdra0zmZObN1mWhTpmYCiev-5sNXSTBfqKeCdcvl0rmhM
+Message-ID: <CAJ9a7Vjw_4ZwEBriS5836YdnxMH47e9b_6LOUWEaTxX3RkNtXQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/5] coresight: Change syncfreq to be a u8
+To: James Clark <james.clark@linaro.org>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Leo Yan <leo.yan@arm.com>, coresight@lists.linaro.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 09, 2025 at 11:06:35AM +0200, Luca Weiss wrote:
-> From: Luca Weiss <luca@lucaweiss.eu>
-> 
-> Enable the RGB LED connected to the PM7350C (PM8350C).
-> 
-> Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+On Thu, 2 Oct 2025 at 11:09, James Clark <james.clark@linaro.org> wrote:
+>
+> TRCSYNCPR.PERIOD is the only functional part of TRCSYNCPR and it only
+> has 5 valid bits so it can be stored in a u8.
+>
+> Signed-off-by: James Clark <james.clark@linaro.org>
 > ---
->  arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts | 27 ++++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
-> 
+>  drivers/hwtracing/coresight/coresight-etm4x.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/hwtracing/coresight/coresight-etm4x.h b/drivers/hwtracing/coresight/coresight-etm4x.h
+> index 13ec9ecef46f..eda3a6d2e8e2 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm4x.h
+> +++ b/drivers/hwtracing/coresight/coresight-etm4x.h
+> @@ -825,7 +825,6 @@ struct etmv4_config {
+>         u32                             eventctrl1;
+>         u32                             stall_ctrl;
+>         u32                             ts_ctrl;
+> -       u32                             syncfreq;
+>         u32                             ccctlr;
+>         u32                             bb_ctrl;
+>         u32                             vinst_ctrl;
+> @@ -833,6 +832,7 @@ struct etmv4_config {
+>         u32                             vissctlr;
+>         u32                             vipcssctlr;
+>         u8                              seq_idx;
+> +       u8                              syncfreq;
+>         u32                             seq_ctrl[ETM_MAX_SEQ_STATES];
+>         u32                             seq_rst;
+>         u32                             seq_state;
+>
+> --
+> 2.34.1
+>
+
+Reviewed-by: Mike Leach <mike.leach@linaro.org>
 
 -- 
-With best wishes
-Dmitry
+Mike Leach
+Principal Engineer, ARM Ltd.
+Manchester Design Centre. UK
 
