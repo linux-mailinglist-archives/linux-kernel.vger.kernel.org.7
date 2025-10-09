@@ -1,139 +1,156 @@
-Return-Path: <linux-kernel+bounces-847071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DD60BC9CD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 17:31:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99659BC9CBD
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 17:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 848F33A16F5
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 15:30:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B7331885B32
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 15:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 902331FFC46;
-	Thu,  9 Oct 2025 15:30:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD301EDA02;
+	Thu,  9 Oct 2025 15:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lihEbgME"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="Ld4G2DyO"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34FFC1E9B3D
-	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 15:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E361DEFE8
+	for <linux-kernel@vger.kernel.org>; Thu,  9 Oct 2025 15:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760023812; cv=none; b=hdph+a0hYqjdHPmqDRV7VAZnUysPpKW9PNgJjDwerIhBUUeszFSUfE081EW08PXbfiWN6r45yxcAUQSaas7BhMDUe3j6veIqf6ZdyRZX8xp3icKx5Eu2p2MFQ7OvkdVtFvI+rbtCwGjV4jCvY/EJkn1oeVRdDT7jXcgEY4SQGfs=
+	t=1760023802; cv=none; b=kuJo2mFqTZ7UrUsFFMEjCqr+R+UeURTK+D4xVEJmP5qcex0LSL1/Zi+QWKqiDmhxZ7mR5gp4hS/c420Rpm/IItorvl6jayu3amgQRRH8hMrA/O8wWLEWsQS/IaCxDDW759IIKDdvTu+oHs3aNUoMhvwGVgQ4DWYFN5r9+DI6D7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760023812; c=relaxed/simple;
-	bh=xKdHY98uifDCA/ZQ54Qd29uwoqQwdPCP6AZELTJbBvg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q9QN+vOPSncngdA7eJP8cCr+w/qlBJ2i2zlDsHdotsTdKxa3WBODA+PpqDgSEPtJ/EdczS831cPJkcn/5m4Btnha6YNYInImVBia/rxFN5tmLfFKrS7DKkctm4dqqQmg376nRbTYAaB8Gi2MFV7i9rCfoIA2OEsgbHjsnNip3HM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lihEbgME; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-799572d92b0so10736476d6.3
-        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 08:30:10 -0700 (PDT)
+	s=arc-20240116; t=1760023802; c=relaxed/simple;
+	bh=gd5cjc2YDQCWkA8evLBN0VUFvCTfmbJVeE9I3tDWPk4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V0HatgJ3fX9nooK437zGirnx/b2eXEQuZpOHmBYPA3wG9cgbrnV+1zVlBXnhdZcgezNMZiSEQL1LgF5tnUJO3O0ju2CQ8nTKoCx+Xr9zNbD4NcVyVq8k4GArvIDg14ucwCnM3GDvJWGPjMXIlFVmUBPvT8uovIzeE3rYbWdRqWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=Ld4G2DyO; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-80ff41475cdso16976046d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 08:30:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1760023810; x=1760628610; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3K/OkTfxaQVQjtAI923mEKQkdyC4/Ch4flZGg5G+nto=;
-        b=lihEbgMEpSlA5LSNoA9Qp9VepM65F3cxM6NZN/eNaRMWaYFu7pQlUnnNl6K5bw/0EX
-         trWDdJ6Ke3Mv/19+6xR1t5SDsu8TFJgaUdkFHyCly7Cif7zgmjUdVf6x2XWS6A621If1
-         BmU4PoYpgxl0BhbALg0FqpIdWpRV5L4l/QNAGjFOu5kjyhrY3OnB3Tej+z8in8B3xrdH
-         dE93j/mteX93Ud8/ily/c5XJXe1wqj2fxiEV4bmflkX3+oI6jFB/s3P5dj/h52X+VxQ0
-         FeqX1w3/BJYvM9fepsETt32d+dyVIo099qaKTkrB0uzC+yZy/GoJwCPrxgl4obz25q0s
-         10uw==
+        d=gourry.net; s=google; t=1760023800; x=1760628600; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5KXAYePP4BLP0oPw4Oo2yec/zLTGELhv7tKRSHRmraM=;
+        b=Ld4G2DyO0tepnMs45JoXCcL17nkacHSQL3Lh14ZisIFERpBxhy33A9XOHu6e7ezDQ9
+         XrQugbSNGmT5m7cBOEUG7uz56OlLT52nKTLYBGZez6ZIYNSJeVL44LBra5NauLPXqou2
+         wo3tgCU2ztH7cAFuWqwAE/VQqNEwEEdyLTvMjeFSPqap1SJYOoTmjRPP1Jnbzag2DbU/
+         mRbdybrhI8ztX/7VHJAep/4uE4oZXHFNxsHwTSILJ7NHikPVOJS7PYAvWEzeU+DkqMSJ
+         NH+VkfDLhWPIuzZAXcGEgF1Um2cyOzM3eqLIWTr1ysXT9bvmHGwY5UO/enkVl220dhh3
+         i33g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1760023810; x=1760628610;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3K/OkTfxaQVQjtAI923mEKQkdyC4/Ch4flZGg5G+nto=;
-        b=Yp90T6fkYNvZcV3aBamKEyVruy07fTS4s66CDZhmLDmaStQCen5qcqoHe9oOQFSG6v
-         JBtUt37rkQ7AFo2LswcWFbmpASKgmjl60iks4CKZqumlhNkrpWI34bF3iWY5X5mwANV2
-         Sy0/P9cBt5ncQ1IwNzFNTBVPaJvx4feKU93RZwS04xHPMXQLqWJLA2/gaO+7e0qrJsju
-         TfUGy36j4jXFO1ltXTCxNUJ0v1MjQvZYeOdG2LkZhLHV9Fej6agm9vlcm6S8MoS8f1l/
-         PrJgjYY/IYLIr74rx3KFlJpCh6nfwtDIUVDPBIIhANwuVf3hrVb6gtC+wxT6nP49FfSU
-         Er0g==
-X-Forwarded-Encrypted: i=1; AJvYcCU5nPF1Hq17OwCEt0P6LDrmqAB6XXYL/JdLvueHca82N/LrPWcmsQyza1gWHRYZf0rlcB3h111TOyb2Df0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO0YEdZKoOWzPNfyuOece7oY1Has7KgcA6COn/R0jQU/fM7WhP
-	qNpdpSRy57icoGViLMPz7sxN1OCb8BeNoqgst2PgU1KAamERHTVEEtcU25pt3pHgfpYQNzq7HdZ
-	voRk3wsiNmP8STrBe0/wJ/5COk+r4unRr9w==
-X-Gm-Gg: ASbGncuSmb/neBJNvKwtluZDOusDwvFkgzNZwZxKqhPYq0M2Iw7u+Nr3FfMnjne5c5X
-	LwmewcoNrvsOgCtddc01ENzkoxCej8320qUDFPteaRsikE3IEP5q3yQQiFbp4lgfM528hALkIQ9
-	xigXw7McUCtA7AGG1Bo5NOzLSs1FlgoHulEFwj5eWPBdb5uQDddJ24QbXibgp/8Lw0G/hdwZpy5
-	eWmdIrojZjDzz8UUqIBHGPrilIJmPpoGnGs4tvwNYz6qyHtCbuU64Z4IKSGS+IePfsw3DFFSOH5
-	RtZDHRqBgPrkxv4Lb1BHdn7RvD2d2BUcvrF1YTNlbxkIMWBTX+j1XoQrKKJbWZMdu7josT6JETz
-	K5jqhGR8DejpznmfYH70yJ4jx6iMzmErKyeRGqpsYdhvvLabpz2Yxzn86
-X-Google-Smtp-Source: AGHT+IGJdcJchywsY80gAXJqF2Dh5hkmMc+nT1QmiKbYTO/FxvtFxR8ICSKzlj+TOaws0AV2aAY8SzOBjdCxSsbgzqY=
-X-Received: by 2002:a05:6214:484:b0:7cd:91ff:6215 with SMTP id
- 6a1803df08f44-87b2efc2c6dmr99245676d6.61.1760023809944; Thu, 09 Oct 2025
- 08:30:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1760023800; x=1760628600;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5KXAYePP4BLP0oPw4Oo2yec/zLTGELhv7tKRSHRmraM=;
+        b=BMinBhUC+lJbEiM2UIRKKYDRSZtdyvT6rWfJUYlvMHCgjkCpMNYPJjLUG4v3pwFT5H
+         n4w9eNFr2fGdpUP4pU5Vi1G2PMQ4CsZ6oz8RP9UOGyAf26sMUcuT5KNFXKG/zga8Kj2J
+         jMLZpa+0jilJAwuKxRysMCC+5a9NXsbCkk9xQYkOdfKbRw9yBS0sPopkggI8Gm1Ja4o6
+         k8F+JfJLWA9KjH5KMzvVN4LjHMprYtsJnVaZj5ye1NeNnXS++1c6712nliypc3h1W7M0
+         S9G1RtbEbnoBZqpTq8FydqRMv3yYp6uE6O0RfjWCV7mWMgU19YEqohNbQ3wEhS9/+wm9
+         XZBw==
+X-Forwarded-Encrypted: i=1; AJvYcCU95tz4Begzy0ah0zqBY8zCghkRi33NgTdLfpaoB7jJcSXMYjHQTj/pLTXS8k/C4Uw95HVl1yvCoX3WUo0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2ax9i/UKYGSutZGzkLurrfz7LZt5hnhh6QgrnL1CggIcmKVsQ
+	DE0c0COvtU1ci7qE9/mSkdBoKtpL8du1Ap3lBrcOexRrHpSQvUfI19XU5LcQ6CiMn7I=
+X-Gm-Gg: ASbGncty1vfWl65XyRFKWthvJwuEPnI+UQKQf0L8ZckUwoMAG2+pgL/jTE6bj1W2JkN
+	DbFxEyFEGb3KUOCVfE6NH2cfJkyMEIbltBDwIRw8qtgsmshlzusU0uFwxMC0y8DR+TUNb8LaFHt
+	omy4iVVQw8lLsdF/HarucobaJkzLJoZed1iPMvrdp3ncltB47VHMSsPQRxlZVxZ/HSxFBzpBqW3
+	Ilxec83cXc11qLG6VwFeNpWMtqDX+dpNjdu8lQ3+i9oxfefCVpBnAJl9SmpAiLpWo7ljbuPN1ik
+	F9/iiPsZYchflhcpB0XHUJMIFaYdyP4ziWzrf79ZrXJ/reZOM++3kiU1ITQGq9YFx0D8NSZ2Sny
+	eoegt+0x9DUTqyhMIrt789yy9re52fErVv2wOkhBI3m9VYNNNIr1u5e3Gnat4E/ES9WH8dKY87/
+	VWWUkEO56KNWlOP6Xp0+tRQB7NWY9fiA==
+X-Google-Smtp-Source: AGHT+IFdgTVH9uyu/5o64basHMKsbAG88LBs1aBY1NSyzfZE3IVT45kHm7IlO9M72p9+htOIi0Mntg==
+X-Received: by 2002:a05:6214:29cd:b0:772:4853:48 with SMTP id 6a1803df08f44-87b21002ac1mr103016176d6.8.1760023799963;
+        Thu, 09 Oct 2025 08:29:59 -0700 (PDT)
+Received: from gourry-fedora-PF4VCD3F (pool-96-255-20-138.washdc.ftas.verizon.net. [96.255.20.138])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-878bae60c89sm179458576d6.12.2025.10.09.08.29.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Oct 2025 08:29:59 -0700 (PDT)
+Date: Thu, 9 Oct 2025 11:29:57 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Michal Hocko <mhocko@suse.com>
+Cc: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+	corbet@lwn.net, muchun.song@linux.dev, osalvador@suse.de,
+	akpm@linux-foundation.org, hannes@cmpxchg.org, laoar.shao@gmail.com,
+	brauner@kernel.org, mclapinski@google.com, joel.granados@kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Mel Gorman <mgorman@suse.de>,
+	Alexandru Moise <00moses.alexander00@gmail.com>,
+	Mike Kravetz <mike.kravetz@oracle.com>,
+	David Rientjes <rientjes@google.com>
+Subject: Re: [PATCH] Revert "mm, hugetlb: remove hugepages_treat_as_movable
+ sysctl"
+Message-ID: <aOfU9YTKMPWzYOta@gourry-fedora-PF4VCD3F>
+References: <20251007214412.3832340-1-gourry@gourry.net>
+ <402170e6-c49f-4d28-a010-eb253fc2f923@redhat.com>
+ <aOZ8PPWMchRN_t5-@tiehlicka>
+ <271f9af4-695c-4aa5-9249-2d21ad3db76e@redhat.com>
+ <aOaCAG6e5a7BDUxK@tiehlicka>
+ <83e33641-8c42-4341-8e6e-5c75d00f93b9@redhat.com>
+ <aOaR2gXBX_bOpG61@gourry-fedora-PF4VCD3F>
+ <aOdSvriKRoCR5IUs@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <5b95806a-e72e-4d05-9db8-104be645e6e5@web.de>
-In-Reply-To: <5b95806a-e72e-4d05-9db8-104be645e6e5@web.de>
-From: Steve French <smfrench@gmail.com>
-Date: Thu, 9 Oct 2025 10:29:57 -0500
-X-Gm-Features: AS18NWC3ORxIiPJ-wdFN48myFn8Rs2UbLqRS_MIq9LzeT2xWYlDBUeIINdVmdKk
-Message-ID: <CAH2r5mvg=kqPyA2nYF=Nhjr3vkt4dT1R4p-Bk_MBQtddjx_EhA@mail.gmail.com>
-Subject: Re: [PATCH] smb: client: Simplify a return statement in get_smb2_acl_by_path()
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
-	Bharath SM <bharathsm@microsoft.com>, Paulo Alcantara <pc@manguebit.org>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
-	Steve French <sfrench@samba.org>, Tom Talpey <tom@talpey.com>, LKML <linux-kernel@vger.kernel.org>, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aOdSvriKRoCR5IUs@tiehlicka>
 
-As pointed out by the kernel test robot a few minutes ago, this patch
-would introduce a regression (uninitialized rc variable in free_xid
-macro), so will remove this patch from for-next.
-
-
-On Wed, Oct 8, 2025 at 3:02=E2=80=AFPM Markus Elfring <Markus.Elfring@web.d=
-e> wrote:
->
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Wed, 8 Oct 2025 21:56:34 +0200
->
-> Return an error pointer without referencing another local variable
-> in an if branch of this function implementation.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-> ---
->  fs/smb/client/smb2ops.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-> index 7c3e96260fd4..bb5eda032aa4 100644
-> --- a/fs/smb/client/smb2ops.c
-> +++ b/fs/smb/client/smb2ops.c
-> @@ -3216,9 +3216,8 @@ get_smb2_acl_by_path(struct cifs_sb_info *cifs_sb,
->
->         utf16_path =3D cifs_convert_path_to_utf16(path, cifs_sb);
->         if (!utf16_path) {
-> -               rc =3D -ENOMEM;
->                 free_xid(xid);
-> -               return ERR_PTR(rc);
-> +               return ERR_PTR(-ENOMEM);
->         }
->
->         oparms =3D (struct cifs_open_parms) {
-> --
-> 2.51.0
->
->
+On Thu, Oct 09, 2025 at 08:14:22AM +0200, Michal Hocko wrote:
+> On Wed 08-10-25 12:31:22, Gregory Price wrote:
+> > > I'm not quite clear yet on the use case, though. If all the user allocations
+> > > end up fragmenting the memory, there is also not a lot of benefit to be had
+> > > from that zone long term.
+> > >
+> > 
+> > The only real use case i've seen is exactly: 
+> >  - Don't want random GFP_KERNEL to land there
+> >  - Might want it to be pinnable
+> > 
+> > I think that covers what you've described above.
+> > 
+> > But adding an entire zone felt a bit heavy handed.  Allowing gigantic in
+> > movable seemed less - immediately - offensive.
+> 
+> The question is whether we need a full zone for that or we can control
+> those allocation constrains on per memory block bases to override
+> otherwise default. So it wouldn't be MOVABLE but rather something like
+> USER zone.
 
 
---=20
-Thanks,
+Mild ignorance here - but I don't think the buddy allocator currently
+differentiates chunks of memory based on block membership, it just eats
+folios from certain zones/nodes.
 
-Steve
+I'm scratching my head trying to think of the discrete mechanism to do
+this that doesn't inject significantly more complexity into the buddy
+allocator.
+
+Looking at the recent[1] THP support for ZONE_DEVICE, I wonder if we end
+up with something more along these lines?  But this aschews the other
+requirement of wanting the memory to be otherwise general purpose.
+
+https://lore.kernel.org/linux-mm/20251001065707.920170-1-balbirs@nvidia.com/
+
+ZONE_USER does feel like the most natural solution.  Literally just
+(ZONE_NORMAL - GFP_KERNEL).  This might need a new GFP flag for certain
+use cases like KVM (GFP_USER) to denote certain "This isn't technically
+kernel memory, but it needs to be pinnable".  That would slot right
+between ZONE_NORMAL and ZONE_MOVABLE.
+
+Alternatively we could go the opposite way and introduce ZONE_KERNEL
+below ZONE_NORMAL and disallow GFP_KERNEL from ZONE_NORMAL - then have
+strict watermarks on ZONE_KERNEL to ensure the kernel is always able
+to get memory. 
+
+~Gregory
 
