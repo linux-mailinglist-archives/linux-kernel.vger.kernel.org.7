@@ -1,179 +1,140 @@
-Return-Path: <linux-kernel+bounces-846829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDD6DBC925A
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:58:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BF0BBC926F
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 14:59:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEDDF3E65D1
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:58:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B1173E6502
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 12:59:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53BE62E62D4;
-	Thu,  9 Oct 2025 12:58:22 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9232E6CA3;
+	Thu,  9 Oct 2025 12:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G94Rf8Tc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644F833D8;
-	Thu,  9 Oct 2025 12:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FEE072614;
+	Thu,  9 Oct 2025 12:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760014701; cv=none; b=ALeczyKujUoz+uNADWpko1aLg8OZIEeHpyiIcPW8hty5y0hYFG/Whz7Mdcffk7U386p3NwtzEReX/VtjBOGpwWh+qoOjNXbOK+cf1geEz1wu8ZWoccUllbS2GNRzNjRYzEIFjt+TT7T//Zl2XRTPy3uS47YuWlzzZVWXkT5rBOY=
+	t=1760014774; cv=none; b=oL/N28Q4wBUnB2WO7OVAOq1CTgdX5NMSeyHChHXFxMnIvKeize9B5dUfM/2BW5chmLmP43Z82AZ4iCDlMvLbxVU2ssgmf4SIic1Xa7V6OFWzoNiXkXnw9p/kzosmHUFk6CF3uv7zcd0cEsscbNRWqnzA7ytiRzCJmYuNNBOLY4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760014701; c=relaxed/simple;
-	bh=LoaVQodVhFo56YznmyVF9NYQySEKHXOiB5FSKqVj0xQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FWUL4Y+3TfNSNvCkmz948WSMLtuBgK4nEShR51XO5wXKS3f4E9t499QYKHRkhW4WAbU7/CEmQsTMv6TLF698fffUC6M4+2m7Ak6R2JCMlbSSGsYBZ8vK6W6/8Hqdwn9ic9dRL1CFkcP9Z2IPm1OHtPbqrUaKwxHxc/9ld2j4cuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 599CvacV010883;
-	Thu, 9 Oct 2025 21:57:37 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 599CvaUs010879
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 9 Oct 2025 21:57:36 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <559c331f-4838-49fb-95aa-2d1498c8a41e@I-love.SAKURA.ne.jp>
-Date: Thu, 9 Oct 2025 21:57:33 +0900
+	s=arc-20240116; t=1760014774; c=relaxed/simple;
+	bh=e5JU+EEej+UYaag5RGaq8r1rnPbVxtcpHRPK8XuGuKI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=k/F3u0QPnhckUydB5ImFjbtCRQFL4zD7+WcskxFYoSieE3POCuz6QcekYytLBwwWcsqVbdeSiH6AvmUZ9lU7Sj/YpfjBePEkY2MpySTdEHnBr0gb7WmBl3jhZUEt+tG5dbuSuuLhIyb9wZPWUftDHFF8AGreIB9iJ5KTor/2RNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G94Rf8Tc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D83DC4CEE7;
+	Thu,  9 Oct 2025 12:59:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760014773;
+	bh=e5JU+EEej+UYaag5RGaq8r1rnPbVxtcpHRPK8XuGuKI=;
+	h=From:Date:Subject:To:Cc:From;
+	b=G94Rf8TcwEGdLlN3SnzjIRm3WYgCmLcChcN86VR4YcB/CEIvZlRouqiCiqUoh8U9U
+	 TWblrqVDA8ceVUwAomINkWWzvyf+ajyHNUexEZ51sxU/jRRx3crAC6Balab/25XgYG
+	 m3Uh+W4hyqBQY5pRHp6NrI7EE0zTIg4Gh7Ef4XCvK3oC33Vw2ktDIoNj/q6J7HpZXw
+	 3JhHTMK/4Rv648alUr1wLIigMbbKsRqMtGCMPXAR33zS1TzjVW3NTPL93egSO8Ch6z
+	 tC04gxaZaJj2YcY6SHhZ6KPW1TNSHZNEeQijZekRLiH3mpUJ7GpIWIj2D6pJDtRKVG
+	 qup9DRwoJkX6w==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Date: Thu, 09 Oct 2025 14:59:18 +0200
+Subject: [PATCH] arm64: dts: qcom: x1e80100: Describe the full 'link'
+ region of DP hosts
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hfs: Validate CNIDs in hfs_read_inode
-To: Viacheslav Dubeyko <slava@dubeyko.com>,
-        George Anthony Vernon <contact@gvernon.com>,
-        Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-        "frank.li@vivo.com" <frank.li@vivo.com>,
-        "skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel-mentees@lists.linux.dev"
- <linux-kernel-mentees@lists.linux.dev>,
-        "syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com"
- <syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20251003024544.477462-1-contact@gvernon.com>
- <405569eb2e0ec4ce2afa9c331eb791941d0cf726.camel@ibm.com>
- <aOB3fME3Q4GfXu0O@Bertha>
- <6ec98658418f12b85e5161d28a59c48a68388b76.camel@dubeyko.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <6ec98658418f12b85e5161d28a59c48a68388b76.camel@dubeyko.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav401.rs.sakura.ne.jp
-X-Virus-Status: clean
+Message-Id: <20251009-topic-hamoa_dp_reg-v1-1-4c70afa5f029@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAKWx52gC/x3MQQqAIBBA0avIrBNUkKirRIjpVLMoZYwIpLsnL
+ d/i/woFmbDAKCow3lQonQ26ExB2f24oKTaDUcZqpQZ5pUxB7v5I3sXsGDdpow+9shaNXqCFmXG
+ l559O8/t+GMMxcmQAAAA=
+X-Change-ID: 20251009-topic-hamoa_dp_reg-5dac7055e21b
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Sibi Sankar <sibi.sankar@oss.qualcomm.com>, 
+ Rajendra Nayak <quic_rjendra@quicinc.com>, Abel Vesa <abel.vesa@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1760014769; l=2184;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=BySGI5l3xmSxujvS1r//EHNI4zajTcwhIloUQLpdfQs=;
+ b=nIISyw7OoP/4O5B/3DTMjarVufsW3iJyLcwGz7OWZb4NunAI06subptyt1ZX9xFv9xLRJkNwm
+ 00Fq7AUFwHJBJQCOC77hcBAqBSPv/GQjH9ZzgPKiW4E2wxibuhhAJnh
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-I found this patch. Please CC: me when posting V2.
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-On 2025/10/07 22:40, Viacheslav Dubeyko wrote:
-> On Sat, 2025-10-04 at 02:25 +0100, George Anthony Vernon wrote:
->> On Fri, Oct 03, 2025 at 10:40:16PM +0000, Viacheslav Dubeyko wrote:
->>> Let's pay respect to previous efforts. I am suggesting to add this
->>> line:
->>>
->>> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->>>
->>> Are you OK with it?
->> I agree with paying respect to Tetsuo. The kernel docs indicate that
->> the SoB tag
->> isn't used like that. Would the Suggested-by: tag be more
->> appropriate?
->>
+The regions are larger than currently described. Rather inconveniently,
+some control registers, including some related to USB4, are in that
+left-out chunk.
 
-I'm not suggesting this change. Therefore, Cc: might match.
+Extend it to cover the entire region, as per the hw specification.
 
-But I don't like
+Fixes: 1940c25eaa63 ("arm64: dts: qcom: x1e80100: Add display nodes")
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-  Tested-by: syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+index 51576d9c935d..ccd7f9975dac 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
++++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+@@ -5466,7 +5466,7 @@ mdss_dp0: displayport-controller@ae90000 {
+ 				compatible = "qcom,x1e80100-dp";
+ 				reg = <0 0x0ae90000 0 0x200>,
+ 				      <0 0x0ae90200 0 0x200>,
+-				      <0 0x0ae90400 0 0x600>,
++				      <0 0x0ae90400 0 0xc00>,
+ 				      <0 0x0ae91000 0 0x400>,
+ 				      <0 0x0ae91400 0 0x400>;
+ 
+@@ -5554,7 +5554,7 @@ mdss_dp1: displayport-controller@ae98000 {
+ 				compatible = "qcom,x1e80100-dp";
+ 				reg = <0 0x0ae98000 0 0x200>,
+ 				      <0 0x0ae98200 0 0x200>,
+-				      <0 0x0ae98400 0 0x600>,
++				      <0 0x0ae98400 0 0xc00>,
+ 				      <0 0x0ae99000 0 0x400>,
+ 				      <0 0x0ae99400 0 0x400>;
+ 
+@@ -5642,7 +5642,7 @@ mdss_dp2: displayport-controller@ae9a000 {
+ 				compatible = "qcom,x1e80100-dp";
+ 				reg = <0 0x0ae9a000 0 0x200>,
+ 				      <0 0x0ae9a200 0 0x200>,
+-				      <0 0x0ae9a400 0 0x600>,
++				      <0 0x0ae9a400 0 0xc00>,
+ 				      <0 0x0ae9b000 0 0x400>,
+ 				      <0 0x0ae9b400 0 0x400>;
+ 
+@@ -5729,7 +5729,7 @@ mdss_dp3: displayport-controller@aea0000 {
+ 				compatible = "qcom,x1e80100-dp";
+ 				reg = <0 0x0aea0000 0 0x200>,
+ 				      <0 0x0aea0200 0 0x200>,
+-				      <0 0x0aea0400 0 0x600>,
++				      <0 0x0aea0400 0 0xc00>,
+ 				      <0 0x0aea1000 0 0x400>,
+ 				      <0 0x0aea1400 0 0x400>;
+ 
 
-line, for syzbot only tested one cnid which was embedded in the
-reproducer. My modified reproducer which tests all range still hits
-BUG() when the inode number of the record retrieved as a result of
-hfs_cat_find_brec(HFS_ROOT_CNID) is HFS_POR_CNID. That is why I push
-https://lkml.kernel.org/r/427fcb57-8424-4e52-9f21-7041b2c4ae5b@I-love.SAKURA.ne.jp
-as a fix for this problem (and you can propose this patch as a
-further sanity check). Unless
+---
+base-commit: 0b2f041c47acb45db82b4e847af6e17eb66cd32d
+change-id: 20251009-topic-hamoa_dp_reg-5dac7055e21b
 
->>>
->>>> +{
->>>> +	if (likely(cnid >= HFS_FIRSTUSER_CNID))
->>>> +		return true;
->>>> +
->>>> +	switch (cnid) {
->>>> +	case HFS_POR_CNID:
-
-we disable HFS_POR_CNID case (which I guess it is wrong to do so),
-we shall hit BUG() in hfs_write_inode().
-
->>>> +	case HFS_ROOT_CNID:
->>>> +		return type == HFS_CDR_DIR;
->>>> +	case HFS_EXT_CNID:
->>>> +	case HFS_CAT_CNID:
->>>> +	case HFS_BAD_CNID:
->>>> +	case HFS_EXCH_CNID:
->>>> +		return type == HFS_CDR_FIL;
->>>> +	default:
->>>> +		return false;
->>>
-
-
-
->>> int hfs_write_inode(struct inode *inode, struct writeback_control
->>> *wbc)
->>> {
->>> 	struct inode *main_inode = inode;
->>> 	struct hfs_find_data fd;
->>> 	hfs_cat_rec rec;
->>> 	int res;
->>>
->>> 	hfs_dbg("ino %lu\n", inode->i_ino);
->>> 	res = hfs_ext_write_extent(inode);
->>> 	if (res)
->>> 		return res;
->>>
->>> 	if (inode->i_ino < HFS_FIRSTUSER_CNID) {
->>> 		switch (inode->i_ino) {
->>> 		case HFS_ROOT_CNID:
->>> 			break;
->>> 		case HFS_EXT_CNID:
->>> 			hfs_btree_write(HFS_SB(inode->i_sb)-
->>>> ext_tree);
->>> 			return 0;
->>> 		case HFS_CAT_CNID:
->>> 			hfs_btree_write(HFS_SB(inode->i_sb)-
->>>> cat_tree);
->>> 			return 0;
->>> 		default:
->>> 			BUG();
->>> 			return -EIO;
->>>
->>> I think we need to select something one here. :) I believe we need
->>> to remove
->>> BUG() and return -EIO, finally. What do you think? 
-
-I think that removing this BUG() now is wrong.
-Without my patch, the inode number of the record retrieved as a
-result of hfs_cat_find_brec(HFS_ROOT_CNID) can be HFS_POR_CNID or
-greater than HFS_FIRSTUSER_CNID, which I think is a logical error
-in the filesystem image.
-
->>
->> I think that with validation of inodes in hfs_read_inode this code
->> path should
->> no longer be reachable by poking the kernel interface from userspace.
->> If it is
->> ever reached, it means kernel logic is broken, so it should be
->> treated as a bug.
-
-Your patch is incomplete. Please also apply my patch.
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
 
