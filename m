@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-846108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-846109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42F31BC70EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 03:07:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0FF0BC70FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 09 Oct 2025 03:08:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B4943E4E62
-	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 01:07:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C91E53E4E37
+	for <lists+linux-kernel@lfdr.de>; Thu,  9 Oct 2025 01:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3AA6158DA3;
-	Thu,  9 Oct 2025 01:07:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F9D3D987;
+	Thu,  9 Oct 2025 01:07:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z85MDq7b"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cpsu6soK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C697082D;
-	Thu,  9 Oct 2025 01:07:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65ED419D07A;
+	Thu,  9 Oct 2025 01:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759972028; cv=none; b=D84JNm438dyr9ZH9mBrdve6x2rw+Kh1q7L3QWthJ9GcsdSiIPot62PWAJe2H8uyq5B9+MUJqwphe7kDaPctcl2XXN1GLmPRMCD2/wstfvc5x2haBK34Pto7VM2w0pxq5wDa3ccmZfOIBVp93jB5krrpC2CZKJj+wIZU1v7PYYxE=
+	t=1759972030; cv=none; b=Hu90+GsipYIPw2QW6YaNCrQThFUFdzfcDbwI5s4Eb3RAUgVsmSUIsdWCYxHaHwizRfZ6usSW+vcEivhUdlgGXlCGnVbxvjaA4GUj0QlGqcWBBmdtBulzPKEH8u5g1qgfX7hpfFOaToDDsvS9ZXRuy4134vahKTaw3FL/QxcJEKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759972028; c=relaxed/simple;
-	bh=VISjCl3028ZdolLBlNDZGd4lu4o1butuKMV03AtZBlw=;
+	s=arc-20240116; t=1759972030; c=relaxed/simple;
+	bh=1CdwuT+kYcmte8eivy456G2ecK75wHvT2qHam+/7tKI=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=BNUU0AANUHqccrRIptTrY9gZjtGJEozA74zp58XfSB9qOwfrBpucQQB47KmDptEOE/XZoNqgfL74FPmHKPHJK3rxyCkzsyCWbYBSjjFGUy9oDP8fVuaJ/pJ4v6/sjN3ALQdagnbr/R8acTRTr1Ehb3jgPMk6RvRoNMW5OpiyG+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z85MDq7b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EE42C4CEF8;
-	Thu,  9 Oct 2025 01:07:07 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=a+WGCxnojG5f38ScFBOTqU3cgTEdlNDDz3rGl5fzzbDe2TN/R77EXp6JYlvyquV0HdIAcfHNi2ANpUwqdyvoo+XX0JAymQm9FKGDJQpGyrjArywRC3RRvV+UrSD3o1CUFngBAPD81br14dE4VF1x1wd5D0ACSAabNlRiiqbXzfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cpsu6soK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB6FAC4CEE7;
+	Thu,  9 Oct 2025 01:07:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759972027;
-	bh=VISjCl3028ZdolLBlNDZGd4lu4o1butuKMV03AtZBlw=;
+	s=k20201202; t=1759972028;
+	bh=1CdwuT+kYcmte8eivy456G2ecK75wHvT2qHam+/7tKI=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Z85MDq7bFHAVb7Rv7QvW4jT9Y15cPiI0WVlhCJV3Hb8KzH2ZYtKDIugmNBfAaGySd
-	 z5ewF5rNJ+Eg/0lDf4iQ7eqlYgIW0QFXYttqFueGd0EyH0q3YxGVMid01GmetPjhLw
-	 CLKH4BhiZk2QE9ZHGNcP1R+Uu7twuBVmXVU7JX+WU6Qkgezekw/tfTay9IqLn/03qv
-	 fGM0puNNPNlEwlNS8diIH3zKif6A6uWsftAXlyDWexxIsHVq/Ua4/nh1U3nC4uYics
-	 +WuF25l1nNqeg2I6RnH6RhbrrEuRMwXBeUzGy3elVssgawfAsHG1eRRK1qPPGapFZ4
-	 MDqB4RaRlBhng==
+	b=Cpsu6soKqutgxCtUfPezdkxx5CskZoUCgqzxXo1GLczYtT2CWVv8zYILvo1MH+poW
+	 8DhXILNkc/IhfRwPBJ7pkQy0hiD+DaTrCdzXG6qb0D0NXeOCimbRprobtFWuTn47ho
+	 tQbo9vk0bTVjq7sibNH0YszQlPI6Jcarcu66BF/sInizjAkBMDCmXfi46DTJc27HSW
+	 hcP8a7f9wEppJoIJVEDXf2evkRhdga2TKzVhWETk+l1nHvvhF8r7ZY2NaJEr80vbqL
+	 YSkN+7gJaSYfvUVuv4qhYaECiIXdJzyycgv5G4S97GOwlGR0oNXYlAJZEkpT9yJhuT
+	 hJ49LeKwxzDEw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB00C3A41017;
-	Thu,  9 Oct 2025 01:06:56 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70F473A41017;
+	Thu,  9 Oct 2025 01:06:58 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,69 +51,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 00/11] vdso: Various cleanups
+Subject: Re: [PATCH v6 0/8] Add SBI v3.0 PMU enhancements
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <175997201575.3661959.11378704835584004005.git-patchwork-notify@kernel.org>
-Date: Thu, 09 Oct 2025 01:06:55 +0000
-References: <20250826-vdso-cleanups-v1-0-d9b65750e49f@linutronix.de>
-In-Reply-To: <20250826-vdso-cleanups-v1-0-d9b65750e49f@linutronix.de>
-To: =?utf-8?q?Thomas_Wei=C3=9Fschuh_=3Cthomas=2Eweissschuh=40linutronix=2Ede=3E?=@codeaurora.org
-Cc: linux-riscv@lists.infradead.org, luto@kernel.org, tglx@linutronix.de,
- vincenzo.frascino@arm.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, alex@ghiti.fr, namcao@linutronix.de,
- linux@armlinux.org.uk, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- catalin.marinas@arm.com, will@kernel.org, chenhuacai@kernel.org,
- kernel@xen0n.name, tsbogend@alpha.franken.de, maddy@linux.ibm.com,
- mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
- hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
- borntraeger@linux.ibm.com, svens@linux.ibm.com, arnd@arndb.de,
- brauner@kernel.org, shuah@kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
- linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-s390@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux@rasmusvillemoes.dk
+ <175997201703.3661959.2204934721349838885.git-patchwork-notify@kernel.org>
+Date: Thu, 09 Oct 2025 01:06:57 +0000
+References: <20250909-pmu_event_info-v6-0-d8f80cacb884@rivosinc.com>
+In-Reply-To: <20250909-pmu_event_info-v6-0-d8f80cacb884@rivosinc.com>
+To: Atish Kumar Patra <atishp@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, anup@brainfault.org, will@kernel.org,
+ mark.rutland@arm.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ mchitale@ventanamicro.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ kvm-riscv@lists.infradead.org, seanjc@google.com
 
 Hello:
 
 This series was applied to riscv/linux.git (for-next)
-by Thomas Gleixner <tglx@linutronix.de>:
+by Anup Patel <anup@brainfault.org>:
 
-On Tue, 26 Aug 2025 08:17:03 +0200 you wrote:
-> Various cleanups to the generic vDSO infrastructure and a patch for ARM
-> which was never applied.
+On Tue, 09 Sep 2025 00:03:19 -0700 you wrote:
+> SBI v3.0 specification[1] added two new improvements to the PMU chaper.
+> The SBI v3.0 specification is frozen and under public review phase as
+> per the RISC-V International guidelines.
 > 
-> This series has one trivial syntactic conflict with "dso/datastore: Allow
-> prefaulting by mlockall()" [0] and a semantic one with "sparc64: vdso:
-> Switch to generic vDSO library" [1], which still uses the removed
-> GENERIC_VDSO_DATA_STORE.
+> 1. Added an additional get_event_info function to query event availablity
+> in bulk instead of individual SBI calls for each event. This helps in
+> improving the boot time.
 > 
 > [...]
 
 Here is the summary with links:
-  - [01/11] vdso/datastore: Gate time data behind CONFIG_GENERIC_GETTIMEOFDAY
-    https://git.kernel.org/riscv/c/7c0c01a216e6
-  - [02/11] ARM: VDSO: remove cntvct_ok global variable
-    https://git.kernel.org/riscv/c/39f1ee1299c9
-  - [03/11] vdso: Move ENABLE_COMPAT_VDSO from core to arm64
-    https://git.kernel.org/riscv/c/7d298d25ce81
-  - [04/11] vdso/gettimeofday: Remove !CONFIG_TIME_NS stubs
-    https://git.kernel.org/riscv/c/f145d6bf8d59
-  - [05/11] time: Build generic update_vsyscall() only with generic time vDSO
-    https://git.kernel.org/riscv/c/ea1a1fa919a5
-  - [06/11] riscv: vdso: Untangle kconfig logic
-    https://git.kernel.org/riscv/c/eb3b66aab72c
-  - [07/11] vdso: Drop kconfig GENERIC_VDSO_32
-    https://git.kernel.org/riscv/c/278f1c933c3f
-  - [08/11] vdso: Drop kconfig GENERIC_COMPAT_VDSO
-    https://git.kernel.org/riscv/c/bb5bc7bfab06
-  - [09/11] vdso: Drop kconfig GENERIC_VDSO_DATA_STORE
-    https://git.kernel.org/riscv/c/7b338f6d4e3d
-  - [10/11] vdso: Drop kconfig GENERIC_VDSO_TIME_NS
-    https://git.kernel.org/riscv/c/bad53ae2dc42
-  - [11/11] vdso: Gate VDSO_GETRANDOM behind HAVE_GENERIC_VDSO
-    https://git.kernel.org/riscv/c/258b37c6e626
+  - [v6,1/8] drivers/perf: riscv: Add SBI v3.0 flag
+    https://git.kernel.org/riscv/c/8c8d0f002b76
+  - [v6,2/8] drivers/perf: riscv: Add raw event v2 support
+    https://git.kernel.org/riscv/c/656ef2ea30a9
+  - [v6,3/8] RISC-V: KVM: Add support for Raw event v2
+    https://git.kernel.org/riscv/c/190b74154299
+  - [v6,4/8] drivers/perf: riscv: Implement PMU event info function
+    https://git.kernel.org/riscv/c/adffbd06d003
+  - [v6,5/8] drivers/perf: riscv: Export PMU event info function
+    https://git.kernel.org/riscv/c/880fcc329e24
+  - [v6,6/8] RISC-V: KVM: No need of explicit writable slot check
+    https://git.kernel.org/riscv/c/41f4d0cc331a
+  - [v6,7/8] RISC-V: KVM: Implement get event info function
+    https://git.kernel.org/riscv/c/e309fd113b9f
+  - [v6,8/8] RISC-V: KVM: Upgrade the supported SBI version to 3.0
+    https://git.kernel.org/riscv/c/dbdadd943a27
 
 You are awesome, thank you!
 -- 
