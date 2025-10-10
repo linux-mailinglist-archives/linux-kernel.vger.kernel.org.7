@@ -1,148 +1,115 @@
-Return-Path: <linux-kernel+bounces-848710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D877BCE65C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 21:31:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1EF7BCE665
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 21:32:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07DAA19A7C3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 19:32:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 318E319A83BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 19:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304B2301030;
-	Fri, 10 Oct 2025 19:31:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D976D30149B;
+	Fri, 10 Oct 2025 19:32:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="4DtP1zW4"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="27QRfO0E"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD531D6193;
-	Fri, 10 Oct 2025 19:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8218E270EBA;
+	Fri, 10 Oct 2025 19:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760124691; cv=none; b=aTihdudJj5RkQ/gqgcsYHVtjYRy46OpxX4AqrvCaknqL4ofOphpuhuZOMMbXxu5izlWGMMU7Cl3EBAPshxJht+yXurkWJq9IqFFRk3IF9MA5Zoig1/+hoc+hEKma6Oz3QWFfACI+231uCoY8BoFeYw9yrEh6lCQAMUTpFh1mcrI=
+	t=1760124725; cv=none; b=V1LwM5g63BzUluzSV2zOi5PgLSJswROmXl1XLzv44+vsSRiOXaBsqjiObD1LoMbK2UJNnlNSq1W5b1fa/tUfe2OEakp8SdvpnQRId3tgyifbYZxbIJGJTiy0Ujji9Py0GGx1j442F7pu3UXfqKSnwziQtP57yuUURytpG7hoyFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760124691; c=relaxed/simple;
-	bh=AiHgADCO575LW3Jd7nNp0VaAAqwI7NoyKpnJZKEjRNM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O1nlNCr8ge9BgMV1re6mdCNuEKmFczV6jlELXEbEzksmrFykCR/+KQWcWxH1FEofGG9rfdzyM4nvg4nYVP0am7wSsS7Ko8ZlwUVnUpyPqnBc8XGVLYu6txNNwlgjYo2AaEcvVpGCR0IIxDQf2gBagtxZrJMIYTdyoTTHya0WxRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=4DtP1zW4; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=PCNi5/OuVnRwhbzGyuTsh6ukiwTm+O6EJKLlJ1B2gEw=; b=4DtP1zW44Vb6QBKbJyt2gzFny1
-	yvoH5OtVcCy5Ms02majpKQ1uofu1fe3sIP/2IwWe1pCnQE1bX/8S8BSzkwIvvlSHeCqkZdgpfQzr9
-	l1DJFzOWWnoL1D328ZjMcbAmNQAJvPWCjCuiLz0JQmgF36GPQmgapZSILT2ZZnvEKTjGFe4YT7Bnw
-	ooE7Hco/w4VVet2bxVfVNpG2TcG1kU6a8lC9wtEY55wtgG6NGbFAcZ99cGEbz9k7PPnniY3FpdeAu
-	ZxsMIKZ7IfV2CP/X40W2eXqppC5Ws+ANhxeYX9gxltQ7OeitlW10UYQMb6/T8ERzySBkf2wXv9sGm
-	b7s1whdw==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v7Ipn-00000009FkH-15gP;
-	Fri, 10 Oct 2025 19:31:23 +0000
-Message-ID: <07ae142e-4266-44a3-9aa1-4b2acbd72c1b@infradead.org>
-Date: Fri, 10 Oct 2025 12:31:22 -0700
+	s=arc-20240116; t=1760124725; c=relaxed/simple;
+	bh=qtnSzonR6W0Cv1rX5Y6WVUNsvtka5ChSZBJBbqU7rgo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f43/xHohgA60uh2goaf6sqOxlY+aP8VKYs7FA7MJFBcIAkFEEOHphCDzTPEHTaKT9DiMF5V24mFNzMcm9twQAMtb4w6+muEG7qoSmU+xU4i2v6tWoqZ6lcfEfBM+zNvG9m1S4hsIZ88Xqi8YiXATSMEWe8MyZ/Ks5rLfztlo88w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=27QRfO0E; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=sPg6tFmE44GO59Osmm6OJOsXJFjD9dOzK+Pou3aQd1c=; b=27QRfO0Egr4ssojusmNF/vvsXi
+	6sPZztKOfe+I3ZeGlmigAgpjzzSxVViZTvdyVqzi/1WpBAAreUqrl3eg8oRMEhWk15NhHNVnoeOkf
+	RavLSNw0COOTLc0bZ9h1DoJ/+no6V6J5tmj/zYPBaWJv40C9NRS57bCzvQ8XS7R6edmU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1v7IqJ-00Acyl-Qt; Fri, 10 Oct 2025 21:31:55 +0200
+Date: Fri, 10 Oct 2025 21:31:55 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Shenwei Wang <shenwei.wang@nxp.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH v3 3/4] gpio: imx-rpmsg: add imx-rpmsg GPIO driver
+Message-ID: <6025be80-7007-48bb-bdd1-c8198e951400@lunn.ch>
+References: <20251009222716.394806-1-shenwei.wang@nxp.com>
+ <20251009222716.394806-4-shenwei.wang@nxp.com>
+ <eb99d9a8-eb96-445d-899a-6e1d9b6f6c69@lunn.ch>
+ <PAXPR04MB9185A829534963B22D1C49FD89EFA@PAXPR04MB9185.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] initrd: remove deprecated code path (linuxrc)
-To: Askar Safin <safinaskar@gmail.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
- Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
- Jens Axboe <axboe@kernel.dk>, Andy Shevchenko <andy.shevchenko@gmail.com>,
- Aleksa Sarai <cyphar@cyphar.com>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- Julian Stecklina <julian.stecklina@cyberus-technology.de>,
- Gao Xiang <hsiangkao@linux.alibaba.com>, Art Nikpal <email2tema@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>, Alexander Graf <graf@amazon.com>,
- Rob Landley <rob@landley.net>, Lennart Poettering <mzxreary@0pointer.de>,
- linux-arch@vger.kernel.org, linux-block@vger.kernel.org,
- initramfs@vger.kernel.org, linux-api@vger.kernel.org,
- linux-doc@vger.kernel.org, Michal Simek <monstr@monstr.eu>,
- Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>,
- Thorsten Blum <thorsten.blum@linux.dev>, Heiko Carstens <hca@linux.ibm.com>,
- Arnd Bergmann <arnd@arndb.de>, Dave Young <dyoung@redhat.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Krzysztof Kozlowski <krzk@kernel.org>, Borislav Petkov <bp@alien8.de>,
- Jessica Clarke <jrtc27@jrtc27.com>, Nicolas Schichan <nschichan@freebox.fr>,
- David Disseldorp <ddiss@suse.de>, patches@lists.linux.dev
-References: <20251010094047.3111495-1-safinaskar@gmail.com>
- <20251010094047.3111495-3-safinaskar@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251010094047.3111495-3-safinaskar@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PAXPR04MB9185A829534963B22D1C49FD89EFA@PAXPR04MB9185.eurprd04.prod.outlook.com>
 
-Hi,
-
-On 10/10/25 2:40 AM, Askar Safin wrote:
-> Remove linuxrc initrd code path, which was deprecated in 2020.
+> The only platform-specific part is the message format exchanged between Linux and the remote processors.
+> As long as the remote processor follows the same message protocol, the driver should work as expected.
 > 
-> Initramfs and (non-initial) RAM disks (i. e. brd) still work.
+> Here's the layout of the message packets:
 > 
-> Both built-in and bootloader-supplied initramfs still work.
+> +--------+--------+--------+--------+--------+----------------+--------+--------+---------------+---------------+
+> |0x00    |0x01    |0x02    |0x03    |0x04    |0x05..0x09      |0x0A    |0x0B    |0x0C           |0x0D           |
+> |cate    |major   |minor   |type    |cmd     |reserved[5]     |pin_idx |port_idx|out:{evt/rc/v} |in:{wkup/val}  |
+> +--------+--------+--------+--------+--------+----------------+--------+--------+---------------+---------------+
 > 
-> Non-linuxrc initrd code path (i. e. using /dev/ram as final root
-> filesystem) still works, but I put deprecation message into it
+> Cate (Category field ): can be GPIO /I2C/PMIC/AUDIO ... etc
+> Major : Major version number
+> Minor: Minor version number
+> Type (Message Type): Can be SETUP / REPLY /NOTIFY for GPIO category
+> Cmd (Command): Can be Input INIT / Output INIT / Input GET for GPIO category
+> Pin_idx: The GPIO line index
+> Port_idx: The GPIO controller index
 > 
-> Signed-off-by: Askar Safin <safinaskar@gmail.com>
-> ---
->  .../admin-guide/kernel-parameters.txt         |  4 +-
->  fs/init.c                                     | 14 ---
->  include/linux/init_syscalls.h                 |  1 -
->  include/linux/initrd.h                        |  2 -
->  init/do_mounts.c                              |  4 +-
->  init/do_mounts.h                              | 18 +---
->  init/do_mounts_initrd.c                       | 85 ++-----------------
->  init/do_mounts_rd.c                           | 17 +---
->  8 files changed, 17 insertions(+), 128 deletions(-)
+> For Out packet:  
+> 	if it is OUPUT INIT, the out field value is the gpio output level.
+> 	If it is INPUT INIT, the out filed is 0.
 > 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 521ab3425504..24d8899d8a39 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -4285,7 +4285,7 @@
->  			Note that this argument takes precedence over
->  			the CONFIG_RCU_NOCB_CPU_DEFAULT_ALL option.
->  
-> -	noinitrd	[RAM] Tells the kernel not to load any configured
-> +	noinitrd	[Deprecated,RAM] Tells the kernel not to load any configured
->  			initial RAM disk.
->  
->  	nointremap	[X86-64,Intel-IOMMU,EARLY] Do not enable interrupt
-> @@ -5299,7 +5299,7 @@
->  	ramdisk_size=	[RAM] Sizes of RAM disks in kilobytes
->  			See Documentation/admin-guide/blockdev/ramdisk.rst.
->  
-> -	ramdisk_start=	[RAM] RAM disk image start address
-> +	ramdisk_start=	[Deprecated,RAM] RAM disk image start address
->  
->  	random.trust_cpu=off
->  			[KNL,EARLY] Disable trusting the use of the CPU's
+> For In packet:
+> 	If it is a REPLY message, the out field is return code. 0 means success.  
+> 	If it is a REPLY of INPUT GET, the in field is the value of GPIO line level.
+> 	If it is an NOTIFY type of message, it simulates an interrupt event from the remote processor.
+> 
+> I can add above comments in the commit log or the beginning of the driver source file.
 
-There are more places in Documentation/ that refer to "linuxrc".
-Should those also be removed or fixed?
+Maybe Documentation/admin-guide/gpio-rpmsg.rst would be better.  You
+should also document how to handle features the device does not
+support. e.g. i _think_ your hardware supports all 4 interrupt
+types. But maybe other hardware needs to return something meaning
+-EOPNOTSUP?
 
-accounting/delay-accounting.rst
-admin-guide/initrd.rst
-driver-api/early-userspace/early_userspace_support.rst
-power/swsusp-dmcrypt.rst
-translations/zh_CN/accounting/delay-accounting.rst
-
-
-Thanks.
-
-
+	Andrew
 
