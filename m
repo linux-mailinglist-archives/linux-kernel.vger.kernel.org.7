@@ -1,235 +1,125 @@
-Return-Path: <linux-kernel+bounces-847759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6CD4BCB9BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:08:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FEB8BCB9B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 06:08:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 552E84FA65C
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 04:08:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1B6D4083E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 04:07:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C09072AD31;
-	Fri, 10 Oct 2025 04:08:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E361FAC42;
+	Fri, 10 Oct 2025 04:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="VCOjjjWI"
-Received: from mail-m49231.qiye.163.com (mail-m49231.qiye.163.com [45.254.49.231])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MTQhtqJO"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F79182D0;
-	Fri, 10 Oct 2025 04:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFBE2AD31
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 04:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760069286; cv=none; b=NR+uTAryqKQL+Kmds2HYAKleGK2tcX/62HuJ18Bmp2AVJ7d1iJWoMrbfiMNHvb8Ns3Sp0sxVU6es5Dz5Ejze8DQJmryRV9lf9W2NmcXQclWB7aIlywC0b+7lHBbvXy1rpiWAHn3yL1AlpM56pMr3eRwBeH+ggW2H9+1RFoVkdoQ=
+	t=1760069264; cv=none; b=Hl+oMEgHUzeckaOKG7hAtbnrCdTdqw6OcNi3h1ZV5IXY6vW1NsQargkwdcHOzFPBJCAs8ndBDgtd4jr0BHmpLGdilSEwNkx9nsFdY+ihqO8u058nGO0cCYNyNLDMPuHK41t4/1vPUz1gv5Y7D1ixLuSLkLL45X/e4yrB238IZfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760069286; c=relaxed/simple;
-	bh=X63iAn+aQH9VSzWIOvI40cDDjWVc1dw6bbn/t20RtYI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UB4HO2yk1kTPDtT3BlhpZVpa20pDRCIwGI5EDMQYhQ4kkiX5TlfJZDIoiFXh7og/dOOxIkwSjD+Uhkx2jv0qDlQV6kmu2SgkUoJcfE0XZN1kt8+4yoUaOqZISpcyvIGST/BA7BAEmGx3WUaaoRVJhVUzS5cLOowH5zLsP8/0nFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=VCOjjjWI; arc=none smtp.client-ip=45.254.49.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.26] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 256613dc5;
-	Fri, 10 Oct 2025 12:02:44 +0800 (GMT+08:00)
-Message-ID: <b47c5579-511e-4831-b86e-48ad4cefaa6c@rock-chips.com>
-Date: Fri, 10 Oct 2025 12:02:43 +0800
+	s=arc-20240116; t=1760069264; c=relaxed/simple;
+	bh=zKp2kw3Tfj/wI+7DBmKCMChAalHVoRdliS5fwx1zm9s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ujEVVP2R7HVUPxSl+ZGagf+Or0foZzBIO/7j3peaKmXd2JdOUTcoy0ZwP8JOv2qXLvvbrCJLk1ns04epRaNXDm+iwaCkCa40cQRuZ15q5Jbaw2fqIf1R/7n67DwiVO66x0zTe+s0kBPUOdel/smorWET4XmqTwKhvlQb8jGHzt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MTQhtqJO; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-73b4e3d0756so19577777b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 09 Oct 2025 21:07:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1760069260; x=1760674060; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zKp2kw3Tfj/wI+7DBmKCMChAalHVoRdliS5fwx1zm9s=;
+        b=MTQhtqJO+fB23BeKxPChePBiul2OLD2R3e4r3/DBj5FLkEAuL0XSceSwP5w5vMbnmZ
+         l042076U99GkRQvHqrdAzbVDwCW4eeypNzpcLQdRO1KUT1CBsk/MB0MXNkPJuViMaDgh
+         1dDSkmBJLlA+wMSkgc2OpI21yLucA+ywwLmE/B4fj9AKSCShFPkwrCY6j4IS/f6hrzvh
+         LHNxt1GryrhatGCYhA2KFuZJAeJ50Yas5ibGAHfG/tMWPAlvGKKMde7gORw+L7RR1o9q
+         8lIZjeMw75nk7FSwmxnzCwhNG6pIiaIDRurrsPBd9G2WJTuf2T/CWP2V/QeJEKWVHjc5
+         1ZuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1760069260; x=1760674060;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zKp2kw3Tfj/wI+7DBmKCMChAalHVoRdliS5fwx1zm9s=;
+        b=nddKPX82V0p6xhpLBiTZ0HFggSvLu2CAxv2oGUsdlTyK+yrgBGu0cwh7/bWXfRdWSg
+         uIzd3m2nkpzW3goys4N+LnavdaJNoe29KfEpR/hlPYWlB05lQ9l7RAcSBlvXPr4VWA3Y
+         7aVEunX+9wRxj0df4LFLMHti6CnZzxb5MYG4a4O6ZAl/seAABSYMspJTGKO+k+nmHMAH
+         CPd2AX8KZBXoTvxSsc2zreWOltHGUu9NuHB0YXgc+tdlR+Eqho5h7mxVtpHwMlCuYmRN
+         jvRfygy4womVRhZJZdrCX9XGkDJv2PhXuI2HuCvwOhHhcuVbbeZJ36LlWw/8CVAZ58aX
+         Cwrw==
+X-Forwarded-Encrypted: i=1; AJvYcCUWeHArX5aM6BMsYqDDrqO3rjaCUtkqNZ+WE80JT/rMkNFkR8xhdjHA6D1nxNVSjN9BJUqye5Q8Qmw6u+o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXJ7UUIAawyaDbKBzdkHU+3DeKhwnQzOstGJfeYkctAU2uPfRX
+	m+BxdXmXLpoe+oQKE3yFpORnYy2AkLHqagXWiH6H6kjOkiS/uATXVGnPAKDqUYXAaNPCyh+WocB
+	I5sJ9EmlYStjhuBkGECDDgYxUnGgh+nc=
+X-Gm-Gg: ASbGncuFamXZMfNEu431UbJQJ4wSuVfxTLpD3KrGmEUBI4WUckieWoVbq5XiJKjQNvv
+	emY90YGJJLbHhXFX8KVbxM1YIWQgt3n6dfxke0pACmoz12GZGR+lJ1T5ru3bBpdST1LWkMJipnF
+	Fl38xS/Qxiyyq2TnYSNyKUcqSxO4/xFXKdC966ku8Wn8rbejTdzerjBq7hFQXtZ3WYJLP72RD3Q
+	E2IYKm/K9XhWdBPntKre9umdQ==
+X-Google-Smtp-Source: AGHT+IFQERg8mTh7nax6OaWavJ8DgllCOHm5p0zLQR54uFFNlwqM0wGCA+Q/Rj/bdvDMe/rRbnhyAA7hAcefbtq0UHo=
+X-Received: by 2002:a53:ca49:0:b0:633:a883:3d1b with SMTP id
+ 956f58d0204a3-63ccb87491emr6995599d50.6.1760069259733; Thu, 09 Oct 2025
+ 21:07:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/bridge: analogix_dp: Fix connector status detection
- for bridges
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: m.szyprowski@samsung.com, andrzej.hajda@intel.com,
- neil.armstrong@linaro.org, rfoss@kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
-References: <20251009193028.4952-1-heiko@sntech.de>
- <v6aqic6kffc3x42dkb4bika5tvoqdpmmloroqio2656g74pkws@7fe3bsfzbasn>
- <3572997.QJadu78ljV@diego>
-Content-Language: en-US
-From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <3572997.QJadu78ljV@diego>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a99cc49106703a3kunm83717e1fa8459
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGklOSlZPGUgZTkNMGh1DHU1WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=VCOjjjWIpm8zpF9NqD0SP/ze5+hbIMIcSXoNvqOQfkmwmjkR5AcJwvXZDcLpheH0NZr8ZoT5Dlq8tfuxsW5qN4Y9ZRDF7m5Z1/TSpFCfjLJeqrJjzs7+YC0W2vMw+JhU2Ij7RyJydf4czuEd03Tx/NsyfP+Kir+EymCgdAoNXqk=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=GjdmS7xtW1HFPjDkBq2hnFUV3l8gzHZMY6mZgqnMerE=;
-	h=date:mime-version:subject:message-id:from;
+References: <20250913003842.41944-1-safinaskar@gmail.com> <20250913003842.41944-29-safinaskar@gmail.com>
+ <20250916030903.GA3598798-robh@kernel.org>
+In-Reply-To: <20250916030903.GA3598798-robh@kernel.org>
+From: Askar Safin <safinaskar@gmail.com>
+Date: Fri, 10 Oct 2025 07:07:02 +0300
+X-Gm-Features: AS18NWBct1j-7S8OHD6pljCYd2aEZxR7vcCRPjZz3T1pRcQcUgdDoCBWxEfbyM8
+Message-ID: <CAPnZJGAvQirGTJTiTxumn8sAJ5KYDv8+MUTBmEW2fYX+r2RE3Q@mail.gmail.com>
+Subject: Re: [PATCH RESEND 28/62] init: alpha, arc, arm, arm64, csky, m68k,
+ microblaze, mips, nios2, openrisc, parisc, powerpc, s390, sh, sparc, um, x86,
+ xtensa: rename initrd_{start,end} to virt_external_initramfs_{start,end}
+To: Rob Herring <robh@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Christian Brauner <brauner@kernel.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, 
+	Jens Axboe <axboe@kernel.dk>, Andy Shevchenko <andy.shevchenko@gmail.com>, 
+	Aleksa Sarai <cyphar@cyphar.com>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+	Julian Stecklina <julian.stecklina@cyberus-technology.de>, 
+	Gao Xiang <hsiangkao@linux.alibaba.com>, Art Nikpal <email2tema@gmail.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Eric Curtin <ecurtin@redhat.com>, 
+	Alexander Graf <graf@amazon.com>, Rob Landley <rob@landley.net>, 
+	Lennart Poettering <mzxreary@0pointer.de>, linux-arch@vger.kernel.org, 
+	linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org, 
+	linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
+	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org, 
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-um@lists.infradead.org, x86@kernel.org, 
+	Ingo Molnar <mingo@redhat.com>, linux-block@vger.kernel.org, initramfs@vger.kernel.org, 
+	linux-api@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-efi@vger.kernel.org, linux-ext4@vger.kernel.org, 
+	"Theodore Y . Ts'o" <tytso@mit.edu>, linux-acpi@vger.kernel.org, Michal Simek <monstr@monstr.eu>, 
+	devicetree@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Thorsten Blum <thorsten.blum@linux.dev>, Heiko Carstens <hca@linux.ibm.com>, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Tue, Sep 16, 2025 at 6:09=E2=80=AFAM Rob Herring <robh@kernel.org> wrote=
+:
+> There's not really any point in listing every arch in the subject.
 
-On 10/10/2025 7:42 AM, Heiko Stübner wrote:
-> Hi Dmitry,
-> 
-> Am Freitag, 10. Oktober 2025, 00:30:11 Mitteleuropäische Sommerzeit schrieb Dmitry Baryshkov:
->> On Thu, Oct 09, 2025 at 09:30:28PM +0200, Heiko Stuebner wrote:
->>> Right now if there is a next bridge attached to the analogix-dp controller
->>> the driver always assumes this bridge is connected to something, but this
->>> is of course not always true, as that bridge could also be a hotpluggable
->>> dp port for example.
->>>
->>> On the other hand, as stated in commit cb640b2ca546 ("drm/bridge: display-
->>> connector: don't set OP_DETECT for DisplayPorts"), "Detecting the monitor
->>> for DisplayPort targets is more complicated than just reading the HPD pin
->>> level" and we should be "letting the actual DP driver perform detection."
->>>
->>> So use drm_bridge_detect() to detect the next bridge's state but ignore
->>> that bridge if the analogix-dp is handling the hpd-gpio.
->>>
->>> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
->>> ---
->>> As this patch stands, it would go on top of v6 of Damon's bridge-connector
->>> work, but could very well be also integrated into one of the changes there.
->>>
->>> I don't know yet if my ordering and/or reasoning is the correct one or if
->>> a better handling could be done, but with that change I do get a nice
->>> hotplug behaviour on my rk3588-tiger-dp-carrier board, where the
->>> Analogix-DP ends in a full size DP port.
->>>
->>>   drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 8 ++++++--
->>>   1 file changed, 6 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->>> index c04b5829712b..cdc56e83b576 100644
->>> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->>> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
->>> @@ -983,8 +983,12 @@ analogix_dp_bridge_detect(struct drm_bridge *bridge, struct drm_connector *conne
->>>   	struct analogix_dp_device *dp = to_dp(bridge);
->>>   	enum drm_connector_status status = connector_status_disconnected;
->>>   
->>> -	if (dp->plat_data->next_bridge)
->>> -		return connector_status_connected;
->>> +	/*
->>> +	 * An optional next bridge should be in charge of detection the
->>> +	 * connection status, except if we manage a actual hpd gpio.
->>> +	 */
->>> +	if (dp->plat_data->next_bridge && !dp->hpd_gpiod)
->>> +		return drm_bridge_detect(dp->plat_data->next_bridge, connector);
+Ok, I will fix this.
 
-I have tried to use the drm_bridge_detect() API to do this as 
-simple-bridge driver, but it does not work well for bridges that do not 
-declare OP_DETECT.
 
-Take nxp-ptn3460 as an example, the connected status will be treated as 
-connector_status_unknown via the following call stack:
-
-drm_helper_probe_single_connector_modes()
-   -> drm_helper_probe_detect()
-      -> drm_bridge_connector_detect()
-         -> analogix_dp_bridge_detect()
-            -> drm_bridge_detect()
-               -> return connector_status_unknown due to !OP_DETECT
-
-However, the connected status will be connector_status_connected as 
-expected if Analogix DP does not declare OP_DETECT[0]:
-
-drm_helper_probe_single_connector_modes()
-   -> drm_helper_probe_detect()
-      -> drm_bridge_connector_detect()
-         -> return connector_status_connected due to CONNECTOR_LVDS
-
-Base on Andy's commit 5d156a9c3d5e ("drm/bridge: Pass down connector to 
-drm bridge detect hook"), the drm_connector becomes available in 
-drm_bridge_detect().
-
-It may be better to unify the logic of drm_bridge_detect() and 
-drm_bridge_connector_detect(), which sets the connected status according 
-to the connector_type. Then the codes will be more reasonable and become 
-similar to the simple-bridge demo via 
-'drm_bridge_detect(dp->plat_data->next_bridge, connector)'.
-
-But we still need a specific check for DP-connector to resolve this 
-issue. The '!dp->hpd_gpiod' may not be well-considered. Perhaps we could 
-introduce a new API, similar to drm_bridge_is_panel(), called 
-drm_bridge_is_display_connector()?
-
->>
->> And it's also not correct because the next bridge might be a retimer
->> with the bridge next to it being a one with the actual detection
->> capabilities. drm_bridge_connector solves that in a much better way. See
->> the series at [1]
->>
->> [1] https://lore.kernel.org/dri-devel/41c2a141-a72e-4780-ab32-f22f3a2e0179@samsung.com/
-> 
-> Hence my comment above about that possibly not being the right variant.
-> Sort of asking for direction :-) .
-> 
-> I am working on top of Damon's drm-bridge-connector series as noted above,
-> but it looks like the detect function still is called at does then stuff.
-> 
-> My board is the rk3588-tiger-displayport-carrier [0], with a dp-connector
-> which is the next bridge, so _without_ any changes, the analogix-dp
-> always assumes "something" is connected and I end up with
-> 
-> [    9.869198] [drm:analogix_dp_bridge_atomic_enable] *ERROR* failed to get hpd single ret = -110
-> [    9.980422] [drm:analogix_dp_bridge_atomic_enable] *ERROR* failed to get hpd single ret = -110
-> [   10.091522] [drm:analogix_dp_bridge_atomic_enable] *ERROR* failed to get hpd single ret = -110
-> [   10.202419] [drm:analogix_dp_bridge_atomic_enable] *ERROR* failed to get hpd single ret = -110
-> [   10.313651] [drm:analogix_dp_bridge_atomic_enable] *ERROR* failed to get hpd single ret = -110
-> 
-> when no display is connected.
-> 
-> With this change I do get the expected hotplug behaviour, so something is
-> missing still even with the bridge-connector series.
-> 
-> 
-> Heiko
-> 
-> 
-> [0] v3: https://lore.kernel.org/r/20250812083217.1064185-3-heiko@sntech.de
->      v4: https://lore.kernel.org/r/20251009225050.88192-3-heiko@sntech.de
->      (moved hpd-gpios from dp-connector back to analogix-dp per dp-connector
->      being not able to detect dp-monitors)
->>
->>>   
->>>   	if (!analogix_dp_detect_hpd(dp))
->>>   		status = connector_status_connected;
->>
->>
-> 
-> 
-
-I see... There is also a way to leave the connected status check in 
-Analogix DP bridge:
-
-1.If the later bridge does not support HPD function, the 'force-hpd' 
-property must be set under the DP DT node. The DT modifications may be
-large by this way.
-2.If the later bridge do support HPD function like the DP-connector, the
-connected status detection method is GPIO HPD or functional pin HPD.
-
-With the DT modifications for above 1, the analogix_dp_bridge_detect() 
-can be simplified to:
-
-static enum drm_connector_status
-analogix_dp_bridge_detect(struct drm_bridge *bridge, struct 
-drm_connector *connector)
-{
-	struct analogix_dp_device *dp = to_dp(bridge);
-	enum drm_connector_status status = connector_status_disconnected;
-
-	if (!analogix_dp_detect_hpd(dp))
-		status = connector_status_connected;
-
-	return status;
-}
-
-Best regards,
-Damon
-
-[0]https://lore.kernel.org/all/22a5119c-01da-4a7a-bafb-f657b1552a56@rock-chips.com/
-
+--=20
+Askar Safin
 
