@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-847984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-847985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16E4FBCC35D
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:47:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F620BCC36C
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 10:49:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CC88188EAFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:48:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 455F0188BD5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 08:49:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10BA23ABA1;
-	Fri, 10 Oct 2025 08:47:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3541F258CFA;
+	Fri, 10 Oct 2025 08:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V69MybbW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gV1PWpU1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1733034BA34;
-	Fri, 10 Oct 2025 08:47:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83ED423ABA1;
+	Fri, 10 Oct 2025 08:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760086049; cv=none; b=Yp2mbfuhPq0Kp33REv72ITux3U5H9vx8zVYBzpk8xvM44rmEK/uIXw7ylelgkMW19lBu/09l+07Iu0IjNfBLMmtpf5H3+D4L1OP2OpylfpbFFtvcBwEOAHYI9fLietzjw4AJuVpC+Dm4Ed6O1SdPwMeyC+bQV5ob6H15kDMp7ww=
+	t=1760086151; cv=none; b=PNT/q+nk4IgLKAEoTkNPOZ5qlq4c8knuCGQbxZ2ckHSNWspyB71gmIgGJQHM4uWZBNGqEWTGXLw1z+RB3DL1GKeBGZiTMCfO6jOG9aSoGL00DOC0VpMcaQfcv3dFx/jHFDfjvZozNcqUG4T0gZiM/Unst8JqfWIAeFHTd1jSYwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760086049; c=relaxed/simple;
-	bh=5ZjF/edBLuVtifBB9F7s4zV657A7tnM/MJmVoH+vwi0=;
+	s=arc-20240116; t=1760086151; c=relaxed/simple;
+	bh=a0RRr6OOdtVYcLYaZeReQC7vOkfUX13MwvuWF9/B8CU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y2ugGxyHDHLUgvEEm8vNs+7T9doAjCFx7cZ4xZno/Z39odE897EOS61DlRGv1EI+22StBCiH0+EQM/m+DjBsVMqVXMhPoRMeQpHdldD1N/QyVz9ywaabXi95rLSNydTOXf1NcLRuiXT3oF/3diiPn+UlmidN8ZCHgyOfw5FSh3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V69MybbW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA31DC4CEF8;
-	Fri, 10 Oct 2025 08:47:21 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=htPbOaAy6SLmEHuOImweBT7M83mViGyRJhiaBoWcRuEX79+VicUy9SY2NoMotvXjrec7C7g0QDa8T2mHH2d5mb8NkzBvdeH3EMjwoZ9sCF+BSUiEqAIUA0FyPbQ0O4pzbRrsDBqYfaIUGoXKj84Y07QtzR4l7S4Cxe9BpT2qc+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gV1PWpU1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 552BBC4CEF1;
+	Fri, 10 Oct 2025 08:49:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1760086048;
-	bh=5ZjF/edBLuVtifBB9F7s4zV657A7tnM/MJmVoH+vwi0=;
+	s=k20201202; t=1760086150;
+	bh=a0RRr6OOdtVYcLYaZeReQC7vOkfUX13MwvuWF9/B8CU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=V69MybbWHyp/8CMwfh903AwO832Jv2dVCAVJmOvWnLGtlQLM8SwVk+hhO1Fk/h1Fw
-	 aquc6U8M7Uo8MASONl7uaqEp7Sec834nNPWeCcHiHP21VX6zarM55quog7iKRLIdK9
-	 hUAbZDunj2rQLmgrVu9sU2xH54CGA6EYLXiNaYHcThVp3jtsSexk5gl+tdS2HLBOab
-	 d1/O9nksvbP2cpHW3pJyqRmsNubKnt0pHL7jHP33uJm+oADjAK9H5cFmsS2cc+tdh9
-	 8y9eY4jDMS5TxtwxCWNyIvdXWn7aIO8u79+EoZaW1xDKPkMcYaCeAxh5dZ947L+4II
-	 o3fLz76yNcJ3w==
-Message-ID: <82bcd40f-7e94-43ca-99c9-234458011b9b@kernel.org>
-Date: Fri, 10 Oct 2025 10:47:19 +0200
+	b=gV1PWpU1uqJZj/+si8MbW1bv7yiRllIj9UxLg7JJrkJRaN7hL0KQ+xCLvQKcyXg4A
+	 m7t8CfNFgkdAXb7GgnG8skaN0XbnjSfGpQL/IQ8bQUPkQacjeMK17N1W4bAhwbztcb
+	 KBe30BcfXSye0825Gzv7QUqk63WtkwXRpG4/R/J4gRRiBN03OI3HEBmWJcPbqnvuFL
+	 8hV+f+UHcaZ7edZZhoWKUOkB6sGlWSRPpK8gonDyivR0ZXAMDOvQFGYdAeQ0PE/IZ/
+	 YC9LMWmy+PEW6yVkrzJWrRDF4YQaOkDMqCCmS5pr0eaDsF5camsEGZ/T0zhlozPP2j
+	 KgsOKO/L2l79Q==
+Message-ID: <02864e41-cbf7-42e1-87ba-95bdac6d9e6d@kernel.org>
+Date: Fri, 10 Oct 2025 10:49:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +49,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/15] arm64: dts: allwinner: h616: add NAND controller
+Subject: Re: [PATCH 02/15] dt-bindings: mtd: sunxi: Add new compatible
 To: Richard Genoud <richard.genoud@bootlin.com>,
  Miquel Raynal <miquel.raynal@bootlin.com>,
  Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
@@ -65,7 +65,7 @@ Cc: Wentao Liang <vulab@iscas.ac.cn>,
  linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
  linux-kernel@vger.kernel.org
 References: <20251010084042.341224-1-richard.genoud@bootlin.com>
- <20251010084042.341224-4-richard.genoud@bootlin.com>
+ <20251010084042.341224-3-richard.genoud@bootlin.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -111,30 +111,25 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251010084042.341224-4-richard.genoud@bootlin.com>
+In-Reply-To: <20251010084042.341224-3-richard.genoud@bootlin.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 10/10/2025 10:40, Richard Genoud wrote:
-> The H616 has a NAND controller quite similar to the A10/A23 ones, but
-> with some register differences, more clocks (for ECC and MBUS), more ECC
-> strengths, so this requires a new compatible string.
-> 
-> This patch adds the NAND controller node and pins in the device tree.
+> +
+>  properties:
+>    compatible:
+>      enum:
+>        - allwinner,sun4i-a10-nand
+>        - allwinner,sun8i-a23-nand-controller
+> +      - allwinner,sun50i-h616-nand-controller
 
 
-Please do not use "This commit/patch/change", but imperative mood. See
-longer explanation here:
-https://elixir.bootlin.com/linux/v6.16/source/Documentation/process/submitting-patches.rst#L94
-
-> 
-> Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
-> ---
-
-Confusing order of patches. Driver code cannot depend on DTS.
-
-See submitting patches in DT. It is VERY explicit about it. Please also
-read maintainer soc profile.
+Also:
+1. missing new line - why did you remove it?
+2. Keep existing sunxi preferred order of entries. In other platforms it
+is alphanumerical, not natural. In case sunxi uses something else, just
+be sure you use sunxi order.
 
 Best regards,
 Krzysztof
