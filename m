@@ -1,201 +1,127 @@
-Return-Path: <linux-kernel+bounces-848570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-848571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA287BCE101
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 19:16:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21CBEBCE107
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 19:16:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9605A4EE5FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:16:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 126D84EE41A
+	for <lists+linux-kernel@lfdr.de>; Fri, 10 Oct 2025 17:16:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C20521D599;
-	Fri, 10 Oct 2025 17:15:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645A21FF5F9;
+	Fri, 10 Oct 2025 17:16:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="EiRuN4vA"
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012035.outbound.protection.outlook.com [52.101.53.35])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EoeziE5l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE29212B2F;
-	Fri, 10 Oct 2025 17:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.35
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1760116555; cv=fail; b=c8ky+lIWUs2nCCdeXo5zjtmJlvDIirjwfCiFWpKYb2FARC1KvmJmEfCaJgKi9Sfr0UW89aVdsdJIrMGRwQdXQFtBn50rJe82ii7sPq4EeN7w2Q8y/WYvlbpteG2fUVEUbAGI5rREEkaM8ludHVtKd6c7mCA3h5sM3C++otDS9jM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1760116555; c=relaxed/simple;
-	bh=Y7UD/oFqnLasfb6zAUS+WGDyL7F3elxKejyE5l2kd9s=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=rqskJYtVw/Nf0paxtRIrm/5bLWpItSOgN3TRcc1tdYpUYSg6/RGgILMUJM8zuEnNqu6dtZvHqY0C9nzb9KXzYyB/hi/rmo6AFyqfB4YyWweENdG3ZiGPDaMDXWWSMK/sJXjtDImMjUhaGLPaQAW6/gdV4u+499R51sDoIOusURI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=EiRuN4vA; arc=fail smtp.client-ip=52.101.53.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=I5IuDgGhOLmZqPniBdMS/nL86gZATa+Ds45FQq+6NNBl/Ylg2ALc1YM8fgsmn4kqSbn+UEePS9Rm3eln+Y8fIyoDQ4B8CtCOM6/teCggtJI1VmREsGEu3W0hNy9cavx+cjF3QgSdaWP6k0+/wTjFeUkxXxfI8NWsW13cwLGok00plFqyj6VR4Zmv1IilajYtrp4CznLsJ+2++/cs3ut0qzPUKYwEQirIwh10tYN46gvB3MujmwF8qFOtK/r/jbSLJvPGIUQ+zwgi2q4vnPr5jXygwd4PjTQcKGTV/r2hqFDTtBCCpvALiUMGb04jfYgOaK8TMRoHHG6x5SEBOjZ8qg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7uXxr5cxIg4c2ABdk8hMNszSnkckDlcyO6ZpL89Hhh8=;
- b=VTZwN0fOO9XyYWqOdP3l0imrHs+op2RJKhNnUWbGgUaOpYroW76ysqScRhoqEOghGKl12iBGTejSJOA6/P/yMHeA8nq9+bnD2axo4nsJ6mr0AACU8I0+ncywbKFBXUfPNJiJntFH4EYzrGVpLYzfuJ/tzE7x73zs2eD+Q0CabqyPNnn0/y5l0iR5rsK7/rkAaZQkr84aJzMasl7xmeZ8je1/EQgXcJyHqh5SwL6/Xr6SWSFUbz2BjIqzeHAbAXNDiTMG/KiGanHGFwTdq5/YZCFHF+CyNTuvPoKyRmaPZoUXcyHnar+d68Fh8SD0h056IxsoUh7sB/DIrch3FqRHvA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7uXxr5cxIg4c2ABdk8hMNszSnkckDlcyO6ZpL89Hhh8=;
- b=EiRuN4vAPCaoknZ0Xkr9lNKiPgqtiIFwWPU4uH2T0BXA1L2kz/nMiMlzDNTafKRuPUQokdpgdMcYak+z/gRTG2J9poJ4I7pwmPc8Dw/7djhUraKAsiGaf+fuLIP/GR5/SLoj1nCXIBIbICWLLssutoSNm5DhTVYNboREuTxyj1w8ayXYFcVV86BMhsCrigAFt4ai+xsDi9aYSxr36fm4PVbnvEc/8BKJNDvADBDiR/SEQsqLkEQ5hn5knbh/S5LhJBLE2D/cxkh7FoMPJ2hVK/HJ0UZAm48jJ0Qh6MVW2FhR25UKNflIcL3/Vvcr6xIJQyRt2ZMRKAPv1xABFIUSFQ==
-Received: from BYAPR06CA0021.namprd06.prod.outlook.com (2603:10b6:a03:d4::34)
- by PH7PR12MB7308.namprd12.prod.outlook.com (2603:10b6:510:20c::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9203.9; Fri, 10 Oct
- 2025 17:15:47 +0000
-Received: from BY1PEPF0001AE17.namprd04.prod.outlook.com
- (2603:10b6:a03:d4:cafe::cf) by BYAPR06CA0021.outlook.office365.com
- (2603:10b6:a03:d4::34) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.10 via Frontend Transport; Fri,
- 10 Oct 2025 17:15:47 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- BY1PEPF0001AE17.mail.protection.outlook.com (10.167.242.107) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9203.9 via Frontend Transport; Fri, 10 Oct 2025 17:15:47 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Fri, 10 Oct
- 2025 10:15:38 -0700
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Fri, 10 Oct 2025 10:15:38 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.126.190.180) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Fri, 10 Oct 2025 10:15:38 -0700
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <rwarsow@gmx.de>,
-	<conor@kernel.org>, <hargar@microsoft.com>, <broonie@kernel.org>,
-	<achill@achill.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 6.17 00/26] 6.17.2-rc1 review
-In-Reply-To: <20251010131331.204964167@linuxfoundation.org>
-References: <20251010131331.204964167@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0604216E23
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 17:16:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1760116587; cv=none; b=X30L0+DoGO2eTsoGX7ASuVbTykjtFZfVYQTdvzvWV7/WqAwSywf5Fyv6sZzKZ111+xPTywQX8De+Wa/qoWli8RFrsgg5QMHg0blNuHfbutyt1nCBrzxqoM8y380ArtvDezbFBZCK3ozXqDbET6mds+OnVObvcSVJl3jAZwFJ89M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1760116587; c=relaxed/simple;
+	bh=9YNtDjY0aaMTxDGqBzpJuihnTbbfeShho9k1I/iDzko=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RwAmJ03udibLoLm9TdV+lPInSY5JSZNqaD6vwqGVrHA1l0YNb1OQJHULt1GgpuF7oxN9A3Xrco48hLwgyljbQ9o1DSuV1asJYBVNHoKtV029DyeRhRmED2o6cs5M0s8rODeoilpreDkfY2hH3wJL1gbbABzbT3zptWomjva0ADY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EoeziE5l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74596C4CEF8
+	for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 17:16:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1760116587;
+	bh=9YNtDjY0aaMTxDGqBzpJuihnTbbfeShho9k1I/iDzko=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=EoeziE5leDTQuMaTQWdDIjyfK93VH3byeksfUxrxmj+AjwFdDlSCZOORl5IicF3bN
+	 dqcrB6PGSr7OqyXTwiTXRMWp/Dwzabpe51AQWLTdrinm33G1eOtl7/40+2Lt/TVaat
+	 +d/4unC/iRa4tIuCgurOJ26L0fGo/94fI9tf1VU5wyjyryifG95Lpbi4XbB50ZKdce
+	 rGeBiFVckgbLc4nzxTEN8s1/unz6yaZLHNjMPd0NGtYgDIw3nV0YVUxlrs+E2xeGBN
+	 a6i4pC6tdZJfqPAhdf8dqiNPWTwl2Nl9VVZq+xjTJx5WaA7Q4YVvrcTcQgpw0LjV8M
+	 LgO0L2O1vqwzA==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-57d5ccd73dfso2431724e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 10 Oct 2025 10:16:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWhX8INHhBFr3LZKxWByNmm695lAr+HroWwhUvBIcrY87RYdF8zg7PS5aPAVwPs+EXv5prcfnoAAWPximU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuubcXMUdS73QyaGfVrET6gMz1yapSbOLV0oXJdUjBJTIsxgSx
+	HfvPOzMSQoQFsLBek6N/MKGRax3fPibSp3qLXJyaZvSKS7V9oVXHku2NvzyuG8HZkB4Eo5MnMuQ
+	NVdOQp0XxbBL7Fa9ymkVWiLxAd4GEIAQ=
+X-Google-Smtp-Source: AGHT+IGqjzPItbFI6jGLvg16WPlcUtcB/SyvLVUZ4hypPmxN6mA33rq7E1HgZbgBWLrxuQL9XcUXMPKdt5yKP8dsUKM=
+X-Received: by 2002:a05:6512:1291:b0:57d:ffa4:56f4 with SMTP id
+ 2adb3069b0e04-5906dae5904mr3545979e87.41.1760116585846; Fri, 10 Oct 2025
+ 10:16:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <f2b27b64-e08f-4312-8ec3-fc7cdd2196ae@drhqmail201.nvidia.com>
-Date: Fri, 10 Oct 2025 10:15:38 -0700
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY1PEPF0001AE17:EE_|PH7PR12MB7308:EE_
-X-MS-Office365-Filtering-Correlation-Id: a7fbb9a2-efe0-49c1-936d-08de0820a79d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|1800799024|82310400026|36860700013|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NlJIOVg3dytHOFpkbUhhcEdKcTdrL3JvTTBGRStvYmpVb00zeTNBNkNyc05h?=
- =?utf-8?B?elJZNzJiZjduT1FBYUR2QmZRbTJCMDF5U2JTcWpiUTliV2tUTkpQVGVhbGxB?=
- =?utf-8?B?TXhlU3VtbGgxdG5Eb0E1aGJXelhLUVVzelJxZ256WEJBTzdFMVE1NDFjK29w?=
- =?utf-8?B?NjNBTjNiTkg0Y1ptUmZydFdtS29TTXJXTXQ1ZUhObFlaNEszTFg0dkVzMXdj?=
- =?utf-8?B?KzZweXNOdnI3S1FRbUlFSXVYcTRMN2RXSFRQbXJuMTBjOTVvV0FVWGZwQlcr?=
- =?utf-8?B?N0g1bE5Ec3VYRVRralFaSisycTd1MGYwWnZwc3lyWWloSE4vVkRiUkNGZkJS?=
- =?utf-8?B?Y1JTbkNML0Jzdi94eGlOUURZNnJoeU44YjcxWVY0M0ZCVGJib2lNMmMreWJu?=
- =?utf-8?B?akhjUlRuOWIxc1hKM0JKWDZuWThqMis4b1FhY0RrN0hJblU0V2dvL0hLU3Jk?=
- =?utf-8?B?TDdic2podmkrS053R0YyU2xLaDcyaitTbEt1eUd5SjBYUE53VnhlVHlUSlZQ?=
- =?utf-8?B?dlR1Q0pGaCszVUw4K2t6ZlpoeUg4L2N3Wi9WQmREUmNwTVBTbkpETklTQnMr?=
- =?utf-8?B?Z09QTG4rUkV1ZE1Qa3gwTFdKSk9aRkhBK0JVVHZmWVZNYzRDNHJzNFpZQmlk?=
- =?utf-8?B?UkYvOC9wMWd0R1U0Q3hZbWdHYkU0SXlnS0pzcy8rNHZJemliSUFHV2ZCaW5h?=
- =?utf-8?B?ejhJQUtwSm1tRVg3bG1aQ3dWd1k3MVZrRVlDMmE3OXdhNGNvYUpHdmxvNVln?=
- =?utf-8?B?R21SSnFQanFVc2pzTXlnRHRuMHJiMmEyUTR0NVNoamVuUDZTREJtS2k5WHpO?=
- =?utf-8?B?MFAwbGRNNFdtVTBGR2xFekc1MWZzeWFuTUtoWFYvd2oxLzRaaG9xS1d6OWxs?=
- =?utf-8?B?bGdlNkhPZHpDU1E0WmFvMndRSU5Eei8zNHVrQUZlVnR3Vng0RTdZWUo4ZDRi?=
- =?utf-8?B?Tkd6M2RGbGRtUkQwUjBzZi9SeU5mR2tZaUw5RHExRlJJRTl6Z3N5ZC9GQ0U1?=
- =?utf-8?B?d3NJSEU1Zkg0ODVabGhwVDdaelo5TU1SdkpJcTNpZEZsSDdhMnFFTTQ5NWN3?=
- =?utf-8?B?UEZEQ0RObFJ4cThJbGdXYWtNVFJEUW1RdFQ5UjNoZ2JhNzdKRjYwbzRuczRa?=
- =?utf-8?B?QVM3aW1lTHordU42M0xtU251VlJHUXcyQm9MYWxxS2M5S3NUb3duUFlOdEZW?=
- =?utf-8?B?TWtsMHlCY0lzQndZcTkwMXdqWGFpZG5kVEgvVVVDcGZmcXkxejZHSHRHYzhM?=
- =?utf-8?B?b1pVZHprNzErL1NydTAzMUI0c2JxczdzQ2lPSmE0VlFLb3dFUTJVNStKSjQ3?=
- =?utf-8?B?ZWVSKzk0Q3ZJTFF3VUNTVkZLY01NM2JBUEJhaVBlaE9JTzRPWER2akdyZjZq?=
- =?utf-8?B?ajlqcUpKd1ZPc2RqV25jL1lSL1ZwdS8yNHJhbU0zN2JCZ292K0hQZ1Naa1JO?=
- =?utf-8?B?QkovRDgzNFc5cmkxcmlESi9RaFQ5YjZObU82aEVLUmw0SzJidFYwQmd1TTJV?=
- =?utf-8?B?ZjExUkE1TEJ5bjhFUTc3MGQ0a0xuZ3FzZGVJTGlLdi9rNFJzUytmN2ZDZ0VW?=
- =?utf-8?B?Z0xIM0hJTXI3bDJXQWx2S1JLbm01WUl4bW5jLzVabmhieTZpenYzdThoZmxJ?=
- =?utf-8?B?bHBPRXdrSGJGOGFPakdYZUZPZmtoa0l4T2V1czBIWmVZSGRTSllzOUhMSDEr?=
- =?utf-8?B?SWpxLzFHd1B1K3lvUU9qRWRuZWdmOS9lelJBV3RWQndkcWFPcEo1TjZhSHVI?=
- =?utf-8?B?L2krMUpuL0d3V0liWDhtRk9PN3hqUXF0YzA5V2tmQ2gxSENTNlZ2TFJDSHlh?=
- =?utf-8?B?SS9sd1FReXoxRWhPQ2JYcnpyM3RIamM4dW42UHlqVDJZNzdZaFVDOUV6NXB4?=
- =?utf-8?B?b3FhZURaY0VCdWJHcThTT1I5Tmg2UmIrbjJxaWN4cVJTVisxM3hnUmZQR0Mw?=
- =?utf-8?B?dmROd2syVDU1cVN6U2tzRW5RaFBkUGFvOVk0TVpYeFEzYzlmR1YyRi9laGJM?=
- =?utf-8?B?UDVGTGhvODIwYTU2MXNiMjRkckgremxwUDZuc2Z6TGhWbFVDT3NiZVo3TFIy?=
- =?utf-8?B?eEtBT3JIYWRzb0tmRnRsZlEwTWNjQlE0ZWN6MEg2SGYveGhJcFh2Q2x3MWYz?=
- =?utf-8?Q?bAng=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(82310400026)(36860700013)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2025 17:15:47.7094
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a7fbb9a2-efe0-49c1-936d-08de0820a79d
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BY1PEPF0001AE17.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7308
+References: <20251008-kbuild-fix-modinfo-regressions-v1-0-9fc776c5887c@kernel.org>
+ <20251008-kbuild-fix-modinfo-regressions-v1-2-9fc776c5887c@kernel.org>
+In-Reply-To: <20251008-kbuild-fix-modinfo-regressions-v1-2-9fc776c5887c@kernel.org>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 10 Oct 2025 10:16:14 -0700
+X-Gmail-Original-Message-ID: <CAMj1kXH8zHwszosJVNYT=o+CfKBMz4mOp0NoxpEEDUpKm6Dcxw@mail.gmail.com>
+X-Gm-Features: AS18NWCiLkt3LHlYWoSTA35aXA7btFnwEifEZNsHsaa-xn_DY2Z_rG_Vr-a6ugs
+Message-ID: <CAMj1kXH8zHwszosJVNYT=o+CfKBMz4mOp0NoxpEEDUpKm6Dcxw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] kbuild: Add '.rel.*' strip pattern for vmlinux
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Nicolas Schier <nsc@kernel.org>, Alexey Gladkov <legion@kernel.org>, 
+	Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Linux Kernel Functional Testing <lkft@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 10 Oct 2025 15:15:55 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.17.2 release.
-> There are 26 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun, 12 Oct 2025 13:13:18 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.17.2-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.17.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On Wed, 8 Oct 2025 at 15:47, Nathan Chancellor <nathan@kernel.org> wrote:
+>
+> Prior to binutils commit c12d9fa2afe ("Support objcopy
+> --remove-section=.relaFOO") [1] in 2.32, stripping relocation sections
+> required the trailing period (i.e., '.rel.*') to work properly.
+>
+> After commit 3e86e4d74c04 ("kbuild: keep .modinfo section in
+> vmlinux.unstripped"), there is an error with binutils 2.31.1 or earlier
+> because these sections are not properly removed:
+>
+>   s390-linux-objcopy: st6tO8Ev: symbol `.modinfo' required but not present
+>   s390-linux-objcopy:st6tO8Ev: no symbols
+>
+> Add the old pattern to resolve this issue (along with a comment to allow
+> cleaning this when binutils 2.32 or newer is the minimum supported
+> version). While the aforementioned kbuild change exposes this, the
+> pattern was originally changed by commit 71d815bf5dfd ("kbuild: Strip
+> runtime const RELA sections correctly"), where it would still be
+> incorrect with binutils older than 2.32.
+>
+> Fixes: 71d815bf5dfd ("kbuild: Strip runtime const RELA sections correctly")
+> Link: https://sourceware.org/git/?p=binutils-gdb.git;a=commit;h=c12d9fa2afe7abcbe407a00e15719e1a1350c2a7 [1]
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> Closes: https://lore.kernel.org/CA+G9fYvVktRhFtZXdNgVOL8j+ArsJDpvMLgCitaQvQmCx=hwOQ@mail.gmail.com/
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
 
-All tests passing for Tegra ...
+Acked-by: Ard Biesheuvel <ardb@kernel.org>
 
-Test results for stable-v6.17:
-    10 builds:	10 pass, 0 fail
-    28 boots:	28 pass, 0 fail
-    120 tests:	120 pass, 0 fail
-
-Linux version:	6.17.2-rc1-g8902adbbfd36
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra186-p3509-0000+p3636-0001, tegra194-p2972-0000,
-                tegra194-p3509-0000+p3668-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+> ---
+> Cc: Ard Biesheuvel <ardb@kernel.org>
+> ---
+>  scripts/Makefile.vmlinux | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/scripts/Makefile.vmlinux b/scripts/Makefile.vmlinux
+> index a62639982be5..c02f85c2e241 100644
+> --- a/scripts/Makefile.vmlinux
+> +++ b/scripts/Makefile.vmlinux
+> @@ -83,6 +83,9 @@ endif
+>
+>  remove-section-y                                   := .modinfo
+>  remove-section-$(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS) += '.rel*' '!.rel*.dyn'
+> +# for compatibility with binutils < 2.32
+> +# https://sourceware.org/git/?p=binutils-gdb.git;a=commit;h=c12d9fa2afe7abcbe407a00e15719e1a1350c2a7
+> +remove-section-$(CONFIG_ARCH_VMLINUX_NEEDS_RELOCS) += '.rel.*'
+>
+>  remove-symbols := -w --strip-symbol='__mod_device_table__*'
+>
+>
+> --
+> 2.51.0
+>
 
